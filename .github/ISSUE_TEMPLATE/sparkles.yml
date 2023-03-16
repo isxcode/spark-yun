@@ -1,0 +1,53 @@
+name: 创建需求
+title: ":sparkles: "
+labels: ["需求"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        欢迎提交一个需求
+  - type: input
+    id: id1
+    attributes:
+      label: 项目
+      description: 来自哪个项目？
+      placeholder: 至轻云创新团队
+    validations:
+      required: true
+  - type: dropdown
+    id: id2
+    attributes:
+      label: 紧急程度
+      options:
+        - 超级紧急
+        - 紧急
+        - 普通
+    validations:
+      required: true
+  - type: dropdown
+    id: id3
+    attributes:
+      label: 相关标签
+      multiple: true
+      options:
+        - 用户体验差
+        - 未完成的功能
+        - 缺失的功能
+  - type: textarea
+    id: id4
+    attributes:
+      label: 需求描述
+      placeholder: 请填写需求内容...
+      value: "标题即需求内容"
+    validations:
+      required: true
+  - type: dropdown
+    id: id5
+    attributes:
+      label: 预期时间
+      options:
+        - 1周
+        - 2周
+        - 1个月
+    validations:
+      required: true
