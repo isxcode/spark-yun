@@ -1,0 +1,37 @@
+name: 创建日常任务
+title: ":art: "
+labels: ["日常"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        欢迎创建一个日常任务
+  - type: dropdown
+    id: id1
+    attributes:
+      label: 所属组
+      options:
+        - 产品组
+        - 开发组
+        - 管理组
+        - 测试组
+    validations:
+      required: true
+  - type: dropdown
+    id: id2
+    attributes:
+      label: 紧急程度
+      options:
+        - 超级急
+        - 紧急
+        - 普通
+    validations:
+      required: true
+  - type: textarea
+    id: id3
+    attributes:
+      label: 任务描述
+      placeholder: 请填写任务内容...
+      value: "标题即任务内容"
+    validations:
+      required: true
