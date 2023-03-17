@@ -1,54 +1,41 @@
-name: 需求创建
-description: 欢迎提交一个需求
-title: ":sparkles: "
-labels: ["需求"]
+name: 日常任务
+description: 创建一个日常任务
+title: ":art: "
+labels: ["日常任务"]
 body:
   - type: markdown
     attributes:
       value: |
-        欢迎提交一个需求
-  - type: input
-    id: org
-    attributes:
-      label: 所属组织
-      description: 来自哪个组织？
-      placeholder: 至轻云创新团队
-    validations:
-      required: false
-  - type: textarea
-    id: describe-content
-    attributes:
-      label: 需求描述
-      description: 简单描述一下需求。
-      placeholder: 请填写需求内容...
-      value: "标题即是需求内容"
-    validations:
-      required: true
+        欢迎创建一个日常任务
   - type: dropdown
     id: version
     attributes:
-      label: 紧急状态
-      description: 需求紧急的状态。
+      label: 所属组
+      description: 所功能分组
       options:
-        - 紧急
-        - 普通
-        - 不急
+        - 产品组
+        - 开发组
+        - 管理组
+        - 测试组
     validations:
       required: true
   - type: dropdown
-    id: browsers
+    id: version1
     attributes:
-      label: 相关场景
-      multiple: true
+      label: 紧急程度
+      description: 紧急程度
       options:
-        - 用户体验差
-        - 未完成的功能
-        - 缺失的功能
-  - type: checkboxes
-    id: terms
+        - 超级急
+        - 紧急
+        - 普通
+    validations:
+      required: true    
+  - type: textarea
+    id: describe-content
     attributes:
-      label: Code of Conduct
-      description: By submitting this issue, you agree to follow our [Code of Conduct](https://example.com)
-      options:
-        - label: I agree to follow this project's Code of Conduct
-          required: false
+      label: 任务描述
+      description: 简单描述一下内容。
+      placeholder: 请填写任务内容...
+      value: "标题即任务内容"
+    validations:
+      required: true
