@@ -8,6 +8,7 @@ body:
         欢迎创建一个日常任务
   - type: dropdown
     id: version
+    description:
     attributes:
       label: 所属分组
       options:
@@ -19,6 +20,7 @@ body:
       required: true
   - type: dropdown
     id: version1
+    description:
     attributes:
       label: 紧急程度
       options:
@@ -32,6 +34,7 @@ body:
     attributes:
       label: 任务描述
       placeholder: 请填写任务内容...
+      description: 
       value: "标题即任务内容"
     validations:
       required: true
