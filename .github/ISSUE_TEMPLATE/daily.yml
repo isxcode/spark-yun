@@ -1,6 +1,6 @@
 name: 创建日常任务
 title: ":art: "
-labels: ["日常"]
+labels: ["日常任务"]
 body:
   - type: markdown
     attributes:
@@ -11,9 +11,9 @@ body:
     attributes:
       label: 所属组
       options:
+        - 管理组
         - 产品组
         - 开发组
-        - 管理组
         - 测试组
     validations:
       required: true
