@@ -1,5 +1,4 @@
-name: 日常任务
-description: 创建一个日常任务
+name: 创建日常任务
 title: ":art: "
 labels: ["日常任务"]
 body:
@@ -10,8 +9,7 @@ body:
   - type: dropdown
     id: version
     attributes:
-      label: 所属组
-      description: 所功能分组
+      label: 所属分组
       options:
         - 产品组
         - 开发组
@@ -23,7 +21,6 @@ body:
     id: version1
     attributes:
       label: 紧急程度
-      description: 紧急程度
       options:
         - 超级急
         - 紧急
@@ -34,7 +31,6 @@ body:
     id: describe-content
     attributes:
       label: 任务描述
-      description: 简单描述一下内容。
       placeholder: 请填写任务内容...
       value: "标题即任务内容"
     validations:
