@@ -1,6 +1,6 @@
 name: 创建回归缺陷
 description: 欢迎提交一个回归缺陷
-title: ":bug: "
+title: ":fire: "
 labels: ["回归缺陷"]
 body:
   - type: input
