@@ -6,9 +6,10 @@ body:
   - type: input
     id: org
     attributes:
-      label: Bug prevalence
-      description: "How often do you or others encounter this bug?"
-      placeholder: "Example: Whenever I visit the personal account page (1-2 times a week)"
+      label: 项目
+      description: "项目名称"
+      placeholder: "项目名称"
+      value: 至轻云大数据创新团队
     validations:
       required: true
   - type: textarea
@@ -17,7 +18,6 @@ body:
       label: 需求内容
       description: "描述一下需求内容"
       placeholder: 请填写需求内容...
-      value: |
-        "标题即是需求内容"
+      value: 标题即是需求内容
     validations:
       required: true
