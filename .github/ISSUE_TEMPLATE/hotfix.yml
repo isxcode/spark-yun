@@ -9,7 +9,7 @@ body:
       label: 对应需求
       description: "需求编号"
       placeholder: "需求编号"
-      value: `#`
+      value: "#"
     validations:
       required: true
   - type: textarea
