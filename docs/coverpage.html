@@ -1,0 +1,156 @@
+<div class="custom-body">
+    <nav class="custom-navbar navbar navbar-expand-lg bg-body-tertiary">
+        <div class="container-fluid">
+            <a class="custom-navbar-brand navbar-brand" onclick="scrollToDiv('custom-index')">至轻云</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                <div class="custom-navbar-nav navbar-nav">
+                    <a class="nav-link" onclick="scrollToDiv('custom-advantage')">产品优势</a>
+                    <a class="nav-link" onclick="scrollToDiv('custom-technology')">技术架构</a>
+                    <a class="nav-link" onclick="scrollToDiv('custom-version')">版本差异</a>
+                    <a class="nav-link" onclick="scrollToDiv('custom-application')">应用场景</a>
+                    <a class="nav-link" onclick="scrollToDiv('custom-about')">关于我们</a>
+                    <a class="nav-link" onclick="window.open('/README')">文档中心</a>
+                    <a class="nav-link" onclick="window.open('https://gitee.com/isxcode/spark-yun')">Gitee开源</a>
+                    <a class="nav-link" onclick="window.open('https://github.com/isxcode/spark-yun')">Github开源</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <div class="custom-main">
+        <div id="custom-index">
+            <div id="carouselExampleIndicators" class="custom-carousel carousel carousel-dark carousel-fade" data-bs-ride="carousel">
+                <div class="carousel-indicators">
+<!--                    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>-->
+<!--                    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>-->
+<!--                    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>-->
+                </div>
+                <div class="carousel-inner">
+                    <div class="carousel-item active">
+                        <div class="slide1-title">至轻云</div>
+                        <div class="slide1-describe">打造超轻量级大数据平台</div>
+                        <code class="slide1-bash"><span style="color: #ff7b72">docker</span> run -p 8080:8080 -d isxcode/zhiqingyun:latest</code>
+                        <button class="slide1-btn">演示环境</button>
+                    </div>
+<!--                    <div class="carousel-item">-->
+
+<!--                    </div>-->
+<!--                    <div class="carousel-item">-->
+
+<!--                    </div>-->
+                </div>
+            </div>
+        </div>
+        <div id="custom-advantage" class="custom-content">
+            <h2>产品优势</h2>
+            <h6>一键部署</h6>
+            <div class="advantage-nav">
+                <nav>
+                    <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                        <button class="nav-link active" id="nav-tab-1" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">
+                            极速部署
+                        </button>
+                        <button class="nav-link" id="nav-tab-2" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">
+                            多数据源
+                        </button>
+                        <button class="nav-link" id="nav-tab-3" data-bs-toggle="tab" data-bs-target="#nav-contact" type="button" role="tab" aria-controls="nav-contact" aria-selected="false">
+                            丰富作业
+                        </button>
+                        <button class="nav-link" id="nav-tab-4" data-bs-toggle="tab" data-bs-target="#nav-contact" type="button" role="tab" aria-controls="nav-contact" aria-selected="false">
+                            数据建模
+                        </button>
+                        <button class="nav-link" id="nav-tab-5" data-bs-toggle="tab" data-bs-target="#nav-contact" type="button" role="tab" aria-controls="nav-contact" aria-selected="false">
+                            自定义接口
+                        </button>
+                        <button class="nav-link" id="nav-tab-6" data-bs-toggle="tab" data-bs-target="#nav-contact" type="button" role="tab" aria-controls="nav-contact" aria-selected="false">
+                            周期调度
+                        </button>
+                    </div>
+                </nav>
+                <div class="tab-content" id="nav-tabContent">
+                    <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab" tabindex="0">
+                        1
+                    </div>
+                    <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab" tabindex="0">
+                        2
+                    </div>
+                    <div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab" tabindex="0">
+                        3
+                    </div>
+                    <div class="tab-pane fade" id="nav-4" role="tabpanel" aria-labelledby="nav-contact-tab" tabindex="0">
+                        4
+                    </div>
+                    <div class="tab-pane fade" id="nav-5" role="tabpanel" aria-labelledby="nav-contact-tab" tabindex="0">
+                        5
+                    </div>
+                    <div class="tab-pane fade" id="nav-6" role="tabpanel" aria-labelledby="nav-contact-tab" tabindex="0">
+                        6
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="custom-technology" class="custom-content">
+            <h2>技术架构</h2>
+            <h6>基于Spark计算引擎，打造Hadoop生态超轻量级大数据平台。</h6>
+            <img class="technology-img" src="https://img.isxcode.com/picgo/20230304115621.png" alt="架构图">
+        </div>
+        <div id="custom-version" class="custom-content">
+            <h2>版本差异</h2>
+            <h6>社区版永久开源免费。</h6>
+            <div class="table-responsive">
+                <table class="table caption-top">
+                    <thead>
+                    <tr>
+                        <th scope="col">First</th>
+                        <th scope="col">Last</th>
+                        <th scope="col">Handle</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>Mark</td>
+                        <td>Otto</td>
+                        <td>@mdo</td>
+                    </tr>
+                    <tr>
+                        <td>Jacob</td>
+                        <td>Thornton</td>
+                        <td>@fat</td>
+                    </tr>
+                    <tr>
+                        <td>Larry</td>
+                        <td>the Bird</td>
+                        <td>@twitter</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div id="custom-application" class="custom-content">
+            <h2>应用场景</h2>
+            <h6>丰富的应用场景</h6>
+            <div class="application-scroll">
+                <div class="custom-card-container">
+
+                </div>
+                <div class="custom-card-container">
+
+                </div>
+                <div class="custom-card-container">
+
+                </div>
+                <div class="custom-card-container">
+
+                </div>
+                <div class="custom-card-container">
+
+                </div>
+            </div>
+        </div>
+        <div id="custom-about" class="custom-content">
+            <h2>关于我们</h2>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,168 @@
+:root {
+    --navbar-padding-left-and-right-pc: 3rem;
+    --navbar-padding-left-and-right-mobile: 0.5rem;
+}
+
+/* nav浮起来 */
+.custom-navbar {
+    background: white !important;
+    z-index: 999;
+    width: 100%;
+    position: absolute;
+    border-bottom: black solid 2px;
+    padding-left: var(--navbar-padding-left-and-right-pc);
+    padding-right: var(--navbar-padding-left-and-right-pc);
+}
+@media screen and (max-width: 985px) {
+    .custom-navbar {
+        padding-left: var(--navbar-padding-left-and-right-mobile);
+        padding-right: var(--navbar-padding-left-and-right-mobile);
+    }
+}
+
+/* nav中logo */
+.custom-navbar-brand {
+    font-weight: bold;
+    font-size: 1.6rem;
+    cursor: pointer;
+}
+
+/* navbar中的nav样式 */
+.custom-navbar-nav {
+    margin-left: auto;
+}
+
+/* nav中的连接样式 */
+.custom-navbar-nav a {
+    font-size: 1rem;
+    width: 7rem;
+    cursor: pointer;
+    margin: auto;
+}
+
+/* 首页滚动 */
+.custom-carousel {
+    height: 100%;
+}
+
+/* slide1 */
+.slide1-title {
+    margin-top: 7%;
+    font-size: 6rem;
+    font-weight: normal;
+}
+@media screen and (max-width: 985px) {
+    .slide1-title {
+        margin-top: 30%;
+    }
+}
+
+.slide1-describe {
+    margin-top: 4rem;
+    font-size: 2.5rem;
+    font-weight: normal;
+}
+
+.slide1-bash {
+    color: white;
+    display: block;
+    margin: 3rem auto auto;
+    height: 2.2rem;
+    line-height: 2.2rem;
+    font-size: 0.9rem;
+    width: 45%;
+    font-weight: normal;
+    border: none;
+    white-space: nowrap;
+    background: #161b22;
+    border-radius: 0.5rem;
+}
+
+.slide1-btn {
+    margin-top: 3rem;
+    font-size: 1.3rem;
+    background: white;
+    color: black;
+    border-radius: 0.1rem;
+    border: black solid 2px;
+    width: 150px;
+    height: 40px;
+    cursor: pointer;
+}
+
+.slide1-btn:hover {
+    background: black;
+    color: white;
+}
+
+@media screen and (max-width: 985px) {
+    .slide1-bash {
+        width: 90%;
+        display: flex;
+        overflow-x: scroll;
+        overflow-y: hidden;
+    }
+}
+
+/* 产品优势 */
+.nav-link {
+    color: black;
+    width: 16.66%;
+}
+
+
+.technology-img {
+    height: 70%;
+    width: auto;
+}
+@media screen and (max-width: 985px) {
+    .technology-img {
+        height: auto;
+        width: 100%;
+    }
+}
+
+
+.advantage-nav {
+    height: 50%;
+    width: 80%;
+    margin: auto;
+}
+
+#custom-version {
+}
+
+.table-responsive {
+    width: 60%;
+    margin: auto;
+}
+
+.application-scroll {
+    display: flex;
+    overflow-x: scroll;
+    overflow-y: hidden;
+    padding-bottom: 2rem;
+    margin: 4rem auto auto;
+    width: 80%;
+    height: 70%;
+}
+
+.custom-card-container {
+    width: 300px;
+    height: 500px;
+    margin-left: 10px;
+    flex-shrink: 0;
+}
+
+.card {
+    display: none;
+    width: 100%;
+}
+
+.active {
+    font-weight: bold;
+}
+
+.nav-link:hover {
+    color: black;
+}

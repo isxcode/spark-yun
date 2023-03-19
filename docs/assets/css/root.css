@@ -1,0 +1,43 @@
+/* 关闭docsify彩色背景 */
+section.cover {
+    background: #fff !important;
+}
+
+/* 将docsify的coverage改为官网 */
+.custom-body {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+/* 自定义main,实现nav下面的内容可以滚动 */
+.custom-main {
+    width: 100%;
+    height: 100vh;
+    overflow-y: scroll;
+}
+
+/* 自定义content */
+.custom-content {
+    margin: auto;
+    height: 100vh;
+    width: 96%;
+    border-bottom: lightgray solid 2px;
+    padding-top: 6rem;
+}
+
+/* 首页 */
+#custom-index {
+    margin: auto;
+    height: 100vh;
+    width: 100%;
+    padding-top: 4.2rem;
+    border-bottom: lightgray solid 2px;
+}
+@media screen and (max-width: 985px) {
+    #custom-index {
+        border-bottom: none;
+    }
+}
