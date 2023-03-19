@@ -104,15 +104,77 @@
     }
 }
 
-/* 产品优势 */
-.nav-link {
+/* 产品优势 桌面*/
+.advantage-nav-mobile {
+    display: none;
+}
+.advantage-nav-pc {
+    height: 80%;
+    width: 80%;
+    margin: auto;
+}
+
+.custom-advantage-nav {
+
+}
+
+.custom-advantage-nav button {
     color: black;
     width: 16.66%;
 }
 
+.custom-advantage-nav button:hover {
+    color: black;
+}
 
+.custom-advantage-card-body {
+    width: 100%;
+    height: 100%;
+}
+
+.custom-advantage-img {
+    margin-top: 30%;
+    margin-bottom: 30%;
+    width: 50%;
+}
+
+.custom-advantage-font {
+    display: flex;
+    margin-left: auto;
+}
+
+.custom-advantage-li {
+    border: none;
+    text-align: left;
+}
+
+.custom-advantage-list-body {
+    margin-top: 5%;
+}
+
+/* 移动版 产品优势 */
+@media screen and (max-width: 985px) {
+    .advantage-nav-mobile {
+        display: block;
+    }
+    .advantage-nav-pc {
+        display: none;
+    }
+
+    .custom-accordion .accordion-button {
+        background: white;
+        color: black;
+        box-shadow: none;
+    }
+
+    #custom-advantage .content-top {
+        display: none;
+    }
+}
+
+/* 技术架构 */
 .technology-img {
-    height: 70%;
+    height: 90%;
     width: auto;
 }
 @media screen and (max-width: 985px) {
@@ -122,47 +184,49 @@
     }
 }
 
-
-.advantage-nav {
-    height: 50%;
-    width: 80%;
-    margin: auto;
-}
-
-#custom-version {
-}
-
+/* 版本差异 */
 .table-responsive {
-    width: 60%;
+    width: 40%;
     margin: auto;
 }
+@media screen and (max-width: 985px) {
+    .table-responsive {
+        width: 90%;
+    }
+}
 
+/* 应用场景 */
 .application-scroll {
+    margin: auto;
+    width: 80%;
     display: flex;
     overflow-x: scroll;
     overflow-y: hidden;
-    padding-bottom: 2rem;
-    margin: 4rem auto auto;
-    width: 80%;
-    height: 70%;
 }
 
 .custom-card-container {
-    width: 300px;
-    height: 500px;
-    margin-left: 10px;
     flex-shrink: 0;
+    height: 60%;
+    margin-right: 20px;
+    width: 23%;
+}
+@media screen and (max-width: 985px) {
+    .custom-card-container {
+        width: 90%;
+    }
 }
 
-.card {
-    display: none;
-    width: 100%;
+.custom-card-img-top {
+    width: 40%;
+    margin: auto;
 }
 
-.active {
-    font-weight: bold;
+/*关于我们*/
+.link-wechat {
+    width: 14rem;
 }
 
-.nav-link:hover {
-    color: black;
+.link-wechat-describe {
+    color: grey;
+    font-size: 0.8rem;
 }
