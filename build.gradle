@@ -86,6 +86,12 @@ tasks.named('test') {
 }
 
 tasks.register('start', GradleBuild) {
+	dependsOn("spark-yun-backend:clean-web")
+	dependsOn("spark-yun-website:npm-run-build")
+	dependsOn("spark-yun-backend:mkdir-templates")
+	dependsOn("spark-yun-backend:mkdir-static")
+	dependsOn("spark-yun-website:copy-index")
+	dependsOn("spark-yun-website:copy-static")
 	tasks = ["spark-yun-backend:bootRun"]
 }
 

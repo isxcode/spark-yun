@@ -1,0 +1,6 @@
+spring:
+  mvc:
+    view:
+      prefix: /templates/
+      suffix: .html
+    static-path-pattern: /static/**

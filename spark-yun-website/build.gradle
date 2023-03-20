@@ -1,0 +1,14 @@
+tasks.register('npm-run-build', Exec) {
+    commandLine 'npm', 'run', 'install'
+    commandLine 'npm', 'run', 'build'
+}
+
+tasks.register('copy-index', Copy) {
+    from 'build/index.html'
+    into '../spark-yun-backend/src/main/resources/templates/'
+}
+
+tasks.register('copy-static', Copy) {
+    from 'build/static'
+    into '../spark-yun-backend/src/main/resources/static'
+}

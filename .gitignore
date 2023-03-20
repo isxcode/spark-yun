@@ -18,3 +18,7 @@ gradle-app.setting
 
 ###
 **/build
+
+### spark-yun
+spark-yun-backend/src/main/resources/templates/**
+spark-yun-backend/src/main/resources/static/**
