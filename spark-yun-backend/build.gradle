@@ -2,21 +2,3 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 }
 
-bootJar {
-    archiveName "spark-yun-backend.jar"
-}
-
-tasks.register('clean-web', Delete) {
-    // 删除resources下面的static和templates
-    delete 'src/main/resources/templates'
-    delete 'src/main/resources/static'
-}
-
-tasks.register('mkdir-static', Exec) {
-    commandLine 'mkdir', 'src/main/resources/static'
-}
-
-tasks.register('mkdir-templates', Exec) {
-    commandLine 'mkdir', 'src/main/resources/templates'
-}
-
