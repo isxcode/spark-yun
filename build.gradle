@@ -13,7 +13,6 @@ allprojects {
 	sourceCompatibility = JavaVersion.VERSION_1_8
 	targetCompatibility = JavaVersion.VERSION_1_8
 
-
 	def versionNumber = new File(rootDir.getAbsolutePath(), "VERSION.txt").readLines()[0].trim()
 
 	group = 'com.isxcode'
@@ -50,14 +49,6 @@ allprojects {
 		compileOnly {
 			extendsFrom annotationProcessor
 		}
-	}
-
-	jar {
-		enabled true
-	}
-
-	bootJar {
-		enabled false
 	}
 }
 
@@ -100,7 +91,8 @@ tasks.register('agent', GradleBuild) {
 }
 
 tasks.register('docker', Exec) {
+	dependsOn("spark-yun-backend:bootJar")
+
 	def versionNumber = new File(rootDir.getAbsolutePath(), "VERSION.txt").readLines()[0].trim()
-	dependsOn("spark-yun-backend:build")
 	commandLine 'bash', '-c', 'docker build -t isxcode/spark-star:' + versionNumber + ' -f ./Dockerfile  .'
 }
