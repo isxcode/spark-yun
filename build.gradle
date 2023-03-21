@@ -1,0 +1,106 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '2.7.9'
+	id 'io.spring.dependency-management' version '1.0.15.RELEASE'
+}
+
+allprojects {
+
+	apply plugin: 'org.springframework.boot'
+	apply plugin: 'io.spring.dependency-management'
+	apply plugin: 'java-library'
+
+	sourceCompatibility = JavaVersion.VERSION_1_8
+	targetCompatibility = JavaVersion.VERSION_1_8
+
+
+	def versionNumber = new File(rootDir.getAbsolutePath(), "VERSION.txt").readLines()[0].trim()
+
+	group = 'com.isxcode'
+	version = versionNumber
+
+	repositories {
+		mavenLocal()
+		mavenCentral()
+		maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
+		maven { url 'https://maven.aliyun.com/nexus/content/groups/public/' }
+		maven { url "https://plugins.gradle.org/m2/" }
+	}
+
+	dependencies {
+
+		implementation 'org.springframework.boot:spring-boot-starter-web'
+
+		annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+
+		compileOnly 'org.projectlombok:lombok:1.18.24'
+		annotationProcessor 'org.projectlombok:lombok:1.18.24'
+
+		implementation 'com.alibaba:fastjson:2.0.16'
+
+		implementation 'org.springframework.boot:spring-boot-starter-aop'
+
+		implementation 'org.junit.jupiter:junit-jupiter:5.9.1'
+		testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.1'
+
+		testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	}
+
+	configurations {
+		compileOnly {
+			extendsFrom annotationProcessor
+		}
+	}
+
+	jar {
+		enabled true
+	}
+
+	bootJar {
+		enabled false
+	}
+}
+
+project("spark-yun-backend") {
+
+	apply plugin: 'org.springframework.boot'
+	apply plugin: 'io.spring.dependency-management'
+
+	dependencies {
+		implementation 'org.springframework.boot:spring-boot-starter-web'
+	}
+
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
+
+tasks.register('start', GradleBuild) {
+	dependsOn("spark-yun-backend:clean-web")
+	dependsOn("spark-yun-website:npm-run-build")
+	dependsOn("spark-yun-backend:mkdir-templates")
+	dependsOn("spark-yun-backend:mkdir-static")
+	dependsOn("spark-yun-website:copy-index")
+	dependsOn("spark-yun-website:copy-static")
+	tasks = ["spark-yun-backend:bootRun"]
+}
+
+tasks.register('agent', GradleBuild) {
+	tasks = ["spark-yun-agent:bootRun"]
+}
+
+tasks.register('docker', Exec) {
+	def versionNumber = new File(rootDir.getAbsolutePath(), "VERSION.txt").readLines()[0].trim()
+	dependsOn("spark-yun-backend:build")
+	commandLine 'bash', '-c', 'docker build -t isxcode/spark-star:' + versionNumber + ' -f ./Dockerfile  .'
+}
