@@ -1,0 +1,13 @@
+// root项目名称
+rootProject.name = 'spark-yun'
+
+// 添加子模块
+include 'spark-yun-agent'
+include 'spark-yun-api'
+include 'spark-yun-backend'
+include 'spark-yun-client'
+include 'spark-yun-common'
+include 'spark-yun-dist'
+include 'spark-yun-plugins'
+include 'spark-yun-test'
+include 'spark-yun-website'
