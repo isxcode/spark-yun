@@ -1,17 +1,15 @@
+# gradle隐藏文件夹不提交
 .gradle
-/build/
 
-# Ignore Gradle GUI config
-gradle-app.setting
-
-# Avoid ignoring Gradle wrapper jar file (.jar files are usually ignored)
+# 禁止提交gradle的gradle-wrapper.jar
 !gradle-wrapper.jar
 
-# Cache of project
-.gradletasknamecache
-
-# # Work around https://youtrack.jetbrains.com/issue/IDEA-116898
-# gradle/wrapper/gradle-wrapper.properties
-
-### idea
+### idea隐藏文件夹不提交
 .idea
+
+### 所有项目下的build都不提交
+**/build
+
+### 后端项目中前端打包的文件，不提交
+spark-yun-backend/src/main/resources/templates/**
+spark-yun-backend/src/main/resources/static/**
