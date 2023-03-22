@@ -1,0 +1,9 @@
+### 添加用户
+POST http://localhost:8080/user/addUser
+Content-Type: application/json
+
+{
+  "account": "123456",
+  "password": "1234567890",
+  "email": "123@qq.com"
+}

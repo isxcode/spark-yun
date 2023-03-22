@@ -1,4 +1,21 @@
 dependencies {
+
+    // spring web
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+
+    // thymeleaf
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+
+    // h2
+    runtimeOnly 'com.h2database:h2'
+
+    // jpa
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+    // validation
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+    // spark-yun-api
+    api(project(':spark-yun-api'))
 }
 

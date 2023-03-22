@@ -1,6 +1,35 @@
+# 服务配置
+server:
+  port: 8080
+
 spring:
+
+  # 数据源配置
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:file:/Users/ispong/Data/h2
+    username: root
+    password: ispong123
+
+  # sql初始化
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:db/schema.sql
+      data-locations: classpath:db/data.sql
+
+  # mvc配置
   mvc:
     view:
       prefix: /templates/
       suffix: .html
     static-path-pattern: /static/**
+
+  # h2数据库配置
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+      settings:
+        trace: false
+        web-allow-others: true
