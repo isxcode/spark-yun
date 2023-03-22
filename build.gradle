@@ -4,6 +4,7 @@ plugins {
 	id 'org.springframework.boot' version "${SPRING_VERSION}"
 	id 'io.spring.dependency-management' version "${SPRING_MANAGER_VERSION}"
 	id "com.diffplug.spotless" version "${SPOTLESS_VERSION}"
+	id 'checkstyle'
 }
 
 // 从VERSION.txt中获取自定义版本号
@@ -67,6 +68,24 @@ allprojects {
 			extendsFrom annotationProcessor
 		}
 	}
+
+// checkstyle配置
+//	checkstyle {
+//		configFile = file("${rootDir}/config/checkstyle/checkstyle.xml")
+//		toolVersion = '8.1'
+//		sourceSets = [project.sourceSets.main]
+//	}
+//	tasks.withType(Checkstyle).configureEach {
+//		minHeapSize = "200m"
+//		maxHeapSize = "1g"
+//		classpath = configurations.checkstyle
+//		ignoreFailures = true
+//		reports {
+//			xml.required = false
+//			html.required = true
+//			html.stylesheet resources.text.fromFile('config/checkstyle/checkstyle-simple.xsl')
+//		}
+//	}
 }
 
 // 独立配置spark-yun-backend模块项目
@@ -130,8 +149,12 @@ tasks.register('start', GradleBuild) {
 	// 第四步：将打包好的文件复制到指定文件夹
 	dependsOn("spark-yun-website:copy-index")
 	dependsOn("spark-yun-website:copy-static")
-	// 第五步：spring启动项目
-	tasks = ["spark-yun:spotlessApply", "spark-yun-backend:bootRun"]
+	// 第五步：spotless格式化代码
+	dependsOn(":spotlessApply")
+	// 第六步：checkstyle检测代码
+	dependsOn(":checkstyleMain")
+	// 第七步：spring启动项目
+	tasks = ["spark-yun-backend:bootRun"]
 }
 
 // gradle agent命令，启动至轻云代理项目
@@ -152,6 +175,7 @@ tasks.register('docker', Exec) {
 spotless {
 	java {
 		target '*/**/*.java'
+		targetExclude '*/build/**/*.java'
 		googleJavaFormat()
 		removeUnusedImports()
 		indentWithTabs(2)
