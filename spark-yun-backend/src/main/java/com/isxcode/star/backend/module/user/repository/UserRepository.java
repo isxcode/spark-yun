@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
  * @ispong
  */
 @Repository
-public interface UserRepository extends JpaRepository<UserEntity,String> {
+public interface UserRepository extends JpaRepository<UserEntity, String> {
 
     UserEntity findFirstByAccount(String account);
 }

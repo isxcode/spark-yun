@@ -1,10 +1,9 @@
 package com.isxcode.star.api.pojos.user.req;
 
-import lombok.Data;
-
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
+import lombok.Data;
 
 /*
  * 每一个请求接口，都需要一个请求对象

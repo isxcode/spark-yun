@@ -1,11 +1,10 @@
 package com.isxcode.star.backend.module.user.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.Data;
-
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import lombok.Data;
 
 /*
  * 只负责数据库对象映射
@@ -18,8 +17,7 @@ import javax.persistence.Table;
 @JsonIgnoreProperties({"hibernateLazyInitializer"})
 public class UserEntity {
 
-    @Id
-    private String id;
+    @Id private String id;
 
     private String account;
 

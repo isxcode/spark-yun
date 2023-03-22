@@ -3,13 +3,12 @@ package com.isxcode.star.backend.module.user.controller;
 import com.isxcode.star.api.constants.ModulePrefix;
 import com.isxcode.star.api.pojos.user.req.AddUserReq;
 import com.isxcode.star.backend.module.user.service.UserBizService;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.validation.Valid;
 
 /*
  * 只负责接口入口
@@ -30,33 +29,20 @@ public class UserController {
     }
 
     @PostMapping("/queryUser")
-    public void queryUser() {
-
-    }
+    public void queryUser() {}
 
     @PostMapping("/delUser")
-    public void delUser() {
-
-    }
+    public void delUser() {}
 
     @PostMapping("/updateUser")
-    public void updateUser() {
-
-    }
+    public void updateUser() {}
 
     @PostMapping("/getUser")
-    public void getUser() {
-
-    }
+    public void getUser() {}
 
     @PostMapping("/updateUserStatus")
-    public void updateUserStatus() {
-
-    }
+    public void updateUserStatus() {}
 
     @PostMapping("/login")
-    public void login() {
-
-    }
-
+    public void login() {}
 }

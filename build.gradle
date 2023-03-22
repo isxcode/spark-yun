@@ -3,6 +3,7 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version "${SPRING_VERSION}"
 	id 'io.spring.dependency-management' version "${SPRING_MANAGER_VERSION}"
+	id "com.diffplug.spotless" version "${SPOTLESS_VERSION}"
 }
 
 // 从VERSION.txt中获取自定义版本号
@@ -130,7 +131,7 @@ tasks.register('start', GradleBuild) {
 	dependsOn("spark-yun-website:copy-index")
 	dependsOn("spark-yun-website:copy-static")
 	// 第五步：spring启动项目
-	tasks = ["spark-yun-backend:bootRun"]
+	tasks = ["spark-yun:spotlessApply", "spark-yun-backend:bootRun"]
 }
 
 // gradle agent命令，启动至轻云代理项目
@@ -145,4 +146,15 @@ tasks.register('docker', Exec) {
 	dependsOn("spark-yun-backend:bootJar")
 	// 使用dockerfile对项目进行打包
 	commandLine 'bash', '-c', 'docker build -t isxcode/spark-star:' + versionNumber + ' -f ./Dockerfile  .'
+}
+
+// spotless配置
+spotless {
+	java {
+		target '*/**/*.java'
+		googleJavaFormat()
+		removeUnusedImports()
+		indentWithTabs(2)
+		indentWithSpaces(4)
+	}
 }

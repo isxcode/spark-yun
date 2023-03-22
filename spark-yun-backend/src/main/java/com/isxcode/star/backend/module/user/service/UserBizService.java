@@ -1,14 +1,12 @@
 package com.isxcode.star.backend.module.user.service;
 
-import com.isxcode.star.backend.module.user.entity.UserEntity;
 import com.isxcode.star.api.pojos.user.req.AddUserReq;
+import com.isxcode.star.backend.module.user.entity.UserEntity;
 import com.isxcode.star.backend.module.user.mapper.UserMapper;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.BeanUtils;
-import org.springframework.stereotype.Service;
-
-import javax.transaction.Transactional;
 import java.util.UUID;
+import javax.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
 /*
  * 对应接口的业务逻辑
@@ -38,5 +36,4 @@ public class UserBizService {
         // 数据持久化
         userService.addUser(user);
     }
-
 }
