@@ -7,5 +7,5 @@ import org.mapstruct.Mapper;
 @Mapper(componentModel = "spring")
 public interface UserMapper {
 
-    UserEntity addUserReqToUserEntity(AddUserReq addUserReq);
+  UserEntity addUserReqToUserEntity(AddUserReq addUserReq);
 }

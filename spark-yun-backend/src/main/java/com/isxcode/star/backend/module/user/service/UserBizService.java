@@ -18,22 +18,22 @@ import org.springframework.stereotype.Service;
 @Transactional
 public class UserBizService {
 
-    private final UserService userService;
+  private final UserService userService;
 
-    private final UserMapper userMapper;
+  private final UserMapper userMapper;
 
-    public void addUser(AddUserReq addUserReq) {
+  public void addUser(AddUserReq addUserReq) {
 
-        // 如果用户存在，则排除异常
-        if (userService.userExist(addUserReq.getAccount())) {
-            throw new RuntimeException("用户已存在");
-        }
-
-        // req 转 entity
-        UserEntity user = userMapper.addUserReqToUserEntity(addUserReq);
-        user.setId(UUID.randomUUID().toString());
-
-        // 数据持久化
-        userService.addUser(user);
+    // 如果用户存在，则排除异常
+    if (userService.userExist(addUserReq.getAccount())) {
+      throw new RuntimeException("用户已存在");
     }
+
+    // req 转 entity
+    UserEntity user = userMapper.addUserReqToUserEntity(addUserReq);
+    user.setId(UUID.randomUUID().toString());
+
+    // 数据持久化
+    userService.addUser(user);
+  }
 }

@@ -14,27 +14,27 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class UserService {
 
-    private final UserRepository userRepository;
+  private final UserRepository userRepository;
 
-    /*
-     * 判断用户是否存在
-     *
-     * @param account 用户账号
-     * @return true为存在 false为不存在
-     * @ispong
-     */
-    public Boolean userExist(String account) {
+  /*
+   * 判断用户是否存在
+   *
+   * @param account 用户账号
+   * @return true为存在 false为不存在
+   * @ispong
+   */
+  public Boolean userExist(String account) {
 
-        return userRepository.findFirstByAccount(account) != null;
-    }
+    return userRepository.findFirstByAccount(account) != null;
+  }
 
-    /*
-     * 添加用户
-     *
-     * @ispong
-     */
-    public void addUser(UserEntity user) {
+  /*
+   * 添加用户
+   *
+   * @ispong
+   */
+  public void addUser(UserEntity user) {
 
-        userRepository.save(user);
-    }
+    userRepository.save(user);
+  }
 }

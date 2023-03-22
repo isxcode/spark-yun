@@ -20,29 +20,29 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class UserController {
 
-    private final UserBizService userBizService;
+  private final UserBizService userBizService;
 
-    @PostMapping("/addUser")
-    public void addUser(@Valid @RequestBody AddUserReq addUserReq) {
+  @PostMapping("/addUser")
+  public void addUser(@Valid @RequestBody AddUserReq addUserReq) {
 
-        userBizService.addUser(addUserReq);
-    }
+    userBizService.addUser(addUserReq);
+  }
 
-    @PostMapping("/queryUser")
-    public void queryUser() {}
+  @PostMapping("/queryUser")
+  public void queryUser() {}
 
-    @PostMapping("/delUser")
-    public void delUser() {}
+  @PostMapping("/delUser")
+  public void delUser() {}
 
-    @PostMapping("/updateUser")
-    public void updateUser() {}
+  @PostMapping("/updateUser")
+  public void updateUser() {}
 
-    @PostMapping("/getUser")
-    public void getUser() {}
+  @PostMapping("/getUser")
+  public void getUser() {}
 
-    @PostMapping("/updateUserStatus")
-    public void updateUserStatus() {}
+  @PostMapping("/updateUserStatus")
+  public void updateUserStatus() {}
 
-    @PostMapping("/login")
-    public void login() {}
+  @PostMapping("/login")
+  public void login() {}
 }

@@ -18,6 +18,7 @@ allprojects {
 	apply plugin: 'org.springframework.boot'
 	apply plugin: 'io.spring.dependency-management'
 	apply plugin: 'java-library'
+	apply plugin: 'checkstyle'
 
 	// java环境配置，使用java1.8
 	sourceCompatibility = JavaVersion.VERSION_1_8
@@ -69,23 +70,19 @@ allprojects {
 		}
 	}
 
-// checkstyle配置
-//	checkstyle {
-//		configFile = file("${rootDir}/config/checkstyle/checkstyle.xml")
-//		toolVersion = '8.1'
-//		sourceSets = [project.sourceSets.main]
-//	}
-//	tasks.withType(Checkstyle).configureEach {
-//		minHeapSize = "200m"
-//		maxHeapSize = "1g"
-//		classpath = configurations.checkstyle
-//		ignoreFailures = true
-//		reports {
-//			xml.required = false
-//			html.required = true
-//			html.stylesheet resources.text.fromFile('config/checkstyle/checkstyle-simple.xsl')
-//		}
-//	}
+     // checkstyle配置
+	tasks.withType(Checkstyle) {
+		maxWarnings 0
+		maxErrors 0
+		ignoreFailures = false
+		reports {
+			xml.required = false
+			html.required = true
+			html.stylesheet resources.text.fromFile('../config/xsl/checkstyle-simple.xsl')
+		}
+		minHeapSize = "200m"
+		maxHeapSize = "1g"
+	}
 }
 
 // 独立配置spark-yun-backend模块项目
@@ -152,7 +149,7 @@ tasks.register('start', GradleBuild) {
 	// 第五步：spotless格式化代码
 	dependsOn(":spotlessApply")
 	// 第六步：checkstyle检测代码
-	dependsOn(":checkstyleMain")
+	dependsOn(":check")
 	// 第七步：spring启动项目
 	tasks = ["spark-yun-backend:bootRun"]
 }
@@ -178,7 +175,5 @@ spotless {
 		targetExclude '*/build/**/*.java'
 		googleJavaFormat()
 		removeUnusedImports()
-		indentWithTabs(2)
-		indentWithSpaces(4)
 	}
 }

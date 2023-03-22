@@ -7,9 +7,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping(value = "/")
 public class WebController {
 
-    @RequestMapping(value = {"/*"})
-    public String index() {
+  @RequestMapping(value = {"/*"})
+  public String index() {
 
-        return "index";
-    }
+    return "index";
+  }
 }

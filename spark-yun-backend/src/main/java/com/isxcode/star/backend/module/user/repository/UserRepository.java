@@ -12,5 +12,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface UserRepository extends JpaRepository<UserEntity, String> {
 
-    UserEntity findFirstByAccount(String account);
+  UserEntity findFirstByAccount(String account);
 }

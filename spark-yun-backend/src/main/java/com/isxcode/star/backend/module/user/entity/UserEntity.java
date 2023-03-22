@@ -17,11 +17,11 @@ import lombok.Data;
 @JsonIgnoreProperties({"hibernateLazyInitializer"})
 public class UserEntity {
 
-    @Id private String id;
+  @Id private String id;
 
-    private String account;
+  private String account;
 
-    private String password;
+  private String password;
 
-    private String email;
+  private String email;
 }
