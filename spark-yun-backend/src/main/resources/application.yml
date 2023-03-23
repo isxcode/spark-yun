@@ -10,6 +10,9 @@ spring:
     url: jdbc:h2:file:/Users/ispong/Data/h2
     username: root
     password: ispong123
+    hikari:
+      pool-name: spark-yun-db-pool
+      maximum-pool-size: 20
 
   # sql初始化
   sql:
