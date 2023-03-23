@@ -4,6 +4,7 @@ import com.isxcode.star.api.pojos.user.req.AddUserReq;
 import com.isxcode.star.backend.module.user.entity.UserEntity;
 import org.mapstruct.Mapper;
 
+/** mapstruct映射. */
 @Mapper(componentModel = "spring")
 public interface UserMapper {
 

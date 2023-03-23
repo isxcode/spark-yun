@@ -5,11 +5,7 @@ import com.isxcode.star.backend.module.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-/*
- * 解藕出来的基础逻辑
- *
- * @ispong
- */
+/** 解藕出来的基础逻辑. */
 @Service
 @RequiredArgsConstructor
 public class UserService {

@@ -5,11 +5,7 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 import lombok.Data;
 
-/*
- * 每一个请求接口，都需要一个请求对象
- *
- * @ispong
- */
+/** AddUser接口请求对象. */
 @Data
 public class AddUserReq {
 

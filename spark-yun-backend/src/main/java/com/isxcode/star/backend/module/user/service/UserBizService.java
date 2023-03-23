@@ -8,11 +8,7 @@ import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-/*
- * 对应接口的业务逻辑
- *
- * @ispong
- */
+/** 用户模块接口的业务逻辑. */
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -22,6 +18,7 @@ public class UserBizService {
 
   private final UserMapper userMapper;
 
+  /** 添加用户. */
   public void addUser(AddUserReq addUserReq) {
 
     // 如果用户存在，则排除异常

@@ -6,11 +6,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import lombok.Data;
 
-/*
- * 只负责数据库对象映射
- *
- * @ispong
- */
+/** 只负责数据库对象映射. */
 @Data
 @Entity
 @Table(name = "sy_users")

@@ -10,11 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-/*
- * 只负责接口入口
- *
- * @ispong
- */
+/** 只负责用户接口入口. */
 @RestController
 @RequestMapping(ModulePrefix.USER)
 @RequiredArgsConstructor
