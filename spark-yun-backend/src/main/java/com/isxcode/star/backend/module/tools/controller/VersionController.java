@@ -1,4 +1,4 @@
-package com.isxcode.star.backend.module.version.controller;
+package com.isxcode.star.backend.module.tools.controller;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

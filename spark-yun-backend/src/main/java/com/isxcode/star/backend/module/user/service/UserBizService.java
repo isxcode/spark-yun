@@ -1,9 +1,12 @@
 package com.isxcode.star.backend.module.user.service;
 
 import com.isxcode.star.api.pojos.user.req.AddUserReq;
+import com.isxcode.star.api.pojos.user.req.GetUserReq;
 import com.isxcode.star.backend.module.user.entity.UserEntity;
 import com.isxcode.star.backend.module.user.mapper.UserMapper;
-import java.util.UUID;
+import com.isxcode.star.backend.module.user.repository.UserRepository;
+import java.util.List;
+import java.util.Optional;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,6 +18,8 @@ import org.springframework.stereotype.Service;
 public class UserBizService {
 
   private final UserService userService;
+
+  private final UserRepository userRepository;
 
   private final UserMapper userMapper;
 
@@ -28,9 +33,23 @@ public class UserBizService {
 
     // req 转 entity
     UserEntity user = userMapper.addUserReqToUserEntity(addUserReq);
-    user.setId(UUID.randomUUID().toString());
 
     // 数据持久化
     userService.addUser(user);
+  }
+
+  public List<UserEntity> queryUser() {
+
+    return userRepository.findAll();
+  }
+
+  /** 获取用户信息. */
+  public UserEntity getUser(GetUserReq getUserReq) {
+
+    Optional<UserEntity> optionalUser = userRepository.findById(getUserReq.getId());
+    if (optionalUser.isPresent()) {
+      return optionalUser.get();
+    }
+    throw new RuntimeException("用户不存在");
   }
 }

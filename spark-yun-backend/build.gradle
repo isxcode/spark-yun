@@ -20,6 +20,12 @@ dependencies {
     annotationProcessor "org.mapstruct:mapstruct-processor:${MAPSTRUCT_VERSION}"
     testAnnotationProcessor "org.mapstruct:mapstruct-processor:${MAPSTRUCT_VERSION}"
 
+    // cache
+    implementation 'org.springframework.boot:spring-boot-starter-cache'
+
+    // druid
+    implementation "com.alibaba:druid-spring-boot-starter:${DRUID_VERSION}"
+
     // spark-yun-api
     api(project(':spark-yun-api'))
 }

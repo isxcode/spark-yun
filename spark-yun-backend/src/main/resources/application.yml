@@ -10,9 +10,28 @@ spring:
     url: jdbc:h2:file:/Users/ispong/Data/h2
     username: root
     password: ispong123
-    hikari:
-      pool-name: spark-yun-db-pool
-      maximum-pool-size: 20
+
+    # 配置druid数据源
+    type: com.alibaba.druid.pool.DruidDataSource
+    druid:
+      initial-size: 5
+      max-active: 20
+      min-idle: 10
+      max-wait: 30000
+      validationQuery: select 'x'
+      stat-view-servlet:
+        enabled: true
+        login-username: root
+        login-password: ispong123
+      filters: stat,wall,log4j2
+
+  # jpa配置
+  jpa:
+    database: h2
+    show-sql: true
+    open-in-view: false
+    hibernate:
+      ddl-auto: none
 
   # sql初始化
   sql:
@@ -36,3 +55,12 @@ spring:
       settings:
         trace: false
         web-allow-others: true
+
+  # 缓存
+  cache:
+    type: simple
+
+# 日志等级
+logging:
+  level:
+    root: info
