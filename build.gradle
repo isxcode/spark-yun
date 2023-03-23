@@ -72,16 +72,14 @@ allprojects {
 
      // checkstyle配置
 	tasks.withType(Checkstyle) {
-		maxWarnings 0
-		maxErrors 0
+		maxWarnings = 0
+		maxErrors = 0
 		ignoreFailures = false
 		reports {
 			xml.required = false
 			html.required = true
 			html.stylesheet resources.text.fromFile('../config/xsl/checkstyle-simple.xsl')
 		}
-		minHeapSize = "200m"
-		maxHeapSize = "1g"
 	}
 }
 
@@ -149,7 +147,13 @@ tasks.register('start', GradleBuild) {
 	// 第五步：spotless格式化代码
 	dependsOn(":spotlessApply")
 	// 第六步：checkstyle检测代码
-	dependsOn(":check")
+	dependsOn("spark-yun-agent:check")
+	dependsOn("spark-yun-api:check")
+	dependsOn("spark-yun-backend:check")
+	dependsOn("spark-yun-client:check")
+	dependsOn("spark-yun-client:check")
+	dependsOn("spark-yun-common:check")
+	dependsOn("spark-yun-plugins:check")
 	// 第七步：spring启动项目
 	tasks = ["spark-yun-backend:bootRun"]
 }
