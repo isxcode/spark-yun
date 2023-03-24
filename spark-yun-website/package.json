@@ -19,8 +19,8 @@
   "scripts": {
     "start": "dotenv -e ./config/.env.local webpack server --hot",
     "build": "dotenv -e ./config/.env.demo webpack",
-    "prettier": "prettier --write ./**/*.tsx",
-    "eslint": "eslint ./"
+    "prettier": "prettier --write **.tsx",
+    "eslint": "eslint --fix ./"
   },
   "eslintConfig": {
     "extends": [
