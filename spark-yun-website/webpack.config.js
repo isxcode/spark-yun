@@ -13,8 +13,9 @@ const config = {
     },
     // 打包导出路径
     output: {
-        path: path.resolve(__dirname, "./build"),
+        path: path.resolve(__dirname, "./dist/"),
         publicPath: process.env.PUBLIC_PATH,
+        filename: "static/index.js",
     },
     // 本地热部署
     devServer: {
@@ -32,14 +33,14 @@ const config = {
     },
     plugins: [
         // 拷贝插件,拷贝静态资源
-        // new CopyPlugin({
-        //     patterns: [
-        //         {from: './public/assert', to: './assert'},
-        //     ],
-        // }),
+        new CopyPlugin({
+            patterns: [
+                {from: './public/assets', to: './static'},
+            ],
+        }),
         // html自动生成插件
         new HtmlWebpackPlugin({
-            template: './public/index.html'
+            template: './public/index.html',
         }),
         // 清理插件
         new CleanWebpackPlugin(),

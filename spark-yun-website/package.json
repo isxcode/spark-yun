@@ -19,9 +19,7 @@
   },
   "scripts": {
     "start": "dotenv -e ./config/.env.local webpack server --hot",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "build": "dotenv -e ./config/.env.demo webpack"
   },
   "eslintConfig": {
     "extends": [

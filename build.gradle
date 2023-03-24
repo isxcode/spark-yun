@@ -109,14 +109,16 @@ project("spark-yun-website") {
 
 	// 将index.html拷贝到templates中
 	tasks.register('copy-index', Copy) {
-		from 'build/index.html'
+		mustRunAfter('npm-run-build')
+		from 'dist/index.html'
 		into '../spark-yun-backend/src/main/resources/templates/'
 	}
 
 	// 将剩余的静态文件拷贝到static中
 	tasks.register('copy-static', Copy) {
-		from 'build/static'
-		into '../spark-yun-backend/src/main/resources/static'
+		mustRunAfter('npm-run-build')
+		from 'dist/static'
+		into '../spark-yun-backend/src/main/resources/static/'
 	}
 }
 
