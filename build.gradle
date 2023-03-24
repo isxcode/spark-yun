@@ -105,6 +105,8 @@ project("spark-yun-website") {
 	tasks.register('npm-run-build', Exec) {
 		commandLine 'npm', 'run', 'install'
 		commandLine 'npm', 'run', 'build'
+    commandLine 'npm', 'run', 'prettier'
+    commandLine 'npm', 'run', 'eslint'
 	}
 
 	// 将index.html拷贝到templates中
