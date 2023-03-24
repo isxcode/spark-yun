@@ -14,12 +14,13 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-scripts": "5.0.1",
-    "typescript": "^4.9.5",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
     "start": "dotenv -e ./config/.env.local webpack server --hot",
-    "build": "dotenv -e ./config/.env.demo webpack"
+    "build": "dotenv -e ./config/.env.demo webpack",
+    "prettier": "prettier --write ./**/*.tsx",
+    "eslint": "eslint ./"
   },
   "eslintConfig": {
     "extends": [
@@ -40,11 +41,20 @@
     ]
   },
   "devDependencies": {
-    "webpack-cli": "^5.0.1",
+    "@typescript-eslint/eslint-plugin": "^5.56.0",
     "clean-webpack-plugin": "^4.0.0",
     "copy-webpack-plugin": "^11.0.0",
     "dotenv-webpack": "^8.0.1",
+    "eslint": "^8.36.0",
+    "eslint-config-standard-with-typescript": "^34.0.1",
+    "eslint-plugin-import": "^2.27.5",
+    "eslint-plugin-n": "^15.6.1",
+    "eslint-plugin-promise": "^6.1.1",
+    "eslint-plugin-react": "^7.32.2",
     "html-webpack-plugin": "^5.5.0",
-    "ts-loader": "^9.4.2"
+    "prettier": "2.8.6",
+    "ts-loader": "^9.4.2",
+    "typescript": "^5.0.2",
+    "webpack-cli": "^5.0.1"
   }
 }
