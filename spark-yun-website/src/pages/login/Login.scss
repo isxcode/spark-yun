@@ -1,0 +1,39 @@
+.sy-login-page {
+  width: 100%;
+  height: 100vh;
+}
+
+.sy-login-div {
+  width: 250px;
+  height: 400px;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translateX(-50%) translateY(-50%);
+  margin: auto;
+
+  .sy-login-title {
+    color: white;
+    width: 10rem;
+    font-size: 2rem;
+    border-radius: 10px;
+    line-height: 3rem;
+    text-align: center;
+    margin: auto;
+  }
+
+  .sy-login-account-input {
+    width: 250px;
+    margin-top: 40px;
+  }
+
+  .sy-login-password-input {
+    width: 250px;
+    margin-top: 10px;
+  }
+
+  .sy-login-btn {
+    width: 90px;
+  }
+
+}
