@@ -3,6 +3,8 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version "${SPRING_VERSION}"
 	id 'io.spring.dependency-management' version "${SPRING_MANAGER_VERSION}"
+	id "com.diffplug.spotless" version "${SPOTLESS_VERSION}"
+	id 'checkstyle'
 }
 
 // 从VERSION.txt中获取自定义版本号
@@ -16,6 +18,7 @@ allprojects {
 	apply plugin: 'org.springframework.boot'
 	apply plugin: 'io.spring.dependency-management'
 	apply plugin: 'java-library'
+	apply plugin: 'checkstyle'
 
 	// java环境配置，使用java1.8
 	sourceCompatibility = JavaVersion.VERSION_1_8
@@ -38,9 +41,6 @@ allprojects {
 
 	// 配置基础依赖
 	dependencies {
-
-		// spring-web
-		implementation 'org.springframework.boot:spring-boot-starter-web'
 
 		// spring-boot-configuration-processor
 		annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
@@ -67,6 +67,18 @@ allprojects {
 	configurations {
 		compileOnly {
 			extendsFrom annotationProcessor
+		}
+	}
+
+     // checkstyle配置
+	tasks.withType(Checkstyle) {
+		maxWarnings = 0
+		maxErrors = 0
+		ignoreFailures = false
+		reports {
+			xml.required = false
+			html.required = true
+			html.stylesheet resources.text.fromFile('../config/xsl/checkstyle-simple.xsl')
 		}
 	}
 }
@@ -147,7 +159,17 @@ tasks.register('start', GradleBuild) {
 	// 第四步：将打包好的文件复制到指定文件夹
 	dependsOn("spark-yun-website:copy-index")
 	dependsOn("spark-yun-website:copy-static")
-	// 第五步：spring启动项目
+	// 第五步：spotless格式化代码
+	dependsOn(":spotlessApply")
+	// 第六步：checkstyle检测代码
+	dependsOn("spark-yun-agent:check")
+	dependsOn("spark-yun-api:check")
+	dependsOn("spark-yun-backend:check")
+	dependsOn("spark-yun-client:check")
+	dependsOn("spark-yun-client:check")
+	dependsOn("spark-yun-common:check")
+	dependsOn("spark-yun-plugins:check")
+	// 第七步：spring启动项目
 	tasks = ["spark-yun-backend:bootRun"]
 }
 
@@ -163,4 +185,14 @@ tasks.register('docker', Exec) {
 	dependsOn("spark-yun-backend:bootJar")
 	// 使用dockerfile对项目进行打包
 	commandLine 'bash', '-c', 'docker build -t isxcode/spark-star:' + versionNumber + ' -f ./Dockerfile  .'
+}
+
+// spotless配置
+spotless {
+	java {
+		target '*/**/*.java'
+		targetExclude '*/build/**/*.java'
+		googleJavaFormat()
+		removeUnusedImports()
+	}
 }
