@@ -1,6 +1,66 @@
+# 服务配置
+server:
+  port: 8080
+
 spring:
+
+  # 数据源配置 http://localhost:8080/h2-console
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:file:/Users/ispong/Data/h2
+    username: root
+    password: ispong123
+
+    # 配置druid数据源
+    type: com.alibaba.druid.pool.DruidDataSource
+    druid:
+      initial-size: 5
+      max-active: 20
+      min-idle: 10
+      max-wait: 30000
+      validationQuery: select 'x'
+      stat-view-servlet:
+        enabled: true
+        login-username: root
+        login-password: ispong123
+      filters: stat,wall,log4j2
+
+  # jpa配置
+  jpa:
+    database: h2
+    show-sql: true
+    open-in-view: false
+    hibernate:
+      ddl-auto: none
+
+  # sql初始化
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:db/schema.sql
+      data-locations: classpath:db/data.sql
+
+  # mvc配置
   mvc:
     view:
       prefix: /templates/
       suffix: .html
     static-path-pattern: /static/**
+
+  # h2数据库配置
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+      settings:
+        trace: false
+        web-allow-others: true
+
+  # 缓存
+  cache:
+    type: simple
+
+# 日志等级
+logging:
+  level:
+    root: info

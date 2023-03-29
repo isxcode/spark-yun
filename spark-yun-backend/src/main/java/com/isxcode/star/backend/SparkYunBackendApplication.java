@@ -3,10 +3,11 @@ package com.isxcode.star.backend;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+/** 系统入口. */
 @SpringBootApplication
 public class SparkYunBackendApplication {
 
-    public static void main(String[] args) {
-        SpringApplication.run(SparkYunBackendApplication.class, args);
-    }
+  public static void main(String[] args) {
+    SpringApplication.run(SparkYunBackendApplication.class, args);
+  }
 }
