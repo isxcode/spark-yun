@@ -113,35 +113,22 @@ project("spark-yun-backend") {
 // 独立配置spark-yun-website模块项目
 project("spark-yun-website") {
 
-  // 前端代码格式检查
-  tasks.register('npm-run-prettier', Exec) {
-    commandLine 'npm', 'run', 'prettier'
-  }
-
-  // 代码质量检查
-  tasks.register('npm-run-eslint', Exec) {
-    mustRunAfter('npm-run-prettier')
-    commandLine 'npm', 'run', 'eslint'
-  }
-
 	// 前端构建项目
 	tasks.register('npm-run-build', Exec) {
-    mustRunAfter('npm-run-eslint')
-    commandLine 'npm', 'run', 'build'
-  }
+		commandLine 'npm', 'run', 'install'
+		commandLine 'npm', 'run', 'build'
+	}
 
 	// 将index.html拷贝到templates中
 	tasks.register('copy-index', Copy) {
-		mustRunAfter('npm-run-build')
-		from 'dist/index.html'
+		from 'build/index.html'
 		into '../spark-yun-backend/src/main/resources/templates/'
 	}
 
 	// 将剩余的静态文件拷贝到static中
 	tasks.register('copy-static', Copy) {
-		mustRunAfter('npm-run-build')
-		from 'dist/static'
-		into '../spark-yun-backend/src/main/resources/static/'
+		from 'build/static'
+		into '../spark-yun-backend/src/main/resources/static'
 	}
 }
 
@@ -150,9 +137,7 @@ tasks.register('start', GradleBuild) {
 	// 第一步：删除前端打包好在spring项目中的文件
 	dependsOn("spark-yun-backend:clean-website-package")
 	// 第二步：前端打包
-  dependsOn("spark-yun-website:npm-run-prettier")
-  dependsOn("spark-yun-website:npm-run-eslint")
-  dependsOn("spark-yun-website:npm-run-build")
+	dependsOn("spark-yun-website:npm-run-build")
 	// 第三步：spring中创建文件夹
 	dependsOn("spark-yun-backend:mkdir-templates")
 	dependsOn("spark-yun-backend:mkdir-static")
