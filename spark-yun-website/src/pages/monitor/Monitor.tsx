@@ -1,8 +1,7 @@
-import React from 'react';
+import React from 'react'
 
-function Monitor() {
-
-  return <>Monitor</>;
+function Monitor () {
+  return <>Monitor</>
 }
 
-export default Monitor;
+export default Monitor
