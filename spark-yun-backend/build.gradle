@@ -28,5 +28,15 @@ dependencies {
 
     // spark-yun-api
     api(project(':spark-yun-api'))
+
+    // mysql
+    runtimeOnly "com.mysql:mysql-connector-j:${MYSQL_DRIVER_VERSION}"
+
+    // sqlserver
+    runtimeOnly "com.microsoft.sqlserver:mssql-jdbc:${SQLSERVER_DRIVER_VERSION}"
+
+    // oracle
+    runtimeOnly "com.oracle.database.jdbc:ojdbc10:${ORACLE_DRIVER_VERSION}"
+
 }
 

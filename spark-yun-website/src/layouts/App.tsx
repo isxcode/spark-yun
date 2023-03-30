@@ -3,6 +3,12 @@ import { BrowserRouter, Navigate, Route, Routes, useLocation } from 'react-route
 import Login from '../pages/login/Login'
 import Monitor from '../pages/monitor/Monitor'
 import Layouts from './Layouts'
+import Engine from '../pages/engine/Engine'
+import Node from '../pages/engine/node/Node'
+import Datasource from '../pages/datasource/Datasource'
+import Workflow from '../pages/workflow/Workflow'
+import Work from '../pages/workflow/work/Work'
+import Worklist from "../pages/workflow/worklist/Worklist";
 
 export default function App () {
   return (
@@ -32,6 +38,54 @@ export default function App () {
                 element={
                   <RequireAuth>
                     <Monitor />
+                  </RequireAuth>
+                }
+              />
+              <Route
+                path={'/engine'}
+                element={
+                  <RequireAuth>
+                    <Engine />
+                  </RequireAuth>
+                }
+              />
+              <Route
+                path={'/node/:engineId'}
+                element={
+                  <RequireAuth>
+                    <Node />
+                  </RequireAuth>
+                }
+              />
+              <Route
+                path={'/datasource'}
+                element={
+                  <RequireAuth>
+                    <Datasource />
+                  </RequireAuth>
+                }
+              />
+              <Route
+                path={'/workflow'}
+                element={
+                  <RequireAuth>
+                    <Workflow />
+                  </RequireAuth>
+                }
+              />
+              <Route
+                path={'/work'}
+                element={
+                  <RequireAuth>
+                    <Work />
+                  </RequireAuth>
+                }
+              />
+              <Route
+                path={'/worklist/:workflowId'}
+                element={
+                  <RequireAuth>
+                    <Worklist />
                   </RequireAuth>
                 }
               />

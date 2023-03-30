@@ -25,7 +25,7 @@ spring:
         login-password: ispong123
       filters: stat,wall,log4j2
 
-  # jpa配置
+  # jpa配置˚
   jpa:
     database: h2
     show-sql: true
