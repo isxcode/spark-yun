@@ -74,7 +74,7 @@ export default function App () {
                 }
               />
               <Route
-                path={'/work'}
+                path={'/work/:workId'}
                 element={
                   <RequireAuth>
                     <Work />

@@ -61,3 +61,23 @@ create table if not exists sy_workflows
   status       varchar(100) null,
   label        varchar(100) null
 );
+
+create table if not exists sy_works
+(
+  id               varchar(100) null,
+  name             varchar(100) null,
+  comment_info     varchar(100) null,
+  status           varchar(100) null,
+  label            varchar(100) null,
+  type             varchar(100) null,
+  work_config_id   varchar(100) null,
+  create_date_time datetime     null
+);
+
+create table if not exists sy_work_configs
+(
+  id            varchar(100) null,
+  datasource_id varchar(100) null,
+  engine_id     varchar(100) null,
+  script        varchar(100) null
+);

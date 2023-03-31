@@ -15,9 +15,9 @@ import java.time.LocalDateTime;
  */
 @Data
 @Entity
-@Table(name = "sy_works")
+@Table(name = "sy_work_configs")
 @JsonIgnoreProperties({"hibernateLazyInitializer"})
-public class WorkEntity {
+public class WorkConfigEntity {
 
   @Id
   @GeneratedValue(generator = "sy-id-generator")
@@ -26,19 +26,9 @@ public class WorkEntity {
     strategy = "com.isxcode.star.backend.config.GeneratedValueConfig")
   private String id;
 
-  private String name;
+  private String engineId;
 
-  private String type;
+  private String datasourceId;
 
-  private String commentInfo;
-
-  private String status;
-
-  private String label;
-
-  private String workConfigId;
-
-  private String workflowId;
-
-  private LocalDateTime createDateTime;
+  private String script;
 }
