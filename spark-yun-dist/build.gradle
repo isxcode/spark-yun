@@ -1,0 +1,41 @@
+dependencies {
+
+  // fast
+  implementation "com.alibaba:fastjson:${FASTJSON_VERSION}"
+
+  // junit test
+  implementation "org.junit.jupiter:junit-jupiter:${JUPITER_VERSION}"
+  testImplementation "org.junit.jupiter:junit-jupiter-api:${JUPITER_VERSION}"
+
+  // spark-streaming-kafka
+  implementation "org.apache.spark:spark-streaming-kafka-0-10_${SPARK_SCALA_VERSION}:${SPARK_KAFKA_VERSION}"
+}
+
+// 复制依赖
+task copyLib(type: Copy) {
+  from configurations.runtimeClasspath.find { it.name.contains('fastjson') }
+  from configurations.runtimeClasspath.find { it.name.contains('log4j-api') }
+  from configurations.runtimeClasspath.find { it.name.contains('spark-streaming-kafka') }
+  into 'build/lib'
+}
+
+// 构建spark-yun-agent.zip
+task zipApp(type: Zip) {
+  dependsOn('copyLib')
+  archiveFileName = 'spark-yun-agent.zip'
+  from('src/main/bin') {
+    into 'bin'
+  }
+  from('src/main/conf') {
+    into 'conf'
+  }
+  from('../spark-yun-plugins/spark-query-sql-plugin/build/libs/spark-query-sql-plugin-0.0.1.jar') {
+    into 'plugins'
+  }
+  from('build/lib') {
+    into 'lib'
+  }
+  from('src/main/log') {
+    into 'log'
+  }
+}

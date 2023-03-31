@@ -1,0 +1,5 @@
+server:
+  port: 30156
+
+star:
+  secret: star-key

@@ -1,0 +1,10 @@
+#!/bin/bash
+
+# 进入link项目
+BASE_PATH=$(cd "$(dirname "$0")" || exit ; pwd)
+cd "${BASE_PATH}" || exit
+
+# 看日志
+LOG_PATH="${BASE_PATH}"/../log/star-server.log
+echo "Spark-Star log file "+ "${LOG_PATH}"
+tail -f "${LOG_PATH}"

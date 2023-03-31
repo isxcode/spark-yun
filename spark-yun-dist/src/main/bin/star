@@ -1,0 +1,21 @@
+#!/bin/bash
+
+# 获取后缀参数
+for key in "$@"
+do
+    exec_command=${key#*=}
+done
+
+# 获取当前位置路径
+BASE_PATH=$(cd "$(dirname "$0")" || exit ; pwd)
+cd "${BASE_PATH}" || exit
+
+# 根据不同的参数，执行命令
+case ${exec_command} in
+    start) star-start && star-log;;
+    log) star-log;;
+    stop) star-stop;;
+    version) echo "spark-star version is v1.2.0";;
+    config) vim "${BASE_PATH}"/../conf/application-star.yml;;
+    status) ps -e -o pid,command | grep star-plugin.jar;;
+esac

@@ -1,0 +1,17 @@
+dependencies {
+
+  // spark-yun-api
+  api(project(':spark-yun-api'))
+
+  // hadoop-yarn-client
+  implementation "org.apache.hadoop:hadoop-yarn-client:${HADOOP_VERSION}"
+
+  // spark-yarn
+  implementation "org.apache.spark:spark-yarn_${SPARK_SCALA_VERSION}:${SPARK_VERSION}"
+
+  // spring web
+  implementation 'org.springframework.boot:spring-boot-starter-web'
+
+  // jsoup
+  implementation 'org.jsoup:jsoup:1.15.3'
+}

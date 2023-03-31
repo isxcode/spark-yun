@@ -1,0 +1,16 @@
+#!/bin/bash
+
+for key in "$@"
+do
+    CUSTOM_STAR_HOME=${key#*=}
+done
+
+rm -rf $CUSTOM_STAR_HOME/spark-star-1.2.0
+
+tar -vzxf $CUSTOM_STAR_HOME/spark-star-1.2.0-bin.tar.gz -C $CUSTOM_STAR_HOME/
+rm $CUSTOM_STAR_HOME/spark-star-1.2.0-bin.tar.gz
+
+touch $CUSTOM_STAR_HOME/spark-star-1.2.0/log/star-server.log
+
+source /etc/profile
+nohup java -jar -Xmx2048m $CUSTOM_STAR_HOME/spark-star-1.2.0/lib/star-server.jar >> $CUSTOM_STAR_HOME/spark-star-1.2.0/log/star-server.log &
