@@ -1,0 +1,8 @@
+#!/bin/bash
+
+rm -rf ~/spark-yun-agent
+
+tar -vzxf ~/spark-yun-agent.tar.gz -C ~/
+rm ~/spark-yun-agent.tar.gz
+
+nohup java -jar -Xmx2048m ~/spark-yun-agent/lib/spark-yun-agent.jar >> ~/spark-yun-agent/log/spark-yun-agent.log &

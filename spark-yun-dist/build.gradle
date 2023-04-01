@@ -20,9 +20,12 @@ task copyLib(type: Copy) {
 }
 
 // 构建spark-yun-agent.zip
-task zipApp(type: Zip) {
+task zipApp(type: Tar) {
   dependsOn('copyLib')
-  archiveFileName = 'spark-yun-agent.zip'
+  archiveFileName = 'spark-yun-agent.tar.gz'
+  from('/Users/ispong/Downloads/spark-3.1.1-bin-hadoop3.2') {
+    into 'spark-min'
+  }
   from('src/main/bin') {
     into 'bin'
   }
@@ -31,6 +34,9 @@ task zipApp(type: Zip) {
   }
   from('../spark-yun-plugins/spark-query-sql-plugin/build/libs/spark-query-sql-plugin-0.0.1.jar') {
     into 'plugins'
+  }
+  from('../spark-yun-backend/build/libs/spark-yun-backend.jar') {
+    into 'lib'
   }
   from('build/lib') {
     into 'lib'

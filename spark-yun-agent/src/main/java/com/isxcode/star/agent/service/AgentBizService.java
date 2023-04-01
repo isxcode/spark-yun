@@ -54,6 +54,7 @@ public class AgentBizService {
 
     // 封装launcher
     SparkLauncher sparkLauncher = new SparkLauncher()
+      .setSparkHome("")
       .setMaster("yarn")
       .setDeployMode("cluster")
       .setAppName(executeReq.getAppName())
