@@ -113,8 +113,14 @@ project("spark-yun-backend") {
 // 独立配置spark-yun-website模块项目
 project("spark-yun-website") {
 
+  // 前端构建项目
+  tasks.register('npm-run-install', Exec) {
+    commandLine 'npm', 'install'
+  }
+
   // 前端代码格式检查
   tasks.register('npm-run-prettier', Exec) {
+    mustRunAfter('npm-run-install')
     commandLine 'npm', 'run', 'prettier'
   }
 
@@ -124,14 +130,8 @@ project("spark-yun-website") {
     commandLine 'npm', 'run', 'eslint'
   }
 
-  // 前端构建项目
-  tasks.register('npm-run-install', Exec) {
-    mustRunAfter('npm-run-eslint')
-    commandLine 'npm', 'install'
-  }
-
   tasks.register('npm-run-build', Exec) {
-    mustRunAfter('npm-run-install')
+    mustRunAfter('npm-run-eslint')
     commandLine 'npm', 'run', 'build'
   }
 

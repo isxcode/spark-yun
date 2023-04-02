@@ -19,8 +19,7 @@ git clone -b main https://gitee.com/isxcode/spark-yun.git
 - [node 安装](https://ispong.isxcode.com/react/nodejs/nodejs%20%E5%AE%89%E8%A3%85/)
 
 ```bash
-npm install dotenv-cli --location=global
-npm install webpack-cli --location=global
+npm install dotenv-cli webpack-cli prettier eslint node-sass --location=global
 ```
 
 ### 安装gradle环境
