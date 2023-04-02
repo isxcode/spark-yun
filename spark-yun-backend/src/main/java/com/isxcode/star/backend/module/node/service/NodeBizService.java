@@ -83,7 +83,7 @@ public class NodeBizService {
         node.getHomePath());
 
     // 运行安装脚本
-    String installCommand = "bash ~/spark-yun-install && rm ~/spark-yun-install";
+    String installCommand = "bash ~/spark-yun-install";
     executeCommand(node, installCommand, false);
 
     node.setStatus("已安装");
@@ -118,7 +118,7 @@ public class NodeBizService {
     scpFile(node, "/spark-yun-remove", node.getHomePath());
 
     // 运行卸载脚本s
-    String installCommand = "bash ~/spark-yun-remove && bash ~/spark-yun-remove ";
+    String installCommand = "bash ~/spark-yun-remove";
     executeCommand(node, installCommand, false);
 
     node.setStatus("已卸载");
