@@ -51,6 +51,7 @@ public class NodeController {
     try {
       return nodeBizService.installAgent(nodeId);
     } catch (Exception e) {
+      e.printStackTrace();
       return new InstallAgentRes(e.getMessage());
     }
   }
@@ -61,6 +62,7 @@ public class NodeController {
     try {
       return nodeBizService.checkAgent(nodeId);
     } catch (Exception e) {
+      e.printStackTrace();
       return new CheckAgentRes(e.getMessage());
     }
   }
@@ -71,6 +73,7 @@ public class NodeController {
     try {
       return nodeBizService.removeAgent(nodeId);
     } catch (Exception e) {
+      e.printStackTrace();
       return new RemoveAgentRes(e.getMessage());
     }
   }
