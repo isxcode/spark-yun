@@ -66,7 +66,7 @@ public class NodeBizService {
   }
 
   public InstallAgentRes installAgent(String nodeId)
-      throws JSchException, SftpException, IOException {
+    throws JSchException, SftpException, IOException, InterruptedException {
 
     // 查询节点信息
     NodeEntity node = nodeRepository.findById(nodeId).get();
@@ -76,6 +76,8 @@ public class NodeBizService {
       node,
       "/spark-yun-agent.tar.gz",
       node.getHomePath());
+
+    Thread.sleep(30000);
 
     scpFile(
         node,
