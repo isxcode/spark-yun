@@ -33,9 +33,9 @@ allprojects {
   // 配置多选中央仓库
   repositories {
     mavenLocal()
+    maven { url 'https://maven.aliyun.com/nexus/content/groups/public/' }
     mavenCentral()
     maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
-    maven { url 'https://maven.aliyun.com/nexus/content/groups/public/' }
     maven { url "https://plugins.gradle.org/m2/" }
   }
 
