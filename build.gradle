@@ -190,6 +190,7 @@ tasks.register('start', GradleBuild) {
 tasks.register('docker', Exec) {
   dependsOn(":package")
   dependsOn("spark-yun-dist:buildAgentPackage")
+  dependsOn("spark-yun-agent:bootJar")
   // 使用dockerfile对项目进行打包
   commandLine 'bash', '-c', 'docker build -t isxcode/spark-star:' + versionNumber + ' -f ./Dockerfile  .'
 }

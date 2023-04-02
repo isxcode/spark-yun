@@ -25,3 +25,7 @@ dependencies {
   implementation "org.apache.hadoop:hadoop-yarn-client:${HADOOP_VERSION}"
 
 }
+
+bootJar {
+  archiveName "spark-yun-agent.jar"
+}

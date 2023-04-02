@@ -35,7 +35,7 @@ tasks.register('buildAgentPackage', Tar) {
   from('../spark-yun-plugins/spark-query-sql-plugin/build/libs/spark-query-sql-plugin-0.0.1.jar') {
     into 'plugins'
   }
-  from('../spark-yun-backend/build/libs/spark-yun-backend.jar') {
+  from('../spark-yun-agent/build/libs/spark-yun-agent.jar') {
     into 'lib'
   }
   from('build/lib') {

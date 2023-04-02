@@ -3,7 +3,9 @@
 rm -rf ~/spark-yun-agent
 
 mkdir ~/spark-yun-agent
-tar -vxf ~/spark-yun-agent.tar.gz -C ~/spark-yun-agent
-rm ~/spark-yun-agent.tar.gz
+tar -vxf ~/spark-yun-agent.tar.gz -C ~/spark-yun-agent/
+
+mkdir /tmp/spark-yun-agent/log/
+touch /tmp/spark-yun-agent/log/spark-yun-agent.log
 
 nohup java -jar -Xmx2048m ~/spark-yun-agent/lib/spark-yun-agent.jar >> ~/spark-yun-agent/log/spark-yun-agent.log &
