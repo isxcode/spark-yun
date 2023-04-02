@@ -27,7 +27,7 @@ export const AddWorkflowModal = (props: {
   const addWorkflow = (data) => {
     axios({
       method: 'post',
-      url: 'http://localhost:8080/workflow/addWorkflow',
+      url: process.env.API_PREFIX_URL + '/workflow/addWorkflow',
       data: {
         name: data.name,
         comment: data.comment,

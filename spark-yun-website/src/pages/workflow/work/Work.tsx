@@ -56,7 +56,7 @@ function Work () {
   const getWork = () => {
     axios({
       method: 'get',
-      url: 'http://localhost:8080/workflow/getWork?workId=' + workId
+      url: process.env.API_PREFIX_URL + '/workflow/getWork?workId=' + workId
     })
       .then(function (response) {
         setWork(response.data)
@@ -70,7 +70,7 @@ function Work () {
   const configWorkDatasource = (datasourceId) => {
     axios({
       method: 'post',
-      url: 'http://localhost:8080/workflow/configWork',
+      url: process.env.API_PREFIX_URL + '/workflow/configWork',
       data: {
         workId,
         script: workScript,
@@ -88,7 +88,7 @@ function Work () {
   const configWork = () => {
     axios({
       method: 'post',
-      url: 'http://localhost:8080/workflow/configWork',
+      url: process.env.API_PREFIX_URL + '/workflow/configWork',
       data: {
         workId,
         script: workScript
@@ -105,7 +105,7 @@ function Work () {
   const runWork = () => {
     axios({
       method: 'get',
-      url: 'http://localhost:8080/workflow/runWork?workId=' + workId
+      url: process.env.API_PREFIX_URL + '/workflow/runWork?workId=' + workId
     })
       .then(function (response) {
         message.success('保存成功')
@@ -175,7 +175,7 @@ function Work () {
   const queryDatasources = () => {
     axios({
       method: 'get',
-      url: 'http://localhost:8080/datasource/queryDatasource'
+      url: process.env.API_PREFIX_URL + '/datasource/queryDatasource'
     })
       .then(function (response) {
         setDatasource(response.data)

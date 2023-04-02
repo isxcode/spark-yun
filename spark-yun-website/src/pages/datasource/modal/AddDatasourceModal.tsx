@@ -15,7 +15,7 @@ export const AddDatasourceModal = (props: {
   const addDatasource = (data) => {
     axios({
       method: 'post',
-      url: 'http://localhost:8080/datasource/addDatasource',
+      url: process.env.API_PREFIX_URL + '/datasource/addDatasource',
       data: {
         name: data.name,
         comment: data.comment,

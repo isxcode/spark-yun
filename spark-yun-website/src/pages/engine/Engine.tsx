@@ -27,7 +27,7 @@ function Engine () {
   const queryEngines = () => {
     axios({
       method: 'get',
-      url: 'http://localhost:8080/engine/queryEngine'
+      url: process.env.API_PREFIX_URL + '/engine/queryEngine'
     })
       .then(function (response) {
         console.log(response)
@@ -46,7 +46,7 @@ function Engine () {
   const delEngine = (value) => {
     axios({
       method: 'get',
-      url: 'http://localhost:8080/engine/delEngine?engineId=' + value
+      url: process.env.API_PREFIX_URL + '/engine/delEngine?engineId=' + value
     })
       .then(function (response) {
         console.log(response)

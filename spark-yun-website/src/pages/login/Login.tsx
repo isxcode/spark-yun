@@ -9,7 +9,7 @@ function Login () {
   const login = (value) => {
     axios({
       method: 'post',
-      url: 'http://localhost:8080/user/login',
+      url: process.env.API_PREFIX_URL + '/user/login',
       data: {
         account: value.account,
         password: value.password

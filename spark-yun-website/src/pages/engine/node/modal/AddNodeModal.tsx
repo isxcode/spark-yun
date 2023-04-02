@@ -15,7 +15,7 @@ export const AddNodeModal = (props: {
   const addEngine = (data) => {
     axios({
       method: 'post',
-      url: 'http://localhost:8080/node/addNode',
+      url: process.env.API_PREFIX_URL + '/node/addNode',
       data: {
         name: data.name,
         comment: data.comment,

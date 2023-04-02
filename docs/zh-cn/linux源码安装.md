@@ -18,10 +18,6 @@ git clone -b main https://gitee.com/isxcode/spark-yun.git
 
 - [node 安装](https://ispong.isxcode.com/react/nodejs/nodejs%20%E5%AE%89%E8%A3%85/)
 
-```bash
-npm install dotenv-cli webpack-cli prettier eslint node-sass --location=global
-```
-
 ### 安装gradle环境
 
 - [gradle 安装](https://ispong.isxcode.com/react/nodejs/gradle%20%E5%AE%89%E8%A3%85/)
@@ -35,6 +31,10 @@ gradle docker
 ### 启动容器
 
 ```bash
-docker run 
+docker run -p 30111:8080 -d isxcode/spark-star:3.0.1
 ```
+
+### 访问界面
+
+- http://39.98.223.46:30111
 

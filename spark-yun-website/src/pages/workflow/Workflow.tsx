@@ -34,7 +34,7 @@ function Workflow () {
   const queryWorkflow = () => {
     axios({
       method: 'get',
-      url: 'http://localhost:8080/workflow/queryWorkflow'
+      url: process.env.API_PREFIX_URL + '/workflow/queryWorkflow'
     })
       .then(function (response) {
         setWorkflows(response.data)
@@ -47,7 +47,7 @@ function Workflow () {
   const delWorkflow = (value) => {
     axios({
       method: 'get',
-      url: 'http://localhost:8080/workflow/delWorkflow?workflowId=' + value
+      url: process.env.API_PREFIX_URL + '/workflow/delWorkflow?workflowId=' + value
     })
       .then(function (response) {
         console.log(response)

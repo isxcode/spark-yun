@@ -28,7 +28,7 @@ function Datasource () {
   const queryDatasources = () => {
     axios({
       method: 'get',
-      url: 'http://localhost:8080/datasource/queryDatasource'
+      url: process.env.API_PREFIX_URL + '/datasource/queryDatasource'
     })
       .then(function (response) {
         setDatasources(response.data)
@@ -41,7 +41,7 @@ function Datasource () {
   const delDatasource = (value) => {
     axios({
       method: 'get',
-      url: 'http://localhost:8080/datasource/delDatasource?datasourceId=' + value
+      url: process.env.API_PREFIX_URL + '/datasource/delDatasource?datasourceId=' + value
     })
       .then(function (response) {
         queryDatasources()
@@ -54,7 +54,7 @@ function Datasource () {
   const testConnect = (value) => {
     axios({
       method: 'post',
-      url: 'http://localhost:8080/datasource/testConnect',
+      url: process.env.API_PREFIX_URL + '/datasource/testConnect',
       data: {
         datasourceId: value
       }

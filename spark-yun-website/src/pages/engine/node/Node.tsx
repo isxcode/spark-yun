@@ -33,7 +33,7 @@ function Node () {
   const queryNodes = (value) => {
     axios({
       method: 'get',
-      url: 'http://localhost:8080/node/queryNode?engineId=' + value
+      url: process.env.API_PREFIX_URL + '/node/queryNode?engineId=' + value
     })
       .then(function (response) {
         setNodes(response.data)
@@ -46,7 +46,7 @@ function Node () {
   const delNode = (value) => {
     axios({
       method: 'get',
-      url: 'http://localhost:8080/node/delNode?nodeId=' + value
+      url: process.env.API_PREFIX_URL + '/node/delNode?nodeId=' + value
     })
       .then(function (response) {
         queryNodes(engineId)
@@ -59,7 +59,7 @@ function Node () {
   const checkNode = (value) => {
     axios({
       method: 'get',
-      url: 'http://localhost:8080/node/checkAgent?nodeId=' + value
+      url: process.env.API_PREFIX_URL + '/node/checkAgent?nodeId=' + value
     })
       .then(function (response) {
         queryNodes(engineId)
@@ -72,7 +72,7 @@ function Node () {
   const installAgent = (value) => {
     axios({
       method: 'get',
-      url: 'http://localhost:8080/node/installAgent?nodeId=' + value
+      url: process.env.API_PREFIX_URL + '/node/installAgent?nodeId=' + value
     })
       .then(function (response) {
         queryNodes(engineId)
@@ -85,7 +85,7 @@ function Node () {
   const removeAgent = (value) => {
     axios({
       method: 'get',
-      url: 'http://localhost:8080/node/removeAgent?nodeId=' + value
+      url: process.env.API_PREFIX_URL + '/node/removeAgent?nodeId=' + value
     })
       .then(function (response) {
         queryNodes(engineId)
