@@ -125,8 +125,13 @@ project("spark-yun-website") {
   }
 
   // 前端构建项目
-  tasks.register('npm-run-build', Exec) {
+  tasks.register('npm-run-install', Exec) {
     mustRunAfter('npm-run-eslint')
+    commandLine 'npm', 'install'
+  }
+
+  tasks.register('npm-run-build', Exec) {
+    mustRunAfter('npm-run-install')
     commandLine 'npm', 'run', 'build'
   }
 
