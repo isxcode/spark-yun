@@ -146,7 +146,7 @@ project("spark-yun-website") {
 }
 
 // gradle start命令，启动至轻云项目
-tasks.register('start', GradleBuild) {
+tasks.register('package', GradleBuild) {
   // 第一步：删除前端打包好在spring项目中的文件
   dependsOn("spark-yun-backend:clean-website-package")
   // 第二步：前端打包
@@ -170,14 +170,19 @@ tasks.register('start', GradleBuild) {
   dependsOn("spark-yun-common:check")
   dependsOn("spark-yun-plugins:check")
   // 第七步：spring启动项目
+  tasks = ["spark-yun-backend:bootJar"]
+}
+
+// gradle start命令，启动至轻云项目
+tasks.register('start', GradleBuild) {
+  dependsOn(":package")
+  // 第七步：spring启动项目
   tasks = ["spark-yun-backend:bootRun"]
 }
 
 // gradle docker命令，打包至轻云到本地镜像中
 tasks.register('docker', Exec) {
-  // 至轻云构建后端程序
-  dependsOn("spark-yun-backend:bootJar")
-  // 至轻云构建jar包
+  dependsOn(":package")
   dependsOn("spark-yun-dist:buildAgentPackage")
   // 使用dockerfile对项目进行打包
   commandLine 'bash', '-c', 'docker build -t isxcode/spark-star:' + versionNumber + ' -f ./Dockerfile  .'
