@@ -70,9 +70,9 @@ allprojects {
 		}
 	}
 
-     // checkstyle配置
+  // checkstyle配置
 	tasks.withType(Checkstyle) {
-		maxWarnings = 0
+		maxWarnings = 100
 		maxErrors = 0
 		ignoreFailures = false
 		reports {

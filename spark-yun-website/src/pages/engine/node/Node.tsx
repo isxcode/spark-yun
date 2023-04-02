@@ -22,8 +22,12 @@ interface DataType {
 
 function Node () {
   const [isModalVisible, setIsModalVisible] = useState(false)
-  const handleOk = () => { setIsModalVisible(true) }
-  const handleCancel = () => { setIsModalVisible(false) }
+  const handleOk = () => {
+    setIsModalVisible(true)
+  }
+  const handleCancel = () => {
+    setIsModalVisible(false)
+  }
 
   const [nodes, setNodes] = useState([])
   const queryNodes = (value) => {
@@ -54,7 +58,9 @@ function Node () {
 
   const { engineId } = useParams()
 
-  useEffect(() => { queryNodes(engineId) }, [])
+  useEffect(() => {
+    queryNodes(engineId)
+  }, [])
 
   const columns: ColumnsType<DataType> = [
     {
@@ -110,7 +116,12 @@ function Node () {
           <a>检测</a>
           <a>安装</a>
           <a>卸载</a>
-          <a onClick={() => { delNode(record.id) }}>删除</a>
+          <a
+            onClick={() => {
+              delNode(record.id)
+            }}>
+            删除
+          </a>
           <a>更多</a>
         </Space>
       )
@@ -120,7 +131,12 @@ function Node () {
   return (
     <>
       <div className={'node-bar'}>
-        <Button onClick={() => { handleOk() }}>添加节点</Button>
+        <Button
+          onClick={() => {
+            handleOk()
+          }}>
+          添加节点
+        </Button>
         <Input></Input>
         <Button>搜索</Button>
       </div>

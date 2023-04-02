@@ -1,9 +1,8 @@
 package com.isxcode.star.api.pojos.work.res;
 
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-
-import java.util.List;
 
 @Data
 @AllArgsConstructor

@@ -1,11 +1,11 @@
-import React, {useEffect, useState} from 'react'
+import React, { useEffect, useState } from 'react'
 import './Worklist.scss'
-import {Button, Form, Input, message, Space, Table, Tag, theme} from 'antd'
+import { Button, Form, Input, message, Space, Table, Tag, theme } from 'antd'
 import { type ColumnsType } from 'antd/es/table'
-import {useNavigate, useParams} from 'react-router-dom'
-import {AddWorkflowModal} from "../modal/AddWorkflowModal";
-import {AddWorkModal} from "./modal/AddWorkModal";
-import axios from "axios";
+import { useNavigate, useParams } from 'react-router-dom'
+import { AddWorkflowModal } from '../modal/AddWorkflowModal'
+import { AddWorkModal } from './modal/AddWorkModal'
+import axios from 'axios'
 
 interface DataType {
   id: string
@@ -20,19 +20,24 @@ function Worklist () {
 
   const { workflowId } = useParams()
 
-  const [works, setWorks] = useState<DataType[] >([])
+  const [works, setWorks] = useState<DataType[]>([])
 
   useEffect(() => {
-    queryWork(); }, [])
+    queryWork()
+  }, [])
 
   const [isModalVisible, setIsModalVisible] = useState(false)
-  const handleOk = () => { setIsModalVisible(true) }
-  const handleCancel = () => { setIsModalVisible(false) }
+  const handleOk = () => {
+    setIsModalVisible(true)
+  }
+  const handleCancel = () => {
+    setIsModalVisible(false)
+  }
 
   const queryWork = () => {
     axios({
       method: 'get',
-      url: 'http://localhost:8080/workflow/queryWork?workflowId=' + workflowId,
+      url: 'http://localhost:8080/workflow/queryWork?workflowId=' + workflowId
     })
       .then(function (response) {
         setWorks(response.data)
@@ -40,12 +45,12 @@ function Worklist () {
       .catch(function (error) {
         message.error(error.response.data.message)
       })
-  };
+  }
 
   const delWork = (value) => {
     axios({
       method: 'get',
-      url: 'http://localhost:8080/workflow/delWork?workId=' + value,
+      url: 'http://localhost:8080/workflow/delWork?workId=' + value
     })
       .then(function (response) {
         console.log(response)
@@ -61,7 +66,14 @@ function Worklist () {
       title: '作业名称',
       dataIndex: 'name',
       key: 'name',
-      render: (text,record) => <a onClick={() => { navigate('/work/'+record.id) }}>{text}</a>
+      render: (text, record) => (
+        <a
+          onClick={() => {
+            navigate('/work/' + record.id)
+          }}>
+          {text}
+        </a>
+      )
     },
     {
       title: '类型',
@@ -94,7 +106,12 @@ function Worklist () {
       render: (_, record) => (
         <Space size="middle">
           <a>编辑</a>
-          <a onClick={() => { delWork(record.id) }}>删除</a>
+          <a
+            onClick={() => {
+              delWork(record.id)
+            }}>
+            删除
+          </a>
           <a>操作历史</a>
         </Space>
       )
@@ -104,14 +121,17 @@ function Worklist () {
   return (
     <>
       <div className={'worklist-bar'}>
-        <Button onClick={() => {
-          handleOk()
-        }}>添加作业</Button>
+        <Button
+          onClick={() => {
+            handleOk()
+          }}>
+          添加作业
+        </Button>
         <Input></Input>
         <Button>搜索</Button>
       </div>
 
-      <Table columns={columns} dataSource={works}/>
+      <Table columns={columns} dataSource={works} />
 
       <AddWorkModal
         handleCancel={handleCancel}
@@ -121,7 +141,7 @@ function Worklist () {
         workflowId={workflowId}
       />
     </>
-  );
+  )
 }
 
 export default Worklist

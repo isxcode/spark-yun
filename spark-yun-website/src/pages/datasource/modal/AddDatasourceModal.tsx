@@ -1,11 +1,16 @@
 import React, { useEffect, useState } from 'react'
-import {Button, Card, Form, Input, message, Modal, Select} from 'antd'
+import { Button, Card, Form, Input, message, Modal, Select } from 'antd'
 import './AddDatasourceModal.scss'
 import axios from 'axios'
 
-const { Option } = Select;
+const { Option } = Select
 
-export const AddDatasourceModal = (props: { isModalVisible: any, handleOk: any, handleCancel: any; queryDatasources: any;}) => {
+export const AddDatasourceModal = (props: {
+  isModalVisible: any
+  handleOk: any
+  handleCancel: any
+  queryDatasources: any
+}) => {
   const [form] = Form.useForm()
   const addDatasource = (data) => {
     axios({
@@ -24,7 +29,7 @@ export const AddDatasourceModal = (props: { isModalVisible: any, handleOk: any, 
       .then(function (response) {
         message.success('添加成功')
         props.handleCancel()
-        props.queryDatasources();
+        props.queryDatasources()
       })
       .catch(function (error) {
         message.error(error.response.data.message)
@@ -47,17 +52,17 @@ export const AddDatasourceModal = (props: { isModalVisible: any, handleOk: any, 
   const onGenderChange = (value: string) => {
     switch (value) {
       case 'male':
-        form.setFieldsValue({ note: 'Hi, man!' });
-        break;
+        form.setFieldsValue({ note: 'Hi, man!' })
+        break
       case 'female':
-        form.setFieldsValue({ note: 'Hi, lady!' });
-        break;
+        form.setFieldsValue({ note: 'Hi, lady!' })
+        break
       case 'other':
-        form.setFieldsValue({ note: 'Hi there!' });
-        break;
+        form.setFieldsValue({ note: 'Hi there!' })
+        break
       default:
     }
-  };
+  }
 
   return (
     <>
@@ -86,11 +91,7 @@ export const AddDatasourceModal = (props: { isModalVisible: any, handleOk: any, 
           </Form.Item>
 
           <Form.Item name="type" label="类型" rules={[{ required: true }]}>
-            <Select
-              placeholder="选择数据库类型"
-              onChange={onGenderChange}
-              allowClear
-            >
+            <Select placeholder="选择数据库类型" onChange={onGenderChange} allowClear>
               <Option value="mysql">mysql</Option>
               <Option value="oracle">oracle</Option>
               <Option value="sqlserver">sqlserver</Option>

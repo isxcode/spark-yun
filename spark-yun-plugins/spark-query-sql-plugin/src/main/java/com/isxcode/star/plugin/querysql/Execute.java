@@ -2,16 +2,15 @@ package com.isxcode.star.plugin.querysql;
 
 import com.alibaba.fastjson.JSON;
 import com.isxcode.star.api.pojos.agent.req.PluginReq;
-import org.apache.spark.SparkConf;
-import org.apache.spark.sql.Dataset;
-import org.apache.spark.sql.Row;
-import org.apache.spark.sql.SparkSession;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
 import java.util.Map;
+import org.apache.spark.SparkConf;
+import org.apache.spark.sql.Dataset;
+import org.apache.spark.sql.Row;
+import org.apache.spark.sql.SparkSession;
 
 public class Execute {
 
@@ -31,10 +30,7 @@ public class Execute {
       conf.set(entry.getKey(), entry.getValue());
     }
 
-    return sparkSessionBuilder
-      .config(conf)
-      .enableHiveSupport()
-      .getOrCreate();
+    return sparkSessionBuilder.config(conf).enableHiveSupport().getOrCreate();
   }
 
   public static void checkRequest(PluginReq pluginReq) {
@@ -56,22 +52,25 @@ public class Execute {
     result.add(Arrays.asList(rowDataset.columns()));
 
     // 数据
-    rowDataset.collectAsList().forEach(e -> {
-      List<String> metaData = new ArrayList<>();
-      for (int i = 0; i < e.size(); i++) {
-        metaData.add(String.valueOf(e.get(i)));
-      }
-      result.add(metaData);
-    });
+    rowDataset
+        .collectAsList()
+        .forEach(
+            e -> {
+              List<String> metaData = new ArrayList<>();
+              for (int i = 0; i < e.size(); i++) {
+                metaData.add(String.valueOf(e.get(i)));
+              }
+              result.add(metaData);
+            });
 
     System.out.println(JSON.toJSONString(result));
   }
 
   public static void main(String[] args) {
 
-//    PluginReq pluginReq = parse(args);
-//
-//    checkRequest(pluginReq);
+    //    PluginReq pluginReq = parse(args);
+    //
+    //    checkRequest(pluginReq);
 
     PluginReq pluginReq = new PluginReq();
 
@@ -83,6 +82,4 @@ public class Execute {
 
     sparkSession.stop();
   }
-
 }
-

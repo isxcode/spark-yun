@@ -1,11 +1,11 @@
-import React, {useEffect, useState} from 'react'
+import React, { useEffect, useState } from 'react'
 import './Workflow.scss'
-import {Button, Form, Input, message, Space, Table, Tag, theme} from 'antd'
+import { Button, Form, Input, message, Space, Table, Tag, theme } from 'antd'
 import { type ColumnsType } from 'antd/es/table'
 import { useNavigate } from 'react-router-dom'
-import {AddEngineModal} from "../engine/modal/AddEngineModal";
-import {AddWorkflowModal} from "./modal/AddWorkflowModal";
-import axios from "axios";
+import { AddEngineModal } from '../engine/modal/AddEngineModal'
+import { AddWorkflowModal } from './modal/AddWorkflowModal'
+import axios from 'axios'
 
 interface DataType {
   id: string
@@ -15,16 +15,21 @@ interface DataType {
 }
 
 function Workflow () {
-
-  const [workflows, setWorkflows] = useState<DataType[] >([])
+  const [workflows, setWorkflows] = useState<DataType[]>([])
 
   const [isModalVisible, setIsModalVisible] = useState(false)
-  const handleOk = () => { setIsModalVisible(true) }
-  const handleCancel = () => { setIsModalVisible(false) }
+  const handleOk = () => {
+    setIsModalVisible(true)
+  }
+  const handleCancel = () => {
+    setIsModalVisible(false)
+  }
 
   const navigate = useNavigate()
 
-  useEffect(() => { queryWorkflow() }, [])
+  useEffect(() => {
+    queryWorkflow()
+  }, [])
 
   const queryWorkflow = () => {
     axios({
@@ -58,8 +63,14 @@ function Workflow () {
       title: '工作流名称',
       dataIndex: 'name',
       key: 'name',
-      render: (text,record) => <a onClick={() => {
-        navigate('/worklist/' + record.id); }}>{text}</a>
+      render: (text, record) => (
+        <a
+          onClick={() => {
+            navigate('/worklist/' + record.id)
+          }}>
+          {text}
+        </a>
+      )
     },
     {
       title: '作业数',
@@ -87,7 +98,12 @@ function Workflow () {
       render: (_, record) => (
         <Space size="middle">
           <a>编辑</a>
-          <a onClick={() => { delWorkflow(record.id) }}>删除</a>
+          <a
+            onClick={() => {
+              delWorkflow(record.id)
+            }}>
+            删除
+          </a>
         </Space>
       )
     }
@@ -96,7 +112,12 @@ function Workflow () {
   return (
     <>
       <div className={'workflow-bar'}>
-        <Button onClick={() => { handleOk() }}>添加工作流</Button>
+        <Button
+          onClick={() => {
+            handleOk()
+          }}>
+          添加工作流
+        </Button>
         <Input></Input>
         <Button>搜索</Button>
       </div>

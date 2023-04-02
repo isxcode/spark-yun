@@ -1,13 +1,12 @@
 package com.isxcode.star.api.pojos.agent.req;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @Data
 @Builder
@@ -49,14 +48,20 @@ public class PluginReq {
 
   private Map<String, Object> kafkaConfig;
 
-  private Map<String, String> sparkConfig = new HashMap<String, String>() {{
-    put("spark.executor.memory", "1g");
-    put("spark.driver.memory", "1g");
-  }};
+  private Map<String, String> sparkConfig =
+      new HashMap<String, String>() {
+        {
+          put("spark.executor.memory", "1g");
+          put("spark.driver.memory", "1g");
+        }
+      };
 
-  private Map<String, String> yarnJobConfig = new HashMap<String, String>() {{
-    put("appName", "spark-star");
-    put("mainClass", "com.isxcode.star.plugin.querysql.Execute");
-    put("appResourceName", "spark-query-sql-plugin");
-  }};
+  private Map<String, String> yarnJobConfig =
+      new HashMap<String, String>() {
+        {
+          put("appName", "spark-star");
+          put("mainClass", "com.isxcode.star.plugin.querysql.Execute");
+          put("appResourceName", "spark-query-sql-plugin");
+        }
+      };
 }

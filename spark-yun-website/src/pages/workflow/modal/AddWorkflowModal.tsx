@@ -3,8 +3,12 @@ import { Button, Card, Form, Input, message, Modal } from 'antd'
 import './AddWorkflowModal.scss'
 import axios from 'axios'
 
-export const AddWorkflowModal = (props: { isModalVisible: any, handleOk: any, handleCancel: any, queryWorkflow: any, }) => {
-
+export const AddWorkflowModal = (props: {
+  isModalVisible: any
+  handleOk: any
+  handleCancel: any
+  queryWorkflow: any
+}) => {
   const [form] = Form.useForm()
 
   const onFinish = (values: any) => {
@@ -27,7 +31,7 @@ export const AddWorkflowModal = (props: { isModalVisible: any, handleOk: any, ha
       data: {
         name: data.name,
         comment: data.comment,
-        label: data.label,
+        label: data.label
       }
     })
       .then(function (response) {
@@ -50,27 +54,27 @@ export const AddWorkflowModal = (props: { isModalVisible: any, handleOk: any, ha
         onCancel={props.handleCancel}
         width={500}>
         <Form
-          labelCol={{span: 4}}
-          wrapperCol={{span: 18}}
-          style={{maxWidth: 600}}
-          initialValues={{remember: true}}
+          labelCol={{ span: 4 }}
+          wrapperCol={{ span: 18 }}
+          style={{ maxWidth: 600 }}
+          initialValues={{ remember: true }}
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
           autoComplete="off"
           form={form}>
           <Form.Item label="名称" name="name">
-            <Input/>
+            <Input />
           </Form.Item>
 
           <Form.Item label="备注" name="comment">
-            <Input/>
+            <Input />
           </Form.Item>
 
           <Form.Item label="标签" name="label">
-            <Input/>
+            <Input />
           </Form.Item>
 
-          <Form.Item wrapperCol={{offset: 8, span: 16}}>
+          <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
             <Button type="primary" htmlType="submit" onClick={props.handleCancel}>
               创建
             </Button>
@@ -79,4 +83,4 @@ export const AddWorkflowModal = (props: { isModalVisible: any, handleOk: any, ha
       </Modal>
     </>
   )
-};
+}

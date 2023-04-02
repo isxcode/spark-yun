@@ -1,14 +1,13 @@
 package com.isxcode.star.backend.module.datasource.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.Data;
-import org.hibernate.annotations.GenericGenerator;
-
+import java.time.LocalDateTime;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import java.time.LocalDateTime;
+import lombok.Data;
+import org.hibernate.annotations.GenericGenerator;
 
 /** 只负责数据库对象映射. */
 @Data

@@ -20,7 +20,9 @@ interface DataType {
 function Engine () {
   const [engines, setEngines] = useState([])
 
-  useEffect(() => { queryEngines() }, [])
+  useEffect(() => {
+    queryEngines()
+  }, [])
 
   const queryEngines = () => {
     axios({
@@ -32,6 +34,7 @@ function Engine () {
         response.data.map((server) => {
           server.value = server.id
           server.title = server.name
+          return server
         })
         setEngines(response.data)
       })
@@ -57,8 +60,12 @@ function Engine () {
   const navigate = useNavigate()
 
   const [isModalVisible, setIsModalVisible] = useState(false)
-  const handleOk = () => { setIsModalVisible(true) }
-  const handleCancel = () => { setIsModalVisible(false) }
+  const handleOk = () => {
+    setIsModalVisible(true)
+  }
+  const handleCancel = () => {
+    setIsModalVisible(false)
+  }
 
   const columns: ColumnsType<DataType> = [
     {
@@ -66,7 +73,14 @@ function Engine () {
       dataIndex: 'name',
       key: 'name',
       width: 160,
-      render: (text, record) => <a onClick={() => { navigate('/node/' + record.id) }}>{text}</a>
+      render: (text, record) => (
+        <a
+          onClick={() => {
+            navigate('/node/' + record.id)
+          }}>
+          {text}
+        </a>
+      )
     },
     {
       title: '可用/总节点数',
@@ -111,7 +125,12 @@ function Engine () {
         <Space size="middle">
           <a>编辑</a>
           <a>检测</a>
-          <a onClick={() => { delEngine(record.id) }}>删除</a>
+          <a
+            onClick={() => {
+              delEngine(record.id)
+            }}>
+            删除
+          </a>
         </Space>
       )
     }
@@ -120,7 +139,12 @@ function Engine () {
   return (
     <>
       <div className={'engine-bar'}>
-        <Button onClick={() => { handleOk() }}>添加集群</Button>
+        <Button
+          onClick={() => {
+            handleOk()
+          }}>
+          添加集群
+        </Button>
         <Input></Input>
         <Button>搜索</Button>
       </div>

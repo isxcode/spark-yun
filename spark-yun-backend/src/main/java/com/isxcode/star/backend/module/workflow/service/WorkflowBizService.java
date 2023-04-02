@@ -1,17 +1,14 @@
 package com.isxcode.star.backend.module.workflow.service;
 
-import com.isxcode.star.api.pojos.engine.res.QueryEngineRes;
-import com.isxcode.star.api.pojos.work.req.AddWorkReq;
 import com.isxcode.star.api.pojos.workflow.req.AddWorkflowReq;
 import com.isxcode.star.api.pojos.workflow.res.QueryWorkflowRes;
 import com.isxcode.star.backend.module.workflow.entity.WorkflowEntity;
 import com.isxcode.star.backend.module.workflow.mapper.WorkflowMapper;
 import com.isxcode.star.backend.module.workflow.repository.WorkflowRepository;
+import java.util.List;
+import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import javax.transaction.Transactional;
-import java.util.List;
 
 /** 用户模块接口的业务逻辑. */
 @Service
@@ -37,12 +34,13 @@ public class WorkflowBizService {
 
     List<WorkflowEntity> workflowEntities = workflowRepository.findAll();
 
-    List<QueryWorkflowRes> queryWorkflowRes = workflowMapper.workflowEntityListToQueryWorkflowResList(workflowEntities);
+    List<QueryWorkflowRes> queryWorkflowRes =
+        workflowMapper.workflowEntityListToQueryWorkflowResList(workflowEntities);
 
-    queryWorkflowRes.forEach(e -> {
-
-      e.setWorkNum(0);
-    });
+    queryWorkflowRes.forEach(
+        e -> {
+          e.setWorkNum(0);
+        });
 
     return queryWorkflowRes;
   }

@@ -8,7 +8,7 @@ import Node from '../pages/engine/node/Node'
 import Datasource from '../pages/datasource/Datasource'
 import Workflow from '../pages/workflow/Workflow'
 import Work from '../pages/workflow/work/Work'
-import Worklist from "../pages/workflow/worklist/Worklist";
+import Worklist from '../pages/workflow/worklist/Worklist'
 
 export default function App () {
   return (

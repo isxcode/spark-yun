@@ -22,54 +22,42 @@ public class AgentController {
 
   private final AgentBizService agentBizService;
 
-  /**
-   * 提交作业.
-   */
+  /** 提交作业. */
   @PostMapping("/execute")
   public ExecuteRes execute(@RequestBody ExecuteReq executeReq) {
 
     return agentBizService.execute(executeReq);
   }
 
-  /**
-   * 获取任务状态成功.
-   */
+  /** 获取任务状态成功. */
   @GetMapping("/getStatus")
   public GetStatusRes getStatus(@RequestParam String applicationId) {
 
     return agentBizService.getStatus(applicationId);
   }
 
-  /**
-   * 获取作业日志成功.
-   */
+  /** 获取作业日志成功. */
   @GetMapping("/getLog")
   public GetLogRes getLog(@RequestParam String applicationId) {
 
     return agentBizService.getLog(applicationId);
   }
 
-  /**
-   * 获取数据成功.
-   */
+  /** 获取数据成功. */
   @PostMapping("/getData")
   public GetDataRes getData(@RequestParam String applicationId) {
 
     return agentBizService.getData(applicationId);
   }
 
-  /**
-   * 停止作业成功.
-   */
+  /** 停止作业成功. */
   @PostMapping("/stopJob")
   public void stopJob(@RequestParam String applicationId) {
 
     agentBizService.stopJob(applicationId);
   }
 
-  /**
-   * 心跳检测.
-   */
+  /** 心跳检测. */
   @GetMapping("/heartCheck")
   public HeartCheckRes heartCheck() {
 

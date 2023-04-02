@@ -7,10 +7,7 @@ dependencies {
   api(project(':spark-yun-yarn'))
 
   // spring web
-  implementation('org.springframework.boot:spring-boot-starter-web')
-
-  // spark-core
-  implementation "org.apache.spark:spark-core_${SPARK_SCALA_VERSION}:${SPARK_VERSION}"
+  implementation "org.springframework.boot:spring-boot-starter-web"
 
   // spark-sql
   implementation "org.apache.spark:spark-sql_${SPARK_SCALA_VERSION}:${SPARK_VERSION}"

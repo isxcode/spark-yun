@@ -5,9 +5,9 @@ import com.isxcode.star.api.pojos.datasource.req.AddDatasourceReq;
 import com.isxcode.star.api.pojos.datasource.req.TestConnectReq;
 import com.isxcode.star.api.pojos.datasource.res.QueryDatasourceRes;
 import com.isxcode.star.api.pojos.datasource.res.TestConnectRes;
-import com.isxcode.star.api.pojos.node.req.AddNodeReq;
-import com.isxcode.star.api.pojos.node.res.QueryNodeRes;
 import com.isxcode.star.backend.module.datasource.service.DatasourceBizService;
+import java.util.List;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,9 +15,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.validation.Valid;
-import java.util.List;
 
 /** 只负责用户接口入口. */
 @RestController
@@ -46,7 +43,8 @@ public class DatasourceController {
   }
 
   @PostMapping("/testConnect")
-  public TestConnectRes testConnect(@RequestBody TestConnectReq testConnectReq) throws ClassNotFoundException {
+  public TestConnectRes testConnect(@RequestBody TestConnectReq testConnectReq)
+      throws ClassNotFoundException {
 
     return datasourceBizService.testConnect(testConnectReq);
   }

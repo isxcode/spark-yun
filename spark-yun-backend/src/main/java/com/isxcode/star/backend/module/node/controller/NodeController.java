@@ -9,9 +9,6 @@ import com.isxcode.star.api.pojos.node.res.RemoveAgentRes;
 import com.isxcode.star.backend.module.node.service.NodeBizService;
 import java.util.List;
 import javax.validation.Valid;
-
-import com.jcraft.jsch.JSchException;
-import com.jcraft.jsch.SftpException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -77,5 +74,4 @@ public class NodeController {
       return new RemoveAgentRes(e.getMessage());
     }
   }
-
 }

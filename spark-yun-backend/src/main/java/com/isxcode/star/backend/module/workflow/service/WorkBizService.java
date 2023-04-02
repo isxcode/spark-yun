@@ -1,37 +1,30 @@
 package com.isxcode.star.backend.module.workflow.service;
 
+import static java.sql.DriverManager.getConnection;
+
 import com.isxcode.star.api.pojos.work.req.AddWorkReq;
 import com.isxcode.star.api.pojos.work.req.ConfigWorkReq;
 import com.isxcode.star.api.pojos.work.res.GetWorkRes;
 import com.isxcode.star.api.pojos.work.res.QueryWorkRes;
 import com.isxcode.star.api.pojos.work.res.RunWorkRes;
-import com.isxcode.star.api.pojos.workflow.req.AddWorkflowReq;
-import com.isxcode.star.api.pojos.workflow.res.QueryWorkflowRes;
 import com.isxcode.star.backend.module.datasource.entity.DatasourceEntity;
 import com.isxcode.star.backend.module.datasource.repository.DatasourceRepository;
 import com.isxcode.star.backend.module.workflow.entity.WorkConfigEntity;
 import com.isxcode.star.backend.module.workflow.entity.WorkEntity;
-import com.isxcode.star.backend.module.workflow.entity.WorkflowEntity;
 import com.isxcode.star.backend.module.workflow.mapper.WorkMapper;
-import com.isxcode.star.backend.module.workflow.mapper.WorkflowMapper;
 import com.isxcode.star.backend.module.workflow.repository.WorkConfigRepository;
 import com.isxcode.star.backend.module.workflow.repository.WorkRepository;
-import com.isxcode.star.backend.module.workflow.repository.WorkflowRepository;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.logging.log4j.util.Strings;
-import org.springframework.stereotype.Service;
-
-import javax.transaction.Transactional;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-
-import static java.sql.DriverManager.getConnection;
+import javax.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.util.Strings;
+import org.springframework.stereotype.Service;
 
 /** 用户模块接口的业务逻辑. */
 @Service
@@ -84,7 +77,6 @@ public class WorkBizService {
 
     // 判断类型
     switch (workEntity.getType()) {
-
       case "executeSql":
         return executeSql(workEntity.getWorkConfigId());
       case "querySql":
@@ -100,7 +92,8 @@ public class WorkBizService {
     WorkConfigEntity workConfigEntity = workConfigRepository.findById(workConfigId).get();
 
     // 获取数据源信息
-    DatasourceEntity datasourceEntity = datasourceRepository.findById(workConfigEntity.getDatasourceId()).get();
+    DatasourceEntity datasourceEntity =
+        datasourceRepository.findById(workConfigEntity.getDatasourceId()).get();
 
     switch (datasourceEntity.getType()) {
       case "mysql":
@@ -116,10 +109,12 @@ public class WorkBizService {
         return new RunWorkRes("暂不支持数据源", "暂不支持数据源", null);
     }
 
-    try (
-      Connection connection = getConnection(datasourceEntity.getJdbcUrl(), datasourceEntity.getUsername(), datasourceEntity.getPasswd());
-      Statement statement = connection.createStatement();
-    ) {
+    try (Connection connection =
+            getConnection(
+                datasourceEntity.getJdbcUrl(),
+                datasourceEntity.getUsername(),
+                datasourceEntity.getPasswd());
+        Statement statement = connection.createStatement(); ) {
       statement.execute(workConfigEntity.getScript());
       return new RunWorkRes("提交成功", "执行成功", null);
     } catch (Exception e) {
@@ -138,7 +133,8 @@ public class WorkBizService {
     }
 
     // 获取数据源信息
-    DatasourceEntity datasourceEntity = datasourceRepository.findById(workConfigEntity.getDatasourceId()).get();
+    DatasourceEntity datasourceEntity =
+        datasourceRepository.findById(workConfigEntity.getDatasourceId()).get();
 
     switch (datasourceEntity.getType()) {
       case "mysql":
@@ -156,10 +152,12 @@ public class WorkBizService {
 
     List<List<String>> result = new ArrayList<>();
 
-    try (
-      Connection connection = getConnection(datasourceEntity.getJdbcUrl(), datasourceEntity.getUsername(), datasourceEntity.getPasswd());
-      Statement statement = connection.createStatement();
-    ) {
+    try (Connection connection =
+            getConnection(
+                datasourceEntity.getJdbcUrl(),
+                datasourceEntity.getUsername(),
+                datasourceEntity.getPasswd());
+        Statement statement = connection.createStatement(); ) {
       ResultSet resultSet = statement.executeQuery(workConfigEntity.getScript());
       int columnCount = resultSet.getMetaData().getColumnCount();
 
@@ -189,7 +187,8 @@ public class WorkBizService {
 
     WorkEntity workEntity = workRepository.findById(configWorkReq.getWorkId()).get();
 
-    WorkConfigEntity workConfigEntity = workConfigRepository.findById(workEntity.getWorkConfigId()).get();
+    WorkConfigEntity workConfigEntity =
+        workConfigRepository.findById(workEntity.getWorkConfigId()).get();
 
     if (!Strings.isEmpty(configWorkReq.getDatasourceId())) {
       workConfigEntity.setDatasourceId(configWorkReq.getDatasourceId());
@@ -206,7 +205,8 @@ public class WorkBizService {
 
     WorkEntity workEntity = workRepository.findById(workId).get();
 
-    WorkConfigEntity workConfigEntity = workConfigRepository.findById(workEntity.getWorkConfigId()).get();
+    WorkConfigEntity workConfigEntity =
+        workConfigRepository.findById(workEntity.getWorkConfigId()).get();
 
     return workMapper.workEntityAndWorkConfigEntityToGetWorkRes(workEntity, workConfigEntity);
   }

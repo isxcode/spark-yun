@@ -4,8 +4,18 @@ FROM openjdk:8
 # 将jar包拷贝到容器容器中
 COPY ./spark-yun-backend/build/libs/spark-yun-backend.jar /app.jar
 
+# 拷贝代理安装包
+COPY ./spark-yun-dist/build/distributions/spark-yun-agent.tar.gz /spark-yun-agent.tar.gz
+
+# 拷贝安装脚本和卸载脚本
+COPY ./spark-yun-dist/src/main/bin/spark-yun-install /spark-yun-install
+COPY ./spark-yun-dist/src/main/bin/spark-yun-remove /spark-yun-remove
+
 # 暴露8080端口号
 EXPOSE 8080
 
 # 执行命令运行spring项目
-CMD java -jar app.jar --spring.profiles.active=prod
+CMD java -jar app.jar
+
+# 构建命令
+# docker build -t isxcode/spark-star:0.0.2 -f ./Dockerfile  .

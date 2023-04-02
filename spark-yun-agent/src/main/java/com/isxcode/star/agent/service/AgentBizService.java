@@ -7,6 +7,16 @@ import com.isxcode.star.api.pojos.agent.res.GetDataRes;
 import com.isxcode.star.api.pojos.agent.res.GetLogRes;
 import com.isxcode.star.api.pojos.agent.res.GetStatusRes;
 import com.isxcode.star.yarn.utils.LogUtils;
+import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Base64;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.hadoop.conf.Configuration;
@@ -20,17 +30,6 @@ import org.apache.spark.launcher.SparkAppHandle;
 import org.apache.spark.launcher.SparkLauncher;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Base64;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -41,7 +40,15 @@ public class AgentBizService {
     // 获取hadoop环境变量
     String hadoopConfDir = System.getenv("HADOOP_HOME");
     Configuration hadoopConf = new Configuration(false);
-    Path path = Paths.get(hadoopConfDir + File.separator + "etc" + File.separator + "hadoop" + File.separator + "yarn-site.xml");
+    Path path =
+        Paths.get(
+            hadoopConfDir
+                + File.separator
+                + "etc"
+                + File.separator
+                + "hadoop"
+                + File.separator
+                + "yarn-site.xml");
     try {
       hadoopConf.addResource(Files.newInputStream(path));
     } catch (IOException e) {
@@ -53,15 +60,24 @@ public class AgentBizService {
     String starHomePath = "~/spark-yun-agent";
 
     // 封装launcher
-    SparkLauncher sparkLauncher = new SparkLauncher()
-      .setSparkHome("")
-      .setMaster("yarn")
-      .setDeployMode("cluster")
-      .setAppName(executeReq.getAppName())
-      .setVerbose(true)
-      .setMainClass(executeReq.getMainClass())
-      .setAppResource(starHomePath + File.separator + "plugins" + File.separator + executeReq.getAppResourceName() + ".jar")
-      .addAppArgs(Base64.getEncoder().encodeToString(JSON.toJSONString(executeReq.getPluginReq()).getBytes()));
+    SparkLauncher sparkLauncher =
+        new SparkLauncher()
+            .setSparkHome("")
+            .setMaster("yarn")
+            .setDeployMode("cluster")
+            .setAppName(executeReq.getAppName())
+            .setVerbose(true)
+            .setMainClass(executeReq.getMainClass())
+            .setAppResource(
+                starHomePath
+                    + File.separator
+                    + "plugins"
+                    + File.separator
+                    + executeReq.getAppResourceName()
+                    + ".jar")
+            .addAppArgs(
+                Base64.getEncoder()
+                    .encodeToString(JSON.toJSONString(executeReq.getPluginReq()).getBytes()));
 
     // 添加依赖包
     File[] jars = new File(starHomePath + File.separator + "lib" + File.separator).listFiles();
@@ -78,18 +94,20 @@ public class AgentBizService {
     // 提交作业到yarn
     SparkAppHandle sparkAppHandle;
     try {
-      sparkAppHandle = sparkLauncher.startApplication(new SparkAppHandle.Listener() {
+      sparkAppHandle =
+          sparkLauncher.startApplication(
+              new SparkAppHandle.Listener() {
 
-        @Override
-        public void stateChanged(SparkAppHandle sparkAppHandle) {
-          // do nothing
-        }
+                @Override
+                public void stateChanged(SparkAppHandle sparkAppHandle) {
+                  // do nothing
+                }
 
-        @Override
-        public void infoChanged(SparkAppHandle sparkAppHandle) {
-          // do nothing
-        }
-      });
+                @Override
+                public void infoChanged(SparkAppHandle sparkAppHandle) {
+                  // do nothing
+                }
+              });
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
@@ -105,7 +123,7 @@ public class AgentBizService {
       }
 
       if (SparkAppHandle.State.FAILED.equals(sparkAppHandle.getState())) {
-                Optional<Throwable> error = sparkAppHandle.getError();
+        Optional<Throwable> error = sparkAppHandle.getError();
         return new ExecuteRes("提交失败", error.get().getMessage(), null);
       }
 
@@ -129,7 +147,9 @@ public class AgentBizService {
       throw new RuntimeException(e);
     }
 
-    return new GetStatusRes(String.valueOf(applicationReport.getYarnApplicationState()), String.valueOf(applicationReport.getFinalApplicationStatus()));
+    return new GetStatusRes(
+        String.valueOf(applicationReport.getYarnApplicationState()),
+        String.valueOf(applicationReport.getFinalApplicationStatus()));
   }
 
   public GetLogRes getLog(String applicationId) {
@@ -175,7 +195,15 @@ public class AgentBizService {
 
     // 读取配置yarn-site.yml文件
     Configuration yarnConf = new Configuration(false);
-    Path path = Paths.get(hadoopConfDir + File.separator + "etc" + File.separator + "hadoop" + File.separator + "yarn-site.xml");
+    Path path =
+        Paths.get(
+            hadoopConfDir
+                + File.separator
+                + "etc"
+                + File.separator
+                + "hadoop"
+                + File.separator
+                + "yarn-site.xml");
     try {
       yarnConf.addResource(Files.newInputStream(path));
     } catch (IOException e) {
