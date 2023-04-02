@@ -3,6 +3,8 @@ package com.isxcode.star.backend.module.user.controller;
 import com.isxcode.star.api.constants.ModulePrefix;
 import com.isxcode.star.api.pojos.user.req.AddUserReq;
 import com.isxcode.star.api.pojos.user.req.GetUserReq;
+import com.isxcode.star.api.pojos.user.req.LoginReq;
+import com.isxcode.star.api.pojos.user.res.LoginRes;
 import com.isxcode.star.backend.module.user.entity.UserEntity;
 import com.isxcode.star.backend.module.user.service.UserBizService;
 import java.util.List;
@@ -48,5 +50,11 @@ public class UserController {
   public void updateUserStatus() {}
 
   @PostMapping("/login")
-  public void login() {}
+  public LoginRes login(@RequestBody LoginReq loginReq) {
+
+    if (loginReq.getAccount().equals("ispong") && loginReq.getPassword().equals("ispong123")) {
+      return new LoginRes(true, "登录成功");
+    }
+    return new LoginRes(false, "登录失败");
+  }
 }

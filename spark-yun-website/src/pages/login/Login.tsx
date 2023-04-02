@@ -1,9 +1,36 @@
 import React from 'react'
 import './Login.scss'
-import { Button, Form, Input, theme } from 'antd'
+import { Button, Form, Input, message, theme } from 'antd'
+import axios from 'axios'
+import { useNavigate } from 'react-router-dom'
 function Login () {
+  const navigate = useNavigate()
+
+  const login = (value) => {
+    axios({
+      method: 'post',
+      url: 'http://localhost:8080/user/login',
+      data: {
+        account: value.account,
+        password: value.password
+      }
+    })
+      .then(function (response) {
+        if (response.data.isLogin) {
+          message.success('登录成功').then(() => {})
+          localStorage.setItem('Authorization', response.data.isLogin)
+          navigate('/')
+        } else {
+          message.error(response.data.message)
+        }
+      })
+      .catch(function (error) {
+        message.error(error.response.data.message)
+      })
+  }
+
   const onFinish = (values: any) => {
-    console.log('Success:', values)
+    login(values)
   }
 
   const onFinishFailed = (errorInfo: any) => {

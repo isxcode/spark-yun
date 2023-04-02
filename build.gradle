@@ -1,10 +1,10 @@
 // 引入插件
 plugins {
-	id 'java'
-	id 'org.springframework.boot' version "${SPRING_VERSION}"
-	id 'io.spring.dependency-management' version "${SPRING_MANAGER_VERSION}"
-	id "com.diffplug.spotless" version "${SPOTLESS_VERSION}"
-	id 'checkstyle'
+  id 'java'
+  id 'org.springframework.boot' version "${SPRING_VERSION}"
+  id 'io.spring.dependency-management' version "${SPRING_MANAGER_VERSION}"
+  id "com.diffplug.spotless" version "${SPOTLESS_VERSION}"
+  id 'checkstyle'
 }
 
 // 从VERSION.txt中获取自定义版本号
@@ -14,100 +14,100 @@ def versionNumber = new File(rootDir.getAbsolutePath(), versionFileName).readLin
 // 所有项目模块的配置
 allprojects {
 
-	// 声明插件，表示使用
-	apply plugin: 'org.springframework.boot'
-	apply plugin: 'io.spring.dependency-management'
-	apply plugin: 'java-library'
-	apply plugin: 'checkstyle'
+  // 声明插件，表示使用
+  apply plugin: 'org.springframework.boot'
+  apply plugin: 'io.spring.dependency-management'
+  apply plugin: 'java-library'
+  apply plugin: 'checkstyle'
 
-	// java环境配置，使用java1.8
-	sourceCompatibility = JavaVersion.VERSION_1_8
-	targetCompatibility = JavaVersion.VERSION_1_8
+  // java环境配置，使用java1.8
+  sourceCompatibility = JavaVersion.VERSION_1_8
+  targetCompatibility = JavaVersion.VERSION_1_8
 
-	// 定义组织名称
-	group = 'com.isxcode.star'
+  // 定义组织名称
+  group = 'com.isxcode.star'
 
-	// 定义版本号
-	version = versionNumber
+  // 定义版本号
+  version = versionNumber
 
-    // 配置多选中央仓库
-	repositories {
-		mavenLocal()
-		mavenCentral()
-		maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
-		maven { url 'https://maven.aliyun.com/nexus/content/groups/public/' }
-		maven { url "https://plugins.gradle.org/m2/" }
-	}
+  // 配置多选中央仓库
+  repositories {
+    mavenLocal()
+    mavenCentral()
+    maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
+    maven { url 'https://maven.aliyun.com/nexus/content/groups/public/' }
+    maven { url "https://plugins.gradle.org/m2/" }
+  }
 
-	// 配置基础依赖
-	dependencies {
+  // 配置基础依赖
+  dependencies {
 
-		// spring-boot-configuration-processor
-		annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+    // spring-boot-configuration-processor
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
 
-		// lombok
-		compileOnly "org.projectlombok:lombok:${LOMBOK_VERSION}"
-		annotationProcessor "org.projectlombok:lombok:${LOMBOK_VERSION}"
+    // lombok
+    compileOnly "org.projectlombok:lombok:${LOMBOK_VERSION}"
+    annotationProcessor "org.projectlombok:lombok:${LOMBOK_VERSION}"
 
-		// fastjson
-		implementation "com.alibaba:fastjson:${FASTJSON_VERSION}"
+    // fastjson
+    implementation "com.alibaba:fastjson:${FASTJSON_VERSION}"
 
-		// spring aop
-		implementation 'org.springframework.boot:spring-boot-starter-aop'
+    // spring aop
+    implementation 'org.springframework.boot:spring-boot-starter-aop'
 
-		// junit test
-		implementation "org.junit.jupiter:junit-jupiter:${JUPITER_VERSION}"
-		testImplementation "org.junit.jupiter:junit-jupiter-api:${JUPITER_VERSION}"
+    // junit test
+    implementation "org.junit.jupiter:junit-jupiter:${JUPITER_VERSION}"
+    testImplementation "org.junit.jupiter:junit-jupiter-api:${JUPITER_VERSION}"
 
-		// spring test
-		testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	}
+    // spring test
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+  }
 
-	// 配置spring的spring-boot-configuration-processor，编译时生效。
-	configurations {
-		compileOnly {
-			extendsFrom annotationProcessor
-		}
-	}
+  // 配置spring的spring-boot-configuration-processor，编译时生效。
+  configurations {
+    compileOnly {
+      extendsFrom annotationProcessor
+    }
+  }
 
   // checkstyle配置
-	tasks.withType(Checkstyle) {
-		maxWarnings = 100
-		maxErrors = 0
-		ignoreFailures = false
-		reports {
-			xml.required = false
-			html.required = true
-			html.stylesheet resources.text.fromFile('../config/xsl/checkstyle-simple.xsl')
-		}
-	}
+  tasks.withType(Checkstyle) {
+    maxWarnings = 100
+    maxErrors = 0
+    ignoreFailures = false
+    reports {
+      xml.required = false
+      html.required = true
+      html.stylesheet resources.text.fromFile('../config/xsl/checkstyle-simple.xsl')
+    }
+  }
 }
 
 // 独立配置spark-yun-backend模块项目
 project("spark-yun-backend") {
 
-	// 使用bootJar打spring的包，指定打包名称，方便Dockerfile文件中复制spark-yun-backend.jar文件
-	bootJar {
-		archiveName "spark-yun-backend.jar"
-	}
+  // 使用bootJar打spring的包，指定打包名称，方便Dockerfile文件中复制spark-yun-backend.jar文件
+  bootJar {
+    archiveName "spark-yun-backend.jar"
+  }
 
-	// 删除spring项目中前端打包好的文件
-	tasks.register('clean-website-package', Delete) {
+  // 删除spring项目中前端打包好的文件
+  tasks.register('clean-website-package', Delete) {
 
-		// 删除resources下面的static和templates
-		delete 'src/main/resources/templates'
-		delete 'src/main/resources/static'
-	}
+    // 删除resources下面的static和templates
+    delete 'src/main/resources/templates'
+    delete 'src/main/resources/static'
+  }
 
-	// 创建前端打包好需要存放的路径static
-	tasks.register('mkdir-static', Exec) {
-		commandLine 'mkdir', 'src/main/resources/static'
-	}
+  // 创建前端打包好需要存放的路径static
+  tasks.register('mkdir-static', Exec) {
+    commandLine 'mkdir', 'src/main/resources/static'
+  }
 
-	// 创建前端打包好需要存放的路径templates
-	tasks.register('mkdir-templates', Exec) {
-		commandLine 'mkdir', 'src/main/resources/templates'
-	}
+  // 创建前端打包好需要存放的路径templates
+  tasks.register('mkdir-templates', Exec) {
+    commandLine 'mkdir', 'src/main/resources/templates'
+  }
 }
 
 // 独立配置spark-yun-website模块项目
@@ -124,76 +124,72 @@ project("spark-yun-website") {
     commandLine 'npm', 'run', 'eslint'
   }
 
-	// 前端构建项目
-	tasks.register('npm-run-build', Exec) {
+  // 前端构建项目
+  tasks.register('npm-run-build', Exec) {
     mustRunAfter('npm-run-eslint')
     commandLine 'npm', 'run', 'build'
   }
 
-	// 将index.html拷贝到templates中
-	tasks.register('copy-index', Copy) {
-		mustRunAfter('npm-run-build')
-		from 'dist/index.html'
-		into '../spark-yun-backend/src/main/resources/templates/'
-	}
+  // 将index.html拷贝到templates中
+  tasks.register('copy-index', Copy) {
+    mustRunAfter('npm-run-build')
+    from 'dist/index.html'
+    into '../spark-yun-backend/src/main/resources/templates/'
+  }
 
-	// 将剩余的静态文件拷贝到static中
-	tasks.register('copy-static', Copy) {
-		mustRunAfter('npm-run-build')
-		from 'dist/static'
-		into '../spark-yun-backend/src/main/resources/static/'
-	}
+  // 将剩余的静态文件拷贝到static中
+  tasks.register('copy-static', Copy) {
+    mustRunAfter('npm-run-build')
+    from 'dist/static'
+    into '../spark-yun-backend/src/main/resources/static/'
+  }
 }
 
 // gradle start命令，启动至轻云项目
 tasks.register('start', GradleBuild) {
-	// 第一步：删除前端打包好在spring项目中的文件
-	dependsOn("spark-yun-backend:clean-website-package")
-	// 第二步：前端打包
+  // 第一步：删除前端打包好在spring项目中的文件
+  dependsOn("spark-yun-backend:clean-website-package")
+  // 第二步：前端打包
   dependsOn("spark-yun-website:npm-run-prettier")
   dependsOn("spark-yun-website:npm-run-eslint")
   dependsOn("spark-yun-website:npm-run-build")
-	// 第三步：spring中创建文件夹
-	dependsOn("spark-yun-backend:mkdir-templates")
-	dependsOn("spark-yun-backend:mkdir-static")
-	// 第四步：将打包好的文件复制到指定文件夹
-	dependsOn("spark-yun-website:copy-index")
-	dependsOn("spark-yun-website:copy-static")
-	// 第五步：spotless格式化代码
-	dependsOn(":spotlessApply")
-	// 第六步：checkstyle检测代码
-	dependsOn("spark-yun-agent:check")
-	dependsOn("spark-yun-api:check")
-	dependsOn("spark-yun-backend:check")
-	dependsOn("spark-yun-client:check")
-	dependsOn("spark-yun-client:check")
-	dependsOn("spark-yun-common:check")
-	dependsOn("spark-yun-plugins:check")
-	// 第七步：spring启动项目
-	tasks = ["spark-yun-backend:bootRun"]
-}
-
-// gradle agent命令，启动至轻云代理项目
-tasks.register('agent', GradleBuild) {
-	// 直接运行代理中的服务
-	tasks = ["spark-yun-agent:bootRun"]
+  // 第三步：spring中创建文件夹
+  dependsOn("spark-yun-backend:mkdir-templates")
+  dependsOn("spark-yun-backend:mkdir-static")
+  // 第四步：将打包好的文件复制到指定文件夹
+  dependsOn("spark-yun-website:copy-index")
+  dependsOn("spark-yun-website:copy-static")
+  // 第五步：spotless格式化代码
+  dependsOn(":spotlessApply")
+  // 第六步：checkstyle检测代码
+  dependsOn("spark-yun-agent:check")
+  dependsOn("spark-yun-api:check")
+  dependsOn("spark-yun-backend:check")
+  dependsOn("spark-yun-client:check")
+  dependsOn("spark-yun-client:check")
+  dependsOn("spark-yun-common:check")
+  dependsOn("spark-yun-plugins:check")
+  // 第七步：spring启动项目
+  tasks = ["spark-yun-backend:bootRun"]
 }
 
 // gradle docker命令，打包至轻云到本地镜像中
 tasks.register('docker', Exec) {
-	// 至轻云构建jar包
-	dependsOn("spark-yun-backend:bootJar")
-	// 使用dockerfile对项目进行打包
-	commandLine 'bash', '-c', 'docker build -t isxcode/spark-star:' + versionNumber + ' -f ./Dockerfile  .'
+  // 至轻云构建后端程序
+  dependsOn("spark-yun-backend:bootJar")
+  // 至轻云构建jar包
+  dependsOn("spark-yun-dist:buildAgentPackage")
+  // 使用dockerfile对项目进行打包
+  commandLine 'bash', '-c', 'docker build -t isxcode/spark-star:' + versionNumber + ' -f ./Dockerfile  .'
 }
 
 // spotless配置
 spotless {
-	java {
-		target '*/**/*.java'
-		targetExclude '*/build/**/*.java'
-		googleJavaFormat()
-		removeUnusedImports()
-	}
+  java {
+    target '*/**/*.java'
+    targetExclude '*/build/**/*.java'
+    googleJavaFormat()
+    removeUnusedImports()
+  }
 }
 

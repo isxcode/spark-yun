@@ -13,14 +13,14 @@ function Layouts () {
       key: 1,
       label: '首页',
       onClick: () => {
-        navigate('/monitor')
+        navigate('/auth')
       }
     },
     {
       key: 2,
       label: '项目管理',
       onClick: () => {
-        navigate('/project')
+        navigate('/auth')
       }
     },
     {
@@ -47,47 +47,65 @@ function Layouts () {
     {
       key: 6,
       label: '数据建模',
-      onClick: () => message.warning('请上传企业许可证！')
+      onClick: () => {
+        navigate('/auth')
+      }
     },
     {
       key: 7,
       label: '调度历史',
-      onClick: () => message.warning('请上传企业许可证！')
+      onClick: () => {
+        navigate('/auth')
+      }
     },
     {
       key: 8,
       label: 'BI酷屏',
-      onClick: () => message.warning('请上传企业许可证！')
+      onClick: () => {
+        navigate('/auth')
+      }
     },
     {
       key: 9,
       label: '数据资产',
-      onClick: () => message.warning('请上传企业许可证！')
+      onClick: () => {
+        navigate('/auth')
+      }
     },
     {
       key: 10,
       label: '自定义Api',
-      onClick: () => message.warning('请上传企业许可证！')
+      onClick: () => {
+        navigate('/auth')
+      }
     },
     {
       key: 11,
       label: 'AI计算',
-      onClick: () => message.warning('请上传企业许可证！')
+      onClick: () => {
+        navigate('/auth')
+      }
     },
     {
       key: 12,
       label: '后台管理',
-      onClick: () => message.warning('请上传企业许可证！')
+      onClick: () => {
+        navigate('/auth')
+      }
     },
     {
       key: 13,
       label: '用户中心',
-      onClick: () => message.warning('请上传企业许可证！')
+      onClick: () => {
+        navigate('/auth')
+      }
     },
     {
       key: 14,
       label: '系统配置',
-      onClick: () => message.warning('请上传企业许可证！')
+      onClick: () => {
+        navigate('/auth')
+      }
     }
   ]
 

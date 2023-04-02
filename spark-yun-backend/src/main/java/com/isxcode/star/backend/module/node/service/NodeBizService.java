@@ -75,13 +75,26 @@ public class NodeBizService {
     String installCommand = "bash ~/spark-yun-install";
     executeCommand(node, installCommand, false);
 
+    node.setStatus("已安装");
+    nodeRepository.save(node);
+
     // 安装成功
     return new InstallAgentRes("安装成功");
   }
 
-  public CheckAgentRes checkAgent(String nodeId) throws JSchException, SftpException, IOException {
+  public CheckAgentRes checkAgent(String nodeId) throws JSchException, IOException {
 
-    return new CheckAgentRes("");
+    // 查询节点信息
+    NodeEntity node = nodeRepository.findById(nodeId).get();
+
+    // 运行卸载脚本
+    String lsCommand = "ls";
+    executeCommand(node, lsCommand, false);
+
+    node.setStatus("可安装");
+    nodeRepository.save(node);
+
+    return new CheckAgentRes("完成检测");
   }
 
   public RemoveAgentRes removeAgent(String nodeId)
@@ -93,9 +106,12 @@ public class NodeBizService {
     // 拷贝卸载脚本
     scpFile(node, "/spark-yun-remove", "~/");
 
-    // 运行卸载脚本
+    // 运行卸载脚本s
     String installCommand = "bash ~/spark-yun-remove";
     executeCommand(node, installCommand, false);
+
+    node.setStatus("已卸载");
+    nodeRepository.save(node);
 
     return new RemoveAgentRes("卸载成功");
   }

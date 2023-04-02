@@ -45,7 +45,7 @@ public class NodeController {
   @PostMapping("/updateUser")
   public void updateUser() {}
 
-  @PostMapping("/installAgent")
+  @GetMapping("/installAgent")
   public InstallAgentRes installAgent(@RequestParam String nodeId) {
 
     try {
@@ -55,7 +55,7 @@ public class NodeController {
     }
   }
 
-  @PostMapping("/checkAgent")
+  @GetMapping("/checkAgent")
   public CheckAgentRes checkAgent(@RequestParam String nodeId) {
 
     try {
@@ -65,7 +65,7 @@ public class NodeController {
     }
   }
 
-  @PostMapping("/removeAgent")
+  @GetMapping("/removeAgent")
   public RemoveAgentRes removeAgent(@RequestParam String nodeId) {
 
     try {

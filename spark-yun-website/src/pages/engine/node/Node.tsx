@@ -56,6 +56,45 @@ function Node () {
       })
   }
 
+  const checkNode = (value) => {
+    axios({
+      method: 'get',
+      url: 'http://localhost:8080/node/checkAgent?nodeId=' + value
+    })
+      .then(function (response) {
+        queryNodes(engineId)
+      })
+      .catch(function (error) {
+        message.error(error.response.data.message)
+      })
+  }
+
+  const installAgent = (value) => {
+    axios({
+      method: 'get',
+      url: 'http://localhost:8080/node/installAgent?nodeId=' + value
+    })
+      .then(function (response) {
+        queryNodes(engineId)
+      })
+      .catch(function (error) {
+        message.error(error.response.data.message)
+      })
+  }
+
+  const removeAgent = (value) => {
+    axios({
+      method: 'get',
+      url: 'http://localhost:8080/node/removeAgent?nodeId=' + value
+    })
+      .then(function (response) {
+        queryNodes(engineId)
+      })
+      .catch(function (error) {
+        message.error(error.response.data.message)
+      })
+  }
+
   const { engineId } = useParams()
 
   useEffect(() => {
@@ -113,9 +152,24 @@ function Node () {
       key: 'action',
       render: (_, record) => (
         <Space size="middle">
-          <a>检测</a>
-          <a>安装</a>
-          <a>卸载</a>
+          <a
+            onClick={() => {
+              checkNode(record.id)
+            }}>
+            检测
+          </a>
+          <a
+            onClick={() => {
+              installAgent(record.id)
+            }}>
+            安装
+          </a>
+          <a
+            onClick={() => {
+              removeAgent(record.id)
+            }}>
+            卸载
+          </a>
           <a
             onClick={() => {
               delNode(record.id)

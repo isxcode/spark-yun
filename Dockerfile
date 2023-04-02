@@ -16,6 +16,3 @@ EXPOSE 8080
 
 # 执行命令运行spring项目
 CMD java -jar app.jar
-
-# 构建命令
-# docker build -t isxcode/spark-star:0.0.2 -f ./Dockerfile  .

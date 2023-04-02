@@ -9,6 +9,7 @@ import Datasource from '../pages/datasource/Datasource'
 import Workflow from '../pages/workflow/Workflow'
 import Work from '../pages/workflow/work/Work'
 import Worklist from '../pages/workflow/worklist/Worklist'
+import Auth from '../pages/auth/Auth'
 
 export default function App () {
   return (
@@ -37,7 +38,15 @@ export default function App () {
                 path={'/monitor'}
                 element={
                   <RequireAuth>
-                    <Monitor />
+                    <Auth />
+                  </RequireAuth>
+                }
+              />
+              <Route
+                path={'/auth'}
+                element={
+                  <RequireAuth>
+                    <Auth />
                   </RequireAuth>
                 }
               />

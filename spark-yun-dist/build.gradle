@@ -20,7 +20,7 @@ task copyLib(type: Copy) {
 }
 
 // 构建spark-yun-agent.zip
-task zipApp(type: Tar) {
+task buildAgentPackage(type: Tar) {
   dependsOn('copyLib')
   archiveFileName = 'spark-yun-agent.tar.gz'
   from('/Users/ispong/Downloads/spark-3.1.1-bin-hadoop3.2') {
