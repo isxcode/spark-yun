@@ -157,6 +157,7 @@ tasks.register('package', GradleBuild) {
   // 第二步：前端打包
   dependsOn("spark-yun-website:npm-run-prettier")
   dependsOn("spark-yun-website:npm-run-eslint")
+  dependsOn("spark-yun-website:npm-run-install")
   dependsOn("spark-yun-website:npm-run-build")
   // 第三步：spring中创建文件夹
   dependsOn("spark-yun-backend:mkdir-templates")

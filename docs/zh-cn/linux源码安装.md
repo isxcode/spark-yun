@@ -18,11 +18,24 @@ git clone -b main https://gitee.com/isxcode/spark-yun.git
 
 - [node 安装](https://ispong.isxcode.com/react/nodejs/nodejs%20%E5%AE%89%E8%A3%85/)
 
+```bash
+npm install dotenv-cli --location=global
+npm install webpack-cli --location=global
+```
+
+### 安装gradle环境
+
+- [gradle 安装](https://ispong.isxcode.com/react/nodejs/gradle%20%E5%AE%89%E8%A3%85/)
+
 ### 镜像打包
 
 ```bash
-./gradlew docker
+gradle docker
 ```
 
 ### 启动容器
+
+```bash
+docker run 
+```
 
