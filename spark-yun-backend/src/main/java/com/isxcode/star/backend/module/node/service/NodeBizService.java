@@ -43,6 +43,12 @@ public class NodeBizService {
     node.setCheckDate(LocalDateTime.now());
     node.setStatus("未安装");
 
+    if ("root".equals(node.getUsername())) {
+      node.setHomePath("/root/");
+    } else {
+      node.setHomePath("/home/" + node.getUsername() + "/");
+    }
+
     // 数据持久化
     nodeRepository.save(node);
   }
@@ -65,16 +71,15 @@ public class NodeBizService {
     // 查询节点信息
     NodeEntity node = nodeRepository.findById(nodeId).get();
 
-    // 拷贝安装脚本
+    // 拷贝安装包
+    scpFile(
+      node,
+      "/spark-yun-agent.tar.gz",
+      node.getHomePath());
+
     scpFile(
         node,
         "/spark-yun-install",
-        node.getHomePath());
-
-    // 拷贝安装包
-    scpFile(
-        node,
-        "/spark-yun-agent.tar.gz",
         node.getHomePath());
 
     // 运行安装脚本
