@@ -23,7 +23,7 @@ task copyLib(type: Copy) {
 tasks.register('buildAgentPackage', Tar) {
   dependsOn('copyLib')
   archiveFileName = 'spark-yun-agent.tar.gz'
-  from('/Users/ispong/Downloads/spark-3.1.1-bin-hadoop3.2') {
+  from('/opt/spark-3.1.1-bin-hadoop3.2') {
     into 'spark-min'
   }
   from('src/main/bin') {

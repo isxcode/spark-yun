@@ -22,6 +22,14 @@ git clone -b main https://gitee.com/isxcode/spark-yun.git
 
 - [gradle 安装](https://ispong.isxcode.com/react/nodejs/gradle%20%E5%AE%89%E8%A3%85/)
 
+### 下载spark二进制
+
+```bash
+nohup wget https://archive.apache.org/dist/spark/spark-3.1.1/spark-3.1.1-bin-hadoop3.2.tgz >> download_spark.log 2>&1 &  
+tail -f download_spark.log
+tar vzxf spark-3.1.1-bin-hadoop3.2.tgz -C /opt/
+```
+
 ### 镜像打包
 
 ```bash

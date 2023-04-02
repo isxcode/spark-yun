@@ -23,8 +23,8 @@ export const AddNodeModal = (props: {
         port: data.port,
         password: data.password,
         engineId: props.engineId,
-        homePath: data.homePath,
-  }
+        homePath: data.homePath
+      }
     })
       .then(function (response) {
         message.success('添加成功')
@@ -59,43 +59,43 @@ export const AddNodeModal = (props: {
         onCancel={props.handleCancel}
         width={500}>
         <Form
-          labelCol={{span: 4}}
-          wrapperCol={{span: 18}}
-          style={{maxWidth: 600}}
-          initialValues={{remember: true}}
+          labelCol={{ span: 4 }}
+          wrapperCol={{ span: 18 }}
+          style={{ maxWidth: 600 }}
+          initialValues={{ remember: true }}
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
           autoComplete="off"
           form={form}>
           <Form.Item label="节点名称" name="name">
-            <Input/>
+            <Input />
           </Form.Item>
 
           <Form.Item label="备注" name="comment">
-            <Input/>
+            <Input />
           </Form.Item>
 
           <Form.Item label="地址" name="host">
-            <Input/>
+            <Input />
           </Form.Item>
 
           <Form.Item label="端口号" name="port">
-            <Input/>
+            <Input />
           </Form.Item>
 
           <Form.Item label="用户名" name="username">
-            <Input/>
+            <Input />
           </Form.Item>
 
           <Form.Item label="密码" name="password">
-            <Input/>
+            <Input />
           </Form.Item>
 
           <Form.Item label="家路径" name="homePath">
-            <Input/>
+            <Input />
           </Form.Item>
 
-          <Form.Item wrapperCol={{offset: 8, span: 16}}>
+          <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
             <Button type="primary" htmlType="submit" onClick={props.handleCancel}>
               创建
             </Button>
@@ -103,5 +103,5 @@ export const AddNodeModal = (props: {
         </Form>
       </Modal>
     </>
-  );
+  )
 }
