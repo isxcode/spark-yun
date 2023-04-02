@@ -50,4 +50,6 @@ public class NodeEntity {
   private String username;
 
   private String passwd;
+
+  private String homePath;
 }

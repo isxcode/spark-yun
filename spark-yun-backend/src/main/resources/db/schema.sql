@@ -37,7 +37,8 @@ create table if not exists sy_nodes
   host           varchar(100) null,
   port           varchar(100) null,
   username       varchar(100) null,
-  passwd         varchar(100) null
+  passwd         varchar(100) null,
+  home_path      varchar(100) null
 );
 
 create table if not exists sy_datasources

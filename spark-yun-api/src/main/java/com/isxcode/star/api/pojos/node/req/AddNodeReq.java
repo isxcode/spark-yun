@@ -18,4 +18,6 @@ public class AddNodeReq {
   private String comment;
 
   private String name;
+
+  private String homePath;
 }
