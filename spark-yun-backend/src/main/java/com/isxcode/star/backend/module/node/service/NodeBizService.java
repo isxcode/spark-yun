@@ -68,13 +68,13 @@ public class NodeBizService {
     // 拷贝安装脚本
     scpFile(
         node,
-        "/Users/ispong/Isxcode/spark-yun/spark-yun-dist/src/main/bin/spark-yun-install",
+        "/spark-yun-install",
         node.getHomePath());
 
     // 拷贝安装包
     scpFile(
         node,
-        "/Users/ispong/Isxcode/spark-yun/spark-yun-dist/build/distributions/spark-yun-agent.tar.gz",
+        "/spark-yun-agent.tar.gz",
         node.getHomePath());
 
     // 运行安装脚本
