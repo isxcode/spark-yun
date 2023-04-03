@@ -1,6 +1,9 @@
 package com.isxcode.star.backend.module.workflow.mapper;
 
 import com.isxcode.star.api.pojos.agent.res.ExecuteRes;
+import com.isxcode.star.api.pojos.agent.res.GetDataRes;
+import com.isxcode.star.api.pojos.agent.res.GetLogRes;
+import com.isxcode.star.api.pojos.agent.res.GetStatusRes;
 import com.isxcode.star.api.pojos.work.req.AddWorkReq;
 import com.isxcode.star.api.pojos.work.req.ConfigWorkReq;
 import com.isxcode.star.api.pojos.work.res.GetWorkRes;
@@ -36,4 +39,10 @@ public interface WorkMapper {
       WorkEntity workEntity, WorkConfigEntity workConfigEntity);
 
   RunWorkRes executeResToRunWorkRes(ExecuteRes executeRes);
+
+  RunWorkRes getLogResToRunWorkRes(GetLogRes getLogRes);
+
+  RunWorkRes getDataResToRunWorkRes(GetDataRes getDataRes);
+
+  RunWorkRes getStatusToRunWorkRes(GetStatusRes getStatusRes);
 }

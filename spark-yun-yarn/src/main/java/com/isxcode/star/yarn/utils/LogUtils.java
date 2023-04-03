@@ -76,11 +76,14 @@ public class LogUtils {
                 Map.class);
     Map<String, Map<String, Object>> appMap =
         (Map<String, Map<String, Object>>) appInfoMap.get("app");
+    log.info("appInfoMap {}", appInfoMap);
+    log.info("appMap {}", appMap);
     String amContainerLogsUrl = String.valueOf(appMap.get("amContainerLogs"));
 
     // 使用jsoup解析日志网页
     Document doc;
     try {
+      log.info("amContainerLogsUrl:{}", amContainerLogsUrl);
       doc = Jsoup.connect(amContainerLogsUrl).get();
     } catch (IOException e) {
       throw new RuntimeException(e);

@@ -68,11 +68,7 @@ public class Execute {
 
   public static void main(String[] args) {
 
-    //    PluginReq pluginReq = parse(args);
-    //
-    //    checkRequest(pluginReq);
-
-    PluginReq pluginReq = new PluginReq();
+    PluginReq pluginReq = parse(args);
 
     SparkSession sparkSession = initSparkSession(pluginReq);
 

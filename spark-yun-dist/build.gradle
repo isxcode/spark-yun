@@ -10,11 +10,22 @@ dependencies {
   // spark-streaming-kafka
   implementation "org.apache.spark:spark-streaming-kafka-0-10_${SPARK_SCALA_VERSION}:${SPARK_KAFKA_VERSION}"
 
+  // fastjson2
+  implementation "com.alibaba.fastjson2:fastjson2:${FASTJSON_VERSION}"
+
+  // fastjson2-extension
+  implementation "com.alibaba.fastjson2:fastjson2-extension:${FASTJSON_VERSION}"
+
   api(project(':spark-yun-api'))
 }
 
 // 复制依赖
 task copyLib(type: Copy) {
+  def dependencies = configurations.runtimeClasspath.findAll { it.name.contains('fastjson2') }
+  dependencies.each { dependency ->
+    from dependency
+    into 'build/lib'
+  }
   from configurations.runtimeClasspath.find { it.name.contains('fastjson') }
   from configurations.runtimeClasspath.find { it.name.contains('spark-streaming-kafka') }
   from configurations.runtimeClasspath.find { it.name.contains('spark-yun-api') }

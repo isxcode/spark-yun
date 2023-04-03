@@ -15,4 +15,10 @@ public class RunWorkRes {
   private List<List<String>> data;
 
   private String applicationId;
+
+  private String yarnApplicationState;
+
+  private String finalApplicationStatus;
+
+  private String trackingUrl;
 }

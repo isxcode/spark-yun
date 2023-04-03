@@ -5,6 +5,9 @@ import static java.sql.DriverManager.getConnection;
 import com.isxcode.star.api.pojos.agent.req.ExecuteReq;
 import com.isxcode.star.api.pojos.agent.req.PluginReq;
 import com.isxcode.star.api.pojos.agent.res.ExecuteRes;
+import com.isxcode.star.api.pojos.agent.res.GetDataRes;
+import com.isxcode.star.api.pojos.agent.res.GetLogRes;
+import com.isxcode.star.api.pojos.agent.res.GetStatusRes;
 import com.isxcode.star.api.pojos.work.req.AddWorkReq;
 import com.isxcode.star.api.pojos.work.req.ConfigWorkReq;
 import com.isxcode.star.api.pojos.work.res.GetWorkRes;
@@ -30,6 +33,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -98,8 +102,103 @@ public class WorkBizService {
       case "sparkSql":
         return sparkSql(workEntity.getWorkConfigId());
       default:
-        return new RunWorkRes("执行失败", "作业类型暂不支持", null, null);
+        return new RunWorkRes("执行失败", "作业类型暂不支持", null, null, null, null, null);
     }
+  }
+
+  public RunWorkRes getData(String workId, String applicationId) {
+
+    WorkEntity workEntity = workRepository.findById(workId).get();
+
+    WorkConfigEntity workConfigEntity =
+        workConfigRepository.findById(workEntity.getWorkConfigId()).get();
+
+    NodeEntity node = nodeRepository.findAllByEngineId(workConfigEntity.getEngineId()).get(0);
+
+    GetDataRes getDataRes =
+        HttpUtils.doGet(
+            "http://"
+                + node.getHost()
+                + ":"
+                + "8080"
+                + "/agent/getData?applicationId="
+                + applicationId,
+            GetDataRes.class);
+
+    RunWorkRes dataResToRunWorkRes = workMapper.getDataResToRunWorkRes(getDataRes);
+    dataResToRunWorkRes.setApplicationId(applicationId);
+    return dataResToRunWorkRes;
+  }
+
+  public RunWorkRes getStatus(String workId, String applicationId) {
+
+    WorkEntity workEntity = workRepository.findById(workId).get();
+
+    WorkConfigEntity workConfigEntity =
+        workConfigRepository.findById(workEntity.getWorkConfigId()).get();
+
+    NodeEntity node = nodeRepository.findAllByEngineId(workConfigEntity.getEngineId()).get(0);
+
+    GetStatusRes getStatusRes =
+        HttpUtils.doGet(
+            "http://"
+                + node.getHost()
+                + ":"
+                + "8080"
+                + "/agent/getStatus?applicationId="
+                + applicationId,
+            GetStatusRes.class);
+
+    RunWorkRes statusToRunWorkRes = workMapper.getStatusToRunWorkRes(getStatusRes);
+    statusToRunWorkRes.setApplicationId(applicationId);
+
+    return statusToRunWorkRes;
+  }
+
+  public RunWorkRes stopJob(String workId, String applicationId) {
+
+    WorkEntity workEntity = workRepository.findById(workId).get();
+
+    WorkConfigEntity workConfigEntity =
+        workConfigRepository.findById(workEntity.getWorkConfigId()).get();
+
+    NodeEntity node = nodeRepository.findAllByEngineId(workConfigEntity.getEngineId()).get(0);
+
+    Map map =
+        HttpUtils.doGet(
+            "http://"
+                + node.getHost()
+                + ":"
+                + "8080"
+                + "/agent/stopJob?applicationId="
+                + applicationId,
+            Map.class);
+
+    return new RunWorkRes("提交成功", "", null, applicationId, null, null, null);
+  }
+
+  public RunWorkRes getWorkLog(String workId, String applicationId) {
+
+    WorkEntity workEntity = workRepository.findById(workId).get();
+
+    WorkConfigEntity workConfigEntity =
+        workConfigRepository.findById(workEntity.getWorkConfigId()).get();
+
+    NodeEntity node = nodeRepository.findAllByEngineId(workConfigEntity.getEngineId()).get(0);
+
+    GetLogRes getLogRes =
+        HttpUtils.doGet(
+            "http://"
+                + node.getHost()
+                + ":"
+                + "8080"
+                + "/agent/getLog?applicationId="
+                + applicationId,
+            GetLogRes.class);
+
+    RunWorkRes logResToRunWorkRes = workMapper.getLogResToRunWorkRes(getLogRes);
+    logResToRunWorkRes.setApplicationId(applicationId);
+    return logResToRunWorkRes;
   }
 
   public RunWorkRes executeSql(String workConfigId) throws ClassNotFoundException {
@@ -122,7 +221,7 @@ public class WorkBizService {
         Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
         break;
       default:
-        return new RunWorkRes("暂不支持数据源", "暂不支持数据源", null, null);
+        return new RunWorkRes("暂不支持数据源", "暂不支持数据源", null, null, null, null, null);
     }
 
     try (Connection connection =
@@ -132,10 +231,10 @@ public class WorkBizService {
                 datasourceEntity.getPasswd());
         Statement statement = connection.createStatement(); ) {
       statement.execute(workConfigEntity.getScript());
-      return new RunWorkRes("提交成功", "执行成功", null, null);
+      return new RunWorkRes("提交成功", "", null, null, null, null, null);
     } catch (Exception e) {
       log.error(e.getMessage());
-      return new RunWorkRes("执行失败", e.getMessage(), null, null);
+      return new RunWorkRes("执行失败", e.getMessage(), null, null, null, null, null);
     }
   }
 
@@ -145,7 +244,7 @@ public class WorkBizService {
     WorkConfigEntity workConfigEntity = workConfigRepository.findById(workConfigId).get();
 
     if (Strings.isEmpty(workConfigEntity.getDatasourceId())) {
-      return new RunWorkRes("执行失败", "请先在配置中选择数据源", null, null);
+      return new RunWorkRes("执行失败", "请先在配置中选择数据源", null, null, null, null, null);
     }
 
     // 获取数据源信息
@@ -163,7 +262,7 @@ public class WorkBizService {
         Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
         break;
       default:
-        return new RunWorkRes("暂不支持数据源", "暂不支持数据源", null, null);
+        return new RunWorkRes("暂不支持数据源", "暂不支持数据源", null, null, null, null, null);
     }
 
     List<List<String>> result = new ArrayList<>();
@@ -192,10 +291,10 @@ public class WorkBizService {
         }
         result.add(metaList);
       }
-      return new RunWorkRes("提交成功", "查询成功", result, null);
+      return new RunWorkRes("提交成功", "", result, null, null, null, null);
     } catch (Exception e) {
       log.error(e.getMessage());
-      return new RunWorkRes("查询失败", e.getMessage(), null, null);
+      return new RunWorkRes("查询失败", e.getMessage(), null, null, null, null, null);
     }
   }
 
@@ -237,7 +336,7 @@ public class WorkBizService {
     WorkConfigEntity workConfigEntity = workConfigRepository.findById(workConfigId).get();
 
     if (Strings.isEmpty(workConfigEntity.getEngineId())) {
-      return new RunWorkRes("执行失败", "请先在配置中选择计算引擎", null, null);
+      return new RunWorkRes("执行失败", "请先在配置中选择计算引擎", null, null, null, null, null);
     }
 
     // 找到可用的计算节点
@@ -246,7 +345,7 @@ public class WorkBizService {
     List<NodeEntity> allNodes = nodeRepository.findAllByEngineId(engine.getId());
 
     if (allNodes.size() < 1) {
-      return new RunWorkRes("执行失败", "可用计算节点为0", null, null);
+      return new RunWorkRes("执行失败", "可用计算节点为0", null, null, null, null, null);
     }
 
     NodeEntity node = allNodes.get(0);
@@ -272,9 +371,11 @@ public class WorkBizService {
               executeReq,
               ExecuteRes.class);
     } catch (IOException e) {
-      return new RunWorkRes("执行失败", "提交作业失败", null, null);
+      return new RunWorkRes("执行失败", "提交作业失败", null, null, null, null, null);
     }
 
-    return workMapper.executeResToRunWorkRes(executeRes);
+    RunWorkRes runWorkRes = workMapper.executeResToRunWorkRes(executeRes);
+    runWorkRes.setLog("");
+    return runWorkRes;
   }
 }

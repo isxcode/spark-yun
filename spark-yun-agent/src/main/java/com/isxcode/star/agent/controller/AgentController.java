@@ -44,14 +44,14 @@ public class AgentController {
   }
 
   /** 获取数据成功. */
-  @PostMapping("/getData")
+  @GetMapping("/getData")
   public GetDataRes getData(@RequestParam String applicationId) {
 
     return agentBizService.getData(applicationId);
   }
 
   /** 停止作业成功. */
-  @PostMapping("/stopJob")
+  @GetMapping("/stopJob")
   public void stopJob(@RequestParam String applicationId) {
 
     agentBizService.stopJob(applicationId);

@@ -129,7 +129,8 @@ public class AgentBizService {
 
     return new GetStatusRes(
         String.valueOf(applicationReport.getYarnApplicationState()),
-        String.valueOf(applicationReport.getFinalApplicationStatus()));
+        String.valueOf(applicationReport.getFinalApplicationStatus()),
+        String.valueOf(applicationReport.getTrackingUrl()));
   }
 
   public GetLogRes getLog(String applicationId) {

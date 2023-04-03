@@ -64,6 +64,35 @@ public class WorkflowController {
     return workBizService.runWork(workId);
   }
 
+  /** 查询日志. */
+  @GetMapping("/getWorkLog")
+  public RunWorkRes getWorkLog(@RequestParam String workId, @RequestParam String applicationId) {
+
+    return workBizService.getWorkLog(workId, applicationId);
+  }
+
+  /** 查询数据. */
+  @GetMapping("/getData")
+  public RunWorkRes getData(@RequestParam String workId, @RequestParam String applicationId)
+      throws ClassNotFoundException {
+
+    return workBizService.getData(workId, applicationId);
+  }
+
+  /** 中止作业. */
+  @GetMapping("/stopJob")
+  public RunWorkRes stopJob(@RequestParam String workId, @RequestParam String applicationId) {
+
+    return workBizService.stopJob(workId, applicationId);
+  }
+
+  /** 获取状态. */
+  @GetMapping("/getStatus")
+  public RunWorkRes getStatus(@RequestParam String workId, @RequestParam String applicationId) {
+
+    return workBizService.getStatus(workId, applicationId);
+  }
+
   /** 保存配置. */
   @PostMapping("/configWork")
   public void configWork(@RequestBody ConfigWorkReq configWorkReq) {

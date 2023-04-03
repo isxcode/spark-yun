@@ -57,7 +57,15 @@ function Work () {
     workflowId: ''
   })
   const [workScript, setWorkScript] = useState('')
-  const [result, setResult] = useState({ message: '', log: '', data: [[]] })
+  const [result, setResult] = useState({
+    message: '',
+    log: '',
+    data: [[]],
+    applicationId: '',
+    yarnApplicationState: '',
+    finalApplicationStatus: '',
+    trackingUrl: ''
+  })
   const handleInputChange = (value) => {
     setWorkScript(value)
   }
@@ -75,6 +83,58 @@ function Work () {
         setWork(response.data)
         setWorkScript(response.data.script)
       })
+      .catch(function (error) {
+        message.error(error.response.data.message)
+      })
+  }
+
+  const getWorkLog = () => {
+    axios({
+      method: 'get',
+      url:
+        process.env.API_PREFIX_URL + '/workflow/getWorkLog?workId=' + workId + '&applicationId=' + result.applicationId
+    })
+      .then(function (response) {
+        setResult(response.data)
+      })
+      .catch(function (error) {
+        message.error(error.response.data.message)
+      })
+  }
+
+  const getWorkData = () => {
+    axios({
+      method: 'get',
+      url: process.env.API_PREFIX_URL + '/workflow/getData?workId=' + workId + '&applicationId=' + result.applicationId
+    })
+      .then(function (response) {
+        setResult(response.data)
+      })
+      .catch(function (error) {
+        message.error(error.response.data.message)
+      })
+  }
+
+  const getWorkStatus = () => {
+    axios({
+      method: 'get',
+      url:
+        process.env.API_PREFIX_URL + '/workflow/getStatus?workId=' + workId + '&applicationId=' + result.applicationId
+    })
+      .then(function (response) {
+        setResult(response.data)
+      })
+      .catch(function (error) {
+        message.error(error.response.data.message)
+      })
+  }
+
+  const getStopWork = () => {
+    axios({
+      method: 'get',
+      url: process.env.API_PREFIX_URL + '/workflow/stopJob?workId=' + workId + '&applicationId=' + result.applicationId
+    })
+      .then(function (response) {})
       .catch(function (error) {
         message.error(error.response.data.message)
       })
@@ -130,7 +190,30 @@ function Work () {
       })
   }
 
-  const onChange = (key: string) => {}
+  const onChange = (key: string) => {
+    switch (key) {
+      case '2':
+        if (work.type === 'sparkSql') {
+          // 查询日志
+          getWorkLog()
+        }
+        break
+      case '3':
+        if (work.type === 'sparkSql') {
+          // 查询数据
+          getWorkData()
+        }
+        break
+      case '4':
+      case '5':
+        if (work.type === 'sparkSql') {
+          // 查询数据
+          getWorkStatus()
+        }
+        break
+      default:
+    }
+  }
 
   const {
     token: { colorBgContainer, colorPrimary }
@@ -164,7 +247,7 @@ function Work () {
     {
       key: '2',
       label: '运行日志',
-      children: result.log
+      children: <div style={{ height: '280px', overflow: 'auto' }}>{result.log}</div>
     },
     {
       key: '3',
@@ -174,12 +257,17 @@ function Work () {
     {
       key: '4',
       label: '监控地址',
-      children: 'http://localhost:8888'
+      children: <div>trackingUrl:{result.trackingUrl}</div>
     },
     {
       key: '5',
       label: '运行状态',
-      children: '运行中'
+      children: (
+        <div>
+          <div>yarnApplicationState:{result.yarnApplicationState}</div>
+          <div>finalApplicationStatus:{result.finalApplicationStatus}</div>
+        </div>
+      )
     }
   ]
 
@@ -268,7 +356,12 @@ function Work () {
             }}>
             运行
           </Button>
-          <Button>中止</Button>
+          <Button
+            onClick={() => {
+              getStopWork()
+            }}>
+            中止
+          </Button>
           <Button>撤回</Button>
           <Button
             onClick={() => {

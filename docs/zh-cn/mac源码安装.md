@@ -44,4 +44,4 @@ docker run --name spark-yun -p 30111:8080 -d isxcode/spark-star:3.0.1
 
 ### 访问界面
 
-- http://192.168.115.103:30111
+- http://192.168.0.106:30111
