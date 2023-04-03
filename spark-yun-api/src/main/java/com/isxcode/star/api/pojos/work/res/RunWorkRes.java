@@ -13,4 +13,6 @@ public class RunWorkRes {
   private String log;
 
   private List<List<String>> data;
+
+  private String applicationId;
 }

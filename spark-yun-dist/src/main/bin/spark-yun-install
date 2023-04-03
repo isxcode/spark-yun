@@ -1,4 +1,13 @@
 #!/bin/bash
 
-rm -rf ~/spark-yun-agent && mkdir ~/spark-yun-agent && tar -vxf ~/spark-yun-agent.tar.gz -C ~/spark-yun-agent/ && rm -rf /tmp/spark-yun-agent/log/ && mkdir /tmp/spark-yun-agent/log/ && touch /tmp/spark-yun-agent/log/spark-yun-agent.log && nohup java -jar -Xmx2048m ~/spark-yun-agent/lib/spark-yun-agent.jar >> /tmp/spark-yun-agent/log/spark-yun-agent.log &
+rm -rf ~/spark-yun-agent && mkdir ~/spark-yun-agent
+echo "创建spark-yun-agent文件夹"
+
+tar -vxf ~/spark-yun-agent.tar.gz -C ~/spark-yun-agent/
+echo "解压文件"
+
+bash ~/spark-yun-agent/bin/spark-yun-start
+echo "执行spark-yun-start启动脚本"
+
 rm ~/spark-yun-agent.tar.gz && rm ~/spark-yun-install
+echo "安装完成，删除多余的文件"

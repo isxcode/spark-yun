@@ -1,9 +1,11 @@
 package com.isxcode.star.backend.module.workflow.mapper;
 
+import com.isxcode.star.api.pojos.agent.res.ExecuteRes;
 import com.isxcode.star.api.pojos.work.req.AddWorkReq;
 import com.isxcode.star.api.pojos.work.req.ConfigWorkReq;
 import com.isxcode.star.api.pojos.work.res.GetWorkRes;
 import com.isxcode.star.api.pojos.work.res.QueryWorkRes;
+import com.isxcode.star.api.pojos.work.res.RunWorkRes;
 import com.isxcode.star.backend.module.workflow.entity.WorkConfigEntity;
 import com.isxcode.star.backend.module.workflow.entity.WorkEntity;
 import java.util.List;
@@ -32,4 +34,6 @@ public interface WorkMapper {
   @Mapping(target = "workflowId", source = "workEntity.workflowId")
   GetWorkRes workEntityAndWorkConfigEntityToGetWorkRes(
       WorkEntity workEntity, WorkConfigEntity workConfigEntity);
+
+  RunWorkRes executeResToRunWorkRes(ExecuteRes executeRes);
 }

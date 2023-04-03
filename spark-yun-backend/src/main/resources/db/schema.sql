@@ -72,7 +72,8 @@ create table if not exists sy_works
   label            varchar(100) null,
   type             varchar(100) null,
   work_config_id   varchar(100) null,
-  create_date_time datetime     null
+  create_date_time datetime     null,
+  workflow_id      varchar(100) null
 );
 
 create table if not exists sy_work_configs

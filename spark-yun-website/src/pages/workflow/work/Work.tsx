@@ -28,10 +28,16 @@ interface WorkType {
   name: string
   workflowId: string
   datasourceId: string
+  engineId: string
   type: string
 }
 
 interface Datasource {
+  id: string
+  name: string
+}
+
+interface Engine {
   id: string
   name: string
 }
@@ -42,7 +48,14 @@ function Work () {
 
   const { workId } = useParams()
 
-  const [work, setWork] = useState<WorkType>({ type: '', datasourceId: '', name: '', script: '', workflowId: '' })
+  const [work, setWork] = useState<WorkType>({
+    engineId: '',
+    type: '',
+    datasourceId: '',
+    name: '',
+    script: '',
+    workflowId: ''
+  })
   const [workScript, setWorkScript] = useState('')
   const [result, setResult] = useState({ message: '', log: '', data: [[]] })
   const handleInputChange = (value) => {
@@ -67,14 +80,15 @@ function Work () {
       })
   }
 
-  const configWorkDatasource = (datasourceId) => {
+  const configWorkDatasource = (value) => {
     axios({
       method: 'post',
       url: process.env.API_PREFIX_URL + '/workflow/configWork',
       data: {
         workId,
         script: workScript,
-        datasourceId
+        datasourceId: value.datasourceId,
+        engineId: value.engineId
       }
     })
       .then(function (response) {
@@ -171,6 +185,7 @@ function Work () {
 
   const [open, setOpen] = useState(false)
   const [datasource, setDatasource] = useState<Datasource[]>([])
+  const [engine, setEngines] = useState<Engine[]>([])
 
   const queryDatasources = () => {
     axios({
@@ -185,9 +200,23 @@ function Work () {
       })
   }
 
+  const queryEngines = () => {
+    axios({
+      method: 'get',
+      url: process.env.API_PREFIX_URL + '/engine/queryEngine'
+    })
+      .then(function (response) {
+        setEngines(response.data)
+      })
+      .catch(function (error) {
+        message.error(error.response.data.message)
+      })
+  }
+
   const showDrawer = () => {
     // 查询数据源
     queryDatasources()
+    queryEngines()
     setOpen(true)
   }
 
@@ -197,7 +226,7 @@ function Work () {
 
   const onFinish = (values: any) => {
     console.log('configWorkDatasource' + values)
-    configWorkDatasource(values.datasourceId)
+    configWorkDatasource(values)
   }
 
   const onFinishFailed = (errorInfo: any) => {
@@ -268,15 +297,29 @@ function Work () {
           onFinishFailed={onFinishFailed}
           autoComplete="off"
           form={form}>
-          <Form.Item name="datasourceId" label="数据源" rules={[{ required: true }]}>
-            <Select defaultValue={work.datasourceId} placeholder="" onChange={onGenderChange} allowClear>
-              {datasource.map((option) => (
-                <Option key={option.id} value={option.id}>
-                  {option.name}
-                </Option>
-              ))}
-            </Select>
-          </Form.Item>
+          {work.type === 'sparkSql'
+            ? (
+            <Form.Item name="engineId" label="计算引擎" rules={[{ required: true }]}>
+              <Select defaultValue={work.engineId} placeholder="" allowClear>
+                {engine.map((option) => (
+                  <Option key={option.id} value={option.id}>
+                    {option.name}
+                  </Option>
+                ))}
+              </Select>
+            </Form.Item>
+              )
+            : (
+            <Form.Item name="datasourceId" label="数据源" rules={[{ required: true }]}>
+              <Select defaultValue={work.datasourceId} placeholder="" allowClear>
+                {datasource.map((option) => (
+                  <Option key={option.id} value={option.id}>
+                    {option.name}
+                  </Option>
+                ))}
+              </Select>
+            </Form.Item>
+              )}
 
           <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
             <Button type="primary" htmlType="submit">

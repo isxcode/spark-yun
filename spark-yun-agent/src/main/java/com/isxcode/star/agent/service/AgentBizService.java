@@ -25,7 +25,6 @@ import org.apache.hadoop.yarn.api.records.ApplicationReport;
 import org.apache.hadoop.yarn.client.api.YarnClient;
 import org.apache.hadoop.yarn.conf.YarnConfiguration;
 import org.apache.hadoop.yarn.exceptions.YarnException;
-import org.apache.logging.log4j.util.Strings;
 import org.apache.spark.launcher.SparkAppHandle;
 import org.apache.spark.launcher.SparkLauncher;
 import org.springframework.stereotype.Service;
@@ -37,32 +36,13 @@ public class AgentBizService {
 
   public ExecuteRes execute(ExecuteReq executeReq) {
 
-    // 获取hadoop环境变量
-    String hadoopConfDir = System.getenv("HADOOP_HOME");
-    Configuration hadoopConf = new Configuration(false);
-    Path path =
-        Paths.get(
-            hadoopConfDir
-                + File.separator
-                + "etc"
-                + File.separator
-                + "hadoop"
-                + File.separator
-                + "yarn-site.xml");
-    try {
-      hadoopConf.addResource(Files.newInputStream(path));
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
-    YarnConfiguration yarnConf = new YarnConfiguration(hadoopConf);
-
     // 获取star目录位置
-    String starHomePath = "~/spark-yun-agent";
+    String starHomePath = executeReq.getHomePath() + "spark-yun-agent";
 
     // 封装launcher
     SparkLauncher sparkLauncher =
         new SparkLauncher()
-            .setSparkHome("")
+            .setSparkHome(executeReq.getHomePath() + "/spark-yun-agent/spark-min")
             .setMaster("yarn")
             .setDeployMode("cluster")
             .setAppName(executeReq.getAppName())
@@ -157,9 +137,9 @@ public class AgentBizService {
     Map<String, String> map = LogUtils.parseYarnLog(applicationId);
     String stdErrLog = map.get("stderr");
 
-    if (Strings.isEmpty(stdErrLog)) {
-      return new GetLogRes("查询失败", "作业日志暂未生成");
-    }
+    //    if (Strings.isEmpty(stdErrLog)) {
+    //      return new GetLogRes("查询失败", "作业日志暂未生成");
+    //    }
 
     return new GetLogRes("查询成功", stdErrLog);
   }
@@ -168,10 +148,10 @@ public class AgentBizService {
 
     Map<String, String> map = LogUtils.parseYarnLog(applicationId);
     String stdoutLog = map.get("stdout");
-
-    if (Strings.isEmpty(stdoutLog)) {
-      return new GetDataRes(null, "查询异常", "日志为空");
-    }
+    //
+    //    if (Strings.isEmpty(stdoutLog)) {
+    //      return new GetDataRes(null, "查询异常", "日志为空");
+    //    }
 
     List<List> lists = JSON.parseArray(stdoutLog, List.class);
 

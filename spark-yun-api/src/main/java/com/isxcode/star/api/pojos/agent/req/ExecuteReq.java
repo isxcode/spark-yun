@@ -12,4 +12,8 @@ public class ExecuteReq {
   private String appResourceName;
 
   private PluginReq pluginReq;
+
+  private String sql;
+
+  private String homePath;
 }

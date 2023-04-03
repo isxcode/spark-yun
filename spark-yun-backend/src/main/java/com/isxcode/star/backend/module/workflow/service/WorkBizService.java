@@ -2,23 +2,33 @@ package com.isxcode.star.backend.module.workflow.service;
 
 import static java.sql.DriverManager.getConnection;
 
+import com.isxcode.star.api.pojos.agent.req.ExecuteReq;
+import com.isxcode.star.api.pojos.agent.req.PluginReq;
+import com.isxcode.star.api.pojos.agent.res.ExecuteRes;
 import com.isxcode.star.api.pojos.work.req.AddWorkReq;
 import com.isxcode.star.api.pojos.work.req.ConfigWorkReq;
 import com.isxcode.star.api.pojos.work.res.GetWorkRes;
 import com.isxcode.star.api.pojos.work.res.QueryWorkRes;
 import com.isxcode.star.api.pojos.work.res.RunWorkRes;
+import com.isxcode.star.api.utils.HttpUtils;
 import com.isxcode.star.backend.module.datasource.entity.DatasourceEntity;
 import com.isxcode.star.backend.module.datasource.repository.DatasourceRepository;
+import com.isxcode.star.backend.module.engine.entity.EngineEntity;
+import com.isxcode.star.backend.module.engine.repository.EngineRepository;
+import com.isxcode.star.backend.module.node.entity.NodeEntity;
+import com.isxcode.star.backend.module.node.repository.NodeRepository;
 import com.isxcode.star.backend.module.workflow.entity.WorkConfigEntity;
 import com.isxcode.star.backend.module.workflow.entity.WorkEntity;
 import com.isxcode.star.backend.module.workflow.mapper.WorkMapper;
 import com.isxcode.star.backend.module.workflow.repository.WorkConfigRepository;
 import com.isxcode.star.backend.module.workflow.repository.WorkRepository;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -40,6 +50,10 @@ public class WorkBizService {
   private final DatasourceRepository datasourceRepository;
 
   private final WorkMapper workMapper;
+
+  private final EngineRepository engineRepository;
+
+  private final NodeRepository nodeRepository;
 
   public void addWork(AddWorkReq addWorkReq) {
 
@@ -81,8 +95,10 @@ public class WorkBizService {
         return executeSql(workEntity.getWorkConfigId());
       case "querySql":
         return querySql(workEntity.getWorkConfigId());
+      case "sparkSql":
+        return sparkSql(workEntity.getWorkConfigId());
       default:
-        return new RunWorkRes("执行失败", "作业类型暂不支持", null);
+        return new RunWorkRes("执行失败", "作业类型暂不支持", null, null);
     }
   }
 
@@ -106,7 +122,7 @@ public class WorkBizService {
         Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
         break;
       default:
-        return new RunWorkRes("暂不支持数据源", "暂不支持数据源", null);
+        return new RunWorkRes("暂不支持数据源", "暂不支持数据源", null, null);
     }
 
     try (Connection connection =
@@ -116,10 +132,10 @@ public class WorkBizService {
                 datasourceEntity.getPasswd());
         Statement statement = connection.createStatement(); ) {
       statement.execute(workConfigEntity.getScript());
-      return new RunWorkRes("提交成功", "执行成功", null);
+      return new RunWorkRes("提交成功", "执行成功", null, null);
     } catch (Exception e) {
       log.error(e.getMessage());
-      return new RunWorkRes("执行失败", e.getMessage(), null);
+      return new RunWorkRes("执行失败", e.getMessage(), null, null);
     }
   }
 
@@ -129,7 +145,7 @@ public class WorkBizService {
     WorkConfigEntity workConfigEntity = workConfigRepository.findById(workConfigId).get();
 
     if (Strings.isEmpty(workConfigEntity.getDatasourceId())) {
-      return new RunWorkRes("执行失败", "请先在配置中选择数据源", null);
+      return new RunWorkRes("执行失败", "请先在配置中选择数据源", null, null);
     }
 
     // 获取数据源信息
@@ -147,7 +163,7 @@ public class WorkBizService {
         Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
         break;
       default:
-        return new RunWorkRes("暂不支持数据源", "暂不支持数据源", null);
+        return new RunWorkRes("暂不支持数据源", "暂不支持数据源", null, null);
     }
 
     List<List<String>> result = new ArrayList<>();
@@ -176,10 +192,10 @@ public class WorkBizService {
         }
         result.add(metaList);
       }
-      return new RunWorkRes("提交成功", "查询成功", result);
+      return new RunWorkRes("提交成功", "查询成功", result, null);
     } catch (Exception e) {
       log.error(e.getMessage());
-      return new RunWorkRes("查询失败", e.getMessage(), null);
+      return new RunWorkRes("查询失败", e.getMessage(), null, null);
     }
   }
 
@@ -192,6 +208,10 @@ public class WorkBizService {
 
     if (!Strings.isEmpty(configWorkReq.getDatasourceId())) {
       workConfigEntity.setDatasourceId(configWorkReq.getDatasourceId());
+    }
+
+    if (!Strings.isEmpty(configWorkReq.getEngineId())) {
+      workConfigEntity.setEngineId(configWorkReq.getEngineId());
     }
 
     if (!Strings.isEmpty(configWorkReq.getScript())) {
@@ -209,5 +229,52 @@ public class WorkBizService {
         workConfigRepository.findById(workEntity.getWorkConfigId()).get();
 
     return workMapper.workEntityAndWorkConfigEntityToGetWorkRes(workEntity, workConfigEntity);
+  }
+
+  public RunWorkRes sparkSql(String workConfigId) {
+
+    // 查询配置
+    WorkConfigEntity workConfigEntity = workConfigRepository.findById(workConfigId).get();
+
+    if (Strings.isEmpty(workConfigEntity.getEngineId())) {
+      return new RunWorkRes("执行失败", "请先在配置中选择计算引擎", null, null);
+    }
+
+    // 找到可用的计算节点
+    EngineEntity engine = engineRepository.findById(workConfigEntity.getEngineId()).get();
+
+    List<NodeEntity> allNodes = nodeRepository.findAllByEngineId(engine.getId());
+
+    if (allNodes.size() < 1) {
+      return new RunWorkRes("执行失败", "可用计算节点为0", null, null);
+    }
+
+    NodeEntity node = allNodes.get(0);
+
+    // 调用远程接口
+    ExecuteReq executeReq = new ExecuteReq();
+    executeReq.setAppName("spark-star");
+    executeReq.setMainClass("com.isxcode.star.plugin.querysql.Execute");
+    executeReq.setAppResourceName("spark-query-sql-plugin-3.0.1-plain");
+    executeReq.setHomePath(node.getHomePath());
+
+    PluginReq pluginReq = new PluginReq();
+    pluginReq.setSql(workConfigEntity.getScript());
+    pluginReq.setLimit(200);
+    executeReq.setPluginReq(pluginReq);
+
+    ExecuteRes executeRes;
+    try {
+      executeRes =
+          HttpUtils.doPost(
+              "http://" + node.getHost() + ":" + "8080" + "/agent/execute",
+              new HashMap<>(),
+              executeReq,
+              ExecuteRes.class);
+    } catch (IOException e) {
+      return new RunWorkRes("执行失败", "提交作业失败", null, null);
+    }
+
+    return workMapper.executeResToRunWorkRes(executeRes);
   }
 }
