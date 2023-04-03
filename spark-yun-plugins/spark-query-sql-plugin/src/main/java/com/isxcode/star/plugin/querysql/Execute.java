@@ -72,7 +72,11 @@ public class Execute {
 
     SparkSession sparkSession = initSparkSession(pluginReq);
 
-    Dataset<Row> rowDataset = sparkSession.sql(pluginReq.getSql()).limit(pluginReq.getLimit());
+    String[] split = pluginReq.getSql().split(";");
+
+    sparkSession.sql(split[0]);
+
+    Dataset<Row> rowDataset = sparkSession.sql(split[1]).limit(pluginReq.getLimit());
 
     exportResult(rowDataset);
 

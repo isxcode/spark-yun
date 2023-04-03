@@ -81,5 +81,5 @@ create table if not exists sy_work_configs
   id            varchar(100) null,
   datasource_id varchar(100) null,
   engine_id     varchar(100) null,
-  script        varchar(100) null
+  script        varchar(2000) null
 );

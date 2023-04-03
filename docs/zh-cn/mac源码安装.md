@@ -24,6 +24,8 @@ git clone -b main https://gitee.com/isxcode/spark-yun.git
 
 ### 下载spark二进制
 
+> 在jars中提前下载好jdbc驱动
+
 ```bash
 nohup wget https://archive.apache.org/dist/spark/spark-3.1.1/spark-3.1.1-bin-hadoop3.2.tgz >> download_spark.log 2>&1 &  
 tail -f download_spark.log
