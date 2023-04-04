@@ -20,7 +20,5 @@ echo "进入spark-yun-agent"+"${BASE_PATH}"
 # 启动项目
 STAR_APP="${BASE_PATH}"/../lib/spark-yun-agent.jar
 STAR_LOG="${BASE_PATH}"/../log/spark-yun-agent.log
-export HADOOP_CONF_DIR=/opt/homebrew/Cellar/hadoop/3.3.4/libexec/etc/hadoop
-export HADOOP_HOME=/opt/homebrew/Cellar/hadoop/3.3.4/libexec
 nohup java -jar -Xmx2048m "${STAR_APP}" >> "${STAR_LOG}" 2>&1 &
 echo "启动项目"

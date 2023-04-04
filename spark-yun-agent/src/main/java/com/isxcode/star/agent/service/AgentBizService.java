@@ -92,8 +92,8 @@ public class AgentBizService {
       throw new RuntimeException(e);
     }
 
-    // 默认10秒超时
-    long timeoutExpiredMs = System.currentTimeMillis() + 10000;
+    // 默认60秒超时
+    long timeoutExpiredMs = System.currentTimeMillis() + 60000;
     String applicationId;
     while (!SparkAppHandle.State.RUNNING.equals(sparkAppHandle.getState())) {
 
