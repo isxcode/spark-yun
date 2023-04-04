@@ -29,7 +29,7 @@ git clone -b main https://gitee.com/isxcode/spark-yun.git
 ```bash
 nohup wget https://archive.apache.org/dist/spark/spark-3.1.1/spark-3.1.1-bin-hadoop3.2.tgz >> download_spark.log 2>&1 &  
 tail -f download_spark.log
-tar vzxf spark-3.1.1-bin-hadoop3.2.tgz -C /opt/
+tar vzxf spark-3.1.1-bin-hadoop3.2.tgz -C /tmp/
 ```
 
 ### 镜像打包
@@ -41,7 +41,7 @@ tar vzxf spark-3.1.1-bin-hadoop3.2.tgz -C /opt/
 ### 启动容器
 
 ```bash
-docker run --name spark-yun -p 30111:8080 -d isxcode/spark-star:3.0.1
+docker run --name spark-yun -p 30111:8080 -d isxcode/zhiqingyun:0.0.1
 ```
 
 ### 访问界面
