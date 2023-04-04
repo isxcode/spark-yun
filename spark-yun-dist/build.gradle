@@ -37,7 +37,7 @@ tasks.register('buildAgentPackage', Tar) {
   mustRunAfter(':spark-yun-plugins:spark-query-sql-plugin:build')
   dependsOn('copyLib')
   archiveFileName = 'spark-yun-agent.tar.gz'
-  from('/opt/spark-3.1.1-bin-hadoop3.2') {
+  from('/tmp/spark-3.1.1-bin-hadoop3.2') {
     into 'spark-min'
   }
   from('src/main/bin') {
