@@ -3,17 +3,14 @@ dependencies {
   // spark-yun-api
   api(project(':spark-yun-api'))
 
+  // spark-yun-common
+  api(project(':spark-yun-common'))
+
   // spark-yun-yarn
   api(project(':spark-yun-yarn'))
 
-  // spring web
-  implementation "org.springframework.boot:spring-boot-starter-web"
-
   // spark-core
   implementation "org.apache.spark:spark-core_${SPARK_SCALA_VERSION}:${SPARK_VERSION}"
-
-  // spark-sql
-  implementation "org.apache.spark:spark-sql_${SPARK_SCALA_VERSION}:${SPARK_VERSION}"
 
   // spark-yarn
   implementation "org.apache.spark:spark-yarn_${SPARK_SCALA_VERSION}:${SPARK_VERSION}"
@@ -21,14 +18,6 @@ dependencies {
   // spark-launcher
   implementation "org.apache.spark:spark-launcher_${SPARK_SCALA_VERSION}:${SPARK_VERSION}"
 
-  // janino
-  implementation "org.codehaus.janino:janino:3.0.8"
-
   // hadoop-yarn-client
   implementation "org.apache.hadoop:hadoop-yarn-client:${HADOOP_VERSION}"
-
-}
-
-bootJar {
-  archiveName "spark-yun-agent.jar"
 }

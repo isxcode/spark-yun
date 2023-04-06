@@ -21,6 +21,7 @@ dependencies {
 
 // 复制依赖
 task copyLib(type: Copy) {
+  dependsOn("spark-yun-api:jar")
   def dependencies = configurations.runtimeClasspath.findAll { it.name.contains('fastjson2') }
   dependencies.each { dependency ->
     from dependency

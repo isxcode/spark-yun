@@ -1,9 +1,9 @@
 package com.isxcode.star.backend.module.workflow.mapper;
 
-import com.isxcode.star.api.pojos.agent.res.ExecuteRes;
-import com.isxcode.star.api.pojos.agent.res.GetDataRes;
-import com.isxcode.star.api.pojos.agent.res.GetLogRes;
-import com.isxcode.star.api.pojos.agent.res.GetStatusRes;
+import com.isxcode.star.api.pojos.yun.agent.res.YagExecuteWorkRes;
+import com.isxcode.star.api.pojos.yun.agent.res.YagGetDataRes;
+import com.isxcode.star.api.pojos.yun.agent.res.YagGetLogRes;
+import com.isxcode.star.api.pojos.yun.agent.res.YagGetStatusRes;
 import com.isxcode.star.api.pojos.work.req.AddWorkReq;
 import com.isxcode.star.api.pojos.work.req.ConfigWorkReq;
 import com.isxcode.star.api.pojos.work.res.GetWorkRes;
@@ -38,11 +38,11 @@ public interface WorkMapper {
   GetWorkRes workEntityAndWorkConfigEntityToGetWorkRes(
       WorkEntity workEntity, WorkConfigEntity workConfigEntity);
 
-  RunWorkRes executeResToRunWorkRes(ExecuteRes executeRes);
+  RunWorkRes executeResToRunWorkRes(YagExecuteWorkRes executeRes);
 
-  RunWorkRes getLogResToRunWorkRes(GetLogRes getLogRes);
+  RunWorkRes getLogResToRunWorkRes(YagGetLogRes getLogRes);
 
-  RunWorkRes getDataResToRunWorkRes(GetDataRes getDataRes);
+  RunWorkRes getDataResToRunWorkRes(YagGetDataRes getDataRes);
 
-  RunWorkRes getStatusToRunWorkRes(GetStatusRes getStatusRes);
+  RunWorkRes getStatusToRunWorkRes(YagGetStatusRes getStatusRes);
 }

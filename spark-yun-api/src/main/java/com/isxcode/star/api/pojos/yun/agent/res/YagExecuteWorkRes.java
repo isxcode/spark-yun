@@ -1,4 +1,4 @@
-package com.isxcode.star.api.pojos.agent.res;
+package com.isxcode.star.api.pojos.yun.agent.res;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class HeartCheckRes {
+public class YagExecuteWorkRes {
 
-  private String status;
+  private String applicationId;
 }

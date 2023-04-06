@@ -1,4 +1,4 @@
-package com.isxcode.star.api.pojos.agent.req;
+package com.isxcode.star.api.pojos.plugin.req;
 
 import java.util.HashMap;
 import java.util.Map;

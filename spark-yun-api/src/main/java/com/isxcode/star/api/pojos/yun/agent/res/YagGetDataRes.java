@@ -1,5 +1,6 @@
-package com.isxcode.star.api.pojos.agent.res;
+package com.isxcode.star.api.pojos.yun.agent.res;
 
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -7,9 +8,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class GetLogRes {
+public class YagGetDataRes {
 
-  private String message;
-
-  private String log;
+  private List<List> data;
 }

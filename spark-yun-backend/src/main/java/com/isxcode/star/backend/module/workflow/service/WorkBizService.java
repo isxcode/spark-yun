@@ -2,12 +2,12 @@ package com.isxcode.star.backend.module.workflow.service;
 
 import static java.sql.DriverManager.getConnection;
 
-import com.isxcode.star.api.pojos.agent.req.ExecuteReq;
-import com.isxcode.star.api.pojos.agent.req.PluginReq;
-import com.isxcode.star.api.pojos.agent.res.ExecuteRes;
-import com.isxcode.star.api.pojos.agent.res.GetDataRes;
-import com.isxcode.star.api.pojos.agent.res.GetLogRes;
-import com.isxcode.star.api.pojos.agent.res.GetStatusRes;
+import com.isxcode.star.api.pojos.yun.agent.req.YagExecuteWorkReq;
+import com.isxcode.star.api.pojos.plugin.req.PluginReq;
+import com.isxcode.star.api.pojos.yun.agent.res.YagExecuteWorkRes;
+import com.isxcode.star.api.pojos.yun.agent.res.YagGetDataRes;
+import com.isxcode.star.api.pojos.yun.agent.res.YagGetLogRes;
+import com.isxcode.star.api.pojos.yun.agent.res.YagGetStatusRes;
 import com.isxcode.star.api.pojos.work.req.AddWorkReq;
 import com.isxcode.star.api.pojos.work.req.ConfigWorkReq;
 import com.isxcode.star.api.pojos.work.res.GetWorkRes;
@@ -115,7 +115,7 @@ public class WorkBizService {
 
     NodeEntity node = nodeRepository.findAllByEngineId(workConfigEntity.getEngineId()).get(0);
 
-    GetDataRes getDataRes =
+    YagGetDataRes getDataRes =
         HttpUtils.doGet(
             "http://"
                 + node.getHost()
@@ -123,7 +123,7 @@ public class WorkBizService {
                 + "8080"
                 + "/agent/getData?applicationId="
                 + applicationId,
-            GetDataRes.class);
+            YagGetDataRes.class);
 
     RunWorkRes dataResToRunWorkRes = workMapper.getDataResToRunWorkRes(getDataRes);
     dataResToRunWorkRes.setApplicationId(applicationId);
@@ -139,7 +139,7 @@ public class WorkBizService {
 
     NodeEntity node = nodeRepository.findAllByEngineId(workConfigEntity.getEngineId()).get(0);
 
-    GetStatusRes getStatusRes =
+    YagGetStatusRes getStatusRes =
         HttpUtils.doGet(
             "http://"
                 + node.getHost()
@@ -147,7 +147,7 @@ public class WorkBizService {
                 + "8080"
                 + "/agent/getStatus?applicationId="
                 + applicationId,
-            GetStatusRes.class);
+            YagGetStatusRes.class);
 
     RunWorkRes statusToRunWorkRes = workMapper.getStatusToRunWorkRes(getStatusRes);
     statusToRunWorkRes.setApplicationId(applicationId);
@@ -186,7 +186,7 @@ public class WorkBizService {
 
     NodeEntity node = nodeRepository.findAllByEngineId(workConfigEntity.getEngineId()).get(0);
 
-    GetLogRes getLogRes =
+    YagGetLogRes getLogRes =
         HttpUtils.doGet(
             "http://"
                 + node.getHost()
@@ -194,7 +194,7 @@ public class WorkBizService {
                 + "8080"
                 + "/agent/getLog?applicationId="
                 + applicationId,
-            GetLogRes.class);
+            YagGetLogRes.class);
 
     RunWorkRes logResToRunWorkRes = workMapper.getLogResToRunWorkRes(getLogRes);
     logResToRunWorkRes.setApplicationId(applicationId);
@@ -351,7 +351,7 @@ public class WorkBizService {
     NodeEntity node = allNodes.get(0);
 
     // 调用远程接口
-    ExecuteReq executeReq = new ExecuteReq();
+    YagExecuteWorkReq executeReq = new YagExecuteWorkReq();
     executeReq.setAppName("spark-star");
     executeReq.setMainClass("com.isxcode.star.plugin.querysql.Execute");
     executeReq.setAppResourceName("spark-query-sql-plugin-3.0.1-plain");
@@ -362,14 +362,14 @@ public class WorkBizService {
     pluginReq.setLimit(200);
     executeReq.setPluginReq(pluginReq);
 
-    ExecuteRes executeRes;
+    YagExecuteWorkRes executeRes;
     try {
       executeRes =
           HttpUtils.doPost(
               "http://" + node.getHost() + ":" + "8080" + "/agent/execute",
               new HashMap<>(),
               executeReq,
-              ExecuteRes.class);
+              YagExecuteWorkRes.class);
     } catch (IOException e) {
       return new RunWorkRes("执行失败", "提交作业失败", null, null, null, null, null);
     }
