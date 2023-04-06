@@ -2,24 +2,24 @@ package com.isxcode.star.backend.module.workflow.service;
 
 import static java.sql.DriverManager.getConnection;
 
-import com.isxcode.star.api.pojos.yun.agent.req.YagExecuteWorkReq;
 import com.isxcode.star.api.pojos.plugin.req.PluginReq;
-import com.isxcode.star.api.pojos.yun.agent.res.YagExecuteWorkRes;
-import com.isxcode.star.api.pojos.yun.agent.res.YagGetDataRes;
-import com.isxcode.star.api.pojos.yun.agent.res.YagGetLogRes;
-import com.isxcode.star.api.pojos.yun.agent.res.YagGetStatusRes;
 import com.isxcode.star.api.pojos.work.req.AddWorkReq;
 import com.isxcode.star.api.pojos.work.req.ConfigWorkReq;
 import com.isxcode.star.api.pojos.work.res.GetWorkRes;
 import com.isxcode.star.api.pojos.work.res.QueryWorkRes;
 import com.isxcode.star.api.pojos.work.res.RunWorkRes;
+import com.isxcode.star.api.pojos.yun.agent.req.YagExecuteWorkReq;
+import com.isxcode.star.api.pojos.yun.agent.res.YagExecuteWorkRes;
+import com.isxcode.star.api.pojos.yun.agent.res.YagGetDataRes;
+import com.isxcode.star.api.pojos.yun.agent.res.YagGetLogRes;
+import com.isxcode.star.api.pojos.yun.agent.res.YagGetStatusRes;
 import com.isxcode.star.api.utils.HttpUtils;
+import com.isxcode.star.backend.module.calculate.engine.entity.CalculateEngineEntity;
+import com.isxcode.star.backend.module.calculate.engine.repository.CalculateEngineRepository;
 import com.isxcode.star.backend.module.datasource.entity.DatasourceEntity;
 import com.isxcode.star.backend.module.datasource.repository.DatasourceRepository;
-import com.isxcode.star.backend.module.engine.entity.EngineEntity;
-import com.isxcode.star.backend.module.engine.repository.EngineRepository;
-import com.isxcode.star.backend.module.node.entity.NodeEntity;
-import com.isxcode.star.backend.module.node.repository.NodeRepository;
+import com.isxcode.star.backend.module.engine.node.entity.EngineNodeEntity;
+import com.isxcode.star.backend.module.engine.node.repository.EngineNodeRepository;
 import com.isxcode.star.backend.module.workflow.entity.WorkConfigEntity;
 import com.isxcode.star.backend.module.workflow.entity.WorkEntity;
 import com.isxcode.star.backend.module.workflow.mapper.WorkMapper;
@@ -55,9 +55,9 @@ public class WorkBizService {
 
   private final WorkMapper workMapper;
 
-  private final EngineRepository engineRepository;
+  private final CalculateEngineRepository engineRepository;
 
-  private final NodeRepository nodeRepository;
+  private final EngineNodeRepository nodeRepository;
 
   public void addWork(AddWorkReq addWorkReq) {
 
@@ -113,7 +113,7 @@ public class WorkBizService {
     WorkConfigEntity workConfigEntity =
         workConfigRepository.findById(workEntity.getWorkConfigId()).get();
 
-    NodeEntity node = nodeRepository.findAllByEngineId(workConfigEntity.getEngineId()).get(0);
+    EngineNodeEntity node = nodeRepository.findAllByEngineId(workConfigEntity.getEngineId()).get(0);
 
     YagGetDataRes getDataRes =
         HttpUtils.doGet(
@@ -137,7 +137,7 @@ public class WorkBizService {
     WorkConfigEntity workConfigEntity =
         workConfigRepository.findById(workEntity.getWorkConfigId()).get();
 
-    NodeEntity node = nodeRepository.findAllByEngineId(workConfigEntity.getEngineId()).get(0);
+    EngineNodeEntity node = nodeRepository.findAllByEngineId(workConfigEntity.getEngineId()).get(0);
 
     YagGetStatusRes getStatusRes =
         HttpUtils.doGet(
@@ -162,7 +162,7 @@ public class WorkBizService {
     WorkConfigEntity workConfigEntity =
         workConfigRepository.findById(workEntity.getWorkConfigId()).get();
 
-    NodeEntity node = nodeRepository.findAllByEngineId(workConfigEntity.getEngineId()).get(0);
+    EngineNodeEntity node = nodeRepository.findAllByEngineId(workConfigEntity.getEngineId()).get(0);
 
     Map map =
         HttpUtils.doGet(
@@ -184,7 +184,7 @@ public class WorkBizService {
     WorkConfigEntity workConfigEntity =
         workConfigRepository.findById(workEntity.getWorkConfigId()).get();
 
-    NodeEntity node = nodeRepository.findAllByEngineId(workConfigEntity.getEngineId()).get(0);
+    EngineNodeEntity node = nodeRepository.findAllByEngineId(workConfigEntity.getEngineId()).get(0);
 
     YagGetLogRes getLogRes =
         HttpUtils.doGet(
@@ -340,22 +340,22 @@ public class WorkBizService {
     }
 
     // 找到可用的计算节点
-    EngineEntity engine = engineRepository.findById(workConfigEntity.getEngineId()).get();
+    CalculateEngineEntity engine = engineRepository.findById(workConfigEntity.getEngineId()).get();
 
-    List<NodeEntity> allNodes = nodeRepository.findAllByEngineId(engine.getId());
+    List<EngineNodeEntity> allNodes = nodeRepository.findAllByEngineId(engine.getId());
 
     if (allNodes.size() < 1) {
       return new RunWorkRes("执行失败", "可用计算节点为0", null, null, null, null, null);
     }
 
-    NodeEntity node = allNodes.get(0);
+    EngineNodeEntity node = allNodes.get(0);
 
     // 调用远程接口
     YagExecuteWorkReq executeReq = new YagExecuteWorkReq();
     executeReq.setAppName("spark-star");
     executeReq.setMainClass("com.isxcode.star.plugin.querysql.Execute");
-    executeReq.setAppResourceName("spark-query-sql-plugin-3.0.1-plain");
-    executeReq.setHomePath(node.getHomePath());
+    executeReq.setAppResourcePath("spark-query-sql-plugin-3.0.1-plain");
+    executeReq.setAgentHomePath(node.getHomePath());
 
     PluginReq pluginReq = new PluginReq();
     pluginReq.setSql(workConfigEntity.getScript());

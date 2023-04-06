@@ -1,5 +1,8 @@
 package com.isxcode.star.yun.agent.service;
 
+import static com.isxcode.star.yarn.utils.YarnUtils.formatApplicationId;
+import static com.isxcode.star.yarn.utils.YarnUtils.initYarnClient;
+
 import com.alibaba.fastjson.JSON;
 import com.isxcode.star.api.constants.SparkConstants;
 import com.isxcode.star.api.pojos.yun.agent.req.YagExecuteWorkReq;
@@ -9,6 +12,13 @@ import com.isxcode.star.api.pojos.yun.agent.res.YagGetLogRes;
 import com.isxcode.star.api.pojos.yun.agent.res.YagGetStatusRes;
 import com.isxcode.star.common.exception.SparkYunException;
 import com.isxcode.star.yarn.utils.LogUtils;
+import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.util.Base64;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.hadoop.yarn.api.records.ApplicationReport;
@@ -19,20 +29,7 @@ import org.apache.spark.launcher.SparkAppHandle;
 import org.apache.spark.launcher.SparkLauncher;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.util.Base64;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
-import static com.isxcode.star.yarn.utils.YarnUtils.formatApplicationId;
-import static com.isxcode.star.yarn.utils.YarnUtils.initYarnClient;
-
-/**
- * 代理服务层.
- */
+/** 代理服务层. */
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -41,19 +38,21 @@ public class YunAgentBizService {
   public YagExecuteWorkRes executeWork(YagExecuteWorkReq yagExecuteWorkReq) {
 
     // 压缩插件请求对西那个
-    String appArgs = Base64.getEncoder().encodeToString(JSON.toJSONString(yagExecuteWorkReq.getPluginReq()).getBytes());
+    String appArgs =
+        Base64.getEncoder()
+            .encodeToString(JSON.toJSONString(yagExecuteWorkReq.getPluginReq()).getBytes());
 
     // 封装spark-launcher
     SparkLauncher sparkLauncher =
-      new SparkLauncher()
-        .setVerbose(true)
-        .setSparkHome(yagExecuteWorkReq.getSparkHomePath())
-        .setMaster(SparkConstants.SPARK_MASTER)
-        .setDeployMode(SparkConstants.SPARK_DEPLOY_MODE)
-        .setAppName(yagExecuteWorkReq.getAppName())
-        .setMainClass(yagExecuteWorkReq.getMainClass())
-        .setAppResource(yagExecuteWorkReq.getAppResourcePath())
-        .addAppArgs(appArgs);
+        new SparkLauncher()
+            .setVerbose(true)
+            .setSparkHome(yagExecuteWorkReq.getSparkHomePath())
+            .setMaster(SparkConstants.SPARK_MASTER)
+            .setDeployMode(SparkConstants.SPARK_DEPLOY_MODE)
+            .setAppName(yagExecuteWorkReq.getAppName())
+            .setMainClass(yagExecuteWorkReq.getMainClass())
+            .setAppResource(yagExecuteWorkReq.getAppResourcePath())
+            .addAppArgs(appArgs);
 
     // 添加依赖包
     File[] jars = new File(yagExecuteWorkReq.getAgentLibPath()).listFiles();
@@ -71,19 +70,20 @@ public class YunAgentBizService {
     // 提交作业到yarn
     SparkAppHandle sparkAppHandle;
     try {
-      sparkAppHandle = sparkLauncher.startApplication(
-        new SparkAppHandle.Listener() {
+      sparkAppHandle =
+          sparkLauncher.startApplication(
+              new SparkAppHandle.Listener() {
 
-          @Override
-          public void stateChanged(SparkAppHandle sparkAppHandle) {
-            // do nothing
-          }
+                @Override
+                public void stateChanged(SparkAppHandle sparkAppHandle) {
+                  // do nothing
+                }
 
-          @Override
-          public void infoChanged(SparkAppHandle sparkAppHandle) {
-            // do nothing
-          }
-        });
+                @Override
+                public void infoChanged(SparkAppHandle sparkAppHandle) {
+                  // do nothing
+                }
+              });
     } catch (IOException e) {
       log.error(e.getMessage());
       throw new SparkYunException("50010", "提交作业异常", e.getMessage());
@@ -128,9 +128,9 @@ public class YunAgentBizService {
     }
 
     return new YagGetStatusRes(
-      String.valueOf(applicationReport.getYarnApplicationState()),
-      String.valueOf(applicationReport.getFinalApplicationStatus()),
-      String.valueOf(applicationReport.getTrackingUrl()));
+        String.valueOf(applicationReport.getYarnApplicationState()),
+        String.valueOf(applicationReport.getFinalApplicationStatus()),
+        String.valueOf(applicationReport.getTrackingUrl()));
   }
 
   public YagGetLogRes getLog(String applicationId) {
@@ -172,5 +172,4 @@ public class YunAgentBizService {
       throw new SparkYunException("50010", "中止作业异常", e.getMessage());
     }
   }
-
 }

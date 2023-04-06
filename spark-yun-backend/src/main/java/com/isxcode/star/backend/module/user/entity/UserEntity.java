@@ -8,10 +8,9 @@ import javax.persistence.Table;
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 
-/** 只负责数据库对象映射. */
 @Data
 @Entity
-@Table(name = "sy_users")
+@Table(name = "SY_USER")
 @JsonIgnoreProperties({"hibernateLazyInitializer"})
 public class UserEntity {
 
@@ -22,9 +21,9 @@ public class UserEntity {
       strategy = "com.isxcode.star.backend.config.GeneratedValueConfig")
   private String id;
 
+  private String username;
+
   private String account;
 
-  private String password;
-
-  private String email;
+  private String passwd;
 }

@@ -1,6 +1,7 @@
 package com.isxcode.star.common.response;
 
 import com.isxcode.star.api.constants.CodeConstants;
+import java.io.InputStream;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
@@ -12,41 +13,39 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.NoSuchMessageException;
 import org.springframework.context.i18n.LocaleContextHolder;
 
-import java.io.InputStream;
-
 @Aspect
 @Slf4j
 @RequiredArgsConstructor
 public class SuccessResponseAdvice {
 
-	private final MessageSource messageSource;
+  private final MessageSource messageSource;
 
-	@Pointcut("@annotation(com.isxcode.star.common.response.SuccessResponse)")
-	public void operateLog() {}
+  @Pointcut("@annotation(com.isxcode.star.common.response.SuccessResponse)")
+  public void operateLog() {}
 
-	@AfterReturning(returning = "data", value = "operateLog()&&@annotation(successResponse)")
-	public void afterReturning(JoinPoint joinPoint, Object data, SuccessResponse successResponse) {
+  @AfterReturning(returning = "data", value = "operateLog()&&@annotation(successResponse)")
+  public void afterReturning(JoinPoint joinPoint, Object data, SuccessResponse successResponse) {
 
-		MethodSignature signature = (MethodSignature) joinPoint.getSignature();
-		BaseResponse<Object> baseResponse = new BaseResponse<>();
-		if (!"void".equals(signature.getReturnType().getName())) {
-			if (data instanceof InputStream) {
-				return;
-			}
+    MethodSignature signature = (MethodSignature) joinPoint.getSignature();
+    BaseResponse<Object> baseResponse = new BaseResponse<>();
+    if (!"void".equals(signature.getReturnType().getName())) {
+      if (data instanceof InputStream) {
+        return;
+      }
       baseResponse.setCode(CodeConstants.SUCCESS_CODE);
-			if (data.getClass().getDeclaredFields().length == 0) {
+      if (data.getClass().getDeclaredFields().length == 0) {
         baseResponse.setData(null);
-			} else {
-				baseResponse.setData(data);
-			}
-			baseResponse.setMsg(getMsg(successResponse));
-			successResponse(baseResponse);
-		} else {
-			baseResponse.setCode(CodeConstants.SUCCESS_CODE);
-			baseResponse.setMsg(getMsg(successResponse));
-			successResponse(baseResponse);
-		}
-	}
+      } else {
+        baseResponse.setData(data);
+      }
+      baseResponse.setMsg(getMsg(successResponse));
+      successResponse(baseResponse);
+    } else {
+      baseResponse.setCode(CodeConstants.SUCCESS_CODE);
+      baseResponse.setMsg(getMsg(successResponse));
+      successResponse(baseResponse);
+    }
+  }
 
   public String getMsg(SuccessResponse successResponse) {
 
@@ -61,8 +60,8 @@ public class SuccessResponseAdvice {
     }
   }
 
-	public void successResponse(BaseResponse<Object> baseResponse) {
+  public void successResponse(BaseResponse<Object> baseResponse) {
 
-		throw new SuccessResponseException(baseResponse);
-	}
+    throw new SuccessResponseException(baseResponse);
+  }
 }

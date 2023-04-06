@@ -6,7 +6,7 @@ dependencies {
   // spark-yun-common
   api(project(':spark-yun-common'))
 
-  // spark-yun-yarn
+  // spark-yun-common
   api(project(':spark-yun-yarn'))
 
   // spark-core

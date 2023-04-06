@@ -26,5 +26,4 @@ public class AdviceAutoConfiguration {
 
     return new SuccessResponseAdvice(messageSource);
   }
-
 }

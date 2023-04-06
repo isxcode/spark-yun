@@ -1,15 +1,14 @@
 package com.isxcode.star.yarn.utils;
 
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.yarn.api.records.ApplicationId;
-import org.apache.hadoop.yarn.client.api.YarnClient;
-import org.apache.hadoop.yarn.conf.YarnConfiguration;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.yarn.api.records.ApplicationId;
+import org.apache.hadoop.yarn.client.api.YarnClient;
+import org.apache.hadoop.yarn.conf.YarnConfiguration;
 
 public class YarnUtils {
 
@@ -21,14 +20,14 @@ public class YarnUtils {
     // 读取配置yarn-site.yml文件
     Configuration yarnConf = new Configuration(false);
     Path path =
-      Paths.get(
-        hadoopConfDir
-          + File.separator
-          + "etc"
-          + File.separator
-          + "hadoop"
-          + File.separator
-          + "yarn-site.xml");
+        Paths.get(
+            hadoopConfDir
+                + File.separator
+                + "etc"
+                + File.separator
+                + "hadoop"
+                + File.separator
+                + "yarn-site.xml");
     try {
       yarnConf.addResource(Files.newInputStream(path));
     } catch (IOException e) {
@@ -43,7 +42,6 @@ public class YarnUtils {
 
     return yarnClient;
   }
-
 
   public static ApplicationId formatApplicationId(String appIdStr) {
 

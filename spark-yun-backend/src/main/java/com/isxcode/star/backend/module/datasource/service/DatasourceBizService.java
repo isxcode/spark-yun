@@ -2,22 +2,28 @@ package com.isxcode.star.backend.module.datasource.service;
 
 import static java.sql.DriverManager.getConnection;
 
-import com.isxcode.star.api.pojos.datasource.req.AddDatasourceReq;
-import com.isxcode.star.api.pojos.datasource.req.TestConnectReq;
-import com.isxcode.star.api.pojos.datasource.res.QueryDatasourceRes;
-import com.isxcode.star.api.pojos.datasource.res.TestConnectRes;
+import com.isxcode.star.api.constants.DatasourceTypeConstants;
+import com.isxcode.star.api.pojos.datasource.req.DasAddDatasourceReq;
+import com.isxcode.star.api.pojos.datasource.req.DasQueryDatasourceReq;
+import com.isxcode.star.api.pojos.datasource.req.DasTestConnectReq;
+import com.isxcode.star.api.pojos.datasource.res.DasQueryDatasourceRes;
+import com.isxcode.star.api.pojos.datasource.res.DasTestConnectRes;
 import com.isxcode.star.backend.module.datasource.entity.DatasourceEntity;
 import com.isxcode.star.backend.module.datasource.mapper.DatasourceMapper;
 import com.isxcode.star.backend.module.datasource.repository.DatasourceRepository;
+import com.isxcode.star.common.exception.SparkYunException;
 import java.sql.Connection;
-import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Optional;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-/** 用户模块接口的业务逻辑. */
+/** 数据源模块service. */
 @Service
+@Slf4j
 @RequiredArgsConstructor
 @Transactional
 public class DatasourceBizService {
@@ -26,66 +32,83 @@ public class DatasourceBizService {
 
   private final DatasourceMapper datasourceMapper;
 
-  public void addDatasource(AddDatasourceReq addDatasourceReq) {
+  /** 添加数据源. */
+  public void addDatasource(DasAddDatasourceReq dasAddDatasourceReq) {
 
-    // req 转 entity
     DatasourceEntity datasource =
-        datasourceMapper.addDatasourceReqToDatasourceEntity(addDatasourceReq);
-    datasource.setCheckDate(LocalDateTime.now());
-    datasource.setStatus("未检测");
+        datasourceMapper.dasAddDatasourceReqToDatasourceEntity(dasAddDatasourceReq);
 
-    // 数据持久化
     datasourceRepository.save(datasource);
   }
 
-  public List<QueryDatasourceRes> queryDatasource() {
+  /** 查询数据源. */
+  public Page<DasQueryDatasourceRes> queryDatasource(DasQueryDatasourceReq dasQueryDatasourceReq) {
 
-    List<DatasourceEntity> datasourceEntities = datasourceRepository.findAll();
+    Page<DatasourceEntity> datasourceEntityPage =
+        datasourceRepository.findAll(
+            PageRequest.of(dasQueryDatasourceReq.getPage(), dasQueryDatasourceReq.getPageSize()));
 
-    return datasourceMapper.datasourceEntityListToQueryDatasourceResList(datasourceEntities);
+    return datasourceMapper.datasourceEntityListToQueryDatasourceResList(datasourceEntityPage);
   }
 
+  /** 删除数据源. */
   public void delDatasource(String datasourceId) {
 
     datasourceRepository.deleteById(datasourceId);
   }
 
-  public TestConnectRes testConnect(TestConnectReq testConnectReq) throws ClassNotFoundException {
+  /** 数据源连接测试. */
+  public DasTestConnectRes testConnect(DasTestConnectReq dasTestConnectRes) {
 
-    DatasourceEntity datasource =
-        datasourceRepository.findById(testConnectReq.getDatasourceId()).get();
+    // 获取数据源
+    Optional<DatasourceEntity> datasourceEntityOptional =
+        datasourceRepository.findById(dasTestConnectRes.getDatasourceId());
+    if (!datasourceEntityOptional.isPresent()) {
+      throw new SparkYunException("数据源不存在");
+    }
+    DatasourceEntity datasource = datasourceEntityOptional.get();
 
+    // 获取class
     switch (datasource.getType()) {
-      case "mysql":
-        Class.forName("com.mysql.cj.jdbc.Driver");
+      case DatasourceTypeConstants.MYSQL:
+        try {
+          Class.forName("com.mysql.cj.jdbc.Driver");
+        } catch (ClassNotFoundException e) {
+          log.error(e.getMessage());
+          throw new SparkYunException("找不到mysql驱动");
+        }
         break;
-      case "oracle":
-        Class.forName("oracle.jdbc.driver.OracleDriver");
+      case DatasourceTypeConstants.ORACLE:
+        try {
+          Class.forName("oracle.jdbc.driver.OracleDriver");
+        } catch (ClassNotFoundException e) {
+          log.error(e.getMessage());
+          throw new SparkYunException("找不到oracle驱动");
+        }
         break;
-      case "sqlserver":
-        Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+      case DatasourceTypeConstants.SQL_SERVER:
+        try {
+          Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+        } catch (ClassNotFoundException e) {
+          log.error(e.getMessage());
+          throw new SparkYunException("找不到sqlServer驱动");
+        }
         break;
       default:
-        throw new RuntimeException("暂不支持数据源");
+        throw new SparkYunException("数据源暂不支持");
     }
 
     try (Connection connection =
         getConnection(
             datasource.getJdbcUrl(), datasource.getUsername(), datasource.getPasswd()); ) {
       if (connection != null) {
-        datasource.setStatus("连接成功");
-        datasource.setCheckDate(LocalDateTime.now());
-        return new TestConnectRes(true, "连接成功");
-      } else {
-        datasource.setStatus("连接失败");
-        datasource.setCheckDate(LocalDateTime.now());
-        return new TestConnectRes(false, "连接失败");
+        return new DasTestConnectRes(true, "连接成功");
       }
     } catch (Exception e) {
-      e.printStackTrace();
-      datasource.setStatus("连接失败");
-      datasource.setCheckDate(LocalDateTime.now());
-      return new TestConnectRes(false, e.getMessage());
+      log.error(e.getMessage());
+      return new DasTestConnectRes(false, e.getMessage());
     }
+
+    return new DasTestConnectRes(false, "连接失败");
   }
 }

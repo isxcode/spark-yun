@@ -12,7 +12,7 @@ import org.hibernate.annotations.GenericGenerator;
 /** 只负责数据库对象映射. */
 @Data
 @Entity
-@Table(name = "sy_datasources")
+@Table(name = "SY_DATASOURCE")
 @JsonIgnoreProperties({"hibernateLazyInitializer"})
 public class DatasourceEntity {
 
@@ -31,7 +31,7 @@ public class DatasourceEntity {
 
   private String type;
 
-  private LocalDateTime checkDate;
+  private LocalDateTime checkDateTime;
 
   private String username;
 

@@ -2,7 +2,7 @@ package com.isxcode.star.common.exception;
 
 public interface AbstractSparkYunExceptionEnum {
 
-    String getCode();
+  String getCode();
 
-    String getMsg();
+  String getMsg();
 }

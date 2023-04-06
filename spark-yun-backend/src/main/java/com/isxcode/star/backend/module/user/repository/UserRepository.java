@@ -16,7 +16,7 @@ import org.springframework.stereotype.Repository;
 @CacheConfig(cacheNames = {"sy_users"})
 public interface UserRepository extends JpaRepository<UserEntity, String> {
 
-  UserEntity findFirstByAccount(String account);
+  Optional<UserEntity> findByAccount(String account);
 
   @Override
   @Cacheable(key = "#id")

@@ -1,10 +1,4 @@
 dependencies {
 
-  // validation
-  implementation 'org.springframework.boot:spring-boot-starter-validation'
-
-  // spring web
-  implementation 'org.springframework.boot:spring-boot-starter-web'
-
 }
 

@@ -2,19 +2,14 @@ package com.isxcode.star.common.exception;
 
 import lombok.Getter;
 
-/**
- * 异常抽象类.
- */
+/** 异常抽象类. */
 public abstract class AbstractSparkYunException extends RuntimeException {
 
-  @Getter
-  private final String code;
+  @Getter private final String code;
 
-  @Getter
-  private final String msg;
+  @Getter private final String msg;
 
-  @Getter
-  private final String err;
+  @Getter private final String err;
 
   public AbstractSparkYunException(AbstractSparkYunExceptionEnum abstractSparkYunExceptionEnum) {
 

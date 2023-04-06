@@ -1,42 +1,48 @@
 dependencies {
 
+  // spark-yun-api
+  api(project(':spark-yun-api'))
 
-    // thymeleaf
-    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+  // spark-yun-common
+  api(project(':spark-yun-common'))
 
-    // h2
-    runtimeOnly 'com.h2database:h2'
+  // spark-yun-yarn
+  api(project(':spark-yun-yarn'))
 
-    // jpa
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+  // thymeleaf
+  implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 
-    // validation
-    implementation 'org.springframework.boot:spring-boot-starter-validation'
+  // h2
+  runtimeOnly 'com.h2database:h2'
 
-    // mapstruct
-    implementation "org.mapstruct:mapstruct:${MAPSTRUCT_VERSION}"
-    annotationProcessor "org.mapstruct:mapstruct-processor:${MAPSTRUCT_VERSION}"
-    testAnnotationProcessor "org.mapstruct:mapstruct-processor:${MAPSTRUCT_VERSION}"
+  // jpa
+  implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 
-    // cache
-    implementation 'org.springframework.boot:spring-boot-starter-cache'
+  // mapstruct
+  implementation "org.mapstruct:mapstruct:${MAPSTRUCT_VERSION}"
+  annotationProcessor "org.mapstruct:mapstruct-processor:${MAPSTRUCT_VERSION}"
+  testAnnotationProcessor "org.mapstruct:mapstruct-processor:${MAPSTRUCT_VERSION}"
 
-    // druid
-    implementation "com.alibaba:druid-spring-boot-starter:${DRUID_VERSION}"
+  // cache
+  implementation 'org.springframework.boot:spring-boot-starter-cache'
 
-    // spark-yun-api
-    api(project(':spark-yun-api'))
+  // druid
+  implementation "com.alibaba:druid-spring-boot-starter:${DRUID_VERSION}"
 
-    // mysql
-    runtimeOnly "com.mysql:mysql-connector-j:${MYSQL_DRIVER_VERSION}"
+  // mysql
+  runtimeOnly "com.mysql:mysql-connector-j:${MYSQL_DRIVER_VERSION}"
 
-    // sqlserver
-    runtimeOnly "com.microsoft.sqlserver:mssql-jdbc:${SQLSERVER_DRIVER_VERSION}"
+  // sqlserver
+  runtimeOnly "com.microsoft.sqlserver:mssql-jdbc:${SQLSERVER_DRIVER_VERSION}"
 
-    // oracle
-    runtimeOnly "com.oracle.database.jdbc:ojdbc10:${ORACLE_DRIVER_VERSION}"
+  // oracle
+  runtimeOnly "com.oracle.database.jdbc:ojdbc10:${ORACLE_DRIVER_VERSION}"
 
-    // jsch
-    implementation 'com.jcraft:jsch:0.1.55'
+  // openapi
+  implementation 'org.springdoc:springdoc-openapi-ui:1.7.0'
+  implementation 'org.springdoc:springdoc-openapi-webmvc-core:1.7.0'
+
+  // jsch
+  implementation 'com.jcraft:jsch:0.1.55'
 }
 

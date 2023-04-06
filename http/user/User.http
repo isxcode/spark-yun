@@ -1,20 +1,16 @@
-### 添加用户
-POST http://localhost:8080/user/addUser
+### 用户登录
+POST http://localhost:8080/usr/login
 Content-Type: application/json
 
 {
-  "account": "1234678901231234567890",
-  "password": "1234567890",
-  "email": "123@qq.com"
+  "account": "admin",
+  "passwd": "admin123"
 }
 
-### 查询所有用户
-GET http://localhost:8080/user/queryUser
+### 创建数据源
 
-### 查询用户
-POST http://localhost:8080/user/getUser
-Content-Type: application/json
+### 查询数据源
 
-{
-  "id": "1"
-}
+### 删除数据源
+
+###

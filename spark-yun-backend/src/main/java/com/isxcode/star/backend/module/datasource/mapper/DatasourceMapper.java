@@ -1,30 +1,41 @@
 package com.isxcode.star.backend.module.datasource.mapper;
 
-import com.isxcode.star.api.pojos.datasource.req.AddDatasourceReq;
-import com.isxcode.star.api.pojos.datasource.res.QueryDatasourceRes;
+import com.isxcode.star.api.pojos.datasource.req.DasAddDatasourceReq;
+import com.isxcode.star.api.pojos.datasource.res.DasQueryDatasourceRes;
 import com.isxcode.star.backend.module.datasource.entity.DatasourceEntity;
 import java.util.List;
-import java.util.stream.Collectors;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 
 /** mapstruct映射. */
 @Mapper(componentModel = "spring")
 public interface DatasourceMapper {
 
+  /** dasAddDatasourceReq转DatasourceEntity. */
   @Mapping(source = "password", target = "passwd")
   @Mapping(source = "comment", target = "commentInfo")
-  DatasourceEntity addDatasourceReqToDatasourceEntity(AddDatasourceReq addDatasourceReq);
+  @Mapping(target = "checkDateTime", expression = "java(java.time.LocalDateTime.now())")
+  @Mapping(
+      target = "status",
+      expression = "java(com.isxcode.star.api.menus.DatasourceStatusMenus.UN_CHECK.getStatus())")
+  DatasourceEntity dasAddDatasourceReqToDatasourceEntity(DasAddDatasourceReq dasAddDatasourceReq);
 
+  /** datasourceEntity转DasQueryDatasourceRes. */
   @Mapping(target = "comment", source = "commentInfo")
-  @Mapping(target = "checkTime", source = "checkDate", dateFormat = "yyyy-MM-dd HH:mm:ss")
-  QueryDatasourceRes datasourceEntityToQueryDatasourceRes(DatasourceEntity nodeEntity);
+  @Mapping(target = "checkTime", source = "checkDateTime", dateFormat = "yyyy-MM-dd HH:mm:ss")
+  DasQueryDatasourceRes datasourceEntityToQueryDatasourceRes(DatasourceEntity datasourceEntity);
 
-  default List<QueryDatasourceRes> datasourceEntityListToQueryDatasourceResList(
-      List<DatasourceEntity> nodeEntities) {
+  /** List[datasourceEntity]转List[DasQueryDatasourceRes]. */
+  List<DasQueryDatasourceRes> datasourceEntityToQueryDatasourceRes(
+      List<DatasourceEntity> datasourceEntity);
 
-    return nodeEntities.stream()
-        .map(this::datasourceEntityToQueryDatasourceRes)
-        .collect(Collectors.toList());
+  /** Page[datasourceEntity]转Page[DasQueryDatasourceRes]. */
+  default Page<DasQueryDatasourceRes> datasourceEntityListToQueryDatasourceResList(
+      Page<DatasourceEntity> pageDatasource) {
+    List<DasQueryDatasourceRes> dtoList =
+        datasourceEntityToQueryDatasourceRes(pageDatasource.getContent());
+    return new PageImpl<>(dtoList, pageDatasource.getPageable(), pageDatasource.getTotalElements());
   }
 }

@@ -1,85 +1,90 @@
-create table if not exists sy_users
+-- 用户表
+create table if not exists SY_USER
 (
-  id       varchar(100) null,
-  account  varchar(100) null,
-  password varchar(100) null,
-  email    varchar(100) null
+  id       varchar(200) null unique comment '用户唯一id',
+  username varchar(200) null comment '用户名称',
+  account  varchar(200) null comment '账号',
+  passwd   varchar(200) null comment '密码'
 );
 
-create table if not exists sy_engines
+-- 计算引擎表
+create table if not exists SY_CALCULATE_ENGINE
 (
-  id             varchar(100) null,
-  name           varchar(100) null,
-  comment_info   varchar(100) null,
-  status         varchar(100) null,
-  check_date     datetime     null,
-  all_node       int          null,
-  active_node    int          null,
-  all_memory     int          null,
-  active_memory  int          null,
-  all_storage    int          null,
-  active_storage int          null
+  id              varchar(200) null unique comment '计算引擎唯一id',
+  name            varchar(100) null comment '引擎名称',
+  comment_info    varchar(100) null comment '备注',
+  status          varchar(100) null comment '健康状态',
+  check_date_time datetime     null comment '检测健康状态时间',
+  all_node        int          null comment '总节点数',
+  active_node     int          null comment '激活节点数',
+  all_memory      int          null comment '所有可用内存数',
+  used_memory     int          null comment '已使用内存数',
+  all_storage     int          null comment '所有存储',
+  used_storage    int          null comment '已使用存储'
 );
 
-create table if not exists sy_nodes
+-- 引擎节点
+create table if not exists SY_ENGINE_NODE
 (
-  id             varchar(100) null,
-  name           varchar(100) null,
-  comment_info   varchar(100) null,
-  status         varchar(100) null,
-  check_date     datetime     null,
-  all_memory     int          null,
-  active_memory  int          null,
-  all_storage    int          null,
-  active_storage int          null,
-  cpu_percent    varchar(100) null,
-  engine_id      varchar(100) null,
-  host           varchar(100) null,
-  port           varchar(100) null,
-  username       varchar(100) null,
-  passwd         varchar(100) null,
-  home_path      varchar(100) null
+  id                  varchar(100) null unique comment '节点唯一id',
+  name                varchar(100) null comment '节点名称',
+  comment_info        varchar(100) null comment '备注',
+  status              varchar(100) null comment '状态',
+  check_date_time     datetime     null comment '检查健康时间',
+  all_memory          int          null comment '节点所有内存',
+  used_memory         int          null comment '已使用内存',
+  all_storage         int          null comment '所有存储',
+  active_storage      int          null comment '已使用存储',
+  cpu_percent         varchar(100) null comment 'CPU使用占比',
+  calculate_engine_id varchar(100) null comment '属于计算引擎',
+  host                varchar(100) null comment '服务器host',
+  port                varchar(100) null comment '服务器端口号',
+  username            varchar(100) null comment '服务器用户名',
+  passwd              varchar(100) null comment '服务器密码',
+  agent_home_path     varchar(100) null comment '代理安装路径'
 );
 
-create table if not exists sy_datasources
+-- 数据源
+create table if not exists SY_DATASOURCE
 (
-  id           varchar(100) null,
-  name         varchar(100) null,
-  jdbc_url     varchar(200) null,
-  comment_info varchar(100) null,
-  status       varchar(100) null,
-  check_date   datetime     null,
-  username     varchar(100) null,
-  type         varchar(100) null,
-  passwd       varchar(100) null
+  id              varchar(100) null unique comment '数据源唯一id',
+  name            varchar(100) null comment '数据源名称',
+  jdbc_url        varchar(200) null comment '数据源url',
+  comment_info    varchar(100) null comment '备注',
+  status          varchar(100) null comment '状态',
+  check_date_time datetime     null comment '检测时间',
+  username        varchar(100) null comment '用户名称',
+  passwd          varchar(100) null comment '密码',
+  datasource_type varchar(100) null comment '数据源类型'
 );
 
-create table if not exists sy_workflows
+-- 作业流
+create table if not exists SY_WORKFLOW
 (
-  id           varchar(100) null,
-  name         varchar(100) null,
-  comment_info varchar(100) null,
-  status       varchar(100) null,
-  label        varchar(100) null
+  id           varchar(100) null unique comment '作业流唯一id',
+  name         varchar(100) null comment '作业流名称',
+  comment_info varchar(100) null comment '备注',
+  status       varchar(100) null comment '作业流状态'
 );
 
-create table if not exists sy_works
+-- 作业
+create table if not exists SY_WORK
 (
-  id               varchar(100) null,
-  name             varchar(100) null,
-  comment_info     varchar(100) null,
-  status           varchar(100) null,
-  label            varchar(100) null,
-  type             varchar(100) null,
-  work_config_id   varchar(100) null,
-  create_date_time datetime     null,
-  workflow_id      varchar(100) null
+  id               varchar(100) null unique comment '作业唯一id',
+  name             varchar(100) null comment '作业名称',
+  comment_info     varchar(100) null comment '备注',
+  status           varchar(100) null comment '状态',
+  work_type        varchar(100) null comment '作业类型',
+  work_config_id   varchar(100) null comment '作业配置id',
+  create_date_time datetime     null comment '作业创建时间',
+  workflow_id      varchar(100) null comment '所属作业流id'
 );
 
-create table if not exists sy_work_configs
+-- 作业配置
+create table if not exists SY_WORK_CONFIG
 (
-  id            varchar(100) null,
-  datasource_id varchar(100) null,
-  engine_id     varchar(100) null,
-  script        varchar(2000) null
+  id                  varchar(100)  null unique comment '作业配置唯一id',
+  datasource_id       varchar(100)  null comment '数据源id',
+  calculate_engine_id varchar(100)  null comment '计算引擎id',
+  sql                 varchar(2000) null comment 'sql'
 );

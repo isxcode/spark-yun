@@ -5,7 +5,7 @@ import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-/** 只负责数据库查询逻辑. */
+/** 数据源模块. */
 @Repository
-@CacheConfig(cacheNames = {"sy_datasources"})
+@CacheConfig(cacheNames = {"SY_DATASOURCE"})
 public interface DatasourceRepository extends JpaRepository<DatasourceEntity, String> {}

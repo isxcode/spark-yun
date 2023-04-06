@@ -7,14 +7,13 @@ plugins {
   id 'checkstyle'
 }
 
-// 从VERSION.txt中获取自定义版本号
-def versionFileName = 'VERSION.txt'
-def versionNumber = new File(rootDir.getAbsolutePath(), versionFileName).readLines()[0].trim()
+// 从VERSION中获取版本号
+def version_number = new File(rootDir.getAbsolutePath(), 'VERSION').readLines()[0].trim()
 
 // 所有项目模块的配置
 allprojects {
 
-  // 声明插件，表示使用
+  // 声明插件
   apply plugin: 'org.springframework.boot'
   apply plugin: 'io.spring.dependency-management'
   apply plugin: 'java-library'
@@ -28,7 +27,7 @@ allprojects {
   group = 'com.isxcode.star'
 
   // 定义版本号
-  version = versionNumber
+  version = version_number
 
   // 配置多选中央仓库
   repositories {
@@ -49,6 +48,9 @@ allprojects {
 
     // spring web
     implementation 'org.springframework.boot:spring-boot-starter-web'
+
+    // validation
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
 
     // spring-boot-configuration-processor
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
@@ -190,7 +192,6 @@ tasks.register('package', GradleBuild) {
 // gradle start命令，启动至轻云项目
 tasks.register('start', GradleBuild) {
   dependsOn(":package")
-  // 第七步：spring启动项目
   tasks = ["spark-yun-backend:bootRun"]
 }
 
@@ -201,7 +202,7 @@ tasks.register('docker', Exec) {
   dependsOn("spark-yun-dist:buildAgentPackage")
   dependsOn("spark-yun-agent:bootJar")
   // 使用dockerfile对项目进行打包
-  commandLine 'bash', '-c', 'docker build -t isxcode/spark-star:' + versionNumber + ' -f ./Dockerfile  .'
+  commandLine 'bash', '-c', 'docker build -t isxcode/spark-star:' + version_number + ' -f ./Dockerfile  .'
 }
 
 // spotless配置
