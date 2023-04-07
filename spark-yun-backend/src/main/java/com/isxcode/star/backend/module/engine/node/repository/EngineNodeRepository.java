@@ -13,7 +13,7 @@ import org.springframework.stereotype.Repository;
 @CacheConfig(cacheNames = {"SY_ENGINE_NODE"})
 public interface EngineNodeRepository extends JpaRepository<EngineNodeEntity, String> {
 
-  Page<EngineNodeEntity> findAllByEngineId(String engineId, Pageable pageable);
+  Page<EngineNodeEntity> findAllByCalculateEngineId(String engineId, Pageable pageable);
 
-  List<EngineNodeEntity> findAllByEngineId(String engineId);
+  List<EngineNodeEntity> findAllByCalculateEngineId(String engineId);
 }

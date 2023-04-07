@@ -29,7 +29,7 @@ public class DatasourceEntity {
 
   private String jdbcUrl;
 
-  private String type;
+  private String datasourceType;
 
   private LocalDateTime checkDateTime;
 

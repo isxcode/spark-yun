@@ -88,7 +88,7 @@ public class SshUtils {
   }
 
   /** 执行远程命令. */
-  public static void executeCommand(EngineNodeEntity engineNode, String command, boolean pty) {
+  public static String executeCommand(EngineNodeEntity engineNode, String command, boolean pty) {
 
     JSch jsch = new JSch();
     Session session;
@@ -111,13 +111,13 @@ public class SshUtils {
       throw new SparkYunException("远程连接异常", e.getMessage());
     }
 
-    ChannelExec channel = null;
+    ChannelExec channel;
     try {
       channel = (ChannelExec) session.openChannel("exec");
       channel.setPty(pty);
       channel.setCommand(command);
       channel.setInputStream(null);
-      channel.setErrStream(System.err);
+      channel.setErrStream(System.out);
     } catch (JSchException e) {
       log.error(e.getMessage());
       throw new SparkYunException("远程连接异常", e.getMessage());
@@ -138,6 +138,15 @@ public class SshUtils {
       throw new SparkYunException("远程连接异常", e.getMessage());
     }
 
+    while (!channel.isClosed()) {
+      try {
+        Thread.sleep(1000);
+      } catch (InterruptedException e) {
+        log.error(e.getMessage());
+        throw new SparkYunException("等待分发线程异常", e.getMessage());
+      }
+    }
+
     // 判断命令是否执行完成
     int exitStatus = channel.getExitStatus();
     channel.disconnect();
@@ -145,6 +154,8 @@ public class SshUtils {
 
     if (exitStatus != 0) {
       throw new SparkYunException("执行安装脚本异常", output.toString());
+    } else {
+      return output.toString();
     }
   }
 }

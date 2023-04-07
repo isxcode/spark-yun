@@ -37,9 +37,9 @@ public class CalculateEngineEntity {
 
   private Integer allMemory;
 
-  private Integer activeMemory;
+  private Integer usedMemory;
 
   private Integer allStorage;
 
-  private Integer activeStorage;
+  private Integer usedStorage;
 }

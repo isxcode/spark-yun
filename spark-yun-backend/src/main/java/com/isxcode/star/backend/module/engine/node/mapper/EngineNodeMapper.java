@@ -16,9 +16,9 @@ public interface EngineNodeMapper {
 
   @Mapping(source = "password", target = "passwd")
   @Mapping(source = "comment", target = "commentInfo")
-  @Mapping(target = "activeMemory", expression = "java(0)")
+  @Mapping(target = "usedMemory", expression = "java(0)")
   @Mapping(target = "allMemory", expression = "java(0)")
-  @Mapping(target = "activeStorage", expression = "java(0)")
+  @Mapping(target = "usedStorage", expression = "java(0)")
   @Mapping(target = "allStorage", expression = "java(0)")
   @Mapping(target = "cpuPercent", expression = "java(\"0%\")")
   @Mapping(target = "checkDateTime", expression = "java(java.time.LocalDateTime.now())")
@@ -27,10 +27,10 @@ public interface EngineNodeMapper {
 
   @Mapping(
       target = "memory",
-      expression = "java( nodeEntity.getActiveMemory()+ \"/\" +nodeEntity.getAllMemory())")
+      expression = "java( nodeEntity.getUsedMemory()+ \"/\" +nodeEntity.getAllMemory())")
   @Mapping(
       target = "storage",
-      expression = "java( nodeEntity.getActiveStorage()+ \"/\" +nodeEntity.getAllStorage())")
+      expression = "java( nodeEntity.getUsedStorage()+ \"/\" +nodeEntity.getAllStorage())")
   @Mapping(target = "comment", source = "commentInfo")
   @Mapping(target = "cpu", source = "cpuPercent")
   @Mapping(target = "checkTime", source = "checkDateTime", dateFormat = "yyyy-MM-dd HH:mm:ss")

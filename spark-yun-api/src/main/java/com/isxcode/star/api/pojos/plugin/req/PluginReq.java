@@ -1,6 +1,5 @@
 package com.isxcode.star.api.pojos.plugin.req;
 
-import java.util.HashMap;
 import java.util.Map;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,15 +14,9 @@ public class PluginReq {
 
   private String sql;
 
-  private Integer limit = 100;
+  private Integer limit;
 
   private String applicationId;
 
-  private Map<String, String> sparkConfig =
-      new HashMap<String, String>() {
-        {
-          put("spark.executor.memory", "1g");
-          put("spark.driver.memory", "1g");
-        }
-      };
+  private Map<String, String> sparkConfig;
 }

@@ -1,0 +1,20 @@
+#!/bin/bash
+
+home_path=""
+
+for arg in "$@"; do
+  case "$arg" in
+    --home-path=*) home_path="${arg#*=}" ;;
+    *) echo "未知参数: $arg" && exit 1 ;;
+  esac
+done
+
+pid_file=${home_path}+"/spark-yun-agent/spark-yun-agent.pid"
+
+pid=$(cat "$pid_file")
+kill -9 "$pid"
+
+rm -rf ${home_path}/spark-yun-agent
+echo "卸载完成l ss
+
+"

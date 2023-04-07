@@ -4,12 +4,9 @@ server:
 
 spring:
 
-  # 数据源配置 http://localhost:8080/h2-console
-  datasource:
-    driver-class-name: org.h2.Driver
-    url: jdbc:h2:file:~/.h2/data
-    username: root
-    password: ispong123
+  # 使用配置文件
+  profiles:
+    active: local
 
     # 配置druid数据源
     type: com.alibaba.druid.pool.DruidDataSource
@@ -34,11 +31,11 @@ spring:
       ddl-auto: none
 
   # sql初始化
-  sql:
-    init:
-      mode: NEVER # ALWAYS
-      schema-locations: classpath:db/schema.sql
-      data-locations: classpath:db/data.sql
+#  sql:
+#    init:
+#      mode: ALWAYS # NEVER
+#      schema-locations: classpath:db/schema.sql
+#      data-locations: classpath:db/data.sql
 
   # mvc配置
   mvc:
@@ -67,6 +64,8 @@ logging:
 
 # openapi: http://localhost:8080/swagger-ui.html
 springdoc:
+  api-docs:
+    path: /api-docs
   swagger-ui:
     path: /swagger-ui.html
   packages-to-scan: com.isxcode.star

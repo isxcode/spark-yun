@@ -19,17 +19,14 @@ wget https://archive.apache.org/dist/spark/spark-3.1.1/spark-3.1.1-bin-hadoop3.2
 tar vzxf spark-3.1.1-bin-hadoop3.2.tgz -C /tmp/
 ```
 
-#### 安装dotenv
-
-```bash
-npm install dotenv-cli --location=global
-```
-
 #### 镜像打包
 
 ```bash
 cd spark-yun
-./gradlew docker
+# 启动项目
+./gradlew clean start
+# 打包docker镜像
+./gradlew clean docker
 ```
 
 ![20230404105427](https://img.isxcode.com/picgo/20230404105427.png)

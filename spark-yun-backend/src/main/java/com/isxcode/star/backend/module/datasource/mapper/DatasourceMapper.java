@@ -13,17 +13,23 @@ import org.springframework.data.domain.PageImpl;
 @Mapper(componentModel = "spring")
 public interface DatasourceMapper {
 
-  /** dasAddDatasourceReq转DatasourceEntity. */
+  /**
+   * dasAddDatasourceReq转DatasourceEntity.
+   */
   @Mapping(source = "password", target = "passwd")
   @Mapping(source = "comment", target = "commentInfo")
+  @Mapping(source = "type", target = "datasourceType")
   @Mapping(target = "checkDateTime", expression = "java(java.time.LocalDateTime.now())")
   @Mapping(
-      target = "status",
-      expression = "java(com.isxcode.star.api.menus.DatasourceStatusMenus.UN_CHECK.getStatus())")
+    target = "status",
+    expression = "java(com.isxcode.star.api.menus.DatasourceStatusMenus.UN_CHECK.getStatus())")
   DatasourceEntity dasAddDatasourceReqToDatasourceEntity(DasAddDatasourceReq dasAddDatasourceReq);
 
-  /** datasourceEntity转DasQueryDatasourceRes. */
+  /**
+   * datasourceEntity转DasQueryDatasourceRes.
+   */
   @Mapping(target = "comment", source = "commentInfo")
+  @Mapping(target = "type", source = "datasourceType")
   @Mapping(target = "checkTime", source = "checkDateTime", dateFormat = "yyyy-MM-dd HH:mm:ss")
   DasQueryDatasourceRes datasourceEntityToQueryDatasourceRes(DatasourceEntity datasourceEntity);
 

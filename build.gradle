@@ -52,6 +52,9 @@ allprojects {
     // validation
     implementation 'org.springframework.boot:spring-boot-starter-validation'
 
+    // openapi
+    implementation "org.springdoc:springdoc-openapi-ui:${OPENAPI_VERSION}"
+
     // spring-boot-configuration-processor
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
 
@@ -61,6 +64,11 @@ allprojects {
 
     // fastjson
     implementation "com.alibaba:fastjson:${FASTJSON_VERSION}"
+
+    // mapstruct
+    implementation "org.mapstruct:mapstruct:${MAPSTRUCT_VERSION}"
+    annotationProcessor "org.mapstruct:mapstruct-processor:${MAPSTRUCT_VERSION}"
+    testAnnotationProcessor "org.mapstruct:mapstruct-processor:${MAPSTRUCT_VERSION}"
 
     // spring aop
     implementation 'org.springframework.boot:spring-boot-starter-aop'
@@ -79,130 +87,27 @@ allprojects {
       extendsFrom annotationProcessor
     }
   }
-
-  // checkstyle配置
-  tasks.withType(Checkstyle) {
-    maxWarnings = 100
-    maxErrors = 0
-    ignoreFailures = false
-    reports {
-      xml.required = false
-      html.required = true
-      html.stylesheet resources.text.fromFile('../config/xsl/checkstyle-simple.xsl')
-    }
-  }
 }
 
-// 独立配置spark-yun-backend模块项目
-project("spark-yun-backend") {
-
-  // 使用bootJar打spring的包，指定打包名称，方便Dockerfile文件中复制spark-yun-backend.jar文件
-  bootJar {
-    archiveName "spark-yun-backend.jar"
-  }
-
-  // 删除spring项目中前端打包好的文件
-  tasks.register('clean-website-package', Delete) {
-
-    // 删除resources下面的static和templates
-    delete 'src/main/resources/templates'
-    delete 'src/main/resources/static'
-  }
-
-  // 创建前端打包好需要存放的路径static
-  tasks.register('mkdir-static', Exec) {
-    commandLine 'mkdir', 'src/main/resources/static'
-  }
-
-  // 创建前端打包好需要存放的路径templates
-  tasks.register('mkdir-templates', Exec) {
-    commandLine 'mkdir', 'src/main/resources/templates'
-  }
-}
-
-// 独立配置spark-yun-website模块项目
-project("spark-yun-website") {
-
-  // 前端构建项目
-  tasks.register('npm-run-install', Exec) {
-    commandLine 'npm', 'install'
-  }
-
-  // 前端代码格式检查
-  tasks.register('npm-run-prettier', Exec) {
-    mustRunAfter('npm-run-install')
-    commandLine 'npm', 'run', 'prettier'
-  }
-
-  // 代码质量检查
-  tasks.register('npm-run-eslint', Exec) {
-    mustRunAfter('npm-run-prettier')
-    commandLine 'npm', 'run', 'eslint'
-  }
-
-  tasks.register('npm-run-build', Exec) {
-    mustRunAfter('npm-run-eslint')
-    commandLine 'npm', 'run', 'build'
-  }
-
-  // 将index.html拷贝到templates中
-  tasks.register('copy-index', Copy) {
-    mustRunAfter('npm-run-build')
-    from 'dist/index.html'
-    into '../spark-yun-backend/src/main/resources/templates/'
-  }
-
-  // 将剩余的静态文件拷贝到static中
-  tasks.register('copy-static', Copy) {
-    mustRunAfter('npm-run-build')
-    from 'dist/static'
-    into '../spark-yun-backend/src/main/resources/static/'
-  }
-}
-
-// gradle start命令，启动至轻云项目
+// package
 tasks.register('package', GradleBuild) {
-  // 第一步：删除前端打包好在spring项目中的文件
-  dependsOn("spark-yun-backend:clean-website-package")
-  // 第二步：前端打包
-  dependsOn("spark-yun-website:npm-run-prettier")
-  dependsOn("spark-yun-website:npm-run-eslint")
-  dependsOn("spark-yun-website:npm-run-install")
-  dependsOn("spark-yun-website:npm-run-build")
-  // 第三步：spring中创建文件夹
-  dependsOn("spark-yun-backend:mkdir-templates")
-  dependsOn("spark-yun-backend:mkdir-static")
-  // 第四步：将打包好的文件复制到指定文件夹
-  dependsOn("spark-yun-website:copy-index")
-  dependsOn("spark-yun-website:copy-static")
-  // 第五步：spotless格式化代码
-  dependsOn(":spotlessApply")
-  // 第六步：checkstyle检测代码
-  dependsOn("spark-yun-agent:check")
-  dependsOn("spark-yun-api:check")
-  dependsOn("spark-yun-backend:check")
-  dependsOn("spark-yun-client:check")
-  dependsOn("spark-yun-client:check")
-  dependsOn("spark-yun-common:check")
-  dependsOn("spark-yun-plugins:check")
-  // 第七步：spring启动项目
-  tasks = ["spark-yun-backend:bootJar"]
+
+  dependsOn(":spark-yun-dist:build_dist", ":spark-yun-website:install_website")
+  tasks = [":spark-yun-backend:bootJar"]
 }
 
-// gradle start命令，启动至轻云项目
-tasks.register('start', GradleBuild) {
+// start
+tasks.register('start', Exec) {
+
   dependsOn(":package")
-  tasks = ["spark-yun-backend:bootRun"]
+  commandLine 'bash', '-c', 'java -jar ./spark-yun-backend/build/libs/spark-yun-backend.jar'
 }
 
-// gradle docker命令，打包至轻云到本地镜像中
+// docker
 tasks.register('docker', Exec) {
+
   dependsOn(":package")
-  dependsOn("spark-yun-plugins:spark-query-sql-plugin:build")
-  dependsOn("spark-yun-dist:buildAgentPackage")
-  dependsOn("spark-yun-agent:bootJar")
-  // 使用dockerfile对项目进行打包
-  commandLine 'bash', '-c', 'docker build -t isxcode/spark-star:' + version_number + ' -f ./Dockerfile  .'
+  commandLine 'bash', '-c', 'docker build -t isxcode/zhiqingyun:' + version_number + ' -f ./Dockerfile  .'
 }
 
 // spotless配置
@@ -215,3 +120,14 @@ spotless {
   }
 }
 
+// checkstyle配置
+tasks.withType(Checkstyle).configureEach {
+  maxWarnings = 100
+  maxErrors = 0
+  ignoreFailures = false
+  reports {
+    xml.required = false
+    html.required = true
+    html.stylesheet resources.text.fromFile('../config/xsl/checkstyle-simple.xsl')
+  }
+}

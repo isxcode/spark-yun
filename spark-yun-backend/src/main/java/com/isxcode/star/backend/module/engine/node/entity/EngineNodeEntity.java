@@ -9,7 +9,6 @@ import javax.persistence.Table;
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 
-/** 只负责数据库对象映射. */
 @Data
 @Entity
 @Table(name = "SY_ENGINE_NODE")
@@ -19,8 +18,8 @@ public class EngineNodeEntity {
   @Id
   @GeneratedValue(generator = "sy-id-generator")
   @GenericGenerator(
-      name = "sy-id-generator",
-      strategy = "com.isxcode.star.backend.config.GeneratedValueConfig")
+    name = "sy-id-generator",
+    strategy = "com.isxcode.star.backend.config.GeneratedValueConfig")
   private String id;
 
   private String name;
@@ -33,15 +32,15 @@ public class EngineNodeEntity {
 
   private Integer allMemory;
 
-  private Integer activeMemory;
+  private Integer usedMemory;
 
   private Integer allStorage;
 
-  private Integer activeStorage;
+  private Integer usedStorage;
 
   private String cpuPercent;
 
-  private String engineId;
+  private String calculateEngineId;
 
   private String host;
 
@@ -51,5 +50,5 @@ public class EngineNodeEntity {
 
   private String passwd;
 
-  private String homePath;
+  private String agentHomePath;
 }

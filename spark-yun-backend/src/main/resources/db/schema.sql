@@ -34,7 +34,7 @@ create table if not exists SY_ENGINE_NODE
   all_memory          int          null comment '节点所有内存',
   used_memory         int          null comment '已使用内存',
   all_storage         int          null comment '所有存储',
-  active_storage      int          null comment '已使用存储',
+  used_storage      int          null comment '已使用存储',
   cpu_percent         varchar(100) null comment 'CPU使用占比',
   calculate_engine_id varchar(100) null comment '属于计算引擎',
   host                varchar(100) null comment '服务器host',

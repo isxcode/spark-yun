@@ -6,10 +6,10 @@ import com.isxcode.star.api.pojos.user.res.UsrLoginRes;
 import com.isxcode.star.backend.module.user.service.UserBizService;
 import com.isxcode.star.common.response.SuccessResponse;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import javax.validation.Valid;
+
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,10 +23,10 @@ public class UserController {
 
   private final UserBizService userBizService;
 
-  @Operation(description = "用户登录接口")
+  @Operation(summary = "用户登录接口")
   @PostMapping("/login")
   @SuccessResponse("登录成功")
-  public UsrLoginRes login(@ParameterObject @Valid @RequestBody UsrLoginReq usrLoginReq) {
+  public UsrLoginRes login(@Valid @RequestBody UsrLoginReq usrLoginReq) {
 
     return userBizService.login(usrLoginReq);
   }

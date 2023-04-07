@@ -113,7 +113,7 @@ public class WorkBizService {
     WorkConfigEntity workConfigEntity =
         workConfigRepository.findById(workEntity.getWorkConfigId()).get();
 
-    EngineNodeEntity node = nodeRepository.findAllByEngineId(workConfigEntity.getEngineId()).get(0);
+    EngineNodeEntity node = nodeRepository.findAllByCalculateEngineId(workConfigEntity.getEngineId()).get(0);
 
     YagGetDataRes getDataRes =
         HttpUtils.doGet(
@@ -137,7 +137,7 @@ public class WorkBizService {
     WorkConfigEntity workConfigEntity =
         workConfigRepository.findById(workEntity.getWorkConfigId()).get();
 
-    EngineNodeEntity node = nodeRepository.findAllByEngineId(workConfigEntity.getEngineId()).get(0);
+    EngineNodeEntity node = nodeRepository.findAllByCalculateEngineId(workConfigEntity.getEngineId()).get(0);
 
     YagGetStatusRes getStatusRes =
         HttpUtils.doGet(
@@ -162,7 +162,7 @@ public class WorkBizService {
     WorkConfigEntity workConfigEntity =
         workConfigRepository.findById(workEntity.getWorkConfigId()).get();
 
-    EngineNodeEntity node = nodeRepository.findAllByEngineId(workConfigEntity.getEngineId()).get(0);
+    EngineNodeEntity node = nodeRepository.findAllByCalculateEngineId(workConfigEntity.getEngineId()).get(0);
 
     Map map =
         HttpUtils.doGet(
@@ -184,7 +184,7 @@ public class WorkBizService {
     WorkConfigEntity workConfigEntity =
         workConfigRepository.findById(workEntity.getWorkConfigId()).get();
 
-    EngineNodeEntity node = nodeRepository.findAllByEngineId(workConfigEntity.getEngineId()).get(0);
+    EngineNodeEntity node = nodeRepository.findAllByCalculateEngineId(workConfigEntity.getEngineId()).get(0);
 
     YagGetLogRes getLogRes =
         HttpUtils.doGet(
@@ -210,7 +210,7 @@ public class WorkBizService {
     DatasourceEntity datasourceEntity =
         datasourceRepository.findById(workConfigEntity.getDatasourceId()).get();
 
-    switch (datasourceEntity.getType()) {
+    switch (datasourceEntity.getDatasourceType()) {
       case "mysql":
         Class.forName("com.mysql.cj.jdbc.Driver");
         break;
@@ -251,7 +251,7 @@ public class WorkBizService {
     DatasourceEntity datasourceEntity =
         datasourceRepository.findById(workConfigEntity.getDatasourceId()).get();
 
-    switch (datasourceEntity.getType()) {
+    switch (datasourceEntity.getDatasourceType()) {
       case "mysql":
         Class.forName("com.mysql.cj.jdbc.Driver");
         break;
@@ -342,7 +342,7 @@ public class WorkBizService {
     // 找到可用的计算节点
     CalculateEngineEntity engine = engineRepository.findById(workConfigEntity.getEngineId()).get();
 
-    List<EngineNodeEntity> allNodes = nodeRepository.findAllByEngineId(engine.getId());
+    List<EngineNodeEntity> allNodes = nodeRepository.findAllByCalculateEngineId(engine.getId());
 
     if (allNodes.size() < 1) {
       return new RunWorkRes("执行失败", "可用计算节点为0", null, null, null, null, null);
@@ -355,7 +355,7 @@ public class WorkBizService {
     executeReq.setAppName("spark-star");
     executeReq.setMainClass("com.isxcode.star.plugin.querysql.Execute");
     executeReq.setAppResourcePath("spark-query-sql-plugin-3.0.1-plain");
-    executeReq.setAgentHomePath(node.getHomePath());
+    executeReq.setAgentHomePath(node.getAgentHomePath());
 
     PluginReq pluginReq = new PluginReq();
     pluginReq.setSql(workConfigEntity.getScript());

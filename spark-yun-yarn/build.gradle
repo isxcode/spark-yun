@@ -3,7 +3,7 @@ dependencies {
   // spark-yun-api
   api(project(':spark-yun-api'))
 
-  // spark-yun-api
+  // spark-yun-common
   api(project(':spark-yun-common'))
 
   // hadoop-yarn-client

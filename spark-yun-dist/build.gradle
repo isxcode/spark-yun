@@ -1,44 +1,44 @@
-dependencies {
+// 构建lib文件夹
+tasks.register('build_lib', Copy) {
 
-  // fast
-  implementation "com.alibaba:fastjson:${FASTJSON_VERSION}"
+  dependsOn(":spark-yun-api:jar")
+  dependsOn(":spark-yun-agent:bootJar")
 
-  // junit test
-  implementation "org.junit.jupiter:junit-jupiter:${JUPITER_VERSION}"
-  testImplementation "org.junit.jupiter:junit-jupiter-api:${JUPITER_VERSION}"
-
-  // spark-streaming-kafka
-  implementation "org.apache.spark:spark-streaming-kafka-0-10_${SPARK_SCALA_VERSION}:${SPARK_KAFKA_VERSION}"
-
-  // fastjson2
-  implementation "com.alibaba.fastjson2:fastjson2:${FASTJSON_VERSION}"
-
-  // fastjson2-extension
-  implementation "com.alibaba.fastjson2:fastjson2-extension:${FASTJSON_VERSION}"
-
-  api(project(':spark-yun-api'))
-}
-
-// 复制依赖
-task copyLib(type: Copy) {
-  dependsOn("spark-yun-api:jar")
-  def dependencies = configurations.runtimeClasspath.findAll { it.name.contains('fastjson2') }
+  def dependencies = configurations.runtimeClasspath.findAll {
+    it.name.contains('fastjson2') ||
+      it.name.contains('fastjson') ||
+      it.name.contains('spark-yun-api')
+  }
   dependencies.each { dependency ->
     from dependency
     into 'build/lib'
   }
-  from configurations.runtimeClasspath.find { it.name.contains('fastjson') }
-  from configurations.runtimeClasspath.find { it.name.contains('spark-streaming-kafka') }
-  from configurations.runtimeClasspath.find { it.name.contains('spark-yun-api') }
+
+  from '../spark-yun-api/build/libs'
+  from '../spark-yun-agent/build/libs'
+  from '../spark-yun-plugins/spark-query-sql-plugin/build/libs'
   into 'build/lib'
 }
 
-// 构建spark-yun-agent.zip
-tasks.register('buildAgentPackage', Tar) {
-  mustRunAfter(':spark-yun-plugins:spark-query-sql-plugin:build')
-  dependsOn('copyLib')
+// 构建plugins文件夹
+tasks.register('build_plugins', Copy) {
+
+  dependsOn(':spark-yun-plugins:spark-query-sql-plugin:jar')
+
+  from '../spark-yun-plugins/spark-query-sql-plugin/build/libs'
+  into 'build/plugins'
+}
+
+// 打包压缩
+tasks.register('build_dist', Tar) {
+
+  dependsOn('build_lib')
+  dependsOn('build_plugins')
+
+  compression = Compression.GZIP
   archiveFileName = 'spark-yun-agent.tar.gz'
-  from('/tmp/spark-3.1.1-bin-hadoop3.2') {
+
+  from("${SPARK_MIN_DIR}") {
     into 'spark-min'
   }
   from('src/main/bin') {
@@ -47,16 +47,16 @@ tasks.register('buildAgentPackage', Tar) {
   from('src/main/conf') {
     into 'conf'
   }
-  from('../spark-yun-plugins/spark-query-sql-plugin/build/libs/spark-query-sql-plugin-3.0.1-plain.jar') {
+  from('build/plugins') {
     into 'plugins'
-  }
-  from('../spark-yun-agent/build/libs/spark-yun-agent.jar') {
-    into 'lib'
   }
   from('build/lib') {
     into 'lib'
   }
   from('src/main/log') {
     into 'log'
+  }
+  from('../README.md') {
+    into '/'
   }
 }

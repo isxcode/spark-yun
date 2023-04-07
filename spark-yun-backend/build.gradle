@@ -12,19 +12,14 @@ dependencies {
   // thymeleaf
   implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 
-  // h2
-  runtimeOnly 'com.h2database:h2'
-
   // jpa
   implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 
-  // mapstruct
-  implementation "org.mapstruct:mapstruct:${MAPSTRUCT_VERSION}"
-  annotationProcessor "org.mapstruct:mapstruct-processor:${MAPSTRUCT_VERSION}"
-  testAnnotationProcessor "org.mapstruct:mapstruct-processor:${MAPSTRUCT_VERSION}"
-
   // cache
   implementation 'org.springframework.boot:spring-boot-starter-cache'
+
+  // jsch
+  implementation "com.jcraft:jsch:${JSCH_VERSION}"
 
   // druid
   implementation "com.alibaba:druid-spring-boot-starter:${DRUID_VERSION}"
@@ -38,11 +33,10 @@ dependencies {
   // oracle
   runtimeOnly "com.oracle.database.jdbc:ojdbc10:${ORACLE_DRIVER_VERSION}"
 
-  // openapi
-  implementation 'org.springdoc:springdoc-openapi-ui:1.7.0'
-  implementation 'org.springdoc:springdoc-openapi-webmvc-core:1.7.0'
-
-  // jsch
-  implementation 'com.jcraft:jsch:0.1.55'
+  // h2
+  runtimeOnly 'com.h2database:h2'
 }
 
+bootJar {
+  archiveFileName = 'spark-yun-backend.jar'
+}

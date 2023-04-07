@@ -3,10 +3,17 @@ package com.isxcode.star.backend.module.engine.node.controller;
 import com.isxcode.star.api.constants.ModulePrefix;
 import com.isxcode.star.api.pojos.engine.node.req.EnoAddNodeReq;
 import com.isxcode.star.api.pojos.engine.node.req.EnoQueryNodeReq;
+import com.isxcode.star.api.pojos.engine.node.res.EnoCheckAgentRes;
+import com.isxcode.star.api.pojos.engine.node.res.EnoInstallAgentRes;
 import com.isxcode.star.api.pojos.engine.node.res.EnoQueryNodeRes;
+import com.isxcode.star.api.pojos.engine.node.res.EnoRemoveAgentRes;
 import com.isxcode.star.backend.module.engine.node.service.EngineNodeBizService;
 import com.isxcode.star.common.response.SuccessResponse;
 import javax.validation.Valid;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,7 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-/** 引擎节点. */
+@Tag(name = "引擎节点模块")
 @RestController
 @RequestMapping(ModulePrefix.ENGINE_NODE)
 @RequiredArgsConstructor
@@ -24,7 +31,7 @@ public class EngineNodeController {
 
   private final EngineNodeBizService engineNodeBizService;
 
-  /** 添加引擎节点. */
+  @Operation(summary = "添加引擎节点接口")
   @PostMapping("/addNode")
   @SuccessResponse("添加集群节点成功")
   public void addNode(@Valid @RequestBody EnoAddNodeReq enoAddNodeReq) {
@@ -32,7 +39,7 @@ public class EngineNodeController {
     engineNodeBizService.addNode(enoAddNodeReq);
   }
 
-  /** 查询节点列表. */
+  @Operation(summary = "查询节点列表接口")
   @PostMapping("/queryNode")
   @SuccessResponse("查询节点列表成功")
   public Page<EnoQueryNodeRes> queryNode(@Valid @RequestBody EnoQueryNodeReq enoQueryNodeReq) {
@@ -40,35 +47,35 @@ public class EngineNodeController {
     return engineNodeBizService.queryNodes(enoQueryNodeReq);
   }
 
-  /** 删除节点. */
+  @Operation(summary = "删除节点接口")
   @GetMapping("/delNode")
   @SuccessResponse("删除节点成功")
-  public void delNode(@RequestParam String engineNodeId) {
+  public void delNode(@Schema(description = "引擎节点唯一id", example = "sy_de7c0478a75343ae853a637af1f4819c") @RequestParam String engineNodeId) {
 
     engineNodeBizService.delNode(engineNodeId);
   }
 
-  /** 安装代理. */
-  @GetMapping("/installAgent")
-  @SuccessResponse("安装成功")
-  public void installAgent(@RequestParam String engineNodeId) {
-
-    engineNodeBizService.installAgent(engineNodeId);
-  }
-
-  /** 检查代理是否可以安装. */
+  @Operation(summary = "检查代理接口")
   @GetMapping("/checkAgent")
   @SuccessResponse("检测完成")
-  public void checkAgent(@RequestParam String engineNodeId) {
+  public EnoCheckAgentRes checkAgent(@Schema(description = "引擎节点唯一id", example = "sy_aaa9440040aa455d84c17f96d8cd7844") @RequestParam String engineNodeId) {
 
-    engineNodeBizService.checkAgent(engineNodeId);
+    return engineNodeBizService.checkAgent(engineNodeId);
   }
 
-  /** 卸载代理. */
+  @Operation(summary = "安装代理接口")
+  @GetMapping("/installAgent")
+  @SuccessResponse("安装成功")
+  public EnoInstallAgentRes installAgent(@Schema(description = "引擎节点唯一id", example = "sy_aaa9440040aa455d84c17f96d8cd7844") @RequestParam String engineNodeId) {
+
+    return engineNodeBizService.installAgent(engineNodeId);
+  }
+
+  @Operation(summary = "卸载代理接口")
   @GetMapping("/removeAgent")
   @SuccessResponse("卸载完成")
-  public void removeAgent(@RequestParam String engineNodeId) {
+  public EnoRemoveAgentRes removeAgent(@Schema(description = "引擎节点唯一id", example = "sy_aaa9440040aa455d84c17f96d8cd7844") @RequestParam String engineNodeId) {
 
-    engineNodeBizService.removeAgent(engineNodeId);
+    return engineNodeBizService.removeAgent(engineNodeId);
   }
 }

@@ -69,7 +69,7 @@ public class DatasourceBizService {
     DatasourceEntity datasource = datasourceEntityOptional.get();
 
     // 获取class
-    switch (datasource.getType()) {
+    switch (datasource.getDatasourceType()) {
       case DatasourceTypeConstants.MYSQL:
         try {
           Class.forName("com.mysql.cj.jdbc.Driver");

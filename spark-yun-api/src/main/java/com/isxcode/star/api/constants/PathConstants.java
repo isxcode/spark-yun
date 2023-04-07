@@ -15,9 +15,6 @@ public interface PathConstants {
   /** 代理名称. */
   String SPARK_YUN_AGENT_TAR_GZ_NAME = "spark-yun-agent.tar.gz";
 
-  /** docker中的程序位置. */
-  String DOCKER_SPARK_YUN_DIR = "/spark-yun";
-
   /** 安装脚本名称. */
   String AGENT_INSTALL_BASH_NAME = "spark-yun-install";
 

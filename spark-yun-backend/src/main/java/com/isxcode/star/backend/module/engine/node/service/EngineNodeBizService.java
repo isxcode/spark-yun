@@ -6,7 +6,13 @@ import static com.isxcode.star.backend.utils.SshUtils.scpFile;
 import com.isxcode.star.api.constants.PathConstants;
 import com.isxcode.star.api.pojos.engine.node.req.EnoAddNodeReq;
 import com.isxcode.star.api.pojos.engine.node.req.EnoQueryNodeReq;
+import com.isxcode.star.api.pojos.engine.node.res.EnoCheckAgentRes;
+import com.isxcode.star.api.pojos.engine.node.res.EnoInstallAgentRes;
 import com.isxcode.star.api.pojos.engine.node.res.EnoQueryNodeRes;
+import com.isxcode.star.api.pojos.engine.node.res.EnoRemoveAgentRes;
+import com.isxcode.star.api.properties.SparkYunProperties;
+import com.isxcode.star.backend.module.calculate.engine.entity.CalculateEngineEntity;
+import com.isxcode.star.backend.module.calculate.engine.repository.CalculateEngineRepository;
 import com.isxcode.star.backend.module.engine.node.entity.EngineNodeEntity;
 import com.isxcode.star.backend.module.engine.node.mapper.EngineNodeMapper;
 import com.isxcode.star.backend.module.engine.node.repository.EngineNodeRepository;
@@ -30,15 +36,25 @@ public class EngineNodeBizService {
 
   private final EngineNodeRepository engineNodeRepository;
 
+  private final CalculateEngineRepository calculateEngineRepository;
+
   private final EngineNodeMapper engineNodeMapper;
 
+  private final SparkYunProperties sparkYunProperties;
+
   public void addNode(EnoAddNodeReq enoAddNodeReq) {
+
+    // 检查计算引擎是否存在
+    Optional<CalculateEngineEntity> calculateEngineEntityOptional = calculateEngineRepository.findById(enoAddNodeReq.getCalculateEngineId());
+    if (!calculateEngineEntityOptional.isPresent()) {
+      throw new SparkYunException("计算引擎不存在");
+    }
 
     EngineNodeEntity node = engineNodeMapper.addNodeReqToNodeEntity(enoAddNodeReq);
 
     // 设置安装地址
-    node.setHomePath(
-        getDefaultAgentHomePath(enoAddNodeReq.getHomePath(), enoAddNodeReq.getUsername()));
+    node.setAgentHomePath(
+      getDefaultAgentHomePath(enoAddNodeReq.getAgentHomePath(), enoAddNodeReq.getUsername()));
 
     engineNodeRepository.save(node);
   }
@@ -60,8 +76,8 @@ public class EngineNodeBizService {
   public Page<EnoQueryNodeRes> queryNodes(EnoQueryNodeReq enoQueryNodeReq) {
 
     Page<EngineNodeEntity> engineNodeEntities =
-        engineNodeRepository.findAllByEngineId(
-            enoQueryNodeReq.getEngineId(),
+        engineNodeRepository.findAllByCalculateEngineId(
+            enoQueryNodeReq.getCalculateEngineId(),
             PageRequest.of(enoQueryNodeReq.getPage(), enoQueryNodeReq.getPageSize()));
 
     return engineNodeMapper.datasourceEntityPageToQueryDatasourceResPage(engineNodeEntities);
@@ -85,69 +101,63 @@ public class EngineNodeBizService {
   }
 
   /** 安装节点. */
-  public void installAgent(String engineNodeId) {
+  public EnoInstallAgentRes installAgent(String engineNodeId) {
 
     EngineNodeEntity engineNode = getEngineNode(engineNodeId);
 
     // 拷贝安装包
     scpFile(
-        engineNode,
-        PathConstants.DOCKER_SPARK_YUN_DIR
-            + File.separator
-            + PathConstants.SPARK_YUN_AGENT_TAR_GZ_NAME,
-        engineNode.getHomePath() + File.separator + PathConstants.SPARK_YUN_AGENT_TAR_GZ_NAME);
+      engineNode,
+      sparkYunProperties.getAgentTarGzDir()
+        + File.separator
+        + PathConstants.SPARK_YUN_AGENT_TAR_GZ_NAME,
+      engineNode.getAgentHomePath() + File.separator + PathConstants.SPARK_YUN_AGENT_TAR_GZ_NAME);
 
     // 拷贝执行脚本
     scpFile(
-        engineNode,
-        PathConstants.DOCKER_SPARK_YUN_DIR
-            + File.separator
-            + "bin"
-            + File.separator
-            + PathConstants.AGENT_INSTALL_BASH_NAME,
-        engineNode.getHomePath() + File.separator + PathConstants.AGENT_INSTALL_BASH_NAME);
+      engineNode,
+      sparkYunProperties.getAgentBinDir()
+        + File.separator
+        + PathConstants.AGENT_INSTALL_BASH_NAME,
+      engineNode.getAgentHomePath() + File.separator + PathConstants.AGENT_INSTALL_BASH_NAME);
 
     // 运行安装脚本
     String installCommand =
-        "bash " + engineNode.getHomePath() + File.separator + PathConstants.AGENT_INSTALL_BASH_NAME;
-    executeCommand(engineNode, installCommand, false);
+      "bash " + engineNode.getAgentHomePath() + File.separator + PathConstants.AGENT_INSTALL_BASH_NAME + " --home-path=" + engineNode.getAgentHomePath();
+    String executeLog = executeCommand(engineNode, installCommand, false);
 
     engineNode.setStatus("INSTALLED");
     engineNodeRepository.save(engineNode);
+
+    return new EnoInstallAgentRes(executeLog);
   }
 
-  public void checkAgent(String engineNodeId) {
+  public EnoCheckAgentRes checkAgent(String engineNodeId) {
 
     EngineNodeEntity engineNode = getEngineNode(engineNodeId);
 
     // 运行卸载脚本
-    String lsCommand = "ls";
-    executeCommand(engineNode, lsCommand, false);
+    String checkCommand = "echo \"可安装\"";
+    String executeLog = executeCommand(engineNode, checkCommand, false);
 
     engineNode.setStatus("CAN_INSTALLED");
     engineNodeRepository.save(engineNode);
+
+    return new EnoCheckAgentRes(executeLog);
   }
 
-  public void removeAgent(String engineNodeId) {
+  public EnoRemoveAgentRes removeAgent(String engineNodeId) {
 
     EngineNodeEntity engineNode = getEngineNode(engineNodeId);
 
-    // 拷贝卸载脚本
-    scpFile(
-        engineNode,
-        PathConstants.DOCKER_SPARK_YUN_DIR
-            + File.separator
-            + "bin"
-            + File.separator
-            + PathConstants.AGENT_REMOVE_BASH_NAME,
-        engineNode.getHomePath() + File.separator + PathConstants.AGENT_REMOVE_BASH_NAME);
-
-    // 运行卸载脚本s
+    // 运行卸载脚本
     String installCommand =
-        "bash " + engineNode.getHomePath() + File.separator + PathConstants.AGENT_REMOVE_BASH_NAME;
-    executeCommand(engineNode, installCommand, false);
+      "bash " + engineNode.getAgentHomePath() + File.separator + PathConstants.AGENT_REMOVE_BASH_NAME + " --home-path=" + engineNode.getAgentHomePath();
+    String executeLog = executeCommand(engineNode, installCommand, false);
 
     engineNode.setStatus("UNINSTALLED");
     engineNodeRepository.save(engineNode);
+
+    return new EnoRemoveAgentRes(executeLog);
   }
 }
