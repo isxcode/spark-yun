@@ -66,7 +66,7 @@ export const AddWorkModal = (props: {
   return (
     <>
       <Modal
-        title="创建作业"
+        title="添加作业"
         footer={false}
         open={props.isModalVisible}
         onOk={props.handleOk}
@@ -98,13 +98,13 @@ export const AddWorkModal = (props: {
             </Select>
           </Form.Item>
 
-          <Form.Item label="标签" name="label">
+          <Form.Item label="标签" name="label" wrapperCol={{offset: 10, span: 16}}>
             <Input />
           </Form.Item>
 
           <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
             <Button type="primary" htmlType="submit" onClick={props.handleCancel}>
-              创建
+              保存
             </Button>
           </Form.Item>
         </Form>

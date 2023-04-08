@@ -36,14 +36,19 @@ function Worklist () {
 
   const queryWork = () => {
     axios({
-      method: 'get',
-      url: process.env.API_PREFIX_URL + '/workflow/queryWork?workflowId=' + workflowId
+      method: 'post',
+      url: process.env.API_PREFIX_URL + '/wok/queryWork',
+      data:{
+        workflowId:workflowId,
+        page:0,
+        pageSize: 10,
+      }
     })
       .then(function (response) {
-        setWorks(response.data)
+        setWorks(response.data.data.content)
       })
       .catch(function (error) {
-        message.error(error.response.data.message)
+        message.error(error.response.data.data.msg)
       })
   }
 
@@ -77,8 +82,8 @@ function Worklist () {
     },
     {
       title: '类型',
-      dataIndex: 'type',
-      key: 'type'
+      dataIndex: 'workType',
+      key: 'workType'
     },
     {
       title: '状态',
@@ -94,11 +99,6 @@ function Worklist () {
       title: '备注',
       key: 'comment',
       dataIndex: 'comment'
-    },
-    {
-      title: '标签',
-      dataIndex: 'label',
-      key: 'label'
     },
     {
       title: '操作',

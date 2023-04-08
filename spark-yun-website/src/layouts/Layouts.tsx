@@ -116,14 +116,18 @@ function Layouts () {
   return (
     <>
       <Layout style={{ minHeight: '100vh' }}>
-        <Header style={{ background: colorBgContainer, borderBottom: colorPrimary + ' solid 2px' }}>
+        <Header style={{ background: colorBgContainer, borderBottom: colorPrimary + ' solid 1.4px' ,paddingInline:'30px'}}>
           <div
+            onClick={()=>{
+              window.open('https://zhiqingyun.isxcode.com')}}
             className={'logo'}
             style={{
+              cursor:'pointer',
               background: colorPrimary,
               color: 'white',
               width: '100px',
-              textAlign: 'center'
+              textAlign: 'center',
+              borderRadius: '10px'
             }}>
             至轻云
           </div>
@@ -132,7 +136,7 @@ function Layouts () {
           <Sider width={150} style={{ background: colorBgContainer, textAlign: 'center' }}>
             <Menu defaultSelectedKeys={['1']} items={menus} />
           </Sider>
-          <Layout style={{ borderLeft: colorPrimary + ' solid 2px' }}>
+          <Layout style={{ borderLeft: colorPrimary + ' solid 1.4px' }}>
             <Content
               style={{
                 padding: 24,

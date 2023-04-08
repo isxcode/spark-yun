@@ -4,7 +4,7 @@
 }
 
 .sy-login-div {
-  width: 250px;
+  width: 450px;
   height: 400px;
   position: absolute;
   left: 50%;
@@ -22,14 +22,22 @@
     margin: auto;
   }
 
+  .sy-login-desc {
+    margin: 15px auto auto;
+    text-align: center;
+    color: darkgray;
+    font-size: 13px;
+  }
+
   .sy-login-account-input {
-    width: 250px;
-    margin-top: 40px;
+    width: 270px;
+    margin-top: 30px;
   }
 
   .sy-login-password-input {
-    width: 250px;
-    margin-top: 10px;
+    justify-content: center;
+    width: 270px;
+    margin-top: 5px;
   }
 
   .sy-login-btn {

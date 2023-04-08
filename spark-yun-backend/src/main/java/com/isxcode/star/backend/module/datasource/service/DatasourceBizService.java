@@ -2,6 +2,7 @@ package com.isxcode.star.backend.module.datasource.service;
 
 import static java.sql.DriverManager.getConnection;
 
+import com.isxcode.star.api.constants.DatasourceStatus;
 import com.isxcode.star.api.constants.DatasourceType;
 import com.isxcode.star.api.pojos.datasource.req.DasAddDatasourceReq;
 import com.isxcode.star.api.pojos.datasource.req.DasQueryDatasourceReq;
@@ -38,6 +39,7 @@ public class DatasourceBizService {
     DatasourceEntity datasource =
         datasourceMapper.dasAddDatasourceReqToDatasourceEntity(dasAddDatasourceReq);
 
+    datasource.setStatus(DatasourceStatus.UN_CHECK);
     datasourceRepository.save(datasource);
   }
 
@@ -102,6 +104,7 @@ public class DatasourceBizService {
         getConnection(
             datasource.getJdbcUrl(), datasource.getUsername(), datasource.getPasswd()); ) {
       if (connection != null) {
+        datasource.setStatus(DatasourceStatus.ACTIVE);
         return new DasTestConnectRes(true, "连接成功");
       }
     } catch (Exception e) {

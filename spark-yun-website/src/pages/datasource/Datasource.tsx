@@ -27,21 +27,25 @@ function Datasource () {
 
   const queryDatasources = () => {
     axios({
-      method: 'get',
-      url: process.env.API_PREFIX_URL + '/datasource/queryDatasource'
+      method: 'post',
+      url: process.env.API_PREFIX_URL + '/das/queryDatasource',
+      data:{
+        page: 0,
+        pageSize: 10
+      }
     })
       .then(function (response) {
-        setDatasources(response.data)
+        setDatasources(response.data.data.content)
       })
       .catch(function (error) {
-        message.error(error.response.data.message)
+        message.error(error.response.data.data.msg)
       })
   }
 
   const delDatasource = (value) => {
     axios({
       method: 'get',
-      url: process.env.API_PREFIX_URL + '/datasource/delDatasource?datasourceId=' + value
+      url: process.env.API_PREFIX_URL + '/das/delDatasource?datasourceId=' + value
     })
       .then(function (response) {
         queryDatasources()
@@ -54,14 +58,16 @@ function Datasource () {
   const testConnect = (value) => {
     axios({
       method: 'post',
-      url: process.env.API_PREFIX_URL + '/datasource/testConnect',
+      url: process.env.API_PREFIX_URL + '/das/testConnect',
       data: {
         datasourceId: value
       }
     })
       .then(function (response) {
-        if (!response.data.canConnect) {
-          message.warning(response.data.message)
+        if (!response.data.data.canConnect) {
+          message.warning(response.data.data.connectLog);
+        } else {
+          message.success(response.data.msg);
         }
         queryDatasources()
       })
@@ -115,19 +121,19 @@ function Datasource () {
       key: 'action',
       render: (_, record) => (
         <Space size="middle">
-          <Button>编辑</Button>
-          <Button
+          <a>编辑</a>
+          <a
             onClick={() => {
               testConnect(record.id)
             }}>
             检测
-          </Button>
-          <Button
+          </a>
+          <a
             onClick={() => {
               delDatasource(record.id)
             }}>
             删除
-          </Button>
+          </a>
         </Space>
       )
     }

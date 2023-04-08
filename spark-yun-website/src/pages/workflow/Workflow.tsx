@@ -25,6 +25,10 @@ function Workflow () {
     setIsModalVisible(false)
   }
 
+  const {
+    token: { colorBgContainer, colorPrimary }
+  } = theme.useToken()
+
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -33,14 +37,19 @@ function Workflow () {
 
   const queryWorkflow = () => {
     axios({
-      method: 'get',
-      url: process.env.API_PREFIX_URL + '/workflow/queryWorkflow'
+      method: 'post',
+      url: process.env.API_PREFIX_URL + '/wof/queryWorkflow',
+      data: {
+        page: 0,
+        pageSize: 10
+      }
     })
       .then(function (response) {
-        setWorkflows(response.data)
+        console.log(response)
+        setWorkflows(response.data.data.content)
       })
       .catch(function (error) {
-        message.error(error.response.data.message)
+        message.error(error.response.data.data.msg)
       })
   }
 
@@ -64,7 +73,7 @@ function Workflow () {
       dataIndex: 'name',
       key: 'name',
       render: (text, record) => (
-        <a
+        <a style={{color: colorPrimary}}
           onClick={() => {
             navigate('/worklist/' + record.id)
           }}>
@@ -73,9 +82,9 @@ function Workflow () {
       )
     },
     {
-      title: '作业数',
-      dataIndex: 'workNum',
-      key: 'workNum'
+      title: '备注',
+      key: 'comment',
+      dataIndex: 'comment'
     },
     {
       title: '调度状态',
@@ -83,22 +92,12 @@ function Workflow () {
       key: 'status'
     },
     {
-      title: '备注',
-      key: 'comment',
-      dataIndex: 'comment'
-    },
-    {
-      title: '标签',
-      dataIndex: 'label',
-      key: 'label'
-    },
-    {
       title: '操作',
       key: 'action',
       render: (_, record) => (
         <Space size="middle">
-          <a>编辑</a>
-          <a
+          <a style={{color:colorPrimary}}>编辑</a>
+          <a style={{color:colorPrimary}}
             onClick={() => {
               delWorkflow(record.id)
             }}>

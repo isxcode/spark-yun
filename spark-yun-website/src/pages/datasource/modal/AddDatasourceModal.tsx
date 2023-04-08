@@ -15,7 +15,7 @@ export const AddDatasourceModal = (props: {
   const addDatasource = (data) => {
     axios({
       method: 'post',
-      url: process.env.API_PREFIX_URL + '/datasource/addDatasource',
+      url: process.env.API_PREFIX_URL + '/das/addDatasource',
       data: {
         name: data.name,
         comment: data.comment,
@@ -86,19 +86,15 @@ export const AddDatasourceModal = (props: {
             <Input />
           </Form.Item>
 
-          <Form.Item label="备注" name="comment">
-            <Input />
-          </Form.Item>
-
           <Form.Item name="type" label="类型" rules={[{ required: true }]}>
             <Select placeholder="选择数据库类型" onChange={onGenderChange} allowClear>
-              <Option value="mysql">mysql</Option>
-              <Option value="oracle">oracle</Option>
-              <Option value="sqlserver">sqlserver</Option>
+              <Option value="MYSQL">mysql数据库</Option>
+              <Option value="ORACLE">oracle数据库</Option>
+              <Option value="SQL_SERVER">sqlserver数据库</Option>
             </Select>
           </Form.Item>
 
-          <Form.Item label="地址" name="jdbcUrl">
+          <Form.Item label="jdbcUrl:" name="jdbcUrl">
             <Input />
           </Form.Item>
 
@@ -110,9 +106,13 @@ export const AddDatasourceModal = (props: {
             <Input />
           </Form.Item>
 
-          <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+          <Form.Item label="备注" name="comment">
+            <Input />
+          </Form.Item>
+
+          <Form.Item wrapperCol={{ offset: 11, span: 16 }}>
             <Button type="primary" htmlType="submit" onClick={props.handleCancel}>
-              创建
+              保存
             </Button>
           </Form.Item>
         </Form>

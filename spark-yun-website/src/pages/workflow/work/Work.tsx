@@ -24,12 +24,12 @@ import TextArea from 'antd/es/input/TextArea'
 import axios from 'axios'
 
 interface WorkType {
-  script: string
+  sql: string
   name: string
   workflowId: string
   datasourceId: string
   engineId: string
-  type: string
+  workType: string
 }
 
 interface Datasource {
@@ -50,10 +50,10 @@ function Work () {
 
   const [work, setWork] = useState<WorkType>({
     engineId: '',
-    type: '',
+    workType: '',
     datasourceId: '',
     name: '',
-    script: '',
+    sql: '',
     workflowId: ''
   })
   const [workScript, setWorkScript] = useState('')
@@ -77,11 +77,11 @@ function Work () {
   const getWork = () => {
     axios({
       method: 'get',
-      url: process.env.API_PREFIX_URL + '/workflow/getWork?workId=' + workId
+      url: process.env.API_PREFIX_URL + '/wok/getWork?workId=' + workId
     })
       .then(function (response) {
-        setWork(response.data)
-        setWorkScript(response.data.script)
+        setWork(response.data.data)
+        setWorkScript(response.data.data.sql)
       })
       .catch(function (error) {
         message.error(error.response.data.message)
@@ -193,20 +193,20 @@ function Work () {
   const onChange = (key: string) => {
     switch (key) {
       case '2':
-        if (work.type === 'sparkSql') {
+        if (work.workType === 'sparkSql') {
           // 查询日志
           getWorkLog()
         }
         break
       case '3':
-        if (work.type === 'sparkSql') {
+        if (work.workType === 'sparkSql') {
           // 查询数据
           getWorkData()
         }
         break
       case '4':
       case '5':
-        if (work.type === 'sparkSql') {
+        if (work.workType === 'sparkSql') {
           // 查询数据
           getWorkStatus()
         }
@@ -278,7 +278,7 @@ function Work () {
   const queryDatasources = () => {
     axios({
       method: 'get',
-      url: process.env.API_PREFIX_URL + '/datasource/queryDatasource'
+      url: process.env.API_PREFIX_URL + '/das/queryDatasource'
     })
       .then(function (response) {
         setDatasource(response.data)
@@ -343,7 +343,7 @@ function Work () {
       <div>
         <div className={'work-bar'}>
           <Button type={'text'}>{work.name}</Button>
-          <Button type={'text'}>{work.type}</Button>
+          <Button type={'text'}>{work.workType}</Button>
           <Button
             onClick={() => {
               navigate('/worklist/' + work.workflowId)
@@ -390,7 +390,7 @@ function Work () {
           onFinishFailed={onFinishFailed}
           autoComplete="off"
           form={form}>
-          {work.type === 'sparkSql'
+          {work.workType === 'sparkSql'
             ? (
             <Form.Item name="engineId" label="计算引擎" rules={[{ required: true }]}>
               <Select defaultValue={work.engineId} placeholder="" allowClear>

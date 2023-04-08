@@ -20,9 +20,6 @@ public interface DatasourceMapper {
   @Mapping(source = "comment", target = "commentInfo")
   @Mapping(source = "type", target = "datasourceType")
   @Mapping(target = "checkDateTime", expression = "java(java.time.LocalDateTime.now())")
-  @Mapping(
-    target = "status",
-    expression = "java(com.isxcode.star.api.menus.DatasourceStatusMenus.UN_CHECK.getStatus())")
   DatasourceEntity dasAddDatasourceReqToDatasourceEntity(DasAddDatasourceReq dasAddDatasourceReq);
 
   /**
