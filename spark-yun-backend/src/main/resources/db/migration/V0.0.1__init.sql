@@ -90,3 +90,5 @@ create table if not exists SY_WORK_CONFIG
   calculate_engine_id varchar(100)  null comment '计算引擎id',
   sql                 varchar(2000) null comment 'sql'
 );
+
+insert into SY_USER (id, username, account, passwd) values ('admin_id', '管理员', 'admin', 'admin123');

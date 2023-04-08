@@ -31,13 +31,6 @@ spring:
     hibernate:
       ddl-auto: none
 
-  # sql初始化
-  sql:
-    init:
-      mode: ALWAYS # NEVER
-      schema-locations: classpath:db/0.0.1/schema.sql
-      data-locations: classpath:db/0.0.1/data.sql
-
   # mvc配置
   mvc:
     view:

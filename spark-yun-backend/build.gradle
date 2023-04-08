@@ -35,6 +35,9 @@ dependencies {
 
   // h2
   runtimeOnly 'com.h2database:h2'
+
+  // flyway
+  implementation 'org.flywaydb:flyway-core:9.16.3'
 }
 
 bootJar {
