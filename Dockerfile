@@ -25,8 +25,7 @@ CMD java -jar /spark-yun/app.jar --spring.profiles.active=demo
 # 构建多平台镜像
 # docker buildx create --name spark-yun-builder
 # docker buildx use spark-yun-builder
-# docker buildx build --platform linux/amd64,linux/arm64/v8 -t isxcode/zhiqingyun:0.0.2 -f ./Dockerfile .
-# docker push isxcode/zhiqingyun:0.0.2
+# docker buildx build --platform linux/amd64,linux/arm64/v8 -t isxcode/zhiqingyun:0.0.2 -f ./Dockerfile . --push
 
 # 启动脚本
 # docker run --restart=always --name spark-yun -v /Users/ispong/.h2:/h2  -p 30111:8080 -d isxcode/zhiqingyun:0.0.2
