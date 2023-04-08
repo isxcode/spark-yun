@@ -87,64 +87,41 @@ public class SshUtils {
     session.disconnect();
   }
 
-  /** 执行远程命令. */
-  public static String executeCommand(EngineNodeEntity engineNode, String command, boolean pty) {
+  /**
+   * 执行远程命令.
+   */
+  public static String executeCommand(EngineNodeEntity engineNode, String command, boolean pty) throws JSchException, InterruptedException, IOException {
 
     JSch jsch = new JSch();
     Session session;
-    try {
-      session =
-          jsch.getSession(
-              engineNode.getUsername(),
-              engineNode.getHost(),
-              Integer.parseInt(engineNode.getPort()));
-    } catch (JSchException e) {
-      log.error(e.getMessage());
-      throw new SparkYunException("远程连接异常", e.getMessage());
-    }
+
+    session =
+      jsch.getSession(
+        engineNode.getUsername(),
+        engineNode.getHost(),
+        Integer.parseInt(engineNode.getPort()));
+
     session.setPassword(engineNode.getPasswd());
     session.setConfig("StrictHostKeyChecking", "no");
-    try {
-      session.connect();
-    } catch (JSchException e) {
-      log.error(e.getMessage());
-      throw new SparkYunException("远程连接异常", e.getMessage());
-    }
+    session.connect();
 
-    ChannelExec channel;
-    try {
-      channel = (ChannelExec) session.openChannel("exec");
-      channel.setPty(pty);
-      channel.setCommand(command);
-      channel.setInputStream(null);
+    ChannelExec channel = (ChannelExec) session.openChannel("exec");
+    channel.setPty(pty);
+    channel.setCommand(command);
+    channel.setInputStream(null);
 //      channel.setErrStream(System.out);
-    } catch (JSchException e) {
-      log.error(e.getMessage());
-      throw new SparkYunException("远程连接异常", e.getMessage());
-    }
 
-    StringBuilder output;
-    try {
-      InputStream in = channel.getInputStream();
-      channel.connect();
-      BufferedReader reader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
-      String line;
-      output = new StringBuilder();
-      while ((line = reader.readLine()) != null) {
-        output.append(line).append("\n");
-      }
-    } catch (IOException | JSchException e) {
-      log.error(e.getMessage());
-      throw new SparkYunException("远程连接异常", e.getMessage());
+    InputStream in = channel.getInputStream();
+    channel.connect();
+    BufferedReader reader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
+    String line;
+    StringBuilder output = new StringBuilder();
+    while ((line = reader.readLine()) != null) {
+      output.append(line).append("\n");
     }
 
     while (!channel.isClosed()) {
-      try {
-        Thread.sleep(1000);
-      } catch (InterruptedException e) {
-        log.error(e.getMessage());
-        throw new SparkYunException("等待分发线程异常", e.getMessage());
-      }
+      Thread.sleep(1000);
     }
 
     // 判断命令是否执行完成

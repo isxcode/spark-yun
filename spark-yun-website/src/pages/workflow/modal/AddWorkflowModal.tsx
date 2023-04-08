@@ -47,7 +47,7 @@ export const AddWorkflowModal = (props: {
   return (
     <>
       <Modal
-        title="创建工作流"
+        title="创建作业流"
         footer={false}
         open={props.isModalVisible}
         onOk={props.handleOk}

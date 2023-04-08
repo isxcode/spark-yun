@@ -39,4 +39,8 @@ public class EnoAddNodeReq {
 
   @Schema(title = "代理服务端口号", example = "30177")
   private String agentPort;
+
+  @Schema(title = "hadoop的home目录", example = "/opt/homebrew/Cellar/hadoop/3.3.4/libexec")
+  @NotEmpty(message = "hadoop的home目录不能空")
+  private String hadoopHomePath;
 }

@@ -53,4 +53,6 @@ public class EngineNodeEntity {
   private String agentHomePath;
 
   private String agentPort;
+
+  private String hadoopHomePath;
 }

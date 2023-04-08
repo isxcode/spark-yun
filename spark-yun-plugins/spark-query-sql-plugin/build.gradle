@@ -80,3 +80,6 @@ dependencies {
 
 }
 
+jar {
+  archiveFileName = "spark-query-sql-plugin.jar"
+}

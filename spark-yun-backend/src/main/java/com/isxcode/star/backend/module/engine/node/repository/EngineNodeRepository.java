@@ -15,5 +15,5 @@ public interface EngineNodeRepository extends JpaRepository<EngineNodeEntity, St
 
   Page<EngineNodeEntity> findAllByCalculateEngineId(String engineId, Pageable pageable);
 
-  List<EngineNodeEntity> findAllByCalculateEngineId(String engineId);
+  List<EngineNodeEntity> findAllByCalculateEngineIdAndStatus(String engineId, String status);
 }

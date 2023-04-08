@@ -2,7 +2,7 @@ package com.isxcode.star.backend.module.datasource.service;
 
 import static java.sql.DriverManager.getConnection;
 
-import com.isxcode.star.api.constants.DatasourceTypeConstants;
+import com.isxcode.star.api.constants.DatasourceType;
 import com.isxcode.star.api.pojos.datasource.req.DasAddDatasourceReq;
 import com.isxcode.star.api.pojos.datasource.req.DasQueryDatasourceReq;
 import com.isxcode.star.api.pojos.datasource.req.DasTestConnectReq;
@@ -70,7 +70,7 @@ public class DatasourceBizService {
 
     // 获取class
     switch (datasource.getDatasourceType()) {
-      case DatasourceTypeConstants.MYSQL:
+      case DatasourceType.MYSQL:
         try {
           Class.forName("com.mysql.cj.jdbc.Driver");
         } catch (ClassNotFoundException e) {
@@ -78,7 +78,7 @@ public class DatasourceBizService {
           throw new SparkYunException("找不到mysql驱动");
         }
         break;
-      case DatasourceTypeConstants.ORACLE:
+      case DatasourceType.ORACLE:
         try {
           Class.forName("oracle.jdbc.driver.OracleDriver");
         } catch (ClassNotFoundException e) {
@@ -86,7 +86,7 @@ public class DatasourceBizService {
           throw new SparkYunException("找不到oracle驱动");
         }
         break;
-      case DatasourceTypeConstants.SQL_SERVER:
+      case DatasourceType.SQL_SERVER:
         try {
           Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
         } catch (ClassNotFoundException e) {

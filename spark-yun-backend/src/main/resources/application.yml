@@ -8,19 +8,20 @@ spring:
   profiles:
     active: local
 
-    # 配置druid数据源
+  # 配置druid数据源
+  datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     druid:
       initial-size: 5
       max-active: 20
       min-idle: 10
       max-wait: 30000
+      filters: stat,wall,log4j2
       validationQuery: select 'x'
       stat-view-servlet:
         enabled: true
         login-username: root
         login-password: ispong123
-      filters: stat,wall,log4j2
 
   # jpa配置˚
   jpa:
@@ -31,11 +32,11 @@ spring:
       ddl-auto: none
 
   # sql初始化
-#  sql:
-#    init:
-#      mode: ALWAYS # NEVER
-#      schema-locations: classpath:db/0.0.1/schema.sql
-#      data-locations: classpath:db/0.0.1/data.sql
+  sql:
+    init:
+      mode: ALWAYS # NEVER
+      schema-locations: classpath:db/0.0.1/schema.sql
+      data-locations: classpath:db/0.0.1/data.sql
 
   # mvc配置
   mvc:

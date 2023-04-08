@@ -1,17 +1,18 @@
-package com.isxcode.star.backend.module.workflow.entity;
+package com.isxcode.star.backend.module.work.config.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.Data;
+import org.hibernate.annotations.GenericGenerator;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import lombok.Data;
-import org.hibernate.annotations.GenericGenerator;
 
 /** 只负责数据库对象映射. */
 @Data
 @Entity
-@Table(name = "sy_work_configs")
+@Table(name = "SY_WORK_CONFIG")
 @JsonIgnoreProperties({"hibernateLazyInitializer"})
 public class WorkConfigEntity {
 
@@ -22,9 +23,9 @@ public class WorkConfigEntity {
       strategy = "com.isxcode.star.backend.config.GeneratedValueConfig")
   private String id;
 
-  private String engineId;
+  private String calculateEngineId;
 
   private String datasourceId;
 
-  private String script;
+  private String sql;
 }

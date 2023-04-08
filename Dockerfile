@@ -2,7 +2,7 @@
 FROM openjdk:8
 
 # 设置挂载点
-VOLUME /data/h2
+VOLUME /h2
 
 # 创建文件夹
 RUN mkdir /spark-yun
@@ -20,7 +20,7 @@ COPY ./spark-yun-dist/src/main/bin /spark-yun/bin
 EXPOSE 8080
 
 # 执行命令运行spring项目
-CMD java -jar app.jar --spring.profiles.active=demo
+CMD java -jar /spark-yun/app.jar --spring.profiles.active=demo
 
 # 启动脚本
-# docker run --restart=always --name spark-yun -v ~/.h2/data:/data/h2  -p 30111:8080 -d isxcode/zhiqingyun:0.0.2
+# docker run --restart=always --name spark-yun -v /Users/ispong/.h2:/h2  -p 30111:8080 -d isxcode/zhiqingyun:0.0.2

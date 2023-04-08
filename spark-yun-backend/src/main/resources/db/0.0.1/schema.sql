@@ -42,7 +42,8 @@ create table if not exists SY_ENGINE_NODE
   username            varchar(100) null comment '服务器用户名',
   passwd              varchar(100) null comment '服务器密码',
   agent_home_path     varchar(100) null comment '代理安装路径',
-  agent_port          varchar(100) null comment '代理端口号'
+  agent_port          varchar(100) null comment '代理端口号',
+  hadoop_home_path    varchar(100) null comment 'hadoop的home目录'
 );
 
 -- 数据源

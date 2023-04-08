@@ -1,9 +1,11 @@
 package com.isxcode.star.api.pojos.work.res;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 
 @Data
-public class QueryWorkRes {
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class WokQueryWorkRes {
 
   private String comment;
 
@@ -11,9 +13,7 @@ public class QueryWorkRes {
 
   private String id;
 
-  private String label;
-
-  private String type;
+  private String workType;
 
   private String createDateTime;
 

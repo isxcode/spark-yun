@@ -1,8 +1,10 @@
 package com.isxcode.star.api.pojos.calculate.engine.res;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 
 @Data
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class CaeQueryEngineRes {
 
   private String id;

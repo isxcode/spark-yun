@@ -1,4 +1,4 @@
-package com.isxcode.star.plugin.querysql;
+package com.isxcode.star.plugin.query.sql;
 
 import com.alibaba.fastjson.JSON;
 import com.isxcode.star.api.pojos.plugin.req.PluginReq;
@@ -14,6 +14,26 @@ import org.apache.spark.sql.SparkSession;
 
 public class Execute {
 
+  /**
+   * 最后一句sql查询.
+   */
+  public static void main(String[] args) {
+
+    PluginReq pluginReq = parse(args);
+
+    try (SparkSession sparkSession = initSparkSession(pluginReq)) {
+      String[] sqls = pluginReq.getSql().split(";");
+
+      for (int i = 0; i < sqls.length - 1; i++) {
+        sparkSession.sql(sqls[i]);
+      }
+
+      Dataset<Row> rowDataset = sparkSession.sql(sqls[sqls.length - 1]).limit(pluginReq.getLimit());
+
+      exportResult(rowDataset);
+    }
+  }
+
   public static PluginReq parse(String[] args) {
     if (args.length == 0) {
       throw new RuntimeException("args is empty");
@@ -26,22 +46,13 @@ public class Execute {
     SparkSession.Builder sparkSessionBuilder = SparkSession.builder();
 
     SparkConf conf = new SparkConf();
-    for (Map.Entry<String, String> entry : pluginReq.getSparkConfig().entrySet()) {
-      conf.set(entry.getKey(), entry.getValue());
+    if (pluginReq.getSparkConfig() != null) {
+      for (Map.Entry<String, String> entry : pluginReq.getSparkConfig().entrySet()) {
+        conf.set(entry.getKey(), entry.getValue());
+      }
     }
 
     return sparkSessionBuilder.config(conf).enableHiveSupport().getOrCreate();
-  }
-
-  public static void checkRequest(PluginReq pluginReq) {
-
-    if (pluginReq.getSql() != null && !pluginReq.getSql().isEmpty()) {
-      throw new RuntimeException("sql is empty");
-    }
-
-    if (pluginReq.getLimit() > 500) {
-      throw new RuntimeException("limit must low than 500");
-    }
   }
 
   public static void exportResult(Dataset<Row> rowDataset) {
@@ -53,33 +64,17 @@ public class Execute {
 
     // 数据
     rowDataset
-        .collectAsList()
-        .forEach(
-            e -> {
-              List<String> metaData = new ArrayList<>();
-              for (int i = 0; i < e.size(); i++) {
-                metaData.add(String.valueOf(e.get(i)));
-              }
-              result.add(metaData);
-            });
+      .collectAsList()
+      .forEach(
+        e -> {
+          List<String> metaData = new ArrayList<>();
+          for (int i = 0; i < e.size(); i++) {
+            metaData.add(String.valueOf(e.get(i)));
+          }
+          result.add(metaData);
+        });
 
     System.out.println(JSON.toJSONString(result));
   }
 
-  public static void main(String[] args) {
-
-    PluginReq pluginReq = parse(args);
-
-    SparkSession sparkSession = initSparkSession(pluginReq);
-
-    String[] split = pluginReq.getSql().split(";");
-
-    sparkSession.sql(split[0]);
-
-    Dataset<Row> rowDataset = sparkSession.sql(split[1]).limit(pluginReq.getLimit());
-
-    exportResult(rowDataset);
-
-    sparkSession.stop();
-  }
 }

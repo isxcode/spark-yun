@@ -8,10 +8,9 @@ import javax.persistence.Table;
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 
-/** 只负责数据库对象映射. */
 @Data
 @Entity
-@Table(name = "sy_workflows")
+@Table(name = "SY_WORKFLOW")
 @JsonIgnoreProperties({"hibernateLazyInitializer"})
 public class WorkflowEntity {
 
@@ -27,6 +26,4 @@ public class WorkflowEntity {
   private String commentInfo;
 
   private String status;
-
-  private String label;
 }
