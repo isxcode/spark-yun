@@ -117,7 +117,7 @@ public class SshUtils {
       channel.setPty(pty);
       channel.setCommand(command);
       channel.setInputStream(null);
-      channel.setErrStream(System.out);
+//      channel.setErrStream(System.out);
     } catch (JSchException e) {
       log.error(e.getMessage());
       throw new SparkYunException("远程连接异常", e.getMessage());

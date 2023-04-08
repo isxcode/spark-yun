@@ -36,4 +36,7 @@ public class EnoAddNodeReq {
 
   @Schema(title = "代理安装的路径", example = "/Users/ispong")
   private String agentHomePath;
+
+  @Schema(title = "代理服务端口号", example = "30177")
+  private String agentPort;
 }

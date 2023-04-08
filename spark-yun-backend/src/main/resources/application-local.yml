@@ -1,6 +1,7 @@
 spark-yun:
   agent-tar-gz-dir: /Users/ispong/Isxcode/spark-yun/spark-yun-dist/build/distributions
   agent-bin-dir: /Users/ispong/Isxcode/spark-yun/spark-yun-dist/src/main/bin
+  default-agent-port: 30177
 
 spring:
 

@@ -19,5 +19,5 @@ public interface PathConstants {
   String AGENT_INSTALL_BASH_NAME = "spark-yun-install";
 
   /** 卸载脚本名称. */
-  String AGENT_REMOVE_BASH_NAME = "spark-yun-remove";
+  String AGENT_REMOVE_BASH_NAME = "spark-yun-uninstall";
 }

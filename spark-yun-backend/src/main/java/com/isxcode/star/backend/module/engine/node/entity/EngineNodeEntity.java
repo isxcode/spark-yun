@@ -51,4 +51,6 @@ public class EngineNodeEntity {
   private String passwd;
 
   private String agentHomePath;
+
+  private String agentPort;
 }

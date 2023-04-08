@@ -34,8 +34,8 @@ spring:
 #  sql:
 #    init:
 #      mode: ALWAYS # NEVER
-#      schema-locations: classpath:db/schema.sql
-#      data-locations: classpath:db/data.sql
+#      schema-locations: classpath:db/0.0.1/schema.sql
+#      data-locations: classpath:db/0.0.1/data.sql
 
   # mvc配置
   mvc:

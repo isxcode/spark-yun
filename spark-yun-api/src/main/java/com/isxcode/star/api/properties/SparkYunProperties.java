@@ -19,4 +19,9 @@ public class SparkYunProperties {
    */
   private String agentBinDir;
 
+  /**
+   * 代理默认端口号.
+   */
+  private String defaultAgentPort = "30177";
+
 }

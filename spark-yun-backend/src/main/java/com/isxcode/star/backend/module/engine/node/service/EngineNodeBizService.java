@@ -56,6 +56,11 @@ public class EngineNodeBizService {
     node.setAgentHomePath(
       getDefaultAgentHomePath(enoAddNodeReq.getAgentHomePath(), enoAddNodeReq.getUsername()));
 
+    // 设置代理端口号
+    if (Strings.isEmpty(enoAddNodeReq.getAgentPort())) {
+      node.setAgentPort(sparkYunProperties.getDefaultAgentPort());
+    }
+
     engineNodeRepository.save(node);
   }
 
@@ -123,7 +128,7 @@ public class EngineNodeBizService {
 
     // 运行安装脚本
     String installCommand =
-      "bash " + engineNode.getAgentHomePath() + File.separator + PathConstants.AGENT_INSTALL_BASH_NAME + " --home-path=" + engineNode.getAgentHomePath();
+      "bash " + engineNode.getAgentHomePath() + File.separator + PathConstants.AGENT_INSTALL_BASH_NAME + " --home-path=" + engineNode.getAgentHomePath() + " --agent-port=" + engineNode.getAgentPort();
     String executeLog = executeCommand(engineNode, installCommand, false);
 
     engineNode.setStatus("INSTALLED");
@@ -152,7 +157,7 @@ public class EngineNodeBizService {
 
     // 运行卸载脚本
     String installCommand =
-      "bash " + engineNode.getAgentHomePath() + File.separator + PathConstants.AGENT_REMOVE_BASH_NAME + " --home-path=" + engineNode.getAgentHomePath();
+      "bash " + engineNode.getAgentHomePath() + File.separator + "spark-yun-agent" + File.separator + "bin" + File.separator + PathConstants.AGENT_REMOVE_BASH_NAME + " --home-path=" + engineNode.getAgentHomePath();
     String executeLog = executeCommand(engineNode, installCommand, false);
 
     engineNode.setStatus("UNINSTALLED");
