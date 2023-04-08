@@ -27,7 +27,7 @@ function Engine () {
   const queryEngines = () => {
     axios({
       method: 'get',
-      url: process.env.API_PREFIX_URL + '/engine/queryEngine'
+      url: process.env.API_PREFIX_URL + '/cae/queryEngine'
     })
       .then(function (response) {
         console.log(response)
@@ -36,10 +36,10 @@ function Engine () {
           server.title = server.name
           return server
         })
-        setEngines(response.data)
+        setEngines(response.data.data.content)
       })
       .catch(function (error) {
-        message.error(error.response.data.message)
+        message.error(error.response.data.data.msg)
       })
   }
 

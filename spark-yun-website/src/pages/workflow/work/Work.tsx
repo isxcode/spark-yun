@@ -143,7 +143,7 @@ function Work () {
   const configWorkDatasource = (value) => {
     axios({
       method: 'post',
-      url: process.env.API_PREFIX_URL + '/workflow/configWork',
+      url: process.env.API_PREFIX_URL + '/woc/configWork',
       data: {
         workId,
         script: workScript,
@@ -162,10 +162,10 @@ function Work () {
   const configWork = () => {
     axios({
       method: 'post',
-      url: process.env.API_PREFIX_URL + '/workflow/configWork',
+      url: process.env.API_PREFIX_URL + '/woc/configWork',
       data: {
         workId,
-        script: workScript
+        sql: workScript
       }
     })
       .then(function (response) {
@@ -179,7 +179,7 @@ function Work () {
   const runWork = () => {
     axios({
       method: 'get',
-      url: process.env.API_PREFIX_URL + '/workflow/runWork?workId=' + workId
+      url: process.env.API_PREFIX_URL + '/wok/runWork?workId=' + workId
     })
       .then(function (response) {
         message.success('保存成功')
@@ -277,11 +277,15 @@ function Work () {
 
   const queryDatasources = () => {
     axios({
-      method: 'get',
-      url: process.env.API_PREFIX_URL + '/das/queryDatasource'
+      method: 'post',
+      url: process.env.API_PREFIX_URL + '/das/queryDatasource',
+      data:{
+        page: 0,
+        pageSize:10
+      }
     })
       .then(function (response) {
-        setDatasource(response.data)
+        setDatasource(response.data.data.content)
       })
       .catch(function (error) {
         message.error(error.response.data.message)
@@ -290,8 +294,12 @@ function Work () {
 
   const queryEngines = () => {
     axios({
-      method: 'get',
-      url: process.env.API_PREFIX_URL + '/engine/queryEngine'
+      method: 'post',
+      url: process.env.API_PREFIX_URL + '/cae/queryEngine',
+      data:{
+        page:0,
+        pageSize: 10
+      }
     })
       .then(function (response) {
         setEngines(response.data)
