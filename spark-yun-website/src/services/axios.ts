@@ -1,41 +1,36 @@
-import axios, { type AxiosInstance, type AxiosRequestConfig, type AxiosResponse } from 'axios'
+import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
+import {message} from "antd";
 
-class Axios {
-  private readonly instance: AxiosInstance
+const axiosInstance = axios.create({
 
-  constructor (config?: AxiosRequestConfig) {
-    this.instance = axios.create(config)
-    this.instance.interceptors.response.use(this.handleResponse, this.handleError)
+  baseURL: process.env.API_PREFIX_URL,
+  timeout: 5000,
+  responseType: "json",
+  maxContentLength: 2000,
+  maxBodyLength: 2000,
+  maxRedirects: 1
+});
+
+axiosInstance.interceptors.request.use(function (config) {
+  return config
+}, function (error) {
+  return Promise.reject(error)
+})
+
+axiosInstance.interceptors.response.use(
+  (response: AxiosResponse) => {
+    if (response.status === 200) {
+      if (response.data.code !== '200') {
+        message.error(response.data.msg);
+      } else {
+        message.success(response.data.msg);
+        return response.data;
+      }
+    }
+  },
+  (error: any) => {
+    return Promise.reject(error);
   }
+);
 
-  private handleResponse (response: AxiosResponse) {
-    return response.data
-  }
-
-  private handleError (error: any) {
-    console.error('API request error:', error)
-    throw error
-  }
-
-  public async get<T>(url: string, config?: AxiosRequestConfig): Promise<T> {
-    const response = await this.instance.get(url, config)
-    return response.data
-  }
-
-  public async post<T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T> {
-    const response = await this.instance.post(url, data, config)
-    return response.data
-  }
-
-  public async put<T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T> {
-    const response = await this.instance.put(url, data, config)
-    return response.data
-  }
-
-  public async delete<T>(url: string, config?: AxiosRequestConfig): Promise<T> {
-    const response = await this.instance.delete(url, config)
-    return response.data
-  }
-}
-
-export default axios
+export default axiosInstance;

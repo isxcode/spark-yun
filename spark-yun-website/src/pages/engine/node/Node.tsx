@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import './Node.scss'
 import { Button, Form, Input, message, Space, Table, Tag, theme } from 'antd'
 import { type ColumnsType } from 'antd/es/table'
 import { useParams } from 'react-router-dom'

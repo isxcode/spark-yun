@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import { Button, Card, Form, Input, message, Modal } from 'antd'
-import './AddWorkflowModal.scss'
 import axios from 'axios'
 
 export const AddWorkflowModal = (props: {

@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import { Button, Card, Form, Input, message, Modal, Select } from 'antd'
-import './AddDatasourceModal.scss'
 import axios from 'axios'
 
 const { Option } = Select

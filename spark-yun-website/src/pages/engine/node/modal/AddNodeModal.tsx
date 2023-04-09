@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import { Button, Card, Form, Input, message, Modal } from 'antd'
-import './AddNodeModal.scss'
 import axios from 'axios'
 
 export const AddNodeModal = (props: {

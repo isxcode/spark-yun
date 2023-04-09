@@ -1,5 +1,4 @@
 import React from 'react'
-import './Auth.scss'
 import { Button, Form, Input, message, theme, Upload, type UploadProps } from 'antd'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'

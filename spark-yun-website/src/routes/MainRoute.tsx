@@ -1,8 +1,5 @@
 import React from 'react'
 import { BrowserRouter, Navigate, Route, Routes, useLocation } from 'react-router-dom'
-import Login from '../pages/login/Login'
-import Monitor from '../pages/monitor/Monitor'
-import Layouts from './Layouts'
 import Engine from '../pages/engine/Engine'
 import Node from '../pages/engine/node/Node'
 import Datasource from '../pages/datasource/Datasource'
@@ -10,8 +7,10 @@ import Workflow from '../pages/workflow/Workflow'
 import Work from '../pages/workflow/work/Work'
 import Worklist from '../pages/workflow/worklist/Worklist'
 import Auth from '../pages/auth/Auth'
+import Layouts from "../layouts/Layouts";
+import Login from "../pages/login/Login";
 
-export default function App () {
+export default function MainRoute () {
   return (
     <>
       <React.StrictMode>

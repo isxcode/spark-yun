@@ -1,7 +1,6 @@
 import React from 'react'
 import { Layout, Menu, type MenuProps, message, theme } from 'antd'
 import { Outlet, useNavigate } from 'react-router-dom'
-import './Layouts.scss'
 
 function Layouts () {
   const navigate = useNavigate()

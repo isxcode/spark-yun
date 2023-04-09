@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import { Button, Card, Form, Input, message, Modal } from 'antd'
-import './AddEngineModal.scss'
 import axios from 'axios'
 
 export const AddEngineModal = (props: { isModalVisible: any, handleOk: any, handleCancel: any, queryEngines: any }) => {

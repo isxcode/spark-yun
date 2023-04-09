@@ -68,8 +68,8 @@ const config = {
       },
       // sass解析
       {
-        test: /\.css|s[ac]ss$/i,
-        use: ['style-loader', 'css-loader', 'sass-loader']
+        test: /\.css|less$/i,
+        use: ['style-loader', 'css-loader', 'less-loader']
       },
       // png解析
       {
