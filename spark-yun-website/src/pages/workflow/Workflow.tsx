@@ -1,84 +1,71 @@
-import React, { useEffect, useState } from 'react'
-import { Button, Form, Input, message, Space, Table, Tag, theme } from 'antd'
-import { type ColumnsType } from 'antd/es/table'
-import { useNavigate } from 'react-router-dom'
-import { AddEngineModal } from '../engine/modal/AddEngineModal'
-import { AddWorkflowModal } from './modal/AddWorkflowModal'
-import axios from 'axios'
-
-interface DataType {
-  id: string
-  name: string
-  age: number
-  address: string
-}
+import React, {useEffect, useState} from 'react'
+import {Button, Space, Table} from 'antd'
+import {type ColumnsType} from 'antd/es/table'
+import {useNavigate} from 'react-router-dom'
+import {AddWorkflowModal} from '../../modals/workflow/AddWorkflowModal'
+import {delWorkflowApi, queryWorkflowApi} from "../../services/worflow/workflowService";
+import {Workflow} from "../../services/worflow/res/Workflow";
+import './Workflow.less';
 
 function Workflow () {
-  const [workflows, setWorkflows] = useState<DataType[]>([])
 
-  const [isModalVisible, setIsModalVisible] = useState(false)
-  const handleOk = () => {
-    setIsModalVisible(true)
-  }
-  const handleCancel = () => {
-    setIsModalVisible(false)
-  }
+  const navigate = useNavigate();
 
-  const {
-    token: { colorBgContainer, colorPrimary }
-  } = theme.useToken()
-
-  const navigate = useNavigate()
+  const [workflows, setWorkflows] = useState<Workflow[]>([]);
+  const [pagination, setPagination] = useState({
+    currentPage: 0,
+    pageSize: 0,
+    total: 0,
+  });
 
   useEffect(() => {
-    queryWorkflow()
-  }, [])
+    queryWorkflow(0, 10);
+  }, []);
 
-  const queryWorkflow = () => {
-    axios({
-      method: 'post',
-      url: process.env.API_PREFIX_URL + '/wof/queryWorkflow',
-      data: {
-        page: 0,
-        pageSize: 10
-      }
-    })
-      .then(function (response) {
-        console.log(response)
-        setWorkflows(response.data.data.content)
-      })
-      .catch(function (error) {
-        message.error(error.response.data.data.msg)
-      })
+  const queryWorkflow = (page: number, pageSize: number) => {
+    queryWorkflowApi({page: page, pageSize: pageSize}).then(function (response) {
+      setWorkflows(response.content)
+      setPagination({
+        total: response.totalElements,
+        currentPage: response.currentPage,
+        pageSize: response.pageSize
+      });
+    });
+  };
+
+  const delWorkflow = (workflowId: string) => {
+    delWorkflowApi(workflowId).then(function (response) {
+      queryWorkflow(pagination.currentPage, pagination.pageSize);
+    });
+  };
+
+  const [visible, setVisible] = useState(false);
+
+  const showModal = () => {
+    setVisible(true);
   }
 
-  const delWorkflow = (value) => {
-    axios({
-      method: 'get',
-      url: process.env.API_PREFIX_URL + '/workflow/delWorkflow?workflowId=' + value
-    })
-      .then(function (response) {
-        console.log(response)
-        queryWorkflow()
-      })
-      .catch(function (error) {
-        message.error(error.response.data.message)
-      })
+  const handleCancel = () => {
+    setVisible(false);
   }
 
-  const columns: ColumnsType<DataType> = [
+  const columns: ColumnsType<Workflow> = [
     {
       title: '工作流名称',
       dataIndex: 'name',
       key: 'name',
       render: (text, record) => (
-        <a style={{color: colorPrimary}}
-          onClick={() => {
-            navigate('/worklist/' + record.id)
-          }}>
+        <a onClick={() => {
+          navigate('/worklist/' + record.id);
+        }}>
           {text}
         </a>
       )
+    },
+    {
+      title: '调度状态',
+      key: 'status',
+      dataIndex: 'status'
     },
     {
       title: '备注',
@@ -86,17 +73,12 @@ function Workflow () {
       dataIndex: 'comment'
     },
     {
-      title: '调度状态',
-      dataIndex: 'status',
-      key: 'status'
-    },
-    {
       title: '操作',
       key: 'action',
       render: (_, record) => (
         <Space size="middle">
-          <a style={{color:colorPrimary}}>编辑</a>
-          <a style={{color:colorPrimary}}
+          <a>编辑</a>
+          <a
             onClick={() => {
               delWorkflow(record.id)
             }}>
@@ -105,31 +87,27 @@ function Workflow () {
         </Space>
       )
     }
-  ]
+  ];
+
+  const handleTableChange = (pagination) => {
+    queryWorkflow(pagination.current - 1, pagination.pageSize);
+  };
 
   return (
     <>
       <div className={'workflow-bar'}>
-        <Button
-          onClick={() => {
-            handleOk()
-          }}>
+        <Button type={'primary'} onClick={() => {
+          showModal()
+        }}>
           添加作业流
         </Button>
-        <Input></Input>
-        <Button>搜索</Button>
       </div>
 
-      <Table columns={columns} dataSource={workflows} />
+      <Table columns={columns} dataSource={workflows} pagination={pagination} onChange={handleTableChange}/>
 
-      <AddWorkflowModal
-        handleCancel={handleCancel}
-        handleOk={handleOk}
-        isModalVisible={isModalVisible}
-        queryWorkflow={queryWorkflow}
-      />
+      <AddWorkflowModal isModalVisible={visible} handleCancel={handleCancel} queryWorkflow={queryWorkflow}/>
     </>
-  )
+  );
 }
 
 export default Workflow

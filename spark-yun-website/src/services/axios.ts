@@ -23,6 +23,7 @@ axiosInstance.interceptors.response.use(
       if (response.data.code !== '200') {
         message.error(response.data.msg);
       } else {
+        console.log(response.data);
         message.success(response.data.msg);
         return response.data;
       }

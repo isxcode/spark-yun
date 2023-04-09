@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Button, Form, Input, message, Space, Table, Tag, theme } from 'antd'
 import { type ColumnsType } from 'antd/es/table'
 import { useNavigate, useParams } from 'react-router-dom'
-import { AddWorkflowModal } from '../modal/AddWorkflowModal'
+import { AddWorkflowModal } from '../../../modals/workflow/AddWorkflowModal'
 import { AddWorkModal } from './modal/AddWorkModal'
 import axios from 'axios'
 
