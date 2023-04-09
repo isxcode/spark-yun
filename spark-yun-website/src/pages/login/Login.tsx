@@ -21,7 +21,7 @@ function Login() {
   };
 
   return (
-    <div className={"sy-login-div"}>
+    <div className={'sy-login-div'}>
 
       <div className={'sy-login-logo'}>至轻云</div>
 
