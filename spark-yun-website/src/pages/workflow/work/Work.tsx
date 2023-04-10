@@ -278,9 +278,9 @@ function Work () {
     axios({
       method: 'post',
       url: process.env.API_PREFIX_URL + '/das/queryDatasource',
-      data:{
+      data: {
         page: 0,
-        pageSize:10
+        pageSize: 10
       }
     })
       .then(function (response) {
@@ -295,8 +295,8 @@ function Work () {
     axios({
       method: 'post',
       url: process.env.API_PREFIX_URL + '/cae/queryEngine',
-      data:{
-        page:0,
+      data: {
+        page: 0,
         pageSize: 10
       }
     })

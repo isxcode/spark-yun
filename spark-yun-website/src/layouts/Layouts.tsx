@@ -1,17 +1,23 @@
 import React from 'react'
 import { Layout, Menu, type MenuProps, message, theme } from 'antd'
 import { Outlet, useNavigate } from 'react-router-dom'
-import './Layouts.less';
+import './Layouts.less'
 import {
-  ApartmentOutlined, ApiOutlined,
+  ApartmentOutlined,
+  ApiOutlined,
   AppstoreOutlined,
-  CloudOutlined, DashboardOutlined,
-  DatabaseOutlined, FireOutlined, FundProjectionScreenOutlined,
-  HomeOutlined, NodeIndexOutlined,
+  CloudOutlined,
+  DashboardOutlined,
+  DatabaseOutlined,
+  FireOutlined,
+  FundProjectionScreenOutlined,
+  HomeOutlined,
+  NodeIndexOutlined,
   ProjectOutlined,
-  SettingOutlined, TeamOutlined,
+  SettingOutlined,
+  TeamOutlined,
   UserOutlined
-} from "@ant-design/icons";
+} from '@ant-design/icons'
 
 function Layouts () {
   const navigate = useNavigate()
@@ -22,7 +28,7 @@ function Layouts () {
     {
       key: 1,
       label: '首页',
-      icon: <HomeOutlined/>,
+      icon: <HomeOutlined />,
       onClick: () => {
         navigate('/auth')
       }
@@ -30,7 +36,7 @@ function Layouts () {
     {
       key: 2,
       label: '项目管理',
-      icon: <ProjectOutlined/>,
+      icon: <ProjectOutlined />,
       onClick: () => {
         navigate('/auth')
       }
@@ -38,7 +44,7 @@ function Layouts () {
     {
       key: 3,
       label: '计算集群',
-      icon: <CloudOutlined/>,
+      icon: <CloudOutlined />,
       onClick: () => {
         navigate('/engine')
       }
@@ -46,7 +52,7 @@ function Layouts () {
     {
       key: 4,
       label: '数据源',
-      icon: <DatabaseOutlined/>,
+      icon: <DatabaseOutlined />,
       onClick: () => {
         navigate('/datasource')
       }
@@ -54,7 +60,7 @@ function Layouts () {
     {
       key: 5,
       label: '作业流',
-      icon: <NodeIndexOutlined/>,
+      icon: <NodeIndexOutlined />,
       onClick: () => {
         navigate('/workflow')
       }
@@ -62,7 +68,7 @@ function Layouts () {
     {
       key: 6,
       label: '数据建模',
-      icon: <AppstoreOutlined/>,
+      icon: <AppstoreOutlined />,
       onClick: () => {
         navigate('/auth')
       }
@@ -70,7 +76,7 @@ function Layouts () {
     {
       key: 7,
       label: '调度历史',
-      icon: <ApartmentOutlined/>,
+      icon: <ApartmentOutlined />,
       onClick: () => {
         navigate('/auth')
       }
@@ -86,7 +92,7 @@ function Layouts () {
     {
       key: 9,
       label: '数据资产',
-      icon: <DashboardOutlined/>,
+      icon: <DashboardOutlined />,
       onClick: () => {
         navigate('/auth')
       }
@@ -94,7 +100,7 @@ function Layouts () {
     {
       key: 10,
       label: '自定义Api',
-      icon: <ApiOutlined/>,
+      icon: <ApiOutlined />,
       onClick: () => {
         navigate('/auth')
       }
@@ -102,7 +108,7 @@ function Layouts () {
     {
       key: 11,
       label: 'AI计算',
-      icon: <FireOutlined/>,
+      icon: <FireOutlined />,
       onClick: () => {
         navigate('/auth')
       }
@@ -110,7 +116,7 @@ function Layouts () {
     {
       key: 12,
       label: '后台管理',
-      icon: <TeamOutlined/>,
+      icon: <TeamOutlined />,
       onClick: () => {
         navigate('/auth')
       }
@@ -118,7 +124,7 @@ function Layouts () {
     {
       key: 14,
       label: '系统配置',
-      icon: <SettingOutlined/>,
+      icon: <SettingOutlined />,
       onClick: () => {
         navigate('/auth')
       }
@@ -131,32 +137,33 @@ function Layouts () {
 
   return (
     <>
-      <Layout style={{minHeight: '100vh'}}>
+      <Layout style={{ minHeight: '100vh' }}>
         <Header className={'sy-header'}>
-          <div
-            className={'sy-logo'}
-            onClick={() => window.open('https://zhiqingyun.isxcode.com')}>
+          <div className={'sy-logo'} onClick={() => window.open('https://zhiqingyun.isxcode.com')}>
             至轻云
           </div>
+          <a onClick={()=>{window.open("http://zhiqingyun.isxcode.com/README")}}>
+            使用手册
+          </a>
         </Header>
         <Layout>
           <Sider className={'sy-sider'} width={200}>
-            <Menu defaultSelectedKeys={['1']} items={menus}/>
+            <Menu defaultSelectedKeys={['1']} items={menus} />
           </Sider>
-          <Layout style={{borderLeft: colorPrimary + ' solid 1.4px'}}>
+          <Layout style={{ borderLeft: colorPrimary + ' solid 1.4px' }}>
             <Content
               style={{
                 padding: 24,
                 margin: 0,
                 background: colorBgContainer
               }}>
-              <Outlet/>
+              <Outlet />
             </Content>
           </Layout>
         </Layout>
       </Layout>
     </>
-  );
+  )
 }
 
 export default Layouts

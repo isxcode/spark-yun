@@ -4,6 +4,8 @@ FROM openjdk:8
 # 设置挂载点
 VOLUME /h2
 
+ARG ADMIN_PASSWORD='admin123'
+
 # 创建文件夹
 RUN mkdir /spark-yun
 
@@ -19,8 +21,10 @@ COPY ./spark-yun-dist/src/main/bin /spark-yun/bin
 # 暴露8080端口号
 EXPOSE 8080
 
+ENV ADMIN_PASSWORD=${ADMIN_PASSWORD}
+
 # 执行命令运行spring项目
-CMD java -jar /spark-yun/app.jar --spring.profiles.active=demo
+CMD java -jar /spark-yun/app.jar --spring.profiles.active=demo --spring.security.user.password=${ADMIN_PASSWORD}
 
 # 构建多平台镜像
 # docker buildx create --name spark-yun-builder
@@ -29,3 +33,4 @@ CMD java -jar /spark-yun/app.jar --spring.profiles.active=demo
 
 # 启动脚本
 # docker run --restart=always --name spark-yun -v /Users/ispong/.h2:/h2  -p 30111:8080 -d isxcode/zhiqingyun:0.0.2
+# docker run --restart=always --name spark-yun -p 30204:8080 -d isxcode/zhiqingyun:0.0.2

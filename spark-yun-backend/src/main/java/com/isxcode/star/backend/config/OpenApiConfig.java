@@ -21,7 +21,7 @@ import io.swagger.v3.oas.annotations.servers.Server;
       description = "本地环境"
     ),
     @Server(
-      url = "http://localhost:30111",
+      url = "http://localhost:30204",
       description = "本地docker环境"
     ),
     @Server(

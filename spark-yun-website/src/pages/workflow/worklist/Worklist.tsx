@@ -37,10 +37,10 @@ function Worklist () {
     axios({
       method: 'post',
       url: process.env.API_PREFIX_URL + '/wok/queryWork',
-      data:{
-        workflowId:workflowId,
-        page:0,
-        pageSize: 10,
+      data: {
+        workflowId,
+        page: 0,
+        pageSize: 10
       }
     })
       .then(function (response) {

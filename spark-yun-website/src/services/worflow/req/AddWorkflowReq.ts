@@ -1,4 +1,4 @@
 export interface AddWorkflowReq {
-  name: string;
-  comment: string;
+  name: string
+  comment: string
 }

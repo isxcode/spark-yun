@@ -97,7 +97,7 @@ export const AddWorkModal = (props: {
             </Select>
           </Form.Item>
 
-          <Form.Item label="标签" name="label" wrapperCol={{offset: 10, span: 16}}>
+          <Form.Item label="标签" name="label" wrapperCol={{ offset: 10, span: 16 }}>
             <Input />
           </Form.Item>
 

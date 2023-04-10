@@ -1,3 +1,3 @@
 export interface LoginRes {
-  username: string;
+  username: string
 }

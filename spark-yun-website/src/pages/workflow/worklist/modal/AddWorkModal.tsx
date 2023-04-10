@@ -72,19 +72,19 @@ export const AddWorkModal = (props: {
         onCancel={props.handleCancel}
         width={500}>
         <Form
-          labelCol={{span: 4}}
-          wrapperCol={{span: 18}}
-          style={{maxWidth: 600}}
-          initialValues={{remember: true}}
+          labelCol={{ span: 4 }}
+          wrapperCol={{ span: 18 }}
+          style={{ maxWidth: 600 }}
+          initialValues={{ remember: true }}
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
           autoComplete="off"
           form={form}>
           <Form.Item label="名称" name="name">
-            <Input/>
+            <Input />
           </Form.Item>
 
-          <Form.Item name="type" label="类型" rules={[{required: true}]}>
+          <Form.Item name="type" label="类型" rules={[{ required: true }]}>
             <Select placeholder="选择作业类型" onChange={onGenderChange} allowClear>
               <Option value="EXECUTE_JDBC_SQL">jdbc执行作业</Option>
               <Option value="QUERY_JDBC_SQL">jdbc查询作业</Option>
@@ -94,10 +94,10 @@ export const AddWorkModal = (props: {
           </Form.Item>
 
           <Form.Item label="备注" name="comment">
-            <Input/>
+            <Input />
           </Form.Item>
 
-          <Form.Item wrapperCol={{offset: 10, span: 16}}>
+          <Form.Item wrapperCol={{ offset: 10, span: 16 }}>
             <Button type="primary" htmlType="submit" onClick={props.handleCancel}>
               保存
             </Button>
@@ -105,5 +105,5 @@ export const AddWorkModal = (props: {
         </Form>
       </Modal>
     </>
-  );
+  )
 }

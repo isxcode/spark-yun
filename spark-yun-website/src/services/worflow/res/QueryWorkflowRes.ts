@@ -1,13 +1,13 @@
-import {Workflow} from "./Workflow";
+import { type Workflow } from './Workflow'
 
 export interface QueryWorkflowRes {
-  username: string;
+  username: string
 
-  content: Workflow[];
+  content: Workflow[]
 
-  totalElements: number;
+  totalElements: number
 
-  currentPage: number;
+  currentPage: number
 
-  pageSize: number;
+  pageSize: number
 }

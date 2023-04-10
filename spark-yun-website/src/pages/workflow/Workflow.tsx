@@ -1,52 +1,51 @@
-import React, {useEffect, useState} from 'react'
-import {Button, Space, Table} from 'antd'
-import {type ColumnsType} from 'antd/es/table'
-import {useNavigate} from 'react-router-dom'
-import {AddWorkflowModal} from '../../modals/workflow/AddWorkflowModal'
-import {delWorkflowApi, queryWorkflowApi} from "../../services/worflow/workflowService";
-import {Workflow} from "../../services/worflow/res/Workflow";
-import './Workflow.less';
+import React, { useEffect, useState } from 'react'
+import { Button, Space, Table } from 'antd'
+import { type ColumnsType } from 'antd/es/table'
+import { useNavigate } from 'react-router-dom'
+import { AddWorkflowModal } from '../../modals/workflow/AddWorkflowModal'
+import { delWorkflowApi, queryWorkflowApi } from '../../services/worflow/workflowService'
+import { Workflow } from '../../services/worflow/res/Workflow'
+import './Workflow.less'
 
 function Workflow () {
+  const navigate = useNavigate()
 
-  const navigate = useNavigate();
-
-  const [workflows, setWorkflows] = useState<Workflow[]>([]);
+  const [workflows, setWorkflows] = useState<Workflow[]>([])
   const [pagination, setPagination] = useState({
     currentPage: 0,
     pageSize: 0,
-    total: 0,
-  });
+    total: 0
+  })
 
   useEffect(() => {
-    queryWorkflow(0, 10);
-  }, []);
+    queryWorkflow(0, 10)
+  }, [])
 
   const queryWorkflow = (page: number, pageSize: number) => {
-    queryWorkflowApi({page: page, pageSize: pageSize}).then(function (response) {
+    queryWorkflowApi({ page, pageSize }).then(function (response) {
       setWorkflows(response.content)
       setPagination({
         total: response.totalElements,
         currentPage: response.currentPage,
         pageSize: response.pageSize
-      });
-    });
-  };
+      })
+    })
+  }
 
   const delWorkflow = (workflowId: string) => {
     delWorkflowApi(workflowId).then(function (response) {
-      queryWorkflow(pagination.currentPage, pagination.pageSize);
-    });
-  };
+      queryWorkflow(pagination.currentPage, pagination.pageSize)
+    })
+  }
 
-  const [visible, setVisible] = useState(false);
+  const [visible, setVisible] = useState(false)
 
   const showModal = () => {
-    setVisible(true);
+    setVisible(true)
   }
 
   const handleCancel = () => {
-    setVisible(false);
+    setVisible(false)
   }
 
   const columns: ColumnsType<Workflow> = [
@@ -55,9 +54,10 @@ function Workflow () {
       dataIndex: 'name',
       key: 'name',
       render: (text, record) => (
-        <a onClick={() => {
-          navigate('/worklist/' + record.id);
-        }}>
+        <a
+          onClick={() => {
+            navigate('/worklist/' + record.id)
+          }}>
           {text}
         </a>
       )
@@ -87,27 +87,29 @@ function Workflow () {
         </Space>
       )
     }
-  ];
+  ]
 
   const handleTableChange = (pagination) => {
-    queryWorkflow(pagination.current - 1, pagination.pageSize);
-  };
+    queryWorkflow(pagination.current - 1, pagination.pageSize)
+  }
 
   return (
     <>
       <div className={'workflow-bar'}>
-        <Button type={'primary'} onClick={() => {
-          showModal()
-        }}>
+        <Button
+          type={'primary'}
+          onClick={() => {
+            showModal()
+          }}>
           添加作业流
         </Button>
       </div>
 
-      <Table columns={columns} dataSource={workflows} pagination={pagination} onChange={handleTableChange}/>
+      <Table columns={columns} dataSource={workflows} pagination={pagination} onChange={handleTableChange} />
 
-      <AddWorkflowModal isModalVisible={visible} handleCancel={handleCancel} queryWorkflow={queryWorkflow}/>
+      <AddWorkflowModal isModalVisible={visible} handleCancel={handleCancel} queryWorkflow={queryWorkflow} />
     </>
-  );
+  )
 }
 
 export default Workflow

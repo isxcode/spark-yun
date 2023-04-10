@@ -28,7 +28,7 @@ function Datasource () {
     axios({
       method: 'post',
       url: process.env.API_PREFIX_URL + '/das/queryDatasource',
-      data:{
+      data: {
         page: 0,
         pageSize: 10
       }
@@ -64,9 +64,9 @@ function Datasource () {
     })
       .then(function (response) {
         if (!response.data.data.canConnect) {
-          message.warning(response.data.data.connectLog);
+          message.warning(response.data.data.connectLog)
         } else {
-          message.success(response.data.msg);
+          message.success(response.data.msg)
         }
         queryDatasources()
       })

@@ -7,8 +7,8 @@ import Workflow from '../pages/workflow/Workflow'
 import Work from '../pages/workflow/work/Work'
 import Worklist from '../pages/workflow/worklist/Worklist'
 import Auth from '../pages/auth/Auth'
-import Layouts from "../layouts/Layouts";
-import Login from "../pages/login/Login";
+import Layouts from '../layouts/Layouts'
+import Login from '../pages/login/Login'
 
 export default function MainRoute () {
   return (

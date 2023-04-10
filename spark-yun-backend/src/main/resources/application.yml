@@ -4,6 +4,13 @@ server:
 
 spring:
 
+  # 身份认证
+  security:
+    user:
+      roles: ADMIN
+      name: admin
+      password: admin123
+
   # 使用配置文件
   profiles:
     active: local
@@ -20,8 +27,6 @@ spring:
       validationQuery: select 'x'
       stat-view-servlet:
         enabled: true
-        login-username: root
-        login-password: ispong123
 
   # jpa配置˚
   jpa:
@@ -56,10 +61,19 @@ logging:
   level:
     root: info
 
-# openapi: http://localhost:8080/swagger-ui.html
+# openapi
 springdoc:
   api-docs:
     path: /api-docs
   swagger-ui:
     path: /swagger-ui.html
   packages-to-scan: com.isxcode.star
+
+# admin用户访问
+spark-yun:
+  admin-url:
+    - /swagger-ui.html # http://localhost:8080/swagger-ui.html
+    - /h2-console # http://localhost:8080/h2-console
+    - /druid/index.html # http://localhost:8080/druid/index.html
+  anonymous-url:
+    - /login

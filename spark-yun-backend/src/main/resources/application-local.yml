@@ -19,3 +19,4 @@ spring:
     url: jdbc:h2:file:~/.h2/data
     username: root
     password: ispong123
+
