@@ -17,7 +17,7 @@ export const WorkflowModal = (props: {
 
   useEffect(() => {
     form.setFieldsValue(workflow)
-  }, [isModalVisible])
+  }, [workflow])
 
   const addWorkflow = (data: AddWorkflowReq) => {
     addWorkflowApi(data).then(function () {
@@ -58,17 +58,11 @@ export const WorkflowModal = (props: {
             name="name"
             rules={[{ required: true, message: '名称不能为空' }]}
             labelCol={{ span: 4 }}
-            wrapperCol={{ span: 20 }}
-            initialValue={workflow?.name}>
+            wrapperCol={{ span: 20 }}>
             <Input />
           </Form.Item>
 
-          <Form.Item
-            label="备注"
-            name="comment"
-            labelCol={{ span: 4 }}
-            wrapperCol={{ span: 20 }}
-            initialValue={workflow?.comment}>
+          <Form.Item label="备注" name="comment" labelCol={{ span: 4 }} wrapperCol={{ span: 20 }}>
             <Input.TextArea />
           </Form.Item>
         </Form>

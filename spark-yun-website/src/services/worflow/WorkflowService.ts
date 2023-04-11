@@ -10,7 +10,7 @@ export const queryWorkflowApi = async (data: WofQueryWorkflowReq): Promise<WofQu
   return response.data
 }
 
-export const delWorkflowApi = async (data: string): Promise<void> => {
+export const delWorkflowApi = async (data: string | undefined): Promise<void> => {
   await axiosInstance.get<WofQueryWorkflowRes>('/wof/delWorkflow?workflowId=' + data)
 }
 

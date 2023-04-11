@@ -42,7 +42,7 @@ function WorkflowPage() {
     })
   }
 
-  const delWorkflow = (workflowId: string) => {
+  const delWorkflow = (workflowId: string | undefined) => {
     delWorkflowApi(workflowId).then(function () {
       fetchWorkflows()
     })
@@ -119,6 +119,7 @@ function WorkflowPage() {
         <Button
           type={'primary'}
           onClick={() => {
+            setWorkflow({})
             setIsModalVisible(true)
           }}>
           添加作业流
