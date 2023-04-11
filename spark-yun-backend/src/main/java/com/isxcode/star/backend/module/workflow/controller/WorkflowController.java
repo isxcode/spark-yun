@@ -3,6 +3,7 @@ package com.isxcode.star.backend.module.workflow.controller;
 import com.isxcode.star.api.constants.ModulePrefix;
 import com.isxcode.star.api.pojos.workflow.req.WocQueryWorkflowReq;
 import com.isxcode.star.api.pojos.workflow.req.WofAddWorkflowReq;
+import com.isxcode.star.api.pojos.workflow.req.WofUpdateWorkflowReq;
 import com.isxcode.star.api.pojos.workflow.res.WofQueryWorkflowRes;
 import com.isxcode.star.backend.module.workflow.service.WorkflowBizService;
 import com.isxcode.star.common.response.SuccessResponse;
@@ -34,6 +35,14 @@ public class WorkflowController {
   public void addWorkflow(@Valid @RequestBody WofAddWorkflowReq wofAddWorkflowReq) {
 
     workflowBizService.addWorkflow(wofAddWorkflowReq);
+  }
+
+  @Operation(summary = "更新作业流接口")
+  @PostMapping("/updateWorkflow")
+  @SuccessResponse("更新成功")
+  public void updateWorkflow(@Valid @RequestBody WofUpdateWorkflowReq wofUpdateWorkflowReq) {
+
+    workflowBizService.updateWorkflow(wofUpdateWorkflowReq);
   }
 
   @Operation(summary = "查询作业流接口")

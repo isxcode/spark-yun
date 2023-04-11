@@ -1,6 +1,7 @@
 package com.isxcode.star.backend.module.calculate.engine.mapper;
 
 import com.isxcode.star.api.pojos.calculate.engine.req.CaeAddEngineReq;
+import com.isxcode.star.api.pojos.calculate.engine.req.CaeUpdateEngineReq;
 import com.isxcode.star.api.pojos.calculate.engine.res.CaeQueryEngineRes;
 import com.isxcode.star.backend.module.calculate.engine.entity.CalculateEngineEntity;
 import java.util.List;
@@ -24,6 +25,10 @@ public interface CalculateEngineMapper {
   @Mapping(target = "checkDateTime", expression = "java(java.time.LocalDateTime.now())")
   @Mapping(target = "status", expression = "java(\"UN_CHECK\")")
   CalculateEngineEntity addEngineReqToEngineEntity(CaeAddEngineReq caeAddEngineReq);
+
+  @Mapping(target = "name", source = "caeUpdateEngineReq.name")
+  @Mapping(target = "commentInfo", source = "caeUpdateEngineReq.comment")
+  CalculateEngineEntity updateEngineReqToEngineEntity(CaeUpdateEngineReq caeUpdateEngineReq, CalculateEngineEntity calculateEngineEntity);
 
   @Mapping(
       target = "node",

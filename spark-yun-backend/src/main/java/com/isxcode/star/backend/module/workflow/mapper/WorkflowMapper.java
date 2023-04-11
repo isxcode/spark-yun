@@ -2,6 +2,7 @@ package com.isxcode.star.backend.module.workflow.mapper;
 
 import com.isxcode.star.api.pojos.calculate.engine.res.CaeQueryEngineRes;
 import com.isxcode.star.api.pojos.workflow.req.WofAddWorkflowReq;
+import com.isxcode.star.api.pojos.workflow.req.WofUpdateWorkflowReq;
 import com.isxcode.star.api.pojos.workflow.res.WofQueryWorkflowRes;
 import com.isxcode.star.backend.module.workflow.entity.WorkflowEntity;
 import java.util.List;
@@ -16,6 +17,11 @@ public interface WorkflowMapper {
 
   @Mapping(source = "comment", target = "commentInfo")
   WorkflowEntity addWorkflowReqToWorkflowEntity(WofAddWorkflowReq addWorkflowReq);
+
+  @Mapping(source = "wofUpdateWorkflowReq.comment", target = "commentInfo")
+  @Mapping(source = "wofUpdateWorkflowReq.name", target = "name")
+  @Mapping(source = "workflowEntity.id", target = "id")
+  WorkflowEntity updateWorkflowReqToWorkflowEntity(WofUpdateWorkflowReq wofUpdateWorkflowReq, WorkflowEntity workflowEntity);
 
   @Mapping(target = "comment", source = "commentInfo")
   WofQueryWorkflowRes workflowEntityToQueryWorkflowRes(WorkflowEntity workflowEntity);

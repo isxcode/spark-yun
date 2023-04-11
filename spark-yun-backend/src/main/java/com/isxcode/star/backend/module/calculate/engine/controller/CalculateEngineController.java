@@ -3,6 +3,7 @@ package com.isxcode.star.backend.module.calculate.engine.controller;
 import com.isxcode.star.api.constants.ModulePrefix;
 import com.isxcode.star.api.pojos.calculate.engine.req.CaeAddEngineReq;
 import com.isxcode.star.api.pojos.calculate.engine.req.CaeQueryEngineReq;
+import com.isxcode.star.api.pojos.calculate.engine.req.CaeUpdateEngineReq;
 import com.isxcode.star.api.pojos.calculate.engine.res.CaeQueryEngineRes;
 import com.isxcode.star.backend.module.calculate.engine.service.CalculateEngineBizService;
 import com.isxcode.star.common.response.SuccessResponse;
@@ -34,6 +35,15 @@ public class CalculateEngineController {
   public void addEngine(@Valid @RequestBody CaeAddEngineReq caeAddEngineReq) {
 
     calculateEngineBizService.addEngine(caeAddEngineReq);
+  }
+
+  @Operation(summary = "更新计算引擎接口")
+  @PostMapping("/updateEngine")
+  @SuccessResponse("更新计算引擎成功")
+  public void addEngine(@Valid @RequestBody CaeUpdateEngineReq caeUpdateEngineReq) {
+
+    calculateEngineBizService.updateEngine(caeUpdateEngineReq);
+
   }
 
   @Operation(summary = "查询计算引擎接口")

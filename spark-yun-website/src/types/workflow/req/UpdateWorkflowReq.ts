@@ -1,6 +1,5 @@
-export interface WorkflowRow {
+export interface UpdateWorkflowReq {
   id: string
   name: string
-  status: string
   comment: string
 }

@@ -1,18 +1,26 @@
 import React, { useEffect, useState } from 'react'
-import { Button, Space, Table } from 'antd'
+import { Button, message, Space, Table, Tag } from 'antd'
 import { type ColumnsType } from 'antd/es/table'
 import { useNavigate } from 'react-router-dom'
 import { type WorkflowRow } from '../../types/workflow/info/WorkflowRow'
-import './Workflow.less'
+import './WorkflowPage.less'
 import { type BasePagination, defaultPagination } from '../../types/base/BasePagination'
 import { type WofQueryWorkflowReq } from '../../types/workflow/req/WofQueryWorkflowReq'
 import { delWorkflowApi, queryWorkflowApi } from '../../services/worflow/WorkflowService'
+import { WorkflowModal } from '../../modals/workflow/WorkflowModal'
 
 function WorkflowPage() {
   const navigate = useNavigate()
 
   const [workflows, setWorkflows] = useState<WorkflowRow[]>([])
+  const [workflow, setWorkflow] = useState<WorkflowRow>()
   const [pagination, setPagination] = useState<BasePagination>(defaultPagination)
+  const [isModalVisible, setIsModalVisible] = useState(false)
+
+  const handleOk = () => {
+    fetchWorkflows()
+    setIsModalVisible(false)
+  }
 
   useEffect(() => {
     fetchWorkflows()
@@ -45,8 +53,10 @@ function WorkflowPage() {
       title: '工作流名称',
       dataIndex: 'name',
       key: 'name',
+      width: 200,
       render: (text, record) => (
         <a
+          className={'sy-table-a'}
           onClick={() => {
             navigate('/works/' + record.id)
           }}>
@@ -55,9 +65,15 @@ function WorkflowPage() {
       )
     },
     {
-      title: '调度状态',
+      title: '发布状态',
       key: 'status',
-      dataIndex: 'status'
+      dataIndex: 'status',
+      width: 120,
+      render: (_, record) => (
+        <Space size="middle">
+          {record.status === 'UN_AUTO' ? <Tag color="blue">未运行</Tag> : <Tag color="green">调度中</Tag>}
+        </Space>
+      )
     },
     {
       title: '备注',
@@ -67,14 +83,30 @@ function WorkflowPage() {
     {
       title: '操作',
       key: 'action',
+      width: 320,
       render: (_, record) => (
         <Space size="middle">
-          <a>编辑</a>
           <a
+            className={'sy-table-a'}
+            onClick={() => {
+              setWorkflow(record)
+              setIsModalVisible(true)
+            }}>
+            编辑
+          </a>
+          <a
+            className={'sy-table-a'}
             onClick={() => {
               delWorkflow(record.id)
             }}>
             删除
+          </a>
+          <a
+            className={'sy-table-a'}
+            onClick={() => {
+              message.warning('需上传企业许可证').then((r) => {})
+            }}>
+            发布
           </a>
         </Space>
       )
@@ -84,7 +116,13 @@ function WorkflowPage() {
   return (
     <>
       <div className={'workflow-bar'}>
-        <Button type={'primary'}>添加作业流</Button>
+        <Button
+          type={'primary'}
+          onClick={() => {
+            setIsModalVisible(true)
+          }}>
+          添加作业流
+        </Button>
       </div>
       <Table
         columns={columns}
@@ -97,6 +135,14 @@ function WorkflowPage() {
             setPagination({ ...pagination, currentPage })
           }
         }}
+      />
+      <WorkflowModal
+        workflow={workflow}
+        isModalVisible={isModalVisible}
+        handleCancel={() => {
+          setIsModalVisible(false)
+        }}
+        handleOk={handleOk}
       />
     </>
   )

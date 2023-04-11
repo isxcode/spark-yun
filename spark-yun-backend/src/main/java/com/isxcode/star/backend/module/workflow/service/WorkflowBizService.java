@@ -3,12 +3,16 @@ package com.isxcode.star.backend.module.workflow.service;
 import com.isxcode.star.api.constants.WorkflowStatus;
 import com.isxcode.star.api.pojos.workflow.req.WocQueryWorkflowReq;
 import com.isxcode.star.api.pojos.workflow.req.WofAddWorkflowReq;
+import com.isxcode.star.api.pojos.workflow.req.WofUpdateWorkflowReq;
 import com.isxcode.star.api.pojos.workflow.res.WofQueryWorkflowRes;
 import com.isxcode.star.backend.module.workflow.entity.WorkflowEntity;
 import com.isxcode.star.backend.module.workflow.mapper.WorkflowMapper;
 import com.isxcode.star.backend.module.workflow.repository.WorkflowRepository;
 import java.util.List;
+import java.util.Optional;
 import javax.transaction.Transactional;
+
+import com.isxcode.star.common.exception.SparkYunException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -28,6 +32,18 @@ public class WorkflowBizService {
 
     WorkflowEntity workflow = workflowMapper.addWorkflowReqToWorkflowEntity(wofAddWorkflowReq);
     workflow.setStatus(WorkflowStatus.UN_AUTO);
+
+    workflowRepository.save(workflow);
+  }
+
+  public void updateWorkflow(WofUpdateWorkflowReq wofUpdateWorkflowReq) {
+
+    Optional<WorkflowEntity> workflowEntityOptional = workflowRepository.findById(wofUpdateWorkflowReq.getId());
+    if (!workflowEntityOptional.isPresent()) {
+      throw new SparkYunException("作业流不存在");
+    }
+
+    WorkflowEntity workflow = workflowMapper.updateWorkflowReqToWorkflowEntity(wofUpdateWorkflowReq, workflowEntityOptional.get());
 
     workflowRepository.save(workflow);
   }
