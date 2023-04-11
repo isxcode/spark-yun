@@ -4,7 +4,7 @@ env:
 extends:
   - plugin:react/recommended
   - standard-with-typescript
-overrides: []
+overrides: [ ]
 parserOptions:
   project:
     - tsconfig.json
@@ -19,6 +19,7 @@ rules:
   "@typescript-eslint/no-floating-promises": off
   "@typescript-eslint/restrict-plus-operands": off
   "@typescript-eslint/strict-boolean-expressions": off
+  "@typescript-eslint/space-before-function-paren": off
 settings:
   react:
     version: 18.2.0

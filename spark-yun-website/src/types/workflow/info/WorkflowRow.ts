@@ -1,4 +1,4 @@
-export interface Workflow {
+export interface WorkflowRow {
 
   id: string
   name: string

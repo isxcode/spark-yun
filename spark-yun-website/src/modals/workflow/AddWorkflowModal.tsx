@@ -1,10 +1,10 @@
 import React from 'react'
 import { Form, Input, Modal } from 'antd'
 import './AddWorkflowModal.less'
-import { addWorkflowApi } from '../../services/worflow/workflowService'
-import { type AddWorkflowReq } from '../../services/worflow/req/AddWorkflowReq'
+import { addWorkflowApi } from '../../services/worflow/WorkflowService'
+import { type AddWorkflowReq } from '../../types/workflow/req/AddWorkflowReq'
 
-export const AddWorkflowModal = (props: { isModalVisible: boolean, handleCancel: () => void, queryWorkflow: any }) => {
+export const AddWorkflowModal = (props: { isModalVisible: boolean; handleCancel: () => void; queryWorkflow: any }) => {
   const { isModalVisible, handleCancel, queryWorkflow } = props
 
   const [form] = Form.useForm()

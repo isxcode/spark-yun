@@ -1,8 +1,7 @@
-import axios, { AxiosRequestConfig, type AxiosResponse } from 'axios'
+import axios, { type AxiosResponse } from 'axios'
 import { message } from 'antd'
 
 const axiosInstance = axios.create({
-
   baseURL: process.env.API_PREFIX_URL,
   timeout: 5000,
   responseType: 'json',
@@ -11,20 +10,21 @@ const axiosInstance = axios.create({
   maxRedirects: 1
 })
 
-axiosInstance.interceptors.request.use(function (config) {
-  return config
-}, async function (error) {
-  return await Promise.reject(error)
-})
+axiosInstance.interceptors.request.use(
+  function (config) {
+    return config
+  },
+  async function (error) {
+    return await Promise.reject(error)
+  }
+)
 
 axiosInstance.interceptors.response.use(
   (response: AxiosResponse) => {
     if (response.status === 200) {
       if (response.data.code !== '200') {
-        message.error(response.data.msg)
+        message.error(response.data.msg).then((r) => {})
       } else {
-        console.log(response.data)
-        message.success(response.data.msg)
         return response.data
       }
     }
