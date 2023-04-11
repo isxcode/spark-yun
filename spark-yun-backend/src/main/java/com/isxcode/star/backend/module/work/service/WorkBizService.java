@@ -13,6 +13,7 @@ import com.isxcode.star.api.pojos.work.req.WokGetStatusReq;
 import com.isxcode.star.api.pojos.work.req.WokGetWorkLogReq;
 import com.isxcode.star.api.pojos.work.req.WokQueryWorkReq;
 import com.isxcode.star.api.pojos.work.req.WokStopJobReq;
+import com.isxcode.star.api.pojos.work.req.WokUpdateWorkReq;
 import com.isxcode.star.api.pojos.work.res.WokGetDataRes;
 import com.isxcode.star.api.pojos.work.res.WokGetStatusRes;
 import com.isxcode.star.api.pojos.work.res.WokGetWorkLogRes;
@@ -85,6 +86,18 @@ public class WorkBizService {
 
     work.setStatus(WorkStatus.NEW);
     work.setCreateDateTime(LocalDateTime.now());
+
+    workRepository.save(work);
+  }
+
+  public void updateWork(WokUpdateWorkReq wokUpdateWorkReq) {
+
+    Optional<WorkEntity> workEntityOptional = workRepository.findById(wokUpdateWorkReq.getId());
+    if (!workEntityOptional.isPresent()) {
+      throw new SparkYunException("作业不存在");
+    }
+
+    WorkEntity work = workMapper.updateWorkReqToWorkEntity(wokUpdateWorkReq, workEntityOptional.get());
 
     workRepository.save(work);
   }

@@ -19,5 +19,5 @@ export const addWorkflowApi = async (data: AddWorkflowReq): Promise<void> => {
 }
 
 export const updateWorkflowApi = async (data: UpdateWorkflowReq): Promise<void> => {
-  await axiosInstance.post<WofQueryWorkflowRes>('/wof/updateWorkflow', data)
+  await axiosInstance.post('/wof/updateWorkflow', data)
 }

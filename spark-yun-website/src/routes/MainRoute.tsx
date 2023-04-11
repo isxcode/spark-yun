@@ -5,7 +5,7 @@ import Node from '../pages/engine/node/Node'
 import Datasource from '../pages/datasource/Datasource'
 import WorkflowPage from '../pages/workflow/WorkflowPage'
 import Work from '../pages/work/Work'
-import Worklist from '../pages/worklist/Worklist'
+import WorksPage from '../pages/works/WorksPage'
 import Auth from '../pages/auth/Auth'
 import Layouts from '../layouts/Layouts'
 import Login from '../pages/login/Login'
@@ -89,10 +89,10 @@ export default function MainRoute() {
               }
             />
             <Route
-              path={'/worklist/:workflowId'}
+              path={'/works/:workflowId'}
               element={
                 <RequireAuth>
-                  <Worklist />
+                  <WorksPage />
                 </RequireAuth>
               }
             />

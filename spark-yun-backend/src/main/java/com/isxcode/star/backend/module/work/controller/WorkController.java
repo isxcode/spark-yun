@@ -7,6 +7,7 @@ import com.isxcode.star.api.pojos.work.req.WokGetWorkLogReq;
 import com.isxcode.star.api.pojos.work.req.WokQueryWorkReq;
 import com.isxcode.star.api.pojos.work.req.WokAddWorkReq;
 import com.isxcode.star.api.pojos.work.req.WokStopJobReq;
+import com.isxcode.star.api.pojos.work.req.WokUpdateWorkReq;
 import com.isxcode.star.api.pojos.work.res.WokGetDataRes;
 import com.isxcode.star.api.pojos.work.res.WokGetStatusRes;
 import com.isxcode.star.api.pojos.work.res.WokGetWorkLogRes;
@@ -43,6 +44,14 @@ public class WorkController {
   public void addWork(@Valid @RequestBody WokAddWorkReq addWorkReq) {
 
     workBizService.addWork(addWorkReq);
+  }
+
+  @Operation(summary = "更新作业接口")
+  @PostMapping("/updateWork")
+  @SuccessResponse("更新成功")
+  public void updateWork(@Valid @RequestBody WokUpdateWorkReq wokUpdateWorkReq) {
+
+    workBizService.updateWork(wokUpdateWorkReq);
   }
 
   @Operation(summary = "运行作业接口")

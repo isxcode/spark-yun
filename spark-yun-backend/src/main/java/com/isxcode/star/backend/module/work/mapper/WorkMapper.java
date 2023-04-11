@@ -2,6 +2,7 @@ package com.isxcode.star.backend.module.work.mapper;
 
 import com.isxcode.star.api.pojos.work.config.req.WocConfigWorkReq;
 import com.isxcode.star.api.pojos.work.req.WokAddWorkReq;
+import com.isxcode.star.api.pojos.work.req.WokUpdateWorkReq;
 import com.isxcode.star.api.pojos.work.res.WokGetWorkRes;
 import com.isxcode.star.api.pojos.work.res.WokQueryWorkRes;
 import com.isxcode.star.api.pojos.work.res.WokRunWorkRes;
@@ -23,6 +24,12 @@ public interface WorkMapper {
 
   @Mapping(source = "comment", target = "commentInfo")
   WorkEntity addWorkReqToWorkEntity(WokAddWorkReq addWorkReq);
+
+  @Mapping(source = "wokUpdateWorkReq.comment", target = "commentInfo")
+  @Mapping(source = "wokUpdateWorkReq.workType", target = "workType")
+  @Mapping(source = "wokUpdateWorkReq.name", target = "name")
+  @Mapping(source = "workEntity.id", target = "id")
+  WorkEntity updateWorkReqToWorkEntity(WokUpdateWorkReq wokUpdateWorkReq, WorkEntity workEntity);
 
   WorkConfigEntity configWorkReqToWorkConfigEntity(WocConfigWorkReq configWorkReq);
 

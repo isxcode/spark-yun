@@ -52,13 +52,14 @@ export const WorkflowModal = (props: {
         onCancel={handleCancel}
         okText={'保存'}
         cancelText={'取消'}>
-        <Form form={form} className={'sy-add-workflow-form'} initialValues={{ remember: true }} onFinish={onFinish}>
-          <Form.Item
-            label="名称"
-            name="name"
-            rules={[{ required: true, message: '名称不能为空' }]}
-            labelCol={{ span: 4 }}
-            wrapperCol={{ span: 20 }}>
+        <Form
+          form={form}
+          className={'sy-add-workflow-form'}
+          initialValues={{ remember: true }}
+          onFinish={onFinish}
+          labelCol={{ span: 4 }}
+          wrapperCol={{ span: 20 }}>
+          <Form.Item label="名称" name="name" rules={[{ required: true, message: '名称不能为空' }]}>
             <Input />
           </Form.Item>
 

@@ -1,35 +1,37 @@
 import React, { useEffect, useState } from 'react'
 import { Button, message, Space, Table, Tag } from 'antd'
 import { type ColumnsType } from 'antd/es/table'
-import { useNavigate } from 'react-router-dom'
-import { type WorkflowRow } from '../../types/workflow/info/WorkflowRow'
-import './WorkflowPage.less'
+import { useNavigate, useParams } from 'react-router-dom'
+import { WorkModal } from '../../modals/work/WorkModal'
+import './Works.less'
+import { type WorkRow } from '../../types/woks/info/WorkRow'
 import { type BasePagination, defaultPagination } from '../../types/base/BasePagination'
-import { type WofQueryWorkflowReq } from '../../types/workflow/req/WofQueryWorkflowReq'
-import { delWorkflowApi, queryWorkflowApi } from '../../services/worflow/WorkflowService'
-import { WorkflowModal } from '../../modals/workflow/WorkflowModal'
+import { type QueryWorkReq } from '../../types/woks/req/QueryWorkReq'
+import { delWorkApi, queryWorkApi } from '../../services/works/WorksService'
 
-function WorkflowPage() {
+function WorksPage() {
   const navigate = useNavigate()
+  const { workflowId } = useParams()
 
-  const [workflows, setWorkflows] = useState<WorkflowRow[]>([])
-  const [workflow, setWorkflow] = useState<WorkflowRow>()
+  const [works, setWorks] = useState<WorkRow[]>([])
+  const [work, setWork] = useState<WorkRow>()
   const [pagination, setPagination] = useState<BasePagination>(defaultPagination)
   const [isModalVisible, setIsModalVisible] = useState(false)
 
   useEffect(() => {
-    fetchWorkflows()
-  }, [pagination.currentPage])
+    fetchWorks()
+  }, [])
 
-  const queryWorkflowReq: WofQueryWorkflowReq = {
+  const queryWorkReq: QueryWorkReq = {
+    workflowId: workflowId,
     page: pagination.currentPage,
     pageSize: pagination.pageSize,
     contentSearch: ''
   }
 
-  const fetchWorkflows = () => {
-    queryWorkflowApi(queryWorkflowReq).then(function (response) {
-      setWorkflows(response.content)
+  const fetchWorks = () => {
+    queryWorkApi(queryWorkReq).then(function (response) {
+      setWorks(response.content)
       setPagination((prevPagination) => ({
         ...prevPagination,
         totalItems: response.totalElements
@@ -38,19 +40,19 @@ function WorkflowPage() {
   }
 
   const handleOk = () => {
-    fetchWorkflows()
+    fetchWorks()
     setIsModalVisible(false)
   }
 
-  const delWorkflow = (workflowId: string | undefined) => {
-    delWorkflowApi(workflowId).then(function () {
-      fetchWorkflows()
+  const delWork = (workId: string | undefined) => {
+    delWorkApi(workId).then(function () {
+      fetchWorks()
     })
   }
 
-  const columns: ColumnsType<WorkflowRow> = [
+  const columns: ColumnsType<WorkRow> = [
     {
-      title: '工作流名称',
+      title: '作业名称',
       dataIndex: 'name',
       key: 'name',
       width: 200,
@@ -58,20 +60,35 @@ function WorkflowPage() {
         <a
           className={'sy-table-a'}
           onClick={() => {
-            navigate('/works/' + record.id)
+            navigate('/work/' + record.id)
           }}>
           {text}
         </a>
       )
     },
     {
-      title: '发布状态',
-      key: 'status',
-      dataIndex: 'status',
+      title: '类型',
+      dataIndex: 'workType',
+      key: 'workType',
       width: 120,
       render: (_, record) => (
         <Space size="middle">
-          {record.status === 'UN_AUTO' ? <Tag color="blue">未运行</Tag> : <Tag color="green">调度中</Tag>}
+          {record.workType === 'EXECUTE_JDBC_SQL' && <Tag color="default">EXE_JDBC</Tag>}
+          {record.workType === 'QUERY_JDBC_SQL' && <Tag color="default">QUERY_JDBC</Tag>}
+          {record.workType === 'QUERY_SPARK_SQL' && <Tag color="default">SPARK_SQL</Tag>}
+        </Space>
+      )
+    },
+    {
+      title: '状态',
+      dataIndex: 'status',
+      key: 'status',
+      width: 120,
+      render: (_, record) => (
+        <Space size="middle">
+          {record.status === 'NEW' && <Tag color="blue">新建</Tag>}
+          {record.status === 'QUERY_JDBC_SQL' && <Tag color="default">JDBC_QUERY</Tag>}
+          {record.status === 'QUERY_SPARK_SQL' && <Tag color="default">SPARK_SQL</Tag>}
         </Space>
       )
     },
@@ -79,6 +96,12 @@ function WorkflowPage() {
       title: '备注',
       key: 'comment',
       dataIndex: 'comment'
+    },
+    {
+      title: '创建时间',
+      dataIndex: 'createDateTime',
+      key: 'createDateTime',
+      width: 220
     },
     {
       title: '操作',
@@ -89,7 +112,7 @@ function WorkflowPage() {
           <a
             className={'sy-table-a'}
             onClick={() => {
-              setWorkflow(record)
+              setWork(record)
               setIsModalVisible(true)
             }}>
             编辑
@@ -97,8 +120,8 @@ function WorkflowPage() {
           <a
             className={'sy-table-a'}
             onClick={() => {
-              setWorkflow({})
-              delWorkflow(record.id)
+              setWork({})
+              delWork(record.id)
             }}>
             删除
           </a>
@@ -107,7 +130,7 @@ function WorkflowPage() {
             onClick={() => {
               message.warning('需上传企业许可证').then((r) => {})
             }}>
-            发布
+            历史
           </a>
         </Space>
       )
@@ -116,19 +139,20 @@ function WorkflowPage() {
 
   return (
     <>
-      <div className={'workflow-bar'}>
+      <div className={'works-bar'}>
         <Button
           type={'primary'}
           onClick={() => {
-            setWorkflow({})
+            setWork({})
             setIsModalVisible(true)
           }}>
-          添加作业流
+          添加作业
         </Button>
       </div>
+
       <Table
         columns={columns}
-        dataSource={workflows}
+        dataSource={works}
         pagination={{
           current: pagination.currentPage,
           pageSize: pagination.pageSize,
@@ -138,16 +162,18 @@ function WorkflowPage() {
           }
         }}
       />
-      <WorkflowModal
-        workflow={workflow}
-        isModalVisible={isModalVisible}
+
+      <WorkModal
+        workflowId={workflowId as string}
         handleCancel={() => {
           setIsModalVisible(false)
         }}
         handleOk={handleOk}
+        isModalVisible={isModalVisible}
+        work={work}
       />
     </>
   )
 }
 
-export default WorkflowPage
+export default WorksPage
