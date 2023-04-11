@@ -4,6 +4,7 @@ import com.isxcode.star.api.constants.ModulePrefix;
 import com.isxcode.star.api.pojos.datasource.req.DasAddDatasourceReq;
 import com.isxcode.star.api.pojos.datasource.req.DasQueryDatasourceReq;
 import com.isxcode.star.api.pojos.datasource.req.DasTestConnectReq;
+import com.isxcode.star.api.pojos.datasource.req.DasUpdateDatasourceReq;
 import com.isxcode.star.api.pojos.datasource.res.DasQueryDatasourceRes;
 import com.isxcode.star.api.pojos.datasource.res.DasTestConnectRes;
 import com.isxcode.star.backend.module.datasource.service.DatasourceBizService;
@@ -36,6 +37,14 @@ public class DatasourceController {
   public void addDatasource(@Valid @RequestBody DasAddDatasourceReq dasAddDatasourceReq) {
 
     datasourceBizService.addDatasource(dasAddDatasourceReq);
+  }
+
+  @Operation(summary = "更新数据源接口")
+  @PostMapping("/updateDatasource")
+  @SuccessResponse("更新数据源成功")
+  public void updateDatasource(@Valid @RequestBody DasUpdateDatasourceReq dasAddDatasourceReq) {
+
+    datasourceBizService.updateDatasource(dasAddDatasourceReq);
   }
 
   @Operation(summary = "查询数据源列表接口")

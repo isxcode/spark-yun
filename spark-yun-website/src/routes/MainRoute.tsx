@@ -2,9 +2,9 @@ import React from 'react'
 import { BrowserRouter, Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import Engine from '../pages/engine/Engine'
 import Node from '../pages/engine/node/Node'
-import Datasource from '../pages/datasource/Datasource'
+import DatasourcePage from '../pages/datasource/DatasourcePage'
 import WorkflowPage from '../pages/workflow/WorkflowPage'
-import Work from '../pages/work/Work'
+import WorkPage from '../pages/work/WorkPage'
 import WorksPage from '../pages/works/WorksPage'
 import Auth from '../pages/auth/Auth'
 import Layouts from '../layouts/Layouts'
@@ -68,7 +68,7 @@ export default function MainRoute() {
               path={'/datasource'}
               element={
                 <RequireAuth>
-                  <Datasource />
+                  <DatasourcePage />
                 </RequireAuth>
               }
             />
@@ -84,7 +84,7 @@ export default function MainRoute() {
               path={'/work/:workId'}
               element={
                 <RequireAuth>
-                  <Work />
+                  <WorkPage />
                 </RequireAuth>
               }
             />

@@ -7,4 +7,5 @@ public interface DatasourceStatus {
 
   String ACTIVE = "ACTIVE";
 
+  String FAIL = "FAIL";
 }

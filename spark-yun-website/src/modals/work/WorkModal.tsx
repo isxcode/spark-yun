@@ -4,7 +4,7 @@ import './WorkModal.less'
 import { type WorkRow } from '../../types/woks/info/WorkRow'
 import { type AddWorkReq } from '../../types/woks/req/AddWorkReq'
 import { addWorkApi, updateWorkApi } from '../../services/works/WorksService'
-import { UpdateWorkReq } from '../../types/woks/req/UpdateWorkReq'
+import { type UpdateWorkReq } from '../../types/woks/req/UpdateWorkReq'
 
 const { Option } = Select
 export const WorkModal = (props: {
@@ -18,7 +18,11 @@ export const WorkModal = (props: {
   const [form] = Form.useForm()
 
   useEffect(() => {
-    form.setFieldsValue(work)
+    if (work?.id == null) {
+      form.resetFields()
+    } else {
+      form.setFieldsValue(work)
+    }
   }, [work])
 
   const addWork = (data: AddWorkReq) => {

@@ -16,7 +16,11 @@ export const WorkflowModal = (props: {
   const [form] = Form.useForm()
 
   useEffect(() => {
-    form.setFieldsValue(workflow)
+    if (workflow?.id == null) {
+      form.resetFields()
+    } else {
+      form.setFieldsValue(workflow)
+    }
   }, [workflow])
 
   const addWorkflow = (data: AddWorkflowReq) => {

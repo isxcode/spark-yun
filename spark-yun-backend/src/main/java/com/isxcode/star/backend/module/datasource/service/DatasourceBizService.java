@@ -7,6 +7,7 @@ import com.isxcode.star.api.constants.DatasourceType;
 import com.isxcode.star.api.pojos.datasource.req.DasAddDatasourceReq;
 import com.isxcode.star.api.pojos.datasource.req.DasQueryDatasourceReq;
 import com.isxcode.star.api.pojos.datasource.req.DasTestConnectReq;
+import com.isxcode.star.api.pojos.datasource.req.DasUpdateDatasourceReq;
 import com.isxcode.star.api.pojos.datasource.res.DasQueryDatasourceRes;
 import com.isxcode.star.api.pojos.datasource.res.DasTestConnectRes;
 import com.isxcode.star.backend.module.datasource.entity.DatasourceEntity;
@@ -14,6 +15,7 @@ import com.isxcode.star.backend.module.datasource.mapper.DatasourceMapper;
 import com.isxcode.star.backend.module.datasource.repository.DatasourceRepository;
 import com.isxcode.star.common.exception.SparkYunException;
 import java.sql.Connection;
+import java.time.LocalDateTime;
 import java.util.Optional;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -39,6 +41,20 @@ public class DatasourceBizService {
     DatasourceEntity datasource =
         datasourceMapper.dasAddDatasourceReqToDatasourceEntity(dasAddDatasourceReq);
 
+    datasource.setStatus(DatasourceStatus.UN_CHECK);
+    datasourceRepository.save(datasource);
+  }
+
+  public void updateDatasource(DasUpdateDatasourceReq dasAddDatasourceReq) {
+
+    Optional<DatasourceEntity> datasourceEntityOptional = datasourceRepository.findById(dasAddDatasourceReq.getId());
+    if (!datasourceEntityOptional.isPresent()) {
+      throw new SparkYunException("数据源不存在");
+    }
+
+    DatasourceEntity datasource = datasourceMapper.dasUpdateDatasourceReqToDatasourceEntity(dasAddDatasourceReq,datasourceEntityOptional.get());
+
+    datasource.setCheckDateTime(LocalDateTime.now());
     datasource.setStatus(DatasourceStatus.UN_CHECK);
     datasourceRepository.save(datasource);
   }
@@ -105,10 +121,13 @@ public class DatasourceBizService {
             datasource.getJdbcUrl(), datasource.getUsername(), datasource.getPasswd()); ) {
       if (connection != null) {
         datasource.setStatus(DatasourceStatus.ACTIVE);
+        datasourceRepository.save(datasource);
         return new DasTestConnectRes(true, "连接成功");
       }
     } catch (Exception e) {
       log.error(e.getMessage());
+      datasource.setStatus(DatasourceStatus.FAIL);
+      datasourceRepository.save(datasource);
       return new DasTestConnectRes(false, e.getMessage());
     }
 

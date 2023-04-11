@@ -1,6 +1,7 @@
 package com.isxcode.star.backend.module.datasource.mapper;
 
 import com.isxcode.star.api.pojos.datasource.req.DasAddDatasourceReq;
+import com.isxcode.star.api.pojos.datasource.req.DasUpdateDatasourceReq;
 import com.isxcode.star.api.pojos.datasource.res.DasQueryDatasourceRes;
 import com.isxcode.star.backend.module.datasource.entity.DatasourceEntity;
 import java.util.List;
@@ -21,6 +22,16 @@ public interface DatasourceMapper {
   @Mapping(source = "type", target = "datasourceType")
   @Mapping(target = "checkDateTime", expression = "java(java.time.LocalDateTime.now())")
   DatasourceEntity dasAddDatasourceReqToDatasourceEntity(DasAddDatasourceReq dasAddDatasourceReq);
+
+
+  @Mapping(source = "dasUpdateDatasourceReq.password", target = "passwd")
+  @Mapping(source = "dasUpdateDatasourceReq.comment", target = "commentInfo")
+  @Mapping(source = "dasUpdateDatasourceReq.type", target = "datasourceType")
+  @Mapping(source = "dasUpdateDatasourceReq.jdbcUrl", target = "jdbcUrl")
+  @Mapping(source = "dasUpdateDatasourceReq.username", target = "username")
+  @Mapping(source = "dasUpdateDatasourceReq.name", target = "name")
+  @Mapping(target = "id", source = "datasourceEntity.id")
+  DatasourceEntity dasUpdateDatasourceReqToDatasourceEntity(DasUpdateDatasourceReq dasUpdateDatasourceReq,DatasourceEntity datasourceEntity);
 
   /**
    * datasourceEntity转DasQueryDatasourceRes.
