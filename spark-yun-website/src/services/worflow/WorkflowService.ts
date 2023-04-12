@@ -3,10 +3,11 @@ import { type WofQueryWorkflowRes } from '../../types/workflow/res/WofQueryWorkf
 import axiosInstance from '../../config/axios'
 import { type AddWorkflowReq } from '../../types/workflow/req/AddWorkflowReq'
 import { type UpdateWorkflowReq } from '../../types/workflow/req/UpdateWorkflowReq'
+import { QueryEngineRes } from '../../types/calculate/engine/res/QueryEngineRes'
 
-export const queryWorkflowApi = async (data: WofQueryWorkflowReq): Promise<WofQueryWorkflowRes> => {
+export const queryWorkflowApi = async (data: WofQueryWorkflowReq): Promise<QueryEngineRes> => {
   data.page = data.page - 1
-  const response = await axiosInstance.post<WofQueryWorkflowRes>('/wof/queryWorkflow', data)
+  const response = await axiosInstance.post<QueryEngineRes>('/wof/queryWorkflow', data)
   return response.data
 }
 

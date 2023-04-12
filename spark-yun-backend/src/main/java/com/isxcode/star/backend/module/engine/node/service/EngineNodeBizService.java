@@ -1,12 +1,11 @@
 package com.isxcode.star.backend.module.engine.node.service;
 
-import static com.isxcode.star.backend.utils.SshUtils.executeCommand;
-import static com.isxcode.star.backend.utils.SshUtils.scpFile;
-
+import com.isxcode.star.api.constants.CalculateEngineStatus;
 import com.isxcode.star.api.constants.EngineNodeStatus;
 import com.isxcode.star.api.constants.PathConstants;
 import com.isxcode.star.api.pojos.engine.node.req.EnoAddNodeReq;
 import com.isxcode.star.api.pojos.engine.node.req.EnoQueryNodeReq;
+import com.isxcode.star.api.pojos.engine.node.req.EnoUpdateNodeReq;
 import com.isxcode.star.api.pojos.engine.node.res.EnoCheckAgentRes;
 import com.isxcode.star.api.pojos.engine.node.res.EnoInstallAgentRes;
 import com.isxcode.star.api.pojos.engine.node.res.EnoQueryNodeRes;
@@ -18,24 +17,26 @@ import com.isxcode.star.backend.module.engine.node.entity.EngineNodeEntity;
 import com.isxcode.star.backend.module.engine.node.mapper.EngineNodeMapper;
 import com.isxcode.star.backend.module.engine.node.repository.EngineNodeRepository;
 import com.isxcode.star.common.exception.SparkYunException;
-import java.io.File;
-import java.io.IOException;
-import java.util.Optional;
-import javax.transaction.Transactional;
-
 import com.jcraft.jsch.JSchException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
-import org.mapstruct.Mapping;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Optional;
+
+import static com.isxcode.star.backend.utils.SshUtils.executeCommand;
+import static com.isxcode.star.backend.utils.SshUtils.scpFile;
 
 /** 用户模块接口的业务逻辑. */
 @Service
 @RequiredArgsConstructor
-@Transactional
+@Transactional(noRollbackFor = {SparkYunException.class})
 @Slf4j
 public class EngineNodeBizService {
 
@@ -57,6 +58,11 @@ public class EngineNodeBizService {
 
     EngineNodeEntity node = engineNodeMapper.addNodeReqToNodeEntity(enoAddNodeReq);
 
+    // 设置代理端口号
+    if (Strings.isEmpty(enoAddNodeReq.getPort())) {
+      node.setPort("22");
+    }
+
     // 设置安装地址
     node.setAgentHomePath(
       getDefaultAgentHomePath(enoAddNodeReq.getAgentHomePath(), enoAddNodeReq.getUsername()));
@@ -67,9 +73,45 @@ public class EngineNodeBizService {
     }
 
     // 初始化节点状态，未检测
-    node.setStatus(EngineNodeStatus.UN_CHECK);
+    node.setStatus(EngineNodeStatus.NEW);
 
     engineNodeRepository.save(node);
+  }
+
+  public void updateNode(EnoUpdateNodeReq enoUpdateNodeReq) {
+
+    // 检查计算引擎是否存在
+    Optional<CalculateEngineEntity> calculateEngineEntityOptional = calculateEngineRepository.findById(enoUpdateNodeReq.getCalculateEngineId());
+    if (!calculateEngineEntityOptional.isPresent()) {
+      throw new SparkYunException("计算引擎不存在");
+    }
+
+    // 判断节点存不存在
+    Optional<EngineNodeEntity> engineNodeEntityOptional = engineNodeRepository.findById(enoUpdateNodeReq.getId());
+    if (!engineNodeEntityOptional.isPresent()) {
+      throw new SparkYunException("计算引擎不存在");
+    }
+
+    EngineNodeEntity node = engineNodeMapper.updateNodeReqToNodeEntity(enoUpdateNodeReq);
+    node.setId(engineNodeEntityOptional.get().getId());
+
+    // 设置安装地址
+    node.setAgentHomePath(
+      getDefaultAgentHomePath(enoUpdateNodeReq.getAgentHomePath(), enoUpdateNodeReq.getUsername()));
+
+    // 设置代理端口号
+    if (Strings.isEmpty(enoUpdateNodeReq.getAgentPort())) {
+      node.setAgentPort(sparkYunProperties.getDefaultAgentPort());
+    }
+
+    // 初始化节点状态，未检测
+    node.setStatus(EngineNodeStatus.UN_CHECK);
+    engineNodeRepository.save(node);
+
+    // 集群状态修改
+    CalculateEngineEntity calculateEngineEntity = calculateEngineEntityOptional.get();
+    calculateEngineEntity.setStatus(CalculateEngineStatus.UN_CHECK);
+    calculateEngineRepository.save(calculateEngineEntity);
   }
 
   public String getDefaultAgentHomePath(String agentHomePath, String username) {
@@ -151,7 +193,7 @@ public class EngineNodeBizService {
         + " --agent-port=" + engineNode.getAgentPort()
         + " --hadoop-home=" + engineNode.getHadoopHomePath();
 
-    String executeLog = null;
+    String executeLog;
     try {
       executeLog = executeCommand(engineNode, installCommand, false);
     } catch (JSchException | InterruptedException | IOException e) {
@@ -172,10 +214,15 @@ public class EngineNodeBizService {
     EngineNodeEntity engineNode = getEngineNode(engineNodeId);
 
     // 运行卸载脚本
-    String checkCommand = "echo \"可安装\"";
-    String executeLog = null;
+    String checkCommand = "java -version && yarn application -list | grep 'Total number of applications' && echo $HADOOP_HOME";
+    String executeLog;
     try {
       executeLog = executeCommand(engineNode, checkCommand, false);
+      if (executeLog.contains("SY_ERROR")) {
+        engineNode.setStatus(EngineNodeStatus.CAN_NOT_INSTALL);
+        engineNodeRepository.save(engineNode);
+        throw new SparkYunException("不可安装",executeLog);
+      }
     } catch (JSchException | InterruptedException | IOException e) {
       log.error(e.getMessage());
       engineNode.setStatus(EngineNodeStatus.CAN_NOT_INSTALL);
@@ -183,7 +230,13 @@ public class EngineNodeBizService {
       throw new SparkYunException("不可安装", e.getMessage());
     }
 
+    // 修改状态
     engineNode.setStatus(EngineNodeStatus.CAN_INSTALL);
+
+    // 保存HadoopHomePath
+    String[] split = executeLog.split("\n");
+    engineNode.setHadoopHomePath(split[split.length-1]);
+
     engineNodeRepository.save(engineNode);
 
     return new EnoCheckAgentRes(executeLog);

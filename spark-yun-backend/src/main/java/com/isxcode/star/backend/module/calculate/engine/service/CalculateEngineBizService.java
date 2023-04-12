@@ -1,5 +1,6 @@
 package com.isxcode.star.backend.module.calculate.engine.service;
 
+import com.isxcode.star.api.constants.CalculateEngineStatus;
 import com.isxcode.star.api.pojos.calculate.engine.req.CaeAddEngineReq;
 import com.isxcode.star.api.pojos.calculate.engine.req.CaeQueryEngineReq;
 import com.isxcode.star.api.pojos.calculate.engine.req.CaeUpdateEngineReq;
@@ -30,6 +31,8 @@ public class CalculateEngineBizService {
   public void addEngine(CaeAddEngineReq caeAddEngineReq) {
 
     CalculateEngineEntity engine = engineMapper.addEngineReqToEngineEntity(caeAddEngineReq);
+
+    engine.setStatus(CalculateEngineStatus.NEW);
 
     engineRepository.save(engine);
   }

@@ -1,10 +1,10 @@
 package com.isxcode.star.api.constants;
 
 /** 引擎节点状态码. */
-public interface EngineNodeStatus {
+public interface CalculateEngineStatus {
 
   /**
-   * 未安装.
+   * 待配置.
    */
   String NEW = "NEW";
 

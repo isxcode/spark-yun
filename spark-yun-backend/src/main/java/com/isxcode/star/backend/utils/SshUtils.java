@@ -51,7 +51,7 @@ public class SshUtils {
     ChannelSftp channel;
     try {
       channel = (ChannelSftp) session.openChannel("sftp");
-      channel.connect(1000);
+      channel.connect(120000);
       channel.put(srcPath, dstPath);
     } catch (JSchException | SftpException e) {
       log.error(e.getMessage());
@@ -109,15 +109,23 @@ public class SshUtils {
     channel.setPty(pty);
     channel.setCommand(command);
     channel.setInputStream(null);
-//      channel.setErrStream(System.out);
+    channel.setErrStream(null);
 
     InputStream in = channel.getInputStream();
+    InputStream err = channel.getErrStream();
     channel.connect();
     BufferedReader reader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
     String line;
     StringBuilder output = new StringBuilder();
     while ((line = reader.readLine()) != null) {
       output.append(line).append("\n");
+    }
+
+    BufferedReader errReader = new BufferedReader(new InputStreamReader(err, StandardCharsets.UTF_8));
+    String errLine;
+    StringBuilder errOutput = new StringBuilder();
+    while ((errLine = errReader.readLine()) != null) {
+      errOutput.append(errLine).append("\n");
     }
 
     while (!channel.isClosed()) {
@@ -130,7 +138,7 @@ public class SshUtils {
     session.disconnect();
 
     if (exitStatus != 0) {
-      throw new SparkYunException("执行安装脚本异常", output.toString());
+      return "SY_ERROR:" + errOutput;
     } else {
       return output.toString();
     }

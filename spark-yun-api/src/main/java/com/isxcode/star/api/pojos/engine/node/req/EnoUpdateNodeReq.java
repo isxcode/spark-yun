@@ -1,12 +1,16 @@
 package com.isxcode.star.api.pojos.engine.node.req;
 
-import javax.validation.constraints.NotEmpty;
-
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
+import javax.validation.constraints.NotEmpty;
+
 @Data
-public class EnoAddNodeReq {
+public class EnoUpdateNodeReq {
+
+  @Schema(title = "引擎节点唯一id", example = "sy_fd34e4a53db640f5943a4352c4d549b9")
+  @NotEmpty(message = "id不能为空")
+  private String id;
 
   @Schema(title = "计算引擎唯一id", example = "sy_fd34e4a53db640f5943a4352c4d549b9")
   @NotEmpty(message = "引擎id不能为空")
@@ -41,5 +45,6 @@ public class EnoAddNodeReq {
   private String agentPort;
 
   @Schema(title = "hadoop的home目录", example = "/opt/homebrew/Cellar/hadoop/3.3.4/libexec")
+  @NotEmpty(message = "hadoop的home目录不能空")
   private String hadoopHomePath;
 }

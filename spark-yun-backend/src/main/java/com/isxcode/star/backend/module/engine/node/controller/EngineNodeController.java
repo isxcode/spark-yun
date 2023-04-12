@@ -3,6 +3,7 @@ package com.isxcode.star.backend.module.engine.node.controller;
 import com.isxcode.star.api.constants.ModulePrefix;
 import com.isxcode.star.api.pojos.engine.node.req.EnoAddNodeReq;
 import com.isxcode.star.api.pojos.engine.node.req.EnoQueryNodeReq;
+import com.isxcode.star.api.pojos.engine.node.req.EnoUpdateNodeReq;
 import com.isxcode.star.api.pojos.engine.node.res.EnoCheckAgentRes;
 import com.isxcode.star.api.pojos.engine.node.res.EnoInstallAgentRes;
 import com.isxcode.star.api.pojos.engine.node.res.EnoQueryNodeRes;
@@ -37,6 +38,14 @@ public class EngineNodeController {
   public void addNode(@Valid @RequestBody EnoAddNodeReq enoAddNodeReq) {
 
     engineNodeBizService.addNode(enoAddNodeReq);
+  }
+
+  @Operation(summary = "更新引擎节点接口")
+  @PostMapping("/updateNode")
+  @SuccessResponse("更新集群节点成功")
+  public void updateNode(@Valid @RequestBody EnoUpdateNodeReq enoUpdateNodeReq) {
+
+    engineNodeBizService.updateNode(enoUpdateNodeReq);
   }
 
   @Operation(summary = "查询节点列表接口")

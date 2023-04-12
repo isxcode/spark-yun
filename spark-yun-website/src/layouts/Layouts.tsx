@@ -19,7 +19,7 @@ import {
   UserOutlined
 } from '@ant-design/icons'
 
-function Layouts () {
+function Layouts() {
   const navigate = useNavigate()
 
   const { Header, Content, Sider } = Layout
@@ -142,8 +142,12 @@ function Layouts () {
           <div className={'sy-logo'} onClick={() => window.open('https://zhiqingyun.isxcode.com')}>
             至轻云
           </div>
-          <a onClick={()=>{window.open("http://zhiqingyun.isxcode.com/README")}}>
-            使用手册
+          <a
+            className={'sy-table-a sy-help-doc-a'}
+            onClick={() => {
+              window.open('http://zhiqingyun.isxcode.com/README')
+            }}>
+            帮助文档
           </a>
         </Header>
         <Layout>

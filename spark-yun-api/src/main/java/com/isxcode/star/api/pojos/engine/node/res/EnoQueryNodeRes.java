@@ -26,4 +26,12 @@ public class EnoQueryNodeRes {
   private String status;
 
   private String checkTime;
+
+  private String agentHomePath;
+
+  private String agentPort;
+
+  private String hadoopHomePath;
+
+  private String port;
 }

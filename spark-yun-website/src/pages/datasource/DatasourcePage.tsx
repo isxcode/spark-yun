@@ -92,14 +92,14 @@ function DatasourcePage() {
       width: 100
     },
     {
-      title: '健康状态',
+      title: '状态',
       dataIndex: 'status',
       key: 'status',
       width: 120,
       render: (_, record) => (
         <Space size="middle">
           {record.status === 'UN_CHECK' && <Tag color="blue">未检测</Tag>}
-          {record.status === 'ACTIVE' && <Tag color="green">已激活</Tag>}
+          {record.status === 'ACTIVE' && <Tag color="green">可用</Tag>}
           {record.status === 'FAIL' && <Tag color="red">连接失败</Tag>}
         </Space>
       )
@@ -108,7 +108,7 @@ function DatasourcePage() {
       title: '检测时间',
       key: 'checkTime',
       dataIndex: 'checkTime',
-      width: 170
+      width: 180
     },
     {
       title: '备注',

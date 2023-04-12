@@ -1,7 +1,7 @@
 import React from 'react'
 import { BrowserRouter, Navigate, Route, Routes, useLocation } from 'react-router-dom'
-import Engine from '../pages/engine/Engine'
-import Node from '../pages/engine/node/Node'
+import CalculateEnginePage from '../pages/calculate/engine/CalculateEnginePage'
+import EngineNodePage from '../pages/calculate/node/EngineNodePage'
 import DatasourcePage from '../pages/datasource/DatasourcePage'
 import WorkflowPage from '../pages/workflow/WorkflowPage'
 import WorkPage from '../pages/work/WorkPage'
@@ -52,15 +52,15 @@ export default function MainRoute() {
               path={'/engine'}
               element={
                 <RequireAuth>
-                  <Engine />
+                  <CalculateEnginePage />
                 </RequireAuth>
               }
             />
             <Route
-              path={'/node/:engineId'}
+              path={'/nodes/:calculateEngineId'}
               element={
                 <RequireAuth>
-                  <Node />
+                  <EngineNodePage />
                 </RequireAuth>
               }
             />

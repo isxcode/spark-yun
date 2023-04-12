@@ -23,7 +23,6 @@ public interface CalculateEngineMapper {
   @Mapping(target = "usedStorage", expression = "java(0)")
   @Mapping(target = "allStorage", expression = "java(0)")
   @Mapping(target = "checkDateTime", expression = "java(java.time.LocalDateTime.now())")
-  @Mapping(target = "status", expression = "java(\"UN_CHECK\")")
   CalculateEngineEntity addEngineReqToEngineEntity(CaeAddEngineReq caeAddEngineReq);
 
   @Mapping(target = "name", source = "caeUpdateEngineReq.name")
@@ -35,10 +34,10 @@ public interface CalculateEngineMapper {
       expression = "java( engineEntity.getActiveNode()+ \"/\" +engineEntity.getAllNode())")
   @Mapping(
       target = "memory",
-      expression = "java( engineEntity.getUsedMemory()+ \"/\" +engineEntity.getAllMemory())")
+      expression = "java( engineEntity.getUsedMemory()+ \"G/\" +engineEntity.getAllMemory()+\"G\")")
   @Mapping(
       target = "storage",
-      expression = "java( engineEntity.getUsedStorage()+ \"/\" +engineEntity.getAllStorage())")
+      expression = "java( engineEntity.getUsedStorage()+ \"T/\"  +engineEntity.getAllStorage()+\"T\")")
   @Mapping(target = "comment", source = "commentInfo")
   @Mapping(target = "checkTime", source = "checkDateTime", dateFormat = "yyyy-MM-dd HH:mm:ss")
   CaeQueryEngineRes engineEntityToQueryEngineRes(CalculateEngineEntity engineEntity);

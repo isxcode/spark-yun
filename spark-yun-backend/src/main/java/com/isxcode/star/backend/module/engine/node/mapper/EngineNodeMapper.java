@@ -1,6 +1,7 @@
 package com.isxcode.star.backend.module.engine.node.mapper;
 
 import com.isxcode.star.api.pojos.engine.node.req.EnoAddNodeReq;
+import com.isxcode.star.api.pojos.engine.node.req.EnoUpdateNodeReq;
 import com.isxcode.star.api.pojos.engine.node.res.EnoQueryNodeRes;
 import com.isxcode.star.backend.module.engine.node.entity.EngineNodeEntity;
 import java.util.List;
@@ -24,12 +25,22 @@ public interface EngineNodeMapper {
   @Mapping(target = "checkDateTime", expression = "java(java.time.LocalDateTime.now())")
   EngineNodeEntity addNodeReqToNodeEntity(EnoAddNodeReq enoAddNodeReq);
 
+  @Mapping(source = "password", target = "passwd")
+  @Mapping(source = "comment", target = "commentInfo")
+  @Mapping(target = "usedMemory", expression = "java(0)")
+  @Mapping(target = "allMemory", expression = "java(0)")
+  @Mapping(target = "usedStorage", expression = "java(0)")
+  @Mapping(target = "allStorage", expression = "java(0)")
+  @Mapping(target = "cpuPercent", expression = "java(\"0%\")")
+  @Mapping(target = "checkDateTime", expression = "java(java.time.LocalDateTime.now())")
+  EngineNodeEntity updateNodeReqToNodeEntity(EnoUpdateNodeReq enoUpdateNodeReq);
+
   @Mapping(
       target = "memory",
-      expression = "java( nodeEntity.getUsedMemory()+ \"/\" +nodeEntity.getAllMemory())")
+      expression = "java( nodeEntity.getUsedMemory()+ \"G/\" +nodeEntity.getAllMemory()+\"G\")")
   @Mapping(
       target = "storage",
-      expression = "java( nodeEntity.getUsedStorage()+ \"/\" +nodeEntity.getAllStorage())")
+      expression = "java( nodeEntity.getUsedStorage()+ \"T/\" +nodeEntity.getAllStorage()+\"T\")")
   @Mapping(target = "comment", source = "commentInfo")
   @Mapping(target = "cpu", source = "cpuPercent")
   @Mapping(target = "checkTime", source = "checkDateTime", dateFormat = "yyyy-MM-dd HH:mm:ss")
