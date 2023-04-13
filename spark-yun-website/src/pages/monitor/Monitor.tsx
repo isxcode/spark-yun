@@ -1,6 +1,6 @@
 import React from 'react'
 
-function Monitor () {
+function Monitor() {
   return <>Monitor</>
 }
 

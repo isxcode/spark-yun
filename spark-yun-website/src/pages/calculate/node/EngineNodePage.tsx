@@ -99,16 +99,17 @@ function EngineNodePage() {
       title: 'CPU占用率',
       dataIndex: 'cpu',
       key: 'cpu',
-      width: 110
+      width: 110,
+      render: (text, record) => <>{text}%</>
     },
     {
-      title: '可用/总内存',
+      title: '已用/总内存',
       dataIndex: 'memory',
       key: 'memory',
       width: 110
     },
     {
-      title: '可用/总存储',
+      title: '已用/总存储',
       dataIndex: 'storage',
       key: 'storage',
       width: 110
@@ -125,6 +126,8 @@ function EngineNodePage() {
           {record.status === 'ACTIVE' && <Tag color="green">可用</Tag>}
           {record.status === 'UNINSTALLED' && <Tag color="default">已卸载</Tag>}
           {record.status === 'UN_CHECK' && <Tag color="cyan">待检测</Tag>}
+          {record.status === 'INSTALL_ERROR' && <Tag color="red">安装失败</Tag>}
+          {record.status === 'CHECK_ERROR' && <Tag color="red">检测失败</Tag>}
         </Space>
       )
     },
@@ -177,7 +180,7 @@ function EngineNodePage() {
   ]
 
   return (
-    <>
+    <div style={{ padding: 24 }}>
       <div className={'node-bar'}>
         <Button
           type={'primary'}
@@ -198,7 +201,7 @@ function EngineNodePage() {
         }}
         handleOk={handleOk}
       />
-    </>
+    </div>
   )
 }
 

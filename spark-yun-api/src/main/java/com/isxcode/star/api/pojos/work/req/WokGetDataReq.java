@@ -13,6 +13,5 @@ public class WokGetDataReq {
   private String workId;
 
   @Schema(title = "作业提交返回的容器id", example = "application_1680753912057_0019")
-  @NotEmpty(message = "作业id不能为空")
   private String applicationId;
 }

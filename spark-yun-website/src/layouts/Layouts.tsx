@@ -151,13 +151,13 @@ function Layouts() {
           </a>
         </Header>
         <Layout>
-          <Sider className={'sy-sider'} width={200}>
-            <Menu defaultSelectedKeys={['1']} items={menus} />
+          <Sider width={200}>
+            <Menu className={'sy-sider'} defaultSelectedKeys={['1']} items={menus} />
           </Sider>
-          <Layout style={{ borderLeft: colorPrimary + ' solid 1.4px' }}>
+          <Layout>
             <Content
               style={{
-                padding: 24,
+                padding: 0,
                 margin: 0,
                 background: colorBgContainer
               }}>

@@ -17,10 +17,10 @@ create table if not exists SY_CALCULATE_ENGINE
   check_date_time datetime     null comment '检测健康状态时间',
   all_node        int          null comment '总节点数',
   active_node     int          null comment '激活节点数',
-  all_memory      int          null comment '所有可用内存数',
-  used_memory     int          null comment '已使用内存数',
-  all_storage     int          null comment '所有存储',
-  used_storage    int          null comment '已使用存储'
+  all_memory      double       null comment '所有可用内存数',
+  used_memory     double       null comment '已使用内存数',
+  all_storage     double       null comment '所有存储',
+  used_storage    double       null comment '已使用存储'
 );
 
 -- 引擎节点
@@ -31,10 +31,10 @@ create table if not exists SY_ENGINE_NODE
   comment_info        varchar(100) null comment '备注',
   status              varchar(100) null comment '状态',
   check_date_time     datetime     null comment '检查健康时间',
-  all_memory          int          null comment '节点所有内存',
-  used_memory         int          null comment '已使用内存',
-  all_storage         int          null comment '所有存储',
-  used_storage        int          null comment '已使用存储',
+  all_memory          double       null comment '节点所有内存',
+  used_memory         double       null comment '已使用内存',
+  all_storage         double       null comment '所有存储',
+  used_storage        double       null comment '已使用存储',
   cpu_percent         varchar(100) null comment 'CPU使用占比',
   calculate_engine_id varchar(100) null comment '属于计算引擎',
   host                varchar(100) null comment '服务器host',

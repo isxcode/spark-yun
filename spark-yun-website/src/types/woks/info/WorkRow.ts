@@ -4,6 +4,5 @@ export interface WorkRow {
   status?: string
   comment?: string
   workflowId?: string
-
   workType?: string
 }

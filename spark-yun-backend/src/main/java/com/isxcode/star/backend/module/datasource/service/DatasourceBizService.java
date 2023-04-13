@@ -116,6 +116,8 @@ public class DatasourceBizService {
         throw new SparkYunException("数据源暂不支持");
     }
 
+    datasource.setCheckDateTime(LocalDateTime.now());
+
     try (Connection connection =
         getConnection(
             datasource.getJdbcUrl(), datasource.getUsername(), datasource.getPasswd()); ) {

@@ -23,11 +23,11 @@ export const delEngineNodeApi = async (data: string | undefined): Promise<void> 
 }
 
 export const checkAgentApi = async (data: string | undefined): Promise<void> => {
-  await axiosInstance.get('/eno/checkAgent?engineNodeId=' + data)
+  await axiosInstance.get('/eno/checkAgent?engineNodeId=' + data, { timeout: 600000 })
 }
 
 export const installAgentApi = async (data: string | undefined): Promise<void> => {
-  await axiosInstance.get('/eno/installAgent?engineNodeId=' + data, { timeout: 120000 })
+  await axiosInstance.get('/eno/installAgent?engineNodeId=' + data, { timeout: 600000 })
 }
 
 export const removeAgentApi = async (data: string | undefined): Promise<void> => {

@@ -34,6 +34,11 @@ public interface EngineNodeStatus {
   String INSTALL_ERROR = "INSTALL_ERROR";
 
   /**
+   * 检测失败.
+   */
+  String CHECK_ERROR = "CHECK_ERROR";
+
+  /**
    * 已卸载.
    */
   String UNINSTALLED = "UNINSTALLED";

@@ -1,3 +1,13 @@
+dependencies {
+  implementation 'com.mysql:mysql-connector-j:8.0.32'
+
+  implementation "com.microsoft.sqlserver:mssql-jdbc:${SQLSERVER_DRIVER_VERSION}"
+
+  implementation 'com.oracle.database.jdbc:ojdbc10:19.18.0.0'
+
+  implementation 'org.postgresql:postgresql:42.6.0'
+}
+
 // 构建lib文件夹
 tasks.register('build_lib', Copy) {
 
@@ -7,7 +17,12 @@ tasks.register('build_lib', Copy) {
   def dependencies = configurations.runtimeClasspath.findAll {
     it.name.contains('fastjson2') ||
       it.name.contains('fastjson') ||
-      it.name.contains('spark-yun-api')
+      it.name.contains('spark-yun-api') ||
+      it.name.contains('log4j-api') ||
+      it.name.contains('mysql-connector-j') ||
+      it.name.contains('mssql-jdbc') ||
+      it.name.contains('ojdbc10') ||
+      it.name.contains('postgresql')
   }
   dependencies.each { dependency ->
     from dependency

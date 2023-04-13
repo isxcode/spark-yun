@@ -2,11 +2,12 @@ import { type BasePaginationRes } from '../../base/BasePaginationRes'
 import { WorkRow } from '../info/WorkRow'
 
 export interface RunWorkRes {
-  message: ''
-  log: ''
+  message?: string
+  log?: string
+  yarnLog?: string
   data: [[]]
-  applicationId: ''
-  yarnApplicationState: ''
-  finalApplicationStatus: ''
-  trackingUrl: ''
+  applicationId?: string
+  yarnApplicationState?: string
+  finalApplicationStatus?: string
+  trackingUrl?: string
 }

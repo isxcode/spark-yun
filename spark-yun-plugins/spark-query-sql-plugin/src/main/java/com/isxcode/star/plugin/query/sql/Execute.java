@@ -2,15 +2,26 @@ package com.isxcode.star.plugin.query.sql;
 
 import com.alibaba.fastjson.JSON;
 import com.isxcode.star.api.pojos.plugin.req.PluginReq;
+
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+
+import com.isxcode.star.api.pojos.work.res.WokRunWorkRes;
+import org.apache.logging.log4j.util.Strings;
 import org.apache.spark.SparkConf;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
+
+import static java.sql.DriverManager.getConnection;
 
 public class Execute {
 
@@ -21,15 +32,19 @@ public class Execute {
 
     PluginReq pluginReq = parse(args);
 
+    String regex = "/\\*(?:.|[\\n\\r])*?\\*/|--.*";
+    String noCommentSql = pluginReq.getSql().replaceAll(regex, "");
+    String realSql = noCommentSql.replace("\n", " ");
+    String[] sqls = realSql.split(";");
+
     try (SparkSession sparkSession = initSparkSession(pluginReq)) {
-      String[] sqls = pluginReq.getSql().split(";");
 
       for (int i = 0; i < sqls.length - 1; i++) {
-        sparkSession.sql(sqls[i]);
+        if (!Strings.isEmpty(sqls[i])) {
+          sparkSession.sql(sqls[i]);
+        }
       }
-
       Dataset<Row> rowDataset = sparkSession.sql(sqls[sqls.length - 1]).limit(pluginReq.getLimit());
-
       exportResult(rowDataset);
     }
   }

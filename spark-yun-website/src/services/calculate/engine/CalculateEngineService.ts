@@ -21,3 +21,7 @@ export const queryEnginesApi = async (data: QueryEngineReq): Promise<QueryDataso
 export const delEngineApi = async (data: string | undefined): Promise<void> => {
   await axiosInstance.get('/cae/delEngine?engineId=' + data)
 }
+
+export const checkEngineApi = async (data: string | undefined): Promise<void> => {
+  await axiosInstance.get('/cae/checkEngine?engineId=' + data)
+}

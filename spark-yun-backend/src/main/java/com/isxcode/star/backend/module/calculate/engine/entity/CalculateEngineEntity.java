@@ -35,11 +35,11 @@ public class CalculateEngineEntity {
 
   private Integer activeNode;
 
-  private Integer allMemory;
+  private Double allMemory;
 
-  private Integer usedMemory;
+  private Double usedMemory;
 
-  private Integer allStorage;
+  private Double allStorage;
 
-  private Integer usedStorage;
+  private Double usedStorage;
 }

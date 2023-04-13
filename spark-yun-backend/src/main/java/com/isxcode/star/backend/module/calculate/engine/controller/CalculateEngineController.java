@@ -61,4 +61,12 @@ public class CalculateEngineController {
 
     calculateEngineBizService.delEngine(engineId);
   }
+
+  @Operation(summary = "检测计算引擎接口")
+  @GetMapping("/checkEngine")
+  @SuccessResponse("检测计算引擎成功")
+  public void checkEngine(@Schema(description = "计算引擎唯一id", example = "sy_b0288cadb2ab4325ae519ff329a95cda") @RequestParam String engineId) {
+
+    calculateEngineBizService.checkEngine(engineId);
+  }
 }

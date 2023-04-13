@@ -9,5 +9,5 @@ import java.util.List;
 @Builder
 public class WokGetWorkLogRes {
 
-  private List<String> logList;
+  private String yarnLog;
 }

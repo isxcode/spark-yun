@@ -28,12 +28,16 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.DecimalFormat;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static com.isxcode.star.backend.utils.SshUtils.executeCommand;
 import static com.isxcode.star.backend.utils.SshUtils.scpFile;
 
-/** 用户模块接口的业务逻辑. */
+/**
+ * 用户模块接口的业务逻辑.
+ */
 @Service
 @RequiredArgsConstructor
 @Transactional(noRollbackFor = {SparkYunException.class})
@@ -119,9 +123,9 @@ public class EngineNodeBizService {
     if (Strings.isEmpty(agentHomePath)) {
 
       if ("root".equals(username)) {
-        return "/root/";
+        return "/root";
       } else {
-        return "/home/" + username + "/";
+        return "/home/" + username ;
       }
     } else {
       return agentHomePath;
@@ -131,9 +135,9 @@ public class EngineNodeBizService {
   public Page<EnoQueryNodeRes> queryNodes(EnoQueryNodeReq enoQueryNodeReq) {
 
     Page<EngineNodeEntity> engineNodeEntities =
-        engineNodeRepository.findAllByCalculateEngineId(
-            enoQueryNodeReq.getCalculateEngineId(),
-            PageRequest.of(enoQueryNodeReq.getPage(), enoQueryNodeReq.getPageSize()));
+      engineNodeRepository.findAllByCalculateEngineId(
+        enoQueryNodeReq.getCalculateEngineId(),
+        PageRequest.of(enoQueryNodeReq.getPage(), enoQueryNodeReq.getPageSize()));
 
     return engineNodeMapper.datasourceEntityPageToQueryDatasourceResPage(engineNodeEntities);
   }
@@ -156,7 +160,7 @@ public class EngineNodeBizService {
   public EngineNodeEntity getEngineNode(String engineNodeId) {
 
     Optional<EngineNodeEntity> engineNodeEntityOptional =
-        engineNodeRepository.findById(engineNodeId);
+      engineNodeRepository.findById(engineNodeId);
 
     if (!engineNodeEntityOptional.isPresent()) {
       throw new SparkYunException("节点不存在");
@@ -165,10 +169,16 @@ public class EngineNodeBizService {
     return engineNodeEntityOptional.get();
   }
 
-  /** 安装节点. */
+  /**
+   * 安装节点.
+   */
   public EnoInstallAgentRes installAgent(String engineNodeId) {
 
     EngineNodeEntity engineNode = getEngineNode(engineNodeId);
+
+    if (Strings.isEmpty(engineNode.getHadoopHomePath())) {
+      throw new SparkYunException("请填写hadoop配置");
+    }
 
     // 拷贝安装包
     scpFile(
@@ -204,6 +214,7 @@ public class EngineNodeBizService {
     }
 
     engineNode.setStatus(EngineNodeStatus.ACTIVE);
+
     engineNodeRepository.save(engineNode);
 
     return new EnoInstallAgentRes(executeLog);
@@ -221,7 +232,7 @@ public class EngineNodeBizService {
       if (executeLog.contains("SY_ERROR")) {
         engineNode.setStatus(EngineNodeStatus.CAN_NOT_INSTALL);
         engineNodeRepository.save(engineNode);
-        throw new SparkYunException("不可安装",executeLog);
+        throw new SparkYunException("不可安装", executeLog);
       }
     } catch (JSchException | InterruptedException | IOException e) {
       log.error(e.getMessage());
@@ -230,15 +241,30 @@ public class EngineNodeBizService {
       throw new SparkYunException("不可安装", e.getMessage());
     }
 
+    try {
+      engineNode.setAllMemory(getAllMemory(engineNode));
+      engineNode.setUsedMemory(getUsedMemory(engineNode));
+      engineNode.setAllStorage(getAllStorage(engineNode));
+      engineNode.setUsedStorage(getUsedStorage(engineNode));
+      engineNode.setCpuPercent(getCpuPercent(engineNode));
+    } catch (Exception e) {
+      log.error(e.getMessage());
+      engineNode.setStatus(EngineNodeStatus.CHECK_ERROR);
+      engineNodeRepository.save(engineNode);
+      throw new SparkYunException("检测失败", e.getMessage());
+    }
+
     // 修改状态
-    engineNode.setStatus(EngineNodeStatus.CAN_INSTALL);
+    if (!EngineNodeStatus.ACTIVE.equals(engineNode.getStatus())) {
+      engineNode.setStatus(EngineNodeStatus.CAN_INSTALL);
+    }
 
     // 保存HadoopHomePath
     String[] split = executeLog.split("\n");
-    engineNode.setHadoopHomePath(split[split.length-1]);
+    engineNode.setHadoopHomePath(split[split.length - 1]);
 
+    engineNode.setCheckDateTime(LocalDateTime.now());
     engineNodeRepository.save(engineNode);
-
     return new EnoCheckAgentRes(executeLog);
   }
 
@@ -249,7 +275,7 @@ public class EngineNodeBizService {
     // 运行卸载脚本
     String installCommand =
       "bash " + engineNode.getAgentHomePath() + File.separator + "spark-yun-agent" + File.separator + "bin" + File.separator + PathConstants.AGENT_REMOVE_BASH_NAME + " --home-path=" + engineNode.getAgentHomePath();
-    String executeLog = null;
+    String executeLog;
     try {
       executeLog = executeCommand(engineNode, installCommand, false);
     } catch (JSchException | InterruptedException | IOException e) {
@@ -264,4 +290,34 @@ public class EngineNodeBizService {
 
     return new EnoRemoveAgentRes(executeLog);
   }
+
+  public Double getAllMemory(EngineNodeEntity engineNode) throws JSchException, IOException, InterruptedException {
+    String getAllMemoryCommand = "grep MemTotal /proc/meminfo | awk '{print $2/1024/1024}' | bc -l | awk '{printf \"%.2f\\n\", $1}'";
+    String allMemory = executeCommand(engineNode, getAllMemoryCommand, false).replace("\n", "");
+    return Double.parseDouble(new DecimalFormat("#.00").format(Double.parseDouble(allMemory)));
+  }
+
+  public Double getUsedMemory(EngineNodeEntity engineNode) throws JSchException, IOException, InterruptedException {
+    String getUsedMemoryCommand = "free | grep Mem: | awk '{print $3/1024/1024}'";
+    String usedMemory = executeCommand(engineNode, getUsedMemoryCommand, false).replace("\n", "");
+    return Double.parseDouble(new DecimalFormat("#.00").format(Double.parseDouble(usedMemory)));
+  }
+
+  public Double getAllStorage(EngineNodeEntity engineNode) throws JSchException, IOException, InterruptedException {
+    String getAllStorageCommand = "lsblk -b | grep disk | awk '{total += $4} END {print total/1024/1024/1024}'";
+    String allStorage = executeCommand(engineNode, getAllStorageCommand, false).replace("\n", "");
+    return Double.parseDouble(new DecimalFormat("#.00").format(Double.parseDouble(allStorage)));
+  }
+
+  public Double getUsedStorage(EngineNodeEntity engineNode) throws JSchException, IOException, InterruptedException {
+    String getUsedStorageCommand = "df -h -t ext4 | awk '{total += $3} END {print total}'";
+    String usedStorage = executeCommand(engineNode, getUsedStorageCommand, false).replace("\n", "");
+    return Double.parseDouble(new DecimalFormat("#.00").format(Double.parseDouble(usedStorage)));
+  }
+
+  public String getCpuPercent(EngineNodeEntity engineNode) throws JSchException, IOException, InterruptedException {
+    String getCpuPercentCommand = "top -bn1 | grep '%Cpu' | awk '{print 100-$8}'";
+    return executeCommand(engineNode, getCpuPercentCommand, false).replace("\n", "");
+  }
+
 }

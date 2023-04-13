@@ -13,6 +13,8 @@ import lombok.Data;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class WokRunWorkRes {
 
+  private String executeStatus;
+
   private String message;
 
   private String log;

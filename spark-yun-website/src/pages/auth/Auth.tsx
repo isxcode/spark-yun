@@ -6,13 +6,13 @@ import Dragger from 'antd/es/upload/Dragger'
 import { InboxOutlined } from '@ant-design/icons'
 import './Auth.less'
 
-function Auth () {
+function Auth() {
   const { Dragger } = Upload
 
   const props: UploadProps = {
     name: 'file',
     multiple: false,
-    onChange (info) {
+    onChange(info) {
       const { status } = info.file
       if (status !== 'uploading') {
         console.log(info.file, info.fileList)
@@ -23,7 +23,7 @@ function Auth () {
         message.error(`${info.file.name} file upload failed.`)
       }
     },
-    onDrop (e) {
+    onDrop(e) {
       console.log('Dropped files', e.dataTransfer.files)
     }
   }

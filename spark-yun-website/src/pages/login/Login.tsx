@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { loginApi } from '../../services/login/loginService'
 import './Login.less'
 
-function Login () {
+function Login() {
   const navigate = useNavigate()
 
   const [loading, setLoading] = useState(false)

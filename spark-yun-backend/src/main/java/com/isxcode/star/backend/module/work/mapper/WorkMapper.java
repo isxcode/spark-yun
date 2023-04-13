@@ -44,7 +44,10 @@ public interface WorkMapper {
     return new PageImpl<>(dtoList, workEntities.getPageable(), workEntities.getTotalElements());
   }
 
+  @Mapping(target = "calculateId", source = "workConfigEntity.calculateEngineId")
+  @Mapping(target = "datasourceId", source = "workConfigEntity.datasourceId")
   @Mapping(target = "workflowId", source = "workEntity.workflowId")
+  @Mapping(target = "workId", source = "workEntity.id")
   WokGetWorkRes workEntityAndWorkConfigEntityToGetWorkRes(
           WorkEntity workEntity, WorkConfigEntity workConfigEntity);
 

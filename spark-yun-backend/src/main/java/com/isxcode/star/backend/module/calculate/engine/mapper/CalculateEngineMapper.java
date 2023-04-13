@@ -18,10 +18,10 @@ public interface CalculateEngineMapper {
   @Mapping(source = "comment", target = "commentInfo")
   @Mapping(target = "activeNode", expression = "java(0)")
   @Mapping(target = "allNode", expression = "java(0)")
-  @Mapping(target = "usedMemory", expression = "java(0)")
-  @Mapping(target = "allMemory", expression = "java(0)")
-  @Mapping(target = "usedStorage", expression = "java(0)")
-  @Mapping(target = "allStorage", expression = "java(0)")
+  @Mapping(target = "usedMemory", expression = "java(0.0)")
+  @Mapping(target = "allMemory", expression = "java(0.0)")
+  @Mapping(target = "usedStorage", expression = "java(0.0)")
+  @Mapping(target = "allStorage", expression = "java(0.0)")
   @Mapping(target = "checkDateTime", expression = "java(java.time.LocalDateTime.now())")
   CalculateEngineEntity addEngineReqToEngineEntity(CaeAddEngineReq caeAddEngineReq);
 
@@ -37,7 +37,7 @@ public interface CalculateEngineMapper {
       expression = "java( engineEntity.getUsedMemory()+ \"G/\" +engineEntity.getAllMemory()+\"G\")")
   @Mapping(
       target = "storage",
-      expression = "java( engineEntity.getUsedStorage()+ \"T/\"  +engineEntity.getAllStorage()+\"T\")")
+      expression = "java( engineEntity.getUsedStorage()+ \"G/\"  +engineEntity.getAllStorage()+\"G\")")
   @Mapping(target = "comment", source = "commentInfo")
   @Mapping(target = "checkTime", source = "checkDateTime", dateFormat = "yyyy-MM-dd HH:mm:ss")
   CaeQueryEngineRes engineEntityToQueryEngineRes(CalculateEngineEntity engineEntity);

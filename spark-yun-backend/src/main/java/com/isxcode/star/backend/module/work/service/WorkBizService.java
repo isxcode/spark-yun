@@ -146,6 +146,10 @@ public class WorkBizService {
 
   public WokGetDataRes getData(WokGetDataReq wokGetDataReq) {
 
+    if (Strings.isEmpty(wokGetDataReq.getApplicationId())) {
+      return WokGetDataRes.builder().data(new ArrayList<>()).build();
+    }
+
     EngineNodeEntity engineNode = getEngineNodeByWorkId(wokGetDataReq.getWorkId());
 
     String getDataUrl = "http://" + engineNode.getHost() + ":" + engineNode.getAgentPort() + "/yag/getData?applicationId=" + wokGetDataReq.getApplicationId();
@@ -158,6 +162,10 @@ public class WorkBizService {
   }
 
   public WokGetStatusRes getStatus(WokGetStatusReq wokGetStatusReq) {
+
+    if (Strings.isEmpty(wokGetStatusReq.getApplicationId())) {
+      return WokGetStatusRes.builder().yarnApplicationState("NO_RUNNING").build();
+    }
 
     EngineNodeEntity engineNode = getEngineNodeByWorkId(wokGetStatusReq.getWorkId());
 
@@ -199,6 +207,10 @@ public class WorkBizService {
 
   public WokGetWorkLogRes getWorkLog(WokGetWorkLogReq wokGetWorkLogReq) {
 
+    if (Strings.isEmpty(wokGetWorkLogReq.getApplicationId())) {
+      return WokGetWorkLogRes.builder().yarnLog("待运行").build();
+    }
+
     EngineNodeEntity engineNode = getEngineNodeByWorkId(wokGetWorkLogReq.getWorkId());
 
     String getLogUrl = "http://" + engineNode.getHost() + ":" + engineNode.getAgentPort() + "/yag/getLog?applicationId=" + wokGetWorkLogReq.getApplicationId();
@@ -207,27 +219,133 @@ public class WorkBizService {
       throw new SparkYunException(baseResponse.getCode(), baseResponse.getMsg(), baseResponse.getErr());
     }
     YagGetLogRes yagGetLogRes = JSON.parseObject(JSON.toJSONString(baseResponse.getData()), YagGetLogRes.class);
-    return WokGetWorkLogRes.builder().logList(Arrays.asList(yagGetLogRes.getLog().split("\n"))).build();
+    return WokGetWorkLogRes.builder().yarnLog(yagGetLogRes.getLog()).build();
+  }
+
+  public WokRunWorkRes querySql(String workConfigId) {
+
+    StringBuilder logBuilder = new StringBuilder();
+    String infoHeader = LocalDateTime.now() + " INFO : ";
+    String errorHeader = LocalDateTime.now() + " ERROR : ";
+
+    // 检测配置是否存在
+    Optional<WorkConfigEntity> workConfigEntityOptional = workConfigRepository.findById(workConfigId);
+    logBuilder.append(infoHeader + "开始检测作业 \n");
+    if (!workConfigEntityOptional.isPresent()) {
+      logBuilder.append(errorHeader + "检测作业失败  \n");
+      return WokRunWorkRes.builder().log(logBuilder.toString()).executeStatus("ERROR").build();
+    }
+    WorkConfigEntity workConfig = workConfigEntityOptional.get();
+    logBuilder.append(infoHeader + "检测作业完成  \n");
+
+    // 检测数据源是否存在
+    logBuilder.append(infoHeader + "开始检测运行环境 \n");
+    if (Strings.isEmpty(workConfig.getDatasourceId())) {
+      logBuilder.append(errorHeader + "检测运行环境失败: 未配置有效数据源  \n");
+      return WokRunWorkRes.builder().log(logBuilder.toString()).executeStatus("ERROR").build();
+    }
+    logBuilder.append(infoHeader + "检测运行环境完成  \n");
+
+    // 开始执行作业
+    logBuilder.append(infoHeader + "开始执行作业 \n");
+    DatasourceEntity datasource = getDatasource(workConfig.getDatasourceId());
+
+    // 初始化返回结果
+    List<List<String>> result = new ArrayList<>();
+    try (Connection connection = getConnection(datasource.getJdbcUrl(), datasource.getUsername(), datasource.getPasswd());
+         Statement statement = connection.createStatement()) {
+
+      String regex = "/\\*(?:.|[\\n\\r])*?\\*/|--.*";
+      String noCommentSql = workConfig.getSql().replaceAll(regex, "");
+      String realSql = noCommentSql.replace("\n", " ");
+      String[] sqls = realSql.split(";");
+
+      for (int i = 0; i < sqls.length - 1; i++) {
+
+        logBuilder.append(infoHeader + "开始执行SQL: " + sqls[i] + " \n");
+        if (!Strings.isEmpty(sqls[i])) {
+          statement.execute(sqls[i]);
+        }
+        logBuilder.append(infoHeader + "SQL执行成功  \n");
+      }
+
+      // 执行最后一句查询语句
+      logBuilder.append(infoHeader + "开始查询SQL: " + sqls[sqls.length - 1] + " \n");
+      ResultSet resultSet = statement.executeQuery(sqls[sqls.length - 1]);
+      logBuilder.append(infoHeader + "查询SQL执行成功  \n");
+
+      int columnCount = resultSet.getMetaData().getColumnCount();
+      // 表头
+      List<String> metaList = new ArrayList<>();
+      for (int i = 1; i <= columnCount; i++) {
+        metaList.add(resultSet.getMetaData().getColumnName(i));
+      }
+      result.add(metaList);
+
+      // 数据
+      while (resultSet.next()) {
+        metaList = new ArrayList<>();
+        for (int i = 1; i <= columnCount; i++) {
+          metaList.add(String.valueOf(resultSet.getObject(i)));
+        }
+        result.add(metaList);
+      }
+      logBuilder.append(infoHeader + "[SUCCESS] \n");
+      return WokRunWorkRes.builder().log(logBuilder.toString()).executeStatus("SUCCESS").data(result).build();
+    } catch (Exception e) {
+      logBuilder.append(errorHeader + e.getMessage() + "\n");
+      log.error(e.getMessage());
+      return WokRunWorkRes.builder().log(logBuilder.toString()).executeStatus("ERROR").build();
+    }
   }
 
   public WokRunWorkRes executeSql(String workConfigId) {
 
+    StringBuilder logBuilder = new StringBuilder();
+    String infoHeader = LocalDateTime.now() + " INFO : ";
+    String errorHeader = LocalDateTime.now() + " ERROR : ";
+
+    // 检测配置是否存在
     Optional<WorkConfigEntity> workConfigEntityOptional = workConfigRepository.findById(workConfigId);
+    logBuilder.append(infoHeader + "开始检测作业 \n");
     if (!workConfigEntityOptional.isPresent()) {
-      throw new SparkYunException("作业异常，不可用作业");
+      logBuilder.append(errorHeader + "检测作业失败: 作业配置不存在 \n");
+      return WokRunWorkRes.builder().log(logBuilder.toString()).executeStatus("ERROR").build();
     }
     WorkConfigEntity workConfig = workConfigEntityOptional.get();
+    logBuilder.append(infoHeader + "检测作业完成  \n");
 
+    // 检测数据源是否存在
+    logBuilder.append(infoHeader + "开始检测运行环境 \n");
+    if (Strings.isEmpty(workConfig.getDatasourceId())) {
+      logBuilder.append(errorHeader + "检测运行环境失败: 未配置有效数据源  \n");
+      return WokRunWorkRes.builder().log(logBuilder.toString()).executeStatus("ERROR").build();
+    }
+    logBuilder.append(infoHeader + "检测运行环境完成  \n");
+
+    // 开始执行作业
+    logBuilder.append(infoHeader + "开始执行作业 \n");
     DatasourceEntity datasource = getDatasource(workConfig.getDatasourceId());
-
-    try (Connection connection =
-           getConnection(datasource.getJdbcUrl(), datasource.getUsername(), datasource.getPasswd());
+    try (Connection connection = getConnection(datasource.getJdbcUrl(), datasource.getUsername(), datasource.getPasswd());
          Statement statement = connection.createStatement();) {
-      statement.execute(workConfig.getSql());
-      return WokRunWorkRes.builder().build();
+
+      String regex = "/\\*(?:.|[\\n\\r])*?\\*/|--.*";
+      String noCommentSql = workConfig.getSql().replaceAll(regex, "");
+      String realSql = noCommentSql.replace("\n", " ");
+      for (String sql : realSql.split(";")) {
+
+        logBuilder.append(infoHeader + "开始执行SQL: " + sql + " \n");
+        if (!Strings.isEmpty(sql)) {
+          statement.execute(sql);
+        }
+        logBuilder.append(infoHeader + "SQL执行成功  \n");
+      }
+      logBuilder.append(infoHeader + "[SUCCESS] \n");
+      return WokRunWorkRes.builder().log(logBuilder.toString()).executeStatus("SUCCESS").build();
     } catch (Exception e) {
+      logBuilder.append(errorHeader + e.getMessage() + "\n");
       log.error(e.getMessage());
-      throw new SparkYunException("执行异常", e.getMessage());
+      return WokRunWorkRes.builder().log(logBuilder.toString()).executeStatus("ERROR").build();
     }
   }
 
@@ -262,48 +380,6 @@ public class WorkBizService {
     }
 
     return datasource;
-  }
-
-
-  public WokRunWorkRes querySql(String workConfigId) {
-
-    Optional<WorkConfigEntity> workConfigEntityOptional = workConfigRepository.findById(workConfigId);
-    if (!workConfigEntityOptional.isPresent()) {
-      throw new SparkYunException("作业异常，不可用作业");
-    }
-    WorkConfigEntity workConfig = workConfigEntityOptional.get();
-
-    DatasourceEntity datasource = getDatasource(workConfig.getDatasourceId());
-
-    List<List<String>> result = new ArrayList<>();
-    try (Connection connection = getConnection(datasource.getJdbcUrl(), datasource.getUsername(), datasource.getPasswd());
-         Statement statement = connection.createStatement()) {
-
-      ResultSet resultSet = statement.executeQuery(workConfig.getSql());
-      int columnCount = resultSet.getMetaData().getColumnCount();
-
-      // 表头
-      List<String> metaList = new ArrayList<>();
-      for (int i = 1; i <= columnCount; i++) {
-        metaList.add(resultSet.getMetaData().getColumnName(i));
-      }
-      result.add(metaList);
-
-      // 数据
-      while (resultSet.next()) {
-        metaList = new ArrayList<>();
-        for (int i = 1; i <= columnCount; i++) {
-          metaList.add(String.valueOf(resultSet.getObject(i)));
-        }
-        result.add(metaList);
-      }
-
-      return WokRunWorkRes.builder().data(result).build();
-
-    } catch (Exception e) {
-      log.error(e.getMessage());
-      throw new SparkYunException("作业执行异常", e.getMessage());
-    }
   }
 
   public WokGetWorkRes getWork(String workId) {
@@ -341,14 +417,40 @@ public class WorkBizService {
 
   public WokRunWorkRes sparkSql(String workConfigId) {
 
+    StringBuilder logBuilder = new StringBuilder();
+    String infoHeader = LocalDateTime.now() + " INFO : ";
+    String errorHeader = LocalDateTime.now() + " ERROR : ";
+
+    logBuilder.append(infoHeader + "开始检查作业  \n");
     Optional<WorkConfigEntity> workConfigEntityOptional = workConfigRepository.findById(workConfigId);
     if (!workConfigEntityOptional.isPresent()) {
-      throw new SparkYunException("作业异常，不可用作业");
+      logBuilder.append(errorHeader + "检查作业失败 : 作业配置不存在 \n");
+      return WokRunWorkRes.builder().log(logBuilder.toString()).executeStatus("ERROR").build();
     }
     WorkConfigEntity workConfig = workConfigEntityOptional.get();
+    logBuilder.append(infoHeader + "检查作业完成  \n");
 
-    EngineNodeEntity engineNode = getEngineWork(workConfig.getCalculateEngineId());
+    logBuilder.append(infoHeader + "开始申请资源  \n");
+    if (Strings.isEmpty(workConfig.getCalculateEngineId())) {
+      logBuilder.append(errorHeader + "申请资源失败 : 未配置计算引擎 \n");
+      return WokRunWorkRes.builder().log(logBuilder.toString()).executeStatus("ERROR").build();
+    }
 
+    Optional<CalculateEngineEntity> calculateEngineEntityOptional = calculateEngineRepository.findById(workConfig.getCalculateEngineId());
+    if (!calculateEngineEntityOptional.isPresent()) {
+      logBuilder.append(errorHeader + "申请资源失败 : 计算引擎不存在 \n");
+      return WokRunWorkRes.builder().log(logBuilder.toString()).executeStatus("ERROR").build();
+    }
+
+    List<EngineNodeEntity> allEngineNodes = engineNodeRepository.findAllByCalculateEngineIdAndStatus(calculateEngineEntityOptional.get().getId(), EngineNodeStatus.ACTIVE);
+    if (allEngineNodes.isEmpty()) {
+      logBuilder.append(errorHeader + "申请资源失败 : 集群不存在可用节点，请切换一个集群 \n");
+      return WokRunWorkRes.builder().log(logBuilder.toString()).executeStatus("ERROR").build();
+    }
+    EngineNodeEntity engineNode = allEngineNodes.get(0);
+    logBuilder.append(infoHeader + "申请资源完成，激活节点:【" + engineNode.getName() + "】\n");
+
+    logBuilder.append(infoHeader + "开始构建作业  \n");
     YagExecuteWorkReq executeReq = new YagExecuteWorkReq();
     executeReq.setAppName("spark-yun");
     executeReq.setMainClass("com.isxcode.star.plugin.query.sql.Execute");
@@ -363,19 +465,28 @@ public class WorkBizService {
     sparkConfig.put("spark.executor.memory", "1g");
     sparkConfig.put("spark.driver.memory", "1g");
     pluginReq.setSparkConfig(sparkConfig);
-
     executeReq.setPluginReq(pluginReq);
+    logBuilder.append(infoHeader + "构建作业完，SparkConfig: \n");
+    sparkConfig.forEach((k, v) -> logBuilder.append(infoHeader + k + ":" + v + " \n"));
 
     try {
+      logBuilder.append(infoHeader + "开始提交作业  \n");
       String executeWorkUrl = "http://" + engineNode.getHost() + ":" + engineNode.getAgentPort() + "/yag/executeWork";
       BaseResponse<?> baseResponse = HttpUtils.doPost(executeWorkUrl, executeReq, BaseResponse.class);
       if (!CodeConstants.SUCCESS_CODE.equals(baseResponse.getCode())) {
-        throw new SparkYunException(baseResponse.getCode(), baseResponse.getMsg(), baseResponse.getErr());
+        logBuilder.append(errorHeader + "提交作业失败 : " + baseResponse.getErr() + "\n");
+        return WokRunWorkRes.builder().log(logBuilder.toString()).executeStatus("ERROR").build();
       }
-      return JSON.parseObject(JSON.toJSONString(baseResponse.getData()), WokRunWorkRes.class);
+      WokRunWorkRes wokRunWorkRes = JSON.parseObject(JSON.toJSONString(baseResponse.getData()), WokRunWorkRes.class);
+      logBuilder.append(infoHeader + "提交作业完成  \n");
+      wokRunWorkRes.setLog(logBuilder.toString());
+      wokRunWorkRes.setExecuteStatus("SUCCESS");
+      return wokRunWorkRes;
+
     } catch (Exception e) {
       log.error(e.getMessage());
-      throw new SparkYunException("提交作业异常", e.getMessage());
+      logBuilder.append(errorHeader + "提交作业失败 : " + e.getMessage() + "\n");
+      return WokRunWorkRes.builder().log(logBuilder.toString()).executeStatus("ERROR").build();
     }
   }
 }

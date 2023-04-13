@@ -18,4 +18,6 @@ public class WokGetWorkRes {
   private String calculateId;
 
   private String workType;
+
+  private String workId;
 }

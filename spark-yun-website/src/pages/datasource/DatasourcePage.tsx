@@ -148,7 +148,7 @@ function DatasourcePage() {
   ]
 
   return (
-    <>
+    <div style={{ padding: 24 }}>
       <div className={'datasource-bar'}>
         <Button
           type={'primary'}
@@ -170,7 +170,7 @@ function DatasourcePage() {
         handleOk={handleOk}
         isModalVisible={isModalVisible}
       />
-    </>
+    </div>
   )
 }
 

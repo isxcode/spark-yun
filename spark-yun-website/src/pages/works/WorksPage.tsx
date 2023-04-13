@@ -23,7 +23,7 @@ function WorksPage() {
   }, [])
 
   const queryWorkReq: QueryWorkReq = {
-    workflowId: workflowId,
+    workflowId,
     page: pagination.currentPage,
     pageSize: pagination.pageSize,
     contentSearch: ''
@@ -138,7 +138,7 @@ function WorksPage() {
   ]
 
   return (
-    <>
+    <div style={{ padding: 24 }}>
       <div className={'works-bar'}>
         <Button
           type={'primary'}
@@ -172,7 +172,7 @@ function WorksPage() {
         isModalVisible={isModalVisible}
         work={work}
       />
-    </>
+    </div>
   )
 }
 

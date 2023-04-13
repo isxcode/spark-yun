@@ -115,7 +115,7 @@ function WorkflowPage() {
   ]
 
   return (
-    <>
+    <div style={{ padding: 24 }}>
       <div className={'workflow-bar'}>
         <Button
           type={'primary'}
@@ -146,7 +146,7 @@ function WorkflowPage() {
         }}
         handleOk={handleOk}
       />
-    </>
+    </div>
   )
 }
 

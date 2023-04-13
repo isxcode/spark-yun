@@ -6,7 +6,11 @@ import './CalculateEnginePage.less'
 import { BasePagination, defaultPagination } from '../../../types/base/BasePagination'
 import { CalculateEngineRow } from '../../../types/calculate/engine/info/CalculateEngineRow'
 import { QueryEngineReq } from '../../../types/calculate/engine/req/QueryEngineReq'
-import { delEngineApi, queryEnginesApi } from '../../../services/calculate/engine/CalculateEngineService'
+import {
+  checkEngineApi,
+  delEngineApi,
+  queryEnginesApi
+} from '../../../services/calculate/engine/CalculateEngineService'
 import { EngineModal } from '../../../modals/calculate/engine/EngineModal'
 
 function CalculateEnginePage() {
@@ -41,8 +45,14 @@ function CalculateEnginePage() {
     setIsModalVisible(false)
   }
 
-  const delEngine = (workflowId: string | undefined) => {
-    delEngineApi(workflowId).then(function () {
+  const delEngine = (engineId: string | undefined) => {
+    delEngineApi(engineId).then(function () {
+      fetchEngines()
+    })
+  }
+
+  const checkEngine = (engineId: string | undefined) => {
+    checkEngineApi(engineId).then(function () {
       fetchEngines()
     })
   }
@@ -70,13 +80,13 @@ function CalculateEnginePage() {
       width: 130
     },
     {
-      title: '可用/总内存',
+      title: '已用/总内存',
       dataIndex: 'memory',
       key: 'memory',
       width: 120
     },
     {
-      title: '可用/总存储',
+      title: '已用/总存储',
       dataIndex: 'storage',
       key: 'storage',
       width: 120
@@ -89,8 +99,10 @@ function CalculateEnginePage() {
       render: (_, record) => (
         <Space size="middle">
           {record.status === 'NEW' && <Tag color="blue">待配置</Tag>}
-          {record.status === 'ACTIVE' && <Tag color="green">已激活</Tag>}
+          {record.status === 'ACTIVE' && <Tag color="green">可用</Tag>}
           {record.status === 'FAIL' && <Tag color="red">连接失败</Tag>}
+          {record.status === 'UN_CHECK' && <Tag color="cyan">待检测</Tag>}
+          {record.status === 'NO_ACTIVE' && <Tag color="red">不可用</Tag>}
         </Space>
       )
     },
@@ -119,7 +131,14 @@ function CalculateEnginePage() {
             }}>
             编辑
           </a>
-          <a className={'sy-table-a'}> 检测</a>
+          <a
+            className={'sy-table-a'}
+            onClick={() => {
+              checkEngine(record.id)
+            }}>
+            {' '}
+            检测
+          </a>
           <a
             className={'sy-table-a'}
             onClick={() => {
@@ -141,7 +160,7 @@ function CalculateEnginePage() {
   ]
 
   return (
-    <>
+    <div style={{ padding: 24 }}>
       <div className={'engine-bar'}>
         <Button
           type={'primary'}
@@ -172,7 +191,7 @@ function CalculateEnginePage() {
         handleOk={handleOk}
         isModalVisible={isModalVisible}
       />
-    </>
+    </div>
   )
 }
 
