@@ -25,8 +25,6 @@ function Login() {
     <div className={'sy-login-div'}>
       <div className={'sy-login-logo'}>至轻云</div>
 
-      <div className={'sy-login-describe'}>基于spark打造超轻量级批处理大数据平台</div>
-
       <Form onFinish={handleLogin} initialValues={{ remember: true }}>
         <Form.Item className={'sy-login-item'} name="account" rules={[{ required: true, message: '账号不能为空' }]}>
           <Input placeholder="账号/邮箱/手机号" />
@@ -46,6 +44,8 @@ function Login() {
           </Row>
         </Form.Item>
       </Form>
+
+      <div className={'sy-login-describe'}>基于Spark打造超轻量级批处理大数据平台</div>
     </div>
   )
 }

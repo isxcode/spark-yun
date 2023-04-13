@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Button, message, Space, Table, Tag } from 'antd'
+import { Button, Col, Input, message, Row, Space, Table, Tag } from 'antd'
 import { type ColumnsType } from 'antd/es/table'
 import { useNavigate } from 'react-router-dom'
 import { type WorkflowRow } from '../../types/workflow/info/WorkflowRow'
@@ -116,16 +116,22 @@ function WorkflowPage() {
 
   return (
     <div style={{ padding: 24 }}>
-      <div className={'workflow-bar'}>
-        <Button
-          type={'primary'}
-          onClick={() => {
-            setWorkflow({})
-            setIsModalVisible(true)
-          }}>
-          添加作业流
-        </Button>
-      </div>
+      <Row className={'workflow-bar'}>
+        <Col span={8}>
+          <Button
+            type={'primary'}
+            onClick={() => {
+              setWorkflow({})
+              setIsModalVisible(true)
+            }}>
+            添加作业流
+          </Button>
+        </Col>
+        <Col span={8} offset={8} style={{ textAlign: 'right', display: 'flex' }}>
+          <Input style={{ marginRight: '10px' }} placeholder={'名称/备注'} />
+          <Button type={'primary'}>搜索</Button>
+        </Col>
+      </Row>
       <Table
         columns={columns}
         dataSource={workflows}
