@@ -61,6 +61,16 @@ section.cover {
     }
 }
 
+.custom-carousel-inner {
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.custom-carousel-inner-item {
+  height: 400px;
+}
+
 .true-svg {
     width: 20px !important;
 }

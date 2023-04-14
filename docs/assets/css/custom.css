@@ -47,18 +47,12 @@
 
 /***** 首页滚动 slide1 *****/
 .slide1-title {
-    margin-top: 7%;
     font-size: 6rem;
     font-weight: normal;
 }
-@media screen and (max-width: 985px) {
-    .slide1-title {
-        margin-top: 30%;
-    }
-}
 
 .slide1-describe {
-    margin-top: 4rem;
+  margin-top: 50px;
     font-size: 2.5rem;
     font-weight: normal;
 }
@@ -66,11 +60,11 @@
 .slide1-bash {
     color: white;
     display: block;
-    margin: 3rem auto auto;
-    height: 2.2rem;
+  margin: 30px auto auto;
+  height: 2.2rem;
     line-height: 2.2rem;
     font-size: 0.9rem;
-    width: 45%;
+    width: 800px;
     font-weight: normal;
     border: none;
     white-space: nowrap;
@@ -79,7 +73,7 @@
 }
 
 .slide1-btn {
-    margin-top: 3rem;
+  margin-top: 40px;
     font-size: 1.3rem;
     background: white;
     color: black;
@@ -179,6 +173,8 @@
 .technology-img {
     height: 90%;
     width: auto;
+    max-width: 800px;
+    max-height: 800px;
 }
 @media screen and (max-width: 985px) {
     .technology-img {
@@ -190,6 +186,7 @@
 /***** 版本差异 *****/
 .table-responsive {
     width: 40%;
+    max-width: 800px;
     margin: auto;
 }
 @media screen and (max-width: 985px) {
@@ -211,7 +208,11 @@
     flex-shrink: 0;
     height: 60%;
     margin-right: 20px;
-    width: 23%;
+    width: 300px;
+}
+
+.custom-card-text {
+
 }
 @media screen and (max-width: 985px) {
     .custom-card-container {
