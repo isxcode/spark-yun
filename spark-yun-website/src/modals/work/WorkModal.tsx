@@ -72,9 +72,9 @@ export const WorkModal = (props: {
 
           <Form.Item name="workType" label="类型" rules={[{ required: true, message: '类型不能为空' }]}>
             <Select placeholder="选择作业类型" allowClear>
-              <Option value="EXECUTE_JDBC_SQL">Jdbc执行作业</Option>
-              <Option value="QUERY_JDBC_SQL">Jdbc查询作业</Option>
-              <Option value="QUERY_SPARK_SQL">SparkSql查询作业</Option>
+              <Option value="EXE_JDBC">Jdbc执行作业</Option>
+              <Option value="QUERY_JDBC">Jdbc查询作业</Option>
+              <Option value="SPARK_SQL">SparkSql查询作业</Option>
             </Select>
           </Form.Item>
 

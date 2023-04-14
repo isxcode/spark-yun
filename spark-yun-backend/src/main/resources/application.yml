@@ -33,7 +33,7 @@ spring:
   # jpa配置˚
   jpa:
     database: h2
-    show-sql: false
+    show-sql: true
     open-in-view: false
     hibernate:
       ddl-auto: none

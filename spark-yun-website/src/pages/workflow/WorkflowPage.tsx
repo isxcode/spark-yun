@@ -24,7 +24,7 @@ function WorkflowPage() {
   const queryWorkflowReq: WofQueryWorkflowReq = {
     page: pagination.currentPage,
     pageSize: pagination.pageSize,
-    contentSearch: ''
+    searchContent: pagination.searchContent
   }
 
   const fetchWorkflows = () => {
@@ -40,6 +40,14 @@ function WorkflowPage() {
   const handleOk = () => {
     fetchWorkflows()
     setIsModalVisible(false)
+  }
+
+  const handleSearch = () => {
+    setPagination((prevPagination) => ({
+      ...prevPagination,
+      currentPage: 1
+    }))
+    fetchWorkflows()
   }
 
   const delWorkflow = (workflowId: string | undefined) => {
@@ -127,9 +135,19 @@ function WorkflowPage() {
             添加作业流
           </Button>
         </Col>
-        <Col span={8} offset={8} style={{ textAlign: 'right', display: 'flex' }}>
-          <Input style={{ marginRight: '10px' }} placeholder={'名称/备注'} />
-          <Button type={'primary'}>搜索</Button>
+        <Col span={7} offset={9} style={{ textAlign: 'right', display: 'flex' }}>
+          <Input
+            style={{ marginRight: '10px' }}
+            onPressEnter={handleSearch}
+            defaultValue={queryWorkflowReq.searchContent}
+            onChange={(e) => {
+              setPagination({ ...pagination, searchContent: e.target.value })
+            }}
+            placeholder={'名称/备注'}
+          />
+          <Button type={'primary'} onClick={handleSearch}>
+            搜索
+          </Button>
         </Col>
       </Row>
       <Table

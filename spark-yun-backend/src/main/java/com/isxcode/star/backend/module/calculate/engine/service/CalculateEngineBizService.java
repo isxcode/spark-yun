@@ -60,8 +60,8 @@ public class CalculateEngineBizService {
   public Page<CaeQueryEngineRes> queryEngines(CaeQueryEngineReq caeQueryEngineReq) {
 
     Page<CalculateEngineEntity> engineEntities =
-        engineRepository.findAll(
-            PageRequest.of(caeQueryEngineReq.getPage(), caeQueryEngineReq.getPageSize()));
+      engineRepository.searchAll(caeQueryEngineReq.getSearchContent(),
+        PageRequest.of(caeQueryEngineReq.getPage(), caeQueryEngineReq.getPageSize()));
 
     return engineMapper.engineEntityPageToCaeQueryEngineResPage(engineEntities);
   }

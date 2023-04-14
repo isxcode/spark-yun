@@ -129,14 +129,14 @@ function WorkPage() {
       label: '提交日志',
       children: <pre style={{ overflowY: 'scroll', maxHeight: '200px', whiteSpace: 'pre-wrap' }}>{result?.log}</pre>
     })
-    if (work?.workType === 'QUERY_JDBC_SQL' || work?.workType === 'QUERY_SPARK_SQL') {
+    if (work?.workType === 'QUERY_JDBC' || work?.workType === 'SPARK_SQL') {
       items.push({
         key: 'BACK_DATA',
         label: '数据返回',
         children: <Table columns={columns()} dataSource={data()} scroll={{ y: 200 }} />
       })
     }
-    if (work?.workType === 'QUERY_SPARK_SQL') {
+    if (work?.workType === 'SPARK_SQL') {
       items.push({
         key: 'EXECUTE_LOG',
         label: '运行日志',

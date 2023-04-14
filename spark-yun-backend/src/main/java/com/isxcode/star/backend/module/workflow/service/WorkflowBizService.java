@@ -14,6 +14,7 @@ import javax.transaction.Transactional;
 
 import com.isxcode.star.common.exception.SparkYunException;
 import lombok.RequiredArgsConstructor;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -50,7 +51,7 @@ public class WorkflowBizService {
 
   public Page<WofQueryWorkflowRes> queryWorkflow(WocQueryWorkflowReq wocQueryWorkflowReq) {
 
-    Page<WorkflowEntity> WorkflowEntityPage = workflowRepository.findAll(PageRequest.of(wocQueryWorkflowReq.getPage(), wocQueryWorkflowReq.getPageSize()));
+    Page<WorkflowEntity> WorkflowEntityPage = workflowRepository.searchAll(wocQueryWorkflowReq.getSearchContent(), PageRequest.of(wocQueryWorkflowReq.getPage(), wocQueryWorkflowReq.getPageSize()));
 
     return workflowMapper.workflowEntityPageToQueryWorkflowResPage(WorkflowEntityPage);
   }

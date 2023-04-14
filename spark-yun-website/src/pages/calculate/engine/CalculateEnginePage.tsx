@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Button, Space, Table, Tag } from 'antd'
+import { Button, Col, Input, Row, Space, Table, Tag } from 'antd'
 import { type ColumnsType } from 'antd/es/table'
 import { useNavigate } from 'react-router-dom'
 import './CalculateEnginePage.less'
@@ -27,7 +27,7 @@ function CalculateEnginePage() {
   const queryEnginesReq: QueryEngineReq = {
     page: pagination.currentPage,
     pageSize: pagination.pageSize,
-    contentSearch: ''
+    searchContent: pagination.searchContent
   }
 
   const fetchEngines = () => {
@@ -55,6 +55,14 @@ function CalculateEnginePage() {
     checkEngineApi(engineId).then(function () {
       fetchEngines()
     })
+  }
+
+  const handleSearch = () => {
+    setPagination((prevPagination) => ({
+      ...prevPagination,
+      currentPage: 1
+    }))
+    fetchEngines()
   }
 
   const columns: ColumnsType<CalculateEngineRow> = [
@@ -161,16 +169,32 @@ function CalculateEnginePage() {
 
   return (
     <div style={{ padding: 24 }}>
-      <div className={'engine-bar'}>
-        <Button
-          type={'primary'}
-          onClick={() => {
-            setCalculate({})
-            setIsModalVisible(true)
-          }}>
-          添加集群
-        </Button>
-      </div>
+      <Row className={'engine-bar'}>
+        <Col span={8}>
+          <Button
+            type={'primary'}
+            onClick={() => {
+              setCalculate({})
+              setIsModalVisible(true)
+            }}>
+            添加集群
+          </Button>
+        </Col>
+        <Col span={7} offset={9} style={{ textAlign: 'right', display: 'flex' }}>
+          <Input
+            style={{ marginRight: '10px' }}
+            onPressEnter={handleSearch}
+            defaultValue={queryEnginesReq.searchContent}
+            onChange={(e) => {
+              setPagination({ ...pagination, searchContent: e.target.value })
+            }}
+            placeholder={'名称/备注'}
+          />
+          <Button type={'primary'} onClick={handleSearch}>
+            搜索
+          </Button>
+        </Col>
+      </Row>
       <Table
         columns={columns}
         dataSource={calculates}

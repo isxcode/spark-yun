@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Button, Input, Space, Table, Tag } from 'antd'
+import { Button, Col, Input, Row, Space, Table, Tag } from 'antd'
 import { type ColumnsType } from 'antd/es/table'
 import { useParams } from 'react-router-dom'
 import './EngineNodePage.less'
@@ -30,7 +30,7 @@ function EngineNodePage() {
     calculateEngineId: calculateEngineId as string,
     page: pagination.currentPage,
     pageSize: pagination.pageSize,
-    contentSearch: ''
+    searchContent: pagination.searchContent
   }
 
   const fetchEngineNodes = () => {
@@ -46,6 +46,14 @@ function EngineNodePage() {
   const handleOk = () => {
     fetchEngineNodes()
     setIsModalVisible(false)
+  }
+
+  const handleSearch = () => {
+    setPagination((prevPagination) => ({
+      ...prevPagination,
+      currentPage: 1
+    }))
+    fetchEngineNodes()
   }
 
   const delEngineNode = (engineNodeId: string | undefined) => {
@@ -181,16 +189,32 @@ function EngineNodePage() {
 
   return (
     <div style={{ padding: 24 }}>
-      <div className={'node-bar'}>
-        <Button
-          type={'primary'}
-          onClick={() => {
-            setEngineNode({})
-            setIsModalVisible(true)
-          }}>
-          添加节点
-        </Button>
-      </div>
+      <Row className={'node-bar'}>
+        <Col span={8}>
+          <Button
+            type={'primary'}
+            onClick={() => {
+              setEngineNode({})
+              setIsModalVisible(true)
+            }}>
+            添加节点
+          </Button>
+        </Col>
+        <Col span={7} offset={9} style={{ textAlign: 'right', display: 'flex' }}>
+          <Input
+            style={{ marginRight: '10px' }}
+            onPressEnter={handleSearch}
+            defaultValue={queryEngineNodeReq.searchContent}
+            onChange={(e) => {
+              setPagination({ ...pagination, searchContent: e.target.value })
+            }}
+            placeholder={'名称/地址/备注'}
+          />
+          <Button type={'primary'} onClick={handleSearch}>
+            搜索
+          </Button>
+        </Col>
+      </Row>
       <Table columns={columns} dataSource={engineNodes} />
       <EngineNodeModal
         calculateEngineId={calculateEngineId as string}

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Button, Space, Table, Tag } from 'antd'
+import { Button, Col, Input, Row, Space, Table, Tag } from 'antd'
 import { type ColumnsType } from 'antd/es/table'
 import { DatasourceModal } from '../../modals/datasource/DatasourceModal'
 import './DatasourcePage.less'
@@ -21,7 +21,7 @@ function DatasourcePage() {
   const queryDatasourceReq: QueryDatasourceReq = {
     page: pagination.currentPage,
     pageSize: pagination.pageSize,
-    contentSearch: ''
+    searchContent: pagination.searchContent
   }
 
   const fetchDatasources = () => {
@@ -49,6 +49,14 @@ function DatasourcePage() {
     testDatasourceApi(datasourceId).then(function () {
       fetchDatasources()
     })
+  }
+
+  const handleSearch = () => {
+    setPagination((prevPagination) => ({
+      ...prevPagination,
+      currentPage: 1
+    }))
+    fetchDatasources()
   }
 
   const columns: ColumnsType<DatasourceRow> = [
@@ -149,16 +157,32 @@ function DatasourcePage() {
 
   return (
     <div style={{ padding: 24 }}>
-      <div className={'datasource-bar'}>
-        <Button
-          type={'primary'}
-          onClick={() => {
-            setDatasource({})
-            setIsModalVisible(true)
-          }}>
-          添加数据源
-        </Button>
-      </div>
+      <Row className={'datasource-bar'}>
+        <Col span={8}>
+          <Button
+            type={'primary'}
+            onClick={() => {
+              setDatasource({})
+              setIsModalVisible(true)
+            }}>
+            添加数据源
+          </Button>
+        </Col>
+        <Col span={7} offset={9} style={{ textAlign: 'right', display: 'flex' }}>
+          <Input
+            style={{ marginRight: '10px' }}
+            onPressEnter={handleSearch}
+            defaultValue={queryDatasourceReq.searchContent}
+            onChange={(e) => {
+              setPagination({ ...pagination, searchContent: e.target.value })
+            }}
+            placeholder={'名称/类型/连接信息/用户名/备注'}
+          />
+          <Button type={'primary'} onClick={handleSearch}>
+            搜索
+          </Button>
+        </Col>
+      </Row>
 
       <Table columns={columns} dataSource={datasources} />
 

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Button, message, Space, Table, Tag } from 'antd'
+import { Button, Col, Input, message, Row, Space, Table, Tag } from 'antd'
 import { type ColumnsType } from 'antd/es/table'
 import { useNavigate, useParams } from 'react-router-dom'
 import { WorkModal } from '../../modals/work/WorkModal'
@@ -26,7 +26,7 @@ function WorksPage() {
     workflowId,
     page: pagination.currentPage,
     pageSize: pagination.pageSize,
-    contentSearch: ''
+    searchContent: pagination.searchContent
   }
 
   const fetchWorks = () => {
@@ -48,6 +48,14 @@ function WorksPage() {
     delWorkApi(workId).then(function () {
       fetchWorks()
     })
+  }
+
+  const handleSearch = () => {
+    setPagination((prevPagination) => ({
+      ...prevPagination,
+      currentPage: 1
+    }))
+    fetchWorks()
   }
 
   const columns: ColumnsType<WorkRow> = [
@@ -73,9 +81,9 @@ function WorksPage() {
       width: 120,
       render: (_, record) => (
         <Space size="middle">
-          {record.workType === 'EXECUTE_JDBC_SQL' && <Tag color="default">EXE_JDBC</Tag>}
-          {record.workType === 'QUERY_JDBC_SQL' && <Tag color="default">QUERY_JDBC</Tag>}
-          {record.workType === 'QUERY_SPARK_SQL' && <Tag color="default">SPARK_SQL</Tag>}
+          {record.workType === 'EXE_JDBC' && <Tag color="default">EXE_JDBC</Tag>}
+          {record.workType === 'QUERY_JDBC' && <Tag color="default">QUERY_JDBC</Tag>}
+          {record.workType === 'SPARK_SQL' && <Tag color="default">SPARK_SQL</Tag>}
         </Space>
       )
     },
@@ -139,17 +147,32 @@ function WorksPage() {
 
   return (
     <div style={{ padding: 24 }}>
-      <div className={'works-bar'}>
-        <Button
-          type={'primary'}
-          onClick={() => {
-            setWork({})
-            setIsModalVisible(true)
-          }}>
-          添加作业
-        </Button>
-      </div>
-
+      <Row className={'works-bar'}>
+        <Col span={8}>
+          <Button
+            type={'primary'}
+            onClick={() => {
+              setWork({})
+              setIsModalVisible(true)
+            }}>
+            添加作业
+          </Button>
+        </Col>
+        <Col span={7} offset={9} style={{ textAlign: 'right', display: 'flex' }}>
+          <Input
+            style={{ marginRight: '10px' }}
+            onPressEnter={handleSearch}
+            defaultValue={queryWorkReq.searchContent}
+            onChange={(e) => {
+              setPagination({ ...pagination, searchContent: e.target.value })
+            }}
+            placeholder={'名称/类型/备注'}
+          />
+          <Button type={'primary'} onClick={handleSearch}>
+            搜索
+          </Button>
+        </Col>
+      </Row>
       <Table
         columns={columns}
         dataSource={works}
