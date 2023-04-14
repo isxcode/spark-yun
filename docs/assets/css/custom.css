@@ -3,15 +3,15 @@
     --navbar-padding-left-and-right-mobile: 0.5rem;
 }
 
-/* nav浮起来 */
+/***** nav浮起来 *****/
 .custom-navbar {
-    background: white !important;
-    z-index: 999;
-    width: 100%;
-    position: absolute;
-    border-bottom: black solid 2px;
-    padding-left: var(--navbar-padding-left-and-right-pc);
-    padding-right: var(--navbar-padding-left-and-right-pc);
+  background: white !important;
+  z-index: 999;
+  width: 100%;
+  position: absolute;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+  padding-left: var(--navbar-padding-left-and-right-pc);
+  padding-right: var(--navbar-padding-left-and-right-pc);
 }
 @media screen and (max-width: 985px) {
     .custom-navbar {
@@ -20,19 +20,19 @@
     }
 }
 
-/* nav中logo */
+/***** nav中logo *****/
 .custom-navbar-brand {
     font-weight: bold;
     font-size: 1.6rem;
     cursor: pointer;
 }
 
-/* navbar中的nav样式 */
+/***** navbar中的nav样式 *****/
 .custom-navbar-nav {
     margin-left: auto;
 }
 
-/* nav中的连接样式 */
+/***** nav中的连接样式 *****/
 .custom-navbar-nav a {
     font-size: 1rem;
     width: 7rem;
@@ -40,12 +40,12 @@
     margin: auto;
 }
 
-/* 首页滚动 */
+/***** 首页滚动 *****/
 .custom-carousel {
     height: 100%;
 }
 
-/* slide1 */
+/***** 首页滚动 slide1 *****/
 .slide1-title {
     margin-top: 7%;
     font-size: 6rem;
@@ -104,7 +104,7 @@
     }
 }
 
-/* 产品优势 桌面*/
+/***** 产品优势 桌面*****/
 .advantage-nav-mobile {
     display: none;
 }
@@ -128,8 +128,9 @@
 }
 
 .custom-advantage-card-body {
-    width: 100%;
-    height: 100%;
+  width: 100%;
+  height: 100%;
+  border: none;
 }
 
 .custom-advantage-img {
@@ -149,10 +150,12 @@
 }
 
 .custom-advantage-list-body {
-    margin-top: 5%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-/* 移动版 产品优势 */
+/***** 移动版 产品优势 *****/
 @media screen and (max-width: 985px) {
     .advantage-nav-mobile {
         display: block;
@@ -172,7 +175,7 @@
     }
 }
 
-/* 技术架构 */
+/***** 技术架构 *****/
 .technology-img {
     height: 90%;
     width: auto;
@@ -184,7 +187,7 @@
     }
 }
 
-/* 版本差异 */
+/***** 版本差异 *****/
 .table-responsive {
     width: 40%;
     margin: auto;
@@ -195,7 +198,7 @@
     }
 }
 
-/* 应用场景 */
+/***** 应用场景 *****/
 .application-scroll {
     margin: auto;
     width: 80%;
@@ -217,16 +220,17 @@
 }
 
 .custom-card-img-top {
-    width: 40%;
-    margin: auto;
+    width: 30%;
+  margin: 25px auto auto;
 }
 
-/*关于我们*/
+/***** 关于我们 *****/
 .link-wechat {
     width: 14rem;
 }
 
 .link-wechat-describe {
-    color: grey;
-    font-size: 0.8rem;
+  color: grey;
+  font-size: 0.8rem;
+  margin-top: 30px;
 }
