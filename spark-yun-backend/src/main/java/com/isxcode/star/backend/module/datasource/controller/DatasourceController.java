@@ -33,7 +33,7 @@ public class DatasourceController {
 
   @Operation(summary = "添加数据源接口")
   @PostMapping("/addDatasource")
-  @SuccessResponse("添加数据源成功")
+  @SuccessResponse("添加成功")
   public void addDatasource(@Valid @RequestBody DasAddDatasourceReq dasAddDatasourceReq) {
 
     datasourceBizService.addDatasource(dasAddDatasourceReq);
@@ -41,7 +41,7 @@ public class DatasourceController {
 
   @Operation(summary = "更新数据源接口")
   @PostMapping("/updateDatasource")
-  @SuccessResponse("更新数据源成功")
+  @SuccessResponse("更新成功")
   public void updateDatasource(@Valid @RequestBody DasUpdateDatasourceReq dasAddDatasourceReq) {
 
     datasourceBizService.updateDatasource(dasAddDatasourceReq);
@@ -57,7 +57,7 @@ public class DatasourceController {
 
   @Operation(summary = "删除数据源接口")
   @GetMapping("/delDatasource")
-  @SuccessResponse("删除数据源成功")
+  @SuccessResponse("删除成功")
   public void delDatasource(@Schema(description = "数据源唯一id", example = "sy_344c3d583fa344f7a2403b19c5a654dc") @RequestParam String datasourceId) {
 
     datasourceBizService.delDatasource(datasourceId);
@@ -65,7 +65,7 @@ public class DatasourceController {
 
   @Operation(summary = "测试数据源连接接口")
   @PostMapping("/testConnect")
-  @SuccessResponse("连接测试成功")
+  @SuccessResponse("检测完成")
   public DasTestConnectRes testConnect(@Valid @RequestBody DasTestConnectReq dasTestConnectRes) {
 
     return datasourceBizService.testConnect(dasTestConnectRes);

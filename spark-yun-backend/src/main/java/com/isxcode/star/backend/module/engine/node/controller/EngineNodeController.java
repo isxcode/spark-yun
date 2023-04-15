@@ -34,7 +34,7 @@ public class EngineNodeController {
 
   @Operation(summary = "添加引擎节点接口")
   @PostMapping("/addNode")
-  @SuccessResponse("添加集群节点成功")
+  @SuccessResponse("添加成功")
   public void addNode(@Valid @RequestBody EnoAddNodeReq enoAddNodeReq) {
 
     engineNodeBizService.addNode(enoAddNodeReq);
@@ -42,7 +42,7 @@ public class EngineNodeController {
 
   @Operation(summary = "更新引擎节点接口")
   @PostMapping("/updateNode")
-  @SuccessResponse("更新集群节点成功")
+  @SuccessResponse("更新成功")
   public void updateNode(@Valid @RequestBody EnoUpdateNodeReq enoUpdateNodeReq) {
 
     engineNodeBizService.updateNode(enoUpdateNodeReq);
@@ -58,7 +58,7 @@ public class EngineNodeController {
 
   @Operation(summary = "删除节点接口")
   @GetMapping("/delNode")
-  @SuccessResponse("删除节点成功")
+  @SuccessResponse("删除成功")
   public void delNode(@Schema(description = "引擎节点唯一id", example = "sy_de7c0478a75343ae853a637af1f4819c") @RequestParam String engineNodeId) {
 
     engineNodeBizService.delNode(engineNodeId);
@@ -74,7 +74,7 @@ public class EngineNodeController {
 
   @Operation(summary = "安装代理接口")
   @GetMapping("/installAgent")
-  @SuccessResponse("安装成功")
+  @SuccessResponse("安装完成")
   public EnoInstallAgentRes installAgent(@Schema(description = "引擎节点唯一id", example = "sy_aaa9440040aa455d84c17f96d8cd7844") @RequestParam String engineNodeId) {
 
     return engineNodeBizService.installAgent(engineNodeId);

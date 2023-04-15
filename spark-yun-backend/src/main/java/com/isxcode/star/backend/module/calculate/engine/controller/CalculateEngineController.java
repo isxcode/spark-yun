@@ -31,7 +31,7 @@ public class CalculateEngineController {
 
   @Operation(summary = "添加计算引擎接口")
   @PostMapping("/addEngine")
-  @SuccessResponse("添加计算引擎成功")
+  @SuccessResponse("添加成功")
   public void addEngine(@Valid @RequestBody CaeAddEngineReq caeAddEngineReq) {
 
     calculateEngineBizService.addEngine(caeAddEngineReq);
@@ -39,7 +39,7 @@ public class CalculateEngineController {
 
   @Operation(summary = "更新计算引擎接口")
   @PostMapping("/updateEngine")
-  @SuccessResponse("更新计算引擎成功")
+  @SuccessResponse("更新成功")
   public void addEngine(@Valid @RequestBody CaeUpdateEngineReq caeUpdateEngineReq) {
 
     calculateEngineBizService.updateEngine(caeUpdateEngineReq);
@@ -56,7 +56,7 @@ public class CalculateEngineController {
 
   @Operation(summary = "删除计算引擎接口")
   @GetMapping("/delEngine")
-  @SuccessResponse("删除计算引擎成功")
+  @SuccessResponse("删除成功")
   public void delEngine(@Schema(description = "计算引擎唯一id", example = "sy_b0288cadb2ab4325ae519ff329a95cda") @RequestParam String engineId) {
 
     calculateEngineBizService.delEngine(engineId);
@@ -64,7 +64,7 @@ public class CalculateEngineController {
 
   @Operation(summary = "检测计算引擎接口")
   @GetMapping("/checkEngine")
-  @SuccessResponse("检测计算引擎成功")
+  @SuccessResponse("检测成功")
   public void checkEngine(@Schema(description = "计算引擎唯一id", example = "sy_b0288cadb2ab4325ae519ff329a95cda") @RequestParam String engineId) {
 
     calculateEngineBizService.checkEngine(engineId);

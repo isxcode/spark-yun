@@ -1,9 +1,10 @@
 import { type WofQueryWorkflowReq } from '../../types/workflow/req/WofQueryWorkflowReq'
-import { type WofQueryWorkflowRes } from '../../types/workflow/res/WofQueryWorkflowRes'
 import axiosInstance from '../../config/axios'
 import { type AddWorkflowReq } from '../../types/workflow/req/AddWorkflowReq'
 import { type UpdateWorkflowReq } from '../../types/workflow/req/UpdateWorkflowReq'
 import { QueryEngineRes } from '../../types/calculate/engine/res/QueryEngineRes'
+import { message } from 'antd'
+import { BaseResponse } from '../../types/base/BaseResponse'
 
 export const queryWorkflowApi = async (data: WofQueryWorkflowReq): Promise<QueryEngineRes> => {
   data.page = data.page - 1
@@ -12,13 +13,16 @@ export const queryWorkflowApi = async (data: WofQueryWorkflowReq): Promise<Query
 }
 
 export const delWorkflowApi = async (data: string | undefined): Promise<void> => {
-  await axiosInstance.get<WofQueryWorkflowRes>('/wof/delWorkflow?workflowId=' + data)
+  const response: BaseResponse = await axiosInstance.get('/wof/delWorkflow?workflowId=' + data)
+  message.success(response.msg)
 }
 
 export const addWorkflowApi = async (data: AddWorkflowReq): Promise<void> => {
-  await axiosInstance.post<WofQueryWorkflowRes>('/wof/addWorkflow', data)
+  const response: BaseResponse = await axiosInstance.post('/wof/addWorkflow', data)
+  message.success(response.msg)
 }
 
 export const updateWorkflowApi = async (data: UpdateWorkflowReq): Promise<void> => {
-  await axiosInstance.post('/wof/updateWorkflow', data)
+  const response: BaseResponse = await axiosInstance.post('/wof/updateWorkflow', data)
+  message.success(response.msg)
 }

@@ -13,7 +13,7 @@ import { QueryEngineReq } from '../../../types/calculate/engine/req/QueryEngineR
 
 const { Option } = Select
 
-export const WorkConfigDrawer = (props: { isModalVisible: boolean; handleCancel: () => void; work?: WorkInfo }) => {
+export const WorkConfigDrawer = (props: { isModalVisible: boolean, handleCancel: () => void, work?: WorkInfo }) => {
   const { isModalVisible, handleCancel, work } = props
   const [form] = Form.useForm()
   const [datasources, setDatasources] = useState<DatasourceRow[]>([])
@@ -102,7 +102,8 @@ export const WorkConfigDrawer = (props: { isModalVisible: boolean; handleCancel:
           onFinish={onFinish}
           autoComplete="off"
           form={form}>
-          {work?.workType === 'QUERY_SPARK_SQL' ? (
+          {work?.workType === 'SPARK_SQL'
+? (
             <Form.Item
               name="engineId"
               initialValue={work.calculateId}
@@ -116,7 +117,8 @@ export const WorkConfigDrawer = (props: { isModalVisible: boolean; handleCancel:
                 ))}
               </Select>
             </Form.Item>
-          ) : (
+          )
+: (
             <Form.Item
               name="datasourceId"
               label="数据源"

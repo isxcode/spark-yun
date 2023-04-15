@@ -59,6 +59,26 @@
     let div = document.getElementById(div_name);
     div.scrollIntoView({behavior: 'smooth'});
   }
+
+  function isMobileDevice() {
+    return (typeof window.orientation !== "undefined") || (navigator.userAgent.indexOf('IEMobile') !== -1);
+  }
+
+  function demoBtn(url) {
+    if (isMobileDevice()) {
+      alert("请使用桌面电脑访问！");
+    } else {
+      window.open(url);
+    }
+  }
+
+  function docBtn(url) {
+    if (isMobileDevice()) {
+      alert("请使用桌面电脑访问！");
+    } else {
+      window.location.href = url;
+    }
+  }
 </script>
 
 <script src="//lib.baomitu.com/twitter-bootstrap/5.2.3/js/bootstrap.bundle.min.js"></script>

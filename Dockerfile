@@ -32,5 +32,5 @@ CMD java -jar /spark-yun/app.jar --spring.profiles.active=demo --spring.security
 # docker buildx build --platform linux/amd64,linux/arm64/v8 -t isxcode/zhiqingyun:0.0.2 -f ./Dockerfile . --push
 
 # 启动脚本
-# docker run --restart=always --name spark-yun -v /Users/ispong/.h2:/h2  -p 30111:8080 -d isxcode/zhiqingyun:0.0.2
-# docker run --restart=always --name spark-yun -p 30204:8080 -d isxcode/zhiqingyun:0.0.2
+# docker run --restart=always --name zhiqingyun -v /Users/ispong/.h2:/h2  -p 30211:8080 -d isxcode/zhiqingyun:0.0.2
+# docker run --restart=always --name zhiqingyun -p 30211:8080 -v /root/.h2:/h2 -d isxcode/zhiqingyun:0.0.2

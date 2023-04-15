@@ -4,11 +4,11 @@ import { type QueryWorkReq } from '../../types/woks/req/QueryWorkReq'
 import { type QueryWorkRes } from '../../types/woks/res/QueryWorkRes'
 import { type AddWorkReq } from '../../types/woks/req/AddWorkReq'
 import { UpdateWorkReq } from '../../types/woks/req/UpdateWorkReq'
-import axios from 'axios/index'
 import { message } from 'antd'
 import { WorkInfo } from '../../types/woks/info/WorkInfo'
 import { RunWorkRes } from '../../types/woks/res/RunWorkRes'
 import { ConfigWorkReq } from '../../types/woks/req/ConfigWorkReq'
+import { BaseResponse } from '../../types/base/BaseResponse'
 
 export const queryWorkApi = async (data: QueryWorkReq): Promise<QueryWorkRes> => {
   data.page = data.page - 1
@@ -17,15 +17,18 @@ export const queryWorkApi = async (data: QueryWorkReq): Promise<QueryWorkRes> =>
 }
 
 export const delWorkApi = async (data: string | undefined): Promise<void> => {
-  await axiosInstance.get<WofQueryWorkflowRes>('/wok/delWork?workId=' + data)
+  const response: BaseResponse = await axiosInstance.get('/wok/delWork?workId=' + data)
+  message.success(response.msg)
 }
 
 export const addWorkApi = async (data: AddWorkReq): Promise<void> => {
-  await axiosInstance.post('/wok/addWork', data)
+  const response: BaseResponse = await axiosInstance.post('/wok/addWork', data)
+  message.success(response.msg)
 }
 
 export const updateWorkApi = async (data: UpdateWorkReq): Promise<void> => {
-  await axiosInstance.post('/wok/updateWork', data)
+  const response: BaseResponse = await axiosInstance.post('/wok/updateWork', data)
+  message.success(response.msg)
 }
 
 export const getWorkApi = async (workId: string): Promise<WorkInfo> => {
@@ -61,15 +64,18 @@ export const stopWorkApi = async (workId: string, applicationId: string | undefi
   const response = await axiosInstance.get<RunWorkRes>(
     '/wok/stopJob?workId=' + workId + '&applicationId=' + applicationId
   )
+  message.success(JSON.parse(JSON.stringify(response)).msg)
   return response.data
 }
 
 export const configWorkApi = async (data: ConfigWorkReq): Promise<void> => {
   const response = await axiosInstance.post('/woc/configWork', data)
+  message.success(JSON.parse(JSON.stringify(response)).msg)
   return response.data
 }
 
 export const runWorkApi = async (workId: string): Promise<RunWorkRes> => {
   const response = await axiosInstance.get<RunWorkRes>('/wok/runWork?workId=' + workId, { timeout: 600000 })
+  message.success(JSON.parse(JSON.stringify(response)).msg)
   return response.data
 }

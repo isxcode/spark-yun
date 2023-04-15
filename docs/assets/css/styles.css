@@ -121,7 +121,7 @@ body .sidebar-toggle span:nth-child(3) {
 
 @media screen and (max-width: 768px) {
   body .sidebar-toggle {
-      left: 1rem;
+      display: none;
   }
 
   body.close .sidebar-toggle {
