@@ -145,7 +145,7 @@ function Layouts() {
           <a
             className={'sy-table-a sy-help-doc-a'}
             onClick={() => {
-              window.open('http://zhiqingyun.isxcode.com/README')
+              window.open(process.env.DOC_PREFIX_URL)
             }}>
             帮助文档
           </a>

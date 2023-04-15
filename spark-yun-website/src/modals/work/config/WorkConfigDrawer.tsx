@@ -43,7 +43,7 @@ export const WorkConfigDrawer = (props: { isModalVisible: boolean, handleCancel:
   }
 
   useEffect(() => {
-    if (work?.workType === 'QUERY_SPARK_SQL') {
+    if (work?.workType === 'SPARK_SQL') {
       fetchEngines()
     } else {
       fetchDatasources()

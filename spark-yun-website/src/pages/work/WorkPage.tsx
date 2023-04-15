@@ -84,17 +84,17 @@ function WorkPage() {
   const onChange = (key: string) => {
     switch (key) {
       case 'EXECUTE_LOG':
-        if (work?.workType === 'QUERY_SPARK_SQL') {
+        if (work?.workType === 'SPARK_SQL') {
           getWorkLog()
         }
         break
       case 'BACK_DATA':
-        if (work?.workType === 'QUERY_SPARK_SQL') {
+        if (work?.workType === 'SPARK_SQL') {
           getData()
         }
         break
       case 'MONITOR_INFO':
-        if (work?.workType === 'QUERY_SPARK_SQL') {
+        if (work?.workType === 'SPARK_SQL') {
           getWorkStatus()
         }
         break
