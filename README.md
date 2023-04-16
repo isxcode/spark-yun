@@ -11,7 +11,7 @@
 </h4>
 
 <h4 align="center">
-  官方网址  <a href="https://zhiqingyun-demo.isxcode.com">点击进入演示环境</a>
+  <a href="https://zhiqingyun-demo.isxcode.com">点击进入演示环境</a>
 </h4>
 
 <h4 align="center">
