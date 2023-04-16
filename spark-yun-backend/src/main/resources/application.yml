@@ -1,0 +1,81 @@
+# 服务配置
+server:
+  port: 8080
+  tomcat:
+    connection-timeout: 120s
+
+spring:
+
+  # 身份认证
+  security:
+    user:
+      roles: ADMIN
+      name: admin
+      password: admin123
+
+  # 使用配置文件
+  profiles:
+    active: local
+
+  # 配置druid数据源
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    druid:
+      initial-size: 5
+      max-active: 20
+      min-idle: 10
+      max-wait: 30000
+      filters: stat,wall,log4j2
+      validationQuery: select 'x'
+      stat-view-servlet:
+        enabled: true
+
+  # jpa配置˚
+  jpa:
+    database: h2
+    show-sql: false
+    open-in-view: false
+    hibernate:
+      ddl-auto: none
+
+  # mvc配置
+  mvc:
+    view:
+      prefix: /templates/
+      suffix: .html
+    static-path-pattern: /static/**
+
+  # h2数据库配置
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+      settings:
+        trace: false
+        web-allow-others: true
+
+  # 缓存
+  cache:
+    type: simple
+
+# 日志等级
+logging:
+  level:
+    root: info
+
+# openapi
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+  packages-to-scan: com.isxcode.star
+
+# admin用户访问
+spark-yun:
+  admin-url:
+    - /swagger-ui.html # http://localhost:8080/swagger-ui.html
+    - /h2-console # http://localhost:8080/h2-console
+    - /druid/index.html # http://localhost:8080/druid/index.html
+  anonymous-url:
+    - /login
