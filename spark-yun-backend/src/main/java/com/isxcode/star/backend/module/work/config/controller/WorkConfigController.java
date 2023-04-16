@@ -22,7 +22,7 @@ public class WorkConfigController {
 
   @Operation(summary = "配置作业接口")
   @PostMapping("/configWork")
-  @SuccessResponse("配置成功")
+  @SuccessResponse("保存成功")
   public void configWork(@RequestBody WocConfigWorkReq configWorkReq) {
 
     workConfigBizService.configWork(configWorkReq);
