@@ -1,0 +1,44 @@
+// clean_backend，删除后端中存储前端包的路径
+tasks.register('clean_backend', Delete) {
+
+  delete '../spark-yun-backend/src/main/resources/templates'
+  delete '../spark-yun-backend/src/main/resources/static'
+}
+
+// 前端构建项目
+tasks.register('build_website', Exec) {
+
+  mustRunAfter("clean_backend")
+
+  commandLine 'sh', '-c', '''
+    npm install
+    npm install dotenv-cli --location=global
+    npm run prettier
+    npm run eslint
+    npm run build
+  '''
+}
+
+// 拷贝到templates中
+tasks.register('templates_install', Copy) {
+
+  mustRunAfter("clean_backend", "build_website")
+
+  from 'dist/index.html'
+  into '../spark-yun-backend/src/main/resources/templates/'
+}
+
+// 拷贝到static中
+tasks.register('static_install', Copy) {
+
+  mustRunAfter("clean_backend", "build_website")
+
+  from 'dist/static'
+  into '../spark-yun-backend/src/main/resources/static/'
+}
+
+// 安装前端项目
+tasks.register('install_website', GradleBuild) {
+
+  dependsOn("clean_backend", "build_website", "templates_install", "static_install")
+}

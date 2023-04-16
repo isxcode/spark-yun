@@ -1,0 +1,23 @@
+name: 创建缺陷
+description: 欢迎提交一个缺陷
+title: ":bug: "
+labels: ["缺陷"]
+body:
+  - type: input
+    id: org
+    attributes:
+      label: 项目
+      description: "项目名称"
+      placeholder: "项目名称"
+      value: 至轻云大数据创新团队
+    validations:
+      required: true
+  - type: textarea
+    id: describe
+    attributes:
+      label: 缺陷内容
+      description: "描述一下缺陷内容"
+      placeholder: 请填写缺陷内容...
+      value: 标题即是缺陷内容
+    validations:
+      required: true

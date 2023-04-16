@@ -1,0 +1,23 @@
+name: 创建回归缺陷
+description: 欢迎提交一个回归缺陷
+title: ":fire: "
+labels: ["回归缺陷"]
+body:
+  - type: input
+    id: org
+    attributes:
+      label: 对应需求
+      description: "需求编号"
+      placeholder: "需求编号"
+      value: "#"
+    validations:
+      required: true
+  - type: textarea
+    id: describe
+    attributes:
+      label: 缺陷内容
+      description: "描述一下缺陷内容"
+      placeholder: 请填写缺陷内容...
+      value: 标题即是缺陷内容
+    validations:
+      required: true
