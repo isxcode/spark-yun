@@ -1,0 +1,77 @@
+dependencies {
+  implementation 'com.mysql:mysql-connector-j:8.0.32'
+
+  implementation "com.microsoft.sqlserver:mssql-jdbc:${SQLSERVER_DRIVER_VERSION}"
+
+  implementation 'com.oracle.database.jdbc:ojdbc10:19.18.0.0'
+
+  implementation 'org.postgresql:postgresql:42.6.0'
+}
+
+// 构建lib文件夹
+tasks.register('build_lib', Copy) {
+
+  dependsOn(":spark-yun-api:jar")
+  dependsOn(":spark-yun-agent:bootJar")
+
+  def dependencies = configurations.runtimeClasspath.findAll {
+    it.name.contains('fastjson2') ||
+      it.name.contains('fastjson') ||
+      it.name.contains('spark-yun-api') ||
+      it.name.contains('log4j-api') ||
+      it.name.contains('mysql-connector-j') ||
+      it.name.contains('mssql-jdbc') ||
+      it.name.contains('ojdbc10') ||
+      it.name.contains('postgresql')
+  }
+  dependencies.each { dependency ->
+    from dependency
+    into 'build/lib'
+  }
+
+  from '../spark-yun-api/build/libs'
+  from '../spark-yun-agent/build/libs'
+  from '../spark-yun-plugins/spark-query-sql-plugin/build/libs'
+  into 'build/lib'
+}
+
+// 构建plugins文件夹
+tasks.register('build_plugins', Copy) {
+
+  dependsOn(':spark-yun-plugins:spark-query-sql-plugin:jar')
+
+  from '../spark-yun-plugins/spark-query-sql-plugin/build/libs'
+  into 'build/plugins'
+}
+
+// 打包压缩
+tasks.register('build_dist', Tar) {
+
+  dependsOn('build_lib')
+  dependsOn('build_plugins')
+
+  compression = Compression.GZIP
+  archiveFileName = 'spark-yun-agent.tar.gz'
+
+  from("${SPARK_MIN_DIR}") {
+    into 'spark-min'
+  }
+  from('src/main/bin') {
+    into 'bin'
+  }
+  from('src/main/conf') {
+    into 'conf'
+  }
+  from('build/plugins') {
+    into 'plugins'
+  }
+  from('build/lib') {
+    into 'lib'
+  }
+  from('src/main/log') {
+    into 'log'
+  }
+  from('../README.md') {
+    into '/'
+  }
+}
