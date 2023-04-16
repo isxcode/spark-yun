@@ -1,0 +1,27 @@
+dependencies {
+
+  // spark-yun-api
+  api(project(':spark-yun-api'))
+
+  // spark-yun-common
+  api(project(':spark-yun-common'))
+
+  // spark-yun-common
+  api(project(':spark-yun-yarn'))
+
+  // spark-core
+  implementation "org.apache.spark:spark-core_${SPARK_SCALA_VERSION}:${SPARK_VERSION}"
+
+  // spark-yarn
+  implementation "org.apache.spark:spark-yarn_${SPARK_SCALA_VERSION}:${SPARK_VERSION}"
+
+  // spark-launcher
+  implementation "org.apache.spark:spark-launcher_${SPARK_SCALA_VERSION}:${SPARK_VERSION}"
+
+  // hadoop-yarn-client
+  implementation "org.apache.hadoop:hadoop-yarn-client:${HADOOP_VERSION}"
+}
+
+bootJar {
+  archiveFileName = 'spark-yun-agent.jar'
+}

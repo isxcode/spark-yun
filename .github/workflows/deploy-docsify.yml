@@ -1,0 +1,66 @@
+# 部署官网
+name: deploy docsify
+
+# 发版后触发
+on:
+  push:
+    branches:
+      - latest
+
+# 配置阿里云镜像仓库信息
+env:
+  REGISTRY: registry.cn-hongkong.aliyuncs.com
+  IMAGE_NAME: isxcode/zhiqingyun-website
+  REGISTRY_USERNAME: ${{ secrets.REGISTRY_USERNAME }}
+  REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+
+      # 拉取代码
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      # 登录阿里云镜像仓库
+      - name: Log into registry ${{ env.REGISTRY }}
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ env.REGISTRY_USERNAME }}
+          password: ${{ env.REGISTRY_PASSWORD }}
+
+      # 构建docker元数据
+      - name: Extract Docker metadata
+        id: meta
+        uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+
+      # 构建镜像并推到阿里云镜像仓库
+      - name: Build and push Docker image
+        id: build-and-push
+        uses: docker/build-push-action@v3.2.0
+        with:
+          context: ./docs
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+      # 部署项目到自己到服务器
+      - name: deploy
+        uses: appleboy/ssh-action@v0.1.4
+        with:
+          host: isxcode.com
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          script_stop: false
+          script: |
+            docker stop zhiqingyun-website
+            docker rm zhiqingyun-website
+            docker rmi ${{ steps.meta.outputs.tags }}
+            docker pull ${{ steps.meta.outputs.tags }}
+            docker run --restart=always --name zhiqingyun-website -p 30210:80 -d ${{ steps.meta.outputs.tags }}
