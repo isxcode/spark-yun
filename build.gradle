@@ -1,0 +1,133 @@
+// 引入插件
+plugins {
+  id 'java'
+  id 'org.springframework.boot' version "${SPRING_VERSION}"
+  id 'io.spring.dependency-management' version "${SPRING_MANAGER_VERSION}"
+  id "com.diffplug.spotless" version "${SPOTLESS_VERSION}"
+  id 'checkstyle'
+}
+
+// 从VERSION中获取版本号
+def version_number = new File(rootDir.getAbsolutePath(), 'VERSION').readLines()[0].trim()
+
+// 所有项目模块的配置
+allprojects {
+
+  // 声明插件
+  apply plugin: 'org.springframework.boot'
+  apply plugin: 'io.spring.dependency-management'
+  apply plugin: 'java-library'
+  apply plugin: 'checkstyle'
+
+  // java环境配置，使用java1.8
+  sourceCompatibility = JavaVersion.VERSION_1_8
+  targetCompatibility = JavaVersion.VERSION_1_8
+
+  // 定义组织名称
+  group = 'com.isxcode.star'
+
+  // 定义版本号
+  version = version_number
+
+  // 配置多选中央仓库
+  repositories {
+    mavenLocal()
+    maven { url 'https://maven.aliyun.com/nexus/content/groups/public/' }
+    mavenCentral()
+    maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
+    maven { url "https://plugins.gradle.org/m2/" }
+  }
+
+  configurations.configureEach {
+    exclude group: "org.apache.logging.log4j", module: "log4j-slf4j-impl"
+    exclude group: "org.slf4j", module: "slf4j-reload4j"
+  }
+
+  // 配置基础依赖
+  dependencies {
+
+    // spring web
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+
+    // validation
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+    // openapi
+    implementation "org.springdoc:springdoc-openapi-ui:${OPENAPI_VERSION}"
+
+    // spring-boot-configuration-processor
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+
+    // lombok
+    compileOnly "org.projectlombok:lombok:${LOMBOK_VERSION}"
+    annotationProcessor "org.projectlombok:lombok:${LOMBOK_VERSION}"
+
+    // fastjson
+    implementation "com.alibaba:fastjson:${FASTJSON_VERSION}"
+
+    // mapstruct
+    implementation "org.mapstruct:mapstruct:${MAPSTRUCT_VERSION}"
+    annotationProcessor "org.mapstruct:mapstruct-processor:${MAPSTRUCT_VERSION}"
+    testAnnotationProcessor "org.mapstruct:mapstruct-processor:${MAPSTRUCT_VERSION}"
+
+    // spring aop
+    implementation 'org.springframework.boot:spring-boot-starter-aop'
+
+    // junit test
+    implementation "org.junit.jupiter:junit-jupiter:${JUPITER_VERSION}"
+    testImplementation "org.junit.jupiter:junit-jupiter-api:${JUPITER_VERSION}"
+
+    // spring test
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+  }
+
+  // 配置spring的spring-boot-configuration-processor，编译时生效。
+  configurations {
+    compileOnly {
+      extendsFrom annotationProcessor
+    }
+  }
+}
+
+// package
+tasks.register('package', GradleBuild) {
+
+  dependsOn(":spark-yun-dist:build_dist", ":spark-yun-website:install_website")
+  tasks = [":spark-yun-backend:bootJar"]
+}
+
+// start
+tasks.register('start', Exec) {
+
+  dependsOn(":package")
+  commandLine 'bash', '-c', 'java -jar ./spark-yun-backend/build/libs/spark-yun-backend.jar'
+}
+
+// docker
+tasks.register('docker', Exec) {
+
+  dependsOn(":package")
+  commandLine 'bash', '-c', 'docker build -t isxcode/zhiqingyun:' + version_number + ' -f ./Dockerfile  .'
+}
+
+// spotless配置
+spotless {
+  java {
+    target '*/**/*.java'
+    targetExclude '*/build/**/*.java'
+    googleJavaFormat()
+    removeUnusedImports()
+  }
+}
+
+// checkstyle配置
+tasks.withType(Checkstyle).configureEach {
+  maxWarnings = 100
+  maxErrors = 0
+  ignoreFailures = false
+  reports {
+    xml.required = false
+    html.required = true
+    html.stylesheet resources.text.fromFile('../config/xsl/checkstyle-simple.xsl')
+  }
+}
