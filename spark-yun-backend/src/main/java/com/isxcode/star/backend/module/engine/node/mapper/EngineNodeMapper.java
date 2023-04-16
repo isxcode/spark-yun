@@ -21,7 +21,7 @@ public interface EngineNodeMapper {
   @Mapping(target = "allMemory", expression = "java(0.0)")
   @Mapping(target = "usedStorage", expression = "java(0.0)")
   @Mapping(target = "allStorage", expression = "java(0.0)")
-  @Mapping(target = "cpuPercent", expression = "java(\"0%\")")
+  @Mapping(target = "cpuPercent", expression = "java(\"0\")")
   @Mapping(target = "checkDateTime", expression = "java(java.time.LocalDateTime.now())")
   EngineNodeEntity addNodeReqToNodeEntity(EnoAddNodeReq enoAddNodeReq);
 
