@@ -1,0 +1,22 @@
+spark-yun:
+  agent-tar-gz-dir: /Users/ispong/Isxcode/spark-yun/spark-yun-dist/build/distributions
+  agent-bin-dir: /Users/ispong/Isxcode/spark-yun/spark-yun-dist/src/main/bin
+  default-agent-port: 30177
+
+spring:
+
+  # 用于版本升级
+  flyway:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:file:~/.h2/data
+    user: root
+    password: ispong123
+    locations: classpath:db/migration
+
+  # 数据源配置 http://localhost:8080/h2-console
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:file:~/.h2/data
+    username: root
+    password: ispong123
+
