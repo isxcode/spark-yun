@@ -16,7 +16,7 @@ import org.springframework.context.annotation.Configuration;
   info = @Info(
     title = "至轻云",
     description = "基于spark打造超轻量级批处理大数据平台",
-    version = "0.0.1"
+    version = "latest"
   ),
   externalDocs = @ExternalDocumentation(
     url = "https://zhiqingyun.isxcode.com",
@@ -32,7 +32,7 @@ import org.springframework.context.annotation.Configuration;
       description = "本地docker环境"
     ),
     @Server(
-      url = "http://101.132.135.228:30204",
+      url = "http://101.132.135.228:30211",
       description = "远程开发环境"
     )
   })

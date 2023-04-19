@@ -6,16 +6,16 @@ import {
   ApartmentOutlined,
   ApiOutlined,
   AppstoreOutlined,
-  CloudOutlined,
+  CloudOutlined, CopyrightOutlined,
   DashboardOutlined,
   DatabaseOutlined, DownOutlined,
   FireOutlined,
   FundProjectionScreenOutlined,
   HomeOutlined,
-  NodeIndexOutlined,
-  ProjectOutlined,
-  SettingOutlined,
-  TeamOutlined,
+  NodeIndexOutlined, ProfileOutlined,
+  ProjectOutlined, SearchOutlined,
+  SettingOutlined, ShopOutlined, ShoppingCartOutlined,
+  TeamOutlined, ToolOutlined, TrademarkOutlined,
   UserOutlined
 } from '@ant-design/icons'
 
@@ -58,17 +58,25 @@ function Layouts() {
       }
     },
     {
-      key: 6,
-      label: '数据建模',
-      icon: <AppstoreOutlined/>,
+      key: 7,
+      label: '调度历史',
+      icon: <ApartmentOutlined/>,
       onClick: () => {
         navigate('/auth')
       }
     },
     {
-      key: 7,
-      label: '调度历史',
-      icon: <ApartmentOutlined/>,
+      key: 22,
+      label: '模型仓库',
+      icon:<ShopOutlined />,
+      onClick: () => {
+        navigate('/auth')
+      }
+    },
+    {
+      key: 6,
+      label: '数据建模',
+      icon: <AppstoreOutlined/>,
       onClick: () => {
         navigate('/auth')
       }
@@ -90,6 +98,14 @@ function Layouts() {
       }
     },
     {
+      key: 21,
+      label: '数据地图',
+      icon: <SearchOutlined />,
+      onClick: () => {
+        navigate('/auth')
+      }
+    },
+    {
       key: 10,
       label: '自定义Api',
       icon: <ApiOutlined/>,
@@ -106,27 +122,44 @@ function Layouts() {
       }
     },
     {
-      key: 12,
-      label: '后台管理',
+      key: 14,
+      label: '租户成员',
       icon: <TeamOutlined/>,
       onClick: () => {
         navigate('/auth')
+      }
+    },
+    {
+      key: 18,
+      label: '系统用户',
+      icon: <UserOutlined />,
+      onClick: () => {
+        navigate('/auth')
       },
-      children: [{
-        key: 13,
-        label: '租户配置',
-        icon: <TeamOutlined/>,
-        onClick: () => {
-          navigate('/auth')
-        }
-      },{
-        key: 14,
-        label: '成员管理',
-        icon: <TeamOutlined/>,
-        onClick: () => {
-          navigate('/auth')
-        }
-      }]
+    },
+    {
+      key: 19,
+      label: '证书安装',
+      icon: <CopyrightOutlined />,
+      onClick: () => {
+        navigate('/auth')
+      }
+    },
+    {
+      key: 17,
+      label: '租户列表',
+      icon: <ProfileOutlined />,
+      onClick: () => {
+        navigate('/auth')
+      }
+    },
+    {
+      key: 12,
+      label: '后台设置',
+      icon: <ToolOutlined />,
+      onClick: () => {
+        navigate('/auth')
+      }
     },
     {
       key: 15,
@@ -134,39 +167,7 @@ function Layouts() {
       icon: <SettingOutlined/>,
       onClick: () => {
         navigate('/auth')
-      },
-      children: [{
-        key: 16,
-        label: '系统配置',
-        icon: <SettingOutlined/>,
-        onClick: () => {
-          navigate('/auth')
-        }
-      }, {
-        key: 17,
-        label: '租户管理',
-        icon: <SettingOutlined/>,
-        onClick: () => {
-          navigate('/auth')
-        }
-      },
-        {
-          key: 18,
-          label: '用户管理',
-          icon: <SettingOutlined/>,
-          onClick: () => {
-            navigate('/auth')
-          },
-        },
-        {
-          key: 19,
-          label: '证书管理',
-          icon: <SettingOutlined/>,
-          onClick: () => {
-            navigate('/auth')
-          }
-        }
-      ]
+      }
     }
   ];
 
