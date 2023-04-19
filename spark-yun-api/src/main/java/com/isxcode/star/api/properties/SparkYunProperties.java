@@ -36,4 +36,19 @@ public class SparkYunProperties {
    */
   private List<String> anonymousUrl;
 
+  /**
+   * aes密钥.
+   */
+  private String aesSlat;
+
+  /**
+   * jwt密钥.
+   */
+  private String jwtKey;
+
+  /**
+   * jwt超时.
+   */
+  private Integer expirationMin;
+
 }

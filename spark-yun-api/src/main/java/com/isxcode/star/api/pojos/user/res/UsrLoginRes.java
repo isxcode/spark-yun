@@ -10,4 +10,6 @@ import lombok.Data;
 public class UsrLoginRes {
 
   private String username;
+
+  private String token;
 }

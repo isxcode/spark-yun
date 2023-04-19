@@ -26,4 +26,10 @@ public interface ModulePrefix {
 
   /** 云代理模块. */
   String YUN_AGENT = "/yag";
+
+  /** 租户模块. */
+  String TENANT = "/tet";
+
+  /** 租户用户模块. */
+  String TENANT_USER = "/tur";
 }

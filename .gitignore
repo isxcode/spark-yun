@@ -13,3 +13,6 @@
 ### 后端项目中前端打包的文件，不提交
 spark-yun-backend/src/main/resources/templates/**
 spark-yun-backend/src/main/resources/static/**
+
+### 企业版代码，不提交
+spark-yun-vip/**

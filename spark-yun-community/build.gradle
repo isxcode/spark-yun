@@ -1,0 +1,25 @@
+dependencies {
+
+  api(project(':spark-yun-api'))
+  api(project(':spark-yun-common'))
+  api(project(':spark-yun-yarn'))
+  api(project(':spark-yun-security'))
+
+  // jpa
+  implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+  // cache
+  implementation 'org.springframework.boot:spring-boot-starter-cache'
+
+  // mysql
+  runtimeOnly "com.mysql:mysql-connector-j:${MYSQL_DRIVER_VERSION}"
+
+  // sqlserver
+  runtimeOnly "com.microsoft.sqlserver:mssql-jdbc:${SQLSERVER_DRIVER_VERSION}"
+
+  // oracle
+  runtimeOnly "com.oracle.database.jdbc:ojdbc10:${ORACLE_DRIVER_VERSION}"
+
+  // h2
+  runtimeOnly 'com.h2database:h2'
+}

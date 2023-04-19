@@ -1,7 +1,7 @@
 package com.isxcode.star.common.config;
 
-import com.isxcode.star.common.response.GlobalExceptionAdvice;
-import com.isxcode.star.common.response.SuccessResponseAdvice;
+import com.isxcode.star.api.response.GlobalExceptionAdvice;
+import com.isxcode.star.api.response.SuccessResponseAdvice;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSource;
