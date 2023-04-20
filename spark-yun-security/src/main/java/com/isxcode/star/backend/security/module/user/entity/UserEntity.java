@@ -10,6 +10,8 @@ import javax.persistence.Version;
 
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -20,6 +22,10 @@ import java.time.LocalDateTime;
 
 @Data
 @Entity
+@SQLDelete(
+  sql = "UPDATE SY_USER SET deleted = 1 WHERE id = ?"
+)
+@Where(clause = "deleted = 0")
 @Table(name = "SY_USER")
 @JsonIgnoreProperties({"hibernateLazyInitializer"})
 @EntityListeners(AuditingEntityListener.class)
