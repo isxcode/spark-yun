@@ -5,9 +5,6 @@ dependencies {
   api(project(':spark-yun-yarn'))
   api(project(':spark-yun-security'))
 
-  // jpa
-  implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-
   // cache
   implementation 'org.springframework.boot:spring-boot-starter-cache'
 

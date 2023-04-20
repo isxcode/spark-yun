@@ -85,4 +85,4 @@ spark-yun:
     - /usr/login
   jwt-key: spark-yun
   aes-slat: spark-yun
-  expiration-min: 1
+  expiration-min: 60

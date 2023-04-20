@@ -1,6 +1,8 @@
 package com.isxcode.star.backend.module.tenant.controller;
 
 import com.isxcode.star.api.constants.ModulePrefix;
+import com.isxcode.star.api.constants.Roles;
+import com.isxcode.star.api.constants.SecurityConstants;
 import com.isxcode.star.api.pojos.tenant.req.TetAddTenantReq;
 import com.isxcode.star.api.pojos.tenant.req.TetAddUserReq;
 import com.isxcode.star.api.pojos.tenant.req.TetUpdateTenantReq;
@@ -11,6 +13,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -68,6 +72,7 @@ public class TenantController {
     tenantBizService.checkTenant(tenantId);
   }
 
+  @Secured({Roles.SYS_ADMIN})
   @Operation(summary = "创建用户接口")
   @PostMapping("/addUser")
   @SuccessResponse("创建成功")
@@ -76,6 +81,7 @@ public class TenantController {
     tenantBizService.addUser(tetAddUserReq);
   }
 
+  @PreAuthorize("hasRole('" + Roles.SYS_ADMIN + "')")
   @Operation(summary = "更新用户接口")
   @PostMapping("/updateUser")
   @SuccessResponse("更新成功")

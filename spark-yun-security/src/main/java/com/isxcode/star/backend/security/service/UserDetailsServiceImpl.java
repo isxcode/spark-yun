@@ -4,14 +4,12 @@ import com.isxcode.star.api.exception.SparkYunException;
 import com.isxcode.star.backend.security.module.user.entity.UserEntity;
 import com.isxcode.star.backend.security.module.user.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.logging.log4j.util.Strings;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
-import java.util.ArrayList;
 import java.util.Optional;
 
 @Slf4j
@@ -34,7 +32,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     }
 
     // 获取用户的权限
-    String authority = Strings.join(new ArrayList<>(), ',');
+    String authority = userEntityOptional.get().getUserRole();
 
     // 返回用户信息
     return User.withUsername(userId)

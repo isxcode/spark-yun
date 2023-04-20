@@ -4,6 +4,7 @@ import com.isxcode.star.api.properties.SparkYunProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 /**
@@ -13,5 +14,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableCaching
 @EnableTransactionManagement
 @EnableConfigurationProperties(SparkYunProperties.class)
+@EnableJpaAuditing(auditorAwareRef = "jpaAuditorConfig")
 public class AppConfig {
+
 }

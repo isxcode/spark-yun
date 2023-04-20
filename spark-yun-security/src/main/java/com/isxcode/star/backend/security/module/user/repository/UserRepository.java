@@ -20,6 +20,10 @@ public interface UserRepository extends JpaRepository<UserEntity, String> {
 
   Optional<UserEntity> findByAccount(String account);
 
+  Optional<UserEntity> findByPhone(String phone);
+
+  Optional<UserEntity> findByEmail(String email);
+
   @Override
   @Cacheable(key = "#id")
   Optional<UserEntity> findById(String id);

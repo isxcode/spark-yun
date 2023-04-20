@@ -57,5 +57,9 @@ public class UserBizService {
     System.out.println("用户退出登录");
   }
 
+  public void addUser() {
+
+  }
+
 
 }
