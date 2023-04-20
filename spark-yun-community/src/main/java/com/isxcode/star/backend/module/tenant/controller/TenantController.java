@@ -98,6 +98,14 @@ public class TenantController {
     tenantBizService.disableUser(userId);
   }
 
+  @Operation(summary = "删除用户接口")
+  @PostMapping("/deleteUser")
+  @SuccessResponse("删除成功")
+  public void deleteUser(@Schema(description = "用户唯一id", example = "sy_ff3c1b52f8b34c45ab2cf24b6bccd480")  @RequestParam String userId) {
+
+    tenantBizService.deleteUser(userId);
+  }
+
   @Operation(summary = "启用用户接口")
   @PostMapping("/enableUser")
   @SuccessResponse("启用成功")

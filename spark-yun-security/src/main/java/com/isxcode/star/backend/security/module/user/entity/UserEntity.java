@@ -23,7 +23,7 @@ import java.time.LocalDateTime;
 @Data
 @Entity
 @SQLDelete(
-  sql = "UPDATE SY_USER SET deleted = 1 WHERE id = ?"
+  sql = "UPDATE SY_USER SET deleted = 1 WHERE id = ? and version_number = ?"
 )
 @Where(clause = "deleted = 0")
 @Table(name = "SY_USER")
@@ -70,4 +70,6 @@ public class UserEntity {
 
   @Version
   private Long versionNumber;
+
+  private Integer deleted;
 }

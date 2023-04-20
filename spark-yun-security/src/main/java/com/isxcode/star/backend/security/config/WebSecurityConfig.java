@@ -73,10 +73,11 @@ public class WebSecurityConfig {
     List<String> excludePaths = new ArrayList<>();
     excludePaths.addAll(sparkYunProperties.getAdminUrl());
     excludePaths.addAll(sparkYunProperties.getAnonymousUrl());
-    http.antMatcher("/**")
-      .addFilterBefore(
-        new JwtAuthenticationFilter(authenticationManagerBean(), excludePaths, sparkYunProperties),
-        UsernamePasswordAuthenticationFilter.class);
+
+    // token
+    http.addFilterBefore(new JwtAuthenticationFilter(authenticationManagerBean(), excludePaths, sparkYunProperties),
+      UsernamePasswordAuthenticationFilter.class);
+    http.authorizeRequests().antMatchers("/**").authenticated();
 
     http.formLogin();
     return http.build();

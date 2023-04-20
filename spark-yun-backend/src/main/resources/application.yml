@@ -33,8 +33,8 @@ spring:
   # jpa配置˚
   jpa:
     database: h2
-    show-sql: false
-    open-in-view: false
+    show-sql: true
+    open-in-view: true
     hibernate:
       ddl-auto: none
 
@@ -66,7 +66,7 @@ logging:
 # openapi
 springdoc:
   api-docs:
-    path: /api-docs
+    path: /swagger-ui/api-docs
   swagger-ui:
     path: /swagger-ui.html
   packages-to-scan: com.isxcode.star
@@ -74,16 +74,12 @@ springdoc:
 # admin用户访问
 spark-yun:
   admin-url:
-    - /swagger-ui.html/** # http://localhost:8080/swagger-ui.html
+    - /swagger-ui/** # http://localhost:8080/swagger-ui/index.html
     - /h2-console/** # http://localhost:8080/h2-console
-    - /druid/index.html/** # http://localhost:8080/druid/index.html
-    - /favicon.ico # swagger的ico
-    - /swagger-ui/** # swagger的html
-    - /api-docs/** # swagger的api-docs
+    - /druid/** # http://localhost:8080/druid/index.html
   anonymous-url:
     - /login
-    - /usr/login
-    - /error
+    - /**/open/**
   jwt-key: spark-yun
   aes-slat: spark-yun
   expiration-min: 60

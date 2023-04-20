@@ -90,6 +90,12 @@ public class TenantBizService {
 
   }
 
+  public void deleteUser(String userId) {
+
+    userRepository.deleteById(userId);
+  }
+
+
   public void enableUser(String userId) {
 
   }

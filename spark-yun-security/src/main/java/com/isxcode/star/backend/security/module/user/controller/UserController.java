@@ -26,7 +26,7 @@ public class UserController {
   private final UserBizService userBizService;
 
   @Operation(summary = "用户登录接口")
-  @PostMapping("/login")
+  @PostMapping("/open/login")
   @SuccessResponse("登录成功")
   public UsrLoginRes login(@Valid @RequestBody UsrLoginReq usrLoginReq) {
 
