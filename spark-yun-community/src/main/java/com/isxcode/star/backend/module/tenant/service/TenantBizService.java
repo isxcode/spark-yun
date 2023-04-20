@@ -74,7 +74,16 @@ public class TenantBizService {
 
   public void updateUser(TetUpdateUserReq tetUpdateUserReq) {
 
+    // 判断用户是否存在
+    Optional<UserEntity> userEntityOptional = userRepository.findById(tetUpdateUserReq.getId());
+    if (!userEntityOptional.isPresent()) {
+      throw new SparkYunException("用户不存在");
+    }
 
+    // TetUpdateUserReq To UserEntity
+    UserEntity userEntity = userMapper.tetUpdateUserReqToUserEntity(tetUpdateUserReq, userEntityOptional.get());
+
+    userRepository.save(userEntity);
   }
 
   public void disableUser(String userId) {

@@ -83,6 +83,7 @@ spark-yun:
   anonymous-url:
     - /login
     - /usr/login
+    - /error
   jwt-key: spark-yun
   aes-slat: spark-yun
   expiration-min: 60

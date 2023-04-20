@@ -79,7 +79,6 @@ public class WebSecurityConfig {
         UsernamePasswordAuthenticationFilter.class);
 
     http.formLogin();
-
     return http.build();
   }
 

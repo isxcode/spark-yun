@@ -81,7 +81,7 @@ public class TenantController {
     tenantBizService.addUser(tetAddUserReq);
   }
 
-  @PreAuthorize("hasRole('" + Roles.SYS_ADMIN + "')")
+  @Secured({Roles.SYS_ADMIN})
   @Operation(summary = "更新用户接口")
   @PostMapping("/updateUser")
   @SuccessResponse("更新成功")
