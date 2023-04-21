@@ -1,5 +1,5 @@
 dependencies {
-  
+
   api(project(':spark-yun-community'))
   api(project(':spark-yun-vip'))
 
@@ -11,6 +11,10 @@ dependencies {
 
   // flyway
   implementation 'org.flywaydb:flyway-core:9.16.3'
+  implementation 'org.flywaydb:flyway-mysql:9.16.3'
+
+  // mysql
+  implementation 'com.mysql:mysql-connector-j:8.0.33'
 }
 
 bootJar {
