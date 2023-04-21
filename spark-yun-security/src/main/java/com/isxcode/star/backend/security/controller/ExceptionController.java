@@ -27,7 +27,7 @@ public class ExceptionController {
   }
 
   @Operation(summary = "权限不足异常")
-  @RequestMapping(path = "/exception/authError", method = {RequestMethod.GET, RequestMethod.POST})
+  @RequestMapping(path = "/authError", method = {RequestMethod.GET, RequestMethod.POST})
   public void exceptionAuthError() {
 
     throw new SparkYunException("权限不足异常");

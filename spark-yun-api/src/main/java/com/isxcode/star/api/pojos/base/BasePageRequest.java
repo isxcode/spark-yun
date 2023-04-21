@@ -17,5 +17,5 @@ public class BasePageRequest {
   private Integer pageSize;
 
   @Schema(title = "搜索内容", example = "至轻云")
-  private String searchContent;
+  private String searchKeyWord;
 }

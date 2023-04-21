@@ -32,7 +32,7 @@ spring:
 
   # jpa配置˚
   jpa:
-    database: h2
+    database: mysql
     show-sql: false
     open-in-view: false
     hibernate:

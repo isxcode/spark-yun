@@ -60,6 +60,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     try {
       authenticationManager.authenticate(new AuthenticationToken(userUuid));
     } catch (Exception e) {
+      log.error(e.getMessage());
       request.getRequestDispatcher(SecurityConstants.AUTH_ERROR_PATH).forward(request, response);
       return;
     }

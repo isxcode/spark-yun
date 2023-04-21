@@ -2,7 +2,6 @@ package com.isxcode.star.backend.module.tenant.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.isxcode.star.common.base.BaseEntity;
-import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.SQLDelete;
@@ -12,6 +11,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.time.LocalDateTime;
 
 @SQLDelete(
   sql = "UPDATE SY_TENANT SET deleted = 1 WHERE id = ? and version_number = ?"
@@ -28,24 +28,23 @@ public class TenantEntity extends BaseEntity {
   @GenericGenerator(
     name = "sy-id-generator",
     strategy = "com.isxcode.star.backend.config.GeneratedValueConfig")
-  @Schema(title = "租户唯一id")
   private String id;
 
-  @Schema(title = "租户名称")
   private String name;
 
-  @Schema(title = "备注")
-  private String remark;
+  private Integer usedMemberNum;
 
-  @Schema(title = "租户简介")
-  private String introduce;
-
-  @Schema(title = "最大工作流数量")
-  private Integer maxWorkflowNum;
-
-  @Schema(title = "最大用户数量")
   private Integer maxMemberNum;
 
-  @Schema(title = "租户状态")
-  private String Status;
+  private Integer usedWorkflowNum;
+
+  private Integer maxWorkflowNum;
+
+  private String status;
+
+  private String introduce;
+
+  private String remark;
+
+  private LocalDateTime checkDateTime;
 }

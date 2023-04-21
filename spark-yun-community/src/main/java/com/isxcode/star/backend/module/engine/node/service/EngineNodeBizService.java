@@ -136,7 +136,7 @@ public class EngineNodeBizService {
   public Page<EnoQueryNodeRes> queryNodes(EnoQueryNodeReq enoQueryNodeReq) {
 
     Page<EngineNodeEntity> engineNodeEntities =
-      engineNodeRepository.searchAll(enoQueryNodeReq.getSearchContent(),
+      engineNodeRepository.searchAll(enoQueryNodeReq.getSearchKeyWord(),
         enoQueryNodeReq.getCalculateEngineId(),
         PageRequest.of(enoQueryNodeReq.getPage(), enoQueryNodeReq.getPageSize()));
 

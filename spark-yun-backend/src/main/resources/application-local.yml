@@ -5,7 +5,15 @@ spark-yun:
 
 spring:
 
-  # 用于版本升级
+  # 支持h2数据库
+#  flyway:
+#    driver-class-name: org.h2.Driver
+#    url: jdbc:h2:file:~/.h2/data
+#    user: root
+#    password: ispong123
+#    locations: classpath:db/migration/h2/
+
+  # 支持mysql数据库
   flyway:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:30306/zhiqingyun
@@ -13,10 +21,16 @@ spring:
     password: ispong123
     locations: classpath:db/migration/mysql/
 
+#  datasource:
+#    driver-class-name: org.h2.Driver
+#    url: jdbc:h2:file:~/.h2/data
+#    username: root
+#    password: ispong123
+
   # 数据源配置 http://localhost:8080/h2-console
   datasource:
-    driver-class-name: org.h2.Driver
-    url: jdbc:h2:file:~/.h2/data
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:30306/zhiqingyun
     username: root
     password: ispong123
 

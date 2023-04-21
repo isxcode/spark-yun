@@ -3,6 +3,7 @@ create table if not exists SY_TENANT
 (
   id                      varchar(200)  not null unique primary key,
   name                    varchar(200)  not null,
+  used_member_num         int default 0 not null
   max_member_num          int           not null,
   max_workflow_num        int           not null,
   status                  varchar(200)  not null,

@@ -103,7 +103,7 @@ public class WorkBizService {
 
   public Page<WokQueryWorkRes> queryWork(WokQueryWorkReq wocQueryWorkReq) {
 
-    Page<WorkEntity> workflowPage = workRepository.searchAllByWorkflowId(wocQueryWorkReq.getSearchContent(), wocQueryWorkReq.getWorkflowId(), PageRequest.of(wocQueryWorkReq.getPage(), wocQueryWorkReq.getPageSize()));
+    Page<WorkEntity> workflowPage = workRepository.searchAllByWorkflowId(wocQueryWorkReq.getSearchKeyWord(), wocQueryWorkReq.getWorkflowId(), PageRequest.of(wocQueryWorkReq.getPage(), wocQueryWorkReq.getPageSize()));
 
     return workMapper.workEntityListToQueryWorkResList(workflowPage);
   }

@@ -63,7 +63,7 @@ public class DatasourceBizService {
   public Page<DasQueryDatasourceRes> queryDatasource(DasQueryDatasourceReq dasQueryDatasourceReq) {
 
     Page<DatasourceEntity> datasourceEntityPage =
-      datasourceRepository.searchAll(dasQueryDatasourceReq.getSearchContent(),
+      datasourceRepository.searchAll(dasQueryDatasourceReq.getSearchKeyWord(),
         PageRequest.of(dasQueryDatasourceReq.getPage(), dasQueryDatasourceReq.getPageSize()));
 
     return datasourceMapper.datasourceEntityListToQueryDatasourceResList(datasourceEntityPage);

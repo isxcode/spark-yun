@@ -50,7 +50,7 @@ public class WorkflowBizService {
 
   public Page<WofQueryWorkflowRes> queryWorkflow(WocQueryWorkflowReq wocQueryWorkflowReq) {
 
-    Page<WorkflowEntity> WorkflowEntityPage = workflowRepository.searchAll(wocQueryWorkflowReq.getSearchContent(), PageRequest.of(wocQueryWorkflowReq.getPage(), wocQueryWorkflowReq.getPageSize()));
+    Page<WorkflowEntity> WorkflowEntityPage = workflowRepository.searchAll(wocQueryWorkflowReq.getSearchKeyWord(), PageRequest.of(wocQueryWorkflowReq.getPage(), wocQueryWorkflowReq.getPageSize()));
 
     return workflowMapper.workflowEntityPageToQueryWorkflowResPage(WorkflowEntityPage);
   }

@@ -1,0 +1,18 @@
+package com.isxcode.star.api.pojos.user.dto;
+
+import lombok.Data;
+
+@Data
+public class UsrUserDto {
+
+  private String id;
+
+  private String username;
+
+  private String account;
+
+  private String status;
+
+  private String createDateTime;
+
+}

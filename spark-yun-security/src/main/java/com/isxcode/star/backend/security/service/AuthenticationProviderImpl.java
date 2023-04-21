@@ -2,6 +2,7 @@ package com.isxcode.star.backend.security.service;
 
 import com.isxcode.star.api.exception.SparkYunException;
 import com.isxcode.star.backend.security.pojo.AuthenticationToken;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -17,14 +18,10 @@ import org.springframework.security.core.userdetails.UserDetailsService;
  * @author isxcode
  * @since 0.0.1
  */
+@RequiredArgsConstructor
 public class AuthenticationProviderImpl implements AuthenticationProvider {
 
     private final UserDetailsService userDetailsService;
-
-    public AuthenticationProviderImpl(UserDetailsService userDetailsService) {
-
-        this.userDetailsService = userDetailsService;
-    }
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
