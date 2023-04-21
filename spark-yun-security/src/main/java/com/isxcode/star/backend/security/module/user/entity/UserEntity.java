@@ -25,7 +25,7 @@ import java.time.LocalDateTime;
 @SQLDelete(
   sql = "UPDATE SY_USER SET deleted = 1 WHERE id = ? and version_number = ?"
 )
-@Where(clause = "deleted = 0")
+@Where(clause = "deleted = 0 and tenant_id = '${tenantId}'")
 @Table(name = "SY_USER")
 @JsonIgnoreProperties({"hibernateLazyInitializer"})
 @EntityListeners(AuditingEntityListener.class)
@@ -70,6 +70,8 @@ public class UserEntity {
 
   @Version
   private Long versionNumber;
+
+  private String tenantId;
 
   private Integer deleted;
 }

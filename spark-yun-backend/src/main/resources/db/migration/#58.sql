@@ -6,6 +6,7 @@ alter table SY_USER add create_date_time varchar(200) not null comment '创建�
 alter table SY_USER add last_modified_date_time varchar(200) not null comment '更新时间';
 alter table SY_USER add version_number int not null comment '版本号';
 alter table SY_USER add deleted int default 0 not null comment '假删除';
+alter table SY_USER add tenant_id varchar(200) comment '租户id';
 
 -- 配置管理员信息
 update SY_USER set USER_ROLE = 'SYS_ADMIN' where ID='admin_id';

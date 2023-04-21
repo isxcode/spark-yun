@@ -31,12 +31,14 @@ public class UserDetailsServiceImpl implements UserDetailsService {
       throw new SparkYunException("用户不存在");
     }
 
+    String tenantId = "custom";
+
     // 获取用户的权限
     String authority = userEntityOptional.get().getUserRole();
 
     // 返回用户信息
     return User.withUsername(userId)
-      .password(userEntityOptional.get().getPasswd())
+      .password(tenantId)
       .authorities(AuthorityUtils.commaSeparatedStringToAuthorityList(authority))
       .build();
   }
