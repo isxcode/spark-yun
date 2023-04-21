@@ -23,5 +23,5 @@ public class TetAddTenantReq {
 
   @Schema(title = "管理员用户id", example = "sy_1234567890")
   @NotEmpty(message = "租户管理员不能为空")
-  private Integer adminUserId;
+  private String adminUserId;
 }

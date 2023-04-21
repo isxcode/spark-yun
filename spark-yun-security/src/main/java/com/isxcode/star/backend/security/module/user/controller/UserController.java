@@ -71,7 +71,7 @@ public class UserController {
 
   @Secured({Roles.SYS_ADMIN})
   @Operation(summary = "禁用用户接口")
-  @PostMapping("/disableUser")
+  @GetMapping("/disableUser")
   @SuccessResponse("禁用成功")
   public void disableUser(@Schema(description = "用户唯一id", example = "sy_b0288cadb2ab4325ae519ff329a95cda") @RequestParam String userId) {
 
@@ -80,7 +80,7 @@ public class UserController {
 
   @Secured({Roles.SYS_ADMIN})
   @Operation(summary = "启用用户接口")
-  @PostMapping("/enableUser")
+  @GetMapping("/enableUser")
   @SuccessResponse("启用成功")
   public void enableUser(@Schema(description = "用户唯一id", example = "sy_b0288cadb2ab4325ae519ff329a95cda") @RequestParam String userId) {
 
@@ -89,7 +89,7 @@ public class UserController {
 
   @Secured({Roles.SYS_ADMIN})
   @Operation(summary = "删除用户接口")
-  @PostMapping("/deleteUser")
+  @GetMapping("/deleteUser")
   @SuccessResponse("删除成功")
   public void deleteUser(@Schema(description = "用户唯一id", example = "sy_ff3c1b52f8b34c45ab2cf24b6bccd480") @RequestParam String userId) {
 

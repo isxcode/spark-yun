@@ -37,7 +37,17 @@ public class TenantController {
     tenantBizService.addTenant(tetAddTenantReq);
   }
 
-  @Operation(summary = "更新租户")
+  @Secured({Roles.SYS_ADMIN})
+  @Operation(summary = "查询租户列表接口")
+  @PostMapping("/queryTenant")
+  @SuccessResponse("查询成功")
+  public void queryTenant(@Valid @RequestBody TetAddTenantReq tetAddTenantReq) {
+
+    tenantBizService.addTenant(tetAddTenantReq);
+  }
+
+  @Secured({Roles.SYS_ADMIN})
+  @Operation(summary = "更新租户接口")
   @PostMapping("/updateTenant")
   @SuccessResponse("更新成功")
   public void updateTenant(@Valid @RequestBody TetUpdateTenantReq tetUpdateTenantReq) {
@@ -45,7 +55,8 @@ public class TenantController {
     tenantBizService.updateTenant(tetUpdateTenantReq);
   }
 
-  @Operation(summary = "启动租户")
+  @Secured({Roles.SYS_ADMIN})
+  @Operation(summary = "启动租户接口")
   @PostMapping("/enableTenant")
   @SuccessResponse("启用成功")
   public void enableTenant(@Schema(description = "租户唯一id", example = "sy_344c3d583fa344f7a2403b19c5a654dc") @RequestParam String tenantId) {
@@ -53,7 +64,8 @@ public class TenantController {
     tenantBizService.enableTenant(tenantId);
   }
 
-  @Operation(summary = "禁用租户")
+  @Secured({Roles.SYS_ADMIN})
+  @Operation(summary = "禁用租户接口")
   @GetMapping("/disableTenant")
   @SuccessResponse("禁用成功")
   public void disableTenant(@Schema(description = "租户唯一id", example = "sy_344c3d583fa344f7a2403b19c5a654dc") @RequestParam String tenantId) {
@@ -61,7 +73,8 @@ public class TenantController {
     tenantBizService.disableTenant(tenantId);
   }
 
-  @Operation(summary = "检测租户")
+  @Secured({Roles.SYS_ADMIN})
+  @Operation(summary = "检测租户信息接口")
   @PostMapping("/checkTenant")
   @SuccessResponse("检测完成")
   public void checkTenant(@Schema(description = "租户唯一id", example = "sy_344c3d583fa344f7a2403b19c5a654dc") @RequestParam String tenantId) {

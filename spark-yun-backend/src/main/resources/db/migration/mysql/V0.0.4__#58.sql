@@ -19,8 +19,6 @@ create table if not exists SY_TENANT
   deleted                 int default 0 not null comment '逻辑删除'
 );
 
-
-
 -- 用户表
 create table if not exists SY_USER
 (

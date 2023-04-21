@@ -1,56 +1,21 @@
 package com.isxcode.star.backend.module.tenant.mapper;
 
-import com.isxcode.star.api.pojos.datasource.req.DasAddDatasourceReq;
-import com.isxcode.star.api.pojos.datasource.req.DasUpdateDatasourceReq;
-import com.isxcode.star.api.pojos.datasource.res.DasQueryDatasourceRes;
-import com.isxcode.star.backend.module.datasource.entity.DatasourceEntity;
+import com.isxcode.star.api.constants.UserStatus;
+import com.isxcode.star.api.pojos.tenant.req.TetAddTenantReq;
+import com.isxcode.star.backend.module.tenant.entity.TenantEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 
-import java.util.List;
-
-/** mapstruct映射. */
 @Mapper(componentModel = "spring")
 public interface TenantMapper {
 
   /**
-   * dasAddDatasourceReq转DatasourceEntity.
+   * TetAddTenantReq To TenantEntity.
    */
-  @Mapping(source = "password", target = "passwd")
-  @Mapping(source = "comment", target = "commentInfo")
-  @Mapping(source = "type", target = "datasourceType")
   @Mapping(target = "checkDateTime", expression = "java(java.time.LocalDateTime.now())")
-  DatasourceEntity dasAddDatasourceReqToDatasourceEntity(DasAddDatasourceReq dasAddDatasourceReq);
-
-
-  @Mapping(source = "dasUpdateDatasourceReq.password", target = "passwd")
-  @Mapping(source = "dasUpdateDatasourceReq.comment", target = "commentInfo")
-  @Mapping(source = "dasUpdateDatasourceReq.type", target = "datasourceType")
-  @Mapping(source = "dasUpdateDatasourceReq.jdbcUrl", target = "jdbcUrl")
-  @Mapping(source = "dasUpdateDatasourceReq.username", target = "username")
-  @Mapping(source = "dasUpdateDatasourceReq.name", target = "name")
-  @Mapping(target = "id", source = "datasourceEntity.id")
-  DatasourceEntity dasUpdateDatasourceReqToDatasourceEntity(DasUpdateDatasourceReq dasUpdateDatasourceReq,DatasourceEntity datasourceEntity);
-
-  /**
-   * datasourceEntity转DasQueryDatasourceRes.
-   */
-  @Mapping(target = "comment", source = "commentInfo")
-  @Mapping(target = "type", source = "datasourceType")
-  @Mapping(target = "checkTime", source = "checkDateTime", dateFormat = "yyyy-MM-dd HH:mm:ss")
-  DasQueryDatasourceRes datasourceEntityToQueryDatasourceRes(DatasourceEntity datasourceEntity);
-
-  /** List[datasourceEntity]转List[DasQueryDatasourceRes]. */
-  List<DasQueryDatasourceRes> datasourceEntityToQueryDatasourceRes(
-      List<DatasourceEntity> datasourceEntity);
-
-  /** Page[datasourceEntity]转Page[DasQueryDatasourceRes]. */
-  default Page<DasQueryDatasourceRes> datasourceEntityListToQueryDatasourceResList(
-      Page<DatasourceEntity> pageDatasource) {
-    List<DasQueryDatasourceRes> dtoList =
-        datasourceEntityToQueryDatasourceRes(pageDatasource.getContent());
-    return new PageImpl<>(dtoList, pageDatasource.getPageable(), pageDatasource.getTotalElements());
-  }
+  @Mapping(target = "status", constant = UserStatus.ENABLE)
+  @Mapping(target = "usedMemberNum", constant = "1")
+  @Mapping(target = "usedWorkflowNum", constant = "0")
+  TenantEntity tetAddTenantReqToTenantEntity(TetAddTenantReq tetAddTenantReq);
 }
+

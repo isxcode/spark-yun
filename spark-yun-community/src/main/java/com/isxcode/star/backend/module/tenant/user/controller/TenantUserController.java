@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 
-@Tag(name = "租户模块")
+@Tag(name = "租户用户模块")
 @RestController
 @RequestMapping(ModulePrefix.TENANT_USER)
 @RequiredArgsConstructor

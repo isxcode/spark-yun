@@ -104,10 +104,6 @@ public class UserBizService {
     // UsrAddUserReq To UserEntity
     UserEntity userEntity = userMapper.usrAddUserReqToUserEntity(usrAddUserReq);
 
-    // 配置默认值
-    userEntity.setStatus(UserStatus.ENABLE);
-    userEntity.setRoleCode(Roles.NORMAL_MEMBER);
-
     // 数据持久化
     userRepository.save(userEntity);
   }

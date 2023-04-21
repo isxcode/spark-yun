@@ -1,5 +1,7 @@
 package com.isxcode.star.backend.security.module.user.mapper;
 
+import com.isxcode.star.api.constants.Roles;
+import com.isxcode.star.api.constants.UserStatus;
 import com.isxcode.star.api.pojos.datasource.res.DasQueryDatasourceRes;
 import com.isxcode.star.api.pojos.user.req.UsrAddUserReq;
 import com.isxcode.star.api.pojos.user.req.UsrUpdateUserReq;
@@ -18,7 +20,9 @@ import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface UserMapper {
-  
+
+  @Mapping(target = "status", constant = UserStatus.ENABLE)
+  @Mapping(target = "roleCode", constant = Roles.NORMAL_MEMBER)
   UserEntity usrAddUserReqToUserEntity(UsrAddUserReq usrAddUserReq);
 
   @Mapping(target = "passwd", source = "userEntity.passwd")
