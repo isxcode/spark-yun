@@ -40,13 +40,13 @@ public class TenantEntity {
 
   private String name;
 
-  private Integer usedMemberNum;
+  private Long usedMemberNum;
 
-  private Integer maxMemberNum;
+  private Long maxMemberNum;
 
-  private Integer usedWorkflowNum;
+  private Long usedWorkflowNum;
 
-  private Integer maxWorkflowNum;
+  private Long maxWorkflowNum;
 
   private String status;
 

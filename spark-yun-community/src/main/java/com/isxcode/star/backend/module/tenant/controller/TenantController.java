@@ -3,7 +3,9 @@ package com.isxcode.star.backend.module.tenant.controller;
 import com.isxcode.star.api.constants.ModulePrefix;
 import com.isxcode.star.api.constants.Roles;
 import com.isxcode.star.api.pojos.tenant.req.TetAddTenantReq;
-import com.isxcode.star.api.pojos.tenant.req.TetUpdateTenantReq;
+import com.isxcode.star.api.pojos.tenant.req.TetUpdateTenantBySystemAdminReq;
+import com.isxcode.star.api.pojos.tenant.req.TetUpdateTenantByTenantAdminReq;
+import com.isxcode.star.api.pojos.tenant.res.TetQueryUserTenantRes;
 import com.isxcode.star.api.response.SuccessResponse;
 import com.isxcode.star.backend.module.tenant.service.TenantBizService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @Tag(name = "租户模块")
 @RestController
@@ -46,13 +49,29 @@ public class TenantController {
     tenantBizService.addTenant(tetAddTenantReq);
   }
 
-  @Secured({Roles.SYS_ADMIN})
-  @Operation(summary = "更新租户接口")
-  @PostMapping("/updateTenant")
-  @SuccessResponse("更新成功")
-  public void updateTenant(@Valid @RequestBody TetUpdateTenantReq tetUpdateTenantReq) {
+  @Operation(summary = "查询用户租户列表接口")
+  @PostMapping("/queryUserTenant")
+  @SuccessResponse("查询成功")
+  public List<TetQueryUserTenantRes> queryUserTenant() {
+    return tenantBizService.queryUserTenant();
+  }
 
-    tenantBizService.updateTenant(tetUpdateTenantReq);
+  @Secured({Roles.SYS_ADMIN})
+  @Operation(summary = "系统管理员更新租户接口")
+  @PostMapping("/updateTenantBySystemAdmin")
+  @SuccessResponse("更新成功")
+  public void updateTenantBySystemAdmin(@Valid @RequestBody TetUpdateTenantBySystemAdminReq tetUpdateTenantBySystemAdminReq) {
+
+    tenantBizService.updateTenantByTenantAdmin(tetUpdateTenantBySystemAdminReq);
+  }
+
+  @Secured({Roles.TENANT_ADMIN})
+  @Operation(summary = "租户管理员更新租户接口")
+  @PostMapping("/updateTenantByTenantAdmin")
+  @SuccessResponse("更新成功")
+  public void updateTenantByTenantAdmin(@Valid @RequestBody TetUpdateTenantByTenantAdminReq tetUpdateTenantByTenantAdminReq) {
+
+    tenantBizService.TetUpdateTenantByTenantAdminReq(tetUpdateTenantByTenantAdminReq);
   }
 
   @Secured({Roles.SYS_ADMIN})

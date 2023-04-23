@@ -1,10 +1,7 @@
-package com.isxcode.star.backend.module.tenant.user.entity;
+package com.isxcode.star.backend.module.user.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
@@ -23,19 +20,16 @@ import javax.persistence.Transient;
 import javax.persistence.Version;
 import java.time.LocalDateTime;
 
-@SQLDelete(
-  sql = "UPDATE SY_TENANT_USERS SET deleted = 1 WHERE id = ? and version_number = ?"
-)
 @Data
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
 @Entity
-@Table(name = "SY_TENANT_USERS")
+@SQLDelete(
+  sql = "UPDATE SY_USER SET deleted = 1 WHERE id = ? and version_number = ?"
+)
 @Where(clause = "deleted = 0")
+@Table(name = "SY_USER")
 @JsonIgnoreProperties({"hibernateLazyInitializer"})
 @EntityListeners(AuditingEntityListener.class)
-public class TenantUserEntity {
+public class UserEntity {
 
   @Id
   @GeneratedValue(generator = "sy-id-generator")
@@ -44,13 +38,25 @@ public class TenantUserEntity {
     strategy = "com.isxcode.star.backend.config.GeneratedValueConfig")
   private String id;
 
-  private String userId;
+  private String username;
 
-  private String tenantId;
+  private String account;
+
+  private String passwd;
+
+  private String phone;
+
+  private String email;
+
+  private String introduce;
+
+  private String remark;
 
   private String roleCode;
 
   private String status;
+
+  private String currentTenantId;
 
   @CreatedDate
   private LocalDateTime createDateTime;

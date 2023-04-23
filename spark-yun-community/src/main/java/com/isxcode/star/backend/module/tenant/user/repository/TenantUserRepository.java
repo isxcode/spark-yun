@@ -1,6 +1,5 @@
 package com.isxcode.star.backend.module.tenant.user.repository;
 
-import com.isxcode.star.backend.module.datasource.entity.DatasourceEntity;
 import com.isxcode.star.backend.module.tenant.user.entity.TenantUserEntity;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.data.domain.Page;
@@ -10,11 +9,29 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-/** 数据源模块. */
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
 @Repository
 @CacheConfig(cacheNames = {"SY_DATASOURCE"})
 public interface TenantUserRepository extends JpaRepository<TenantUserEntity, String> {
 
-  @Query("SELECT D FROM DatasourceEntity D WHERE D.name LIKE %:keyword% OR D.commentInfo LIKE %:keyword% OR D.datasourceType LIKE %:keyword% OR D.username LIKE %:keyword% OR D.jdbcUrl LIKE %:keyword%")
-  Page<DatasourceEntity> searchAll(@Param("keyword") String searchKeyWord, Pageable pageable);
+  Optional<TenantUserEntity> findByTenantIdAndUserId(String tenantId, String userId);
+
+  List<TenantUserEntity> findAllByUserId(String userId);
+
+  @Query(value = "" +
+    "select " +
+    "   U.account as account, " +
+    "   U.username as username, " +
+    "   DATE_FORMAT(T.createDateTime, '%Y-%m-%d %H:%i:%s') as createDateTime, " +
+    "   T.roleCode as roleCode " +
+    "from TenantUserEntity T left join UserEntity U on T.userId = U.id  " +
+    "WHERE U.roleCode != 'ROLE_SYS_ADMIN' " +
+    "   and T.tenantId=:tenantId " +
+    "   and (U.username LIKE %:keyword% OR U.account LIKE %:keyword%) ")
+  Page<Map> searchTenantUser(@Param("tenantId") String tenantId, @Param("keyword") String searchKeyWord, Pageable pageable);
+
+  long countByTenantId(String tenantId);
 }

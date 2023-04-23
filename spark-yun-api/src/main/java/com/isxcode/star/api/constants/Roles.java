@@ -14,6 +14,11 @@ public interface Roles {
   String TENANT_ADMIN = "ROLE_TENANT_ADMIN";
 
   /**
+   * 租户成员权限.
+   */
+  String TENANT_MEMBER = "ROLE_TENANT_MEMBER";
+
+  /**
    * 普通成员.
    */
   String NORMAL_MEMBER = "ROLE_NORMAL_MEMBER";

@@ -15,15 +15,12 @@ import org.springframework.data.domain.PageImpl;
 @Mapper(componentModel = "spring")
 public interface WorkflowMapper {
 
-  @Mapping(source = "comment", target = "commentInfo")
   WorkflowEntity addWorkflowReqToWorkflowEntity(WofAddWorkflowReq addWorkflowReq);
 
-  @Mapping(source = "wofUpdateWorkflowReq.comment", target = "commentInfo")
   @Mapping(source = "wofUpdateWorkflowReq.name", target = "name")
   @Mapping(source = "workflowEntity.id", target = "id")
   WorkflowEntity updateWorkflowReqToWorkflowEntity(WofUpdateWorkflowReq wofUpdateWorkflowReq, WorkflowEntity workflowEntity);
 
-  @Mapping(target = "comment", source = "commentInfo")
   WofQueryWorkflowRes workflowEntityToQueryWorkflowRes(WorkflowEntity workflowEntity);
 
   List<WofQueryWorkflowRes> workflowEntityListToQueryWorkflowResList(List<WorkflowEntity> workflowEntities);

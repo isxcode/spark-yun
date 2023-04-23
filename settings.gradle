@@ -7,7 +7,6 @@ include 'spark-yun-client' // 至轻云客户端，包括访问agent的所有方
 include 'spark-yun-backend' // 至轻云后端服务，包括社区版和企业版
 include 'spark-yun-community' // 至轻云后端服务器社区版
 include 'spark-yun-vip' // 至轻云后端服务企业版
-include 'spark-yun-security' // 至轻云安全服务，包括用户模块，认证模块
 include 'spark-yun-website' // 至轻云前端服务
 include 'spark-yun-yarn' // 至轻云集成yarn服务
 include 'spark-yun-dist' // 至轻云打包工具

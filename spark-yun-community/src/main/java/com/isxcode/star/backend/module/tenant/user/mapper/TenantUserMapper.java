@@ -1,56 +1,28 @@
 package com.isxcode.star.backend.module.tenant.user.mapper;
 
-import com.isxcode.star.api.pojos.datasource.req.DasAddDatasourceReq;
-import com.isxcode.star.api.pojos.datasource.req.DasUpdateDatasourceReq;
-import com.isxcode.star.api.pojos.datasource.res.DasQueryDatasourceRes;
-import com.isxcode.star.backend.module.datasource.entity.DatasourceEntity;
+import com.alibaba.fastjson.JSON;
+import com.isxcode.star.api.pojos.tenant.user.res.TurQueryTenantUserRes;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 
 import java.util.List;
+import java.util.Map;
 
-/** mapstruct映射. */
 @Mapper(componentModel = "spring")
 public interface TenantUserMapper {
 
   /**
-   * dasAddDatasourceReq转DatasourceEntity.
+   * TurTenantUserDto To TurQueryTenantUserRes.
    */
-  @Mapping(source = "password", target = "passwd")
-  @Mapping(source = "comment", target = "commentInfo")
-  @Mapping(source = "type", target = "datasourceType")
-  @Mapping(target = "checkDateTime", expression = "java(java.time.LocalDateTime.now())")
-  DatasourceEntity dasAddDatasourceReqToDatasourceEntity(DasAddDatasourceReq dasAddDatasourceReq);
+  default TurQueryTenantUserRes turTenantUserDtoToTurQueryTenantUserRes(Map turTenantUserDto) {
 
+    return JSON.parseObject(JSON.toJSONString(turTenantUserDto), TurQueryTenantUserRes.class);
+  }
 
-  @Mapping(source = "dasUpdateDatasourceReq.password", target = "passwd")
-  @Mapping(source = "dasUpdateDatasourceReq.comment", target = "commentInfo")
-  @Mapping(source = "dasUpdateDatasourceReq.type", target = "datasourceType")
-  @Mapping(source = "dasUpdateDatasourceReq.jdbcUrl", target = "jdbcUrl")
-  @Mapping(source = "dasUpdateDatasourceReq.username", target = "username")
-  @Mapping(source = "dasUpdateDatasourceReq.name", target = "name")
-  @Mapping(target = "id", source = "datasourceEntity.id")
-  DatasourceEntity dasUpdateDatasourceReqToDatasourceEntity(DasUpdateDatasourceReq dasUpdateDatasourceReq,DatasourceEntity datasourceEntity);
+  List<TurQueryTenantUserRes> turTenantUserDtoToTurQueryTenantUserResList(List<Map> turTenantUserDto);
 
-  /**
-   * datasourceEntity转DasQueryDatasourceRes.
-   */
-  @Mapping(target = "comment", source = "commentInfo")
-  @Mapping(target = "type", source = "datasourceType")
-  @Mapping(target = "checkTime", source = "checkDateTime", dateFormat = "yyyy-MM-dd HH:mm:ss")
-  DasQueryDatasourceRes datasourceEntityToQueryDatasourceRes(DatasourceEntity datasourceEntity);
-
-  /** List[datasourceEntity]转List[DasQueryDatasourceRes]. */
-  List<DasQueryDatasourceRes> datasourceEntityToQueryDatasourceRes(
-      List<DatasourceEntity> datasourceEntity);
-
-  /** Page[datasourceEntity]转Page[DasQueryDatasourceRes]. */
-  default Page<DasQueryDatasourceRes> datasourceEntityListToQueryDatasourceResList(
-      Page<DatasourceEntity> pageDatasource) {
-    List<DasQueryDatasourceRes> dtoList =
-        datasourceEntityToQueryDatasourceRes(pageDatasource.getContent());
-    return new PageImpl<>(dtoList, pageDatasource.getPageable(), pageDatasource.getTotalElements());
+  default Page<TurQueryTenantUserRes> turTenantUserDtoToTurQueryTenantUserResPage(Page<Map> turTenantUserDtos) {
+    return new PageImpl<>(turTenantUserDtoToTurQueryTenantUserResList(turTenantUserDtos.getContent()), turTenantUserDtos.getPageable(), turTenantUserDtos.getTotalElements());
   }
 }
