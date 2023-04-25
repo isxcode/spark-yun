@@ -29,8 +29,9 @@ public class ToolController {
   private final CacheManager cacheManager;
 
   @Operation(summary = "获取版本号接口")
-  @GetMapping("/version")
+  @GetMapping("/open/version")
   public String getLeoLastVersion() {
+
     File file = new File("./VERSION");
     FileInputStream fis;
     try {
@@ -47,7 +48,7 @@ public class ToolController {
   }
 
   @Operation(summary = "获取缓存接口")
-  @GetMapping("/getCache")
+  @GetMapping("/open/getCache")
   public Map<String, String> getCache() {
 
     Map<String, String> cacheMap = new HashMap<>();

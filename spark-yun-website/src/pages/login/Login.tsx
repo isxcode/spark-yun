@@ -14,6 +14,7 @@ function Login() {
     loginApi(value)
       .then(function (response) {
         localStorage.setItem('Authorization', response.username)
+        localStorage.setItem('Token', response.token)
         navigate('/')
       })
       .finally(() => {

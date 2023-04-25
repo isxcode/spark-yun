@@ -32,4 +32,11 @@ public class ExceptionController {
 
     throw new SparkYunException("权限不足异常");
   }
+
+  @Operation(summary = "证书无效接口")
+  @RequestMapping(path = "/licenseError", method = {RequestMethod.GET, RequestMethod.POST})
+  public void licenseError() {
+
+    throw new SparkYunException("证书无效");
+  }
 }

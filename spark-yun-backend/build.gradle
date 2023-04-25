@@ -1,6 +1,8 @@
 dependencies {
 
   api(project(':spark-yun-community'))
+
+  // 社区版需要注释此行
   api(project(':spark-yun-vip'))
 
   // thymeleaf

@@ -10,5 +10,7 @@ public interface SecurityConstants {
 
   String TOKEN_IS_INVALID_PATH = "/exception/tokenIsInvalid";
 
+  String LICENSE_IS_ERROR = "/exception/licenseError";
+
   String AUTH_ERROR_PATH = "/exception/authError";
 }

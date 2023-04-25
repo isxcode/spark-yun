@@ -126,7 +126,7 @@ function Layouts() {
       label: '租户成员',
       icon: <TeamOutlined/>,
       onClick: () => {
-        navigate('/auth')
+        navigate('/tenant_user')
       }
     },
     {
@@ -134,7 +134,7 @@ function Layouts() {
       label: '系统用户',
       icon: <UserOutlined />,
       onClick: () => {
-        navigate('/auth')
+        navigate('/user')
       },
     },
     {
@@ -142,7 +142,7 @@ function Layouts() {
       label: '证书安装',
       icon: <CopyrightOutlined />,
       onClick: () => {
-        navigate('/auth')
+        navigate('/license')
       }
     },
     {
@@ -150,7 +150,7 @@ function Layouts() {
       label: '租户列表',
       icon: <ProfileOutlined />,
       onClick: () => {
-        navigate('/auth')
+        navigate('/tenant')
       }
     },
     {

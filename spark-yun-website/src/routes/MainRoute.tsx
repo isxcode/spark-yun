@@ -9,6 +9,10 @@ import WorksPage from '../pages/works/WorksPage'
 import Auth from '../pages/auth/Auth'
 import Layouts from '../layouts/Layouts'
 import Login from '../pages/login/Login'
+import UserPage from "../pages/user/UserPage";
+import TenantUserPage from "../pages/tenant/user/TenantUserPage";
+import TenantPage from "../pages/tenant/TenantPage";
+import LicensePage from "../pages/license/LicensePage";
 
 export default function MainRoute() {
   return (
@@ -19,24 +23,24 @@ export default function MainRoute() {
             path="/*"
             element={
               <RequireAuth>
-                <Layouts />
+                <Layouts/>
               </RequireAuth>
             }
           />
-          <Route path="/login" element={<Login />} />
+          <Route path="/login" element={<Login/>}/>
           <Route
             path={'/'}
             element={
               <RequireAuth>
-                <Layouts />
+                <Layouts/>
               </RequireAuth>
             }>
-            <Route index element={<Navigate to={'/monitor'} />} />
+            <Route index element={<Navigate to={'/monitor'}/>}/>
             <Route
               path={'/monitor'}
               element={
                 <RequireAuth>
-                  <Auth />
+                  <Auth/>
                 </RequireAuth>
               }
             />
@@ -44,7 +48,39 @@ export default function MainRoute() {
               path={'/auth'}
               element={
                 <RequireAuth>
-                  <Auth />
+                  <Auth/>
+                </RequireAuth>
+              }
+            />
+            <Route
+              path={'/user'}
+              element={
+                <RequireAuth>
+                  <UserPage/>
+                </RequireAuth>
+              }
+            />
+            <Route
+              path={'/tenant'}
+              element={
+                <RequireAuth>
+                  <TenantPage/>
+                </RequireAuth>
+              }
+            />
+            <Route
+              path={'/license'}
+              element={
+                <RequireAuth>
+                  <LicensePage/>
+                </RequireAuth>
+              }
+            />
+            <Route
+              path={'/tenant_user'}
+              element={
+                <RequireAuth>
+                  <TenantUserPage/>
                 </RequireAuth>
               }
             />
@@ -52,7 +88,7 @@ export default function MainRoute() {
               path={'/engine'}
               element={
                 <RequireAuth>
-                  <CalculateEnginePage />
+                  <CalculateEnginePage/>
                 </RequireAuth>
               }
             />
@@ -60,7 +96,7 @@ export default function MainRoute() {
               path={'/nodes/:calculateEngineId'}
               element={
                 <RequireAuth>
-                  <EngineNodePage />
+                  <EngineNodePage/>
                 </RequireAuth>
               }
             />
@@ -68,7 +104,7 @@ export default function MainRoute() {
               path={'/datasource'}
               element={
                 <RequireAuth>
-                  <DatasourcePage />
+                  <DatasourcePage/>
                 </RequireAuth>
               }
             />
@@ -76,7 +112,7 @@ export default function MainRoute() {
               path={'/workflow'}
               element={
                 <RequireAuth>
-                  <WorkflowPage />
+                  <WorkflowPage/>
                 </RequireAuth>
               }
             />
@@ -84,7 +120,7 @@ export default function MainRoute() {
               path={'/work/:workId'}
               element={
                 <RequireAuth>
-                  <WorkPage />
+                  <WorkPage/>
                 </RequireAuth>
               }
             />
@@ -92,7 +128,7 @@ export default function MainRoute() {
               path={'/works/:workflowId'}
               element={
                 <RequireAuth>
-                  <WorksPage />
+                  <WorksPage/>
                 </RequireAuth>
               }
             />
@@ -100,7 +136,7 @@ export default function MainRoute() {
         </Routes>
       </BrowserRouter>
     </>
-  )
+  );
 }
 
 function RequireAuth({ children }: { children: JSX.Element }) {
