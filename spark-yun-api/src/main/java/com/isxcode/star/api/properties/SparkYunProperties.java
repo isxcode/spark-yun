@@ -51,4 +51,9 @@ public class SparkYunProperties {
    */
   private Integer expirationMin;
 
+  /**
+   * 资源目录.
+   */
+  private String resourcesPath;
+
 }

@@ -32,4 +32,7 @@ public interface ModulePrefix {
 
   /** 租户用户模块. */
   String TENANT_USER = "/tur";
+
+  /** 许可证模块. */
+  String LICENSE = "/lic";
 }

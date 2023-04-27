@@ -20,8 +20,9 @@ spring:
     user: root
     password: ispong123
     locations: classpath:db/migration/mysql/
+    enabled: false
 
-#  datasource:
+  #  datasource:
 #    driver-class-name: org.h2.Driver
 #    url: jdbc:h2:file:~/.h2/data
 #    username: root

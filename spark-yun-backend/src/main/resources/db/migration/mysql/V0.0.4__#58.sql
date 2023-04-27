@@ -187,3 +187,33 @@ insert into SY_USER (id, username, account, passwd, role_code, status, create_by
                      last_modified_date_time, version_number)
 values ('admin_id', '系统管理员', 'admin', 'admin123', 'ROLE_SYS_ADMIN', 'ENABLE', 'admin_id', now(), 'admin_id', now(),
         0);
+
+-- 许可证表
+create table if not exists SY_LICENSE
+(
+  id                      varchar(200)  not null unique primary key comment '许可证唯一id',
+  code                    varchar(200)  not null comment '许可证编号',
+  company_name            varchar(200)  not null comment '公司名称',
+  logo                    varchar(2000) not null comment '公司logo',
+  remark                  varchar(2000) comment '许可证备注',
+  issuer                  varchar(200)  not null comment '许可证签发人',
+  start_date_time         datetime      not null comment '许可证起始时间',
+  end_date_time           datetime      not null comment '许可证到期时间',
+  max_tenant_num          int comment '最大租户数',
+  max_member_num          int comment '最大成员数',
+  max_workflow_num        int comment '最大作业流数',
+  status                  varchar(200)  not null comment '证书状态',
+  create_by               varchar(200)  not null comment '创建人',
+  create_date_time        datetime      not null comment '创建时间',
+  last_modified_by        varchar(200)  not null comment '更新人',
+  last_modified_date_time datetime      not null comment '更新时间',
+  version_number          int           not null comment '版本号',
+  deleted                 int default 0 not null comment '逻辑删除'
+);
+
+
+
+
+
+
+

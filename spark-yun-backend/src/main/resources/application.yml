@@ -90,3 +90,4 @@ spark-yun:
   jwt-key: spark-yun
   aes-slat: spark-yun
   expiration-min: 60
+  resources-path: /Users/ispong/Data/resource
