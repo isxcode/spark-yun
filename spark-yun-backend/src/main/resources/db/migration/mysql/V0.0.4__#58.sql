@@ -211,6 +211,32 @@ create table if not exists SY_LICENSE
   deleted                 int default 0 not null comment '逻辑删除'
 );
 
+-- 自定义API表
+create table if not exists SY_API
+(
+  id                      varchar(200)  not null unique primary key comment '唯一API的id',
+  name                    varchar(200)  not null comment 'API名称',
+  path                    varchar(200)  not null comment 'API访问地址',
+  api_type                varchar(200)  not null comment 'API类型',
+  remark                  varchar(2000) comment 'API备注',
+  req_header              varchar(2000) comment '请求头',
+  req_body                varchar(2000) comment '请求体',
+  api_sql                 varchar(2000) not null comment '执行的sql',
+  res_body                varchar(2000) not null comment '响应体',
+  datasource_id           varchar(200)  not null comment '数据源id',
+  status                  varchar(200)  not null comment 'API状态',
+  create_by               varchar(200)  not null comment '创建人',
+  create_date_time        datetime      not null comment '创建时间',
+  last_modified_by        varchar(200)  not null comment '更新人',
+  last_modified_date_time datetime      not null comment '更新时间',
+  version_number          int           not null comment '版本号',
+  deleted                 int default 0 not null comment '逻辑删除',
+  tenant_id               varchar(200)  not null comment '租户id'
+);
+
+
+
+
 
 
 

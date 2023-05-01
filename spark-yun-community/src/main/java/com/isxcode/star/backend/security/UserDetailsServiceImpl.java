@@ -1,5 +1,6 @@
 package com.isxcode.star.backend.security;
 
+import com.isxcode.star.api.constants.Roles;
 import com.isxcode.star.api.exception.SparkYunException;
 import com.isxcode.star.backend.module.tenant.user.entity.TenantUserEntity;
 import com.isxcode.star.backend.module.tenant.user.repository.TenantUserRepository;
@@ -16,6 +17,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.util.Optional;
 
+import static com.isxcode.star.backend.config.WebSecurityConfig.JPA_TENANT_MODE;
 import static com.isxcode.star.backend.config.WebSecurityConfig.TENANT_ID;
 
 @Slf4j
@@ -30,13 +32,21 @@ public class UserDetailsServiceImpl implements UserDetailsService {
   public UserDetails loadUserByUsername(String userId) throws UsernameNotFoundException {
 
     // 获取用户信息
+    JPA_TENANT_MODE.set(false);
     Optional<UserEntity> userEntityOptional = userRepository.findById(userId);
+    JPA_TENANT_MODE.set(true);
+
     if (!userEntityOptional.isPresent()) {
       throw new SparkYunException("用户不存在");
     }
 
     // 获取用户系统权限
     String authority = userEntityOptional.get().getRoleCode();
+
+    // 如果不是系统管理员，且没有TENANT_ID则直接报错，缺少tenantId
+    if (!Roles.SYS_ADMIN.equals(authority) && Strings.isEmpty(TENANT_ID.get())) {
+      throw new SparkYunException("缺少tenantId");
+    }
 
     // 获取用户租户权限
     if (!Strings.isEmpty(TENANT_ID.get())) {

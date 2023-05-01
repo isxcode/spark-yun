@@ -17,39 +17,26 @@ public interface DatasourceMapper {
   /**
    * dasAddDatasourceReq转DatasourceEntity.
    */
-  @Mapping(source = "password", target = "passwd")
-  @Mapping(source = "comment", target = "commentInfo")
-  @Mapping(source = "type", target = "datasourceType")
-  @Mapping(target = "checkDateTime", expression = "java(java.time.LocalDateTime.now())")
   DatasourceEntity dasAddDatasourceReqToDatasourceEntity(DasAddDatasourceReq dasAddDatasourceReq);
 
 
-  @Mapping(source = "dasUpdateDatasourceReq.password", target = "passwd")
-  @Mapping(source = "dasUpdateDatasourceReq.comment", target = "commentInfo")
-  @Mapping(source = "dasUpdateDatasourceReq.type", target = "datasourceType")
+  @Mapping(source = "dasUpdateDatasourceReq.passwd", target = "passwd")
+  @Mapping(source = "dasUpdateDatasourceReq.remark", target = "remark")
+  @Mapping(source = "dasUpdateDatasourceReq.dbType", target = "dbType")
   @Mapping(source = "dasUpdateDatasourceReq.jdbcUrl", target = "jdbcUrl")
   @Mapping(source = "dasUpdateDatasourceReq.username", target = "username")
   @Mapping(source = "dasUpdateDatasourceReq.name", target = "name")
   @Mapping(target = "id", source = "datasourceEntity.id")
-  DatasourceEntity dasUpdateDatasourceReqToDatasourceEntity(DasUpdateDatasourceReq dasUpdateDatasourceReq,DatasourceEntity datasourceEntity);
+  DatasourceEntity dasUpdateDatasourceReqToDatasourceEntity(DasUpdateDatasourceReq dasUpdateDatasourceReq, DatasourceEntity datasourceEntity);
 
-  /**
-   * datasourceEntity转DasQueryDatasourceRes.
-   */
-  @Mapping(target = "comment", source = "commentInfo")
-  @Mapping(target = "type", source = "datasourceType")
-  @Mapping(target = "checkTime", source = "checkDateTime", dateFormat = "yyyy-MM-dd HH:mm:ss")
+
+  @Mapping(target = "checkDateTime", dateFormat = "yyyy-MM-dd HH:mm:ss")
   DasQueryDatasourceRes datasourceEntityToQueryDatasourceRes(DatasourceEntity datasourceEntity);
 
-  /** List[datasourceEntity]转List[DasQueryDatasourceRes]. */
-  List<DasQueryDatasourceRes> datasourceEntityToQueryDatasourceRes(
-      List<DatasourceEntity> datasourceEntity);
+  List<DasQueryDatasourceRes> datasourceEntityToQueryDatasourceResList(List<DatasourceEntity> datasourceEntity);
 
-  /** Page[datasourceEntity]转Page[DasQueryDatasourceRes]. */
-  default Page<DasQueryDatasourceRes> datasourceEntityListToQueryDatasourceResList(
-      Page<DatasourceEntity> pageDatasource) {
-    List<DasQueryDatasourceRes> dtoList =
-        datasourceEntityToQueryDatasourceRes(pageDatasource.getContent());
+  default Page<DasQueryDatasourceRes> datasourceEntityToQueryDatasourceResPage(Page<DatasourceEntity> pageDatasource) {
+    List<DasQueryDatasourceRes> dtoList = datasourceEntityToQueryDatasourceResList(pageDatasource.getContent());
     return new PageImpl<>(dtoList, pageDatasource.getPageable(), pageDatasource.getTotalElements());
   }
 }

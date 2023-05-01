@@ -48,7 +48,7 @@ public class TenantController {
 
     tenantBizService.addTenant(tetAddTenantReq);
   }
-
+  
   @Operation(summary = "查询用户租户列表接口")
   @PostMapping("/queryUserTenant")
   @SuccessResponse("查询成功")

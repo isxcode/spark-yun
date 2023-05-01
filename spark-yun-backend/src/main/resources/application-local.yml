@@ -35,3 +35,17 @@ spring:
     username: root
     password: ispong123
 
+  # 定时调度
+  quartz:
+    scheduler-name: spark-yun-quartz-scheduler
+    job-store-type: jdbc
+    jdbc:
+      initialize-schema: never # 项目第一次初始化需要改为alawys never
+    properties:
+      org.quartz.jobStore.class: org.quartz.impl.jdbcjobstore.JobStoreTX
+      org.quartz.jobStore.driverDelegateClass: org.quartz.impl.jdbcjobstore.StdJDBCDelegate
+      org.quartz.jobStore.dataSource: quartzDataSource
+      org.quartz.dataSource.quartzDataSource.driver: com.mysql.cj.jdbc.Driver
+      org.quartz.dataSource.quartzDataSource.URL: jdbc:mysql://localhost:30306/zhiqingyun
+      org.quartz.dataSource.quartzDataSource.user: root
+      org.quartz.dataSource.quartzDataSource.password: ispong123

@@ -26,12 +26,12 @@ public class DasUpdateDatasourceReq {
 
   @Schema(title = "数据源密码", example = "ispong123")
   @NotEmpty(message = "密码不能为空")
-  private String password;
+  private String passwd;
 
   @Schema(title = "备注", example = "该数据源为本地mysql数据源，请勿删除")
-  private String comment;
+  private String remark;
 
   @Schema(title = "数据源类型", example = "mysql")
   @NotEmpty(message = "数据源类型不能为空")
-  private String type;
+  private String dbType;
 }

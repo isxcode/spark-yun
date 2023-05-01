@@ -33,7 +33,7 @@ spring:
   # jpa配置˚
   jpa:
     database: mysql
-    show-sql: false
+    show-sql: true
     open-in-view: false
     hibernate:
       ddl-auto: none
@@ -87,6 +87,7 @@ spark-yun:
     - /favicon.ico
     - /login
     - /**/open/**
+    - /vip/api/custom/**
   jwt-key: spark-yun
   aes-slat: spark-yun
   expiration-min: 60

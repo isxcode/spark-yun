@@ -13,14 +13,14 @@ public class JpaTenantInterceptor implements StatementInspector {
 
     // 租户id不存在，则使用普通查询
     if (Strings.isEmpty(TENANT_ID.get())) {
-      return sql;
+      return sql.replace("${TENANT_FILTER}", "");
     }
 
     // 当时租户模式开启是，使用租户查询
     if (JPA_TENANT_MODE.get() == null || JPA_TENANT_MODE.get()) {
-      return sql + " and ( tenant_id = '" + TENANT_ID.get() + "' ) ";
+      return sql.replace("${TENANT_FILTER}", " and tenant_id = '" + TENANT_ID.get() + "' ");
     } else {
-      return sql;
+      return sql.replace("${TENANT_FILTER}", "");
     }
   }
 }

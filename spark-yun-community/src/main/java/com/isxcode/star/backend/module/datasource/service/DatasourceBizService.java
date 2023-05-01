@@ -24,7 +24,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-/** 数据源模块service. */
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -35,12 +34,11 @@ public class DatasourceBizService {
 
   private final DatasourceMapper datasourceMapper;
 
-  /** 添加数据源. */
   public void addDatasource(DasAddDatasourceReq dasAddDatasourceReq) {
 
-    DatasourceEntity datasource =
-        datasourceMapper.dasAddDatasourceReqToDatasourceEntity(dasAddDatasourceReq);
+    DatasourceEntity datasource = datasourceMapper.dasAddDatasourceReqToDatasourceEntity(dasAddDatasourceReq);
 
+    datasource.setCheckDateTime(LocalDateTime.now());
     datasource.setStatus(DatasourceStatus.UN_CHECK);
     datasourceRepository.save(datasource);
   }
@@ -52,42 +50,37 @@ public class DatasourceBizService {
       throw new SparkYunException("数据源不存在");
     }
 
-    DatasourceEntity datasource = datasourceMapper.dasUpdateDatasourceReqToDatasourceEntity(dasAddDatasourceReq,datasourceEntityOptional.get());
+    DatasourceEntity datasource = datasourceMapper.dasUpdateDatasourceReqToDatasourceEntity(dasAddDatasourceReq, datasourceEntityOptional.get());
 
     datasource.setCheckDateTime(LocalDateTime.now());
     datasource.setStatus(DatasourceStatus.UN_CHECK);
     datasourceRepository.save(datasource);
   }
 
-  /** 查询数据源. */
   public Page<DasQueryDatasourceRes> queryDatasource(DasQueryDatasourceReq dasQueryDatasourceReq) {
 
-    Page<DatasourceEntity> datasourceEntityPage =
-      datasourceRepository.searchAll(dasQueryDatasourceReq.getSearchKeyWord(),
-        PageRequest.of(dasQueryDatasourceReq.getPage(), dasQueryDatasourceReq.getPageSize()));
+    Page<DatasourceEntity> datasourceEntityPage = datasourceRepository.searchAll(dasQueryDatasourceReq.getSearchKeyWord(), PageRequest.of(dasQueryDatasourceReq.getPage(), dasQueryDatasourceReq.getPageSize()));
 
-    return datasourceMapper.datasourceEntityListToQueryDatasourceResList(datasourceEntityPage);
+    return datasourceMapper.datasourceEntityToQueryDatasourceResPage(datasourceEntityPage);
   }
 
-  /** 删除数据源. */
+
   public void delDatasource(String datasourceId) {
 
     datasourceRepository.deleteById(datasourceId);
   }
 
-  /** 数据源连接测试. */
   public DasTestConnectRes testConnect(DasTestConnectReq dasTestConnectRes) {
 
     // 获取数据源
-    Optional<DatasourceEntity> datasourceEntityOptional =
-        datasourceRepository.findById(dasTestConnectRes.getDatasourceId());
+    Optional<DatasourceEntity> datasourceEntityOptional = datasourceRepository.findById(dasTestConnectRes.getDatasourceId());
     if (!datasourceEntityOptional.isPresent()) {
       throw new SparkYunException("数据源不存在");
     }
     DatasourceEntity datasource = datasourceEntityOptional.get();
 
     // 获取class
-    switch (datasource.getDatasourceType()) {
+    switch (datasource.getDbType()) {
       case DatasourceType.MYSQL:
         try {
           Class.forName("com.mysql.cj.jdbc.Driver");
@@ -115,12 +108,9 @@ public class DatasourceBizService {
       default:
         throw new SparkYunException("数据源暂不支持");
     }
-
     datasource.setCheckDateTime(LocalDateTime.now());
 
-    try (Connection connection =
-        getConnection(
-            datasource.getJdbcUrl(), datasource.getUsername(), datasource.getPasswd()); ) {
+    try (Connection connection = getConnection(datasource.getJdbcUrl(), datasource.getUsername(), datasource.getPasswd());) {
       if (connection != null) {
         datasource.setStatus(DatasourceStatus.ACTIVE);
         datasourceRepository.save(datasource);

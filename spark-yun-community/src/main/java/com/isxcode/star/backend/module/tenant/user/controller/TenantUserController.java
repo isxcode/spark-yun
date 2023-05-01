@@ -2,6 +2,7 @@ package com.isxcode.star.backend.module.tenant.user.controller;
 
 import com.isxcode.star.api.constants.ModulePrefix;
 import com.isxcode.star.api.constants.Roles;
+import com.isxcode.star.api.constants.SecurityConstants;
 import com.isxcode.star.api.pojos.tenant.user.req.TurAddTenantUserReq;
 import com.isxcode.star.api.pojos.tenant.user.req.TurQueryTenantUserReq;
 import com.isxcode.star.api.pojos.tenant.user.res.TurQueryTenantUserRes;
@@ -45,7 +46,7 @@ public class TenantUserController {
   @Operation(summary = "查询租户用户列表接口")
   @PostMapping("/queryTenantUser")
   @SuccessResponse("查询成功")
-  @Parameter(name = "Tenant", description = "租户id", required = true, in = ParameterIn.HEADER, schema = @Schema(type = "string"))
+  @Parameter(name = SecurityConstants.HEADER_TENANT_ID, description = "租户id", required = true, in = ParameterIn.HEADER, schema = @Schema(type = "string"))
   public Page<TurQueryTenantUserRes> queryTenantUser(@Valid @RequestBody TurQueryTenantUserReq turQueryTenantUserReq) {
 
     return tenantUserBizService.queryTenantUser(turQueryTenantUserReq);

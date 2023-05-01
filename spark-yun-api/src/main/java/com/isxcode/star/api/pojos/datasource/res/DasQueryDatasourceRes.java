@@ -19,7 +19,7 @@ public class DasQueryDatasourceRes {
 
   private String status;
 
-  private String checkTime;
+  private String checkDateTime;
 
   private String type;
 }

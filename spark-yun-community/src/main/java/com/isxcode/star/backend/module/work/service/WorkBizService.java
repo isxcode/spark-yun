@@ -361,7 +361,7 @@ public class WorkBizService {
     DatasourceEntity datasource = datasourceEntityOptional.get();
 
     try {
-      switch (datasource.getDatasourceType()) {
+      switch (datasource.getDbType()) {
         case DatasourceType.MYSQL:
           Class.forName("com.mysql.cj.jdbc.Driver");
           break;
