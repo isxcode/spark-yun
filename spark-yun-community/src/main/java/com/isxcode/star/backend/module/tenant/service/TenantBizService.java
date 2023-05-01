@@ -4,8 +4,10 @@ import com.isxcode.star.api.constants.Roles;
 import com.isxcode.star.api.constants.TenantStatus;
 import com.isxcode.star.api.exception.SparkYunException;
 import com.isxcode.star.api.pojos.tenant.req.TetAddTenantReq;
+import com.isxcode.star.api.pojos.tenant.req.TetQueryTenantReq;
 import com.isxcode.star.api.pojos.tenant.req.TetUpdateTenantBySystemAdminReq;
 import com.isxcode.star.api.pojos.tenant.req.TetUpdateTenantByTenantAdminReq;
+import com.isxcode.star.api.pojos.tenant.res.TetQueryTenantRes;
 import com.isxcode.star.api.pojos.tenant.res.TetQueryUserTenantRes;
 import com.isxcode.star.backend.module.tenant.entity.TenantEntity;
 import com.isxcode.star.backend.module.tenant.mapper.TenantMapper;
@@ -17,10 +19,13 @@ import com.isxcode.star.backend.module.user.repository.UserRepository;
 import com.isxcode.star.backend.module.workflow.repository.WorkflowRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -110,6 +115,13 @@ public class TenantBizService {
     return userTenantResList;
   }
 
+  public Page<TetQueryTenantRes> queryTenants(TetQueryTenantReq tetQueryTenantReq) {
+
+    Page<TenantEntity> tenantEntityPage = tenantRepository.searchAll(tetQueryTenantReq.getSearchKeyWord(), PageRequest.of(tetQueryTenantReq.getPage(), tetQueryTenantReq.getPageSize()));
+
+    return tenantMapper.tenantEntityToTetQueryTenantResPage(tenantEntityPage);
+  }
+
   public void updateTenantByTenantAdmin(TetUpdateTenantBySystemAdminReq tetUpdateTenantBySystemAdminReq) {
 
     // 判断租户是否存在
@@ -190,6 +202,7 @@ public class TenantBizService {
     // 统计成员数量
     long memberNum = tenantUserRepository.countByTenantId(tenantId);
     tenantEntity.setUsedMemberNum(memberNum);
+    tenantEntity.setCheckDateTime(LocalDateTime.now());
 
     // 持久化
     tenantRepository.save(tenantEntity);

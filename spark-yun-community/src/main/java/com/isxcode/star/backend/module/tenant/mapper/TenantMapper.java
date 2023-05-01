@@ -1,13 +1,19 @@
 package com.isxcode.star.backend.module.tenant.mapper;
 
 import com.isxcode.star.api.constants.UserStatus;
+import com.isxcode.star.api.pojos.datasource.res.DasQueryDatasourceRes;
 import com.isxcode.star.api.pojos.tenant.req.TetAddTenantReq;
+import com.isxcode.star.api.pojos.tenant.req.TetQueryTenantReq;
 import com.isxcode.star.api.pojos.tenant.req.TetUpdateTenantBySystemAdminReq;
 import com.isxcode.star.api.pojos.tenant.req.TetUpdateTenantByTenantAdminReq;
+import com.isxcode.star.api.pojos.tenant.res.TetQueryTenantRes;
 import com.isxcode.star.api.pojos.tenant.res.TetQueryUserTenantRes;
+import com.isxcode.star.backend.module.datasource.entity.DatasourceEntity;
 import com.isxcode.star.backend.module.tenant.entity.TenantEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 
 import java.util.List;
 
@@ -40,5 +46,14 @@ public interface TenantMapper {
   @Mapping(target = "introduce", source = "tetUpdateTenantByTenantAdminReq.introduce")
   @Mapping(target = "id", source = "tenantEntity.id")
   TenantEntity tetUpdateTenantByTenantAdminReqToTenantEntity(TetUpdateTenantByTenantAdminReq tetUpdateTenantByTenantAdminReq, TenantEntity tenantEntity);
+
+
+  @Mapping(target = "checkDateTime", dateFormat = "yyyy-MM-dd HH:mm:ss")
+  TetQueryTenantRes tenantEntityToTetQueryTenantRes(TenantEntity tenantEntity);
+  List<TetQueryTenantRes> tenantEntityToTetQueryTenantResList(List<TenantEntity> tenantEntities);
+  default Page<TetQueryTenantRes> tenantEntityToTetQueryTenantResPage(Page<TenantEntity> tenantEntityPage) {
+    List<TetQueryTenantRes> dtoList = tenantEntityToTetQueryTenantResList(tenantEntityPage.getContent());
+    return new PageImpl<>(dtoList, tenantEntityPage.getPageable(), tenantEntityPage.getTotalElements());
+  }
 }
 

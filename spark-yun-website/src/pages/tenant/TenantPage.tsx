@@ -7,26 +7,37 @@ import { type DatasourceRow } from '../../types/datasource/info/DatasourceRow'
 import { type BasePagination, defaultPagination } from '../../types/base/BasePagination'
 import { type QueryDatasourceReq } from '../../types/datasource/req/QueryDatasourceReq'
 import { delDatasourceApi, queryDatasourceApi, testDatasourceApi } from '../../services/datasource/DatasourceService'
+import {TenantRow} from "../../types/tenant/info/TenantRow";
+import {
+  checkTenantApi,
+  delTenantApi,
+  disableTenantApi,
+  enableTenantApi,
+  queryTenantsApi
+} from "../../services/tenant/TenantService";
+import {QueryTenantsReq} from "../../types/tenant/req/QueryTenantsReq";
+import {enableUserApi} from "../../services/user/UserService";
+import {TenantModal} from "../../modals/tenant/TenantModal";
 
 function TenantPage() {
-  const [datasources, setDatasources] = useState<DatasourceRow[]>([])
-  const [datasource, setDatasource] = useState<DatasourceRow>()
+  const [tenants, setTenants] = useState<TenantRow[]>([]);
+  const [tenant, setTenant] = useState<TenantRow>()
   const [pagination, setPagination] = useState<BasePagination>(defaultPagination)
-  const [isModalVisible, setIsModalVisible] = useState(false)
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
   useEffect(() => {
-    fetchDatasources()
+    fetchTenant()
   }, [pagination.currentPage])
 
-  const queryDatasourceReq: QueryDatasourceReq = {
+  const queryTenantsReq: QueryTenantsReq = {
     page: pagination.currentPage,
     pageSize: pagination.pageSize,
     searchKeyWord: pagination.searchKeyWord
   }
 
-  const fetchDatasources = () => {
-    queryDatasourceApi(queryDatasourceReq).then(function (response) {
-      setDatasources(response.content)
+  const fetchTenant = () => {
+    queryTenantsApi(queryTenantsReq).then(function (response) {
+      setTenants(response.content)
       setPagination((prevPagination) => ({
         ...prevPagination,
         totalItems: response.totalElements
@@ -35,31 +46,49 @@ function TenantPage() {
   }
 
   const handleOk = () => {
-    fetchDatasources()
+    fetchTenant()
     setIsModalVisible(false)
   }
 
   const delDatasource = (datasourceId: string | undefined) => {
     delDatasourceApi(datasourceId).then(function () {
-      fetchDatasources()
+      fetchTenant()
     })
   }
 
-  const testDatasource = (datasourceId: string) => {
-    testDatasourceApi(datasourceId).then(function () {
-      fetchDatasources()
-    })
+  const enableTenant = (tenantId: string | undefined) => {
+    enableTenantApi(tenantId).then(function () {
+      fetchTenant()
+    });
   }
+
+  const disableTenant = (tenantId: string | undefined) => {
+    disableTenantApi(tenantId).then(function () {
+      fetchTenant()
+    });
+  }
+
+  const checkTenant = (tenantId: string | undefined) => {
+    checkTenantApi(tenantId).then(function () {
+      fetchTenant()
+    });
+  }
+
+  const delTenant = (tenantId: string | undefined) => {
+    delTenantApi(tenantId).then(function () {
+      fetchTenant()
+    })
+  };
 
   const handleSearch = () => {
     setPagination((prevPagination) => ({
       ...prevPagination,
       currentPage: 1
     }))
-    fetchDatasources()
+    fetchTenant()
   }
 
-  const columns: ColumnsType<DatasourceRow> = [
+  const columns: ColumnsType<TenantRow> = [
     {
       title: '租户名称',
       dataIndex: 'name',
@@ -68,7 +97,7 @@ function TenantPage() {
       render: (text, record) => (
         <a
           onClick={() => {
-            setDatasource(record)
+            setTenant(record)
             setIsModalVisible(true)
           }}
           className={'sy-table-a'}>
@@ -77,44 +106,45 @@ function TenantPage() {
       )
     },
     {
-      title: '状态',
-      dataIndex: 'type',
-      key: 'type',
-      width: 80,
-      render: (_, record) => (
-        <Space size="middle">
-          <Tag color="default">{record.dbType}</Tag>
-        </Space>
+      title: '已用/总成员',
+      dataIndex: 'member',
+      key: 'member',
+      width: 120,
+      render: (text, record) => (
+        <>{record.usedMemberNum}/{record.maxMemberNum}</>
       )
     },
     {
       title: '已用/总工作流',
-      dataIndex: 'jdbcUrl',
-      key: 'jdbcUrl',
-      width: 150
-    },
-    {
-      title: '已用/总成员',
-      dataIndex: 'jdbcUrl',
-      key: 'jdbcUrl',
-      width: 150
-    },
-    {
-      title: '检测时间',
-      dataIndex: 'jdbcUrl',
-      key: 'jdbcUrl',
-      width: 150
+      dataIndex: 'workflow',
+      key: 'workflow',
+      width: 130,
+      render: (text, record) => (
+        <>{record.usedWorkflowNum}/{record.maxWorkflowNum}</>
+      )
     },
     {
       title: '状态',
       dataIndex: 'jdbcUrl',
       key: 'jdbcUrl',
-      width: 150
+      width: 100,
+      render: (_, record) => (
+        <Space size="middle">
+          {record.status === 'ENABLE' && <Tag color="green">启用</Tag>}
+          {record.status === 'DISABLE' && <Tag color="red">禁用</Tag>}
+        </Space>),
+    },
+    {
+      title: '检测时间',
+      dataIndex: 'checkDateTime',
+      key: 'checkDateTime',
+      width: 180
     },
     {
       title: '备注',
-      key: 'comment',
-      dataIndex: 'comment'
+      key: 'remark',
+      width: 250,
+      dataIndex: 'remark'
     },
     {
       title: '操作',
@@ -124,7 +154,7 @@ function TenantPage() {
           <a
             className={'sy-table-a'}
             onClick={() => {
-              setDatasource(record)
+              setTenant(record)
               setIsModalVisible(true)
             }}>
             编辑
@@ -132,21 +162,36 @@ function TenantPage() {
           <a
             className={'sy-table-a'}
             onClick={() => {
-              delDatasource(record.id)
+              checkTenant(record.id);
             }}>
-            启用
+            同步
           </a>
+          {
+            record.status === "ENABLE" ? <a
+              className={'sy-table-a'}
+              onClick={() => {
+                disableTenant(record.id)
+              }}>
+              禁用
+            </a> : <a
+              className={'sy-table-a'}
+              onClick={() => {
+                enableTenant(record.id);
+              }}>
+              启用
+            </a>
+          }
           <a
             className={'sy-table-a'}
             onClick={() => {
-              delDatasource(record.id)
+              delTenant(record.id);
             }}>
             删除
           </a>
         </Space>
       )
     }
-  ]
+  ];
 
   return (
     <div style={{ padding: 24 }}>
@@ -155,7 +200,7 @@ function TenantPage() {
           <Button
             type={'primary'}
             onClick={() => {
-              setDatasource({})
+              setTenant({})
               setIsModalVisible(true)
             }}>
             创建租户
@@ -165,7 +210,7 @@ function TenantPage() {
           <Input
             style={{ marginRight: '10px' }}
             onPressEnter={handleSearch}
-            defaultValue={queryDatasourceReq.searchKeyWord}
+            defaultValue={queryTenantsReq.searchKeyWord}
             onChange={(e) => {
               setPagination({ ...pagination, searchKeyWord: e.target.value })
             }}
@@ -177,10 +222,10 @@ function TenantPage() {
         </Col>
       </Row>
 
-      <Table columns={columns} dataSource={datasources} />
+      <Table columns={columns} dataSource={tenants} />
 
-      <DatasourceModal
-        datasource={datasource}
+      <TenantModal
+        tenant={tenant}
         handleCancel={() => {
           setIsModalVisible(false)
         }}

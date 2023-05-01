@@ -3,8 +3,10 @@ package com.isxcode.star.backend.module.tenant.controller;
 import com.isxcode.star.api.constants.ModulePrefix;
 import com.isxcode.star.api.constants.Roles;
 import com.isxcode.star.api.pojos.tenant.req.TetAddTenantReq;
+import com.isxcode.star.api.pojos.tenant.req.TetQueryTenantReq;
 import com.isxcode.star.api.pojos.tenant.req.TetUpdateTenantBySystemAdminReq;
 import com.isxcode.star.api.pojos.tenant.req.TetUpdateTenantByTenantAdminReq;
+import com.isxcode.star.api.pojos.tenant.res.TetQueryTenantRes;
 import com.isxcode.star.api.pojos.tenant.res.TetQueryUserTenantRes;
 import com.isxcode.star.api.response.SuccessResponse;
 import com.isxcode.star.backend.module.tenant.service.TenantBizService;
@@ -12,6 +14,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -44,11 +47,11 @@ public class TenantController {
   @Operation(summary = "查询租户列表接口")
   @PostMapping("/queryTenant")
   @SuccessResponse("查询成功")
-  public void queryTenant(@Valid @RequestBody TetAddTenantReq tetAddTenantReq) {
+  public Page<TetQueryTenantRes> queryTenant(@Valid @RequestBody TetQueryTenantReq tetQueryTenantReq) {
 
-    tenantBizService.addTenant(tetAddTenantReq);
+    return tenantBizService.queryTenants(tetQueryTenantReq);
   }
-  
+
   @Operation(summary = "查询用户租户列表接口")
   @PostMapping("/queryUserTenant")
   @SuccessResponse("查询成功")
@@ -76,7 +79,7 @@ public class TenantController {
 
   @Secured({Roles.SYS_ADMIN})
   @Operation(summary = "启动租户接口")
-  @PostMapping("/enableTenant")
+  @GetMapping("/enableTenant")
   @SuccessResponse("启用成功")
   public void enableTenant(@Schema(description = "租户唯一id", example = "sy_344c3d583fa344f7a2403b19c5a654dc") @RequestParam String tenantId) {
 
@@ -94,7 +97,7 @@ public class TenantController {
 
   @Secured({Roles.SYS_ADMIN})
   @Operation(summary = "检测租户信息接口")
-  @PostMapping("/checkTenant")
+  @GetMapping("/checkTenant")
   @SuccessResponse("检测完成")
   public void checkTenant(@Schema(description = "租户唯一id", example = "sy_344c3d583fa344f7a2403b19c5a654dc") @RequestParam String tenantId) {
 

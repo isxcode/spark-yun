@@ -2,9 +2,9 @@ import React, {useEffect} from 'react'
 import {Form, Input, Modal} from 'antd'
 import './UserModal.less'
 import {UserRow} from "../../types/user/info/UserRow";
-import {AddUserReq} from "../../types/user/req/AddUserReq";
 import {addUserApi, updateUserApi} from "../../services/user/UserService";
 import {UpdateUserReq} from "../../types/user/req/UpdateUserReq";
+import {AddUserReq} from "../../types/user/req/AddUserReq";
 
 export const UserModal = (props: {
   isModalVisible: boolean
