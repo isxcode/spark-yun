@@ -103,5 +103,14 @@ public class TenantController {
 
     tenantBizService.checkTenant(tenantId);
   }
+
+  @Secured({Roles.SYS_ADMIN})
+  @Operation(summary = "删除租户接口")
+  @GetMapping("/deleteTenant")
+  @SuccessResponse("删除成功")
+  public void deleteTenant(@Schema(description = "租户唯一id", example = "sy_344c3d583fa344f7a2403b19c5a654dc") @RequestParam String tenantId) {
+
+    tenantBizService.deleteTenant(tenantId);
+  }
 }
 

@@ -127,14 +127,14 @@ function TenantUserPage() {
               setDatasource(record)
               setIsModalVisible(true)
             }}>
-            编辑
+            授权管理员
           </a>
           <a
             className={'sy-table-a'}
             onClick={() => {
               delDatasource(record.id)
             }}>
-            启用
+            移除
           </a>
         </Space>
       )

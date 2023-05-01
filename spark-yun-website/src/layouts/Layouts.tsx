@@ -141,14 +141,6 @@ function Layouts() {
 
   const adminMenus: MenuProps['items'] = [
     {
-      key: 14,
-      label: '租户成员',
-      icon: <TeamOutlined/>,
-      onClick: () => {
-        navigate('/tenant_user')
-      }
-    },
-    {
       key: 18,
       label: '用户中心',
       icon: <UserOutlined />,
@@ -157,19 +149,27 @@ function Layouts() {
       },
     },
     {
-      key: 19,
-      label: '证书安装',
-      icon: <CopyrightOutlined />,
-      onClick: () => {
-        navigate('/license')
-      }
-    },
-    {
       key: 17,
       label: '租户列表',
       icon: <ProfileOutlined />,
       onClick: () => {
         navigate('/tenant')
+      }
+    },
+    {
+      key: 14,
+      label: '租户成员',
+      icon: <TeamOutlined/>,
+      onClick: () => {
+        navigate('/tenant_user')
+      }
+    },
+    {
+      key: 19,
+      label: '证书安装',
+      icon: <CopyrightOutlined />,
+      onClick: () => {
+        navigate('/license')
       }
     },
     {
@@ -182,7 +182,7 @@ function Layouts() {
     }
   ];
 
-  const items: MenuProps['items'] = [
+  const items = [
     {
       key: '1',
       label: '设置',
@@ -195,17 +195,6 @@ function Layouts() {
         localStorage.removeItem('Token')
         window.location.reload()
       }
-    },
-  ];
-
-  const userItems: MenuProps['items'] = [
-    {
-      key: '1',
-      label: '设置',
-    },
-    {
-      key: '2',
-      label: '退出登录',
     },
   ];
 
@@ -231,6 +220,7 @@ function Layouts() {
                       icon={<DownOutlined/>}
                       menu={{items}}
                       onClick={() => {
+
                       }}
                     >
                       测试租户

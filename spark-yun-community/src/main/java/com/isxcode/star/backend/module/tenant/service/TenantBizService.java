@@ -184,6 +184,11 @@ public class TenantBizService {
     tenantRepository.save(tenantEntity);
   }
 
+  public void deleteTenant(String tenantId) {
+
+    tenantRepository.deleteById(tenantId);
+  }
+
   public void checkTenant(String tenantId) {
 
     // 判断租户是否存在

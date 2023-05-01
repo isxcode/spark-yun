@@ -92,15 +92,17 @@ export const TenantModal = (props: {
             <Input/>
           </Form.Item>
 
-          <Form.Item name="adminUserId" label="管理员" rules={[{required: true, message: '租户管理员不能为空'}]}>
-            <Select placeholder="选择管理员" allowClear>
-              {users?.map(option => (
-                <Select.Option key={option.id} value={option.id}>
-                  {option.account}
-                </Select.Option>
-              ))}
-            </Select>
-          </Form.Item>
+          {tenant?.id == null ?
+            <Form.Item name="adminUserId" label="管理员" rules={[{required: true, message: '租户管理员不能为空'}]}>
+              <Select placeholder="选择管理员" allowClear>
+                {users?.map(option => (
+                  <Select.Option key={option.id} value={option.id}>
+                    {option.account}
+                  </Select.Option>
+                ))}
+              </Select>
+            </Form.Item> : <></>
+          }
 
           <Form.Item label="备注" name="remark">
             <Input.TextArea/>
