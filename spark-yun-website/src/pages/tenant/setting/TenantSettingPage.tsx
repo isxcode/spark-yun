@@ -21,7 +21,7 @@ function TenantSettingPage() {
   const queryDatasourceReq: QueryDatasourceReq = {
     page: pagination.currentPage,
     pageSize: pagination.pageSize,
-    searchContent: pagination.searchContent
+    searchKeyWord: pagination.searchKeyWord
   }
 
   const fetchDatasources = () => {
@@ -83,7 +83,7 @@ function TenantSettingPage() {
       width: 80,
       render: (_, record) => (
         <Space size="middle">
-          <Tag color="default">{record.type}</Tag>
+          <Tag color="default">{record.dbType}</Tag>
         </Space>
       )
     },
@@ -165,9 +165,9 @@ function TenantSettingPage() {
           <Input
             style={{ marginRight: '10px' }}
             onPressEnter={handleSearch}
-            defaultValue={queryDatasourceReq.searchContent}
+            defaultValue={queryDatasourceReq.searchKeyWord}
             onChange={(e) => {
-              setPagination({ ...pagination, searchContent: e.target.value })
+              setPagination({ ...pagination, searchKeyWord: e.target.value })
             }}
             placeholder={'租户名称/备注'}
           />

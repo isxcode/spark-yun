@@ -70,7 +70,7 @@ export const DatasourceModal = (props: {
             <Input />
           </Form.Item>
 
-          <Form.Item name="type" label="类型" rules={[{ required: true, message: '类型不能为空' }]}>
+          <Form.Item name="dbType" label="类型" rules={[{ required: true, message: '类型不能为空' }]}>
             <Select placeholder="选择数据库类型" allowClear>
               <Option value="MYSQL">Mysql</Option>
               <Option value="ORACLE">Oracle</Option>
@@ -86,11 +86,11 @@ export const DatasourceModal = (props: {
             <Input />
           </Form.Item>
 
-          <Form.Item label="密码" name="password" rules={[{ required: true, message: '密码不能为空' }]}>
+          <Form.Item label="密码" name="passwd" rules={[{ required: true, message: '密码不能为空' }]}>
             <Input />
           </Form.Item>
 
-          <Form.Item label="备注" name="comment">
+          <Form.Item label="备注" name="remark">
             <Input.TextArea />
           </Form.Item>
         </Form>

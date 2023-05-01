@@ -24,7 +24,7 @@ create table if not exists SY_USER
 (
   id                      varchar(200)  not null unique primary key comment '用户唯一id',
   username                varchar(200)  not null comment '用户名称',
-  account                 varchar(200)  not null unique comment '用户账号',
+  account                 varchar(200)  not null comment '用户账号',
   passwd                  varchar(200)  not null comment '账号密码',
   phone                   varchar(200) comment '手机号',
   email                   varchar(200) comment '邮箱',

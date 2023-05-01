@@ -27,7 +27,7 @@ function CalculateEnginePage() {
   const queryEnginesReq: QueryEngineReq = {
     page: pagination.currentPage,
     pageSize: pagination.pageSize,
-    searchContent: pagination.searchContent
+    searchKeyWord: pagination.searchKeyWord
   }
 
   const fetchEngines = () => {
@@ -184,9 +184,9 @@ function CalculateEnginePage() {
           <Input
             style={{ marginRight: '10px' }}
             onPressEnter={handleSearch}
-            defaultValue={queryEnginesReq.searchContent}
+            defaultValue={queryEnginesReq.searchKeyWord}
             onChange={(e) => {
-              setPagination({ ...pagination, searchContent: e.target.value })
+              setPagination({ ...pagination, searchKeyWord: e.target.value })
             }}
             placeholder={'名称/备注'}
           />

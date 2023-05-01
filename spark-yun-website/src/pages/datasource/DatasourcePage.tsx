@@ -21,7 +21,7 @@ function DatasourcePage() {
   const queryDatasourceReq: QueryDatasourceReq = {
     page: pagination.currentPage,
     pageSize: pagination.pageSize,
-    searchContent: pagination.searchContent
+    searchKeyWord: pagination.searchKeyWord
   }
 
   const fetchDatasources = () => {
@@ -78,12 +78,12 @@ function DatasourcePage() {
     },
     {
       title: '类型',
-      dataIndex: 'type',
-      key: 'type',
+      dataIndex: 'dbType',
+      key: 'dbType',
       width: 80,
       render: (_, record) => (
         <Space size="middle">
-          <Tag color="default">{record.type}</Tag>
+          <Tag color="default">{record.dbType}</Tag>
         </Space>
       )
     },
@@ -114,14 +114,14 @@ function DatasourcePage() {
     },
     {
       title: '检测时间',
-      key: 'checkTime',
-      dataIndex: 'checkTime',
+      key: 'checkDateTime',
+      dataIndex: 'checkDateTime',
       width: 180
     },
     {
       title: '备注',
-      key: 'comment',
-      dataIndex: 'comment'
+      key: 'remark',
+      dataIndex: 'remark'
     },
     {
       title: '操作',
@@ -172,9 +172,9 @@ function DatasourcePage() {
           <Input
             style={{ marginRight: '10px' }}
             onPressEnter={handleSearch}
-            defaultValue={queryDatasourceReq.searchContent}
+            defaultValue={queryDatasourceReq.searchKeyWord}
             onChange={(e) => {
-              setPagination({ ...pagination, searchContent: e.target.value })
+              setPagination({ ...pagination, searchKeyWord: e.target.value })
             }}
             placeholder={'名称/类型/连接信息/用户名/备注'}
           />

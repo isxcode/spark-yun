@@ -15,6 +15,9 @@ function Login() {
       .then(function (response) {
         localStorage.setItem('Authorization', response.username)
         localStorage.setItem('Token', response.token)
+        localStorage.setItem('Tenant', response.tenantId)
+        localStorage.setItem('Username', response.username)
+        localStorage.setItem('Role', response.role);
         navigate('/')
       })
       .finally(() => {
@@ -28,7 +31,7 @@ function Login() {
 
       <Form onFinish={handleLogin} initialValues={{ remember: true }}>
         <Form.Item className={'sy-login-item'} name="account" rules={[{ required: true, message: '账号不能为空' }]}>
-          <Input placeholder="账号/邮箱/手机号" />
+          <Input placeholder="账号" />
         </Form.Item>
 
         <Form.Item className={'sy-login-item'} name="passwd" rules={[{ required: true, message: '密码不能为空' }]}>

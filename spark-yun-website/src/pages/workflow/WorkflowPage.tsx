@@ -24,7 +24,7 @@ function WorkflowPage() {
   const queryWorkflowReq: WofQueryWorkflowReq = {
     page: pagination.currentPage,
     pageSize: pagination.pageSize,
-    searchContent: pagination.searchContent
+    searchKeyWord: pagination.searchKeyWord
   }
 
   const fetchWorkflows = () => {
@@ -139,9 +139,9 @@ function WorkflowPage() {
           <Input
             style={{ marginRight: '10px' }}
             onPressEnter={handleSearch}
-            defaultValue={queryWorkflowReq.searchContent}
+            defaultValue={queryWorkflowReq.searchKeyWord}
             onChange={(e) => {
-              setPagination({ ...pagination, searchContent: e.target.value })
+              setPagination({ ...pagination, searchKeyWord: e.target.value })
             }}
             placeholder={'名称/备注'}
           />

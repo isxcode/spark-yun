@@ -24,7 +24,7 @@ function Layouts() {
 
   const {Header, Content, Sider} = Layout
 
-  const menus: MenuProps['items'] = [
+  const memberMenus: MenuProps['items'] = [
     {
       key: 1,
       label: '首页',
@@ -130,8 +130,27 @@ function Layouts() {
       }
     },
     {
+      key: 12,
+      label: '后台设置',
+      icon: <ToolOutlined />,
+      onClick: () => {
+        navigate('/auth')
+      }
+    }
+  ];
+
+  const adminMenus: MenuProps['items'] = [
+    {
+      key: 14,
+      label: '租户成员',
+      icon: <TeamOutlined/>,
+      onClick: () => {
+        navigate('/tenant_user')
+      }
+    },
+    {
       key: 18,
-      label: '系统用户',
+      label: '用户中心',
       icon: <UserOutlined />,
       onClick: () => {
         navigate('/user')
@@ -154,14 +173,6 @@ function Layouts() {
       }
     },
     {
-      key: 12,
-      label: '后台设置',
-      icon: <ToolOutlined />,
-      onClick: () => {
-        navigate('/auth')
-      }
-    },
-    {
       key: 15,
       label: '系统设置',
       icon: <SettingOutlined/>,
@@ -174,15 +185,27 @@ function Layouts() {
   const items: MenuProps['items'] = [
     {
       key: '1',
-      label: '租户1',
+      label: '设置',
     },
     {
       key: '2',
-      label: '租户2',
+      label: '退出登录',
+      onClick: () => {
+        localStorage.removeItem('Authorization')
+        localStorage.removeItem('Token')
+        window.location.reload()
+      }
+    },
+  ];
+
+  const userItems: MenuProps['items'] = [
+    {
+      key: '1',
+      label: '设置',
     },
     {
-      key: '3',
-      label: '租户2',
+      key: '2',
+      label: '退出登录',
     },
   ];
 
@@ -231,7 +254,7 @@ function Layouts() {
                   <Col style={{minWidth: '40px'}}>
                     <Dropdown menu={{items}} placement="bottomRight" arrow>
                       <Avatar style={{backgroundColor: '#e25a1b', verticalAlign: 'middle'}} size="large" gap={4}>
-                        is
+                        {localStorage.getItem('Username')}
                       </Avatar>
                     </Dropdown>
                   </Col>
@@ -242,7 +265,8 @@ function Layouts() {
         </Header>
         <Layout>
           <Sider width={200} theme={"light"}>
-            <Menu className={'sy-sider'} defaultSelectedKeys={['1']} items={menus} mode="inline"
+            <Menu className={'sy-sider'} defaultSelectedKeys={['1']}
+                  items={localStorage.getItem("Role") == 'ROLE_SYS_ADMIN' ? adminMenus : memberMenus} mode="inline"
                   style={{overflowY: 'scroll', maxHeight: '90vh', height: '90vh'}}/>
             {/*<div style={{*/}
             {/*  position: 'absolute', bottom: 10, textAlign: 'center', width: '100%', color: 'darkgrey',*/}

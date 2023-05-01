@@ -12,4 +12,8 @@ public class UsrLoginRes {
   private String username;
 
   private String token;
+
+  private String tenantId;
+
+  private String role;
 }

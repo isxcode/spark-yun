@@ -15,4 +15,9 @@ public class UsrUserDto {
 
   private String createDateTime;
 
+  private String phone;
+
+  private String email;
+
+  private String remark;
 }

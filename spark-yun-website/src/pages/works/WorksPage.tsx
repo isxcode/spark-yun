@@ -26,7 +26,7 @@ function WorksPage() {
     workflowId,
     page: pagination.currentPage,
     pageSize: pagination.pageSize,
-    searchContent: pagination.searchContent
+    searchKeyWord: pagination.searchKeyWord
   }
 
   const fetchWorks = () => {
@@ -162,9 +162,9 @@ function WorksPage() {
           <Input
             style={{ marginRight: '10px' }}
             onPressEnter={handleSearch}
-            defaultValue={queryWorkReq.searchContent}
+            defaultValue={queryWorkReq.searchKeyWord}
             onChange={(e) => {
-              setPagination({ ...pagination, searchContent: e.target.value })
+              setPagination({ ...pagination, searchKeyWord: e.target.value })
             }}
             placeholder={'名称/类型/备注'}
           />

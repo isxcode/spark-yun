@@ -30,7 +30,7 @@ function EngineNodePage() {
     calculateEngineId: calculateEngineId as string,
     page: pagination.currentPage,
     pageSize: pagination.pageSize,
-    searchContent: pagination.searchContent
+    searchKeyWord: pagination.searchKeyWord
   }
 
   const fetchEngineNodes = () => {
@@ -204,9 +204,9 @@ function EngineNodePage() {
           <Input
             style={{ marginRight: '10px' }}
             onPressEnter={handleSearch}
-            defaultValue={queryEngineNodeReq.searchContent}
+            defaultValue={queryEngineNodeReq.searchKeyWord}
             onChange={(e) => {
-              setPagination({ ...pagination, searchContent: e.target.value })
+              setPagination({ ...pagination, searchKeyWord: e.target.value })
             }}
             placeholder={'名称/地址/备注'}
           />

@@ -15,11 +15,11 @@ public class DasQueryDatasourceRes {
 
   private String username;
 
-  private String comment;
+  private String remark;
 
   private String status;
 
   private String checkDateTime;
 
-  private String type;
+  private String dbType;
 }

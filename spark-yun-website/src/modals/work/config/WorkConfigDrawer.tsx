@@ -22,7 +22,7 @@ export const WorkConfigDrawer = (props: { isModalVisible: boolean, handleCancel:
   const queryDatasourceReq: QueryDatasourceReq = {
     page: 1,
     pageSize: 999,
-    searchContent: ''
+    searchKeyWord: ''
   }
   const fetchDatasources = () => {
     queryDatasourceApi(queryDatasourceReq).then(function (response) {
@@ -33,7 +33,7 @@ export const WorkConfigDrawer = (props: { isModalVisible: boolean, handleCancel:
   const queryEnginesReq: QueryEngineReq = {
     page: 1,
     pageSize: 999,
-    searchContent: ''
+    searchKeyWord: ''
   }
 
   const fetchEngines = () => {

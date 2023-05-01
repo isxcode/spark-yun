@@ -49,7 +49,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     }
 
     // 获取用户租户权限
-    if (!Strings.isEmpty(TENANT_ID.get())) {
+    if (!Strings.isEmpty(TENANT_ID.get()) && !"undefined".equals(TENANT_ID.get())) {
       Optional<TenantUserEntity> tenantUserEntityOptional = tenantUserRepository.findByTenantIdAndUserId(TENANT_ID.get(), userId);
       if (!tenantUserEntityOptional.isPresent()) {
         throw new SparkYunException("用户不在租户中");

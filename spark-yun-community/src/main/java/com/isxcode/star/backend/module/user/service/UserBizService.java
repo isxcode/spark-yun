@@ -13,6 +13,8 @@ import com.isxcode.star.api.pojos.user.res.UsrQueryAllUsersRes;
 import com.isxcode.star.api.properties.SparkYunProperties;
 import com.isxcode.star.api.utils.JwtUtils;
 import com.isxcode.star.backend.module.tenant.repository.TenantRepository;
+import com.isxcode.star.backend.module.tenant.user.entity.TenantUserEntity;
+import com.isxcode.star.backend.module.tenant.user.repository.TenantUserRepository;
 import com.isxcode.star.backend.module.user.entity.UserEntity;
 import com.isxcode.star.backend.module.user.mapper.UserMapper;
 import com.isxcode.star.backend.module.user.repository.UserRepository;
@@ -23,7 +25,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
+import static com.isxcode.star.backend.config.WebSecurityConfig.USER_ID;
 
 /** 用户模块. */
 @Service
@@ -38,6 +44,8 @@ public class UserBizService {
   private final SparkYunProperties sparkYunProperties;
 
   private final TenantRepository tenantRepository;
+
+  private final TenantUserRepository tenantUserRepository;
 
   /**
    * 用户登录.
@@ -63,7 +71,7 @@ public class UserBizService {
 
     // 生成token并返回
     String jwtToken = JwtUtils.encrypt(sparkYunProperties.getAesSlat(), userEntity.getId(), sparkYunProperties.getJwtKey(), sparkYunProperties.getExpirationMin());
-    return new UsrLoginRes(userEntity.getUsername(), jwtToken);
+    return new UsrLoginRes(userEntity.getUsername(), jwtToken, userEntity.getCurrentTenantId(), userEntity.getRoleCode());
   }
 
   public void logout() {

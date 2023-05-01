@@ -25,7 +25,7 @@ public interface UserRepository extends JpaRepository<UserEntity, String> {
   /**
    * 分页搜索查询所有用户.
    */
-  @Query("SELECT U FROM UserEntity U WHERE U.roleCode != 'ROLE_SYS_ADMIN' and (U.username LIKE %:keyword% OR U.account LIKE %:keyword%)")
+  @Query("SELECT U FROM UserEntity U WHERE U.roleCode != 'ROLE_SYS_ADMIN' and (U.username LIKE %:keyword% OR U.account LIKE %:keyword% OR U.email LIKE %:keyword% OR U.phone LIKE %:keyword%)")
   Page<UserEntity> searchAllUser(@Param("keyword") String searchKeyWord, Pageable pageable);
 
   /**
