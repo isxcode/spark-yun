@@ -19,6 +19,21 @@ dependencies {
   // h2
   runtimeOnly 'com.h2database:h2'
 
+  // hive
+//  runtimeOnly "org.apache.hive:hive-jdbc:${HIVE_DRIVER_VERSION}"
+
+  // clickhouse
+  runtimeOnly "ru.yandex.clickhouse:clickhouse-jdbc:${CLICKHOUSE_DRIVER_VERSION}"
+
+  // hana
+  runtimeOnly "com.sap.cloud.db.jdbc:ngdbc:${HANA_DRIVER_VERSION}"
+
+  // doris
+  runtimeOnly "mysql:mysql-connector-java:${DORIS_DRIVER_VERSION}"
+
+  // kingbase
+  runtimeOnly "kingbase:kingbase8:${KINGBASE_DRIVER_VERSION}"
+
   // jpa
   implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 
