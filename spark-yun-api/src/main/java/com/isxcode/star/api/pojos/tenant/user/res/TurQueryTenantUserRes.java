@@ -5,6 +5,8 @@ import lombok.Data;
 @Data
 public class TurQueryTenantUserRes {
 
+  private String id;
+
   private String username;
 
   private String account;
@@ -14,4 +16,8 @@ public class TurQueryTenantUserRes {
   private String roleCode;
 
   private String createDateTime;
+
+  private String phone;
+
+  private String email;
 }

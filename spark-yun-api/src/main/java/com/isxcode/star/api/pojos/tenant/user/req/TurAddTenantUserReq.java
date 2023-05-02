@@ -14,4 +14,7 @@ public class TurAddTenantUserReq {
 
   @Schema(title = "是否为租户管理者", example = "false")
   private boolean isTenantAdmin;
+
+  @Schema(title = "备注", example = "ispong")
+  private String remark;
 }

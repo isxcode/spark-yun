@@ -52,6 +52,8 @@ public class TenantUserEntity {
 
   private String status;
 
+  private String remark;
+
   @CreatedDate
   private LocalDateTime createDateTime;
 

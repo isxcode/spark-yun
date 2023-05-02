@@ -49,6 +49,7 @@ create table if not exists SY_TENANT_USERS
   tenant_id               varchar(200)  not null comment '租户id',
   role_code               varchar(200)  not null comment '角色编码',
   status                  varchar(200)  not null comment '用户状态',
+  remark                  varchar(200) comment '备注',
   create_by               varchar(200)  not null comment '创建人',
   create_date_time        datetime      not null comment '创建时间',
   last_modified_by        varchar(200)  not null comment '更新人',

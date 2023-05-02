@@ -12,6 +12,7 @@ import com.isxcode.star.api.pojos.user.res.UsrQueryAllEnableUsersRes;
 import com.isxcode.star.api.pojos.user.res.UsrQueryAllUsersRes;
 import com.isxcode.star.api.properties.SparkYunProperties;
 import com.isxcode.star.api.utils.JwtUtils;
+import com.isxcode.star.backend.module.tenant.entity.TenantEntity;
 import com.isxcode.star.backend.module.tenant.repository.TenantRepository;
 import com.isxcode.star.backend.module.tenant.user.entity.TenantUserEntity;
 import com.isxcode.star.backend.module.tenant.user.repository.TenantUserRepository;
@@ -69,9 +70,12 @@ public class UserBizService {
       throw new SparkYunException("账号或者密码不正确");
     }
 
+    // 获取最近一次租户信息
+    Optional<TenantEntity> tenantEntityOptional = tenantRepository.findById(userEntity.getCurrentTenantId());
+
     // 生成token并返回
     String jwtToken = JwtUtils.encrypt(sparkYunProperties.getAesSlat(), userEntity.getId(), sparkYunProperties.getJwtKey(), sparkYunProperties.getExpirationMin());
-    return new UsrLoginRes(userEntity.getUsername(), jwtToken, userEntity.getCurrentTenantId(), userEntity.getRoleCode());
+    return new UsrLoginRes(userEntity.getUsername(), jwtToken, userEntity.getCurrentTenantId(), tenantEntityOptional.get().getName(), userEntity.getRoleCode());
   }
 
   public void logout() {

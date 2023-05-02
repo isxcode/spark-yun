@@ -15,5 +15,7 @@ public class UsrLoginRes {
 
   private String tenantId;
 
+  private String tenantName;
+
   private String role;
 }

@@ -1,4 +1,5 @@
 export interface TenantRow {
+
   id?: string
 
   name?: string;

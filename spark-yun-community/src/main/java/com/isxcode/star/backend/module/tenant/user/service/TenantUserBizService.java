@@ -78,27 +78,27 @@ public class TenantUserBizService {
     return tenantUserMapper.turTenantUserDtoToTurQueryTenantUserResPage(tenantUserEntities);
   }
 
-  public void removeTenantUser(String userId) {
-
-    // 不可以删除自己
-    if (USER_ID.get().equals(userId)) {
-      throw new SparkYunException("不可以移除自己");
-    }
+  public void removeTenantUser(String tenantUserId) {
 
     // 查询用户是否在租户中
-    Optional<TenantUserEntity> tenantUserEntityOptional = tenantUserRepository.findByTenantIdAndUserId(TENANT_ID.get(), userId);
+    Optional<TenantUserEntity> tenantUserEntityOptional = tenantUserRepository.findById(tenantUserId);
     if (!tenantUserEntityOptional.isPresent()) {
       throw new SparkYunException("用户不存在");
+    }
+
+    // 不可以删除自己
+    if (USER_ID.get().equals(tenantUserEntityOptional.get().getUserId())) {
+      throw new SparkYunException("不可以移除自己");
     }
 
     // 删除租户用户
     tenantUserRepository.deleteById(tenantUserEntityOptional.get().getId());
   }
 
-  public void setTenantAdmin(String userId) {
+  public void setTenantAdmin(String tenantUserId) {
 
     // 查询用户是否在租户中
-    Optional<TenantUserEntity> tenantUserEntityOptional = tenantUserRepository.findByTenantIdAndUserId(TENANT_ID.get(), userId);
+    Optional<TenantUserEntity> tenantUserEntityOptional = tenantUserRepository.findById(tenantUserId);
     if (!tenantUserEntityOptional.isPresent()) {
       throw new SparkYunException("用户不存在");
     }
@@ -111,16 +111,16 @@ public class TenantUserBizService {
     tenantUserRepository.save(tenantUserEntity);
   }
 
-  public void removeTenantAdmin(String userId) {
+  public void removeTenantAdmin(String tenantUserId) {
 
     // 查询用户是否在租户中
-    Optional<TenantUserEntity> tenantUserEntityOptional = tenantUserRepository.findByTenantIdAndUserId(TENANT_ID.get(), userId);
+    Optional<TenantUserEntity> tenantUserEntityOptional = tenantUserRepository.findById(tenantUserId);
     if (!tenantUserEntityOptional.isPresent()) {
       throw new SparkYunException("用户不存在");
     }
 
-    // 不可以移除自己
-    if (Roles.TENANT_ADMIN.equals(tenantUserEntityOptional.get().getRoleCode())) {
+    // 管理员不可以移除自己
+    if (Roles.TENANT_ADMIN.equals(tenantUserEntityOptional.get().getRoleCode())&&USER_ID.get().equals(tenantUserEntityOptional.get().getUserId())) {
       throw new SparkYunException("不可以取消自己的管理员权限");
     }
 

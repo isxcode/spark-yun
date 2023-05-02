@@ -1,10 +1,4 @@
 import axiosInstance from '../../config/axios'
-import {type QueryDatasourceReq} from '../../types/datasource/req/QueryDatasourceReq'
-import {type QueryDatasourceRes} from '../../types/datasource/res/QueryDatasourceRes'
-import {type AddDatasourceReq} from '../../types/datasource/req/AddDatasourceReq'
-import {TestDatasourceReq} from '../../types/datasource/req/TestDatasourceReq'
-import {TestDatasourceRes} from '../../types/datasource/res/TestDatasourceRes'
-import {UpdateDatasourceReq} from '../../types/datasource/req/UpdateDatasourceReq'
 import {message} from 'antd'
 import {BaseResponse} from '../../types/base/BaseResponse'
 import {QueryAllUsersRes} from "../../types/user/res/QueryAllUsersRes";
@@ -22,6 +16,12 @@ const headerConfig = {
 export const queryAllUsersApi = async (data: QueryAllUserReq): Promise<QueryAllUsersRes> => {
   data.page = data.page - 1
   const response = await axiosInstance.post<QueryAllUsersRes>('/usr/queryAllUsers', data, headerConfig);
+  return response.data
+};
+
+export const queryAllEnableUsersApi = async (data: QueryAllUserReq): Promise<QueryAllUsersRes> => {
+  data.page = data.page - 1
+  const response = await axiosInstance.post<QueryAllUsersRes>('/usr/queryAllEnableUsers', data, headerConfig);
   return response.data
 };
 

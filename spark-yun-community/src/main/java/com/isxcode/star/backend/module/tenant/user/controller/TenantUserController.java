@@ -16,6 +16,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -54,32 +55,32 @@ public class TenantUserController {
 
   @Secured({Roles.SYS_ADMIN, Roles.TENANT_ADMIN})
   @Operation(summary = "移除用户接口")
-  @PostMapping("/removeTenantUser")
+  @GetMapping("/removeTenantUser")
   @SuccessResponse("移除成功")
   @Parameter(name = "Tenant", description = "租户id", required = true, in = ParameterIn.HEADER, schema = @Schema(type = "string"))
-  public void removeTenantUser(@Schema(description = "用户唯一id", example = "sy_ff3c1b52f8b34c45ab2cf24b6bccd480") @RequestParam String userId) {
+  public void removeTenantUser(@Schema(description = "关系唯一id", example = "sy_ff3c1b52f8b34c45ab2cf24b6bccd480") @RequestParam String tenantUserId) {
 
-    tenantUserBizService.removeTenantUser(userId);
+    tenantUserBizService.removeTenantUser(tenantUserId);
   }
 
   @Secured({Roles.SYS_ADMIN, Roles.TENANT_ADMIN})
   @Operation(summary = "设置为租户管理员接口")
-  @PostMapping("/setTenantAdmin")
+  @GetMapping("/setTenantAdmin")
   @SuccessResponse("设置成功")
   @Parameter(name = "Tenant", description = "租户id", required = true, in = ParameterIn.HEADER, schema = @Schema(type = "string"))
-  public void setTenantAdmin(@Schema(description = "用户唯一id", example = "sy_ff3c1b52f8b34c45ab2cf24b6bccd480") @RequestParam String userId) {
+  public void setTenantAdmin(@Schema(description = "关系id", example = "sy_ff3c1b52f8b34c45ab2cf24b6bccd480") @RequestParam String tenantUserId) {
 
-    tenantUserBizService.setTenantAdmin(userId);
+    tenantUserBizService.setTenantAdmin(tenantUserId);
   }
 
   @Secured({Roles.SYS_ADMIN, Roles.TENANT_ADMIN})
   @Operation(summary = "取消设置为租户管理员接口")
-  @PostMapping("/removeTenantAdmin")
+  @GetMapping("/removeTenantAdmin")
   @SuccessResponse("设置成功")
   @Parameter(name = "Tenant", description = "租户id", required = true, in = ParameterIn.HEADER, schema = @Schema(type = "string"))
-  public void removeTenantAdmin(@Schema(description = "用户唯一id", example = "sy_ff3c1b52f8b34c45ab2cf24b6bccd480") @RequestParam String userId) {
+  public void removeTenantAdmin(@Schema(description = "关系id", example = "sy_ff3c1b52f8b34c45ab2cf24b6bccd480") @RequestParam String tenantUserId) {
 
-    tenantUserBizService.removeTenantAdmin(userId);
+    tenantUserBizService.removeTenantAdmin(tenantUserId);
   }
 }
 
