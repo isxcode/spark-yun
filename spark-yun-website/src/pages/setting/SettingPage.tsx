@@ -56,6 +56,11 @@ function SettingPage() {
         <Form.Item label="简介">
           <TextArea rows={4} />
         </Form.Item>
+        <Form.Item  wrapperCol={{ offset: 15, span: 16 }}>
+          <Button type="primary" htmlType="submit">
+            保存
+          </Button>
+        </Form.Item>
       </Form>
     </>
   );
