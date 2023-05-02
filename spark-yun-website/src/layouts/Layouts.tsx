@@ -5,20 +5,16 @@ import './Layouts.less'
 import {
   ApartmentOutlined,
   ApiOutlined,
-  AppstoreOutlined,
   CloudOutlined,
   CopyrightOutlined,
   DashboardOutlined,
   DatabaseOutlined,
   DownOutlined,
-  FireOutlined,
-  FundProjectionScreenOutlined,
   HomeOutlined,
   NodeIndexOutlined,
   ProfileOutlined,
   SearchOutlined,
   SettingOutlined,
-  ShopOutlined,
   TeamOutlined,
   ToolOutlined,
   UserOutlined
@@ -35,7 +31,34 @@ function Layouts() {
 
   const {Header, Content, Sider} = Layout
 
-  const memberMenus: MenuProps['items'] = [
+  const genMenus = () => {
+
+    if (localStorage.getItem("Role") == 'ROLE_SYS_ADMIN') {
+      return adminMenus;
+    }
+    if (localStorage.getItem("Role") == 'ROLE_TENANT_MEMBER') {
+      return memberMenus;
+    }
+    memberMenus.push({
+      key: 14,
+      label: '租户成员',
+      icon: <TeamOutlined/>,
+      onClick: () => {
+        navigate('/tenant_user')
+      }
+    })
+    memberMenus.push({
+      key: 12,
+      label: '后台设置',
+      icon: <ToolOutlined/>,
+      onClick: () => {
+        navigate('/auth')
+      }
+    })
+    return memberMenus;
+  };
+
+  const memberMenus = [
     {
       key: 1,
       label: '首页',
@@ -76,30 +99,30 @@ function Layouts() {
         navigate('/auth')
       }
     },
-    {
-      key: 22,
-      label: '模型仓库',
-      icon:<ShopOutlined />,
-      onClick: () => {
-        navigate('/auth')
-      }
-    },
-    {
-      key: 6,
-      label: '数据建模',
-      icon: <AppstoreOutlined/>,
-      onClick: () => {
-        navigate('/auth')
-      }
-    },
-    {
-      key: 8,
-      label: 'BI酷屏',
-      icon: <FundProjectionScreenOutlined/>,
-      onClick: () => {
-        navigate('/auth')
-      }
-    },
+    // {
+    //   key: 22,
+    //   label: '模型仓库',
+    //   icon:<ShopOutlined />,
+    //   onClick: () => {
+    //     navigate('/auth')
+    //   }
+    // },
+    // {
+    //   key: 6,
+    //   label: '数据建模',
+    //   icon: <AppstoreOutlined/>,
+    //   onClick: () => {
+    //     navigate('/auth')
+    //   }
+    // },
+    // {
+    //   key: 8,
+    //   label: 'BI酷屏',
+    //   icon: <FundProjectionScreenOutlined/>,
+    //   onClick: () => {
+    //     navigate('/auth')
+    //   }
+    // },
     {
       key: 9,
       label: '数据资产',
@@ -111,7 +134,7 @@ function Layouts() {
     {
       key: 21,
       label: '数据地图',
-      icon: <SearchOutlined />,
+      icon: <SearchOutlined/>,
       onClick: () => {
         navigate('/auth')
       }
@@ -124,37 +147,21 @@ function Layouts() {
         navigate('/auth')
       }
     },
-    {
-      key: 11,
-      label: 'AI计算',
-      icon: <FireOutlined/>,
-      onClick: () => {
-        navigate('/auth')
-      }
-    },
-    {
-      key: 14,
-      label: '租户成员',
-      icon: <TeamOutlined/>,
-      onClick: () => {
-        navigate('/tenant_user')
-      }
-    },
-    {
-      key: 12,
-      label: '后台设置',
-      icon: <ToolOutlined />,
-      onClick: () => {
-        navigate('/auth')
-      }
-    }
+    // {
+    //   key: 11,
+    //   label: 'AI计算',
+    //   icon: <FireOutlined/>,
+    //   onClick: () => {
+    //     navigate('/auth')
+    //   }
+    // },
   ];
 
   const adminMenus: MenuProps['items'] = [
     {
       key: 18,
       label: '用户中心',
-      icon: <UserOutlined />,
+      icon: <UserOutlined/>,
       onClick: () => {
         navigate('/user')
       },
@@ -162,7 +169,7 @@ function Layouts() {
     {
       key: 17,
       label: '租户列表',
-      icon: <ProfileOutlined />,
+      icon: <ProfileOutlined/>,
       onClick: () => {
         navigate('/tenant')
       }
@@ -178,7 +185,7 @@ function Layouts() {
     {
       key: 19,
       label: '证书安装',
-      icon: <CopyrightOutlined />,
+      icon: <CopyrightOutlined/>,
       onClick: () => {
         navigate('/license')
       }
@@ -303,7 +310,7 @@ function Layouts() {
         <Layout>
           <Sider width={200} theme={"light"}>
             <Menu className={'sy-sider'} defaultSelectedKeys={['1']}
-                  items={localStorage.getItem("Role") == 'ROLE_SYS_ADMIN' ? adminMenus : memberMenus} mode="inline"
+                  items={genMenus()} mode="inline"
                   style={{overflowY: 'scroll', maxHeight: '90vh', height: '90vh'}}/>
             {/*<div style={{*/}
             {/*  position: 'absolute', bottom: 10, textAlign: 'center', width: '100%', color: 'darkgrey',*/}
