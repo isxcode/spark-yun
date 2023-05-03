@@ -14,6 +14,7 @@ import TenantUserPage from "../pages/tenant/user/TenantUserPage";
 import TenantPage from "../pages/tenant/TenantPage";
 import LicensePage from "../pages/license/LicensePage";
 import SettingPage from "../pages/setting/SettingPage";
+import ApiPage from "../pages/api/ApiPage";
 
 export default function MainRoute() {
   return (
@@ -90,6 +91,14 @@ export default function MainRoute() {
               element={
                 <RequireAuth>
                   <SettingPage/>
+                </RequireAuth>
+              }
+            />
+            <Route
+              path={'/api'}
+              element={
+                <RequireAuth>
+                  <ApiPage/>
                 </RequireAuth>
               }
             />

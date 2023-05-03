@@ -144,7 +144,7 @@ function Layouts() {
       label: '自定义Api',
       icon: <ApiOutlined/>,
       onClick: () => {
-        navigate('/auth')
+        navigate('/api')
       }
     },
     // {
