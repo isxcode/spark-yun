@@ -5,7 +5,7 @@ name: deploy docsify
 on:
   push:
     branches:
-      - latest
+      - xx
 
 # 配置阿里云镜像仓库信息
 env:
