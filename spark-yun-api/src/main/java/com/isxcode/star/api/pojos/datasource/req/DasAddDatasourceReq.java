@@ -2,7 +2,7 @@ package com.isxcode.star.api.pojos.datasource.req;
 
 import javax.validation.constraints.NotEmpty;
 
-import com.isxcode.star.api.constants.DatasourceType;
+import com.isxcode.star.api.constants.datasource.DatasourceType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
@@ -22,7 +22,6 @@ public class DasAddDatasourceReq {
   private String username;
 
   @Schema(title = "数据源密码", example = "ispong123")
-  @NotEmpty(message = "密码不能为空")
   private String passwd;
 
   @Schema(title = "备注", example = "该数据源为本地mysql数据源，请勿删除")

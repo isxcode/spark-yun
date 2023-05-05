@@ -5,7 +5,6 @@ import com.isxcode.star.api.constants.Roles;
 import com.isxcode.star.api.constants.SecurityConstants;
 import com.isxcode.star.api.pojos.datasource.req.DasAddDatasourceReq;
 import com.isxcode.star.api.pojos.datasource.req.DasQueryDatasourceReq;
-import com.isxcode.star.api.pojos.datasource.req.DasTestConnectReq;
 import com.isxcode.star.api.pojos.datasource.req.DasUpdateDatasourceReq;
 import com.isxcode.star.api.pojos.datasource.res.DasQueryDatasourceRes;
 import com.isxcode.star.api.pojos.datasource.res.DasTestConnectRes;
@@ -78,11 +77,11 @@ public class DatasourceController {
 
   @Secured({Roles.TENANT_MEMBER, Roles.TENANT_ADMIN})
   @Operation(summary = "测试数据源连接接口")
-  @PostMapping("/testConnect")
+  @GetMapping("/testConnect")
   @SuccessResponse("检测完成")
   @Parameter(name = SecurityConstants.HEADER_TENANT_ID, description = "租户id", required = true, in = ParameterIn.HEADER, schema = @Schema(type = "string"))
-  public DasTestConnectRes testConnect(@Valid @RequestBody DasTestConnectReq dasTestConnectRes) {
+  public DasTestConnectRes testConnect(@Schema(description = "数据源唯一id", example = "sy_344c3d583fa344f7a2403b19c5a654dc") @RequestParam String datasourceId) {
 
-    return datasourceBizService.testConnect(dasTestConnectRes);
+    return datasourceBizService.testConnect(datasourceId);
   }
 }

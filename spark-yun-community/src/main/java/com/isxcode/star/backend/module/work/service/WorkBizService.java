@@ -2,7 +2,7 @@ package com.isxcode.star.backend.module.work.service;
 
 import com.alibaba.fastjson.JSON;
 import com.isxcode.star.api.constants.CodeConstants;
-import com.isxcode.star.api.constants.DatasourceType;
+import com.isxcode.star.api.constants.datasource.DatasourceType;
 import com.isxcode.star.api.constants.EngineNodeStatus;
 import com.isxcode.star.api.constants.WorkStatus;
 import com.isxcode.star.api.constants.WorkType;

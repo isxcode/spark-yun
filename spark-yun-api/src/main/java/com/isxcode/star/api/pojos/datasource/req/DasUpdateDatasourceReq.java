@@ -25,7 +25,6 @@ public class DasUpdateDatasourceReq {
   private String username;
 
   @Schema(title = "数据源密码", example = "ispong123")
-  @NotEmpty(message = "密码不能为空")
   private String passwd;
 
   @Schema(title = "备注", example = "该数据源为本地mysql数据源，请勿删除")
