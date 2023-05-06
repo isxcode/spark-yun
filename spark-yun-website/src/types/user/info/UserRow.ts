@@ -11,6 +11,5 @@ export interface UserRow {
 
   status?: string
 
-  createDateTime?: string;
+  createDateTime?: string
 }
-

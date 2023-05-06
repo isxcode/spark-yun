@@ -2,21 +2,19 @@ export interface TenantRow {
 
   id?: string
 
-  name?: string;
+  name?: string
 
-  usedMemberNum?: string;
+  usedMemberNum?: string
 
-  maxMemberNum?: string;
+  maxMemberNum?: string
 
-  usedWorkflowNum?: string;
+  usedWorkflowNum?: string
 
-  maxWorkflowNum?: string;
+  maxWorkflowNum?: string
 
-  status?: string;
+  status?: string
 
-  remark?: string;
+  remark?: string
 
-  checkDateTime?: string;
+  checkDateTime?: string
 }
-
-

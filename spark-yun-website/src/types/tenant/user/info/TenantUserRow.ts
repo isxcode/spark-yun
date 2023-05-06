@@ -15,7 +15,6 @@ export interface TenantUserRow {
 
   roleCode?: string
 
-  createDateTime?: string;
+  createDateTime?: string
 
 }
-

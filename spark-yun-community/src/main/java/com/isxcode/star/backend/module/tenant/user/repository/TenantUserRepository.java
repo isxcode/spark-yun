@@ -28,7 +28,6 @@ public interface TenantUserRepository extends JpaRepository<TenantUserEntity, St
     "   U.username as username, " +
     "   U.phone as phone, " +
     "   U.email as email, " +
-    "   DATE_FORMAT(T.createDateTime, '%Y-%m-%d %H:%i:%s') as createDateTime, " +
     "   T.roleCode as roleCode " +
     "from TenantUserEntity T left join UserEntity U on T.userId = U.id  " +
     "WHERE U.roleCode != 'ROLE_SYS_ADMIN' " +

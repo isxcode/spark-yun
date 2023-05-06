@@ -11,12 +11,11 @@ export interface LicenseRow {
 
   endDateTime?: string
 
-  maxTenantNum?: string;
+  maxTenantNum?: string
 
-  maxWorkflowNum?: string;
+  maxWorkflowNum?: string
 
-  maxMemberNum?: string;
+  maxMemberNum?: string
 
-  status?: string;
+  status?: string
 }
-

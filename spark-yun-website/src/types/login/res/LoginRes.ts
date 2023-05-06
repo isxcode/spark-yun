@@ -1,11 +1,11 @@
 export interface LoginRes {
   username: string
 
-  token: string;
+  token: string
 
-  tenantId: string;
+  tenantId: string
 
-  role: string;
+  role: string
 
-  tenantName: string;
+  tenantName: string
 }

@@ -7,23 +7,23 @@ import { type DatasourceRow } from '../../types/datasource/info/DatasourceRow'
 import { type BasePagination, defaultPagination } from '../../types/base/BasePagination'
 import { type QueryDatasourceReq } from '../../types/datasource/req/QueryDatasourceReq'
 import { delDatasourceApi, queryDatasourceApi, testDatasourceApi } from '../../services/datasource/DatasourceService'
-import {TenantRow} from "../../types/tenant/info/TenantRow";
+import { TenantRow } from '../../types/tenant/info/TenantRow'
 import {
   checkTenantApi,
   delTenantApi,
   disableTenantApi,
   enableTenantApi,
   queryTenantsApi
-} from "../../services/tenant/TenantService";
-import {QueryTenantsReq} from "../../types/tenant/req/QueryTenantsReq";
-import {enableUserApi} from "../../services/user/UserService";
-import {TenantModal} from "../../modals/tenant/TenantModal";
+} from '../../services/tenant/TenantService'
+import { QueryTenantsReq } from '../../types/tenant/req/QueryTenantsReq'
+import { enableUserApi } from '../../services/user/UserService'
+import { TenantModal } from '../../modals/tenant/TenantModal'
 
 function TenantPage() {
-  const [tenants, setTenants] = useState<TenantRow[]>([]);
+  const [tenants, setTenants] = useState<TenantRow[]>([])
   const [tenant, setTenant] = useState<TenantRow>()
   const [pagination, setPagination] = useState<BasePagination>(defaultPagination)
-  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isModalVisible, setIsModalVisible] = useState(false)
 
   useEffect(() => {
     fetchTenant()
@@ -59,26 +59,26 @@ function TenantPage() {
   const enableTenant = (tenantId: string | undefined) => {
     enableTenantApi(tenantId).then(function () {
       fetchTenant()
-    });
+    })
   }
 
   const disableTenant = (tenantId: string | undefined) => {
     disableTenantApi(tenantId).then(function () {
       fetchTenant()
-    });
+    })
   }
 
   const checkTenant = (tenantId: string | undefined) => {
     checkTenantApi(tenantId).then(function () {
       fetchTenant()
-    });
+    })
   }
 
   const delTenant = (tenantId: string | undefined) => {
     delTenantApi(tenantId).then(function () {
       fetchTenant()
     })
-  };
+  }
 
   const handleSearch = () => {
     setPagination((prevPagination) => ({
@@ -111,7 +111,9 @@ function TenantPage() {
       key: 'member',
       width: 120,
       render: (text, record) => (
-        <>{record.usedMemberNum}/{record.maxMemberNum}</>
+        <>
+          {record.usedMemberNum}/{record.maxMemberNum}
+        </>
       )
     },
     {
@@ -120,7 +122,9 @@ function TenantPage() {
       key: 'workflow',
       width: 130,
       render: (text, record) => (
-        <>{record.usedWorkflowNum}/{record.maxWorkflowNum}</>
+        <>
+          {record.usedWorkflowNum}/{record.maxWorkflowNum}
+        </>
       )
     },
     {
@@ -132,7 +136,8 @@ function TenantPage() {
         <Space size="middle">
           {record.status === 'ENABLE' && <Tag color="green">启用</Tag>}
           {record.status === 'DISABLE' && <Tag color="red">禁用</Tag>}
-        </Space>),
+        </Space>
+      )
     },
     {
       title: '检测时间',
@@ -162,36 +167,40 @@ function TenantPage() {
           <a
             className={'sy-table-a'}
             onClick={() => {
-              checkTenant(record.id);
+              checkTenant(record.id)
             }}>
             同步
           </a>
-          {
-            record.status === "ENABLE" ? <a
+          {record.status === 'ENABLE'
+? (
+            <a
               className={'sy-table-a'}
               onClick={() => {
                 disableTenant(record.id)
               }}>
               禁用
-            </a> : <a
+            </a>
+          )
+: (
+            <a
               className={'sy-table-a'}
               onClick={() => {
-                enableTenant(record.id);
+                enableTenant(record.id)
               }}>
               启用
             </a>
-          }
+          )}
           <a
             className={'sy-table-a'}
             onClick={() => {
-              delTenant(record.id);
+              delTenant(record.id)
             }}>
             删除
           </a>
         </Space>
       )
     }
-  ];
+  ]
 
   return (
     <div style={{ padding: 24 }}>

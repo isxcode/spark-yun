@@ -1,10 +1,10 @@
-import React, {useEffect} from 'react'
-import {Form, Input, Modal} from 'antd'
+import React, { useEffect } from 'react'
+import { Form, Input, Modal } from 'antd'
 import './UserModal.less'
-import {UserRow} from "../../types/user/info/UserRow";
-import {addUserApi, updateUserApi} from "../../services/user/UserService";
-import {UpdateUserReq} from "../../types/user/req/UpdateUserReq";
-import {AddUserReq} from "../../types/user/req/AddUserReq";
+import { UserRow } from '../../types/user/info/UserRow'
+import { addUserApi, updateUserApi } from '../../services/user/UserService'
+import { UpdateUserReq } from '../../types/user/req/UpdateUserReq'
+import { AddUserReq } from '../../types/user/req/AddUserReq'
 
 export const UserModal = (props: {
   isModalVisible: boolean
@@ -12,7 +12,7 @@ export const UserModal = (props: {
   handleOk: () => void
   user?: UserRow
 }) => {
-  const {isModalVisible, handleCancel, handleOk, user} = props
+  const { isModalVisible, handleCancel, handleOk, user } = props
   const [form] = Form.useForm()
 
   useEffect(() => {
@@ -58,38 +58,42 @@ export const UserModal = (props: {
         cancelText={'取消'}>
         <Form
           className={'sy-add-datasource-form'}
-          labelCol={{span: 4}}
-          wrapperCol={{span: 20}}
-          initialValues={{remember: true}}
+          labelCol={{ span: 4 }}
+          wrapperCol={{ span: 20 }}
+          initialValues={{ remember: true }}
           onFinish={onFinish}
           form={form}>
-          <Form.Item label="用户名称" name="username" rules={[{required: true, message: '名称不能为空'}]}>
-            <Input/>
+          <Form.Item label="用户名称" name="username" rules={[{ required: true, message: '名称不能为空' }]}>
+            <Input />
           </Form.Item>
 
-          <Form.Item label="账号" name="account" rules={[{required: true, message: '账号不能为空'}]}>
-            <Input/>
+          <Form.Item label="账号" name="account" rules={[{ required: true, message: '账号不能为空' }]}>
+            <Input />
           </Form.Item>
 
-          {user?.id === undefined ?
-            <Form.Item label="密码" name="passwd" rules={[{required: true, message: '密码不能为空'}]}>
-              <Input/>
-            </Form.Item> : <></>
-          }
+          {user?.id === undefined
+? (
+            <Form.Item label="密码" name="passwd" rules={[{ required: true, message: '密码不能为空' }]}>
+              <Input />
+            </Form.Item>
+          )
+: (
+            <></>
+          )}
 
           <Form.Item label="手机号" name="phone">
-            <Input/>
+            <Input />
           </Form.Item>
 
           <Form.Item label="邮箱" name="email">
-            <Input/>
+            <Input />
           </Form.Item>
 
           <Form.Item label="备注" name="remark">
-            <Input.TextArea/>
+            <Input.TextArea />
           </Form.Item>
         </Form>
       </Modal>
     </>
-  );
-};
+  )
+}

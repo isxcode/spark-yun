@@ -29,9 +29,6 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-
-import static com.isxcode.star.backend.config.WebSecurityConfig.USER_ID;
 
 /** 用户模块. */
 @Service
@@ -59,11 +56,17 @@ public class UserBizService {
     if (!userEntityOptional.isPresent()) {
       throw new SparkYunException("用户不存在");
     }
+    UserEntity userEntity = userEntityOptional.get();
 
     // 判断用户是否禁用
-    UserEntity userEntity = userEntityOptional.get();
     if (UserStatus.DISABLE.equals(userEntity.getStatus())) {
       throw new SparkYunException("该用户已被禁用");
+    }
+
+    // 如果是系统管理员，首次登录，插入配置的密码并保存
+    if (Roles.SYS_ADMIN.equals(userEntity.getRoleCode()) && Strings.isEmpty(userEntity.getPasswd())) {
+      userEntity.setPasswd(sparkYunProperties.getAdminPasswd());
+      userRepository.save(userEntity);
     }
 
     // 判断密码是否合法
@@ -71,25 +74,44 @@ public class UserBizService {
       throw new SparkYunException("账号或者密码不正确");
     }
 
-    // 获取最近一次租户信息
+    // 生成token
+    String jwtToken = JwtUtils.encrypt(sparkYunProperties.getAesSlat(), userEntity.getId(), sparkYunProperties.getJwtKey(), sparkYunProperties.getExpirationMin());
+
+    // 如果是系统管理员直接返回
+    if (Roles.SYS_ADMIN.equals(userEntity.getRoleCode())) {
+      return UsrLoginRes.builder().username(userEntity.getUsername()).token(jwtToken).role(userEntity.getRoleCode()).build();
+    }
+
+    // 获取用户最近一次租户信息
     if (Strings.isEmpty(userEntity.getCurrentTenantId())) {
       throw new SparkYunException("申请管理员，添加到租户");
     }
     Optional<TenantEntity> tenantEntityOptional = tenantRepository.findById(userEntity.getCurrentTenantId());
 
-    // 如果不是系统管理员，返回用户在租户中的角色
-    String roleCode = userEntity.getRoleCode();
-    if (!Roles.SYS_ADMIN.equals(userEntity.getRoleCode())) {
-      Optional<TenantUserEntity> tenantUserEntityOptional = tenantUserRepository.findByTenantIdAndUserId(tenantEntityOptional.get().getId(), userEntity.getId());
-      if (tenantUserEntityOptional.isPresent()) {
-        roleCode = tenantUserEntityOptional.get().getRoleCode();
+    // 如果租户不存在,则随机选择一个
+    String currentTenantId;
+    if (!tenantEntityOptional.isPresent()) {
+      List<TenantUserEntity> tenantUserEntities = tenantUserRepository.findAllByUserId(userEntity.getId());
+      if (tenantUserEntities.isEmpty()) {
+        throw new SparkYunException("申请管理员，添加到租户");
       }
+      currentTenantId = tenantUserEntities.get(0).getTenantId();
+      userEntity.setCurrentTenantId(currentTenantId);
+      userRepository.save(userEntity);
+    } else {
+      currentTenantId = tenantEntityOptional.get().getId();
+    }
+
+    // 返回用户在租户中的角色
+    Optional<TenantUserEntity> tenantUserEntityOptional = tenantUserRepository.findByTenantIdAndUserId(currentTenantId, userEntity.getId());
+    if (!tenantUserEntityOptional.isPresent()) {
+      throw new SparkYunException("申请管理员，添加到租户");
     }
 
     // 生成token并返回
-    String jwtToken = JwtUtils.encrypt(sparkYunProperties.getAesSlat(), userEntity.getId(), sparkYunProperties.getJwtKey(), sparkYunProperties.getExpirationMin());
-    return new UsrLoginRes(userEntity.getUsername(), jwtToken, userEntity.getCurrentTenantId(), tenantEntityOptional.get().getName(), roleCode);
+    return new UsrLoginRes(userEntity.getUsername(), jwtToken, currentTenantId, tenantUserEntityOptional.get().getRoleCode());
   }
+
   public void logout() {
 
     System.out.println("用户退出登录");

@@ -1,21 +1,21 @@
-import React, {useEffect, useState} from 'react'
-import {Button, Col, Input, Row, Space, Table, Tag} from 'antd'
-import {type ColumnsType} from 'antd/es/table'
+import React, { useEffect, useState } from 'react'
+import { Button, Col, Input, Row, Space, Table, Tag } from 'antd'
+import { type ColumnsType } from 'antd/es/table'
 import './TenantUserPage.less'
-import {type BasePagination, defaultPagination} from '../../../types/base/BasePagination'
-import {TenantUserRow} from "../../../types/tenant/user/info/TenantUserRow";
-import {QueryTenantUserReq} from "../../../types/tenant/user/req/QueryTenantUserReq";
+import { type BasePagination, defaultPagination } from '../../../types/base/BasePagination'
+import { TenantUserRow } from '../../../types/tenant/user/info/TenantUserRow'
+import { QueryTenantUserReq } from '../../../types/tenant/user/req/QueryTenantUserReq'
 import {
   queryTenantUserApi,
   removeTenantAdminApi,
   removeTenantUserApi,
   setTenantAdminApi
-} from "../../../services/tenant/user/TenantUserService";
-import {TenantUserModal} from "../../../modals/tenant/user/TenantUserModal";
+} from '../../../services/tenant/user/TenantUserService'
+import { TenantUserModal } from '../../../modals/tenant/user/TenantUserModal'
 
 function TenantUserPage() {
   const [tenantUsers, setTenantUsers] = useState<TenantUserRow[]>([])
-  const [tenantUser, setTenantUser] = useState<TenantUserRow>();
+  const [tenantUser, setTenantUser] = useState<TenantUserRow>()
   const [pagination, setPagination] = useState<BasePagination>(defaultPagination)
   const [isModalVisible, setIsModalVisible] = useState(false)
 
@@ -54,13 +54,13 @@ function TenantUserPage() {
     removeTenantAdminApi(userId).then(function () {
       fetchTenantUser()
     })
-  };
+  }
 
   const deleteMember = (userId: string | undefined) => {
     removeTenantUserApi(userId).then(function () {
       fetchTenantUser()
     })
-  };
+  }
 
   const handleSearch = () => {
     setPagination((prevPagination) => ({
@@ -104,28 +104,33 @@ function TenantUserPage() {
         <Space size="middle">
           {record.roleCode === 'ROLE_TENANT_ADMIN' && <Tag color="green">管理员</Tag>}
           {record.roleCode === 'ROLE_TENANT_MEMBER' && <Tag color="orange">成员</Tag>}
-        </Space>),
+        </Space>
+      )
     },
     {
       title: '操作',
       key: 'action',
       render: (_, record) => (
         <Space size="middle">
-          {
-            record.roleCode === 'ROLE_TENANT_ADMIN' ? <a
+          {record.roleCode === 'ROLE_TENANT_ADMIN'
+? (
+            <a
               className={'sy-table-a'}
               onClick={() => {
-                removeTenantAdmin(record.id);
+                removeTenantAdmin(record.id)
               }}>
               取消授权
-            </a> : <a
+            </a>
+          )
+: (
+            <a
               className={'sy-table-a'}
               onClick={() => {
-                setTenantAdmin(record.id);
+                setTenantAdmin(record.id)
               }}>
               授权管理
             </a>
-          }
+          )}
           <a
             className={'sy-table-a'}
             onClick={() => {
@@ -139,7 +144,7 @@ function TenantUserPage() {
   ]
 
   return (
-    <div style={{padding: 24}}>
+    <div style={{ padding: 24 }}>
       <Row className={'datasource-bar'}>
         <Col span={8}>
           <Button
@@ -150,13 +155,13 @@ function TenantUserPage() {
             添加成员
           </Button>
         </Col>
-        <Col span={7} offset={9} style={{textAlign: 'right', display: 'flex'}}>
+        <Col span={7} offset={9} style={{ textAlign: 'right', display: 'flex' }}>
           <Input
-            style={{marginRight: '10px'}}
+            style={{ marginRight: '10px' }}
             onPressEnter={handleSearch}
             defaultValue={queryTenantUserReq.searchKeyWord}
             onChange={(e) => {
-              setPagination({...pagination, searchKeyWord: e.target.value})
+              setPagination({ ...pagination, searchKeyWord: e.target.value })
             }}
             placeholder={'用户名/账号/手机号/邮箱'}
           />
@@ -166,13 +171,17 @@ function TenantUserPage() {
         </Col>
       </Row>
 
-      <Table columns={columns} dataSource={tenantUsers}/>
+      <Table columns={columns} dataSource={tenantUsers} />
 
-      <TenantUserModal isModalVisible={isModalVisible} handleCancel={() => {
-        setIsModalVisible(false)
-      }} handleOk={handleOk}/>
+      <TenantUserModal
+        isModalVisible={isModalVisible}
+        handleCancel={() => {
+          setIsModalVisible(false)
+        }}
+        handleOk={handleOk}
+      />
     </div>
-  );
+  )
 }
 
 export default TenantUserPage

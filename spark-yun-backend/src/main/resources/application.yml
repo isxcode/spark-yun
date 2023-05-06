@@ -6,13 +6,6 @@ server:
 
 spring:
 
-  # 身份认证
-  security:
-    user:
-      roles: ADMIN
-      name: admin
-      password: admin123
-
   # 使用配置文件
   profiles:
     active: local
@@ -30,10 +23,9 @@ spring:
       stat-view-servlet:
         enabled: true
 
-  # jpa配置˚
+  # jpa配置
   jpa:
-    database: mysql
-    show-sql: true
+    show-sql: false
     open-in-view: false
     hibernate:
       ddl-auto: none
@@ -58,14 +50,20 @@ spring:
         trace: false
         web-allow-others: true
 
+  # 定时调度
+  quartz:
+    scheduler-name: spark-yun-quartz-scheduler
+    job-store-type: jdbc
+    jdbc:
+      initialize-schema: never
+    properties:
+      org.quartz.jobStore.class: org.quartz.impl.jdbcjobstore.JobStoreTX
+      org.quartz.jobStore.driverDelegateClass: org.quartz.impl.jdbcjobstore.StdJDBCDelegate
+      org.quartz.jobStore.dataSource: quartzDataSource
+
   # 缓存
   cache:
     type: simple
-
-# 日志等级
-logging:
-  level:
-    root: info
 
 # openapi
 springdoc:
@@ -90,5 +88,9 @@ spark-yun:
     - /vip/api/custom/**
   jwt-key: spark-yun
   aes-slat: spark-yun
-  expiration-min: 60
-  resources-path: /Users/ispong/Data/resource
+  resources-path: /resources
+  agent-tar-gz-dir: /spark-yun
+  agent-bin-dir: /spark-yun/bin
+  default-agent-port: 30177
+  expiration-min: 1440
+

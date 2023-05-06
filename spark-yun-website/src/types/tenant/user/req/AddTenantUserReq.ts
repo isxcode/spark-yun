@@ -1,5 +1,5 @@
 export interface AddTenantUserReq {
-  userId: string;
+  userId: string
   tenantAdmin: boolean
-  remark: string;
+  remark: string
 }

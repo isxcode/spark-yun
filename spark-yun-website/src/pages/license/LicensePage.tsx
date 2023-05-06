@@ -1,15 +1,15 @@
-import React, {useEffect, useState} from 'react'
-import {Button, Col, Input, Row, Space, Table, Tag} from 'antd'
-import {type ColumnsType} from 'antd/es/table'
+import React, { useEffect, useState } from 'react'
+import { Button, Col, Input, Row, Space, Table, Tag } from 'antd'
+import { type ColumnsType } from 'antd/es/table'
 import './LicensePage.less'
-import {type BasePagination, defaultPagination} from '../../types/base/BasePagination'
-import {LicenseRow} from "../../types/license/info/LicenseRow";
-import {deleteLicenseApi, enableLicenseApi, queryLicenseApi} from "../../services/license/LicenseService";
-import {QueryLicenseReq} from "../../types/license/req/QueryLicenseReq";
-import {LicenseModal} from "../../modals/license/LicenseModal";
+import { type BasePagination, defaultPagination } from '../../types/base/BasePagination'
+import { LicenseRow } from '../../types/license/info/LicenseRow'
+import { deleteLicenseApi, enableLicenseApi, queryLicenseApi } from '../../services/license/LicenseService'
+import { QueryLicenseReq } from '../../types/license/req/QueryLicenseReq'
+import { LicenseModal } from '../../modals/license/LicenseModal'
 
 function LicensePage() {
-  const [licenses, setLicense] = useState<LicenseRow[]>([]);
+  const [licenses, setLicense] = useState<LicenseRow[]>([])
   const [pagination, setPagination] = useState<BasePagination>(defaultPagination)
   const [isModalVisible, setIsModalVisible] = useState(false)
 
@@ -30,14 +30,14 @@ function LicensePage() {
         ...prevPagination,
         totalItems: response.totalElements
       }))
-    });
+    })
   }
 
   const enableLicense = (licenseId: string | undefined) => {
     enableLicenseApi(licenseId).then(function () {
       fetchLicense()
     })
-  };
+  }
 
   const handleOk = () => {
     fetchLicense()
@@ -48,7 +48,7 @@ function LicensePage() {
     deleteLicenseApi(licenseId).then(function () {
       fetchLicense()
     })
-  };
+  }
 
   const handleSearch = () => {
     setPagination((prevPagination) => ({
@@ -63,7 +63,7 @@ function LicensePage() {
       title: '许可证编号',
       dataIndex: 'code',
       key: 'code',
-      width: 120,
+      width: 120
     },
     {
       title: '开始时间',
@@ -104,7 +104,8 @@ function LicensePage() {
         <Space size="middle">
           {record.status === 'ENABLE' && <Tag color="green">启用</Tag>}
           {record.status === 'DISABLE' && <Tag color="red">禁用</Tag>}
-        </Space>),
+        </Space>
+      )
     },
     {
       title: '备注',
@@ -134,27 +135,27 @@ function LicensePage() {
         </Space>
       )
     }
-  ];
+  ]
 
   return (
-    <div style={{padding: 24}}>
+    <div style={{ padding: 24 }}>
       <Row className={'datasource-bar'}>
         <Col span={8}>
           <Button
             type={'primary'}
             onClick={() => {
-              setIsModalVisible(true);
+              setIsModalVisible(true)
             }}>
             上传证书
           </Button>
         </Col>
-        <Col span={7} offset={9} style={{textAlign: 'right', display: 'flex'}}>
+        <Col span={7} offset={9} style={{ textAlign: 'right', display: 'flex' }}>
           <Input
-            style={{marginRight: '10px'}}
+            style={{ marginRight: '10px' }}
             onPressEnter={handleSearch}
             defaultValue={queryLicenseReq.searchKeyWord}
             onChange={(e) => {
-              setPagination({...pagination, searchKeyWord: e.target.value})
+              setPagination({ ...pagination, searchKeyWord: e.target.value })
             }}
             placeholder={'备注'}
           />
@@ -164,13 +165,17 @@ function LicensePage() {
         </Col>
       </Row>
 
-      <Table columns={columns} dataSource={licenses}/>
+      <Table columns={columns} dataSource={licenses} />
 
-      <LicenseModal isModalVisible={isModalVisible} handleCancel={() => {
-        setIsModalVisible(false)
-      }} handleOk={handleOk}/>
+      <LicenseModal
+        isModalVisible={isModalVisible}
+        handleCancel={() => {
+          setIsModalVisible(false)
+        }}
+        handleOk={handleOk}
+      />
     </div>
-  );
+  )
 }
 
 export default LicensePage

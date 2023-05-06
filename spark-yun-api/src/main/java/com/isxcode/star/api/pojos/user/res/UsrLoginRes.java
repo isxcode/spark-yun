@@ -2,10 +2,12 @@ package com.isxcode.star.api.pojos.user.res;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 
 @Data
 @AllArgsConstructor
+@Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class UsrLoginRes {
 
@@ -14,8 +16,6 @@ public class UsrLoginRes {
   private String token;
 
   private String tenantId;
-
-  private String tenantName;
 
   private String role;
 }

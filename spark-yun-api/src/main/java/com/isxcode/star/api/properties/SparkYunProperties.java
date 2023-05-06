@@ -56,4 +56,9 @@ public class SparkYunProperties {
    */
   private String resourcesPath;
 
+  /**
+   * 系统管理员admin密码.
+   */
+  private String adminPasswd;
+
 }

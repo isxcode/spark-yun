@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, { useState } from 'react'
 import {
   Button,
   Cascader,
@@ -14,19 +14,18 @@ import {
   Upload
 } from 'antd'
 import './SettingPage.less'
-import {PlusOutlined} from "@ant-design/icons";
+import { PlusOutlined } from '@ant-design/icons'
 
 function SettingPage() {
-
-  const { RangePicker } = DatePicker;
-  const { TextArea } = Input;
+  const { RangePicker } = DatePicker
+  const { TextArea } = Input
 
   const normFile = (e: any) => {
     if (Array.isArray(e)) {
-      return e;
+      return e
     }
-    return e?.fileList;
-  };
+    return e?.fileList
+  }
 
   return (
     <>
@@ -34,8 +33,7 @@ function SettingPage() {
         labelCol={{ span: 4 }}
         wrapperCol={{ span: 14 }}
         layout="horizontal"
-        style={{ maxWidth: 600 , marginTop: '30px', marginLeft: '30px'}}
-      >
+        style={{ maxWidth: 600, marginTop: '30px', marginLeft: '30px' }}>
         <Form.Item label="公司名称">
           <Input />
         </Form.Item>
@@ -56,14 +54,14 @@ function SettingPage() {
         <Form.Item label="简介">
           <TextArea rows={4} />
         </Form.Item>
-        <Form.Item  wrapperCol={{ offset: 15, span: 16 }}>
+        <Form.Item wrapperCol={{ offset: 15, span: 16 }}>
           <Button type="primary" htmlType="submit">
             保存
           </Button>
         </Form.Item>
       </Form>
     </>
-  );
+  )
 }
 
 export default SettingPage

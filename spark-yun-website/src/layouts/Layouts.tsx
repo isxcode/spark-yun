@@ -1,6 +1,6 @@
-import React, {useState} from 'react'
-import {Avatar, Col, Dropdown, Layout, Menu, type MenuProps, Row, Space, theme, Typography} from 'antd';
-import {Outlet, useNavigate} from 'react-router-dom'
+import React, { useState } from 'react'
+import { Avatar, Col, Dropdown, Layout, Menu, type MenuProps, Row, Space, theme, Typography } from 'antd'
+import { Outlet, useNavigate } from 'react-router-dom'
 import './Layouts.less'
 import {
   ApartmentOutlined,
@@ -19,30 +19,29 @@ import {
   ToolOutlined,
   UserOutlined
 } from '@ant-design/icons'
-import {QueryTenantsReq} from "../types/tenant/req/QueryTenantsReq";
-import {queryTenantsApi} from "../services/tenant/TenantService";
-import {TenantRow} from "../types/tenant/info/TenantRow";
+import { QueryTenantsReq } from '../types/tenant/req/QueryTenantsReq'
+import { queryTenantsApi } from '../services/tenant/TenantService'
+import { TenantRow } from '../types/tenant/info/TenantRow'
 
 function Layouts() {
   const navigate = useNavigate()
 
-  const [tenant, setTenant] = useState(localStorage.getItem("TenantName"));
-  const [tenants, setTenants] = useState<TenantRow[]>([]);
+  const [tenant, setTenant] = useState(localStorage.getItem('TenantName'))
+  const [tenants, setTenants] = useState<TenantRow[]>([])
 
-  const {Header, Content, Sider} = Layout
+  const { Header, Content, Sider } = Layout
 
   const genMenus = () => {
-
-    if (localStorage.getItem("Role") == 'ROLE_SYS_ADMIN') {
-      return adminMenus;
+    if (localStorage.getItem('Role') == 'ROLE_SYS_ADMIN') {
+      return adminMenus
     }
-    if (localStorage.getItem("Role") == 'ROLE_TENANT_MEMBER') {
-      return memberMenus;
+    if (localStorage.getItem('Role') == 'ROLE_TENANT_MEMBER') {
+      return memberMenus
     }
     memberMenus.push({
       key: 14,
       label: '租户成员',
-      icon: <TeamOutlined/>,
+      icon: <TeamOutlined />,
       onClick: () => {
         navigate('/tenant_user')
       }
@@ -50,19 +49,19 @@ function Layouts() {
     memberMenus.push({
       key: 12,
       label: '后台设置',
-      icon: <ToolOutlined/>,
+      icon: <ToolOutlined />,
       onClick: () => {
         navigate('/auth')
       }
     })
-    return memberMenus;
-  };
+    return memberMenus
+  }
 
   const memberMenus = [
     {
       key: 1,
       label: '首页',
-      icon: <HomeOutlined/>,
+      icon: <HomeOutlined />,
       onClick: () => {
         navigate('/auth')
       }
@@ -70,7 +69,7 @@ function Layouts() {
     {
       key: 3,
       label: '计算集群',
-      icon: <CloudOutlined/>,
+      icon: <CloudOutlined />,
       onClick: () => {
         navigate('/engine')
       }
@@ -78,7 +77,7 @@ function Layouts() {
     {
       key: 4,
       label: '数据源',
-      icon: <DatabaseOutlined/>,
+      icon: <DatabaseOutlined />,
       onClick: () => {
         navigate('/datasource')
       }
@@ -86,7 +85,7 @@ function Layouts() {
     {
       key: 5,
       label: '作业流',
-      icon: <NodeIndexOutlined/>,
+      icon: <NodeIndexOutlined />,
       onClick: () => {
         navigate('/workflow')
       }
@@ -94,7 +93,7 @@ function Layouts() {
     {
       key: 7,
       label: '调度历史',
-      icon: <ApartmentOutlined/>,
+      icon: <ApartmentOutlined />,
       onClick: () => {
         navigate('/auth')
       }
@@ -126,7 +125,7 @@ function Layouts() {
     {
       key: 9,
       label: '数据资产',
-      icon: <DashboardOutlined/>,
+      icon: <DashboardOutlined />,
       onClick: () => {
         navigate('/auth')
       }
@@ -134,7 +133,7 @@ function Layouts() {
     {
       key: 21,
       label: '数据地图',
-      icon: <SearchOutlined/>,
+      icon: <SearchOutlined />,
       onClick: () => {
         navigate('/auth')
       }
@@ -142,11 +141,11 @@ function Layouts() {
     {
       key: 10,
       label: '自定义Api',
-      icon: <ApiOutlined/>,
+      icon: <ApiOutlined />,
       onClick: () => {
         navigate('/api')
       }
-    },
+    }
     // {
     //   key: 11,
     //   label: 'AI计算',
@@ -155,21 +154,21 @@ function Layouts() {
     //     navigate('/auth')
     //   }
     // },
-  ];
+  ]
 
   const adminMenus: MenuProps['items'] = [
     {
       key: 18,
       label: '用户中心',
-      icon: <UserOutlined/>,
+      icon: <UserOutlined />,
       onClick: () => {
         navigate('/user')
-      },
+      }
     },
     {
       key: 17,
       label: '租户列表',
-      icon: <ProfileOutlined/>,
+      icon: <ProfileOutlined />,
       onClick: () => {
         navigate('/tenant')
       }
@@ -177,7 +176,7 @@ function Layouts() {
     {
       key: 14,
       label: '租户成员',
-      icon: <TeamOutlined/>,
+      icon: <TeamOutlined />,
       onClick: () => {
         navigate('/tenant_user')
       }
@@ -185,7 +184,7 @@ function Layouts() {
     {
       key: 19,
       label: '证书安装',
-      icon: <CopyrightOutlined/>,
+      icon: <CopyrightOutlined />,
       onClick: () => {
         navigate('/license')
       }
@@ -193,17 +192,17 @@ function Layouts() {
     {
       key: 15,
       label: '系统设置',
-      icon: <SettingOutlined/>,
+      icon: <SettingOutlined />,
       onClick: () => {
         navigate('/setting')
       }
     }
-  ];
+  ]
 
   const items2: MenuProps['items'] = [
     {
       key: '1',
-      label: '设置',
+      label: '设置'
     },
     {
       key: '2',
@@ -213,69 +212,68 @@ function Layouts() {
         localStorage.removeItem('Token')
         window.location.reload()
       }
-    },
-  ];
+    }
+  ]
 
-  const items: MenuProps['items'] =
-    tenants.map((row) => {
-      const rowData = {
-        key: "", label: "", onClick: () => {
-        }
-      }
-      rowData.key = row.id as string;
-      rowData.label = row.name as string
-      rowData.onClick = () => {
-        console.log(row)
-        setTenant(row.name as string);
-        localStorage.setItem("Tenant", row.id as string);
-      }
-      return rowData
-    });
+  const items: MenuProps['items'] = tenants.map((row) => {
+    const rowData = {
+      key: '',
+      label: '',
+      onClick: () => {}
+    }
+    rowData.key = row.id as string
+    rowData.label = row.name as string
+    rowData.onClick = () => {
+      console.log(row)
+      setTenant(row.name as string)
+      localStorage.setItem('Tenant', row.id as string)
+    }
+    return rowData
+  })
 
   const {
-    token: {colorBgContainer, colorPrimary}
+    token: { colorBgContainer, colorPrimary }
   } = theme.useToken()
 
   const queryTenantsReq: QueryTenantsReq = {
     page: 1,
     pageSize: 999,
-    searchKeyWord: ""
+    searchKeyWord: ''
   }
 
   const fetchTenant = () => {
     queryTenantsApi(queryTenantsReq).then(function (response) {
       setTenants(response.content)
     })
-  };
+  }
 
   return (
     <>
-      <Layout style={{minHeight: '100vh'}}>
+      <Layout style={{ minHeight: '100vh' }}>
         <Header className={'sy-header'}>
           <Row align="middle">
             <Col span={8}>
-              <Row justify={'start'} style={{minWidth: '320px'}}>
+              <Row justify={'start'} style={{ minWidth: '320px' }}>
                 <Space>
-                  <Col style={{minWidth: '160px'}}>
+                  <Col style={{ minWidth: '160px' }}>
                     <div className={'sy-logo'} onClick={() => window.open('https://zhiqingyun.isxcode.com')}>
                       至轻云
                     </div>
                   </Col>
-                  <Col style={{minWidth: '150px', display: 'flex', alignItems: 'center'}}>
+                  <Col style={{ minWidth: '150px', display: 'flex', alignItems: 'center' }}>
                     <Dropdown
                       onOpenChange={() => {
-                        fetchTenant();
+                        fetchTenant()
                       }}
                       menu={{
                         items,
                         selectable: true,
-                        defaultSelectedKeys: [tenant as string],
-                      }}
-                    >
+                        defaultSelectedKeys: [tenant as string]
+                      }}>
                       <Typography.Link>
-                        <Space style={{color: colorPrimary}}>
+                        <Space style={{ color: colorPrimary }}>
                           {tenant}
-                          <DownOutlined/>
+                          <DownOutlined />
                         </Space>
                       </Typography.Link>
                     </Dropdown>
@@ -284,9 +282,9 @@ function Layouts() {
               </Row>
             </Col>
             <Col span={8} offset={8}>
-              <Row justify={'end'} style={{minWidth: '100px'}}>
+              <Row justify={'end'} style={{ minWidth: '100px' }}>
                 <Space>
-                  <Col style={{minWidth: '80px'}}>
+                  <Col style={{ minWidth: '80px' }}>
                     <a
                       className={'sy-table-a sy-help-doc-a'}
                       onClick={() => {
@@ -295,9 +293,9 @@ function Layouts() {
                       帮助文档
                     </a>
                   </Col>
-                  <Col style={{minWidth: '40px'}}>
-                    <Dropdown menu={{items: items2}} placement="bottomRight" arrow>
-                      <Avatar style={{backgroundColor: '#e25a1b', verticalAlign: 'middle'}} size="large" gap={4}>
+                  <Col style={{ minWidth: '40px' }}>
+                    <Dropdown menu={{ items: items2 }} placement="bottomRight" arrow>
+                      <Avatar style={{ backgroundColor: '#e25a1b', verticalAlign: 'middle' }} size="large" gap={4}>
                         {localStorage.getItem('Username')}
                       </Avatar>
                     </Dropdown>
@@ -308,15 +306,19 @@ function Layouts() {
           </Row>
         </Header>
         <Layout>
-          <Sider width={200} theme={"light"}>
-            <Menu className={'sy-sider'} defaultSelectedKeys={['1']}
-                  items={genMenus()} mode="inline"
-                  style={{overflowY: 'scroll', maxHeight: '90vh', height: '90vh'}}/>
-            {/*<div style={{*/}
-            {/*  position: 'absolute', bottom: 10, textAlign: 'center', width: '100%', color: 'darkgrey',*/}
-            {/*  fontSize: '14px'*/}
-            {/*}}>v0.0.1*/}
-            {/*</div>*/}
+          <Sider width={200} theme={'light'}>
+            <Menu
+              className={'sy-sider'}
+              defaultSelectedKeys={['1']}
+              items={genMenus()}
+              mode="inline"
+              style={{ overflowY: 'scroll', maxHeight: '90vh', height: '90vh' }}
+            />
+            {/* <div style={{ */}
+            {/*  position: 'absolute', bottom: 10, textAlign: 'center', width: '100%', color: 'darkgrey', */}
+            {/*  fontSize: '14px' */}
+            {/* }}>v0.0.1 */}
+            {/* </div> */}
           </Sider>
           <Layout>
             <Content
@@ -325,13 +327,13 @@ function Layouts() {
                 margin: 0,
                 background: colorBgContainer
               }}>
-              <Outlet/>
+              <Outlet />
             </Content>
           </Layout>
         </Layout>
       </Layout>
     </>
-  );
+  )
 }
 
 export default Layouts

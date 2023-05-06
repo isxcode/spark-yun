@@ -1,5 +1,5 @@
 export interface AddUserReq {
-  username: string;
+  username: string
   account: string
   passwd: string
   phone: string

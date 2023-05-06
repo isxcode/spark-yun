@@ -2,15 +2,18 @@
 FROM openjdk:8
 
 # 设置挂载点
-VOLUME /h2
+VOLUME /resources
 
 ARG ADMIN_PASSWORD='admin123'
 
 # 创建文件夹
-RUN mkdir /spark-yun
+RUN mkdir -p /spark-yun/resources/config
 
 # 将jar包拷贝到容器容器中
 COPY ./spark-yun-backend/build/libs/spark-yun-backend.jar /spark-yun/app.jar
+
+# 拷贝demo配置文件
+COPY ./spark-yun-backend/src/main/resources/application-demo.yml /spark-yun/resources/config/application-demo.yml
 
 # 拷贝代理安装包
 COPY ./spark-yun-dist/build/distributions/spark-yun-agent.tar.gz /spark-yun/spark-yun-agent.tar.gz
@@ -24,15 +27,19 @@ EXPOSE 8080
 ENV ADMIN_PASSWORD=${ADMIN_PASSWORD}
 
 # 执行命令运行spring项目
-CMD java -jar /spark-yun/app.jar --spring.profiles.active=demo --spring.security.user.password=${ADMIN_PASSWORD}
+CMD java -jar /spark-yun/app.jar --spring.profiles.active=demo --spring.config.additional-location=/spark-yun/resources/config/application-demo.yml --spark-yun.admin-passwd=${ADMIN_PASSWORD}
 
 # 构建多平台镜像
+# docker buildx install
 # docker buildx create --name spark-yun-builder
 # docker buildx use spark-yun-builder
 # docker buildx build --platform linux/amd64,linux/arm64/v8 -t isxcode/zhiqingyun:latest -f ./Dockerfile . --push
 
-# 本地脚本
-# docker run --restart=always --name zhiqingyun -v /Users/ispong/.h2:/h2  -p 30211:8080 -d isxcode/zhiqingyun:0.0.2
+# 本地脚本 (需要先退出多平台镜像)
+# docker buildx uninstall
+# gradle docker
+# docker run --restart=always --name zhiqingyun -v /Users/ispong/Data/resources:/resources -p 30211:8080 -e ADMIN_PASSWORD=ispong123 -d isxcode/zhiqingyun:0.0.3
+# 在resources下面创建 h2文件夹 licenses文件夹 config配置文件夹
 
 # 远程启动
 # docker stop zhiqingyun

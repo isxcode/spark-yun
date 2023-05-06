@@ -1,20 +1,20 @@
-import React, {useEffect, useState} from 'react'
-import {Button, Col, Input, Row, Space, Table, Tag} from 'antd'
-import {type ColumnsType} from 'antd/es/table'
+import React, { useEffect, useState } from 'react'
+import { Button, Col, Input, Row, Space, Table, Tag } from 'antd'
+import { type ColumnsType } from 'antd/es/table'
 import './ApiPage.less'
-import {type BasePagination, defaultPagination} from '../../types/base/BasePagination'
-import {delDatasourceApi} from '../../services/datasource/DatasourceService'
-import {UserRow} from "../../types/user/info/UserRow";
-import {delUserApi, disableUserApi, enableUserApi, queryAllUsersApi} from "../../services/user/UserService";
-import {QueryAllUserReq} from "../../types/user/req/QueryAllUserReq";
-import {UserModal} from "../../modals/user/UserModal";
-import {ApiModal} from "../../modals/api/ApiModal";
+import { type BasePagination, defaultPagination } from '../../types/base/BasePagination'
+import { delDatasourceApi } from '../../services/datasource/DatasourceService'
+import { UserRow } from '../../types/user/info/UserRow'
+import { delUserApi, disableUserApi, enableUserApi, queryAllUsersApi } from '../../services/user/UserService'
+import { QueryAllUserReq } from '../../types/user/req/QueryAllUserReq'
+import { UserModal } from '../../modals/user/UserModal'
+import { ApiModal } from '../../modals/api/ApiModal'
 
 function ApiPage() {
   const [users, setUsers] = useState<UserRow[]>([])
   const [user, setUser] = useState<UserRow>()
   const [pagination, setPagination] = useState<BasePagination>(defaultPagination)
-  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isModalVisible, setIsModalVisible] = useState(false)
 
   useEffect(() => {
     fetchUsers()
@@ -34,7 +34,7 @@ function ApiPage() {
         totalItems: response.totalElements
       }))
     })
-  };
+  }
 
   const handleOk = () => {
     fetchUsers()
@@ -44,7 +44,7 @@ function ApiPage() {
   const delUser = (datasourceId: string | undefined) => {
     delUserApi(datasourceId).then(function () {
       fetchUsers()
-    });
+    })
   }
 
   const enableUser = (userId: string | undefined) => {
@@ -101,7 +101,8 @@ function ApiPage() {
         <Space size="middle">
           {record.status === 'ENABLE' && <Tag color="green">启用</Tag>}
           {record.status === 'DISABLE' && <Tag color="red">禁用</Tag>}
-        </Space>),
+        </Space>
+      )
     },
     {
       title: '操作',
@@ -116,21 +117,25 @@ function ApiPage() {
             }}>
             编辑
           </a>
-          {
-            record.status === "ENABLE" ? <a
+          {record.status === 'ENABLE'
+? (
+            <a
               className={'sy-table-a'}
               onClick={() => {
                 disableUser(record.id)
               }}>
               禁用
-            </a> : <a
+            </a>
+          )
+: (
+            <a
               className={'sy-table-a'}
               onClick={() => {
                 enableUser(record.id)
               }}>
               启用
             </a>
-          }
+          )}
           <a
             className={'sy-table-a'}
             onClick={() => {
@@ -148,7 +153,7 @@ function ApiPage() {
         </Space>
       )
     }
-  ];
+  ]
 
   return (
     <div style={{ padding: 24 }}>

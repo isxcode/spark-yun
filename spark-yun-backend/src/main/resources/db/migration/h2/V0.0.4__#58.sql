@@ -4,9 +4,9 @@ create table if not exists SY_TENANT
   id                      varchar(200)  not null unique primary key comment '租户唯一id',
   name                    varchar(200)  not null comment '租户名称',
   used_member_num         int           not null comment '已使用成员数',
-  max_member_num          int comment '最大成员数',
+  max_member_num          int           not null comment '最大成员数',
   used_workflow_num       int           not null comment '已使用作业流数',
-  max_workflow_num        int comment '最大作业流数',
+  max_workflow_num        int           not null comment '最大作业流数',
   status                  varchar(200)  not null comment '租户状态',
   introduce               varchar(500) comment '租户简介',
   remark                  varchar(500) comment '租户描述',
@@ -19,14 +19,13 @@ create table if not exists SY_TENANT
   deleted                 int default 0 not null comment '逻辑删除'
 );
 
-
 -- 用户表
 create table if not exists SY_USER
 (
   id                      varchar(200)  not null unique primary key comment '用户唯一id',
   username                varchar(200)  not null comment '用户名称',
-  account                 varchar(200)  not null unique comment '用户账号',
-  passwd                  varchar(200)  not null comment '账号密码',
+  account                 varchar(200)  not null comment '用户账号',
+  passwd                  varchar(200) comment '账号密码',
   phone                   varchar(200) comment '手机号',
   email                   varchar(200) comment '邮箱',
   introduce               varchar(500) comment '简介',
@@ -50,6 +49,7 @@ create table if not exists SY_TENANT_USERS
   tenant_id               varchar(200)  not null comment '租户id',
   role_code               varchar(200)  not null comment '角色编码',
   status                  varchar(200)  not null comment '用户状态',
+  remark                  varchar(200) comment '备注',
   create_by               varchar(200)  not null comment '创建人',
   create_date_time        datetime      not null comment '创建时间',
   last_modified_by        varchar(200)  not null comment '更新人',
@@ -186,5 +186,51 @@ create table if not exists SY_WORK_CONFIG
 -- 初始化系统管理员
 insert into SY_USER (id, username, account, passwd, role_code, status, create_by, create_date_time, last_modified_by,
                      last_modified_date_time, version_number)
-values ('admin_id', '系统管理员', 'admin', 'admin123', 'ROLE_SYS_ADMIN', 'ENABLE', 'admin_id', now(), 'admin_id', now(),
+values ('admin_id', '系统管理员', 'admin', '', 'ROLE_SYS_ADMIN', 'ENABLE', 'admin_id', now(), 'admin_id', now(),
         0);
+
+-- 许可证表
+create table if not exists SY_LICENSE
+(
+  id                      varchar(200)  not null unique primary key comment '许可证唯一id',
+  code                    varchar(200)  not null comment '许可证编号',
+  company_name            varchar(200)  not null comment '公司名称',
+  logo                    varchar(2000) not null comment '公司logo',
+  remark                  varchar(2000) comment '许可证备注',
+  issuer                  varchar(200)  not null comment '许可证签发人',
+  start_date_time         datetime      not null comment '许可证起始时间',
+  end_date_time           datetime      not null comment '许可证到期时间',
+  max_tenant_num          int comment '最大租户数',
+  max_member_num          int comment '最大成员数',
+  max_workflow_num        int comment '最大作业流数',
+  status                  varchar(200)  not null comment '证书状态',
+  create_by               varchar(200)  not null comment '创建人',
+  create_date_time        datetime      not null comment '创建时间',
+  last_modified_by        varchar(200)  not null comment '更新人',
+  last_modified_date_time datetime      not null comment '更新时间',
+  version_number          int           not null comment '版本号',
+  deleted                 int default 0 not null comment '逻辑删除'
+);
+
+-- 自定义API表
+create table if not exists SY_API
+(
+  id                      varchar(200)  not null unique primary key comment '唯一API的id',
+  name                    varchar(200)  not null comment 'API名称',
+  path                    varchar(200)  not null comment 'API访问地址',
+  api_type                varchar(200)  not null comment 'API类型',
+  remark                  varchar(2000) comment 'API备注',
+  req_header              varchar(2000) comment '请求头',
+  req_body                varchar(2000) comment '请求体',
+  api_sql                 varchar(2000) not null comment '执行的sql',
+  res_body                varchar(2000) not null comment '响应体',
+  datasource_id           varchar(200)  not null comment '数据源id',
+  status                  varchar(200)  not null comment 'API状态',
+  create_by               varchar(200)  not null comment '创建人',
+  create_date_time        datetime      not null comment '创建时间',
+  last_modified_by        varchar(200)  not null comment '更新人',
+  last_modified_date_time datetime      not null comment '更新时间',
+  version_number          int           not null comment '版本号',
+  deleted                 int default 0 not null comment '逻辑删除',
+  tenant_id               varchar(200)  not null comment '租户id'
+);

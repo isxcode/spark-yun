@@ -2,8 +2,13 @@ spark-yun:
   agent-tar-gz-dir: /Users/ispong/Isxcode/spark-yun/spark-yun-dist/build/distributions
   agent-bin-dir: /Users/ispong/Isxcode/spark-yun/spark-yun-dist/src/main/bin
   default-agent-port: 30177
+  resources-path: /Users/ispong/Data/resource
+  expiration-min: 1440
 
 spring:
+
+  jpa:
+    database: mysql
 
   # 支持h2数据库
 #  flyway:
@@ -19,7 +24,7 @@ spring:
     url: jdbc:mysql://localhost:30306/zhiqingyun
     user: root
     password: ispong123
-    locations: classpath:db/migration/mysql/
+    locations: classpath:db/migration/mysql
     enabled: false
 
   #  datasource:
@@ -35,17 +40,13 @@ spring:
     username: root
     password: ispong123
 
-  # 定时调度
   quartz:
-    scheduler-name: spark-yun-quartz-scheduler
-    job-store-type: jdbc
-    jdbc:
-      initialize-schema: never # 项目第一次初始化需要改为alawys never
     properties:
-      org.quartz.jobStore.class: org.quartz.impl.jdbcjobstore.JobStoreTX
-      org.quartz.jobStore.driverDelegateClass: org.quartz.impl.jdbcjobstore.StdJDBCDelegate
-      org.quartz.jobStore.dataSource: quartzDataSource
       org.quartz.dataSource.quartzDataSource.driver: com.mysql.cj.jdbc.Driver
       org.quartz.dataSource.quartzDataSource.URL: jdbc:mysql://localhost:30306/zhiqingyun
       org.quartz.dataSource.quartzDataSource.user: root
       org.quartz.dataSource.quartzDataSource.password: ispong123
+
+logging:
+  level:
+    root: info

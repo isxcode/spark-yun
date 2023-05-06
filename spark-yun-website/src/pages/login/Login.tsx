@@ -18,7 +18,7 @@ function Login() {
         localStorage.setItem('Tenant', response.tenantId)
         localStorage.setItem('TenantName', response.tenantName)
         localStorage.setItem('Username', response.username)
-        localStorage.setItem('Role', response.role);
+        localStorage.setItem('Role', response.role)
         navigate('/')
       })
       .finally(() => {

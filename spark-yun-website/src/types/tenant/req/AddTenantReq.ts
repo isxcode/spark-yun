@@ -1,5 +1,5 @@
 export interface AddTenantReq {
-  username: string;
+  username: string
   account: string
   passwd: string
   phone: string
