@@ -1,49 +1,31 @@
-spark-yun:
-  agent-tar-gz-dir: /Users/ispong/Isxcode/spark-yun/spark-yun-dist/build/distributions
-  agent-bin-dir: /Users/ispong/Isxcode/spark-yun/spark-yun-dist/src/main/bin
-  default-agent-port: 30177
-  resources-path: /Users/ispong/Data/resource
-  expiration-min: 1440
-
 spring:
+
+  security:
+    user:
+      roles: ADMIN
+      name: admin
+      password: admin123
 
   jpa:
     database: mysql
 
-  # 支持h2数据库
-#  flyway:
-#    driver-class-name: org.h2.Driver
-#    url: jdbc:h2:file:~/.h2/data
-#    user: root
-#    password: ispong123
-#    locations: classpath:db/migration/h2/
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://192.168.34.157:30306/zhiqingyun
+    username: root
+    password: ispong123
 
-  # 支持mysql数据库
   flyway:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:30306/zhiqingyun
+    url: jdbc:mysql://192.168.34.157:30306/zhiqingyun
     user: root
     password: ispong123
     locations: classpath:db/migration/mysql
-    enabled: false
-
-  #  datasource:
-#    driver-class-name: org.h2.Driver
-#    url: jdbc:h2:file:~/.h2/data
-#    username: root
-#    password: ispong123
-
-  # 数据源配置 http://localhost:8080/h2-console
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:30306/zhiqingyun
-    username: root
-    password: ispong123
 
   quartz:
     properties:
       org.quartz.dataSource.quartzDataSource.driver: com.mysql.cj.jdbc.Driver
-      org.quartz.dataSource.quartzDataSource.URL: jdbc:mysql://localhost:30306/zhiqingyun
+      org.quartz.dataSource.quartzDataSource.URL: jdbc:mysql://192.168.34.157:30306/zhiqingyun
       org.quartz.dataSource.quartzDataSource.user: root
       org.quartz.dataSource.quartzDataSource.password: ispong123
 

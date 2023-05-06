@@ -1,4 +1,3 @@
-# 服务配置
 server:
   port: 8080
   tomcat:
@@ -6,11 +5,9 @@ server:
 
 spring:
 
-  # 使用配置文件
   profiles:
     active: local
 
-  # 配置druid数据源
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     druid:
@@ -23,7 +20,6 @@ spring:
       stat-view-servlet:
         enabled: true
 
-  # jpa配置
   jpa:
     show-sql: false
     open-in-view: false
@@ -34,14 +30,12 @@ spring:
         session_factory:
           statement_inspector: com.isxcode.star.backend.config.JpaTenantInterceptor
 
-  # mvc配置
   mvc:
     view:
       prefix: /templates/
       suffix: .html
     static-path-pattern: /static/**
 
-  # h2数据库配置
   h2:
     console:
       enabled: true
@@ -50,7 +44,6 @@ spring:
         trace: false
         web-allow-others: true
 
-  # 定时调度
   quartz:
     scheduler-name: spark-yun-quartz-scheduler
     job-store-type: jdbc
@@ -61,11 +54,9 @@ spring:
       org.quartz.jobStore.driverDelegateClass: org.quartz.impl.jdbcjobstore.StdJDBCDelegate
       org.quartz.jobStore.dataSource: quartzDataSource
 
-  # 缓存
   cache:
     type: simple
 
-# openapi
 springdoc:
   api-docs:
     path: /swagger-ui/api-docs
@@ -73,7 +64,6 @@ springdoc:
     path: /swagger-ui.html
   packages-to-scan: com.isxcode.star
 
-# admin用户访问
 spark-yun:
   admin-url:
     - /swagger-ui/** # http://localhost:8080/swagger-ui/index.html
@@ -93,4 +83,3 @@ spark-yun:
   agent-bin-dir: /spark-yun/bin
   default-agent-port: 30177
   expiration-min: 1440
-

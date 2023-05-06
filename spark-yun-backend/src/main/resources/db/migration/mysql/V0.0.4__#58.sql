@@ -25,7 +25,7 @@ create table if not exists SY_USER
   id                      varchar(200)  not null unique primary key comment '用户唯一id',
   username                varchar(200)  not null comment '用户名称',
   account                 varchar(200)  not null comment '用户账号',
-  passwd                  varchar(200)  not null comment '账号密码',
+  passwd                  varchar(200) comment '账号密码',
   phone                   varchar(200) comment '手机号',
   email                   varchar(200) comment '邮箱',
   introduce               varchar(500) comment '简介',
@@ -184,9 +184,9 @@ create table if not exists SY_WORK_CONFIG
 );
 
 -- 初始化系统管理员
-insert into SY_USER (id, username, account, passwd, role_code, status, create_by, create_date_time, last_modified_by,
+insert into SY_USER (id, username, accoun, role_code, status, create_by, create_date_time, last_modified_by,
                      last_modified_date_time, version_number)
-values ('admin_id', '系统管理员', 'admin', 'admin123', 'ROLE_SYS_ADMIN', 'ENABLE', 'admin_id', now(), 'admin_id', now(),
+values ('admin_id', '系统管理员', 'admin', 'ROLE_SYS_ADMIN', 'ENABLE', 'admin_id', now(), 'admin_id', now(),
         0);
 
 -- 许可证表

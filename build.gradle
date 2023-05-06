@@ -107,7 +107,7 @@ tasks.register('start', Exec) {
 tasks.register('docker', Exec) {
 
   dependsOn(":package")
-  // docker build -t isxcode/zhiqingyun:0.0.3 -f ./Dockerfile .
+  // docker build -t isxcode/zhiqingyun:0.0.4 -f ./Dockerfile .
   commandLine 'bash', '-c', 'docker build -t isxcode/zhiqingyun:' + version_number + ' -f ./Dockerfile .'
 }
 
