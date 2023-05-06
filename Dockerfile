@@ -40,9 +40,10 @@ CMD java -jar /spark-yun/app.jar --spring.profiles.active=demo --spring.config.a
 # 本地脚本 (需要先退出多平台镜像)
 # docker buildx uninstall
 # gradle docker
+# 使用默认配置
 # docker run --restart=always --name zhiqingyun -v /Users/ispong/Data/resources:/spark-yun/resources -p 30211:8080 -e ADMIN_PASSWORD=ispong123 -d isxcode/zhiqingyun:0.0.4
+# 自定义配置
 # docker run --restart=always --name zhiqingyun -v /Users/ispong/Data/resources:/spark-yun/resources -v /Users/ispong/Data/config:/spark-yun/config -p 30211:8080 -e ADMIN_PASSWORD=ispong123 -d isxcode/zhiqingyun:0.0.4
-# 在resources下面创建 h2文件夹 licenses文件夹 config配置文件夹
 
 # 远程启动
 # docker stop zhiqingyun
