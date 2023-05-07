@@ -1,7 +1,7 @@
 import React from 'react'
 import { BrowserRouter, Navigate, Route, Routes, useLocation } from 'react-router-dom'
-import CalculateEnginePage from '../pages/calculate/engine/CalculateEnginePage'
-import EngineNodePage from '../pages/calculate/node/EngineNodePage'
+import CalculateEnginePage from '../pages/cluster/ClusterPage'
+import ClusterNodePage from '../pages/cluster/node/ClusterNodePage'
 import DatasourcePage from '../pages/datasource/DatasourcePage'
 import WorkflowPage from '../pages/workflow/WorkflowPage'
 import WorkPage from '../pages/work/WorkPage'
@@ -112,10 +112,10 @@ export default function MainRoute() {
               }
             />
             <Route
-              path={'/nodes/:calculateEngineId'}
+              path={'/nodes/:clusterId'}
               element={
                 <RequireAuth>
-                  <EngineNodePage/>
+                  <ClusterNodePage/>
                 </RequireAuth>
               }
             />

@@ -11,7 +11,7 @@ public class EnoQueryNodeRes {
 
   private String name;
 
-  private String comment;
+  private String remark;
 
   private String host;
 
@@ -25,7 +25,7 @@ public class EnoQueryNodeRes {
 
   private String status;
 
-  private String checkTime;
+  private String checkDateTime;
 
   private String agentHomePath;
 

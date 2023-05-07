@@ -8,7 +8,7 @@ import { DatasourceRow } from '../../../types/datasource/info/DatasourceRow'
 import { QueryDatasourceReq } from '../../../types/datasource/req/QueryDatasourceReq'
 import { queryDatasourceApi } from '../../../services/datasource/DatasourceService'
 import { CalculateEngineRow } from '../../../types/calculate/engine/info/CalculateEngineRow'
-import { queryEnginesApi } from '../../../services/calculate/engine/CalculateEngineService'
+import { queryEnginesApi } from '../../../services/cluster/ClusterService'
 import { QueryEngineReq } from '../../../types/calculate/engine/req/QueryEngineReq'
 
 const { Option } = Select
@@ -54,7 +54,7 @@ export const WorkConfigDrawer = (props: { isModalVisible: boolean, handleCancel:
     workId: work?.workId,
     calculateEngineId: work?.calculateId as string,
     datasourceId: work?.datasourceId as string,
-    sql: work?.sql
+    sqlScript: work?.sqlScript
   }
 
   const configWork = () => {

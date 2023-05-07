@@ -1,6 +1,6 @@
 export interface ConfigWorkReq {
   workId: string | undefined
-  sql?: string
+  sqlScript?: string;
   datasourceId: string
   calculateEngineId: string
 }

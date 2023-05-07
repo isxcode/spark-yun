@@ -5,7 +5,7 @@ export interface WorkInfo {
   comment?: string
   workflowId?: string
   workType?: string
-  sql?: string
+  sqlScript?: string
   datasourceId?: string
   calculateId?: string
 }

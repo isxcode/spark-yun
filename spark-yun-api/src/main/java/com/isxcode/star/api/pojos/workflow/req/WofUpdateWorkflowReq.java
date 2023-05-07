@@ -17,5 +17,5 @@ public class WofUpdateWorkflowReq {
   private String name;
 
   @Schema(title = "备注", example = "所属安全部门，其他人勿动")
-  private String comment;
+  private String remark;
 }

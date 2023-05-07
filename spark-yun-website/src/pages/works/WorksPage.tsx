@@ -102,8 +102,8 @@ function WorksPage() {
     },
     {
       title: '备注',
-      key: 'comment',
-      dataIndex: 'comment'
+      key: 'remark',
+      dataIndex: 'remark'
     },
     {
       title: '创建时间',

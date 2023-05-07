@@ -21,5 +21,5 @@ public class WokUpdateWorkReq {
   private String workType;
 
   @Schema(title = "备注", example = "星期一执行的作业")
-  private String comment;
+  private String remark;
 }

@@ -21,5 +21,5 @@ public class CaeQueryEngineRes {
 
   private String status;
 
-  private String comment;
+  private String remark;
 }

@@ -85,8 +85,8 @@ function WorkflowPage() {
     },
     {
       title: '备注',
-      key: 'comment',
-      dataIndex: 'comment'
+      key: 'remark',
+      dataIndex: 'remark'
     },
     {
       title: '操作',

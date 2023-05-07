@@ -13,11 +13,11 @@ public class WocConfigWorkReq {
   private String workId;
 
   @Schema(title = "运行脚本", example = "show databases;")
-  private String sql;
+  private String sqlScript;
 
   @Schema(title = "数据源唯一id", example = "sy_fd34e4a53db640f5943a4352c4d549b9")
   private String datasourceId;
 
   @Schema(title = "计算引擎唯一id", example = "sy_354554267db34602896c35b4162fd4d8")
-  private String calculateEngineId;
+  private String clusterId;
 }

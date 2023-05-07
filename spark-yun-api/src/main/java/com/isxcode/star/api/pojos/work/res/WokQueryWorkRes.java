@@ -7,7 +7,7 @@ import lombok.Data;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class WokQueryWorkRes {
 
-  private String comment;
+  private String remark;
 
   private String name;
 

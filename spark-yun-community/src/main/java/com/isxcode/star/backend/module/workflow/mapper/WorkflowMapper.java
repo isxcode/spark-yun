@@ -19,6 +19,7 @@ public interface WorkflowMapper {
 
   @Mapping(source = "wofUpdateWorkflowReq.name", target = "name")
   @Mapping(source = "workflowEntity.id", target = "id")
+  @Mapping(source = "wofUpdateWorkflowReq.remark", target = "remark")
   WorkflowEntity updateWorkflowReqToWorkflowEntity(WofUpdateWorkflowReq wofUpdateWorkflowReq, WorkflowEntity workflowEntity);
 
   WofQueryWorkflowRes workflowEntityToQueryWorkflowRes(WorkflowEntity workflowEntity);

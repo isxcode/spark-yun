@@ -66,7 +66,7 @@ function WorkPage() {
 
   const configWorkReq: ConfigWorkReq = {
     workId,
-    sql: work?.sql as string,
+    sqlScript: work?.sqlScript as string,
     calculateEngineId: work?.calculateId as string,
     datasourceId: work?.datasourceId as string
   }
@@ -221,9 +221,9 @@ function WorkPage() {
             <TextArea
               style={{ height: '100%' }}
               className={'work-sql-textarea'}
-              value={work?.sql}
+              value={work?.sqlScript}
               onChange={(e) => {
-                setWork({ ...work, sql: e.target.value })
+                setWork({ ...work, sqlScript: e.target.value })
               }}
             />
           </Col>

@@ -1,18 +1,7 @@
 package com.isxcode.star.backend.module.workflow.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-import javax.persistence.Version;
-
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
@@ -22,18 +11,25 @@ import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.PrePersist;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+import javax.persistence.Version;
 import java.time.LocalDateTime;
 
-@SQLDelete(
-  sql = "UPDATE SY_TENANT_USERS SET deleted = 1 WHERE id = ? and version_number = ?"
-)
+import static com.isxcode.star.backend.config.WebSecurityConfig.TENANT_ID;
+
 @Data
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
 @Entity
+@SQLDelete(
+  sql = "UPDATE SY_WORKFLOW SET deleted = 1 WHERE id = ? and version_number = ?"
+)
+@Where(clause = "deleted = 0 ${TENANT_FILTER} ")
 @Table(name = "SY_WORKFLOW")
-@Where(clause = "deleted = 0")
 @JsonIgnoreProperties({"hibernateLazyInitializer"})
 @EntityListeners(AuditingEntityListener.class)
 public class WorkflowEntity {
@@ -51,8 +47,6 @@ public class WorkflowEntity {
   private String remark;
 
   private String status;
-
-  private LocalDateTime checkDateTime;
 
   @CreatedDate
   private LocalDateTime createDateTime;
@@ -73,4 +67,9 @@ public class WorkflowEntity {
   private Integer deleted;
 
   private String tenantId;
+
+  @PrePersist
+  public void prePersist() {
+    this.tenantId = TENANT_ID.get();
+  }
 }

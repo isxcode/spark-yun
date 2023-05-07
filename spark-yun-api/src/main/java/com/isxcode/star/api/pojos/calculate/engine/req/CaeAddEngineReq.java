@@ -13,5 +13,5 @@ public class CaeAddEngineReq {
   private String name;
 
   @Schema(title = "备注", example = "仅供内部使用")
-  private String comment;
+  private String remark;
 }

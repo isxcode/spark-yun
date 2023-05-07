@@ -23,12 +23,13 @@ import com.isxcode.star.api.pojos.work.res.WokRunWorkRes;
 import com.isxcode.star.api.pojos.yun.agent.req.YagExecuteWorkReq;
 import com.isxcode.star.api.pojos.yun.agent.res.YagGetLogRes;
 import com.isxcode.star.api.utils.HttpUtils;
-import com.isxcode.star.backend.module.calculate.engine.entity.CalculateEngineEntity;
-import com.isxcode.star.backend.module.calculate.engine.repository.CalculateEngineRepository;
+import com.isxcode.star.backend.module.cluster.entity.ClusterEntity;
+import com.isxcode.star.backend.module.cluster.repository.ClusterRepository;
 import com.isxcode.star.backend.module.datasource.entity.DatasourceEntity;
 import com.isxcode.star.backend.module.datasource.repository.DatasourceRepository;
-import com.isxcode.star.backend.module.engine.node.entity.EngineNodeEntity;
-import com.isxcode.star.backend.module.engine.node.repository.EngineNodeRepository;
+import com.isxcode.star.backend.module.cluster.node.entity.ClusterNodeEntity;
+import com.isxcode.star.backend.module.cluster.node.repository.ClusterNodeRepository;
+import com.isxcode.star.backend.module.datasource.service.DatasourceBizService;
 import com.isxcode.star.backend.module.work.config.entity.WorkConfigEntity;
 import com.isxcode.star.backend.module.work.config.repository.WorkConfigRepository;
 import com.isxcode.star.backend.module.work.entity.WorkEntity;
@@ -71,9 +72,11 @@ public class WorkBizService {
 
   private final WorkMapper workMapper;
 
-  private final CalculateEngineRepository calculateEngineRepository;
+  private final ClusterRepository calculateEngineRepository;
 
-  private final EngineNodeRepository engineNodeRepository;
+  private final ClusterNodeRepository engineNodeRepository;
+
+  private final DatasourceBizService datasourceBizService;
 
   public void addWork(WokAddWorkReq addWorkReq) {
 
@@ -81,10 +84,9 @@ public class WorkBizService {
 
     // 添加默认作业配置
     WorkConfigEntity workConfigEntity = workConfigRepository.save(new WorkConfigEntity());
-    work.setWorkConfigId(workConfigEntity.getId());
+    work.setConfigId(workConfigEntity.getId());
 
     work.setStatus(WorkStatus.NEW);
-    work.setCreateDateTime(LocalDateTime.now());
 
     workRepository.save(work);
   }
@@ -117,7 +119,7 @@ public class WorkBizService {
     }
 
     // 删除作业配置
-    Optional<WorkConfigEntity> workConfigEntityOptional = workConfigRepository.findById(workEntityOptional.get().getWorkConfigId());
+    Optional<WorkConfigEntity> workConfigEntityOptional = workConfigRepository.findById(workEntityOptional.get().getConfigId());
     workConfigEntityOptional.ifPresent(workConfigEntity -> workConfigRepository.deleteById(workConfigEntity.getId()));
 
     workRepository.deleteById(workId);
@@ -133,11 +135,11 @@ public class WorkBizService {
 
     switch (work.getWorkType()) {
       case WorkType.EXECUTE_JDBC_SQL:
-        return executeSql(work.getWorkConfigId());
+        return executeSql(work.getConfigId());
       case WorkType.QUERY_JDBC_SQL:
-        return querySql(work.getWorkConfigId());
+        return querySql(work.getConfigId());
       case WorkType.QUERY_SPARK_SQL:
-        return sparkSql(work.getWorkConfigId());
+        return sparkSql(work.getConfigId());
       default:
         throw new SparkYunException("该作业类型暂不支持");
     }
@@ -149,7 +151,7 @@ public class WorkBizService {
       return WokGetDataRes.builder().data(new ArrayList<>()).build();
     }
 
-    EngineNodeEntity engineNode = getEngineNodeByWorkId(wokGetDataReq.getWorkId());
+    ClusterNodeEntity engineNode = getEngineNodeByWorkId(wokGetDataReq.getWorkId());
 
     String getDataUrl = "http://" + engineNode.getHost() + ":" + engineNode.getAgentPort() + "/yag/getData?applicationId=" + wokGetDataReq.getApplicationId();
     BaseResponse<?> baseResponse = HttpUtils.doGet(getDataUrl, BaseResponse.class);
@@ -166,7 +168,7 @@ public class WorkBizService {
       return WokGetStatusRes.builder().yarnApplicationState("NO_RUNNING").build();
     }
 
-    EngineNodeEntity engineNode = getEngineNodeByWorkId(wokGetStatusReq.getWorkId());
+    ClusterNodeEntity engineNode = getEngineNodeByWorkId(wokGetStatusReq.getWorkId());
 
     String getStatusUrl = "http://" + engineNode.getHost() + ":" + engineNode.getAgentPort() + "/yag/getStatus?applicationId=" + wokGetStatusReq.getApplicationId();
     BaseResponse<?> baseResponse = HttpUtils.doGet(getStatusUrl, BaseResponse.class);
@@ -178,7 +180,7 @@ public class WorkBizService {
 
   public void stopJob(WokStopJobReq wokStopJobReq) {
 
-    EngineNodeEntity engineNode = getEngineNodeByWorkId(wokStopJobReq.getWorkId());
+    ClusterNodeEntity engineNode = getEngineNodeByWorkId(wokStopJobReq.getWorkId());
 
     String stopJobUrl = "http://" + engineNode.getHost() + ":" + engineNode.getAgentPort() + "/yag/stopJob?applicationId=" + wokStopJobReq.getApplicationId();
     BaseResponse<?> baseResponse = HttpUtils.doGet(stopJobUrl, BaseResponse.class);
@@ -188,20 +190,20 @@ public class WorkBizService {
     }
   }
 
-  public EngineNodeEntity getEngineNodeByWorkId(String workId) {
+  public ClusterNodeEntity getEngineNodeByWorkId(String workId) {
 
     Optional<WorkEntity> workEntityOptional = workRepository.findById(workId);
     if (!workEntityOptional.isPresent()) {
       throw new RuntimeException("作业不存在");
     }
 
-    Optional<WorkConfigEntity> workConfigEntityOptional = workConfigRepository.findById(workEntityOptional.get().getWorkConfigId());
+    Optional<WorkConfigEntity> workConfigEntityOptional = workConfigRepository.findById(workEntityOptional.get().getConfigId());
     if (!workConfigEntityOptional.isPresent()) {
       throw new SparkYunException("作业异常，不可用作业");
     }
     WorkConfigEntity workConfig = workConfigEntityOptional.get();
 
-    return getEngineWork(workConfig.getCalculateEngineId());
+    return getEngineWork(workConfig.getClusterId());
   }
 
   public WokGetWorkLogRes getWorkLog(WokGetWorkLogReq wokGetWorkLogReq) {
@@ -210,7 +212,7 @@ public class WorkBizService {
       return WokGetWorkLogRes.builder().yarnLog("待运行").build();
     }
 
-    EngineNodeEntity engineNode = getEngineNodeByWorkId(wokGetWorkLogReq.getWorkId());
+    ClusterNodeEntity engineNode = getEngineNodeByWorkId(wokGetWorkLogReq.getWorkId());
 
     String getLogUrl = "http://" + engineNode.getHost() + ":" + engineNode.getAgentPort() + "/yag/getLog?applicationId=" + wokGetWorkLogReq.getApplicationId();
     BaseResponse<?> baseResponse = HttpUtils.doGet(getLogUrl, BaseResponse.class);
@@ -255,7 +257,7 @@ public class WorkBizService {
          Statement statement = connection.createStatement()) {
 
       String regex = "/\\*(?:.|[\\n\\r])*?\\*/|--.*";
-      String noCommentSql = workConfig.getSql().replaceAll(regex, "");
+      String noCommentSql = workConfig.getSqlScript().replaceAll(regex, "");
       String realSql = noCommentSql.replace("\n", " ");
       String[] sqls = realSql.split(";");
 
@@ -329,7 +331,7 @@ public class WorkBizService {
          Statement statement = connection.createStatement();) {
 
       String regex = "/\\*(?:.|[\\n\\r])*?\\*/|--.*";
-      String noCommentSql = workConfig.getSql().replaceAll(regex, "");
+      String noCommentSql = workConfig.getSqlScript().replaceAll(regex, "");
       String realSql = noCommentSql.replace("\n", " ");
       for (String sql : realSql.split(";")) {
 
@@ -360,23 +362,7 @@ public class WorkBizService {
     }
     DatasourceEntity datasource = datasourceEntityOptional.get();
 
-    try {
-      switch (datasource.getDbType()) {
-        case DatasourceType.MYSQL:
-          Class.forName("com.mysql.cj.jdbc.Driver");
-          break;
-        case DatasourceType.ORACLE:
-          Class.forName("oracle.jdbc.driver.OracleDriver");
-          break;
-        case DatasourceType.SQL_SERVER:
-          Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-          break;
-        default:
-          throw new SparkYunException("数据源暂不支持");
-      }
-    } catch (ClassNotFoundException e) {
-      throw new SparkYunException("驱动加载异常", e.getMessage());
-    }
+    datasourceBizService.loadDriverClass(datasource.getDbType());
 
     return datasource;
   }
@@ -388,7 +374,7 @@ public class WorkBizService {
       throw new SparkYunException("作业不存在");
     }
 
-    Optional<WorkConfigEntity> workConfigEntityOptional = workConfigRepository.findById(workEntityOptional.get().getWorkConfigId());
+    Optional<WorkConfigEntity> workConfigEntityOptional = workConfigRepository.findById(workEntityOptional.get().getConfigId());
     if (!workConfigEntityOptional.isPresent()) {
       throw new SparkYunException("作业异常不可用");
     }
@@ -396,18 +382,18 @@ public class WorkBizService {
     return workMapper.workEntityAndWorkConfigEntityToGetWorkRes(workEntityOptional.get(), workConfigEntityOptional.get());
   }
 
-  public EngineNodeEntity getEngineWork(String calculateEngineId) {
+  public ClusterNodeEntity getEngineWork(String calculateEngineId) {
 
     if (Strings.isEmpty(calculateEngineId)) {
       throw new SparkYunException("作业未配置计算引擎");
     }
 
-    Optional<CalculateEngineEntity> calculateEngineEntityOptional = calculateEngineRepository.findById(calculateEngineId);
+    Optional<ClusterEntity> calculateEngineEntityOptional = calculateEngineRepository.findById(calculateEngineId);
     if (!calculateEngineEntityOptional.isPresent()) {
       throw new SparkYunException("计算引擎不存在");
     }
 
-    List<EngineNodeEntity> allEngineNodes = engineNodeRepository.findAllByClusterIdAndStatus(calculateEngineEntityOptional.get().getId(), EngineNodeStatus.ACTIVE);
+    List<ClusterNodeEntity> allEngineNodes = engineNodeRepository.findAllByClusterIdAndStatus(calculateEngineEntityOptional.get().getId(), EngineNodeStatus.ACTIVE);
     if (allEngineNodes.isEmpty()) {
       throw new SparkYunException("计算引擎无可用节点，请换一个计算引擎");
     }
@@ -430,23 +416,23 @@ public class WorkBizService {
     logBuilder.append(infoHeader + "检查作业完成  \n");
 
     logBuilder.append(infoHeader + "开始申请资源  \n");
-    if (Strings.isEmpty(workConfig.getCalculateEngineId())) {
+    if (Strings.isEmpty(workConfig.getClusterId())) {
       logBuilder.append(errorHeader + "申请资源失败 : 未配置计算引擎 \n");
       return WokRunWorkRes.builder().log(logBuilder.toString()).executeStatus("ERROR").build();
     }
 
-    Optional<CalculateEngineEntity> calculateEngineEntityOptional = calculateEngineRepository.findById(workConfig.getCalculateEngineId());
+    Optional<ClusterEntity> calculateEngineEntityOptional = calculateEngineRepository.findById(workConfig.getClusterId());
     if (!calculateEngineEntityOptional.isPresent()) {
       logBuilder.append(errorHeader + "申请资源失败 : 计算引擎不存在 \n");
       return WokRunWorkRes.builder().log(logBuilder.toString()).executeStatus("ERROR").build();
     }
 
-    List<EngineNodeEntity> allEngineNodes = engineNodeRepository.findAllByClusterIdAndStatus(calculateEngineEntityOptional.get().getId(), EngineNodeStatus.ACTIVE);
+    List<ClusterNodeEntity> allEngineNodes = engineNodeRepository.findAllByClusterIdAndStatus(calculateEngineEntityOptional.get().getId(), EngineNodeStatus.ACTIVE);
     if (allEngineNodes.isEmpty()) {
       logBuilder.append(errorHeader + "申请资源失败 : 集群不存在可用节点，请切换一个集群 \n");
       return WokRunWorkRes.builder().log(logBuilder.toString()).executeStatus("ERROR").build();
     }
-    EngineNodeEntity engineNode = allEngineNodes.get(0);
+    ClusterNodeEntity engineNode = allEngineNodes.get(0);
     logBuilder.append(infoHeader + "申请资源完成，激活节点:【" + engineNode.getName() + "】\n");
 
     logBuilder.append(infoHeader + "开始构建作业  \n");
@@ -458,7 +444,7 @@ public class WorkBizService {
     executeReq.setAgentLibPath(engineNode.getAgentHomePath() + File.separator + "spark-yun-agent" + File.separator + "lib");
 
     PluginReq pluginReq = new PluginReq();
-    pluginReq.setSql(workConfig.getSql());
+    pluginReq.setSql(workConfig.getSqlScript());
     pluginReq.setLimit(200);
     Map<String, String> sparkConfig = new HashMap<>();
     sparkConfig.put("spark.executor.memory", "1g");

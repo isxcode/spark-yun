@@ -22,10 +22,9 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface WorkMapper {
 
-  @Mapping(source = "comment", target = "commentInfo")
   WorkEntity addWorkReqToWorkEntity(WokAddWorkReq addWorkReq);
 
-  @Mapping(source = "wokUpdateWorkReq.comment", target = "commentInfo")
+  @Mapping(source = "wokUpdateWorkReq.remark", target = "remark")
   @Mapping(source = "wokUpdateWorkReq.workType", target = "workType")
   @Mapping(source = "wokUpdateWorkReq.name", target = "name")
   @Mapping(source = "workEntity.id", target = "id")
@@ -33,7 +32,6 @@ public interface WorkMapper {
 
   WorkConfigEntity configWorkReqToWorkConfigEntity(WocConfigWorkReq configWorkReq);
 
-  @Mapping(target = "comment", source = "commentInfo")
   @Mapping(target = "createDateTime", dateFormat = "yyyy-MM-dd HH:mm:ss")
   WokQueryWorkRes workEntityToQueryWorkRes(WorkEntity workEntity);
   List<WokQueryWorkRes> workEntityListToQueryWorkResList(List<WorkEntity> workEntities);
@@ -44,7 +42,7 @@ public interface WorkMapper {
     return new PageImpl<>(dtoList, workEntities.getPageable(), workEntities.getTotalElements());
   }
 
-  @Mapping(target = "calculateId", source = "workConfigEntity.calculateEngineId")
+  @Mapping(target = "clusterId", source = "workConfigEntity.clusterId")
   @Mapping(target = "datasourceId", source = "workConfigEntity.datasourceId")
   @Mapping(target = "workflowId", source = "workEntity.workflowId")
   @Mapping(target = "workId", source = "workEntity.id")

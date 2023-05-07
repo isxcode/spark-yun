@@ -9,6 +9,7 @@ import com.isxcode.star.backend.module.work.repository.WorkRepository;
 import com.isxcode.star.api.exception.SparkYunException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -34,13 +35,21 @@ public class WorkConfigBizService {
       throw new SparkYunException("作业不存在");
     }
 
-    Optional<WorkConfigEntity> workConfigEntityOptional = workConfigRepository.findById(workEntityOptional.get().getWorkConfigId());
+    Optional<WorkConfigEntity> workConfigEntityOptional = workConfigRepository.findById(workEntityOptional.get().getConfigId());
     if (!workConfigEntityOptional.isPresent()) {
       throw new SparkYunException("作业异常，作业不可用。");
     }
+    WorkConfigEntity workConfigEntity = workConfigEntityOptional.get();
 
-    WorkConfigEntity workConfigEntity = workConfigMapper.wocConfigWorkReqToWorkConfigEntity(wocConfigWorkReq);
-    workConfigEntity.setId(workConfigEntityOptional.get().getId());
+    if (!Strings.isEmpty(wocConfigWorkReq.getSqlScript())) {
+      workConfigEntity.setSqlScript(wocConfigWorkReq.getSqlScript());
+    }
+    if (!Strings.isEmpty(wocConfigWorkReq.getClusterId())) {
+      workConfigEntity.setClusterId(wocConfigWorkReq.getClusterId());
+    }
+    if (!Strings.isEmpty(wocConfigWorkReq.getDatasourceId())) {
+      workConfigEntity.setDatasourceId(wocConfigWorkReq.getDatasourceId());
+    }
 
     workConfigRepository.save(workConfigEntity);
   }

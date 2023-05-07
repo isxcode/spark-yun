@@ -13,8 +13,8 @@ public class EnoUpdateNodeReq {
   private String id;
 
   @Schema(title = "计算引擎唯一id", example = "sy_fd34e4a53db640f5943a4352c4d549b9")
-  @NotEmpty(message = "引擎id不能为空")
-  private String calculateEngineId;
+  @NotEmpty(message = "clusterId不能为空")
+  private String clusterId;
 
   @Schema(title = "节点服务器hostname", example = "192.168.115.103")
   @NotEmpty(message = "host不能为空")
@@ -29,10 +29,10 @@ public class EnoUpdateNodeReq {
 
   @Schema(title = "节点服务器密码", example = "ispong123")
   @NotEmpty(message = "密码不能为空")
-  private String password;
+  private String passwd;
 
   @Schema(title = "备注", example = "本地测试节点")
-  private String comment;
+  private String remark;
 
   @Schema(title = "节点名称", example = "节点1")
   @NotEmpty(message = "节点名称不能为空")

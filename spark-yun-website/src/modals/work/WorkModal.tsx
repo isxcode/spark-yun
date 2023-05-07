@@ -62,7 +62,7 @@ export const WorkModal = (props: {
         <Form
           className={'sy-add-work-form'}
           labelCol={{ span: 4 }}
-          wrapperCol={{ span: 20 }}
+          wrapperCol={{ span: 18 }}
           initialValues={{ remember: true }}
           onFinish={onFinish}
           form={form}>
@@ -78,7 +78,7 @@ export const WorkModal = (props: {
             </Select>
           </Form.Item>
 
-          <Form.Item label="备注" name="comment">
+          <Form.Item label="备注" name="remark">
             <Input.TextArea />
           </Form.Item>
         </Form>

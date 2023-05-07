@@ -20,6 +20,6 @@ public interface WorkRepository extends JpaRepository<WorkEntity, String> {
 
   Page<WorkEntity> findAllByWorkflowId(String workflowId, Pageable pageable);
 
-  @Query("SELECT w FROM WorkEntity w WHERE w.workflowId = :workflowId AND (w.name LIKE %:keyword% OR w.commentInfo LIKE %:keyword% OR w.workType LIKE %:keyword%)")
+  @Query("SELECT w FROM WorkEntity w WHERE w.workflowId = :workflowId AND (w.name LIKE %:keyword% OR w.remark LIKE %:keyword% OR w.workType LIKE %:keyword%)")
   Page<WorkEntity> searchAllByWorkflowId(@Param("keyword") String searchKeyWord, @Param("workflowId") String workflowId, Pageable pageable);
 }
