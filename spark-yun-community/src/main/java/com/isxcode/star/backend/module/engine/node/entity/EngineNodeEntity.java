@@ -5,13 +5,23 @@ import java.time.LocalDateTime;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.PrePersist;
 import javax.persistence.Table;
+import javax.persistence.Transient;
+import javax.persistence.Version;
+
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
+
+import static com.isxcode.star.backend.config.WebSecurityConfig.TENANT_ID;
 
 @Data
 @Entity
-@Table(name = "SY_ENGINE_NODE")
+@Table(name = "SY_CLUSTER_NODE")
 @JsonIgnoreProperties({"hibernateLazyInitializer"})
 public class EngineNodeEntity {
 
@@ -24,7 +34,7 @@ public class EngineNodeEntity {
 
   private String name;
 
-  private String commentInfo;
+  private String remark;
 
   private String status;
 
@@ -40,7 +50,7 @@ public class EngineNodeEntity {
 
   private String cpuPercent;
 
-  private String calculateEngineId;
+  private String clusterId;
 
   private String host;
 
@@ -55,4 +65,30 @@ public class EngineNodeEntity {
   private String agentPort;
 
   private String hadoopHomePath;
+
+  @CreatedDate
+  private LocalDateTime createDateTime;
+
+  @LastModifiedDate
+  private LocalDateTime lastModifiedDateTime;
+
+  @CreatedBy
+  private String createBy;
+
+  @LastModifiedBy
+  private String lastModifiedBy;
+
+  @Version
+  private Long versionNumber;
+
+  @Transient
+  private Integer deleted;
+
+  private String tenantId;
+
+  @PrePersist
+  public void prePersist() {
+    this.tenantId = TENANT_ID.get();
+  }
+
 }

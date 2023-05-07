@@ -407,7 +407,7 @@ public class WorkBizService {
       throw new SparkYunException("计算引擎不存在");
     }
 
-    List<EngineNodeEntity> allEngineNodes = engineNodeRepository.findAllByCalculateEngineIdAndStatus(calculateEngineEntityOptional.get().getId(), EngineNodeStatus.ACTIVE);
+    List<EngineNodeEntity> allEngineNodes = engineNodeRepository.findAllByClusterIdAndStatus(calculateEngineEntityOptional.get().getId(), EngineNodeStatus.ACTIVE);
     if (allEngineNodes.isEmpty()) {
       throw new SparkYunException("计算引擎无可用节点，请换一个计算引擎");
     }
@@ -441,7 +441,7 @@ public class WorkBizService {
       return WokRunWorkRes.builder().log(logBuilder.toString()).executeStatus("ERROR").build();
     }
 
-    List<EngineNodeEntity> allEngineNodes = engineNodeRepository.findAllByCalculateEngineIdAndStatus(calculateEngineEntityOptional.get().getId(), EngineNodeStatus.ACTIVE);
+    List<EngineNodeEntity> allEngineNodes = engineNodeRepository.findAllByClusterIdAndStatus(calculateEngineEntityOptional.get().getId(), EngineNodeStatus.ACTIVE);
     if (allEngineNodes.isEmpty()) {
       logBuilder.append(errorHeader + "申请资源失败 : 集群不存在可用节点，请切换一个集群 \n");
       return WokRunWorkRes.builder().log(logBuilder.toString()).executeStatus("ERROR").build();

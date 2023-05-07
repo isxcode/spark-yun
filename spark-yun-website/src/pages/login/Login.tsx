@@ -19,6 +19,7 @@ function Login() {
         localStorage.setItem('Username', response.username)
         localStorage.setItem('Role', response.role)
         navigate('/')
+        window.location.reload()
       })
       .finally(() => {
         setLoading(false)

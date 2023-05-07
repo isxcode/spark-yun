@@ -37,10 +37,7 @@ export const updateDatasourceApi = async (data: UpdateDatasourceReq): Promise<vo
 }
 
 export const testDatasourceApi = async (data: string): Promise<TestDatasourceRes> => {
-  const testDatasourceReq: TestDatasourceReq = {
-    datasourceId: data
-  }
-  const response = await axiosInstance.post<TestDatasourceRes>('/das/testConnect', testDatasourceReq, headerConfig)
+  const response = await axiosInstance.get<TestDatasourceRes>('/das/testConnect?datasourceId=' + data, headerConfig)
   message.success(JSON.parse(JSON.stringify(response)).msg)
   return response.data
-}
+};

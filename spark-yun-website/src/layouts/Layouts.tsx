@@ -20,7 +20,7 @@ import {
   UserOutlined
 } from '@ant-design/icons'
 import {QueryTenantsReq} from '../types/tenant/req/QueryTenantsReq'
-import {chooseTenantApi, getTenantApi, queryTenantsApi} from '../services/tenant/TenantService'
+import {chooseTenantApi, getTenantApi, queryTenantsApi, queryUserTenantsApi} from '../services/tenant/TenantService'
 import {TenantRow} from '../types/tenant/info/TenantRow'
 
 function Layouts() {
@@ -55,26 +55,26 @@ function Layouts() {
         navigate('/tenant_user')
       }
     })
-    memberMenus.push({
-      key: 12,
-      label: '后台设置',
-      icon: <ToolOutlined/>,
-      onClick: () => {
-        navigate('/auth')
-      }
-    })
+    // memberMenus.push({
+    //   key: 12,
+    //   label: '后台设置',
+    //   icon: <ToolOutlined/>,
+    //   onClick: () => {
+    //     navigate('/auth')
+    //   }
+    // })
     return memberMenus
   }
 
   const memberMenus = [
-    {
-      key: 1,
-      label: '首页',
-      icon: <HomeOutlined/>,
-      onClick: () => {
-        navigate('/auth')
-      }
-    },
+    // {
+    //   key: 1,
+    //   label: '首页',
+    //   icon: <HomeOutlined/>,
+    //   onClick: () => {
+    //     navigate('/auth')
+    //   }
+    // },
     {
       key: 3,
       label: '计算集群',
@@ -237,6 +237,7 @@ function Layouts() {
       console.log(row)
       setTenant(row.name as string)
       chooseTenantApi(row.id as string).then();
+      window.location.reload()
       localStorage.setItem('Tenant', row.id as string)
     }
     return rowData
@@ -253,9 +254,15 @@ function Layouts() {
   }
 
   const fetchTenant = () => {
-    queryTenantsApi(queryTenantsReq).then(function (response) {
-      setTenants(response.content)
-    })
+    if (localStorage.getItem('Role') == 'ROLE_SYS_ADMIN') {
+      queryTenantsApi(queryTenantsReq).then(function (response) {
+        setTenants(response.content)
+      });
+    } else {
+      queryUserTenantsApi().then(function (response) {
+        setTenants(response);
+      });
+    }
   }
 
   return (

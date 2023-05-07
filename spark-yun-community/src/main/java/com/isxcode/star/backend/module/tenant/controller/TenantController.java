@@ -44,7 +44,6 @@ public class TenantController {
     tenantBizService.addTenant(tetAddTenantReq);
   }
 
-  @Secured({Roles.SYS_ADMIN})
   @Operation(summary = "查询租户列表接口")
   @PostMapping("/queryTenant")
   @SuccessResponse("查询成功")
@@ -54,9 +53,10 @@ public class TenantController {
   }
 
   @Operation(summary = "查询用户租户列表接口")
-  @PostMapping("/queryUserTenant")
+  @GetMapping("/queryUserTenant")
   @SuccessResponse("查询成功")
   public List<TetQueryUserTenantRes> queryUserTenant() {
+
     return tenantBizService.queryUserTenant();
   }
 

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Button, Col, Input, Row, Space, Table, Tag } from 'antd'
+import {Button, Col, Input, Row, Space, Table, Tag, Tooltip} from 'antd'
 import { type ColumnsType } from 'antd/es/table'
 import { DatasourceModal } from '../../modals/datasource/DatasourceModal'
 import './DatasourcePage.less'
@@ -64,7 +64,7 @@ function DatasourcePage() {
       title: '数据源名称',
       dataIndex: 'name',
       key: 'name',
-      width: 140,
+      width: 130,
       render: (text, record) => (
         <a
           onClick={() => {
@@ -80,7 +80,7 @@ function DatasourcePage() {
       title: '类型',
       dataIndex: 'dbType',
       key: 'dbType',
-      width: 80,
+      width: 120,
       render: (_, record) => (
         <Space size="middle">
           <Tag color="default">{record.dbType}</Tag>
@@ -91,7 +91,15 @@ function DatasourcePage() {
       title: '连接信息',
       dataIndex: 'jdbcUrl',
       key: 'jdbcUrl',
-      width: 250
+      width: 250,
+      ellipsis: true,
+      render: (text, record) => (
+        <Tooltip title={text} placement="top">
+          <div style={{width: '200px'}}>
+            {text}
+          </div>
+        </Tooltip>
+      ),
     },
     {
       title: '用户名',
@@ -103,7 +111,7 @@ function DatasourcePage() {
       title: '状态',
       dataIndex: 'status',
       key: 'status',
-      width: 120,
+      width: 100,
       render: (_, record) => (
         <Space size="middle">
           {record.status === 'UN_CHECK' && <Tag color="blue">未检测</Tag>}
@@ -121,11 +129,13 @@ function DatasourcePage() {
     {
       title: '备注',
       key: 'remark',
-      dataIndex: 'remark'
+      dataIndex: 'remark',
+      width: 180
     },
     {
       title: '操作',
       key: 'action',
+      width: 250,
       render: (_, record) => (
         <Space size="middle">
           <a
@@ -153,7 +163,7 @@ function DatasourcePage() {
         </Space>
       )
     }
-  ]
+  ];
 
   return (
     <div style={{ padding: 24 }}>

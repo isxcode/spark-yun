@@ -17,7 +17,7 @@ public class CaeQueryEngineRes {
 
   private String memory;
 
-  private String checkTime;
+  private String checkDateTime;
 
   private String status;
 

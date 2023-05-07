@@ -16,8 +16,6 @@ import org.springframework.data.domain.PageImpl;
 @Mapper(componentModel = "spring")
 public interface EngineNodeMapper {
 
-  @Mapping(source = "password", target = "passwd")
-  @Mapping(source = "comment", target = "commentInfo")
   @Mapping(target = "usedMemory", expression = "java(0.0)")
   @Mapping(target = "allMemory", expression = "java(0.0)")
   @Mapping(target = "usedStorage", expression = "java(0.0)")
@@ -26,8 +24,6 @@ public interface EngineNodeMapper {
   @Mapping(target = "checkDateTime", expression = "java(java.time.LocalDateTime.now())")
   EngineNodeEntity addNodeReqToNodeEntity(EnoAddNodeReq enoAddNodeReq);
 
-  @Mapping(source = "password", target = "passwd")
-  @Mapping(source = "comment", target = "commentInfo")
   @Mapping(target = "usedMemory", expression = "java(0.0)")
   @Mapping(target = "allMemory", expression = "java(0.0)")
   @Mapping(target = "usedStorage", expression = "java(0.0)")
@@ -42,7 +38,6 @@ public interface EngineNodeMapper {
   @Mapping(
       target = "storage",
       expression = "java( nodeEntity.getUsedStorage()+ \"G/\" +nodeEntity.getAllStorage()+\"G\")")
-  @Mapping(target = "comment", source = "commentInfo")
   @Mapping(target = "cpu", source = "cpuPercent")
   @Mapping(target = "checkTime", source = "checkDateTime", dateFormat = "yyyy-MM-dd HH:mm:ss")
   EnoQueryNodeRes nodeEntityToQueryNodeRes(EngineNodeEntity nodeEntity);

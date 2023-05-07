@@ -17,12 +17,12 @@ import org.springframework.stereotype.Repository;
 @CacheConfig(cacheNames = {"SY_ENGINE_NODE"})
 public interface EngineNodeRepository extends JpaRepository<EngineNodeEntity, String> {
 
-  Page<EngineNodeEntity> findAllByCalculateEngineId(String engineId, Pageable pageable);
+  Page<EngineNodeEntity> findAllByClusterId(String clusterId, Pageable pageable);
 
-  List<EngineNodeEntity> findAllByCalculateEngineId(String engineId);
+  List<EngineNodeEntity> findAllByClusterId(String clusterId);
 
-  List<EngineNodeEntity> findAllByCalculateEngineIdAndStatus(String engineId, String status);
+  List<EngineNodeEntity> findAllByClusterIdAndStatus(String clusterId, String status);
 
-  @Query("SELECT E FROM EngineNodeEntity E WHERE E.calculateEngineId = :engineId  and ( E.name LIKE %:keyword% OR E.commentInfo LIKE %:keyword% OR E.host LIKE %:keyword%)")
+  @Query("SELECT E FROM EngineNodeEntity E WHERE E.clusterId = :engineId  and ( E.name LIKE %:keyword% OR E.remark LIKE %:keyword% OR E.host LIKE %:keyword%)")
   Page<EngineNodeEntity> searchAll(@Param("keyword") String searchKeyWord, @Param("engineId") String engineId, Pageable pageable);
 }

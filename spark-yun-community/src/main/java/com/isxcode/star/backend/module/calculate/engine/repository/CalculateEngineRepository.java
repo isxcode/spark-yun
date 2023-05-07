@@ -15,6 +15,6 @@ import org.springframework.stereotype.Repository;
 @CacheConfig(cacheNames = {"SY_CALCULATE_ENGINE"})
 public interface CalculateEngineRepository extends JpaRepository<CalculateEngineEntity, String> {
 
-  @Query("SELECT C FROM CalculateEngineEntity C WHERE C.name LIKE %:keyword% OR C.commentInfo LIKE %:keyword%")
+  @Query("SELECT C FROM CalculateEngineEntity C WHERE C.name LIKE %:keyword% OR C.remark LIKE %:keyword%")
   Page<CalculateEngineEntity> searchAll(@Param("keyword") String searchKeyWord, Pageable pageable);
 }

@@ -79,24 +79,24 @@ public class CalculateEngineBizService {
     }
     CalculateEngineEntity calculateEngineEntity = calculateEngineEntityOptional.get();
 
-    List<EngineNodeEntity> engineNodes = engineNodeRepository.findAllByCalculateEngineId(engineId);
+    List<EngineNodeEntity> engineNodes = engineNodeRepository.findAllByClusterId(engineId);
 
     // 激活节点
     List<EngineNodeEntity> activeNodes = engineNodes.stream().filter(e -> EngineNodeStatus.ACTIVE.equals(e.getStatus())).collect(Collectors.toList());
-    calculateEngineEntity.setActiveNode(activeNodes.size());
-    calculateEngineEntity.setAllNode(engineNodes.size());
+    calculateEngineEntity.setActiveNodeNum(activeNodes.size());
+    calculateEngineEntity.setAllNodeNum(engineNodes.size());
 
     // 内存
     double allMemory = activeNodes.stream().mapToDouble(EngineNodeEntity::getAllMemory).sum();
-    calculateEngineEntity.setAllMemory(allMemory);
+    calculateEngineEntity.setAllMemoryNum(allMemory);
     double usedMemory = activeNodes.stream().mapToDouble(EngineNodeEntity::getUsedMemory).sum();
-    calculateEngineEntity.setUsedMemory(usedMemory);
+    calculateEngineEntity.setUsedMemoryNum(usedMemory);
 
     // 存储
     double allStorage = activeNodes.stream().mapToDouble(EngineNodeEntity::getAllStorage).sum();
-    calculateEngineEntity.setAllStorage(allStorage);
+    calculateEngineEntity.setAllStorageNum(allStorage);
     double usedStorage = activeNodes.stream().mapToDouble(EngineNodeEntity::getUsedStorage).sum();
-    calculateEngineEntity.setUsedStorage(usedStorage);
+    calculateEngineEntity.setUsedStorageNum(usedStorage);
 
     if (!activeNodes.isEmpty()) {
       calculateEngineEntity.setStatus(CalculateEngineStatus.ACTIVE);

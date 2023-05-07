@@ -38,7 +38,7 @@ export default function MainRoute() {
               </RequireAuth>
             }>
             <Route index
-                   element={<Navigate to={localStorage.getItem('Role') == 'ROLE_SYS_ADMIN' ? '/user' : '/monitor'}/>}/>
+                   element={<Navigate to={localStorage.getItem('Role') == 'ROLE_SYS_ADMIN' ? '/user' : '/engine'}/>}/>
             <Route
               path={'/monitor'}
               element={
