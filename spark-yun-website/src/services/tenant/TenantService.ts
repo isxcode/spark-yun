@@ -5,6 +5,7 @@ import { UpdateUserReq } from '../../types/user/req/UpdateUserReq'
 import { QueryTenantsReq } from '../../types/tenant/req/QueryTenantsReq'
 import { QueryTenantsRes } from '../../types/tenant/res/QueryTenantsRes'
 import { AddTenantReq } from '../../types/tenant/req/AddTenantReq'
+import {GetTenantsRes} from "../../types/tenant/res/GetTenantsRes";
 
 const headerConfig = {
   headers: {
@@ -39,6 +40,17 @@ export const delTenantApi = async (data: string | undefined): Promise<void> => {
   message.success(response.msg)
 }
 
+export const chooseTenantApi = async (data: string | undefined): Promise<void> => {
+  const response: BaseResponse = await axiosInstance.get('/tet/chooseTenant?tenantId=' + data, headerConfig)
+  message.success(response.msg)
+}
+
+export const getTenantApi = async (data: string | undefined): Promise<GetTenantsRes> => {
+  const response: BaseResponse = await axiosInstance.get('/tet/getTenant?tenantId=' + data, headerConfig)
+  message.success(response.msg)
+  return response.data
+};
+
 export const updateTenantApi = async (data: UpdateUserReq): Promise<void> => {
   const response: BaseResponse = await axiosInstance.post('/tet/updateTenantBySystemAdmin', data, headerConfig)
   message.success(response.msg)
@@ -48,3 +60,4 @@ export const addTenantApi = async (data: AddTenantReq): Promise<void> => {
   const response: BaseResponse = await axiosInstance.post('/tet/addTenant', data, headerConfig)
   message.success(response.msg)
 }
+

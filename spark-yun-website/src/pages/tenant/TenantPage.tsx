@@ -1,13 +1,10 @@
-import React, { useEffect, useState } from 'react'
-import { Button, Col, Input, Row, Space, Table, Tag } from 'antd'
-import { type ColumnsType } from 'antd/es/table'
-import { DatasourceModal } from '../../modals/datasource/DatasourceModal'
+import React, {useEffect, useState} from 'react'
+import {Button, Col, Input, Row, Space, Table, Tag} from 'antd'
+import {type ColumnsType} from 'antd/es/table'
 import './TenantPage.less'
-import { type DatasourceRow } from '../../types/datasource/info/DatasourceRow'
-import { type BasePagination, defaultPagination } from '../../types/base/BasePagination'
-import { type QueryDatasourceReq } from '../../types/datasource/req/QueryDatasourceReq'
-import { delDatasourceApi, queryDatasourceApi, testDatasourceApi } from '../../services/datasource/DatasourceService'
-import { TenantRow } from '../../types/tenant/info/TenantRow'
+import {type BasePagination, defaultPagination} from '../../types/base/BasePagination'
+import {delDatasourceApi} from '../../services/datasource/DatasourceService'
+import {TenantRow} from '../../types/tenant/info/TenantRow'
 import {
   checkTenantApi,
   delTenantApi,
@@ -15,9 +12,8 @@ import {
   enableTenantApi,
   queryTenantsApi
 } from '../../services/tenant/TenantService'
-import { QueryTenantsReq } from '../../types/tenant/req/QueryTenantsReq'
-import { enableUserApi } from '../../services/user/UserService'
-import { TenantModal } from '../../modals/tenant/TenantModal'
+import {QueryTenantsReq} from '../../types/tenant/req/QueryTenantsReq'
+import {TenantModal} from '../../modals/tenant/TenantModal'
 
 function TenantPage() {
   const [tenants, setTenants] = useState<TenantRow[]>([])

@@ -1,13 +1,12 @@
-import React, { useEffect, useState } from 'react'
-import { Button, Col, Input, Row, Space, Table, Tag } from 'antd'
-import { type ColumnsType } from 'antd/es/table'
+import React, {useEffect, useState} from 'react'
+import {Button, Col, Input, Row, Space, Table, Tag} from 'antd'
+import {type ColumnsType} from 'antd/es/table'
 import './UserPage.less'
-import { type BasePagination, defaultPagination } from '../../types/base/BasePagination'
-import { delDatasourceApi } from '../../services/datasource/DatasourceService'
-import { UserRow } from '../../types/user/info/UserRow'
-import { delUserApi, disableUserApi, enableUserApi, queryAllUsersApi } from '../../services/user/UserService'
-import { QueryAllUserReq } from '../../types/user/req/QueryAllUserReq'
-import { UserModal } from '../../modals/user/UserModal'
+import {type BasePagination, defaultPagination} from '../../types/base/BasePagination'
+import {UserRow} from '../../types/user/info/UserRow'
+import {delUserApi, disableUserApi, enableUserApi, queryAllUsersApi} from '../../services/user/UserService'
+import {QueryAllUserReq} from '../../types/user/req/QueryAllUserReq'
+import {UserModal} from '../../modals/user/UserModal'
 
 function UserPage() {
   const [users, setUsers] = useState<UserRow[]>([])
@@ -71,7 +70,7 @@ function UserPage() {
       title: '用户名',
       dataIndex: 'username',
       key: 'username',
-      width: 100
+      width: 120
     },
     {
       title: '账号',
@@ -83,13 +82,13 @@ function UserPage() {
       title: '手机号',
       dataIndex: 'phone',
       key: 'phone',
-      width: 150
+      width: 140
     },
     {
       title: '邮箱',
       dataIndex: 'email',
       key: 'email',
-      width: 160
+      width: 200
     },
     {
       title: '状态',
@@ -106,7 +105,8 @@ function UserPage() {
     {
       title: '备注',
       key: 'remark',
-      dataIndex: 'remark'
+      dataIndex: 'remark',
+      width: 240
     },
     {
       title: '操作',

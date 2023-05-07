@@ -1,11 +1,7 @@
-import React, { useEffect } from 'react'
-import { Form, Input, message, Modal, Upload, UploadProps } from 'antd'
+import React from 'react'
+import {message, Modal, Upload, UploadProps} from 'antd'
 import './LicenseModal.less'
-import { UserRow } from '../../types/user/info/UserRow'
-import { addUserApi, updateUserApi } from '../../services/user/UserService'
-import { UpdateUserReq } from '../../types/user/req/UpdateUserReq'
-import { AddUserReq } from '../../types/user/req/AddUserReq'
-import { InboxOutlined } from '@ant-design/icons'
+import {InboxOutlined} from '@ant-design/icons'
 
 export const LicenseModal = (props: { isModalVisible: boolean, handleCancel: () => void, handleOk: () => void }) => {
   const { isModalVisible, handleCancel, handleOk } = props
@@ -18,16 +14,17 @@ export const LicenseModal = (props: { isModalVisible: boolean, handleCancel: () 
     headers: {
       Authorization: localStorage.getItem('Token') as string
     },
-    action: 'http://localhost:8080/lic/uploadLicense',
+    action: process.env.API_PREFIX_URL + '/lic/uploadLicense',
     onChange(info) {
       const { status } = info.file
+      let code
       if (status !== 'uploading') {
-        console.log(info.file, info.fileList)
+        code = JSON.parse(JSON.stringify(info.file)).response.code;
       }
-      if (status === 'done') {
-        message.success(`${info.file.name} 上传成功`)
-      } else if (status === 'error') {
-        message.error(`${info.file.name} 上传失败`)
+      if (code === '200') {
+        message.success(`${info.file.name} 验证成功`);
+      } else if (code === '500') {
+        message.error(`${info.file.name} 验证失败`);
       }
     },
     onDrop(e) {

@@ -79,7 +79,7 @@ public class UserBizService {
 
     // 如果是系统管理员直接返回
     if (Roles.SYS_ADMIN.equals(userEntity.getRoleCode())) {
-      return UsrLoginRes.builder().username(userEntity.getUsername()).token(jwtToken).role(userEntity.getRoleCode()).build();
+      return UsrLoginRes.builder().tenantId(userEntity.getCurrentTenantId()).username(userEntity.getUsername()).token(jwtToken).role(userEntity.getRoleCode()).build();
     }
 
     // 获取用户最近一次租户信息

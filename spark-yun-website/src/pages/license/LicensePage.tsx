@@ -66,13 +66,13 @@ function LicensePage() {
       width: 120
     },
     {
-      title: '开始时间',
+      title: '创建时间',
       dataIndex: 'startDateTime',
       key: 'startDateTime',
       width: 120
     },
     {
-      title: '结束时间',
+      title: '到期时间',
       dataIndex: 'endDateTime',
       key: 'endDateTime',
       width: 120

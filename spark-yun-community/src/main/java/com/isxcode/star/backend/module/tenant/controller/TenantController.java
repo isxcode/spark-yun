@@ -6,6 +6,7 @@ import com.isxcode.star.api.pojos.tenant.req.TetAddTenantReq;
 import com.isxcode.star.api.pojos.tenant.req.TetQueryTenantReq;
 import com.isxcode.star.api.pojos.tenant.req.TetUpdateTenantBySystemAdminReq;
 import com.isxcode.star.api.pojos.tenant.req.TetUpdateTenantByTenantAdminReq;
+import com.isxcode.star.api.pojos.tenant.res.TetGetTenantRes;
 import com.isxcode.star.api.pojos.tenant.res.TetQueryTenantRes;
 import com.isxcode.star.api.pojos.tenant.res.TetQueryUserTenantRes;
 import com.isxcode.star.api.response.SuccessResponse;
@@ -111,6 +112,22 @@ public class TenantController {
   public void deleteTenant(@Schema(description = "租户唯一id", example = "sy_344c3d583fa344f7a2403b19c5a654dc") @RequestParam String tenantId) {
 
     tenantBizService.deleteTenant(tenantId);
+  }
+
+  @Operation(summary = "选择租户接口")
+  @GetMapping("/chooseTenant")
+  @SuccessResponse("切换成功")
+  public void chooseTenant(@Schema(description = "租户唯一id", example = "sy_344c3d583fa344f7a2403b19c5a654dc") @RequestParam String tenantId) {
+
+    tenantBizService.chooseTenant(tenantId);
+  }
+
+  @Operation(summary = "获取租户信息接口")
+  @GetMapping("/getTenant")
+  @SuccessResponse("获取成功")
+  public TetGetTenantRes getTenant(@Schema(description = "租户唯一id", example = "sy_344c3d583fa344f7a2403b19c5a654dc") @RequestParam String tenantId) {
+
+    return tenantBizService.getTenant(tenantId);
   }
 }
 

@@ -13,6 +13,7 @@ import com.isxcode.star.backend.module.tenant.user.mapper.TenantUserMapper;
 import com.isxcode.star.backend.module.tenant.user.repository.TenantUserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -45,6 +46,7 @@ public class TenantUserBizService {
     if (!userEntityOptional.isPresent()) {
       throw new SparkYunException("用户不存在");
     }
+    UserEntity userEntity = userEntityOptional.get();
 
     // 判断该用户是否已经是成员
     Optional<TenantUserEntity> tenantUserEntityOptional = tenantUserRepository.findByTenantIdAndUserId(TENANT_ID.get(), turAddTenantUserReq.getUserId());
@@ -64,6 +66,12 @@ public class TenantUserBizService {
       tenantUserEntity.setRoleCode(Roles.TENANT_ADMIN);
     } else {
       tenantUserEntity.setRoleCode(Roles.TENANT_MEMBER);
+    }
+
+    // 判断用户当前是否有租户
+    if (Strings.isEmpty(userEntity.getCurrentTenantId())) {
+      userEntity.setCurrentTenantId(TENANT_ID.get());
+      userRepository.save(userEntity);
     }
 
     // 持久化数据

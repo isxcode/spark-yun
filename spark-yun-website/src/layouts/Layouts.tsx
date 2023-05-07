@@ -1,6 +1,6 @@
-import React, { useState } from 'react'
-import { Avatar, Col, Dropdown, Layout, Menu, type MenuProps, Row, Space, theme, Typography } from 'antd'
-import { Outlet, useNavigate } from 'react-router-dom'
+import React, {useEffect, useState} from 'react'
+import {Avatar, Col, Dropdown, Layout, Menu, type MenuProps, Row, Space, theme, Typography} from 'antd'
+import {Outlet, useNavigate} from 'react-router-dom'
 import './Layouts.less'
 import {
   ApartmentOutlined,
@@ -19,17 +19,26 @@ import {
   ToolOutlined,
   UserOutlined
 } from '@ant-design/icons'
-import { QueryTenantsReq } from '../types/tenant/req/QueryTenantsReq'
-import { queryTenantsApi } from '../services/tenant/TenantService'
-import { TenantRow } from '../types/tenant/info/TenantRow'
+import {QueryTenantsReq} from '../types/tenant/req/QueryTenantsReq'
+import {chooseTenantApi, getTenantApi, queryTenantsApi} from '../services/tenant/TenantService'
+import {TenantRow} from '../types/tenant/info/TenantRow'
 
 function Layouts() {
   const navigate = useNavigate()
 
-  const [tenant, setTenant] = useState(localStorage.getItem('TenantName'))
+  const [tenant, setTenant] = useState("");
   const [tenants, setTenants] = useState<TenantRow[]>([])
 
-  const { Header, Content, Sider } = Layout
+  useEffect(() => {
+    if (localStorage.getItem('Tenant') === 'undefined') {
+      setTenant("选择租户");
+    }else{
+      getTenantApi(localStorage.getItem('Tenant') as string).then(r => setTenant(r.name));
+      localStorage.getItem('Tenant')
+    }
+  }, []);
+
+  const {Header, Content, Sider} = Layout
 
   const genMenus = () => {
     if (localStorage.getItem('Role') == 'ROLE_SYS_ADMIN') {
@@ -41,7 +50,7 @@ function Layouts() {
     memberMenus.push({
       key: 14,
       label: '租户成员',
-      icon: <TeamOutlined />,
+      icon: <TeamOutlined/>,
       onClick: () => {
         navigate('/tenant_user')
       }
@@ -49,7 +58,7 @@ function Layouts() {
     memberMenus.push({
       key: 12,
       label: '后台设置',
-      icon: <ToolOutlined />,
+      icon: <ToolOutlined/>,
       onClick: () => {
         navigate('/auth')
       }
@@ -61,7 +70,7 @@ function Layouts() {
     {
       key: 1,
       label: '首页',
-      icon: <HomeOutlined />,
+      icon: <HomeOutlined/>,
       onClick: () => {
         navigate('/auth')
       }
@@ -69,7 +78,7 @@ function Layouts() {
     {
       key: 3,
       label: '计算集群',
-      icon: <CloudOutlined />,
+      icon: <CloudOutlined/>,
       onClick: () => {
         navigate('/engine')
       }
@@ -77,7 +86,7 @@ function Layouts() {
     {
       key: 4,
       label: '数据源',
-      icon: <DatabaseOutlined />,
+      icon: <DatabaseOutlined/>,
       onClick: () => {
         navigate('/datasource')
       }
@@ -85,7 +94,7 @@ function Layouts() {
     {
       key: 5,
       label: '作业流',
-      icon: <NodeIndexOutlined />,
+      icon: <NodeIndexOutlined/>,
       onClick: () => {
         navigate('/workflow')
       }
@@ -93,7 +102,7 @@ function Layouts() {
     {
       key: 7,
       label: '调度历史',
-      icon: <ApartmentOutlined />,
+      icon: <ApartmentOutlined/>,
       onClick: () => {
         navigate('/auth')
       }
@@ -125,7 +134,7 @@ function Layouts() {
     {
       key: 9,
       label: '数据资产',
-      icon: <DashboardOutlined />,
+      icon: <DashboardOutlined/>,
       onClick: () => {
         navigate('/auth')
       }
@@ -133,7 +142,7 @@ function Layouts() {
     {
       key: 21,
       label: '数据地图',
-      icon: <SearchOutlined />,
+      icon: <SearchOutlined/>,
       onClick: () => {
         navigate('/auth')
       }
@@ -141,7 +150,7 @@ function Layouts() {
     {
       key: 10,
       label: '自定义Api',
-      icon: <ApiOutlined />,
+      icon: <ApiOutlined/>,
       onClick: () => {
         navigate('/api')
       }
@@ -160,7 +169,7 @@ function Layouts() {
     {
       key: 18,
       label: '用户中心',
-      icon: <UserOutlined />,
+      icon: <UserOutlined/>,
       onClick: () => {
         navigate('/user')
       }
@@ -168,7 +177,7 @@ function Layouts() {
     {
       key: 17,
       label: '租户列表',
-      icon: <ProfileOutlined />,
+      icon: <ProfileOutlined/>,
       onClick: () => {
         navigate('/tenant')
       }
@@ -176,7 +185,7 @@ function Layouts() {
     {
       key: 14,
       label: '租户成员',
-      icon: <TeamOutlined />,
+      icon: <TeamOutlined/>,
       onClick: () => {
         navigate('/tenant_user')
       }
@@ -184,26 +193,26 @@ function Layouts() {
     {
       key: 19,
       label: '证书安装',
-      icon: <CopyrightOutlined />,
+      icon: <CopyrightOutlined/>,
       onClick: () => {
         navigate('/license')
       }
     },
-    {
-      key: 15,
-      label: '系统设置',
-      icon: <SettingOutlined />,
-      onClick: () => {
-        navigate('/setting')
-      }
-    }
+    // {
+    //   key: 15,
+    //   label: '系统设置',
+    //   icon: <SettingOutlined />,
+    //   onClick: () => {
+    //     navigate('/setting')
+    //   }
+    // }
   ]
 
   const items2: MenuProps['items'] = [
-    {
-      key: '1',
-      label: '设置'
-    },
+    // {
+    //   key: '1',
+    //   label: '设置'
+    // },
     {
       key: '2',
       label: '退出登录',
@@ -219,20 +228,22 @@ function Layouts() {
     const rowData = {
       key: '',
       label: '',
-      onClick: () => {}
+      onClick: () => {
+      }
     }
     rowData.key = row.id as string
     rowData.label = row.name as string
     rowData.onClick = () => {
       console.log(row)
       setTenant(row.name as string)
+      chooseTenantApi(row.id as string).then();
       localStorage.setItem('Tenant', row.id as string)
     }
     return rowData
   })
 
   const {
-    token: { colorBgContainer, colorPrimary }
+    token: {colorBgContainer, colorPrimary}
   } = theme.useToken()
 
   const queryTenantsReq: QueryTenantsReq = {
@@ -249,18 +260,18 @@ function Layouts() {
 
   return (
     <>
-      <Layout style={{ minHeight: '100vh' }}>
+      <Layout style={{minHeight: '100vh'}}>
         <Header className={'sy-header'}>
           <Row align="middle">
             <Col span={8}>
-              <Row justify={'start'} style={{ minWidth: '320px' }}>
+              <Row justify={'start'} style={{minWidth: '320px'}}>
                 <Space>
-                  <Col style={{ minWidth: '160px' }}>
+                  <Col style={{minWidth: '160px'}}>
                     <div className={'sy-logo'} onClick={() => window.open('https://zhiqingyun.isxcode.com')}>
                       至轻云
                     </div>
                   </Col>
-                  <Col style={{ minWidth: '150px', display: 'flex', alignItems: 'center' }}>
+                  <Col style={{minWidth: '150px', display: 'flex', alignItems: 'center'}}>
                     <Dropdown
                       onOpenChange={() => {
                         fetchTenant()
@@ -271,9 +282,9 @@ function Layouts() {
                         defaultSelectedKeys: [tenant as string]
                       }}>
                       <Typography.Link>
-                        <Space style={{ color: colorPrimary }}>
+                        <Space style={{color: colorPrimary}}>
                           {tenant}
-                          <DownOutlined />
+                          <DownOutlined/>
                         </Space>
                       </Typography.Link>
                     </Dropdown>
@@ -282,9 +293,9 @@ function Layouts() {
               </Row>
             </Col>
             <Col span={8} offset={8}>
-              <Row justify={'end'} style={{ minWidth: '100px' }}>
+              <Row justify={'end'} style={{minWidth: '100px'}}>
                 <Space>
-                  <Col style={{ minWidth: '80px' }}>
+                  <Col style={{minWidth: '80px'}}>
                     <a
                       className={'sy-table-a sy-help-doc-a'}
                       onClick={() => {
@@ -293,9 +304,9 @@ function Layouts() {
                       帮助文档
                     </a>
                   </Col>
-                  <Col style={{ minWidth: '40px' }}>
-                    <Dropdown menu={{ items: items2 }} placement="bottomRight" arrow>
-                      <Avatar style={{ backgroundColor: '#e25a1b', verticalAlign: 'middle' }} size="large" gap={4}>
+                  <Col style={{minWidth: '40px'}}>
+                    <Dropdown menu={{items: items2}} placement="bottomRight" arrow>
+                      <Avatar style={{backgroundColor: '#e25a1b', verticalAlign: 'middle'}} size="large" gap={4}>
                         {localStorage.getItem('Username')}
                       </Avatar>
                     </Dropdown>
@@ -309,10 +320,10 @@ function Layouts() {
           <Sider width={200} theme={'light'}>
             <Menu
               className={'sy-sider'}
-              defaultSelectedKeys={['1']}
+              defaultSelectedKeys={[localStorage.getItem('Role') == 'ROLE_SYS_ADMIN' ? "18" : "1"]}
               items={genMenus()}
               mode="inline"
-              style={{ overflowY: 'scroll', maxHeight: '90vh', height: '90vh' }}
+              style={{overflowY: 'scroll', maxHeight: '90vh', height: '90vh'}}
             />
             {/* <div style={{ */}
             {/*  position: 'absolute', bottom: 10, textAlign: 'center', width: '100%', color: 'darkgrey', */}
@@ -327,7 +338,7 @@ function Layouts() {
                 margin: 0,
                 background: colorBgContainer
               }}>
-              <Outlet />
+              <Outlet/>
             </Content>
           </Layout>
         </Layout>

@@ -25,24 +25,25 @@ export default function MainRoute() {
             path="/*"
             element={
               <RequireAuth>
-                <Layouts />
+                <Layouts/>
               </RequireAuth>
             }
           />
-          <Route path="/login" element={<Login />} />
+          <Route path="/login" element={<Login/>}/>
           <Route
             path={'/'}
             element={
               <RequireAuth>
-                <Layouts />
+                <Layouts/>
               </RequireAuth>
             }>
-            <Route index element={<Navigate to={'/monitor'} />} />
+            <Route index
+                   element={<Navigate to={localStorage.getItem('Role') == 'ROLE_SYS_ADMIN' ? '/user' : '/monitor'}/>}/>
             <Route
               path={'/monitor'}
               element={
                 <RequireAuth>
-                  <Auth />
+                  <Auth/>
                 </RequireAuth>
               }
             />
@@ -50,7 +51,7 @@ export default function MainRoute() {
               path={'/auth'}
               element={
                 <RequireAuth>
-                  <Auth />
+                  <Auth/>
                 </RequireAuth>
               }
             />
@@ -58,7 +59,7 @@ export default function MainRoute() {
               path={'/user'}
               element={
                 <RequireAuth>
-                  <UserPage />
+                  <UserPage/>
                 </RequireAuth>
               }
             />
@@ -66,7 +67,7 @@ export default function MainRoute() {
               path={'/tenant'}
               element={
                 <RequireAuth>
-                  <TenantPage />
+                  <TenantPage/>
                 </RequireAuth>
               }
             />
@@ -74,7 +75,7 @@ export default function MainRoute() {
               path={'/license'}
               element={
                 <RequireAuth>
-                  <LicensePage />
+                  <LicensePage/>
                 </RequireAuth>
               }
             />
@@ -82,7 +83,7 @@ export default function MainRoute() {
               path={'/tenant_user'}
               element={
                 <RequireAuth>
-                  <TenantUserPage />
+                  <TenantUserPage/>
                 </RequireAuth>
               }
             />
@@ -90,7 +91,7 @@ export default function MainRoute() {
               path={'/setting'}
               element={
                 <RequireAuth>
-                  <SettingPage />
+                  <SettingPage/>
                 </RequireAuth>
               }
             />
@@ -98,7 +99,7 @@ export default function MainRoute() {
               path={'/api'}
               element={
                 <RequireAuth>
-                  <ApiPage />
+                  <ApiPage/>
                 </RequireAuth>
               }
             />
@@ -106,7 +107,7 @@ export default function MainRoute() {
               path={'/engine'}
               element={
                 <RequireAuth>
-                  <CalculateEnginePage />
+                  <CalculateEnginePage/>
                 </RequireAuth>
               }
             />
@@ -114,7 +115,7 @@ export default function MainRoute() {
               path={'/nodes/:calculateEngineId'}
               element={
                 <RequireAuth>
-                  <EngineNodePage />
+                  <EngineNodePage/>
                 </RequireAuth>
               }
             />
@@ -122,7 +123,7 @@ export default function MainRoute() {
               path={'/datasource'}
               element={
                 <RequireAuth>
-                  <DatasourcePage />
+                  <DatasourcePage/>
                 </RequireAuth>
               }
             />
@@ -130,7 +131,7 @@ export default function MainRoute() {
               path={'/workflow'}
               element={
                 <RequireAuth>
-                  <WorkflowPage />
+                  <WorkflowPage/>
                 </RequireAuth>
               }
             />
@@ -138,7 +139,7 @@ export default function MainRoute() {
               path={'/work/:workId'}
               element={
                 <RequireAuth>
-                  <WorkPage />
+                  <WorkPage/>
                 </RequireAuth>
               }
             />
@@ -146,7 +147,7 @@ export default function MainRoute() {
               path={'/works/:workflowId'}
               element={
                 <RequireAuth>
-                  <WorksPage />
+                  <WorksPage/>
                 </RequireAuth>
               }
             />
@@ -154,7 +155,7 @@ export default function MainRoute() {
         </Routes>
       </BrowserRouter>
     </>
-  )
+  );
 }
 
 function RequireAuth({ children }: { children: JSX.Element }) {

@@ -6,6 +6,4 @@ export interface LoginRes {
   tenantId: string
 
   role: string
-
-  tenantName: string
 }

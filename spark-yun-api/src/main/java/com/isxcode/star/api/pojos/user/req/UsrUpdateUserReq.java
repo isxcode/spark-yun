@@ -16,12 +16,12 @@ public class UsrUpdateUserReq {
 
   @Schema(title = "名称", example = "ispong")
   @NotEmpty(message = "名称不能为空")
-  @Size(min = 5, max = 100, message = "名称长度5～100")
+  @Size(min = 1, max = 100, message = "名称长度5～100")
   private String username;
 
   @Schema(title = "账号", example = "ispong")
   @NotEmpty(message = "账号不能为空")
-  @Size(min = 5, max = 100, message = "账号长度5～100")
+  @Size(min = 1, max = 100, message = "账号长度5～100")
   private String account;
 
   @Schema(title = "邮箱", example = "ispong@123.com")

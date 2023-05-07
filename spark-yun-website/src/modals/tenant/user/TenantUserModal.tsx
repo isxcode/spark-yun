@@ -53,8 +53,8 @@ export const TenantUserModal = (props: { isModalVisible: boolean, handleCancel: 
         cancelText={'取消'}>
         <Form
           className={'sy-add-datasource-form'}
-          labelCol={{ span: 6 }}
-          wrapperCol={{ span: 20 }}
+          labelCol={{ span: 5 }}
+          wrapperCol={{ span: 16 }}
           initialValues={{ remember: true }}
           onFinish={onFinish}
           form={form}>
@@ -68,13 +68,13 @@ export const TenantUserModal = (props: { isModalVisible: boolean, handleCancel: 
             </Select>
           </Form.Item>
 
-          <Form.Item name={'tenantAdmin'} label="设为管理员" valuePropName="tenantAdmin">
+          <Form.Item name={'tenantAdmin'} label="管理员" valuePropName="tenantAdmin">
             <Switch />
           </Form.Item>
 
-          <Form.Item label="备注" name="remark">
-            <Input.TextArea />
-          </Form.Item>
+          {/*<Form.Item label="备注" name="remark">*/}
+          {/*  <Input.TextArea />*/}
+          {/*</Form.Item>*/}
         </Form>
       </Modal>
     </>

@@ -184,7 +184,7 @@ create table if not exists SY_WORK_CONFIG
 );
 
 -- 初始化系统管理员
-insert into SY_USER (id, username, accoun, role_code, status, create_by, create_date_time, last_modified_by,
+insert into SY_USER (id, username, account, role_code, status, create_by, create_date_time, last_modified_by,
                      last_modified_date_time, version_number)
 values ('admin_id', '系统管理员', 'admin', 'ROLE_SYS_ADMIN', 'ENABLE', 'admin_id', now(), 'admin_id', now(),
         0);

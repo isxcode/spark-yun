@@ -7,6 +7,7 @@ import com.isxcode.star.api.pojos.tenant.req.TetAddTenantReq;
 import com.isxcode.star.api.pojos.tenant.req.TetQueryTenantReq;
 import com.isxcode.star.api.pojos.tenant.req.TetUpdateTenantBySystemAdminReq;
 import com.isxcode.star.api.pojos.tenant.req.TetUpdateTenantByTenantAdminReq;
+import com.isxcode.star.api.pojos.tenant.res.TetGetTenantRes;
 import com.isxcode.star.api.pojos.tenant.res.TetQueryTenantRes;
 import com.isxcode.star.api.pojos.tenant.res.TetQueryUserTenantRes;
 import com.isxcode.star.backend.module.tenant.entity.TenantEntity;
@@ -219,6 +220,50 @@ public class TenantBizService {
 
     // 持久化
     tenantRepository.save(tenantEntity);
+  }
+
+  public void chooseTenant(String tenantId) {
+
+    Optional<TenantEntity> tenantEntityOptional = tenantRepository.findById(tenantId);
+    if (!tenantEntityOptional.isPresent()) {
+      throw new SparkYunException("租户不存在");
+    }
+
+    Optional<UserEntity> userEntityOptional = userRepository.findById(USER_ID.get());
+    if (!userEntityOptional.isPresent()) {
+      throw new SparkYunException("用户不存在");
+    }
+
+    UserEntity userEntity = userEntityOptional.get();
+    userEntity.setCurrentTenantId(tenantId);
+    userRepository.save(userEntity);
+  }
+
+  public TetGetTenantRes getTenant(String tenantId) {
+
+    Optional<TenantEntity> tenantEntityOptional = tenantRepository.findById(tenantId);
+    if (!tenantEntityOptional.isPresent()) {
+      throw new SparkYunException("租户不存在");
+    }
+    TenantEntity tenantEntity = tenantEntityOptional.get();
+
+    Optional<UserEntity> userEntityOptional = userRepository.findById(USER_ID.get());
+    if (!userEntityOptional.isPresent()) {
+      throw new SparkYunException("用户不存在");
+    }
+    UserEntity userEntity = userEntityOptional.get();
+
+    // 如果是管理员直接返回
+    if (Roles.SYS_ADMIN.equals(userEntity.getRoleCode())) {
+      return TetGetTenantRes.builder().id(tenantEntity.getId()).name(tenantEntity.getName()).build();
+    }
+
+    // 判断用户是否在租户中
+    Optional<TenantUserEntity> tenantUserEntityOptional = tenantUserRepository.findByTenantIdAndUserId(tenantId, USER_ID.get());
+    if (!tenantUserEntityOptional.isPresent()) {
+      throw new SparkYunException("不在租户中");
+    }
+    return TetGetTenantRes.builder().id(tenantEntity.getId()).name(tenantEntity.getName()).build();
   }
 
 }

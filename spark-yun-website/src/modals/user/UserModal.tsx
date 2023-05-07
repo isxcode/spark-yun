@@ -58,12 +58,12 @@ export const UserModal = (props: {
         cancelText={'取消'}>
         <Form
           className={'sy-add-datasource-form'}
-          labelCol={{ span: 4 }}
-          wrapperCol={{ span: 20 }}
+          labelCol={{ span: 5 }}
+          wrapperCol={{ span: 18 }}
           initialValues={{ remember: true }}
           onFinish={onFinish}
           form={form}>
-          <Form.Item label="用户名称" name="username" rules={[{ required: true, message: '名称不能为空' }]}>
+          <Form.Item label="用户名" name="username" rules={[{ required: true, message: '名称不能为空' }]}>
             <Input />
           </Form.Item>
 
