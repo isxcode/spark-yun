@@ -33,7 +33,9 @@ function Layouts() {
     if (localStorage.getItem('Tenant') === 'undefined') {
       setTenant('选择租户')
     } else {
-      getTenantApi(localStorage.getItem('Tenant') as string).then((r) => { setTenant(r.name) })
+      getTenantApi(localStorage.getItem('Tenant') as string).then((r) => {
+        setTenant(r.name)
+      })
       localStorage.getItem('Tenant')
     }
   }, [])

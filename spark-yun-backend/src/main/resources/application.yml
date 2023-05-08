@@ -76,6 +76,17 @@ spark-yun:
     - /login
     - /**/open/**
     - /vip/api/custom/**
+    - /user
+    - /tenant
+    - /license
+    - /tenant_user
+    - /api
+    - /engine
+    - /nodes/*
+    - /datasource
+    - /workflow
+    - /work/*
+    - /works/*
   jwt-key: spark-yun
   aes-slat: spark-yun
   resources-path: /resources
