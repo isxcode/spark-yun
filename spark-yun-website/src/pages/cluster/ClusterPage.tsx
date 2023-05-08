@@ -6,11 +6,7 @@ import './ClusterPage.less'
 import { BasePagination, defaultPagination } from '../../types/base/BasePagination'
 import { CalculateEngineRow } from '../../types/calculate/engine/info/CalculateEngineRow'
 import { QueryEngineReq } from '../../types/calculate/engine/req/QueryEngineReq'
-import {
-  checkEngineApi,
-  delEngineApi,
-  queryEnginesApi
-} from '../../services/cluster/ClusterService'
+import { checkEngineApi, delEngineApi, queryEnginesApi } from '../../services/cluster/ClusterService'
 import { ClusterModal } from '../../modals/cluster/ClusterModal'
 
 function ClusterPage() {

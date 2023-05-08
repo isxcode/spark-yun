@@ -1,10 +1,10 @@
-import React, {useEffect, useState} from 'react'
-import {Button, Col, Input, Row, Space, Table, Tag} from 'antd'
-import {type ColumnsType} from 'antd/es/table'
+import React, { useEffect, useState } from 'react'
+import { Button, Col, Input, Row, Space, Table, Tag } from 'antd'
+import { type ColumnsType } from 'antd/es/table'
 import './TenantPage.less'
-import {type BasePagination, defaultPagination} from '../../types/base/BasePagination'
-import {delDatasourceApi} from '../../services/datasource/DatasourceService'
-import {TenantRow} from '../../types/tenant/info/TenantRow'
+import { type BasePagination, defaultPagination } from '../../types/base/BasePagination'
+import { delDatasourceApi } from '../../services/datasource/DatasourceService'
+import { TenantRow } from '../../types/tenant/info/TenantRow'
 import {
   checkTenantApi,
   delTenantApi,
@@ -12,8 +12,8 @@ import {
   enableTenantApi,
   queryTenantsApi
 } from '../../services/tenant/TenantService'
-import {QueryTenantsReq} from '../../types/tenant/req/QueryTenantsReq'
-import {TenantModal} from '../../modals/tenant/TenantModal'
+import { QueryTenantsReq } from '../../types/tenant/req/QueryTenantsReq'
+import { TenantModal } from '../../modals/tenant/TenantModal'
 
 function TenantPage() {
   const [tenants, setTenants] = useState<TenantRow[]>([])

@@ -4,7 +4,7 @@ import axiosInstance from '../../config/axios'
 import { type AddEngineReq } from '../../types/calculate/engine/req/AddEngineReq'
 import { type UpdateEngineReq } from '../../types/calculate/engine/req/UpdateEngineReq'
 import { message } from 'antd'
-import {BaseResponse} from '../../types/base/BaseResponse';
+import { BaseResponse } from '../../types/base/BaseResponse'
 
 const headerConfig = {
   headers: {
@@ -14,7 +14,7 @@ const headerConfig = {
 }
 
 export const addEngineApi = async (data: AddEngineReq): Promise<void> => {
-  const response: BaseResponse = await axiosInstance.post('/cae/addEngine', data, headerConfig);
+  const response: BaseResponse = await axiosInstance.post('/cae/addEngine', data, headerConfig)
   message.success(response.msg)
 }
 

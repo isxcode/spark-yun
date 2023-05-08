@@ -1,17 +1,16 @@
 rootProject.name = 'spark-yun'
 
-include 'spark-yun-api' // 底层模块，包括所有的工具类(utils)，pojo类(pojos)，枚举类(menus)，静态变量(constants)，配置变量(properties),异常类(exceptions)
-include 'spark-yun-common' // 中间层，包括响应控制(response)
-include 'spark-yun-agent' // 至轻云代理，包括代理的所有功能
-include 'spark-yun-client' // 至轻云客户端，包括访问agent的所有方法
-include 'spark-yun-backend' // 至轻云后端服务，包括社区版和企业版
-include 'spark-yun-community' // 至轻云后端服务器社区版
-include 'spark-yun-website' // 至轻云前端服务
-include 'spark-yun-yarn' // 至轻云集成yarn服务
-include 'spark-yun-dist' // 至轻云打包工具
-include 'spark-yun-connector' // 至轻云数据库连接
-include 'spark-yun-plugins' // 至轻云spark插件中心
+include 'spark-yun-api'
+include 'spark-yun-common'
+include 'spark-yun-agent'
+include 'spark-yun-client'
+include 'spark-yun-backend'
+include 'spark-yun-community'
+include 'spark-yun-vip'
+include 'spark-yun-website'
+include 'spark-yun-yarn'
+include 'spark-yun-dist'
+include 'spark-yun-connector'
+include 'spark-yun-plugins'
 include 'spark-yun-plugins:spark-plugin-test'
 include 'spark-yun-plugins:spark-query-sql-plugin'
-
-include 'spark-yun-vip' // 至轻云后端服务企业版，社区版需要注释此行

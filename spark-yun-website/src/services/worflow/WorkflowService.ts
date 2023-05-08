@@ -15,7 +15,7 @@ const headerConfig = {
 
 export const queryWorkflowApi = async (data: WofQueryWorkflowReq): Promise<QueryEngineRes> => {
   data.page = data.page - 1
-  const response = await axiosInstance.post<QueryEngineRes>('/wof/queryWorkflow', data, headerConfig);
+  const response = await axiosInstance.post<QueryEngineRes>('/wof/queryWorkflow', data, headerConfig)
   return response.data
 }
 

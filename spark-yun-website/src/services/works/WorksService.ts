@@ -20,7 +20,7 @@ const headerConfig = {
 
 export const queryWorkApi = async (data: QueryWorkReq): Promise<QueryWorkRes> => {
   data.page = data.page - 1
-    const response = await axiosInstance.post<WofQueryWorkflowRes>('/wok/queryWork', data, headerConfig);
+    const response = await axiosInstance.post<WofQueryWorkflowRes>('/wok/queryWork', data, headerConfig)
   return response.data
 }
 
@@ -83,8 +83,7 @@ export const configWorkApi = async (data: ConfigWorkReq): Promise<void> => {
 }
 
 export const runWorkApi = async (workId: string): Promise<RunWorkRes> => {
-
-  const response = await axiosInstance.get<RunWorkRes>('/wok/runWork?workId=' + workId, headerConfig);
+  const response = await axiosInstance.get<RunWorkRes>('/wok/runWork?workId=' + workId, headerConfig)
   message.success(JSON.parse(JSON.stringify(response)).msg)
   return response.data
 }

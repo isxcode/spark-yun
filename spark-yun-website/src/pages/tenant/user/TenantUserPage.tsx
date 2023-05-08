@@ -1,17 +1,17 @@
-import React, {useEffect, useState} from 'react'
-import {Button, Col, Input, Row, Space, Table, Tag} from 'antd'
-import {type ColumnsType} from 'antd/es/table'
+import React, { useEffect, useState } from 'react'
+import { Button, Col, Input, Row, Space, Table, Tag } from 'antd'
+import { type ColumnsType } from 'antd/es/table'
 import './TenantUserPage.less'
-import {type BasePagination, defaultPagination} from '../../../types/base/BasePagination'
-import {TenantUserRow} from '../../../types/tenant/user/info/TenantUserRow'
-import {QueryTenantUserReq} from '../../../types/tenant/user/req/QueryTenantUserReq'
+import { type BasePagination, defaultPagination } from '../../../types/base/BasePagination'
+import { TenantUserRow } from '../../../types/tenant/user/info/TenantUserRow'
+import { QueryTenantUserReq } from '../../../types/tenant/user/req/QueryTenantUserReq'
 import {
   queryTenantUserApi,
   removeTenantAdminApi,
   removeTenantUserApi,
   setTenantAdminApi
 } from '../../../services/tenant/user/TenantUserService'
-import {TenantUserModal} from '../../../modals/tenant/user/TenantUserModal'
+import { TenantUserModal } from '../../../modals/tenant/user/TenantUserModal'
 
 function TenantUserPage() {
   const [tenantUsers, setTenantUsers] = useState<TenantUserRow[]>([])

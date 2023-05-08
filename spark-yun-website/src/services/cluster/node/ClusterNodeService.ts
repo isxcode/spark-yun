@@ -15,7 +15,7 @@ const headerConfig = {
 }
 
 export const addEngineNodeApi = async (data: AddEngineNodeReq): Promise<void> => {
-  const response: BaseResponse = await axiosInstance.post('/eno/addNode', data, headerConfig);
+  const response: BaseResponse = await axiosInstance.post('/eno/addNode', data, headerConfig)
   message.success(response.msg)
 }
 export const updateEngineNodeApi = async (data: UpdateEngineNodeReq): Promise<void> => {
@@ -45,6 +45,6 @@ export const installAgentApi = async (data: string | undefined): Promise<void> =
 }
 
 export const removeAgentApi = async (data: string | undefined): Promise<void> => {
-  const response: BaseResponse = await axiosInstance.get('/eno/removeAgent?engineNodeId=' + data, headerConfig);
+  const response: BaseResponse = await axiosInstance.get('/eno/removeAgent?engineNodeId=' + data, headerConfig)
   message.success(response.msg)
 }

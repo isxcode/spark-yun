@@ -1,4 +1,3 @@
-// 引入插件
 plugins {
   id 'java'
   id 'org.springframework.boot' version "${SPRING_VERSION}"
@@ -7,29 +6,21 @@ plugins {
   id 'checkstyle'
 }
 
-// 从VERSION中获取版本号
 def version_number = new File(rootDir.getAbsolutePath(), 'VERSION').readLines()[0].trim()
 
-// 所有项目模块的配置
 allprojects {
 
-  // 声明插件
   apply plugin: 'org.springframework.boot'
   apply plugin: 'io.spring.dependency-management'
   apply plugin: 'java-library'
   apply plugin: 'checkstyle'
 
-  // java环境配置，使用java1.8
   sourceCompatibility = JavaVersion.VERSION_1_8
   targetCompatibility = JavaVersion.VERSION_1_8
 
-  // 定义组织名称
   group = 'com.isxcode.star'
-
-  // 定义版本号
   version = version_number
 
-  // 配置多选中央仓库
   repositories {
     mavenLocal()
     maven { url 'https://maven.aliyun.com/nexus/content/groups/public/' }
@@ -43,7 +34,6 @@ allprojects {
     exclude group: "org.slf4j", module: "slf4j-reload4j"
   }
 
-  // 配置基础依赖
   dependencies {
 
     // spring web
@@ -81,7 +71,6 @@ allprojects {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
   }
 
-  // 配置spring的spring-boot-configuration-processor，编译时生效。
   configurations {
     compileOnly {
       extendsFrom annotationProcessor
@@ -89,26 +78,38 @@ allprojects {
   }
 }
 
-// package
+// gradle package 打包
 tasks.register('package', GradleBuild) {
 
   dependsOn(":spark-yun-dist:build_dist", ":spark-yun-website:install_website")
   tasks = [":spark-yun-backend:bootJar"]
 }
 
-// start
+// gradle start 启动项目
 tasks.register('start', Exec) {
 
   dependsOn(":package")
   commandLine 'bash', '-c', 'java -jar ./spark-yun-backend/build/libs/spark-yun-backend.jar'
 }
 
-// docker
+// gradle docker 构建本地docker镜像
 tasks.register('docker', Exec) {
 
   dependsOn(":package")
-  // docker build -t isxcode/zhiqingyun:0.0.4 -f ./Dockerfile .
   commandLine 'bash', '-c', 'docker build -t isxcode/zhiqingyun:' + version_number + ' -f ./Dockerfile .'
+}
+
+// gradle deploy 发布docker镜像
+tasks.register('deploy', Exec) {
+
+  dependsOn(":package")
+  commandLine 'bash', '-c', 'docker buildx build --platform linux/amd64,linux/arm64/v8 -t isxcode/zhiqingyun:' + version_number + ' -f ./Dockerfile . --push'
+}
+
+// gradle docs 启动本地官网
+tasks.register('docs', Exec) {
+
+  commandLine 'bash', '-c', 'docsify serve docs'
 }
 
 // spotless配置

@@ -34,9 +34,52 @@ public class SparkYunBackendApplication {
     return "index";
   }
 
-  @RequestMapping(value = {"/nodes/{calculateCLusterId}"})
-  public String nodes(@PathVariable String calculateCLusterId) {
+  @RequestMapping(value = {"/nodes/{clusterId}"})
+  public String nodes(@PathVariable String clusterId) {
 
     return "index";
   }
+
+  @RequestMapping(value = {"/user"})
+  public String user() {
+
+    return "index";
+  }
+
+  @RequestMapping(value = {"/tenant"})
+  public String tenant() {
+
+    return "index";
+  }
+
+  @RequestMapping(value = {"/tenant_user"})
+  public String tenantUser() {
+
+    return "index";
+  }
+
+  @RequestMapping(value = {"/license"})
+  public String license() {
+
+    return "index";
+  }
+
+  @RequestMapping(value = {"/engine"})
+  public String engine() {
+
+    return "index";
+  }
+
+  @RequestMapping(value = {"/datasource"})
+  public String datasource() {
+
+    return "index";
+  }
+
+  @RequestMapping(value = {"/workflow"})
+  public String workflow() {
+
+    return "index";
+  }
+
 }

@@ -94,9 +94,9 @@ export const ClusterNodeModal = (props: {
             <Input />
           </Form.Item>
 
-          {/*<Form.Item label="Hadoop" name="hadoopHomePath">*/}
-          {/*  <Input />*/}
-          {/*</Form.Item>*/}
+          {/* <Form.Item label="Hadoop" name="hadoopHomePath"> */}
+          {/*  <Input /> */}
+          {/* </Form.Item> */}
 
           <Form.Item label="备注" name="remark">
             <Input.TextArea />

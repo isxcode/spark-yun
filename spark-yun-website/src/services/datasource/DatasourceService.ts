@@ -40,4 +40,4 @@ export const testDatasourceApi = async (data: string): Promise<TestDatasourceRes
   const response = await axiosInstance.get<TestDatasourceRes>('/das/testConnect?datasourceId=' + data, headerConfig)
   message.success(JSON.parse(JSON.stringify(response)).msg)
   return response.data
-};
+}

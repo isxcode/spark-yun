@@ -1,7 +1,7 @@
 import React from 'react'
-import {message, Modal, Upload, UploadProps} from 'antd'
+import { message, Modal, Upload, UploadProps } from 'antd'
 import './LicenseModal.less'
-import {InboxOutlined} from '@ant-design/icons'
+import { InboxOutlined } from '@ant-design/icons'
 
 export const LicenseModal = (props: { isModalVisible: boolean, handleCancel: () => void, handleOk: () => void }) => {
   const { isModalVisible, handleCancel, handleOk } = props
@@ -19,12 +19,12 @@ export const LicenseModal = (props: { isModalVisible: boolean, handleCancel: () 
       const { status } = info.file
       let code
       if (status !== 'uploading') {
-        code = JSON.parse(JSON.stringify(info.file)).response.code;
+        code = JSON.parse(JSON.stringify(info.file)).response.code
       }
       if (code === '200') {
-        message.success(`${info.file.name} 验证成功`);
+        message.success(`${info.file.name} 验证成功`)
       } else if (code === '500') {
-        message.error(`${info.file.name} 验证失败`);
+        message.error(`${info.file.name} 验证失败`)
       }
     },
     onDrop(e) {

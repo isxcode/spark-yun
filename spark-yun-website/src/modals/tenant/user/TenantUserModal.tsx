@@ -72,9 +72,9 @@ export const TenantUserModal = (props: { isModalVisible: boolean, handleCancel: 
             <Switch />
           </Form.Item>
 
-          {/*<Form.Item label="备注" name="remark">*/}
-          {/*  <Input.TextArea />*/}
-          {/*</Form.Item>*/}
+          {/* <Form.Item label="备注" name="remark"> */}
+          {/*  <Input.TextArea /> */}
+          {/* </Form.Item> */}
         </Form>
       </Modal>
     </>

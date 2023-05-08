@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import {Button, Col, Input, Row, Space, Table, Tag, Tooltip} from 'antd'
+import { Button, Col, Input, Row, Space, Table, Tag, Tooltip } from 'antd'
 import { type ColumnsType } from 'antd/es/table'
 import { DatasourceModal } from '../../modals/datasource/DatasourceModal'
 import './DatasourcePage.less'
@@ -95,11 +95,9 @@ function DatasourcePage() {
       ellipsis: true,
       render: (text, record) => (
         <Tooltip title={text} placement="top">
-          <div style={{width: '200px'}}>
-            {text}
-          </div>
+          <div style={{ width: '200px' }}>{text}</div>
         </Tooltip>
-      ),
+      )
     },
     {
       title: '用户名',
@@ -163,7 +161,7 @@ function DatasourcePage() {
         </Space>
       )
     }
-  ];
+  ]
 
   return (
     <div style={{ padding: 24 }}>
