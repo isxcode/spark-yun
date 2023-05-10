@@ -50,7 +50,9 @@ public class WorkConfigBizService {
     if (!Strings.isEmpty(wocConfigWorkReq.getDatasourceId())) {
       workConfigEntity.setDatasourceId(wocConfigWorkReq.getDatasourceId());
     }
-
+    if (!Strings.isEmpty(wocConfigWorkReq.getCorn())) {
+      workConfigEntity.setCorn(wocConfigWorkReq.getCorn());
+    }
     workConfigRepository.save(workConfigEntity);
   }
 

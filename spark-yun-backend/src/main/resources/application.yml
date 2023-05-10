@@ -89,7 +89,6 @@ spark-yun:
     - /works/*
   jwt-key: spark-yun
   aes-slat: spark-yun
-  resources-path: /resources
   agent-tar-gz-dir: /spark-yun
   agent-bin-dir: /spark-yun/bin
   default-agent-port: 30177

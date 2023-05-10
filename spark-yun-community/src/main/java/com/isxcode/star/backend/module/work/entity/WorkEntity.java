@@ -56,6 +56,8 @@ public class WorkEntity {
 
   private String workflowId;
 
+  private String versionId;
+
   @CreatedDate
   private LocalDateTime createDateTime;
 

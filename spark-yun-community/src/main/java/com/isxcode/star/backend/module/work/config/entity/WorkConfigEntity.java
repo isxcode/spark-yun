@@ -47,6 +47,8 @@ public class WorkConfigEntity {
 
   private String sqlScript;
 
+  private String corn;
+
   @CreatedDate
   private LocalDateTime createDateTime;
 

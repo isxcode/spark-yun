@@ -1,4 +1,4 @@
-package com.isxcode.star.api.pojos.vip.api.dto;
+package com.isxcode.star.api.pojos.api.dto;
 
 import lombok.Data;
 

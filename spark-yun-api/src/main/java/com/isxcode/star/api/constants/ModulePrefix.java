@@ -3,7 +3,7 @@ package com.isxcode.star.api.constants;
 /** 各个模块的请求路径前缀. */
 public interface ModulePrefix {
 
-  /** 用户模块. */
+  /** 用户模块 USER. */
   String USER = "/usr";
 
   /** 计算引擎模块. */
@@ -41,4 +41,10 @@ public interface ModulePrefix {
 
   /** 企业API模块. */
   String VIP_API = "/vip/api";
+
+  /** 数据地图模块. DATA_MAP */
+  String VIP_DATA_MAP = "/vip/dmp";
+
+  /** 数据资产模块. DATA_ASSET */
+  String VIP_DATA_ASSET = "/vip/dat";
 }

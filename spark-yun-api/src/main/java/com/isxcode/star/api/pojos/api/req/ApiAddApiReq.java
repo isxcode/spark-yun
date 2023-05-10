@@ -1,4 +1,4 @@
-package com.isxcode.star.api.pojos.vip.api.req;
+package com.isxcode.star.api.pojos.api.req;
 
 import com.isxcode.star.api.constants.ApiType;
 import io.swagger.v3.oas.annotations.media.Schema;
