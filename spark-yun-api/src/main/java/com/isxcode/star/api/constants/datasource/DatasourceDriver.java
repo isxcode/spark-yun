@@ -24,4 +24,8 @@ public interface DatasourceDriver {
   String DORIS_DRIVER = "com.mysql.jdbc.Driver";
 
   String OCEAN_BASE_DRIVER = "com.oceanbase.jdbc.Driver";
+
+  String TIDB_DRIVER = "com.mysql.cj.jdbc.Driver";
+
+  String DB2_DRIVER = "com.ibm.db2.jcc.DB2Driver";
 }

@@ -106,6 +106,12 @@ public class DatasourceBizService {
         case DatasourceType.OCEAN_BASE:
           Class.forName(DatasourceDriver.OCEAN_BASE_DRIVER);
           break;
+        case DatasourceType.TIDB:
+          Class.forName(DatasourceDriver.TIDB_DRIVER);
+          break;
+        case DatasourceType.DB2:
+          Class.forName(DatasourceDriver.DB2_DRIVER);
+          break;
         default:
           throw new SparkYunException("数据源暂不支持");
       }

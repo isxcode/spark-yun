@@ -24,4 +24,9 @@ public interface DatasourceType {
   String DORIS = "DORIS";
 
   String OCEAN_BASE = "OCEAN_BASE";
+
+  String TIDB = "TIDB";
+
+  String DB2 = "DB2";
+
 }
