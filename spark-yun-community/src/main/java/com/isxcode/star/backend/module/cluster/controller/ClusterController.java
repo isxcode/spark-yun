@@ -9,6 +9,7 @@ import com.isxcode.star.backend.module.cluster.service.ClusterBizService;
 import com.isxcode.star.api.response.SuccessResponse;
 import javax.validation.Valid;
 
+import com.isxcode.star.backend.module.user.action.annoation.UserLog;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -29,6 +30,7 @@ public class ClusterController {
 
   private final ClusterBizService calculateEngineBizService;
 
+  @UserLog
   @Operation(summary = "添加计算引擎接口")
   @PostMapping("/addEngine")
   @SuccessResponse("添加成功")
@@ -37,6 +39,7 @@ public class ClusterController {
     calculateEngineBizService.addEngine(caeAddEngineReq);
   }
 
+  @UserLog
   @Operation(summary = "更新计算引擎接口")
   @PostMapping("/updateEngine")
   @SuccessResponse("更新成功")
@@ -46,6 +49,7 @@ public class ClusterController {
 
   }
 
+  @UserLog
   @Operation(summary = "查询计算引擎接口")
   @PostMapping("/queryEngine")
   @SuccessResponse("查询计算引擎成功")
@@ -54,6 +58,7 @@ public class ClusterController {
     return calculateEngineBizService.queryEngines(caeQueryEngineReq);
   }
 
+  @UserLog
   @Operation(summary = "删除计算引擎接口")
   @GetMapping("/delEngine")
   @SuccessResponse("删除成功")
@@ -62,6 +67,7 @@ public class ClusterController {
     calculateEngineBizService.delEngine(engineId);
   }
 
+  @UserLog
   @Operation(summary = "检测计算引擎接口")
   @GetMapping("/checkEngine")
   @SuccessResponse("检测成功")

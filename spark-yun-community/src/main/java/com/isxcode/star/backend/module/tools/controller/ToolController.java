@@ -1,6 +1,7 @@
 package com.isxcode.star.backend.module.tools.controller;
 
 import com.isxcode.star.api.exception.SparkYunException;
+import com.isxcode.star.backend.module.user.action.annoation.UserLog;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +29,7 @@ public class ToolController {
 
   private final CacheManager cacheManager;
 
+  @UserLog
   @Operation(summary = "获取版本号接口")
   @GetMapping("/open/version")
   public String getLeoLastVersion() {
@@ -47,6 +49,7 @@ public class ToolController {
     }
   }
 
+  @UserLog
   @Operation(summary = "获取缓存接口")
   @GetMapping("/open/getCache")
   public Map<String, String> getCache() {

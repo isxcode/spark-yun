@@ -12,6 +12,7 @@ import com.isxcode.star.backend.module.cluster.node.service.ClusterNodeBizServic
 import com.isxcode.star.api.response.SuccessResponse;
 import javax.validation.Valid;
 
+import com.isxcode.star.backend.module.user.action.annoation.UserLog;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -32,6 +33,7 @@ public class ClusterNodeController {
 
   private final ClusterNodeBizService engineNodeBizService;
 
+  @UserLog
   @Operation(summary = "添加引擎节点接口")
   @PostMapping("/addNode")
   @SuccessResponse("添加成功")
@@ -40,6 +42,7 @@ public class ClusterNodeController {
     engineNodeBizService.addNode(enoAddNodeReq);
   }
 
+  @UserLog
   @Operation(summary = "更新引擎节点接口")
   @PostMapping("/updateNode")
   @SuccessResponse("更新成功")
@@ -48,6 +51,7 @@ public class ClusterNodeController {
     engineNodeBizService.updateNode(enoUpdateNodeReq);
   }
 
+  @UserLog
   @Operation(summary = "查询节点列表接口")
   @PostMapping("/queryNode")
   @SuccessResponse("查询节点列表成功")
@@ -56,6 +60,7 @@ public class ClusterNodeController {
     return engineNodeBizService.queryNodes(enoQueryNodeReq);
   }
 
+  @UserLog
   @Operation(summary = "删除节点接口")
   @GetMapping("/delNode")
   @SuccessResponse("删除成功")
@@ -64,6 +69,7 @@ public class ClusterNodeController {
     engineNodeBizService.delNode(engineNodeId);
   }
 
+  @UserLog
   @Operation(summary = "检查代理接口")
   @GetMapping("/checkAgent")
   @SuccessResponse("检测完成")
@@ -72,6 +78,7 @@ public class ClusterNodeController {
     return engineNodeBizService.checkAgent(engineNodeId);
   }
 
+  @UserLog
   @Operation(summary = "安装代理接口")
   @GetMapping("/installAgent")
   @SuccessResponse("安装完成")
@@ -80,6 +87,7 @@ public class ClusterNodeController {
     return engineNodeBizService.installAgent(engineNodeId);
   }
 
+  @UserLog
   @Operation(summary = "卸载代理接口")
   @GetMapping("/removeAgent")
   @SuccessResponse("卸载完成")

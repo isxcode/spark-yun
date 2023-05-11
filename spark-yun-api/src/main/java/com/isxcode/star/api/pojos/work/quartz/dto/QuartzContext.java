@@ -18,4 +18,8 @@ public class QuartzContext {
   private String corn;
 
   private String sqlScript;
+
+  private String userId;
+
+  private String tenantId;
 }

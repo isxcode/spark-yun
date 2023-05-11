@@ -10,6 +10,7 @@ import com.isxcode.star.api.pojos.datasource.res.DasQueryDatasourceRes;
 import com.isxcode.star.api.pojos.datasource.res.DasTestConnectRes;
 import com.isxcode.star.api.response.SuccessResponse;
 import com.isxcode.star.backend.module.datasource.service.DatasourceBizService;
+import com.isxcode.star.backend.module.user.action.annoation.UserLog;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -35,6 +36,7 @@ public class DatasourceController {
 
   private final DatasourceBizService datasourceBizService;
 
+  @UserLog
   @Secured({Roles.TENANT_MEMBER, Roles.TENANT_ADMIN})
   @Operation(summary = "添加数据源接口")
   @PostMapping("/addDatasource")
@@ -45,6 +47,7 @@ public class DatasourceController {
     datasourceBizService.addDatasource(dasAddDatasourceReq);
   }
 
+  @UserLog
   @Secured({Roles.TENANT_MEMBER, Roles.TENANT_ADMIN})
   @Operation(summary = "更新数据源接口")
   @PostMapping("/updateDatasource")
@@ -55,6 +58,7 @@ public class DatasourceController {
     datasourceBizService.updateDatasource(dasAddDatasourceReq);
   }
 
+  @UserLog
   @Secured({Roles.TENANT_MEMBER, Roles.TENANT_ADMIN})
   @Operation(summary = "查询数据源列表接口")
   @PostMapping("/queryDatasource")
@@ -65,6 +69,7 @@ public class DatasourceController {
     return datasourceBizService.queryDatasource(dasQueryDatasourceReq);
   }
 
+  @UserLog
   @Secured({Roles.TENANT_MEMBER, Roles.TENANT_ADMIN})
   @Operation(summary = "删除数据源接口")
   @GetMapping("/delDatasource")
@@ -75,6 +80,7 @@ public class DatasourceController {
     datasourceBizService.delDatasource(datasourceId);
   }
 
+  @UserLog
   @Secured({Roles.TENANT_MEMBER, Roles.TENANT_ADMIN})
   @Operation(summary = "测试数据源连接接口")
   @GetMapping("/testConnect")

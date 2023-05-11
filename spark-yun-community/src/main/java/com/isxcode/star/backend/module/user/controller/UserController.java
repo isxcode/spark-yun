@@ -10,6 +10,7 @@ import com.isxcode.star.api.pojos.user.req.UsrUpdateUserReq;
 import com.isxcode.star.api.pojos.user.res.UsrLoginRes;
 import com.isxcode.star.api.pojos.user.res.UsrQueryAllEnableUsersRes;
 import com.isxcode.star.api.pojos.user.res.UsrQueryAllUsersRes;
+import com.isxcode.star.backend.module.user.action.annoation.UserLog;
 import com.isxcode.star.backend.module.user.service.UserBizService;
 import com.isxcode.star.api.response.SuccessResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -35,6 +36,7 @@ public class UserController {
 
   private final UserBizService userBizService;
 
+  @UserLog
   @Operation(summary = "用户登录接口")
   @PostMapping("/open/login")
   @SuccessResponse("登录成功")
@@ -43,6 +45,7 @@ public class UserController {
     return userBizService.login(usrLoginReq);
   }
 
+  @UserLog
   @Operation(summary = "用户退出接口")
   @GetMapping("/logout")
   @SuccessResponse("退出成功")
@@ -51,6 +54,7 @@ public class UserController {
     userBizService.logout();
   }
 
+  @UserLog
   @Secured({Roles.SYS_ADMIN})
   @Operation(summary = "创建用户接口")
   @PostMapping("/addUser")
@@ -60,6 +64,7 @@ public class UserController {
     userBizService.addUser(usrAddUserReq);
   }
 
+  @UserLog
   @Secured({Roles.SYS_ADMIN})
   @Operation(summary = "更新用户接口")
   @PostMapping("/updateUser")
@@ -69,6 +74,7 @@ public class UserController {
     userBizService.updateUser(usrUpdateUserReq);
   }
 
+  @UserLog
   @Secured({Roles.SYS_ADMIN})
   @Operation(summary = "禁用用户接口")
   @GetMapping("/disableUser")
@@ -78,6 +84,7 @@ public class UserController {
     userBizService.disableUser(userId);
   }
 
+  @UserLog
   @Secured({Roles.SYS_ADMIN})
   @Operation(summary = "启用用户接口")
   @GetMapping("/enableUser")
@@ -87,6 +94,7 @@ public class UserController {
     userBizService.enableUser(userId);
   }
 
+  @UserLog
   @Secured({Roles.SYS_ADMIN})
   @Operation(summary = "删除用户接口")
   @GetMapping("/deleteUser")
@@ -96,6 +104,7 @@ public class UserController {
     userBizService.deleteUser(userId);
   }
 
+  @UserLog
   @Secured({Roles.SYS_ADMIN})
   @Operation(summary = "查询所有用户接口")
   @PostMapping("/queryAllUsers")
@@ -105,6 +114,7 @@ public class UserController {
     return userBizService.queryAllUsers(usrQueryAllUsersReq);
   }
 
+  @UserLog
   @Secured({Roles.SYS_ADMIN, Roles.TENANT_ADMIN})
   @Operation(summary = "查询所有启用用户接口")
   @PostMapping("/queryAllEnableUsers")
@@ -113,4 +123,5 @@ public class UserController {
 
     return userBizService.queryAllEnableUsers(usrQueryAllEnableUsersReq);
   }
+
 }

@@ -1,10 +1,14 @@
 package com.isxcode.star.backend.module.work.config.controller;
 
 import com.isxcode.star.api.constants.ModulePrefix;
+import com.isxcode.star.api.constants.SecurityConstants;
 import com.isxcode.star.api.pojos.work.config.req.WocConfigWorkReq;
 import com.isxcode.star.backend.module.work.config.service.WorkConfigBizService;
 import com.isxcode.star.api.response.SuccessResponse;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,6 +27,7 @@ public class WorkConfigController {
   @Operation(summary = "配置作业接口")
   @PostMapping("/configWork")
   @SuccessResponse("保存成功")
+  @Parameter(name = SecurityConstants.HEADER_TENANT_ID, description = "租户id", required = true, in = ParameterIn.HEADER, schema = @Schema(type = "string"))
   public void configWork(@RequestBody WocConfigWorkReq configWorkReq) {
 
     workConfigBizService.configWork(configWorkReq);

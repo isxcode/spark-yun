@@ -11,6 +11,7 @@ import com.isxcode.star.api.pojos.tenant.res.TetQueryTenantRes;
 import com.isxcode.star.api.pojos.tenant.res.TetQueryUserTenantRes;
 import com.isxcode.star.api.response.SuccessResponse;
 import com.isxcode.star.backend.module.tenant.service.TenantBizService;
+import com.isxcode.star.backend.module.user.action.annoation.UserLog;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -35,6 +36,7 @@ public class TenantController {
 
   private final TenantBizService tenantBizService;
 
+  @UserLog
   @Secured({Roles.SYS_ADMIN})
   @Operation(summary = "创建租户接口")
   @PostMapping("/addTenant")
@@ -44,6 +46,7 @@ public class TenantController {
     tenantBizService.addTenant(tetAddTenantReq);
   }
 
+  @UserLog
   @Operation(summary = "查询租户列表接口")
   @PostMapping("/queryTenant")
   @SuccessResponse("查询成功")
@@ -52,6 +55,7 @@ public class TenantController {
     return tenantBizService.queryTenants(tetQueryTenantReq);
   }
 
+  @UserLog
   @Operation(summary = "查询用户租户列表接口")
   @GetMapping("/queryUserTenant")
   @SuccessResponse("查询成功")
@@ -60,6 +64,7 @@ public class TenantController {
     return tenantBizService.queryUserTenant();
   }
 
+  @UserLog
   @Secured({Roles.SYS_ADMIN})
   @Operation(summary = "系统管理员更新租户接口")
   @PostMapping("/updateTenantBySystemAdmin")
@@ -69,6 +74,7 @@ public class TenantController {
     tenantBizService.updateTenantByTenantAdmin(tetUpdateTenantBySystemAdminReq);
   }
 
+  @UserLog
   @Secured({Roles.TENANT_ADMIN})
   @Operation(summary = "租户管理员更新租户接口")
   @PostMapping("/updateTenantByTenantAdmin")
@@ -78,6 +84,7 @@ public class TenantController {
     tenantBizService.TetUpdateTenantByTenantAdminReq(tetUpdateTenantByTenantAdminReq);
   }
 
+  @UserLog
   @Secured({Roles.SYS_ADMIN})
   @Operation(summary = "启动租户接口")
   @GetMapping("/enableTenant")
@@ -87,6 +94,7 @@ public class TenantController {
     tenantBizService.enableTenant(tenantId);
   }
 
+  @UserLog
   @Secured({Roles.SYS_ADMIN})
   @Operation(summary = "禁用租户接口")
   @GetMapping("/disableTenant")
@@ -96,6 +104,7 @@ public class TenantController {
     tenantBizService.disableTenant(tenantId);
   }
 
+  @UserLog
   @Secured({Roles.SYS_ADMIN})
   @Operation(summary = "检测租户信息接口")
   @GetMapping("/checkTenant")
@@ -105,6 +114,7 @@ public class TenantController {
     tenantBizService.checkTenant(tenantId);
   }
 
+  @UserLog
   @Secured({Roles.SYS_ADMIN})
   @Operation(summary = "删除租户接口")
   @GetMapping("/deleteTenant")
@@ -114,6 +124,7 @@ public class TenantController {
     tenantBizService.deleteTenant(tenantId);
   }
 
+  @UserLog
   @Operation(summary = "选择租户接口")
   @GetMapping("/chooseTenant")
   @SuccessResponse("切换成功")
@@ -122,6 +133,7 @@ public class TenantController {
     tenantBizService.chooseTenant(tenantId);
   }
 
+  @UserLog
   @Operation(summary = "获取租户信息接口")
   @GetMapping("/getTenant")
   @SuccessResponse("获取成功")
