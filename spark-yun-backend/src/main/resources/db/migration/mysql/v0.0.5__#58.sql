@@ -63,3 +63,45 @@ create table if not exists SY_USER_ACTION
   create_by        varchar(200) not null comment '创建人',
   create_date_time datetime     not null comment '创建时间'
 );
+
+-- 自定义表单表
+create table if not exists SY_FORM
+(
+  id                      varchar(200)  not null unique primary key comment '自定义表单唯一id',
+  name                    varchar(200)  not null comment '表单名称',
+  datasource_id           varchar(200)  not null comment '数据源id',
+  main_table              varchar(200) comment '主要对象表id',
+  status                  varchar(200) comment '自定义表单状态',
+  insert_sql              varchar(2000) not null comment '增sql语句',
+  delete_sql              varchar(2000) not null comment '删sql语句',
+  update_sql              varchar(2000) not null comment '改sql语句',
+  select_sql              varchar(2000) not null comment '查sql语句',
+  create_by               varchar(200)  not null comment '创建人',
+  create_date_time        datetime      not null comment '创建时间',
+  last_modified_by        varchar(200)  not null comment '更新人',
+  last_modified_date_time datetime      not null comment '更新时间',
+  version_number          int           not null comment '版本号',
+  deleted                 int default 0 not null comment '逻辑删除',
+  tenant_id               varchar(200)  not null comment '租户id'
+);
+
+-- 自定义表单组件表
+create table if not exists SY_FORM_COMPONENT
+(
+  id                      varchar(200)  not null unique primary key comment '表单字段组件唯一id',
+  form_id                 varchar(200) comment '自定义表单id',
+  name                    varchar(200) comment '字段名称',
+  component_type          varchar(200) comment '组件类型',
+  component_key           varchar(200) comment '组件Key',
+  is_display              boolean comment '是否显示组件',
+  is_primary_key          boolean comment '是否为主键',
+  show_value              varchar(200) comment '显示的值',
+  value_sql               varchar(2000) comment '来源值查询sql',
+  create_by               varchar(200)  not null comment '创建人',
+  create_date_time        datetime      not null comment '创建时间',
+  last_modified_by        varchar(200)  not null comment '更新人',
+  last_modified_date_time datetime      not null comment '更新时间',
+  version_number          int           not null comment '版本号',
+  deleted                 int default 0 not null comment '逻辑删除',
+  tenant_id               varchar(200)  not null comment '租户id'
+);

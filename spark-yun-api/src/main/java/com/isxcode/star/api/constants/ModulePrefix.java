@@ -47,4 +47,7 @@ public interface ModulePrefix {
 
   /** 数据资产模块. DATA_ASSET */
   String VIP_DATA_ASSET = "/vip/dat";
+
+  /** 自定义表单. VIP_FORM */
+  String VIP_FORM = "/vip/fom";
 }
