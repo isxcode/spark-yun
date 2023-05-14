@@ -1,12 +1,17 @@
-import React, { useEffect, useState } from 'react'
-import { Button, Col, Input, Row, Space, Table, Tag } from 'antd'
-import { type ColumnsType } from 'antd/es/table'
+import React, {useEffect, useState} from 'react'
+import {Button, Col, Input, Row, Space, Table, Tag} from 'antd'
+import {type ColumnsType} from 'antd/es/table'
 import './LicensePage.less'
-import { type BasePagination, defaultPagination } from '../../types/base/BasePagination'
-import { LicenseRow } from '../../types/license/info/LicenseRow'
-import { deleteLicenseApi, enableLicenseApi, queryLicenseApi } from '../../services/license/LicenseService'
-import { QueryLicenseReq } from '../../types/license/req/QueryLicenseReq'
-import { LicenseModal } from '../../modals/license/LicenseModal'
+import {type BasePagination, defaultPagination} from '../../types/base/BasePagination'
+import {LicenseRow} from '../../types/license/info/LicenseRow'
+import {
+  deleteLicenseApi,
+  disableLicenseApi,
+  enableLicenseApi,
+  queryLicenseApi
+} from '../../services/license/LicenseService'
+import {QueryLicenseReq} from '../../types/license/req/QueryLicenseReq'
+import {LicenseModal} from '../../modals/license/LicenseModal'
 
 function LicensePage() {
   const [licenses, setLicense] = useState<LicenseRow[]>([])
@@ -35,6 +40,12 @@ function LicensePage() {
 
   const enableLicense = (licenseId: string | undefined) => {
     enableLicenseApi(licenseId).then(function () {
+      fetchLicense()
+    })
+  }
+
+  const disableLicense = (licenseId: string | undefined) => {
+    disableLicenseApi(licenseId).then(function () {
       fetchLicense()
     })
   }
@@ -78,19 +89,19 @@ function LicensePage() {
       width: 120
     },
     {
-      title: '成员数',
+      title: '成员',
       dataIndex: 'maxMemberNum',
       key: 'maxMemberNum',
       width: 80
     },
     {
-      title: '租户数',
+      title: '租户',
       dataIndex: 'maxTenantNum',
       key: 'maxTenantNum',
       width: 80
     },
     {
-      title: '作业流数',
+      title: '作业流',
       dataIndex: 'maxWorkflowNum',
       key: 'maxWorkflowNum',
       width: 90
@@ -118,13 +129,23 @@ function LicensePage() {
       key: 'action',
       render: (_, record) => (
         <Space size="middle">
-          <a
-            className={'sy-table-a'}
-            onClick={() => {
-              enableLicense(record.id)
-            }}>
-            启用
-          </a>
+
+          {
+            record.status === "ENABLE" ? <a
+              className={'sy-table-a'}
+              onClick={() => {
+                disableLicense(record.id)
+              }}>
+              禁用
+            </a> : <a
+              className={'sy-table-a'}
+              onClick={() => {
+                enableLicense(record.id)
+              }}>
+              启用
+            </a>
+          }
+
           <a
             className={'sy-table-a'}
             onClick={() => {
@@ -138,7 +159,7 @@ function LicensePage() {
   ]
 
   return (
-    <div style={{ padding: 24 }}>
+    <div style={{padding: 24}}>
       <Row className={'datasource-bar'}>
         <Col span={8}>
           <Button
@@ -149,13 +170,13 @@ function LicensePage() {
             上传证书
           </Button>
         </Col>
-        <Col span={7} offset={9} style={{ textAlign: 'right', display: 'flex' }}>
+        <Col span={7} offset={9} style={{textAlign: 'right', display: 'flex'}}>
           <Input
-            style={{ marginRight: '10px' }}
+            style={{marginRight: '10px'}}
             onPressEnter={handleSearch}
             defaultValue={queryLicenseReq.searchKeyWord}
             onChange={(e) => {
-              setPagination({ ...pagination, searchKeyWord: e.target.value })
+              setPagination({...pagination, searchKeyWord: e.target.value})
             }}
             placeholder={'备注'}
           />
@@ -165,7 +186,7 @@ function LicensePage() {
         </Col>
       </Row>
 
-      <Table columns={columns} dataSource={licenses} />
+      <Table columns={columns} dataSource={licenses}/>
 
       <LicenseModal
         isModalVisible={isModalVisible}

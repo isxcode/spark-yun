@@ -3,6 +3,7 @@ import { Button, Col, Form, Input, message, Row, theme } from 'antd'
 import { useNavigate } from 'react-router-dom'
 import { loginApi } from '../../services/login/loginService'
 import './Login.less'
+import * as CryptoJS from 'crypto-js'
 
 function Login() {
   const navigate = useNavigate()
@@ -11,6 +12,8 @@ function Login() {
 
   const handleLogin = (value) => {
     setLoading(true)
+    const { passwd } = value
+    value.passwd = CryptoJS.MD5(passwd).toString()
     loginApi(value)
       .then(function (response) {
         localStorage.setItem('Authorization', response.username)

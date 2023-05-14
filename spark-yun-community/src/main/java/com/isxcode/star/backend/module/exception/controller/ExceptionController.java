@@ -23,7 +23,7 @@ public class ExceptionController {
   @RequestMapping(path = "/tokenIsInvalid", method = {RequestMethod.GET, RequestMethod.POST})
   public void tokenIsInvalid() {
 
-    throw new SparkYunException("token不合法异常");
+    throw new SparkYunException("5555", "token异常，请重新登录");
   }
 
   @Operation(summary = "权限不足异常")

@@ -6,9 +6,24 @@ package com.isxcode.star.api.constants;
 public interface WorkStatus {
 
   /**
-   * 新建.
+   * 已发布.
    */
-  String NEW = "NEW";
+  String PUBLISHED = "PUBLISHED";
+
+  /**
+   * 未发布.
+   */
+  String UN_PUBLISHED = "UN_PUBLISHED";
+
+  /**
+   * 已下线.
+   */
+  String STOP = "STOP";
+
+  /**
+   * 已暂停.
+   */
+  String PAUSED = "PAUSED";
 
   /**
    * 可运行.

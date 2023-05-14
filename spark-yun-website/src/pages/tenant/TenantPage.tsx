@@ -89,20 +89,20 @@ function TenantPage() {
       title: '租户名称',
       dataIndex: 'name',
       key: 'name',
-      width: 140,
-      render: (text, record) => (
-        <a
-          onClick={() => {
-            setTenant(record)
-            setIsModalVisible(true)
-          }}
-          className={'sy-table-a'}>
-          {text}
-        </a>
-      )
+      width: 140
+      // render: (text, record) => (
+      //   <a
+      //     onClick={() => {
+      //       setTenant(record)
+      //       setIsModalVisible(true)
+      //     }}
+      //     className={'sy-table-a'}>
+      //     {text}
+      //   </a>
+      // )
     },
     {
-      title: '已用/总成员',
+      title: '成员',
       dataIndex: 'member',
       key: 'member',
       width: 120,
@@ -113,7 +113,7 @@ function TenantPage() {
       )
     },
     {
-      title: '已用/总工作流',
+      title: '工作流',
       dataIndex: 'workflow',
       key: 'workflow',
       width: 130,

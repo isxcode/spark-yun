@@ -5,6 +5,7 @@ import { UserRow } from '../../types/user/info/UserRow'
 import { addUserApi, updateUserApi } from '../../services/user/UserService'
 import { UpdateUserReq } from '../../types/user/req/UpdateUserReq'
 import { AddUserReq } from '../../types/user/req/AddUserReq'
+import * as CryptoJS from 'crypto-js'
 
 export const UserModal = (props: {
   isModalVisible: boolean
@@ -24,6 +25,8 @@ export const UserModal = (props: {
   }, [user])
 
   const addUser = (data: AddUserReq) => {
+    const { passwd } = data
+    data.passwd = CryptoJS.MD5(passwd)
     addUserApi(data).then(function () {
       handleOk()
     })

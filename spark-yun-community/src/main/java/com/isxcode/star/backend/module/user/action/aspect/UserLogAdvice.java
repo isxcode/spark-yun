@@ -96,7 +96,11 @@ public class UserLogAdvice {
       userActionEntity.setCreateBy("anonymous");
     }
     userActionEntity.setEndTimestamp(System.currentTimeMillis());
-    userActionRepository.save(userActionEntity);
+    try {
+      userActionRepository.save(userActionEntity);
+    } catch (Exception e) {
+      log.error(e.getMessage());
+    }
   }
 
   @AfterThrowing(value = "operateUserLog()", throwing = "successResponseException")

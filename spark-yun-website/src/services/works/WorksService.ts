@@ -87,3 +87,23 @@ export const runWorkApi = async (workId: string): Promise<RunWorkRes> => {
   message.success(JSON.parse(JSON.stringify(response)).msg)
   return response.data
 }
+
+export const depolyWorkApi = async (workId: string): Promise<void> => {
+  const response = await axiosInstance.get<RunWorkRes>('/vip/wok/deployWork?workId=' + workId, headerConfig)
+  message.success(JSON.parse(JSON.stringify(response)).msg)
+}
+
+export const pauseWorkApi = async (workId: string): Promise<void> => {
+  const response = await axiosInstance.get<RunWorkRes>('/vip/wok/pauseWork?workId=' + workId, headerConfig)
+  message.success(JSON.parse(JSON.stringify(response)).msg)
+}
+
+export const resumeWorkApi = async (workId: string): Promise<void> => {
+  const response = await axiosInstance.get<RunWorkRes>('/vip/wok/resumeWork?workId=' + workId, headerConfig)
+  message.success(JSON.parse(JSON.stringify(response)).msg)
+}
+
+export const deleteWorkApi = async (workId: string): Promise<void> => {
+  const response = await axiosInstance.get<RunWorkRes>('/vip/wok/deleteWork?workId=' + workId, headerConfig)
+  message.success(JSON.parse(JSON.stringify(response)).msg)
+}

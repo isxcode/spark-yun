@@ -3,4 +3,5 @@ export interface ConfigWorkReq {
   sqlScript?: string
   datasourceId: string
   calculateEngineId: string
+  corn?: string
 }

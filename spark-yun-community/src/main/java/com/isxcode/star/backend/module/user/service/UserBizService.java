@@ -13,6 +13,7 @@ import com.isxcode.star.api.pojos.user.res.UsrQueryAllEnableUsersRes;
 import com.isxcode.star.api.pojos.user.res.UsrQueryAllUsersRes;
 import com.isxcode.star.api.properties.SparkYunProperties;
 import com.isxcode.star.api.utils.JwtUtils;
+import com.isxcode.star.api.utils.Md5Utils;
 import com.isxcode.star.backend.module.tenant.entity.TenantEntity;
 import com.isxcode.star.backend.module.tenant.repository.TenantRepository;
 import com.isxcode.star.backend.module.tenant.user.entity.TenantUserEntity;
@@ -54,18 +55,18 @@ public class UserBizService {
     // 判断用户是否存在
     Optional<UserEntity> userEntityOptional = userRepository.findByAccount(usrLoginReq.getAccount());
     if (!userEntityOptional.isPresent()) {
-      throw new SparkYunException("用户不存在");
+      throw new SparkYunException("账号或者密码不正确");
     }
     UserEntity userEntity = userEntityOptional.get();
 
     // 判断用户是否禁用
     if (UserStatus.DISABLE.equals(userEntity.getStatus())) {
-      throw new SparkYunException("该用户已被禁用");
+      throw new SparkYunException("账号已被禁用，请联系管理员");
     }
 
     // 如果是系统管理员，首次登录，插入配置的密码并保存
     if (Roles.SYS_ADMIN.equals(userEntity.getRoleCode()) && Strings.isEmpty(userEntity.getPasswd())) {
-      userEntity.setPasswd(sparkYunProperties.getAdminPasswd());
+      userEntity.setPasswd(Md5Utils.hashStr(sparkYunProperties.getAdminPasswd()));
       userRepository.save(userEntity);
     }
 
@@ -84,7 +85,7 @@ public class UserBizService {
 
     // 获取用户最近一次租户信息
     if (Strings.isEmpty(userEntity.getCurrentTenantId())) {
-      throw new SparkYunException("申请管理员，添加到租户");
+      throw new SparkYunException("无可用租户，请联系管理员");
     }
     Optional<TenantEntity> tenantEntityOptional = tenantRepository.findById(userEntity.getCurrentTenantId());
 
@@ -93,7 +94,7 @@ public class UserBizService {
     if (!tenantEntityOptional.isPresent()) {
       List<TenantUserEntity> tenantUserEntities = tenantUserRepository.findAllByUserId(userEntity.getId());
       if (tenantUserEntities.isEmpty()) {
-        throw new SparkYunException("申请管理员，添加到租户");
+        throw new SparkYunException("无可用租户，请联系管理员");
       }
       currentTenantId = tenantUserEntities.get(0).getTenantId();
       userEntity.setCurrentTenantId(currentTenantId);
@@ -105,7 +106,7 @@ public class UserBizService {
     // 返回用户在租户中的角色
     Optional<TenantUserEntity> tenantUserEntityOptional = tenantUserRepository.findByTenantIdAndUserId(currentTenantId, userEntity.getId());
     if (!tenantUserEntityOptional.isPresent()) {
-      throw new SparkYunException("申请管理员，添加到租户");
+      throw new SparkYunException("无可用租户，请联系管理员");
     }
 
     // 生成token并返回

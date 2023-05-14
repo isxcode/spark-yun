@@ -96,13 +96,14 @@ tasks.register('start', Exec) {
 tasks.register('docker', Exec) {
 
   dependsOn(":package")
-  commandLine 'bash', '-c', 'docker build -t isxcode/zhiqingyun:' + version_number + ' -f ./Dockerfile .'
+  commandLine 'bash', '-c', 'docker buildx uninstall && docker build -t isxcode/zhiqingyun:' + version_number + ' -f ./Dockerfile .'
 }
 
 // gradle deploy 发布docker镜像
 tasks.register('deploy', Exec) {
 
   dependsOn(":package")
+  commandLine 'bash', '-c', 'docker buildx install'
   commandLine 'bash', '-c', 'docker buildx build --platform linux/amd64,linux/arm64/v8 -t isxcode/zhiqingyun:' + version_number + ' -f ./Dockerfile . --push'
 }
 

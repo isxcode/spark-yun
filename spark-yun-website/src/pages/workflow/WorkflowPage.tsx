@@ -73,7 +73,7 @@ function WorkflowPage() {
       )
     },
     {
-      title: '发布状态',
+      title: '状态',
       key: 'status',
       dataIndex: 'status',
       width: 120,
@@ -82,6 +82,16 @@ function WorkflowPage() {
           {record.status === 'UN_AUTO' ? <Tag color="blue">未运行</Tag> : <Tag color="green">调度中</Tag>}
         </Space>
       )
+    },
+    {
+      title: '创建人',
+      key: 'creator',
+      dataIndex: 'creator'
+    },
+    {
+      title: '创建时间',
+      key: 'creator',
+      dataIndex: 'creator'
     },
     {
       title: '备注',
@@ -94,7 +104,7 @@ function WorkflowPage() {
       width: 320,
       render: (_, record) => (
         <Space size="middle">
-          <a
+           <a
             className={'sy-table-a'}
             onClick={() => {
               setWorkflow(record)
@@ -110,13 +120,13 @@ function WorkflowPage() {
             }}>
             删除
           </a>
-          <a
-            className={'sy-table-a'}
-            onClick={() => {
-              message.warning('需上传企业许可证').then((r) => {})
-            }}>
-            发布
-          </a>
+          {/*<a*/}
+          {/*  className={'sy-table-a'}*/}
+          {/*  onClick={() => {*/}
+          {/*    message.warning('需上传企业许可证').then((r) => {})*/}
+          {/*  }}>*/}
+          {/*  发布*/}
+          {/*</a>*/}
         </Space>
       )
     }

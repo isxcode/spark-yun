@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { Form, Input, Modal } from 'antd'
+import { Button, Form, Input, Modal } from 'antd'
 import { type CalculateEngineRow } from '../../../types/calculate/engine/info/CalculateEngineRow'
 import { type AddEngineNodeReq } from '../../../types/calculate/node/req/AddEngineNodeReq'
 import { addEngineNodeApi, updateEngineNodeApi } from '../../../services/cluster/node/ClusterNodeService'
@@ -57,6 +57,9 @@ export const ClusterNodeModal = (props: {
           form.submit()
         }}
         onCancel={handleCancel}
+        // footer={<>
+        //   <Button>高级配置</Button>
+        // </>}
         okText={'保存'}
         cancelText={'取消'}>
         <Form
@@ -66,7 +69,7 @@ export const ClusterNodeModal = (props: {
           initialValues={{ remember: true }}
           onFinish={onFinish}
           form={form}>
-          <Form.Item label="节点名称" name="name" rules={[{ required: true, message: '名称不能为空' }]}>
+          <Form.Item label="名称" name="name" rules={[{ required: true, message: '名称不能为空' }]}>
             <Input />
           </Form.Item>
 
@@ -74,9 +77,9 @@ export const ClusterNodeModal = (props: {
             <Input />
           </Form.Item>
 
-          <Form.Item label="端口号" name="port">
-            <Input />
-          </Form.Item>
+          {/* <Form.Item label="端口号" name="port"> */}
+          {/*  <Input /> */}
+          {/* </Form.Item> */}
 
           <Form.Item label="用户名" name="username" rules={[{ required: true, message: '用户名不能为空' }]}>
             <Input />
@@ -86,13 +89,13 @@ export const ClusterNodeModal = (props: {
             <Input />
           </Form.Item>
 
-          <Form.Item label="代理路径" name="agentHomePath">
-            <Input />
-          </Form.Item>
+          {/* <Form.Item label="代理路径" name="agentHomePath"> */}
+          {/*  <Input /> */}
+          {/* </Form.Item> */}
 
-          <Form.Item label="代理端口号" name="agentPort">
-            <Input />
-          </Form.Item>
+          {/* <Form.Item label="代理端口号" name="agentPort"> */}
+          {/*  <Input /> */}
+          {/* </Form.Item> */}
 
           {/* <Form.Item label="Hadoop" name="hadoopHomePath"> */}
           {/*  <Input /> */}

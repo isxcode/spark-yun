@@ -35,6 +35,12 @@ public class GlobalExceptionAdvice extends ResponseEntityExceptionHandler {
             : abstractSparkYunException.getCode());
     errorResponse.setErr(
         abstractSparkYunException.getErr() == null ? null : abstractSparkYunException.getErr());
+
+    // token异常
+//    if ("5555".equals(abstractSparkYunException.getCode())) {
+//      return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
+//    }
+
     return new ResponseEntity<>(errorResponse, HttpStatus.OK);
   }
 

@@ -18,4 +18,6 @@ public class WokQueryWorkRes {
   private String createDateTime;
 
   private String status;
+
+  private String corn;
 }

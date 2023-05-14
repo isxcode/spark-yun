@@ -1,3 +1,7 @@
+server:
+  ssl
+
+
 spring:
 
   security:

@@ -1,15 +1,16 @@
 package com.isxcode.star.backend.module.work.config.service;
 
+import com.isxcode.star.api.exception.SparkYunException;
 import com.isxcode.star.api.pojos.work.config.req.WocConfigWorkReq;
 import com.isxcode.star.backend.module.work.config.entity.WorkConfigEntity;
 import com.isxcode.star.backend.module.work.config.mapper.WorkConfigMapper;
 import com.isxcode.star.backend.module.work.config.repository.WorkConfigRepository;
 import com.isxcode.star.backend.module.work.entity.WorkEntity;
 import com.isxcode.star.backend.module.work.repository.WorkRepository;
-import com.isxcode.star.api.exception.SparkYunException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
+import org.springframework.scheduling.support.CronExpression;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -51,6 +52,13 @@ public class WorkConfigBizService {
       workConfigEntity.setDatasourceId(wocConfigWorkReq.getDatasourceId());
     }
     if (!Strings.isEmpty(wocConfigWorkReq.getCorn())) {
+      // 检验corn表达式
+
+      boolean validExpression = CronExpression.isValidExpression(wocConfigWorkReq.getCorn());
+      if (!validExpression) {
+        throw new SparkYunException("Corn表达式异常");
+      }
+
       workConfigEntity.setCorn(wocConfigWorkReq.getCorn());
     }
     workConfigRepository.save(workConfigEntity);

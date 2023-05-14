@@ -78,22 +78,46 @@ function ClusterPage() {
       )
     },
     {
-      title: '可用/总节点数',
+      title: '节点',
       dataIndex: 'node',
       key: 'node',
-      width: 130
+      width: 100
     },
     {
-      title: '已用/总内存',
+      title: '内存',
       dataIndex: 'memory',
       key: 'memory',
-      width: 120
+      width: 100
     },
     {
-      title: '已用/总存储',
+      title: '存储',
       dataIndex: 'storage',
       key: 'storage',
-      width: 120
+      width: 100
+    },
+    {
+      title: '链接',
+      render: (_, record) => (
+        <Space size="middle">
+          <a
+            className={'sy-table-a'}
+            onClick={() => {
+              setCalculate({})
+              delEngine(record.id)
+            }}>
+            YARN
+          </a>
+          <a
+            className={'sy-table-a'}
+            onClick={() => {
+              setCalculate({})
+              delEngine(record.id)
+            }}>
+            HDFS
+          </a>
+        </Space>
+      ),
+      width: 100
     },
     {
       title: '状态',
@@ -114,7 +138,7 @@ function ClusterPage() {
       title: '检测时间',
       dataIndex: 'checkDateTime',
       key: 'checkDateTime',
-      width: 200
+      width: 180
     },
     {
       title: '备注',
@@ -146,9 +170,10 @@ function ClusterPage() {
           <a
             className={'sy-table-a'}
             onClick={() => {
-              navigate('/nodes/' + record.id)
+              setCalculate({})
+              delEngine(record.id)
             }}>
-            节点
+            删除
           </a>
           <a
             className={'sy-table-a'}
@@ -156,7 +181,7 @@ function ClusterPage() {
               setCalculate({})
               delEngine(record.id)
             }}>
-            删除
+            日志
           </a>
         </Space>
       )

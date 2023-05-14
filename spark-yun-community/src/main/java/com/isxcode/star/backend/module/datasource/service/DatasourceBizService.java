@@ -10,6 +10,8 @@ import com.isxcode.star.api.pojos.datasource.req.DasQueryDatasourceReq;
 import com.isxcode.star.api.pojos.datasource.req.DasUpdateDatasourceReq;
 import com.isxcode.star.api.pojos.datasource.res.DasQueryDatasourceRes;
 import com.isxcode.star.api.pojos.datasource.res.DasTestConnectRes;
+import com.isxcode.star.api.properties.SparkYunProperties;
+import com.isxcode.star.api.utils.AesUtils;
 import com.isxcode.star.backend.module.datasource.entity.DatasourceEntity;
 import com.isxcode.star.backend.module.datasource.mapper.DatasourceMapper;
 import com.isxcode.star.backend.module.datasource.repository.DatasourceRepository;
@@ -35,6 +37,8 @@ public class DatasourceBizService {
   private final DatasourceRepository datasourceRepository;
 
   private final DatasourceMapper datasourceMapper;
+
+  private final SparkYunProperties sparkYunProperties;
 
   public void addDatasource(DasAddDatasourceReq dasAddDatasourceReq) {
 
@@ -137,7 +141,7 @@ public class DatasourceBizService {
     // 测试连接
     datasource.setCheckDateTime(LocalDateTime.now());
 
-    try (Connection connection = getConnection(datasource.getJdbcUrl(), datasource.getUsername(), datasource.getPasswd());) {
+    try (Connection connection = getConnection(datasource.getJdbcUrl(), datasource.getUsername(), AesUtils.decryptByte(sparkYunProperties.getAesSlat(), datasource.getPasswd()));) {
       if (connection != null) {
         datasource.setStatus(DatasourceStatus.ACTIVE);
         datasourceRepository.save(datasource);

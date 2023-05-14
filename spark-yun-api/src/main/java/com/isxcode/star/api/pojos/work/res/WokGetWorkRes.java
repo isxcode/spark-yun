@@ -20,4 +20,6 @@ public class WokGetWorkRes {
   private String workType;
 
   private String workId;
+
+  private String corn;
 }

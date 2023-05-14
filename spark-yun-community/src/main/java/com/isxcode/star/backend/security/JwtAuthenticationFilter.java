@@ -3,6 +3,7 @@ package com.isxcode.star.backend.security;
 import com.isxcode.star.api.constants.SecurityConstants;
 import com.isxcode.star.api.properties.SparkYunProperties;
 import com.isxcode.star.api.utils.JwtUtils;
+import io.jsonwebtoken.ExpiredJwtException;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -59,7 +60,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     try {
       userUuid = JwtUtils.decrypt(sparkYunProperties.getJwtKey(), authorization, sparkYunProperties.getAesSlat(), String.class);
       USER_ID.set(userUuid);
-    } catch (Exception e) {
+    } catch (ExpiredJwtException e) {
       request
         .getRequestDispatcher(SecurityConstants.TOKEN_IS_INVALID_PATH)
         .forward(request, response);

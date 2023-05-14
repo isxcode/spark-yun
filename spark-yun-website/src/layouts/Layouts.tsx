@@ -100,15 +100,15 @@ function Layouts() {
       onClick: () => {
         navigate('/workflow')
       }
-    },
-    {
-      key: 7,
-      label: '调度历史',
-      icon: <ApartmentOutlined />,
-      onClick: () => {
-        navigate('/auth')
-      }
-    },
+    }
+    // {
+    //   key: 7,
+    //   label: '调度历史',
+    //   icon: <ApartmentOutlined />,
+    //   onClick: () => {
+    //     navigate('/auth')
+    //   }
+    // },
     // {
     //   key: 22,
     //   label: '模型仓库',
@@ -133,30 +133,38 @@ function Layouts() {
     //     navigate('/auth')
     //   }
     // },
-    {
-      key: 9,
-      label: '数据资产',
-      icon: <DashboardOutlined />,
-      onClick: () => {
-        navigate('/auth')
-      }
-    },
-    {
-      key: 21,
-      label: '数据地图',
-      icon: <SearchOutlined />,
-      onClick: () => {
-        navigate('/auth')
-      }
-    },
-    {
-      key: 10,
-      label: '自定义Api',
-      icon: <ApiOutlined />,
-      onClick: () => {
-        navigate('/api')
-      }
-    }
+    // {
+    //   key: 9,
+    //   label: '数据资产',
+    //   icon: <DashboardOutlined />,
+    //   onClick: () => {
+    //     navigate('/auth')
+    //   }
+    // },
+    // {
+    //   key: 21,
+    //   label: '数据地图',
+    //   icon: <SearchOutlined />,
+    //   onClick: () => {
+    //     navigate('/auth')
+    //   }
+    // },
+    // {
+    //   key: 10,
+    //   label: '开放API',
+    //   icon: <ApiOutlined />,
+    //   onClick: () => {
+    //     navigate('/api')
+    //   }
+    // },
+    // {
+    //   key: 10,
+    //   label: '自助表单',
+    //   icon: <ApiOutlined />,
+    //   onClick: () => {
+    //     navigate('/api')
+    //   }
+    // }
     // {
     //   key: 11,
     //   label: 'AI计算',

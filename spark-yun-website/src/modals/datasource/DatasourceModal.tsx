@@ -5,6 +5,8 @@ import { DatasourceRow } from '../../types/datasource/info/DatasourceRow'
 import { AddDatasourceReq } from '../../types/datasource/req/AddDatasourceReq'
 import { addDatasourceApi, updateDatasourceApi } from '../../services/datasource/DatasourceService'
 import { UpdateDatasourceReq } from '../../types/datasource/req/UpdateDatasourceReq'
+import Md5 from 'crypto-js/md5'
+import * as CryptoJS from 'crypto-js'
 
 const { Option } = Select
 export const DatasourceModal = (props: {
@@ -25,12 +27,18 @@ export const DatasourceModal = (props: {
   }, [datasource])
 
   const addDatasource = (data: AddDatasourceReq) => {
+    const { passwd } = data
+    // data.passwd = CryptoJS.Aen(passwd, 'spark-yun',).toString();
     addDatasourceApi(data).then(function () {
       handleOk()
     })
   }
 
   const updateDatasource = (data: UpdateDatasourceReq) => {
+    const { passwd } = data
+    data.passwd = CryptoJS.AES.encrypt(CryptoJS.enc.Hex.parse(passwd), CryptoJS.enc.Utf8.parse('spark-yun'), {
+      iv: CryptoJS.enc.Utf8.parse('spark-yun')
+    })
     updateDatasourceApi(data).then(function () {
       handleOk()
     })

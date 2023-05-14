@@ -22,6 +22,11 @@ export const enableLicenseApi = async (data: string | undefined): Promise<void> 
   message.success(response.msg)
 }
 
+export const disableLicenseApi = async (data: string | undefined): Promise<void> => {
+  const response: BaseResponse = await axiosInstance.get('/lic/disableLicense?licenseId=' + data, headerConfig)
+  message.success(response.msg)
+}
+
 export const deleteLicenseApi = async (data: string | undefined): Promise<void> => {
   const response: BaseResponse = await axiosInstance.get('/lic/deleteLicense?licenseId=' + data, headerConfig)
   message.success(response.msg)

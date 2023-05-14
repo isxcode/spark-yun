@@ -86,7 +86,7 @@ public class WorkBizService {
     WorkConfigEntity workConfigEntity = workConfigRepository.save(new WorkConfigEntity());
     work.setConfigId(workConfigEntity.getId());
 
-    work.setStatus(WorkStatus.NEW);
+    work.setStatus(WorkStatus.UN_PUBLISHED);
 
     workRepository.save(work);
   }
@@ -116,6 +116,12 @@ public class WorkBizService {
     Optional<WorkEntity> workEntityOptional = workRepository.findById(workId);
     if (!workEntityOptional.isPresent()) {
       throw new SparkYunException("作业不存在");
+    }
+    WorkEntity work = workEntityOptional.get();
+
+    // 如果不是已下线状态或者未发布状态 不让删除
+    if (WorkStatus.UN_PUBLISHED.equals(work.getStatus()) || WorkStatus.STOP.equals(work.getStatus())) {
+      throw new SparkYunException("请下线作业");
     }
 
     // 删除作业配置

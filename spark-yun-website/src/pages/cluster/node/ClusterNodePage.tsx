@@ -82,42 +82,42 @@ function ClusterNodePage() {
 
   const columns: ColumnsType<EngineNodeRow> = [
     {
-      title: '节点名称',
+      title: '名称',
       dataIndex: 'name',
       key: 'name',
-      width: 120,
-      render: (text, record) => (
-        <a
-          onClick={() => {
-            setEngineNode(record)
-            setIsModalVisible(true)
-          }}
-          className={'sy-table-a'}>
-          {text}
-        </a>
-      )
+      width: 100
+      // render: (text, record) => (
+      //   <a
+      //     onClick={() => {
+      //       setEngineNode(record)
+      //       setIsModalVisible(true)
+      //     }}
+      //     className={'sy-table-a'}>
+      //     {text}
+      //   </a>
+      // )
     },
     {
       title: '地址',
       dataIndex: 'host',
       key: 'host',
-      width: 140
+      width: 100
     },
     {
-      title: 'CPU占用率',
+      title: 'CPU',
       dataIndex: 'cpu',
       key: 'cpu',
-      width: 110,
+      width: 80,
       render: (text, record) => <>{text}%</>
     },
     {
-      title: '已用/总内存',
+      title: '内存',
       dataIndex: 'memory',
       key: 'memory',
       width: 110
     },
     {
-      title: '已用/总存储',
+      title: '存储',
       dataIndex: 'storage',
       key: 'storage',
       width: 110
@@ -126,6 +126,7 @@ function ClusterNodePage() {
       title: '状态',
       dataIndex: 'status',
       key: 'status',
+      width: 80,
       render: (_, record) => (
         <Space size="middle">
           {record.status === 'NEW' && <Tag color="blue">未检测</Tag>}
@@ -142,12 +143,14 @@ function ClusterNodePage() {
     {
       title: '检测时间',
       dataIndex: 'checkDateTime',
-      key: 'checkDateTime'
+      key: 'checkDateTime',
+      width: 180
     },
     {
       title: '备注',
       key: 'remark',
-      dataIndex: 'remark'
+      dataIndex: 'remark',
+      width: 200
     },
     {
       title: '操作',
@@ -157,23 +160,37 @@ function ClusterNodePage() {
           <a
             className={'sy-table-a'}
             onClick={() => {
+              delEngineNode(record.id)
+            }}>
+            编辑
+          </a>
+          <a
+            className={'sy-table-a'}
+            onClick={() => {
               checkAgent(record.id)
             }}>
             检测
           </a>
+          {/* <a */}
+          {/*  className={'sy-table-a'} */}
+          {/*  onClick={() => { */}
+          {/*    installAgent(record.id) */}
+          {/*  }}> */}
+          {/*  安装 */}
+          {/* </a> */}
+          {/* <a */}
+          {/*  className={'sy-table-a'} */}
+          {/*  onClick={() => { */}
+          {/*    removeAgent(record.id) */}
+          {/*  }}> */}
+          {/*  卸载 */}
+          {/* </a> */}
           <a
             className={'sy-table-a'}
             onClick={() => {
-              installAgent(record.id)
+              delEngineNode(record.id)
             }}>
-            安装
-          </a>
-          <a
-            className={'sy-table-a'}
-            onClick={() => {
-              removeAgent(record.id)
-            }}>
-            卸载
+            日志
           </a>
           <a
             className={'sy-table-a'}

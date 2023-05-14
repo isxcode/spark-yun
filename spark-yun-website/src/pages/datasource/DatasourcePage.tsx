@@ -136,14 +136,14 @@ function DatasourcePage() {
       width: 250,
       render: (_, record) => (
         <Space size="middle">
-          <a
-            className={'sy-table-a'}
-            onClick={() => {
-              setDatasource(record)
-              setIsModalVisible(true)
-            }}>
-            编辑
-          </a>
+          {/* <a */}
+          {/*  className={'sy-table-a'} */}
+          {/*  onClick={() => { */}
+          {/*    setDatasource(record) */}
+          {/*    setIsModalVisible(true) */}
+          {/*  }}> */}
+          {/*  编辑 */}
+          {/* </a> */}
           <a
             className={'sy-table-a'}
             onClick={() => {
@@ -157,6 +157,13 @@ function DatasourcePage() {
               delDatasource(record.id)
             }}>
             删除
+          </a>
+          <a
+            className={'sy-table-a'}
+            onClick={() => {
+              delDatasource(record.id)
+            }}>
+            日志
           </a>
         </Space>
       )
