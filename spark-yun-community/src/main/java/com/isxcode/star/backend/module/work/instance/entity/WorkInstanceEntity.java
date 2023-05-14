@@ -1,17 +1,11 @@
-package com.isxcode.star.backend.module.datasource.entity;
+package com.isxcode.star.backend.module.work.instance.entity;
+
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import java.time.LocalDateTime;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.PrePersist;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-import javax.persistence.Version;
-
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
@@ -21,43 +15,61 @@ import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.PrePersist;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+import javax.persistence.Version;
+import java.time.LocalDateTime;
+import java.util.Date;
+
 import static com.isxcode.star.backend.config.WebSecurityConfig.TENANT_ID;
 
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @SQLDelete(
-  sql = "UPDATE SY_DATASOURCE SET deleted = 1 WHERE id = ? and version_number = ?"
+  sql = "UPDATE SY_WORK_INSTANCE SET deleted = 1 WHERE id = ?"
 )
 @Where(clause = "deleted = 0 ${TENANT_FILTER} ")
-@Table(name = "SY_DATASOURCE")
+@Table(name = "SY_WORK_INSTANCE")
 @JsonIgnoreProperties({"hibernateLazyInitializer"})
 @EntityListeners(AuditingEntityListener.class)
-public class DatasourceEntity {
+public class WorkInstanceEntity {
 
   @Id
   @GeneratedValue(generator = "sy-id-generator")
   @GenericGenerator(
-      name = "sy-id-generator",
-      strategy = "com.isxcode.star.backend.config.GeneratedValueConfig")
+    name = "sy-id-generator",
+    strategy = "com.isxcode.star.backend.config.GeneratedValueConfig")
   private String id;
 
-  private String name;
+  private String versionId;
 
-  private String remark;
+  private String workId;
 
-  private String jdbcUrl;
-
-  private String dbType;
-
-  private LocalDateTime checkDateTime;
-
-  private String username;
-
-  private String passwd;
+  private String instanceType;
 
   private String status;
 
-  private String connectLog;
+  private Date planStartDateTime;
+
+  private Date nextPlanDateTime;
+
+  private Date execStartDateTime;
+
+  private Date execEndDateTime;
+
+  private String submitLog;
+
+  private String sparkLog;
+
+  private String resultData;
 
   @CreatedDate
   private LocalDateTime createDateTime;
@@ -71,9 +83,6 @@ public class DatasourceEntity {
   @LastModifiedBy
   private String lastModifiedBy;
 
-  @Version
-  private Long versionNumber;
-
   @Transient
   private Integer deleted;
 
@@ -84,3 +93,4 @@ public class DatasourceEntity {
     this.tenantId = TENANT_ID.get();
   }
 }
+

@@ -15,6 +15,7 @@ import TenantPage from '../pages/tenant/TenantPage'
 import LicensePage from '../pages/license/LicensePage'
 import SettingPage from '../pages/setting/SettingPage'
 import ApiPage from '../pages/api/ApiPage'
+import InstancePage from "../pages/instance/InstancePage";
 
 export default function MainRoute() {
   return (
@@ -110,6 +111,14 @@ export default function MainRoute() {
               element={
                 <RequireAuth>
                   <CalculateEnginePage />
+                </RequireAuth>
+              }
+            />
+            <Route
+              path={'/instance'}
+              element={
+                <RequireAuth>
+                  <InstancePage />
                 </RequireAuth>
               }
             />

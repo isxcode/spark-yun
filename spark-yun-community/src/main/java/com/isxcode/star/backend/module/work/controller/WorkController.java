@@ -2,22 +2,23 @@ package com.isxcode.star.backend.module.work.controller;
 
 import com.isxcode.star.api.constants.ModulePrefix;
 import com.isxcode.star.api.constants.SecurityConstants;
+import com.isxcode.star.api.pojos.work.req.WokAddWorkReq;
 import com.isxcode.star.api.pojos.work.req.WokGetDataReq;
 import com.isxcode.star.api.pojos.work.req.WokGetStatusReq;
 import com.isxcode.star.api.pojos.work.req.WokGetWorkLogReq;
 import com.isxcode.star.api.pojos.work.req.WokQueryWorkReq;
-import com.isxcode.star.api.pojos.work.req.WokAddWorkReq;
 import com.isxcode.star.api.pojos.work.req.WokStopJobReq;
 import com.isxcode.star.api.pojos.work.req.WokUpdateWorkReq;
 import com.isxcode.star.api.pojos.work.res.WokGetDataRes;
 import com.isxcode.star.api.pojos.work.res.WokGetStatusRes;
+import com.isxcode.star.api.pojos.work.res.WokGetSubmitLogRes;
 import com.isxcode.star.api.pojos.work.res.WokGetWorkLogRes;
 import com.isxcode.star.api.pojos.work.res.WokGetWorkRes;
 import com.isxcode.star.api.pojos.work.res.WokQueryWorkRes;
 import com.isxcode.star.api.pojos.work.res.WokRunWorkRes;
+import com.isxcode.star.api.response.SuccessResponse;
 import com.isxcode.star.backend.module.user.action.annoation.UserLog;
 import com.isxcode.star.backend.module.work.service.WorkBizService;
-import com.isxcode.star.api.response.SuccessResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -69,10 +70,9 @@ public class WorkController {
   @Parameter(name = SecurityConstants.HEADER_TENANT_ID, description = "租户id", required = true, in = ParameterIn.HEADER, schema = @Schema(type = "string"))
   public WokRunWorkRes runWork(@Schema(description = "作业唯一id", example = "sy_4f07ab7b1fe54dab9be884e410c53af4") @RequestParam String workId) {
 
-    return workBizService.runWork(workId);
+   return workBizService.submitWork(workId);
   }
 
-  @UserLog
   @Operation(summary = "查询作业运行日志接口")
   @PostMapping("/getWorkLog")
   @SuccessResponse("查询成功")
@@ -140,5 +140,14 @@ public class WorkController {
   public WokGetWorkRes getWork(@Schema(description = "作业唯一id", example = "sy_4f07ab7b1fe54dab9be884e410c53af4") @RequestParam String workId) {
 
     return workBizService.getWork(workId);
+  }
+
+  @Operation(summary = "查询作业提交日志接口")
+  @GetMapping("/getSubmitLog")
+  @SuccessResponse("查询成功")
+  @Parameter(name = SecurityConstants.HEADER_TENANT_ID, description = "租户id", required = true, in = ParameterIn.HEADER, schema = @Schema(type = "string"))
+  public WokGetSubmitLogRes getSubmitLog(@Schema(description = "实例唯一id", example = "sy_4f07ab7b1fe54dab9be884e410c53af4") @RequestParam String instanceId) {
+
+    return workBizService.getSubmitLog(instanceId);
   }
 }

@@ -6,6 +6,7 @@ import com.isxcode.star.api.constants.SecurityConstants;
 import com.isxcode.star.api.pojos.datasource.req.DasAddDatasourceReq;
 import com.isxcode.star.api.pojos.datasource.req.DasQueryDatasourceReq;
 import com.isxcode.star.api.pojos.datasource.req.DasUpdateDatasourceReq;
+import com.isxcode.star.api.pojos.datasource.res.DasGetConnectLogRes;
 import com.isxcode.star.api.pojos.datasource.res.DasQueryDatasourceRes;
 import com.isxcode.star.api.pojos.datasource.res.DasTestConnectRes;
 import com.isxcode.star.api.response.SuccessResponse;
@@ -89,5 +90,16 @@ public class DatasourceController {
   public DasTestConnectRes testConnect(@Schema(description = "数据源唯一id", example = "sy_344c3d583fa344f7a2403b19c5a654dc") @RequestParam String datasourceId) {
 
     return datasourceBizService.testConnect(datasourceId);
+  }
+
+  @UserLog
+  @Secured({Roles.TENANT_MEMBER, Roles.TENANT_ADMIN})
+  @Operation(summary = "查询连接日志")
+  @GetMapping("/getConnectLog")
+  @SuccessResponse("获取成功")
+  @Parameter(name = SecurityConstants.HEADER_TENANT_ID, description = "租户id", required = true, in = ParameterIn.HEADER, schema = @Schema(type = "string"))
+  public DasGetConnectLogRes getConnectLog(@Schema(description = "数据源唯一id", example = "sy_344c3d583fa344f7a2403b19c5a654dc") @RequestParam String datasourceId) {
+
+    return datasourceBizService.getConnectLog(datasourceId);
   }
 }

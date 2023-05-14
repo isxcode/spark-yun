@@ -7,4 +7,9 @@ public interface InstanceType {
    */
   String WORK = "WORK";
 
+  /**
+   * 手动点击.
+   */
+  String MANUAL = "MANUAL";
+
 }

@@ -2,6 +2,7 @@ package com.isxcode.star.backend.module.user.action.aspect;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.isxcode.star.api.properties.SparkYunProperties;
 import com.isxcode.star.api.response.SuccessResponseException;
 import com.isxcode.star.backend.module.user.action.entity.UserActionEntity;
 import com.isxcode.star.backend.module.user.action.repository.UserActionRepository;
@@ -41,12 +42,18 @@ public class UserLogAdvice {
 
   private UserActionEntity userActionEntity;
 
+  private final SparkYunProperties sparkYunProperties;
+
   @Pointcut("@annotation(com.isxcode.star.backend.module.user.action.annoation.UserLog)")
   public void operateUserLog() {
   }
 
   @Before(value = "operateUserLog()")
   public void before(JoinPoint joinPoint) {
+
+    if (!sparkYunProperties.isLogAdvice()) {
+      return;
+    }
 
     userActionEntity = new UserActionEntity();
     userActionEntity.setStartTimestamp(System.currentTimeMillis());
@@ -92,6 +99,10 @@ public class UserLogAdvice {
   @After(value = "operateUserLog()")
   public void after(JoinPoint joinPoint) {
 
+    if (!sparkYunProperties.isLogAdvice()) {
+      return;
+    }
+
     if (Strings.isEmpty(USER_ID.get())) {
       userActionEntity.setCreateBy("anonymous");
     }
@@ -105,6 +116,10 @@ public class UserLogAdvice {
 
   @AfterThrowing(value = "operateUserLog()", throwing = "successResponseException")
   public void afterThrowing(JoinPoint joinPoint, SuccessResponseException successResponseException) {
+
+    if (!sparkYunProperties.isLogAdvice()) {
+      return;
+    }
 
     userActionEntity.setResBody(JSON.toJSONString(successResponseException.getBaseResponse()));
   }

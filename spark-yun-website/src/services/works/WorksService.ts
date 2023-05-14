@@ -9,6 +9,9 @@ import { WorkInfo } from '../../types/woks/info/WorkInfo'
 import { RunWorkRes } from '../../types/woks/res/RunWorkRes'
 import { ConfigWorkReq } from '../../types/woks/req/ConfigWorkReq'
 import { BaseResponse } from '../../types/base/BaseResponse'
+import {QueryWorkInstanceReq} from "../../types/woks/req/QueryWorkInstanceReq";
+import {QueryWorkInstanceRes} from "../../types/woks/res/QueryWorkInstanceRes";
+import {GetSubmitLogRes} from "../../types/woks/res/GetSubmitLogRes";
 
 const headerConfig = {
   timeout: 600000,
@@ -21,6 +24,12 @@ const headerConfig = {
 export const queryWorkApi = async (data: QueryWorkReq): Promise<QueryWorkRes> => {
   data.page = data.page - 1
     const response = await axiosInstance.post<WofQueryWorkflowRes>('/wok/queryWork', data, headerConfig)
+  return response.data
+}
+
+export const queryWorkInstanceApi = async (data: QueryWorkInstanceReq): Promise<QueryWorkInstanceRes> => {
+  data.page = data.page - 1
+  const response = await axiosInstance.post<WofQueryWorkflowRes>('/vip/woi/queryInstance', data, headerConfig);
   return response.data
 }
 
@@ -106,4 +115,14 @@ export const resumeWorkApi = async (workId: string): Promise<void> => {
 export const deleteWorkApi = async (workId: string): Promise<void> => {
   const response = await axiosInstance.get<RunWorkRes>('/vip/wok/deleteWork?workId=' + workId, headerConfig)
   message.success(JSON.parse(JSON.stringify(response)).msg)
+}
+
+export const deleteWorkInstanceApi = async (instanceId: string): Promise<void> => {
+  const response = await axiosInstance.get<RunWorkRes>('/vip/woi/deleteInstance?instanceId=' + instanceId, headerConfig)
+  message.success(JSON.parse(JSON.stringify(response)).msg)
+}
+
+export const getSubmitLogApi = async (instanceId: string): Promise<GetSubmitLogRes> => {
+  const response = await axiosInstance.get<GetSubmitLogRes>('/wok/getSubmitLog?instanceId=' + instanceId, headerConfig);
+  return response.data
 }

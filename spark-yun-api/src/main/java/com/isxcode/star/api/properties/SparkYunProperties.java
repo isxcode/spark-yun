@@ -60,4 +60,9 @@ public class SparkYunProperties {
    * 系统管理员admin密码.
    */
   private String adminPasswd;
+
+  /**
+   * 开启用户操作日志
+   */
+  private boolean logAdvice;
 }

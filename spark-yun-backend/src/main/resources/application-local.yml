@@ -12,7 +12,7 @@ spring:
 
   jpa:
     database: mysql
-    show-sql: true
+    show-sql: false
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -42,3 +42,4 @@ logging:
 spark-yun:
   admin-passwd: ispong123
   resources-path: /Users/ispong/Data/resources
+  log-advice: true

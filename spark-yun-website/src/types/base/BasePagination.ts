@@ -7,7 +7,7 @@ export interface BasePagination {
 
 export const defaultPagination: BasePagination = {
   currentPage: 1,
-  pageSize: 10,
+  pageSize: 8,
   totalItems: 0,
   searchKeyWord: ''
 }

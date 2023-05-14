@@ -59,20 +59,4 @@ public class AesUtils {
       throw new SparkYunException(e.getMessage());
     }
   }
-
-  public static String decryptByte(String key, String data) {
-
-    try {
-      Cipher cipher = Cipher.getInstance("AES/CBC/ISO10126Padding");
-      IvParameterSpec paramSpec = new IvParameterSpec("".getBytes());
-      cipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(key.getBytes(), "AES"), paramSpec);
-      return Base64.getEncoder().encodeToString(cipher.doFinal(data.getBytes(StandardCharsets.UTF_8)));
-    } catch (NoSuchPaddingException
-             | NoSuchAlgorithmException
-             | InvalidKeyException
-             | BadPaddingException
-             | IllegalBlockSizeException | InvalidAlgorithmParameterException e) {
-      throw new SparkYunException(e.getMessage());
-    }
-  }
 }

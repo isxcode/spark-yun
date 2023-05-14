@@ -37,6 +37,6 @@ public class ExceptionController {
   @RequestMapping(path = "/licenseError", method = {RequestMethod.GET, RequestMethod.POST})
   public void licenseError() {
 
-    throw new SparkYunException("证书无效");
+    throw new SparkYunException("许可证无效，请联系管理员");
   }
 }

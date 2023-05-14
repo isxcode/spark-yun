@@ -1,11 +1,10 @@
-import React, { useEffect } from 'react'
-import { Form, Input, Modal, Select } from 'antd'
+import React, {useEffect} from 'react'
+import {Form, Input, Modal, Select} from 'antd'
 import './DatasourceModal.less'
-import { DatasourceRow } from '../../types/datasource/info/DatasourceRow'
-import { AddDatasourceReq } from '../../types/datasource/req/AddDatasourceReq'
-import { addDatasourceApi, updateDatasourceApi } from '../../services/datasource/DatasourceService'
-import { UpdateDatasourceReq } from '../../types/datasource/req/UpdateDatasourceReq'
-import Md5 from 'crypto-js/md5'
+import {DatasourceRow} from '../../types/datasource/info/DatasourceRow'
+import {AddDatasourceReq} from '../../types/datasource/req/AddDatasourceReq'
+import {addDatasourceApi, updateDatasourceApi} from '../../services/datasource/DatasourceService'
+import {UpdateDatasourceReq} from '../../types/datasource/req/UpdateDatasourceReq'
 import * as CryptoJS from 'crypto-js'
 
 const { Option } = Select
@@ -27,7 +26,7 @@ export const DatasourceModal = (props: {
   }, [datasource])
 
   const addDatasource = (data: AddDatasourceReq) => {
-    const { passwd } = data
+    // const { passwd } = data
     // data.passwd = CryptoJS.Aen(passwd, 'spark-yun',).toString();
     addDatasourceApi(data).then(function () {
       handleOk()
@@ -35,10 +34,10 @@ export const DatasourceModal = (props: {
   }
 
   const updateDatasource = (data: UpdateDatasourceReq) => {
-    const { passwd } = data
-    data.passwd = CryptoJS.AES.encrypt(CryptoJS.enc.Hex.parse(passwd), CryptoJS.enc.Utf8.parse('spark-yun'), {
-      iv: CryptoJS.enc.Utf8.parse('spark-yun')
-    })
+    // const { passwd } = data
+    // data.passwd = CryptoJS.AES.encrypt(CryptoJS.enc.Hex.parse(passwd), CryptoJS.enc.Utf8.parse('spark-yun'), {
+    //   iv: CryptoJS.enc.Utf8.parse('spark-yun')
+    // })
     updateDatasourceApi(data).then(function () {
       handleOk()
     })

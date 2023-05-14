@@ -36,3 +36,4 @@ logging:
 spark-yun:
   admin-passwd: ispong123
   resources-path: /spark-yun/resources
+  log-advice: false

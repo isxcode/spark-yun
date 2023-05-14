@@ -39,6 +39,9 @@ public interface ModulePrefix {
   /** 企业作业模块. */
   String VIP_WORK = "/vip/wok";
 
+  /** 企业作业模块. */
+  String VIP_WORK_INSTANCE = "/vip/woi";
+
   /** 企业API模块. */
   String VIP_API = "/vip/api";
 

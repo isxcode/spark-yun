@@ -72,17 +72,17 @@ function WorkflowPage() {
         </a>
       )
     },
-    {
-      title: '状态',
-      key: 'status',
-      dataIndex: 'status',
-      width: 120,
-      render: (_, record) => (
-        <Space size="middle">
-          {record.status === 'UN_AUTO' ? <Tag color="blue">未运行</Tag> : <Tag color="green">调度中</Tag>}
-        </Space>
-      )
-    },
+    // {
+    //   title: '状态',
+    //   key: 'status',
+    //   dataIndex: 'status',
+    //   width: 120,
+    //   render: (_, record) => (
+    //     <Space size="middle">
+    //       {record.status === 'UN_AUTO' ? <Tag color="blue">未运行</Tag> : <Tag color="green">调度中</Tag>}
+    //     </Space>
+    //   )
+    // },
     {
       title: '创建人',
       key: 'creator',
