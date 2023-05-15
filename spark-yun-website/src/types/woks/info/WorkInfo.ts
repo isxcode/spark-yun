@@ -8,5 +8,5 @@ export interface WorkInfo {
   sqlScript?: string
   datasourceId?: string
   calculateId?: string
-  corn?:string
+  corn?: string
 }

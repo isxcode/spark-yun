@@ -1,10 +1,10 @@
-import React, {useEffect} from 'react'
-import {Form, Input, Modal, Select} from 'antd'
+import React, { useEffect } from 'react'
+import { Form, Input, Modal, Select } from 'antd'
 import './DatasourceModal.less'
-import {DatasourceRow} from '../../types/datasource/info/DatasourceRow'
-import {AddDatasourceReq} from '../../types/datasource/req/AddDatasourceReq'
-import {addDatasourceApi, updateDatasourceApi} from '../../services/datasource/DatasourceService'
-import {UpdateDatasourceReq} from '../../types/datasource/req/UpdateDatasourceReq'
+import { DatasourceRow } from '../../types/datasource/info/DatasourceRow'
+import { AddDatasourceReq } from '../../types/datasource/req/AddDatasourceReq'
+import { addDatasourceApi, updateDatasourceApi } from '../../services/datasource/DatasourceService'
+import { UpdateDatasourceReq } from '../../types/datasource/req/UpdateDatasourceReq'
 import * as CryptoJS from 'crypto-js'
 
 const { Option } = Select

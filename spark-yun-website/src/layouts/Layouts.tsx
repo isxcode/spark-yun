@@ -108,7 +108,7 @@ function Layouts() {
       onClick: () => {
         navigate('/instance')
       }
-    },
+    }
     // {
     //   key: 22,
     //   label: '模型仓库',

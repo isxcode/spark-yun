@@ -7,7 +7,7 @@ import { TestDatasourceRes } from '../../types/datasource/res/TestDatasourceRes'
 import { UpdateDatasourceReq } from '../../types/datasource/req/UpdateDatasourceReq'
 import { message } from 'antd'
 import { BaseResponse } from '../../types/base/BaseResponse'
-import {GetConnectLogRes} from "../../types/datasource/res/GetConnectLogRes";
+import { GetConnectLogRes } from '../../types/datasource/res/GetConnectLogRes'
 
 const headerConfig = {
   headers: {
@@ -44,7 +44,7 @@ export const testDatasourceApi = async (data: string): Promise<TestDatasourceRes
 }
 
 export const getConnectLogApi = async (data: string): Promise<GetConnectLogRes> => {
-  const response = await axiosInstance.get<GetConnectLogRes>('/das/getConnectLog?datasourceId=' + data, headerConfig);
+  const response = await axiosInstance.get<GetConnectLogRes>('/das/getConnectLog?datasourceId=' + data, headerConfig)
   message.success(JSON.parse(JSON.stringify(response)).msg)
   return response.data
 }

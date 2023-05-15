@@ -104,7 +104,7 @@ function WorkflowPage() {
       width: 320,
       render: (_, record) => (
         <Space size="middle">
-           <a
+          <a
             className={'sy-table-a'}
             onClick={() => {
               setWorkflow(record)
@@ -120,13 +120,13 @@ function WorkflowPage() {
             }}>
             删除
           </a>
-          {/*<a*/}
-          {/*  className={'sy-table-a'}*/}
-          {/*  onClick={() => {*/}
-          {/*    message.warning('需上传企业许可证').then((r) => {})*/}
-          {/*  }}>*/}
-          {/*  发布*/}
-          {/*</a>*/}
+          {/* <a */}
+          {/*  className={'sy-table-a'} */}
+          {/*  onClick={() => { */}
+          {/*    message.warning('需上传企业许可证').then((r) => {}) */}
+          {/*  }}> */}
+          {/*  发布 */}
+          {/* </a> */}
         </Space>
       )
     }

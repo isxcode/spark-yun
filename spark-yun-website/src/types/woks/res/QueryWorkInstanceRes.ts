@@ -1,5 +1,5 @@
-import {type BasePaginationRes} from '../../base/BasePaginationRes'
-import {WorkInstanceRow} from "../info/WorkInstanceRow";
+import { type BasePaginationRes } from '../../base/BasePaginationRes'
+import { WorkInstanceRow } from '../info/WorkInstanceRow'
 
 export interface QueryWorkInstanceRes extends BasePaginationRes {
 

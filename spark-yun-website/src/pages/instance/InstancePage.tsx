@@ -1,16 +1,16 @@
-import React, {useEffect, useState} from 'react'
-import {Button, Col, Input, Row, Select, Space, Table, Tag, Tooltip} from 'antd'
-import {type ColumnsType} from 'antd/es/table'
-import {DatasourceModal} from '../../modals/datasource/DatasourceModal'
+import React, { useEffect, useState } from 'react'
+import { Button, Col, Input, Row, Select, Space, Table, Tag, Tooltip } from 'antd'
+import { type ColumnsType } from 'antd/es/table'
+import { DatasourceModal } from '../../modals/datasource/DatasourceModal'
 import './InstancePage.less'
-import {type DatasourceRow} from '../../types/datasource/info/DatasourceRow'
-import {type BasePagination, defaultPagination} from '../../types/base/BasePagination'
-import {type QueryDatasourceReq} from '../../types/datasource/req/QueryDatasourceReq'
-import {delDatasourceApi, queryDatasourceApi, testDatasourceApi} from '../../services/datasource/DatasourceService'
-import {WorkInstanceRow} from "../../types/woks/info/WorkInstanceRow";
-import {deleteWorkInstanceApi, queryWorkInstanceApi} from "../../services/works/WorksService";
+import { type DatasourceRow } from '../../types/datasource/info/DatasourceRow'
+import { type BasePagination, defaultPagination } from '../../types/base/BasePagination'
+import { type QueryDatasourceReq } from '../../types/datasource/req/QueryDatasourceReq'
+import { delDatasourceApi, queryDatasourceApi, testDatasourceApi } from '../../services/datasource/DatasourceService'
+import { WorkInstanceRow } from '../../types/woks/info/WorkInstanceRow'
+import { deleteWorkInstanceApi, queryWorkInstanceApi } from '../../services/works/WorksService'
 
-const {Option} = Select
+const { Option } = Select
 
 function InstancePage() {
   const [instances, setInstances] = useState<WorkInstanceRow[]>([])
@@ -30,7 +30,7 @@ function InstancePage() {
   const deleteInstance = (instanceId: string) => {
     deleteWorkInstanceApi(instanceId).then(function () {
       fetchInstances()
-    });
+    })
   }
 
   const fetchInstances = () => {
@@ -40,7 +40,7 @@ function InstancePage() {
         ...prevPagination,
         totalItems: response.totalElements
       }))
-    });
+    })
   }
 
   // const handleOk = () => {
@@ -128,30 +128,19 @@ function InstancePage() {
       width: 220,
       render: (_, record) => (
         <Space size="middle">
-          <a
-            className={'sy-table-a'}
-            onClick={() => {
-
-            }}>
+          <a className={'sy-table-a'} onClick={() => {}}>
             重跑
           </a>
-          <a
-            className={'sy-table-a'}
-            onClick={() => {
-
-            }}>
+          <a className={'sy-table-a'} onClick={() => {}}>
             日志
           </a>
-          <a
-            className={'sy-table-a'}
-            onClick={() => {
-            }}>
+          <a className={'sy-table-a'} onClick={() => {}}>
             数据
           </a>
           <a
             className={'sy-table-a'}
             onClick={() => {
-              deleteInstance(record.id as string);
+              deleteInstance(record.id as string)
             }}>
             删除
           </a>
@@ -161,15 +150,15 @@ function InstancePage() {
   ]
 
   return (
-    <div style={{padding: 24}}>
+    <div style={{ padding: 24 }}>
       <Row className={'datasource-bar'}>
-        <Col span={7} offset={17} style={{textAlign: 'right', display: 'flex'}}>
+        <Col span={7} offset={17} style={{ textAlign: 'right', display: 'flex' }}>
           <Input
-            style={{marginRight: '10px'}}
+            style={{ marginRight: '10px' }}
             onPressEnter={handleSearch}
             defaultValue={queryDatasourceReq.searchKeyWord}
             onChange={(e) => {
-              setPagination({...pagination, searchKeyWord: e.target.value})
+              setPagination({ ...pagination, searchKeyWord: e.target.value })
             }}
             placeholder={'实例编码/作业/作业流'}
           />
@@ -179,23 +168,27 @@ function InstancePage() {
         </Col>
       </Row>
 
-      <Table pagination={{
-        current: pagination.currentPage,
-        pageSize: pagination.pageSize,
-        total: pagination.totalItems,
-        onChange: (currentPage: number) => {
-          setPagination({...pagination, currentPage})
-        }
-      }} columns={columns} dataSource={instances}/>
+      <Table
+        pagination={{
+          current: pagination.currentPage,
+          pageSize: pagination.pageSize,
+          total: pagination.totalItems,
+          onChange: (currentPage: number) => {
+            setPagination({ ...pagination, currentPage })
+          }
+        }}
+        columns={columns}
+        dataSource={instances}
+      />
 
-      {/*<DatasourceModal*/}
-      {/*  datasource={datasource}*/}
-      {/*  handleCancel={() => {*/}
-      {/*    setIsModalVisible(false)*/}
-      {/*  }}*/}
-      {/*  handleOk={handleOk}*/}
-      {/*  isModalVisible={isModalVisible}*/}
-      {/*/>*/}
+      {/* <DatasourceModal */}
+      {/*  datasource={datasource} */}
+      {/*  handleCancel={() => { */}
+      {/*    setIsModalVisible(false) */}
+      {/*  }} */}
+      {/*  handleOk={handleOk} */}
+      {/*  isModalVisible={isModalVisible} */}
+      {/* /> */}
     </div>
   )
 }

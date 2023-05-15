@@ -1,12 +1,12 @@
-import React, {useEffect, useState} from 'react'
-import {Button, Col, Input, message, Row, Space, Table, Tag} from 'antd'
-import {type ColumnsType} from 'antd/es/table'
-import {useNavigate, useParams} from 'react-router-dom'
-import {WorkModal} from '../../modals/work/WorkModal'
+import React, { useEffect, useState } from 'react'
+import { Button, Col, Input, message, Row, Space, Table, Tag } from 'antd'
+import { type ColumnsType } from 'antd/es/table'
+import { useNavigate, useParams } from 'react-router-dom'
+import { WorkModal } from '../../modals/work/WorkModal'
 import './WorksPage.less'
-import {type WorkRow} from '../../types/woks/info/WorkRow'
-import {type BasePagination, defaultPagination} from '../../types/base/BasePagination'
-import {type QueryWorkReq} from '../../types/woks/req/QueryWorkReq'
+import { type WorkRow } from '../../types/woks/info/WorkRow'
+import { type BasePagination, defaultPagination } from '../../types/base/BasePagination'
+import { type QueryWorkReq } from '../../types/woks/req/QueryWorkReq'
 import {
   deleteWorkApi,
   delWorkApi,
@@ -18,7 +18,7 @@ import {
 
 function WorksPage() {
   const navigate = useNavigate()
-  const {workflowId} = useParams()
+  const { workflowId } = useParams()
 
   const [works, setWorks] = useState<WorkRow[]>([])
   const [work, setWork] = useState<WorkRow>()
@@ -55,25 +55,25 @@ function WorksPage() {
     depolyWorkApi(workId).then(function () {
       fetchWorks()
     })
-  };
+  }
 
   const resumeWork = (workId: string) => {
     resumeWorkApi(workId).then(function () {
       fetchWorks()
     })
-  };
+  }
 
   const stopWork = (workId: string) => {
     deleteWorkApi(workId).then(function () {
       fetchWorks()
     })
-  };
+  }
 
   const pauseWork = (workId: string) => {
     pauseWorkApi(workId).then(function () {
       fetchWorks()
     })
-  };
+  }
 
   const delWork = (workId: string | undefined) => {
     delWorkApi(workId).then(function () {
@@ -165,55 +165,67 @@ function WorksPage() {
             }}>
             删除
           </a>
-          {record.status === 'STOP' && <a
-            className={'sy-table-a'}
-            onClick={() => {
-              depolyWork(record.id as string);
-            }}>
-            发布
-          </a>}
-          {record.status === ('UN_PUBLISHED' || 'STOP') && <a
-            className={'sy-table-a'}
-            onClick={() => {
-              depolyWork(record.id as string);
-            }}>
-            发布
-          </a>}
-          {record.status === ('PAUSED') && <a
-            className={'sy-table-a'}
-            onClick={() => {
-              resumeWork(record.id as string);
-            }}>
-            重启
-          </a>}
-          {record.status === 'PUBLISHED' && <a
-            className={'sy-table-a'}
-            onClick={() => {
-              pauseWork(record.id as string);
-            }}>
-            暂停
-          </a>}
-          {record.status === ('PAUSED') && <a
-            className={'sy-table-a'}
-            onClick={() => {
-              stopWork(record.id as string);
-            }}>
-            下线
-          </a>}
-          {record.status === 'PUBLISHED' && <a
-            className={'sy-table-a'}
-            onClick={() => {
-              stopWork(record.id as string);
-            }}>
-            下线
-          </a>}
+          {record.status === 'STOP' && (
+            <a
+              className={'sy-table-a'}
+              onClick={() => {
+                depolyWork(record.id as string)
+              }}>
+              发布
+            </a>
+          )}
+          {record.status === ('UN_PUBLISHED' || 'STOP') && (
+            <a
+              className={'sy-table-a'}
+              onClick={() => {
+                depolyWork(record.id as string)
+              }}>
+              发布
+            </a>
+          )}
+          {record.status === 'PAUSED' && (
+            <a
+              className={'sy-table-a'}
+              onClick={() => {
+                resumeWork(record.id as string)
+              }}>
+              重启
+            </a>
+          )}
+          {record.status === 'PUBLISHED' && (
+            <a
+              className={'sy-table-a'}
+              onClick={() => {
+                pauseWork(record.id as string)
+              }}>
+              暂停
+            </a>
+          )}
+          {record.status === 'PAUSED' && (
+            <a
+              className={'sy-table-a'}
+              onClick={() => {
+                stopWork(record.id as string)
+              }}>
+              下线
+            </a>
+          )}
+          {record.status === 'PUBLISHED' && (
+            <a
+              className={'sy-table-a'}
+              onClick={() => {
+                stopWork(record.id as string)
+              }}>
+              下线
+            </a>
+          )}
         </Space>
       )
     }
   ]
 
   return (
-    <div style={{padding: 24}}>
+    <div style={{ padding: 24 }}>
       <Row className={'works-bar'}>
         <Col span={8}>
           <Button
@@ -225,13 +237,13 @@ function WorksPage() {
             添加作业
           </Button>
         </Col>
-        <Col span={7} offset={9} style={{textAlign: 'right', display: 'flex'}}>
+        <Col span={7} offset={9} style={{ textAlign: 'right', display: 'flex' }}>
           <Input
-            style={{marginRight: '10px'}}
+            style={{ marginRight: '10px' }}
             onPressEnter={handleSearch}
             defaultValue={queryWorkReq.searchKeyWord}
             onChange={(e) => {
-              setPagination({...pagination, searchKeyWord: e.target.value})
+              setPagination({ ...pagination, searchKeyWord: e.target.value })
             }}
             placeholder={'名称/类型/备注'}
           />
@@ -248,7 +260,7 @@ function WorksPage() {
           pageSize: pagination.pageSize,
           total: pagination.totalItems,
           onChange: (currentPage: number) => {
-            setPagination({...pagination, currentPage})
+            setPagination({ ...pagination, currentPage })
           }
         }}
       />

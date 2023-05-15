@@ -15,7 +15,7 @@ import TenantPage from '../pages/tenant/TenantPage'
 import LicensePage from '../pages/license/LicensePage'
 import SettingPage from '../pages/setting/SettingPage'
 import ApiPage from '../pages/api/ApiPage'
-import InstancePage from "../pages/instance/InstancePage";
+import InstancePage from '../pages/instance/InstancePage'
 
 export default function MainRoute() {
   return (

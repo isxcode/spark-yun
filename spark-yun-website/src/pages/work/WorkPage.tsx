@@ -1,12 +1,13 @@
-import React, {useEffect, useState} from 'react'
-import {Button, Col, Form, Row, Table, Tabs, type TabsProps} from 'antd'
-import {useNavigate, useParams} from 'react-router-dom'
+import React, { useEffect, useState } from 'react'
+import { Button, Col, Form, Row, Table, Tabs, type TabsProps } from 'antd'
+import { useNavigate, useParams } from 'react-router-dom'
 import TextArea from 'antd/es/input/TextArea'
 import './WorkPage.less'
-import {type WorkInfo} from '../../types/woks/info/WorkInfo'
-import {type RunWorkRes} from '../../types/woks/res/RunWorkRes'
+import { type WorkInfo } from '../../types/woks/info/WorkInfo'
+import { type RunWorkRes } from '../../types/woks/res/RunWorkRes'
 import {
-  configWorkApi, getSubmitLogApi,
+  configWorkApi,
+  getSubmitLogApi,
   getWorkApi,
   getWorkDataApi,
   getWorkLogApi,
@@ -14,24 +15,24 @@ import {
   runWorkApi,
   stopWorkApi
 } from '../../services/works/WorksService'
-import {CloseOutlined, PlayCircleOutlined, RollbackOutlined, SaveOutlined, SettingOutlined} from '@ant-design/icons'
-import {type ConfigWorkReq} from '../../types/woks/req/ConfigWorkReq'
-import {WorkConfigDrawer} from '../../modals/work/config/WorkConfigDrawer'
+import { CloseOutlined, PlayCircleOutlined, RollbackOutlined, SaveOutlined, SettingOutlined } from '@ant-design/icons'
+import { type ConfigWorkReq } from '../../types/woks/req/ConfigWorkReq'
+import { WorkConfigDrawer } from '../../modals/work/config/WorkConfigDrawer'
 
 function WorkPage() {
   const navigate = useNavigate()
-  const {workId} = useParams()
+  const { workId } = useParams()
 
   const [isModalVisible, setIsModalVisible] = useState(false)
   const [work, setWork] = useState<WorkInfo>()
   const [result, setResult] = useState<RunWorkRes>()
-  const [instanceId, setInstanceId] = useState("");
-  const [logs, setLogs] = useState("");
-  const [pollingStarted, setPollingStarted] = useState(false);
+  const [instanceId, setInstanceId] = useState('')
+  const [logs, setLogs] = useState('')
+  const [pollingStarted, setPollingStarted] = useState(false)
 
   const startPolling = () => {
-    setPollingStarted(true);
-  };
+    setPollingStarted(true)
+  }
 
   useEffect(() => {
     getWork()
@@ -40,21 +41,21 @@ function WorkPage() {
   useEffect(() => {
     const fetchData = async () => {
       getSubmitLogApi(instanceId).then(function (response) {
-        const successLog = response.status === 'SUCCESS' || response.status === 'FAIL';
+        const successLog = response.status === 'SUCCESS' || response.status === 'FAIL'
         setLogs(response.log as string)
         if (successLog) {
-          setPollingStarted(false);
+          setPollingStarted(false)
         }
-      });
-    };
+      })
+    }
 
     if (pollingStarted) {
-      const pollingInterval = setInterval(fetchData, 2000);
+      const pollingInterval = setInterval(fetchData, 2000)
       return () => {
-        clearInterval(pollingInterval);
-      };
+        clearInterval(pollingInterval)
+      }
     }
-  }, [pollingStarted]);
+  }, [pollingStarted])
 
   const getWork = () => {
     getWorkApi(workId as string).then(function (response) {
@@ -64,13 +65,13 @@ function WorkPage() {
 
   const getWorkLog = () => {
     getWorkLogApi(workId as string, result?.applicationId).then(function (response) {
-      setResult({...result, yarnLog: response.yarnLog, data: [[]]})
+      setResult({ ...result, yarnLog: response.yarnLog, data: [[]] })
     })
   }
 
   const getData = () => {
     getWorkDataApi(workId as string, result?.applicationId).then(function (response) {
-      setResult({...result, data: response.data})
+      setResult({ ...result, data: response.data })
     })
   }
 
@@ -87,8 +88,7 @@ function WorkPage() {
   }
 
   const getStopWork = () => {
-    stopWorkApi(workId as string, result?.applicationId).then(function (response) {
-    })
+    stopWorkApi(workId as string, result?.applicationId).then(function (response) {})
   }
 
   const configWorkReq: ConfigWorkReq = {
@@ -99,8 +99,7 @@ function WorkPage() {
   }
 
   const configWork = () => {
-    configWorkApi(configWorkReq).then((r) => {
-    })
+    configWorkApi(configWorkReq).then((r) => {})
   }
 
   const runWork = () => {
@@ -133,21 +132,21 @@ function WorkPage() {
   const columns = () => {
     return result?.data != null && result?.data.length > 0
       ? result.data[0].map((columnTitle) => ({
-        title: columnTitle,
-        dataIndex: columnTitle
-      }))
+          title: columnTitle,
+          dataIndex: columnTitle
+        }))
       : []
   }
 
   const data = () => {
     return result?.data != null && result?.data.length > 0
       ? result.data.slice(1).map((row) => {
-        const rowData = {}
-        result.data[0].forEach((columnTitle, columnIndex) => {
-          rowData[columnTitle] = row[columnIndex]
+          const rowData = {}
+          result.data[0].forEach((columnTitle, columnIndex) => {
+            rowData[columnTitle] = row[columnIndex]
+          })
+          return rowData
         })
-        return rowData
-      })
       : []
   }
 
@@ -156,13 +155,13 @@ function WorkPage() {
     items.push({
       key: 'SUBMIT_LOG',
       label: '提交日志',
-      children: <pre style={{overflowY: 'scroll', maxHeight: '200px', whiteSpace: 'pre-wrap'}}>{logs}</pre>
+      children: <pre style={{ overflowY: 'scroll', maxHeight: '200px', whiteSpace: 'pre-wrap' }}>{logs}</pre>
     })
     if (work?.workType === 'QUERY_JDBC' || work?.workType === 'SPARK_SQL') {
       items.push({
         key: 'BACK_DATA',
         label: '数据返回',
-        children: <Table columns={columns()} dataSource={data()} scroll={{y: 200}}/>
+        children: <Table columns={columns()} dataSource={data()} scroll={{ y: 200 }} />
       })
     }
     if (work?.workType === 'SPARK_SQL') {
@@ -170,7 +169,7 @@ function WorkPage() {
         key: 'EXECUTE_LOG',
         label: '运行日志',
         children: (
-          <pre style={{overflowY: 'scroll', maxHeight: '200px', whiteSpace: 'pre-wrap'}}>{result?.yarnLog}</pre>
+          <pre style={{ overflowY: 'scroll', maxHeight: '200px', whiteSpace: 'pre-wrap' }}>{result?.yarnLog}</pre>
         )
       })
       items.push({
@@ -208,19 +207,19 @@ function WorkPage() {
                 }}
                 className={'sy-btn'}
                 type={'text'}
-                icon={<RollbackOutlined/>}>
+                icon={<RollbackOutlined />}>
                 返回
               </Button>
               <Button
                 className={'sy-btn'}
                 type={'text'}
-                icon={<PlayCircleOutlined/>}
+                icon={<PlayCircleOutlined />}
                 onClick={() => {
                   runWork()
                 }}>
                 运行
               </Button>
-              <Button className={'sy-btn'} type={'text'} icon={<CloseOutlined/>}>
+              <Button className={'sy-btn'} type={'text'} icon={<CloseOutlined />}>
                 中止
               </Button>
               <Button
@@ -229,13 +228,13 @@ function WorkPage() {
                 }}
                 className={'sy-btn'}
                 type={'text'}
-                icon={<SaveOutlined/>}>
+                icon={<SaveOutlined />}>
                 保存
               </Button>
               <Button
                 className={'sy-btn'}
                 type={'text'}
-                icon={<SettingOutlined/>}
+                icon={<SettingOutlined />}
                 onClick={() => {
                   setIsModalVisible(true)
                 }}>
@@ -245,22 +244,22 @@ function WorkPage() {
             </div>
           </Col>
         </Row>
-        <Row style={{height: '50%'}}>
+        <Row style={{ height: '50%' }}>
           <Col span={24}>
             <TextArea
-              style={{height: '100%'}}
+              style={{ height: '100%' }}
               className={'work-sql-textarea'}
               value={work?.sqlScript}
               onChange={(e) => {
-                setWork({...work, sqlScript: e.target.value})
+                setWork({ ...work, sqlScript: e.target.value })
               }}
             />
           </Col>
         </Row>
-        <Row style={{height: '30%'}}>
+        <Row style={{ height: '30%' }}>
           <Col span={24}>
             <Tabs
-              style={{height: '100%'}}
+              style={{ height: '100%' }}
               className={'work-console-tab'}
               defaultActiveKey="1"
               items={initItems()}

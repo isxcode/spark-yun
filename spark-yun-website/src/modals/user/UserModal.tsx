@@ -26,7 +26,7 @@ export const UserModal = (props: {
 
   const addUser = (data: AddUserReq) => {
     const { passwd } = data
-    data.passwd = CryptoJS.MD5(passwd)
+    data.passwd = CryptoJS.MD5(passwd).toString()
     addUserApi(data).then(function () {
       handleOk()
     })

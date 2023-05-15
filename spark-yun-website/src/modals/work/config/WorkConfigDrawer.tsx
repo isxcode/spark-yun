@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import {Button, Col, Drawer, Form, Input, Row, Select} from 'antd'
+import { Button, Col, Drawer, Form, Input, Row, Select } from 'antd'
 import './WorkConfigDrawer.less'
 import { ConfigWorkReq } from '../../../types/woks/req/ConfigWorkReq'
 import { configWorkApi } from '../../../services/works/WorksService'
@@ -43,7 +43,6 @@ export const WorkConfigDrawer = (props: { isModalVisible: boolean, handleCancel:
   }
 
   useEffect(() => {
-
     if (work?.workType === 'SPARK_SQL') {
       fetchEngines()
     } else {
@@ -53,10 +52,9 @@ export const WorkConfigDrawer = (props: { isModalVisible: boolean, handleCancel:
   }, [work])
 
   const configWork = (data: any) => {
-    data.workId = work?.workId;
-    configWorkApi(data).then(() => {
-    })
-  };
+    data.workId = work?.workId
+    configWorkApi(data).then(() => {})
+  }
 
   const onFinish = (values: any) => {
     configWork(values)
@@ -71,14 +69,14 @@ export const WorkConfigDrawer = (props: { isModalVisible: boolean, handleCancel:
         onClose={handleCancel}
         open={isModalVisible}
         getContainer={false}
-        maskStyle={{background: 'none'}}
+        maskStyle={{ background: 'none' }}
         footer={
           <Row justify="end">
             <Col>
               <Button onClick={handleCancel}>取消</Button>
             </Col>
             <Col>
-              <span style={{marginLeft: 8}}/>
+              <span style={{ marginLeft: 8 }} />
               <Button
                 onClick={() => {
                   form.submit()
@@ -91,47 +89,41 @@ export const WorkConfigDrawer = (props: { isModalVisible: boolean, handleCancel:
           </Row>
         }>
         <Form
-          labelCol={{span: 7}}
-          wrapperCol={{span: 20}}
-          initialValues={{remember: true}}
+          labelCol={{ span: 7 }}
+          wrapperCol={{ span: 20 }}
+          initialValues={{ remember: true }}
           onFinish={onFinish}
           autoComplete="off"
           form={form}>
           {work?.workType === 'SPARK_SQL'
-            ? (
-              <Form.Item
-                name="engineId"
-                label="计算引擎"
-                rules={[{required: true, message: '计算引擎不能为空'}]}>
-                <Select placeholder="选择计算引擎" allowClear>
-                  {calculates.map((option) => (
-                    <Option key={option.id} value={option.id}>
-                      {option.name}
-                    </Option>
-                  ))}
-                </Select>
-              </Form.Item>
-            )
-            : (
-              <Form.Item
-                name="datasourceId"
-                label="数据源"
-                rules={[{required: true}]}>
-                <Select placeholder="选择数据源" allowClear>
-                  {datasources.map((option) => (
-                    <Option key={option.id} value={option.id}>
-                      {option.name}
-                    </Option>
-                  ))}
-                </Select>
-              </Form.Item>
-            )}
+? (
+            <Form.Item name="engineId" label="计算引擎" rules={[{ required: true, message: '计算引擎不能为空' }]}>
+              <Select placeholder="选择计算引擎" allowClear>
+                {calculates.map((option) => (
+                  <Option key={option.id} value={option.id}>
+                    {option.name}
+                  </Option>
+                ))}
+              </Select>
+            </Form.Item>
+          )
+: (
+            <Form.Item name="datasourceId" label="数据源" rules={[{ required: true }]}>
+              <Select placeholder="选择数据源" allowClear>
+                {datasources.map((option) => (
+                  <Option key={option.id} value={option.id}>
+                    {option.name}
+                  </Option>
+                ))}
+              </Select>
+            </Form.Item>
+          )}
 
           <Form.Item label="Corn表达式" name="corn">
-            <Input/>
+            <Input />
           </Form.Item>
         </Form>
       </Drawer>
     </>
-  );
+  )
 }
