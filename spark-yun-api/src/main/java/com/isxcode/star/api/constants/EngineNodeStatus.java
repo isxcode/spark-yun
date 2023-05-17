@@ -6,7 +6,37 @@ public interface EngineNodeStatus {
   /**
    * 未安装.
    */
-  String NEW = "NEW";
+  String UN_INSTALL = "UN_INSTALL";
+
+  /**
+   * 启动.
+   */
+  String RUNNING = "RUNNING";
+
+  /**
+   * 待启动.
+   */
+  String STOP = "STOP";
+
+  /**
+   * 检测中.
+   */
+  String CHECKING = "CHECKING";
+
+  /**
+   * 启动中.
+   */
+  String STARTING = "STARTING";
+
+  /**
+   * 安装中.
+   */
+  String INSTALLING = "INSTALLING";
+
+  /**
+   * 卸载中.
+   */
+  String REMOVING = "REMOVING";
 
   /**
    * 待检测.
@@ -14,9 +44,9 @@ public interface EngineNodeStatus {
   String UN_CHECK = "UN_CHECK";
 
   /**
-   * 可安装.
+   * 检测失败.
    */
-  String CAN_INSTALL = "CAN_INSTALL";
+  String CHECK_ERROR = "CHECK_ERROR";
 
   /**
    * 不可安装.
@@ -24,42 +54,7 @@ public interface EngineNodeStatus {
   String CAN_NOT_INSTALL = "CAN_NOT_INSTALL";
 
   /**
-   * 已激活.
+   * 可安装.
    */
-  String ACTIVE = "ACTIVE";
-
-  /**
-   * 安装失败.
-   */
-  String INSTALL_ERROR = "INSTALL_ERROR";
-
-  /**
-   * 检测失败.
-   */
-  String CHECK_ERROR = "CHECK_ERROR";
-
-  /**
-   * 已卸载.
-   */
-  String UNINSTALLED = "UNINSTALLED";
-
-  /**
-   * 已安装.
-   */
-  String INSTALLED = "INSTALLED";
-
-  /**
-   * 已停止.
-   */
-  String STOP = "STOP";
-
-  /**
-   * 未安装.
-   */
-  String NO_INSTALL = "NO_INSTALL";
-
-  /**
-   * 运行中.
-   */
-  String RUNNING = "RUNNING";
+  String CAN_INSTALL = "CAN_INSTALL";
 }

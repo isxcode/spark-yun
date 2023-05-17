@@ -12,23 +12,25 @@ for arg in "$@"; do
   esac
 done
 
-# 检查是否有README.md文件，有则表示已安装，无则表示未安装
-if [ -e "${home_path}/README.md" ]; then
-  INSTALL_STATUS="INSTALLED"
-else
-  INSTALL_STATUS="NO_INSTALL"
+# 判断home_path目录是否存在
+if [ ! -d "$home_path" ]; then
+  mkdir -p $home_path
 fi
 
-# 检查pid文件，无则表示未运行，有再判断pid是否运行
-if [ -e "${home_path}/spark-yun-agent.pid" ]; then
-  pid=$(cat "${home_path}/spark-yun-agent.pid")
-  if ps -p $pid > /dev/null 2>&1; then
-      RUN_STATUS="RUNNING"
-  else
-      RUN_STATUS="STOP"
+# 检查是否有README.md文件，有则表示已安装，无则表示未安装
+if [ -e "${home_path}/README.md" ]; then
+
+  # 检查pid文件，无则表示未运行，有再判断pid是否运行
+  if [ -e "${home_path}/spark-yun-agent.pid" ]; then
+    pid=$(cat "${home_path}/spark-yun-agent.pid")
+    if ps -p $pid > /dev/null 2>&1; then
+        CHECK_STATUS="RUNNING"
+    else
+        CHECK_STATUS="STOP"
+    fi
   fi
 else
-  RUN_STATUS="STOP"
+  CHECK_STATUS="UN_INSTALL"
 fi
 
 # 获取所有内存
@@ -48,16 +50,17 @@ CPU_PERCENT=$(top -bn1 | grep '%Cpu' | awk '{print 100-$8}')
 
 # 返回json的日志
 json_output="{ \
-  \"installStatus\": \"$INSTALL_STATUS\", \
-  \"runStatus\": \"$RUN_STATUS\", \
+  \"checkStatus\": \"$CHECK_STATUS\", \
+  \"log\": \"检测完成\", \
   \"allMemory\": $ALL_MEMORY, \
   \"usedMemory\": $USED_MEMORY, \
   \"allStorage\": $ALL_STORAGE, \
   \"usedStorage\": $USED_STORAGE, \
-  \"cpuPercent\": $CPU_PERCENT \
+  \"cpuPercent\": $((100 - $CPU_PERCENT)) \
 }"
 
 echo $json_output
 
 # 删除检测脚本
-rm -rf ${home_path}/spark-yun-check
+rm /tmp/sy-check.sh
+

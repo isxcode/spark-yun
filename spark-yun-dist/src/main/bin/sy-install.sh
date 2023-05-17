@@ -6,32 +6,37 @@
 
 home_path=""
 agent_port=""
-hadoop_home_path=""
 for arg in "$@"; do
   case "$arg" in
   --home-path=*) home_path="${arg#*=}" ;;
   --agent-port=*) agent_port="${arg#*=}" ;;
-  --hadoop-home=*) hadoop_home_path="${arg#*=}" ;;
   *) echo "未知参数: $arg" && exit 1 ;;
   esac
 done
 
 # 将文件解压到指定目录
-tar -vxf /tmp/spark-yun-agent.tar.gz -C ${home_path}/
-
-# 配置环境变量
-export HADOOP_HOME=${hadoop_home_path}
-export HADOOP_CONF_DIR=${hadoop_home_path}/etc/hadoop
+tar -vxf /tmp/spark-yun-agent.tar.gz -C ${home_path}/ > /dev/null
 
 # 运行jar包
 nohup java -jar -Xmx2048m ${home_path}/lib/spark-yun-agent.jar --server.port=${agent_port} >>${home_path}/log/spark-yun-agent.log 2>&1 &
-echo $! >${home_path}/spark-yun-agent/spark-yun-agent.pid
+echo $! >${home_path}/spark-yun-agent.pid
 
-# 返回结果
-json_output="{ \
-          \"installStatus\": \"SUCCESS\"
-        }"
-echo $json_output
+# 检查是否安装
+if [ -e "${home_path}/spark-yun-agent.pid" ]; then
+  pid=$(cat "${home_path}/spark-yun-agent.pid")
+  sleep 5
+  if ps -p $pid >/dev/null 2>&1; then
+    json_output="{ \
+              \"installStatus\": \"RUNNING\"
+            }"
+    echo $json_output
+  else
+    json_output="{ \
+                  \"installStatus\": \"STOP\"
+                }"
+    echo $json_output
+  fi
+fi
 
 # 删除安装包 和 安装脚本
-rm /tmp/spark-yun-agent.tar.gz && rm ${home_path}/spark-yun-install
+rm /tmp/spark-yun-agent.tar.gz && rm /tmp/sy-install.sh

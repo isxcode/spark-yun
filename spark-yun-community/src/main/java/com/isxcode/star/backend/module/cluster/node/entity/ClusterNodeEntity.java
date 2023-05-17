@@ -75,6 +75,8 @@ public class ClusterNodeEntity {
 
   private String hadoopHomePath;
 
+  private String agentLog;
+
   @CreatedDate
   private LocalDateTime createDateTime;
 
@@ -86,9 +88,6 @@ public class ClusterNodeEntity {
 
   @LastModifiedBy
   private String lastModifiedBy;
-
-  @Version
-  private Long versionNumber;
 
   @Transient
   private Integer deleted;

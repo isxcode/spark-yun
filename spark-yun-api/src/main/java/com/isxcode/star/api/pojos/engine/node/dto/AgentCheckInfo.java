@@ -5,9 +5,11 @@ import lombok.Data;
 @Data
 public class AgentCheckInfo {
 
-  private String installStatus;
+  private String execStatus;
 
-  private String runStatus;
+  private String checkStatus;
+
+  private String log;
 
   private Double allMemory;
 

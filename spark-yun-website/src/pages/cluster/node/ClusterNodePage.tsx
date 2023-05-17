@@ -150,11 +150,12 @@ function ClusterNodePage() {
       title: '备注',
       key: 'remark',
       dataIndex: 'remark',
-      width: 200
+      width: 100
     },
     {
       title: '操作',
       key: 'action',
+      width: 300,
       render: (_, record) => (
         <Space size="middle">
           <a
@@ -195,7 +196,7 @@ function ClusterNodePage() {
           <a
             className={'sy-table-a'}
             onClick={() => {
-              delEngineNode(record.id)
+              installAgent(record.id)
             }}>
             安装
           </a>

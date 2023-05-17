@@ -83,7 +83,7 @@ public class ClusterBizService {
     List<ClusterNodeEntity> engineNodes = engineNodeRepository.findAllByClusterId(engineId);
 
     // 激活节点
-    List<ClusterNodeEntity> activeNodes = engineNodes.stream().filter(e -> EngineNodeStatus.ACTIVE.equals(e.getStatus())).collect(Collectors.toList());
+    List<ClusterNodeEntity> activeNodes = engineNodes.stream().filter(e -> EngineNodeStatus.RUNNING.equals(e.getStatus())).collect(Collectors.toList());
     calculateEngineEntity.setActiveNodeNum(activeNodes.size());
     calculateEngineEntity.setAllNodeNum(engineNodes.size());
 
@@ -106,6 +106,6 @@ public class ClusterBizService {
     }
 
     calculateEngineEntity.setCheckDateTime(LocalDateTime.now());
-    engineRepository.save(calculateEngineEntity);
+    engineRepository.saveAndFlush(calculateEngineEntity);
   }
 }

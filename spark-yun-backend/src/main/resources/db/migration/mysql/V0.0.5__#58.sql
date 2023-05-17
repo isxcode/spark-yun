@@ -108,5 +108,15 @@ create table if not exists SY_FORM_COMPONENT
 
 -- 添加测试连接日志
 alter table SY_DATASOURCE
-  add connect_log varchar(200) null comment '测试连接日志' after db_type;
+  add connect_log varchar(2000) null comment '测试连接日志' after db_type;
 
+-- 添加节点安装日志
+alter table SY_CLUSTER_NODE
+  add agent_log varchar(2000) null comment '代理日志';
+
+-- 可以为null
+alter table SY_CLUSTER_NODE
+  modify hadoop_home_path varchar(200) null comment 'hadoop家目录';
+
+-- 关闭节点的乐观锁
+alter table SY_CLUSTER_NODE drop column version_number

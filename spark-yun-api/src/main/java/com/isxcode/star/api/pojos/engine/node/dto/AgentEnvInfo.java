@@ -5,6 +5,8 @@ import lombok.Data;
 @Data
 public class AgentEnvInfo {
 
+  private String execStatus;
+
   private String envStatus;
 
   private String hadoopHome;

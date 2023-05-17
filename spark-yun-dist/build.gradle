@@ -59,7 +59,7 @@ tasks.register('build_dist', Tar) {
   from('src/main/bin') {
     into 'bin'
   }
-  from('src/main/conf') {
+  from('src/main/agent-conf') {
     into 'conf'
   }
   from('build/plugins') {
