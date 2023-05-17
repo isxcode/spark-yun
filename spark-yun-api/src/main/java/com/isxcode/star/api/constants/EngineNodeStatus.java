@@ -42,4 +42,24 @@ public interface EngineNodeStatus {
    * 已卸载.
    */
   String UNINSTALLED = "UNINSTALLED";
+
+  /**
+   * 已安装.
+   */
+  String INSTALLED = "INSTALLED";
+
+  /**
+   * 已停止.
+   */
+  String STOP = "STOP";
+
+  /**
+   * 未安装.
+   */
+  String NO_INSTALL = "NO_INSTALL";
+
+  /**
+   * 运行中.
+   */
+  String RUNNING = "RUNNING";
 }

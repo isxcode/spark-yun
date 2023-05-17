@@ -1,4 +1,5 @@
 #!/bin/bash
+# 安装脚本
 
 home_path=""
 agent_port=""

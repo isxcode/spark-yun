@@ -21,7 +21,7 @@ public interface ClusterNodeMapper {
   @Mapping(target = "allMemory", expression = "java(0.0)")
   @Mapping(target = "usedStorage", expression = "java(0.0)")
   @Mapping(target = "allStorage", expression = "java(0.0)")
-  @Mapping(target = "cpuPercent", expression = "java(\"0\")")
+  @Mapping(target = "cpuPercent", expression = "java(0.0)")
   @Mapping(target = "checkDateTime", expression = "java(java.time.LocalDateTime.now())")
   ClusterNodeEntity addNodeReqToNodeEntity(EnoAddNodeReq enoAddNodeReq);
 
@@ -29,7 +29,7 @@ public interface ClusterNodeMapper {
   @Mapping(target = "allMemory", expression = "java(0.0)")
   @Mapping(target = "usedStorage", expression = "java(0.0)")
   @Mapping(target = "allStorage", expression = "java(0.0)")
-  @Mapping(target = "cpuPercent", expression = "java(\"0\")")
+  @Mapping(target = "cpuPercent", expression = "java(0.0)")
   @Mapping(target = "checkDateTime", expression = "java(java.time.LocalDateTime.now())")
   ClusterNodeEntity updateNodeReqToNodeEntity(EnoUpdateNodeReq enoUpdateNodeReq);
 

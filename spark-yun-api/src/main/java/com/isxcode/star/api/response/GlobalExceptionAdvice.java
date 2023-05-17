@@ -36,10 +36,13 @@ public class GlobalExceptionAdvice extends ResponseEntityExceptionHandler {
     errorResponse.setErr(
         abstractSparkYunException.getErr() == null ? null : abstractSparkYunException.getErr());
 
-    // token异常
-//    if ("5555".equals(abstractSparkYunException.getCode())) {
-//      return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
-//    }
+    if ("401".equals(abstractSparkYunException.getCode())) {
+      return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
+    }
+
+    if ("403".equals(abstractSparkYunException.getCode())) {
+      return new ResponseEntity<>(errorResponse, HttpStatus.FORBIDDEN);
+    }
 
     return new ResponseEntity<>(errorResponse, HttpStatus.OK);
   }

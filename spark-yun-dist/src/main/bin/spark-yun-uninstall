@@ -1,4 +1,5 @@
 #!/bin/bash
+# 卸载脚本
 
 home_path=""
 

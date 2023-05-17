@@ -57,7 +57,7 @@ public class ClusterNodeEntity {
 
   private Double usedStorage;
 
-  private String cpuPercent;
+  private Double cpuPercent;
 
   private String clusterId;
 

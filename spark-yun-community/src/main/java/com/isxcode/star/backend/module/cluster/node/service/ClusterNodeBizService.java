@@ -1,8 +1,10 @@
 package com.isxcode.star.backend.module.cluster.node.service;
 
+import com.alibaba.fastjson.JSON;
 import com.isxcode.star.api.constants.CalculateEngineStatus;
 import com.isxcode.star.api.constants.EngineNodeStatus;
 import com.isxcode.star.api.constants.PathConstants;
+import com.isxcode.star.api.pojos.engine.node.dto.AgentCheckInfo;
 import com.isxcode.star.api.pojos.engine.node.dto.ScpFileEngineNodeDto;
 import com.isxcode.star.api.pojos.engine.node.req.EnoAddNodeReq;
 import com.isxcode.star.api.pojos.engine.node.req.EnoQueryNodeReq;
@@ -233,16 +235,24 @@ public class ClusterNodeBizService {
 
     ScpFileEngineNodeDto scpFileEngineNodeDto = engineNodeMapper.engineNodeEntityToScpFileEngineNodeDto(engineNode);
 
-    // 运行卸载脚本
-    String checkCommand = "java -version && yarn application -list | grep 'Total number of applications' && echo $HADOOP_HOME";
-    String executeLog;
+    // 拷贝执行脚本
+    scpFile(
+      scpFileEngineNodeDto,
+      sparkYunProperties.getAgentBinDir()
+        + File.separator
+        + PathConstants.AGENT_CHECK_BASH_NAME,
+      engineNode.getAgentHomePath() + File.separator + PathConstants.AGENT_CHECK_BASH_NAME);
+
+    // 运行安装脚本
+    String checkCommand =
+      "bash " + engineNode.getAgentHomePath() + File.separator + PathConstants.AGENT_CHECK_BASH_NAME
+        + " --home-path=" + engineNode.getAgentHomePath();
+
+    // 获取返回结果
+    AgentCheckInfo agentCheckInfo;
     try {
-      executeLog = executeCommand(scpFileEngineNodeDto, checkCommand, false);
-      if (executeLog.contains("SY_ERROR")) {
-        engineNode.setStatus(EngineNodeStatus.CAN_NOT_INSTALL);
-        engineNodeRepository.save(engineNode);
-        throw new SparkYunException("不可安装", executeLog);
-      }
+       String executeLog = executeCommand(scpFileEngineNodeDto, checkCommand, false);
+       agentCheckInfo = JSON.parseObject(executeLog, AgentCheckInfo.class);
     } catch (JSchException | InterruptedException | IOException e) {
       log.error(e.getMessage());
       engineNode.setStatus(EngineNodeStatus.CAN_NOT_INSTALL);
@@ -250,31 +260,26 @@ public class ClusterNodeBizService {
       throw new SparkYunException("不可安装", e.getMessage());
     }
 
-    try {
-      engineNode.setAllMemory(getAllMemory(scpFileEngineNodeDto));
-      engineNode.setUsedMemory(getUsedMemory(scpFileEngineNodeDto));
-      engineNode.setAllStorage(getAllStorage(scpFileEngineNodeDto));
-      engineNode.setUsedStorage(getUsedStorage(scpFileEngineNodeDto));
-      engineNode.setCpuPercent(getCpuPercent(scpFileEngineNodeDto));
-    } catch (Exception e) {
-      log.error(e.getMessage());
-      engineNode.setStatus(EngineNodeStatus.CHECK_ERROR);
-      engineNodeRepository.save(engineNode);
-      throw new SparkYunException("检测失败", e.getMessage());
-    }
+    engineNode.setAllMemory(agentCheckInfo.getAllMemory());
+    engineNode.setUsedMemory(agentCheckInfo.getUsedMemory());
+    engineNode.setAllStorage(agentCheckInfo.getAllStorage());
+    engineNode.setUsedStorage(agentCheckInfo.getUsedStorage());
+    engineNode.setCpuPercent(agentCheckInfo.getCpuPercent());
 
-    // 修改状态
-    if (!EngineNodeStatus.ACTIVE.equals(engineNode.getStatus())) {
-      engineNode.setStatus(EngineNodeStatus.CAN_INSTALL);
+    // 修改状态  未安装 -> 停止 -> 运行中
+    if (EngineNodeStatus.RUNNING.equals(agentCheckInfo.getRunStatus())) {
+      engineNode.setStatus(EngineNodeStatus.RUNNING);
     }
-
-    // 保存HadoopHomePath
-    String[] split = executeLog.split("\n");
-    engineNode.setHadoopHomePath(split[split.length - 1]);
+    if (EngineNodeStatus.STOP.equals(agentCheckInfo.getRunStatus())) {
+      engineNode.setStatus(EngineNodeStatus.STOP);
+    }
+    if (EngineNodeStatus.NO_INSTALL.equals(agentCheckInfo.getInstallStatus())) {
+      engineNode.setStatus(EngineNodeStatus.NO_INSTALL);
+    }
 
     engineNode.setCheckDateTime(LocalDateTime.now());
     engineNodeRepository.save(engineNode);
-    return new EnoCheckAgentRes(executeLog);
+    return new EnoCheckAgentRes("检测成功");
   }
 
   public EnoRemoveAgentRes removeAgent(String engineNodeId) {
@@ -300,35 +305,6 @@ public class ClusterNodeBizService {
     engineNodeRepository.save(engineNode);
 
     return new EnoRemoveAgentRes(executeLog);
-  }
-
-  public Double getAllMemory(ScpFileEngineNodeDto engineNode) throws JSchException, IOException, InterruptedException {
-    String getAllMemoryCommand = "grep MemTotal /proc/meminfo | awk '{print $2/1024/1024}' | bc -l | awk '{printf \"%.2f\\n\", $1}'";
-    String allMemory = executeCommand(engineNode, getAllMemoryCommand, false).replace("\n", "");
-    return Double.parseDouble(new DecimalFormat("#.00").format(Double.parseDouble(allMemory)));
-  }
-
-  public Double getUsedMemory(ScpFileEngineNodeDto engineNode) throws JSchException, IOException, InterruptedException {
-    String getUsedMemoryCommand = "free | grep Mem: | awk '{print $3/1024/1024}'";
-    String usedMemory = executeCommand(engineNode, getUsedMemoryCommand, false).replace("\n", "");
-    return Double.parseDouble(new DecimalFormat("#.00").format(Double.parseDouble(usedMemory)));
-  }
-
-  public Double getAllStorage(ScpFileEngineNodeDto engineNode) throws JSchException, IOException, InterruptedException {
-    String getAllStorageCommand = "lsblk -b | grep disk | awk '{total += $4} END {print total/1024/1024/1024}'";
-    String allStorage = executeCommand(engineNode, getAllStorageCommand, false).replace("\n", "");
-    return Double.parseDouble(new DecimalFormat("#.00").format(Double.parseDouble(allStorage)));
-  }
-
-  public Double getUsedStorage(ScpFileEngineNodeDto engineNode) throws JSchException, IOException, InterruptedException {
-    String getUsedStorageCommand = "df -h -t ext4 | awk '{total += $3} END {print total}'";
-    String usedStorage = executeCommand(engineNode, getUsedStorageCommand, false).replace("\n", "");
-    return Double.parseDouble(new DecimalFormat("#.00").format(Double.parseDouble(usedStorage)));
-  }
-
-  public String getCpuPercent(ScpFileEngineNodeDto engineNode) throws JSchException, IOException, InterruptedException {
-    String getCpuPercentCommand = "top -bn1 | grep '%Cpu' | awk '{print 100-$8}'";
-    return executeCommand(engineNode, getCpuPercentCommand, false).replace("\n", "");
   }
 
 }

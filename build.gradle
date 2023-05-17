@@ -103,8 +103,7 @@ tasks.register('docker', Exec) {
 tasks.register('deploy', Exec) {
 
   dependsOn(":package")
-  commandLine 'bash', '-c', 'docker buildx install'
-  commandLine 'bash', '-c', 'docker buildx build --platform linux/amd64,linux/arm64/v8 -t isxcode/zhiqingyun:' + version_number + ' -f ./Dockerfile . --push'
+  commandLine 'bash', '-c', 'docker buildx install && docker buildx build --platform linux/amd64,linux/arm64/v8 -t isxcode/zhiqingyun:' + version_number + ' -f ./Dockerfile . --push'
 }
 
 // gradle docs 启动本地官网

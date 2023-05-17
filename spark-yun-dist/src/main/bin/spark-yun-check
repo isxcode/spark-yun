@@ -1,34 +1,59 @@
 #!/bin/bash
 
-home_path="/Users/ispong"
-#for arg in "$@"; do
-#  case "$arg" in
-#    --home-path=*) home_path="${arg#*=}" ;;
-#    *) echo "未知参数: $arg" && exit 1 ;;
-#  esac
-#done
-#echo 'home_path:'+${home_path}+'\n'
+home_path=""
+for arg in "$@"; do
+  case "$arg" in
+    --home-path=*) home_path="${arg#*=}" ;;
+    *) echo "未知参数: $arg" && exit 1 ;;
+  esac
+done
 
-mkdir ${home_path}/spark-yun-agent
-echo '构建文件夹'
+# 检查是否有README.md文件，有则表示已安装，无则表示未安装
+if [ -e "${home_path}/README.md" ]; then
+  INSTALL_STATUS="INSTALLED"
+else
+  INSTALL_STATUS="NO_INSTALL"
+fi
 
-tar -vxf ${home_path}/spark-yun-agent.tar.gz -C ${home_path}/spark-yun-agent/
-echo "解压安装包"
+# 检查pid文件，无则表示未运行，有再判断pid是否运行
+if [ -e "${home_path}/spark-yun-agent.pid" ]; then
+  pid=$(cat "${home_path}/spark-yun-agent.pid")
+  if ps -p $pid > /dev/null 2>&1; then
+      RUN_STATUS="RUNNING"
+  else
+      RUN_STATUS="STOP"
+  fi
+else
+  RUN_STATUS="STOP"
+fi
 
-#pid_file=${home_path}/spark-yun-agent/spark-yun-agent.pid
-#if [ -e "$pid_file" ]; then
-#  pid=$(cat "$pid_file")
-#  if [ -n "$pid" ]; then
-#    kill -9 "$pid"
-#    echo "杀死旧进程"
-#  fi
-#fi
+# 获取所有内存
+ALL_MEMORY=$(grep MemTotal /proc/meminfo | awk '{print $2/1024/1024}' | bc -l | awk '{printf "%.2f\n", $1}')
 
-spark_yun_agent= ${home_path}/spark-yun-agent/lib/spark-yun-agent.jar
-spark_yun_agent_log= ${home_path}/spark-yun-agent/log/spark-yun-agent.log
-nohup java -jar -Xmx2048m ${spark_yun_agent} >> ${spark_yun_agent_log} 2>&1 &
-echo $! > ${home_path}/spark-yun-agent/spring-yun-agent.pid
-echo "启动代理服务"
+# 获取已用内存
+USED_MEMORY=$(free | grep Mem: | awk '{printf "%.2f", $3/1024/1024}')
 
-rm ${home_path}/spark-yun-agent.tar.gz && rm ${home_path}/spark-yun-install
-echo "安装完成"
+# 获取所有存储
+ALL_STORAGE=$(lsblk -b | grep disk | awk '{total += $4} END {print total/1024/1024/1024}')
+
+# 获取已用存储
+USED_STORAGE=$(df -h -t ext4 | awk '{total += $3} END {print total}')
+
+# 获取cpu使用率
+CPU_PERCENT=$(top -bn1 | grep '%Cpu' | awk '{print 100-$8}')
+
+# 返回json的日志
+json_output="{ \
+  \"installStatus\": \"$INSTALL_STATUS\", \
+  \"runStatus\": \"$RUN_STATUS\", \
+  \"allMemory\": $ALL_MEMORY, \
+  \"usedMemory\": $USED_MEMORY, \
+  \"allStorage\": $ALL_STORAGE, \
+  \"usedStorage\": $USED_STORAGE, \
+  \"cpuPercent\": $CPU_PERCENT \
+}"
+
+echo $json_output
+
+# 删除检测脚本
+rm -rf ${home_path}/spark-yun-check
