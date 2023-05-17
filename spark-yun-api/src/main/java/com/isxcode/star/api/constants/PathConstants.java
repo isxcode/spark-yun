@@ -16,15 +16,30 @@ public interface PathConstants {
   String SPARK_YUN_AGENT_TAR_GZ_NAME = "spark-yun-agent.tar.gz";
 
   /** 安装脚本. */
-  String AGENT_INSTALL_BASH_NAME = "spark-yun-install";
+  String AGENT_INSTALL_BASH_NAME = "sy-install.sh";
 
   /**
    * 检测脚本.
    */
-  String AGENT_CHECK_BASH_NAME = "spark-yun-check";
+  String AGENT_CHECK_BASH_NAME = "sy-check.sh";
+
+  /**
+   * 检测环境脚本.
+   */
+  String AGENT_ENV_BASH_NAME = "sy-env.sh";
 
   /**
    * 卸载脚本.
    */
-  String AGENT_REMOVE_BASH_NAME = "spark-yun-uninstall";
+  String AGENT_UNINSTALL_BASH_NAME = "sy-uninstall.sh";
+
+  /**
+   * 启动脚本.
+   */
+  String AGENT_START_BASH_NAME = "sy-start.sh";
+
+  /**
+   * 停止脚本.
+   */
+  String AGENT_STOP_BASH_NAME = "sy-stop.sh";
 }

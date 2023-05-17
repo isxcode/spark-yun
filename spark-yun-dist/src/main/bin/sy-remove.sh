@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ######################
-# 停止脚本
+# 卸载脚本
 ######################
 
 home_path=""
@@ -12,15 +12,22 @@ for arg in "$@"; do
   esac
 done
 
+# 关闭进程
 if [ -e "${home_path}/spark-yun-agent.pid" ]; then
   pid=$(cat "${home_path}/spark-yun-agent.pid")
   if ps -p $pid >/dev/null 2>&1; then
-   kill -9 ${pid}
+    kill -9 ${pid}
   fi
 fi
 
+# 删除安装包
+rm -rf ${home_path}/spark-yun-agent
+
 # 返回结果
 json_output="{ \
-          \"stopStatus\": \"SUCCESS\"
+          \"uninstallStatus\": \"SUCCESS\"
         }"
 echo $json_output
+
+# 删除脚本
+rm ${home_path}/sy-remove.sh

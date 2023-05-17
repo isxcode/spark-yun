@@ -1,87 +1,124 @@
 #!/bin/bash
 
+######################
+# 检测安装环境脚本
+######################
+
 home_path=""
 agent_port=""
 for arg in "$@"; do
   case "$arg" in
-    --home-path=*) home_path="${arg#*=}" ;;
-    --agent-port=*) agent_port="${arg#*=}" ;;
-    *) echo "未知参数: $arg" && exit 1 ;;
+  --home-path=*) home_path="${arg#*=}" ;;
+  --agent-port=*) agent_port="${arg#*=}" ;;
+  *) echo "未知参数: $arg" && exit 1 ;;
   esac
 done
 
 # 判断home_path目录是否存在
 if [ ! -d "$home_path" ]; then
-  ENV_STATUS="CAN_NOT_INSTALL"
-  LOG=$home_path+"目录不存在"
+  mkdir -p $home_path
 fi
 
 # 判断是否之前已安装代理
 if [ -e "${home_path}/spark-yun-agent.pid" ]; then
   pid=$(cat "${home_path}/spark-yun-agent.pid")
-  if ps -p $pid > /dev/null 2>&1; then
-      ENV_STATUS="RUNNING"
+  if ps -p $pid >/dev/null 2>&1; then
+    json_output="{ \
+            \"envStatus\": \"RUNNING\", \
+            \"log\": \"正在运行中\" \
+          }"
+    echo $json_output
+    exit 1
   else
-      ENV_STATUS="INSTALLED"
+    json_output="{ \
+            \"envStatus\": \"INSTALLED\", \
+            \"log\": \"已安装，请启动\" \
+          }"
+    echo $json_output
+    exit 1
   fi
-else
-  ENV_STATUS="INSTALLED"
 fi
 
 # 判断tar解压命令
+if ! command -v tar &>/dev/null; then
+  json_output="{ \
+        \"envStatus\": \"CAN_NOT_INSTALL\", \
+        \"log\": \"请安装tar命令\" \
+      }"
+  echo $json_output
+  exit 1
+fi
 
+# 判断是否有java命令
+if ! command -v java &>/dev/null; then
+  json_output="{ \
+    \"envStatus\": \"CAN_NOT_INSTALL\", \
+    \"log\": \"请安装java环境\" \
+  }"
+  echo $json_output
+  exit 1
+fi
 
-# 判断java版本
+# 判断java版本是否为1.8
+java_version=$(java -version 2>&1 | awk -F '"' '/version/ {print $2}')
+if [[ "$java_version" != "1.8"* ]]; then
+  json_output="{ \
+      \"envStatus\": \"CAN_NOT_INSTALL\", \
+      \"log\": \"请安装java1.8环境\" \
+    }"
+  echo $json_output
+  exit 1
+fi
+
+# 获取HADOOP_HOME环境变量值
+if [ -n "$HADOOP_HOME" ]; then
+  HADOOP_PATH=$HADOOP_HOME
+else
+  json_output="{ \
+            \"envStatus\": \"CAN_NOT_INSTALL\", \
+            \"log\": \"未配置HADOOP_HOME环境变量\" \
+          }"
+  echo $json_output
+  exit 1
+fi
 
 # 判断hadoop环境变量
+if ! command -v hadoop &>/dev/null; then
+  json_output="{ \
+      \"envStatus\": \"CAN_NOT_INSTALL\", \
+      \"log\": \"请安装hadoop\" \
+    }"
+  echo $json_output
+  exit 1
+fi
 
 # 判断yarn是否正常运行
-
-# 判断端口号是否占用
-
-#
-
-# 检查是否有README.md文件，有则表示已安装，无则表示未安装
-if [ -e "${home_path}/README.md" ]; then
-  INSTALL_STATUS="INSTALLED"
-else
-  INSTALL_STATUS="NO_INSTALL"
+if ! yarn node -list &>/dev/null; then
+  json_output="{ \
+        \"envStatus\": \"CAN_NOT_INSTALL\", \
+        \"log\": \"未检测到yarn服务\" \
+      }"
+  echo $json_output
+  exit 1
 fi
 
-# 检查pid文件，无则表示未运行，有再判断pid是否运行
-if [ -e "${home_path}/spark-yun-agent.pid" ]; then
-  pid=$(cat "${home_path}/spark-yun-agent.pid")
-  if ps -p $pid > /dev/null 2>&1; then
-      RUN_STATUS="RUNNING"
-  else
-      RUN_STATUS="STOP"
-  fi
-else
-  RUN_STATUS="STOP"
+# 判断端口号是否被占用
+if ! netstat -tln | awk '$4 ~ /:'"$agent_port"'$/ {exit 1}'; then
+  json_output="{ \
+          \"envStatus\": \"CAN_NOT_INSTALL\", \
+          \"log\": \"${agent_port} 端口号已被占用\" \
+        }"
+  echo $json_output
+  exit 1
 fi
 
-# 获取所有内存
-ALL_MEMORY=$(grep MemTotal /proc/meminfo | awk '{print $2/1024/1024}' | bc -l | awk '{printf "%.2f\n", $1}')
-
-# 获取已用内存
-USED_MEMORY=$(free | grep Mem: | awk '{printf "%.2f", $3/1024/1024}')
-
-# 获取所有存储
-ALL_STORAGE=$(lsblk -b | grep disk | awk '{total += $4} END {print total/1024/1024/1024}')
-
-# 获取已用存储
-USED_STORAGE=$(df -h -t ext4 | awk '{total += $3} END {print total}')
-
-# 获取cpu使用率
-CPU_PERCENT=$(top -bn1 | grep '%Cpu' | awk '{print 100-$8}')
-
-# 返回json的日志
+# 返回可以安装
 json_output="{ \
-  \"envStatus\": \"$ENV_STATUS\", \
-  \"log\": \"$LOG\" \
-}"
-
+          \"envStatus\": \"CAN_INSTALL\", \
+          \"hadoopHome\": \"$HADOOP_PATH\", \
+          \"log\": \"允许安装\" \
+        }"
 echo $json_output
 
 # 删除检测脚本
-rm -rf ${home_path}/spark-yun-check
+rm ${home_path}/sy-env.sh

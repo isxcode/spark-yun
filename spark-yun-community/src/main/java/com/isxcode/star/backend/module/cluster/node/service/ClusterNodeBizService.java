@@ -5,6 +5,7 @@ import com.isxcode.star.api.constants.CalculateEngineStatus;
 import com.isxcode.star.api.constants.EngineNodeStatus;
 import com.isxcode.star.api.constants.PathConstants;
 import com.isxcode.star.api.pojos.engine.node.dto.AgentCheckInfo;
+import com.isxcode.star.api.pojos.engine.node.dto.AgentEnvInfo;
 import com.isxcode.star.api.pojos.engine.node.dto.ScpFileEngineNodeDto;
 import com.isxcode.star.api.pojos.engine.node.req.EnoAddNodeReq;
 import com.isxcode.star.api.pojos.engine.node.req.EnoQueryNodeReq;
@@ -181,22 +182,47 @@ public class ClusterNodeBizService {
    */
   public EnoInstallAgentRes installAgent(String engineNodeId) {
 
+    // 获取节点信息
     ClusterNodeEntity engineNode = getEngineNode(engineNodeId);
 
-    if (Strings.isEmpty(engineNode.getHadoopHomePath())) {
-      throw new SparkYunException("请填写hadoop配置");
-    }
-
+    // 将节点信息转成工具类识别对象
     ScpFileEngineNodeDto scpFileEngineNodeDto = engineNodeMapper.engineNodeEntityToScpFileEngineNodeDto(engineNode);
 
-    // 拷贝安装包
+    // 先检查节点是否可以安装
+    // 上传环境检测脚本
+    scpFile(
+      scpFileEngineNodeDto,
+      sparkYunProperties.getAgentBinDir()
+        + File.separator
+        + PathConstants.AGENT_ENV_BASH_NAME,
+      engineNode.getAgentHomePath() + File.separator + PathConstants.AGENT_ENV_BASH_NAME);
+
+    // 运行安装脚本
+    String envCommand =
+      "bash " + engineNode.getAgentHomePath() + File.separator + PathConstants.AGENT_ENV_BASH_NAME
+        + " --home-path=" + engineNode.getAgentHomePath()
+        + " --agent-port=" + engineNode.getAgentPort();
+
+    // 获取返回结果
+    AgentEnvInfo agentEnvInfo;
+    try {
+      String executeLog = executeCommand(scpFileEngineNodeDto, envCommand, false);
+      agentEnvInfo = JSON.parseObject(executeLog, AgentEnvInfo.class);
+    } catch (JSchException | InterruptedException | IOException e) {
+      log.error(e.getMessage());
+      engineNode.setStatus(EngineNodeStatus.CAN_NOT_INSTALL);
+      engineNodeRepository.save(engineNode);
+      throw new SparkYunException("不可安装", e.getMessage());
+    }
+
+    // 下载安装包
     scpFile(
       scpFileEngineNodeDto,
       sparkYunProperties.getAgentTarGzDir()
         + File.separator
-        + PathConstants.SPARK_YUN_AGENT_TAR_GZ_NAME,
-      engineNode.getAgentHomePath() + File.separator + PathConstants.SPARK_YUN_AGENT_TAR_GZ_NAME);
+        + PathConstants.SPARK_YUN_AGENT_TAR_GZ_NAME, "/tmp/");
 
+    // 执行安装命令
     // 拷贝执行脚本
     scpFile(
       scpFileEngineNodeDto,
@@ -210,7 +236,7 @@ public class ClusterNodeBizService {
       "bash " + engineNode.getAgentHomePath() + File.separator + PathConstants.AGENT_INSTALL_BASH_NAME
         + " --home-path=" + engineNode.getAgentHomePath()
         + " --agent-port=" + engineNode.getAgentPort()
-        + " --hadoop-home=" + engineNode.getHadoopHomePath();
+        + " --hadoop-home=" + agentEnvInfo.getHadoopHome();
 
     String executeLog;
     try {
@@ -290,7 +316,7 @@ public class ClusterNodeBizService {
 
     // 运行卸载脚本
     String installCommand =
-      "bash " + engineNode.getAgentHomePath() + File.separator + "spark-yun-agent" + File.separator + "bin" + File.separator + PathConstants.AGENT_REMOVE_BASH_NAME + " --home-path=" + engineNode.getAgentHomePath();
+      "bash " + engineNode.getAgentHomePath() + File.separator + "spark-yun-agent" + File.separator + "bin" + File.separator + PathConstants.AGENT_UNINSTALL_BASH_NAME + " --home-path=" + engineNode.getAgentHomePath();
     String executeLog;
     try {
       executeLog = executeCommand(scpFileEngineNodeDto, installCommand, false);

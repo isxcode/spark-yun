@@ -197,6 +197,20 @@ function ClusterNodePage() {
             onClick={() => {
               delEngineNode(record.id)
             }}>
+            安装
+          </a>
+          <a
+            className={'sy-table-a'}
+            onClick={() => {
+              delEngineNode(record.id)
+            }}>
+            启动
+          </a>
+          <a
+            className={'sy-table-a'}
+            onClick={() => {
+              delEngineNode(record.id)
+            }}>
             删除
           </a>
         </Space>
