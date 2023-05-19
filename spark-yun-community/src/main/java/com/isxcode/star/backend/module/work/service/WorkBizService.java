@@ -65,6 +65,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Random;
 
 import static com.isxcode.star.backend.config.WebSecurityConfig.TENANT_ID;
 import static com.isxcode.star.backend.config.WebSecurityConfig.USER_ID;
@@ -423,7 +424,9 @@ public class WorkBizService {
       logBuilder.append(errorHeader + "申请资源失败 : 集群不存在可用节点，请切换一个集群 \n");
       return WokRunWorkRes.builder().log(logBuilder.toString()).executeStatus("ERROR").build();
     }
-    ClusterNodeEntity engineNode = allEngineNodes.get(0);
+
+    // 节点选择随机数
+    ClusterNodeEntity engineNode = allEngineNodes.get(new Random().nextInt(allEngineNodes.size()));
     logBuilder.append(infoHeader + "申请资源完成，激活节点:【" + engineNode.getName() + "】\n");
 
     logBuilder.append(infoHeader + "开始构建作业  \n");

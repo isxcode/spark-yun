@@ -12,6 +12,7 @@ import com.isxcode.star.api.pojos.engine.node.req.EnoUpdateNodeReq;
 import com.isxcode.star.api.pojos.engine.node.res.EnoQueryNodeRes;
 import com.isxcode.star.api.pojos.engine.node.res.EnoRemoveAgentRes;
 import com.isxcode.star.api.properties.SparkYunProperties;
+import com.isxcode.star.api.utils.AesUtils;
 import com.isxcode.star.backend.module.cluster.entity.ClusterEntity;
 import com.isxcode.star.backend.module.cluster.node.entity.ClusterNodeEntity;
 import com.isxcode.star.backend.module.cluster.node.repository.ClusterNodeRepository;
@@ -66,6 +67,9 @@ public class ClusterNodeBizService {
       throw new SparkYunException("计算引擎不存在");
     }
     ClusterNodeEntity node = engineNodeMapper.addNodeReqToNodeEntity(enoAddNodeReq);
+
+    // 密码对成加密
+    node.setPasswd(AesUtils.encrypt(sparkYunProperties.getAesSlat(), enoAddNodeReq.getPasswd()));
 
     // 设置服务器默认端口号
     node.setPort(enoAddNodeReq.getPort() == null ? "22" : enoAddNodeReq.getPort());
@@ -218,6 +222,7 @@ public class ClusterNodeBizService {
 
     // 将节点信息转成工具类识别对象
     ScpFileEngineNodeDto scpFileEngineNodeDto = engineNodeMapper.engineNodeEntityToScpFileEngineNodeDto(engineNode);
+    scpFileEngineNodeDto.setPasswd(AesUtils.decrypt(sparkYunProperties.getAesSlat(), scpFileEngineNodeDto.getPasswd()));
 
     // 修改状态
     engineNode.setStatus(EngineNodeStatus.INSTALLING);
