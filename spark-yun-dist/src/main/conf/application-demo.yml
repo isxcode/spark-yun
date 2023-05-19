@@ -11,13 +11,13 @@ spring:
 
   datasource:
     driver-class-name: org.h2.Driver
-    url: jdbc:h2:file:/spark-yun/resources/h2/data
+    url: jdbc:h2:file:/var/lib/spark-yun/h2/data
     username: root
     password: root123
 
   flyway:
     driver-class-name: org.h2.Driver
-    url: jdbc:h2:file:/spark-yun/resources/h2/data
+    url: jdbc:h2:file:/var/lib/spark-yun/h2/data
     user: root
     password: root123
     locations: classpath:db/migration/h2
@@ -25,7 +25,7 @@ spring:
   quartz:
     properties:
       org.quartz.dataSource.quartzDataSource.driver: org.h2.Driver
-      org.quartz.dataSource.quartzDataSource.URL: jdbc:h2:file:/spark-yun/resources/h2/data
+      org.quartz.dataSource.quartzDataSource.URL: jdbc:h2:file:/var/lib/spark-yun/h2/data
       org.quartz.dataSource.quartzDataSource.user: root
       org.quartz.dataSource.quartzDataSource.password: root123
 
@@ -34,6 +34,4 @@ logging:
     root: info
 
 spark-yun:
-  admin-passwd: ispong123
-  resources-path: /spark-yun/resources
   log-advice: false

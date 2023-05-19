@@ -72,34 +72,23 @@ public class RunExecuteSqlService {
 
     // 检测数据源是否存在
     logBuilder.append(WorkLog.SUCCESS_INFO + "开始检测运行环境 \n");
+    if (Strings.isEmpty(datasourceId)) {
+      throw new WorkRunException(WorkLog.ERROR_INFO + "检测运行环境失败: 未配置有效数据源  \n");
+    }
     Optional<DatasourceEntity> datasourceEntityOptional = datasourceRepository.findById(datasourceId);
     if(!datasourceEntityOptional.isPresent()){
       throw new WorkRunException(WorkLog.ERROR_INFO + "检测运行环境失败: 未配置有效数据源  \n");
     }
+
+    // 检测完成同步日志
     logBuilder.append(WorkLog.SUCCESS_INFO + "检测运行环境完成  \n");
     instance.setSubmitLog(logBuilder.toString());
     workInstanceRepository.saveAndFlush(instance);
-    try {
-      Thread.sleep(1000);
-    } catch (InterruptedException e) {
-      throw new RuntimeException(e);
-    }
-    try {
-      Thread.sleep(1000);
-    } catch (InterruptedException e) {
-      throw new RuntimeException(e);
-    }
-    try {
-      Thread.sleep(1000);
-    } catch (InterruptedException e) {
-      throw new RuntimeException(e);
-    }
 
     // 开始执行作业
     logBuilder.append(WorkLog.SUCCESS_INFO + "开始执行作业 \n");
     try (Connection connection = datasourceBizService.getDbConnection(datasourceEntityOptional.get());
          Statement statement = connection.createStatement();) {
-
       String regex = "/\\*(?:.|[\\n\\r])*?\\*/|--.*";
       String noCommentSql = sqlScript.replaceAll(regex, "");
       String realSql = noCommentSql.replace("\n", " ");
@@ -108,16 +97,8 @@ public class RunExecuteSqlService {
         if (!Strings.isEmpty(sql)) {
           statement.execute(sql);
         }
-        try {
-          Thread.sleep(1000);
-        } catch (InterruptedException e) {
-          throw new RuntimeException(e);
-        }
-        try {
-          Thread.sleep(1000);
-        } catch (InterruptedException e) {
-          throw new RuntimeException(e);
-        }
+
+        // 保存日志
         logBuilder.append(WorkLog.SUCCESS_INFO + "SQL执行成功  \n");
         instance.setSubmitLog(logBuilder.toString());
         workInstanceRepository.saveAndFlush(instance);

@@ -4,6 +4,8 @@
 # 启动脚本
 ######################
 
+source /etc/profile
+
 home_path=""
 agent_port=""
 for arg in "$@"; do

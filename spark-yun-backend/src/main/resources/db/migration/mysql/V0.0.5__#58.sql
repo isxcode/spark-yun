@@ -32,11 +32,12 @@ create table if not exists SY_WORK_INSTANCE
   instance_type           varchar(200) comment '实例类型',
   status                  varchar(200) comment '实例状态',
   plan_start_date_time    datetime comment '计划开始时间',
-  next_plan_date_time    datetime comment '下一次开始时间',
+  next_plan_date_time     datetime comment '下一次开始时间',
   exec_start_date_time    datetime comment '执行开始时间',
   exec_end_date_time      datetime comment '执行结束时间',
   submit_log              varchar(2000) comment '提交日志',
-  spark_log               varchar(2000) comment 'spark日志',
+  yarn_log                varchar(2000) comment 'yarn日志',
+  spark_star_res          varchar(2000) comment 'spark-star插件返回',
   result_data             varchar(2000) comment '结果数据',
   create_by               varchar(200)  not null comment '创建人',
   create_date_time        datetime      not null comment '创建时间',
@@ -119,4 +120,5 @@ alter table SY_CLUSTER_NODE
   modify hadoop_home_path varchar(200) null comment 'hadoop家目录';
 
 -- 关闭节点的乐观锁
-alter table SY_CLUSTER_NODE drop column version_number
+alter table SY_CLUSTER_NODE
+  drop column version_number

@@ -67,7 +67,9 @@ public class WorkInstanceEntity {
 
   private String submitLog;
 
-  private String sparkLog;
+  private String yarnLog;
+
+  private String sparkStarRes;
 
   private String resultData;
 
