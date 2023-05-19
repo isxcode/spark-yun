@@ -5,14 +5,11 @@ import com.isxcode.star.api.pojos.engine.node.req.EnoAddNodeReq;
 import com.isxcode.star.api.pojos.engine.node.req.EnoQueryNodeReq;
 import com.isxcode.star.api.pojos.engine.node.req.EnoUpdateNodeReq;
 import com.isxcode.star.api.pojos.engine.node.res.EnoQueryNodeRes;
-import com.isxcode.star.api.pojos.engine.node.res.EnoRemoveAgentRes;
 import com.isxcode.star.backend.module.cluster.node.service.ClusterNodeBizService;
 import com.isxcode.star.api.response.SuccessResponse;
 import javax.validation.Valid;
 
 import com.isxcode.star.backend.module.user.action.annoation.UserLog;
-import com.jcraft.jsch.JSchException;
-import com.jcraft.jsch.SftpException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -82,17 +79,35 @@ public class ClusterNodeController {
   @Operation(summary = "安装节点接口")
   @GetMapping("/installAgent")
   @SuccessResponse("开始安装")
-  public void installAgent(@Schema(description = "引擎节点唯一id", example = "sy_aaa9440040aa455d84c17f96d8cd7844") @RequestParam String engineNodeId) throws JSchException, SftpException, InterruptedException {
+  public void installAgent(@Schema(description = "引擎节点唯一id", example = "sy_aaa9440040aa455d84c17f96d8cd7844") @RequestParam String engineNodeId) {
 
     engineNodeBizService.installAgent(engineNodeId);
   }
 
   @UserLog
+  @Operation(summary = "停止节点接口")
+  @GetMapping("/stopAgent")
+  @SuccessResponse("停止中")
+  public void stopAgent(@Schema(description = "引擎节点唯一id", example = "sy_aaa9440040aa455d84c17f96d8cd7844") @RequestParam String engineNodeId) {
+
+    engineNodeBizService.stopAgent(engineNodeId);
+  }
+
+  @UserLog
+  @Operation(summary = "激活节点接口")
+  @GetMapping("/startAgent")
+  @SuccessResponse("激活中")
+  public void startAgent(@Schema(description = "引擎节点唯一id", example = "sy_aaa9440040aa455d84c17f96d8cd7844") @RequestParam String engineNodeId) {
+
+    engineNodeBizService.startAgent(engineNodeId);
+  }
+
+  @UserLog
   @Operation(summary = "卸载代理接口")
   @GetMapping("/removeAgent")
-  @SuccessResponse("卸载完成")
-  public EnoRemoveAgentRes removeAgent(@Schema(description = "引擎节点唯一id", example = "sy_aaa9440040aa455d84c17f96d8cd7844") @RequestParam String engineNodeId) {
+  @SuccessResponse("卸载中")
+  public void removeAgent(@Schema(description = "引擎节点唯一id", example = "sy_aaa9440040aa455d84c17f96d8cd7844") @RequestParam String engineNodeId) {
 
-    return engineNodeBizService.removeAgent(engineNodeId);
+    engineNodeBizService.removeAgent(engineNodeId);
   }
 }

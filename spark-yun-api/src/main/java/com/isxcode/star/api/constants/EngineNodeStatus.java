@@ -29,6 +29,11 @@ public interface EngineNodeStatus {
   String STARTING = "STARTING";
 
   /**
+   * 停止中.
+   */
+  String STOPPING = "STOPPING";
+
+  /**
    * 安装中.
    */
   String INSTALLING = "INSTALLING";
@@ -57,4 +62,9 @@ public interface EngineNodeStatus {
    * 可安装.
    */
   String CAN_INSTALL = "CAN_INSTALL";
+
+  /**
+   * 安装失败.
+   */
+  String INSTALL_ERROR = "INSTALL_ERROR";
 }

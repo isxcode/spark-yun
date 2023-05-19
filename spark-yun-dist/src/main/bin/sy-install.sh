@@ -27,12 +27,12 @@ if [ -e "${home_path}/spark-yun-agent.pid" ]; then
   sleep 5
   if ps -p $pid >/dev/null 2>&1; then
     json_output="{ \
-              \"installStatus\": \"RUNNING\"
+              \"status\": \"RUNNING\"
             }"
     echo $json_output
   else
     json_output="{ \
-                  \"installStatus\": \"STOP\"
+                  \"status\": \"STOP\"
                 }"
     echo $json_output
   fi

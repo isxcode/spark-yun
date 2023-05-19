@@ -4,8 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.isxcode.star.api.constants.EngineNodeStatus;
 import com.isxcode.star.api.constants.PathConstants;
 import com.isxcode.star.api.exception.SparkYunException;
-import com.isxcode.star.api.pojos.engine.node.dto.AgentEnvInfo;
-import com.isxcode.star.api.pojos.engine.node.dto.AgentInstallInfo;
+import com.isxcode.star.api.pojos.engine.node.dto.AgentInfo;
 import com.isxcode.star.api.pojos.engine.node.dto.ScpFileEngineNodeDto;
 import com.isxcode.star.api.properties.SparkYunProperties;
 import com.isxcode.star.backend.module.cluster.node.entity.ClusterNodeEntity;
@@ -78,11 +77,11 @@ public class RunAgentInstallService {
 
     // 获取返回结果
     String executeLog = executeCommand(scpFileEngineNodeDto, envCommand, false);
-    AgentEnvInfo agentEnvInfo = JSON.parseObject(executeLog, AgentEnvInfo.class);
+    AgentInfo agentEnvInfo = JSON.parseObject(executeLog, AgentInfo.class);
 
     // 如果不可以安装直接返回
-    if (!EngineNodeStatus.CAN_INSTALL.equals(agentEnvInfo.getEnvStatus())) {
-      engineNode.setStatus(agentEnvInfo.getEnvStatus());
+    if (!EngineNodeStatus.CAN_INSTALL.equals(agentEnvInfo.getStatus())) {
+      engineNode.setStatus(agentEnvInfo.getStatus());
       engineNode.setAgentLog(agentEnvInfo.getLog());
       engineNode.setCheckDateTime(LocalDateTime.now());
       clusterNodeRepository.saveAndFlush(engineNode);
@@ -107,10 +106,10 @@ public class RunAgentInstallService {
       + " --agent-port=" + engineNode.getAgentPort();
 
     executeLog = executeCommand(scpFileEngineNodeDto, installCommand, false);
-    AgentInstallInfo agentInstallInfo = JSON.parseObject(executeLog, AgentInstallInfo.class);
+    AgentInfo agentInstallInfo = JSON.parseObject(executeLog, AgentInfo.class);
 
-    if (EngineNodeStatus.RUNNING.equals(agentInstallInfo.getInstallStatus())) {
-      engineNode.setStatus(agentInstallInfo.getInstallStatus());
+    if (EngineNodeStatus.RUNNING.equals(agentInstallInfo.getStatus())) {
+      engineNode.setStatus(agentInstallInfo.getStatus());
       engineNode.setAgentLog("安装成功");
       engineNode.setCheckDateTime(LocalDateTime.now());
       clusterNodeRepository.saveAndFlush(engineNode);

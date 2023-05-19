@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Button, Col, Input, Row, Space, Table, Tag } from 'antd'
+import { Button, Col, Input, Modal, Row, Space, Table, Tag } from 'antd'
 import { type ColumnsType } from 'antd/es/table'
 import { useParams } from 'react-router-dom'
 import './ClusterNodePage.less'
@@ -10,7 +10,7 @@ import {
   delEngineNodeApi,
   installAgentApi,
   queryEngineNodesApi,
-  removeAgentApi
+  removeAgentApi, startAgentApi, stopAgentApi
 } from '../../../services/cluster/node/ClusterNodeService'
 import { type EngineNodeRow } from '../../../types/calculate/node/info/EngineNodeRow'
 import { ClusterNodeModal } from '../../../modals/cluster/node/ClusterNodeModal'
@@ -21,6 +21,8 @@ function ClusterNodePage() {
   const [engineNode, setEngineNode] = useState<EngineNodeRow>()
   const [pagination, setPagination] = useState<BasePagination>(defaultPagination)
   const [isModalVisible, setIsModalVisible] = useState(false)
+  const [connectLog, setConnectLog] = useState('')
+  const [isLogModalVisible, setIsLogModalVisible] = useState(false)
 
   useEffect(() => {
     fetchEngineNodes()
@@ -80,6 +82,18 @@ function ClusterNodePage() {
     })
   }
 
+  const stopAgent = (engineNodeId: string | undefined) => {
+    stopAgentApi(engineNodeId).then(function () {
+      fetchEngineNodes()
+    })
+  }
+
+  const startAgent = (engineNodeId: string | undefined) => {
+    startAgentApi(engineNodeId).then(function () {
+      fetchEngineNodes()
+    })
+  }
+
   const columns: ColumnsType<EngineNodeRow> = [
     {
       title: '名称',
@@ -130,13 +144,18 @@ function ClusterNodePage() {
       render: (_, record) => (
         <Space size="middle">
           {record.status === 'NEW' && <Tag color="blue">未检测</Tag>}
-          {record.status === 'CAN_INSTALL' && <Tag color="green">可安装</Tag>}
-          {record.status === 'CAN_NOT_INSTALL' && <Tag color="orange">不可安装</Tag>}
-          {record.status === 'ACTIVE' && <Tag color="green">可用</Tag>}
+          {record.status === 'INSTALLING' && <Tag color="blue">安装中</Tag>}
+          {record.status === 'UN_INSTALL' && <Tag color="orange">未安装</Tag>}
+          {record.status === 'RUNNING' && <Tag color="green">激活</Tag>}
           {record.status === 'UNINSTALLED' && <Tag color="default">已卸载</Tag>}
           {record.status === 'UN_CHECK' && <Tag color="cyan">待检测</Tag>}
           {record.status === 'INSTALL_ERROR' && <Tag color="red">安装失败</Tag>}
           {record.status === 'CHECK_ERROR' && <Tag color="red">检测失败</Tag>}
+          {record.status === 'CHECKING' && <Tag color="blue">检测中</Tag>}
+          {record.status === 'STOPPING' && <Tag color="blue">停止中</Tag>}
+          {record.status === 'STARTING' && <Tag color="blue">激活中</Tag>}
+          {record.status === 'REMOVING' && <Tag color="blue">卸载中</Tag>}
+          {record.status === 'STOP' && <Tag color="orange">未激活</Tag>}
         </Space>
       )
     },
@@ -172,41 +191,50 @@ function ClusterNodePage() {
             }}>
             检测
           </a>
-          {/* <a */}
-          {/*  className={'sy-table-a'} */}
-          {/*  onClick={() => { */}
-          {/*    installAgent(record.id) */}
-          {/*  }}> */}
-          {/*  安装 */}
-          {/* </a> */}
-          {/* <a */}
-          {/*  className={'sy-table-a'} */}
-          {/*  onClick={() => { */}
-          {/*    removeAgent(record.id) */}
-          {/*  }}> */}
-          {/*  卸载 */}
-          {/* </a> */}
           <a
             className={'sy-table-a'}
             onClick={() => {
-              delEngineNode(record.id)
+              setConnectLog(record.agentLog as string)
+              setIsLogModalVisible(true)
             }}>
             日志
           </a>
-          <a
-            className={'sy-table-a'}
-            onClick={() => {
-              installAgent(record.id)
-            }}>
-            安装
-          </a>
-          <a
-            className={'sy-table-a'}
-            onClick={() => {
-              delEngineNode(record.id)
-            }}>
-            启动
-          </a>
+          {(record.status === 'UN_INSTALL' || record.status === 'INSTALL_ERROR') &&
+            <a
+              className={'sy-table-a'}
+              onClick={() => {
+                installAgent(record.id)
+              }}>
+              安装
+            </a>
+          }
+          {(record.status === 'RUNNING') &&
+            <a
+              className={'sy-table-a'}
+              onClick={() => {
+                stopAgent(record.id);
+              }}>
+              停止
+            </a>
+          }
+          {record.status === 'STOP' && (
+            <a
+              className={'sy-table-a'}
+              onClick={() => {
+                removeAgent(record.id)
+              }}>
+              卸载
+            </a>
+          )}
+          {record.status === 'STOP' && (
+            <a
+              className={'sy-table-a'}
+              onClick={() => {
+                startAgent(record.id)
+              }}>
+              启动
+            </a>
+          )}
           <a
             className={'sy-table-a'}
             onClick={() => {
@@ -257,6 +285,18 @@ function ClusterNodePage() {
         }}
         handleOk={handleOk}
       />
+
+      <Modal
+        title="日志"
+        open={isLogModalVisible}
+        onOk={() => {
+          setIsLogModalVisible(false)
+        }}
+        onCancel={() => {
+          setIsLogModalVisible(false)
+        }}>
+        <p>{connectLog}</p>
+      </Modal>
     </div>
   )
 }

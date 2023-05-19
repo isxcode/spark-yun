@@ -34,4 +34,6 @@ public class EnoQueryNodeRes {
   private String hadoopHomePath;
 
   private String port;
+
+  private String agentLog;
 }

@@ -3,11 +3,11 @@ package com.isxcode.star.api.pojos.engine.node.dto;
 import lombok.Data;
 
 @Data
-public class AgentCheckInfo {
+public class AgentInfo {
 
   private String execStatus;
 
-  private String checkStatus;
+  private String status;
 
   private String log;
 
@@ -20,4 +20,6 @@ public class AgentCheckInfo {
   private Double usedStorage;
 
   private Double cpuPercent;
+
+  private String hadoopHome;
 }

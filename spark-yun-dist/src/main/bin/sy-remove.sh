@@ -21,13 +21,15 @@ if [ -e "${home_path}/spark-yun-agent.pid" ]; then
 fi
 
 # 删除安装包
-rm -rf ${home_path}/spark-yun-agent
+rm -rf ${home_path}
 
 # 返回结果
 json_output="{ \
-          \"uninstallStatus\": \"SUCCESS\"
+          \"status\": \"UN_INSTALL\",
+          \"log\": \"卸载成功\"
         }"
 echo $json_output
 
 # 删除脚本
-rm ${home_path}/sy-remove.sh
+rm /tmp/sy-remove.sh
+

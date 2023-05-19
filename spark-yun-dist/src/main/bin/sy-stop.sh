@@ -21,6 +21,10 @@ fi
 
 # 返回结果
 json_output="{ \
-          \"stopStatus\": \"SUCCESS\"
+          \"status\": \"STOP\"
+          \"log\": \"停止成功\",
         }"
 echo $json_output
+
+# 删除检测脚本
+rm /tmp/sy-stop.sh

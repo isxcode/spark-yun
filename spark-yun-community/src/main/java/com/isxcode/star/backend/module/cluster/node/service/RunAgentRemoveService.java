@@ -31,7 +31,7 @@ import static com.isxcode.star.backend.config.WebSecurityConfig.USER_ID;
 @Slf4j
 @RequiredArgsConstructor
 @Transactional(noRollbackFor = {SparkYunException.class})
-public class RunAgentCheckService {
+public class RunAgentRemoveService {
 
   private final SparkYunProperties sparkYunProperties;
 
@@ -51,7 +51,7 @@ public class RunAgentCheckService {
     ClusterNodeEntity clusterNodeEntity = clusterNodeEntityOptional.get();
 
     try {
-      checkAgent(scpFileEngineNodeDto, clusterNodeEntity);
+      removeAgent(scpFileEngineNodeDto, clusterNodeEntity);
     } catch (Exception e) {
       log.error(e.getMessage());
       clusterNodeEntity.setCheckDateTime(LocalDateTime.now());
@@ -61,32 +61,26 @@ public class RunAgentCheckService {
     }
   }
 
-  public void checkAgent(ScpFileEngineNodeDto scpFileEngineNodeDto, ClusterNodeEntity engineNode) throws JSchException, IOException, InterruptedException, SftpException {
+  public void removeAgent(ScpFileEngineNodeDto scpFileEngineNodeDto, ClusterNodeEntity engineNode) throws JSchException, IOException, InterruptedException, SftpException {
 
     // 拷贝检测脚本
     scpFile(
       scpFileEngineNodeDto,
-      sparkYunProperties.getAgentBinDir() + File.separator + PathConstants.AGENT_CHECK_BASH_NAME,
-      "/tmp/" + PathConstants.AGENT_CHECK_BASH_NAME);
+      sparkYunProperties.getAgentBinDir() + File.separator + PathConstants.AGENT_REMOVE_BASH_NAME,
+      "/tmp/" + PathConstants.AGENT_REMOVE_BASH_NAME);
 
-    // 运行安装脚本
-    String checkCommand =
-      "bash /tmp/" + PathConstants.AGENT_CHECK_BASH_NAME + " --home-path=" + engineNode.getAgentHomePath() + File.separator + PathConstants.AGENT_PATH_NAME;
+    // 运行停止脚本
+    String removeCommand =
+      "bash /tmp/" + PathConstants.AGENT_REMOVE_BASH_NAME
+        + " --home-path=" + engineNode.getAgentHomePath() + File.separator + PathConstants.AGENT_PATH_NAME;
 
     // 获取返回结果
-    String executeLog = executeCommand(scpFileEngineNodeDto, checkCommand, false);
-    AgentInfo agentCheckInfo = JSON.parseObject(executeLog, AgentInfo.class);
-
-    // 保存服务器信息
-    engineNode.setAllMemory(agentCheckInfo.getAllMemory());
-    engineNode.setUsedMemory(agentCheckInfo.getUsedMemory());
-    engineNode.setAllStorage(agentCheckInfo.getAllStorage());
-    engineNode.setUsedStorage(agentCheckInfo.getUsedStorage());
-    engineNode.setCpuPercent(agentCheckInfo.getCpuPercent());
+    String executeLog = executeCommand(scpFileEngineNodeDto, removeCommand, false);
+    AgentInfo agentStartInfo = JSON.parseObject(executeLog, AgentInfo.class);
 
     // 修改状态
-    engineNode.setStatus(agentCheckInfo.getStatus());
-    engineNode.setAgentLog(agentCheckInfo.getLog());
+    engineNode.setStatus(agentStartInfo.getStatus());
+    engineNode.setAgentLog(agentStartInfo.getLog());
     engineNode.setCheckDateTime(LocalDateTime.now());
     clusterNodeRepository.saveAndFlush(engineNode);
   }

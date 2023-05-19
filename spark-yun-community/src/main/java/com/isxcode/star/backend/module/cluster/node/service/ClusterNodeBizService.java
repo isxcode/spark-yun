@@ -1,16 +1,12 @@
 package com.isxcode.star.backend.module.cluster.node.service;
 
-import com.alibaba.fastjson.JSON;
 import com.isxcode.star.api.constants.CalculateEngineStatus;
 import com.isxcode.star.api.constants.EngineNodeStatus;
-import com.isxcode.star.api.constants.PathConstants;
-import com.isxcode.star.api.pojos.engine.node.dto.AgentEnvInfo;
 import com.isxcode.star.api.pojos.engine.node.dto.ScpFileEngineNodeDto;
 import com.isxcode.star.api.pojos.engine.node.req.EnoAddNodeReq;
 import com.isxcode.star.api.pojos.engine.node.req.EnoQueryNodeReq;
 import com.isxcode.star.api.pojos.engine.node.req.EnoUpdateNodeReq;
 import com.isxcode.star.api.pojos.engine.node.res.EnoQueryNodeRes;
-import com.isxcode.star.api.pojos.engine.node.res.EnoRemoveAgentRes;
 import com.isxcode.star.api.properties.SparkYunProperties;
 import com.isxcode.star.api.utils.AesUtils;
 import com.isxcode.star.backend.module.cluster.entity.ClusterEntity;
@@ -19,8 +15,6 @@ import com.isxcode.star.backend.module.cluster.node.repository.ClusterNodeReposi
 import com.isxcode.star.backend.module.cluster.repository.ClusterRepository;
 import com.isxcode.star.backend.module.cluster.node.mapper.ClusterNodeMapper;
 import com.isxcode.star.api.exception.SparkYunException;
-import com.jcraft.jsch.JSchException;
-import com.jcraft.jsch.SftpException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
@@ -29,12 +23,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.Optional;
 
-import static com.isxcode.star.api.utils.SshUtils.executeCommand;
-import static com.isxcode.star.api.utils.SshUtils.scpFile;
 import static com.isxcode.star.backend.config.WebSecurityConfig.TENANT_ID;
 import static com.isxcode.star.backend.config.WebSecurityConfig.USER_ID;
 
@@ -58,6 +48,12 @@ public class ClusterNodeBizService {
   private final RunAgentCheckService runAgentCheckService;
 
   private final RunAgentInstallService runAgentInstallService;
+
+  private final RunAgentStopService runAgentStopService;
+
+  private final RunAgentStartService runAgentStartService;
+
+  private final RunAgentRemoveService runAgentRemoveService;
 
   public void addNode(EnoAddNodeReq enoAddNodeReq) {
 
@@ -194,6 +190,7 @@ public class ClusterNodeBizService {
 
     // 转换请求节点检测对象
     ScpFileEngineNodeDto scpFileEngineNodeDto = engineNodeMapper.engineNodeEntityToScpFileEngineNodeDto(engineNode);
+    scpFileEngineNodeDto.setPasswd(AesUtils.decrypt(sparkYunProperties.getAesSlat(), scpFileEngineNodeDto.getPasswd()));
 
     // 修改状态
     engineNode.setStatus(EngineNodeStatus.CHECKING);
@@ -234,29 +231,88 @@ public class ClusterNodeBizService {
     runAgentInstallService.run(engineNodeId, scpFileEngineNodeDto, TENANT_ID.get(), USER_ID.get());
   }
 
-  public EnoRemoveAgentRes removeAgent(String engineNodeId) {
+  public void removeAgent(String engineNodeId) {
 
+    // 获取节点信息
     ClusterNodeEntity engineNode = getEngineNode(engineNodeId);
 
-    ScpFileEngineNodeDto scpFileEngineNodeDto = engineNodeMapper.engineNodeEntityToScpFileEngineNodeDto(engineNode);
-
-    // 运行卸载脚本
-    String installCommand =
-      "bash " + engineNode.getAgentHomePath() + File.separator + "spark-yun-agent" + File.separator + "bin" + File.separator + PathConstants.AGENT_UNINSTALL_BASH_NAME + " --home-path=" + engineNode.getAgentHomePath();
-    String executeLog;
-    try {
-      executeLog = executeCommand(scpFileEngineNodeDto, installCommand, false);
-    } catch (JSchException | InterruptedException | IOException e) {
-      log.error(e.getMessage());
-      engineNode.setStatus(EngineNodeStatus.RUNNING);
-      engineNodeRepository.save(engineNode);
-      throw new SparkYunException("卸载失败", e.getMessage());
+    // 如果是安装中等状态，需要等待运行结束
+    if (EngineNodeStatus.CHECKING.equals(engineNode.getStatus())
+      || EngineNodeStatus.INSTALLING.equals(engineNode.getStatus())
+      || EngineNodeStatus.REMOVING.equals(engineNode.getStatus())) {
+      throw new SparkYunException("进行中，稍后再试");
     }
 
-    engineNode.setStatus(EngineNodeStatus.UN_INSTALL);
-    engineNodeRepository.save(engineNode);
+    // 将节点信息转成工具类识别对象
+    ScpFileEngineNodeDto scpFileEngineNodeDto = engineNodeMapper.engineNodeEntityToScpFileEngineNodeDto(engineNode);
+    scpFileEngineNodeDto.setPasswd(AesUtils.decrypt(sparkYunProperties.getAesSlat(), scpFileEngineNodeDto.getPasswd()));
 
-    return new EnoRemoveAgentRes(executeLog);
+    // 修改状态
+    engineNode.setStatus(EngineNodeStatus.REMOVING);
+
+    // 持久化
+    engineNodeRepository.saveAndFlush(engineNode);
+
+    // 异步调用
+    runAgentRemoveService.run(engineNodeId, scpFileEngineNodeDto, TENANT_ID.get(), USER_ID.get());
+  }
+
+  /**
+   * 停止节点.
+   */
+  public void stopAgent(String engineNodeId) {
+
+    // 获取节点信息
+    ClusterNodeEntity engineNode = getEngineNode(engineNodeId);
+
+    // 如果是安装中等状态，需要等待运行结束
+    if (EngineNodeStatus.CHECKING.equals(engineNode.getStatus())
+      || EngineNodeStatus.INSTALLING.equals(engineNode.getStatus())
+      || EngineNodeStatus.REMOVING.equals(engineNode.getStatus())) {
+      throw new SparkYunException("进行中，稍后再试");
+    }
+
+    // 将节点信息转成工具类识别对象
+    ScpFileEngineNodeDto scpFileEngineNodeDto = engineNodeMapper.engineNodeEntityToScpFileEngineNodeDto(engineNode);
+    scpFileEngineNodeDto.setPasswd(AesUtils.decrypt(sparkYunProperties.getAesSlat(), scpFileEngineNodeDto.getPasswd()));
+
+    // 修改状态
+    engineNode.setStatus(EngineNodeStatus.STOPPING);
+
+    // 持久化
+    engineNodeRepository.saveAndFlush(engineNode);
+
+    // 异步调用
+    runAgentStopService.run(engineNodeId, scpFileEngineNodeDto, TENANT_ID.get(), USER_ID.get());
+  }
+
+  /**
+   * 激活中.
+   */
+  public void startAgent(String engineNodeId) {
+
+    // 获取节点信息
+    ClusterNodeEntity engineNode = getEngineNode(engineNodeId);
+
+    // 如果是安装中等状态，需要等待运行结束
+    if (EngineNodeStatus.CHECKING.equals(engineNode.getStatus())
+      || EngineNodeStatus.INSTALLING.equals(engineNode.getStatus())
+      || EngineNodeStatus.REMOVING.equals(engineNode.getStatus())) {
+      throw new SparkYunException("进行中，稍后再试");
+    }
+
+    // 将节点信息转成工具类识别对象
+    ScpFileEngineNodeDto scpFileEngineNodeDto = engineNodeMapper.engineNodeEntityToScpFileEngineNodeDto(engineNode);
+    scpFileEngineNodeDto.setPasswd(AesUtils.decrypt(sparkYunProperties.getAesSlat(), scpFileEngineNodeDto.getPasswd()));
+
+    // 修改状态
+    engineNode.setStatus(EngineNodeStatus.STARTING);
+
+    // 持久化
+    engineNodeRepository.saveAndFlush(engineNode);
+
+    // 异步调用
+    runAgentStartService.run(engineNodeId, scpFileEngineNodeDto, TENANT_ID.get(), USER_ID.get());
   }
 
 }

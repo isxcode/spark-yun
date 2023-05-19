@@ -46,17 +46,17 @@ ALL_STORAGE=$(lsblk -b | grep disk | awk '{total += $4} END {print total/1024/10
 USED_STORAGE=$(df -h -t ext4 | awk '{total += $3} END {print total}')
 
 # 获取cpu使用率
-CPU_PERCENT=$(top -bn1 | grep '%Cpu' | awk '{print 100-$8}')
+CPU_PERCENT=$(mpstat 1 1 | awk '/Average:/ {printf "%.2f", 100 - $NF}')
 
 # 返回json的日志
 json_output="{ \
-  \"checkStatus\": \"$CHECK_STATUS\", \
+  \"status\": \"$CHECK_STATUS\", \
   \"log\": \"检测完成\", \
   \"allMemory\": $ALL_MEMORY, \
   \"usedMemory\": $USED_MEMORY, \
   \"allStorage\": $ALL_STORAGE, \
   \"usedStorage\": $USED_STORAGE, \
-  \"cpuPercent\": $((100 - $CPU_PERCENT)) \
+  \"cpuPercent\": $CPU_PERCENT \
 }"
 
 echo $json_output

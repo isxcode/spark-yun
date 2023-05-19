@@ -26,7 +26,7 @@ import static com.isxcode.star.backend.config.WebSecurityConfig.TENANT_ID;
 @Data
 @Entity
 @SQLDelete(
-  sql = "UPDATE SY_CLUSTER_NODE SET deleted = 1 WHERE id = ? and version_number = ?"
+  sql = "UPDATE SY_CLUSTER_NODE SET deleted = 1 WHERE id = ?"
 )
 @Where(clause = "deleted = 0 ${TENANT_FILTER} ")
 @Table(name = "SY_CLUSTER_NODE")

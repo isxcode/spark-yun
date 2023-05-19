@@ -46,7 +46,7 @@ fi
 # 判断tar解压命令
 if ! command -v tar &>/dev/null; then
   json_output="{ \
-        \"envStatus\": \"UN_INSTALL\", \
+        \"envStatus\": \"INSTALL_ERROR\", \
         \"log\": \"请安装tar命令\" \
       }"
   echo $json_output
@@ -57,7 +57,7 @@ fi
 # 判断是否有java命令
 if ! command -v java &>/dev/null; then
   json_output="{ \
-    \"envStatus\": \"UN_INSTALL\", \
+    \"envStatus\": \"INSTALL_ERROR\", \
     \"log\": \"请安装java环境\" \
   }"
   echo $json_output
@@ -69,7 +69,7 @@ fi
 java_version=$(java -version 2>&1 | awk -F '"' '/version/ {print $2}')
 if [[ "$java_version" != "1.8"* ]]; then
   json_output="{ \
-      \"envStatus\": \"UN_INSTALL\", \
+      \"envStatus\": \"INSTALL_ERROR\", \
       \"log\": \"请安装java1.8环境\" \
     }"
   echo $json_output
@@ -80,7 +80,7 @@ fi
 # 判断hadoop环境变量
 if ! command -v hadoop &>/dev/null; then
   json_output="{ \
-      \"envStatus\": \"UN_INSTALL\", \
+      \"envStatus\": \"INSTALL_ERROR\", \
       \"log\": \"请安装hadoop\" \
     }"
   echo $json_output
@@ -93,7 +93,7 @@ if [ -n "$HADOOP_HOME" ]; then
   HADOOP_PATH=$HADOOP_HOME
 else
   json_output="{ \
-            \"envStatus\": \"UN_INSTALL\", \
+            \"envStatus\": \"INSTALL_ERROR\", \
             \"log\": \"未配置HADOOP_HOME环境变量\" \
           }"
   echo $json_output
@@ -104,7 +104,7 @@ fi
 # 判断yarn是否正常运行
 if ! timeout 3s yarn node -list &>/dev/null; then
   json_output="{ \
-        \"envStatus\": \"UN_INSTALL\", \
+        \"envStatus\": \"INSTALL_ERROR\", \
         \"log\": \"请启动yarn服务\" \
       }"
   echo $json_output
@@ -115,7 +115,7 @@ fi
 # 判断端口号是否被占用
 if ! netstat -tln | awk '$4 ~ /:'"$agent_port"'$/ {exit 1}'; then
   json_output="{ \
-          \"envStatus\": \"UN_INSTALL\", \
+          \"envStatus\": \"INSTALL_ERROR\", \
           \"log\": \"${agent_port} 端口号已被占用\" \
         }"
   echo $json_output
@@ -125,7 +125,7 @@ fi
 
 # 返回可以安装
 json_output="{ \
-          \"envStatus\": \"CAN_INSTALL\", \
+          \"status\": \"CAN_INSTALL\", \
           \"hadoopHome\": \"$HADOOP_PATH\", \
           \"log\": \"允许安装\" \
         }"

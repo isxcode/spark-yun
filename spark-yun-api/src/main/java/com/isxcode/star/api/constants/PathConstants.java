@@ -36,7 +36,7 @@ public interface PathConstants {
   /**
    * 卸载脚本.
    */
-  String AGENT_UNINSTALL_BASH_NAME = "sy-uninstall.sh";
+  String AGENT_REMOVE_BASH_NAME = "sy-remove.sh";
 
   /**
    * 启动脚本.
