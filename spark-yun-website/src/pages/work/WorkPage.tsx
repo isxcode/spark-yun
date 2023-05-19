@@ -64,19 +64,19 @@ function WorkPage() {
   }
 
   const getWorkLog = () => {
-    getWorkLogApi(workId as string, result?.applicationId).then(function (response) {
-      setResult({ ...result, yarnLog: response.yarnLog, data: [[]] })
-    })
+    getWorkLogApi(instanceId).then(function (response) {
+      setResult({...result, yarnLog: response.yarnLog, data: [[]]})
+    });
   }
 
   const getData = () => {
-    getWorkDataApi(workId as string, result?.applicationId).then(function (response) {
-      setResult({ ...result, data: response.data })
-    })
+    getWorkDataApi(instanceId).then(function (response) {
+      setResult({...result, data: response.data})
+    });
   }
 
   const getWorkStatus = () => {
-    getWorkStatusApi(workId as string, result?.applicationId).then(function (response) {
+    getWorkStatusApi(instanceId).then(function (response) {
       setResult({
         ...result,
         trackingUrl: response.trackingUrl,
@@ -84,7 +84,7 @@ function WorkPage() {
         yarnApplicationState: response.yarnApplicationState,
         data: [[]]
       })
-    })
+    });
   }
 
   const getStopWork = () => {

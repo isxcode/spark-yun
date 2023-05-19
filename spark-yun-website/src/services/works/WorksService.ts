@@ -53,27 +53,18 @@ export const getWorkApi = async (workId: string): Promise<WorkInfo> => {
   return response.data
 }
 
-export const getWorkLogApi = async (workId: string, applicationId: string | undefined): Promise<RunWorkRes> => {
-  const response = await axiosInstance.post<RunWorkRes>('/wok/getWorkLog', {
-    workId,
-    applicationId
-  }, headerConfig)
+export const getWorkLogApi = async (instanceId: string): Promise<RunWorkRes> => {
+  const response = await axiosInstance.get<RunWorkRes>('/wok/getYarnLog?instanceId=' + instanceId, headerConfig);
   return response.data
-}
+};
 
-export const getWorkDataApi = async (workId: string, applicationId: string | undefined): Promise<RunWorkRes> => {
-  const response = await axiosInstance.post<RunWorkRes>('/wok/getData', {
-    workId,
-    applicationId
-  }, headerConfig)
+export const getWorkDataApi = async (instanceId: string): Promise<RunWorkRes> => {
+  const response = await axiosInstance.get<RunWorkRes>('/wok/getData?instanceId=' + instanceId, headerConfig);
   return response.data
-}
+};
 
-export const getWorkStatusApi = async (workId: string, applicationId: string | undefined): Promise<RunWorkRes> => {
-  const response = await axiosInstance.post<RunWorkRes>('/wok/getStatus', {
-    workId,
-    applicationId
-  }, headerConfig)
+export const getWorkStatusApi = async (instanceId: string): Promise<RunWorkRes> => {
+  const response = await axiosInstance.get<RunWorkRes>('/wok/getStatus?instanceId=' + instanceId, headerConfig);
   return response.data
 }
 

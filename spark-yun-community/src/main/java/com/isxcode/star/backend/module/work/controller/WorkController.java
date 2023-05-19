@@ -74,22 +74,22 @@ public class WorkController {
   }
 
   @Operation(summary = "查询作业运行日志接口")
-  @PostMapping("/getWorkLog")
+  @GetMapping("/getYarnLog")
   @SuccessResponse("查询成功")
   @Parameter(name = SecurityConstants.HEADER_TENANT_ID, description = "租户id", required = true, in = ParameterIn.HEADER, schema = @Schema(type = "string"))
-  public WokGetWorkLogRes getWorkLog(@Valid @RequestBody WokGetWorkLogReq wokGetWorkLogReq) {
+  public WokGetWorkLogRes getYarnLog(@Schema(description = "实例唯一id", example = "sy_12baf74d710c43a78858e547bf41a586") @RequestParam String instanceId) {
 
-    return workBizService.getWorkLog(wokGetWorkLogReq);
+    return workBizService.getWorkLog(instanceId);
   }
 
   @UserLog
   @Operation(summary = "查询作业返回数据接口")
-  @PostMapping("/getData")
+  @GetMapping("/getData")
   @SuccessResponse("查询成功")
   @Parameter(name = SecurityConstants.HEADER_TENANT_ID, description = "租户id", required = true, in = ParameterIn.HEADER, schema = @Schema(type = "string"))
-  public WokGetDataRes getData(@Valid @RequestBody WokGetDataReq wokGetWorkRes) {
+  public WokGetDataRes getData(@Schema(description = "实例唯一id", example = "sy_12baf74d710c43a78858e547bf41a586") @RequestParam String instanceId) {
 
-    return workBizService.getData(wokGetWorkRes);
+    return workBizService.getData(instanceId);
   }
 
   @UserLog
@@ -104,12 +104,12 @@ public class WorkController {
 
   @UserLog
   @Operation(summary = "获取作业当前运行状态接口")
-  @PostMapping("/getStatus")
+  @GetMapping("/getStatus")
   @SuccessResponse("获取成功")
   @Parameter(name = SecurityConstants.HEADER_TENANT_ID, description = "租户id", required = true, in = ParameterIn.HEADER, schema = @Schema(type = "string"))
-  public WokGetStatusRes getStatus(@Valid @RequestBody WokGetStatusReq wokGetStatusReq) {
+  public WokGetStatusRes getStatus(@Schema(description = "实例唯一id", example = "sy_12baf74d710c43a78858e547bf41a586") @RequestParam String instanceId) {
 
-    return workBizService.getStatus(wokGetStatusReq);
+    return workBizService.getStatus(instanceId);
   }
 
   @UserLog

@@ -172,15 +172,24 @@ public class WorkBizService {
     }
   }
 
-  public WokGetDataRes getData(WokGetDataReq wokGetDataReq) {
+  public WokGetDataRes getData(String instanceId) {
 
-    if (Strings.isEmpty(wokGetDataReq.getApplicationId())) {
+    // 获取实例
+    Optional<WorkInstanceEntity> instanceEntityOptional = workInstanceRepository.findById(instanceId);
+    if (!instanceEntityOptional.isPresent()) {
+      throw new SparkYunException("实例不存在");
+    }
+    WorkInstanceEntity workInstanceEntity = instanceEntityOptional.get();
+
+    // 获取sparkStar返回对象
+    WokRunWorkRes wokRunWorkRes = JSON.parseObject(workInstanceEntity.getSparkStarRes(), WokRunWorkRes.class);
+    if (Strings.isEmpty(wokRunWorkRes.getApplicationId())) {
       return WokGetDataRes.builder().data(new ArrayList<>()).build();
     }
 
-    ClusterNodeEntity engineNode = getEngineNodeByWorkId(wokGetDataReq.getWorkId());
+    ClusterNodeEntity engineNode = getEngineNodeByWorkId(workInstanceEntity.getWorkId());
 
-    String getDataUrl = "http://" + engineNode.getHost() + ":" + engineNode.getAgentPort() + "/yag/getData?applicationId=" + wokGetDataReq.getApplicationId();
+    String getDataUrl = "http://" + engineNode.getHost() + ":" + engineNode.getAgentPort() + "/yag/getData?applicationId=" + wokRunWorkRes.getApplicationId();
     BaseResponse<?> baseResponse = HttpUtils.doGet(getDataUrl, BaseResponse.class);
 
     if (!CodeConstants.SUCCESS_CODE.equals(baseResponse.getCode())) {
@@ -189,15 +198,23 @@ public class WorkBizService {
     return JSON.parseObject(JSON.toJSONString(baseResponse.getData()), WokGetDataRes.class);
   }
 
-  public WokGetStatusRes getStatus(WokGetStatusReq wokGetStatusReq) {
+  public WokGetStatusRes getStatus(String instanceId) {
 
-    if (Strings.isEmpty(wokGetStatusReq.getApplicationId())) {
+    Optional<WorkInstanceEntity> workInstanceEntityOptional = workInstanceRepository.findById(instanceId);
+    if (!workInstanceEntityOptional.isPresent()) {
+      throw new SparkYunException("实例暂未生成请稍后再试");
+    }
+    WorkInstanceEntity workInstanceEntity = workInstanceEntityOptional.get();
+
+    WokRunWorkRes wokRunWorkRes = JSON.parseObject(workInstanceEntity.getSparkStarRes(), WokRunWorkRes.class);
+
+    if (Strings.isEmpty(wokRunWorkRes.getApplicationId())) {
       return WokGetStatusRes.builder().yarnApplicationState("NO_RUNNING").build();
     }
 
-    ClusterNodeEntity engineNode = getEngineNodeByWorkId(wokGetStatusReq.getWorkId());
+    ClusterNodeEntity engineNode = getEngineNodeByWorkId(workInstanceEntity.getWorkId());
 
-    String getStatusUrl = "http://" + engineNode.getHost() + ":" + engineNode.getAgentPort() + "/yag/getStatus?applicationId=" + wokGetStatusReq.getApplicationId();
+    String getStatusUrl = "http://" + engineNode.getHost() + ":" + engineNode.getAgentPort() + "/yag/getStatus?applicationId=" + wokRunWorkRes.getApplicationId();
     BaseResponse<?> baseResponse = HttpUtils.doGet(getStatusUrl, BaseResponse.class);
     if (!CodeConstants.SUCCESS_CODE.equals(baseResponse.getCode())) {
       throw new SparkYunException(baseResponse.getCode(), baseResponse.getMsg(), baseResponse.getErr());
@@ -233,15 +250,23 @@ public class WorkBizService {
     return getEngineWork(workConfig.getClusterId());
   }
 
-  public WokGetWorkLogRes getWorkLog(WokGetWorkLogReq wokGetWorkLogReq) {
+  public WokGetWorkLogRes getWorkLog(String instanceId) {
 
-    if (Strings.isEmpty(wokGetWorkLogReq.getApplicationId())) {
+    Optional<WorkInstanceEntity> workInstanceEntityOptional = workInstanceRepository.findById(instanceId);
+    if (!workInstanceEntityOptional.isPresent()) {
+      throw new SparkYunException("实例暂未生成，请稍后再试");
+    }
+    WorkInstanceEntity workInstanceEntity = workInstanceEntityOptional.get();
+
+    WokRunWorkRes wokRunWorkRes = JSON.parseObject(workInstanceEntity.getSparkStarRes(), WokRunWorkRes.class);
+
+    if (Strings.isEmpty(wokRunWorkRes.getApplicationId())) {
       return WokGetWorkLogRes.builder().yarnLog("待运行").build();
     }
 
-    ClusterNodeEntity engineNode = getEngineNodeByWorkId(wokGetWorkLogReq.getWorkId());
+    ClusterNodeEntity engineNode = getEngineNodeByWorkId(workInstanceEntity.getWorkId());
 
-    String getLogUrl = "http://" + engineNode.getHost() + ":" + engineNode.getAgentPort() + "/yag/getLog?applicationId=" + wokGetWorkLogReq.getApplicationId();
+    String getLogUrl = "http://" + engineNode.getHost() + ":" + engineNode.getAgentPort() + "/yag/getLog?applicationId=" + wokRunWorkRes.getApplicationId();
     BaseResponse<?> baseResponse = HttpUtils.doGet(getLogUrl, BaseResponse.class);
     if (!CodeConstants.SUCCESS_CODE.equals(baseResponse.getCode())) {
       throw new SparkYunException(baseResponse.getCode(), baseResponse.getMsg(), baseResponse.getErr());
