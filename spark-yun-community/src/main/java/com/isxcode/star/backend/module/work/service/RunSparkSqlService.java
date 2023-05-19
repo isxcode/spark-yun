@@ -8,7 +8,6 @@ import com.isxcode.star.api.constants.work.WorkLog;
 import com.isxcode.star.api.constants.work.instance.InstanceStatus;
 import com.isxcode.star.api.exception.WorkRunException;
 import com.isxcode.star.api.pojos.plugin.req.PluginReq;
-import com.isxcode.star.api.pojos.work.res.WokRunWorkRes;
 import com.isxcode.star.api.pojos.yun.agent.req.YagExecuteWorkReq;
 import com.isxcode.star.api.response.BaseResponse;
 import com.isxcode.star.api.utils.HttpUtils;
@@ -16,9 +15,6 @@ import com.isxcode.star.backend.module.cluster.entity.ClusterEntity;
 import com.isxcode.star.backend.module.cluster.node.entity.ClusterNodeEntity;
 import com.isxcode.star.backend.module.cluster.node.repository.ClusterNodeRepository;
 import com.isxcode.star.backend.module.cluster.repository.ClusterRepository;
-import com.isxcode.star.backend.module.datasource.repository.DatasourceRepository;
-import com.isxcode.star.backend.module.datasource.service.DatasourceBizService;
-import com.isxcode.star.backend.module.work.config.entity.WorkConfigEntity;
 import com.isxcode.star.backend.module.work.instance.entity.WorkInstanceEntity;
 import com.isxcode.star.backend.module.work.instance.repository.WorkInstanceRepository;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +25,6 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -44,10 +39,6 @@ import static com.isxcode.star.backend.config.WebSecurityConfig.USER_ID;
 @Slf4j
 @RequiredArgsConstructor
 public class RunSparkSqlService {
-
-  private final DatasourceBizService datasourceBizService;
-
-  private final DatasourceRepository datasourceRepository;
 
   private final WorkInstanceRepository workInstanceRepository;
 
@@ -81,9 +72,10 @@ public class RunSparkSqlService {
       instance.setSubmitLog(logBuilder.toString());
       instance.setExecEndDateTime(new Date());
       workInstanceRepository.saveAndFlush(instance);
-    } catch (WorkRunException | IOException e) {
+    } catch (Exception e) {
       log.error(e.getMessage());
       logBuilder.append(WorkLog.ERROR_INFO + e.getMessage() + "\n");
+      logBuilder.append(WorkLog.ERROR_INFO + "提交失败 \n");
       instance.setStatus(InstanceStatus.FAIL);
       instance.setSubmitLog(logBuilder.toString());
       workInstanceRepository.saveAndFlush(instance);
@@ -142,7 +134,7 @@ public class RunSparkSqlService {
     // 开始提交作业
     logBuilder.append(WorkLog.SUCCESS_INFO + "开始提交作业  \n");
     String executeWorkUrl = "http://" + engineNode.getHost() + ":" + engineNode.getAgentPort() + "/yag/executeWork";
-    BaseResponse<?> baseResponse = HttpUtils.doPost(executeWorkUrl, executeReq, Map.class);
+    BaseResponse<?> baseResponse = HttpUtils.doPost(executeWorkUrl, executeReq, BaseResponse.class);
     if (!CodeConstants.SUCCESS_CODE.equals(baseResponse.getCode())) {
       throw new WorkRunException(WorkLog.ERROR_INFO + "提交作业失败 : " + baseResponse.getErr() + "\n");
     }

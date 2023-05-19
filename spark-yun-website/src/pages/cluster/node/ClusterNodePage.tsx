@@ -10,7 +10,9 @@ import {
   delEngineNodeApi,
   installAgentApi,
   queryEngineNodesApi,
-  removeAgentApi, startAgentApi, stopAgentApi
+  removeAgentApi,
+  startAgentApi,
+  stopAgentApi
 } from '../../../services/cluster/node/ClusterNodeService'
 import { type EngineNodeRow } from '../../../types/calculate/node/info/EngineNodeRow'
 import { ClusterNodeModal } from '../../../modals/cluster/node/ClusterNodeModal'
@@ -199,7 +201,7 @@ function ClusterNodePage() {
             }}>
             日志
           </a>
-          {(record.status === 'UN_INSTALL' || record.status === 'INSTALL_ERROR') &&
+          {(record.status === 'UN_INSTALL' || record.status === 'INSTALL_ERROR') && (
             <a
               className={'sy-table-a'}
               onClick={() => {
@@ -207,16 +209,16 @@ function ClusterNodePage() {
               }}>
               安装
             </a>
-          }
-          {(record.status === 'RUNNING') &&
+          )}
+          {record.status === 'RUNNING' && (
             <a
               className={'sy-table-a'}
               onClick={() => {
-                stopAgent(record.id);
+                stopAgent(record.id)
               }}>
               停止
             </a>
-          }
+          )}
           {record.status === 'STOP' && (
             <a
               className={'sy-table-a'}

@@ -26,7 +26,7 @@ echo $! >${home_path}/spark-yun-agent.pid
 # 检查是否安装
 if [ -e "${home_path}/spark-yun-agent.pid" ]; then
   pid=$(cat "${home_path}/spark-yun-agent.pid")
-  sleep 5
+  sleep 10
   if ps -p $pid >/dev/null 2>&1; then
     json_output="{ \
               \"status\": \"RUNNING\"

@@ -59,9 +59,10 @@ public class RunExecuteSqlService {
       instance.setSubmitLog(logBuilder.toString());
       instance.setExecEndDateTime(new Date());
       workInstanceRepository.saveAndFlush(instance);
-    } catch (WorkRunException e) {
+    } catch (Exception e) {
       log.error(e.getMessage());
       logBuilder.append(WorkLog.ERROR_INFO + e.getMessage() + "\n");
+      logBuilder.append(WorkLog.ERROR_INFO + "提交失败 \n");
       instance.setStatus(InstanceStatus.FAIL);
       instance.setSubmitLog(logBuilder.toString());
       workInstanceRepository.saveAndFlush(instance);

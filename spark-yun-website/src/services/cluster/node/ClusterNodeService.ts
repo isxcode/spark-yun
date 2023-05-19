@@ -52,9 +52,9 @@ export const removeAgentApi = async (data: string | undefined): Promise<void> =>
 export const stopAgentApi = async (data: string | undefined): Promise<void> => {
   const response: BaseResponse = await axiosInstance.get('/eno/stopAgent?engineNodeId=' + data, headerConfig)
   message.success(response.msg)
-};
+}
 
 export const startAgentApi = async (data: string | undefined): Promise<void> => {
   const response: BaseResponse = await axiosInstance.get('/eno/startAgent?engineNodeId=' + data, headerConfig)
   message.success(response.msg)
-};
+}
