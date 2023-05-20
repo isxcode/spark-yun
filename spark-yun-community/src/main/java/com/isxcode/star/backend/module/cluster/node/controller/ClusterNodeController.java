@@ -78,7 +78,7 @@ public class ClusterNodeController {
   @UserLog
   @Operation(summary = "安装节点接口")
   @GetMapping("/installAgent")
-  @SuccessResponse("开始安装")
+  @SuccessResponse("激活中")
   public void installAgent(@Schema(description = "引擎节点唯一id", example = "sy_aaa9440040aa455d84c17f96d8cd7844") @RequestParam String engineNodeId) {
 
     engineNodeBizService.installAgent(engineNodeId);

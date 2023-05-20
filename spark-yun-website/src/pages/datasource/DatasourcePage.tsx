@@ -77,6 +77,7 @@ function DatasourcePage() {
       title: '数据源名称',
       dataIndex: 'name',
       key: 'name',
+      ellipsis: true,
       width: 130
       // render: (text, record) => (
       //   <a
@@ -105,12 +106,7 @@ function DatasourcePage() {
       dataIndex: 'jdbcUrl',
       key: 'jdbcUrl',
       width: 250,
-      ellipsis: true,
-      render: (text, record) => (
-        <Tooltip title={text} placement="top">
-          <div style={{ width: '200px' }}>{text}</div>
-        </Tooltip>
-      )
+      ellipsis: true
     },
     {
       title: '用户名',
@@ -127,7 +123,7 @@ function DatasourcePage() {
         <Space size="middle">
           {record.status === 'UN_CHECK' && <Tag color="blue">未检测</Tag>}
           {record.status === 'ACTIVE' && <Tag color="green">可用</Tag>}
-          {record.status === 'FAIL' && <Tag color="red">连接失败</Tag>}
+          {record.status === 'FAIL' && <Tag color="red">不可用</Tag>}
         </Space>
       )
     },
@@ -141,12 +137,12 @@ function DatasourcePage() {
       title: '备注',
       key: 'remark',
       dataIndex: 'remark',
-      width: 180
+      width: 170
     },
     {
       title: '操作',
       key: 'action',
-      width: 250,
+      width: 200,
       render: (_, record) => (
         <Space size="middle">
           <a
@@ -167,25 +163,25 @@ function DatasourcePage() {
           <a
             className={'sy-table-a'}
             onClick={() => {
-              delDatasource(record.id)
-            }}>
-            删除
-          </a>
-          <a
-            className={'sy-table-a'}
-            onClick={() => {
               getConnectLog(record.id as string)
               setIsLogModalVisible(true)
             }}>
             日志
           </a>
+          <a
+            className={'sy-table-a'}
+            onClick={() => {
+              delDatasource(record.id)
+            }}>
+            删除
+          </a>
         </Space>
       )
     }
-  ]
+  ];
 
   return (
-    <div style={{ padding: 24 }}>
+    <div style={{padding: 24}}>
       <Row className={'datasource-bar'}>
         <Col span={8}>
           <Button
@@ -197,13 +193,13 @@ function DatasourcePage() {
             添加数据源
           </Button>
         </Col>
-        <Col span={7} offset={9} style={{ textAlign: 'right', display: 'flex' }}>
+        <Col span={7} offset={9} style={{textAlign: 'right', display: 'flex'}}>
           <Input
-            style={{ marginRight: '10px' }}
+            style={{marginRight: '10px'}}
             onPressEnter={handleSearch}
             defaultValue={queryDatasourceReq.searchKeyWord}
             onChange={(e) => {
-              setPagination({ ...pagination, searchKeyWord: e.target.value })
+              setPagination({...pagination, searchKeyWord: e.target.value})
             }}
             placeholder={'名称/类型/连接信息/用户名/备注'}
           />
@@ -213,7 +209,7 @@ function DatasourcePage() {
         </Col>
       </Row>
 
-      <Table columns={columns} dataSource={datasources} />
+      <Table columns={columns} dataSource={datasources}/>
 
       <DatasourceModal
         datasource={datasource}
@@ -227,16 +223,14 @@ function DatasourcePage() {
       <Modal
         title="连接日志"
         open={isLogModalVisible}
-        onOk={() => {
-          setIsLogModalVisible(false)
-        }}
         onCancel={() => {
           setIsLogModalVisible(false)
-        }}>
+        }}
+        footer={<></>}>
         <p>{connectLog}</p>
       </Modal>
     </div>
-  )
+  );
 }
 
 export default DatasourcePage

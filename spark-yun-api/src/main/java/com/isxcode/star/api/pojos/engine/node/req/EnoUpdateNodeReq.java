@@ -45,6 +45,5 @@ public class EnoUpdateNodeReq {
   private String agentPort;
 
   @Schema(title = "hadoop的home目录", example = "/opt/homebrew/Cellar/hadoop/3.3.4/libexec")
-  @NotEmpty(message = "hadoop的home目录不能空")
   private String hadoopHomePath;
 }

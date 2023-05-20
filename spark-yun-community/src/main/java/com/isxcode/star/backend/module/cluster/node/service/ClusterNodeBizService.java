@@ -96,13 +96,16 @@ public class ClusterNodeBizService {
     if (!engineNodeEntityOptional.isPresent()) {
       throw new SparkYunException("计算引擎不存在");
     }
+    ClusterNodeEntity clusterNodeEntity = engineNodeEntityOptional.get();
 
     // 转换对象
-    ClusterNodeEntity node = engineNodeMapper.updateNodeReqToNodeEntity(enoUpdateNodeReq);
-    node.setId(engineNodeEntityOptional.get().getId());
+    ClusterNodeEntity node = engineNodeMapper.updateNodeReqToNodeEntity(enoUpdateNodeReq, clusterNodeEntity);
 
     // 设置安装地址
     node.setAgentHomePath(getDefaultAgentHomePath(enoUpdateNodeReq.getAgentHomePath(), enoUpdateNodeReq.getUsername()));
+
+    // 密码对成加密
+    node.setPasswd(AesUtils.encrypt(sparkYunProperties.getAesSlat(), enoUpdateNodeReq.getPasswd()));
 
     // 设置代理端口号
     node.setAgentPort(getDefaultAgentPort(enoUpdateNodeReq.getAgentPort()));

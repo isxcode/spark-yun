@@ -165,7 +165,7 @@ function TenantPage() {
             onClick={() => {
               checkTenant(record.id)
             }}>
-            同步
+            检测
           </a>
           {record.status === 'ENABLE'
 ? (

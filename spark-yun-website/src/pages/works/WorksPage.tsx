@@ -133,15 +133,15 @@ function WorksPage() {
       )
     },
     {
-      title: '备注',
-      key: 'remark',
-      dataIndex: 'remark'
-    },
-    {
       title: '创建时间',
       dataIndex: 'createDateTime',
       key: 'createDateTime',
       width: 220
+    },
+    {
+      title: '备注',
+      key: 'remark',
+      dataIndex: 'remark'
     },
     {
       title: '操作',
@@ -156,14 +156,6 @@ function WorksPage() {
               setIsModalVisible(true)
             }}>
             编辑
-          </a>
-          <a
-            className={'sy-table-a'}
-            onClick={() => {
-              setWork({})
-              delWork(record.id)
-            }}>
-            删除
           </a>
           {record.status === 'STOP' && (
             <a
@@ -219,6 +211,14 @@ function WorksPage() {
               下线
             </a>
           )}
+          <a
+            className={'sy-table-a'}
+            onClick={() => {
+              setWork({})
+              delWork(record.id)
+            }}>
+            删除
+          </a>
         </Space>
       )
     }

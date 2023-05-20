@@ -59,9 +59,9 @@ public class RunExecuteSqlService {
       instance.setSubmitLog(logBuilder.toString());
       instance.setExecEndDateTime(new Date());
       workInstanceRepository.saveAndFlush(instance);
-    } catch (Exception e) {
-      log.error(e.getMessage());
-      logBuilder.append(WorkLog.ERROR_INFO + e.getMessage() + "\n");
+    } catch (WorkRunException e) {
+      log.error(e.getMsg());
+      logBuilder.append(e.getMsg());
       logBuilder.append(WorkLog.ERROR_INFO + "提交失败 \n");
       instance.setStatus(InstanceStatus.FAIL);
       instance.setSubmitLog(logBuilder.toString());
@@ -88,6 +88,11 @@ public class RunExecuteSqlService {
 
     // 开始执行作业
     logBuilder.append(WorkLog.SUCCESS_INFO + "开始执行作业 \n");
+
+    if (Strings.isEmpty(sqlScript)) {
+      throw new WorkRunException(WorkLog.ERROR_INFO + "Sql内容为空 \n");
+    }
+
     try (Connection connection = datasourceBizService.getDbConnection(datasourceEntityOptional.get());
          Statement statement = connection.createStatement();) {
       String regex = "/\\*(?:.|[\\n\\r])*?\\*/|--.*";
@@ -98,7 +103,6 @@ public class RunExecuteSqlService {
         if (!Strings.isEmpty(sql)) {
           statement.execute(sql);
         }
-
         // 保存日志
         logBuilder.append(WorkLog.SUCCESS_INFO + "SQL执行成功  \n");
         instance.setSubmitLog(logBuilder.toString());

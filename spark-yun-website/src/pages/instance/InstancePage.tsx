@@ -64,13 +64,13 @@ function InstancePage() {
       ellipsis: true,
       width: 120
     },
-    {
-      title: '作业流',
-      key: 'workflowName',
-      dataIndex: 'workflowName',
-      ellipsis: true,
-      width: 120
-    },
+    // {
+    //   title: '作业流',
+    //   key: 'workflowName',
+    //   dataIndex: 'workflowName',
+    //   ellipsis: true,
+    //   width: 120
+    // },
     {
       title: '作业',
       key: 'workName',
@@ -135,7 +135,10 @@ function InstancePage() {
             日志
           </a>
           <a className={'sy-table-a'} onClick={() => {}}>
-            数据
+            中止
+          </a>
+          <a className={'sy-table-a'} onClick={() => {}}>
+            结果
           </a>
           <a
             className={'sy-table-a'}

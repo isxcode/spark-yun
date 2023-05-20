@@ -40,7 +40,7 @@ logging:
     root: info
 
 spark-yun:
-  admin-passwd: ispong123
+  admin-passwd: admin123
   resources-path: /Users/ispong/Data/resources
   log-advice: true
   agent-bin-dir: /Users/ispong/Isxcode/spark-yun/spark-yun-dist/src/main/bin

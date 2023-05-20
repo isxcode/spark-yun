@@ -25,13 +25,18 @@ public interface ClusterNodeMapper {
   @Mapping(target = "checkDateTime", expression = "java(java.time.LocalDateTime.now())")
   ClusterNodeEntity addNodeReqToNodeEntity(EnoAddNodeReq enoAddNodeReq);
 
-  @Mapping(target = "usedMemory", expression = "java(0.0)")
-  @Mapping(target = "allMemory", expression = "java(0.0)")
-  @Mapping(target = "usedStorage", expression = "java(0.0)")
-  @Mapping(target = "allStorage", expression = "java(0.0)")
-  @Mapping(target = "cpuPercent", expression = "java(0.0)")
-  @Mapping(target = "checkDateTime", expression = "java(java.time.LocalDateTime.now())")
-  ClusterNodeEntity updateNodeReqToNodeEntity(EnoUpdateNodeReq enoUpdateNodeReq);
+  @Mapping(target = "id", source = "clusterNodeEntity.id")
+  @Mapping(target = "clusterId", source = "clusterNodeEntity.clusterId")
+  @Mapping(target = "name", source = "enoUpdateNodeReq.name")
+  @Mapping(target = "remark", source = "enoUpdateNodeReq.remark")
+  @Mapping(target = "host", source = "enoUpdateNodeReq.host")
+  @Mapping(target = "port", source = "clusterNodeEntity.port")
+  @Mapping(target = "username", source = "enoUpdateNodeReq.username")
+  @Mapping(target = "passwd", source = "enoUpdateNodeReq.passwd")
+  @Mapping(target = "agentHomePath", source = "clusterNodeEntity.agentHomePath")
+  @Mapping(target = "agentPort", source = "clusterNodeEntity.agentPort")
+  @Mapping(target = "hadoopHomePath", source = "clusterNodeEntity.hadoopHomePath")
+  ClusterNodeEntity updateNodeReqToNodeEntity(EnoUpdateNodeReq enoUpdateNodeReq, ClusterNodeEntity clusterNodeEntity);
 
   @Mapping(
       target = "memory",

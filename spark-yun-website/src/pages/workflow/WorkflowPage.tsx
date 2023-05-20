@@ -83,16 +83,16 @@ function WorkflowPage() {
     //     </Space>
     //   )
     // },
-    {
-      title: '创建人',
-      key: 'creator',
-      dataIndex: 'creator'
-    },
-    {
-      title: '创建时间',
-      key: 'creator',
-      dataIndex: 'creator'
-    },
+    // {
+    //   title: '创建人',
+    //   key: 'creator',
+    //   dataIndex: 'creator'
+    // },
+    // {
+    //   title: '创建时间',
+    //   key: 'creator',
+    //   dataIndex: 'creator'
+    // },
     {
       title: '备注',
       key: 'remark',

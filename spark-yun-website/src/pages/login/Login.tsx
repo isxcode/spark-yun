@@ -53,7 +53,7 @@ function Login() {
         </Form.Item>
       </Form>
 
-      <div className={'sy-login-describe'}>基于Spark打造超轻量级批处理大数据平台</div>
+      <div className={'sy-login-describe'}>基于Spark打造超轻量级大数据平台</div>
     </div>
   )
 }

@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react'
-import { Button, Col, Input, Modal, Row, Space, Table, Tag } from 'antd'
-import { type ColumnsType } from 'antd/es/table'
-import { useParams } from 'react-router-dom'
+import React, {useEffect, useState} from 'react'
+import {Button, Col, Input, Modal, Row, Space, Table, Tag} from 'antd'
+import {type ColumnsType} from 'antd/es/table'
+import {useParams} from 'react-router-dom'
 import './ClusterNodePage.less'
-import { BasePagination, defaultPagination } from '../../../types/base/BasePagination'
-import { QueryEngineNodeReq } from '../../../types/calculate/node/req/QueryEngineNodeReq'
+import {BasePagination, defaultPagination} from '../../../types/base/BasePagination'
+import {QueryEngineNodeReq} from '../../../types/calculate/node/req/QueryEngineNodeReq'
 import {
   checkAgentApi,
   delEngineNodeApi,
@@ -14,11 +14,11 @@ import {
   startAgentApi,
   stopAgentApi
 } from '../../../services/cluster/node/ClusterNodeService'
-import { type EngineNodeRow } from '../../../types/calculate/node/info/EngineNodeRow'
-import { ClusterNodeModal } from '../../../modals/cluster/node/ClusterNodeModal'
+import {type EngineNodeRow} from '../../../types/calculate/node/info/EngineNodeRow'
+import {ClusterNodeModal} from '../../../modals/cluster/node/ClusterNodeModal'
 
 function ClusterNodePage() {
-  const { clusterId } = useParams()
+  const {clusterId} = useParams()
   const [engineNodes, setEngineNodes] = useState<EngineNodeRow[]>([])
   const [engineNode, setEngineNode] = useState<EngineNodeRow>()
   const [pagination, setPagination] = useState<BasePagination>(defaultPagination)
@@ -146,12 +146,12 @@ function ClusterNodePage() {
       render: (_, record) => (
         <Space size="middle">
           {record.status === 'NEW' && <Tag color="blue">未检测</Tag>}
-          {record.status === 'INSTALLING' && <Tag color="blue">安装中</Tag>}
-          {record.status === 'UN_INSTALL' && <Tag color="orange">未安装</Tag>}
+          {record.status === 'INSTALLING' && <Tag color="blue">激活中</Tag>}
+          {record.status === 'UN_INSTALL' && <Tag color="orange">未激活</Tag>}
           {record.status === 'RUNNING' && <Tag color="green">激活</Tag>}
           {record.status === 'UNINSTALLED' && <Tag color="default">已卸载</Tag>}
           {record.status === 'UN_CHECK' && <Tag color="cyan">待检测</Tag>}
-          {record.status === 'INSTALL_ERROR' && <Tag color="red">安装失败</Tag>}
+          {record.status === 'INSTALL_ERROR' && <Tag color="red">激活失败</Tag>}
           {record.status === 'CHECK_ERROR' && <Tag color="red">检测失败</Tag>}
           {record.status === 'CHECKING' && <Tag color="blue">检测中</Tag>}
           {record.status === 'STOPPING' && <Tag color="blue">停止中</Tag>}
@@ -182,24 +182,10 @@ function ClusterNodePage() {
           <a
             className={'sy-table-a'}
             onClick={() => {
-              delEngineNode(record.id)
+              setEngineNode(record)
+              setIsModalVisible(true)
             }}>
             编辑
-          </a>
-          <a
-            className={'sy-table-a'}
-            onClick={() => {
-              checkAgent(record.id)
-            }}>
-            检测
-          </a>
-          <a
-            className={'sy-table-a'}
-            onClick={() => {
-              setConnectLog(record.agentLog as string)
-              setIsLogModalVisible(true)
-            }}>
-            日志
           </a>
           {(record.status === 'UN_INSTALL' || record.status === 'INSTALL_ERROR') && (
             <a
@@ -207,7 +193,7 @@ function ClusterNodePage() {
               onClick={() => {
                 installAgent(record.id)
               }}>
-              安装
+              激活
             </a>
           )}
           {record.status === 'RUNNING' && (
@@ -234,9 +220,24 @@ function ClusterNodePage() {
               onClick={() => {
                 startAgent(record.id)
               }}>
-              启动
+              激活
             </a>
           )}
+          <a
+            className={'sy-table-a'}
+            onClick={() => {
+              checkAgent(record.id)
+            }}>
+            检测
+          </a>
+          <a
+            className={'sy-table-a'}
+            onClick={() => {
+              setConnectLog(record.agentLog as string)
+              setIsLogModalVisible(true)
+            }}>
+            日志
+          </a>
           <a
             className={'sy-table-a'}
             onClick={() => {
@@ -250,7 +251,7 @@ function ClusterNodePage() {
   ]
 
   return (
-    <div style={{ padding: 24 }}>
+    <div style={{padding: 24}}>
       <Row className={'node-bar'}>
         <Col span={8}>
           <Button
@@ -262,22 +263,25 @@ function ClusterNodePage() {
             添加节点
           </Button>
         </Col>
-        <Col span={7} offset={9} style={{ textAlign: 'right', display: 'flex' }}>
+        <Col span={7} offset={9} style={{textAlign: 'right', display: 'flex'}}>
           <Input
-            style={{ marginRight: '10px' }}
+            style={{marginRight: '10px'}}
             onPressEnter={handleSearch}
             defaultValue={queryEngineNodeReq.searchKeyWord}
             onChange={(e) => {
-              setPagination({ ...pagination, searchKeyWord: e.target.value })
+              setPagination({...pagination, searchKeyWord: e.target.value})
             }}
             placeholder={'名称/地址/备注'}
           />
           <Button type={'primary'} onClick={handleSearch}>
             搜索
           </Button>
+          <Button type={'primary'} onClick={() => fetchEngineNodes()} style={{marginLeft: '8px'}}>
+            刷新
+          </Button>
         </Col>
       </Row>
-      <Table columns={columns} dataSource={engineNodes} />
+      <Table columns={columns} dataSource={engineNodes}/>
       <ClusterNodeModal
         calculateEngineId={clusterId as string}
         engineNode={engineNode}
@@ -291,16 +295,15 @@ function ClusterNodePage() {
       <Modal
         title="日志"
         open={isLogModalVisible}
-        onOk={() => {
-          setIsLogModalVisible(false)
-        }}
         onCancel={() => {
-          setIsLogModalVisible(false)
-        }}>
+          setIsLogModalVisible(false);
+        }}
+        footer={<></>}
+      >
         <p>{connectLog}</p>
       </Modal>
     </div>
-  )
+  );
 }
 
 export default ClusterNodePage

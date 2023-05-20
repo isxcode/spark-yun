@@ -322,7 +322,7 @@ function Layouts() {
                   </Col>
                   <Col style={{ minWidth: '40px' }}>
                     <Dropdown menu={{ items: items2 }} placement="bottomRight" arrow>
-                      <Avatar style={{ backgroundColor: '#e25a1b', verticalAlign: 'middle' }} size="large" gap={4}>
+                      <Avatar style={{ backgroundColor: '#e25a1b', verticalAlign: 'middle', cursor: 'pointer' }} size="large" gap={4}>
                         {localStorage.getItem('Username')}
                       </Avatar>
                     </Dropdown>
@@ -336,7 +336,7 @@ function Layouts() {
           <Sider width={200} theme={'light'}>
             <Menu
               className={'sy-sider'}
-              defaultSelectedKeys={[localStorage.getItem('Role') == 'ROLE_SYS_ADMIN' ? '18' : '1']}
+              defaultSelectedKeys={[localStorage.getItem('Role') == 'ROLE_SYS_ADMIN' ? '18' : '3']}
               items={genMenus()}
               mode="inline"
               style={{ overflowY: 'scroll', maxHeight: '90vh', height: '90vh' }}

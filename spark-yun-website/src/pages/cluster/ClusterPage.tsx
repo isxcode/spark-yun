@@ -95,30 +95,30 @@ function ClusterPage() {
       key: 'storage',
       width: 100
     },
-    {
-      title: '链接',
-      render: (_, record) => (
-        <Space size="middle">
-          <a
-            className={'sy-table-a'}
-            onClick={() => {
-              setCalculate({})
-              delEngine(record.id)
-            }}>
-            YARN
-          </a>
-          <a
-            className={'sy-table-a'}
-            onClick={() => {
-              setCalculate({})
-              delEngine(record.id)
-            }}>
-            HDFS
-          </a>
-        </Space>
-      ),
-      width: 100
-    },
+    // {
+    //   title: '链接',
+    //   render: (_, record) => (
+    //     <Space size="middle">
+    //       <a
+    //         className={'sy-table-a'}
+    //         onClick={() => {
+    //           setCalculate({})
+    //           delEngine(record.id)
+    //         }}>
+    //         YARN
+    //       </a>
+    //       <a
+    //         className={'sy-table-a'}
+    //         onClick={() => {
+    //           setCalculate({})
+    //           delEngine(record.id)
+    //         }}>
+    //         HDFS
+    //       </a>
+    //     </Space>
+    // //   ),
+    //   width: 100
+    // },
     {
       title: '状态',
       dataIndex: 'status',
@@ -174,14 +174,6 @@ function ClusterPage() {
               delEngine(record.id)
             }}>
             删除
-          </a>
-          <a
-            className={'sy-table-a'}
-            onClick={() => {
-              setCalculate({})
-              delEngine(record.id)
-            }}>
-            日志
           </a>
         </Space>
       )

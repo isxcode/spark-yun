@@ -45,6 +45,5 @@ export const testDatasourceApi = async (data: string): Promise<TestDatasourceRes
 
 export const getConnectLogApi = async (data: string): Promise<GetConnectLogRes> => {
   const response = await axiosInstance.get<GetConnectLogRes>('/das/getConnectLog?datasourceId=' + data, headerConfig)
-  message.success(JSON.parse(JSON.stringify(response)).msg)
   return response.data
 }

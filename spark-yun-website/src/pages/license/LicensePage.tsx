@@ -100,12 +100,12 @@ function LicensePage() {
       key: 'maxTenantNum',
       width: 80
     },
-    {
-      title: '作业流',
-      dataIndex: 'maxWorkflowNum',
-      key: 'maxWorkflowNum',
-      width: 90
-    },
+    // {
+    //   title: '作业流',
+    //   dataIndex: 'maxWorkflowNum',
+    //   key: 'maxWorkflowNum',
+    //   width: 90
+    // },
     {
       title: '状态',
       dataIndex: 'status',
