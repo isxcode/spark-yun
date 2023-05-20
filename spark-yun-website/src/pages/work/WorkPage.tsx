@@ -71,7 +71,7 @@ function WorkPage() {
 
   const getData = () => {
     getWorkDataApi(instanceId).then(function (response) {
-      setResult({...result, data: response.data})
+      setResult({...result, data: response.data});
     });
   }
 
@@ -117,9 +117,7 @@ function WorkPage() {
         }
         break
       case 'BACK_DATA':
-        if (work?.workType === 'SPARK_SQL') {
-          getData()
-        }
+        getData();
         break
       case 'MONITOR_INFO':
         if (work?.workType === 'SPARK_SQL') {

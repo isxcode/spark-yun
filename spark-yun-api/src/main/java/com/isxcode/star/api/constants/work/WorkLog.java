@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 
 public interface WorkLog {
 
-  String SUCCESS_INFO = LocalDateTime.now() + " INFO : ";
+  String SUCCESS_INFO = LocalDateTime.now() + " INFO  : ";
 
   String ERROR_INFO = LocalDateTime.now() + " ERROR : ";
 }

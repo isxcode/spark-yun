@@ -2,6 +2,7 @@ package com.isxcode.star.api.utils;
 
 import com.isxcode.star.api.exception.SparkYunException;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.util.Strings;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -24,6 +25,10 @@ public class AesUtils {
    */
   public static String encrypt(String key, String data) throws SparkYunException {
 
+    if (Strings.isEmpty(data)) {
+      return data;
+    }
+
     try {
       Cipher cipher = Cipher.getInstance("AES");
       cipher.init(
@@ -44,6 +49,10 @@ public class AesUtils {
    * 对称解密.
    */
   public static String decrypt(String key, String data) {
+
+    if (Strings.isEmpty(data)) {
+      return data;
+    }
 
     try {
       Cipher cipher = Cipher.getInstance("AES");
