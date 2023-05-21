@@ -10,7 +10,6 @@ import com.isxcode.star.api.constants.work.instance.InstanceType;
 import com.isxcode.star.api.exception.SparkYunException;
 import com.isxcode.star.api.pojos.work.req.WokAddWorkReq;
 import com.isxcode.star.api.pojos.work.req.WokQueryWorkReq;
-import com.isxcode.star.api.pojos.work.req.WokStopJobReq;
 import com.isxcode.star.api.pojos.work.req.WokUpdateWorkReq;
 import com.isxcode.star.api.pojos.work.res.WokGetDataRes;
 import com.isxcode.star.api.pojos.work.res.WokGetStatusRes;
@@ -19,7 +18,6 @@ import com.isxcode.star.api.pojos.work.res.WokGetWorkLogRes;
 import com.isxcode.star.api.pojos.work.res.WokGetWorkRes;
 import com.isxcode.star.api.pojos.work.res.WokQueryWorkRes;
 import com.isxcode.star.api.pojos.work.res.WokRunWorkRes;
-import com.isxcode.star.api.pojos.yun.agent.res.YagGetLogRes;
 import com.isxcode.star.api.response.BaseResponse;
 import com.isxcode.star.api.utils.HttpUtils;
 import com.isxcode.star.backend.module.cluster.entity.ClusterEntity;
@@ -41,7 +39,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -197,7 +194,7 @@ public class WorkBizService {
     return JSON.parseObject(workInstanceEntity.getSparkStarRes(), WokGetStatusRes.class);
   }
 
-  public void stopJob(WokStopJobReq wokStopJobReq) {
+  public void stopJob(String instanceId) {
 
     ClusterNodeEntity engineNode = getEngineNodeByWorkId(wokStopJobReq.getWorkId());
 

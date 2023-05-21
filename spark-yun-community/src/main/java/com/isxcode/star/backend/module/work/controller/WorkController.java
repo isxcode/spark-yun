@@ -4,7 +4,6 @@ import com.isxcode.star.api.constants.ModulePrefix;
 import com.isxcode.star.api.constants.SecurityConstants;
 import com.isxcode.star.api.pojos.work.req.WokAddWorkReq;
 import com.isxcode.star.api.pojos.work.req.WokQueryWorkReq;
-import com.isxcode.star.api.pojos.work.req.WokStopJobReq;
 import com.isxcode.star.api.pojos.work.req.WokUpdateWorkReq;
 import com.isxcode.star.api.pojos.work.res.WokGetDataRes;
 import com.isxcode.star.api.pojos.work.res.WokGetStatusRes;
@@ -94,9 +93,9 @@ public class WorkController {
   @PostMapping("/stopJob")
   @SuccessResponse("中止成功")
   @Parameter(name = SecurityConstants.HEADER_TENANT_ID, description = "租户id", required = true, in = ParameterIn.HEADER, schema = @Schema(type = "string"))
-  public void stopJob(@Valid @RequestBody WokStopJobReq wokStopJobReq) {
+  public void stopJob(@Schema(description = "实例唯一id", example = "sy_12baf74d710c43a78858e547bf41a586") @RequestParam String instanceId) {
 
-    workBizService.stopJob(wokStopJobReq);
+    workBizService.stopJob(instanceId);
   }
 
   @UserLog
