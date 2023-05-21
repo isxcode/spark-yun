@@ -1,9 +1,3 @@
-alter table SY_WORK_CONFIG
-  add corn varchar(200) null comment '定时表达式';
-
-alter table SY_WORK
-  add version_id varchar(200) null comment '作业当前最新版本号';
-
 -- 作业配置版本表
 create table if not exists SY_WORK_VERSION
 (
@@ -32,17 +26,17 @@ create table if not exists SY_WORK_INSTANCE
   instance_type           varchar(200) comment '实例类型',
   status                  varchar(200) comment '实例状态',
   plan_start_date_time    datetime comment '计划开始时间',
-  next_plan_date_time    datetime comment '下一次开始时间',
+  next_plan_date_time     datetime comment '下一次开始时间',
   exec_start_date_time    datetime comment '执行开始时间',
   exec_end_date_time      datetime comment '执行结束时间',
   submit_log              varchar(2000) comment '提交日志',
-  spark_log               varchar(2000) comment 'spark日志',
-  result_data             varchar(2000) comment '结果数据',
+  yarn_log                CLOB comment 'yarn日志',
+  spark_star_res          varchar(2000) comment 'spark-star插件返回',
+  result_data             CLOB comment '结果数据',
   create_by               varchar(200)  not null comment '创建人',
   create_date_time        datetime      not null comment '创建时间',
   last_modified_by        varchar(200)  not null comment '更新人',
   last_modified_date_time datetime      not null comment '更新时间',
-  version_number          int           not null comment '版本号',
   deleted                 int default 0 not null comment '逻辑删除',
   tenant_id               varchar(200)  not null comment '租户id'
 );
@@ -105,8 +99,3 @@ create table if not exists SY_FORM_COMPONENT
   deleted                 int default 0 not null comment '逻辑删除',
   tenant_id               varchar(200)  not null comment '租户id'
 );
-
--- 添加测试连接日志
-alter table SY_DATASOURCE
-  add connect_log varchar(200) null comment '测试连接日志' after db_type;
-

@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Connection;
 import java.sql.Statement;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Optional;
 
@@ -46,7 +47,7 @@ public class RunExecuteSqlService {
     WorkInstanceEntity instance = instanceEntityOptional.get();
 
     StringBuilder logBuilder = new StringBuilder();
-    logBuilder.append(WorkLog.SUCCESS_INFO + "提交作业完成 \n");
+    logBuilder.append(LocalDateTime.now() + WorkLog.SUCCESS_INFO + "提交作业完成 \n");
 
     instance.setStatus(InstanceStatus.RUNNING);
     instance.setSubmitLog(logBuilder.toString());
@@ -62,8 +63,9 @@ public class RunExecuteSqlService {
     } catch (WorkRunException e) {
       log.error(e.getMsg());
       logBuilder.append(e.getMsg());
-      logBuilder.append(WorkLog.ERROR_INFO + "提交失败 \n");
+      logBuilder.append(LocalDateTime.now() + WorkLog.ERROR_INFO + "提交失败 \n");
       instance.setStatus(InstanceStatus.FAIL);
+      instance.setExecEndDateTime(new Date());
       instance.setSubmitLog(logBuilder.toString());
       workInstanceRepository.saveAndFlush(instance);
     }
@@ -72,25 +74,25 @@ public class RunExecuteSqlService {
   public void executeSql(String datasourceId, String sqlScript, WorkInstanceEntity instance, StringBuilder logBuilder) {
 
     // 检测数据源是否存在
-    logBuilder.append(WorkLog.SUCCESS_INFO + "开始检测运行环境 \n");
+    logBuilder.append(LocalDateTime.now() + WorkLog.SUCCESS_INFO + "开始检测运行环境 \n");
     if (Strings.isEmpty(datasourceId)) {
-      throw new WorkRunException(WorkLog.ERROR_INFO + "检测运行环境失败: 未配置有效数据源  \n");
+      throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "检测运行环境失败: 未配置有效数据源  \n");
     }
     Optional<DatasourceEntity> datasourceEntityOptional = datasourceRepository.findById(datasourceId);
     if(!datasourceEntityOptional.isPresent()){
-      throw new WorkRunException(WorkLog.ERROR_INFO + "检测运行环境失败: 未配置有效数据源  \n");
+      throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "检测运行环境失败: 未配置有效数据源  \n");
     }
 
     // 检测完成同步日志
-    logBuilder.append(WorkLog.SUCCESS_INFO + "检测运行环境完成  \n");
+    logBuilder.append(LocalDateTime.now() + WorkLog.SUCCESS_INFO + "检测运行环境完成  \n");
     instance.setSubmitLog(logBuilder.toString());
     workInstanceRepository.saveAndFlush(instance);
 
     // 开始执行作业
-    logBuilder.append(WorkLog.SUCCESS_INFO + "开始执行作业 \n");
+    logBuilder.append(LocalDateTime.now() + WorkLog.SUCCESS_INFO + "开始执行作业 \n");
 
     if (Strings.isEmpty(sqlScript)) {
-      throw new WorkRunException(WorkLog.ERROR_INFO + "Sql内容为空 \n");
+      throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "Sql内容为空 \n");
     }
 
     try (Connection connection = datasourceBizService.getDbConnection(datasourceEntityOptional.get());
@@ -99,19 +101,19 @@ public class RunExecuteSqlService {
       String noCommentSql = sqlScript.replaceAll(regex, "");
       String realSql = noCommentSql.replace("\n", " ");
       for (String sql : realSql.split(";")) {
-        logBuilder.append(WorkLog.SUCCESS_INFO + "开始执行SQL: " + sql + " \n");
+        logBuilder.append(LocalDateTime.now() + WorkLog.SUCCESS_INFO + "开始执行SQL: " + sql + " \n");
         if (!Strings.isEmpty(sql)) {
           statement.execute(sql);
         }
         // 保存日志
-        logBuilder.append(WorkLog.SUCCESS_INFO + "SQL执行成功  \n");
+        logBuilder.append(LocalDateTime.now() + WorkLog.SUCCESS_INFO + "SQL执行成功  \n");
         instance.setSubmitLog(logBuilder.toString());
         workInstanceRepository.saveAndFlush(instance);
       }
-      logBuilder.append(WorkLog.SUCCESS_INFO + "[SUCCESS] \n");
+      logBuilder.append(LocalDateTime.now() + WorkLog.SUCCESS_INFO + "[SUCCESS] \n");
     } catch (Exception e) {
       log.error(e.getMessage());
-      throw new WorkRunException(WorkLog.ERROR_INFO + e.getMessage() + "\n");
+      throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + e.getMessage() + "\n");
     }
   }
 }

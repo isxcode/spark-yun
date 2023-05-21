@@ -6,9 +6,11 @@ import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -52,6 +54,30 @@ public class GlobalExceptionAdvice extends ResponseEntityExceptionHandler {
       SuccessResponseException successException) {
 
     return new ResponseEntity<>(successException.getBaseResponse(), HttpStatus.OK);
+  }
+
+  @ExceptionHandler(EmptyResultDataAccessException.class)
+  public ResponseEntity<BaseResponse<Object>> ObjectOptimisticLockingFailureException(
+    EmptyResultDataAccessException emptyResultDataAccessException) {
+
+    BaseResponse baseResponse = new BaseResponse();
+    baseResponse.setCode("55500");
+    baseResponse.setMsg("请稍后再试");
+    baseResponse.setErr(emptyResultDataAccessException.getMessage());
+
+    return new ResponseEntity<>(baseResponse, HttpStatus.OK);
+  }
+
+  @ExceptionHandler(ObjectOptimisticLockingFailureException.class)
+  public ResponseEntity<BaseResponse<Object>> ObjectOptimisticLockingFailureException(
+    ObjectOptimisticLockingFailureException objectOptimisticLockingFailureException) {
+
+    BaseResponse baseResponse = new BaseResponse();
+    baseResponse.setCode("55500");
+    baseResponse.setMsg("请稍后再试");
+    baseResponse.setErr(objectOptimisticLockingFailureException.getMessage());
+
+    return new ResponseEntity<>(baseResponse, HttpStatus.OK);
   }
 
   @ExceptionHandler(Exception.class)

@@ -1,10 +1,10 @@
-import React, {useEffect, useState} from 'react'
-import {Button, Col, Input, Modal, Row, Space, Table, Tag} from 'antd'
-import {type ColumnsType} from 'antd/es/table'
-import {useParams} from 'react-router-dom'
+import React, { useEffect, useState } from 'react'
+import { Button, Col, Input, Modal, Row, Space, Table, Tag } from 'antd'
+import { type ColumnsType } from 'antd/es/table'
+import { useParams } from 'react-router-dom'
 import './ClusterNodePage.less'
-import {BasePagination, defaultPagination} from '../../../types/base/BasePagination'
-import {QueryEngineNodeReq} from '../../../types/calculate/node/req/QueryEngineNodeReq'
+import { BasePagination, defaultPagination } from '../../../types/base/BasePagination'
+import { QueryEngineNodeReq } from '../../../types/calculate/node/req/QueryEngineNodeReq'
 import {
   checkAgentApi,
   delEngineNodeApi,
@@ -14,11 +14,11 @@ import {
   startAgentApi,
   stopAgentApi
 } from '../../../services/cluster/node/ClusterNodeService'
-import {type EngineNodeRow} from '../../../types/calculate/node/info/EngineNodeRow'
-import {ClusterNodeModal} from '../../../modals/cluster/node/ClusterNodeModal'
+import { type EngineNodeRow } from '../../../types/calculate/node/info/EngineNodeRow'
+import { ClusterNodeModal } from '../../../modals/cluster/node/ClusterNodeModal'
 
 function ClusterNodePage() {
-  const {clusterId} = useParams()
+  const { clusterId } = useParams()
   const [engineNodes, setEngineNodes] = useState<EngineNodeRow[]>([])
   const [engineNode, setEngineNode] = useState<EngineNodeRow>()
   const [pagination, setPagination] = useState<BasePagination>(defaultPagination)
@@ -251,7 +251,7 @@ function ClusterNodePage() {
   ]
 
   return (
-    <div style={{padding: 24}}>
+    <div style={{ padding: 24 }}>
       <Row className={'node-bar'}>
         <Col span={8}>
           <Button
@@ -263,25 +263,30 @@ function ClusterNodePage() {
             添加节点
           </Button>
         </Col>
-        <Col span={7} offset={9} style={{textAlign: 'right', display: 'flex'}}>
+        <Col span={7} offset={9} style={{ textAlign: 'right', display: 'flex' }}>
           <Input
-            style={{marginRight: '10px'}}
+            style={{ marginRight: '10px' }}
             onPressEnter={handleSearch}
             defaultValue={queryEngineNodeReq.searchKeyWord}
             onChange={(e) => {
-              setPagination({...pagination, searchKeyWord: e.target.value})
+              setPagination({ ...pagination, searchKeyWord: e.target.value })
             }}
             placeholder={'名称/地址/备注'}
           />
           <Button type={'primary'} onClick={handleSearch}>
             搜索
           </Button>
-          <Button type={'primary'} onClick={() => fetchEngineNodes()} style={{marginLeft: '8px'}}>
+          <Button
+            type={'primary'}
+            onClick={() => {
+              fetchEngineNodes()
+            }}
+            style={{ marginLeft: '8px' }}>
             刷新
           </Button>
         </Col>
       </Row>
-      <Table columns={columns} dataSource={engineNodes}/>
+      <Table columns={columns} dataSource={engineNodes} />
       <ClusterNodeModal
         calculateEngineId={clusterId as string}
         engineNode={engineNode}
@@ -296,14 +301,13 @@ function ClusterNodePage() {
         title="日志"
         open={isLogModalVisible}
         onCancel={() => {
-          setIsLogModalVisible(false);
+          setIsLogModalVisible(false)
         }}
-        footer={<></>}
-      >
+        footer={<></>}>
         <p>{connectLog}</p>
       </Modal>
     </div>
-  );
+  )
 }
 
 export default ClusterNodePage

@@ -5,6 +5,7 @@ import com.isxcode.star.api.constants.CodeConstants;
 import com.isxcode.star.api.constants.EngineNodeStatus;
 import com.isxcode.star.api.constants.WorkStatus;
 import com.isxcode.star.api.constants.WorkType;
+import com.isxcode.star.api.constants.work.instance.InstanceStatus;
 import com.isxcode.star.api.constants.work.instance.InstanceType;
 import com.isxcode.star.api.exception.SparkYunException;
 import com.isxcode.star.api.pojos.work.req.WokAddWorkReq;
@@ -168,6 +169,13 @@ public class WorkBizService {
       throw new SparkYunException("实例不存在");
     }
     WorkInstanceEntity workInstanceEntity = instanceEntityOptional.get();
+    if (!InstanceStatus.SUCCESS.equals(workInstanceEntity.getStatus())) {
+      throw new SparkYunException("只有成功实例，才可查看数据");
+    }
+    if (Strings.isEmpty(workInstanceEntity.getResultData())) {
+      throw new SparkYunException("请等待作业运行完毕或者对应作业无返回结果");
+    }
+
     if (Strings.isEmpty(workInstanceEntity.getYarnLog())) {
       return new WokGetDataRes(JSON.parseArray(workInstanceEntity.getResultData()));
     }
@@ -181,6 +189,10 @@ public class WorkBizService {
       throw new SparkYunException("实例暂未生成请稍后再试");
     }
     WorkInstanceEntity workInstanceEntity = workInstanceEntityOptional.get();
+
+    if (Strings.isEmpty(workInstanceEntity.getResultData())) {
+      throw new SparkYunException("请等待作业提交完毕");
+    }
 
     return JSON.parseObject(workInstanceEntity.getSparkStarRes(), WokGetStatusRes.class);
   }
@@ -219,7 +231,11 @@ public class WorkBizService {
     if (!workInstanceEntityOptional.isPresent()) {
       throw new SparkYunException("实例暂未生成，请稍后再试");
     }
+
     WorkInstanceEntity workInstanceEntity = workInstanceEntityOptional.get();
+    if (Strings.isEmpty(workInstanceEntity.getResultData())) {
+      throw new SparkYunException("请等待作业运行完毕或者对应作业没有Yarn日志");
+    }
     return WokGetWorkLogRes.builder().yarnLog(workInstanceEntity.getYarnLog()).build();
   }
 

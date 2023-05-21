@@ -89,13 +89,13 @@ export const ClusterNodeModal = (props: {
             <Input />
           </Form.Item>
 
-          {/*<Form.Item label="服务路径" name="agentHomePath">*/}
-          {/*  <Input />*/}
-          {/*</Form.Item>*/}
+          {/* <Form.Item label="服务路径" name="agentHomePath"> */}
+          {/*  <Input /> */}
+          {/* </Form.Item> */}
 
-          {/*<Form.Item label="服务端口" name="agentPort">*/}
-          {/*  <Input />*/}
-          {/*</Form.Item>*/}
+          {/* <Form.Item label="服务端口" name="agentPort"> */}
+          {/*  <Input /> */}
+          {/* </Form.Item> */}
 
           {/* <Form.Item label="Hadoop" name="hadoopHomePath"> */}
           {/*  <Input /> */}

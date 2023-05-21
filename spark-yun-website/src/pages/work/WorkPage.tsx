@@ -65,14 +65,14 @@ function WorkPage() {
 
   const getWorkLog = () => {
     getWorkLogApi(instanceId).then(function (response) {
-      setResult({...result, yarnLog: response.yarnLog, data: [[]]})
-    });
+      setResult({ ...result, yarnLog: response.yarnLog, data: [[]] })
+    })
   }
 
   const getData = () => {
     getWorkDataApi(instanceId).then(function (response) {
-      setResult({...result, data: response.data});
-    });
+      setResult({ ...result, data: response.data })
+    })
   }
 
   const getWorkStatus = () => {
@@ -84,7 +84,7 @@ function WorkPage() {
         yarnApplicationState: response.yarnApplicationState,
         data: [[]]
       })
-    });
+    })
   }
 
   const getStopWork = () => {
@@ -117,7 +117,7 @@ function WorkPage() {
         }
         break
       case 'BACK_DATA':
-        getData();
+        getData()
         break
       case 'MONITOR_INFO':
         if (work?.workType === 'SPARK_SQL') {

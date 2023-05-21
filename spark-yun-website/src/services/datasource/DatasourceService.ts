@@ -2,7 +2,6 @@ import axiosInstance from '../../config/axios'
 import { type QueryDatasourceReq } from '../../types/datasource/req/QueryDatasourceReq'
 import { type QueryDatasourceRes } from '../../types/datasource/res/QueryDatasourceRes'
 import { type AddDatasourceReq } from '../../types/datasource/req/AddDatasourceReq'
-import { TestDatasourceReq } from '../../types/datasource/req/TestDatasourceReq'
 import { TestDatasourceRes } from '../../types/datasource/res/TestDatasourceRes'
 import { UpdateDatasourceReq } from '../../types/datasource/req/UpdateDatasourceReq'
 import { message } from 'antd'
@@ -10,6 +9,7 @@ import { BaseResponse } from '../../types/base/BaseResponse'
 import { GetConnectLogRes } from '../../types/datasource/res/GetConnectLogRes'
 
 const headerConfig = {
+  timeout: 10000,
   headers: {
     Tenant: localStorage.getItem('Tenant'),
     Authorization: localStorage.getItem('Token')

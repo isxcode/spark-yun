@@ -322,7 +322,10 @@ function Layouts() {
                   </Col>
                   <Col style={{ minWidth: '40px' }}>
                     <Dropdown menu={{ items: items2 }} placement="bottomRight" arrow>
-                      <Avatar style={{ backgroundColor: '#e25a1b', verticalAlign: 'middle', cursor: 'pointer' }} size="large" gap={4}>
+                      <Avatar
+                        style={{ backgroundColor: '#e25a1b', verticalAlign: 'middle', cursor: 'pointer' }}
+                        size="large"
+                        gap={4}>
                         {localStorage.getItem('Username')}
                       </Avatar>
                     </Dropdown>

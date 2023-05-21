@@ -29,9 +29,5 @@ spring:
       org.quartz.dataSource.quartzDataSource.user: root
       org.quartz.dataSource.quartzDataSource.password: root123
 
-logging:
-  level:
-    root: info
-
 spark-yun:
   log-advice: false

@@ -178,10 +178,10 @@ function DatasourcePage() {
         </Space>
       )
     }
-  ];
+  ]
 
   return (
-    <div style={{padding: 24}}>
+    <div style={{ padding: 24 }}>
       <Row className={'datasource-bar'}>
         <Col span={8}>
           <Button
@@ -193,23 +193,31 @@ function DatasourcePage() {
             添加数据源
           </Button>
         </Col>
-        <Col span={7} offset={9} style={{textAlign: 'right', display: 'flex'}}>
+        <Col span={7} offset={9} style={{ textAlign: 'right', display: 'flex' }}>
           <Input
-            style={{marginRight: '10px'}}
+            style={{ marginRight: '10px' }}
             onPressEnter={handleSearch}
             defaultValue={queryDatasourceReq.searchKeyWord}
             onChange={(e) => {
-              setPagination({...pagination, searchKeyWord: e.target.value})
+              setPagination({ ...pagination, searchKeyWord: e.target.value })
             }}
             placeholder={'名称/类型/连接信息/用户名/备注'}
           />
           <Button type={'primary'} onClick={handleSearch}>
             搜索
           </Button>
+          <Button
+            type={'primary'}
+            onClick={() => {
+              fetchDatasources()
+            }}
+            style={{ marginLeft: '8px' }}>
+            刷新
+          </Button>
         </Col>
       </Row>
 
-      <Table columns={columns} dataSource={datasources}/>
+      <Table columns={columns} dataSource={datasources} />
 
       <DatasourceModal
         datasource={datasource}
@@ -230,7 +238,7 @@ function DatasourcePage() {
         <p>{connectLog}</p>
       </Modal>
     </div>
-  );
+  )
 }
 
 export default DatasourcePage

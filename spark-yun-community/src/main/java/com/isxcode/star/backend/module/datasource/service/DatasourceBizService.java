@@ -19,6 +19,7 @@ import com.isxcode.star.backend.module.datasource.repository.DatasourceRepositor
 import com.isxcode.star.api.exception.SparkYunException;
 
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -82,7 +83,9 @@ public class DatasourceBizService {
 
   public Connection getDbConnection( DatasourceEntity datasource) throws SQLException {
     loadDriverClass(datasource.getDbType());
-    return getConnection(datasource.getJdbcUrl(), datasource.getUsername(), AesUtils.decrypt(sparkYunProperties.getAesSlat(), datasource.getPasswd()));
+
+    DriverManager.setLoginTimeout(10);
+    return DriverManager.getConnection(datasource.getJdbcUrl(), datasource.getUsername(), AesUtils.decrypt(sparkYunProperties.getAesSlat(), datasource.getPasswd()));
   }
 
   public void delDatasource(String datasourceId) {

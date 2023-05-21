@@ -54,17 +54,17 @@ export const getWorkApi = async (workId: string): Promise<WorkInfo> => {
 }
 
 export const getWorkLogApi = async (instanceId: string): Promise<RunWorkRes> => {
-  const response = await axiosInstance.get<RunWorkRes>('/wok/getYarnLog?instanceId=' + instanceId, headerConfig);
+  const response = await axiosInstance.get<RunWorkRes>('/wok/getYarnLog?instanceId=' + instanceId, headerConfig)
   return response.data
-};
+}
 
 export const getWorkDataApi = async (instanceId: string): Promise<RunWorkRes> => {
-  const response = await axiosInstance.get<RunWorkRes>('/wok/getData?instanceId=' + instanceId, headerConfig);
+  const response = await axiosInstance.get<RunWorkRes>('/wok/getData?instanceId=' + instanceId, headerConfig)
   return response.data
-};
+}
 
 export const getWorkStatusApi = async (instanceId: string): Promise<RunWorkRes> => {
-  const response = await axiosInstance.get<RunWorkRes>('/wok/getStatus?instanceId=' + instanceId, headerConfig);
+  const response = await axiosInstance.get<RunWorkRes>('/wok/getStatus?instanceId=' + instanceId, headerConfig)
   return response.data
 }
 
@@ -110,6 +110,11 @@ export const deleteWorkApi = async (workId: string): Promise<void> => {
 
 export const deleteWorkInstanceApi = async (instanceId: string): Promise<void> => {
   const response = await axiosInstance.get<RunWorkRes>('/vip/woi/deleteInstance?instanceId=' + instanceId, headerConfig)
+  message.success(JSON.parse(JSON.stringify(response)).msg)
+}
+
+export const restartWorkInstanceApi = async (instanceId: string): Promise<void> => {
+  const response = await axiosInstance.get<RunWorkRes>('/vip/woi/restartInstance?instanceId=' + instanceId, headerConfig)
   message.success(JSON.parse(JSON.stringify(response)).msg)
 }
 

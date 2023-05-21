@@ -16,6 +16,8 @@ public class WoiQueryInstanceRes {
 
   private String workName;
 
+  private String workType;
+
   private String workflowName;
 
   private String instanceType;

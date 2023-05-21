@@ -1,10 +1,9 @@
 package com.isxcode.star.api.constants.work;
 
-import java.time.LocalDateTime;
 
 public interface WorkLog {
 
-  String SUCCESS_INFO = LocalDateTime.now() + " INFO  : ";
+  String SUCCESS_INFO = " INFO  : ";
 
-  String ERROR_INFO = LocalDateTime.now() + " ERROR : ";
+  String ERROR_INFO = " ERROR : ";
 }
