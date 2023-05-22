@@ -175,15 +175,16 @@ function InstancePage() {
       width: 240,
       render: (_, record) => (
         <Space size="middle">
-          {record.instanceType === 'WORK' && (record.status === 'SUCCESS' || record.status === 'FAIL' || record.status === 'ABORT') && (
-            <a
-              className={'sy-table-a'}
-              onClick={() => {
-                restartInstance(record.id as string)
-              }}>
-              重跑
-            </a>
-          )}
+          {record.instanceType === 'WORK' &&
+            (record.status === 'SUCCESS' || record.status === 'FAIL' || record.status === 'ABORT') && (
+              <a
+                className={'sy-table-a'}
+                onClick={() => {
+                  restartInstance(record.id as string)
+                }}>
+                重跑
+              </a>
+            )}
           {record.status === 'RUNNING' && record.workType === 'SPARK_SQL' && (
             <a
               className={'sy-table-a'}
@@ -211,7 +212,7 @@ function InstancePage() {
             </a>
           )}
 
-          {record.status === 'SUCCESS' && (
+          {(record.status === 'SUCCESS' && (record.workType === 'SPARK_SQL' || record.workType === 'QUERY_JDBC')) && (
             <a
               className={'sy-table-a'}
               onClick={() => {

@@ -105,7 +105,7 @@ function WorkPage() {
   const runWork = () => {
     runWorkApi(workId as string).then((r) => {
       setInstanceId(r.instanceId as string)
-      setResult({ ...result, yarnLog: "", data: [[]] })
+      setResult({ ...result, yarnLog: '', data: [[]] })
       startPolling()
     })
   }
