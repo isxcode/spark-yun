@@ -25,7 +25,9 @@ public interface TenantMapper {
    */
   @Mapping(target = "checkDateTime", expression = "java(java.time.LocalDateTime.now())")
   @Mapping(target = "status", constant = UserStatus.ENABLE)
+  @Mapping(target = "maxMemberNum", constant = "1L")
   @Mapping(target = "usedMemberNum", constant = "1L")
+  @Mapping(target = "maxWorkflowNum", constant = "0L")
   @Mapping(target = "usedWorkflowNum", constant = "0L")
   TenantEntity tetAddTenantReqToTenantEntity(TetAddTenantReq tetAddTenantReq);
 
@@ -34,7 +36,6 @@ public interface TenantMapper {
    */
   TetQueryUserTenantRes tenantEntityToTetQueryUserTenantRes(TenantEntity tenantEntity);
   List<TetQueryUserTenantRes> tenantEntityToTetQueryUserTenantResList(List<TenantEntity> tenantEntities);
-
 
   @Mapping(target = "remark", source = "tetUpdateTenantBySystemAdminReq.remark")
   @Mapping(target = "maxWorkflowNum", source = "tetUpdateTenantBySystemAdminReq.maxWorkflowNum")

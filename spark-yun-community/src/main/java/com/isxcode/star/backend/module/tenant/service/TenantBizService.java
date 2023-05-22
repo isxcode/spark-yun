@@ -68,8 +68,16 @@ public class TenantBizService {
     }
     UserEntity userEntity = userEntityOptional.get();
 
+    TenantEntity tenant = tenantMapper.tetAddTenantReqToTenantEntity(tetAddTenantReq);
+    if (tetAddTenantReq.getMaxMemberNum() != null) {
+      tenant.setMaxMemberNum(tenant.getMaxMemberNum());
+    }
+    if (tetAddTenantReq.getMaxWorkflowNum() != null) {
+      tenant.setMaxWorkflowNum(tenant.getMaxWorkflowNum());
+    }
+
     // 持久化租户
-    TenantEntity tenantEntity = tenantRepository.save(tenantMapper.tetAddTenantReqToTenantEntity(tetAddTenantReq));
+    TenantEntity tenantEntity = tenantRepository.save(tenant);
 
     // 初始化租户管理员
     TenantUserEntity tenantUserEntity = TenantUserEntity.builder()

@@ -54,6 +54,17 @@ if ! command -v tar &>/dev/null; then
   exit 0
 fi
 
+# 判断mpstat命令
+if ! command -v tar &>/dev/null; then
+  json_output="{ \
+        \"status\": \"INSTALL_ERROR\", \
+        \"log\": \"未检测到mpstat命令\" \
+      }"
+  echo $json_output
+  rm /tmp/sy-env.sh
+  exit 0
+fi
+
 # 判断是否有java命令
 if ! command -v java &>/dev/null; then
   json_output="{ \
@@ -102,7 +113,7 @@ else
 fi
 
 # 判断yarn是否正常运行
-if ! timeout 3s yarn node -list &>/dev/null; then
+if ! timeout 10s yarn node -list &>/dev/null; then
   json_output="{ \
         \"status\": \"INSTALL_ERROR\", \
         \"log\": \"未启动yarn服务\" \

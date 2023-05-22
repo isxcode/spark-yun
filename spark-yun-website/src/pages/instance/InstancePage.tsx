@@ -211,8 +211,7 @@ function InstancePage() {
               Yarn日志
             </a>
           )}
-
-          {(record.status === 'SUCCESS' && (record.workType === 'SPARK_SQL' || record.workType === 'QUERY_JDBC')) && (
+          {record.status === 'SUCCESS' && (record.workType === 'SPARK_SQL' || record.workType === 'QUERY_JDBC') && (
             <a
               className={'sy-table-a'}
               onClick={() => {
