@@ -68,12 +68,11 @@ export const getWorkStatusApi = async (instanceId: string): Promise<RunWorkRes> 
   return response.data
 }
 
-export const stopWorkApi = async (workId: string, applicationId: string | undefined): Promise<RunWorkRes> => {
+export const stopWorkApi = async (instanceId: string): Promise<void> => {
   const response = await axiosInstance.get<RunWorkRes>(
-    '/wok/stopJob?workId=' + workId + '&applicationId=' + applicationId, headerConfig
+    '/wok/stopJob?instanceId=' + instanceId, headerConfig
   )
   message.success(JSON.parse(JSON.stringify(response)).msg)
-  return response.data
 }
 
 export const configWorkApi = async (data: ConfigWorkReq): Promise<void> => {
@@ -115,6 +114,11 @@ export const deleteWorkInstanceApi = async (instanceId: string): Promise<void> =
 
 export const restartWorkInstanceApi = async (instanceId: string): Promise<void> => {
   const response = await axiosInstance.get<RunWorkRes>('/vip/woi/restartInstance?instanceId=' + instanceId, headerConfig)
+  message.success(JSON.parse(JSON.stringify(response)).msg)
+}
+
+export const stopWorkInstanceApi = async (instanceId: string): Promise<void> => {
+  const response = await axiosInstance.get<RunWorkRes>('/vip/woi/stopInstance?instanceId=' + instanceId, headerConfig)
   message.success(JSON.parse(JSON.stringify(response)).msg)
 }
 

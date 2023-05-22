@@ -90,7 +90,7 @@ public class WorkController {
 
   @UserLog
   @Operation(summary = "中止作业接口")
-  @PostMapping("/stopJob")
+  @GetMapping("/stopJob")
   @SuccessResponse("中止成功")
   @Parameter(name = SecurityConstants.HEADER_TENANT_ID, description = "租户id", required = true, in = ParameterIn.HEADER, schema = @Schema(type = "string"))
   public void stopJob(@Schema(description = "实例唯一id", example = "sy_12baf74d710c43a78858e547bf41a586") @RequestParam String instanceId) {

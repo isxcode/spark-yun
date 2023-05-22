@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.isxcode.star.api.constants.CodeConstants;
 import com.isxcode.star.api.constants.EngineNodeStatus;
 import com.isxcode.star.api.constants.PathConstants;
+import com.isxcode.star.api.constants.WorkStatus;
 import com.isxcode.star.api.constants.work.WorkLog;
 import com.isxcode.star.api.constants.work.instance.InstanceStatus;
 import com.isxcode.star.api.exception.SparkYunException;
@@ -88,8 +89,9 @@ public class RunSparkSqlService {
       executeSparkSql(clusterId, sqlScript, instance, logBuilder);
 
       // 记录执行结束时间
-      instance.setExecEndDateTime(new Date());
-      workInstanceRepository.saveAndFlush(instance);
+      WorkInstanceEntity workInstanceEntity = workInstanceRepository.findById(instance.getId()).get();
+      workInstanceEntity.setExecEndDateTime(new Date());
+      workInstanceRepository.saveAndFlush(workInstanceEntity);
     } catch (WorkRunException e) {
       log.error(e.getMsg());
 
@@ -169,6 +171,11 @@ public class RunSparkSqlService {
     // 提交作业成功后开始循环判断状态
     while (true) {
 
+      WorkInstanceEntity workInstanceEntity = workInstanceRepository.findById(instance.getId()).get();
+      if (InstanceStatus.ABORT.equals(workInstanceEntity.getStatus())) {
+        break;
+      }
+
       // 获取作业状态并保存
       String getStatusUrl = "http://" + engineNode.getHost() + ":" + engineNode.getAgentPort() + "/yag/getStatus?applicationId=" + submitWorkRes.getApplicationId();
       baseResponse = HttpUtils.doGet(getStatusUrl, BaseResponse.class);
@@ -190,17 +197,20 @@ public class RunSparkSqlService {
         } catch (InterruptedException e) {
           throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "睡眠线程异常 : " + e.getMessage() + "\n");
         }
-        // 保存日志，生成日志时间比较久
-        String getLogUrl = "http://" + engineNode.getHost() + ":" + engineNode.getAgentPort() + "/yag/getLog?applicationId=" + submitWorkRes.getApplicationId();
-        baseResponse = HttpUtils.doGet(getLogUrl, BaseResponse.class);
-        if (!CodeConstants.SUCCESS_CODE.equals(baseResponse.getCode())) {
-          throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "获取作业日志异常 : " + baseResponse.getMsg() + "\n");
+
+        if (!"KILLED".equals(workStatusRes.getYarnApplicationState())) {
+          // 保存日志，生成日志时间比较久
+          String getLogUrl = "http://" + engineNode.getHost() + ":" + engineNode.getAgentPort() + "/yag/getLog?applicationId=" + submitWorkRes.getApplicationId();
+          baseResponse = HttpUtils.doGet(getLogUrl, BaseResponse.class);
+          if (!CodeConstants.SUCCESS_CODE.equals(baseResponse.getCode())) {
+            throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "获取作业日志异常 : " + baseResponse.getMsg() + "\n");
+          }
+          YagGetLogRes yagGetLogRes = JSON.parseObject(JSON.toJSONString(baseResponse.getData()), YagGetLogRes.class);
+          logBuilder.append(LocalDateTime.now() + WorkLog.SUCCESS_INFO + "保存日志完成 \n");
+          instance.setSubmitLog(logBuilder.toString());
+          instance.setYarnLog(yagGetLogRes.getLog());
+          workInstanceRepository.saveAndFlush(instance);
         }
-        YagGetLogRes yagGetLogRes = JSON.parseObject(JSON.toJSONString(baseResponse.getData()), YagGetLogRes.class);
-        logBuilder.append(LocalDateTime.now() + WorkLog.SUCCESS_INFO + "保存日志完成 \n");
-        instance.setSubmitLog(logBuilder.toString());
-        instance.setYarnLog(yagGetLogRes.getLog());
-        workInstanceRepository.saveAndFlush(instance);
 
         // 运行成功，保存数据
         if ("SUCCEEDED".equals(workStatusRes.getFinalApplicationStatus())) {

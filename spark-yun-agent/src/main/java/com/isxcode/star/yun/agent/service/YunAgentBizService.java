@@ -128,9 +128,10 @@ public class YunAgentBizService {
     }
 
     return new YagGetStatusRes(
-        String.valueOf(applicationReport.getYarnApplicationState()),
-        String.valueOf(applicationReport.getFinalApplicationStatus()),
-        String.valueOf(applicationReport.getTrackingUrl()));
+      String.valueOf(applicationReport.getYarnApplicationState()),
+      String.valueOf(applicationReport.getFinalApplicationStatus()),
+      String.valueOf(applicationReport.getTrackingUrl()),
+      applicationId);
   }
 
   public YagGetLogRes getLog(String applicationId) {
@@ -145,7 +146,7 @@ public class YunAgentBizService {
       throw new SparkYunException("50010", "查询失败，日志暂未生成");
     }
 
-    return new YagGetLogRes(stdErrLog);
+    return new YagGetLogRes(stdErrLog, applicationId);
   }
 
   public YagGetDataRes getData(String applicationId) {
@@ -158,7 +159,7 @@ public class YunAgentBizService {
       throw new SparkYunException("50010", "查询失败，数据暂未生成");
     }
 
-    return new YagGetDataRes(JSON.parseArray(stdoutLog, List.class));
+    return new YagGetDataRes(JSON.parseArray(stdoutLog, List.class), applicationId);
   }
 
   public void stopJob(String applicationId) {

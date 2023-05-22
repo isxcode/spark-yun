@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Button, Col, Form, Row, Table, Tabs, type TabsProps } from 'antd'
+import { Button, Col, Form, Row, Table, Tabs, type TabsProps, Tag } from 'antd'
 import { useNavigate, useParams } from 'react-router-dom'
 import TextArea from 'antd/es/input/TextArea'
 import './WorkPage.less'
@@ -87,8 +87,8 @@ function WorkPage() {
     })
   }
 
-  const getStopWork = () => {
-    stopWorkApi(workId as string, result?.applicationId).then(function (response) {})
+  const getStopWork = (instanceId: string) => {
+    stopWorkApi(instanceId).then(function (response) {})
   }
 
   const configWorkReq: ConfigWorkReq = {
@@ -105,6 +105,7 @@ function WorkPage() {
   const runWork = () => {
     runWorkApi(workId as string).then((r) => {
       setInstanceId(r.instanceId as string)
+      setResult({ ...result, yarnLog: "", data: [[]] })
       startPolling()
     })
   }
@@ -217,9 +218,17 @@ function WorkPage() {
                 }}>
                 运行
               </Button>
-              <Button className={'sy-btn'} type={'text'} icon={<CloseOutlined />}>
-                中止
-              </Button>
+              {work?.workType === 'SPARK_SQL' && (
+                <Button
+                  className={'sy-btn'}
+                  type={'text'}
+                  onClick={() => {
+                    getStopWork(instanceId)
+                  }}
+                  icon={<CloseOutlined />}>
+                  中止
+                </Button>
+              )}
               <Button
                 onClick={() => {
                   configWork()

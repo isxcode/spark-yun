@@ -14,4 +14,6 @@ import lombok.NoArgsConstructor;
 public class YagGetDataRes {
 
   private List<List> data;
+
+  private String applicationId;
 }

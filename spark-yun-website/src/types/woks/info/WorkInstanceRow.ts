@@ -8,5 +8,5 @@ export interface WorkInstanceRow {
   execEndDateTime?: string
   nextPlanDateTime?: string
   planStartDateTime?: string
-  workType?:string
+  workType?: string
 }

@@ -1,19 +1,22 @@
-import React, {useEffect, useState} from 'react'
-import {Button, Col, Input, Modal, Row, Select, Space, Table, Tag} from 'antd'
-import {type ColumnsType} from 'antd/es/table'
+import React, { useEffect, useState } from 'react'
+import { Button, Col, Input, Modal, Row, Select, Space, Table, Tag } from 'antd'
+import { type ColumnsType } from 'antd/es/table'
 import './InstancePage.less'
-import {type BasePagination, defaultPagination} from '../../types/base/BasePagination'
-import {type QueryDatasourceReq} from '../../types/datasource/req/QueryDatasourceReq'
-import {WorkInstanceRow} from '../../types/woks/info/WorkInstanceRow'
+import { type BasePagination, defaultPagination } from '../../types/base/BasePagination'
+import { type QueryDatasourceReq } from '../../types/datasource/req/QueryDatasourceReq'
+import { WorkInstanceRow } from '../../types/woks/info/WorkInstanceRow'
 import {
   deleteWorkInstanceApi,
   getSubmitLogApi,
-  getWorkDataApi, getWorkLogApi,
-  queryWorkInstanceApi, restartWorkInstanceApi
+  getWorkDataApi,
+  getWorkLogApi,
+  queryWorkInstanceApi,
+  restartWorkInstanceApi,
+  stopWorkInstanceApi
 } from '../../services/works/WorksService'
-import {RunWorkRes} from "../../types/woks/res/RunWorkRes";
+import { RunWorkRes } from '../../types/woks/res/RunWorkRes'
 
-const {Option} = Select
+const { Option } = Select
 
 function InstancePage() {
   const [instances, setInstances] = useState<WorkInstanceRow[]>([])
@@ -37,10 +40,10 @@ function InstancePage() {
 
   const getData = (instanceId: string) => {
     getWorkDataApi(instanceId).then(function (response) {
-      setResult({...result, data: response.data})
-      setDataModalVisible(true);
+      setResult({ ...result, data: response.data })
+      setDataModalVisible(true)
     })
-  };
+  }
 
   const deleteInstance = (instanceId: string) => {
     deleteWorkInstanceApi(instanceId).then(function () {
@@ -50,6 +53,12 @@ function InstancePage() {
 
   const restartInstance = (instanceId: string) => {
     restartWorkInstanceApi(instanceId).then(function () {
+      fetchInstances()
+    })
+  }
+
+  const stopInstance = (instanceId: string) => {
+    stopWorkInstanceApi(instanceId).then(function () {
       fetchInstances()
     })
   }
@@ -78,6 +87,7 @@ function InstancePage() {
   const getYarnLog = (instanceId: string) => {
     getWorkLogApi(instanceId).then(function (res) {
       setConnectLog(res.yarnLog as string)
+      setIsYarnLogModalVisible(true)
     })
   }
 
@@ -132,6 +142,7 @@ function InstancePage() {
         <Space size="middle">
           {record.status === 'SUCCESS' && <Tag color="green">成功</Tag>}
           {record.status === 'FAIL' && <Tag color="red">失败</Tag>}
+          {record.status === 'ABORT' && <Tag color="orange">已中止</Tag>}
           {record.status === 'RUNNING' && <Tag color="blue">运行中</Tag>}
           {record.status == null && <Tag color="red">未运行</Tag>}
         </Space>
@@ -141,19 +152,22 @@ function InstancePage() {
       title: '执行时间',
       key: 'execStartDateTime',
       dataIndex: 'execStartDateTime',
-      width: 180
+      ellipsis: true,
+      width: 160
     },
     {
       title: '结束时间',
       key: 'execEndDateTime',
       dataIndex: 'execEndDateTime',
-      width: 180
+      ellipsis: true,
+      width: 160
     },
     {
       title: '下次计划时间',
       key: 'nextPlanDateTime',
       dataIndex: 'nextPlanDateTime',
-      width: 180
+      ellipsis: true,
+      width: 160
     },
     {
       title: '操作',
@@ -161,35 +175,51 @@ function InstancePage() {
       width: 240,
       render: (_, record) => (
         <Space size="middle">
-          {(record.instanceType === 'WORK' && (record.status === 'SUCCESS' || record.status === 'FAIL')) &&
-            <a className={'sy-table-a'} onClick={() => {
-              restartInstance(record.id as string);
-            }}>
+          {record.instanceType === 'WORK' && (record.status === 'SUCCESS' || record.status === 'FAIL' || record.status === 'ABORT') && (
+            <a
+              className={'sy-table-a'}
+              onClick={() => {
+                restartInstance(record.id as string)
+              }}>
               重跑
-            </a>}
-          {(record.status === 'RUNNING' && record.workType === 'SPARK_SQL') &&
-            <a className={'sy-table-a'} onClick={() => {
-
-            }}>
+            </a>
+          )}
+          {record.status === 'RUNNING' && record.workType === 'SPARK_SQL' && (
+            <a
+              className={'sy-table-a'}
+              onClick={() => {
+                stopInstance(record.id as string)
+              }}>
               中止
-            </a>}
-          <a className={'sy-table-a'} onClick={() => {
-            getConnectLog(record.id as string)
-            setIsLogModalVisible(true)
-          }}>
+            </a>
+          )}
+          <a
+            className={'sy-table-a'}
+            onClick={() => {
+              getConnectLog(record.id as string)
+              setIsLogModalVisible(true)
+            }}>
             日志
           </a>
-          {record.workType === 'SPARK_SQL' && <a className={'sy-table-a'} onClick={() => {
-            getYarnLog(record.id as string);
-            setIsYarnLogModalVisible(true)
-          }}>
-            Yarn日志
-          </a>}
-          <a className={'sy-table-a'} onClick={() => {
-            getData(record.id as string);
-          }}>
-            数据
-          </a>
+          {record.workType === 'SPARK_SQL' && (
+            <a
+              className={'sy-table-a'}
+              onClick={() => {
+                getYarnLog(record.id as string)
+              }}>
+              Yarn日志
+            </a>
+          )}
+
+          {record.status === 'SUCCESS' && (
+            <a
+              className={'sy-table-a'}
+              onClick={() => {
+                getData(record.id as string)
+              }}>
+              数据
+            </a>
+          )}
           <a
             className={'sy-table-a'}
             onClick={() => {
@@ -205,34 +235,34 @@ function InstancePage() {
   const getColumns = () => {
     return result?.data != null && result?.data.length > 0
       ? result.data[0].map((columnTitle) => ({
-        title: columnTitle,
-        dataIndex: columnTitle
-      }))
+          title: columnTitle,
+          dataIndex: columnTitle
+        }))
       : []
   }
 
   const data = () => {
     return result?.data != null && result?.data.length > 0
       ? result.data.slice(1).map((row) => {
-        const rowData = {}
-        result.data[0].forEach((columnTitle, columnIndex) => {
-          rowData[columnTitle] = row[columnIndex]
+          const rowData = {}
+          result.data[0].forEach((columnTitle, columnIndex) => {
+            rowData[columnTitle] = row[columnIndex]
+          })
+          return rowData
         })
-        return rowData
-      })
       : []
   }
 
   return (
-    <div style={{padding: 24}}>
+    <div style={{ padding: 24 }}>
       <Row className={'datasource-bar'}>
-        <Col span={7} offset={17} style={{textAlign: 'right', display: 'flex'}}>
+        <Col span={7} offset={17} style={{ textAlign: 'right', display: 'flex' }}>
           <Input
-            style={{marginRight: '10px'}}
+            style={{ marginRight: '10px' }}
             onPressEnter={handleSearch}
             defaultValue={queryDatasourceReq.searchKeyWord}
             onChange={(e) => {
-              setPagination({...pagination, searchKeyWord: e.target.value})
+              setPagination({ ...pagination, searchKeyWord: e.target.value })
             }}
             placeholder={'实例编码/作业/作业流'}
           />
@@ -242,9 +272,9 @@ function InstancePage() {
           <Button
             type={'primary'}
             onClick={() => {
-              fetchInstances();
+              fetchInstances()
             }}
-            style={{marginLeft: '8px'}}>
+            style={{ marginLeft: '8px' }}>
             刷新
           </Button>
         </Col>
@@ -256,7 +286,7 @@ function InstancePage() {
           pageSize: pagination.pageSize,
           total: pagination.totalItems,
           onChange: (currentPage: number) => {
-            setPagination({...pagination, currentPage})
+            setPagination({ ...pagination, currentPage })
           }
         }}
         columns={columns}
@@ -271,7 +301,7 @@ function InstancePage() {
           setIsLogModalVisible(false)
         }}
         footer={<></>}>
-        <pre style={{overflowY: 'scroll', maxHeight: '200px', whiteSpace: 'pre-wrap'}}>{connectLog}</pre>
+        <pre style={{ overflowY: 'scroll', maxHeight: '200px', whiteSpace: 'pre-wrap' }}>{connectLog}</pre>
       </Modal>
 
       <Modal
@@ -282,7 +312,7 @@ function InstancePage() {
           setDataModalVisible(false)
         }}
         footer={<></>}>
-        <Table columns={getColumns()} dataSource={data()} scroll={{y: 200}}/>
+        <Table columns={getColumns()} dataSource={data()} scroll={{ y: 200 }} />
       </Modal>
 
       <Modal
@@ -293,11 +323,10 @@ function InstancePage() {
           setIsYarnLogModalVisible(false)
         }}
         footer={<></>}>
-        <pre style={{overflowY: 'scroll', maxHeight: '200px', whiteSpace: 'pre-wrap'}}>{connectLog}</pre>
+        <pre style={{ overflowY: 'scroll', maxHeight: '200px', whiteSpace: 'pre-wrap' }}>{connectLog}</pre>
       </Modal>
-
     </div>
-  );
+  )
 }
 
 export default InstancePage

@@ -55,9 +55,9 @@ public class YunAgentController {
   @Operation(summary = "获取作业运行返回数据接口", description = "获取query数据")
   @GetMapping("/getData")
   @SuccessResponse("获取成功")
-  public YagGetDataRes getData(@RequestParam String instanceId) {
+  public YagGetDataRes getData(@RequestParam String applicationId) {
 
-    return yunAgentBizService.getData(instanceId);
+    return yunAgentBizService.getData(applicationId);
   }
 
   @Operation(summary = "中止作业接口", description = "中止作业")

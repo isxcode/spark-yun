@@ -197,6 +197,7 @@ public class ClusterNodeBizService {
 
     // 修改状态
     engineNode.setStatus(EngineNodeStatus.CHECKING);
+    engineNode.setAgentLog("检测中");
 
     // 持久化
     engineNodeRepository.saveAndFlush(engineNode);
@@ -226,6 +227,7 @@ public class ClusterNodeBizService {
 
     // 修改状态
     engineNode.setStatus(EngineNodeStatus.INSTALLING);
+    engineNode.setAgentLog("激活中");
 
     // 持久化
     engineNodeRepository.saveAndFlush(engineNode);
@@ -252,6 +254,7 @@ public class ClusterNodeBizService {
 
     // 修改状态
     engineNode.setStatus(EngineNodeStatus.REMOVING);
+    engineNode.setAgentLog("卸载中");
 
     // 持久化
     engineNodeRepository.saveAndFlush(engineNode);
@@ -281,6 +284,7 @@ public class ClusterNodeBizService {
 
     // 修改状态
     engineNode.setStatus(EngineNodeStatus.STOPPING);
+    engineNode.setAgentLog("停止中");
 
     // 持久化
     engineNodeRepository.saveAndFlush(engineNode);
@@ -310,6 +314,7 @@ public class ClusterNodeBizService {
 
     // 修改状态
     engineNode.setStatus(EngineNodeStatus.STARTING);
+    engineNode.setAgentLog("启动中");
 
     // 持久化
     engineNodeRepository.saveAndFlush(engineNode);

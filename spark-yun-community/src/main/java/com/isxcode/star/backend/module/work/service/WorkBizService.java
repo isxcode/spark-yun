@@ -5,9 +5,11 @@ import com.isxcode.star.api.constants.CodeConstants;
 import com.isxcode.star.api.constants.EngineNodeStatus;
 import com.isxcode.star.api.constants.WorkStatus;
 import com.isxcode.star.api.constants.WorkType;
+import com.isxcode.star.api.constants.work.WorkLog;
 import com.isxcode.star.api.constants.work.instance.InstanceStatus;
 import com.isxcode.star.api.constants.work.instance.InstanceType;
 import com.isxcode.star.api.exception.SparkYunException;
+import com.isxcode.star.api.exception.WorkRunException;
 import com.isxcode.star.api.pojos.work.req.WokAddWorkReq;
 import com.isxcode.star.api.pojos.work.req.WokQueryWorkReq;
 import com.isxcode.star.api.pojos.work.req.WokUpdateWorkReq;
@@ -39,8 +41,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 
 import static com.isxcode.star.backend.config.WebSecurityConfig.TENANT_ID;
 import static com.isxcode.star.backend.config.WebSecurityConfig.USER_ID;
@@ -194,15 +199,64 @@ public class WorkBizService {
     return JSON.parseObject(workInstanceEntity.getSparkStarRes(), WokGetStatusRes.class);
   }
 
+  /**
+   * 中止作业.
+   */
   public void stopJob(String instanceId) {
 
-    ClusterNodeEntity engineNode = getEngineNodeByWorkId(wokStopJobReq.getWorkId());
+    // 通过实例 获取workId
+    Optional<WorkInstanceEntity> workInstanceEntityOptional = workInstanceRepository.findById(instanceId);
+    if (!workInstanceEntityOptional.isPresent()) {
+      throw new SparkYunException("实例不存在");
+    }
+    WorkInstanceEntity workInstanceEntity = workInstanceEntityOptional.get();
 
-    String stopJobUrl = "http://" + engineNode.getHost() + ":" + engineNode.getAgentPort() + "/yag/stopJob?applicationId=" + wokStopJobReq.getApplicationId();
-    BaseResponse<?> baseResponse = HttpUtils.doGet(stopJobUrl, BaseResponse.class);
+    if (InstanceStatus.SUCCESS.equals(workInstanceEntity.getStatus())) {
+      throw new SparkYunException("已经成功，无法中止");
+    }
 
-    if (!CodeConstants.SUCCESS_CODE.equals(baseResponse.getCode())) {
-      throw new SparkYunException(baseResponse.getCode(), baseResponse.getMsg(), baseResponse.getErr());
+    if (InstanceStatus.ABORT.equals(workInstanceEntity.getStatus())) {
+      throw new SparkYunException("已中止");
+    }
+
+    // 获取中作业id
+    if (InstanceType.MANUAL.equals(workInstanceEntity.getInstanceType())) {
+      WorkEntity workEntity = workRepository.findById(workInstanceEntity.getWorkId()).get();
+
+      // 作业类型不对返回
+      if (!WorkType.QUERY_SPARK_SQL.equals(workEntity.getWorkType())) {
+        throw new SparkYunException("只有sparkSql作业才支持中止");
+      }
+
+      WorkConfigEntity workConfigEntity = workConfigRepository.findById(workEntity.getConfigId()).get();
+      List<ClusterNodeEntity> allEngineNodes = engineNodeRepository.findAllByClusterIdAndStatus(workConfigEntity.getClusterId(), EngineNodeStatus.RUNNING);
+      if (allEngineNodes.isEmpty()) {
+        throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "申请资源失败 : 集群不存在可用节点，请切换一个集群  \n");
+      }
+
+      // 节点选择随机数
+      ClusterNodeEntity engineNode = allEngineNodes.get(new Random().nextInt(allEngineNodes.size()));
+
+      if (Strings.isEmpty(workInstanceEntity.getSparkStarRes())) {
+        throw new SparkYunException("还未提交，请稍后再试");
+      }
+
+      // 解析实例的状态信息
+      WokRunWorkRes wokRunWorkRes = JSON.parseObject(workInstanceEntity.getSparkStarRes(), WokRunWorkRes.class);
+
+      String stopJobUrl = "http://" + engineNode.getHost() + ":" + engineNode.getAgentPort() + "/yag/stopJob?applicationId=" + wokRunWorkRes.getApplicationId();
+      BaseResponse<?> baseResponse = HttpUtils.doGet(stopJobUrl, BaseResponse.class);
+
+      if (!CodeConstants.SUCCESS_CODE.equals(baseResponse.getCode())) {
+        throw new SparkYunException(baseResponse.getCode(), baseResponse.getMsg(), baseResponse.getErr());
+      }
+
+      // 修改实例状态
+      workInstanceEntity.setStatus(InstanceStatus.ABORT);
+      String submitLog = workInstanceEntity.getSubmitLog() + LocalDateTime.now() + WorkLog.SUCCESS_INFO + "已中止  \n";
+      workInstanceEntity.setSubmitLog(submitLog);
+      workInstanceEntity.setExecEndDateTime(new Date());
+      workInstanceRepository.saveAndFlush(workInstanceEntity);
     }
   }
 

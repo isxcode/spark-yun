@@ -35,7 +35,7 @@ create table if not exists SY_WORK_INSTANCE
   next_plan_date_time     datetime comment '下一次开始时间',
   exec_start_date_time    datetime comment '执行开始时间',
   exec_end_date_time      datetime comment '执行结束时间',
-  submit_log              varchar(2000) comment '提交日志',
+  submit_log              text comment '提交日志',
   yarn_log                text comment 'yarn日志',
   spark_star_res          varchar(2000) comment 'spark-star插件返回',
   result_data             text comment '结果数据',
