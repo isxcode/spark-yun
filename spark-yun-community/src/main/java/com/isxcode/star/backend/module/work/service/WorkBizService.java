@@ -192,7 +192,7 @@ public class WorkBizService {
     }
     WorkInstanceEntity workInstanceEntity = workInstanceEntityOptional.get();
 
-    if (Strings.isEmpty(workInstanceEntity.getResultData())) {
+    if (Strings.isEmpty(workInstanceEntity.getSparkStarRes())) {
       throw new SparkYunException("请等待作业提交完毕");
     }
 
@@ -284,7 +284,7 @@ public class WorkBizService {
     }
 
     WorkInstanceEntity workInstanceEntity = workInstanceEntityOptional.get();
-    if (Strings.isEmpty(workInstanceEntity.getResultData())) {
+    if (Strings.isEmpty(workInstanceEntity.getYarnLog())) {
       throw new SparkYunException("请等待作业运行完毕或者对应作业没有Yarn日志");
     }
     return WokGetWorkLogRes.builder().yarnLog(workInstanceEntity.getYarnLog()).build();

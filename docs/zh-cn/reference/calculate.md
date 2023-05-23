@@ -1,5 +1,6 @@
 ?> 计算集群： 负责支持SparkSql作业运行的环境。
 
+
 > 点击添加集群按钮，创建计算集群。
 
 <img src="https://img.isxcode.com/picgo/20230415165827.png" width="900">
@@ -14,6 +15,8 @@
 
 <img src="https://img.isxcode.com/picgo/20230415165913.png" width="700">
 
+> 服务器需要支持 mpstat
+> 需提前安装命令 yum install sysstat
 > 节点列表中会显示节点信息，需要手动点击记检测按钮，对节点信息进行手动检测。
 > 用户需要先点击检测按钮，然后点击安装按钮，即可对该节点做监听。当状态为可用时，即可用于spark作业的运行。
 
