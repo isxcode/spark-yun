@@ -4,23 +4,17 @@ import { Outlet, useNavigate } from 'react-router-dom'
 import './Layouts.less'
 import {
   ApartmentOutlined,
-  ApiOutlined,
   CloudOutlined,
   CopyrightOutlined,
-  DashboardOutlined,
   DatabaseOutlined,
   DownOutlined,
-  HomeOutlined,
   NodeIndexOutlined,
   ProfileOutlined,
-  SearchOutlined,
-  SettingOutlined,
   TeamOutlined,
-  ToolOutlined,
   UserOutlined
 } from '@ant-design/icons'
 import { QueryTenantsReq } from '../types/tenant/req/QueryTenantsReq'
-import { chooseTenantApi, getTenantApi, queryTenantsApi, queryUserTenantsApi } from '../services/tenant/TenantService'
+import { chooseTenantApi, getTenantApi, queryUserTenantsApi } from '../services/tenant/TenantService'
 import { TenantRow } from '../types/tenant/info/TenantRow'
 
 function Layouts() {
@@ -263,15 +257,9 @@ function Layouts() {
   }
 
   const fetchTenant = () => {
-    if (localStorage.getItem('Role') == 'ROLE_SYS_ADMIN') {
-      queryTenantsApi(queryTenantsReq).then(function (response) {
-        setTenants(response.content)
-      })
-    } else {
-      queryUserTenantsApi().then(function (response) {
-        setTenants(response)
-      })
-    }
+    queryUserTenantsApi().then(function (response) {
+      setTenants(response)
+    })
   }
 
   return (

@@ -96,15 +96,21 @@ public class TenantBizService {
 
   public List<TetQueryUserTenantRes> queryUserTenant() {
 
-    // 判断用户是否有租户
-    List<TenantUserEntity> tenantUserEntities = tenantUserRepository.findAllByUserId(USER_ID.get());
-    if (tenantUserEntities.isEmpty()) {
-      throw new SparkYunException("请管理员添加进入租户");
+    List<String> tenantIds;
+    if ("admin_id".equals(USER_ID.get())) {
+      List<TenantEntity> allTenantList = tenantRepository.findAll();
+      tenantIds = allTenantList.stream().map(TenantEntity::getId).collect(Collectors.toList());
+    } else {
+      List<TenantUserEntity> tenantUserEntities =
+          tenantUserRepository.findAllByUserId(USER_ID.get());
+      tenantIds =
+          tenantUserEntities.stream()
+              .map(TenantUserEntity::getTenantId)
+              .collect(Collectors.toList());
+      if (tenantUserEntities.isEmpty()) {
+        throw new SparkYunException("请管理员添加进入租户");
+      }
     }
-
-    // 获取租户id的list
-    List<String> tenantIds =
-        tenantUserEntities.stream().map(TenantUserEntity::getTenantId).collect(Collectors.toList());
 
     // 查询用户最近一次租户
     UserEntity userEntity = userRepository.findById(USER_ID.get()).get();

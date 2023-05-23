@@ -180,7 +180,7 @@ create table if not exists SY_WORK_CONFIG
   id                      varchar(200)  not null unique primary key comment '作业配置唯一id',
   datasource_id           varchar(200) comment '数据源id',
   cluster_id              varchar(200) comment '集群id',
-  sql_script              varchar(2000) comment 'sql脚本',
+  sql_script              text comment 'sql脚本',
   create_by               varchar(200)  not null comment '创建人',
   create_date_time        datetime      not null comment '创建时间',
   last_modified_by        varchar(200)  not null comment '更新人',

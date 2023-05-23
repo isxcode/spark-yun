@@ -12,8 +12,8 @@ function Login() {
 
   const handleLogin = (value) => {
     setLoading(true)
-    const { passwd } = value
-    value.passwd = CryptoJS.MD5(passwd).toString()
+    // const { passwd } = value
+    // value.passwd = CryptoJS.MD5(passwd).toString()
     loginApi(value)
       .then(function (response) {
         localStorage.setItem('Authorization', response.username)

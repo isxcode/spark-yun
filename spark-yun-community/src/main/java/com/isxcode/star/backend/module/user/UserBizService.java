@@ -67,7 +67,7 @@ public class UserBizService {
     }
 
     // 判断密码是否合法
-    if (!usrLoginReq.getPasswd().equals(userEntity.getPasswd())) {
+    if (!Md5Utils.hashStr(usrLoginReq.getPasswd()).equals(userEntity.getPasswd())) {
       throw new SparkYunException("账号或者密码不正确");
     }
 
@@ -161,6 +161,7 @@ public class UserBizService {
 
     // UsrAddUserReq To UserEntity
     UserEntity userEntity = userMapper.usrAddUserReqToUserEntity(usrAddUserReq);
+    userEntity.setPasswd(Md5Utils.hashStr(userEntity.getPasswd()));
 
     // 数据持久化
     userRepository.save(userEntity);
