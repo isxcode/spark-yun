@@ -1,7 +1,7 @@
 package com.isxcode.star.backend.module.tenant.controller;
 
-import com.isxcode.star.api.constants.ModulePrefix;
-import com.isxcode.star.api.constants.Roles;
+import com.isxcode.star.api.constants.base.ModulePrefix;
+import com.isxcode.star.api.constants.user.RoleType;
 import com.isxcode.star.api.pojos.tenant.req.TetAddTenantReq;
 import com.isxcode.star.api.pojos.tenant.req.TetQueryTenantReq;
 import com.isxcode.star.api.pojos.tenant.req.TetUpdateTenantBySystemAdminReq;
@@ -9,7 +9,7 @@ import com.isxcode.star.api.pojos.tenant.req.TetUpdateTenantByTenantAdminReq;
 import com.isxcode.star.api.pojos.tenant.res.TetGetTenantRes;
 import com.isxcode.star.api.pojos.tenant.res.TetQueryTenantRes;
 import com.isxcode.star.api.pojos.tenant.res.TetQueryUserTenantRes;
-import com.isxcode.star.api.response.SuccessResponse;
+import com.isxcode.star.api.annotations.SuccessResponse;
 import com.isxcode.star.backend.module.tenant.service.TenantBizService;
 import com.isxcode.star.backend.module.user.action.annoation.UserLog;
 import io.swagger.v3.oas.annotations.Operation;
@@ -37,7 +37,7 @@ public class TenantController {
   private final TenantBizService tenantBizService;
 
   @UserLog
-  @Secured({Roles.SYS_ADMIN})
+  @Secured({RoleType.SYS_ADMIN})
   @Operation(summary = "创建租户接口")
   @PostMapping("/addTenant")
   @SuccessResponse("创建成功")
@@ -65,7 +65,7 @@ public class TenantController {
   }
 
   @UserLog
-  @Secured({Roles.SYS_ADMIN})
+  @Secured({RoleType.SYS_ADMIN})
   @Operation(summary = "系统管理员更新租户接口")
   @PostMapping("/updateTenantBySystemAdmin")
   @SuccessResponse("更新成功")
@@ -75,7 +75,7 @@ public class TenantController {
   }
 
   @UserLog
-  @Secured({Roles.TENANT_ADMIN})
+  @Secured({RoleType.TENANT_ADMIN})
   @Operation(summary = "租户管理员更新租户接口")
   @PostMapping("/updateTenantByTenantAdmin")
   @SuccessResponse("更新成功")
@@ -85,7 +85,7 @@ public class TenantController {
   }
 
   @UserLog
-  @Secured({Roles.SYS_ADMIN})
+  @Secured({RoleType.SYS_ADMIN})
   @Operation(summary = "启动租户接口")
   @GetMapping("/enableTenant")
   @SuccessResponse("启用成功")
@@ -95,7 +95,7 @@ public class TenantController {
   }
 
   @UserLog
-  @Secured({Roles.SYS_ADMIN})
+  @Secured({RoleType.SYS_ADMIN})
   @Operation(summary = "禁用租户接口")
   @GetMapping("/disableTenant")
   @SuccessResponse("禁用成功")
@@ -105,7 +105,7 @@ public class TenantController {
   }
 
   @UserLog
-  @Secured({Roles.SYS_ADMIN})
+  @Secured({RoleType.SYS_ADMIN})
   @Operation(summary = "检测租户信息接口")
   @GetMapping("/checkTenant")
   @SuccessResponse("检测完成")
@@ -115,7 +115,7 @@ public class TenantController {
   }
 
   @UserLog
-  @Secured({Roles.SYS_ADMIN})
+  @Secured({RoleType.SYS_ADMIN})
   @Operation(summary = "删除租户接口")
   @GetMapping("/deleteTenant")
   @SuccessResponse("删除成功")

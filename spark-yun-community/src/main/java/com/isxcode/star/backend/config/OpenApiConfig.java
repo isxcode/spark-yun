@@ -1,6 +1,6 @@
 package com.isxcode.star.backend.config;
 
-import com.isxcode.star.api.constants.SecurityConstants;
+import com.isxcode.star.api.constants.base.SecurityConstants;
 import io.swagger.v3.oas.annotations.ExternalDocumentation;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Info;

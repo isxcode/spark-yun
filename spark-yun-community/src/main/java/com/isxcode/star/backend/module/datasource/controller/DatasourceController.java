@@ -1,15 +1,15 @@
 package com.isxcode.star.backend.module.datasource.controller;
 
-import com.isxcode.star.api.constants.ModulePrefix;
-import com.isxcode.star.api.constants.Roles;
-import com.isxcode.star.api.constants.SecurityConstants;
+import com.isxcode.star.api.constants.base.ModulePrefix;
+import com.isxcode.star.api.constants.user.RoleType;
+import com.isxcode.star.api.constants.base.SecurityConstants;
 import com.isxcode.star.api.pojos.datasource.req.DasAddDatasourceReq;
 import com.isxcode.star.api.pojos.datasource.req.DasQueryDatasourceReq;
 import com.isxcode.star.api.pojos.datasource.req.DasUpdateDatasourceReq;
 import com.isxcode.star.api.pojos.datasource.res.DasGetConnectLogRes;
 import com.isxcode.star.api.pojos.datasource.res.DasQueryDatasourceRes;
 import com.isxcode.star.api.pojos.datasource.res.DasTestConnectRes;
-import com.isxcode.star.api.response.SuccessResponse;
+import com.isxcode.star.api.annotations.SuccessResponse;
 import com.isxcode.star.backend.module.datasource.service.DatasourceBizService;
 import com.isxcode.star.backend.module.user.action.annoation.UserLog;
 import io.swagger.v3.oas.annotations.Operation;
@@ -38,7 +38,7 @@ public class DatasourceController {
   private final DatasourceBizService datasourceBizService;
 
   @UserLog
-  @Secured({Roles.TENANT_MEMBER, Roles.TENANT_ADMIN})
+  @Secured({RoleType.TENANT_MEMBER, RoleType.TENANT_ADMIN})
   @Operation(summary = "添加数据源接口")
   @PostMapping("/addDatasource")
   @SuccessResponse("添加成功")
@@ -49,7 +49,7 @@ public class DatasourceController {
   }
 
   @UserLog
-  @Secured({Roles.TENANT_MEMBER, Roles.TENANT_ADMIN})
+  @Secured({RoleType.TENANT_MEMBER, RoleType.TENANT_ADMIN})
   @Operation(summary = "更新数据源接口")
   @PostMapping("/updateDatasource")
   @SuccessResponse("更新成功")
@@ -60,7 +60,7 @@ public class DatasourceController {
   }
 
   @UserLog
-  @Secured({Roles.TENANT_MEMBER, Roles.TENANT_ADMIN})
+  @Secured({RoleType.TENANT_MEMBER, RoleType.TENANT_ADMIN})
   @Operation(summary = "查询数据源列表接口")
   @PostMapping("/queryDatasource")
   @SuccessResponse("查询数据源成功")
@@ -71,7 +71,7 @@ public class DatasourceController {
   }
 
   @UserLog
-  @Secured({Roles.TENANT_MEMBER, Roles.TENANT_ADMIN})
+  @Secured({RoleType.TENANT_MEMBER, RoleType.TENANT_ADMIN})
   @Operation(summary = "删除数据源接口")
   @GetMapping("/delDatasource")
   @SuccessResponse("删除成功")
@@ -82,7 +82,7 @@ public class DatasourceController {
   }
 
   @UserLog
-  @Secured({Roles.TENANT_MEMBER, Roles.TENANT_ADMIN})
+  @Secured({RoleType.TENANT_MEMBER, RoleType.TENANT_ADMIN})
   @Operation(summary = "测试数据源连接接口")
   @GetMapping("/testConnect")
   @SuccessResponse("检测完成")
@@ -93,7 +93,7 @@ public class DatasourceController {
   }
 
   @UserLog
-  @Secured({Roles.TENANT_MEMBER, Roles.TENANT_ADMIN})
+  @Secured({RoleType.TENANT_MEMBER, RoleType.TENANT_ADMIN})
   @Operation(summary = "查询连接日志")
   @GetMapping("/getConnectLog")
   @SuccessResponse("获取成功")

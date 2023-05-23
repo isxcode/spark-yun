@@ -1,12 +1,12 @@
 package com.isxcode.star.backend.module.cluster.controller;
 
-import com.isxcode.star.api.constants.ModulePrefix;
-import com.isxcode.star.api.pojos.calculate.engine.req.CaeAddEngineReq;
-import com.isxcode.star.api.pojos.calculate.engine.req.CaeQueryEngineReq;
-import com.isxcode.star.api.pojos.calculate.engine.req.CaeUpdateEngineReq;
-import com.isxcode.star.api.pojos.calculate.engine.res.CaeQueryEngineRes;
+import com.isxcode.star.api.constants.base.ModulePrefix;
+import com.isxcode.star.api.pojos.cluster.req.CaeAddEngineReq;
+import com.isxcode.star.api.pojos.cluster.req.CaeQueryEngineReq;
+import com.isxcode.star.api.pojos.cluster.req.CaeUpdateEngineReq;
+import com.isxcode.star.api.pojos.cluster.res.CaeQueryEngineRes;
 import com.isxcode.star.backend.module.cluster.service.ClusterBizService;
-import com.isxcode.star.api.response.SuccessResponse;
+import com.isxcode.star.api.annotations.SuccessResponse;
 import javax.validation.Valid;
 
 import com.isxcode.star.backend.module.user.action.annoation.UserLog;
@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "计算引擎模块")
 @RestController
-@RequestMapping(ModulePrefix.CALCULATE_ENGINE)
+@RequestMapping(ModulePrefix.CLUSTER)
 @RequiredArgsConstructor
 public class ClusterController {
 

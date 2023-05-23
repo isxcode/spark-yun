@@ -1,7 +1,7 @@
 package com.isxcode.star.backend.module.user.controller;
 
-import com.isxcode.star.api.constants.ModulePrefix;
-import com.isxcode.star.api.constants.Roles;
+import com.isxcode.star.api.constants.base.ModulePrefix;
+import com.isxcode.star.api.constants.user.RoleType;
 import com.isxcode.star.api.pojos.user.req.UsrAddUserReq;
 import com.isxcode.star.api.pojos.user.req.UsrLoginReq;
 import com.isxcode.star.api.pojos.user.req.UsrQueryAllEnableUsersReq;
@@ -12,7 +12,7 @@ import com.isxcode.star.api.pojos.user.res.UsrQueryAllEnableUsersRes;
 import com.isxcode.star.api.pojos.user.res.UsrQueryAllUsersRes;
 import com.isxcode.star.backend.module.user.action.annoation.UserLog;
 import com.isxcode.star.backend.module.user.service.UserBizService;
-import com.isxcode.star.api.response.SuccessResponse;
+import com.isxcode.star.api.annotations.SuccessResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import javax.validation.Valid;
 
@@ -55,7 +55,7 @@ public class UserController {
   }
 
   @UserLog
-  @Secured({Roles.SYS_ADMIN})
+  @Secured({RoleType.SYS_ADMIN})
   @Operation(summary = "创建用户接口")
   @PostMapping("/addUser")
   @SuccessResponse("创建成功")
@@ -65,7 +65,7 @@ public class UserController {
   }
 
   @UserLog
-  @Secured({Roles.SYS_ADMIN})
+  @Secured({RoleType.SYS_ADMIN})
   @Operation(summary = "更新用户接口")
   @PostMapping("/updateUser")
   @SuccessResponse("更新成功")
@@ -75,7 +75,7 @@ public class UserController {
   }
 
   @UserLog
-  @Secured({Roles.SYS_ADMIN})
+  @Secured({RoleType.SYS_ADMIN})
   @Operation(summary = "禁用用户接口")
   @GetMapping("/disableUser")
   @SuccessResponse("禁用成功")
@@ -85,7 +85,7 @@ public class UserController {
   }
 
   @UserLog
-  @Secured({Roles.SYS_ADMIN})
+  @Secured({RoleType.SYS_ADMIN})
   @Operation(summary = "启用用户接口")
   @GetMapping("/enableUser")
   @SuccessResponse("启用成功")
@@ -95,7 +95,7 @@ public class UserController {
   }
 
   @UserLog
-  @Secured({Roles.SYS_ADMIN})
+  @Secured({RoleType.SYS_ADMIN})
   @Operation(summary = "删除用户接口")
   @GetMapping("/deleteUser")
   @SuccessResponse("删除成功")
@@ -105,7 +105,7 @@ public class UserController {
   }
 
   @UserLog
-  @Secured({Roles.SYS_ADMIN})
+  @Secured({RoleType.SYS_ADMIN})
   @Operation(summary = "查询所有用户接口")
   @PostMapping("/queryAllUsers")
   @SuccessResponse("查询成功")
@@ -115,7 +115,7 @@ public class UserController {
   }
 
   @UserLog
-  @Secured({Roles.SYS_ADMIN, Roles.TENANT_ADMIN})
+  @Secured({RoleType.SYS_ADMIN, RoleType.TENANT_ADMIN})
   @Operation(summary = "查询所有启用用户接口")
   @PostMapping("/queryAllEnableUsers")
   @SuccessResponse("查询成功")

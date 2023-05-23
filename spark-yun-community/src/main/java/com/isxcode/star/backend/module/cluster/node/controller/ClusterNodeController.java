@@ -1,12 +1,12 @@
 package com.isxcode.star.backend.module.cluster.node.controller;
 
-import com.isxcode.star.api.constants.ModulePrefix;
-import com.isxcode.star.api.pojos.engine.node.req.EnoAddNodeReq;
-import com.isxcode.star.api.pojos.engine.node.req.EnoQueryNodeReq;
-import com.isxcode.star.api.pojos.engine.node.req.EnoUpdateNodeReq;
-import com.isxcode.star.api.pojos.engine.node.res.EnoQueryNodeRes;
+import com.isxcode.star.api.constants.base.ModulePrefix;
+import com.isxcode.star.api.pojos.cluster.node.req.EnoAddNodeReq;
+import com.isxcode.star.api.pojos.cluster.node.req.EnoQueryNodeReq;
+import com.isxcode.star.api.pojos.cluster.node.req.EnoUpdateNodeReq;
+import com.isxcode.star.api.pojos.cluster.node.res.EnoQueryNodeRes;
 import com.isxcode.star.backend.module.cluster.node.service.ClusterNodeBizService;
-import com.isxcode.star.api.response.SuccessResponse;
+import com.isxcode.star.api.annotations.SuccessResponse;
 import javax.validation.Valid;
 
 import com.isxcode.star.backend.module.user.action.annoation.UserLog;
@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "引擎节点模块")
 @RestController
-@RequestMapping(ModulePrefix.ENGINE_NODE)
+@RequestMapping(ModulePrefix.CLUSTER_NODE)
 @RequiredArgsConstructor
 public class ClusterNodeController {
 

@@ -3,7 +3,7 @@ package com.isxcode.star.backend.module.work.service;
 import com.alibaba.fastjson.JSON;
 import com.isxcode.star.api.constants.work.WorkLog;
 import com.isxcode.star.api.constants.work.instance.InstanceStatus;
-import com.isxcode.star.api.exception.WorkRunException;
+import com.isxcode.star.api.exceptions.WorkRunException;
 import com.isxcode.star.backend.module.datasource.entity.DatasourceEntity;
 import com.isxcode.star.backend.module.datasource.repository.DatasourceRepository;
 import com.isxcode.star.backend.module.datasource.service.DatasourceBizService;

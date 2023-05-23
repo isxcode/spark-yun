@@ -1,9 +1,9 @@
 package com.isxcode.star.backend.module.cluster.node.mapper;
 
-import com.isxcode.star.api.pojos.engine.node.dto.ScpFileEngineNodeDto;
-import com.isxcode.star.api.pojos.engine.node.req.EnoAddNodeReq;
-import com.isxcode.star.api.pojos.engine.node.req.EnoUpdateNodeReq;
-import com.isxcode.star.api.pojos.engine.node.res.EnoQueryNodeRes;
+import com.isxcode.star.api.pojos.cluster.node.dto.ScpFileEngineNodeDto;
+import com.isxcode.star.api.pojos.cluster.node.req.EnoAddNodeReq;
+import com.isxcode.star.api.pojos.cluster.node.req.EnoUpdateNodeReq;
+import com.isxcode.star.api.pojos.cluster.node.res.EnoQueryNodeRes;
 import com.isxcode.star.backend.module.cluster.node.entity.ClusterNodeEntity;
 
 import java.util.List;

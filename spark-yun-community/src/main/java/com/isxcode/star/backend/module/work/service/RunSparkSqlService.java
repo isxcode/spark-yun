@@ -1,18 +1,17 @@
 package com.isxcode.star.backend.module.work.service;
 
 import com.alibaba.fastjson.JSON;
-import com.isxcode.star.api.constants.CodeConstants;
-import com.isxcode.star.api.constants.EngineNodeStatus;
-import com.isxcode.star.api.constants.PathConstants;
+import com.isxcode.star.api.constants.cluster.ClusterNodeStatus;
+import com.isxcode.star.api.constants.api.PathConstants;
 import com.isxcode.star.api.constants.work.WorkLog;
 import com.isxcode.star.api.constants.work.instance.InstanceStatus;
-import com.isxcode.star.api.exception.WorkRunException;
+import com.isxcode.star.api.exceptions.WorkRunException;
 import com.isxcode.star.api.pojos.plugin.req.PluginReq;
 import com.isxcode.star.api.pojos.work.res.WokRunWorkRes;
 import com.isxcode.star.api.pojos.yun.agent.req.YagExecuteWorkReq;
 import com.isxcode.star.api.pojos.yun.agent.res.YagGetLogRes;
-import com.isxcode.star.api.response.BaseResponse;
-import com.isxcode.star.api.utils.HttpUtils;
+import com.isxcode.star.api.pojos.base.BaseResponse;
+import com.isxcode.star.common.utils.HttpUtils;
 import com.isxcode.star.backend.module.cluster.entity.ClusterEntity;
 import com.isxcode.star.backend.module.cluster.node.entity.ClusterNodeEntity;
 import com.isxcode.star.backend.module.cluster.node.repository.ClusterNodeRepository;
@@ -21,6 +20,7 @@ import com.isxcode.star.backend.module.work.instance.entity.WorkInstanceEntity;
 import com.isxcode.star.backend.module.work.instance.repository.WorkInstanceRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -109,7 +109,7 @@ public class RunSparkSqlService {
     }
 
     // 检测集群中的节点是否合法
-    List<ClusterNodeEntity> allEngineNodes = clusterNodeRepository.findAllByClusterIdAndStatus(calculateEngineEntityOptional.get().getId(), EngineNodeStatus.RUNNING);
+    List<ClusterNodeEntity> allEngineNodes = clusterNodeRepository.findAllByClusterIdAndStatus(calculateEngineEntityOptional.get().getId(), ClusterNodeStatus.RUNNING);
     if (allEngineNodes.isEmpty()) {
       throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "申请资源失败 : 集群不存在可用节点，请切换一个集群  \n");
     }
@@ -159,7 +159,7 @@ public class RunSparkSqlService {
     } catch (IOException e) {
       throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "提交作业失败 : " + e.getMessage() + "\n");
     }
-    if (!CodeConstants.SUCCESS_CODE.equals(baseResponse.getCode())) {
+    if (!String.valueOf(HttpStatus.OK.value()).equals(baseResponse.getCode())) {
       throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "提交作业失败 : " + baseResponse.getErr() + "\n");
     }
     WokRunWorkRes submitWorkRes = JSON.parseObject(JSON.toJSONString(baseResponse.getData()), WokRunWorkRes.class);
@@ -178,7 +178,7 @@ public class RunSparkSqlService {
       // 获取作业状态并保存
       String getStatusUrl = "http://" + engineNode.getHost() + ":" + engineNode.getAgentPort() + "/yag/getStatus?applicationId=" + submitWorkRes.getApplicationId();
       baseResponse = HttpUtils.doGet(getStatusUrl, BaseResponse.class);
-      if (!CodeConstants.SUCCESS_CODE.equals(baseResponse.getCode())) {
+      if (!String.valueOf(HttpStatus.OK.value()).equals(baseResponse.getCode())) {
         throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "获取作业状态异常 : " + baseResponse.getErr() + "\n");
       }
       WokRunWorkRes workStatusRes = JSON.parseObject(JSON.toJSONString(baseResponse.getData()), WokRunWorkRes.class);
@@ -201,7 +201,7 @@ public class RunSparkSqlService {
           // 保存日志，生成日志时间比较久
           String getLogUrl = "http://" + engineNode.getHost() + ":" + engineNode.getAgentPort() + "/yag/getLog?applicationId=" + submitWorkRes.getApplicationId();
           baseResponse = HttpUtils.doGet(getLogUrl, BaseResponse.class);
-          if (!CodeConstants.SUCCESS_CODE.equals(baseResponse.getCode())) {
+          if (!String.valueOf(HttpStatus.OK.value()).equals(baseResponse.getCode())) {
             throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "获取作业日志异常 : " + baseResponse.getMsg() + "\n");
           }
           YagGetLogRes yagGetLogRes = JSON.parseObject(JSON.toJSONString(baseResponse.getData()), YagGetLogRes.class);
@@ -215,7 +215,7 @@ public class RunSparkSqlService {
         if ("SUCCEEDED".equals(workStatusRes.getFinalApplicationStatus())) {
           String getDataUrl = "http://" + engineNode.getHost() + ":" + engineNode.getAgentPort() + "/yag/getData?applicationId=" + submitWorkRes.getApplicationId();
           baseResponse = HttpUtils.doGet(getDataUrl, BaseResponse.class);
-          if (!CodeConstants.SUCCESS_CODE.equals(baseResponse.getCode())) {
+          if (!String.valueOf(HttpStatus.OK.value()).equals(baseResponse.getCode())) {
             throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "获取作业数据异常 : " + baseResponse.getErr() + "\n");
           }
           instance.setResultData(JSON.toJSONString(baseResponse.getData()));

@@ -1,11 +1,11 @@
 package com.isxcode.star.backend.module.cluster.node.service;
 
 import com.alibaba.fastjson.JSON;
-import com.isxcode.star.api.constants.EngineNodeStatus;
-import com.isxcode.star.api.constants.PathConstants;
-import com.isxcode.star.api.exception.SparkYunException;
-import com.isxcode.star.api.pojos.engine.node.dto.AgentInfo;
-import com.isxcode.star.api.pojos.engine.node.dto.ScpFileEngineNodeDto;
+import com.isxcode.star.api.constants.cluster.ClusterNodeStatus;
+import com.isxcode.star.api.constants.api.PathConstants;
+import com.isxcode.star.api.exceptions.SparkYunException;
+import com.isxcode.star.api.pojos.cluster.node.dto.AgentInfo;
+import com.isxcode.star.api.pojos.cluster.node.dto.ScpFileEngineNodeDto;
 import com.isxcode.star.api.properties.SparkYunProperties;
 import com.isxcode.star.backend.module.cluster.node.entity.ClusterNodeEntity;
 import com.isxcode.star.backend.module.cluster.node.repository.ClusterNodeRepository;
@@ -22,8 +22,8 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
-import static com.isxcode.star.api.utils.SshUtils.executeCommand;
-import static com.isxcode.star.api.utils.SshUtils.scpFile;
+import static com.isxcode.star.common.utils.SshUtils.executeCommand;
+import static com.isxcode.star.common.utils.SshUtils.scpFile;
 import static com.isxcode.star.backend.config.WebSecurityConfig.TENANT_ID;
 import static com.isxcode.star.backend.config.WebSecurityConfig.USER_ID;
 
@@ -56,7 +56,7 @@ public class RunAgentInstallService {
       log.error(e.getMessage());
       clusterNodeEntity.setCheckDateTime(LocalDateTime.now());
       clusterNodeEntity.setAgentLog(e.getMessage());
-      clusterNodeEntity.setStatus(EngineNodeStatus.UN_INSTALL);
+      clusterNodeEntity.setStatus(ClusterNodeStatus.UN_INSTALL);
       clusterNodeRepository.saveAndFlush(clusterNodeEntity);
     }
   }
@@ -80,7 +80,7 @@ public class RunAgentInstallService {
     AgentInfo agentEnvInfo = JSON.parseObject(executeLog, AgentInfo.class);
 
     // 如果不可以安装直接返回
-    if (!EngineNodeStatus.CAN_INSTALL.equals(agentEnvInfo.getStatus())) {
+    if (!ClusterNodeStatus.CAN_INSTALL.equals(agentEnvInfo.getStatus())) {
       engineNode.setStatus(agentEnvInfo.getStatus());
       engineNode.setAgentLog(agentEnvInfo.getLog());
       engineNode.setCheckDateTime(LocalDateTime.now());
@@ -108,7 +108,7 @@ public class RunAgentInstallService {
     executeLog = executeCommand(scpFileEngineNodeDto, installCommand, false);
     AgentInfo agentInstallInfo = JSON.parseObject(executeLog, AgentInfo.class);
 
-    if (EngineNodeStatus.RUNNING.equals(agentInstallInfo.getStatus())) {
+    if (ClusterNodeStatus.RUNNING.equals(agentInstallInfo.getStatus())) {
       engineNode.setStatus(agentInstallInfo.getStatus());
       engineNode.setAgentLog("安装成功");
       engineNode.setCheckDateTime(LocalDateTime.now());

@@ -1,12 +1,12 @@
 package com.isxcode.star.backend.module.tenant.user.controller;
 
-import com.isxcode.star.api.constants.ModulePrefix;
-import com.isxcode.star.api.constants.Roles;
-import com.isxcode.star.api.constants.SecurityConstants;
+import com.isxcode.star.api.constants.base.ModulePrefix;
+import com.isxcode.star.api.constants.user.RoleType;
+import com.isxcode.star.api.constants.base.SecurityConstants;
 import com.isxcode.star.api.pojos.tenant.user.req.TurAddTenantUserReq;
 import com.isxcode.star.api.pojos.tenant.user.req.TurQueryTenantUserReq;
 import com.isxcode.star.api.pojos.tenant.user.res.TurQueryTenantUserRes;
-import com.isxcode.star.api.response.SuccessResponse;
+import com.isxcode.star.api.annotations.SuccessResponse;
 import com.isxcode.star.backend.module.tenant.user.service.TenantUserBizService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -33,7 +33,7 @@ public class TenantUserController {
 
   private final TenantUserBizService tenantUserBizService;
 
-  @Secured({Roles.SYS_ADMIN, Roles.TENANT_ADMIN})
+  @Secured({RoleType.SYS_ADMIN, RoleType.TENANT_ADMIN})
   @Operation(summary = "添加用户接口")
   @PostMapping("/addTenantUser")
   @SuccessResponse("添加成功")
@@ -43,7 +43,7 @@ public class TenantUserController {
     tenantUserBizService.addTenantUser(turAddTenantUserReq);
   }
 
-  @Secured({Roles.SYS_ADMIN, Roles.TENANT_ADMIN})
+  @Secured({RoleType.SYS_ADMIN, RoleType.TENANT_ADMIN})
   @Operation(summary = "查询租户用户列表接口")
   @PostMapping("/queryTenantUser")
   @SuccessResponse("查询成功")
@@ -53,7 +53,7 @@ public class TenantUserController {
     return tenantUserBizService.queryTenantUser(turQueryTenantUserReq);
   }
 
-  @Secured({Roles.SYS_ADMIN, Roles.TENANT_ADMIN})
+  @Secured({RoleType.SYS_ADMIN, RoleType.TENANT_ADMIN})
   @Operation(summary = "移除用户接口")
   @GetMapping("/removeTenantUser")
   @SuccessResponse("移除成功")
@@ -63,7 +63,7 @@ public class TenantUserController {
     tenantUserBizService.removeTenantUser(tenantUserId);
   }
 
-  @Secured({Roles.SYS_ADMIN, Roles.TENANT_ADMIN})
+  @Secured({RoleType.SYS_ADMIN, RoleType.TENANT_ADMIN})
   @Operation(summary = "设置为租户管理员接口")
   @GetMapping("/setTenantAdmin")
   @SuccessResponse("设置成功")
@@ -73,7 +73,7 @@ public class TenantUserController {
     tenantUserBizService.setTenantAdmin(tenantUserId);
   }
 
-  @Secured({Roles.SYS_ADMIN, Roles.TENANT_ADMIN})
+  @Secured({RoleType.SYS_ADMIN, RoleType.TENANT_ADMIN})
   @Operation(summary = "取消设置为租户管理员接口")
   @GetMapping("/removeTenantAdmin")
   @SuccessResponse("设置成功")

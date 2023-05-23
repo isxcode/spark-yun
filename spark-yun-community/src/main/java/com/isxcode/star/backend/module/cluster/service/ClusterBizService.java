@@ -1,14 +1,14 @@
 package com.isxcode.star.backend.module.cluster.service;
 
-import com.isxcode.star.api.constants.CalculateEngineStatus;
-import com.isxcode.star.api.constants.EngineNodeStatus;
-import com.isxcode.star.api.pojos.calculate.engine.req.CaeAddEngineReq;
-import com.isxcode.star.api.pojos.calculate.engine.req.CaeQueryEngineReq;
-import com.isxcode.star.api.pojos.calculate.engine.req.CaeUpdateEngineReq;
-import com.isxcode.star.api.pojos.calculate.engine.res.CaeQueryEngineRes;
-import com.isxcode.star.api.pojos.engine.node.dto.ScpFileEngineNodeDto;
+import com.isxcode.star.api.constants.cluster.ClusterStatus;
+import com.isxcode.star.api.constants.cluster.ClusterNodeStatus;
+import com.isxcode.star.api.pojos.cluster.req.CaeAddEngineReq;
+import com.isxcode.star.api.pojos.cluster.req.CaeQueryEngineReq;
+import com.isxcode.star.api.pojos.cluster.req.CaeUpdateEngineReq;
+import com.isxcode.star.api.pojos.cluster.res.CaeQueryEngineRes;
+import com.isxcode.star.api.pojos.cluster.node.dto.ScpFileEngineNodeDto;
 import com.isxcode.star.api.properties.SparkYunProperties;
-import com.isxcode.star.api.utils.AesUtils;
+import com.isxcode.star.common.utils.AesUtils;
 import com.isxcode.star.backend.module.cluster.entity.ClusterEntity;
 import com.isxcode.star.backend.module.cluster.node.entity.ClusterNodeEntity;
 import com.isxcode.star.backend.module.cluster.node.mapper.ClusterNodeMapper;
@@ -18,12 +18,11 @@ import com.isxcode.star.backend.module.cluster.node.service.RunAgentCheckService
 import com.isxcode.star.backend.module.cluster.repository.ClusterRepository;
 import javax.transaction.Transactional;
 
-import com.isxcode.star.api.exception.SparkYunException;
+import com.isxcode.star.api.exceptions.SparkYunException;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.SftpException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.mapstruct.Mapping;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -57,7 +56,7 @@ public class ClusterBizService {
 
     ClusterEntity engine = engineMapper.addEngineReqToEngineEntity(caeAddEngineReq);
 
-    engine.setStatus(CalculateEngineStatus.NEW);
+    engine.setStatus(ClusterStatus.NEW);
 
     engineRepository.save(engine);
   }
@@ -110,13 +109,13 @@ public class ClusterBizService {
         log.error(ex.getMessage());
         e.setCheckDateTime(LocalDateTime.now());
         e.setAgentLog(ex.getMessage());
-        e.setStatus(EngineNodeStatus.CHECK_ERROR);
+        e.setStatus(ClusterNodeStatus.CHECK_ERROR);
         engineNodeRepository.saveAndFlush(e);
       }
     });
 
     // 激活节点
-    List<ClusterNodeEntity> activeNodes = engineNodes.stream().filter(e -> EngineNodeStatus.RUNNING.equals(e.getStatus())).collect(Collectors.toList());
+    List<ClusterNodeEntity> activeNodes = engineNodes.stream().filter(e -> ClusterNodeStatus.RUNNING.equals(e.getStatus())).collect(Collectors.toList());
     calculateEngineEntity.setActiveNodeNum(activeNodes.size());
     calculateEngineEntity.setAllNodeNum(engineNodes.size());
 
@@ -133,9 +132,9 @@ public class ClusterBizService {
     calculateEngineEntity.setUsedStorageNum(usedStorage);
 
     if (!activeNodes.isEmpty()) {
-      calculateEngineEntity.setStatus(CalculateEngineStatus.ACTIVE);
+      calculateEngineEntity.setStatus(ClusterStatus.ACTIVE);
     } else {
-      calculateEngineEntity.setStatus(CalculateEngineStatus.NO_ACTIVE);
+      calculateEngineEntity.setStatus(ClusterStatus.NO_ACTIVE);
     }
 
     calculateEngineEntity.setCheckDateTime(LocalDateTime.now());

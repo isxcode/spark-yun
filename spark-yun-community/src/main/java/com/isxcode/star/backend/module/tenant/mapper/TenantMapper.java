@@ -1,14 +1,11 @@
 package com.isxcode.star.backend.module.tenant.mapper;
 
-import com.isxcode.star.api.constants.UserStatus;
-import com.isxcode.star.api.pojos.datasource.res.DasQueryDatasourceRes;
+import com.isxcode.star.api.constants.user.UserStatus;
 import com.isxcode.star.api.pojos.tenant.req.TetAddTenantReq;
-import com.isxcode.star.api.pojos.tenant.req.TetQueryTenantReq;
 import com.isxcode.star.api.pojos.tenant.req.TetUpdateTenantBySystemAdminReq;
 import com.isxcode.star.api.pojos.tenant.req.TetUpdateTenantByTenantAdminReq;
 import com.isxcode.star.api.pojos.tenant.res.TetQueryTenantRes;
 import com.isxcode.star.api.pojos.tenant.res.TetQueryUserTenantRes;
-import com.isxcode.star.backend.module.datasource.entity.DatasourceEntity;
 import com.isxcode.star.backend.module.tenant.entity.TenantEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

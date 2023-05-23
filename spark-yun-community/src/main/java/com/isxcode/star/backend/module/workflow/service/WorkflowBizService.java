@@ -1,6 +1,6 @@
 package com.isxcode.star.backend.module.workflow.service;
 
-import com.isxcode.star.api.constants.WorkflowStatus;
+import com.isxcode.star.api.constants.workflow.WorkflowStatus;
 import com.isxcode.star.api.pojos.workflow.req.WocQueryWorkflowReq;
 import com.isxcode.star.api.pojos.workflow.req.WofAddWorkflowReq;
 import com.isxcode.star.api.pojos.workflow.req.WofUpdateWorkflowReq;
@@ -12,7 +12,7 @@ import com.isxcode.star.backend.module.workflow.repository.WorkflowRepository;
 import java.util.Optional;
 import javax.transaction.Transactional;
 
-import com.isxcode.star.api.exception.SparkYunException;
+import com.isxcode.star.api.exceptions.SparkYunException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

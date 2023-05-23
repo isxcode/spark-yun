@@ -1,7 +1,7 @@
 package com.isxcode.star.backend.security;
 
-import com.isxcode.star.api.constants.Roles;
-import com.isxcode.star.api.exception.SparkYunException;
+import com.isxcode.star.api.constants.user.RoleType;
+import com.isxcode.star.api.exceptions.SparkYunException;
 import com.isxcode.star.backend.module.tenant.user.entity.TenantUserEntity;
 import com.isxcode.star.backend.module.tenant.user.repository.TenantUserRepository;
 import com.isxcode.star.backend.module.user.entity.UserEntity;
@@ -44,12 +44,12 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     String authority = userEntityOptional.get().getRoleCode();
 
     // 如果不是系统管理员，且没有TENANT_ID则直接报错，缺少tenantId
-    if (!Roles.SYS_ADMIN.equals(authority) && Strings.isEmpty(TENANT_ID.get())) {
+    if (!RoleType.SYS_ADMIN.equals(authority) && Strings.isEmpty(TENANT_ID.get())) {
       throw new SparkYunException("缺少tenantId");
     }
 
     // 获取用户租户权限
-    if (!Roles.SYS_ADMIN.equals(authority)) {
+    if (!RoleType.SYS_ADMIN.equals(authority)) {
       if (!Strings.isEmpty(TENANT_ID.get()) && !"undefined".equals(TENANT_ID.get())) {
         Optional<TenantUserEntity> tenantUserEntityOptional = tenantUserRepository.findByTenantIdAndUserId(TENANT_ID.get(), userId);
         if (!tenantUserEntityOptional.isPresent()) {

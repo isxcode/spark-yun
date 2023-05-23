@@ -1,10 +1,10 @@
 package com.isxcode.star.backend.module.work.config.controller;
 
-import com.isxcode.star.api.constants.ModulePrefix;
-import com.isxcode.star.api.constants.SecurityConstants;
+import com.isxcode.star.api.constants.base.ModulePrefix;
+import com.isxcode.star.api.constants.base.SecurityConstants;
 import com.isxcode.star.api.pojos.work.config.req.WocConfigWorkReq;
 import com.isxcode.star.backend.module.work.config.service.WorkConfigBizService;
-import com.isxcode.star.api.response.SuccessResponse;
+import com.isxcode.star.api.annotations.SuccessResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;

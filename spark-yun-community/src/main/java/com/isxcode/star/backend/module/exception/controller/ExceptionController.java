@@ -1,6 +1,6 @@
 package com.isxcode.star.backend.module.exception.controller;
 
-import com.isxcode.star.api.exception.SparkYunException;
+import com.isxcode.star.api.exceptions.SparkYunException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.RequestMapping;

@@ -1,7 +1,7 @@
 package com.isxcode.star.backend.module.user.mapper;
 
-import com.isxcode.star.api.constants.Roles;
-import com.isxcode.star.api.constants.UserStatus;
+import com.isxcode.star.api.constants.user.RoleType;
+import com.isxcode.star.api.constants.user.UserStatus;
 import com.isxcode.star.api.pojos.user.req.UsrAddUserReq;
 import com.isxcode.star.api.pojos.user.req.UsrUpdateUserReq;
 import com.isxcode.star.api.pojos.user.res.UsrQueryAllEnableUsersRes;
@@ -18,7 +18,7 @@ import java.util.List;
 public interface UserMapper {
 
   @Mapping(target = "status", constant = UserStatus.ENABLE)
-  @Mapping(target = "roleCode", constant = Roles.NORMAL_MEMBER)
+  @Mapping(target = "roleCode", constant = RoleType.NORMAL_MEMBER)
   UserEntity usrAddUserReqToUserEntity(UsrAddUserReq usrAddUserReq);
 
   @Mapping(target = "passwd", source = "userEntity.passwd")

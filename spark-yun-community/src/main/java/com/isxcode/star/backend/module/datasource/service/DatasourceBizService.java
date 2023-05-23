@@ -2,7 +2,7 @@ package com.isxcode.star.backend.module.datasource.service;
 
 import static java.sql.DriverManager.getConnection;
 
-import com.isxcode.star.api.constants.DatasourceStatus;
+import com.isxcode.star.api.constants.datasource.DatasourceStatus;
 import com.isxcode.star.api.constants.datasource.DatasourceDriver;
 import com.isxcode.star.api.constants.datasource.DatasourceType;
 import com.isxcode.star.api.pojos.datasource.req.DasAddDatasourceReq;
@@ -12,22 +12,26 @@ import com.isxcode.star.api.pojos.datasource.res.DasGetConnectLogRes;
 import com.isxcode.star.api.pojos.datasource.res.DasQueryDatasourceRes;
 import com.isxcode.star.api.pojos.datasource.res.DasTestConnectRes;
 import com.isxcode.star.api.properties.SparkYunProperties;
-import com.isxcode.star.api.utils.AesUtils;
+import com.isxcode.star.common.utils.AesUtils;
 import com.isxcode.star.backend.module.datasource.entity.DatasourceEntity;
 import com.isxcode.star.backend.module.datasource.mapper.DatasourceMapper;
 import com.isxcode.star.backend.module.datasource.repository.DatasourceRepository;
-import com.isxcode.star.api.exception.SparkYunException;
+import com.isxcode.star.api.exceptions.SparkYunException;
 
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.Optional;
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import javax.transaction.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.logging.log4j.util.Strings;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -81,7 +85,7 @@ public class DatasourceBizService {
   }
 
 
-  public Connection getDbConnection( DatasourceEntity datasource) throws SQLException {
+  public Connection getDbConnection(DatasourceEntity datasource) throws SQLException {
     loadDriverClass(datasource.getDbType());
 
     DriverManager.setLoginTimeout(10);

@@ -1,8 +1,8 @@
 package com.isxcode.star.backend.module.tenant.user.service;
 
-import com.isxcode.star.api.constants.Roles;
-import com.isxcode.star.api.constants.UserStatus;
-import com.isxcode.star.api.exception.SparkYunException;
+import com.isxcode.star.api.constants.user.RoleType;
+import com.isxcode.star.api.constants.user.UserStatus;
+import com.isxcode.star.api.exceptions.SparkYunException;
 import com.isxcode.star.api.pojos.tenant.user.req.TurAddTenantUserReq;
 import com.isxcode.star.api.pojos.tenant.user.req.TurQueryTenantUserReq;
 import com.isxcode.star.api.pojos.tenant.user.res.TurQueryTenantUserRes;
@@ -63,9 +63,9 @@ public class TenantUserBizService {
 
     // 初始化用户权限
     if (turAddTenantUserReq.isTenantAdmin()) {
-      tenantUserEntity.setRoleCode(Roles.TENANT_ADMIN);
+      tenantUserEntity.setRoleCode(RoleType.TENANT_ADMIN);
     } else {
-      tenantUserEntity.setRoleCode(Roles.TENANT_MEMBER);
+      tenantUserEntity.setRoleCode(RoleType.TENANT_MEMBER);
     }
 
     // 判断用户当前是否有租户
@@ -113,7 +113,7 @@ public class TenantUserBizService {
 
     // 设置为租户管理员权限
     TenantUserEntity tenantUserEntity = tenantUserEntityOptional.get();
-    tenantUserEntity.setRoleCode(Roles.TENANT_ADMIN);
+    tenantUserEntity.setRoleCode(RoleType.TENANT_ADMIN);
 
     // 持久化
     tenantUserRepository.save(tenantUserEntity);
@@ -128,13 +128,13 @@ public class TenantUserBizService {
     }
 
     // 管理员不可以移除自己
-    if (Roles.TENANT_ADMIN.equals(tenantUserEntityOptional.get().getRoleCode())&&USER_ID.get().equals(tenantUserEntityOptional.get().getUserId())) {
+    if (RoleType.TENANT_ADMIN.equals(tenantUserEntityOptional.get().getRoleCode())&&USER_ID.get().equals(tenantUserEntityOptional.get().getUserId())) {
       throw new SparkYunException("不可以取消自己的管理员权限");
     }
 
     // 设置为租户管理员权限
     TenantUserEntity tenantUserEntity = tenantUserEntityOptional.get();
-    tenantUserEntity.setRoleCode(Roles.TENANT_MEMBER);
+    tenantUserEntity.setRoleCode(RoleType.TENANT_MEMBER);
 
     // 持久化
     tenantUserRepository.save(tenantUserEntity);

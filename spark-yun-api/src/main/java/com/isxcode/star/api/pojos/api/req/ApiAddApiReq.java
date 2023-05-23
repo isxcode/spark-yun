@@ -1,6 +1,6 @@
 package com.isxcode.star.api.pojos.api.req;
 
-import com.isxcode.star.api.constants.ApiType;
+import com.isxcode.star.api.constants.api.ApiType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 

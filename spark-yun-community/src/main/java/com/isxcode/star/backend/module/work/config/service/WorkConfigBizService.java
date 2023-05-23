@@ -1,6 +1,6 @@
 package com.isxcode.star.backend.module.work.config.service;
 
-import com.isxcode.star.api.exception.SparkYunException;
+import com.isxcode.star.api.exceptions.SparkYunException;
 import com.isxcode.star.api.pojos.work.config.req.WocConfigWorkReq;
 import com.isxcode.star.backend.module.work.config.entity.WorkConfigEntity;
 import com.isxcode.star.backend.module.work.config.mapper.WorkConfigMapper;

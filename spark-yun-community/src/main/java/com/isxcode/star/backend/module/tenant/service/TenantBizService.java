@@ -1,8 +1,8 @@
 package com.isxcode.star.backend.module.tenant.service;
 
-import com.isxcode.star.api.constants.Roles;
-import com.isxcode.star.api.constants.TenantStatus;
-import com.isxcode.star.api.exception.SparkYunException;
+import com.isxcode.star.api.constants.user.RoleType;
+import com.isxcode.star.api.constants.tenant.TenantStatus;
+import com.isxcode.star.api.exceptions.SparkYunException;
 import com.isxcode.star.api.pojos.tenant.req.TetAddTenantReq;
 import com.isxcode.star.api.pojos.tenant.req.TetQueryTenantReq;
 import com.isxcode.star.api.pojos.tenant.req.TetUpdateTenantBySystemAdminReq;
@@ -83,7 +83,7 @@ public class TenantBizService {
     TenantUserEntity tenantUserEntity = TenantUserEntity.builder()
       .userId(tetAddTenantReq.getAdminUserId())
       .tenantId(tenantEntity.getId())
-      .roleCode(Roles.TENANT_ADMIN)
+      .roleCode(RoleType.TENANT_ADMIN)
       .status(TenantStatus.ENABLE)
       .build();
 
@@ -262,7 +262,7 @@ public class TenantBizService {
     UserEntity userEntity = userEntityOptional.get();
 
     // 如果是管理员直接返回
-    if (Roles.SYS_ADMIN.equals(userEntity.getRoleCode())) {
+    if (RoleType.SYS_ADMIN.equals(userEntity.getRoleCode())) {
       return TetGetTenantRes.builder().id(tenantEntity.getId()).name(tenantEntity.getName()).build();
     }
 

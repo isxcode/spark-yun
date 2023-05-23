@@ -1,7 +1,7 @@
 package com.isxcode.star.backend.module.work.controller;
 
-import com.isxcode.star.api.constants.ModulePrefix;
-import com.isxcode.star.api.constants.SecurityConstants;
+import com.isxcode.star.api.constants.base.ModulePrefix;
+import com.isxcode.star.api.constants.base.SecurityConstants;
 import com.isxcode.star.api.pojos.work.req.WokAddWorkReq;
 import com.isxcode.star.api.pojos.work.req.WokQueryWorkReq;
 import com.isxcode.star.api.pojos.work.req.WokUpdateWorkReq;
@@ -12,7 +12,7 @@ import com.isxcode.star.api.pojos.work.res.WokGetWorkLogRes;
 import com.isxcode.star.api.pojos.work.res.WokGetWorkRes;
 import com.isxcode.star.api.pojos.work.res.WokQueryWorkRes;
 import com.isxcode.star.api.pojos.work.res.WokRunWorkRes;
-import com.isxcode.star.api.response.SuccessResponse;
+import com.isxcode.star.api.annotations.SuccessResponse;
 import com.isxcode.star.backend.module.user.action.annoation.UserLog;
 import com.isxcode.star.backend.module.work.service.WorkBizService;
 import io.swagger.v3.oas.annotations.Operation;

@@ -1,11 +1,11 @@
 package com.isxcode.star.backend.module.cluster.node.service;
 
 import com.alibaba.fastjson.JSON;
-import com.isxcode.star.api.constants.EngineNodeStatus;
-import com.isxcode.star.api.constants.PathConstants;
-import com.isxcode.star.api.exception.SparkYunException;
-import com.isxcode.star.api.pojos.engine.node.dto.AgentInfo;
-import com.isxcode.star.api.pojos.engine.node.dto.ScpFileEngineNodeDto;
+import com.isxcode.star.api.constants.cluster.ClusterNodeStatus;
+import com.isxcode.star.api.constants.api.PathConstants;
+import com.isxcode.star.api.exceptions.SparkYunException;
+import com.isxcode.star.api.pojos.cluster.node.dto.AgentInfo;
+import com.isxcode.star.api.pojos.cluster.node.dto.ScpFileEngineNodeDto;
 import com.isxcode.star.api.properties.SparkYunProperties;
 import com.isxcode.star.backend.module.cluster.node.entity.ClusterNodeEntity;
 import com.isxcode.star.backend.module.cluster.node.repository.ClusterNodeRepository;
@@ -22,8 +22,8 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
-import static com.isxcode.star.api.utils.SshUtils.executeCommand;
-import static com.isxcode.star.api.utils.SshUtils.scpFile;
+import static com.isxcode.star.common.utils.SshUtils.executeCommand;
+import static com.isxcode.star.common.utils.SshUtils.scpFile;
 import static com.isxcode.star.backend.config.WebSecurityConfig.TENANT_ID;
 import static com.isxcode.star.backend.config.WebSecurityConfig.USER_ID;
 
@@ -56,7 +56,7 @@ public class RunAgentStopService {
       log.error(e.getMessage());
       clusterNodeEntity.setCheckDateTime(LocalDateTime.now());
       clusterNodeEntity.setAgentLog(e.getMessage());
-      clusterNodeEntity.setStatus(EngineNodeStatus.CHECK_ERROR);
+      clusterNodeEntity.setStatus(ClusterNodeStatus.CHECK_ERROR);
       clusterNodeRepository.saveAndFlush(clusterNodeEntity);
     }
   }

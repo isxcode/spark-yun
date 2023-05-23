@@ -1,7 +1,5 @@
 dependencies {
 
-  // spark-yun-api
-  api(project(':spark-yun-api'))
   api(project(':spark-yun-yarn'))
   api(project(':spark-yun-common'))
 

@@ -1,6 +1,6 @@
 package com.isxcode.star.yarn.utils;
 
-import com.isxcode.star.api.exception.SparkYunException;
+import com.isxcode.star.api.exceptions.SparkYunException;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;

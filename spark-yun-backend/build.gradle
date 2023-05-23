@@ -17,6 +17,9 @@ dependencies {
 
   // mysql
   implementation 'com.mysql:mysql-connector-j:8.0.33'
+
+  // jpa
+  api 'org.springframework.boot:spring-boot-starter-data-jpa'
 }
 
 bootJar {

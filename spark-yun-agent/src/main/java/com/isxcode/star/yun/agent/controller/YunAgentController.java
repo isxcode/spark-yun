@@ -1,12 +1,12 @@
 package com.isxcode.star.yun.agent.controller;
 
-import com.isxcode.star.api.constants.ModulePrefix;
+import com.isxcode.star.api.constants.base.ModulePrefix;
 import com.isxcode.star.api.pojos.yun.agent.req.YagExecuteWorkReq;
 import com.isxcode.star.api.pojos.yun.agent.res.YagExecuteWorkRes;
 import com.isxcode.star.api.pojos.yun.agent.res.YagGetDataRes;
 import com.isxcode.star.api.pojos.yun.agent.res.YagGetLogRes;
 import com.isxcode.star.api.pojos.yun.agent.res.YagGetStatusRes;
-import com.isxcode.star.api.response.SuccessResponse;
+import com.isxcode.star.api.annotations.SuccessResponse;
 import com.isxcode.star.yun.agent.service.YunAgentBizService;
 import javax.validation.Valid;
 

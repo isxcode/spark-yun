@@ -1,15 +1,14 @@
 package com.isxcode.star.backend.module.work.service;
 
 import com.alibaba.fastjson.JSON;
-import com.isxcode.star.api.constants.CodeConstants;
-import com.isxcode.star.api.constants.EngineNodeStatus;
-import com.isxcode.star.api.constants.WorkStatus;
-import com.isxcode.star.api.constants.WorkType;
+import com.isxcode.star.api.constants.cluster.ClusterNodeStatus;
+import com.isxcode.star.api.constants.work.WorkStatus;
+import com.isxcode.star.api.constants.work.WorkType;
 import com.isxcode.star.api.constants.work.WorkLog;
 import com.isxcode.star.api.constants.work.instance.InstanceStatus;
 import com.isxcode.star.api.constants.work.instance.InstanceType;
-import com.isxcode.star.api.exception.SparkYunException;
-import com.isxcode.star.api.exception.WorkRunException;
+import com.isxcode.star.api.exceptions.SparkYunException;
+import com.isxcode.star.api.exceptions.WorkRunException;
 import com.isxcode.star.api.pojos.work.req.WokAddWorkReq;
 import com.isxcode.star.api.pojos.work.req.WokQueryWorkReq;
 import com.isxcode.star.api.pojos.work.req.WokUpdateWorkReq;
@@ -20,8 +19,8 @@ import com.isxcode.star.api.pojos.work.res.WokGetWorkLogRes;
 import com.isxcode.star.api.pojos.work.res.WokGetWorkRes;
 import com.isxcode.star.api.pojos.work.res.WokQueryWorkRes;
 import com.isxcode.star.api.pojos.work.res.WokRunWorkRes;
-import com.isxcode.star.api.response.BaseResponse;
-import com.isxcode.star.api.utils.HttpUtils;
+import com.isxcode.star.api.pojos.base.BaseResponse;
+import com.isxcode.star.common.utils.HttpUtils;
 import com.isxcode.star.backend.module.cluster.entity.ClusterEntity;
 import com.isxcode.star.backend.module.cluster.node.entity.ClusterNodeEntity;
 import com.isxcode.star.backend.module.cluster.node.repository.ClusterNodeRepository;
@@ -38,6 +37,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -229,7 +229,7 @@ public class WorkBizService {
       }
 
       WorkConfigEntity workConfigEntity = workConfigRepository.findById(workEntity.getConfigId()).get();
-      List<ClusterNodeEntity> allEngineNodes = engineNodeRepository.findAllByClusterIdAndStatus(workConfigEntity.getClusterId(), EngineNodeStatus.RUNNING);
+      List<ClusterNodeEntity> allEngineNodes = engineNodeRepository.findAllByClusterIdAndStatus(workConfigEntity.getClusterId(), ClusterNodeStatus.RUNNING);
       if (allEngineNodes.isEmpty()) {
         throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "申请资源失败 : 集群不存在可用节点，请切换一个集群  \n");
       }
@@ -247,7 +247,7 @@ public class WorkBizService {
       String stopJobUrl = "http://" + engineNode.getHost() + ":" + engineNode.getAgentPort() + "/yag/stopJob?applicationId=" + wokRunWorkRes.getApplicationId();
       BaseResponse<?> baseResponse = HttpUtils.doGet(stopJobUrl, BaseResponse.class);
 
-      if (!CodeConstants.SUCCESS_CODE.equals(baseResponse.getCode())) {
+      if (!String.valueOf(HttpStatus.OK.value()).equals(baseResponse.getCode())) {
         throw new SparkYunException(baseResponse.getCode(), baseResponse.getMsg(), baseResponse.getErr());
       }
 
@@ -316,7 +316,7 @@ public class WorkBizService {
       throw new SparkYunException("计算引擎不存在");
     }
 
-    List<ClusterNodeEntity> allEngineNodes = engineNodeRepository.findAllByClusterIdAndStatus(calculateEngineEntityOptional.get().getId(), EngineNodeStatus.RUNNING);
+    List<ClusterNodeEntity> allEngineNodes = engineNodeRepository.findAllByClusterIdAndStatus(calculateEngineEntityOptional.get().getId(), ClusterNodeStatus.RUNNING);
     if (allEngineNodes.isEmpty()) {
       throw new SparkYunException("计算引擎无可用节点，请换一个计算引擎");
     }

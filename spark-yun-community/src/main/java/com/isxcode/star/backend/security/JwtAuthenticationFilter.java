@@ -1,8 +1,8 @@
 package com.isxcode.star.backend.security;
 
-import com.isxcode.star.api.constants.SecurityConstants;
+import com.isxcode.star.api.constants.base.SecurityConstants;
 import com.isxcode.star.api.properties.SparkYunProperties;
-import com.isxcode.star.api.utils.JwtUtils;
+import com.isxcode.star.common.utils.JwtUtils;
 import io.jsonwebtoken.ExpiredJwtException;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -11,11 +11,16 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 import static com.isxcode.star.backend.config.WebSecurityConfig.TENANT_ID;
@@ -60,7 +65,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     try {
       userUuid = JwtUtils.decrypt(sparkYunProperties.getJwtKey(), authorization, sparkYunProperties.getAesSlat(), String.class);
       USER_ID.set(userUuid);
-    } catch (ExpiredJwtException e) {
+    } catch (Exception e) {
       request
         .getRequestDispatcher(SecurityConstants.TOKEN_IS_INVALID_PATH)
         .forward(request, response);

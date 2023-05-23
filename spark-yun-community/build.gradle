@@ -1,6 +1,5 @@
 dependencies {
 
-  api(project(':spark-yun-api'))
   api(project(':spark-yun-common'))
   api(project(':spark-yun-yarn'))
 
@@ -46,7 +45,7 @@ dependencies {
   runtimeOnly "com.ibm.db2:jcc:${DB2_DRIVER_VERSION}"
 
   // jpa
-  implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+  api 'org.springframework.boot:spring-boot-starter-data-jpa'
 
   // spring security
   api 'org.springframework.boot:spring-boot-starter-security'

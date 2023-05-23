@@ -1,8 +1,8 @@
 package com.isxcode.star.backend.module.user.service;
 
-import com.isxcode.star.api.constants.Roles;
-import com.isxcode.star.api.constants.UserStatus;
-import com.isxcode.star.api.exception.SparkYunException;
+import com.isxcode.star.api.constants.user.RoleType;
+import com.isxcode.star.api.constants.user.UserStatus;
+import com.isxcode.star.api.exceptions.SparkYunException;
 import com.isxcode.star.api.pojos.user.req.UsrAddUserReq;
 import com.isxcode.star.api.pojos.user.req.UsrLoginReq;
 import com.isxcode.star.api.pojos.user.req.UsrQueryAllEnableUsersReq;
@@ -12,8 +12,8 @@ import com.isxcode.star.api.pojos.user.res.UsrLoginRes;
 import com.isxcode.star.api.pojos.user.res.UsrQueryAllEnableUsersRes;
 import com.isxcode.star.api.pojos.user.res.UsrQueryAllUsersRes;
 import com.isxcode.star.api.properties.SparkYunProperties;
-import com.isxcode.star.api.utils.JwtUtils;
-import com.isxcode.star.api.utils.Md5Utils;
+import com.isxcode.star.common.utils.JwtUtils;
+import com.isxcode.star.common.utils.Md5Utils;
 import com.isxcode.star.backend.module.tenant.entity.TenantEntity;
 import com.isxcode.star.backend.module.tenant.repository.TenantRepository;
 import com.isxcode.star.backend.module.tenant.user.entity.TenantUserEntity;
@@ -65,7 +65,7 @@ public class UserBizService {
     }
 
     // 如果是系统管理员，首次登录，插入配置的密码并保存
-    if (Roles.SYS_ADMIN.equals(userEntity.getRoleCode()) && Strings.isEmpty(userEntity.getPasswd())) {
+    if (RoleType.SYS_ADMIN.equals(userEntity.getRoleCode()) && Strings.isEmpty(userEntity.getPasswd())) {
       userEntity.setPasswd(Md5Utils.hashStr(sparkYunProperties.getAdminPasswd()));
       userRepository.save(userEntity);
     }
@@ -79,7 +79,7 @@ public class UserBizService {
     String jwtToken = JwtUtils.encrypt(sparkYunProperties.getAesSlat(), userEntity.getId(), sparkYunProperties.getJwtKey(), sparkYunProperties.getExpirationMin());
 
     // 如果是系统管理员直接返回
-    if (Roles.SYS_ADMIN.equals(userEntity.getRoleCode())) {
+    if (RoleType.SYS_ADMIN.equals(userEntity.getRoleCode())) {
       return UsrLoginRes.builder().tenantId(userEntity.getCurrentTenantId()).username(userEntity.getUsername()).token(jwtToken).role(userEntity.getRoleCode()).build();
     }
 

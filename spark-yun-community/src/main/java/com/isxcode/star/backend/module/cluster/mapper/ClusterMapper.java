@@ -1,8 +1,8 @@
 package com.isxcode.star.backend.module.cluster.mapper;
 
-import com.isxcode.star.api.pojos.calculate.engine.req.CaeAddEngineReq;
-import com.isxcode.star.api.pojos.calculate.engine.req.CaeUpdateEngineReq;
-import com.isxcode.star.api.pojos.calculate.engine.res.CaeQueryEngineRes;
+import com.isxcode.star.api.pojos.cluster.req.CaeAddEngineReq;
+import com.isxcode.star.api.pojos.cluster.req.CaeUpdateEngineReq;
+import com.isxcode.star.api.pojos.cluster.res.CaeQueryEngineRes;
 import com.isxcode.star.backend.module.cluster.entity.ClusterEntity;
 
 import java.util.List;
