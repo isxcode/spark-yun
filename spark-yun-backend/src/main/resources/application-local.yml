@@ -22,7 +22,7 @@ spring:
     user: root
     password: ispong123
     locations: classpath:db/migration/mysql
-    enabled: true
+    enabled: false
 
   quartz:
     properties:
