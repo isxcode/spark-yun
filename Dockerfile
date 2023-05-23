@@ -13,7 +13,7 @@ RUN mkdir -p /var/lib/spark-yun
 COPY ./spark-yun-backend/build/libs/spark-yun-backend.jar /opt/spark-yun/zhiqingyun.jar
 COPY ./spark-yun-dist/src/main/conf /etc/spark-yun/conf
 COPY ./spark-yun-dist/build/distributions/spark-yun-agent.tar.gz /tmp/spark-yun-agent.tar.gz
-COPY ./spark-yun-dist/src/main/bin /tmp/spark-yun-bash
+COPY ./spark-yun-dist/src/main/bash /tmp/spark-yun-bash
 
 EXPOSE 8080
 

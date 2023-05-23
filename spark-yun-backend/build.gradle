@@ -1,8 +1,6 @@
 dependencies {
 
   api(project(':spark-yun-community'))
-
-  // 社区版需要注释此行
   api(project(':spark-yun-vip'))
 
   // thymeleaf
@@ -12,14 +10,8 @@ dependencies {
   implementation "com.alibaba:druid-spring-boot-starter:${DRUID_VERSION}"
 
   // flyway
-  implementation 'org.flywaydb:flyway-core:9.16.3'
-  implementation 'org.flywaydb:flyway-mysql:9.16.3'
-
-  // mysql
-  implementation 'com.mysql:mysql-connector-j:8.0.33'
-
-  // jpa
-  api 'org.springframework.boot:spring-boot-starter-data-jpa'
+  implementation "org.flywaydb:flyway-core:${FLYWAY_VERSION}"
+  implementation "org.flywaydb:flyway-mysql:${FLYWAY_VERSION}"
 }
 
 bootJar {

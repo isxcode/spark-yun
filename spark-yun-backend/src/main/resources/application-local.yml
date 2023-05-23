@@ -1,7 +1,3 @@
-server:
-  ssl
-
-
 spring:
 
   security:
@@ -26,7 +22,7 @@ spring:
     user: root
     password: ispong123
     locations: classpath:db/migration/mysql
-    enabled: false
+    enabled: true
 
   quartz:
     properties:
@@ -41,7 +37,7 @@ logging:
 
 spark-yun:
   admin-passwd: admin123
-  resources-path: /Users/ispong/Data/resources
   log-advice: false
+  resources-path: /Users/ispong/Data/resources
   agent-bin-dir: /Users/ispong/Isxcode/spark-yun/spark-yun-dist/src/main/bin
   agent-tar-gz-dir: /Users/ispong/Isxcode/spark-yun/spark-yun-dist/build/distributions

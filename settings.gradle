@@ -11,5 +11,4 @@ include 'spark-yun-website'
 include 'spark-yun-yarn'
 include 'spark-yun-dist'
 
-include 'spark-yun-plugins:spark-plugin-test'
 include 'spark-yun-plugins:spark-query-sql-plugin'

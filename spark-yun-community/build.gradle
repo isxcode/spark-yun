@@ -3,7 +3,7 @@ dependencies {
   api(project(':spark-yun-common'))
   api(project(':spark-yun-yarn'))
 
-  // cache
+  // spring-cache
   implementation 'org.springframework.boot:spring-boot-starter-cache'
 
   // mysql
@@ -22,11 +22,11 @@ dependencies {
   runtimeOnly "org.postgresql:postgresql:${POSTGRE_DRIVER_VERSION}"
 
   // hive
-  runtimeOnly("org.apache.hive:hive-jdbc:${HIVE_DRIVER_VERSION}" ) {
+  runtimeOnly("org.apache.hive:hive-jdbc:${HIVE_DRIVER_VERSION}") {
     exclude group: 'org.eclipse.jetty'
   }
 
-  // dm 需要提前下载驱动安装
+  // dm
   runtimeOnly "com.dameng:Dm8JdbcDriver18:${DM_DRIVER_VERSION}"
 
   // clickhouse

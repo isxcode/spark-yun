@@ -2,10 +2,10 @@ package com.isxcode.star.backend.security;
 
 import com.isxcode.star.api.constants.user.RoleType;
 import com.isxcode.star.api.exceptions.SparkYunException;
-import com.isxcode.star.backend.module.tenant.user.entity.TenantUserEntity;
-import com.isxcode.star.backend.module.tenant.user.repository.TenantUserRepository;
-import com.isxcode.star.backend.module.user.entity.UserEntity;
-import com.isxcode.star.backend.module.user.repository.UserRepository;
+import com.isxcode.star.backend.module.tenant.user.TenantUserEntity;
+import com.isxcode.star.backend.module.tenant.user.TenantUserRepository;
+import com.isxcode.star.backend.module.user.UserEntity;
+import com.isxcode.star.backend.module.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;

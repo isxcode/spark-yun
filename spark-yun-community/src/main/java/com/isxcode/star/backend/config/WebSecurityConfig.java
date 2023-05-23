@@ -2,8 +2,8 @@ package com.isxcode.star.backend.config;
 
 import com.isxcode.star.api.properties.SparkYunProperties;
 import com.isxcode.star.backend.security.JwtAuthenticationFilter;
-import com.isxcode.star.backend.module.tenant.user.repository.TenantUserRepository;
-import com.isxcode.star.backend.module.user.repository.UserRepository;
+import com.isxcode.star.backend.module.tenant.user.TenantUserRepository;
+import com.isxcode.star.backend.module.user.UserRepository;
 import com.isxcode.star.backend.security.AuthenticationManagerImpl;
 import com.isxcode.star.backend.security.AuthenticationProviderImpl;
 import com.isxcode.star.backend.security.UserDetailsServiceImpl;
@@ -63,6 +63,7 @@ public class WebSecurityConfig {
 
   @Bean
   public HttpFirewall allowUrlEncodedSlashHttpFirewall() {
+
     DefaultHttpFirewall firewall = new DefaultHttpFirewall();
     firewall.setAllowUrlEncodedSlash(true);
     return firewall;
@@ -87,7 +88,7 @@ public class WebSecurityConfig {
       .antMatchers(sparkYunProperties.getAnonymousUrl().toArray(new String[0]))
       .permitAll();
 
-    // 需要token才可以访问的权限
+    // 需要token才可以访问的地址
     List<String> excludePaths = new ArrayList<>();
     excludePaths.addAll(sparkYunProperties.getAdminUrl());
     excludePaths.addAll(sparkYunProperties.getAnonymousUrl());
