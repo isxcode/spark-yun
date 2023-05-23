@@ -1,9 +1,17 @@
+# idea配置，不提交
 .idea
+
+# gradle缓存，不提交
 .gradle
 !gradle-wrapper.jar
+
+# 后端打包文件，不提交
 **/build
 
-# 前端包内容，不提交
+# 前端打包文件，不提交
+spark-yun-website/dist
+
+# 前端嵌入后端内容，不提交
 spark-yun-backend/src/main/resources/templates/**
 spark-yun-backend/src/main/resources/static/**
 

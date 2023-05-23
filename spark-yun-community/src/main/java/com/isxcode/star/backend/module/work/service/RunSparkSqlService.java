@@ -4,14 +4,10 @@ import com.alibaba.fastjson.JSON;
 import com.isxcode.star.api.constants.CodeConstants;
 import com.isxcode.star.api.constants.EngineNodeStatus;
 import com.isxcode.star.api.constants.PathConstants;
-import com.isxcode.star.api.constants.WorkStatus;
 import com.isxcode.star.api.constants.work.WorkLog;
 import com.isxcode.star.api.constants.work.instance.InstanceStatus;
-import com.isxcode.star.api.exception.SparkYunException;
 import com.isxcode.star.api.exception.WorkRunException;
 import com.isxcode.star.api.pojos.plugin.req.PluginReq;
-import com.isxcode.star.api.pojos.work.res.WokGetDataRes;
-import com.isxcode.star.api.pojos.work.res.WokGetWorkLogRes;
 import com.isxcode.star.api.pojos.work.res.WokRunWorkRes;
 import com.isxcode.star.api.pojos.yun.agent.req.YagExecuteWorkReq;
 import com.isxcode.star.api.pojos.yun.agent.res.YagGetLogRes;
@@ -25,14 +21,12 @@ import com.isxcode.star.backend.module.work.instance.entity.WorkInstanceEntity;
 import com.isxcode.star.backend.module.work.instance.repository.WorkInstanceRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.logging.log4j.util.Strings;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -142,6 +136,11 @@ public class RunSparkSqlService {
     Map<String, String> sparkConfig = new HashMap<>();
     sparkConfig.put("spark.executor.memory", "1g");
     sparkConfig.put("spark.driver.memory", "1g");
+    sparkConfig.put("spark.sql.storeAssignmentPolicy", "LEGACY");
+    sparkConfig.put("spark.sql.legacy.timeParserPolicy", "LEGACY");
+    sparkConfig.put("spark.hadoop.hive.exec.dynamic.partition", "true");
+    sparkConfig.put("spark.hadoop.hive.exec.dynamic.partition.mode", "nonstrict");
+
     pluginReq.setSparkConfig(sparkConfig);
     executeReq.setPluginReq(pluginReq);
 
