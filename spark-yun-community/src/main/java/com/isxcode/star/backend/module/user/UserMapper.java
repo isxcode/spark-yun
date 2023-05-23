@@ -6,13 +6,11 @@ import com.isxcode.star.api.pojos.user.req.UsrAddUserReq;
 import com.isxcode.star.api.pojos.user.req.UsrUpdateUserReq;
 import com.isxcode.star.api.pojos.user.res.UsrQueryAllEnableUsersRes;
 import com.isxcode.star.api.pojos.user.res.UsrQueryAllUsersRes;
-import com.isxcode.star.backend.module.user.UserEntity;
+import java.util.List;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-
-import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface UserMapper {
@@ -30,27 +28,32 @@ public interface UserMapper {
   @Mapping(target = "email", source = "usrUpdateUserReq.email")
   UserEntity usrUpdateUserReqToUserEntity(UsrUpdateUserReq usrUpdateUserReq, UserEntity userEntity);
 
-  /**
-   * UsrQueryAllUsersRes.
-   */
+  /** UsrQueryAllUsersRes. */
   @Mapping(target = "createDateTime", dateFormat = "yyyy-MM-dd HH:mm:ss")
   UsrQueryAllUsersRes userEntityToUsrQueryAllUsersRes(UserEntity userEntity);
 
   List<UsrQueryAllUsersRes> userEntityToUsrQueryAllUsersResList(List<UserEntity> userEntity);
 
-  default Page<UsrQueryAllUsersRes> userEntityToUsrQueryAllUsersResPage(Page<UserEntity> userEntities) {
-    return new PageImpl<>(userEntityToUsrQueryAllUsersResList(userEntities.getContent()), userEntities.getPageable(), userEntities.getTotalElements());
+  default Page<UsrQueryAllUsersRes> userEntityToUsrQueryAllUsersResPage(
+      Page<UserEntity> userEntities) {
+    return new PageImpl<>(
+        userEntityToUsrQueryAllUsersResList(userEntities.getContent()),
+        userEntities.getPageable(),
+        userEntities.getTotalElements());
   }
 
-  /**
-   * UsrQueryAllEnableUsersRes.
-   */
+  /** UsrQueryAllEnableUsersRes. */
   @Mapping(target = "createDateTime", dateFormat = "yyyy-MM-dd HH:mm:ss")
   UsrQueryAllEnableUsersRes userEntityToUsrQueryAllEnableUsersRes(UserEntity userEntity);
 
-  List<UsrQueryAllEnableUsersRes> userEntityToUsrQueryAllEnableUsersResList(List<UserEntity> userEntity);
+  List<UsrQueryAllEnableUsersRes> userEntityToUsrQueryAllEnableUsersResList(
+      List<UserEntity> userEntity);
 
-  default Page<UsrQueryAllEnableUsersRes> userEntityToUsrQueryAllEnableUsersResPage(Page<UserEntity> userEntities) {
-    return new PageImpl<>(userEntityToUsrQueryAllEnableUsersResList(userEntities.getContent()), userEntities.getPageable(), userEntities.getTotalElements());
+  default Page<UsrQueryAllEnableUsersRes> userEntityToUsrQueryAllEnableUsersResPage(
+      Page<UserEntity> userEntities) {
+    return new PageImpl<>(
+        userEntityToUsrQueryAllEnableUsersResList(userEntities.getContent()),
+        userEntities.getPageable(),
+        userEntities.getTotalElements());
   }
 }

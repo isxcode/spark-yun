@@ -1,21 +1,22 @@
 package com.isxcode.star.backend.module.datasource;
 
+import com.isxcode.star.api.annotations.SuccessResponse;
 import com.isxcode.star.api.constants.base.ModulePrefix;
-import com.isxcode.star.api.constants.user.RoleType;
 import com.isxcode.star.api.constants.base.SecurityConstants;
+import com.isxcode.star.api.constants.user.RoleType;
 import com.isxcode.star.api.pojos.datasource.req.DasAddDatasourceReq;
 import com.isxcode.star.api.pojos.datasource.req.DasQueryDatasourceReq;
 import com.isxcode.star.api.pojos.datasource.req.DasUpdateDatasourceReq;
 import com.isxcode.star.api.pojos.datasource.res.DasGetConnectLogRes;
 import com.isxcode.star.api.pojos.datasource.res.DasQueryDatasourceRes;
 import com.isxcode.star.api.pojos.datasource.res.DasTestConnectRes;
-import com.isxcode.star.api.annotations.SuccessResponse;
 import com.isxcode.star.backend.module.user.action.UserLog;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.security.access.annotation.Secured;
@@ -25,8 +26,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.validation.Valid;
 
 @Tag(name = "数据源模块")
 @RestController
@@ -41,7 +40,12 @@ public class DatasourceController {
   @Operation(summary = "添加数据源接口")
   @PostMapping("/addDatasource")
   @SuccessResponse("添加成功")
-  @Parameter(name = SecurityConstants.HEADER_TENANT_ID, description = "租户id", required = true, in = ParameterIn.HEADER, schema = @Schema(type = "string"))
+  @Parameter(
+      name = SecurityConstants.HEADER_TENANT_ID,
+      description = "租户id",
+      required = true,
+      in = ParameterIn.HEADER,
+      schema = @Schema(type = "string"))
   public void addDatasource(@Valid @RequestBody DasAddDatasourceReq dasAddDatasourceReq) {
 
     datasourceBizService.addDatasource(dasAddDatasourceReq);
@@ -52,7 +56,12 @@ public class DatasourceController {
   @Operation(summary = "更新数据源接口")
   @PostMapping("/updateDatasource")
   @SuccessResponse("更新成功")
-  @Parameter(name = SecurityConstants.HEADER_TENANT_ID, description = "租户id", required = true, in = ParameterIn.HEADER, schema = @Schema(type = "string"))
+  @Parameter(
+      name = SecurityConstants.HEADER_TENANT_ID,
+      description = "租户id",
+      required = true,
+      in = ParameterIn.HEADER,
+      schema = @Schema(type = "string"))
   public void updateDatasource(@Valid @RequestBody DasUpdateDatasourceReq dasAddDatasourceReq) {
 
     datasourceBizService.updateDatasource(dasAddDatasourceReq);
@@ -63,8 +72,14 @@ public class DatasourceController {
   @Operation(summary = "查询数据源列表接口")
   @PostMapping("/queryDatasource")
   @SuccessResponse("查询数据源成功")
-  @Parameter(name = SecurityConstants.HEADER_TENANT_ID, description = "租户id", required = true, in = ParameterIn.HEADER, schema = @Schema(type = "string"))
-  public Page<DasQueryDatasourceRes> queryDatasource(@Valid @RequestBody DasQueryDatasourceReq dasQueryDatasourceReq) {
+  @Parameter(
+      name = SecurityConstants.HEADER_TENANT_ID,
+      description = "租户id",
+      required = true,
+      in = ParameterIn.HEADER,
+      schema = @Schema(type = "string"))
+  public Page<DasQueryDatasourceRes> queryDatasource(
+      @Valid @RequestBody DasQueryDatasourceReq dasQueryDatasourceReq) {
 
     return datasourceBizService.queryDatasource(dasQueryDatasourceReq);
   }
@@ -74,8 +89,16 @@ public class DatasourceController {
   @Operation(summary = "删除数据源接口")
   @GetMapping("/delDatasource")
   @SuccessResponse("删除成功")
-  @Parameter(name = SecurityConstants.HEADER_TENANT_ID, description = "租户id", required = true, in = ParameterIn.HEADER, schema = @Schema(type = "string"))
-  public void delDatasource(@Schema(description = "数据源唯一id", example = "sy_344c3d583fa344f7a2403b19c5a654dc") @RequestParam String datasourceId) {
+  @Parameter(
+      name = SecurityConstants.HEADER_TENANT_ID,
+      description = "租户id",
+      required = true,
+      in = ParameterIn.HEADER,
+      schema = @Schema(type = "string"))
+  public void delDatasource(
+      @Schema(description = "数据源唯一id", example = "sy_344c3d583fa344f7a2403b19c5a654dc")
+          @RequestParam
+          String datasourceId) {
 
     datasourceBizService.delDatasource(datasourceId);
   }
@@ -85,8 +108,16 @@ public class DatasourceController {
   @Operation(summary = "测试数据源连接接口")
   @GetMapping("/testConnect")
   @SuccessResponse("检测完成")
-  @Parameter(name = SecurityConstants.HEADER_TENANT_ID, description = "租户id", required = true, in = ParameterIn.HEADER, schema = @Schema(type = "string"))
-  public DasTestConnectRes testConnect(@Schema(description = "数据源唯一id", example = "sy_344c3d583fa344f7a2403b19c5a654dc") @RequestParam String datasourceId) {
+  @Parameter(
+      name = SecurityConstants.HEADER_TENANT_ID,
+      description = "租户id",
+      required = true,
+      in = ParameterIn.HEADER,
+      schema = @Schema(type = "string"))
+  public DasTestConnectRes testConnect(
+      @Schema(description = "数据源唯一id", example = "sy_344c3d583fa344f7a2403b19c5a654dc")
+          @RequestParam
+          String datasourceId) {
 
     return datasourceBizService.testConnect(datasourceId);
   }
@@ -96,8 +127,16 @@ public class DatasourceController {
   @Operation(summary = "查询连接日志")
   @GetMapping("/getConnectLog")
   @SuccessResponse("获取成功")
-  @Parameter(name = SecurityConstants.HEADER_TENANT_ID, description = "租户id", required = true, in = ParameterIn.HEADER, schema = @Schema(type = "string"))
-  public DasGetConnectLogRes getConnectLog(@Schema(description = "数据源唯一id", example = "sy_344c3d583fa344f7a2403b19c5a654dc") @RequestParam String datasourceId) {
+  @Parameter(
+      name = SecurityConstants.HEADER_TENANT_ID,
+      description = "租户id",
+      required = true,
+      in = ParameterIn.HEADER,
+      schema = @Schema(type = "string"))
+  public DasGetConnectLogRes getConnectLog(
+      @Schema(description = "数据源唯一id", example = "sy_344c3d583fa344f7a2403b19c5a654dc")
+          @RequestParam
+          String datasourceId) {
 
     return datasourceBizService.getConnectLog(datasourceId);
   }

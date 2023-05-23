@@ -4,14 +4,13 @@ import com.isxcode.star.api.exceptions.SparkYunException;
 import com.isxcode.star.api.pojos.work.config.req.WocConfigWorkReq;
 import com.isxcode.star.backend.module.work.WorkEntity;
 import com.isxcode.star.backend.module.work.WorkRepository;
+import java.util.Optional;
+import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.scheduling.support.CronExpression;
 import org.springframework.stereotype.Service;
-
-import javax.transaction.Transactional;
-import java.util.Optional;
 
 /** 用户模块接口的业务逻辑. */
 @Service
@@ -33,7 +32,8 @@ public class WorkConfigBizService {
       throw new SparkYunException("作业不存在");
     }
 
-    Optional<WorkConfigEntity> workConfigEntityOptional = workConfigRepository.findById(workEntityOptional.get().getConfigId());
+    Optional<WorkConfigEntity> workConfigEntityOptional =
+        workConfigRepository.findById(workEntityOptional.get().getConfigId());
     if (!workConfigEntityOptional.isPresent()) {
       throw new SparkYunException("作业异常，作业不可用。");
     }
@@ -60,5 +60,4 @@ public class WorkConfigBizService {
     }
     workConfigRepository.save(workConfigEntity);
   }
-
 }

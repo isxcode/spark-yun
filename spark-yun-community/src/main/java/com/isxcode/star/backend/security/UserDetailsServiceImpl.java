@@ -1,11 +1,15 @@
 package com.isxcode.star.backend.security;
 
+import static com.isxcode.star.backend.config.WebSecurityConfig.JPA_TENANT_MODE;
+import static com.isxcode.star.backend.config.WebSecurityConfig.TENANT_ID;
+
 import com.isxcode.star.api.constants.user.RoleType;
 import com.isxcode.star.api.exceptions.SparkYunException;
 import com.isxcode.star.backend.module.tenant.user.TenantUserEntity;
 import com.isxcode.star.backend.module.tenant.user.TenantUserRepository;
 import com.isxcode.star.backend.module.user.UserEntity;
 import com.isxcode.star.backend.module.user.UserRepository;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
@@ -14,11 +18,6 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-
-import java.util.Optional;
-
-import static com.isxcode.star.backend.config.WebSecurityConfig.JPA_TENANT_MODE;
-import static com.isxcode.star.backend.config.WebSecurityConfig.TENANT_ID;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -51,7 +50,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     // 获取用户租户权限
     if (!RoleType.SYS_ADMIN.equals(authority)) {
       if (!Strings.isEmpty(TENANT_ID.get()) && !"undefined".equals(TENANT_ID.get())) {
-        Optional<TenantUserEntity> tenantUserEntityOptional = tenantUserRepository.findByTenantIdAndUserId(TENANT_ID.get(), userId);
+        Optional<TenantUserEntity> tenantUserEntityOptional =
+            tenantUserRepository.findByTenantIdAndUserId(TENANT_ID.get(), userId);
         if (!tenantUserEntityOptional.isPresent()) {
           throw new SparkYunException("用户不在租户中");
         }
@@ -61,8 +61,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     // 返回用户信息
     return User.withUsername(userId)
-      .password(userEntityOptional.get().getPasswd())
-      .authorities(AuthorityUtils.commaSeparatedStringToAuthorityList(authority))
-      .build();
+        .password(userEntityOptional.get().getPasswd())
+        .authorities(AuthorityUtils.commaSeparatedStringToAuthorityList(authority))
+        .build();
   }
 }

@@ -1,17 +1,15 @@
 package com.isxcode.star.yun.agent.run;
 
+import com.isxcode.star.api.annotations.SuccessResponse;
 import com.isxcode.star.api.constants.base.ModulePrefix;
 import com.isxcode.star.api.pojos.yun.agent.req.YagExecuteWorkReq;
 import com.isxcode.star.api.pojos.yun.agent.res.YagExecuteWorkRes;
 import com.isxcode.star.api.pojos.yun.agent.res.YagGetDataRes;
 import com.isxcode.star.api.pojos.yun.agent.res.YagGetLogRes;
 import com.isxcode.star.api.pojos.yun.agent.res.YagGetStatusRes;
-import com.isxcode.star.api.annotations.SuccessResponse;
-
-import javax.validation.Valid;
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -68,12 +66,9 @@ public class YunAgentController {
     yunAgentBizService.stopJob(applicationId);
   }
 
-  /**
-   * 心跳检测.
-   */
+  /** 心跳检测. */
   @Operation(summary = "心跳检测接口", description = "心跳检测")
   @GetMapping("/heartCheck")
   @SuccessResponse("正常心跳")
-  public void heartCheck() {
-  }
+  public void heartCheck() {}
 }

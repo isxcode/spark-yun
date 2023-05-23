@@ -1,19 +1,17 @@
 package com.isxcode.star.backend.module.user.action;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.Data;
-import org.hibernate.annotations.GenericGenerator;
-import org.springframework.data.annotation.CreatedBy;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
+import java.time.LocalDateTime;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
+import lombok.Data;
+import org.hibernate.annotations.GenericGenerator;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Data
 @Entity
@@ -25,8 +23,8 @@ public class UserActionEntity {
   @Id
   @GeneratedValue(generator = "sy-id-generator")
   @GenericGenerator(
-    name = "sy-id-generator",
-    strategy = "com.isxcode.star.backend.config.GeneratedValueConfig")
+      name = "sy-id-generator",
+      strategy = "com.isxcode.star.backend.config.GeneratedValueConfig")
   private String id;
 
   private String userId;
@@ -47,9 +45,7 @@ public class UserActionEntity {
 
   private Long endTimestamp;
 
-  @CreatedDate
-  private LocalDateTime createDateTime;
+  @CreatedDate private LocalDateTime createDateTime;
 
-  @CreatedBy
-  private String createBy;
+  @CreatedBy private String createBy;
 }

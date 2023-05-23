@@ -1,11 +1,10 @@
 package com.isxcode.star.api.pojos.user.req;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Data;
-
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
+import lombok.Data;
 
 @Data
 public class UsrUpdateUserReq {
@@ -33,5 +32,4 @@ public class UsrUpdateUserReq {
 
   @Schema(title = "备注", example = "这个人不能删除")
   private String remark;
-
 }

@@ -8,7 +8,6 @@ import io.jsonwebtoken.JwtParserBuilder;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
-
 import java.security.Key;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -17,17 +16,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-/**
- * jwt加密工具类.
- */
+/** jwt加密工具类. */
 public class JwtUtils {
 
   private static final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 
-  /**
-   * jwt加密.
-   */
-  public static String encrypt(String aesKey, Object obj, String jwtKey, Integer minutes){
+  /** jwt加密. */
+  public static String encrypt(String aesKey, Object obj, String jwtKey, Integer minutes) {
 
     Map<String, Object> claims = new HashMap<>(1);
 
@@ -47,7 +42,7 @@ public class JwtUtils {
       jwtBuilder = jwtBuilder.signWith(key);
     } else {
       jwtBuilder =
-        jwtBuilder.signWith(Keys.hmacShaKeyFor(Arrays.copyOf(jwtKey.getBytes(), 1 << 5)));
+          jwtBuilder.signWith(Keys.hmacShaKeyFor(Arrays.copyOf(jwtKey.getBytes(), 1 << 5)));
     }
 
     jwtBuilder.setClaims(claims).setIssuedAt(new Date()).setId(String.valueOf(UUID.randomUUID()));
@@ -60,13 +55,11 @@ public class JwtUtils {
     }
 
     return jwtBuilder.compact();
-
   }
 
-  /**
-   * jwt解密.
-   */
-  public static <A> A decrypt(String aesKey, String jwtString, String jwtKey, Class<A> targetClass) {
+  /** jwt解密. */
+  public static <A> A decrypt(
+      String aesKey, String jwtString, String jwtKey, Class<A> targetClass) {
 
     JwtParserBuilder jwtParserBuilder = Jwts.parserBuilder();
 
@@ -74,16 +67,12 @@ public class JwtUtils {
       jwtParserBuilder = jwtParserBuilder.setSigningKey(key);
     } else {
       jwtParserBuilder =
-        jwtParserBuilder.setSigningKey(
-          Keys.hmacShaKeyFor(Arrays.copyOf(jwtKey.getBytes(), 1 << 5)));
+          jwtParserBuilder.setSigningKey(
+              Keys.hmacShaKeyFor(Arrays.copyOf(jwtKey.getBytes(), 1 << 5)));
     }
 
     String claimStr =
-      jwtParserBuilder
-        .build()
-        .parseClaimsJws(jwtString)
-        .getBody()
-        .get("CLAIM", String.class);
+        jwtParserBuilder.build().parseClaimsJws(jwtString).getBody().get("CLAIM", String.class);
 
     String targetJsonStr = claimStr;
     if (aesKey != null) {

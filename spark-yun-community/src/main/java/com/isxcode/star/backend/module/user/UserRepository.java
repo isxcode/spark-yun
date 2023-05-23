@@ -1,10 +1,7 @@
 package com.isxcode.star.backend.module.user;
 
-import com.isxcode.star.backend.module.user.UserEntity;
-
 import java.util.List;
 import java.util.Optional;
-
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
@@ -22,16 +19,27 @@ import org.springframework.stereotype.Repository;
 @CacheConfig(cacheNames = {"sy_users"})
 public interface UserRepository extends JpaRepository<UserEntity, String> {
 
-  /**
-   * 分页搜索查询所有用户.
-   */
-  @Query("SELECT U FROM UserEntity U WHERE U.roleCode != 'ROLE_SYS_ADMIN' and (U.username LIKE %:keyword% OR U.account LIKE %:keyword% OR U.email LIKE %:keyword% OR U.phone LIKE %:keyword% OR U.remark LIKE %:keyword%)")
+  /** 分页搜索查询所有用户. */
+  @Query(
+      "SELECT U FROM UserEntity U "
+          + "WHERE U.roleCode != 'ROLE_SYS_ADMIN' and "
+          + "(U.username LIKE %:keyword% "
+          + "OR U.account LIKE %:keyword% "
+          + "OR U.email LIKE %:keyword% "
+          + "OR U.phone LIKE %:keyword% "
+          + "OR U.remark LIKE %:keyword%)")
   Page<UserEntity> searchAllUser(@Param("keyword") String searchKeyWord, Pageable pageable);
 
-  /**
-   * 分页搜索查询所有有效用户.
-   */
-  @Query("SELECT U FROM UserEntity U WHERE U.roleCode != 'ROLE_SYS_ADMIN' and U.status = 'ENABLE' AND (U.username LIKE %:keyword% OR U.account LIKE %:keyword% OR U.email LIKE %:keyword% OR U.phone LIKE %:keyword% OR U.remark LIKE %:keyword%)")
+  /** 分页搜索查询所有有效用户. */
+  @Query(
+      "SELECT U FROM UserEntity U "
+          + "WHERE U.roleCode != 'ROLE_SYS_ADMIN' "
+          + "AND U.status = 'ENABLE' "
+          + "AND (U.username LIKE %:keyword%"
+          + " OR U.account LIKE %:keyword% "
+          + "OR U.email LIKE %:keyword% "
+          + "OR U.phone LIKE %:keyword% "
+          + "OR U.remark LIKE %:keyword%)")
   Page<UserEntity> searchAllEnableUser(@Param("keyword") String searchKeyWord, Pageable pageable);
 
   Optional<UserEntity> findByAccount(String account);
@@ -40,8 +48,8 @@ public interface UserRepository extends JpaRepository<UserEntity, String> {
 
   Optional<UserEntity> findByEmail(String email);
 
-//  @Override
-//  @Cacheable(key = "#id")
+  //  @Override
+  //  @Cacheable(key = "#id")
   Optional<UserEntity> findById(String id);
 
   @Override

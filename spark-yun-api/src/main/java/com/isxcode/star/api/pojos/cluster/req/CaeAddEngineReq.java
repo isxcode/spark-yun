@@ -1,8 +1,7 @@
 package com.isxcode.star.api.pojos.cluster.req;
 
-import javax.validation.constraints.NotEmpty;
-
 import io.swagger.v3.oas.annotations.media.Schema;
+import javax.validation.constraints.NotEmpty;
 import lombok.Data;
 
 @Data

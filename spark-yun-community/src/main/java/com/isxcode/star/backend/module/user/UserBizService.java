@@ -12,24 +12,20 @@ import com.isxcode.star.api.pojos.user.res.UsrLoginRes;
 import com.isxcode.star.api.pojos.user.res.UsrQueryAllEnableUsersRes;
 import com.isxcode.star.api.pojos.user.res.UsrQueryAllUsersRes;
 import com.isxcode.star.api.properties.SparkYunProperties;
-import com.isxcode.star.common.utils.JwtUtils;
-import com.isxcode.star.common.utils.Md5Utils;
 import com.isxcode.star.backend.module.tenant.TenantEntity;
 import com.isxcode.star.backend.module.tenant.TenantRepository;
 import com.isxcode.star.backend.module.tenant.user.TenantUserEntity;
 import com.isxcode.star.backend.module.tenant.user.TenantUserRepository;
-import com.isxcode.star.backend.module.user.UserEntity;
-import com.isxcode.star.backend.module.user.UserMapper;
-import com.isxcode.star.backend.module.user.UserRepository;
+import com.isxcode.star.common.utils.JwtUtils;
+import com.isxcode.star.common.utils.Md5Utils;
+import java.util.List;
+import java.util.Optional;
+import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-
-import javax.transaction.Transactional;
-import java.util.List;
-import java.util.Optional;
 
 /** 用户模块. */
 @Service
@@ -47,13 +43,12 @@ public class UserBizService {
 
   private final TenantUserRepository tenantUserRepository;
 
-  /**
-   * 用户登录.
-   */
+  /** 用户登录. */
   public UsrLoginRes login(UsrLoginReq usrLoginReq) {
 
     // 判断用户是否存在
-    Optional<UserEntity> userEntityOptional = userRepository.findByAccount(usrLoginReq.getAccount());
+    Optional<UserEntity> userEntityOptional =
+        userRepository.findByAccount(usrLoginReq.getAccount());
     if (!userEntityOptional.isPresent()) {
       throw new SparkYunException("账号或者密码不正确");
     }
@@ -65,7 +60,8 @@ public class UserBizService {
     }
 
     // 如果是系统管理员，首次登录，插入配置的密码并保存
-    if (RoleType.SYS_ADMIN.equals(userEntity.getRoleCode()) && Strings.isEmpty(userEntity.getPasswd())) {
+    if (RoleType.SYS_ADMIN.equals(userEntity.getRoleCode())
+        && Strings.isEmpty(userEntity.getPasswd())) {
       userEntity.setPasswd(Md5Utils.hashStr(sparkYunProperties.getAdminPasswd()));
       userRepository.save(userEntity);
     }
@@ -76,23 +72,35 @@ public class UserBizService {
     }
 
     // 生成token
-    String jwtToken = JwtUtils.encrypt(sparkYunProperties.getAesSlat(), userEntity.getId(), sparkYunProperties.getJwtKey(), sparkYunProperties.getExpirationMin());
+    String jwtToken =
+        JwtUtils.encrypt(
+            sparkYunProperties.getAesSlat(),
+            userEntity.getId(),
+            sparkYunProperties.getJwtKey(),
+            sparkYunProperties.getExpirationMin());
 
     // 如果是系统管理员直接返回
     if (RoleType.SYS_ADMIN.equals(userEntity.getRoleCode())) {
-      return UsrLoginRes.builder().tenantId(userEntity.getCurrentTenantId()).username(userEntity.getUsername()).token(jwtToken).role(userEntity.getRoleCode()).build();
+      return UsrLoginRes.builder()
+          .tenantId(userEntity.getCurrentTenantId())
+          .username(userEntity.getUsername())
+          .token(jwtToken)
+          .role(userEntity.getRoleCode())
+          .build();
     }
 
     // 获取用户最近一次租户信息
     if (Strings.isEmpty(userEntity.getCurrentTenantId())) {
       throw new SparkYunException("无可用租户，请联系管理员");
     }
-    Optional<TenantEntity> tenantEntityOptional = tenantRepository.findById(userEntity.getCurrentTenantId());
+    Optional<TenantEntity> tenantEntityOptional =
+        tenantRepository.findById(userEntity.getCurrentTenantId());
 
     // 如果租户不存在,则随机选择一个
     String currentTenantId;
     if (!tenantEntityOptional.isPresent()) {
-      List<TenantUserEntity> tenantUserEntities = tenantUserRepository.findAllByUserId(userEntity.getId());
+      List<TenantUserEntity> tenantUserEntities =
+          tenantUserRepository.findAllByUserId(userEntity.getId());
       if (tenantUserEntities.isEmpty()) {
         throw new SparkYunException("无可用租户，请联系管理员");
       }
@@ -104,13 +112,18 @@ public class UserBizService {
     }
 
     // 返回用户在租户中的角色
-    Optional<TenantUserEntity> tenantUserEntityOptional = tenantUserRepository.findByTenantIdAndUserId(currentTenantId, userEntity.getId());
+    Optional<TenantUserEntity> tenantUserEntityOptional =
+        tenantUserRepository.findByTenantIdAndUserId(currentTenantId, userEntity.getId());
     if (!tenantUserEntityOptional.isPresent()) {
       throw new SparkYunException("无可用租户，请联系管理员");
     }
 
     // 生成token并返回
-    return new UsrLoginRes(userEntity.getUsername(), jwtToken, currentTenantId, tenantUserEntityOptional.get().getRoleCode());
+    return new UsrLoginRes(
+        userEntity.getUsername(),
+        jwtToken,
+        currentTenantId,
+        tenantUserEntityOptional.get().getRoleCode());
   }
 
   public void logout() {
@@ -118,17 +131,14 @@ public class UserBizService {
     System.out.println("用户退出登录");
   }
 
-  public void addUser() {
+  public void addUser() {}
 
-  }
-
-  /**
-   * 创建用户.
-   */
+  /** 创建用户. */
   public void addUser(UsrAddUserReq usrAddUserReq) {
 
     // 判断账号是否存在
-    Optional<UserEntity> userEntityOptional = userRepository.findByAccount(usrAddUserReq.getAccount());
+    Optional<UserEntity> userEntityOptional =
+        userRepository.findByAccount(usrAddUserReq.getAccount());
     if (userEntityOptional.isPresent()) {
       throw new SparkYunException("用户已存在");
     }
@@ -165,7 +175,8 @@ public class UserBizService {
     }
 
     // UsrUpdateUserReq To UserEntity
-    UserEntity userEntity = userMapper.usrUpdateUserReqToUserEntity(usrUpdateUserReq, userEntityOptional.get());
+    UserEntity userEntity =
+        userMapper.usrUpdateUserReqToUserEntity(usrUpdateUserReq, userEntityOptional.get());
 
     userRepository.save(userEntity);
   }
@@ -206,17 +217,22 @@ public class UserBizService {
 
   public Page<UsrQueryAllUsersRes> queryAllUsers(UsrQueryAllUsersReq usrQueryAllUsersReq) {
 
-    Page<UserEntity> userEntitiesPage = userRepository.searchAllUser(usrQueryAllUsersReq.getSearchKeyWord(),
-      PageRequest.of(usrQueryAllUsersReq.getPage(), usrQueryAllUsersReq.getPageSize()));
+    Page<UserEntity> userEntitiesPage =
+        userRepository.searchAllUser(
+            usrQueryAllUsersReq.getSearchKeyWord(),
+            PageRequest.of(usrQueryAllUsersReq.getPage(), usrQueryAllUsersReq.getPageSize()));
 
     return userMapper.userEntityToUsrQueryAllUsersResPage(userEntitiesPage);
   }
 
-  public Page<UsrQueryAllEnableUsersRes> queryAllEnableUsers(UsrQueryAllEnableUsersReq usrQueryAllEnableUsersReq) {
+  public Page<UsrQueryAllEnableUsersRes> queryAllEnableUsers(
+      UsrQueryAllEnableUsersReq usrQueryAllEnableUsersReq) {
 
     Page<UserEntity> userEntitiesPage =
-      userRepository.searchAllEnableUser(usrQueryAllEnableUsersReq.getSearchKeyWord(),
-        PageRequest.of(usrQueryAllEnableUsersReq.getPage(), usrQueryAllEnableUsersReq.getPageSize()));
+        userRepository.searchAllEnableUser(
+            usrQueryAllEnableUsersReq.getSearchKeyWord(),
+            PageRequest.of(
+                usrQueryAllEnableUsersReq.getPage(), usrQueryAllEnableUsersReq.getPageSize()));
 
     return userMapper.userEntityToUsrQueryAllEnableUsersResPage(userEntitiesPage);
   }

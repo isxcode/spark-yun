@@ -254,15 +254,15 @@ function InstancePage() {
   }
 
   return (
-    <div style={{ padding: 24 }}>
+    <div style={{padding: 24}}>
       <Row className={'datasource-bar'}>
-        <Col span={7} offset={17} style={{ textAlign: 'right', display: 'flex' }}>
+        <Col span={7} offset={17} style={{textAlign: 'right', display: 'flex'}}>
           <Input
-            style={{ marginRight: '10px' }}
+            style={{marginRight: '10px'}}
             onPressEnter={handleSearch}
             defaultValue={queryDatasourceReq.searchKeyWord}
             onChange={(e) => {
-              setPagination({ ...pagination, searchKeyWord: e.target.value })
+              setPagination({...pagination, searchKeyWord: e.target.value})
             }}
             placeholder={'实例编码/作业/作业流'}
           />
@@ -274,7 +274,7 @@ function InstancePage() {
             onClick={() => {
               fetchInstances()
             }}
-            style={{ marginLeft: '8px' }}>
+            style={{marginLeft: '8px'}}>
             刷新
           </Button>
         </Col>
@@ -286,7 +286,7 @@ function InstancePage() {
           pageSize: pagination.pageSize,
           total: pagination.totalItems,
           onChange: (currentPage: number) => {
-            setPagination({ ...pagination, currentPage })
+            setPagination({...pagination, currentPage})
           }
         }}
         columns={columns}
@@ -301,7 +301,7 @@ function InstancePage() {
           setIsLogModalVisible(false)
         }}
         footer={<></>}>
-        <pre style={{ overflowY: 'scroll', maxHeight: '200px', whiteSpace: 'pre-wrap' }}>{connectLog}</pre>
+        <pre style={{overflowY: 'scroll', maxHeight: '200px', whiteSpace: 'pre-wrap'}}>{connectLog}</pre>
       </Modal>
 
       <Modal
@@ -312,7 +312,7 @@ function InstancePage() {
           setDataModalVisible(false)
         }}
         footer={<></>}>
-        <Table columns={getColumns()} dataSource={data()} scroll={{ y: 200 }} />
+        <Table columns={getColumns()} dataSource={data()} scroll={{y: 200}}/>
       </Modal>
 
       <Modal
@@ -323,10 +323,10 @@ function InstancePage() {
           setIsYarnLogModalVisible(false)
         }}
         footer={<></>}>
-        <pre style={{ overflowY: 'scroll', maxHeight: '200px', whiteSpace: 'pre-wrap' }}>{connectLog}</pre>
+        <pre style={{overflowY: 'scroll', maxHeight: '200px', whiteSpace: 'pre-wrap'}}>{connectLog}</pre>
       </Modal>
     </div>
-  )
+  );
 }
 
 export default InstancePage

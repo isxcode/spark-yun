@@ -8,5 +8,4 @@ public class FomAddDataReq {
   private String formId;
 
   private Object data;
-
 }

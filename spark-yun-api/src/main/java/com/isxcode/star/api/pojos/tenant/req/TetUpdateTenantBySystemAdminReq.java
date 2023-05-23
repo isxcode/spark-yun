@@ -1,10 +1,8 @@
 package com.isxcode.star.api.pojos.tenant.req;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-
 import javax.validation.constraints.NotEmpty;
+import lombok.Data;
 
 @Data
 public class TetUpdateTenantBySystemAdminReq {

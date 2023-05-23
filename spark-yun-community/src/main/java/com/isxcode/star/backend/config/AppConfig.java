@@ -7,14 +7,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-/**
- * 应用配置中心.
- */
+/** 应用配置中心. */
 @Configuration
 @EnableCaching
 @EnableTransactionManagement
 @EnableConfigurationProperties(SparkYunProperties.class)
 @EnableJpaAuditing(auditorAwareRef = "jpaAuditorConfig")
-public class AppConfig {
-
-}
+public class AppConfig {}

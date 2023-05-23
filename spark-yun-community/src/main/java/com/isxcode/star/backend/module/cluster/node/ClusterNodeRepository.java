@@ -1,9 +1,6 @@
 package com.isxcode.star.backend.module.cluster.node;
 
-import com.isxcode.star.backend.module.cluster.node.ClusterNodeEntity;
-
 import java.util.List;
-
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,6 +20,10 @@ public interface ClusterNodeRepository extends JpaRepository<ClusterNodeEntity, 
 
   List<ClusterNodeEntity> findAllByClusterIdAndStatus(String clusterId, String status);
 
-  @Query("SELECT E FROM ClusterNodeEntity E WHERE E.clusterId = :engineId  and ( E.name LIKE %:keyword% OR E.remark LIKE %:keyword% OR E.host LIKE %:keyword%)")
-  Page<ClusterNodeEntity> searchAll(@Param("keyword") String searchKeyWord, @Param("engineId") String engineId, Pageable pageable);
+  @Query(
+      "SELECT E FROM ClusterNodeEntity E WHERE E.clusterId = :engineId  and ( E.name LIKE %:keyword% OR E.remark LIKE %:keyword% OR E.host LIKE %:keyword%)")
+  Page<ClusterNodeEntity> searchAll(
+      @Param("keyword") String searchKeyWord,
+      @Param("engineId") String engineId,
+      Pageable pageable);
 }

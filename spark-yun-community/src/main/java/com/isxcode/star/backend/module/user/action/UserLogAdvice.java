@@ -1,9 +1,14 @@
 package com.isxcode.star.backend.module.user.action;
 
+import static com.isxcode.star.backend.config.WebSecurityConfig.TENANT_ID;
+import static com.isxcode.star.backend.config.WebSecurityConfig.USER_ID;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.isxcode.star.api.properties.SparkYunProperties;
 import com.isxcode.star.api.exceptions.SuccessResponseException;
+import com.isxcode.star.api.properties.SparkYunProperties;
+import java.util.Enumeration;
+import javax.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
@@ -16,13 +21,6 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-
-import javax.servlet.http.HttpServletRequest;
-
-import java.util.Enumeration;
-
-import static com.isxcode.star.backend.config.WebSecurityConfig.TENANT_ID;
-import static com.isxcode.star.backend.config.WebSecurityConfig.USER_ID;
 
 @Aspect
 @Slf4j
@@ -37,8 +35,7 @@ public class UserLogAdvice {
   private final SparkYunProperties sparkYunProperties;
 
   @Pointcut("@annotation(com.isxcode.star.backend.module.user.action.UserLog)")
-  public void operateUserLog() {
-  }
+  public void operateUserLog() {}
 
   @Before(value = "operateUserLog()")
   public void before(JoinPoint joinPoint) {
@@ -61,7 +58,8 @@ public class UserLogAdvice {
       userActionEntity.setTenantId(TENANT_ID.get());
     }
 
-    ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+    ServletRequestAttributes attributes =
+        (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
     HttpServletRequest request = attributes.getRequest();
 
     userActionEntity.setReqPath(request.getRequestURI());
@@ -107,7 +105,8 @@ public class UserLogAdvice {
   }
 
   @AfterThrowing(value = "operateUserLog()", throwing = "successResponseException")
-  public void afterThrowing(JoinPoint joinPoint, SuccessResponseException successResponseException) {
+  public void afterThrowing(
+      JoinPoint joinPoint, SuccessResponseException successResponseException) {
 
     if (!sparkYunProperties.isLogAdvice()) {
       return;

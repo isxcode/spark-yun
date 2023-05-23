@@ -1,6 +1,5 @@
 package com.isxcode.star.backend.module.work.config;
 
-import com.isxcode.star.backend.module.work.config.WorkConfigEntity;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

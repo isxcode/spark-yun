@@ -3,14 +3,10 @@ package com.isxcode.star.common.utils;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-/**
- * md5加密工具类.
- */
+/** md5加密工具类. */
 public class Md5Utils {
 
-  /**
-   * md5加密.
-   */
+  /** md5加密. */
   public static String hashStr(String input) {
     MessageDigest md;
     try {

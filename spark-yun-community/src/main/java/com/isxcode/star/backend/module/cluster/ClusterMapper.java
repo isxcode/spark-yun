@@ -3,11 +3,8 @@ package com.isxcode.star.backend.module.cluster;
 import com.isxcode.star.api.pojos.cluster.req.CaeAddEngineReq;
 import com.isxcode.star.api.pojos.cluster.req.CaeUpdateEngineReq;
 import com.isxcode.star.api.pojos.cluster.res.CaeQueryEngineRes;
-import com.isxcode.star.backend.module.cluster.ClusterEntity;
-
 import java.util.List;
 import java.util.stream.Collectors;
-
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.springframework.data.domain.Page;
@@ -25,19 +22,23 @@ public interface ClusterMapper {
   @Mapping(target = "allStorageNum", expression = "java(0.0)")
   @Mapping(target = "checkDateTime", expression = "java(java.time.LocalDateTime.now())")
   ClusterEntity addEngineReqToEngineEntity(CaeAddEngineReq caeAddEngineReq);
+
   @Mapping(target = "name", source = "caeUpdateEngineReq.name")
   @Mapping(target = "remark", source = "caeUpdateEngineReq.remark")
-  ClusterEntity updateEngineReqToEngineEntity(CaeUpdateEngineReq caeUpdateEngineReq, ClusterEntity calculateEngineEntity);
+  ClusterEntity updateEngineReqToEngineEntity(
+      CaeUpdateEngineReq caeUpdateEngineReq, ClusterEntity calculateEngineEntity);
 
   @Mapping(
-    target = "node",
-    expression = "java( engineEntity.getActiveNodeNum()+ \"/\" +engineEntity.getAllNodeNum())")
+      target = "node",
+      expression = "java( engineEntity.getActiveNodeNum()+ \"/\" +engineEntity.getAllNodeNum())")
   @Mapping(
-    target = "memory",
-    expression = "java( engineEntity.getUsedMemoryNum()+ \"G/\" +engineEntity.getAllMemoryNum()+\"G\")")
+      target = "memory",
+      expression =
+          "java( engineEntity.getUsedMemoryNum()+ \"G/\" +engineEntity.getAllMemoryNum()+\"G\")")
   @Mapping(
-    target = "storage",
-    expression = "java( engineEntity.getUsedStorageNum()+ \"G/\"  +engineEntity.getAllStorageNum()+\"G\")")
+      target = "storage",
+      expression =
+          "java( engineEntity.getUsedStorageNum()+ \"G/\"  +engineEntity.getAllStorageNum()+\"G\")")
   @Mapping(target = "checkDateTime", dateFormat = "yyyy-MM-dd HH:mm:ss")
   CaeQueryEngineRes engineEntityToQueryEngineRes(ClusterEntity engineEntity);
 

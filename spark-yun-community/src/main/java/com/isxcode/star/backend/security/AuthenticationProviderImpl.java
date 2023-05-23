@@ -26,11 +26,12 @@ public class AuthenticationProviderImpl implements AuthenticationProvider {
 
     // 获取用户详细信息
     UserDetails userDetail =
-      userDetailsService.loadUserByUsername(authentication.getPrincipal().toString());
+        userDetailsService.loadUserByUsername(authentication.getPrincipal().toString());
 
     // 用户赋权
     AuthenticationToken authenticationToken =
-      new AuthenticationToken(userDetail.getUsername(), userDetail.getPassword(), userDetail.getAuthorities());
+        new AuthenticationToken(
+            userDetail.getUsername(), userDetail.getPassword(), userDetail.getAuthorities());
     authenticationToken.setDetails(userDetail);
 
     // 上下文保存用户信息

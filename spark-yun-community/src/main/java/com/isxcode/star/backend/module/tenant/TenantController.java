@@ -1,5 +1,6 @@
 package com.isxcode.star.backend.module.tenant;
 
+import com.isxcode.star.api.annotations.SuccessResponse;
 import com.isxcode.star.api.constants.base.ModulePrefix;
 import com.isxcode.star.api.constants.user.RoleType;
 import com.isxcode.star.api.pojos.tenant.req.TetAddTenantReq;
@@ -9,11 +10,12 @@ import com.isxcode.star.api.pojos.tenant.req.TetUpdateTenantByTenantAdminReq;
 import com.isxcode.star.api.pojos.tenant.res.TetGetTenantRes;
 import com.isxcode.star.api.pojos.tenant.res.TetQueryTenantRes;
 import com.isxcode.star.api.pojos.tenant.res.TetQueryUserTenantRes;
-import com.isxcode.star.api.annotations.SuccessResponse;
 import com.isxcode.star.backend.module.user.action.UserLog;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.List;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.security.access.annotation.Secured;
@@ -23,9 +25,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.validation.Valid;
-import java.util.List;
 
 @Tag(name = "租户模块")
 @RestController
@@ -49,7 +48,8 @@ public class TenantController {
   @Operation(summary = "查询租户列表接口")
   @PostMapping("/queryTenant")
   @SuccessResponse("查询成功")
-  public Page<TetQueryTenantRes> queryTenant(@Valid @RequestBody TetQueryTenantReq tetQueryTenantReq) {
+  public Page<TetQueryTenantRes> queryTenant(
+      @Valid @RequestBody TetQueryTenantReq tetQueryTenantReq) {
 
     return tenantBizService.queryTenants(tetQueryTenantReq);
   }
@@ -68,7 +68,8 @@ public class TenantController {
   @Operation(summary = "系统管理员更新租户接口")
   @PostMapping("/updateTenantBySystemAdmin")
   @SuccessResponse("更新成功")
-  public void updateTenantBySystemAdmin(@Valid @RequestBody TetUpdateTenantBySystemAdminReq tetUpdateTenantBySystemAdminReq) {
+  public void updateTenantBySystemAdmin(
+      @Valid @RequestBody TetUpdateTenantBySystemAdminReq tetUpdateTenantBySystemAdminReq) {
 
     tenantBizService.updateTenantByTenantAdmin(tetUpdateTenantBySystemAdminReq);
   }
@@ -78,7 +79,8 @@ public class TenantController {
   @Operation(summary = "租户管理员更新租户接口")
   @PostMapping("/updateTenantByTenantAdmin")
   @SuccessResponse("更新成功")
-  public void updateTenantByTenantAdmin(@Valid @RequestBody TetUpdateTenantByTenantAdminReq tetUpdateTenantByTenantAdminReq) {
+  public void updateTenantByTenantAdmin(
+      @Valid @RequestBody TetUpdateTenantByTenantAdminReq tetUpdateTenantByTenantAdminReq) {
 
     tenantBizService.TetUpdateTenantByTenantAdminReq(tetUpdateTenantByTenantAdminReq);
   }
@@ -88,7 +90,9 @@ public class TenantController {
   @Operation(summary = "启动租户接口")
   @GetMapping("/enableTenant")
   @SuccessResponse("启用成功")
-  public void enableTenant(@Schema(description = "租户唯一id", example = "sy_344c3d583fa344f7a2403b19c5a654dc") @RequestParam String tenantId) {
+  public void enableTenant(
+      @Schema(description = "租户唯一id", example = "sy_344c3d583fa344f7a2403b19c5a654dc") @RequestParam
+          String tenantId) {
 
     tenantBizService.enableTenant(tenantId);
   }
@@ -98,7 +102,9 @@ public class TenantController {
   @Operation(summary = "禁用租户接口")
   @GetMapping("/disableTenant")
   @SuccessResponse("禁用成功")
-  public void disableTenant(@Schema(description = "租户唯一id", example = "sy_344c3d583fa344f7a2403b19c5a654dc") @RequestParam String tenantId) {
+  public void disableTenant(
+      @Schema(description = "租户唯一id", example = "sy_344c3d583fa344f7a2403b19c5a654dc") @RequestParam
+          String tenantId) {
 
     tenantBizService.disableTenant(tenantId);
   }
@@ -108,7 +114,9 @@ public class TenantController {
   @Operation(summary = "检测租户信息接口")
   @GetMapping("/checkTenant")
   @SuccessResponse("检测完成")
-  public void checkTenant(@Schema(description = "租户唯一id", example = "sy_344c3d583fa344f7a2403b19c5a654dc") @RequestParam String tenantId) {
+  public void checkTenant(
+      @Schema(description = "租户唯一id", example = "sy_344c3d583fa344f7a2403b19c5a654dc") @RequestParam
+          String tenantId) {
 
     tenantBizService.checkTenant(tenantId);
   }
@@ -118,7 +126,9 @@ public class TenantController {
   @Operation(summary = "删除租户接口")
   @GetMapping("/deleteTenant")
   @SuccessResponse("删除成功")
-  public void deleteTenant(@Schema(description = "租户唯一id", example = "sy_344c3d583fa344f7a2403b19c5a654dc") @RequestParam String tenantId) {
+  public void deleteTenant(
+      @Schema(description = "租户唯一id", example = "sy_344c3d583fa344f7a2403b19c5a654dc") @RequestParam
+          String tenantId) {
 
     tenantBizService.deleteTenant(tenantId);
   }
@@ -127,7 +137,9 @@ public class TenantController {
   @Operation(summary = "选择租户接口")
   @GetMapping("/chooseTenant")
   @SuccessResponse("切换成功")
-  public void chooseTenant(@Schema(description = "租户唯一id", example = "sy_344c3d583fa344f7a2403b19c5a654dc") @RequestParam String tenantId) {
+  public void chooseTenant(
+      @Schema(description = "租户唯一id", example = "sy_344c3d583fa344f7a2403b19c5a654dc") @RequestParam
+          String tenantId) {
 
     tenantBizService.chooseTenant(tenantId);
   }
@@ -136,9 +148,10 @@ public class TenantController {
   @Operation(summary = "获取租户信息接口")
   @GetMapping("/getTenant")
   @SuccessResponse("获取成功")
-  public TetGetTenantRes getTenant(@Schema(description = "租户唯一id", example = "sy_344c3d583fa344f7a2403b19c5a654dc") @RequestParam String tenantId) {
+  public TetGetTenantRes getTenant(
+      @Schema(description = "租户唯一id", example = "sy_344c3d583fa344f7a2403b19c5a654dc") @RequestParam
+          String tenantId) {
 
     return tenantBizService.getTenant(tenantId);
   }
 }
-

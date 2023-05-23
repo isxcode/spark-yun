@@ -1,9 +1,9 @@
 package com.isxcode.star.backend.module.work.config;
 
+import com.isxcode.star.api.annotations.SuccessResponse;
 import com.isxcode.star.api.constants.base.ModulePrefix;
 import com.isxcode.star.api.constants.base.SecurityConstants;
 import com.isxcode.star.api.pojos.work.config.req.WocConfigWorkReq;
-import com.isxcode.star.api.annotations.SuccessResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -26,7 +26,12 @@ public class WorkConfigController {
   @Operation(summary = "配置作业接口")
   @PostMapping("/configWork")
   @SuccessResponse("保存成功")
-  @Parameter(name = SecurityConstants.HEADER_TENANT_ID, description = "租户id", required = true, in = ParameterIn.HEADER, schema = @Schema(type = "string"))
+  @Parameter(
+      name = SecurityConstants.HEADER_TENANT_ID,
+      description = "租户id",
+      required = true,
+      in = ParameterIn.HEADER,
+      schema = @Schema(type = "string"))
   public void configWork(@RequestBody WocConfigWorkReq configWorkReq) {
 
     workConfigBizService.configWork(configWorkReq);

@@ -8,32 +8,27 @@ import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 import com.jcraft.jsch.SftpATTRS;
 import com.jcraft.jsch.SftpException;
-import lombok.extern.slf4j.Slf4j;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import lombok.extern.slf4j.Slf4j;
 
-/**
- * ssh连接工具类.
- */
+/** ssh连接工具类. */
 @Slf4j
 public class SshUtils {
 
-  /**
-   * scp传递文件.
-   */
-  public static void scpFile(ScpFileEngineNodeDto engineNode, String srcPath, String dstPath) throws JSchException, SftpException, InterruptedException {
+  /** scp传递文件. */
+  public static void scpFile(ScpFileEngineNodeDto engineNode, String srcPath, String dstPath)
+      throws JSchException, SftpException, InterruptedException {
 
     // 初始化jsch
     JSch jsch = new JSch();
-    Session session = jsch.getSession(
-      engineNode.getUsername(),
-      engineNode.getHost(),
-      Integer.parseInt(engineNode.getPort()));
+    Session session =
+        jsch.getSession(
+            engineNode.getUsername(), engineNode.getHost(), Integer.parseInt(engineNode.getPort()));
 
     // 连接远程服务器
     session.setPassword(engineNode.getPasswd());
@@ -65,19 +60,16 @@ public class SshUtils {
     session.disconnect();
   }
 
-  /**
-   * 执行远程命令.
-   */
-  public static String executeCommand(ScpFileEngineNodeDto engineNode, String command, boolean pty) throws JSchException, InterruptedException, IOException {
+  /** 执行远程命令. */
+  public static String executeCommand(ScpFileEngineNodeDto engineNode, String command, boolean pty)
+      throws JSchException, InterruptedException, IOException {
 
     JSch jsch = new JSch();
     Session session;
 
     session =
-      jsch.getSession(
-        engineNode.getUsername(),
-        engineNode.getHost(),
-        Integer.parseInt(engineNode.getPort()));
+        jsch.getSession(
+            engineNode.getUsername(), engineNode.getHost(), Integer.parseInt(engineNode.getPort()));
 
     session.setPassword(engineNode.getPasswd());
     session.setConfig("StrictHostKeyChecking", "no");
@@ -99,7 +91,8 @@ public class SshUtils {
       output.append(line).append("\n");
     }
 
-    BufferedReader errReader = new BufferedReader(new InputStreamReader(err, StandardCharsets.UTF_8));
+    BufferedReader errReader =
+        new BufferedReader(new InputStreamReader(err, StandardCharsets.UTF_8));
     String errLine;
     StringBuilder errOutput = new StringBuilder();
     while ((errLine = errReader.readLine()) != null) {
@@ -116,10 +109,12 @@ public class SshUtils {
     session.disconnect();
 
     if (exitStatus != 0) {
-      return "{\n" +
-        "        \"execStatus\":\"ERROR\",\n" +
-        "        \"log\":\"" + errOutput + "\"\n" +
-        "      }";
+      return "{\n"
+          + "        \"execStatus\":\"ERROR\",\n"
+          + "        \"log\":\""
+          + errOutput
+          + "\"\n"
+          + "      }";
     } else {
       return output.toString();
     }

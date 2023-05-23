@@ -1,10 +1,9 @@
 package com.isxcode.star.backend.module.datasource;
 
-import static java.sql.DriverManager.getConnection;
-
-import com.isxcode.star.api.constants.datasource.DatasourceStatus;
 import com.isxcode.star.api.constants.datasource.DatasourceDriver;
+import com.isxcode.star.api.constants.datasource.DatasourceStatus;
 import com.isxcode.star.api.constants.datasource.DatasourceType;
+import com.isxcode.star.api.exceptions.SparkYunException;
 import com.isxcode.star.api.pojos.datasource.req.DasAddDatasourceReq;
 import com.isxcode.star.api.pojos.datasource.req.DasQueryDatasourceReq;
 import com.isxcode.star.api.pojos.datasource.req.DasUpdateDatasourceReq;
@@ -13,18 +12,12 @@ import com.isxcode.star.api.pojos.datasource.res.DasQueryDatasourceRes;
 import com.isxcode.star.api.pojos.datasource.res.DasTestConnectRes;
 import com.isxcode.star.api.properties.SparkYunProperties;
 import com.isxcode.star.common.utils.AesUtils;
-import com.isxcode.star.backend.module.datasource.DatasourceEntity;
-import com.isxcode.star.backend.module.datasource.DatasourceMapper;
-import com.isxcode.star.backend.module.datasource.DatasourceRepository;
-import com.isxcode.star.api.exceptions.SparkYunException;
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import javax.transaction.Transactional;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -45,7 +38,8 @@ public class DatasourceBizService {
 
   public void addDatasource(DasAddDatasourceReq dasAddDatasourceReq) {
 
-    DatasourceEntity datasource = datasourceMapper.dasAddDatasourceReqToDatasourceEntity(dasAddDatasourceReq);
+    DatasourceEntity datasource =
+        datasourceMapper.dasAddDatasourceReqToDatasourceEntity(dasAddDatasourceReq);
 
     // 密码对成加密
     datasource.setPasswd(AesUtils.encrypt(sparkYunProperties.getAesSlat(), datasource.getPasswd()));
@@ -57,12 +51,15 @@ public class DatasourceBizService {
 
   public void updateDatasource(DasUpdateDatasourceReq dasAddDatasourceReq) {
 
-    Optional<DatasourceEntity> datasourceEntityOptional = datasourceRepository.findById(dasAddDatasourceReq.getId());
+    Optional<DatasourceEntity> datasourceEntityOptional =
+        datasourceRepository.findById(dasAddDatasourceReq.getId());
     if (!datasourceEntityOptional.isPresent()) {
       throw new SparkYunException("数据源不存在");
     }
 
-    DatasourceEntity datasource = datasourceMapper.dasUpdateDatasourceReqToDatasourceEntity(dasAddDatasourceReq, datasourceEntityOptional.get());
+    DatasourceEntity datasource =
+        datasourceMapper.dasUpdateDatasourceReqToDatasourceEntity(
+            dasAddDatasourceReq, datasourceEntityOptional.get());
 
     // 密码对成加密
     datasource.setPasswd(AesUtils.encrypt(sparkYunProperties.getAesSlat(), datasource.getPasswd()));
@@ -74,17 +71,22 @@ public class DatasourceBizService {
 
   public Page<DasQueryDatasourceRes> queryDatasource(DasQueryDatasourceReq dasQueryDatasourceReq) {
 
-    Page<DatasourceEntity> datasourceEntityPage = datasourceRepository.searchAll(dasQueryDatasourceReq.getSearchKeyWord(), PageRequest.of(dasQueryDatasourceReq.getPage(), dasQueryDatasourceReq.getPageSize()));
+    Page<DatasourceEntity> datasourceEntityPage =
+        datasourceRepository.searchAll(
+            dasQueryDatasourceReq.getSearchKeyWord(),
+            PageRequest.of(dasQueryDatasourceReq.getPage(), dasQueryDatasourceReq.getPageSize()));
 
     return datasourceMapper.datasourceEntityToQueryDatasourceResPage(datasourceEntityPage);
   }
-
 
   public Connection getDbConnection(DatasourceEntity datasource) throws SQLException {
     loadDriverClass(datasource.getDbType());
 
     DriverManager.setLoginTimeout(10);
-    return DriverManager.getConnection(datasource.getJdbcUrl(), datasource.getUsername(), AesUtils.decrypt(sparkYunProperties.getAesSlat(), datasource.getPasswd()));
+    return DriverManager.getConnection(
+        datasource.getJdbcUrl(),
+        datasource.getUsername(),
+        AesUtils.decrypt(sparkYunProperties.getAesSlat(), datasource.getPasswd()));
   }
 
   public void delDatasource(String datasourceId) {
@@ -139,13 +141,13 @@ public class DatasourceBizService {
       log.error(e.getMessage());
       throw new SparkYunException("找不到对应驱动");
     }
-
   }
 
   public DasTestConnectRes testConnect(String datasourceId) {
 
     // 获取数据源
-    Optional<DatasourceEntity> datasourceEntityOptional = datasourceRepository.findById(datasourceId);
+    Optional<DatasourceEntity> datasourceEntityOptional =
+        datasourceRepository.findById(datasourceId);
     if (!datasourceEntityOptional.isPresent()) {
       throw new SparkYunException("数据源不存在");
     }
@@ -177,7 +179,8 @@ public class DatasourceBizService {
   public DasGetConnectLogRes getConnectLog(String datasourceId) {
 
     // 获取数据源
-    Optional<DatasourceEntity> datasourceEntityOptional = datasourceRepository.findById(datasourceId);
+    Optional<DatasourceEntity> datasourceEntityOptional =
+        datasourceRepository.findById(datasourceId);
     if (!datasourceEntityOptional.isPresent()) {
       throw new SparkYunException("数据源不存在");
     }

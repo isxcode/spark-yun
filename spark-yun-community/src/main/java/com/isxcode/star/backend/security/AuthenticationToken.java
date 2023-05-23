@@ -1,10 +1,9 @@
 package com.isxcode.star.backend.security;
 
+import java.util.Collection;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.SpringSecurityCoreVersion;
-
-import java.util.Collection;
 
 /**
  * 认证的token对象
@@ -20,13 +19,13 @@ public class AuthenticationToken extends AbstractAuthenticationToken {
 
   private Object credentials;
 
-    public AuthenticationToken(Object principal) {
+  public AuthenticationToken(Object principal) {
 
-        super(null);
-        this.principal = principal;
-        //        this.credentials = "";
-        setAuthenticated(false);
-    }
+    super(null);
+    this.principal = principal;
+    //        this.credentials = "";
+    setAuthenticated(false);
+  }
 
   public AuthenticationToken(Object principal, Object credentials) {
 
@@ -37,7 +36,7 @@ public class AuthenticationToken extends AbstractAuthenticationToken {
   }
 
   public AuthenticationToken(
-    Object principal, Object credentials, Collection<? extends GrantedAuthority> authorities) {
+      Object principal, Object credentials, Collection<? extends GrantedAuthority> authorities) {
 
     super(authorities);
     this.principal = principal;

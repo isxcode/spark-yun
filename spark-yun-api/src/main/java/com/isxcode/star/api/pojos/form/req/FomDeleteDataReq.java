@@ -8,5 +8,4 @@ public class FomDeleteDataReq {
   private String formId;
 
   private Object data;
-
 }

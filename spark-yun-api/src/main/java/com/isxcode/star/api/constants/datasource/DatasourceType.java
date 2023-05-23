@@ -1,8 +1,6 @@
 package com.isxcode.star.api.constants.datasource;
 
-/**
- * 数据源类型.
- */
+/** 数据源类型. */
 public interface DatasourceType {
 
   String MYSQL = "MYSQL";
@@ -28,5 +26,4 @@ public interface DatasourceType {
   String TIDB = "TIDB";
 
   String DB2 = "DB2";
-
 }

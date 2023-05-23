@@ -1,11 +1,10 @@
 package com.isxcode.star.backend.security;
 
+import java.util.List;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-
-import java.util.List;
 
 /**
  * 权限认证管理器,负责管理权限处理器
@@ -15,21 +14,21 @@ import java.util.List;
  */
 public class AuthenticationManagerImpl implements AuthenticationManager {
 
-    private final List<AuthenticationProvider> authenticationProviders;
+  private final List<AuthenticationProvider> authenticationProviders;
 
-    public AuthenticationManagerImpl(List<AuthenticationProvider> authenticationProviders) {
+  public AuthenticationManagerImpl(List<AuthenticationProvider> authenticationProviders) {
 
-        this.authenticationProviders = authenticationProviders;
+    this.authenticationProviders = authenticationProviders;
+  }
+
+  @Override
+  public Authentication authenticate(Authentication authentication) throws AuthenticationException {
+
+    for (AuthenticationProvider provider : authenticationProviders) {
+
+      return provider.authenticate(authentication);
     }
 
-    @Override
-    public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-
-        for (AuthenticationProvider provider : authenticationProviders) {
-
-            return provider.authenticate(authentication);
-        }
-
-        return authentication;
-    }
+    return authentication;
+  }
 }

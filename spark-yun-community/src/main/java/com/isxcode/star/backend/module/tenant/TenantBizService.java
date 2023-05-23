@@ -1,7 +1,10 @@
 package com.isxcode.star.backend.module.tenant;
 
-import com.isxcode.star.api.constants.user.RoleType;
+import static com.isxcode.star.backend.config.WebSecurityConfig.JPA_TENANT_MODE;
+import static com.isxcode.star.backend.config.WebSecurityConfig.USER_ID;
+
 import com.isxcode.star.api.constants.tenant.TenantStatus;
+import com.isxcode.star.api.constants.user.RoleType;
 import com.isxcode.star.api.exceptions.SparkYunException;
 import com.isxcode.star.api.pojos.tenant.req.TetAddTenantReq;
 import com.isxcode.star.api.pojos.tenant.req.TetQueryTenantReq;
@@ -15,23 +18,17 @@ import com.isxcode.star.backend.module.tenant.user.TenantUserRepository;
 import com.isxcode.star.backend.module.user.UserEntity;
 import com.isxcode.star.backend.module.user.UserRepository;
 import com.isxcode.star.backend.module.workflow.WorkflowRepository;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-
-import javax.transaction.Transactional;
-
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import static com.isxcode.star.backend.config.WebSecurityConfig.JPA_TENANT_MODE;
-import static com.isxcode.star.backend.config.WebSecurityConfig.USER_ID;
-
 
 /** 数据源模块service. */
 @Service
@@ -53,13 +50,15 @@ public class TenantBizService {
   public void addTenant(TetAddTenantReq tetAddTenantReq) {
 
     // 判断名称是否存在
-    Optional<TenantEntity> tenantEntityOptional = tenantRepository.findByName(tetAddTenantReq.getName());
+    Optional<TenantEntity> tenantEntityOptional =
+        tenantRepository.findByName(tetAddTenantReq.getName());
     if (tenantEntityOptional.isPresent()) {
       throw new SparkYunException("租户名称重复");
     }
 
     // 判断管理员是否存在
-    Optional<UserEntity> userEntityOptional = userRepository.findById(tetAddTenantReq.getAdminUserId());
+    Optional<UserEntity> userEntityOptional =
+        userRepository.findById(tetAddTenantReq.getAdminUserId());
     if (!userEntityOptional.isPresent()) {
       throw new SparkYunException("用户不存在");
     }
@@ -77,12 +76,13 @@ public class TenantBizService {
     TenantEntity tenantEntity = tenantRepository.save(tenant);
 
     // 初始化租户管理员
-    TenantUserEntity tenantUserEntity = TenantUserEntity.builder()
-      .userId(tetAddTenantReq.getAdminUserId())
-      .tenantId(tenantEntity.getId())
-      .roleCode(RoleType.TENANT_ADMIN)
-      .status(TenantStatus.ENABLE)
-      .build();
+    TenantUserEntity tenantUserEntity =
+        TenantUserEntity.builder()
+            .userId(tetAddTenantReq.getAdminUserId())
+            .tenantId(tenantEntity.getId())
+            .roleCode(RoleType.TENANT_ADMIN)
+            .status(TenantStatus.ENABLE)
+            .build();
 
     // 判断管理员是否绑定新租户
     if (Strings.isEmpty(userEntity.getCurrentTenantId())) {
@@ -103,7 +103,8 @@ public class TenantBizService {
     }
 
     // 获取租户id的list
-    List<String> tenantIds = tenantUserEntities.stream().map(TenantUserEntity::getTenantId).collect(Collectors.toList());
+    List<String> tenantIds =
+        tenantUserEntities.stream().map(TenantUserEntity::getTenantId).collect(Collectors.toList());
 
     // 查询用户最近一次租户
     UserEntity userEntity = userRepository.findById(USER_ID.get()).get();
@@ -117,50 +118,63 @@ public class TenantBizService {
     List<TenantEntity> tenantEntityList = tenantRepository.findAllById(tenantIds);
 
     // TenantEntity To TetQueryUserTenantRes
-    List<TetQueryUserTenantRes> userTenantResList = tenantMapper.tenantEntityToTetQueryUserTenantResList(tenantEntityList);
+    List<TetQueryUserTenantRes> userTenantResList =
+        tenantMapper.tenantEntityToTetQueryUserTenantResList(tenantEntityList);
 
     // 标记当前租户
-    userTenantResList.forEach(e -> {
-      if (userEntity.getCurrentTenantId().equals(e.getId())) {
-        e.setCurrentTenant(true);
-      }
-    });
+    userTenantResList.forEach(
+        e -> {
+          if (userEntity.getCurrentTenantId().equals(e.getId())) {
+            e.setCurrentTenant(true);
+          }
+        });
 
     return userTenantResList;
   }
 
   public Page<TetQueryTenantRes> queryTenants(TetQueryTenantReq tetQueryTenantReq) {
 
-    Page<TenantEntity> tenantEntityPage = tenantRepository.searchAll(tetQueryTenantReq.getSearchKeyWord(), PageRequest.of(tetQueryTenantReq.getPage(), tetQueryTenantReq.getPageSize()));
+    Page<TenantEntity> tenantEntityPage =
+        tenantRepository.searchAll(
+            tetQueryTenantReq.getSearchKeyWord(),
+            PageRequest.of(tetQueryTenantReq.getPage(), tetQueryTenantReq.getPageSize()));
 
     return tenantMapper.tenantEntityToTetQueryTenantResPage(tenantEntityPage);
   }
 
-  public void updateTenantByTenantAdmin(TetUpdateTenantBySystemAdminReq tetUpdateTenantBySystemAdminReq) {
+  public void updateTenantByTenantAdmin(
+      TetUpdateTenantBySystemAdminReq tetUpdateTenantBySystemAdminReq) {
 
     // 判断租户是否存在
-    Optional<TenantEntity> tenantEntityOptional = tenantRepository.findById(tetUpdateTenantBySystemAdminReq.getId());
+    Optional<TenantEntity> tenantEntityOptional =
+        tenantRepository.findById(tetUpdateTenantBySystemAdminReq.getId());
     if (!tenantEntityOptional.isPresent()) {
       throw new SparkYunException("租户不存在");
     }
 
     // TetUpdateTenantBySystemAdminReq To TenantEntity
-    TenantEntity tenantEntity = tenantMapper.tetUpdateTenantBySystemAdminReqToTenantEntity(tetUpdateTenantBySystemAdminReq, tenantEntityOptional.get());
+    TenantEntity tenantEntity =
+        tenantMapper.tetUpdateTenantBySystemAdminReqToTenantEntity(
+            tetUpdateTenantBySystemAdminReq, tenantEntityOptional.get());
 
     // 持久化对象
     tenantRepository.save(tenantEntity);
   }
 
-  public void TetUpdateTenantByTenantAdminReq(TetUpdateTenantByTenantAdminReq tetUpdateTenantByTenantAdminReq) {
+  public void TetUpdateTenantByTenantAdminReq(
+      TetUpdateTenantByTenantAdminReq tetUpdateTenantByTenantAdminReq) {
 
     // 判断租户是否存在
-    Optional<TenantEntity> tenantEntityOptional = tenantRepository.findById(tetUpdateTenantByTenantAdminReq.getId());
+    Optional<TenantEntity> tenantEntityOptional =
+        tenantRepository.findById(tetUpdateTenantByTenantAdminReq.getId());
     if (!tenantEntityOptional.isPresent()) {
       throw new SparkYunException("租户不存在");
     }
 
     // TetUpdateTenantByTenantAdminReq To TenantEntity
-    TenantEntity tenantEntity = tenantMapper.tetUpdateTenantByTenantAdminReqToTenantEntity(tetUpdateTenantByTenantAdminReq, tenantEntityOptional.get());
+    TenantEntity tenantEntity =
+        tenantMapper.tetUpdateTenantByTenantAdminReqToTenantEntity(
+            tetUpdateTenantByTenantAdminReq, tenantEntityOptional.get());
 
     // 持久化对象
     tenantRepository.save(tenantEntity);
@@ -260,15 +274,18 @@ public class TenantBizService {
 
     // 如果是管理员直接返回
     if (RoleType.SYS_ADMIN.equals(userEntity.getRoleCode())) {
-      return TetGetTenantRes.builder().id(tenantEntity.getId()).name(tenantEntity.getName()).build();
+      return TetGetTenantRes.builder()
+          .id(tenantEntity.getId())
+          .name(tenantEntity.getName())
+          .build();
     }
 
     // 判断用户是否在租户中
-    Optional<TenantUserEntity> tenantUserEntityOptional = tenantUserRepository.findByTenantIdAndUserId(tenantId, USER_ID.get());
+    Optional<TenantUserEntity> tenantUserEntityOptional =
+        tenantUserRepository.findByTenantIdAndUserId(tenantId, USER_ID.get());
     if (!tenantUserEntityOptional.isPresent()) {
       throw new SparkYunException("不在租户中");
     }
     return TetGetTenantRes.builder().id(tenantEntity.getId()).name(tenantEntity.getName()).build();
   }
-
 }

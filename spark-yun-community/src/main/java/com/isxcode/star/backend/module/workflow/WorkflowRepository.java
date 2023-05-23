@@ -1,6 +1,5 @@
 package com.isxcode.star.backend.module.workflow;
 
-import com.isxcode.star.backend.module.workflow.WorkflowEntity;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

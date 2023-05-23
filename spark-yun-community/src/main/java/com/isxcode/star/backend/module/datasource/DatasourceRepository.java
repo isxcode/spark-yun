@@ -1,6 +1,5 @@
 package com.isxcode.star.backend.module.datasource;
 
-import com.isxcode.star.backend.module.datasource.DatasourceEntity;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -13,6 +12,7 @@ import org.springframework.stereotype.Repository;
 @CacheConfig(cacheNames = {"SY_DATASOURCE"})
 public interface DatasourceRepository extends JpaRepository<DatasourceEntity, String> {
 
-  @Query("SELECT D FROM DatasourceEntity D WHERE D.name LIKE %:keyword% OR D.remark LIKE %:keyword% OR D.dbType LIKE %:keyword% OR D.username LIKE %:keyword% OR D.jdbcUrl LIKE %:keyword%")
+  @Query(
+      "SELECT D FROM DatasourceEntity D WHERE D.name LIKE %:keyword% OR D.remark LIKE %:keyword% OR D.dbType LIKE %:keyword% OR D.username LIKE %:keyword% OR D.jdbcUrl LIKE %:keyword%")
   Page<DatasourceEntity> searchAll(@Param("keyword") String searchKeyWord, Pageable pageable);
 }

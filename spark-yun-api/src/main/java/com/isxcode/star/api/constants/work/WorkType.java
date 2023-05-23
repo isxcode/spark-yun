@@ -1,8 +1,6 @@
 package com.isxcode.star.api.constants.work;
 
-/**
- * 作业类型.
- */
+/** 作业类型. */
 public interface WorkType {
 
   String QUERY_SPARK_SQL = "SPARK_SQL";

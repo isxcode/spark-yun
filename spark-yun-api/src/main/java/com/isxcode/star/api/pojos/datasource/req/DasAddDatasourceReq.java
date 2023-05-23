@@ -1,9 +1,8 @@
 package com.isxcode.star.api.pojos.datasource.req;
 
-import javax.validation.constraints.NotEmpty;
-
 import com.isxcode.star.api.constants.datasource.DatasourceType;
 import io.swagger.v3.oas.annotations.media.Schema;
+import javax.validation.constraints.NotEmpty;
 import lombok.Data;
 
 @Data

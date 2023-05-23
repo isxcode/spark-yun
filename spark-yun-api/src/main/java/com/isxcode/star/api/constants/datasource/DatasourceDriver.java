@@ -1,8 +1,6 @@
 package com.isxcode.star.api.constants.datasource;
 
-/**
- * 数据源驱动.
- */
+/** 数据源驱动. */
 public interface DatasourceDriver {
 
   String MYSQL_DRIVER = "com.mysql.cj.jdbc.Driver";

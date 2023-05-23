@@ -83,6 +83,7 @@ allprojects {
 tasks.register('package', GradleBuild) {
 
   dependsOn(":spark-yun-dist:build_dist", ":spark-yun-website:install_website")
+  dependsOn(":spotlessApply", ":checkstyleMain")
   tasks = [":spark-yun-backend:bootJar"]
 }
 

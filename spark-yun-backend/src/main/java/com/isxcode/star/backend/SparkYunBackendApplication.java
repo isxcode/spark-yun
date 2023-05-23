@@ -35,7 +35,7 @@ public class SparkYunBackendApplication {
 
   @RequestMapping(value = {"/nodes/{clusterId}"})
   public String nodes(@PathVariable String clusterId) {
-    
+
     return "index";
   }
 }

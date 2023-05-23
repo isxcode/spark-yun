@@ -1,11 +1,10 @@
 package com.isxcode.star.backend.config;
 
-import org.springframework.data.domain.AuditorAware;
-import org.springframework.stereotype.Component;
+import static com.isxcode.star.backend.config.WebSecurityConfig.USER_ID;
 
 import java.util.Optional;
-
-import static com.isxcode.star.backend.config.WebSecurityConfig.USER_ID;
+import org.springframework.data.domain.AuditorAware;
+import org.springframework.stereotype.Component;
 
 @Component
 public class JpaAuditorConfig implements AuditorAware<String> {

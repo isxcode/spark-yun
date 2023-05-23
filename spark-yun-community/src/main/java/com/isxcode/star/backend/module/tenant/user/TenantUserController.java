@@ -1,17 +1,18 @@
 package com.isxcode.star.backend.module.tenant.user;
 
+import com.isxcode.star.api.annotations.SuccessResponse;
 import com.isxcode.star.api.constants.base.ModulePrefix;
-import com.isxcode.star.api.constants.user.RoleType;
 import com.isxcode.star.api.constants.base.SecurityConstants;
+import com.isxcode.star.api.constants.user.RoleType;
 import com.isxcode.star.api.pojos.tenant.user.req.TurAddTenantUserReq;
 import com.isxcode.star.api.pojos.tenant.user.req.TurQueryTenantUserReq;
 import com.isxcode.star.api.pojos.tenant.user.res.TurQueryTenantUserRes;
-import com.isxcode.star.api.annotations.SuccessResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.security.access.annotation.Secured;
@@ -21,8 +22,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.validation.Valid;
 
 @Tag(name = "租户用户模块")
 @RestController
@@ -36,7 +35,12 @@ public class TenantUserController {
   @Operation(summary = "添加用户接口")
   @PostMapping("/addTenantUser")
   @SuccessResponse("添加成功")
-  @Parameter(name = "Tenant", description = "租户id", required = true, in = ParameterIn.HEADER, schema = @Schema(type = "string"))
+  @Parameter(
+      name = "Tenant",
+      description = "租户id",
+      required = true,
+      in = ParameterIn.HEADER,
+      schema = @Schema(type = "string"))
   public void addTenantUser(@Valid @RequestBody TurAddTenantUserReq turAddTenantUserReq) {
 
     tenantUserBizService.addTenantUser(turAddTenantUserReq);
@@ -46,8 +50,14 @@ public class TenantUserController {
   @Operation(summary = "查询租户用户列表接口")
   @PostMapping("/queryTenantUser")
   @SuccessResponse("查询成功")
-  @Parameter(name = SecurityConstants.HEADER_TENANT_ID, description = "租户id", required = true, in = ParameterIn.HEADER, schema = @Schema(type = "string"))
-  public Page<TurQueryTenantUserRes> queryTenantUser(@Valid @RequestBody TurQueryTenantUserReq turQueryTenantUserReq) {
+  @Parameter(
+      name = SecurityConstants.HEADER_TENANT_ID,
+      description = "租户id",
+      required = true,
+      in = ParameterIn.HEADER,
+      schema = @Schema(type = "string"))
+  public Page<TurQueryTenantUserRes> queryTenantUser(
+      @Valid @RequestBody TurQueryTenantUserReq turQueryTenantUserReq) {
 
     return tenantUserBizService.queryTenantUser(turQueryTenantUserReq);
   }
@@ -56,8 +66,15 @@ public class TenantUserController {
   @Operation(summary = "移除用户接口")
   @GetMapping("/removeTenantUser")
   @SuccessResponse("移除成功")
-  @Parameter(name = "Tenant", description = "租户id", required = true, in = ParameterIn.HEADER, schema = @Schema(type = "string"))
-  public void removeTenantUser(@Schema(description = "关系唯一id", example = "sy_ff3c1b52f8b34c45ab2cf24b6bccd480") @RequestParam String tenantUserId) {
+  @Parameter(
+      name = "Tenant",
+      description = "租户id",
+      required = true,
+      in = ParameterIn.HEADER,
+      schema = @Schema(type = "string"))
+  public void removeTenantUser(
+      @Schema(description = "关系唯一id", example = "sy_ff3c1b52f8b34c45ab2cf24b6bccd480") @RequestParam
+          String tenantUserId) {
 
     tenantUserBizService.removeTenantUser(tenantUserId);
   }
@@ -66,8 +83,15 @@ public class TenantUserController {
   @Operation(summary = "设置为租户管理员接口")
   @GetMapping("/setTenantAdmin")
   @SuccessResponse("设置成功")
-  @Parameter(name = "Tenant", description = "租户id", required = true, in = ParameterIn.HEADER, schema = @Schema(type = "string"))
-  public void setTenantAdmin(@Schema(description = "关系id", example = "sy_ff3c1b52f8b34c45ab2cf24b6bccd480") @RequestParam String tenantUserId) {
+  @Parameter(
+      name = "Tenant",
+      description = "租户id",
+      required = true,
+      in = ParameterIn.HEADER,
+      schema = @Schema(type = "string"))
+  public void setTenantAdmin(
+      @Schema(description = "关系id", example = "sy_ff3c1b52f8b34c45ab2cf24b6bccd480") @RequestParam
+          String tenantUserId) {
 
     tenantUserBizService.setTenantAdmin(tenantUserId);
   }
@@ -76,10 +100,16 @@ public class TenantUserController {
   @Operation(summary = "取消设置为租户管理员接口")
   @GetMapping("/removeTenantAdmin")
   @SuccessResponse("设置成功")
-  @Parameter(name = "Tenant", description = "租户id", required = true, in = ParameterIn.HEADER, schema = @Schema(type = "string"))
-  public void removeTenantAdmin(@Schema(description = "关系id", example = "sy_ff3c1b52f8b34c45ab2cf24b6bccd480") @RequestParam String tenantUserId) {
+  @Parameter(
+      name = "Tenant",
+      description = "租户id",
+      required = true,
+      in = ParameterIn.HEADER,
+      schema = @Schema(type = "string"))
+  public void removeTenantAdmin(
+      @Schema(description = "关系id", example = "sy_ff3c1b52f8b34c45ab2cf24b6bccd480") @RequestParam
+          String tenantUserId) {
 
     tenantUserBizService.removeTenantAdmin(tenantUserId);
   }
 }
-

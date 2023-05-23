@@ -1,6 +1,14 @@
 package com.isxcode.star.backend.module.tenant;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import java.time.LocalDateTime;
+import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+import javax.persistence.Version;
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.SQLDelete;
@@ -11,18 +19,7 @@ import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-import javax.persistence.Version;
-import java.time.LocalDateTime;
-
-@SQLDelete(
-  sql = "UPDATE SY_TENANT SET deleted = 1 WHERE id = ? and version_number = ?"
-)
+@SQLDelete(sql = "UPDATE SY_TENANT SET deleted = 1 WHERE id = ? and version_number = ?")
 @Data
 @Entity
 @Table(name = "SY_TENANT")
@@ -34,8 +31,8 @@ public class TenantEntity {
   @Id
   @GeneratedValue(generator = "sy-id-generator")
   @GenericGenerator(
-    name = "sy-id-generator",
-    strategy = "com.isxcode.star.backend.config.GeneratedValueConfig")
+      name = "sy-id-generator",
+      strategy = "com.isxcode.star.backend.config.GeneratedValueConfig")
   private String id;
 
   private String name;
@@ -56,21 +53,15 @@ public class TenantEntity {
 
   private LocalDateTime checkDateTime;
 
-  @CreatedDate
-  private LocalDateTime createDateTime;
+  @CreatedDate private LocalDateTime createDateTime;
 
-  @LastModifiedDate
-  private LocalDateTime lastModifiedDateTime;
+  @LastModifiedDate private LocalDateTime lastModifiedDateTime;
 
-  @CreatedBy
-  private String createBy;
+  @CreatedBy private String createBy;
 
-  @LastModifiedBy
-  private String lastModifiedBy;
+  @LastModifiedBy private String lastModifiedBy;
 
-  @Version
-  private Long versionNumber;
+  @Version private Long versionNumber;
 
-  @Transient
-  private Integer deleted;
+  @Transient private Integer deleted;
 }

@@ -1,12 +1,15 @@
 package com.isxcode.star.backend.config;
 
 import com.isxcode.star.api.properties.SparkYunProperties;
-import com.isxcode.star.backend.security.JwtAuthenticationFilter;
 import com.isxcode.star.backend.module.tenant.user.TenantUserRepository;
 import com.isxcode.star.backend.module.user.UserRepository;
 import com.isxcode.star.backend.security.AuthenticationManagerImpl;
 import com.isxcode.star.backend.security.AuthenticationProviderImpl;
+import com.isxcode.star.backend.security.JwtAuthenticationFilter;
 import com.isxcode.star.backend.security.UserDetailsServiceImpl;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
@@ -25,10 +28,6 @@ import org.springframework.security.web.firewall.HttpFirewall;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 @Slf4j
 @Configuration
@@ -80,13 +79,13 @@ public class WebSecurityConfig {
 
     // 访问h2,swagger，druid界面需要的权限
     http.authorizeRequests()
-      .antMatchers(sparkYunProperties.getAdminUrl().toArray(new String[0]))
-      .hasRole("ADMIN");
+        .antMatchers(sparkYunProperties.getAdminUrl().toArray(new String[0]))
+        .hasRole("ADMIN");
 
     // 任何人都可以访问的权限
     http.authorizeRequests()
-      .antMatchers(sparkYunProperties.getAnonymousUrl().toArray(new String[0]))
-      .permitAll();
+        .antMatchers(sparkYunProperties.getAnonymousUrl().toArray(new String[0]))
+        .permitAll();
 
     // 需要token才可以访问的地址
     List<String> excludePaths = new ArrayList<>();
@@ -94,8 +93,9 @@ public class WebSecurityConfig {
     excludePaths.addAll(sparkYunProperties.getAnonymousUrl());
 
     // token
-    http.addFilterBefore(new JwtAuthenticationFilter(authenticationManagerBean(), excludePaths, sparkYunProperties),
-      UsernamePasswordAuthenticationFilter.class);
+    http.addFilterBefore(
+        new JwtAuthenticationFilter(authenticationManagerBean(), excludePaths, sparkYunProperties),
+        UsernamePasswordAuthenticationFilter.class);
     http.authorizeRequests().antMatchers("/**").authenticated();
 
     http.formLogin();

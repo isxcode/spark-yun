@@ -1,10 +1,10 @@
 package com.isxcode.star.backend.config;
 
-import org.apache.logging.log4j.util.Strings;
-import org.hibernate.resource.jdbc.spi.StatementInspector;
-
 import static com.isxcode.star.backend.config.WebSecurityConfig.JPA_TENANT_MODE;
 import static com.isxcode.star.backend.config.WebSecurityConfig.TENANT_ID;
+
+import org.apache.logging.log4j.util.Strings;
+import org.hibernate.resource.jdbc.spi.StatementInspector;
 
 public class JpaTenantInterceptor implements StatementInspector {
 

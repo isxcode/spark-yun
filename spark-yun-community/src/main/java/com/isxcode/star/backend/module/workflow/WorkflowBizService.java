@@ -1,18 +1,13 @@
 package com.isxcode.star.backend.module.workflow;
 
 import com.isxcode.star.api.constants.workflow.WorkflowStatus;
+import com.isxcode.star.api.exceptions.SparkYunException;
 import com.isxcode.star.api.pojos.workflow.req.WocQueryWorkflowReq;
 import com.isxcode.star.api.pojos.workflow.req.WofAddWorkflowReq;
 import com.isxcode.star.api.pojos.workflow.req.WofUpdateWorkflowReq;
 import com.isxcode.star.api.pojos.workflow.res.WofQueryWorkflowRes;
-import com.isxcode.star.backend.module.workflow.WorkflowEntity;
-import com.isxcode.star.backend.module.workflow.WorkflowMapper;
-import com.isxcode.star.backend.module.workflow.WorkflowRepository;
-
 import java.util.Optional;
 import javax.transaction.Transactional;
-
-import com.isxcode.star.api.exceptions.SparkYunException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -38,19 +33,25 @@ public class WorkflowBizService {
 
   public void updateWorkflow(WofUpdateWorkflowReq wofUpdateWorkflowReq) {
 
-    Optional<WorkflowEntity> workflowEntityOptional = workflowRepository.findById(wofUpdateWorkflowReq.getId());
+    Optional<WorkflowEntity> workflowEntityOptional =
+        workflowRepository.findById(wofUpdateWorkflowReq.getId());
     if (!workflowEntityOptional.isPresent()) {
       throw new SparkYunException("作业流不存在");
     }
 
-    WorkflowEntity workflow = workflowMapper.updateWorkflowReqToWorkflowEntity(wofUpdateWorkflowReq, workflowEntityOptional.get());
+    WorkflowEntity workflow =
+        workflowMapper.updateWorkflowReqToWorkflowEntity(
+            wofUpdateWorkflowReq, workflowEntityOptional.get());
 
     workflowRepository.save(workflow);
   }
 
   public Page<WofQueryWorkflowRes> queryWorkflow(WocQueryWorkflowReq wocQueryWorkflowReq) {
 
-    Page<WorkflowEntity> WorkflowEntityPage = workflowRepository.searchAll(wocQueryWorkflowReq.getSearchKeyWord(), PageRequest.of(wocQueryWorkflowReq.getPage(), wocQueryWorkflowReq.getPageSize()));
+    Page<WorkflowEntity> WorkflowEntityPage =
+        workflowRepository.searchAll(
+            wocQueryWorkflowReq.getSearchKeyWord(),
+            PageRequest.of(wocQueryWorkflowReq.getPage(), wocQueryWorkflowReq.getPageSize()));
 
     return workflowMapper.workflowEntityPageToQueryWorkflowResPage(WorkflowEntityPage);
   }

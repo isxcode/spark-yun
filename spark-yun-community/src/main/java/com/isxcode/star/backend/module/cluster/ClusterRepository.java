@@ -1,6 +1,5 @@
 package com.isxcode.star.backend.module.cluster;
 
-import com.isxcode.star.backend.module.cluster.ClusterEntity;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
