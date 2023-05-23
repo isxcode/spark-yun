@@ -13,6 +13,11 @@ import org.springframework.stereotype.Repository;
 public interface DatasourceRepository extends JpaRepository<DatasourceEntity, String> {
 
   @Query(
-      "SELECT D FROM DatasourceEntity D WHERE D.name LIKE %:keyword% OR D.remark LIKE %:keyword% OR D.dbType LIKE %:keyword% OR D.username LIKE %:keyword% OR D.jdbcUrl LIKE %:keyword%")
+      "SELECT D FROM DatasourceEntity D "
+          + "WHERE D.name LIKE %:keyword% "
+          + "OR D.remark LIKE %:keyword% "
+          + "OR D.dbType LIKE %:keyword% "
+          + "OR D.username LIKE %:keyword% "
+          + "OR D.jdbcUrl LIKE %:keyword%")
   Page<DatasourceEntity> searchAll(@Param("keyword") String searchKeyWord, Pageable pageable);
 }

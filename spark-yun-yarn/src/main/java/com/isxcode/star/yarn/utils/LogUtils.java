@@ -62,7 +62,8 @@ public class LogUtils {
       throw new SparkYunException(
           "50010",
           "yarn配置异常",
-          "请在yarn-site.xml中配置yarn.resourcemanager.webapp.address属性:${yarn.resourcemanager.hostname}:8088");
+          "请在yarn-site.xml中配置"
+              + "yarn.resourcemanager.webapp.address属性:${yarn.resourcemanager.hostname}:8088");
     }
 
     // 访问yarn作业日志页面

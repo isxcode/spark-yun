@@ -82,7 +82,7 @@ public class TenantController {
   public void updateTenantByTenantAdmin(
       @Valid @RequestBody TetUpdateTenantByTenantAdminReq tetUpdateTenantByTenantAdminReq) {
 
-    tenantBizService.TetUpdateTenantByTenantAdminReq(tetUpdateTenantByTenantAdminReq);
+    tenantBizService.tetUpdateTenantByTenantAdminReq(tetUpdateTenantByTenantAdminReq);
   }
 
   @UserLog

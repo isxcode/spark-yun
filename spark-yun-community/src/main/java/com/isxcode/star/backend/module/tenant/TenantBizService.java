@@ -161,7 +161,7 @@ public class TenantBizService {
     tenantRepository.save(tenantEntity);
   }
 
-  public void TetUpdateTenantByTenantAdminReq(
+  public void tetUpdateTenantByTenantAdminReq(
       TetUpdateTenantByTenantAdminReq tetUpdateTenantByTenantAdminReq) {
 
     // 判断租户是否存在
