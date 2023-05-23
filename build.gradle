@@ -114,7 +114,7 @@ tasks.register('deploy', Exec) {
 // gradle docs
 tasks.register('docs', Exec) {
 
-  commandLine 'bash', '-c', 'docsify serve docs'
+  commandLine 'bash', '-c', 'npm i docsify-cli -g && docsify serve docs'
 }
 
 // spotless
