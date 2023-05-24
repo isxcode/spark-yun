@@ -22,4 +22,6 @@ public class QuartzContext {
   private String userId;
 
   private String tenantId;
+
+  private String sparkConfig;
 }

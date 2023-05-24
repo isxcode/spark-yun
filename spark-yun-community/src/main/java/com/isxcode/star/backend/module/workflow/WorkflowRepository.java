@@ -13,7 +13,8 @@ import org.springframework.stereotype.Repository;
 @CacheConfig(cacheNames = {"sy_engines"})
 public interface WorkflowRepository extends JpaRepository<WorkflowEntity, String> {
 
-  @Query("SELECT w FROM WorkflowEntity w WHERE w.name LIKE %:keyword% OR w.remark LIKE %:keyword%")
+  @Query(
+      "SELECT w FROM WorkflowEntity w WHERE w.name LIKE %:keyword% OR w.remark LIKE %:keyword% order by w.lastModifiedDateTime desc ")
   Page<WorkflowEntity> searchAll(@Param("keyword") String searchKeyWord, Pageable pageable);
 
   long countByTenantId(String tenantId);

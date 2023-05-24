@@ -15,6 +15,7 @@ public interface TenantRepository extends JpaRepository<TenantEntity, String> {
 
   Optional<TenantEntity> findByName(String name);
 
-  @Query("SELECT T FROM TenantEntity T WHERE T.name LIKE %:keyword% OR T.remark LIKE %:keyword%")
+  @Query(
+      "SELECT T FROM TenantEntity T WHERE T.name LIKE %:keyword% OR T.remark LIKE %:keyword% order by T.lastModifiedDateTime desc ")
   Page<TenantEntity> searchAll(@Param("keyword") String searchKeyWord, Pageable pageable);
 }

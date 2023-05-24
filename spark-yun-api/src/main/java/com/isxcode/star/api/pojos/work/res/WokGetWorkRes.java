@@ -22,4 +22,6 @@ public class WokGetWorkRes {
   private String workId;
 
   private String corn;
+
+  private String sparkConfig;
 }

@@ -23,8 +23,6 @@ public class WorkConfigBizService {
 
   private final WorkConfigRepository workConfigRepository;
 
-  private final WorkConfigMapper workConfigMapper;
-
   public void configWork(WocConfigWorkReq wocConfigWorkReq) {
 
     Optional<WorkEntity> workEntityOptional = workRepository.findById(wocConfigWorkReq.getWorkId());
@@ -48,14 +46,15 @@ public class WorkConfigBizService {
     if (!Strings.isEmpty(wocConfigWorkReq.getDatasourceId())) {
       workConfigEntity.setDatasourceId(wocConfigWorkReq.getDatasourceId());
     }
+    if (!Strings.isEmpty(wocConfigWorkReq.getSparkConfig())) {
+      workConfigEntity.setSparkConfig(wocConfigWorkReq.getSparkConfig());
+    }
     if (!Strings.isEmpty(wocConfigWorkReq.getCorn())) {
       // 检验corn表达式
-
       boolean validExpression = CronExpression.isValidExpression(wocConfigWorkReq.getCorn());
       if (!validExpression) {
         throw new SparkYunException("Corn表达式异常");
       }
-
       workConfigEntity.setCorn(wocConfigWorkReq.getCorn());
     }
     workConfigRepository.save(workConfigEntity);

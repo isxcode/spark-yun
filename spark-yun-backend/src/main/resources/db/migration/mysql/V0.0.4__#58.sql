@@ -180,7 +180,10 @@ create table if not exists SY_WORK_CONFIG
   id                      varchar(200)  not null unique primary key comment '作业配置唯一id',
   datasource_id           varchar(200) comment '数据源id',
   cluster_id              varchar(200) comment '集群id',
+  spark_config            text comment 'spark的作业配置',
   sql_script              text comment 'sql脚本',
+  corn                    varchar(200) comment '定时表达式',
+  version_id              varchar(200) comment '作业当前最新版本号',
   create_by               varchar(200)  not null comment '创建人',
   create_date_time        datetime      not null comment '创建时间',
   last_modified_by        varchar(200)  not null comment '更新人',
@@ -236,12 +239,6 @@ create table if not exists SY_API
   tenant_id               varchar(200)  not null comment '租户id'
 );
 
-alter table SY_WORK_CONFIG
-  add corn varchar(200) null comment '定时表达式';
-
-alter table SY_WORK
-  add version_id varchar(200) null comment '作业当前最新版本号';
-
 -- 作业配置版本表
 create table if not exists SY_WORK_VERSION
 (
@@ -250,7 +247,8 @@ create table if not exists SY_WORK_VERSION
   work_type               varchar(200)  not null comment '作业类型',
   datasource_id           varchar(200) comment '数据源id',
   cluster_id              varchar(200) comment '集群id',
-  sql_script              varchar(2000) comment 'sql脚本',
+  sql_script              text comment 'sql脚本',
+  spark_config            text comment 'spark的作业配置',
   corn                    varchar(200)  not null comment '定时表达式',
   create_by               varchar(200)  not null comment '创建人',
   create_date_time        datetime      not null comment '创建时间',

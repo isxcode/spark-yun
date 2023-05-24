@@ -5,6 +5,7 @@ import static com.isxcode.star.backend.config.WebSecurityConfig.USER_ID;
 
 import com.alibaba.fastjson.JSON;
 import com.isxcode.star.api.constants.cluster.ClusterNodeStatus;
+import com.isxcode.star.api.constants.work.WorkDefault;
 import com.isxcode.star.api.constants.work.WorkLog;
 import com.isxcode.star.api.constants.work.WorkStatus;
 import com.isxcode.star.api.constants.work.WorkType;
@@ -38,6 +39,7 @@ import com.isxcode.star.common.utils.HttpUtils;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 import javax.transaction.Transactional;
@@ -77,10 +79,15 @@ public class WorkBizService {
 
     WorkEntity work = workMapper.addWorkReqToWorkEntity(addWorkReq);
 
-    // 添加默认作业配置
-    WorkConfigEntity workConfigEntity = workConfigRepository.save(new WorkConfigEntity());
-    work.setConfigId(workConfigEntity.getId());
+    // 如果是sparkSql作业，初始化sparkConfig
+    WorkConfigEntity workConfigEntity = new WorkConfigEntity();
+    if (WorkType.QUERY_SPARK_SQL.equals(addWorkReq.getWorkType())) {
+      workConfigEntity.setSparkConfig(WorkDefault.DEFAULT_SPARK_CONF);
+    }
 
+    // 添加默认作业配置
+    workConfigEntity = workConfigRepository.save(workConfigEntity);
+    work.setConfigId(workConfigEntity.getId());
     work.setStatus(WorkStatus.UN_PUBLISHED);
 
     workRepository.save(work);
@@ -176,6 +183,7 @@ public class WorkBizService {
         runSparkSqlService.run(
             workConfig.getClusterId(),
             workConfig.getSqlScript(),
+            JSON.parseObject(workConfig.getSparkConfig(), Map.class),
             workInstanceEntity.getId(),
             TENANT_ID.get(),
             USER_ID.get());

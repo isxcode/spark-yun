@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository;
 @CacheConfig(cacheNames = {"SY_CALCULATE_ENGINE"})
 public interface ClusterRepository extends JpaRepository<ClusterEntity, String> {
 
-  @Query("SELECT C FROM ClusterEntity C WHERE C.name LIKE %:keyword% OR C.remark LIKE %:keyword%")
+  @Query(
+      "SELECT C FROM ClusterEntity C WHERE C.name LIKE %:keyword% OR C.remark LIKE %:keyword% order by C.lastModifiedDateTime desc ")
   Page<ClusterEntity> searchAll(@Param("keyword") String searchKeyWord, Pageable pageable);
 }

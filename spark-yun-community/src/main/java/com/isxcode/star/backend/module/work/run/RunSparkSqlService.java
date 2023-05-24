@@ -25,7 +25,6 @@ import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -56,7 +55,12 @@ public class RunSparkSqlService {
    */
   @Async("sparkYunWorkThreadPool")
   public void run(
-      String clusterId, String sqlScript, String instanceId, String tenantId, String userId) {
+      String clusterId,
+      String sqlScript,
+      Map<String, String> sparkConfig,
+      String instanceId,
+      String tenantId,
+      String userId) {
 
     // 异步环境变量
     USER_ID.set(userId);
@@ -81,7 +85,7 @@ public class RunSparkSqlService {
     try {
 
       // 执行作业
-      executeSparkSql(clusterId, sqlScript, instance, logBuilder);
+      executeSparkSql(clusterId, sqlScript, sparkConfig, instance, logBuilder);
 
       // 记录执行结束时间
       WorkInstanceEntity workInstanceEntity =
@@ -102,7 +106,11 @@ public class RunSparkSqlService {
   }
 
   public void executeSparkSql(
-      String clusterId, String sqlScript, WorkInstanceEntity instance, StringBuilder logBuilder) {
+      String clusterId,
+      String sqlScript,
+      Map<String, String> sparkConfig,
+      WorkInstanceEntity instance,
+      StringBuilder logBuilder) {
 
     // 检测计算集群是否存在
     logBuilder.append(LocalDateTime.now() + WorkLog.SUCCESS_INFO + "开始申请资源 \n");
@@ -161,14 +169,6 @@ public class RunSparkSqlService {
     PluginReq pluginReq = new PluginReq();
     pluginReq.setSql(sqlScript);
     pluginReq.setLimit(200);
-    Map<String, String> sparkConfig = new HashMap<>();
-    sparkConfig.put("spark.executor.memory", "1g");
-    sparkConfig.put("spark.driver.memory", "1g");
-    sparkConfig.put("spark.sql.storeAssignmentPolicy", "LEGACY");
-    sparkConfig.put("spark.sql.legacy.timeParserPolicy", "LEGACY");
-    sparkConfig.put("spark.hadoop.hive.exec.dynamic.partition", "true");
-    sparkConfig.put("spark.hadoop.hive.exec.dynamic.partition.mode", "nonstrict");
-
     pluginReq.setSparkConfig(sparkConfig);
     executeReq.setPluginReq(pluginReq);
 

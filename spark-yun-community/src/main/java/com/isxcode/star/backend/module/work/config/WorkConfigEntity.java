@@ -44,6 +44,8 @@ public class WorkConfigEntity {
 
   private String sqlScript;
 
+  private String sparkConfig;
+
   private String corn;
 
   @CreatedDate private LocalDateTime createDateTime;

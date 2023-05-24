@@ -39,5 +39,5 @@ spark-yun:
   admin-passwd: admin123
   log-advice: false
   resources-path: /Users/ispong/Data/resources
-  agent-bin-dir: /Users/ispong/Isxcode/spark-yun/spark-yun-dist/src/main/bin
+  agent-bin-dir: /Users/ispong/Isxcode/spark-yun/spark-yun-dist/src/main/bash
   agent-tar-gz-dir: /Users/ispong/Isxcode/spark-yun/spark-yun-dist/build/distributions

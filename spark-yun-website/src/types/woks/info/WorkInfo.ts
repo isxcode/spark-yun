@@ -9,4 +9,5 @@ export interface WorkInfo {
   datasourceId?: string
   calculateId?: string
   corn?: string
+  sparkConfig?: string
 }

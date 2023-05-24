@@ -180,7 +180,7 @@ function InstancePage() {
               <a
                 className={'sy-table-a'}
                 onClick={() => {
-                  restartInstance(record.id as string)
+                  restartInstance(record.id as string);
                 }}>
                 重跑
               </a>
