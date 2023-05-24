@@ -41,6 +41,12 @@ create table if not exists SY_USER
   deleted                 int default 0 not null comment '逻辑删除'
 );
 
+-- 初始化系统管理员
+insert into SY_USER (id, username, account, passwd, role_code, status, create_by, create_date_time, last_modified_by,
+                     last_modified_date_time, version_number)
+values ('admin_id', '系统管理员', 'admin', '', 'ROLE_SYS_ADMIN', 'ENABLE', 'admin_id', now(), 'admin_id', now(),
+        0);
+
 -- 租户用户关系表
 create table if not exists SY_TENANT_USERS
 (
@@ -168,12 +174,6 @@ create table if not exists SY_WORK
   deleted                 int default 0 not null comment '逻辑删除',
   tenant_id               varchar(200)  not null comment '租户id'
 );
-
--- 初始化系统管理员
-insert into SY_USER (id, username, account, passwd, role_code, status, create_by, create_date_time, last_modified_by,
-                     last_modified_date_time, version_number)
-values ('admin_id', '系统管理员', 'admin', '', 'ROLE_SYS_ADMIN', 'ENABLE', 'admin_id', now(), 'admin_id', now(),
-        0);
 
 -- 作业配置表
 create table if not exists SY_WORK_CONFIG
