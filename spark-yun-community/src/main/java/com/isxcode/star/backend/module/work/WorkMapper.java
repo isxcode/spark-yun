@@ -21,9 +21,9 @@ public interface WorkMapper {
   WorkEntity addWorkReqToWorkEntity(WokAddWorkReq addWorkReq);
 
   @Mapping(source = "wokUpdateWorkReq.remark", target = "remark")
-  @Mapping(source = "wokUpdateWorkReq.workType", target = "workType")
   @Mapping(source = "wokUpdateWorkReq.name", target = "name")
   @Mapping(source = "workEntity.id", target = "id")
+  @Mapping(source = "workEntity.workType", target = "workType")
   WorkEntity updateWorkReqToWorkEntity(WokUpdateWorkReq wokUpdateWorkReq, WorkEntity workEntity);
 
   WorkConfigEntity configWorkReqToWorkConfigEntity(WocConfigWorkReq configWorkReq);

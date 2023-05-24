@@ -54,6 +54,16 @@ public class UserController {
 
   @UserLog
   @Secured({RoleType.SYS_ADMIN})
+  @Operation(summary = "获取用户信息接口")
+  @GetMapping("/getUser")
+  @SuccessResponse("获取成功")
+  public UsrLoginRes getUser() {
+
+    return userBizService.getUser();
+  }
+
+  @UserLog
+  @Secured({RoleType.SYS_ADMIN})
   @Operation(summary = "创建用户接口")
   @PostMapping("/addUser")
   @SuccessResponse("创建成功")

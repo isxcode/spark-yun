@@ -1,5 +1,7 @@
 package com.isxcode.star.backend.module.user;
 
+import static com.isxcode.star.backend.config.WebSecurityConfig.USER_ID;
+
 import com.isxcode.star.api.constants.user.RoleType;
 import com.isxcode.star.api.constants.user.UserStatus;
 import com.isxcode.star.api.exceptions.SparkYunException;
@@ -69,6 +71,75 @@ public class UserBizService {
     // 判断密码是否合法
     if (!Md5Utils.hashStr(usrLoginReq.getPasswd()).equals(userEntity.getPasswd())) {
       throw new SparkYunException("账号或者密码不正确");
+    }
+
+    // 生成token
+    String jwtToken =
+        JwtUtils.encrypt(
+            sparkYunProperties.getAesSlat(),
+            userEntity.getId(),
+            sparkYunProperties.getJwtKey(),
+            sparkYunProperties.getExpirationMin());
+
+    // 如果是系统管理员直接返回
+    if (RoleType.SYS_ADMIN.equals(userEntity.getRoleCode())) {
+      return UsrLoginRes.builder()
+          .tenantId(userEntity.getCurrentTenantId())
+          .username(userEntity.getUsername())
+          .token(jwtToken)
+          .role(userEntity.getRoleCode())
+          .build();
+    }
+
+    // 获取用户最近一次租户信息
+    if (Strings.isEmpty(userEntity.getCurrentTenantId())) {
+      throw new SparkYunException("无可用租户，请联系管理员");
+    }
+    Optional<TenantEntity> tenantEntityOptional =
+        tenantRepository.findById(userEntity.getCurrentTenantId());
+
+    // 如果租户不存在,则随机选择一个
+    String currentTenantId;
+    if (!tenantEntityOptional.isPresent()) {
+      List<TenantUserEntity> tenantUserEntities =
+          tenantUserRepository.findAllByUserId(userEntity.getId());
+      if (tenantUserEntities.isEmpty()) {
+        throw new SparkYunException("无可用租户，请联系管理员");
+      }
+      currentTenantId = tenantUserEntities.get(0).getTenantId();
+      userEntity.setCurrentTenantId(currentTenantId);
+      userRepository.save(userEntity);
+    } else {
+      currentTenantId = tenantEntityOptional.get().getId();
+    }
+
+    // 返回用户在租户中的角色
+    Optional<TenantUserEntity> tenantUserEntityOptional =
+        tenantUserRepository.findByTenantIdAndUserId(currentTenantId, userEntity.getId());
+    if (!tenantUserEntityOptional.isPresent()) {
+      throw new SparkYunException("无可用租户，请联系管理员");
+    }
+
+    // 生成token并返回
+    return new UsrLoginRes(
+        userEntity.getUsername(),
+        jwtToken,
+        currentTenantId,
+        tenantUserEntityOptional.get().getRoleCode());
+  }
+
+  public UsrLoginRes getUser() {
+
+    // 判断用户是否存在
+    Optional<UserEntity> userEntityOptional = userRepository.findById(USER_ID.get());
+    if (!userEntityOptional.isPresent()) {
+      throw new SparkYunException("账号或者密码不正确");
+    }
+    UserEntity userEntity = userEntityOptional.get();
+
+    // 判断用户是否禁用
+    if (UserStatus.DISABLE.equals(userEntity.getStatus())) {
+      throw new SparkYunException("账号已被禁用，请联系管理员");
     }
 
     // 生成token
