@@ -93,6 +93,33 @@ SHOW TABLES;
 select distinct object_name TABLE_SCHEMA from all_objects where object_type = 'SCH';
 ```
 
+##### oceanbase
+
+- jdbc:oceanbase://x.x.x.x:x
+- com.oceanbase.jdbc.Driver
+
+```sql
+show databases;
+```
+
+##### tidb
+
+- com.mysql.cj.jdbc.Driver
+- jdbc:mysql://x.x.x.x:x
+
+```sql
+show databases;
+```
+
+##### starRocks
+
+- com.mysql.jdbc.Driver
+- jdbc:mysql://x.x.x.x:x
+
+```sql
+show databases;
+```
+
 ##### 数据同步
 
 - oracle同步到hive
