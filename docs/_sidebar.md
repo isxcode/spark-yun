@@ -1,21 +1,23 @@
 - **产品简介**
-  - [超轻量级大数据平台](/zh-cn/introduce/introduce.md)
-- **功能介绍**
-  - [功能一：多数据源查询](/zh-cn/demo/demo1.md)
-  - [功能二：数据同步](/zh-cn/demo/demo2.md)
-- **项目部署**
-  - [Docker部署](/zh-cn/deploy/docker-deploy.md)
-  - [源码部署](/zh-cn/deploy/source-deploy.md)
-- **使用说明**
-  - [登录](/zh-cn/reference/login.md)
-  - [计算集群](/zh-cn/reference/calculate.md)
+  - [至轻云](/zh-cn/introduce/introduce.md)
+- **产品优势**
+  - [纯原生Spark](/zh-cn/success/demo2.md)
+- **成功案例**
+  - [进行中](/zh-cn/success/demo1.md)
+- **安装手册**
+  - [源码安装](/zh-cn/install/source-deploy.md)
+  - [Docker安装](/zh-cn/install/docker-deploy.md)
+- **使用手册**
+  - [多租户](/zh-cn/reference/tenant.md)
+  - [计算集群](/zh-cn/reference/cluster.md)
   - [数据源](/zh-cn/reference/datasource.md)
   - [作业流](/zh-cn/reference/workflow.md)
-- **发版历史**
-  - [v0.0.2](/zh-cn/version/0-0-2.md)
-  - [v0.0.1](/zh-cn/version/0-0-1.md)
+  - [调度历史](/zh-cn/reference/history.md)
 - **开发手册**
-  - [如何创建需求](/zh-cn/develop/create_issue.md)
-  - [如何提交合并请求](/zh-cn/develop/create_pr.md)
-  - [如何加入开发](/zh-cn/develop/join.md)
-- [**联系方式**](/zh-cn/link/link.md)
+  - [如何启动项目](/zh-cn/develop/create_issue.md)
+  - [如何提交PR](/zh-cn/develop/create_issue.md)
+  - [如何申请加入](/zh-cn/develop/join.md)
+- **版本历史**
+  - [v0.0.5](/zh-cn/version/v0-0-5.md)
+  - [v0.0.2](/zh-cn/version/v0-0-2.md)
+  - [v0.0.1](/zh-cn/version/v0-0-1.md)

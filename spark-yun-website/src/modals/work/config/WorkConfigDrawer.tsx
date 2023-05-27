@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from 'react'
-import { Button, Col, Drawer, Form, Row, Select } from 'antd'
+import { Button, Col, Drawer, Form, Input, Row, Select } from 'antd'
 import './WorkConfigDrawer.less'
-import { ConfigWorkReq } from '../../../types/woks/req/ConfigWorkReq'
 import { configWorkApi } from '../../../services/works/WorksService'
 import { WorkInfo } from '../../../types/woks/info/WorkInfo'
 import { DatasourceRow } from '../../../types/datasource/info/DatasourceRow'
 import { QueryDatasourceReq } from '../../../types/datasource/req/QueryDatasourceReq'
 import { queryDatasourceApi } from '../../../services/datasource/DatasourceService'
 import { CalculateEngineRow } from '../../../types/calculate/engine/info/CalculateEngineRow'
-import { queryEnginesApi } from '../../../services/calculate/engine/CalculateEngineService'
+import { queryEnginesApi } from '../../../services/cluster/ClusterService'
 import { QueryEngineReq } from '../../../types/calculate/engine/req/QueryEngineReq'
+import TextArea from 'antd/es/input/TextArea'
 
 const { Option } = Select
 
@@ -22,7 +22,7 @@ export const WorkConfigDrawer = (props: { isModalVisible: boolean, handleCancel:
   const queryDatasourceReq: QueryDatasourceReq = {
     page: 1,
     pageSize: 999,
-    searchContent: ''
+    searchKeyWord: ''
   }
   const fetchDatasources = () => {
     queryDatasourceApi(queryDatasourceReq).then(function (response) {
@@ -33,7 +33,7 @@ export const WorkConfigDrawer = (props: { isModalVisible: boolean, handleCancel:
   const queryEnginesReq: QueryEngineReq = {
     page: 1,
     pageSize: 999,
-    searchContent: ''
+    searchKeyWord: ''
   }
 
   const fetchEngines = () => {
@@ -48,23 +48,16 @@ export const WorkConfigDrawer = (props: { isModalVisible: boolean, handleCancel:
     } else {
       fetchDatasources()
     }
+    form.setFieldsValue(work)
   }, [work])
 
-  const configWorkReq: ConfigWorkReq = {
-    workId: work?.workId,
-    calculateEngineId: work?.calculateId as string,
-    datasourceId: work?.datasourceId as string,
-    sql: work?.sql
-  }
-
-  const configWork = () => {
-    configWorkApi(configWorkReq).then(() => {})
+  const configWork = (data: any) => {
+    data.workId = work?.workId
+    configWorkApi(data).then(() => {})
   }
 
   const onFinish = (values: any) => {
-    configWorkReq.calculateEngineId = values.engineId
-    configWorkReq.datasourceId = values.datasourceId
-    configWork()
+    configWork(values)
     handleCancel()
   }
 
@@ -96,7 +89,7 @@ export const WorkConfigDrawer = (props: { isModalVisible: boolean, handleCancel:
           </Row>
         }>
         <Form
-          labelCol={{ span: 6 }}
+          labelCol={{ span: 7 }}
           wrapperCol={{ span: 20 }}
           initialValues={{ remember: true }}
           onFinish={onFinish}
@@ -104,11 +97,7 @@ export const WorkConfigDrawer = (props: { isModalVisible: boolean, handleCancel:
           form={form}>
           {work?.workType === 'SPARK_SQL'
 ? (
-            <Form.Item
-              name="engineId"
-              initialValue={work.calculateId}
-              label="计算引擎"
-              rules={[{ required: true, message: '计算引擎不能为空' }]}>
+            <Form.Item name="clusterId" label="计算引擎" rules={[{ required: true, message: '计算引擎不能为空' }]}>
               <Select placeholder="选择计算引擎" allowClear>
                 {calculates.map((option) => (
                   <Option key={option.id} value={option.id}>
@@ -119,11 +108,7 @@ export const WorkConfigDrawer = (props: { isModalVisible: boolean, handleCancel:
             </Form.Item>
           )
 : (
-            <Form.Item
-              name="datasourceId"
-              label="数据源"
-              rules={[{ required: true }]}
-              initialValue={work?.datasourceId}>
+            <Form.Item name="datasourceId" label="数据源" rules={[{ required: true }]}>
               <Select placeholder="选择数据源" allowClear>
                 {datasources.map((option) => (
                   <Option key={option.id} value={option.id}>
@@ -133,6 +118,20 @@ export const WorkConfigDrawer = (props: { isModalVisible: boolean, handleCancel:
               </Select>
             </Form.Item>
           )}
+
+          {work?.workType === 'SPARK_SQL'
+? (
+            <Form.Item label="Spark配置" name="sparkConfig">
+              <TextArea rows={16} style={{ whiteSpace: 'nowrap' }} />
+            </Form.Item>
+          )
+: (
+            <></>
+          )}
+
+          <Form.Item label="Corn表达式" name="corn">
+            <Input />
+          </Form.Item>
         </Form>
       </Drawer>
     </>

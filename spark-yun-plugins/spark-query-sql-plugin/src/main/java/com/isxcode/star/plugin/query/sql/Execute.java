@@ -2,32 +2,20 @@ package com.isxcode.star.plugin.query.sql;
 
 import com.alibaba.fastjson.JSON;
 import com.isxcode.star.api.pojos.plugin.req.PluginReq;
-
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.Statement;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-
-import com.isxcode.star.api.pojos.work.res.WokRunWorkRes;
 import org.apache.logging.log4j.util.Strings;
 import org.apache.spark.SparkConf;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
 
-import static java.sql.DriverManager.getConnection;
-
 public class Execute {
 
-  /**
-   * 最后一句sql查询.
-   */
+  /** 最后一句sql查询. */
   public static void main(String[] args) {
 
     PluginReq pluginReq = parse(args);
@@ -79,17 +67,16 @@ public class Execute {
 
     // 数据
     rowDataset
-      .collectAsList()
-      .forEach(
-        e -> {
-          List<String> metaData = new ArrayList<>();
-          for (int i = 0; i < e.size(); i++) {
-            metaData.add(String.valueOf(e.get(i)));
-          }
-          result.add(metaData);
-        });
+        .collectAsList()
+        .forEach(
+            e -> {
+              List<String> metaData = new ArrayList<>();
+              for (int i = 0; i < e.size(); i++) {
+                metaData.add(String.valueOf(e.get(i)));
+              }
+              result.add(metaData);
+            });
 
     System.out.println(JSON.toJSONString(result));
   }
-
 }
