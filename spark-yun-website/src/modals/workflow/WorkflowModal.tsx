@@ -67,7 +67,7 @@ export const WorkflowModal = (props: {
             <Input />
           </Form.Item>
 
-          <Form.Item label="备注" name="comment" labelCol={{ span: 4 }} wrapperCol={{ span: 20 }}>
+          <Form.Item label="备注" name="remark" labelCol={{ span: 4 }} wrapperCol={{ span: 20 }}>
             <Input.TextArea />
           </Form.Item>
         </Form>

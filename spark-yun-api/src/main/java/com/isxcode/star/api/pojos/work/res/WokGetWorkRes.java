@@ -9,15 +9,19 @@ public class WokGetWorkRes {
 
   private String name;
 
-  private String sql;
+  private String sqlScript;
 
   private String workflowId;
 
   private String datasourceId;
 
-  private String calculateId;
+  private String clusterId;
 
   private String workType;
 
   private String workId;
+
+  private String corn;
+
+  private String sparkConfig;
 }
