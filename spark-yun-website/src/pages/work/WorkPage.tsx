@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Button, Col, Form, Row, Table, Tabs, type TabsProps } from 'antd'
+import { Button, Col, Form, Row, Table, Tabs, type TabsProps, Tag } from 'antd'
 import { useNavigate, useParams } from 'react-router-dom'
 import TextArea from 'antd/es/input/TextArea'
 import './WorkPage.less'
@@ -7,6 +7,7 @@ import { type WorkInfo } from '../../types/woks/info/WorkInfo'
 import { type RunWorkRes } from '../../types/woks/res/RunWorkRes'
 import {
   configWorkApi,
+  getSubmitLogApi,
   getWorkApi,
   getWorkDataApi,
   getWorkLogApi,
@@ -25,10 +26,36 @@ function WorkPage() {
   const [isModalVisible, setIsModalVisible] = useState(false)
   const [work, setWork] = useState<WorkInfo>()
   const [result, setResult] = useState<RunWorkRes>()
+  const [instanceId, setInstanceId] = useState('')
+  const [logs, setLogs] = useState('')
+  const [pollingStarted, setPollingStarted] = useState(false)
+
+  const startPolling = () => {
+    setPollingStarted(true)
+  }
 
   useEffect(() => {
     getWork()
   }, [])
+
+  useEffect(() => {
+    const fetchData = async () => {
+      getSubmitLogApi(instanceId).then(function (response) {
+        const successLog = response.status === 'SUCCESS' || response.status === 'FAIL'
+        setLogs(response.log as string)
+        if (successLog) {
+          setPollingStarted(false)
+        }
+      })
+    }
+
+    if (pollingStarted) {
+      const pollingInterval = setInterval(fetchData, 2000)
+      return () => {
+        clearInterval(pollingInterval)
+      }
+    }
+  }, [pollingStarted])
 
   const getWork = () => {
     getWorkApi(workId as string).then(function (response) {
@@ -37,19 +64,19 @@ function WorkPage() {
   }
 
   const getWorkLog = () => {
-    getWorkLogApi(workId as string, result?.applicationId).then(function (response) {
+    getWorkLogApi(instanceId).then(function (response) {
       setResult({ ...result, yarnLog: response.yarnLog, data: [[]] })
     })
   }
 
   const getData = () => {
-    getWorkDataApi(workId as string, result?.applicationId).then(function (response) {
+    getWorkDataApi(instanceId).then(function (response) {
       setResult({ ...result, data: response.data })
     })
   }
 
   const getWorkStatus = () => {
-    getWorkStatusApi(workId as string, result?.applicationId).then(function (response) {
+    getWorkStatusApi(instanceId).then(function (response) {
       setResult({
         ...result,
         trackingUrl: response.trackingUrl,
@@ -60,13 +87,13 @@ function WorkPage() {
     })
   }
 
-  const getStopWork = () => {
-    stopWorkApi(workId as string, result?.applicationId).then(function (response) {})
+  const getStopWork = (instanceId: string) => {
+    stopWorkApi(instanceId).then(function (response) {})
   }
 
   const configWorkReq: ConfigWorkReq = {
     workId,
-    sql: work?.sql as string,
+    sqlScript: work?.sqlScript as string,
     calculateEngineId: work?.calculateId as string,
     datasourceId: work?.datasourceId as string
   }
@@ -77,7 +104,9 @@ function WorkPage() {
 
   const runWork = () => {
     runWorkApi(workId as string).then((r) => {
-      setResult(r)
+      setInstanceId(r.instanceId as string)
+      setResult({ ...result, yarnLog: '', data: [[]] })
+      startPolling()
     })
   }
 
@@ -89,9 +118,7 @@ function WorkPage() {
         }
         break
       case 'BACK_DATA':
-        if (work?.workType === 'SPARK_SQL') {
-          getData()
-        }
+        getData()
         break
       case 'MONITOR_INFO':
         if (work?.workType === 'SPARK_SQL') {
@@ -127,7 +154,7 @@ function WorkPage() {
     items.push({
       key: 'SUBMIT_LOG',
       label: '提交日志',
-      children: <pre style={{ overflowY: 'scroll', maxHeight: '200px', whiteSpace: 'pre-wrap' }}>{result?.log}</pre>
+      children: <pre style={{ overflowY: 'scroll', maxHeight: '200px', whiteSpace: 'pre-wrap' }}>{logs}</pre>
     })
     if (work?.workType === 'QUERY_JDBC' || work?.workType === 'SPARK_SQL') {
       items.push({
@@ -191,9 +218,17 @@ function WorkPage() {
                 }}>
                 运行
               </Button>
-              <Button className={'sy-btn'} type={'text'} icon={<CloseOutlined />}>
-                中止
-              </Button>
+              {work?.workType === 'SPARK_SQL' && (
+                <Button
+                  className={'sy-btn'}
+                  type={'text'}
+                  onClick={() => {
+                    getStopWork(instanceId)
+                  }}
+                  icon={<CloseOutlined />}>
+                  中止
+                </Button>
+              )}
               <Button
                 onClick={() => {
                   configWork()
@@ -221,9 +256,9 @@ function WorkPage() {
             <TextArea
               style={{ height: '100%' }}
               className={'work-sql-textarea'}
-              value={work?.sql}
+              value={work?.sqlScript}
               onChange={(e) => {
-                setWork({ ...work, sql: e.target.value })
+                setWork({ ...work, sqlScript: e.target.value })
               }}
             />
           </Col>
