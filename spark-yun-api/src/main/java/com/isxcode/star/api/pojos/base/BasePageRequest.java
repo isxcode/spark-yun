@@ -1,9 +1,8 @@
 package com.isxcode.star.api.pojos.base;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Data;
-
 import javax.validation.constraints.NotNull;
+import lombok.Data;
 
 @Data
 public class BasePageRequest {
@@ -17,5 +16,5 @@ public class BasePageRequest {
   private Integer pageSize;
 
   @Schema(title = "搜索内容", example = "至轻云")
-  private String searchContent;
+  private String searchKeyWord;
 }
