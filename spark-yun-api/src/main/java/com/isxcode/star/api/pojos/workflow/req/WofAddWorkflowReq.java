@@ -1,9 +1,8 @@
 package com.isxcode.star.api.pojos.workflow.req;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Data;
-
 import javax.validation.constraints.NotEmpty;
+import lombok.Data;
 
 @Data
 public class WofAddWorkflowReq {
@@ -13,5 +12,5 @@ public class WofAddWorkflowReq {
   private String name;
 
   @Schema(title = "备注", example = "所属安全部门，其他人勿动")
-  private String comment;
+  private String remark;
 }

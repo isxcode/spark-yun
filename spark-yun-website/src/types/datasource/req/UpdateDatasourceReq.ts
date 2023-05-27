@@ -5,6 +5,6 @@ export interface UpdateDatasourceReq {
   username: string
   port: string
   type: string
-  password: string
+  passwd: string
   comment: string
 }

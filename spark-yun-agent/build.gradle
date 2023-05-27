@@ -1,13 +1,7 @@
 dependencies {
 
-  // spark-yun-api
-  api(project(':spark-yun-api'))
-
-  // spark-yun-common
-  api(project(':spark-yun-common'))
-
-  // spark-yun-common
   api(project(':spark-yun-yarn'))
+  api(project(':spark-yun-common'))
 
   // spark-core
   implementation "org.apache.spark:spark-core_${SPARK_SCALA_VERSION}:${SPARK_VERSION}"
