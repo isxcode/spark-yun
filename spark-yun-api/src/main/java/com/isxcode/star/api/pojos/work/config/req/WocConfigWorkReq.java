@@ -1,9 +1,8 @@
 package com.isxcode.star.api.pojos.work.config.req;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Data;
-
 import javax.validation.constraints.NotEmpty;
+import lombok.Data;
 
 @Data
 public class WocConfigWorkReq {
@@ -13,11 +12,19 @@ public class WocConfigWorkReq {
   private String workId;
 
   @Schema(title = "运行脚本", example = "show databases;")
-  private String sql;
+  private String sqlScript;
 
   @Schema(title = "数据源唯一id", example = "sy_fd34e4a53db640f5943a4352c4d549b9")
   private String datasourceId;
 
   @Schema(title = "计算引擎唯一id", example = "sy_354554267db34602896c35b4162fd4d8")
-  private String calculateEngineId;
+  private String clusterId;
+
+  @Schema(
+      title = "spark的配置文件",
+      example = "{\"spark.executor.memory\":\"1g\",\"spark.driver.memory\":\"1g\"}")
+  private String sparkConfig;
+
+  @Schema(title = "corn表达式", example = "0 0/3 * * * ?")
+  private String corn;
 }

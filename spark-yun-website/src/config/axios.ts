@@ -23,7 +23,12 @@ axiosInstance.interceptors.response.use(
   (response: AxiosResponse) => {
     if (response.status === 200) {
       if (response.data.code !== '200') {
-        message.error(response.data.msg).then((r) => {})
+        if (response.data.code === '5555') {
+          localStorage.clear()
+          window.location.reload()
+        } else {
+          message.error(response.data.msg).then((r) => {})
+        }
       } else {
         return response.data
       }

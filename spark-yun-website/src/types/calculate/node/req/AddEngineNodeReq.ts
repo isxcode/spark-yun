@@ -1,5 +1,5 @@
 export interface AddEngineNodeReq {
-  calculateEngineId: string | undefined
+  clusterId: string | undefined
 
   name: string
 

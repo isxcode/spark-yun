@@ -4,7 +4,7 @@ export interface AddDatasourceReq {
   jdbcUrl: string
   username: string
   port: string
-  type: string
-  password: string
-  comment: string
+  dbType: string
+  passwd: string
+  remark: string
 }
