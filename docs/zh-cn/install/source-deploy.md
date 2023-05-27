@@ -9,42 +9,63 @@
 ##### 下载代码
 
 ```bash
-git clone https://gitee.com/isxcode/spark-yun.git
+git clone https://github.com/isxcode/spark-yun.git
 ```
 
 ##### 下载spark二进制文件
 
-!> 目前只可以使用3.1.1版本
+!> 目前只可以使用`spark-3.1.1-bin-hadoop3.2`版本
 
 ```bash
 wget https://archive.apache.org/dist/spark/spark-3.1.1/spark-3.1.1-bin-hadoop3.2.tgz 
 tar vzxf spark-3.1.1-bin-hadoop3.2.tgz -C /tmp/
 ```
 
-##### 构建docker镜像
-
-?> 需要提前[安装docker环境](https://ispong.isxcode.com/linux/docker/docker%20%E5%AE%89%E8%A3%85/)
+##### 修改配置文件
 
 ```bash
-./gradlew docker
+vim spark-yun/spark-yun-backend/src/main/resources/application-local.yml
 ```
 
-![20230404105427](https://img.isxcode.com/picgo/20230404105427.png)
+```yml
+spring:
 
-##### 构建jar包
+  security:
+    user:
+      roles: ADMIN
+      name: admin
+      password: admin123
+
+  jpa:
+    database: mysql
+    show-sql: false
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:30306/zhiqingyun
+    username: root
+    password: ispong123
+
+  flyway:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:30306/zhiqingyun
+    user: root
+    password: ispong123
+    locations: classpath:db/migration/mysql
+    enabled: false
+
+  quartz:
+    properties:
+      org.quartz.dataSource.quartzDataSource.driver: com.mysql.cj.jdbc.Driver
+      org.quartz.dataSource.quartzDataSource.URL: jdbc:mysql://localhost:30306/zhiqingyun
+      org.quartz.dataSource.quartzDataSource.user: root
+      org.quartz.dataSource.quartzDataSource.password: ispong123
+```
+
+##### 启动项目
 
 ```bash
-./gradlew package
+./gradlew start
 ```
 
-##### 容器启动
-
-```bash
-docker run --name zhiqingyun -p ${localPort}:8080 -d isxcode/zhiqingyun:${version}
-```
-
-##### 访问界面
-
-```text
-http://localhost:${localPort}
-```
+![img](https://img.isxcode.com/picgo/20230527155307.png)

@@ -1,4 +1,4 @@
-?> 多数据源查询，可以同时处理Mysql、Oracle、SqlServer中的数据，并且生成的新的表数据同步到任意一张表中。
+?> 多数据源交叉查询，可以同时处理Mysql、Oracle、SqlServer中的数据，并且生成的新的表数据同步到任意一张表中。
 
 ##### 案例
 
@@ -6,21 +6,7 @@
 
 ##### 解决方案
 
-> 创建SparkSql作业,注意options中的字符不能有多余空格
-
-```sql
-CREATE TEMPORARY VIEW table1
-USING org.apache.spark.sql.jdbc
-OPTIONS (
-    driver 'com.mysql.cj.jdbc.Driver',
-    url 'jdbc:mysql://1.1.1.1:xxx/xxx?serverTimezone=Asia/Shanghai',
-    user 'xxx',
-    password 'xxx',
-    dbtable 'xxx'
-);
-
-select * from table1 limit 10;
-```
+!> 创建SparkSql作业,注意`OPTIONS`中的字符不能有多余空格
 
 ```sql
 -- 引入部门一的表
@@ -58,10 +44,4 @@ OPTIONS (
     
 -- 将部门一和部门二的数据汇总后，写入部门三中
 insert into table3 select * from table2 join in table1 on table1.id = table2.id
-```
-
-##### 如果想直接使用sql查询hive
-
-```bash
-ln -s /etc/hive/conf/hive-site.xml /home/xxx/spark-yun/spark-min/conf
 ```
