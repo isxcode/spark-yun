@@ -3,7 +3,7 @@
 </h1>
 
 <h3 align="center">
-  基于Spark打造超轻量级批处理大数据平台
+  基于Spark打造超轻量级大数据平台
 </h3>
 
 <h4 align="center">
