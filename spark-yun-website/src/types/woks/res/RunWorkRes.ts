@@ -10,4 +10,5 @@ export interface RunWorkRes {
   yarnApplicationState?: string
   finalApplicationStatus?: string
   trackingUrl?: string
+  instanceId?: string
 }
