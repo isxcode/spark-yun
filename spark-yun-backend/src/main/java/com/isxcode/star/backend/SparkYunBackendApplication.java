@@ -6,7 +6,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-/** 系统入口. */
 @Controller
 @RequestMapping(value = "/")
 @SpringBootApplication
@@ -34,8 +33,8 @@ public class SparkYunBackendApplication {
     return "index";
   }
 
-  @RequestMapping(value = {"/nodes/{calculateCLusterId}"})
-  public String nodes(@PathVariable String calculateCLusterId) {
+  @RequestMapping(value = {"/nodes/{clusterId}"})
+  public String nodes(@PathVariable String clusterId) {
 
     return "index";
   }

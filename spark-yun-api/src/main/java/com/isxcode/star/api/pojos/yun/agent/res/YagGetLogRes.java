@@ -12,4 +12,6 @@ import lombok.NoArgsConstructor;
 public class YagGetLogRes {
 
   private String log;
+
+  private String applicationId;
 }
