@@ -4,8 +4,6 @@ import './DatasourceModal.less'
 import { DatasourceRow } from '../../types/datasource/info/DatasourceRow'
 import { AddDatasourceReq } from '../../types/datasource/req/AddDatasourceReq'
 import { addDatasourceApi, updateDatasourceApi } from '../../services/datasource/DatasourceService'
-import { UpdateWorkReq } from '../../types/woks/req/UpdateWorkReq'
-import { updateWorkApi } from '../../services/works/WorksService'
 import { UpdateDatasourceReq } from '../../types/datasource/req/UpdateDatasourceReq'
 
 const { Option } = Select
@@ -27,12 +25,18 @@ export const DatasourceModal = (props: {
   }, [datasource])
 
   const addDatasource = (data: AddDatasourceReq) => {
+    // const { passwd } = data
+    // data.passwd = CryptoJS.Aen(passwd, 'spark-yun',).toString();
     addDatasourceApi(data).then(function () {
       handleOk()
     })
   }
 
   const updateDatasource = (data: UpdateDatasourceReq) => {
+    // const { passwd } = data
+    // data.passwd = CryptoJS.AES.encrypt(CryptoJS.enc.Hex.parse(passwd), CryptoJS.enc.Utf8.parse('spark-yun'), {
+    //   iv: CryptoJS.enc.Utf8.parse('spark-yun')
+    // })
     updateDatasourceApi(data).then(function () {
       handleOk()
     })
@@ -62,7 +66,7 @@ export const DatasourceModal = (props: {
         <Form
           className={'sy-add-datasource-form'}
           labelCol={{ span: 4 }}
-          wrapperCol={{ span: 20 }}
+          wrapperCol={{ span: 18 }}
           initialValues={{ remember: true }}
           onFinish={onFinish}
           form={form}>
@@ -70,11 +74,20 @@ export const DatasourceModal = (props: {
             <Input />
           </Form.Item>
 
-          <Form.Item name="type" label="类型" rules={[{ required: true, message: '类型不能为空' }]}>
+          <Form.Item name="dbType" label="类型" rules={[{ required: true, message: '类型不能为空' }]}>
             <Select placeholder="选择数据库类型" allowClear>
               <Option value="MYSQL">Mysql</Option>
               <Option value="ORACLE">Oracle</Option>
               <Option value="SQL_SERVER">SqlServer</Option>
+              <Option value="POSTGRE_SQL">PostgreSql</Option>
+              <Option value="CLICKHOUSE">Clickhouse</Option>
+              <Option value="HIVE">Hive</Option>
+              <Option value="HANA_SAP">HanaSap</Option>
+              <Option value="DM">达梦</Option>
+              <Option value="DORIS">Doris</Option>
+              <Option value="OCEANBASE">OceanBase</Option>
+              <Option value="TIDB">TiDB</Option>
+              <Option value="STAR_ROCKS">StarRocks</Option>
             </Select>
           </Form.Item>
 
@@ -86,11 +99,11 @@ export const DatasourceModal = (props: {
             <Input />
           </Form.Item>
 
-          <Form.Item label="密码" name="password" rules={[{ required: true, message: '密码不能为空' }]}>
+          <Form.Item label="密码" name="passwd">
             <Input />
           </Form.Item>
 
-          <Form.Item label="备注" name="comment">
+          <Form.Item label="备注" name="remark">
             <Input.TextArea />
           </Form.Item>
         </Form>

@@ -16,4 +16,6 @@ public class YagGetStatusRes {
   private String finalApplicationStatus;
 
   private String trackingUrl;
+
+  private String applicationId;
 }

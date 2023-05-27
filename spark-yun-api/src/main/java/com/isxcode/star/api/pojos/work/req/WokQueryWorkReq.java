@@ -2,10 +2,9 @@ package com.isxcode.star.api.pojos.work.req;
 
 import com.isxcode.star.api.pojos.base.BasePageRequest;
 import io.swagger.v3.oas.annotations.media.Schema;
+import javax.validation.constraints.NotEmpty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-
-import javax.validation.constraints.NotEmpty;
 
 @EqualsAndHashCode(callSuper = true)
 @Data

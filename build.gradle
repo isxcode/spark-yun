@@ -1,35 +1,26 @@
-// 引入插件
 plugins {
   id 'java'
+  id 'checkstyle'
   id 'org.springframework.boot' version "${SPRING_VERSION}"
   id 'io.spring.dependency-management' version "${SPRING_MANAGER_VERSION}"
   id "com.diffplug.spotless" version "${SPOTLESS_VERSION}"
-  id 'checkstyle'
 }
 
-// 从VERSION中获取版本号
 def version_number = new File(rootDir.getAbsolutePath(), 'VERSION').readLines()[0].trim()
 
-// 所有项目模块的配置
 allprojects {
 
-  // 声明插件
   apply plugin: 'org.springframework.boot'
   apply plugin: 'io.spring.dependency-management'
   apply plugin: 'java-library'
   apply plugin: 'checkstyle'
 
-  // java环境配置，使用java1.8
   sourceCompatibility = JavaVersion.VERSION_1_8
   targetCompatibility = JavaVersion.VERSION_1_8
 
-  // 定义组织名称
   group = 'com.isxcode.star'
-
-  // 定义版本号
   version = version_number
 
-  // 配置多选中央仓库
   repositories {
     mavenLocal()
     maven { url 'https://maven.aliyun.com/nexus/content/groups/public/' }
@@ -43,20 +34,25 @@ allprojects {
     exclude group: "org.slf4j", module: "slf4j-reload4j"
   }
 
-  // 配置基础依赖
   dependencies {
 
-    // spring web
+    // spring-web
     implementation 'org.springframework.boot:spring-boot-starter-web'
 
-    // validation
+    // spring-validation
     implementation 'org.springframework.boot:spring-boot-starter-validation'
 
-    // openapi
-    implementation "org.springdoc:springdoc-openapi-ui:${OPENAPI_VERSION}"
-
-    // spring-boot-configuration-processor
+    // spring-configuration
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+
+    // spring-aop
+    implementation 'org.springframework.boot:spring-boot-starter-aop'
+
+    // spring-test
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+    // spring-openapi
+    implementation "org.springdoc:springdoc-openapi-ui:${OPENAPI_VERSION}"
 
     // lombok
     compileOnly "org.projectlombok:lombok:${LOMBOK_VERSION}"
@@ -70,18 +66,11 @@ allprojects {
     annotationProcessor "org.mapstruct:mapstruct-processor:${MAPSTRUCT_VERSION}"
     testAnnotationProcessor "org.mapstruct:mapstruct-processor:${MAPSTRUCT_VERSION}"
 
-    // spring aop
-    implementation 'org.springframework.boot:spring-boot-starter-aop'
-
-    // junit test
+    // junit
     implementation "org.junit.jupiter:junit-jupiter:${JUPITER_VERSION}"
     testImplementation "org.junit.jupiter:junit-jupiter-api:${JUPITER_VERSION}"
-
-    // spring test
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
   }
 
-  // 配置spring的spring-boot-configuration-processor，编译时生效。
   configurations {
     compileOnly {
       extendsFrom annotationProcessor
@@ -89,28 +78,47 @@ allprojects {
   }
 }
 
-// package
+// 自定义命令：项目打包
+// gradle package
 tasks.register('package', GradleBuild) {
 
   dependsOn(":spark-yun-dist:build_dist", ":spark-yun-website:install_website")
+  dependsOn(":spotlessApply", ":checkstyleMain")
   tasks = [":spark-yun-backend:bootJar"]
 }
 
-// start
+// 自定义命令：项目启动
+// gradle start
 tasks.register('start', Exec) {
 
   dependsOn(":package")
   commandLine 'bash', '-c', 'java -jar ./spark-yun-backend/build/libs/spark-yun-backend.jar'
 }
 
-// docker
+// 自定义命令：构建本地docker镜像
+// gradle docker
 tasks.register('docker', Exec) {
 
   dependsOn(":package")
-  commandLine 'bash', '-c', 'docker build -t isxcode/zhiqingyun:' + version_number + ' -f ./Dockerfile  .'
+  commandLine 'bash', '-c', 'docker buildx uninstall && docker build -t isxcode/zhiqingyun:' + version_number + ' -f ./Dockerfile .'
 }
 
-// spotless配置
+// 自定义命令：发布docker镜像
+// gradle deploy
+tasks.register('deploy', Exec) {
+
+  dependsOn(":package")
+  commandLine 'bash', '-c', 'docker buildx install && docker buildx build --platform linux/amd64,linux/arm64/v8 -t isxcode/zhiqingyun:' + version_number + ' -f ./Dockerfile . --push'
+}
+
+// 自定义命令：启动本地官网
+// gradle docs
+tasks.register('docs', Exec) {
+
+  commandLine 'bash', '-c', 'npm i docsify-cli -g && docsify serve docs'
+}
+
+// spotless
 spotless {
   java {
     target '*/**/*.java'
@@ -120,7 +128,7 @@ spotless {
   }
 }
 
-// checkstyle配置
+// checkstyle
 tasks.withType(Checkstyle).configureEach {
   maxWarnings = 100
   maxErrors = 0

@@ -1,9 +1,8 @@
 package com.isxcode.star.api.pojos.work.req;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Data;
-
 import javax.validation.constraints.NotEmpty;
+import lombok.Data;
 
 @Data
 public class WokAddWorkReq {
@@ -21,5 +20,5 @@ public class WokAddWorkReq {
   private String workflowId;
 
   @Schema(title = "备注", example = "星期一执行的作业")
-  private String comment;
+  private String remark;
 }
