@@ -62,23 +62,27 @@ export const WorkModal = (props: {
         <Form
           className={'sy-add-work-form'}
           labelCol={{ span: 4 }}
-          wrapperCol={{ span: 20 }}
+          wrapperCol={{ span: 18 }}
           initialValues={{ remember: true }}
           onFinish={onFinish}
           form={form}>
           <Form.Item label="名称" name="name" rules={[{ required: true, message: '名称不能为空' }]}>
             <Input />
           </Form.Item>
-
-          <Form.Item name="workType" label="类型" rules={[{ required: true, message: '类型不能为空' }]}>
-            <Select placeholder="选择作业类型" allowClear>
-              <Option value="EXE_JDBC">Jdbc执行作业</Option>
-              <Option value="QUERY_JDBC">Jdbc查询作业</Option>
-              <Option value="SPARK_SQL">SparkSql查询作业</Option>
-            </Select>
-          </Form.Item>
-
-          <Form.Item label="备注" name="comment">
+          {work?.id == null
+? (
+            <Form.Item name="workType" label="类型" rules={[{ required: true, message: '类型不能为空' }]}>
+              <Select placeholder="选择作业类型" allowClear>
+                <Option value="EXE_JDBC">Jdbc执行作业</Option>
+                <Option value="QUERY_JDBC">Jdbc查询作业</Option>
+                <Option value="SPARK_SQL">SparkSql查询作业</Option>
+              </Select>
+            </Form.Item>
+          )
+: (
+            <></>
+          )}
+          <Form.Item label="备注" name="remark">
             <Input.TextArea />
           </Form.Item>
         </Form>

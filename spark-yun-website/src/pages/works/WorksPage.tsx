@@ -7,7 +7,14 @@ import './WorksPage.less'
 import { type WorkRow } from '../../types/woks/info/WorkRow'
 import { type BasePagination, defaultPagination } from '../../types/base/BasePagination'
 import { type QueryWorkReq } from '../../types/woks/req/QueryWorkReq'
-import { delWorkApi, queryWorkApi } from '../../services/works/WorksService'
+import {
+  deleteWorkApi,
+  delWorkApi,
+  depolyWorkApi,
+  pauseWorkApi,
+  queryWorkApi,
+  resumeWorkApi
+} from '../../services/works/WorksService'
 
 function WorksPage() {
   const navigate = useNavigate()
@@ -26,7 +33,7 @@ function WorksPage() {
     workflowId,
     page: pagination.currentPage,
     pageSize: pagination.pageSize,
-    searchContent: pagination.searchContent
+    searchKeyWord: pagination.searchKeyWord
   }
 
   const fetchWorks = () => {
@@ -42,6 +49,30 @@ function WorksPage() {
   const handleOk = () => {
     fetchWorks()
     setIsModalVisible(false)
+  }
+
+  const depolyWork = (workId: string) => {
+    depolyWorkApi(workId).then(function () {
+      fetchWorks()
+    })
+  }
+
+  const resumeWork = (workId: string) => {
+    resumeWorkApi(workId).then(function () {
+      fetchWorks()
+    })
+  }
+
+  const stopWork = (workId: string) => {
+    deleteWorkApi(workId).then(function () {
+      fetchWorks()
+    })
+  }
+
+  const pauseWork = (workId: string) => {
+    pauseWorkApi(workId).then(function () {
+      fetchWorks()
+    })
   }
 
   const delWork = (workId: string | undefined) => {
@@ -94,22 +125,23 @@ function WorksPage() {
       width: 120,
       render: (_, record) => (
         <Space size="middle">
-          {record.status === 'NEW' && <Tag color="blue">新建</Tag>}
-          {record.status === 'QUERY_JDBC_SQL' && <Tag color="default">JDBC_QUERY</Tag>}
-          {record.status === 'QUERY_SPARK_SQL' && <Tag color="default">SPARK_SQL</Tag>}
+          {record.status === 'PUBLISHED' && <Tag color="green">已发布</Tag>}
+          {record.status === 'STOP' && <Tag color="red">已下线</Tag>}
+          {record.status === 'PAUSED' && <Tag color="orange">已暂停</Tag>}
+          {record.status === 'UN_PUBLISHED' && <Tag color="cyan">未发布</Tag>}
         </Space>
       )
-    },
-    {
-      title: '备注',
-      key: 'comment',
-      dataIndex: 'comment'
     },
     {
       title: '创建时间',
       dataIndex: 'createDateTime',
       key: 'createDateTime',
       width: 220
+    },
+    {
+      title: '备注',
+      key: 'remark',
+      dataIndex: 'remark'
     },
     {
       title: '操作',
@@ -125,6 +157,60 @@ function WorksPage() {
             }}>
             编辑
           </a>
+          {record.status === 'STOP' && (
+            <a
+              className={'sy-table-a'}
+              onClick={() => {
+                depolyWork(record.id as string)
+              }}>
+              发布
+            </a>
+          )}
+          {record.status === ('UN_PUBLISHED' || 'STOP') && (
+            <a
+              className={'sy-table-a'}
+              onClick={() => {
+                depolyWork(record.id as string)
+              }}>
+              发布
+            </a>
+          )}
+          {record.status === 'PAUSED' && (
+            <a
+              className={'sy-table-a'}
+              onClick={() => {
+                resumeWork(record.id as string)
+              }}>
+              重启
+            </a>
+          )}
+          {record.status === 'PUBLISHED' && (
+            <a
+              className={'sy-table-a'}
+              onClick={() => {
+                pauseWork(record.id as string)
+              }}>
+              暂停
+            </a>
+          )}
+          {record.status === 'PAUSED' && (
+            <a
+              className={'sy-table-a'}
+              onClick={() => {
+                stopWork(record.id as string)
+              }}>
+              下线
+            </a>
+          )}
+          {record.status === 'PUBLISHED' && (
+            <a
+              className={'sy-table-a'}
+              onClick={() => {
+                stopWork(record.id as string)
+              }}>
+              下线
+            </a>
+          )}
           <a
             className={'sy-table-a'}
             onClick={() => {
@@ -132,13 +218,6 @@ function WorksPage() {
               delWork(record.id)
             }}>
             删除
-          </a>
-          <a
-            className={'sy-table-a'}
-            onClick={() => {
-              message.warning('需上传企业许可证').then((r) => {})
-            }}>
-            历史
           </a>
         </Space>
       )
@@ -162,9 +241,9 @@ function WorksPage() {
           <Input
             style={{ marginRight: '10px' }}
             onPressEnter={handleSearch}
-            defaultValue={queryWorkReq.searchContent}
+            defaultValue={queryWorkReq.searchKeyWord}
             onChange={(e) => {
-              setPagination({ ...pagination, searchContent: e.target.value })
+              setPagination({ ...pagination, searchKeyWord: e.target.value })
             }}
             placeholder={'名称/类型/备注'}
           />
