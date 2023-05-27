@@ -24,7 +24,7 @@ function WorkflowPage() {
   const queryWorkflowReq: WofQueryWorkflowReq = {
     page: pagination.currentPage,
     pageSize: pagination.pageSize,
-    searchContent: pagination.searchContent
+    searchKeyWord: pagination.searchKeyWord
   }
 
   const fetchWorkflows = () => {
@@ -72,21 +72,31 @@ function WorkflowPage() {
         </a>
       )
     },
-    {
-      title: '发布状态',
-      key: 'status',
-      dataIndex: 'status',
-      width: 120,
-      render: (_, record) => (
-        <Space size="middle">
-          {record.status === 'UN_AUTO' ? <Tag color="blue">未运行</Tag> : <Tag color="green">调度中</Tag>}
-        </Space>
-      )
-    },
+    // {
+    //   title: '状态',
+    //   key: 'status',
+    //   dataIndex: 'status',
+    //   width: 120,
+    //   render: (_, record) => (
+    //     <Space size="middle">
+    //       {record.status === 'UN_AUTO' ? <Tag color="blue">未运行</Tag> : <Tag color="green">调度中</Tag>}
+    //     </Space>
+    //   )
+    // },
+    // {
+    //   title: '创建人',
+    //   key: 'creator',
+    //   dataIndex: 'creator'
+    // },
+    // {
+    //   title: '创建时间',
+    //   key: 'creator',
+    //   dataIndex: 'creator'
+    // },
     {
       title: '备注',
-      key: 'comment',
-      dataIndex: 'comment'
+      key: 'remark',
+      dataIndex: 'remark'
     },
     {
       title: '操作',
@@ -110,13 +120,13 @@ function WorkflowPage() {
             }}>
             删除
           </a>
-          <a
-            className={'sy-table-a'}
-            onClick={() => {
-              message.warning('需上传企业许可证').then((r) => {})
-            }}>
-            发布
-          </a>
+          {/* <a */}
+          {/*  className={'sy-table-a'} */}
+          {/*  onClick={() => { */}
+          {/*    message.warning('需上传企业许可证').then((r) => {}) */}
+          {/*  }}> */}
+          {/*  发布 */}
+          {/* </a> */}
         </Space>
       )
     }
@@ -139,9 +149,9 @@ function WorkflowPage() {
           <Input
             style={{ marginRight: '10px' }}
             onPressEnter={handleSearch}
-            defaultValue={queryWorkflowReq.searchContent}
+            defaultValue={queryWorkflowReq.searchKeyWord}
             onChange={(e) => {
-              setPagination({ ...pagination, searchContent: e.target.value })
+              setPagination({ ...pagination, searchKeyWord: e.target.value })
             }}
             placeholder={'名称/备注'}
           />

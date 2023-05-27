@@ -3,7 +3,7 @@ export interface DatasourceRow {
 
   name?: string
 
-  type?: string
+  dbType?: string
 
   status?: string
 }

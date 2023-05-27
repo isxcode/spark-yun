@@ -8,4 +8,5 @@ export interface EngineNodeRow {
   storage?: string
   status?: string
   checkTime?: string
+  agentLog?: string
 }
