@@ -1,13 +1,12 @@
 - **产品简介**
-  - [超轻量级大数据平台](/zh-cn/introduce/introduce.md)
-- **产品介绍**
-  - [多数据源查询](/zh-cn/success/demo1.md)
-  - [数据同步](/zh-cn/success/demo2.md)
-- **客户案例**
+  - [至轻云](/zh-cn/introduce/introduce.md)
+- **产品优势**
+  - [纯原生Spark](/zh-cn/success/demo2.md)
+- **成功案例**
   - [进行中](/zh-cn/demo/demo1.md)
 - **安装手册**
-  - [Docker安装](/zh-cn/install/docker-deploy.md)
   - [源码安装](/zh-cn/install/source-deploy.md)
+  - [Docker安装](/zh-cn/install/docker-deploy.md)
 - **使用手册**
   - [多租户](/zh-cn/reference/login.md)
   - [许可证](/zh-cn/reference/login.md)
