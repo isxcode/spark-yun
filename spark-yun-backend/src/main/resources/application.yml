@@ -25,6 +25,8 @@ spring:
     open-in-view: false
     hibernate:
       ddl-auto: none
+      naming:
+        physical-strategy: com.isxcode.star.backend.config.JpaTableUpperCaseStrategy
     properties:
       hibernate:
         session_factory:
