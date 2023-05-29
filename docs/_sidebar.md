@@ -16,8 +16,8 @@
 - **开发手册**
   - [如何启动项目](/zh-cn/develop/create_issue.md)
   - [如何开发项目](/zh-cn/develop/develop.md)
-  - [如何提交PR](/zh-cn/develop/create_issue.md)
   - [如何申请加入](/zh-cn/develop/join.md)
+  - [如何提交PR](/zh-cn/develop/create_issue.md)
 - **版本历史**
   - [v0.0.5](/zh-cn/version/v0-0-5.md)
   - [v0.0.2](/zh-cn/version/v0-0-2.md)
