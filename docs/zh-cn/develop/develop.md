@@ -33,7 +33,7 @@
 # 将isxcode组织的代码源加入到项目的upstream中。
 git remote add upstream https://github.com/isxcode/spark-yun.git
 # 更新组织代码
-git fetch upstream
+git remote update upstream -p
 # 切出远程主分支
 git checkout upstream/0.0.5
 ```
