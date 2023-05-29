@@ -103,12 +103,12 @@ create table if not exists SY_CLUSTER_NODE
   cluster_id              varchar(200)  not null comment '集群id',
   host                    varchar(200)  not null comment '节点服务器host',
   port                    int           not null comment '节点服务器端口号',
+  agent_log               varchar(2000) null comment '代理日志',
   username                varchar(200)  not null comment '节点服务器用户名',
   passwd                  varchar(200)  not null comment '节点服务器',
   agent_home_path         varchar(200)  not null comment '至轻云代理安装目录',
   agent_port              varchar(200)  not null comment '至轻云代理服务端口号',
   hadoop_home_path        varchar(200)  null comment 'hadoop家目录',
-  agent_log               varchar(2000) null comment '代理日志',
   create_by               varchar(200)  not null comment '创建人',
   create_date_time        datetime      not null comment '创建时间',
   last_modified_by        varchar(200)  not null comment '更新人',
@@ -128,8 +128,8 @@ create table if not exists SY_DATASOURCE
   check_date_time         datetime      not null comment '检测时间',
   username                varchar(200) comment '数据源用户名',
   passwd                  varchar(200) comment '数据源密码',
-  db_type                 varchar(200)  not null comment '数据源类型',
   connect_log             varchar(2000) null comment '测试连接日志',
+  db_type                 varchar(200)  not null comment '数据源类型',
   create_by               varchar(200)  not null comment '创建人',
   create_date_time        datetime      not null comment '创建时间',
   last_modified_by        varchar(200)  not null comment '更新人',
@@ -165,6 +165,7 @@ create table if not exists SY_WORK
   work_type               varchar(200)  not null comment '作业类型',
   config_id               varchar(200)  not null comment '作业配置id',
   workflow_id             varchar(200)  not null comment '作业流id',
+  version_id              varchar(200)  null comment '作业当前最新版本号',
   create_by               varchar(200)  not null comment '创建人',
   create_date_time        datetime      not null comment '创建时间',
   last_modified_by        varchar(200)  not null comment '更新人',
@@ -183,7 +184,6 @@ create table if not exists SY_WORK_CONFIG
   spark_config            text comment 'spark的作业配置',
   sql_script              text comment 'sql脚本',
   corn                    varchar(200) comment '定时表达式',
-  version_id              varchar(200) comment '作业当前最新版本号',
   create_by               varchar(200)  not null comment '创建人',
   create_date_time        datetime      not null comment '创建时间',
   last_modified_by        varchar(200)  not null comment '更新人',
@@ -279,7 +279,6 @@ create table if not exists SY_WORK_INSTANCE
   create_date_time        datetime      not null comment '创建时间',
   last_modified_by        varchar(200)  not null comment '更新人',
   last_modified_date_time datetime      not null comment '更新时间',
-  version_number          int           not null comment '版本号',
   deleted                 int default 0 not null comment '逻辑删除',
   tenant_id               varchar(200)  not null comment '租户id'
 );
@@ -342,10 +341,3 @@ create table if not exists SY_FORM_COMPONENT
   deleted                 int default 0 not null comment '逻辑删除',
   tenant_id               varchar(200)  not null comment '租户id'
 );
-
-
-
-
-
-
-
