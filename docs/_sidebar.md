@@ -15,6 +15,7 @@
   - [调度历史](/zh-cn/reference/history.md)
 - **开发手册**
   - [如何启动项目](/zh-cn/develop/create_issue.md)
+  - [如何开发项目](/zh-cn/develop/develop.md)
   - [如何提交PR](/zh-cn/develop/create_issue.md)
   - [如何申请加入](/zh-cn/develop/join.md)
 - **版本历史**
