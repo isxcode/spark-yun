@@ -48,6 +48,10 @@ tar vzxf spark-3.1.1-bin-hadoop3.2.tgz -C /tmp/
 
 > 修改`gradle.properties`文件配置，将spark二进制的文件夹填入
 
+```bash
+vim spark-yun/gradle.properties
+```
+
 ```yaml
 SPARK_MIN_DIR=/tmp/spark-3.1.1-bin-hadoop3.2
 ```
