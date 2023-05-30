@@ -11,10 +11,10 @@ import org.springframework.stereotype.Component;
 public class SparkYunProperties {
 
   /** 压缩包位置. */
-  private String agentTarGzDir;
+  private String agentTarGzDir = "/tmp";
 
   /** bin位置. */
-  private String agentBinDir;
+  private String agentBinDir = "/tmp/spark-yun-bash";
 
   /** 代理默认端口号. */
   private String defaultAgentPort = "30177";
@@ -26,20 +26,20 @@ public class SparkYunProperties {
   private List<String> anonymousUrl;
 
   /** aes密钥. */
-  private String aesSlat;
+  private String aesSlat = "spark-yun";
 
   /** jwt密钥. */
-  private String jwtKey;
+  private String jwtKey = "spark-yun";
 
   /** jwt超时. */
-  private Integer expirationMin;
+  private Integer expirationMin = 1440;
 
   /** 资源目录. */
-  private String resourcesPath;
+  private String resourcesPath = "/var/lib/spark-yun";
 
   /** 系统管理员admin密码. */
-  private String adminPasswd;
+  private String adminPasswd = "admin123";
 
   /** 开启用户操作日志 */
-  private boolean logAdvice;
+  private boolean logAdvice = false;
 }

@@ -6,7 +6,7 @@ server:
 spring:
 
   profiles:
-    active: local
+    active: mac
 
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
@@ -90,10 +90,3 @@ spark-yun:
     - /work/*
     - /works/*
     - /instance/*
-  jwt-key: spark-yun
-  aes-slat: spark-yun
-  agent-tar-gz-dir: /tmp
-  agent-bin-dir: /tmp/spark-yun-bash
-  default-agent-port: 30177
-  expiration-min: 1440
-  resources-path: /var/lib/spark-yun
