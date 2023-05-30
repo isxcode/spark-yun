@@ -6,7 +6,7 @@ server:
 spring:
 
   profiles:
-    active: mac
+    active: local
 
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
