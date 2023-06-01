@@ -33,8 +33,7 @@ logging:
   level:
     root: info
 
-# 需要开发者自定义路径
 spark-yun:
-  resources-path: /Users/ispong/.zhiqingyun/resources  # 资源文件目录
-  agent-bin-dir: /Users/ispong/Isxcode/spark-yun/spark-yun-dist/src/main/bash # bash脚本路径
-  agent-tar-gz-dir: /Users/ispong/Isxcode/spark-yun/spark-yun-dist/build/distributions # 代理包路径
+  resources-path: classpath:resources
+  agent-bin-dir: classpath:spark-yun-dist/src/main/bash
+  agent-tar-gz-dir: classpath:spark-yun-dist/build/distributions
