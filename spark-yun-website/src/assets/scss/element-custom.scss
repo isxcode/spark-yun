@@ -1,0 +1,107 @@
+@import "./variable/element-variable.scss";
+
+.el-form-item {
+  // margin-bottom: 2px;
+  .el-form-item__label {
+    margin-bottom: -8px;
+    font-size: $--element-small-font-size;
+  }
+  .el-form-item__content {
+    .el-input {
+      height: $--element-input-box-height;
+      .el-input__inner {
+        height: $--element-input-box-height;
+        border-radius: $--element-border-radius;
+        font-size: $--element-small-font-size;
+      }
+    }
+    .el-select {
+      width: 100%;
+      .el-input {
+        .el-input__suffix {
+          .el-input__suffix-inner {
+            .el-select__caret {
+              line-height: 32px;
+            }
+          }
+        }
+      }
+    }
+    .el-textarea {
+      .el-textarea__inner {
+        border-radius: $--element-border-radius;
+        font-size: $--element-small-font-size;
+        padding: 8px;
+      }
+    }
+    .el-date-editor {
+      .el-input__prefix {
+        left: unset;
+        right: 5px;
+      }
+    }
+    .el-radio-group {
+      width: 100%;
+      .el-radio {
+        .el-radio__label {
+          font-size: $--element-small-font-size;
+        }
+      }
+    }
+    .el-input-number {
+      width: 100%;
+      .el-input {
+        .el-input__wrapper {
+          padding: 0 10px;
+          .el-input__inner {
+            text-align: left;
+          }
+        }
+      }
+    }
+  }
+  &.is-error {
+    .el-form-item__error {
+      // margin-top: -4px;
+    }
+  }
+}
+
+.el-button {
+  height: $--element-input-box-height;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: $--element-border-radius;
+  font-size: $--element-small-font-size;
+}
+
+.el-card {
+  border-radius: $--app-border-radius;
+}
+
+.el-tabs__nav-wrap::after {
+  background-color: unset;
+}
+
+.el-button {
+  height: 28px;
+}
+
+.el-input {
+  height: $--element-input-box-height;
+  .el-input__wrapper {
+    border-radius: $--element-border-radius;
+    .el-input__inner {
+      height: $--element-input-box-height;
+      font-size: $--element-small-font-size;
+      // padding: 8px;
+    }
+  }
+}
+
+.el-select__popper {
+  .el-select-dropdown__item {
+    font-size: $--app-small-font-size;
+  }
+}
