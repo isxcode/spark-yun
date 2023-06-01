@@ -15,9 +15,6 @@ export default defineConfig({
       ]
     }
   )],
-  server: {
-
-  },
   build: {
     outDir: 'dist',
     assetsDir: 'static',
