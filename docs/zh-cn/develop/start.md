@@ -22,22 +22,7 @@
 git clone https://github.com/ispong/spark-yun.git
 ```
 
-##### 4. 修改配置文件
-
-> 根据平台不同，修改目录地址。
-
-```bash
-vim spark-yun/spark-yun-backend/src/main/resources/application-local.yml
-```
-
-```yml
-spark-yun:
-  resources-path: ${自定义路径}/.zhiqingyun/resources  # 资源文件目录
-  agent-bin-dir: ${项目路径}/spark-yun-dist/src/main/bash # bash脚本路径
-  agent-tar-gz-dir: ${项目路径}/spark-yun-dist/build/distributions # 代理包路径
-```
-
-##### 5. 下载spark二进制文件
+##### 4. 下载spark二进制文件
 
 > 解压路径可以自定义
 
@@ -56,7 +41,7 @@ vim spark-yun/gradle.properties
 SPARK_MIN_DIR=/tmp/spark-3.1.1-bin-hadoop3.2
 ```
 
-##### 6. 启动项目
+##### 5. 启动项目
 
 > 最好可以访问外网
 
