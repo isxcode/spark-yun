@@ -12,9 +12,8 @@ tasks.register('build_website', Exec) {
 
   commandLine 'sh', '-c', '''
     npm install
-    npm install dotenv-cli --location=global
-    npm run prettier
-    npm run eslint
+    npm run format
+    npm run lint
     npm run build
   '''
 }
