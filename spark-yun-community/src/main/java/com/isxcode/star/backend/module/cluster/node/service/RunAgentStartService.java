@@ -71,7 +71,9 @@ public class RunAgentStartService {
     // 拷贝检测脚本
     scpFile(
         scpFileEngineNodeDto,
-        sparkYunProperties.getAgentBinDir() + File.separator + PathConstants.AGENT_START_BASH_NAME,
+        PathUtils.parseProjectPath(sparkYunProperties.getAgentBinDir())
+            + File.separator
+            + PathConstants.AGENT_START_BASH_NAME,
         "/tmp/" + PathConstants.AGENT_START_BASH_NAME);
 
     // 运行停止脚本
