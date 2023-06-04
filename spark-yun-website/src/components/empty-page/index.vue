@@ -1,6 +1,14 @@
+<!--
+ * @Author: fanciNate
+ * @Date: 2023-06-04 22:27:08
+ * @LastEditTime: 2023-06-04 22:32:31
+ * @LastEditors: fanciNate
+ * @Description: In User Settings Edit
+ * @FilePath: /spark-yun/spark-yun-website/src/components/empty-page/index.vue
+-->
 <template>
   <div class="empty-page">
-    <img class="empty-icon" :src="emptyPath" alt="暂无数据" />
+    <img class="empty-icon" src="./empty-page.png" alt="暂无数据" />
     <template v-if="$slots.default">
       <slot />
     </template>
@@ -19,10 +27,6 @@ withDefaults(
     label: "暂无数据",
   }
 );
-
-const emptyPath = computed(() => {
-  return require("./empty-page.png");
-});
 </script>
 
 <style lang="scss">
