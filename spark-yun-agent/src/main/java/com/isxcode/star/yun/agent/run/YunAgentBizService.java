@@ -104,8 +104,6 @@ public class YunAgentBizService {
     String applicationId;
     while (!SparkAppHandle.State.RUNNING.equals(sparkAppHandle.getState())) {
 
-      log.info("sparkAppHandle:{},{}", sparkAppHandle.getAppId(), sparkAppHandle.getState());
-
       long waitMillis = timeoutExpiredMs - System.currentTimeMillis();
       if (waitMillis <= 0) {
         throw new SparkYunException("50010", "提交超时");
