@@ -86,12 +86,12 @@ public class YunAgentBizService {
 
           @Override
           public void stateChanged(SparkAppHandle sparkAppHandle) {
-            log.info("stateChanged:{}", sparkAppHandle);
+            log.info("stateChanged:{}", sparkAppHandle.getState());
           }
 
           @Override
           public void infoChanged(SparkAppHandle sparkAppHandle) {
-            log.info("infoChanged:{}", sparkAppHandle);
+            log.info("infoChanged:{}", sparkAppHandle.getState());
           }
         });
     } catch (IOException e) {
@@ -100,25 +100,27 @@ public class YunAgentBizService {
     }
 
     // 等待作业响应
-//    long timeoutExpiredMs = System.currentTimeMillis() + SparkConstants.SPARK_SUBMIT_TIMEOUT;
-//    String applicationId;
-//    while (!SparkAppHandle.State.RUNNING.equals(sparkAppHandle.getState())) {
-//
-//      long waitMillis = timeoutExpiredMs - System.currentTimeMillis();
-//      if (waitMillis <= 0) {
-//        throw new SparkYunException("50010", "提交超时");
-//      }
-//
-//      if (SparkAppHandle.State.FAILED.equals(sparkAppHandle.getState())) {
-//        Optional<Throwable> error = sparkAppHandle.getError();
-//        throw new SparkYunException("50010", "提交运行失败", error.toString());
-//      }
-//
-//      applicationId = sparkAppHandle.getAppId();
-//      if (applicationId != null) {
-//        return new YagExecuteWorkRes(applicationId);
-//      }
-//    }
+    long timeoutExpiredMs = System.currentTimeMillis() + SparkConstants.SPARK_SUBMIT_TIMEOUT;
+    String applicationId;
+    while (!SparkAppHandle.State.RUNNING.equals(sparkAppHandle.getState())) {
+
+      log.info("sparkAppHandle:{},{}", sparkAppHandle.getAppId(), sparkAppHandle.getState());
+
+      long waitMillis = timeoutExpiredMs - System.currentTimeMillis();
+      if (waitMillis <= 0) {
+        throw new SparkYunException("50010", "提交超时");
+      }
+
+      if (SparkAppHandle.State.FAILED.equals(sparkAppHandle.getState())) {
+        Optional<Throwable> error = sparkAppHandle.getError();
+        throw new SparkYunException("50010", "提交运行失败", error.toString());
+      }
+
+      applicationId = sparkAppHandle.getAppId();
+      if (applicationId != null) {
+        return;
+      }
+    }
 
 //    throw new SparkYunException("50010", "出现非法异常，联系开发者");
   }
