@@ -29,9 +29,16 @@ public class YunAgentController {
   @Operation(summary = "提交作业接口", description = "执行作业，将作业通过代理提交给yarn处理")
   @PostMapping("/executeWork")
   @SuccessResponse("提交成功")
-  public YagExecuteWorkRes executeWork(@Valid @RequestBody YagExecuteWorkReq yagExecuteWorkReq) {
+  public void executeWork(@Valid @RequestBody YagExecuteWorkReq yagExecuteWorkReq) {
 
-    return yunAgentBizService.executeWork(yagExecuteWorkReq);
+    yunAgentBizService.executeWork();
+  }
+
+  @PostMapping("/testExecute")
+  @SuccessResponse("提交成功")
+  public void testExecute() {
+
+    yunAgentBizService.executeWork();
   }
 
   @Operation(summary = "获取作业运行状态接口")
