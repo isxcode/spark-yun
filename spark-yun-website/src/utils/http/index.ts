@@ -1,10 +1,10 @@
 /*
  * @Author: fanciNate
  * @Date: 2023-05-23 17:00:06
- * @LastEditTime: 2023-05-27 16:12:11
+ * @LastEditTime: 2023-06-04 22:33:17
  * @LastEditors: fanciNate
  * @Description: In User Settings Edit
- * @FilePath: /zqy-web/src/utils/http/index.ts
+ * @FilePath: /spark-yun/spark-yun-website/src/utils/http/index.ts
  */
 import { createAxios } from "@/plugins/http-request";
 import router from "@/router";
@@ -31,8 +31,8 @@ export const httpOption = {
     },
   },
   requestOptions: {
-    // urlPrefix: 'http://isxcode.com:30211',
-    urlPrefix: import.meta.env.VUE_APP_BASE_DOMAIN,
+    urlPrefix: 'http://isxcode.com:30211',
+    // urlPrefix: import.meta.env.VUE_APP_BASE_DOMAIN,
     showSuccessMessage: (msg: string): void => {
       message.success(msg);
     },
