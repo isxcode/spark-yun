@@ -1,6 +1,6 @@
-import { AxiosRequestConfig } from "axios";
-import { AxiosTransform } from "./axiosTransform";
-import { ShowMessage, CheckStatus } from "./handler";
+import { AxiosRequestConfig } from 'axios'
+import { AxiosTransform } from './axiosTransform'
+import { ShowMessage, CheckStatus } from './handler'
 
 // axios实例化的配置项，在原本的基础之上添加了新的配置
 export interface CreateAxiosOptions extends AxiosRequestConfig {
@@ -66,7 +66,7 @@ export interface RequestOptions {
 // 接口返回结果
 export interface Result<T = any> {
   code: number;
-  type?: "success" | "error" | "warning";
+  type?: 'success' | 'error' | 'warning';
   message: string;
   msg: string;
   data?: T;

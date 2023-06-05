@@ -6,24 +6,24 @@
  * @Description: In User Settings Edit
  * @FilePath: /zqy-web/src/validator/index.ts
  */
-import { isFunction } from "@/utils/checkType";
-import HostValidator from "./host.validator";
-import PortValidator from "./port.validator";
+import { isFunction } from '@/utils/checkType'
+import HostValidator from './host.validator'
+import PortValidator from './port.validator'
 
 export const Validator = {
   HostValidator,
-  PortValidator,
-};
+  PortValidator
+}
 
 export function _validate(type: any, message: string, trigger: string[]) {
   // 生成验证器
   const validator = {
     trigger: trigger,
-    validator: null,
-  };
+    validator: null
+  }
   if (isFunction(type)) {
-    validator.validator = type;
+    validator.validator = type
   }
 
-  return validator;
+  return validator
 }

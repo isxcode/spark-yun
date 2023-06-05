@@ -41,37 +41,37 @@ export interface FormData {
 
 export const BreadCrumbList: Array<BreadCrumb> = [
   {
-    name: "作业流",
-    code: "workflow",
-  },
-];
+    name: '作业流',
+    code: 'workflow'
+  }
+]
 
 export const colConfigs: colConfig[] = [
   {
-    prop: "name",
-    title: "作业流名称",
+    prop: 'name',
+    title: '作业流名称',
     minWidth: 100,
-    customSlot: "nameSlot",
-    showOverflowTooltip: true,
+    customSlot: 'nameSlot',
+    showOverflowTooltip: true
   },
   {
-    prop: "status",
-    title: "发布状态",
+    prop: 'status',
+    title: '发布状态',
     minWidth: 100,
-    customSlot: "statusTag",
+    customSlot: 'statusTag'
   },
   {
-    prop: "comment",
-    title: "备注",
-    minWidth: 100,
+    prop: 'comment',
+    title: '备注',
+    minWidth: 100
   },
   {
-    title: "操作",
-    align: "center",
-    customSlot: "options",
-    width: 80,
-  },
-];
+    title: '操作',
+    align: 'center',
+    customSlot: 'options',
+    width: 80
+  }
+]
 
 export const TableConfig: TableConfig = {
   tableData: [],
@@ -79,49 +79,49 @@ export const TableConfig: TableConfig = {
   pagination: {
     currentPage: 1,
     pageSize: 10,
-    total: 0,
+    total: 0
   },
-  seqType: "seq",
-  loading: false,
-};
+  seqType: 'seq',
+  loading: false
+}
 
 export const DetailColConfigs: colConfig[] = [
   {
-    prop: "name",
-    title: "作业名称",
+    prop: 'name',
+    title: '作业名称',
     minWidth: 120,
-    customSlot: "nameSlot",
-    showOverflowTooltip: true,
+    customSlot: 'nameSlot',
+    showOverflowTooltip: true
   },
   {
-    prop: "workType",
-    title: "类型",
+    prop: 'workType',
+    title: '类型',
     minWidth: 100,
-    showOverflowTooltip: true,
+    showOverflowTooltip: true
   },
   {
-    prop: "status",
-    title: "状态",
+    prop: 'status',
+    title: '状态',
     minWidth: 100,
-    customSlot: "statusTag",
+    customSlot: 'statusTag'
   },
   {
-    prop: "createDateTime",
-    title: "创建时间",
-    minWidth: 140,
+    prop: 'createDateTime',
+    title: '创建时间',
+    minWidth: 140
   },
   {
-    prop: "comment",
-    title: "备注",
-    minWidth: 100,
+    prop: 'comment',
+    title: '备注',
+    minWidth: 100
   },
   {
-    title: "操作",
-    align: "center",
-    customSlot: "options",
-    width: 80,
-  },
-];
+    title: '操作',
+    align: 'center',
+    customSlot: 'options',
+    width: 80
+  }
+]
 
 export const DetailTableConfig: TableConfig = {
   tableData: [],
@@ -129,8 +129,8 @@ export const DetailTableConfig: TableConfig = {
   pagination: {
     currentPage: 1,
     pageSize: 10,
-    total: 0,
+    total: 0
   },
-  seqType: "seq",
-  loading: false,
-};
+  seqType: 'seq',
+  loading: false
+}

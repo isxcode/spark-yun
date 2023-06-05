@@ -7,7 +7,10 @@
  * @FilePath: /zqy-web/src/views/workflow/work-item/total-detail.vue
 -->
 <template>
-  <div id="content" class="total-detail">
+  <div
+    id="content"
+    class="total-detail"
+  >
     <div class="detail-container">
       <span>作业运行地址: {{ detailData.trackingUrl }}</span>
       <span>作业当前状态: {{ detailData.finalApplicationStatus }}</span>
@@ -17,54 +20,54 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, onUnmounted, ref, defineExpose } from "vue";
-import { GetResultItemDetail } from "@/services/workflow.service";
+import { reactive, onUnmounted, ref, defineExpose } from 'vue'
+import { GetResultItemDetail } from '@/services/workflow.service'
 
-const timer = ref(null);
+const timer = ref(null)
 
 let detailData = reactive({
-  finalApplicationStatus: "",
-  trackingUrl: "",
-  yarnApplicationState: "",
-});
+  finalApplicationStatus: '',
+  trackingUrl: '',
+  yarnApplicationState: ''
+})
 
 function initData(id: string): void {
-  getData(id);
+  getData(id)
   if (!timer.value) {
     timer.value = setInterval(() => {
-      getData(id);
-    }, 3000);
+      getData(id)
+    }, 3000)
   }
 }
 
 // 获取日志
 function getData(id: string) {
   if (!id) {
-    return;
+    return
   }
   GetResultItemDetail({
-    instanceId: id,
+    instanceId: id
   })
     .then((res: any) => {
-      detailData.finalApplicationStatus = res.data.finalApplicationStatus;
-      detailData.trackingUrl = res.data.trackingUrl;
-      detailData.yarnApplicationState = res.data.yarnApplicationState;
+      detailData.finalApplicationStatus = res.data.finalApplicationStatus
+      detailData.trackingUrl = res.data.trackingUrl
+      detailData.yarnApplicationState = res.data.yarnApplicationState
     })
     .catch((error: any) => {
-      console.error(error);
-    });
+      console.error(error)
+    })
 }
 
 onUnmounted(() => {
   if (timer.value) {
-    clearInterval(timer.value);
+    clearInterval(timer.value)
   }
-  timer.value = null;
-});
+  timer.value = null
+})
 
 defineExpose({
-  initData,
-});
+  initData
+})
 </script>
 
 <style lang="scss">

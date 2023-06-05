@@ -1,14 +1,38 @@
 <template>
-  <el-dialog v-model="visible" :title="modelConfig.title" :width="modelConfig.width" :class="modelConfig.customClass + ' zqy-block-modal'" :close-on-press-escape="false" :close-on-click-modal="false" :append-to-body="true" :destroy-on-close="true" :center="true" @close="close">
+  <el-dialog
+    v-model="visible"
+    :title="modelConfig.title"
+    :width="modelConfig.width"
+    :class="modelConfig.customClass + ' zqy-block-modal'"
+    :close-on-press-escape="false"
+    :close-on-click-modal="false"
+    :append-to-body="true"
+    :destroy-on-close="true"
+    :center="true"
+    @close="close"
+  >
     <div class="modal-content">
       <slot />
     </div>
-    <template v-if="!modelConfig.footerHidden" #footer>
+    <template
+      v-if="!modelConfig.footerHidden"
+      #footer
+    >
       <slot name="customLeft" />
-      <el-button v-if="modelConfig.cancelConfig" :disabled="modelConfig.cancelConfig.disabled || false" @click="clickToCancel">
+      <el-button
+        v-if="modelConfig.cancelConfig"
+        :disabled="modelConfig.cancelConfig.disabled || false"
+        @click="clickToCancel"
+      >
         {{ modelConfig.cancelConfig.title }}
       </el-button>
-      <el-button v-if="modelConfig.okConfig" type="primary" :loading="modelConfig.okConfig.loading" :disabled="modelConfig.okConfig.disabled || false" @click="clickToSave">
+      <el-button
+        v-if="modelConfig.okConfig"
+        type="primary"
+        :loading="modelConfig.okConfig.loading"
+        :disabled="modelConfig.okConfig.disabled || false"
+        @click="clickToSave"
+      >
         {{ modelConfig.okConfig.title }}
       </el-button>
     </template>
@@ -16,7 +40,7 @@
 </template>
 
 <script lang="ts" setup>
-import { defineProps, ref, watch } from "vue";
+import { defineProps, ref, watch } from 'vue'
 
 interface BtnConfig {
   title: string;
@@ -43,29 +67,29 @@ interface ModalConfig {
   footerHidden?: boolean;
 }
 
-const visible = ref(false);
+const visible = ref(false)
 
 const props = defineProps<{
   modelConfig: ModalConfig;
-}>();
+}>()
 
 watch(
   () => props.modelConfig.visible,
   (newVal) => {
-    visible.value = newVal;
+    visible.value = newVal
   }
-);
+)
 
 function clickToSave() {
-  props.modelConfig.okConfig.ok();
+  props.modelConfig.okConfig.ok()
 }
 
 function clickToCancel() {
-  props.modelConfig.cancelConfig.cancel();
+  props.modelConfig.cancelConfig.cancel()
 }
 
 function close() {
-  props.modelConfig.cancelConfig.cancel();
+  props.modelConfig.cancelConfig.cancel()
 }
 </script>
 

@@ -1,18 +1,32 @@
 <template>
   <div class="zqy-loading">
     <template v-if="displayVisable">
-      <div class="zqy-loading-img__another" style="opacity: 0.7">
+      <div
+        class="zqy-loading-img__another"
+        style="opacity: 0.7"
+      >
         <div class="loader" />
       </div>
       <span class="loading-text">
         正在加载中<span style="font-size: 18px">{{ points }}</span>
       </span>
     </template>
-    <div v-else-if="networkError" class="zqy-loading-network-error">
-      <img src="./error-page.png" class="network-error" alt="服务器不稳定，请稍后重试" />
+    <div
+      v-else-if="networkError"
+      class="zqy-loading-network-error"
+    >
+      <img
+        src="./error-page.png"
+        class="network-error"
+        alt="服务器不稳定，请稍后重试"
+      >
       <span class="zqy-loading-error-text">
         服务器不稳定，请稍后
-        <el-button class="zqy-loading-refresh-btn" type="text" @click="handleReflesh">重试</el-button>
+        <el-button
+          class="zqy-loading-refresh-btn"
+          type="text"
+          @click="handleReflesh"
+        >重试</el-button>
       </span>
     </div>
     <slot />
@@ -20,7 +34,7 @@
 </template>
 
 <script lang="ts" setup>
-import { defineProps, withDefaults, ref, watch, defineEmits, onMounted, onBeforeUnmount } from "vue";
+import { defineProps, withDefaults, ref, watch, defineEmits, onMounted, onBeforeUnmount } from 'vue'
 
 const props: any = withDefaults(
   defineProps<{
@@ -30,61 +44,61 @@ const props: any = withDefaults(
   }>(),
   {
     visible: false,
-    timer: 500,
+    timer: 500
   }
-);
+)
 
-const displayVisable = ref(false);
-const timestamp = ref(0);
-const points = ref(".");
-const timeCode = ref(0);
+const displayVisable = ref(false)
+const timestamp = ref(0)
+const points = ref('.')
+const timeCode = ref(0)
 
-const emit = defineEmits(["loading-done", "loading-refresh"]);
+const emit = defineEmits([ 'loading-done', 'loading-refresh' ])
 
 watch(
   () => props.visible,
   (newVal) => {
     if (newVal) {
-      timestamp.value = new Date().getTime();
-      displayVisable.value = true;
+      timestamp.value = new Date().getTime()
+      displayVisable.value = true
     } else {
-      const endTimestamp = new Date().getTime();
-      const temp: number = endTimestamp - timestamp.value;
+      const endTimestamp = new Date().getTime()
+      const temp: number = endTimestamp - timestamp.value
       if (temp >= props.timer) {
-        displayVisable.value = false;
+        displayVisable.value = false
         if (props.networkError === false) {
-          emit("loading-done");
+          emit('loading-done')
         }
       } else {
         const timeout = setTimeout(() => {
-          displayVisable.value = false;
-          clearTimeout(timeout);
+          displayVisable.value = false
+          clearTimeout(timeout)
           if (props.networkError === false) {
-            emit("loading-done");
+            emit('loading-done')
           }
-        }, props.timer - temp);
+        }, props.timer - temp)
       }
     }
   }
-);
+)
 
 onMounted(() => {
   timeCode.value = setInterval(() => {
-    if (points.value === "...") {
-      points.value = "";
+    if (points.value === '...') {
+      points.value = ''
     } else {
-      points.value += ".";
+      points.value += '.'
     }
-  }, 500);
-});
+  }, 500)
+})
 
 onBeforeUnmount(() => {
-  clearInterval(timeCode.value);
-  timeCode.value = 0;
-});
+  clearInterval(timeCode.value)
+  timeCode.value = 0
+})
 
 function handleReflesh() {
-  emit("loading-refresh");
+  emit('loading-refresh')
 }
 </script>
 

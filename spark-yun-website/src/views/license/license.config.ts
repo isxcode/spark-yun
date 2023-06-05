@@ -30,57 +30,57 @@ export interface TableConfig {
 
 export const BreadCrumbList: Array<BreadCrumb> = [
   {
-    name: "证书安装",
-    code: "license",
-  },
-];
+    name: '证书安装',
+    code: 'license'
+  }
+]
 
 export const colConfigs: colConfig[] = [
   {
-    prop: "code",
-    title: "许可证编号",
+    prop: 'code',
+    title: '许可证编号',
     minWidth: 125,
-    showOverflowTooltip: true,
+    showOverflowTooltip: true
   },
   {
-    prop: "startDateTime",
-    title: "创建时间",
-    minWidth: 110,
+    prop: 'startDateTime',
+    title: '创建时间',
+    minWidth: 110
   },
   {
-    prop: "endDateTime",
-    title: "到期时间",
-    minWidth: 110,
+    prop: 'endDateTime',
+    title: '到期时间',
+    minWidth: 110
   },
   {
-    prop: "maxMemberNum",
-    title: "成员",
-    minWidth: 80,
+    prop: 'maxMemberNum',
+    title: '成员',
+    minWidth: 80
   },
   {
-    prop: "maxTenantNum",
-    title: "租户",
-    minWidth: 80,
+    prop: 'maxTenantNum',
+    title: '租户',
+    minWidth: 80
   },
   {
-    prop: "status",
-    title: "状态",
+    prop: 'status',
+    title: '状态',
     minWidth: 100,
-    customSlot: "statusTag",
+    customSlot: 'statusTag'
   },
   {
-    prop: "remark",
-    title: "备注",
+    prop: 'remark',
+    title: '备注',
     minWidth: 100,
-    showOverflowTooltip: true,
+    showOverflowTooltip: true
   },
   {
-    title: "操作",
-    align: "center",
-    customSlot: "options",
-    width: 80,
-  },
-];
+    title: '操作',
+    align: 'center',
+    customSlot: 'options',
+    width: 80
+  }
+]
 
 export const TableConfig: TableConfig = {
   tableData: [],
@@ -88,8 +88,8 @@ export const TableConfig: TableConfig = {
   pagination: {
     currentPage: 1,
     pageSize: 10,
-    total: 0,
+    total: 0
   },
-  seqType: "seq",
-  loading: false,
-};
+  seqType: 'seq',
+  loading: false
+}

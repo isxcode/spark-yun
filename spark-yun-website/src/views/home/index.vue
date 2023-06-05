@@ -11,9 +11,16 @@
     <Header />
     <div class="home-container">
       <div class="container-left">
-        <menu-list :default-menu="defaultMenu" :menu-list="menuListData" @select="select" />
+        <menu-list
+          :default-menu="defaultMenu"
+          :menu-list="menuListData"
+          @select="select"
+        />
       </div>
-      <div v-if="showData" class="container-right">
+      <div
+        v-if="showData"
+        class="container-right"
+      >
         <router-view />
       </div>
     </div>
@@ -21,58 +28,58 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, reactive, ref, onUnmounted, nextTick } from "vue";
-import Header from "@/layout/header/index.vue";
-import MenuList from "@/layout/menu-list/index.vue";
-import { menu, MenuListData } from "./home.config";
-import { useRouter } from "vue-router";
-import eventBus from "@/utils/eventBus";
-import { useMutations, useState } from "@/hooks/useStore";
+import { onMounted, reactive, ref, onUnmounted, nextTick } from 'vue'
+import Header from '@/layout/header/index.vue'
+import MenuList from '@/layout/menu-list/index.vue'
+import { menu, MenuListData } from './home.config'
+import { useRouter } from 'vue-router'
+import eventBus from '@/utils/eventBus'
+import { useMutations, useState } from '@/hooks/useStore'
 
-const router = useRouter();
-const mutations = useMutations(["setCurrentMenu"], "authStoreModule");
-const state = useState(["currentMenu", "role"], "authStoreModule");
+const router = useRouter()
+const mutations = useMutations([ 'setCurrentMenu' ], 'authStoreModule')
+const state = useState([ 'currentMenu', 'role' ], 'authStoreModule')
 
-const defaultMenu = ref("");
-const showData = ref(true);
-const menuListData: Array<menu> = reactive(MenuListData);
+const defaultMenu = ref('')
+const showData = ref(true)
+const menuListData: Array<menu> = reactive(MenuListData)
 
 const select = (e: string) => {
-  defaultMenu.value = e;
-  mutations.setCurrentMenu(e);
+  defaultMenu.value = e
+  mutations.setCurrentMenu(e)
   router.push({
-    name: e,
-  });
-};
+    name: e
+  })
+}
 
 onMounted(() => {
-  const menuList = menuListData.filter((menu) => menu.authType?.includes(state.role.value || "ROLE_TENANT_MEMBER"));
+  const menuList = menuListData.filter((menu) => menu.authType?.includes(state.role.value || 'ROLE_TENANT_MEMBER'))
   if (!state.currentMenu.value) {
-    defaultMenu.value = menuList[0].code;
+    defaultMenu.value = menuList[0].code
     router.push({
-      name: defaultMenu.value,
-    });
-    mutations.setCurrentMenu(defaultMenu.value);
+      name: defaultMenu.value
+    })
+    mutations.setCurrentMenu(defaultMenu.value)
   } else {
-    defaultMenu.value = state.currentMenu.value;
+    defaultMenu.value = state.currentMenu.value
     router.push({
-      name: state.currentMenu.value,
-    });
+      name: state.currentMenu.value
+    })
   }
   // 这里接受eventbus 触发页面更新
-  eventBus.on("tenantChange", () => {
-    showData.value = false;
+  eventBus.on('tenantChange', () => {
+    showData.value = false
     nextTick(() => {
-      showData.value = true;
-    });
-  });
-});
+      showData.value = true
+    })
+  })
+})
 
 onUnmounted(() => {
-  eventBus.off("tenantChange", () => {
-    console.log("这里移除了bus");
-  });
-});
+  eventBus.off('tenantChange', () => {
+    console.log('这里移除了bus')
+  })
+})
 </script>
 
 <style lang="scss">

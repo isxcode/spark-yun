@@ -6,30 +6,30 @@
  * @Description: In User Settings Edit
  * @FilePath: /zqy-web/src/router/index.ts
  */
-import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
-import Home from "../views/home/index.vue";
-import Login from "@/views/login/login.vue";
+import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
+import Home from '../views/home/index.vue'
+import Login from '@/views/login/login.vue'
 
-import HomeChildren from "./home-children";
+import HomeChildren from './home-children'
 
 const routes: Array<RouteRecordRaw> = [
   {
-    path: "/",
+    path: '/',
     redirect: {
-      name: "home",
-    },
+      name: 'home'
+    }
   },
   {
-    path: "/login",
-    name: "login",
-    component: Login,
+    path: '/login',
+    name: 'login',
+    component: Login
   },
   {
-    path: "/home",
-    name: "home",
+    path: '/home',
+    name: 'home',
     component: Home,
-    children: HomeChildren,
-  },
+    children: HomeChildren
+  }
   // {
   //   path: '/about',
   //   name: 'About',
@@ -38,11 +38,11 @@ const routes: Array<RouteRecordRaw> = [
   //   // which is lazy-loaded when the route is visited.
   //   component: () => import(/* webpackChunkName: "about" */ '../views/About.vue')
   // }
-];
+]
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
-  routes,
-});
+  routes
+})
 
-export default router;
+export default router

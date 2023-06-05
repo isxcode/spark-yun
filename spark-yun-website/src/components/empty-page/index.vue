@@ -8,25 +8,32 @@
 -->
 <template>
   <div class="empty-page">
-    <img class="empty-icon" src="./empty-page.png" alt="暂无数据" />
+    <img
+      class="empty-icon"
+      src="./empty-page.png"
+      alt="暂无数据"
+    >
     <template v-if="$slots.default">
       <slot />
     </template>
-    <span v-else class="empty-text"> {{ label }} </span>
+    <span
+      v-else
+      class="empty-text"
+    > {{ label }} </span>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { computed, defineProps, withDefaults } from "vue";
+import { computed, defineProps, withDefaults } from 'vue'
 
 withDefaults(
   defineProps<{
     label?: string;
   }>(),
   {
-    label: "暂无数据",
+    label: '暂无数据'
   }
-);
+)
 </script>
 
 <style lang="scss">

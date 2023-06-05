@@ -6,7 +6,7 @@
  * @Description: In User Settings Edit
  * @FilePath: /zqy-web/src/services/computer-group.service.ts
  */
-import { http } from "@/utils/http";
+import { http } from '@/utils/http'
 interface SerchParams {
   page: number;
   pageSize: number;
@@ -19,44 +19,44 @@ interface LicenseIdParam {
 
 export function GetLicenseList(params: SerchParams): Promise<any> {
   return http.request({
-    method: "post",
-    url: "/lic/queryLicense",
-    params: params,
-  });
+    method: 'post',
+    url: '/lic/queryLicense',
+    params: params
+  })
 }
 
 // 上传license证书
 export function UploadLicenseFile(params: any): Promise<any> {
   return http.uploadFile({
-    method: "post",
-    url: "/lic/uploadLicense",
-    params,
-  });
+    method: 'post',
+    url: '/lic/uploadLicense',
+    params
+  })
 }
 
 // 启用
 export function DisableLicense(params: LicenseIdParam): Promise<any> {
   return http.request({
-    method: "get",
-    url: "/lic/disableLicense",
-    params: params,
-  });
+    method: 'get',
+    url: '/lic/disableLicense',
+    params: params
+  })
 }
 
 // 禁用
 export function EnableLicense(params: LicenseIdParam): Promise<any> {
   return http.request({
-    method: "get",
-    url: "/lic/enableLicense",
-    params: params,
-  });
+    method: 'get',
+    url: '/lic/enableLicense',
+    params: params
+  })
 }
 
 // 删除
 export function DeleteLicense(params: LicenseIdParam): Promise<any> {
   return http.request({
-    method: "get",
-    url: "/lic/deleteLicense",
-    params: params,
-  });
+    method: 'get',
+    url: '/lic/deleteLicense',
+    params: params
+  })
 }

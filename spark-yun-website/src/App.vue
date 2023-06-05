@@ -23,9 +23,9 @@
 <!--</template>-->
 
 <script lang="ts" setup>
-import { onMounted, reactive, ref } from "vue";
-import ZSvgIcon from "@/components/z-svg-icon/index.vue";
-import bpmn from "@/lib/packages/bpmn.vue";
+import { onMounted, reactive, ref } from 'vue'
+import ZSvgIcon from '@/components/z-svg-icon/index.vue'
+import bpmn from '@/lib/packages/bpmn.vue'
 
 // import BlockDrawer from '@/components/block-drawer/index.vue'
 
@@ -65,9 +65,9 @@ import bpmn from "@/lib/packages/bpmn.vue";
 // }
 
 onMounted(() => {
-  const linkIcon: any = document.getElementById("icon");
+  const linkIcon: any = document.getElementById('icon')
   if (linkIcon) {
-    linkIcon.href = "./assets/icons/favicon.ico";
+    linkIcon.href = './assets/icons/favicon.ico'
   }
-});
+})
 </script>

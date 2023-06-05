@@ -12,10 +12,22 @@
       <!-- <img src="../../assets/icons/logo.jpg" alt="至轻云"> -->
       至轻云
     </div>
-    <div v-if="headerConfig.tenantList && headerConfig.tenantList.length > 0 && tenantSelect" class="zqy-tenant">
+    <div
+      v-if="headerConfig.tenantList && headerConfig.tenantList.length > 0 && tenantSelect"
+      class="zqy-tenant"
+    >
       <!-- <div class="zqy-tenant"> -->
-      <el-select v-model="tenantSelect" @change="tenantChange" @visible-change="visibleChange">
-        <el-option v-for="tenant in headerConfig.tenantList" :key="tenant.id" :label="tenant.name" :value="tenant.id" />
+      <el-select
+        v-model="tenantSelect"
+        @change="tenantChange"
+        @visible-change="visibleChange"
+      >
+        <el-option
+          v-for="tenant in headerConfig.tenantList"
+          :key="tenant.id"
+          :label="tenant.name"
+          :value="tenant.id"
+        />
       </el-select>
     </div>
     <div class="header-user">
@@ -27,7 +39,9 @@
         <template #dropdown>
           <el-dropdown-menu>
             <!-- <el-dropdown-item>个人信息</el-dropdown-item> -->
-            <el-dropdown-item command="logout"> 退出登录 </el-dropdown-item>
+            <el-dropdown-item command="logout">
+              退出登录
+            </el-dropdown-item>
           </el-dropdown-menu>
         </template>
       </el-dropdown>
@@ -36,88 +50,89 @@
 </template>
 
 <script lang="ts" setup>
-import { useRouter } from "vue-router";
-import { useState, useMutations } from "@/hooks/useStore";
-import { nextTick, onMounted, reactive, ref } from "vue";
-import { ChangeTenantData, QueryTenantList } from "@/services/login.service";
-import eventBus from "@/utils/eventBus";
+import { useRouter } from 'vue-router'
+import { useState, useMutations } from '@/hooks/useStore'
+import { nextTick, onMounted, reactive, ref } from 'vue'
+import { ChangeTenantData, QueryTenantList } from '@/services/login.service'
+import eventBus from '@/utils/eventBus'
 // import { GetTenantList } from '@/services/tenant-list.service'
 
-const state = useState(["userInfo", "tenantId"], "authStoreModule");
-const mutations = useMutations(["setUserInfo", "setToken", "setTenantId", "setRole", "setCurrentMenu"], "authStoreModule");
-const router = useRouter();
+const state = useState([ 'userInfo', 'tenantId' ], 'authStoreModule')
+const mutations = useMutations([ 'setUserInfo', 'setToken', 'setTenantId', 'setRole', 'setCurrentMenu' ], 'authStoreModule')
+const router = useRouter()
 
-const tenantSelect = ref("");
+const tenantSelect = ref('')
 let headerConfig = reactive({
   tenantList: [],
-  userInfo: state.userInfo.value,
-});
+  userInfo: state.userInfo.value
+})
 
 function handleCommand(command: string): void {
-  if (command === "logout") {
-    clearStore();
+  if (command === 'logout') {
+    clearStore()
     router.push({
-      name: "login",
-    });
+      name: 'login'
+    })
   }
 }
 
 function clearStore() {
-  mutations.setUserInfo({});
-  mutations.setToken("");
-  mutations.setTenantId("");
-  mutations.setRole("");
-  mutations.setRole("");
-  mutations.setCurrentMenu("");
+  mutations.setUserInfo({
+  })
+  mutations.setToken('')
+  mutations.setTenantId('')
+  mutations.setRole('')
+  mutations.setRole('')
+  mutations.setCurrentMenu('')
 }
 
 function getTenantList(): void {
   QueryTenantList()
     .then((res: any) => {
-      headerConfig.tenantList = res.data || [];
+      headerConfig.tenantList = res.data || []
       res.data.forEach((item: any) => {
         if (item.currentTenant) {
-          tenantSelect.value = item.id;
+          tenantSelect.value = item.id
         }
-      });
+      })
       if (res.data && res.data.length > 0 && res.data.every((item: any) => !item.currentTenant)) {
-        tenantChange(res.data[0].id);
+        tenantChange(res.data[0].id)
       }
     })
     .catch(() => {
-      headerConfig.tenantList = [];
-    });
+      headerConfig.tenantList = []
+    })
 }
 
 function tenantChange(e: string): void {
   ChangeTenantData({
-    tenantId: e,
+    tenantId: e
   })
     .then(() => {
-      console.log("切换成功");
-      mutations.setTenantId(e);
+      console.log('切换成功')
+      mutations.setTenantId(e)
 
       // 这里发送eventbus，刷新当前打开的页面
-      eventBus.emit("tenantChange");
+      eventBus.emit('tenantChange')
     })
     .catch(() => {
-      tenantSelect.value = state.tenantId.value;
-      console.log("切换失败");
-    });
+      tenantSelect.value = state.tenantId.value
+      console.log('切换失败')
+    })
 }
 
 function visibleChange(e: boolean): void {
   if (e) {
-    getTenantList();
+    getTenantList()
   }
 }
 
 onMounted(() => {
   nextTick(() => {
-    getTenantList();
-    eventBus.emit("tenantChange");
-  });
-});
+    getTenantList()
+    eventBus.emit('tenantChange')
+  })
+})
 </script>
 
 <style lang="scss">

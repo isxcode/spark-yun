@@ -39,58 +39,58 @@ export interface TableConfig {
 
 export const BreadCrumbList: Array<BreadCrumb> = [
   {
-    name: "租户列表",
-    code: "tenant-list",
-  },
-];
+    name: '租户列表',
+    code: 'tenant-list'
+  }
+]
 
 export const colConfigs: colConfig[] = [
   {
-    prop: "name",
-    title: "租户名称",
+    prop: 'name',
+    title: '租户名称',
     minWidth: 100,
-    showOverflowTooltip: true,
+    showOverflowTooltip: true
   },
   {
-    prop: "maxMemberNum",
-    title: "已用/总成员",
+    prop: 'maxMemberNum',
+    title: '已用/总成员',
     minWidth: 100,
     formatter: (data: any): string => {
-      return `${data.row.usedMemberNum} / ${data.row.maxMemberNum}`;
-    },
+      return `${data.row.usedMemberNum} / ${data.row.maxMemberNum}`
+    }
   },
   {
-    prop: "maxWorkflowNum",
-    title: "已用/总工作流",
+    prop: 'maxWorkflowNum',
+    title: '已用/总工作流',
     minWidth: 120,
     formatter: (data: any): string => {
-      return `${data.row.usedWorkflowNum} / ${data.row.maxWorkflowNum}`;
-    },
+      return `${data.row.usedWorkflowNum} / ${data.row.maxWorkflowNum}`
+    }
   },
   {
-    prop: "status",
-    title: "状态",
+    prop: 'status',
+    title: '状态',
     minWidth: 100,
-    customSlot: "statusTag",
+    customSlot: 'statusTag'
   },
   {
-    prop: "checkDateTime",
-    title: "检测时间",
-    minWidth: 140,
+    prop: 'checkDateTime',
+    title: '检测时间',
+    minWidth: 140
   },
   {
-    prop: "remark",
-    title: "备注",
+    prop: 'remark',
+    title: '备注',
     minWidth: 120,
-    showOverflowTooltip: true,
+    showOverflowTooltip: true
   },
   {
-    title: "操作",
-    align: "center",
-    customSlot: "options",
-    width: 140,
-  },
-];
+    title: '操作',
+    align: 'center',
+    customSlot: 'options',
+    width: 140
+  }
+]
 
 export const TableConfig: TableConfig = {
   tableData: [],
@@ -98,8 +98,8 @@ export const TableConfig: TableConfig = {
   pagination: {
     currentPage: 1,
     pageSize: 10,
-    total: 0,
+    total: 0
   },
-  seqType: "seq",
-  loading: false,
-};
+  seqType: 'seq',
+  loading: false
+}
