@@ -1,58 +1,58 @@
 /*
  * @Author: fanciNate
  * @Date: 2023-05-23 17:00:06
- * @LastEditTime: 2023-06-04 22:33:17
+ * @LastEditTime: 2023-06-05 22:32:18
  * @LastEditors: fanciNate
  * @Description: In User Settings Edit
  * @FilePath: /spark-yun/spark-yun-website/src/utils/http/index.ts
  */
-import { createAxios } from "@/plugins/http-request";
-import router from "@/router";
-import { merge } from "../checkType";
-import store from "@/store";
-import { ElMessage } from "element-plus";
-import * as process from "process";
+import { createAxios } from '@/plugins/http-request'
+import router from '@/router'
+import { merge } from '../checkType'
+import store from '@/store'
+import { ElMessage } from 'element-plus'
+import * as process from 'process'
 
-const message = ElMessage;
-const storeData: any = store;
+const message = ElMessage
+const storeData: any = store
 
 export const httpOption = {
   transform: {
     requestInterceptors: (config: any) => {
-      config.headers["authorization"] = storeData.state?.authStoreModule?.token;
-      config.headers["tenant"] = storeData.state?.authStoreModule?.tenantId;
+      config.headers['authorization'] = storeData.state?.authStoreModule?.token
+      config.headers['tenant'] = storeData.state?.authStoreModule?.tenantId
 
-      return config;
+      return config
     },
     responseInterceptors: (config: any): any => {
       // getTokenFromResponse(config);
 
-      return config;
-    },
+      return config
+    }
   },
   requestOptions: {
-    urlPrefix: 'http://isxcode.com:30211',
-    // urlPrefix: import.meta.env.VUE_APP_BASE_DOMAIN,
+    // urlPrefix: 'http://isxcode.com:30211',
+    urlPrefix: import.meta.env.VITE_VUE_APP_BASE_DOMAIN,
     showSuccessMessage: (msg: string): void => {
-      message.success(msg);
+      message.success(msg)
     },
     showErrorMessage: (msg: string): void => {
-      message.error(msg);
+      message.error(msg)
     },
     checkStatus: (status: number, msg: string, showMsg: any): void => {
       try {
         if (status == 401) {
-          showMsg("用户登录过期");
+          showMsg('用户登录过期')
           router.push({
-            name: "login",
-          });
+            name: 'login'
+          })
         } else if (status == 403) {
-          message.error("许可证无效，请联系管理员");
+          message.error('许可证无效，请联系管理员')
         } else {
-          showMsg(msg);
+          showMsg(msg)
         }
       } catch (error) {
-        console.error("error", error);
+        console.error('error', error)
         // console.log('err', error);
         // router.replace({
         //     name: LOGIN_NAME,
@@ -61,23 +61,25 @@ export const httpOption = {
         //     }
         // });
       }
-    },
+    }
   },
-  timeout: 30 * 1e3,
-};
+  timeout: 30 * 1e3
+}
 
-export const createHttp = (option = {}) => {
+export const createHttp = (option = {
+}) => {
   return createAxios(
     merge(
-      {},
       {
-        ...httpOption,
       },
       {
-        ...option,
+        ...httpOption
+      },
+      {
+        ...option
       }
     )
-  );
-};
+  )
+}
 
-export const http = createHttp();
+export const http = createHttp()

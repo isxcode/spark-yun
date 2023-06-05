@@ -1,8 +1,20 @@
 <template>
   <div class="menu-list">
-    <el-menu :default-active="defaultMenu" class="el-menu-vertical-demo" :collapse="isCollapse" :unique-opened="true" @select="handleSelect">
-      <template v-for="menu in menuList" :key="menu.code">
-        <el-menu-item v-if="menu.authType.includes(configData.role)" :index="menu.code">
+    <el-menu
+      :default-active="defaultMenu"
+      class="el-menu-vertical-demo"
+      :collapse="isCollapse"
+      :unique-opened="true"
+      @select="handleSelect"
+    >
+      <template
+        v-for="menu in menuList"
+        :key="menu.code"
+      >
+        <el-menu-item
+          v-if="menu.authType.includes(configData.role)"
+          :index="menu.code"
+        >
           <el-icon><component :is="menu.icon" /></el-icon>
           <template #title>
             {{ menu.name }}
@@ -10,7 +22,10 @@
         </el-menu-item>
       </template>
     </el-menu>
-    <div class="collapse-btn" @click="clickToCollapse">
+    <div
+      class="collapse-btn"
+      @click="clickToCollapse"
+    >
       <template v-if="isCollapse">
         <el-icon><ArrowRight /></el-icon>
       </template>
@@ -22,8 +37,8 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, defineProps, defineEmits, reactive } from "vue";
-import { useState } from "@/hooks/useStore";
+import { ref, defineProps, defineEmits, reactive } from 'vue'
+import { useState } from '@/hooks/useStore'
 
 interface menu {
   icon: string;
@@ -31,27 +46,27 @@ interface menu {
   code: string;
   authType?: Array<string>;
 }
-const state = useState(["role"], "authStoreModule");
-let isCollapse = ref(false);
+const state = useState([ 'role' ], 'authStoreModule')
+let isCollapse = ref(false)
 const configData = reactive({
-  role: state.role.value,
-});
+  role: state.role.value
+})
 
 defineProps<{
   menuList: {
     type: Array<menu>;
-    default: () => [];
+    default:() => [];
   };
   defaultMenu: string;
-}>();
-const emit = defineEmits(["select"]);
+}>()
+const emit = defineEmits([ 'select' ])
 
 const handleSelect = (key: string, keyPath: string[]) => {
-  emit("select", key);
-};
+  emit('select', key)
+}
 
 function clickToCollapse() {
-  isCollapse.value = !isCollapse.value;
+  isCollapse.value = !isCollapse.value
 }
 </script>
 

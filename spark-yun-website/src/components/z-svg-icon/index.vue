@@ -1,34 +1,38 @@
 <template>
-  <svg :class="svgClass" aria-hidden="true" :fill="iconColor">
+  <svg
+    :class="svgClass"
+    aria-hidden="true"
+    :fill="iconColor"
+  >
     <use :xlink:href="iconName" />
   </svg>
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed } from 'vue'
 
 const props = defineProps({
   iconClass: {
     type: String,
-    required: true,
+    required: true
   },
   className: {
     type: String,
-    default: "",
+    default: ''
   },
   iconColor: {
     type: String,
-    default: "CurrentColor",
-  },
-});
-const iconName = computed(() => `#icon-${props.iconClass}`);
+    default: 'CurrentColor'
+  }
+})
+const iconName = computed(() => `#icon-${props.iconClass}`)
 const svgClass = computed(() => {
   if (props.className) {
-    return "svg-icon " + props.className;
+    return 'svg-icon ' + props.className
   } else {
-    return "svg-icon";
+    return 'svg-icon'
   }
-});
+})
 </script>
 
 <style lang="scss">

@@ -30,49 +30,49 @@ export interface TableConfig {
 
 export const BreadCrumbList: Array<BreadCrumb> = [
   {
-    name: "用户中心",
-    code: "user-center",
-  },
-];
+    name: '用户中心',
+    code: 'user-center'
+  }
+]
 
 export const colConfigs: colConfig[] = [
   {
-    prop: "username",
-    title: "用户名",
+    prop: 'username',
+    title: '用户名',
     minWidth: 100,
-    showOverflowTooltip: true,
+    showOverflowTooltip: true
   },
   {
-    prop: "account",
-    title: "账号",
+    prop: 'account',
+    title: '账号',
     minWidth: 100,
-    showOverflowTooltip: true,
+    showOverflowTooltip: true
   },
   {
-    prop: "phone",
-    title: "手机号",
+    prop: 'phone',
+    title: '手机号',
     minWidth: 100,
-    showOverflowTooltip: true,
+    showOverflowTooltip: true
   },
   {
-    prop: "email",
-    title: "邮箱",
+    prop: 'email',
+    title: '邮箱',
     minWidth: 160,
-    showOverflowTooltip: true,
+    showOverflowTooltip: true
   },
   {
-    prop: "status",
-    title: "状态",
+    prop: 'status',
+    title: '状态',
     minWidth: 100,
-    customSlot: "statusTag",
+    customSlot: 'statusTag'
   },
   {
-    title: "操作",
-    align: "center",
-    customSlot: "options",
-    width: 100,
-  },
-];
+    title: '操作',
+    align: 'center',
+    customSlot: 'options',
+    width: 100
+  }
+]
 
 export const TableConfig: TableConfig = {
   tableData: [],
@@ -80,8 +80,8 @@ export const TableConfig: TableConfig = {
   pagination: {
     currentPage: 1,
     pageSize: 10,
-    total: 0,
+    total: 0
   },
-  seqType: "seq",
-  loading: false,
-};
+  seqType: 'seq',
+  loading: false
+}

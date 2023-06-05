@@ -7,68 +7,72 @@
  * @FilePath: /zqy-web/src/views/workflow/work-item/return-data.vue
 -->
 <template>
-  <BlockTable class="return-data" :table-config="tableConfig" />
+  <BlockTable
+    class="return-data"
+    :table-config="tableConfig"
+  />
 </template>
 
 <script lang="ts" setup>
-import { reactive } from "vue";
-import BlockTable from "@/components/block-table/index.vue";
-import { GetResultData } from "@/services/schedule.service";
+import { reactive } from 'vue'
+import BlockTable from '@/components/block-table/index.vue'
+import { GetResultData } from '@/services/schedule.service'
 
 const tableConfig = reactive({
   tableData: [],
   colConfigs: [],
-  seqType: "seq",
-  loading: false,
-});
+  seqType: 'seq',
+  loading: false
+})
 
 function initData(id: string): void {
-  getResultDatalist(id);
+  getResultDatalist(id)
 }
 
 // 获取结果
 function getResultDatalist(id: string) {
   if (!id) {
-    tableConfig.colConfigs = [];
-    tableConfig.tableData = [];
-    tableConfig.loading = false;
-    return;
+    tableConfig.colConfigs = []
+    tableConfig.tableData = []
+    tableConfig.loading = false
+    return
   }
-  tableConfig.loading = true;
+  tableConfig.loading = true
   GetResultData({
-    instanceId: id,
+    instanceId: id
   })
     .then((res: any) => {
-      const col = res.data.data.slice(0, 1)[0];
-      const tableData = res.data.data.slice(1, res.data.data.length);
+      const col = res.data.data.slice(0, 1)[0]
+      const tableData = res.data.data.slice(1, res.data.data.length)
       tableConfig.colConfigs = col.map((colunm: any) => {
         return {
           prop: colunm,
           title: colunm,
           minWidth: 100,
           showHeaderOverflow: true,
-          showOverflowTooltip: true,
-        };
-      });
+          showOverflowTooltip: true
+        }
+      })
       tableConfig.tableData = tableData.map((columnData: any) => {
-        const dataObj: any = {};
+        const dataObj: any = {
+        }
         col.forEach((c: any, index: number) => {
-          dataObj[c] = columnData[index];
-        });
-        return dataObj;
-      });
-      tableConfig.loading = false;
+          dataObj[c] = columnData[index]
+        })
+        return dataObj
+      })
+      tableConfig.loading = false
     })
     .catch(() => {
-      tableConfig.colConfigs = [];
-      tableConfig.tableData = [];
-      tableConfig.loading = false;
-    });
+      tableConfig.colConfigs = []
+      tableConfig.tableData = []
+      tableConfig.loading = false
+    })
 }
 
 defineExpose({
-  initData,
-});
+  initData
+})
 </script>
 
 <style lang="scss">

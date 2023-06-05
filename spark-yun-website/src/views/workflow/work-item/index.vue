@@ -9,55 +9,104 @@
 <template>
   <Breadcrumb :bread-crumb-list="breadCrumbList" />
   <div class="zqy-work-item">
-    <LoadingPage :visible="loading" :network-error="networkError" @loading-refresh="initData">
+    <LoadingPage
+      :visible="loading"
+      :network-error="networkError"
+      @loading-refresh="initData"
+    >
       <div class="zqy-work-container">
         <div class="sql-code-container">
           <div class="sql-option-container">
-            <div class="btn-box" @click="goBack">
+            <div
+              class="btn-box"
+              @click="goBack"
+            >
               <el-icon><RefreshLeft /></el-icon>
               <span class="btn-text">返回</span>
             </div>
-            <div class="btn-box" @click="runWorkData">
+            <div
+              class="btn-box"
+              @click="runWorkData"
+            >
               <el-icon v-if="!runningLoading">
                 <VideoPlay />
               </el-icon>
-              <el-icon v-else class="is-loading">
+              <el-icon
+                v-else
+                class="is-loading"
+              >
                 <Loading />
               </el-icon>
               <span class="btn-text">运行</span>
             </div>
-            <div v-if="workConfig.workType === 'SPARK_SQL'" class="btn-box" @click="terWorkData">
+            <div
+              v-if="workConfig.workType === 'SPARK_SQL'"
+              class="btn-box"
+              @click="terWorkData"
+            >
               <el-icon v-if="!terLoading">
                 <Close />
               </el-icon>
-              <el-icon v-else class="is-loading">
+              <el-icon
+                v-else
+                class="is-loading"
+              >
                 <Loading />
               </el-icon>
               <span class="btn-text">中止</span>
             </div>
-            <div class="btn-box" @click="saveData">
+            <div
+              class="btn-box"
+              @click="saveData"
+            >
               <el-icon v-if="!saveLoading">
                 <Finished />
               </el-icon>
-              <el-icon v-else class="is-loading">
+              <el-icon
+                v-else
+                class="is-loading"
+              >
                 <Loading />
               </el-icon>
               <span class="btn-text">保存</span>
             </div>
-            <div class="btn-box" @click="setConfigData">
+            <div
+              class="btn-box"
+              @click="setConfigData"
+            >
               <el-icon><Setting /></el-icon>
               <span class="btn-text">配置</span>
             </div>
           </div>
-          <el-input v-model="sqltextData" type="textarea" maxlength="2000" :autosize="{ minRows: 10, maxRows: 10 }" placeholder="请输入" />
+          <el-input
+            v-model="sqltextData"
+            type="textarea"
+            maxlength="2000"
+            :autosize="{ minRows: 10, maxRows: 10 }"
+            placeholder="请输入"
+          />
         </div>
         <div class="log-show">
-          <el-tabs v-model="activeName" @tab-change="tabChangeEvent">
-            <template v-for="tab in tabList" :key="tab.code">
-              <el-tab-pane v-if="!tab.hide" :label="tab.name" :name="tab.code" />
+          <el-tabs
+            v-model="activeName"
+            @tab-change="tabChangeEvent"
+          >
+            <template
+              v-for="tab in tabList"
+              :key="tab.code"
+            >
+              <el-tab-pane
+                v-if="!tab.hide"
+                :label="tab.name"
+                :name="tab.code"
+              />
             </template>
           </el-tabs>
-          <component :is="currentTab" ref="containerInstanceRef" class="show-container" />
+          <component
+            :is="currentTab"
+            ref="containerInstanceRef"
+            class="show-container"
+          />
         </div>
       </div>
     </LoadingPage>
@@ -66,109 +115,109 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, ref, onMounted, markRaw } from "vue";
-import Breadcrumb from "@/layout/bread-crumb/index.vue";
-import LoadingPage from "@/components/loading/index.vue";
-import ConfigModal from "./config-modal/index.vue";
-import PublishLog from "./publish-log.vue";
-import ReturnData from "./return-data.vue";
-import RunningLog from "./running-log.vue";
-import TotalDetail from "./total-detail.vue";
+import { reactive, ref, onMounted, markRaw } from 'vue'
+import Breadcrumb from '@/layout/bread-crumb/index.vue'
+import LoadingPage from '@/components/loading/index.vue'
+import ConfigModal from './config-modal/index.vue'
+import PublishLog from './publish-log.vue'
+import ReturnData from './return-data.vue'
+import RunningLog from './running-log.vue'
+import TotalDetail from './total-detail.vue'
 
-import { GetWorkItemConfig, RunWorkItemConfig, SaveWorkItemConfig, TerWorkItemConfig } from "@/services/workflow.service";
-import { ElMessage } from "element-plus";
-import { useRoute, useRouter } from "vue-router";
-import { nextTick } from "vue";
+import { GetWorkItemConfig, RunWorkItemConfig, SaveWorkItemConfig, TerWorkItemConfig } from '@/services/workflow.service'
+import { ElMessage } from 'element-plus'
+import { useRoute, useRouter } from 'vue-router'
+import { nextTick } from 'vue'
 
-const route = useRoute();
-const router = useRouter();
-const loading = ref(false);
-const networkError = ref(false);
-const runningLoading = ref(false);
-const saveLoading = ref(false);
-const terLoading = ref(false);
-const configModalRef = ref(null);
-const activeName = ref();
-const currentTab = ref();
-const sqltextData = ref("");
-const instanceId = ref("");
+const route = useRoute()
+const router = useRouter()
+const loading = ref(false)
+const networkError = ref(false)
+const runningLoading = ref(false)
+const saveLoading = ref(false)
+const terLoading = ref(false)
+const configModalRef = ref(null)
+const activeName = ref()
+const currentTab = ref()
+const sqltextData = ref('')
+const instanceId = ref('')
 
-const containerInstanceRef = ref(null);
+const containerInstanceRef = ref(null)
 
 let workConfig = reactive({
-  clusterId: "",
-  datasourceId: "",
-  name: "",
-  sql: "",
-  workId: "",
-  workType: "",
-  workflowId: "",
-  applicationId: "",
-});
+  clusterId: '',
+  datasourceId: '',
+  name: '',
+  sql: '',
+  workId: '',
+  workType: '',
+  workflowId: '',
+  applicationId: ''
+})
 
 const breadCrumbList = reactive([
   {
-    name: "作业流",
-    code: "workflow",
+    name: '作业流',
+    code: 'workflow'
   },
   {
-    name: "作业",
-    code: "workflow-detail",
+    name: '作业',
+    code: 'workflow-detail',
     query: {
-      id: route.query.workflowId,
-    },
+      id: route.query.workflowId
+    }
   },
   {
-    name: "作业详情",
-    code: "work-item",
-  },
-]);
+    name: '作业详情',
+    code: 'work-item'
+  }
+])
 const tabList = reactive([
   {
-    name: "提交日志",
-    code: "PublishLog",
-    hide: false,
+    name: '提交日志',
+    code: 'PublishLog',
+    hide: false
   },
   {
-    name: "数据返回",
-    code: "ReturnData",
-    hide: false,
+    name: '数据返回',
+    code: 'ReturnData',
+    hide: false
   },
   {
-    name: "运行日志",
-    code: "RunningLog",
-    hide: true,
+    name: '运行日志',
+    code: 'RunningLog',
+    hide: true
   },
   {
-    name: "监控信息",
-    code: "TotalDetail",
-    hide: true,
-  },
-]);
+    name: '监控信息',
+    code: 'TotalDetail',
+    hide: true
+  }
+])
 
 function initData() {
-  loading.value = true;
-  networkError.value = networkError.value || false;
+  loading.value = true
+  networkError.value = networkError.value || false
   GetWorkItemConfig({
-    workId: route.query.id,
+    workId: route.query.id
   })
     .then((res: any) => {
-      workConfig = res.data;
-      sqltextData.value = res.data.sqlScript;
-      if (workConfig.workType === "SPARK_SQL") {
+      workConfig = res.data
+      sqltextData.value = res.data.sqlScript
+      if (workConfig.workType === 'SPARK_SQL') {
         tabList.forEach((item: any) => {
-          if (["RunningLog", "TotalDetail"].includes(item.code)) {
-            item.hide = false;
+          if ([ 'RunningLog', 'TotalDetail' ].includes(item.code)) {
+            item.hide = false
           }
-        });
+        })
       }
-      loading.value = false;
-      networkError.value = false;
+      loading.value = false
+      networkError.value = false
     })
     .catch(() => {
-      loading.value = false;
-      networkError.value = false;
-    });
+      loading.value = false
+      networkError.value = false
+    })
 }
 
 function tabChangeEvent(e: string) {
@@ -176,80 +225,80 @@ function tabChangeEvent(e: string) {
     PublishLog: PublishLog,
     ReturnData: ReturnData,
     RunningLog: RunningLog,
-    TotalDetail: TotalDetail,
-  };
-  activeName.value = e;
-  currentTab.value = markRaw(lookup[e]);
+    TotalDetail: TotalDetail
+  }
+  activeName.value = e
+  currentTab.value = markRaw(lookup[e])
   nextTick(() => {
-    containerInstanceRef.value.initData(instanceId.value);
-  });
+    containerInstanceRef.value.initData(instanceId.value)
+  })
 }
 
 // 返回
 function goBack() {
   router.push({
-    name: "workflow-detail",
+    name: 'workflow-detail',
     query: {
-      id: route.query.workflowId,
-    },
-  });
+      id: route.query.workflowId
+    }
+  })
 }
 
 // 运行
 function runWorkData() {
-  runningLoading.value = true;
+  runningLoading.value = true
   RunWorkItemConfig({
-    workId: route.query.id,
+    workId: route.query.id
   })
     .then((res: any) => {
-      runningLoading.value = false;
-      instanceId.value = res.data.instanceId;
-      ElMessage.success(res.msg);
-      initData();
-      containerInstanceRef.value.initData(instanceId.value);
+      runningLoading.value = false
+      instanceId.value = res.data.instanceId
+      ElMessage.success(res.msg)
+      initData()
+      containerInstanceRef.value.initData(instanceId.value)
     })
     .catch(() => {
-      runningLoading.value = false;
-    });
+      runningLoading.value = false
+    })
 }
 
 // 终止
 function terWorkData() {
   if (!instanceId.value) {
-    ElMessage.warning("暂无可中止的作业");
-    return;
+    ElMessage.warning('暂无可中止的作业')
+    return
   }
-  terLoading.value = true;
+  terLoading.value = true
   TerWorkItemConfig({
     workId: route.query.id,
-    instanceId: instanceId.value,
+    instanceId: instanceId.value
   })
     .then((res: any) => {
-      terLoading.value = false;
-      ElMessage.success(res.msg);
-      initData();
+      terLoading.value = false
+      ElMessage.success(res.msg)
+      initData()
     })
     .catch(() => {
-      terLoading.value = false;
-    });
+      terLoading.value = false
+    })
 }
 
 // 保存配置
 function saveData() {
-  saveLoading.value = true;
+  saveLoading.value = true
   SaveWorkItemConfig({
     sql: sqltextData.value,
     workId: route.query.id,
-    datasourceId: workConfig.datasourceId,
+    datasourceId: workConfig.datasourceId
   })
     .then((res: any) => {
-      ElMessage.success(res.msg);
-      saveLoading.value = false;
-      initData();
+      ElMessage.success(res.msg)
+      saveLoading.value = false
+      initData()
     })
     .catch(() => {
-      saveLoading.value = false;
-    });
+      saveLoading.value = false
+    })
 }
 
 // 配置打开
@@ -259,25 +308,25 @@ function setConfigData() {
       SaveWorkItemConfig({
         sql: sqltextData.value,
         workId: route.query.id,
-        datasourceId: formData.datasourceId,
+        datasourceId: formData.datasourceId
       })
         .then((res: any) => {
-          ElMessage.success(res.msg);
-          initData();
-          resolve();
+          ElMessage.success(res.msg)
+          initData()
+          resolve()
         })
         .catch((error: any) => {
-          reject(error);
-        });
-    });
-  }, workConfig);
+          reject(error)
+        })
+    })
+  }, workConfig)
 }
 
 onMounted(() => {
-  initData();
-  activeName.value = "PublishLog";
-  currentTab.value = markRaw(PublishLog);
-});
+  initData()
+  activeName.value = 'PublishLog'
+  currentTab.value = markRaw(PublishLog)
+})
 </script>
 
 <style lang="scss">

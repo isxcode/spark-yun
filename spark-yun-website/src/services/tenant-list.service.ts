@@ -6,7 +6,7 @@
  * @Description: In User Settings Edit
  * @FilePath: /zqy-web/src/services/computer-group.service.ts
  */
-import { http } from "@/utils/http";
+import { http } from '@/utils/http'
 
 interface SerchParams {
   page: number;
@@ -30,62 +30,62 @@ interface TenantIdParam {
 // 租户列表-查询租户
 export function GetTenantList(params: SerchParams): Promise<any> {
   return http.request({
-    method: "post",
-    url: "/tet/queryTenant",
-    params: params,
-  });
+    method: 'post',
+    url: '/tet/queryTenant',
+    params: params
+  })
 }
 
 // 租户列表-添加租户
 export function AddTenantData(params: TenantParam): Promise<any> {
   return http.request({
-    method: "post",
-    url: "/tet/addTenant",
-    params: params,
-  });
+    method: 'post',
+    url: '/tet/addTenant',
+    params: params
+  })
 }
 
 // 租户列表-更新租户
 export function UpdateTenantData(params: TenantParam): Promise<any> {
   return http.request({
-    method: "post",
-    url: "/tet/updateTenantBySystemAdmin",
-    params: params,
-  });
+    method: 'post',
+    url: '/tet/updateTenantBySystemAdmin',
+    params: params
+  })
 }
 
 // 租户列表-同步
 export function CheckTenantData(params: TenantIdParam): Promise<any> {
   return http.request({
-    method: "get",
-    url: "/tet/checkTenant",
-    params: params,
-  });
+    method: 'get',
+    url: '/tet/checkTenant',
+    params: params
+  })
 }
 
 // 租户列表-禁用
 export function DisableTenantData(params: TenantIdParam): Promise<any> {
   return http.request({
-    method: "get",
-    url: "/tet/disableTenant",
-    params: params,
-  });
+    method: 'get',
+    url: '/tet/disableTenant',
+    params: params
+  })
 }
 
 // 租户列表-启用
 export function EnableTenantData(params: TenantIdParam): Promise<any> {
   return http.request({
-    method: "get",
-    url: "/tet/enableTenant",
-    params: params,
-  });
+    method: 'get',
+    url: '/tet/enableTenant',
+    params: params
+  })
 }
 
 // 租户列表-删除租户
 export function DeleteTenantData(params: TenantIdParam): Promise<any> {
   return http.request({
-    method: "get",
-    url: "/tet/deleteTenant",
-    params: params,
-  });
+    method: 'get',
+    url: '/tet/deleteTenant',
+    params: params
+  })
 }

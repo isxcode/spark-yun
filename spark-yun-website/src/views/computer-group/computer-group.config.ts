@@ -41,59 +41,59 @@ export interface FormData {
 
 export const BreadCrumbList: Array<BreadCrumb> = [
   {
-    name: "计算集群",
-    code: "computer-group",
-  },
-];
+    name: '计算集群',
+    code: 'computer-group'
+  }
+]
 
 export const colConfigs: colConfig[] = [
   {
-    prop: "name",
-    title: "集群名称",
+    prop: 'name',
+    title: '集群名称',
     minWidth: 100,
-    showOverflowTooltip: true,
+    showOverflowTooltip: true
   },
   {
-    prop: "node",
-    title: "可用/总节点数",
+    prop: 'node',
+    title: '可用/总节点数',
     minWidth: 120,
-    showOverflowTooltip: true,
+    showOverflowTooltip: true
   },
   {
-    prop: "memory",
-    title: "已用/总内存",
+    prop: 'memory',
+    title: '已用/总内存',
     minWidth: 120,
-    showOverflowTooltip: true,
+    showOverflowTooltip: true
   },
   {
-    prop: "storage",
-    title: "已用/总存储",
+    prop: 'storage',
+    title: '已用/总存储',
     minWidth: 120,
-    showOverflowTooltip: true,
+    showOverflowTooltip: true
   },
   {
-    prop: "status",
-    title: "状态",
+    prop: 'status',
+    title: '状态',
     minWidth: 100,
-    customSlot: "statusTag",
+    customSlot: 'statusTag'
   },
   {
-    prop: "checkTime",
-    title: "检测时间",
-    minWidth: 140,
+    prop: 'checkTime',
+    title: '检测时间',
+    minWidth: 140
   },
   {
-    prop: "comment",
-    title: "备注",
-    minWidth: 100,
+    prop: 'comment',
+    title: '备注',
+    minWidth: 100
   },
   {
-    title: "操作",
-    align: "center",
-    customSlot: "options",
-    width: 140,
-  },
-];
+    title: '操作',
+    align: 'center',
+    customSlot: 'options',
+    width: 140
+  }
+]
 
 export const TableConfig: TableConfig = {
   tableData: [],
@@ -101,66 +101,66 @@ export const TableConfig: TableConfig = {
   pagination: {
     currentPage: 1,
     pageSize: 10,
-    total: 0,
+    total: 0
   },
-  seqType: "seq",
-  loading: false,
-};
+  seqType: 'seq',
+  loading: false
+}
 
 export const PointColConfigs: colConfig[] = [
   {
-    prop: "name",
-    title: "节点名称",
+    prop: 'name',
+    title: '节点名称',
     minWidth: 100,
-    showOverflowTooltip: true,
+    showOverflowTooltip: true
   },
   {
-    prop: "host",
-    title: "地址",
+    prop: 'host',
+    title: '地址',
     minWidth: 120,
-    showOverflowTooltip: true,
+    showOverflowTooltip: true
   },
   {
-    prop: "cpu",
-    title: "CPU占用率",
+    prop: 'cpu',
+    title: 'CPU占用率',
     minWidth: 120,
-    showOverflowTooltip: true,
+    showOverflowTooltip: true
   },
   {
-    prop: "memory",
-    title: "已用/总内存",
+    prop: 'memory',
+    title: '已用/总内存',
     minWidth: 120,
-    showOverflowTooltip: true,
+    showOverflowTooltip: true
   },
   {
-    prop: "storage",
-    title: "已用/总存储",
+    prop: 'storage',
+    title: '已用/总存储',
     minWidth: 120,
-    showOverflowTooltip: true,
+    showOverflowTooltip: true
   },
   {
-    prop: "status",
-    title: "状态",
+    prop: 'status',
+    title: '状态',
     minWidth: 100,
-    customSlot: "statusTag",
+    customSlot: 'statusTag'
   },
   {
-    prop: "checkTime",
-    title: "检测时间",
-    minWidth: 140,
+    prop: 'checkTime',
+    title: '检测时间',
+    minWidth: 140
   },
   {
-    prop: "comment",
-    title: "备注",
-    minWidth: 100,
+    prop: 'comment',
+    title: '备注',
+    minWidth: 100
   },
   {
-    title: "操作",
-    align: "center",
-    customSlot: "options",
-    width: 140,
-  },
-];
+    title: '操作',
+    align: 'center',
+    customSlot: 'options',
+    width: 140
+  }
+]
 
 export const PointTableConfig: TableConfig = {
   tableData: [],
@@ -168,8 +168,8 @@ export const PointTableConfig: TableConfig = {
   pagination: {
     currentPage: 1,
     pageSize: 10,
-    total: 0,
+    total: 0
   },
-  seqType: "seq",
-  loading: false,
-};
+  seqType: 'seq',
+  loading: false
+}

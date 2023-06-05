@@ -38,58 +38,58 @@ export interface TableConfig {
 
 export const BreadCrumbList: Array<BreadCrumb> = [
   {
-    name: "调度历史",
-    code: "schedule",
-  },
-];
+    name: '调度历史',
+    code: 'schedule'
+  }
+]
 // 实例编码	作业	类型	状态	执行时间	结束时间	下次计划时间	操作
 export const colConfigs: colConfig[] = [
   {
-    prop: "id",
-    title: "实例编码",
+    prop: 'id',
+    title: '实例编码',
     minWidth: 158,
-    showOverflowTooltip: true,
+    showOverflowTooltip: true
   },
   {
-    prop: "workName",
-    title: "作业",
+    prop: 'workName',
+    title: '作业',
     minWidth: 120,
-    showOverflowTooltip: true,
+    showOverflowTooltip: true
   },
   {
-    prop: "instanceType",
-    title: "类型",
+    prop: 'instanceType',
+    title: '类型',
     minWidth: 110,
-    customSlot: "instanceTypeTag",
+    customSlot: 'instanceTypeTag'
   },
   {
-    prop: "status",
-    title: "状态",
+    prop: 'status',
+    title: '状态',
     minWidth: 100,
-    customSlot: "statusTag",
+    customSlot: 'statusTag'
   },
   {
-    prop: "execStartDateTime",
-    title: "执行时间",
-    minWidth: 140,
+    prop: 'execStartDateTime',
+    title: '执行时间',
+    minWidth: 140
   },
   {
-    prop: "execEndDateTime",
-    title: "结束时间",
-    minWidth: 140,
+    prop: 'execEndDateTime',
+    title: '结束时间',
+    minWidth: 140
   },
   {
-    prop: "nextPlanDateTime",
-    title: "下次计划时间",
-    minWidth: 140,
+    prop: 'nextPlanDateTime',
+    title: '下次计划时间',
+    minWidth: 140
   },
   {
-    title: "操作",
-    align: "center",
-    customSlot: "options",
-    width: 80,
-  },
-];
+    title: '操作',
+    align: 'center',
+    customSlot: 'options',
+    width: 80
+  }
+]
 
 export const TableConfig: TableConfig = {
   tableData: [],
@@ -97,8 +97,8 @@ export const TableConfig: TableConfig = {
   pagination: {
     currentPage: 1,
     pageSize: 10,
-    total: 0,
+    total: 0
   },
-  seqType: "seq",
-  loading: false,
-};
+  seqType: 'seq',
+  loading: false
+}

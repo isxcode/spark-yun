@@ -9,20 +9,48 @@
 <template>
   <div class="zqy-login">
     <div class="zqy-login-container">
-      <div class="normal-login-title">登录</div>
-      <el-form ref="loginForm" :model="formData" :rules="rules" class="normal-login-form">
-        <el-form-item label="账号" prop="account">
-          <el-input v-model="formData.account" placeholder="请输入账号" />
+      <div class="normal-login-title">
+        登录
+      </div>
+      <el-form
+        ref="loginForm"
+        :model="formData"
+        :rules="rules"
+        class="normal-login-form"
+      >
+        <el-form-item
+          label="账号"
+          prop="account"
+        >
+          <el-input
+            v-model="formData.account"
+            placeholder="请输入账号"
+          />
         </el-form-item>
-        <el-form-item label="密码" prop="passwd">
-          <el-input v-model="formData.passwd" type="password" placeholder="请输入密码" autocomplete="off" :show-password="true" />
+        <el-form-item
+          label="密码"
+          prop="passwd"
+        >
+          <el-input
+            v-model="formData.passwd"
+            type="password"
+            placeholder="请输入密码"
+            autocomplete="off"
+            :show-password="true"
+          />
         </el-form-item>
         <el-form-item class="login-button-content">
-          <el-button class="login-button" type="primary" :loading="loading" @click="clickToLogin"> 登录 </el-button>
+          <el-button
+            class="login-button"
+            type="primary"
+            :loading="loading"
+            @click="clickToLogin"
+          >
+            登录
+          </el-button>
         </el-form-item>
         <el-form-item class="registered-content">
-          <span class="registered"
-            >没有账号请联系管理员
+          <span class="registered">没有账号请联系管理员
             <!-- <a class="do-registered" @click="clickRegistered"
                             >免费注册</a -->
           </span>
@@ -33,56 +61,56 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, ref } from "vue";
-import { LoginUserInfo } from "@/services/login.service";
-import { ElMessage, FormInstance, FormRules } from "element-plus";
-import { useMutations } from "@/hooks/useStore";
-import { useRouter } from "vue-router";
+import { reactive, ref } from 'vue'
+import { LoginUserInfo } from '@/services/login.service'
+import { ElMessage, FormInstance, FormRules } from 'element-plus'
+import { useMutations } from '@/hooks/useStore'
+import { useRouter } from 'vue-router'
 
-const mutations = useMutations(["setUserInfo", "setToken", "setTenantId", "setRole"], "authStoreModule");
-const router = useRouter();
+const mutations = useMutations([ 'setUserInfo', 'setToken', 'setTenantId', 'setRole' ], 'authStoreModule')
+const router = useRouter()
 
-const loginForm = ref<FormInstance>();
-const loading = ref(false);
+const loginForm = ref<FormInstance>()
+const loading = ref(false)
 const formData = reactive({
-  account: "",
-  passwd: "",
-});
+  account: '',
+  passwd: ''
+})
 const rules = reactive<FormRules>({
   account: [
     {
       required: true,
-      message: "请输入用户名",
-      trigger: ["blur", "change"],
-    },
+      message: '请输入用户名',
+      trigger: [ 'blur', 'change' ]
+    }
   ],
   passwd: [
     {
       required: true,
-      message: "请输入密码",
-      trigger: ["blur", "change"],
-    },
-  ],
-});
+      message: '请输入密码',
+      trigger: [ 'blur', 'change' ]
+    }
+  ]
+})
 
 function clickToLogin() {
-  loading.value = true;
+  loading.value = true
   LoginUserInfo(formData)
     .then((res: any) => {
-      mutations.setUserInfo(res.data);
-      mutations.setToken(res.data.token);
-      mutations.setTenantId(res.data?.tenantId);
-      mutations.setRole(res.data?.role);
-      loading.value = false;
+      mutations.setUserInfo(res.data)
+      mutations.setToken(res.data.token)
+      mutations.setTenantId(res.data?.tenantId)
+      mutations.setRole(res.data?.role)
+      loading.value = false
       router.push({
-        name: "home",
-      });
-      ElMessage.success(res.msg);
+        name: 'home'
+      })
+      ElMessage.success(res.msg)
     })
     .catch((err: any) => {
-      loading.value = false;
-      console.error(err);
-    });
+      loading.value = false
+      console.error(err)
+    })
 }
 </script>
 

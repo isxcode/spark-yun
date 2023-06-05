@@ -1,75 +1,85 @@
 <template>
   <BlockModal :model-config="modelConfig">
-    <el-upload class="license-upload" action="" :limit="1" :multiple="false" :drag="true" :auto-upload="false" :on-change="handleChange">
+    <el-upload
+      class="license-upload"
+      action=""
+      :limit="1"
+      :multiple="false"
+      :drag="true"
+      :auto-upload="false"
+      :on-change="handleChange"
+    >
       <el-icon class="el-icon--upload">
         <upload-filled />
       </el-icon>
-      <div class="el-upload__text">上传企业许可证 <em>点击上传</em></div>
+      <div class="el-upload__text">
+        上传企业许可证 <em>点击上传</em>
+      </div>
     </el-upload>
   </BlockModal>
 </template>
 
 <script lang="ts" setup>
-import { reactive, defineExpose, ref } from "vue";
-import BlockModal from "@/components/block-modal/index.vue";
-import { ElMessage } from "element-plus";
+import { reactive, defineExpose, ref } from 'vue'
+import BlockModal from '@/components/block-modal/index.vue'
+import { ElMessage } from 'element-plus'
 
-const callback = ref<any>();
-const fileData = ref(null);
+const callback = ref<any>()
+const fileData = ref(null)
 const modelConfig = reactive({
-  title: "上传证书",
+  title: '上传证书',
   visible: false,
-  width: "520px",
+  width: '520px',
   okConfig: {
-    title: "确定",
+    title: '确定',
     ok: okEvent,
     disabled: false,
-    loading: false,
+    loading: false
   },
   cancelConfig: {
-    title: "取消",
+    title: '取消',
     cancel: closeEvent,
-    disabled: false,
+    disabled: false
   },
   needScale: false,
   zIndex: 1100,
-  closeOnClickModal: false,
-});
+  closeOnClickModal: false
+})
 
 function showModal(cb: () => void): void {
-  callback.value = cb;
-  modelConfig.visible = true;
+  callback.value = cb
+  modelConfig.visible = true
 }
 
 function okEvent() {
-  modelConfig.okConfig.loading = true;
+  modelConfig.okConfig.loading = true
   callback
     .value(fileData.value)
     .then((res: any) => {
-      modelConfig.okConfig.loading = false;
+      modelConfig.okConfig.loading = false
       if (res === undefined) {
-        modelConfig.visible = false;
+        modelConfig.visible = false
       } else {
-        modelConfig.visible = true;
+        modelConfig.visible = true
       }
     })
     .catch((err: any) => {
-      modelConfig.okConfig.loading = false;
-      ElMessage.error(err);
-    });
+      modelConfig.okConfig.loading = false
+      ElMessage.error(err)
+    })
 }
 
 function closeEvent() {
-  modelConfig.visible = false;
+  modelConfig.visible = false
 }
 
 function handleChange(e: any) {
-  fileData.value = e.raw;
+  fileData.value = e.raw
 }
 
 defineExpose({
-  showModal,
-});
+  showModal
+})
 </script>
 
 <style lang="scss">

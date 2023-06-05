@@ -1,4 +1,4 @@
-import { http } from "@/utils/http";
+import { http } from '@/utils/http'
 
 interface LoginParam {
   account: string;
@@ -12,25 +12,25 @@ interface TenantParams {
 // 登录接口
 export function LoginUserInfo(params: LoginParam): Promise<any> {
   return http.request({
-    method: "post",
-    url: "/usr/open/login",
-    params: params,
-  });
+    method: 'post',
+    url: '/usr/open/login',
+    params: params
+  })
 }
 
 // 查询租户信息
 export function QueryTenantList(): Promise<any> {
   return http.request({
-    method: "get",
-    url: "/tet/queryUserTenant",
-  });
+    method: 'get',
+    url: '/tet/queryUserTenant'
+  })
 }
 
 // 切换租户
 export function ChangeTenantData(params: TenantParams): Promise<any> {
   return http.request({
-    method: "get",
-    url: "/tet/chooseTenant",
-    params: params,
-  });
+    method: 'get',
+    url: '/tet/chooseTenant',
+    params: params
+  })
 }
