@@ -1,17 +1,14 @@
 package com.isxcode.star.plugin.query.sql;
 
-//import com.alibaba.fastjson.JSON;
-//import com.isxcode.star.api.pojos.plugin.req.PluginReq;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Base64;
-import java.util.List;
-import java.util.Map;
-import org.apache.logging.log4j.util.Strings;
+import com.alibaba.fastjson2.JSON;
 import org.apache.spark.SparkConf;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class Execute {
 
@@ -53,7 +50,6 @@ public class Execute {
     // 表头
     result.add(Arrays.asList(rowDataset.columns()));
 
-
     // 数据
     rowDataset
         .collectAsList()
@@ -66,8 +62,8 @@ public class Execute {
               result.add(metaData);
             });
 
-    System.out.println("==============");
-    System.out.println(result);
-    System.out.println("==============");
+    System.out.println("LogType:spark-yun");
+    System.out.println(JSON.toJSONString(result));
+    System.out.println("End of LogType:spark-yun");
   }
 }
