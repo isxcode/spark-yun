@@ -59,11 +59,11 @@ public class YunAgentBizService {
         break;
       case AgentType.K8S:
         sparkLauncher = kubernetesAgentService.genSparkLauncher(yagExecuteWorkReq.getPluginReq(), yagExecuteWorkReq.getSparkSubmit(), yagExecuteWorkReq.getAgentHomePath());
-        appId = yarnAgentService.executeWork(sparkLauncher);
+        appId = kubernetesAgentService.executeWork(sparkLauncher);
         break;
       case AgentType.StandAlone:
         sparkLauncher = standaloneAgentService.genSparkLauncher(yagExecuteWorkReq.getPluginReq(), yagExecuteWorkReq.getSparkSubmit(), yagExecuteWorkReq.getAgentHomePath());
-        appId = yarnAgentService.executeWork(sparkLauncher);
+        appId = standaloneAgentService.executeWork(sparkLauncher);
         break;
       default:
         throw new SparkYunException("agent类型不支持");
@@ -100,7 +100,7 @@ public class YunAgentBizService {
         appLog = yarnAgentService.getAppLog(appId);
         break;
       case AgentType.K8S:
-        appLog = String.valueOf(kubernetesAgentService.getAppLog(appId));
+        appLog = kubernetesAgentService.getAppLog(appId);
         break;
       case AgentType.StandAlone:
         appLog = standaloneAgentService.getAppLog(appId);
