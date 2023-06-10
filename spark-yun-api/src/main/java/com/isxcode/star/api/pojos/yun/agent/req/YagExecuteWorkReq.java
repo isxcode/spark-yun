@@ -11,4 +11,6 @@ public class YagExecuteWorkReq {
   private SparkSubmit sparkSubmit;
 
   private String agentHomePath;
+
+  private String agentType;
 }

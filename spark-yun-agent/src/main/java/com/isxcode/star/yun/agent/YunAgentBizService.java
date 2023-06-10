@@ -1,16 +1,18 @@
-package com.isxcode.star.yun.agent.run;
+package com.isxcode.star.yun.agent;
 
 import com.alibaba.fastjson.JSON;
+import com.isxcode.star.api.constants.agent.AgentType;
 import com.isxcode.star.api.exceptions.SparkYunException;
 import com.isxcode.star.api.pojos.yun.agent.req.YagExecuteWorkReq;
 import com.isxcode.star.api.pojos.yun.agent.res.YagExecuteWorkRes;
 import com.isxcode.star.api.pojos.yun.agent.res.YagGetDataRes;
 import com.isxcode.star.api.pojos.yun.agent.res.YagGetLogRes;
 import com.isxcode.star.api.pojos.yun.agent.res.YagGetStatusRes;
-import com.isxcode.star.yarn.utils.LogUtils;
+import com.isxcode.star.yun.agent.service.KubernetesAgentService;
+import com.isxcode.star.yun.agent.service.StandaloneAgentService;
+import com.isxcode.star.yun.agent.service.YarnAgentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.hadoop.yarn.api.records.ApplicationReport;
 import org.apache.hadoop.yarn.client.api.YarnClient;
 import org.apache.hadoop.yarn.exceptions.YarnException;
 import org.apache.hc.client5.http.classic.methods.HttpPost;
@@ -30,17 +32,13 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.stereotype.Service;
 
-import java.io.*;
-import java.net.MalformedURLException;
-import java.nio.charset.StandardCharsets;
-import java.util.Base64;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import static com.isxcode.star.yarn.utils.YarnUtils.formatApplicationId;
 import static com.isxcode.star.yarn.utils.YarnUtils.initYarnClient;
-import static org.apache.commons.lang3.StringUtils.containsIgnoreCase;
 
 /**
  * 代理服务层.
@@ -50,140 +48,110 @@ import static org.apache.commons.lang3.StringUtils.containsIgnoreCase;
 @RequiredArgsConstructor
 public class YunAgentBizService {
 
-  /**
-   * 执行作业.
-   */
+  private final KubernetesAgentService kubernetesAgentService;
+
+  private final YarnAgentService yarnAgentService;
+
+  private final StandaloneAgentService standaloneAgentService;
+
   public YagExecuteWorkRes executeWork(YagExecuteWorkReq yagExecuteWorkReq) throws IOException {
 
-    SparkLauncher sparkLauncher = new SparkLauncher()
-      .setVerbose(yagExecuteWorkReq.getSparkSubmit().isVerbose())
-      .setMainClass(yagExecuteWorkReq.getSparkSubmit().getMainClass())
-      .setDeployMode(yagExecuteWorkReq.getSparkSubmit().getDeployMode())
-      .setMaster(yagExecuteWorkReq.getSparkSubmit().getMaster())
-      .setAppName(yagExecuteWorkReq.getSparkSubmit().getAppName())
-      .setAppResource(yagExecuteWorkReq.getSparkSubmit().getAppResource())
-      .setSparkHome(yagExecuteWorkReq.getSparkSubmit().getSparkHome());
-
-    if (!Strings.isEmpty(yagExecuteWorkReq.getAgentHomePath())) {
-      File[] jarFiles = new File(yagExecuteWorkReq.getAgentHomePath() + File.separator + "lib").listFiles();
-      if (jarFiles != null) {
-        for (File jar : jarFiles) {
-          try {
-            sparkLauncher.addJar(jar.toURI().toURL().toString());
-          } catch (MalformedURLException e) {
-            log.error(e.getMessage());
-            throw new SparkYunException("50010", "添加lib中文件异常", e.getMessage());
-          }
-        }
-      }
+    SparkLauncher sparkLauncher;
+    String appId;
+    switch (yagExecuteWorkReq.getAgentType()) {
+      case AgentType.YARN:
+        sparkLauncher = yarnAgentService.genSparkLauncher(yagExecuteWorkReq.getPluginReq(), yagExecuteWorkReq.getSparkSubmit(), yagExecuteWorkReq.getAgentHomePath());
+        appId = yarnAgentService.executeWork(sparkLauncher);
+        break;
+      case AgentType.K8S:
+        sparkLauncher = kubernetesAgentService.genSparkLauncher(yagExecuteWorkReq.getPluginReq(), yagExecuteWorkReq.getSparkSubmit(), yagExecuteWorkReq.getAgentHomePath());
+        appId = yarnAgentService.executeWork(sparkLauncher);
+        break;
+      case AgentType.StandAlone:
+        sparkLauncher = standaloneAgentService.genSparkLauncher(yagExecuteWorkReq.getPluginReq(), yagExecuteWorkReq.getSparkSubmit(), yagExecuteWorkReq.getAgentHomePath());
+        appId = yarnAgentService.executeWork(sparkLauncher);
+        break;
+      default:
+        throw new SparkYunException("agent类型不支持");
     }
 
-    if (yagExecuteWorkReq.getSparkSubmit().getAppArgs().isEmpty()) {
-      sparkLauncher.addAppArgs(Base64.getEncoder().encodeToString(JSON.toJSONString(yagExecuteWorkReq.getPluginReq()).getBytes()));
-    }else{
-      sparkLauncher.addAppArgs(String.valueOf(yagExecuteWorkReq.getSparkSubmit().getAppArgs()));
-    }
-
-    yagExecuteWorkReq.getSparkSubmit().getConf().forEach(sparkLauncher::setConf);
-
-    Process launch = sparkLauncher.launch();
-    InputStream inputStream = launch.getErrorStream();
-    BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
-
-    // 等待作业响应
-    String applicationId;
-
-    StringBuilder errLog = new StringBuilder();
-    int errIndex = 0;
-    boolean isError = false;
-
-    // 如果发现错误日志，返回100行日志
-    String line;
-    while ((line = reader.readLine()) != null) {
-
-      if (errIndex > 100) {
-        throw new SparkYunException(errLog.toString());
-      }
-
-      if (!isError) {
-        if ((containsIgnoreCase(line, "Error") || containsIgnoreCase(line, "Exception")) && !line.contains("at ")) {
-          isError = true;
-        }
-      }
-
-      if (isError) {
-        errLog.append(line).append("\n");
-        errIndex++;
-      }
-
-      System.out.println(line);
-    }
-
-    if (launch.exitValue() == 1) {
-      throw new SparkYunException(errLog.toString());
-    }
-
-    return null;
+    return YagExecuteWorkRes.builder().appId(appId).build();
   }
 
-  public YagGetStatusRes getStatus(String applicationId) {
+  public YagGetStatusRes getStatus(String appId, String agentType) throws IOException {
 
-    // 初始化本地yarn客户端
-    YarnClient yarnClient = initYarnClient();
-
-    // 获取状态
-    ApplicationReport applicationReport;
-    try {
-      applicationReport = yarnClient.getApplicationReport(formatApplicationId(applicationId));
-    } catch (YarnException | IOException e) {
-      log.error(e.getMessage());
-      throw new SparkYunException("50010", "获取状态异常", e.getMessage());
+    String appStatus;
+    switch (agentType) {
+      case AgentType.YARN:
+        appStatus = yarnAgentService.getAppStatus(appId);
+        break;
+      case AgentType.K8S:
+        appStatus = kubernetesAgentService.getAppStatus(appId);
+        break;
+      case AgentType.StandAlone:
+        appStatus = standaloneAgentService.getAppStatus(appId);
+        break;
+      default:
+        throw new SparkYunException("agent类型不支持");
     }
 
-    return new YagGetStatusRes(
-      String.valueOf(applicationReport.getYarnApplicationState()),
-      String.valueOf(applicationReport.getFinalApplicationStatus()),
-      String.valueOf(applicationReport.getTrackingUrl()),
-      applicationId);
+    return YagGetStatusRes.builder().appStatus(appStatus).build();
   }
 
-  public YagGetLogRes getLog(String applicationId) {
+  public YagGetLogRes getLog(String appId, String agentType) throws IOException {
 
-    // 使用yarn工具获取日志
-    Map<String, String> map = LogUtils.parseYarnLog(applicationId);
-
-    // 获取日志
-    String stdErrLog = map.get("stderr");
-
-    if (Strings.isEmpty(stdErrLog)) {
-      throw new SparkYunException("50010", "查询失败，日志暂未生成");
+    String appLog;
+    switch (agentType) {
+      case AgentType.YARN:
+        appLog = yarnAgentService.getAppLog(appId);
+        break;
+      case AgentType.K8S:
+        appLog = String.valueOf(kubernetesAgentService.getAppLog(appId));
+        break;
+      case AgentType.StandAlone:
+        appLog = standaloneAgentService.getAppLog(appId);
+        break;
+      default:
+        throw new SparkYunException("agent类型不支持");
     }
 
-    return new YagGetLogRes(stdErrLog, applicationId);
+    return YagGetLogRes.builder().log(appLog).build();
   }
 
-  public YagGetDataRes getData(String applicationId) {
+  public YagGetDataRes getData(String appId, String agentType) throws IOException {
 
-    // 使用yarn工具获取日志
-    Map<String, String> map = LogUtils.parseYarnLog(applicationId);
-    String stdoutLog = map.get("stdout");
-
-    if (Strings.isEmpty(stdoutLog)) {
-      throw new SparkYunException("50010", "查询失败，数据暂未生成");
+    String stdoutLog;
+    switch (agentType) {
+      case AgentType.YARN:
+        stdoutLog = yarnAgentService.getAppData(appId);
+        break;
+      case AgentType.K8S:
+        stdoutLog = kubernetesAgentService.getAppData(appId);
+        break;
+      case AgentType.StandAlone:
+        stdoutLog = standaloneAgentService.getAppData(appId);
+        break;
+      default:
+        throw new SparkYunException("agent类型不支持");
     }
 
-    return new YagGetDataRes(JSON.parseArray(stdoutLog, List.class), applicationId);
+    return YagGetDataRes.builder().data(JSON.parseArray(stdoutLog, List.class)).build();
   }
 
-  public void stopJob(String applicationId) {
+  public void stopJob(String appId, String agentType) throws IOException {
 
-    YarnClient yarnClient = initYarnClient();
-
-    try {
-      yarnClient.killApplication(formatApplicationId(applicationId));
-    } catch (YarnException | IOException e) {
-      log.error(e.getMessage());
-      throw new SparkYunException("50010", "中止作业异常", e.getMessage());
+    switch (agentType) {
+      case AgentType.YARN:
+        yarnAgentService.killApp(appId);
+        break;
+      case AgentType.K8S:
+        kubernetesAgentService.killApp(appId);
+        break;
+      case AgentType.StandAlone:
+        standaloneAgentService.killApp(appId);
+        break;
+      default:
+        throw new SparkYunException("agent类型不支持");
     }
   }
 
@@ -299,11 +267,6 @@ public class YunAgentBizService {
         System.out.println(responseBody);
       }
     }
-  }
-
-  public static void main(String[] args) throws IOException, ParseException {
-
-
   }
 
 }
