@@ -21,16 +21,21 @@ public class StandaloneAgentService implements AgentService{
 
   @Override
   public String getAppStatus(String appId) {
+
+    String a = "spark-submit --status app-20230610112208-0007";
     return null;
   }
 
   @Override
   public String getAppLog(String appId) {
+
     return null;
   }
 
   @Override
   public String getAppData(String appId)  {
+
+
     return null;
   }
 
