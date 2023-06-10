@@ -40,7 +40,7 @@ public class Execute {
 //      }
 //    }
 
-    return sparkSessionBuilder.config(conf).enableHiveSupport().getOrCreate();
+    return sparkSessionBuilder.config(conf).getOrCreate();
   }
 
   public static void exportResult(Dataset<Row> rowDataset) {

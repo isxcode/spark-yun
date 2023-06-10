@@ -29,7 +29,7 @@ public class YarnAgentService implements AgentService {
       .setDeployMode(sparkSubmit.getDeployMode())
       .setAppName(sparkSubmit.getAppName())
       .setMaster(sparkSubmit.getMaster())
-      .setAppResource(sparkSubmit.getAppResource())
+      .setAppResource(agentHomePath + File.separator + "plugins" + File.separator + sparkSubmit.getAppResource())
       .setSparkHome(sparkSubmit.getSparkHome());
 
     if (!Strings.isEmpty(agentHomePath)) {
