@@ -45,3 +45,23 @@ OPTIONS (
 -- 将部门一和部门二的数据汇总后，写入部门三中
 insert into table3 select * from table2 join in table1 on table1.id = table2.id
 ```
+
+##### 真实案例
+
+> starrocks同步到spark
+
+```sql
+CREATE TEMPORARY VIEW table1
+USING org.apache.spark.sql.jdbc
+OPTIONS (
+    driver 'com.mysql.jdbc.Driver',
+    url 'jdbc:mysql://39.100.69.68:30191/ispong_db',
+    user 'root',
+    password '',
+    dbtable 'users'
+);
+
+insert into ispong_db.users_textfile select username,age from table1;
+
+select * from ispong_db.users_textfile;
+```

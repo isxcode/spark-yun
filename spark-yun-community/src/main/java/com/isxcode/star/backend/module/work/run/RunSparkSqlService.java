@@ -12,6 +12,7 @@ import com.isxcode.star.api.exceptions.WorkRunException;
 import com.isxcode.star.api.pojos.base.BaseResponse;
 import com.isxcode.star.api.pojos.plugin.req.PluginReq;
 import com.isxcode.star.api.pojos.work.res.WokRunWorkRes;
+import com.isxcode.star.api.pojos.yun.agent.req.SparkSubmit;
 import com.isxcode.star.api.pojos.yun.agent.req.YagExecuteWorkReq;
 import com.isxcode.star.api.pojos.yun.agent.res.YagGetLogRes;
 import com.isxcode.star.backend.module.cluster.ClusterEntity;
@@ -24,13 +25,10 @@ import com.isxcode.star.common.utils.HttpUtils;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -114,6 +112,9 @@ public class RunSparkSqlService {
 
     // 检测计算集群是否存在
     logBuilder.append(LocalDateTime.now() + WorkLog.SUCCESS_INFO + "开始申请资源 \n");
+    if (Strings.isEmpty(clusterId)) {
+      throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "申请资源失败 : 计算引擎不存在  \n");
+    }
     Optional<ClusterEntity> calculateEngineEntityOptional = clusterRepository.findById(clusterId);
     if (!calculateEngineEntityOptional.isPresent()) {
       throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "申请资源失败 : 计算引擎不存在  \n");
@@ -142,35 +143,36 @@ public class RunSparkSqlService {
     // 开始构建作业
     logBuilder.append(LocalDateTime.now() + WorkLog.SUCCESS_INFO + "开始构建作业  \n");
     YagExecuteWorkReq executeReq = new YagExecuteWorkReq();
-    executeReq.setAppName("spark-yun");
-    executeReq.setMainClass("com.isxcode.star.plugin.query.sql.Execute");
-    executeReq.setAppResourcePath(
-        engineNode.getAgentHomePath()
-            + File.separator
-            + PathConstants.AGENT_PATH_NAME
-            + File.separator
-            + "plugins"
-            + File.separator
-            + "spark-query-sql-plugin.jar");
-    executeReq.setSparkHomePath(
-        engineNode.getAgentHomePath()
-            + File.separator
-            + PathConstants.AGENT_PATH_NAME
-            + File.separator
-            + "spark-min");
-    executeReq.setAgentLibPath(
-        engineNode.getAgentHomePath()
-            + File.separator
-            + PathConstants.AGENT_PATH_NAME
-            + File.separator
-            + "lib");
 
-    // 封装请求spark作业提交
-    PluginReq pluginReq = new PluginReq();
-    pluginReq.setSql(sqlScript);
-    pluginReq.setLimit(200);
-    pluginReq.setSparkConfig(sparkConfig);
+    // 过滤掉 前缀不包含spark.xxx的配置
+    Map<String, String> sparkSubmitConfig = new HashMap<>();
+    sparkConfig.forEach(
+        (k, v) -> {
+          if (k.startsWith("spark")) {
+            sparkSubmitConfig.put(k, v);
+          }
+        });
+
+    SparkSubmit sparkSubmit =
+        SparkSubmit.builder()
+            .verbose(true)
+            .mainClass("com.isxcode.star.plugin.query.sql.Execute")
+            .appResource("spark-query-sql-plugin.jar")
+            .conf(sparkSubmitConfig)
+            .build();
+
+    sparkConfig.remove("spark.kubernetes.driver.podTemplateFile");
+    sparkConfig.remove("spark.kubernetes.executor.podTemplateFile");
+
+    PluginReq pluginReq =
+        PluginReq.builder().sql(sqlScript).limit(200).sparkConfig(sparkConfig).build();
+
+    String clusterType = calculateEngineEntityOptional.get().getClusterType();
+    executeReq.setSparkSubmit(sparkSubmit);
     executeReq.setPluginReq(pluginReq);
+    executeReq.setAgentHomePath(
+        engineNode.getAgentHomePath() + File.separator + PathConstants.AGENT_PATH_NAME);
+    executeReq.setAgentType(clusterType);
 
     // 构建作业完成
     logBuilder.append(LocalDateTime.now() + WorkLog.SUCCESS_INFO + "构建作业完成 \n");
@@ -193,17 +195,25 @@ public class RunSparkSqlService {
     }
     if (!String.valueOf(HttpStatus.OK.value()).equals(baseResponse.getCode())) {
       throw new WorkRunException(
-          LocalDateTime.now() + WorkLog.ERROR_INFO + "提交作业失败 : " + baseResponse.getErr() + "\n");
+          LocalDateTime.now() + WorkLog.ERROR_INFO + "提交作业失败 : " + baseResponse.getMsg() + "\n");
     }
+
+    // 解析返回对象,获取appId
     WokRunWorkRes submitWorkRes =
         JSON.parseObject(JSON.toJSONString(baseResponse.getData()), WokRunWorkRes.class);
-    logBuilder.append(LocalDateTime.now() + WorkLog.SUCCESS_INFO + "提交作业成功  \n");
+    logBuilder
+        .append(LocalDateTime.now())
+        .append(WorkLog.SUCCESS_INFO)
+        .append("提交作业成功 : ")
+        .append(submitWorkRes.getAppId())
+        .append("\n");
     instance.setSubmitLog(logBuilder.toString());
     workInstanceRepository.saveAndFlush(instance);
 
     // 提交作业成功后开始循环判断状态
     while (true) {
 
+      // 如果中止，则直接退出
       WorkInstanceEntity workInstanceEntity =
           workInstanceRepository.findById(instance.getId()).get();
       if (InstanceStatus.ABORT.equals(workInstanceEntity.getStatus())) {
@@ -216,8 +226,10 @@ public class RunSparkSqlService {
               + engineNode.getHost()
               + ":"
               + engineNode.getAgentPort()
-              + "/yag/getStatus?applicationId="
-              + submitWorkRes.getApplicationId();
+              + "/yag/getStatus?appId="
+              + submitWorkRes.getAppId()
+              + "&agentType="
+              + clusterType;
       baseResponse = HttpUtils.doGet(getStatusUrl, BaseResponse.class);
       if (!String.valueOf(HttpStatus.OK.value()).equals(baseResponse.getCode())) {
         throw new WorkRunException(
@@ -227,65 +239,75 @@ public class RunSparkSqlService {
                 + baseResponse.getErr()
                 + "\n");
       }
+
+      // 解析返回对象
       WokRunWorkRes workStatusRes =
           JSON.parseObject(JSON.toJSONString(baseResponse.getData()), WokRunWorkRes.class);
       instance.setSparkStarRes(JSON.toJSONString(workStatusRes));
       workInstanceRepository.saveAndFlush(instance);
 
-      // 如果是运行中，更新日志，继续执行
-      if ("RUNNING".equals(workStatusRes.getYarnApplicationState())
-          || "UNDEFINED".equals(workStatusRes.getFinalApplicationStatus())) {
-        logBuilder.append(
-            LocalDateTime.now()
-                + WorkLog.SUCCESS_INFO
-                + "运行中:"
-                + workStatusRes.getYarnApplicationState()
-                + "\n");
-        instance.setSubmitLog(logBuilder.toString());
-        workInstanceRepository.saveAndFlush(instance);
-      } else {
+      // 打印当前作业执行状态
+      logBuilder
+          .append(LocalDateTime.now())
+          .append(WorkLog.SUCCESS_INFO)
+          .append("运行状态:")
+          .append(workStatusRes.getAppStatus())
+          .append("\n");
+      instance.setSubmitLog(logBuilder.toString());
+      workInstanceRepository.saveAndFlush(instance);
+
+      // 如果是运行中，更新日志，继续执行 ContainerCreating
+      List<String> runningStatus =
+          Arrays.asList("RUNNING", "UNDEFINED", "SUBMITTED", "CONTAINERCREATING");
+      if (runningStatus.contains(workStatusRes.getAppStatus().toUpperCase())) {
         try {
-          Thread.sleep(2000);
+          Thread.sleep(1000);
         } catch (InterruptedException e) {
           throw new WorkRunException(
               LocalDateTime.now() + WorkLog.ERROR_INFO + "睡眠线程异常 : " + e.getMessage() + "\n");
         }
-
-        if (!"KILLED".equals(workStatusRes.getYarnApplicationState())) {
-          // 保存日志，生成日志时间比较久
-          String getLogUrl =
-              "http://"
-                  + engineNode.getHost()
-                  + ":"
-                  + engineNode.getAgentPort()
-                  + "/yag/getLog?applicationId="
-                  + submitWorkRes.getApplicationId();
-          baseResponse = HttpUtils.doGet(getLogUrl, BaseResponse.class);
-          if (!String.valueOf(HttpStatus.OK.value()).equals(baseResponse.getCode())) {
-            throw new WorkRunException(
-                LocalDateTime.now()
-                    + WorkLog.ERROR_INFO
-                    + "获取作业日志异常 : "
-                    + baseResponse.getMsg()
-                    + "\n");
-          }
-          YagGetLogRes yagGetLogRes =
-              JSON.parseObject(JSON.toJSONString(baseResponse.getData()), YagGetLogRes.class);
-          logBuilder.append(LocalDateTime.now() + WorkLog.SUCCESS_INFO + "保存日志完成 \n");
-          instance.setSubmitLog(logBuilder.toString());
-          instance.setYarnLog(yagGetLogRes.getLog());
-          workInstanceRepository.saveAndFlush(instance);
+      } else {
+        // 如果运行结束，获取运行日志并保存
+        String getLogUrl =
+            "http://"
+                + engineNode.getHost()
+                + ":"
+                + engineNode.getAgentPort()
+                + "/yag/getLog?appId="
+                + submitWorkRes.getAppId()
+                + "&agentType="
+                + clusterType;
+        baseResponse = HttpUtils.doGet(getLogUrl, BaseResponse.class);
+        if (!String.valueOf(HttpStatus.OK.value()).equals(baseResponse.getCode())) {
+          throw new WorkRunException(
+              LocalDateTime.now()
+                  + WorkLog.ERROR_INFO
+                  + "获取作业日志异常 : "
+                  + baseResponse.getMsg()
+                  + "\n");
         }
 
-        // 运行成功，保存数据
-        if ("SUCCEEDED".equals(workStatusRes.getFinalApplicationStatus())) {
+        // 解析日志并保存
+        YagGetLogRes yagGetLogRes =
+            JSON.parseObject(JSON.toJSONString(baseResponse.getData()), YagGetLogRes.class);
+        logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("保存日志完成 \n");
+        instance.setSubmitLog(logBuilder.toString());
+        instance.setYarnLog(yagGetLogRes.getLog());
+        workInstanceRepository.saveAndFlush(instance);
+
+        // 如果运行成功，则保存返回数据
+        List<String> successStatus = Arrays.asList("FINISHED", "SUCCEEDED", "COMPLETED");
+
+        if (successStatus.contains(workStatusRes.getAppStatus().toUpperCase())) {
           String getDataUrl =
               "http://"
                   + engineNode.getHost()
                   + ":"
                   + engineNode.getAgentPort()
-                  + "/yag/getData?applicationId="
-                  + submitWorkRes.getApplicationId();
+                  + "/yag/getData?appId="
+                  + submitWorkRes.getAppId()
+                  + "&agentType="
+                  + clusterType;
           baseResponse = HttpUtils.doGet(getDataUrl, BaseResponse.class);
           if (!String.valueOf(HttpStatus.OK.value()).equals(baseResponse.getCode())) {
             throw new WorkRunException(
@@ -297,19 +319,14 @@ public class RunSparkSqlService {
           }
           instance.setResultData(JSON.toJSONString(baseResponse.getData()));
           instance.setStatus(InstanceStatus.SUCCESS);
-          logBuilder.append(LocalDateTime.now() + WorkLog.SUCCESS_INFO + "作业执行成功 \n");
+          logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("作业执行成功 \n");
           instance.setSubmitLog(logBuilder.toString());
           workInstanceRepository.saveAndFlush(instance);
         } else {
-          throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "执行失败 \n");
+          // 如果不成功，直接返回失败
+          throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "作业远程执行失败 \n");
         }
         break;
-      }
-      try {
-        Thread.sleep(1000);
-      } catch (InterruptedException e) {
-        throw new WorkRunException(
-            LocalDateTime.now() + WorkLog.ERROR_INFO + "睡眠线程异常 : " + e.getMessage() + "\n");
       }
     }
   }

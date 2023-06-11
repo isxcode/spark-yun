@@ -66,10 +66,10 @@ public class TenantBizService {
 
     TenantEntity tenant = tenantMapper.tetAddTenantReqToTenantEntity(tetAddTenantReq);
     if (tetAddTenantReq.getMaxMemberNum() != null) {
-      tenant.setMaxMemberNum(tenant.getMaxMemberNum());
+      tenant.setMaxMemberNum(Long.parseLong(String.valueOf(tetAddTenantReq.getMaxMemberNum())));
     }
     if (tetAddTenantReq.getMaxWorkflowNum() != null) {
-      tenant.setMaxWorkflowNum(tenant.getMaxWorkflowNum());
+      tenant.setMaxWorkflowNum(Long.parseLong(String.valueOf(tetAddTenantReq.getMaxWorkflowNum())));
     }
 
     // 持久化租户

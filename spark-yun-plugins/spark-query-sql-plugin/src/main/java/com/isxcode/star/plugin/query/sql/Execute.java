@@ -77,6 +77,7 @@ public class Execute {
               result.add(metaData);
             });
 
-    System.out.println(JSON.toJSONString(result));
+    System.out.println(
+        "LogType:spark-yun\n" + JSON.toJSONString(result) + "\nEnd of LogType:spark-yun");
   }
 }
