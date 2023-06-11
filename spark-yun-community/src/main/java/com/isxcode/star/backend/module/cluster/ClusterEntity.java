@@ -59,6 +59,8 @@ public class ClusterEntity {
 
   private Double usedStorageNum;
 
+  private String clusterType;
+
   @CreatedDate private LocalDateTime createDateTime;
 
   @LastModifiedDate private LocalDateTime lastModifiedDateTime;
