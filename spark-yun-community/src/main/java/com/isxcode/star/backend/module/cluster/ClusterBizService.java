@@ -59,7 +59,7 @@ public class ClusterBizService {
   public void updateEngine(CaeUpdateEngineReq caeUpdateEngineReq) {
 
     Optional<ClusterEntity> calculateEngineEntityOptional =
-        engineRepository.findById(caeUpdateEngineReq.getCalculateEngineId());
+        engineRepository.findById(caeUpdateEngineReq.getClusterId());
     if (!calculateEngineEntityOptional.isPresent()) {
       throw new SparkYunException("计算引擎不存在");
     }
