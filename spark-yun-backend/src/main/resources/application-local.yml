@@ -7,37 +7,33 @@ spring:
       password: admin123
 
   jpa:
-    database: mysql
-    show-sql: false
+    database: h2
 
   datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:30306/zhiqingyun
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:file:~/.zhiqingyun/h2/data
     username: root
-    password: ispong123
+    password: root123
 
   flyway:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:30306/zhiqingyun
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:file:~/.zhiqingyun/h2/data
     user: root
-    password: ispong123
-    locations: classpath:db/migration/mysql
-    enabled: false
+    password: root123
+    locations: classpath:db/migration/h2
 
   quartz:
     properties:
-      org.quartz.dataSource.quartzDataSource.driver: com.mysql.cj.jdbc.Driver
-      org.quartz.dataSource.quartzDataSource.URL: jdbc:mysql://localhost:30306/zhiqingyun
+      org.quartz.dataSource.quartzDataSource.driver: org.h2.Driver
+      org.quartz.dataSource.quartzDataSource.URL: jdbc:h2:file:~/.zhiqingyun/h2/data
       org.quartz.dataSource.quartzDataSource.user: root
-      org.quartz.dataSource.quartzDataSource.password: ispong123
+      org.quartz.dataSource.quartzDataSource.password: root123
 
 logging:
   level:
     root: info
 
 spark-yun:
-  admin-passwd: admin123
-  log-advice: false
-  resources-path: /Users/ispong/Data/resources
-  agent-bin-dir: /Users/ispong/Isxcode/spark-yun/spark-yun-dist/src/main/bash
-  agent-tar-gz-dir: /Users/ispong/Isxcode/spark-yun/spark-yun-dist/build/distributions
+  resources-path: classpath:resources
+  agent-bin-dir: classpath:spark-yun-dist/src/main/bash
+  agent-tar-gz-dir: classpath:spark-yun-dist/build/distributions
