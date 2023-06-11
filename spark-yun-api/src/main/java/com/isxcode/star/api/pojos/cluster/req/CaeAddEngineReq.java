@@ -11,6 +11,10 @@ public class CaeAddEngineReq {
   @NotEmpty(message = "引擎名称不能为空")
   private String name;
 
+  @Schema(title = "计算引擎类型", example = "yarn")
+  @NotEmpty(message = "计算引擎类型不能为空")
+  private String clusterType;
+
   @Schema(title = "备注", example = "仅供内部使用")
   private String remark;
 }
