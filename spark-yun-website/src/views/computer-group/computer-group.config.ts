@@ -54,6 +54,12 @@ export const colConfigs: colConfig[] = [
     showOverflowTooltip: true
   },
   {
+    prop: 'clusterType',
+    title: '类型',
+    minWidth: 60,
+    showOverflowTooltip: true,
+  },
+  {
     prop: 'node',
     title: '可用/总节点数',
     minWidth: 120,

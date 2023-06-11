@@ -148,7 +148,7 @@ let workConfig = reactive({
   clusterId: '',
   datasourceId: '',
   name: '',
-  sql: '',
+  sqlScript: '',
   workId: '',
   workType: '',
   workflowId: '',
@@ -287,7 +287,7 @@ function terWorkData() {
 function saveData() {
   saveLoading.value = true
   SaveWorkItemConfig({
-    sql: sqltextData.value,
+    sqlScript: sqltextData.value,
     workId: route.query.id,
     datasourceId: workConfig.datasourceId
   })
@@ -306,7 +306,7 @@ function setConfigData() {
   configModalRef.value.showModal((formData: any) => {
     return new Promise((resolve: any, reject: any) => {
       SaveWorkItemConfig({
-        sql: sqltextData.value,
+        sqlScript: sqltextData.value,
         workId: route.query.id,
         datasourceId: formData.datasourceId
       })

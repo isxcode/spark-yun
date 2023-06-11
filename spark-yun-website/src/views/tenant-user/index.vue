@@ -53,7 +53,7 @@
                 <span
                   v-if="!scopeSlot.row.authLoading"
                   @click="giveAuth(scopeSlot.row)"
-                >授权</span>
+                >管理授权</span>
                 <el-icon
                   v-else
                   class="is-loading"
@@ -73,7 +73,7 @@
                   <Loading />
                 </el-icon>
               </template>
-              <span @click="deleteData(scopeSlot.row)">删除</span>
+              <span @click="deleteData(scopeSlot.row)">移除</span>
             </div>
           </template>
         </BlockTable>
@@ -180,7 +180,7 @@ function removeAuth(data: any) {
 
 // 删除
 function deleteData(data: any) {
-  ElMessageBox.confirm('确定删除该成员吗？', '警告', {
+  ElMessageBox.confirm('确定移除该成员吗？', '警告', {
     confirmButtonText: '确定',
     cancelButtonText: '取消',
     type: 'warning'
