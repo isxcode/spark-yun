@@ -14,6 +14,12 @@ dependencies {
 
   // hadoop-yarn-client
   implementation "org.apache.hadoop:hadoop-yarn-client:${HADOOP_VERSION}"
+
+  // jsoup
+  implementation "org.jsoup:jsoup:${JSOUP_VERSION}"
+
+  implementation group: 'org.apache.httpcomponents.client5', name: 'httpclient5', version: '5.2.1'
+
 }
 
 bootJar {

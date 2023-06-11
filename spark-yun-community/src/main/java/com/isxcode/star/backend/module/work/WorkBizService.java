@@ -287,7 +287,7 @@ public class WorkBizService {
               + engineNode.getHost()
               + ":"
               + engineNode.getAgentPort()
-              + "/yag/stopJob?applicationId="
+              + "/yag/stopJob?appId="
               + wokRunWorkRes.getApplicationId();
       BaseResponse<?> baseResponse = HttpUtils.doGet(stopJobUrl, BaseResponse.class);
 
