@@ -13,12 +13,17 @@
   - [数据源](/zh-cn/reference/datasource.md)
   - [作业流](/zh-cn/reference/workflow.md)
   - [调度历史](/zh-cn/reference/history.md)
-- **开发手册**
-  - [如何启动项目](/zh-cn/develop/create_issue.md)
-  - [如何开发项目](/zh-cn/develop/develop.md)
-  - [如何申请加入](/zh-cn/develop/join.md)
-  - [如何提交PR](/zh-cn/develop/create_issue.md)
-- **版本历史**
-  - [v0.0.5](/zh-cn/version/v0-0-5.md)
-  - [v0.0.2](/zh-cn/version/v0-0-2.md)
-  - [v0.0.1](/zh-cn/version/v0-0-1.md)
+- **开发者手册**
+  - [启动项目](/zh-cn/develop/start.md)
+  - [任务开发](/zh-cn/develop/develop.md)
+  - [版本发布](/zh-cn/develop/release.md)
+  - [开发规范](/zh-cn/develop/rule.md)
+  - [申请加入](/zh-cn/develop/join.md)
+    
+[//]: # (- **版本历史**)
+
+[//]: # (  - [v0.0.5]&#40;/zh-cn/version/v0-0-5.md&#41;)
+
+[//]: # (  - [v0.0.2]&#40;/zh-cn/version/v0-0-2.md&#41;)
+
+[//]: # (  - [v0.0.1]&#40;/zh-cn/version/v0-0-1.md&#41;)
