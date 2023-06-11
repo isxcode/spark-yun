@@ -20,10 +20,10 @@
       </el-form-item>
       <el-form-item
         label="类型"
-        prop="type"
+        prop="dbType"
       >
         <el-select
-          v-model="formData.type"
+          v-model="formData.dbType"
           placeholder="请选择"
         >
           <el-option
@@ -58,10 +58,10 @@
       </el-form-item>
       <el-form-item
         label="密码"
-        prop="password"
+        prop="passwd"
       >
         <el-input
-          v-model="formData.password"
+          v-model="formData.passwd"
           maxlength="100"
           type="password"
           show-password
@@ -110,27 +110,63 @@ const modelConfig = reactive({
 })
 const formData = reactive({
   name: '',
-  type: '',
+  dbType: '',
   jdbcUrl: '',
   username: '',
-  password: '',
+  passwd: '',
   comment: '',
   id: ''
 })
 const typeList = reactive([
   {
     label: 'Mysql',
-    value: 'Mysql'
+    value: 'MYSQL',
   },
   {
     label: 'Oracle',
-    value: 'Oracle'
+    value: 'ORACLE',
   },
   {
     label: 'SqlServer',
-    value: 'SqlServer'
-  }
-])
+    value: 'SQL_SERVER',
+  },
+  {
+    label: 'PostgreSql',
+    value: 'POSTGRE_SQL',
+  },
+  {
+    label: 'Clickhouse',
+    value: 'CLICKHOUSE',
+  },
+  {
+    label: 'Hive',
+    value: 'HIVE',
+  },
+  {
+    label: 'HanaSap',
+    value: 'HANA_SAP',
+  },
+  {
+    label: '达梦',
+    value: 'DM',
+  },
+  {
+    label: 'Doris',
+    value: 'DORIS',
+  },
+  {
+    label: 'OceanBase',
+    value: 'OCEANBASE',
+  },
+  {
+    label: 'TiDB',
+    value: 'TIDB',
+  },
+  {
+    label: 'StarRocks',
+    value: 'STAR_ROCKS',
+  },
+]);
 const rules = reactive<FormRules>({
   name: [
     {
@@ -139,7 +175,7 @@ const rules = reactive<FormRules>({
       trigger: [ 'blur', 'change' ]
     }
   ],
-  type: [
+  dbType: [
     {
       required: true,
       message: '请选择数据库类型',
@@ -160,7 +196,7 @@ const rules = reactive<FormRules>({
       trigger: [ 'blur', 'change' ]
     }
   ],
-  password: [
+  passwd: [
     {
       required: true,
       message: '请输入密码',
@@ -174,19 +210,19 @@ function showModal(cb: () => void, data: any): void {
   modelConfig.visible = true
   if (data) {
     formData.name = data.name
-    formData.type = data.type
+    formData.dbType = data.dbType
     formData.jdbcUrl = data.jdbcUrl
     formData.username = data.username
-    formData.password = data.password
+    formData.passwd = data.passwd
     formData.comment = data.comment
     formData.id = data.id
     modelConfig.title = '编辑数据源'
   } else {
     formData.name = ''
-    formData.type = ''
+    formData.dbType = ''
     formData.jdbcUrl = ''
     formData.username = ''
-    formData.password = ''
+    formData.passwd = ''
     formData.comment = ''
     formData.id = ''
     modelConfig.title = '添加数据源'

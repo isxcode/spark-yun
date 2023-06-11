@@ -18,6 +18,11 @@
           show-word-limit
         />
       </el-form-item>
+      <el-form-item label="类型" prop="type">
+        <el-select v-model="formData.clusterType" placeholder="请选择">
+          <el-option v-for="item in typeList" :key="item.value" :label="item.label" :value="item.value" />
+        </el-select>
+      </el-form-item>
       <el-form-item label="备注">
         <el-input
           v-model="formData.comment"
@@ -59,6 +64,7 @@ const modelConfig = reactive({
   closeOnClickModal: false
 })
 const formData = reactive({
+  clusterType: '',
   name: '',
   comment: '',
   id: ''
@@ -72,6 +78,20 @@ const rules = reactive<FormRules>({
     }
   ]
 })
+const typeList = reactive([
+  {
+    label: 'Kubernetes',
+    value: 'kubernetes',
+  },
+  {
+    label: 'Yarn',
+    value: 'yarn',
+  },
+  {
+    label: 'StandAlone',
+    value: 'standalone',
+  },
+]);
 
 function showModal(cb: () => void, data: any): void {
   callback.value = cb

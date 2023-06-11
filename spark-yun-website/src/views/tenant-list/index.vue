@@ -54,7 +54,7 @@
               <span
                 v-if="!scopeSlot.row.checkLoding"
                 @click="checkTenant(scopeSlot.row)"
-              >同步</span>
+              >检测</span>
               <el-icon
                 v-else
                 class="is-loading"

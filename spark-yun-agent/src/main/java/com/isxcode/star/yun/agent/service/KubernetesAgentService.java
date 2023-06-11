@@ -4,46 +4,53 @@ import com.alibaba.fastjson.JSON;
 import com.isxcode.star.api.exceptions.SparkYunException;
 import com.isxcode.star.api.pojos.plugin.req.PluginReq;
 import com.isxcode.star.api.pojos.yun.agent.req.SparkSubmit;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.logging.log4j.util.Strings;
-import org.apache.spark.launcher.SparkLauncher;
-import org.springframework.stereotype.Service;
-
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.util.Strings;
+import org.apache.spark.launcher.SparkLauncher;
+import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
-public class KubernetesAgentService implements AgentService{
+public class KubernetesAgentService implements AgentService {
   @Override
-  public SparkLauncher genSparkLauncher(PluginReq pluginReq, SparkSubmit sparkSubmit, String agentHomePath) {
+  public SparkLauncher genSparkLauncher(
+      PluginReq pluginReq, SparkSubmit sparkSubmit, String agentHomePath) {
 
-    SparkLauncher sparkLauncher = new SparkLauncher()
-      .setVerbose(sparkSubmit.isVerbose())
-      .setMainClass(sparkSubmit.getMainClass())
-      .setDeployMode(sparkSubmit.getDeployMode())
-      .setAppName(sparkSubmit.getAppName())
-      .setMaster(sparkSubmit.getMaster())
-      .setAppResource("local:///opt/spark/examples/jars/" + sparkSubmit.getAppResource())
-      .setSparkHome(sparkSubmit.getSparkHome());
+    SparkLauncher sparkLauncher =
+        new SparkLauncher()
+            .setVerbose(sparkSubmit.isVerbose())
+            .setMainClass(sparkSubmit.getMainClass())
+            .setDeployMode(sparkSubmit.getDeployMode())
+            .setAppName(sparkSubmit.getAppName())
+            .setMaster(sparkSubmit.getMaster())
+            .setAppResource("local:///opt/spark/examples/jars/" + sparkSubmit.getAppResource())
+            .setSparkHome(sparkSubmit.getSparkHome());
 
     if (!Strings.isEmpty(agentHomePath)) {
       File[] jarFiles = new File(agentHomePath + File.separator + "lib").listFiles();
       if (jarFiles != null) {
         for (int i = 0; i < jarFiles.length; i++) {
           sparkLauncher.addJar("local:///opt/spark/examples/jars/lib/" + jarFiles[i].getName());
-          sparkLauncher.setConf("spark.kubernetes.driver.volumes.hostPath." + i + ".mount.path", "/opt/spark/examples/jars/lib/" + jarFiles[i].getName());
-          sparkLauncher.setConf("spark.kubernetes.driver.volumes.hostPath." + i + ".mount.readOnly", "false");
-          sparkLauncher.setConf("spark.kubernetes.driver.volumes.hostPath." + i + ".options.path", jarFiles[i].getPath());
+          sparkLauncher.setConf(
+              "spark.kubernetes.driver.volumes.hostPath." + i + ".mount.path",
+              "/opt/spark/examples/jars/lib/" + jarFiles[i].getName());
+          sparkLauncher.setConf(
+              "spark.kubernetes.driver.volumes.hostPath." + i + ".mount.readOnly", "false");
+          sparkLauncher.setConf(
+              "spark.kubernetes.driver.volumes.hostPath." + i + ".options.path",
+              jarFiles[i].getPath());
         }
       }
     }
 
     if (sparkSubmit.getAppArgs().isEmpty()) {
-      sparkLauncher.addAppArgs(Base64.getEncoder().encodeToString(JSON.toJSONString(pluginReq).getBytes()));
+      sparkLauncher.addAppArgs(
+          Base64.getEncoder().encodeToString(JSON.toJSONString(pluginReq).getBytes()));
     } else {
       sparkLauncher.addAppArgs(String.valueOf(sparkSubmit.getAppArgs()));
     }
@@ -51,9 +58,13 @@ public class KubernetesAgentService implements AgentService{
     sparkSubmit.getConf().forEach(sparkLauncher::setConf);
 
     sparkLauncher.setConf("spark.kubernetes.container.image", "zhiqingyun/spark:latest");
-    sparkLauncher.setConf("spark.kubernetes.driver.volumes.hostPath.jar.mount.path", "/opt/spark/examples/jars/" + sparkSubmit.getAppResource());
+    sparkLauncher.setConf(
+        "spark.kubernetes.driver.volumes.hostPath.jar.mount.path",
+        "/opt/spark/examples/jars/" + sparkSubmit.getAppResource());
     sparkLauncher.setConf("spark.kubernetes.driver.volumes.hostPath.jar.mount.readOnly", "false");
-    sparkLauncher.setConf("spark.kubernetes.driver.volumes.hostPath.jar.options.path", agentHomePath + File.separator + "plugins" + File.separator + sparkSubmit.getAppResource());
+    sparkLauncher.setConf(
+        "spark.kubernetes.driver.volumes.hostPath.jar.options.path",
+        agentHomePath + File.separator + "plugins" + File.separator + sparkSubmit.getAppResource());
     sparkLauncher.setConf("spark.kubernetes.authenticate.driver.serviceAccountName", "zhiqingyun");
     sparkLauncher.setConf("spark.kubernetes.namespace", "spark-yun");
 
@@ -65,7 +76,8 @@ public class KubernetesAgentService implements AgentService{
 
     Process launch = sparkLauncher.launch();
     InputStream inputStream = launch.getErrorStream();
-    BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
+    BufferedReader reader =
+        new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
 
     StringBuilder errLog = new StringBuilder();
     String line;
@@ -102,7 +114,8 @@ public class KubernetesAgentService implements AgentService{
     Process process = Runtime.getRuntime().exec(String.format(getStatusCmdFormat, appId));
 
     InputStream inputStream = process.getInputStream();
-    BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
+    BufferedReader reader =
+        new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
 
     StringBuilder errLog = new StringBuilder();
     String line;
@@ -139,7 +152,8 @@ public class KubernetesAgentService implements AgentService{
     Process process = Runtime.getRuntime().exec(String.format(getLogCmdFormat, appId));
 
     InputStream inputStream = process.getInputStream();
-    BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
+    BufferedReader reader =
+        new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
 
     StringBuilder errLog = new StringBuilder();
     String line;
@@ -156,7 +170,8 @@ public class KubernetesAgentService implements AgentService{
     if (process.exitValue() == 1) {
       throw new SparkYunException(errLog.toString());
     } else {
-      Pattern regex = Pattern.compile("LogType:spark-yun\\s*([\\s\\S]*?)\\s*End of LogType:spark-yun");
+      Pattern regex =
+          Pattern.compile("LogType:spark-yun\\s*([\\s\\S]*?)\\s*End of LogType:spark-yun");
       Matcher matcher = regex.matcher(errLog);
       String log = errLog.toString();
       if (matcher.find()) {
@@ -175,7 +190,8 @@ public class KubernetesAgentService implements AgentService{
     Process process = Runtime.getRuntime().exec(String.format(getLogCmdFormat, appId));
 
     InputStream inputStream = process.getInputStream();
-    BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
+    BufferedReader reader =
+        new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
 
     StringBuilder errLog = new StringBuilder();
     String line;
@@ -192,11 +208,16 @@ public class KubernetesAgentService implements AgentService{
     if (process.exitValue() == 1) {
       throw new SparkYunException(errLog.toString());
     } else {
-      Pattern regex = Pattern.compile("LogType:spark-yun\\s*([\\s\\S]*?)\\s*End of LogType:spark-yun");
+      Pattern regex =
+          Pattern.compile("LogType:spark-yun\\s*([\\s\\S]*?)\\s*End of LogType:spark-yun");
       Matcher matcher = regex.matcher(errLog);
       String log = "";
       while (matcher.find() && Strings.isEmpty(log)) {
-        log = matcher.group().replace("LogType:spark-yun\n","").replace("\nEnd of LogType:spark-yun","");
+        log =
+            matcher
+                .group()
+                .replace("LogType:spark-yun\n", "")
+                .replace("\nEnd of LogType:spark-yun", "");
       }
       return log;
     }
@@ -211,7 +232,8 @@ public class KubernetesAgentService implements AgentService{
     Process process = Runtime.getRuntime().exec(String.format(killAppCmdFormat, appId));
 
     InputStream inputStream = process.getInputStream();
-    BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
+    BufferedReader reader =
+        new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
 
     StringBuilder errLog = new StringBuilder();
     String line;

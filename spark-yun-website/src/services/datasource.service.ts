@@ -42,7 +42,7 @@ export function UpdateDatasourceData(params: any): Promise<any> {
 // 检测
 export function CheckDatasourceData(params: any): Promise<any> {
   return http.request({
-    method: 'post',
+    method: 'get',
     url: '/das/testConnect',
     params: params
   })

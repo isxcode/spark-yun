@@ -54,7 +54,7 @@ export const colConfigs: colConfig[] = [
     showOverflowTooltip: true
   },
   {
-    prop: 'type',
+    prop: 'dbType',
     title: '类型',
     minWidth: 100,
     showOverflowTooltip: true

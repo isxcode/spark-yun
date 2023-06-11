@@ -11,6 +11,10 @@ import com.isxcode.star.api.pojos.yun.agent.res.YagGetStatusRes;
 import com.isxcode.star.yun.agent.service.KubernetesAgentService;
 import com.isxcode.star.yun.agent.service.StandaloneAgentService;
 import com.isxcode.star.yun.agent.service.YarnAgentService;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.hc.client5.http.classic.methods.HttpPost;
@@ -29,14 +33,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-/**
- * 代理服务层.
- */
+/** 代理服务层. */
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -54,15 +51,27 @@ public class YunAgentBizService {
     String appId;
     switch (yagExecuteWorkReq.getAgentType()) {
       case AgentType.YARN:
-        sparkLauncher = yarnAgentService.genSparkLauncher(yagExecuteWorkReq.getPluginReq(), yagExecuteWorkReq.getSparkSubmit(), yagExecuteWorkReq.getAgentHomePath());
+        sparkLauncher =
+            yarnAgentService.genSparkLauncher(
+                yagExecuteWorkReq.getPluginReq(),
+                yagExecuteWorkReq.getSparkSubmit(),
+                yagExecuteWorkReq.getAgentHomePath());
         appId = yarnAgentService.executeWork(sparkLauncher);
         break;
       case AgentType.K8S:
-        sparkLauncher = kubernetesAgentService.genSparkLauncher(yagExecuteWorkReq.getPluginReq(), yagExecuteWorkReq.getSparkSubmit(), yagExecuteWorkReq.getAgentHomePath());
+        sparkLauncher =
+            kubernetesAgentService.genSparkLauncher(
+                yagExecuteWorkReq.getPluginReq(),
+                yagExecuteWorkReq.getSparkSubmit(),
+                yagExecuteWorkReq.getAgentHomePath());
         appId = kubernetesAgentService.executeWork(sparkLauncher);
         break;
       case AgentType.StandAlone:
-        sparkLauncher = standaloneAgentService.genSparkLauncher(yagExecuteWorkReq.getPluginReq(), yagExecuteWorkReq.getSparkSubmit(), yagExecuteWorkReq.getAgentHomePath());
+        sparkLauncher =
+            standaloneAgentService.genSparkLauncher(
+                yagExecuteWorkReq.getPluginReq(),
+                yagExecuteWorkReq.getSparkSubmit(),
+                yagExecuteWorkReq.getAgentHomePath());
         appId = standaloneAgentService.executeWork(sparkLauncher);
         break;
       default:
@@ -191,7 +200,8 @@ public class YunAgentBizService {
     }
 
     for (Element row : activeRows) {
-      apps.put(row.select("td").get(1).text(), row.select("td").get(0).text().replace("(kill)", ""));
+      apps.put(
+          row.select("td").get(1).text(), row.select("td").get(0).text().replace("(kill)", ""));
     }
 
     return apps.get(jobName);
@@ -200,12 +210,14 @@ public class YunAgentBizService {
   public String getOutUrl() throws IOException {
 
     // 爬虫获取状态
-    Document doc = Jsoup.connect("http://39.100.67.15:8081/app/?appId=app-20230608171856-0001").get();
+    Document doc =
+        Jsoup.connect("http://39.100.67.15:8081/app/?appId=app-20230608171856-0001").get();
 
     // 提取stdout链接
-    Elements stdoutLinks = doc.select("div.aggregated-removedExecutors tbody tr td:nth-child(8) a[href]:eq(0)");
+    Elements stdoutLinks =
+        doc.select("div.aggregated-removedExecutors tbody tr td:nth-child(8) a[href]:eq(0)");
     for (Element link : stdoutLinks) {
-     return  link.attr("href");
+      return link.attr("href");
     }
     return null;
   }
@@ -213,10 +225,12 @@ public class YunAgentBizService {
   public String getErrUrl() throws IOException {
 
     // 爬虫获取状态
-    Document doc = Jsoup.connect("http://39.100.67.15:8081/app/?appId=app-20230608171856-0001").get();
+    Document doc =
+        Jsoup.connect("http://39.100.67.15:8081/app/?appId=app-20230608171856-0001").get();
 
     // 提取stderr链接
-    Elements stderrLinks = doc.select("div.aggregated-removedExecutors tbody tr td:nth-child(8) a[href]:eq(1)");
+    Elements stderrLinks =
+        doc.select("div.aggregated-removedExecutors tbody tr td:nth-child(8) a[href]:eq(1)");
     for (Element link : stderrLinks) {
       return link.attr("href");
     }
@@ -225,7 +239,10 @@ public class YunAgentBizService {
 
   public String getErrLog() throws IOException {
 
-    Document doc = Jsoup.connect("http://39.100.67.15:8082/logPage/?appId=app-20230608171856-0001&executorId=0&logType=stderr").get();
+    Document doc =
+        Jsoup.connect(
+                "http://39.100.67.15:8082/logPage/?appId=app-20230608171856-0001&executorId=0&logType=stderr")
+            .get();
 
     Element preElement = doc.selectFirst("pre");
 
@@ -234,7 +251,10 @@ public class YunAgentBizService {
 
   public String getOutLog() throws IOException {
 
-    Document doc = Jsoup.connect("http://39.100.67.15:8082/logPage/?appId=app-20230608171856-0001&executorId=0&logType=stdout").get();
+    Document doc =
+        Jsoup.connect(
+                "http://39.100.67.15:8082/logPage/?appId=app-20230608171856-0001&executorId=0&logType=stdout")
+            .get();
 
     Element preElement = doc.selectFirst("pre");
 
@@ -262,5 +282,4 @@ public class YunAgentBizService {
       }
     }
   }
-
 }
