@@ -1,10 +1,10 @@
 <!--
  * @Author: fanciNate
  * @Date: 2023-05-05 15:04:54
- * @LastEditTime: 2023-05-23 22:03:43
+ * @LastEditTime: 2023-06-11 21:34:43
  * @LastEditors: fanciNate
  * @Description: In User Settings Edit
- * @FilePath: /zqy-web/src/layout/header/index.vue
+ * @FilePath: /spark-yun/spark-yun-website/src/layout/header/index.vue
 -->
 <template>
   <div class="zqy-header">
@@ -31,6 +31,7 @@
       </el-select>
     </div>
     <div class="header-user">
+      <span class="redirect-url" @click="clickRedirectUrl">帮助文档</span>
       <el-dropdown @command="handleCommand">
         <span class="el-dropdown-link">
           <!-- {{ headerConfig?.userInfo?.username }}<i class="el-icon-arrow-down el-icon--right"></i> -->
@@ -127,6 +128,10 @@ function visibleChange(e: boolean): void {
   }
 }
 
+function clickRedirectUrl(): void {
+  window.open(import.meta.env.VITE_INFO_URL, '_blank')
+}
+
 onMounted(() => {
   nextTick(() => {
     getTenantList()
@@ -204,6 +209,16 @@ onMounted(() => {
       background-color: $--app-primary-color;
       color: $--app-light-color;
       font-size: $--app-small-font-size;
+    }
+
+    .redirect-url {
+      font-size: $--app-small-font-size;
+      color: $--app-primary-color;
+      margin-right: 12px;
+      cursor: pointer;
+      &:hover {
+        text-decoration: underline;
+      }
     }
   }
 }
