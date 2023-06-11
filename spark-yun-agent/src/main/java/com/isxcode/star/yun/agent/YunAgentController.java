@@ -1,4 +1,4 @@
-package com.isxcode.star.yun.agent.run;
+package com.isxcode.star.yun.agent;
 
 import com.isxcode.star.api.annotations.SuccessResponse;
 import com.isxcode.star.api.constants.base.ModulePrefix;
@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
+
 @Tag(name = "代理模块")
 @RequestMapping(ModulePrefix.YUN_AGENT)
 @RestController
@@ -29,7 +31,7 @@ public class YunAgentController {
   @Operation(summary = "提交作业接口", description = "执行作业，将作业通过代理提交给yarn处理")
   @PostMapping("/executeWork")
   @SuccessResponse("提交成功")
-  public YagExecuteWorkRes executeWork(@Valid @RequestBody YagExecuteWorkReq yagExecuteWorkReq) {
+  public YagExecuteWorkRes executeWork(@Valid @RequestBody YagExecuteWorkReq yagExecuteWorkReq) throws IOException {
 
     return yunAgentBizService.executeWork(yagExecuteWorkReq);
   }
@@ -37,33 +39,33 @@ public class YunAgentController {
   @Operation(summary = "获取作业运行状态接口")
   @GetMapping("/getStatus")
   @SuccessResponse("获取成功")
-  public YagGetStatusRes getStatus(@RequestParam String applicationId) {
+  public YagGetStatusRes getStatus(@RequestParam String appId, @RequestParam String agentType) throws IOException {
 
-    return yunAgentBizService.getStatus(applicationId);
+    return yunAgentBizService.getStatus(appId, agentType);
   }
 
   @Operation(summary = "获取作业运行日志接口", description = "获取作业运行日志")
   @GetMapping("/getLog")
   @SuccessResponse("获取成功")
-  public YagGetLogRes getLog(@RequestParam String applicationId) {
+  public YagGetLogRes getLog(@RequestParam String appId, @RequestParam String agentType) throws IOException {
 
-    return yunAgentBizService.getLog(applicationId);
+    return yunAgentBizService.getLog(appId, agentType);
   }
 
   @Operation(summary = "获取作业运行返回数据接口", description = "获取query数据")
   @GetMapping("/getData")
   @SuccessResponse("获取成功")
-  public YagGetDataRes getData(@RequestParam String applicationId) {
+  public YagGetDataRes getData(@RequestParam String appId, @RequestParam String agentType) throws IOException {
 
-    return yunAgentBizService.getData(applicationId);
+    return yunAgentBizService.getData(appId, agentType);
   }
 
   @Operation(summary = "中止作业接口", description = "中止作业")
   @GetMapping("/stopJob")
   @SuccessResponse("中止成功")
-  public void stopJob(@RequestParam String applicationId) {
+  public void stopJob(@RequestParam String appId, @RequestParam String agentType) throws IOException {
 
-    yunAgentBizService.stopJob(applicationId);
+    yunAgentBizService.stopJob(appId, agentType);
   }
 
   /** 心跳检测. */

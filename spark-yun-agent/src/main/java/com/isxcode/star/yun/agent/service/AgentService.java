@@ -1,0 +1,29 @@
+package com.isxcode.star.yun.agent.service;
+
+import com.isxcode.star.api.pojos.plugin.req.PluginReq;
+import com.isxcode.star.api.pojos.yun.agent.req.SparkSubmit;
+import org.apache.spark.launcher.SparkLauncher;
+
+import java.io.IOException;
+
+public interface AgentService {
+
+  /**
+   * @param pluginReq   插件请求体
+   * @param sparkSubmit spark作业提交配置
+   */
+  SparkLauncher genSparkLauncher(PluginReq pluginReq, SparkSubmit sparkSubmit, String agentHomePath);
+
+  /**
+   * @param sparkLauncher spark启动器
+   */
+  String executeWork(SparkLauncher sparkLauncher) throws IOException;
+
+  String getAppStatus(String appId)  throws IOException;
+
+  String getAppLog(String appId)  throws IOException;
+
+  String getAppData(String appId)  throws IOException;
+
+  void killApp(String appId) throws IOException;
+}
