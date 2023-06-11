@@ -14,6 +14,7 @@ import com.isxcode.star.api.pojos.cluster.node.dto.ScpFileEngineNodeDto;
 import com.isxcode.star.api.properties.SparkYunProperties;
 import com.isxcode.star.backend.module.cluster.node.ClusterNodeEntity;
 import com.isxcode.star.backend.module.cluster.node.ClusterNodeRepository;
+import com.isxcode.star.common.utils.PathUtils;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.SftpException;
 import java.io.File;
@@ -71,7 +72,9 @@ public class RunAgentStartService {
     // 拷贝检测脚本
     scpFile(
         scpFileEngineNodeDto,
-        sparkYunProperties.getAgentBinDir() + File.separator + PathConstants.AGENT_START_BASH_NAME,
+        PathUtils.parseProjectPath(sparkYunProperties.getAgentBinDir())
+            + File.separator
+            + PathConstants.AGENT_START_BASH_NAME,
         "/tmp/" + PathConstants.AGENT_START_BASH_NAME);
 
     // 运行停止脚本

@@ -14,6 +14,7 @@ import com.isxcode.star.api.pojos.cluster.node.dto.ScpFileEngineNodeDto;
 import com.isxcode.star.api.properties.SparkYunProperties;
 import com.isxcode.star.backend.module.cluster.node.ClusterNodeEntity;
 import com.isxcode.star.backend.module.cluster.node.ClusterNodeRepository;
+import com.isxcode.star.common.utils.PathUtils;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.SftpException;
 import java.io.File;
@@ -71,7 +72,9 @@ public class RunAgentInstallService {
     // 先检查节点是否可以安装
     scpFile(
         scpFileEngineNodeDto,
-        sparkYunProperties.getAgentBinDir() + File.separator + PathConstants.AGENT_ENV_BASH_NAME,
+        PathUtils.parseProjectPath(sparkYunProperties.getAgentBinDir())
+            + File.separator
+            + PathConstants.AGENT_ENV_BASH_NAME,
         "/tmp/" + PathConstants.AGENT_ENV_BASH_NAME);
 
     // 运行安装脚本
@@ -101,7 +104,7 @@ public class RunAgentInstallService {
     // 下载安装包
     scpFile(
         scpFileEngineNodeDto,
-        sparkYunProperties.getAgentTarGzDir()
+        PathUtils.parseProjectPath(sparkYunProperties.getAgentTarGzDir())
             + File.separator
             + PathConstants.SPARK_YUN_AGENT_TAR_GZ_NAME,
         "/tmp/" + PathConstants.SPARK_YUN_AGENT_TAR_GZ_NAME);
@@ -109,7 +112,7 @@ public class RunAgentInstallService {
     // 拷贝安装脚本
     scpFile(
         scpFileEngineNodeDto,
-        sparkYunProperties.getAgentBinDir()
+        PathUtils.parseProjectPath(sparkYunProperties.getAgentBinDir())
             + File.separator
             + PathConstants.AGENT_INSTALL_BASH_NAME,
         "/tmp/" + PathConstants.AGENT_INSTALL_BASH_NAME);
