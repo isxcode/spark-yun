@@ -7,6 +7,7 @@
 
 # 后端打包文件，不提交
 **/build
+**/bin
 
 # 前端打包文件，不提交
 spark-yun-website/dist
