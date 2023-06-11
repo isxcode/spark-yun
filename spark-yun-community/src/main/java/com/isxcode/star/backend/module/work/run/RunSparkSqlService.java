@@ -4,7 +4,6 @@ import static com.isxcode.star.backend.config.WebSecurityConfig.TENANT_ID;
 import static com.isxcode.star.backend.config.WebSecurityConfig.USER_ID;
 
 import com.alibaba.fastjson.JSON;
-import com.isxcode.star.api.constants.api.PathConstants;
 import com.isxcode.star.api.constants.cluster.ClusterNodeStatus;
 import com.isxcode.star.api.constants.work.WorkLog;
 import com.isxcode.star.api.constants.work.instance.InstanceStatus;
@@ -12,6 +11,7 @@ import com.isxcode.star.api.exceptions.WorkRunException;
 import com.isxcode.star.api.pojos.base.BaseResponse;
 import com.isxcode.star.api.pojos.plugin.req.PluginReq;
 import com.isxcode.star.api.pojos.work.res.WokRunWorkRes;
+import com.isxcode.star.api.pojos.yun.agent.req.SparkSubmit;
 import com.isxcode.star.api.pojos.yun.agent.req.YagExecuteWorkReq;
 import com.isxcode.star.api.pojos.yun.agent.res.YagGetLogRes;
 import com.isxcode.star.backend.module.cluster.ClusterEntity;
@@ -21,7 +21,6 @@ import com.isxcode.star.backend.module.cluster.node.ClusterNodeRepository;
 import com.isxcode.star.backend.module.work.instance.WorkInstanceEntity;
 import com.isxcode.star.backend.module.work.instance.WorkInstanceRepository;
 import com.isxcode.star.common.utils.HttpUtils;
-import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Date;
@@ -142,35 +141,21 @@ public class RunSparkSqlService {
     // 开始构建作业
     logBuilder.append(LocalDateTime.now() + WorkLog.SUCCESS_INFO + "开始构建作业  \n");
     YagExecuteWorkReq executeReq = new YagExecuteWorkReq();
-    executeReq.setAppName("spark-yun");
-    executeReq.setMainClass("com.isxcode.star.plugin.query.sql.Execute");
-    executeReq.setAppResourcePath(
-        engineNode.getAgentHomePath()
-            + File.separator
-            + PathConstants.AGENT_PATH_NAME
-            + File.separator
-            + "plugins"
-            + File.separator
-            + "spark-query-sql-plugin.jar");
-    executeReq.setSparkHomePath(
-        engineNode.getAgentHomePath()
-            + File.separator
-            + PathConstants.AGENT_PATH_NAME
-            + File.separator
-            + "spark-min");
-    executeReq.setAgentLibPath(
-        engineNode.getAgentHomePath()
-            + File.separator
-            + PathConstants.AGENT_PATH_NAME
-            + File.separator
-            + "lib");
 
-    // 封装请求spark作业提交
-    PluginReq pluginReq = new PluginReq();
-    pluginReq.setSql(sqlScript);
-    pluginReq.setLimit(200);
-    pluginReq.setSparkConfig(sparkConfig);
+    SparkSubmit sparkSubmit =
+        SparkSubmit.builder()
+            .appName("spark-yun")
+            .mainClass("com.isxcode.star.plugin.query.sql.Execute")
+            .appResource("spark-query-sql-plugin.jar")
+            .conf(sparkConfig)
+            .build();
+
+    PluginReq pluginReq =
+        PluginReq.builder().sql(sqlScript).limit(200).sparkConfig(sparkConfig).build();
+
+    executeReq.setSparkSubmit(sparkSubmit);
     executeReq.setPluginReq(pluginReq);
+    executeReq.setAgentHomePath(engineNode.getAgentHomePath());
 
     // 构建作业完成
     logBuilder.append(LocalDateTime.now() + WorkLog.SUCCESS_INFO + "构建作业完成 \n");
