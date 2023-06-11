@@ -103,8 +103,8 @@ public class GlobalExceptionAdvice extends ResponseEntityExceptionHandler {
     return new ResponseEntity<>(
         new BaseResponse<>(
             String.valueOf(HttpStatus.BAD_REQUEST.value()),
-            "请求参数不合法",
-            objectError.getDefaultMessage()),
+            objectError.getDefaultMessage(),
+            "请求参数不合法"),
         HttpStatus.OK);
   }
 }

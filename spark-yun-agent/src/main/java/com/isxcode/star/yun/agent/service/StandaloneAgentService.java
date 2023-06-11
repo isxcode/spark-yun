@@ -2,15 +2,15 @@ package com.isxcode.star.yun.agent.service;
 
 import com.isxcode.star.api.pojos.plugin.req.PluginReq;
 import com.isxcode.star.api.pojos.yun.agent.req.SparkSubmit;
+import java.io.IOException;
 import org.apache.spark.launcher.SparkLauncher;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
-
 @Service
-public class StandaloneAgentService implements AgentService{
+public class StandaloneAgentService implements AgentService {
   @Override
-  public SparkLauncher genSparkLauncher(PluginReq pluginReq, SparkSubmit sparkSubmit, String agentHomePath) {
+  public SparkLauncher genSparkLauncher(
+      PluginReq pluginReq, SparkSubmit sparkSubmit, String agentHomePath) {
     return null;
   }
 
@@ -33,14 +33,11 @@ public class StandaloneAgentService implements AgentService{
   }
 
   @Override
-  public String getAppData(String appId)  {
-
+  public String getAppData(String appId) {
 
     return null;
   }
 
   @Override
-  public void killApp(String appId) throws IOException {
-
-  }
+  public void killApp(String appId) throws IOException {}
 }

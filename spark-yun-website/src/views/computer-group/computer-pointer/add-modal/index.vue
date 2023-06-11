@@ -28,70 +28,11 @@
           show-word-limit
         />
       </el-form-item>
-      <el-form-item
-        label="Port"
-        prop="port"
-      >
-        <el-input
-          v-model="formData.port"
-          placeholder="请输入"
-          show-word-limit
-        />
+      <el-form-item label="用户名" prop="username">
+        <el-input v-model="formData.username" maxlength="20" placeholder="请输入" show-word-limit />
       </el-form-item>
-      <el-form-item
-        label="用户名"
-        prop="username"
-      >
-        <el-input
-          v-model="formData.username"
-          maxlength="20"
-          placeholder="请输入"
-          show-word-limit
-        />
-      </el-form-item>
-      <el-form-item
-        label="密码"
-        prop="password"
-      >
-        <el-input
-          v-model="formData.password"
-          type="password"
-          show-password
-          placeholder="请输入"
-        />
-      </el-form-item>
-      <el-form-item
-        label="YunHome"
-        prop="agentHomePath"
-      >
-        <el-input
-          v-model="formData.agentHomePath"
-          maxlength="100"
-          placeholder="请输入"
-          show-word-limit
-        />
-      </el-form-item>
-      <el-form-item
-        label="YunPort"
-        prop="agentPort"
-      >
-        <el-input
-          v-model="formData.agentPort"
-          maxlength="20"
-          placeholder="请输入"
-          show-word-limit
-        />
-      </el-form-item>
-      <el-form-item
-        label="Hadoop"
-        prop="hadoopHomePath"
-      >
-        <el-input
-          v-model="formData.hadoopHomePath"
-          maxlength="100"
-          placeholder="请输入"
-          show-word-limit
-        />
+      <el-form-item label="密码" prop="password">
+        <el-input v-model="formData.password" type="password" show-password placeholder="请输入" />
       </el-form-item>
       <el-form-item label="备注">
         <el-input

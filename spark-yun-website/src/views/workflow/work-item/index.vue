@@ -145,15 +145,15 @@ const instanceId = ref('')
 const containerInstanceRef = ref(null)
 
 let workConfig = reactive({
-  clusterId: '',
-  datasourceId: '',
-  name: '',
-  sql: '',
-  workId: '',
-  workType: '',
-  workflowId: '',
-  applicationId: ''
-})
+  clusterId: "",
+  datasourceId: "",
+  name: "",
+  sqlScript: "",
+  workId: "",
+  workType: "",
+  workflowId: "",
+  applicationId: "",
+});
 
 const breadCrumbList = reactive([
   {
@@ -287,7 +287,7 @@ function terWorkData() {
 function saveData() {
   saveLoading.value = true
   SaveWorkItemConfig({
-    sql: sqltextData.value,
+    sqlScript: sqltextData.value,
     workId: route.query.id,
     datasourceId: workConfig.datasourceId
   })
@@ -306,7 +306,7 @@ function setConfigData() {
   configModalRef.value.showModal((formData: any) => {
     return new Promise((resolve: any, reject: any) => {
       SaveWorkItemConfig({
-        sql: sqltextData.value,
+        sqlScript: sqltextData.value,
         workId: route.query.id,
         datasourceId: formData.datasourceId
       })

@@ -42,10 +42,10 @@ export function UpdateDatasourceData(params: any): Promise<any> {
 // 检测
 export function CheckDatasourceData(params: any): Promise<any> {
   return http.request({
-    method: 'post',
-    url: '/das/testConnect',
-    params: params
-  })
+    method: "get",
+    url: "/das/testConnect",
+    params: params,
+  });
 }
 
 // 删除

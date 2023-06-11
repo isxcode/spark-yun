@@ -51,14 +51,8 @@
           <template #options="scopeSlot">
             <div class="btn-group">
               <span @click="editData(scopeSlot.row)">编辑</span>
-              <span
-                v-if="!scopeSlot.row.checkLoding"
-                @click="checkTenant(scopeSlot.row)"
-              >同步</span>
-              <el-icon
-                v-else
-                class="is-loading"
-              >
+              <span v-if="!scopeSlot.row.checkLoding" @click="checkTenant(scopeSlot.row)">检测</span>
+              <el-icon v-else class="is-loading">
                 <Loading />
               </el-icon>
               <template v-if="scopeSlot.row.status === 'ENABLE'">

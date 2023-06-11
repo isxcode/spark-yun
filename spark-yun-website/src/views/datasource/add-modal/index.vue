@@ -18,20 +18,9 @@
           show-word-limit
         />
       </el-form-item>
-      <el-form-item
-        label="类型"
-        prop="type"
-      >
-        <el-select
-          v-model="formData.type"
-          placeholder="请选择"
-        >
-          <el-option
-            v-for="item in typeList"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-          />
+      <el-form-item label="类型" prop="dbType">
+        <el-select v-model="formData.dbType" placeholder="请选择">
+          <el-option v-for="item in typeList" :key="item.value" :label="item.label" :value="item.value" />
         </el-select>
       </el-form-item>
       <el-form-item
@@ -56,17 +45,8 @@
           show-word-limit
         />
       </el-form-item>
-      <el-form-item
-        label="密码"
-        prop="password"
-      >
-        <el-input
-          v-model="formData.password"
-          maxlength="100"
-          type="password"
-          show-password
-          placeholder="请输入"
-        />
+      <el-form-item label="密码" prop="passwd">
+        <el-input v-model="formData.passwd" maxlength="100" type="password" show-password placeholder="请输入" />
       </el-form-item>
       <el-form-item label="备注">
         <el-input
@@ -109,28 +89,64 @@ const modelConfig = reactive({
   closeOnClickModal: false
 })
 const formData = reactive({
-  name: '',
-  type: '',
-  jdbcUrl: '',
-  username: '',
-  password: '',
-  comment: '',
-  id: ''
-})
+  name: "",
+  dbType: "",
+  jdbcUrl: "",
+  username: "",
+  passwd: "",
+  comment: "",
+  id: "",
+});
 const typeList = reactive([
   {
-    label: 'Mysql',
-    value: 'Mysql'
+    label: "Mysql",
+    value: "MYSQL",
   },
   {
-    label: 'Oracle',
-    value: 'Oracle'
+    label: "Oracle",
+    value: "ORACLE",
   },
   {
-    label: 'SqlServer',
-    value: 'SqlServer'
-  }
-])
+    label: "SqlServer",
+    value: "SQL_SERVER",
+  },
+  {
+    label: "PostgreSql",
+    value: "POSTGRE_SQL",
+  },
+  {
+    label: "Clickhouse",
+    value: "CLICKHOUSE",
+  },
+  {
+    label: "Hive",
+    value: "HIVE",
+  },
+  {
+    label: "HanaSap",
+    value: "HANA_SAP",
+  },
+  {
+    label: "达梦",
+    value: "DM",
+  },
+  {
+    label: "Doris",
+    value: "DORIS",
+  },
+  {
+    label: "OceanBase",
+    value: "OCEANBASE",
+  },
+  {
+    label: "TiDB",
+    value: "TIDB",
+  },
+  {
+    label: "StarRocks",
+    value: "STAR_ROCKS",
+  },
+]);
 const rules = reactive<FormRules>({
   name: [
     {
@@ -139,7 +155,7 @@ const rules = reactive<FormRules>({
       trigger: [ 'blur', 'change' ]
     }
   ],
-  type: [
+  dbType: [
     {
       required: true,
       message: '请选择数据库类型',
@@ -160,7 +176,7 @@ const rules = reactive<FormRules>({
       trigger: [ 'blur', 'change' ]
     }
   ],
-  password: [
+  passwd: [
     {
       required: true,
       message: '请输入密码',
@@ -173,23 +189,23 @@ function showModal(cb: () => void, data: any): void {
   callback.value = cb
   modelConfig.visible = true
   if (data) {
-    formData.name = data.name
-    formData.type = data.type
-    formData.jdbcUrl = data.jdbcUrl
-    formData.username = data.username
-    formData.password = data.password
-    formData.comment = data.comment
-    formData.id = data.id
-    modelConfig.title = '编辑数据源'
+    formData.name = data.name;
+    formData.dbType = data.dbType;
+    formData.jdbcUrl = data.jdbcUrl;
+    formData.username = data.username;
+    formData.passwd = data.passwd;
+    formData.comment = data.comment;
+    formData.id = data.id;
+    modelConfig.title = "编辑数据源";
   } else {
-    formData.name = ''
-    formData.type = ''
-    formData.jdbcUrl = ''
-    formData.username = ''
-    formData.password = ''
-    formData.comment = ''
-    formData.id = ''
-    modelConfig.title = '添加数据源'
+    formData.name = "";
+    formData.dbType = "";
+    formData.jdbcUrl = "";
+    formData.username = "";
+    formData.passwd = "";
+    formData.comment = "";
+    formData.id = "";
+    modelConfig.title = "添加数据源";
   }
   nextTick(() => {
     form.value?.resetFields()

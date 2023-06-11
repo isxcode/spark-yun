@@ -32,29 +32,9 @@
         >
           <template #statusTag="scopeSlot">
             <div class="btn-group">
-              <el-tag
-                v-if="scopeSlot.row.status === 'ACTIVE'"
-                class="ml-2"
-                type="success"
-              >
-                可用
-              </el-tag>
-              <el-tag
-                v-if="scopeSlot.row.status === 'NO_ACTIVE'"
-                class="ml-2"
-                type="danger"
-              >
-                不可用
-              </el-tag>
-              <el-tag
-                v-if="scopeSlot.row.status === 'NEW'"
-                type="info"
-              >
-                待配置
-              </el-tag>
-              <el-tag v-if="scopeSlot.row.status === 'UN_CHECK'">
-                待检测
-              </el-tag>
+              <el-tag v-if="scopeSlot.row.status === 'ACTIVE'" class="ml-2" type="success"> 可用 </el-tag>
+              <el-tag v-if="scopeSlot.row.status === 'FAIL'" class="ml-2" type="danger"> 不可用 </el-tag>
+              <el-tag v-if="scopeSlot.row.status === 'UN_CHECK'"> 待检测 </el-tag>
             </div>
           </template>
           <template #options="scopeSlot">
