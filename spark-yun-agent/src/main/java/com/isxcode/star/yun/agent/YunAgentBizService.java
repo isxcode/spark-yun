@@ -158,55 +158,6 @@ public class YunAgentBizService {
     }
   }
 
-  public String getStatus1(String jobName) throws IOException {
-
-    // 爬虫获取状态
-    Document doc = Jsoup.connect("http://39.100.67.15:8081/").get();
-
-    Element completedAppsTable = doc.selectFirst("div.aggregated-completedApps table");
-    Elements completedRows = completedAppsTable.select("tbody tr");
-
-    Element activeAppsTable = doc.selectFirst("div.aggregated-activeApps table");
-    Elements activeRows = activeAppsTable.select("tbody tr");
-
-    Map<String, String> apps = new HashMap<>();
-
-    for (Element row : completedRows) {
-      apps.put(row.select("td").get(1).text(), row.select("td").get(7).text());
-    }
-
-    for (Element row : activeRows) {
-      apps.put(row.select("td").get(1).text(), row.select("td").get(7).text());
-    }
-
-    return apps.get(jobName);
-  }
-
-  public String getAppId(String jobName) throws IOException {
-
-    // 爬虫获取状态
-    Document doc = Jsoup.connect("http://39.100.67.15:8081/").get();
-
-    Element completedAppsTable = doc.selectFirst("div.aggregated-completedApps table");
-    Elements completedRows = completedAppsTable.select("tbody tr");
-
-    Element activeAppsTable = doc.selectFirst("div.aggregated-activeApps table");
-    Elements activeRows = activeAppsTable.select("tbody tr");
-
-    Map<String, String> apps = new HashMap<>();
-
-    for (Element row : completedRows) {
-      apps.put(row.select("td").get(1).text(), row.select("td").get(0).text());
-    }
-
-    for (Element row : activeRows) {
-      apps.put(
-          row.select("td").get(1).text(), row.select("td").get(0).text().replace("(kill)", ""));
-    }
-
-    return apps.get(jobName);
-  }
-
   public String getOutUrl() throws IOException {
 
     // 爬虫获取状态

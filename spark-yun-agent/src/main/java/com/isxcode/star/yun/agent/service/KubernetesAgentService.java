@@ -17,6 +17,12 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 public class KubernetesAgentService implements AgentService {
+
+  @Override
+  public String getMaster() {
+    return null;
+  }
+
   @Override
   public SparkLauncher genSparkLauncher(
       PluginReq pluginReq, SparkSubmit sparkSubmit, String agentHomePath) {
@@ -27,7 +33,7 @@ public class KubernetesAgentService implements AgentService {
             .setMainClass(sparkSubmit.getMainClass())
             .setDeployMode(sparkSubmit.getDeployMode())
             .setAppName(sparkSubmit.getAppName())
-            .setMaster(sparkSubmit.getMaster())
+            .setMaster(getMaster())
             .setAppResource("local:///opt/spark/examples/jars/" + sparkSubmit.getAppResource())
             .setSparkHome(sparkSubmit.getSparkHome());
 

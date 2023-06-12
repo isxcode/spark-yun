@@ -55,7 +55,7 @@ if ! command -v tar &>/dev/null; then
 fi
 
 # 判断mpstat命令
-if ! command -v tar &>/dev/null; then
+if ! command -v mpstat &>/dev/null; then
   json_output="{ \
         \"status\": \"INSTALL_ERROR\", \
         \"log\": \"未检测到mpstat命令\" \
@@ -88,36 +88,23 @@ if [[ "$java_version" != "1.8"* ]]; then
   exit 0
 fi
 
-# 判断hadoop环境变量
-if ! command -v hadoop &>/dev/null; then
+# 判断是否有kubectl命令
+if ! command -v kubectl &>/dev/null; then
   json_output="{ \
-      \"status\": \"INSTALL_ERROR\", \
-      \"log\": \"未检测到hadoop环境\" \
-    }"
+    \"status\": \"INSTALL_ERROR\", \
+    \"log\": \"未检测到kubectl命令\" \
+  }"
   echo $json_output
   rm /tmp/sy-env.sh
   exit 0
 fi
 
-# 获取HADOOP_HOME环境变量值
-if [ -n "$HADOOP_HOME" ]; then
-  HADOOP_PATH=$HADOOP_HOME
-else
+# 判断kubectl命令，是否可以访问k8s集群
+if ! kubectl cluster-info &>/dev/null; then
   json_output="{ \
-            \"status\": \"INSTALL_ERROR\", \
-            \"log\": \"未配置HADOOP_HOME环境变量\" \
-          }"
-  echo $json_output
-  rm /tmp/sy-env.sh
-  exit 0
-fi
-
-# 判断yarn是否正常运行
-if ! timeout 10s yarn node -list &>/dev/null; then
-  json_output="{ \
-        \"status\": \"INSTALL_ERROR\", \
-        \"log\": \"未启动yarn服务\" \
-      }"
+          \"status\": \"INSTALL_ERROR\", \
+          \"log\": \"kubectl无法访问k8s集群\" \
+        }"
   echo $json_output
   rm /tmp/sy-env.sh
   exit 0

@@ -7,6 +7,8 @@ import org.apache.spark.launcher.SparkLauncher;
 
 public interface AgentService {
 
+  String getMaster();
+
   /**
    * @param pluginReq 插件请求体
    * @param sparkSubmit spark作业提交配置
