@@ -4,12 +4,22 @@
 
 - **CentOS-7.9**
 - [Java-1.8](https://ispong.isxcode.com/spring/java/java%20%E5%AE%89%E8%A3%85/)
+
+```bash
+sudo yum install java-1.8.0-openjdk-devel java-1.8.0-openjdk -y 
+```
+
 - [Node-16](https://ispong.isxcode.com/react/nodejs/nodejs%20%E5%AE%89%E8%A3%85/)
+
+```bash
+sudo yum install node npm -y
+```
 
 ##### 下载代码
 
 ```bash
-git clone https://github.com/isxcode/spark-yun.git
+sudo yum install git -y
+git clone -b latest https://github.com/isxcode/spark-yun.git
 ```
 
 ##### 下载spark二进制文件
@@ -17,11 +27,12 @@ git clone https://github.com/isxcode/spark-yun.git
 !> 目前只可以使用`spark-3.1.1-bin-hadoop3.2`版本
 
 ```bash
-wget https://archive.apache.org/dist/spark/spark-3.1.1/spark-3.1.1-bin-hadoop3.2.tgz 
+nohup wget https://archive.apache.org/dist/spark/spark-3.1.1/spark-3.1.1-bin-hadoop3.2.tgz  >> download_spark.log 2>&1 &  
+tail -f download_spark.log
 tar vzxf spark-3.1.1-bin-hadoop3.2.tgz -C /tmp/
 ```
 
-##### 修改配置文件
+##### 修改配置文件（可选）
 
 ```bash
 vim spark-yun/spark-yun-backend/src/main/resources/application-local.yml
@@ -52,7 +63,6 @@ spring:
     user: root
     password: ispong123
     locations: classpath:db/migration/mysql
-    enabled: false
 
   quartz:
     properties:
@@ -65,6 +75,7 @@ spring:
 ##### 启动项目
 
 ```bash
+cd spark-yun
 ./gradlew start
 ```
 
