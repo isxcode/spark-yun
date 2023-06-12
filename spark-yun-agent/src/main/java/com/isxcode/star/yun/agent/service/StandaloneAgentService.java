@@ -15,6 +15,15 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.ParseException;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
+import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.apache.logging.log4j.util.Strings;
 import org.apache.spark.launcher.SparkLauncher;
 import org.jsoup.Jsoup;
@@ -200,15 +209,59 @@ public class StandaloneAgentService implements AgentService {
   }
 
   @Override
-  public String getAppData(String submissionId) {
+  public String getAppData(String submissionId) throws IOException {
 
+    Document doc = Jsoup.connect(getMasterWebUrl()).get();
 
+    Element completedDriversTable = doc.selectFirst(".aggregated-completedDrivers table");
+    Elements completedDriversRows = completedDriversTable.select("tbody tr");
 
-    return null;
+    Map<String, String> apps = new HashMap<>();
+
+    for (Element row : completedDriversRows) {
+      apps.put(row.selectFirst("td:nth-child(1)").text(), row.select("td:nth-child(3) a").first().attr("href"));
+    }
+
+    String workUrl = apps.get(submissionId);
+
+    doc = Jsoup.connect(workUrl).get();
+    Elements rows = doc.select(".aggregated-finishedDrivers table tbody tr");
+    Map<String, String> driversMap = new HashMap<>();
+    for (Element row : rows) {
+      String driverId = row.select("td:nth-child(1)").text();
+      String stderrUrl = row.select("td:nth-child(7) a[href$=stdout]").attr("href");
+      driversMap.put(driverId, stderrUrl);
+    }
+
+    // 从errlog连接中，爬取日志
+    String errlogUrl = driversMap.get(submissionId);
+    doc = Jsoup.connect(errlogUrl).get();
+    Element preElement = doc.selectFirst("pre");
+
+    return preElement.text().replace("LogType:spark-yun", "").replace("End of ", "");
   }
 
   @Override
-  public void killApp(String appId) throws IOException {
+  public void killApp(String submissionId) throws IOException {
 
+    String url = getMasterWebUrl() + "/driver/kill/";
+
+    CloseableHttpClient httpClient = HttpClients.createDefault();
+    HttpPost httpPost = new HttpPost(url);
+
+    String payload = "id=" + submissionId + "&terminate=true";
+    StringEntity stringEntity = new StringEntity(payload, ContentType.APPLICATION_FORM_URLENCODED);
+
+    httpPost.setEntity(stringEntity);
+
+    try (CloseableHttpResponse response = httpClient.execute(httpPost)) {
+      // 获取响应实体
+      HttpEntity responseEntity = response.getEntity();
+      if (responseEntity != null) {
+        EntityUtils.toString(responseEntity);
+      }
+    } catch (ParseException e) {
+      throw new SparkYunException("中止失败");
+    }
   }
 }
