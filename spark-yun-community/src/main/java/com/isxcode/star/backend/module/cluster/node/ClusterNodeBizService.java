@@ -221,6 +221,12 @@ public class ClusterNodeBizService {
     // 获取节点信息
     ClusterNodeEntity engineNode = getEngineNode(engineNodeId);
 
+    // 查询集群信息
+    Optional<ClusterEntity> clusterEntityOptional = calculateEngineRepository.findById(engineNode.getClusterId());
+    if (!clusterEntityOptional.isPresent()) {
+      throw new SparkYunException("集群不存在");
+    }
+
     // 如果是安装中等状态，需要等待运行结束
     if (ClusterNodeStatus.CHECKING.equals(engineNode.getStatus())
         || ClusterNodeStatus.INSTALLING.equals(engineNode.getStatus())
@@ -242,7 +248,7 @@ public class ClusterNodeBizService {
     engineNodeRepository.saveAndFlush(engineNode);
 
     // 异步调用
-    runAgentInstallService.run(engineNodeId, scpFileEngineNodeDto, TENANT_ID.get(), USER_ID.get());
+    runAgentInstallService.run(engineNodeId, clusterEntityOptional.get().getClusterType(), scpFileEngineNodeDto, TENANT_ID.get(), USER_ID.get());
   }
 
   public void removeAgent(String engineNodeId) {

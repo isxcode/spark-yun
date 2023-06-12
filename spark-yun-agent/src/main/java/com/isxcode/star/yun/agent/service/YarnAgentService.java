@@ -20,23 +20,28 @@ import org.springframework.stereotype.Service;
 public class YarnAgentService implements AgentService {
 
   @Override
+  public String getMaster() {
+    return "yarn";
+  }
+
+  @Override
   public SparkLauncher genSparkLauncher(
       PluginReq pluginReq, SparkSubmit sparkSubmit, String agentHomePath) {
 
     SparkLauncher sparkLauncher =
-        new SparkLauncher()
-            .setVerbose(sparkSubmit.isVerbose())
-            .setMainClass(sparkSubmit.getMainClass())
-            .setDeployMode(sparkSubmit.getDeployMode())
-            .setAppName(sparkSubmit.getAppName())
-            .setMaster(sparkSubmit.getMaster())
-            .setAppResource(
-                agentHomePath
-                    + File.separator
-                    + "plugins"
-                    + File.separator
-                    + sparkSubmit.getAppResource())
-            .setSparkHome(sparkSubmit.getSparkHome());
+      new SparkLauncher()
+        .setVerbose(sparkSubmit.isVerbose())
+        .setMainClass(sparkSubmit.getMainClass())
+        .setDeployMode(sparkSubmit.getDeployMode())
+        .setAppName(sparkSubmit.getAppName())
+        .setMaster(getMaster())
+        .setAppResource(
+          agentHomePath
+            + File.separator
+            + "plugins"
+            + File.separator
+            + sparkSubmit.getAppResource())
+        .setSparkHome(sparkSubmit.getSparkHome());
 
     if (!Strings.isEmpty(agentHomePath)) {
       File[] jarFiles = new File(agentHomePath + File.separator + "lib").listFiles();

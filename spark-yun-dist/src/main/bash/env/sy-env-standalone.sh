@@ -55,7 +55,7 @@ if ! command -v tar &>/dev/null; then
 fi
 
 # 判断mpstat命令
-if ! command -v tar &>/dev/null; then
+if ! command -v mpstat &>/dev/null; then
   json_output="{ \
         \"status\": \"INSTALL_ERROR\", \
         \"log\": \"未检测到mpstat命令\" \
@@ -88,47 +88,104 @@ if [[ "$java_version" != "1.8"* ]]; then
   exit 0
 fi
 
-# 判断hadoop环境变量
-if ! command -v hadoop &>/dev/null; then
-  json_output="{ \
-      \"status\": \"INSTALL_ERROR\", \
-      \"log\": \"未检测到hadoop环境\" \
-    }"
-  echo $json_output
-  rm /tmp/sy-env.sh
-  exit 0
-fi
-
-# 获取HADOOP_HOME环境变量值
-if [ -n "$HADOOP_HOME" ]; then
-  HADOOP_PATH=$HADOOP_HOME
-else
-  json_output="{ \
-            \"status\": \"INSTALL_ERROR\", \
-            \"log\": \"未配置HADOOP_HOME环境变量\" \
-          }"
-  echo $json_output
-  rm /tmp/sy-env.sh
-  exit 0
-fi
-
-# 判断yarn是否正常运行
-if ! timeout 10s yarn node -list &>/dev/null; then
-  json_output="{ \
-        \"status\": \"INSTALL_ERROR\", \
-        \"log\": \"未启动yarn服务\" \
-      }"
-  echo $json_output
-  rm /tmp/sy-env.sh
-  exit 0
-fi
-
 # 判断端口号是否被占用
 if ! netstat -tln | awk '$4 ~ /:'"$agent_port"'$/ {exit 1}'; then
   json_output="{ \
           \"status\": \"INSTALL_ERROR\", \
           \"log\": \"${agent_port} 端口号已被占用\" \
         }"
+  echo $json_output
+  rm /tmp/sy-env.sh
+  exit 0
+fi
+
+# 判断是否安装spark，判断是否配置SPARK_HOME
+if [ -n "$SPARK_HOME" ]; then
+  SPARK_PATH=$SPARK_HOME
+else
+  json_output="{ \
+            \"status\": \"INSTALL_ERROR\", \
+            \"log\": \"未配置SPARK_HOME环境变量\" \
+          }"
+  echo $json_output
+  rm /tmp/sy-env.sh
+  exit 0
+fi
+
+# 从$SPARK_HOME/conf/spark-defaults.conf 配置文件中，获取SPARK_MASTER_PORT和SPARK_MASTER_WEBUI_PORT
+# spark.master          spark://isxcode:7077
+# spark.master.web.url  http://isxcode:8081
+config_file="$SPARK_PATH/conf/spark-defaults.conf"
+
+config_file="/opt/spark/conf/spark-defaults.conf"
+
+spark_master_web_url=$(grep -E "^spark.master\.web\.url[[:space:]]+" "$config_file" | awk '{print $2}')
+spark_master=$(grep -E "^spark.master[[:space:]]+" "$config_file" | awk '{print $2}')
+
+if [[ -z $spark_master_web_url ]]; then
+  json_output="{ \
+               \"status\": \"INSTALL_ERROR\", \
+               \"log\": \"conf/spark-defaults.conf配置文件中未配置spark.master.web.url\" \
+             }"
+  echo $json_output
+  rm /tmp/sy-env.sh
+  exit 0
+fi
+
+if [[ -z $spark_master ]]; then
+  json_output="{ \
+                   \"status\": \"INSTALL_ERROR\", \
+                   \"log\": \"conf/spark-defaults.conf配置文件中未配置spark.master\" \
+                 }"
+  echo $json_output
+  rm /tmp/sy-env.sh
+  exit 0
+fi
+
+# 判断是否可以访问SPARK_MASTER_PORT=7077
+regex="^spark://([^:]+):([0-9]+)$"
+if [[ $spark_master =~ $regex ]]; then
+  host=${BASH_REMATCH[1]}
+  port=${BASH_REMATCH[2]}
+  if ! (echo >/dev/tcp/$host/$port) &>/dev/null; then
+    json_output="{ \
+                      \"status\": \"INSTALL_ERROR\", \
+                      \"log\": \"无法访问master的url\" \
+                    }"
+    echo $json_output
+    rm /tmp/sy-env.sh
+    exit 0
+  fi
+else
+  json_output="{ \
+              \"status\": \"INSTALL_ERROR\", \
+              \"log\": \"spark master url 填写格式异常\" \
+            }"
+  echo $json_output
+  rm /tmp/sy-env.sh
+  exit 0
+fi
+
+# 判断是否可以访问SPARK_MASTER_WEBUI_PORT=8081
+regex="^(http|https)://([^:/]+):([0-9]+)"
+if [[ $spark_master_web_url =~ $regex ]]; then
+  protocol=${BASH_REMATCH[1]}
+  host=${BASH_REMATCH[2]}
+  port=${BASH_REMATCH[3]}
+  if ! (echo >/dev/tcp/$host/$port) &>/dev/null; then
+    json_output="{ \
+                    \"status\": \"INSTALL_ERROR\", \
+                    \"log\": \"无法访问 spark web ui\" \
+                  }"
+    echo $json_output
+    rm /tmp/sy-env.sh
+    exit 0
+  fi
+else
+  json_output="{ \
+                  \"status\": \"INSTALL_ERROR\", \
+                  \"log\": \"spark web ui url 填写格式异常\" \
+                }"
   echo $json_output
   rm /tmp/sy-env.sh
   exit 0

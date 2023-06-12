@@ -25,7 +25,7 @@ public interface PathConstants {
   String AGENT_CHECK_BASH_NAME = "sy-check.sh";
 
   /** 检测环境脚本. */
-  String AGENT_ENV_BASH_NAME = "sy-env.sh";
+  String AGENT_ENV_BASH_FORMAT = "sy-env-%s.sh";
 
   /** 卸载脚本. */
   String AGENT_REMOVE_BASH_NAME = "sy-remove.sh";

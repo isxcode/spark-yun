@@ -55,7 +55,7 @@ if ! command -v tar &>/dev/null; then
 fi
 
 # 判断mpstat命令
-if ! command -v tar &>/dev/null; then
+if ! command -v mpstat &>/dev/null; then
   json_output="{ \
         \"status\": \"INSTALL_ERROR\", \
         \"log\": \"未检测到mpstat命令\" \
