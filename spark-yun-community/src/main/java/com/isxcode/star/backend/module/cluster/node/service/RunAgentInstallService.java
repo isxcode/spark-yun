@@ -39,18 +39,18 @@ public class RunAgentInstallService {
 
   @Async("sparkYunWorkThreadPool")
   public void run(
-    String clusterNodeId,
-    String clusterType,
-    ScpFileEngineNodeDto scpFileEngineNodeDto,
-    String tenantId,
-    String userId) {
+      String clusterNodeId,
+      String clusterType,
+      ScpFileEngineNodeDto scpFileEngineNodeDto,
+      String tenantId,
+      String userId) {
 
     USER_ID.set(userId);
     TENANT_ID.set(tenantId);
 
     // 获取节点信息
     Optional<ClusterNodeEntity> clusterNodeEntityOptional =
-      clusterNodeRepository.findById(clusterNodeId);
+        clusterNodeRepository.findById(clusterNodeId);
     if (!clusterNodeEntityOptional.isPresent()) {
       return;
     }
@@ -67,29 +67,30 @@ public class RunAgentInstallService {
     }
   }
 
-  public void installAgent(ScpFileEngineNodeDto scpFileEngineNodeDto, ClusterNodeEntity engineNode, String clusterType)
-    throws JSchException, IOException, InterruptedException, SftpException {
+  public void installAgent(
+      ScpFileEngineNodeDto scpFileEngineNodeDto, ClusterNodeEntity engineNode, String clusterType)
+      throws JSchException, IOException, InterruptedException, SftpException {
 
     // 先检查节点是否可以安装
     scpFile(
-      scpFileEngineNodeDto,
-      PathUtils.parseProjectPath(sparkYunProperties.getAgentBinDir())
-        + File.separator
-        + "env"
-        + File.separator
-        + String.format(PathConstants.AGENT_ENV_BASH_FORMAT, clusterType),
-      "/tmp/" + String.format(PathConstants.AGENT_ENV_BASH_FORMAT, clusterType));
+        scpFileEngineNodeDto,
+        PathUtils.parseProjectPath(sparkYunProperties.getAgentBinDir())
+            + File.separator
+            + "env"
+            + File.separator
+            + String.format(PathConstants.AGENT_ENV_BASH_FORMAT, clusterType),
+        "/tmp/" + String.format(PathConstants.AGENT_ENV_BASH_FORMAT, clusterType));
 
     // 运行安装脚本
     String envCommand =
-      "bash /tmp/"
-        + String.format(PathConstants.AGENT_ENV_BASH_FORMAT, clusterType)
-        + " --home-path="
-        + engineNode.getAgentHomePath()
-        + File.separator
-        + PathConstants.AGENT_PATH_NAME
-        + " --agent-port="
-        + engineNode.getAgentPort();
+        "bash /tmp/"
+            + String.format(PathConstants.AGENT_ENV_BASH_FORMAT, clusterType)
+            + " --home-path="
+            + engineNode.getAgentHomePath()
+            + File.separator
+            + PathConstants.AGENT_PATH_NAME
+            + " --agent-port="
+            + engineNode.getAgentPort();
 
     // 获取返回结果
     String executeLog = executeCommand(scpFileEngineNodeDto, envCommand, false);
@@ -106,30 +107,30 @@ public class RunAgentInstallService {
 
     // 下载安装包
     scpFile(
-      scpFileEngineNodeDto,
-      PathUtils.parseProjectPath(sparkYunProperties.getAgentTarGzDir())
-        + File.separator
-        + PathConstants.SPARK_YUN_AGENT_TAR_GZ_NAME,
-      "/tmp/" + PathConstants.SPARK_YUN_AGENT_TAR_GZ_NAME);
+        scpFileEngineNodeDto,
+        PathUtils.parseProjectPath(sparkYunProperties.getAgentTarGzDir())
+            + File.separator
+            + PathConstants.SPARK_YUN_AGENT_TAR_GZ_NAME,
+        "/tmp/" + PathConstants.SPARK_YUN_AGENT_TAR_GZ_NAME);
 
     // 拷贝安装脚本
     scpFile(
-      scpFileEngineNodeDto,
-      PathUtils.parseProjectPath(sparkYunProperties.getAgentBinDir())
-        + File.separator
-        + PathConstants.AGENT_INSTALL_BASH_NAME,
-      "/tmp/" + PathConstants.AGENT_INSTALL_BASH_NAME);
+        scpFileEngineNodeDto,
+        PathUtils.parseProjectPath(sparkYunProperties.getAgentBinDir())
+            + File.separator
+            + PathConstants.AGENT_INSTALL_BASH_NAME,
+        "/tmp/" + PathConstants.AGENT_INSTALL_BASH_NAME);
 
     // 运行安装脚本
     String installCommand =
-      "bash /tmp/"
-        + PathConstants.AGENT_INSTALL_BASH_NAME
-        + " --home-path="
-        + engineNode.getAgentHomePath()
-        + File.separator
-        + PathConstants.AGENT_PATH_NAME
-        + " --agent-port="
-        + engineNode.getAgentPort();
+        "bash /tmp/"
+            + PathConstants.AGENT_INSTALL_BASH_NAME
+            + " --home-path="
+            + engineNode.getAgentHomePath()
+            + File.separator
+            + PathConstants.AGENT_PATH_NAME
+            + " --agent-port="
+            + engineNode.getAgentPort();
 
     executeLog = executeCommand(scpFileEngineNodeDto, installCommand, false);
     AgentInfo agentInstallInfo = JSON.parseObject(executeLog, AgentInfo.class);

@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSON;
 import com.isxcode.star.api.exceptions.SparkYunException;
 import com.isxcode.star.api.pojos.plugin.req.PluginReq;
 import com.isxcode.star.api.pojos.yun.agent.req.SparkSubmit;
-
 import java.io.*;
 import java.net.MalformedURLException;
 import java.nio.charset.StandardCharsets;
@@ -13,7 +12,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import lombok.extern.slf4j.Slf4j;
 import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
@@ -75,22 +73,22 @@ public class StandaloneAgentService implements AgentService {
 
   @Override
   public SparkLauncher genSparkLauncher(
-    PluginReq pluginReq, SparkSubmit sparkSubmit, String agentHomePath) {
+      PluginReq pluginReq, SparkSubmit sparkSubmit, String agentHomePath) {
 
     SparkLauncher sparkLauncher =
-      new SparkLauncher()
-        .setVerbose(sparkSubmit.isVerbose())
-        .setMainClass(sparkSubmit.getMainClass())
-        .setDeployMode(sparkSubmit.getDeployMode())
-        .setAppName(sparkSubmit.getAppName())
-        .setMaster(getMaster())
-        .setAppResource(
-          agentHomePath
-            + File.separator
-            + "plugins"
-            + File.separator
-            + sparkSubmit.getAppResource())
-        .setSparkHome(sparkSubmit.getSparkHome());
+        new SparkLauncher()
+            .setVerbose(sparkSubmit.isVerbose())
+            .setMainClass(sparkSubmit.getMainClass())
+            .setDeployMode(sparkSubmit.getDeployMode())
+            .setAppName(sparkSubmit.getAppName())
+            .setMaster(getMaster())
+            .setAppResource(
+                agentHomePath
+                    + File.separator
+                    + "plugins"
+                    + File.separator
+                    + sparkSubmit.getAppResource())
+            .setSparkHome(sparkSubmit.getSparkHome());
 
     if (!Strings.isEmpty(agentHomePath)) {
       File[] jarFiles = new File(agentHomePath + File.separator + "lib").listFiles();
@@ -108,7 +106,7 @@ public class StandaloneAgentService implements AgentService {
 
     if (sparkSubmit.getAppArgs().isEmpty()) {
       sparkLauncher.addAppArgs(
-        Base64.getEncoder().encodeToString(JSON.toJSONString(pluginReq).getBytes()));
+          Base64.getEncoder().encodeToString(JSON.toJSONString(pluginReq).getBytes()));
     } else {
       sparkLauncher.addAppArgs(String.valueOf(sparkSubmit.getAppArgs()));
     }
@@ -123,7 +121,7 @@ public class StandaloneAgentService implements AgentService {
     Process launch = sparkLauncher.launch();
     InputStream inputStream = launch.getErrorStream();
     BufferedReader reader =
-      new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
+        new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
 
     StringBuilder errLog = new StringBuilder();
     String line;
@@ -165,7 +163,8 @@ public class StandaloneAgentService implements AgentService {
     Map<String, String> apps = new HashMap<>();
 
     for (Element row : completedDriversRows) {
-      apps.put(row.selectFirst("td:nth-child(1)").text(), row.selectFirst("td:nth-child(4)").text());
+      apps.put(
+          row.selectFirst("td:nth-child(1)").text(), row.selectFirst("td:nth-child(4)").text());
     }
 
     for (Element row : runningDriversRows) {
@@ -186,7 +185,9 @@ public class StandaloneAgentService implements AgentService {
     Map<String, String> apps = new HashMap<>();
 
     for (Element row : completedDriversRows) {
-      apps.put(row.selectFirst("td:nth-child(1)").text(), row.select("td:nth-child(3) a").first().attr("href"));
+      apps.put(
+          row.selectFirst("td:nth-child(1)").text(),
+          row.select("td:nth-child(3) a").first().attr("href"));
     }
 
     String workUrl = apps.get(submissionId);
@@ -219,7 +220,9 @@ public class StandaloneAgentService implements AgentService {
     Map<String, String> apps = new HashMap<>();
 
     for (Element row : completedDriversRows) {
-      apps.put(row.selectFirst("td:nth-child(1)").text(), row.select("td:nth-child(3) a").first().attr("href"));
+      apps.put(
+          row.selectFirst("td:nth-child(1)").text(),
+          row.select("td:nth-child(3) a").first().attr("href"));
     }
 
     String workUrl = apps.get(submissionId);

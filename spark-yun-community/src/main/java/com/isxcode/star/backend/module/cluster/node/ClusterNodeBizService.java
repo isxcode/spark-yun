@@ -68,7 +68,7 @@ public class ClusterNodeBizService {
     node.setPasswd(AesUtils.encrypt(sparkYunProperties.getAesSlat(), enoAddNodeReq.getPasswd()));
 
     // 设置服务器默认端口号
-    node.setPort(enoAddNodeReq.getPort() == null ? "22" : enoAddNodeReq.getPort());
+    node.setPort(Strings.isEmpty(enoAddNodeReq.getPort()) ? "22" : enoAddNodeReq.getPort());
 
     // 设置默认代理安装地址
     node.setAgentHomePath(
@@ -222,7 +222,8 @@ public class ClusterNodeBizService {
     ClusterNodeEntity engineNode = getEngineNode(engineNodeId);
 
     // 查询集群信息
-    Optional<ClusterEntity> clusterEntityOptional = calculateEngineRepository.findById(engineNode.getClusterId());
+    Optional<ClusterEntity> clusterEntityOptional =
+        calculateEngineRepository.findById(engineNode.getClusterId());
     if (!clusterEntityOptional.isPresent()) {
       throw new SparkYunException("集群不存在");
     }
@@ -248,7 +249,12 @@ public class ClusterNodeBizService {
     engineNodeRepository.saveAndFlush(engineNode);
 
     // 异步调用
-    runAgentInstallService.run(engineNodeId, clusterEntityOptional.get().getClusterType(), scpFileEngineNodeDto, TENANT_ID.get(), USER_ID.get());
+    runAgentInstallService.run(
+        engineNodeId,
+        clusterEntityOptional.get().getClusterType(),
+        scpFileEngineNodeDto,
+        TENANT_ID.get(),
+        USER_ID.get());
   }
 
   public void removeAgent(String engineNodeId) {

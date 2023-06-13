@@ -30,7 +30,7 @@ if [ -e "${home_path}/spark-yun-agent.pid" ]; then
             \"log\": \"正在运行中\" \
           }"
     echo $json_output
-    rm /tmp/sy-env.sh
+    rm /tmp/sy-env-standalone.sh
     exit 0
   else
     json_output="{ \
@@ -38,7 +38,7 @@ if [ -e "${home_path}/spark-yun-agent.pid" ]; then
             \"log\": \"已安装，请启动\" \
           }"
     echo $json_output
-    rm /tmp/sy-env.sh
+    rm /tmp/sy-env-standalone.sh
     exit 0
   fi
 fi
@@ -50,7 +50,7 @@ if ! command -v tar &>/dev/null; then
         \"log\": \"未检测到tar命令\" \
       }"
   echo $json_output
-  rm /tmp/sy-env.sh
+  rm /tmp/sy-env-standalone.sh
   exit 0
 fi
 
@@ -61,7 +61,7 @@ if ! command -v mpstat &>/dev/null; then
         \"log\": \"未检测到mpstat命令\" \
       }"
   echo $json_output
-  rm /tmp/sy-env.sh
+  rm /tmp/sy-env-standalone.sh
   exit 0
 fi
 
@@ -69,10 +69,10 @@ fi
 if ! command -v java &>/dev/null; then
   json_output="{ \
     \"status\": \"INSTALL_ERROR\", \
-    \"log\": \"未检测到java1.8.x环境\" \
+    \"log\": \"未检测到java命令，需要java1.8.x环境\" \
   }"
   echo $json_output
-  rm /tmp/sy-env.sh
+  rm /tmp/sy-env-standalone.sh
   exit 0
 fi
 
@@ -84,7 +84,7 @@ if [[ "$java_version" != "1.8"* ]]; then
       \"log\": \"未检测到java1.8.x环境\" \
     }"
   echo $json_output
-  rm /tmp/sy-env.sh
+  rm /tmp/sy-env-standalone.sh
   exit 0
 fi
 
@@ -95,7 +95,7 @@ if ! netstat -tln | awk '$4 ~ /:'"$agent_port"'$/ {exit 1}'; then
           \"log\": \"${agent_port} 端口号已被占用\" \
         }"
   echo $json_output
-  rm /tmp/sy-env.sh
+  rm /tmp/sy-env-standalone.sh
   exit 0
 fi
 
@@ -108,7 +108,7 @@ else
             \"log\": \"未配置SPARK_HOME环境变量\" \
           }"
   echo $json_output
-  rm /tmp/sy-env.sh
+  rm /tmp/sy-env-standalone.sh
   exit 0
 fi
 
@@ -117,7 +117,15 @@ fi
 # spark.master.web.url  http://isxcode:8081
 config_file="$SPARK_PATH/conf/spark-defaults.conf"
 
-config_file="/opt/spark/conf/spark-defaults.conf"
+if [ ! -f "$config_file" ]; then
+    json_output="{ \
+                       \"status\": \"INSTALL_ERROR\", \
+                       \"log\": \"$SPARK_HOME/conf/spark-defaults.conf配置文件不存在\" \
+                     }"
+      echo $json_output
+      rm /tmp/sy-env-standalone.sh
+      exit 0
+fi
 
 spark_master_web_url=$(grep -E "^spark.master\.web\.url[[:space:]]+" "$config_file" | awk '{print $2}')
 spark_master=$(grep -E "^spark.master[[:space:]]+" "$config_file" | awk '{print $2}')
@@ -125,20 +133,20 @@ spark_master=$(grep -E "^spark.master[[:space:]]+" "$config_file" | awk '{print 
 if [[ -z $spark_master_web_url ]]; then
   json_output="{ \
                \"status\": \"INSTALL_ERROR\", \
-               \"log\": \"conf/spark-defaults.conf配置文件中未配置spark.master.web.url\" \
+               \"log\": \"$SPARK_HOME/conf/spark-defaults.conf配置文件中未配置spark.master.web.url\" \
              }"
   echo $json_output
-  rm /tmp/sy-env.sh
+  rm /tmp/sy-env-standalone.sh
   exit 0
 fi
 
 if [[ -z $spark_master ]]; then
   json_output="{ \
                    \"status\": \"INSTALL_ERROR\", \
-                   \"log\": \"conf/spark-defaults.conf配置文件中未配置spark.master\" \
+                   \"log\": \"$SPARK_HOME/conf/spark-defaults.conf配置文件中未配置spark.master\" \
                  }"
   echo $json_output
-  rm /tmp/sy-env.sh
+  rm /tmp/sy-env-standalone.sh
   exit 0
 fi
 
@@ -150,10 +158,10 @@ if [[ $spark_master =~ $regex ]]; then
   if ! (echo >/dev/tcp/$host/$port) &>/dev/null; then
     json_output="{ \
                       \"status\": \"INSTALL_ERROR\", \
-                      \"log\": \"无法访问master的url\" \
+                      \"log\": \"无法访问spark.master.web.url的服务\" \
                     }"
     echo $json_output
-    rm /tmp/sy-env.sh
+    rm /tmp/sy-env-standalone.sh
     exit 0
   fi
 else
@@ -162,7 +170,7 @@ else
               \"log\": \"spark master url 填写格式异常\" \
             }"
   echo $json_output
-  rm /tmp/sy-env.sh
+  rm /tmp/sy-env-standalone.sh
   exit 0
 fi
 
@@ -178,7 +186,7 @@ if [[ $spark_master_web_url =~ $regex ]]; then
                     \"log\": \"无法访问 spark web ui\" \
                   }"
     echo $json_output
-    rm /tmp/sy-env.sh
+    rm /tmp/sy-env-standalone.sh
     exit 0
   fi
 else
@@ -187,7 +195,7 @@ else
                   \"log\": \"spark web ui url 填写格式异常\" \
                 }"
   echo $json_output
-  rm /tmp/sy-env.sh
+  rm /tmp/sy-env-standalone.sh
   exit 0
 fi
 
@@ -200,4 +208,4 @@ json_output="{ \
 echo $json_output
 
 # 删除检测脚本
-rm /tmp/sy-env.sh
+rm /tmp/sy-env-standalone.sh
