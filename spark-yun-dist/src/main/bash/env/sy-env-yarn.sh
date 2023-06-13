@@ -88,11 +88,11 @@ if [[ "$java_version" != "1.8"* ]]; then
   exit 0
 fi
 
-# 判断hadoop环境变量
-if ! command -v hadoop &>/dev/null; then
+# 判断yarn命令
+if ! command -v yarn &>/dev/null; then
   json_output="{ \
       \"status\": \"INSTALL_ERROR\", \
-      \"log\": \"未检测到hadoop环境\" \
+      \"log\": \"未检测到yarn命令\" \
     }"
   echo $json_output
   rm /tmp/sy-env-yarn.sh
