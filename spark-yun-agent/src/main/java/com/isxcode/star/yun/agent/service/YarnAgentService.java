@@ -1,19 +1,18 @@
 package com.isxcode.star.yun.agent.service;
 
-import com.alibaba.fastjson.JSON;
 import com.isxcode.star.api.exceptions.SparkYunException;
 import com.isxcode.star.api.pojos.plugin.req.PluginReq;
 import com.isxcode.star.api.pojos.yun.agent.req.SparkSubmit;
-import java.io.*;
-import java.net.MalformedURLException;
-import java.nio.charset.StandardCharsets;
-import java.util.Base64;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
 import org.apache.spark.launcher.SparkLauncher;
 import org.springframework.stereotype.Service;
+
+import java.io.*;
+import java.net.MalformedURLException;
+import java.nio.charset.StandardCharsets;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 @Slf4j
@@ -57,12 +56,7 @@ public class YarnAgentService implements AgentService {
       }
     }
 
-    if (sparkSubmit.getAppArgs().isEmpty()) {
-      sparkLauncher.addAppArgs(
-          Base64.getEncoder().encodeToString(JSON.toJSONString(pluginReq).getBytes()));
-    } else {
-      sparkLauncher.addAppArgs(String.valueOf(sparkSubmit.getAppArgs()));
-    }
+    sparkLauncher.addAppArgs(String.valueOf(sparkSubmit.getAppArgs()));
 
     sparkSubmit.getConf().forEach(sparkLauncher::setConf);
 
@@ -163,9 +157,13 @@ public class YarnAgentService implements AgentService {
         Matcher matcher = regex.matcher(errLog);
         String log = "";
         while (matcher.find()) {
-          log = matcher.group();
-          if (log.contains("ERROR")) {
-            return log;
+          String tmpLog = matcher.group();
+          if (tmpLog.contains("ERROR")) {
+            log = tmpLog;
+            break;
+          }
+          if (tmpLog.length() > log.length()) {
+            log = tmpLog;
           }
         }
         return log;
