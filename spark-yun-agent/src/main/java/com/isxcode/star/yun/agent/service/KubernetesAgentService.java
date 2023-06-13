@@ -19,13 +19,37 @@ import org.springframework.stereotype.Service;
 public class KubernetesAgentService implements AgentService {
 
   @Override
-  public String getMaster() {
-    return null;
+  public String getMaster() throws IOException {
+
+    String getMasterCmd = "kubectl cluster-info";
+
+    Process process = Runtime.getRuntime().exec(getMasterCmd);
+    InputStream inputStream = process.getInputStream();
+    BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
+
+    StringBuilder errLog = new StringBuilder();
+    String line;
+    while ((line = reader.readLine()) != null) {
+      errLog.append(line).append("\n");
+    }
+
+    try {
+      int exitCode = process.waitFor();
+      if (exitCode == 1) {
+        throw new SparkYunException(errLog.toString());
+      } else {
+        int startIndex = errLog.indexOf("https://") + "https://".length();
+        int endIndex = errLog.indexOf("\n", startIndex);
+        return errLog.substring(startIndex, endIndex);
+      }
+    } catch (InterruptedException e) {
+      throw new SparkYunException(e.getMessage());
+    }
   }
 
   @Override
   public SparkLauncher genSparkLauncher(
-      PluginReq pluginReq, SparkSubmit sparkSubmit, String agentHomePath) {
+      PluginReq pluginReq, SparkSubmit sparkSubmit, String agentHomePath) throws IOException {
 
     SparkLauncher sparkLauncher =
       new SparkLauncher()
@@ -220,6 +244,5 @@ public class KubernetesAgentService implements AgentService {
     } catch (InterruptedException e) {
       throw new SparkYunException(e.getMessage());
     }
-
   }
 }
