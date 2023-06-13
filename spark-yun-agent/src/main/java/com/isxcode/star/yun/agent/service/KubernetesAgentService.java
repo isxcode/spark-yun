@@ -40,7 +40,8 @@ public class KubernetesAgentService implements AgentService {
       } else {
         int startIndex = errLog.indexOf("https://") + "https://".length();
         int endIndex = errLog.indexOf("\n", startIndex);
-        return "k8s://" + errLog.substring(startIndex, endIndex);
+        // k8s命令会返回特殊字符
+        return ("k8s://" + errLog.substring(startIndex, endIndex)).replaceAll("[^\\p{L}\\p{N}\\s:./-]", "");
       }
     } catch (InterruptedException e) {
       throw new SparkYunException(e.getMessage());
@@ -57,7 +58,7 @@ public class KubernetesAgentService implements AgentService {
         .setMainClass(sparkSubmit.getMainClass())
         .setDeployMode("cluster")
         .setAppName("zhiqingyun-job")
-        .setMaster("k8s://172.16.215.105:6443")
+        .setMaster(getMaster())
         .setAppResource("local:///opt/spark/examples/jars/" + sparkSubmit.getAppResource())
         .setSparkHome(agentHomePath + File.separator + "spark-min");
 
@@ -77,7 +78,7 @@ public class KubernetesAgentService implements AgentService {
 
     sparkSubmit.getConf().forEach(sparkLauncher::setConf);
 
-    sparkLauncher.setConf("spark.kubernetes.container.image", "bitnami/spark:3.1.2");
+    sparkLauncher.setConf("spark.kubernetes.container.image", "apache/spark:v3.1.3");
     sparkLauncher.setConf("spark.kubernetes.authenticate.driver.serviceAccountName", "zhiqingyun");
     sparkLauncher.setConf("spark.kubernetes.namespace", "spark-yun");
     sparkLauncher.setConf("spark.kubernetes.driver.volumes.hostPath.jar.mount.path", "/opt/spark/examples/jars/" + sparkSubmit.getAppResource());
@@ -160,12 +161,20 @@ public class KubernetesAgentService implements AgentService {
 
     Process process = Runtime.getRuntime().exec(String.format(getLogCmdFormat, appId));
     InputStream inputStream = process.getInputStream();
+    InputStream errStream = process.getErrorStream();
     BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
+    BufferedReader errReader = new BufferedReader(new InputStreamReader(errStream, StandardCharsets.UTF_8));
 
     StringBuilder errLog = new StringBuilder();
     String line;
     while ((line = reader.readLine()) != null) {
       errLog.append(line).append("\n");
+    }
+
+    if (Strings.isEmpty(errLog)) {
+      while ((line = errReader.readLine()) != null) {
+        errLog.append(line).append("\n");
+      }
     }
 
     try {
