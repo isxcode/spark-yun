@@ -76,19 +76,14 @@ public class StandaloneAgentService implements AgentService {
       PluginReq pluginReq, SparkSubmit sparkSubmit, String agentHomePath) {
 
     SparkLauncher sparkLauncher =
-        new SparkLauncher()
-            .setVerbose(sparkSubmit.isVerbose())
-            .setMainClass(sparkSubmit.getMainClass())
-            .setDeployMode(sparkSubmit.getDeployMode())
-            .setAppName(sparkSubmit.getAppName())
-            .setMaster(getMaster())
-            .setAppResource(
-                agentHomePath
-                    + File.separator
-                    + "plugins"
-                    + File.separator
-                    + sparkSubmit.getAppResource())
-            .setSparkHome(sparkSubmit.getSparkHome());
+      new SparkLauncher()
+        .setVerbose(sparkSubmit.isVerbose())
+        .setMainClass(sparkSubmit.getMainClass())
+        .setDeployMode("cluster")
+        .setAppName("zhiqingyun-job")
+        .setMaster(getMaster())
+        .setAppResource(agentHomePath + File.separator + "plugins" + File.separator + sparkSubmit.getAppResource())
+        .setSparkHome(agentHomePath + File.separator + "spark-min");
 
     if (!Strings.isEmpty(agentHomePath)) {
       File[] jarFiles = new File(agentHomePath + File.separator + "lib").listFiles();
@@ -104,12 +99,7 @@ public class StandaloneAgentService implements AgentService {
       }
     }
 
-    if (sparkSubmit.getAppArgs().isEmpty()) {
-      sparkLauncher.addAppArgs(
-          Base64.getEncoder().encodeToString(JSON.toJSONString(pluginReq).getBytes()));
-    } else {
-      sparkLauncher.addAppArgs(String.valueOf(sparkSubmit.getAppArgs()));
-    }
+    sparkLauncher.addAppArgs(Base64.getEncoder().encodeToString(JSON.toJSONString(pluginReq).getBytes()));
 
     sparkSubmit.getConf().forEach(sparkLauncher::setConf);
 
@@ -118,17 +108,16 @@ public class StandaloneAgentService implements AgentService {
 
   @Override
   public String executeWork(SparkLauncher sparkLauncher) throws IOException {
+
     Process launch = sparkLauncher.launch();
     InputStream inputStream = launch.getErrorStream();
-    BufferedReader reader =
-        new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
+    BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
 
     StringBuilder errLog = new StringBuilder();
     String line;
     while ((line = reader.readLine()) != null) {
       errLog.append(line).append("\n");
-
-      String pattern = "driver-\\d+-\\d is RUNNING";
+      String pattern = "(driver-\\d+-\\d+)\\s+is\\s+(\\w+)";
       Pattern regex = Pattern.compile(pattern);
       Matcher matcher = regex.matcher(line);
       if (matcher.find()) {
@@ -137,13 +126,12 @@ public class StandaloneAgentService implements AgentService {
     }
 
     try {
-      launch.waitFor();
+      int exitCode = launch.waitFor();
+      if (exitCode == 1) {
+        throw new SparkYunException(errLog.toString());
+      }
     } catch (InterruptedException e) {
       throw new SparkYunException(e.getMessage());
-    }
-
-    if (launch.exitValue() == 1) {
-      throw new SparkYunException(errLog.toString());
     }
 
     throw new SparkYunException("无法获取submissionId");
@@ -163,8 +151,7 @@ public class StandaloneAgentService implements AgentService {
     Map<String, String> apps = new HashMap<>();
 
     for (Element row : completedDriversRows) {
-      apps.put(
-          row.selectFirst("td:nth-child(1)").text(), row.selectFirst("td:nth-child(4)").text());
+      apps.put(row.selectFirst("td:nth-child(1)").text(), row.selectFirst("td:nth-child(4)").text());
     }
 
     for (Element row : runningDriversRows) {
@@ -185,11 +172,8 @@ public class StandaloneAgentService implements AgentService {
     Map<String, String> apps = new HashMap<>();
 
     for (Element row : completedDriversRows) {
-      apps.put(
-          row.selectFirst("td:nth-child(1)").text(),
-          row.select("td:nth-child(3) a").first().attr("href"));
+      apps.put(row.selectFirst("td:nth-child(1)").text(), row.select("td:nth-child(3) a").first().attr("href"));
     }
-
     String workUrl = apps.get(submissionId);
 
     doc = Jsoup.connect(workUrl).get();
@@ -201,7 +185,6 @@ public class StandaloneAgentService implements AgentService {
       driversMap.put(driverId, stderrUrl);
     }
 
-    // 从errlog连接中，爬取日志
     String errlogUrl = driversMap.get(submissionId);
     doc = Jsoup.connect(errlogUrl).get();
     Element preElement = doc.selectFirst("pre");
@@ -221,8 +204,8 @@ public class StandaloneAgentService implements AgentService {
 
     for (Element row : completedDriversRows) {
       apps.put(
-          row.selectFirst("td:nth-child(1)").text(),
-          row.select("td:nth-child(3) a").first().attr("href"));
+        row.selectFirst("td:nth-child(1)").text(),
+        row.select("td:nth-child(3) a").first().attr("href"));
     }
 
     String workUrl = apps.get(submissionId);
@@ -236,7 +219,6 @@ public class StandaloneAgentService implements AgentService {
       driversMap.put(driverId, stderrUrl);
     }
 
-    // 从errlog连接中，爬取日志
     String errlogUrl = driversMap.get(submissionId);
     doc = Jsoup.connect(errlogUrl).get();
     Element preElement = doc.selectFirst("pre");
@@ -258,7 +240,6 @@ public class StandaloneAgentService implements AgentService {
     httpPost.setEntity(stringEntity);
 
     try (CloseableHttpResponse response = httpClient.execute(httpPost)) {
-      // 获取响应实体
       HttpEntity responseEntity = response.getEntity();
       if (responseEntity != null) {
         EntityUtils.toString(responseEntity);
