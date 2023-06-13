@@ -40,7 +40,7 @@ public class KubernetesAgentService implements AgentService {
       } else {
         int startIndex = errLog.indexOf("https://") + "https://".length();
         int endIndex = errLog.indexOf("\n", startIndex);
-        return errLog.substring(startIndex, endIndex);
+        return "k8s://" + errLog.substring(startIndex, endIndex);
       }
     } catch (InterruptedException e) {
       throw new SparkYunException(e.getMessage());
