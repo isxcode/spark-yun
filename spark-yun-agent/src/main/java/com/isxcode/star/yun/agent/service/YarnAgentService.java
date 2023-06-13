@@ -29,19 +29,19 @@ public class YarnAgentService implements AgentService {
       PluginReq pluginReq, SparkSubmit sparkSubmit, String agentHomePath) {
 
     SparkLauncher sparkLauncher =
-      new SparkLauncher()
-        .setVerbose(sparkSubmit.isVerbose())
-        .setMainClass(sparkSubmit.getMainClass())
-        .setDeployMode(sparkSubmit.getDeployMode())
-        .setAppName(sparkSubmit.getAppName())
-        .setMaster(getMaster())
-        .setAppResource(
-          agentHomePath
-            + File.separator
-            + "plugins"
-            + File.separator
-            + sparkSubmit.getAppResource())
-        .setSparkHome(sparkSubmit.getSparkHome());
+        new SparkLauncher()
+            .setVerbose(sparkSubmit.isVerbose())
+            .setMainClass(sparkSubmit.getMainClass())
+            .setDeployMode(sparkSubmit.getDeployMode())
+            .setAppName(sparkSubmit.getAppName())
+            .setMaster(getMaster())
+            .setAppResource(
+                agentHomePath
+                    + File.separator
+                    + "plugins"
+                    + File.separator
+                    + sparkSubmit.getAppResource())
+            .setSparkHome(sparkSubmit.getSparkHome());
 
     if (!Strings.isEmpty(agentHomePath)) {
       File[] jarFiles = new File(agentHomePath + File.separator + "lib").listFiles();

@@ -120,7 +120,7 @@ function okEvent() {
         .value({
           ...formData,
           id: formData.id ? formData.id : undefined,
-          calculateEngineId: formData.id ? formData.id : undefined
+          clusterId: formData.id ? formData.id : undefined
         })
         .then((res: any) => {
           modelConfig.okConfig.loading = false

@@ -41,11 +41,11 @@
           <template #statusTag="scopeSlot">
             <div class="btn-group">
               <el-tag
-                v-if="scopeSlot.row.status === 'ACTIVE'"
+                v-if="scopeSlot.row.status === 'RUNNING'"
                 class="ml-2"
                 type="success"
               >
-                可用
+                启动
               </el-tag>
               <el-tag
                 v-if="scopeSlot.row.status === 'NO_ACTIVE'"
@@ -54,8 +54,64 @@
               >
                 不可用
               </el-tag>
-              <el-tag v-if="scopeSlot.row.status === 'NEW'">
-                待配置
+              <el-tag
+                v-if="scopeSlot.row.status === 'STOP'"
+                class="ml-2"
+                type="danger"
+              >
+                待启动
+              </el-tag>
+              <el-tag v-if="scopeSlot.row.status === 'UN_INSTALL'">
+                未安装
+              </el-tag>
+              <el-tag v-if="scopeSlot.row.status === 'CHECKING'">
+                检测中
+              </el-tag>
+              <el-tag v-if="scopeSlot.row.status === 'STARTING'">
+                启动中
+              </el-tag>
+              <el-tag v-if="scopeSlot.row.status === 'STOPPING'">
+                停止中
+              </el-tag>
+              <el-tag v-if="scopeSlot.row.status === 'INSTALLING'">
+                安装中
+              </el-tag>
+              <el-tag v-if="scopeSlot.row.status === 'REMOVING'">
+                卸载中
+              </el-tag>
+              <el-tag v-if="scopeSlot.row.status === 'UN_CHECK'">
+                待检测
+              </el-tag>
+              <el-tag v-if="scopeSlot.row.status === 'UN_CHECK'">
+                待检测
+              </el-tag>
+              <el-tag
+                v-if="scopeSlot.row.status === 'CHECK_ERROR'"
+                class="ml-2"
+                type="danger"
+              >
+                检测失败
+              </el-tag>
+              <el-tag
+                v-if="scopeSlot.row.status === 'CAN_NOT_INSTALL'"
+                class="ml-2"
+                type="danger"
+              >
+                不可安装
+              </el-tag>
+              <el-tag
+                v-if="scopeSlot.row.status === 'CAN_INSTALL'"
+                class="ml-2"
+                type="success"
+              >
+                可安装
+              </el-tag>
+              <el-tag
+                v-if="scopeSlot.row.status === 'INSTALL_ERROR'"
+                class="ml-2"
+                type="danger"
+              >
+                安装失败
               </el-tag>
             </div>
           </template>
@@ -161,7 +217,7 @@ function addData() {
     return new Promise((resolve: any, reject: any) => {
       AddComputerPointData({
         ...formData,
-        calculateEngineId: route.query.id
+        clusterId: route.query.id
       })
         .then((res: any) => {
           ElMessage.success(res.msg)

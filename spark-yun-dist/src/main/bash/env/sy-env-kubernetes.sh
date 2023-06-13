@@ -30,7 +30,7 @@ if [ -e "${home_path}/spark-yun-agent.pid" ]; then
             \"log\": \"正在运行中\" \
           }"
     echo $json_output
-    rm /tmp/sy-env.sh
+    rm /tmp/sy-env-kubernetes.sh
     exit 0
   else
     json_output="{ \
@@ -38,7 +38,7 @@ if [ -e "${home_path}/spark-yun-agent.pid" ]; then
             \"log\": \"已安装，请启动\" \
           }"
     echo $json_output
-    rm /tmp/sy-env.sh
+    rm /tmp/sy-env-kubernetes.sh
     exit 0
   fi
 fi
@@ -50,7 +50,7 @@ if ! command -v tar &>/dev/null; then
         \"log\": \"未检测到tar命令\" \
       }"
   echo $json_output
-  rm /tmp/sy-env.sh
+  rm /tmp/sy-env-kubernetes.sh
   exit 0
 fi
 
@@ -61,7 +61,7 @@ if ! command -v mpstat &>/dev/null; then
         \"log\": \"未检测到mpstat命令\" \
       }"
   echo $json_output
-  rm /tmp/sy-env.sh
+  rm /tmp/sy-env-kubernetes.sh
   exit 0
 fi
 
@@ -72,7 +72,7 @@ if ! command -v java &>/dev/null; then
     \"log\": \"未检测到java1.8.x环境\" \
   }"
   echo $json_output
-  rm /tmp/sy-env.sh
+  rm /tmp/sy-env-kubernetes.sh
   exit 0
 fi
 
@@ -84,7 +84,7 @@ if [[ "$java_version" != "1.8"* ]]; then
       \"log\": \"未检测到java1.8.x环境\" \
     }"
   echo $json_output
-  rm /tmp/sy-env.sh
+  rm /tmp/sy-env-kubernetes.sh
   exit 0
 fi
 
@@ -95,7 +95,7 @@ if ! command -v kubectl &>/dev/null; then
     \"log\": \"未检测到kubectl命令\" \
   }"
   echo $json_output
-  rm /tmp/sy-env.sh
+  rm /tmp/sy-env-kubernetes.sh
   exit 0
 fi
 
@@ -106,7 +106,7 @@ if ! kubectl cluster-info &>/dev/null; then
           \"log\": \"kubectl无法访问k8s集群\" \
         }"
   echo $json_output
-  rm /tmp/sy-env.sh
+  rm /tmp/sy-env-kubernetes.sh
   exit 0
 fi
 
@@ -117,7 +117,7 @@ if ! netstat -tln | awk '$4 ~ /:'"$agent_port"'$/ {exit 1}'; then
           \"log\": \"${agent_port} 端口号已被占用\" \
         }"
   echo $json_output
-  rm /tmp/sy-env.sh
+  rm /tmp/sy-env-kubernetes.sh
   exit 0
 fi
 
@@ -130,4 +130,4 @@ json_output="{ \
 echo $json_output
 
 # 删除检测脚本
-rm /tmp/sy-env.sh
+rm /tmp/sy-env-kubernetes.sh
