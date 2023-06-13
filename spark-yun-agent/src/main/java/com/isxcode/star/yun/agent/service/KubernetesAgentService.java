@@ -41,7 +41,7 @@ public class KubernetesAgentService implements AgentService {
         int startIndex = errLog.indexOf("https://") + "https://".length();
         int endIndex = errLog.indexOf("\n", startIndex);
         // k8s命令会返回特殊字符
-        return ("k8s://" + errLog.substring(startIndex, endIndex)).replaceAll("[^\\p{L}\\p{N}\\s:./-]", "");
+        return ("k8s://" + errLog.substring(startIndex, endIndex)).replaceAll("0m", "").replaceAll("\u001B", "").replaceAll("\\[", "");
       }
     } catch (InterruptedException e) {
       throw new SparkYunException(e.getMessage());
