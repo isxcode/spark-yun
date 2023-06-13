@@ -121,6 +121,12 @@ if ! netstat -tln | awk '$4 ~ /:'"$agent_port"'$/ {exit 1}'; then
   exit 0
 fi
 
+# 执行拉取spark镜像命令
+docker pull bitnami/spark:3.1.2 >/dev/null
+kubectl create namespace spark-yun >/dev/null
+kubectl create serviceaccount zhiqingyun -n spark-yun >/dev/null
+kubectl create clusterrolebinding spark-role --clusterrole=edit --serviceaccount=spark-yun:zhiqingyun --namespace=spark-yun >/dev/null
+
 # 返回可以安装
 json_output="{ \
           \"status\": \"CAN_INSTALL\", \

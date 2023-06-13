@@ -57,7 +57,7 @@ public class KubernetesAgentService implements AgentService {
         .setMainClass(sparkSubmit.getMainClass())
         .setDeployMode("cluster")
         .setAppName("zhiqingyun-job")
-        .setMaster(getMaster())
+        .setMaster("k8s://172.16.215.105:6443")
         .setAppResource("local:///opt/spark/examples/jars/" + sparkSubmit.getAppResource())
         .setSparkHome(agentHomePath + File.separator + "spark-min");
 
@@ -77,7 +77,7 @@ public class KubernetesAgentService implements AgentService {
 
     sparkSubmit.getConf().forEach(sparkLauncher::setConf);
 
-    sparkLauncher.setConf("spark.kubernetes.container.image", "zhiqingyun/spark:latest");
+    sparkLauncher.setConf("spark.kubernetes.container.image", "bitnami/spark:3.1.2");
     sparkLauncher.setConf("spark.kubernetes.authenticate.driver.serviceAccountName", "zhiqingyun");
     sparkLauncher.setConf("spark.kubernetes.namespace", "spark-yun");
     sparkLauncher.setConf("spark.kubernetes.driver.volumes.hostPath.jar.mount.path", "/opt/spark/examples/jars/" + sparkSubmit.getAppResource());
@@ -173,6 +173,9 @@ public class KubernetesAgentService implements AgentService {
       if (exitCode == 1) {
         throw new SparkYunException(errLog.toString());
       } else {
+        if (errLog.toString().contains("Error")) {
+          return errLog.toString();
+        }
         Pattern regex = Pattern.compile("LogType:spark-yun\\s*([\\s\\S]*?)\\s*End of LogType:spark-yun");
         Matcher matcher = regex.matcher(errLog);
         String log = errLog.toString();
