@@ -22,7 +22,7 @@ public class WokRunWorkRes {
 
   private List<List<String>> data;
 
-  private String applicationId;
+  private String appId;
 
   private String yarnApplicationState;
 

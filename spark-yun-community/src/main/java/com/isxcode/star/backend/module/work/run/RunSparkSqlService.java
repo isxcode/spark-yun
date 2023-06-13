@@ -144,7 +144,7 @@ public class RunSparkSqlService {
 
     SparkSubmit sparkSubmit =
         SparkSubmit.builder()
-            .appName("spark-yun")
+            .verbose(true)
             .mainClass("com.isxcode.star.plugin.query.sql.Execute")
             .appResource("spark-query-sql-plugin.jar")
             .conf(sparkConfig)
@@ -153,9 +153,11 @@ public class RunSparkSqlService {
     PluginReq pluginReq =
         PluginReq.builder().sql(sqlScript).limit(200).sparkConfig(sparkConfig).build();
 
+    String clusterType = calculateEngineEntityOptional.get().getClusterType();
     executeReq.setSparkSubmit(sparkSubmit);
     executeReq.setPluginReq(pluginReq);
     executeReq.setAgentHomePath(engineNode.getAgentHomePath());
+    executeReq.setAgentType(clusterType);
 
     // 构建作业完成
     logBuilder.append(LocalDateTime.now() + WorkLog.SUCCESS_INFO + "构建作业完成 \n");
@@ -201,8 +203,10 @@ public class RunSparkSqlService {
               + engineNode.getHost()
               + ":"
               + engineNode.getAgentPort()
-              + "/yag/getStatus?applicationId="
-              + submitWorkRes.getApplicationId();
+              + "/yag/getStatus?appId="
+              + submitWorkRes.getAppId()
+              + "&agentType="
+              + clusterType;
       baseResponse = HttpUtils.doGet(getStatusUrl, BaseResponse.class);
       if (!String.valueOf(HttpStatus.OK.value()).equals(baseResponse.getCode())) {
         throw new WorkRunException(
@@ -243,8 +247,10 @@ public class RunSparkSqlService {
                   + engineNode.getHost()
                   + ":"
                   + engineNode.getAgentPort()
-                  + "/yag/getLog?applicationId="
-                  + submitWorkRes.getApplicationId();
+                  + "/yag/getLog?appId="
+                  + submitWorkRes.getAppId()
+                  + "&agentType="
+                  + clusterType;
           baseResponse = HttpUtils.doGet(getLogUrl, BaseResponse.class);
           if (!String.valueOf(HttpStatus.OK.value()).equals(baseResponse.getCode())) {
             throw new WorkRunException(
@@ -269,8 +275,10 @@ public class RunSparkSqlService {
                   + engineNode.getHost()
                   + ":"
                   + engineNode.getAgentPort()
-                  + "/yag/getData?applicationId="
-                  + submitWorkRes.getApplicationId();
+                  + "/yag/getData?appId="
+                  + submitWorkRes.getAppId()
+                  + "&agentType="
+                  + clusterType;
           baseResponse = HttpUtils.doGet(getDataUrl, BaseResponse.class);
           if (!String.valueOf(HttpStatus.OK.value()).equals(baseResponse.getCode())) {
             throw new WorkRunException(
@@ -282,7 +290,7 @@ public class RunSparkSqlService {
           }
           instance.setResultData(JSON.toJSONString(baseResponse.getData()));
           instance.setStatus(InstanceStatus.SUCCESS);
-          logBuilder.append(LocalDateTime.now() + WorkLog.SUCCESS_INFO + "作业执行成功 \n");
+          logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("作业执行成功 \n");
           instance.setSubmitLog(logBuilder.toString());
           workInstanceRepository.saveAndFlush(instance);
         } else {
