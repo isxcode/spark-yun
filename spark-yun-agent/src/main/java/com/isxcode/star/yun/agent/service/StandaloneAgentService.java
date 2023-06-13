@@ -121,7 +121,7 @@ public class StandaloneAgentService implements AgentService {
       Pattern regex = Pattern.compile(pattern);
       Matcher matcher = regex.matcher(line);
       if (matcher.find()) {
-        return matcher.group().replace(" is RUNNING", "");
+        return matcher.group().replace(" is RUNNING", "").replace(" is SUBMITTED", "");
       }
     }
 
