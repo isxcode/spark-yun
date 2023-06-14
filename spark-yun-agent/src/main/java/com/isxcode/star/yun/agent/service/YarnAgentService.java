@@ -71,6 +71,9 @@ public class YarnAgentService implements AgentService {
     BufferedReader reader =
         new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
 
+    // 设置超时时间
+
+
     StringBuilder errLog = new StringBuilder();
     String line;
     while ((line = reader.readLine()) != null) {
