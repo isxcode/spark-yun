@@ -13,8 +13,8 @@ public interface AgentService {
    * @param pluginReq 插件请求体
    * @param sparkSubmit spark作业提交配置
    */
-  SparkLauncher genSparkLauncher(
-      PluginReq pluginReq, SparkSubmit sparkSubmit, String agentHomePath) throws IOException;
+  SparkLauncher genSparkLauncher(PluginReq pluginReq, SparkSubmit sparkSubmit, String agentHomePath)
+      throws IOException;
 
   /** @param sparkLauncher spark启动器 */
   String executeWork(SparkLauncher sparkLauncher) throws IOException;

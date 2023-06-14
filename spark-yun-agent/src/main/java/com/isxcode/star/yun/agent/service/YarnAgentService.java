@@ -5,17 +5,16 @@ import com.isxcode.star.api.constants.base.SparkConstants;
 import com.isxcode.star.api.exceptions.SparkYunException;
 import com.isxcode.star.api.pojos.plugin.req.PluginReq;
 import com.isxcode.star.api.pojos.yun.agent.req.SparkSubmit;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.logging.log4j.util.Strings;
-import org.apache.spark.launcher.SparkLauncher;
-import org.springframework.stereotype.Service;
-
 import java.io.*;
 import java.net.MalformedURLException;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.util.Strings;
+import org.apache.spark.launcher.SparkLauncher;
+import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
@@ -59,7 +58,8 @@ public class YarnAgentService implements AgentService {
       }
     }
 
-    sparkLauncher.addAppArgs(Base64.getEncoder().encodeToString(JSON.toJSONString(pluginReq).getBytes()));
+    sparkLauncher.addAppArgs(
+        Base64.getEncoder().encodeToString(JSON.toJSONString(pluginReq).getBytes()));
 
     sparkSubmit.getConf().forEach(sparkLauncher::setConf);
 
@@ -126,7 +126,11 @@ public class YarnAgentService implements AgentService {
       Pattern regex = Pattern.compile(pattern);
       Matcher matcher = regex.matcher(line);
       if (matcher.find()) {
-        return matcher.group(1);
+        String status = matcher.group(1);
+        if ("UNDEFINED".equals(status)) {
+          status = "RUNNING";
+        }
+        return status;
       }
     }
 

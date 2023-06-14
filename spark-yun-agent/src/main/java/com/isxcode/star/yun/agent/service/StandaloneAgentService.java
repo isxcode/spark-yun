@@ -76,14 +76,19 @@ public class StandaloneAgentService implements AgentService {
       PluginReq pluginReq, SparkSubmit sparkSubmit, String agentHomePath) {
 
     SparkLauncher sparkLauncher =
-      new SparkLauncher()
-        .setVerbose(sparkSubmit.isVerbose())
-        .setMainClass(sparkSubmit.getMainClass())
-        .setDeployMode("cluster")
-        .setAppName("zhiqingyun-job")
-        .setMaster(getMaster())
-        .setAppResource(agentHomePath + File.separator + "plugins" + File.separator + sparkSubmit.getAppResource())
-        .setSparkHome(agentHomePath + File.separator + "spark-min");
+        new SparkLauncher()
+            .setVerbose(sparkSubmit.isVerbose())
+            .setMainClass(sparkSubmit.getMainClass())
+            .setDeployMode("cluster")
+            .setAppName("zhiqingyun-job")
+            .setMaster(getMaster())
+            .setAppResource(
+                agentHomePath
+                    + File.separator
+                    + "plugins"
+                    + File.separator
+                    + sparkSubmit.getAppResource())
+            .setSparkHome(agentHomePath + File.separator + "spark-min");
 
     if (!Strings.isEmpty(agentHomePath)) {
       File[] jarFiles = new File(agentHomePath + File.separator + "lib").listFiles();
@@ -99,7 +104,8 @@ public class StandaloneAgentService implements AgentService {
       }
     }
 
-    sparkLauncher.addAppArgs(Base64.getEncoder().encodeToString(JSON.toJSONString(pluginReq).getBytes()));
+    sparkLauncher.addAppArgs(
+        Base64.getEncoder().encodeToString(JSON.toJSONString(pluginReq).getBytes()));
 
     sparkSubmit.getConf().forEach(sparkLauncher::setConf);
 
@@ -111,7 +117,8 @@ public class StandaloneAgentService implements AgentService {
 
     Process launch = sparkLauncher.launch();
     InputStream inputStream = launch.getErrorStream();
-    BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
+    BufferedReader reader =
+        new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
 
     StringBuilder errLog = new StringBuilder();
     String line;
@@ -121,7 +128,11 @@ public class StandaloneAgentService implements AgentService {
       Pattern regex = Pattern.compile(pattern);
       Matcher matcher = regex.matcher(line);
       if (matcher.find()) {
-        return matcher.group().replace(" is RUNNING", "").replace(" is SUBMITTED", "").replace(" is FAILED", "");
+        return matcher
+            .group()
+            .replace(" is RUNNING", "")
+            .replace(" is SUBMITTED", "")
+            .replace(" is FAILED", "");
       }
     }
 
@@ -151,11 +162,14 @@ public class StandaloneAgentService implements AgentService {
     Map<String, String> apps = new HashMap<>();
 
     for (Element row : completedDriversRows) {
-      apps.put(row.selectFirst("td:nth-child(1)").text(), row.selectFirst("td:nth-child(4)").text());
+      apps.put(
+          row.selectFirst("td:nth-child(1)").text(), row.selectFirst("td:nth-child(4)").text());
     }
 
     for (Element row : runningDriversRows) {
-      apps.put(row.selectFirst("td:nth-child(1)").text().replace(" (kill)", ""), row.select("td").get(3).text());
+      apps.put(
+          row.selectFirst("td:nth-child(1)").text().replace(" (kill)", ""),
+          row.select("td").get(3).text());
     }
 
     return apps.get(submissionId);
@@ -172,7 +186,9 @@ public class StandaloneAgentService implements AgentService {
     Map<String, String> apps = new HashMap<>();
 
     for (Element row : completedDriversRows) {
-      apps.put(row.selectFirst("td:nth-child(1)").text(), row.select("td:nth-child(3) a").first().attr("href"));
+      apps.put(
+          row.selectFirst("td:nth-child(1)").text(),
+          row.select("td:nth-child(3) a").first().attr("href"));
     }
     String workUrl = apps.get(submissionId);
 
@@ -204,8 +220,8 @@ public class StandaloneAgentService implements AgentService {
 
     for (Element row : completedDriversRows) {
       apps.put(
-        row.selectFirst("td:nth-child(1)").text(),
-        row.select("td:nth-child(3) a").first().attr("href"));
+          row.selectFirst("td:nth-child(1)").text(),
+          row.select("td:nth-child(3) a").first().attr("href"));
     }
 
     String workUrl = apps.get(submissionId);
