@@ -1,5 +1,6 @@
 package com.isxcode.star.yun.agent.service;
 
+import com.isxcode.star.api.constants.base.SparkConstants;
 import com.isxcode.star.api.exceptions.SparkYunException;
 import com.isxcode.star.api.pojos.plugin.req.PluginReq;
 import com.isxcode.star.api.pojos.yun.agent.req.SparkSubmit;
@@ -72,12 +73,17 @@ public class YarnAgentService implements AgentService {
         new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
 
     // 设置超时时间
-
+    long timeoutExpiredMs = System.currentTimeMillis() + SparkConstants.SPARK_SUBMIT_TIMEOUT;
 
     StringBuilder errLog = new StringBuilder();
     String line;
     while ((line = reader.readLine()) != null) {
       errLog.append(line).append("\n");
+
+      long waitMillis = timeoutExpiredMs - System.currentTimeMillis();
+      if (waitMillis <= 0) {
+        throw new SparkYunException(errLog.toString());
+      }
 
       String pattern = "Submitted application application_\\d+_\\d+";
       Pattern regex = Pattern.compile(pattern);
