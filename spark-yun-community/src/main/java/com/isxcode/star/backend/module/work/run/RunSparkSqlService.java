@@ -23,11 +23,8 @@ import com.isxcode.star.backend.module.work.instance.WorkInstanceRepository;
 import com.isxcode.star.common.utils.HttpUtils;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -221,47 +218,49 @@ public class RunSparkSqlService {
       instance.setSparkStarRes(JSON.toJSONString(workStatusRes));
       workInstanceRepository.saveAndFlush(instance);
 
+      List<String> runningStatus = Arrays.asList("RUNNING", "UNDEFINED");
+
       // 如果是运行中，更新日志，继续执行
-      if ("RUNNING".equals(workStatusRes.getYarnApplicationState())
-          || "UNDEFINED".equals(workStatusRes.getFinalApplicationStatus())) {
+      if (runningStatus.contains(workStatusRes.getAppStatus())) {
         logBuilder.append(
-            LocalDateTime.now()
-                + WorkLog.SUCCESS_INFO
-                + "运行中:"
-                + workStatusRes.getYarnApplicationState()
-                + "\n");
+          LocalDateTime.now()
+            + WorkLog.SUCCESS_INFO
+            + "运行中:"
+            + workStatusRes.getAppStatus()
+            + "\n");
         instance.setSubmitLog(logBuilder.toString());
         workInstanceRepository.saveAndFlush(instance);
       } else {
+
         try {
           Thread.sleep(2000);
         } catch (InterruptedException e) {
           throw new WorkRunException(
-              LocalDateTime.now() + WorkLog.ERROR_INFO + "睡眠线程异常 : " + e.getMessage() + "\n");
+            LocalDateTime.now() + WorkLog.ERROR_INFO + "睡眠线程异常 : " + e.getMessage() + "\n");
         }
 
-        if (!"KILLED".equals(workStatusRes.getYarnApplicationState())) {
+        if (!"KILLED".equals(workStatusRes.getAppStatus())) {
           // 保存日志，生成日志时间比较久
           String getLogUrl =
-              "http://"
-                  + engineNode.getHost()
-                  + ":"
-                  + engineNode.getAgentPort()
-                  + "/yag/getLog?appId="
-                  + submitWorkRes.getAppId()
-                  + "&agentType="
-                  + clusterType;
+            "http://"
+              + engineNode.getHost()
+              + ":"
+              + engineNode.getAgentPort()
+              + "/yag/getLog?appId="
+              + submitWorkRes.getAppId()
+              + "&agentType="
+              + clusterType;
           baseResponse = HttpUtils.doGet(getLogUrl, BaseResponse.class);
           if (!String.valueOf(HttpStatus.OK.value()).equals(baseResponse.getCode())) {
             throw new WorkRunException(
-                LocalDateTime.now()
-                    + WorkLog.ERROR_INFO
-                    + "获取作业日志异常 : "
-                    + baseResponse.getMsg()
-                    + "\n");
+              LocalDateTime.now()
+                + WorkLog.ERROR_INFO
+                + "获取作业日志异常 : "
+                + baseResponse.getMsg()
+                + "\n");
           }
           YagGetLogRes yagGetLogRes =
-              JSON.parseObject(JSON.toJSONString(baseResponse.getData()), YagGetLogRes.class);
+            JSON.parseObject(JSON.toJSONString(baseResponse.getData()), YagGetLogRes.class);
           logBuilder.append(LocalDateTime.now() + WorkLog.SUCCESS_INFO + "保存日志完成 \n");
           instance.setSubmitLog(logBuilder.toString());
           instance.setYarnLog(yagGetLogRes.getLog());
@@ -269,24 +268,24 @@ public class RunSparkSqlService {
         }
 
         // 运行成功，保存数据
-        if ("SUCCEEDED".equals(workStatusRes.getFinalApplicationStatus())) {
+        if ("SUCCEEDED".equals(workStatusRes.getAppStatus())) {
           String getDataUrl =
-              "http://"
-                  + engineNode.getHost()
-                  + ":"
-                  + engineNode.getAgentPort()
-                  + "/yag/getData?appId="
-                  + submitWorkRes.getAppId()
-                  + "&agentType="
-                  + clusterType;
+            "http://"
+              + engineNode.getHost()
+              + ":"
+              + engineNode.getAgentPort()
+              + "/yag/getData?appId="
+              + submitWorkRes.getAppId()
+              + "&agentType="
+              + clusterType;
           baseResponse = HttpUtils.doGet(getDataUrl, BaseResponse.class);
           if (!String.valueOf(HttpStatus.OK.value()).equals(baseResponse.getCode())) {
             throw new WorkRunException(
-                LocalDateTime.now()
-                    + WorkLog.ERROR_INFO
-                    + "获取作业数据异常 : "
-                    + baseResponse.getErr()
-                    + "\n");
+              LocalDateTime.now()
+                + WorkLog.ERROR_INFO
+                + "获取作业数据异常 : "
+                + baseResponse.getErr()
+                + "\n");
           }
           instance.setResultData(JSON.toJSONString(baseResponse.getData()));
           instance.setStatus(InstanceStatus.SUCCESS);
