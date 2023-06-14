@@ -7,8 +7,6 @@ public interface SparkConstants {
 
   String SPARK_DEPLOY_MODE = "cluster";
 
-  /**
-   * 提交作业默认超时时间15秒.
-   */
+  /** 提交作业默认超时时间15秒. */
   Integer SPARK_SUBMIT_TIMEOUT = 15000;
 }
