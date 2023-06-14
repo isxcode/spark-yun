@@ -4,11 +4,13 @@ import com.alibaba.fastjson.JSON;
 import com.isxcode.star.api.exceptions.SparkYunException;
 import com.isxcode.star.api.pojos.plugin.req.PluginReq;
 import com.isxcode.star.api.pojos.yun.agent.req.SparkSubmit;
+
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
 import org.apache.spark.launcher.SparkLauncher;
@@ -50,7 +52,7 @@ public class KubernetesAgentService implements AgentService {
 
   @Override
   public SparkLauncher genSparkLauncher(
-      PluginReq pluginReq, SparkSubmit sparkSubmit, String agentHomePath) throws IOException {
+    PluginReq pluginReq, SparkSubmit sparkSubmit, String agentHomePath) throws IOException {
 
     SparkLauncher sparkLauncher =
       new SparkLauncher()
@@ -127,18 +129,27 @@ public class KubernetesAgentService implements AgentService {
 
     Process process = Runtime.getRuntime().exec(String.format(getStatusCmdFormat, podName));
     InputStream inputStream = process.getInputStream();
+    InputStream errStream = process.getErrorStream();
     BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
-
+    BufferedReader errReader = new BufferedReader(new InputStreamReader(errStream, StandardCharsets.UTF_8));
     StringBuilder errLog = new StringBuilder();
     String line;
     while ((line = reader.readLine()) != null) {
       errLog.append(line).append("\n");
-
       String pattern = "\\s+\\d/\\d\\s+(\\w+)";
       Pattern regex = Pattern.compile(pattern);
       Matcher matcher = regex.matcher(line);
       if (matcher.find()) {
         return matcher.group(1);
+      }
+    }
+
+    if (errLog.toString().isEmpty()) {
+      while ((line = errReader.readLine()) != null) {
+        errLog.append(line).append("\n");
+        if (errLog.toString().contains("not found")) {
+          return "KILLED";
+        }
       }
     }
 

@@ -177,7 +177,7 @@ public class RunSparkSqlService {
     }
     if (!String.valueOf(HttpStatus.OK.value()).equals(baseResponse.getCode())) {
       throw new WorkRunException(
-          LocalDateTime.now() + WorkLog.ERROR_INFO + "提交作业失败 : " + baseResponse.getErr() + "\n");
+          LocalDateTime.now() + WorkLog.ERROR_INFO + "提交作业失败 : " + baseResponse.getMsg() + "\n");
     }
     WokRunWorkRes submitWorkRes =
         JSON.parseObject(JSON.toJSONString(baseResponse.getData()), WokRunWorkRes.class);
