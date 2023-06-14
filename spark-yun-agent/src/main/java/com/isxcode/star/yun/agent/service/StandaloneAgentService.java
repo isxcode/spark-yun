@@ -121,7 +121,7 @@ public class StandaloneAgentService implements AgentService {
       Pattern regex = Pattern.compile(pattern);
       Matcher matcher = regex.matcher(line);
       if (matcher.find()) {
-        return matcher.group().replace(" is RUNNING", "").replace(" is SUBMITTED", "");
+        return matcher.group().replace(" is RUNNING", "").replace(" is SUBMITTED", "").replace(" is FAILED", "");
       }
     }
 
@@ -155,7 +155,7 @@ public class StandaloneAgentService implements AgentService {
     }
 
     for (Element row : runningDriversRows) {
-      apps.put(row.selectFirst("td:nth-child(1)").text(), row.select("td").get(7).text());
+      apps.put(row.selectFirst("td:nth-child(1)").text().replace(" (kill)", ""), row.select("td").get(3).text());
     }
 
     return apps.get(submissionId);

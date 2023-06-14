@@ -1,5 +1,6 @@
 package com.isxcode.star.yun.agent.service;
 
+import com.alibaba.fastjson2.JSON;
 import com.isxcode.star.api.constants.base.SparkConstants;
 import com.isxcode.star.api.exceptions.SparkYunException;
 import com.isxcode.star.api.pojos.plugin.req.PluginReq;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -57,7 +59,7 @@ public class YarnAgentService implements AgentService {
       }
     }
 
-    sparkLauncher.addAppArgs(String.valueOf(sparkSubmit.getAppArgs()));
+    sparkLauncher.addAppArgs(Base64.getEncoder().encodeToString(JSON.toJSONString(pluginReq).getBytes()));
 
     sparkSubmit.getConf().forEach(sparkLauncher::setConf);
 
@@ -72,7 +74,6 @@ public class YarnAgentService implements AgentService {
     BufferedReader reader =
         new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
 
-    // 设置超时时间
     long timeoutExpiredMs = System.currentTimeMillis() + SparkConstants.SPARK_SUBMIT_TIMEOUT;
 
     StringBuilder errLog = new StringBuilder();
@@ -187,7 +188,6 @@ public class YarnAgentService implements AgentService {
 
     String getLogCmdFormat = "yarn logs -applicationId %s";
 
-    // 使用命令获取状态
     Process process = Runtime.getRuntime().exec(String.format(getLogCmdFormat, appId));
 
     InputStream inputStream = process.getInputStream();
