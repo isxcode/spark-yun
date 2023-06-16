@@ -77,7 +77,7 @@ public class StandaloneAgentService implements AgentService {
 
     SparkLauncher sparkLauncher =
         new SparkLauncher()
-            .setVerbose(sparkSubmit.isVerbose())
+            .setVerbose(false)
             .setMainClass(sparkSubmit.getMainClass())
             .setDeployMode("cluster")
             .setAppName("zhiqingyun-job")
@@ -145,7 +145,7 @@ public class StandaloneAgentService implements AgentService {
       throw new SparkYunException(e.getMessage());
     }
 
-    throw new SparkYunException("无法获取submissionId");
+    throw new SparkYunException("无法获取submissionId \n" + errLog);
   }
 
   @Override

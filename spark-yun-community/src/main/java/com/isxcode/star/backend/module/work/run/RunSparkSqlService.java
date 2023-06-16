@@ -161,6 +161,9 @@ public class RunSparkSqlService {
             .conf(sparkSubmitConfig)
             .build();
 
+    sparkConfig.remove("spark.kubernetes.driver.podTemplateFile");
+    sparkConfig.remove("spark.kubernetes.executor.podTemplateFile");
+
     PluginReq pluginReq =
         PluginReq.builder().sql(sqlScript).limit(200).sparkConfig(sparkConfig).build();
 

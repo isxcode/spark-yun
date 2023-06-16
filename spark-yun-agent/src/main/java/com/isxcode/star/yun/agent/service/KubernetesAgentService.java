@@ -58,7 +58,7 @@ public class KubernetesAgentService implements AgentService {
 
     SparkLauncher sparkLauncher =
         new SparkLauncher()
-            .setVerbose(sparkSubmit.isVerbose())
+            .setVerbose(false)
             .setMainClass(sparkSubmit.getMainClass())
             .setDeployMode("cluster")
             .setAppName("zhiqingyun-job")
