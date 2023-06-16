@@ -21,7 +21,7 @@
   - [开发规范](/zh-cn/develop/rule.md)
   - [申请加入](/zh-cn/develop/join.md)
 - **常见问题**
-  - [启动项目](/zh-cn/problem/proble1名.md)
+  - [常见问题](/zh-cn/problem/problem1.md)
 
 [//]: # (- **版本历史**)
 
