@@ -147,3 +147,99 @@ spec:
   "hive.metastore.uris": "thrift://isxcode:9083"
 }
 ```
+
+#### 问题4
+
+> standalone 执行sparksql报错
+
+```log
+2023-06-16 18:05:12,769 WARN server.TransportChannelHandler: Exception in connection from /172.16.215.105:7077
+java.io.InvalidClassException: org.apache.spark.rpc.RpcEndpointRef; local class incompatible: stream classdesc serialVersionUID = -2184441956866814275, local class serialVersionUID = -3992716321891270988
+	at java.io.ObjectStreamClass.initNonProxy(ObjectStreamClass.java:699)
+	at java.io.ObjectInputStream.readNonProxyDesc(ObjectInputStream.java:2004)
+	at java.io.ObjectInputStream.readClassDesc(ObjectInputStream.java:1851)
+	at java.io.ObjectInputStream.readNonProxyDesc(ObjectInputStream.java:2004)
+	at java.io.ObjectInputStream.readClassDesc(ObjectInputStream.java:1851)
+	at java.io.ObjectInputStream.readOrdinaryObject(ObjectInputStream.java:2185)
+	at java.io.ObjectInputStream.readObject0(ObjectInputStream.java:1668)
+	at java.io.ObjectInputStream.defaultReadFields(ObjectInputStream.java:2430)
+	at java.io.ObjectInputStream.readSerialData(ObjectInputStream.java:2354)
+	at java.io.ObjectInputStream.readOrdinaryObject(ObjectInputStream.java:2212)
+	at java.io.ObjectInputStream.readObject0(ObjectInputStream.java:1668)
+	at java.io.ObjectInputStream.readObject(ObjectInputStream.java:502)
+	at java.io.ObjectInputStream.readObject(ObjectInputStream.java:460)
+	at org.apache.spark.serializer.JavaDeserializationStream.readObject(JavaSerializer.scala:76)
+	at org.apache.spark.serializer.JavaSerializerInstance.deserialize(JavaSerializer.scala:109)
+	at org.apache.spark.rpc.netty.NettyRpcEnv.$anonfun$deserialize$2(NettyRpcEnv.scala:299)
+	at scala.util.DynamicVariable.withValue(DynamicVariable.scala:62)
+	at org.apache.spark.rpc.netty.NettyRpcEnv.deserialize(NettyRpcEnv.scala:352)
+	at org.apache.spark.rpc.netty.NettyRpcEnv.$anonfun$deserialize$1(NettyRpcEnv.scala:298)
+	at scala.util.DynamicVariable.withValue(DynamicVariable.scala:62)
+	at org.apache.spark.rpc.netty.NettyRpcEnv.deserialize(NettyRpcEnv.scala:298)
+	at org.apache.spark.rpc.netty.NettyRpcEnv.$anonfun$askAbortable$7(NettyRpcEnv.scala:246)
+	at org.apache.spark.rpc.netty.NettyRpcEnv.$anonfun$askAbortable$7$adapted(NettyRpcEnv.scala:246)
+	at org.apache.spark.rpc.netty.RpcOutboxMessage.onSuccess(Outbox.scala:90)
+	at org.apache.spark.network.client.TransportResponseHandler.handle(TransportResponseHandler.java:194)
+	at org.apache.spark.network.server.TransportChannelHandler.channelRead0(TransportChannelHandler.java:142)
+	at org.apache.spark.network.server.TransportChannelHandler.channelRead0(TransportChannelHandler.java:53)
+	at io.netty.channel.SimpleChannelInboundHandler.channelRead(SimpleChannelInboundHandler.java:99)
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:379)
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:365)
+	at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:357)
+	at io.netty.handler.timeout.IdleStateHandler.channelRead(IdleStateHandler.java:286)
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:379)
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:365)
+	at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:357)
+	at io.netty.handler.codec.MessageToMessageDecoder.channelRead(MessageToMessageDecoder.java:103)
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:379)
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:365)
+	at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:357)
+	at org.apache.spark.network.util.TransportFrameDecoder.channelRead(TransportFrameDecoder.java:102)
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:379)
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:365)
+	at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:357)
+	at io.netty.channel.DefaultChannelPipeline$HeadContext.channelRead(DefaultChannelPipeline.java:1410)
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:379)
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:365)
+	at io.netty.channel.DefaultChannelPipeline.fireChannelRead(DefaultChannelPipeline.java:919)
+	at io.netty.channel.nio.AbstractNioByteChannel$NioByteUnsafe.read(AbstractNioByteChannel.java:163)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:714)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:650)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:576)
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:493)
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:989)
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+	at java.lang.Thread.run(Thread.java:750)
+```
+
+###### 解决方案
+
+```text
+这是因为spark的standalone集群版本，和spark-yun中spark-min中自带的版本冲突，需要将两边的版本保持一致
+```
+
+```bash
+cp -r /opt/spark/* /home/ispong/spark-yun/spark-min/
+rm /home/ispong/spark-yun/spark-min/conf/spark-env.sh
+rm /home/ispong/spark-yun/spark-min/conf/spark-defaults.conf
+```
+
+#### 问题5
+
+> 提交standalone作业报错
+
+```log
+Exception in thread "main" java.lang.NoSuchMethodError: org.apache.spark.network.util.JavaUtils.createDirectory(Ljava/lang/String;Ljava/lang/String;)Ljava/io/File;
+	at org.apache.spark.util.Utils$.createDirectory(Utils.scala:323)
+	at org.apache.spark.util.Utils$.createTempDir(Utils.scala:340)
+	at org.apache.spark.util.Utils$.createTempDir(Utils.scala:331)
+	at org.apache.spark.deploy.SparkSubmit.prepareSubmitEnvironment(SparkSubmit.scala:370)
+	at org.apache.spark.deploy.SparkSubmit.org$apache$spark$deploy$SparkSubmit$$runMain(SparkSubmit.scala:955)
+	at org.apache.spark.deploy.SparkSubmit.doRunMain$1(SparkSubmit.scala:192)
+	at org.apache.spark.deploy.SparkSubmit.submit(SparkSubmit.scala:215)
+	at org.apache.spark.deploy.SparkSubmit.doSubmit(SparkSubmit.scala:91)
+	at org.apache.spark.deploy.SparkSubmit$$anon$2.doSubmit(SparkSubmit.scala:1111)
+	at org.apache.spark.deploy.SparkSubmit$.main(SparkSubmit.scala:1120)
+	at org.apache.spark.deploy.SparkSubmit.main(SparkSubmit.scala)
+```
