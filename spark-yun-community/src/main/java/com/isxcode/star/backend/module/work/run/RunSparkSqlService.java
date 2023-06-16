@@ -253,8 +253,9 @@ public class RunSparkSqlService {
       instance.setSubmitLog(logBuilder.toString());
       workInstanceRepository.saveAndFlush(instance);
 
-      // 如果是运行中，更新日志，继续执行
-      List<String> runningStatus = Arrays.asList("RUNNING", "UNDEFINED", "SUBMITTED");
+      // 如果是运行中，更新日志，继续执行 ContainerCreating
+      List<String> runningStatus =
+          Arrays.asList("RUNNING", "UNDEFINED", "SUBMITTED", "CONTAINERCREATING");
       if (runningStatus.contains(workStatusRes.getAppStatus().toUpperCase())) {
         try {
           Thread.sleep(1000);

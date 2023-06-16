@@ -45,6 +45,8 @@ tasks.register('build_lib', Copy) {
   }
 
   from '../spark-yun-api/build/libs'
+  from '../spark-yun-agent/build/libs'
+  from '../spark-yun-plugins/spark-query-sql-plugin/build/libs'
   into 'build/lib'
 }
 

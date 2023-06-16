@@ -79,6 +79,14 @@ public class KubernetesAgentService implements AgentService {
           sparkLauncher.setConf(
               "spark.kubernetes.driver.volumes.hostPath." + i + ".options.path",
               jarFiles[i].getPath());
+          sparkLauncher.setConf(
+              "spark.kubernetes.executor.volumes.hostPath." + i + ".mount.path",
+              "/opt/spark/examples/jars/lib/" + jarFiles[i].getName());
+          sparkLauncher.setConf(
+              "spark.kubernetes.executor.volumes.hostPath." + i + ".mount.readOnly", "false");
+          sparkLauncher.setConf(
+              "spark.kubernetes.executor.volumes.hostPath." + i + ".options.path",
+              jarFiles[i].getPath());
         }
       }
     }
@@ -97,6 +105,13 @@ public class KubernetesAgentService implements AgentService {
     sparkLauncher.setConf("spark.kubernetes.driver.volumes.hostPath.jar.mount.readOnly", "false");
     sparkLauncher.setConf(
         "spark.kubernetes.driver.volumes.hostPath.jar.options.path",
+        agentHomePath + File.separator + "plugins" + File.separator + sparkSubmit.getAppResource());
+    sparkLauncher.setConf(
+        "spark.kubernetes.executor.volumes.hostPath.jar.mount.path",
+        "/opt/spark/examples/jars/" + sparkSubmit.getAppResource());
+    sparkLauncher.setConf("spark.kubernetes.executor.volumes.hostPath.jar.mount.readOnly", "false");
+    sparkLauncher.setConf(
+        "spark.kubernetes.executor.volumes.hostPath.jar.options.path",
         agentHomePath + File.separator + "plugins" + File.separator + sparkSubmit.getAppResource());
 
     return sparkLauncher;
