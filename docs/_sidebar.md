@@ -7,6 +7,7 @@
 - **安装手册**
   - [源码安装](/zh-cn/install/source-deploy.md)
   - [Docker安装](/zh-cn/install/docker-deploy.md)
+  - [升级安装](/zh-cn/install/upgrade.md)
 - **使用手册**
   - [多租户](/zh-cn/reference/tenant.md)
   - [计算集群](/zh-cn/reference/cluster.md)
