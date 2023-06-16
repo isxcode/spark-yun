@@ -270,6 +270,12 @@ public class WorkBizService {
             LocalDateTime.now() + WorkLog.ERROR_INFO + "申请资源失败 : 集群不存在可用节点，请切换一个集群  \n");
       }
 
+      Optional<ClusterEntity> clusterEntityOptional =
+          calculateEngineRepository.findById(workConfigEntity.getClusterId());
+      if (!clusterEntityOptional.isPresent()) {
+        throw new SparkYunException("集群不存在");
+      }
+
       // 节点选择随机数
       ClusterNodeEntity engineNode =
           allEngineNodes.get(new Random().nextInt(allEngineNodes.size()));
@@ -288,7 +294,9 @@ public class WorkBizService {
               + ":"
               + engineNode.getAgentPort()
               + "/yag/stopJob?appId="
-              + wokRunWorkRes.getApplicationId();
+              + wokRunWorkRes.getAppId()
+              + "&agentType="
+              + clusterEntityOptional.get().getClusterType();
       BaseResponse<?> baseResponse = HttpUtils.doGet(stopJobUrl, BaseResponse.class);
 
       if (!String.valueOf(HttpStatus.OK.value()).equals(baseResponse.getCode())) {

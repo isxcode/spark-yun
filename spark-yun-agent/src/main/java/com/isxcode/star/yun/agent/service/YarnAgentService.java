@@ -1,6 +1,7 @@
 package com.isxcode.star.yun.agent.service;
 
-import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson2.JSON;
+import com.isxcode.star.api.constants.base.SparkConstants;
 import com.isxcode.star.api.exceptions.SparkYunException;
 import com.isxcode.star.api.pojos.plugin.req.PluginReq;
 import com.isxcode.star.api.pojos.yun.agent.req.SparkSubmit;
@@ -20,23 +21,28 @@ import org.springframework.stereotype.Service;
 public class YarnAgentService implements AgentService {
 
   @Override
+  public String getMaster() {
+    return "yarn";
+  }
+
+  @Override
   public SparkLauncher genSparkLauncher(
       PluginReq pluginReq, SparkSubmit sparkSubmit, String agentHomePath) {
 
     SparkLauncher sparkLauncher =
         new SparkLauncher()
-            .setVerbose(sparkSubmit.isVerbose())
+            .setVerbose(false)
             .setMainClass(sparkSubmit.getMainClass())
-            .setDeployMode(sparkSubmit.getDeployMode())
-            .setAppName(sparkSubmit.getAppName())
-            .setMaster(sparkSubmit.getMaster())
+            .setDeployMode("cluster")
+            .setAppName("zhiqingyun-job")
+            .setMaster(getMaster())
             .setAppResource(
                 agentHomePath
                     + File.separator
                     + "plugins"
                     + File.separator
                     + sparkSubmit.getAppResource())
-            .setSparkHome(sparkSubmit.getSparkHome());
+            .setSparkHome(agentHomePath + File.separator + "spark-min");
 
     if (!Strings.isEmpty(agentHomePath)) {
       File[] jarFiles = new File(agentHomePath + File.separator + "lib").listFiles();
@@ -52,12 +58,8 @@ public class YarnAgentService implements AgentService {
       }
     }
 
-    if (sparkSubmit.getAppArgs().isEmpty()) {
-      sparkLauncher.addAppArgs(
-          Base64.getEncoder().encodeToString(JSON.toJSONString(pluginReq).getBytes()));
-    } else {
-      sparkLauncher.addAppArgs(String.valueOf(sparkSubmit.getAppArgs()));
-    }
+    sparkLauncher.addAppArgs(
+        Base64.getEncoder().encodeToString(JSON.toJSONString(pluginReq).getBytes()));
 
     sparkSubmit.getConf().forEach(sparkLauncher::setConf);
 
@@ -72,10 +74,17 @@ public class YarnAgentService implements AgentService {
     BufferedReader reader =
         new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
 
+    long timeoutExpiredMs = System.currentTimeMillis() + SparkConstants.SPARK_SUBMIT_TIMEOUT;
+
     StringBuilder errLog = new StringBuilder();
     String line;
     while ((line = reader.readLine()) != null) {
       errLog.append(line).append("\n");
+
+      long waitMillis = timeoutExpiredMs - System.currentTimeMillis();
+      if (waitMillis <= 0) {
+        throw new SparkYunException(errLog.toString());
+      }
 
       String pattern = "Submitted application application_\\d+_\\d+";
       Pattern regex = Pattern.compile(pattern);
@@ -86,13 +95,12 @@ public class YarnAgentService implements AgentService {
     }
 
     try {
-      launch.waitFor();
+      int exitCode = launch.waitFor();
+      if (exitCode == 1) {
+        throw new SparkYunException(errLog.toString());
+      }
     } catch (InterruptedException e) {
       throw new SparkYunException(e.getMessage());
-    }
-
-    if (launch.exitValue() == 1) {
-      throw new SparkYunException(errLog.toString());
     }
 
     throw new SparkYunException("无法获取applicationId");
@@ -103,7 +111,6 @@ public class YarnAgentService implements AgentService {
 
     String getStatusCmdFormat = "yarn application -status %s";
 
-    // 使用命令获取状态
     Process process = Runtime.getRuntime().exec(String.format(getStatusCmdFormat, appId));
 
     InputStream inputStream = process.getInputStream();
@@ -119,18 +126,21 @@ public class YarnAgentService implements AgentService {
       Pattern regex = Pattern.compile(pattern);
       Matcher matcher = regex.matcher(line);
       if (matcher.find()) {
-        return matcher.group(1);
+        String status = matcher.group(1);
+        if ("UNDEFINED".equals(status)) {
+          status = "RUNNING";
+        }
+        return status;
       }
     }
 
     try {
-      process.waitFor();
+      int exitCode = process.waitFor();
+      if (exitCode == 1) {
+        throw new SparkYunException(errLog.toString());
+      }
     } catch (InterruptedException e) {
       throw new SparkYunException(e.getMessage());
-    }
-
-    if (process.exitValue() == 1) {
-      throw new SparkYunException(errLog.toString());
     }
 
     throw new SparkYunException("获取状态异常");
@@ -140,8 +150,6 @@ public class YarnAgentService implements AgentService {
   public String getAppLog(String appId) throws IOException {
 
     String getLogCmdFormat = "yarn logs -applicationId %s";
-
-    // 使用命令获取状态
     Process process = Runtime.getRuntime().exec(String.format(getLogCmdFormat, appId));
 
     InputStream inputStream = process.getInputStream();
@@ -155,24 +163,27 @@ public class YarnAgentService implements AgentService {
     }
 
     try {
-      process.waitFor();
+      int exitCode = process.waitFor();
+      if (exitCode == 1) {
+        throw new SparkYunException(errLog.toString());
+      } else {
+        Pattern regex = Pattern.compile("LogType:stderr\\s*([\\s\\S]*?)\\s*End of LogType:stderr");
+        Matcher matcher = regex.matcher(errLog);
+        String log = "";
+        while (matcher.find()) {
+          String tmpLog = matcher.group();
+          if (tmpLog.contains("ERROR")) {
+            log = tmpLog;
+            break;
+          }
+          if (tmpLog.length() > log.length()) {
+            log = tmpLog;
+          }
+        }
+        return log;
+      }
     } catch (InterruptedException e) {
       throw new SparkYunException(e.getMessage());
-    }
-
-    if (process.exitValue() == 1) {
-      throw new SparkYunException(errLog.toString());
-    } else {
-      Pattern regex = Pattern.compile("LogType:stderr\\s*([\\s\\S]*?)\\s*End of LogType:stderr");
-      Matcher matcher = regex.matcher(errLog);
-      String log = "";
-      while (matcher.find()) {
-        log = matcher.group();
-        if (log.contains("ERROR")) {
-          return log;
-        }
-      }
-      return log;
     }
   }
 
@@ -181,7 +192,6 @@ public class YarnAgentService implements AgentService {
 
     String getLogCmdFormat = "yarn logs -applicationId %s";
 
-    // 使用命令获取状态
     Process process = Runtime.getRuntime().exec(String.format(getLogCmdFormat, appId));
 
     InputStream inputStream = process.getInputStream();
@@ -195,26 +205,25 @@ public class YarnAgentService implements AgentService {
     }
 
     try {
-      process.waitFor();
+      int exitCode = process.waitFor();
+      if (exitCode == 1) {
+        throw new SparkYunException(errLog.toString());
+      } else {
+        Pattern regex =
+            Pattern.compile("LogType:spark-yun\\s*([\\s\\S]*?)\\s*End of LogType:spark-yun");
+        Matcher matcher = regex.matcher(errLog);
+        String log = "";
+        while (matcher.find() && Strings.isEmpty(log)) {
+          log =
+              matcher
+                  .group()
+                  .replace("LogType:spark-yun\n", "")
+                  .replace("\nEnd of LogType:spark-yun", "");
+        }
+        return log;
+      }
     } catch (InterruptedException e) {
       throw new SparkYunException(e.getMessage());
-    }
-
-    if (process.exitValue() == 1) {
-      throw new SparkYunException(errLog.toString());
-    } else {
-      Pattern regex =
-          Pattern.compile("LogType:spark-yun\\s*([\\s\\S]*?)\\s*End of LogType:spark-yun");
-      Matcher matcher = regex.matcher(errLog);
-      String log = "";
-      while (matcher.find() && Strings.isEmpty(log)) {
-        log =
-            matcher
-                .group()
-                .replace("LogType:spark-yun\n", "")
-                .replace("\nEnd of LogType:spark-yun", "");
-      }
-      return log;
     }
   }
 
@@ -222,8 +231,6 @@ public class YarnAgentService implements AgentService {
   public void killApp(String appId) throws IOException {
 
     String killAppCmdFormat = "yarn application -kill %s";
-
-    // 使用命令获取状态
     Process process = Runtime.getRuntime().exec(String.format(killAppCmdFormat, appId));
 
     InputStream inputStream = process.getInputStream();
@@ -237,13 +244,12 @@ public class YarnAgentService implements AgentService {
     }
 
     try {
-      process.waitFor();
+      int exitCode = process.waitFor();
+      if (exitCode == 1) {
+        throw new SparkYunException(errLog.toString());
+      }
     } catch (InterruptedException e) {
       throw new SparkYunException(e.getMessage());
-    }
-
-    if (process.exitValue() == 1) {
-      throw new SparkYunException(errLog.toString());
     }
   }
 }
