@@ -188,11 +188,11 @@ const tabList = reactive([
     code: 'RunningLog',
     hide: true
   },
-  {
-    name: '监控信息',
-    code: 'TotalDetail',
-    hide: true
-  }
+  // {
+  //   name: '监控信息',
+  //   code: 'TotalDetail',
+  //   hide: true
+  // }
 ])
 
 function initData() {
