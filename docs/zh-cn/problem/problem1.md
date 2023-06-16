@@ -136,3 +136,14 @@ spec:
       hostPath:
         path: /etc/passwd
 ```
+
+
+#### 问题3
+
+> 无法访问本地hive数据库
+
+```json
+{
+  "hive.metastore.uris": "thrift://isxcode:9083"
+}
+```
