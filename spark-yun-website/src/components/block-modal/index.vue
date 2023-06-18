@@ -114,7 +114,8 @@ function close() {
   }
   .el-dialog__body {
     overflow: auto;
-    max-height: calc(100vh - 96px);
+    // max-height: calc(100vh - 96px);
+    max-height: calc(74vh - 120px);
     padding: 0 !important;
   }
   .custom-header-btn {

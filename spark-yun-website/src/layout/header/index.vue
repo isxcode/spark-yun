@@ -1,14 +1,14 @@
 <!--
  * @Author: fanciNate
  * @Date: 2023-05-05 15:04:54
- * @LastEditTime: 2023-06-11 21:34:43
+ * @LastEditTime: 2023-06-16 22:29:31
  * @LastEditors: fanciNate
  * @Description: In User Settings Edit
  * @FilePath: /spark-yun/spark-yun-website/src/layout/header/index.vue
 -->
 <template>
   <div class="zqy-header">
-    <div class="header-name">
+    <div class="header-name" @click="clickToSPK">
       <!-- <img src="../../assets/icons/logo.jpg" alt="至轻云"> -->
       至轻云
     </div>
@@ -53,7 +53,7 @@
 <script lang="ts" setup>
 import { useRouter } from 'vue-router'
 import { useState, useMutations } from '@/hooks/useStore'
-import { nextTick, onMounted, reactive, ref } from 'vue'
+import { nextTick, onMounted, onUnmounted, reactive, ref } from 'vue'
 import { ChangeTenantData, QueryTenantList } from '@/services/login.service'
 import eventBus from '@/utils/eventBus'
 // import { GetTenantList } from '@/services/tenant-list.service'
@@ -132,10 +132,24 @@ function clickRedirectUrl(): void {
   window.open(import.meta.env.VITE_INFO_URL, '_blank')
 }
 
+function clickToSPK() {
+  window.open(import.meta.env.VITE_SPARK_URL, '_blank')
+}
+
 onMounted(() => {
   nextTick(() => {
     getTenantList()
     eventBus.emit('tenantChange')
+  })
+
+  eventBus.on('tenantListUpdate', () => {
+    getTenantList()
+  })
+})
+
+onUnmounted(() => {
+  eventBus.off('tenantListUpdate', () => {
+    console.log('这里移除了bus')
   })
 })
 </script>
@@ -162,9 +176,7 @@ onMounted(() => {
     width: 200px;
     justify-content: center;
     color: $--app-primary-color;
-    // img {
-    //     height: 48px;
-    // }
+    cursor: pointer;
   }
   .zqy-tenant {
     position: absolute;

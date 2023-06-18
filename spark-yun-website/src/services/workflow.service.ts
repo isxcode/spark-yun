@@ -1,10 +1,10 @@
 /*
  * @Author: fanciNate
  * @Date: 2023-04-26 17:01:16
- * @LastEditTime: 2023-05-27 15:53:47
+ * @LastEditTime: 2023-06-18 14:56:21
  * @LastEditors: fanciNate
  * @Description: In User Settings Edit
- * @FilePath: /zqy-web/src/services/workflow.service.ts
+ * @FilePath: /spark-yun/spark-yun-website/src/services/workflow.service.ts
  */
 import { http } from '@/utils/http'
 interface SerchParams {
@@ -89,6 +89,15 @@ export function DeleteWorkflowDetailList(params: any): Promise<any> {
   return http.request({
     method: 'get',
     url: '/wok/delWork',
+    params: params
+  })
+}
+
+// 作业-发布
+export function PublishWorkData(params: any): Promise<any> {
+  return http.request({
+    method: 'get',
+    url: '/vip/wok/deployWork',
     params: params
   })
 }

@@ -36,7 +36,7 @@ export interface SerchParams {
 
 export interface FormData {
   name: string;
-  comment: string;
+  remark: string;
 }
 
 export const BreadCrumbList: Array<BreadCrumb> = [
@@ -54,14 +54,14 @@ export const colConfigs: colConfig[] = [
     customSlot: 'nameSlot',
     showOverflowTooltip: true
   },
+  // {
+  //   prop: 'status',
+  //   title: '发布状态',
+  //   minWidth: 100,
+  //   customSlot: 'statusTag'
+  // },
   {
-    prop: 'status',
-    title: '发布状态',
-    minWidth: 100,
-    customSlot: 'statusTag'
-  },
-  {
-    prop: 'comment',
+    prop: 'remark',
     title: '备注',
     minWidth: 100
   },
@@ -97,6 +97,7 @@ export const DetailColConfigs: colConfig[] = [
     prop: 'workType',
     title: '类型',
     minWidth: 100,
+    customSlot: 'typeSlot',
     showOverflowTooltip: true
   },
   {
@@ -111,7 +112,7 @@ export const DetailColConfigs: colConfig[] = [
     minWidth: 140
   },
   {
-    prop: 'comment',
+    prop: 'remark',
     title: '备注',
     minWidth: 100
   },
@@ -119,7 +120,7 @@ export const DetailColConfigs: colConfig[] = [
     title: '操作',
     align: 'center',
     customSlot: 'options',
-    width: 80
+    width: 120
   }
 ]
 
