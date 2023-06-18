@@ -105,6 +105,7 @@ import AddModal from './add-modal/index.vue'
 import { BreadCrumbList, TableConfig } from './tenant-list.config'
 import { GetTenantList, AddTenantData, DeleteTenantData, CheckTenantData, DisableTenantData, EnableTenantData, UpdateTenantData } from '@/services/tenant-list.service'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import eventBus from '@/utils/eventBus'
 
 interface FormTenant {
   adminUserId: string;
@@ -151,6 +152,9 @@ function addData() {
       AddTenantData(formData)
         .then((res: any) => {
           ElMessage.success(res.msg)
+          // 这里发送eventbus，刷新当前打开的页面
+          eventBus.emit('tenantListUpdate')
+
           initData()
           resolve()
         })

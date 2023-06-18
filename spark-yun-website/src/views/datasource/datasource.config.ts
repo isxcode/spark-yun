@@ -36,7 +36,7 @@ export interface SerchParams {
 
 export interface FormData {
   name: string;
-  comment: string;
+  remark: string;
 }
 
 export const BreadCrumbList: Array<BreadCrumb> = [
@@ -83,7 +83,7 @@ export const colConfigs: colConfig[] = [
     minWidth: 140
   },
   {
-    prop: 'comment',
+    prop: 'remark',
     title: '备注',
     minWidth: 100
   },

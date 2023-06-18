@@ -36,7 +36,7 @@ export interface SerchParams {
 
 export interface FormData {
   name: string;
-  comment: string;
+  remark: string;
 }
 
 export const BreadCrumbList: Array<BreadCrumb> = [
@@ -51,6 +51,7 @@ export const colConfigs: colConfig[] = [
     prop: 'name',
     title: '集群名称',
     minWidth: 100,
+    customSlot: 'nameSlot',
     showOverflowTooltip: true
   },
   {
@@ -61,19 +62,19 @@ export const colConfigs: colConfig[] = [
   },
   {
     prop: 'node',
-    title: '可用/总节点数',
+    title: '节点',
     minWidth: 120,
     showOverflowTooltip: true
   },
   {
     prop: 'memory',
-    title: '已用/总内存',
+    title: '内存',
     minWidth: 120,
     showOverflowTooltip: true
   },
   {
     prop: 'storage',
-    title: '已用/总存储',
+    title: '存储',
     minWidth: 120,
     showOverflowTooltip: true
   },
@@ -89,7 +90,7 @@ export const colConfigs: colConfig[] = [
     minWidth: 140
   },
   {
-    prop: 'comment',
+    prop: 'remark',
     title: '备注',
     minWidth: 100
   },
@@ -116,7 +117,7 @@ export const TableConfig: TableConfig = {
 export const PointColConfigs: colConfig[] = [
   {
     prop: 'name',
-    title: '节点名称',
+    title: '名称',
     minWidth: 100,
     showOverflowTooltip: true
   },
@@ -128,19 +129,19 @@ export const PointColConfigs: colConfig[] = [
   },
   {
     prop: 'cpu',
-    title: 'CPU占用率',
+    title: 'CPU',
     minWidth: 120,
     showOverflowTooltip: true
   },
   {
     prop: 'memory',
-    title: '已用/总内存',
+    title: '内存',
     minWidth: 120,
     showOverflowTooltip: true
   },
   {
     prop: 'storage',
-    title: '已用/总存储',
+    title: '存储',
     minWidth: 120,
     showOverflowTooltip: true
   },
@@ -156,7 +157,7 @@ export const PointColConfigs: colConfig[] = [
     minWidth: 140
   },
   {
-    prop: 'comment',
+    prop: 'remark',
     title: '备注',
     minWidth: 100
   },

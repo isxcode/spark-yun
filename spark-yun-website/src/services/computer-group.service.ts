@@ -1,10 +1,10 @@
 /*
  * @Author: fanciNate
  * @Date: 2023-04-26 17:01:16
- * @LastEditTime: 2023-05-03 21:36:23
+ * @LastEditTime: 2023-06-18 13:07:27
  * @LastEditors: fanciNate
  * @Description: In User Settings Edit
- * @FilePath: /zqy-web/src/services/computer-group.service.ts
+ * @FilePath: /spark-yun/spark-yun-website/src/services/computer-group.service.ts
  */
 import { http } from '@/utils/http'
 interface SerchParams {
@@ -14,7 +14,7 @@ interface SerchParams {
 }
 
 interface AddParams {
-  comment: string;
+  remark: string;
   name: string;
   id?: string;
 }

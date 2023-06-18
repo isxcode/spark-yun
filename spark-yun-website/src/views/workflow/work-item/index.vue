@@ -1,10 +1,10 @@
 <!--
  * @Author: fanciNate
  * @Date: 2023-04-27 16:57:57
- * @LastEditTime: 2023-05-27 15:52:46
+ * @LastEditTime: 2023-06-18 16:32:00
  * @LastEditors: fanciNate
  * @Description: In User Settings Edit
- * @FilePath: /zqy-web/src/views/workflow/work-item/index.vue
+ * @FilePath: /spark-yun/spark-yun-website/src/views/workflow/work-item/index.vue
 -->
 <template>
   <Breadcrumb :bread-crumb-list="breadCrumbList" />
@@ -195,7 +195,7 @@ const tabList = reactive([
   // }
 ])
 
-function initData() {
+function initData(id?: string) {
   loading.value = true
   networkError.value = networkError.value || false
   GetWorkItemConfig({
@@ -206,11 +206,29 @@ function initData() {
       sqltextData.value = res.data.sqlScript
       if (workConfig.workType === 'SPARK_SQL') {
         tabList.forEach((item: any) => {
-          if ([ 'RunningLog', 'TotalDetail' ].includes(item.code)) {
-            item.hide = false
+          if ([ 'RunningLog', 'TotalDetail', 'ReturnData'].includes(item.code)) {
+            item.hide = true
+          }
+        })
+      } else {
+        tabList.forEach((item: any) => {
+          if ([ 'ReturnData'].includes(item.code)) {
+            item.hide = true
           }
         })
       }
+      nextTick(() => {
+        containerInstanceRef.value.initData(id || instanceId.value, () => {
+          // 运行结束
+          if (workConfig.workType === 'SPARK_SQL') {
+            tabList.forEach((item: any) => {
+              if ([ 'RunningLog', 'TotalDetail', 'ReturnData'].includes(item.code)) {
+                item.hide = false
+              }
+            })
+          }
+        })
+      })
       loading.value = false
       networkError.value = false
     })
@@ -254,8 +272,7 @@ function runWorkData() {
       runningLoading.value = false
       instanceId.value = res.data.instanceId
       ElMessage.success(res.msg)
-      initData()
-      containerInstanceRef.value.initData(instanceId.value)
+      initData(res.data.instanceId)
     })
     .catch(() => {
       runningLoading.value = false

@@ -20,7 +20,7 @@
       </el-form-item>
       <el-form-item label="备注">
         <el-input
-          v-model="formData.comment"
+          v-model="formData.remark"
           show-word-limit
           type="textarea"
           maxlength="200"
@@ -60,7 +60,7 @@ const modelConfig = reactive({
 })
 const formData = reactive({
   name: '',
-  comment: '',
+  remark: '',
   id: ''
 })
 const rules = reactive<FormRules>({
@@ -78,12 +78,12 @@ function showModal(cb: () => void, data: any): void {
   modelConfig.visible = true
   if (data) {
     formData.name = data.name
-    formData.comment = data.comment
+    formData.remark = data.remark
     formData.id = data.id
     modelConfig.title = '编辑作业流'
   } else {
     formData.name = ''
-    formData.comment = ''
+    formData.remark = ''
     formData.id = ''
     modelConfig.title = '添加作业流'
   }
