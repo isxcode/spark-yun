@@ -1,6 +1,6 @@
 <template>
   <Breadcrumb :bread-crumb-list="breadCrumbList" />
-  <div class="zqy-seach-table">
+  <div class="zqy-seach-table zqy-schedule">
     <div class="zqy-table-top">
       <div />
       <div class="zqy-seach">
@@ -12,6 +12,12 @@
           @input="inputEvent"
           @keyup.enter="initData(false)"
         />
+        <el-button
+          type="primary"
+          @click="initData(false)"
+        >
+          刷新
+        </el-button>
       </div>
     </div>
     <LoadingPage
@@ -92,7 +98,7 @@
                       v-if="scopeSlot.row.status !== 'RUNNING'"
                       @click="showDetailModal(scopeSlot.row, 'yarnLog')"
                     >
-                      Yarn日志
+                      运行日志
                     </el-dropdown-item>
                     <el-dropdown-item
                       v-if="scopeSlot.row.status !== 'RUNNING'"
@@ -229,6 +235,16 @@ onMounted(() => {
 .zqy-seach-table {
   .click-show-more {
     font-size: $--app-small-font-size;
+  }
+
+  &.zqy-schedule {
+    .zqy-seach {
+      display: flex;
+      align-items: center;
+      .el-button {
+        margin-left: 12px;
+      }
+    }
   }
 }
 </style>

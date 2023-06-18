@@ -1,14 +1,13 @@
 <!--
  * @Author: fanciNate
  * @Date: 2023-05-23 07:25:46
- * @LastEditTime: 2023-05-27 14:40:14
+ * @LastEditTime: 2023-06-18 16:13:37
  * @LastEditors: fanciNate
  * @Description: In User Settings Edit
- * @FilePath: /zqy-web/src/views/workflow/work-item/return-data.vue
+ * @FilePath: /spark-yun/spark-yun-website/src/views/workflow/work-item/return-data.vue
 -->
 <template>
   <BlockTable
-    class="return-data"
     :table-config="tableConfig"
   />
 </template>
@@ -76,10 +75,8 @@ defineExpose({
 </script>
 
 <style lang="scss">
-.return-data {
-  .vxe-table--body-wrapper {
-    max-height: calc(100vh - 468px);
-    overflow: auto;
-  }
+.vxe-table--body-wrapper {
+  max-height: calc(100vh - 466px);
+  overflow: auto;
 }
 </style>

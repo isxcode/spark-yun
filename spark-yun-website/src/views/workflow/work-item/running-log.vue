@@ -1,10 +1,10 @@
 <!--
  * @Author: fanciNate
  * @Date: 2023-05-26 16:35:28
- * @LastEditTime: 2023-05-27 15:30:24
+ * @LastEditTime: 2023-06-18 15:48:24
  * @LastEditors: fanciNate
  * @Description: In User Settings Edit
- * @FilePath: /zqy-web/src/views/workflow/work-item/running-log.vue
+ * @FilePath: /spark-yun/spark-yun-website/src/views/workflow/work-item/running-log.vue
 -->
 <template>
   <div
@@ -26,15 +26,17 @@ import EmptyPage from '@/components/empty-page/index.vue'
 import { GetYarnLogData } from '@/services/schedule.service'
 
 const logMsg = ref('')
-const position = ref(false)
+const position = ref(true)
 const timer = ref(null)
 const preContentRef = ref(null)
+const pubId = ref('')
 
 function initData(id: string): void {
-  getLogData(id)
+  pubId.value = id
+  getLogData(pubId.value)
   if (!timer.value) {
     timer.value = setInterval(() => {
-      getLogData(id)
+      getLogData(pubId.value)
     }, 3000)
   }
 }

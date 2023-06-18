@@ -30,6 +30,12 @@
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
         >
+          <template #nameSlot="scopeSlot">
+            <span
+              class="name-click"
+              @click="showDetail(scopeSlot.row)"
+            >{{ scopeSlot.row.name }}</span>
+          </template>
           <template #statusTag="scopeSlot">
             <div class="btn-group">
               <el-tag
@@ -59,6 +65,7 @@
           </template>
           <template #options="scopeSlot">
             <div class="btn-group">
+              <span @click="showLog(scopeSlot.row)">日志</span>
               <span @click="editData(scopeSlot.row)">编辑</span>
               <span
                 v-if="!scopeSlot.row.checkLoading"
@@ -70,7 +77,7 @@
               >
                 <Loading />
               </el-icon>
-              <span @click="showPointDetail(scopeSlot.row)">节点</span>
+              <!-- <span @click="showPointDetail(scopeSlot.row)">节点</span> -->
               <span @click="deleteData(scopeSlot.row)">删除</span>
             </div>
           </template>
@@ -183,6 +190,11 @@ function showPointDetail(data: any) {
   })
 }
 
+// 查看日志
+function showLog() {
+  console.log('查看日志')
+}
+
 // 删除
 function deleteData(data: any) {
   ElMessageBox.confirm('确定删除该集群吗？', '警告', {
@@ -198,6 +210,15 @@ function deleteData(data: any) {
         initData()
       })
       .catch(() => {})
+  })
+}
+
+function showDetail(data: any) {
+  router.push({
+    name: 'computer-pointer',
+    query: {
+      id: data.id
+    }
   })
 }
 

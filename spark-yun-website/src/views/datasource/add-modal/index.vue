@@ -42,7 +42,6 @@
           v-model="formData.jdbcUrl"
           maxlength="100"
           placeholder="请输入"
-          show-word-limit
         />
       </el-form-item>
       <el-form-item
@@ -58,7 +57,6 @@
       </el-form-item>
       <el-form-item
         label="密码"
-        prop="passwd"
       >
         <el-input
           v-model="formData.passwd"
@@ -70,7 +68,7 @@
       </el-form-item>
       <el-form-item label="备注">
         <el-input
-          v-model="formData.comment"
+          v-model="formData.remark"
           show-word-limit
           type="textarea"
           maxlength="200"
@@ -114,7 +112,7 @@ const formData = reactive({
   jdbcUrl: '',
   username: '',
   passwd: '',
-  comment: '',
+  remark: '',
   id: ''
 })
 const typeList = reactive([
@@ -214,7 +212,7 @@ function showModal(cb: () => void, data: any): void {
     formData.jdbcUrl = data.jdbcUrl
     formData.username = data.username
     formData.passwd = data.passwd
-    formData.comment = data.comment
+    formData.remark = data.remark
     formData.id = data.id
     modelConfig.title = '编辑数据源'
   } else {
@@ -223,7 +221,7 @@ function showModal(cb: () => void, data: any): void {
     formData.jdbcUrl = ''
     formData.username = ''
     formData.passwd = ''
-    formData.comment = ''
+    formData.remark = ''
     formData.id = ''
     modelConfig.title = '添加数据源'
   }

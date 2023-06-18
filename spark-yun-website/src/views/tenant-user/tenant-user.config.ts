@@ -1,3 +1,11 @@
+/*
+ * @Author: fanciNate
+ * @Date: 2023-06-04 22:27:08
+ * @LastEditTime: 2023-06-16 22:22:24
+ * @LastEditors: fanciNate
+ * @Description: In User Settings Edit
+ * @FilePath: /spark-yun/spark-yun-website/src/views/tenant-user/tenant-user.config.ts
+ */
 export interface BreadCrumb {
   name: string;
   code: string;
@@ -70,7 +78,7 @@ export const colConfigs: colConfig[] = [
     title: '操作',
     align: 'center',
     customSlot: 'options',
-    width: 100
+    width: 140
   }
 ]
 
