@@ -122,10 +122,49 @@ if ! netstat -tln | awk '$4 ~ /:'"$agent_port"'$/ {exit 1}'; then
 fi
 
 # 执行拉取spark镜像命令
-docker pull apache/spark:v3.1.3 >/dev/null
-kubectl create namespace spark-yun >/dev/null
-kubectl create serviceaccount zhiqingyun -n spark-yun >/dev/null
-kubectl create clusterrolebinding spark-role --clusterrole=edit --serviceaccount=spark-yun:zhiqingyun --namespace=spark-yun >/dev/null
+if ! docker image inspect apache/spark:v3.1.3 &>/dev/null; then
+  json_output="{ \
+            \"status\": \"INSTALL_ERROR\", \
+            \"log\": \"没有apache/spark:v3.1.3镜像，需要执行命令，docker pull apache/spark:v3.1.3\" \
+          }"
+  echo $json_output
+  rm /tmp/sy-env-kubernetes.sh
+  exit 0
+fi
+
+# 检测命名空间是否有spark-yun
+if ! kubectl get namespace spark-yun &>/dev/null; then
+  json_output="{ \
+            \"status\": \"INSTALL_ERROR\", \
+            \"log\": \"没有spark-yun命令空间，需要执行命令，kubectl create namespace spark-yun \" \
+          }"
+  echo $json_output
+  rm /tmp/sy-env-kubernetes.sh
+  exit 0
+fi
+
+# 判断是否存在zhiqingyun用户
+if ! kubectl get serviceaccount --namespace spark-yun | grep -q zhiqingyun; then
+  json_output="{ \
+              \"status\": \"INSTALL_ERROR\", \
+              \"log\": \"spark-yun命令空间中，不存在zhiqingyun用户，需要执行命令，kubectl create serviceaccount zhiqingyun -n spark-yun \" \
+            }"
+  echo $json_output
+  rm /tmp/sy-env-kubernetes.sh
+  exit 0
+fi
+
+# 判断是否zhiqingyun有读写权限
+hasRole=$(kubectl auth can-i create pods --as=system:serviceaccount:spark-yun:zhiqingyun 2>&1)
+if [ "$hasRole" = "no" ]; then
+  json_output="{ \
+                \"status\": \"INSTALL_ERROR\", \
+                \"log\": \"zhiqingyun没有创建pod的权限，需要执行命令，kubectl create clusterrolebinding spark-role --clusterrole=edit --serviceaccount=spark-yun:zhiqingyun --namespace=spark-yun \" \
+              }"
+  echo $json_output
+  rm /tmp/sy-env-kubernetes.sh
+  exit 0
+fi
 
 # 返回可以安装
 json_output="{ \
