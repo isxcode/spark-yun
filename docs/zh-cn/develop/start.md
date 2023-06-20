@@ -27,18 +27,9 @@ git clone https://github.com/ispong/spark-yun.git
 > 解压路径可以自定义
 
 ```bash
-wget https://archive.apache.org/dist/spark/spark-3.1.1/spark-3.1.1-bin-hadoop3.2.tgz 
-tar vzxf spark-3.1.1-bin-hadoop3.2.tgz -C /tmp/
-```
-
-> 修改`gradle.properties`文件配置，将spark二进制的文件夹填入
-
-```bash
-vim spark-yun/gradle.properties
-```
-
-```yaml
-SPARK_MIN_DIR=/tmp/spark-3.1.1-bin-hadoop3.2
+wget https://archive.apache.org/dist/spark/spark-3.4.0/spark-3.4.0-bin-hadoop3.tgz
+tar vzxf spark-3.4.0-bin-hadoop3.tgz -C spark-yun/spark-yun-dist/src/main/
+mv spark-3.4.0-bin-hadoop3 spark-min
 ```
 
 ##### 5. 启动项目
