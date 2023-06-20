@@ -28,7 +28,7 @@ git clone https://github.com/ispong/spark-yun.git
 
 ```bash
 wget https://archive.apache.org/dist/spark/spark-3.4.0/spark-3.4.0-bin-hadoop3.tgz
-tar vzxf spark-3.4.0-bin-hadoop3.tgz -C spark-yun/spark-yun-dist/src/main/
+tar vzxf spark-3.4.0-bin-hadoop3.tgz -C /tmp/
 mv spark-3.4.0-bin-hadoop3 spark-min
 ```
 
