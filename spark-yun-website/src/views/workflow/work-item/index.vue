@@ -153,7 +153,8 @@ let workConfig = reactive({
   workId: '',
   workType: '',
   workflowId: '',
-  applicationId: ''
+  applicationId: '',
+  sparkConfig:''
 })
 
 const breadCrumbList = reactive([
@@ -308,7 +309,7 @@ function saveData() {
     sqlScript: sqltextData.value,
     workId: route.query.id,
     datasourceId: workConfig.datasourceId,
-    sparkConfig: workConfig.sqlScript,
+    sparkConfig: workConfig.sparkConfig,
     clusterId: workConfig.clusterId,
     corn: workConfig.corn
   })
