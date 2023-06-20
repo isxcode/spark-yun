@@ -19,17 +19,18 @@ sudo yum install node npm -y
 
 ```bash
 sudo yum install git -y
-git clone -b latest https://github.com/isxcode/spark-yun.git
+git clone https://github.com/isxcode/spark-yun.git
 ```
 
 ##### 下载spark二进制文件
 
-!> 目前只可以使用`spark-3.1.1-bin-hadoop3.2`版本
+!> 目前只可以使用`spark-3.4.0-bin-hadoop3`版本
 
 ```bash
-nohup wget https://archive.apache.org/dist/spark/spark-3.1.1/spark-3.1.1-bin-hadoop3.2.tgz  >> download_spark.log 2>&1 &  
+nohup wget https://archive.apache.org/dist/spark/spark-3.4.0/spark-3.4.0-bin-hadoop3.tgz >> download_spark.log 2>&1 &  
 tail -f download_spark.log
-tar vzxf spark-3.1.1-bin-hadoop3.2.tgz -C /tmp/
+tar vzxf spark-3.4.0-bin-hadoop3.tgz -C /tmp/
+mv /tmp/spark-3.4.0-bin-hadoop3 /tmp/spark-min
 ```
 
 ##### 修改配置文件（可选）
