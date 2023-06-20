@@ -147,6 +147,7 @@ const containerInstanceRef = ref(null)
 let workConfig = reactive({
   clusterId: '',
   datasourceId: '',
+  corn:'',
   name: '',
   sqlScript: '',
   workId: '',
@@ -306,7 +307,10 @@ function saveData() {
   SaveWorkItemConfig({
     sqlScript: sqltextData.value,
     workId: route.query.id,
-    datasourceId: workConfig.datasourceId
+    datasourceId: workConfig.datasourceId,
+    sparkConfig: workConfig.sqlScript,
+    clusterId: workConfig.clusterId,
+    corn: workConfig.corn
   })
     .then((res: any) => {
       ElMessage.success(res.msg)
@@ -325,7 +329,9 @@ function setConfigData() {
       SaveWorkItemConfig({
         sqlScript: sqltextData.value,
         workId: route.query.id,
-        datasourceId: formData.datasourceId
+        datasourceId: formData.datasourceId,
+        clusterId: formData.clusterId,
+        sparkConfig: formData.sparkConfig
       })
         .then((res: any) => {
           ElMessage.success(res.msg)
