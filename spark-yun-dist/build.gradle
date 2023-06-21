@@ -68,9 +68,9 @@ tasks.register('build_dist', Tar) {
   compression = Compression.GZIP
   archiveFileName = 'spark-yun-agent.tar.gz'
 
-  from("/tmp/spark-min") {
+  from((rootDir.getAbsolutePath() + "/spark-yun-dist/src/main/spark-min") {
     into 'spark-min'
-  }
+  })
   from('src/main/bin') {
     into 'bin'
   }
