@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "vite --mode dev",
     "serve-prod": "vite --mode prod",
-    "build": "run-p build-only",
+    "build": "NODE_ENV=prod run-p build-only",
     "build-bak": "run-p type-check build-only",
     "preview": "vite preview",
     "test:unit": "vitest",
