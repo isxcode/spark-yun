@@ -107,13 +107,13 @@ Caused by: java.net.UnknownHostException: isxcode
 
 ```json
 {
-  "spark.kubernetes.driver.podTemplateFile":"/home/ispong/pod-init.yaml",
-  "spark.kubernetes.executor.podTemplateFile":"/home/ispong/pod-init.yaml"
+  "spark.kubernetes.driver.podTemplateFile":"/home/zhiqingyun/pod-init.yaml",
+  "spark.kubernetes.executor.podTemplateFile":"/home/zhiqingyun/pod-init.yaml"
 }
 ```
 
 ```bash
-vim /home/ispong/pod-init.yml
+vim /home/zhiqingyun/pod-init.yaml
 ```
 
 ```yml
@@ -122,21 +122,11 @@ kind: Pod
 metadata:
   name: host-pod
 spec:
-  restartPolicy: never
-  securityContext:
-    privileged: true
-    runAsUser: 1000 
-    runAsGroup: 1001
-  hostAliases:  # 域名映射
-    - ip: "172.16.215.105"
+  hostAliases:
+    - ip: "172.16.215.83"
       hostnames:
         - "isxcode"
-  volumes:
-    - name: users
-      hostPath:
-        path: /etc/passwd
 ```
-
 
 #### 问题3
 
@@ -242,4 +232,98 @@ Exception in thread "main" java.lang.NoSuchMethodError: org.apache.spark.network
 	at org.apache.spark.deploy.SparkSubmit$$anon$2.doSubmit(SparkSubmit.scala:1111)
 	at org.apache.spark.deploy.SparkSubmit$.main(SparkSubmit.scala:1120)
 	at org.apache.spark.deploy.SparkSubmit.main(SparkSubmit.scala)
+```
+
+###### 解决方案
+
+> spark-min与本地的spark版本不一致
+
+#### 问题6
+
+> k8s容器中默认的用户，没有操作hdfs的权限
+
+```log
+Caused by: org.apache.hadoop.ipc.RemoteException(org.apache.hadoop.security.AccessControlException): Permission denied: user=185, access=EXECUTE, inode="/tmp":zhiqingyun:supergroup:drwxrwx---
+	at org.apache.hadoop.hdfs.server.namenode.FSPermissionChecker.check(FSPermissionChecker.java:506)
+	at org.apache.hadoop.hdfs.server.namenode.FSPermissionChecker.checkTraverse(FSPermissionChecker.java:422)
+	at org.apache.hadoop.hdfs.server.namenode.FSPermissionChecker.checkPermission(FSPermissionChecker.java:333)
+	at org.apache.hadoop.hdfs.server.namenode.FSPermissionChecker.checkPermissionWithContext(FSPermissionChecker.java:370)
+	at org.apache.hadoop.hdfs.server.namenode.FSPermissionChecker.checkPermission(FSPermissionChecker.java:240)
+	at org.apache.hadoop.hdfs.server.namenode.FSPermissionChecker.checkTraverse(FSPermissionChecker.java:713)
+	at org.apache.hadoop.hdfs.server.namenode.FSDirectory.checkTraverse(FSDirectory.java:1892)
+	at org.apache.hadoop.hdfs.server.namenode.FSDirectory.checkTraverse(FSDirectory.java:1910)
+	at org.apache.hadoop.hdfs.server.namenode.FSDirectory.resolvePath(FSDirectory.java:727)
+	at org.apache.hadoop.hdfs.server.namenode.FSDirStatAndListingOp.getFileInfo(FSDirStatAndListingOp.java:112)
+	at org.apache.hadoop.hdfs.server.namenode.FSNamesystem.getFileInfo(FSNamesystem.java:3379)
+	at org.apache.hadoop.hdfs.server.namenode.NameNodeRpcServer.getFileInfo(NameNodeRpcServer.java:1215)
+	at org.apache.hadoop.hdfs.protocolPB.ClientNamenodeProtocolServerSideTranslatorPB.getFileInfo(ClientNamenodeProtocolServerSideTranslatorPB.java:1044)
+	at org.apache.hadoop.hdfs.protocol.proto.ClientNamenodeProtocolProtos$ClientNamenodeProtocol$2.callBlockingMethod(ClientNamenodeProtocolProtos.java)
+	at org.apache.hadoop.ipc.ProtobufRpcEngine2$Server$ProtoBufRpcInvoker.call(ProtobufRpcEngine2.java:621)
+	at org.apache.hadoop.ipc.ProtobufRpcEngine2$Server$ProtoBufRpcInvoker.call(ProtobufRpcEngine2.java:589)
+	at org.apache.hadoop.ipc.ProtobufRpcEngine2$Server$ProtoBufRpcInvoker.call(ProtobufRpcEngine2.java:573)
+	at org.apache.hadoop.ipc.RPC$Server.call(RPC.java:1213)
+	at org.apache.hadoop.ipc.Server$RpcCall.run(Server.java:1089)
+	at org.apache.hadoop.ipc.Server$RpcCall.run(Server.java:1012)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at javax.security.auth.Subject.doAs(Subject.java:422)
+	at org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1899)
+	at org.apache.hadoop.ipc.Server$Handler.run(Server.java:3026)
+```
+
+##### 解决方案
+
+> 查看本地zhiqingyun的uid，将容器的权限设置一致
+
+```bash
+sudo cat /etc/group
+```
+
+> 获取zhiqingyun的uid是1000
+
+```text
+nscd:x:28:
+tcpdump:x:72:
+rpc:x:32:
+rpcuser:x:29:
+nfsnobody:x:65534:
+zhiqingyun:x:1000:
+cgred:x:995:
+docker:x:994:zhiqingyun
+```
+
+```json
+{
+  "spark.kubernetes.driver.podTemplateFile":"/home/zhiqingyun/pod-init.yaml",
+  "spark.kubernetes.executor.podTemplateFile":"/home/zhiqingyun/pod-init.yaml"
+}
+```
+
+```bash
+vim /home/zhiqingyun/pod-init.yaml
+```
+
+> runAsUser: 1000 需要和zhiqingyun的uid一致
+
+```yml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: host-pod
+spec:
+  containers:
+    - volumeMounts:
+      - mountPath: /etc/passwd
+        name: users-volume
+  restartPolicy: never
+  securityContext:
+    privileged: true
+    runAsUser: 1000  
+  hostAliases:
+    - ip: "172.16.215.83"
+      hostnames:
+        - "isxcode"
+  volumes:
+    - name: users-volume
+      hostPath:
+        path: /etc/passwd
 ```

@@ -147,12 +147,14 @@ const containerInstanceRef = ref(null)
 let workConfig = reactive({
   clusterId: '',
   datasourceId: '',
+  corn:'',
   name: '',
   sqlScript: '',
   workId: '',
   workType: '',
   workflowId: '',
-  applicationId: ''
+  applicationId: '',
+  sparkConfig:''
 })
 
 const breadCrumbList = reactive([
@@ -306,7 +308,10 @@ function saveData() {
   SaveWorkItemConfig({
     sqlScript: sqltextData.value,
     workId: route.query.id,
-    datasourceId: workConfig.datasourceId
+    datasourceId: workConfig.datasourceId,
+    sparkConfig: workConfig.sparkConfig,
+    clusterId: workConfig.clusterId,
+    corn: workConfig.corn
   })
     .then((res: any) => {
       ElMessage.success(res.msg)
@@ -325,7 +330,10 @@ function setConfigData() {
       SaveWorkItemConfig({
         sqlScript: sqltextData.value,
         workId: route.query.id,
-        datasourceId: formData.datasourceId
+        datasourceId: formData.datasourceId,
+        clusterId: formData.clusterId,
+        sparkConfig: formData.sparkConfig,
+        corn: formData.corn,
       })
         .then((res: any) => {
           ElMessage.success(res.msg)

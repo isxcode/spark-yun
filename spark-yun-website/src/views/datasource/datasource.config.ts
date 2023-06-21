@@ -78,7 +78,7 @@ export const colConfigs: colConfig[] = [
     customSlot: 'statusTag'
   },
   {
-    prop: 'checkTime',
+    prop: 'checkDateTime',
     title: '检测时间',
     minWidth: 140
   },
