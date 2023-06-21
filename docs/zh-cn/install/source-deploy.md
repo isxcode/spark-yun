@@ -27,13 +27,14 @@ git clone https://github.com/isxcode/spark-yun.git
 !> 目前只可以使用`spark-3.4.0-bin-hadoop3`版本
 
 ```bash
-wget https://archive.apache.org/dist/spark/spark-3.4.0/spark-3.4.0-bin-hadoop3.tgz
+nohup wget https://archive.apache.org/dist/spark/spark-3.4.0/spark-3.4.0-bin-hadoop3.tgz >> download_spark.log 2>&1 &  
+tail -f download_spark.log
 tar vzxf spark-3.4.0-bin-hadoop3.tgz --strip-components=1 -C spark-yun/spark-yun-dist/src/main/spark-min
 ```
 
 ##### 企业版（可选）
 
-> 授权可拉取代码
+> 授权后可拉取代码
 
 ```bash
 cd spark-yun
