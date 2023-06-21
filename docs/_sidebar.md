@@ -7,6 +7,7 @@
 - **安装手册**
   - [源码安装](/zh-cn/install/source-deploy.md)
   - [Docker安装](/zh-cn/install/docker-deploy.md)
+  - [安装相关文档](/zh-cn/install/source-deploy.md)
   - [升级安装](/zh-cn/install/upgrade.md)
 - **使用手册**
   - [多租户](/zh-cn/reference/tenant.md)
@@ -16,6 +17,7 @@
   - [调度历史](/zh-cn/reference/history.md)
 - **开发者手册**
   - [启动项目](/zh-cn/develop/start.md)
+  - [gitpod启动项目](/zh-cn/develop/start_gitpod.md)
   - [任务开发](/zh-cn/develop/develop.md)
   - [版本发布](/zh-cn/develop/release.md)
   - [开发规范](/zh-cn/develop/rule.md)
