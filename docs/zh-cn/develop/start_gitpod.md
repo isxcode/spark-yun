@@ -4,7 +4,7 @@
 
 - [https://www.gitpod.io/](https://www.gitpod.io/)
 
-##### 创建自己的工作空间
+##### 创建工作空间
 
 ![20230621165436](https://img.isxcode.com/picgo/20230621165436.png)
 
@@ -12,7 +12,7 @@
 
 ![20230621165609](https://img.isxcode.com/picgo/20230621165609.png)
 
-##### 启动并等待项目安装
+##### 启动并等待依赖安装
 
 > 安装依赖过程会比较久，请耐心等待。
 
@@ -20,7 +20,7 @@
 
 ##### 开放gitpod端口号，访问至轻云
 
-> 注意：此时的至轻云没有集群节点安装功，需要下载内置spark二进制文件，再重新启动。
+> 注意：此时的至轻云没有集群节点安装功能，需要下载内置的spark二进制文件，再重新启动。
 
 ![20230621171419](https://img.isxcode.com/picgo/20230621171419.png)
 
@@ -30,7 +30,7 @@
 - 默认管理员账号: admin
 - 默认管理员密码: admin123
 
-##### 下载内置spark二进制文件
+##### 下载内置的spark二进制文件
 
 ```bash
 cd /tmp
@@ -42,11 +42,11 @@ tar vzxf spark-3.4.0-bin-hadoop3.tgz --strip-components=1 -C /workspace/spark-yu
 > 重启项目即可
 
 ```bash
-cd spark-yun
+cd /workspace/spark-yun/
 ./gradlew start
 ```
 
-##### 开启企业版本
+##### 企业版本启动
 
 > 需要代码授权
 
@@ -76,4 +76,3 @@ git clone git@github.com:isxcode/spark-yun-vip.git
 cd /workspace/spark-yun/
 ./gradlew start
 ```
-

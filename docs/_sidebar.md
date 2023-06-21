@@ -7,7 +7,7 @@
 - **安装手册**
   - [源码安装](/zh-cn/install/source-deploy.md)
   - [Docker安装](/zh-cn/install/docker-deploy.md)
-  - [安装相关文档](/zh-cn/install/source-deploy.md)
+  - [大数据组件安装文档](/zh-cn/install/install-blogs.md)
   - [升级安装](/zh-cn/install/upgrade.md)
 - **使用手册**
   - [多租户](/zh-cn/reference/tenant.md)
