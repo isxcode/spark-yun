@@ -4,8 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "vite --mode dev",
-    "serve-prod": "vite --mode prod",
-    "build": "NODE_ENV=prod run-p build-only",
+    "serve-prod": "vite",
+    "build": "run-p build-only",
     "build-bak": "run-p type-check build-only",
     "preview": "vite preview",
     "test:unit": "vitest",
