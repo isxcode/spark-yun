@@ -19,7 +19,7 @@ public interface PathConstants {
   String AGENT_INSTALL_BASH_NAME = "sy-install.sh";
 
   /** 代理文件命令. */
-  String AGENT_PATH_NAME = "spark-yun";
+  String AGENT_PATH_NAME = "spark-yun-node";
 
   /** 检测脚本. */
   String AGENT_CHECK_BASH_NAME = "sy-check.sh";
