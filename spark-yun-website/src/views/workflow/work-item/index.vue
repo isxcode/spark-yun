@@ -332,7 +332,8 @@ function setConfigData() {
         workId: route.query.id,
         datasourceId: formData.datasourceId,
         clusterId: formData.clusterId,
-        sparkConfig: formData.sparkConfig
+        sparkConfig: formData.sparkConfig,
+        corn: formData.corn,
       })
         .then((res: any) => {
           ElMessage.success(res.msg)
