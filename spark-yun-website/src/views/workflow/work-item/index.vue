@@ -1,11 +1,3 @@
-<!--
- * @Author: fanciNate
- * @Date: 2023-04-27 16:57:57
- * @LastEditTime: 2023-06-22 21:29:29
- * @LastEditors: fanciNate
- * @Description: In User Settings Edit
- * @FilePath: /spark-yun/spark-yun-website/src/views/workflow/work-item/index.vue
--->
 <template>
   <Breadcrumb :bread-crumb-list="breadCrumbList" />
   <div class="zqy-work-item">
@@ -326,7 +318,6 @@ function saveData() {
     .then((res: any) => {
       ElMessage.success(res.msg)
       saveLoading.value = false
-      initData()
     })
     .catch(() => {
       saveLoading.value = false
