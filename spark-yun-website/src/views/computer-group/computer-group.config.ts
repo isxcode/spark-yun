@@ -99,7 +99,7 @@ export const colConfigs: colConfig[] = [
     title: '操作',
     align: 'center',
     customSlot: 'options',
-    width: 140
+    width: 120
   }
 ]
 
@@ -167,7 +167,7 @@ export const PointColConfigs: colConfig[] = [
     title: '操作',
     align: 'center',
     customSlot: 'options',
-    width: 140
+    width: 160
   }
 ]
 
