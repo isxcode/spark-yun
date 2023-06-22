@@ -21,6 +21,7 @@
       <el-form-item label="成员数">
         <el-input-number
           v-model="formData.maxMemberNum"
+          placeholder="请输入"
           :min="0"
           :max="100"
           :controls="false"
@@ -29,6 +30,7 @@
       <el-form-item label="作业流数">
         <el-input-number
           v-model="formData.maxWorkflowNum"
+          placeholder="请输入"
           :min="0"
           :max="100"
           :controls="false"
@@ -96,8 +98,8 @@ const modelConfig = reactive({
 })
 const formData = reactive({
   name: '',
-  maxMemberNum: '',
-  maxWorkflowNum: '',
+  maxMemberNum: undefined,
+  maxWorkflowNum: undefined,
   adminUserId: '',
   remark: '',
   id: ''
@@ -133,8 +135,8 @@ function showModal(cb: () => void, data: any): void {
     renderSence.value = 'edit'
   } else {
     formData.name = ''
-    formData.maxMemberNum = ''
-    formData.maxWorkflowNum = ''
+    formData.maxMemberNum = undefined
+    formData.maxWorkflowNum = undefined
     formData.adminUserId = ''
     formData.remark = ''
     formData.id = ''
