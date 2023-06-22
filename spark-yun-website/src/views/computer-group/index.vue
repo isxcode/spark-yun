@@ -65,7 +65,6 @@
           </template>
           <template #options="scopeSlot">
             <div class="btn-group">
-              <span @click="showLog(scopeSlot.row)">日志</span>
               <span @click="editData(scopeSlot.row)">编辑</span>
               <span
                 v-if="!scopeSlot.row.checkLoading"
@@ -188,11 +187,6 @@ function showPointDetail(data: any) {
       id: data.id
     }
   })
-}
-
-// 查看日志
-function showLog() {
-  console.log('查看日志')
 }
 
 // 删除
