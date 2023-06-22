@@ -156,7 +156,7 @@ onUnmounted(() => {
 
 <style lang="scss">
 .zqy-header {
-  min-width: 960px;
+  // min-width: 960px;
   height: 60px;
   box-shadow: $--app-box-shadow;
   background-color: $--app-light-color;
