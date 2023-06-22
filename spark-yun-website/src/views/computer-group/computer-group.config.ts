@@ -57,7 +57,7 @@ export const colConfigs: colConfig[] = [
   {
     prop: 'clusterType',
     title: '类型',
-    minWidth: 60,
+    minWidth: 100,
     showOverflowTooltip: true,
   },
   {
@@ -92,7 +92,8 @@ export const colConfigs: colConfig[] = [
   {
     prop: 'remark',
     title: '备注',
-    minWidth: 100
+    minWidth: 100,
+    showOverflowTooltip: true
   },
   {
     title: '操作',
@@ -159,7 +160,8 @@ export const PointColConfigs: colConfig[] = [
   {
     prop: 'remark',
     title: '备注',
-    minWidth: 100
+    minWidth: 100,
+    showOverflowTooltip: true
   },
   {
     title: '操作',

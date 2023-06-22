@@ -1,7 +1,7 @@
 <!--
  * @Author: fanciNate
  * @Date: 2023-04-27 16:57:57
- * @LastEditTime: 2023-06-18 16:32:00
+ * @LastEditTime: 2023-06-22 17:41:59
  * @LastEditors: fanciNate
  * @Description: In User Settings Edit
  * @FilePath: /spark-yun/spark-yun-website/src/views/workflow/work-item/index.vue
@@ -228,6 +228,12 @@ function initData(id?: string) {
                 item.hide = false
               }
             })
+          } else if (workConfig.workType === 'QUERY_JDBC') {
+            tabList.forEach((item: any) => {
+              if (['ReturnData'].includes(item.code)) {
+                item.hide = false
+              }
+            })
           }
         })
       })
@@ -275,6 +281,10 @@ function runWorkData() {
       instanceId.value = res.data.instanceId
       ElMessage.success(res.msg)
       initData(res.data.instanceId)
+
+      // 点击运行，默认跳转到提交日志tab
+      activeName.value = 'PublishLog'
+      currentTab.value = markRaw(PublishLog)
     })
     .catch(() => {
       runningLoading.value = false
