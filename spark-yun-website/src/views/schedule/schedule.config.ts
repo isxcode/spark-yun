@@ -57,8 +57,15 @@ export const colConfigs: colConfig[] = [
     showOverflowTooltip: true
   },
   {
-    prop: 'instanceType',
+    prop: 'workType',
     title: '类型',
+    minWidth: 100,
+    customSlot: 'typeSlot',
+    showOverflowTooltip: true
+  },
+  {
+    prop: 'instanceType',
+    title: '执行类型',
     minWidth: 110,
     customSlot: 'instanceTypeTag'
   },

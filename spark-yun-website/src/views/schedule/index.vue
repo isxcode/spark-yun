@@ -49,6 +49,9 @@
               </el-tag>
             </div>
           </template>
+          <template #typeSlot="scopeSlot">
+            {{ getTypeData(scopeSlot.row.workType) }}
+          </template>
           <template #statusTag="scopeSlot">
             <div class="btn-group">
               <el-tag
@@ -208,6 +211,27 @@ function deleteSchedule(data: any) {
       })
       .catch(() => {})
   })
+}
+
+function getTypeData(e: string) {
+  if (!e) {
+    return
+  }
+  const typeList = [
+    {
+      label: 'Jdbc执行作业',
+      value: 'EXE_JDBC'
+    },
+    {
+      label: 'Jdbc查询作业',
+      value: 'QUERY_JDBC'
+    },
+    {
+      label: 'SparkSql查询作业',
+      value: 'SPARK_SQL'
+    }
+  ]
+  return typeList.find(itme => itme.value === e)?.label
 }
 
 function inputEvent(e: string) {
