@@ -98,22 +98,22 @@
                 <template #dropdown>
                   <el-dropdown-menu>
                     <el-dropdown-item
-                      v-if="scopeSlot.row.status !== 'RUNNING'"
+                      v-if="scopeSlot.row.status !== 'RUNNING' && scopeSlot.row.workType === 'SPARK_SQL'"
                       @click="showDetailModal(scopeSlot.row, 'yarnLog')"
                     >
                       运行日志
                     </el-dropdown-item>
                     <el-dropdown-item
-                      v-if="scopeSlot.row.status !== 'RUNNING'"
+                      v-if="scopeSlot.row.status !== 'RUNNING' && scopeSlot.row.instanceType === 'WORK'"
                       @click="retry(scopeSlot.row)"
                     >
                       重新运行
                     </el-dropdown-item>
                     <el-dropdown-item
-                      v-if="scopeSlot.row.status === 'SUCCESS'"
+                      v-if="scopeSlot.row.status === 'SUCCESS' && scopeSlot.row.workType !== 'EXE_JDBC'"
                       @click="showDetailModal(scopeSlot.row, 'result')"
                     >
-                      结果
+                      运行结果
                     </el-dropdown-item>
                     <el-dropdown-item @click="deleteSchedule(scopeSlot.row)">
                       删除

@@ -58,7 +58,7 @@ export const colConfigs: colConfig[] = [
   },
   {
     prop: 'workType',
-    title: '类型',
+    title: '作业类型',
     minWidth: 100,
     customSlot: 'typeSlot',
     showOverflowTooltip: true
