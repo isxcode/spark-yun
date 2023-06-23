@@ -1,6 +1,6 @@
 <template>
   <Breadcrumb :bread-crumb-list="breadCrumbList" />
-  <div class="zqy-seach-table">
+  <div class="zqy-seach-table zqy-computer-node">
     <div class="zqy-table-top">
       <el-button type="primary" @click="addData">
         添加节点
@@ -8,6 +8,9 @@
       <div class="zqy-seach">
         <el-input v-model="keyword" placeholder="请输入节点名称/地址/备注 回车进行搜索" :maxlength="200" clearable @input="inputEvent"
           @keyup.enter="initData(false)" />
+        <el-button type="primary" @click="initData(false)">
+          刷新
+        </el-button>
       </div>
     </div>
     <LoadingPage :visible="loading" :network-error="networkError" @loading-refresh="initData(false)">
@@ -45,9 +48,6 @@
               <el-tag v-if="scopeSlot.row.status === 'UN_CHECK'">
                 待检测
               </el-tag>
-              <el-tag v-if="scopeSlot.row.status === 'UN_CHECK'">
-                待检测
-              </el-tag>
               <el-tag v-if="scopeSlot.row.status === 'CHECK_ERROR'" class="ml-2" type="danger">
                 检测失败
               </el-tag>
@@ -65,19 +65,31 @@
           <template #options="scopeSlot">
             <div class="btn-group">
               <span @click="showLog(scopeSlot.row)">日志</span>
-              <span v-if="!scopeSlot.row.checkLoading" @click="checkData(scopeSlot.row)">检测</span>
-              <el-icon v-else class="is-loading">
-                <Loading />
-              </el-icon>
-              <span v-if="!scopeSlot.row.installLoading" @click="installData(scopeSlot.row)">安装</span>
-              <el-icon v-else class="is-loading">
-                <Loading />
-              </el-icon>
-              <span v-if="!scopeSlot.row.uninstallLoading" @click="uninstallData(scopeSlot.row)">卸载</span>
-              <el-icon v-else class="is-loading">
-                <Loading />
-              </el-icon>
-              <span @click="deleteData(scopeSlot.row)">删除</span>
+              <el-dropdown trigger="click">
+                <span class="click-show-more">更多</span>
+                <template #dropdown>
+                  <el-dropdown-menu>
+                    <el-dropdown-item v-if="scopeSlot.row.status === 'RUNNING'" @click="stopAgent(scopeSlot.row)">
+                      停止
+                    </el-dropdown-item>
+                    <el-dropdown-item v-if="scopeSlot.row.status === 'STOP'" @click="startAgent(scopeSlot.row)">
+                      激活
+                    </el-dropdown-item>
+                    <el-dropdown-item @click="checkData(scopeSlot.row)">
+                      检测
+                    </el-dropdown-item>
+                    <el-dropdown-item @click="installData(scopeSlot.row)">
+                      安装
+                    </el-dropdown-item>
+                    <el-dropdown-item @click="uninstallData(scopeSlot.row)">
+                      卸载
+                    </el-dropdown-item>
+                    <el-dropdown-item @click="deleteData(scopeSlot.row)">
+                      删除
+                    </el-dropdown-item>
+                  </el-dropdown-menu>
+                </template>
+              </el-dropdown>
             </div>
           </template>
         </BlockTable>
@@ -97,7 +109,7 @@ import AddModal from './add-modal/index.vue'
 import ShowLog from './show-log/index.vue'
 
 import { PointTableConfig, FormData } from '../computer-group.config'
-import { GetComputerPointData, CheckComputerPointData, AddComputerPointData, InstallComputerPointData, UninstallComputerPointData, DeleteComputerPointData } from '@/services/computer-group.service'
+import { GetComputerPointData, CheckComputerPointData, AddComputerPointData, InstallComputerPointData, UninstallComputerPointData, DeleteComputerPointData, StopComputerPointData, StartComputerPointData } from '@/services/computer-group.service'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useRoute } from 'vue-router'
 
@@ -167,6 +179,34 @@ function addData() {
 // 查看日志
 function showLog(e: any) {
   showLogRef.value.showModal(e.agentLog)
+}
+
+// 停止
+function stopAgent(data: any) {
+  data.stopAgentLoading = true
+  StopComputerPointData({
+    engineNodeId: data.id
+  }).then((res: any) => {
+    ElMessage.success(res.msg)
+    data.stopAgentLoading = false
+    initData(true)
+  }).catch(() => {
+    data.stopAgentLoading = false
+  })
+}
+
+// 停止
+function startAgent(data: any) {
+  data.stopAgentLoading = true
+  StartComputerPointData({
+    engineNodeId: data.id
+  }).then((res: any) => {
+    ElMessage.success(res.msg)
+    data.stopAgentLoading = false
+    initData(true)
+  }).catch(() => {
+    data.stopAgentLoading = false
+  })
 }
 
 // 安装
@@ -255,3 +295,21 @@ onMounted(() => {
   initData()
 })
 </script>
+
+<style lang="scss">
+.zqy-seach-table {
+  .click-show-more {
+    font-size: $--app-small-font-size;
+  }
+
+  &.zqy-computer-node {
+    .zqy-seach {
+      display: flex;
+      align-items: center;
+      .el-button {
+        margin-left: 12px;
+      }
+    }
+  }
+}
+</style>

@@ -125,3 +125,21 @@ export function UninstallComputerPointData(params: any): Promise<any> {
     params: params
   })
 }
+
+// 停止节点数据
+export function StopComputerPointData(params: any): Promise<any> {
+  return http.request({
+    method: 'get',
+    url: '/eno/stopAgent',
+    params: params
+  })
+}
+
+// 激活节点数据
+export function StartComputerPointData(params: any): Promise<any> {
+  return http.request({
+    method: 'get',
+    url: '/eno/startAgent',
+    params: params
+  })
+}
