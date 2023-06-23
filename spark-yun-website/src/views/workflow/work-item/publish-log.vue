@@ -61,7 +61,7 @@ function getLogData(id: string) {
         })
       }
       if (status.value && callback.value) {
-        callback.value()
+        callback.value(res.data.status)
         if (timer.value) {
           clearInterval(timer.value)
         }

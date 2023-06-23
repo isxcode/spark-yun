@@ -175,7 +175,7 @@ const tabList = reactive([
   {
     name: '数据返回',
     code: 'ReturnData',
-    hide: false
+    hide: true
   },
   {
     name: '运行日志',
@@ -198,32 +198,22 @@ function initData(id?: string) {
     .then((res: any) => {
       workConfig = res.data
       sqltextData.value = res.data.sqlScript
-      if (workConfig.workType === 'SPARK_SQL') {
-        tabList.forEach((item: any) => {
-          if ([ 'RunningLog', 'TotalDetail', 'ReturnData'].includes(item.code)) {
-            item.hide = true
-          }
-        })
-      } else {
-        tabList.forEach((item: any) => {
-          if ([ 'ReturnData'].includes(item.code)) {
-            item.hide = true
-          }
-        })
-      }
       nextTick(() => {
-        containerInstanceRef.value.initData(id || instanceId.value, () => {
+        containerInstanceRef.value.initData(id || instanceId.value, (status: string) => {
           // 运行结束
           if (workConfig.workType === 'SPARK_SQL') {
             tabList.forEach((item: any) => {
-              if ([ 'RunningLog', 'TotalDetail', 'ReturnData'].includes(item.code)) {
+              if ([ 'RunningLog', 'TotalDetail'].includes(item.code)) {
                 item.hide = false
+              }
+              if (item.code === 'ReturnData') {
+                item.hide = status === 'FAIL' ? true : false
               }
             })
           } else if (workConfig.workType === 'QUERY_JDBC') {
             tabList.forEach((item: any) => {
               if (['ReturnData'].includes(item.code)) {
-                item.hide = false
+                item.hide = status === 'FAIL' ? true : false
               }
             })
           }
@@ -264,6 +254,11 @@ function goBack() {
 
 // 运行
 function runWorkData() {
+  tabList.forEach((item: any) => {
+    if ([ 'RunningLog', 'TotalDetail', 'ReturnData'].includes(item.code)) {
+      item.hide = true
+    }
+  })
   runningLoading.value = true
   RunWorkItemConfig({
     workId: route.query.id
