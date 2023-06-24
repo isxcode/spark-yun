@@ -69,6 +69,9 @@
                 <span class="click-show-more">更多</span>
                 <template #dropdown>
                   <el-dropdown-menu>
+                    <el-dropdown-item @click="editNodeData(scopeSlot.row)">
+                      编辑
+                    </el-dropdown-item>
                     <el-dropdown-item v-if="scopeSlot.row.status === 'RUNNING'" @click="stopAgent(scopeSlot.row)">
                       停止
                     </el-dropdown-item>
@@ -109,7 +112,7 @@ import AddModal from './add-modal/index.vue'
 import ShowLog from './show-log/index.vue'
 
 import { PointTableConfig, FormData } from '../computer-group.config'
-import { GetComputerPointData, CheckComputerPointData, AddComputerPointData, InstallComputerPointData, UninstallComputerPointData, DeleteComputerPointData, StopComputerPointData, StartComputerPointData } from '@/services/computer-group.service'
+import { GetComputerPointData, CheckComputerPointData, AddComputerPointData, InstallComputerPointData, UninstallComputerPointData, DeleteComputerPointData, StopComputerPointData, StartComputerPointData, EditComputerPointData } from '@/services/computer-group.service'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useRoute } from 'vue-router'
 
@@ -174,6 +177,26 @@ function addData() {
         })
     })
   })
+}
+
+// 编辑节点数据
+function editNodeData(data: any) {
+  addModalRef.value.showModal((formData: FormData) => {
+    return new Promise((resolve: any, reject: any) => {
+      EditComputerPointData({
+        ...formData,
+        clusterId: route.query.id
+      })
+        .then((res: any) => {
+          ElMessage.success(res.msg)
+          initData()
+          resolve()
+        })
+        .catch((error: any) => {
+          reject(error)
+        })
+    })
+  }, data)
 }
 
 // 查看日志
