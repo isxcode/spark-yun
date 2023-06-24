@@ -22,4 +22,6 @@ public class DasQueryDatasourceRes {
   private String checkDateTime;
 
   private String dbType;
+
+  private String connectLog;
 }

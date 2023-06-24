@@ -53,7 +53,7 @@ export const colConfigs: colConfig[] = [
   },
   {
     prop: 'maxMemberNum',
-    title: '已用/总成员',
+    title: '成员',
     minWidth: 100,
     formatter: (data: any): string => {
       return `${data.row.usedMemberNum} / ${data.row.maxMemberNum}`
@@ -61,7 +61,7 @@ export const colConfigs: colConfig[] = [
   },
   {
     prop: 'maxWorkflowNum',
-    title: '已用/总工作流',
+    title: '工作流',
     minWidth: 120,
     formatter: (data: any): string => {
       return `${data.row.usedWorkflowNum} / ${data.row.maxWorkflowNum}`

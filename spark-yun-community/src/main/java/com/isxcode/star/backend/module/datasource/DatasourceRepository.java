@@ -18,6 +18,6 @@ public interface DatasourceRepository extends JpaRepository<DatasourceEntity, St
           + "OR D.remark LIKE %:keyword% "
           + "OR D.dbType LIKE %:keyword% "
           + "OR D.username LIKE %:keyword% "
-          + "OR D.jdbcUrl LIKE %:keyword% order by D.lastModifiedDateTime desc ")
+          + "OR D.jdbcUrl LIKE %:keyword% order by D.createDateTime desc ")
   Page<DatasourceEntity> searchAll(@Param("keyword") String searchKeyWord, Pageable pageable);
 }

@@ -14,7 +14,7 @@ import org.springframework.stereotype.Repository;
 public interface WorkflowRepository extends JpaRepository<WorkflowEntity, String> {
 
   @Query(
-      "SELECT w FROM WorkflowEntity w WHERE w.name LIKE %:keyword% OR w.remark LIKE %:keyword% order by w.lastModifiedDateTime desc ")
+      "SELECT w FROM WorkflowEntity w WHERE w.name LIKE %:keyword% OR w.remark LIKE %:keyword% order by w.createDateTime desc ")
   Page<WorkflowEntity> searchAll(@Param("keyword") String searchKeyWord, Pageable pageable);
 
   long countByTenantId(String tenantId);

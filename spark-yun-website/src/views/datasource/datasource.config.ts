@@ -36,7 +36,7 @@ export interface SerchParams {
 
 export interface FormData {
   name: string;
-  comment: string;
+  remark: string;
 }
 
 export const BreadCrumbList: Array<BreadCrumb> = [
@@ -54,7 +54,7 @@ export const colConfigs: colConfig[] = [
     showOverflowTooltip: true
   },
   {
-    prop: 'type',
+    prop: 'dbType',
     title: '类型',
     minWidth: 100,
     showOverflowTooltip: true
@@ -78,12 +78,12 @@ export const colConfigs: colConfig[] = [
     customSlot: 'statusTag'
   },
   {
-    prop: 'checkTime',
+    prop: 'checkDateTime',
     title: '检测时间',
     minWidth: 140
   },
   {
-    prop: 'comment',
+    prop: 'remark',
     title: '备注',
     minWidth: 100
   },
@@ -91,7 +91,7 @@ export const colConfigs: colConfig[] = [
     title: '操作',
     align: 'center',
     customSlot: 'options',
-    width: 110
+    width: 140
   }
 ]
 

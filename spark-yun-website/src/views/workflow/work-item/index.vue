@@ -1,11 +1,3 @@
-<!--
- * @Author: fanciNate
- * @Date: 2023-04-27 16:57:57
- * @LastEditTime: 2023-05-27 15:52:46
- * @LastEditors: fanciNate
- * @Description: In User Settings Edit
- * @FilePath: /zqy-web/src/views/workflow/work-item/index.vue
--->
 <template>
   <Breadcrumb :bread-crumb-list="breadCrumbList" />
   <div class="zqy-work-item">
@@ -147,12 +139,14 @@ const containerInstanceRef = ref(null)
 let workConfig = reactive({
   clusterId: '',
   datasourceId: '',
+  corn:'',
   name: '',
-  sql: '',
+  sqlScript: '',
   workId: '',
   workType: '',
   workflowId: '',
-  applicationId: ''
+  applicationId: '',
+  sparkConfig:''
 })
 
 const breadCrumbList = reactive([
@@ -181,21 +175,21 @@ const tabList = reactive([
   {
     name: '数据返回',
     code: 'ReturnData',
-    hide: false
+    hide: true
   },
   {
     name: '运行日志',
     code: 'RunningLog',
     hide: true
   },
-  {
-    name: '监控信息',
-    code: 'TotalDetail',
-    hide: true
-  }
+  // {
+  //   name: '监控信息',
+  //   code: 'TotalDetail',
+  //   hide: true
+  // }
 ])
 
-function initData() {
+function initData(id?: string) {
   loading.value = true
   networkError.value = networkError.value || false
   GetWorkItemConfig({
@@ -204,13 +198,27 @@ function initData() {
     .then((res: any) => {
       workConfig = res.data
       sqltextData.value = res.data.sqlScript
-      if (workConfig.workType === 'SPARK_SQL') {
-        tabList.forEach((item: any) => {
-          if ([ 'RunningLog', 'TotalDetail' ].includes(item.code)) {
-            item.hide = false
+      nextTick(() => {
+        containerInstanceRef.value.initData(id || instanceId.value, (status: string) => {
+          // 运行结束
+          if (workConfig.workType === 'SPARK_SQL') {
+            tabList.forEach((item: any) => {
+              if ([ 'RunningLog', 'TotalDetail'].includes(item.code)) {
+                item.hide = false
+              }
+              if (item.code === 'ReturnData') {
+                item.hide = status === 'FAIL' ? true : false
+              }
+            })
+          } else if (workConfig.workType === 'QUERY_JDBC') {
+            tabList.forEach((item: any) => {
+              if (['ReturnData'].includes(item.code)) {
+                item.hide = status === 'FAIL' ? true : false
+              }
+            })
           }
         })
-      }
+      })
       loading.value = false
       networkError.value = false
     })
@@ -246,6 +254,11 @@ function goBack() {
 
 // 运行
 function runWorkData() {
+  tabList.forEach((item: any) => {
+    if ([ 'RunningLog', 'TotalDetail', 'ReturnData'].includes(item.code)) {
+      item.hide = true
+    }
+  })
   runningLoading.value = true
   RunWorkItemConfig({
     workId: route.query.id
@@ -254,8 +267,11 @@ function runWorkData() {
       runningLoading.value = false
       instanceId.value = res.data.instanceId
       ElMessage.success(res.msg)
-      initData()
-      containerInstanceRef.value.initData(instanceId.value)
+      initData(res.data.instanceId)
+
+      // 点击运行，默认跳转到提交日志tab
+      activeName.value = 'PublishLog'
+      currentTab.value = markRaw(PublishLog)
     })
     .catch(() => {
       runningLoading.value = false
@@ -287,14 +303,16 @@ function terWorkData() {
 function saveData() {
   saveLoading.value = true
   SaveWorkItemConfig({
-    sql: sqltextData.value,
+    sqlScript: sqltextData.value,
     workId: route.query.id,
-    datasourceId: workConfig.datasourceId
+    datasourceId: workConfig.datasourceId,
+    sparkConfig: workConfig.sparkConfig,
+    clusterId: workConfig.clusterId,
+    corn: workConfig.corn
   })
     .then((res: any) => {
       ElMessage.success(res.msg)
       saveLoading.value = false
-      initData()
     })
     .catch(() => {
       saveLoading.value = false
@@ -306,9 +324,12 @@ function setConfigData() {
   configModalRef.value.showModal((formData: any) => {
     return new Promise((resolve: any, reject: any) => {
       SaveWorkItemConfig({
-        sql: sqltextData.value,
+        sqlScript: sqltextData.value,
         workId: route.query.id,
-        datasourceId: formData.datasourceId
+        datasourceId: formData.datasourceId,
+        clusterId: formData.clusterId,
+        sparkConfig: formData.sparkConfig,
+        corn: formData.corn,
       })
         .then((res: any) => {
           ElMessage.success(res.msg)
