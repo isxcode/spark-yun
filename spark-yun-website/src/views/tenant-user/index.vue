@@ -95,7 +95,7 @@ import { GetUserList, AddTenantUserData, DeleteTenantUser, GiveAuth, RemoveAuth 
 import { ElMessage, ElMessageBox } from 'element-plus'
 
 interface FormUser {
-  tenantAdmin: boolean;
+  isTenantAdmin: boolean;
   userId: string;
 }
 
