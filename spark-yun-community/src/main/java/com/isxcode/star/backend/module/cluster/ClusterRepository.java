@@ -14,6 +14,6 @@ import org.springframework.stereotype.Repository;
 public interface ClusterRepository extends JpaRepository<ClusterEntity, String> {
 
   @Query(
-      "SELECT C FROM ClusterEntity C WHERE C.name LIKE %:keyword% OR C.remark LIKE %:keyword% order by C.lastModifiedDateTime desc ")
+      "SELECT C FROM ClusterEntity C WHERE C.name LIKE %:keyword% OR C.remark LIKE %:keyword% order by C.createDateTime desc ")
   Page<ClusterEntity> searchAll(@Param("keyword") String searchKeyWord, Pageable pageable);
 }
