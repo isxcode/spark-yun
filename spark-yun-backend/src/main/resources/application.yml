@@ -72,6 +72,7 @@ spark-yun:
     - /h2-console/** # http://localhost:8080/h2-console
     - /druid/** # http://localhost:8080/druid/index.html
   anonymous-url:
+    - / # 让页面可以访问前端
     - /static/** # 放行前端资源文件
     - /favicon.ico # 放行网站的logo
     - /login # 放行登录接口
