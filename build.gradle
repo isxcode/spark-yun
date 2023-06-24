@@ -122,7 +122,7 @@ tasks.register('docs', Exec) {
 spotless {
   java {
     target '*/**/*.java'
-    targetExclude '*/build/**/*.java'
+    targetExclude '*/build/**/*.java','spark-yun-dist/**'
     googleJavaFormat()
     removeUnusedImports()
   }

@@ -1,16 +1,16 @@
 <!--
  * @Author: fanciNate
  * @Date: 2023-04-10 13:33:20
- * @LastEditTime: 2023-05-18 20:58:44
+ * @LastEditTime: 2023-06-16 21:56:33
  * @LastEditors: fanciNate
  * @Description: In User Settings Edit
- * @FilePath: /zqy-web/src/views/login/login.vue
+ * @FilePath: /spark-yun/spark-yun-website/src/views/login/login.vue
 -->
 <template>
-  <div class="zqy-login">
+  <div class="zqy-login" @keyup.enter="clickToLogin">
     <div class="zqy-login-container">
       <div class="normal-login-title">
-        登录
+        至轻云
       </div>
       <el-form
         ref="loginForm"
@@ -19,7 +19,7 @@
         class="normal-login-form"
       >
         <el-form-item
-          label="账号"
+          label=""
           prop="account"
         >
           <el-input
@@ -28,7 +28,7 @@
           />
         </el-form-item>
         <el-form-item
-          label="密码"
+          label=""
           prop="passwd"
         >
           <el-input
@@ -50,7 +50,7 @@
           </el-button>
         </el-form-item>
         <el-form-item class="registered-content">
-          <span class="registered">没有账号请联系管理员
+          <span class="registered">基于spark打造超轻量级大数据平台
             <!-- <a class="do-registered" @click="clickRegistered"
                             >免费注册</a -->
           </span>
@@ -123,12 +123,13 @@ function clickToLogin() {
   align-items: center;
   .zqy-login-container {
     width: 360px;
-    height: 400px;
+    height: 370px;
     padding: 32px 32px;
     box-sizing: border-box;
     border-radius: $--app-border-radius;
     background-color: rgba($color: $--app-light-color, $alpha: 1);
     box-shadow: $--app-box-shadow;
+    position: relative;
 
     .normal-login-title {
       display: flex;
@@ -146,8 +147,14 @@ function clickToLogin() {
     }
     .registered-content {
       text-align: right;
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
       .registered {
         font-size: 12px;
+        width: 100%;
+        text-align: center;
         .do-registered {
           color: $--app-primary-color;
           &:hover {

@@ -1,10 +1,10 @@
 <!--
  * @Author: fanciNate
  * @Date: 2023-04-27 16:57:57
- * @LastEditTime: 2023-05-27 14:58:39
+ * @LastEditTime: 2023-06-18 14:59:12
  * @LastEditors: fanciNate
  * @Description: In User Settings Edit
- * @FilePath: /zqy-web/src/views/workflow/workflow-detail/index.vue
+ * @FilePath: /spark-yun/spark-yun-website/src/views/workflow/workflow-detail/index.vue
 -->
 <template>
   <Breadcrumb :bread-crumb-list="breadCrumbList" />
@@ -44,6 +44,9 @@
               @click="showDetail(scopeSlot.row)"
             >{{ scopeSlot.row.name }}</span>
           </template>
+          <template #typeSlot="scopeSlot">
+            {{ getTypeData(scopeSlot.row.workType) }}
+          </template>
           <template #statusTag="scopeSlot">
             <div class="btn-group">
               <el-tag
@@ -74,6 +77,7 @@
           </template>
           <template #options="scopeSlot">
             <div class="btn-group">
+              <span @click="publishData(scopeSlot.row)">发布</span>
               <span @click="editData(scopeSlot.row)">编辑</span>
               <span @click="deleteData(scopeSlot.row)">删除</span>
               <!-- <span>历史</span> -->
@@ -94,7 +98,7 @@ import LoadingPage from '@/components/loading/index.vue'
 import AddModal from './add-modal/index.vue'
 
 import { DetailTableConfig, FormData } from '../workflow.config'
-import { GetWorkflowDetailList, AddWorkflowDetailList, UpdateWorkflowDetailList, DeleteWorkflowDetailList } from '@/services/workflow.service'
+import { GetWorkflowDetailList, AddWorkflowDetailList, UpdateWorkflowDetailList, DeleteWorkflowDetailList, PublishWorkData } from '@/services/workflow.service'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useRoute, useRouter } from 'vue-router'
 
@@ -178,6 +182,18 @@ function editData(data: any) {
   }, data)
 }
 
+// 发布
+function publishData(data: any) {
+  PublishWorkData({
+    workId: data.id
+  }).then((res: any) => {
+    ElMessage.success(res.msg)
+    initData()
+  })
+  .catch((error: any) => {
+  })
+}
+
 // 删除
 function deleteData(data: any) {
   ElMessageBox.confirm('确定删除该节点吗？', '警告', {
@@ -223,6 +239,27 @@ function handleSizeChange(e: number) {
 function handleCurrentChange(e: number) {
   tableConfig.pagination.currentPage = e
   initData(true)
+}
+
+function getTypeData(e: string) {
+  if (!e) {
+    return
+  }
+  const typeList = [
+    {
+      label: 'Jdbc执行作业',
+      value: 'EXE_JDBC'
+    },
+    {
+      label: 'Jdbc查询作业',
+      value: 'QUERY_JDBC'
+    },
+    {
+      label: 'SparkSql查询作业',
+      value: 'SPARK_SQL'
+    }
+  ]
+  return typeList.find(itme => itme.value === e)?.label
 }
 
 onMounted(() => {

@@ -21,3 +21,6 @@ spark-yun-vip/**
 
 # 资源文件
 resources
+
+# 不提交spark-min
+spark-yun-dist/src/main/spark-min

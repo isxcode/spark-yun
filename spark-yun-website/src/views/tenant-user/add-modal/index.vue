@@ -24,7 +24,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="管理员">
-        <el-switch v-model="formData.delivery" />
+        <el-switch v-model="formData.isTenantAdmin" />
       </el-form-item>
     </el-form>
   </BlockModal>
@@ -59,7 +59,7 @@ const modelConfig = reactive({
   closeOnClickModal: false
 })
 const formData = reactive({
-  tenantAdmin: false,
+  isTenantAdmin: false,
   userId: '',
   id: ''
 })
