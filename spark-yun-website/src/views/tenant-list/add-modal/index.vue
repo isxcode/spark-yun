@@ -23,7 +23,6 @@
           v-model="formData.maxMemberNum"
           placeholder="请输入"
           :min="0"
-          :max="100"
           :controls="false"
         />
       </el-form-item>
@@ -32,7 +31,6 @@
           v-model="formData.maxWorkflowNum"
           placeholder="请输入"
           :min="0"
-          :max="100"
           :controls="false"
         />
       </el-form-item>
