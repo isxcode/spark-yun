@@ -194,7 +194,6 @@ function okEvent() {
         })
         .catch((err: any) => {
           modelConfig.okConfig.loading = false
-          ElMessage.error(err)
         })
     } else {
       ElMessage.warning('请将表单输入完整')

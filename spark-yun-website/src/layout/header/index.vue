@@ -1,14 +1,14 @@
 <!--
  * @Author: fanciNate
  * @Date: 2023-05-05 15:04:54
- * @LastEditTime: 2023-05-23 22:03:43
+ * @LastEditTime: 2023-06-22 21:30:03
  * @LastEditors: fanciNate
  * @Description: In User Settings Edit
- * @FilePath: /zqy-web/src/layout/header/index.vue
+ * @FilePath: /spark-yun/spark-yun-website/src/layout/header/index.vue
 -->
 <template>
   <div class="zqy-header">
-    <div class="header-name">
+    <div class="header-name" @click="clickToSPK">
       <!-- <img src="../../assets/icons/logo.jpg" alt="至轻云"> -->
       至轻云
     </div>
@@ -31,6 +31,7 @@
       </el-select>
     </div>
     <div class="header-user">
+      <span class="redirect-url" @click="clickRedirectUrl">帮助文档</span>
       <el-dropdown @command="handleCommand">
         <span class="el-dropdown-link">
           <!-- {{ headerConfig?.userInfo?.username }}<i class="el-icon-arrow-down el-icon--right"></i> -->
@@ -52,7 +53,7 @@
 <script lang="ts" setup>
 import { useRouter } from 'vue-router'
 import { useState, useMutations } from '@/hooks/useStore'
-import { nextTick, onMounted, reactive, ref } from 'vue'
+import { nextTick, onMounted, onUnmounted, reactive, ref } from 'vue'
 import { ChangeTenantData, QueryTenantList } from '@/services/login.service'
 import eventBus from '@/utils/eventBus'
 // import { GetTenantList } from '@/services/tenant-list.service'
@@ -127,17 +128,35 @@ function visibleChange(e: boolean): void {
   }
 }
 
+function clickRedirectUrl(): void {
+  window.open(import.meta.env.VITE_INFO_URL, '_blank')
+}
+
+function clickToSPK() {
+  window.open(import.meta.env.VITE_SPARK_URL, '_blank')
+}
+
 onMounted(() => {
   nextTick(() => {
     getTenantList()
     eventBus.emit('tenantChange')
+  })
+
+  eventBus.on('tenantListUpdate', () => {
+    getTenantList()
+  })
+})
+
+onUnmounted(() => {
+  eventBus.off('tenantListUpdate', () => {
+    console.log('这里移除了bus')
   })
 })
 </script>
 
 <style lang="scss">
 .zqy-header {
-  min-width: 960px;
+  // min-width: 960px;
   height: 60px;
   box-shadow: $--app-box-shadow;
   background-color: $--app-light-color;
@@ -157,9 +176,7 @@ onMounted(() => {
     width: 200px;
     justify-content: center;
     color: $--app-primary-color;
-    // img {
-    //     height: 48px;
-    // }
+    cursor: pointer;
   }
   .zqy-tenant {
     position: absolute;
@@ -204,6 +221,16 @@ onMounted(() => {
       background-color: $--app-primary-color;
       color: $--app-light-color;
       font-size: $--app-small-font-size;
+    }
+
+    .redirect-url {
+      font-size: $--app-small-font-size;
+      color: $--app-primary-color;
+      margin-right: 12px;
+      cursor: pointer;
+      &:hover {
+        text-decoration: underline;
+      }
     }
   }
 }

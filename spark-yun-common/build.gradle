@@ -15,4 +15,5 @@ dependencies {
   // spring-framework
   implementation "org.springframework:spring-tx:${SPRING_FRAMEWORK_VERSION}"
   implementation "org.springframework:spring-orm:${SPRING_FRAMEWORK_VERSION}"
+  implementation "org.springframework.security:spring-security-core:5.7.7"
 }

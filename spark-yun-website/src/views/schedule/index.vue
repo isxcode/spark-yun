@@ -1,6 +1,6 @@
 <template>
   <Breadcrumb :bread-crumb-list="breadCrumbList" />
-  <div class="zqy-seach-table">
+  <div class="zqy-seach-table zqy-schedule">
     <div class="zqy-table-top">
       <div />
       <div class="zqy-seach">
@@ -12,6 +12,12 @@
           @input="inputEvent"
           @keyup.enter="initData(false)"
         />
+        <el-button
+          type="primary"
+          @click="initData(false)"
+        >
+          刷新
+        </el-button>
       </div>
     </div>
     <LoadingPage
@@ -43,6 +49,9 @@
               </el-tag>
             </div>
           </template>
+          <template #typeSlot="scopeSlot">
+            {{ getTypeData(scopeSlot.row.workType) }}
+          </template>
           <template #statusTag="scopeSlot">
             <div class="btn-group">
               <el-tag
@@ -64,7 +73,7 @@
                 class="ml-2"
                 type="warning"
               >
-                已终止
+                已中止
               </el-tag>
               <el-tag
                 v-if="scopeSlot.row.status === 'RUNNING'"
@@ -89,22 +98,22 @@
                 <template #dropdown>
                   <el-dropdown-menu>
                     <el-dropdown-item
-                      v-if="scopeSlot.row.status !== 'RUNNING'"
+                      v-if="scopeSlot.row.status !== 'RUNNING' && scopeSlot.row.workType === 'SPARK_SQL'"
                       @click="showDetailModal(scopeSlot.row, 'yarnLog')"
                     >
-                      Yarn日志
+                      运行日志
                     </el-dropdown-item>
                     <el-dropdown-item
-                      v-if="scopeSlot.row.status !== 'RUNNING'"
+                      v-if="scopeSlot.row.status !== 'RUNNING' && scopeSlot.row.instanceType === 'WORK'"
                       @click="retry(scopeSlot.row)"
                     >
                       重新运行
                     </el-dropdown-item>
                     <el-dropdown-item
-                      v-if="scopeSlot.row.status === 'SUCCESS'"
+                      v-if="scopeSlot.row.status === 'SUCCESS' && scopeSlot.row.workType !== 'EXE_JDBC'"
                       @click="showDetailModal(scopeSlot.row, 'result')"
                     >
-                      结果
+                      运行结果
                     </el-dropdown-item>
                     <el-dropdown-item @click="deleteSchedule(scopeSlot.row)">
                       删除
@@ -204,6 +213,27 @@ function deleteSchedule(data: any) {
   })
 }
 
+function getTypeData(e: string) {
+  if (!e) {
+    return
+  }
+  const typeList = [
+    {
+      label: 'Jdbc执行作业',
+      value: 'EXE_JDBC'
+    },
+    {
+      label: 'Jdbc查询作业',
+      value: 'QUERY_JDBC'
+    },
+    {
+      label: 'SparkSql查询作业',
+      value: 'SPARK_SQL'
+    }
+  ]
+  return typeList.find(itme => itme.value === e)?.label
+}
+
 function inputEvent(e: string) {
   if (e === '') {
     initData()
@@ -229,6 +259,16 @@ onMounted(() => {
 .zqy-seach-table {
   .click-show-more {
     font-size: $--app-small-font-size;
+  }
+
+  &.zqy-schedule {
+    .zqy-seach {
+      display: flex;
+      align-items: center;
+      .el-button {
+        margin-left: 12px;
+      }
+    }
   }
 }
 </style>

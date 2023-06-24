@@ -79,7 +79,7 @@ function showModal(cb: () => void, data: any, type: string): void {
     modelConfig.title = '结果'
   } else if (modalType.value === 'yarnLog') {
     position.value = true
-    modelConfig.title = 'Yarn日志'
+    modelConfig.title = '运行日志'
     getYarnLogData()
   }
   modelConfig.visible = true

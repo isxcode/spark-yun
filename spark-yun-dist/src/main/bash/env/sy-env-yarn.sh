@@ -30,7 +30,7 @@ if [ -e "${home_path}/spark-yun-agent.pid" ]; then
             \"log\": \"正在运行中\" \
           }"
     echo $json_output
-    rm /tmp/sy-env.sh
+    rm /tmp/sy-env-yarn.sh
     exit 0
   else
     json_output="{ \
@@ -38,7 +38,7 @@ if [ -e "${home_path}/spark-yun-agent.pid" ]; then
             \"log\": \"已安装，请启动\" \
           }"
     echo $json_output
-    rm /tmp/sy-env.sh
+    rm /tmp/sy-env-yarn.sh
     exit 0
   fi
 fi
@@ -50,18 +50,18 @@ if ! command -v tar &>/dev/null; then
         \"log\": \"未检测到tar命令\" \
       }"
   echo $json_output
-  rm /tmp/sy-env.sh
+  rm /tmp/sy-env-yarn.sh
   exit 0
 fi
 
 # 判断mpstat命令
-if ! command -v tar &>/dev/null; then
+if ! command -v mpstat &>/dev/null; then
   json_output="{ \
         \"status\": \"INSTALL_ERROR\", \
         \"log\": \"未检测到mpstat命令\" \
       }"
   echo $json_output
-  rm /tmp/sy-env.sh
+  rm /tmp/sy-env-yarn.sh
   exit 0
 fi
 
@@ -72,7 +72,7 @@ if ! command -v java &>/dev/null; then
     \"log\": \"未检测到java1.8.x环境\" \
   }"
   echo $json_output
-  rm /tmp/sy-env.sh
+  rm /tmp/sy-env-yarn.sh
   exit 0
 fi
 
@@ -84,18 +84,18 @@ if [[ "$java_version" != "1.8"* ]]; then
       \"log\": \"未检测到java1.8.x环境\" \
     }"
   echo $json_output
-  rm /tmp/sy-env.sh
+  rm /tmp/sy-env-yarn.sh
   exit 0
 fi
 
-# 判断hadoop环境变量
-if ! command -v hadoop &>/dev/null; then
+# 判断yarn命令
+if ! command -v yarn &>/dev/null; then
   json_output="{ \
       \"status\": \"INSTALL_ERROR\", \
-      \"log\": \"未检测到hadoop环境\" \
+      \"log\": \"未检测到yarn命令\" \
     }"
   echo $json_output
-  rm /tmp/sy-env.sh
+  rm /tmp/sy-env-yarn.sh
   exit 0
 fi
 
@@ -108,7 +108,7 @@ else
             \"log\": \"未配置HADOOP_HOME环境变量\" \
           }"
   echo $json_output
-  rm /tmp/sy-env.sh
+  rm /tmp/sy-env-yarn.sh
   exit 0
 fi
 
@@ -119,7 +119,7 @@ if ! timeout 10s yarn node -list &>/dev/null; then
         \"log\": \"未启动yarn服务\" \
       }"
   echo $json_output
-  rm /tmp/sy-env.sh
+  rm /tmp/sy-env-yarn.sh
   exit 0
 fi
 
@@ -130,7 +130,7 @@ if ! netstat -tln | awk '$4 ~ /:'"$agent_port"'$/ {exit 1}'; then
           \"log\": \"${agent_port} 端口号已被占用\" \
         }"
   echo $json_output
-  rm /tmp/sy-env.sh
+  rm /tmp/sy-env-yarn.sh
   exit 0
 fi
 
@@ -143,4 +143,4 @@ json_output="{ \
 echo $json_output
 
 # 删除检测脚本
-rm /tmp/sy-env.sh
+rm /tmp/sy-env-yarn.sh

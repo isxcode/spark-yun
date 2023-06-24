@@ -5,6 +5,11 @@
   .el-form-item__label {
     margin-bottom: -8px;
     font-size: $--element-small-font-size;
+    position: relative;
+    &::before {
+      position: absolute;
+      left: -8px;
+    }
   }
   .el-form-item__content {
     .el-input {

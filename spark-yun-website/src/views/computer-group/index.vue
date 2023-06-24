@@ -30,6 +30,12 @@
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
         >
+          <template #nameSlot="scopeSlot">
+            <span
+              class="name-click"
+              @click="showDetail(scopeSlot.row)"
+            >{{ scopeSlot.row.name }}</span>
+          </template>
           <template #statusTag="scopeSlot">
             <div class="btn-group">
               <el-tag
@@ -70,7 +76,7 @@
               >
                 <Loading />
               </el-icon>
-              <span @click="showPointDetail(scopeSlot.row)">节点</span>
+              <!-- <span @click="showPointDetail(scopeSlot.row)">节点</span> -->
               <span @click="deleteData(scopeSlot.row)">删除</span>
             </div>
           </template>
@@ -198,6 +204,15 @@ function deleteData(data: any) {
         initData()
       })
       .catch(() => {})
+  })
+}
+
+function showDetail(data: any) {
+  router.push({
+    name: 'computer-pointer',
+    query: {
+      id: data.id
+    }
   })
 }
 

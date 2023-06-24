@@ -1,3 +1,11 @@
+/*
+ * @Author: fanciNate
+ * @Date: 2023-06-04 22:27:08
+ * @LastEditTime: 2023-06-16 22:20:14
+ * @LastEditors: fanciNate
+ * @Description: In User Settings Edit
+ * @FilePath: /spark-yun/spark-yun-website/src/views/user-center/user-center.config.ts
+ */
 export interface BreadCrumb {
   name: string;
   code: string;
@@ -67,10 +75,15 @@ export const colConfigs: colConfig[] = [
     customSlot: 'statusTag'
   },
   {
+    prop: 'remark',
+    title: '备注',
+    minWidth: 120
+  },
+  {
     title: '操作',
     align: 'center',
     customSlot: 'options',
-    width: 100
+    width: 120
   }
 ]
 

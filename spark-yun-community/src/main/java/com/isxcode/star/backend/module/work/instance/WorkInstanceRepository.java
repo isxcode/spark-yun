@@ -33,7 +33,7 @@ public interface WorkInstanceRepository extends JpaRepository<WorkInstanceEntity
               + "(S.id LIKE %:keyword% "
               + "OR SW.name LIKE %:keyword% "
               + "OR SWF.name LIKE %:keyword% ) "
-              + "order by S.lastModifiedDateTime desc ")
+              + "order by S.createDateTime desc ")
   Page<Map> searchAll(
       @Param("tenantId") String tenantId,
       @Param("keyword") String searchKeyWord,

@@ -15,7 +15,7 @@
 <br/>
 
 <h5 align="center">
-  <a href="https://zhiqingyun-demo.isxcode.com">点击进入演示环境</a>
+  <a style="color: #e25a1b;cursor: pointer"  onclick="window.open('https://zhiqingyun-demo.isxcode.com')">点击进入演示环境</a>
 </h5>
 
 <br/>
