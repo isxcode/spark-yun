@@ -14,6 +14,7 @@ import com.isxcode.star.api.pojos.cluster.node.dto.ScpFileEngineNodeDto;
 import com.isxcode.star.api.properties.SparkYunProperties;
 import com.isxcode.star.backend.module.cluster.node.ClusterNodeEntity;
 import com.isxcode.star.backend.module.cluster.node.ClusterNodeRepository;
+import com.isxcode.star.common.utils.PathUtils;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.SftpException;
 import java.io.File;
@@ -39,6 +40,7 @@ public class RunAgentInstallService {
   @Async("sparkYunWorkThreadPool")
   public void run(
       String clusterNodeId,
+      String clusterType,
       ScpFileEngineNodeDto scpFileEngineNodeDto,
       String tenantId,
       String userId) {
@@ -55,7 +57,7 @@ public class RunAgentInstallService {
     ClusterNodeEntity clusterNodeEntity = clusterNodeEntityOptional.get();
 
     try {
-      installAgent(scpFileEngineNodeDto, clusterNodeEntity);
+      installAgent(scpFileEngineNodeDto, clusterNodeEntity, clusterType);
     } catch (Exception e) {
       log.error(e.getMessage());
       clusterNodeEntity.setCheckDateTime(LocalDateTime.now());
@@ -65,19 +67,24 @@ public class RunAgentInstallService {
     }
   }
 
-  public void installAgent(ScpFileEngineNodeDto scpFileEngineNodeDto, ClusterNodeEntity engineNode)
+  public void installAgent(
+      ScpFileEngineNodeDto scpFileEngineNodeDto, ClusterNodeEntity engineNode, String clusterType)
       throws JSchException, IOException, InterruptedException, SftpException {
 
     // 先检查节点是否可以安装
     scpFile(
         scpFileEngineNodeDto,
-        sparkYunProperties.getAgentBinDir() + File.separator + PathConstants.AGENT_ENV_BASH_NAME,
-        "/tmp/" + PathConstants.AGENT_ENV_BASH_NAME);
+        PathUtils.parseProjectPath(sparkYunProperties.getAgentBinDir())
+            + File.separator
+            + "env"
+            + File.separator
+            + String.format(PathConstants.AGENT_ENV_BASH_FORMAT, clusterType),
+        "/tmp/" + String.format(PathConstants.AGENT_ENV_BASH_FORMAT, clusterType));
 
     // 运行安装脚本
     String envCommand =
         "bash /tmp/"
-            + PathConstants.AGENT_ENV_BASH_NAME
+            + String.format(PathConstants.AGENT_ENV_BASH_FORMAT, clusterType)
             + " --home-path="
             + engineNode.getAgentHomePath()
             + File.separator
@@ -101,7 +108,7 @@ public class RunAgentInstallService {
     // 下载安装包
     scpFile(
         scpFileEngineNodeDto,
-        sparkYunProperties.getAgentTarGzDir()
+        PathUtils.parseProjectPath(sparkYunProperties.getAgentTarGzDir())
             + File.separator
             + PathConstants.SPARK_YUN_AGENT_TAR_GZ_NAME,
         "/tmp/" + PathConstants.SPARK_YUN_AGENT_TAR_GZ_NAME);
@@ -109,7 +116,7 @@ public class RunAgentInstallService {
     // 拷贝安装脚本
     scpFile(
         scpFileEngineNodeDto,
-        sparkYunProperties.getAgentBinDir()
+        PathUtils.parseProjectPath(sparkYunProperties.getAgentBinDir())
             + File.separator
             + PathConstants.AGENT_INSTALL_BASH_NAME,
         "/tmp/" + PathConstants.AGENT_INSTALL_BASH_NAME);

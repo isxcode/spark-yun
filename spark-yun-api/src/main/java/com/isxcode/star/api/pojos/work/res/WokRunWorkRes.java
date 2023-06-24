@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class WokRunWorkRes {
 
-  private String executeStatus;
+  private String appStatus;
 
   private String message;
 
@@ -22,11 +22,7 @@ public class WokRunWorkRes {
 
   private List<List<String>> data;
 
-  private String applicationId;
-
-  private String yarnApplicationState;
-
-  private String finalApplicationStatus;
+  private String appId;
 
   private String trackingUrl;
 

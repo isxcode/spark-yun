@@ -23,7 +23,7 @@ public interface WorkRepository extends JpaRepository<WorkEntity, String> {
           + "WHERE w.workflowId = :workflowId AND "
           + "(w.name LIKE %:keyword% "
           + "OR w.remark LIKE %:keyword% "
-          + "OR w.workType LIKE %:keyword%) order by w.lastModifiedDateTime desc ")
+          + "OR w.workType LIKE %:keyword%) order by w.createDateTime desc ")
   Page<WorkEntity> searchAllByWorkflowId(
       @Param("keyword") String searchKeyWord,
       @Param("workflowId") String workflowId,

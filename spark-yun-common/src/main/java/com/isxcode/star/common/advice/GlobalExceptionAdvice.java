@@ -12,6 +12,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -55,6 +56,18 @@ public class GlobalExceptionAdvice extends ResponseEntityExceptionHandler {
       SuccessResponseException successException) {
 
     return new ResponseEntity<>(successException.getBaseResponse(), HttpStatus.OK);
+  }
+
+  @ExceptionHandler(AccessDeniedException.class)
+  public ResponseEntity<BaseResponse<Object>> accessDeniedException(
+      AccessDeniedException accessDeniedException) {
+
+    BaseResponse baseResponse = new BaseResponse();
+    baseResponse.setCode("401");
+    baseResponse.setMsg("当前用户没有权限");
+    baseResponse.setErr(accessDeniedException.getMessage());
+
+    return new ResponseEntity<>(baseResponse, HttpStatus.OK);
   }
 
   @ExceptionHandler(EmptyResultDataAccessException.class)
@@ -103,8 +116,8 @@ public class GlobalExceptionAdvice extends ResponseEntityExceptionHandler {
     return new ResponseEntity<>(
         new BaseResponse<>(
             String.valueOf(HttpStatus.BAD_REQUEST.value()),
-            "请求参数不合法",
-            objectError.getDefaultMessage()),
+            objectError.getDefaultMessage(),
+            "请求参数不合法"),
         HttpStatus.OK);
   }
 }

@@ -1,4 +1,4 @@
-?> 计算集群： 负责支持SparkSql作业运行的环境。
+?> 计算集群： 负责支持SparkSql作业运行的环境。支持k8s,yarn,standalone计算集群
 
 > 点击添加集群按钮，创建计算集群。
 
@@ -20,3 +20,35 @@
 用户需要先点击检测按钮，然后点击安装按钮，即可对该节点做监听。当状态为可用时，即可用于spark作业的运行。
 
 <img src="https://img.isxcode.com/picgo/20230415165616.png" width="900">
+
+!> 如果使用k8s集群方式，需要配置podTemplate文件
+
+```bash
+vim /home/ispong/pod-init.yml
+```
+
+```yml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: host-pod
+spec:
+  restartPolicy: never
+  securityContext:
+    privileged: true
+    runAsUser: 1000 
+    runAsGroup: 1001
+  hostAliases:  # 域名映射
+    - ip: "172.16.215.105"
+      hostnames:
+        - "isxcode"
+  volumes:
+    - name: users
+      hostPath:
+        path: /etc/passwd
+```
+
+```config
+spark.kubernetes.driver.podTemplateFile    /home/ispong/pod-init.yaml
+spark.kubernetes.executor.podTemplateFile    /home/ispong/pod-init.yaml
+```

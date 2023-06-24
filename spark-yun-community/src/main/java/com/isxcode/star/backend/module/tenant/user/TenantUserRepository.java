@@ -35,7 +35,7 @@ public interface TenantUserRepository extends JpaRepository<TenantUserEntity, St
               + "   and (U.username LIKE %:keyword% "
               + "OR U.account LIKE %:keyword% "
               + "OR U.phone LIKE %:keyword% "
-              + "OR U.email LIKE %:keyword%) order by T.lastModifiedDateTime desc ")
+              + "OR U.email LIKE %:keyword%) order by T.createDateTime desc ")
   Page<Map> searchTenantUser(
       @Param("tenantId") String tenantId,
       @Param("keyword") String searchKeyWord,
