@@ -25,7 +25,7 @@ public class UsrAddUserReq {
   private String passwd;
 
   @Schema(title = "邮箱", example = "ispong@123.com")
-  @Email(message = "格式为邮箱格式")
+  @Email(message = "邮箱不合法")
   private String email;
 
   @Schema(title = "手机号", example = "1234567890")

@@ -1,10 +1,10 @@
 <!--
  * @Author: fanciNate
  * @Date: 2023-05-23 07:25:46
- * @LastEditTime: 2023-05-28 22:15:37
+ * @LastEditTime: 2023-06-16 22:12:11
  * @LastEditors: fanciNate
  * @Description: In User Settings Edit
- * @FilePath: /zqy-web/src/views/home/index.vue
+ * @FilePath: /spark-yun/spark-yun-website/src/views/home/index.vue
 -->
 <template>
   <div class="zqy-home">
@@ -32,11 +32,12 @@ import { onMounted, reactive, ref, onUnmounted, nextTick } from 'vue'
 import Header from '@/layout/header/index.vue'
 import MenuList from '@/layout/menu-list/index.vue'
 import { menu, MenuListData } from './home.config'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import eventBus from '@/utils/eventBus'
 import { useMutations, useState } from '@/hooks/useStore'
 
 const router = useRouter()
+const route = useRoute()
 const mutations = useMutations([ 'setCurrentMenu' ], 'authStoreModule')
 const state = useState([ 'currentMenu', 'role' ], 'authStoreModule')
 
@@ -54,16 +55,20 @@ const select = (e: string) => {
 
 onMounted(() => {
   const menuList = menuListData.filter((menu) => menu.authType?.includes(state.role.value || 'ROLE_TENANT_MEMBER'))
-  if (!state.currentMenu.value) {
+  let urlMenu: string
+  urlMenu = route.name
+  const status = menuList.find((menu) => menu.code === urlMenu)
+  // if (!state.currentMenu.value) {
+  if (!status) {
     defaultMenu.value = menuList[0].code
     router.push({
       name: defaultMenu.value
     })
     mutations.setCurrentMenu(defaultMenu.value)
   } else {
-    defaultMenu.value = state.currentMenu.value
+    defaultMenu.value = urlMenu
     router.push({
-      name: state.currentMenu.value
+      name: urlMenu
     })
   }
   // 这里接受eventbus 触发页面更新

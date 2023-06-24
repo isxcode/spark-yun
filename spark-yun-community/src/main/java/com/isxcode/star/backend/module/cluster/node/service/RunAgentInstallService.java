@@ -40,6 +40,7 @@ public class RunAgentInstallService {
   @Async("sparkYunWorkThreadPool")
   public void run(
       String clusterNodeId,
+      String clusterType,
       ScpFileEngineNodeDto scpFileEngineNodeDto,
       String tenantId,
       String userId) {
@@ -56,7 +57,7 @@ public class RunAgentInstallService {
     ClusterNodeEntity clusterNodeEntity = clusterNodeEntityOptional.get();
 
     try {
-      installAgent(scpFileEngineNodeDto, clusterNodeEntity);
+      installAgent(scpFileEngineNodeDto, clusterNodeEntity, clusterType);
     } catch (Exception e) {
       log.error(e.getMessage());
       clusterNodeEntity.setCheckDateTime(LocalDateTime.now());
@@ -66,7 +67,8 @@ public class RunAgentInstallService {
     }
   }
 
-  public void installAgent(ScpFileEngineNodeDto scpFileEngineNodeDto, ClusterNodeEntity engineNode)
+  public void installAgent(
+      ScpFileEngineNodeDto scpFileEngineNodeDto, ClusterNodeEntity engineNode, String clusterType)
       throws JSchException, IOException, InterruptedException, SftpException {
 
     // 先检查节点是否可以安装
@@ -74,13 +76,15 @@ public class RunAgentInstallService {
         scpFileEngineNodeDto,
         PathUtils.parseProjectPath(sparkYunProperties.getAgentBinDir())
             + File.separator
-            + PathConstants.AGENT_ENV_BASH_NAME,
-        "/tmp/" + PathConstants.AGENT_ENV_BASH_NAME);
+            + "env"
+            + File.separator
+            + String.format(PathConstants.AGENT_ENV_BASH_FORMAT, clusterType),
+        "/tmp/" + String.format(PathConstants.AGENT_ENV_BASH_FORMAT, clusterType));
 
     // 运行安装脚本
     String envCommand =
         "bash /tmp/"
-            + PathConstants.AGENT_ENV_BASH_NAME
+            + String.format(PathConstants.AGENT_ENV_BASH_FORMAT, clusterType)
             + " --home-path="
             + engineNode.getAgentHomePath()
             + File.separator

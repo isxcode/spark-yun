@@ -28,74 +28,15 @@
           show-word-limit
         />
       </el-form-item>
-      <el-form-item
-        label="Port"
-        prop="port"
-      >
-        <el-input
-          v-model="formData.port"
-          placeholder="请输入"
-          show-word-limit
-        />
+      <el-form-item label="用户名" prop="username">
+        <el-input v-model="formData.username" maxlength="20" placeholder="请输入" show-word-limit />
       </el-form-item>
-      <el-form-item
-        label="用户名"
-        prop="username"
-      >
-        <el-input
-          v-model="formData.username"
-          maxlength="20"
-          placeholder="请输入"
-          show-word-limit
-        />
-      </el-form-item>
-      <el-form-item
-        label="密码"
-        prop="password"
-      >
-        <el-input
-          v-model="formData.password"
-          type="password"
-          show-password
-          placeholder="请输入"
-        />
-      </el-form-item>
-      <el-form-item
-        label="YunHome"
-        prop="agentHomePath"
-      >
-        <el-input
-          v-model="formData.agentHomePath"
-          maxlength="100"
-          placeholder="请输入"
-          show-word-limit
-        />
-      </el-form-item>
-      <el-form-item
-        label="YunPort"
-        prop="agentPort"
-      >
-        <el-input
-          v-model="formData.agentPort"
-          maxlength="20"
-          placeholder="请输入"
-          show-word-limit
-        />
-      </el-form-item>
-      <el-form-item
-        label="Hadoop"
-        prop="hadoopHomePath"
-      >
-        <el-input
-          v-model="formData.hadoopHomePath"
-          maxlength="100"
-          placeholder="请输入"
-          show-word-limit
-        />
+      <el-form-item label="密码" prop="password">
+        <el-input v-model="formData.passwd" type="password" show-password placeholder="请输入" />
       </el-form-item>
       <el-form-item label="备注">
         <el-input
-          v-model="formData.comment"
+          v-model="formData.remark"
           show-word-limit
           type="textarea"
           maxlength="200"
@@ -139,11 +80,11 @@ const formData = reactive({
   host: '',
   port: '',
   username: '',
-  password: '',
+  passwd: '',
   agentHomePath: '',
   agentPort: '',
   hadoopHomePath: '',
-  comment: '',
+  remark: '',
   id: ''
 })
 const rules = reactive<FormRules>({
@@ -185,11 +126,11 @@ function showModal(cb: () => void, data: any): void {
     formData.host = data.host
     formData.port = data.port
     formData.username = data.username
-    formData.password = data.password
+    formData.passwd = data.passwd
     formData.agentHomePath = data.agentHomePath
     formData.agentPort = data.agentPort
     formData.hadoopHomePath = data.hadoopHomePath
-    formData.comment = data.comment
+    formData.remark = data.remark
     formData.id = data.id
     modelConfig.title = '编辑节点'
   } else {
@@ -197,11 +138,11 @@ function showModal(cb: () => void, data: any): void {
     formData.host = ''
     formData.port = ''
     formData.username = ''
-    formData.password = ''
+    formData.passwd = ''
     formData.agentHomePath = ''
     formData.agentPort = ''
     formData.hadoopHomePath = ''
-    formData.comment = ''
+    formData.remark = ''
     formData.id = ''
     modelConfig.title = '添加节点'
   }
@@ -220,7 +161,7 @@ function okEvent() {
         .value({
           ...formData,
           id: formData.id ? formData.id : undefined,
-          calculateEngineId: formData.id ? formData.id : undefined
+          clusterId: formData.id ? formData.id : undefined
         })
         .then((res: any) => {
           modelConfig.okConfig.loading = false

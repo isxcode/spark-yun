@@ -18,9 +18,14 @@
           show-word-limit
         />
       </el-form-item>
+      <el-form-item label="类型" prop="type">
+        <el-select v-model="formData.clusterType" placeholder="请选择">
+          <el-option v-for="item in typeList" :key="item.value" :label="item.label" :value="item.value" />
+        </el-select>
+      </el-form-item>
       <el-form-item label="备注">
         <el-input
-          v-model="formData.comment"
+          v-model="formData.remark"
           show-word-limit
           type="textarea"
           maxlength="200"
@@ -59,8 +64,9 @@ const modelConfig = reactive({
   closeOnClickModal: false
 })
 const formData = reactive({
+  clusterType: '',
   name: '',
-  comment: '',
+  remark: '',
   id: ''
 })
 const rules = reactive<FormRules>({
@@ -72,17 +78,31 @@ const rules = reactive<FormRules>({
     }
   ]
 })
+const typeList = reactive([
+  {
+    label: 'Kubernetes',
+    value: 'kubernetes',
+  },
+  {
+    label: 'Yarn',
+    value: 'yarn',
+  },
+  {
+    label: 'StandAlone',
+    value: 'standalone',
+  },
+]);
 
 function showModal(cb: () => void, data: any): void {
   callback.value = cb
   if (data) {
     formData.name = data.name
-    formData.comment = data.comment
+    formData.remark = data.remark
     formData.id = data.id
     modelConfig.title = '编辑集群'
   } else {
     formData.name = ''
-    formData.comment = ''
+    formData.remark = ''
     formData.id = ''
     modelConfig.title = '添加集群'
   }
@@ -100,7 +120,7 @@ function okEvent() {
         .value({
           ...formData,
           id: formData.id ? formData.id : undefined,
-          calculateEngineId: formData.id ? formData.id : undefined
+          clusterId: formData.id ? formData.id : undefined
         })
         .then((res: any) => {
           modelConfig.okConfig.loading = false
