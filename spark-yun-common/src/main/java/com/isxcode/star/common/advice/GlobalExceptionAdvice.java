@@ -29,16 +29,16 @@ public class GlobalExceptionAdvice extends ResponseEntityExceptionHandler {
 
   @ExceptionHandler(AbstractSparkYunException.class)
   public ResponseEntity<BaseResponse<?>> customException(
-      AbstractSparkYunException abstractSparkYunException) {
+    AbstractSparkYunException abstractSparkYunException) {
 
     BaseResponse<?> errorResponse = new BaseResponse<>();
     errorResponse.setMsg(abstractSparkYunException.getMsg());
     errorResponse.setCode(
-        abstractSparkYunException.getCode() == null
-            ? String.valueOf(HttpStatus.INTERNAL_SERVER_ERROR.value())
-            : abstractSparkYunException.getCode());
+      abstractSparkYunException.getCode() == null
+        ? String.valueOf(HttpStatus.INTERNAL_SERVER_ERROR.value())
+        : abstractSparkYunException.getCode());
     errorResponse.setErr(
-        abstractSparkYunException.getErr() == null ? null : abstractSparkYunException.getErr());
+      abstractSparkYunException.getErr() == null ? null : abstractSparkYunException.getErr());
 
     if ("401".equals(abstractSparkYunException.getCode())) {
       return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
@@ -53,14 +53,14 @@ public class GlobalExceptionAdvice extends ResponseEntityExceptionHandler {
 
   @ExceptionHandler(SuccessResponseException.class)
   public ResponseEntity<BaseResponse<Object>> successException(
-      SuccessResponseException successException) {
+    SuccessResponseException successException) {
 
     return new ResponseEntity<>(successException.getBaseResponse(), HttpStatus.OK);
   }
 
   @ExceptionHandler(AccessDeniedException.class)
   public ResponseEntity<BaseResponse<Object>> accessDeniedException(
-      AccessDeniedException accessDeniedException) {
+    AccessDeniedException accessDeniedException) {
 
     BaseResponse baseResponse = new BaseResponse();
     baseResponse.setCode("401");
@@ -72,7 +72,7 @@ public class GlobalExceptionAdvice extends ResponseEntityExceptionHandler {
 
   @ExceptionHandler(EmptyResultDataAccessException.class)
   public ResponseEntity<BaseResponse<Object>> emptyResultDataAccessException(
-      EmptyResultDataAccessException emptyResultDataAccessException) {
+    EmptyResultDataAccessException emptyResultDataAccessException) {
 
     BaseResponse baseResponse = new BaseResponse();
     baseResponse.setCode("55500");
@@ -84,7 +84,7 @@ public class GlobalExceptionAdvice extends ResponseEntityExceptionHandler {
 
   @ExceptionHandler(ObjectOptimisticLockingFailureException.class)
   public ResponseEntity<BaseResponse<Object>> objectOptimisticLockingFailureException(
-      ObjectOptimisticLockingFailureException objectOptimisticLockingFailureException) {
+    ObjectOptimisticLockingFailureException objectOptimisticLockingFailureException) {
 
     BaseResponse baseResponse = new BaseResponse();
     baseResponse.setCode("55500");
@@ -100,7 +100,7 @@ public class GlobalExceptionAdvice extends ResponseEntityExceptionHandler {
     BaseResponse<?> baseResponse = new BaseResponse<>();
     baseResponse.setCode(String.valueOf(HttpStatus.OK.value()));
     baseResponse.setMsg(
-        exception.getMessage() == null ? exception.getClass().getName() : exception.getMessage());
+      exception.getMessage() == null ? exception.getClass().getName() : exception.getMessage());
     exception.printStackTrace();
     return new ResponseEntity<>(baseResponse, HttpStatus.OK);
   }
@@ -108,16 +108,16 @@ public class GlobalExceptionAdvice extends ResponseEntityExceptionHandler {
   @Override
   @NonNull
   protected ResponseEntity<Object> handleMethodArgumentNotValid(
-      MethodArgumentNotValidException ex,
-      @NonNull HttpHeaders headers,
-      @NonNull HttpStatus status,
-      @NonNull WebRequest request) {
+    MethodArgumentNotValidException ex,
+    @NonNull HttpHeaders headers,
+    @NonNull HttpStatus status,
+    @NonNull WebRequest request) {
     ObjectError objectError = ex.getBindingResult().getAllErrors().get(0);
     return new ResponseEntity<>(
-        new BaseResponse<>(
-            String.valueOf(HttpStatus.BAD_REQUEST.value()),
-            objectError.getDefaultMessage(),
-            "请求参数不合法"),
-        HttpStatus.OK);
+      new BaseResponse<>(
+        String.valueOf(HttpStatus.BAD_REQUEST.value()),
+        objectError.getDefaultMessage(),
+        "请求参数不合法"),
+      HttpStatus.OK);
   }
 }
