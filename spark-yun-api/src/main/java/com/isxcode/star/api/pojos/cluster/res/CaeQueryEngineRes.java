@@ -22,4 +22,6 @@ public class CaeQueryEngineRes {
   private String status;
 
   private String remark;
+
+  private String clusterType;
 }
