@@ -25,7 +25,7 @@
                 不可用
               </el-tag>
               <el-tag v-if="scopeSlot.row.status === 'STOP'" class="ml-2" type="danger">
-                待启动
+                待激活
               </el-tag>
               <el-tag v-if="scopeSlot.row.status === 'UN_INSTALL'">
                 未安装
