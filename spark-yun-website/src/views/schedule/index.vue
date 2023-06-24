@@ -73,7 +73,7 @@
                 class="ml-2"
                 type="warning"
               >
-                已终止
+                已中止
               </el-tag>
               <el-tag
                 v-if="scopeSlot.row.status === 'RUNNING'"
