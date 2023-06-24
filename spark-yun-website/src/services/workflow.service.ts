@@ -102,6 +102,15 @@ export function PublishWorkData(params: any): Promise<any> {
   })
 }
 
+// 作业-下线
+export function DeleteWorkData(params: any): Promise<any> {
+  return http.request({
+    method: 'get',
+    url: '/vip/wok/deleteWork',
+    params: params
+  })
+}
+
 // 作业-详情-获取数据
 export function GetWorkItemConfig(params: any): Promise<any> {
   return http.request({
