@@ -61,7 +61,7 @@ public class TenantUserBizService {
             .build();
 
     // 初始化用户权限
-    if (turAddTenantUserReq.isTenantAdmin()) {
+    if (turAddTenantUserReq.getIsTenantAdmin()) {
       tenantUserEntity.setRoleCode(RoleType.TENANT_ADMIN);
     } else {
       tenantUserEntity.setRoleCode(RoleType.TENANT_MEMBER);
