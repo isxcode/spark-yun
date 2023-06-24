@@ -99,6 +99,15 @@ export function AddComputerPointData(params: any): Promise<any> {
   })
 }
 
+// 编辑节点数据
+export function EditComputerPointData(params: any): Promise<any> {
+  return http.request({
+    method: 'post',
+    url: '/eno/updateNode',
+    params: params
+  })
+}
+
 // 添加节点数据
 export function DeleteComputerPointData(params: any): Promise<any> {
   return http.request({
