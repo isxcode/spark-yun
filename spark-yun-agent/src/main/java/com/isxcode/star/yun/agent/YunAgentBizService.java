@@ -83,7 +83,7 @@ public class YunAgentBizService {
         throw new SparkYunException("agent类型不支持");
     }
 
-    return YagGetStatusRes.builder().appStatus(appStatus).build();
+    return YagGetStatusRes.builder().appId(appId).appStatus(appStatus).build();
   }
 
   public YagGetLogRes getLog(String appId, String agentType) throws IOException {
