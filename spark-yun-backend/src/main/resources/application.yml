@@ -72,21 +72,20 @@ spark-yun:
     - /h2-console/** # http://localhost:8080/h2-console
     - /druid/** # http://localhost:8080/druid/index.html
   anonymous-url:
-    - /
-    - /static/**
-    - /favicon.ico
-    - /login
-    - /**/open/**
-    - /vip/api/custom/**
-    - /user
-    - /tenant
-    - /license
-    - /tenant_user
-    - /api
-    - /engine
-    - /nodes/*
+    - /static/** # 放行前端资源文件
+    - /favicon.ico # 放行网站的logo
+    - /login # 放行登录接口
+    - /**/open/** # 放行所有的开放接口
+    - /vip/api/custom/** # 放行所有自定义接口
+    - /tenant-user # 下面放行全部前端的刷新访问路径
+    - /computer-group
+    - /computer-pointer
     - /datasource
     - /workflow
-    - /work/*
-    - /works/*
-    - /instance/*
+    - /workflow-detail
+    - /work-item
+    - /tenant-user
+    - /user-center
+    - /tenant-list
+    - /license
+    - /schedule
