@@ -77,10 +77,23 @@
           </template>
           <template #options="scopeSlot">
             <div class="btn-group">
-              <span @click="publishData(scopeSlot.row)">发布</span>
               <span @click="editData(scopeSlot.row)">编辑</span>
-              <span @click="deleteData(scopeSlot.row)">删除</span>
-              <!-- <span>历史</span> -->
+              <el-dropdown trigger="click">
+                <span class="click-show-more">更多</span>
+                <template #dropdown>
+                  <el-dropdown-menu>
+                    <el-dropdown-item v-if="scopeSlot.row.status !== 'PUBLISHED'" @click="publishData(scopeSlot.row)">
+                      发布
+                    </el-dropdown-item>
+                    <el-dropdown-item v-if="scopeSlot.row.status === 'PUBLISHED'" @click="stopData(scopeSlot.row)">
+                      下线
+                    </el-dropdown-item>
+                    <el-dropdown-item @click="deleteData(scopeSlot.row)">
+                      删除
+                    </el-dropdown-item>
+                  </el-dropdown-menu>
+                </template>
+              </el-dropdown>
             </div>
           </template>
         </BlockTable>
@@ -98,7 +111,7 @@ import LoadingPage from '@/components/loading/index.vue'
 import AddModal from './add-modal/index.vue'
 
 import { DetailTableConfig, FormData } from '../workflow.config'
-import { GetWorkflowDetailList, AddWorkflowDetailList, UpdateWorkflowDetailList, DeleteWorkflowDetailList, PublishWorkData } from '@/services/workflow.service'
+import { GetWorkflowDetailList, AddWorkflowDetailList, UpdateWorkflowDetailList, DeleteWorkflowDetailList, PublishWorkData, DeleteWorkData } from '@/services/workflow.service'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useRoute, useRouter } from 'vue-router'
 
@@ -185,6 +198,18 @@ function editData(data: any) {
 // 发布
 function publishData(data: any) {
   PublishWorkData({
+    workId: data.id
+  }).then((res: any) => {
+    ElMessage.success(res.msg)
+    initData()
+  })
+  .catch((error: any) => {
+  })
+}
+
+// 下线
+function stopData(data: any) {
+  DeleteWorkData({
     workId: data.id
   }).then((res: any) => {
     ElMessage.success(res.msg)
