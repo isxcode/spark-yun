@@ -27,7 +27,7 @@ public interface UserRepository extends JpaRepository<UserEntity, String> {
           + "OR U.account LIKE %:keyword% "
           + "OR U.email LIKE %:keyword% "
           + "OR U.phone LIKE %:keyword% "
-          + "OR U.remark LIKE %:keyword%) order by U.lastModifiedDateTime desc ")
+          + "OR U.remark LIKE %:keyword%) order by U.createDateTime desc ")
   Page<UserEntity> searchAllUser(@Param("keyword") String searchKeyWord, Pageable pageable);
 
   /** 分页搜索查询所有有效用户. */
@@ -39,7 +39,7 @@ public interface UserRepository extends JpaRepository<UserEntity, String> {
           + " OR U.account LIKE %:keyword% "
           + "OR U.email LIKE %:keyword% "
           + "OR U.phone LIKE %:keyword% "
-          + "OR U.remark LIKE %:keyword%) order by U.lastModifiedDateTime desc ")
+          + "OR U.remark LIKE %:keyword%) order by U.createDateTime desc ")
   Page<UserEntity> searchAllEnableUser(@Param("keyword") String searchKeyWord, Pageable pageable);
 
   Optional<UserEntity> findByAccount(String account);
