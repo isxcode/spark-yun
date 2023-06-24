@@ -2,48 +2,23 @@
   <Breadcrumb :bread-crumb-list="breadCrumbList" />
   <div class="zqy-seach-table">
     <div class="zqy-table-top">
-      <el-button
-        type="primary"
-        @click="addData"
-      >
+      <el-button type="primary" @click="addData">
         添加数据源
       </el-button>
       <div class="zqy-seach">
-        <el-input
-          v-model="keyword"
-          placeholder="请输入名称/类型/连接信息/用户名/备注 回车进行搜索"
-          :maxlength="200"
-          clearable
-          @input="inputEvent"
-          @keyup.enter="initData(false)"
-        />
+        <el-input v-model="keyword" placeholder="请输入名称/类型/连接信息/用户名/备注 回车进行搜索" :maxlength="200" clearable
+          @input="inputEvent" @keyup.enter="initData(false)" />
       </div>
     </div>
-    <LoadingPage
-      :visible="loading"
-      :network-error="networkError"
-      @loading-refresh="initData(false)"
-    >
+    <LoadingPage :visible="loading" :network-error="networkError" @loading-refresh="initData(false)">
       <div class="zqy-table">
-        <BlockTable
-          :table-config="tableConfig"
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-        >
+        <BlockTable :table-config="tableConfig" @size-change="handleSizeChange" @current-change="handleCurrentChange">
           <template #statusTag="scopeSlot">
             <div class="btn-group">
-              <el-tag
-                v-if="scopeSlot.row.status === 'ACTIVE'"
-                class="ml-2"
-                type="success"
-              >
+              <el-tag v-if="scopeSlot.row.status === 'ACTIVE'" class="ml-2" type="success">
                 可用
               </el-tag>
-              <el-tag
-                v-if="scopeSlot.row.status === 'FAIL'"
-                class="ml-2"
-                type="danger"
-              >
+              <el-tag v-if="scopeSlot.row.status === 'FAIL'" class="ml-2" type="danger">
                 不可用
               </el-tag>
               <el-tag v-if="scopeSlot.row.status === 'UN_CHECK'">
@@ -53,15 +28,10 @@
           </template>
           <template #options="scopeSlot">
             <div class="btn-group">
+              <span @click="showLog(scopeSlot.row)">日志</span>
               <span @click="editData(scopeSlot.row)">编辑</span>
-              <span
-                v-if="!scopeSlot.row.checkLoading"
-                @click="checkData(scopeSlot.row)"
-              >检测</span>
-              <el-icon
-                v-else
-                class="is-loading"
-              >
+              <span v-if="!scopeSlot.row.checkLoading" @click="checkData(scopeSlot.row)">检测</span>
+              <el-icon v-else class="is-loading">
                 <Loading />
               </el-icon>
               <span @click="deleteData(scopeSlot.row)">删除</span>
@@ -71,6 +41,7 @@
       </div>
     </LoadingPage>
     <AddModal ref="addModalRef" />
+    <ShowLog ref="showLogRef" />
   </div>
 </template>
 
@@ -80,6 +51,7 @@ import Breadcrumb from '@/layout/bread-crumb/index.vue'
 import BlockTable from '@/components/block-table/index.vue'
 import LoadingPage from '@/components/loading/index.vue'
 import AddModal from './add-modal/index.vue'
+import ShowLog from '../computer-group/computer-pointer/show-log/index.vue'
 
 import { BreadCrumbList, TableConfig, FormData } from './datasource.config'
 import { GetDatasourceList, AddDatasourceData, UpdateDatasourceData, CheckDatasourceData, DeleteDatasourceData } from '@/services/datasource.service'
@@ -89,6 +61,8 @@ const keyword = ref('')
 const loading = ref(false)
 const networkError = ref(false)
 const addModalRef = ref(null)
+const showLogRef = ref(null)
+
 const breadCrumbList = reactive(BreadCrumbList)
 const tableConfig: any = reactive(TableConfig)
 
@@ -130,6 +104,11 @@ function addData() {
         })
     })
   })
+}
+
+// 查看日志
+function showLog(e: any) {
+  showLogRef.value.showModal(e.connectLog)
 }
 
 function editData(data: any) {
@@ -178,7 +157,7 @@ function deleteData(data: any) {
         ElMessage.success(res.msg)
         initData()
       })
-      .catch(() => {})
+      .catch(() => { })
   })
 }
 
