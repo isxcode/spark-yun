@@ -11,7 +11,7 @@ public class WofQueryWorkflowRes {
 
   private String name;
 
-  private String comment;
+  private String remark;
 
   private String status;
 }

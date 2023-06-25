@@ -1,6 +1,6 @@
 package com.isxcode.star.yarn.utils;
 
-import com.isxcode.star.common.exception.SparkYunException;
+import com.isxcode.star.api.exceptions.SparkYunException;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -62,7 +62,8 @@ public class LogUtils {
       throw new SparkYunException(
           "50010",
           "yarn配置异常",
-          "请在yarn-site.xml中配置yarn.resourcemanager.webapp.address属性:${yarn.resourcemanager.hostname}:8088");
+          "请在yarn-site.xml中配置"
+              + "yarn.resourcemanager.webapp.address属性:${yarn.resourcemanager.hostname}:8088");
     }
 
     // 访问yarn作业日志页面

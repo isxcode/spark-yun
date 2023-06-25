@@ -1,15 +1,19 @@
-# gradle隐藏文件夹不提交
-.gradle
-
-# 禁止提交gradle的gradle-wrapper.jar
-!gradle-wrapper.jar
-
-### idea隐藏文件夹不提交
+# idea配置，不提交
 .idea
 
-### 所有项目下的build都不提交
+# gradle缓存，不提交
+.gradle
+!gradle-wrapper.jar
+
+# 后端打包文件，不提交
 **/build
 
-### 后端项目中前端打包的文件，不提交
+# 前端打包文件，不提交
+spark-yun-website/dist
+
+# 前端嵌入后端内容，不提交
 spark-yun-backend/src/main/resources/templates/**
 spark-yun-backend/src/main/resources/static/**
+
+# 企业版代码，不提交
+spark-yun-vip/**

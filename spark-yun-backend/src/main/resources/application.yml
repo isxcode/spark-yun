@@ -1,4 +1,3 @@
-# 服务配置
 server:
   port: 8080
   tomcat:
@@ -6,18 +5,9 @@ server:
 
 spring:
 
-  # 身份认证
-  security:
-    user:
-      roles: ADMIN
-      name: admin
-      password: admin123
-
-  # 使用配置文件
   profiles:
     active: local
 
-  # 配置druid数据源
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     druid:
@@ -30,22 +20,24 @@ spring:
       stat-view-servlet:
         enabled: true
 
-  # jpa配置˚
   jpa:
-    database: h2
     show-sql: false
     open-in-view: false
     hibernate:
       ddl-auto: none
+      naming:
+        physical-strategy: com.isxcode.star.backend.config.JpaTableUpperCaseStrategy
+    properties:
+      hibernate:
+        session_factory:
+          statement_inspector: com.isxcode.star.backend.config.JpaTenantInterceptor
 
-  # mvc配置
   mvc:
     view:
       prefix: /templates/
       suffix: .html
     static-path-pattern: /static/**
 
-  # h2数据库配置
   h2:
     console:
       enabled: true
@@ -54,28 +46,54 @@ spring:
         trace: false
         web-allow-others: true
 
-  # 缓存
+  quartz:
+    scheduler-name: spark-yun-quartz-scheduler
+    job-store-type: jdbc
+    jdbc:
+      initialize-schema: never
+    properties:
+      org.quartz.jobStore.class: org.quartz.impl.jdbcjobstore.JobStoreTX
+      org.quartz.jobStore.driverDelegateClass: org.quartz.impl.jdbcjobstore.StdJDBCDelegate
+      org.quartz.jobStore.dataSource: quartzDataSource
+
   cache:
     type: simple
 
-# 日志等级
-logging:
-  level:
-    root: info
-
-# openapi
 springdoc:
   api-docs:
-    path: /api-docs
+    path: /swagger-ui/api-docs
   swagger-ui:
     path: /swagger-ui.html
   packages-to-scan: com.isxcode.star
 
-# admin用户访问
 spark-yun:
   admin-url:
-    - /swagger-ui.html # http://localhost:8080/swagger-ui.html
-    - /h2-console # http://localhost:8080/h2-console
-    - /druid/index.html # http://localhost:8080/druid/index.html
+    - /swagger-ui/** # http://localhost:8080/swagger-ui/index.html
+    - /h2-console/** # http://localhost:8080/h2-console
+    - /druid/** # http://localhost:8080/druid/index.html
   anonymous-url:
+    - /
+    - /static/**
+    - /favicon.ico
     - /login
+    - /**/open/**
+    - /vip/api/custom/**
+    - /user
+    - /tenant
+    - /license
+    - /tenant_user
+    - /api
+    - /engine
+    - /nodes/*
+    - /datasource
+    - /workflow
+    - /work/*
+    - /works/*
+    - /instance/*
+  jwt-key: spark-yun
+  aes-slat: spark-yun
+  agent-tar-gz-dir: /tmp
+  agent-bin-dir: /tmp/spark-yun-bash
+  default-agent-port: 30177
+  expiration-min: 1440
+  resources-path: /var/lib/spark-yun
