@@ -3,6 +3,7 @@ package com.isxcode.star.backend.config;
 import com.isxcode.star.api.properties.SparkYunProperties;
 import com.isxcode.star.backend.module.tenant.user.TenantUserRepository;
 import com.isxcode.star.backend.module.user.UserRepository;
+import com.isxcode.star.backend.module.user.jwt.UserJwtCache;
 import com.isxcode.star.backend.security.AuthenticationManagerImpl;
 import com.isxcode.star.backend.security.AuthenticationProviderImpl;
 import com.isxcode.star.backend.security.JwtAuthenticationFilter;
@@ -39,6 +40,8 @@ public class WebSecurityConfig {
   private final SparkYunProperties sparkYunProperties;
 
   private final UserRepository userRepository;
+
+  private final UserJwtCache userJwtCache;
 
   private final TenantUserRepository tenantUserRepository;
 
@@ -94,7 +97,8 @@ public class WebSecurityConfig {
 
     // token
     http.addFilterBefore(
-        new JwtAuthenticationFilter(authenticationManagerBean(), excludePaths, sparkYunProperties),
+        new JwtAuthenticationFilter(
+            authenticationManagerBean(), excludePaths, sparkYunProperties, userJwtCache),
         UsernamePasswordAuthenticationFilter.class);
     http.authorizeRequests().antMatchers("/**").authenticated();
 

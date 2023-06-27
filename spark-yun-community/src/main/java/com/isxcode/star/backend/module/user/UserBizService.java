@@ -18,6 +18,8 @@ import com.isxcode.star.backend.module.tenant.TenantEntity;
 import com.isxcode.star.backend.module.tenant.TenantRepository;
 import com.isxcode.star.backend.module.tenant.user.TenantUserEntity;
 import com.isxcode.star.backend.module.tenant.user.TenantUserRepository;
+import com.isxcode.star.backend.module.user.jwt.UserJwtCache;
+import com.isxcode.star.backend.module.user.jwt.UserJwtEntity;
 import com.isxcode.star.common.utils.JwtUtils;
 import com.isxcode.star.common.utils.Md5Utils;
 import java.util.List;
@@ -44,6 +46,8 @@ public class UserBizService {
   private final TenantRepository tenantRepository;
 
   private final TenantUserRepository tenantUserRepository;
+
+  private final UserJwtCache userJwtCache;
 
   /** 用户登录. */
   public UsrLoginRes login(UsrLoginReq usrLoginReq) {
@@ -83,6 +87,7 @@ public class UserBizService {
 
     // 如果是系统管理员直接返回
     if (RoleType.SYS_ADMIN.equals(userEntity.getRoleCode())) {
+      userJwtCache.setJwt(new UserJwtEntity(userEntity.getId(), jwtToken));
       return UsrLoginRes.builder()
           .tenantId(userEntity.getCurrentTenantId())
           .username(userEntity.getUsername())
@@ -119,7 +124,7 @@ public class UserBizService {
     if (!tenantUserEntityOptional.isPresent()) {
       throw new SparkYunException("无可用租户，请联系管理员");
     }
-
+    userJwtCache.setJwt(new UserJwtEntity(userEntity.getId(), jwtToken));
     // 生成token并返回
     return new UsrLoginRes(
         userEntity.getUsername(),
@@ -197,8 +202,14 @@ public class UserBizService {
         tenantUserEntityOptional.get().getRoleCode());
   }
 
+  /*通过用户id清除退出登录的jwt*/
   public void logout() {
-
+    Optional<UserEntity> userEntityOptional = userRepository.findById(USER_ID.get());
+    if (!userEntityOptional.isPresent()) {
+      throw new SparkYunException("账号异常，请联系管理员");
+    }
+    UserEntity userEntity = userEntityOptional.get();
+    userJwtCache.clearJwt(userEntity.getId());
     System.out.println("用户退出登录");
   }
 

@@ -1,23 +1,25 @@
 package com.isxcode.star.backend.security;
 
-import static com.isxcode.star.backend.config.WebSecurityConfig.TENANT_ID;
-import static com.isxcode.star.backend.config.WebSecurityConfig.USER_ID;
-
 import com.isxcode.star.api.constants.base.SecurityConstants;
 import com.isxcode.star.api.properties.SparkYunProperties;
+import com.isxcode.star.backend.module.user.jwt.UserJwtCache;
 import com.isxcode.star.common.utils.JwtUtils;
-import java.io.IOException;
-import java.util.List;
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
+
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.List;
+
+import static com.isxcode.star.backend.config.WebSecurityConfig.TENANT_ID;
+import static com.isxcode.star.backend.config.WebSecurityConfig.USER_ID;
 
 /** jwt拦截接口. */
 @Slf4j
@@ -29,6 +31,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
   private final List<String> excludeUrlPaths;
 
   private final SparkYunProperties sparkYunProperties;
+
+  private final UserJwtCache userJwtCache;
 
   @Override
   protected void doFilterInternal(
@@ -61,6 +65,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
               String.class);
       USER_ID.set(userUuid);
     } catch (Exception e) {
+      request
+          .getRequestDispatcher(SecurityConstants.TOKEN_IS_INVALID_PATH)
+          .forward(request, response);
+      return;
+    }
+
+    // 校验token是否被移除
+    String jwt = userJwtCache.getJwt(userUuid).getJwtToken();
+    if (jwt == null) {
       request
           .getRequestDispatcher(SecurityConstants.TOKEN_IS_INVALID_PATH)
           .forward(request, response);
