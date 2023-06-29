@@ -5,10 +5,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
@@ -20,7 +23,9 @@ public class WorkflowRunController {
 
   private final ApplicationEventPublisher eventPublisher;
 
-  public static final ConcurrentHashMap<String, String> workStatus = new ConcurrentHashMap<>();
+  public static final Map<String, String> workStatus = new HashMap<>();
+
+  public static final Map<String, Thread> workThread = new HashMap<>();
 
   @GetMapping("/open/flowRun")
   public void flowRun() {
@@ -84,14 +89,20 @@ public class WorkflowRunController {
     List<Work> startNodes = workflow.getWorks().stream().filter(e -> startNodeIds.contains(e.getId())).collect(Collectors.toList());
 
     // 异步触发工作流
-    startNodes.forEach(e -> new Thread(() -> {
+    startNodes.forEach(e -> {
       WorkEvent metaEvent = new WorkEvent(e, flowList, workflow.getWorks());
       eventPublisher.publishEvent(metaEvent);
-    }).start());
+    });
   }
 
-  public void flowDeploy() {
+  /**
+   * kill 线程.
+   */
+  @GetMapping("/open/flowKill")
+  public void flowKill(@RequestParam String name) {
 
+    Thread thread = workThread.get(name);
+    thread.interrupt();
   }
 
 }
