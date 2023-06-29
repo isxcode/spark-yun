@@ -31,6 +31,12 @@ public class WorkEventListener {
       String status = workStatus.get(event.getWork().getId());
       if (!"PENDING".equals(status)) {
 
+        try {
+          Thread.sleep(5000);
+        } catch (InterruptedException e) {
+          throw new RuntimeException(e);
+        }
+
         // 任务开始执行
         System.out.println(event.getWork().getContent() + ":     " + LocalTime.now() + "推送未执行");
         return;
@@ -39,6 +45,12 @@ public class WorkEventListener {
       // 上面不成功，异步推送，一个不成功则全部不成功，全部中止。
       List<String> parentNodes = WorkflowUtils.getParentNodes(event.getFlowList(), event.getWork().getId());
       if (parentNodes.stream().map(e -> "FINISHED".equals(workStatus.get(e))).anyMatch(e -> !e)) {
+
+        try {
+          Thread.sleep(5000);
+        } catch (InterruptedException e) {
+          throw new RuntimeException(e);
+        }
 
         // 任务开始执行
         System.out.println(event.getWork().getContent() + ":     " + LocalTime.now() + "推送未执行");

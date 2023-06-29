@@ -35,16 +35,16 @@ public class AsyncConfig {
 
     ThreadPoolTaskExecutor threadPoolTaskExecutor = new ThreadPoolTaskExecutor();
     threadPoolTaskExecutor.setCorePoolSize(1); // 核心线程数，指正在执行的线程，要小于MaxPoolSize配置
-    threadPoolTaskExecutor.setMaxPoolSize(5); // 允许最大的线程数量
+    threadPoolTaskExecutor.setMaxPoolSize(200); // 允许最大的线程数量
     threadPoolTaskExecutor.setQueueCapacity(10); // 在最大线程数上，再扩展等待线程数
-    threadPoolTaskExecutor.setKeepAliveSeconds(1); // 用于设置线程池中空闲线程的存活时间
     threadPoolTaskExecutor.setThreadNamePrefix("springEventThreadPool-"); // 设置线程名的前缀
     threadPoolTaskExecutor.setAllowCoreThreadTimeOut(true); // true表示空闲线程会回收，false表示空闲的线程不会回收
-    threadPoolTaskExecutor.setPrestartAllCoreThreads(false); // 是否需要一下子把线程创建满，提高速度，ture会把核心线程创满，即使没有任务。
+    threadPoolTaskExecutor.setKeepAliveSeconds(100); // 用于设置线程池中空闲线程的存活时间
+    threadPoolTaskExecutor.setPrestartAllCoreThreads(true); // 是否需要一下子把线程创建满，提高速度，ture会把核心线程创满，即使没有任务。
     threadPoolTaskExecutor.setWaitForTasksToCompleteOnShutdown(true); // 设置线程池关闭时是否等待，将任务全部提交后，再关闭线程池
     threadPoolTaskExecutor.setAwaitTerminationSeconds(300); // 手动关闭停止线程池的时候，线程池还会停留的时间， 0表示不等待任务完成。
-    threadPoolTaskExecutor.setTaskDecorator(new CustomTaskDecorator()); // 控制任务执行前，执行后
-    threadPoolTaskExecutor.setRejectedExecutionHandler((r, executor) -> log.info("未执行的异常进程")); // 被拒绝的事件
+//    threadPoolTaskExecutor.setTaskDecorator(new CustomTaskDecorator()); // 控制任务执行前，执行后
+    threadPoolTaskExecutor.setRejectedExecutionHandler((r, executor) -> log.info("未执行的异常进程" + executor.toString())); // 被拒绝的事件
     return threadPoolTaskExecutor;
   }
 }

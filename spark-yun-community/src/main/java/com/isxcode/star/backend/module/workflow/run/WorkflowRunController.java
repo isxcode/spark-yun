@@ -21,6 +21,8 @@ import java.util.stream.Collectors;
 @RequestMapping("/flow")
 public class WorkflowRunController {
 
+  private final SyncService syncService;
+
   private final ApplicationEventPublisher eventPublisher;
 
   public static final Map<String, String> workStatus = new HashMap<>();
@@ -103,6 +105,24 @@ public class WorkflowRunController {
 
     Thread thread = workThread.get(name);
     thread.interrupt();
+  }
+
+  @GetMapping("/open/testThread")
+  public void testThread() {
+
+    for (int i = 0; i < 10; i++) {
+      syncService.test(i);
+    }
+
+    try {
+      Thread.sleep(2000);
+    } catch (InterruptedException e) {
+      throw new RuntimeException(e);
+    }
+
+    for (int i = 0; i < 10; i++) {
+      syncService.test(i);
+    }
   }
 
 }
