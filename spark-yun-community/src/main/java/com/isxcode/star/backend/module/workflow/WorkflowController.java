@@ -94,4 +94,40 @@ public class WorkflowController {
 
     workflowBizService.delWorkflow(workflowId);
   }
+
+//  @UserLog
+//  @Operation(summary = "拖拽工作流接口")
+//  @GetMapping("/drawFlow")
+//  @SuccessResponse("保存成功")
+//  @Parameter(
+//    name = SecurityConstants.HEADER_TENANT_ID,
+//    description = "租户id",
+//    required = true,
+//    in = ParameterIn.HEADER,
+//    schema = @Schema(type = "string"))
+//  public void drawFlow(
+//    @Schema(description = "作业流唯一id", example = "sy_ba1f12b5c8154f999a02a5be2373a438")
+//    @RequestBody
+//    String workflowId) {
+//
+//    workflowBizService.drawFlow(workflowId);
+//  }
+//
+//  @UserLog
+//  @Operation(summary = "运行工作流接口")
+//  @GetMapping("/runFlow")
+//  @SuccessResponse("提交成功")
+//  @Parameter(
+//    name = SecurityConstants.HEADER_TENANT_ID,
+//    description = "租户id",
+//    required = true,
+//    in = ParameterIn.HEADER,
+//    schema = @Schema(type = "string"))
+//  public void runFlow(
+//    @Schema(description = "作业流唯一id", example = "sy_ba1f12b5c8154f999a02a5be2373a438")
+//    @RequestBody
+//    String workflowId) {
+//
+//    workflowBizService.runFlow(workflowId);
+//  }
 }

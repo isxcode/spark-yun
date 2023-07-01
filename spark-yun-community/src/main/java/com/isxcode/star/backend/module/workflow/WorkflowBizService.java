@@ -60,4 +60,25 @@ public class WorkflowBizService {
 
     workflowRepository.deleteById(workflowId);
   }
+
+  public void drawFlow() {
+
+    // 解析前端传递的数据
+
+    // 保存工作流的配置，解析成nodeIdList，startNodeList，endNodeList，nodeMapping
+
+    // 解析完保存下来
+
+  }
+
+  public void runFlow() {
+
+    // 获取工作流配置
+
+    // 获取startnode
+
+    // 生成实例
+
+    // 封装event推送时间，开始执行任务
+  }
 }
