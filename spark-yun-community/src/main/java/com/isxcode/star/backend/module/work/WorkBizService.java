@@ -1,8 +1,5 @@
 package com.isxcode.star.backend.module.work;
 
-import static com.isxcode.star.backend.config.WebSecurityConfig.TENANT_ID;
-import static com.isxcode.star.backend.config.WebSecurityConfig.USER_ID;
-
 import com.alibaba.fastjson.JSON;
 import com.isxcode.star.api.constants.cluster.ClusterNodeStatus;
 import com.isxcode.star.api.constants.work.WorkDefault;
@@ -17,32 +14,20 @@ import com.isxcode.star.api.pojos.base.BaseResponse;
 import com.isxcode.star.api.pojos.work.req.WokAddWorkReq;
 import com.isxcode.star.api.pojos.work.req.WokQueryWorkReq;
 import com.isxcode.star.api.pojos.work.req.WokUpdateWorkReq;
-import com.isxcode.star.api.pojos.work.res.WokGetDataRes;
-import com.isxcode.star.api.pojos.work.res.WokGetStatusRes;
-import com.isxcode.star.api.pojos.work.res.WokGetSubmitLogRes;
-import com.isxcode.star.api.pojos.work.res.WokGetWorkLogRes;
-import com.isxcode.star.api.pojos.work.res.WokGetWorkRes;
-import com.isxcode.star.api.pojos.work.res.WokQueryWorkRes;
-import com.isxcode.star.api.pojos.work.res.WokRunWorkRes;
+import com.isxcode.star.api.pojos.work.res.*;
+import com.isxcode.star.api.pojos.workflow.dto.WorkRunContext;
 import com.isxcode.star.backend.module.cluster.ClusterEntity;
 import com.isxcode.star.backend.module.cluster.ClusterRepository;
 import com.isxcode.star.backend.module.cluster.node.ClusterNodeEntity;
 import com.isxcode.star.backend.module.cluster.node.ClusterNodeRepository;
+import com.isxcode.star.backend.module.work.config.WorkConfigBizService;
 import com.isxcode.star.backend.module.work.config.WorkConfigEntity;
 import com.isxcode.star.backend.module.work.config.WorkConfigRepository;
 import com.isxcode.star.backend.module.work.instance.WorkInstanceEntity;
 import com.isxcode.star.backend.module.work.instance.WorkInstanceRepository;
-import com.isxcode.star.backend.module.work.run.RunExecuteSqlService;
-import com.isxcode.star.backend.module.work.run.RunQuerySqlService;
-import com.isxcode.star.backend.module.work.run.RunSparkSqlService;
+import com.isxcode.star.backend.module.work.run.WorkExecutor;
+import com.isxcode.star.backend.module.work.run.WorkExecutorFactory;
 import com.isxcode.star.common.utils.HttpUtils;
-import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Random;
-import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
@@ -51,15 +36,20 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+import java.time.LocalDateTime;
+import java.util.*;
+
+import static com.isxcode.star.backend.config.WebSecurityConfig.TENANT_ID;
+import static com.isxcode.star.backend.config.WebSecurityConfig.USER_ID;
+
 @Service
 @RequiredArgsConstructor
 @Transactional
 @Slf4j
 public class WorkBizService {
 
-  private final RunExecuteSqlService runExecuteSqlService;
-
-  private final RunSparkSqlService runSparkSqlService;
+  private final WorkExecutorFactory workExecutorFactory;
 
   private final WorkRepository workRepository;
 
@@ -73,7 +63,16 @@ public class WorkBizService {
 
   private final WorkInstanceRepository workInstanceRepository;
 
-  private final RunQuerySqlService runQuerySqlService;
+  private final WorkConfigBizService workConfigBizService;
+
+  public WorkEntity getWorkEntity(String workId) {
+
+    Optional<WorkEntity> workEntityOptional = workRepository.findById(workId);
+    if (!workEntityOptional.isPresent()) {
+      throw new SparkYunException("作业不存在");
+    }
+    return workEntityOptional.get();
+  }
 
   public void addWork(WokAddWorkReq addWorkReq) {
 
@@ -141,57 +140,50 @@ public class WorkBizService {
     }
   }
 
-  public WokRunWorkRes submitWork(String workId) {
+  public WorkInstanceEntity genWorkInstance(String workId) {
 
-    Optional<WorkEntity> workEntityOptional = workRepository.findById(workId);
-    if (!workEntityOptional.isPresent()) {
-      throw new SparkYunException("作业不存在");
-    }
-    WorkEntity work = workEntityOptional.get();
-
-    // 初始化作业实例
     WorkInstanceEntity workInstanceEntity = new WorkInstanceEntity();
     workInstanceEntity.setWorkId(workId);
     workInstanceEntity.setInstanceType(InstanceType.MANUAL);
-    workInstanceRepository.saveAndFlush(workInstanceEntity);
+    return workInstanceRepository.saveAndFlush(workInstanceEntity);
+  }
 
-    Optional<WorkConfigEntity> workConfigEntityOptional =
-        workConfigRepository.findById(work.getConfigId());
-    if (!workConfigEntityOptional.isPresent()) {
-      throw new SparkYunException("作业异常，请联系开发者");
-    }
-    WorkConfigEntity workConfig = workConfigEntityOptional.get();
+  public WorkRunContext genWorkRunContext(String instanceId, WorkEntity work, WorkConfigEntity workConfig) {
 
-    switch (work.getWorkType()) {
-      case WorkType.EXECUTE_JDBC_SQL:
-        runExecuteSqlService.run(
-            workConfig.getDatasourceId(),
-            workConfig.getSqlScript(),
-            workInstanceEntity.getId(),
-            TENANT_ID.get(),
-            USER_ID.get());
-        break;
-      case WorkType.QUERY_JDBC_SQL:
-        runQuerySqlService.run(
-            workConfig.getDatasourceId(),
-            workConfig.getSqlScript(),
-            workInstanceEntity.getId(),
-            TENANT_ID.get(),
-            USER_ID.get());
-        break;
-      case WorkType.QUERY_SPARK_SQL:
-        runSparkSqlService.run(
-            workConfig.getClusterId(),
-            workConfig.getSqlScript(),
-            JSON.parseObject(workConfig.getSparkConfig(), Map.class),
-            workInstanceEntity.getId(),
-            TENANT_ID.get(),
-            USER_ID.get());
-        break;
-      default:
-        throw new SparkYunException("该作业类型暂不支持");
-    }
-    return WokRunWorkRes.builder().instanceId(workInstanceEntity.getId()).build();
+    return WorkRunContext.builder().datasourceId(workConfig.getDatasourceId())
+      .sqlScript(workConfig.getSqlScript())
+      .instanceId(instanceId)
+      .tenantId(TENANT_ID.get())
+      .clusterId(workConfig.getClusterId())
+      .workType(work.getWorkType())
+      .workId(work.getId())
+      .sparkConfig(JSON.parseObject(workConfig.getSparkConfig(), Map.class))
+      .userId(USER_ID.get())
+      .build();
+  }
+  /**
+   * 提交作业.
+   */
+  public WokRunWorkRes submitWork(String workId) {
+
+    // 获取作业信息
+    WorkEntity work = getWorkEntity(workId);
+
+    // 初始化作业实例
+    WorkInstanceEntity workInstance = genWorkInstance(work.getId());
+
+    // 获取作业配置
+    WorkConfigEntity workConfig = workConfigBizService.workConfigEntity(work.getConfigId());
+
+    // 初始化作业运行上下文
+    WorkRunContext workRunContext = genWorkRunContext(workInstance.getId(), work, workConfig);
+
+    // 异步运行作业
+    WorkExecutor workExecutor = workExecutorFactory.create(work.getWorkType());
+    workExecutor.executeWork(workRunContext);
+
+    // 返回作业的实例id
+    return WokRunWorkRes.builder().instanceId(workInstance.getId()).build();
   }
 
   public WokGetDataRes getData(String instanceId) {
