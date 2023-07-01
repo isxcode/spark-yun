@@ -23,6 +23,16 @@ public class WorkConfigBizService {
 
   private final WorkConfigRepository workConfigRepository;
 
+  public WorkConfigEntity workConfigEntity(String workConfigId) {
+
+    Optional<WorkConfigEntity> workConfigEntityOptional =
+      workConfigRepository.findById(workConfigId);
+    if (!workConfigEntityOptional.isPresent()) {
+      throw new SparkYunException("作业异常，请联系开发者");
+    }
+    return workConfigEntityOptional.get();
+  }
+
   public void configWork(WocConfigWorkReq wocConfigWorkReq) {
 
     Optional<WorkEntity> workEntityOptional = workRepository.findById(wocConfigWorkReq.getWorkId());
