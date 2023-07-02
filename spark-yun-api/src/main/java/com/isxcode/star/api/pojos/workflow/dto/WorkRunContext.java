@@ -15,8 +15,6 @@ public class WorkRunContext {
 
   private String clusterId;
 
-  private String clusterType;
-
   private String sqlScript;
 
   private String tenantId;

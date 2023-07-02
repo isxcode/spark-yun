@@ -98,8 +98,8 @@ public class SparkSqlExecutor extends WorkExecutor{
 
     // 节点选择随机数
     ClusterNodeEntity engineNode = allEngineNodes.get(new Random().nextInt(allEngineNodes.size()));
-    logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("检测运行环境完成  \n");
     logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("申请资源完成，激活节点:【").append(engineNode.getName()).append("】\n");
+    logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("检测运行环境完成  \n");
     workInstance = updateInstance(workInstance, logBuilder);
 
     // 开始构建作业
@@ -160,10 +160,10 @@ public class SparkSqlExecutor extends WorkExecutor{
       }
 
       // 获取作业状态并保存
-      String getStatusUrl = "http://" + engineNode.getHost() + ":" + engineNode.getAgentPort() + "/yag/getStatus?appId=" + submitWorkRes.getAppId() + "&agentType=" + workRunContext.getClusterId();
+      String getStatusUrl = "http://" + engineNode.getHost() + ":" + engineNode.getAgentPort() + "/yag/getStatus?appId=" + submitWorkRes.getAppId() + "&agentType=" + calculateEngineEntityOptional.get().getClusterType();
       baseResponse = HttpUtils.doGet(getStatusUrl, BaseResponse.class);
       if (!String.valueOf(HttpStatus.OK.value()).equals(baseResponse.getCode())) {
-        throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "获取作业状态异常 : " + baseResponse.getErr() + "\n");
+        throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "获取作业状态异常 : " + baseResponse.getMsg() + "\n");
       }
 
       // 解析返回状态，并保存
@@ -184,7 +184,7 @@ public class SparkSqlExecutor extends WorkExecutor{
         // 如果运行结束，获取运行日志并保存
 
         // 获取日志
-        String getLogUrl = "http://" + engineNode.getHost() + ":" + engineNode.getAgentPort() + "/yag/getLog?appId=" + submitWorkRes.getAppId() + "&agentType=" + workRunContext.getClusterType();
+        String getLogUrl = "http://" + engineNode.getHost() + ":" + engineNode.getAgentPort() + "/yag/getLog?appId=" + submitWorkRes.getAppId() + "&agentType=" + calculateEngineEntityOptional.get().getClusterType();
         baseResponse = HttpUtils.doGet(getLogUrl, BaseResponse.class);
         if (!String.valueOf(HttpStatus.OK.value()).equals(baseResponse.getCode())) {
           throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "获取作业日志异常 : " + baseResponse.getMsg() + "\n");
@@ -192,7 +192,7 @@ public class SparkSqlExecutor extends WorkExecutor{
 
         // 解析日志并保存
         YagGetLogRes yagGetLogRes = JSON.parseObject(JSON.toJSONString(baseResponse.getData()), YagGetLogRes.class);
-        logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("保存日志完成 \n");
+        logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("日志保存成功 \n");
         workInstance.setYarnLog(yagGetLogRes.getLog());
         workInstance = updateInstance(workInstance, logBuilder);
 
@@ -201,7 +201,7 @@ public class SparkSqlExecutor extends WorkExecutor{
         if (successStatus.contains(workStatusRes.getAppStatus().toUpperCase())) {
 
           // 获取数据
-          String getDataUrl = "http://" + engineNode.getHost() + ":" + engineNode.getAgentPort() + "/yag/getData?appId=" + submitWorkRes.getAppId() + "&agentType=" + workRunContext.getClusterType();
+          String getDataUrl = "http://" + engineNode.getHost() + ":" + engineNode.getAgentPort() + "/yag/getData?appId=" + submitWorkRes.getAppId() + "&agentType=" + calculateEngineEntityOptional.get().getClusterType();
           baseResponse = HttpUtils.doGet(getDataUrl, BaseResponse.class);
           if (!String.valueOf(HttpStatus.OK.value()).equals(baseResponse.getCode())) {
             throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "获取作业数据异常 : " + baseResponse.getErr() + "\n");
@@ -209,7 +209,7 @@ public class SparkSqlExecutor extends WorkExecutor{
 
           // 解析数据并保存
           workInstance.setResultData(JSON.toJSONString(baseResponse.getData()));
-          logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("作业执行成功 \n");
+          logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("数据保存成功 \n");
           updateInstance(workInstance, logBuilder);
 
         }

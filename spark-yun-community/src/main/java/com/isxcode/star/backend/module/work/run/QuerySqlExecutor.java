@@ -93,7 +93,7 @@ public class QuerySqlExecutor extends WorkExecutor {
       }
 
       // 执行最后一句查询语句
-      logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始查询SQL: ").append(sqls.get(sqls.size() - 1)).append(" \n");
+      logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("执行查询SQL: ").append(sqls.get(sqls.size() - 1)).append(" \n");
       workInstance = updateInstance(workInstance, logBuilder);
 
       // 执行查询sql
@@ -121,7 +121,7 @@ public class QuerySqlExecutor extends WorkExecutor {
       }
 
       // 讲data转为json存到实例中
-      logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("查询数据保存成功  \n");
+      logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("数据保存成功  \n");
       workInstance.setSubmitLog(logBuilder.toString());
       workInstance.setResultData(JSON.toJSONString(result));
       workInstanceRepository.saveAndFlush(workInstance);
