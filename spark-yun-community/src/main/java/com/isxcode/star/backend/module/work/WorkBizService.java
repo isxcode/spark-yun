@@ -15,7 +15,7 @@ import com.isxcode.star.api.pojos.work.req.WokAddWorkReq;
 import com.isxcode.star.api.pojos.work.req.WokQueryWorkReq;
 import com.isxcode.star.api.pojos.work.req.WokUpdateWorkReq;
 import com.isxcode.star.api.pojos.work.res.*;
-import com.isxcode.star.api.pojos.workflow.dto.WorkRunContext;
+import com.isxcode.star.api.pojos.work.dto.WorkRunContext;
 import com.isxcode.star.backend.module.cluster.ClusterEntity;
 import com.isxcode.star.backend.module.cluster.ClusterRepository;
 import com.isxcode.star.backend.module.cluster.node.ClusterNodeEntity;
@@ -173,14 +173,14 @@ public class WorkBizService {
     WorkInstanceEntity workInstance = genWorkInstance(work.getId());
 
     // 获取作业配置
-    WorkConfigEntity workConfig = workConfigBizService.workConfigEntity(work.getConfigId());
+    WorkConfigEntity workConfig = workConfigBizService.getWorkConfigEntity(work.getConfigId());
 
     // 初始化作业运行上下文
     WorkRunContext workRunContext = genWorkRunContext(workInstance.getId(), work, workConfig);
 
     // 异步运行作业
     WorkExecutor workExecutor = workExecutorFactory.create(work.getWorkType());
-    workExecutor.executeWork(workRunContext);
+    workExecutor.asyncExecute(workRunContext);
 
     // 返回作业的实例id
     return WokRunWorkRes.builder().instanceId(workInstance.getId()).build();

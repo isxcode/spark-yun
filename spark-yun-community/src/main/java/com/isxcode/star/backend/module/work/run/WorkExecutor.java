@@ -4,7 +4,7 @@ import com.isxcode.star.api.constants.work.WorkLog;
 import com.isxcode.star.api.constants.work.instance.InstanceStatus;
 import com.isxcode.star.api.exceptions.SparkYunException;
 import com.isxcode.star.api.exceptions.WorkRunException;
-import com.isxcode.star.api.pojos.workflow.dto.WorkRunContext;
+import com.isxcode.star.api.pojos.work.dto.WorkRunContext;
 import com.isxcode.star.backend.module.work.instance.WorkInstanceEntity;
 import com.isxcode.star.backend.module.work.instance.WorkInstanceRepository;
 import lombok.RequiredArgsConstructor;
@@ -31,12 +31,23 @@ public abstract class WorkExecutor {
     return workInstanceRepository.saveAndFlush(workInstance);
   }
 
+  /**
+   * 异步执行.
+   */
   @Async("sparkYunWorkThreadPool")
-  public void executeWork(WorkRunContext workRunContext) {
+  public void asyncExecute(WorkRunContext workRunContext) {
 
     // 初始化异步线程中的上下文
     USER_ID.set(workRunContext.getUserId());
     TENANT_ID.set(workRunContext.getTenantId());
+
+    syncExecute(workRunContext);
+  }
+
+  /**
+   * 同步执行.
+   */
+  public void syncExecute(WorkRunContext workRunContext) {
 
     // 获取实例信息
     WorkInstanceEntity workInstance = workInstanceRepository.findById(workRunContext.getInstanceId())
