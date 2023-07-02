@@ -2,7 +2,7 @@ package com.isxcode.star.backend.module.work.run;
 
 import com.isxcode.star.api.constants.work.WorkLog;
 import com.isxcode.star.api.exceptions.WorkRunException;
-import com.isxcode.star.api.pojos.workflow.dto.WorkRunContext;
+import com.isxcode.star.api.pojos.work.dto.WorkRunContext;
 import com.isxcode.star.backend.module.datasource.DatasourceBizService;
 import com.isxcode.star.backend.module.datasource.DatasourceEntity;
 import com.isxcode.star.backend.module.datasource.DatasourceRepository;

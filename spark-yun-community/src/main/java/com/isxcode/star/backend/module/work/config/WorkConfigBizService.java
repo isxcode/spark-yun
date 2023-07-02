@@ -23,7 +23,7 @@ public class WorkConfigBizService {
 
   private final WorkConfigRepository workConfigRepository;
 
-  public WorkConfigEntity workConfigEntity(String workConfigId) {
+  public WorkConfigEntity getWorkConfigEntity(String workConfigId) {
 
     Optional<WorkConfigEntity> workConfigEntityOptional =
       workConfigRepository.findById(workConfigId);

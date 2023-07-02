@@ -1,4 +1,4 @@
-package com.isxcode.star.api.pojos.workflow.dto;
+package com.isxcode.star.api.pojos.work.dto;
 
 import lombok.Builder;
 import lombok.Data;
