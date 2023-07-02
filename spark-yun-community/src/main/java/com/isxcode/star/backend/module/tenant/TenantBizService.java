@@ -114,7 +114,7 @@ public class TenantBizService {
 
     // 查询用户最近一次租户
     UserEntity userEntity = userRepository.findById(USER_ID.get()).get();
-    if (!tenantIds.contains(userEntity.getCurrentTenantId())) {
+    if (!tenantIds.isEmpty() && !tenantIds.contains(userEntity.getCurrentTenantId())) {
       userEntity.setCurrentTenantId(tenantIds.get(0));
       // 更新用户最近一次租户
       userRepository.save(userEntity);

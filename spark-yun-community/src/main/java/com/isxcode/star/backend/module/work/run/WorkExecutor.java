@@ -54,14 +54,17 @@ public abstract class WorkExecutor {
 
     try {
 
-      // 开始执行
+      // 日志需要贯穿上下文
       workRunContext.setLogBuilder(logBuilder);
+
+      // 开始执行
       execute(workRunContext, workInstance);
 
       // 执行成功
+      workInstance = workInstanceRepository.findById(workRunContext.getInstanceId()).orElseThrow(() -> new SparkYunException("实例异常"));
       workInstance.setStatus(InstanceStatus.SUCCESS);
       workInstance.setExecEndDateTime(new Date());
-      logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("成功 \n");
+      logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("执行成功 \n");
       workInstance.setSubmitLog(logBuilder.toString());
       workInstanceRepository.save(workInstance);
     } catch (WorkRunException e) {
@@ -71,9 +74,10 @@ public abstract class WorkExecutor {
 
       // 补充异常日志，更新实例
       logBuilder.append(e.getMsg());
+      workInstance = workInstanceRepository.findById(workRunContext.getInstanceId()).orElseThrow(() -> new SparkYunException("实例异常"));
       workInstance.setStatus(InstanceStatus.FAIL);
       workInstance.setExecEndDateTime(new Date());
-      logBuilder.append(LocalDateTime.now()).append(WorkLog.ERROR_INFO).append("失败 \n");
+      logBuilder.append(LocalDateTime.now()).append(WorkLog.ERROR_INFO).append("执行失败 \n");
       workInstance.setSubmitLog(logBuilder.toString());
       workInstanceRepository.save(workInstance);
     }
