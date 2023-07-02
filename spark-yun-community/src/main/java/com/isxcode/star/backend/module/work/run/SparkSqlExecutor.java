@@ -9,7 +9,7 @@ import com.isxcode.star.api.exceptions.WorkRunException;
 import com.isxcode.star.api.pojos.base.BaseResponse;
 import com.isxcode.star.api.pojos.plugin.req.PluginReq;
 import com.isxcode.star.api.pojos.work.res.WokRunWorkRes;
-import com.isxcode.star.api.pojos.workflow.dto.WorkRunContext;
+import com.isxcode.star.api.pojos.work.dto.WorkRunContext;
 import com.isxcode.star.api.pojos.yun.agent.req.SparkSubmit;
 import com.isxcode.star.api.pojos.yun.agent.req.YagExecuteWorkReq;
 import com.isxcode.star.api.pojos.yun.agent.res.YagGetLogRes;
@@ -180,7 +180,8 @@ public class SparkSqlExecutor extends WorkExecutor{
         } catch (InterruptedException e) {
           throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "睡眠线程异常 : " + e.getMessage() + "\n");
         }
-      } else {
+      }else {
+
         // 如果运行结束，获取运行日志并保存
 
         // 获取日志
