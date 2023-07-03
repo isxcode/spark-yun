@@ -1,17 +1,6 @@
-package com.isxcode.star.backend.module.work.instance;
-
-import static com.isxcode.star.backend.config.WebSecurityConfig.TENANT_ID;
+package com.isxcode.star.backend.module.workflow.config;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import java.time.LocalDateTime;
-import java.util.Date;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.PrePersist;
-import javax.persistence.Table;
-import javax.persistence.Transient;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -25,17 +14,22 @@ import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import javax.persistence.*;
+import java.time.LocalDateTime;
+
+import static com.isxcode.star.backend.config.WebSecurityConfig.TENANT_ID;
+
 @Data
+@Entity
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
-@SQLDelete(sql = "UPDATE SY_WORK_INSTANCE SET deleted = 1 WHERE id = ?")
+@SQLDelete(sql = "UPDATE SY_WORKFLOW_CONFIG SET deleted = 1 WHERE id = ? and version_number = ?")
 @Where(clause = "deleted = 0 ${TENANT_FILTER} ")
-@Table(name = "SY_WORK_INSTANCE")
+@Table(name = "SY_WORKFLOW_CONFIG")
 @JsonIgnoreProperties({"hibernateLazyInitializer"})
 @EntityListeners(AuditingEntityListener.class)
-public class WorkInstanceEntity {
+public class WorkflowConfigEntity {
 
   @Id
   @GeneratedValue(generator = "sy-id-generator")
@@ -44,31 +38,15 @@ public class WorkInstanceEntity {
       strategy = "com.isxcode.star.backend.config.GeneratedValueConfig")
   private String id;
 
-  private String versionId;
+  private String webConfig;
 
-  private String workId;
+  private String nodeMapping;
 
-  private String instanceType;
+  private String nodeList;
 
-  private String status;
+  private String dagStartList;
 
-  private Date planStartDateTime;
-
-  private Date nextPlanDateTime;
-
-  private Date execStartDateTime;
-
-  private Date execEndDateTime;
-
-  private String submitLog;
-
-  private String yarnLog;
-
-  private String sparkStarRes;
-
-  private String resultData;
-
-  private String workflowInstanceId;
+  private String dagEndList;
 
   @CreatedDate private LocalDateTime createDateTime;
 
@@ -77,6 +55,8 @@ public class WorkInstanceEntity {
   @CreatedBy private String createBy;
 
   @LastModifiedBy private String lastModifiedBy;
+
+  @Version private Long versionNumber;
 
   @Transient private Integer deleted;
 

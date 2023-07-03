@@ -18,6 +18,9 @@ public interface ModulePrefix {
   /** 作业流模块. */
   String WORKFLOW = "/wof";
 
+  /** 作业流配置模块. */
+  String WORKFLOW_CONFIG = "wfc";
+
   /** 作业模块. */
   String WORK = "/wok";
 

@@ -9,8 +9,7 @@ import org.jgrapht.alg.cycle.CycleDetector;
 import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
 
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -56,7 +55,13 @@ public class WorkflowUtils {
    */
   public static List<String> getParentNodes(List<List<String>> flowList, String nodeId) {
 
-    return flowList.stream().filter(e -> Objects.equals(e.get(1), nodeId)).map(e -> e.get(0)).collect(Collectors.toList());
+    List<String> nodes = flowList.stream().filter(e -> Objects.equals(e.get(1), nodeId)).map(e -> e.get(0)).collect(Collectors.toList());
+
+    if (nodes.isEmpty()) {
+      return Collections.singletonList("");
+    }else{
+      return nodes;
+    }
   }
 
   /**
@@ -64,7 +69,13 @@ public class WorkflowUtils {
    */
   public static List<String> getSonNodes(List<List<String>> flowList, String nodeId) {
 
-    return flowList.stream().filter(e -> Objects.equals(e.get(0), nodeId)).map(e -> e.get(1)).collect(Collectors.toList());
+    List<String> nodes = flowList.stream().filter(e -> Objects.equals(e.get(0), nodeId)).map(e -> e.get(1)).collect(Collectors.toList());
+
+    if (nodes.isEmpty()) {
+      return Collections.singletonList("");
+    }else{
+      return nodes;
+    }
   }
 
   /**
@@ -90,5 +101,39 @@ public class WorkflowUtils {
 
     return nodeIdList.stream().filter(e -> !sonNodes.contains(e)).collect(Collectors.toList());
   }
+
+  /**
+   * 从webConfig中解析出节点list.
+   */
+  public static List<String> parseNodeList(String webConfig) {
+
+    return Arrays.asList(
+      "sy_e3fd91cbbe714e9d9699b49a675540e4",
+      "sy_4c12decb272945da97b0137e2e64e62e",
+      "sy_4d61f91655e74b51992efa6a4e4ee488"
+    );
+  }
+
+  /**
+   * 从webConfig中解析出节点映射关系.
+   */
+  public static List<List<String>> parseNodeMapping(String webConfig) {
+
+    List<List<String>> nodeMapping = new ArrayList<>();
+
+    List<String> node1 = new ArrayList<>();
+    node1.add("sy_e3fd91cbbe714e9d9699b49a675540e4");
+    node1.add("sy_4c12decb272945da97b0137e2e64e62e");
+    nodeMapping.add(node1);
+
+    List<String> node2 = new ArrayList<>();
+    node2.add("sy_4c12decb272945da97b0137e2e64e62e");
+    node2.add("sy_4d61f91655e74b51992efa6a4e4ee488");
+    nodeMapping.add(node2);
+
+    return nodeMapping;
+  }
+
+
 }
 
