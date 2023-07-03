@@ -24,7 +24,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -38,7 +37,6 @@ import static com.isxcode.star.backend.config.WebSecurityConfig.USER_ID;
  */
 @Service
 @RequiredArgsConstructor
-@Transactional
 public class WorkflowBizService {
 
   private final WorkflowRepository workflowRepository;
