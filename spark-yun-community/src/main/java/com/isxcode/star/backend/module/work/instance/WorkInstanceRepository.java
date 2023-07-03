@@ -1,5 +1,6 @@
 package com.isxcode.star.backend.module.work.instance;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -40,4 +41,12 @@ public interface WorkInstanceRepository extends JpaRepository<WorkInstanceEntity
       @Param("tenantId") String tenantId,
       @Param("keyword") String searchKeyWord,
       Pageable pageable);
+
+  WorkInstanceEntity findByWorkIdAndWorkflowInstanceId(String workId, String workflowInstanceId);
+
+  @Query(
+    "SELECT W FROM WorkInstanceEntity W "
+      + "WHERE W.workId IN (:workIds) "
+      + "AND W.workflowInstanceId = :workflowInstanceId ")
+  List<WorkInstanceEntity> findAllByWorkIdAndWorkflowInstanceId(List<String> workIds, String workflowInstanceId);
 }
