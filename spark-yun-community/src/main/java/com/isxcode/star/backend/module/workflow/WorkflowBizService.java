@@ -7,9 +7,11 @@ import com.isxcode.star.api.constants.work.instance.InstanceType;
 import com.isxcode.star.api.constants.workflow.WorkflowStatus;
 import com.isxcode.star.api.constants.workflow.instance.FlowInstanceStatus;
 import com.isxcode.star.api.exceptions.SparkYunException;
+import com.isxcode.star.api.pojos.workflow.dto.WorkInstanceInfo;
 import com.isxcode.star.api.pojos.workflow.req.WocQueryWorkflowReq;
 import com.isxcode.star.api.pojos.workflow.req.WofAddWorkflowReq;
 import com.isxcode.star.api.pojos.workflow.req.WofUpdateWorkflowReq;
+import com.isxcode.star.api.pojos.workflow.res.WofQueryRunWorkInstancesRes;
 import com.isxcode.star.api.pojos.workflow.res.WofQueryWorkflowRes;
 import com.isxcode.star.backend.module.work.instance.WorkInstanceEntity;
 import com.isxcode.star.backend.module.work.instance.WorkInstanceRepository;
@@ -161,4 +163,22 @@ public class WorkflowBizService {
 
     return workflowInstance.getId();
   }
+
+  public WofQueryRunWorkInstancesRes queryRunWorkInstances(String workflowInstanceId) {
+
+    // 查询工作流实例
+    Optional<WorkflowInstanceEntity> workflowInstanceEntityOptional = workflowInstanceRepository.findById(workflowInstanceId);
+    if (!workflowInstanceEntityOptional.isPresent()) {
+      throw new SparkYunException("工作流实例不存在");
+    }
+    WorkflowInstanceEntity workflowInstance = workflowInstanceEntityOptional.get();
+
+    // 查询作业实例列表
+    List<WorkInstanceEntity> workInstances = workInstanceRepository.findAllByWorkflowInstanceId(workflowInstanceId);
+    List<WorkInstanceInfo> instanceInfos = workflowMapper.workInstanceEntityListToWorkInstanceInfoList(workInstances);
+
+    // 封装返回对象
+    return WofQueryRunWorkInstancesRes.builder().flowStatus(workflowInstance.getStatus()).workInstances(instanceInfos).build();
+  }
+
 }
