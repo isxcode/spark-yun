@@ -1,6 +1,7 @@
 package com.isxcode.star.backend.module.work;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.isxcode.star.api.constants.cluster.ClusterNodeStatus;
 import com.isxcode.star.api.constants.work.WorkDefault;
 import com.isxcode.star.api.constants.work.WorkLog;
@@ -27,6 +28,10 @@ import com.isxcode.star.backend.module.work.instance.WorkInstanceEntity;
 import com.isxcode.star.backend.module.work.instance.WorkInstanceRepository;
 import com.isxcode.star.backend.module.work.run.WorkExecutor;
 import com.isxcode.star.backend.module.work.run.WorkExecutorFactory;
+import com.isxcode.star.backend.module.workflow.WorkflowEntity;
+import com.isxcode.star.backend.module.workflow.WorkflowRepository;
+import com.isxcode.star.backend.module.workflow.config.WorkflowConfigEntity;
+import com.isxcode.star.backend.module.workflow.config.WorkflowConfigRepository;
 import com.isxcode.star.common.utils.HttpUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -64,6 +69,10 @@ public class WorkBizService {
   private final WorkInstanceRepository workInstanceRepository;
 
   private final WorkConfigBizService workConfigBizService;
+
+  private final WorkflowConfigRepository workflowConfigRepository;
+
+  private final WorkflowRepository workflowRepository;
 
   public WorkEntity getWorkEntity(String workId) {
 
@@ -138,6 +147,14 @@ public class WorkBizService {
     } else {
       throw new SparkYunException("请下线作业");
     }
+
+    // 拖拽到DAG中的作业无法删除
+    WorkflowEntity workflow = workflowRepository.findById(work.getWorkflowId()).get();
+    WorkflowConfigEntity workflowConfig = workflowConfigRepository.findById(workflow.getConfigId()).get();
+    if (JSONArray.parseObject(workflowConfig.getNodeList(), String.class).contains(workId)) {
+      throw new SparkYunException("作业在DAG图中无法删除");
+    }
+
   }
 
   public WorkInstanceEntity genWorkInstance(String workId) {
