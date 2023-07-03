@@ -1,9 +1,12 @@
 package com.isxcode.star.backend.module.workflow;
 
+import com.isxcode.star.api.pojos.workflow.dto.WorkInstanceInfo;
 import com.isxcode.star.api.pojos.workflow.req.WofAddWorkflowReq;
 import com.isxcode.star.api.pojos.workflow.req.WofUpdateWorkflowReq;
 import com.isxcode.star.api.pojos.workflow.res.WofQueryWorkflowRes;
 import java.util.List;
+
+import com.isxcode.star.backend.module.work.instance.WorkInstanceEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.springframework.data.domain.Page;
@@ -33,4 +36,9 @@ public interface WorkflowMapper {
     return new PageImpl<>(
         dtoList, workflowEntityPage.getPageable(), workflowEntityPage.getTotalElements());
   }
+
+  @Mapping(source = "status", target = "runStatus")
+  WorkInstanceInfo workInstanceEntityToWorkInstanceInfo(WorkInstanceEntity workInstances);
+
+  List<WorkInstanceInfo> workInstanceEntityListToWorkInstanceInfoList(List<WorkInstanceEntity> workInstances);
 }
