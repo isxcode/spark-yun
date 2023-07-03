@@ -107,6 +107,9 @@ public class WorkflowUtils {
    */
   public static List<String> parseNodeList(String webConfig) {
 
+
+    // todo 节点解析重复报错
+
     return Arrays.asList(
       "sy_134879c1f4d44a22a18ea5e51b8b3609",
       "sy_312eae734d394cfaa74a859498c013bd",
