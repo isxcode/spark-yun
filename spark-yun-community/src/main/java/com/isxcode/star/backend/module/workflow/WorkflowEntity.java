@@ -44,6 +44,8 @@ public class WorkflowEntity {
 
   private String status;
 
+  private String configId;
+
   @CreatedDate private LocalDateTime createDateTime;
 
   @LastModifiedDate private LocalDateTime lastModifiedDateTime;

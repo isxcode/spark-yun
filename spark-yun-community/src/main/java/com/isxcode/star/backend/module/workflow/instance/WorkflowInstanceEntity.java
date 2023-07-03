@@ -1,8 +1,9 @@
-package com.isxcode.star.backend.module.work.instance;
+package com.isxcode.star.backend.module.workflow.instance;
 
 import static com.isxcode.star.backend.config.WebSecurityConfig.TENANT_ID;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.time.LocalDateTime;
 import java.util.Date;
 import javax.persistence.Entity;
@@ -12,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -30,23 +32,23 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@SQLDelete(sql = "UPDATE SY_WORK_INSTANCE SET deleted = 1 WHERE id = ?")
+@SQLDelete(sql = "UPDATE SY_WORKFLOW_INSTANCE SET deleted = 1 WHERE id = ?")
 @Where(clause = "deleted = 0 ${TENANT_FILTER} ")
-@Table(name = "SY_WORK_INSTANCE")
+@Table(name = "SY_WORKFLOW_INSTANCE")
 @JsonIgnoreProperties({"hibernateLazyInitializer"})
 @EntityListeners(AuditingEntityListener.class)
-public class WorkInstanceEntity {
+public class WorkflowInstanceEntity {
 
   @Id
   @GeneratedValue(generator = "sy-id-generator")
   @GenericGenerator(
-      name = "sy-id-generator",
-      strategy = "com.isxcode.star.backend.config.GeneratedValueConfig")
+    name = "sy-id-generator",
+    strategy = "com.isxcode.star.backend.config.GeneratedValueConfig")
   private String id;
 
   private String versionId;
 
-  private String workId;
+  private String flowId;
 
   private String instanceType;
 
@@ -60,25 +62,20 @@ public class WorkInstanceEntity {
 
   private Date execEndDateTime;
 
-  private String submitLog;
+  @CreatedDate
+  private LocalDateTime createDateTime;
 
-  private String yarnLog;
+  @LastModifiedDate
+  private LocalDateTime lastModifiedDateTime;
 
-  private String sparkStarRes;
+  @CreatedBy
+  private String createBy;
 
-  private String resultData;
+  @LastModifiedBy
+  private String lastModifiedBy;
 
-  private String workflowInstanceId;
-
-  @CreatedDate private LocalDateTime createDateTime;
-
-  @LastModifiedDate private LocalDateTime lastModifiedDateTime;
-
-  @CreatedBy private String createBy;
-
-  @LastModifiedBy private String lastModifiedBy;
-
-  @Transient private Integer deleted;
+  @Transient
+  private Integer deleted;
 
   private String tenantId;
 
