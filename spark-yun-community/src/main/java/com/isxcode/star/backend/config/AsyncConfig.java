@@ -34,7 +34,7 @@ public class AsyncConfig {
   public Executor springEventThreadPool() {
 
     ThreadPoolTaskExecutor threadPoolTaskExecutor = new ThreadPoolTaskExecutor();
-    threadPoolTaskExecutor.setCorePoolSize(1); // 核心线程数，指正在执行的线程，要小于MaxPoolSize配置
+    threadPoolTaskExecutor.setCorePoolSize(10); // 核心线程数，指正在执行的线程，要小于MaxPoolSize配置
     threadPoolTaskExecutor.setMaxPoolSize(200); // 允许最大的线程数量
     threadPoolTaskExecutor.setQueueCapacity(10); // 在最大线程数上，再扩展等待线程数
     threadPoolTaskExecutor.setThreadNamePrefix("springEventThreadPool-"); // 设置线程名的前缀

@@ -108,10 +108,20 @@ public class WorkflowUtils {
   public static List<String> parseNodeList(String webConfig) {
 
     return Arrays.asList(
-      "sy_e3fd91cbbe714e9d9699b49a675540e4",
+      "sy_134879c1f4d44a22a18ea5e51b8b3609",
+      "sy_312eae734d394cfaa74a859498c013bd",
+      "sy_35f48b20f8c1433d87ef5206fd0d3e1d",
       "sy_4c12decb272945da97b0137e2e64e62e",
-      "sy_4d61f91655e74b51992efa6a4e4ee488"
-    );
+      "sy_4d61f91655e74b51992efa6a4e4ee488",
+      "sy_623d9d2493d547d0ac14d2f35d84a77b",
+      "sy_65fe0d29ec054af28a241fb17da357a2",
+      "sy_691908fa93c1473cbf8ac8a047590176",
+      "sy_831191f53e144efa9c7ba3bc5e475e33",
+      "sy_a9f0fbafe00545c598f4c710ae52c56d",
+      "sy_d71599fb12d54e33ae6d211027b15168",
+      "sy_e3fd91cbbe714e9d9699b49a675540e4",
+      "sy_fa862b0f4373402c89e5ac42e220609b"
+      );
   }
 
   /**
@@ -119,19 +129,26 @@ public class WorkflowUtils {
    */
   public static List<List<String>> parseNodeMapping(String webConfig) {
 
-    List<List<String>> nodeMapping = new ArrayList<>();
+    String flowConfig = "[\n" +
+      "        [\"sy_e3fd91cbbe714e9d9699b49a675540e4\",\"sy_4c12decb272945da97b0137e2e64e62e\"],\n" +
+      "        [\"sy_e3fd91cbbe714e9d9699b49a675540e4\",\"sy_4d61f91655e74b51992efa6a4e4ee488\"],\n" +
+      "        [\"sy_4c12decb272945da97b0137e2e64e62e\",\"sy_623d9d2493d547d0ac14d2f35d84a77b\"],\n" +
+      "        [\"sy_4c12decb272945da97b0137e2e64e62e\",\"sy_312eae734d394cfaa74a859498c013bd\"],\n" +
+      "        [\"sy_4d61f91655e74b51992efa6a4e4ee488\",\"sy_312eae734d394cfaa74a859498c013bd\"],\n" +
+      "        [\"sy_4d61f91655e74b51992efa6a4e4ee488\",\"sy_a9f0fbafe00545c598f4c710ae52c56d\"],\n" +
+      "        [\"sy_35f48b20f8c1433d87ef5206fd0d3e1d\",\"sy_4d61f91655e74b51992efa6a4e4ee488\"],\n" +
+      "        [\"sy_623d9d2493d547d0ac14d2f35d84a77b\",\"sy_134879c1f4d44a22a18ea5e51b8b3609\"],\n" +
+      "        [\"sy_623d9d2493d547d0ac14d2f35d84a77b\",\"sy_d71599fb12d54e33ae6d211027b15168\"],\n" +
+      "        [\"sy_312eae734d394cfaa74a859498c013bd\",\"sy_134879c1f4d44a22a18ea5e51b8b3609\"],\n" +
+      "        [\"sy_a9f0fbafe00545c598f4c710ae52c56d\",\"sy_65fe0d29ec054af28a241fb17da357a2\"],\n" +
+      "        [\"sy_a9f0fbafe00545c598f4c710ae52c56d\",\"sy_fa862b0f4373402c89e5ac42e220609b\"],\n" +
+      "        [\"sy_134879c1f4d44a22a18ea5e51b8b3609\",\"sy_65fe0d29ec054af28a241fb17da357a2\"],\n" +
+      "        [\"sy_134879c1f4d44a22a18ea5e51b8b3609\",\"sy_831191f53e144efa9c7ba3bc5e475e33\"],\n" +
+      "        [\"sy_65fe0d29ec054af28a241fb17da357a2\",\"sy_691908fa93c1473cbf8ac8a047590176\"]\n" +
+      "]";
 
-    List<String> node1 = new ArrayList<>();
-    node1.add("sy_e3fd91cbbe714e9d9699b49a675540e4");
-    node1.add("sy_4c12decb272945da97b0137e2e64e62e");
-    nodeMapping.add(node1);
-
-    List<String> node2 = new ArrayList<>();
-    node2.add("sy_4c12decb272945da97b0137e2e64e62e");
-    node2.add("sy_4d61f91655e74b51992efa6a4e4ee488");
-    nodeMapping.add(node2);
-
-    return nodeMapping;
+    return JSON.parseObject(flowConfig, new TypeReference<List<List<String>>>() {
+    });
   }
 
 
