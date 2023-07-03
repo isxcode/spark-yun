@@ -31,4 +31,7 @@ public interface WorkRepository extends JpaRepository<WorkEntity, String> {
       @Param("keyword") String searchKeyWord,
       @Param("workflowId") String workflowId,
       Pageable pageable);
+
+  @Query("select W from WorkEntity W where W.id in (:workIds)")
+  List<WorkEntity> findAllByWorkIds(List<String> workIds);
 }
