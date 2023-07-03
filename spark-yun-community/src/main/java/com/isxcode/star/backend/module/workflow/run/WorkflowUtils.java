@@ -110,7 +110,7 @@ public class WorkflowUtils {
 
     // todo 节点解析重复报错
 
-    return Arrays.asList(
+    List<String> nodeIdList = Arrays.asList(
       "sy_134879c1f4d44a22a18ea5e51b8b3609",
       "sy_312eae734d394cfaa74a859498c013bd",
       "sy_35f48b20f8c1433d87ef5206fd0d3e1d",
@@ -124,7 +124,9 @@ public class WorkflowUtils {
       "sy_d71599fb12d54e33ae6d211027b15168",
       "sy_e3fd91cbbe714e9d9699b49a675540e4",
       "sy_fa862b0f4373402c89e5ac42e220609b"
-      );
+    );
+
+    return nodeIdList;
   }
 
   /**
