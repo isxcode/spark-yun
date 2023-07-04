@@ -11,8 +11,8 @@ spring:
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     druid:
-      initial-size: 5
-      max-active: 20
+      initial-size: 10
+      max-active: 200
       min-idle: 10
       max-wait: 30000
       filters: stat,wall,log4j2
