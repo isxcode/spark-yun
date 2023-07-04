@@ -1,5 +1,6 @@
 package com.isxcode.star.backend.module.workflow.run;
 
+import com.alibaba.fastjson.JSON;
 import com.isxcode.star.api.constants.work.instance.InstanceStatus;
 import com.isxcode.star.backend.module.work.WorkBizService;
 import com.isxcode.star.backend.module.work.WorkEntity;
@@ -10,6 +11,8 @@ import com.isxcode.star.backend.module.work.instance.WorkInstanceEntity;
 import com.isxcode.star.backend.module.work.instance.WorkInstanceRepository;
 import com.isxcode.star.backend.module.work.run.WorkExecutor;
 import com.isxcode.star.backend.module.work.run.WorkExecutorFactory;
+import com.isxcode.star.backend.module.work.version.VipWorkVersionEntity;
+import com.isxcode.star.backend.module.work.version.VipWorkVersionRepository;
 import com.isxcode.star.backend.module.workflow.instance.WorkflowInstanceEntity;
 import com.isxcode.star.backend.module.workflow.instance.WorkflowInstanceRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +26,7 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import static com.isxcode.star.backend.config.WebSecurityConfig.TENANT_ID;
 import static com.isxcode.star.backend.config.WebSecurityConfig.USER_ID;
@@ -46,6 +50,8 @@ public class WorkRunEventListener {
 
   private final WorkConfigRepository workConfigRepository;
 
+  private final VipWorkVersionRepository vipWorkVersionRepository;
+
   @EventListener
   @Async("springEventThreadPool")
   public void onApplicationEvent(WorkRunEvent event) {
@@ -59,7 +65,7 @@ public class WorkRunEventListener {
     TENANT_ID.set(event.getTenantId());
 
     // 修改状态前都要加锁，给实例中的作业加锁
-    synchronized (this) {
+    synchronized (event.getFlowInstanceId()) {
 
       // 查询作业实例
       WorkInstanceEntity workInstance = workInstanceRepository.findByWorkIdAndWorkflowInstanceId(event.getWorkId(), event.getFlowInstanceId());
@@ -107,7 +113,17 @@ public class WorkRunEventListener {
         WorkConfigEntity workConfig = workConfigRepository.findById(work.getConfigId()).get();
         workRunContext = workBizService.genWorkRunContext(workInstance.getId(), work, workConfig);
       }else{
-        workRunContext = event.getWorkRunContext();
+        VipWorkVersionEntity workVersion = vipWorkVersionRepository.findById(event.getVersionId()).get();
+        workRunContext = WorkRunContext.builder().datasourceId(workVersion.getDatasourceId())
+          .sqlScript(workVersion.getSqlScript())
+          .instanceId(workInstance.getId())
+          .tenantId(TENANT_ID.get())
+          .userId(USER_ID.get())
+          .clusterId(workVersion.getClusterId())
+          .workType(workVersion.getWorkType())
+          .workId(workVersion.getId())
+          .sparkConfig(JSON.parseObject(workVersion.getSparkConfig(), Map.class))
+          .build();
       }
 
       // 同步执行作业
@@ -116,7 +132,7 @@ public class WorkRunEventListener {
     }
 
     // 判断工作流是否执行完毕，检查结束节点是否都运行完
-    synchronized (this) {
+    synchronized (event.getFlowInstanceId()) {
 
       // 获取结束节点实例
       List<String> endNodes = WorkflowUtils.getEndNodes(event.getNodeMapping(), event.getNodeList());
@@ -138,7 +154,8 @@ public class WorkRunEventListener {
     List<String> sonNodes = WorkflowUtils.getSonNodes(event.getNodeMapping(), event.getWorkId());
     sonNodes.forEach(e -> {
       if (!Strings.isEmpty(e)) {
-        WorkRunEvent metaEvent = new WorkRunEvent(event.getFlowInstanceId(), e, event.getNodeMapping(), event.getNodeList(), event.getDagStartList(), event.getDagEndList(), event.getUserId(), event.getTenantId());
+        WorkRunEvent metaEvent = new WorkRunEvent(event.getFlowInstanceId(), e, event.getNodeMapping(), event.getNodeList(), event.getDagStartList(), event.getDagEndList(), event.getUserId(), event.getTenantId(), event.getWorkVersionMap());
+        metaEvent.setVersionId(event.getWorkVersionMap().get(e));
         eventPublisher.publishEvent(metaEvent);
       }
     });
