@@ -8,4 +8,6 @@ public class WorkInstanceInfo {
   private String workId;
 
   private String runStatus;
+
+  private String workInstanceId;
 }
