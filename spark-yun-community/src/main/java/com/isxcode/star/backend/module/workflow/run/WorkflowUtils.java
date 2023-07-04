@@ -1,8 +1,10 @@
 package com.isxcode.star.backend.module.workflow.run;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.TypeReference;
 import com.isxcode.star.api.exceptions.SparkYunException;
+import com.isxcode.star.api.pojos.workflow.config.dto.NodeInfo;
 import org.apache.logging.log4j.util.Strings;
 import org.jgrapht.Graph;
 import org.jgrapht.alg.cycle.CycleDetector;
@@ -107,26 +109,9 @@ public class WorkflowUtils {
    */
   public static List<String> parseNodeList(String webConfig) {
 
+    List<NodeInfo> nodeInfos = JSONArray.parseArray(webConfig, NodeInfo.class);
 
-    // todo 节点解析重复报错
-
-    List<String> nodeIdList = Arrays.asList(
-      "sy_134879c1f4d44a22a18ea5e51b8b3609",
-      "sy_312eae734d394cfaa74a859498c013bd",
-      "sy_35f48b20f8c1433d87ef5206fd0d3e1d",
-      "sy_4c12decb272945da97b0137e2e64e62e",
-      "sy_4d61f91655e74b51992efa6a4e4ee488",
-      "sy_623d9d2493d547d0ac14d2f35d84a77b",
-      "sy_65fe0d29ec054af28a241fb17da357a2",
-      "sy_691908fa93c1473cbf8ac8a047590176",
-      "sy_831191f53e144efa9c7ba3bc5e475e33",
-      "sy_a9f0fbafe00545c598f4c710ae52c56d",
-      "sy_d71599fb12d54e33ae6d211027b15168",
-      "sy_e3fd91cbbe714e9d9699b49a675540e4",
-      "sy_fa862b0f4373402c89e5ac42e220609b"
-    );
-
-    return nodeIdList;
+    return nodeInfos.stream().filter(e -> "dag-node".equals(e.getShape())).map(NodeInfo::getId).collect(Collectors.toList());
   }
 
   /**
@@ -134,26 +119,20 @@ public class WorkflowUtils {
    */
   public static List<List<String>> parseNodeMapping(String webConfig) {
 
-    String flowConfig = "[\n" +
-      "        [\"sy_e3fd91cbbe714e9d9699b49a675540e4\",\"sy_4c12decb272945da97b0137e2e64e62e\"],\n" +
-      "        [\"sy_e3fd91cbbe714e9d9699b49a675540e4\",\"sy_4d61f91655e74b51992efa6a4e4ee488\"],\n" +
-      "        [\"sy_4c12decb272945da97b0137e2e64e62e\",\"sy_623d9d2493d547d0ac14d2f35d84a77b\"],\n" +
-      "        [\"sy_4c12decb272945da97b0137e2e64e62e\",\"sy_312eae734d394cfaa74a859498c013bd\"],\n" +
-      "        [\"sy_4d61f91655e74b51992efa6a4e4ee488\",\"sy_312eae734d394cfaa74a859498c013bd\"],\n" +
-      "        [\"sy_4d61f91655e74b51992efa6a4e4ee488\",\"sy_a9f0fbafe00545c598f4c710ae52c56d\"],\n" +
-      "        [\"sy_35f48b20f8c1433d87ef5206fd0d3e1d\",\"sy_4d61f91655e74b51992efa6a4e4ee488\"],\n" +
-      "        [\"sy_623d9d2493d547d0ac14d2f35d84a77b\",\"sy_134879c1f4d44a22a18ea5e51b8b3609\"],\n" +
-      "        [\"sy_623d9d2493d547d0ac14d2f35d84a77b\",\"sy_d71599fb12d54e33ae6d211027b15168\"],\n" +
-      "        [\"sy_312eae734d394cfaa74a859498c013bd\",\"sy_134879c1f4d44a22a18ea5e51b8b3609\"],\n" +
-      "        [\"sy_a9f0fbafe00545c598f4c710ae52c56d\",\"sy_65fe0d29ec054af28a241fb17da357a2\"],\n" +
-      "        [\"sy_a9f0fbafe00545c598f4c710ae52c56d\",\"sy_fa862b0f4373402c89e5ac42e220609b\"],\n" +
-      "        [\"sy_134879c1f4d44a22a18ea5e51b8b3609\",\"sy_65fe0d29ec054af28a241fb17da357a2\"],\n" +
-      "        [\"sy_134879c1f4d44a22a18ea5e51b8b3609\",\"sy_831191f53e144efa9c7ba3bc5e475e33\"],\n" +
-      "        [\"sy_65fe0d29ec054af28a241fb17da357a2\",\"sy_691908fa93c1473cbf8ac8a047590176\"]\n" +
-      "]";
+    List<NodeInfo> nodeInfos = JSONArray.parseArray(webConfig, NodeInfo.class);
 
-    return JSON.parseObject(flowConfig, new TypeReference<List<List<String>>>() {
-    });
+    nodeInfos = nodeInfos.stream().filter(e -> "dag-edge".equals(e.getShape())).collect(Collectors.toList());
+
+    List<List<String>> nodeMapping = new ArrayList<>();
+    for (NodeInfo node : nodeInfos) {
+
+      List<String> metaEdge = new ArrayList<>();
+      metaEdge.add(node.getSource().getCell());
+      metaEdge.add(node.getTarget().getCell());
+      nodeMapping.add(metaEdge);
+    }
+
+    return nodeMapping;
   }
 
 
