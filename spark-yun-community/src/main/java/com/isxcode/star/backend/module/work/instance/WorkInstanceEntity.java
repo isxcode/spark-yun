@@ -70,6 +70,8 @@ public class WorkInstanceEntity {
 
   private String workflowInstanceId;
 
+  private Boolean quartzHasRun;
+
   @CreatedDate private LocalDateTime createDateTime;
 
   @LastModifiedDate private LocalDateTime lastModifiedDateTime;

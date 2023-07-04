@@ -4,7 +4,7 @@ import com.isxcode.star.api.constants.work.WorkLog;
 import com.isxcode.star.api.constants.work.instance.InstanceStatus;
 import com.isxcode.star.api.exceptions.SparkYunException;
 import com.isxcode.star.api.exceptions.WorkRunException;
-import com.isxcode.star.api.pojos.work.dto.WorkRunContext;
+import com.isxcode.star.backend.module.workflow.run.WorkRunContext;
 import com.isxcode.star.backend.module.work.instance.WorkInstanceEntity;
 import com.isxcode.star.backend.module.work.instance.WorkInstanceRepository;
 import lombok.RequiredArgsConstructor;
