@@ -48,6 +48,8 @@ public class WorkflowConfigEntity {
 
   private String dagEndList;
 
+  private String corn;
+
   @CreatedDate private LocalDateTime createDateTime;
 
   @LastModifiedDate private LocalDateTime lastModifiedDateTime;

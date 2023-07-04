@@ -42,9 +42,13 @@ public class WorkflowEntity {
 
   private String remark;
 
+  private String type;
+
   private String status;
 
   private String configId;
+
+  private String versionId;
 
   @CreatedDate private LocalDateTime createDateTime;
 
