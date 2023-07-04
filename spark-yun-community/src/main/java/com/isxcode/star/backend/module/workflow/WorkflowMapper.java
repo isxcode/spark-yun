@@ -38,6 +38,7 @@ public interface WorkflowMapper {
   }
 
   @Mapping(source = "status", target = "runStatus")
+  @Mapping(source = "id", target = "workInstanceId")
   WorkInstanceInfo workInstanceEntityToWorkInstanceInfo(WorkInstanceEntity workInstances);
 
   List<WorkInstanceInfo> workInstanceEntityListToWorkInstanceInfoList(List<WorkInstanceEntity> workInstances);
