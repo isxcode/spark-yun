@@ -8,7 +8,6 @@ import com.isxcode.star.backend.module.datasource.DatasourceEntity;
 import com.isxcode.star.backend.module.datasource.DatasourceRepository;
 import com.isxcode.star.backend.module.work.instance.WorkInstanceEntity;
 import com.isxcode.star.backend.module.work.instance.WorkInstanceRepository;
-import com.isxcode.star.backend.module.workflow.run.WorkRunContext;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.stereotype.Service;

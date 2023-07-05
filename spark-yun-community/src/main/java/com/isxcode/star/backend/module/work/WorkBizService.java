@@ -2,6 +2,7 @@ package com.isxcode.star.backend.module.work;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.TypeReference;
 import com.isxcode.star.api.constants.cluster.ClusterNodeStatus;
 import com.isxcode.star.api.constants.work.WorkDefault;
 import com.isxcode.star.api.constants.work.WorkLog;
@@ -12,7 +13,7 @@ import com.isxcode.star.api.constants.work.instance.InstanceType;
 import com.isxcode.star.api.exceptions.SparkYunException;
 import com.isxcode.star.api.exceptions.WorkRunException;
 import com.isxcode.star.api.pojos.base.BaseResponse;
-import com.isxcode.star.backend.module.workflow.run.WorkRunContext;
+import com.isxcode.star.backend.module.work.run.WorkRunContext;
 import com.isxcode.star.api.pojos.work.req.WokAddWorkReq;
 import com.isxcode.star.api.pojos.work.req.WokQueryWorkReq;
 import com.isxcode.star.api.pojos.work.req.WokUpdateWorkReq;
@@ -28,6 +29,7 @@ import com.isxcode.star.backend.module.work.instance.WorkInstanceEntity;
 import com.isxcode.star.backend.module.work.instance.WorkInstanceRepository;
 import com.isxcode.star.backend.module.work.run.WorkExecutor;
 import com.isxcode.star.backend.module.work.run.WorkExecutorFactory;
+import com.isxcode.star.backend.module.work.version.VipWorkVersionEntity;
 import com.isxcode.star.backend.module.workflow.WorkflowEntity;
 import com.isxcode.star.backend.module.workflow.WorkflowRepository;
 import com.isxcode.star.backend.module.workflow.config.WorkflowConfigEntity;
@@ -174,10 +176,27 @@ public class WorkBizService {
       .clusterId(workConfig.getClusterId())
       .workType(work.getWorkType())
       .workId(work.getId())
-      .sparkConfig(JSON.parseObject(workConfig.getSparkConfig(), Map.class))
+      .sparkConfig(JSON.parseObject(workConfig.getSparkConfig(),new TypeReference<Map<String, String>>() {
+      }.getType()))
       .userId(USER_ID.get())
       .build();
   }
+
+  public WorkRunContext genWorkRunContext(String instanceId, VipWorkVersionEntity workVersion) {
+
+    return WorkRunContext.builder().datasourceId(workVersion.getDatasourceId())
+      .sqlScript(workVersion.getSqlScript())
+      .instanceId(instanceId)
+      .tenantId(TENANT_ID.get())
+      .userId(USER_ID.get())
+      .clusterId(workVersion.getClusterId())
+      .workType(workVersion.getWorkType())
+      .workId(workVersion.getId())
+      .sparkConfig(JSON.parseObject(workVersion.getSparkConfig(), new TypeReference<Map<String, String>>() {
+      }.getType()))
+      .build();
+  }
+
   /**
    * 提交作业.
    */
