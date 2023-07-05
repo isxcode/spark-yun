@@ -210,9 +210,6 @@ public class WorkBizService {
       throw new SparkYunException("请等待作业运行完毕或者对应作业无返回结果");
     }
 
-    if (Strings.isEmpty(workInstanceEntity.getYarnLog())) {
-      return new WokGetDataRes(JSON.parseArray(workInstanceEntity.getResultData()));
-    }
     return JSON.parseObject(workInstanceEntity.getResultData(), WokGetDataRes.class);
   }
 

@@ -3,6 +3,7 @@ package com.isxcode.star.yun.agent;
 import com.alibaba.fastjson.JSON;
 import com.isxcode.star.api.constants.agent.AgentType;
 import com.isxcode.star.api.exceptions.SparkYunException;
+import com.isxcode.star.api.pojos.spark.BaseReturn;
 import com.isxcode.star.api.pojos.yun.agent.req.YagExecuteWorkReq;
 import com.isxcode.star.api.pojos.yun.agent.res.YagExecuteWorkRes;
 import com.isxcode.star.api.pojos.yun.agent.res.YagGetDataRes;
@@ -12,7 +13,6 @@ import com.isxcode.star.yun.agent.service.KubernetesAgentService;
 import com.isxcode.star.yun.agent.service.StandaloneAgentService;
 import com.isxcode.star.yun.agent.service.YarnAgentService;
 import java.io.IOException;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.spark.launcher.SparkLauncher;
@@ -122,8 +122,11 @@ public class YunAgentBizService {
       default:
         throw new SparkYunException("agent类型不支持");
     }
-
-    return YagGetDataRes.builder().data(JSON.parseArray(stdoutLog, List.class)).build();
+    BaseReturn baseReturn = JSON.parseObject(stdoutLog, BaseReturn.class);
+    return YagGetDataRes.yagGetDataResBuilder()
+        .column(baseReturn.getColumn())
+        .data(baseReturn.getData())
+        .build();
   }
 
   public void stopJob(String appId, String agentType) throws IOException {
