@@ -36,18 +36,12 @@ public class SuccessResponseAdvice {
         return;
       }
       baseResponse.setCode(String.valueOf(HttpStatus.OK.value()));
-      if (data.getClass().getDeclaredFields().length == 0) {
-        baseResponse.setData(null);
-      } else {
-        baseResponse.setData(data);
-      }
-      baseResponse.setMsg(getMsg(successResponse));
-      successResponse(baseResponse);
+      baseResponse.setData(data);
     } else {
       baseResponse.setCode(String.valueOf(HttpStatus.OK.value()));
-      baseResponse.setMsg(getMsg(successResponse));
-      successResponse(baseResponse);
     }
+    baseResponse.setMsg(getMsg(successResponse));
+    successResponse(baseResponse);
   }
 
   public String getMsg(SuccessResponse successResponse) {

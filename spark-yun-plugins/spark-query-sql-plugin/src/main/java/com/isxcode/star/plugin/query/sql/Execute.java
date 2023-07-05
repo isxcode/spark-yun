@@ -2,6 +2,7 @@ package com.isxcode.star.plugin.query.sql;
 
 import com.alibaba.fastjson.JSON;
 import com.isxcode.star.api.pojos.plugin.req.PluginReq;
+import com.isxcode.star.api.pojos.spark.BaseReturn;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
@@ -60,10 +61,11 @@ public class Execute {
 
   public static void exportResult(Dataset<Row> rowDataset) {
 
-    List<List<String>> result = new ArrayList<>();
+    BaseReturn baseReturn = new BaseReturn();
+    List<List<String>> data = new ArrayList<>();
 
     // 表头
-    result.add(Arrays.asList(rowDataset.columns()));
+    baseReturn.setColumn(Arrays.asList(rowDataset.columns()));
 
     // 数据
     rowDataset
@@ -74,10 +76,12 @@ public class Execute {
               for (int i = 0; i < e.size(); i++) {
                 metaData.add(String.valueOf(e.get(i)));
               }
-              result.add(metaData);
+              data.add(metaData);
             });
 
+    baseReturn.setData(data);
+
     System.out.println(
-        "LogType:spark-yun\n" + JSON.toJSONString(result) + "\nEnd of LogType:spark-yun");
+        "LogType:spark-yun\n" + JSON.toJSONString(baseReturn) + "\nEnd of LogType:spark-yun");
   }
 }

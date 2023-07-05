@@ -1,16 +1,9 @@
 package com.isxcode.star.api.pojos.work.res;
 
-import java.util.List;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.isxcode.star.api.pojos.spark.BaseReturn;
+import lombok.*;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
 @Builder
-@AllArgsConstructor
-@NoArgsConstructor
-public class WokGetDataRes {
-
-  private List<List<String>> data;
-}
+public class WokGetDataRes extends BaseReturn {}
