@@ -143,10 +143,12 @@ public class WorkflowRunEventListener {
     // 工作流没有执行完，解析推送子节点
     List<String> sonNodes = WorkflowUtils.getSonNodes(event.getNodeMapping(), event.getWorkId());
     sonNodes.forEach(workId -> {
-      WorkflowRunEvent metaEvent = new WorkflowRunEvent(workId, event);
-      WorkInstanceEntity sonWorkInstance = workInstanceRepository.findByWorkIdAndWorkflowInstanceId(workId, event.getFlowInstanceId());
-      metaEvent.setVersionId(sonWorkInstance.getVersionId());
-      eventPublisher.publishEvent(metaEvent);
+      if (!Strings.isEmpty(workId)) {
+        WorkflowRunEvent metaEvent = new WorkflowRunEvent(workId, event);
+        WorkInstanceEntity sonWorkInstance = workInstanceRepository.findByWorkIdAndWorkflowInstanceId(workId, event.getFlowInstanceId());
+        metaEvent.setVersionId(sonWorkInstance.getVersionId());
+        eventPublisher.publishEvent(metaEvent);
+      }
     });
   }
 }
