@@ -2,8 +2,12 @@ package com.isxcode.star.api.pojos.yun.agent.res;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.isxcode.star.api.pojos.spark.BaseReturn;
+import lombok.Builder;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+
 import java.util.List;
-import lombok.*;
+
 
 @EqualsAndHashCode(callSuper = true)
 @Data
