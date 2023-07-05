@@ -19,7 +19,7 @@ import com.isxcode.star.backend.module.workflow.config.WorkflowConfigEntity;
 import com.isxcode.star.backend.module.workflow.config.WorkflowConfigRepository;
 import com.isxcode.star.backend.module.workflow.instance.WorkflowInstanceEntity;
 import com.isxcode.star.backend.module.workflow.instance.WorkflowInstanceRepository;
-import com.isxcode.star.backend.module.workflow.run.WorkRunEvent;
+import com.isxcode.star.backend.module.workflow.run.WorkflowRunEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
@@ -148,7 +148,7 @@ public class WorkflowBizService {
     // 封装event推送时间，开始执行任务
     // 异步触发工作流
     for (String workId : startNodes) {
-      WorkRunEvent metaEvent = WorkRunEvent.builder()
+      WorkflowRunEvent metaEvent = WorkflowRunEvent.builder()
         .workId(workId)
         .dagEndList(endNodes)
         .dagStartList(startNodes)

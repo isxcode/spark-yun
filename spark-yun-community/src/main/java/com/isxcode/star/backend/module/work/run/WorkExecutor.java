@@ -5,7 +5,6 @@ import com.isxcode.star.api.constants.work.instance.InstanceStatus;
 import com.isxcode.star.api.exceptions.WorkRunException;
 import com.isxcode.star.backend.module.work.instance.WorkInstanceEntity;
 import com.isxcode.star.backend.module.work.instance.WorkInstanceRepository;
-import com.isxcode.star.backend.module.workflow.run.WorkRunContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
