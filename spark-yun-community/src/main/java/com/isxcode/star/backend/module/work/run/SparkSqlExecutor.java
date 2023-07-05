@@ -32,7 +32,7 @@ import java.util.*;
 
 @Service
 @Slf4j
-public class SparkSqlExecutor extends WorkExecutor{
+public class SparkSqlExecutor extends WorkExecutor {
 
   private final WorkInstanceRepository workInstanceRepository;
 
@@ -48,34 +48,10 @@ public class SparkSqlExecutor extends WorkExecutor{
     this.clusterNodeRepository = clusterNodeRepository;
   }
 
-  /**
-   * 初始化spark作业提交配置.
-   */
-  public Map<String, String> genSparkSubmitConfig(Map<String, String> sparkConfig) {
-
-    // 过滤掉，前缀不包含spark.xxx的配置，spark submit中必须都是spark.xxx
-    Map<String, String> sparkSubmitConfig = new HashMap<>();
-    sparkConfig.forEach(
-      (k, v) -> {
-        if (k.startsWith("spark")) {
-          sparkSubmitConfig.put(k, v);
-        }
-      });
-    return sparkSubmitConfig;
-  }
-
-  public Map<String, String> genSparkConfig(Map<String, String> sparkConfig) {
-
-    // k8s的配置不能提交到作业中
-    sparkConfig.remove("spark.kubernetes.driver.podTemplateFile");
-    sparkConfig.remove("spark.kubernetes.executor.podTemplateFile");
-
-    return sparkConfig;
-  }
-
   @Override
   protected void execute(WorkRunContext workRunContext, WorkInstanceEntity workInstance) {
 
+    // 获取日志构造器
     StringBuilder logBuilder = workRunContext.getLogBuilder();
 
     // 检测计算集群是否存在
@@ -106,6 +82,7 @@ public class SparkSqlExecutor extends WorkExecutor{
     logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始构建作业  \n");
     YagExecuteWorkReq executeReq = new YagExecuteWorkReq();
 
+    // 开始构造SparkSubmit
     SparkSubmit sparkSubmit = SparkSubmit.builder()
       .verbose(true)
       .mainClass("com.isxcode.star.plugin.query.sql.Execute")
@@ -113,18 +90,20 @@ public class SparkSqlExecutor extends WorkExecutor{
       .conf(genSparkSubmitConfig(workRunContext.getSparkConfig()))
       .build();
 
+    // 开始构造PluginReq
     PluginReq pluginReq = PluginReq.builder()
       .sql(workRunContext.getSqlScript())
       .limit(200)
       .sparkConfig(genSparkConfig(workRunContext.getSparkConfig()))
       .build();
 
+    // 开始构造executeReq
     executeReq.setSparkSubmit(sparkSubmit);
     executeReq.setPluginReq(pluginReq);
     executeReq.setAgentHomePath(engineNode.getAgentHomePath() + File.separator + PathConstants.AGENT_PATH_NAME);
     executeReq.setAgentType(calculateEngineEntityOptional.get().getClusterType());
 
-    // 构建作业完成
+    // 构建作业完成，并打印作业配置信息
     logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("构建作业完成 \n");
     workRunContext.getSparkConfig().forEach((k, v) -> logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append(k).append(":").append(v).append(" \n"));
     logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始提交作业  \n");
@@ -151,11 +130,8 @@ public class SparkSqlExecutor extends WorkExecutor{
     while (true) {
 
       // 如果中止，则直接退出
-      Optional<WorkInstanceEntity> workInstanceEntityOptional = workInstanceRepository.findById(workInstance.getId());
-      if (!workInstanceEntityOptional.isPresent()) {
-        break;
-      }
-      if (InstanceStatus.ABORT.equals(workInstanceEntityOptional.get().getStatus())) {
+      workInstance = workInstanceRepository.findById(workInstance.getId()).get();
+      if (InstanceStatus.ABORT.equals(workInstance.getStatus())) {
         break;
       }
 
@@ -180,11 +156,10 @@ public class SparkSqlExecutor extends WorkExecutor{
         } catch (InterruptedException e) {
           throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "睡眠线程异常 : " + e.getMessage() + "\n");
         }
-      }else {
+      } else {
+        // 运行结束逻辑
 
-        // 如果运行结束，获取运行日志并保存
-
-        // 获取日志
+        // 获取日志并保存
         String getLogUrl = "http://" + engineNode.getHost() + ":" + engineNode.getAgentPort() + "/yag/getLog?appId=" + submitWorkRes.getAppId() + "&agentType=" + calculateEngineEntityOptional.get().getClusterType();
         baseResponse = HttpUtils.doGet(getLogUrl, BaseResponse.class);
         if (!String.valueOf(HttpStatus.OK.value()).equals(baseResponse.getCode())) {
@@ -212,13 +187,39 @@ public class SparkSqlExecutor extends WorkExecutor{
           workInstance.setResultData(JSON.toJSONString(baseResponse.getData()));
           logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("数据保存成功 \n");
           updateInstance(workInstance, logBuilder);
-
         }
 
-        // 运行成功，则退出死循环
+        // 运行结束，则退出死循环
         break;
       }
     }
   }
 
+  /**
+   * 初始化spark作业提交配置.
+   */
+  public Map<String, String> genSparkSubmitConfig(Map<String, String> sparkConfig) {
+
+    // 过滤掉，前缀不包含spark.xxx的配置，spark submit中必须都是spark.xxx
+    Map<String, String> sparkSubmitConfig = new HashMap<>();
+    sparkConfig.forEach(
+      (k, v) -> {
+        if (k.startsWith("spark")) {
+          sparkSubmitConfig.put(k, v);
+        }
+      });
+    return sparkSubmitConfig;
+  }
+
+  /**
+   * sparkConfig不能包含k8s的配置
+   */
+  public Map<String, String> genSparkConfig(Map<String, String> sparkConfig) {
+
+    // k8s的配置不能提交到作业中
+    sparkConfig.remove("spark.kubernetes.driver.podTemplateFile");
+    sparkConfig.remove("spark.kubernetes.executor.podTemplateFile");
+
+    return sparkConfig;
+  }
 }
