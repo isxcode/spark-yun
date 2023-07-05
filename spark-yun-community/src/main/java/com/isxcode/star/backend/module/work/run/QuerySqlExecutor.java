@@ -34,6 +34,7 @@ public class QuerySqlExecutor extends WorkExecutor {
   private final WorkInstanceRepository workInstanceRepository;
 
   public QuerySqlExecutor(DatasourceBizService datasourceBizService, DatasourceRepository datasourceRepository, WorkInstanceRepository workInstanceRepository) {
+
     super(workInstanceRepository);
     this.datasourceBizService = datasourceBizService;
     this.datasourceRepository = datasourceRepository;
@@ -42,6 +43,7 @@ public class QuerySqlExecutor extends WorkExecutor {
 
   public void execute(WorkRunContext workRunContext, WorkInstanceEntity workInstance) {
 
+    // 获取日志构造器
     StringBuilder logBuilder = workRunContext.getLogBuilder();
 
     // 检测数据源是否配置
@@ -69,17 +71,17 @@ public class QuerySqlExecutor extends WorkExecutor {
     logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始执行作业 \n");
     workInstance = updateInstance(workInstance, logBuilder);
 
-    // 记录结果
-    List<List<String>> result = new ArrayList<>();
+    // 开始执行sql
     try (Connection connection = datasourceBizService.getDbConnection(datasourceEntityOptional.get());
          Statement statement = connection.createStatement()) {
+
       // 清除注释
       String noCommentSql = workRunContext.getSqlScript().replaceAll("/\\*(?:.|[\\n\\r])*?\\*/|--.*", "");
 
       // 清除脚本中的脏数据
       List<String> sqls = Arrays.stream(noCommentSql.split(";")).filter(e -> !Strings.isEmpty(e)).collect(Collectors.toList());
 
-      // 执行每条sql
+      // 执行每条sql，除了最后一条
       for (int i = 0; i < sqls.size() - 1; i++) {
 
         // 记录开始执行时间
@@ -104,6 +106,9 @@ public class QuerySqlExecutor extends WorkExecutor {
       // 记录结束执行时间
       logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("查询SQL执行成功  \n");
       workInstance = updateInstance(workInstance, logBuilder);
+
+      // 记录返回结果
+      List<List<String>> result = new ArrayList<>();
 
       // 封装表头
       int columnCount = resultSet.getMetaData().getColumnCount();
