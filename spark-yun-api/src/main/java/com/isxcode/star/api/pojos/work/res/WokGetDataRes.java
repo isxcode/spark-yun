@@ -1,7 +1,10 @@
 package com.isxcode.star.api.pojos.work.res;
 
 import com.isxcode.star.api.pojos.spark.BaseReturn;
-import lombok.*;
+import lombok.Builder;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+
 
 @EqualsAndHashCode(callSuper = true)
 @Data
