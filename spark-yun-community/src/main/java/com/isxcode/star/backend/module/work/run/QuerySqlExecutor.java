@@ -8,10 +8,6 @@ import com.isxcode.star.backend.module.datasource.DatasourceEntity;
 import com.isxcode.star.backend.module.datasource.DatasourceRepository;
 import com.isxcode.star.backend.module.work.instance.WorkInstanceEntity;
 import com.isxcode.star.backend.module.work.instance.WorkInstanceRepository;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.logging.log4j.util.Strings;
-import org.springframework.stereotype.Service;
-
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
@@ -21,6 +17,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.util.Strings;
+import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
@@ -32,7 +31,10 @@ public class QuerySqlExecutor extends WorkExecutor {
 
   private final WorkInstanceRepository workInstanceRepository;
 
-  public QuerySqlExecutor(DatasourceBizService datasourceBizService, DatasourceRepository datasourceRepository, WorkInstanceRepository workInstanceRepository) {
+  public QuerySqlExecutor(
+      DatasourceBizService datasourceBizService,
+      DatasourceRepository datasourceRepository,
+      WorkInstanceRepository workInstanceRepository) {
 
     super(workInstanceRepository);
     this.datasourceBizService = datasourceBizService;
@@ -48,13 +50,16 @@ public class QuerySqlExecutor extends WorkExecutor {
     // 检测数据源是否配置
     logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始检测运行环境 \n");
     if (Strings.isEmpty(workRunContext.getDatasourceId())) {
-      throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "检测运行环境失败: 未配置有效数据源  \n");
+      throw new WorkRunException(
+          LocalDateTime.now() + WorkLog.ERROR_INFO + "检测运行环境失败: 未配置有效数据源  \n");
     }
 
     // 检查数据源是否存在
-    Optional<DatasourceEntity> datasourceEntityOptional = datasourceRepository.findById(workRunContext.getDatasourceId());
+    Optional<DatasourceEntity> datasourceEntityOptional =
+        datasourceRepository.findById(workRunContext.getDatasourceId());
     if (!datasourceEntityOptional.isPresent()) {
-      throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "检测运行环境失败: 未配置有效数据源  \n");
+      throw new WorkRunException(
+          LocalDateTime.now() + WorkLog.ERROR_INFO + "检测运行环境失败: 未配置有效数据源  \n");
     }
 
     // 数据源检查通过
@@ -71,20 +76,30 @@ public class QuerySqlExecutor extends WorkExecutor {
     workInstance = updateInstance(workInstance, logBuilder);
 
     // 开始执行sql
-    try (Connection connection = datasourceBizService.getDbConnection(datasourceEntityOptional.get());
-         Statement statement = connection.createStatement()) {
+    try (Connection connection =
+            datasourceBizService.getDbConnection(datasourceEntityOptional.get());
+        Statement statement = connection.createStatement()) {
 
       // 清除注释
-      String noCommentSql = workRunContext.getSqlScript().replaceAll("/\\*(?:.|[\\n\\r])*?\\*/|--.*", "");
+      String noCommentSql =
+          workRunContext.getSqlScript().replaceAll("/\\*(?:.|[\\n\\r])*?\\*/|--.*", "");
 
       // 清除脚本中的脏数据
-      List<String> sqls = Arrays.stream(noCommentSql.split(";")).filter(e -> !Strings.isEmpty(e)).collect(Collectors.toList());
+      List<String> sqls =
+          Arrays.stream(noCommentSql.split(";"))
+              .filter(e -> !Strings.isEmpty(e))
+              .collect(Collectors.toList());
 
       // 执行每条sql，除了最后一条
       for (int i = 0; i < sqls.size() - 1; i++) {
 
         // 记录开始执行时间
-        logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始执行SQL: ").append(sqls.get(i)).append(" \n");
+        logBuilder
+            .append(LocalDateTime.now())
+            .append(WorkLog.SUCCESS_INFO)
+            .append("开始执行SQL: ")
+            .append(sqls.get(i))
+            .append(" \n");
         workInstance = updateInstance(workInstance, logBuilder);
 
         // 执行sql
@@ -96,7 +111,12 @@ public class QuerySqlExecutor extends WorkExecutor {
       }
 
       // 执行最后一句查询语句
-      logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("执行查询SQL: ").append(sqls.get(sqls.size() - 1)).append(" \n");
+      logBuilder
+          .append(LocalDateTime.now())
+          .append(WorkLog.SUCCESS_INFO)
+          .append("执行查询SQL: ")
+          .append(sqls.get(sqls.size() - 1))
+          .append(" \n");
       workInstance = updateInstance(workInstance, logBuilder);
 
       // 执行查询sql
