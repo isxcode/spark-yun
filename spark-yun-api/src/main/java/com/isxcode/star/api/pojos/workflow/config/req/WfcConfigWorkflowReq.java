@@ -1,9 +1,8 @@
 package com.isxcode.star.api.pojos.workflow.config.req;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Data;
-
 import javax.validation.constraints.NotEmpty;
+import lombok.Data;
 
 @Data
 public class WfcConfigWorkflowReq {
@@ -14,5 +13,4 @@ public class WfcConfigWorkflowReq {
 
   @Schema(title = "工作流配置信息", example = "123")
   private String webConfig;
-
 }

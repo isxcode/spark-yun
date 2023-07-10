@@ -6,6 +6,4 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 @CacheConfig(cacheNames = {"sy_workflow"})
-public interface WorkflowConfigRepository extends JpaRepository<WorkflowConfigEntity, String> {
-
-}
+public interface WorkflowConfigRepository extends JpaRepository<WorkflowConfigEntity, String> {}

@@ -1,5 +1,8 @@
 package com.isxcode.star.backend.module.workflow.run;
 
+import static com.isxcode.star.backend.config.WebSecurityConfig.TENANT_ID;
+import static com.isxcode.star.backend.config.WebSecurityConfig.USER_ID;
+
 import com.isxcode.star.api.constants.work.instance.InstanceStatus;
 import com.isxcode.star.backend.module.work.WorkBizService;
 import com.isxcode.star.backend.module.work.WorkEntity;
@@ -15,6 +18,8 @@ import com.isxcode.star.backend.module.work.version.VipWorkVersionEntity;
 import com.isxcode.star.backend.module.work.version.VipWorkVersionRepository;
 import com.isxcode.star.backend.module.workflow.instance.WorkflowInstanceEntity;
 import com.isxcode.star.backend.module.workflow.instance.WorkflowInstanceRepository;
+import java.util.Date;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.mapstruct.ap.internal.util.Strings;
@@ -23,15 +28,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
-import java.util.Date;
-import java.util.List;
-
-import static com.isxcode.star.backend.config.WebSecurityConfig.TENANT_ID;
-import static com.isxcode.star.backend.config.WebSecurityConfig.USER_ID;
-
-/**
- * 工作流执行器.
- */
+/** 工作流执行器. */
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -65,7 +62,9 @@ public class WorkflowRunEventListener {
     synchronized (event.getFlowInstanceId()) {
 
       // 查询作业实例
-      WorkInstanceEntity workInstance = workInstanceRepository.findByWorkIdAndWorkflowInstanceId(event.getWorkId(), event.getFlowInstanceId());
+      WorkInstanceEntity workInstance =
+          workInstanceRepository.findByWorkIdAndWorkflowInstanceId(
+              event.getWorkId(), event.getFlowInstanceId());
 
       // 跑过了或者正在跑，不可以再跑
       if (!InstanceStatus.PENDING.equals(workInstance.getStatus())) {
@@ -79,10 +78,19 @@ public class WorkflowRunEventListener {
       }
 
       // 判断父级是否可以执行
-      List<String> parentNodes = WorkflowUtils.getParentNodes(event.getNodeMapping(), event.getWorkId());
-      List<WorkInstanceEntity> parentInstances = workInstanceRepository.findAllByWorkIdAndWorkflowInstanceId(parentNodes, event.getFlowInstanceId());
-      boolean parentIsError = parentInstances.stream().anyMatch(e -> InstanceStatus.FAIL.equals(e.getStatus()));
-      boolean parentIsRunning = parentInstances.stream().anyMatch(e -> InstanceStatus.RUNNING.equals(e.getStatus()) || InstanceStatus.PENDING.equals(e.getStatus()));
+      List<String> parentNodes =
+          WorkflowUtils.getParentNodes(event.getNodeMapping(), event.getWorkId());
+      List<WorkInstanceEntity> parentInstances =
+          workInstanceRepository.findAllByWorkIdAndWorkflowInstanceId(
+              parentNodes, event.getFlowInstanceId());
+      boolean parentIsError =
+          parentInstances.stream().anyMatch(e -> InstanceStatus.FAIL.equals(e.getStatus()));
+      boolean parentIsRunning =
+          parentInstances.stream()
+              .anyMatch(
+                  e ->
+                      InstanceStatus.RUNNING.equals(e.getStatus())
+                          || InstanceStatus.PENDING.equals(e.getStatus()));
 
       // 根据父级的不同状态，执行不同的逻辑
       if (parentIsError) {
@@ -100,7 +108,9 @@ public class WorkflowRunEventListener {
     }
 
     // 再次查询作业实例，如果状态为运行中，则可以开始运行作业
-    WorkInstanceEntity workInstance = workInstanceRepository.findByWorkIdAndWorkflowInstanceId(event.getWorkId(), event.getFlowInstanceId());
+    WorkInstanceEntity workInstance =
+        workInstanceRepository.findByWorkIdAndWorkflowInstanceId(
+            event.getWorkId(), event.getFlowInstanceId());
     if (InstanceStatus.RUNNING.equals(workInstance.getStatus())) {
 
       // 封装workRunContext
@@ -112,7 +122,8 @@ public class WorkflowRunEventListener {
         workRunContext = workBizService.genWorkRunContext(workInstance.getId(), work, workConfig);
       } else {
         // 通过versionId封装workRunContext
-        VipWorkVersionEntity workVersion = vipWorkVersionRepository.findById(event.getVersionId()).get();
+        VipWorkVersionEntity workVersion =
+            vipWorkVersionRepository.findById(event.getVersionId()).get();
         workRunContext = workBizService.genWorkRunContext(workInstance.getId(), workVersion);
       }
 
@@ -125,14 +136,24 @@ public class WorkflowRunEventListener {
     synchronized (event.getFlowInstanceId()) {
 
       // 获取结束节点实例
-      List<String> endNodes = WorkflowUtils.getEndNodes(event.getNodeMapping(), event.getNodeList());
-      List<WorkInstanceEntity> endNodeInstance = workInstanceRepository.findAllByWorkIdAndWorkflowInstanceId(endNodes, event.getFlowInstanceId());
-      boolean flowIsOver = endNodeInstance.stream().allMatch(e -> InstanceStatus.FAIL.equals(e.getStatus()) || InstanceStatus.SUCCESS.equals(e.getStatus()));
+      List<String> endNodes =
+          WorkflowUtils.getEndNodes(event.getNodeMapping(), event.getNodeList());
+      List<WorkInstanceEntity> endNodeInstance =
+          workInstanceRepository.findAllByWorkIdAndWorkflowInstanceId(
+              endNodes, event.getFlowInstanceId());
+      boolean flowIsOver =
+          endNodeInstance.stream()
+              .allMatch(
+                  e ->
+                      InstanceStatus.FAIL.equals(e.getStatus())
+                          || InstanceStatus.SUCCESS.equals(e.getStatus()));
 
       // 判断工作流是否执行完
       if (flowIsOver) {
-        boolean flowIsError = endNodeInstance.stream().anyMatch(e -> InstanceStatus.FAIL.equals(e.getStatus()));
-        WorkflowInstanceEntity workflowInstance = workflowInstanceRepository.findById(event.getFlowInstanceId()).get();
+        boolean flowIsError =
+            endNodeInstance.stream().anyMatch(e -> InstanceStatus.FAIL.equals(e.getStatus()));
+        WorkflowInstanceEntity workflowInstance =
+            workflowInstanceRepository.findById(event.getFlowInstanceId()).get();
         workflowInstance.setStatus(flowIsError ? InstanceStatus.FAIL : InstanceStatus.SUCCESS);
         workflowInstance.setExecEndDateTime(new Date());
         workflowInstanceRepository.saveAndFlush(workflowInstance);
@@ -142,13 +163,16 @@ public class WorkflowRunEventListener {
 
     // 工作流没有执行完，解析推送子节点
     List<String> sonNodes = WorkflowUtils.getSonNodes(event.getNodeMapping(), event.getWorkId());
-    sonNodes.forEach(workId -> {
-      if (!Strings.isEmpty(workId)) {
-        WorkflowRunEvent metaEvent = new WorkflowRunEvent(workId, event);
-        WorkInstanceEntity sonWorkInstance = workInstanceRepository.findByWorkIdAndWorkflowInstanceId(workId, event.getFlowInstanceId());
-        metaEvent.setVersionId(sonWorkInstance.getVersionId());
-        eventPublisher.publishEvent(metaEvent);
-      }
-    });
+    sonNodes.forEach(
+        workId -> {
+          if (!Strings.isEmpty(workId)) {
+            WorkflowRunEvent metaEvent = new WorkflowRunEvent(workId, event);
+            WorkInstanceEntity sonWorkInstance =
+                workInstanceRepository.findByWorkIdAndWorkflowInstanceId(
+                    workId, event.getFlowInstanceId());
+            metaEvent.setVersionId(sonWorkInstance.getVersionId());
+            eventPublisher.publishEvent(metaEvent);
+          }
+        });
   }
 }

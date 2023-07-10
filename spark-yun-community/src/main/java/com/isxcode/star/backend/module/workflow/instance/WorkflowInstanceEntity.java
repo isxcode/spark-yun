@@ -3,7 +3,6 @@ package com.isxcode.star.backend.module.workflow.instance;
 import static com.isxcode.star.backend.config.WebSecurityConfig.TENANT_ID;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 import java.time.LocalDateTime;
 import java.util.Date;
 import javax.persistence.Entity;
@@ -13,7 +12,6 @@ import javax.persistence.Id;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -42,8 +40,8 @@ public class WorkflowInstanceEntity {
   @Id
   @GeneratedValue(generator = "sy-id-generator")
   @GenericGenerator(
-    name = "sy-id-generator",
-    strategy = "com.isxcode.star.backend.config.GeneratedValueConfig")
+      name = "sy-id-generator",
+      strategy = "com.isxcode.star.backend.config.GeneratedValueConfig")
   private String id;
 
   private String versionId;
@@ -62,20 +60,15 @@ public class WorkflowInstanceEntity {
 
   private Date execEndDateTime;
 
-  @CreatedDate
-  private LocalDateTime createDateTime;
+  @CreatedDate private LocalDateTime createDateTime;
 
-  @LastModifiedDate
-  private LocalDateTime lastModifiedDateTime;
+  @LastModifiedDate private LocalDateTime lastModifiedDateTime;
 
-  @CreatedBy
-  private String createBy;
+  @CreatedBy private String createBy;
 
-  @LastModifiedBy
-  private String lastModifiedBy;
+  @LastModifiedBy private String lastModifiedBy;
 
-  @Transient
-  private Integer deleted;
+  @Transient private Integer deleted;
 
   private String tenantId;
 

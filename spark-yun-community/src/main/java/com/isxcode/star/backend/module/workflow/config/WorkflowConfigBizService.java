@@ -8,13 +8,12 @@ import com.isxcode.star.backend.module.work.WorkRepository;
 import com.isxcode.star.backend.module.workflow.WorkflowBizService;
 import com.isxcode.star.backend.module.workflow.WorkflowEntity;
 import com.isxcode.star.backend.module.workflow.run.WorkflowUtils;
+import java.util.List;
+import java.util.Optional;
+import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-
-import javax.transaction.Transactional;
-import java.util.List;
-import java.util.Optional;
 
 /** 用户模块接口的业务逻辑. */
 @Service
@@ -31,20 +30,20 @@ public class WorkflowConfigBizService {
 
   public WorkflowConfigEntity getWorkflowConfig(String workflowConfigId) {
 
-    Optional<WorkflowConfigEntity> workflowConfigEntityOptional = workflowConfigRepository.findById(workflowConfigId);
+    Optional<WorkflowConfigEntity> workflowConfigEntityOptional =
+        workflowConfigRepository.findById(workflowConfigId);
     if (!workflowConfigEntityOptional.isPresent()) {
       throw new SparkYunException("工作流配置异常，不存在");
     }
     return workflowConfigEntityOptional.get();
   }
 
-  /**
-   * 配置工作流.
-   */
+  /** 配置工作流. */
   public void configWorkflow(WfcConfigWorkflowReq wfcConfigWorkflowReq) {
 
     // 获取工作流
-    WorkflowEntity workflow = workflowBizService.getWorkflowEntity(wfcConfigWorkflowReq.getWorkflowId());
+    WorkflowEntity workflow =
+        workflowBizService.getWorkflowEntity(wfcConfigWorkflowReq.getWorkflowId());
 
     // 从webConfig中解析出所有节点
     List<String> nodeList = WorkflowUtils.parseNodeList(wfcConfigWorkflowReq.getWebConfig());
@@ -56,7 +55,8 @@ public class WorkflowConfigBizService {
     }
 
     // 从webConfig中解析出所有节点映射
-    List<List<String>> nodeMapping = WorkflowUtils.parseNodeMapping(wfcConfigWorkflowReq.getWebConfig());
+    List<List<String>> nodeMapping =
+        WorkflowUtils.parseNodeMapping(wfcConfigWorkflowReq.getWebConfig());
 
     // 检查节点是否闭环
     WorkflowUtils.checkFlow(nodeList, nodeMapping);

@@ -1,5 +1,8 @@
 package com.isxcode.star.backend.module.work;
 
+import static com.isxcode.star.backend.config.WebSecurityConfig.TENANT_ID;
+import static com.isxcode.star.backend.config.WebSecurityConfig.USER_ID;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.TypeReference;
@@ -13,7 +16,6 @@ import com.isxcode.star.api.constants.work.instance.InstanceType;
 import com.isxcode.star.api.exceptions.SparkYunException;
 import com.isxcode.star.api.exceptions.WorkRunException;
 import com.isxcode.star.api.pojos.base.BaseResponse;
-import com.isxcode.star.backend.module.work.run.WorkRunContext;
 import com.isxcode.star.api.pojos.work.req.WokAddWorkReq;
 import com.isxcode.star.api.pojos.work.req.WokQueryWorkReq;
 import com.isxcode.star.api.pojos.work.req.WokUpdateWorkReq;
@@ -29,12 +31,16 @@ import com.isxcode.star.backend.module.work.instance.WorkInstanceEntity;
 import com.isxcode.star.backend.module.work.instance.WorkInstanceRepository;
 import com.isxcode.star.backend.module.work.run.WorkExecutor;
 import com.isxcode.star.backend.module.work.run.WorkExecutorFactory;
+import com.isxcode.star.backend.module.work.run.WorkRunContext;
 import com.isxcode.star.backend.module.work.version.VipWorkVersionEntity;
 import com.isxcode.star.backend.module.workflow.WorkflowEntity;
 import com.isxcode.star.backend.module.workflow.WorkflowRepository;
 import com.isxcode.star.backend.module.workflow.config.WorkflowConfigEntity;
 import com.isxcode.star.backend.module.workflow.config.WorkflowConfigRepository;
 import com.isxcode.star.common.utils.HttpUtils;
+import java.time.LocalDateTime;
+import java.util.*;
+import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
@@ -42,13 +48,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-
-import javax.transaction.Transactional;
-import java.time.LocalDateTime;
-import java.util.*;
-
-import static com.isxcode.star.backend.config.WebSecurityConfig.TENANT_ID;
-import static com.isxcode.star.backend.config.WebSecurityConfig.USER_ID;
 
 @Service
 @RequiredArgsConstructor
@@ -152,11 +151,11 @@ public class WorkBizService {
 
     // 拖拽到DAG中的作业无法删除
     WorkflowEntity workflow = workflowRepository.findById(work.getWorkflowId()).get();
-    WorkflowConfigEntity workflowConfig = workflowConfigRepository.findById(workflow.getConfigId()).get();
+    WorkflowConfigEntity workflowConfig =
+        workflowConfigRepository.findById(workflow.getConfigId()).get();
     if (JSONArray.parseObject(workflowConfig.getNodeList(), String.class).contains(workId)) {
       throw new SparkYunException("作业在DAG图中无法删除");
     }
-
   }
 
   public WorkInstanceEntity genWorkInstance(String workId) {
@@ -167,39 +166,43 @@ public class WorkBizService {
     return workInstanceRepository.saveAndFlush(workInstanceEntity);
   }
 
-  public WorkRunContext genWorkRunContext(String instanceId, WorkEntity work, WorkConfigEntity workConfig) {
+  public WorkRunContext genWorkRunContext(
+      String instanceId, WorkEntity work, WorkConfigEntity workConfig) {
 
-    return WorkRunContext.builder().datasourceId(workConfig.getDatasourceId())
-      .sqlScript(workConfig.getSqlScript())
-      .instanceId(instanceId)
-      .tenantId(TENANT_ID.get())
-      .clusterId(workConfig.getClusterId())
-      .workType(work.getWorkType())
-      .workId(work.getId())
-      .sparkConfig(JSON.parseObject(workConfig.getSparkConfig(),new TypeReference<Map<String, String>>() {
-      }.getType()))
-      .userId(USER_ID.get())
-      .build();
+    return WorkRunContext.builder()
+        .datasourceId(workConfig.getDatasourceId())
+        .sqlScript(workConfig.getSqlScript())
+        .instanceId(instanceId)
+        .tenantId(TENANT_ID.get())
+        .clusterId(workConfig.getClusterId())
+        .workType(work.getWorkType())
+        .workId(work.getId())
+        .sparkConfig(
+            JSON.parseObject(
+                workConfig.getSparkConfig(), new TypeReference<Map<String, String>>() {}.getType()))
+        .userId(USER_ID.get())
+        .build();
   }
 
   public WorkRunContext genWorkRunContext(String instanceId, VipWorkVersionEntity workVersion) {
 
-    return WorkRunContext.builder().datasourceId(workVersion.getDatasourceId())
-      .sqlScript(workVersion.getSqlScript())
-      .instanceId(instanceId)
-      .tenantId(TENANT_ID.get())
-      .userId(USER_ID.get())
-      .clusterId(workVersion.getClusterId())
-      .workType(workVersion.getWorkType())
-      .workId(workVersion.getId())
-      .sparkConfig(JSON.parseObject(workVersion.getSparkConfig(), new TypeReference<Map<String, String>>() {
-      }.getType()))
-      .build();
+    return WorkRunContext.builder()
+        .datasourceId(workVersion.getDatasourceId())
+        .sqlScript(workVersion.getSqlScript())
+        .instanceId(instanceId)
+        .tenantId(TENANT_ID.get())
+        .userId(USER_ID.get())
+        .clusterId(workVersion.getClusterId())
+        .workType(workVersion.getWorkType())
+        .workId(workVersion.getId())
+        .sparkConfig(
+            JSON.parseObject(
+                workVersion.getSparkConfig(),
+                new TypeReference<Map<String, String>>() {}.getType()))
+        .build();
   }
 
-  /**
-   * 提交作业.
-   */
+  /** 提交作业. */
   public WokRunWorkRes submitWork(String workId) {
 
     // 获取作业信息
