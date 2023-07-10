@@ -20,13 +20,10 @@ spark-yun-backend/src/main/resources/static/**
 spark-yun-vip/**
 
 # 资源文件
-resources
+resources/license
 
 # 不提交spark-min
 spark-yun-dist/src/main/spark-min
-
-# 个人配置不提交，根据自己需求添加
-spark-yun-backend/src/main/resources/application-ispong.yml
 
 # 主配置，非必要，不提交
 spark-yun-backend/src/main/resources/application.yml
