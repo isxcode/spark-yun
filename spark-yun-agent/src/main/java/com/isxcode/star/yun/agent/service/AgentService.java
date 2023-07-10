@@ -16,7 +16,6 @@ public interface AgentService {
   SparkLauncher genSparkLauncher(PluginReq pluginReq, SparkSubmit sparkSubmit, String agentHomePath)
       throws IOException;
 
-  /** @param sparkLauncher spark启动器 */
   String executeWork(SparkLauncher sparkLauncher) throws IOException;
 
   String getAppStatus(String appId) throws IOException;
