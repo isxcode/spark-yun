@@ -101,15 +101,15 @@ public class WorkflowController {
   @GetMapping("/runFlow")
   @SuccessResponse("提交成功")
   @Parameter(
-    name = SecurityConstants.HEADER_TENANT_ID,
-    description = "租户id",
-    required = true,
-    in = ParameterIn.HEADER,
-    schema = @Schema(type = "string"))
+      name = SecurityConstants.HEADER_TENANT_ID,
+      description = "租户id",
+      required = true,
+      in = ParameterIn.HEADER,
+      schema = @Schema(type = "string"))
   public String runFlow(
-    @Schema(description = "作业流唯一id", example = "sy_ba1f12b5c8154f999a02a5be2373a438")
-    @RequestParam
-    String workflowId) {
+      @Schema(description = "作业流唯一id", example = "sy_ba1f12b5c8154f999a02a5be2373a438")
+          @RequestParam
+          String workflowId) {
 
     return workflowBizService.runFlow(workflowId);
   }
@@ -119,15 +119,15 @@ public class WorkflowController {
   @GetMapping("/queryRunWorkInstances")
   @SuccessResponse("查询成功")
   @Parameter(
-    name = SecurityConstants.HEADER_TENANT_ID,
-    description = "租户id",
-    required = true,
-    in = ParameterIn.HEADER,
-    schema = @Schema(type = "string"))
+      name = SecurityConstants.HEADER_TENANT_ID,
+      description = "租户id",
+      required = true,
+      in = ParameterIn.HEADER,
+      schema = @Schema(type = "string"))
   public WofQueryRunWorkInstancesRes queryRunWorkInstances(
-    @Schema(description = "作业流实例唯一id", example = "sy_ba1f12b5c8154f999a02a5be2373a438")
-    @RequestParam
-    String workflowInstanceId) {
+      @Schema(description = "作业流实例唯一id", example = "sy_ba1f12b5c8154f999a02a5be2373a438")
+          @RequestParam
+          String workflowInstanceId) {
 
     return workflowBizService.queryRunWorkInstances(workflowInstanceId);
   }
