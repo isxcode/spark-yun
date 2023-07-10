@@ -7,7 +7,7 @@ spring:
       password: admin123
 
   jpa:
-    database: h2
+    database: mysql
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -20,7 +20,8 @@ spring:
     url: jdbc:mysql://localhost:30306/zhiqingyun
     user: root
     password: ispong123
-    locations: classpath:db/migration/h2
+    locations: classpath:db/migration/mysql
+    enabled: false
 
   quartz:
     properties:
