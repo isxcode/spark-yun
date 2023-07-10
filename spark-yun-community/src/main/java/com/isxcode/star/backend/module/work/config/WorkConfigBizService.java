@@ -26,7 +26,7 @@ public class WorkConfigBizService {
   public WorkConfigEntity getWorkConfigEntity(String workConfigId) {
 
     Optional<WorkConfigEntity> workConfigEntityOptional =
-      workConfigRepository.findById(workConfigId);
+        workConfigRepository.findById(workConfigId);
     if (!workConfigEntityOptional.isPresent()) {
       throw new SparkYunException("作业异常，请联系开发者");
     }

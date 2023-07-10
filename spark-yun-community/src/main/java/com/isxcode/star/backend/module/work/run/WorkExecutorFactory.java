@@ -7,9 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
-/**
- * 执行器工厂类，返回对应作业的执行器.
- */
+/** 执行器工厂类，返回对应作业的执行器. */
 @Slf4j
 @RequiredArgsConstructor
 @Component
@@ -18,7 +16,7 @@ public class WorkExecutorFactory {
   private final ApplicationContext applicationContext;
 
   public WorkExecutor create(String workType) {
-    
+
     switch (workType) {
       case WorkType.QUERY_SPARK_SQL:
         return applicationContext.getBean(SparkSqlExecutor.class);

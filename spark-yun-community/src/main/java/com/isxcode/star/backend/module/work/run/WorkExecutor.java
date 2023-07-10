@@ -1,23 +1,20 @@
 package com.isxcode.star.backend.module.work.run;
 
+import static com.isxcode.star.backend.config.WebSecurityConfig.TENANT_ID;
+import static com.isxcode.star.backend.config.WebSecurityConfig.USER_ID;
+
 import com.isxcode.star.api.constants.work.WorkLog;
 import com.isxcode.star.api.constants.work.instance.InstanceStatus;
 import com.isxcode.star.api.exceptions.WorkRunException;
 import com.isxcode.star.backend.module.work.instance.WorkInstanceEntity;
 import com.isxcode.star.backend.module.work.instance.WorkInstanceRepository;
+import java.time.LocalDateTime;
+import java.util.Date;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 
-import java.time.LocalDateTime;
-import java.util.Date;
-
-import static com.isxcode.star.backend.config.WebSecurityConfig.TENANT_ID;
-import static com.isxcode.star.backend.config.WebSecurityConfig.USER_ID;
-
-/**
- * 作业执行器.
- */
+/** 作业执行器. */
 @Slf4j
 @RequiredArgsConstructor
 public abstract class WorkExecutor {
@@ -26,18 +23,15 @@ public abstract class WorkExecutor {
 
   protected abstract void execute(WorkRunContext workRunContext, WorkInstanceEntity workInstance);
 
-  /**
-   * 更新实例的日志和状态
-   */
-  public WorkInstanceEntity updateInstance(WorkInstanceEntity workInstance, StringBuilder logBuilder) {
+  /** 更新实例的日志和状态 */
+  public WorkInstanceEntity updateInstance(
+      WorkInstanceEntity workInstance, StringBuilder logBuilder) {
 
     workInstance.setSubmitLog(logBuilder.toString());
     return workInstanceRepository.saveAndFlush(workInstance);
   }
 
-  /**
-   * 异步执行作业.
-   */
+  /** 异步执行作业. */
   @Async("sparkYunWorkThreadPool")
   public void asyncExecute(WorkRunContext workRunContext) {
 
@@ -48,13 +42,12 @@ public abstract class WorkExecutor {
     syncExecute(workRunContext);
   }
 
-  /**
-   * 同步执行作业.
-   */
+  /** 同步执行作业. */
   public void syncExecute(WorkRunContext workRunContext) {
 
     // 获取作业实例
-    WorkInstanceEntity workInstance = workInstanceRepository.findById(workRunContext.getInstanceId()).get();
+    WorkInstanceEntity workInstance =
+        workInstanceRepository.findById(workRunContext.getInstanceId()).get();
 
     // 初始化日志
     StringBuilder logBuilder = new StringBuilder();
