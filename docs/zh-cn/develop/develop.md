@@ -14,10 +14,11 @@
 
 ![20230529113243](https://img.isxcode.com/picgo/20230529113243.png)
 
-##### 3. 确认开发主分支
+##### 3. 确认开发分支名称
 
-> 所有的需求分支都以当前`最新版本`分支为基础。</br>
-> 即如果当前的最新版本是`0.0.5`，需求编号为`#74`,则从`0.0.5`的分支上切出需求分支`0.0.5-#74`。
+> 所有的需求分支都以当前`最新版本`分支为前缀。</br>
+> 即如果当前的最新版本是`0.0.5`，需求编号为`#74`</br>
+> 则需求分支名称为`0.0.5-#74`。
 
 - 项目github地址：https://github.com/isxcode/spark-yun
 
@@ -25,10 +26,9 @@
 
 ##### 4. Fork并拉取代码
 
-> Fork项目，并拉取最新版本分支`0.0.5`代码。
+> Fork项目，并拉取最新版本分支`latest`代码。
 
 - Fork项目：https://github.com/isxcode/spark-yun/fork
-- [启动项目(可选)](/zh-cn/install/source-deploy.md)
 
 ```bash
 # 将isxcode组织的代码仓库加入到本地的upstream中
@@ -36,13 +36,12 @@ git remote add upstream https://github.com/isxcode/spark-yun.git
 # 更新isxcode组织代码
 git remote update upstream -p
 # 拉取远程主分支-0.0.5
-git checkout --track upstream/0.0.5
+git checkout --track upstream/latest
 ```
 
 ##### 5. 创建需求分支`0.0.5-#74`
 
 > 创建需求分支并提交到自己fork的项目中。</br>
-> 分支命名规范：`0.0.5-#74` </br>
 
 - **upstream远程**已有分支
 
