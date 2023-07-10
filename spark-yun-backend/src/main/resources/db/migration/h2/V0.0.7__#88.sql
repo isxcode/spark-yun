@@ -4,7 +4,7 @@ alter table SY_WORK_INSTANCE
 
 -- 给作业实例，添加是否被定时器触发过
 alter table SY_WORK_INSTANCE
-  add quartz_has_run tinyint(1) null comment '是否被定时器触发过';
+  add quartz_has_run boolean null comment '是否被定时器触发过';
 
 -- 创建工作流配置表
 create table SY_WORKFLOW_CONFIG
