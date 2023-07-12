@@ -23,7 +23,9 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url))
+      '@': fileURLToPath(new URL('./src', import.meta.url)),
+      '@antv/x6': '@antv/x6/lib',
+      '@antv/x6-vue-shape': '@antv/x6-vue-shape/lib'
     }
   },
   css: {

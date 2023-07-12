@@ -191,7 +191,7 @@ function deleteData(data: any) {
 
 function showDetail(data: any) {
   router.push({
-    name: 'workflow-detail',
+    name: 'workflow-page',
     query: {
       id: data.id
     }
