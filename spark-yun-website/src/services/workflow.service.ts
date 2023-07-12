@@ -164,3 +164,13 @@ export function GetResultItemDetail(params: any): Promise<any> {
     params: params
   })
 }
+
+// 工作流------------流程图接口
+// 保存工作流
+export function SaveWorkflowData(params: any): Promise<any> {
+  return http.request({
+    method: 'post',
+    url: '/wfc/configWorkflow',
+    params: params
+  })
+}
