@@ -4,6 +4,7 @@ import ComputerPointer from '@/views/computer-group/computer-pointer/index.vue'
 import DataSource from '@/views/datasource/index.vue'
 import Workflow from '@/views/workflow/index.vue'
 import WorkflowDetail from '@/views/workflow/workflow-detail/index.vue'
+import WorkflowPage from '@/views/workflow/workflow-page/index.vue'
 import WorkItem from '@/views/workflow/work-item/index.vue'
 import Schedule from '@/views/schedule/index.vue'
 
@@ -37,6 +38,11 @@ export default [
     path: '/workflow-detail',
     name: 'workflow-detail',
     component: WorkflowDetail
+  },
+  {
+    path: '/workflow-page',
+    name: 'workflow-page',
+    component: WorkflowPage
   },
   {
     path: '/work-item',

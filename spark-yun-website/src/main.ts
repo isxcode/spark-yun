@@ -16,6 +16,7 @@ import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
 import VXETable from 'vxe-table'
 import 'vxe-table/lib/style.css'
 import '@/assets/scss/index.scss'
+import '@antv/x6-vue-shape'
 
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 
