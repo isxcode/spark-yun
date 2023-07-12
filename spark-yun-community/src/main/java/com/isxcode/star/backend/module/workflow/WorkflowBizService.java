@@ -14,10 +14,12 @@ import com.isxcode.star.api.pojos.workflow.dto.WorkInstanceInfo;
 import com.isxcode.star.api.pojos.workflow.req.WocQueryWorkflowReq;
 import com.isxcode.star.api.pojos.workflow.req.WofAddWorkflowReq;
 import com.isxcode.star.api.pojos.workflow.req.WofUpdateWorkflowReq;
+import com.isxcode.star.api.pojos.workflow.res.WofGetWorkflowRes;
 import com.isxcode.star.api.pojos.workflow.res.WofQueryRunWorkInstancesRes;
 import com.isxcode.star.api.pojos.workflow.res.WofQueryWorkflowRes;
 import com.isxcode.star.backend.module.work.instance.WorkInstanceEntity;
 import com.isxcode.star.backend.module.work.instance.WorkInstanceRepository;
+import com.isxcode.star.backend.module.workflow.config.WorkflowConfigBizService;
 import com.isxcode.star.backend.module.workflow.config.WorkflowConfigEntity;
 import com.isxcode.star.backend.module.workflow.config.WorkflowConfigRepository;
 import com.isxcode.star.backend.module.workflow.instance.WorkflowInstanceEntity;
@@ -49,6 +51,8 @@ public class WorkflowBizService {
   private final WorkflowInstanceRepository workflowInstanceRepository;
 
   private final WorkInstanceRepository workInstanceRepository;
+
+  private final WorkflowConfigBizService workflowConfigBizService;
 
   public WorkflowEntity getWorkflowEntity(String workflowId) {
 
@@ -186,5 +190,17 @@ public class WorkflowBizService {
         .flowStatus(workflowInstance.getStatus())
         .workInstances(instanceInfos)
         .build();
+  }
+
+  public WofGetWorkflowRes getWorkflow(String workflowId) {
+
+    WorkflowEntity workflow = getWorkflowEntity(workflowId);
+
+    WorkflowConfigEntity workflowConfig = workflowConfigBizService.getWorkflowConfig(workflow.getConfigId());
+
+    WofGetWorkflowRes wofGetWorkflowRes = new WofGetWorkflowRes();
+    wofGetWorkflowRes.setWebConfig(workflowConfig.getWebConfig());
+
+    return wofGetWorkflowRes;
   }
 }

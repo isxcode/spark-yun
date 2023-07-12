@@ -6,6 +6,7 @@ import com.isxcode.star.api.constants.base.SecurityConstants;
 import com.isxcode.star.api.pojos.workflow.req.WocQueryWorkflowReq;
 import com.isxcode.star.api.pojos.workflow.req.WofAddWorkflowReq;
 import com.isxcode.star.api.pojos.workflow.req.WofUpdateWorkflowReq;
+import com.isxcode.star.api.pojos.workflow.res.WofGetWorkflowRes;
 import com.isxcode.star.api.pojos.workflow.res.WofQueryRunWorkInstancesRes;
 import com.isxcode.star.api.pojos.workflow.res.WofQueryWorkflowRes;
 import com.isxcode.star.backend.module.user.action.UserLog;
@@ -130,5 +131,23 @@ public class WorkflowController {
           String workflowInstanceId) {
 
     return workflowBizService.queryRunWorkInstances(workflowInstanceId);
+  }
+
+  @UserLog
+  @Operation(summary = "获取作业流信息接口")
+  @GetMapping("/getWorkflow")
+  @SuccessResponse("获取成功")
+  @Parameter(
+    name = SecurityConstants.HEADER_TENANT_ID,
+    description = "租户id",
+    required = true,
+    in = ParameterIn.HEADER,
+    schema = @Schema(type = "string"))
+  public WofGetWorkflowRes getWorkflow(
+    @Schema(description = "作业流唯一id", example = "sy_ba1f12b5c8154f999a02a5be2373a438")
+    @RequestParam
+    String workflowId) {
+
+    return workflowBizService.getWorkflow(workflowId);
   }
 }
