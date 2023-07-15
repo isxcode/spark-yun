@@ -193,7 +193,8 @@ function showDetail(data: any) {
   router.push({
     name: 'workflow-page',
     query: {
-      id: data.id
+      id: data.id,
+      name: data.name
     }
   })
 }
