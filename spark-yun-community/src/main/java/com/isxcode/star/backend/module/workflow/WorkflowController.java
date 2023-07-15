@@ -138,15 +138,15 @@ public class WorkflowController {
   @GetMapping("/getWorkflow")
   @SuccessResponse("获取成功")
   @Parameter(
-    name = SecurityConstants.HEADER_TENANT_ID,
-    description = "租户id",
-    required = true,
-    in = ParameterIn.HEADER,
-    schema = @Schema(type = "string"))
+      name = SecurityConstants.HEADER_TENANT_ID,
+      description = "租户id",
+      required = true,
+      in = ParameterIn.HEADER,
+      schema = @Schema(type = "string"))
   public WofGetWorkflowRes getWorkflow(
-    @Schema(description = "作业流唯一id", example = "sy_ba1f12b5c8154f999a02a5be2373a438")
-    @RequestParam
-    String workflowId) {
+      @Schema(description = "作业流唯一id", example = "sy_ba1f12b5c8154f999a02a5be2373a438")
+          @RequestParam
+          String workflowId) {
 
     return workflowBizService.getWorkflow(workflowId);
   }
