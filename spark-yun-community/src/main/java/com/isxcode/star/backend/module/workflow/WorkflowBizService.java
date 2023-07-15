@@ -19,7 +19,6 @@ import com.isxcode.star.api.pojos.workflow.res.WofQueryRunWorkInstancesRes;
 import com.isxcode.star.api.pojos.workflow.res.WofQueryWorkflowRes;
 import com.isxcode.star.backend.module.work.instance.WorkInstanceEntity;
 import com.isxcode.star.backend.module.work.instance.WorkInstanceRepository;
-import com.isxcode.star.backend.module.workflow.config.WorkflowConfigBizService;
 import com.isxcode.star.backend.module.workflow.config.WorkflowConfigEntity;
 import com.isxcode.star.backend.module.workflow.config.WorkflowConfigRepository;
 import com.isxcode.star.backend.module.workflow.instance.WorkflowInstanceEntity;
@@ -195,7 +194,7 @@ public class WorkflowBizService {
     WorkflowEntity workflow = getWorkflowEntity(workflowId);
 
     WorkflowConfigEntity workflowConfig =
-      workflowConfigRepository.findById(workflow.getConfigId()).get();
+        workflowConfigRepository.findById(workflow.getConfigId()).get();
 
     WofGetWorkflowRes wofGetWorkflowRes = new WofGetWorkflowRes();
     wofGetWorkflowRes.setWebConfig(workflowConfig.getWebConfig());
