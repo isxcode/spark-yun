@@ -69,6 +69,7 @@ p {
     width: 100%;
     word-break: break-all;
     white-space: pre-wrap;
+    padding-left: 8px;
 }
 
 .el-icon-add {
