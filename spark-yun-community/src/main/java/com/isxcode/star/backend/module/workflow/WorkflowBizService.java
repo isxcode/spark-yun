@@ -52,8 +52,6 @@ public class WorkflowBizService {
 
   private final WorkInstanceRepository workInstanceRepository;
 
-  private final WorkflowConfigBizService workflowConfigBizService;
-
   public WorkflowEntity getWorkflowEntity(String workflowId) {
 
     Optional<WorkflowEntity> workflowEntityOptional = workflowRepository.findById(workflowId);
@@ -196,7 +194,8 @@ public class WorkflowBizService {
 
     WorkflowEntity workflow = getWorkflowEntity(workflowId);
 
-    WorkflowConfigEntity workflowConfig = workflowConfigBizService.getWorkflowConfig(workflow.getConfigId());
+    WorkflowConfigEntity workflowConfig =
+      workflowConfigRepository.findById(workflow.getConfigId()).get();
 
     WofGetWorkflowRes wofGetWorkflowRes = new WofGetWorkflowRes();
     wofGetWorkflowRes.setWebConfig(workflowConfig.getWebConfig());
