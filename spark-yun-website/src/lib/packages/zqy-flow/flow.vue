@@ -249,7 +249,6 @@ const initGraph = () => {
 
 // 添加节点
 function addNodeFn(item: any) {
-    debugger
     _Graph.addNode(_Graph.createNode({
         "id": item.id,
         "shape": "dag-node",
