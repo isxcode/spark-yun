@@ -58,14 +58,16 @@
 <script lang="ts" setup>
 import { reactive, ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
+import { useState } from '@/hooks/useStore'
 import Breadcrumb from '@/layout/bread-crumb/index.vue'
 import ZqyFlow from '@/lib/packages/zqy-flow/flow.vue'
 import AddModal from './add-modal/index.vue'
 
-import { AddWorkflowDetailList, GetWorkflowDetailList, SaveWorkflowData, UpdateWorkflowDetailList } from '@/services/workflow.service'
+import { AddWorkflowDetailList, GetWorkflowData, GetWorkflowDetailList, SaveWorkflowData, UpdateWorkflowDetailList } from '@/services/workflow.service'
 import { ElMessage } from 'element-plus'
 
 const route = useRoute()
+const state = useState(['tenantId' ], 'authStoreModule')
 
 const searchParam = ref('')
 const workListItem = ref([])
@@ -130,6 +132,10 @@ function saveData() {
     console.log(JSON.stringify(data))
 }
 
+function runWorkFlowData() {
+    
+}
+
 // 添加作业
 function addData() {
     addModalRef.value.showModal((formData: FormData) => {
@@ -169,7 +175,16 @@ function editData(data: any) {
 
 function initFlowData() {
     const data = []
-    zqyFlowRef.value.initCellList(data)
+    // zqyFlowRef.value.initCellList(data)
+    GetWorkflowData({
+        workflowId: route.query.id,
+        Tenant: state.tenantId.value
+    }).then((res: any) => {
+        zqyFlowRef.value.initCellList(res.data.workInstances)
+        // ElMessage.success('保存成功')
+    }).catch(() => {
+
+    })
 }
 
 function inputEvent(e: string) {
@@ -180,6 +195,7 @@ function inputEvent(e: string) {
 
 onMounted(() => {
     initData()
+    initFlowData()
     workflowName.value = route.query.name
 })
 </script>
@@ -213,6 +229,7 @@ onMounted(() => {
 
         span {
             margin-right: 8px;
+            color: $--app-unclick-color;
             cursor: pointer;
 
             &:hover {
