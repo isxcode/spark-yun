@@ -174,3 +174,21 @@ export function SaveWorkflowData(params: any): Promise<any> {
     params: params
   })
 }
+
+// 获取配置的工作流程图信息
+export function GetWorkflowData(params: any): Promise<any> {
+  return http.request({
+    method: 'get',
+    url: '/wof/getWorkflow',
+    params: params
+  })
+}
+
+// 运行工作流
+export function RunWorkflowData(params: any): Promise<any> {
+  return http.request({
+    method: 'get',
+    url: '/wof/runFlow',
+    params: params
+  })
+}
