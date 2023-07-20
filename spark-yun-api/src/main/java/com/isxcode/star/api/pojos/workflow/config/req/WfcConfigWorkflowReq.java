@@ -12,5 +12,5 @@ public class WfcConfigWorkflowReq {
   private String workflowId;
 
   @Schema(title = "工作流配置信息", example = "123")
-  private String webConfig;
+  private Object webConfig;
 }
