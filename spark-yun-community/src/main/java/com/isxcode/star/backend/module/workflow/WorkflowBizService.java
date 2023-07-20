@@ -197,7 +197,7 @@ public class WorkflowBizService {
         workflowConfigRepository.findById(workflow.getConfigId()).get();
 
     WofGetWorkflowRes wofGetWorkflowRes = new WofGetWorkflowRes();
-    wofGetWorkflowRes.setWebConfig(workflowConfig.getWebConfig());
+    wofGetWorkflowRes.setWebConfig(JSON.parse(workflowConfig.getWebConfig()));
 
     return wofGetWorkflowRes;
   }
