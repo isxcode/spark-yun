@@ -41,12 +41,14 @@ public class WorkflowConfigBizService {
   /** 配置工作流. */
   public void configWorkflow(WfcConfigWorkflowReq wfcConfigWorkflowReq) {
 
+    String flowWebConfig = JSON.toJSONString(wfcConfigWorkflowReq.getWebConfig());
+
     // 获取工作流
     WorkflowEntity workflow =
         workflowBizService.getWorkflowEntity(wfcConfigWorkflowReq.getWorkflowId());
 
     // 从webConfig中解析出所有节点
-    List<String> nodeList = WorkflowUtils.parseNodeList(wfcConfigWorkflowReq.getWebConfig());
+    List<String> nodeList = WorkflowUtils.parseNodeList(flowWebConfig);
 
     // 保存时检测作业是否存在，有bug，后面改
     List<WorkEntity> works = workRepository.findAllByWorkIds(nodeList);
@@ -56,7 +58,7 @@ public class WorkflowConfigBizService {
 
     // 从webConfig中解析出所有节点映射
     List<List<String>> nodeMapping =
-        WorkflowUtils.parseNodeMapping(wfcConfigWorkflowReq.getWebConfig());
+        WorkflowUtils.parseNodeMapping(flowWebConfig);
 
     // 检查节点是否闭环
     WorkflowUtils.checkFlow(nodeList, nodeMapping);
@@ -71,7 +73,7 @@ public class WorkflowConfigBizService {
     WorkflowConfigEntity workflowConfig = getWorkflowConfig(workflow.getConfigId());
 
     // 封装工作流配置
-    workflowConfig.setWebConfig(wfcConfigWorkflowReq.getWebConfig());
+    workflowConfig.setWebConfig(flowWebConfig);
     workflowConfig.setDagEndList(JSON.toJSONString(endNodes));
     workflowConfig.setDagStartList(JSON.toJSONString(startNodes));
     workflowConfig.setNodeList(JSON.toJSONString(nodeList));
