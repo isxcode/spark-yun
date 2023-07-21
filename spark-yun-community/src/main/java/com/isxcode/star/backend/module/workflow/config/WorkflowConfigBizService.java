@@ -57,8 +57,7 @@ public class WorkflowConfigBizService {
     }
 
     // 从webConfig中解析出所有节点映射
-    List<List<String>> nodeMapping =
-        WorkflowUtils.parseNodeMapping(flowWebConfig);
+    List<List<String>> nodeMapping = WorkflowUtils.parseNodeMapping(flowWebConfig);
 
     // 检查节点是否闭环
     WorkflowUtils.checkFlow(nodeList, nodeMapping);
