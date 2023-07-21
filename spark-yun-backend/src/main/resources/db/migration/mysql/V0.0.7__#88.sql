@@ -56,6 +56,7 @@ create table SY_WORKFLOW_VERSION
 (
   id                      varchar(200)  not null comment '工作流版本唯一id'
     primary key,
+  name                    varchar(200)  not null comment '作业流版本名称',
   workflow_id             varchar(200)  not null comment '作业流id',
   workflow_type           varchar(200)  null comment '作业类型',
   node_mapping            text          null comment '节点映射',
