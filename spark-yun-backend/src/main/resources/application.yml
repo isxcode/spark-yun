@@ -3,10 +3,18 @@ server:
   tomcat:
     connection-timeout: 120s
 
+application:
+    title: 至轻云
+    website: https://zhiqingyun.isxcode.com
+    describe: 打造超轻量级批处理大数据平台
+
 spring:
 
   profiles:
     active: local
+
+  banner:
+    location: classpath:banner/logo.txt
 
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
