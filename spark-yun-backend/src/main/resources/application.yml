@@ -98,3 +98,4 @@ spark-yun:
     - /tenant-list
     - /license
     - /schedule
+    - /workflow-page
