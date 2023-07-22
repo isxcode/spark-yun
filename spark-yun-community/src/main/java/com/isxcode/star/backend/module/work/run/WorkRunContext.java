@@ -22,6 +22,8 @@ public class WorkRunContext {
 
   private String workId;
 
+  private String workName;
+
   private String workType;
 
   private String versionId;
