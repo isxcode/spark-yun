@@ -10,6 +10,5 @@ ${AnsiColor.GREEN}
 项目: ${application.title}
 官网: ${application.website}
 描述: ${application.describe}
-spring boot version: ${spring-boot.formatted-version}
 
 ${AnsiColor.WHITE}
