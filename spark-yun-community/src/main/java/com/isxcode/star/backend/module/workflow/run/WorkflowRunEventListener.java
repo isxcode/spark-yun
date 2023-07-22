@@ -182,7 +182,7 @@ public class WorkflowRunEventListener {
             workflowInstanceRepository.getWorkflowLog(event.getFlowInstanceId())
                 + "\n"
                 + LocalDateTime.now()
-                + WorkLog.ERROR_INFO
+                + (flowIsError ? WorkLog.ERROR_INFO : WorkLog.SUCCESS_INFO)
                 + (flowIsError ? "运行失败" : "运行成功"));
         workflowInstance.setExecEndDateTime(new Date());
         workflowInstanceRepository.saveAndFlush(workflowInstance);
