@@ -18,6 +18,7 @@ import com.isxcode.star.backend.module.cluster.node.ClusterNodeEntity;
 import com.isxcode.star.backend.module.cluster.node.ClusterNodeRepository;
 import com.isxcode.star.backend.module.work.instance.WorkInstanceEntity;
 import com.isxcode.star.backend.module.work.instance.WorkInstanceRepository;
+import com.isxcode.star.backend.module.workflow.instance.WorkflowInstanceRepository;
 import com.isxcode.star.common.utils.HttpUtils;
 import java.io.File;
 import java.io.IOException;
@@ -41,9 +42,10 @@ public class SparkSqlExecutor extends WorkExecutor {
   public SparkSqlExecutor(
       WorkInstanceRepository workInstanceRepository,
       ClusterRepository clusterRepository,
-      ClusterNodeRepository clusterNodeRepository) {
+      ClusterNodeRepository clusterNodeRepository,
+      WorkflowInstanceRepository workflowInstanceRepository) {
 
-    super(workInstanceRepository);
+    super(workInstanceRepository, workflowInstanceRepository);
     this.workInstanceRepository = workInstanceRepository;
     this.clusterRepository = clusterRepository;
     this.clusterNodeRepository = clusterNodeRepository;

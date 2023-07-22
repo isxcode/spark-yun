@@ -8,10 +8,13 @@ import com.isxcode.star.api.constants.work.instance.InstanceStatus;
 import com.isxcode.star.api.exceptions.WorkRunException;
 import com.isxcode.star.backend.module.work.instance.WorkInstanceEntity;
 import com.isxcode.star.backend.module.work.instance.WorkInstanceRepository;
+import com.isxcode.star.backend.module.workflow.instance.WorkflowInstanceEntity;
+import com.isxcode.star.backend.module.workflow.instance.WorkflowInstanceRepository;
 import java.time.LocalDateTime;
 import java.util.Date;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.scheduling.annotation.Async;
 
 /** 作业执行器. */
@@ -20,6 +23,8 @@ import org.springframework.scheduling.annotation.Async;
 public abstract class WorkExecutor {
 
   private final WorkInstanceRepository workInstanceRepository;
+
+  private final WorkflowInstanceRepository workflowInstanceRepository;
 
   protected abstract void execute(WorkRunContext workRunContext, WorkInstanceEntity workInstance);
 
@@ -76,6 +81,23 @@ public abstract class WorkExecutor {
       logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("执行成功 \n");
       workInstance.setSubmitLog(logBuilder.toString());
       workInstanceRepository.save(workInstance);
+
+      // 修改工作流日志
+      if (!Strings.isEmpty(workInstance.getWorkflowInstanceId())) {
+        WorkflowInstanceEntity workflowInstance =
+            workflowInstanceRepository.findById(workInstance.getWorkflowInstanceId()).get();
+        String runLog =
+            workflowInstanceRepository.getWorkflowLog(workflowInstance.getId())
+                + "\n"
+                + LocalDateTime.now()
+                + WorkLog.SUCCESS_INFO
+                + "作业: 【"
+                + workRunContext.getWorkName()
+                + "】运行成功";
+        workflowInstance.setRunLog(runLog);
+        workflowInstanceRepository.setWorkflowLog(workflowInstance.getId(), runLog);
+      }
+
     } catch (WorkRunException e) {
 
       // 打印异常
@@ -91,6 +113,22 @@ public abstract class WorkExecutor {
       logBuilder.append(LocalDateTime.now()).append(WorkLog.ERROR_INFO).append("执行失败 \n");
       workInstance.setSubmitLog(logBuilder.toString());
       workInstanceRepository.save(workInstance);
+
+      // 修改工作流日志
+      if (!Strings.isEmpty(workInstance.getWorkflowInstanceId())) {
+        WorkflowInstanceEntity workflowInstance =
+            workflowInstanceRepository.findById(workInstance.getWorkflowInstanceId()).get();
+        String runLog =
+            workflowInstanceRepository.getWorkflowLog(workflowInstance.getId())
+                + "\n"
+                + LocalDateTime.now()
+                + WorkLog.SUCCESS_INFO
+                + "作业: 【"
+                + workRunContext.getWorkName()
+                + "】运行失败";
+        workflowInstance.setRunLog(runLog);
+        workflowInstanceRepository.setWorkflowLog(workflowInstance.getId(), runLog);
+      }
     }
   }
 }

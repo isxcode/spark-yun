@@ -3,6 +3,7 @@ package com.isxcode.star.backend.module.workflow.run;
 import static com.isxcode.star.backend.config.WebSecurityConfig.TENANT_ID;
 import static com.isxcode.star.backend.config.WebSecurityConfig.USER_ID;
 
+import com.isxcode.star.api.constants.work.WorkLog;
 import com.isxcode.star.api.constants.work.instance.InstanceStatus;
 import com.isxcode.star.backend.module.work.WorkBizService;
 import com.isxcode.star.backend.module.work.WorkEntity;
@@ -18,6 +19,7 @@ import com.isxcode.star.backend.module.work.version.VipWorkVersionEntity;
 import com.isxcode.star.backend.module.work.version.VipWorkVersionRepository;
 import com.isxcode.star.backend.module.workflow.instance.WorkflowInstanceEntity;
 import com.isxcode.star.backend.module.workflow.instance.WorkflowInstanceRepository;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -113,6 +115,27 @@ public class WorkflowRunEventListener {
             event.getWorkId(), event.getFlowInstanceId());
     if (InstanceStatus.RUNNING.equals(workInstance.getStatus())) {
 
+      // 作业开始执行，添加作业流实例日志
+      synchronized (event.getFlowInstanceId()) {
+        WorkflowInstanceEntity workflowInstance =
+            workflowInstanceRepository.findById(event.getFlowInstanceId()).get();
+
+        // 保存到缓存中
+        String runLog =
+            workflowInstanceRepository.getWorkflowLog(event.getFlowInstanceId())
+                + "\n"
+                + LocalDateTime.now()
+                + WorkLog.SUCCESS_INFO
+                + "作业: 【"
+                + event.getWorkName()
+                + "】开始执行";
+        workflowInstanceRepository.setWorkflowLog(event.getFlowInstanceId(), runLog);
+
+        // 更新工作流实例日志
+        workflowInstance.setRunLog(runLog);
+        workflowInstanceRepository.saveAndFlush(workflowInstance);
+      }
+
       // 封装workRunContext
       WorkRunContext workRunContext;
       if (Strings.isEmpty(event.getVersionId())) {
@@ -155,24 +178,32 @@ public class WorkflowRunEventListener {
         WorkflowInstanceEntity workflowInstance =
             workflowInstanceRepository.findById(event.getFlowInstanceId()).get();
         workflowInstance.setStatus(flowIsError ? InstanceStatus.FAIL : InstanceStatus.SUCCESS);
+        workflowInstance.setRunLog(
+            workflowInstanceRepository.getWorkflowLog(event.getFlowInstanceId())
+                + "\n"
+                + LocalDateTime.now()
+                + WorkLog.ERROR_INFO
+                + (flowIsError ? "运行失败" : "运行成功"));
         workflowInstance.setExecEndDateTime(new Date());
         workflowInstanceRepository.saveAndFlush(workflowInstance);
+
+        // 清除缓存中的作业流日志
+        workflowInstanceRepository.deleteWorkflowLog(event.getFlowInstanceId());
         return;
       }
     }
 
     // 工作流没有执行完，解析推送子节点
     List<String> sonNodes = WorkflowUtils.getSonNodes(event.getNodeMapping(), event.getWorkId());
-    sonNodes.forEach(
-        workId -> {
-          if (!Strings.isEmpty(workId)) {
-            WorkflowRunEvent metaEvent = new WorkflowRunEvent(workId, event);
-            WorkInstanceEntity sonWorkInstance =
-                workInstanceRepository.findByWorkIdAndWorkflowInstanceId(
-                    workId, event.getFlowInstanceId());
-            metaEvent.setVersionId(sonWorkInstance.getVersionId());
-            eventPublisher.publishEvent(metaEvent);
-          }
+    List<WorkEntity> sonNodeWorks = workRepository.findAllByWorkIds(sonNodes);
+    sonNodeWorks.forEach(
+        work -> {
+          WorkflowRunEvent metaEvent = new WorkflowRunEvent(work.getId(), work.getName(), event);
+          WorkInstanceEntity sonWorkInstance =
+              workInstanceRepository.findByWorkIdAndWorkflowInstanceId(
+                  work.getId(), event.getFlowInstanceId());
+          metaEvent.setVersionId(sonWorkInstance.getVersionId());
+          eventPublisher.publishEvent(metaEvent);
         });
   }
 }

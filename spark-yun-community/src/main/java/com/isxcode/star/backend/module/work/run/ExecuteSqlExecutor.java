@@ -7,6 +7,7 @@ import com.isxcode.star.backend.module.datasource.DatasourceEntity;
 import com.isxcode.star.backend.module.datasource.DatasourceRepository;
 import com.isxcode.star.backend.module.work.instance.WorkInstanceEntity;
 import com.isxcode.star.backend.module.work.instance.WorkInstanceRepository;
+import com.isxcode.star.backend.module.workflow.instance.WorkflowInstanceRepository;
 import java.sql.Connection;
 import java.sql.Statement;
 import java.time.LocalDateTime;
@@ -29,9 +30,10 @@ public class ExecuteSqlExecutor extends WorkExecutor {
   public ExecuteSqlExecutor(
       WorkInstanceRepository workInstanceRepository,
       DatasourceRepository datasourceRepository,
-      DatasourceBizService datasourceBizService) {
+      DatasourceBizService datasourceBizService,
+      WorkflowInstanceRepository workflowInstanceRepository) {
 
-    super(workInstanceRepository);
+    super(workInstanceRepository, workflowInstanceRepository);
     this.datasourceRepository = datasourceRepository;
     this.datasourceBizService = datasourceBizService;
   }

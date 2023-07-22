@@ -14,6 +14,8 @@ public class WorkflowRunEvent {
 
   private String workId;
 
+  private String workName;
+
   private String versionId;
 
   private List<List<String>> nodeMapping;
@@ -28,9 +30,10 @@ public class WorkflowRunEvent {
 
   private String tenantId;
 
-  public WorkflowRunEvent(String workId, WorkflowRunEvent workRunEvent) {
+  public WorkflowRunEvent(String workId, String workName, WorkflowRunEvent workRunEvent) {
 
     this.workId = workId;
+    this.workName = workName;
     this.flowInstanceId = workRunEvent.getFlowInstanceId();
     this.nodeMapping = workRunEvent.getNodeMapping();
     this.nodeList = workRunEvent.getNodeList();
