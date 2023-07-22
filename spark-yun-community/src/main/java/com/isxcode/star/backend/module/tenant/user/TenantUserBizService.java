@@ -52,6 +52,11 @@ public class TenantUserBizService {
       throw new SparkYunException("该成员已经是项目成员");
     }
 
+    // 如果租户id为空
+    if (Strings.isEmpty(TENANT_ID.get())) {
+      throw new SparkYunException("请指定租户id");
+    }
+
     // 初始化租户用户
     TenantUserEntity tenantUserEntity =
         TenantUserEntity.builder()
