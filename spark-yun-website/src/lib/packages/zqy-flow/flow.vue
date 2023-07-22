@@ -269,7 +269,7 @@ function addNodeFn(item: any) {
             }
         ]
     }))
-    _Graph.resetCells()
+    // _Graph.resetCells()
 }
 
 // 获取所有节点以及连线的数据
@@ -279,7 +279,9 @@ function getAllCellData() {
 
 // 根据给定的数据结构渲染流程图
 function initCellList(data: any) {
-    _Graph.fromJSON(data)
+    if (data) {
+        _Graph.fromJSON(data)
+    }
 }
 
 const getTreeObjFn = (tree: any, id: String) => {

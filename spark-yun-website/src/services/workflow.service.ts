@@ -192,3 +192,12 @@ export function RunWorkflowData(params: any): Promise<any> {
     params: params
   })
 }
+
+// 查询作业流实例接口
+export function QueryRunWorkInstances(params: any): Promise<any> {
+  return http.request({
+    method: 'get',
+    url: '/wof/queryRunWorkInstances',
+    params: params
+  })
+}
