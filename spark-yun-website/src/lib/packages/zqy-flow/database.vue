@@ -19,7 +19,8 @@ export default {
     inject: ['getGraph', 'getNode'],
     data() {
         return {
-            status: 'logo',
+            // success running failed
+            status: 'success',
             name: '',
             node: '',
             text: 11
@@ -35,6 +36,7 @@ export default {
         this.node = Node = this.getNode()
 
         this.name = Node.data.name
+        console.log('Node.data', Node.data)
         // 监听数据改变事件
         this.node.on('change:data', ({ current }) => {
             self.name = current.name
@@ -90,14 +92,14 @@ p {
     color: #ffffff;
 }
 
-.node img {
+.zqy-flow-node img {
     width: 20px;
     height: 20px;
     flex-shrink: 0;
     margin-left: 8px;
 }
 
-.node .label {
+.zqy-flow-node .label {
     display: inline-block;
     flex-shrink: 0;
     width: 104px;
@@ -106,23 +108,23 @@ p {
     font-size: 12px;
 }
 
-.node .status {
+.zqy-flow-node .status {
     flex-shrink: 0;
 }
 
-.node.success {
+.zqy-flow-node.success {
     border-left: 4px solid #52c41a;
 }
 
-.node.failed {
+.zqy-flow-node.failed {
     border-left: 4px solid #ff4d4f;
 }
 
-.node.running .status img {
+.zqy-flow-node.running .status img {
     animation: spin 1s linear infinite;
 }
 
-.x6-node-selected .node {
+.x6-node-selected .zqy-flow-node {
     border-color: #1890ff;
     border-radius: 2px;
     box-shadow: 0 0 0 4px #d4e8fe;
