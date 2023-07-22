@@ -177,6 +177,7 @@ public class WorkBizService {
         .clusterId(workConfig.getClusterId())
         .workType(work.getWorkType())
         .workId(work.getId())
+        .workName(work.getName())
         .sparkConfig(
             JSON.parseObject(
                 workConfig.getSparkConfig(), new TypeReference<Map<String, String>>() {}.getType()))

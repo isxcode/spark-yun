@@ -11,5 +11,7 @@ public class WofQueryRunWorkInstancesRes {
 
   private String flowStatus;
 
+  private String flowRunLog;
+
   private List<WorkInstanceInfo> workInstances;
 }

@@ -11,7 +11,7 @@ create table SY_WORKFLOW_CONFIG
 (
   id                      varchar(200)  not null comment '作业流配置唯一id'
     primary key,
-  web_config              varchar(2000) null comment '前端配置',
+  web_config              text          null comment '前端配置',
   node_mapping            varchar(2000) null comment '节点映射关系',
   node_list               varchar(2000) null comment '节点列表',
   dag_start_list          varchar(2000) null comment 'DAG开始节点列表',
@@ -37,6 +37,7 @@ create table SY_WORKFLOW_INSTANCE
   flow_id                 varchar(200)  null comment '作业流id',
   instance_type           varchar(200)  null comment '实例类型',
   status                  varchar(200)  null comment '实例状态',
+  run_log                 text          null comment '作业流运行日志',
   plan_start_date_time    datetime      null comment '计划开始时间',
   next_plan_date_time     datetime      null comment '下一次开始时间',
   exec_start_date_time    datetime      null comment '执行开始时间',

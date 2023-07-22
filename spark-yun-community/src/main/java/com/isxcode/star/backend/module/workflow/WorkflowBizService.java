@@ -5,6 +5,7 @@ import static com.isxcode.star.backend.config.WebSecurityConfig.USER_ID;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
+import com.isxcode.star.api.constants.work.WorkLog;
 import com.isxcode.star.api.constants.work.instance.InstanceStatus;
 import com.isxcode.star.api.constants.work.instance.InstanceType;
 import com.isxcode.star.api.constants.workflow.WorkflowStatus;
@@ -17,6 +18,8 @@ import com.isxcode.star.api.pojos.workflow.req.WofUpdateWorkflowReq;
 import com.isxcode.star.api.pojos.workflow.res.WofGetWorkflowRes;
 import com.isxcode.star.api.pojos.workflow.res.WofQueryRunWorkInstancesRes;
 import com.isxcode.star.api.pojos.workflow.res.WofQueryWorkflowRes;
+import com.isxcode.star.backend.module.work.WorkEntity;
+import com.isxcode.star.backend.module.work.WorkRepository;
 import com.isxcode.star.backend.module.work.instance.WorkInstanceEntity;
 import com.isxcode.star.backend.module.work.instance.WorkInstanceRepository;
 import com.isxcode.star.backend.module.workflow.config.WorkflowConfigEntity;
@@ -24,6 +27,7 @@ import com.isxcode.star.backend.module.workflow.config.WorkflowConfigRepository;
 import com.isxcode.star.backend.module.workflow.instance.WorkflowInstanceEntity;
 import com.isxcode.star.backend.module.workflow.instance.WorkflowInstanceRepository;
 import com.isxcode.star.backend.module.workflow.run.WorkflowRunEvent;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -50,6 +54,8 @@ public class WorkflowBizService {
   private final WorkflowInstanceRepository workflowInstanceRepository;
 
   private final WorkInstanceRepository workInstanceRepository;
+
+  private final WorkRepository workRepository;
 
   public WorkflowEntity getWorkflowEntity(String workflowId) {
 
@@ -113,6 +119,9 @@ public class WorkflowBizService {
     WorkflowConfigEntity workflowConfig =
         workflowConfigRepository.findById(workflow.getConfigId()).get();
 
+    // 初始化作业流日志
+    String runLog = LocalDateTime.now() + WorkLog.SUCCESS_INFO + "开始执行";
+
     // 创建工作流实例
     WorkflowInstanceEntity workflowInstance =
         WorkflowInstanceEntity.builder()
@@ -120,8 +129,11 @@ public class WorkflowBizService {
             .status(FlowInstanceStatus.RUNNING)
             .instanceType(InstanceType.MANUAL)
             .execStartDateTime(new Date())
+            .runLog(runLog)
             .build();
     workflowInstance = workflowInstanceRepository.saveAndFlush(workflowInstance);
+
+    workflowInstanceRepository.setWorkflowLog(workflowInstance.getId(), runLog);
 
     // 初始化所有节点的作业实例
     List<String> nodeList = JSON.parseArray(workflowConfig.getNodeList(), String.class);
@@ -148,10 +160,12 @@ public class WorkflowBizService {
 
     // 封装event推送时间，开始执行任务
     // 异步触发工作流
-    for (String workId : startNodes) {
+    List<WorkEntity> startNodeWorks = workRepository.findAllByWorkIds(startNodes);
+    for (WorkEntity work : startNodeWorks) {
       WorkflowRunEvent metaEvent =
           WorkflowRunEvent.builder()
-              .workId(workId)
+              .workId(work.getId())
+              .workName(work.getName())
               .dagEndList(endNodes)
               .dagStartList(startNodes)
               .flowInstanceId(workflowInstance.getId())
@@ -185,6 +199,7 @@ public class WorkflowBizService {
     // 封装返回对象
     return WofQueryRunWorkInstancesRes.builder()
         .flowStatus(workflowInstance.getStatus())
+        .flowRunLog(workflowInstance.getRunLog())
         .workInstances(instanceInfos)
         .build();
   }
