@@ -5,7 +5,7 @@
             {{ workflowName }}
         </div>
         <div class="option-btns">
-            <span>运行</span>
+            <span @click="runWorkFlowData">运行</span>
             <span @click="saveData">保存</span>
             <span>中止</span>
             <span>配置</span>
@@ -63,7 +63,7 @@ import Breadcrumb from '@/layout/bread-crumb/index.vue'
 import ZqyFlow from '@/lib/packages/zqy-flow/flow.vue'
 import AddModal from './add-modal/index.vue'
 
-import { AddWorkflowDetailList, GetWorkflowData, GetWorkflowDetailList, SaveWorkflowData, UpdateWorkflowDetailList } from '@/services/workflow.service'
+import { AddWorkflowDetailList, GetWorkflowData, GetWorkflowDetailList, QueryRunWorkInstances, RunWorkflowData, SaveWorkflowData, UpdateWorkflowDetailList } from '@/services/workflow.service'
 import { ElMessage } from 'element-plus'
 
 const route = useRoute()
@@ -74,6 +74,8 @@ const workListItem = ref([])
 const zqyFlowRef = ref(null)
 const workflowName = ref('')
 const addModalRef = ref(null)
+const workflowInstanceId = ref('')
+const timer = ref()
 
 const breadCrumbList = reactive([
     {
@@ -108,9 +110,11 @@ function handleDragEnd(e, item) {
 // 保存数据
 function saveData() {
     const data = zqyFlowRef.value.getAllCellData()
+    console.log('data', data)
     SaveWorkflowData({
         workflowId: route.query.id,
-        webConfig: JSON.stringify(data.map((item: any) => {
+        webConfig: data.map((node: any) => {
+            const item = node.store.data
             if (item.shape === 'dag-node') {
                 return {
                     position: item.position,
@@ -123,7 +127,7 @@ function saveData() {
             } else {
                 return item
             }
-        }))
+        })
     }).then((res: any) => {
         ElMessage.success('保存成功')
     }).catch(() => {
@@ -132,9 +136,43 @@ function saveData() {
     console.log(JSON.stringify(data))
 }
 
+// 运行作业流
 function runWorkFlowData() {
-    
+    RunWorkflowData({
+        workflowId: route.query.id,
+        Tenant: state.tenantId.value
+    }).then((res: any) => {
+        workflowInstanceId.value = res.data
+        ElMessage.success(res.msg)
+        queryRunWorkInstances()
+        if (!timer.value) {
+            timer.value = setInterval(() => {
+                queryRunWorkInstances()
+            }, 2000)
+        }
+    }).catch(() => {
+
+    })
 }
+
+// 运行作业流后获取节点运行状态
+function queryRunWorkInstances() {
+    if (workflowInstanceId.value) {
+        QueryRunWorkInstances({
+            workflowInstanceId: workflowInstanceId.value,
+            Tenant: state.tenantId.value
+        }).then((res: any) => {
+            if (res.data.flowStatus === 'SUCCESS') {
+                clearInterval(timer.value)
+                timer.value = null
+            }
+            zqyFlowRef.value.updateFlowStatus(res.data.workInstances)
+        }).catch(() => {
+    
+        })
+    }
+}
+
 
 // 添加作业
 function addData() {
@@ -180,8 +218,7 @@ function initFlowData() {
         workflowId: route.query.id,
         Tenant: state.tenantId.value
     }).then((res: any) => {
-        zqyFlowRef.value.initCellList(res.data.workInstances)
-        // ElMessage.success('保存成功')
+        zqyFlowRef.value.initCellList(res.data.webConfig)
     }).catch(() => {
 
     })
