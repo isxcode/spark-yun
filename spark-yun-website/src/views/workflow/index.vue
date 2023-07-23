@@ -87,6 +87,7 @@ import Breadcrumb from '@/layout/bread-crumb/index.vue'
 import BlockTable from '@/components/block-table/index.vue'
 import LoadingPage from '@/components/loading/index.vue'
 import AddModal from './add-modal/index.vue'
+import { useState } from '@/hooks/useStore'
 
 import { BreadCrumbList, TableConfig, FormData } from './workflow.config'
 import { GetWorkflowList, AddWorkflowData, UpdateWorkflowData, DeleteWorkflowData } from '@/services/workflow.service'
@@ -94,6 +95,8 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
+const state = useState(['tenantId' ], 'authStoreModule')
+
 const breadCrumbList = reactive(BreadCrumbList)
 const tableConfig: any = reactive(TableConfig)
 const keyword = ref('')
@@ -179,7 +182,8 @@ function deleteData(data: any) {
     type: 'warning'
   }).then(() => {
     DeleteWorkflowData({
-      datasourceId: data.id
+      workflowId: data.id,
+      Tenant: state.tenantId.value
     })
       .then((res: any) => {
         ElMessage.success(res.msg)
