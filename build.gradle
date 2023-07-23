@@ -118,6 +118,13 @@ tasks.register('docs', Exec) {
   commandLine 'bash', '-c', 'npm i docsify-cli -g && docsify serve docs'
 }
 
+// 自定义命令：项目代码格式化
+// gradle format
+tasks.register('format', GradleBuild) {
+
+  tasks = [":spotlessApply", ":checkstyleMain"]
+}
+
 // spotless
 spotless {
   java {
