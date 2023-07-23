@@ -10,10 +10,11 @@
   
 <script setup lang='ts'>
 import { nextTick, onMounted } from 'vue'
-import { Graph, Path } from '@antv/x6';
+import { Graph, Path } from '@antv/x6'
 import database from './database.vue'
 import Hierarchy from '@antv/hierarchy'
-import { $Bus } from "@/plugins/global";
+import { $Bus } from "@/plugins/global"
+import CustomNode from './custom-node.vue'
 
 let _Graph: any;
 
@@ -43,9 +44,9 @@ const initGraph = () => {
             width: 180,
             height: 36,
             component: {
-                template: `<database/>`,
+                template: `<CustomNode/>`,
                 components: {
-                    database
+                    CustomNode
                 }
             },
             ports: {

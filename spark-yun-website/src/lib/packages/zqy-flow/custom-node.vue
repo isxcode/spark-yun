@@ -1,57 +1,46 @@
 <template>
     <div class="zqy-flow-node " :class="status">
-        <div ref="content">
+        <div class="flow-node-container" ref="content">
             <p class="text">{{ name }}</p>
-            <!-- <span class="el-icon-add" @click="iconClick">+</span> -->
-            <el-icon class="option-more">
-                <MoreFilled />
-            </el-icon>
+            <el-dropdown trigger="click">
+                <el-icon class="node-option-more">
+                    <MoreFilled />
+                </el-icon>
+                <template #dropdown>
+                    <el-dropdown-menu>
+                        <el-dropdown-item>编辑</el-dropdown-item>
+                        <el-dropdown-item>删除</el-dropdown-item>
+                    </el-dropdown-menu>
+                </template>
+            </el-dropdown>
         </div>
     </div>
 </template>
-  
-<script>
 
-let Node = ''
+<script lang="ts" setup>
+import { inject, onMounted, ref } from 'vue'
+import { ElIcon, ElDropdown, ElDropdownMenu, ElDropdownItem } from 'element-plus'
+import { MoreFilled } from '@element-plus/icons-vue'
 
-import { $Bus } from '@/plugins/global.js'
+const getGraph = inject('getGraph')
+const getNode = inject('getNode')
 
-export default {
-    name: 'database',
+const name = ref('')
+const node = ref()
 
-    inject: ['getGraph', 'getNode'],
-    data() {
-        return {
-            // success running failed
-            status: 'success',
-            name: '',
-            node: '',
-            text: 11
-        }
-    },
-    methods: {
-        iconClick() {
-            // $Bus.$Bus.emit('nodeOpenConfig', this.node)
-        }
-    },
-    mounted() {
-        const self = this
-        this.node = Node = this.getNode()
+let Node
 
-        this.name = Node.data.name
-        console.log('Node.data', Node.data)
-        // 监听数据改变事件
-        this.node.on('change:data', ({ current }) => {
-            self.name = current.name
-            self.status = current.status
-        })
+onMounted(() => {
+    node.value = Node = getNode()
+    name.value = node.value.data.name
+    // node.value.on('change:data', ({ current }) => {
+    //     name.value = current.name
+    // })
+})
 
-
-    }
-}
 </script>
-<style>
 
+<style lang="scss">
 .zqy-flow-node {
     position: relative;
     display: flex;
@@ -64,6 +53,13 @@ export default {
     border-left: 4px solid #5F95FF;
     border-radius: 4px;
     box-shadow: 0 2px 5px 1px rgba(0, 0, 0, 0.06);
+
+    .flow-node-container {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+        padding-right: 8px;
+    }
 }
 p {
     margin: 0;
@@ -171,4 +167,3 @@ p {
     }
 }
 </style>
-  
