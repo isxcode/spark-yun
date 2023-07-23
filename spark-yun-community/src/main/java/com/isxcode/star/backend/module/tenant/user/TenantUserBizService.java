@@ -11,7 +11,6 @@ import com.isxcode.star.api.pojos.tenant.user.req.TurQueryTenantUserReq;
 import com.isxcode.star.api.pojos.tenant.user.res.TurQueryTenantUserRes;
 import com.isxcode.star.backend.module.user.UserEntity;
 import com.isxcode.star.backend.module.user.UserRepository;
-import java.util.Map;
 import java.util.Optional;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -84,13 +83,10 @@ public class TenantUserBizService {
 
   public Page<TurQueryTenantUserRes> queryTenantUser(TurQueryTenantUserReq turAddTenantUserReq) {
 
-    Page<Map> tenantUserEntities =
-        tenantUserRepository.searchTenantUser(
-            TENANT_ID.get(),
-            turAddTenantUserReq.getSearchKeyWord(),
-            PageRequest.of(turAddTenantUserReq.getPage(), turAddTenantUserReq.getPageSize()));
-
-    return tenantUserMapper.turTenantUserDtoToTurQueryTenantUserResPage(tenantUserEntities);
+    return tenantUserRepository.searchTenantUser(
+        TENANT_ID.get(),
+        turAddTenantUserReq.getSearchKeyWord(),
+        PageRequest.of(turAddTenantUserReq.getPage(), turAddTenantUserReq.getPageSize()));
   }
 
   public void removeTenantUser(String tenantUserId) {

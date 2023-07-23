@@ -1,7 +1,7 @@
 package com.isxcode.star.backend.module.tenant.user;
 
+import com.isxcode.star.api.pojos.tenant.user.res.TurQueryTenantUserRes;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.data.domain.Page;
@@ -21,14 +21,13 @@ public interface TenantUserRepository extends JpaRepository<TenantUserEntity, St
 
   @Query(
       value =
-          ""
-              + "select "
-              + "   T.id as id, "
-              + "   U.account as account, "
-              + "   U.username as username, "
-              + "   U.phone as phone, "
-              + "   U.email as email, "
-              + "   T.roleCode as roleCode "
+          "select "
+              + "   new com.isxcode.star.api.pojos.tenant.user.res.TurQueryTenantUserRes(T.id , "
+              + "   U.account , "
+              + "   U.username , "
+              + "   U.phone , "
+              + "   U.email , "
+              + "   T.roleCode) "
               + "from TenantUserEntity T left join UserEntity U on T.userId = U.id  "
               + "WHERE U.roleCode != 'ROLE_SYS_ADMIN' "
               + "   and T.tenantId=:tenantId "
@@ -36,7 +35,7 @@ public interface TenantUserRepository extends JpaRepository<TenantUserEntity, St
               + "OR U.account LIKE %:keyword% "
               + "OR U.phone LIKE %:keyword% "
               + "OR U.email LIKE %:keyword%) order by T.createDateTime desc ")
-  Page<Map> searchTenantUser(
+  Page<TurQueryTenantUserRes> searchTenantUser(
       @Param("tenantId") String tenantId,
       @Param("keyword") String searchKeyWord,
       Pageable pageable);
