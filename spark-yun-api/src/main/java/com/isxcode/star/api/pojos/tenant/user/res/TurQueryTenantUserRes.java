@@ -20,4 +20,14 @@ public class TurQueryTenantUserRes {
   private String phone;
 
   private String email;
+
+  public TurQueryTenantUserRes(
+      String id, String account, String username, String phone, String email, String roleCode) {
+    this.id = id;
+    this.username = username;
+    this.account = account;
+    this.roleCode = roleCode;
+    this.phone = phone;
+    this.email = email;
+  }
 }
