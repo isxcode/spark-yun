@@ -16,9 +16,7 @@ import com.isxcode.star.api.constants.work.instance.InstanceType;
 import com.isxcode.star.api.exceptions.SparkYunException;
 import com.isxcode.star.api.exceptions.WorkRunException;
 import com.isxcode.star.api.pojos.base.BaseResponse;
-import com.isxcode.star.api.pojos.work.req.WokAddWorkReq;
-import com.isxcode.star.api.pojos.work.req.WokQueryWorkReq;
-import com.isxcode.star.api.pojos.work.req.WokUpdateWorkReq;
+import com.isxcode.star.api.pojos.work.req.*;
 import com.isxcode.star.api.pojos.work.res.*;
 import com.isxcode.star.backend.module.cluster.ClusterEntity;
 import com.isxcode.star.backend.module.cluster.ClusterRepository;
@@ -38,20 +36,26 @@ import com.isxcode.star.backend.module.workflow.WorkflowRepository;
 import com.isxcode.star.backend.module.workflow.config.WorkflowConfigEntity;
 import com.isxcode.star.backend.module.workflow.config.WorkflowConfigRepository;
 import com.isxcode.star.common.utils.HttpUtils;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.*;
+import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
 @Slf4j
 public class WorkBizService {
 
@@ -75,6 +79,7 @@ public class WorkBizService {
 
   private final WorkflowRepository workflowRepository;
 
+  @Transactional
   public WorkEntity getWorkEntity(String workId) {
 
     Optional<WorkEntity> workEntityOptional = workRepository.findById(workId);
@@ -84,6 +89,7 @@ public class WorkBizService {
     return workEntityOptional.get();
   }
 
+  @Transactional
   public void addWork(WokAddWorkReq addWorkReq) {
 
     WorkEntity work = workMapper.addWorkReqToWorkEntity(addWorkReq);
@@ -102,6 +108,7 @@ public class WorkBizService {
     workRepository.save(work);
   }
 
+  @Transactional
   public void updateWork(WokUpdateWorkReq wokUpdateWorkReq) {
 
     Optional<WorkEntity> workEntityOptional = workRepository.findById(wokUpdateWorkReq.getId());
@@ -115,6 +122,7 @@ public class WorkBizService {
     workRepository.save(work);
   }
 
+  @Transactional
   public Page<WokQueryWorkRes> queryWork(WokQueryWorkReq wocQueryWorkReq) {
 
     Page<WorkEntity> workflowPage =
@@ -126,6 +134,7 @@ public class WorkBizService {
     return workMapper.workEntityListToQueryWorkResList(workflowPage);
   }
 
+  @Transactional
   public void delWork(String workId) {
 
     // 判断作业是否存在
@@ -158,6 +167,7 @@ public class WorkBizService {
     }
   }
 
+  @Transactional
   public WorkInstanceEntity genWorkInstance(String workId) {
 
     WorkInstanceEntity workInstanceEntity = new WorkInstanceEntity();
@@ -166,6 +176,7 @@ public class WorkBizService {
     return workInstanceRepository.saveAndFlush(workInstanceEntity);
   }
 
+  @Transactional
   public WorkRunContext genWorkRunContext(
       String instanceId, WorkEntity work, WorkConfigEntity workConfig) {
 
@@ -185,6 +196,7 @@ public class WorkBizService {
         .build();
   }
 
+  @Transactional
   public WorkRunContext genWorkRunContext(String instanceId, VipWorkVersionEntity workVersion) {
 
     return WorkRunContext.builder()
@@ -265,6 +277,7 @@ public class WorkBizService {
   }
 
   /** 中止作业. */
+  @Transactional
   public void stopJob(String instanceId) {
 
     // 通过实例 获取workId
@@ -432,5 +445,92 @@ public class WorkBizService {
         .log(workInstanceEntity.getSubmitLog())
         .status(workInstanceEntity.getStatus())
         .build();
+  }
+
+  public void renameWork(WokRenameWorkReq wokRenameWorkReq) {
+
+    WorkEntity workEntity = getWorkEntity(wokRenameWorkReq.getWorkId());
+
+    workEntity.setName(wokRenameWorkReq.getWorkName());
+
+    workRepository.save(workEntity);
+  }
+
+  public void copyWork(WokCopyWorkReq wokCopyWorkReq) {
+
+    // 获取作业信息
+    WorkEntity work = getWorkEntity(wokCopyWorkReq.getWorkId());
+
+    // 获取作业配置
+    WorkConfigEntity workConfig = workConfigBizService.getWorkConfigEntity(work.getConfigId());
+
+    // 初始化作业配置
+    workConfig.setId(null);
+    workConfig.setVersionNumber(null);
+    workConfig = workConfigRepository.save(workConfigRepository.save(workConfig));
+
+    // 初始化作业
+    work.setTopIndex(null);
+    work.setConfigId(workConfig.getId());
+    work.setName(wokCopyWorkReq.getWorkName());
+    work.setVersionNumber(null);
+    workRepository.save(work);
+  }
+
+  public void topWork(String workId) {
+
+    WorkEntity work = getWorkEntity(workId);
+
+    // 获取作业最大的
+    Integer maxTopIndex = workRepository.findWorkflowMaxTopIndex(work.getWorkflowId());
+
+    work.setTopIndex(maxTopIndex);
+    workRepository.save(work);
+  }
+
+  public void exportWork(String workId, HttpServletResponse response) throws IOException {
+
+    // 获取作业
+    WorkEntity work = getWorkEntity(workId);
+    work.setId(null);
+    work.setVersionNumber(null);
+    work.setVersionId(null);
+    work.setWorkflowId(null);
+
+    // 获取作业配置
+    WorkConfigEntity workConfig = workConfigBizService.getWorkConfigEntity(work.getConfigId());
+    workConfig.setId(null);
+    workConfig.setVersionNumber(null);
+
+    // 封装返回对象
+    WorkExportInfo exportInfo = WorkExportInfo.builder().workConfig(workConfig).work(work).build();
+
+    // 生成json并导出
+    PrintWriter out = response.getWriter();
+    response.setContentType("text/plain");
+    response.setCharacterEncoding("UTF-8");
+    response.setHeader(
+        HttpHeaders.CONTENT_DISPOSITION,
+        "attachment; filename="
+            + URLEncoder.encode(work.getName(), String.valueOf(StandardCharsets.UTF_8))
+            + ".json");
+    out.write(JSON.toJSONString(exportInfo));
+    out.flush();
+  }
+
+  public void importWork(MultipartFile workFile, String workflowId) throws IOException {
+
+    String exportWorkInfoStr = new String(workFile.getBytes(), StandardCharsets.UTF_8);
+    WorkExportInfo workExportInfo = JSON.parseObject(exportWorkInfoStr, WorkExportInfo.class);
+
+    // 保存作业配置
+    WorkConfigEntity workConfig = workExportInfo.getWorkConfig();
+    workConfig = workConfigRepository.save(workConfig);
+
+    // 保存作业
+    WorkEntity work = workExportInfo.getWork();
+    work.setWorkflowId(workflowId);
+    work.setConfigId(workConfig.getId());
+    workRepository.save(work);
   }
 }
