@@ -23,7 +23,7 @@ public interface WorkRepository extends JpaRepository<WorkEntity, String> {
           + "WHERE w.workflowId = :workflowId AND "
           + "(w.name LIKE %:keyword% "
           + "OR w.remark LIKE %:keyword% "
-          + "OR w.workType LIKE %:keyword%) order by w.createDateTime desc ")
+          + "OR w.workType LIKE %:keyword%) order by w.createDateTime desc,w.topIndex desc ")
   Page<WorkEntity> searchAllByWorkflowId(
       @Param("keyword") String searchKeyWord,
       @Param("workflowId") String workflowId,
@@ -31,4 +31,7 @@ public interface WorkRepository extends JpaRepository<WorkEntity, String> {
 
   @Query("select W from WorkEntity W where W.id in (:workIds)")
   List<WorkEntity> findAllByWorkIds(List<String> workIds);
+
+  @Query("select max(W.topIndex) from WorkEntity W where W.workflowId = :workflowId")
+  Integer findWorkflowMaxTopIndex(@Param("workflowId") String workflowId);
 }

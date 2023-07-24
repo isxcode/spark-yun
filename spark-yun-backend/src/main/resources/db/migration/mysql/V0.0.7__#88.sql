@@ -88,3 +88,24 @@ alter table SY_WORKFLOW
 -- 工作流添加工作流类型
 alter table SY_WORKFLOW
   add type varchar(200) null comment '工作流类型';
+
+-- 作业添加置顶标志
+alter table SY_WORK
+  add top_index int null comment '作业置顶标志';
+
+-- 工作流收藏表
+create table SY_WORKFLOW_FAVOUR
+(
+  id                      varchar(200)  not null comment '工作流收藏唯一id'
+    primary key,
+  workflow_id             varchar(200)  null comment '工作流唯一id',
+  user_id                 varchar(200)  null comment '用户id',
+  top_index               int           null comment 'top排序标志',
+  create_by               varchar(200)  not null comment '创建人',
+  create_date_time        datetime      not null comment '创建时间',
+  last_modified_by        varchar(200)  not null comment '更新人',
+  last_modified_date_time datetime      not null comment '更新时间',
+  version_number          int           not null comment '版本号',
+  deleted                 int default 0 not null comment '逻辑删除',
+  tenant_id               varchar(200)  not null comment '租户id'
+);
