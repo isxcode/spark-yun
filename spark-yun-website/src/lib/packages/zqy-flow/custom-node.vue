@@ -59,6 +59,13 @@ onMounted(() => {
         justify-content: space-between;
         width: 100%;
         padding-right: 8px;
+
+        .node-option-more {
+            font-size: 14px;
+            transform: rotate(90deg);
+            cursor: pointer;
+            color: $--app-info-color;
+        }
     }
 }
 p {

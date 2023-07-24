@@ -21,12 +21,29 @@ export default defineConfig({
     copyPublicDir: false,
     manifest: false
   },
+  optimizeDeps: {
+    exclude: ['@antv/x6-vue-shape']
+  },
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
       '@antv/x6': '@antv/x6/lib',
       '@antv/x6-vue-shape': '@antv/x6-vue-shape/lib'
     }
+    // alias: [
+    //   {
+    //     find: '@',
+    //     replacement: fileURLToPath(new URL('./src', import.meta.url))
+    //   },
+    //   {
+    //     find: '@antv/x6',
+    //     replacement: '@antv/x6/dist/x6.js',
+    //   },
+    //   {
+    //     find: '@antv/x6-vue-shape',
+    //     replacement: '@antv/x6-vue-shape/lib',
+    //   },
+    // ]
   },
   css: {
     preprocessorOptions: {

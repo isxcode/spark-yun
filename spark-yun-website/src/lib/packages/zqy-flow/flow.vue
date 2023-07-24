@@ -9,7 +9,7 @@
 </template>
   
 <script setup lang='ts'>
-import { nextTick, onMounted } from 'vue'
+import { nextTick, onMounted, createVNode } from 'vue'
 import { Graph, Path } from '@antv/x6'
 import database from './database.vue'
 import Hierarchy from '@antv/hierarchy'
@@ -44,9 +44,8 @@ const initGraph = () => {
             width: 180,
             height: 36,
             component: {
-                template: `<CustomNode/>`,
-                components: {
-                    CustomNode
+                render: ()=>{
+                   return createVNode(CustomNode);
                 }
             },
             ports: {
