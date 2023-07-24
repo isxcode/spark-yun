@@ -62,7 +62,6 @@ import { useState } from '@/hooks/useStore'
 import Breadcrumb from '@/layout/bread-crumb/index.vue'
 import ZqyFlow from '@/lib/packages/zqy-flow/flow.vue'
 import AddModal from './add-modal/index.vue'
-import IconMenu from '@/lib/packages/zqy-flow/icon-menu.vue'
 
 import { AddWorkflowDetailList, GetWorkflowData, GetWorkflowDetailList, QueryRunWorkInstances, RunWorkflowData, SaveWorkflowData, UpdateWorkflowDetailList } from '@/services/workflow.service'
 import { ElMessage } from 'element-plus'
