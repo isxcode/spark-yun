@@ -125,6 +125,13 @@ tasks.register('format', GradleBuild) {
   tasks = [":spotlessApply", ":checkstyleMain"]
 }
 
+// 自定义命令：isx 安装命令
+// isx git checkout add
+tasks.register('isx_install', Exec) {
+
+  commandLine 'bash', '-c', 'cp spark-yun-vip/spark-yun-isx/isx.sh ./isx && chmod a+x isx'
+}
+
 // spotless
 spotless {
   java {

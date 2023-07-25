@@ -27,3 +27,6 @@ spark-yun-dist/src/main/spark-min
 
 # 主配置，非必要，不提交
 spark-yun-backend/src/main/resources/application.yml
+
+# isx工具不提交
+isx
