@@ -285,7 +285,17 @@ public class WorkController {
     }
   }
 
-  @Operation(summary = "作业导入接口")
+  /**
+   * POST http://localhost:8080/wok/importWork
+   * Content-Type: multipart/form-data;
+   * boundary=WebAppBoundary Authorization: eyJhbGciOiJIUzI1NiJ9.token
+   *
+   * <p>--WebAppBoundary Content-Disposition: form-data; name="workFile"; filename="vs-picgo-data.json"
+   * Content-Type: application/json
+   *
+   * <p>< /Users/ispong/vs-picgo-data.json --WebAppBoundary--
+   */
+  @Operation(summary = "作业导入接口(Swagger有Bug不能使用)")
   @PostMapping("/importWork")
   @Parameter(
       name = SecurityConstants.HEADER_TENANT_ID,
