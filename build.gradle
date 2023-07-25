@@ -126,8 +126,7 @@ tasks.register('format', GradleBuild) {
 }
 
 // 自定义命令：isx 安装命令
-// isx git checkout add
-tasks.register('isx_install', Exec) {
+tasks.register('install_isx', Exec) {
 
   commandLine 'bash', '-c', 'cp spark-yun-vip/spark-yun-isx/isx.sh ./isx && chmod a+x isx'
 }
