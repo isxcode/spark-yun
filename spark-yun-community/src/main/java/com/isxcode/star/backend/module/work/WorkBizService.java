@@ -484,7 +484,11 @@ public class WorkBizService {
     // 获取作业最大的
     Integer maxTopIndex = workRepository.findWorkflowMaxTopIndex(work.getWorkflowId());
 
-    work.setTopIndex(maxTopIndex);
+    if (maxTopIndex == null) {
+      work.setTopIndex(1);
+    }else{
+      work.setTopIndex(maxTopIndex + 1);
+    }
     workRepository.save(work);
   }
 
