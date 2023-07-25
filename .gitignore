@@ -29,5 +29,4 @@ spark-yun-dist/src/main/spark-min
 spark-yun-backend/src/main/resources/application.yml
 
 # isx工具不提交
-spark-yun-vip/spark-yun-isx/isx.sh
 isx
