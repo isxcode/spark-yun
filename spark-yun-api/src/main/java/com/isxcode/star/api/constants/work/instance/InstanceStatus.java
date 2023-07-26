@@ -14,6 +14,9 @@ public interface InstanceStatus {
   /** 运行失败. */
   String FAIL = "FAIL";
 
-  /** 被中止. */
+  /** 已中止. */
   String ABORT = "ABORT";
+
+  /** 中止中. */
+  String ABORTING = "ABORTING";
 }

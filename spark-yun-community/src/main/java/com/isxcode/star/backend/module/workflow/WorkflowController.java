@@ -187,4 +187,80 @@ public class WorkflowController {
 
     workflowBizService.importWorks(workFile, workflowId);
   }
+
+  @Operation(summary = "中止工作流接口")
+  @GetMapping("/abortFlow")
+  @SuccessResponse("中止成功")
+  @Parameter(
+    name = SecurityConstants.HEADER_TENANT_ID,
+    description = "租户id",
+    required = true,
+    in = ParameterIn.HEADER,
+    schema = @Schema(type = "string"))
+  public void abortFlow(@Schema(description = "作业流实例唯一id", example = "sy_ba1f12b5c8154f999a02a5be2373a438") @RequestParam
+                        String workflowInstanceId) {
+    
+    workflowBizService.abortFlow(workflowInstanceId);
+  }
+
+  @Operation(summary = "中断工作流接口")
+  @GetMapping("/breakFlow")
+  @SuccessResponse("中断成功")
+  @Parameter(
+    name = SecurityConstants.HEADER_TENANT_ID,
+    description = "租户id",
+    required = true,
+    in = ParameterIn.HEADER,
+    schema = @Schema(type = "string"))
+  public void breakFlow(@Schema(description = "作业实例唯一id", example = "sy_ba1f12b5c8154f999a02a5be2373a438") @RequestParam
+                        String workInstanceId) {
+
+    workflowBizService.breakFlow(workInstanceId);
+  }
+
+  @Operation(summary = "重跑工作流接口")
+  @GetMapping("/reRunFlow")
+  @SuccessResponse("重跑成功")
+  @Parameter(
+    name = SecurityConstants.HEADER_TENANT_ID,
+    description = "租户id",
+    required = true,
+    in = ParameterIn.HEADER,
+    schema = @Schema(type = "string"))
+  public void reRunFlow(@Schema(description = "作业流实例唯一id", example = "sy_ba1f12b5c8154f999a02a5be2373a438") @RequestParam
+                        String workflowInstanceId) {
+
+    workflowBizService.reRunFlow(workflowInstanceId);
+  }
+
+  @Operation(summary = "重跑当前节点接口")
+  @GetMapping("/runCurrentNode")
+  @SuccessResponse("重跑成功")
+  @Parameter(
+    name = SecurityConstants.HEADER_TENANT_ID,
+    description = "租户id",
+    required = true,
+    in = ParameterIn.HEADER,
+    schema = @Schema(type = "string"))
+  public void runCurrentNode(@Schema(description = "作业实例唯一id", example = "sy_ba1f12b5c8154f999a02a5be2373a438") @RequestParam
+                             String workInstanceId) {
+
+    workflowBizService.runCurrentNode(workInstanceId);
+  }
+
+  @Operation(summary = "重跑下游接口")
+  @GetMapping("/runAfterFlow")
+  @SuccessResponse("重跑成功")
+  @Parameter(
+    name = SecurityConstants.HEADER_TENANT_ID,
+    description = "租户id",
+    required = true,
+    in = ParameterIn.HEADER,
+    schema = @Schema(type = "string"))
+  public void runAfterFlow(@Schema(description = "作业流实例唯一id", example = "sy_ba1f12b5c8154f999a02a5be2373a438") @RequestParam
+                           String workflowInstanceId) {
+
+    workflowBizService.runAfterFlow(workflowInstanceId);
+  }
+
 }
