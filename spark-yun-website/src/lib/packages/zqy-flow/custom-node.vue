@@ -1,18 +1,23 @@
 <template>
     <div class="zqy-flow-node " :class="status">
         <div class="flow-node-container" ref="content">
-            <p class="text">{{ name }}</p>
-            <el-dropdown trigger="click">
-                <el-icon class="node-option-more">
-                    <MoreFilled />
-                </el-icon>
-                <template #dropdown>
-                    <el-dropdown-menu>
-                        <el-dropdown-item>编辑</el-dropdown-item>
-                        <el-dropdown-item>删除</el-dropdown-item>
-                    </el-dropdown-menu>
-                </template>
-            </el-dropdown>
+            <p class="text">{{ name }}{{ status }}</p>
+            <template v-if="isRunning">
+                <el-icon v-if="status === 'RUNNING'" class="is-loading"><Loading /></el-icon>
+            </template>
+            <template v-else>
+                <!-- <el-dropdown trigger="click">
+                    <el-icon class="node-option-more">
+                        <MoreFilled />
+                    </el-icon>
+                    <template #dropdown>
+                        <el-dropdown-menu>
+                            <el-dropdown-item>编辑</el-dropdown-item>
+                            <el-dropdown-item>删除</el-dropdown-item>
+                        </el-dropdown-menu>
+                    </template>
+                </el-dropdown> -->
+            </template>
         </div>
     </div>
 </template>
@@ -20,22 +25,27 @@
 <script lang="ts" setup>
 import { inject, onMounted, ref } from 'vue'
 import { ElIcon, ElDropdown, ElDropdownMenu, ElDropdownItem } from 'element-plus'
-import { MoreFilled } from '@element-plus/icons-vue'
+import { MoreFilled, Loading } from '@element-plus/icons-vue'
 
 const getGraph = inject('getGraph')
 const getNode = inject('getNode')
 
 const name = ref('')
 const node = ref()
+const status = ref('')
+const isRunning = ref(false)
 
 let Node
 
 onMounted(() => {
     node.value = Node = getNode()
     name.value = node.value.data.name
-    // node.value.on('change:data', ({ current }) => {
-    //     name.value = current.name
-    // })
+    node.value.on('change:data', ({ current }) => {
+        // name.value = current.name
+        console.log('current', current)
+        status.value = current.status
+        isRunning.value = current.isRunning
+    })
 })
 
 </script>
@@ -118,15 +128,15 @@ p {
     flex-shrink: 0;
 }
 
-.zqy-flow-node.success {
+.zqy-flow-node.SUCCESS {
     border-left: 4px solid #52c41a;
 }
 
-.zqy-flow-node.failed {
+.zqy-flow-node.FAIL {
     border-left: 4px solid #ff4d4f;
 }
 
-.zqy-flow-node.running .status img {
+.zqy-flow-node.RUNNING .status img {
     animation: spin 1s linear infinite;
 }
 
@@ -136,13 +146,13 @@ p {
     box-shadow: 0 0 0 4px #d4e8fe;
 }
 
-.x6-node-selected .node.success {
+.x6-node-selected .zqy-flow-node.SUCCESS {
     border-color: #52c41a;
     border-radius: 2px;
     box-shadow: 0 0 0 4px #ccecc0;
 }
 
-.x6-node-selected .node.failed {
+.x6-node-selected .zqy-flow-node.FAIL {
     border-color: #ff4d4f;
     border-radius: 2px;
     box-shadow: 0 0 0 4px #fedcdc;

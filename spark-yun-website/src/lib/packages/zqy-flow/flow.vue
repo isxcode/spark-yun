@@ -78,7 +78,17 @@ const initGraph = () => {
                         }
                     }
                 }
-            }
+            },
+            tools: [
+                {
+                name: 'button-remove',
+                args: {
+                    x: '100%',
+                    y: 0,
+                    offset: { x: 2, y: 7 },
+                },
+                },
+            ]
         },
         true
     )
@@ -126,6 +136,10 @@ const initGraph = () => {
             //         },
             //     },
             // },
+            tools: {
+                name: 'button-remove',
+                args: { distance: -40 },
+            },
             attrs: {
                 // body: {
                 //     stroke: 'transparent',
@@ -248,12 +262,13 @@ const initGraph = () => {
 }
 
 // 添加节点
-function addNodeFn(item: any) {
+function addNodeFn(item: any, e: any) {
+    console.log('e', e)
     _Graph.addNode(_Graph.createNode({
         "id": item.id,
         "shape": "dag-node",
-        "x": 290,
-        "y": 110,
+        "x": e.x - 354,
+        "y": e.y - 186,
         "data": {
             "name": item.name,
             nodeConfigData: item
@@ -269,7 +284,6 @@ function addNodeFn(item: any) {
             }
         ]
     }))
-    // _Graph.resetCells()
 }
 
 // 获取所有节点以及连线的数据
@@ -284,88 +298,28 @@ function initCellList(data: any) {
     }
 }
 
-const getTreeObjFn = (tree: any, id: String) => {
-    let d: any = ''
-    const fn = (list: Object) => {
-        if (list.id == id) {
-            d = list
-        } else {
-            list.children.forEach((e: object) => {
-                fn(e)
-            })
-        }
-    }
-    if (tree.id === id) {
-        d = tree
-    } else {
-        tree.children.forEach((e) => {
-            fn(e)
+function updateFlowStatus(statusList: Array<any>, isRunning: boolean) {
+    statusList.forEach((item: any) => {
+        const node = _Graph.getCellById(item.workId)
+        const data = node.getData()
+        node.setData({
+            ...data,
+            status: item.runStatus,
+            isRunning: isRunning
         })
-    }
-    return d
+    })
 }
 
-const getTreeObjParentFn = (tree, id) => {
-    let p = ''
-    const fn = (list, parent) => {
-        if (list.id == id) {
-            p = parent
-        } else {
-            list.children.forEach((e) => {
-                fn(e, list)
-            })
-        }
-    }
-    if (tree.id === id) {
-        p = ''
+// 设置是否隐藏网格以及工具---运行中
+function hideGrid(status: boolean) {
+    if (status) {
+        _Graph.hideGrid()
+        _Graph.hideTools()
     } else {
-        tree.children.forEach((e) => {
-            fn(e, tree)
-        })
-    }
-    return p
-}
-
-const editFn = (node) => {
-    // 改变cell data赋值
-    // 触发 database 组件的监听
-    const treeNode = getTreeObjFn(Tree, node.id)
-    treeNode.data = node.data.data
-    let cell = _Graph.getCellById(node.id)
-    cell.data = node.data.data
-    // this.layoutFn()
-}
-
-const delFn = (node) => {
-    let parent = getTreeObjParentFn(Tree, node.id)
-    if (parent) {
-        for (let i = 0; i < parent.children.length; i++) {
-            if (parent.children[i].id === node.id) {
-                parent.children.splice(i, 1)
-                layoutFn()
-                break
-            }
-        }
-
-    } else {
+        _Graph.showGrid()
+        _Graph.showTools()
     }
 }
-
-// const addNodeFn = (node, lineLabel, height) => {
-//     const treeNode = getTreeObjFn(Tree, node.id)
-//     treeNode.children.push({
-//         type: 2,
-//         id: new Date().getTime() + '',
-//         data: {
-//             name: '新增',
-//             height: height || 40,
-//             lineLabel: lineLabel,
-//         },
-//         children: []
-//     })
-
-//     layoutFn()
-// }
 
 onMounted(() => {
     container = document.getElementById('container') as HTMLElement | undefined
@@ -375,7 +329,9 @@ onMounted(() => {
 defineExpose({
     addNodeFn,
     getAllCellData,
-    initCellList
+    initCellList,
+    updateFlowStatus,
+    hideGrid
 })
 </script>
   
