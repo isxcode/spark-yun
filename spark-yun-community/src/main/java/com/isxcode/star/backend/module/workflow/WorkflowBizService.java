@@ -39,6 +39,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -425,4 +426,108 @@ public class WorkflowBizService {
       workflowConfigRepository.save(workflowConfigEntity);
     }
   }
+
+  /**
+   * 中止作业流
+   * 将当前运行中的工作流停止调.
+   */
+  public void abortFlow(String workflowInstanceId) {
+
+    // 查询未运行的作业实例，将实例状态改为已中止
+    List<WorkInstanceEntity> pendingWorkInstances = workInstanceRepository.findAllByWorkflowInstanceIdAndStatus(workflowInstanceId, InstanceStatus.PENDING);
+    pendingWorkInstances.forEach(workInstance -> {
+      workInstance.setStatus(InstanceStatus.ABORT);
+    });
+    workInstanceRepository.saveAll(pendingWorkInstances);
+
+    // 把运行中的作业实例，改为中止中
+    List<WorkInstanceEntity> runningWorkInstances = workInstanceRepository.findAllByWorkflowInstanceIdAndStatus(workflowInstanceId, InstanceStatus.RUNNING);
+    runningWorkInstances.forEach(workInstance -> {
+      workInstance.setStatus(InstanceStatus.ABORTING);
+    });
+    workInstanceRepository.saveAll(pendingWorkInstances);
+
+    // 异步调用中止作业的方法
+    CompletableFuture.supplyAsync(() -> {
+
+      // 依此中止作业
+      List<String> exeStatus = new ArrayList<>();
+      runningWorkInstances.forEach(workInstance -> {
+        exeStatus.add(abortWorkInstance(workInstance));
+      });
+      return exeStatus;
+    }).whenComplete((exeStatus, exception) -> {
+
+      if (exeStatus.contains(InstanceStatus.FAIL)) {
+        // 修改作业流实例状态为失败
+
+      } else {
+        // 修改作业流实例状态为已中止
+
+      }
+    });
+
+  }
+
+  /**
+   * 中止作业节点实例.
+   */
+  public String abortWorkInstance(WorkInstanceEntity workInstance) {
+
+    // 调用自己的中止方法
+
+    // 修改作业实例已中止
+
+    // 每次执行判断一下，工作流是否运行结束
+
+    // 修改工作流实例的状态已中止，前端停止轮训
+    return "";
+  }
+
+  /**
+   * 中断作业.
+   */
+  public void breakFlow(String workInstanceId) {
+
+    // 第一时间，将当前作业实例节点改为中断状态
+
+    // 第二时间，将下游的所有实例，全部改为中断状态
+
+    // 其他不用管，让工作流事件自动推送
+
+  }
+
+  /**
+   * 重跑当前节点.
+   */
+  public void runCurrentNode(String workInstanceId) {
+
+    // 异步单独跑一次作业实例
+
+  }
+
+  public void runWorkNode() {
+
+    // 运行节点
+
+    // 判断工作流是否运行完毕，修改工作流实例状态
+
+  }
+
+  /**
+   * 重跑作业流.
+   */
+  public void reRunFlow(String workflowInstanceId) {
+
+    // 先中止作业流
+
+    // 再初始化实例的值
+
+    // 再执行一个运行逻辑
+  }
+
+  public void runAfterFlow(String workflowInstanceId) {
+
+  }
+
 }
