@@ -21,9 +21,9 @@ export default defineConfig({
     copyPublicDir: false,
     manifest: false
   },
-  optimizeDeps: {
-    exclude: ['@antv/x6-vue-shape']
-  },
+  // optimizeDeps: {
+  //   exclude: ['@antv/x6-vue-shape']
+  // },
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),

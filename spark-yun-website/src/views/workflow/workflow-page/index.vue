@@ -5,12 +5,18 @@
             {{ workflowName }}
         </div>
         <div class="option-btns">
-            <span @click="runWorkFlowData">运行</span>
-            <span @click="saveData">保存</span>
-            <span>中止</span>
-            <span>配置</span>
-            <span>发布</span>
-            <span>下线</span>
+            <!-- 非运行状态 -->
+            <template v-if="!runningStatus">
+                <span @click="runWorkFlowDataEvent">运行</span>
+                <span @click="saveData">保存</span>
+                <span>配置</span>
+                <span>发布</span>
+                <span>下线</span>
+            </template>
+            <!-- 运行状态 -->
+            <template v-else>
+                <span>中止</span>
+            </template>
             <span>导出</span>
             <span>导入</span>
             <span>收藏</span>
@@ -56,7 +62,7 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, ref, onMounted } from 'vue'
+import { reactive, ref, onMounted, onUnmounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { useState } from '@/hooks/useStore'
 import Breadcrumb from '@/layout/bread-crumb/index.vue'
@@ -76,6 +82,7 @@ const workflowName = ref('')
 const addModalRef = ref(null)
 const workflowInstanceId = ref('')
 const timer = ref()
+const runningStatus = ref(false)
 
 const breadCrumbList = reactive([
     {
@@ -104,13 +111,12 @@ function initData() {
 // 拖动后松开鼠标触发事件
 function handleDragEnd(e, item) {
     //   addHandleNode(e.pageX - 240, e.pageY - 40, new Date().getTime(), item.name, item.type)
-    zqyFlowRef.value.addNodeFn(item)
+    zqyFlowRef.value.addNodeFn(item, e)
 }
 
 // 保存数据
 function saveData() {
     const data = zqyFlowRef.value.getAllCellData()
-    console.log('data', data)
     SaveWorkflowData({
         workflowId: route.query.id,
         webConfig: data.map((node: any) => {
@@ -137,17 +143,20 @@ function saveData() {
 }
 
 // 运行作业流
-function runWorkFlowData() {
+function runWorkFlowDataEvent() {
     RunWorkflowData({
         workflowId: route.query.id,
         Tenant: state.tenantId.value
     }).then((res: any) => {
         workflowInstanceId.value = res.data
         ElMessage.success(res.msg)
-        queryRunWorkInstances()
+        zqyFlowRef.value.hideGrid(true)
+        // 判断是否开始运行
+        runningStatus.value = true
+        queryRunWorkInstancesEvent()
         if (!timer.value) {
             timer.value = setInterval(() => {
-                queryRunWorkInstances()
+                queryRunWorkInstancesEvent()
             }, 2000)
         }
     }).catch(() => {
@@ -156,17 +165,20 @@ function runWorkFlowData() {
 }
 
 // 运行作业流后获取节点运行状态
-function queryRunWorkInstances() {
+function queryRunWorkInstancesEvent() {
     if (workflowInstanceId.value) {
         QueryRunWorkInstances({
             workflowInstanceId: workflowInstanceId.value,
             Tenant: state.tenantId.value
         }).then((res: any) => {
-            if (res.data.flowStatus === 'SUCCESS') {
+            if (res.data.flowStatus === 'SUCCESS' || res.data.flowStatus === 'FAIL') {
                 clearInterval(timer.value)
                 timer.value = null
+                zqyFlowRef.value.hideGrid(false)
+                // 这里关闭运行状态
+                runningStatus.value = false
             }
-            zqyFlowRef.value.updateFlowStatus(res.data.workInstances)
+            zqyFlowRef.value.updateFlowStatus(res.data.workInstances, runningStatus.value)
         }).catch(() => {
     
         })
@@ -212,8 +224,6 @@ function editData(data: any) {
 }
 
 function initFlowData() {
-    const data = []
-    // zqyFlowRef.value.initCellList(data)
     GetWorkflowData({
         workflowId: route.query.id,
         Tenant: state.tenantId.value
@@ -234,6 +244,11 @@ onMounted(() => {
     initData()
     initFlowData()
     workflowName.value = route.query.name
+})
+
+onUnmounted(() => {
+    clearInterval(timer.value)
+    timer.value = null
 })
 </script>
 
