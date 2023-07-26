@@ -68,6 +68,11 @@ public class WorkflowRunEventListener {
           workInstanceRepository.findByWorkIdAndWorkflowInstanceId(
               event.getWorkId(), event.getFlowInstanceId());
 
+      // 已中止的任务，不可以再跑
+      if (InstanceStatus.ABORT.equals(workInstance.getStatus())) {
+        return;
+      }
+
       // 跑过了或者正在跑，不可以再跑
       if (!InstanceStatus.PENDING.equals(workInstance.getStatus())) {
         return;
