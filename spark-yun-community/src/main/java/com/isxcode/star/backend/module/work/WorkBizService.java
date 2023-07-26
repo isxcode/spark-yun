@@ -36,23 +36,16 @@ import com.isxcode.star.backend.module.workflow.WorkflowRepository;
 import com.isxcode.star.backend.module.workflow.config.WorkflowConfigEntity;
 import com.isxcode.star.backend.module.workflow.config.WorkflowConfigRepository;
 import com.isxcode.star.common.utils.HttpUtils;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.*;
-import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
@@ -486,55 +479,9 @@ public class WorkBizService {
 
     if (maxTopIndex == null) {
       work.setTopIndex(1);
-    }else{
+    } else {
       work.setTopIndex(maxTopIndex + 1);
     }
-    workRepository.save(work);
-  }
-
-  public void exportWork(String workId, HttpServletResponse response) throws IOException {
-
-    // 获取作业
-    WorkEntity work = getWorkEntity(workId);
-    work.setId(null);
-    work.setVersionNumber(null);
-    work.setVersionId(null);
-    work.setWorkflowId(null);
-
-    // 获取作业配置
-    WorkConfigEntity workConfig = workConfigBizService.getWorkConfigEntity(work.getConfigId());
-    workConfig.setId(null);
-    workConfig.setVersionNumber(null);
-
-    // 封装返回对象
-    WorkExportInfo exportInfo = WorkExportInfo.builder().workConfig(workConfig).work(work).build();
-
-    // 生成json并导出
-    PrintWriter out = response.getWriter();
-    response.setContentType("text/plain");
-    response.setCharacterEncoding("UTF-8");
-    response.setHeader(
-        HttpHeaders.CONTENT_DISPOSITION,
-        "attachment; filename="
-            + URLEncoder.encode(work.getName(), String.valueOf(StandardCharsets.UTF_8))
-            + ".json");
-    out.write(JSON.toJSONString(exportInfo));
-    out.flush();
-  }
-
-  public void importWork(MultipartFile workFile, String workflowId) throws IOException {
-
-    String exportWorkInfoStr = new String(workFile.getBytes(), StandardCharsets.UTF_8);
-    WorkExportInfo workExportInfo = JSON.parseObject(exportWorkInfoStr, WorkExportInfo.class);
-
-    // 保存作业配置
-    WorkConfigEntity workConfig = workExportInfo.getWorkConfig();
-    workConfig = workConfigRepository.save(workConfig);
-
-    // 保存作业
-    WorkEntity work = workExportInfo.getWork();
-    work.setWorkflowId(workflowId);
-    work.setConfigId(workConfig.getId());
     workRepository.save(work);
   }
 }

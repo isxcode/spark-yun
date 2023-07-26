@@ -6,6 +6,7 @@ import static com.isxcode.star.backend.config.WebSecurityConfig.USER_ID;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.isxcode.star.api.constants.work.WorkLog;
+import com.isxcode.star.api.constants.work.WorkStatus;
 import com.isxcode.star.api.constants.work.instance.InstanceStatus;
 import com.isxcode.star.api.constants.work.instance.InstanceType;
 import com.isxcode.star.api.constants.workflow.WorkflowStatus;
@@ -14,12 +15,16 @@ import com.isxcode.star.api.exceptions.SparkYunException;
 import com.isxcode.star.api.pojos.workflow.dto.WorkInstanceInfo;
 import com.isxcode.star.api.pojos.workflow.req.WocQueryWorkflowReq;
 import com.isxcode.star.api.pojos.workflow.req.WofAddWorkflowReq;
+import com.isxcode.star.api.pojos.workflow.req.WofExportWorkflowReq;
 import com.isxcode.star.api.pojos.workflow.req.WofUpdateWorkflowReq;
 import com.isxcode.star.api.pojos.workflow.res.WofGetWorkflowRes;
 import com.isxcode.star.api.pojos.workflow.res.WofQueryRunWorkInstancesRes;
 import com.isxcode.star.api.pojos.workflow.res.WofQueryWorkflowRes;
 import com.isxcode.star.backend.module.work.WorkEntity;
+import com.isxcode.star.backend.module.work.WorkExportInfo;
 import com.isxcode.star.backend.module.work.WorkRepository;
+import com.isxcode.star.backend.module.work.config.WorkConfigEntity;
+import com.isxcode.star.backend.module.work.config.WorkConfigRepository;
 import com.isxcode.star.backend.module.work.instance.WorkInstanceEntity;
 import com.isxcode.star.backend.module.work.instance.WorkInstanceRepository;
 import com.isxcode.star.backend.module.workflow.config.WorkflowConfigEntity;
@@ -27,18 +32,27 @@ import com.isxcode.star.backend.module.workflow.config.WorkflowConfigRepository;
 import com.isxcode.star.backend.module.workflow.instance.WorkflowInstanceEntity;
 import com.isxcode.star.backend.module.workflow.instance.WorkflowInstanceRepository;
 import com.isxcode.star.backend.module.workflow.run.WorkflowRunEvent;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
+import javax.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 /** 用户模块接口的业务逻辑. */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class WorkflowBizService {
@@ -56,6 +70,8 @@ public class WorkflowBizService {
   private final WorkInstanceRepository workInstanceRepository;
 
   private final WorkRepository workRepository;
+
+  private final WorkConfigRepository workConfigRepository;
 
   public WorkflowEntity getWorkflowEntity(String workflowId) {
 
@@ -146,7 +162,6 @@ public class WorkflowBizService {
               .status(InstanceStatus.PENDING)
               .workflowInstanceId(workflowInstance.getId())
               .build();
-
       workInstances.add(metaInstance);
     }
     workInstanceRepository.saveAllAndFlush(workInstances);
@@ -215,5 +230,199 @@ public class WorkflowBizService {
     wofGetWorkflowRes.setWebConfig(JSON.parse(workflowConfig.getWebConfig()));
 
     return wofGetWorkflowRes;
+  }
+
+  /** 导出作业或者作业流 */
+  public void exportWorks(WofExportWorkflowReq wofExportWorkflowReq, HttpServletResponse response) {
+
+    // 导出作业流
+    WorkflowEntity workflow = new WorkflowEntity();
+    WorkflowConfigEntity workflowConfig = new WorkflowConfigEntity();
+    if (!Strings.isEmpty(wofExportWorkflowReq.getWorkflowId())) {
+      workflow = workflowRepository.findById(wofExportWorkflowReq.getWorkflowId()).get();
+      workflowConfig = workflowConfigRepository.findById(workflow.getConfigId()).get();
+
+      List<String> workIds =
+          workRepository.findAllByWorkflowId(wofExportWorkflowReq.getWorkflowId()).stream()
+              .map(WorkEntity::getId)
+              .collect(Collectors.toList());
+      wofExportWorkflowReq.setWorkIds(workIds);
+    }
+
+    // 导出作业
+    List<WorkExportInfo> works = new ArrayList<>();
+    if (wofExportWorkflowReq.getWorkIds() != null && !wofExportWorkflowReq.getWorkIds().isEmpty()) {
+      wofExportWorkflowReq
+          .getWorkIds()
+          .forEach(
+              workId -> {
+                WorkEntity work = workRepository.findById(workId).get();
+                WorkConfigEntity workConfig =
+                    workConfigRepository.findById(work.getConfigId()).get();
+                WorkExportInfo metaExportInfo =
+                    WorkExportInfo.builder().workConfig(workConfig).work(work).build();
+                works.add(metaExportInfo);
+              });
+    }
+
+    WorkflowExportInfo workflowExportInfo =
+        WorkflowExportInfo.builder()
+            .workflowConfig(workflowConfig)
+            .workflow(workflow)
+            .works(works)
+            .build();
+
+    // 导出的文件名
+    String exportFileName;
+    try {
+      if (!Strings.isEmpty(wofExportWorkflowReq.getWorkflowId())) {
+        exportFileName =
+            URLEncoder.encode(workflow.getName() + "_all", String.valueOf(StandardCharsets.UTF_8));
+      } else if (works.size() > 1) {
+        exportFileName =
+            URLEncoder.encode(
+                workflow.getName() + "_" + works.size() + "_works",
+                String.valueOf(StandardCharsets.UTF_8));
+      } else if (works.size() == 1) {
+        exportFileName =
+            URLEncoder.encode(
+                works.get(0).getWork().getName(), String.valueOf(StandardCharsets.UTF_8));
+      } else {
+        throw new SparkYunException("作业数量为空不能导出");
+      }
+    } catch (UnsupportedEncodingException e) {
+      log.error(e.getMessage());
+      throw new SparkYunException(e.getMessage());
+    }
+
+    // 生成json并导出
+    response.setContentType("text/plain");
+    response.setCharacterEncoding("UTF-8");
+    response.setHeader(
+        HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + exportFileName + ".json");
+
+    // 导出
+    PrintWriter out;
+    try {
+      out = response.getWriter();
+      out.write(JSON.toJSONString(workflowExportInfo));
+      out.flush();
+    } catch (IOException e) {
+      log.error(e.getMessage());
+      throw new SparkYunException(e.getMessage());
+    }
+  }
+
+  public void importWorks(MultipartFile workFile, String workflowId) {
+
+    // 解析文本
+    String exportWorkflowInfoStr;
+    try {
+      exportWorkflowInfoStr = new String(workFile.getBytes(), StandardCharsets.UTF_8);
+    } catch (IOException e) {
+      log.error(e.getMessage());
+      throw new SparkYunException(e.getMessage());
+    }
+
+    // 获取对象
+    WorkflowExportInfo workflowExportInfo =
+        JSON.parseObject(exportWorkflowInfoStr, WorkflowExportInfo.class);
+
+    // 导入作业流
+    WorkflowConfigEntity workflowConfigEntity;
+    if (Strings.isEmpty(workflowId)) {
+
+      // 初始化作业流配置
+      WorkflowConfigEntity workflowConfig = workflowExportInfo.getWorkflowConfig();
+      workflowConfig.setId(null);
+      workflowConfig.setVersionNumber(null);
+      workflowConfig.setCreateBy(null);
+      workflowConfig.setCreateDateTime(null);
+      workflowConfig.setLastModifiedBy(null);
+      workflowConfig.setLastModifiedDateTime(null);
+      workflowConfig.setTenantId(null);
+      workflowConfigEntity = workflowConfigRepository.save(workflowConfig);
+
+      // 导入作业流
+      WorkflowEntity workflow = workflowExportInfo.getWorkflow();
+      workflow.setId(null);
+      workflow.setVersionId(null);
+      workflow.setConfigId(workflowConfigEntity.getId());
+      workflow.setStatus(WorkflowStatus.UN_AUTO);
+      workflow.setVersionNumber(null);
+      workflow.setCreateBy(null);
+      workflow.setCreateDateTime(null);
+      workflow.setLastModifiedBy(null);
+      workflow.setLastModifiedDateTime(null);
+      workflow.setTenantId(null);
+      WorkflowEntity workflowEntity = workflowRepository.save(workflow);
+      workflowId = workflowEntity.getId();
+    } else {
+      workflowConfigEntity = null;
+    }
+
+    // 记录新的作业id
+    Map<String, String> workIdMapping = new HashMap<>();
+
+    if (Strings.isEmpty(workflowId)) {
+      throw new SparkYunException("作业导入不能没有作业流id");
+    }
+
+    // 导入作业
+    for (WorkExportInfo exportWork : workflowExportInfo.getWorks()) {
+
+      // 旧的workId
+      String oldWorkId = exportWork.getWork().getId();
+
+      // 保存作业配置
+      WorkConfigEntity workConfig = exportWork.getWorkConfig();
+
+      workConfig.setId(null);
+      workConfig.setVersionNumber(null);
+      workConfig.setCreateBy(null);
+      workConfig.setCreateDateTime(null);
+      workConfig.setLastModifiedBy(null);
+      workConfig.setLastModifiedDateTime(null);
+      workConfig.setTenantId(null);
+      workConfig = workConfigRepository.save(workConfig);
+
+      // 保存作业
+      WorkEntity work = exportWork.getWork();
+      work.setId(null);
+      work.setStatus(WorkStatus.UN_PUBLISHED);
+      work.setWorkflowId(workflowId);
+      work.setConfigId(workConfig.getId());
+      work.setVersionId(null);
+      work.setTopIndex(null);
+      work.setVersionNumber(null);
+      work.setCreateBy(null);
+      work.setCreateDateTime(null);
+      work.setLastModifiedBy(null);
+      work.setLastModifiedDateTime(null);
+      work.setTenantId(null);
+      work = workRepository.save(work);
+
+      // 记录workId映射关系
+      workIdMapping.put(oldWorkId, work.getId());
+    }
+
+    // 最后再翻译一下，新的作业流配置
+    if (workflowConfigEntity != null) {
+
+      workIdMapping.forEach(
+          (oldWorkId, newWorkId) -> {
+            workflowConfigEntity.setDagStartList(
+                workflowConfigEntity.getDagStartList().replace(oldWorkId, newWorkId));
+            workflowConfigEntity.setNodeMapping(
+                workflowConfigEntity.getNodeMapping().replace(oldWorkId, newWorkId));
+            workflowConfigEntity.setDagEndList(
+                workflowConfigEntity.getDagEndList().replace(oldWorkId, newWorkId));
+            workflowConfigEntity.setNodeList(
+                workflowConfigEntity.getNodeList().replace(oldWorkId, newWorkId));
+            workflowConfigEntity.setWebConfig(
+                workflowConfigEntity.getWebConfig().replace(oldWorkId, newWorkId));
+          });
+      workflowConfigRepository.save(workflowConfigEntity);
+    }
   }
 }
