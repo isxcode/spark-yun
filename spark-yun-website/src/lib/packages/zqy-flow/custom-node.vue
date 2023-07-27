@@ -7,18 +7,19 @@
                 <el-icon v-if="status === 'PENDING'" class="custom-icon"><Clock /></el-icon>
                 <el-icon v-if="status === 'ABORT'" class="custom-icon"><VideoPause /></el-icon>
             </template>
-            <template v-else>
-                <!-- <el-dropdown trigger="click">
-                    <el-icon class="node-option-more">
-                        <MoreFilled />
-                    </el-icon>
-                    <template #dropdown>
-                        <el-dropdown-menu>
-                            <el-dropdown-item>日志</el-dropdown-item>
-                        </el-dropdown-menu>
-                    </template>
-                </el-dropdown> -->
-            </template>
+            <el-dropdown trigger="click">
+                <el-icon class="node-option-more">
+                    <MoreFilled />
+                </el-icon>
+                <template #dropdown>
+                    <el-dropdown-menu>
+                        <el-dropdown-item>日志</el-dropdown-item>
+                        <el-dropdown-item>重跑下游</el-dropdown-item>
+                        <el-dropdown-item>中断</el-dropdown-item>
+                        <el-dropdown-item>重跑当前</el-dropdown-item>
+                    </el-dropdown-menu>
+                </template>
+            </el-dropdown>
         </div>
     </div>
 </template>
@@ -76,7 +77,7 @@ onMounted(() => {
             color: $--app-info-color;
         }
         .custom-icon {
-            color: #c2c8d5;
+            color: #9599a2;
         }
     }
 }
