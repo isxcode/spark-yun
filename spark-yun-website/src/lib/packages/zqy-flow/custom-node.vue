@@ -1,9 +1,11 @@
 <template>
     <div class="zqy-flow-node " :class="status">
         <div class="flow-node-container" ref="content">
-            <p class="text">{{ name }}{{ status }}</p>
+            <p class="text">{{ name }}</p>
             <template v-if="isRunning">
-                <el-icon v-if="status === 'RUNNING'" class="is-loading"><Loading /></el-icon>
+                <el-icon v-if="status === 'RUNNING'" class="custom-icon is-loading"><Loading /></el-icon>
+                <el-icon v-if="status === 'PENDING'" class="custom-icon"><Clock /></el-icon>
+                <el-icon v-if="status === 'ABORT'" class="custom-icon"><VideoPause /></el-icon>
             </template>
             <template v-else>
                 <!-- <el-dropdown trigger="click">
@@ -12,8 +14,7 @@
                     </el-icon>
                     <template #dropdown>
                         <el-dropdown-menu>
-                            <el-dropdown-item>编辑</el-dropdown-item>
-                            <el-dropdown-item>删除</el-dropdown-item>
+                            <el-dropdown-item>日志</el-dropdown-item>
                         </el-dropdown-menu>
                     </template>
                 </el-dropdown> -->
@@ -25,7 +26,7 @@
 <script lang="ts" setup>
 import { inject, onMounted, ref } from 'vue'
 import { ElIcon, ElDropdown, ElDropdownMenu, ElDropdownItem } from 'element-plus'
-import { MoreFilled, Loading } from '@element-plus/icons-vue'
+import { MoreFilled, Loading, Clock, VideoPause } from '@element-plus/icons-vue'
 
 const getGraph = inject('getGraph')
 const getNode = inject('getNode')
@@ -41,8 +42,6 @@ onMounted(() => {
     node.value = Node = getNode()
     name.value = node.value.data.name
     node.value.on('change:data', ({ current }) => {
-        // name.value = current.name
-        console.log('current', current)
         status.value = current.status
         isRunning.value = current.isRunning
     })
@@ -75,6 +74,9 @@ onMounted(() => {
             transform: rotate(90deg);
             cursor: pointer;
             color: $--app-info-color;
+        }
+        .custom-icon {
+            color: #c2c8d5;
         }
     }
 }
@@ -136,6 +138,10 @@ p {
     border-left: 4px solid #ff4d4f;
 }
 
+.zqy-flow-node.ABORT {
+    border-left: 4px solid #b2b2b2;
+}
+
 .zqy-flow-node.RUNNING .status img {
     animation: spin 1s linear infinite;
 }
@@ -150,6 +156,12 @@ p {
     border-color: #52c41a;
     border-radius: 2px;
     box-shadow: 0 0 0 4px #ccecc0;
+}
+
+.x6-node-selected .zqy-flow-node.ABORT {
+    border-color: #b2b2b2;
+    border-radius: 2px;
+    box-shadow: 0 0 0 4px #e0dcdc;
 }
 
 .x6-node-selected .zqy-flow-node.FAIL {
