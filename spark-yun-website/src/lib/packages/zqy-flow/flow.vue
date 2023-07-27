@@ -9,34 +9,20 @@
 </template>
   
 <script setup lang='ts'>
-import { nextTick, onMounted, createVNode } from 'vue'
-import { Graph, Path } from '@antv/x6'
+import { nextTick, onMounted, createVNode, ref } from 'vue'
+import { Graph, Path, Addon } from '@antv/x6'
 import database from './database.vue'
 import Hierarchy from '@antv/hierarchy'
 import { $Bus } from "@/plugins/global"
 import CustomNode from './custom-node.vue'
 
-let _Graph: any;
-
-
-// const DrawerRef = ref()
-
-$Bus.$Bus.on('nodeOpenConfig', (node) => {
-    // DrawerRef.value.init(node)
-})
-
-
-let Tree: graphData;
-
-interface graphData {
-    id: string;
-    type: number;
-    data: object;
-}
+let _Graph: any
+let dnd: any
 let container: HTMLElement | undefined;
-// const Drawer = defineAsyncComponent(() => import('./drawer.vue'))
 
-const initGraph = () => {
+const runningStatus = ref(false)
+
+function initGraph() {
     Graph.registerNode(
         'dag-node',
         {
@@ -78,17 +64,7 @@ const initGraph = () => {
                         }
                     }
                 }
-            },
-            tools: [
-                {
-                name: 'button-remove',
-                args: {
-                    x: '100%',
-                    y: 0,
-                    offset: { x: 2, y: 7 },
-                },
-                },
-            ]
+            }
         },
         true
     )
@@ -96,56 +72,7 @@ const initGraph = () => {
         'dag-edge',
         {
             inherit: 'edge',
-            // defaultLabel: {
-            //     markup: [
-            //         {
-            //             tagName: 'rect',
-            //             selector: 'body',
-            //         },
-            //         {
-            //             tagName: 'text',
-            //             selector: 'label',
-            //         },
-            //     ],
-            //     attrs: {
-            //         label: {
-            //             fill: '#000',
-            //             fontSize: 14,
-            //             textAnchor: 'middle',
-            //             textVerticalAnchor: 'middle',
-            //             pointerEvents: 'none',
-            //         },
-            //         body: {
-            //             ref: 'label',
-            //             fill: '#ffd591',
-            //             stroke: '#ffa940',
-            //             strokeWidth: 2,
-            //             rx: 4,
-            //             ry: 4,
-            //             refWidth: '140%',
-            //             refHeight: '140%',
-            //             refX: '-20%',
-            //             refY: '-20%',
-            //         }
-            //     },
-            //     position: {
-            //         distance: 100,
-            //         options: {
-            //             absoluteDistance: true,
-            //             reverseDistance: true,
-            //         },
-            //     },
-            // },
-            tools: {
-                name: 'button-remove',
-                args: { distance: -40 },
-            },
             attrs: {
-                // body: {
-                //     stroke: 'transparent',
-                //     strokeWidth: 1,
-                //     magnet: true
-                // },
                 line: {
                     stroke: '#c2c8d5',
                     strokeWidth: 1,
@@ -258,32 +185,72 @@ const initGraph = () => {
         clipboard: true,
         history: true
     })
-
+    dnd = new Addon.Dnd({
+        target: _Graph,
+        getDragNode: (node: any) => node.clone({ keepId: true }),
+        getDropNode: (node: any) => node.clone({ keepId: true }),
+        validateNode() {
+            return true
+        }
+    })
+    _Graph.on('node:mouseenter', ({ node }) => {
+        if (!runningStatus.value) {
+            node.addTools({
+                name: 'button-remove',
+                args: {
+                    x: 160,  // 160最右边
+                    y: 13,
+                    offset: { x: 10, y: 10 },
+                }
+            })
+        }
+    })
+    _Graph.on('node:mouseleave', ({ node }) => {
+        node.removeTools()
+    })
+    _Graph.on('edge:mouseenter', ({ edge }) => {
+        if (!runningStatus.value) {
+            edge.addTools({
+                name: 'button-remove',
+                args: { distance: '50%' }
+            })
+        }
+    })
+    _Graph.on('edge:mouseleave', ({ edge }) => {
+        edge.removeTools()
+    })
+    _Graph.bindKey('backspace', () => {
+        if (!runningStatus.value) {
+            const cells = _Graph.getSelectedCells()
+            if (cells.length) {
+                _Graph.removeCells(cells)
+            }
+        }
+    })
 }
 
 // 添加节点
 function addNodeFn(item: any, e: any) {
-    console.log('e', e)
-    _Graph.addNode(_Graph.createNode({
-        "id": item.id,
-        "shape": "dag-node",
-        "x": e.x - 354,
-        "y": e.y - 186,
-        "data": {
-            "name": item.name,
+    const node = _Graph.createNode({
+        id: item.id,
+        shape: 'dag-node',
+        data: {
+            name: item.name,
             nodeConfigData: item
         },
-        "ports": [
+        ports: [
             {
-                "id": "1-2",
-                "group": "top"
+                id: '1-2',
+                group: 'top'
             },
             {
-                "id": "1-1",
-                "group": "bottom"
+                id: '1-1',
+                group: 'bottom'
             }
         ]
-    }))
+    })
+    dnd.start(node, e)
+    // _Graph.addNode()
 }
 
 // 获取所有节点以及连线的数据
@@ -295,10 +262,13 @@ function getAllCellData() {
 function initCellList(data: any) {
     if (data) {
         _Graph.fromJSON(data)
+        _Graph.centerContent()
     }
 }
 
+// 更新节点状态
 function updateFlowStatus(statusList: Array<any>, isRunning: boolean) {
+    runningStatus.value = isRunning
     statusList.forEach((item: any) => {
         const node = _Graph.getCellById(item.workId)
         const data = node.getData()
