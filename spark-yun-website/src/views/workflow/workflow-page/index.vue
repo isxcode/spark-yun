@@ -31,7 +31,7 @@
             </div>
             <div class="list-box">
                 <template v-for="work in workListItem" :key="work.id">
-                    <div :draggable="true" class="list-item" @dragend="handleDragEnd($event, work)">{{ work.name }}
+                    <div :draggable="true" class="list-item" @mousedown="handleDragEnd($event, work)">{{ work.name }}
                         <el-dropdown trigger="click">
                             <el-icon class="option-more">
                                 <MoreFilled />
@@ -109,9 +109,10 @@ function initData() {
 }
 
 // 拖动后松开鼠标触发事件
-function handleDragEnd(e, item) {
-    //   addHandleNode(e.pageX - 240, e.pageY - 40, new Date().getTime(), item.name, item.type)
-    zqyFlowRef.value.addNodeFn(item, e)
+function handleDragEnd(e: any, item: any) {
+    if (!runningStatus.value) {
+        zqyFlowRef.value.addNodeFn(item, e)
+    }
 }
 
 // 保存数据
