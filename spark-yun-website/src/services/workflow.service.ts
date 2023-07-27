@@ -166,7 +166,7 @@ export function GetResultItemDetail(params: any): Promise<any> {
 }
 
 // 工作流------------流程图接口
-// 保存工作流
+// 保存工作流--流程图
 export function SaveWorkflowData(params: any): Promise<any> {
   return http.request({
     method: 'post',
@@ -175,7 +175,7 @@ export function SaveWorkflowData(params: any): Promise<any> {
   })
 }
 
-// 获取配置的工作流程图信息
+// 获取配置的工作流程图信息--流程图
 export function GetWorkflowData(params: any): Promise<any> {
   return http.request({
     method: 'get',
@@ -184,7 +184,7 @@ export function GetWorkflowData(params: any): Promise<any> {
   })
 }
 
-// 运行工作流
+// 运行工作流--流程图
 export function RunWorkflowData(params: any): Promise<any> {
   return http.request({
     method: 'get',
@@ -193,11 +193,46 @@ export function RunWorkflowData(params: any): Promise<any> {
   })
 }
 
-// 查询作业流实例接口
+// 中止正在运行的工作流--流程图
+export function StopWorkflowData(params: any): Promise<any> {
+  return http.request({
+    method: 'get',
+    url: '/wof/abortFlow',
+    params: params
+  })
+}
+
+// 查询作业流实例接口--流程图
 export function QueryRunWorkInstances(params: any): Promise<any> {
   return http.request({
     method: 'get',
     url: '/wof/queryRunWorkInstances',
+    params: params
+  })
+}
+
+// 导出作业--流程图
+export function ExportWorkflowData(params: any): Promise<any> {
+  return http.request({
+    method: 'post',
+    url: '/wof/exportWorks',
+    params: params
+  })
+}
+// 导入作业--流程图
+export function ImportWorkflowData(params: any): Promise<any> {
+  return http.request({
+    method: 'post',
+    url: '/wof/importWorks',
+    params: params
+  })
+}
+
+// 发布作业流--流程图
+export function PublishWorkflowData(params: any): Promise<any> {
+  return http.request({
+    method: 'get',
+    url: '/vip/wok/deployWorkflow',
     params: params
   })
 }

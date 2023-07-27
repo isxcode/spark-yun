@@ -198,8 +198,11 @@ function initGraph() {
             node.addTools({
                 name: 'button-remove',
                 args: {
-                    x: 160,  // 160最右边
+                    x: 144,  // 160最右边
                     y: 13,
+                    // x: 170,
+                    // y: 0,
+                    // offset: { x: 15, y: 5 },
                     offset: { x: 10, y: 10 },
                 }
             })
