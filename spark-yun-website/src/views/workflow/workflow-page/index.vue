@@ -7,18 +7,28 @@
         <div class="option-btns">
             <!-- 非运行状态 -->
             <template v-if="!runningStatus">
-                <span @click="runWorkFlowDataEvent">运行</span>
-                <span @click="saveData">保存</span>
+                <span v-if="!btnLoadingConfig.runningLoading" @click="runWorkFlowDataEvent">运行</span>
+                <el-icon v-else class="is-loading"><Loading /></el-icon>
+
+                <span v-if="!btnLoadingConfig.saveLoading" @click="saveData">保存</span>
+                <el-icon v-else class="is-loading"><Loading /></el-icon>
+
                 <span>配置</span>
-                <span>发布</span>
-                <span>下线</span>
+
+                <span v-if="!btnLoadingConfig.publishLoading" @click="publishWorkFlow">发布</span>
+                <el-icon v-else class="is-loading"><Loading /></el-icon>
+
+                <!-- <span>下线</span> -->
             </template>
             <!-- 运行状态 -->
             <template v-else>
-                <span>中止</span>
+                <span v-if="!btnLoadingConfig.stopWorkFlowLoading" @click="stopWorkFlow">中止</span>
+                <el-icon v-else class="is-loading"><Loading /></el-icon>
             </template>
-            <span>导出</span>
-            <span>导入</span>
+            <!-- <span v-if="!btnLoadingConfig.exportLoading" @click="exportWorkFlow">导出</span>
+            <el-icon v-else class="is-loading"><Loading /></el-icon>
+            <span v-if="!btnLoadingConfig.importLoading" @click="importWorkFlow">导入</span>
+            <el-icon v-else class="is-loading"><Loading /></el-icon> -->
             <span>收藏</span>
         </div>
     </div>
@@ -64,16 +74,14 @@
 <script lang="ts" setup>
 import { reactive, ref, onMounted, onUnmounted } from 'vue'
 import { useRoute } from 'vue-router'
-import { useState } from '@/hooks/useStore'
 import Breadcrumb from '@/layout/bread-crumb/index.vue'
 import ZqyFlow from '@/lib/packages/zqy-flow/flow.vue'
 import AddModal from './add-modal/index.vue'
 
-import { AddWorkflowDetailList, GetWorkflowData, GetWorkflowDetailList, QueryRunWorkInstances, RunWorkflowData, SaveWorkflowData, UpdateWorkflowDetailList } from '@/services/workflow.service'
+import { AddWorkflowDetailList, ExportWorkflowData, GetWorkflowData, GetWorkflowDetailList, ImportWorkflowData, PublishWorkflowData, QueryRunWorkInstances, RunWorkflowData, SaveWorkflowData, StopWorkflowData, UpdateWorkflowDetailList } from '@/services/workflow.service'
 import { ElMessage } from 'element-plus'
 
 const route = useRoute()
-const state = useState(['tenantId' ], 'authStoreModule')
 
 const searchParam = ref('')
 const workListItem = ref([])
@@ -83,6 +91,14 @@ const addModalRef = ref(null)
 const workflowInstanceId = ref('')
 const timer = ref()
 const runningStatus = ref(false)
+const btnLoadingConfig = reactive({
+    runningLoading: false,
+    saveLoading: false,
+    publishLoading: false,
+    stopWorkFlowLoading: false,
+    importLoading: false,
+    exportLoading: false
+})
 
 const breadCrumbList = reactive([
     {
@@ -118,6 +134,7 @@ function handleDragEnd(e: any, item: any) {
 // 保存数据
 function saveData() {
     const data = zqyFlowRef.value.getAllCellData()
+    btnLoadingConfig.saveLoading = true
     SaveWorkflowData({
         workflowId: route.query.id,
         webConfig: data.map((node: any) => {
@@ -136,18 +153,18 @@ function saveData() {
             }
         })
     }).then((res: any) => {
+        btnLoadingConfig.saveLoading = false
         ElMessage.success('保存成功')
     }).catch(() => {
-
+        btnLoadingConfig.saveLoading = false
     })
-    console.log(JSON.stringify(data))
 }
 
 // 运行作业流
 function runWorkFlowDataEvent() {
+    btnLoadingConfig.runningLoading = true
     RunWorkflowData({
-        workflowId: route.query.id,
-        Tenant: state.tenantId.value
+        workflowId: route.query.id
     }).then((res: any) => {
         workflowInstanceId.value = res.data
         ElMessage.success(res.msg)
@@ -160,8 +177,9 @@ function runWorkFlowDataEvent() {
                 queryRunWorkInstancesEvent()
             }, 2000)
         }
+        btnLoadingConfig.runningLoading = false
     }).catch(() => {
-
+        btnLoadingConfig.runningLoading = false
     })
 }
 
@@ -169,8 +187,7 @@ function runWorkFlowDataEvent() {
 function queryRunWorkInstancesEvent() {
     if (workflowInstanceId.value) {
         QueryRunWorkInstances({
-            workflowInstanceId: workflowInstanceId.value,
-            Tenant: state.tenantId.value
+            workflowInstanceId: workflowInstanceId.value
         }).then((res: any) => {
             if (res.data.flowStatus === 'SUCCESS' || res.data.flowStatus === 'FAIL') {
                 clearInterval(timer.value)
@@ -181,7 +198,7 @@ function queryRunWorkInstancesEvent() {
             }
             zqyFlowRef.value.updateFlowStatus(res.data.workInstances, runningStatus.value)
         }).catch(() => {
-    
+
         })
     }
 }
@@ -209,29 +226,80 @@ function addData() {
 
 // 编辑作业
 function editData(data: any) {
-  addModalRef.value.showModal((formData: FormData) => {
-    return new Promise((resolve: any, reject: any) => {
-      UpdateWorkflowDetailList(formData)
-        .then((res: any) => {
-          ElMessage.success(res.msg)
-          initData()
-          resolve()
+    addModalRef.value.showModal((formData: FormData) => {
+        return new Promise((resolve: any, reject: any) => {
+            UpdateWorkflowDetailList(formData)
+                .then((res: any) => {
+                    ElMessage.success(res.msg)
+                    initData()
+                    resolve()
+                })
+                .catch((error: any) => {
+                    reject(error)
+                })
         })
-        .catch((error: any) => {
-          reject(error)
-        })
-    })
-  }, data)
+    }, data)
 }
 
 function initFlowData() {
     GetWorkflowData({
-        workflowId: route.query.id,
-        Tenant: state.tenantId.value
+        workflowId: route.query.id
     }).then((res: any) => {
         zqyFlowRef.value.initCellList(res.data.webConfig)
     }).catch(() => {
 
+    })
+}
+
+// 发布作业流
+function publishWorkFlow() {
+    btnLoadingConfig.publishLoading = true
+    PublishWorkflowData({
+        workflowId: route.query.id
+    }).then((res: any) => {
+        btnLoadingConfig.publishLoading = false
+        ElMessage.success(res.msg)
+    }).catch(() => {
+        btnLoadingConfig.publishLoading = false
+    })
+}
+
+// 中止工作流
+function stopWorkFlow() {
+    btnLoadingConfig.stopWorkFlowLoading = true
+    StopWorkflowData({
+        workflowInstanceId: workflowInstanceId.value
+    }).then((res: any) => {
+        btnLoadingConfig.stopWorkFlowLoading = false
+        ElMessage.success(res.msg)
+    }).catch(() => {
+        btnLoadingConfig.stopWorkFlowLoading = false
+    })
+}
+
+// 导入工作流
+function importWorkFlow() {
+    btnLoadingConfig.importLoading = true
+    ImportWorkflowData({
+        workflowId: route.query.id
+    }).then((res: any) => {
+        btnLoadingConfig.importLoading = false
+        ElMessage.success(res.msg)
+    }).catch(() => {
+        btnLoadingConfig.importLoading = false
+    })
+}
+
+// 导出工作流
+function exportWorkFlow() {
+    btnLoadingConfig.exportLoading = true
+    ExportWorkflowData({
+        workflowId: route.query.id
+    }).then((res: any) => {
+        btnLoadingConfig.exportLoading = false
+        ElMessage.success(res.msg)
+    }).catch(() => {
+        btnLoadingConfig.exportLoading = false
     })
 }
 
@@ -271,6 +339,7 @@ onUnmounted(() => {
         padding-left: 12px;
         border-right: 1px solid $--app-border-color;
         box-sizing: border-box;
+
     }
 
     .option-btns {
@@ -279,6 +348,10 @@ onUnmounted(() => {
         padding-left: 12px;
         box-sizing: border-box;
         font-size: $--app-small-font-size;
+
+        .el-icon {
+            margin-right: 8px;
+        }
 
         span {
             margin-right: 8px;
