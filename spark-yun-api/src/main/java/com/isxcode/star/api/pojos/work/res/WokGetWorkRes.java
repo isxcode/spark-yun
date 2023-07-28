@@ -11,6 +11,10 @@ public class WokGetWorkRes {
 
   private String sqlScript;
 
+  private String jarName;
+
+  private String mainClass;
+
   private String workflowId;
 
   private String datasourceId;

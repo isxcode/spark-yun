@@ -14,6 +14,15 @@ public class WocConfigWorkReq {
   @Schema(title = "运行脚本", example = "show databases;")
   private String sqlScript;
 
+  @Schema(title = "jar包名称", example = "xxx.jar")
+  private String jarName;
+
+  @Schema(title = "jar执行参数")
+  private String args;
+
+  @Schema(title = "jar包主类", example = "com.isxcode.star.plugin.query.sql.Execute")
+  private String mainClass;
+
   @Schema(title = "数据源唯一id", example = "sy_fd34e4a53db640f5943a4352c4d549b9")
   private String datasourceId;
 

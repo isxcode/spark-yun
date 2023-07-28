@@ -89,7 +89,8 @@ public class WorkBizService {
 
     // 如果是sparkSql作业，初始化sparkConfig
     WorkConfigEntity workConfigEntity = new WorkConfigEntity();
-    if (WorkType.QUERY_SPARK_SQL.equals(addWorkReq.getWorkType())) {
+    if (WorkType.QUERY_SPARK_SQL.equals(addWorkReq.getWorkType())
+        || WorkType.SPARK_JAR.equals(addWorkReq.getWorkType())) {
       workConfigEntity.setSparkConfig(WorkDefault.DEFAULT_SPARK_CONF);
     }
 
@@ -173,20 +174,30 @@ public class WorkBizService {
   public WorkRunContext genWorkRunContext(
       String instanceId, WorkEntity work, WorkConfigEntity workConfig) {
 
-    return WorkRunContext.builder()
-        .datasourceId(workConfig.getDatasourceId())
-        .sqlScript(workConfig.getSqlScript())
-        .instanceId(instanceId)
-        .tenantId(TENANT_ID.get())
-        .clusterId(workConfig.getClusterId())
-        .workType(work.getWorkType())
-        .workId(work.getId())
-        .workName(work.getName())
-        .sparkConfig(
-            JSON.parseObject(
-                workConfig.getSparkConfig(), new TypeReference<Map<String, String>>() {}.getType()))
-        .userId(USER_ID.get())
-        .build();
+    WorkRunContext context =
+        WorkRunContext.builder()
+            .datasourceId(workConfig.getDatasourceId())
+            .sqlScript(workConfig.getSqlScript())
+            .instanceId(instanceId)
+            .tenantId(TENANT_ID.get())
+            .clusterId(workConfig.getClusterId())
+            .workType(work.getWorkType())
+            .workId(work.getId())
+            .workName(work.getName())
+            .sparkConfig(
+                JSON.parseObject(
+                    workConfig.getSparkConfig(),
+                    new TypeReference<Map<String, String>>() {}.getType()))
+            .userId(USER_ID.get())
+            .build();
+
+    if (work.getWorkType().equals(WorkType.SPARK_JAR)) {
+      context.setJarName(workConfig.getJarName());
+      context.setMainClass(workConfig.getMainClass());
+      context.setArgs(workConfig.getArgs());
+    }
+    // 保存作业配置
+    return context;
   }
 
   @Transactional

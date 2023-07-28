@@ -28,6 +28,17 @@ public interface WorkMapper {
 
   WorkConfigEntity configWorkReqToWorkConfigEntity(WocConfigWorkReq configWorkReq);
 
+  @Mapping(target = "sqlScript", source = "wocConfigWorkReq.sqlScript")
+  @Mapping(target = "jarName", source = "wocConfigWorkReq.jarName")
+  @Mapping(target = "mainClass", source = "wocConfigWorkReq.mainClass")
+  @Mapping(target = "args", source = "wocConfigWorkReq.args")
+  @Mapping(target = "clusterId", source = "wocConfigWorkReq.clusterId")
+  @Mapping(target = "datasourceId", source = "wocConfigWorkReq.datasourceId")
+  @Mapping(target = "sparkConfig", source = "wocConfigWorkReq.sparkConfig")
+  @Mapping(target = "corn", source = "wocConfigWorkReq.corn")
+  WorkConfigEntity workConfigEntityAndWocConfigWorkReqToWorkConfigEntity(
+      WocConfigWorkReq wocConfigWorkReq, WorkConfigEntity workConfigEntity);
+
   @Mapping(target = "createDateTime", dateFormat = "yyyy-MM-dd HH:mm:ss")
   WokQueryWorkRes workEntityToQueryWorkRes(WorkEntity workEntity);
 

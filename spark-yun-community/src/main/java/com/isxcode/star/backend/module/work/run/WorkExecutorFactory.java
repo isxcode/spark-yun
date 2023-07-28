@@ -24,6 +24,8 @@ public class WorkExecutorFactory {
         return applicationContext.getBean(QuerySqlExecutor.class);
       case WorkType.EXECUTE_JDBC_SQL:
         return applicationContext.getBean(ExecuteSqlExecutor.class);
+      case WorkType.SPARK_JAR:
+        return applicationContext.getBean(SparkJarExecutor.class);
       default:
         throw new SparkYunException("作业类型不存在");
     }

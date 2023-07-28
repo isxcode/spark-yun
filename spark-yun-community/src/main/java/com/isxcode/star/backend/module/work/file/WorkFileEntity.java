@@ -1,21 +1,16 @@
-package com.isxcode.star.backend.module.work.config;
+package com.isxcode.star.backend.module.work.file;
 
 import static com.isxcode.star.backend.config.WebSecurityConfig.TENANT_ID;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.time.LocalDateTime;
+import javax.persistence.*;
 import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.PrePersist;
 import javax.persistence.Table;
-import javax.persistence.Transient;
-import javax.persistence.Version;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
+import org.hibernate.annotations.*;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -24,12 +19,14 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Data
 @Entity
-@SQLDelete(sql = "UPDATE SY_WORK_CONFIG SET deleted = 1 WHERE id = ? and version_number = ?")
+@SQLDelete(sql = "UPDATE SY_WORK_FILE SET deleted = 1 WHERE id = ? and version_number = ?")
 @Where(clause = "deleted = 0 ${TENANT_FILTER} ")
-@Table(name = "SY_WORK_CONFIG")
+@Table(name = "SY_WORK_FILE")
 @JsonIgnoreProperties({"hibernateLazyInitializer"})
 @EntityListeners(AuditingEntityListener.class)
-public class WorkConfigEntity {
+@Builder(toBuilder = true)
+@AllArgsConstructor
+public class WorkFileEntity {
 
   @Id
   @GeneratedValue(generator = "sy-id-generator")
@@ -38,21 +35,15 @@ public class WorkConfigEntity {
       strategy = "com.isxcode.star.backend.config.GeneratedValueConfig")
   private String id;
 
-  private String clusterId;
+  private String workId;
 
-  private String datasourceId;
+  private String fileName;
 
-  private String sqlScript;
+  private String fileSize;
 
-  private String jarName;
+  private String filePath;
 
-  private String mainClass;
-
-  private String args;
-
-  private String sparkConfig;
-
-  private String corn;
+  private String fileType;
 
   @CreatedDate private LocalDateTime createDateTime;
 
@@ -67,6 +58,8 @@ public class WorkConfigEntity {
   @Transient private Integer deleted;
 
   private String tenantId;
+
+  public WorkFileEntity() {}
 
   @PrePersist
   public void prePersist() {

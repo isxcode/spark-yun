@@ -109,3 +109,35 @@ create table SY_WORKFLOW_FAVOUR
   deleted                 int default 0 not null comment '逻辑删除',
   tenant_id               varchar(200)  not null comment '租户id'
 );
+
+alter table SY_WORK_CONFIG
+  add jar_name varchar(100) null comment 'jar包名称';
+
+alter table SY_WORK_CONFIG
+  add main_class varchar(100) null comment 'jar包主类';
+
+alter table SY_WORK_CONFIG
+  add args varchar(100) null comment 'jar执行参数';
+
+
+-- 创建作业资源文件表
+create table SY_WORK_FILE
+(
+  id                      varchar(200)  not null comment '文件配置唯一id'
+    primary key,
+  work_id                  varchar(200)  null comment '作业唯一id',
+  file_name                varchar(200)  null comment '文件名称',
+  file_size                varchar(200)  null comment '文件大小',
+  file_path                varchar(200)  null comment '文件存储路径',
+  file_type                varchar(200)  null comment '文件类型',
+  create_by               varchar(200)  not null comment '创建人',
+  create_date_time        datetime      not null comment '创建时间',
+  last_modified_by        varchar(200)  not null comment '更新人',
+  last_modified_date_time datetime      not null comment '更新时间',
+  version_number          int           not null comment '版本号',
+  deleted                 int default 0 not null comment '逻辑删除',
+  tenant_id               varchar(200)  not null comment '租户id',
+  constraint id
+    unique (id)
+);
+

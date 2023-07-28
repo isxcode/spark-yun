@@ -19,4 +19,6 @@ public class PluginReq {
   private String applicationId;
 
   private Map<String, String> sparkConfig;
+
+  private String args;
 }

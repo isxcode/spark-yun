@@ -10,6 +10,8 @@ import com.isxcode.star.backend.module.work.instance.WorkInstanceEntity;
 import com.isxcode.star.backend.module.work.instance.WorkInstanceRepository;
 import com.isxcode.star.backend.module.workflow.instance.WorkflowInstanceEntity;
 import com.isxcode.star.backend.module.workflow.instance.WorkflowInstanceRepository;
+import com.jcraft.jsch.JSchException;
+import com.jcraft.jsch.SftpException;
 import java.time.LocalDateTime;
 import java.util.Date;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +28,8 @@ public abstract class WorkExecutor {
 
   private final WorkflowInstanceRepository workflowInstanceRepository;
 
-  protected abstract void execute(WorkRunContext workRunContext, WorkInstanceEntity workInstance);
+  protected abstract void execute(WorkRunContext workRunContext, WorkInstanceEntity workInstance)
+      throws JSchException, SftpException, InterruptedException;
 
   /** 更新实例的日志和状态 */
   public WorkInstanceEntity updateInstance(
@@ -129,6 +132,8 @@ public abstract class WorkExecutor {
         workflowInstance.setRunLog(runLog);
         workflowInstanceRepository.setWorkflowLog(workflowInstance.getId(), runLog);
       }
+    } catch (JSchException | SftpException | InterruptedException e) {
+      throw new RuntimeException(e);
     }
   }
 }

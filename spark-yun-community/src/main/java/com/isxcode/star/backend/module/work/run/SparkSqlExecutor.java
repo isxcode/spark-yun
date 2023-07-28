@@ -134,6 +134,23 @@ public class SparkSqlExecutor extends WorkExecutor {
     logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始提交作业  \n");
     workInstance = updateInstance(workInstance, logBuilder);
 
+    BaseResponse<?> baseResponse = submitWork(engineNode, executeReq);
+
+    // 解析返回对象,获取appId
+    WokRunWorkRes submitWorkRes =
+        JSON.parseObject(JSON.toJSONString(baseResponse.getData()), WokRunWorkRes.class);
+    logBuilder
+        .append(LocalDateTime.now())
+        .append(WorkLog.SUCCESS_INFO)
+        .append("提交作业成功 : ")
+        .append(submitWorkRes.getAppId())
+        .append("\n");
+    workInstance = updateInstance(workInstance, logBuilder);
+
+    checkWorkStatus(workInstance, logBuilder, calculateEngineEntityOptional, engineNode, submitWorkRes);
+  }
+
+  public static BaseResponse<?> submitWork(ClusterNodeEntity engineNode, YagExecuteWorkReq executeReq) {
     // 开始提交作业
     String executeWorkUrl =
         "http://" + engineNode.getHost() + ":" + engineNode.getAgentPort() + "/yag/executeWork";
@@ -148,18 +165,11 @@ public class SparkSqlExecutor extends WorkExecutor {
       throw new WorkRunException(
           LocalDateTime.now() + WorkLog.ERROR_INFO + "提交作业失败 : " + baseResponse.getMsg() + "\n");
     }
+    return baseResponse;
+  }
 
-    // 解析返回对象,获取appId
-    WokRunWorkRes submitWorkRes =
-        JSON.parseObject(JSON.toJSONString(baseResponse.getData()), WokRunWorkRes.class);
-    logBuilder
-        .append(LocalDateTime.now())
-        .append(WorkLog.SUCCESS_INFO)
-        .append("提交作业成功 : ")
-        .append(submitWorkRes.getAppId())
-        .append("\n");
-    workInstance = updateInstance(workInstance, logBuilder);
-
+  public void checkWorkStatus(WorkInstanceEntity workInstance, StringBuilder logBuilder, Optional<ClusterEntity> calculateEngineEntityOptional, ClusterNodeEntity engineNode, WokRunWorkRes submitWorkRes) {
+    BaseResponse<?> baseResponse;
     // 提交作业成功后，开始循环判断状态
     while (true) {
 

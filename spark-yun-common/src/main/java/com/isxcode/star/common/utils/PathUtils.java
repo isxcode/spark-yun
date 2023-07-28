@@ -1,6 +1,7 @@
 package com.isxcode.star.common.utils;
 
 import java.io.File;
+import java.io.IOException;
 
 public class PathUtils {
 
@@ -12,5 +13,15 @@ public class PathUtils {
     }
 
     return path;
+  }
+
+  public static File createFile(String path) throws IOException {
+    // 文件路径而非目录
+    File file = new File(path);
+    if (!file.exists()) {
+      file.getParentFile().mkdirs();
+      file.createNewFile();
+    }
+    return file;
   }
 }

@@ -3,6 +3,7 @@ package com.isxcode.star.backend.module.work.config;
 import com.isxcode.star.api.exceptions.SparkYunException;
 import com.isxcode.star.api.pojos.work.config.req.WocConfigWorkReq;
 import com.isxcode.star.backend.module.work.WorkEntity;
+import com.isxcode.star.backend.module.work.WorkMapper;
 import com.isxcode.star.backend.module.work.WorkRepository;
 import java.util.Optional;
 import javax.transaction.Transactional;
@@ -22,6 +23,8 @@ public class WorkConfigBizService {
   private final WorkRepository workRepository;
 
   private final WorkConfigRepository workConfigRepository;
+
+  private final WorkMapper workMapper;
 
   public WorkConfigEntity getWorkConfigEntity(String workConfigId) {
 
@@ -47,26 +50,18 @@ public class WorkConfigBizService {
     }
     WorkConfigEntity workConfigEntity = workConfigEntityOptional.get();
 
-    if (!Strings.isEmpty(wocConfigWorkReq.getSqlScript())) {
-      workConfigEntity.setSqlScript(wocConfigWorkReq.getSqlScript());
-    }
-    if (!Strings.isEmpty(wocConfigWorkReq.getClusterId())) {
-      workConfigEntity.setClusterId(wocConfigWorkReq.getClusterId());
-    }
-    if (!Strings.isEmpty(wocConfigWorkReq.getDatasourceId())) {
-      workConfigEntity.setDatasourceId(wocConfigWorkReq.getDatasourceId());
-    }
-    if (!Strings.isEmpty(wocConfigWorkReq.getSparkConfig())) {
-      workConfigEntity.setSparkConfig(wocConfigWorkReq.getSparkConfig());
-    }
     if (!Strings.isEmpty(wocConfigWorkReq.getCorn())) {
       // 检验corn表达式
       boolean validExpression = CronExpression.isValidExpression(wocConfigWorkReq.getCorn());
       if (!validExpression) {
         throw new SparkYunException("Corn表达式异常");
       }
-      workConfigEntity.setCorn(wocConfigWorkReq.getCorn());
     }
+
+    workConfigEntity =
+        workMapper.workConfigEntityAndWocConfigWorkReqToWorkConfigEntity(
+            wocConfigWorkReq, workConfigEntity);
+
     workConfigRepository.save(workConfigEntity);
   }
 }

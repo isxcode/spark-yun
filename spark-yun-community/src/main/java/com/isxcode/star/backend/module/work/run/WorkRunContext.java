@@ -28,6 +28,12 @@ public class WorkRunContext {
 
   private String versionId;
 
+  private String jarName;
+
+  private String mainClass;
+
+  private String args;
+
   private StringBuilder logBuilder;
 
   private Map<String, String> sparkConfig;

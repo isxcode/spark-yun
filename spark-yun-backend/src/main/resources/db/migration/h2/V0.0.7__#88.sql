@@ -4,14 +4,14 @@ alter table SY_WORK_INSTANCE
 
 -- 给作业实例，添加是否被定时器触发过
 alter table SY_WORK_INSTANCE
-  add quartz_has_run boolean null comment '是否被定时器触发过';
+  add quartz_has_run tinyint(1) null comment '是否被定时器触发过';
 
 -- 创建工作流配置表
 create table SY_WORKFLOW_CONFIG
 (
   id                      varchar(200)  not null comment '作业流配置唯一id'
     primary key,
-  web_config              CLOB          null comment '前端配置',
+  web_config              text          null comment '前端配置',
   node_mapping            varchar(2000) null comment '节点映射关系',
   node_list               varchar(2000) null comment '节点列表',
   dag_start_list          varchar(2000) null comment 'DAG开始节点列表',
@@ -23,7 +23,9 @@ create table SY_WORKFLOW_CONFIG
   version_number          int           not null comment '版本号',
   deleted                 int default 0 not null comment '逻辑删除',
   tenant_id               varchar(200)  not null comment '租户id',
-  corn                    varchar(300)  null comment '定时时间'
+  corn                    varchar(300)  null comment '定时时间',
+  constraint id
+    unique (id)
 );
 
 -- 创建工作流实例表
@@ -35,7 +37,7 @@ create table SY_WORKFLOW_INSTANCE
   flow_id                 varchar(200)  null comment '作业流id',
   instance_type           varchar(200)  null comment '实例类型',
   status                  varchar(200)  null comment '实例状态',
-  run_log                 CLOB          null comment '作业流运行日志',
+  run_log                 text          null comment '作业流运行日志',
   plan_start_date_time    datetime      null comment '计划开始时间',
   next_plan_date_time     datetime      null comment '下一次开始时间',
   exec_start_date_time    datetime      null comment '执行开始时间',
@@ -45,7 +47,9 @@ create table SY_WORKFLOW_INSTANCE
   last_modified_by        varchar(200)  not null comment '更新人',
   last_modified_date_time datetime      not null comment '更新时间',
   deleted                 int default 0 not null comment '逻辑删除',
-  tenant_id               varchar(200)  not null comment '租户id'
+  tenant_id               varchar(200)  not null comment '租户id',
+  constraint id
+    unique (id)
 );
 
 -- 创建工作流版本表
@@ -53,14 +57,14 @@ create table SY_WORKFLOW_VERSION
 (
   id                      varchar(200)  not null comment '工作流版本唯一id'
     primary key,
-  workflow_id             varchar(200)  not null comment '作业流id',
   name                    varchar(200)  not null comment '作业流版本名称',
+  workflow_id             varchar(200)  not null comment '作业流id',
   workflow_type           varchar(200)  null comment '作业类型',
-  node_mapping            CLOB          null comment '节点映射',
-  node_list               CLOB          null comment '节点',
-  dag_start_list          CLOB          null comment '开始节点',
-  dag_end_list            CLOB          null comment '结束节点',
-  work_version_map        CLOB          null comment '作业版本映射',
+  node_mapping            text          null comment '节点映射',
+  node_list               text          null comment '节点',
+  dag_start_list          text          null comment '开始节点',
+  dag_end_list            text          null comment '结束节点',
+  work_version_map        text          null comment '作业版本映射',
   corn                    varchar(200)  not null comment '定时表达式',
   create_by               varchar(200)  not null comment '创建人',
   create_date_time        datetime      not null comment '创建时间',
@@ -68,7 +72,9 @@ create table SY_WORKFLOW_VERSION
   last_modified_date_time datetime      not null comment '更新时间',
   version_number          int           not null comment '版本号',
   deleted                 int default 0 not null comment '逻辑删除',
-  tenant_id               varchar(200)  not null comment '租户id'
+  tenant_id               varchar(200)  not null comment '租户id',
+  constraint id
+    unique (id)
 );
 
 -- 工作流添加工作流配置id
@@ -103,3 +109,35 @@ create table SY_WORKFLOW_FAVOUR
   deleted                 int default 0 not null comment '逻辑删除',
   tenant_id               varchar(200)  not null comment '租户id'
 );
+
+alter table SY_WORK_CONFIG
+  add jar_name varchar(100) null comment 'jar包名称';
+
+alter table SY_WORK_CONFIG
+  add main_class varchar(100) null comment 'jar包主类';
+
+alter table SY_WORK_CONFIG
+  add args varchar(100) null comment 'jar执行参数';
+
+
+-- 创建作业资源文件表
+create table SY_WORK_FILE
+(
+  id                      varchar(200)  not null comment '文件配置唯一id'
+    primary key,
+  work_id                  varchar(200)  null comment '作业唯一id',
+  file_name                varchar(200)  null comment '文件名称',
+  file_size                varchar(200)  null comment '文件大小',
+  file_path                varchar(200)  null comment '文件存储路径',
+  file_type                varchar(200)  null comment '文件类型',
+  create_by               varchar(200)  not null comment '创建人',
+  create_date_time        datetime      not null comment '创建时间',
+  last_modified_by        varchar(200)  not null comment '更新人',
+  last_modified_date_time datetime      not null comment '更新时间',
+  version_number          int           not null comment '版本号',
+  deleted                 int default 0 not null comment '逻辑删除',
+  tenant_id               varchar(200)  not null comment '租户id',
+  constraint id
+    unique (id)
+);
+

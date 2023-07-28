@@ -30,6 +30,9 @@ public interface ModulePrefix {
   /** 作业配置模块. */
   String WORK_CONFIG = "woc";
 
+  /** 作业资源文件模块. */
+  String WORK_FILE = "wof";
+
   /** 云代理模块. */
   String YUN_AGENT = "/yag";
 
