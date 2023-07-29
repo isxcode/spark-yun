@@ -12,6 +12,9 @@ import com.isxcode.star.backend.module.workflow.instance.WorkflowInstanceEntity;
 import com.isxcode.star.backend.module.workflow.instance.WorkflowInstanceRepository;
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
@@ -22,11 +25,15 @@ import org.springframework.scheduling.annotation.Async;
 @RequiredArgsConstructor
 public abstract class WorkExecutor {
 
+  public static final Map<String, Thread> WORK_THREAD = new HashMap<>();
+
   private final WorkInstanceRepository workInstanceRepository;
 
   private final WorkflowInstanceRepository workflowInstanceRepository;
 
   protected abstract void execute(WorkRunContext workRunContext, WorkInstanceEntity workInstance);
+
+  protected abstract void abort(WorkInstanceEntity workInstance);
 
   /** 更新实例的日志和状态 */
   public WorkInstanceEntity updateInstance(
@@ -53,6 +60,9 @@ public abstract class WorkExecutor {
     // 获取作业实例
     WorkInstanceEntity workInstance =
         workInstanceRepository.findById(workRunContext.getInstanceId()).get();
+
+    // 将线程存到Map
+    WORK_THREAD.put(workInstance.getId(), Thread.currentThread());
 
     // 初始化日志
     StringBuilder logBuilder = new StringBuilder();
@@ -98,6 +108,9 @@ public abstract class WorkExecutor {
         workflowInstanceRepository.setWorkflowLog(workflowInstance.getId(), runLog);
       }
 
+      // 执行完请求线程
+      WORK_THREAD.remove(workInstance.getId());
+
     } catch (WorkRunException e) {
 
       // 打印异常
@@ -130,5 +143,13 @@ public abstract class WorkExecutor {
         workflowInstanceRepository.setWorkflowLog(workflowInstance.getId(), runLog);
       }
     }
+
+    // 执行完请求线程
+    WORK_THREAD.remove(workInstance.getId());
+  }
+
+  public void syncAbort(WorkInstanceEntity workInstance) {
+
+    this.abort(workInstance);
   }
 }

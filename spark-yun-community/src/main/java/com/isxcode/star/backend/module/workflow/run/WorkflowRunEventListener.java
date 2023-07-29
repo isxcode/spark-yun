@@ -170,11 +170,12 @@ public class WorkflowRunEventListener {
           workInstanceRepository.findAllByWorkIdAndWorkflowInstanceId(
               endNodes, event.getFlowInstanceId());
       boolean flowIsOver =
-          endNodeInstance.stream()
-              .allMatch(
-                  e ->
-                      InstanceStatus.FAIL.equals(e.getStatus())
-                          || InstanceStatus.SUCCESS.equals(e.getStatus()));
+        endNodeInstance.stream()
+          .allMatch(
+            e ->
+              InstanceStatus.FAIL.equals(e.getStatus())
+                || InstanceStatus.SUCCESS.equals(e.getStatus())
+                || InstanceStatus.ABORT.equals(e.getStatus()));
 
       // 判断工作流是否执行完
       if (flowIsOver) {
