@@ -51,5 +51,6 @@ public interface WorkInstanceRepository extends JpaRepository<WorkInstanceEntity
 
   List<WorkInstanceEntity> findAllByWorkflowInstanceId(String workflowInstanceId);
 
-  List<WorkInstanceEntity> findAllByWorkflowInstanceIdAndStatus(String workflowInstanceId, String status);
+  List<WorkInstanceEntity> findAllByWorkflowInstanceIdAndStatus(
+      String workflowInstanceId, String status);
 }

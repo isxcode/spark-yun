@@ -431,50 +431,55 @@ public class WorkflowBizService {
     }
   }
 
-  /**
-   * 中止作业流
-   */
+  /** 中止作业流 */
   public void abortFlow(String workflowInstanceId) {
 
     // 将所有的PENDING作业实例，改为ABORT
-    List<WorkInstanceEntity> pendingWorkInstances = workInstanceRepository.findAllByWorkflowInstanceIdAndStatus(workflowInstanceId, InstanceStatus.PENDING);
-    pendingWorkInstances.forEach(workInstance -> {
-      workInstance.setStatus(InstanceStatus.ABORT);
-    });
+    List<WorkInstanceEntity> pendingWorkInstances =
+        workInstanceRepository.findAllByWorkflowInstanceIdAndStatus(
+            workflowInstanceId, InstanceStatus.PENDING);
+    pendingWorkInstances.forEach(
+        workInstance -> {
+          workInstance.setStatus(InstanceStatus.ABORT);
+        });
     workInstanceRepository.saveAll(pendingWorkInstances);
 
     // 将所有的RUNNING作业实例，改为ABORTING
-    List<WorkInstanceEntity> runningWorkInstances = workInstanceRepository.findAllByWorkflowInstanceIdAndStatus(workflowInstanceId, InstanceStatus.RUNNING);
-    runningWorkInstances.forEach(workInstance -> {
-      workInstance.setStatus(InstanceStatus.ABORTING);
-    });
+    List<WorkInstanceEntity> runningWorkInstances =
+        workInstanceRepository.findAllByWorkflowInstanceIdAndStatus(
+            workflowInstanceId, InstanceStatus.RUNNING);
+    runningWorkInstances.forEach(
+        workInstance -> {
+          workInstance.setStatus(InstanceStatus.ABORTING);
+        });
     workInstanceRepository.saveAll(runningWorkInstances);
 
     // 异步调用中止作业的方法
-    CompletableFuture.supplyAsync(() -> {
-      List<String> exeStatus = new ArrayList<>();
-      // 依此中止
-      runningWorkInstances.forEach(workInstance -> {
-        exeStatus.add(abortWorkInstance(workInstance));
-      });
-      return exeStatus;
-    }).whenComplete((exeStatus, exception) -> {
-
-        WorkflowInstanceEntity workflowInstance = workflowInstanceRepository.findById(workflowInstanceId).get();
-        if (exception != null || exeStatus.contains(InstanceStatus.FAIL)) {
-            workflowInstance.setStatus(InstanceStatus.FAIL);
-        } else {
-            workflowInstance.setStatus(InstanceStatus.ABORT);
-        }
-        workflowInstance.setExecEndDateTime(new Date());
-        workflowInstanceRepository.saveAndFlush(workflowInstance);
-    });
-
+    CompletableFuture.supplyAsync(
+            () -> {
+              List<String> exeStatus = new ArrayList<>();
+              // 依此中止
+              runningWorkInstances.forEach(
+                  workInstance -> {
+                    exeStatus.add(abortWorkInstance(workInstance));
+                  });
+              return exeStatus;
+            })
+        .whenComplete(
+            (exeStatus, exception) -> {
+              WorkflowInstanceEntity workflowInstance =
+                  workflowInstanceRepository.findById(workflowInstanceId).get();
+              if (exception != null || exeStatus.contains(InstanceStatus.FAIL)) {
+                workflowInstance.setStatus(InstanceStatus.FAIL);
+              } else {
+                workflowInstance.setStatus(InstanceStatus.ABORT);
+              }
+              workflowInstance.setExecEndDateTime(new Date());
+              workflowInstanceRepository.saveAndFlush(workflowInstance);
+            });
   }
 
-  /**
-   * 中止作业节点实例.
-   */
+  /** 中止作业节点实例. */
   public String abortWorkInstance(WorkInstanceEntity workInstance) {
 
     WorkEntity workEntity = workRepository.findById(workInstance.getWorkId()).get();
@@ -493,9 +498,7 @@ public class WorkflowBizService {
     }
   }
 
-  /**
-   * 中断作业.
-   */
+  /** 中断作业. */
   public void breakFlow(String workInstanceId) {
 
     // 将作业实例状态改为BREAK
@@ -504,9 +507,7 @@ public class WorkflowBizService {
     workInstanceRepository.save(workInstance);
   }
 
-  /**
-   * 重跑当前节点.
-   */
+  /** 重跑当前节点. */
   public void runCurrentNode(String workInstanceId) {
 
     // 异步单独跑一次作业实例
@@ -521,9 +522,7 @@ public class WorkflowBizService {
 
   }
 
-  /**
-   * 重跑作业流.
-   */
+  /** 重跑作业流. */
   public void reRunFlow(String workflowInstanceId) {
 
     // 先中止作业流
@@ -533,8 +532,5 @@ public class WorkflowBizService {
     // 再执行一个运行逻辑
   }
 
-  public void runAfterFlow(String workflowInstanceId) {
-
-  }
-
+  public void runAfterFlow(String workflowInstanceId) {}
 }
