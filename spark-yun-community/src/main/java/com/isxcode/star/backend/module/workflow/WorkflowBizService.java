@@ -498,12 +498,10 @@ public class WorkflowBizService {
    */
   public void breakFlow(String workInstanceId) {
 
-    // 第一时间，将当前作业实例节点改为中断状态
-
-    // 第二时间，将下游的所有实例，全部改为中断状态
-
-    // 其他不用管，让工作流事件自动推送
-
+    // 将作业实例状态改为BREAK
+    WorkInstanceEntity workInstance = workInstanceRepository.findById(workInstanceId).get();
+    workInstance.setStatus(InstanceStatus.BREAK);
+    workInstanceRepository.save(workInstance);
   }
 
   /**

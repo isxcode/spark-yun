@@ -74,7 +74,7 @@ public class WorkflowRunEventListener {
       }
 
       // 跑过了或者正在跑，不可以再跑
-      if (!InstanceStatus.PENDING.equals(workInstance.getStatus())) {
+      if (!InstanceStatus.PENDING.equals(workInstance.getStatus()) && !InstanceStatus.BREAK.equals(workInstance.getStatus())) {
         return;
       }
 
@@ -91,7 +91,9 @@ public class WorkflowRunEventListener {
           workInstanceRepository.findAllByWorkIdAndWorkflowInstanceId(
               parentNodes, event.getFlowInstanceId());
       boolean parentIsError =
-          parentInstances.stream().anyMatch(e -> InstanceStatus.FAIL.equals(e.getStatus()));
+        parentInstances.stream().anyMatch(e -> InstanceStatus.FAIL.equals(e.getStatus()));
+      boolean parentIsBreak =
+        parentInstances.stream().anyMatch(e -> InstanceStatus.BREAK.equals(e.getStatus()));
       boolean parentIsRunning =
           parentInstances.stream()
               .anyMatch(
@@ -99,15 +101,20 @@ public class WorkflowRunEventListener {
                       InstanceStatus.RUNNING.equals(e.getStatus())
                           || InstanceStatus.PENDING.equals(e.getStatus()));
 
+      // 如果父级在运行中，直接中断
+      if (parentIsRunning) {
+        return;
+      }
+
       // 根据父级的不同状态，执行不同的逻辑
       if (parentIsError) {
         // 如果父级有错，则状态直接变更为失败
         workInstance.setStatus(InstanceStatus.FAIL);
         workInstance.setSubmitLog("父级执行失败");
         workInstance.setExecEndDateTime(new Date());
-      } else if (parentIsRunning) {
-        // 如果父级在运行中，直接中断
-        return;
+      } else if (parentIsBreak || InstanceStatus.BREAK.equals(workInstance.getStatus())) {
+        workInstance.setStatus(InstanceStatus.BREAK);
+        workInstance.setExecEndDateTime(new Date());
       } else {
         workInstance.setStatus(InstanceStatus.RUNNING);
       }
@@ -123,17 +130,17 @@ public class WorkflowRunEventListener {
       // 作业开始执行，添加作业流实例日志
       synchronized (event.getFlowInstanceId()) {
         WorkflowInstanceEntity workflowInstance =
-            workflowInstanceRepository.findById(event.getFlowInstanceId()).get();
+          workflowInstanceRepository.findById(event.getFlowInstanceId()).get();
 
         // 保存到缓存中
         String runLog =
-            workflowInstanceRepository.getWorkflowLog(event.getFlowInstanceId())
-                + "\n"
-                + LocalDateTime.now()
-                + WorkLog.SUCCESS_INFO
-                + "作业: 【"
-                + event.getWorkName()
-                + "】开始执行";
+          workflowInstanceRepository.getWorkflowLog(event.getFlowInstanceId())
+            + "\n"
+            + LocalDateTime.now()
+            + WorkLog.SUCCESS_INFO
+            + "作业: 【"
+            + event.getWorkName()
+            + "】开始执行";
         workflowInstanceRepository.setWorkflowLog(event.getFlowInstanceId(), runLog);
 
         // 更新工作流实例日志
@@ -151,7 +158,7 @@ public class WorkflowRunEventListener {
       } else {
         // 通过versionId封装workRunContext
         VipWorkVersionEntity workVersion =
-            vipWorkVersionRepository.findById(event.getVersionId()).get();
+          vipWorkVersionRepository.findById(event.getVersionId()).get();
         workRunContext = workBizService.genWorkRunContext(workInstance.getId(), workVersion);
       }
 
@@ -175,7 +182,8 @@ public class WorkflowRunEventListener {
             e ->
               InstanceStatus.FAIL.equals(e.getStatus())
                 || InstanceStatus.SUCCESS.equals(e.getStatus())
-                || InstanceStatus.ABORT.equals(e.getStatus()));
+                || InstanceStatus.ABORT.equals(e.getStatus())
+                || InstanceStatus.BREAK.equals(e.getStatus()));
 
       // 判断工作流是否执行完
       if (flowIsOver) {
