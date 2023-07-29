@@ -14,7 +14,6 @@ import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
@@ -78,6 +77,12 @@ public abstract class WorkExecutor {
 
       // 日志需要贯穿上下文
       workRunContext.setLogBuilder(logBuilder);
+
+      try {
+        Thread.sleep(10000);
+      } catch (InterruptedException e) {
+        throw new RuntimeException(e);
+      }
 
       // 开始执行作业
       execute(workRunContext, workInstance);
