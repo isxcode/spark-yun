@@ -278,9 +278,7 @@ public class SparkSqlExecutor extends WorkExecutor {
   }
 
   @Override
-  protected void abort( WorkInstanceEntity workInstance) {
-
-  }
+  protected void abort(WorkInstanceEntity workInstance) {}
 
   /** 初始化spark作业提交配置. */
   public Map<String, String> genSparkSubmitConfig(Map<String, String> sparkConfig) {
