@@ -27,6 +27,8 @@ import com.isxcode.star.backend.module.work.config.WorkConfigEntity;
 import com.isxcode.star.backend.module.work.config.WorkConfigRepository;
 import com.isxcode.star.backend.module.work.instance.WorkInstanceEntity;
 import com.isxcode.star.backend.module.work.instance.WorkInstanceRepository;
+import com.isxcode.star.backend.module.work.run.WorkExecutor;
+import com.isxcode.star.backend.module.work.run.WorkExecutorFactory;
 import com.isxcode.star.backend.module.workflow.config.WorkflowConfigEntity;
 import com.isxcode.star.backend.module.workflow.config.WorkflowConfigRepository;
 import com.isxcode.star.backend.module.workflow.instance.WorkflowInstanceEntity;
@@ -73,6 +75,8 @@ public class WorkflowBizService {
   private final WorkRepository workRepository;
 
   private final WorkConfigRepository workConfigRepository;
+
+  private final WorkExecutorFactory workExecutorFactory;
 
   public WorkflowEntity getWorkflowEntity(String workflowId) {
 
@@ -429,42 +433,41 @@ public class WorkflowBizService {
 
   /**
    * 中止作业流
-   * 将当前运行中的工作流停止调.
    */
   public void abortFlow(String workflowInstanceId) {
 
-    // 查询未运行的作业实例，将实例状态改为已中止
+    // 将所有的PENDING作业实例，改为ABORT
     List<WorkInstanceEntity> pendingWorkInstances = workInstanceRepository.findAllByWorkflowInstanceIdAndStatus(workflowInstanceId, InstanceStatus.PENDING);
     pendingWorkInstances.forEach(workInstance -> {
       workInstance.setStatus(InstanceStatus.ABORT);
     });
     workInstanceRepository.saveAll(pendingWorkInstances);
 
-    // 把运行中的作业实例，改为中止中
+    // 将所有的RUNNING作业实例，改为ABORTING
     List<WorkInstanceEntity> runningWorkInstances = workInstanceRepository.findAllByWorkflowInstanceIdAndStatus(workflowInstanceId, InstanceStatus.RUNNING);
     runningWorkInstances.forEach(workInstance -> {
       workInstance.setStatus(InstanceStatus.ABORTING);
     });
-    workInstanceRepository.saveAll(pendingWorkInstances);
+    workInstanceRepository.saveAll(runningWorkInstances);
 
     // 异步调用中止作业的方法
     CompletableFuture.supplyAsync(() -> {
-
-      // 依此中止作业
       List<String> exeStatus = new ArrayList<>();
+      // 依此中止
       runningWorkInstances.forEach(workInstance -> {
         exeStatus.add(abortWorkInstance(workInstance));
       });
       return exeStatus;
     }).whenComplete((exeStatus, exception) -> {
 
-      if (exeStatus.contains(InstanceStatus.FAIL)) {
-        // 修改作业流实例状态为失败
-
-      } else {
-        // 修改作业流实例状态为已中止
-
-      }
+        WorkflowInstanceEntity workflowInstance = workflowInstanceRepository.findById(workflowInstanceId).get();
+        if (exception != null || exeStatus.contains(InstanceStatus.FAIL)) {
+            workflowInstance.setStatus(InstanceStatus.FAIL);
+        } else {
+            workflowInstance.setStatus(InstanceStatus.ABORT);
+        }
+        workflowInstance.setExecEndDateTime(new Date());
+        workflowInstanceRepository.saveAndFlush(workflowInstance);
     });
 
   }
@@ -474,14 +477,20 @@ public class WorkflowBizService {
    */
   public String abortWorkInstance(WorkInstanceEntity workInstance) {
 
-    // 调用自己的中止方法
-
-    // 修改作业实例已中止
-
-    // 每次执行判断一下，工作流是否运行结束
-
-    // 修改工作流实例的状态已中止，前端停止轮训
-    return "";
+    WorkEntity workEntity = workRepository.findById(workInstance.getWorkId()).get();
+    WorkExecutor workExecutor = workExecutorFactory.create(workEntity.getWorkType());
+    workInstance = workInstanceRepository.findById(workInstance.getId()).get();
+    try {
+      workExecutor.syncAbort(workInstance);
+      workInstance.setStatus(InstanceStatus.ABORT);
+      workInstance.setExecEndDateTime(new Date());
+      workInstanceRepository.save(workInstance);
+      return InstanceStatus.SUCCESS;
+    } catch (Exception e) {
+      workInstance.setStatus(InstanceStatus.FAIL);
+      workInstance.setExecEndDateTime(new Date());
+      return InstanceStatus.FAIL;
+    }
   }
 
   /**

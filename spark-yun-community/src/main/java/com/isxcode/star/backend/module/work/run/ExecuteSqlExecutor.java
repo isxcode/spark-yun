@@ -112,4 +112,11 @@ public class ExecuteSqlExecutor extends WorkExecutor {
       throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + e.getMessage() + "\n");
     }
   }
+
+  @Override
+  protected void abort(WorkInstanceEntity workInstance) {
+
+    Thread thread = WORK_THREAD.get(workInstance.getId());
+    thread.interrupt();
+  }
 }
