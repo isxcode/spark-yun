@@ -5,6 +5,7 @@ import com.isxcode.star.api.constants.api.PathConstants;
 import com.isxcode.star.api.constants.cluster.ClusterNodeStatus;
 import com.isxcode.star.api.constants.work.WorkLog;
 import com.isxcode.star.api.constants.work.instance.InstanceStatus;
+import com.isxcode.star.api.exceptions.SparkYunException;
 import com.isxcode.star.api.exceptions.WorkRunException;
 import com.isxcode.star.api.pojos.base.BaseResponse;
 import com.isxcode.star.api.pojos.plugin.req.PluginReq;
@@ -16,6 +17,10 @@ import com.isxcode.star.backend.module.cluster.ClusterEntity;
 import com.isxcode.star.backend.module.cluster.ClusterRepository;
 import com.isxcode.star.backend.module.cluster.node.ClusterNodeEntity;
 import com.isxcode.star.backend.module.cluster.node.ClusterNodeRepository;
+import com.isxcode.star.backend.module.work.WorkEntity;
+import com.isxcode.star.backend.module.work.WorkRepository;
+import com.isxcode.star.backend.module.work.config.WorkConfigEntity;
+import com.isxcode.star.backend.module.work.config.WorkConfigRepository;
 import com.isxcode.star.backend.module.work.instance.WorkInstanceEntity;
 import com.isxcode.star.backend.module.work.instance.WorkInstanceRepository;
 import com.isxcode.star.backend.module.workflow.instance.WorkflowInstanceRepository;
@@ -39,16 +44,24 @@ public class SparkSqlExecutor extends WorkExecutor {
 
   private final ClusterNodeRepository clusterNodeRepository;
 
+  private final WorkRepository workRepository;
+
+  private final WorkConfigRepository workConfigRepository;
+
   public SparkSqlExecutor(
       WorkInstanceRepository workInstanceRepository,
       ClusterRepository clusterRepository,
       ClusterNodeRepository clusterNodeRepository,
-      WorkflowInstanceRepository workflowInstanceRepository) {
+      WorkflowInstanceRepository workflowInstanceRepository,
+      WorkRepository workRepository,
+      WorkConfigRepository workConfigRepository) {
 
     super(workInstanceRepository, workflowInstanceRepository);
     this.workInstanceRepository = workInstanceRepository;
     this.clusterRepository = clusterRepository;
     this.clusterNodeRepository = clusterNodeRepository;
+    this.workRepository = workRepository;
+    this.workConfigRepository = workConfigRepository;
   }
 
   @Override
@@ -278,7 +291,52 @@ public class SparkSqlExecutor extends WorkExecutor {
   }
 
   @Override
-  protected void abort(WorkInstanceEntity workInstance) {}
+  protected void abort(WorkInstanceEntity workInstance) {
+
+    // 判断作业有没有提交成功
+    workInstance = workInstanceRepository.findById(workInstance.getId()).get();
+    if (!Strings.isEmpty(workInstance.getSparkStarRes())) {
+      WokRunWorkRes wokRunWorkRes =
+          JSON.parseObject(workInstance.getSparkStarRes(), WokRunWorkRes.class);
+      if (!Strings.isEmpty(wokRunWorkRes.getAppId())) {
+        // 关闭远程线程
+
+        WorkEntity work = workRepository.findById(workInstance.getWorkId()).get();
+        WorkConfigEntity workConfig = workConfigRepository.findById(work.getConfigId()).get();
+        List<ClusterNodeEntity> allEngineNodes =
+            clusterNodeRepository.findAllByClusterIdAndStatus(
+                workConfig.getClusterId(), ClusterNodeStatus.RUNNING);
+        if (allEngineNodes.isEmpty()) {
+          throw new WorkRunException(
+              LocalDateTime.now() + WorkLog.ERROR_INFO + "申请资源失败 : 集群不存在可用节点，请切换一个集群  \n");
+        }
+
+        ClusterEntity cluster = clusterRepository.findById(workConfig.getClusterId()).get();
+
+        // 节点选择随机数
+        ClusterNodeEntity engineNode =
+            allEngineNodes.get(new Random().nextInt(allEngineNodes.size()));
+
+        String stopJobUrl =
+            "http://"
+                + engineNode.getHost()
+                + ":"
+                + engineNode.getAgentPort()
+                + "/yag/stopJob?appId="
+                + wokRunWorkRes.getAppId()
+                + "&agentType="
+                + cluster.getClusterType();
+        BaseResponse<?> baseResponse = HttpUtils.doGet(stopJobUrl, BaseResponse.class);
+
+        if (!String.valueOf(HttpStatus.OK.value()).equals(baseResponse.getCode())) {
+          throw new SparkYunException(
+              baseResponse.getCode(), baseResponse.getMsg(), baseResponse.getErr());
+        }
+      }
+    } else {
+      WORK_THREAD.get(workInstance.getId()).interrupt();
+    }
+  }
 
   /** 初始化spark作业提交配置. */
   public Map<String, String> genSparkSubmitConfig(Map<String, String> sparkConfig) {
