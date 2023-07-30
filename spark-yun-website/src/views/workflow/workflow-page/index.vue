@@ -23,10 +23,10 @@
                                     <el-dropdown-menu>
                                         <el-dropdown-item @click="editData(work)">编辑</el-dropdown-item>
                                         <el-dropdown-item v-if="containerType === 'flow'" @click="changeContianer(work, 'config')">作业配置</el-dropdown-item>
-                                        <el-dropdown-item>删除</el-dropdown-item>
-                                        <el-dropdown-item>复制</el-dropdown-item>
+                                        <el-dropdown-item @click="deleteData(work)">删除</el-dropdown-item>
+                                        <!-- <el-dropdown-item>复制</el-dropdown-item>
                                         <el-dropdown-item>导出</el-dropdown-item>
-                                        <el-dropdown-item>置顶</el-dropdown-item>
+                                        <el-dropdown-item>置顶</el-dropdown-item> -->
                                     </el-dropdown-menu>
                                 </template>
                             </el-dropdown>
@@ -86,8 +86,8 @@ import eventBus from '@/utils/eventBus'
 import zqyLog from '@/components/zqy-log/index.vue'
 import WorkItem from '../work-item/index.vue'
 
-import { AddWorkflowDetailList, BreakFlowData, ExportWorkflowData, GetWorkflowData, GetWorkflowDetailList, ImportWorkflowData, PublishWorkflowData, QueryRunWorkInstances, RerunCurrentNodeFlowData, RunAfterFlowData, RunWorkflowData, SaveWorkflowData, StopWorkflowData, UpdateWorkflowDetailList } from '@/services/workflow.service'
-import { ElMessage } from 'element-plus'
+import { AddWorkflowDetailList, BreakFlowData, DeleteWorkflowDetailList, ExportWorkflowData, GetWorkflowData, GetWorkflowDetailList, ImportWorkflowData, PublishWorkflowData, QueryRunWorkInstances, RerunCurrentNodeFlowData, RunAfterFlowData, RunWorkflowData, SaveWorkflowData, StopWorkflowData, UpdateWorkflowDetailList } from '@/services/workflow.service'
+import { ElMessage, ElMessageBox } from 'element-plus'
 
 const route = useRoute()
 
@@ -174,6 +174,26 @@ function saveData() {
     })
 }
 
+// 删除
+function deleteData(data: any) {
+  ElMessageBox.confirm('确定删除该作业吗？', '警告', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning'
+  }).then(() => {
+    DeleteWorkflowDetailList({
+      workId: data.id
+    })
+      .then((res: any) => {
+        ElMessage.success(res.msg)
+        initData()
+      })
+      .catch((error: any) => {
+        console.error(error)
+      })
+  })
+}
+
 // 运行作业流
 function runWorkFlowDataEvent() {
     btnLoadingConfig.runningLoading = true
@@ -203,7 +223,8 @@ function queryRunWorkInstancesEvent() {
         QueryRunWorkInstances({
             workflowInstanceId: workflowInstanceId.value
         }).then((res: any) => {
-            if (res.data.flowStatus === 'SUCCESS' || res.data.flowStatus === 'FAIL') {
+            const statusList = ['SUCCESS', 'FAIL', 'ABORT']
+            if (statusList.includes(res.data.flowStatus)) {
                 clearInterval(timer.value)
                 timer.value = null
                 zqyFlowRef.value.hideGrid(false)
