@@ -13,7 +13,7 @@
                 <span v-if="!btnLoadingConfig.saveLoading" @click="saveData">保存</span>
                 <el-icon v-else class="is-loading"><Loading /></el-icon>
 
-                <span>配置</span>
+                <span @click="showConfigDetail">配置</span>
 
                 <span v-if="!btnLoadingConfig.publishLoading" @click="publishWorkFlow">发布</span>
                 <el-icon v-else class="is-loading"><Loading /></el-icon>
@@ -43,7 +43,7 @@
                 <template v-for="work in workListItem" :key="work.id">
                     <div :draggable="true" class="list-item" @mousedown="handleDragEnd($event, work)">{{ work.name }}
                         <el-dropdown trigger="click">
-                            <el-icon class="option-more">
+                            <el-icon class="option-more" @mousedown.stop>
                                 <MoreFilled />
                             </el-icon>
                             <template #dropdown>
@@ -68,6 +68,7 @@
             <ZqyFlow ref="zqyFlowRef"></ZqyFlow>
         </div>
         <AddModal ref="addModalRef" />
+        <ConfigDetail ref="configDetailRef"></ConfigDetail>
     </div>
 </template>
 
@@ -77,6 +78,7 @@ import { useRoute } from 'vue-router'
 import Breadcrumb from '@/layout/bread-crumb/index.vue'
 import ZqyFlow from '@/lib/packages/zqy-flow/flow.vue'
 import AddModal from './add-modal/index.vue'
+import ConfigDetail from './config-detail/index.vue'
 
 import { AddWorkflowDetailList, ExportWorkflowData, GetWorkflowData, GetWorkflowDetailList, ImportWorkflowData, PublishWorkflowData, QueryRunWorkInstances, RunWorkflowData, SaveWorkflowData, StopWorkflowData, UpdateWorkflowDetailList } from '@/services/workflow.service'
 import { ElMessage } from 'element-plus'
@@ -88,9 +90,11 @@ const workListItem = ref([])
 const zqyFlowRef = ref(null)
 const workflowName = ref('')
 const addModalRef = ref(null)
+const configDetailRef = ref(null)
 const workflowInstanceId = ref('')
 const timer = ref()
 const runningStatus = ref(false)
+
 const btnLoadingConfig = reactive({
     runningLoading: false,
     saveLoading: false,
@@ -245,7 +249,9 @@ function initFlowData() {
     GetWorkflowData({
         workflowId: route.query.id
     }).then((res: any) => {
-        zqyFlowRef.value.initCellList(res.data.webConfig)
+        if (res.data?.webConfig) {
+            zqyFlowRef.value.initCellList(res.data.webConfig)
+        }
     }).catch(() => {
 
     })
@@ -307,6 +313,26 @@ function inputEvent(e: string) {
     if (e === '') {
         initData()
     }
+}
+
+// 配置设置
+function showConfigDetail() {
+    configDetailRef.value.showModal(() => {
+        return new Promise((resolve: any, reject: any) => {
+            // AddWorkflowDetailList({
+            //     ...formData,
+            //     workflowId: route.query.id
+            // })
+            //     .then((res: any) => {
+            //         ElMessage.success(res.msg)
+            //         initData()
+                    resolve()
+            //     })
+            //     .catch((error: any) => {
+            //         reject(error)
+            //     })
+        })
+    })
 }
 
 onMounted(() => {

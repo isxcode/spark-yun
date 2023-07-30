@@ -236,3 +236,29 @@ export function PublishWorkflowData(params: any): Promise<any> {
     params: params
   })
 }
+
+// 发布作业流--流程图--重跑下游节点
+export function RunAfterFlowData(params: any): Promise<any> {
+  return http.request({
+    method: 'get',
+    url: '/wof/runAfterFlow',
+    params: params
+  })
+}
+// 发布作业流--流程图--中断
+export function BreakFlowData(params: any): Promise<any> {
+  return http.request({
+    method: 'get',
+    url: '/wof/breakFlow',
+    params: params
+  })
+}
+// 发布作业流--流程图--重跑当前节点
+export function RerunCurrentNodeFlowData(params: any): Promise<any> {
+  return http.request({
+    method: 'get',
+    url: '/wof/runCurrentNode',
+    params: params
+  })
+}
+

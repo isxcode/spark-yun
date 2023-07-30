@@ -7,16 +7,16 @@
                 <el-icon v-if="status === 'PENDING'" class="custom-icon"><Clock /></el-icon>
                 <el-icon v-if="status === 'ABORT'" class="custom-icon"><VideoPause /></el-icon>
             </template>
-            <el-dropdown trigger="click">
+            <el-dropdown trigger="click" @command="handleCommand">
                 <el-icon class="node-option-more">
                     <MoreFilled />
                 </el-icon>
                 <template #dropdown>
                     <el-dropdown-menu>
-                        <el-dropdown-item>日志</el-dropdown-item>
-                        <el-dropdown-item>重跑下游</el-dropdown-item>
-                        <el-dropdown-item>中断</el-dropdown-item>
-                        <el-dropdown-item>重跑当前</el-dropdown-item>
+                        <el-dropdown-item command="node_log">日志</el-dropdown-item>
+                        <el-dropdown-item command="node_runAfter">重跑下游</el-dropdown-item>
+                        <el-dropdown-item command="node_break">中断</el-dropdown-item>
+                        <el-dropdown-item command="node_reRun">重跑当前</el-dropdown-item>
                     </el-dropdown-menu>
                 </template>
             </el-dropdown>
@@ -38,6 +38,10 @@ const status = ref('')
 const isRunning = ref(false)
 
 let Node
+
+function handleCommand(command: string) {
+    console.log('当前节点', command, node.value)
+}
 
 onMounted(() => {
     node.value = Node = getNode()
