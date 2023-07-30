@@ -8,7 +8,7 @@
                 <el-icon v-if="status === 'ABORT'" class="custom-icon"><VideoPause /></el-icon>
             </template>
             <el-dropdown trigger="click" @command="handleCommand">
-                <el-icon class="node-option-more">
+                <el-icon v-if="showMenu" class="node-option-more">
                     <MoreFilled />
                 </el-icon>
                 <template #dropdown>
@@ -25,9 +25,11 @@
 </template>
 
 <script lang="ts" setup>
-import { inject, onMounted, ref } from 'vue'
+import { computed, inject, onMounted, ref } from 'vue'
 import { ElIcon, ElDropdown, ElDropdownMenu, ElDropdownItem } from 'element-plus'
 import { MoreFilled, Loading, Clock, VideoPause } from '@element-plus/icons-vue'
+import { RunAfterFlowData } from '@/services/workflow.service';
+import eventBus from '@/utils/eventBus'
 
 const getGraph = inject('getGraph')
 const getNode = inject('getNode')
@@ -36,11 +38,23 @@ const name = ref('')
 const node = ref()
 const status = ref('')
 const isRunning = ref(false)
+const showMenu = ref(false)
 
 let Node
 
+// const showMenu = computed(() => {
+//     return node.value?.data?.workInstanceId
+// })
+
 function handleCommand(command: string) {
     console.log('当前节点', command, node.value)
+    // if (command === 'node_runAfter') {
+    //     runAfterNode()
+    // }
+    eventBus.emit('nodeMenuEvent', {
+        data: node.value.data,
+        type: command
+    })
 }
 
 onMounted(() => {
@@ -49,6 +63,7 @@ onMounted(() => {
     node.value.on('change:data', ({ current }) => {
         status.value = current.status
         isRunning.value = current.isRunning
+        showMenu.value = !!current.workInstanceId
     })
 })
 
