@@ -69,6 +69,7 @@
         </div>
         <AddModal ref="addModalRef" />
         <ConfigDetail ref="configDetailRef"></ConfigDetail>
+        <zqyLog ref="zqyLogRef"></zqyLog>
     </div>
 </template>
 
@@ -79,8 +80,10 @@ import Breadcrumb from '@/layout/bread-crumb/index.vue'
 import ZqyFlow from '@/lib/packages/zqy-flow/flow.vue'
 import AddModal from './add-modal/index.vue'
 import ConfigDetail from './config-detail/index.vue'
+import eventBus from '@/utils/eventBus'
+import zqyLog from '@/components/zqy-log/index.vue'
 
-import { AddWorkflowDetailList, ExportWorkflowData, GetWorkflowData, GetWorkflowDetailList, ImportWorkflowData, PublishWorkflowData, QueryRunWorkInstances, RunWorkflowData, SaveWorkflowData, StopWorkflowData, UpdateWorkflowDetailList } from '@/services/workflow.service'
+import { AddWorkflowDetailList, BreakFlowData, ExportWorkflowData, GetWorkflowData, GetWorkflowDetailList, ImportWorkflowData, PublishWorkflowData, QueryRunWorkInstances, RerunCurrentNodeFlowData, RunAfterFlowData, RunWorkflowData, SaveWorkflowData, StopWorkflowData, UpdateWorkflowDetailList } from '@/services/workflow.service'
 import { ElMessage } from 'element-plus'
 
 const route = useRoute()
@@ -91,6 +94,8 @@ const zqyFlowRef = ref(null)
 const workflowName = ref('')
 const addModalRef = ref(null)
 const configDetailRef = ref(null)
+const zqyLogRef = ref(null)
+
 const workflowInstanceId = ref('')
 const timer = ref()
 const runningStatus = ref(false)
@@ -335,15 +340,68 @@ function showConfigDetail() {
     })
 }
 
+// 节点运行日志
+function nodeRunningLog(e: any) {
+    zqyLogRef.value.showModal(() => {
+      console.log('关闭')
+    }, { id: e.data.workInstanceId }
+  )
+}
+
+// 节点重跑下游
+function nodeRunAfterFlow() {
+    RunAfterFlowData({
+        workflowInstanceId: workflowInstanceId.value
+    }).then((res: any) => {
+        ElMessage.success(res.msg)
+    }).catch(() => {})
+}
+
+// 节点中断
+function nodeBreakFlow(e: any) {
+    BreakFlowData({
+        workInstanceId: e.data.workInstanceId
+    }).then((res: any) => {
+        ElMessage.success(res.msg)
+    }).catch(() => {})
+}
+
+// 重跑当前节点
+function reRunCurrentNodeFlow(e: any) {
+    RerunCurrentNodeFlowData({
+        workInstanceId: e.data.workInstanceId
+    }).then((res: any) => {
+        ElMessage.success(res.msg)
+    }).catch(() => {})
+}
+
 onMounted(() => {
     initData()
     initFlowData()
     workflowName.value = route.query.name
+
+    eventBus.on('nodeMenuEvent', (e: any) => {
+        console.log('eeee', e)
+        if (e.type === 'node_log') {
+            // 日志
+            nodeRunningLog(e)
+        } else if (e.type === 'node_runAfter') {
+            // 重跑下游
+            nodeRunAfterFlow()
+        } else if (e.type === 'node_break') {
+            // 中断
+            nodeBreakFlow(e)
+        } else if (e.type === 'node_reRun') {
+            // 重跑当前
+            reRunCurrentNodeFlow(e)
+        }
+    })
 })
 
 onUnmounted(() => {
     clearInterval(timer.value)
     timer.value = null
+    eventBus.off('nodeMenuEvent')
 })
 </script>
 

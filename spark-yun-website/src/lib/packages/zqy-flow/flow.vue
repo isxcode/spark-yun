@@ -277,6 +277,7 @@ function updateFlowStatus(statusList: Array<any>, isRunning: boolean) {
         const data = node.getData()
         node.setData({
             ...data,
+            workInstanceId: item.workInstanceId,
             status: item.runStatus,
             isRunning: isRunning
         })
