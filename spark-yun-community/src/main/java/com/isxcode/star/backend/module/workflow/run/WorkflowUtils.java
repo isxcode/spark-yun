@@ -1,10 +1,17 @@
 package com.isxcode.star.backend.module.workflow.run;
 
+import static com.isxcode.star.backend.config.WebSecurityConfig.TENANT_ID;
+import static com.isxcode.star.backend.config.WebSecurityConfig.USER_ID;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.TypeReference;
 import com.isxcode.star.api.exceptions.SparkYunException;
 import com.isxcode.star.api.pojos.workflow.config.dto.NodeInfo;
+import com.isxcode.star.backend.module.work.WorkEntity;
+import com.isxcode.star.backend.module.work.config.WorkConfigEntity;
+import com.isxcode.star.backend.module.work.run.WorkRunContext;
+import com.isxcode.star.backend.module.work.version.VipWorkVersionEntity;
 import java.util.*;
 import java.util.stream.Collectors;
 import org.apache.logging.log4j.util.Strings;
@@ -127,5 +134,64 @@ public class WorkflowUtils {
     }
 
     return nodeMapping;
+  }
+
+  public static WorkRunContext genWorkRunContext(
+      String instanceId, WorkEntity work, WorkConfigEntity workConfig) {
+
+    return WorkRunContext.builder()
+        .datasourceId(workConfig.getDatasourceId())
+        .sqlScript(workConfig.getSqlScript())
+        .instanceId(instanceId)
+        .tenantId(TENANT_ID.get())
+        .clusterId(workConfig.getClusterId())
+        .workType(work.getWorkType())
+        .workId(work.getId())
+        .workName(work.getName())
+        .sparkConfig(
+            JSON.parseObject(
+                workConfig.getSparkConfig(), new TypeReference<Map<String, String>>() {}.getType()))
+        .userId(USER_ID.get())
+        .build();
+  }
+
+  public static WorkRunContext genWorkRunContext(
+      String instanceId, VipWorkVersionEntity workVersion) {
+
+    return WorkRunContext.builder()
+        .datasourceId(workVersion.getDatasourceId())
+        .sqlScript(workVersion.getSqlScript())
+        .instanceId(instanceId)
+        .tenantId(TENANT_ID.get())
+        .userId(USER_ID.get())
+        .clusterId(workVersion.getClusterId())
+        .workType(workVersion.getWorkType())
+        .workId(workVersion.getId())
+        .sparkConfig(
+            JSON.parseObject(
+                workVersion.getSparkConfig(),
+                new TypeReference<Map<String, String>>() {}.getType()))
+        .build();
+  }
+
+  /** 获取所有下游的节点id. */
+  public static List<String> parseAfterNodes(List<List<String>> webConfig, String workId) {
+
+    List<String> afterNodes = new ArrayList<>();
+    afterNodes.add(workId);
+    recursionAfterNode(afterNodes, webConfig, workId);
+    return afterNodes.stream().distinct().collect(Collectors.toList());
+  }
+
+  public static void recursionAfterNode(
+      List<String> result, List<List<String>> webConfig, String currentWorkId) {
+
+    webConfig.forEach(
+        e -> {
+          if (currentWorkId.equals(e.get(0))) {
+            result.add(e.get(1));
+            recursionAfterNode(result, webConfig, e.get(1));
+          }
+        });
   }
 }

@@ -266,10 +266,10 @@ public class WorkflowController {
       in = ParameterIn.HEADER,
       schema = @Schema(type = "string"))
   public void runAfterFlow(
-      @Schema(description = "作业流实例唯一id", example = "sy_ba1f12b5c8154f999a02a5be2373a438")
+      @Schema(description = "作业实例唯一id", example = "sy_ba1f12b5c8154f999a02a5be2373a438")
           @RequestParam
-          String workflowInstanceId) {
+          String workInstanceId) {
 
-    workflowBizService.runAfterFlow(workflowInstanceId);
+    workflowBizService.runAfterFlow(workInstanceId);
   }
 }
