@@ -11,9 +11,6 @@
 <script setup lang='ts'>
 import { nextTick, onMounted, createVNode, ref } from 'vue'
 import { Graph, Path, Addon } from '@antv/x6'
-import database from './database.vue'
-import Hierarchy from '@antv/hierarchy'
-import { $Bus } from "@/plugins/global"
 import CustomNode from './custom-node.vue'
 
 let _Graph: any
@@ -253,7 +250,6 @@ function addNodeFn(item: any, e: any) {
         ]
     })
     dnd.start(node, e)
-    // _Graph.addNode()
 }
 
 // 获取所有节点以及连线的数据
@@ -296,10 +292,8 @@ function hideGrid(status: boolean) {
 }
 
 onMounted(() => {
-    nextTick(() => {
-        container = document.getElementById('container') as HTMLElement | undefined
-        initGraph()
-    })
+    container = document.getElementById('container') as HTMLElement | undefined
+    initGraph()
 })
 
 defineExpose({
@@ -310,10 +304,10 @@ defineExpose({
     hideGrid
 })
 </script>
-  
+
 <style lang="scss" scoped>
 .zqy-flow {
-    height: 100%;
+    height: calc(100vh - 162px);
 
     .my-selecting {
         border: 1px solid red;
