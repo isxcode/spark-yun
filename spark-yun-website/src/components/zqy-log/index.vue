@@ -9,14 +9,13 @@
   
 <script lang="ts" setup>
 import { reactive, ref, nextTick, onUnmounted } from 'vue'
-import BlockModal from '@/components/block-modal/index.vue'
+import BlockModal from '../block-modal/index.vue'
 
 import { GetLogData, GetYarnLogData } from '@/services/schedule.service'
 
 const callback = ref<any>()
 const logMsg = ref('')
 const info = ref('')
-const modalType = ref('')
 const position = ref(false)
 const timer = ref(null)
 const preContentRef = ref(null)
@@ -36,29 +35,17 @@ const modelConfig = reactive({
     closeOnClickModal: false
 })
 
-function showModal(cb: () => void, data: any, type: string): void {
+function showModal(cb: () => void, data: any): void {
     callback.value = cb
     info.value = data.id
-    modalType.value = type
-
-    if (modalType.value === 'log') {
-        position.value = true
-        getLogData()
-        if (!timer.value) {
-            timer.value = setInterval(() => {
-                getLogData()
-            }, 3000)
-        }
-        modelConfig.title = '日志'
-    } else if (modalType.value === 'result') {
-        getResultDatalist()
-        modelConfig.width = '64%'
-        modelConfig.title = '结果'
-    } else if (modalType.value === 'yarnLog') {
-        position.value = true
-        modelConfig.title = '运行日志'
-        getYarnLogData()
+    position.value = true
+    getLogData()
+    if (!timer.value) {
+        timer.value = setInterval(() => {
+            getLogData()
+        }, 3000)
     }
+    modelConfig.title = '日志'
     modelConfig.visible = true
 }
 
