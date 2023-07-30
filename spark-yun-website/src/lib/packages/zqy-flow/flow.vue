@@ -295,8 +295,10 @@ function hideGrid(status: boolean) {
 }
 
 onMounted(() => {
-    container = document.getElementById('container') as HTMLElement | undefined
-    initGraph()
+    nextTick(() => {
+        container = document.getElementById('container') as HTMLElement | undefined
+        initGraph()
+    })
 })
 
 defineExpose({
