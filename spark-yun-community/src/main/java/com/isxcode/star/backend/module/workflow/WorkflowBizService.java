@@ -550,7 +550,7 @@ public class WorkflowBizService {
   /** 重跑作业流. */
   public void reRunFlow(String workflowInstanceId) {
 
-    // 先中止作业流
+    // 先中止运行中的作业
 
     // 再初始化实例的值
 
