@@ -145,12 +145,22 @@ p {
 .zqy-flow-node.SUCCESS {
     border-left: 4px solid #52c41a;
 }
+.zqy-flow-node.PENDING {
+    border-left: 4px solid #F5B041;
+}
+.zqy-flow-node.BREAK {
+    border-left: 4px solid #F1C40F;
+}
 
 .zqy-flow-node.FAIL {
     border-left: 4px solid #ff4d4f;
 }
 
 .zqy-flow-node.ABORT {
+    border-left: 4px solid #839192;
+}
+
+.zqy-flow-node.ABORTING {
     border-left: 4px solid #b2b2b2;
 }
 
@@ -171,9 +181,26 @@ p {
 }
 
 .x6-node-selected .zqy-flow-node.ABORT {
+    border-color: #839192;
+    border-radius: 2px;
+    box-shadow: 0 0 0 4px #cfdcdd;
+}
+
+.x6-node-selected .zqy-flow-node.PENDING {
+    border-color: #F5B041;
+    border-radius: 2px;
+    box-shadow: 0 0 0 4px #ffe1b4;
+}
+
+.x6-node-selected .zqy-flow-node.ABORTING {
     border-color: #b2b2b2;
     border-radius: 2px;
-    box-shadow: 0 0 0 4px #e0dcdc;
+    box-shadow: 0 0 0 4px #f0e9e9;
+}
+.x6-node-selected .zqy-flow-node.BREAK {
+    border-color: #F1C40F;
+    border-radius: 2px;
+    box-shadow: 0 0 0 4px #faf1cf;
 }
 
 .x6-node-selected .zqy-flow-node.FAIL {
