@@ -375,9 +375,9 @@ function nodeRunningLog(e: any) {
 }
 
 // 节点重跑下游
-function nodeRunAfterFlow() {
+function nodeRunAfterFlow(e) {
     RunAfterFlowData({
-        workflowInstanceId: workflowInstanceId.value
+        workInstanceId: e.data.workInstanceId
     }).then((res: any) => {
         ElMessage.success(res.msg)
     }).catch(() => {})
@@ -424,7 +424,7 @@ onMounted(() => {
             nodeRunningLog(e)
         } else if (e.type === 'node_runAfter') {
             // 重跑下游
-            nodeRunAfterFlow()
+            nodeRunAfterFlow(e)
         } else if (e.type === 'node_break') {
             // 中断
             nodeBreakFlow(e)
