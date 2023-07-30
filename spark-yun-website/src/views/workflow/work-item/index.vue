@@ -1,5 +1,5 @@
 <template>
-  <Breadcrumb :bread-crumb-list="breadCrumbList" />
+  <!-- <Breadcrumb :bread-crumb-list="breadCrumbList" /> -->
   <div class="zqy-work-item">
     <LoadingPage
       :visible="loading"
@@ -10,11 +10,11 @@
         <div class="sql-code-container">
           <div class="sql-option-container">
             <div
-              class="btn-box"
+              class="btn-box btn-box__4"
               @click="goBack"
             >
               <el-icon><RefreshLeft /></el-icon>
-              <span class="btn-text">返回</span>
+              <span class="btn-text">返回流程</span>
             </div>
             <div
               class="btn-box"
@@ -123,6 +123,8 @@ import { nextTick } from 'vue'
 
 const route = useRoute()
 const router = useRouter()
+const emit = defineEmits([ 'back' ])
+
 const loading = ref(false)
 const networkError = ref(false)
 const runningLoading = ref(false)
@@ -158,7 +160,8 @@ const breadCrumbList = reactive([
     name: '作业',
     code: 'workflow-detail',
     query: {
-      id: route.query.workflowId
+      // id: route.query.workflowId
+      id: route.query.id
     }
   },
   {
@@ -189,11 +192,15 @@ const tabList = reactive([
   // }
 ])
 
+const props = defineProps<{
+  workItemConfig: any
+}>()
+
 function initData(id?: string) {
   loading.value = true
   networkError.value = networkError.value || false
   GetWorkItemConfig({
-    workId: route.query.id
+    workId: props.workItemConfig.id
   })
     .then((res: any) => {
       workConfig = res.data
@@ -244,12 +251,13 @@ function tabChangeEvent(e: string) {
 
 // 返回
 function goBack() {
-  router.push({
-    name: 'workflow-detail',
-    query: {
-      id: route.query.workflowId
-    }
-  })
+  emit('back')
+  // router.push({
+  //   name: 'workflow-detail',
+  //   query: {
+  //     id: route.query.workflowId
+  //   }
+  // })
 }
 
 // 运行
@@ -261,7 +269,7 @@ function runWorkData() {
   })
   runningLoading.value = true
   RunWorkItemConfig({
-    workId: route.query.id
+    workId: props.workItemConfig.id
   })
     .then((res: any) => {
       runningLoading.value = false
@@ -286,7 +294,7 @@ function terWorkData() {
   }
   terLoading.value = true
   TerWorkItemConfig({
-    workId: route.query.id,
+    workId: props.workItemConfig.id,
     instanceId: instanceId.value
   })
     .then((res: any) => {
@@ -304,7 +312,7 @@ function saveData() {
   saveLoading.value = true
   SaveWorkItemConfig({
     sqlScript: sqltextData.value,
-    workId: route.query.id,
+    workId: props.workItemConfig.id,
     datasourceId: workConfig.datasourceId,
     sparkConfig: workConfig.sparkConfig,
     clusterId: workConfig.clusterId,
@@ -325,7 +333,7 @@ function setConfigData() {
     return new Promise((resolve: any, reject: any) => {
       SaveWorkItemConfig({
         sqlScript: sqltextData.value,
-        workId: route.query.id,
+        workId: props.workItemConfig.id,
         datasourceId: formData.datasourceId,
         clusterId: formData.clusterId,
         sparkConfig: formData.sparkConfig,
@@ -370,6 +378,9 @@ onMounted(() => {
           cursor: pointer;
           width: 48px;
           margin-right: 8px;
+          &.btn-box__4 {
+            width: 70px;
+          }
           .btn-text {
             margin-left: 4px;
           }
