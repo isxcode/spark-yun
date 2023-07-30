@@ -2,6 +2,7 @@ package com.isxcode.star.backend.module.workflow.run;
 
 import static com.isxcode.star.backend.config.WebSecurityConfig.TENANT_ID;
 import static com.isxcode.star.backend.config.WebSecurityConfig.USER_ID;
+import static com.isxcode.star.backend.module.workflow.run.WorkflowUtils.genWorkRunContext;
 
 import com.isxcode.star.api.constants.work.WorkLog;
 import com.isxcode.star.api.constants.work.instance.InstanceStatus;
@@ -155,12 +156,12 @@ public class WorkflowRunEventListener {
         // 通过workId封装workRunContext
         WorkEntity work = workRepository.findById(event.getWorkId()).get();
         WorkConfigEntity workConfig = workConfigRepository.findById(work.getConfigId()).get();
-        workRunContext = workBizService.genWorkRunContext(workInstance.getId(), work, workConfig);
+        workRunContext = genWorkRunContext(workInstance.getId(), work, workConfig);
       } else {
         // 通过versionId封装workRunContext
         VipWorkVersionEntity workVersion =
             vipWorkVersionRepository.findById(event.getVersionId()).get();
-        workRunContext = workBizService.genWorkRunContext(workInstance.getId(), workVersion);
+        workRunContext = genWorkRunContext(workInstance.getId(), workVersion);
       }
 
       // 同步执行作业
