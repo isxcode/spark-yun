@@ -262,3 +262,11 @@ export function RerunCurrentNodeFlowData(params: any): Promise<any> {
   })
 }
 
+// 作业流--流程图--重跑工作流
+export function ReRunWorkflow(params: any): Promise<any> {
+  return http.request({
+    method: 'get',
+    url: '/wof/reRunFlow',
+    params: params
+  })
+}
