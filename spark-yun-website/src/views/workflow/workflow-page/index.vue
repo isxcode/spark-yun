@@ -4,8 +4,18 @@
             <div class="work-list">
                 <div class="option-container">
                     <div class="option-title">
-                        <span class="option-title__href" @click="backToFlow">{{ workflowName }}</span>
+                        <span class="option-title__href" @click="backToFlow">{{ workFlowData.name }}</span>
                     </div>
+                    <el-dropdown trigger="click">
+                        <el-icon class="change-workflow">
+                            <Switch />
+                        </el-icon>
+                        <template #dropdown>
+                            <el-dropdown-menu>
+                                <el-dropdown-item @click="changeWorkFlow(workFlow)" v-for="workFlow in workFlowList">{{ workFlow.name }}</el-dropdown-item>
+                            </el-dropdown-menu>
+                        </template>
+                    </el-dropdown>
                 </div>
                 <div class="search-box">
                     <el-input v-model="searchParam" placeholder="回车搜索作业名称" @input="inputEvent"
@@ -71,7 +81,7 @@
                     <ZqyFlow ref="zqyFlowRef"></ZqyFlow>
                 </template>
                 <template v-else>
-                    <WorkItem v-if="showWorkItem" @back="backToFlow" :workItemConfig="workConfig"></WorkItem>
+                    <WorkItem v-if="showWorkItem" @back="backToFlow" :workItemConfig="workConfig" :workFlowData="workFlowData"></WorkItem>
                 </template>
             </div>
         <AddModal ref="addModalRef" />
@@ -91,7 +101,7 @@ import eventBus from '@/utils/eventBus'
 import zqyLog from '@/components/zqy-log/index.vue'
 import WorkItem from '../work-item/index.vue'
 
-import { AddWorkflowDetailList, BreakFlowData, DeleteWorkflowDetailList, ExportWorkflowData, GetWorkflowData, GetWorkflowDetailList, ImportWorkflowData, PublishWorkflowData, QueryRunWorkInstances, ReRunWorkflow, RerunCurrentNodeFlowData, RunAfterFlowData, RunWorkflowData, SaveWorkflowData, StopWorkflowData, UpdateWorkflowDetailList } from '@/services/workflow.service'
+import { AddWorkflowDetailList, BreakFlowData, DeleteWorkflowDetailList, ExportWorkflowData, GetWorkflowData, GetWorkflowDetailList, GetWorkflowList, ImportWorkflowData, PublishWorkflowData, QueryRunWorkInstances, ReRunWorkflow, RerunCurrentNodeFlowData, RunAfterFlowData, RunWorkflowData, SaveWorkflowData, StopWorkflowData, UpdateWorkflowDetailList } from '@/services/workflow.service'
 import { ElMessage, ElMessageBox } from 'element-plus'
 
 const route = useRoute()
@@ -106,6 +116,11 @@ const zqyLogRef = ref(null)
 const containerType = ref('flow')
 const workConfig = ref()
 const showWorkItem = ref(true)
+const workFlowList = ref()
+const workFlowData = ref({
+    name: '',
+    id: ''
+})
 
 const workflowInstanceId = ref('')
 const timer = ref()
@@ -137,11 +152,27 @@ function initData() {
         page: 0,
         pageSize: 99999,
         searchKeyWord: searchParam.value,
-        workflowId: route.query.id
+        workflowId: workFlowData.value.id
     }).then((res: any) => {
         workListItem.value = res.data.content
     }).catch(() => {
         workListItem.value = []
+    })
+}
+
+function getWorkFlows() {
+    GetWorkflowList({
+        page: 0,
+        pageSize: 100000,
+        searchKeyWord: ''
+    }).then((res: any) => {
+        workFlowList.value = res.data.content
+    }).catch(() => {
+    tableConfig.tableData = []
+    tableConfig.pagination.total = 0
+    loading.value = false
+    tableConfig.loading = false
+    networkError.value = true
     })
 }
 
@@ -164,7 +195,7 @@ function saveData() {
     const data = zqyFlowRef.value.getAllCellData()
     btnLoadingConfig.saveLoading = true
     SaveWorkflowData({
-        workflowId: route.query.id,
+        workflowId: workFlowData.value.id,
         webConfig: data.map((node: any) => {
             const item = node.store.data
             if (item.shape === 'dag-node') {
@@ -212,7 +243,7 @@ function deleteData(data: any) {
 function runWorkFlowDataEvent() {
     btnLoadingConfig.runningLoading = true
     RunWorkflowData({
-        workflowId: route.query.id
+        workflowId: workFlowData.value.id
     }).then((res: any) => {
         workflowInstanceId.value = res.data
         ElMessage.success(res.msg)
@@ -280,7 +311,7 @@ function addData() {
         return new Promise((resolve: any, reject: any) => {
             AddWorkflowDetailList({
                 ...formData,
-                workflowId: route.query.id
+                workflowId: workFlowData.value.id
             })
                 .then((res: any) => {
                     ElMessage.success(res.msg)
@@ -313,7 +344,7 @@ function editData(data: any) {
 
 function initFlowData() {
     GetWorkflowData({
-        workflowId: route.query.id
+        workflowId: workFlowData.value.id
     }).then((res: any) => {
         if (res.data?.webConfig) {
             zqyFlowRef.value.initCellList(res.data.webConfig)
@@ -327,7 +358,7 @@ function initFlowData() {
 function publishWorkFlow() {
     btnLoadingConfig.publishLoading = true
     PublishWorkflowData({
-        workflowId: route.query.id
+        workflowId: workFlowData.value.id
     }).then((res: any) => {
         btnLoadingConfig.publishLoading = false
         ElMessage.success(res.msg)
@@ -354,7 +385,7 @@ function stopWorkFlow() {
 function importWorkFlow() {
     btnLoadingConfig.importLoading = true
     ImportWorkflowData({
-        workflowId: route.query.id
+        workflowId: workFlowData.value.id
     }).then((res: any) => {
         btnLoadingConfig.importLoading = false
         ElMessage.success(res.msg)
@@ -367,7 +398,7 @@ function importWorkFlow() {
 function exportWorkFlow() {
     btnLoadingConfig.exportLoading = true
     ExportWorkflowData({
-        workflowId: route.query.id
+        workflowId: workFlowData.value.id
     }).then((res: any) => {
         btnLoadingConfig.exportLoading = false
         ElMessage.success(res.msg)
@@ -388,7 +419,7 @@ function showConfigDetail() {
         return new Promise((resolve: any, reject: any) => {
             // AddWorkflowDetailList({
             //     ...formData,
-            //     workflowId: route.query.id
+            //     workflowId: workFlowData.value.id
             // })
             //     .then((res: any) => {
             //         ElMessage.success(res.msg)
@@ -477,10 +508,26 @@ function backToFlow() {
     initFlowData()
 }
 
-onMounted(() => {
+function changeWorkFlow(workFlow: any) {
+    containerType.value = 'flow'
+    workConfig.value = null
+    workFlowData.value = {
+        name: workFlow.name,
+        id: workFlow.id
+    }
     initData()
     initFlowData()
-    workflowName.value = route.query.name
+}
+
+onMounted(() => {
+    workFlowData.value = {
+        name: route.query.name,
+        id: route.query.id
+    }
+    initData()
+    initFlowData()
+    getWorkFlows()
+    // workflowName.value = route.query.name
 
     eventBus.on('nodeMenuEvent', (e: any) => {
         console.log('eeee', e)
@@ -527,6 +574,7 @@ onUnmounted(() => {
             background-color: $--app-light-color;
             border-bottom: 1px solid $--app-border-color;
             display: flex;
+            position: relative;
 
             .option-title {
                 height: 100%;
@@ -547,6 +595,15 @@ onUnmounted(() => {
                 }
             }
 
+            .change-workflow {
+                position: absolute;
+                right: 12px;
+                top: 16px;
+                cursor: pointer;
+                &:hover {
+                    color: $--app-primary-color;
+                }
+            }
         }
 
         .search-box {
