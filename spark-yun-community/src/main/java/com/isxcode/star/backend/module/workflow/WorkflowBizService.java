@@ -550,11 +550,85 @@ public class WorkflowBizService {
   /** 重跑作业流. */
   public void reRunFlow(String workflowInstanceId) {
 
-    // 先中止运行中的作业
+    // 先中止作业
+    // 将所有的PENDING作业实例，改为ABORT
+    List<WorkInstanceEntity> pendingWorkInstances =
+        workInstanceRepository.findAllByWorkflowInstanceIdAndStatus(
+            workflowInstanceId, InstanceStatus.PENDING);
+    pendingWorkInstances.forEach(
+        workInstance -> {
+          workInstance.setStatus(InstanceStatus.ABORT);
+        });
+    workInstanceRepository.saveAll(pendingWorkInstances);
 
-    // 再初始化实例的值
+    // 将所有的RUNNING作业实例，改为ABORTING
+    List<WorkInstanceEntity> runningWorkInstances =
+        workInstanceRepository.findAllByWorkflowInstanceIdAndStatus(
+            workflowInstanceId, InstanceStatus.RUNNING);
+    runningWorkInstances.forEach(
+        workInstance -> {
+          workInstance.setStatus(InstanceStatus.ABORTING);
+        });
+    workInstanceRepository.saveAll(runningWorkInstances);
 
-    // 再执行一个运行逻辑
+    // 异步调用中止作业的方法
+    CompletableFuture.supplyAsync(
+            () -> {
+              List<String> exeStatus = new ArrayList<>();
+              // 依此中止
+              runningWorkInstances.forEach(
+                  workInstance -> exeStatus.add(abortWorkInstance(workInstance)));
+              return exeStatus;
+            })
+        .whenComplete(
+            (exeStatus, exception) -> {
+
+              // 中止完作业后，重新运行
+
+              // 初始化工作流实例状态
+              WorkflowInstanceEntity workflowInstance =
+                  workflowInstanceRepository.findById(workflowInstanceId).get();
+              workflowInstance.setStatus(InstanceStatus.PENDING);
+              workflowInstanceRepository.save(workflowInstance);
+
+              // 初始化作业实例状态
+              List<WorkInstanceEntity> workInstances =
+                  workInstanceRepository.findAllByWorkflowInstanceId(workflowInstanceId);
+              workInstances.forEach(
+                  e -> {
+                    e.setStatus(InstanceStatus.PENDING);
+                  });
+              workInstanceRepository.saveAll(workInstances);
+
+              // 获取配置工作流配置信息
+              WorkflowEntity workflow =
+                  workflowRepository.findById(workflowInstance.getFlowId()).get();
+              WorkflowConfigEntity workflowConfig =
+                  workflowConfigRepository.findById(workflow.getConfigId()).get();
+
+              // 重新执行
+              List<String> startNodes =
+                  JSON.parseArray(workflowConfig.getDagStartList(), String.class);
+              List<WorkEntity> startNodeWorks = workRepository.findAllByWorkIds(startNodes);
+              for (WorkEntity work : startNodeWorks) {
+                WorkflowRunEvent metaEvent =
+                    WorkflowRunEvent.builder()
+                        .workId(work.getId())
+                        .workName(work.getName())
+                        .dagEndList(JSON.parseArray(workflowConfig.getDagEndList(), String.class))
+                        .dagStartList(startNodes)
+                        .flowInstanceId(workflowInstance.getId())
+                        .nodeMapping(
+                            JSON.parseObject(
+                                workflowConfig.getNodeMapping(),
+                                new TypeReference<List<List<String>>>() {}))
+                        .nodeList(JSON.parseArray(workflowConfig.getNodeList(), String.class))
+                        .tenantId(TENANT_ID.get())
+                        .userId(USER_ID.get())
+                        .build();
+                eventPublisher.publishEvent(metaEvent);
+              }
+            });
   }
 
   public void runAfterFlow(String workInstanceId) {
