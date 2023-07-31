@@ -14,9 +14,9 @@
                 </div>
                 <div class="list-box">
                     <template v-for="work in workListItem" :key="work.id">
-                        <div class="list-item" @mousedown="handleDragEnd($event, work)">{{ work.name }}
+                        <div class="list-item" :class="{ 'choose-item': workConfig && workConfig.id === work.id }" :draggable="true" @click="showWorkConfig(work)" @dragstart="handleDragEnd($event, work)">{{ work.name }}
                             <el-dropdown trigger="click">
-                                <el-icon class="option-more" @mousedown.stop>
+                                <el-icon class="option-more" @click.stop>
                                     <MoreFilled />
                                 </el-icon>
                                 <template #dropdown>
@@ -66,7 +66,7 @@
                     <ZqyFlow ref="zqyFlowRef"></ZqyFlow>
                 </template>
                 <template v-else>
-                    <WorkItem @back="backToFlow" :workItemConfig="workConfig"></WorkItem>
+                    <WorkItem v-if="showWorkItem" @back="backToFlow" :workItemConfig="workConfig"></WorkItem>
                 </template>
             </div>
         <AddModal ref="addModalRef" />
@@ -76,7 +76,7 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, ref, onMounted, onUnmounted } from 'vue'
+import { reactive, ref, onMounted, onUnmounted, nextTick } from 'vue'
 import { useRoute } from 'vue-router'
 import Breadcrumb from '@/layout/bread-crumb/index.vue'
 import ZqyFlow from '@/lib/packages/zqy-flow/flow.vue'
@@ -100,6 +100,7 @@ const configDetailRef = ref(null)
 const zqyLogRef = ref(null)
 const containerType = ref('flow')
 const workConfig = ref()
+const showWorkItem = ref(true)
 
 const workflowInstanceId = ref('')
 const timer = ref()
@@ -140,8 +141,15 @@ function initData() {
 
 // 拖动后松开鼠标触发事件
 function handleDragEnd(e: any, item: any) {
-    if (!runningStatus.value && containerType.value === 'flow') {
-        zqyFlowRef.value.addNodeFn(item, e)
+    if (!runningStatus.value) {
+        if (containerType.value === 'config') {
+            containerType.value = 'flow'
+            workConfig.value = null
+            initFlowData()
+        }
+        nextTick(() => {
+            zqyFlowRef.value.addNodeFn(item, e)
+        })
     }
 }
 
@@ -375,7 +383,7 @@ function nodeRunningLog(e: any) {
 }
 
 // 节点重跑下游
-function nodeRunAfterFlow(e) {
+function nodeRunAfterFlow(e: any) {
     RunAfterFlowData({
         workInstanceId: e.data.workInstanceId
     }).then((res: any) => {
@@ -405,6 +413,15 @@ function reRunCurrentNodeFlow(e: any) {
 function changeContianer(data: any, type: string) {
     workConfig.value = data
     containerType.value = type
+}
+
+function showWorkConfig(data: any) {
+    workConfig.value = data
+    containerType.value = 'config'
+    showWorkItem.value = false
+    nextTick(() => {
+        showWorkItem.value = true
+    })
 }
 
 function backToFlow() {
@@ -499,19 +516,23 @@ onUnmounted(() => {
         }
 
         .list-box {
-            padding: 0 4px;
+            // padding: 0 4px;
             box-sizing: border-box;
 
             .list-item {
                 height: $--app-item-height;
                 line-height: $--app-item-height;
-                padding-left: 8px;
-                padding-right: 8px;
+                padding-left: 12px;
+                padding-right: 12px;
                 box-sizing: border-box;
                 border-bottom: 1px solid $--app-border-color;
-                cursor: grab;
+                cursor: pointer;
                 font-size: $--app-small-font-size;
                 position: relative;
+
+                &.choose-item {
+                    background-color: $--app-click-color;
+                }
 
                 &:hover {
                     background-color: $--app-click-color;
