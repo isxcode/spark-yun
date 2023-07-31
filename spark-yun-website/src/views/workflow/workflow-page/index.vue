@@ -4,13 +4,13 @@
             <div class="work-list">
                 <div class="option-container">
                     <div class="option-title">
-                        {{ workflowName }}
+                        <span class="option-title__href" @click="backToFlow">{{ workflowName }}</span>
                     </div>
                 </div>
                 <div class="search-box">
                     <el-input v-model="searchParam" placeholder="回车搜索作业名称" @input="inputEvent"
                         @keyup.enter="initData"></el-input>
-                    <el-button @click="addData">新建作业</el-button>
+                    <el-button type="primary" @click="addData"><el-icon><Plus /></el-icon></el-button>
                 </div>
                 <div class="list-box">
                     <template v-for="work in workListItem" :key="work.id">
@@ -490,28 +490,36 @@ onUnmounted(() => {
                 padding-left: 12px;
                 border-right: 1px solid $--app-border-color;
                 box-sizing: border-box;
-
+                .option-title__href {
+                    cursor: pointer;
+                    &:hover {
+                        color: $--app-primary-color;
+                        text-decoration: underline;
+                    }
+                }
             }
 
         }
 
         .search-box {
-            height: 72px;
             padding: 4px 0;
             box-sizing: border-box;
             display: flex;
-            flex-direction: column;
             justify-content: space-between;
             align-items: center;
             width: 100%;
             border-bottom: 1px solid $--app-border-color;
 
             .el-input {
+                margin-left: 8px;
                 width: 180px;
             }
 
             .el-button {
-                width: 90%;
+                margin-left: 4px;
+                margin-right: 8px;
+                height: 32px;
+                width: 36px;
             }
         }
 

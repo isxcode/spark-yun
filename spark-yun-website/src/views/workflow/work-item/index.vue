@@ -10,11 +10,11 @@
         <div class="sql-code-container">
           <div class="sql-option-container">
             <div
-              class="btn-box btn-box__4"
+              class="btn-box"
               @click="goBack"
             >
               <el-icon><RefreshLeft /></el-icon>
-              <span class="btn-text">返回流程</span>
+              <span class="btn-text">返回</span>
             </div>
             <div
               class="btn-box"
