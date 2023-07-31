@@ -125,6 +125,12 @@ const route = useRoute()
 const router = useRouter()
 const emit = defineEmits([ 'back' ])
 
+const props = defineProps<{
+  workItemConfig: any,
+  workFlowData: any
+}>()
+
+
 const loading = ref(false)
 const networkError = ref(false)
 const runningLoading = ref(false)
@@ -161,7 +167,7 @@ const breadCrumbList = reactive([
     code: 'workflow-detail',
     query: {
       // id: route.query.workflowId
-      id: route.query.id
+      id: props.workFlowData.id
     }
   },
   {
@@ -191,11 +197,6 @@ const tabList = reactive([
   //   hide: true
   // }
 ])
-
-const props = defineProps<{
-  workItemConfig: any
-}>()
-
 function initData(id?: string) {
   loading.value = true
   networkError.value = networkError.value || false
