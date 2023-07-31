@@ -4,6 +4,11 @@
             <div id="container">
                 <div id="draw-cot" />
             </div>
+            <div class="btn-container">
+                <el-icon @click="zoomOut"><ZoomOut /></el-icon>
+                <el-icon @click="zoomIn"><ZoomIn /></el-icon>
+                <el-icon @click="locationCenter"><MapLocation /></el-icon>
+            </div>
         </section>
     </div>
 </template>
@@ -291,6 +296,16 @@ function hideGrid(status: boolean) {
     }
 }
 
+function zoomIn() {
+  _Graph.zoom(0.2)
+}
+function zoomOut() {
+  _Graph.zoom(-0.2)
+}
+function locationCenter() {
+  _Graph.centerContent()
+}
+
 onMounted(() => {
     container = document.getElementById('container') as HTMLElement | undefined
     initGraph()
@@ -347,6 +362,29 @@ defineExpose({
         width: 100%;
         height: 100%;
         display: flex;
+        position: relative;
+    }
+
+    .section-cot .btn-container {
+        position: absolute;
+        // top: 8px;
+        // right: 8px;
+        bottom: 8px;
+        left: 8px;
+        height: 28px;
+        padding-left: 8px;
+        background-color: #f3f3f3;
+        display: flex;
+        align-items: center;
+    }
+    .section-cot .btn-container .el-icon {
+        font-size: 18px;
+        color: #b2b2b2;
+        margin-right: 8px;
+        cursor: pointer;
+        &:hover {
+            color: $--app-primary-color;
+        }
     }
 
     .section-cot #container {
