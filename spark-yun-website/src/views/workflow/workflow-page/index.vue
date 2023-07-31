@@ -42,6 +42,11 @@
                             <span v-if="!btnLoadingConfig.runningLoading" @click="runWorkFlowDataEvent">运行</span>
                             <el-icon v-else class="is-loading"><Loading /></el-icon>
 
+                            <template v-if="workflowInstanceId">
+                                <span v-if="!btnLoadingConfig.reRunLoading" @click="reRunWorkFlowDataEvent">重跑</span>
+                                <el-icon v-else class="is-loading"><Loading /></el-icon>
+                            </template>
+
                             <span v-if="!btnLoadingConfig.saveLoading" @click="saveData">保存</span>
                             <el-icon v-else class="is-loading"><Loading /></el-icon>
 
@@ -86,7 +91,7 @@ import eventBus from '@/utils/eventBus'
 import zqyLog from '@/components/zqy-log/index.vue'
 import WorkItem from '../work-item/index.vue'
 
-import { AddWorkflowDetailList, BreakFlowData, DeleteWorkflowDetailList, ExportWorkflowData, GetWorkflowData, GetWorkflowDetailList, ImportWorkflowData, PublishWorkflowData, QueryRunWorkInstances, RerunCurrentNodeFlowData, RunAfterFlowData, RunWorkflowData, SaveWorkflowData, StopWorkflowData, UpdateWorkflowDetailList } from '@/services/workflow.service'
+import { AddWorkflowDetailList, BreakFlowData, DeleteWorkflowDetailList, ExportWorkflowData, GetWorkflowData, GetWorkflowDetailList, ImportWorkflowData, PublishWorkflowData, QueryRunWorkInstances, ReRunWorkflow, RerunCurrentNodeFlowData, RunAfterFlowData, RunWorkflowData, SaveWorkflowData, StopWorkflowData, UpdateWorkflowDetailList } from '@/services/workflow.service'
 import { ElMessage, ElMessageBox } from 'element-plus'
 
 const route = useRoute()
@@ -108,6 +113,7 @@ const runningStatus = ref(false)
 
 const btnLoadingConfig = reactive({
     runningLoading: false,
+    reRunLoading: false,
     saveLoading: false,
     publishLoading: false,
     stopWorkFlowLoading: false,
@@ -224,6 +230,27 @@ function runWorkFlowDataEvent() {
         btnLoadingConfig.runningLoading = false
     })
 }
+// 重跑工作流
+function reRunWorkFlowDataEvent() {
+    btnLoadingConfig.reRunLoading = true
+    ReRunWorkflow({
+        workflowInstanceId: workflowInstanceId.value
+    }).then((res: any) => {
+        ElMessage.success(res.msg)
+        zqyFlowRef.value.hideGrid(true)
+        // 判断是否开始运行
+        runningStatus.value = true
+        queryRunWorkInstancesEvent()
+        if (!timer.value) {
+            timer.value = setInterval(() => {
+                queryRunWorkInstancesEvent()
+            }, 1000)
+        }
+        btnLoadingConfig.reRunLoading = false
+    }).catch(() => {
+        btnLoadingConfig.reRunLoading = false
+    })
+}
 
 // 运行作业流后获取节点运行状态
 function queryRunWorkInstancesEvent() {
@@ -317,6 +344,7 @@ function stopWorkFlow() {
     }).then((res: any) => {
         btnLoadingConfig.stopWorkFlowLoading = false
         ElMessage.success(res.msg)
+        queryRunWorkInstancesEvent()
     }).catch(() => {
         btnLoadingConfig.stopWorkFlowLoading = false
     })
@@ -388,7 +416,17 @@ function nodeRunAfterFlow(e: any) {
         workInstanceId: e.data.workInstanceId
     }).then((res: any) => {
         ElMessage.success(res.msg)
-    }).catch(() => {})
+        zqyFlowRef.value.hideGrid(true)
+        // 判断是否开始运行
+        runningStatus.value = true
+        queryRunWorkInstancesEvent()
+        if (!timer.value) {
+            timer.value = setInterval(() => {
+                queryRunWorkInstancesEvent()
+            }, 1000)
+        }
+    }).catch(() => {
+    })
 }
 
 // 节点中断
@@ -397,6 +435,7 @@ function nodeBreakFlow(e: any) {
         workInstanceId: e.data.workInstanceId
     }).then((res: any) => {
         ElMessage.success(res.msg)
+        queryRunWorkInstancesEvent()
     }).catch(() => {})
 }
 
@@ -406,6 +445,15 @@ function reRunCurrentNodeFlow(e: any) {
         workInstanceId: e.data.workInstanceId
     }).then((res: any) => {
         ElMessage.success(res.msg)
+        zqyFlowRef.value.hideGrid(true)
+        // 判断是否开始运行
+        runningStatus.value = true
+        queryRunWorkInstancesEvent()
+        if (!timer.value) {
+            timer.value = setInterval(() => {
+                queryRunWorkInstancesEvent()
+            }, 1000)
+        }
     }).catch(() => {})
 }
 
