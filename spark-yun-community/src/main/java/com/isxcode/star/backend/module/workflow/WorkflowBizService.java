@@ -558,6 +558,8 @@ public class WorkflowBizService {
     pendingWorkInstances.forEach(
         workInstance -> {
           workInstance.setStatus(InstanceStatus.ABORT);
+          workInstance.setSubmitLog(null);
+          workInstance.setYarnLog(null);
         });
     workInstanceRepository.saveAll(pendingWorkInstances);
 
@@ -660,6 +662,8 @@ public class WorkflowBizService {
     afterWorkInstances.forEach(
         e -> {
           e.setStatus(InstanceStatus.PENDING);
+          e.setSubmitLog(null);
+          e.setYarnLog(null);
         });
     workInstanceRepository.saveAllAndFlush(afterWorkInstances);
 
