@@ -38,6 +38,7 @@ create table SY_WORKFLOW_INSTANCE
   instance_type           varchar(200)  null comment '实例类型',
   status                  varchar(200)  null comment '实例状态',
   run_log                 text          null comment '作业流运行日志',
+  web_config              text          null comment '前端页面配置信息',
   plan_start_date_time    datetime      null comment '计划开始时间',
   next_plan_date_time     datetime      null comment '下一次开始时间',
   exec_start_date_time    datetime      null comment '执行开始时间',

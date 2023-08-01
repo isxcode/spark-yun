@@ -150,6 +150,7 @@ public class WorkflowBizService {
     WorkflowInstanceEntity workflowInstance =
         WorkflowInstanceEntity.builder()
             .flowId(workflowId)
+            .webConfig(workflowConfig.getWebConfig())
             .status(FlowInstanceStatus.RUNNING)
             .instanceType(InstanceType.MANUAL)
             .execStartDateTime(new Date())

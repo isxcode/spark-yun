@@ -54,6 +54,8 @@ public class WorkflowInstanceEntity {
 
   private String runLog;
 
+  private String webConfig;
+
   private Date planStartDateTime;
 
   private Date nextPlanDateTime;
