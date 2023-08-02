@@ -78,12 +78,6 @@ public abstract class WorkExecutor {
       // 日志需要贯穿上下文
       workRunContext.setLogBuilder(logBuilder);
 
-      try {
-        Thread.sleep(10000);
-      } catch (InterruptedException e) {
-        throw new RuntimeException(e);
-      }
-
       // 开始执行作业
       execute(workRunContext, workInstance);
 
