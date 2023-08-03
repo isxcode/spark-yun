@@ -48,6 +48,9 @@ public interface ModulePrefix {
   /** VIP作业实例模块. */
   String VIP_WORK_INSTANCE = "/vip/woi";
 
+  /** VIP作业流实例模块. */
+  String VIP_WORKFLOW_INSTANCE = "/vip/wfi";
+
   /** VIP自定义API模块. */
   String VIP_API = "/vip/api";
 
