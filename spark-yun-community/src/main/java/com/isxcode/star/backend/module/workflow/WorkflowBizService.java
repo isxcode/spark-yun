@@ -492,20 +492,16 @@ public class WorkflowBizService {
     try {
       workExecutor.syncAbort(workInstance);
 
-      String submitLog = workInstance.getSubmitLog()
-        + LocalDateTime.now()
-        + WorkLog.SUCCESS_INFO
-        + "已中止  \n";
+      String submitLog =
+          workInstance.getSubmitLog() + LocalDateTime.now() + WorkLog.SUCCESS_INFO + "已中止  \n";
       workInstance.setSubmitLog(submitLog);
       workInstance.setStatus(InstanceStatus.ABORT);
       workInstance.setExecEndDateTime(new Date());
       workInstanceRepository.save(workInstance);
       return InstanceStatus.SUCCESS;
     } catch (Exception e) {
-      String submitLog = workInstance.getSubmitLog()
-        + LocalDateTime.now()
-        + WorkLog.SUCCESS_INFO
-        + "中止失败 \n";
+      String submitLog =
+          workInstance.getSubmitLog() + LocalDateTime.now() + WorkLog.SUCCESS_INFO + "中止失败 \n";
       workInstance.setSubmitLog(submitLog);
       workInstance.setStatus(InstanceStatus.FAIL);
       workInstance.setExecEndDateTime(new Date());
