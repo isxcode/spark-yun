@@ -104,3 +104,11 @@ create table SY_WORKFLOW_FAVOUR
   deleted                 int default 0 not null comment '逻辑删除',
   tenant_id               varchar(200)  not null comment '租户id'
 );
+
+-- 自定义锁表
+CREATE TABLE SY_LOCKER
+(
+  id    INT AUTO_INCREMENT PRIMARY KEY,
+  name  VARCHAR(2000) not null,
+  box VARCHAR(2000) null
+);
