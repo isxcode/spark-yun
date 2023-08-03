@@ -559,6 +559,7 @@ public class WorkflowBizService {
     pendingWorkInstances.forEach(
         workInstance -> {
           workInstance.setStatus(InstanceStatus.ABORT);
+          workInstance.setSparkStarRes(null);
           workInstance.setSubmitLog(null);
           workInstance.setYarnLog(null);
         });
@@ -663,6 +664,7 @@ public class WorkflowBizService {
     afterWorkInstances.forEach(
         e -> {
           e.setStatus(InstanceStatus.PENDING);
+          e.setSparkStarRes(null);
           e.setSubmitLog(null);
           e.setYarnLog(null);
         });
