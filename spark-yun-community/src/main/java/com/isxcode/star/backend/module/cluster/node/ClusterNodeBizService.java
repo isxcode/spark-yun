@@ -65,14 +65,16 @@ public class ClusterNodeBizService {
     ClusterNodeEntity node = engineNodeMapper.addNodeReqToNodeEntity(enoAddNodeReq);
 
     // 密码对成加密
-    node.setPasswd(AesUtils.encrypt(sparkYunProperties.getAesSlat(), enoAddNodeReq.getPasswd().trim()));
+    node.setPasswd(
+        AesUtils.encrypt(sparkYunProperties.getAesSlat(), enoAddNodeReq.getPasswd().trim()));
 
     // 设置服务器默认端口号
     node.setPort(Strings.isEmpty(enoAddNodeReq.getPort()) ? "22" : enoAddNodeReq.getPort().trim());
 
     // 设置默认代理安装地址
     node.setAgentHomePath(
-        getDefaultAgentHomePath(enoAddNodeReq.getAgentHomePath(), enoAddNodeReq.getUsername().trim()));
+        getDefaultAgentHomePath(
+            enoAddNodeReq.getAgentHomePath(), enoAddNodeReq.getUsername().trim()));
 
     // 设置默认代理端口号
     node.setAgentPort(getDefaultAgentPort(enoAddNodeReq.getAgentPort().trim()));
