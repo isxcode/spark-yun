@@ -171,6 +171,7 @@ public class SparkSqlExecutor extends WorkExecutor {
         .append("提交作业成功 : ")
         .append(submitWorkRes.getAppId())
         .append("\n");
+    workInstance.setSparkStarRes(JSON.toJSONString(submitWorkRes));
     workInstance = updateInstance(workInstance, logBuilder);
 
     // 提交作业成功后，开始循环判断状态
