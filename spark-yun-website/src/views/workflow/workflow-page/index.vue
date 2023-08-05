@@ -543,6 +543,9 @@ onMounted(() => {
         } else if (e.type === 'node_reRun') {
             // 重跑当前
             reRunCurrentNodeFlow(e)
+        } else if (e.type === 'dbclick') {
+            // 双击节点跳转到作业配置
+            showWorkConfig(e.data.nodeConfigData)
         }
     })
 })

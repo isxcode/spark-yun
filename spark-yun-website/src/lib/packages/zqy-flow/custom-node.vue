@@ -1,5 +1,5 @@
 <template>
-    <div class="zqy-flow-node " :class="status">
+    <div class="zqy-flow-node " :class="status" @dblclick="dbclickToDetain">
         <div class="flow-node-container" ref="content">
             <p class="text">{{ name }}</p>
             <template v-if="isRunning">
@@ -47,6 +47,13 @@ function handleCommand(command: string) {
     eventBus.emit('nodeMenuEvent', {
         data: node.value.data,
         type: command
+    })
+}
+
+function dbclickToDetain() {
+    eventBus.emit('nodeMenuEvent', {
+        data: node.value.data,
+        type: 'dbclick'
     })
 }
 
