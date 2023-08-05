@@ -631,6 +631,8 @@ onUnmounted(() => {
         .list-box {
             // padding: 0 4px;
             box-sizing: border-box;
+            overflow: auto;
+            max-height: calc(100vh - 206px);
 
             .list-item {
                 height: $--app-item-height;
