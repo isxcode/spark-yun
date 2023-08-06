@@ -1,0 +1,19 @@
+dependencies {
+
+  api(project(':spark-yun-backend:spark-yun-modules'))
+  api(project(':spark-yun-vip:spark-yun-backend'))
+
+  // thymeleaf
+  implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+
+  // druid
+  implementation "com.alibaba:druid-spring-boot-starter:${DRUID_VERSION}"
+
+  // flyway
+  implementation "org.flywaydb:flyway-core:${FLYWAY_VERSION}"
+  implementation "org.flywaydb:flyway-mysql:${FLYWAY_VERSION}"
+}
+
+bootJar {
+  archiveFileName = 'spark-yun-backend.jar'
+}

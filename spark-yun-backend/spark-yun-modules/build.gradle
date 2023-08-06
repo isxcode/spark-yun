@@ -1,0 +1,47 @@
+dependencies {
+
+  api(project(':spark-yun-backend:spark-yun-common'))
+  api(project(':spark-yun-backend:spark-yun-utils'))
+  api(project(':spark-yun-backend:spark-yun-security'))
+
+  // spring-cache
+  api 'org.springframework.boot:spring-boot-starter-cache'
+
+  // mysql
+  runtimeOnly "com.mysql:mysql-connector-j:${MYSQL_DRIVER_VERSION}"
+
+  // sqlserver
+  runtimeOnly "com.microsoft.sqlserver:mssql-jdbc:${SQLSERVER_DRIVER_VERSION}"
+
+  // oracle
+  runtimeOnly "com.oracle.database.jdbc:ojdbc8:${ORACLE_DRIVER_VERSION}"
+
+  // h2
+  runtimeOnly 'com.h2database:h2'
+
+  // postgresql
+  runtimeOnly "org.postgresql:postgresql:${POSTGRE_DRIVER_VERSION}"
+
+  // hive
+  runtimeOnly("org.apache.hive:hive-jdbc:${HIVE_DRIVER_VERSION}") {
+    exclude group: 'org.eclipse.jetty'
+  }
+
+  // dm
+  runtimeOnly "com.dameng:Dm8JdbcDriver18:${DM_DRIVER_VERSION}"
+
+  // clickhouse
+  runtimeOnly "com.clickhouse:clickhouse-jdbc:${CLICKHOUSE_DRIVER_VERSION}"
+
+  // hana
+  runtimeOnly "com.sap.cloud.db.jdbc:ngdbc:${HANA_DRIVER_VERSION}"
+
+  // doris
+  runtimeOnly "mysql:mysql-connector-java:${DORIS_DRIVER_VERSION}"
+
+  // ocean_base
+  runtimeOnly "com.oceanbase:oceanbase-client:${OCEAN_BASE_DRIVER_VERSION}"
+
+  // db2
+  runtimeOnly "com.ibm.db2:jcc:${DB2_DRIVER_VERSION}"
+}

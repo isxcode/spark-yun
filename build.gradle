@@ -39,14 +39,14 @@ allprojects {
     // spring-web
     implementation 'org.springframework.boot:spring-boot-starter-web'
 
+    // spring-aop
+    implementation 'org.springframework.boot:spring-boot-starter-aop'
+
     // spring-validation
     implementation 'org.springframework.boot:spring-boot-starter-validation'
 
     // spring-configuration
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
-
-    // spring-aop
-    implementation 'org.springframework.boot:spring-boot-starter-aop'
 
     // spring-test
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
@@ -61,14 +61,14 @@ allprojects {
     // fastjson
     implementation "com.alibaba:fastjson:${FASTJSON_VERSION}"
 
+    // junit
+    implementation "org.junit.jupiter:junit-jupiter:${JUPITER_VERSION}"
+    testImplementation "org.junit.jupiter:junit-jupiter-api:${JUPITER_VERSION}"
+
     // mapstruct
     implementation "org.mapstruct:mapstruct:${MAPSTRUCT_VERSION}"
     annotationProcessor "org.mapstruct:mapstruct-processor:${MAPSTRUCT_VERSION}"
     testAnnotationProcessor "org.mapstruct:mapstruct-processor:${MAPSTRUCT_VERSION}"
-
-    // junit
-    implementation "org.junit.jupiter:junit-jupiter:${JUPITER_VERSION}"
-    testImplementation "org.junit.jupiter:junit-jupiter-api:${JUPITER_VERSION}"
   }
 
   configurations {
