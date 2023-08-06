@@ -78,59 +78,6 @@ allprojects {
   }
 }
 
-// 自定义命令：项目打包
-// gradle package
-tasks.register('package', GradleBuild) {
-
-  dependsOn(":spark-yun-dist:build_dist", ":spark-yun-website:install_website")
-  dependsOn(":spotlessApply", ":checkstyleMain")
-  tasks = [":spark-yun-backend:bootJar"]
-}
-
-// 自定义命令：项目启动
-// gradle start
-tasks.register('start', Exec) {
-
-  dependsOn(":package")
-  commandLine 'bash', '-c', 'java -jar ./spark-yun-backend/build/libs/spark-yun-backend.jar'
-}
-
-// 自定义命令：构建本地docker镜像
-// gradle docker
-tasks.register('docker', Exec) {
-
-  dependsOn(":package")
-  commandLine 'bash', '-c', 'docker buildx uninstall && docker build -t isxcode/zhiqingyun:' + version_number + ' -f ./Dockerfile .'
-}
-
-// 自定义命令：发布docker镜像
-// gradle deploy
-tasks.register('deploy', Exec) {
-
-  dependsOn(":package")
-  commandLine 'bash', '-c', 'docker buildx install && docker buildx build --platform linux/amd64,linux/arm64/v8 -t isxcode/zhiqingyun:' + version_number + ' -f ./Dockerfile . --push'
-}
-
-// 自定义命令：启动本地官网
-// gradle docs
-tasks.register('docs', Exec) {
-
-  commandLine 'bash', '-c', 'npm i docsify-cli -g && docsify serve docs'
-}
-
-// 自定义命令：项目代码格式化
-// gradle format
-tasks.register('format', GradleBuild) {
-
-  tasks = [":spotlessApply", ":checkstyleMain"]
-}
-
-// 自定义命令：isx 安装命令
-tasks.register('install_isx', Exec) {
-
-  commandLine 'bash', '-c', 'cp spark-yun-vip/spark-yun-isx/isx.sh ./isx && chmod a+x isx'
-}
-
 // spotless
 spotless {
   java {
@@ -152,3 +99,58 @@ tasks.withType(Checkstyle).configureEach {
     html.stylesheet resources.text.fromFile('../config/xsl/checkstyle-simple.xsl')
   }
 }
+
+// 自定义命令：打包项目
+// gradle package
+tasks.register('package', GradleBuild) {
+
+  dependsOn(":spark-yun-dist:build_dist", ":spark-yun-website:install_website")
+  dependsOn(":spotlessApply", ":checkstyleMain")
+  tasks = [":spark-yun-backend:bootJar"]
+}
+
+// 自定义命令：启动项目
+// gradle start
+tasks.register('start', Exec) {
+
+  dependsOn(":package")
+  commandLine 'bash', '-c', 'java -jar ./spark-yun-backend/build/libs/spark-yun-backend.jar'
+}
+
+// 自定义命令：构建docker镜像
+// gradle docker
+tasks.register('docker', Exec) {
+
+  dependsOn(":package")
+  commandLine 'bash', '-c', 'docker buildx uninstall && docker build -t isxcode/zhiqingyun:' + version_number + ' -f ./Dockerfile .'
+}
+
+// 自定义命令：发布docker镜像
+// gradle deploy
+tasks.register('deploy', Exec) {
+
+  dependsOn(":package")
+  commandLine 'bash', '-c', 'docker buildx install && docker buildx build --platform linux/amd64,linux/arm64/v8 -t isxcode/zhiqingyun:' + version_number + ' -f ./Dockerfile . --push'
+}
+
+// 自定义命令：启动官网
+// gradle website
+tasks.register('website', Exec) {
+
+  commandLine 'bash', '-c', 'npm i docsify-cli -g && docsify serve docs'
+}
+
+// 自定义命令：格式化代码
+// gradle format
+tasks.register('format', GradleBuild) {
+
+  tasks = [":spotlessApply", ":checkstyleMain"]
+}
+
+// 自定义命令：安装isx命令
+// gradle isx
+tasks.register('isx', Exec) {
+
+  commandLine 'bash', '-c', 'cp spark-yun-vip/spark-yun-isx/isx.sh ./isx && chmod a+x isx'
+}
+
