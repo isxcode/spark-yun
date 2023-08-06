@@ -1,7 +1,7 @@
 package com.isxcode.star.plugin.query.sql;
 
 import com.alibaba.fastjson.JSON;
-import com.isxcode.star.api.pojos.plugin.req.PluginReq;
+import com.isxcode.star.api.agent.pojos.req.PluginReq;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;

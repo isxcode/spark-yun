@@ -1,7 +1,7 @@
 dependencies {
 
   // spark-yun-api
-  api(project(':spark-yun-api'))
+  api(project(':spark-yun-backend:spark-yun-api'))
 
   // spark-streaming
   implementation "org.apache.spark:spark-streaming_${SPARK_SCALA_VERSION}:${SPARK_VERSION}"
