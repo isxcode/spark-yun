@@ -11,10 +11,11 @@
 
 # 前端打包文件，不提交
 spark-yun-website/dist
+spark-yun-frontend/dist
 
 # 前端嵌入后端内容，不提交
-spark-yun-backend/src/main/resources/templates/**
-spark-yun-backend/src/main/resources/static/**
+spark-yun-backend/spark-yun-main/src/main/resources/templates/**
+spark-yun-backend/spark-yun-main/src/main/resources/static/**
 
 # 企业版代码，不提交
 spark-yun-vip/**
@@ -26,7 +27,7 @@ resources/license
 spark-yun-dist/src/main/spark-min
 
 # 主配置，非必要，不提交
-spark-yun-backend/src/main/resources/application.yml
+spark-yun-backend/spark-yun-main/src/main/resources/application.yml
 
 # isx工具不提交
 isx

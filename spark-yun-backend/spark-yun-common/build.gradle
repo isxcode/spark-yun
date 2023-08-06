@@ -1,0 +1,12 @@
+dependencies {
+
+  api(project(':spark-yun-backend:spark-yun-api'))
+  api(project(':spark-yun-backend:spark-yun-utils'))
+
+  // jpa
+  api 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+  // for spring exception
+  implementation "org.springframework:spring-tx:${SPRING_FRAMEWORK_VERSION}"
+  implementation "org.springframework:spring-orm:${SPRING_FRAMEWORK_VERSION}"
+}
