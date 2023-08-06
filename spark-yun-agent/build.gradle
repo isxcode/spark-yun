@@ -1,5 +1,6 @@
 dependencies {
 
+  api(project(':spark-yun-backend:spark-yun-api'))
   api(project(':spark-yun-backend:spark-yun-common'))
 
   // spark-core
