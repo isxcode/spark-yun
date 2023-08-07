@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
+
 @Service
 @RequiredArgsConstructor
 public class Locker {
@@ -31,6 +33,6 @@ public class Locker {
     do {
       minId = lockerRepository.getMinId(name);
       Thread.sleep(500);
-    } while (id != minId);
+    } while (!Objects.equals(id, minId));
   }
 }
