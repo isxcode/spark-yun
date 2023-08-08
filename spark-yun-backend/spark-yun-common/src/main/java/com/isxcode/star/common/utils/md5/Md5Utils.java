@@ -1,4 +1,4 @@
-package com.isxcode.star.utils.md5;
+package com.isxcode.star.common.utils.md5;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;

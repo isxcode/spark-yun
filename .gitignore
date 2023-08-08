@@ -24,7 +24,7 @@ spark-yun-vip/**
 resources/license
 
 # 不提交spark-min
-spark-yun-dist/src/main/spark-min
+spark-yun-dist/spark-min
 
 # 主配置，非必要，不提交
 spark-yun-backend/spark-yun-main/src/main/resources/application.yml

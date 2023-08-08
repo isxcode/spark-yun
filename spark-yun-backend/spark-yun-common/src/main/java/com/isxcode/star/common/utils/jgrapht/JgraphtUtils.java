@@ -1,4 +1,4 @@
-package com.isxcode.star.utils.jgrapht;
+package com.isxcode.star.common.utils.jgrapht;
 
 import com.isxcode.star.backend.api.base.exceptions.SparkYunException;
 import java.util.List;

@@ -1,9 +1,9 @@
-package com.isxcode.star.utils.jwt;
+package com.isxcode.star.common.utils.jwt;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.isxcode.star.backend.api.base.exceptions.SparkYunException;
-import com.isxcode.star.utils.aes.AesUtils;
+import com.isxcode.star.common.utils.aes.AesUtils;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.JwtParserBuilder;
 import io.jsonwebtoken.Jwts;

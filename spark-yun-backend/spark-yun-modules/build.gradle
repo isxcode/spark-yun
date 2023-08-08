@@ -1,7 +1,6 @@
 dependencies {
 
   api(project(':spark-yun-backend:spark-yun-common'))
-  api(project(':spark-yun-backend:spark-yun-utils'))
   api(project(':spark-yun-backend:spark-yun-security'))
 
   // spring-cache

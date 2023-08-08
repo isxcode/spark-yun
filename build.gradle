@@ -76,37 +76,43 @@ allprojects {
       extendsFrom annotationProcessor
     }
   }
+
+  // checkstyle
+  tasks.withType(Checkstyle).configureEach {
+    maxWarnings = 100
+    maxErrors = 0
+    ignoreFailures = false
+    config resources.text.fromFile(rootDir.getAbsolutePath() + '/.checkstyle/checkstyle.xml')
+    reports {
+      xml.required = false
+      html.required = true
+      html.stylesheet resources.text.fromFile(rootDir.getAbsolutePath() + '/.checkstyle/checkstyle-simple.xsl')
+    }
+  }
 }
 
 // spotless
 spotless {
   java {
     target '*/**/*.java'
-    targetExclude '*/build/**/*.java','spark-yun-dist/**'
+    targetExclude '*/build/**/*.java', 'spark-yun-dist/**'
     googleJavaFormat()
     removeUnusedImports()
   }
 }
 
-// checkstyle
-tasks.withType(Checkstyle).configureEach {
-  maxWarnings = 100
-  maxErrors = 0
-  ignoreFailures = false
-  reports {
-    xml.required = false
-    html.required = true
-    html.stylesheet resources.text.fromFile('../config/xsl/checkstyle-simple.xsl')
-  }
+// 自定义命令：格式化代码
+// gradle format
+tasks.register('format', GradleBuild) {
+
+  tasks = ["spotlessApply", "checkstyleMain"]
 }
 
 // 自定义命令：打包项目
 // gradle package
 tasks.register('package', GradleBuild) {
 
-  dependsOn(":spark-yun-dist:build_dist", ":spark-yun-website:install_website")
-  dependsOn(":spotlessApply", ":checkstyleMain")
-  tasks = [":spark-yun-backend:bootJar"]
+  tasks = [":spark-yun-dist:package"]
 }
 
 // 自定义命令：启动项目
@@ -114,7 +120,11 @@ tasks.register('package', GradleBuild) {
 tasks.register('start', Exec) {
 
   dependsOn(":package")
-  commandLine 'bash', '-c', 'java -jar ./spark-yun-backend/build/libs/spark-yun-backend.jar'
+  if (System.properties['os.name'].toString().contains('Mac OS X')) {
+    commandLine 'bash', '-c', 'java -jar ./spark-yun-backend/spark-yun-main/build/libs/zhiqingyun.jar'
+  } else {
+    commandLine 'cmd', '/c', 'java -jar ./spark-yun-backend/spark-yun-main/build/libs/zhiqingyun.jar'
+  }
 }
 
 // 自定义命令：构建docker镜像
@@ -138,13 +148,6 @@ tasks.register('deploy', Exec) {
 tasks.register('website', Exec) {
 
   commandLine 'bash', '-c', 'npm i docsify-cli -g && docsify serve docs'
-}
-
-// 自定义命令：格式化代码
-// gradle format
-tasks.register('format', GradleBuild) {
-
-  tasks = [":spotlessApply", ":checkstyleMain"]
 }
 
 // 自定义命令：安装isx命令
