@@ -22,6 +22,7 @@ dependencies {
 tasks.register('build_agent_lib', Copy) {
 
   dependsOn(":spark-yun-agent:bootJar")
+  dependsOn(":spark-yun-backend:spark-yun-api:jar")
 
   def dependencies = configurations.runtimeClasspath.findAll {
     it.name.contains('fastjson2') ||
@@ -61,8 +62,6 @@ tasks.register('build_agent_plugins', Copy) {
 // 构建至轻云代理
 tasks.register('build_agent', Tar) {
 
-  mustRunAfter(":spark-yun-backend:package")
-
   dependsOn('build_agent_lib')
   dependsOn('build_agent_plugins')
 
@@ -96,7 +95,6 @@ tasks.register('build_agent', Tar) {
 tasks.register('build_zhiqingyun', Tar) {
 
   mustRunAfter(":spark-yun-backend:package")
-  mustRunAfter("build_agent")
 
   compression = Compression.GZIP
   archiveFileName = 'zhiqingyun.tar.gz'
@@ -113,9 +111,6 @@ tasks.register('build_zhiqingyun', Tar) {
   from('../spark-yun-backend/spark-yun-main/build/libs/zhiqingyun.jar') {
     into 'lib'
   }
-  from('build/distributions/zhiqingyun-agent.tar.gz') {
-    into 'agent'
-  }
   from('../README.md') {
     into '/'
   }
@@ -124,5 +119,5 @@ tasks.register('build_zhiqingyun', Tar) {
 // 打包
 tasks.register('package', GradleBuild) {
 
-  tasks = [":spark-yun-frontend:package", ":spark-yun-backend:package", "build_agent", "build_zhiqingyun"]
+  tasks = ["spark-yun:spark-yun-frontend:package", "build_agent", "spark-yun:spark-yun-backend:package", "build_zhiqingyun"]
 }

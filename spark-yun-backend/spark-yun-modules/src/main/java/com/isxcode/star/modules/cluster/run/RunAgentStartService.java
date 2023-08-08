@@ -12,7 +12,6 @@ import com.isxcode.star.api.cluster.pojos.dto.AgentInfo;
 import com.isxcode.star.api.cluster.pojos.dto.ScpFileEngineNodeDto;
 import com.isxcode.star.backend.api.base.exceptions.SparkYunException;
 import com.isxcode.star.backend.api.base.properties.SparkYunProperties;
-import com.isxcode.star.common.utils.path.PathUtils;
 import com.isxcode.star.modules.cluster.entity.ClusterNodeEntity;
 import com.isxcode.star.modules.cluster.repository.ClusterNodeRepository;
 import com.jcraft.jsch.JSchException;
@@ -26,6 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ResourceUtils;
 
 @Service
 @Slf4j
@@ -72,15 +72,15 @@ public class RunAgentStartService {
     // 拷贝检测脚本
     scpFile(
         scpFileEngineNodeDto,
-        PathUtils.parseProjectPath(sparkYunProperties.getAgentBinDir())
-            + File.separator
-            + PathConstants.AGENT_START_BASH_NAME,
-        "/tmp/" + PathConstants.AGENT_START_BASH_NAME);
+        ResourceUtils.getFile("classpath:bash/agent-start.sh").getPath(),
+        sparkYunProperties.getTmpDir() + File.separator + "agent-start.sh");
 
     // 运行停止脚本
     String startCommand =
-        "bash /tmp/"
-            + PathConstants.AGENT_START_BASH_NAME
+        "bash "
+            + sparkYunProperties.getTmpDir()
+            + File.separator
+            + "agent-start.sh"
             + " --home-path="
             + engineNode.getAgentHomePath()
             + File.separator

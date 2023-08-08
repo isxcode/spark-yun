@@ -28,7 +28,7 @@ tasks.register('npm_build', Exec) {
 // 拷贝后端resources中的templates里
 tasks.register('copy_to_templates', Copy) {
 
-  mustRunAfter("clean_backend_resources", "npm_build")
+  mustRunAfter("npm_build")
 
   from 'dist/index.html'
   into '../spark-yun-backend/spark-yun-main/src/main/resources/templates/'
@@ -37,7 +37,7 @@ tasks.register('copy_to_templates', Copy) {
 // 拷贝到static中
 tasks.register('copy_to_static', Copy) {
 
-  mustRunAfter("clean_backend_resources", "npm_build", "copy_to_templates")
+  mustRunAfter("npm_build")
 
   from 'dist/static'
   into '../spark-yun-backend/spark-yun-main/src/main/resources/static/'
