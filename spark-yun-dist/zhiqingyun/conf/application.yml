@@ -1,3 +1,6 @@
+server:
+  port: 8080
+
 spring:
 
   # 配置h2\swagger\druid的web登录账号密码
@@ -14,14 +17,14 @@ spring:
   # 配置至轻云业务数据库信息
   datasource:
     driver-class-name: org.h2.Driver
-    url: jdbc:h2:file:/var/lib/spark-yun/h2/data
+    url: jdbc:h2:file:~/.zhiqingyun/h2/data
     username: root
     password: root123
 
   # 配置flyway访问数据库信息
   flyway:
     driver-class-name: org.h2.Driver
-    url: jdbc:h2:file:/var/lib/spark-yun/h2/data
+    url: jdbc:h2:file:~/.zhiqingyun/h2/data
     user: root
     password: root123
     locations: classpath:db/migration/h2
@@ -30,7 +33,7 @@ spring:
   quartz:
     properties:
       org.quartz.dataSource.quartzDataSource.driver: org.h2.Driver
-      org.quartz.dataSource.quartzDataSource.URL: jdbc:h2:file:/var/lib/spark-yun/h2/data
+      org.quartz.dataSource.quartzDataSource.URL: jdbc:h2:file:~/.zhiqingyun/h2/data
       org.quartz.dataSource.quartzDataSource.user: root
       org.quartz.dataSource.quartzDataSource.password: root123
 

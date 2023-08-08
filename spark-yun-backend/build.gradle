@@ -1,8 +1,22 @@
+// 清理后端的resources中的前端文件
+tasks.register('clean_resources_agent', Delete) {
+
+  delete rootDir.getAbsolutePath() + '/spark-yun-backend/spark-yun-main/src/main/resources/agent'
+}
+
+// 把插件拷贝到resource中
+tasks.register('copy_resources_agent', Copy) {
+
+  mustRunAfter("clean_resources_agent")
+
+  from rootDir.getAbsolutePath() + '/spark-yun-dist/build/distributions/zhiqingyun-agent.tar.gz'
+  into rootDir.getAbsolutePath() + '/spark-yun-backend/spark-yun-main/src/main/resources/agent'
+}
+
 // 后端打包
 tasks.register('package', GradleBuild) {
 
-  // 前端打完包，后端才可以打包
-  mustRunAfter(":spark-yun-frontend:package")
+  mustRunAfter(":spark-yun-dist:build_agent", "clean_resources_agent", "copy_resources_agent")
 
   // 后端代码检测
   dependsOn(":spotlessApply", ":checkstyleMain")

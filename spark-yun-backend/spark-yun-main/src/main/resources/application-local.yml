@@ -1,3 +1,6 @@
+server:
+  port: 8080
+
 spring:
 
   security:
@@ -35,5 +38,3 @@ logging:
 
 spark-yun:
   resources-path: classpath:resources
-  agent-bin-dir: classpath:spark-yun-dist/src/main/bash
-  agent-tar-gz-dir: classpath:spark-yun-dist/build/distributions

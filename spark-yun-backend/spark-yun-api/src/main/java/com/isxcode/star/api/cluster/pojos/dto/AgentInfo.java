@@ -11,15 +11,15 @@ public class AgentInfo {
 
   private String log;
 
-  private Double allMemory;
+  private String allMemory;
 
-  private Double usedMemory;
+  private String usedMemory;
 
-  private Double allStorage;
+  private String allStorage;
 
-  private Double usedStorage;
+  private String usedStorage;
 
-  private Double cpuPercent;
+  private String cpuPercent;
 
   private String hadoopHome;
 }
