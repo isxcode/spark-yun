@@ -1,7 +1,6 @@
 dependencies {
 
   api(project(':spark-yun-backend:spark-yun-api'))
-  api(project(':spark-yun-backend:spark-yun-utils'))
 
   // jpa
   api 'org.springframework.boot:spring-boot-starter-data-jpa'
@@ -9,4 +8,16 @@ dependencies {
   // for spring exception
   implementation "org.springframework:spring-tx:${SPRING_FRAMEWORK_VERSION}"
   implementation "org.springframework:spring-orm:${SPRING_FRAMEWORK_VERSION}"
+
+  // jwt
+  api "io.jsonwebtoken:jjwt-api:${JWT_VERSION}"
+  implementation "io.jsonwebtoken:jjwt-jackson:${JWT_VERSION}"
+  runtimeOnly "io.jsonwebtoken:jjwt-impl:${JWT_VERSION}",
+    "io.jsonwebtoken:jjwt-jackson:${JWT_VERSION}"
+
+  // jsch
+  api "com.jcraft:jsch:${JSCH_VERSION}"
+
+  // jgrapht
+  implementation 'org.jgrapht:jgrapht-core:1.4.0'
 }

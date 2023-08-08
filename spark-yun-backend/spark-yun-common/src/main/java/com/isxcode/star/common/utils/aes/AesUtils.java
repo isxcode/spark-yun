@@ -1,4 +1,4 @@
-package com.isxcode.star.utils.aes;
+package com.isxcode.star.common.utils.aes;
 
 import com.isxcode.star.backend.api.base.exceptions.SparkYunException;
 import java.nio.charset.StandardCharsets;

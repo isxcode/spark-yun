@@ -5,7 +5,7 @@ import static com.isxcode.star.security.main.WebSecurityConfig.USER_ID;
 
 import com.isxcode.star.backend.api.base.constants.SecurityConstants;
 import com.isxcode.star.backend.api.base.properties.SparkYunProperties;
-import com.isxcode.star.utils.jwt.JwtUtils;
+import com.isxcode.star.common.utils.jwt.JwtUtils;
 import java.io.IOException;
 import java.util.List;
 import javax.servlet.FilterChain;

@@ -1,45 +1,51 @@
-// clean_backend，删除后端中存储前端包的路径
-tasks.register('clean_backend', Delete) {
+// 清理后端的resources中的前端文件
+tasks.register('clean_backend_resources', Delete) {
 
-  delete '../spark-yun-backend/src/main/resources/templates'
-  delete '../spark-yun-backend/src/main/resources/static'
+  delete '../spark-yun-backend/spark-yun-main/src/main/resources/templates'
+  delete '../spark-yun-backend/spark-yun-main/src/main/resources/static'
 }
 
-// 前端构建项目
-tasks.register('build_website', Exec) {
+// 打包前端项目
+tasks.register('npm_build', Exec) {
 
-  mustRunAfter("clean_backend")
+  mustRunAfter("clean_backend_resources")
 
-//  npm run format &&
-//  npm run lint &&
-//  npm install eslint prettier npm-run-all vite --location=global &&
-  commandLine 'sh', '-c', '''
-    npm install node-sass -D --sass_binary_site=https://npm.taobao.org/mirrors/node-sass/ &&
-    npm install &&
-    npm run build
-  '''
+  if (System.properties['os.name'].toString().contains('Mac OS X')) {
+    commandLine 'sh', '-c', '''
+      npm install node-sass -D --sass_binary_site=https://npm.taobao.org/mirrors/node-sass/ &&
+      npm install &&
+      npm run build
+    '''
+  } else {
+    commandLine 'cmd', '/c', '''
+      npm install node-sass -D --sass_binary_site=https://npm.taobao.org/mirrors/node-sass/ &&
+      npm install &&
+      npm run build
+    '''
+  }
 }
 
-// 拷贝到templates中
-tasks.register('templates_install', Copy) {
+// 拷贝后端resources中的templates里
+tasks.register('copy_to_templates', Copy) {
 
-  mustRunAfter("clean_backend", "build_website")
+  mustRunAfter("clean_backend_resources", "npm_build")
 
   from 'dist/index.html'
-  into '../spark-yun-backend/src/main/resources/templates/'
+  into '../spark-yun-backend/spark-yun-main/src/main/resources/templates/'
 }
 
 // 拷贝到static中
-tasks.register('static_install', Copy) {
+tasks.register('copy_to_static', Copy) {
 
-  mustRunAfter("clean_backend", "build_website")
+  mustRunAfter("clean_backend_resources", "npm_build", "copy_to_templates")
 
   from 'dist/static'
-  into '../spark-yun-backend/src/main/resources/static/'
+  into '../spark-yun-backend/spark-yun-main/src/main/resources/static/'
 }
 
-// 安装前端项目
-tasks.register('install_website', GradleBuild) {
+// 打包并安装前端项目
+tasks.register('package', GradleBuild) {
 
-  dependsOn("clean_backend", "build_website", "templates_install", "static_install")
+  // 串行执行
+  tasks = ["clean_backend_resources", "npm_build", "copy_to_templates", "copy_to_static"]
 }
