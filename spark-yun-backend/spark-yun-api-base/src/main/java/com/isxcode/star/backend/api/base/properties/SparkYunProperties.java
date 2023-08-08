@@ -10,11 +10,8 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties(prefix = "spark-yun")
 public class SparkYunProperties {
 
-  /** 压缩包位置. */
-  private String agentTarGzDir = "/tmp";
-
-  /** bin位置. */
-  private String agentBinDir = "/tmp/spark-yun-bash";
+  /** 可以让脚本临时复制的目录. */
+  private String tmpDir = "/tmp";
 
   /** 代理默认端口号. */
   private String defaultAgentPort = "30177";

@@ -117,14 +117,10 @@ tasks.register('package', GradleBuild) {
 
 // 自定义命令：启动项目
 // gradle start
-tasks.register('start', Exec) {
+tasks.register('start', GradleBuild) {
 
   dependsOn(":package")
-  if (System.properties['os.name'].toString().contains('Mac OS X')) {
-    commandLine 'bash', '-c', 'java -jar ./spark-yun-backend/spark-yun-main/build/libs/zhiqingyun.jar'
-  } else {
-    commandLine 'cmd', '/c', 'java -jar ./spark-yun-backend/spark-yun-main/build/libs/zhiqingyun.jar'
-  }
+  tasks = [":spark-yun-backend:spark-yun-main:bootRun"]
 }
 
 // 自定义命令：构建docker镜像

@@ -12,7 +12,6 @@ import com.isxcode.star.api.cluster.pojos.dto.AgentInfo;
 import com.isxcode.star.api.cluster.pojos.dto.ScpFileEngineNodeDto;
 import com.isxcode.star.backend.api.base.exceptions.SparkYunException;
 import com.isxcode.star.backend.api.base.properties.SparkYunProperties;
-import com.isxcode.star.common.utils.path.PathUtils;
 import com.isxcode.star.modules.cluster.entity.ClusterNodeEntity;
 import com.isxcode.star.modules.cluster.repository.ClusterNodeRepository;
 import com.jcraft.jsch.JSchException;
@@ -23,9 +22,11 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ResourceUtils;
 
 @Service
 @Slf4j
@@ -72,30 +73,52 @@ public class RunAgentCheckService {
     // 拷贝检测脚本
     scpFile(
         scpFileEngineNodeDto,
-        PathUtils.parseProjectPath(sparkYunProperties.getAgentBinDir())
-            + File.separator
-            + PathConstants.AGENT_CHECK_BASH_NAME,
-        "/tmp/" + PathConstants.AGENT_CHECK_BASH_NAME);
+        ResourceUtils.getFile("classpath:bash/agent-check.sh").getPath(),
+        sparkYunProperties.getTmpDir() + File.separator + "agent-check.sh");
 
     // 运行安装脚本
     String checkCommand =
-        "bash /tmp/"
-            + PathConstants.AGENT_CHECK_BASH_NAME
+        "bash "
+            + sparkYunProperties.getTmpDir()
+            + File.separator
+            + "agent-check.sh"
             + " --home-path="
             + engineNode.getAgentHomePath()
             + File.separator
             + PathConstants.AGENT_PATH_NAME;
+
+    log.debug("执行远程命令:{}", checkCommand);
 
     // 获取返回结果
     String executeLog = executeCommand(scpFileEngineNodeDto, checkCommand, false);
     AgentInfo agentCheckInfo = JSON.parseObject(executeLog, AgentInfo.class);
 
     // 保存服务器信息
-    engineNode.setAllMemory(agentCheckInfo.getAllMemory());
-    engineNode.setUsedMemory(agentCheckInfo.getUsedMemory());
-    engineNode.setAllStorage(agentCheckInfo.getAllStorage());
-    engineNode.setUsedStorage(agentCheckInfo.getUsedStorage());
-    engineNode.setCpuPercent(agentCheckInfo.getCpuPercent());
+    engineNode.setAllMemory(
+        Double.parseDouble(
+            Strings.isEmpty(agentCheckInfo.getAllMemory())
+                ? "0.0"
+                : agentCheckInfo.getAllMemory()));
+    engineNode.setUsedMemory(
+        Double.parseDouble(
+            Strings.isEmpty(agentCheckInfo.getUsedMemory())
+                ? "0.0"
+                : agentCheckInfo.getUsedMemory()));
+    engineNode.setAllStorage(
+        Double.parseDouble(
+            Strings.isEmpty(agentCheckInfo.getAllStorage())
+                ? "0.0"
+                : agentCheckInfo.getAllStorage()));
+    engineNode.setUsedStorage(
+        Double.parseDouble(
+            Strings.isEmpty(agentCheckInfo.getUsedStorage())
+                ? "0.0"
+                : agentCheckInfo.getUsedStorage()));
+    engineNode.setCpuPercent(
+        Double.parseDouble(
+            Strings.isEmpty(agentCheckInfo.getCpuPercent())
+                ? "0.0"
+                : agentCheckInfo.getCpuPercent()));
 
     // 修改状态
     engineNode.setStatus(agentCheckInfo.getStatus());

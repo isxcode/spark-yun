@@ -12,7 +12,6 @@ import com.isxcode.star.api.cluster.pojos.dto.AgentInfo;
 import com.isxcode.star.api.cluster.pojos.dto.ScpFileEngineNodeDto;
 import com.isxcode.star.backend.api.base.exceptions.SparkYunException;
 import com.isxcode.star.backend.api.base.properties.SparkYunProperties;
-import com.isxcode.star.common.utils.path.PathUtils;
 import com.isxcode.star.modules.cluster.entity.ClusterNodeEntity;
 import com.isxcode.star.modules.cluster.repository.ClusterNodeRepository;
 import com.jcraft.jsch.JSchException;
@@ -26,6 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ResourceUtils;
 
 @Service
 @Slf4j
@@ -74,17 +74,18 @@ public class RunAgentInstallService {
     // 先检查节点是否可以安装
     scpFile(
         scpFileEngineNodeDto,
-        PathUtils.parseProjectPath(sparkYunProperties.getAgentBinDir())
+        ResourceUtils.getFile("classpath:bash/" + String.format("agent-%s.sh", clusterType))
+            .getPath(),
+        sparkYunProperties.getTmpDir()
             + File.separator
-            + "env"
-            + File.separator
-            + String.format(PathConstants.AGENT_ENV_BASH_FORMAT, clusterType),
-        "/tmp/" + String.format(PathConstants.AGENT_ENV_BASH_FORMAT, clusterType));
+            + String.format("agent-%s.sh", clusterType));
 
     // 运行安装脚本
     String envCommand =
-        "bash /tmp/"
-            + String.format(PathConstants.AGENT_ENV_BASH_FORMAT, clusterType)
+        "bash "
+            + sparkYunProperties.getTmpDir()
+            + File.separator
+            + String.format("agent-%s.sh", clusterType)
             + " --home-path="
             + engineNode.getAgentHomePath()
             + File.separator
@@ -108,29 +109,29 @@ public class RunAgentInstallService {
     // 下载安装包
     scpFile(
         scpFileEngineNodeDto,
-        PathUtils.parseProjectPath(sparkYunProperties.getAgentTarGzDir())
-            + File.separator
-            + PathConstants.SPARK_YUN_AGENT_TAR_GZ_NAME,
-        "/tmp/" + PathConstants.SPARK_YUN_AGENT_TAR_GZ_NAME);
+        ResourceUtils.getFile("classpath:agent/zhiqingyun-agent.tar.gz").getPath(),
+        sparkYunProperties.getTmpDir() + File.separator + "zhiqingyun-agent.tar.gz");
 
     // 拷贝安装脚本
     scpFile(
         scpFileEngineNodeDto,
-        PathUtils.parseProjectPath(sparkYunProperties.getAgentBinDir())
-            + File.separator
-            + PathConstants.AGENT_INSTALL_BASH_NAME,
-        "/tmp/" + PathConstants.AGENT_INSTALL_BASH_NAME);
+        ResourceUtils.getFile("classpath:bash/agent-install.sh").getPath(),
+        sparkYunProperties.getTmpDir() + File.separator + "agent-install.sh");
 
     // 运行安装脚本
+//    String installCommand =
+//        "bash "
+//            + sparkYunProperties.getTmpDir()
+//            + File.separator
+//            + "agent-install.sh"
+//            + " --home-path="
+//            + engineNode.getAgentHomePath()
+//            + File.separator
+//            + PathConstants.AGENT_PATH_NAME
+//            + " --agent-port="
+//            + engineNode.getAgentPort();
     String installCommand =
-        "bash /tmp/"
-            + PathConstants.AGENT_INSTALL_BASH_NAME
-            + " --home-path="
-            + engineNode.getAgentHomePath()
-            + File.separator
-            + PathConstants.AGENT_PATH_NAME
-            + " --agent-port="
-            + engineNode.getAgentPort();
+            "ls";
 
     executeLog = executeCommand(scpFileEngineNodeDto, installCommand, false);
     AgentInfo agentInstallInfo = JSON.parseObject(executeLog, AgentInfo.class);

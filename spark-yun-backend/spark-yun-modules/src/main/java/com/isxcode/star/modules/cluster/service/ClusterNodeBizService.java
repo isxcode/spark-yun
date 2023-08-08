@@ -133,6 +133,11 @@ public class ClusterNodeBizService {
 
   public String getDefaultAgentHomePath(String agentHomePath, String username) {
 
+    // 苹果系统,直接返回
+    if ("Mac OS X".equals(System.getProperty("os.name"))) {
+      return "/Users/" + username;
+    }
+
     if (Strings.isEmpty(agentHomePath)) {
       if ("root".equals(username)) {
         return "/root";
