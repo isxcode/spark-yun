@@ -23,5 +23,5 @@ dependencies {
 }
 
 bootJar {
-  archiveFileName = 'spark-yun-agent.jar'
+  archiveFileName = 'zhiqingyun-agent.jar'
 }

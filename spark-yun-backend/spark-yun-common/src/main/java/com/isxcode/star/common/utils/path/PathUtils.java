@@ -1,4 +1,4 @@
-package com.isxcode.star.utils.path;
+package com.isxcode.star.common.utils.path;
 
 import java.io.File;
 

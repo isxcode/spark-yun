@@ -1,4 +1,4 @@
-package com.isxcode.star.utils.http;
+package com.isxcode.star.common.utils.http;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
