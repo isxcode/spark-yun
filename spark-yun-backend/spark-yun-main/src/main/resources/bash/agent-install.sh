@@ -4,7 +4,28 @@
 # 安装脚本
 ######################
 
-source /etc/profile
+if [[ "$OSTYPE" == "linux-gnu" ]]; then
+    source /etc/profile
+elif [[ "$OSTYPE" == "darwin"* ]]; then
+    source /etc/profile
+    source ~/.zshrc
+elif [[ "$OSTYPE" == "cygwin" || "$OSTYPE" == "msys" || "$OSTYPE" == "mingw64" ]]; then
+    json_output="{ \
+                          \"status\": \"INSTALL_ERROR\", \
+                          \"log\": \"windows系统不支持安装\" \
+                        }"
+          echo $json_output
+          rm ${BASE_PATH}/agent-standalone.sh
+          exit 0
+else
+    json_output="{ \
+                      \"status\": \"INSTALL_ERROR\", \
+                      \"log\": \"该系统不支持安装\" \
+                    }"
+      echo $json_output
+      rm ${BASE_PATH}/agent-standalone.sh
+      exit 0
+fi
 
 BASE_PATH=$(cd "$(dirname "$0")" || exit ; pwd)
 

@@ -95,7 +95,7 @@ allprojects {
 spotless {
   java {
     target '*/**/*.java'
-    targetExclude '*/build/**/*.java', 'spark-yun-dist/**'
+    targetExclude '*/build/**/*.java', rootDir.getAbsolutePath() + '/spark-yun-dist/**'
     googleJavaFormat()
     removeUnusedImports()
   }
