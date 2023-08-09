@@ -4,7 +4,28 @@
 # 检测安装环境脚本
 ######################
 
-source /etc/profile
+if [[ "$OSTYPE" == "linux-gnu" ]]; then
+    source /etc/profile
+elif [[ "$OSTYPE" == "darwin"* ]]; then
+    source /etc/profile
+    source ~/.zshrc
+elif [[ "$OSTYPE" == "cygwin" || "$OSTYPE" == "msys" || "$OSTYPE" == "mingw64" ]]; then
+    json_output="{ \
+                          \"status\": \"INSTALL_ERROR\", \
+                          \"log\": \"windows系统不支持安装\" \
+                        }"
+          echo $json_output
+          rm ${BASE_PATH}/agent-standalone.sh
+          exit 0
+else
+    json_output="{ \
+                      \"status\": \"INSTALL_ERROR\", \
+                      \"log\": \"该系统不支持安装\" \
+                    }"
+      echo $json_output
+      rm ${BASE_PATH}/agent-standalone.sh
+      exit 0
+fi
 
 BASE_PATH=$(cd "$(dirname "$0")" || exit ; pwd)
 
@@ -24,8 +45,8 @@ if [ ! -d "$home_path" ]; then
 fi
 
 # 判断是否之前已安装代理
-if [ -e "${home_path}/spark-yun-agent.pid" ]; then
-  pid=$(cat "${home_path}/spark-yun-agent.pid")
+if [ -e "${home_path}/zhiqingyun-agent.pid" ]; then
+  pid=$(cat "${home_path}/zhiqingyun-agent.pid")
   if ps -p $pid >/dev/null 2>&1; then
     json_output="{ \
             \"status\": \"RUNNING\", \
@@ -124,7 +145,7 @@ spark_master=$(grep -E "^spark.master[[:space:]]+" "$config_file" | awk '{print 
 if [[ -z $spark_master_web_url ]]; then
   json_output="{ \
                \"status\": \"INSTALL_ERROR\", \
-               \"log\": \"$SPARK_HOME/conf/spark-defaults.conf配置文件中未配置spark.master.web.url\" \
+               \"log\": \"$SPARK_HOME/conf/spark-defaults.conf配置文件中未配置spark.master.web.url，例如：spark.master.web.url  http://localhost:8081\" \
              }"
   echo $json_output
   rm ${BASE_PATH}/agent-standalone.sh
@@ -134,7 +155,7 @@ fi
 if [[ -z $spark_master ]]; then
   json_output="{ \
                    \"status\": \"INSTALL_ERROR\", \
-                   \"log\": \"$SPARK_HOME/conf/spark-defaults.conf配置文件中未配置spark.master\" \
+                   \"log\": \"$SPARK_HOME/conf/spark-defaults.conf配置文件中未配置spark.master，例如：spark.master          spark://localhost:7077\" \
                  }"
   echo $json_output
   rm ${BASE_PATH}/agent-standalone.sh
@@ -149,7 +170,7 @@ if [[ $spark_master =~ $regex ]]; then
   if ! (echo >/dev/tcp/$host/$port) &>/dev/null; then
     json_output="{ \
                       \"status\": \"INSTALL_ERROR\", \
-                      \"log\": \"无法访问spark.master.web.url的服务\" \
+                      \"log\": \"无法访问spark.master.web.url的服务，请检查spark服务。\" \
                     }"
     echo $json_output
     rm /tmp/sy-env-standalone.sh
@@ -174,7 +195,7 @@ if [[ $spark_master_web_url =~ $regex ]]; then
   if ! (echo >/dev/tcp/$host/$port) &>/dev/null; then
     json_output="{ \
                     \"status\": \"INSTALL_ERROR\", \
-                    \"log\": \"无法访问 spark web ui\" \
+                    \"log\": \"无法访问 spark web ui，请检查spark服务。\" \
                   }"
     echo $json_output
     rm ${BASE_PATH}/agent-standalone.sh
