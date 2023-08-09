@@ -19,7 +19,7 @@ for arg in "$@"; do
 done
 
 # 将文件解压到指定目录
-tar -vxf ${BASE_PATH}/zhiqingyun-agent.tar.gz -C ${home_path}/ > /dev/null
+tar -xf ${BASE_PATH}/zhiqingyun-agent.tar.gz -C ${home_path}/ > /dev/null
 
 # 运行jar包
 nohup java -jar -Xmx2048m ${home_path}/lib/zhiqingyun-agent.jar --server.port=${agent_port} >>${home_path}/logs/zhiqingyun-agent.log 2>&1 &

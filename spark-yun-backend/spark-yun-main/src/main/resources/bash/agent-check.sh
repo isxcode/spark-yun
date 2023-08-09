@@ -22,8 +22,8 @@ fi
 # 检查是否有README.md文件，有则表示已安装，无则表示未安装
 if [ -e "${home_path}/README.md" ]; then
   # 检查pid文件，无则表示未运行，有再判断pid是否运行
-  if [ -e "${home_path}/spark-yun-agent.pid" ]; then
-    pid=$(cat "${home_path}/spark-yun-agent.pid")
+  if [ -e "${home_path}/zhiqingyun-agent.pid" ]; then
+    pid=$(cat "${home_path}/zhiqingyun-agent.pid")
     if ps -p $pid > /dev/null 2>&1; then
         CHECK_STATUS="RUNNING"
     else

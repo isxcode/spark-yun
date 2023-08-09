@@ -4,6 +4,8 @@
 # 停止脚本
 ######################
 
+BASE_PATH=$(cd "$(dirname "$0")" || exit ; pwd)
+
 home_path=""
 for arg in "$@"; do
   case "$arg" in
@@ -12,10 +14,10 @@ for arg in "$@"; do
   esac
 done
 
-if [ -e "${home_path}/spark-yun-agent.pid" ]; then
-  pid=$(cat "${home_path}/spark-yun-agent.pid")
+if [ -e "${home_path}/zhiqingyun-agent.pid" ]; then
+  pid=$(cat "${home_path}/zhiqingyun-agent.pid")
   if ps -p $pid >/dev/null 2>&1; then
-   kill -9 ${pid}
+   kill -15 ${pid}
   fi
 fi
 
@@ -27,4 +29,4 @@ json_output="{ \
 echo $json_output
 
 # 删除检测脚本
-rm /tmp/sy-stop.sh
+rm ${BASE_PATH}/agent-stop.sh

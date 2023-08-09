@@ -77,7 +77,7 @@ public class RunAgentRemoveService {
 
     // 运行停止脚本
     String removeCommand =
-        "bash"
+        "bash "
             + sparkYunProperties.getTmpDir()
             + File.separator
             + "agent-uninstall.sh"
