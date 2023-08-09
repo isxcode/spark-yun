@@ -120,16 +120,16 @@ public class RunAgentInstallService {
 
     // 运行安装脚本
     String installCommand =
-      "bash "
-        + sparkYunProperties.getTmpDir()
-        + File.separator
-        + "agent-install.sh"
-        + " --home-path="
-        + engineNode.getAgentHomePath()
-        + File.separator
-        + PathConstants.AGENT_PATH_NAME
-        + " --agent-port="
-        + engineNode.getAgentPort();
+        "bash "
+            + sparkYunProperties.getTmpDir()
+            + File.separator
+            + "agent-install.sh"
+            + " --home-path="
+            + engineNode.getAgentHomePath()
+            + File.separator
+            + PathConstants.AGENT_PATH_NAME
+            + " --agent-port="
+            + engineNode.getAgentPort();
 
     executeLog = executeCommand(scpFileEngineNodeDto, installCommand, false);
     AgentInfo agentInstallInfo = JSON.parseObject(executeLog, AgentInfo.class);

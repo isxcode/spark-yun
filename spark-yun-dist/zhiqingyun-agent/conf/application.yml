@@ -1,3 +1,6 @@
+server:
+  port: 30177
+
 management:
   endpoints:
     web:
