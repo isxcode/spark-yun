@@ -72,7 +72,7 @@ public class RunAgentRemoveService {
     // 拷贝检测脚本
     scpFile(
         scpFileEngineNodeDto,
-        ResourceUtils.getFile("classpath:bash/agent-uninstall.sh").getPath(),
+        "classpath:bash/agent-uninstall.sh",
         sparkYunProperties.getTmpDir() + File.separator + "agent-uninstall.sh");
 
     // 运行停止脚本

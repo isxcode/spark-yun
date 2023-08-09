@@ -72,9 +72,9 @@ public class RunAgentCheckService {
 
     // 拷贝检测脚本
     scpFile(
-        scpFileEngineNodeDto,
-        ResourceUtils.getFile("classpath:bash/agent-check.sh").getPath(),
-        sparkYunProperties.getTmpDir() + File.separator + "agent-check.sh");
+      scpFileEngineNodeDto,
+      "classpath:bash/agent-check.sh",
+      sparkYunProperties.getTmpDir() + File.separator + "agent-check.sh");
 
     // 运行安装脚本
     String checkCommand =

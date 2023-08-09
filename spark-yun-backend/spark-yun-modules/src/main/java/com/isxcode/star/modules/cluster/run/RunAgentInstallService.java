@@ -74,8 +74,7 @@ public class RunAgentInstallService {
     // 先检查节点是否可以安装
     scpFile(
         scpFileEngineNodeDto,
-        ResourceUtils.getFile("classpath:bash/" + String.format("agent-%s.sh", clusterType))
-            .getPath(),
+        "classpath:bash/" + String.format("agent-%s.sh", clusterType),
         sparkYunProperties.getTmpDir()
             + File.separator
             + String.format("agent-%s.sh", clusterType));
@@ -109,13 +108,13 @@ public class RunAgentInstallService {
     // 下载安装包
     scpFile(
         scpFileEngineNodeDto,
-        ResourceUtils.getFile("classpath:agent/zhiqingyun-agent.tar.gz").getPath(),
+        "classpath:agent/zhiqingyun-agent.tar.gz",
         sparkYunProperties.getTmpDir() + File.separator + "zhiqingyun-agent.tar.gz");
 
     // 拷贝安装脚本
     scpFile(
         scpFileEngineNodeDto,
-        ResourceUtils.getFile("classpath:bash/agent-install.sh").getPath(),
+       "classpath:bash/agent-install.sh",
         sparkYunProperties.getTmpDir() + File.separator + "agent-install.sh");
 
     // 运行安装脚本
