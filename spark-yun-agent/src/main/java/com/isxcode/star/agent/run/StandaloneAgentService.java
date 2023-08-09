@@ -186,9 +186,11 @@ public class StandaloneAgentService implements AgentService {
     Map<String, String> apps = new HashMap<>();
 
     for (Element row : completedDriversRows) {
-      apps.put(
+      if (row.select("td:nth-child(3) a").first() != null) {
+        apps.put(
           row.selectFirst("td:nth-child(1)").text(),
           row.select("td:nth-child(3) a").first().attr("href"));
+      }
     }
     String workUrl = apps.get(submissionId);
 

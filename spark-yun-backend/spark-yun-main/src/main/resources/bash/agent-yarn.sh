@@ -124,15 +124,44 @@ if ! command -v yarn &>/dev/null; then
   exit 0
 fi
 
-# 判断yarn是否正常运行
-if ! timeout 10s yarn node -list &>/dev/null; then
-  json_output="{ \
-        \"status\": \"INSTALL_ERROR\", \
-        \"log\": \"未启动yarn服务\" \
-      }"
-  echo $json_output
-  rm ${BASE_PATH}/agent-yarn.sh
-  exit 0
+if [[ "$OSTYPE" == "linux-gnu" ]]; then
+    # 判断yarn是否正常运行
+    if ! timeout 10s yarn node -list &>/dev/null; then
+      json_output="{ \
+            \"status\": \"INSTALL_ERROR\", \
+            \"log\": \"未启动yarn服务\" \
+          }"
+      echo $json_output
+      rm ${BASE_PATH}/agent-yarn.sh
+      exit 0
+    fi
+elif [[ "$OSTYPE" == "darwin"* ]]; then
+    # 判断yarn是否正常运行
+    if ! yarn node -list &>/dev/null; then
+      json_output="{ \
+            \"status\": \"INSTALL_ERROR\", \
+            \"log\": \"未启动yarn服务\" \
+          }"
+      echo $json_output
+      rm ${BASE_PATH}/agent-yarn.sh
+      exit 0
+    fi
+elif [[ "$OSTYPE" == "cygwin" || "$OSTYPE" == "msys" || "$OSTYPE" == "mingw64" ]]; then
+    json_output="{ \
+                          \"status\": \"INSTALL_ERROR\", \
+                          \"log\": \"windows系统不支持安装\" \
+                        }"
+          echo $json_output
+          rm ${BASE_PATH}/agent-standalone.sh
+          exit 0
+else
+    json_output="{ \
+                      \"status\": \"INSTALL_ERROR\", \
+                      \"log\": \"该系统不支持安装\" \
+                    }"
+      echo $json_output
+      rm ${BASE_PATH}/agent-standalone.sh
+      exit 0
 fi
 
 # 判断端口号是否被占用

@@ -44,9 +44,9 @@ tasks.register('build_agent_lib', Copy) {
     into 'build/zhiqingyun_agent/lib'
   }
 
-  from '../spark-yun-api/build/libs'
-  from '../spark-yun-agent/build/libs'
-  from '../spark-yun-plugins/spark-query-sql-plugin/build/libs'
+  from rootDir.getAbsolutePath() + '/spark-yun-backend/spark-yun-api/build/libs'
+  from rootDir.getAbsolutePath() + '/spark-yun-agent/build/libs'
+  from rootDir.getAbsolutePath() + '/spark-yun-plugins/spark-query-sql-plugin/build/libs'
   into 'build/zhiqingyun-agent/lib'
 }
 
@@ -55,7 +55,7 @@ tasks.register('build_agent_plugins', Copy) {
 
   dependsOn(':spark-yun-plugins:spark-query-sql-plugin:jar')
 
-  from '../spark-yun-plugins/spark-query-sql-plugin/build/libs'
+  from rootDir.getAbsolutePath() + '/spark-yun-plugins/spark-query-sql-plugin/build/libs'
   into 'build/zhiqingyun-agent/plugins'
 }
 
@@ -108,10 +108,10 @@ tasks.register('build_zhiqingyun', Tar) {
   from('zhiqingyun/logs') {
     into 'logs'
   }
-  from('../spark-yun-backend/spark-yun-main/build/libs/zhiqingyun.jar') {
+  from(rootDir.getAbsolutePath() + '/spark-yun-backend/spark-yun-main/build/libs/zhiqingyun.jar') {
     into 'lib'
   }
-  from('../README.md') {
+  from(rootDir.getAbsolutePath() + '/README.md') {
     into '/'
   }
 }

@@ -98,7 +98,7 @@ public class KubernetesAgentService implements AgentService {
 
     sparkLauncher.setConf("spark.kubernetes.container.image", "apache/spark:v3.1.3");
     sparkLauncher.setConf("spark.kubernetes.authenticate.driver.serviceAccountName", "zhiqingyun");
-    sparkLauncher.setConf("spark.kubernetes.namespace", "spark-yun");
+    sparkLauncher.setConf("spark.kubernetes.namespace", "zhiqingyun-space");
     sparkLauncher.setConf(
         "spark.kubernetes.driver.volumes.hostPath.jar.mount.path",
         "/opt/spark/examples/jars/" + sparkSubmit.getAppResource());
@@ -153,7 +153,7 @@ public class KubernetesAgentService implements AgentService {
   @Override
   public String getAppStatus(String podName) throws IOException {
 
-    String getStatusCmdFormat = "kubectl get pod %s -n spark-yun";
+    String getStatusCmdFormat = "kubectl get pod %s -n zhiqingyun-space";
 
     Process process = Runtime.getRuntime().exec(String.format(getStatusCmdFormat, podName));
     InputStream inputStream = process.getInputStream();
@@ -198,7 +198,7 @@ public class KubernetesAgentService implements AgentService {
   @Override
   public String getAppLog(String appId) throws IOException {
 
-    String getLogCmdFormat = "kubectl logs -f %s -n spark-yun";
+    String getLogCmdFormat = "kubectl logs -f %s -n zhiqingyun-space";
 
     Process process = Runtime.getRuntime().exec(String.format(getLogCmdFormat, appId));
     InputStream inputStream = process.getInputStream();
@@ -245,7 +245,7 @@ public class KubernetesAgentService implements AgentService {
   @Override
   public String getAppData(String appId) throws IOException {
 
-    String getLogCmdFormat = "kubectl logs -f %s -n spark-yun";
+    String getLogCmdFormat = "kubectl logs -f %s -n zhiqingyun-space";
 
     Process process = Runtime.getRuntime().exec(String.format(getLogCmdFormat, appId));
     InputStream inputStream = process.getInputStream();
@@ -284,7 +284,7 @@ public class KubernetesAgentService implements AgentService {
   @Override
   public void killApp(String appId) throws IOException {
 
-    String killAppCmdFormat = "kubectl delete pod %s -n spark-yun";
+    String killAppCmdFormat = "kubectl delete pod %s -n zhiqingyun-space";
     Process process = Runtime.getRuntime().exec(String.format(killAppCmdFormat, appId));
 
     InputStream inputStream = process.getInputStream();
