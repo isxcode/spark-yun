@@ -4,7 +4,28 @@
 # 检测安装环境脚本
 ######################
 
-source /etc/profile
+if [[ "$OSTYPE" == "linux-gnu" ]]; then
+    source /etc/profile
+elif [[ "$OSTYPE" == "darwin"* ]]; then
+    source /etc/profile
+    source ~/.zshrc
+elif [[ "$OSTYPE" == "cygwin" || "$OSTYPE" == "msys" || "$OSTYPE" == "mingw64" ]]; then
+    json_output="{ \
+                          \"status\": \"INSTALL_ERROR\", \
+                          \"log\": \"windows系统不支持安装\" \
+                        }"
+          echo $json_output
+          rm ${BASE_PATH}/agent-standalone.sh
+          exit 0
+else
+    json_output="{ \
+                      \"status\": \"INSTALL_ERROR\", \
+                      \"log\": \"该系统不支持安装\" \
+                    }"
+      echo $json_output
+      rm ${BASE_PATH}/agent-standalone.sh
+      exit 0
+fi
 
 BASE_PATH=$(cd "$(dirname "$0")" || exit ; pwd)
 
@@ -24,8 +45,8 @@ if [ ! -d "$home_path" ]; then
 fi
 
 # 判断是否之前已安装代理
-if [ -e "${home_path}/spark-yun-agent.pid" ]; then
-  pid=$(cat "${home_path}/spark-yun-agent.pid")
+if [ -e "${home_path}/zhiqingyun-agent.pid" ]; then
+  pid=$(cat "${home_path}/zhiqingyun-agent.pid")
   if ps -p $pid >/dev/null 2>&1; then
     json_output="{ \
             \"status\": \"RUNNING\", \
@@ -56,17 +77,6 @@ if ! command -v tar &>/dev/null; then
   exit 0
 fi
 
-# 判断mpstat命令
-if ! command -v mpstat &>/dev/null; then
-  json_output="{ \
-        \"status\": \"INSTALL_ERROR\", \
-        \"log\": \"未检测到mpstat命令\" \
-      }"
-  echo $json_output
-  rm ${BASE_PATH}/agent-yarn.sh
-  exit 0
-fi
-
 # 判断是否有java命令
 if ! command -v java &>/dev/null; then
   json_output="{ \
@@ -90,17 +100,6 @@ if [[ "$java_version" != "1.8"* ]]; then
   exit 0
 fi
 
-# 判断yarn命令
-if ! command -v yarn &>/dev/null; then
-  json_output="{ \
-      \"status\": \"INSTALL_ERROR\", \
-      \"log\": \"未检测到yarn命令\" \
-    }"
-  echo $json_output
-  rm ${BASE_PATH}/agent-yarn.sh
-  exit 0
-fi
-
 # 获取HADOOP_HOME环境变量值
 if [ -n "$HADOOP_HOME" ]; then
   HADOOP_PATH=$HADOOP_HOME
@@ -109,6 +108,17 @@ else
             \"status\": \"INSTALL_ERROR\", \
             \"log\": \"未配置HADOOP_HOME环境变量\" \
           }"
+  echo $json_output
+  rm ${BASE_PATH}/agent-yarn.sh
+  exit 0
+fi
+
+# 判断yarn命令
+if ! command -v yarn &>/dev/null; then
+  json_output="{ \
+      \"status\": \"INSTALL_ERROR\", \
+      \"log\": \"未检测到yarn命令\" \
+    }"
   echo $json_output
   rm ${BASE_PATH}/agent-yarn.sh
   exit 0
