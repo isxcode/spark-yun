@@ -153,8 +153,10 @@ public class WorkBizService {
     WorkflowEntity workflow = workflowRepository.findById(work.getWorkflowId()).get();
     WorkflowConfigEntity workflowConfig =
         workflowConfigRepository.findById(workflow.getConfigId()).get();
-    if (JSONArray.parseObject(workflowConfig.getNodeList(), String.class).contains(workId)) {
-      throw new SparkYunException("作业在DAG图中无法删除");
+    if (workflowConfig.getNodeList() != null) {
+      if (JSONArray.parseObject(workflowConfig.getNodeList(), String.class).contains(workId)) {
+        throw new SparkYunException("作业在DAG图中无法删除");
+      }
     }
   }
 

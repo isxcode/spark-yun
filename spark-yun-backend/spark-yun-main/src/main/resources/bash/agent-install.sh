@@ -9,21 +9,13 @@ if [[ "$OSTYPE" == "linux-gnu" ]]; then
 elif [[ "$OSTYPE" == "darwin"* ]]; then
     source /etc/profile
     source ~/.zshrc
-elif [[ "$OSTYPE" == "cygwin" || "$OSTYPE" == "msys" || "$OSTYPE" == "mingw64" ]]; then
-    json_output="{ \
-                          \"status\": \"INSTALL_ERROR\", \
-                          \"log\": \"windows系统不支持安装\" \
-                        }"
-          echo $json_output
-          rm ${BASE_PATH}/agent-standalone.sh
-          exit 0
 else
     json_output="{ \
                       \"status\": \"INSTALL_ERROR\", \
                       \"log\": \"该系统不支持安装\" \
                     }"
       echo $json_output
-      rm ${BASE_PATH}/agent-standalone.sh
+      rm ${BASE_PATH}/agent-install.sh
       exit 0
 fi
 
@@ -64,4 +56,4 @@ if [ -e "${home_path}/zhiqingyun-agent.pid" ]; then
 fi
 
 # 删除安装包 和 安装脚本
-rm ${BASE_PATH}/zhiqingyun-agent.tar.gz && rm ${BASE_PATH}/agent-install.sh
+#rm ${BASE_PATH}/zhiqingyun-agent.tar.gz && rm ${BASE_PATH}/agent-install.sh

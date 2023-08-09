@@ -91,9 +91,12 @@ public class RunAgentInstallService {
             + PathConstants.AGENT_PATH_NAME
             + " --agent-port="
             + engineNode.getAgentPort();
+    log.debug("执行远程命令:{}", envCommand);
 
     // 获取返回结果
     String executeLog = executeCommand(scpFileEngineNodeDto, envCommand, false);
+    log.debug("远程返回值:{}", executeLog);
+
     AgentInfo agentEnvInfo = JSON.parseObject(executeLog, AgentInfo.class);
 
     // 如果不可以安装直接返回
@@ -110,12 +113,14 @@ public class RunAgentInstallService {
         scpFileEngineNodeDto,
         "classpath:agent/zhiqingyun-agent.tar.gz",
         sparkYunProperties.getTmpDir() + File.separator + "zhiqingyun-agent.tar.gz");
+    log.debug("下载安装包成功");
 
     // 拷贝安装脚本
     scpFile(
         scpFileEngineNodeDto,
        "classpath:bash/agent-install.sh",
         sparkYunProperties.getTmpDir() + File.separator + "agent-install.sh");
+    log.debug("下载安装脚本成功");
 
     // 运行安装脚本
     String installCommand =
@@ -129,8 +134,11 @@ public class RunAgentInstallService {
             + PathConstants.AGENT_PATH_NAME
             + " --agent-port="
             + engineNode.getAgentPort();
+    log.debug("执行远程安装命令:{}", envCommand);
 
     executeLog = executeCommand(scpFileEngineNodeDto, installCommand, false);
+    log.debug("远程安装返回值:{}", executeLog);
+
     AgentInfo agentInstallInfo = JSON.parseObject(executeLog, AgentInfo.class);
 
     if (ClusterNodeStatus.RUNNING.equals(agentInstallInfo.getStatus())) {

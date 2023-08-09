@@ -62,6 +62,8 @@ tasks.register('build_agent_plugins', Copy) {
 // 构建至轻云代理
 tasks.register('build_agent', Tar) {
 
+  mustRunAfter(":spark-yun-frontend:package")
+
   dependsOn('build_agent_lib')
   dependsOn('build_agent_plugins')
 
@@ -94,7 +96,7 @@ tasks.register('build_agent', Tar) {
 // 构建至轻云
 tasks.register('build_zhiqingyun', Tar) {
 
-  dependsOn(":spark-yun-backend:package")
+  mustRunAfter(":spark-yun-backend:package")
 
   compression = Compression.GZIP
   archiveFileName = 'zhiqingyun.tar.gz'
