@@ -6,7 +6,20 @@
 
 BASE_PATH=$(cd "$(dirname "$0")" || exit ; pwd)
 
-source /etc/profile
+if [[ "$OSTYPE" == "linux-gnu" ]]; then
+    source /etc/profile
+elif [[ "$OSTYPE" == "darwin"* ]]; then
+    source /etc/profile
+    source ~/.zshrc
+else
+    json_output="{ \
+                      \"status\": \"INSTALL_ERROR\", \
+                      \"log\": \"该系统不支持安装\" \
+                    }"
+      echo $json_output
+      rm ${BASE_PATH}/agent-start.sh
+      exit 0
+fi
 
 home_path=""
 agent_port=""

@@ -104,6 +104,7 @@ public class SshUtils {
 
     // 判断命令是否执行完成
     int exitStatus = channel.getExitStatus();
+    log.debug("SSH执行返回状态:{}", exitStatus);
     channel.disconnect();
     session.disconnect();
 

@@ -87,9 +87,12 @@ public class RunAgentStartService {
             + PathConstants.AGENT_PATH_NAME
             + " --agent-port="
             + engineNode.getAgentPort();
+    log.debug("执行远程命令:{}", startCommand);
 
     // 获取返回结果
     String executeLog = executeCommand(scpFileEngineNodeDto, startCommand, false);
+    log.debug("远程返回值:{}", executeLog);
+
     AgentInfo agentStartInfo = JSON.parseObject(executeLog, AgentInfo.class);
 
     // 修改状态
