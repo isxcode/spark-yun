@@ -85,9 +85,12 @@ public class RunAgentRemoveService {
             + engineNode.getAgentHomePath()
             + File.separator
             + PathConstants.AGENT_PATH_NAME;
+    log.debug("执行远程命令:{}", removeCommand);
 
     // 获取返回结果
     String executeLog = executeCommand(scpFileEngineNodeDto, removeCommand, false);
+    log.debug("远程返回值:{}", executeLog);
+
     AgentInfo agentStartInfo = JSON.parseObject(executeLog, AgentInfo.class);
 
     // 修改状态

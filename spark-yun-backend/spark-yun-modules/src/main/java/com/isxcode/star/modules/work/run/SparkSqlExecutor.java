@@ -252,7 +252,9 @@ public class SparkSqlExecutor extends WorkExecutor {
         YagGetLogRes yagGetLogRes =
             JSON.parseObject(JSON.toJSONString(baseResponse.getData()), YagGetLogRes.class);
         logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("日志保存成功 \n");
-        workInstance.setYarnLog(yagGetLogRes.getLog());
+        if(yagGetLogRes!=null){
+          workInstance.setYarnLog(yagGetLogRes.getLog());
+        }
         workInstance = updateInstance(workInstance, logBuilder);
 
         // 如果运行成功，则保存返回数据

@@ -91,6 +91,8 @@ public class RunAgentCheckService {
 
     // 获取返回结果
     String executeLog = executeCommand(scpFileEngineNodeDto, checkCommand, false);
+
+    log.debug("远程返回值:{}", executeLog);
     AgentInfo agentCheckInfo = JSON.parseObject(executeLog, AgentInfo.class);
 
     // 保存服务器信息
