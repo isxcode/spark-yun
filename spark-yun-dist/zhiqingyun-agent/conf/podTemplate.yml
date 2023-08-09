@@ -1,0 +1,21 @@
+# k8s作业配置host映射
+# "spark.kubernetes.driver.podTemplateFile":"/Users/ispong/zhiqingyun-agent/conf/podTemplate.yml",
+# "spark.kubernetes.executor.podTemplateFile":"/Users/ispong/zhiqingyun-agent/conf/podTemplate.yml"
+apiVersion: v1
+kind: Pod
+metadata:
+  name: host-pod
+spec:
+  restartPolicy: never
+#  securityContext:
+#    privileged: true
+#    runAsUser: 1000
+#    runAsGroup: 1001
+  hostAliases:
+    - ip: "192.168.115.109"
+      hostnames:
+        - "localhost"
+#  volumes:
+#    - name: users
+#      hostPath:
+#        path: /etc/passwd

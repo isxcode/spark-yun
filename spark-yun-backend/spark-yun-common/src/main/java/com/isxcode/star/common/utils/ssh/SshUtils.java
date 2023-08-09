@@ -8,13 +8,12 @@ import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 import com.jcraft.jsch.SftpATTRS;
 import com.jcraft.jsch.SftpException;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.DefaultResourceLoader;
+import org.springframework.util.ResourceUtils;
 
 /** ssh连接工具类. */
 @Slf4j
@@ -22,7 +21,7 @@ public class SshUtils {
 
   /** scp传递文件. */
   public static void scpFile(ScpFileEngineNodeDto engineNode, String srcPath, String dstPath)
-      throws JSchException, SftpException, InterruptedException {
+    throws JSchException, SftpException, InterruptedException, IOException {
 
     // 初始化jsch
     JSch jsch = new JSch();
@@ -39,16 +38,16 @@ public class SshUtils {
     ChannelSftp channel;
     channel = (ChannelSftp) session.openChannel("sftp");
     channel.connect(120000);
-    channel.put(srcPath, dstPath);
+    DefaultResourceLoader resourceLoader = new DefaultResourceLoader();
+    channel.put(resourceLoader.getResource(srcPath).getInputStream(), dstPath);
 
     // 文件校验
-    File file = new File(srcPath);
     SftpATTRS attrs;
     while (true) {
       attrs = channel.stat(dstPath);
       if (attrs != null) {
         long remoteFileSize = attrs.getSize();
-        long localFileSize = file.length();
+        long localFileSize = resourceLoader.getResource(srcPath).contentLength();
         if (remoteFileSize == localFileSize) {
           break;
         }

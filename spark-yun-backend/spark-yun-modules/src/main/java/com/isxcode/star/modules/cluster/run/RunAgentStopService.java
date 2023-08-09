@@ -72,7 +72,7 @@ public class RunAgentStopService {
     // 拷贝检测脚本
     scpFile(
         scpFileEngineNodeDto,
-        ResourceUtils.getFile("classpath:bash/agent-stop.sh").getPath(),
+        "classpath:bash/agent-stop.sh",
         sparkYunProperties.getTmpDir() + File.separator + "agent-stop.sh");
 
     // 运行停止脚本
