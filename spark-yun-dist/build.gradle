@@ -94,7 +94,7 @@ tasks.register('build_agent', Tar) {
 // 构建至轻云
 tasks.register('build_zhiqingyun', Tar) {
 
-  mustRunAfter(":spark-yun-backend:package")
+  dependsOn(":spark-yun-backend:package")
 
   compression = Compression.GZIP
   archiveFileName = 'zhiqingyun.tar.gz'
@@ -119,5 +119,5 @@ tasks.register('build_zhiqingyun', Tar) {
 // 打包
 tasks.register('package', GradleBuild) {
 
-  tasks = ["spark-yun:spark-yun-frontend:package", "build_agent", "spark-yun:spark-yun-backend:package", "build_zhiqingyun"]
+  tasks = [":spark-yun-frontend:package", "build_agent", ":spark-yun-backend:package", "build_zhiqingyun"]
 }

@@ -175,7 +175,7 @@ if [ "$hasRole" = "no" ]; then
               }"
   echo $json_output
   rm ${BASE_PATH}/agent-kubernetes.sh
-  exit 05
+  exit 0
 fi
 
 # 返回可以安装
