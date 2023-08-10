@@ -14,7 +14,7 @@ tasks.register('copy_resources_agent', Copy) {
 }
 
 // 后端打包
-tasks.register('package', GradleBuild) {
+tasks.register('make', GradleBuild) {
 
   mustRunAfter(":spark-yun-dist:build_agent")
   dependsOn("clean_resources_agent", "copy_resources_agent")
