@@ -10,7 +10,7 @@ tasks.register('npm_build', Exec) {
 
   mustRunAfter("clean_backend_resources")
 
-  if (System.properties['os.name'].toString().contains('Mac OS X')) {
+  if (System.properties['os.name'].toString().contains('Mac OS X')||System.properties['os.name'].toString().contains('Linux')) {
     commandLine 'sh', '-c', '''
       npm install node-sass -D --sass_binary_site=https://npm.taobao.org/mirrors/node-sass/ &&
       npm install &&
