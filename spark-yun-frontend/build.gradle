@@ -44,7 +44,7 @@ tasks.register('copy_to_static', Copy) {
 }
 
 // 打包并安装前端项目
-tasks.register('package', GradleBuild) {
+tasks.register('make', GradleBuild) {
 
   // 串行执行
   tasks = ["clean_backend_resources", "npm_build", "copy_to_templates", "copy_to_static"]

@@ -112,14 +112,14 @@ tasks.register('format', GradleBuild) {
 // gradle package
 tasks.register('package', GradleBuild) {
 
-  tasks = [":spark-yun-dist:package"]
+  tasks = [":spark-yun-dist:make"]
 }
 
 // 自定义命令：启动项目
 // gradle start
 tasks.register('start', GradleBuild) {
 
-  dependsOn(":package")
+  dependsOn(":spark-yun-dist:make")
   tasks = [":spark-yun-backend:spark-yun-main:bootRun"]
 }
 
@@ -127,7 +127,7 @@ tasks.register('start', GradleBuild) {
 // gradle docker
 tasks.register('docker', Exec) {
 
-  dependsOn(":package")
+  dependsOn(":spark-yun-dist:make")
   commandLine 'bash', '-c', 'docker buildx uninstall && docker build -t isxcode/zhiqingyun:' + version_number + ' -f ./Dockerfile .'
 }
 
@@ -135,7 +135,7 @@ tasks.register('docker', Exec) {
 // gradle deploy
 tasks.register('deploy', Exec) {
 
-  dependsOn(":package")
+  dependsOn(":spark-yun-dist:make")
   commandLine 'bash', '-c', 'docker buildx install && docker buildx build --platform linux/amd64,linux/arm64/v8 -t isxcode/zhiqingyun:' + version_number + ' -f ./Dockerfile . --push'
 }
 
