@@ -12,7 +12,7 @@ spec:
 #    runAsUser: 1000
 #    runAsGroup: 1001
   hostAliases:
-    - ip: "192.168.115.109"
+    - ip: "192.168.18.146"
       hostnames:
         - "localhost"
 #  volumes:
