@@ -274,17 +274,23 @@ public class SparkSqlExecutor extends WorkExecutor {
           baseResponse = HttpUtils.doGet(getDataUrl, BaseResponse.class);
           if (!String.valueOf(HttpStatus.OK.value()).equals(baseResponse.getCode())) {
             throw new WorkRunException(
-                LocalDateTime.now()
-                    + WorkLog.ERROR_INFO
-                    + "获取作业数据异常 : "
-                    + baseResponse.getErr()
-                    + "\n");
+              LocalDateTime.now()
+                + WorkLog.ERROR_INFO
+                + "获取作业数据异常 : "
+                + baseResponse.getErr()
+                + "\n");
           }
 
           // 解析数据并保存
           workInstance.setResultData(JSON.toJSONString(baseResponse.getData()));
           logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("数据保存成功 \n");
           updateInstance(workInstance, logBuilder);
+        } else {
+          throw new WorkRunException(
+            LocalDateTime.now()
+              + WorkLog.ERROR_INFO
+              + "作业运行失败"
+              + "\n");
         }
 
         // 运行结束，则退出死循环
