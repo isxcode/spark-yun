@@ -1,0 +1,100 @@
+spring:
+
+  profiles:
+    active: local
+
+  banner:
+    location: classpath:banner/logo.txt
+
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    druid:
+      initial-size: 10
+      max-active: 200
+      min-idle: 10
+      max-wait: 30000
+      filters: stat,wall,log4j2
+      validationQuery: select 'x'
+      stat-view-servlet:
+        enabled: true
+
+  jpa:
+    show-sql: false
+    open-in-view: false
+    hibernate:
+      ddl-auto: none
+      naming:
+        physical-strategy: com.isxcode.star.config.JpaTableUpperCaseStrategy
+    properties:
+      hibernate:
+        session_factory:
+          statement_inspector: com.isxcode.star.config.JpaTenantInterceptor
+
+  mvc:
+    view:
+      prefix: /templates/
+      suffix: .html
+    static-path-pattern: /static/**
+
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+      settings:
+        trace: false
+        web-allow-others: true
+
+  quartz:
+    scheduler-name: spark-yun-quartz-scheduler
+    job-store-type: jdbc
+    jdbc:
+      initialize-schema: never
+    properties:
+      org.quartz.jobStore.class: org.quartz.impl.jdbcjobstore.JobStoreTX
+      org.quartz.jobStore.driverDelegateClass: org.quartz.impl.jdbcjobstore.StdJDBCDelegate
+      org.quartz.jobStore.dataSource: quartzDataSource
+
+  cache:
+    type: simple
+
+springdoc:
+  api-docs:
+    path: /swagger-ui/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+  packages-to-scan: com.isxcode.star
+
+spark-yun:
+  admin-url:
+    - /swagger-ui/** # http://localhost:8080/swagger-ui/index.html
+    - /h2-console/** # http://localhost:8080/h2-console
+    - /druid/** # http://localhost:8080/druid/index.html
+  anonymous-url:
+    - / # 让页面可以访问前端
+    - /static/** # 放行前端资源文件
+    - /favicon.ico # 放行网站的logo
+    - /login # 放行登录接口
+    - /**/open/** # 放行所有的开放接口
+    - /vip/api/custom/** # 放行所有自定义接口
+    - /tenant-user # 下面放行全部前端的刷新访问路径
+    - /computer-group
+    - /computer-pointer
+    - /datasource
+    - /workflow
+    - /workflow-detail
+    - /work-item
+    - /tenant-user
+    - /user-center
+    - /tenant-list
+    - /license
+    - /schedule
+    - /workflow-page
+
+server:
+  tomcat:
+    connection-timeout: 120s
+
+application:
+  title: 至轻云
+  website: https://zhiqingyun.isxcode.com
+  describe: 打造超轻量级批处理大数据平台
