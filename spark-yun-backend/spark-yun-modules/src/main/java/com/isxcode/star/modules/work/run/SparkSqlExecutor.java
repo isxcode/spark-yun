@@ -239,6 +239,8 @@ public class SparkSqlExecutor extends WorkExecutor {
                 + "&agentType="
                 + calculateEngineEntityOptional.get().getClusterType();
         baseResponse = HttpUtils.doGet(getLogUrl, BaseResponse.class);
+        log.debug("获取远程返回日志:{}", baseResponse.toString());
+
         if (!String.valueOf(HttpStatus.OK.value()).equals(baseResponse.getCode())) {
           throw new WorkRunException(
               LocalDateTime.now()
@@ -272,6 +274,8 @@ public class SparkSqlExecutor extends WorkExecutor {
                   + "&agentType="
                   + calculateEngineEntityOptional.get().getClusterType();
           baseResponse = HttpUtils.doGet(getDataUrl, BaseResponse.class);
+          log.debug("获取远程返回数据:{}", baseResponse.toString());
+
           if (!String.valueOf(HttpStatus.OK.value()).equals(baseResponse.getCode())) {
             throw new WorkRunException(
               LocalDateTime.now()
