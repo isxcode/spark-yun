@@ -188,8 +188,8 @@ public class StandaloneAgentService implements AgentService {
     for (Element row : completedDriversRows) {
       if (row.select("td:nth-child(3) a").first() != null) {
         apps.put(
-          row.selectFirst("td:nth-child(1)").text(),
-          row.select("td:nth-child(3) a").first().attr("href"));
+            row.selectFirst("td:nth-child(1)").text(),
+            row.select("td:nth-child(3) a").first().attr("href"));
       }
     }
     String workUrl = apps.get(submissionId);
