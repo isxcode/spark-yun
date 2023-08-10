@@ -56,4 +56,4 @@ if [ -e "${home_path}/zhiqingyun-agent.pid" ]; then
 fi
 
 # 删除安装包 和 安装脚本
-#rm ${BASE_PATH}/zhiqingyun-agent.tar.gz && rm ${BASE_PATH}/agent-install.sh
+rm ${BASE_PATH}/zhiqingyun-agent.tar.gz && rm ${BASE_PATH}/agent-install.sh
