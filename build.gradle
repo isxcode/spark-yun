@@ -95,7 +95,8 @@ allprojects {
 spotless {
   java {
     target '*/**/*.java'
-    targetExclude '*/build/**/*.java', rootDir.getAbsolutePath() + '/spark-yun-dist/**'
+    targetExclude('*/build/**/*.java')
+    targetExclude('spark-yun-dist/**/*.java')
     googleJavaFormat()
     removeUnusedImports()
   }
@@ -105,7 +106,7 @@ spotless {
 // gradle format
 tasks.register('format', GradleBuild) {
 
-  tasks = ["spotlessApply", "checkstyleMain"]
+  tasks = [":spotlessApply", ":checkstyleMain"]
 }
 
 // 自定义命令：打包项目

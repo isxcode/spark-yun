@@ -25,7 +25,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.ResourceUtils;
 
 @Service
 @Slf4j
@@ -118,7 +117,7 @@ public class RunAgentInstallService {
     // 拷贝安装脚本
     scpFile(
         scpFileEngineNodeDto,
-       "classpath:bash/agent-install.sh",
+        "classpath:bash/agent-install.sh",
         sparkYunProperties.getTmpDir() + File.separator + "agent-install.sh");
     log.debug("下载安装脚本成功");
 

@@ -26,7 +26,6 @@ import org.apache.logging.log4j.util.Strings;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.ResourceUtils;
 
 @Service
 @Slf4j
@@ -72,9 +71,9 @@ public class RunAgentCheckService {
 
     // 拷贝检测脚本
     scpFile(
-      scpFileEngineNodeDto,
-      "classpath:bash/agent-check.sh",
-      sparkYunProperties.getTmpDir() + File.separator + "agent-check.sh");
+        scpFileEngineNodeDto,
+        "classpath:bash/agent-check.sh",
+        sparkYunProperties.getTmpDir() + File.separator + "agent-check.sh");
 
     // 运行安装脚本
     String checkCommand =

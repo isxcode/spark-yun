@@ -8,12 +8,10 @@ import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 import com.jcraft.jsch.SftpATTRS;
 import com.jcraft.jsch.SftpException;
-
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.DefaultResourceLoader;
-import org.springframework.util.ResourceUtils;
 
 /** ssh连接工具类. */
 @Slf4j
@@ -21,7 +19,7 @@ public class SshUtils {
 
   /** scp传递文件. */
   public static void scpFile(ScpFileEngineNodeDto engineNode, String srcPath, String dstPath)
-    throws JSchException, SftpException, InterruptedException, IOException {
+      throws JSchException, SftpException, InterruptedException, IOException {
 
     // 初始化jsch
     JSch jsch = new JSch();

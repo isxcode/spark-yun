@@ -257,7 +257,7 @@ public class SparkSqlExecutor extends WorkExecutor {
         YagGetLogRes yagGetLogRes =
             JSON.parseObject(JSON.toJSONString(baseResponse.getData()), YagGetLogRes.class);
         logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("日志保存成功 \n");
-        if(yagGetLogRes!=null){
+        if (yagGetLogRes != null) {
           workInstance.setYarnLog(yagGetLogRes.getLog());
         }
         workInstance = updateInstance(workInstance, logBuilder);
@@ -281,11 +281,11 @@ public class SparkSqlExecutor extends WorkExecutor {
 
           if (!String.valueOf(HttpStatus.OK.value()).equals(baseResponse.getCode())) {
             throw new WorkRunException(
-              LocalDateTime.now()
-                + WorkLog.ERROR_INFO
-                + "获取作业数据异常 : "
-                + baseResponse.getErr()
-                + "\n");
+                LocalDateTime.now()
+                    + WorkLog.ERROR_INFO
+                    + "获取作业数据异常 : "
+                    + baseResponse.getErr()
+                    + "\n");
           }
 
           // 解析数据并保存
@@ -293,11 +293,7 @@ public class SparkSqlExecutor extends WorkExecutor {
           logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("数据保存成功 \n");
           updateInstance(workInstance, logBuilder);
         } else {
-          throw new WorkRunException(
-            LocalDateTime.now()
-              + WorkLog.ERROR_INFO
-              + "作业运行失败"
-              + "\n");
+          throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "作业运行失败" + "\n");
         }
 
         // 运行结束，则退出死循环
