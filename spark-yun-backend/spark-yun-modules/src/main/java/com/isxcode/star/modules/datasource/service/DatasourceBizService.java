@@ -10,8 +10,7 @@ import com.isxcode.star.api.datasource.pojos.res.DasGetConnectLogRes;
 import com.isxcode.star.api.datasource.pojos.res.DasQueryDatasourceRes;
 import com.isxcode.star.api.datasource.pojos.res.DasTestConnectRes;
 import com.isxcode.star.backend.api.base.exceptions.SparkYunException;
-import com.isxcode.star.backend.api.base.properties.SparkYunProperties;
-import com.isxcode.star.common.utils.aes.AesUtils;
+import com.isxcode.star.common.utils.AesUtils;
 import com.isxcode.star.modules.datasource.entity.DatasourceEntity;
 import com.isxcode.star.modules.datasource.mapper.DatasourceMapper;
 import com.isxcode.star.modules.datasource.repository.DatasourceRepository;
@@ -37,7 +36,7 @@ public class DatasourceBizService {
 
   private final DatasourceMapper datasourceMapper;
 
-  private final SparkYunProperties sparkYunProperties;
+  private final AesUtils aesUtils;
 
   public void addDatasource(DasAddDatasourceReq dasAddDatasourceReq) {
 
@@ -45,7 +44,7 @@ public class DatasourceBizService {
         datasourceMapper.dasAddDatasourceReqToDatasourceEntity(dasAddDatasourceReq);
 
     // 密码对成加密
-    datasource.setPasswd(AesUtils.encrypt(sparkYunProperties.getAesSlat(), datasource.getPasswd()));
+    datasource.setPasswd(aesUtils.encrypt(datasource.getPasswd()));
 
     datasource.setCheckDateTime(LocalDateTime.now());
     datasource.setStatus(DatasourceStatus.UN_CHECK);
@@ -65,7 +64,7 @@ public class DatasourceBizService {
             dasAddDatasourceReq, datasourceEntityOptional.get());
 
     // 密码对成加密
-    datasource.setPasswd(AesUtils.encrypt(sparkYunProperties.getAesSlat(), datasource.getPasswd()));
+    datasource.setPasswd(aesUtils.encrypt(datasource.getPasswd()));
 
     datasource.setCheckDateTime(LocalDateTime.now());
     datasource.setStatus(DatasourceStatus.UN_CHECK);
@@ -89,7 +88,7 @@ public class DatasourceBizService {
     return DriverManager.getConnection(
         datasource.getJdbcUrl(),
         datasource.getUsername(),
-        AesUtils.decrypt(sparkYunProperties.getAesSlat(), datasource.getPasswd()));
+        aesUtils.decrypt(datasource.getPasswd()));
   }
 
   public void delDatasource(String datasourceId) {

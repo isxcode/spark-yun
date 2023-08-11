@@ -113,4 +113,4 @@ CREATE TABLE SY_LOCKER
   box VARCHAR(2000) null
 );
 
-alter table SY_CLUSTER_NODE alter column passwd varchar(3000) not null comment '节点服务器密码';
+alter table SY_CLUSTER_NODE alter column passwd varchar(5000) not null comment '节点服务器密码';
