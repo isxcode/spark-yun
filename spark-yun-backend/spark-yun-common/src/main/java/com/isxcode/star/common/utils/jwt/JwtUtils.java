@@ -1,9 +1,9 @@
 package com.isxcode.star.common.utils.jwt;
 
+import cn.hutool.crypto.SecureUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.isxcode.star.backend.api.base.exceptions.SparkYunException;
-import com.isxcode.star.common.utils.aes.AesUtils;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.JwtParserBuilder;
 import io.jsonwebtoken.Jwts;
@@ -34,7 +34,7 @@ public class JwtUtils {
       throw new SparkYunException("jwt加密异常");
     }
     if (aesKey != null) {
-      claimsStr = AesUtils.encrypt(aesKey, claimsStr);
+      claimsStr = SecureUtil.aes(Arrays.copyOf(aesKey.getBytes(), 1 << 5)).encryptBase64(claimsStr);
     }
     claims.put("CLAIM", claimsStr);
 
@@ -77,7 +77,7 @@ public class JwtUtils {
 
     String targetJsonStr = claimStr;
     if (aesKey != null) {
-      targetJsonStr = AesUtils.decrypt(aesKey, claimStr);
+      targetJsonStr = SecureUtil.aes(Arrays.copyOf(aesKey.getBytes(), 1 << 5)).decryptStr(claimStr);
     }
 
     ObjectMapper objectMapper = new ObjectMapper();

@@ -8,8 +8,7 @@ import com.isxcode.star.api.cluster.pojos.req.CaeQueryEngineReq;
 import com.isxcode.star.api.cluster.pojos.req.CaeUpdateEngineReq;
 import com.isxcode.star.api.cluster.pojos.res.CaeQueryEngineRes;
 import com.isxcode.star.backend.api.base.exceptions.SparkYunException;
-import com.isxcode.star.backend.api.base.properties.SparkYunProperties;
-import com.isxcode.star.common.utils.aes.AesUtils;
+import com.isxcode.star.common.utils.AesUtils;
 import com.isxcode.star.modules.cluster.entity.ClusterEntity;
 import com.isxcode.star.modules.cluster.entity.ClusterNodeEntity;
 import com.isxcode.star.modules.cluster.mapper.ClusterMapper;
@@ -48,7 +47,7 @@ public class ClusterBizService {
 
   private final ClusterNodeMapper clusterNodeMapper;
 
-  private final SparkYunProperties sparkYunProperties;
+  private final AesUtils aesUtils;
 
   public void addEngine(CaeAddEngineReq caeAddEngineReq) {
 
@@ -104,8 +103,7 @@ public class ClusterBizService {
         e -> {
           ScpFileEngineNodeDto scpFileEngineNodeDto =
               clusterNodeMapper.engineNodeEntityToScpFileEngineNodeDto(e);
-          scpFileEngineNodeDto.setPasswd(
-              AesUtils.decrypt(sparkYunProperties.getAesSlat(), scpFileEngineNodeDto.getPasswd()));
+          scpFileEngineNodeDto.setPasswd(aesUtils.decrypt(scpFileEngineNodeDto.getPasswd()));
 
           try {
             runAgentCheckService.checkAgent(scpFileEngineNodeDto, e);
