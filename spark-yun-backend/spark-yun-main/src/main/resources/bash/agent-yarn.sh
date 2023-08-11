@@ -81,16 +81,16 @@ if ! command -v java &>/dev/null; then
 fi
 
 # 判断java版本是否为1.8
-java_version=$(java -version 2>&1 | awk -F '"' '/version/ {print $2}')
-if [[ "$java_version" != "1.8"* ]]; then
-  json_output="{ \
-      \"status\": \"INSTALL_ERROR\", \
-      \"log\": \"未检测到java1.8.x环境\" \
-    }"
-  echo $json_output
-  rm ${BASE_PATH}/agent-yarn.sh
-  exit 0
-fi
+#java_version=$(java -version 2>&1 | awk -F '"' '/version/ {print $2}')
+#if [[ "$java_version" != "1.8"* ]]; then
+#  json_output="{ \
+#      \"status\": \"INSTALL_ERROR\", \
+#      \"log\": \"未检测到java1.8.x环境\" \
+#    }"
+#  echo $json_output
+#  rm ${BASE_PATH}/agent-yarn.sh
+#  exit 0
+#fi
 
 # 获取HADOOP_HOME环境变量值
 if [ -n "$HADOOP_HOME" ]; then
