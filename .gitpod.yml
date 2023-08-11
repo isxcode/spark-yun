@@ -37,5 +37,3 @@ vscode:
     - vscjava.vscode-java-dependency
     - vscjava.vscode-spring-boot-dashboard
     - vmware.vscode-spring-boot
-    - Pivotal.vscode-boot-dev-pack
-    - vscjava.vscode-java-test
