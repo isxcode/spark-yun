@@ -28,6 +28,8 @@ resources/license
 
 # 不提交spark-min
 spark-yun-dist/spark-min
+!spark-yun-dist/zhiqingyun/bin
+!spark-yun-dist/zhiqingyun-agent/bin
 
 # isx工具不提交
 isx
