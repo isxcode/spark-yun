@@ -74,22 +74,22 @@ tasks.register('build_agent', Tar) {
     into 'spark-min'
   }
   from('zhiqingyun-agent/bin') {
-    into 'bin'
+    into 'zhiqingyun-agent/bin'
   }
   from('zhiqingyun-agent/conf') {
-    into 'conf'
+    into 'zhiqingyun-agent/conf'
   }
   from('zhiqingyun-agent/logs') {
-    into 'logs'
+    into 'zhiqingyun-agent/logs'
   }
   from('build/zhiqingyun-agent/plugins') {
-    into 'plugins'
+    into 'zhiqingyun-agent/plugins'
   }
   from('build/zhiqingyun-agent/lib') {
-    into 'lib'
+    into 'zhiqingyun-agent/lib'
   }
   from('../README.md') {
-    into '/'
+    into 'zhiqingyun-agent/'
   }
 }
 
@@ -102,19 +102,19 @@ tasks.register('build_zhiqingyun', Tar) {
   archiveFileName = 'zhiqingyun.tar.gz'
 
   from('zhiqingyun/bin') {
-    into 'bin'
+    into 'zhiqingyun/bin'
   }
   from(rootDir.getAbsolutePath() + '/spark-yun-backend/spark-yun-main/src/main/resources/application-local.yml') {
-    into 'conf'
+    into 'zhiqingyun/conf'
   }
   from('zhiqingyun/logs') {
-    into 'logs'
+    into 'zhiqingyun/logs'
   }
   from(rootDir.getAbsolutePath() + '/spark-yun-backend/spark-yun-main/build/libs/zhiqingyun.jar') {
-    into 'lib'
+    into 'zhiqingyun/lib'
   }
   from(rootDir.getAbsolutePath() + '/README.md') {
-    into '/'
+    into 'zhiqingyun/'
   }
 }
 

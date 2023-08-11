@@ -6,6 +6,7 @@
 
 if [[ "$OSTYPE" == "linux-gnu" ]]; then
     source /etc/profile
+    source ~/.bashrc
 elif [[ "$OSTYPE" == "darwin"* ]]; then
     source /etc/profile
     source ~/.zshrc
