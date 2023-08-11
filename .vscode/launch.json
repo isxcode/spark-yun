@@ -1,0 +1,25 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "java",
+      "name": "Current File",
+      "request": "launch",
+      "mainClass": "${file}"
+    },
+    {
+      "type": "java",
+      "name": "SparkYunAgentApplication",
+      "request": "launch",
+      "mainClass": "com.isxcode.star.agent.SparkYunAgentApplication",
+      "projectName": "spark-yun-agent"
+    },
+    {
+      "type": "java",
+      "name": "SparkYunApplication",
+      "request": "launch",
+      "mainClass": "com.isxcode.star.SparkYunApplication",
+      "projectName": "spark-yun-main"
+    }
+  ]
+}
