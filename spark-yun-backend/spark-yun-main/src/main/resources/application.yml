@@ -1,7 +1,7 @@
 spring:
 
   profiles:
-    active: ispong
+    active: local
 
   banner:
     location: classpath:banner/logo.txt
