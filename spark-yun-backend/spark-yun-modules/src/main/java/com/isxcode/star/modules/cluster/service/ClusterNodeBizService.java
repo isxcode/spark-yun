@@ -73,45 +73,7 @@ public class ClusterNodeBizService {
     ClusterNodeEntity node = engineNodeMapper.addNodeReqToNodeEntity(enoAddNodeReq);
 
     // 密码对成加密
-//    node.setPasswd(aesUtils.encrypt(enoAddNodeReq.getPasswd().trim()));
-    node.setPasswd(aesUtils.encrypt("-----BEGIN OPENSSH PRIVATE KEY-----\n" +
-      "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\n" +
-      "-----END OPENSSH PRIVATE KEY-----"));
+    node.setPasswd(aesUtils.encrypt(enoAddNodeReq.getPasswd().trim()));
 
     // 设置服务器默认端口号
     node.setPort(Strings.isEmpty(enoAddNodeReq.getPort()) ? "22" : enoAddNodeReq.getPort().trim());

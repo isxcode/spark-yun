@@ -27,7 +27,6 @@ ports:
 # 安装必要插件
 vscode:
   extensions:
-    - vscjava.vscode-java-packw.gitpod.io/docs/introduction/getting-started/quickstart
     - akamud.vscode-theme-onedark
     - vscjava.vscode-java-debug
     - vscjava.vscode-java-pack
