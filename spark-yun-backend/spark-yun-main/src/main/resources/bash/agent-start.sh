@@ -8,6 +8,7 @@ BASE_PATH=$(cd "$(dirname "$0")" || exit ; pwd)
 
 if [[ "$OSTYPE" == "linux-gnu" ]]; then
     source /etc/profile
+    source ~/.bashrc
 elif [[ "$OSTYPE" == "darwin"* ]]; then
     source /etc/profile
     source ~/.zshrc

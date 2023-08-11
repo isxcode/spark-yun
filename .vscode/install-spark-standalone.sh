@@ -24,6 +24,13 @@ export SPARK_MASTER_WEBUI_PORT=8081
 export JAVA_HOME=/home/gitpod/.sdkman/candidates/java/11.0.20.fx-zulu
 EOF
 
+# 配置SPARK_HOME环境变量
+tee -a ~/.bashrc <<-'EOF'
+export SPARK_HOME=/tmp/spark-min
+export PATH=$PATH:SPARK_HOME/bin:SPARK_HOME/sbin
+EOF
+source ~/.bashrc
+
 # 启动spark服务
 bash /tmp/spark-min/sbin/start-master.sh
 bash /tmp/spark-min/sbin/start-worker.sh spark://localhost:7077
