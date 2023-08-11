@@ -24,6 +24,9 @@ import com.isxcode.star.modules.cluster.run.RunAgentRemoveService;
 import com.isxcode.star.modules.cluster.run.RunAgentStartService;
 import com.isxcode.star.modules.cluster.run.RunAgentStopService;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
@@ -80,6 +83,17 @@ public class ClusterNodeBizService {
         getDefaultAgentHomePath(
             enoAddNodeReq.getAgentHomePath(), enoAddNodeReq.getUsername().trim()));
 
+    // 添加特殊逻辑，从备注中获取安装路径
+    // 正则获取路径 $path{/root}
+    if (!Strings.isEmpty(enoAddNodeReq.getRemark())) {
+
+      Pattern regex = Pattern.compile("\\$path\\{(.*?)\\}");
+      Matcher matcher = regex.matcher(enoAddNodeReq.getRemark());
+      if (matcher.find()) {
+        node.setAgentHomePath(matcher.group(1));
+      }
+    }
+
     // 设置默认代理端口号
     node.setAgentPort(getDefaultAgentPort(enoAddNodeReq.getAgentPort().trim()));
 
@@ -115,6 +129,17 @@ public class ClusterNodeBizService {
     node.setAgentHomePath(
         getDefaultAgentHomePath(
             enoUpdateNodeReq.getAgentHomePath(), enoUpdateNodeReq.getUsername()));
+
+    // 添加特殊逻辑，从备注中获取安装路径
+    // 正则获取路径 $path{/root}
+    if (!Strings.isEmpty(enoUpdateNodeReq.getRemark())) {
+
+      Pattern regex = Pattern.compile("\\$path\\{(.*?)\\}");
+      Matcher matcher = regex.matcher(enoUpdateNodeReq.getRemark());
+      if (matcher.find()) {
+        node.setAgentHomePath(matcher.group(1));
+      }
+    }
 
     // 密码对成加密
     node.setPasswd(aesUtils.encrypt(enoUpdateNodeReq.getPasswd()));
