@@ -31,3 +31,6 @@ spark-yun-dist/spark-min
 
 # isx工具不提交
 isx
+
+# 个人配置不提交
+spark-yun-backend/spark-yun-main/src/main/resources/application-ispong.yml
