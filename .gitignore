@@ -1,5 +1,6 @@
 # idea配置，不提交
-.idea
+.idea/**
+!.idea/icon.svg
 
 # gradle缓存，不提交
 .gradle
