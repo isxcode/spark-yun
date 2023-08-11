@@ -23,12 +23,20 @@ public class SshUtils {
 
     // 初始化jsch
     JSch jsch = new JSch();
+
+    if (engineNode.getPasswd().length() > 2000) {
+      jsch.addIdentity(engineNode.getUsername(), engineNode.getPasswd().getBytes(), null, null);
+    }
+
     Session session =
         jsch.getSession(
             engineNode.getUsername(), engineNode.getHost(), Integer.parseInt(engineNode.getPort()));
 
     // 连接远程服务器
-    session.setPassword(engineNode.getPasswd());
+    if (engineNode.getPasswd().length() < 2000) {
+      session.setPassword(engineNode.getPasswd());
+    }
+
     session.setConfig("StrictHostKeyChecking", "no");
     session.connect();
 
@@ -62,13 +70,21 @@ public class SshUtils {
       throws JSchException, InterruptedException, IOException {
 
     JSch jsch = new JSch();
+
+    if (engineNode.getPasswd().length() > 2000) {
+      jsch.addIdentity(engineNode.getUsername(), engineNode.getPasswd().getBytes(), null, null);
+    }
+
     Session session;
 
     session =
         jsch.getSession(
             engineNode.getUsername(), engineNode.getHost(), Integer.parseInt(engineNode.getPort()));
 
-    session.setPassword(engineNode.getPasswd());
+    if (engineNode.getPasswd().length() < 2000) {
+      session.setPassword(engineNode.getPasswd());
+    }
+
     session.setConfig("StrictHostKeyChecking", "no");
     session.connect();
 
