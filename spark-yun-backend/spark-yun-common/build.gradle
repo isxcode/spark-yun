@@ -16,7 +16,10 @@ dependencies {
     "io.jsonwebtoken:jjwt-jackson:${JWT_VERSION}"
 
   // jsch
-  api "com.jcraft:jsch:${JSCH_VERSION}"
+  api 'com.github.mwiede:jsch:0.2.11'
+
+  // hutool
+  api 'cn.hutool:hutool-all:5.8.16'
 
   // jgrapht
   implementation 'org.jgrapht:jgrapht-core:1.4.0'

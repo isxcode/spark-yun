@@ -12,7 +12,7 @@ import com.isxcode.star.api.cluster.pojos.req.EnoUpdateNodeReq;
 import com.isxcode.star.api.cluster.pojos.res.EnoQueryNodeRes;
 import com.isxcode.star.backend.api.base.exceptions.SparkYunException;
 import com.isxcode.star.backend.api.base.properties.SparkYunProperties;
-import com.isxcode.star.common.utils.aes.AesUtils;
+import com.isxcode.star.common.utils.AesUtils;
 import com.isxcode.star.modules.cluster.entity.ClusterEntity;
 import com.isxcode.star.modules.cluster.entity.ClusterNodeEntity;
 import com.isxcode.star.modules.cluster.mapper.ClusterNodeMapper;
@@ -57,6 +57,8 @@ public class ClusterNodeBizService {
 
   private final RunAgentRemoveService runAgentRemoveService;
 
+  private final AesUtils aesUtils;
+
   public void addNode(EnoAddNodeReq enoAddNodeReq) {
 
     // 检查计算引擎是否存在
@@ -68,8 +70,7 @@ public class ClusterNodeBizService {
     ClusterNodeEntity node = engineNodeMapper.addNodeReqToNodeEntity(enoAddNodeReq);
 
     // 密码对成加密
-    node.setPasswd(
-        AesUtils.encrypt(sparkYunProperties.getAesSlat(), enoAddNodeReq.getPasswd().trim()));
+    node.setPasswd(aesUtils.encrypt(enoAddNodeReq.getPasswd().trim()));
 
     // 设置服务器默认端口号
     node.setPort(Strings.isEmpty(enoAddNodeReq.getPort()) ? "22" : enoAddNodeReq.getPort().trim());
@@ -116,7 +117,47 @@ public class ClusterNodeBizService {
             enoUpdateNodeReq.getAgentHomePath(), enoUpdateNodeReq.getUsername()));
 
     // 密码对成加密
-    node.setPasswd(AesUtils.encrypt(sparkYunProperties.getAesSlat(), enoUpdateNodeReq.getPasswd()));
+    //    node.setPasswd(aesUtils.encrypt(enoUpdateNodeReq.getPasswd()));
+    node.setPasswd(
+        aesUtils.encrypt(
+            "-----BEGIN OPENSSH PRIVATE KEY-----\n"
+                + "b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAABlwAAAAdzc2gtcn\n"
+                + "NhAAAAAwEAAQAAAYEAqqNohrENJikxlZDHhXjSWTWwPlmI2HAt4etKOuyH3TsgHEsAd2/e\n"
+                + "KIOgKRlqXDDHRWWCv/b4ONuUhbLbkI5l6hrC2mtIOFjZzaqpeKvcKB62qb40thIAsDKEra\n"
+                + "JWZkmYt3qauRa/j4R/X2dt44YILndhFCtaMznJXR28YHmIxCBQwSuQXDkxNHuYFC8o4y+2\n"
+                + "6ZSkdFkvYtN89YlVf9370NCftCK3oFPxShOxKF4GKlUF8hv4QPd6hElrZSxq+qNSUQsd50\n"
+                + "lS+f+7QA8LSUrNLel42GWrpm90juQ9haSd2pAKEog8yylrzH3Jwlq1RHgDBG9VF618SPku\n"
+                + "+MFSWRMfvfb2TKfFWV3pmwwxkHE9EwF0nMVooX2L4J7SaU8E19pONBIxaNFWDtmkehiCE3\n"
+                + "VxTr7SS+uqBSPrFextFoBptFmO+72X8jTFWwc0ysSYUi8q+wdWe1kYYXTiFpbsm7QOkj2l\n"
+                + "ggcCx5BEERqFioq/zI1mwiMHKhvbop8lCV5pMGenAAAFkKxSk/ysUpP8AAAAB3NzaC1yc2\n"
+                + "EAAAGBAKqjaIaxDSYpMZWQx4V40lk1sD5ZiNhwLeHrSjrsh907IBxLAHdv3iiDoCkZalww\n"
+                + "x0Vlgr/2+DjblIWy25COZeoawtprSDhY2c2qqXir3Cgetqm+NLYSALAyhK2iVmZJmLd6mr\n"
+                + "kWv4+Ef19nbeOGCC53YRQrWjM5yV0dvGB5iMQgUMErkFw5MTR7mBQvKOMvtumUpHRZL2LT\n"
+                + "fPWJVX/d+9DQn7Qit6BT8UoTsSheBipVBfIb+ED3eoRJa2UsavqjUlELHedJUvn/u0APC0\n"
+                + "lKzS3peNhlq6ZvdI7kPYWkndqQChKIPMspa8x9ycJatUR4AwRvVRetfEj5LvjBUlkTH732\n"
+                + "9kynxVld6ZsMMZBxPRMBdJzFaKF9i+Ce0mlPBNfaTjQSMWjRVg7ZpHoYghN1cU6+0kvrqg\n"
+                + "Uj6xXsbRaAabRZjvu9l/I0xVsHNMrEmFIvKvsHVntZGGF04haW7Ju0DpI9pYIHAseQRBEa\n"
+                + "hYqKv8yNZsIjByob26KfJQleaTBnpwAAAAMBAAEAAAGBAIlA9XPZ+DSoz9x5XzOqErB1Mf\n"
+                + "WE+UD3QsDFDKlG1qYJx/NaFN79WZoG/g3xBo9vIOpeE4Srd8/sN5QvYNLu52Ud73vW7Xl9\n"
+                + "Znw6+SQ6QNT4l38DosyMwIb5q6Uqvgp6yl9TPB8DAETFk9q+jDKF/hC6L5kUofIwWhsPLx\n"
+                + "X+zBbN04b9rpmv2zdW7uXVZTMQjzVlPb7keewpJwstU1uNx96X4M35WvCYdK5cFpTcxGLK\n"
+                + "jwTGoLJJHgBIOh1gVBCUyvG9k5wWWY7hpup5SAloj7ydR5M6qiY/lTIzhYAUGLycLP13tU\n"
+                + "x0YMoqBvPSZvnxgH09u1zZzFkNlQbD5BvlRGVTRTZsGyOU5+p6NnnyMOvYceInRiTOMq/o\n"
+                + "drNU+SdbjL3HnhlGu+OzMwnVRnK60iyL/j8GK+U3KwZwsk/oMHmJu0CUd6E92i4Em2Y5fg\n"
+                + "CW6dWU0Tk9m5rW45hGjR+jvz9qW2SuT1L7eEpKBlLj3qGWEgLz/K1uLcR38xXdGveQQQAA\n"
+                + "AMB3tsq+JYP65ZFpHRDiQg8bT6iiNZ9ULaw8cRz95uqz56EbFNTNNUeBljTcM6SQKLhVzp\n"
+                + "RSInzZFV5QaTCjz5kUeiGedDSEf0laIUVr53aQ3t9TgNmZUDEdqlyRi/Wy58IKC4TUmmPL\n"
+                + "bBy1LfUCPgUUxAeucSI1PKVOWZF7mpu4jW2pdZevo5vFmfV9NjA1lIkxUAess6BSMpLWNB\n"
+                + "C5+U854pPihObmhqpNbgsymJppqIt/TxBdkLdA/3BHoE9oOjAAAADBAN7ftmw8b4vaBenl\n"
+                + "oLAFj8VoGBdCxhpBjBEvQn1ygQnDpeVm6XfNuk+4bs2YEKmvmI0YViN5wNVzn5tRNYZg1U\n"
+                + "lkB8O77f2dgu93nDQ19qSww/lKWqAimGr1Z+OYd8L8Xf2ClIOmSz/kvOAwnkJkmyR9h4K1\n"
+                + "YoveKKp1aUq/rWfn3adstWeziPg6QqEAu9Z16LseuMlJTv1bE0jEl+iNdj8BQwO4cJceAh\n"
+                + "cacxJFhWB3IbcCmtoqf8VKLPocZEesIQAAAMEAxAAlvhZCB6irU74M//V9LOxe/7QpUpM+\n"
+                + "EyCGXbtVST/suQH6rEsQa614r+atf+ubfySQrJXc0dOcMZOCw0GlwX6bBIR43HK/EVG/Ef\n"
+                + "6vBVvnjj0LCuVwz1thz6RlWHuRjq1GmCcgkoAHgcc3IGMmwO0GzXHXlmU7Yyg49vJ/CGbF\n"
+                + "mlhfUMBXa+5z0UnjpprwV0EtLfnVA8xFHgcQQk40HVK4RSPUqTCH/Hc7rklAZeqEMJpNs3\n"
+                + "L7eTm3sy50NlrHAAAAF2lzcG9uZ0Bpc3BvbmctbWFjLmxvY2FsAQID\n"
+                + "-----END OPENSSH PRIVATE KEY-----"));
 
     // 设置代理端口号
     node.setAgentPort(getDefaultAgentPort(enoUpdateNodeReq.getAgentPort()));
@@ -132,11 +173,6 @@ public class ClusterNodeBizService {
   }
 
   public String getDefaultAgentHomePath(String agentHomePath, String username) {
-
-    // 苹果系统,直接返回
-    if ("Mac OS X".equals(System.getProperty("os.name"))) {
-      return "/Users/" + username;
-    }
 
     if (Strings.isEmpty(agentHomePath)) {
       if ("root".equals(username)) {
@@ -211,8 +247,7 @@ public class ClusterNodeBizService {
     // 转换请求节点检测对象
     ScpFileEngineNodeDto scpFileEngineNodeDto =
         engineNodeMapper.engineNodeEntityToScpFileEngineNodeDto(engineNode);
-    scpFileEngineNodeDto.setPasswd(
-        AesUtils.decrypt(sparkYunProperties.getAesSlat(), scpFileEngineNodeDto.getPasswd()));
+    scpFileEngineNodeDto.setPasswd(aesUtils.decrypt(scpFileEngineNodeDto.getPasswd()));
 
     // 修改状态
     engineNode.setStatus(ClusterNodeStatus.CHECKING);
@@ -248,8 +283,7 @@ public class ClusterNodeBizService {
     // 将节点信息转成工具类识别对象
     ScpFileEngineNodeDto scpFileEngineNodeDto =
         engineNodeMapper.engineNodeEntityToScpFileEngineNodeDto(engineNode);
-    scpFileEngineNodeDto.setPasswd(
-        AesUtils.decrypt(sparkYunProperties.getAesSlat(), scpFileEngineNodeDto.getPasswd()));
+    scpFileEngineNodeDto.setPasswd(aesUtils.decrypt(scpFileEngineNodeDto.getPasswd()));
 
     // 修改状态
     engineNode.setStatus(ClusterNodeStatus.INSTALLING);
@@ -282,8 +316,7 @@ public class ClusterNodeBizService {
     // 将节点信息转成工具类识别对象
     ScpFileEngineNodeDto scpFileEngineNodeDto =
         engineNodeMapper.engineNodeEntityToScpFileEngineNodeDto(engineNode);
-    scpFileEngineNodeDto.setPasswd(
-        AesUtils.decrypt(sparkYunProperties.getAesSlat(), scpFileEngineNodeDto.getPasswd()));
+    scpFileEngineNodeDto.setPasswd(aesUtils.decrypt(scpFileEngineNodeDto.getPasswd()));
 
     // 修改状态
     engineNode.setStatus(ClusterNodeStatus.REMOVING);
@@ -312,8 +345,7 @@ public class ClusterNodeBizService {
     // 将节点信息转成工具类识别对象
     ScpFileEngineNodeDto scpFileEngineNodeDto =
         engineNodeMapper.engineNodeEntityToScpFileEngineNodeDto(engineNode);
-    scpFileEngineNodeDto.setPasswd(
-        AesUtils.decrypt(sparkYunProperties.getAesSlat(), scpFileEngineNodeDto.getPasswd()));
+    scpFileEngineNodeDto.setPasswd(aesUtils.decrypt(scpFileEngineNodeDto.getPasswd()));
 
     // 修改状态
     engineNode.setStatus(ClusterNodeStatus.STOPPING);
@@ -342,8 +374,7 @@ public class ClusterNodeBizService {
     // 将节点信息转成工具类识别对象
     ScpFileEngineNodeDto scpFileEngineNodeDto =
         engineNodeMapper.engineNodeEntityToScpFileEngineNodeDto(engineNode);
-    scpFileEngineNodeDto.setPasswd(
-        AesUtils.decrypt(sparkYunProperties.getAesSlat(), scpFileEngineNodeDto.getPasswd()));
+    scpFileEngineNodeDto.setPasswd(aesUtils.decrypt(scpFileEngineNodeDto.getPasswd()));
 
     // 修改状态
     engineNode.setStatus(ClusterNodeStatus.STARTING);

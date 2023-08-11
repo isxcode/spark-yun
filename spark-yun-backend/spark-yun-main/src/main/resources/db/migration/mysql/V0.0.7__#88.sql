@@ -125,4 +125,4 @@ alter table SY_LOCKER
   modify id int auto_increment;
 
 alter table SY_CLUSTER_NODE
-  modify passwd varchar(3000) not null comment '节点服务器密码';
+  modify passwd varchar(5000) not null comment '节点服务器密码';
