@@ -5,6 +5,7 @@ import static com.isxcode.star.security.main.WebSecurityConfig.USER_ID;
 
 import com.isxcode.star.api.instance.constants.InstanceStatus;
 import com.isxcode.star.api.work.constants.WorkLog;
+import com.isxcode.star.common.locker.Locker;
 import com.isxcode.star.modules.work.entity.VipWorkVersionEntity;
 import com.isxcode.star.modules.work.entity.WorkConfigEntity;
 import com.isxcode.star.modules.work.entity.WorkEntity;
@@ -16,7 +17,6 @@ import com.isxcode.star.modules.work.repository.WorkRepository;
 import com.isxcode.star.modules.work.run.WorkExecutor;
 import com.isxcode.star.modules.work.run.WorkExecutorFactory;
 import com.isxcode.star.modules.work.run.WorkRunContext;
-import com.isxcode.star.modules.work.service.WorkBizService;
 import com.isxcode.star.modules.workflow.entity.WorkflowInstanceEntity;
 import com.isxcode.star.modules.workflow.repository.WorkflowInstanceRepository;
 import java.time.LocalDateTime;
@@ -40,7 +40,7 @@ public class WorkflowRunEventListener {
 
   private final WorkExecutorFactory workExecutorFactory;
 
-  private final WorkBizService workBizService;
+  private final Locker locker;
 
   private final WorkInstanceRepository workInstanceRepository;
 
@@ -61,8 +61,8 @@ public class WorkflowRunEventListener {
     TENANT_ID.set(event.getTenantId());
 
     // 修改状态前都要加锁，给工作流实例加锁
-    synchronized (event.getFlowInstanceId()) {
-
+    Integer lockId = locker.lock(event.getFlowInstanceId());
+    try {
       // 查询作业实例
       WorkInstanceEntity workInstance =
           workInstanceRepository.findByWorkIdAndWorkflowInstanceId(
@@ -120,6 +120,9 @@ public class WorkflowRunEventListener {
         workInstance.setStatus(InstanceStatus.RUNNING);
       }
       workInstanceRepository.saveAndFlush(workInstance);
+    } finally {
+      // 解锁
+      locker.unlock(lockId);
     }
 
     // 再次查询作业实例，如果状态为运行中，则可以开始运行作业
@@ -169,8 +172,8 @@ public class WorkflowRunEventListener {
     }
 
     // 判断工作流是否执行完毕，检查结束节点是否都运行完
-    synchronized (event.getFlowInstanceId()) {
-
+    lockId = locker.lock(event.getFlowInstanceId());
+    try {
       // 获取结束节点实例
       List<String> endNodes =
           WorkflowUtils.getEndNodes(event.getNodeMapping(), event.getNodeList());
@@ -206,6 +209,8 @@ public class WorkflowRunEventListener {
         workflowInstanceRepository.deleteWorkflowLog(event.getFlowInstanceId());
         return;
       }
+    } finally {
+      locker.unlock(lockId);
     }
 
     // 工作流没有执行完，解析推送子节点

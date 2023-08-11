@@ -114,7 +114,7 @@ create table SY_WORKFLOW_FAVOUR
 -- 自定义锁表
 create table SY_LOCKER
 (
-  id    int,
+  id    bigint,
   name  varchar(2000) not null,
   box varchar(2000) null,
   constraint SY_LOCKER_pk

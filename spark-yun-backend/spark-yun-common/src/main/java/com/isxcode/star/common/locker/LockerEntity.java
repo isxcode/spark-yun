@@ -1,4 +1,4 @@
-package com.isxcode.star.modules.locker;
+package com.isxcode.star.common.locker;
 
 import javax.persistence.*;
 import lombok.AllArgsConstructor;
