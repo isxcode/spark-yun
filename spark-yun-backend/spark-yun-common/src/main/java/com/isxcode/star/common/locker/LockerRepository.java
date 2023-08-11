@@ -1,4 +1,4 @@
-package com.isxcode.star.modules.locker;
+package com.isxcode.star.common.locker;
 
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.data.jpa.repository.JpaRepository;
