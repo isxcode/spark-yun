@@ -93,6 +93,17 @@ if [[ "$java_version" != "1.8"* ]]; then
   exit 0
 fi
 
+# 判断mpstat命令
+#if ! command -v mpstat &>/dev/null; then
+#  json_output="{ \
+#        \"status\": \"INSTALL_ERROR\", \
+#        \"log\": \"未检测到mpstat命令\" \
+#      }"
+#  echo $json_output
+#  rm /tmp/sy-env-kubernetes.sh
+#  exit 0
+#fi
+
 # 获取HADOOP_HOME环境变量值
 if [ -n "$HADOOP_HOME" ]; then
   HADOOP_PATH=$HADOOP_HOME

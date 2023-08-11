@@ -101,6 +101,17 @@ if [[ "$java_version" != "1.8"* ]]; then
   exit 0
 fi
 
+# 判断mpstat命令
+#if ! command -v mpstat &>/dev/null; then
+#  json_output="{ \
+#        \"status\": \"INSTALL_ERROR\", \
+#        \"log\": \"未检测到mpstat命令\" \
+#      }"
+#  echo $json_output
+#  rm /tmp/sy-env-kubernetes.sh
+#  exit 0
+#fi
+
 # 判断端口号是否被占用
 if ! netstat -tln | awk '$4 ~ /:'"$agent_port"'$/ {exit 1}'; then
   json_output="{ \
