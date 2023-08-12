@@ -415,8 +415,9 @@ function inputEvent(e: string) {
 
 // 配置设置
 function showConfigDetail() {
-    configDetailRef.value.showModal(() => {
+    configDetailRef.value.showModal((data: any) => {
         return new Promise((resolve: any, reject: any) => {
+            console.log(data)
             // AddWorkflowDetailList({
             //     ...formData,
             //     workflowId: workFlowData.value.id
