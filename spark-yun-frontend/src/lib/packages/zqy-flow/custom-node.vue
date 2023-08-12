@@ -1,9 +1,10 @@
 <template>
-    <div class="zqy-flow-node " :class="status">
+    <div class="zqy-flow-node " :class="status" @dblclick="dbclickToDetain">
         <div class="flow-node-container" ref="content">
             <p class="text">{{ name }}</p>
             <template v-if="isRunning">
                 <el-icon v-if="status === 'RUNNING'" class="custom-icon is-loading"><Loading /></el-icon>
+                <el-icon v-if="status === 'ABORTING'" class="custom-icon is-loading"><Loading /></el-icon>
                 <el-icon v-if="status === 'PENDING'" class="custom-icon"><Clock /></el-icon>
                 <el-icon v-if="status === 'ABORT'" class="custom-icon"><VideoPause /></el-icon>
             </template>
@@ -46,6 +47,13 @@ function handleCommand(command: string) {
     eventBus.emit('nodeMenuEvent', {
         data: node.value.data,
         type: command
+    })
+}
+
+function dbclickToDetain() {
+    eventBus.emit('nodeMenuEvent', {
+        data: node.value.data,
+        type: 'dbclick'
     })
 }
 
@@ -157,7 +165,7 @@ p {
 }
 
 .zqy-flow-node.ABORT {
-    border-left: 4px solid #839192;
+    border-left: 4px solid #9f26e1;
 }
 
 .zqy-flow-node.ABORTING {
@@ -181,9 +189,9 @@ p {
 }
 
 .x6-node-selected .zqy-flow-node.ABORT {
-    border-color: #839192;
+    border-color: #9f26e1;
     border-radius: 2px;
-    box-shadow: 0 0 0 4px #cfdcdd;
+    box-shadow: 0 0 0 4px #edcefe;
 }
 
 .x6-node-selected .zqy-flow-node.PENDING {
