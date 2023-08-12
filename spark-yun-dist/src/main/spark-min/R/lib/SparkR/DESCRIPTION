@@ -1,0 +1,32 @@
+Package: SparkR
+Type: Package
+Version: 3.4.0
+Title: R Front End for 'Apache Spark'
+Description: Provides an R Front end for 'Apache Spark' <https://spark.apache.org>.
+Authors@R: 
+    person(family = "The Apache Software Foundation",
+           email = "dev@spark.apache.org",
+           role = c("aut", "cre", "cph"))
+License: Apache License (== 2.0)
+URL: https://www.apache.org https://spark.apache.org
+BugReports: https://spark.apache.org/contributing.html
+SystemRequirements: Java (>= 8, < 18)
+Depends: R (>= 3.5), methods
+Suggests: knitr, rmarkdown, markdown, testthat, e1071, survival, arrow
+        (>= 1.0.0)
+Collate: 'schema.R' 'generics.R' 'jobj.R' 'column.R' 'group.R' 'RDD.R'
+        'pairRDD.R' 'DataFrame.R' 'SQLContext.R' 'WindowSpec.R'
+        'backend.R' 'broadcast.R' 'catalog.R' 'client.R' 'context.R'
+        'deserialize.R' 'functions.R' 'install.R' 'jvm.R'
+        'mllib_classification.R' 'mllib_clustering.R' 'mllib_fpm.R'
+        'mllib_recommendation.R' 'mllib_regression.R' 'mllib_stat.R'
+        'mllib_tree.R' 'mllib_utils.R' 'serialize.R' 'sparkR.R'
+        'stats.R' 'streaming.R' 'types.R' 'utils.R' 'window.R'
+RoxygenNote: 7.2.3
+VignetteBuilder: knitr
+NeedsCompilation: no
+Encoding: UTF-8
+Packaged: 2023-04-07 02:40:40 UTC; spark-rm
+Author: The Apache Software Foundation [aut, cre, cph]
+Maintainer: The Apache Software Foundation <dev@spark.apache.org>
+Built: R 4.2.2; ; 2023-04-07 02:43:11 UTC; unix
