@@ -415,8 +415,9 @@ function inputEvent(e: string) {
 
 // 配置设置
 function showConfigDetail() {
-    configDetailRef.value.showModal(() => {
+    configDetailRef.value.showModal((data: any) => {
         return new Promise((resolve: any, reject: any) => {
+            console.log(data)
             // AddWorkflowDetailList({
             //     ...formData,
             //     workflowId: workFlowData.value.id
@@ -543,6 +544,9 @@ onMounted(() => {
         } else if (e.type === 'node_reRun') {
             // 重跑当前
             reRunCurrentNodeFlow(e)
+        } else if (e.type === 'dbclick') {
+            // 双击节点跳转到作业配置
+            showWorkConfig(e.data.nodeConfigData)
         }
     })
 })
@@ -631,6 +635,8 @@ onUnmounted(() => {
         .list-box {
             // padding: 0 4px;
             box-sizing: border-box;
+            overflow: auto;
+            max-height: calc(100vh - 206px);
 
             .list-item {
                 height: $--app-item-height;
