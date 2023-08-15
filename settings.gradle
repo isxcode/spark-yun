@@ -15,7 +15,6 @@ include 'spark-yun-plugins'
 include 'spark-yun-plugins:spark-query-sql-plugin'
 
 include 'spark-yun-vip'
-include 'spark-yun-vip:spark-yun-isx'
 include 'spark-yun-vip:spark-yun-backend'
 include 'spark-yun-vip:spark-yun-license'
 include 'spark-yun-vip:spark-yun-autotest'
