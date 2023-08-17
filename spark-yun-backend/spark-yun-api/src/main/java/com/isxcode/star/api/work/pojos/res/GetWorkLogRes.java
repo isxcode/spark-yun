@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class WokGetWorkLogRes {
+public class GetWorkLogRes {
 
   private String yarnLog;
 }

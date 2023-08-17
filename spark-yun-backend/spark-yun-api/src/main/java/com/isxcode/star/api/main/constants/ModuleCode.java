@@ -25,7 +25,7 @@ public interface ModuleCode {
   String WORKFLOW_CONFIG = "wfc";
 
   /** 作业模块. */
-  String WORK = "/wok";
+  String WORK = "work";
 
   /** 作业配置模块. */
   String WORK_CONFIG = "woc";
@@ -43,7 +43,7 @@ public interface ModuleCode {
   String LICENSE = "/lic";
 
   /** VIP作业模块. */
-  String VIP_WORK = "/vip/wok";
+  String VIP_WORK = "/vip/work";
 
   /** VIP作业实例模块. */
   String VIP_WORK_INSTANCE = "/vip/woi";

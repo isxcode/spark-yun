@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class WokGetSubmitLogRes {
+public class GetSubmitLogRes {
 
   private String log;
 
