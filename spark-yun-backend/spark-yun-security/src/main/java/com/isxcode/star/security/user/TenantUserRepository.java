@@ -1,6 +1,6 @@
 package com.isxcode.star.security.user;
 
-import com.isxcode.star.api.tenant.pojos.res.TurQueryTenantUserRes;
+import com.isxcode.star.api.tenant.pojos.res.PageTenantUserRes;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.cache.annotation.CacheConfig;
@@ -22,7 +22,7 @@ public interface TenantUserRepository extends JpaRepository<TenantUserEntity, St
   @Query(
       value =
           "select "
-              + "   new com.isxcode.star.api.tenant.pojos.res.TurQueryTenantUserRes(T.id , "
+              + "   new com.isxcode.star.api.tenant.pojos.res.PageTenantUserRes(T.id , "
               + "   U.account , "
               + "   U.username , "
               + "   U.phone , "
@@ -35,7 +35,7 @@ public interface TenantUserRepository extends JpaRepository<TenantUserEntity, St
               + "OR U.account LIKE %:keyword% "
               + "OR U.phone LIKE %:keyword% "
               + "OR U.email LIKE %:keyword%) order by T.createDateTime desc ")
-  Page<TurQueryTenantUserRes> searchTenantUser(
+  Page<PageTenantUserRes> searchTenantUser(
       @Param("tenantId") String tenantId,
       @Param("keyword") String searchKeyWord,
       Pageable pageable);

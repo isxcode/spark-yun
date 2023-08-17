@@ -3,7 +3,7 @@ package com.isxcode.star.api.tenant.pojos.res;
 import lombok.Data;
 
 @Data
-public class TurQueryTenantUserRes {
+public class PageTenantUserRes {
 
   private String id;
 
@@ -21,7 +21,7 @@ public class TurQueryTenantUserRes {
 
   private String email;
 
-  public TurQueryTenantUserRes(
+  public PageTenantUserRes(
       String id, String account, String username, String phone, String email, String roleCode) {
     this.id = id;
     this.username = username;

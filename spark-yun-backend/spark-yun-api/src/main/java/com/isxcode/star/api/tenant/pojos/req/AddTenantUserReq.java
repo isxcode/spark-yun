@@ -5,7 +5,7 @@ import javax.validation.constraints.NotEmpty;
 import lombok.Data;
 
 @Data
-public class TurAddTenantUserReq {
+public class AddTenantUserReq {
 
   @Schema(title = "用户id", example = "ispong")
   @NotEmpty(message = "用户id不能为空")
