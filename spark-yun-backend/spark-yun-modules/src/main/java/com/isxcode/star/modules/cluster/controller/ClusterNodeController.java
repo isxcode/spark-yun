@@ -7,14 +7,13 @@ import com.isxcode.star.common.annotations.successResponse.SuccessResponse;
 import com.isxcode.star.modules.cluster.service.ClusterNodeBizService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.validation.Valid;
 
 @Tag(name = "引擎节点模块")
 @RestController
@@ -43,7 +42,8 @@ public class ClusterNodeController {
   @Operation(summary = "查询节点列表接口")
   @PostMapping("/pageClusterNode")
   @SuccessResponse("查询节点列表成功")
-  public Page<EnoQueryNodeRes> pageClusterNode(@Valid @RequestBody PageClusterNodeReq pageClusterNodeReq) {
+  public Page<EnoQueryNodeRes> pageClusterNode(
+      @Valid @RequestBody PageClusterNodeReq pageClusterNodeReq) {
 
     return clusterNodeBizService.pageClusterNode(pageClusterNodeReq);
   }
