@@ -12,7 +12,6 @@ import com.isxcode.star.api.cluster.pojos.req.EnoUpdateNodeReq;
 import com.isxcode.star.api.cluster.pojos.res.EnoQueryNodeRes;
 import com.isxcode.star.api.main.properties.SparkYunProperties;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
-import com.isxcode.star.backend.api.base.properties.IsxAppProperties;
 import com.isxcode.star.common.utils.AesUtils;
 import com.isxcode.star.modules.cluster.entity.ClusterEntity;
 import com.isxcode.star.modules.cluster.entity.ClusterNodeEntity;
@@ -27,7 +26,6 @@ import com.isxcode.star.modules.cluster.run.RunAgentStopService;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;

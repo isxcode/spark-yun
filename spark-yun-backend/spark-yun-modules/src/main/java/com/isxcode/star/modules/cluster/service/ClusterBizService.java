@@ -3,10 +3,8 @@ package com.isxcode.star.modules.cluster.service;
 import com.isxcode.star.api.cluster.constants.ClusterNodeStatus;
 import com.isxcode.star.api.cluster.constants.ClusterStatus;
 import com.isxcode.star.api.cluster.pojos.dto.ScpFileEngineNodeDto;
-import com.isxcode.star.api.cluster.pojos.req.CaeAddEngineReq;
-import com.isxcode.star.api.cluster.pojos.req.CaeQueryEngineReq;
-import com.isxcode.star.api.cluster.pojos.req.CaeUpdateEngineReq;
-import com.isxcode.star.api.cluster.pojos.res.CaeQueryEngineRes;
+import com.isxcode.star.api.cluster.pojos.req.*;
+import com.isxcode.star.api.cluster.pojos.res.PageClusterRes;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.star.common.utils.AesUtils;
 import com.isxcode.star.modules.cluster.entity.ClusterEntity;
@@ -49,7 +47,7 @@ public class ClusterBizService {
 
   private final AesUtils aesUtils;
 
-  public void addEngine(CaeAddEngineReq caeAddEngineReq) {
+  public void addCluster(AddClusterReq caeAddEngineReq) {
 
     ClusterEntity engine = engineMapper.addEngineReqToEngineEntity(caeAddEngineReq);
 
@@ -58,7 +56,7 @@ public class ClusterBizService {
     engineRepository.save(engine);
   }
 
-  public void updateEngine(CaeUpdateEngineReq caeUpdateEngineReq) {
+  public void updateCluster(UpdateClusterReq caeUpdateEngineReq) {
 
     Optional<ClusterEntity> calculateEngineEntityOptional =
         engineRepository.findById(caeUpdateEngineReq.getClusterId());
@@ -73,7 +71,7 @@ public class ClusterBizService {
     engineRepository.save(engine);
   }
 
-  public Page<CaeQueryEngineRes> queryEngines(CaeQueryEngineReq caeQueryEngineReq) {
+  public Page<PageClusterRes> pageCluster(PageClusterReq caeQueryEngineReq) {
 
     Page<ClusterEntity> engineEntities =
         engineRepository.searchAll(
@@ -83,20 +81,22 @@ public class ClusterBizService {
     return engineMapper.engineEntityPageToCaeQueryEngineResPage(engineEntities);
   }
 
-  public void delEngine(String engineId) {
+  public void deleteCluster(DeleteClusterReq deleteClusterReq) {
 
-    engineRepository.deleteById(engineId);
+    engineRepository.deleteById(deleteClusterReq.getEngineId());
   }
 
-  public void checkEngine(String engineId) {
+  public void checkCluster(CheckClusterReq checkClusterReq) {
 
-    Optional<ClusterEntity> calculateEngineEntityOptional = engineRepository.findById(engineId);
+    Optional<ClusterEntity> calculateEngineEntityOptional =
+        engineRepository.findById(checkClusterReq.getEngineId());
     if (!calculateEngineEntityOptional.isPresent()) {
       throw new IsxAppException("计算引擎不存在");
     }
     ClusterEntity calculateEngineEntity = calculateEngineEntityOptional.get();
 
-    List<ClusterNodeEntity> engineNodes = engineNodeRepository.findAllByClusterId(engineId);
+    List<ClusterNodeEntity> engineNodes =
+        engineNodeRepository.findAllByClusterId(checkClusterReq.getEngineId());
 
     // 同步检测按钮
     engineNodes.forEach(
