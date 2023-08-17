@@ -67,7 +67,7 @@ export function DeleteComputerGroupData(params: any): Promise<any> {
 export function GetComputerPointData(params: any): Promise<any> {
   return http.request({
     method: 'post',
-    url: '/eno/queryNode',
+    url: '/cluster_node/queryNode',
     params: params
   })
 }
@@ -76,7 +76,7 @@ export function GetComputerPointData(params: any): Promise<any> {
 export function CheckComputerPointData(params: any): Promise<any> {
   return http.request({
     method: 'get',
-    url: '/eno/checkAgent',
+    url: '/cluster_node/checkAgent',
     params: params
   })
 }
@@ -85,7 +85,7 @@ export function CheckComputerPointData(params: any): Promise<any> {
 export function UpdateComputerPointData(params: any): Promise<any> {
   return http.request({
     method: 'post',
-    url: '/eno/updateNode',
+    url: '/cluster_node/updateNode',
     params: params
   })
 }
@@ -94,7 +94,7 @@ export function UpdateComputerPointData(params: any): Promise<any> {
 export function AddComputerPointData(params: any): Promise<any> {
   return http.request({
     method: 'post',
-    url: '/eno/addNode',
+    url: '/cluster_node/addClusterNode',
     params: params
   })
 }
@@ -103,7 +103,7 @@ export function AddComputerPointData(params: any): Promise<any> {
 export function EditComputerPointData(params: any): Promise<any> {
   return http.request({
     method: 'post',
-    url: '/eno/updateNode',
+    url: '/cluster_node/updateNode',
     params: params
   })
 }
@@ -112,7 +112,7 @@ export function EditComputerPointData(params: any): Promise<any> {
 export function DeleteComputerPointData(params: any): Promise<any> {
   return http.request({
     method: 'get',
-    url: '/eno/delNode',
+    url: '/cluster_node/delNode',
     params: params
   })
 }
@@ -121,7 +121,7 @@ export function DeleteComputerPointData(params: any): Promise<any> {
 export function InstallComputerPointData(params: any): Promise<any> {
   return http.request({
     method: 'get',
-    url: '/eno/installAgent',
+    url: '/cluster_node/installAgent',
     params: params
   })
 }
@@ -130,7 +130,7 @@ export function InstallComputerPointData(params: any): Promise<any> {
 export function UninstallComputerPointData(params: any): Promise<any> {
   return http.request({
     method: 'get',
-    url: '/eno/removeAgent',
+    url: '/cluster_node/removeAgent',
     params: params
   })
 }
@@ -139,7 +139,7 @@ export function UninstallComputerPointData(params: any): Promise<any> {
 export function StopComputerPointData(params: any): Promise<any> {
   return http.request({
     method: 'get',
-    url: '/eno/stopAgent',
+    url: '/cluster_node/stopAgent',
     params: params
   })
 }
@@ -148,7 +148,7 @@ export function StopComputerPointData(params: any): Promise<any> {
 export function StartComputerPointData(params: any): Promise<any> {
   return http.request({
     method: 'get',
-    url: '/eno/startAgent',
+    url: '/cluster_node/startAgent',
     params: params
   })
 }

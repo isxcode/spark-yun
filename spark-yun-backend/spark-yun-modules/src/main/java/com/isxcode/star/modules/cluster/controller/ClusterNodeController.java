@@ -1,25 +1,20 @@
 package com.isxcode.star.modules.cluster.controller;
 
-import com.isxcode.star.api.cluster.pojos.req.EnoAddNodeReq;
-import com.isxcode.star.api.cluster.pojos.req.EnoQueryNodeReq;
-import com.isxcode.star.api.cluster.pojos.req.EnoUpdateNodeReq;
+import com.isxcode.star.api.cluster.pojos.req.*;
 import com.isxcode.star.api.cluster.pojos.res.EnoQueryNodeRes;
 import com.isxcode.star.api.main.constants.ModuleCode;
 import com.isxcode.star.common.annotations.successResponse.SuccessResponse;
 import com.isxcode.star.modules.cluster.service.ClusterNodeBizService;
-import com.isxcode.star.modules.userlog.UserLog;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.validation.Valid;
 
 @Tag(name = "引擎节点模块")
 @RestController
@@ -27,104 +22,77 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class ClusterNodeController {
 
-  private final ClusterNodeBizService engineNodeBizService;
+  private final ClusterNodeBizService clusterNodeBizService;
 
-  @UserLog
   @Operation(summary = "添加引擎节点接口")
-  @PostMapping("/addNode")
+  @PostMapping("/addClusterNode")
   @SuccessResponse("添加成功")
-  public void addNode(@Valid @RequestBody EnoAddNodeReq enoAddNodeReq) {
+  public void addClusterNode(@Valid @RequestBody AddClusterNodeReq addClusterNodeReq) {
 
-    engineNodeBizService.addNode(enoAddNodeReq);
+    clusterNodeBizService.addClusterNode(addClusterNodeReq);
   }
 
-  @UserLog
   @Operation(summary = "更新引擎节点接口")
-  @PostMapping("/updateNode")
+  @PostMapping("/updateClusterNode")
   @SuccessResponse("更新成功")
-  public void updateNode(@Valid @RequestBody EnoUpdateNodeReq enoUpdateNodeReq) {
+  public void updateClusterNode(@Valid @RequestBody UpdateClusterNodeReq updateClusterNodeReq) {
 
-    engineNodeBizService.updateNode(enoUpdateNodeReq);
+    clusterNodeBizService.updateClusterNode(updateClusterNodeReq);
   }
 
-  @UserLog
   @Operation(summary = "查询节点列表接口")
-  @PostMapping("/queryNode")
+  @PostMapping("/pageClusterNode")
   @SuccessResponse("查询节点列表成功")
-  public Page<EnoQueryNodeRes> queryNode(@Valid @RequestBody EnoQueryNodeReq enoQueryNodeReq) {
+  public Page<EnoQueryNodeRes> pageClusterNode(@Valid @RequestBody PageClusterNodeReq pageClusterNodeReq) {
 
-    return engineNodeBizService.queryNodes(enoQueryNodeReq);
+    return clusterNodeBizService.pageClusterNode(pageClusterNodeReq);
   }
 
-  @UserLog
   @Operation(summary = "删除节点接口")
-  @GetMapping("/delNode")
+  @PostMapping("/deleteClusterNode")
   @SuccessResponse("删除成功")
-  public void delNode(
-      @Schema(description = "引擎节点唯一id", example = "sy_de7c0478a75343ae853a637af1f4819c")
-          @RequestParam
-          String engineNodeId) {
+  public void deleteClusterNode(@Valid @RequestBody DeleteClusterNodeReq deleteClusterNodeReq) {
 
-    engineNodeBizService.delNode(engineNodeId);
+    clusterNodeBizService.deleteClusterNode(deleteClusterNodeReq);
   }
 
-  @UserLog
   @Operation(summary = "检测节点接口")
-  @GetMapping("/checkAgent")
+  @PostMapping("/checkAgent")
   @SuccessResponse("开始检测")
-  public void checkAgent(
-      @Schema(description = "引擎节点唯一id", example = "sy_aaa9440040aa455d84c17f96d8cd7844")
-          @RequestParam
-          String engineNodeId) {
+  public void checkAgent(@Valid @RequestBody CheckAgentReq checkAgentReq) {
 
-    engineNodeBizService.checkAgent(engineNodeId);
+    clusterNodeBizService.checkAgent(checkAgentReq);
   }
 
-  @UserLog
   @Operation(summary = "安装节点接口")
-  @GetMapping("/installAgent")
+  @PostMapping("/installAgent")
   @SuccessResponse("激活中")
-  public void installAgent(
-      @Schema(description = "引擎节点唯一id", example = "sy_aaa9440040aa455d84c17f96d8cd7844")
-          @RequestParam
-          String engineNodeId) {
+  public void installAgent(@Valid @RequestBody InstallAgentReq installAgentReq) {
 
-    engineNodeBizService.installAgent(engineNodeId);
+    clusterNodeBizService.installAgent(installAgentReq);
   }
 
-  @UserLog
   @Operation(summary = "停止节点接口")
-  @GetMapping("/stopAgent")
+  @PostMapping("/stopAgent")
   @SuccessResponse("停止中")
-  public void stopAgent(
-      @Schema(description = "引擎节点唯一id", example = "sy_aaa9440040aa455d84c17f96d8cd7844")
-          @RequestParam
-          String engineNodeId) {
+  public void stopAgent(@Valid @RequestBody StopAgentReq stopAgentReq) {
 
-    engineNodeBizService.stopAgent(engineNodeId);
+    clusterNodeBizService.stopAgent(stopAgentReq);
   }
 
-  @UserLog
   @Operation(summary = "激活节点接口")
-  @GetMapping("/startAgent")
+  @PostMapping("/startAgent")
   @SuccessResponse("激活中")
-  public void startAgent(
-      @Schema(description = "引擎节点唯一id", example = "sy_aaa9440040aa455d84c17f96d8cd7844")
-          @RequestParam
-          String engineNodeId) {
+  public void startAgent(@Valid @RequestBody StartAgentReq startAgentReq) {
 
-    engineNodeBizService.startAgent(engineNodeId);
+    clusterNodeBizService.startAgent(startAgentReq);
   }
 
-  @UserLog
   @Operation(summary = "卸载代理接口")
-  @GetMapping("/removeAgent")
+  @PostMapping("/removeAgent")
   @SuccessResponse("卸载中")
-  public void removeAgent(
-      @Schema(description = "引擎节点唯一id", example = "sy_aaa9440040aa455d84c17f96d8cd7844")
-          @RequestParam
-          String engineNodeId) {
+  public void removeAgent(@Valid @RequestBody RemoveAgentReq removeAgentReq) {
 
-    engineNodeBizService.removeAgent(engineNodeId);
+    clusterNodeBizService.removeAgent(removeAgentReq);
   }
 }

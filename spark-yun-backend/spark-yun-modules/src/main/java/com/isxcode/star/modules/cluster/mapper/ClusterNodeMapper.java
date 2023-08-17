@@ -1,8 +1,8 @@
 package com.isxcode.star.modules.cluster.mapper;
 
 import com.isxcode.star.api.cluster.pojos.dto.ScpFileEngineNodeDto;
-import com.isxcode.star.api.cluster.pojos.req.EnoAddNodeReq;
-import com.isxcode.star.api.cluster.pojos.req.EnoUpdateNodeReq;
+import com.isxcode.star.api.cluster.pojos.req.AddClusterNodeReq;
+import com.isxcode.star.api.cluster.pojos.req.UpdateClusterNodeReq;
 import com.isxcode.star.api.cluster.pojos.res.EnoQueryNodeRes;
 import com.isxcode.star.modules.cluster.entity.ClusterNodeEntity;
 import java.util.List;
@@ -22,7 +22,7 @@ public interface ClusterNodeMapper {
   @Mapping(target = "allStorage", expression = "java(0.0)")
   @Mapping(target = "cpuPercent", expression = "java(0.0)")
   @Mapping(target = "checkDateTime", expression = "java(java.time.LocalDateTime.now())")
-  ClusterNodeEntity addNodeReqToNodeEntity(EnoAddNodeReq enoAddNodeReq);
+  ClusterNodeEntity addNodeReqToNodeEntity(AddClusterNodeReq enoAddNodeReq);
 
   @Mapping(target = "id", source = "clusterNodeEntity.id")
   @Mapping(target = "clusterId", source = "clusterNodeEntity.clusterId")
@@ -36,7 +36,7 @@ public interface ClusterNodeMapper {
   @Mapping(target = "agentPort", source = "clusterNodeEntity.agentPort")
   @Mapping(target = "hadoopHomePath", source = "clusterNodeEntity.hadoopHomePath")
   ClusterNodeEntity updateNodeReqToNodeEntity(
-      EnoUpdateNodeReq enoUpdateNodeReq, ClusterNodeEntity clusterNodeEntity);
+          UpdateClusterNodeReq enoUpdateNodeReq, ClusterNodeEntity clusterNodeEntity);
 
   @Mapping(
       target = "memory",
