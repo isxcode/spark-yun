@@ -1,10 +1,7 @@
 package com.isxcode.star.modules.workflow.controller;
 
 import com.isxcode.star.api.main.constants.ModuleCode;
-import com.isxcode.star.api.workflow.pojos.req.WocQueryWorkflowReq;
-import com.isxcode.star.api.workflow.pojos.req.WofAddWorkflowReq;
-import com.isxcode.star.api.workflow.pojos.req.WofExportWorkflowReq;
-import com.isxcode.star.api.workflow.pojos.req.WofUpdateWorkflowReq;
+import com.isxcode.star.api.workflow.pojos.req.*;
 import com.isxcode.star.api.workflow.pojos.res.WofGetWorkflowRes;
 import com.isxcode.star.api.workflow.pojos.res.WofQueryRunWorkInstancesRes;
 import com.isxcode.star.api.workflow.pojos.res.WofQueryWorkflowRes;
@@ -273,4 +270,35 @@ public class WorkflowController {
 
     workflowBizService.runAfterFlow(workInstanceId);
   }
+
+//  @Operation(summary = "配置作业流接口")
+//  @PostMapping("/configWorkflow")
+//  @SuccessResponse("保存成功")
+//  @Parameter(
+//      name = SecurityConstants.HEADER_TENANT_ID,
+//      description = "租户id",
+//      required = true,
+//      in = ParameterIn.HEADER,
+//      schema = @Schema(type = "string"))
+//  public void configWorkflow(@Valid @RequestBody WfcConfigWorkflowReq wfcConfigWorkflowReq) {
+//
+//    workflowConfigBizService.configWorkflow(wfcConfigWorkflowReq);
+//  }
+//
+//  @Operation(summary = "收藏工作流接口")
+//  @GetMapping("/favourWorkflow")
+//  @SuccessResponse("收藏成功")
+//  @Parameter(
+//      name = SecurityConstants.HEADER_TENANT_ID,
+//      description = "租户id",
+//      required = true,
+//      in = ParameterIn.HEADER,
+//      schema = @Schema(type = "string"))
+//  public void favourWorkflow(
+//      @Schema(description = "作业流唯一id", example = "sy_ba1f12b5c8154f999a02a5be2373a438")
+//          @RequestParam
+//          String workflowId) {
+//
+//    workflowFavourBizService.favourWorkflow(workflowId);
+//  }
 }

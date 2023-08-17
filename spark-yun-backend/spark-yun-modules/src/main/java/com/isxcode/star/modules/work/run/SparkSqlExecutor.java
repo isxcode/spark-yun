@@ -10,7 +10,7 @@ import com.isxcode.star.api.cluster.constants.ClusterNodeStatus;
 import com.isxcode.star.api.instance.constants.InstanceStatus;
 import com.isxcode.star.api.work.constants.WorkLog;
 import com.isxcode.star.api.work.exceptions.WorkRunException;
-import com.isxcode.star.api.work.pojos.res.WokRunWorkRes;
+import com.isxcode.star.api.work.pojos.res.RunWorkRes;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.star.backend.api.base.pojos.BaseResponse;
 import com.isxcode.star.common.utils.http.HttpUtils;
@@ -164,8 +164,8 @@ public class SparkSqlExecutor extends WorkExecutor {
     }
 
     // 解析返回对象,获取appId
-    WokRunWorkRes submitWorkRes =
-        JSON.parseObject(JSON.toJSONString(baseResponse.getData()), WokRunWorkRes.class);
+    RunWorkRes submitWorkRes =
+        JSON.parseObject(JSON.toJSONString(baseResponse.getData()), RunWorkRes.class);
     logBuilder
         .append(LocalDateTime.now())
         .append(WorkLog.SUCCESS_INFO)
@@ -207,8 +207,8 @@ public class SparkSqlExecutor extends WorkExecutor {
       }
 
       // 解析返回状态，并保存
-      WokRunWorkRes workStatusRes =
-          JSON.parseObject(JSON.toJSONString(baseResponse.getData()), WokRunWorkRes.class);
+      RunWorkRes workStatusRes =
+          JSON.parseObject(JSON.toJSONString(baseResponse.getData()), RunWorkRes.class);
       workInstance.setSparkStarRes(JSON.toJSONString(workStatusRes));
       logBuilder
           .append(LocalDateTime.now())
@@ -308,8 +308,7 @@ public class SparkSqlExecutor extends WorkExecutor {
     // 判断作业有没有提交成功
     workInstance = workInstanceRepository.findById(workInstance.getId()).get();
     if (!Strings.isEmpty(workInstance.getSparkStarRes())) {
-      WokRunWorkRes wokRunWorkRes =
-          JSON.parseObject(workInstance.getSparkStarRes(), WokRunWorkRes.class);
+      RunWorkRes wokRunWorkRes = JSON.parseObject(workInstance.getSparkStarRes(), RunWorkRes.class);
       if (!Strings.isEmpty(wokRunWorkRes.getAppId())) {
         // 关闭远程线程
 

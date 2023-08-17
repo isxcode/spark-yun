@@ -1,4 +1,4 @@
-package com.isxcode.star.modules.version;
+package com.isxcode.star.common.version;
 
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import io.swagger.v3.oas.annotations.Operation;

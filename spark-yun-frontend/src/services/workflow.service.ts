@@ -61,7 +61,7 @@ export function DeleteWorkflowData(params: any): Promise<any> {
 export function GetWorkflowDetailList(params: any): Promise<any> {
   return http.request({
     method: 'post',
-    url: '/wok/queryWork',
+    url: '/work/queryWork',
     params: params
   })
 }
@@ -70,7 +70,7 @@ export function GetWorkflowDetailList(params: any): Promise<any> {
 export function AddWorkflowDetailList(params: any): Promise<any> {
   return http.request({
     method: 'post',
-    url: '/wok/addWork',
+    url: '/work/addWork',
     params: params
   })
 }
@@ -79,7 +79,7 @@ export function AddWorkflowDetailList(params: any): Promise<any> {
 export function UpdateWorkflowDetailList(params: any): Promise<any> {
   return http.request({
     method: 'post',
-    url: '/wok/updateWork',
+    url: '/work/updateWork',
     params: params
   })
 }
@@ -88,7 +88,7 @@ export function UpdateWorkflowDetailList(params: any): Promise<any> {
 export function DeleteWorkflowDetailList(params: any): Promise<any> {
   return http.request({
     method: 'get',
-    url: '/wok/delWork',
+    url: '/work/delWork',
     params: params
   })
 }
@@ -97,7 +97,7 @@ export function DeleteWorkflowDetailList(params: any): Promise<any> {
 export function PublishWorkData(params: any): Promise<any> {
   return http.request({
     method: 'get',
-    url: '/vip/wok/deployWork',
+    url: '/vip/work/deployWork',
     params: params
   })
 }
@@ -106,7 +106,7 @@ export function PublishWorkData(params: any): Promise<any> {
 export function DeleteWorkData(params: any): Promise<any> {
   return http.request({
     method: 'get',
-    url: '/vip/wok/deleteWork',
+    url: '/vip/work/deleteWork',
     params: params
   })
 }
@@ -115,7 +115,7 @@ export function DeleteWorkData(params: any): Promise<any> {
 export function GetWorkItemConfig(params: any): Promise<any> {
   return http.request({
     method: 'get',
-    url: '/wok/getWork',
+    url: '/work/getWork',
     params: params
   })
 }
@@ -124,7 +124,7 @@ export function GetWorkItemConfig(params: any): Promise<any> {
 export function RunWorkItemConfig(params: any): Promise<any> {
   return http.request({
     method: 'get',
-    url: '/wok/runWork',
+    url: '/work/runWork',
     params: params
   })
 }
@@ -133,7 +133,7 @@ export function RunWorkItemConfig(params: any): Promise<any> {
 export function TerWorkItemConfig(params: any): Promise<any> {
   return http.request({
     method: 'get',
-    url: '/wok/stopJob',
+    url: '/work/stopJob',
     params: params
   })
 }
@@ -151,7 +151,7 @@ export function SaveWorkItemConfig(params: any): Promise<any> {
 export function GetSubmitLogData(params: any): Promise<any> {
   return http.request({
     method: 'get',
-    url: '/wok/getSubmitLog',
+    url: '/work/getSubmitLog',
     params: params
   })
 }
@@ -160,7 +160,7 @@ export function GetSubmitLogData(params: any): Promise<any> {
 export function GetResultItemDetail(params: any): Promise<any> {
   return http.request({
     method: 'get',
-    url: '/wok/getStatus',
+    url: '/work/getStatus',
     params: params
   })
 }
@@ -232,7 +232,7 @@ export function ImportWorkflowData(params: any): Promise<any> {
 export function PublishWorkflowData(params: any): Promise<any> {
   return http.request({
     method: 'get',
-    url: '/vip/wok/deployWorkflow',
+    url: '/vip/work/deployWorkflow',
     params: params
   })
 }

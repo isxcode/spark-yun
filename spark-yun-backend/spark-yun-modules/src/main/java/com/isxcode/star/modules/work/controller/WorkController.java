@@ -3,22 +3,16 @@ package com.isxcode.star.modules.work.controller;
 import com.isxcode.star.api.main.constants.ModuleCode;
 import com.isxcode.star.api.work.pojos.req.*;
 import com.isxcode.star.api.work.pojos.res.*;
-import com.isxcode.star.backend.api.base.constants.SecurityConstants;
 import com.isxcode.star.common.annotations.successResponse.SuccessResponse;
-import com.isxcode.star.common.userlog.UserLog;
 import com.isxcode.star.modules.work.service.WorkBizService;
+import com.isxcode.star.modules.work.service.WorkConfigBizService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.enums.ParameterIn;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
-@Slf4j
 @Tag(name = "作业模块")
 @RestController
 @RequestMapping(ModuleCode.WORK)
@@ -27,226 +21,125 @@ public class WorkController {
 
   private final WorkBizService workBizService;
 
-  @UserLog
+  private final WorkConfigBizService workConfigBizService;
+
   @Operation(summary = "添加作业接口")
   @PostMapping("/addWork")
   @SuccessResponse("创建成功")
-  @Parameter(
-      name = SecurityConstants.HEADER_TENANT_ID,
-      description = "租户id",
-      required = true,
-      in = ParameterIn.HEADER,
-      schema = @Schema(type = "string"))
-  public void addWork(@Valid @RequestBody WokAddWorkReq addWorkReq) {
+  public void addWork(@Valid @RequestBody AddWorkReq addWorkReq) {
 
     workBizService.addWork(addWorkReq);
   }
 
-  @UserLog
   @Operation(summary = "更新作业接口")
   @PostMapping("/updateWork")
   @SuccessResponse("更新成功")
-  @Parameter(
-      name = SecurityConstants.HEADER_TENANT_ID,
-      description = "租户id",
-      required = true,
-      in = ParameterIn.HEADER,
-      schema = @Schema(type = "string"))
-  public void updateWork(@Valid @RequestBody WokUpdateWorkReq wokUpdateWorkReq) {
+  public void updateWork(@Valid @RequestBody UpdateWorkReq updateWorkReq) {
 
-    workBizService.updateWork(wokUpdateWorkReq);
+    workBizService.updateWork(updateWorkReq);
   }
 
-  @UserLog
   @Operation(summary = "运行作业接口")
-  @GetMapping("/runWork")
+  @PostMapping("/runWork")
   @SuccessResponse("提交成功")
-  @Parameter(
-      name = SecurityConstants.HEADER_TENANT_ID,
-      description = "租户id",
-      required = true,
-      in = ParameterIn.HEADER,
-      schema = @Schema(type = "string"))
-  public WokRunWorkRes runWork(
-      @Schema(description = "作业唯一id", example = "sy_4f07ab7b1fe54dab9be884e410c53af4") @RequestParam
-          String workId) {
+  public RunWorkRes runWork(@Valid @RequestBody RunWorkReq runWorkReq) {
 
-    return workBizService.submitWork(workId);
+    return workBizService.runWork(runWorkReq);
   }
 
   @Operation(summary = "查询作业运行日志接口")
-  @GetMapping("/getYarnLog")
+  @PostMapping("/getYarnLog")
   @SuccessResponse("查询成功")
-  @Parameter(
-      name = SecurityConstants.HEADER_TENANT_ID,
-      description = "租户id",
-      required = true,
-      in = ParameterIn.HEADER,
-      schema = @Schema(type = "string"))
-  public WokGetWorkLogRes getYarnLog(
-      @Schema(description = "实例唯一id", example = "sy_12baf74d710c43a78858e547bf41a586") @RequestParam
-          String instanceId) {
+  public GetWorkLogRes getYarnLog(@Valid @RequestBody GetYarnLogReq getYarnLogReq) {
 
-    return workBizService.getWorkLog(instanceId);
+    return workBizService.getWorkLog(getYarnLogReq);
   }
 
-  @UserLog
   @Operation(summary = "查询作业返回数据接口")
-  @GetMapping("/getData")
+  @PostMapping("/getData")
   @SuccessResponse("查询成功")
-  @Parameter(
-      name = SecurityConstants.HEADER_TENANT_ID,
-      description = "租户id",
-      required = true,
-      in = ParameterIn.HEADER,
-      schema = @Schema(type = "string"))
-  public WokGetDataRes getData(
-      @Schema(description = "实例唯一id", example = "sy_12baf74d710c43a78858e547bf41a586") @RequestParam
-          String instanceId) {
+  public GetDataRes getData(@Valid @RequestBody GetDataReq getDataReq) {
 
-    return workBizService.getData(instanceId);
+    return workBizService.getData(getDataReq);
   }
 
-  @UserLog
   @Operation(summary = "中止作业接口")
-  @GetMapping("/stopJob")
+  @PostMapping("/stopJob")
   @SuccessResponse("中止成功")
-  @Parameter(
-      name = SecurityConstants.HEADER_TENANT_ID,
-      description = "租户id",
-      required = true,
-      in = ParameterIn.HEADER,
-      schema = @Schema(type = "string"))
-  public void stopJob(
-      @Schema(description = "实例唯一id", example = "sy_12baf74d710c43a78858e547bf41a586") @RequestParam
-          String instanceId) {
+  public void stopJob(@Valid @RequestBody StopJobReq stopJobReq) {
 
-    workBizService.stopJob(instanceId);
+    workBizService.stopJob(stopJobReq);
   }
 
-  @UserLog
   @Operation(summary = "获取作业当前运行状态接口")
-  @GetMapping("/getStatus")
+  @PostMapping("/getStatus")
   @SuccessResponse("获取成功")
-  @Parameter(
-      name = SecurityConstants.HEADER_TENANT_ID,
-      description = "租户id",
-      required = true,
-      in = ParameterIn.HEADER,
-      schema = @Schema(type = "string"))
-  public WokGetStatusRes getStatus(
-      @Schema(description = "实例唯一id", example = "sy_12baf74d710c43a78858e547bf41a586") @RequestParam
-          String instanceId) {
+  public GetStatusRes getStatus(@Valid @RequestBody GetStatusReq getStatusReq) {
 
-    return workBizService.getStatus(instanceId);
+    return workBizService.getStatus(getStatusReq);
   }
 
-  @UserLog
   @Operation(summary = "删除作业接口")
-  @GetMapping("/delWork")
+  @PostMapping("/deleteWork")
   @SuccessResponse("删除成功")
-  @Parameter(
-      name = SecurityConstants.HEADER_TENANT_ID,
-      description = "租户id",
-      required = true,
-      in = ParameterIn.HEADER,
-      schema = @Schema(type = "string"))
-  public void delWork(
-      @Schema(description = "作业唯一id", example = "sy_12baf74d710c43a78858e547bf41a586") @RequestParam
-          String workId) {
+  public void deleteWork(@Valid @RequestBody DeleteWorkReq deleteWorkReq) {
 
-    workBizService.delWork(workId);
+    workBizService.deleteWork(deleteWorkReq);
   }
 
-  @UserLog
   @Operation(summary = "查询作业列表接口")
-  @PostMapping("/queryWork")
+  @PostMapping("/pageWork")
   @SuccessResponse("查询成功")
-  @Parameter(
-      name = SecurityConstants.HEADER_TENANT_ID,
-      description = "租户id",
-      required = true,
-      in = ParameterIn.HEADER,
-      schema = @Schema(type = "string"))
-  public Page<WokQueryWorkRes> queryWork(@Valid @RequestBody WokQueryWorkReq wocQueryWorkReq) {
+  public Page<PageWorkRes> pageWork(@Valid @RequestBody PageWorkReq pageWorkReq) {
 
-    return workBizService.queryWork(wocQueryWorkReq);
+    return workBizService.pageWork(pageWorkReq);
   }
 
-  @UserLog
   @Operation(summary = "获取作业信息接口")
-  @GetMapping("/getWork")
+  @PostMapping("/getWork")
   @SuccessResponse("获取成功")
-  @Parameter(
-      name = SecurityConstants.HEADER_TENANT_ID,
-      description = "租户id",
-      required = true,
-      in = ParameterIn.HEADER,
-      schema = @Schema(type = "string"))
-  public WokGetWorkRes getWork(
-      @Schema(description = "作业唯一id", example = "sy_4f07ab7b1fe54dab9be884e410c53af4") @RequestParam
-          String workId) {
+  public GetWorkRes getWork(@Valid @RequestBody GetWorkReq getWorkReq) {
 
-    return workBizService.getWork(workId);
+    return workBizService.getWork(getWorkReq);
   }
 
   @Operation(summary = "查询作业提交日志接口")
-  @GetMapping("/getSubmitLog")
+  @PostMapping("/getSubmitLog")
   @SuccessResponse("查询成功")
-  @Parameter(
-      name = SecurityConstants.HEADER_TENANT_ID,
-      description = "租户id",
-      required = true,
-      in = ParameterIn.HEADER,
-      schema = @Schema(type = "string"))
-  public WokGetSubmitLogRes getSubmitLog(
-      @Schema(description = "实例唯一id", example = "sy_4f07ab7b1fe54dab9be884e410c53af4") @RequestParam
-          String instanceId) {
+  public GetSubmitLogRes getSubmitLog(@Valid @RequestBody GetSubmitLogReq getSubmitLogReq) {
 
-    return workBizService.getSubmitLog(instanceId);
+    return workBizService.getSubmitLog(getSubmitLogReq);
   }
 
   @Operation(summary = "作业重命名接口")
   @PostMapping("/renameWork")
   @SuccessResponse("修改成功")
-  @Parameter(
-      name = SecurityConstants.HEADER_TENANT_ID,
-      description = "租户id",
-      required = true,
-      in = ParameterIn.HEADER,
-      schema = @Schema(type = "string"))
-  public void renameWork(@RequestBody WokRenameWorkReq wokRenameWorkReq) {
+  public void renameWork(@Valid @RequestBody RenameWorkReq renameWorkReq) {
 
-    workBizService.renameWork(wokRenameWorkReq);
+    workBizService.renameWork(renameWorkReq);
   }
 
   @Operation(summary = "作业复制接口")
   @PostMapping("/copyWork")
   @SuccessResponse("复制成功")
-  @Parameter(
-      name = SecurityConstants.HEADER_TENANT_ID,
-      description = "租户id",
-      required = true,
-      in = ParameterIn.HEADER,
-      schema = @Schema(type = "string"))
-  public void copyWork(@RequestBody WokCopyWorkReq wokCopyWorkReq) {
+  public void copyWork(@Valid @RequestBody CopyWorkReq copyWorkReq) {
 
-    workBizService.copyWork(wokCopyWorkReq);
+    workBizService.copyWork(copyWorkReq);
   }
 
   @Operation(summary = "作业置顶接口")
   @PostMapping("/topWork")
   @SuccessResponse("置顶成功")
-  @Parameter(
-      name = SecurityConstants.HEADER_TENANT_ID,
-      description = "租户id",
-      required = true,
-      in = ParameterIn.HEADER,
-      schema = @Schema(type = "string"))
-  public void topWork(
-      @Schema(description = "作业唯一id", example = "sy_4f07ab7b1fe54dab9be884e410c53af4") @RequestParam
-          String workId) {
+  public void topWork(@Valid @RequestBody TopWorkReq topWorkReq) {
 
-    workBizService.topWork(workId);
+    workBizService.topWork(topWorkReq);
+  }
+
+  @Operation(summary = "配置作业接口")
+  @PostMapping("/configWork")
+  @SuccessResponse("保存成功")
+  public void configWork(@Valid @RequestBody ConfigWorkReq configWorkReq) {
+
+    workConfigBizService.configWork(configWorkReq);
   }
 }

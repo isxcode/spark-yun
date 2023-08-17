@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class WokGetWorkRes {
+public class GetWorkRes {
 
   private String name;
 

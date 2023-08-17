@@ -1,6 +1,6 @@
 package com.isxcode.star.modules.work.service;
 
-import com.isxcode.star.api.work.pojos.req.WocConfigWorkReq;
+import com.isxcode.star.api.work.pojos.req.ConfigWorkReq;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.star.modules.work.entity.WorkConfigEntity;
 import com.isxcode.star.modules.work.entity.WorkEntity;
@@ -35,7 +35,7 @@ public class WorkConfigBizService {
     return workConfigEntityOptional.get();
   }
 
-  public void configWork(WocConfigWorkReq wocConfigWorkReq) {
+  public void configWork(ConfigWorkReq wocConfigWorkReq) {
 
     Optional<WorkEntity> workEntityOptional = workRepository.findById(wocConfigWorkReq.getWorkId());
     if (!workEntityOptional.isPresent()) {
