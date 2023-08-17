@@ -7,7 +7,6 @@ import com.isxcode.star.api.tenant.pojos.res.PageTenantRes;
 import com.isxcode.star.api.tenant.pojos.res.QueryUserTenantRes;
 import com.isxcode.star.api.user.constants.RoleType;
 import com.isxcode.star.common.annotations.successResponse.SuccessResponse;
-import com.isxcode.star.common.userlog.UserLog;
 import com.isxcode.star.modules.tenant.service.TenantBizService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -118,7 +117,6 @@ public class TenantController {
     tenantBizService.chooseTenant(chooseTenantReq);
   }
 
-  @UserLog
   @Operation(summary = "获取租户信息接口")
   @PostMapping("/getTenant")
   @SuccessResponse("获取成功")
