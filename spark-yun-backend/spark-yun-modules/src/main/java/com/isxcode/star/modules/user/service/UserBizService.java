@@ -4,14 +4,12 @@ import static com.isxcode.star.common.config.CommonConfig.USER_ID;
 
 import com.isxcode.star.api.user.constants.RoleType;
 import com.isxcode.star.api.user.constants.UserStatus;
-import com.isxcode.star.api.user.pojos.req.UsrAddUserReq;
-import com.isxcode.star.api.user.pojos.req.UsrLoginReq;
-import com.isxcode.star.api.user.pojos.req.UsrQueryAllEnableUsersReq;
-import com.isxcode.star.api.user.pojos.req.UsrQueryAllUsersReq;
-import com.isxcode.star.api.user.pojos.req.UsrUpdateUserReq;
-import com.isxcode.star.api.user.pojos.res.UsrLoginRes;
-import com.isxcode.star.api.user.pojos.res.UsrQueryAllEnableUsersRes;
-import com.isxcode.star.api.user.pojos.res.UsrQueryAllUsersRes;
+import com.isxcode.star.api.user.pojos.req.*;
+import com.isxcode.star.api.user.pojos.req.UpdateUserReq;
+import com.isxcode.star.api.user.pojos.res.GetUserRes;
+import com.isxcode.star.api.user.pojos.res.LoginRes;
+import com.isxcode.star.api.user.pojos.res.PageEnableUserRes;
+import com.isxcode.star.api.user.pojos.res.PageUserRes;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.star.backend.api.base.properties.IsxAppProperties;
 import com.isxcode.star.common.utils.jwt.JwtUtils;
@@ -49,7 +47,7 @@ public class UserBizService {
   private final TenantUserRepository tenantUserRepository;
 
   /** 用户登录. */
-  public UsrLoginRes login(UsrLoginReq usrLoginReq) {
+  public LoginRes login(LoginReq usrLoginReq) {
 
     // 判断用户是否存在
     Optional<UserEntity> userEntityOptional =
@@ -86,7 +84,7 @@ public class UserBizService {
 
     // 如果是系统管理员直接返回
     if (RoleType.SYS_ADMIN.equals(userEntity.getRoleCode())) {
-      return UsrLoginRes.builder()
+      return LoginRes.builder()
           .tenantId(userEntity.getCurrentTenantId())
           .username(userEntity.getUsername())
           .token(jwtToken)
@@ -124,14 +122,14 @@ public class UserBizService {
     }
 
     // 生成token并返回
-    return new UsrLoginRes(
+    return new LoginRes(
         userEntity.getUsername(),
         jwtToken,
         currentTenantId,
         tenantUserEntityOptional.get().getRoleCode());
   }
 
-  public UsrLoginRes getUser() {
+  public GetUserRes getUser() {
 
     // 判断用户是否存在
     Optional<UserEntity> userEntityOptional = userRepository.findById(USER_ID.get());
@@ -155,7 +153,7 @@ public class UserBizService {
 
     // 如果是系统管理员直接返回
     if (RoleType.SYS_ADMIN.equals(userEntity.getRoleCode())) {
-      return UsrLoginRes.builder()
+      return GetUserRes.builder()
           .tenantId(userEntity.getCurrentTenantId())
           .username(userEntity.getUsername())
           .token(jwtToken)
@@ -193,7 +191,7 @@ public class UserBizService {
     }
 
     // 生成token并返回
-    return new UsrLoginRes(
+    return new GetUserRes(
         userEntity.getUsername(),
         jwtToken,
         currentTenantId,
@@ -208,7 +206,7 @@ public class UserBizService {
   public void addUser() {}
 
   /** 创建用户. */
-  public void addUser(UsrAddUserReq usrAddUserReq) {
+  public void addUser(AddUserReq usrAddUserReq) {
 
     // 判断账号是否存在
     Optional<UserEntity> userEntityOptional =
@@ -241,7 +239,7 @@ public class UserBizService {
     userRepository.save(userEntity);
   }
 
-  public void updateUser(UsrUpdateUserReq usrUpdateUserReq) {
+  public void updateUser(UpdateUserReq usrUpdateUserReq) {
 
     // 判断用户是否存在
     Optional<UserEntity> userEntityOptional = userRepository.findById(usrUpdateUserReq.getId());
@@ -256,9 +254,9 @@ public class UserBizService {
     userRepository.save(userEntity);
   }
 
-  public void disableUser(String userId) {
+  public void disableUser(DisableUserReq disableUserReq) {
 
-    Optional<UserEntity> userEntityOptional = userRepository.findById(userId);
+    Optional<UserEntity> userEntityOptional = userRepository.findById(disableUserReq.getUserId());
     if (!userEntityOptional.isPresent()) {
       throw new IsxAppException("用户不存在");
     }
@@ -268,9 +266,9 @@ public class UserBizService {
     userRepository.save(userEntity);
   }
 
-  public void enableUser(String userId) {
+  public void enableUser(EnableUserReq enableUserReq) {
 
-    Optional<UserEntity> userEntityOptional = userRepository.findById(userId);
+    Optional<UserEntity> userEntityOptional = userRepository.findById(enableUserReq.getUserId());
     if (!userEntityOptional.isPresent()) {
       throw new IsxAppException("用户不存在");
     }
@@ -280,17 +278,17 @@ public class UserBizService {
     userRepository.save(userEntity);
   }
 
-  public void deleteUser(String userId) {
+  public void deleteUser(DeleteUserReq deleteUserReq) {
 
-    Optional<UserEntity> userEntityOptional = userRepository.findById(userId);
+    Optional<UserEntity> userEntityOptional = userRepository.findById(deleteUserReq.getUserId());
     if (!userEntityOptional.isPresent()) {
       throw new IsxAppException("用户不存在");
     }
 
-    userRepository.deleteById(userId);
+    userRepository.deleteById(deleteUserReq.getUserId());
   }
 
-  public Page<UsrQueryAllUsersRes> queryAllUsers(UsrQueryAllUsersReq usrQueryAllUsersReq) {
+  public Page<PageUserRes> pageUser(PageUserReq usrQueryAllUsersReq) {
 
     Page<UserEntity> userEntitiesPage =
         userRepository.searchAllUser(
@@ -300,8 +298,7 @@ public class UserBizService {
     return userMapper.userEntityToUsrQueryAllUsersResPage(userEntitiesPage);
   }
 
-  public Page<UsrQueryAllEnableUsersRes> queryAllEnableUsers(
-      UsrQueryAllEnableUsersReq usrQueryAllEnableUsersReq) {
+  public Page<PageEnableUserRes> pageEnableUser(PageEnableUserReq usrQueryAllEnableUsersReq) {
 
     Page<UserEntity> userEntitiesPage =
         userRepository.searchAllEnableUser(
