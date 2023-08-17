@@ -1,7 +1,7 @@
 package com.isxcode.star.modules.work.run;
 
 import com.isxcode.star.api.work.constants.WorkType;
-import com.isxcode.star.backend.api.base.exceptions.SparkYunException;
+import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationContext;
@@ -25,7 +25,7 @@ public class WorkExecutorFactory {
       case WorkType.EXECUTE_JDBC_SQL:
         return applicationContext.getBean(ExecuteSqlExecutor.class);
       default:
-        throw new SparkYunException("作业类型不存在");
+        throw new IsxAppException("作业类型不存在");
     }
   }
 }

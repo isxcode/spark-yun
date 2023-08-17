@@ -10,8 +10,8 @@ import com.isxcode.star.api.cluster.constants.ClusterNodeStatus;
 import com.isxcode.star.api.instance.constants.InstanceStatus;
 import com.isxcode.star.api.work.constants.WorkLog;
 import com.isxcode.star.api.work.pojos.res.WokRunWorkRes;
-import com.isxcode.star.backend.api.base.exceptions.SparkYunException;
-import com.isxcode.star.backend.api.base.exceptions.WorkRunException;
+import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
+import com.isxcode.star.api.work.exceptions.WorkRunException;
 import com.isxcode.star.backend.api.base.pojos.BaseResponse;
 import com.isxcode.star.common.utils.http.HttpUtils;
 import com.isxcode.star.modules.cluster.entity.ClusterEntity;
@@ -341,7 +341,7 @@ public class SparkSqlExecutor extends WorkExecutor {
         BaseResponse<?> baseResponse = HttpUtils.doGet(stopJobUrl, BaseResponse.class);
 
         if (!String.valueOf(HttpStatus.OK.value()).equals(baseResponse.getCode())) {
-          throw new SparkYunException(
+          throw new IsxAppException(
               baseResponse.getCode(), baseResponse.getMsg(), baseResponse.getErr());
         }
       }

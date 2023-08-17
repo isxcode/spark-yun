@@ -1,7 +1,7 @@
 package com.isxcode.star.backend.api.base.pojos;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.isxcode.star.backend.api.base.exceptions.menus.AbstractSparkYunExceptionEnum;
+import com.isxcode.star.backend.api.base.exceptions.AbstractIsxAppExceptionEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -33,7 +33,7 @@ public class BaseResponse<T> {
     this.msg = message;
   }
 
-  public BaseResponse(AbstractSparkYunExceptionEnum abstractSparkYunExceptionEnum) {
+  public BaseResponse(AbstractIsxAppExceptionEnum abstractSparkYunExceptionEnum) {
 
     this.code = abstractSparkYunExceptionEnum.getCode();
     this.msg = abstractSparkYunExceptionEnum.getMsg();

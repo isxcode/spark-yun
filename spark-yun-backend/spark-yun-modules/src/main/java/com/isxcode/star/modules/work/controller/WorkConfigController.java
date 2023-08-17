@@ -1,7 +1,7 @@
 package com.isxcode.star.modules.work.controller;
 
 import com.isxcode.star.api.work.pojos.req.WocConfigWorkReq;
-import com.isxcode.star.backend.api.base.constants.ModulePrefix;
+import com.isxcode.star.api.main.constants.ModuleCode;
 import com.isxcode.star.backend.api.base.constants.SecurityConstants;
 import com.isxcode.star.common.annotations.successResponse.SuccessResponse;
 import com.isxcode.star.modules.work.service.WorkConfigBizService;
@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "作业配置模块")
 @RestController
-@RequestMapping(ModulePrefix.WORK_CONFIG)
+@RequestMapping(ModuleCode.WORK_CONFIG)
 @RequiredArgsConstructor
 public class WorkConfigController {
 

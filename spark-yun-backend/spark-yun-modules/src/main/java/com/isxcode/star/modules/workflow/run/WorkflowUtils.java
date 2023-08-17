@@ -7,7 +7,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.TypeReference;
 import com.isxcode.star.api.workflow.pojos.dto.NodeInfo;
-import com.isxcode.star.backend.api.base.exceptions.SparkYunException;
+import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.star.common.utils.jgrapht.JgraphtUtils;
 import com.isxcode.star.modules.work.entity.VipWorkVersionEntity;
 import com.isxcode.star.modules.work.entity.WorkConfigEntity;
@@ -36,7 +36,7 @@ public class WorkflowUtils {
     flowList.forEach(
         e -> {
           if (Strings.isEmpty(e.get(0)) || Strings.isEmpty(e.get(1))) {
-            throw new SparkYunException("工作流配置异常，节点有空值");
+            throw new IsxAppException("工作流配置异常，节点有空值");
           }
         });
 

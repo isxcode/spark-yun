@@ -6,7 +6,7 @@ import static com.isxcode.star.security.main.WebSecurityConfig.USER_ID;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.isxcode.star.backend.api.base.exceptions.SuccessResponseException;
-import com.isxcode.star.backend.api.base.properties.SparkYunProperties;
+import com.isxcode.star.backend.api.base.properties.IsxAppProperties;
 import java.util.Enumeration;
 import javax.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +32,7 @@ public class UserLogAdvice {
 
   private UserActionEntity userActionEntity;
 
-  private final SparkYunProperties sparkYunProperties;
+  private final IsxAppProperties sparkYunProperties;
 
   @Pointcut("@annotation(com.isxcode.star.modules.userlog.UserLog)")
   public void operateUserLog() {}

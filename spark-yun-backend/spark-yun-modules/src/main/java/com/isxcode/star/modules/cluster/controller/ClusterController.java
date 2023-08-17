@@ -4,7 +4,7 @@ import com.isxcode.star.api.cluster.pojos.req.CaeAddEngineReq;
 import com.isxcode.star.api.cluster.pojos.req.CaeQueryEngineReq;
 import com.isxcode.star.api.cluster.pojos.req.CaeUpdateEngineReq;
 import com.isxcode.star.api.cluster.pojos.res.CaeQueryEngineRes;
-import com.isxcode.star.backend.api.base.constants.ModulePrefix;
+import com.isxcode.star.api.main.constants.ModuleCode;
 import com.isxcode.star.common.annotations.successResponse.SuccessResponse;
 import com.isxcode.star.modules.cluster.service.ClusterBizService;
 import com.isxcode.star.modules.userlog.UserLog;
@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "计算引擎模块")
 @RestController
-@RequestMapping(ModulePrefix.CLUSTER)
+@RequestMapping(ModuleCode.CLUSTER)
 @RequiredArgsConstructor
 public class ClusterController {
 

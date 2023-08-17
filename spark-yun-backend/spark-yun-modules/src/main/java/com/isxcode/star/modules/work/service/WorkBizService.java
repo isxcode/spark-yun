@@ -11,8 +11,8 @@ import com.isxcode.star.api.work.constants.WorkStatus;
 import com.isxcode.star.api.work.constants.WorkType;
 import com.isxcode.star.api.work.pojos.req.*;
 import com.isxcode.star.api.work.pojos.res.*;
-import com.isxcode.star.backend.api.base.exceptions.SparkYunException;
-import com.isxcode.star.backend.api.base.exceptions.WorkRunException;
+import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
+import com.isxcode.star.api.work.exceptions.WorkRunException;
 import com.isxcode.star.backend.api.base.pojos.BaseResponse;
 import com.isxcode.star.common.utils.http.HttpUtils;
 import com.isxcode.star.modules.cluster.entity.ClusterEntity;
@@ -75,7 +75,7 @@ public class WorkBizService {
 
     Optional<WorkEntity> workEntityOptional = workRepository.findById(workId);
     if (!workEntityOptional.isPresent()) {
-      throw new SparkYunException("作业不存在");
+      throw new IsxAppException("作业不存在");
     }
     return workEntityOptional.get();
   }
@@ -104,7 +104,7 @@ public class WorkBizService {
 
     Optional<WorkEntity> workEntityOptional = workRepository.findById(wokUpdateWorkReq.getId());
     if (!workEntityOptional.isPresent()) {
-      throw new SparkYunException("作业不存在");
+      throw new IsxAppException("作业不存在");
     }
 
     WorkEntity work =
@@ -131,7 +131,7 @@ public class WorkBizService {
     // 判断作业是否存在
     Optional<WorkEntity> workEntityOptional = workRepository.findById(workId);
     if (!workEntityOptional.isPresent()) {
-      throw new SparkYunException("作业不存在");
+      throw new IsxAppException("作业不存在");
     }
     WorkEntity work = workEntityOptional.get();
 
@@ -146,7 +146,7 @@ public class WorkBizService {
 
       workRepository.deleteById(workId);
     } else {
-      throw new SparkYunException("请下线作业");
+      throw new IsxAppException("请下线作业");
     }
 
     // 拖拽到DAG中的作业无法删除
@@ -155,7 +155,7 @@ public class WorkBizService {
         workflowConfigRepository.findById(workflow.getConfigId()).get();
     if (workflowConfig.getNodeList() != null) {
       if (JSONArray.parseObject(workflowConfig.getNodeList(), String.class).contains(workId)) {
-        throw new SparkYunException("作业在DAG图中无法删除");
+        throw new IsxAppException("作业在DAG图中无法删除");
       }
     }
   }
@@ -199,14 +199,14 @@ public class WorkBizService {
     Optional<WorkInstanceEntity> instanceEntityOptional =
         workInstanceRepository.findById(instanceId);
     if (!instanceEntityOptional.isPresent()) {
-      throw new SparkYunException("实例不存在");
+      throw new IsxAppException("实例不存在");
     }
     WorkInstanceEntity workInstanceEntity = instanceEntityOptional.get();
     if (!InstanceStatus.SUCCESS.equals(workInstanceEntity.getStatus())) {
-      throw new SparkYunException("只有成功实例，才可查看数据");
+      throw new IsxAppException("只有成功实例，才可查看数据");
     }
     if (Strings.isEmpty(workInstanceEntity.getResultData())) {
-      throw new SparkYunException("请等待作业运行完毕或者对应作业无返回结果");
+      throw new IsxAppException("请等待作业运行完毕或者对应作业无返回结果");
     }
 
     if (Strings.isEmpty(workInstanceEntity.getYarnLog())) {
@@ -220,12 +220,12 @@ public class WorkBizService {
     Optional<WorkInstanceEntity> workInstanceEntityOptional =
         workInstanceRepository.findById(instanceId);
     if (!workInstanceEntityOptional.isPresent()) {
-      throw new SparkYunException("实例暂未生成请稍后再试");
+      throw new IsxAppException("实例暂未生成请稍后再试");
     }
     WorkInstanceEntity workInstanceEntity = workInstanceEntityOptional.get();
 
     if (Strings.isEmpty(workInstanceEntity.getSparkStarRes())) {
-      throw new SparkYunException("请等待作业提交完毕");
+      throw new IsxAppException("请等待作业提交完毕");
     }
 
     return JSON.parseObject(workInstanceEntity.getSparkStarRes(), WokGetStatusRes.class);
@@ -239,16 +239,16 @@ public class WorkBizService {
     Optional<WorkInstanceEntity> workInstanceEntityOptional =
         workInstanceRepository.findById(instanceId);
     if (!workInstanceEntityOptional.isPresent()) {
-      throw new SparkYunException("实例不存在");
+      throw new IsxAppException("实例不存在");
     }
     WorkInstanceEntity workInstanceEntity = workInstanceEntityOptional.get();
 
     if (InstanceStatus.SUCCESS.equals(workInstanceEntity.getStatus())) {
-      throw new SparkYunException("已经成功，无法中止");
+      throw new IsxAppException("已经成功，无法中止");
     }
 
     if (InstanceStatus.ABORT.equals(workInstanceEntity.getStatus())) {
-      throw new SparkYunException("已中止");
+      throw new IsxAppException("已中止");
     }
 
     // 获取中作业id
@@ -257,7 +257,7 @@ public class WorkBizService {
 
       // 作业类型不对返回
       if (!WorkType.QUERY_SPARK_SQL.equals(workEntity.getWorkType())) {
-        throw new SparkYunException("只有sparkSql作业才支持中止");
+        throw new IsxAppException("只有sparkSql作业才支持中止");
       }
 
       WorkConfigEntity workConfigEntity =
@@ -273,7 +273,7 @@ public class WorkBizService {
       Optional<ClusterEntity> clusterEntityOptional =
           calculateEngineRepository.findById(workConfigEntity.getClusterId());
       if (!clusterEntityOptional.isPresent()) {
-        throw new SparkYunException("集群不存在");
+        throw new IsxAppException("集群不存在");
       }
 
       // 节点选择随机数
@@ -281,7 +281,7 @@ public class WorkBizService {
           allEngineNodes.get(new Random().nextInt(allEngineNodes.size()));
 
       if (Strings.isEmpty(workInstanceEntity.getSparkStarRes())) {
-        throw new SparkYunException("还未提交，请稍后再试");
+        throw new IsxAppException("还未提交，请稍后再试");
       }
 
       // 解析实例的状态信息
@@ -300,7 +300,7 @@ public class WorkBizService {
       BaseResponse<?> baseResponse = HttpUtils.doGet(stopJobUrl, BaseResponse.class);
 
       if (!String.valueOf(HttpStatus.OK.value()).equals(baseResponse.getCode())) {
-        throw new SparkYunException(
+        throw new IsxAppException(
             baseResponse.getCode(), baseResponse.getMsg(), baseResponse.getErr());
       }
 
@@ -327,7 +327,7 @@ public class WorkBizService {
     Optional<WorkConfigEntity> workConfigEntityOptional =
         workConfigRepository.findById(workEntityOptional.get().getConfigId());
     if (!workConfigEntityOptional.isPresent()) {
-      throw new SparkYunException("作业异常，不可用作业");
+      throw new IsxAppException("作业异常，不可用作业");
     }
     WorkConfigEntity workConfig = workConfigEntityOptional.get();
 
@@ -339,12 +339,12 @@ public class WorkBizService {
     Optional<WorkInstanceEntity> workInstanceEntityOptional =
         workInstanceRepository.findById(instanceId);
     if (!workInstanceEntityOptional.isPresent()) {
-      throw new SparkYunException("实例暂未生成，请稍后再试");
+      throw new IsxAppException("实例暂未生成，请稍后再试");
     }
 
     WorkInstanceEntity workInstanceEntity = workInstanceEntityOptional.get();
     if (Strings.isEmpty(workInstanceEntity.getYarnLog())) {
-      throw new SparkYunException("请等待作业运行完毕");
+      throw new IsxAppException("请等待作业运行完毕");
     }
     return WokGetWorkLogRes.builder().yarnLog(workInstanceEntity.getYarnLog()).build();
   }
@@ -353,13 +353,13 @@ public class WorkBizService {
 
     Optional<WorkEntity> workEntityOptional = workRepository.findById(workId);
     if (!workEntityOptional.isPresent()) {
-      throw new SparkYunException("作业不存在");
+      throw new IsxAppException("作业不存在");
     }
 
     Optional<WorkConfigEntity> workConfigEntityOptional =
         workConfigRepository.findById(workEntityOptional.get().getConfigId());
     if (!workConfigEntityOptional.isPresent()) {
-      throw new SparkYunException("作业异常不可用");
+      throw new IsxAppException("作业异常不可用");
     }
 
     return workMapper.workEntityAndWorkConfigEntityToGetWorkRes(
@@ -369,20 +369,20 @@ public class WorkBizService {
   public ClusterNodeEntity getEngineWork(String calculateEngineId) {
 
     if (Strings.isEmpty(calculateEngineId)) {
-      throw new SparkYunException("作业未配置计算引擎");
+      throw new IsxAppException("作业未配置计算引擎");
     }
 
     Optional<ClusterEntity> calculateEngineEntityOptional =
         calculateEngineRepository.findById(calculateEngineId);
     if (!calculateEngineEntityOptional.isPresent()) {
-      throw new SparkYunException("计算引擎不存在");
+      throw new IsxAppException("计算引擎不存在");
     }
 
     List<ClusterNodeEntity> allEngineNodes =
         engineNodeRepository.findAllByClusterIdAndStatus(
             calculateEngineEntityOptional.get().getId(), ClusterNodeStatus.RUNNING);
     if (allEngineNodes.isEmpty()) {
-      throw new SparkYunException("计算引擎无可用节点，请换一个计算引擎");
+      throw new IsxAppException("计算引擎无可用节点，请换一个计算引擎");
     }
     return allEngineNodes.get(0);
   }
@@ -392,7 +392,7 @@ public class WorkBizService {
     Optional<WorkInstanceEntity> workInstanceEntityOptional =
         workInstanceRepository.findById(instanceId);
     if (!workInstanceEntityOptional.isPresent()) {
-      throw new SparkYunException("请稍后再试");
+      throw new IsxAppException("请稍后再试");
     }
     WorkInstanceEntity workInstanceEntity = workInstanceEntityOptional.get();
 

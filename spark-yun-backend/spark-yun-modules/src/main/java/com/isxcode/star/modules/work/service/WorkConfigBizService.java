@@ -1,7 +1,7 @@
 package com.isxcode.star.modules.work.service;
 
 import com.isxcode.star.api.work.pojos.req.WocConfigWorkReq;
-import com.isxcode.star.backend.api.base.exceptions.SparkYunException;
+import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.star.modules.work.entity.WorkConfigEntity;
 import com.isxcode.star.modules.work.entity.WorkEntity;
 import com.isxcode.star.modules.work.repository.WorkConfigRepository;
@@ -30,7 +30,7 @@ public class WorkConfigBizService {
     Optional<WorkConfigEntity> workConfigEntityOptional =
         workConfigRepository.findById(workConfigId);
     if (!workConfigEntityOptional.isPresent()) {
-      throw new SparkYunException("作业异常，请联系开发者");
+      throw new IsxAppException("作业异常，请联系开发者");
     }
     return workConfigEntityOptional.get();
   }
@@ -39,13 +39,13 @@ public class WorkConfigBizService {
 
     Optional<WorkEntity> workEntityOptional = workRepository.findById(wocConfigWorkReq.getWorkId());
     if (!workEntityOptional.isPresent()) {
-      throw new SparkYunException("作业不存在");
+      throw new IsxAppException("作业不存在");
     }
 
     Optional<WorkConfigEntity> workConfigEntityOptional =
         workConfigRepository.findById(workEntityOptional.get().getConfigId());
     if (!workConfigEntityOptional.isPresent()) {
-      throw new SparkYunException("作业异常，作业不可用。");
+      throw new IsxAppException("作业异常，作业不可用。");
     }
     WorkConfigEntity workConfigEntity = workConfigEntityOptional.get();
 
@@ -65,7 +65,7 @@ public class WorkConfigBizService {
       // 检验corn表达式
       boolean validExpression = CronExpression.isValidExpression(wocConfigWorkReq.getCorn());
       if (!validExpression) {
-        throw new SparkYunException("Corn表达式异常");
+        throw new IsxAppException("Corn表达式异常");
       }
       workConfigEntity.setCorn(wocConfigWorkReq.getCorn());
     }

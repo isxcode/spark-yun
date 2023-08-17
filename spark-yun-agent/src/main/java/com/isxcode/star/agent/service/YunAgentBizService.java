@@ -10,7 +10,7 @@ import com.isxcode.star.api.agent.pojos.res.ExecuteWorkRes;
 import com.isxcode.star.api.agent.pojos.res.YagGetDataRes;
 import com.isxcode.star.api.agent.pojos.res.YagGetLogRes;
 import com.isxcode.star.api.agent.pojos.res.YagGetStatusRes;
-import com.isxcode.star.backend.api.base.exceptions.SparkYunException;
+import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import java.io.IOException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -60,7 +60,7 @@ public class YunAgentBizService {
         appId = standaloneAgentService.executeWork(sparkLauncher);
         break;
       default:
-        throw new SparkYunException("agent类型不支持");
+        throw new IsxAppException("agent类型不支持");
     }
 
     return ExecuteWorkRes.builder().appId(appId).build();
@@ -80,7 +80,7 @@ public class YunAgentBizService {
         appStatus = standaloneAgentService.getAppStatus(appId);
         break;
       default:
-        throw new SparkYunException("agent类型不支持");
+        throw new IsxAppException("agent类型不支持");
     }
 
     return YagGetStatusRes.builder().appId(appId).appStatus(appStatus).build();
@@ -100,7 +100,7 @@ public class YunAgentBizService {
         appLog = standaloneAgentService.getAppLog(appId);
         break;
       default:
-        throw new SparkYunException("agent类型不支持");
+        throw new IsxAppException("agent类型不支持");
     }
 
     return YagGetLogRes.builder().log(appLog).build();
@@ -120,7 +120,7 @@ public class YunAgentBizService {
         stdoutLog = standaloneAgentService.getAppData(appId);
         break;
       default:
-        throw new SparkYunException("agent类型不支持");
+        throw new IsxAppException("agent类型不支持");
     }
 
     return YagGetDataRes.builder().data(JSON.parseArray(stdoutLog, List.class)).build();
@@ -139,7 +139,7 @@ public class YunAgentBizService {
         standaloneAgentService.killApp(appId);
         break;
       default:
-        throw new SparkYunException("agent类型不支持");
+        throw new IsxAppException("agent类型不支持");
     }
   }
 }

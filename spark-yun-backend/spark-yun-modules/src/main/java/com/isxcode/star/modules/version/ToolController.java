@@ -1,6 +1,6 @@
 package com.isxcode.star.modules.version;
 
-import com.isxcode.star.backend.api.base.exceptions.SparkYunException;
+import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.io.BufferedReader;
@@ -39,7 +39,7 @@ public class ToolController {
       return version;
     } catch (IOException e) {
       log.error(e.getMessage());
-      throw new SparkYunException("获取版本号异常", e.getMessage());
+      throw new IsxAppException("获取版本号异常", e.getMessage());
     }
   }
 }

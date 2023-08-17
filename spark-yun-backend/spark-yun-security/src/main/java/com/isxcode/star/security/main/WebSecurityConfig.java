@@ -1,6 +1,6 @@
 package com.isxcode.star.security.main;
 
-import com.isxcode.star.backend.api.base.properties.SparkYunProperties;
+import com.isxcode.star.backend.api.base.properties.IsxAppProperties;
 import com.isxcode.star.security.user.TenantUserRepository;
 import com.isxcode.star.security.user.UserRepository;
 import java.util.ArrayList;
@@ -32,7 +32,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
 public class WebSecurityConfig {
 
-  private final SparkYunProperties sparkYunProperties;
+  private final IsxAppProperties sparkYunProperties;
 
   private final UserRepository userRepository;
 

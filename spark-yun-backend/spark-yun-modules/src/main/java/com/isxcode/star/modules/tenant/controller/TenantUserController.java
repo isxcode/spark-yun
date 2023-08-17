@@ -4,7 +4,7 @@ import com.isxcode.star.api.tenant.pojos.req.TurAddTenantUserReq;
 import com.isxcode.star.api.tenant.pojos.req.TurQueryTenantUserReq;
 import com.isxcode.star.api.tenant.pojos.res.TurQueryTenantUserRes;
 import com.isxcode.star.api.user.constants.RoleType;
-import com.isxcode.star.backend.api.base.constants.ModulePrefix;
+import com.isxcode.star.api.main.constants.ModuleCode;
 import com.isxcode.star.backend.api.base.constants.SecurityConstants;
 import com.isxcode.star.common.annotations.successResponse.SuccessResponse;
 import com.isxcode.star.modules.tenant.service.TenantUserBizService;
@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "租户用户模块")
 @RestController
-@RequestMapping(ModulePrefix.TENANT_USER)
+@RequestMapping(ModuleCode.TENANT_USER)
 @RequiredArgsConstructor
 public class TenantUserController {
 

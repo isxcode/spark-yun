@@ -1,6 +1,6 @@
 package com.isxcode.star.config;
 
-import com.isxcode.star.backend.api.base.properties.SparkYunProperties;
+import com.isxcode.star.backend.api.base.properties.IsxAppProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Configuration;
@@ -11,6 +11,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @Configuration
 @EnableCaching
 @EnableTransactionManagement
-@EnableConfigurationProperties(SparkYunProperties.class)
+@EnableConfigurationProperties(IsxAppProperties.class)
 @EnableJpaAuditing(auditorAwareRef = "jpaAuditorConfig")
 public class AppConfig {}

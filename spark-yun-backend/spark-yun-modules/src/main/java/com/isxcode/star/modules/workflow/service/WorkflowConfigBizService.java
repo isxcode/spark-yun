@@ -2,7 +2,7 @@ package com.isxcode.star.modules.workflow.service;
 
 import com.alibaba.fastjson.JSON;
 import com.isxcode.star.api.workflow.pojos.req.WfcConfigWorkflowReq;
-import com.isxcode.star.backend.api.base.exceptions.SparkYunException;
+import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.star.modules.work.entity.WorkEntity;
 import com.isxcode.star.modules.work.repository.WorkRepository;
 import com.isxcode.star.modules.workflow.entity.WorkflowConfigEntity;
@@ -34,7 +34,7 @@ public class WorkflowConfigBizService {
     Optional<WorkflowConfigEntity> workflowConfigEntityOptional =
         workflowConfigRepository.findById(workflowConfigId);
     if (!workflowConfigEntityOptional.isPresent()) {
-      throw new SparkYunException("工作流配置异常，不存在");
+      throw new IsxAppException("工作流配置异常，不存在");
     }
     return workflowConfigEntityOptional.get();
   }
@@ -54,7 +54,7 @@ public class WorkflowConfigBizService {
     // 保存时检测作业是否存在，有bug，后面改
     List<WorkEntity> works = workRepository.findAllByWorkIds(nodeList);
     if (works.size() != nodeList.size()) {
-      throw new SparkYunException("作业数量不一致，可能存在作业重复");
+      throw new IsxAppException("作业数量不一致，可能存在作业重复");
     }
 
     // 从webConfig中解析出所有节点映射

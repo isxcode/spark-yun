@@ -7,7 +7,7 @@ import com.isxcode.star.api.cluster.pojos.req.CaeAddEngineReq;
 import com.isxcode.star.api.cluster.pojos.req.CaeQueryEngineReq;
 import com.isxcode.star.api.cluster.pojos.req.CaeUpdateEngineReq;
 import com.isxcode.star.api.cluster.pojos.res.CaeQueryEngineRes;
-import com.isxcode.star.backend.api.base.exceptions.SparkYunException;
+import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.star.common.utils.AesUtils;
 import com.isxcode.star.modules.cluster.entity.ClusterEntity;
 import com.isxcode.star.modules.cluster.entity.ClusterNodeEntity;
@@ -63,7 +63,7 @@ public class ClusterBizService {
     Optional<ClusterEntity> calculateEngineEntityOptional =
         engineRepository.findById(caeUpdateEngineReq.getClusterId());
     if (!calculateEngineEntityOptional.isPresent()) {
-      throw new SparkYunException("计算引擎不存在");
+      throw new IsxAppException("计算引擎不存在");
     }
 
     ClusterEntity engine =
@@ -92,7 +92,7 @@ public class ClusterBizService {
 
     Optional<ClusterEntity> calculateEngineEntityOptional = engineRepository.findById(engineId);
     if (!calculateEngineEntityOptional.isPresent()) {
-      throw new SparkYunException("计算引擎不存在");
+      throw new IsxAppException("计算引擎不存在");
     }
     ClusterEntity calculateEngineEntity = calculateEngineEntityOptional.get();
 

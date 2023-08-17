@@ -6,7 +6,7 @@ import com.isxcode.star.api.agent.pojos.res.ExecuteWorkRes;
 import com.isxcode.star.api.agent.pojos.res.YagGetDataRes;
 import com.isxcode.star.api.agent.pojos.res.YagGetLogRes;
 import com.isxcode.star.api.agent.pojos.res.YagGetStatusRes;
-import com.isxcode.star.backend.api.base.constants.ModulePrefix;
+import com.isxcode.star.api.main.constants.ModuleCode;
 import com.isxcode.star.common.annotations.successResponse.SuccessResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "代理模块")
-@RequestMapping(ModulePrefix.YUN_AGENT)
+@RequestMapping(ModuleCode.YUN_AGENT)
 @RestController
 @RequiredArgsConstructor
 public class YunAgentController {

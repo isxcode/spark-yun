@@ -10,8 +10,9 @@ import com.isxcode.star.api.api.constants.PathConstants;
 import com.isxcode.star.api.cluster.constants.ClusterNodeStatus;
 import com.isxcode.star.api.cluster.pojos.dto.AgentInfo;
 import com.isxcode.star.api.cluster.pojos.dto.ScpFileEngineNodeDto;
-import com.isxcode.star.backend.api.base.exceptions.SparkYunException;
-import com.isxcode.star.backend.api.base.properties.SparkYunProperties;
+import com.isxcode.star.api.main.properties.SparkYunProperties;
+import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
+import com.isxcode.star.backend.api.base.properties.IsxAppProperties;
 import com.isxcode.star.modules.cluster.entity.ClusterNodeEntity;
 import com.isxcode.star.modules.cluster.repository.ClusterNodeRepository;
 import com.jcraft.jsch.JSchException;
@@ -30,7 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-@Transactional(noRollbackFor = {SparkYunException.class})
+@Transactional(noRollbackFor = {IsxAppException.class})
 public class RunAgentCheckService {
 
   private final SparkYunProperties sparkYunProperties;

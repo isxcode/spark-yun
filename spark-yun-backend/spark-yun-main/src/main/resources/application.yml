@@ -1,3 +1,12 @@
+application:
+  title: 至轻云
+  website: https://zhiqingyun.isxcode.com
+  describe: 打造超轻量级批处理大数据平台
+
+server:
+  tomcat:
+    connection-timeout: 120s
+
 spring:
 
   profiles:
@@ -64,7 +73,7 @@ springdoc:
     path: /swagger-ui.html
   packages-to-scan: com.isxcode.star
 
-spark-yun:
+isx-app:
   admin-url:
     - /swagger-ui/** # http://localhost:8080/swagger-ui/index.html
     - /h2-console/** # http://localhost:8080/h2-console
@@ -89,12 +98,4 @@ spark-yun:
     - /license
     - /schedule
     - /workflow-page
-
-server:
-  tomcat:
-    connection-timeout: 120s
-
-application:
-  title: 至轻云
-  website: https://zhiqingyun.isxcode.com
-  describe: 打造超轻量级批处理大数据平台
+  resources-path: classpath:resources
