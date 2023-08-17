@@ -3,7 +3,6 @@ package com.isxcode.star.agent.run;
 import com.alibaba.fastjson2.JSON;
 import com.isxcode.star.api.agent.pojos.req.PluginReq;
 import com.isxcode.star.api.agent.pojos.req.SparkSubmit;
-import com.isxcode.star.backend.api.base.constants.SparkConstants;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import java.io.*;
 import java.net.MalformedURLException;

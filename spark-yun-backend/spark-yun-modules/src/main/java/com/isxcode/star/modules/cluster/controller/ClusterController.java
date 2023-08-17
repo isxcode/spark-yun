@@ -1,15 +1,11 @@
 package com.isxcode.star.modules.cluster.controller;
 
-import com.isxcode.star.api.cluster.pojos.req.CaeAddEngineReq;
-import com.isxcode.star.api.cluster.pojos.req.CaeQueryEngineReq;
-import com.isxcode.star.api.cluster.pojos.req.CaeUpdateEngineReq;
-import com.isxcode.star.api.cluster.pojos.res.CaeQueryEngineRes;
+import com.isxcode.star.api.cluster.pojos.req.*;
+import com.isxcode.star.api.cluster.pojos.res.PageClusterRes;
 import com.isxcode.star.api.main.constants.ModuleCode;
 import com.isxcode.star.common.annotations.successResponse.SuccessResponse;
 import com.isxcode.star.modules.cluster.service.ClusterBizService;
-import com.isxcode.star.modules.userlog.UserLog;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +14,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "计算引擎模块")
@@ -27,57 +22,45 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class ClusterController {
 
-  private final ClusterBizService calculateEngineBizService;
+  private final ClusterBizService clusterBizService;
 
-  @UserLog
-  @Operation(summary = "添加计算引擎接口")
-  @PostMapping("/addEngine")
+  @Operation(summary = "添加计算集群接口")
+  @PostMapping("/addCluster")
   @SuccessResponse("添加成功")
-  public void addEngine(@Valid @RequestBody CaeAddEngineReq caeAddEngineReq) {
+  public void addCluster(@Valid @RequestBody AddClusterReq addClusterReq) {
 
-    calculateEngineBizService.addEngine(caeAddEngineReq);
+    clusterBizService.addCluster(addClusterReq);
   }
 
-  @UserLog
-  @Operation(summary = "更新计算引擎接口")
-  @PostMapping("/updateEngine")
+  @Operation(summary = "更新计算集群接口")
+  @PostMapping("/updateCluster")
   @SuccessResponse("更新成功")
-  public void addEngine(@Valid @RequestBody CaeUpdateEngineReq caeUpdateEngineReq) {
+  public void updateCluster(@Valid @RequestBody UpdateClusterReq updateClusterReq) {
 
-    calculateEngineBizService.updateEngine(caeUpdateEngineReq);
+    clusterBizService.updateCluster(updateClusterReq);
   }
 
-  @UserLog
-  @Operation(summary = "查询计算引擎接口")
-  @PostMapping("/queryEngine")
-  @SuccessResponse("查询计算引擎成功")
-  public Page<CaeQueryEngineRes> queryEngine(
-      @Valid @RequestBody CaeQueryEngineReq caeQueryEngineReq) {
+  @Operation(summary = "分页查询计算集群接口")
+  @PostMapping("/pageCluster")
+  @SuccessResponse("查询计算集群成功")
+  public Page<PageClusterRes> pageCluster(@Valid @RequestBody PageClusterReq pageClusterReq) {
 
-    return calculateEngineBizService.queryEngines(caeQueryEngineReq);
+    return clusterBizService.pageCluster(pageClusterReq);
   }
 
-  @UserLog
-  @Operation(summary = "删除计算引擎接口")
-  @GetMapping("/delEngine")
+  @Operation(summary = "删除计算集群接口")
+  @GetMapping("/deleteCluster")
   @SuccessResponse("删除成功")
-  public void delEngine(
-      @Schema(description = "计算引擎唯一id", example = "sy_b0288cadb2ab4325ae519ff329a95cda")
-          @RequestParam
-          String engineId) {
+  public void deleteCluster(@Valid @RequestBody DeleteClusterReq deleteClusterReq) {
 
-    calculateEngineBizService.delEngine(engineId);
+    clusterBizService.deleteCluster(deleteClusterReq);
   }
 
-  @UserLog
-  @Operation(summary = "检测计算引擎接口")
-  @GetMapping("/checkEngine")
+  @Operation(summary = "检测计算集群接口")
+  @PostMapping("/checkCluster")
   @SuccessResponse("检测成功")
-  public void checkEngine(
-      @Schema(description = "计算引擎唯一id", example = "sy_b0288cadb2ab4325ae519ff329a95cda")
-          @RequestParam
-          String engineId) {
+  public void checkCluster(@Valid @RequestBody CheckClusterReq checkClusterReq) {
 
-    calculateEngineBizService.checkEngine(engineId);
+    clusterBizService.checkCluster(checkClusterReq);
   }
 }

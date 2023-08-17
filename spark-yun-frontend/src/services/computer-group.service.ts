@@ -22,7 +22,7 @@ interface AddParams {
 export function GetComputerGroupList(params: SerchParams): Promise<any> {
   return http.request({
     method: 'post',
-    url: '/cae/queryEngine',
+    url: '/cluster/queryCluster',
     params: params
   })
 }
@@ -31,7 +31,7 @@ export function GetComputerGroupList(params: SerchParams): Promise<any> {
 export function AddComputerGroupData(params: AddParams): Promise<any> {
   return http.request({
     method: 'post',
-    url: '/cae/addEngine',
+    url: '/cluster/addCluster',
     params: params
   })
 }
@@ -40,7 +40,7 @@ export function AddComputerGroupData(params: AddParams): Promise<any> {
 export function UpdateComputerGroupData(params: AddParams): Promise<any> {
   return http.request({
     method: 'post',
-    url: '/cae/updateEngine',
+    url: '/cluster/updateEngine',
     params: params
   })
 }
@@ -49,7 +49,7 @@ export function UpdateComputerGroupData(params: AddParams): Promise<any> {
 export function CheckComputerGroupData(params: any): Promise<any> {
   return http.request({
     method: 'get',
-    url: '/cae/checkEngine',
+    url: '/cluster/checkCluster',
     params: params
   })
 }
@@ -57,8 +57,8 @@ export function CheckComputerGroupData(params: any): Promise<any> {
 // 删除
 export function DeleteComputerGroupData(params: any): Promise<any> {
   return http.request({
-    method: 'get',
-    url: '/cae/delEngine',
+    method: 'post',
+    url: '/cluster/deleteCluster',
     params: params
   })
 }
