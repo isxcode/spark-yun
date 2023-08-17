@@ -5,7 +5,7 @@ import javax.validation.constraints.NotEmpty;
 import lombok.Data;
 
 @Data
-public class WfcConfigWorkflowReq {
+public class ConfigWorkflowReq {
 
   @Schema(title = "工作流id", example = "123")
   @NotEmpty(message = "工作流id不能为空")
