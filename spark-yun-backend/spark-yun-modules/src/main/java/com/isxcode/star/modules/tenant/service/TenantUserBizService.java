@@ -3,9 +3,8 @@ package com.isxcode.star.modules.tenant.service;
 import static com.isxcode.star.security.main.WebSecurityConfig.TENANT_ID;
 import static com.isxcode.star.security.main.WebSecurityConfig.USER_ID;
 
-import com.isxcode.star.api.tenant.pojos.req.TurAddTenantUserReq;
-import com.isxcode.star.api.tenant.pojos.req.TurQueryTenantUserReq;
-import com.isxcode.star.api.tenant.pojos.res.TurQueryTenantUserRes;
+import com.isxcode.star.api.tenant.pojos.req.*;
+import com.isxcode.star.api.tenant.pojos.res.PageTenantUserRes;
 import com.isxcode.star.api.user.constants.RoleType;
 import com.isxcode.star.api.user.constants.UserStatus;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
@@ -36,7 +35,7 @@ public class TenantUserBizService {
 
   private final TenantUserMapper tenantUserMapper;
 
-  public void addTenantUser(TurAddTenantUserReq turAddTenantUserReq) {
+  public void addTenantUser(AddTenantUserReq turAddTenantUserReq) {
 
     // 判断对象用户是否合法
     Optional<UserEntity> userEntityOptional =
@@ -84,7 +83,7 @@ public class TenantUserBizService {
     tenantUserRepository.save(tenantUserEntity);
   }
 
-  public Page<TurQueryTenantUserRes> queryTenantUser(TurQueryTenantUserReq turAddTenantUserReq) {
+  public Page<PageTenantUserRes> pageTenantUser(PageTenantUserReq turAddTenantUserReq) {
 
     return tenantUserRepository.searchTenantUser(
         TENANT_ID.get(),
@@ -92,11 +91,11 @@ public class TenantUserBizService {
         PageRequest.of(turAddTenantUserReq.getPage(), turAddTenantUserReq.getPageSize()));
   }
 
-  public void removeTenantUser(String tenantUserId) {
+  public void removeTenantUser(RemoveTenantUserReq removeTenantUserReq) {
 
     // 查询用户是否在租户中
     Optional<TenantUserEntity> tenantUserEntityOptional =
-        tenantUserRepository.findById(tenantUserId);
+        tenantUserRepository.findById(removeTenantUserReq.getTenantUserId());
     if (!tenantUserEntityOptional.isPresent()) {
       throw new IsxAppException("用户不存在");
     }
@@ -110,11 +109,11 @@ public class TenantUserBizService {
     tenantUserRepository.deleteById(tenantUserEntityOptional.get().getId());
   }
 
-  public void setTenantAdmin(String tenantUserId) {
+  public void setTenantAdmin(SetTenantAdminReq setTenantAdminReq) {
 
     // 查询用户是否在租户中
     Optional<TenantUserEntity> tenantUserEntityOptional =
-        tenantUserRepository.findById(tenantUserId);
+        tenantUserRepository.findById(setTenantAdminReq.getTenantUserId());
     if (!tenantUserEntityOptional.isPresent()) {
       throw new IsxAppException("用户不存在");
     }
@@ -127,11 +126,11 @@ public class TenantUserBizService {
     tenantUserRepository.save(tenantUserEntity);
   }
 
-  public void removeTenantAdmin(String tenantUserId) {
+  public void removeTenantAdmin(RemoveTenantAdminReq removeTenantAdminReq) {
 
     // 查询用户是否在租户中
     Optional<TenantUserEntity> tenantUserEntityOptional =
-        tenantUserRepository.findById(tenantUserId);
+        tenantUserRepository.findById(removeTenantAdminReq.getTenantUserId());
     if (!tenantUserEntityOptional.isPresent()) {
       throw new IsxAppException("用户不存在");
     }
