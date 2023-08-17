@@ -5,7 +5,7 @@ import javax.validation.constraints.NotEmpty;
 import lombok.Data;
 
 @Data
-public class TetUpdateTenantByTenantAdminReq {
+public class UpdateTenantForTenantAdminReq {
 
   @Schema(title = "租户唯一id", example = "sy_123456789")
   @NotEmpty(message = "租户id不能为空")

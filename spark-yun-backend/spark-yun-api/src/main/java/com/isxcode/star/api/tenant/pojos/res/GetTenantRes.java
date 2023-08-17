@@ -7,7 +7,7 @@ import lombok.Data;
 @Data
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class TetGetTenantRes {
+public class GetTenantRes {
 
   private String id;
 

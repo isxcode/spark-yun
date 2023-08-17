@@ -1,10 +1,10 @@
 package com.isxcode.star.modules.tenant.mapper;
 
-import com.isxcode.star.api.tenant.pojos.req.TetAddTenantReq;
-import com.isxcode.star.api.tenant.pojos.req.TetUpdateTenantBySystemAdminReq;
-import com.isxcode.star.api.tenant.pojos.req.TetUpdateTenantByTenantAdminReq;
-import com.isxcode.star.api.tenant.pojos.res.TetQueryTenantRes;
-import com.isxcode.star.api.tenant.pojos.res.TetQueryUserTenantRes;
+import com.isxcode.star.api.tenant.pojos.req.AddTenantReq;
+import com.isxcode.star.api.tenant.pojos.req.UpdateTenantForSystemAdminReq;
+import com.isxcode.star.api.tenant.pojos.req.UpdateTenantForTenantAdminReq;
+import com.isxcode.star.api.tenant.pojos.res.PageTenantRes;
+import com.isxcode.star.api.tenant.pojos.res.QueryUserTenantRes;
 import com.isxcode.star.api.user.constants.UserStatus;
 import com.isxcode.star.modules.tenant.entity.TenantEntity;
 import java.util.List;
@@ -23,12 +23,12 @@ public interface TenantMapper {
   @Mapping(target = "usedMemberNum", constant = "1L")
   @Mapping(target = "maxWorkflowNum", constant = "0L")
   @Mapping(target = "usedWorkflowNum", constant = "0L")
-  TenantEntity tetAddTenantReqToTenantEntity(TetAddTenantReq tetAddTenantReq);
+  TenantEntity tetAddTenantReqToTenantEntity(AddTenantReq tetAddTenantReq);
 
   /** TenantEntity To TetQueryUserTenantRes. */
-  TetQueryUserTenantRes tenantEntityToTetQueryUserTenantRes(TenantEntity tenantEntity);
+  QueryUserTenantRes tenantEntityToTetQueryUserTenantRes(TenantEntity tenantEntity);
 
-  List<TetQueryUserTenantRes> tenantEntityToTetQueryUserTenantResList(
+  List<QueryUserTenantRes> tenantEntityToTetQueryUserTenantResList(
       List<TenantEntity> tenantEntities);
 
   @Mapping(target = "remark", source = "tetUpdateTenantBySystemAdminReq.remark")
@@ -37,21 +37,21 @@ public interface TenantMapper {
   @Mapping(target = "name", source = "tetUpdateTenantBySystemAdminReq.name")
   @Mapping(target = "id", source = "tenantEntity.id")
   TenantEntity tetUpdateTenantBySystemAdminReqToTenantEntity(
-      TetUpdateTenantBySystemAdminReq tetUpdateTenantBySystemAdminReq, TenantEntity tenantEntity);
+      UpdateTenantForSystemAdminReq tetUpdateTenantBySystemAdminReq, TenantEntity tenantEntity);
 
   @Mapping(target = "introduce", source = "tetUpdateTenantByTenantAdminReq.introduce")
   @Mapping(target = "id", source = "tenantEntity.id")
   TenantEntity tetUpdateTenantByTenantAdminReqToTenantEntity(
-      TetUpdateTenantByTenantAdminReq tetUpdateTenantByTenantAdminReq, TenantEntity tenantEntity);
+      UpdateTenantForTenantAdminReq tetUpdateTenantByTenantAdminReq, TenantEntity tenantEntity);
 
   @Mapping(target = "checkDateTime", dateFormat = "yyyy-MM-dd HH:mm:ss")
-  TetQueryTenantRes tenantEntityToTetQueryTenantRes(TenantEntity tenantEntity);
+  PageTenantRes tenantEntityToTetQueryTenantRes(TenantEntity tenantEntity);
 
-  List<TetQueryTenantRes> tenantEntityToTetQueryTenantResList(List<TenantEntity> tenantEntities);
+  List<PageTenantRes> tenantEntityToTetQueryTenantResList(List<TenantEntity> tenantEntities);
 
-  default Page<TetQueryTenantRes> tenantEntityToTetQueryTenantResPage(
+  default Page<PageTenantRes> tenantEntityToTetQueryTenantResPage(
       Page<TenantEntity> tenantEntityPage) {
-    List<TetQueryTenantRes> dtoList =
+    List<PageTenantRes> dtoList =
         tenantEntityToTetQueryTenantResList(tenantEntityPage.getContent());
     return new PageImpl<>(
         dtoList, tenantEntityPage.getPageable(), tenantEntityPage.getTotalElements());

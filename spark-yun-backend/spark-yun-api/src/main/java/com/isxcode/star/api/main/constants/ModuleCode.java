@@ -34,7 +34,7 @@ public interface ModuleCode {
   String YUN_AGENT = "/yag";
 
   /** 租户模块. */
-  String TENANT = "/tet";
+  String TENANT = "tenant";
 
   /** 租户用户模块. */
   String TENANT_USER = "/tur";
