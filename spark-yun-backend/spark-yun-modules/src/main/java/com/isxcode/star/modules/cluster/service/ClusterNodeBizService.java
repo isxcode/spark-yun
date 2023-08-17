@@ -189,7 +189,8 @@ public class ClusterNodeBizService {
 
   public void deleteClusterNode(DeleteClusterNodeReq deleteClusterNodeReq) {
 
-    Optional<ClusterNodeEntity> engineNodeEntityOptional = engineNodeRepository.findById(deleteClusterNodeReq.getEngineNodeId());
+    Optional<ClusterNodeEntity> engineNodeEntityOptional =
+        engineNodeRepository.findById(deleteClusterNodeReq.getEngineNodeId());
     if (!engineNodeEntityOptional.isPresent()) {
       throw new IsxAppException("节点已删除");
     }
@@ -239,7 +240,8 @@ public class ClusterNodeBizService {
     engineNodeRepository.saveAndFlush(engineNode);
 
     // 异步调用
-    runAgentCheckService.run(checkAgentReq.getEngineNodeId(), scpFileEngineNodeDto, TENANT_ID.get(), USER_ID.get());
+    runAgentCheckService.run(
+        checkAgentReq.getEngineNodeId(), scpFileEngineNodeDto, TENANT_ID.get(), USER_ID.get());
   }
 
   /** 安装节点. */
@@ -308,7 +310,8 @@ public class ClusterNodeBizService {
     engineNodeRepository.saveAndFlush(engineNode);
 
     // 异步调用
-    runAgentRemoveService.run(removeAgentReq.getEngineNodeId(), scpFileEngineNodeDto, TENANT_ID.get(), USER_ID.get());
+    runAgentRemoveService.run(
+        removeAgentReq.getEngineNodeId(), scpFileEngineNodeDto, TENANT_ID.get(), USER_ID.get());
   }
 
   /** 停止节点. */
@@ -337,7 +340,8 @@ public class ClusterNodeBizService {
     engineNodeRepository.saveAndFlush(engineNode);
 
     // 异步调用
-    runAgentStopService.run(stopAgentReq.getEngineNodeId(), scpFileEngineNodeDto, TENANT_ID.get(), USER_ID.get());
+    runAgentStopService.run(
+        stopAgentReq.getEngineNodeId(), scpFileEngineNodeDto, TENANT_ID.get(), USER_ID.get());
   }
 
   /** 激活中. */
@@ -366,6 +370,7 @@ public class ClusterNodeBizService {
     engineNodeRepository.saveAndFlush(engineNode);
 
     // 异步调用
-    runAgentStartService.run(startAgentReq.getEngineNodeId(), scpFileEngineNodeDto, TENANT_ID.get(), USER_ID.get());
+    runAgentStartService.run(
+        startAgentReq.getEngineNodeId(), scpFileEngineNodeDto, TENANT_ID.get(), USER_ID.get());
   }
 }

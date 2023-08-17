@@ -7,7 +7,7 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class DasTestConnectRes {
+public class TestConnectRes {
 
   private Boolean canConnect;
 

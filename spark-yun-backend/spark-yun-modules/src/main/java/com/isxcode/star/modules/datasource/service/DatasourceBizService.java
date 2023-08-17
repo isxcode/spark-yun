@@ -3,12 +3,10 @@ package com.isxcode.star.modules.datasource.service;
 import com.isxcode.star.api.datasource.constants.DatasourceDriver;
 import com.isxcode.star.api.datasource.constants.DatasourceStatus;
 import com.isxcode.star.api.datasource.constants.DatasourceType;
-import com.isxcode.star.api.datasource.pojos.req.DasAddDatasourceReq;
-import com.isxcode.star.api.datasource.pojos.req.DasQueryDatasourceReq;
-import com.isxcode.star.api.datasource.pojos.req.DasUpdateDatasourceReq;
-import com.isxcode.star.api.datasource.pojos.res.DasGetConnectLogRes;
-import com.isxcode.star.api.datasource.pojos.res.DasQueryDatasourceRes;
-import com.isxcode.star.api.datasource.pojos.res.DasTestConnectRes;
+import com.isxcode.star.api.datasource.pojos.req.*;
+import com.isxcode.star.api.datasource.pojos.res.GetConnectLogRes;
+import com.isxcode.star.api.datasource.pojos.res.PageDatasourceRes;
+import com.isxcode.star.api.datasource.pojos.res.TestConnectRes;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.star.common.utils.AesUtils;
 import com.isxcode.star.modules.datasource.entity.DatasourceEntity;
@@ -38,7 +36,7 @@ public class DatasourceBizService {
 
   private final AesUtils aesUtils;
 
-  public void addDatasource(DasAddDatasourceReq dasAddDatasourceReq) {
+  public void addDatasource(AddDatasourceReq dasAddDatasourceReq) {
 
     DatasourceEntity datasource =
         datasourceMapper.dasAddDatasourceReqToDatasourceEntity(dasAddDatasourceReq);
@@ -51,7 +49,7 @@ public class DatasourceBizService {
     datasourceRepository.save(datasource);
   }
 
-  public void updateDatasource(DasUpdateDatasourceReq dasAddDatasourceReq) {
+  public void updateDatasource(UpdateDatasourceReq dasAddDatasourceReq) {
 
     Optional<DatasourceEntity> datasourceEntityOptional =
         datasourceRepository.findById(dasAddDatasourceReq.getId());
@@ -71,7 +69,7 @@ public class DatasourceBizService {
     datasourceRepository.save(datasource);
   }
 
-  public Page<DasQueryDatasourceRes> queryDatasource(DasQueryDatasourceReq dasQueryDatasourceReq) {
+  public Page<PageDatasourceRes> pageDatasource(PageDatasourceReq dasQueryDatasourceReq) {
 
     Page<DatasourceEntity> datasourceEntityPage =
         datasourceRepository.searchAll(
@@ -91,9 +89,9 @@ public class DatasourceBizService {
         aesUtils.decrypt(datasource.getPasswd()));
   }
 
-  public void delDatasource(String datasourceId) {
+  public void deleteDatasource(DeleteDatasourceReq deleteDatasourceReq) {
 
-    datasourceRepository.deleteById(datasourceId);
+    datasourceRepository.deleteById(deleteDatasourceReq.getDatasourceId());
   }
 
   public void loadDriverClass(String datasourceType) {
@@ -148,11 +146,11 @@ public class DatasourceBizService {
     }
   }
 
-  public DasTestConnectRes testConnect(String datasourceId) {
+  public TestConnectRes testConnect(GetConnectLogReq testConnectReq) {
 
     // 获取数据源
     Optional<DatasourceEntity> datasourceEntityOptional =
-        datasourceRepository.findById(datasourceId);
+        datasourceRepository.findById(testConnectReq.getDatasourceId());
     if (!datasourceEntityOptional.isPresent()) {
       throw new IsxAppException("数据源不存在");
     }
@@ -169,29 +167,29 @@ public class DatasourceBizService {
         datasource.setStatus(DatasourceStatus.ACTIVE);
         datasource.setConnectLog("测试连接成功！");
         datasourceRepository.save(datasource);
-        return new DasTestConnectRes(true, "连接成功");
+        return new TestConnectRes(true, "连接成功");
       }
     } catch (Exception e) {
       log.error(e.getMessage());
       datasource.setStatus(DatasourceStatus.FAIL);
       datasource.setConnectLog("测试连接失败：" + e.getMessage());
       datasourceRepository.save(datasource);
-      return new DasTestConnectRes(false, e.getMessage());
+      return new TestConnectRes(false, e.getMessage());
     }
-    return new DasTestConnectRes(false, "连接失败");
+    return new TestConnectRes(false, "连接失败");
   }
 
-  public DasGetConnectLogRes getConnectLog(String datasourceId) {
+  public GetConnectLogRes getConnectLog(GetConnectLogReq getConnectLogReq) {
 
     // 获取数据源
     Optional<DatasourceEntity> datasourceEntityOptional =
-        datasourceRepository.findById(datasourceId);
+        datasourceRepository.findById(getConnectLogReq.getDatasourceId());
     if (!datasourceEntityOptional.isPresent()) {
       throw new IsxAppException("数据源不存在");
     }
     DatasourceEntity datasource = datasourceEntityOptional.get();
 
-    DasGetConnectLogRes dasGetConnectLogRes = new DasGetConnectLogRes();
+    GetConnectLogRes dasGetConnectLogRes = new GetConnectLogRes();
     dasGetConnectLogRes.setConnectLog(datasource.getConnectLog());
     return dasGetConnectLogRes;
   }
