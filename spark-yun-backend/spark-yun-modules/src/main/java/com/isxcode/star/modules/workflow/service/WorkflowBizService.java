@@ -12,13 +12,10 @@ import com.isxcode.star.api.work.constants.WorkLog;
 import com.isxcode.star.api.work.constants.WorkStatus;
 import com.isxcode.star.api.workflow.constants.WorkflowStatus;
 import com.isxcode.star.api.workflow.pojos.dto.WorkInstanceInfo;
-import com.isxcode.star.api.workflow.pojos.req.WocQueryWorkflowReq;
-import com.isxcode.star.api.workflow.pojos.req.WofAddWorkflowReq;
-import com.isxcode.star.api.workflow.pojos.req.WofExportWorkflowReq;
-import com.isxcode.star.api.workflow.pojos.req.WofUpdateWorkflowReq;
-import com.isxcode.star.api.workflow.pojos.res.WofGetWorkflowRes;
+import com.isxcode.star.api.workflow.pojos.req.*;
+import com.isxcode.star.api.workflow.pojos.res.PageWorkflowRes;
+import com.isxcode.star.api.workflow.pojos.res.GetWorkflowRes;
 import com.isxcode.star.api.workflow.pojos.res.WofQueryRunWorkInstancesRes;
-import com.isxcode.star.api.workflow.pojos.res.WofQueryWorkflowRes;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.star.modules.work.entity.WorkConfigEntity;
 import com.isxcode.star.modules.work.entity.WorkEntity;
@@ -93,7 +90,7 @@ public class WorkflowBizService {
     return workflowEntityOptional.get();
   }
 
-  public void addWorkflow(WofAddWorkflowReq wofAddWorkflowReq) {
+  public void addWorkflow(AddWorkflowReq wofAddWorkflowReq) {
 
     // 初始化工作流配置
     WorkflowConfigEntity workflowConfig = new WorkflowConfigEntity();
@@ -106,7 +103,7 @@ public class WorkflowBizService {
     workflowRepository.save(workflow);
   }
 
-  public void updateWorkflow(WofUpdateWorkflowReq wofUpdateWorkflowReq) {
+  public void updateWorkflow(UpdateWorkflowReq wofUpdateWorkflowReq) {
 
     Optional<WorkflowEntity> workflowEntityOptional =
         workflowRepository.findById(wofUpdateWorkflowReq.getId());
@@ -121,7 +118,7 @@ public class WorkflowBizService {
     workflowRepository.save(workflow);
   }
 
-  public Page<WofQueryWorkflowRes> queryWorkflow(WocQueryWorkflowReq wocQueryWorkflowReq) {
+  public Page<PageWorkflowRes> pageWorkflow(PageWorkflowReq wocQueryWorkflowReq) {
 
     Page<WorkflowEntity> workflowEntityPage =
         workflowRepository.searchAll(
@@ -131,16 +128,16 @@ public class WorkflowBizService {
     return workflowMapper.workflowEntityPageToQueryWorkflowResPage(workflowEntityPage);
   }
 
-  public void delWorkflow(String workflowId) {
+  public void deleteWorkflow(DeleteWorkflowReq deleteWorkflowReq) {
 
-    workflowRepository.deleteById(workflowId);
+    workflowRepository.deleteById(deleteWorkflowReq.getWorkflowId());
   }
 
   /** 运行工作流，返回工作流实例id */
-  public String runFlow(String workflowId) {
+  public String runWorkflow(RunWorkflowReq runWorkflowReq) {
 
     // 获取工作流配置id
-    WorkflowEntity workflow = getWorkflowEntity(workflowId);
+    WorkflowEntity workflow = getWorkflowEntity(runWorkflowReq.getWorkflowId());
 
     // 获取作业配置
     WorkflowConfigEntity workflowConfig =
@@ -152,7 +149,7 @@ public class WorkflowBizService {
     // 创建工作流实例
     WorkflowInstanceEntity workflowInstance =
         WorkflowInstanceEntity.builder()
-            .flowId(workflowId)
+            .flowId(runWorkflowReq.getWorkflowId())
             .webConfig(workflowConfig.getWebConfig())
             .status(FlowInstanceStatus.RUNNING)
             .instanceType(InstanceType.MANUAL)
@@ -231,21 +228,21 @@ public class WorkflowBizService {
         .build();
   }
 
-  public WofGetWorkflowRes getWorkflow(String workflowId) {
+  public GetWorkflowRes getWorkflow(String workflowId) {
 
     WorkflowEntity workflow = getWorkflowEntity(workflowId);
 
     WorkflowConfigEntity workflowConfig =
         workflowConfigRepository.findById(workflow.getConfigId()).get();
 
-    WofGetWorkflowRes wofGetWorkflowRes = new WofGetWorkflowRes();
+    GetWorkflowRes wofGetWorkflowRes = new GetWorkflowRes();
     wofGetWorkflowRes.setWebConfig(JSON.parse(workflowConfig.getWebConfig()));
 
     return wofGetWorkflowRes;
   }
 
   /** 导出作业或者作业流 */
-  public void exportWorks(WofExportWorkflowReq wofExportWorkflowReq, HttpServletResponse response) {
+  public void exportWorks(ExportWorkflowReq wofExportWorkflowReq, HttpServletResponse response) {
 
     // 导出作业流
     WorkflowEntity workflow = new WorkflowEntity();

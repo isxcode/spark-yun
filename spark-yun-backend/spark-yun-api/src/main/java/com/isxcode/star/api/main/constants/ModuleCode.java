@@ -16,19 +16,14 @@ public interface ModuleCode {
   String DATASOURCE = "datasource";
 
   /** 作业流模块. */
-  String WORKFLOW = "/wof";
-
-  /** 作业流收藏模块. */
-  String WORKFLOW_FAVOUR = "/wff";
-
-  /** 作业流配置模块. */
-  String WORKFLOW_CONFIG = "wfc";
+  String WORKFLOW = "workflow";
 
   /** 作业模块. */
   String WORK = "work";
 
-  /** 作业配置模块. */
-  String WORK_CONFIG = "woc";
+
+  /** 租户用户模块. */
+  String TENANT_USER = "tenant_user";
 
   /** 云代理模块. */
   String YUN_AGENT = "/yag";
@@ -36,8 +31,6 @@ public interface ModuleCode {
   /** 租户模块. */
   String TENANT = "tenant";
 
-  /** 租户用户模块. */
-  String TENANT_USER = "tenant_user";
 
   /** 许可证模块. */
   String LICENSE = "/lic";

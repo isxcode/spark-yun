@@ -5,11 +5,7 @@ import javax.validation.constraints.NotEmpty;
 import lombok.Data;
 
 @Data
-public class WofUpdateWorkflowReq {
-
-  @Schema(title = "作业流唯一id", example = "sy_12345678")
-  @NotEmpty(message = "作业流id不能为空")
-  private String id;
+public class AddWorkflowReq {
 
   @Schema(title = "作业流名称", example = "周报数据总结作业流")
   @NotEmpty(message = "作业流名称不能为空")
