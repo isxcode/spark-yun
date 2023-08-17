@@ -6,4 +6,4 @@ import lombok.EqualsAndHashCode;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class UsrQueryAllUsersRes extends UsrUserDto {}
+public class PageUserRes extends UsrUserDto {}
