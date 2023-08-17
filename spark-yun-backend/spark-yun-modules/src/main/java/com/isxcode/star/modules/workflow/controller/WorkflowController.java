@@ -5,13 +5,9 @@ import com.isxcode.star.api.workflow.pojos.req.*;
 import com.isxcode.star.api.workflow.pojos.res.GetWorkflowRes;
 import com.isxcode.star.api.workflow.pojos.res.PageWorkflowRes;
 import com.isxcode.star.api.workflow.pojos.res.WofQueryRunWorkInstancesRes;
-import com.isxcode.star.backend.api.base.constants.SecurityConstants;
 import com.isxcode.star.common.annotations.successResponse.SuccessResponse;
-import com.isxcode.star.common.userlog.UserLog;
 import com.isxcode.star.modules.workflow.service.WorkflowBizService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import javax.servlet.http.HttpServletResponse;
@@ -37,12 +33,6 @@ public class WorkflowController {
   @Operation(summary = "创建作业流接口")
   @PostMapping("/addWorkflow")
   @SuccessResponse("创建成功")
-  @Parameter(
-      name = SecurityConstants.HEADER_TENANT_ID,
-      description = "租户id",
-      required = true,
-      in = ParameterIn.HEADER,
-      schema = @Schema(type = "string", example = "sy_tenantId"))
   public void addWorkflow(@Valid @RequestBody AddWorkflowReq addWorkflowReq) {
 
     workflowBizService.addWorkflow(addWorkflowReq);
@@ -51,12 +41,6 @@ public class WorkflowController {
   @Operation(summary = "更新作业流接口")
   @PostMapping("/updateWorkflow")
   @SuccessResponse("更新成功")
-  @Parameter(
-      name = SecurityConstants.HEADER_TENANT_ID,
-      description = "租户id",
-      required = true,
-      in = ParameterIn.HEADER,
-      schema = @Schema(type = "string", example = "sy_tenantId"))
   public void updateWorkflow(@Valid @RequestBody UpdateWorkflowReq updateWorkflowReq) {
 
     workflowBizService.updateWorkflow(updateWorkflowReq);
@@ -65,12 +49,6 @@ public class WorkflowController {
   @Operation(summary = "查询作业流接口")
   @PostMapping("/pageWorkflow")
   @SuccessResponse("查询成功")
-  @Parameter(
-      name = SecurityConstants.HEADER_TENANT_ID,
-      description = "租户id",
-      required = true,
-      in = ParameterIn.HEADER,
-      schema = @Schema(type = "string", example = "sy_tenantId"))
   public Page<PageWorkflowRes> pageWorkflow(@Valid @RequestBody PageWorkflowReq pageWorkflowReq) {
 
     return workflowBizService.pageWorkflow(pageWorkflowReq);
@@ -79,12 +57,6 @@ public class WorkflowController {
   @Operation(summary = "删除作业流接口")
   @PostMapping("/deleteWorkflow")
   @SuccessResponse("删除成功")
-  @Parameter(
-      name = SecurityConstants.HEADER_TENANT_ID,
-      description = "租户id",
-      required = true,
-      in = ParameterIn.HEADER,
-      schema = @Schema(type = "string", example = "sy_tenantId"))
   public void deleteWorkflow(@Valid @RequestBody DeleteWorkflowReq deleteWorkflowReq) {
 
     workflowBizService.deleteWorkflow(deleteWorkflowReq);
@@ -93,12 +65,6 @@ public class WorkflowController {
   @Operation(summary = "运行工作流接口")
   @GetMapping("/runWorkflow")
   @SuccessResponse("提交成功")
-  @Parameter(
-      name = SecurityConstants.HEADER_TENANT_ID,
-      description = "租户id",
-      required = true,
-      in = ParameterIn.HEADER,
-      schema = @Schema(type = "string", example = "sy_tenantId"))
   public String runWorkflow(@Valid @RequestBody RunWorkflowReq runWorkflowReq) {
 
     return workflowBizService.runWorkflow(runWorkflowReq);
@@ -107,12 +73,6 @@ public class WorkflowController {
   @Operation(summary = "查询作业流运行实例接口")
   @GetMapping("/queryRunWorkInstances")
   @SuccessResponse("查询成功")
-  @Parameter(
-      name = SecurityConstants.HEADER_TENANT_ID,
-      description = "租户id",
-      required = true,
-      in = ParameterIn.HEADER,
-      schema = @Schema(type = "string", example = "sy_tenantId"))
   public WofQueryRunWorkInstancesRes queryRunWorkInstances(
       @Schema(description = "作业流实例唯一id", example = "sy_ba1f12b5c8154f999a02a5be2373a438")
           @RequestParam
@@ -121,16 +81,9 @@ public class WorkflowController {
     return workflowBizService.queryRunWorkInstances(workflowInstanceId);
   }
 
-  @UserLog
   @Operation(summary = "获取作业流信息接口")
   @GetMapping("/getWorkflow")
   @SuccessResponse("获取成功")
-  @Parameter(
-      name = SecurityConstants.HEADER_TENANT_ID,
-      description = "租户id",
-      required = true,
-      in = ParameterIn.HEADER,
-      schema = @Schema(type = "string", example = "sy_tenantId"))
   public GetWorkflowRes getWorkflow(
       @Schema(description = "作业流唯一id", example = "sy_ba1f12b5c8154f999a02a5be2373a438")
           @RequestParam
@@ -141,12 +94,6 @@ public class WorkflowController {
 
   @Operation(summary = "作业流导出接口")
   @PostMapping("/exportWorks")
-  @Parameter(
-      name = SecurityConstants.HEADER_TENANT_ID,
-      description = "租户id",
-      required = true,
-      in = ParameterIn.HEADER,
-      schema = @Schema(type = "string", example = "sy_tenantId"))
   public void exportWorks(
       @RequestBody ExportWorkflowReq wofExportWorkflowReq, HttpServletResponse response) {
 
@@ -156,12 +103,6 @@ public class WorkflowController {
   @Operation(summary = "作业流导入接口(Swagger有Bug不能使用)")
   @PostMapping("/importWorks")
   @SuccessResponse("导入成功")
-  @Parameter(
-      name = SecurityConstants.HEADER_TENANT_ID,
-      description = "租户id",
-      required = true,
-      in = ParameterIn.HEADER,
-      schema = @Schema(type = "string", example = "sy_tenantId"))
   public void importWorks(
       @RequestParam("workFile") MultipartFile workFile,
       @Schema(description = "作业流唯一id", example = "sy_ba1f12b5c8154f999a02a5be2373a438")
@@ -174,12 +115,6 @@ public class WorkflowController {
   @Operation(summary = "中止工作流接口")
   @GetMapping("/abortFlow")
   @SuccessResponse("中止成功")
-  @Parameter(
-      name = SecurityConstants.HEADER_TENANT_ID,
-      description = "租户id",
-      required = true,
-      in = ParameterIn.HEADER,
-      schema = @Schema(type = "string", example = "sy_tenantId"))
   public void abortFlow(
       @Schema(description = "作业流实例唯一id", example = "sy_ba1f12b5c8154f999a02a5be2373a438")
           @RequestParam
@@ -191,12 +126,6 @@ public class WorkflowController {
   @Operation(summary = "中断工作流接口")
   @GetMapping("/breakFlow")
   @SuccessResponse("中断成功")
-  @Parameter(
-      name = SecurityConstants.HEADER_TENANT_ID,
-      description = "租户id",
-      required = true,
-      in = ParameterIn.HEADER,
-      schema = @Schema(type = "string", example = "sy_tenantId"))
   public void breakFlow(
       @Schema(description = "作业实例唯一id", example = "sy_ba1f12b5c8154f999a02a5be2373a438")
           @RequestParam
@@ -208,12 +137,6 @@ public class WorkflowController {
   @Operation(summary = "重跑工作流接口")
   @GetMapping("/reRunFlow")
   @SuccessResponse("重跑成功")
-  @Parameter(
-      name = SecurityConstants.HEADER_TENANT_ID,
-      description = "租户id",
-      required = true,
-      in = ParameterIn.HEADER,
-      schema = @Schema(type = "string", example = "sy_tenantId"))
   public void reRunFlow(
       @Schema(description = "作业流实例唯一id", example = "sy_ba1f12b5c8154f999a02a5be2373a438")
           @RequestParam
@@ -225,12 +148,6 @@ public class WorkflowController {
   @Operation(summary = "重跑当前节点接口")
   @GetMapping("/runCurrentNode")
   @SuccessResponse("重跑成功")
-  @Parameter(
-      name = SecurityConstants.HEADER_TENANT_ID,
-      description = "租户id",
-      required = true,
-      in = ParameterIn.HEADER,
-      schema = @Schema(type = "string", example = "sy_tenantId"))
   public void runCurrentNode(
       @Schema(description = "作业实例唯一id", example = "sy_ba1f12b5c8154f999a02a5be2373a438")
           @RequestParam
@@ -242,12 +159,6 @@ public class WorkflowController {
   @Operation(summary = "重跑下游接口")
   @GetMapping("/runAfterFlow")
   @SuccessResponse("重跑成功")
-  @Parameter(
-      name = SecurityConstants.HEADER_TENANT_ID,
-      description = "租户id",
-      required = true,
-      in = ParameterIn.HEADER,
-      schema = @Schema(type = "string", example = "sy_tenantId"))
   public void runAfterFlow(
       @Schema(description = "作业实例唯一id", example = "sy_ba1f12b5c8154f999a02a5be2373a438")
           @RequestParam
