@@ -31,7 +31,7 @@ interface TenantIdParam {
 export function GetTenantList(params: SerchParams): Promise<any> {
   return http.request({
     method: 'post',
-    url: '/tet/queryTenant',
+    url: '/tenant/queryTenant',
     params: params
   })
 }
@@ -40,7 +40,7 @@ export function GetTenantList(params: SerchParams): Promise<any> {
 export function AddTenantData(params: TenantParam): Promise<any> {
   return http.request({
     method: 'post',
-    url: '/tet/addTenant',
+    url: '/tenant/addTenant',
     params: params
   })
 }
@@ -49,7 +49,7 @@ export function AddTenantData(params: TenantParam): Promise<any> {
 export function UpdateTenantData(params: TenantParam): Promise<any> {
   return http.request({
     method: 'post',
-    url: '/tet/updateTenantBySystemAdmin',
+    url: '/tenant/updateTenantBySystemAdmin',
     params: params
   })
 }
@@ -58,7 +58,7 @@ export function UpdateTenantData(params: TenantParam): Promise<any> {
 export function CheckTenantData(params: TenantIdParam): Promise<any> {
   return http.request({
     method: 'get',
-    url: '/tet/checkTenant',
+    url: '/tenant/checkTenant',
     params: params
   })
 }
@@ -67,7 +67,7 @@ export function CheckTenantData(params: TenantIdParam): Promise<any> {
 export function DisableTenantData(params: TenantIdParam): Promise<any> {
   return http.request({
     method: 'get',
-    url: '/tet/disableTenant',
+    url: '/tenant/disableTenant',
     params: params
   })
 }
@@ -76,7 +76,7 @@ export function DisableTenantData(params: TenantIdParam): Promise<any> {
 export function EnableTenantData(params: TenantIdParam): Promise<any> {
   return http.request({
     method: 'get',
-    url: '/tet/enableTenant',
+    url: '/tenant/enableTenant',
     params: params
   })
 }
@@ -85,7 +85,7 @@ export function EnableTenantData(params: TenantIdParam): Promise<any> {
 export function DeleteTenantData(params: TenantIdParam): Promise<any> {
   return http.request({
     method: 'get',
-    url: '/tet/deleteTenant',
+    url: '/tenant/deleteTenant',
     params: params
   })
 }

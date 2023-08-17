@@ -22,7 +22,7 @@ export function LoginUserInfo(params: LoginParam): Promise<any> {
 export function QueryTenantList(): Promise<any> {
   return http.request({
     method: 'get',
-    url: '/tet/queryUserTenant'
+    url: '/tenant/queryUserTenant'
   })
 }
 
@@ -30,7 +30,7 @@ export function QueryTenantList(): Promise<any> {
 export function ChangeTenantData(params: TenantParams): Promise<any> {
   return http.request({
     method: 'get',
-    url: '/tet/chooseTenant',
+    url: '/tenant/chooseTenant',
     params: params
   })
 }

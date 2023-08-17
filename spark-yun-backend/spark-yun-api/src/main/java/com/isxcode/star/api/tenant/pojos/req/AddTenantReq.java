@@ -5,7 +5,7 @@ import javax.validation.constraints.NotEmpty;
 import lombok.Data;
 
 @Data
-public class TetAddTenantReq {
+public class AddTenantReq {
 
   @Schema(title = "租户名称", example = "中国大数据租户")
   @NotEmpty(message = "租户名称不能为空")
