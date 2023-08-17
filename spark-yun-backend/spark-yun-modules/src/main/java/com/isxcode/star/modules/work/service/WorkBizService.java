@@ -154,7 +154,8 @@ public class WorkBizService {
     WorkflowConfigEntity workflowConfig =
         workflowConfigRepository.findById(workflow.getConfigId()).get();
     if (workflowConfig.getNodeList() != null) {
-      if (JSONArray.parseObject(workflowConfig.getNodeList(), String.class).contains(deleteWorkReq.getWorkId())) {
+      if (JSONArray.parseObject(workflowConfig.getNodeList(), String.class)
+          .contains(deleteWorkReq.getWorkId())) {
         throw new IsxAppException("作业在DAG图中无法删除");
       }
     }
