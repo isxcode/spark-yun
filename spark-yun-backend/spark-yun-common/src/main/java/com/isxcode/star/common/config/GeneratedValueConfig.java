@@ -1,4 +1,4 @@
-package com.isxcode.star.config;
+package com.isxcode.star.common.config;
 
 import java.io.Serializable;
 import java.util.UUID;

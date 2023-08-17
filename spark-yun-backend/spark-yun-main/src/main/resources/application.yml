@@ -33,7 +33,7 @@ spring:
     hibernate:
       ddl-auto: none
       naming:
-        physical-strategy: com.isxcode.star.config.JpaTableUpperCaseStrategy
+        physical-strategy: com.isxcode.star.common.config.JpaTableUpperCaseStrategy
     properties:
       hibernate:
         session_factory:
