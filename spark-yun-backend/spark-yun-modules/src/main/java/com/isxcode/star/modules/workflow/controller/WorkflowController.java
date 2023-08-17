@@ -45,7 +45,7 @@ public class WorkflowController {
       description = "租户id",
       required = true,
       in = ParameterIn.HEADER,
-      schema = @Schema(type = "string"))
+      schema = @Schema(type = "string", example = "sy_tenantId"))
   public void addWorkflow(@Valid @RequestBody WofAddWorkflowReq wofAddWorkflowReq) {
 
     workflowBizService.addWorkflow(wofAddWorkflowReq);

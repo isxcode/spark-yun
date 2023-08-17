@@ -3,9 +3,13 @@ package com.isxcode.star.modules.cluster.controller;
 import com.isxcode.star.api.cluster.pojos.req.*;
 import com.isxcode.star.api.cluster.pojos.res.EnoQueryNodeRes;
 import com.isxcode.star.api.main.constants.ModuleCode;
+import com.isxcode.star.backend.api.base.constants.SecurityConstants;
 import com.isxcode.star.common.annotations.successResponse.SuccessResponse;
 import com.isxcode.star.modules.cluster.service.ClusterNodeBizService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +30,12 @@ public class ClusterNodeController {
   @Operation(summary = "添加引擎节点接口")
   @PostMapping("/addClusterNode")
   @SuccessResponse("添加成功")
+  @Parameter(
+      name = SecurityConstants.HEADER_TENANT_ID,
+      description = "租户id",
+      required = true,
+      in = ParameterIn.HEADER,
+      schema = @Schema(type = "string", example = "sy_tenantId"))
   public void addClusterNode(@Valid @RequestBody AddClusterNodeReq addClusterNodeReq) {
 
     clusterNodeBizService.addClusterNode(addClusterNodeReq);
@@ -34,6 +44,12 @@ public class ClusterNodeController {
   @Operation(summary = "更新引擎节点接口")
   @PostMapping("/updateClusterNode")
   @SuccessResponse("更新成功")
+  @Parameter(
+      name = SecurityConstants.HEADER_TENANT_ID,
+      description = "租户id",
+      required = true,
+      in = ParameterIn.HEADER,
+      schema = @Schema(type = "string", example = "sy_tenantId"))
   public void updateClusterNode(@Valid @RequestBody UpdateClusterNodeReq updateClusterNodeReq) {
 
     clusterNodeBizService.updateClusterNode(updateClusterNodeReq);
@@ -42,6 +58,12 @@ public class ClusterNodeController {
   @Operation(summary = "查询节点列表接口")
   @PostMapping("/pageClusterNode")
   @SuccessResponse("查询节点列表成功")
+  @Parameter(
+      name = SecurityConstants.HEADER_TENANT_ID,
+      description = "租户id",
+      required = true,
+      in = ParameterIn.HEADER,
+      schema = @Schema(type = "string", example = "sy_tenantId"))
   public Page<EnoQueryNodeRes> pageClusterNode(
       @Valid @RequestBody PageClusterNodeReq pageClusterNodeReq) {
 
@@ -51,6 +73,12 @@ public class ClusterNodeController {
   @Operation(summary = "删除节点接口")
   @PostMapping("/deleteClusterNode")
   @SuccessResponse("删除成功")
+  @Parameter(
+      name = SecurityConstants.HEADER_TENANT_ID,
+      description = "租户id",
+      required = true,
+      in = ParameterIn.HEADER,
+      schema = @Schema(type = "string", example = "sy_tenantId"))
   public void deleteClusterNode(@Valid @RequestBody DeleteClusterNodeReq deleteClusterNodeReq) {
 
     clusterNodeBizService.deleteClusterNode(deleteClusterNodeReq);
@@ -59,6 +87,12 @@ public class ClusterNodeController {
   @Operation(summary = "检测节点接口")
   @PostMapping("/checkAgent")
   @SuccessResponse("开始检测")
+  @Parameter(
+      name = SecurityConstants.HEADER_TENANT_ID,
+      description = "租户id",
+      required = true,
+      in = ParameterIn.HEADER,
+      schema = @Schema(type = "string", example = "sy_tenantId"))
   public void checkAgent(@Valid @RequestBody CheckAgentReq checkAgentReq) {
 
     clusterNodeBizService.checkAgent(checkAgentReq);
@@ -67,6 +101,12 @@ public class ClusterNodeController {
   @Operation(summary = "安装节点接口")
   @PostMapping("/installAgent")
   @SuccessResponse("激活中")
+  @Parameter(
+      name = SecurityConstants.HEADER_TENANT_ID,
+      description = "租户id",
+      required = true,
+      in = ParameterIn.HEADER,
+      schema = @Schema(type = "string", example = "sy_tenantId"))
   public void installAgent(@Valid @RequestBody InstallAgentReq installAgentReq) {
 
     clusterNodeBizService.installAgent(installAgentReq);
@@ -75,6 +115,12 @@ public class ClusterNodeController {
   @Operation(summary = "停止节点接口")
   @PostMapping("/stopAgent")
   @SuccessResponse("停止中")
+  @Parameter(
+      name = SecurityConstants.HEADER_TENANT_ID,
+      description = "租户id",
+      required = true,
+      in = ParameterIn.HEADER,
+      schema = @Schema(type = "string", example = "sy_tenantId"))
   public void stopAgent(@Valid @RequestBody StopAgentReq stopAgentReq) {
 
     clusterNodeBizService.stopAgent(stopAgentReq);
@@ -83,6 +129,12 @@ public class ClusterNodeController {
   @Operation(summary = "激活节点接口")
   @PostMapping("/startAgent")
   @SuccessResponse("激活中")
+  @Parameter(
+      name = SecurityConstants.HEADER_TENANT_ID,
+      description = "租户id",
+      required = true,
+      in = ParameterIn.HEADER,
+      schema = @Schema(type = "string", example = "sy_tenantId"))
   public void startAgent(@Valid @RequestBody StartAgentReq startAgentReq) {
 
     clusterNodeBizService.startAgent(startAgentReq);
@@ -91,6 +143,12 @@ public class ClusterNodeController {
   @Operation(summary = "卸载代理接口")
   @PostMapping("/removeAgent")
   @SuccessResponse("卸载中")
+  @Parameter(
+      name = SecurityConstants.HEADER_TENANT_ID,
+      description = "租户id",
+      required = true,
+      in = ParameterIn.HEADER,
+      schema = @Schema(type = "string", example = "sy_tenantId"))
   public void removeAgent(@Valid @RequestBody RemoveAgentReq removeAgentReq) {
 
     clusterNodeBizService.removeAgent(removeAgentReq);
