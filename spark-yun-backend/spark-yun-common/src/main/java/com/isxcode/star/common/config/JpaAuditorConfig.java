@@ -1,4 +1,4 @@
-package com.isxcode.star.config;
+package com.isxcode.star.common.config;
 
 import static com.isxcode.star.common.config.CommonConfig.USER_ID;
 
