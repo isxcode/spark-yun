@@ -32,17 +32,11 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
 public class WebSecurityConfig {
 
-  private final IsxAppProperties sparkYunProperties;
+  private final IsxAppProperties isxAppProperties;
 
   private final UserRepository userRepository;
 
   private final TenantUserRepository tenantUserRepository;
-
-  public static final ThreadLocal<String> TENANT_ID = new ThreadLocal<>();
-
-  public static final ThreadLocal<String> USER_ID = new ThreadLocal<>();
-
-  public static final ThreadLocal<Boolean> JPA_TENANT_MODE = new ThreadLocal<>();
 
   public UserDetailsService userDetailsServiceBean() {
 
@@ -75,22 +69,22 @@ public class WebSecurityConfig {
 
     // 访问h2,swagger，druid界面需要的权限
     http.authorizeRequests()
-        .antMatchers(sparkYunProperties.getAdminUrl().toArray(new String[0]))
+        .antMatchers(isxAppProperties.getAdminUrl().toArray(new String[0]))
         .hasRole("ADMIN");
 
     // 任何人都可以访问的权限
     http.authorizeRequests()
-        .antMatchers(sparkYunProperties.getAnonymousUrl().toArray(new String[0]))
+        .antMatchers(isxAppProperties.getAnonymousUrl().toArray(new String[0]))
         .permitAll();
 
     // 需要token才可以访问的地址
     List<String> excludePaths = new ArrayList<>();
-    excludePaths.addAll(sparkYunProperties.getAdminUrl());
-    excludePaths.addAll(sparkYunProperties.getAnonymousUrl());
+    excludePaths.addAll(isxAppProperties.getAdminUrl());
+    excludePaths.addAll(isxAppProperties.getAnonymousUrl());
 
     // token
     http.addFilterBefore(
-        new JwtAuthenticationFilter(authenticationManagerBean(), excludePaths, sparkYunProperties),
+        new JwtAuthenticationFilter(authenticationManagerBean(), excludePaths, isxAppProperties),
         UsernamePasswordAuthenticationFilter.class);
     http.authorizeRequests().antMatchers("/**").authenticated();
 

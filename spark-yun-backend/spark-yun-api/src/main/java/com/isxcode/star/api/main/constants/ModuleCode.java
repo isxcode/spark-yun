@@ -4,7 +4,7 @@ package com.isxcode.star.api.main.constants;
 public interface ModuleCode {
 
   /** 用户模块 USER. */
-  String USER = "/usr";
+  String USER = "user";
 
   /** 计算集群模块. */
   String CLUSTER = "cluster";

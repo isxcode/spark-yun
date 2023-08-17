@@ -1,7 +1,7 @@
 package com.isxcode.star.modules.tenant.service;
 
-import static com.isxcode.star.security.main.WebSecurityConfig.TENANT_ID;
-import static com.isxcode.star.security.main.WebSecurityConfig.USER_ID;
+import static com.isxcode.star.common.config.CommonConfig.TENANT_ID;
+import static com.isxcode.star.common.config.CommonConfig.USER_ID;
 
 import com.isxcode.star.api.tenant.pojos.req.*;
 import com.isxcode.star.api.tenant.pojos.res.PageTenantUserRes;

@@ -1,7 +1,7 @@
 package com.isxcode.star.security.main;
 
-import static com.isxcode.star.security.main.WebSecurityConfig.JPA_TENANT_MODE;
-import static com.isxcode.star.security.main.WebSecurityConfig.TENANT_ID;
+import static com.isxcode.star.common.config.CommonConfig.JPA_TENANT_MODE;
+import static com.isxcode.star.common.config.CommonConfig.TENANT_ID;
 
 import com.isxcode.star.api.user.constants.RoleType;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;

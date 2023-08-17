@@ -1,9 +1,9 @@
 package com.isxcode.star.modules.cluster.run;
 
+import static com.isxcode.star.common.config.CommonConfig.TENANT_ID;
+import static com.isxcode.star.common.config.CommonConfig.USER_ID;
 import static com.isxcode.star.common.utils.ssh.SshUtils.executeCommand;
 import static com.isxcode.star.common.utils.ssh.SshUtils.scpFile;
-import static com.isxcode.star.security.main.WebSecurityConfig.TENANT_ID;
-import static com.isxcode.star.security.main.WebSecurityConfig.USER_ID;
 
 import com.alibaba.fastjson.JSON;
 import com.isxcode.star.api.api.constants.PathConstants;

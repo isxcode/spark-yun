@@ -1,6 +1,6 @@
 package com.isxcode.star.modules.workflow.service;
 
-import static com.isxcode.star.security.main.WebSecurityConfig.USER_ID;
+import static com.isxcode.star.common.config.CommonConfig.USER_ID;
 
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.star.modules.workflow.entity.WorkflowFavourEntity;

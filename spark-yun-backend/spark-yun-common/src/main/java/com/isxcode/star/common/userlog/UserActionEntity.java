@@ -1,4 +1,4 @@
-package com.isxcode.star.modules.userlog;
+package com.isxcode.star.common.userlog;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.time.LocalDateTime;

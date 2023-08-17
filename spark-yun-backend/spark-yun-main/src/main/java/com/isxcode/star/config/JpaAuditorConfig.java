@@ -1,6 +1,6 @@
 package com.isxcode.star.config;
 
-import static com.isxcode.star.security.main.WebSecurityConfig.USER_ID;
+import static com.isxcode.star.common.config.CommonConfig.USER_ID;
 
 import java.util.Optional;
 import org.springframework.data.domain.AuditorAware;
