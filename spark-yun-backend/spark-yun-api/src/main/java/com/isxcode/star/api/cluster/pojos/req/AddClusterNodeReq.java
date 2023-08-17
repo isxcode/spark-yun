@@ -5,7 +5,7 @@ import javax.validation.constraints.NotEmpty;
 import lombok.Data;
 
 @Data
-public class EnoAddNodeReq {
+public class AddClusterNodeReq {
 
   @Schema(title = "计算引擎唯一id", example = "sy_fd34e4a53db640f5943a4352c4d549b9")
   @NotEmpty(message = "引擎id不能为空")

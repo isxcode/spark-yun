@@ -6,9 +6,7 @@ import static com.isxcode.star.security.main.WebSecurityConfig.USER_ID;
 import com.isxcode.star.api.cluster.constants.ClusterNodeStatus;
 import com.isxcode.star.api.cluster.constants.ClusterStatus;
 import com.isxcode.star.api.cluster.pojos.dto.ScpFileEngineNodeDto;
-import com.isxcode.star.api.cluster.pojos.req.EnoAddNodeReq;
-import com.isxcode.star.api.cluster.pojos.req.EnoQueryNodeReq;
-import com.isxcode.star.api.cluster.pojos.req.EnoUpdateNodeReq;
+import com.isxcode.star.api.cluster.pojos.req.*;
 import com.isxcode.star.api.cluster.pojos.res.EnoQueryNodeRes;
 import com.isxcode.star.api.main.properties.SparkYunProperties;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
@@ -61,7 +59,7 @@ public class ClusterNodeBizService {
 
   private final AesUtils aesUtils;
 
-  public void addNode(EnoAddNodeReq enoAddNodeReq) {
+  public void addClusterNode(AddClusterNodeReq enoAddNodeReq) {
 
     // 检查计算引擎是否存在
     Optional<ClusterEntity> calculateEngineEntityOptional =
@@ -103,7 +101,7 @@ public class ClusterNodeBizService {
     engineNodeRepository.save(node);
   }
 
-  public void updateNode(EnoUpdateNodeReq enoUpdateNodeReq) {
+  public void updateClusterNode(UpdateClusterNodeReq enoUpdateNodeReq) {
 
     // 检查计算引擎是否存在
     Optional<ClusterEntity> calculateEngineEntityOptional =
@@ -178,7 +176,7 @@ public class ClusterNodeBizService {
     }
   }
 
-  public Page<EnoQueryNodeRes> queryNodes(EnoQueryNodeReq enoQueryNodeReq) {
+  public Page<EnoQueryNodeRes> pageClusterNode(PageClusterNodeReq enoQueryNodeReq) {
 
     Page<ClusterNodeEntity> engineNodeEntities =
         engineNodeRepository.searchAll(
@@ -189,9 +187,9 @@ public class ClusterNodeBizService {
     return engineNodeMapper.datasourceEntityPageToQueryDatasourceResPage(engineNodeEntities);
   }
 
-  public void delNode(String nodeId) {
+  public void deleteClusterNode(DeleteClusterNodeReq deleteClusterNodeReq) {
 
-    Optional<ClusterNodeEntity> engineNodeEntityOptional = engineNodeRepository.findById(nodeId);
+    Optional<ClusterNodeEntity> engineNodeEntityOptional = engineNodeRepository.findById(deleteClusterNodeReq.getEngineNodeId());
     if (!engineNodeEntityOptional.isPresent()) {
       throw new IsxAppException("节点已删除");
     }
@@ -201,7 +199,7 @@ public class ClusterNodeBizService {
       throw new IsxAppException("请卸载节点后删除");
     }
 
-    engineNodeRepository.deleteById(nodeId);
+    engineNodeRepository.deleteById(deleteClusterNodeReq.getEngineNodeId());
   }
 
   public ClusterNodeEntity getEngineNode(String engineNodeId) {
@@ -216,10 +214,10 @@ public class ClusterNodeBizService {
     return engineNodeEntityOptional.get();
   }
 
-  public void checkAgent(String engineNodeId) {
+  public void checkAgent(CheckAgentReq checkAgentReq) {
 
     // 获取节点信息
-    ClusterNodeEntity engineNode = getEngineNode(engineNodeId);
+    ClusterNodeEntity engineNode = getEngineNode(checkAgentReq.getEngineNodeId());
 
     // 如果是安装中等状态，需要等待运行结束
     if (ClusterNodeStatus.CHECKING.equals(engineNode.getStatus())
@@ -241,14 +239,14 @@ public class ClusterNodeBizService {
     engineNodeRepository.saveAndFlush(engineNode);
 
     // 异步调用
-    runAgentCheckService.run(engineNodeId, scpFileEngineNodeDto, TENANT_ID.get(), USER_ID.get());
+    runAgentCheckService.run(checkAgentReq.getEngineNodeId(), scpFileEngineNodeDto, TENANT_ID.get(), USER_ID.get());
   }
 
   /** 安装节点. */
-  public void installAgent(String engineNodeId) {
+  public void installAgent(InstallAgentReq installAgentReq) {
 
     // 获取节点信息
-    ClusterNodeEntity engineNode = getEngineNode(engineNodeId);
+    ClusterNodeEntity engineNode = getEngineNode(installAgentReq.getEngineNodeId());
 
     // 查询集群信息
     Optional<ClusterEntity> clusterEntityOptional =
@@ -278,17 +276,17 @@ public class ClusterNodeBizService {
 
     // 异步调用
     runAgentInstallService.run(
-        engineNodeId,
+        installAgentReq.getEngineNodeId(),
         clusterEntityOptional.get().getClusterType(),
         scpFileEngineNodeDto,
         TENANT_ID.get(),
         USER_ID.get());
   }
 
-  public void removeAgent(String engineNodeId) {
+  public void removeAgent(RemoveAgentReq removeAgentReq) {
 
     // 获取节点信息
-    ClusterNodeEntity engineNode = getEngineNode(engineNodeId);
+    ClusterNodeEntity engineNode = getEngineNode(removeAgentReq.getEngineNodeId());
 
     // 如果是安装中等状态，需要等待运行结束
     if (ClusterNodeStatus.CHECKING.equals(engineNode.getStatus())
@@ -310,14 +308,14 @@ public class ClusterNodeBizService {
     engineNodeRepository.saveAndFlush(engineNode);
 
     // 异步调用
-    runAgentRemoveService.run(engineNodeId, scpFileEngineNodeDto, TENANT_ID.get(), USER_ID.get());
+    runAgentRemoveService.run(removeAgentReq.getEngineNodeId(), scpFileEngineNodeDto, TENANT_ID.get(), USER_ID.get());
   }
 
   /** 停止节点. */
-  public void stopAgent(String engineNodeId) {
+  public void stopAgent(StopAgentReq stopAgentReq) {
 
     // 获取节点信息
-    ClusterNodeEntity engineNode = getEngineNode(engineNodeId);
+    ClusterNodeEntity engineNode = getEngineNode(stopAgentReq.getEngineNodeId());
 
     // 如果是安装中等状态，需要等待运行结束
     if (ClusterNodeStatus.CHECKING.equals(engineNode.getStatus())
@@ -339,14 +337,14 @@ public class ClusterNodeBizService {
     engineNodeRepository.saveAndFlush(engineNode);
 
     // 异步调用
-    runAgentStopService.run(engineNodeId, scpFileEngineNodeDto, TENANT_ID.get(), USER_ID.get());
+    runAgentStopService.run(stopAgentReq.getEngineNodeId(), scpFileEngineNodeDto, TENANT_ID.get(), USER_ID.get());
   }
 
   /** 激活中. */
-  public void startAgent(String engineNodeId) {
+  public void startAgent(StartAgentReq startAgentReq) {
 
     // 获取节点信息
-    ClusterNodeEntity engineNode = getEngineNode(engineNodeId);
+    ClusterNodeEntity engineNode = getEngineNode(startAgentReq.getEngineNodeId());
 
     // 如果是安装中等状态，需要等待运行结束
     if (ClusterNodeStatus.CHECKING.equals(engineNode.getStatus())
@@ -368,6 +366,6 @@ public class ClusterNodeBizService {
     engineNodeRepository.saveAndFlush(engineNode);
 
     // 异步调用
-    runAgentStartService.run(engineNodeId, scpFileEngineNodeDto, TENANT_ID.get(), USER_ID.get());
+    runAgentStartService.run(startAgentReq.getEngineNodeId(), scpFileEngineNodeDto, TENANT_ID.get(), USER_ID.get());
   }
 }

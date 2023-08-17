@@ -6,11 +6,11 @@ public interface ModuleCode {
   /** 用户模块 USER. */
   String USER = "/usr";
 
-  /** 计算集群模块. cluster */
+  /** 计算集群模块.*/
   String CLUSTER = "cluster";
 
   /** 集群节点模块. */
-  String CLUSTER_NODE = "/eno";
+  String CLUSTER_NODE = "/cluster_node";
 
   /** 数据源模块. */
   String DATASOURCE = "/das";
