@@ -36,7 +36,7 @@ public interface ClusterNodeMapper {
   @Mapping(target = "agentPort", source = "clusterNodeEntity.agentPort")
   @Mapping(target = "hadoopHomePath", source = "clusterNodeEntity.hadoopHomePath")
   ClusterNodeEntity updateNodeReqToNodeEntity(
-          UpdateClusterNodeReq enoUpdateNodeReq, ClusterNodeEntity clusterNodeEntity);
+      UpdateClusterNodeReq enoUpdateNodeReq, ClusterNodeEntity clusterNodeEntity);
 
   @Mapping(
       target = "memory",

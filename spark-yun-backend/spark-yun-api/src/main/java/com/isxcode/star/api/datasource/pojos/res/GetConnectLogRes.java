@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class DasGetConnectLogRes {
+public class GetConnectLogRes {
 
   private String connectLog;
 }

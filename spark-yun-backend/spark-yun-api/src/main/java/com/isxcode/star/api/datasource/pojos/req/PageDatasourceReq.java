@@ -6,4 +6,4 @@ import lombok.EqualsAndHashCode;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class DasQueryDatasourceReq extends BasePageRequest {}
+public class PageDatasourceReq extends BasePageRequest {}
