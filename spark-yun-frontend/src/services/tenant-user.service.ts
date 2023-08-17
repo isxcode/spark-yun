@@ -36,7 +36,7 @@ export function GetUserList(params: SerchParams): Promise<any> {
 export function GetUserInfoList(params: SerchParams): Promise<any> {
   return http.request({
     method: 'post',
-    url: '/usr/queryAllEnableUsers',
+    url: '/user/queryAllEnableUsers',
     params: params
   })
 }

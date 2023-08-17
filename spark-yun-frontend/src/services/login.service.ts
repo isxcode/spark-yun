@@ -13,7 +13,7 @@ interface TenantParams {
 export function LoginUserInfo(params: LoginParam): Promise<any> {
   return http.request({
     method: 'post',
-    url: '/usr/open/login',
+    url: '/user/open/login',
     params: params
   })
 }

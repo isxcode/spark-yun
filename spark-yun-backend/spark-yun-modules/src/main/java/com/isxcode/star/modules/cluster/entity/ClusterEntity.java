@@ -1,6 +1,6 @@
 package com.isxcode.star.modules.cluster.entity;
 
-import static com.isxcode.star.security.main.WebSecurityConfig.TENANT_ID;
+import static com.isxcode.star.common.config.CommonConfig.TENANT_ID;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.time.LocalDateTime;

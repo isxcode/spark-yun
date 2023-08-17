@@ -1,7 +1,7 @@
 package com.isxcode.star.config;
 
-import static com.isxcode.star.security.main.WebSecurityConfig.JPA_TENANT_MODE;
-import static com.isxcode.star.security.main.WebSecurityConfig.TENANT_ID;
+import static com.isxcode.star.common.config.CommonConfig.JPA_TENANT_MODE;
+import static com.isxcode.star.common.config.CommonConfig.TENANT_ID;
 
 import org.apache.logging.log4j.util.Strings;
 import org.hibernate.resource.jdbc.spi.StatementInspector;

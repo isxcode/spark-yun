@@ -32,7 +32,7 @@ interface User {
 export function GetUserCenterList(params: SerchParams): Promise<any> {
   return http.request({
     method: 'post',
-    url: '/usr/queryAllUsers',
+    url: '/user/queryAllUsers',
     params: params
   })
 }
@@ -41,7 +41,7 @@ export function GetUserCenterList(params: SerchParams): Promise<any> {
 export function DisableUser(params: UserParam): Promise<any> {
   return http.request({
     method: 'get',
-    url: '/usr/disableUser',
+    url: '/user/disableUser',
     params: params
   })
 }
@@ -50,7 +50,7 @@ export function DisableUser(params: UserParam): Promise<any> {
 export function EnableUser(params: UserParam): Promise<any> {
   return http.request({
     method: 'get',
-    url: '/usr/enableUser',
+    url: '/user/enableUser',
     params: params
   })
 }
@@ -59,7 +59,7 @@ export function EnableUser(params: UserParam): Promise<any> {
 export function AddUserData(params: User): Promise<any> {
   return http.request({
     method: 'post',
-    url: '/usr/addUser',
+    url: '/user/addUser',
     params: params
   })
 }
@@ -68,7 +68,7 @@ export function AddUserData(params: User): Promise<any> {
 export function UpdateUserData(params: User): Promise<any> {
   return http.request({
     method: 'post',
-    url: '/usr/updateUser',
+    url: '/user/updateUser',
     params: params
   })
 }
@@ -77,7 +77,7 @@ export function UpdateUserData(params: User): Promise<any> {
 export function DeleteUser(params: UserParam): Promise<any> {
   return http.request({
     method: 'get',
-    url: '/usr/deleteUser',
+    url: '/user/deleteUser',
     params: params
   })
 }

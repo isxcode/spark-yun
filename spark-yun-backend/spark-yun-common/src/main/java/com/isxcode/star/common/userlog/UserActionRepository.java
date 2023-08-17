@@ -1,4 +1,4 @@
-package com.isxcode.star.modules.userlog;
+package com.isxcode.star.common.userlog;
 
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.data.jpa.repository.JpaRepository;

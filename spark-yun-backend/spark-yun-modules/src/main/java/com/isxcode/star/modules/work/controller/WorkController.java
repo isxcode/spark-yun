@@ -5,7 +5,7 @@ import com.isxcode.star.api.work.pojos.req.*;
 import com.isxcode.star.api.work.pojos.res.*;
 import com.isxcode.star.backend.api.base.constants.SecurityConstants;
 import com.isxcode.star.common.annotations.successResponse.SuccessResponse;
-import com.isxcode.star.modules.userlog.UserLog;
+import com.isxcode.star.common.userlog.UserLog;
 import com.isxcode.star.modules.work.service.WorkBizService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

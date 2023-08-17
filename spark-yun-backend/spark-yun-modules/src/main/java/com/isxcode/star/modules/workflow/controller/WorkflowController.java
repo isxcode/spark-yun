@@ -10,7 +10,7 @@ import com.isxcode.star.api.workflow.pojos.res.WofQueryRunWorkInstancesRes;
 import com.isxcode.star.api.workflow.pojos.res.WofQueryWorkflowRes;
 import com.isxcode.star.backend.api.base.constants.SecurityConstants;
 import com.isxcode.star.common.annotations.successResponse.SuccessResponse;
-import com.isxcode.star.modules.userlog.UserLog;
+import com.isxcode.star.common.userlog.UserLog;
 import com.isxcode.star.modules.workflow.service.WorkflowBizService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
