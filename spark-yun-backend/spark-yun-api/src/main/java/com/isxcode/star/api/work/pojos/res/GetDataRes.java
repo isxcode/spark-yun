@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class WokGetDataRes {
+public class GetDataRes {
 
   private List<List<String>> data;
 }

@@ -4,7 +4,7 @@ import javax.validation.constraints.NotEmpty;
 import lombok.Data;
 
 @Data
-public class WokRenameWorkReq {
+public class CopyWorkReq {
 
   @NotEmpty(message = "作业id不能为空")
   private String workId;

@@ -30,7 +30,7 @@ export function GetScheduleList(params: SerchParams): Promise<any> {
 export function GetLogData(params: LogParam): Promise<any> {
   return http.request({
     method: 'get',
-    url: '/wok/getSubmitLog',
+    url: '/work/getSubmitLog',
     params: params
   })
 }
@@ -39,7 +39,7 @@ export function GetLogData(params: LogParam): Promise<any> {
 export function GetYarnLogData(params: LogParam): Promise<any> {
   return http.request({
     method: 'get',
-    url: '/wok/getYarnLog',
+    url: '/work/getYarnLog',
     params: params
   })
 }
@@ -57,7 +57,7 @@ export function ReStartRunning(params: LogParam): Promise<any> {
 export function GetResultData(params: LogParam): Promise<any> {
   return http.request({
     method: 'get',
-    url: '/wok/getData',
+    url: '/work/getData',
     params: params
   })
 }

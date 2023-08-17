@@ -5,7 +5,7 @@ import javax.validation.constraints.NotEmpty;
 import lombok.Data;
 
 @Data
-public class WocConfigWorkReq {
+public class ConfigWorkReq {
 
   @Schema(title = "作业唯一id", example = "sy_4f07ab7b1fe54dab9be884e410c53af4")
   @NotEmpty(message = "workId不能为空")

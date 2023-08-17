@@ -1,12 +1,12 @@
 package com.isxcode.star.modules.work.mapper;
 
 import com.isxcode.star.api.agent.pojos.res.YagGetStatusRes;
-import com.isxcode.star.api.work.pojos.req.WocConfigWorkReq;
-import com.isxcode.star.api.work.pojos.req.WokAddWorkReq;
-import com.isxcode.star.api.work.pojos.req.WokUpdateWorkReq;
-import com.isxcode.star.api.work.pojos.res.WokGetWorkRes;
-import com.isxcode.star.api.work.pojos.res.WokQueryWorkRes;
-import com.isxcode.star.api.work.pojos.res.WokRunWorkRes;
+import com.isxcode.star.api.work.pojos.req.AddWorkReq;
+import com.isxcode.star.api.work.pojos.req.ConfigWorkReq;
+import com.isxcode.star.api.work.pojos.req.UpdateWorkReq;
+import com.isxcode.star.api.work.pojos.res.GetWorkRes;
+import com.isxcode.star.api.work.pojos.res.PageWorkRes;
+import com.isxcode.star.api.work.pojos.res.RunWorkRes;
 import com.isxcode.star.modules.work.entity.WorkConfigEntity;
 import com.isxcode.star.modules.work.entity.WorkEntity;
 import java.util.List;
@@ -19,23 +19,23 @@ import org.springframework.data.domain.PageImpl;
 @Mapper(componentModel = "spring")
 public interface WorkMapper {
 
-  WorkEntity addWorkReqToWorkEntity(WokAddWorkReq addWorkReq);
+  WorkEntity addWorkReqToWorkEntity(AddWorkReq addWorkReq);
 
   @Mapping(source = "wokUpdateWorkReq.remark", target = "remark")
   @Mapping(source = "wokUpdateWorkReq.name", target = "name")
   @Mapping(source = "workEntity.id", target = "id")
   @Mapping(source = "workEntity.workType", target = "workType")
-  WorkEntity updateWorkReqToWorkEntity(WokUpdateWorkReq wokUpdateWorkReq, WorkEntity workEntity);
+  WorkEntity updateWorkReqToWorkEntity(UpdateWorkReq wokUpdateWorkReq, WorkEntity workEntity);
 
-  WorkConfigEntity configWorkReqToWorkConfigEntity(WocConfigWorkReq configWorkReq);
+  WorkConfigEntity configWorkReqToWorkConfigEntity(ConfigWorkReq configWorkReq);
 
   @Mapping(target = "createDateTime", dateFormat = "yyyy-MM-dd HH:mm:ss")
-  WokQueryWorkRes workEntityToQueryWorkRes(WorkEntity workEntity);
+  PageWorkRes workEntityToQueryWorkRes(WorkEntity workEntity);
 
-  List<WokQueryWorkRes> workEntityListToQueryWorkResList(List<WorkEntity> workEntities);
+  List<PageWorkRes> workEntityListToQueryWorkResList(List<WorkEntity> workEntities);
 
-  default Page<WokQueryWorkRes> workEntityListToQueryWorkResList(Page<WorkEntity> workEntities) {
-    List<WokQueryWorkRes> dtoList = workEntityListToQueryWorkResList(workEntities.getContent());
+  default Page<PageWorkRes> workEntityListToQueryWorkResList(Page<WorkEntity> workEntities) {
+    List<PageWorkRes> dtoList = workEntityListToQueryWorkResList(workEntities.getContent());
     return new PageImpl<>(dtoList, workEntities.getPageable(), workEntities.getTotalElements());
   }
 
@@ -43,8 +43,8 @@ public interface WorkMapper {
   @Mapping(target = "datasourceId", source = "workConfigEntity.datasourceId")
   @Mapping(target = "workflowId", source = "workEntity.workflowId")
   @Mapping(target = "workId", source = "workEntity.id")
-  WokGetWorkRes workEntityAndWorkConfigEntityToGetWorkRes(
+  GetWorkRes workEntityAndWorkConfigEntityToGetWorkRes(
       WorkEntity workEntity, WorkConfigEntity workConfigEntity);
 
-  WokRunWorkRes getStatusToRunWorkRes(YagGetStatusRes getStatusRes);
+  RunWorkRes getStatusToRunWorkRes(YagGetStatusRes getStatusRes);
 }
