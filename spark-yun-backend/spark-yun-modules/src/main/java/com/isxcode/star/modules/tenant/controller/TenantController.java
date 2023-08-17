@@ -8,7 +8,7 @@ import com.isxcode.star.api.tenant.pojos.res.TetGetTenantRes;
 import com.isxcode.star.api.tenant.pojos.res.TetQueryTenantRes;
 import com.isxcode.star.api.tenant.pojos.res.TetQueryUserTenantRes;
 import com.isxcode.star.api.user.constants.RoleType;
-import com.isxcode.star.backend.api.base.constants.ModulePrefix;
+import com.isxcode.star.api.main.constants.ModuleCode;
 import com.isxcode.star.common.annotations.successResponse.SuccessResponse;
 import com.isxcode.star.modules.tenant.service.TenantBizService;
 import com.isxcode.star.modules.userlog.UserLog;
@@ -29,7 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "租户模块")
 @RestController
-@RequestMapping(ModulePrefix.TENANT)
+@RequestMapping(ModuleCode.TENANT)
 @RequiredArgsConstructor
 public class TenantController {
 

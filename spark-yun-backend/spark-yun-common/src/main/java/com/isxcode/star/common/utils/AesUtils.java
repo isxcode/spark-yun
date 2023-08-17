@@ -1,7 +1,7 @@
 package com.isxcode.star.common.utils;
 
 import cn.hutool.crypto.SecureUtil;
-import com.isxcode.star.backend.api.base.properties.SparkYunProperties;
+import com.isxcode.star.backend.api.base.properties.IsxAppProperties;
 import java.util.Arrays;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class AesUtils {
 
-  private final SparkYunProperties sparkYunProperties;
+  private final IsxAppProperties sparkYunProperties;
 
   /** 对称加密. */
   public String encrypt(String data) {

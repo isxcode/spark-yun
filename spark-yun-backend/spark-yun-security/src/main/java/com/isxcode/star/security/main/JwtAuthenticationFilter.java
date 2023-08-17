@@ -4,7 +4,7 @@ import static com.isxcode.star.security.main.WebSecurityConfig.TENANT_ID;
 import static com.isxcode.star.security.main.WebSecurityConfig.USER_ID;
 
 import com.isxcode.star.backend.api.base.constants.SecurityConstants;
-import com.isxcode.star.backend.api.base.properties.SparkYunProperties;
+import com.isxcode.star.backend.api.base.properties.IsxAppProperties;
 import com.isxcode.star.common.utils.jwt.JwtUtils;
 import java.io.IOException;
 import java.util.List;
@@ -28,7 +28,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
   private final List<String> excludeUrlPaths;
 
-  private final SparkYunProperties sparkYunProperties;
+  private final IsxAppProperties sparkYunProperties;
 
   @Override
   protected void doFilterInternal(

@@ -4,7 +4,7 @@ import com.alibaba.fastjson2.JSON;
 import com.isxcode.star.api.agent.pojos.req.PluginReq;
 import com.isxcode.star.api.agent.pojos.req.SparkSubmit;
 import com.isxcode.star.backend.api.base.constants.SparkConstants;
-import com.isxcode.star.backend.api.base.exceptions.SparkYunException;
+import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.nio.charset.StandardCharsets;
@@ -52,7 +52,7 @@ public class YarnAgentService implements AgentService {
             sparkLauncher.addJar(jar.toURI().toURL().toString());
           } catch (MalformedURLException e) {
             log.error(e.getMessage());
-            throw new SparkYunException("50010", "添加lib中文件异常", e.getMessage());
+            throw new IsxAppException("50010", "添加lib中文件异常", e.getMessage());
           }
         }
       }
@@ -74,7 +74,7 @@ public class YarnAgentService implements AgentService {
     BufferedReader reader =
         new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
 
-    long timeoutExpiredMs = System.currentTimeMillis() + SparkConstants.SPARK_SUBMIT_TIMEOUT;
+    long timeoutExpiredMs = System.currentTimeMillis() + 30000;
 
     StringBuilder errLog = new StringBuilder();
     String line;
@@ -83,7 +83,7 @@ public class YarnAgentService implements AgentService {
 
       long waitMillis = timeoutExpiredMs - System.currentTimeMillis();
       if (waitMillis <= 0) {
-        throw new SparkYunException(errLog.toString());
+        throw new IsxAppException(errLog.toString());
       }
 
       String pattern = "Submitted application application_\\d+_\\d+";
@@ -97,13 +97,13 @@ public class YarnAgentService implements AgentService {
     try {
       int exitCode = launch.waitFor();
       if (exitCode == 1) {
-        throw new SparkYunException(errLog.toString());
+        throw new IsxAppException(errLog.toString());
       }
     } catch (InterruptedException e) {
-      throw new SparkYunException(e.getMessage());
+      throw new IsxAppException(e.getMessage());
     }
 
-    throw new SparkYunException("无法获取applicationId");
+    throw new IsxAppException("无法获取applicationId");
   }
 
   @Override
@@ -137,13 +137,13 @@ public class YarnAgentService implements AgentService {
     try {
       int exitCode = process.waitFor();
       if (exitCode == 1) {
-        throw new SparkYunException(errLog.toString());
+        throw new IsxAppException(errLog.toString());
       }
     } catch (InterruptedException e) {
-      throw new SparkYunException(e.getMessage());
+      throw new IsxAppException(e.getMessage());
     }
 
-    throw new SparkYunException("获取状态异常");
+    throw new IsxAppException("获取状态异常");
   }
 
   @Override
@@ -165,7 +165,7 @@ public class YarnAgentService implements AgentService {
     try {
       int exitCode = process.waitFor();
       if (exitCode == 1) {
-        throw new SparkYunException(errLog.toString());
+        throw new IsxAppException(errLog.toString());
       } else {
         Pattern regex = Pattern.compile("LogType:stderr\\s*([\\s\\S]*?)\\s*End of LogType:stderr");
         Matcher matcher = regex.matcher(errLog);
@@ -183,7 +183,7 @@ public class YarnAgentService implements AgentService {
         return log;
       }
     } catch (InterruptedException e) {
-      throw new SparkYunException(e.getMessage());
+      throw new IsxAppException(e.getMessage());
     }
   }
 
@@ -207,7 +207,7 @@ public class YarnAgentService implements AgentService {
     try {
       int exitCode = process.waitFor();
       if (exitCode == 1) {
-        throw new SparkYunException(errLog.toString());
+        throw new IsxAppException(errLog.toString());
       } else {
         Pattern regex =
             Pattern.compile("LogType:spark-yun\\s*([\\s\\S]*?)\\s*End of LogType:spark-yun");
@@ -223,7 +223,7 @@ public class YarnAgentService implements AgentService {
         return log;
       }
     } catch (InterruptedException e) {
-      throw new SparkYunException(e.getMessage());
+      throw new IsxAppException(e.getMessage());
     }
   }
 
@@ -246,10 +246,10 @@ public class YarnAgentService implements AgentService {
     try {
       int exitCode = process.waitFor();
       if (exitCode == 1) {
-        throw new SparkYunException(errLog.toString());
+        throw new IsxAppException(errLog.toString());
       }
     } catch (InterruptedException e) {
-      throw new SparkYunException(e.getMessage());
+      throw new IsxAppException(e.getMessage());
     }
   }
 }

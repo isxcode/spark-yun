@@ -8,7 +8,7 @@ import com.isxcode.star.api.tenant.pojos.req.TurQueryTenantUserReq;
 import com.isxcode.star.api.tenant.pojos.res.TurQueryTenantUserRes;
 import com.isxcode.star.api.user.constants.RoleType;
 import com.isxcode.star.api.user.constants.UserStatus;
-import com.isxcode.star.backend.api.base.exceptions.SparkYunException;
+import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.star.modules.tenant.mapper.TenantUserMapper;
 import com.isxcode.star.security.user.TenantUserEntity;
 import com.isxcode.star.security.user.TenantUserRepository;
@@ -42,7 +42,7 @@ public class TenantUserBizService {
     Optional<UserEntity> userEntityOptional =
         userRepository.findById(turAddTenantUserReq.getUserId());
     if (!userEntityOptional.isPresent()) {
-      throw new SparkYunException("用户不存在");
+      throw new IsxAppException("用户不存在");
     }
     UserEntity userEntity = userEntityOptional.get();
 
@@ -51,12 +51,12 @@ public class TenantUserBizService {
         tenantUserRepository.findByTenantIdAndUserId(
             TENANT_ID.get(), turAddTenantUserReq.getUserId());
     if (tenantUserEntityOptional.isPresent()) {
-      throw new SparkYunException("该成员已经是项目成员");
+      throw new IsxAppException("该成员已经是项目成员");
     }
 
     // 如果租户id为空
     if (Strings.isEmpty(TENANT_ID.get())) {
-      throw new SparkYunException("请指定租户id");
+      throw new IsxAppException("请指定租户id");
     }
 
     // 初始化租户用户
@@ -98,12 +98,12 @@ public class TenantUserBizService {
     Optional<TenantUserEntity> tenantUserEntityOptional =
         tenantUserRepository.findById(tenantUserId);
     if (!tenantUserEntityOptional.isPresent()) {
-      throw new SparkYunException("用户不存在");
+      throw new IsxAppException("用户不存在");
     }
 
     // 不可以删除自己
     if (USER_ID.get().equals(tenantUserEntityOptional.get().getUserId())) {
-      throw new SparkYunException("不可以移除自己");
+      throw new IsxAppException("不可以移除自己");
     }
 
     // 删除租户用户
@@ -116,7 +116,7 @@ public class TenantUserBizService {
     Optional<TenantUserEntity> tenantUserEntityOptional =
         tenantUserRepository.findById(tenantUserId);
     if (!tenantUserEntityOptional.isPresent()) {
-      throw new SparkYunException("用户不存在");
+      throw new IsxAppException("用户不存在");
     }
 
     // 设置为租户管理员权限
@@ -133,13 +133,13 @@ public class TenantUserBizService {
     Optional<TenantUserEntity> tenantUserEntityOptional =
         tenantUserRepository.findById(tenantUserId);
     if (!tenantUserEntityOptional.isPresent()) {
-      throw new SparkYunException("用户不存在");
+      throw new IsxAppException("用户不存在");
     }
 
     // 管理员不可以移除自己
     if (RoleType.TENANT_ADMIN.equals(tenantUserEntityOptional.get().getRoleCode())
         && USER_ID.get().equals(tenantUserEntityOptional.get().getUserId())) {
-      throw new SparkYunException("不可以取消自己的管理员权限");
+      throw new IsxAppException("不可以取消自己的管理员权限");
     }
 
     // 设置为租户管理员权限

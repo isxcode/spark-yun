@@ -1,6 +1,6 @@
 package com.isxcode.star.modules.workflow.controller;
 
-import com.isxcode.star.backend.api.base.constants.ModulePrefix;
+import com.isxcode.star.api.main.constants.ModuleCode;
 import com.isxcode.star.backend.api.base.constants.SecurityConstants;
 import com.isxcode.star.common.annotations.successResponse.SuccessResponse;
 import com.isxcode.star.modules.workflow.service.WorkflowFavourBizService;
@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "作业流收藏模块")
 @RestController
-@RequestMapping(ModulePrefix.WORKFLOW_FAVOUR)
+@RequestMapping(ModuleCode.WORKFLOW_FAVOUR)
 @RequiredArgsConstructor
 public class WorkflowFavourController {
 

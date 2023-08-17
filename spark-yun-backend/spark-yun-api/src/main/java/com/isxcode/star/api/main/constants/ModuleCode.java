@@ -1,7 +1,9 @@
-package com.isxcode.star.backend.api.base.constants;
+package com.isxcode.star.api.main.constants;
 
-/** 每个模块的访问前缀. */
-public interface ModulePrefix {
+/**
+ * 模块编码.
+ */
+public interface ModuleCode {
 
   /** 用户模块 USER. */
   String USER = "/usr";

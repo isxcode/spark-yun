@@ -3,7 +3,7 @@ package com.isxcode.star.agent.run;
 import com.alibaba.fastjson.JSON;
 import com.isxcode.star.api.agent.pojos.req.PluginReq;
 import com.isxcode.star.api.agent.pojos.req.SparkSubmit;
-import com.isxcode.star.backend.api.base.exceptions.SparkYunException;
+import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
@@ -37,7 +37,7 @@ public class KubernetesAgentService implements AgentService {
     try {
       int exitCode = process.waitFor();
       if (exitCode == 1) {
-        throw new SparkYunException(errLog.toString());
+        throw new IsxAppException(errLog.toString());
       } else {
         int startIndex = errLog.indexOf("https://") + "https://".length();
         int endIndex = errLog.indexOf("\n", startIndex);
@@ -48,7 +48,7 @@ public class KubernetesAgentService implements AgentService {
             .replaceAll("\\[", "");
       }
     } catch (InterruptedException e) {
-      throw new SparkYunException(e.getMessage());
+      throw new IsxAppException(e.getMessage());
     }
   }
 
@@ -141,13 +141,13 @@ public class KubernetesAgentService implements AgentService {
     try {
       int exitCode = launch.waitFor();
       if (exitCode == 1) {
-        throw new SparkYunException(errLog.toString());
+        throw new IsxAppException(errLog.toString());
       }
     } catch (InterruptedException e) {
-      throw new SparkYunException(e.getMessage());
+      throw new IsxAppException(e.getMessage());
     }
 
-    throw new SparkYunException("无法获取podName");
+    throw new IsxAppException("无法获取podName");
   }
 
   @Override
@@ -186,13 +186,13 @@ public class KubernetesAgentService implements AgentService {
     try {
       int exitCode = process.waitFor();
       if (exitCode == 1) {
-        throw new SparkYunException(errLog.toString());
+        throw new IsxAppException(errLog.toString());
       }
     } catch (InterruptedException e) {
-      throw new SparkYunException(e.getMessage());
+      throw new IsxAppException(e.getMessage());
     }
 
-    throw new SparkYunException("获取状态异常");
+    throw new IsxAppException("获取状态异常");
   }
 
   @Override
@@ -223,7 +223,7 @@ public class KubernetesAgentService implements AgentService {
     try {
       int exitCode = process.waitFor();
       if (exitCode == 1) {
-        throw new SparkYunException(errLog.toString());
+        throw new IsxAppException(errLog.toString());
       } else {
         if (errLog.toString().contains("Error")) {
           return errLog.toString();
@@ -238,7 +238,7 @@ public class KubernetesAgentService implements AgentService {
         return log;
       }
     } catch (InterruptedException e) {
-      throw new SparkYunException(e.getMessage());
+      throw new IsxAppException(e.getMessage());
     }
   }
 
@@ -261,7 +261,7 @@ public class KubernetesAgentService implements AgentService {
     try {
       int exitCode = process.waitFor();
       if (exitCode == 1) {
-        throw new SparkYunException(errLog.toString());
+        throw new IsxAppException(errLog.toString());
       } else {
         Pattern regex =
             Pattern.compile("LogType:spark-yun\\s*([\\s\\S]*?)\\s*End of LogType:spark-yun");
@@ -277,7 +277,7 @@ public class KubernetesAgentService implements AgentService {
         return log;
       }
     } catch (InterruptedException e) {
-      throw new SparkYunException(e.getMessage());
+      throw new IsxAppException(e.getMessage());
     }
   }
 
@@ -300,10 +300,10 @@ public class KubernetesAgentService implements AgentService {
     try {
       int exitCode = process.waitFor();
       if (exitCode == 1) {
-        throw new SparkYunException(errLog.toString());
+        throw new IsxAppException(errLog.toString());
       }
     } catch (InterruptedException e) {
-      throw new SparkYunException(e.getMessage());
+      throw new IsxAppException(e.getMessage());
     }
   }
 }

@@ -2,7 +2,7 @@ package com.isxcode.star.modules.work.run;
 
 import com.alibaba.fastjson.JSON;
 import com.isxcode.star.api.work.constants.WorkLog;
-import com.isxcode.star.backend.api.base.exceptions.WorkRunException;
+import com.isxcode.star.api.work.exceptions.WorkRunException;
 import com.isxcode.star.modules.datasource.entity.DatasourceEntity;
 import com.isxcode.star.modules.datasource.repository.DatasourceRepository;
 import com.isxcode.star.modules.datasource.service.DatasourceBizService;

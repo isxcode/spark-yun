@@ -4,7 +4,7 @@ import static com.isxcode.star.security.main.WebSecurityConfig.JPA_TENANT_MODE;
 import static com.isxcode.star.security.main.WebSecurityConfig.TENANT_ID;
 
 import com.isxcode.star.api.user.constants.RoleType;
-import com.isxcode.star.backend.api.base.exceptions.SparkYunException;
+import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.star.security.user.TenantUserEntity;
 import com.isxcode.star.security.user.TenantUserRepository;
 import com.isxcode.star.security.user.UserEntity;
@@ -36,7 +36,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     JPA_TENANT_MODE.set(true);
 
     if (!userEntityOptional.isPresent()) {
-      throw new SparkYunException("用户不存在");
+      throw new IsxAppException("用户不存在");
     }
 
     // 获取用户系统权限
@@ -44,7 +44,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     // 如果不是系统管理员，且没有TENANT_ID则直接报错，缺少tenantId
     if (!RoleType.SYS_ADMIN.equals(authority) && Strings.isEmpty(TENANT_ID.get())) {
-      throw new SparkYunException("缺少tenantId");
+      throw new IsxAppException("缺少tenantId");
     }
 
     // 获取用户租户权限
@@ -53,7 +53,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         Optional<TenantUserEntity> tenantUserEntityOptional =
             tenantUserRepository.findByTenantIdAndUserId(TENANT_ID.get(), userId);
         if (!tenantUserEntityOptional.isPresent()) {
-          throw new SparkYunException("用户不在租户中");
+          throw new IsxAppException("用户不在租户中");
         }
         authority = authority + "," + tenantUserEntityOptional.get().getRoleCode();
       }

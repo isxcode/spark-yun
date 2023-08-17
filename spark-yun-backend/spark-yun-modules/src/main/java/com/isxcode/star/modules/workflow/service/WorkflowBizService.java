@@ -19,7 +19,7 @@ import com.isxcode.star.api.workflow.pojos.req.WofUpdateWorkflowReq;
 import com.isxcode.star.api.workflow.pojos.res.WofGetWorkflowRes;
 import com.isxcode.star.api.workflow.pojos.res.WofQueryRunWorkInstancesRes;
 import com.isxcode.star.api.workflow.pojos.res.WofQueryWorkflowRes;
-import com.isxcode.star.backend.api.base.exceptions.SparkYunException;
+import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.star.modules.work.entity.WorkConfigEntity;
 import com.isxcode.star.modules.work.entity.WorkEntity;
 import com.isxcode.star.modules.work.entity.WorkExportInfo;
@@ -88,7 +88,7 @@ public class WorkflowBizService {
 
     Optional<WorkflowEntity> workflowEntityOptional = workflowRepository.findById(workflowId);
     if (!workflowEntityOptional.isPresent()) {
-      throw new SparkYunException("作业流不存在");
+      throw new IsxAppException("作业流不存在");
     }
     return workflowEntityOptional.get();
   }
@@ -111,7 +111,7 @@ public class WorkflowBizService {
     Optional<WorkflowEntity> workflowEntityOptional =
         workflowRepository.findById(wofUpdateWorkflowReq.getId());
     if (!workflowEntityOptional.isPresent()) {
-      throw new SparkYunException("作业流不存在");
+      throw new IsxAppException("作业流不存在");
     }
 
     WorkflowEntity workflow =
@@ -213,7 +213,7 @@ public class WorkflowBizService {
     Optional<WorkflowInstanceEntity> workflowInstanceEntityOptional =
         workflowInstanceRepository.findById(workflowInstanceId);
     if (!workflowInstanceEntityOptional.isPresent()) {
-      throw new SparkYunException("工作流实例不存在");
+      throw new IsxAppException("工作流实例不存在");
     }
     WorkflowInstanceEntity workflowInstance = workflowInstanceEntityOptional.get();
 
@@ -300,11 +300,11 @@ public class WorkflowBizService {
             URLEncoder.encode(
                 works.get(0).getWork().getName(), String.valueOf(StandardCharsets.UTF_8));
       } else {
-        throw new SparkYunException("作业数量为空不能导出");
+        throw new IsxAppException("作业数量为空不能导出");
       }
     } catch (UnsupportedEncodingException e) {
       log.error(e.getMessage());
-      throw new SparkYunException(e.getMessage());
+      throw new IsxAppException(e.getMessage());
     }
 
     // 生成json并导出
@@ -321,7 +321,7 @@ public class WorkflowBizService {
       out.flush();
     } catch (IOException e) {
       log.error(e.getMessage());
-      throw new SparkYunException(e.getMessage());
+      throw new IsxAppException(e.getMessage());
     }
   }
 
@@ -333,7 +333,7 @@ public class WorkflowBizService {
       exportWorkflowInfoStr = new String(workFile.getBytes(), StandardCharsets.UTF_8);
     } catch (IOException e) {
       log.error(e.getMessage());
-      throw new SparkYunException(e.getMessage());
+      throw new IsxAppException(e.getMessage());
     }
 
     // 获取对象
@@ -377,7 +377,7 @@ public class WorkflowBizService {
     Map<String, String> workIdMapping = new HashMap<>();
 
     if (Strings.isEmpty(workflowId)) {
-      throw new SparkYunException("作业导入不能没有作业流id");
+      throw new IsxAppException("作业导入不能没有作业流id");
     }
 
     // 导入作业

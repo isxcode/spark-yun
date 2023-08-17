@@ -9,7 +9,7 @@ import com.isxcode.star.api.user.pojos.req.UsrUpdateUserReq;
 import com.isxcode.star.api.user.pojos.res.UsrLoginRes;
 import com.isxcode.star.api.user.pojos.res.UsrQueryAllEnableUsersRes;
 import com.isxcode.star.api.user.pojos.res.UsrQueryAllUsersRes;
-import com.isxcode.star.backend.api.base.constants.ModulePrefix;
+import com.isxcode.star.api.main.constants.ModuleCode;
 import com.isxcode.star.common.annotations.successResponse.SuccessResponse;
 import com.isxcode.star.modules.user.service.UserBizService;
 import com.isxcode.star.modules.userlog.UserLog;
@@ -29,7 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "用户模块")
 @RestController
-@RequestMapping(ModulePrefix.USER)
+@RequestMapping(ModuleCode.USER)
 @RequiredArgsConstructor
 public class UserController {
 
