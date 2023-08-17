@@ -1,10 +1,10 @@
 package com.isxcode.star.modules.tenant.controller;
 
+import com.isxcode.star.api.main.constants.ModuleCode;
 import com.isxcode.star.api.tenant.pojos.req.TurAddTenantUserReq;
 import com.isxcode.star.api.tenant.pojos.req.TurQueryTenantUserReq;
 import com.isxcode.star.api.tenant.pojos.res.TurQueryTenantUserRes;
 import com.isxcode.star.api.user.constants.RoleType;
-import com.isxcode.star.api.main.constants.ModuleCode;
 import com.isxcode.star.backend.api.base.constants.SecurityConstants;
 import com.isxcode.star.common.annotations.successResponse.SuccessResponse;
 import com.isxcode.star.modules.tenant.service.TenantUserBizService;

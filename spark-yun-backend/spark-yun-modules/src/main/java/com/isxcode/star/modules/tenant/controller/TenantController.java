@@ -1,5 +1,6 @@
 package com.isxcode.star.modules.tenant.controller;
 
+import com.isxcode.star.api.main.constants.ModuleCode;
 import com.isxcode.star.api.tenant.pojos.req.TetAddTenantReq;
 import com.isxcode.star.api.tenant.pojos.req.TetQueryTenantReq;
 import com.isxcode.star.api.tenant.pojos.req.TetUpdateTenantBySystemAdminReq;
@@ -8,7 +9,6 @@ import com.isxcode.star.api.tenant.pojos.res.TetGetTenantRes;
 import com.isxcode.star.api.tenant.pojos.res.TetQueryTenantRes;
 import com.isxcode.star.api.tenant.pojos.res.TetQueryUserTenantRes;
 import com.isxcode.star.api.user.constants.RoleType;
-import com.isxcode.star.api.main.constants.ModuleCode;
 import com.isxcode.star.common.annotations.successResponse.SuccessResponse;
 import com.isxcode.star.modules.tenant.service.TenantBizService;
 import com.isxcode.star.modules.userlog.UserLog;

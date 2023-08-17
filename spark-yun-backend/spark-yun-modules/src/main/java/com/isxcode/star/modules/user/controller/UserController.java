@@ -1,5 +1,6 @@
 package com.isxcode.star.modules.user.controller;
 
+import com.isxcode.star.api.main.constants.ModuleCode;
 import com.isxcode.star.api.user.constants.RoleType;
 import com.isxcode.star.api.user.pojos.req.UsrAddUserReq;
 import com.isxcode.star.api.user.pojos.req.UsrLoginReq;
@@ -9,7 +10,6 @@ import com.isxcode.star.api.user.pojos.req.UsrUpdateUserReq;
 import com.isxcode.star.api.user.pojos.res.UsrLoginRes;
 import com.isxcode.star.api.user.pojos.res.UsrQueryAllEnableUsersRes;
 import com.isxcode.star.api.user.pojos.res.UsrQueryAllUsersRes;
-import com.isxcode.star.api.main.constants.ModuleCode;
 import com.isxcode.star.common.annotations.successResponse.SuccessResponse;
 import com.isxcode.star.modules.user.service.UserBizService;
 import com.isxcode.star.modules.userlog.UserLog;

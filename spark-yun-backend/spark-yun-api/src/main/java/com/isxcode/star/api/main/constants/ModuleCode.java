@@ -1,15 +1,13 @@
 package com.isxcode.star.api.main.constants;
 
-/**
- * 模块编码.
- */
+/** 模块编码. */
 public interface ModuleCode {
 
   /** 用户模块 USER. */
   String USER = "/usr";
 
-  /** 计算集群模块. */
-  String CLUSTER = "/cae";
+  /** 计算集群模块. cluster */
+  String CLUSTER = "cluster";
 
   /** 集群节点模块. */
   String CLUSTER_NODE = "/eno";
