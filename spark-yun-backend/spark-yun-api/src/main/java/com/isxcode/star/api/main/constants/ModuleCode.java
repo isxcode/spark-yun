@@ -37,7 +37,7 @@ public interface ModuleCode {
   String TENANT = "tenant";
 
   /** 租户用户模块. */
-  String TENANT_USER = "/tur";
+  String TENANT_USER = "tenant_user";
 
   /** 许可证模块. */
   String LICENSE = "/lic";

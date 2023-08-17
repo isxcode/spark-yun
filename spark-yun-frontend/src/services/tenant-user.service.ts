@@ -27,7 +27,7 @@ interface DeleteParam {
 export function GetUserList(params: SerchParams): Promise<any> {
   return http.request({
     method: 'post',
-    url: '/tur/queryTenantUser',
+    url: '/tenant_user/queryTenantUser',
     params: params
   })
 }
@@ -45,7 +45,7 @@ export function GetUserInfoList(params: SerchParams): Promise<any> {
 export function AddTenantUserData(params: FormUser): Promise<any> {
   return http.request({
     method: 'post',
-    url: '/tur/addTenantUser',
+    url: '/tenant_user/addTenantUser',
     params: params
   })
 }
@@ -54,7 +54,7 @@ export function AddTenantUserData(params: FormUser): Promise<any> {
 export function EditTenantUserData(params: FormUser): Promise<any> {
   return http.request({
     method: 'post',
-    url: '/tur/addTenantUser',
+    url: '/tenant_user/addTenantUser',
     params: params
   })
 }
@@ -63,7 +63,7 @@ export function EditTenantUserData(params: FormUser): Promise<any> {
 export function DeleteTenantUser(params: DeleteParam): Promise<any> {
   return http.request({
     method: 'get',
-    url: '/tur/removeTenantUser',
+    url: '/tenant_user/removeTenantUser',
     params: params
   })
 }
@@ -72,7 +72,7 @@ export function DeleteTenantUser(params: DeleteParam): Promise<any> {
 export function GiveAuth(params: DeleteParam): Promise<any> {
   return http.request({
     method: 'get',
-    url: '/tur/setTenantAdmin',
+    url: '/tenant_user/setTenantAdmin',
     params: params
   })
 }
@@ -81,7 +81,7 @@ export function GiveAuth(params: DeleteParam): Promise<any> {
 export function RemoveAuth(params: DeleteParam): Promise<any> {
   return http.request({
     method: 'get',
-    url: '/tur/removeTenantAdmin',
+    url: '/tenant_user/removeTenantAdmin',
     params: params
   })
 }
