@@ -31,10 +31,21 @@ public class OpenApiConfig {
             .scheme("basic")
             .name(SecurityConstants.HEADER_AUTHORIZATION);
 
-    SecurityRequirement basicAuthRequirement = new SecurityRequirement().addList("tokenAuth");
+    SecurityScheme basicTenantScheme =
+        new SecurityScheme()
+            .type(SecurityScheme.Type.APIKEY)
+            .in(SecurityScheme.In.HEADER)
+            .description("输入租户tenant")
+            .scheme("tenant")
+            .name(SecurityConstants.HEADER_TENANT_ID);
 
+    SecurityRequirement basicAuthRequirement =
+        new SecurityRequirement().addList("tenantAuth").addList("tokenAuth");
     return new OpenAPI()
-        .components(new Components().addSecuritySchemes("tokenAuth", basicAuthScheme))
+        .components(
+            new Components()
+                .addSecuritySchemes("tokenAuth", basicAuthScheme)
+                .addSecuritySchemes("tenantAuth", basicTenantScheme))
         .addSecurityItem(basicAuthRequirement);
   }
 }

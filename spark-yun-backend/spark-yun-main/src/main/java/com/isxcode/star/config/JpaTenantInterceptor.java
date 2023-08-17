@@ -1,4 +1,4 @@
-package com.isxcode.star.common.config;
+package com.isxcode.star.config;
 
 import static com.isxcode.star.common.config.CommonConfig.JPA_TENANT_MODE;
 import static com.isxcode.star.common.config.CommonConfig.TENANT_ID;

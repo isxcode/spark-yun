@@ -7,13 +7,9 @@ import com.isxcode.star.api.user.pojos.res.GetUserRes;
 import com.isxcode.star.api.user.pojos.res.LoginRes;
 import com.isxcode.star.api.user.pojos.res.PageEnableUserRes;
 import com.isxcode.star.api.user.pojos.res.PageUserRes;
-import com.isxcode.star.backend.api.base.constants.SecurityConstants;
 import com.isxcode.star.common.annotations.successResponse.SuccessResponse;
 import com.isxcode.star.modules.user.service.UserBizService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.enums.ParameterIn;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -52,12 +48,6 @@ public class UserController {
   @Operation(summary = "获取用户信息接口")
   @PostMapping("/getUser")
   @SuccessResponse("获取成功")
-  @Parameter(
-      name = SecurityConstants.HEADER_TENANT_ID,
-      description = "租户id",
-      required = true,
-      in = ParameterIn.HEADER,
-      schema = @Schema(type = "string", example = "sy_tenantId"))
   public GetUserRes getUser() {
 
     return userBizService.getUser();
