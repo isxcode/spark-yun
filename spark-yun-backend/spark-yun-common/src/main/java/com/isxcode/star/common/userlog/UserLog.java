@@ -1,4 +1,4 @@
-package com.isxcode.star.modules.userlog;
+package com.isxcode.star.common.userlog;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;

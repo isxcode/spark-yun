@@ -1,6 +1,6 @@
 package com.isxcode.star.modules.user.service;
 
-import static com.isxcode.star.security.main.WebSecurityConfig.USER_ID;
+import static com.isxcode.star.common.config.CommonConfig.USER_ID;
 
 import com.isxcode.star.api.user.constants.RoleType;
 import com.isxcode.star.api.user.constants.UserStatus;
@@ -42,7 +42,7 @@ public class UserBizService {
 
   private final UserMapper userMapper;
 
-  private final IsxAppProperties sparkYunProperties;
+  private final IsxAppProperties isxAppProperties;
 
   private final TenantRepository tenantRepository;
 
@@ -67,7 +67,7 @@ public class UserBizService {
     // 如果是系统管理员，首次登录，插入配置的密码并保存
     if (RoleType.SYS_ADMIN.equals(userEntity.getRoleCode())
         && Strings.isEmpty(userEntity.getPasswd())) {
-      userEntity.setPasswd(Md5Utils.hashStr(sparkYunProperties.getAdminPasswd()));
+      userEntity.setPasswd(Md5Utils.hashStr(isxAppProperties.getAdminPasswd()));
       userRepository.save(userEntity);
     }
 
@@ -79,10 +79,10 @@ public class UserBizService {
     // 生成token
     String jwtToken =
         JwtUtils.encrypt(
-            sparkYunProperties.getAesSlat(),
+            isxAppProperties.getAesSlat(),
             userEntity.getId(),
-            sparkYunProperties.getJwtKey(),
-            sparkYunProperties.getExpirationMin());
+            isxAppProperties.getJwtKey(),
+            isxAppProperties.getExpirationMin());
 
     // 如果是系统管理员直接返回
     if (RoleType.SYS_ADMIN.equals(userEntity.getRoleCode())) {
@@ -148,10 +148,10 @@ public class UserBizService {
     // 生成token
     String jwtToken =
         JwtUtils.encrypt(
-            sparkYunProperties.getAesSlat(),
+            isxAppProperties.getAesSlat(),
             userEntity.getId(),
-            sparkYunProperties.getJwtKey(),
-            sparkYunProperties.getExpirationMin());
+            isxAppProperties.getJwtKey(),
+            isxAppProperties.getExpirationMin());
 
     // 如果是系统管理员直接返回
     if (RoleType.SYS_ADMIN.equals(userEntity.getRoleCode())) {

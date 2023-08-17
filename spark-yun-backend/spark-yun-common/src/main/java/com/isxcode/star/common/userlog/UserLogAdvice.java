@@ -1,7 +1,7 @@
-package com.isxcode.star.modules.userlog;
+package com.isxcode.star.common.userlog;
 
-import static com.isxcode.star.security.main.WebSecurityConfig.TENANT_ID;
-import static com.isxcode.star.security.main.WebSecurityConfig.USER_ID;
+import static com.isxcode.star.common.config.CommonConfig.TENANT_ID;
+import static com.isxcode.star.common.config.CommonConfig.USER_ID;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -32,15 +32,15 @@ public class UserLogAdvice {
 
   private UserActionEntity userActionEntity;
 
-  private final IsxAppProperties sparkYunProperties;
+  private final IsxAppProperties isxAppProperties;
 
-  @Pointcut("@annotation(com.isxcode.star.modules.userlog.UserLog)")
+  @Pointcut("@annotation(com.isxcode.star.common.userlog.UserLog)")
   public void operateUserLog() {}
 
   @Before(value = "operateUserLog()")
   public void before(JoinPoint joinPoint) {
 
-    if (!sparkYunProperties.isLogAdvice()) {
+    if (!isxAppProperties.isLogAdvice()) {
       return;
     }
 
@@ -89,7 +89,7 @@ public class UserLogAdvice {
   @After(value = "operateUserLog()")
   public void after(JoinPoint joinPoint) {
 
-    if (!sparkYunProperties.isLogAdvice()) {
+    if (!isxAppProperties.isLogAdvice()) {
       return;
     }
 
@@ -108,7 +108,7 @@ public class UserLogAdvice {
   public void afterThrowing(
       JoinPoint joinPoint, SuccessResponseException successResponseException) {
 
-    if (!sparkYunProperties.isLogAdvice()) {
+    if (!isxAppProperties.isLogAdvice()) {
       return;
     }
 
