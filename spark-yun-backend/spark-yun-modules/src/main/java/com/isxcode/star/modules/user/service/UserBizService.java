@@ -12,8 +12,8 @@ import com.isxcode.star.api.user.pojos.req.UsrUpdateUserReq;
 import com.isxcode.star.api.user.pojos.res.UsrLoginRes;
 import com.isxcode.star.api.user.pojos.res.UsrQueryAllEnableUsersRes;
 import com.isxcode.star.api.user.pojos.res.UsrQueryAllUsersRes;
-import com.isxcode.star.backend.api.base.exceptions.SparkYunException;
-import com.isxcode.star.backend.api.base.properties.SparkYunProperties;
+import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
+import com.isxcode.star.backend.api.base.properties.IsxAppProperties;
 import com.isxcode.star.common.utils.jwt.JwtUtils;
 import com.isxcode.star.common.utils.md5.Md5Utils;
 import com.isxcode.star.modules.tenant.entity.TenantEntity;
@@ -42,7 +42,7 @@ public class UserBizService {
 
   private final UserMapper userMapper;
 
-  private final SparkYunProperties sparkYunProperties;
+  private final IsxAppProperties sparkYunProperties;
 
   private final TenantRepository tenantRepository;
 
@@ -55,13 +55,13 @@ public class UserBizService {
     Optional<UserEntity> userEntityOptional =
         userRepository.findByAccount(usrLoginReq.getAccount());
     if (!userEntityOptional.isPresent()) {
-      throw new SparkYunException("账号或者密码不正确");
+      throw new IsxAppException("账号或者密码不正确");
     }
     UserEntity userEntity = userEntityOptional.get();
 
     // 判断用户是否禁用
     if (UserStatus.DISABLE.equals(userEntity.getStatus())) {
-      throw new SparkYunException("账号已被禁用，请联系管理员");
+      throw new IsxAppException("账号已被禁用，请联系管理员");
     }
 
     // 如果是系统管理员，首次登录，插入配置的密码并保存
@@ -73,7 +73,7 @@ public class UserBizService {
 
     // 判断密码是否合法
     if (!Md5Utils.hashStr(usrLoginReq.getPasswd()).equals(userEntity.getPasswd())) {
-      throw new SparkYunException("账号或者密码不正确");
+      throw new IsxAppException("账号或者密码不正确");
     }
 
     // 生成token
@@ -96,7 +96,7 @@ public class UserBizService {
 
     // 获取用户最近一次租户信息
     if (Strings.isEmpty(userEntity.getCurrentTenantId())) {
-      throw new SparkYunException("无可用租户，请联系管理员");
+      throw new IsxAppException("无可用租户，请联系管理员");
     }
     Optional<TenantEntity> tenantEntityOptional =
         tenantRepository.findById(userEntity.getCurrentTenantId());
@@ -107,7 +107,7 @@ public class UserBizService {
       List<TenantUserEntity> tenantUserEntities =
           tenantUserRepository.findAllByUserId(userEntity.getId());
       if (tenantUserEntities.isEmpty()) {
-        throw new SparkYunException("无可用租户，请联系管理员");
+        throw new IsxAppException("无可用租户，请联系管理员");
       }
       currentTenantId = tenantUserEntities.get(0).getTenantId();
       userEntity.setCurrentTenantId(currentTenantId);
@@ -120,7 +120,7 @@ public class UserBizService {
     Optional<TenantUserEntity> tenantUserEntityOptional =
         tenantUserRepository.findByTenantIdAndUserId(currentTenantId, userEntity.getId());
     if (!tenantUserEntityOptional.isPresent()) {
-      throw new SparkYunException("无可用租户，请联系管理员");
+      throw new IsxAppException("无可用租户，请联系管理员");
     }
 
     // 生成token并返回
@@ -136,13 +136,13 @@ public class UserBizService {
     // 判断用户是否存在
     Optional<UserEntity> userEntityOptional = userRepository.findById(USER_ID.get());
     if (!userEntityOptional.isPresent()) {
-      throw new SparkYunException("账号或者密码不正确");
+      throw new IsxAppException("账号或者密码不正确");
     }
     UserEntity userEntity = userEntityOptional.get();
 
     // 判断用户是否禁用
     if (UserStatus.DISABLE.equals(userEntity.getStatus())) {
-      throw new SparkYunException("账号已被禁用，请联系管理员");
+      throw new IsxAppException("账号已被禁用，请联系管理员");
     }
 
     // 生成token
@@ -165,7 +165,7 @@ public class UserBizService {
 
     // 获取用户最近一次租户信息
     if (Strings.isEmpty(userEntity.getCurrentTenantId())) {
-      throw new SparkYunException("无可用租户，请联系管理员");
+      throw new IsxAppException("无可用租户，请联系管理员");
     }
     Optional<TenantEntity> tenantEntityOptional =
         tenantRepository.findById(userEntity.getCurrentTenantId());
@@ -176,7 +176,7 @@ public class UserBizService {
       List<TenantUserEntity> tenantUserEntities =
           tenantUserRepository.findAllByUserId(userEntity.getId());
       if (tenantUserEntities.isEmpty()) {
-        throw new SparkYunException("无可用租户，请联系管理员");
+        throw new IsxAppException("无可用租户，请联系管理员");
       }
       currentTenantId = tenantUserEntities.get(0).getTenantId();
       userEntity.setCurrentTenantId(currentTenantId);
@@ -189,7 +189,7 @@ public class UserBizService {
     Optional<TenantUserEntity> tenantUserEntityOptional =
         tenantUserRepository.findByTenantIdAndUserId(currentTenantId, userEntity.getId());
     if (!tenantUserEntityOptional.isPresent()) {
-      throw new SparkYunException("无可用租户，请联系管理员");
+      throw new IsxAppException("无可用租户，请联系管理员");
     }
 
     // 生成token并返回
@@ -214,14 +214,14 @@ public class UserBizService {
     Optional<UserEntity> userEntityOptional =
         userRepository.findByAccount(usrAddUserReq.getAccount());
     if (userEntityOptional.isPresent()) {
-      throw new SparkYunException("用户已存在");
+      throw new IsxAppException("用户已存在");
     }
 
     // 判断手机号是否存在
     if (!Strings.isEmpty(usrAddUserReq.getPhone())) {
       Optional<UserEntity> byPhoneOptional = userRepository.findByPhone(usrAddUserReq.getPhone());
       if (byPhoneOptional.isPresent()) {
-        throw new SparkYunException("手机号已存在");
+        throw new IsxAppException("手机号已存在");
       }
     }
 
@@ -229,7 +229,7 @@ public class UserBizService {
     if (!Strings.isEmpty(usrAddUserReq.getEmail())) {
       Optional<UserEntity> byPhoneOptional = userRepository.findByEmail(usrAddUserReq.getEmail());
       if (byPhoneOptional.isPresent()) {
-        throw new SparkYunException("邮箱已存在");
+        throw new IsxAppException("邮箱已存在");
       }
     }
 
@@ -246,7 +246,7 @@ public class UserBizService {
     // 判断用户是否存在
     Optional<UserEntity> userEntityOptional = userRepository.findById(usrUpdateUserReq.getId());
     if (!userEntityOptional.isPresent()) {
-      throw new SparkYunException("用户不存在");
+      throw new IsxAppException("用户不存在");
     }
 
     // UsrUpdateUserReq To UserEntity
@@ -260,7 +260,7 @@ public class UserBizService {
 
     Optional<UserEntity> userEntityOptional = userRepository.findById(userId);
     if (!userEntityOptional.isPresent()) {
-      throw new SparkYunException("用户不存在");
+      throw new IsxAppException("用户不存在");
     }
 
     UserEntity userEntity = userEntityOptional.get();
@@ -272,7 +272,7 @@ public class UserBizService {
 
     Optional<UserEntity> userEntityOptional = userRepository.findById(userId);
     if (!userEntityOptional.isPresent()) {
-      throw new SparkYunException("用户不存在");
+      throw new IsxAppException("用户不存在");
     }
 
     UserEntity userEntity = userEntityOptional.get();
@@ -284,7 +284,7 @@ public class UserBizService {
 
     Optional<UserEntity> userEntityOptional = userRepository.findById(userId);
     if (!userEntityOptional.isPresent()) {
-      throw new SparkYunException("用户不存在");
+      throw new IsxAppException("用户不存在");
     }
 
     userRepository.deleteById(userId);

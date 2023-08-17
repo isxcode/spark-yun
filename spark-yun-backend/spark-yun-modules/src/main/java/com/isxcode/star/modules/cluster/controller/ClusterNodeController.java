@@ -4,7 +4,7 @@ import com.isxcode.star.api.cluster.pojos.req.EnoAddNodeReq;
 import com.isxcode.star.api.cluster.pojos.req.EnoQueryNodeReq;
 import com.isxcode.star.api.cluster.pojos.req.EnoUpdateNodeReq;
 import com.isxcode.star.api.cluster.pojos.res.EnoQueryNodeRes;
-import com.isxcode.star.backend.api.base.constants.ModulePrefix;
+import com.isxcode.star.api.main.constants.ModuleCode;
 import com.isxcode.star.common.annotations.successResponse.SuccessResponse;
 import com.isxcode.star.modules.cluster.service.ClusterNodeBizService;
 import com.isxcode.star.modules.userlog.UserLog;
@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "引擎节点模块")
 @RestController
-@RequestMapping(ModulePrefix.CLUSTER_NODE)
+@RequestMapping(ModuleCode.CLUSTER_NODE)
 @RequiredArgsConstructor
 public class ClusterNodeController {
 

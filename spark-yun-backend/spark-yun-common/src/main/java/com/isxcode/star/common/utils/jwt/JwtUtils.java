@@ -3,7 +3,7 @@ package com.isxcode.star.common.utils.jwt;
 import cn.hutool.crypto.SecureUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.isxcode.star.backend.api.base.exceptions.SparkYunException;
+import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.JwtParserBuilder;
 import io.jsonwebtoken.Jwts;
@@ -31,7 +31,7 @@ public class JwtUtils {
     try {
       claimsStr = new ObjectMapper().writeValueAsString(obj);
     } catch (JsonProcessingException e) {
-      throw new SparkYunException("jwt加密异常");
+      throw new IsxAppException("jwt加密异常");
     }
     if (aesKey != null) {
       claimsStr = SecureUtil.aes(Arrays.copyOf(aesKey.getBytes(), 1 << 5)).encryptBase64(claimsStr);
@@ -84,7 +84,7 @@ public class JwtUtils {
     try {
       return objectMapper.readValue(targetJsonStr, targetClass);
     } catch (JsonProcessingException e) {
-      throw new SparkYunException("jwt解密异常");
+      throw new IsxAppException("jwt解密异常");
     }
   }
 }

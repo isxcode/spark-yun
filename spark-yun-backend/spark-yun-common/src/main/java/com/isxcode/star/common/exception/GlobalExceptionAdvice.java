@@ -1,6 +1,6 @@
 package com.isxcode.star.common.exception;
 
-import com.isxcode.star.backend.api.base.exceptions.AbstractSparkYunException;
+import com.isxcode.star.backend.api.base.exceptions.AbstractIsxAppException;
 import com.isxcode.star.backend.api.base.exceptions.SuccessResponseException;
 import com.isxcode.star.backend.api.base.pojos.BaseResponse;
 import java.nio.file.AccessDeniedException;
@@ -27,9 +27,9 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class GlobalExceptionAdvice extends ResponseEntityExceptionHandler {
 
-  @ExceptionHandler(AbstractSparkYunException.class)
+  @ExceptionHandler(AbstractIsxAppException.class)
   public ResponseEntity<BaseResponse<?>> customException(
-      AbstractSparkYunException abstractSparkYunException) {
+      AbstractIsxAppException abstractSparkYunException) {
 
     BaseResponse<?> errorResponse = new BaseResponse<>();
     errorResponse.setMsg(abstractSparkYunException.getMsg());

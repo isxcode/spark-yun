@@ -3,7 +3,7 @@ package com.isxcode.star.agent.run;
 import com.alibaba.fastjson.JSON;
 import com.isxcode.star.api.agent.pojos.req.PluginReq;
 import com.isxcode.star.api.agent.pojos.req.SparkSubmit;
-import com.isxcode.star.backend.api.base.exceptions.SparkYunException;
+import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.nio.charset.StandardCharsets;
@@ -47,9 +47,9 @@ public class StandaloneAgentService implements AgentService {
           return line.split("\\s+")[1];
         }
       }
-      throw new SparkYunException("无法获取master url");
+      throw new IsxAppException("无法获取master url");
     } catch (IOException e) {
-      throw new SparkYunException("无法获取master url");
+      throw new IsxAppException("无法获取master url");
     }
   }
 
@@ -65,9 +65,9 @@ public class StandaloneAgentService implements AgentService {
           return line.split("\\s+")[1];
         }
       }
-      throw new SparkYunException("无法获取master url");
+      throw new IsxAppException("无法获取master url");
     } catch (IOException e) {
-      throw new SparkYunException("无法获取master url");
+      throw new IsxAppException("无法获取master url");
     }
   }
 
@@ -98,7 +98,7 @@ public class StandaloneAgentService implements AgentService {
             sparkLauncher.addJar(jar.toURI().toURL().toString());
           } catch (MalformedURLException e) {
             log.error(e.getMessage());
-            throw new SparkYunException("50010", "添加lib中文件异常", e.getMessage());
+            throw new IsxAppException("50010", "添加lib中文件异常", e.getMessage());
           }
         }
       }
@@ -139,13 +139,13 @@ public class StandaloneAgentService implements AgentService {
     try {
       int exitCode = launch.waitFor();
       if (exitCode == 1) {
-        throw new SparkYunException(errLog.toString());
+        throw new IsxAppException(errLog.toString());
       }
     } catch (InterruptedException e) {
-      throw new SparkYunException(e.getMessage());
+      throw new IsxAppException(e.getMessage());
     }
 
-    throw new SparkYunException("无法获取submissionId \n" + errLog);
+    throw new IsxAppException("无法获取submissionId \n" + errLog);
   }
 
   @Override
@@ -263,7 +263,7 @@ public class StandaloneAgentService implements AgentService {
         EntityUtils.toString(responseEntity);
       }
     } catch (ParseException e) {
-      throw new SparkYunException("中止失败");
+      throw new IsxAppException("中止失败");
     }
   }
 }

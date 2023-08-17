@@ -2,7 +2,7 @@ package com.isxcode.star.modules.workflow.service;
 
 import static com.isxcode.star.security.main.WebSecurityConfig.USER_ID;
 
-import com.isxcode.star.backend.api.base.exceptions.SparkYunException;
+import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.star.modules.workflow.entity.WorkflowFavourEntity;
 import com.isxcode.star.modules.workflow.repository.WorkflowFavourRepository;
 import java.util.Optional;
@@ -26,7 +26,7 @@ public class WorkflowFavourBizService {
     Optional<WorkflowFavourEntity> workflowFavourEntityOptional =
         workflowFavourRepository.findByWorkflowIdAndUserId(workflowId, USER_ID.get());
     if (!workflowFavourEntityOptional.isPresent()) {
-      throw new SparkYunException("已收藏");
+      throw new IsxAppException("已收藏");
     }
 
     WorkflowFavourEntity workflowFavour =

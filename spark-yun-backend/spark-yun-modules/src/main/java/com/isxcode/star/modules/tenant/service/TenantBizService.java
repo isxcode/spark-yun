@@ -12,7 +12,7 @@ import com.isxcode.star.api.tenant.pojos.res.TetGetTenantRes;
 import com.isxcode.star.api.tenant.pojos.res.TetQueryTenantRes;
 import com.isxcode.star.api.tenant.pojos.res.TetQueryUserTenantRes;
 import com.isxcode.star.api.user.constants.RoleType;
-import com.isxcode.star.backend.api.base.exceptions.SparkYunException;
+import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.star.modules.tenant.entity.TenantEntity;
 import com.isxcode.star.modules.tenant.mapper.TenantMapper;
 import com.isxcode.star.modules.tenant.repository.TenantRepository;
@@ -56,14 +56,14 @@ public class TenantBizService {
     Optional<TenantEntity> tenantEntityOptional =
         tenantRepository.findByName(tetAddTenantReq.getName());
     if (tenantEntityOptional.isPresent()) {
-      throw new SparkYunException("租户名称重复");
+      throw new IsxAppException("租户名称重复");
     }
 
     // 判断管理员是否存在
     Optional<UserEntity> userEntityOptional =
         userRepository.findById(tetAddTenantReq.getAdminUserId());
     if (!userEntityOptional.isPresent()) {
-      throw new SparkYunException("用户不存在");
+      throw new IsxAppException("用户不存在");
     }
     UserEntity userEntity = userEntityOptional.get();
 
@@ -111,7 +111,7 @@ public class TenantBizService {
               .map(TenantUserEntity::getTenantId)
               .collect(Collectors.toList());
       if (tenantUserEntities.isEmpty()) {
-        throw new SparkYunException("请管理员添加进入租户");
+        throw new IsxAppException("请管理员添加进入租户");
       }
     }
 
@@ -158,7 +158,7 @@ public class TenantBizService {
     Optional<TenantEntity> tenantEntityOptional =
         tenantRepository.findById(tetUpdateTenantBySystemAdminReq.getId());
     if (!tenantEntityOptional.isPresent()) {
-      throw new SparkYunException("租户不存在");
+      throw new IsxAppException("租户不存在");
     }
 
     // TetUpdateTenantBySystemAdminReq To TenantEntity
@@ -177,7 +177,7 @@ public class TenantBizService {
     Optional<TenantEntity> tenantEntityOptional =
         tenantRepository.findById(tetUpdateTenantByTenantAdminReq.getId());
     if (!tenantEntityOptional.isPresent()) {
-      throw new SparkYunException("租户不存在");
+      throw new IsxAppException("租户不存在");
     }
 
     // TetUpdateTenantByTenantAdminReq To TenantEntity
@@ -194,7 +194,7 @@ public class TenantBizService {
     // 判断租户是否存在
     Optional<TenantEntity> tenantEntityOptional = tenantRepository.findById(tenantId);
     if (!tenantEntityOptional.isPresent()) {
-      throw new SparkYunException("租户不存在");
+      throw new IsxAppException("租户不存在");
     }
 
     // 设置为启用
@@ -210,7 +210,7 @@ public class TenantBizService {
     // 判断租户是否存在
     Optional<TenantEntity> tenantEntityOptional = tenantRepository.findById(tenantId);
     if (!tenantEntityOptional.isPresent()) {
-      throw new SparkYunException("租户不存在");
+      throw new IsxAppException("租户不存在");
     }
 
     // 设置为启用
@@ -231,7 +231,7 @@ public class TenantBizService {
     // 判断租户是否存在
     Optional<TenantEntity> tenantEntityOptional = tenantRepository.findById(tenantId);
     if (!tenantEntityOptional.isPresent()) {
-      throw new SparkYunException("租户不存在");
+      throw new IsxAppException("租户不存在");
     }
     TenantEntity tenantEntity = tenantEntityOptional.get();
 
@@ -254,12 +254,12 @@ public class TenantBizService {
 
     Optional<TenantEntity> tenantEntityOptional = tenantRepository.findById(tenantId);
     if (!tenantEntityOptional.isPresent()) {
-      throw new SparkYunException("租户不存在");
+      throw new IsxAppException("租户不存在");
     }
 
     Optional<UserEntity> userEntityOptional = userRepository.findById(USER_ID.get());
     if (!userEntityOptional.isPresent()) {
-      throw new SparkYunException("用户不存在");
+      throw new IsxAppException("用户不存在");
     }
 
     UserEntity userEntity = userEntityOptional.get();
@@ -271,13 +271,13 @@ public class TenantBizService {
 
     Optional<TenantEntity> tenantEntityOptional = tenantRepository.findById(tenantId);
     if (!tenantEntityOptional.isPresent()) {
-      throw new SparkYunException("租户不存在");
+      throw new IsxAppException("租户不存在");
     }
     TenantEntity tenantEntity = tenantEntityOptional.get();
 
     Optional<UserEntity> userEntityOptional = userRepository.findById(USER_ID.get());
     if (!userEntityOptional.isPresent()) {
-      throw new SparkYunException("用户不存在");
+      throw new IsxAppException("用户不存在");
     }
     UserEntity userEntity = userEntityOptional.get();
 
@@ -293,7 +293,7 @@ public class TenantBizService {
     Optional<TenantUserEntity> tenantUserEntityOptional =
         tenantUserRepository.findByTenantIdAndUserId(tenantId, USER_ID.get());
     if (!tenantUserEntityOptional.isPresent()) {
-      throw new SparkYunException("不在租户中");
+      throw new IsxAppException("不在租户中");
     }
     return TetGetTenantRes.builder().id(tenantEntity.getId()).name(tenantEntity.getName()).build();
   }

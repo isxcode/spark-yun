@@ -37,4 +37,5 @@ logging:
     root: info
 
 spark-yun:
-  resources-path: classpath:resources
+  default-agent-port: 30177
+  tmp-dir: /tmp

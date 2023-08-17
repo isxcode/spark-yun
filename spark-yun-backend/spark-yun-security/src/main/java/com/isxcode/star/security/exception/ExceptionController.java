@@ -1,6 +1,6 @@
 package com.isxcode.star.security.exception;
 
-import com.isxcode.star.backend.api.base.exceptions.SparkYunException;
+import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
@@ -19,7 +19,7 @@ public class ExceptionController {
       method = {RequestMethod.GET, RequestMethod.POST})
   public void tokenIsNull() {
 
-    throw new SparkYunException(String.valueOf(HttpStatus.UNAUTHORIZED.value()), "token为null异常");
+    throw new IsxAppException(String.valueOf(HttpStatus.UNAUTHORIZED.value()), "token为null异常");
   }
 
   @Operation(summary = "token不合法异常")
@@ -28,7 +28,7 @@ public class ExceptionController {
       method = {RequestMethod.GET, RequestMethod.POST})
   public void tokenIsInvalid() {
 
-    throw new SparkYunException(String.valueOf(HttpStatus.UNAUTHORIZED.value()), "token异常，请重新登录");
+    throw new IsxAppException(String.valueOf(HttpStatus.UNAUTHORIZED.value()), "token异常，请重新登录");
   }
 
   @Operation(summary = "权限不足异常")
@@ -37,7 +37,7 @@ public class ExceptionController {
       method = {RequestMethod.GET, RequestMethod.POST})
   public void exceptionAuthError() {
 
-    throw new SparkYunException(String.valueOf(HttpStatus.FORBIDDEN.value()), "权限不足异常");
+    throw new IsxAppException(String.valueOf(HttpStatus.FORBIDDEN.value()), "权限不足异常");
   }
 
   @Operation(summary = "证书无效接口")
@@ -46,6 +46,6 @@ public class ExceptionController {
       method = {RequestMethod.GET, RequestMethod.POST})
   public void licenseError() {
 
-    throw new SparkYunException(String.valueOf(HttpStatus.FORBIDDEN.value()), "许可证无效，请联系管理员");
+    throw new IsxAppException(String.valueOf(HttpStatus.FORBIDDEN.value()), "许可证无效，请联系管理员");
   }
 }

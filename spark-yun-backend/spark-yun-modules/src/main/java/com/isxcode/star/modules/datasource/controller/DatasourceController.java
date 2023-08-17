@@ -7,7 +7,7 @@ import com.isxcode.star.api.datasource.pojos.res.DasGetConnectLogRes;
 import com.isxcode.star.api.datasource.pojos.res.DasQueryDatasourceRes;
 import com.isxcode.star.api.datasource.pojos.res.DasTestConnectRes;
 import com.isxcode.star.api.user.constants.RoleType;
-import com.isxcode.star.backend.api.base.constants.ModulePrefix;
+import com.isxcode.star.api.main.constants.ModuleCode;
 import com.isxcode.star.backend.api.base.constants.SecurityConstants;
 import com.isxcode.star.common.annotations.successResponse.SuccessResponse;
 import com.isxcode.star.modules.datasource.service.DatasourceBizService;
@@ -30,7 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "数据源模块")
 @RestController
-@RequestMapping(ModulePrefix.DATASOURCE)
+@RequestMapping(ModuleCode.DATASOURCE)
 @RequiredArgsConstructor
 public class DatasourceController {
 

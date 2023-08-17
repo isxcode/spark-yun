@@ -10,8 +10,9 @@ import com.isxcode.star.api.cluster.pojos.req.EnoAddNodeReq;
 import com.isxcode.star.api.cluster.pojos.req.EnoQueryNodeReq;
 import com.isxcode.star.api.cluster.pojos.req.EnoUpdateNodeReq;
 import com.isxcode.star.api.cluster.pojos.res.EnoQueryNodeRes;
-import com.isxcode.star.backend.api.base.exceptions.SparkYunException;
-import com.isxcode.star.backend.api.base.properties.SparkYunProperties;
+import com.isxcode.star.api.main.properties.SparkYunProperties;
+import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
+import com.isxcode.star.backend.api.base.properties.IsxAppProperties;
 import com.isxcode.star.common.utils.AesUtils;
 import com.isxcode.star.modules.cluster.entity.ClusterEntity;
 import com.isxcode.star.modules.cluster.entity.ClusterNodeEntity;
@@ -38,7 +39,7 @@ import org.springframework.transaction.annotation.Transactional;
 /** 用户模块接口的业务逻辑. */
 @Service
 @RequiredArgsConstructor
-@Transactional(noRollbackFor = {SparkYunException.class})
+@Transactional(noRollbackFor = {IsxAppException.class})
 @Slf4j
 public class ClusterNodeBizService {
 
@@ -68,7 +69,7 @@ public class ClusterNodeBizService {
     Optional<ClusterEntity> calculateEngineEntityOptional =
         calculateEngineRepository.findById(enoAddNodeReq.getClusterId());
     if (!calculateEngineEntityOptional.isPresent()) {
-      throw new SparkYunException("计算引擎不存在");
+      throw new IsxAppException("计算引擎不存在");
     }
     ClusterNodeEntity node = engineNodeMapper.addNodeReqToNodeEntity(enoAddNodeReq);
 
@@ -110,14 +111,14 @@ public class ClusterNodeBizService {
     Optional<ClusterEntity> calculateEngineEntityOptional =
         calculateEngineRepository.findById(enoUpdateNodeReq.getClusterId());
     if (!calculateEngineEntityOptional.isPresent()) {
-      throw new SparkYunException("计算引擎不存在");
+      throw new IsxAppException("计算引擎不存在");
     }
 
     // 判断节点存不存在
     Optional<ClusterNodeEntity> engineNodeEntityOptional =
         engineNodeRepository.findById(enoUpdateNodeReq.getId());
     if (!engineNodeEntityOptional.isPresent()) {
-      throw new SparkYunException("计算引擎不存在");
+      throw new IsxAppException("计算引擎不存在");
     }
     ClusterNodeEntity clusterNodeEntity = engineNodeEntityOptional.get();
 
@@ -194,12 +195,12 @@ public class ClusterNodeBizService {
 
     Optional<ClusterNodeEntity> engineNodeEntityOptional = engineNodeRepository.findById(nodeId);
     if (!engineNodeEntityOptional.isPresent()) {
-      throw new SparkYunException("节点已删除");
+      throw new IsxAppException("节点已删除");
     }
 
     // 判断节点状态是否为已安装
     if (ClusterNodeStatus.RUNNING.equals(engineNodeEntityOptional.get().getStatus())) {
-      throw new SparkYunException("请卸载节点后删除");
+      throw new IsxAppException("请卸载节点后删除");
     }
 
     engineNodeRepository.deleteById(nodeId);
@@ -211,7 +212,7 @@ public class ClusterNodeBizService {
         engineNodeRepository.findById(engineNodeId);
 
     if (!engineNodeEntityOptional.isPresent()) {
-      throw new SparkYunException("节点不存在");
+      throw new IsxAppException("节点不存在");
     }
 
     return engineNodeEntityOptional.get();
@@ -226,7 +227,7 @@ public class ClusterNodeBizService {
     if (ClusterNodeStatus.CHECKING.equals(engineNode.getStatus())
         || ClusterNodeStatus.INSTALLING.equals(engineNode.getStatus())
         || ClusterNodeStatus.REMOVING.equals(engineNode.getStatus())) {
-      throw new SparkYunException("进行中，稍后再试");
+      throw new IsxAppException("进行中，稍后再试");
     }
 
     // 转换请求节点检测对象
@@ -255,14 +256,14 @@ public class ClusterNodeBizService {
     Optional<ClusterEntity> clusterEntityOptional =
         calculateEngineRepository.findById(engineNode.getClusterId());
     if (!clusterEntityOptional.isPresent()) {
-      throw new SparkYunException("集群不存在");
+      throw new IsxAppException("集群不存在");
     }
 
     // 如果是安装中等状态，需要等待运行结束
     if (ClusterNodeStatus.CHECKING.equals(engineNode.getStatus())
         || ClusterNodeStatus.INSTALLING.equals(engineNode.getStatus())
         || ClusterNodeStatus.REMOVING.equals(engineNode.getStatus())) {
-      throw new SparkYunException("进行中，稍后再试");
+      throw new IsxAppException("进行中，稍后再试");
     }
 
     // 将节点信息转成工具类识别对象
@@ -295,7 +296,7 @@ public class ClusterNodeBizService {
     if (ClusterNodeStatus.CHECKING.equals(engineNode.getStatus())
         || ClusterNodeStatus.INSTALLING.equals(engineNode.getStatus())
         || ClusterNodeStatus.REMOVING.equals(engineNode.getStatus())) {
-      throw new SparkYunException("进行中，稍后再试");
+      throw new IsxAppException("进行中，稍后再试");
     }
 
     // 将节点信息转成工具类识别对象
@@ -324,7 +325,7 @@ public class ClusterNodeBizService {
     if (ClusterNodeStatus.CHECKING.equals(engineNode.getStatus())
         || ClusterNodeStatus.INSTALLING.equals(engineNode.getStatus())
         || ClusterNodeStatus.REMOVING.equals(engineNode.getStatus())) {
-      throw new SparkYunException("进行中，稍后再试");
+      throw new IsxAppException("进行中，稍后再试");
     }
 
     // 将节点信息转成工具类识别对象
@@ -353,7 +354,7 @@ public class ClusterNodeBizService {
     if (ClusterNodeStatus.CHECKING.equals(engineNode.getStatus())
         || ClusterNodeStatus.INSTALLING.equals(engineNode.getStatus())
         || ClusterNodeStatus.REMOVING.equals(engineNode.getStatus())) {
-      throw new SparkYunException("进行中，稍后再试");
+      throw new IsxAppException("进行中，稍后再试");
     }
 
     // 将节点信息转成工具类识别对象

@@ -9,7 +9,7 @@ import com.isxcode.star.api.datasource.pojos.req.DasUpdateDatasourceReq;
 import com.isxcode.star.api.datasource.pojos.res.DasGetConnectLogRes;
 import com.isxcode.star.api.datasource.pojos.res.DasQueryDatasourceRes;
 import com.isxcode.star.api.datasource.pojos.res.DasTestConnectRes;
-import com.isxcode.star.backend.api.base.exceptions.SparkYunException;
+import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.star.common.utils.AesUtils;
 import com.isxcode.star.modules.datasource.entity.DatasourceEntity;
 import com.isxcode.star.modules.datasource.mapper.DatasourceMapper;
@@ -56,7 +56,7 @@ public class DatasourceBizService {
     Optional<DatasourceEntity> datasourceEntityOptional =
         datasourceRepository.findById(dasAddDatasourceReq.getId());
     if (!datasourceEntityOptional.isPresent()) {
-      throw new SparkYunException("数据源不存在");
+      throw new IsxAppException("数据源不存在");
     }
 
     DatasourceEntity datasource =
@@ -140,11 +140,11 @@ public class DatasourceBizService {
           Class.forName(DatasourceDriver.STAR_ROCKS_DRIVER);
           break;
         default:
-          throw new SparkYunException("数据源暂不支持");
+          throw new IsxAppException("数据源暂不支持");
       }
     } catch (ClassNotFoundException e) {
       log.error(e.getMessage());
-      throw new SparkYunException("找不到对应驱动");
+      throw new IsxAppException("找不到对应驱动");
     }
   }
 
@@ -154,7 +154,7 @@ public class DatasourceBizService {
     Optional<DatasourceEntity> datasourceEntityOptional =
         datasourceRepository.findById(datasourceId);
     if (!datasourceEntityOptional.isPresent()) {
-      throw new SparkYunException("数据源不存在");
+      throw new IsxAppException("数据源不存在");
     }
     DatasourceEntity datasource = datasourceEntityOptional.get();
 
@@ -187,7 +187,7 @@ public class DatasourceBizService {
     Optional<DatasourceEntity> datasourceEntityOptional =
         datasourceRepository.findById(datasourceId);
     if (!datasourceEntityOptional.isPresent()) {
-      throw new SparkYunException("数据源不存在");
+      throw new IsxAppException("数据源不存在");
     }
     DatasourceEntity datasource = datasourceEntityOptional.get();
 
