@@ -9,7 +9,7 @@ import lombok.Data;
 @AllArgsConstructor
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class UsrLoginRes {
+public class LoginRes {
 
   private String username;
 

@@ -7,11 +7,7 @@ import javax.validation.constraints.Size;
 import lombok.Data;
 
 @Data
-public class UsrUpdateUserReq {
-
-  @Schema(title = "用户id", example = "sy_f8402cd43898421687fcc7c8b98a359c")
-  @NotEmpty(message = "用户id不能为空")
-  private String id;
+public class AddUserReq {
 
   @Schema(title = "名称", example = "ispong")
   @NotEmpty(message = "名称不能为空")
@@ -22,6 +18,11 @@ public class UsrUpdateUserReq {
   @NotEmpty(message = "账号不能为空")
   @Size(min = 1, max = 100, message = "账号长度5～100")
   private String account;
+
+  @Schema(title = "密码", example = "ispong123")
+  @NotEmpty(message = "密码不能为空")
+  @Size(min = 1, max = 100, message = "密码长度5～100")
+  private String passwd;
 
   @Schema(title = "邮箱", example = "ispong@123.com")
   @Email(message = "邮箱不合法")

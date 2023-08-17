@@ -5,7 +5,7 @@ import javax.validation.constraints.NotEmpty;
 import lombok.Data;
 
 @Data
-public class UsrLoginReq {
+public class LoginReq {
 
   @Schema(title = "账号", example = "admin")
   @NotEmpty(message = "账号不能为空")
