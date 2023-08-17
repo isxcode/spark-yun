@@ -22,7 +22,7 @@ public interface WorkflowMapper {
   @Mapping(source = "workflowEntity.id", target = "id")
   @Mapping(source = "wofUpdateWorkflowReq.remark", target = "remark")
   WorkflowEntity updateWorkflowReqToWorkflowEntity(
-          UpdateWorkflowReq wofUpdateWorkflowReq, WorkflowEntity workflowEntity);
+      UpdateWorkflowReq wofUpdateWorkflowReq, WorkflowEntity workflowEntity);
 
   PageWorkflowRes workflowEntityToQueryWorkflowRes(WorkflowEntity workflowEntity);
 

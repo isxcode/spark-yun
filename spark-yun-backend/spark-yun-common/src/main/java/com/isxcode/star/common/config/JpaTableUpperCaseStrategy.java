@@ -1,4 +1,4 @@
-package com.isxcode.star.config;
+package com.isxcode.star.common.config;
 
 import org.hibernate.engine.jdbc.env.spi.JdbcEnvironment;
 import org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy;
