@@ -16,7 +16,7 @@ interface SerchParams {
 export function GetWorkflowList(params: SerchParams): Promise<any> {
   return http.request({
     method: 'post',
-    url: '/wof/queryWorkflow',
+    url: '/workflow/queryWorkflow',
     params: params
   })
 }
@@ -25,7 +25,7 @@ export function GetWorkflowList(params: SerchParams): Promise<any> {
 export function AddWorkflowData(params: any): Promise<any> {
   return http.request({
     method: 'post',
-    url: '/wof/addWorkflow',
+    url: '/workflow/addWorkflow',
     params: params
   })
 }
@@ -34,7 +34,7 @@ export function AddWorkflowData(params: any): Promise<any> {
 export function UpdateWorkflowData(params: any): Promise<any> {
   return http.request({
     method: 'post',
-    url: '/wof/updateWorkflow',
+    url: '/workflow/updateWorkflow',
     params: params
   })
 }
@@ -43,7 +43,7 @@ export function UpdateWorkflowData(params: any): Promise<any> {
 // export function PublishWorkflowData(params: any): Promise<any> {
 //     return http.request({
 //         method: 'post',
-//         url: '/wof/testConnect',
+//         url: '/workflow/testConnect',
 //         params: params
 //     })
 // }
@@ -52,7 +52,7 @@ export function UpdateWorkflowData(params: any): Promise<any> {
 export function DeleteWorkflowData(params: any): Promise<any> {
   return http.request({
     method: 'get',
-    url: '/wof/delWorkflow',
+    url: '/workflow/delWorkflow',
     params: params
   })
 }
@@ -179,7 +179,7 @@ export function SaveWorkflowData(params: any): Promise<any> {
 export function GetWorkflowData(params: any): Promise<any> {
   return http.request({
     method: 'get',
-    url: '/wof/getWorkflow',
+    url: '/workflow/getWorkflow',
     params: params
   })
 }
@@ -188,7 +188,7 @@ export function GetWorkflowData(params: any): Promise<any> {
 export function RunWorkflowData(params: any): Promise<any> {
   return http.request({
     method: 'get',
-    url: '/wof/runFlow',
+    url: '/workflow/runFlow',
     params: params
   })
 }
@@ -197,7 +197,7 @@ export function RunWorkflowData(params: any): Promise<any> {
 export function StopWorkflowData(params: any): Promise<any> {
   return http.request({
     method: 'get',
-    url: '/wof/abortFlow',
+    url: '/workflow/abortFlow',
     params: params
   })
 }
@@ -206,7 +206,7 @@ export function StopWorkflowData(params: any): Promise<any> {
 export function QueryRunWorkInstances(params: any): Promise<any> {
   return http.request({
     method: 'get',
-    url: '/wof/queryRunWorkInstances',
+    url: '/workflow/queryRunWorkInstances',
     params: params
   })
 }
@@ -215,7 +215,7 @@ export function QueryRunWorkInstances(params: any): Promise<any> {
 export function ExportWorkflowData(params: any): Promise<any> {
   return http.request({
     method: 'post',
-    url: '/wof/exportWorks',
+    url: '/workflow/exportWorks',
     params: params
   })
 }
@@ -223,7 +223,7 @@ export function ExportWorkflowData(params: any): Promise<any> {
 export function ImportWorkflowData(params: any): Promise<any> {
   return http.request({
     method: 'post',
-    url: '/wof/importWorks',
+    url: '/workflow/importWorks',
     params: params
   })
 }
@@ -241,7 +241,7 @@ export function PublishWorkflowData(params: any): Promise<any> {
 export function RunAfterFlowData(params: any): Promise<any> {
   return http.request({
     method: 'get',
-    url: '/wof/runAfterFlow',
+    url: '/workflow/runAfterFlow',
     params: params
   })
 }
@@ -249,7 +249,7 @@ export function RunAfterFlowData(params: any): Promise<any> {
 export function BreakFlowData(params: any): Promise<any> {
   return http.request({
     method: 'get',
-    url: '/wof/breakFlow',
+    url: '/workflow/breakFlow',
     params: params
   })
 }
@@ -257,7 +257,7 @@ export function BreakFlowData(params: any): Promise<any> {
 export function RerunCurrentNodeFlowData(params: any): Promise<any> {
   return http.request({
     method: 'get',
-    url: '/wof/runCurrentNode',
+    url: '/workflow/runCurrentNode',
     params: params
   })
 }
@@ -266,7 +266,7 @@ export function RerunCurrentNodeFlowData(params: any): Promise<any> {
 export function ReRunWorkflow(params: any): Promise<any> {
   return http.request({
     method: 'get',
-    url: '/wof/reRunFlow',
+    url: '/workflow/reRunFlow',
     params: params
   })
 }

@@ -1,7 +1,7 @@
 package com.isxcode.star.modules.workflow.service;
 
 import com.alibaba.fastjson.JSON;
-import com.isxcode.star.api.workflow.pojos.req.WfcConfigWorkflowReq;
+import com.isxcode.star.api.workflow.pojos.req.ConfigWorkflowReq;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.star.modules.work.entity.WorkEntity;
 import com.isxcode.star.modules.work.repository.WorkRepository;
@@ -40,7 +40,7 @@ public class WorkflowConfigBizService {
   }
 
   /** 配置工作流. */
-  public void configWorkflow(WfcConfigWorkflowReq wfcConfigWorkflowReq) {
+  public void configWorkflow(ConfigWorkflowReq wfcConfigWorkflowReq) {
 
     String flowWebConfig = JSON.toJSONString(wfcConfigWorkflowReq.getWebConfig());
 

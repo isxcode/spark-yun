@@ -5,7 +5,7 @@ import java.util.List;
 import lombok.Data;
 
 @Data
-public class WofExportWorkflowReq {
+public class ExportWorkflowReq {
 
   @Schema(title = "作业流唯一id", example = "xxxx")
   private String workflowId;
