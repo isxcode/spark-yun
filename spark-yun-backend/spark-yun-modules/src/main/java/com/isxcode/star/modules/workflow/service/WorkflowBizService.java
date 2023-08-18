@@ -13,9 +13,9 @@ import com.isxcode.star.api.work.constants.WorkStatus;
 import com.isxcode.star.api.workflow.constants.WorkflowStatus;
 import com.isxcode.star.api.workflow.pojos.dto.WorkInstanceInfo;
 import com.isxcode.star.api.workflow.pojos.req.*;
+import com.isxcode.star.api.workflow.pojos.res.GetRunWorkInstancesRes;
 import com.isxcode.star.api.workflow.pojos.res.GetWorkflowRes;
 import com.isxcode.star.api.workflow.pojos.res.PageWorkflowRes;
-import com.isxcode.star.api.workflow.pojos.res.WofQueryRunWorkInstancesRes;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.star.modules.work.entity.WorkConfigEntity;
 import com.isxcode.star.modules.work.entity.WorkEntity;
@@ -204,11 +204,11 @@ public class WorkflowBizService {
     return workflowInstance.getId();
   }
 
-  public WofQueryRunWorkInstancesRes queryRunWorkInstances(String workflowInstanceId) {
+  public GetRunWorkInstancesRes getRunWorkInstances(GetRunWorkInstancesReq getRunWorkInstancesReq) {
 
     // 查询工作流实例
     Optional<WorkflowInstanceEntity> workflowInstanceEntityOptional =
-        workflowInstanceRepository.findById(workflowInstanceId);
+        workflowInstanceRepository.findById(getRunWorkInstancesReq.getWorkflowInstanceId());
     if (!workflowInstanceEntityOptional.isPresent()) {
       throw new IsxAppException("工作流实例不存在");
     }
@@ -216,21 +216,22 @@ public class WorkflowBizService {
 
     // 查询作业实例列表
     List<WorkInstanceEntity> workInstances =
-        workInstanceRepository.findAllByWorkflowInstanceId(workflowInstanceId);
+        workInstanceRepository.findAllByWorkflowInstanceId(
+            getRunWorkInstancesReq.getWorkflowInstanceId());
     List<WorkInstanceInfo> instanceInfos =
         workflowMapper.workInstanceEntityListToWorkInstanceInfoList(workInstances);
 
     // 封装返回对象
-    return WofQueryRunWorkInstancesRes.builder()
+    return GetRunWorkInstancesRes.builder()
         .flowStatus(workflowInstance.getStatus())
         .flowRunLog(workflowInstance.getRunLog())
         .workInstances(instanceInfos)
         .build();
   }
 
-  public GetWorkflowRes getWorkflow(String workflowId) {
+  public GetWorkflowRes getWorkflow(GetWorkflowReq getWorkflowReq) {
 
-    WorkflowEntity workflow = getWorkflowEntity(workflowId);
+    WorkflowEntity workflow = getWorkflowEntity(getWorkflowReq.getWorkflowId());
 
     WorkflowConfigEntity workflowConfig =
         workflowConfigRepository.findById(workflow.getConfigId()).get();
@@ -242,7 +243,7 @@ public class WorkflowBizService {
   }
 
   /** 导出作业或者作业流 */
-  public void exportWorks(ExportWorkflowReq wofExportWorkflowReq, HttpServletResponse response) {
+  public void exportWorkflow(ExportWorkflowReq wofExportWorkflowReq, HttpServletResponse response) {
 
     // 导出作业流
     WorkflowEntity workflow = new WorkflowEntity();
@@ -322,7 +323,7 @@ public class WorkflowBizService {
     }
   }
 
-  public void importWorks(MultipartFile workFile, String workflowId) {
+  public void importWorkflow(MultipartFile workFile, String workflowId) {
 
     // 解析文本
     String exportWorkflowInfoStr;
@@ -436,12 +437,12 @@ public class WorkflowBizService {
   }
 
   /** 中止作业流 */
-  public void abortFlow(String workflowInstanceId) {
+  public void abortFlow(AbortFlowReq abortFlowReq) {
 
     // 将所有的PENDING作业实例，改为ABORT
     List<WorkInstanceEntity> pendingWorkInstances =
         workInstanceRepository.findAllByWorkflowInstanceIdAndStatus(
-            workflowInstanceId, InstanceStatus.PENDING);
+            abortFlowReq.getWorkflowInstanceId(), InstanceStatus.PENDING);
     pendingWorkInstances.forEach(
         workInstance -> {
           workInstance.setStatus(InstanceStatus.ABORT);
@@ -451,7 +452,7 @@ public class WorkflowBizService {
     // 将所有的RUNNING作业实例，改为ABORTING
     List<WorkInstanceEntity> runningWorkInstances =
         workInstanceRepository.findAllByWorkflowInstanceIdAndStatus(
-            workflowInstanceId, InstanceStatus.RUNNING);
+            abortFlowReq.getWorkflowInstanceId(), InstanceStatus.RUNNING);
     runningWorkInstances.forEach(
         workInstance -> {
           workInstance.setStatus(InstanceStatus.ABORTING);
@@ -472,7 +473,7 @@ public class WorkflowBizService {
         .whenComplete(
             (exeStatus, exception) -> {
               WorkflowInstanceEntity workflowInstance =
-                  workflowInstanceRepository.findById(workflowInstanceId).get();
+                  workflowInstanceRepository.findById(abortFlowReq.getWorkflowInstanceId()).get();
               if (exception != null || exeStatus.contains(InstanceStatus.FAIL)) {
                 workflowInstance.setStatus(InstanceStatus.FAIL);
               } else {
@@ -510,18 +511,20 @@ public class WorkflowBizService {
   }
 
   /** 中断作业. */
-  public void breakFlow(String workInstanceId) {
+  public void breakFlow(BreakFlowReq breakFlowReq) {
 
     // 将作业实例状态改为BREAK
-    WorkInstanceEntity workInstance = workInstanceRepository.findById(workInstanceId).get();
+    WorkInstanceEntity workInstance =
+        workInstanceRepository.findById(breakFlowReq.getWorkflowInstanceId()).get();
     workInstance.setStatus(InstanceStatus.BREAK);
     workInstanceRepository.save(workInstance);
   }
 
   /** 重跑当前节点. */
-  public void runCurrentNode(String workInstanceId) {
+  public void runCurrentNode(RunCurrentNodeReq runCurrentNodeReq) {
 
-    WorkInstanceEntity workInstance = workInstanceRepository.findById(workInstanceId).get();
+    WorkInstanceEntity workInstance =
+        workInstanceRepository.findById(runCurrentNodeReq.getWorkflowInstanceId()).get();
     WorkflowInstanceEntity workflowInstance =
         workflowInstanceRepository.findById(workInstance.getWorkflowInstanceId()).get();
     WorkEntity work = workRepository.findById(workInstance.getWorkId()).get();
@@ -535,7 +538,8 @@ public class WorkflowBizService {
               // 同步执行作业
               WorkExecutor workExecutor = workExecutorFactory.create(work.getWorkType());
               WorkRunContext workRunContext =
-                  WorkflowUtils.genWorkRunContext(workInstanceId, work, workConfig);
+                  WorkflowUtils.genWorkRunContext(
+                      runCurrentNodeReq.getWorkflowInstanceId(), work, workConfig);
               workExecutor.syncExecute(workRunContext);
 
               return "OVER";
@@ -557,13 +561,13 @@ public class WorkflowBizService {
   }
 
   /** 重跑作业流. */
-  public void reRunFlow(String workflowInstanceId) {
+  public void reRunFlow(ReRunFlowReq reRunFlowReq) {
 
     // 先中止作业
     // 将所有的PENDING作业实例，改为ABORT
     List<WorkInstanceEntity> pendingWorkInstances =
         workInstanceRepository.findAllByWorkflowInstanceIdAndStatus(
-            workflowInstanceId, InstanceStatus.PENDING);
+            reRunFlowReq.getWorkflowInstanceId(), InstanceStatus.PENDING);
     pendingWorkInstances.forEach(
         workInstance -> {
           workInstance.setStatus(InstanceStatus.ABORT);
@@ -576,7 +580,7 @@ public class WorkflowBizService {
     // 将所有的RUNNING作业实例，改为ABORTING
     List<WorkInstanceEntity> runningWorkInstances =
         workInstanceRepository.findAllByWorkflowInstanceIdAndStatus(
-            workflowInstanceId, InstanceStatus.RUNNING);
+            reRunFlowReq.getWorkflowInstanceId(), InstanceStatus.RUNNING);
     runningWorkInstances.forEach(
         workInstance -> {
           workInstance.setStatus(InstanceStatus.ABORTING);
@@ -599,13 +603,13 @@ public class WorkflowBizService {
 
               // 初始化工作流实例状态
               WorkflowInstanceEntity workflowInstance =
-                  workflowInstanceRepository.findById(workflowInstanceId).get();
+                  workflowInstanceRepository.findById(reRunFlowReq.getWorkflowInstanceId()).get();
               workflowInstance.setStatus(InstanceStatus.PENDING);
               workflowInstanceRepository.save(workflowInstance);
 
               // 初始化作业实例状态
               List<WorkInstanceEntity> workInstances =
-                  workInstanceRepository.findAllByWorkflowInstanceId(workflowInstanceId);
+                  workInstanceRepository.findAllByWorkflowInstanceId(reRunFlowReq.getWorkflowInstanceId());
               workInstances.forEach(
                   e -> {
                     e.setStatus(InstanceStatus.PENDING);
@@ -643,9 +647,10 @@ public class WorkflowBizService {
             });
   }
 
-  public void runAfterFlow(String workInstanceId) {
+  public void runAfterFlow(RunAfterFlowReq runAfterFlowReq) {
 
-    WorkInstanceEntity workInstance = workInstanceRepository.findById(workInstanceId).get();
+    WorkInstanceEntity workInstance =
+        workInstanceRepository.findById(runAfterFlowReq.getWorkflowInstanceId()).get();
     WorkflowInstanceEntity workflowInstance =
         workflowInstanceRepository.findById(workInstance.getWorkflowInstanceId()).get();
 
