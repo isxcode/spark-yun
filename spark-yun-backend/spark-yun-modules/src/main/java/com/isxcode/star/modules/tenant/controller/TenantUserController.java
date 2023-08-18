@@ -5,7 +5,7 @@ import com.isxcode.star.api.tenant.pojos.req.*;
 import com.isxcode.star.api.tenant.pojos.res.PageTenantUserRes;
 import com.isxcode.star.api.user.constants.RoleType;
 import com.isxcode.star.common.annotations.successResponse.SuccessResponse;
-import com.isxcode.star.modules.tenant.service.TenantUserBizService;
+import com.isxcode.star.modules.tenant.service.biz.TenantUserBizService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import javax.validation.Valid;

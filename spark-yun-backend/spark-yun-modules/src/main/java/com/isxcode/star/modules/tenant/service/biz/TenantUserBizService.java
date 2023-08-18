@@ -1,4 +1,4 @@
-package com.isxcode.star.modules.tenant.service;
+package com.isxcode.star.modules.tenant.service.biz;
 
 import static com.isxcode.star.common.config.CommonConfig.TENANT_ID;
 import static com.isxcode.star.common.config.CommonConfig.USER_ID;
