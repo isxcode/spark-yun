@@ -6,6 +6,7 @@ import com.isxcode.star.api.work.exceptions.WorkRunException;
 import com.isxcode.star.modules.datasource.entity.DatasourceEntity;
 import com.isxcode.star.modules.datasource.repository.DatasourceRepository;
 import com.isxcode.star.modules.datasource.service.DatasourceBizService;
+import com.isxcode.star.modules.datasource.service.DatasourceService;
 import com.isxcode.star.modules.work.entity.WorkInstanceEntity;
 import com.isxcode.star.modules.work.repository.WorkInstanceRepository;
 import com.isxcode.star.modules.workflow.repository.WorkflowInstanceRepository;
@@ -32,16 +33,20 @@ public class QuerySqlExecutor extends WorkExecutor {
 
   private final WorkInstanceRepository workInstanceRepository;
 
+  private final DatasourceService datasourceService;
+
   public QuerySqlExecutor(
       DatasourceBizService datasourceBizService,
       DatasourceRepository datasourceRepository,
       WorkInstanceRepository workInstanceRepository,
-      WorkflowInstanceRepository workflowInstanceRepository) {
+      WorkflowInstanceRepository workflowInstanceRepository,
+      DatasourceService datasourceService) {
 
     super(workInstanceRepository, workflowInstanceRepository);
     this.datasourceBizService = datasourceBizService;
     this.datasourceRepository = datasourceRepository;
     this.workInstanceRepository = workInstanceRepository;
+    this.datasourceService = datasourceService;
   }
 
   public void execute(WorkRunContext workRunContext, WorkInstanceEntity workInstance) {
@@ -78,8 +83,7 @@ public class QuerySqlExecutor extends WorkExecutor {
     workInstance = updateInstance(workInstance, logBuilder);
 
     // 开始执行sql
-    try (Connection connection =
-            datasourceBizService.getDbConnection(datasourceEntityOptional.get());
+    try (Connection connection = datasourceService.getDbConnection(datasourceEntityOptional.get());
         Statement statement = connection.createStatement()) {
 
       // 清除注释

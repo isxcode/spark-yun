@@ -22,7 +22,7 @@ public interface ClusterNodeMapper {
   @Mapping(target = "allStorage", expression = "java(0.0)")
   @Mapping(target = "cpuPercent", expression = "java(0.0)")
   @Mapping(target = "checkDateTime", expression = "java(java.time.LocalDateTime.now())")
-  ClusterNodeEntity addNodeReqToNodeEntity(AddClusterNodeReq enoAddNodeReq);
+  ClusterNodeEntity addClusterNodeReqToClusterNodeEntity(AddClusterNodeReq addClusterNodeReq);
 
   @Mapping(target = "id", source = "clusterNodeEntity.id")
   @Mapping(target = "clusterId", source = "clusterNodeEntity.clusterId")

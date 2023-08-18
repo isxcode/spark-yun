@@ -5,6 +5,7 @@ import com.isxcode.star.api.work.exceptions.WorkRunException;
 import com.isxcode.star.modules.datasource.entity.DatasourceEntity;
 import com.isxcode.star.modules.datasource.repository.DatasourceRepository;
 import com.isxcode.star.modules.datasource.service.DatasourceBizService;
+import com.isxcode.star.modules.datasource.service.DatasourceService;
 import com.isxcode.star.modules.work.entity.WorkInstanceEntity;
 import com.isxcode.star.modules.work.repository.WorkInstanceRepository;
 import com.isxcode.star.modules.workflow.repository.WorkflowInstanceRepository;
@@ -27,15 +28,19 @@ public class ExecuteSqlExecutor extends WorkExecutor {
 
   private final DatasourceBizService datasourceBizService;
 
+  private final DatasourceService datasourceService;
+
   public ExecuteSqlExecutor(
       WorkInstanceRepository workInstanceRepository,
       DatasourceRepository datasourceRepository,
       DatasourceBizService datasourceBizService,
-      WorkflowInstanceRepository workflowInstanceRepository) {
+      WorkflowInstanceRepository workflowInstanceRepository,
+      DatasourceService datasourceService) {
 
     super(workInstanceRepository, workflowInstanceRepository);
     this.datasourceRepository = datasourceRepository;
     this.datasourceBizService = datasourceBizService;
+    this.datasourceService = datasourceService;
   }
 
   @Override
@@ -73,8 +78,7 @@ public class ExecuteSqlExecutor extends WorkExecutor {
     workInstance = updateInstance(workInstance, logBuilder);
 
     // 开始执行作业
-    try (Connection connection =
-            datasourceBizService.getDbConnection(datasourceEntityOptional.get());
+    try (Connection connection = datasourceService.getDbConnection(datasourceEntityOptional.get());
         Statement statement = connection.createStatement()) {
 
       // 清除注释
