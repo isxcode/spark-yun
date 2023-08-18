@@ -16,7 +16,7 @@ interface SerchParams {
 export function GetDatasourceList(params: SerchParams): Promise<any> {
   return http.request({
     method: 'post',
-    url: '/das/queryDatasource',
+    url: '/datasource/pageDatasource',
     params: params
   })
 }
@@ -25,7 +25,7 @@ export function GetDatasourceList(params: SerchParams): Promise<any> {
 export function AddDatasourceData(params: any): Promise<any> {
   return http.request({
     method: 'post',
-    url: '/das/addDatasource',
+    url: '/datasource/addDatasource',
     params: params
   })
 }
@@ -34,7 +34,7 @@ export function AddDatasourceData(params: any): Promise<any> {
 export function UpdateDatasourceData(params: any): Promise<any> {
   return http.request({
     method: 'post',
-    url: '/das/updateDatasource',
+    url: '/datasource/updateDatasource',
     params: params
   })
 }
@@ -42,8 +42,8 @@ export function UpdateDatasourceData(params: any): Promise<any> {
 // 检测
 export function CheckDatasourceData(params: any): Promise<any> {
   return http.request({
-    method: 'get',
-    url: '/das/testConnect',
+    method: 'post',
+    url: '/datasource/testConnect',
     params: params
   })
 }
@@ -51,8 +51,8 @@ export function CheckDatasourceData(params: any): Promise<any> {
 // 删除
 export function DeleteDatasourceData(params: any): Promise<any> {
   return http.request({
-    method: 'get',
-    url: '/das/delDatasource',
+    method: 'post',
+    url: '/datasource/deleteDatasource',
     params: params
   })
 }
