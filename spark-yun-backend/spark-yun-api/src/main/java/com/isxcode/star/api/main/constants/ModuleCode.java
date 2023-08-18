@@ -21,14 +21,14 @@ public interface ModuleCode {
   /** 作业模块. */
   String WORK = "work";
 
+  /** 租户模块. */
+  String TENANT = "tenant";
+
   /** 租户用户模块. */
   String TENANT_USER = "tenant_user";
 
   /** 云代理模块. */
   String YUN_AGENT = "/yag";
-
-  /** 租户模块. */
-  String TENANT = "tenant";
 
   /** 许可证模块. */
   String LICENSE = "/lic";
