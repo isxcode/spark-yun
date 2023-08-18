@@ -49,7 +49,7 @@ public class ClusterController {
   }
 
   @Operation(summary = "删除计算集群接口")
-  @GetMapping("/deleteCluster")
+  @PostMapping("/deleteCluster")
   @SuccessResponse("删除成功")
   public void deleteCluster(@Valid @RequestBody DeleteClusterReq deleteClusterReq) {
 

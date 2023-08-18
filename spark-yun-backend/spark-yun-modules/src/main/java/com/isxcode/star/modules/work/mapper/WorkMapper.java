@@ -30,14 +30,7 @@ public interface WorkMapper {
   WorkConfigEntity configWorkReqToWorkConfigEntity(ConfigWorkReq configWorkReq);
 
   @Mapping(target = "createDateTime", dateFormat = "yyyy-MM-dd HH:mm:ss")
-  PageWorkRes workEntityToQueryWorkRes(WorkEntity workEntity);
-
-  List<PageWorkRes> workEntityListToQueryWorkResList(List<WorkEntity> workEntities);
-
-  default Page<PageWorkRes> workEntityListToQueryWorkResList(Page<WorkEntity> workEntities) {
-    List<PageWorkRes> dtoList = workEntityListToQueryWorkResList(workEntities.getContent());
-    return new PageImpl<>(dtoList, workEntities.getPageable(), workEntities.getTotalElements());
-  }
+  PageWorkRes workEntityToPageWorkRes(WorkEntity workEntity);
 
   @Mapping(target = "clusterId", source = "workConfigEntity.clusterId")
   @Mapping(target = "datasourceId", source = "workConfigEntity.datasourceId")

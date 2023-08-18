@@ -147,10 +147,14 @@ tasks.register('website', Exec) {
   commandLine 'bash', '-c', 'npm i docsify-cli -g && docsify serve docs'
 }
 
-// 自定义命令：安装isx命令
-// gradle isx
-tasks.register('isx', Exec) {
+// 自定义命令：单独启动前端页面
+// gradle web
+tasks.register('web', Exec) {
 
-  commandLine 'bash', '-c', 'cp spark-yun-vip/spark-yun-isx/isx.sh ./isx && chmod a+x isx'
+  if (System.properties['os.name'].toString().contains('Mac OS X') || System.properties['os.name'].toString().contains('Linux')) {
+    commandLine 'sh', '-c', 'cd spark-yun-frontend && npm run dev'
+  } else {
+    commandLine 'cmd', '/c', 'cd spark-yun-frontend && npm run dev'
+  }
 }
 

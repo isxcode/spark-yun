@@ -27,7 +27,7 @@ interface DeleteParam {
 export function GetUserList(params: SerchParams): Promise<any> {
   return http.request({
     method: 'post',
-    url: '/tenant_user/queryTenantUser',
+    url: '/tenant_user/pageTenantUser',
     params: params
   })
 }
@@ -36,7 +36,7 @@ export function GetUserList(params: SerchParams): Promise<any> {
 export function GetUserInfoList(params: SerchParams): Promise<any> {
   return http.request({
     method: 'post',
-    url: '/user/queryAllEnableUsers',
+    url: '/user/pageUser',
     params: params
   })
 }
@@ -62,7 +62,7 @@ export function EditTenantUserData(params: FormUser): Promise<any> {
 // 删除
 export function DeleteTenantUser(params: DeleteParam): Promise<any> {
   return http.request({
-    method: 'get',
+    method: 'post',
     url: '/tenant_user/removeTenantUser',
     params: params
   })
@@ -71,7 +71,7 @@ export function DeleteTenantUser(params: DeleteParam): Promise<any> {
 // 授权
 export function GiveAuth(params: DeleteParam): Promise<any> {
   return http.request({
-    method: 'get',
+    method: 'post',
     url: '/tenant_user/setTenantAdmin',
     params: params
   })
@@ -80,7 +80,7 @@ export function GiveAuth(params: DeleteParam): Promise<any> {
 // 取消授权
 export function RemoveAuth(params: DeleteParam): Promise<any> {
   return http.request({
-    method: 'get',
+    method: 'post',
     url: '/tenant_user/removeTenantAdmin',
     params: params
   })

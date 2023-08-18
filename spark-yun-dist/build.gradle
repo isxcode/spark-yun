@@ -71,7 +71,7 @@ tasks.register('build_agent', Tar) {
   archiveFileName = 'zhiqingyun-agent.tar.gz'
 
   from(rootDir.getAbsolutePath() + "/spark-yun-dist/spark-min") {
-    into 'spark-min'
+    into 'zhiqingyun-agent/spark-min'
   }
   from('zhiqingyun-agent/bin') {
     into 'zhiqingyun-agent/bin'

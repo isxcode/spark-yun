@@ -31,13 +31,13 @@ public interface TenantUserRepository extends JpaRepository<TenantUserEntity, St
               + "from TenantUserEntity T left join UserEntity U on T.userId = U.id  "
               + "WHERE U.roleCode != 'ROLE_SYS_ADMIN' "
               + "   and T.tenantId=:tenantId "
-              + "   and (U.username LIKE %:keyword% "
-              + "OR U.account LIKE %:keyword% "
-              + "OR U.phone LIKE %:keyword% "
-              + "OR U.email LIKE %:keyword%) order by T.createDateTime desc ")
+              + "   and (U.username LIKE %:searchKeyWord% "
+              + "OR U.account LIKE %:searchKeyWord% "
+              + "OR U.phone LIKE %:searchKeyWord% "
+              + "OR U.email LIKE %:searchKeyWord%) order by T.createDateTime desc ")
   Page<PageTenantUserRes> searchTenantUser(
       @Param("tenantId") String tenantId,
-      @Param("keyword") String searchKeyWord,
+      @Param("searchKeyWord") String searchKeyWord,
       Pageable pageable);
 
   long countByTenantId(String tenantId);
