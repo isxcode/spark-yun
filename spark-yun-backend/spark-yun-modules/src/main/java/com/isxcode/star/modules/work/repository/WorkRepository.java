@@ -22,11 +22,11 @@ public interface WorkRepository extends JpaRepository<WorkEntity, String> {
   @Query(
       "SELECT w FROM WorkEntity w "
           + "WHERE w.workflowId = :workflowId AND "
-          + "(w.name LIKE %:keyword% "
-          + "OR w.remark LIKE %:keyword% "
-          + "OR w.workType LIKE %:keyword%) order by w.topIndex desc ,w.createDateTime desc")
-  Page<WorkEntity> searchAllByWorkflowId(
-      @Param("keyword") String searchKeyWord,
+          + "(w.name LIKE %:searchKeyWord% "
+          + "OR w.remark LIKE %:searchKeyWord% "
+          + "OR w.workType LIKE %:searchKeyWord%) order by w.topIndex desc ,w.createDateTime desc")
+  Page<WorkEntity> pageSearchByWorkflowId(
+      @Param("searchKeyWord") String searchKeyWord,
       @Param("workflowId") String workflowId,
       Pageable pageable);
 

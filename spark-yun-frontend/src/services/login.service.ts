@@ -21,7 +21,7 @@ export function LoginUserInfo(params: LoginParam): Promise<any> {
 // 查询租户信息
 export function QueryTenantList(): Promise<any> {
   return http.request({
-    method: 'get',
+    method: 'post',
     url: '/tenant/queryUserTenant'
   })
 }

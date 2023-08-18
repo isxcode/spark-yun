@@ -32,7 +32,7 @@ interface User {
 export function GetUserCenterList(params: SerchParams): Promise<any> {
   return http.request({
     method: 'post',
-    url: '/user/queryAllUsers',
+    url: '/user/pageUser',
     params: params
   })
 }
@@ -40,7 +40,7 @@ export function GetUserCenterList(params: SerchParams): Promise<any> {
 // 用户中心-启用
 export function DisableUser(params: UserParam): Promise<any> {
   return http.request({
-    method: 'get',
+    method: 'post',
     url: '/user/disableUser',
     params: params
   })
@@ -49,7 +49,7 @@ export function DisableUser(params: UserParam): Promise<any> {
 // 用户中心-禁用
 export function EnableUser(params: UserParam): Promise<any> {
   return http.request({
-    method: 'get',
+    method: 'post',
     url: '/user/enableUser',
     params: params
   })
@@ -76,7 +76,7 @@ export function UpdateUserData(params: User): Promise<any> {
 // 用户中心-删除用户
 export function DeleteUser(params: UserParam): Promise<any> {
   return http.request({
-    method: 'get',
+    method: 'post',
     url: '/user/deleteUser',
     params: params
   })
