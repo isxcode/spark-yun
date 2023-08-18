@@ -29,7 +29,7 @@ export function GetScheduleList(params: SerchParams): Promise<any> {
 // 获取日志
 export function GetLogData(params: LogParam): Promise<any> {
   return http.request({
-    method: 'get',
+    method: 'post',
     url: '/work/getSubmitLog',
     params: params
   })

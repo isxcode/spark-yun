@@ -164,6 +164,10 @@ public class SparkSqlExecutor extends WorkExecutor {
     }
 
     // 解析返回对象,获取appId
+    if (baseResponse.getData() == null) {
+      throw new WorkRunException(
+        LocalDateTime.now() + WorkLog.ERROR_INFO + "提交作业失败 : " + baseResponse.getMsg() + "\n");
+    }
     RunWorkRes submitWorkRes =
         JSON.parseObject(JSON.toJSONString(baseResponse.getData()), RunWorkRes.class);
     logBuilder
