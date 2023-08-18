@@ -609,7 +609,8 @@ public class WorkflowBizService {
 
               // 初始化作业实例状态
               List<WorkInstanceEntity> workInstances =
-                  workInstanceRepository.findAllByWorkflowInstanceId(reRunFlowReq.getWorkflowInstanceId());
+                  workInstanceRepository.findAllByWorkflowInstanceId(
+                      reRunFlowReq.getWorkflowInstanceId());
               workInstances.forEach(
                   e -> {
                     e.setStatus(InstanceStatus.PENDING);
