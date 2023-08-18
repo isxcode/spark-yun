@@ -10,10 +10,8 @@ import com.isxcode.star.modules.workflow.service.WorkflowBizService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
-
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -82,7 +80,7 @@ public class WorkflowController {
   @Operation(summary = "作业流导出接口")
   @PostMapping("/exportWorkflow")
   public void exportWorkflow(
-    @Valid @RequestBody ExportWorkflowReq exportWorkflowReq, HttpServletResponse response) {
+      @Valid @RequestBody ExportWorkflowReq exportWorkflowReq, HttpServletResponse response) {
 
     workflowBizService.exportWorkflow(exportWorkflowReq, response);
   }
@@ -91,10 +89,10 @@ public class WorkflowController {
   @PostMapping("/importWorkflow")
   @SuccessResponse("导入成功")
   public void importWorkflow(
-    @RequestParam("workflowConfigFile") MultipartFile workflowConfigFile,
-    @Schema(description = "作业流唯一id", example = "sy_ba1f12b5c8154f999a02a5be2373a438")
-    @RequestParam(required = false)
-    String workflowId) {
+      @RequestParam("workflowConfigFile") MultipartFile workflowConfigFile,
+      @Schema(description = "作业流唯一id", example = "sy_ba1f12b5c8154f999a02a5be2373a438")
+          @RequestParam(required = false)
+          String workflowId) {
 
     workflowBizService.importWorkflow(workflowConfigFile, workflowId);
   }
@@ -142,27 +140,27 @@ public class WorkflowController {
   @PostMapping("/getRunWorkInstances")
   @SuccessResponse("查询成功")
   public GetRunWorkInstancesRes getRunWorkInstances(
-    @Valid @RequestBody GetRunWorkInstancesReq getRunWorkInstancesReq) {
+      @Valid @RequestBody GetRunWorkInstancesReq getRunWorkInstancesReq) {
 
     return workflowBizService.getRunWorkInstances(getRunWorkInstancesReq);
   }
 
-//  @Operation(summary = "配置作业流接口")
-//  @PostMapping("/configWorkflow")
-//  @SuccessResponse("保存成功")
-//  public void configWorkflow(@Valid @RequestBody WfcConfigWorkflowReq wfcConfigWorkflowReq) {
-//
-//    workflowConfigBizService.configWorkflow(wfcConfigWorkflowReq);
-//  }
-//
-//  @Operation(summary = "收藏工作流接口")
-//  @GetMapping("/favourWorkflow")
-//  @SuccessResponse("收藏成功")
-//  public void favourWorkflow(
-//    @Schema(description = "作业流唯一id", example = "sy_ba1f12b5c8154f999a02a5be2373a438")
-//    @RequestParam
-//    String workflowId) {
-//
-//    workflowFavourBizService.favourWorkflow(workflowId);
-//  }
+  //  @Operation(summary = "配置作业流接口")
+  //  @PostMapping("/configWorkflow")
+  //  @SuccessResponse("保存成功")
+  //  public void configWorkflow(@Valid @RequestBody WfcConfigWorkflowReq wfcConfigWorkflowReq) {
+  //
+  //    workflowConfigBizService.configWorkflow(wfcConfigWorkflowReq);
+  //  }
+  //
+  //  @Operation(summary = "收藏工作流接口")
+  //  @GetMapping("/favourWorkflow")
+  //  @SuccessResponse("收藏成功")
+  //  public void favourWorkflow(
+  //    @Schema(description = "作业流唯一id", example = "sy_ba1f12b5c8154f999a02a5be2373a438")
+  //    @RequestParam
+  //    String workflowId) {
+  //
+  //    workflowFavourBizService.favourWorkflow(workflowId);
+  //  }
 }

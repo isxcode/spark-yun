@@ -4,7 +4,7 @@ import com.isxcode.star.api.cluster.pojos.req.*;
 import com.isxcode.star.api.cluster.pojos.res.PageClusterRes;
 import com.isxcode.star.api.main.constants.ModuleCode;
 import com.isxcode.star.common.annotations.successResponse.SuccessResponse;
-import com.isxcode.star.modules.cluster.service.ClusterBizService;
+import com.isxcode.star.modules.cluster.service.biz.ClusterBizService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import javax.validation.Valid;

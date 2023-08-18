@@ -1,11 +1,10 @@
-package com.isxcode.star.modules.cluster.service;
+package com.isxcode.star.modules.cluster.service.biz;
 
 import com.isxcode.star.api.cluster.constants.ClusterNodeStatus;
 import com.isxcode.star.api.cluster.constants.ClusterStatus;
 import com.isxcode.star.api.cluster.pojos.dto.ScpFileEngineNodeDto;
 import com.isxcode.star.api.cluster.pojos.req.*;
 import com.isxcode.star.api.cluster.pojos.res.PageClusterRes;
-import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.star.common.utils.AesUtils;
 import com.isxcode.star.modules.cluster.entity.ClusterEntity;
 import com.isxcode.star.modules.cluster.entity.ClusterNodeEntity;
@@ -14,12 +13,12 @@ import com.isxcode.star.modules.cluster.mapper.ClusterNodeMapper;
 import com.isxcode.star.modules.cluster.repository.ClusterNodeRepository;
 import com.isxcode.star.modules.cluster.repository.ClusterRepository;
 import com.isxcode.star.modules.cluster.run.RunAgentCheckService;
+import com.isxcode.star.modules.cluster.service.ClusterService;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.SftpException;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -35,11 +34,11 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class ClusterBizService {
 
-  private final ClusterRepository engineRepository;
+  private final ClusterRepository clusterRepository;
 
-  private final ClusterNodeRepository engineNodeRepository;
+  private final ClusterNodeRepository clusterNodeRepository;
 
-  private final ClusterMapper engineMapper;
+  private final ClusterMapper clusterMapper;
 
   private final RunAgentCheckService runAgentCheckService;
 
@@ -47,56 +46,42 @@ public class ClusterBizService {
 
   private final AesUtils aesUtils;
 
-  public void addCluster(AddClusterReq caeAddEngineReq) {
+  private final ClusterService clusterService;
 
-    ClusterEntity engine = engineMapper.addEngineReqToEngineEntity(caeAddEngineReq);
+  public void addCluster(AddClusterReq addClusterReq) {
 
-    engine.setStatus(ClusterStatus.NEW);
-
-    engineRepository.save(engine);
+    ClusterEntity cluster = clusterMapper.addEngineReqToClusterEntity(addClusterReq);
+    clusterRepository.save(cluster);
   }
 
-  public void updateCluster(UpdateClusterReq caeUpdateEngineReq) {
+  public void updateCluster(UpdateClusterReq updateClusterReq) {
 
-    Optional<ClusterEntity> calculateEngineEntityOptional =
-        engineRepository.findById(caeUpdateEngineReq.getClusterId());
-    if (!calculateEngineEntityOptional.isPresent()) {
-      throw new IsxAppException("计算引擎不存在");
-    }
-
-    ClusterEntity engine =
-        engineMapper.updateEngineReqToEngineEntity(
-            caeUpdateEngineReq, calculateEngineEntityOptional.get());
-
-    engineRepository.save(engine);
+    ClusterEntity cluster = clusterService.getCluster(updateClusterReq.getClusterId());
+    cluster = clusterMapper.updateEngineReqToClusterEntity(updateClusterReq, cluster);
+    clusterRepository.save(cluster);
   }
 
-  public Page<PageClusterRes> pageCluster(PageClusterReq caeQueryEngineReq) {
+  public Page<PageClusterRes> pageCluster(PageClusterReq pageClusterReq) {
 
-    Page<ClusterEntity> engineEntities =
-        engineRepository.searchAll(
-            caeQueryEngineReq.getSearchKeyWord(),
-            PageRequest.of(caeQueryEngineReq.getPage(), caeQueryEngineReq.getPageSize()));
+    Page<ClusterEntity> clusterPage =
+        clusterRepository.pageCluster(
+            pageClusterReq.getSearchKeyWord(),
+            PageRequest.of(pageClusterReq.getPage(), pageClusterReq.getPageSize()));
 
-    return engineMapper.engineEntityPageToCaeQueryEngineResPage(engineEntities);
+    return clusterPage.map(clusterMapper::clusterEntityToPageClusterRes);
   }
 
   public void deleteCluster(DeleteClusterReq deleteClusterReq) {
 
-    engineRepository.deleteById(deleteClusterReq.getEngineId());
+    clusterRepository.deleteById(deleteClusterReq.getEngineId());
   }
 
   public void checkCluster(CheckClusterReq checkClusterReq) {
 
-    Optional<ClusterEntity> calculateEngineEntityOptional =
-        engineRepository.findById(checkClusterReq.getEngineId());
-    if (!calculateEngineEntityOptional.isPresent()) {
-      throw new IsxAppException("计算引擎不存在");
-    }
-    ClusterEntity calculateEngineEntity = calculateEngineEntityOptional.get();
+    ClusterEntity cluster = clusterService.getCluster(checkClusterReq.getEngineId());
 
     List<ClusterNodeEntity> engineNodes =
-        engineNodeRepository.findAllByClusterId(checkClusterReq.getEngineId());
+        clusterNodeRepository.findAllByClusterId(checkClusterReq.getEngineId());
 
     // 同步检测按钮
     engineNodes.forEach(
@@ -112,7 +97,7 @@ public class ClusterBizService {
             e.setCheckDateTime(LocalDateTime.now());
             e.setAgentLog(ex.getMessage());
             e.setStatus(ClusterNodeStatus.CHECK_ERROR);
-            engineNodeRepository.saveAndFlush(e);
+            clusterNodeRepository.saveAndFlush(e);
           }
         });
 
@@ -121,28 +106,28 @@ public class ClusterBizService {
         engineNodes.stream()
             .filter(e -> ClusterNodeStatus.RUNNING.equals(e.getStatus()))
             .collect(Collectors.toList());
-    calculateEngineEntity.setActiveNodeNum(activeNodes.size());
-    calculateEngineEntity.setAllNodeNum(engineNodes.size());
+    cluster.setActiveNodeNum(activeNodes.size());
+    cluster.setAllNodeNum(engineNodes.size());
 
     // 内存
     double allMemory = activeNodes.stream().mapToDouble(ClusterNodeEntity::getAllMemory).sum();
-    calculateEngineEntity.setAllMemoryNum(allMemory);
+    cluster.setAllMemoryNum(allMemory);
     double usedMemory = activeNodes.stream().mapToDouble(ClusterNodeEntity::getUsedMemory).sum();
-    calculateEngineEntity.setUsedMemoryNum(usedMemory);
+    cluster.setUsedMemoryNum(usedMemory);
 
     // 存储
     double allStorage = activeNodes.stream().mapToDouble(ClusterNodeEntity::getAllStorage).sum();
-    calculateEngineEntity.setAllStorageNum(allStorage);
+    cluster.setAllStorageNum(allStorage);
     double usedStorage = activeNodes.stream().mapToDouble(ClusterNodeEntity::getUsedStorage).sum();
-    calculateEngineEntity.setUsedStorageNum(usedStorage);
+    cluster.setUsedStorageNum(usedStorage);
 
     if (!activeNodes.isEmpty()) {
-      calculateEngineEntity.setStatus(ClusterStatus.ACTIVE);
+      cluster.setStatus(ClusterStatus.ACTIVE);
     } else {
-      calculateEngineEntity.setStatus(ClusterStatus.NO_ACTIVE);
+      cluster.setStatus(ClusterStatus.NO_ACTIVE);
     }
 
-    calculateEngineEntity.setCheckDateTime(LocalDateTime.now());
-    engineRepository.saveAndFlush(calculateEngineEntity);
+    cluster.setCheckDateTime(LocalDateTime.now());
+    clusterRepository.saveAndFlush(cluster);
   }
 }
