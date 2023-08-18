@@ -7,7 +7,7 @@ import com.isxcode.star.api.datasource.pojos.res.TestConnectRes;
 import com.isxcode.star.api.main.constants.ModuleCode;
 import com.isxcode.star.api.user.constants.RoleType;
 import com.isxcode.star.common.annotations.successResponse.SuccessResponse;
-import com.isxcode.star.modules.datasource.service.DatasourceBizService;
+import com.isxcode.star.modules.datasource.service.biz.DatasourceBizService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import javax.validation.Valid;
