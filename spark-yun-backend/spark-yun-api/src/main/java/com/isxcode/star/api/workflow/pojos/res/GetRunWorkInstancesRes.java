@@ -7,7 +7,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class WofQueryRunWorkInstancesRes {
+public class GetRunWorkInstancesRes {
 
   private String flowStatus;
 
