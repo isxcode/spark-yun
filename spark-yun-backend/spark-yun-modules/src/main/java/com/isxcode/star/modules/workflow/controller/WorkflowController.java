@@ -7,6 +7,7 @@ import com.isxcode.star.api.workflow.pojos.res.GetWorkflowRes;
 import com.isxcode.star.api.workflow.pojos.res.PageWorkflowRes;
 import com.isxcode.star.common.annotations.successResponse.SuccessResponse;
 import com.isxcode.star.modules.workflow.service.WorkflowBizService;
+import com.isxcode.star.modules.workflow.service.WorkflowConfigBizService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -28,6 +29,8 @@ import org.springframework.web.multipart.MultipartFile;
 public class WorkflowController {
 
   private final WorkflowBizService workflowBizService;
+
+  private final WorkflowConfigBizService workflowConfigBizService;
 
   @Operation(summary = "创建作业流接口")
   @PostMapping("/addWorkflow")
@@ -145,22 +148,22 @@ public class WorkflowController {
     return workflowBizService.getRunWorkInstances(getRunWorkInstancesReq);
   }
 
-  //  @Operation(summary = "配置作业流接口")
-  //  @PostMapping("/configWorkflow")
-  //  @SuccessResponse("保存成功")
-  //  public void configWorkflow(@Valid @RequestBody WfcConfigWorkflowReq wfcConfigWorkflowReq) {
-  //
-  //    workflowConfigBizService.configWorkflow(wfcConfigWorkflowReq);
-  //  }
-  //
-  //  @Operation(summary = "收藏工作流接口")
-  //  @GetMapping("/favourWorkflow")
-  //  @SuccessResponse("收藏成功")
-  //  public void favourWorkflow(
-  //    @Schema(description = "作业流唯一id", example = "sy_ba1f12b5c8154f999a02a5be2373a438")
-  //    @RequestParam
-  //    String workflowId) {
-  //
-  //    workflowFavourBizService.favourWorkflow(workflowId);
-  //  }
+    @Operation(summary = "配置作业流接口")
+    @PostMapping("/configWorkflow")
+    @SuccessResponse("保存成功")
+    public void configWorkflow(@Valid @RequestBody ConfigWorkflowReq configWorkflowReq) {
+
+      workflowConfigBizService.configWorkflow(configWorkflowReq);
+    }
+
+//    @Operation(summary = "收藏工作流接口")
+//    @GetMapping("/favourWorkflow")
+//    @SuccessResponse("收藏成功")
+//    public void favourWorkflow(
+//      @Schema(description = "作业流唯一id", example = "sy_ba1f12b5c8154f999a02a5be2373a438")
+//      @RequestParam
+//      String workflowId) {
+//
+//      workflowFavourBizService.favourWorkflow(workflowId);
+//    }
 }
