@@ -31,7 +31,7 @@ interface TenantIdParam {
 export function GetTenantList(params: SerchParams): Promise<any> {
   return http.request({
     method: 'post',
-    url: '/tenant/queryTenant',
+    url: '/tenant/pageTenant',
     params: params
   })
 }
@@ -57,7 +57,7 @@ export function UpdateTenantData(params: TenantParam): Promise<any> {
 // 租户列表-同步
 export function CheckTenantData(params: TenantIdParam): Promise<any> {
   return http.request({
-    method: 'get',
+    method: 'post',
     url: '/tenant/checkTenant',
     params: params
   })
@@ -66,7 +66,7 @@ export function CheckTenantData(params: TenantIdParam): Promise<any> {
 // 租户列表-禁用
 export function DisableTenantData(params: TenantIdParam): Promise<any> {
   return http.request({
-    method: 'get',
+    method: 'post',
     url: '/tenant/disableTenant',
     params: params
   })
@@ -75,7 +75,7 @@ export function DisableTenantData(params: TenantIdParam): Promise<any> {
 // 租户列表-启用
 export function EnableTenantData(params: TenantIdParam): Promise<any> {
   return http.request({
-    method: 'get',
+    method: 'post',
     url: '/tenant/enableTenant',
     params: params
   })
@@ -84,7 +84,7 @@ export function EnableTenantData(params: TenantIdParam): Promise<any> {
 // 租户列表-删除租户
 export function DeleteTenantData(params: TenantIdParam): Promise<any> {
   return http.request({
-    method: 'get',
+    method: 'post',
     url: '/tenant/deleteTenant',
     params: params
   })

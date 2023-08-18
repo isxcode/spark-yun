@@ -1,4 +1,4 @@
-package com.isxcode.star.modules.work.service;
+package com.isxcode.star.modules.work.service.biz;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
@@ -29,6 +29,7 @@ import com.isxcode.star.modules.work.repository.WorkRepository;
 import com.isxcode.star.modules.work.run.WorkExecutor;
 import com.isxcode.star.modules.work.run.WorkExecutorFactory;
 import com.isxcode.star.modules.work.run.WorkRunContext;
+import com.isxcode.star.modules.work.service.WorkService;
 import com.isxcode.star.modules.workflow.entity.WorkflowConfigEntity;
 import com.isxcode.star.modules.workflow.entity.WorkflowEntity;
 import com.isxcode.star.modules.workflow.repository.WorkflowConfigRepository;
@@ -70,17 +71,8 @@ public class WorkBizService {
 
   private final WorkflowRepository workflowRepository;
 
-  @Transactional
-  public WorkEntity getWorkEntity(String workId) {
+  private final WorkService workService;
 
-    Optional<WorkEntity> workEntityOptional = workRepository.findById(workId);
-    if (!workEntityOptional.isPresent()) {
-      throw new IsxAppException("作业不存在");
-    }
-    return workEntityOptional.get();
-  }
-
-  @Transactional
   public void addWork(AddWorkReq addWorkReq) {
 
     WorkEntity work = workMapper.addWorkReqToWorkEntity(addWorkReq);
@@ -100,47 +92,34 @@ public class WorkBizService {
   }
 
   @Transactional
-  public void updateWork(UpdateWorkReq wokUpdateWorkReq) {
+  public void updateWork(UpdateWorkReq updateWorkReq) {
 
-    Optional<WorkEntity> workEntityOptional = workRepository.findById(wokUpdateWorkReq.getId());
-    if (!workEntityOptional.isPresent()) {
-      throw new IsxAppException("作业不存在");
-    }
-
-    WorkEntity work =
-        workMapper.updateWorkReqToWorkEntity(wokUpdateWorkReq, workEntityOptional.get());
-
+    WorkEntity work = workService.getWork(updateWorkReq.getId());
+    work = workMapper.updateWorkReqToWorkEntity(updateWorkReq, work);
     workRepository.save(work);
   }
 
-  @Transactional
-  public Page<PageWorkRes> pageWork(PageWorkReq wocQueryWorkReq) {
+  public Page<PageWorkRes> pageWork(PageWorkReq pageWorkReq) {
 
-    Page<WorkEntity> workflowPage =
-        workRepository.searchAllByWorkflowId(
-            wocQueryWorkReq.getSearchKeyWord(),
-            wocQueryWorkReq.getWorkflowId(),
-            PageRequest.of(wocQueryWorkReq.getPage(), wocQueryWorkReq.getPageSize()));
+    Page<WorkEntity> workPage =
+        workRepository.pageSearchByWorkflowId(
+            pageWorkReq.getSearchKeyWord(),
+            pageWorkReq.getWorkflowId(),
+            PageRequest.of(pageWorkReq.getPage(), pageWorkReq.getPageSize()));
 
-    return workMapper.workEntityListToQueryWorkResList(workflowPage);
+    return workPage.map(workMapper::workEntityToPageWorkRes);
   }
 
-  @Transactional
   public void deleteWork(DeleteWorkReq deleteWorkReq) {
 
-    // 判断作业是否存在
-    Optional<WorkEntity> workEntityOptional = workRepository.findById(deleteWorkReq.getWorkId());
-    if (!workEntityOptional.isPresent()) {
-      throw new IsxAppException("作业不存在");
-    }
-    WorkEntity work = workEntityOptional.get();
+    WorkEntity work = workService.getWork(deleteWorkReq.getWorkId());
 
     // 如果不是已下线状态或者未发布状态 不让删除
     if (WorkStatus.UN_PUBLISHED.equals(work.getStatus())
         || WorkStatus.STOP.equals(work.getStatus())) {
       // 删除作业配置
       Optional<WorkConfigEntity> workConfigEntityOptional =
-          workConfigRepository.findById(workEntityOptional.get().getConfigId());
+        workConfigRepository.findById(work.getConfigId());
       workConfigEntityOptional.ifPresent(
           workConfigEntity -> workConfigRepository.deleteById(workConfigEntity.getId()));
 
@@ -174,7 +153,7 @@ public class WorkBizService {
   public RunWorkRes runWork(RunWorkReq runWorkReq) {
 
     // 获取作业信息
-    WorkEntity work = getWorkEntity(runWorkReq.getWorkId());
+    WorkEntity work = workService.getWork(runWorkReq.getWorkId());
 
     // 初始化作业实例
     WorkInstanceEntity workInstance = genWorkInstance(work.getId());
@@ -320,13 +299,10 @@ public class WorkBizService {
 
   public ClusterNodeEntity getEngineNodeByWorkId(String workId) {
 
-    Optional<WorkEntity> workEntityOptional = workRepository.findById(workId);
-    if (!workEntityOptional.isPresent()) {
-      throw new RuntimeException("作业不存在");
-    }
+    WorkEntity work = workService.getWork(workId);
 
     Optional<WorkConfigEntity> workConfigEntityOptional =
-        workConfigRepository.findById(workEntityOptional.get().getConfigId());
+        workConfigRepository.findById(work.getConfigId());
     if (!workConfigEntityOptional.isPresent()) {
       throw new IsxAppException("作业异常，不可用作业");
     }
@@ -405,7 +381,7 @@ public class WorkBizService {
 
   public void renameWork(RenameWorkReq wokRenameWorkReq) {
 
-    WorkEntity workEntity = getWorkEntity(wokRenameWorkReq.getWorkId());
+    WorkEntity workEntity = workService.getWork(wokRenameWorkReq.getWorkId());
 
     workEntity.setName(wokRenameWorkReq.getWorkName());
 
@@ -415,7 +391,7 @@ public class WorkBizService {
   public void copyWork(CopyWorkReq wokCopyWorkReq) {
 
     // 获取作业信息
-    WorkEntity work = getWorkEntity(wokCopyWorkReq.getWorkId());
+    WorkEntity work = workService.getWork(wokCopyWorkReq.getWorkId());
 
     // 获取作业配置
     WorkConfigEntity workConfig = workConfigBizService.getWorkConfigEntity(work.getConfigId());
@@ -435,7 +411,7 @@ public class WorkBizService {
 
   public void topWork(TopWorkReq topWorkReq) {
 
-    WorkEntity work = getWorkEntity(topWorkReq.getWorkId());
+    WorkEntity work = workService.getWork(topWorkReq.getWorkId());
 
     // 获取作业最大的
     Integer maxTopIndex = workRepository.findWorkflowMaxTopIndex(work.getWorkflowId());
