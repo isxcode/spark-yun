@@ -81,6 +81,8 @@ public class WorkflowBizService {
 
   private final WorkExecutorFactory workExecutorFactory;
 
+  private final WorkflowService workflowService;
+
   public WorkflowEntity getWorkflowEntity(String workflowId) {
 
     Optional<WorkflowEntity> workflowEntityOptional = workflowRepository.findById(workflowId);
@@ -517,9 +519,10 @@ public class WorkflowBizService {
   /** 中断作业. */
   public void breakFlow(BreakFlowReq breakFlowReq) {
 
-    // 将作业实例状态改为BREAK
-    WorkInstanceEntity workInstance =
-        workInstanceRepository.findById(breakFlowReq.getWorkInstanceId()).get();
+    WorkInstanceEntity workInstance = workflowService.getWorkInstance(breakFlowReq.getWorkInstanceId());
+    if (!InstanceStatus.PENDING.equals(workInstance.getStatus())) {
+      throw new IsxAppException("只有等待中的作业可以中断");
+    }
     workInstance.setStatus(InstanceStatus.BREAK);
     workInstanceRepository.save(workInstance);
   }
