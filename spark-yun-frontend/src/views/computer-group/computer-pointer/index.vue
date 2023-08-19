@@ -104,7 +104,7 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, ref, onMounted } from 'vue'
+import { reactive, ref, onMounted, onUnmounted } from 'vue'
 import Breadcrumb from '@/layout/bread-crumb/index.vue'
 import BlockTable from '@/components/block-table/index.vue'
 import LoadingPage from '@/components/loading/index.vue'
@@ -133,6 +133,7 @@ const loading = ref(false)
 const networkError = ref(false)
 const addModalRef = ref(null)
 const showLogRef = ref(null)
+const timer = ref(null)
 
 function initData(tableLoading?: boolean) {
   loading.value = tableLoading ? false : true
@@ -316,6 +317,15 @@ function handleCurrentChange(e: number) {
 
 onMounted(() => {
   initData()
+  timer.value = setInterval(() => {
+    initData(true)
+  }, 3000)
+})
+onUnmounted(() => {
+  if (timer.value) {
+    clearInterval(timer.value)
+  }
+  timer.value = null
 })
 </script>
 

@@ -133,7 +133,7 @@ function addData() {
       formData.append('license', data)
       UploadLicenseFile(formData)
         .then((res: any) => {
-          ElMessage.success(res.msg)
+          ElMessage.success(res.data.msg)
           initData()
           resolve()
         })

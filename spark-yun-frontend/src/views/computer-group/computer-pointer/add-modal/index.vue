@@ -13,9 +13,8 @@
       >
         <el-input
           v-model="formData.name"
-          maxlength="20"
+          maxlength="100"
           placeholder="请输入"
-          show-word-limit
         />
       </el-form-item>
       <el-form-item
@@ -25,19 +24,32 @@
         <el-input
           v-model="formData.host"
           placeholder="请输入"
-          show-word-limit
         />
       </el-form-item>
       <el-form-item label="用户名" prop="username">
-        <el-input v-model="formData.username" maxlength="20" placeholder="请输入" show-word-limit />
+        <el-input v-model="formData.username" maxlength="100" placeholder="请输入" />
       </el-form-item>
-      <el-form-item label="密码" prop="password">
+      <el-form-item label="验证类型">
+        <el-radio-group v-model="pwdType" @change="pwdTypeChangeEvent">
+          <el-radio :label="'pwd'">密码</el-radio>
+          <el-radio :label="'ssh'">令牌</el-radio>
+        </el-radio-group>
+      </el-form-item>
+      <el-form-item v-if="pwdType === 'pwd'" label="密码">
         <el-input v-model="formData.passwd" type="password" show-password placeholder="请输入" />
+      </el-form-item>
+      <el-form-item v-else label="令牌">
+        <el-input
+          v-model="formData.passwd"
+          show-word-limit
+          type="textarea"
+          :autosize="{ minRows: 2, maxRows: 2 }"
+          placeholder="请输入"
+        />
       </el-form-item>
       <el-form-item label="备注">
         <el-input
           v-model="formData.remark"
-          show-word-limit
           type="textarea"
           maxlength="200"
           :autosize="{ minRows: 4, maxRows: 4 }"
@@ -56,6 +68,7 @@ import { Validator } from '@/validator/index'
 
 const form = ref<FormInstance>()
 const callback = ref<any>()
+const pwdType = ref('pwd')
 const modelConfig = reactive({
   title: '添加节点',
   visible: false,
@@ -101,10 +114,10 @@ const rules = reactive<FormRules>({
       message: '请输入Host',
       trigger: [ 'blur', 'change' ]
     },
-    {
-      validator: Validator.HostValidator('请输入正确的host'),
-      trigger: [ 'blur', 'change' ]
-    }
+    // {
+    //   validator: Validator.HostValidator('请输入正确的host'),
+    //   trigger: [ 'blur', 'change' ]
+    // }
   ],
   port: [
     {
@@ -121,6 +134,7 @@ const rules = reactive<FormRules>({
 
 function showModal(cb: () => void, data: any): void {
   callback.value = cb
+  pwdType.value = 'pwd'
   if (data) {
     formData.name = data.name
     formData.host = data.host
@@ -151,6 +165,10 @@ function showModal(cb: () => void, data: any): void {
     form.value?.resetFields()
   })
   modelConfig.visible = true
+}
+
+function pwdTypeChangeEvent() {
+  formData.passwd = ''
 }
 
 function okEvent() {
