@@ -119,7 +119,7 @@ public class WorkBizService {
         || WorkStatus.STOP.equals(work.getStatus())) {
       // 删除作业配置
       Optional<WorkConfigEntity> workConfigEntityOptional =
-        workConfigRepository.findById(work.getConfigId());
+          workConfigRepository.findById(work.getConfigId());
       workConfigEntityOptional.ifPresent(
           workConfigEntity -> workConfigRepository.deleteById(workConfigEntity.getId()));
 

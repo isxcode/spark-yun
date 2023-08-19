@@ -519,7 +519,8 @@ public class WorkflowBizService {
   /** 中断作业. */
   public void breakFlow(BreakFlowReq breakFlowReq) {
 
-    WorkInstanceEntity workInstance = workflowService.getWorkInstance(breakFlowReq.getWorkInstanceId());
+    WorkInstanceEntity workInstance =
+        workflowService.getWorkInstance(breakFlowReq.getWorkInstanceId());
     if (!InstanceStatus.PENDING.equals(workInstance.getStatus())) {
       throw new IsxAppException("只有等待中的作业可以中断");
     }

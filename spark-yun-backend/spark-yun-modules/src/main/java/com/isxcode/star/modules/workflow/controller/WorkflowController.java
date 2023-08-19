@@ -148,22 +148,22 @@ public class WorkflowController {
     return workflowBizService.getRunWorkInstances(getRunWorkInstancesReq);
   }
 
-    @Operation(summary = "配置作业流接口")
-    @PostMapping("/configWorkflow")
-    @SuccessResponse("保存成功")
-    public void configWorkflow(@Valid @RequestBody ConfigWorkflowReq configWorkflowReq) {
+  @Operation(summary = "配置作业流接口")
+  @PostMapping("/configWorkflow")
+  @SuccessResponse("保存成功")
+  public void configWorkflow(@Valid @RequestBody ConfigWorkflowReq configWorkflowReq) {
 
-      workflowConfigBizService.configWorkflow(configWorkflowReq);
-    }
+    workflowConfigBizService.configWorkflow(configWorkflowReq);
+  }
 
-//    @Operation(summary = "收藏工作流接口")
-//    @GetMapping("/favourWorkflow")
-//    @SuccessResponse("收藏成功")
-//    public void favourWorkflow(
-//      @Schema(description = "作业流唯一id", example = "sy_ba1f12b5c8154f999a02a5be2373a438")
-//      @RequestParam
-//      String workflowId) {
-//
-//      workflowFavourBizService.favourWorkflow(workflowId);
-//    }
+  //    @Operation(summary = "收藏工作流接口")
+  //    @GetMapping("/favourWorkflow")
+  //    @SuccessResponse("收藏成功")
+  //    public void favourWorkflow(
+  //      @Schema(description = "作业流唯一id", example = "sy_ba1f12b5c8154f999a02a5be2373a438")
+  //      @RequestParam
+  //      String workflowId) {
+  //
+  //      workflowFavourBizService.favourWorkflow(workflowId);
+  //    }
 }
