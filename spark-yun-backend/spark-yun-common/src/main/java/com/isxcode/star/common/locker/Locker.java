@@ -35,4 +35,11 @@ public class Locker {
     // 将自己的id删掉
     lockerRepository.deleteById(id);
   }
+
+   /** 清理锁. */
+  public void clearLock(String name) {
+
+    // 将name相关的删掉
+    lockerRepository.deleteAllByName(name);
+  }
 }
