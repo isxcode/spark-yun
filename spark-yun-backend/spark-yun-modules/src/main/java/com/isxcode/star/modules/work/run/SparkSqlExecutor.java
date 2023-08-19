@@ -33,6 +33,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpServerErrorException;
 
 @Service
 @Slf4j
@@ -154,9 +155,9 @@ public class SparkSqlExecutor extends WorkExecutor {
     try {
       baseResponse = HttpUtils.doPost(executeWorkUrl, executeReq, BaseResponse.class);
       log.debug("获取远程提交作业日志:{}", baseResponse.toString());
-    } catch (IOException e) {
+    } catch (IOException | HttpServerErrorException e) {
       throw new WorkRunException(
-          LocalDateTime.now() + WorkLog.ERROR_INFO + "提交作业失败 : " + e.getMessage() + "\n");
+        LocalDateTime.now() + WorkLog.ERROR_INFO + "提交作业失败 : " + e.getMessage() + "\n");
     }
     if (!String.valueOf(HttpStatus.OK.value()).equals(baseResponse.getCode())) {
       throw new WorkRunException(

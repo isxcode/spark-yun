@@ -87,7 +87,7 @@ export function UpdateWorkflowDetailList(params: any): Promise<any> {
 // 作业-删除
 export function DeleteWorkflowDetailList(params: any): Promise<any> {
   return http.request({
-    method: 'get',
+    method: 'post',
     url: '/work/deleteWork',
     params: params
   })
@@ -132,7 +132,7 @@ export function RunWorkItemConfig(params: any): Promise<any> {
 // 作业-详情-终止
 export function TerWorkItemConfig(params: any): Promise<any> {
   return http.request({
-    method: 'get',
+    method: 'post',
     url: '/work/stopJob',
     params: params
   })
@@ -159,7 +159,7 @@ export function GetSubmitLogData(params: any): Promise<any> {
 // 作业-详情-监控信息
 export function GetResultItemDetail(params: any): Promise<any> {
   return http.request({
-    method: 'get',
+    method: 'post',
     url: '/work/getStatus',
     params: params
   })
@@ -231,7 +231,7 @@ export function ImportWorkflowData(params: any): Promise<any> {
 // 发布作业流--流程图
 export function PublishWorkflowData(params: any): Promise<any> {
   return http.request({
-    method: 'get',
+    method: 'post',
     url: '/vip/work/deployWorkflow',
     params: params
   })
@@ -240,7 +240,7 @@ export function PublishWorkflowData(params: any): Promise<any> {
 // 发布作业流--流程图--重跑下游节点
 export function RunAfterFlowData(params: any): Promise<any> {
   return http.request({
-    method: 'get',
+    method: 'post',
     url: '/workflow/runAfterFlow',
     params: params
   })
@@ -248,7 +248,7 @@ export function RunAfterFlowData(params: any): Promise<any> {
 // 发布作业流--流程图--中断
 export function BreakFlowData(params: any): Promise<any> {
   return http.request({
-    method: 'get',
+    method: 'post',
     url: '/workflow/breakFlow',
     params: params
   })
@@ -256,7 +256,7 @@ export function BreakFlowData(params: any): Promise<any> {
 // 发布作业流--流程图--重跑当前节点
 export function RerunCurrentNodeFlowData(params: any): Promise<any> {
   return http.request({
-    method: 'get',
+    method: 'post',
     url: '/workflow/runCurrentNode',
     params: params
   })
@@ -265,7 +265,7 @@ export function RerunCurrentNodeFlowData(params: any): Promise<any> {
 // 作业流--流程图--重跑工作流
 export function ReRunWorkflow(params: any): Promise<any> {
   return http.request({
-    method: 'get',
+    method: 'post',
     url: '/workflow/reRunFlow',
     params: params
   })
