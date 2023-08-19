@@ -9,11 +9,8 @@ import com.isxcode.star.api.work.pojos.res.PageWorkRes;
 import com.isxcode.star.api.work.pojos.res.RunWorkRes;
 import com.isxcode.star.modules.work.entity.WorkConfigEntity;
 import com.isxcode.star.modules.work.entity.WorkEntity;
-import java.util.List;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 
 /** mapstruct映射. */
 @Mapper(componentModel = "spring")

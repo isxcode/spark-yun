@@ -16,7 +16,8 @@ public class WorkflowService {
 
   public WorkInstanceEntity getWorkInstance(String workInstanceId) {
 
-    return workInstanceRepository.findById(workInstanceId).orElseThrow(() -> new IsxAppException("实例不存在"));
+    return workInstanceRepository
+        .findById(workInstanceId)
+        .orElseThrow(() -> new IsxAppException("实例不存在"));
   }
-
 }
