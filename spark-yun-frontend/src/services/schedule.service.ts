@@ -38,7 +38,7 @@ export function GetLogData(params: LogParam): Promise<any> {
 // 获取Yarn日志
 export function GetYarnLogData(params: LogParam): Promise<any> {
   return http.request({
-    method: 'get',
+    method: 'post',
     url: '/work/getYarnLog',
     params: params
   })
@@ -56,7 +56,7 @@ export function ReStartRunning(params: LogParam): Promise<any> {
 // 获取结果表
 export function GetResultData(params: LogParam): Promise<any> {
   return http.request({
-    method: 'get',
+    method: 'post',
     url: '/work/getData',
     params: params
   })
