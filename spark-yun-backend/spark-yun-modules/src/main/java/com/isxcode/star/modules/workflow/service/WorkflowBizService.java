@@ -143,6 +143,10 @@ public class WorkflowBizService {
     WorkflowConfigEntity workflowConfig =
         workflowConfigRepository.findById(workflow.getConfigId()).get();
 
+    if (JSON.parseArray(workflowConfig.getNodeList(), String.class).isEmpty()) {
+      throw new IsxAppException("节点为空，不能运行");
+    }
+
     // 初始化作业流日志
     String runLog = LocalDateTime.now() + WorkLog.SUCCESS_INFO + "开始执行";
 
@@ -515,7 +519,7 @@ public class WorkflowBizService {
 
     // 将作业实例状态改为BREAK
     WorkInstanceEntity workInstance =
-        workInstanceRepository.findById(breakFlowReq.getWorkflowInstanceId()).get();
+        workInstanceRepository.findById(breakFlowReq.getWorkInstanceId()).get();
     workInstance.setStatus(InstanceStatus.BREAK);
     workInstanceRepository.save(workInstance);
   }
@@ -524,7 +528,7 @@ public class WorkflowBizService {
   public void runCurrentNode(RunCurrentNodeReq runCurrentNodeReq) {
 
     WorkInstanceEntity workInstance =
-        workInstanceRepository.findById(runCurrentNodeReq.getWorkflowInstanceId()).get();
+        workInstanceRepository.findById(runCurrentNodeReq.getWorkInstanceId()).get();
     WorkflowInstanceEntity workflowInstance =
         workflowInstanceRepository.findById(workInstance.getWorkflowInstanceId()).get();
     WorkEntity work = workRepository.findById(workInstance.getWorkId()).get();
@@ -539,7 +543,7 @@ public class WorkflowBizService {
               WorkExecutor workExecutor = workExecutorFactory.create(work.getWorkType());
               WorkRunContext workRunContext =
                   WorkflowUtils.genWorkRunContext(
-                      runCurrentNodeReq.getWorkflowInstanceId(), work, workConfig);
+                      runCurrentNodeReq.getWorkInstanceId(), work, workConfig);
               workExecutor.syncExecute(workRunContext);
 
               return "OVER";
@@ -651,7 +655,7 @@ public class WorkflowBizService {
   public void runAfterFlow(RunAfterFlowReq runAfterFlowReq) {
 
     WorkInstanceEntity workInstance =
-        workInstanceRepository.findById(runAfterFlowReq.getWorkflowInstanceId()).get();
+        workInstanceRepository.findById(runAfterFlowReq.getWorkInstanceId()).get();
     WorkflowInstanceEntity workflowInstance =
         workflowInstanceRepository.findById(workInstance.getWorkflowInstanceId()).get();
 

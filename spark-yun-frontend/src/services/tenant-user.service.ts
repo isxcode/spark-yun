@@ -36,7 +36,7 @@ export function GetUserList(params: SerchParams): Promise<any> {
 export function GetUserInfoList(params: SerchParams): Promise<any> {
   return http.request({
     method: 'post',
-    url: '/user/pageUser',
+    url: '/user/pageEnableUser',
     params: params
   })
 }
