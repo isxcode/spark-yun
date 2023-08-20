@@ -24,7 +24,7 @@ public class SshUtils {
     // 初始化jsch
     JSch jsch = new JSch();
 
-    if (engineNode.getPasswd().length() > 2000) {
+    if (engineNode.getPasswd().length() > 1000) {
       jsch.addIdentity(engineNode.getUsername(), engineNode.getPasswd().getBytes(), null, null);
     }
 
@@ -33,7 +33,7 @@ public class SshUtils {
             engineNode.getUsername(), engineNode.getHost(), Integer.parseInt(engineNode.getPort()));
 
     // 连接远程服务器
-    if (engineNode.getPasswd().length() < 2000) {
+    if (engineNode.getPasswd().length() < 1000) {
       session.setPassword(engineNode.getPasswd());
     }
 
@@ -71,7 +71,7 @@ public class SshUtils {
 
     JSch jsch = new JSch();
 
-    if (engineNode.getPasswd().length() > 2000) {
+    if (engineNode.getPasswd().length() > 1000) {
       jsch.addIdentity(engineNode.getUsername(), engineNode.getPasswd().getBytes(), null, null);
     }
 
@@ -81,7 +81,7 @@ public class SshUtils {
         jsch.getSession(
             engineNode.getUsername(), engineNode.getHost(), Integer.parseInt(engineNode.getPort()));
 
-    if (engineNode.getPasswd().length() < 2000) {
+    if (engineNode.getPasswd().length() < 1000) {
       session.setPassword(engineNode.getPasswd());
     }
 

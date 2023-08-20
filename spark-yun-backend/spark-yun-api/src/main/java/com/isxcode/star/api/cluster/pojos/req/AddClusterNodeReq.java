@@ -23,7 +23,6 @@ public class AddClusterNodeReq {
   private String username;
 
   @Schema(title = "节点服务器密码", example = "ispong123")
-  @NotEmpty(message = "密码不能为空")
   private String passwd;
 
   @Schema(title = "备注", example = "本地测试节点")
