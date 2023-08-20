@@ -39,3 +39,7 @@ logging:
 spark-yun:
   default-agent-port: 30177
   tmp-dir: /tmp
+
+isx-app:
+  use-port: true
+  use-ssl: false

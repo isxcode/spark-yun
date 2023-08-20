@@ -35,4 +35,10 @@ public class IsxAppProperties {
 
   /** 开启用户操作日志 */
   private boolean logAdvice = false;
+
+  /** 使用https协议访问接口. */
+  private boolean useSsl = false;
+
+  /** 使用端口号访问接口. */
+  private boolean usePort = true;
 }

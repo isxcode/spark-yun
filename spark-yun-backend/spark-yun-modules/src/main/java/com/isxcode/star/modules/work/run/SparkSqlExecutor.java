@@ -14,6 +14,7 @@ import com.isxcode.star.api.work.pojos.res.RunWorkRes;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.star.backend.api.base.pojos.BaseResponse;
 import com.isxcode.star.common.locker.Locker;
+import com.isxcode.star.common.utils.http.HttpUrlUtils;
 import com.isxcode.star.common.utils.http.HttpUtils;
 import com.isxcode.star.modules.cluster.entity.ClusterEntity;
 import com.isxcode.star.modules.cluster.entity.ClusterNodeEntity;
@@ -35,6 +36,7 @@ import org.apache.logging.log4j.util.Strings;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.client.ResourceAccessException;
 
 @Service
 @Slf4j
@@ -52,6 +54,8 @@ public class SparkSqlExecutor extends WorkExecutor {
 
   private final Locker locker;
 
+  private final HttpUrlUtils httpUrlUtils;
+
   public SparkSqlExecutor(
       WorkInstanceRepository workInstanceRepository,
       ClusterRepository clusterRepository,
@@ -59,7 +63,8 @@ public class SparkSqlExecutor extends WorkExecutor {
       WorkflowInstanceRepository workflowInstanceRepository,
       WorkRepository workRepository,
       WorkConfigRepository workConfigRepository,
-      Locker locker) {
+      Locker locker,
+      HttpUrlUtils httpUrlUtils) {
 
     super(workInstanceRepository, workflowInstanceRepository);
     this.workInstanceRepository = workInstanceRepository;
@@ -68,6 +73,7 @@ public class SparkSqlExecutor extends WorkExecutor {
     this.workRepository = workRepository;
     this.workConfigRepository = workConfigRepository;
     this.locker = locker;
+    this.httpUrlUtils = httpUrlUtils;
   }
 
   @Override
@@ -154,15 +160,18 @@ public class SparkSqlExecutor extends WorkExecutor {
     workInstance = updateInstance(workInstance, logBuilder);
 
     // 开始提交作业
-    String executeWorkUrl =
-        "http://" + engineNode.getHost() + ":" + engineNode.getAgentPort() + "/yag/executeWork";
     BaseResponse<?> baseResponse;
 
     // 加锁留给任务中止
     Integer lock = locker.lock(workInstance.getId());
     RunWorkRes submitWorkRes;
     try {
-      baseResponse = HttpUtils.doPost(executeWorkUrl, executeReq, BaseResponse.class);
+      baseResponse =
+          HttpUtils.doPost(
+              httpUrlUtils.genHttpUrl(
+                  engineNode.getHost(), engineNode.getAgentPort(), "/yag/executeWork"),
+              executeReq,
+              BaseResponse.class);
       log.debug("获取远程提交作业日志:{}", baseResponse.toString());
       if (!String.valueOf(HttpStatus.OK.value()).equals(baseResponse.getCode())) {
         throw new WorkRunException(
@@ -182,7 +191,7 @@ public class SparkSqlExecutor extends WorkExecutor {
           .append("\n");
       workInstance.setSparkStarRes(JSON.toJSONString(submitWorkRes));
       workInstance = updateInstance(workInstance, logBuilder);
-    } catch (IOException | HttpServerErrorException e) {
+    } catch (IOException | HttpServerErrorException | ResourceAccessException e) {
       throw new WorkRunException(
           LocalDateTime.now() + WorkLog.ERROR_INFO + "提交作业失败 : " + e.getMessage() + "\n");
     } finally {
@@ -199,16 +208,16 @@ public class SparkSqlExecutor extends WorkExecutor {
       }
 
       // 获取作业状态并保存
-      String getStatusUrl =
-          "http://"
-              + engineNode.getHost()
-              + ":"
-              + engineNode.getAgentPort()
-              + "/yag/getStatus?appId="
-              + submitWorkRes.getAppId()
-              + "&agentType="
-              + calculateEngineEntityOptional.get().getClusterType();
-      baseResponse = HttpUtils.doGet(getStatusUrl, BaseResponse.class);
+      Map<String, String> paramsMap = new HashMap<>();
+      paramsMap.put("appId", submitWorkRes.getAppId());
+      paramsMap.put("agentType", calculateEngineEntityOptional.get().getClusterType());
+      baseResponse =
+          HttpUtils.doGet(
+              httpUrlUtils.genHttpUrl(
+                  engineNode.getHost(), engineNode.getAgentPort(), "/yag/getStatus"),
+              paramsMap,
+              null,
+              BaseResponse.class);
       log.debug("获取远程获取状态日志:{}", baseResponse.toString());
 
       if (!String.valueOf(HttpStatus.OK.value()).equals(baseResponse.getCode())) {
@@ -252,16 +261,16 @@ public class SparkSqlExecutor extends WorkExecutor {
         }
 
         // 获取日志并保存
-        String getLogUrl =
-            "http://"
-                + engineNode.getHost()
-                + ":"
-                + engineNode.getAgentPort()
-                + "/yag/getLog?appId="
-                + submitWorkRes.getAppId()
-                + "&agentType="
-                + calculateEngineEntityOptional.get().getClusterType();
-        baseResponse = HttpUtils.doGet(getLogUrl, BaseResponse.class);
+        Map<String, String> paramsMap2 = new HashMap<>();
+        paramsMap2.put("appId", submitWorkRes.getAppId());
+        paramsMap2.put("agentType", calculateEngineEntityOptional.get().getClusterType());
+        baseResponse =
+            HttpUtils.doGet(
+                httpUrlUtils.genHttpUrl(
+                    engineNode.getHost(), engineNode.getAgentPort(), "/yag/getLog"),
+                paramsMap2,
+                null,
+                BaseResponse.class);
         log.debug("获取远程返回日志:{}", baseResponse.toString());
 
         if (!String.valueOf(HttpStatus.OK.value()).equals(baseResponse.getCode())) {
@@ -287,16 +296,16 @@ public class SparkSqlExecutor extends WorkExecutor {
         if (successStatus.contains(workStatusRes.getAppStatus().toUpperCase())) {
 
           // 获取数据
-          String getDataUrl =
-              "http://"
-                  + engineNode.getHost()
-                  + ":"
-                  + engineNode.getAgentPort()
-                  + "/yag/getData?appId="
-                  + submitWorkRes.getAppId()
-                  + "&agentType="
-                  + calculateEngineEntityOptional.get().getClusterType();
-          baseResponse = HttpUtils.doGet(getDataUrl, BaseResponse.class);
+          Map<String, String> paramsMap3 = new HashMap<>();
+          paramsMap3.put("appId", submitWorkRes.getAppId());
+          paramsMap3.put("agentType", calculateEngineEntityOptional.get().getClusterType());
+          baseResponse =
+              HttpUtils.doGet(
+                  httpUrlUtils.genHttpUrl(
+                      engineNode.getHost(), engineNode.getAgentPort(), "/yag/getData"),
+                  paramsMap3,
+                  null,
+                  BaseResponse.class);
           log.debug("获取远程返回数据:{}", baseResponse.toString());
 
           if (!String.valueOf(HttpStatus.OK.value()).equals(baseResponse.getCode())) {
@@ -348,16 +357,16 @@ public class SparkSqlExecutor extends WorkExecutor {
           ClusterNodeEntity engineNode =
               allEngineNodes.get(new Random().nextInt(allEngineNodes.size()));
 
-          String stopJobUrl =
-              "http://"
-                  + engineNode.getHost()
-                  + ":"
-                  + engineNode.getAgentPort()
-                  + "/yag/stopJob?appId="
-                  + wokRunWorkRes.getAppId()
-                  + "&agentType="
-                  + cluster.getClusterType();
-          BaseResponse<?> baseResponse = HttpUtils.doGet(stopJobUrl, BaseResponse.class);
+          Map<String, String> paramsMap = new HashMap<>();
+          paramsMap.put("appId", wokRunWorkRes.getAppId());
+          paramsMap.put("agentType", cluster.getClusterType());
+          BaseResponse<?> baseResponse =
+              HttpUtils.doGet(
+                  httpUrlUtils.genHttpUrl(
+                      engineNode.getHost(), engineNode.getAgentPort(), "/yag/stopJob"),
+                  paramsMap,
+                  null,
+                  BaseResponse.class);
 
           if (!String.valueOf(HttpStatus.OK.value()).equals(baseResponse.getCode())) {
             throw new IsxAppException(

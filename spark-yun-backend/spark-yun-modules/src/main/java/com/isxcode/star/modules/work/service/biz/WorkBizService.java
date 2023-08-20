@@ -14,6 +14,7 @@ import com.isxcode.star.api.work.pojos.req.*;
 import com.isxcode.star.api.work.pojos.res.*;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.star.backend.api.base.pojos.BaseResponse;
+import com.isxcode.star.common.utils.http.HttpUrlUtils;
 import com.isxcode.star.common.utils.http.HttpUtils;
 import com.isxcode.star.modules.cluster.entity.ClusterEntity;
 import com.isxcode.star.modules.cluster.entity.ClusterNodeEntity;
@@ -72,6 +73,8 @@ public class WorkBizService {
   private final WorkflowRepository workflowRepository;
 
   private final WorkService workService;
+
+  private final HttpUrlUtils httpUrlUtils;
 
   public void addWork(AddWorkReq addWorkReq) {
 
@@ -268,16 +271,16 @@ public class WorkBizService {
       RunWorkRes wokRunWorkRes =
           JSON.parseObject(workInstanceEntity.getSparkStarRes(), RunWorkRes.class);
 
-      String stopJobUrl =
-          "http://"
-              + engineNode.getHost()
-              + ":"
-              + engineNode.getAgentPort()
-              + "/yag/stopJob?appId="
-              + wokRunWorkRes.getAppId()
-              + "&agentType="
-              + clusterEntityOptional.get().getClusterType();
-      BaseResponse<?> baseResponse = HttpUtils.doGet(stopJobUrl, BaseResponse.class);
+      Map<String, String> paramsMap = new HashMap<>();
+      paramsMap.put("appId", wokRunWorkRes.getAppId());
+      paramsMap.put("agentType", clusterEntityOptional.get().getClusterType());
+      BaseResponse<?> baseResponse =
+          HttpUtils.doGet(
+              httpUrlUtils.genHttpUrl(
+                  engineNode.getHost(), engineNode.getAgentPort(), "/yag/stopJob"),
+              paramsMap,
+              null,
+              BaseResponse.class);
 
       if (!String.valueOf(HttpStatus.OK.value()).equals(baseResponse.getCode())) {
         throw new IsxAppException(
