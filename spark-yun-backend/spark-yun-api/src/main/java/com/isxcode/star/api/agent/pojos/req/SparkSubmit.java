@@ -2,11 +2,15 @@ package com.isxcode.star.api.agent.pojos.req;
 
 import java.util.List;
 import java.util.Map;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Builder
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class SparkSubmit {
 
   private Map<String, String> conf;
