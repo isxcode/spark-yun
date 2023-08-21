@@ -129,7 +129,12 @@ tasks.register('start', GradleBuild) {
 tasks.register('docker', Exec) {
 
   dependsOn(":spark-yun-dist:make")
-  commandLine 'bash', '-c', 'docker buildx uninstall && docker build -t isxcode/zhiqingyun:' + version_number + ' -f ./Dockerfile .'
+
+  if (System.properties['os.name'].toString().contains('Mac OS X') || System.properties['os.name'].toString().contains('Linux')) {
+    commandLine 'sh', '-c', 'docker buildx uninstall && docker build -t isxcode/zhiqingyun:' + version_number + ' -f ./Dockerfile .'
+  } else {
+    commandLine 'cmd', '/c', 'docker buildx uninstall && docker build -t isxcode/zhiqingyun:' + version_number + ' -f ./Dockerfile .'
+  }
 }
 
 // 自定义命令：发布docker镜像
@@ -137,7 +142,12 @@ tasks.register('docker', Exec) {
 tasks.register('deploy', Exec) {
 
   dependsOn(":spark-yun-dist:make")
-  commandLine 'bash', '-c', 'docker buildx install && docker buildx build --platform linux/amd64,linux/arm64/v8 -t isxcode/zhiqingyun:' + version_number + ' -f ./Dockerfile . --push'
+
+  if (System.properties['os.name'].toString().contains('Mac OS X') || System.properties['os.name'].toString().contains('Linux')) {
+    commandLine 'bash', '-c', 'docker buildx install && docker buildx build --platform linux/amd64,linux/arm64/v8 -t isxcode/zhiqingyun:' + version_number + ' -f ./Dockerfile . --push'
+  } else {
+    commandLine 'cmd', '/c', 'docker buildx install && docker buildx build --platform linux/amd64,linux/arm64/v8 -t isxcode/zhiqingyun:' + version_number + ' -f ./Dockerfile . --push'
+  }
 }
 
 // 自定义命令：启动官网
