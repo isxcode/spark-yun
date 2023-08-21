@@ -1,5 +1,6 @@
 # idea配置，不提交
-.idea
+.idea/**
+!.idea/icon.svg
 
 # gradle缓存，不提交
 .gradle
@@ -11,16 +12,28 @@
 
 # 前端打包文件，不提交
 spark-yun-website/dist
+spark-yun-frontend/dist
 
 # 前端嵌入后端内容，不提交
-spark-yun-backend/src/main/resources/templates/**
-spark-yun-backend/src/main/resources/static/**
+spark-yun-backend/spark-yun-main/src/main/resources/templates/**
+spark-yun-backend/spark-yun-main/src/main/resources/static/**
+
+# 代理压缩包
+spark-yun-backend/spark-yun-main/src/main/resources/agent/**
 
 # 企业版代码，不提交
 spark-yun-vip/**
 
 # 资源文件
-resources
+resources/license
 
 # 不提交spark-min
-spark-yun-dist/src/main/spark-min
+spark-yun-dist/spark-min
+!spark-yun-dist/zhiqingyun/bin
+!spark-yun-dist/zhiqingyun-agent/bin
+
+# isx工具不提交
+isx
+
+# 个人配置不提交
+spark-yun-backend/spark-yun-main/src/main/resources/application-ispong.yml

@@ -1,4 +1,5 @@
-
+server:
+  port: 30177
 
 management:
   endpoints:
@@ -8,5 +9,4 @@ management:
   endpoint:
     metrics:
       enabled: true
-server:
-  port: 8099
+
