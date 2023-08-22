@@ -15,7 +15,8 @@
                 <template #dropdown>
                     <el-dropdown-menu>
                         <el-dropdown-item command="node_log">日志</el-dropdown-item>
-                        <el-dropdown-item command="node_result">运行结果</el-dropdown-item>
+                        <el-dropdown-item v-if="status !== 'RUNNING' && node.data.nodeConfigData.workType !== 'EXE_JDBC'" command="node_result">运行结果</el-dropdown-item>
+                        <el-dropdown-item v-if="status !== 'RUNNING' && node.data.nodeConfigData.workType === 'SPARK_SQL'" command="node_yarnLog">运行日志</el-dropdown-item>
                         <el-dropdown-item command="node_runAfter">重跑下游</el-dropdown-item>
                         <el-dropdown-item command="node_break">中断</el-dropdown-item>
                         <el-dropdown-item command="node_reRun">重跑当前</el-dropdown-item>
