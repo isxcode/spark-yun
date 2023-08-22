@@ -435,10 +435,10 @@ function showConfigDetail() {
 }
 
 // 节点运行日志
-function nodeRunningLog(e: any) {
+function nodeRunningLog(e: any, type: string) {
     zqyLogRef.value.showModal(() => {
       console.log('关闭')
-    }, { id: e.data.workInstanceId }
+    }, { id: e.data.workInstanceId, type: type }
   )
 }
 
@@ -534,10 +534,13 @@ onMounted(() => {
         console.log('eeee', e)
         if (e.type === 'node_log') {
             // 日志
-            nodeRunningLog(e)
+            nodeRunningLog(e, 'log')
         } else if (e.type === 'node_runAfter') {
             // 重跑下游
             nodeRunAfterFlow(e)
+        } else if (e.type === 'node_result') {
+            // 查看结果
+            nodeRunningLog(e, 'result')
         } else if (e.type === 'node_break') {
             // 中断
             nodeBreakFlow(e)

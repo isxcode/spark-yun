@@ -15,6 +15,7 @@
                 <template #dropdown>
                     <el-dropdown-menu>
                         <el-dropdown-item command="node_log">日志</el-dropdown-item>
+                        <el-dropdown-item command="node_result">运行结果</el-dropdown-item>
                         <el-dropdown-item command="node_runAfter">重跑下游</el-dropdown-item>
                         <el-dropdown-item command="node_break">中断</el-dropdown-item>
                         <el-dropdown-item command="node_reRun">重跑当前</el-dropdown-item>
