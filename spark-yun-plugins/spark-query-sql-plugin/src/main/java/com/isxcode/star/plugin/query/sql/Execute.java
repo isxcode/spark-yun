@@ -55,7 +55,12 @@ public class Execute {
       }
     }
 
-    return sparkSessionBuilder.config(conf).enableHiveSupport().getOrCreate();
+    if (pluginReq.getSparkConfig() != null
+        && Strings.isEmpty(pluginReq.getSparkConfig().get("hive.metastore.uris"))) {
+      return sparkSessionBuilder.config(conf).getOrCreate();
+    } else {
+      return sparkSessionBuilder.config(conf).enableHiveSupport().getOrCreate();
+    }
   }
 
   public static void exportResult(Dataset<Row> rowDataset) {
