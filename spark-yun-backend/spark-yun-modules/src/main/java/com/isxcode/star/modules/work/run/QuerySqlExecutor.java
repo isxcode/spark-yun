@@ -84,7 +84,9 @@ public class QuerySqlExecutor extends WorkExecutor {
 
     // 开始执行sql
     try (Connection connection = datasourceService.getDbConnection(datasourceEntityOptional.get());
-        Statement statement = connection.createStatement()) {
+        Statement statement = connection.createStatement(); ) {
+
+      statement.setQueryTimeout(1800);
 
       // 清除注释
       String noCommentSql =
