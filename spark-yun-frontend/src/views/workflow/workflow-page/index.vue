@@ -541,6 +541,9 @@ onMounted(() => {
         } else if (e.type === 'node_result') {
             // 查看结果
             nodeRunningLog(e, 'result')
+        } else if (e.type === 'node_yarnLog') {
+            // 运行日志
+            nodeRunningLog(e, 'yarnLog')
         } else if (e.type === 'node_break') {
             // 中断
             nodeBreakFlow(e)
