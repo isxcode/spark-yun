@@ -1,104 +1,66 @@
 <template>
   <!-- <Breadcrumb :bread-crumb-list="breadCrumbList" /> -->
   <div class="zqy-work-item">
-    <LoadingPage
-      :visible="loading"
-      :network-error="networkError"
-      @loading-refresh="initData"
-    >
+    <LoadingPage :visible="loading" :network-error="networkError" @loading-refresh="initData">
       <div class="zqy-work-container">
         <div class="sql-code-container">
           <div class="sql-option-container">
-            <div
-              class="btn-box"
-              @click="goBack"
-            >
-              <el-icon><RefreshLeft /></el-icon>
+            <div class="btn-box" @click="goBack">
+              <el-icon>
+                <RefreshLeft />
+              </el-icon>
               <span class="btn-text">返回</span>
             </div>
-            <div
-              class="btn-box"
-              @click="runWorkData"
-            >
+            <div class="btn-box" @click="runWorkData">
               <el-icon v-if="!runningLoading">
                 <VideoPlay />
               </el-icon>
-              <el-icon
-                v-else
-                class="is-loading"
-              >
+              <el-icon v-else class="is-loading">
                 <Loading />
               </el-icon>
               <span class="btn-text">运行</span>
             </div>
-            <div
-              v-if="workConfig.workType === 'SPARK_SQL'"
-              class="btn-box"
-              @click="terWorkData"
-            >
+            <div v-if="workConfig.workType === 'SPARK_SQL'" class="btn-box" @click="terWorkData">
               <el-icon v-if="!terLoading">
                 <Close />
               </el-icon>
-              <el-icon
-                v-else
-                class="is-loading"
-              >
+              <el-icon v-else class="is-loading">
                 <Loading />
               </el-icon>
               <span class="btn-text">中止</span>
             </div>
-            <div
-              class="btn-box"
-              @click="saveData"
-            >
+            <div class="btn-box" @click="saveData">
               <el-icon v-if="!saveLoading">
                 <Finished />
               </el-icon>
-              <el-icon
-                v-else
-                class="is-loading"
-              >
+              <el-icon v-else class="is-loading">
                 <Loading />
               </el-icon>
               <span class="btn-text">保存</span>
             </div>
-            <div
-              class="btn-box"
-              @click="setConfigData"
-            >
-              <el-icon><Setting /></el-icon>
+            <div class="btn-box" @click="setConfigData">
+              <el-icon>
+                <Setting />
+              </el-icon>
               <span class="btn-text">配置</span>
             </div>
           </div>
-          <el-input
+          <code-mirror v-model="sqltextData" basic :lang="lang" />
+          <!-- <el-input
             v-model="sqltextData"
             type="textarea"
             maxlength="2000"
             :autosize="{ minRows: 10, maxRows: 10 }"
             placeholder="请输入"
-          />
+          /> -->
         </div>
         <div class="log-show">
-          <el-tabs
-            v-model="activeName"
-            @tab-change="tabChangeEvent"
-          >
-            <template
-              v-for="tab in tabList"
-              :key="tab.code"
-            >
-              <el-tab-pane
-                v-if="!tab.hide"
-                :label="tab.name"
-                :name="tab.code"
-              />
+          <el-tabs v-model="activeName" @tab-change="tabChangeEvent">
+            <template v-for="tab in tabList" :key="tab.code">
+              <el-tab-pane v-if="!tab.hide" :label="tab.name" :name="tab.code" />
             </template>
           </el-tabs>
-          <component
-            :is="currentTab"
-            ref="containerInstanceRef"
-            class="show-container"
-          />
+          <component :is="currentTab" ref="containerInstanceRef" class="show-container" />
         </div>
       </div>
     </LoadingPage>
@@ -115,6 +77,8 @@ import PublishLog from './publish-log.vue'
 import ReturnData from './return-data.vue'
 import RunningLog from './running-log.vue'
 import TotalDetail from './total-detail.vue'
+import CodeMirror from 'vue-codemirror6'
+import { sql } from '@codemirror/lang-sql'
 
 import { GetWorkItemConfig, RunWorkItemConfig, SaveWorkItemConfig, TerWorkItemConfig } from '@/services/workflow.service'
 import { ElMessage } from 'element-plus'
@@ -123,14 +87,14 @@ import { nextTick } from 'vue'
 
 const route = useRoute()
 const router = useRouter()
-const emit = defineEmits([ 'back' ])
+const emit = defineEmits(['back'])
 
 const props = defineProps<{
   workItemConfig: any,
   workFlowData: any
 }>()
 
-
+const lang = ref(sql())
 const loading = ref(false)
 const networkError = ref(false)
 const runningLoading = ref(false)
@@ -147,14 +111,14 @@ const containerInstanceRef = ref(null)
 let workConfig = reactive({
   clusterId: '',
   datasourceId: '',
-  corn:'',
+  corn: '',
   name: '',
   sqlScript: '',
   workId: '',
   workType: '',
   workflowId: '',
   applicationId: '',
-  sparkConfig:''
+  sparkConfig: ''
 })
 
 const breadCrumbList = reactive([
@@ -211,7 +175,7 @@ function initData(id?: string) {
           // 运行结束
           if (workConfig.workType === 'SPARK_SQL') {
             tabList.forEach((item: any) => {
-              if ([ 'RunningLog', 'TotalDetail'].includes(item.code)) {
+              if (['RunningLog', 'TotalDetail'].includes(item.code)) {
                 item.hide = false
               }
               if (item.code === 'ReturnData') {
@@ -264,7 +228,7 @@ function goBack() {
 // 运行
 function runWorkData() {
   tabList.forEach((item: any) => {
-    if ([ 'RunningLog', 'TotalDetail', 'ReturnData'].includes(item.code)) {
+    if (['RunningLog', 'TotalDetail', 'ReturnData'].includes(item.code)) {
       item.hide = true
     }
   })
@@ -366,30 +330,79 @@ onMounted(() => {
     box-sizing: border-box;
     height: calc(100vh - 116px);
   }
+
   .zqy-work-container {
     .sql-code-container {
+      .vue-codemirror {
+        // height: calc(100vh - 544px);
+        height: 190px;
+        .cm-editor {
+          height: 100%;
+          outline: none;
+          border: 1px solid #dcdfe6;
+        }
+        .cm-gutters {
+          font-size: 12px;
+          font-family: v-sans, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+        }
+
+        .cm-content {
+          font-size: 12px;
+          font-family: v-sans, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+        }
+
+        .cm-tooltip-autocomplete {
+
+          // display: none !important;
+          ul {
+            li {
+              height: 40px;
+              display: flex;
+              align-items: center;
+              font-size: 12px;
+              background-color: #ffffff;
+              font-family: v-sans, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+            }
+
+            li[aria-selected] {
+              background: #409EFF;
+            }
+
+            .cm-completionIcon {
+              margin-right: -4px;
+              opacity: 0;
+            }
+          }
+        }
+      }
+
       .sql-option-container {
         height: $--app-item-height;
         display: flex;
         align-items: center;
         color: $--app-unclick-color;
+
         .btn-box {
           font-size: $--app-small-font-size;
           display: flex;
           cursor: pointer;
           width: 48px;
           margin-right: 8px;
+
           &.btn-box__4 {
             width: 70px;
           }
+
           .btn-text {
             margin-left: 4px;
           }
+
           &:hover {
             color: $--app-primary-color;
           }
         }
       }
+
       .el-textarea {
         .el-textarea__inner {
           border-radius: $--app-border-radius;
@@ -403,13 +416,16 @@ onMounted(() => {
         .el-tabs__item {
           font-size: $--app-small-font-size;
         }
+
         .el-tabs__content {
           height: 0;
         }
+
         .el-tabs__nav-scroll {
           border-bottom: 1px solid $--app-border-color;
         }
       }
+
       .show-container {
         height: calc(100vh - 420px);
         overflow: auto;
