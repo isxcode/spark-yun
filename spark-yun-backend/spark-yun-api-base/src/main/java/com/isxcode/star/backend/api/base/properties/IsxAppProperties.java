@@ -28,7 +28,7 @@ public class IsxAppProperties {
   private Integer expirationMin = 1440;
 
   /** 资源目录. */
-  private String resourcesPath = "/var/lib/spark-yun";
+  private String resourcesPath = "/var/lib/zhiqingyun";
 
   /** 系统管理员admin密码. */
   private String adminPasswd = "admin123";

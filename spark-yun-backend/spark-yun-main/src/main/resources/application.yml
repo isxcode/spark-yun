@@ -98,4 +98,3 @@ isx-app:
     - /license
     - /schedule
     - /workflow-page
-  resources-path: classpath:resources

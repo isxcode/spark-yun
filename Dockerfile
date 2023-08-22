@@ -1,17 +1,14 @@
 FROM openjdk:8
 
 VOLUME /etc/zhiqingyun/conf
-VOLUME /root/.zhiqingyun
+VOLUME /var/lib/zhiqingyun
 
 ARG ADMIN_PASSWORD='admin123'
-ARG ACTIVE_ENV='local'
+ARG ACTIVE_ENV='default'
 ARG LOG_LEVEL='info'
 
-RUN mkdir -p /opt/zhiqingyun
-RUN mkdir -p /etc/zhiqingyun/conf
-
 COPY ./spark-yun-backend/spark-yun-main/build/libs/zhiqingyun.jar /opt/zhiqingyun/zhiqingyun.jar
-COPY ./spark-yun-backend/spark-yun-main/src/main/resources/application-local.yml /etc/zhiqingyun/conf
+COPY ./spark-yun-backend/spark-yun-main/src/main/resources/application-default.yml /etc/zhiqingyun/conf/
 
 EXPOSE 8080
 
