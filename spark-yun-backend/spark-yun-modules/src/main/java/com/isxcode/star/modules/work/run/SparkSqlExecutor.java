@@ -321,6 +321,10 @@ public class SparkSqlExecutor extends WorkExecutor {
           workInstance.setResultData(JSON.toJSONString(baseResponse.getData()));
           logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("数据保存成功 \n");
           updateInstance(workInstance, logBuilder);
+        } else {
+          // 任务运行错误
+          throw new WorkRunException(
+              LocalDateTime.now() + WorkLog.ERROR_INFO + "Kubernetes容器状态为失败" + "\n");
         }
 
         // 运行结束，则退出死循环
