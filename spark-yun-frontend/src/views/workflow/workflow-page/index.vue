@@ -48,35 +48,36 @@
                 <template v-if="containerType === 'flow'">
                     <div class="option-btns">
                         <!-- 非运行状态 -->
-                        <template v-if="!runningStatus">
+                        <template v-if="!runningStatus || true">
                             <span v-if="!btnLoadingConfig.runningLoading" @click="runWorkFlowDataEvent">运行</span>
                             <el-icon v-else class="is-loading"><Loading /></el-icon>
 
-                            <template v-if="workflowInstanceId">
+                            <template v-if="workflowInstanceId || true">
                                 <span v-if="!btnLoadingConfig.reRunLoading" @click="reRunWorkFlowDataEvent">重跑</span>
                                 <el-icon v-else class="is-loading"><Loading /></el-icon>
                             </template>
 
-                            <span v-if="!btnLoadingConfig.saveLoading" @click="saveData">保存</span>
+                            <span v-if="!btnLoadingConfig.saveLoading || true" @click="saveData">保存</span>
                             <el-icon v-else class="is-loading"><Loading /></el-icon>
 
-                            <span @click="showConfigDetail">配置</span>
+                            <!-- <span @click="showConfigDetail">配置</span> -->
 
-                            <span v-if="!btnLoadingConfig.publishLoading" @click="publishWorkFlow">发布</span>
+                            <span v-if="!btnLoadingConfig.publishLoading || true" @click="publishWorkFlow">发布</span>
                             <el-icon v-else class="is-loading"><Loading /></el-icon>
 
                             <!-- <span>下线</span> -->
                         </template>
                         <!-- 运行状态 -->
-                        <template v-else>
+                        <!-- <template v-else> -->
                             <span v-if="!btnLoadingConfig.stopWorkFlowLoading" @click="stopWorkFlow">中止</span>
                             <el-icon v-else class="is-loading"><Loading /></el-icon>
-                        </template>
+                        <!-- </template> -->
                         <!-- <span v-if="!btnLoadingConfig.exportLoading" @click="exportWorkFlow">导出</span>
                         <el-icon v-else class="is-loading"><Loading /></el-icon>
                         <span v-if="!btnLoadingConfig.importLoading" @click="importWorkFlow">导入</span>
                         <el-icon v-else class="is-loading"><Loading /></el-icon> -->
-                        <span>收藏</span>
+                        <!-- <span>收藏</span> -->
+                        <span @click="queryRunWorkInstancesEvent">刷新</span>
                     </div>
                     <ZqyFlow ref="zqyFlowRef"></ZqyFlow>
                 </template>
@@ -301,6 +302,8 @@ function queryRunWorkInstancesEvent() {
         }).catch(() => {
 
         })
+    } else {
+        ElMessage.warning('请先运行作业流')
     }
 }
 
