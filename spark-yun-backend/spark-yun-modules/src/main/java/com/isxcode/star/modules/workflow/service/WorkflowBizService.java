@@ -17,6 +17,7 @@ import com.isxcode.star.api.workflow.pojos.res.GetRunWorkInstancesRes;
 import com.isxcode.star.api.workflow.pojos.res.GetWorkflowRes;
 import com.isxcode.star.api.workflow.pojos.res.PageWorkflowRes;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
+import com.isxcode.star.common.locker.Locker;
 import com.isxcode.star.modules.work.entity.WorkConfigEntity;
 import com.isxcode.star.modules.work.entity.WorkEntity;
 import com.isxcode.star.modules.work.entity.WorkExportInfo;
@@ -82,6 +83,8 @@ public class WorkflowBizService {
   private final WorkExecutorFactory workExecutorFactory;
 
   private final WorkflowService workflowService;
+
+  private final Locker locker;
 
   public WorkflowEntity getWorkflowEntity(String workflowId) {
 
@@ -478,15 +481,20 @@ public class WorkflowBizService {
             })
         .whenComplete(
             (exeStatus, exception) -> {
-              WorkflowInstanceEntity workflowInstance =
-                  workflowInstanceRepository.findById(abortFlowReq.getWorkflowInstanceId()).get();
-              if (exception != null || exeStatus.contains(InstanceStatus.FAIL)) {
-                workflowInstance.setStatus(InstanceStatus.FAIL);
-              } else {
-                workflowInstance.setStatus(InstanceStatus.ABORT);
+              Integer lock = locker.lock("ABORT_" + abortFlowReq.getWorkflowInstanceId());
+              try {
+                WorkflowInstanceEntity workflowInstance =
+                    workflowInstanceRepository.findById(abortFlowReq.getWorkflowInstanceId()).get();
+                if (exception != null || exeStatus.contains(InstanceStatus.FAIL)) {
+                  workflowInstance.setStatus(InstanceStatus.FAIL);
+                } else {
+                  workflowInstance.setStatus(InstanceStatus.ABORT);
+                }
+                workflowInstance.setExecEndDateTime(new Date());
+                workflowInstanceRepository.saveAndFlush(workflowInstance);
+              } finally {
+                locker.unlock(lock);
               }
-              workflowInstance.setExecEndDateTime(new Date());
-              workflowInstanceRepository.saveAndFlush(workflowInstance);
             });
   }
 
@@ -496,9 +504,11 @@ public class WorkflowBizService {
     WorkEntity workEntity = workRepository.findById(workInstance.getWorkId()).get();
     WorkExecutor workExecutor = workExecutorFactory.create(workEntity.getWorkType());
     workInstance = workInstanceRepository.findById(workInstance.getId()).get();
+
+    // 中止任务先加锁，但不等待
+    Integer locked = locker.lockOnly("ABORT_" + workInstance.getWorkflowInstanceId());
     try {
       workExecutor.syncAbort(workInstance);
-
       String submitLog =
           workInstance.getSubmitLog() + LocalDateTime.now() + WorkLog.SUCCESS_INFO + "已中止  \n";
       workInstance.setSubmitLog(submitLog);
@@ -513,6 +523,8 @@ public class WorkflowBizService {
       workInstance.setStatus(InstanceStatus.FAIL);
       workInstance.setExecEndDateTime(new Date());
       return InstanceStatus.FAIL;
+    } finally {
+      locker.unlock(locked);
     }
   }
 

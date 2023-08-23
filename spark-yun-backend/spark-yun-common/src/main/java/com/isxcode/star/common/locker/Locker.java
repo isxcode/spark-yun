@@ -13,6 +13,14 @@ public class Locker {
 
   /** 加锁. */
   @SneakyThrows
+  public Integer lockOnly(String name) {
+
+    // 给数据库加一条数据
+    return lockerRepository.save(LockerEntity.builder().name(name).build()).getId();
+  }
+
+  /** 加锁. */
+  @SneakyThrows
   public Integer lock(String name) {
 
     // 给数据库加一条数据
