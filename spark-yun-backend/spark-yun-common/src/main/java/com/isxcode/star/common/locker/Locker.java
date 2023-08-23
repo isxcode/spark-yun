@@ -43,7 +43,7 @@ public class Locker {
   public void unlock(Integer id) {
 
     // 将自己的id删掉
-    lockerRepository.deleteById(id);
+    lockerRepository.delete(lockerRepository.findById(id).get());
   }
 
   /** 清理锁. */
