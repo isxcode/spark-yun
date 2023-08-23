@@ -159,7 +159,7 @@ p {
     border-left: 4px solid #F5B041;
 }
 .zqy-flow-node.BREAK {
-    border-left: 4px solid #F1C40F;
+    border-left: 4px solid #3f3a24;
 }
 
 .zqy-flow-node.FAIL {
