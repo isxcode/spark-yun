@@ -112,9 +112,6 @@ public abstract class WorkExecutor {
 
     } catch (WorkRunException e) {
 
-      // 打印异常
-      log.error(e.getMsg());
-
       // 重新获取当前最新实例
       workInstance = workInstanceRepository.findById(workRunContext.getInstanceId()).get();
 
