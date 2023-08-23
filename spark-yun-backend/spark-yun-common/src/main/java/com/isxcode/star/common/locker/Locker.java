@@ -2,9 +2,10 @@ package com.isxcode.star.common.locker;
 
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class Locker {
@@ -12,7 +13,6 @@ public class Locker {
   private final LockerRepository lockerRepository;
 
   /** 加锁. */
-  @SneakyThrows
   public Integer lockOnly(String name) {
 
     // 给数据库加一条数据
@@ -20,7 +20,6 @@ public class Locker {
   }
 
   /** 加锁. */
-  @SneakyThrows
   public Integer lock(String name) {
 
     // 给数据库加一条数据
@@ -30,7 +29,10 @@ public class Locker {
     Integer minId;
     do {
       minId = lockerRepository.getMinId(name);
-      Thread.sleep(500);
+      try {
+        Thread.sleep(500);
+      } catch (InterruptedException ignored) {
+      }
     } while (!Objects.equals(id, minId));
 
     // 返回id
