@@ -16,6 +16,7 @@
 <script lang="ts" setup>
 import { reactive, ref, nextTick, onUnmounted } from 'vue'
 import BlockModal from '../block-modal/index.vue'
+import BlockTable from '../block-table/index.vue'
 
 import { GetLogData, GetYarnLogData, GetResultData } from '@/services/schedule.service'
 
