@@ -15,8 +15,8 @@
                 <template #dropdown>
                     <el-dropdown-menu>
                         <el-dropdown-item command="node_log">日志</el-dropdown-item>
-                        <el-dropdown-item v-if="status !== 'RUNNING' && node.data.nodeConfigData.workType !== 'EXE_JDBC'" command="node_result">运行结果</el-dropdown-item>
-                        <el-dropdown-item v-if="status !== 'RUNNING' && node.data.nodeConfigData.workType === 'SPARK_SQL'" command="node_yarnLog">运行日志</el-dropdown-item>
+                        <el-dropdown-item v-if="status === 'SUCCESS' && node.data.nodeConfigData.workType !== 'EXE_JDBC'" command="node_result">运行结果</el-dropdown-item>
+                        <el-dropdown-item v-if="status === 'SUCCESS' && node.data.nodeConfigData.workType === 'SPARK_SQL'" command="node_yarnLog">运行日志</el-dropdown-item>
                         <el-dropdown-item command="node_runAfter">重跑下游</el-dropdown-item>
                         <el-dropdown-item command="node_break">中断</el-dropdown-item>
                         <el-dropdown-item command="node_reRun">重跑当前</el-dropdown-item>
@@ -208,9 +208,9 @@ p {
     box-shadow: 0 0 0 4px #f0e9e9;
 }
 .x6-node-selected .zqy-flow-node.BREAK {
-    border-color: #F1C40F;
+    border-color: #3f3a24;
     border-radius: 2px;
-    box-shadow: 0 0 0 4px #faf1cf;
+    box-shadow: 0 0 0 4px #abaaa4;
 }
 
 .x6-node-selected .zqy-flow-node.FAIL {
