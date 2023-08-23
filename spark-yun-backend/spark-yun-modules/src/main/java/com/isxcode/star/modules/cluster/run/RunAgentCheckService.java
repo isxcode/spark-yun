@@ -33,98 +33,69 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(noRollbackFor = {IsxAppException.class})
 public class RunAgentCheckService {
 
-  private final SparkYunProperties sparkYunProperties;
+	private final SparkYunProperties sparkYunProperties;
 
-  private final ClusterNodeRepository clusterNodeRepository;
+	private final ClusterNodeRepository clusterNodeRepository;
 
-  @Async("sparkYunWorkThreadPool")
-  public void run(
-      String clusterNodeId,
-      ScpFileEngineNodeDto scpFileEngineNodeDto,
-      String tenantId,
-      String userId) {
+	@Async("sparkYunWorkThreadPool")
+	public void run(String clusterNodeId, ScpFileEngineNodeDto scpFileEngineNodeDto, String tenantId, String userId) {
 
-    USER_ID.set(userId);
-    TENANT_ID.set(tenantId);
+		USER_ID.set(userId);
+		TENANT_ID.set(tenantId);
 
-    // 获取节点信息
-    Optional<ClusterNodeEntity> clusterNodeEntityOptional =
-        clusterNodeRepository.findById(clusterNodeId);
-    if (!clusterNodeEntityOptional.isPresent()) {
-      return;
-    }
-    ClusterNodeEntity clusterNodeEntity = clusterNodeEntityOptional.get();
+		// 获取节点信息
+		Optional<ClusterNodeEntity> clusterNodeEntityOptional = clusterNodeRepository.findById(clusterNodeId);
+		if (!clusterNodeEntityOptional.isPresent()) {
+			return;
+		}
+		ClusterNodeEntity clusterNodeEntity = clusterNodeEntityOptional.get();
 
-    try {
-      checkAgent(scpFileEngineNodeDto, clusterNodeEntity);
-    } catch (Exception e) {
-      log.error(e.getMessage());
-      clusterNodeEntity.setCheckDateTime(LocalDateTime.now());
-      clusterNodeEntity.setAgentLog(e.getMessage());
-      clusterNodeEntity.setStatus(ClusterNodeStatus.CHECK_ERROR);
-      clusterNodeRepository.saveAndFlush(clusterNodeEntity);
-    }
-  }
+		try {
+			checkAgent(scpFileEngineNodeDto, clusterNodeEntity);
+		} catch (Exception e) {
+			log.error(e.getMessage());
+			clusterNodeEntity.setCheckDateTime(LocalDateTime.now());
+			clusterNodeEntity.setAgentLog(e.getMessage());
+			clusterNodeEntity.setStatus(ClusterNodeStatus.CHECK_ERROR);
+			clusterNodeRepository.saveAndFlush(clusterNodeEntity);
+		}
+	}
 
-  public void checkAgent(ScpFileEngineNodeDto scpFileEngineNodeDto, ClusterNodeEntity engineNode)
-      throws JSchException, IOException, InterruptedException, SftpException {
+	public void checkAgent(ScpFileEngineNodeDto scpFileEngineNodeDto, ClusterNodeEntity engineNode)
+			throws JSchException, IOException, InterruptedException, SftpException {
 
-    // 拷贝检测脚本
-    scpFile(
-        scpFileEngineNodeDto,
-        "classpath:bash/agent-check.sh",
-        sparkYunProperties.getTmpDir() + File.separator + "agent-check.sh");
+		// 拷贝检测脚本
+		scpFile(scpFileEngineNodeDto, "classpath:bash/agent-check.sh",
+				sparkYunProperties.getTmpDir() + File.separator + "agent-check.sh");
 
-    // 运行安装脚本
-    String checkCommand =
-        "bash "
-            + sparkYunProperties.getTmpDir()
-            + File.separator
-            + "agent-check.sh"
-            + " --home-path="
-            + engineNode.getAgentHomePath()
-            + File.separator
-            + PathConstants.AGENT_PATH_NAME;
+		// 运行安装脚本
+		String checkCommand = "bash " + sparkYunProperties.getTmpDir() + File.separator + "agent-check.sh"
+				+ " --home-path=" + engineNode.getAgentHomePath() + File.separator + PathConstants.AGENT_PATH_NAME;
 
-    log.debug("执行远程命令:{}", checkCommand);
+		log.debug("执行远程命令:{}", checkCommand);
 
-    // 获取返回结果
-    String executeLog = executeCommand(scpFileEngineNodeDto, checkCommand, false);
+		// 获取返回结果
+		String executeLog = executeCommand(scpFileEngineNodeDto, checkCommand, false);
 
-    log.debug("远程返回值:{}", executeLog);
-    AgentInfo agentCheckInfo = JSON.parseObject(executeLog, AgentInfo.class);
+		log.debug("远程返回值:{}", executeLog);
+		AgentInfo agentCheckInfo = JSON.parseObject(executeLog, AgentInfo.class);
 
-    // 保存服务器信息
-    engineNode.setAllMemory(
-        Double.parseDouble(
-            Strings.isEmpty(agentCheckInfo.getAllMemory())
-                ? "0.0"
-                : agentCheckInfo.getAllMemory()));
-    engineNode.setUsedMemory(
-        Double.parseDouble(
-            Strings.isEmpty(agentCheckInfo.getUsedMemory())
-                ? "0.0"
-                : agentCheckInfo.getUsedMemory()));
-    engineNode.setAllStorage(
-        Double.parseDouble(
-            Strings.isEmpty(agentCheckInfo.getAllStorage())
-                ? "0.0"
-                : agentCheckInfo.getAllStorage()));
-    engineNode.setUsedStorage(
-        Double.parseDouble(
-            Strings.isEmpty(agentCheckInfo.getUsedStorage())
-                ? "0.0"
-                : agentCheckInfo.getUsedStorage()));
-    engineNode.setCpuPercent(
-        Double.parseDouble(
-            Strings.isEmpty(agentCheckInfo.getCpuPercent())
-                ? "0.0"
-                : agentCheckInfo.getCpuPercent()));
+		// 保存服务器信息
+		engineNode.setAllMemory(Double
+				.parseDouble(Strings.isEmpty(agentCheckInfo.getAllMemory()) ? "0.0" : agentCheckInfo.getAllMemory()));
+		engineNode.setUsedMemory(Double
+				.parseDouble(Strings.isEmpty(agentCheckInfo.getUsedMemory()) ? "0.0" : agentCheckInfo.getUsedMemory()));
+		engineNode.setAllStorage(Double
+				.parseDouble(Strings.isEmpty(agentCheckInfo.getAllStorage()) ? "0.0" : agentCheckInfo.getAllStorage()));
+		engineNode.setUsedStorage(Double.parseDouble(
+				Strings.isEmpty(agentCheckInfo.getUsedStorage()) ? "0.0" : agentCheckInfo.getUsedStorage()));
+		engineNode.setCpuPercent(Double
+				.parseDouble(Strings.isEmpty(agentCheckInfo.getCpuPercent()) ? "0.0" : agentCheckInfo.getCpuPercent()));
 
-    // 修改状态
-    engineNode.setStatus(agentCheckInfo.getStatus());
-    engineNode.setAgentLog(agentCheckInfo.getLog());
-    engineNode.setCheckDateTime(LocalDateTime.now());
-    clusterNodeRepository.saveAndFlush(engineNode);
-  }
+		// 修改状态
+		engineNode.setStatus(agentCheckInfo.getStatus());
+		engineNode.setAgentLog(agentCheckInfo.getLog());
+		engineNode.setCheckDateTime(LocalDateTime.now());
+		clusterNodeRepository.saveAndFlush(engineNode);
+	}
 }

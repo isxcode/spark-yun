@@ -13,19 +13,17 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class AesUtils {
 
-  private final IsxAppProperties isxAppProperties;
+	private final IsxAppProperties isxAppProperties;
 
-  /** 对称加密. */
-  public String encrypt(String data) {
+	/** 对称加密. */
+	public String encrypt(String data) {
 
-    return SecureUtil.aes(Arrays.copyOf(isxAppProperties.getAesSlat().getBytes(), 1 << 5))
-        .encryptBase64(data);
-  }
+		return SecureUtil.aes(Arrays.copyOf(isxAppProperties.getAesSlat().getBytes(), 1 << 5)).encryptBase64(data);
+	}
 
-  /** 对称解密. */
-  public String decrypt(String data) {
+	/** 对称解密. */
+	public String decrypt(String data) {
 
-    return SecureUtil.aes(Arrays.copyOf(isxAppProperties.getAesSlat().getBytes(), 1 << 5))
-        .decryptStr(data);
-  }
+		return SecureUtil.aes(Arrays.copyOf(isxAppProperties.getAesSlat().getBytes(), 1 << 5)).decryptStr(data);
+	}
 }

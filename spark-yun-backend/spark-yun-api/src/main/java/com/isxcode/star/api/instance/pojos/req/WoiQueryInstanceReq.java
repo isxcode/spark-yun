@@ -6,4 +6,5 @@ import lombok.EqualsAndHashCode;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class WoiQueryInstanceReq extends BasePageRequest {}
+public class WoiQueryInstanceReq extends BasePageRequest {
+}

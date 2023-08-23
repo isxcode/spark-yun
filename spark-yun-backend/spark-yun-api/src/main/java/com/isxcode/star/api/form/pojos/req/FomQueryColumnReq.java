@@ -5,7 +5,7 @@ import lombok.Data;
 @Data
 public class FomQueryColumnReq {
 
-  private String formId;
+	private String formId;
 
-  private String formComponentId;
+	private String formComponentId;
 }

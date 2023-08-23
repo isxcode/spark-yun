@@ -5,11 +5,11 @@ import lombok.Data;
 @Data
 public class YagExecuteWorkReq {
 
-  private PluginReq pluginReq;
+	private PluginReq pluginReq;
 
-  private SparkSubmit sparkSubmit;
+	private SparkSubmit sparkSubmit;
 
-  private String agentHomePath;
+	private String agentHomePath;
 
-  private String agentType;
+	private String agentType;
 }

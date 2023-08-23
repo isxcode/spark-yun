@@ -13,12 +13,8 @@ import org.springframework.stereotype.Repository;
 @CacheConfig(cacheNames = {"SY_DATASOURCE"})
 public interface DatasourceRepository extends JpaRepository<DatasourceEntity, String> {
 
-  @Query(
-      "SELECT D FROM DatasourceEntity D "
-          + "WHERE D.name LIKE %:keyword% "
-          + "OR D.remark LIKE %:keyword% "
-          + "OR D.dbType LIKE %:keyword% "
-          + "OR D.username LIKE %:keyword% "
-          + "OR D.jdbcUrl LIKE %:keyword% order by D.createDateTime desc ")
-  Page<DatasourceEntity> searchAll(@Param("keyword") String searchKeyWord, Pageable pageable);
+	@Query("SELECT D FROM DatasourceEntity D " + "WHERE D.name LIKE %:keyword% " + "OR D.remark LIKE %:keyword% "
+			+ "OR D.dbType LIKE %:keyword% " + "OR D.username LIKE %:keyword% "
+			+ "OR D.jdbcUrl LIKE %:keyword% order by D.createDateTime desc ")
+	Page<DatasourceEntity> searchAll(@Param("keyword") String searchKeyWord, Pageable pageable);
 }

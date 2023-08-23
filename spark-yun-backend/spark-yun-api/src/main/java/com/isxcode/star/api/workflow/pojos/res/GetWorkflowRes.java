@@ -5,5 +5,5 @@ import lombok.Data;
 @Data
 public class GetWorkflowRes {
 
-  private Object webConfig;
+	private Object webConfig;
 }

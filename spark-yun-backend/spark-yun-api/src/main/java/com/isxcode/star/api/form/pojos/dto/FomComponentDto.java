@@ -5,17 +5,17 @@ import lombok.Data;
 @Data
 public class FomComponentDto {
 
-  private String name;
+	private String name;
 
-  private String componentType;
+	private String componentType;
 
-  private String componentKey;
+	private String componentKey;
 
-  private boolean isDisplay;
+	private boolean isDisplay;
 
-  private boolean isPrimaryKey;
+	private boolean isPrimaryKey;
 
-  private String showValue;
+	private String showValue;
 
-  private String valueSql;
+	private String valueSql;
 }

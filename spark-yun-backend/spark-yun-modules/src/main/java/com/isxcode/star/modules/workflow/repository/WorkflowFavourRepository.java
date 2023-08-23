@@ -11,5 +11,5 @@ import org.springframework.stereotype.Repository;
 @CacheConfig(cacheNames = {"sy_workflow_favour"})
 public interface WorkflowFavourRepository extends JpaRepository<WorkflowFavourEntity, String> {
 
-  Optional<WorkflowFavourEntity> findByWorkflowIdAndUserId(String workflowId, String userId);
+	Optional<WorkflowFavourEntity> findByWorkflowIdAndUserId(String workflowId, String userId);
 }

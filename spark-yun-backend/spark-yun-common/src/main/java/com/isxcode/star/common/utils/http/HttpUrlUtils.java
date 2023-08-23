@@ -11,14 +11,14 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class HttpUrlUtils {
 
-  private final IsxAppProperties isxAppProperties;
+	private final IsxAppProperties isxAppProperties;
 
-  /** 生成http访问路径. */
-  public String genHttpUrl(String host, String port, String path) {
+	/** 生成http访问路径. */
+	public String genHttpUrl(String host, String port, String path) {
 
-    String httpProtocol = isxAppProperties.isUseSsl() ? "https://" : "http://";
-    String httpHost = isxAppProperties.isUsePort() ? host + ":" + port : host;
+		String httpProtocol = isxAppProperties.isUseSsl() ? "https://" : "http://";
+		String httpHost = isxAppProperties.isUsePort() ? host + ":" + port : host;
 
-    return httpProtocol + httpHost + path;
-  }
+		return httpProtocol + httpHost + path;
+	}
 }

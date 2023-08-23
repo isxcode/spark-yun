@@ -25,60 +25,59 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class DatasourceController {
 
-  private final DatasourceBizService datasourceBizService;
+	private final DatasourceBizService datasourceBizService;
 
-  @Secured({RoleType.TENANT_ADMIN})
-  @Operation(summary = "添加数据源接口")
-  @PostMapping("/addDatasource")
-  @SuccessResponse("添加成功")
-  public void addDatasource(@Valid @RequestBody AddDatasourceReq addDatasourceReq) {
+	@Secured({RoleType.TENANT_ADMIN})
+	@Operation(summary = "添加数据源接口")
+	@PostMapping("/addDatasource")
+	@SuccessResponse("添加成功")
+	public void addDatasource(@Valid @RequestBody AddDatasourceReq addDatasourceReq) {
 
-    datasourceBizService.addDatasource(addDatasourceReq);
-  }
+		datasourceBizService.addDatasource(addDatasourceReq);
+	}
 
-  @Secured({RoleType.TENANT_ADMIN})
-  @Operation(summary = "更新数据源接口")
-  @PostMapping("/updateDatasource")
-  @SuccessResponse("更新成功")
-  public void updateDatasource(@Valid @RequestBody UpdateDatasourceReq updateDatasourceReq) {
+	@Secured({RoleType.TENANT_ADMIN})
+	@Operation(summary = "更新数据源接口")
+	@PostMapping("/updateDatasource")
+	@SuccessResponse("更新成功")
+	public void updateDatasource(@Valid @RequestBody UpdateDatasourceReq updateDatasourceReq) {
 
-    datasourceBizService.updateDatasource(updateDatasourceReq);
-  }
+		datasourceBizService.updateDatasource(updateDatasourceReq);
+	}
 
-  @Secured({RoleType.TENANT_MEMBER, RoleType.TENANT_ADMIN})
-  @Operation(summary = "查询数据源列表接口")
-  @PostMapping("/pageDatasource")
-  @SuccessResponse("查询数据源成功")
-  public Page<PageDatasourceRes> pageDatasource(
-      @Valid @RequestBody PageDatasourceReq pageDatasourceReq) {
+	@Secured({RoleType.TENANT_MEMBER, RoleType.TENANT_ADMIN})
+	@Operation(summary = "查询数据源列表接口")
+	@PostMapping("/pageDatasource")
+	@SuccessResponse("查询数据源成功")
+	public Page<PageDatasourceRes> pageDatasource(@Valid @RequestBody PageDatasourceReq pageDatasourceReq) {
 
-    return datasourceBizService.pageDatasource(pageDatasourceReq);
-  }
+		return datasourceBizService.pageDatasource(pageDatasourceReq);
+	}
 
-  @Secured({RoleType.TENANT_ADMIN})
-  @Operation(summary = "删除数据源接口")
-  @PostMapping("/deleteDatasource")
-  @SuccessResponse("删除成功")
-  public void deleteDatasource(@Valid @RequestBody DeleteDatasourceReq deleteDatasourceReq) {
+	@Secured({RoleType.TENANT_ADMIN})
+	@Operation(summary = "删除数据源接口")
+	@PostMapping("/deleteDatasource")
+	@SuccessResponse("删除成功")
+	public void deleteDatasource(@Valid @RequestBody DeleteDatasourceReq deleteDatasourceReq) {
 
-    datasourceBizService.deleteDatasource(deleteDatasourceReq);
-  }
+		datasourceBizService.deleteDatasource(deleteDatasourceReq);
+	}
 
-  @Secured({RoleType.TENANT_MEMBER, RoleType.TENANT_ADMIN})
-  @Operation(summary = "测试数据源连接接口")
-  @PostMapping("/testConnect")
-  @SuccessResponse("检测完成")
-  public TestConnectRes testConnect(@Valid @RequestBody GetConnectLogReq testConnectReq) {
+	@Secured({RoleType.TENANT_MEMBER, RoleType.TENANT_ADMIN})
+	@Operation(summary = "测试数据源连接接口")
+	@PostMapping("/testConnect")
+	@SuccessResponse("检测完成")
+	public TestConnectRes testConnect(@Valid @RequestBody GetConnectLogReq testConnectReq) {
 
-    return datasourceBizService.testConnect(testConnectReq);
-  }
+		return datasourceBizService.testConnect(testConnectReq);
+	}
 
-  @Secured({RoleType.TENANT_MEMBER, RoleType.TENANT_ADMIN})
-  @Operation(summary = "查询连接日志")
-  @PostMapping("/getConnectLog")
-  @SuccessResponse("获取成功")
-  public GetConnectLogRes getConnectLog(@Valid @RequestBody GetConnectLogReq getConnectLogReq) {
+	@Secured({RoleType.TENANT_MEMBER, RoleType.TENANT_ADMIN})
+	@Operation(summary = "查询连接日志")
+	@PostMapping("/getConnectLog")
+	@SuccessResponse("获取成功")
+	public GetConnectLogRes getConnectLog(@Valid @RequestBody GetConnectLogReq getConnectLogReq) {
 
-    return datasourceBizService.getConnectLog(getConnectLogReq);
-  }
+		return datasourceBizService.getConnectLog(getConnectLogReq);
+	}
 }

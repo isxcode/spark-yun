@@ -37,55 +37,58 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @EntityListeners(AuditingEntityListener.class)
 public class WorkInstanceEntity {
 
-  @Id
-  @GeneratedValue(generator = "sy-id-generator")
-  @GenericGenerator(
-      name = "sy-id-generator",
-      strategy = "com.isxcode.star.config.GeneratedValueConfig")
-  private String id;
+	@Id
+	@GeneratedValue(generator = "sy-id-generator")
+	@GenericGenerator(name = "sy-id-generator", strategy = "com.isxcode.star.config.GeneratedValueConfig")
+	private String id;
 
-  private String versionId;
+	private String versionId;
 
-  private String workId;
+	private String workId;
 
-  private String instanceType;
+	private String instanceType;
 
-  private String status;
+	private String status;
 
-  private Date planStartDateTime;
+	private Date planStartDateTime;
 
-  private Date nextPlanDateTime;
+	private Date nextPlanDateTime;
 
-  private Date execStartDateTime;
+	private Date execStartDateTime;
 
-  private Date execEndDateTime;
+	private Date execEndDateTime;
 
-  private String submitLog;
+	private String submitLog;
 
-  private String yarnLog;
+	private String yarnLog;
 
-  private String sparkStarRes;
+	private String sparkStarRes;
 
-  private String resultData;
+	private String resultData;
 
-  private String workflowInstanceId;
+	private String workflowInstanceId;
 
-  private Boolean quartzHasRun;
+	private Boolean quartzHasRun;
 
-  @CreatedDate private LocalDateTime createDateTime;
+	@CreatedDate
+	private LocalDateTime createDateTime;
 
-  @LastModifiedDate private LocalDateTime lastModifiedDateTime;
+	@LastModifiedDate
+	private LocalDateTime lastModifiedDateTime;
 
-  @CreatedBy private String createBy;
+	@CreatedBy
+	private String createBy;
 
-  @LastModifiedBy private String lastModifiedBy;
+	@LastModifiedBy
+	private String lastModifiedBy;
 
-  @Transient private Integer deleted;
+	@Transient
+	private Integer deleted;
 
-  private String tenantId;
+	private String tenantId;
 
-  @PrePersist
-  public void prePersist() {
-    this.tenantId = TENANT_ID.get();
-  }
+	@PrePersist
+	public void prePersist() {
+		this.tenantId = TENANT_ID.get();
+	}
 }

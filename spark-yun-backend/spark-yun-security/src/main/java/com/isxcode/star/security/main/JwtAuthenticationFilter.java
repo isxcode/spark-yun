@@ -24,65 +24,55 @@ import org.springframework.web.filter.OncePerRequestFilter;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-  private final AuthenticationManager authenticationManager;
+	private final AuthenticationManager authenticationManager;
 
-  private final List<String> excludeUrlPaths;
+	private final List<String> excludeUrlPaths;
 
-  private final IsxAppProperties isxAppProperties;
+	private final IsxAppProperties isxAppProperties;
 
-  @Override
-  protected void doFilterInternal(
-      HttpServletRequest request,
-      @NonNull HttpServletResponse response,
-      @NonNull FilterChain filterChain)
-      throws ServletException, IOException {
+	@Override
+	protected void doFilterInternal(HttpServletRequest request, @NonNull HttpServletResponse response,
+			@NonNull FilterChain filterChain) throws ServletException, IOException {
 
-    // 获取用户token
-    String authorization = request.getHeader(SecurityConstants.HEADER_AUTHORIZATION);
-    if (authorization == null) {
-      request.getRequestDispatcher(SecurityConstants.TOKEN_IS_NULL_PATH).forward(request, response);
-      return;
-    }
+		// 获取用户token
+		String authorization = request.getHeader(SecurityConstants.HEADER_AUTHORIZATION);
+		if (authorization == null) {
+			request.getRequestDispatcher(SecurityConstants.TOKEN_IS_NULL_PATH).forward(request, response);
+			return;
+		}
 
-    // 获取用户的租户id
-    String tenantId = request.getHeader(SecurityConstants.HEADER_TENANT_ID);
-    if (tenantId != null) {
-      TENANT_ID.set(tenantId);
-    }
+		// 获取用户的租户id
+		String tenantId = request.getHeader(SecurityConstants.HEADER_TENANT_ID);
+		if (tenantId != null) {
+			TENANT_ID.set(tenantId);
+		}
 
-    // 验证jwt, 获取用户id
-    String userUuid;
-    try {
-      userUuid =
-          JwtUtils.decrypt(
-              isxAppProperties.getJwtKey(),
-              authorization,
-              isxAppProperties.getAesSlat(),
-              String.class);
-      USER_ID.set(userUuid);
-    } catch (Exception e) {
-      request
-          .getRequestDispatcher(SecurityConstants.TOKEN_IS_INVALID_PATH)
-          .forward(request, response);
-      return;
-    }
+		// 验证jwt, 获取用户id
+		String userUuid;
+		try {
+			userUuid = JwtUtils.decrypt(isxAppProperties.getJwtKey(), authorization, isxAppProperties.getAesSlat(),
+					String.class);
+			USER_ID.set(userUuid);
+		} catch (Exception e) {
+			request.getRequestDispatcher(SecurityConstants.TOKEN_IS_INVALID_PATH).forward(request, response);
+			return;
+		}
 
-    // 通过用户id，给用户授权
-    try {
-      authenticationManager.authenticate(new AuthenticationToken(userUuid, tenantId));
-    } catch (Exception e) {
-      log.error(e.getMessage());
-      request.getRequestDispatcher(SecurityConstants.AUTH_ERROR_PATH).forward(request, response);
-      return;
-    }
+		// 通过用户id，给用户授权
+		try {
+			authenticationManager.authenticate(new AuthenticationToken(userUuid, tenantId));
+		} catch (Exception e) {
+			log.error(e.getMessage());
+			request.getRequestDispatcher(SecurityConstants.AUTH_ERROR_PATH).forward(request, response);
+			return;
+		}
 
-    doFilter(request, response, filterChain);
-  }
+		doFilter(request, response, filterChain);
+	}
 
-  @Override
-  protected boolean shouldNotFilter(@NonNull HttpServletRequest request) {
+	@Override
+	protected boolean shouldNotFilter(@NonNull HttpServletRequest request) {
 
-    return excludeUrlPaths.stream()
-        .anyMatch(p -> new AntPathMatcher().match(p, request.getServletPath()));
-  }
+		return excludeUrlPaths.stream().anyMatch(p -> new AntPathMatcher().match(p, request.getServletPath()));
+	}
 }

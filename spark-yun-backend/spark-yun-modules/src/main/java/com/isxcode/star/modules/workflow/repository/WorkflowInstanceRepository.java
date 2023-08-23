@@ -17,35 +17,26 @@ import org.springframework.stereotype.Repository;
 @CacheConfig(cacheNames = {"sy_workflow"})
 public interface WorkflowInstanceRepository extends JpaRepository<WorkflowInstanceEntity, String> {
 
-  @CachePut(key = "#workflowInstanceId")
-  default String setWorkflowLog(String workflowInstanceId, String runLog) {
+	@CachePut(key = "#workflowInstanceId")
+	default String setWorkflowLog(String workflowInstanceId, String runLog) {
 
-    return runLog;
-  }
+		return runLog;
+	}
 
-  @Cacheable(key = "#workflowInstanceId")
-  default String getWorkflowLog(String workflowInstanceId) {
+	@Cacheable(key = "#workflowInstanceId")
+	default String getWorkflowLog(String workflowInstanceId) {
 
-    return "";
-  }
+		return "";
+	}
 
-  @CacheEvict(key = "#workflowInstanceId")
-  default void deleteWorkflowLog(String workflowInstanceId) {}
+	@CacheEvict(key = "#workflowInstanceId")
+	default void deleteWorkflowLog(String workflowInstanceId) {
+	}
 
-  @Query(
-      value =
-          "select "
-              + "   new com.isxcode.star.api.instance.pojos.ao.WfiWorkflowInstanceAo("
-              + "   W.id,"
-              + "   WF.name,"
-              + "   W.execStartDateTime,"
-              + "   W.execEndDateTime,"
-              + "   W.status,"
-              + "   W.instanceType) "
-              + "from WorkflowInstanceEntity W left join WorkflowEntity WF on W.flowId = WF.id "
-              + " where WF.name LIKE %:keyword% AND W.tenantId=:tenantId order by W.createDateTime desc")
-  Page<WfiWorkflowInstanceAo> pageWorkFlowInstances(
-      @Param("tenantId") String tenantId,
-      @Param("keyword") String searchKeyWord,
-      Pageable pageable);
+	@Query(value = "select " + "   new com.isxcode.star.api.instance.pojos.ao.WfiWorkflowInstanceAo(" + "   W.id,"
+			+ "   WF.name," + "   W.execStartDateTime," + "   W.execEndDateTime," + "   W.status,"
+			+ "   W.instanceType) " + "from WorkflowInstanceEntity W left join WorkflowEntity WF on W.flowId = WF.id "
+			+ " where WF.name LIKE %:keyword% AND W.tenantId=:tenantId order by W.createDateTime desc")
+	Page<WfiWorkflowInstanceAo> pageWorkFlowInstances(@Param("tenantId") String tenantId,
+			@Param("keyword") String searchKeyWord, Pageable pageable);
 }

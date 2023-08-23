@@ -34,32 +34,36 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @EntityListeners(AuditingEntityListener.class)
 public class TenantUserEntity {
 
-  @Id
-  @GeneratedValue(generator = "sy-id-generator")
-  @GenericGenerator(
-      name = "sy-id-generator",
-      strategy = "com.isxcode.star.config.GeneratedValueConfig")
-  private String id;
+	@Id
+	@GeneratedValue(generator = "sy-id-generator")
+	@GenericGenerator(name = "sy-id-generator", strategy = "com.isxcode.star.config.GeneratedValueConfig")
+	private String id;
 
-  private String userId;
+	private String userId;
 
-  private String tenantId;
+	private String tenantId;
 
-  private String roleCode;
+	private String roleCode;
 
-  private String status;
+	private String status;
 
-  private String remark;
+	private String remark;
 
-  @CreatedDate private LocalDateTime createDateTime;
+	@CreatedDate
+	private LocalDateTime createDateTime;
 
-  @LastModifiedDate private LocalDateTime lastModifiedDateTime;
+	@LastModifiedDate
+	private LocalDateTime lastModifiedDateTime;
 
-  @CreatedBy private String createBy;
+	@CreatedBy
+	private String createBy;
 
-  @LastModifiedBy private String lastModifiedBy;
+	@LastModifiedBy
+	private String lastModifiedBy;
 
-  @Version private Long versionNumber;
+	@Version
+	private Long versionNumber;
 
-  @Transient private Integer deleted;
+	@Transient
+	private Integer deleted;
 }

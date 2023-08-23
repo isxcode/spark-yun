@@ -5,9 +5,9 @@ import lombok.Data;
 @Data
 public class FomUpdateDataReq {
 
-  private String formId;
+	private String formId;
 
-  private Object oldData;
+	private Object oldData;
 
-  private Object newData;
+	private Object newData;
 }

@@ -12,12 +12,10 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class WorkflowService {
 
-  private final WorkInstanceRepository workInstanceRepository;
+	private final WorkInstanceRepository workInstanceRepository;
 
-  public WorkInstanceEntity getWorkInstance(String workInstanceId) {
+	public WorkInstanceEntity getWorkInstance(String workInstanceId) {
 
-    return workInstanceRepository
-        .findById(workInstanceId)
-        .orElseThrow(() -> new IsxAppException("实例不存在"));
-  }
+		return workInstanceRepository.findById(workInstanceId).orElseThrow(() -> new IsxAppException("实例不存在"));
+	}
 }

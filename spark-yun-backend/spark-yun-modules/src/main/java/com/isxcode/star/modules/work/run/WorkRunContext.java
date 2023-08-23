@@ -8,27 +8,27 @@ import lombok.Data;
 @Builder
 public class WorkRunContext {
 
-  private String instanceId;
+	private String instanceId;
 
-  private String datasourceId;
+	private String datasourceId;
 
-  private String clusterId;
+	private String clusterId;
 
-  private String sqlScript;
+	private String sqlScript;
 
-  private String tenantId;
+	private String tenantId;
 
-  private String userId;
+	private String userId;
 
-  private String workId;
+	private String workId;
 
-  private String workName;
+	private String workName;
 
-  private String workType;
+	private String workType;
 
-  private String versionId;
+	private String versionId;
 
-  private StringBuilder logBuilder;
+	private StringBuilder logBuilder;
 
-  private Map<String, String> sparkConfig;
+	private Map<String, String> sparkConfig;
 }

@@ -14,55 +14,57 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class ClusterNodeService {
 
-  private final SparkYunProperties sparkYunProperties;
+	private final SparkYunProperties sparkYunProperties;
 
-  private final ClusterNodeRepository clusterNodeRepository;
+	private final ClusterNodeRepository clusterNodeRepository;
 
-  /**
-   * 获取代理安装路径
-   *
-   * @param agentHomePath 代理的安装目录
-   * @param username 节点的用户名
-   * @return 代理安装的路径
-   */
-  public String getDefaultAgentHomePath(String agentHomePath, String username) {
+	/**
+	 * 获取代理安装路径
+	 *
+	 * @param agentHomePath
+	 *            代理的安装目录
+	 * @param username
+	 *            节点的用户名
+	 * @return 代理安装的路径
+	 */
+	public String getDefaultAgentHomePath(String agentHomePath, String username) {
 
-    if (Strings.isEmpty(agentHomePath)) {
-      if ("root".equals(username)) {
-        return "/root";
-      } else {
-        return "/home/" + username;
-      }
-    } else {
-      return agentHomePath;
-    }
-  }
+		if (Strings.isEmpty(agentHomePath)) {
+			if ("root".equals(username)) {
+				return "/root";
+			} else {
+				return "/home/" + username;
+			}
+		} else {
+			return agentHomePath;
+		}
+	}
 
-  /**
-   * 获取代理默认端口号
-   *
-   * @param agentPort 代理端口号
-   * @return 代理端口号
-   */
-  public String getDefaultAgentPort(String agentPort) {
+	/**
+	 * 获取代理默认端口号
+	 *
+	 * @param agentPort
+	 *            代理端口号
+	 * @return 代理端口号
+	 */
+	public String getDefaultAgentPort(String agentPort) {
 
-    if (Strings.isEmpty(agentPort)) {
-      return sparkYunProperties.getDefaultAgentPort();
-    } else {
-      return agentPort;
-    }
-  }
+		if (Strings.isEmpty(agentPort)) {
+			return sparkYunProperties.getDefaultAgentPort();
+		} else {
+			return agentPort;
+		}
+	}
 
-  /**
-   * 获取集群节点
-   *
-   * @param clusterNodeId 集群节点id
-   * @return 集群节点entity对象
-   */
-  public ClusterNodeEntity getClusterNode(String clusterNodeId) {
+	/**
+	 * 获取集群节点
+	 *
+	 * @param clusterNodeId
+	 *            集群节点id
+	 * @return 集群节点entity对象
+	 */
+	public ClusterNodeEntity getClusterNode(String clusterNodeId) {
 
-    return clusterNodeRepository
-        .findById(clusterNodeId)
-        .orElseThrow(() -> new IsxAppException("节点不存在"));
-  }
+		return clusterNodeRepository.findById(clusterNodeId).orElseThrow(() -> new IsxAppException("节点不存在"));
+	}
 }

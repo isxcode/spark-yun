@@ -7,19 +7,19 @@ import lombok.Data;
 @Data
 public class FomAddFormReq {
 
-  private String name;
+	private String name;
 
-  private String datasourceId;
+	private String datasourceId;
 
-  private String mainTable;
+	private String mainTable;
 
-  private String insertSql;
+	private String insertSql;
 
-  private String deleteSql;
+	private String deleteSql;
 
-  private String updateSql;
+	private String updateSql;
 
-  private String selectSql;
+	private String selectSql;
 
-  private List<FomComponentDto> components;
+	private List<FomComponentDto> components;
 }

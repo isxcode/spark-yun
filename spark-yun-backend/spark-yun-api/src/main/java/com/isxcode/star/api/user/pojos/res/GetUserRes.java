@@ -11,11 +11,11 @@ import lombok.Data;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class GetUserRes {
 
-  private String username;
+	private String username;
 
-  private String token;
+	private String token;
 
-  private String tenantId;
+	private String tenantId;
 
-  private String role;
+	private String role;
 }

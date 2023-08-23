@@ -14,23 +14,23 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class WorkflowFavourBizService {
 
-  private final WorkflowBizService workflowBizService;
+	private final WorkflowBizService workflowBizService;
 
-  private final WorkflowFavourRepository workflowFavourRepository;
+	private final WorkflowFavourRepository workflowFavourRepository;
 
-  public void favourWorkflow(String workflowId) {
+	public void favourWorkflow(String workflowId) {
 
-    workflowBizService.getWorkflowEntity(workflowId);
+		workflowBizService.getWorkflowEntity(workflowId);
 
-    // 判断工作流是否被收藏过
-    Optional<WorkflowFavourEntity> workflowFavourEntityOptional =
-        workflowFavourRepository.findByWorkflowIdAndUserId(workflowId, USER_ID.get());
-    if (!workflowFavourEntityOptional.isPresent()) {
-      throw new IsxAppException("已收藏");
-    }
+		// 判断工作流是否被收藏过
+		Optional<WorkflowFavourEntity> workflowFavourEntityOptional = workflowFavourRepository
+				.findByWorkflowIdAndUserId(workflowId, USER_ID.get());
+		if (!workflowFavourEntityOptional.isPresent()) {
+			throw new IsxAppException("已收藏");
+		}
 
-    WorkflowFavourEntity workflowFavour =
-        WorkflowFavourEntity.builder().workflowId(workflowId).userId(USER_ID.get()).build();
-    workflowFavourRepository.save(workflowFavour);
-  }
+		WorkflowFavourEntity workflowFavour = WorkflowFavourEntity.builder().workflowId(workflowId)
+				.userId(USER_ID.get()).build();
+		workflowFavourRepository.save(workflowFavour);
+	}
 }

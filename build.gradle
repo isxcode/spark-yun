@@ -97,7 +97,7 @@ spotless {
     target '*/**/*.java'
     targetExclude('*/build/**/*.java')
     targetExclude('spark-yun-dist/**/*.java')
-    googleJavaFormat()
+    eclipse()
     removeUnusedImports()
   }
 }

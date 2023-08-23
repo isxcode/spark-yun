@@ -6,30 +6,25 @@ import lombok.Data;
 @Data
 public class WfiWorkflowInstanceAo {
 
-  private String workflowInstanceId;
+	private String workflowInstanceId;
 
-  private String workflowName;
+	private String workflowName;
 
-  private Date startDateTime;
+	private Date startDateTime;
 
-  private Date endDateTime;
+	private Date endDateTime;
 
-  private String status;
+	private String status;
 
-  private String type;
+	private String type;
 
-  public WfiWorkflowInstanceAo(
-      String workflowInstanceId,
-      String workflowName,
-      Date startDateTime,
-      Date endDateTime,
-      String status,
-      String type) {
-    this.workflowInstanceId = workflowInstanceId;
-    this.workflowName = workflowName;
-    this.startDateTime = startDateTime;
-    this.endDateTime = endDateTime;
-    this.status = status;
-    this.type = type;
-  }
+	public WfiWorkflowInstanceAo(String workflowInstanceId, String workflowName, Date startDateTime, Date endDateTime,
+			String status, String type) {
+		this.workflowInstanceId = workflowInstanceId;
+		this.workflowName = workflowName;
+		this.startDateTime = startDateTime;
+		this.endDateTime = endDateTime;
+		this.status = status;
+		this.type = type;
+	}
 }

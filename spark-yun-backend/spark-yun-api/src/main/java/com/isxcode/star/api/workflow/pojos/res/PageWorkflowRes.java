@@ -7,11 +7,11 @@ import lombok.Data;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class PageWorkflowRes {
 
-  private String id;
+	private String id;
 
-  private String name;
+	private String name;
 
-  private String remark;
+	private String remark;
 
-  private String status;
+	private String status;
 }

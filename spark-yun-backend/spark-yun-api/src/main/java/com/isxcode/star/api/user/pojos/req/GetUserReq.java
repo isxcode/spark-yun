@@ -7,6 +7,6 @@ import lombok.Data;
 @Data
 public class GetUserReq {
 
-  @NotEmpty(message = "id不能为空")
-  private String id;
+	@NotEmpty(message = "id不能为空")
+	private String id;
 }

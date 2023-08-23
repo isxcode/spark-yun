@@ -5,9 +5,9 @@ import lombok.Data;
 @Data
 public class ApiHeaderItemDto {
 
-  private String key;
+	private String key;
 
-  private String value;
+	private String value;
 
-  private String type;
+	private String type;
 }

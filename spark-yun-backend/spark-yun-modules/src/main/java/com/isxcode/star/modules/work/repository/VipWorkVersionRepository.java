@@ -7,4 +7,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 @CacheConfig(cacheNames = {"sy_work"})
-public interface VipWorkVersionRepository extends JpaRepository<VipWorkVersionEntity, String> {}
+public interface VipWorkVersionRepository extends JpaRepository<VipWorkVersionEntity, String> {
+}

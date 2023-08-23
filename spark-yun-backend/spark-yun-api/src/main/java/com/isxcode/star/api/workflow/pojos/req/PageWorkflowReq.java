@@ -2,4 +2,5 @@ package com.isxcode.star.api.workflow.pojos.req;
 
 import com.isxcode.star.backend.api.base.pojos.BasePageRequest;
 
-public class PageWorkflowReq extends BasePageRequest {}
+public class PageWorkflowReq extends BasePageRequest {
+}

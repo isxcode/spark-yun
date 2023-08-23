@@ -13,19 +13,19 @@ import org.springframework.stereotype.Component;
 @Component
 public class WorkExecutorFactory {
 
-  private final ApplicationContext applicationContext;
+	private final ApplicationContext applicationContext;
 
-  public WorkExecutor create(String workType) {
+	public WorkExecutor create(String workType) {
 
-    switch (workType) {
-      case WorkType.QUERY_SPARK_SQL:
-        return applicationContext.getBean(SparkSqlExecutor.class);
-      case WorkType.QUERY_JDBC_SQL:
-        return applicationContext.getBean(QuerySqlExecutor.class);
-      case WorkType.EXECUTE_JDBC_SQL:
-        return applicationContext.getBean(ExecuteSqlExecutor.class);
-      default:
-        throw new IsxAppException("作业类型不存在");
-    }
-  }
+		switch (workType) {
+			case WorkType.QUERY_SPARK_SQL :
+				return applicationContext.getBean(SparkSqlExecutor.class);
+			case WorkType.QUERY_JDBC_SQL :
+				return applicationContext.getBean(QuerySqlExecutor.class);
+			case WorkType.EXECUTE_JDBC_SQL :
+				return applicationContext.getBean(ExecuteSqlExecutor.class);
+			default :
+				throw new IsxAppException("作业类型不存在");
+		}
+	}
 }

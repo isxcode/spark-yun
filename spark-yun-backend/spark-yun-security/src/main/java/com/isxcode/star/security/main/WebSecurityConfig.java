@@ -32,78 +32,73 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
 public class WebSecurityConfig {
 
-  private final IsxAppProperties isxAppProperties;
+	private final IsxAppProperties isxAppProperties;
 
-  private final UserRepository userRepository;
+	private final UserRepository userRepository;
 
-  private final TenantUserRepository tenantUserRepository;
+	private final TenantUserRepository tenantUserRepository;
 
-  public UserDetailsService userDetailsServiceBean() {
+	public UserDetailsService userDetailsServiceBean() {
 
-    return new UserDetailsServiceImpl(userRepository, tenantUserRepository);
-  }
+		return new UserDetailsServiceImpl(userRepository, tenantUserRepository);
+	}
 
-  public AuthenticationManager authenticationManagerBean() {
+	public AuthenticationManager authenticationManagerBean() {
 
-    List<AuthenticationProvider> authenticationProviders = new ArrayList<>();
-    authenticationProviders.add(new AuthenticationProviderImpl(userDetailsServiceBean()));
-    return new AuthenticationManagerImpl(authenticationProviders);
-  }
+		List<AuthenticationProvider> authenticationProviders = new ArrayList<>();
+		authenticationProviders.add(new AuthenticationProviderImpl(userDetailsServiceBean()));
+		return new AuthenticationManagerImpl(authenticationProviders);
+	}
 
-  @Bean
-  public HttpFirewall allowUrlEncodedSlashHttpFirewall() {
+	@Bean
+	public HttpFirewall allowUrlEncodedSlashHttpFirewall() {
 
-    DefaultHttpFirewall firewall = new DefaultHttpFirewall();
-    firewall.setAllowUrlEncodedSlash(true);
-    return firewall;
-  }
+		DefaultHttpFirewall firewall = new DefaultHttpFirewall();
+		firewall.setAllowUrlEncodedSlash(true);
+		return firewall;
+	}
 
-  @Bean
-  SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+	@Bean
+	SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-    http.cors(Customizer.withDefaults());
-    http.csrf().disable();
-    http.headers().cacheControl();
-    http.headers().frameOptions().disable();
-    http.sessionManagement().disable();
+		http.cors(Customizer.withDefaults());
+		http.csrf().disable();
+		http.headers().cacheControl();
+		http.headers().frameOptions().disable();
+		http.sessionManagement().disable();
 
-    // 访问h2,swagger，druid界面需要的权限
-    http.authorizeRequests()
-        .antMatchers(isxAppProperties.getAdminUrl().toArray(new String[0]))
-        .hasRole("ADMIN");
+		// 访问h2,swagger，druid界面需要的权限
+		http.authorizeRequests().antMatchers(isxAppProperties.getAdminUrl().toArray(new String[0])).hasRole("ADMIN");
 
-    // 任何人都可以访问的权限
-    http.authorizeRequests()
-        .antMatchers(isxAppProperties.getAnonymousUrl().toArray(new String[0]))
-        .permitAll();
+		// 任何人都可以访问的权限
+		http.authorizeRequests().antMatchers(isxAppProperties.getAnonymousUrl().toArray(new String[0])).permitAll();
 
-    // 需要token才可以访问的地址
-    List<String> excludePaths = new ArrayList<>();
-    excludePaths.addAll(isxAppProperties.getAdminUrl());
-    excludePaths.addAll(isxAppProperties.getAnonymousUrl());
+		// 需要token才可以访问的地址
+		List<String> excludePaths = new ArrayList<>();
+		excludePaths.addAll(isxAppProperties.getAdminUrl());
+		excludePaths.addAll(isxAppProperties.getAnonymousUrl());
 
-    // token
-    http.addFilterBefore(
-        new JwtAuthenticationFilter(authenticationManagerBean(), excludePaths, isxAppProperties),
-        UsernamePasswordAuthenticationFilter.class);
-    http.authorizeRequests().antMatchers("/**").authenticated();
+		// token
+		http.addFilterBefore(new JwtAuthenticationFilter(authenticationManagerBean(), excludePaths, isxAppProperties),
+				UsernamePasswordAuthenticationFilter.class);
+		http.authorizeRequests().antMatchers("/**").authenticated();
 
-    http.formLogin();
-    return http.build();
-  }
+		http.formLogin();
+		return http.build();
+	}
 
-  @Bean
-  CorsConfigurationSource corsConfigurationSource() {
+	@Bean
+	CorsConfigurationSource corsConfigurationSource() {
 
-    CorsConfiguration configuration = new CorsConfiguration();
-    configuration.setAllowedOriginPatterns(Collections.singletonList("*"));
-    configuration.setAllowedMethods(Collections.singletonList("*"));
-    configuration.setAllowedHeaders(Collections.singletonList("*"));
-    configuration.setExposedHeaders(Collections.singletonList("Content-Disposition"));
-    configuration.setAllowCredentials(true);
-    configuration.setMaxAge(3600L);
-    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-    source.registerCorsConfiguration("/**", configuration);
-    return source;
-  }
+		CorsConfiguration configuration = new CorsConfiguration();
+		configuration.setAllowedOriginPatterns(Collections.singletonList("*"));
+		configuration.setAllowedMethods(Collections.singletonList("*"));
+		configuration.setAllowedHeaders(Collections.singletonList("*"));
+		configuration.setExposedHeaders(Collections.singletonList("Content-Disposition"));
+		configuration.setAllowCredentials(true);
+		configuration.setMaxAge(3600L);
+		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+		source.registerCorsConfiguration("/**", configuration);
+		return source;
+	}
 }

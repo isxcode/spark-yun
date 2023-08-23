@@ -32,70 +32,56 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(noRollbackFor = {IsxAppException.class})
 public class RunAgentRemoveService {
 
-  private final SparkYunProperties sparkYunProperties;
+	private final SparkYunProperties sparkYunProperties;
 
-  private final ClusterNodeRepository clusterNodeRepository;
+	private final ClusterNodeRepository clusterNodeRepository;
 
-  @Async("sparkYunWorkThreadPool")
-  public void run(
-      String clusterNodeId,
-      ScpFileEngineNodeDto scpFileEngineNodeDto,
-      String tenantId,
-      String userId) {
+	@Async("sparkYunWorkThreadPool")
+	public void run(String clusterNodeId, ScpFileEngineNodeDto scpFileEngineNodeDto, String tenantId, String userId) {
 
-    USER_ID.set(userId);
-    TENANT_ID.set(tenantId);
+		USER_ID.set(userId);
+		TENANT_ID.set(tenantId);
 
-    // 获取节点信息
-    Optional<ClusterNodeEntity> clusterNodeEntityOptional =
-        clusterNodeRepository.findById(clusterNodeId);
-    if (!clusterNodeEntityOptional.isPresent()) {
-      return;
-    }
-    ClusterNodeEntity clusterNodeEntity = clusterNodeEntityOptional.get();
+		// 获取节点信息
+		Optional<ClusterNodeEntity> clusterNodeEntityOptional = clusterNodeRepository.findById(clusterNodeId);
+		if (!clusterNodeEntityOptional.isPresent()) {
+			return;
+		}
+		ClusterNodeEntity clusterNodeEntity = clusterNodeEntityOptional.get();
 
-    try {
-      removeAgent(scpFileEngineNodeDto, clusterNodeEntity);
-    } catch (Exception e) {
-      log.error(e.getMessage());
-      clusterNodeEntity.setCheckDateTime(LocalDateTime.now());
-      clusterNodeEntity.setAgentLog(e.getMessage());
-      clusterNodeEntity.setStatus(ClusterNodeStatus.CHECK_ERROR);
-      clusterNodeRepository.saveAndFlush(clusterNodeEntity);
-    }
-  }
+		try {
+			removeAgent(scpFileEngineNodeDto, clusterNodeEntity);
+		} catch (Exception e) {
+			log.error(e.getMessage());
+			clusterNodeEntity.setCheckDateTime(LocalDateTime.now());
+			clusterNodeEntity.setAgentLog(e.getMessage());
+			clusterNodeEntity.setStatus(ClusterNodeStatus.CHECK_ERROR);
+			clusterNodeRepository.saveAndFlush(clusterNodeEntity);
+		}
+	}
 
-  public void removeAgent(ScpFileEngineNodeDto scpFileEngineNodeDto, ClusterNodeEntity engineNode)
-      throws JSchException, IOException, InterruptedException, SftpException {
+	public void removeAgent(ScpFileEngineNodeDto scpFileEngineNodeDto, ClusterNodeEntity engineNode)
+			throws JSchException, IOException, InterruptedException, SftpException {
 
-    // 拷贝检测脚本
-    scpFile(
-        scpFileEngineNodeDto,
-        "classpath:bash/agent-uninstall.sh",
-        sparkYunProperties.getTmpDir() + File.separator + "agent-uninstall.sh");
+		// 拷贝检测脚本
+		scpFile(scpFileEngineNodeDto, "classpath:bash/agent-uninstall.sh",
+				sparkYunProperties.getTmpDir() + File.separator + "agent-uninstall.sh");
 
-    // 运行停止脚本
-    String removeCommand =
-        "bash "
-            + sparkYunProperties.getTmpDir()
-            + File.separator
-            + "agent-uninstall.sh"
-            + " --home-path="
-            + engineNode.getAgentHomePath()
-            + File.separator
-            + PathConstants.AGENT_PATH_NAME;
-    log.debug("执行远程命令:{}", removeCommand);
+		// 运行停止脚本
+		String removeCommand = "bash " + sparkYunProperties.getTmpDir() + File.separator + "agent-uninstall.sh"
+				+ " --home-path=" + engineNode.getAgentHomePath() + File.separator + PathConstants.AGENT_PATH_NAME;
+		log.debug("执行远程命令:{}", removeCommand);
 
-    // 获取返回结果
-    String executeLog = executeCommand(scpFileEngineNodeDto, removeCommand, false);
-    log.debug("远程返回值:{}", executeLog);
+		// 获取返回结果
+		String executeLog = executeCommand(scpFileEngineNodeDto, removeCommand, false);
+		log.debug("远程返回值:{}", executeLog);
 
-    AgentInfo agentStartInfo = JSON.parseObject(executeLog, AgentInfo.class);
+		AgentInfo agentStartInfo = JSON.parseObject(executeLog, AgentInfo.class);
 
-    // 修改状态
-    engineNode.setStatus(agentStartInfo.getStatus());
-    engineNode.setAgentLog(agentStartInfo.getLog());
-    engineNode.setCheckDateTime(LocalDateTime.now());
-    clusterNodeRepository.saveAndFlush(engineNode);
-  }
+		// 修改状态
+		engineNode.setStatus(agentStartInfo.getStatus());
+		engineNode.setAgentLog(agentStartInfo.getLog());
+		engineNode.setCheckDateTime(LocalDateTime.now());
+		clusterNodeRepository.saveAndFlush(engineNode);
+	}
 }

@@ -31,41 +31,45 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @EntityListeners(AuditingEntityListener.class)
 public class WorkflowEntity {
 
-  @Id
-  @GeneratedValue(generator = "sy-id-generator")
-  @GenericGenerator(
-      name = "sy-id-generator",
-      strategy = "com.isxcode.star.config.GeneratedValueConfig")
-  private String id;
+	@Id
+	@GeneratedValue(generator = "sy-id-generator")
+	@GenericGenerator(name = "sy-id-generator", strategy = "com.isxcode.star.config.GeneratedValueConfig")
+	private String id;
 
-  private String name;
+	private String name;
 
-  private String remark;
+	private String remark;
 
-  private String type;
+	private String type;
 
-  private String status;
+	private String status;
 
-  private String configId;
+	private String configId;
 
-  private String versionId;
+	private String versionId;
 
-  @CreatedDate private LocalDateTime createDateTime;
+	@CreatedDate
+	private LocalDateTime createDateTime;
 
-  @LastModifiedDate private LocalDateTime lastModifiedDateTime;
+	@LastModifiedDate
+	private LocalDateTime lastModifiedDateTime;
 
-  @CreatedBy private String createBy;
+	@CreatedBy
+	private String createBy;
 
-  @LastModifiedBy private String lastModifiedBy;
+	@LastModifiedBy
+	private String lastModifiedBy;
 
-  @Version private Long versionNumber;
+	@Version
+	private Long versionNumber;
 
-  @Transient private Integer deleted;
+	@Transient
+	private Integer deleted;
 
-  private String tenantId;
+	private String tenantId;
 
-  @PrePersist
-  public void prePersist() {
-    this.tenantId = TENANT_ID.get();
-  }
+	@PrePersist
+	public void prePersist() {
+		this.tenantId = TENANT_ID.get();
+	}
 }

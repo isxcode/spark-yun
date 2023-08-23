@@ -22,24 +22,24 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 public class ToolController {
 
-  private final CacheManager cacheManager;
+	private final CacheManager cacheManager;
 
-  @Operation(summary = "获取版本号接口")
-  @GetMapping("/open/version")
-  public String getLeoLastVersion() {
+	@Operation(summary = "获取版本号接口")
+	@GetMapping("/open/version")
+	public String getLeoLastVersion() {
 
-    File file = new File("./VERSION");
-    FileInputStream fis;
-    try {
-      fis = new FileInputStream(file);
-      BufferedReader br = new BufferedReader(new InputStreamReader(fis));
-      String version = br.readLine();
-      br.close();
-      fis.close();
-      return version;
-    } catch (IOException e) {
-      log.error(e.getMessage());
-      throw new IsxAppException("获取版本号异常", e.getMessage());
-    }
-  }
+		File file = new File("./VERSION");
+		FileInputStream fis;
+		try {
+			fis = new FileInputStream(file);
+			BufferedReader br = new BufferedReader(new InputStreamReader(fis));
+			String version = br.readLine();
+			br.close();
+			fis.close();
+			return version;
+		} catch (IOException e) {
+			log.error(e.getMessage());
+			throw new IsxAppException("获取版本号异常", e.getMessage());
+		}
+	}
 }

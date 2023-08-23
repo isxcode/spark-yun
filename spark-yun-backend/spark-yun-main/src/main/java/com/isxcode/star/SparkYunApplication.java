@@ -10,13 +10,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @SpringBootApplication
 public class SparkYunApplication {
 
-  public static void main(String[] args) {
-    SpringApplication.run(SparkYunApplication.class, args);
-  }
+	public static void main(String[] args) {
+		SpringApplication.run(SparkYunApplication.class, args);
+	}
 
-  @RequestMapping(value = {"/*"})
-  public String index() {
+	@RequestMapping(value = {"/*"})
+	public String index() {
 
-    return "index";
-  }
+		return "index";
+	}
 }

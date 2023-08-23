@@ -9,10 +9,9 @@ import org.hibernate.id.IdentifierGenerator;
 /** id生成器. */
 public class GeneratedValueConfig implements IdentifierGenerator {
 
-  @Override
-  public Serializable generate(SharedSessionContractImplementor session, Object object)
-      throws HibernateException {
+	@Override
+	public Serializable generate(SharedSessionContractImplementor session, Object object) throws HibernateException {
 
-    return "sy_" + UUID.randomUUID().toString().replace("-", "");
-  }
+		return "sy_" + UUID.randomUUID().toString().replace("-", "");
+	}
 }

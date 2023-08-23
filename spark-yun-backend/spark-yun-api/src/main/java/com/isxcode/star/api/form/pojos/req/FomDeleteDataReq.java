@@ -5,7 +5,7 @@ import lombok.Data;
 @Data
 public class FomDeleteDataReq {
 
-  private String formId;
+	private String formId;
 
-  private Object data;
+	private Object data;
 }

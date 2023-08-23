@@ -8,17 +8,17 @@ import lombok.Data;
 @Data
 public class WfiQueryWorkFlowInstancesRes {
 
-  private String workflowInstanceId;
+	private String workflowInstanceId;
 
-  private String workflowName;
+	private String workflowName;
 
-  @JsonSerialize(using = LocalDateTimeSerializer.class)
-  private LocalDateTime startDateTime;
+	@JsonSerialize(using = LocalDateTimeSerializer.class)
+	private LocalDateTime startDateTime;
 
-  @JsonSerialize(using = LocalDateTimeSerializer.class)
-  private LocalDateTime endDateTime;
+	@JsonSerialize(using = LocalDateTimeSerializer.class)
+	private LocalDateTime endDateTime;
 
-  private String status;
+	private String status;
 
-  private String type;
+	private String type;
 }

@@ -12,11 +12,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class PluginReq {
 
-  private String sql;
+	private String sql;
 
-  private Integer limit;
+	private Integer limit;
 
-  private String applicationId;
+	private String applicationId;
 
-  private Map<String, String> sparkConfig;
+	private Map<String, String> sparkConfig;
 }

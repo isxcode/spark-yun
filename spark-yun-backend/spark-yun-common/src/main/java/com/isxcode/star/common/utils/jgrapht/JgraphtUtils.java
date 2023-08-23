@@ -9,14 +9,14 @@ import org.jgrapht.graph.DefaultEdge;
 
 public class JgraphtUtils {
 
-  public static void isCycle(List<String> nodeIdList, List<List<String>> flowList) {
+	public static void isCycle(List<String> nodeIdList, List<List<String>> flowList) {
 
-    Graph<String, DefaultEdge> graph = new DefaultDirectedGraph<>(DefaultEdge.class);
-    nodeIdList.forEach(graph::addVertex);
-    flowList.forEach(e -> graph.addEdge(e.get(0), e.get(1)));
-    CycleDetector<String, DefaultEdge> cycleDetector = new CycleDetector<>(graph);
-    if (cycleDetector.detectCycles()) {
-      throw new IsxAppException("工作流闭环了");
-    }
-  }
+		Graph<String, DefaultEdge> graph = new DefaultDirectedGraph<>(DefaultEdge.class);
+		nodeIdList.forEach(graph::addVertex);
+		flowList.forEach(e -> graph.addEdge(e.get(0), e.get(1)));
+		CycleDetector<String, DefaultEdge> cycleDetector = new CycleDetector<>(graph);
+		if (cycleDetector.detectCycles()) {
+			throw new IsxAppException("工作流闭环了");
+		}
+	}
 }

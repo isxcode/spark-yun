@@ -5,7 +5,7 @@ import lombok.Data;
 @Data
 public class FomAddDataReq {
 
-  private String formId;
+	private String formId;
 
-  private Object data;
+	private Object data;
 }

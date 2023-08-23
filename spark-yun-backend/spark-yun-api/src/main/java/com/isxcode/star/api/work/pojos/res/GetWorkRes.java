@@ -7,21 +7,21 @@ import lombok.Data;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class GetWorkRes {
 
-  private String name;
+	private String name;
 
-  private String sqlScript;
+	private String sqlScript;
 
-  private String workflowId;
+	private String workflowId;
 
-  private String datasourceId;
+	private String datasourceId;
 
-  private String clusterId;
+	private String clusterId;
 
-  private String workType;
+	private String workType;
 
-  private String workId;
+	private String workId;
 
-  private String corn;
+	private String corn;
 
-  private String sparkConfig;
+	private String sparkConfig;
 }

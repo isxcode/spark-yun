@@ -20,71 +20,67 @@ import java.util.UUID;
 /** jwt加密工具类. */
 public class JwtUtils {
 
-  private static final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+	private static final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 
-  /** jwt加密. */
-  public static String encrypt(String aesKey, Object obj, String jwtKey, Integer minutes) {
+	/** jwt加密. */
+	public static String encrypt(String aesKey, Object obj, String jwtKey, Integer minutes) {
 
-    Map<String, Object> claims = new HashMap<>(1);
+		Map<String, Object> claims = new HashMap<>(1);
 
-    String claimsStr = null;
-    try {
-      claimsStr = new ObjectMapper().writeValueAsString(obj);
-    } catch (JsonProcessingException e) {
-      throw new IsxAppException("jwt加密异常");
-    }
-    if (aesKey != null) {
-      claimsStr = SecureUtil.aes(Arrays.copyOf(aesKey.getBytes(), 1 << 5)).encryptBase64(claimsStr);
-    }
-    claims.put("CLAIM", claimsStr);
+		String claimsStr = null;
+		try {
+			claimsStr = new ObjectMapper().writeValueAsString(obj);
+		} catch (JsonProcessingException e) {
+			throw new IsxAppException("jwt加密异常");
+		}
+		if (aesKey != null) {
+			claimsStr = SecureUtil.aes(Arrays.copyOf(aesKey.getBytes(), 1 << 5)).encryptBase64(claimsStr);
+		}
+		claims.put("CLAIM", claimsStr);
 
-    JwtBuilder jwtBuilder = Jwts.builder();
-    if (jwtKey == null) {
-      jwtBuilder = jwtBuilder.signWith(key);
-    } else {
-      jwtBuilder =
-          jwtBuilder.signWith(Keys.hmacShaKeyFor(Arrays.copyOf(jwtKey.getBytes(), 1 << 5)));
-    }
+		JwtBuilder jwtBuilder = Jwts.builder();
+		if (jwtKey == null) {
+			jwtBuilder = jwtBuilder.signWith(key);
+		} else {
+			jwtBuilder = jwtBuilder.signWith(Keys.hmacShaKeyFor(Arrays.copyOf(jwtKey.getBytes(), 1 << 5)));
+		}
 
-    jwtBuilder.setClaims(claims).setIssuedAt(new Date()).setId(String.valueOf(UUID.randomUUID()));
+		jwtBuilder.setClaims(claims).setIssuedAt(new Date()).setId(String.valueOf(UUID.randomUUID()));
 
-    if (minutes > 0) {
-      Calendar calendar = Calendar.getInstance();
-      calendar.setTime(new Date());
-      calendar.add(Calendar.MINUTE, minutes);
-      jwtBuilder = jwtBuilder.setExpiration(calendar.getTime());
-    }
+		if (minutes > 0) {
+			Calendar calendar = Calendar.getInstance();
+			calendar.setTime(new Date());
+			calendar.add(Calendar.MINUTE, minutes);
+			jwtBuilder = jwtBuilder.setExpiration(calendar.getTime());
+		}
 
-    return jwtBuilder.compact();
-  }
+		return jwtBuilder.compact();
+	}
 
-  /** jwt解密. */
-  public static <A> A decrypt(
-      String aesKey, String jwtString, String jwtKey, Class<A> targetClass) {
+	/** jwt解密. */
+	public static <A> A decrypt(String aesKey, String jwtString, String jwtKey, Class<A> targetClass) {
 
-    JwtParserBuilder jwtParserBuilder = Jwts.parserBuilder();
+		JwtParserBuilder jwtParserBuilder = Jwts.parserBuilder();
 
-    if (jwtKey == null) {
-      jwtParserBuilder = jwtParserBuilder.setSigningKey(key);
-    } else {
-      jwtParserBuilder =
-          jwtParserBuilder.setSigningKey(
-              Keys.hmacShaKeyFor(Arrays.copyOf(jwtKey.getBytes(), 1 << 5)));
-    }
+		if (jwtKey == null) {
+			jwtParserBuilder = jwtParserBuilder.setSigningKey(key);
+		} else {
+			jwtParserBuilder = jwtParserBuilder
+					.setSigningKey(Keys.hmacShaKeyFor(Arrays.copyOf(jwtKey.getBytes(), 1 << 5)));
+		}
 
-    String claimStr =
-        jwtParserBuilder.build().parseClaimsJws(jwtString).getBody().get("CLAIM", String.class);
+		String claimStr = jwtParserBuilder.build().parseClaimsJws(jwtString).getBody().get("CLAIM", String.class);
 
-    String targetJsonStr = claimStr;
-    if (aesKey != null) {
-      targetJsonStr = SecureUtil.aes(Arrays.copyOf(aesKey.getBytes(), 1 << 5)).decryptStr(claimStr);
-    }
+		String targetJsonStr = claimStr;
+		if (aesKey != null) {
+			targetJsonStr = SecureUtil.aes(Arrays.copyOf(aesKey.getBytes(), 1 << 5)).decryptStr(claimStr);
+		}
 
-    ObjectMapper objectMapper = new ObjectMapper();
-    try {
-      return objectMapper.readValue(targetJsonStr, targetClass);
-    } catch (JsonProcessingException e) {
-      throw new IsxAppException("jwt解密异常");
-    }
-  }
+		ObjectMapper objectMapper = new ObjectMapper();
+		try {
+			return objectMapper.readValue(targetJsonStr, targetClass);
+		} catch (JsonProcessingException e) {
+			throw new IsxAppException("jwt解密异常");
+		}
+	}
 }

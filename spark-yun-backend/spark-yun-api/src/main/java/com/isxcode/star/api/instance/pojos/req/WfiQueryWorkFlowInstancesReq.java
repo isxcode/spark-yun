@@ -6,4 +6,5 @@ import lombok.EqualsAndHashCode;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class WfiQueryWorkFlowInstancesReq extends BasePageRequest {}
+public class WfiQueryWorkFlowInstancesReq extends BasePageRequest {
+}

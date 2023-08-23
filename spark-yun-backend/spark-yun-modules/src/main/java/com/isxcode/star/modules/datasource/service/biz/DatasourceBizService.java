@@ -25,88 +25,84 @@ import org.springframework.stereotype.Service;
 @Transactional
 public class DatasourceBizService {
 
-  private final DatasourceRepository datasourceRepository;
+	private final DatasourceRepository datasourceRepository;
 
-  private final DatasourceMapper datasourceMapper;
+	private final DatasourceMapper datasourceMapper;
 
-  private final AesUtils aesUtils;
+	private final AesUtils aesUtils;
 
-  private final DatasourceService datasourceService;
+	private final DatasourceService datasourceService;
 
-  public void addDatasource(AddDatasourceReq addDatasourceReq) {
+	public void addDatasource(AddDatasourceReq addDatasourceReq) {
 
-    DatasourceEntity datasource =
-        datasourceMapper.dasAddDatasourceReqToDatasourceEntity(addDatasourceReq);
+		DatasourceEntity datasource = datasourceMapper.dasAddDatasourceReqToDatasourceEntity(addDatasourceReq);
 
-    // 密码对成加密
-    datasource.setPasswd(aesUtils.encrypt(datasource.getPasswd()));
+		// 密码对成加密
+		datasource.setPasswd(aesUtils.encrypt(datasource.getPasswd()));
 
-    datasource.setCheckDateTime(LocalDateTime.now());
-    datasource.setStatus(DatasourceStatus.UN_CHECK);
-    datasourceRepository.save(datasource);
-  }
+		datasource.setCheckDateTime(LocalDateTime.now());
+		datasource.setStatus(DatasourceStatus.UN_CHECK);
+		datasourceRepository.save(datasource);
+	}
 
-  public void updateDatasource(UpdateDatasourceReq updateDatasourceReq) {
+	public void updateDatasource(UpdateDatasourceReq updateDatasourceReq) {
 
-    DatasourceEntity datasource = datasourceService.getDatasource(updateDatasourceReq.getId());
+		DatasourceEntity datasource = datasourceService.getDatasource(updateDatasourceReq.getId());
 
-    datasource =
-        datasourceMapper.dasUpdateDatasourceReqToDatasourceEntity(updateDatasourceReq, datasource);
+		datasource = datasourceMapper.dasUpdateDatasourceReqToDatasourceEntity(updateDatasourceReq, datasource);
 
-    // 密码对成加密
-    datasource.setPasswd(aesUtils.encrypt(datasource.getPasswd()));
+		// 密码对成加密
+		datasource.setPasswd(aesUtils.encrypt(datasource.getPasswd()));
 
-    datasource.setCheckDateTime(LocalDateTime.now());
-    datasource.setStatus(DatasourceStatus.UN_CHECK);
-    datasourceRepository.save(datasource);
-  }
+		datasource.setCheckDateTime(LocalDateTime.now());
+		datasource.setStatus(DatasourceStatus.UN_CHECK);
+		datasourceRepository.save(datasource);
+	}
 
-  public Page<PageDatasourceRes> pageDatasource(PageDatasourceReq dasQueryDatasourceReq) {
+	public Page<PageDatasourceRes> pageDatasource(PageDatasourceReq dasQueryDatasourceReq) {
 
-    Page<DatasourceEntity> datasourceEntityPage =
-        datasourceRepository.searchAll(
-            dasQueryDatasourceReq.getSearchKeyWord(),
-            PageRequest.of(dasQueryDatasourceReq.getPage(), dasQueryDatasourceReq.getPageSize()));
+		Page<DatasourceEntity> datasourceEntityPage = datasourceRepository.searchAll(
+				dasQueryDatasourceReq.getSearchKeyWord(),
+				PageRequest.of(dasQueryDatasourceReq.getPage(), dasQueryDatasourceReq.getPageSize()));
 
-    return datasourceMapper.datasourceEntityToQueryDatasourceResPage(datasourceEntityPage);
-  }
+		return datasourceMapper.datasourceEntityToQueryDatasourceResPage(datasourceEntityPage);
+	}
 
-  public void deleteDatasource(DeleteDatasourceReq deleteDatasourceReq) {
+	public void deleteDatasource(DeleteDatasourceReq deleteDatasourceReq) {
 
-    datasourceRepository.deleteById(deleteDatasourceReq.getDatasourceId());
-  }
+		datasourceRepository.deleteById(deleteDatasourceReq.getDatasourceId());
+	}
 
-  public TestConnectRes testConnect(GetConnectLogReq testConnectReq) {
+	public TestConnectRes testConnect(GetConnectLogReq testConnectReq) {
 
-    DatasourceEntity datasource = datasourceService.getDatasource(testConnectReq.getDatasourceId());
+		DatasourceEntity datasource = datasourceService.getDatasource(testConnectReq.getDatasourceId());
 
-    datasourceService.loadDriverClass(datasource.getDbType());
+		datasourceService.loadDriverClass(datasource.getDbType());
 
-    // 测试连接
-    datasource.setCheckDateTime(LocalDateTime.now());
+		// 测试连接
+		datasource.setCheckDateTime(LocalDateTime.now());
 
-    try (Connection connection = datasourceService.getDbConnection(datasource)) {
-      if (connection != null) {
-        datasource.setStatus(DatasourceStatus.ACTIVE);
-        datasource.setConnectLog("测试连接成功！");
-        datasourceRepository.save(datasource);
-        return new TestConnectRes(true, "连接成功");
-      }
-    } catch (Exception e) {
-      log.error(e.getMessage());
-      datasource.setStatus(DatasourceStatus.FAIL);
-      datasource.setConnectLog("测试连接失败：" + e.getMessage());
-      datasourceRepository.save(datasource);
-      return new TestConnectRes(false, e.getMessage());
-    }
-    return new TestConnectRes(false, "连接失败");
-  }
+		try (Connection connection = datasourceService.getDbConnection(datasource)) {
+			if (connection != null) {
+				datasource.setStatus(DatasourceStatus.ACTIVE);
+				datasource.setConnectLog("测试连接成功！");
+				datasourceRepository.save(datasource);
+				return new TestConnectRes(true, "连接成功");
+			}
+		} catch (Exception e) {
+			log.error(e.getMessage());
+			datasource.setStatus(DatasourceStatus.FAIL);
+			datasource.setConnectLog("测试连接失败：" + e.getMessage());
+			datasourceRepository.save(datasource);
+			return new TestConnectRes(false, e.getMessage());
+		}
+		return new TestConnectRes(false, "连接失败");
+	}
 
-  public GetConnectLogRes getConnectLog(GetConnectLogReq getConnectLogReq) {
+	public GetConnectLogRes getConnectLog(GetConnectLogReq getConnectLogReq) {
 
-    DatasourceEntity datasource =
-        datasourceService.getDatasource(getConnectLogReq.getDatasourceId());
+		DatasourceEntity datasource = datasourceService.getDatasource(getConnectLogReq.getDatasourceId());
 
-    return GetConnectLogRes.builder().connectLog(datasource.getConnectLog()).build();
-  }
+		return GetConnectLogRes.builder().connectLog(datasource.getConnectLog()).build();
+	}
 }

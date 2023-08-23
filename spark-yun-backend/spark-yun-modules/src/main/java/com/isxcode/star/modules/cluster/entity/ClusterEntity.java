@@ -32,51 +32,55 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @EntityListeners(AuditingEntityListener.class)
 public class ClusterEntity {
 
-  @Id
-  @GeneratedValue(generator = "sy-id-generator")
-  @GenericGenerator(
-      name = "sy-id-generator",
-      strategy = "com.isxcode.star.config.GeneratedValueConfig")
-  private String id;
+	@Id
+	@GeneratedValue(generator = "sy-id-generator")
+	@GenericGenerator(name = "sy-id-generator", strategy = "com.isxcode.star.config.GeneratedValueConfig")
+	private String id;
 
-  private String name;
+	private String name;
 
-  private String remark;
+	private String remark;
 
-  private String status;
+	private String status;
 
-  private LocalDateTime checkDateTime;
+	private LocalDateTime checkDateTime;
 
-  private Integer allNodeNum;
+	private Integer allNodeNum;
 
-  private Integer activeNodeNum;
+	private Integer activeNodeNum;
 
-  private Double allMemoryNum;
+	private Double allMemoryNum;
 
-  private Double usedMemoryNum;
+	private Double usedMemoryNum;
 
-  private Double allStorageNum;
+	private Double allStorageNum;
 
-  private Double usedStorageNum;
+	private Double usedStorageNum;
 
-  private String clusterType;
+	private String clusterType;
 
-  @CreatedDate private LocalDateTime createDateTime;
+	@CreatedDate
+	private LocalDateTime createDateTime;
 
-  @LastModifiedDate private LocalDateTime lastModifiedDateTime;
+	@LastModifiedDate
+	private LocalDateTime lastModifiedDateTime;
 
-  @CreatedBy private String createBy;
+	@CreatedBy
+	private String createBy;
 
-  @LastModifiedBy private String lastModifiedBy;
+	@LastModifiedBy
+	private String lastModifiedBy;
 
-  @Version private Long versionNumber;
+	@Version
+	private Long versionNumber;
 
-  @Transient private Integer deleted;
+	@Transient
+	private Integer deleted;
 
-  private String tenantId;
+	private String tenantId;
 
-  @PrePersist
-  public void prePersist() {
-    this.tenantId = TENANT_ID.get();
-  }
+	@PrePersist
+	public void prePersist() {
+		this.tenantId = TENANT_ID.get();
+	}
 }

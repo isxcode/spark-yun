@@ -20,32 +20,32 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @EntityListeners(AuditingEntityListener.class)
 public class UserActionEntity {
 
-  @Id
-  @GeneratedValue(generator = "sy-id-generator")
-  @GenericGenerator(
-      name = "sy-id-generator",
-      strategy = "com.isxcode.star.config.GeneratedValueConfig")
-  private String id;
+	@Id
+	@GeneratedValue(generator = "sy-id-generator")
+	@GenericGenerator(name = "sy-id-generator", strategy = "com.isxcode.star.config.GeneratedValueConfig")
+	private String id;
 
-  private String userId;
+	private String userId;
 
-  private String tenantId;
+	private String tenantId;
 
-  private String reqPath;
+	private String reqPath;
 
-  private String reqMethod;
+	private String reqMethod;
 
-  private String reqHeader;
+	private String reqHeader;
 
-  private String reqBody;
+	private String reqBody;
 
-  private String resBody;
+	private String resBody;
 
-  private Long startTimestamp;
+	private Long startTimestamp;
 
-  private Long endTimestamp;
+	private Long endTimestamp;
 
-  @CreatedDate private LocalDateTime createDateTime;
+	@CreatedDate
+	private LocalDateTime createDateTime;
 
-  @CreatedBy private String createBy;
+	@CreatedBy
+	private String createBy;
 }

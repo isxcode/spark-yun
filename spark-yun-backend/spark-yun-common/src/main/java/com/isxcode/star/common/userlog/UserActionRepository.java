@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 @CacheConfig(cacheNames = {"sy_users"})
-public interface UserActionRepository extends JpaRepository<UserActionEntity, String> {}
+public interface UserActionRepository extends JpaRepository<UserActionEntity, String> {
+}

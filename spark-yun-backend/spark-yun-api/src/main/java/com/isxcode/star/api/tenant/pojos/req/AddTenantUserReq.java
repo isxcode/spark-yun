@@ -7,13 +7,13 @@ import lombok.Data;
 @Data
 public class AddTenantUserReq {
 
-  @Schema(title = "用户id", example = "ispong")
-  @NotEmpty(message = "用户id不能为空")
-  private String userId;
+	@Schema(title = "用户id", example = "ispong")
+	@NotEmpty(message = "用户id不能为空")
+	private String userId;
 
-  @Schema(title = "是否为租户管理者", example = "false")
-  private Boolean isTenantAdmin;
+	@Schema(title = "是否为租户管理者", example = "false")
+	private Boolean isTenantAdmin;
 
-  @Schema(title = "备注", example = "ispong")
-  private String remark;
+	@Schema(title = "备注", example = "ispong")
+	private String remark;
 }
