@@ -575,15 +575,25 @@ public class WorkflowBizService {
             (exception, result) -> {
               List<WorkInstanceEntity> workInstances =
                   workInstanceRepository.findAllByWorkflowInstanceId(workflowInstance.getId());
-              boolean flowError =
-                  workInstances.stream().anyMatch(e -> InstanceStatus.FAIL.equals(e.getStatus()));
-              if (flowError) {
-                workflowInstance.setStatus(InstanceStatus.FAIL);
-              } else {
-                workflowInstance.setStatus(InstanceStatus.SUCCESS);
+              boolean flowIsRunning =
+                  workInstances.stream()
+                      .anyMatch(
+                          e ->
+                              InstanceStatus.RUNNING.equals(e.getStatus())
+                                  || InstanceStatus.PENDING.equals(e.getStatus()));
+              if (!flowIsRunning) {
+
+                boolean flowError =
+                    workInstances.stream().anyMatch(e -> InstanceStatus.FAIL.equals(e.getStatus()));
+
+                if (flowError) {
+                  workflowInstance.setStatus(InstanceStatus.FAIL);
+                } else {
+                  workflowInstance.setStatus(InstanceStatus.SUCCESS);
+                }
+                workflowInstance.setExecEndDateTime(new Date());
+                workflowInstanceRepository.saveAndFlush(workflowInstance);
               }
-              workflowInstance.setExecEndDateTime(new Date());
-              workflowInstanceRepository.saveAndFlush(workflowInstance);
             });
   }
 
@@ -614,24 +624,35 @@ public class WorkflowBizService {
         });
     workInstanceRepository.saveAll(runningWorkInstances);
 
+    // 初始化工作流实例状态
+    WorkflowInstanceEntity workflowInstance =
+        workflowInstanceRepository.findById(reRunFlowReq.getWorkflowInstanceId()).get();
+    workflowInstance.setStatus(InstanceStatus.ABORTING);
+    workflowInstanceRepository.saveAndFlush(workflowInstance);
+
     // 异步调用中止作业的方法
     CompletableFuture.supplyAsync(
             () -> {
-              List<String> exeStatus = new ArrayList<>();
-              // 依此中止
-              runningWorkInstances.forEach(workInstance -> exeStatus.add(null));
-              return exeStatus;
+              runningWorkInstances.forEach(
+                  e -> {
+                    Integer locked = locker.lockOnly("RERUN_" + e.getWorkflowInstanceId());
+                    sparkYunWorkThreadPool.execute(
+                        () -> {
+                          try {
+                            abortWorkInstance(e);
+                          } finally {
+                            locker.unlock(locked);
+                          }
+                        });
+                  });
+              return "SUCCESS";
             })
         .whenComplete(
             (exeStatus, exception) -> {
 
               // 中止完作业后，重新运行
-
-              // 初始化工作流实例状态
-              WorkflowInstanceEntity workflowInstance =
-                  workflowInstanceRepository.findById(reRunFlowReq.getWorkflowInstanceId()).get();
-              workflowInstance.setStatus(InstanceStatus.PENDING);
-              workflowInstanceRepository.save(workflowInstance);
+              Integer lock = locker.lock("RERUN_" + reRunFlowReq.getWorkflowInstanceId());
+              locker.unlock(lock);
 
               // 初始化作业实例状态
               List<WorkInstanceEntity> workInstances =
@@ -641,13 +662,22 @@ public class WorkflowBizService {
                   e -> {
                     e.setStatus(InstanceStatus.PENDING);
                   });
-              workInstanceRepository.saveAll(workInstances);
+              workInstanceRepository.saveAllAndFlush(workInstances);
+
+              // 初始化工作流实例状态
+              WorkflowInstanceEntity workflowInstance2 =
+                  workflowInstanceRepository.findById(reRunFlowReq.getWorkflowInstanceId()).get();
+              workflowInstance2.setStatus(InstanceStatus.RUNNING);
+              workflowInstanceRepository.saveAndFlush(workflowInstance2);
 
               // 获取配置工作流配置信息
               WorkflowEntity workflow =
                   workflowRepository.findById(workflowInstance.getFlowId()).get();
               WorkflowConfigEntity workflowConfig =
                   workflowConfigRepository.findById(workflow.getConfigId()).get();
+
+              // 清理锁
+              locker.clearLock(reRunFlowReq.getWorkflowInstanceId());
 
               // 重新执行
               List<String> startNodes =
