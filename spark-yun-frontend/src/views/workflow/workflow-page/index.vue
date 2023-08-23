@@ -82,7 +82,7 @@
                     <ZqyFlow ref="zqyFlowRef"></ZqyFlow>
                 </template>
                 <template v-else>
-                    <WorkItem v-if="showWorkItem" @back="backToFlow" :workItemConfig="workConfig" :workFlowData="workFlowData"></WorkItem>
+                    <WorkItem v-if="showWorkItem" @back="backToFlow" @locationNode="locationNode" :workItemConfig="workConfig" :workFlowData="workFlowData"></WorkItem>
                 </template>
             </div>
         <AddModal ref="addModalRef" />
@@ -346,14 +346,17 @@ function editData(data: any) {
 }
 
 function initFlowData() {
-    GetWorkflowData({
-        workflowId: workFlowData.value.id
-    }).then((res: any) => {
-        if (res.data?.webConfig) {
-            zqyFlowRef.value.initCellList(res.data.webConfig)
-        }
-    }).catch(() => {
-
+    return new Promise((resolve, reject) => {
+        GetWorkflowData({
+            workflowId: workFlowData.value.id
+        }).then((res: any) => {
+            if (res.data?.webConfig) {
+                zqyFlowRef.value.initCellList(res.data.webConfig)
+            }
+            resolve()
+        }).catch(() => {
+            reject()
+        })
     })
 }
 
@@ -510,6 +513,15 @@ function showWorkConfig(data: any) {
 function backToFlow() {
     containerType.value = 'flow'
     initFlowData()
+}
+
+// 定位选中节点
+function locationNode(nodeId: string) {
+    containerType.value = 'flow'
+    initFlowData().then(() => {
+        queryRunWorkInstancesEvent()
+        zqyFlowRef.value.selectNodeEvent(nodeId)
+    })
 }
 
 function changeWorkFlow(workFlow: any) {

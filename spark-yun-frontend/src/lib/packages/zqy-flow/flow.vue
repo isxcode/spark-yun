@@ -262,6 +262,11 @@ function getAllCellData() {
     return _Graph.getCells()
 }
 
+// 选中某一个边
+function selectNodeEvent(nodeId: string) {
+    _Graph.resetSelection(nodeId)
+}
+
 // 根据给定的数据结构渲染流程图
 function initCellList(data: any) {
     if (data) {
@@ -316,7 +321,8 @@ defineExpose({
     getAllCellData,
     initCellList,
     updateFlowStatus,
-    hideGrid
+    hideGrid,
+    selectNodeEvent
 })
 </script>
 

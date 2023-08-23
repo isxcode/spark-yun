@@ -44,15 +44,14 @@
               </el-icon>
               <span class="btn-text">配置</span>
             </div>
+            <div class="btn-box" @click="locationNode">
+              <el-icon>
+                <RefreshLeft />
+              </el-icon>
+              <span class="btn-text">定位</span>
+            </div>
           </div>
           <code-mirror v-model="sqltextData" basic :lang="lang" />
-          <!-- <el-input
-            v-model="sqltextData"
-            type="textarea"
-            maxlength="2000"
-            :autosize="{ minRows: 10, maxRows: 10 }"
-            placeholder="请输入"
-          /> -->
         </div>
         <div class="log-show">
           <el-tabs v-model="activeName" @tab-change="tabChangeEvent">
@@ -87,7 +86,7 @@ import { nextTick } from 'vue'
 
 const route = useRoute()
 const router = useRouter()
-const emit = defineEmits(['back'])
+const emit = defineEmits(['back', 'locationNode'])
 
 const props = defineProps<{
   workItemConfig: any,
@@ -216,13 +215,10 @@ function tabChangeEvent(e: string) {
 
 // 返回
 function goBack() {
-  emit('back')
-  // router.push({
-  //   name: 'workflow-detail',
-  //   query: {
-  //     id: route.query.workflowId
-  //   }
-  // })
+  emit('back', props.workItemConfig.id)
+}
+function locationNode() {
+  emit('locationNode', props.workItemConfig.id)
 }
 
 // 运行
