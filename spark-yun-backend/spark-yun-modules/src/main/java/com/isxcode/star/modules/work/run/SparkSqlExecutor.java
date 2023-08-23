@@ -7,7 +7,6 @@ import com.isxcode.star.api.agent.pojos.req.YagExecuteWorkReq;
 import com.isxcode.star.api.agent.pojos.res.YagGetLogRes;
 import com.isxcode.star.api.api.constants.PathConstants;
 import com.isxcode.star.api.cluster.constants.ClusterNodeStatus;
-import com.isxcode.star.api.instance.constants.InstanceStatus;
 import com.isxcode.star.api.work.constants.WorkLog;
 import com.isxcode.star.api.work.exceptions.WorkRunException;
 import com.isxcode.star.api.work.pojos.res.RunWorkRes;
@@ -162,8 +161,8 @@ public class SparkSqlExecutor extends WorkExecutor {
     // 开始提交作业
     BaseResponse<?> baseResponse;
 
-    // 加锁留给任务中止
-    Integer lock = locker.lock(workInstance.getId());
+    // 加锁，必须等待作业提交成功后才能中止
+    Integer lock = locker.lock("REQUEST_" + workInstance.getId());
     RunWorkRes submitWorkRes;
     try {
       baseResponse =
@@ -200,12 +199,6 @@ public class SparkSqlExecutor extends WorkExecutor {
 
     // 提交作业成功后，开始循环判断状态
     while (true) {
-
-      // 如果中止，则直接退出
-      workInstance = workInstanceRepository.findById(workInstance.getId()).get();
-      if (InstanceStatus.ABORT.equals(workInstance.getStatus())) {
-        break;
-      }
 
       // 获取作业状态并保存
       Map<String, String> paramsMap = new HashMap<>();
@@ -336,10 +329,9 @@ public class SparkSqlExecutor extends WorkExecutor {
   @Override
   protected void abort(WorkInstanceEntity workInstance) {
 
-    locker.lock(workInstance.getId());
+    // 判断作业有没有提交成功
+    locker.lock("REQUEST_" + workInstance.getId());
     try {
-
-      // 判断作业有没有提交成功
       workInstance = workInstanceRepository.findById(workInstance.getId()).get();
       if (!Strings.isEmpty(workInstance.getSparkStarRes())) {
         RunWorkRes wokRunWorkRes =
@@ -382,7 +374,7 @@ public class SparkSqlExecutor extends WorkExecutor {
         }
       }
     } finally {
-      locker.clearLock(workInstance.getId());
+      locker.clearLock("REQUEST_" + workInstance.getId());
     }
   }
 

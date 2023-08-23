@@ -48,6 +48,6 @@ public class Locker {
   public void clearLock(String name) {
 
     // 将name相关的删掉
-    lockerRepository.deleteAllByName(name);
+    lockerRepository.deleteAll(lockerRepository.findAllByName(name));
   }
 }

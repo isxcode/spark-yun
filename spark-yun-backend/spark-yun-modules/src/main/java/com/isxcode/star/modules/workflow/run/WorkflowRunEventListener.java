@@ -173,6 +173,14 @@ public class WorkflowRunEventListener {
 
     // 判断工作流是否执行完毕，检查结束节点是否都运行完
     lockId = locker.lock(event.getFlowInstanceId());
+
+    // 如果工作流被中止，则不需要执行下面的逻辑
+    WorkflowInstanceEntity lastWorkflowInstance =
+        workflowInstanceRepository.findById(event.getFlowInstanceId()).get();
+    if (InstanceStatus.ABORTING.equals(lastWorkflowInstance.getStatus())) {
+      return;
+    }
+
     try {
       // 获取结束节点实例
       List<String> endNodes =

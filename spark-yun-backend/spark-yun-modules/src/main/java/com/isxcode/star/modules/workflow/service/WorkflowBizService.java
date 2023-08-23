@@ -46,6 +46,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -85,6 +86,8 @@ public class WorkflowBizService {
   private final WorkflowService workflowService;
 
   private final Locker locker;
+
+  private final Executor sparkYunWorkThreadPool;
 
   public WorkflowEntity getWorkflowEntity(String workflowId) {
 
@@ -456,7 +459,7 @@ public class WorkflowBizService {
         workInstance -> {
           workInstance.setStatus(InstanceStatus.ABORT);
         });
-    workInstanceRepository.saveAll(pendingWorkInstances);
+    workInstanceRepository.saveAllAndFlush(pendingWorkInstances);
 
     // 将所有的RUNNING作业实例，改为ABORTING
     List<WorkInstanceEntity> runningWorkInstances =
@@ -466,18 +469,30 @@ public class WorkflowBizService {
         workInstance -> {
           workInstance.setStatus(InstanceStatus.ABORTING);
         });
-    workInstanceRepository.saveAll(runningWorkInstances);
+    workInstanceRepository.saveAllAndFlush(runningWorkInstances);
+
+    // 将工作流改为ABORTING
+    WorkflowInstanceEntity lastWorkflowInstance =
+        workflowInstanceRepository.findById(abortFlowReq.getWorkflowInstanceId()).get();
+    lastWorkflowInstance.setStatus(InstanceStatus.ABORTING);
+    workflowInstanceRepository.saveAndFlush(lastWorkflowInstance);
 
     // 异步调用中止作业的方法
     CompletableFuture.supplyAsync(
             () -> {
-              List<String> exeStatus = new ArrayList<>();
-              // 依此中止
               runningWorkInstances.forEach(
-                  workInstance -> {
-                    exeStatus.add(abortWorkInstance(workInstance));
+                  e -> {
+                    Integer locked = locker.lockOnly("ABORT_" + e.getWorkflowInstanceId());
+                    sparkYunWorkThreadPool.execute(
+                        () -> {
+                          try {
+                            abortWorkInstance(e);
+                          } finally {
+                            locker.unlock(locked);
+                          }
+                        });
                   });
-              return exeStatus;
+              return "SUCCESS";
             })
         .whenComplete(
             (exeStatus, exception) -> {
@@ -485,11 +500,7 @@ public class WorkflowBizService {
               try {
                 WorkflowInstanceEntity workflowInstance =
                     workflowInstanceRepository.findById(abortFlowReq.getWorkflowInstanceId()).get();
-                if (exception != null || exeStatus.contains(InstanceStatus.FAIL)) {
-                  workflowInstance.setStatus(InstanceStatus.FAIL);
-                } else {
-                  workflowInstance.setStatus(InstanceStatus.ABORT);
-                }
+                workflowInstance.setStatus(InstanceStatus.ABORT);
                 workflowInstance.setExecEndDateTime(new Date());
                 workflowInstanceRepository.saveAndFlush(workflowInstance);
               } finally {
@@ -499,14 +510,12 @@ public class WorkflowBizService {
   }
 
   /** 中止作业节点实例. */
-  public String abortWorkInstance(WorkInstanceEntity workInstance) {
+  public void abortWorkInstance(WorkInstanceEntity workInstance) {
 
     WorkEntity workEntity = workRepository.findById(workInstance.getWorkId()).get();
     WorkExecutor workExecutor = workExecutorFactory.create(workEntity.getWorkType());
     workInstance = workInstanceRepository.findById(workInstance.getId()).get();
 
-    // 中止任务先加锁，但不等待
-    Integer locked = locker.lockOnly("ABORT_" + workInstance.getWorkflowInstanceId());
     try {
       workExecutor.syncAbort(workInstance);
       String submitLog =
@@ -515,16 +524,14 @@ public class WorkflowBizService {
       workInstance.setStatus(InstanceStatus.ABORT);
       workInstance.setExecEndDateTime(new Date());
       workInstanceRepository.save(workInstance);
-      return InstanceStatus.SUCCESS;
     } catch (Exception e) {
+      log.error(e.getMessage());
       String submitLog =
           workInstance.getSubmitLog() + LocalDateTime.now() + WorkLog.SUCCESS_INFO + "中止失败 \n";
       workInstance.setSubmitLog(submitLog);
       workInstance.setStatus(InstanceStatus.FAIL);
       workInstance.setExecEndDateTime(new Date());
-      return InstanceStatus.FAIL;
-    } finally {
-      locker.unlock(locked);
+      workInstanceRepository.save(workInstance);
     }
   }
 
@@ -612,8 +619,7 @@ public class WorkflowBizService {
             () -> {
               List<String> exeStatus = new ArrayList<>();
               // 依此中止
-              runningWorkInstances.forEach(
-                  workInstance -> exeStatus.add(abortWorkInstance(workInstance)));
+              runningWorkInstances.forEach(workInstance -> exeStatus.add(null));
               return exeStatus;
             })
         .whenComplete(
