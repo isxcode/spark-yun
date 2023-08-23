@@ -740,6 +740,9 @@ public class WorkflowBizService {
         });
     workInstanceRepository.saveAllAndFlush(afterWorkInstances);
 
+    // 清空锁
+    locker.clearLock(workflowInstance.getId());
+
     // 推送一次
     WorkflowRunEvent metaEvent =
         WorkflowRunEvent.builder()
