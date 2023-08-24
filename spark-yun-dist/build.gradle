@@ -19,10 +19,10 @@ dependencies {
 }
 
 // 构建lib文件夹
-tasks.register('build_lib', Copy) {
+tasks.register('build_agent_lib', Copy) {
 
-  dependsOn(":spark-yun-api:jar")
   dependsOn(":spark-yun-agent:bootJar")
+  dependsOn(":spark-yun-backend:spark-yun-api:jar")
 
   def dependencies = configurations.runtimeClasspath.findAll {
     it.name.contains('fastjson2') ||
@@ -41,52 +41,85 @@ tasks.register('build_lib', Copy) {
   }
   dependencies.each { dependency ->
     from dependency
-    into 'build/lib'
+    into 'build/zhiqingyun_agent/lib'
   }
 
-  from '../spark-yun-api/build/libs'
-  from '../spark-yun-agent/build/libs'
-  from '../spark-yun-plugins/spark-query-sql-plugin/build/libs'
-  into 'build/lib'
+  from rootDir.getAbsolutePath() + '/spark-yun-backend/spark-yun-api/build/libs'
+  from rootDir.getAbsolutePath() + '/spark-yun-agent/build/libs'
+  from rootDir.getAbsolutePath() + '/spark-yun-plugins/spark-query-sql-plugin/build/libs'
+  into 'build/zhiqingyun-agent/lib'
 }
 
 // 构建plugins文件夹
-tasks.register('build_plugins', Copy) {
+tasks.register('build_agent_plugins', Copy) {
 
   dependsOn(':spark-yun-plugins:spark-query-sql-plugin:jar')
 
-  from '../spark-yun-plugins/spark-query-sql-plugin/build/libs'
-  into 'build/plugins'
+  from rootDir.getAbsolutePath() + '/spark-yun-plugins/spark-query-sql-plugin/build/libs'
+  into 'build/zhiqingyun-agent/plugins'
 }
 
-// 打包压缩
-tasks.register('build_dist', Tar) {
+// 构建至轻云代理
+tasks.register('build_agent', Tar) {
 
-  dependsOn('build_lib')
-  dependsOn('build_plugins')
+  mustRunAfter(":spark-yun-frontend:make")
+
+  dependsOn('build_agent_lib')
+  dependsOn('build_agent_plugins')
 
   compression = Compression.GZIP
-  archiveFileName = 'spark-yun-agent.tar.gz'
+  archiveFileName = 'zhiqingyun-agent.tar.gz'
 
-  from(rootDir.getAbsolutePath() + "/spark-yun-dist/src/main/spark-min") {
-    into 'spark-min'
+  from(rootDir.getAbsolutePath() + "/spark-yun-dist/spark-min") {
+    into 'zhiqingyun-agent/spark-min'
   }
-  from('src/main/bin') {
-    into 'bin'
+  from('zhiqingyun-agent/bin') {
+    into 'zhiqingyun-agent/bin'
   }
-  from('src/main/agent-conf') {
-    into 'conf'
+  from('zhiqingyun-agent/conf') {
+    into 'zhiqingyun-agent/conf'
   }
-  from('build/plugins') {
-    into 'plugins'
+  from('zhiqingyun-agent/logs') {
+    into 'zhiqingyun-agent/logs'
   }
-  from('build/lib') {
-    into 'lib'
+  from('build/zhiqingyun-agent/plugins') {
+    into 'zhiqingyun-agent/plugins'
   }
-  from('src/main/log') {
-    into 'log'
+  from('build/zhiqingyun-agent/lib') {
+    into 'zhiqingyun-agent/lib'
   }
   from('../README.md') {
-    into '/'
+    into 'zhiqingyun-agent/'
   }
+}
+
+// 构建至轻云
+tasks.register('build_zhiqingyun', Tar) {
+
+  mustRunAfter(":spark-yun-backend:make")
+
+  compression = Compression.GZIP
+  archiveFileName = 'zhiqingyun.tar.gz'
+
+  from('zhiqingyun/bin') {
+    into 'zhiqingyun/bin'
+  }
+  from(rootDir.getAbsolutePath() + '/spark-yun-backend/spark-yun-main/src/main/resources/application-local.yml') {
+    into 'zhiqingyun/conf'
+  }
+  from('zhiqingyun/logs') {
+    into 'zhiqingyun/logs'
+  }
+  from(rootDir.getAbsolutePath() + '/spark-yun-backend/spark-yun-main/build/libs/zhiqingyun.jar') {
+    into 'zhiqingyun/lib'
+  }
+  from(rootDir.getAbsolutePath() + '/README.md') {
+    into 'zhiqingyun/'
+  }
+}
+
+// 打包
+tasks.register('make', GradleBuild) {
+
+  tasks = [":spark-yun-frontend:make", "build_agent", ":spark-yun-backend:make", "build_zhiqingyun"]
 }
