@@ -162,7 +162,11 @@ tasks.register('deploy', Exec) {
 // gradle website
 tasks.register('website', Exec) {
 
-  commandLine 'bash', '-c', 'npm i docsify-cli -g && docsify serve docs'
+  if (System.properties['os.name'].toString().contains('Mac OS X') || System.properties['os.name'].toString().contains('Linux')) {
+    commandLine 'sh', '-c', 'cd spark-yun-vip/spark-yun-website && npm i docsify-cli -g && docsify serve docs'
+  } else {
+    commandLine 'cmd', '/c', 'cd spark-yun-vip/spark-yun-website && npm i docsify-cli -g && docsify serve docs'
+  }
 }
 
 // 自定义命令：单独启动前端页面
