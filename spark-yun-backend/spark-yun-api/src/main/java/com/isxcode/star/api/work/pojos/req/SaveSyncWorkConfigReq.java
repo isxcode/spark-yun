@@ -4,7 +4,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 
 @Data
 public class SaveSyncWorkConfigReq {
@@ -32,16 +31,21 @@ public class SaveSyncWorkConfigReq {
   @Schema(title = "目标数据库表名", example = "part")
   @NotEmpty(message = "目标数据库表名不能为空")
   private String targetTable;
-  @Schema(title = "写入模式", example = "OVERWRITE or INTO")
+  @Schema(title = "写入模式", example = "insert into")
   @NotEmpty(message = "写入模式不能为空")
   private String overMode;
-  @Schema(title = "来源表信息", example = "[{\"code\":\"installed_rank\",\"type\":\"String\",\"sql\":\"\"}]")
-  @NotEmpty(message = "来源表信息不能为空")
-  private String sourceTableData;
-  @Schema(title = "去向表信息", example = "[{\"code\":\"installed_rank\",\"type\":\"String\"}]")
-  @NotEmpty(message = "去向表信息不能为空")
-  private String targetTableData;
-  @Schema(title = "字段映射关系", example = "[{\"source\": \"installed_rank\",\"target\": \"installed_rank\"}]")
-  @NotNull(message = "字段映射关系不能为空")
-  private String connect;
+  @Schema(title = "字段映射关系", example = "{\n" +
+    "        \"installed_rank\": [\"installed_rank\", \"\"],\n" +
+    "        \"version\": [\"version\",\"\"],\n" +
+    "        \"description\": [\"description\",\"\"],\n" +
+    "        \"type\": [null, \"type\",\"\"],\n" +
+    "        \"script\": [\"script\",\"\"],\n" +
+    "        \"checksum\": [\"checksum\",\"\"],\n" +
+    "\"installed_by\": [\"installed_by\",\"\"],\n" +
+    "\"installed_on\": [\"installed_on\",\"\"],\n" +
+    "\"execution_time\": [\"execution_time\",\"\"],\n" +
+    "  \"success\": [\"success\",\"\"]\n" +
+    "    }")
+  @NotEmpty(message = "字段映射关系")
+  private String columMapping;
 }

@@ -32,29 +32,21 @@ public class SyncWorkConfigEntity {
 
   private String workId;
 
-  @Column(name="source_db_type")
   private String sourceDBType;
 
-  @Column(name="source_db_id")
   private String sourceDBId;
 
   private String sourceTable;
 
   private String queryCondition;
 
-  @Column(name="target_db_type")
   private String targetDBType;
 
-  @Column(name="target_db_id")
   private String targetDBId;
 
   private String targetTable;
 
   private String overMode;
-
-  private String sourceTableData;
-
-  private String targetTableData;
 
   private String columMapping;
 
