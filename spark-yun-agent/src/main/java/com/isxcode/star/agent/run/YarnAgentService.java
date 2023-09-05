@@ -1,19 +1,19 @@
 package com.isxcode.star.agent.run;
 
 import com.alibaba.fastjson2.JSON;
-import com.isxcode.star.api.agent.pojos.req.PluginReq;
 import com.isxcode.star.api.agent.pojos.req.SparkSubmit;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.util.Strings;
+import org.apache.spark.launcher.SparkLauncher;
+import org.springframework.stereotype.Service;
+
 import java.io.*;
 import java.net.MalformedURLException;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.logging.log4j.util.Strings;
-import org.apache.spark.launcher.SparkLauncher;
-import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
@@ -25,7 +25,7 @@ public class YarnAgentService implements AgentService {
 	}
 
 	@Override
-	public SparkLauncher genSparkLauncher(PluginReq pluginReq, SparkSubmit sparkSubmit, String agentHomePath) {
+	public SparkLauncher genSparkLauncher(Object pluginReq, SparkSubmit sparkSubmit, String agentHomePath) {
 
 		SparkLauncher sparkLauncher = new SparkLauncher().setVerbose(false).setMainClass(sparkSubmit.getMainClass())
 				.setDeployMode("cluster").setAppName("zhiqingyun-job").setMaster(getMaster())
