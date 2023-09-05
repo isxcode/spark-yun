@@ -4,6 +4,8 @@ import com.isxcode.star.api.main.constants.ModuleCode;
 import com.isxcode.star.api.work.pojos.req.*;
 import com.isxcode.star.api.work.pojos.res.*;
 import com.isxcode.star.common.annotations.successResponse.SuccessResponse;
+import com.isxcode.star.modules.work.entity.SyncWorkConfigEntity;
+import com.isxcode.star.modules.work.service.biz.SyncWorkConfigBizService;
 import com.isxcode.star.modules.work.service.biz.WorkBizService;
 import com.isxcode.star.modules.work.service.biz.WorkConfigBizService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -22,6 +24,8 @@ public class WorkController {
 	private final WorkBizService workBizService;
 
 	private final WorkConfigBizService workConfigBizService;
+
+  private final SyncWorkConfigBizService syncWorkConfigBizService;
 
 	@Operation(summary = "添加作业接口")
 	@PostMapping("/addWork")
@@ -142,4 +146,21 @@ public class WorkController {
 
 		workConfigBizService.configWork(configWorkReq);
 	}
+
+  @Operation(summary = "获取同步作业配置接口")
+  @PostMapping("/getSyncWorkConfig")
+  @SuccessResponse("保存成功")
+  public SyncWorkConfigEntity getSyncWorkConfig(@Valid @RequestBody GetSyncWorkConfigReq getSyncWorkConfigReq) {
+
+    return syncWorkConfigBizService.getSyncWorkConfig(getSyncWorkConfigReq);
+  }
+
+  @Operation(summary = "配置作业接口")
+  @PostMapping("/saveSyncWorkConfig")
+  @SuccessResponse("保存成功")
+  public void saveSyncWorkConfig(@Valid @RequestBody SaveSyncWorkConfigReq saveSyncWorkConfigReq) {
+
+    syncWorkConfigBizService.saveSyncWorkConfig(saveSyncWorkConfigReq);
+  }
+
 }
