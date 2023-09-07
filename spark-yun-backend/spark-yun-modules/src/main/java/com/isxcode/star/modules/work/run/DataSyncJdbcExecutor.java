@@ -124,6 +124,8 @@ public class DataSyncJdbcExecutor extends WorkExecutor {
 		logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始构建作业  \n");
 		YagExecuteWorkReq executeReq = new YagExecuteWorkReq();
 
+    workRunContext.getSparkConfig().put("spark.driver.extraClassPath", "/Users/yuzu/Documents/zhiqingyun-agent/lib/mysql-connector-j-8.0.32.jar");
+
 		// 开始构造SparkSubmit
 		SparkSubmit sparkSubmit = SparkSubmit.builder().verbose(true)
 				.mainClass("com.isxcode.star.plugin.query.sql.Execute").appResource("spark-data-sync-jdbc-plugin.jar")
@@ -142,7 +144,7 @@ public class DataSyncJdbcExecutor extends WorkExecutor {
     if(!targetOption.isPresent()){
       throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "作业创建失败 : 目标数据源不存在  \n");
     }
-
+    //String mapping = new String(Base64.getDecoder().decode(syncWorkConfigEntity.getColumMapping()));
     JDBCSyncPluginReq pluginReq = JDBCSyncPluginReq.builder()
       .sourceDbInfo(DataSource.builder()
         .url(sourceDBOption.get().getJdbcUrl())
