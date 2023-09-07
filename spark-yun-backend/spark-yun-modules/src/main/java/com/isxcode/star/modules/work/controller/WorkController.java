@@ -4,16 +4,19 @@ import com.isxcode.star.api.main.constants.ModuleCode;
 import com.isxcode.star.api.work.pojos.req.*;
 import com.isxcode.star.api.work.pojos.res.*;
 import com.isxcode.star.common.annotations.successResponse.SuccessResponse;
-import com.isxcode.star.modules.work.entity.SyncWorkConfigEntity;
 import com.isxcode.star.modules.work.service.biz.SyncWorkConfigBizService;
 import com.isxcode.star.modules.work.service.biz.WorkBizService;
 import com.isxcode.star.modules.work.service.biz.WorkConfigBizService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import javax.validation.Valid;
 
 @Tag(name = "作业模块")
 @RestController
@@ -149,8 +152,8 @@ public class WorkController {
 
   @Operation(summary = "获取同步作业配置接口")
   @PostMapping("/getSyncWorkConfig")
-  @SuccessResponse("保存成功")
-  public SyncWorkConfigEntity getSyncWorkConfig(@Valid @RequestBody GetSyncWorkConfigReq getSyncWorkConfigReq) {
+  @SuccessResponse("查询成功")
+  public GetSyncWorkConfigRes getSyncWorkConfig(@Valid @RequestBody GetSyncWorkConfigReq getSyncWorkConfigReq) {
 
     return syncWorkConfigBizService.getSyncWorkConfig(getSyncWorkConfigReq);
   }

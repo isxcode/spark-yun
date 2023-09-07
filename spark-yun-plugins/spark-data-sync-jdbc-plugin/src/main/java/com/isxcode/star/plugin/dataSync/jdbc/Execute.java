@@ -1,4 +1,4 @@
-package com.isxcode.star.plugin.query.sql;
+package com.isxcode.star.plugin.dataSync.jdbc;
 
 import com.alibaba.fastjson.JSON;
 import com.isxcode.star.api.agent.pojos.req.JDBCSyncPluginReq;
@@ -9,7 +9,11 @@ import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
 
 import java.util.Base64;
+import java.util.Date;
 import java.util.Map;
+
+import static com.isxcode.star.api.plugin.OverModeType.INTO;
+import static com.isxcode.star.api.plugin.OverModeType.OVERWRITE;
 
 public class Execute {
 
@@ -17,6 +21,9 @@ public class Execute {
 	public static void main(String[] args) {
 
     JDBCSyncPluginReq conf = parse(args);
+
+    String sourceTable = "source_temp_table" + new Date().getTime();
+    String targetTable = "target_temp_table" + new Date().getTime();
 
     try (SparkSession sparkSession = initSparkSession(conf.getSparkConfig())) {
       // 读取源数据并创建临时表
@@ -27,7 +34,7 @@ public class Execute {
         .option("user", conf.getSourceDbInfo().getUser())
         .option("password", conf.getSourceDbInfo().getPassword())
         .load();
-      source.createOrReplaceTempView("source_temp_table");
+      source.createOrReplaceTempView(sourceTable);
 
       // 读取目标数据并创建临时表
       Dataset<Row> target = sparkSession.read().format("jdbc")
@@ -37,7 +44,7 @@ public class Execute {
         .option("password", conf.getTargetDbInfo().getPassword())
         .option("truncate", "true")
         .load();
-      target.createOrReplaceTempView("target_temp_table");
+      target.createOrReplaceTempView(targetTable);
       String sourceColums =  "";
       for (String column : target.columns()) {
         if (null == conf.getColumMapping().get(column)) {
@@ -54,12 +61,22 @@ public class Execute {
         }
 
       }
-
-      String sql = "overwrite".equals(conf.getOverMode()) ? "INSERT OVERWRITE target_temp_table ":"INSERT INTO target_temp_table ";
-
       sourceColums = sourceColums.substring(0, sourceColums.length() - 1);
 
-      sql = sql + " SELECT " + sourceColums + " FROM source_temp_table " + conf.getCondition();
+      String sql;
+      switch (conf.getOverMode()) {
+        case OVERWRITE:
+          sql = "INSERT OVERWRITE ";
+          break;
+        case INTO:
+          sql = "INSERT INTO ";
+          break;
+        default:
+          System.out.println("LogType:spark-yun\n暂不支持的写入模式！！！\nEnd of LogType:spark-yun");
+          return;
+      }
+
+      sql = sql + sourceTable + " SELECT " + sourceColums + " FROM "+ targetTable + " " + conf.getCondition();
 
       // 执行数据同步操作
       sparkSession.sql(sql);
