@@ -4,7 +4,6 @@ import com.isxcode.star.api.main.constants.ModuleCode;
 import com.isxcode.star.api.work.pojos.req.*;
 import com.isxcode.star.api.work.pojos.res.*;
 import com.isxcode.star.common.annotations.successResponse.SuccessResponse;
-import com.isxcode.star.modules.work.entity.SyncWorkConfigEntity;
 import com.isxcode.star.modules.work.service.biz.SyncWorkConfigBizService;
 import com.isxcode.star.modules.work.service.biz.WorkBizService;
 import com.isxcode.star.modules.work.service.biz.WorkConfigBizService;
@@ -153,8 +152,8 @@ public class WorkController {
 
   @Operation(summary = "获取同步作业配置接口")
   @PostMapping("/getSyncWorkConfig")
-  @SuccessResponse("保存成功")
-  public SyncWorkConfigEntity getSyncWorkConfig(@Valid @RequestBody GetSyncWorkConfigReq getSyncWorkConfigReq) {
+  @SuccessResponse("查询成功")
+  public GetSyncWorkConfigRes getSyncWorkConfig(@Valid @RequestBody GetSyncWorkConfigReq getSyncWorkConfigReq) {
 
     return syncWorkConfigBizService.getSyncWorkConfig(getSyncWorkConfigReq);
   }
