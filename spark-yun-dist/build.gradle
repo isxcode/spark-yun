@@ -47,6 +47,7 @@ tasks.register('build_agent_lib', Copy) {
   from rootDir.getAbsolutePath() + '/spark-yun-backend/spark-yun-api/build/libs'
   from rootDir.getAbsolutePath() + '/spark-yun-agent/build/libs'
   from rootDir.getAbsolutePath() + '/spark-yun-plugins/spark-query-sql-plugin/build/libs'
+  from rootDir.getAbsolutePath() + '/spark-yun-plugins/spark-data-sync-jdbc-plugin/build/libs'
   into 'build/zhiqingyun-agent/lib'
 }
 
