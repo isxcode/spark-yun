@@ -144,7 +144,7 @@ public class DataSyncJdbcExecutor extends WorkExecutor {
     if(!targetOption.isPresent()){
       throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "作业创建失败 : 目标数据源不存在  \n");
     }
-    //String mapping = new String(Base64.getDecoder().decode(syncWorkConfigEntity.getColumMapping()));
+
     JDBCSyncPluginReq pluginReq = JDBCSyncPluginReq.builder()
       .sourceDbInfo(DataSource.builder()
         .url(sourceDBOption.get().getJdbcUrl())
