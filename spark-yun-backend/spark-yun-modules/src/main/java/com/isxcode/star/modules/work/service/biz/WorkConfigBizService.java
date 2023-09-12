@@ -1,5 +1,6 @@
 package com.isxcode.star.modules.work.service.biz;
 
+import com.alibaba.fastjson2.JSON;
 import com.isxcode.star.api.work.pojos.req.ConfigWorkReq;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.star.modules.work.entity.WorkConfigEntity;
@@ -35,6 +36,13 @@ public class WorkConfigBizService {
 	}
 
 	public void configWork(ConfigWorkReq wocConfigWorkReq) {
+
+		// 校验sparkConfig为json格式
+		try {
+			JSON.parse(wocConfigWorkReq.getSparkConfig());
+		} catch (Exception e) {
+			throw new IsxAppException("500", "sparkConfig中json格式不合法", e.getMessage());
+		}
 
 		Optional<WorkEntity> workEntityOptional = workRepository.findById(wocConfigWorkReq.getWorkId());
 		if (!workEntityOptional.isPresent()) {
