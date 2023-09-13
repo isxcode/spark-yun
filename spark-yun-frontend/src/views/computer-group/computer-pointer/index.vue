@@ -87,6 +87,9 @@
                     <el-dropdown-item @click="uninstallData(scopeSlot.row)">
                       卸载
                     </el-dropdown-item>
+                    <el-dropdown-item @click="cleanData(scopeSlot.row)">
+                      清理
+                    </el-dropdown-item>
                     <el-dropdown-item @click="deleteData(scopeSlot.row)">
                       删除
                     </el-dropdown-item>
@@ -112,7 +115,18 @@ import AddModal from './add-modal/index.vue'
 import ShowLog from './show-log/index.vue'
 
 import { PointTableConfig, FormData } from '../computer-group.config'
-import { GetComputerPointData, CheckComputerPointData, AddComputerPointData, InstallComputerPointData, UninstallComputerPointData, DeleteComputerPointData, StopComputerPointData, StartComputerPointData, EditComputerPointData } from '@/services/computer-group.service'
+import {
+  GetComputerPointData,
+  CheckComputerPointData,
+  AddComputerPointData,
+  InstallComputerPointData,
+  UninstallComputerPointData,
+  DeleteComputerPointData,
+  StopComputerPointData,
+  StartComputerPointData,
+  EditComputerPointData,
+  CleanComputerPointData
+} from '@/services/computer-group.service'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useRoute } from 'vue-router'
 
@@ -262,6 +276,22 @@ function uninstallData(data: any) {
     })
     .catch(() => {
       data.uninstallLoading = false
+    })
+}
+
+// 清理
+function cleanData(data: any) {
+  data.cleanLoading = true
+  CleanComputerPointData({
+    engineNodeId: data.id
+  })
+    .then((res: any) => {
+      ElMessage.success(res.msg)
+      data.cleanLoading = false
+      initData(true)
+    })
+    .catch(() => {
+      data.cleanLoading = false
     })
 }
 
