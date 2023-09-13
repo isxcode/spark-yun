@@ -14,5 +14,5 @@ public class SparkYunAgentProperties {
 	/**
 	 * 提交作业的超时时间，默认60s
 	 */
-	private Integer submitTimeout = 60;
+	private Integer submitTimeout = 120;
 }
