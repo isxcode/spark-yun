@@ -249,7 +249,7 @@ public class SparkSqlExecutor extends WorkExecutor {
 					updateInstance(workInstance, logBuilder);
 				} else {
 					// 任务运行错误
-					throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "Kubernetes容器状态为失败" + "\n");
+					throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "任务运行异常" + "\n");
 				}
 
 				// 运行结束，则退出死循环
