@@ -182,4 +182,19 @@ public class WorkController {
     return syncWorkBizService.getDataSourceColumns(getDataSourceColumnsReq);
   }
 
+  @Operation(summary = "数据预览")
+  @PostMapping("/getDataSourceData")
+  @SuccessResponse("查询成功")
+  public GetDataSourceDataRes getDataSourceData(@Valid @RequestBody GetDataSourceDataReq getDataSourceDataReq) throws Exception {
+
+    return syncWorkBizService.getDataSourceData(getDataSourceDataReq);
+  }
+
+  @Operation(summary = "DDL预生成")
+  @PostMapping("/getCreateTableSql")
+  @SuccessResponse("查询成功")
+  public GetCreateTableSqlRes getCreateTableSql(@Valid @RequestBody GetCreateTableSqlReq getCreateTableSqlReq) throws Exception {
+
+    return syncWorkBizService.getCreateTableSql(getCreateTableSqlReq);
+  }
 }
