@@ -11,4 +11,4 @@ management:
       enabled: true
 
 spark-yun:
-  submit-timeout: 60 # 提交作业的超时时间
+  submit-timeout: 120 # 提交作业的超时时间
