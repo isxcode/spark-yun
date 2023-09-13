@@ -70,6 +70,7 @@ public class YarnAgentService implements AgentService {
 
 			long waitMillis = timeoutExpiredMs - System.currentTimeMillis();
 			if (waitMillis <= 0) {
+				launch.destroy();
 				throw new IsxAppException(errLog.toString());
 			}
 
