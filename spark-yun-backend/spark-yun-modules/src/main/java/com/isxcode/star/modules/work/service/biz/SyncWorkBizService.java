@@ -2,13 +2,8 @@ package com.isxcode.star.modules.work.service.biz;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
-import com.isxcode.star.api.work.pojos.req.GetDataSourceColumnsReq;
-import com.isxcode.star.api.work.pojos.req.GetDataSourceTablesReq;
-import com.isxcode.star.api.work.pojos.req.GetSyncWorkConfigReq;
-import com.isxcode.star.api.work.pojos.req.SaveSyncWorkConfigReq;
-import com.isxcode.star.api.work.pojos.res.GetDataSourceColumnsRes;
-import com.isxcode.star.api.work.pojos.res.GetDataSourceTablesRes;
-import com.isxcode.star.api.work.pojos.res.GetSyncWorkConfigRes;
+import com.isxcode.star.api.work.pojos.req.*;
+import com.isxcode.star.api.work.pojos.res.*;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.star.common.connection.JDBCConnection;
 import com.isxcode.star.common.utils.AesUtils;
@@ -26,11 +21,10 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.sql.Statement;
+import java.util.*;
 
 /** 用户模块接口的业务逻辑. */
 @Service
@@ -45,11 +39,12 @@ public class SyncWorkBizService {
 
   private final SyncWorkConfigMapper syncWorkConfigMapper;
 
-  private final DatasourceRepository datasourceRepository;
-
   private final SyncWorkService syncWorkService;
 
+  private final DatasourceRepository datasourceRepository;
+
   private final AesUtils aesUtils;
+
 
 	public GetSyncWorkConfigRes getSyncWorkConfig(GetSyncWorkConfigReq getSyncWorkConfigReq) {
 
@@ -80,15 +75,7 @@ public class SyncWorkBizService {
 
   public GetDataSourceTablesRes getDataSourceTables(GetDataSourceTablesReq getDataSourceTablesReq) throws Exception {
 
-    Optional<DatasourceEntity> datasourceEntityOptional = datasourceRepository.findById(getDataSourceTablesReq.getDataSourceId());
-    if (!datasourceEntityOptional.isPresent()) {
-      throw new IsxAppException("数据源异常，请联系开发者");
-    }
-
-    Connection connection = JDBCConnection.getConnection(datasourceEntityOptional.get().getJdbcUrl(),
-      datasourceEntityOptional.get().getUsername(),
-      aesUtils.decrypt(datasourceEntityOptional.get().getPasswd()),
-      null, null);
+    Connection connection = syncWorkService.getConnection(getDataSourceTablesReq.getDataSourceId(), null,null);
     String catalog = getCatalogOrSchema(connection, true);
     String schema = getCatalogOrSchema(connection, false);
 
@@ -101,15 +88,7 @@ public class SyncWorkBizService {
 
   public GetDataSourceColumnsRes getDataSourceColumns(GetDataSourceColumnsReq getDataSourceColumnsReq) throws Exception {
 
-    Optional<DatasourceEntity> datasourceEntityOptional = datasourceRepository.findById(getDataSourceColumnsReq.getDataSourceId());
-    if (!datasourceEntityOptional.isPresent()) {
-      throw new IsxAppException("数据源异常，请联系开发者");
-    }
-
-    Connection connection = JDBCConnection.getConnection(datasourceEntityOptional.get().getJdbcUrl(),
-      datasourceEntityOptional.get().getUsername(),
-      aesUtils.decrypt(datasourceEntityOptional.get().getPasswd()),
-      null, null);
+    Connection connection = syncWorkService.getConnection(getDataSourceColumnsReq.getDataSourceId(), null, null);
     String dataBase = null;
     String tableName = getDataSourceColumnsReq.getTableName();
     if (tableName.contains(".")){
@@ -127,6 +106,67 @@ public class SyncWorkBizService {
     connection.close();
     return GetDataSourceColumnsRes.builder().columns(columns).build();
   }
+
+  public GetDataSourceDataRes getDataSourceData(GetDataSourceDataReq getDataSourceDataReq) throws Exception {
+
+    Optional<DatasourceEntity> datasourceEntityOptional = datasourceRepository.findById(getDataSourceDataReq.getDataSourceId());
+    if (!datasourceEntityOptional.isPresent()) {
+      throw new IsxAppException("数据源异常，请联系开发者");
+    }
+
+    Connection connection = JDBCConnection.getConnection(datasourceEntityOptional.get().getJdbcUrl(),
+      datasourceEntityOptional.get().getUsername(),
+      aesUtils.decrypt(datasourceEntityOptional.get().getPasswd()),
+      null, null);
+
+    Statement statement = connection.createStatement();
+    String dataPreviewSql = syncWorkService.getDataPreviewSql(datasourceEntityOptional.get().getDbType(), getDataSourceDataReq.getTableName());
+    ResultSet resultSet = statement.executeQuery(dataPreviewSql);
+    List<String> columns = new ArrayList<>();
+    List<List<String>> rows = new ArrayList<>();
+
+    // 封装表头
+    int columnCount = resultSet.getMetaData().getColumnCount();
+    for (int i = 1; i <= columnCount; i++) {
+      columns.add(resultSet.getMetaData().getColumnName(i));
+    }
+
+    // 封装数据
+    while (resultSet.next()) {
+      List<String> row = new ArrayList<>();
+      for (int i = 1; i <= columnCount; i++) {
+        row.add(String.valueOf(resultSet.getObject(i)));
+      }
+      rows.add(row);
+    }
+    statement.close();
+    connection.close();
+    return GetDataSourceDataRes.builder().columns(columns).rows(rows).build();
+  }
+
+  public GetCreateTableSqlRes getCreateTableSql(GetCreateTableSqlReq getCreateTableSqlReq) throws Exception {
+    Connection connection = syncWorkService.getConnection(getCreateTableSqlReq.getDataSourceId(), null, null);
+    String dataBase = null;
+    String tableName = getCreateTableSqlReq.getTableName();
+    if (tableName.contains(".")){
+      dataBase = tableName.split("\\.")[0];
+      tableName = tableName.split("\\.")[1];
+    }
+
+    String catalog = getCatalogOrSchema(connection, true);
+    String schema = getCatalogOrSchema(connection, false);
+
+    Map<String, String> transform = syncWorkService.transform(dataBase, catalog, schema);
+    ResultSet columns = connection.getMetaData().getColumns(transform.get("catalog"),transform.get("schema"), tableName, null);
+    String sql = "CREATE TABLE " + tableName + " (";
+    while (columns.next()){
+      sql += "\n" + columns.getString("COLUMN_NAME") + " String," ;
+    }
+    return GetCreateTableSqlRes.builder().sql(sql.substring(0, sql.length() - 1) + "\n)").build();
+
+  }
+
+
 
   private String getCatalogOrSchema(Connection connection, boolean isCatalog) {
     try {

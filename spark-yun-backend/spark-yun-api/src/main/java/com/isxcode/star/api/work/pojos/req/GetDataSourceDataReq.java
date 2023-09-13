@@ -6,7 +6,7 @@ import lombok.Data;
 import javax.validation.constraints.NotEmpty;
 
 @Data
-public class GetDataSourceColumnsReq {
+public class GetDataSourceDataReq {
 
 	@Schema(title = "数据源唯一id", example = "sy_123456789")
 	@NotEmpty(message = "数据源id不能为空")
