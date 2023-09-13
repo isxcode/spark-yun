@@ -38,10 +38,8 @@ public class WorkConfigBizService {
 	public void configWork(ConfigWorkReq wocConfigWorkReq) {
 
 		// 校验sparkConfig为json格式
-		try {
-			JSON.parse(wocConfigWorkReq.getSparkConfig());
-		} catch (Exception e) {
-			throw new IsxAppException("500", "sparkConfig中json格式不合法", e.getMessage());
+		if (!JSON.isValid(wocConfigWorkReq.getSparkConfig())) {
+			throw new IsxAppException("500", "sparkConfig中json格式不合法");
 		}
 
 		Optional<WorkEntity> workEntityOptional = workRepository.findById(wocConfigWorkReq.getWorkId());
