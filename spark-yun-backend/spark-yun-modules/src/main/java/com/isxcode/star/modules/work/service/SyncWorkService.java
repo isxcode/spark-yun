@@ -54,8 +54,11 @@ public class SyncWorkService {
     while (columns.next()){
       List<String> cList = new ArrayList<>();
       cList.add(columns.getString("COLUMN_NAME"));
-      cList.add(columns.getString("TYPE_NAME"));
-      cList.add(String.valueOf(columns.getInt("COLUMN_SIZE")));
+      String type = columns.getString("TYPE_NAME");
+      if ("VARCHAR".equals(type)){
+        type += "(" + columns.getInt("COLUMN_SIZE") + ")";
+      }
+      cList.add(type);
       list.add(cList);
     }
     return list;

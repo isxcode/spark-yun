@@ -124,14 +124,14 @@ public class DataSyncJdbcExecutor extends WorkExecutor {
 		logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始构建作业  \n");
 		YagExecuteWorkReq executeReq = new YagExecuteWorkReq();
 
-    workRunContext.getSparkConfig().put("spark.driver.extraClassPath", "/Users/yuzu/Documents/zhiqingyun-agent/lib/mysql-connector-j-8.0.32.jar");
+    //workRunContext.getSparkConfig().put("spark.driver.extraClassPath", "/Users/yuzu/Documents/zhiqingyun-agent/lib/mysql-connector-j-8.0.32.jar");
 
 		// 开始构造SparkSubmit
 		SparkSubmit sparkSubmit = SparkSubmit.builder().verbose(true)
 				.mainClass("com.isxcode.star.plugin.query.sql.Execute").appResource("spark-data-sync-jdbc-plugin.jar")
 				.conf(genSparkSubmitConfig(workRunContext.getSparkConfig())).build();
 
-		// 开始构造PluginReq
+		// 开始构造pluginReq
     SyncWorkConfigEntity syncWorkConfigEntity = syncWorkConfigRepository.findByWorkId(workInstance.getWorkId());
     String sourceDBId = syncWorkConfigEntity.getSourceDBId();
     String targetDBId = syncWorkConfigEntity.getTargetDBId();
@@ -161,7 +161,7 @@ public class DataSyncJdbcExecutor extends WorkExecutor {
       .condition(syncWorkConfigEntity.getQueryCondition())
       .overMode(syncWorkConfigEntity.getOverMode())
       .columMapping(JSON.parseObject(syncWorkConfigEntity.getColumMapping(),
-        new TypeReference<HashMap<String, List<String>>>(){}))
+        new TypeReference<HashMap<String, List<HashMap<String,String>>>>(){}))
       .sparkConfig(genSparkConfig(workRunContext.getSparkConfig())).build();
 
     //todo 传输数据库依赖

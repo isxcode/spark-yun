@@ -8,9 +8,7 @@ import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
 
-import java.util.Base64;
-import java.util.Date;
-import java.util.Map;
+import java.util.*;
 
 import static com.isxcode.star.api.plugin.OverModeType.INTO;
 import static com.isxcode.star.api.plugin.OverModeType.OVERWRITE;
@@ -46,12 +44,23 @@ public class Execute {
         .load();
       target.createOrReplaceTempView(targetTable);
       String sourceColums =  "";
+      HashMap<String,String> realColums = new HashMap<>();
+      for (HashMap<String,String> column : conf.getColumMapping().get("sourceTableData")){
+        if(column.get("sql") != null && !"".equals(column.get("sql"))){
+          realColums.put(column.get("code"), column.get("sql"));
+        }else {
+          realColums.put(column.get("code"), column.get("code"));
+        }
+      }
+      HashMap<String,String> realConnect = new HashMap<>();
+      for (HashMap<String,String> connect : conf.getColumMapping().get("connect")){
+        realConnect.put(connect.get("target"),realColums.get("source"));
+      }
       for (String column : target.columns()) {
-        if (null == conf.getColumMapping().get(column)) {
+        if (null == realConnect.get(column)) {
           sourceColums += "null" + ",";
         }else {
-          String sourceColum = conf.getColumMapping().get(column).get(1) != null && !"".equals(conf.getColumMapping().get(column).get(1)) ?
-            conf.getColumMapping().get(column).get(1) : conf.getColumMapping().get(column).get(0);
+          String sourceColum = realConnect.get(column);
           //含有"'"则表示希望写入固定值
           if(sourceColum.contains("'")){
             sourceColums += sourceColum + ",";
