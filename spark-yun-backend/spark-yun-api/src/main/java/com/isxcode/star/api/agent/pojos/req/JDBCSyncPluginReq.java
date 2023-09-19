@@ -16,7 +16,7 @@ import java.util.Map;
 public class JDBCSyncPluginReq {
   private DataSource sourceDbInfo;
   private DataSource targetDbInfo;
-  private HashMap<String, List<String>> columMapping;
+  private HashMap<String, List<HashMap<String,String>>> columMapping;
   private String condition;
   private String overMode;
   private Map<String, String> sparkConfig;
