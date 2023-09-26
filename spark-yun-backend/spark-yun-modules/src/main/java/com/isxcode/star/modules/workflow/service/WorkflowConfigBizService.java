@@ -2,6 +2,9 @@ package com.isxcode.star.modules.workflow.service;
 
 import com.alibaba.fastjson.JSON;
 import com.isxcode.star.api.workflow.pojos.req.ConfigWorkflowReq;
+import com.isxcode.star.api.workflow.pojos.req.OffExternalCallReq;
+import com.isxcode.star.api.workflow.pojos.req.OnExternalCallReq;
+import com.isxcode.star.api.workflow.pojos.res.OnExternalCallRes;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.star.modules.work.entity.WorkEntity;
 import com.isxcode.star.modules.work.repository.WorkRepository;
@@ -9,12 +12,18 @@ import com.isxcode.star.modules.workflow.entity.WorkflowConfigEntity;
 import com.isxcode.star.modules.workflow.entity.WorkflowEntity;
 import com.isxcode.star.modules.workflow.repository.WorkflowConfigRepository;
 import com.isxcode.star.modules.workflow.run.WorkflowUtils;
-import java.util.List;
-import java.util.Optional;
-import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
+import static com.isxcode.star.api.workflow.constants.WorkflowExternalCallStatus.OFF;
+import static com.isxcode.star.api.workflow.constants.WorkflowExternalCallStatus.ON;
 
 /** 用户模块接口的业务逻辑. */
 @Service
@@ -81,4 +90,29 @@ public class WorkflowConfigBizService {
 		// 持久化配置
 		workflowConfigRepository.save(workflowConfig);
 	}
+
+  public OnExternalCallRes onExternalCall(OnExternalCallReq onExternalCallReq, HttpServletRequest request) {
+    String workflowConfigId = onExternalCallReq.getWorkflowConfigId();
+
+    WorkflowConfigEntity workflowConfig = getWorkflowConfig(workflowConfigId);
+    String accessKey = workflowConfig.getAccessKey();
+    if (null == accessKey || "".equals(accessKey)) {
+      accessKey = UUID.randomUUID().toString();
+      workflowConfig.setAccessKey(accessKey);
+    }
+    workflowConfig.setExternalCall(ON);
+    workflowConfigRepository.saveAndFlush(workflowConfig);
+    String url = request.getRequestURL().toString().replace("/workflow/onExternalCall","/workflow/invoke");
+    return OnExternalCallRes.builder().url(url).accessKey(accessKey).build();
+
+  }
+
+  public void offExternalCall(OffExternalCallReq offExternalCallReq) {
+    String workflowConfigId = offExternalCallReq.getWorkflowConfigId();
+
+    WorkflowConfigEntity workflowConfig = getWorkflowConfig(workflowConfigId);
+    workflowConfig.setExternalCall(OFF);
+    workflowConfigRepository.save(workflowConfig);
+  }
+
 }

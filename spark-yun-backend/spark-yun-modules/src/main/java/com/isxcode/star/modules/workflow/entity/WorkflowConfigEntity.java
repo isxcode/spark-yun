@@ -45,6 +45,10 @@ public class WorkflowConfigEntity {
 
 	private String dagEndList;
 
+  private char externalCall;
+
+  private String accessKey;
+
 	private String corn;
 
 	@CreatedDate
