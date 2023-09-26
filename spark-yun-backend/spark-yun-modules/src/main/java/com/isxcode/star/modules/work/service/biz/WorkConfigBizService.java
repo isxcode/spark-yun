@@ -60,6 +60,9 @@ public class WorkConfigBizService {
 		if (!Strings.isEmpty(wocConfigWorkReq.getSparkConfig())) {
 			workConfigEntity.setSparkConfig(wocConfigWorkReq.getSparkConfig());
 		}
+    if (!Strings.isEmpty(wocConfigWorkReq.getSyncConf())) {
+      workConfigEntity.setSyncConf(wocConfigWorkReq.getSyncConf());
+    }
 		if (!Strings.isEmpty(wocConfigWorkReq.getCorn())) {
 			// 检验corn表达式
 			boolean validExpression = CronExpression.isValidExpression(wocConfigWorkReq.getCorn());

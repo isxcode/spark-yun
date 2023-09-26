@@ -6,7 +6,7 @@ create table SY_SYNC_WORK_CONFIG
   work_id                 varchar(200)  not null comment '作业唯一id',
   source_db_type          varchar(200)  not null comment '来源数据源类型',
   source_db_id            varchar(200)  not null comment '来源数据源唯一id',
-  source_table         varchar(200)  not null comment '来源表名',
+  source_table            varchar(200)  not null comment '来源表名',
   query_condition         varchar(200)  null comment '查询条件',
   target_db_type          varchar(200)  not null comment '目标数据源类型',
   target_db_id            varchar(200)  not null comment '目标数据源唯一id',
@@ -29,10 +29,10 @@ create table SY_FILE
 (
   id                      varchar(200)  not null comment '文件配置唯一id'
     primary key,
-  file_name                varchar(200)  null comment '文件名称',
-  file_size                varchar(200)  null comment '文件大小',
-  file_path                varchar(200)  null comment '文件存储路径',
-  file_type                varchar(200)  null comment '文件类型',
+  file_name               varchar(200)  null comment '文件名称',
+  file_size               varchar(200)  null comment '文件大小',
+  file_path               varchar(200)  null comment '文件存储路径',
+  file_type               varchar(200)  null comment '文件类型',
   create_by               varchar(200)  not null comment '创建人',
   create_date_time        datetime      not null comment '创建时间',
   last_modified_by        varchar(200)  not null comment '更新人',
@@ -43,3 +43,6 @@ create table SY_FILE
   constraint id
     unique (id)
 );
+
+ALTER TABLE SY_WORK_CONFIG ADD sync_conf text NULL;
+ALTER TABLE SY_WORK_CONFIG CHANGE sync_conf sync_conf text NULL AFTER sql_script;

@@ -44,6 +44,8 @@ public class WorkConfigEntity {
 
 	private String sparkConfig;
 
+  private String syncConf;
+
 	private String corn;
 
 	@CreatedDate

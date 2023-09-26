@@ -23,6 +23,9 @@ public class ConfigWorkReq {
 	@Schema(title = "spark的配置文件", example = "{\"spark.executor.memory\":\"1g\",\"spark.driver.memory\":\"1g\"}")
 	private String sparkConfig;
 
+  @Schema(title = "数据同步的配置文件", example = "{\"partitionColumn\": \"id\", \"lowerBound\":\"1\",\"upperBound\":\"10000000\",\"numPartitions\": \"300\"}")
+  private String syncConf;
+
 	@Schema(title = "corn表达式", example = "0 0/3 * * * ?")
 	private String corn;
 }

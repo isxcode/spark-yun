@@ -27,6 +27,13 @@ public class SyncWorkService {
 
   private final AesUtils aesUtils;
 
+  /**
+   * 返回筛选后的表名。
+   * @param metaData 数据库连接的元数据。
+   * @param catalog 数据库名。
+   * @param schema 模式名。
+   * @return 筛选后的数据库表名。
+   */
   public List<String> tables(DatabaseMetaData metaData, String catalog, String schema) throws SQLException {
     List<String> list = new ArrayList<>();
     ResultSet tables = metaData.getTables( catalog,schema, null
@@ -37,6 +44,13 @@ public class SyncWorkService {
     return list;
   }
 
+  /**
+   * 返回筛选后的视图名。
+   * @param metaData 数据库连接的元数据。
+   * @param catalog 数据库名。
+   * @param schema 模式名。
+   * @return 筛选后的数据库视图名。
+   */
   public List<String> views(DatabaseMetaData metaData, String catalog, String schema) throws SQLException {
     List<String> list = new ArrayList<>();
     ResultSet views = metaData.getTables(catalog,schema, null
@@ -47,6 +61,14 @@ public class SyncWorkService {
     return list;
   }
 
+  /**
+   * 返回筛选后的数据表字段信息。
+   * @param metaData 数据库连接的元数据。
+   * @param catalog 数据库名。
+   * @param schema 模式名。
+   * @param table 表名。
+   * @return 筛选后的数据表字段信息。
+   */
   public List<List<String>> columns(DatabaseMetaData metaData, String catalog, String schema, String table) throws SQLException {
     List<List<String>> list = new ArrayList<>();
     ResultSet columns = metaData.getColumns(catalog,schema, table
@@ -64,6 +86,13 @@ public class SyncWorkService {
     return list;
   }
 
+  /**
+   * 获取处理后的catalog与schema。
+   * @param dataBase 传入的数据库名称。
+   * @param catalog 数据库名。
+   * @param schema 模式名。
+   * @return 按规则判断数据源类型 得到catalog与schema的值 返回map。
+   */
   public Map<String, String> transform(String dataBase, String catalog, String schema) {
     Map<String, String> result = new HashMap<>();
 
@@ -84,6 +113,13 @@ public class SyncWorkService {
     return result;
   }
 
+  /**
+   * 获取数据库连接。
+   * @param dataSourceId 数据源唯一id。
+   * @param driver 数据库驱动文件路径。
+   * @param classPath 数据库驱动类名。
+   * @return 数据库连接。
+   */
   public Connection getConnection(String dataSourceId, String driver, String classPath) throws Exception {
     Optional<DatasourceEntity> datasourceEntityOptional = datasourceRepository.findById(dataSourceId);
     if (!datasourceEntityOptional.isPresent()) {
@@ -96,6 +132,12 @@ public class SyncWorkService {
       driver, classPath);
   }
 
+  /**
+   * 获取数据预览SQL。
+   * @param dataType 数据库类型。
+   * @param tableName 数据库表名。
+   * @return 数据预览SQL。
+   */
   public String getDataPreviewSql(String dataType, String tableName) {
     switch (dataType){
       case ORACLE:
