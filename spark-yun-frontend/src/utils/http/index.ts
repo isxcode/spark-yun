@@ -9,18 +9,19 @@
 import { createAxios } from '@/plugins/http-request'
 import router from '@/router'
 import { merge } from '../checkType'
-import store from '@/store'
 import { ElMessage } from 'element-plus'
 import * as process from 'process'
+import { useAuthStore } from '@/store/useAuth'
 
 const message = ElMessage
-const storeData: any = store
 
 export const httpOption = {
   transform: {
     requestInterceptors: (config: any) => {
-      config.headers['authorization'] = storeData.state?.authStoreModule?.token
-      config.headers['tenant'] = storeData.state?.authStoreModule?.tenantId
+      const authStore = useAuthStore()
+
+      config.headers['authorization'] = authStore.token
+      config.headers['tenant'] = authStore.tenantId
 
       return config
     },

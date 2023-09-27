@@ -116,7 +116,7 @@ function columnSlotAdapter(column: any, colConfig: any) {
 <style lang="scss">
 .block-table {
   .vxe-table--header tr.vxe-header--row > th {
-    height: $--app-item-height;
+    height: getCssVar('menu', 'item-height');
     padding: 0;
     background-color: #fff;
   }
@@ -124,7 +124,7 @@ function columnSlotAdapter(column: any, colConfig: any) {
     height: 40px;
     padding: 0;
     .vxe-cell {
-      font-size: $--app-small-font-size;
+      font-size: getCssVar('font-size', 'extra-small');
     }
   }
   .vxe-table--empty-content {
@@ -141,9 +141,9 @@ function columnSlotAdapter(column: any, colConfig: any) {
   &.el-pagination.is-background .btn-next,
   &.el-pagination.is-background .el-pager li {
     background: #fff;
-    border: $--app-border-color solid 1px;
+    border: getCssVar('border-color') solid 1px;
     &.active {
-      background-color: $--app-primary-color;
+      background-color: getCssVar('color', 'primary');;
     }
   }
 

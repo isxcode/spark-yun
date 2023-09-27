@@ -53,7 +53,7 @@ const props: any = withDefaults(
   display: flex;
   align-items: center;
   padding-left: 20px;
-  background-color: $--app-light-color;
-  border-bottom: 1px solid $--app-border-color;
+  background-color: getCssVar('color', 'white');
+  border-bottom: 1px solid getCssVar('border-color');
 }
 </style>

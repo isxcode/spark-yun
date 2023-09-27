@@ -1,0 +1,172 @@
+body * {
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: element-icons !important;
+  background-color: #f7f7f7;
+  overflow: hidden;
+  margin: 0;
+  line-height: 1.15;
+  font-variant: normal;
+  width: 100% !important;
+
+  .layout-middle {
+    overflow-y: auto;
+  }
+}
+
+*:focus {
+  outline: none;
+}
+
+.zqy-seach-table {
+  .zqy-loading {
+    height: calc(100vh - 176px);
+  }
+  .zqy-table-top {
+    height: 60px;
+    display: flex;
+    padding-left: 20px;
+    padding-right: 20px;
+    box-sizing: border-box;
+    align-items: center;
+    justify-content: space-between;
+    .zqy-seach {
+      .el-input {
+        width: 330px;
+      }
+    }
+  }
+  .zqy-table {
+    padding: 0 20px;
+    .vxe-table--body-wrapper {
+      max-height: calc(100vh - 292px);
+    }
+    .btn-group {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      span {
+        cursor: pointer;
+        color: getCssVar('color', 'primary', 'light-5');
+        &:hover {
+          color: getCssVar('color', 'primary');;
+        }
+      }
+    }
+  }
+}
+
+.el-form-item {
+  // margin-bottom: 2px;
+  .el-form-item__label {
+    margin-bottom: -8px;
+    font-size: getCssVar('font-size', 'extra-small');
+    position: relative;
+    &::before {
+      position: absolute;
+      left: -8px;
+    }
+  }
+  .el-form-item__content {
+    .el-input {
+      height: getCssVar('input-height');
+      .el-input__inner {
+        height: getCssVar('input-height');
+        border-radius: getCssVar('border-radius', 'small');
+        font-size: getCssVar('font-size', 'extra-small');
+      }
+    }
+    .el-select {
+      width: 100%;
+      .el-input {
+        .el-input__suffix {
+          .el-input__suffix-inner {
+            .el-select__caret {
+              line-height: 32px;
+            }
+          }
+        }
+      }
+    }
+    .el-textarea {
+      .el-textarea__inner {
+        border-radius: getCssVar('border-radius', 'small');
+        font-size: getCssVar('font-size', 'extra-small');
+        padding: 8px;
+      }
+    }
+    .el-date-editor {
+      .el-input__prefix {
+        left: unset;
+        right: 5px;
+      }
+    }
+    .el-radio-group {
+      width: 100%;
+      .el-radio {
+        .el-radio__label {
+          font-size: getCssVar('font-size', 'extra-small');
+        }
+      }
+    }
+    .el-input-number {
+      width: 100%;
+      .el-input {
+        .el-input__wrapper {
+          padding: 0 10px;
+          .el-input__inner {
+            text-align: left;
+          }
+        }
+      }
+    }
+  }
+  &.is-error {
+    .el-form-item__error {
+      // margin-top: -4px;
+    }
+  }
+}
+
+.el-button {
+  height: getCssVar('input-height');
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: getCssVar('border-radius', 'small');
+  font-size: getCssVar('font-size', 'extra-small');
+}
+
+.el-card {
+  border-radius: getCssVar('border-radius', 'small');
+}
+
+.el-tabs__nav-wrap::after {
+  background-color: unset;
+}
+
+.el-button {
+  height: 28px;
+}
+
+.el-input {
+  height: getCssVar('input-height');
+  .el-input__wrapper {
+    border-radius: getCssVar('border-radius', 'small');
+    .el-input__inner {
+      height: getCssVar('input-height');
+      font-size: getCssVar('font-size', 'extra-small');
+      // padding: 8px;
+    }
+  }
+}
+
+.el-select__popper {
+  .el-select-dropdown__item {
+    font-size: getCssVar('font-size', 'extra-small');
+  }
+}
