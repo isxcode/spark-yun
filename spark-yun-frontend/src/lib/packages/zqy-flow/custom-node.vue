@@ -95,7 +95,7 @@ onMounted(() => {
             font-size: 14px;
             transform: rotate(90deg);
             cursor: pointer;
-            color: $--app-info-color;
+            color: getCssVar('color', 'info');
         }
         .custom-icon {
             color: #9599a2;

@@ -122,7 +122,7 @@ function handleReflesh() {
     bottom: 0;
     left: 12px;
     right: 8px;
-    background-color: $--app-header-bgColor;
+    background-color: #f7f7f7;
     z-index: 100;
 
     .loader {
@@ -131,7 +131,7 @@ function handleReflesh() {
       position: absolute;
       transform: translate(-50%, -50%);
 
-      color: $--app-primary-color;
+      color: getCssVar('color', 'primary');;
       font-size: 10px;
       width: 1em;
       height: 1em;
@@ -153,7 +153,7 @@ function handleReflesh() {
     transform: translate(-50%, -50%);
     margin-top: 58px;
     font-size: 12px;
-    color: $--app-primary-color;
+    color: getCssVar('color', 'primary');;
   }
   .zqy-loading-network-error {
     position: absolute;
@@ -161,7 +161,7 @@ function handleReflesh() {
     bottom: 0;
     left: 12px;
     right: 8px;
-    background-color: $--app-header-bgColor;
+    background-color: #f7f7f7;
     z-index: 100;
     display: flex;
     align-items: center;
@@ -174,14 +174,14 @@ function handleReflesh() {
       width: auto;
     }
     .zqy-loading-error-text {
-      color: $--app-info-color;
+      color: getCssVar('color', 'info');
       display: flex;
       align-items: center;
     }
     .zqy-loading-refresh-btn {
       font-size: 12px;
       padding: 12px 0 !important;
-      color: $--app-primary-color;
+      color: getCssVar('color', 'primary');;
     }
   }
 }

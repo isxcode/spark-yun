@@ -52,20 +52,23 @@
 
 <script lang="ts" setup>
 import { useRouter } from 'vue-router'
-import { useState, useMutations } from '@/hooks/useStore'
+// import { useState, useMutations } from '@/hooks/useStore'
 import { nextTick, onMounted, onUnmounted, reactive, ref } from 'vue'
 import { ChangeTenantData, QueryTenantList } from '@/services/login.service'
 import eventBus from '@/utils/eventBus'
+import { useAuthStore } from '@/store/useAuth'
 // import { GetTenantList } from '@/services/tenant-list.service'
 
-const state = useState([ 'userInfo', 'tenantId' ], 'authStoreModule')
-const mutations = useMutations([ 'setUserInfo', 'setToken', 'setTenantId', 'setRole', 'setCurrentMenu' ], 'authStoreModule')
+const authStore = useAuthStore()
+
+// const state = useState([ 'userInfo', 'tenantId' ], 'authStoreModule')
+// const mutations = useMutations([ 'setUserInfo', 'setToken', 'setTenantId', 'setRole', 'setCurrentMenu' ], 'authStoreModule')
 const router = useRouter()
 
 const tenantSelect = ref('')
 let headerConfig = reactive({
   tenantList: [],
-  userInfo: state.userInfo.value
+  userInfo: authStore.userInfo
 })
 
 function handleCommand(command: string): void {
@@ -78,13 +81,13 @@ function handleCommand(command: string): void {
 }
 
 function clearStore() {
-  mutations.setUserInfo({
+  authStore.setUserInfo({
   })
-  mutations.setToken('')
-  mutations.setTenantId('')
-  mutations.setRole('')
-  mutations.setRole('')
-  mutations.setCurrentMenu('')
+  authStore.setToken('')
+  authStore.setTenantId('')
+  authStore.setRole('')
+  authStore.setRole('')
+  authStore.setCurrentMenu('')
 }
 
 function getTenantList(): void {
@@ -111,13 +114,13 @@ function tenantChange(e: string): void {
   })
     .then(() => {
       console.log('切换成功')
-      mutations.setTenantId(e)
+      authStore.setTenantId(e)
 
       // 这里发送eventbus，刷新当前打开的页面
       eventBus.emit('tenantChange')
     })
     .catch(() => {
-      tenantSelect.value = state.tenantId.value
+      tenantSelect.value = authStore.tenantId
       console.log('切换失败')
     })
 }
@@ -158,8 +161,8 @@ onUnmounted(() => {
 .zqy-header {
   // min-width: 960px;
   height: 60px;
-  box-shadow: $--app-box-shadow;
-  background-color: $--app-light-color;
+  box-shadow: getCssVar('box-shadow', 'lighter');
+  background-color: getCssVar('color', 'white');
   display: flex;
   justify-content: space-between;
   z-index: 100;
@@ -168,14 +171,14 @@ onUnmounted(() => {
   top: 0;
   left: 0;
   .header-name {
-    font-size: $--app-logo-large-font-size;
-    font-weight: $--app-base-font-weight;
+    font-size: 32px;
+    font-weight: bold;
     height: 100%;
     display: flex;
     align-items: center;
     width: 200px;
     justify-content: center;
-    color: $--app-primary-color;
+    color: getCssVar('color', 'primary');;
     cursor: pointer;
   }
   .zqy-tenant {
@@ -218,14 +221,14 @@ onUnmounted(() => {
       margin-right: 20px;
     }
     .el-avatar {
-      background-color: $--app-primary-color;
-      color: $--app-light-color;
-      font-size: $--app-small-font-size;
+      background-color: getCssVar('color', 'primary');;
+      color: getCssVar('color', 'white');
+      font-size: getCssVar('font-size', 'extra-small');
     }
 
     .redirect-url {
-      font-size: $--app-small-font-size;
-      color: $--app-primary-color;
+      font-size: getCssVar('font-size', 'extra-small');
+      color: getCssVar('color', 'primary');;
       margin-right: 12px;
       cursor: pointer;
       &:hover {
@@ -236,7 +239,7 @@ onUnmounted(() => {
 }
 .el-dropdown-menu {
   .el-dropdown-menu__item {
-    font-size: $--app-small-font-size;
+    font-size: getCssVar('font-size', 'extra-small');
   }
 }
 </style>

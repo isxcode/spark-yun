@@ -15,62 +15,62 @@ import TenantUser from '@/views/tenant-user/index.vue'
 
 export default [
   {
-    path: '/computer-group',
+    path: 'computer-group',
     name: 'computer-group',
     component: ComputerGroup
   },
   {
-    path: '/computer-pointer',
+    path: 'computer-pointer',
     name: 'computer-pointer',
     component: ComputerPointer
   },
   {
-    path: '/datasource',
+    path: 'datasource',
     name: 'datasource',
     component: DataSource
   },
   {
-    path: '/workflow',
+    path: 'workflow',
     name: 'workflow',
     component: Workflow
   },
   {
-    path: '/workflow-detail',
+    path: 'workflow-detail',
     name: 'workflow-detail',
     component: WorkflowDetail
   },
   {
-    path: '/workflow-page',
+    path: 'workflow-page',
     name: 'workflow-page',
     component: WorkflowPage
   },
   {
-    path: '/work-item',
+    path: 'work-item',
     name: 'work-item',
     component: WorkItem
   },
   {
-    path: '/tenant-user',
+    path: 'tenant-user',
     name: 'tenant-user',
     component: TenantUser
   },
   {
-    path: '/user-center',
+    path: 'user-center',
     name: 'user-center',
     component: UserCenter
   },
   {
-    path: '/tenant-list',
+    path: 'tenant-list',
     name: 'tenant-list',
     component: TenantList
   },
   {
-    path: '/license',
+    path: 'license',
     name: 'license',
     component: License
   },
   {
-    path: '/schedule',
+    path: 'schedule',
     name: 'schedule',
     component: Schedule
   }

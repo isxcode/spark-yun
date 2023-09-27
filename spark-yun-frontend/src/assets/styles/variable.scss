@@ -1,0 +1,33 @@
+$--colors: (
+  "primary": (
+    "base": #F87E1A
+  ),
+  "success": (
+    "base": #21ba45
+  ),
+  "warning": (
+    "base": #f2711c
+  ),
+  "danger": (
+    "base": #db2828
+  ),
+  "error": (
+    "base": #db2828
+  ),
+  "info": (
+    "base": #b2b2b2
+  )
+);
+
+$--menu: (
+  "item-height": 44px
+);
+
+
+@forward "element-plus/theme-chalk/src/common/var.scss" with (
+  $colors: $--colors,
+  $menu: $--menu,
+);
+
+@forward "element-plus/theme-chalk/src/mixins/function.scss";
+

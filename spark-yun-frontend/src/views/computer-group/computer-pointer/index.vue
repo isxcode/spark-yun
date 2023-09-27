@@ -332,7 +332,7 @@ onUnmounted(() => {
 <style lang="scss">
 .zqy-seach-table {
   .click-show-more {
-    font-size: $--app-small-font-size;
+    font-size: getCssVar('font-size', 'extra-small');
   }
 
   &.zqy-computer-node {

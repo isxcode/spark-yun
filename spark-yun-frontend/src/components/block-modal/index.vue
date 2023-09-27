@@ -109,7 +109,7 @@ function close() {
     }
     .el-dialog__title {
       font-size: 16px;
-      color: $--app-base-font-color;
+      color: getCssVar('text-color', 'primary');
     }
   }
   .el-dialog__body {

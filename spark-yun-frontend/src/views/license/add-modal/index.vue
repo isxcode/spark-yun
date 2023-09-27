@@ -87,9 +87,9 @@ defineExpose({
   margin: 20px;
   .el-upload {
     .el-upload-dragger {
-      border-radius: $--app-border-radius;
+      border-radius: getCssVar('border-radius', 'small');
       .el-upload__text {
-        font-size: $--app-small-font-size;
+        font-size: getCssVar('font-size', 'extra-small');
       }
     }
   }
