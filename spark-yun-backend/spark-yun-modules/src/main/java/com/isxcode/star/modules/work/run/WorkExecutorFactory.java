@@ -24,6 +24,8 @@ public class WorkExecutorFactory {
 				return applicationContext.getBean(QuerySqlExecutor.class);
 			case WorkType.EXECUTE_JDBC_SQL :
 				return applicationContext.getBean(ExecuteSqlExecutor.class);
+      case WorkType.BASH:
+        return applicationContext.getBean(BashExecutor.class);
 			default :
 				throw new IsxAppException("作业类型不存在");
 		}
