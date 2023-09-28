@@ -7,6 +7,7 @@ import com.isxcode.star.modules.datasource.entity.DatasourceEntity;
 import com.isxcode.star.modules.datasource.repository.DatasourceRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.sql.Connection;
@@ -32,11 +33,17 @@ public class SyncWorkService {
    * @param metaData 数据库连接的元数据。
    * @param catalog 数据库名。
    * @param schema 模式名。
+   * @param tablePattern 表名模式，支持模糊匹配。
    * @return 筛选后的数据库表名。
    */
-  public List<String> tables(DatabaseMetaData metaData, String catalog, String schema) throws SQLException {
+  public List<String> tables(DatabaseMetaData metaData, String catalog, String schema, String tablePattern) throws SQLException {
     List<String> list = new ArrayList<>();
-    ResultSet tables = metaData.getTables( catalog,schema, null
+    if(StringUtils.isBlank(tablePattern)) {
+      tablePattern = "%";
+    }else {
+      tablePattern = "%" + tablePattern + "%";
+    }
+    ResultSet tables = metaData.getTables( catalog,schema, tablePattern
       , new String[]{"TABLE"});
     while (tables.next()){
       list.add(tables.getString("TABLE_NAME"));
@@ -51,9 +58,14 @@ public class SyncWorkService {
    * @param schema 模式名。
    * @return 筛选后的数据库视图名。
    */
-  public List<String> views(DatabaseMetaData metaData, String catalog, String schema) throws SQLException {
+  public List<String> views(DatabaseMetaData metaData, String catalog, String schema, String tablePattern) throws SQLException {
     List<String> list = new ArrayList<>();
-    ResultSet views = metaData.getTables(catalog,schema, null
+    if(StringUtils.isBlank(tablePattern)) {
+      tablePattern = "%";
+    }else {
+      tablePattern = "%" + tablePattern + "%";
+    }
+    ResultSet views = metaData.getTables(catalog,schema, tablePattern
       , new String[]{"VIEW"});
     while (views.next()){
       list.add(views.getString("TABLE_NAME"));

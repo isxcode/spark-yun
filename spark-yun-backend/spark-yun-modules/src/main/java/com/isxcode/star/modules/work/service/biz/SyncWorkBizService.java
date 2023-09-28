@@ -75,11 +75,9 @@ public class SyncWorkBizService {
   public GetDataSourceTablesRes getDataSourceTables(GetDataSourceTablesReq getDataSourceTablesReq) throws Exception {
 
     Connection connection = syncWorkService.getConnection(getDataSourceTablesReq.getDataSourceId(), null,null);
-    String catalog = getCatalogOrSchema(connection, true);
-    String schema = getCatalogOrSchema(connection, false);
-
-    List<String> tables = syncWorkService.tables(connection.getMetaData(), catalog, schema);
-    List<String> views = syncWorkService.views(connection.getMetaData(), catalog, schema);
+    Map<String, String> transform = getTransform(connection, getDataSourceTablesReq.getTablePattern());
+    List<String> tables = syncWorkService.tables(connection.getMetaData(), transform.get("catalog"), transform.get("schema"), transform.get("tableName"));
+    List<String> views = syncWorkService.views(connection.getMetaData(), transform.get("catalog"), transform.get("schema"), transform.get("tableName"));
     tables.addAll(views);
     connection.close();
     return GetDataSourceTablesRes.builder().tables(tables).build();
@@ -88,20 +86,8 @@ public class SyncWorkBizService {
   public GetDataSourceColumnsRes getDataSourceColumns(GetDataSourceColumnsReq getDataSourceColumnsReq) throws Exception {
 
     Connection connection = syncWorkService.getConnection(getDataSourceColumnsReq.getDataSourceId(), null, null);
-    String dataBase = null;
-    String tableName = getDataSourceColumnsReq.getTableName();
-    if (tableName.contains(".")){
-      dataBase = tableName.split("\\.")[0];
-      tableName = tableName.split("\\.")[1];
-    }
-
-    String catalog = getCatalogOrSchema(connection, true);
-    String schema = getCatalogOrSchema(connection, false);
-
-    Map<String, String> transform = syncWorkService.transform(dataBase, catalog, schema);
-
-    List<List<String>> columns = syncWorkService.columns(connection.getMetaData(), transform.get("catalog"), transform.get("schema"), tableName);
-
+    Map<String, String> transform = getTransform(connection, getDataSourceColumnsReq.getTableName());
+    List<List<String>> columns = syncWorkService.columns(connection.getMetaData(), transform.get("catalog"), transform.get("schema"), transform.get("tableName"));
     connection.close();
     return GetDataSourceColumnsRes.builder().columns(columns).build();
   }
@@ -145,8 +131,18 @@ public class SyncWorkBizService {
 
   public GetCreateTableSqlRes getCreateTableSql(GetCreateTableSqlReq getCreateTableSqlReq) throws Exception {
     Connection connection = syncWorkService.getConnection(getCreateTableSqlReq.getDataSourceId(), null, null);
+    Map<String, String> transform = getTransform(connection, getCreateTableSqlReq.getTableName());
+    ResultSet columns = connection.getMetaData().getColumns(transform.get("catalog"),transform.get("schema"), transform.get("tableName"), null);
+    String sql = String.join(" ","CREATE TABLE", transform.get("tableName"), "(");
+    while (columns.next()){
+      sql = String.join(" ",sql,"\n",columns.getString("COLUMN_NAME"),"String,");
+    }
+    connection.close();
+    return GetCreateTableSqlRes.builder().sql(sql.substring(0, sql.length() - 1) + "\n)").build();
+  }
+
+  private Map<String,String> getTransform(Connection connection, String tableName) {
     String dataBase = null;
-    String tableName = getCreateTableSqlReq.getTableName();
     if (tableName.contains(".")){
       dataBase = tableName.split("\\.")[0];
       tableName = tableName.split("\\.")[1];
@@ -156,15 +152,9 @@ public class SyncWorkBizService {
     String schema = getCatalogOrSchema(connection, false);
 
     Map<String, String> transform = syncWorkService.transform(dataBase, catalog, schema);
-    ResultSet columns = connection.getMetaData().getColumns(transform.get("catalog"),transform.get("schema"), tableName, null);
-    String sql = String.join(" ","CREATE TABLE", tableName, "(");
-    while (columns.next()){
-      sql = String.join(" ",sql,"\n",columns.getString("COLUMN_NAME"),"String,");
-    }
-    return GetCreateTableSqlRes.builder().sql(sql.substring(0, sql.length() - 1) + "\n)").build();
+    transform.put("tableName", tableName);
+    return transform;
   }
-
-
 
   private String getCatalogOrSchema(Connection connection, boolean isCatalog) {
     try {

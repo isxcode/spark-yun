@@ -11,4 +11,8 @@ public class GetDataSourceTablesReq {
 	@Schema(title = "数据源唯一id", example = "sy_123456789")
 	@NotEmpty(message = "作业id不能为空")
 	private String dataSourceId;
+
+  @Schema(title = "数据库表名", example = "SY")
+  @NotEmpty(message = "作业id不能为空")
+  private String tablePattern;
 }
