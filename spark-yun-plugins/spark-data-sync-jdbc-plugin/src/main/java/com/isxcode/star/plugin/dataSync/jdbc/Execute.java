@@ -43,34 +43,34 @@ public class Execute {
         .option("truncate", "true")
         .load();
       target.createOrReplaceTempView(targetTable);
-      String sourceColums =  "";
-      HashMap<String,String> realColums = new HashMap<>();
-      for (HashMap<String,String> column : conf.getColumMapping().get("sourceTableData")){
+      StringBuilder sourceColums = new StringBuilder();
+      HashMap<String,String> realColumns = new HashMap<>();
+      for (HashMap<String,String> column : conf.getArgs().getSourceTableData()){
         if(column.get("sql") != null && !"".equals(column.get("sql"))){
-          realColums.put(column.get("code"), column.get("sql"));
+          realColumns.put(column.get("code"), column.get("sql"));
         }else {
-          realColums.put(column.get("code"), column.get("code"));
+          realColumns.put(column.get("code"), column.get("code"));
         }
       }
       HashMap<String,String> realConnect = new HashMap<>();
-      for (HashMap<String,String> connect : conf.getColumMapping().get("connect")){
-        realConnect.put(connect.get("target"),realColums.get("source"));
+      for (HashMap<String,String> connect : conf.getArgs().getConnect()){
+        realConnect.put(connect.get("target"),realColumns.get(connect.get("source")));
       }
       for (String column : target.columns()) {
         if (null == realConnect.get(column)) {
-          sourceColums += "null" + ",";
+          sourceColums.append("null" + ",");
         }else {
           String sourceColum = realConnect.get(column);
           //含有"'"则表示希望写入固定值
           if(sourceColum.contains("'")){
-            sourceColums += sourceColum + ",";
+            sourceColums.append(sourceColum).append(",");
           }else {
-            sourceColums += '`'+ sourceColum + '`' + ",";
+            sourceColums.append('`').append(sourceColum).append('`').append(",");
           }
         }
 
       }
-      sourceColums = sourceColums.substring(0, sourceColums.length() - 1);
+      sourceColums = new StringBuilder(sourceColums.substring(0, sourceColums.length() - 1));
 
       String sql;
       switch (conf.getOverMode()) {
@@ -85,7 +85,7 @@ public class Execute {
           return;
       }
 
-      sql = sql + sourceTable + " SELECT " + sourceColums + " FROM "+ targetTable + " " + conf.getCondition();
+      sql = sql + targetTable + " SELECT " + sourceColums + " FROM "+ sourceTable + " " + conf.getCondition();
 
       // 执行数据同步操作
       sparkSession.sql(sql);
@@ -97,7 +97,7 @@ public class Execute {
 
 	public static JDBCSyncPluginReq parse(String[] args) {
 		if (args.length == 0) {
-			throw new RuntimeException("args is empty");
+			throw new RuntimeException("缺少参数");
 		}
 		return JSON.parseObject(Base64.getDecoder().decode(args[0]), JDBCSyncPluginReq.class);
 	}

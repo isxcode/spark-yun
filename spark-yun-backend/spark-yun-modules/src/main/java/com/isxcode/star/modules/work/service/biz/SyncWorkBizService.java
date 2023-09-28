@@ -69,7 +69,6 @@ public class SyncWorkBizService {
 		}
 
     SyncWorkConfigEntity syncWorkConfigEntity = syncWorkConfigRepository.findByWorkId(workEntityOptional.get().getId());
-    saveSyncWorkConfigReq.setColumMapping(JSON.toJSON(saveSyncWorkConfigReq.getColumMapping()));
     syncWorkConfigRepository.save(syncWorkConfigMapper.saveSyncWorkConfigReqAndSyncWorkConfigEntityToSyncWorkConfigEntity(saveSyncWorkConfigReq,syncWorkConfigEntity));
 	}
 
