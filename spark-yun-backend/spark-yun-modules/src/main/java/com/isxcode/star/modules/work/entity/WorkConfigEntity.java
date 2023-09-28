@@ -38,11 +38,15 @@ public class WorkConfigEntity {
 
 	private String clusterId;
 
+  private String clusterNodeId;
+
 	private String datasourceId;
 
 	private String sqlScript;
 
 	private String sparkConfig;
+
+  private String bashScript;
 
 	private String corn;
 

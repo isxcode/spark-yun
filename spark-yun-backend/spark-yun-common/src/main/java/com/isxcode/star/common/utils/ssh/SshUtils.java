@@ -11,7 +11,7 @@ import com.jcraft.jsch.SftpException;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.io.DefaultResourceLoader;
+import org.springframework.core.io.FileSystemResourceLoader;
 
 /** ssh连接工具类. */
 @Slf4j
@@ -43,7 +43,7 @@ public class SshUtils {
 		ChannelSftp channel;
 		channel = (ChannelSftp) session.openChannel("sftp");
 		channel.connect(120000);
-		DefaultResourceLoader resourceLoader = new DefaultResourceLoader();
+		FileSystemResourceLoader resourceLoader = new FileSystemResourceLoader();
 		channel.put(resourceLoader.getResource(srcPath).getInputStream(), dstPath);
 
 		// 文件校验

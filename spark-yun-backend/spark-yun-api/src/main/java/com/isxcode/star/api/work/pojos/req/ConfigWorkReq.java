@@ -20,8 +20,14 @@ public class ConfigWorkReq {
 	@Schema(title = "计算引擎唯一id", example = "sy_354554267db34602896c35b4162fd4d8")
 	private String clusterId;
 
+  @Schema(title = "计算节点唯一id", example = "sy_354554267db34602896c35b4162fd4d8")
+  private String clusterNodeId;
+
 	@Schema(title = "spark的配置文件", example = "{\"spark.executor.memory\":\"1g\",\"spark.driver.memory\":\"1g\"}")
 	private String sparkConfig;
+
+  @Schema(title = "bash脚本语句", example = "cat /etc/hosts")
+  private String bashScript;
 
 	@Schema(title = "corn表达式", example = "0 0/3 * * * ?")
 	private String corn;

@@ -8,4 +8,6 @@ public interface WorkType {
 	String EXECUTE_JDBC_SQL = "EXE_JDBC";
 
 	String QUERY_JDBC_SQL = "QUERY_JDBC";
+
+  String BASH = "BASH";
 }
