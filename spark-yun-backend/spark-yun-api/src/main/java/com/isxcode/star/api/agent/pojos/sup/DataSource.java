@@ -1,4 +1,4 @@
-package com.isxcode.star.api.agent.pojos.req;
+package com.isxcode.star.api.agent.pojos.sup;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

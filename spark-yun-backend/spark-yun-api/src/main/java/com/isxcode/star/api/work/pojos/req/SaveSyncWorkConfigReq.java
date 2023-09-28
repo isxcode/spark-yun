@@ -35,18 +35,13 @@ public class SaveSyncWorkConfigReq {
   @Schema(title = "写入模式", example = "OVERWRITE or INTO")
   @NotEmpty(message = "写入模式不能为空")
   private String overMode;
-  @Schema(title = "字段映射关系", example = "{\n" +
-    "        \"installed_rank\": [\"installed_rank\", \"\"],\n" +
-    "        \"version\": [\"version\",\"\"],\n" +
-    "        \"description\": [\"description\",\"\"],\n" +
-    "        \"type\": [\"type\",\"\"],\n" +
-    "        \"script\": [\"script\",\"\"],\n" +
-    "        \"checksum\": [\"checksum\",\"\"],\n" +
-    "\"installed_by\": [\"installed_by\",\"\"],\n" +
-    "\"installed_on\": [\"installed_on\",\"\"],\n" +
-    "\"execution_time\": [\"execution_time\",\"\"],\n" +
-    "  \"success\": [\"success\",\"\"]\n" +
-    "    }")
-  @NotNull(message = "字段映射关系")
-  private Object columMapping;
+  @Schema(title = "来源表信息", example = "[{\"code\":\"installed_rank\",\"type\":\"String\",\"sql\":\"\"}]")
+  @NotEmpty(message = "来源表信息不能为空")
+  private String sourceTableData;
+  @Schema(title = "去向表信息", example = "[{\"code\":\"installed_rank\",\"type\":\"String\"}]")
+  @NotEmpty(message = "去向表信息不能为空")
+  private String targetTableData;
+  @Schema(title = "字段映射关系", example = "[{\"source\": \"installed_rank\",\"target\": \"installed_rank\"}]")
+  @NotNull(message = "字段映射关系不能为空")
+  private String connect;
 }

@@ -2,11 +2,12 @@ package com.isxcode.star.modules.work.run;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
-import com.isxcode.star.api.agent.pojos.req.DataSource;
+import com.isxcode.star.api.agent.pojos.sup.DataSource;
 import com.isxcode.star.api.agent.pojos.req.JDBCSyncPluginReq;
 import com.isxcode.star.api.agent.pojos.req.SparkSubmit;
 import com.isxcode.star.api.agent.pojos.req.YagExecuteWorkReq;
 import com.isxcode.star.api.agent.pojos.res.YagGetLogRes;
+import com.isxcode.star.api.agent.pojos.sup.MappingData;
 import com.isxcode.star.api.api.constants.PathConstants;
 import com.isxcode.star.api.cluster.constants.ClusterNodeStatus;
 import com.isxcode.star.api.work.constants.WorkLog;
@@ -128,7 +129,7 @@ public class DataSyncJdbcExecutor extends WorkExecutor {
 
 		// 开始构造SparkSubmit
 		SparkSubmit sparkSubmit = SparkSubmit.builder().verbose(true)
-				.mainClass("com.isxcode.star.plugin.query.sql.Execute").appResource("spark-data-sync-jdbc-plugin.jar")
+				.mainClass("com.isxcode.star.plugin.dataSync.jdbc.Execute").appResource("spark-data-sync-jdbc-plugin.jar")
 				.conf(genSparkSubmitConfig(workRunContext.getSparkConfig())).build();
 
 		// 开始构造pluginReq
@@ -145,6 +146,15 @@ public class DataSyncJdbcExecutor extends WorkExecutor {
       throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "作业创建失败 : 目标数据源不存在  \n");
     }
 
+    MappingData args = MappingData.builder()
+      .sourceTableData(JSON.parseObject(syncWorkConfigEntity.getSourceTableData(),
+        new TypeReference<List<HashMap<String, String>>>() {}.getType()))
+      .targetTableData(JSON.parseObject(syncWorkConfigEntity.getTargetTableData(),
+        new TypeReference<List<HashMap<String, String>>>() {}.getType()))
+      .connect(JSON.parseObject(syncWorkConfigEntity.getColumMapping(),
+        new TypeReference<List<HashMap<String, String>>>() {}.getType()))
+      .build();
+
     JDBCSyncPluginReq pluginReq = JDBCSyncPluginReq.builder()
       .sourceDbInfo(DataSource.builder()
         .url(sourceDBOption.get().getJdbcUrl())
@@ -160,8 +170,7 @@ public class DataSyncJdbcExecutor extends WorkExecutor {
         .build())
       .condition(syncWorkConfigEntity.getQueryCondition())
       .overMode(syncWorkConfigEntity.getOverMode())
-      .columMapping(JSON.parseObject(syncWorkConfigEntity.getColumMapping(),
-        new TypeReference<HashMap<String, List<HashMap<String,String>>>>(){}))
+      .args(args)
       .sparkConfig(genSparkConfig(workRunContext.getSparkConfig())).build();
 
     //todo 传输数据库依赖
