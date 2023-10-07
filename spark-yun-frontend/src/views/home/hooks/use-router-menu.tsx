@@ -14,7 +14,7 @@ export function useRouterMenu(menuListData: Menu[]) {
 
   const currentMenu = computed(() => menuViewData.value.find(menuData => menuData.code === route.name))
 
-  if (!currentMenu) {
+  if (!currentMenu.value) {
     router.replace({
       name: menuViewData.value[0].code
     })
