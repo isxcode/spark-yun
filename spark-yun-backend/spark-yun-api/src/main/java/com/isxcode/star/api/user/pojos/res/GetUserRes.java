@@ -13,6 +13,12 @@ public class GetUserRes {
 
 	private String username;
 
+  private String phone;
+
+  private String email;
+
+  private String remark;
+
 	private String token;
 
 	private String tenantId;

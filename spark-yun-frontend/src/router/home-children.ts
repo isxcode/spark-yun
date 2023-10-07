@@ -12,6 +12,7 @@ import UserCenter from '@/views/user-center/index.vue'
 import TenantList from '@/views/tenant-list/index.vue'
 import License from '@/views/license/index.vue'
 import TenantUser from '@/views/tenant-user/index.vue'
+import PersonalInfo from '@/views/personal-info/index.vue'
 
 export default [
   {
@@ -73,5 +74,10 @@ export default [
     path: 'schedule',
     name: 'schedule',
     component: Schedule
+  },
+  {
+    path: 'personal-info',
+    name: 'personalInfo',
+    component: PersonalInfo
   }
 ]
