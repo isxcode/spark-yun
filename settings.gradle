@@ -13,6 +13,7 @@ include 'spark-yun-backend:spark-yun-modules'
 include 'spark-yun-backend:spark-yun-security'
 include 'spark-yun-plugins'
 include 'spark-yun-plugins:spark-query-sql-plugin'
+include 'spark-yun-plugins:spark-kafka-to-jdbc-plugin'
 
 include 'spark-yun-vip'
 include 'spark-yun-vip:spark-yun-backend'
