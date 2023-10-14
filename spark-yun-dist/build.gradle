@@ -76,7 +76,7 @@ tasks.register('build_agent', Tar) {
   from('zhiqingyun-agent/bin') {
     into 'zhiqingyun-agent/bin'
   }
-  from('zhiqingyun-agent/conf') {
+  from(rootDir.getAbsolutePath() + "/spark-yun-agent/src/main/resources/application.yml") {
     into 'zhiqingyun-agent/conf'
   }
   from('zhiqingyun-agent/logs') {

@@ -1,6 +1,7 @@
 package com.isxcode.star.agent.run;
 
 import com.alibaba.fastjson2.JSON;
+import com.isxcode.star.agent.properties.SparkYunAgentProperties;
 import com.isxcode.star.api.agent.pojos.req.PluginReq;
 import com.isxcode.star.api.agent.pojos.req.SparkSubmit;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
@@ -10,6 +11,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
 import org.apache.spark.launcher.SparkLauncher;
@@ -17,7 +20,10 @@ import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class YarnAgentService implements AgentService {
+
+	private final SparkYunAgentProperties sparkYunAgentProperties;
 
 	@Override
 	public String getMaster() {
@@ -61,7 +67,7 @@ public class YarnAgentService implements AgentService {
 		InputStream inputStream = launch.getErrorStream();
 		BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
 
-		long timeoutExpiredMs = System.currentTimeMillis() + 30000;
+		long timeoutExpiredMs = System.currentTimeMillis() + sparkYunAgentProperties.getSubmitTimeout() * 1000;
 
 		StringBuilder errLog = new StringBuilder();
 		String line;
