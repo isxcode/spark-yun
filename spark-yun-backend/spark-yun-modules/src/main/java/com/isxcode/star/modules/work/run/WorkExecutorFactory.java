@@ -24,6 +24,8 @@ public class WorkExecutorFactory {
 				return applicationContext.getBean(QuerySqlExecutor.class);
 			case WorkType.EXECUTE_JDBC_SQL :
 				return applicationContext.getBean(ExecuteSqlExecutor.class);
+      case WorkType.DATA_SYNC_JDBC :
+        return applicationContext.getBean(ExecuteSqlExecutor.class);
       case WorkType.BASH:
         return applicationContext.getBean(BashExecutor.class);
 			default :

@@ -46,6 +46,8 @@ public class WorkConfigEntity {
 
 	private String sparkConfig;
 
+  private String syncConf;
+
   private String bashScript;
 
 	private String corn;
