@@ -28,6 +28,7 @@
     "@element-plus/icons-vue": "^2.1.0",
     "axios": "^1.4.0",
     "element-plus": "^2.3.5",
+    "jsplumb": "^2.15.6",
     "mitt": "^3.0.0",
     "qs": "^6.11.2",
     "vue": "^3.3.2",
