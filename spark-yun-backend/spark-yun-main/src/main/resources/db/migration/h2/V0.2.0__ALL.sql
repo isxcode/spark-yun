@@ -46,3 +46,7 @@ ALTER TABLE SY_WORK_CONFIG ADD sync_conf varchar(5000) NULL;
 
 ALTER TABLE SY_SYNC_WORK_CONFIG ADD source_table_data varchar(5000) not NULL;
 ALTER TABLE SY_SYNC_WORK_CONFIG ADD target_table_data varchar(5000) not NULL;
+
+ALTER TABLE SY_WORK_CONFIG ADD bash_script varchar(5000) NULL;
+
+ALTER TABLE SY_WORK_CONFIG ADD cluster_node_id varchar(200) NULL;
