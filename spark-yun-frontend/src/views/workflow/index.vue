@@ -87,15 +87,18 @@ import Breadcrumb from '@/layout/bread-crumb/index.vue'
 import BlockTable from '@/components/block-table/index.vue'
 import LoadingPage from '@/components/loading/index.vue'
 import AddModal from './add-modal/index.vue'
-import { useState } from '@/hooks/useStore'
+// import { useState } from '@/hooks/useStore'
 
 import { BreadCrumbList, TableConfig, FormData } from './workflow.config'
 import { GetWorkflowList, AddWorkflowData, UpdateWorkflowData, DeleteWorkflowData } from '@/services/workflow.service'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useRouter } from 'vue-router'
+import { useAuthStore } from '@/store/useAuth'
 
 const router = useRouter()
-const state = useState(['tenantId' ], 'authStoreModule')
+
+const authStore = useAuthStore()
+// const state = useState(['tenantId' ], 'authStoreModule')
 
 const breadCrumbList = reactive(BreadCrumbList)
 const tableConfig: any = reactive(TableConfig)
@@ -183,7 +186,7 @@ function deleteData(data: any) {
   }).then(() => {
     DeleteWorkflowData({
       workflowId: data.id,
-      Tenant: state.tenantId.value
+      Tenant: authStore.tenantId
     })
       .then((res: any) => {
         ElMessage.success(res.msg)
@@ -228,9 +231,9 @@ onMounted(() => {
 .zqy-seach-table {
   .name-click {
     cursor: pointer;
-    color: $--app-unclick-color;
+    color: getCssVar('color', 'primary', 'light-5');
     &:hover {
-      color: $--app-primary-color;
+      color: getCssVar('color', 'primary');;
     }
   }
 }

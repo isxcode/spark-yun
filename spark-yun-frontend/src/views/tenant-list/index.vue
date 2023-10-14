@@ -106,7 +106,8 @@ import { BreadCrumbList, TableConfig } from './tenant-list.config'
 import { GetTenantList, AddTenantData, DeleteTenantData, CheckTenantData, DisableTenantData, EnableTenantData, UpdateTenantData } from '@/services/tenant-list.service'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import eventBus from '@/utils/eventBus'
-import { useState, useMutations } from '@/hooks/useStore'
+import { useAuthStore } from '@/store/useAuth'
+// import { useState, useMutations } from '@/hooks/useStore'
 
 interface FormTenant {
   adminUserId: string;
@@ -116,8 +117,10 @@ interface FormTenant {
   remark: string;
 }
 
-const state = useState(['tenantId'], 'authStoreModule')
-const mutations = useMutations(['setTenantId'], 'authStoreModule')
+const authStore = useAuthStore()
+
+// const state = useState(['tenantId'], 'authStoreModule')
+// const mutations = useMutations(['setTenantId'], 'authStoreModule')
 
 const keyword = ref('')
 const loading = ref(false)
@@ -140,8 +143,8 @@ function initData(tableLoading?: boolean) {
       loading.value = false
       tableConfig.loading = false
       networkError.value = false
-      if (!state.tenantId.value && tableConfig.tableData.length === 1) {
-        mutations.setTenantId(tableConfig.tableData[0].id)
+      if (!authStore.tenantId && tableConfig.tableData.length === 1) {
+        authStore.setTenantId(tableConfig.tableData[0].id)
       }
     })
     .catch(() => {

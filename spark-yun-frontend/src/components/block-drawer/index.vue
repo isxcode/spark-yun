@@ -106,7 +106,7 @@ function close() {
     }
     .el-drawer__title {
       font-size: 16px;
-      color: $--app-base-font-color;
+      color: getCssVar('text-color', 'primary');
     }
   }
   .el-drawer__body {

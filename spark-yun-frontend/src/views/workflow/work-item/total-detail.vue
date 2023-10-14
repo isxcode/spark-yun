@@ -74,8 +74,8 @@ defineExpose({
 .detail-container {
   display: flex;
   flex-direction: column;
-  color: $vxe-font-color;
-  font-size: $--app-small-font-size;
+  color: #666;
+  font-size: getCssVar('font-size', 'extra-small');
   span {
     margin-bottom: 12px;
   }

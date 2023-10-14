@@ -9,8 +9,7 @@
 export const authStore = {
   namespaced: true,
   state: {
-    userInfo: {
-    },
+    userInfo: {},
     token: '',
     tenantId: '',
     role: '',

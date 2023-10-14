@@ -56,7 +56,7 @@ body {
         cursor: pointer;
         color: $--app-unclick-color;
         &:hover {
-          color: $--app-primary-color;
+          color: getCssVar('color', 'primary');;
         }
       }
     }

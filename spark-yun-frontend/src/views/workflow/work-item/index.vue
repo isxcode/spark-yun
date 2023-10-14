@@ -373,13 +373,13 @@ onMounted(() => {
       }
 
       .sql-option-container {
-        height: $--app-item-height;
+        height: getCssVar('menu', 'item-height');
         display: flex;
         align-items: center;
-        color: $--app-unclick-color;
+        color: getCssVar('color', 'primary', 'light-5');
 
         .btn-box {
-          font-size: $--app-small-font-size;
+          font-size: getCssVar('font-size', 'extra-small');
           display: flex;
           cursor: pointer;
           width: 48px;
@@ -394,15 +394,15 @@ onMounted(() => {
           }
 
           &:hover {
-            color: $--app-primary-color;
+            color: getCssVar('color', 'primary');;
           }
         }
       }
 
       .el-textarea {
         .el-textarea__inner {
-          border-radius: $--app-border-radius;
-          font-size: $--app-small-font-size;
+          border-radius: getCssVar('border-radius', 'small');
+          font-size: getCssVar('font-size', 'extra-small');
         }
       }
     }
@@ -410,7 +410,7 @@ onMounted(() => {
     .log-show {
       .el-tabs {
         .el-tabs__item {
-          font-size: $--app-small-font-size;
+          font-size: getCssVar('font-size', 'extra-small');
         }
 
         .el-tabs__content {
@@ -418,7 +418,7 @@ onMounted(() => {
         }
 
         .el-tabs__nav-scroll {
-          border-bottom: 1px solid $--app-border-color;
+          border-bottom: 1px solid getCssVar('border-color');
         }
       }
 
