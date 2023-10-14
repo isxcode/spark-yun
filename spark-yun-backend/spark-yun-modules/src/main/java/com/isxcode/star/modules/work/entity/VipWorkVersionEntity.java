@@ -44,7 +44,11 @@ public class VipWorkVersionEntity {
 
 	private String clusterId;
 
+  private String clusterNodeId;
+
 	private String sqlScript;
+
+  private String bashScript;
 
 	private String sparkConfig;
 
