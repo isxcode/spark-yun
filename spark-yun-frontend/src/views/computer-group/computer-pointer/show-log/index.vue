@@ -52,7 +52,7 @@ defineExpose({
             overflow: auto;
 
             pre {
-                color: $--app-base-font-color;
+                color: getCssVar('text-color', 'primary');
                 font-size: 12px;
                 line-height: 21px;
                 margin: 0;

@@ -6,9 +6,9 @@
  * @Description: In User Settings Edit
  * @FilePath: /zqy-web/src/router/index.ts
  */
-import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
-import Home from '../views/home/index.vue'
-import Login from '@/views/login/login.vue'
+import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
+import Home from '../views/home/home'
+import Login from '../views/login/login'
 
 import HomeChildren from './home-children'
 

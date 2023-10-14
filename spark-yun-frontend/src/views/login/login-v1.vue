@@ -61,37 +61,37 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, ref } from 'vue'
-import { LoginUserInfo } from '@/services/login.service'
-import { ElMessage, FormInstance, FormRules } from 'element-plus'
-import { useMutations } from '@/hooks/useStore'
-import { useRouter } from 'vue-router'
+// import { reactive, ref } from 'vue'
+// import { LoginUserInfo } from '@/services/login.service'
+// import { ElMessage, FormInstance, FormRules } from 'element-plus'
+// import { useMutations } from '@/hooks/useStore'
+// import { useRouter } from 'vue-router'
 
-const mutations = useMutations([ 'setUserInfo', 'setToken', 'setTenantId', 'setRole' ], 'authStoreModule')
-const router = useRouter()
+// const mutations = useMutations([ 'setUserInfo', 'setToken', 'setTenantId', 'setRole' ], 'authStoreModule')
+// const router = useRouter()
 
-const loginForm = ref<FormInstance>()
-const loading = ref(false)
-const formData = reactive({
-  account: '',
-  passwd: ''
-})
-const rules = reactive<FormRules>({
-  account: [
-    {
-      required: true,
-      message: '请输入用户名',
-      trigger: [ 'blur', 'change' ]
-    }
-  ],
-  passwd: [
-    {
-      required: true,
-      message: '请输入密码',
-      trigger: [ 'blur', 'change' ]
-    }
-  ]
-})
+// const loginForm = ref<FormInstance>()
+// const loading = ref(false)
+// const formData = reactive({
+//   account: '',
+//   passwd: ''
+// })
+// const rules = reactive<FormRules>({
+//   account: [
+//     {
+//       required: true,
+//       message: '请输入用户名',
+//       trigger: [ 'blur', 'change' ]
+//     }
+//   ],
+//   passwd: [
+//     {
+//       required: true,
+//       message: '请输入密码',
+//       trigger: [ 'blur', 'change' ]
+//     }
+//   ]
+// })
 
 function clickToLogin() {
   loading.value = true
@@ -126,9 +126,9 @@ function clickToLogin() {
     height: 370px;
     padding: 32px 32px;
     box-sizing: border-box;
-    border-radius: $--app-border-radius;
-    background-color: rgba($color: $--app-light-color, $alpha: 1);
-    box-shadow: $--app-box-shadow;
+    border-radius: getCssVar('border-radius', 'small');
+    background-color: rgba($color: getCssVar('color', 'white'), $alpha: 1);
+    box-shadow: getCssVar('box-shadow', 'lighter');
     position: relative;
 
     .normal-login-title {
@@ -156,7 +156,7 @@ function clickToLogin() {
         width: 100%;
         text-align: center;
         .do-registered {
-          color: $--app-primary-color;
+          color: getCssVar('color', 'primary');;
           &:hover {
             cursor: pointer;
           }

@@ -101,8 +101,8 @@ defineExpose({
 <style lang="scss">
 .publish-log {
   pre {
-    color: $--app-base-font-color;
-    font-size: $--app-small-font-size;
+    color: getCssVar('text-color', 'primary');
+    font-size: getCssVar('font-size', 'extra-small');
     line-height: 21px;
     margin: 0;
   }

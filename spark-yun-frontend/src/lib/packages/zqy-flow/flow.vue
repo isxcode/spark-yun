@@ -389,7 +389,7 @@ defineExpose({
         margin-right: 8px;
         cursor: pointer;
         &:hover {
-            color: $--app-primary-color;
+            color: getCssVar('color', 'primary');;
         }
     }
 
