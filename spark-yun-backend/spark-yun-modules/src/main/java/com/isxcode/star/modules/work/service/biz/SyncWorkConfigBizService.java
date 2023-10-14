@@ -1,7 +1,10 @@
 package com.isxcode.star.modules.work.service.biz;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 import com.isxcode.star.api.work.pojos.req.GetSyncWorkConfigReq;
 import com.isxcode.star.api.work.pojos.req.SaveSyncWorkConfigReq;
+import com.isxcode.star.api.work.pojos.res.GetSyncWorkConfigRes;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.star.modules.work.entity.SyncWorkConfigEntity;
 import com.isxcode.star.modules.work.entity.WorkEntity;
@@ -13,6 +16,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Optional;
 
 /** 用户模块接口的业务逻辑. */
@@ -28,13 +33,19 @@ public class SyncWorkConfigBizService {
 
   private final SyncWorkConfigMapper syncWorkConfigMapper;
 
-	public SyncWorkConfigEntity getSyncWorkConfig(GetSyncWorkConfigReq getSyncWorkConfigReq) {
+	public GetSyncWorkConfigRes getSyncWorkConfig(GetSyncWorkConfigReq getSyncWorkConfigReq) {
 
-		Optional<SyncWorkConfigEntity> syncWorkConfigEntityOptional = syncWorkConfigRepository.findById(getSyncWorkConfigReq.getWorkId());
+		Optional<SyncWorkConfigEntity> syncWorkConfigEntityOptional = Optional.ofNullable(syncWorkConfigRepository.findByWorkId(getSyncWorkConfigReq.getWorkId()));
 		if (!syncWorkConfigEntityOptional.isPresent()) {
 			throw new IsxAppException("作业异常，请联系开发者");
 		}
-		return syncWorkConfigEntityOptional.get();
+
+    GetSyncWorkConfigRes getSyncWorkConfigRes = syncWorkConfigMapper
+      .syncWorkConfigEntityToGetSyncWorkConfigRes(syncWorkConfigEntityOptional.get());
+    getSyncWorkConfigRes.setColumMapping(JSON.parseObject(getSyncWorkConfigRes.getColumMapping().toString(),
+      new TypeReference<HashMap<String, List<String>>>() {
+      }));
+    return getSyncWorkConfigRes;
 	}
 
 	public void saveSyncWorkConfig(SaveSyncWorkConfigReq saveSyncWorkConfigReq) {
@@ -44,6 +55,8 @@ public class SyncWorkConfigBizService {
 			throw new IsxAppException("作业不存在");
 		}
 
-    syncWorkConfigRepository.save(syncWorkConfigMapper.saveSyncWorkConfigReqToSyncWorkConfigEntity(saveSyncWorkConfigReq));
+    SyncWorkConfigEntity syncWorkConfigEntity = syncWorkConfigRepository.findByWorkId(workEntityOptional.get().getId());
+    saveSyncWorkConfigReq.setColumMapping(JSON.toJSON(saveSyncWorkConfigReq.getColumMapping()));
+    syncWorkConfigRepository.save(syncWorkConfigMapper.saveSyncWorkConfigReqAndSyncWorkConfigEntityToSyncWorkConfigEntity(saveSyncWorkConfigReq,syncWorkConfigEntity));
 	}
 }

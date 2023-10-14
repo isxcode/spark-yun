@@ -67,7 +67,7 @@ public class RunAgentStartService {
 		scpFile(scpFileEngineNodeDto, "classpath:bash/agent-start.sh",
 				sparkYunProperties.getTmpDir() + File.separator + "agent-start.sh");
 
-		// 运行停止脚本
+		// 运行启动脚本
 		String startCommand = "bash " + sparkYunProperties.getTmpDir() + File.separator + "agent-start.sh"
 				+ " --home-path=" + engineNode.getAgentHomePath() + File.separator + PathConstants.AGENT_PATH_NAME
 				+ " --agent-port=" + engineNode.getAgentPort();

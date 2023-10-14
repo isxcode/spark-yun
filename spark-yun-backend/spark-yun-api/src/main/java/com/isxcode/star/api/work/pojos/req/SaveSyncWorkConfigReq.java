@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 @Data
 public class SaveSyncWorkConfigReq {
@@ -31,14 +32,14 @@ public class SaveSyncWorkConfigReq {
   @Schema(title = "目标数据库表名", example = "part")
   @NotEmpty(message = "目标数据库表名不能为空")
   private String targetTable;
-  @Schema(title = "写入模式", example = "insert into")
+  @Schema(title = "写入模式", example = "OVERWRITE or INTO")
   @NotEmpty(message = "写入模式不能为空")
   private String overMode;
   @Schema(title = "字段映射关系", example = "{\n" +
     "        \"installed_rank\": [\"installed_rank\", \"\"],\n" +
     "        \"version\": [\"version\",\"\"],\n" +
     "        \"description\": [\"description\",\"\"],\n" +
-    "        \"type\": [null, \"type\",\"\"],\n" +
+    "        \"type\": [\"type\",\"\"],\n" +
     "        \"script\": [\"script\",\"\"],\n" +
     "        \"checksum\": [\"checksum\",\"\"],\n" +
     "\"installed_by\": [\"installed_by\",\"\"],\n" +
@@ -46,6 +47,6 @@ public class SaveSyncWorkConfigReq {
     "\"execution_time\": [\"execution_time\",\"\"],\n" +
     "  \"success\": [\"success\",\"\"]\n" +
     "    }")
-  @NotEmpty(message = "字段映射关系")
-  private String columMapping;
+  @NotNull(message = "字段映射关系")
+  private Object columMapping;
 }
