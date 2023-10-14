@@ -116,8 +116,9 @@ public class WorkflowUtils {
 	public static WorkRunContext genWorkRunContext(String instanceId, WorkEntity work, WorkConfigEntity workConfig) {
 
 		return WorkRunContext.builder().datasourceId(workConfig.getDatasourceId()).sqlScript(workConfig.getSqlScript())
-				.instanceId(instanceId).tenantId(TENANT_ID.get()).clusterId(workConfig.getClusterId())
-				.workType(work.getWorkType()).workId(work.getId()).workName(work.getName())
+        .bashScript(workConfig.getBashScript()).instanceId(instanceId).tenantId(TENANT_ID.get())
+        .clusterId(workConfig.getClusterId()).clusterNodeId(workConfig.getClusterNodeId())
+        .workType(work.getWorkType()).workId(work.getId()).workName(work.getName())
 				.sparkConfig(JSON.parseObject(workConfig.getSparkConfig(), new TypeReference<Map<String, String>>() {
 				}.getType())).userId(USER_ID.get()).build();
 	}
@@ -125,9 +126,10 @@ public class WorkflowUtils {
 	public static WorkRunContext genWorkRunContext(String instanceId, VipWorkVersionEntity workVersion) {
 
 		return WorkRunContext.builder().datasourceId(workVersion.getDatasourceId())
-				.sqlScript(workVersion.getSqlScript()).instanceId(instanceId).tenantId(TENANT_ID.get())
-				.userId(USER_ID.get()).clusterId(workVersion.getClusterId()).workType(workVersion.getWorkType())
-				.workId(workVersion.getId())
+				.sqlScript(workVersion.getSqlScript()).bashScript(workVersion.getBashScript())
+        .instanceId(instanceId).tenantId(TENANT_ID.get()).userId(USER_ID.get())
+        .clusterId(workVersion.getClusterId()).clusterNodeId(workVersion.getClusterNodeId())
+        .workType(workVersion.getWorkType()).workId(workVersion.getId())
 				.sparkConfig(JSON.parseObject(workVersion.getSparkConfig(), new TypeReference<Map<String, String>>() {
 				}.getType())).build();
 	}
