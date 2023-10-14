@@ -61,8 +61,8 @@ export function useRouterMenu(menuListData: Menu[]) {
         </el-menu>
         <div class="zqy-home__menu-footer">
           { renderMenuAvatar() }
-          <el-icon 
-            class="zqy-home__icon zqy-home__ops" 
+          <el-icon
+            class="zqy-home__icon zqy-home__ops"
             size={18}
             onClick={withModifiers(() => { isCollapse.value = !isCollapse.value }, ['native'])}
           >{ isCollapse.value ? <expand /> : <fold />}</el-icon>
