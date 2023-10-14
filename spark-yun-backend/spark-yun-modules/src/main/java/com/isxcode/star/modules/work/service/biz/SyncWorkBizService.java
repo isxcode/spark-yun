@@ -158,12 +158,11 @@ public class SyncWorkBizService {
 
     Map<String, String> transform = syncWorkService.transform(dataBase, catalog, schema);
     ResultSet columns = connection.getMetaData().getColumns(transform.get("catalog"),transform.get("schema"), tableName, null);
-    String sql = "CREATE TABLE " + tableName + " (";
+    String sql = String.join(" ","CREATE TABLE", tableName, "(");
     while (columns.next()){
-      sql += "\n" + columns.getString("COLUMN_NAME") + " String," ;
+      sql = String.join(" ",sql,"\n",columns.getString("COLUMN_NAME"),"String,");
     }
     return GetCreateTableSqlRes.builder().sql(sql.substring(0, sql.length() - 1) + "\n)").build();
-
   }
 
 
