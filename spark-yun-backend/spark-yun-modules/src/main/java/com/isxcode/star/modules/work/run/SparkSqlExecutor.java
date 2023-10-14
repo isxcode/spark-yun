@@ -76,6 +76,12 @@ public class SparkSqlExecutor extends WorkExecutor {
 		// 获取日志构造器
 		StringBuilder logBuilder = workRunContext.getLogBuilder();
 
+		// 判断执行脚本是否为空
+		logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("检测脚本内容 \n");
+		if (Strings.isEmpty(workRunContext.getSqlScript())) {
+			throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "检测脚本失败 : SQL内容为空不能执行  \n");
+		}
+
 		// 检测计算集群是否存在
 		logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始申请资源 \n");
 		if (Strings.isEmpty(workRunContext.getClusterId())) {
