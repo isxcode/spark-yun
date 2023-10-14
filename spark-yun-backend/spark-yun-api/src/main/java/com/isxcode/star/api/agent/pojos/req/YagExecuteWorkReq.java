@@ -5,7 +5,7 @@ import lombok.Data;
 @Data
 public class YagExecuteWorkReq {
 
-	private PluginReq pluginReq;
+	private Object pluginReq;
 
 	private SparkSubmit sparkSubmit;
 
