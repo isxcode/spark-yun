@@ -94,4 +94,12 @@ public class ClusterNodeController {
 
 		clusterNodeBizService.removeAgent(removeAgentReq);
 	}
+
+	@Operation(summary = "清理代理接口")
+	@PostMapping("/cleanAgent")
+	@SuccessResponse("清理成功")
+	public void cleanAgent(@Valid @RequestBody CleanAgentReq cleanAgentReq) {
+
+		clusterNodeBizService.cleanAgent(cleanAgentReq);
+	}
 }

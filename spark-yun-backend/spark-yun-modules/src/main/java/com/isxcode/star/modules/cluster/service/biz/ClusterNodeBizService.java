@@ -15,11 +15,7 @@ import com.isxcode.star.modules.cluster.entity.ClusterNodeEntity;
 import com.isxcode.star.modules.cluster.mapper.ClusterNodeMapper;
 import com.isxcode.star.modules.cluster.repository.ClusterNodeRepository;
 import com.isxcode.star.modules.cluster.repository.ClusterRepository;
-import com.isxcode.star.modules.cluster.run.RunAgentCheckService;
-import com.isxcode.star.modules.cluster.run.RunAgentInstallService;
-import com.isxcode.star.modules.cluster.run.RunAgentRemoveService;
-import com.isxcode.star.modules.cluster.run.RunAgentStartService;
-import com.isxcode.star.modules.cluster.run.RunAgentStopService;
+import com.isxcode.star.modules.cluster.run.*;
 import com.isxcode.star.modules.cluster.service.ClusterNodeService;
 import com.isxcode.star.modules.cluster.service.ClusterService;
 import java.util.Optional;
@@ -57,6 +53,8 @@ public class ClusterNodeBizService {
 	private final RunAgentStartService runAgentStartService;
 
 	private final RunAgentRemoveService runAgentRemoveService;
+
+	private final RunAgentCleanService runAgentCleanService;
 
 	private final AesUtils aesUtils;
 
@@ -247,6 +245,19 @@ public class ClusterNodeBizService {
 		// 异步调用
 		runAgentRemoveService.run(removeAgentReq.getEngineNodeId(), scpFileEngineNodeDto, TENANT_ID.get(),
 				USER_ID.get());
+	}
+
+	public void cleanAgent(CleanAgentReq cleanAgentReq) {
+
+		// 获取节点信息
+		ClusterNodeEntity engineNode = clusterNodeService.getClusterNode(cleanAgentReq.getEngineNodeId());
+
+		// 将节点信息转成工具类识别对象
+		ScpFileEngineNodeDto scpFileEngineNodeDto = engineNodeMapper.engineNodeEntityToScpFileEngineNodeDto(engineNode);
+		scpFileEngineNodeDto.setPasswd(aesUtils.decrypt(scpFileEngineNodeDto.getPasswd()));
+
+		// 同步调用
+		runAgentCleanService.run(cleanAgentReq.getEngineNodeId(), scpFileEngineNodeDto, TENANT_ID.get(), USER_ID.get());
 	}
 
 	/** 停止节点. */

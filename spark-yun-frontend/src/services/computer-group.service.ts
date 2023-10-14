@@ -135,6 +135,15 @@ export function UninstallComputerPointData(params: any): Promise<any> {
   })
 }
 
+// 清理节点数据
+export function CleanComputerPointData(params: any): Promise<any> {
+  return http.request({
+    method: 'post',
+    url: '/cluster_node/cleanAgent',
+    params: params
+  })
+}
+
 // 停止节点数据
 export function StopComputerPointData(params: any): Promise<any> {
   return http.request({
