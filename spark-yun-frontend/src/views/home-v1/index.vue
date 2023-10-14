@@ -34,12 +34,16 @@ import MenuList from '@/layout/menu-list/index.vue'
 import { menu, MenuListData } from './home.config'
 import { useRouter, useRoute } from 'vue-router'
 import eventBus from '@/utils/eventBus'
-import { useMutations, useState } from '@/hooks/useStore'
+import { useAuthStore } from '@/store/useAuth'
+// import { useMutations, useState } from '@/hooks/useStore'
 
 const router = useRouter()
 const route = useRoute()
-const mutations = useMutations([ 'setCurrentMenu' ], 'authStoreModule')
-const state = useState([ 'currentMenu', 'role' ], 'authStoreModule')
+
+const authStore = useAuthStore()
+
+// const mutations = useMutations([ 'setCurrentMenu' ], 'authStoreModule')
+// const state = useState([ 'currentMenu', 'role' ], 'authStoreModule')
 
 const defaultMenu = ref('')
 const showData = ref(true)
@@ -47,14 +51,14 @@ const menuListData: Array<menu> = reactive(MenuListData)
 
 const select = (e: string) => {
   defaultMenu.value = e
-  mutations.setCurrentMenu(e)
+  authStore.setCurrentMenu(e)
   router.push({
     name: e
   })
 }
 
 onMounted(() => {
-  const menuList = menuListData.filter((menu) => menu.authType?.includes(state.role.value || 'ROLE_TENANT_MEMBER'))
+  const menuList = menuListData.filter((menu) => menu.authType?.includes(authStore.role || 'ROLE_TENANT_MEMBER'))
   let urlMenu: string
   urlMenu = route.name
   const status = menuList.find((menu) => menu.code === urlMenu)
@@ -64,7 +68,7 @@ onMounted(() => {
     router.push({
       name: defaultMenu.value
     })
-    mutations.setCurrentMenu(defaultMenu.value)
+    authStore.setCurrentMenu(defaultMenu.value)
   } else {
     defaultMenu.value = urlMenu
     router.push({
@@ -98,8 +102,8 @@ onUnmounted(() => {
     position: relative;
     // min-width: 960px;
     .container-left {
-      background-color: $--app-light-color;
-      box-shadow: $--app-box-shadow;
+      background-color: getCssVar('color', 'white');
+      box-shadow: getCssVar('box-shadow', 'lighter');
       padding-top: 8px;
       box-sizing: border-box;
       z-index: 1;

@@ -37,8 +37,9 @@
 </template>
 
 <script lang="ts" setup>
+import { useAuthStore } from '@/store/useAuth';
 import { ref, defineProps, defineEmits, reactive } from 'vue'
-import { useState } from '@/hooks/useStore'
+// import { useState } from '@/hooks/useStore'
 
 interface menu {
   icon: string;
@@ -46,10 +47,12 @@ interface menu {
   code: string;
   authType?: Array<string>;
 }
-const state = useState([ 'role' ], 'authStoreModule')
+
+const authStore = useAuthStore();
+// const state = useState([ 'role' ], 'authStoreModule')
 let isCollapse = ref(false)
 const configData = reactive({
-  role: state.role.value
+  role: authStore.role
 })
 
 defineProps<{
@@ -71,12 +74,13 @@ function clickToCollapse() {
 </script>
 
 <style lang="scss">
+// wraning global css
 .el-menu-item {
-  height: $--app-item-height !important;
+  height: getCssVar('menu', 'item-height') !important;
   display: flex;
   align-items: center;
   &.is-active {
-    background-color: $--app-click-color !important;
+    background-color: getCssVar('color', 'primary', 'light-8') !important;
   }
 }
 .el-menu-item-group__title {
@@ -94,13 +98,13 @@ function clickToCollapse() {
         display: none;
       }
       .el-submenu__title {
-        height: $--app-item-height;
+        height: getCssVar('menu', 'item-height');
         display: flex;
         align-items: center;
       }
     }
     .el-menu-item {
-      height: $--app-item-height;
+      height: getCssVar('menu', 'item-height');
       display: flex;
       align-items: center;
       box-sizing: border-box;
@@ -111,7 +115,7 @@ function clickToCollapse() {
         align-items: center;
       }
       &.is-active {
-        background-color: $--app-click-color;
+        background-color: getCssVar('color', 'primary', 'light-8');
       }
     }
   }
@@ -120,7 +124,7 @@ function clickToCollapse() {
     min-height: 400px;
   }
   .collapse-btn {
-    border: 1px solid $--app-border-color;
+    border: 1px solid getCssVar('border-color');
     width: 12px;
     height: 60px;
     border-radius: 0 12px 12px 0;
@@ -134,11 +138,11 @@ function clickToCollapse() {
     cursor: pointer;
     opacity: 0.7;
     &:hover {
-      background-color: $--app-light-color;
+      background-color: getCssVar('color', 'white');
       opacity: 1;
     }
     .el-icon {
-      color: $--app-info-color;
+      color: getCssVar('color', 'info');
     }
   }
 }

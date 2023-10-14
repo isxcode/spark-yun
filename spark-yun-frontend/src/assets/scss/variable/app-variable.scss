@@ -1,34 +1,33 @@
-$--app-primary-color: #409eff;
-// $--app-primary-color: #eb7040;
-$--app-unclick-color: #579bc9;
+$--app-primary-color: #409eff;  // => getCssVar('color', 'primary');
+$--app-unclick-color: #579bc9; // => getCssVar('color', 'primary', 'light-5')
 
-$--app-info-color: #b2b2b2;
-$--app-light-color: #ffffff;
-$--app-selected-color: #f5f7fa;
-$--app-click-color: #d3edff;
-$--app-header-bgColor: #f7f7f7;
-$--app-border-color: #dcdfe6;
+$--app-info-color: #b2b2b2; // getCssVar('color', 'info')
+$--app-light-color: #ffffff; // getCssVar('color', 'white')
+$--app-selected-color: #f5f7fa; // 没有用到
+$--app-click-color: #d3edff; // getCssVar('color', 'primary', 'light-8')
+// $--app-header-bgColor: #f7f7f7;
+$--app-border-color: #dcdfe6; // getCssVar('border-color')
 // $--app-menu-bgColor: ;
 
-$--app-item-height: 44px;
+$--app-item-height: 44px; // getCssVar('menu', 'item-height')
 
-$--app-box-shadow: 0 0 8px 0 #bfbfbf;
+$--app-box-shadow: 0 0 8px 0 #bfbfbf; // getCssVar('box-shadow', 'lighter')
 // 标准字体颜色
-$--app-base-font-color: #303133;
+$--app-base-font-color: #303133; // getCssVar('text-color', 'primary')
 // 标准加粗
-$--app-base-font-weight: bold;
+// $--app-base-font-weight: bold;
 // 边框圆角
-$--app-border-radius: 2px;
+$--app-border-radius: 2px; // getCssVar('border-radius', 'small')
 // 小号字体样式
-$--app-small-font-size: 12px;
+$--app-small-font-size: 12px; // getCssVar('font-size', 'extra-small')
 // 正常字体样式
-$--app-normal-font-size: 14px;
+$--app-normal-font-size: 14px; // getCssVar('font-size', 'base')
 // 大号字体样式
-$--app-large-font-size: 16px;
+$--app-large-font-size: 16px; // getCssVar('font-size', 'medium')
 
-$--app-title-large-font-size: 20px;
+$--app-title-large-font-size: 20px; // getCssVar('font-size', 'extra-large')
 
-$--app-logo-large-font-size: 32px;
+// $--app-logo-large-font-size: 32px;
 // 输入框高度
 $--app-input-box-height: 32px;
 

@@ -591,13 +591,13 @@ onUnmounted(() => {
         width: 200px;
         max-width: 200px;
         height: 100%;
-        border-right: 1px solid $--app-border-color;
+        border-right: 1px solid getCssVar('border-color');
 
         .option-container {
             height: 50px;
             width: 201px;
-            background-color: $--app-light-color;
-            border-bottom: 1px solid $--app-border-color;
+            background-color: getCssVar('color', 'white');
+            border-bottom: 1px solid getCssVar('border-color');
             display: flex;
             position: relative;
 
@@ -606,15 +606,15 @@ onUnmounted(() => {
                 width: 201px;
                 display: flex;
                 align-items: center;
-                font-size: $--app-normal-font-size;
-                color: $--app-base-font-color;
+                font-size: getCssVar('font-size', 'base');
+                color: getCssVar('text-color', 'primary');
                 padding-left: 12px;
-                border-right: 1px solid $--app-border-color;
+                border-right: 1px solid getCssVar('border-color');
                 box-sizing: border-box;
                 .option-title__href {
                     cursor: pointer;
                     &:hover {
-                        color: $--app-primary-color;
+                        color: getCssVar('color', 'primary');;
                         text-decoration: underline;
                     }
                 }
@@ -626,7 +626,7 @@ onUnmounted(() => {
                 top: 16px;
                 cursor: pointer;
                 &:hover {
-                    color: $--app-primary-color;
+                    color: getCssVar('color', 'primary');;
                 }
             }
         }
@@ -638,7 +638,7 @@ onUnmounted(() => {
             justify-content: space-between;
             align-items: center;
             width: 100%;
-            border-bottom: 1px solid $--app-border-color;
+            border-bottom: 1px solid getCssVar('border-color');
 
             .el-input {
                 margin-left: 8px;
@@ -660,22 +660,22 @@ onUnmounted(() => {
             max-height: calc(100vh - 206px);
 
             .list-item {
-                height: $--app-item-height;
-                line-height: $--app-item-height;
+                height: getCssVar('menu', 'item-height');
+                line-height: getCssVar('menu', 'item-height');
                 padding-left: 12px;
                 padding-right: 12px;
                 box-sizing: border-box;
-                border-bottom: 1px solid $--app-border-color;
+                border-bottom: 1px solid getCssVar('border-color');
                 cursor: pointer;
-                font-size: $--app-small-font-size;
+                font-size: getCssVar('font-size', 'extra-small');
                 position: relative;
 
                 &.choose-item {
-                    background-color: $--app-click-color;
+                    background-color: getCssVar('color', 'primary', 'light-8');
                 }
 
                 &:hover {
-                    background-color: $--app-click-color;
+                    background-color: getCssVar('color', 'primary', 'light-8');
 
                     .el-dropdown {
                         display: block;
@@ -692,7 +692,7 @@ onUnmounted(() => {
                         font-size: 14px;
                         transform: rotate(90deg);
                         cursor: pointer;
-                        color: $--app-info-color;
+                        color: getCssVar('color', 'info');
                     }
                 }
             }
@@ -715,13 +715,13 @@ onUnmounted(() => {
 
         .option-btns {
             height: 50px;
-            background-color: $--app-light-color;
-            border-bottom: 1px solid $--app-border-color;
+            background-color: getCssVar('color', 'white');
+            border-bottom: 1px solid getCssVar('border-color');
             display: flex;
             align-items: center;
             padding-left: 12px;
             box-sizing: border-box;
-            font-size: $--app-small-font-size;
+            font-size: getCssVar('font-size', 'extra-small');
 
             .el-icon {
                 margin-right: 8px;
@@ -729,11 +729,11 @@ onUnmounted(() => {
 
             span {
                 margin-right: 8px;
-                color: $--app-unclick-color;
+                color: getCssVar('color', 'primary', 'light-5');
                 cursor: pointer;
 
                 &:hover {
-                    color: $--app-primary-color;
+                    color: getCssVar('color', 'primary');;
                     text-decoration: underline;
                 }
             }
