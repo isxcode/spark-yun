@@ -288,12 +288,13 @@ onMounted(() => {
             setTimeout(() => {
                 getLinkData()
                 instance.deleteEveryConnection()
-                // connectNodeList.value.forEach((data: any) => {
-                //     instance.connect({
-                //         source: document.querySelector(`.code-source-${data.source}`),
-                //         target: document.querySelector(`.code-target-${data.target}`)
-                //     })
-                // })
+                setContainer()
+                connectNodeList.value.forEach((data: any) => {
+                    instance.connect({
+                        source: document.querySelector(`.code-source-${data.source}`),
+                        target: document.querySelector(`.code-target-${data.target}`)
+                    })
+                })
             })
         })
     });
