@@ -32,6 +32,9 @@ dependencies:
   element-plus:
     specifier: ^2.3.5
     version: 2.3.12(vue@3.3.4)
+  jsplumb:
+    specifier: ^2.15.6
+    version: 2.15.6
   lodash-es:
     specifier: ^4.17.21
     version: 4.17.21
@@ -3326,6 +3329,10 @@ packages:
     optionalDependencies:
       graceful-fs: 4.2.11
     dev: true
+
+  /jsplumb@2.15.6:
+    resolution: {integrity: sha512-sIpbpz5eMVM+vV+MQzFCidlaa1RsknrQs6LOTKYDjYUDdTAi2AN2bFi94TxB33TifcIsRNV1jebcaxg0tCoPzg==}
+    dev: false
 
   /keyv@4.5.3:
     resolution: {integrity: sha512-QCiSav9WaX1PgETJ+SpNnx2PRRapJ/oRSXM4VO5OGYGSjrxbKPVFVhB3l2OCbLCk329N8qyAtsJjSjvVBWzEug==}

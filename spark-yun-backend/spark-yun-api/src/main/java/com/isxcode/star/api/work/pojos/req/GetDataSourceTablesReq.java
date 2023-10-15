@@ -12,7 +12,7 @@ public class GetDataSourceTablesReq {
 	@NotEmpty(message = "作业id不能为空")
 	private String dataSourceId;
 
-  @Schema(title = "数据库表名", example = "SY")
-  @NotEmpty(message = "作业id不能为空")
-  private String tablePattern;
+	@Schema(title = "数据库表名", example = "SY")
+	@NotEmpty(message = "表名不能为空")
+	private String tablePattern;
 }
