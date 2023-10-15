@@ -7,7 +7,7 @@
         </el-icon>
         <span class="btn-text">返回</span>
       </div>
-      <div class="btn-box">
+      <div class="btn-box" @click="saveData">
         <el-icon>
           <Finished/>
         </el-icon>
@@ -102,11 +102,6 @@
           </el-form>
         </el-card>
       </div>
-      <div class="select-link-type">
-        <el-button v-for="button in buttons" :key="button.text" :type="button.type" link
-                   @click="clickSelectLinkConnect(button.code)">{{ button.text }}
-        </el-button>
-      </div>
       <data-sync-table ref="dataSyncTableRef" :formData="formData"></data-sync-table>
     </div>
     <!-- 数据预览 -->
@@ -115,13 +110,13 @@
 </template>
 
 <script lang="ts" setup>
-import {ref, reactive, onMounted, nextTick} from 'vue'
+import {ref, reactive, onMounted, defineProps} from 'vue'
 import {ElMessage, FormInstance, FormRules} from 'element-plus'
 import CodeMirror from 'vue-codemirror6'
 import {sql} from '@codemirror/lang-sql'
 import {DataSourceType, OverModeList} from './data.config.ts'
 import {GetDatasourceList} from '@/services/datasource.service'
-import {CreateTableWork, GetDataSourceTables} from '@/services/data-sync.service'
+import {CreateTableWork, GetDataSourceTables, SaveDataSync} from '@/services/data-sync.service'
 import TableDetail from './table-detail/index.vue'
 import DataSyncTable from './data-sync-table/index.vue'
 
@@ -130,13 +125,10 @@ interface Option {
   value: string
 }
 
-const buttons = ref([
-  {type: 'primary', text: '同行映射', code: 'SameLine'},
-  {type: 'primary', text: '同名映射', code: 'SameName'},
-  //   { type: 'primary', text: '智能映射', code: 'SameLine' },
-  {type: 'primary', text: '取消映射', code: 'quitLine'},
-  {type: 'primary', text: '重置映射', code: 'resetLine'},
-])
+const props = defineProps<{
+  workItemConfig: any
+}>()
+
 const form = ref<FormInstance>()
 const tableDetailRef = ref()
 const dataSyncTableRef = ref()
@@ -170,6 +162,15 @@ const rules = reactive<FormRules>({
   //     }
   // ]
 })
+
+// 保存数据
+function saveData() {
+    SaveDataSync(formData).then((res: any) => {
+
+    }).catch(err => {
+      console.error(err)
+    })
+}
 
 // 获取数据源
 function getDataSource(e: boolean, sourceType: string, type: string) {
@@ -252,14 +253,14 @@ function tableChangeEvent(e: string, dataSourceId: string, type: string) {
 }
 
 onMounted(() => {
-
+    formData.workId = props.workItemConfig.id
 })
 </script>
 
 <style lang="scss">
 .data-sync-page {
   position: relative;
-  padding-top: 44px;
+  padding-top: 50px;
   background-color: #ffffff;
   width: 100%;
 
