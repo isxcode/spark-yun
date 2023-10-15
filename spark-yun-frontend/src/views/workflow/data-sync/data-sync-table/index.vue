@@ -1,4 +1,9 @@
 <template>
+    <div class="select-link-type">
+        <el-button v-for="button in buttons" :key="button.text" :type="button.type" link
+                   @click="clickSelectLinkConnect(button.code)">{{ button.text }}
+        </el-button>
+    </div>
     <div class="data-sync-body" id="container">
         <div class="source-table-container">
             <el-table ref="sourceTableRef" :data="sourceTableData" row-key="code" border>
@@ -91,15 +96,39 @@ const targetTableData = ref([
     //     type: 'int'
     // }
 ])
+const buttons = ref([
+  {type: 'primary', text: '同行映射', code: 'SameLine'},
+  {type: 'primary', text: '同名映射', code: 'SameName'},
+  //   { type: 'primary', text: '智能映射', code: 'SameLine' },
+  {type: 'primary', text: '取消映射', code: 'quitLine'},
+  {type: 'primary', text: '重置映射', code: 'resetLine'},
+])
 
 // 根据表名获取映射表字段
 function getTableColumnData(params: TableDetailParam, type: string) {
     GetTableColumnsByTableId(params).then((res: any) => {
-        console.log('res', res)
-        // type === 'source' ? sourceList.value = options : targetList.value = options
+        console.log('res', res.data)
+        if (type === 'source') {
+            sourceTableData.value = (res.data.columns || []).map((column: any) => {
+                return {
+                    code: column[0],
+                    type: column[1],
+                    sql: ''
+                }
+            })
+        } else {
+            targetTableData.value = (res.data.columns || []).map((column: any) => {
+                return {
+                    code: column[0],
+                    type: column[1]
+                }
+            })
+        }
+        nextTick(() => {
+            initJsPlumb()
+        })
     }).catch(err => {
         console.error(err)
-        // type === 'source' ? sourceList.value = [] : targetList.value = []
     })
 }
 
@@ -257,6 +286,15 @@ defineExpose({
         margin-right: 100px;
         position: relative;
 
+        .el-table {
+            // width: 100%;
+            .el-table__row {
+                td.el-table__cell {
+                    font-size: getCssVar('font-size', 'extra-small');
+                }
+            }
+        }
+
         .source-link-pointer {
             list-style: none;
             width: 6px;
@@ -301,8 +339,10 @@ defineExpose({
 
         .el-table {
             // width: 100%;
-
             .el-table__row {
+                td.el-table__cell {
+                    font-size: getCssVar('font-size', 'extra-small');
+                }
                 &:hover {
                     td.el-table__cell {
                         background-color: unset;
