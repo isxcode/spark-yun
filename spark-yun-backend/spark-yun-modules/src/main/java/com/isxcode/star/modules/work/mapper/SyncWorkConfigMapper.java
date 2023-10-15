@@ -18,9 +18,9 @@ public interface SyncWorkConfigMapper {
 	@Mapping(target = "targetDBId", source = "saveSyncWorkConfigReq.targetDBId")
 	@Mapping(target = "targetTable", source = "saveSyncWorkConfigReq.targetTable")
 	@Mapping(target = "overMode", source = "saveSyncWorkConfigReq.overMode")
-	@Mapping(target = "sourceTableData", source = "saveSyncWorkConfigReq.sourceTableData")
-	@Mapping(target = "targetTableData", source = "saveSyncWorkConfigReq.targetTableData")
-	@Mapping(target = "columMapping", source = "saveSyncWorkConfigReq.connect")
+	@Mapping(target = "sourceTableData", expression = "java( com.alibaba.fastjson.JSON.toJSONString(saveSyncWorkConfigReq.getSourceTableData()) )")
+	@Mapping(target = "targetTableData", expression = "java( com.alibaba.fastjson.JSON.toJSONString(saveSyncWorkConfigReq.getTargetTableData()) )")
+	@Mapping(target = "columMapping", expression = "java( com.alibaba.fastjson.JSON.toJSONString(saveSyncWorkConfigReq.getConnect()) )")
 	SyncWorkConfigEntity saveSyncWorkConfigReqAndSyncWorkConfigEntityToSyncWorkConfigEntity(
 			SaveSyncWorkConfigReq saveSyncWorkConfigReq, SyncWorkConfigEntity syncWorkConfigEntity);
 
