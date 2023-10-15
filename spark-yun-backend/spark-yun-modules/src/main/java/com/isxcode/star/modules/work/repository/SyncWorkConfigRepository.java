@@ -10,5 +10,5 @@ import org.springframework.stereotype.Repository;
 @CacheConfig(cacheNames = {"sy_sync_work"})
 public interface SyncWorkConfigRepository extends JpaRepository<SyncWorkConfigEntity, String> {
 
-  SyncWorkConfigEntity findByWorkId(String workId);
+	SyncWorkConfigEntity findByWorkId(String workId);
 }

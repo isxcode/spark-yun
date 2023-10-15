@@ -15,24 +15,24 @@ import java.util.List;
 @Repository
 @CacheConfig(cacheNames = {"sy_file"})
 public interface FileRepository extends JpaRepository<FileEntity, String>, JpaSpecificationExecutor<FileEntity> {
-  default List<FileEntity> findByFileTypeAndFileName(String fileType, String fileName) {
-    return findAll((Specification<FileEntity>) (root, query, criteriaBuilder) -> {
-      List<Predicate> predicates = new ArrayList<>();
+	default List<FileEntity> findByFileTypeAndFileName(String fileType, String fileName) {
+		return findAll((Specification<FileEntity>) (root, query, criteriaBuilder) -> {
+			List<Predicate> predicates = new ArrayList<>();
 
-      if (fileType != null) {
-        predicates.add(criteriaBuilder.like(root.get("fileType"), "%" + fileType + "%"));
-      }
+			if (fileType != null) {
+				predicates.add(criteriaBuilder.like(root.get("fileType"), "%" + fileType + "%"));
+			}
 
-      if (fileName != null) {
-        predicates.add(criteriaBuilder.like(root.get("fileName"), "%" + fileName + "%"));
-      }
+			if (fileName != null) {
+				predicates.add(criteriaBuilder.like(root.get("fileName"), "%" + fileName + "%"));
+			}
 
-      if (fileType == null && fileName == null) {
-        return criteriaBuilder.conjunction();
-      }
+			if (fileType == null && fileName == null) {
+				return criteriaBuilder.conjunction();
+			}
 
-      return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
-    });
-  }
+			return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+		});
+	}
 
 }

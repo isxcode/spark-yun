@@ -18,7 +18,6 @@ import java.time.LocalDateTime;
 
 import static com.isxcode.star.common.config.CommonConfig.TENANT_ID;
 
-
 @Data
 @Entity
 @SQLDelete(sql = "UPDATE SY_FILE SET deleted = 1 WHERE id = ? and version_number = ?")
@@ -30,37 +29,44 @@ import static com.isxcode.star.common.config.CommonConfig.TENANT_ID;
 @AllArgsConstructor
 public class FileEntity {
 
-  @Id
-  @GeneratedValue(generator = "sy-id-generator")
-  @GenericGenerator(name = "sy-id-generator", strategy = "com.isxcode.star.config.GeneratedValueConfig")
-  private String id;
+	@Id
+	@GeneratedValue(generator = "sy-id-generator")
+	@GenericGenerator(name = "sy-id-generator", strategy = "com.isxcode.star.config.GeneratedValueConfig")
+	private String id;
 
-  private String fileName;
+	private String fileName;
 
-  private String fileSize;
+	private String fileSize;
 
-  private String filePath;
+	private String filePath;
 
-  private String fileType;
+	private String fileType;
 
-  @CreatedDate private LocalDateTime createDateTime;
+	@CreatedDate
+	private LocalDateTime createDateTime;
 
-  @LastModifiedDate private LocalDateTime lastModifiedDateTime;
+	@LastModifiedDate
+	private LocalDateTime lastModifiedDateTime;
 
-  @CreatedBy private String createBy;
+	@CreatedBy
+	private String createBy;
 
-  @LastModifiedBy private String lastModifiedBy;
+	@LastModifiedBy
+	private String lastModifiedBy;
 
-  @Version private Long versionNumber;
+	@Version
+	private Long versionNumber;
 
-  @Transient private Integer deleted;
+	@Transient
+	private Integer deleted;
 
-  private String tenantId;
+	private String tenantId;
 
-  public FileEntity() {}
+	public FileEntity() {
+	}
 
-  @PrePersist
-  public void prePersist() {
-    this.tenantId = TENANT_ID.get();
-  }
+	@PrePersist
+	public void prePersist() {
+		this.tenantId = TENANT_ID.get();
+	}
 }

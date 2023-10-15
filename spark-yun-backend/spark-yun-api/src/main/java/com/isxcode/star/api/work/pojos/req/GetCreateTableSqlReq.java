@@ -12,8 +12,8 @@ public class GetCreateTableSqlReq {
 	@NotEmpty(message = "数据源id不能为空")
 	private String dataSourceId;
 
-  @Schema(title = "待生成sql的表名", example = "sy_user")
-  @NotEmpty(message = "表名不能为空")
-  private String tableName;
+	@Schema(title = "待生成sql的表名", example = "sy_user")
+	@NotEmpty(message = "表名不能为空")
+	private String tableName;
 
 }

@@ -30,13 +30,13 @@ public interface UserMapper {
 	@Mapping(target = "email", source = "usrUpdateUserReq.email")
 	UserEntity usrUpdateUserReqToUserEntity(UpdateUserReq usrUpdateUserReq, UserEntity userEntity);
 
-  @Mapping(target = "passwd", source = "userEntity.passwd")
-  @Mapping(target = "id", source = "userEntity.id")
-  @Mapping(target = "username", source = "updateUserInfoReq.username")
-  @Mapping(target = "phone", source = "updateUserInfoReq.phone")
-  @Mapping(target = "email", source = "updateUserInfoReq.email")
-  @Mapping(target = "remark", source = "updateUserInfoReq.remark")
-  UserEntity usrUpdateUserInfoToUserEntity(UpdateUserInfoReq updateUserInfoReq, UserEntity userEntity);
+	@Mapping(target = "passwd", source = "userEntity.passwd")
+	@Mapping(target = "id", source = "userEntity.id")
+	@Mapping(target = "username", source = "updateUserInfoReq.username")
+	@Mapping(target = "phone", source = "updateUserInfoReq.phone")
+	@Mapping(target = "email", source = "updateUserInfoReq.email")
+	@Mapping(target = "remark", source = "updateUserInfoReq.remark")
+	UserEntity usrUpdateUserInfoToUserEntity(UpdateUserInfoReq updateUserInfoReq, UserEntity userEntity);
 
 	/** UsrQueryAllUsersRes. */
 	@Mapping(target = "createDateTime", dateFormat = "yyyy-MM-dd HH:mm:ss")

@@ -14,12 +14,11 @@ import java.util.Map;
 @AllArgsConstructor
 @NoArgsConstructor
 public class JDBCSyncPluginReq {
-  private DataSource sourceDbInfo;
-  private DataSource targetDbInfo;
-  private HashMap<String, List<String>> columMapping;
-  private String condition;
-  private String overMode;
-  private Map<String, String> sparkConfig;
+	private DataSource sourceDbInfo;
+	private DataSource targetDbInfo;
+	private HashMap<String, List<String>> columMapping;
+	private String condition;
+	private String overMode;
+	private Map<String, String> sparkConfig;
 
 }
-
