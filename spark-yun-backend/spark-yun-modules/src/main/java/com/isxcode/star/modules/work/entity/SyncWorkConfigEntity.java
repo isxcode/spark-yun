@@ -52,6 +52,10 @@ public class SyncWorkConfigEntity {
 
 	private String overMode;
 
+	private String sourceTableData;
+
+	private String targetTableData;
+
 	private String columMapping;
 
 	@CreatedDate
