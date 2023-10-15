@@ -110,7 +110,7 @@
 </template>
 
 <script lang="ts" setup>
-import {ref, reactive, onMounted, defineProps} from 'vue'
+import {ref, reactive, onMounted, defineProps, nextTick} from 'vue'
 import {ElMessage, FormInstance, FormRules} from 'element-plus'
 import CodeMirror from 'vue-codemirror6'
 import {sql} from '@codemirror/lang-sql'
@@ -180,7 +180,23 @@ function getDate() {
     GetDataSyncDetail({
         workId: props.workItemConfig.id
     }).then((res: any) => {
-        
+        formData.sourceDBType = res.data.sourceDBType
+        formData.sourceDBId = res.data.sourceDBId
+        formData.sourceTable = res.data.sourceTable
+        formData.queryCondition = res.data.queryCondition
+        formData.targetDBType = res.data.targetDBType
+        formData.targetDBId = res.data.targetDBId
+        formData.targetTable = res.data.targetTable
+        formData.overMode = res.data.overMode
+
+        nextTick(() => {
+            getDataSource(true, formData.sourceDBType, 'source')
+            getDataSource(true, formData.targetDBType, 'target')
+            getDataSourceTable(true, formData.sourceDBId, 'source')
+            getDataSourceTable(true, formData.targetDBId, 'target')
+
+            dataSyncTableRef.value.initPageData(res.data)
+        })
     }).catch(err => {
       console.error(err)
     })
