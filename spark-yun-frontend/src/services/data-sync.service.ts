@@ -2,6 +2,7 @@ import { http } from '@/utils/http'
 
 interface SourceTablesParam {
     dataSourceId: string
+    tablePattern: string
 }
 
 interface TableDetailParam {

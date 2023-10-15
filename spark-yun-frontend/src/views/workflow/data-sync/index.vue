@@ -201,7 +201,8 @@ function getDataSourceTable(e: boolean, dataSourceId: string, type: string) {
   if (e && dataSourceId) {
     let options = []
     GetDataSourceTables({
-      dataSourceId: dataSourceId
+      dataSourceId: dataSourceId,
+      tablePattern: ""
     }).then((res: any) => {
       options = res.data.tables.map((item: any) => {
         return {
