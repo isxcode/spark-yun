@@ -36,20 +36,20 @@
           </template>
           <el-form ref="form" label-position="left" label-width="70px" :model="formData" :rules="rules">
             <el-form-item prop="sourceDBType" label="类型">
-              <el-select v-model="formData.sourceDBType" placeholder="请选择">
+              <el-select v-model="formData.sourceDBType" clearable placeholder="请选择" @change="dbTypeChange('source')">
                 <el-option v-for="item in typeList" :key="item.value" :label="item.label"
                            :value="item.value"/>
               </el-select>
             </el-form-item>
             <el-form-item prop="sourceDBId" label="数据源">
-              <el-select v-model="formData.sourceDBId" placeholder="请选择"
+              <el-select v-model="formData.sourceDBId" clearable placeholder="请选择"
                          @visible-change="getDataSource($event, formData.sourceDBType, 'source')">
                 <el-option v-for="item in sourceList" :key="item.value" :label="item.label"
                            :value="item.value"/>
               </el-select>
             </el-form-item>
             <el-form-item prop="sourceTable" label="表">
-              <el-select v-model="formData.sourceTable" placeholder="请选择"
+              <el-select v-model="formData.sourceTable" clearable placeholder="请选择"
                          @visible-change="getDataSourceTable($event, formData.sourceDBId, 'source')"
                          @change="tableChangeEvent($event, formData.sourceDBId, 'source')"
               >
@@ -71,20 +71,20 @@
           </template>
           <el-form ref="form" label-position="left" label-width="70px" :model="formData" :rules="rules">
             <el-form-item prop="targetDBType" label="类型">
-              <el-select v-model="formData.targetDBType" placeholder="请选择">
+              <el-select v-model="formData.targetDBType" clearable placeholder="请选择" @change="dbTypeChange('target')">
                 <el-option v-for="item in typeList" :key="item.value" :label="item.label"
                            :value="item.value"/>
               </el-select>
             </el-form-item>
             <el-form-item prop="targetDBId" label="数据源">
-              <el-select v-model="formData.targetDBId" placeholder="请选择"
+              <el-select v-model="formData.targetDBId" clearable placeholder="请选择"
                          @visible-change="getDataSource($event, formData.targetDBType, 'target')">
                 <el-option v-for="item in targetList" :key="item.value" :label="item.label"
                            :value="item.value"/>
               </el-select>
             </el-form-item>
             <el-form-item prop="targetTable" label="表">
-              <el-select v-model="formData.targetTable" placeholder="请选择"
+              <el-select v-model="formData.targetTable" clearable placeholder="请选择"
                          @visible-change="getDataSourceTable($event, formData.targetDBId, 'target')"
                          @change="tableChangeEvent($event, formData.targetDBId, 'target')"
               >
@@ -94,7 +94,7 @@
               <el-button type="primary" link @click="createTableWork">生成建表作业</el-button>
             </el-form-item>
             <el-form-item prop="overMode" label="写入模式">
-              <el-select v-model="formData.overMode" placeholder="请选择">
+              <el-select v-model="formData.overMode" clearable placeholder="请选择">
                 <el-option v-for="item in overModeList" :key="item.value" :label="item.label"
                            :value="item.value"/>
               </el-select>
@@ -280,6 +280,17 @@ function tableChangeEvent(e: string, dataSourceId: string, type: string) {
     dataSourceId: dataSourceId,
     tableName: e
   }, type)
+}
+
+// 级联控制
+function dbTypeChange(type: string) {
+    if (type === 'source') {
+        formData.sourceDBId = ''
+        formData.sourceTable = ''
+    } else {
+        formData.targetDBId = ''
+        formData.targetTable = ''
+    }
 }
 
 onMounted(() => {
