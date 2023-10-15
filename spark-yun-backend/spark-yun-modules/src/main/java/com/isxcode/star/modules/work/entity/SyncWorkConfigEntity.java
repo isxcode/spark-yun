@@ -47,7 +47,7 @@ public class SyncWorkConfigEntity {
 
   @Column(name="target_db_id")
   private String targetDBId;
-
+  
   private String targetTable;
 
   private String overMode;
