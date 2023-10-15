@@ -36,6 +36,10 @@ interface SaveParams {
     connect: connect[]
 }
 
+interface workIdParam {
+    workId: string
+}
+
 // 作业流-数据同步-获取数据源表
 export function GetDataSourceTables(params: SourceTablesParam): Promise<any> {
     return http.request({
@@ -78,6 +82,15 @@ export function SaveDataSync(params: SaveParams): Promise<any> {
     return http.request({
         method: 'post',
         url: '/work/saveSyncWorkConfig',
+        params: params
+    })
+}
+
+// 作业流-数据同步-保存数据
+export function GetDataSyncDetail(params: workIdParam): Promise<any> {
+    return http.request({
+        method: 'post',
+        url: '/work/getSyncWorkConfig',
         params: params
     })
 }
