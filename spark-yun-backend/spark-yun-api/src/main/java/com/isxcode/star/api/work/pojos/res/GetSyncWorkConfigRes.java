@@ -32,4 +32,8 @@ public class GetSyncWorkConfigRes {
 	private String overMode;
 
 	private Object columMapping;
+
+	private Object sourceTableData;
+
+	private Object targetTableData;
 }
