@@ -716,7 +716,7 @@ onUnmounted(() => {
         width: 100%;
 
         .option-btns {
-            height: 50px;
+            height: 51px;
             background-color: getCssVar('color', 'white');
             border-bottom: 1px solid getCssVar('border-color');
             display: flex;

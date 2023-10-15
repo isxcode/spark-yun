@@ -324,7 +324,7 @@ onMounted(() => {
   .zqy-loading {
     padding: 0 20px;
     box-sizing: border-box;
-    height: calc(100vh - 116px);
+    height: calc(100vh - 55px);
   }
 
   .zqy-work-container {
@@ -373,7 +373,7 @@ onMounted(() => {
       }
 
       .sql-option-container {
-        height: getCssVar('menu', 'item-height');
+        height: 50px;
         display: flex;
         align-items: center;
         color: getCssVar('color', 'primary', 'light-5');
@@ -423,7 +423,7 @@ onMounted(() => {
       }
 
       .show-container {
-        height: calc(100vh - 420px);
+        height: calc(100vh - 368px);
         overflow: auto;
       }
     }
