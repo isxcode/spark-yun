@@ -10,6 +10,17 @@ interface TableDetailParam {
     tableName: string
 }
 
+interface tableColumn {
+    code: string
+    type: string
+    sql?: string
+}
+
+interface connect {
+    source: string
+    target: string
+}
+
 interface SaveParams {
     workId: string
     sourceDBType: string
@@ -20,6 +31,9 @@ interface SaveParams {
     targetDBId: string
     targetTable: string
     overMode: string
+    sourceTableData: tableColumn[]
+    targetTableData: tableColumn[]
+    connect: connect[]
 }
 
 // 作业流-数据同步-获取数据源表

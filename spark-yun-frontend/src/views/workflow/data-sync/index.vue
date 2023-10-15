@@ -151,7 +151,6 @@ const formData = reactive({
   targetDBId: '',       // 目标数据源
   targetTable: '',      // 目标数据库表名
   overMode: '',         // 写入模式
-  columMapping: []      // 字段映射关系
 })
 const rules = reactive<FormRules>({
   // sourceDBType: [
@@ -165,7 +164,12 @@ const rules = reactive<FormRules>({
 
 // 保存数据
 function saveData() {
-    SaveDataSync(formData).then((res: any) => {
+    SaveDataSync({
+        ...formData,
+        sourceTableData: dataSyncTableRef.value.getSourceTableData(),
+        targetTableData: dataSyncTableRef.value.getTargetTableData(),
+        connect: dataSyncTableRef.value.getConnect()
+    }).then((res: any) => {
 
     }).catch(err => {
       console.error(err)
