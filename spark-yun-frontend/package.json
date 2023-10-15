@@ -28,6 +28,7 @@
     "axios": "^1.4.0",
     "dagre": "^0.8.5",
     "element-plus": "^2.3.5",
+    "jsplumb": "^2.15.6",
     "lodash-es": "^4.17.21",
     "mitt": "^3.0.0",
     "normalize.css": "8.0.1",
