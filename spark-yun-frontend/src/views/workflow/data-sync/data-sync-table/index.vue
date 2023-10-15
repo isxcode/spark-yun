@@ -118,6 +118,7 @@ function initPageData(data: any) {
 
     connectNodeList.value = data.columMapping
     setTimeout(() => {
+        initJsPlumb()
         connectNodeList.value.forEach((data: any) => {
             instance.connect({
                 source: document.querySelector(`.code-source-${data.source}`),
@@ -288,7 +289,6 @@ onMounted(() => {
             setTimeout(() => {
                 getLinkData()
                 instance.deleteEveryConnection()
-                setContainer()
                 connectNodeList.value.forEach((data: any) => {
                     instance.connect({
                         source: document.querySelector(`.code-source-${data.source}`),
