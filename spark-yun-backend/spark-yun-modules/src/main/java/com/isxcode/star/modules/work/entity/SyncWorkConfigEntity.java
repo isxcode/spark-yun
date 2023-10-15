@@ -30,29 +30,29 @@ public class SyncWorkConfigEntity {
 	@GenericGenerator(name = "sy-id-generator", strategy = "com.isxcode.star.config.GeneratedValueConfig")
 	private String id;
 
-  private String workId;
+	private String workId;
 
-  @Column(name="source_db_type")
-  private String sourceDBType;
+	@Column(name = "source_db_type")
+	private String sourceDBType;
 
-  @Column(name="source_db_id")
-  private String sourceDBId;
+	@Column(name = "source_db_id")
+	private String sourceDBId;
 
-  private String sourceTable;
+	private String sourceTable;
 
-  private String queryCondition;
+	private String queryCondition;
 
-  @Column(name="target_db_type")
-  private String targetDBType;
+	@Column(name = "target_db_type")
+	private String targetDBType;
 
-  @Column(name="target_db_id")
-  private String targetDBId;
-  
-  private String targetTable;
+	@Column(name = "target_db_id")
+	private String targetDBId;
 
-  private String overMode;
+	private String targetTable;
 
-  private String columMapping;
+	private String overMode;
+
+	private String columMapping;
 
 	@CreatedDate
 	private LocalDateTime createDateTime;

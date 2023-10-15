@@ -26,45 +26,37 @@ import java.util.List;
 @RequiredArgsConstructor
 public class FileController {
 
-  private final FileBizService fileBizService;
+	private final FileBizService fileBizService;
 
-  private final FileMapper fileMapper;
+	private final FileMapper fileMapper;
 
+	@Operation(summary = "资源文件上传")
+	@PostMapping("/fileUpload")
+	@SuccessResponse("上传成功")
+	public AddFileRes fileUpload(@RequestParam("file") MultipartFile file, @RequestParam("type") String type)
+			throws IOException {
+		return fileMapper.fileEntityToAddFileRes(fileBizService.fileUpload(file, type));
+	}
 
-  @Operation(summary = "资源文件上传")
-  @PostMapping("/fileUpload")
-  @SuccessResponse("上传成功")
-  public AddFileRes fileUpload(@RequestParam("file") MultipartFile file,
-                               @RequestParam("type") String type)
-      throws IOException {
-    return fileMapper.fileEntityToAddFileRes(fileBizService.fileUpload(file, type));
-  }
+	@Operation(summary = "资源文件下载")
+	@PostMapping("/fileDownload")
+	@SuccessResponse("下载成功")
+	public void fileDownload(@Valid @RequestBody FileDownloadReq fileDownloadReq, HttpServletResponse response)
+			throws IOException {
+		fileBizService.fileDownload(fileDownloadReq.getFileId(), response);
+	}
 
+	@Operation(summary = "资源文件删除")
+	@PostMapping("/fileDelete")
+	@SuccessResponse("删除成功")
+	public void fileDelete(@Valid @RequestBody FileDeleteReq fileDeleteReq) throws IOException {
+		fileBizService.fileDelete(fileDeleteReq.getFileId());
+	}
 
-  @Operation(summary = "资源文件下载")
-  @PostMapping("/fileDownload")
-  @SuccessResponse("下载成功")
-  public void fileDownload(@Valid @RequestBody FileDownloadReq fileDownloadReq, HttpServletResponse response)
-      throws IOException {
-    fileBizService.fileDownload(fileDownloadReq.getFileId(), response);
-  }
-
-
-
-  @Operation(summary = "资源文件删除")
-  @PostMapping("/fileDelete")
-  @SuccessResponse("删除成功")
-  public void fileDelete(@Valid @RequestBody FileDeleteReq fileDeleteReq)
-      throws IOException {
-    fileBizService.fileDelete(fileDeleteReq.getFileId());
-  }
-
-
-  @Operation(summary = "资源文件查询")
-  @PostMapping("/fileList")
-  @SuccessResponse("查询成功")
-  public List<FileListRes> fileList(@Valid @RequestBody FileListReq fileListReq) {
-    return fileMapper.fileEntityListToFileListResList(
-      fileBizService.fileList(fileListReq));
-  }
+	@Operation(summary = "资源文件查询")
+	@PostMapping("/fileList")
+	@SuccessResponse("查询成功")
+	public List<FileListRes> fileList(@Valid @RequestBody FileListReq fileListReq) {
+		return fileMapper.fileEntityListToFileListResList(fileBizService.fileList(fileListReq));
+	}
 }

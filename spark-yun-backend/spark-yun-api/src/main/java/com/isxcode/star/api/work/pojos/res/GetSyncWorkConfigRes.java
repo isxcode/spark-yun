@@ -11,25 +11,25 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class GetSyncWorkConfigRes {
 
-  private String id;
+	private String id;
 
-  private String workId;
+	private String workId;
 
-  private String sourceDBType;
+	private String sourceDBType;
 
-  private String sourceDBId;
+	private String sourceDBId;
 
-  private String sourceTable;
+	private String sourceTable;
 
-  private String queryCondition;
+	private String queryCondition;
 
-  private String targetDBType;
+	private String targetDBType;
 
-  private String targetDBId;
+	private String targetDBId;
 
-  private String targetTable;
+	private String targetTable;
 
-  private String overMode;
+	private String overMode;
 
-  private Object columMapping;
+	private Object columMapping;
 }

@@ -15,8 +15,7 @@ public interface AgentService {
 	 * @param sparkSubmit
 	 *            spark作业提交配置
 	 */
-	SparkLauncher genSparkLauncher(Object pluginReq, SparkSubmit sparkSubmit, String agentHomePath)
-			throws IOException;
+	SparkLauncher genSparkLauncher(Object pluginReq, SparkSubmit sparkSubmit, String agentHomePath) throws IOException;
 
 	String executeWork(SparkLauncher sparkLauncher) throws IOException;
 

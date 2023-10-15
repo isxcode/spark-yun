@@ -28,26 +28,27 @@ import static com.isxcode.star.common.utils.ssh.SshUtils.scpFile;
 @Slf4j
 public class BashExecutor extends WorkExecutor {
 
-  private final WorkInstanceRepository workInstanceRepository;
+	private final WorkInstanceRepository workInstanceRepository;
 
-  private final SparkYunProperties sparkYunProperties;
+	private final SparkYunProperties sparkYunProperties;
 
-  private final ClusterNodeRepository clusterNodeRepository;
+	private final ClusterNodeRepository clusterNodeRepository;
 
-  private final ClusterNodeMapper clusterNodeMapper;
+	private final ClusterNodeMapper clusterNodeMapper;
 
-  private final AesUtils aesUtils;
+	private final AesUtils aesUtils;
 
-	public BashExecutor(WorkInstanceRepository workInstanceRepository, WorkflowInstanceRepository workflowInstanceRepository,
-                      SparkYunProperties sparkYunProperties, ClusterNodeRepository clusterNodeRepository, ClusterNodeMapper clusterNodeMapper, AesUtils aesUtils) {
+	public BashExecutor(WorkInstanceRepository workInstanceRepository,
+			WorkflowInstanceRepository workflowInstanceRepository, SparkYunProperties sparkYunProperties,
+			ClusterNodeRepository clusterNodeRepository, ClusterNodeMapper clusterNodeMapper, AesUtils aesUtils) {
 
 		super(workInstanceRepository, workflowInstanceRepository);
-    this.workInstanceRepository = workInstanceRepository;
-    this.sparkYunProperties = sparkYunProperties;
-    this.clusterNodeRepository = clusterNodeRepository;
-    this.clusterNodeMapper = clusterNodeMapper;
-    this.aesUtils = aesUtils;
-  }
+		this.workInstanceRepository = workInstanceRepository;
+		this.sparkYunProperties = sparkYunProperties;
+		this.clusterNodeRepository = clusterNodeRepository;
+		this.clusterNodeMapper = clusterNodeMapper;
+		this.aesUtils = aesUtils;
+	}
 
 	public void execute(WorkRunContext workRunContext, WorkInstanceEntity workInstance) {
 
@@ -64,45 +65,47 @@ public class BashExecutor extends WorkExecutor {
 		workInstance = updateInstance(workInstance, logBuilder);
 
 		try {
-      //存储本地临时bash脚本文件
+			// 存储本地临时bash脚本文件
 
-      // 创建一个临时文件
-      File file = new File(workInstance.getId() + "-bash.sh");
-      if (!file.exists()) {
-        file.createNewFile();
-      }
-      FileWriter writer = new FileWriter(file);
-      // 写入脚本
-      writer.write(workRunContext.getBashScript());
-      writer.close();
+			// 创建一个临时文件
+			File file = new File(workInstance.getId() + "-bash.sh");
+			if (!file.exists()) {
+				file.createNewFile();
+			}
+			FileWriter writer = new FileWriter(file);
+			// 写入脚本
+			writer.write(workRunContext.getBashScript());
+			writer.close();
 
-      Optional<ClusterNodeEntity> clusterNodeEntityOptional = clusterNodeRepository.findById(workRunContext.getClusterNodeId());
-      if (!clusterNodeEntityOptional.isPresent()) {
-        throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "集群节点不存在 \n");
-      }
-      logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("成功获取集群节点信息 \n");
-      ClusterNodeEntity clusterNode = clusterNodeEntityOptional.get();
-      ScpFileEngineNodeDto scpFileEngineNodeDto = clusterNodeMapper.engineNodeEntityToScpFileEngineNodeDto(clusterNode);
-      scpFileEngineNodeDto.setPasswd(aesUtils.decrypt(scpFileEngineNodeDto.getPasswd()));
+			Optional<ClusterNodeEntity> clusterNodeEntityOptional = clusterNodeRepository
+					.findById(workRunContext.getClusterNodeId());
+			if (!clusterNodeEntityOptional.isPresent()) {
+				throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "集群节点不存在 \n");
+			}
+			logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("成功获取集群节点信息 \n");
+			ClusterNodeEntity clusterNode = clusterNodeEntityOptional.get();
+			ScpFileEngineNodeDto scpFileEngineNodeDto = clusterNodeMapper
+					.engineNodeEntityToScpFileEngineNodeDto(clusterNode);
+			scpFileEngineNodeDto.setPasswd(aesUtils.decrypt(scpFileEngineNodeDto.getPasswd()));
 
-      scpFile(scpFileEngineNodeDto, "/"+ file.getAbsolutePath(),
-        sparkYunProperties.getTmpDir() + File.separator + file.getName());
+			scpFile(scpFileEngineNodeDto, "/" + file.getAbsolutePath(),
+					sparkYunProperties.getTmpDir() + File.separator + file.getName());
 
-      // 待运行脚本
-      String chCommand = "chmod 755 " + sparkYunProperties.getTmpDir() + File.separator + file.getName();
-      String Command = "bash " + sparkYunProperties.getTmpDir() + File.separator + file.getName();
-      String delCommand = "rm -f " + sparkYunProperties.getTmpDir() + File.separator + file.getName();
+			// 待运行脚本
+			String chCommand = "chmod 755 " + sparkYunProperties.getTmpDir() + File.separator + file.getName();
+			String Command = "bash " + sparkYunProperties.getTmpDir() + File.separator + file.getName();
+			String delCommand = "rm -f " + sparkYunProperties.getTmpDir() + File.separator + file.getName();
 
-      //授予执行权限
-      executeCommand(scpFileEngineNodeDto, chCommand, false);
-      // 执行
-      String result = executeCommand(scpFileEngineNodeDto, Command, false);
-      // 删除远程临时文件
-      executeCommand(scpFileEngineNodeDto, delCommand, false);
-      // 删除本地临时文件
-      file.delete();
+			// 授予执行权限
+			executeCommand(scpFileEngineNodeDto, chCommand, false);
+			// 执行
+			String result = executeCommand(scpFileEngineNodeDto, Command, false);
+			// 删除远程临时文件
+			executeCommand(scpFileEngineNodeDto, delCommand, false);
+			// 删除本地临时文件
+			file.delete();
 
-			//存储脚本执行结果
+			// 存储脚本执行结果
 			logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("结果保存成功  \n");
 			workInstance.setSubmitLog(logBuilder.toString());
 			workInstance.setResultData(JSON.toJSONString(result));

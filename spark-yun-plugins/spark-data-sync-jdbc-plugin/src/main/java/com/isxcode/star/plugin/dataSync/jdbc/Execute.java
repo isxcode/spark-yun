@@ -20,70 +20,66 @@ public class Execute {
 	/** 最后一句sql查询. */
 	public static void main(String[] args) {
 
-    JDBCSyncPluginReq conf = parse(args);
+		JDBCSyncPluginReq conf = parse(args);
 
-    String sourceTable = "source_temp_table" + new Date().getTime();
-    String targetTable = "target_temp_table" + new Date().getTime();
+		String sourceTable = "source_temp_table" + new Date().getTime();
+		String targetTable = "target_temp_table" + new Date().getTime();
 
-    try (SparkSession sparkSession = initSparkSession(conf.getSparkConfig())) {
-      // 读取源数据并创建临时表
-      Dataset<Row> source = sparkSession.read()
-        .format("jdbc")
-        .option("url", conf.getSourceDbInfo().getUrl())
-        .option("dbtable", conf.getSourceDbInfo().getTableName())
-        .option("user", conf.getSourceDbInfo().getUser())
-        .option("password", conf.getSourceDbInfo().getPassword())
-        .load();
-      source.createOrReplaceTempView(sourceTable);
+		try (SparkSession sparkSession = initSparkSession(conf.getSparkConfig())) {
+			// 读取源数据并创建临时表
+			Dataset<Row> source = sparkSession.read().format("jdbc").option("url", conf.getSourceDbInfo().getUrl())
+					.option("dbtable", conf.getSourceDbInfo().getTableName())
+					.option("user", conf.getSourceDbInfo().getUser())
+					.option("password", conf.getSourceDbInfo().getPassword()).load();
+			source.createOrReplaceTempView(sourceTable);
 
-      // 读取目标数据并创建临时表
-      Dataset<Row> target = sparkSession.read().format("jdbc")
-        .option("url", conf.getTargetDbInfo().getUrl())
-        .option("dbtable", conf.getTargetDbInfo().getTableName())
-        .option("user", conf.getTargetDbInfo().getUser())
-        .option("password", conf.getTargetDbInfo().getPassword())
-        .option("truncate", "true")
-        .load();
-      target.createOrReplaceTempView(targetTable);
-      String sourceColums =  "";
-      for (String column : target.columns()) {
-        if (null == conf.getColumMapping().get(column)) {
-          sourceColums += "null" + ",";
-        }else {
-          String sourceColum = conf.getColumMapping().get(column).get(1) != null && !"".equals(conf.getColumMapping().get(column).get(1)) ?
-            conf.getColumMapping().get(column).get(1) : conf.getColumMapping().get(column).get(0);
-          //含有"'"则表示希望写入固定值
-          if(sourceColum.contains("'")){
-            sourceColums += sourceColum + ",";
-          }else {
-            sourceColums += '`'+ sourceColum + '`' + ",";
-          }
-        }
+			// 读取目标数据并创建临时表
+			Dataset<Row> target = sparkSession.read().format("jdbc").option("url", conf.getTargetDbInfo().getUrl())
+					.option("dbtable", conf.getTargetDbInfo().getTableName())
+					.option("user", conf.getTargetDbInfo().getUser())
+					.option("password", conf.getTargetDbInfo().getPassword()).option("truncate", "true").load();
+			target.createOrReplaceTempView(targetTable);
+			String sourceColums = "";
+			for (String column : target.columns()) {
+				if (null == conf.getColumMapping().get(column)) {
+					sourceColums += "null" + ",";
+				} else {
+					String sourceColum = conf.getColumMapping().get(column).get(1) != null
+							&& !"".equals(conf.getColumMapping().get(column).get(1))
+									? conf.getColumMapping().get(column).get(1)
+									: conf.getColumMapping().get(column).get(0);
+					// 含有"'"则表示希望写入固定值
+					if (sourceColum.contains("'")) {
+						sourceColums += sourceColum + ",";
+					} else {
+						sourceColums += '`' + sourceColum + '`' + ",";
+					}
+				}
 
-      }
-      sourceColums = sourceColums.substring(0, sourceColums.length() - 1);
+			}
+			sourceColums = sourceColums.substring(0, sourceColums.length() - 1);
 
-      String sql;
-      switch (conf.getOverMode()) {
-        case OVERWRITE:
-          sql = "INSERT OVERWRITE ";
-          break;
-        case INTO:
-          sql = "INSERT INTO ";
-          break;
-        default:
-          System.out.println("LogType:spark-yun\n暂不支持的写入模式！！！\nEnd of LogType:spark-yun");
-          return;
-      }
+			String sql;
+			switch (conf.getOverMode()) {
+				case OVERWRITE :
+					sql = "INSERT OVERWRITE ";
+					break;
+				case INTO :
+					sql = "INSERT INTO ";
+					break;
+				default :
+					System.out.println("LogType:spark-yun\n暂不支持的写入模式！！！\nEnd of LogType:spark-yun");
+					return;
+			}
 
-      sql = sql + sourceTable + " SELECT " + sourceColums + " FROM "+ targetTable + " " + conf.getCondition();
+			sql = sql + sourceTable + " SELECT " + sourceColums + " FROM " + targetTable + " " + conf.getCondition();
 
-      // 执行数据同步操作
-      sparkSession.sql(sql);
+			// 执行数据同步操作
+			sparkSession.sql(sql);
 
-      System.out.println("LogType:spark-yun\n同步成功\nEnd of LogType:spark-yun");
+			System.out.println("LogType:spark-yun\n同步成功\nEnd of LogType:spark-yun");
 
-    }
+		}
 	}
 
 	public static JDBCSyncPluginReq parse(String[] args) {
@@ -104,8 +100,7 @@ public class Execute {
 			}
 		}
 
-		if (sparkConfig != null
-				&& Strings.isEmpty(sparkConfig.get("hive.metastore.uris"))) {
+		if (sparkConfig != null && Strings.isEmpty(sparkConfig.get("hive.metastore.uris"))) {
 			return sparkSessionBuilder.config(conf).getOrCreate();
 		} else {
 			return sparkSessionBuilder.config(conf).enableHiveSupport().getOrCreate();

@@ -24,8 +24,8 @@ public class WorkExecutorFactory {
 				return applicationContext.getBean(QuerySqlExecutor.class);
 			case WorkType.EXECUTE_JDBC_SQL :
 				return applicationContext.getBean(ExecuteSqlExecutor.class);
-      case WorkType.DATA_SYNC_JDBC :
-        return applicationContext.getBean(DataSyncJdbcExecutor.class);
+			case WorkType.DATA_SYNC_JDBC :
+				return applicationContext.getBean(DataSyncJdbcExecutor.class);
 			default :
 				throw new IsxAppException("作业类型不存在");
 		}

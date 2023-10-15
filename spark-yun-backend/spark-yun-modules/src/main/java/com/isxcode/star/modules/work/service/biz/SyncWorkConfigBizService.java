@@ -31,21 +31,22 @@ public class SyncWorkConfigBizService {
 
 	private final SyncWorkConfigRepository syncWorkConfigRepository;
 
-  private final SyncWorkConfigMapper syncWorkConfigMapper;
+	private final SyncWorkConfigMapper syncWorkConfigMapper;
 
 	public GetSyncWorkConfigRes getSyncWorkConfig(GetSyncWorkConfigReq getSyncWorkConfigReq) {
 
-		Optional<SyncWorkConfigEntity> syncWorkConfigEntityOptional = Optional.ofNullable(syncWorkConfigRepository.findByWorkId(getSyncWorkConfigReq.getWorkId()));
+		Optional<SyncWorkConfigEntity> syncWorkConfigEntityOptional = Optional
+				.ofNullable(syncWorkConfigRepository.findByWorkId(getSyncWorkConfigReq.getWorkId()));
 		if (!syncWorkConfigEntityOptional.isPresent()) {
 			throw new IsxAppException("作业异常，请联系开发者");
 		}
 
-    GetSyncWorkConfigRes getSyncWorkConfigRes = syncWorkConfigMapper
-      .syncWorkConfigEntityToGetSyncWorkConfigRes(syncWorkConfigEntityOptional.get());
-    getSyncWorkConfigRes.setColumMapping(JSON.parseObject(getSyncWorkConfigRes.getColumMapping().toString(),
-      new TypeReference<HashMap<String, List<String>>>() {
-      }));
-    return getSyncWorkConfigRes;
+		GetSyncWorkConfigRes getSyncWorkConfigRes = syncWorkConfigMapper
+				.syncWorkConfigEntityToGetSyncWorkConfigRes(syncWorkConfigEntityOptional.get());
+		getSyncWorkConfigRes.setColumMapping(JSON.parseObject(getSyncWorkConfigRes.getColumMapping().toString(),
+				new TypeReference<HashMap<String, List<String>>>() {
+				}));
+		return getSyncWorkConfigRes;
 	}
 
 	public void saveSyncWorkConfig(SaveSyncWorkConfigReq saveSyncWorkConfigReq) {
@@ -55,8 +56,11 @@ public class SyncWorkConfigBizService {
 			throw new IsxAppException("作业不存在");
 		}
 
-    SyncWorkConfigEntity syncWorkConfigEntity = syncWorkConfigRepository.findByWorkId(workEntityOptional.get().getId());
-    saveSyncWorkConfigReq.setColumMapping(JSON.toJSON(saveSyncWorkConfigReq.getColumMapping()));
-    syncWorkConfigRepository.save(syncWorkConfigMapper.saveSyncWorkConfigReqAndSyncWorkConfigEntityToSyncWorkConfigEntity(saveSyncWorkConfigReq,syncWorkConfigEntity));
+		SyncWorkConfigEntity syncWorkConfigEntity = syncWorkConfigRepository
+				.findByWorkId(workEntityOptional.get().getId());
+		saveSyncWorkConfigReq.setColumMapping(JSON.toJSON(saveSyncWorkConfigReq.getColumMapping()));
+		syncWorkConfigRepository
+				.save(syncWorkConfigMapper.saveSyncWorkConfigReqAndSyncWorkConfigEntityToSyncWorkConfigEntity(
+						saveSyncWorkConfigReq, syncWorkConfigEntity));
 	}
 }
