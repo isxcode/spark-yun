@@ -1,7 +1,6 @@
 package com.isxcode.star.modules.work.service.biz;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.TypeReference;
 import com.isxcode.star.api.work.pojos.req.*;
 import com.isxcode.star.api.work.pojos.res.*;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
@@ -55,9 +54,11 @@ public class SyncWorkBizService {
 
 		GetSyncWorkConfigRes getSyncWorkConfigRes = syncWorkConfigMapper
 				.syncWorkConfigEntityToGetSyncWorkConfigRes(syncWorkConfigEntityOptional.get());
-		getSyncWorkConfigRes.setColumMapping(JSON.parseObject(getSyncWorkConfigRes.getColumMapping().toString(),
-				new TypeReference<HashMap<String, List<String>>>() {
-				}));
+		getSyncWorkConfigRes.setColumMapping(JSON.parseArray(String.valueOf(getSyncWorkConfigRes.getColumMapping())));
+		getSyncWorkConfigRes
+				.setSourceTableData(JSON.parseArray(String.valueOf(getSyncWorkConfigRes.getSourceTableData())));
+		getSyncWorkConfigRes
+				.setTargetTableData(JSON.parseArray(String.valueOf(getSyncWorkConfigRes.getTargetTableData())));
 		return getSyncWorkConfigRes;
 	}
 
