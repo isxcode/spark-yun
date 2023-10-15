@@ -4,7 +4,7 @@
   height: 100vh;
 
   &.is-collapse {
-    
+
     .zqy-home__sidebar {
       width: 96px;
     }
@@ -22,7 +22,7 @@
 
     .zqy-home__menu-wrap {
       padding-bottom: 100px;
-    } 
+    }
   }
 
   .zqy-home__sidebar {
@@ -45,14 +45,14 @@
   }
 
   .zqy-home__logo {
-    height: 64px;
-    width: 64px;
+    height: 40px;
+    width: 40px;
   }
 
   .zqy-home__title {
     font-size: 28px;
     font-weight: bold;
-    line-height: 56px;
+    line-height: 46px;
     vertical-align: bottom;
     color: getCssVar('color', 'primary');
   }
