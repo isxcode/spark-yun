@@ -9,6 +9,8 @@
   .zqy-login__header {
     padding: 28px 56px;
     user-select: none;
+    position: absolute;
+    z-index: 99;
   }
 
   .zqy-login__logo {
@@ -41,7 +43,7 @@
   }
 
   .zqy-login__slogan {
-    font-size: 45px;
+    font-size: 40px;
     font-weight: bold;
     color: getCssVar('color', 'primary');
     margin-right: 20%;
