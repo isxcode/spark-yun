@@ -18,9 +18,7 @@ public interface SyncWorkConfigMapper {
   @Mapping(target = "targetDBId", source = "saveSyncWorkConfigReq.targetDBId")
   @Mapping(target = "targetTable", source = "saveSyncWorkConfigReq.targetTable")
   @Mapping(target = "overMode", source = "saveSyncWorkConfigReq.overMode")
-  @Mapping(target = "sourceTableData", source = "saveSyncWorkConfigReq.sourceTableData")
-  @Mapping(target = "targetTableData", source = "saveSyncWorkConfigReq.targetTableData")
-  @Mapping(target = "columMapping", source = "saveSyncWorkConfigReq.connect")
+  @Mapping(target = "columMapping", expression="java(saveSyncWorkConfigReq.getColumMapping().toString())")
   SyncWorkConfigEntity saveSyncWorkConfigReqAndSyncWorkConfigEntityToSyncWorkConfigEntity(SaveSyncWorkConfigReq saveSyncWorkConfigReq,SyncWorkConfigEntity syncWorkConfigEntity);
 
   GetSyncWorkConfigRes syncWorkConfigEntityToGetSyncWorkConfigRes(SyncWorkConfigEntity syncWorkConfigEntity);

@@ -1,12 +1,12 @@
 package com.isxcode.star.api.agent.pojos.req;
 
-import com.isxcode.star.api.agent.pojos.sup.DataSource;
-import com.isxcode.star.api.agent.pojos.sup.MappingData;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Data
@@ -16,7 +16,7 @@ import java.util.Map;
 public class JDBCSyncPluginReq {
   private DataSource sourceDbInfo;
   private DataSource targetDbInfo;
-  private MappingData args;
+  private HashMap<String, List<String>> columMapping;
   private String condition;
   private String overMode;
   private Map<String, String> sparkConfig;
