@@ -97,6 +97,7 @@ const buttons = ref([
   {type: 'primary', text: '取消映射', code: 'quitLine'},
   {type: 'primary', text: '重置映射', code: 'resetLine'},
 ])
+const connectCopy = ref()
 
 function getSourceTableData() {
     return sourceTableData.value
@@ -105,13 +106,30 @@ function getTargetTableData() {
     return targetTableData.value
 }
 function getConnect() {
+    getLinkData()
     return connectNodeList.value
+}
+
+// 初始化数据
+function initPageData(data: any) {
+    sourceTableData.value = data.sourceTableData
+    targetTableData.value = data.targetTableData
+    connectCopy.value = data.columMapping
+
+    connectNodeList.value = data.columMapping
+    setTimeout(() => {
+        connectNodeList.value.forEach((data: any) => {
+            instance.connect({
+                source: document.querySelector(`.code-source-${data.source}`),
+                target: document.querySelector(`.code-target-${data.target}`)
+            })
+        })
+    })
 }
 
 // 根据表名获取映射表字段
 function getTableColumnData(params: TableDetailParam, type: string) {
     GetTableColumnsByTableId(params).then((res: any) => {
-        console.log('res', res.data)
         if (type === 'source') {
             sourceTableData.value = (res.data.columns || []).map((column: any) => {
                 return {
@@ -250,7 +268,15 @@ function clickSelectLinkConnect(type: string) {
     } else if (type === 'quitLine') {
         instance.deleteEveryConnection()
     } else if (type === 'resetLine') {
-        connectNodeList.value
+        connectNodeList.value = connectCopy.value
+        setTimeout(() => {
+            connectNodeList.value.forEach((data: any) => {
+                instance.connect({
+                    source: document.querySelector(`.code-source-${data.source}`),
+                    target: document.querySelector(`.code-target-${data.target}`)
+                })
+            })
+        })
     }
 }
 
@@ -262,12 +288,12 @@ onMounted(() => {
             setTimeout(() => {
                 getLinkData()
                 instance.deleteEveryConnection()
-                connectNodeList.value.forEach((data: any) => {
-                    instance.connect({
-                        source: document.querySelector(`.code-source-${data.source}`),
-                        target: document.querySelector(`.code-target-${data.target}`)
-                    })
-                })
+                // connectNodeList.value.forEach((data: any) => {
+                //     instance.connect({
+                //         source: document.querySelector(`.code-source-${data.source}`),
+                //         target: document.querySelector(`.code-target-${data.target}`)
+                //     })
+                // })
             })
         })
     });
@@ -277,7 +303,8 @@ defineExpose({
     getTableColumnData,
     getSourceTableData,
     getTargetTableData,
-    getConnect
+    getConnect,
+    initPageData
 })
 </script>
 
