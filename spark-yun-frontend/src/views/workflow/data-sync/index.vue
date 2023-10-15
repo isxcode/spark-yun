@@ -116,7 +116,7 @@ import CodeMirror from 'vue-codemirror6'
 import {sql} from '@codemirror/lang-sql'
 import {DataSourceType, OverModeList} from './data.config.ts'
 import {GetDatasourceList} from '@/services/datasource.service'
-import {CreateTableWork, GetDataSourceTables, SaveDataSync} from '@/services/data-sync.service'
+import {CreateTableWork, GetDataSourceTables, GetDataSyncDetail, SaveDataSync} from '@/services/data-sync.service'
 import TableDetail from './table-detail/index.vue'
 import DataSyncTable from './data-sync-table/index.vue'
 
@@ -170,7 +170,17 @@ function saveData() {
         targetTableData: dataSyncTableRef.value.getTargetTableData(),
         connect: dataSyncTableRef.value.getConnect()
     }).then((res: any) => {
+        ElMessage.success('保存成功')
+    }).catch(err => {
+      console.error(err)
+    })
+}
 
+function getDate() {
+    GetDataSyncDetail({
+        workId: props.workItemConfig.id
+    }).then((res: any) => {
+        
     }).catch(err => {
       console.error(err)
     })
@@ -258,6 +268,7 @@ function tableChangeEvent(e: string, dataSourceId: string, type: string) {
 
 onMounted(() => {
     formData.workId = props.workItemConfig.id
+    getDate()
 })
 </script>
 

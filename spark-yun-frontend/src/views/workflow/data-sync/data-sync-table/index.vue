@@ -39,9 +39,15 @@
                 </li>
             </ul>
         </div>
+        <div class="target-link-line">
+            <ul class="target-link-pointer">
+                <li v-for="row in targetTableData" :key="row.code">
+                    <div class="lint-pointer" :class="`rightRow code-target-${row.code}`"></div>
+                </li>
+            </ul>
+        </div>
         <div class="target-table-container">
-            <el-table ref="targetTableRef" :data="targetTableData" row-key="code" border
-                :row-class-name="({ row }) => `rightRow code-target-${row.code}`">
+            <el-table ref="targetTableRef" :data="targetTableData" row-key="code" border>
                 <el-table-column prop="code" :show-overflow-tooltip="true" label="字段名" />
                 <el-table-column prop="type" :show-overflow-tooltip="true" label="类型" />
             </el-table>
@@ -82,19 +88,8 @@ defineProps<{
 
 let instance: any = null
 const connectNodeList = ref<connect[]>([])
-const sourceTableData = ref([
-    // {
-    //     code: 'name',
-    //     type: 'int',
-    //     sql: 'show databasesshow databasesshow databasesshow databasesshow databases'
-    // }
-])
-const targetTableData = ref([
-    // {
-    //     code: 'age',
-    //     type: 'int'
-    // }
-])
+const sourceTableData = ref([])
+const targetTableData = ref([])
 const buttons = ref([
   {type: 'primary', text: '同行映射', code: 'SameLine'},
   {type: 'primary', text: '同名映射', code: 'SameName'},
@@ -343,10 +338,45 @@ defineExpose({
             }
         }
     }
-
+    .target-link-line {
+        position: relative;
+        .target-link-pointer {
+            list-style: none;
+            width: 6px;
+            height: calc(100% - 40px);
+            position: absolute;
+            top: 40px;
+            left: -2px;
+            z-index: 100;
+            padding: 0;
+            margin: 0;
+            box-sizing: content-box;
+            li {
+                height: 40px;
+                display: flex;
+                align-items: center;
+                justify-content: flex-end;
+                .lint-pointer {
+                    height: 6px;
+                    width: 6px;
+                    border-radius: 50%;
+                    background-color: #ff7c06;
+                    z-index: 1000;
+                    transform: scale(1);
+                    transition: transform 0.15s linear;
+    
+                    &:hover {
+                        transform: scale(2);
+                        transition: transform 0.15s linear;
+                    }
+                }
+            }
+        }
+    }
     .target-table-container {
         width: 100%;
         overflow: auto;
+
 
         .el-table {
             // width: 100%;
