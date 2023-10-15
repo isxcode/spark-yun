@@ -38,7 +38,7 @@ public class WorkConfigEntity {
 
 	private String clusterId;
 
-  private String clusterNodeId;
+	private String clusterNodeId;
 
 	private String datasourceId;
 
@@ -46,9 +46,9 @@ public class WorkConfigEntity {
 
 	private String sparkConfig;
 
-  private String syncConf;
+	private String syncConf;
 
-  private String bashScript;
+	private String bashScript;
 
 	private String corn;
 

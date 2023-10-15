@@ -7,15 +7,15 @@ import lombok.Data;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class AddFileRes {
 
-  private String id;
+	private String id;
 
-  private String workId;
+	private String workId;
 
-  private String fileName;
+	private String fileName;
 
-  private String fileSize;
+	private String fileSize;
 
-  private String filePath;
+	private String filePath;
 
-  private String fileType;
+	private String fileType;
 }

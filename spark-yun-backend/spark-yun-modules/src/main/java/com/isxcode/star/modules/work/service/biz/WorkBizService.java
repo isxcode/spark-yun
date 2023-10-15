@@ -83,7 +83,7 @@ public class WorkBizService {
 		// 如果是sparkSql作业，初始化sparkConfig
 		WorkConfigEntity workConfigEntity = new WorkConfigEntity();
 		if (WorkType.QUERY_SPARK_SQL.equals(addWorkReq.getWorkType())
-        || WorkType.DATA_SYNC_JDBC.equals(addWorkReq.getWorkType())) {
+				|| WorkType.DATA_SYNC_JDBC.equals(addWorkReq.getWorkType())) {
 			workConfigEntity.setSparkConfig(WorkDefault.DEFAULT_SPARK_CONF);
 		}
 

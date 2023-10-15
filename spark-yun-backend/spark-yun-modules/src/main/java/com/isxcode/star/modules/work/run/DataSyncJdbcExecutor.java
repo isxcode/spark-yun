@@ -59,20 +59,21 @@ public class DataSyncJdbcExecutor extends WorkExecutor {
 
 	private final WorkConfigRepository workConfigRepository;
 
-  private final SyncWorkConfigRepository syncWorkConfigRepository;
+	private final SyncWorkConfigRepository syncWorkConfigRepository;
 
-  private final DatasourceRepository datasourceRepository;
+	private final DatasourceRepository datasourceRepository;
 
 	private final Locker locker;
 
 	private final HttpUrlUtils httpUrlUtils;
 
-  private final AesUtils aesUtils;
+	private final AesUtils aesUtils;
 
 	public DataSyncJdbcExecutor(WorkInstanceRepository workInstanceRepository, ClusterRepository clusterRepository,
-                              ClusterNodeRepository clusterNodeRepository, WorkflowInstanceRepository workflowInstanceRepository,
-                              WorkRepository workRepository, WorkConfigRepository workConfigRepository, SyncWorkConfigRepository syncWorkConfigRepository, DatasourceRepository datasourceRepository, Locker locker,
-                              HttpUrlUtils httpUrlUtils, AesUtils aesUtils) {
+			ClusterNodeRepository clusterNodeRepository, WorkflowInstanceRepository workflowInstanceRepository,
+			WorkRepository workRepository, WorkConfigRepository workConfigRepository,
+			SyncWorkConfigRepository syncWorkConfigRepository, DatasourceRepository datasourceRepository, Locker locker,
+			HttpUrlUtils httpUrlUtils, AesUtils aesUtils) {
 
 		super(workInstanceRepository, workflowInstanceRepository);
 		this.workInstanceRepository = workInstanceRepository;
@@ -80,12 +81,12 @@ public class DataSyncJdbcExecutor extends WorkExecutor {
 		this.clusterNodeRepository = clusterNodeRepository;
 		this.workRepository = workRepository;
 		this.workConfigRepository = workConfigRepository;
-    this.syncWorkConfigRepository = syncWorkConfigRepository;
-    this.datasourceRepository = datasourceRepository;
-    this.locker = locker;
+		this.syncWorkConfigRepository = syncWorkConfigRepository;
+		this.datasourceRepository = datasourceRepository;
+		this.locker = locker;
 		this.httpUrlUtils = httpUrlUtils;
-    this.aesUtils = aesUtils;
-  }
+		this.aesUtils = aesUtils;
+	}
 
 	@Override
 	protected void execute(WorkRunContext workRunContext, WorkInstanceEntity workInstance) {
@@ -124,7 +125,8 @@ public class DataSyncJdbcExecutor extends WorkExecutor {
 		logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始构建作业  \n");
 		YagExecuteWorkReq executeReq = new YagExecuteWorkReq();
 
-    workRunContext.getSparkConfig().put("spark.driver.extraClassPath", "/Users/yuzu/Documents/zhiqingyun-agent/lib/mysql-connector-j-8.0.32.jar");
+		workRunContext.getSparkConfig().put("spark.driver.extraClassPath",
+				"/Users/yuzu/Documents/zhiqingyun-agent/lib/mysql-connector-j-8.0.32.jar");
 
 		// 开始构造SparkSubmit
 		SparkSubmit sparkSubmit = SparkSubmit.builder().verbose(true)
@@ -132,39 +134,34 @@ public class DataSyncJdbcExecutor extends WorkExecutor {
 				.conf(genSparkSubmitConfig(workRunContext.getSparkConfig())).build();
 
 		// 开始构造PluginReq
-    SyncWorkConfigEntity syncWorkConfigEntity = syncWorkConfigRepository.findByWorkId(workInstance.getWorkId());
-    String sourceDBId = syncWorkConfigEntity.getSourceDBId();
-    String targetDBId = syncWorkConfigEntity.getTargetDBId();
+		SyncWorkConfigEntity syncWorkConfigEntity = syncWorkConfigRepository.findByWorkId(workInstance.getWorkId());
+		String sourceDBId = syncWorkConfigEntity.getSourceDBId();
+		String targetDBId = syncWorkConfigEntity.getTargetDBId();
 
-    Optional<DatasourceEntity> sourceDBOption = datasourceRepository.findById(sourceDBId);
-    if(!sourceDBOption.isPresent()){
-      throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "作业创建失败 : 来源数据源不存在  \n");
-    }
-    Optional<DatasourceEntity> targetOption = datasourceRepository.findById(targetDBId);
-    if(!targetOption.isPresent()){
-      throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "作业创建失败 : 目标数据源不存在  \n");
-    }
-    //String mapping = new String(Base64.getDecoder().decode(syncWorkConfigEntity.getColumMapping()));
-    JDBCSyncPluginReq pluginReq = JDBCSyncPluginReq.builder()
-      .sourceDbInfo(DataSource.builder()
-        .url(sourceDBOption.get().getJdbcUrl())
-        .tableName(syncWorkConfigEntity.getSourceTable())
-        .user(sourceDBOption.get().getUsername())
-        .password(aesUtils.decrypt(sourceDBOption.get().getPasswd()))
-        .build())
-      .targetDbInfo(DataSource.builder()
-        .url(targetOption.get().getJdbcUrl())
-        .tableName(syncWorkConfigEntity.getTargetTable())
-        .user(targetOption.get().getUsername())
-        .password(aesUtils.decrypt(targetOption.get().getPasswd()))
-        .build())
-      .condition(syncWorkConfigEntity.getQueryCondition())
-      .overMode(syncWorkConfigEntity.getOverMode())
-      .columMapping(JSON.parseObject(syncWorkConfigEntity.getColumMapping(),
-        new TypeReference<HashMap<String, List<String>>>(){}))
-      .sparkConfig(genSparkConfig(workRunContext.getSparkConfig())).build();
+		Optional<DatasourceEntity> sourceDBOption = datasourceRepository.findById(sourceDBId);
+		if (!sourceDBOption.isPresent()) {
+			throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "作业创建失败 : 来源数据源不存在  \n");
+		}
+		Optional<DatasourceEntity> targetOption = datasourceRepository.findById(targetDBId);
+		if (!targetOption.isPresent()) {
+			throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "作业创建失败 : 目标数据源不存在  \n");
+		}
+		// String mapping = new
+		// String(Base64.getDecoder().decode(syncWorkConfigEntity.getColumMapping()));
+		JDBCSyncPluginReq pluginReq = JDBCSyncPluginReq.builder()
+				.sourceDbInfo(DataSource.builder().url(sourceDBOption.get().getJdbcUrl())
+						.tableName(syncWorkConfigEntity.getSourceTable()).user(sourceDBOption.get().getUsername())
+						.password(aesUtils.decrypt(sourceDBOption.get().getPasswd())).build())
+				.targetDbInfo(DataSource.builder().url(targetOption.get().getJdbcUrl())
+						.tableName(syncWorkConfigEntity.getTargetTable()).user(targetOption.get().getUsername())
+						.password(aesUtils.decrypt(targetOption.get().getPasswd())).build())
+				.condition(syncWorkConfigEntity.getQueryCondition()).overMode(syncWorkConfigEntity.getOverMode())
+				.columMapping(JSON.parseObject(syncWorkConfigEntity.getColumMapping(),
+						new TypeReference<HashMap<String, List<String>>>() {
+						}))
+				.sparkConfig(genSparkConfig(workRunContext.getSparkConfig())).build();
 
-    //todo 传输数据库依赖
+		// todo 传输数据库依赖
 
 		// 开始构造executeReq
 		executeReq.setSparkSubmit(sparkSubmit);
