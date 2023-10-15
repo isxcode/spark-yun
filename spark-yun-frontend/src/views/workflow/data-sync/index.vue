@@ -264,7 +264,7 @@ onMounted(() => {
   width: 100%;
 
   .data-sync__option-container {
-    height: getCssVar('menu', 'item-height');
+    height: 50px;
     display: flex;
     align-items: center;
     color: getCssVar('color', 'primary', 'light-5');
@@ -302,7 +302,7 @@ onMounted(() => {
     padding: 20px;
     box-sizing: border-box;
     overflow: auto;
-    height: calc(100vh - 156px);
+    height: calc(100vh - 100px);
     position: relative;
 
     .data-sync-top {

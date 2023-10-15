@@ -328,7 +328,7 @@ defineExpose({
 
 <style lang="scss" scoped>
 .zqy-flow {
-    height: calc(100vh - 162px);
+    height: calc(100vh - 106px);
 
     .my-selecting {
         border: 1px solid red;
