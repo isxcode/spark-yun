@@ -82,7 +82,8 @@
                     <ZqyFlow ref="zqyFlowRef"></ZqyFlow>
                 </template>
                 <template v-else>
-                    <WorkItem v-if="showWorkItem" @back="backToFlow" @locationNode="locationNode" :workItemConfig="workConfig" :workFlowData="workFlowData"></WorkItem>
+                    <WorkItem v-if="showWorkItem && workConfig.workType !== 'DATA_SYNC_JDBC'" @back="backToFlow" @locationNode="locationNode" :workItemConfig="workConfig" :workFlowData="workFlowData"></WorkItem>
+                    <data-sync v-if="showWorkItem && workConfig.workType === 'DATA_SYNC_JDBC'"></data-sync>
                 </template>
             </div>
         <AddModal ref="addModalRef" />
@@ -101,6 +102,7 @@ import ConfigDetail from './config-detail/index.vue'
 import eventBus from '@/utils/eventBus'
 import zqyLog from '@/components/zqy-log/index.vue'
 import WorkItem from '../work-item/index.vue'
+import DataSync from '../data-sync/index.vue'
 
 import { AddWorkflowDetailList, BreakFlowData, DeleteWorkflowDetailList, ExportWorkflowData, GetWorkflowData, GetWorkflowDetailList, GetWorkflowList, ImportWorkflowData, PublishWorkflowData, QueryRunWorkInstances, ReRunWorkflow, RerunCurrentNodeFlowData, RunAfterFlowData, RunWorkflowData, SaveWorkflowData, StopWorkflowData, UpdateWorkflowDetailList } from '@/services/workflow.service'
 import { ElMessage, ElMessageBox } from 'element-plus'
@@ -581,7 +583,7 @@ onUnmounted(() => {
 
 <style lang="scss">
 .workflow-page {
-    height: calc(100% - 54px);
+    height: calc(100% - 56px);
     display: flex;
     position: relative;
     overflow: hidden;
