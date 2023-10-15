@@ -1,8 +1,10 @@
 package com.isxcode.star.agent.run;
 
 import com.alibaba.fastjson2.JSON;
+import com.isxcode.star.agent.properties.SparkYunAgentProperties;
 import com.isxcode.star.api.agent.pojos.req.SparkSubmit;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
 import org.apache.spark.launcher.SparkLauncher;

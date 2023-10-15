@@ -51,3 +51,9 @@ ALTER TABLE SY_SYNC_WORK_CONFIG ADD source_table_data text NULL;
 ALTER TABLE SY_SYNC_WORK_CONFIG CHANGE source_table_data sourceTableData text not NULL AFTER over_mode;
 ALTER TABLE SY_SYNC_WORK_CONFIG ADD target_table_data text NULL;
 ALTER TABLE SY_SYNC_WORK_CONFIG CHANGE target_table_data targetTableData text not NULL AFTER sourceTableData;
+
+ALTER TABLE SY_WORK_CONFIG ADD bash_script text NULL;
+ALTER TABLE SY_WORK_CONFIG CHANGE bash_script bash_script text NULL AFTER sql_script;
+
+ALTER TABLE SY_WORK_CONFIG ADD cluster_node_id varchar(200) NULL;
+ALTER TABLE SY_WORK_CONFIG CHANGE cluster_node_id cluster_node_id varchar(200) NULL AFTER cluster_id;
