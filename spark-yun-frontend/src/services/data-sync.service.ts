@@ -10,6 +10,18 @@ interface TableDetailParam {
     tableName: string
 }
 
+interface SaveParams {
+    workId: string
+    sourceDBType: string
+    sourceDBId: string
+    sourceTable: string
+    queryCondition: string
+    targetDBType: string
+    targetDBId: string
+    targetTable: string
+    overMode: string
+}
+
 // 作业流-数据同步-获取数据源表
 export function GetDataSourceTables(params: SourceTablesParam): Promise<any> {
     return http.request({
@@ -42,6 +54,16 @@ export function GetTableColumnsByTableId(params: TableDetailParam): Promise<any>
     return http.request({
         method: 'post',
         url: '/work/getDataSourceColumns',
+        params: params
+    })
+}
+
+
+// 作业流-数据同步-保存数据
+export function SaveDataSync(params: SaveParams): Promise<any> {
+    return http.request({
+        method: 'post',
+        url: '/work/saveSyncWorkConfig',
         params: params
     })
 }
