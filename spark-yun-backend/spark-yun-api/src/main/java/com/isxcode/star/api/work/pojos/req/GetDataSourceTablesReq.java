@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 @Data
 public class GetDataSourceTablesReq {
@@ -13,6 +14,6 @@ public class GetDataSourceTablesReq {
 	private String dataSourceId;
 
 	@Schema(title = "数据库表名", example = "SY")
-	@NotEmpty(message = "表名不能为空")
+	@NotNull(message = "表名搜索不能为空")
 	private String tablePattern;
 }
