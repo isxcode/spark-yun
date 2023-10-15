@@ -7,8 +7,8 @@
     <div class="data-sync-body" id="container">
         <div class="source-table-container">
             <el-table ref="sourceTableRef" :data="sourceTableData" row-key="code" border>
-                <el-table-column prop="code" label="字段名" />
-                <el-table-column prop="type" label="类型" />
+                <el-table-column prop="code" :show-overflow-tooltip="true" label="字段名" />
+                <el-table-column prop="type" :show-overflow-tooltip="true" label="类型" />
                 <el-table-column label="操作" :show-overflow-tooltip="true">
                     <template #default="scope">
                         {{ scope.row.sql }}
@@ -42,8 +42,8 @@
         <div class="target-table-container">
             <el-table ref="targetTableRef" :data="targetTableData" row-key="code" border
                 :row-class-name="({ row }) => `rightRow code-target-${row.code}`">
-                <el-table-column prop="code" label="字段名" />
-                <el-table-column prop="type" label="类型" />
+                <el-table-column prop="code" :show-overflow-tooltip="true" label="字段名" />
+                <el-table-column prop="type" :show-overflow-tooltip="true" label="类型" />
             </el-table>
         </div>
     </div>
@@ -74,7 +74,6 @@ interface FormData {
     targetDBId: string     // 目标数据源
     targetTable: string     // 目标数据库表名
     overMode: string         // 写入模式
-    columMapping?: any[]      // 字段映射关系
 }
 
 defineProps<{
@@ -103,6 +102,16 @@ const buttons = ref([
   {type: 'primary', text: '取消映射', code: 'quitLine'},
   {type: 'primary', text: '重置映射', code: 'resetLine'},
 ])
+
+function getSourceTableData() {
+    return sourceTableData.value
+}
+function getTargetTableData() {
+    return targetTableData.value
+}
+function getConnect() {
+    return connectNodeList.value
+}
 
 // 根据表名获取映射表字段
 function getTableColumnData(params: TableDetailParam, type: string) {
@@ -179,7 +188,7 @@ function setContainer() {
     })
 }
 // 截取元素类名中的id
-const interceptId = (className) => {
+const interceptId = (className: string) => {
     return className.slice(className.indexOf('-') + 1)
 }
 const initJsPlumb = () => {
@@ -215,7 +224,6 @@ function getLinkData() {
     })
     connectNodeList.value = connectList
 }
-
 
 // 设置默认连线
 function clickSelectLinkConnect(type: string) {
@@ -271,7 +279,10 @@ onMounted(() => {
 })
 
 defineExpose({
-    getTableColumnData
+    getTableColumnData,
+    getSourceTableData,
+    getTargetTableData,
+    getConnect
 })
 </script>
 
