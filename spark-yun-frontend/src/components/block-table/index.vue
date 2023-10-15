@@ -6,6 +6,7 @@
     :loading="tableConfig.loading"
   >
     <vxe-column
+      v-if="tableConfig.seqType"
       :type="tableConfig.seqType"
       align="center"
       width="44"
@@ -86,7 +87,7 @@ interface colConfig {
 interface TableConfig {
   tableData: Array<any>;
   colConfigs: Array<colConfig>;
-  seqType: string;
+  seqType?: string;
   pagination?: Pagination; // 分页数据
   loading?: boolean; // 表格loading
 }
