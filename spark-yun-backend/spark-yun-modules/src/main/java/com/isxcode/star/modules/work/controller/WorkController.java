@@ -5,7 +5,6 @@ import com.isxcode.star.api.work.pojos.req.*;
 import com.isxcode.star.api.work.pojos.res.*;
 import com.isxcode.star.common.annotations.successResponse.SuccessResponse;
 import com.isxcode.star.modules.work.service.biz.SyncWorkBizService;
-import com.isxcode.star.modules.work.service.biz.SyncWorkConfigBizService;
 import com.isxcode.star.modules.work.service.biz.WorkBizService;
 import com.isxcode.star.modules.work.service.biz.WorkConfigBizService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -28,8 +27,6 @@ public class WorkController {
 	private final WorkBizService workBizService;
 
 	private final WorkConfigBizService workConfigBizService;
-
-	private final SyncWorkConfigBizService syncWorkConfigBizService;
 
 	private final SyncWorkBizService syncWorkBizService;
 
@@ -158,7 +155,7 @@ public class WorkController {
 	@SuccessResponse("查询成功")
 	public GetSyncWorkConfigRes getSyncWorkConfig(@Valid @RequestBody GetSyncWorkConfigReq getSyncWorkConfigReq) {
 
-		return syncWorkConfigBizService.getSyncWorkConfig(getSyncWorkConfigReq);
+		return syncWorkBizService.getSyncWorkConfig(getSyncWorkConfigReq);
 	}
 
 	@Operation(summary = "配置作业接口")
@@ -166,7 +163,7 @@ public class WorkController {
 	@SuccessResponse("保存成功")
 	public void saveSyncWorkConfig(@Valid @RequestBody SaveSyncWorkConfigReq saveSyncWorkConfigReq) {
 
-		syncWorkConfigBizService.saveSyncWorkConfig(saveSyncWorkConfigReq);
+		syncWorkBizService.saveSyncWorkConfig(saveSyncWorkConfigReq);
 	}
 
 	@Operation(summary = "获取数据源表信息")
@@ -216,5 +213,4 @@ public class WorkController {
 	 * 
 	 * return syncWorkBizService.getTmpSyncConf(getTmpSyncConfReq); }
 	 */
-
 }
