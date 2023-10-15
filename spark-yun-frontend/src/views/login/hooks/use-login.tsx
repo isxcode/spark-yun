@@ -12,7 +12,7 @@ export function useLogin (callback: ((callback: LoginModel) => Promise<void>)) {
     account: [
       {
         required: true,
-        message: '请输入用户名',
+        message: '请输入账号/邮箱/手机号',
         trigger: [ 'blur', 'change' ]
       }
     ],
@@ -44,22 +44,22 @@ export function useLogin (callback: ((callback: LoginModel) => Promise<void>)) {
   return {
     renderLoginForm: () => (
       <div class="zqy-login__form-wrap">
-        <el-form 
+        <el-form
           ref={elFormRef}
-          class="zqy-login__form" 
+          class="zqy-login__form"
           model={loginModel}
           rules={loginRule}
         >
           <el-form-item prop="account">
-            <el-input 
-              class="zqy-login__input" 
-              v-model={loginModel.account} 
+            <el-input
+              class="zqy-login__input"
+              v-model={loginModel.account}
               placeholder="账号/邮箱/手机号"
             ></el-input>
           </el-form-item>
           <el-form-item prop="passwd">
-            <el-input 
-              class="zqy-login__input" 
+            <el-input
+              class="zqy-login__input"
               v-model={loginModel.passwd}
               type="password"
               show-password
@@ -68,9 +68,9 @@ export function useLogin (callback: ((callback: LoginModel) => Promise<void>)) {
             ></el-input>
           </el-form-item>
         </el-form>
-        <el-button 
+        <el-button
           class="zqy-login__btn"
-          type="primary"
+          type="text"
           loading={btnLoading.value}
           onClick={handleLogin}
         >登录</el-button>
