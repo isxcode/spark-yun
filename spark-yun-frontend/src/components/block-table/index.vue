@@ -121,6 +121,9 @@ function columnSlotAdapter(column: any, colConfig: any) {
     padding: 0;
     background-color: #fff;
   }
+  .vxe-table--body-wrapper {
+    min-height: unset !important;
+  }
   .vxe-table--body tr > td.vxe-body--column {
     height: 40px;
     padding: 0;
