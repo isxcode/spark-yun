@@ -18,14 +18,14 @@
                             </el-icon>
                             <template #dropdown>
                                 <el-dropdown-menu>
-                                    <el-dropdown-item>
+                                    <el-dropdown-item @click="addNewCode">
                                         添加
                                     </el-dropdown-item>
-                                    <el-dropdown-item>
+                                    <el-dropdown-item @click="removeCode(scope)">
                                         删除
                                     </el-dropdown-item>
-                                    <el-dropdown-item>
-                                        自定义
+                                    <el-dropdown-item @click="editCode(scope.row)">
+                                        转换
                                     </el-dropdown-item>
                                 </el-dropdown-menu>
                             </template>
@@ -53,12 +53,16 @@
             </el-table>
         </div>
     </div>
+    <!-- 添加字段 -->
+    <add-code ref="addCodeRef"></add-code>
 </template>
 
 <script lang="ts" setup>
 import { ref, defineProps, onMounted, nextTick } from 'vue'
 import { jsPlumb } from 'jsplumb'
 import { GetTableColumnsByTableId } from '@/services/data-sync.service'
+import { ElMessageBox } from 'element-plus'
+import AddCode from '../add-code/index.vue'
 
 interface connect {
     source: string
@@ -82,11 +86,18 @@ interface FormData {
     overMode: string         // 写入模式
 }
 
+interface codeParam {
+    code: string
+    type: string
+    sql: string
+}
+
 defineProps<{
     formData: FormData
 }>()
 
 let instance: any = null
+const addCodeRef = ref()
 const connectNodeList = ref<connect[]>([])
 const sourceTableData = ref([])
 const targetTableData = ref([])
@@ -147,6 +158,8 @@ function getTableColumnData(params: TableDetailParam, type: string) {
                 }
             })
         }
+        instance.deleteEveryConnection()
+        connectCopy.value = []
         nextTick(() => {
             initJsPlumb()
         })
@@ -279,6 +292,45 @@ function clickSelectLinkConnect(type: string) {
             })
         })
     }
+}
+
+
+// 删除来源编码
+function removeCode(cData: codeParam) {
+    ElMessageBox.confirm('确定删除该字段吗？', '警告', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+    }).then(() => {
+        sourceTableData.value.splice(cData.$index, 1)
+        instance.deleteEveryConnection()
+        nextTick(() => {
+            connectNodeList.value = connectNodeList.value.filter((item: any) => cData.row.code !== item.source)
+            setTimeout(() => {
+                initJsPlumb()
+                connectNodeList.value.forEach((data: any) => {
+                    instance.connect({
+                        source: document.querySelector(`.code-source-${data.source}`),
+                        target: document.querySelector(`.code-target-${data.target}`)
+                    })
+                })
+            })
+        })
+    })
+}
+
+function addNewCode() {
+    addCodeRef.value.showModal((formData: codeParam) => {
+        sourceTableData.value.push({ ...formData })
+        nextTick(() => {
+            initJsPlumb()
+        })
+    })
+}
+function editCode(row: codeParam) {
+    addCodeRef.value.showModal((formData: codeParam) => {
+        row.sql = formData.sql
+    }, row)
 }
 
 onMounted(() => {
