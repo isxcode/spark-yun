@@ -37,3 +37,6 @@ isx
 
 # 个人配置不提交
 spark-yun-backend/spark-yun-main/src/main/resources/application-ispong.yml
+
+# 临时目录不提交
+tmp

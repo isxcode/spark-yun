@@ -145,13 +145,13 @@ tasks.register('deploy', Exec) {
 
   if (System.properties['os.name'].toString().contains('Mac OS X') || System.properties['os.name'].toString().contains('Linux')) {
     commandLine 'bash', '-c', '''
-      docker buildx install &&
+      docker buildx install.sh &&
       docker buildx use zhiqingyun-builder &&
       docker buildx build --platform linux/amd64,linux/arm64/v8 -t isxcode/zhiqingyun:''' + version_number + ''' -f ./Dockerfile . --push
     '''
   } else {
     commandLine 'cmd', '/c', '''
-      docker buildx install &&
+      docker buildx install.sh &&
       docker buildx use zhiqingyun-builder &&
       docker buildx build --platform linux/amd64,linux/arm64/v8 -t isxcode/zhiqingyun:''' + version_number + ''' -f ./Dockerfile . --push
     '''
@@ -180,3 +180,13 @@ tasks.register('web', Exec) {
   }
 }
 
+// 自定义命令：安装项目依赖
+// gradle install
+tasks.register('install', Exec) {
+
+  if (System.properties['os.name'].toString().contains('Mac OS X') || System.properties['os.name'].toString().contains('Linux')) {
+    commandLine 'sh', '-c', 'bash install.sh'
+  } else {
+    commandLine 'cmd', '/c', 'install.bat'
+  }
+}
