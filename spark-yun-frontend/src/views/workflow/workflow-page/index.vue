@@ -82,8 +82,19 @@
                     <ZqyFlow ref="zqyFlowRef"></ZqyFlow>
                 </template>
                 <template v-else>
-                    <WorkItem v-if="showWorkItem && workConfig.workType !== 'DATA_SYNC_JDBC'" @back="backToFlow" @locationNode="locationNode" :workItemConfig="workConfig" :workFlowData="workFlowData"></WorkItem>
-                    <data-sync v-if="showWorkItem && workConfig.workType === 'DATA_SYNC_JDBC'" :workItemConfig="workConfig"></data-sync>
+                    <WorkItem
+                        v-if="showWorkItem && workConfig.workType !== 'DATA_SYNC_JDBC'"
+                        :workItemConfig="workConfig"
+                        :workFlowData="workFlowData"
+                        @back="backToFlow"
+                        @locationNode="locationNode"
+                    ></WorkItem>
+                    <data-sync
+                        v-if="showWorkItem && workConfig.workType === 'DATA_SYNC_JDBC'"
+                        :workItemConfig="workConfig"
+                        @back="backToFlow"
+                        @locationNode="locationNode"
+                    ></data-sync>
                 </template>
             </div>
         <AddModal ref="addModalRef" />

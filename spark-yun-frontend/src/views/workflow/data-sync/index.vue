@@ -13,13 +13,13 @@
         </el-icon>
         <span class="btn-text">保存</span>
       </div>
-      <div class="btn-box">
+      <div class="btn-box" @click="setConfigData">
         <el-icon>
           <Setting/>
         </el-icon>
         <span class="btn-text">配置</span>
       </div>
-      <div class="btn-box">
+      <div class="btn-box" @click="locationNode">
         <el-icon>
           <RefreshLeft/>
         </el-icon>
@@ -43,7 +43,8 @@
             </el-form-item>
             <el-form-item prop="sourceDBId" label="数据源">
               <el-select v-model="formData.sourceDBId" clearable placeholder="请选择"
-                         @visible-change="getDataSource($event, formData.sourceDBType, 'source')">
+                         @visible-change="getDataSource($event, formData.sourceDBType, 'source')"
+                         @change="dbIdChange('source')">
                 <el-option v-for="item in sourceList" :key="item.value" :label="item.label"
                            :value="item.value"/>
               </el-select>
@@ -78,7 +79,8 @@
             </el-form-item>
             <el-form-item prop="targetDBId" label="数据源">
               <el-select v-model="formData.targetDBId" clearable placeholder="请选择"
-                         @visible-change="getDataSource($event, formData.targetDBType, 'target')">
+                         @visible-change="getDataSource($event, formData.targetDBType, 'target')"
+                         @change="dbIdChange('target')">
                 <el-option v-for="item in targetList" :key="item.value" :label="item.label"
                            :value="item.value"/>
               </el-select>
@@ -106,6 +108,8 @@
     </div>
     <!-- 数据预览 -->
     <table-detail ref="tableDetailRef"></table-detail>
+    <!-- 配置 -->
+    <config-detail ref="configDetailRef"></config-detail>
   </div>
 </template>
 
@@ -119,6 +123,7 @@ import {GetDatasourceList} from '@/services/datasource.service'
 import {CreateTableWork, GetDataSourceTables, GetDataSyncDetail, SaveDataSync} from '@/services/data-sync.service'
 import TableDetail from './table-detail/index.vue'
 import DataSyncTable from './data-sync-table/index.vue'
+import ConfigDetail from '../workflow-page/config-detail/index.vue'
 
 interface Option {
   label: string
@@ -129,6 +134,9 @@ const props = defineProps<{
   workItemConfig: any
 }>()
 
+const emit = defineEmits(['back', 'locationNode'])
+
+const configDetailRef = ref()
 const form = ref<FormInstance>()
 const tableDetailRef = ref()
 const dataSyncTableRef = ref()
@@ -291,6 +299,31 @@ function dbTypeChange(type: string) {
         formData.targetDBId = ''
         formData.targetTable = ''
     }
+}
+// 级联控制
+function dbIdChange(type: string) {
+    if (type === 'source') {
+        formData.sourceTable = ''
+    } else {
+        formData.targetTable = ''
+    }
+}
+
+// 返回
+function goBack() {
+  emit('back', props.workItemConfig.id)
+}
+function locationNode() {
+  emit('locationNode', props.workItemConfig.id)
+}
+
+// 配置打开
+function setConfigData() {
+    configDetailRef.value.showModal((formData: any) => {
+        return new Promise((resolve: any, reject: any) => {
+            
+        })
+    })
 }
 
 onMounted(() => {
