@@ -5,11 +5,11 @@ import com.alibaba.fastjson.JSONArray;
 import com.isxcode.star.api.cluster.constants.ClusterNodeStatus;
 import com.isxcode.star.api.instance.constants.InstanceStatus;
 import com.isxcode.star.api.instance.constants.InstanceType;
-import com.isxcode.star.api.work.constants.WorkDefault;
 import com.isxcode.star.api.work.constants.WorkLog;
 import com.isxcode.star.api.work.constants.WorkStatus;
 import com.isxcode.star.api.work.constants.WorkType;
 import com.isxcode.star.api.work.exceptions.WorkRunException;
+import com.isxcode.star.api.work.pojos.dto.SyncWorkConfig;
 import com.isxcode.star.api.work.pojos.req.*;
 import com.isxcode.star.api.work.pojos.res.*;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
@@ -23,6 +23,7 @@ import com.isxcode.star.modules.cluster.repository.ClusterRepository;
 import com.isxcode.star.modules.work.entity.WorkConfigEntity;
 import com.isxcode.star.modules.work.entity.WorkEntity;
 import com.isxcode.star.modules.work.entity.WorkInstanceEntity;
+import com.isxcode.star.modules.work.mapper.WorkConfigMapper;
 import com.isxcode.star.modules.work.mapper.WorkMapper;
 import com.isxcode.star.modules.work.repository.WorkConfigRepository;
 import com.isxcode.star.modules.work.repository.WorkInstanceRepository;
@@ -30,15 +31,18 @@ import com.isxcode.star.modules.work.repository.WorkRepository;
 import com.isxcode.star.modules.work.run.WorkExecutor;
 import com.isxcode.star.modules.work.run.WorkExecutorFactory;
 import com.isxcode.star.modules.work.run.WorkRunContext;
+import com.isxcode.star.modules.work.service.WorkConfigService;
 import com.isxcode.star.modules.work.service.WorkService;
 import com.isxcode.star.modules.workflow.entity.WorkflowConfigEntity;
 import com.isxcode.star.modules.workflow.entity.WorkflowEntity;
 import com.isxcode.star.modules.workflow.repository.WorkflowConfigRepository;
 import com.isxcode.star.modules.workflow.repository.WorkflowRepository;
 import com.isxcode.star.modules.workflow.run.WorkflowUtils;
+
 import java.time.LocalDateTime;
 import java.util.*;
 import javax.transaction.Transactional;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
@@ -76,20 +80,24 @@ public class WorkBizService {
 
 	private final HttpUrlUtils httpUrlUtils;
 
+	private final WorkConfigService workConfigService;
+
+	private final WorkConfigMapper workConfigMapper;
+
 	public void addWork(AddWorkReq addWorkReq) {
 
 		WorkEntity work = workMapper.addWorkReqToWorkEntity(addWorkReq);
 
-		// 如果是sparkSql作业，初始化sparkConfig
-		WorkConfigEntity workConfigEntity = new WorkConfigEntity();
+		// 初始化作业默认配置
+		WorkConfigEntity workConfig = new WorkConfigEntity();
 		if (WorkType.QUERY_SPARK_SQL.equals(addWorkReq.getWorkType())
 				|| WorkType.DATA_SYNC_JDBC.equals(addWorkReq.getWorkType())) {
-			workConfigEntity.setSparkConfig(WorkDefault.DEFAULT_SPARK_CONF);
+			workConfigService.initSparkConfig(workConfig);
 		}
 
-		// 添加默认作业配置
-		workConfigEntity = workConfigRepository.save(workConfigEntity);
-		work.setConfigId(workConfigEntity.getId());
+		// 添加作业的默认配置
+		workConfig = workConfigRepository.save(workConfig);
+		work.setConfigId(workConfig.getId());
 		work.setStatus(WorkStatus.UN_PUBLISHED);
 
 		workRepository.save(work);
@@ -98,7 +106,7 @@ public class WorkBizService {
 	@Transactional
 	public void updateWork(UpdateWorkReq updateWorkReq) {
 
-		WorkEntity work = workService.getWork(updateWorkReq.getId());
+		WorkEntity work = workService.getWorkEntity(updateWorkReq.getId());
 		work = workMapper.updateWorkReqToWorkEntity(updateWorkReq, work);
 		workRepository.save(work);
 	}
@@ -113,7 +121,7 @@ public class WorkBizService {
 
 	public void deleteWork(DeleteWorkReq deleteWorkReq) {
 
-		WorkEntity work = workService.getWork(deleteWorkReq.getWorkId());
+		WorkEntity work = workService.getWorkEntity(deleteWorkReq.getWorkId());
 
 		// 如果不是已下线状态或者未发布状态 不让删除
 		if (WorkStatus.UN_PUBLISHED.equals(work.getStatus()) || WorkStatus.STOP.equals(work.getStatus())) {
@@ -146,11 +154,13 @@ public class WorkBizService {
 		return workInstanceRepository.saveAndFlush(workInstanceEntity);
 	}
 
-	/** 提交作业. */
+	/**
+	 * 提交作业.
+	 */
 	public RunWorkRes runWork(RunWorkReq runWorkReq) {
 
 		// 获取作业信息
-		WorkEntity work = workService.getWork(runWorkReq.getWorkId());
+		WorkEntity work = workService.getWorkEntity(runWorkReq.getWorkId());
 
 		// 初始化作业实例
 		WorkInstanceEntity workInstance = genWorkInstance(work.getId());
@@ -207,7 +217,9 @@ public class WorkBizService {
 		return JSON.parseObject(workInstanceEntity.getSparkStarRes(), GetStatusRes.class);
 	}
 
-	/** 中止作业. */
+	/**
+	 * 中止作业.
+	 */
 	@Transactional
 	public void stopJob(StopJobReq stopJobReq) {
 
@@ -282,7 +294,7 @@ public class WorkBizService {
 
 	public ClusterNodeEntity getEngineNodeByWorkId(String workId) {
 
-		WorkEntity work = workService.getWork(workId);
+		WorkEntity work = workService.getWorkEntity(workId);
 
 		Optional<WorkConfigEntity> workConfigEntityOptional = workConfigRepository.findById(work.getConfigId());
 		if (!workConfigEntityOptional.isPresent()) {
@@ -359,7 +371,7 @@ public class WorkBizService {
 
 	public void renameWork(RenameWorkReq wokRenameWorkReq) {
 
-		WorkEntity workEntity = workService.getWork(wokRenameWorkReq.getWorkId());
+		WorkEntity workEntity = workService.getWorkEntity(wokRenameWorkReq.getWorkId());
 
 		workEntity.setName(wokRenameWorkReq.getWorkName());
 
@@ -369,7 +381,7 @@ public class WorkBizService {
 	public void copyWork(CopyWorkReq wokCopyWorkReq) {
 
 		// 获取作业信息
-		WorkEntity work = workService.getWork(wokCopyWorkReq.getWorkId());
+		WorkEntity work = workService.getWorkEntity(wokCopyWorkReq.getWorkId());
 
 		// 获取作业配置
 		WorkConfigEntity workConfig = workConfigBizService.getWorkConfigEntity(work.getConfigId());
@@ -389,7 +401,7 @@ public class WorkBizService {
 
 	public void topWork(TopWorkReq topWorkReq) {
 
-		WorkEntity work = workService.getWork(topWorkReq.getWorkId());
+		WorkEntity work = workService.getWorkEntity(topWorkReq.getWorkId());
 
 		// 获取作业最大的
 		Integer maxTopIndex = workRepository.findWorkflowMaxTopIndex(work.getWorkflowId());
@@ -400,5 +412,25 @@ public class WorkBizService {
 			work.setTopIndex(maxTopIndex + 1);
 		}
 		workRepository.save(work);
+	}
+
+	public void saveSyncWorkConfig(SaveSyncWorkConfigReq saveSyncWorkConfigReq) {
+
+		WorkEntity work = workService.getWorkEntity(saveSyncWorkConfigReq.getWorkId());
+		WorkConfigEntity workConfig = workConfigService.getWorkConfigEntity(work.getConfigId());
+
+		workConfig.setSyncWorkConfig(JSON.toJSONString(saveSyncWorkConfigReq));
+
+		workConfigRepository.save(workConfig);
+	}
+
+	public GetSyncWorkConfigRes getSyncWorkConfig(GetSyncWorkConfigReq getSyncWorkConfigReq) {
+
+		WorkEntity work = workService.getWorkEntity(getSyncWorkConfigReq.getWorkId());
+		WorkConfigEntity workConfig = workConfigService.getWorkConfigEntity(work.getConfigId());
+
+		SyncWorkConfig syncWorkConfig = JSON.parseObject(workConfig.getSyncWorkConfig(), SyncWorkConfig.class);
+
+		return workConfigMapper.syncWorkConfigToGetSyncWorkConfigRes(syncWorkConfig);
 	}
 }

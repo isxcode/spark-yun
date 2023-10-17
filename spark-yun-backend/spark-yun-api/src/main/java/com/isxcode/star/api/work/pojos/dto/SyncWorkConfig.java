@@ -1,19 +1,11 @@
-package com.isxcode.star.api.work.pojos.res;
+package com.isxcode.star.api.work.pojos.dto;
 
-import com.isxcode.star.api.work.pojos.dto.SyncColumnInfo;
-import com.isxcode.star.api.work.pojos.dto.SyncColumnMap;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.util.List;
 
 @Data
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
-public class GetSyncWorkConfigRes {
+public class SyncWorkConfig {
 
 	private String workId;
 
@@ -40,5 +32,4 @@ public class GetSyncWorkConfigRes {
 	private List<SyncColumnInfo> targetTableColumn;
 
 	private List<SyncColumnMap> columnMap;
-
 }
