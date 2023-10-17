@@ -7,10 +7,19 @@ server:
   tomcat:
     connection-timeout: 120s
 
+  multipart:
+    max-file-size: 10MB
+    max-request-size: 100MB
+    enabled: true
+
 spring:
 
   profiles:
-    active: local
+    active: h2
+
+  security:
+    user:
+      roles: ADMIN
 
   banner:
     location: classpath:banner/logo.txt
@@ -85,16 +94,4 @@ isx-app:
     - /login # 放行登录接口
     - /**/open/** # 放行所有的开放接口
     - /vip/api/custom/** # 放行所有自定义接口
-    - /tenant-user # 下面放行全部前端的刷新访问路径
-    - /computer-group
-    - /computer-pointer
-    - /datasource
-    - /workflow
-    - /workflow-detail
-    - /work-item
-    - /tenant-user
-    - /user-center
-    - /tenant-list
-    - /license
-    - /schedule
-    - /workflow-page
+    - /home/** # 放行全部前端的刷新访问路径
