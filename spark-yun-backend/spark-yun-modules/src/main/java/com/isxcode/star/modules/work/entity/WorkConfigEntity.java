@@ -3,6 +3,7 @@ package com.isxcode.star.modules.work.entity;
 import static com.isxcode.star.common.config.CommonConfig.TENANT_ID;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.time.LocalDateTime;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
@@ -12,6 +13,7 @@ import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.Version;
+
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.SQLDelete;
@@ -38,19 +40,15 @@ public class WorkConfigEntity {
 
 	private String clusterId;
 
-	private String clusterNodeId;
-
 	private String datasourceId;
 
 	private String sqlScript;
 
 	private String sparkConfig;
 
-	private String syncConf;
-
-	private String bashScript;
-
 	private String corn;
+
+	private String syncWorkConfig;
 
 	@CreatedDate
 	private LocalDateTime createDateTime;

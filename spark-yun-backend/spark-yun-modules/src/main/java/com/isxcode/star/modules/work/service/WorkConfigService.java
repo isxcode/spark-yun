@@ -1,5 +1,6 @@
 package com.isxcode.star.modules.work.service;
 
+import com.isxcode.star.api.work.constants.WorkDefault;
 import com.isxcode.star.api.work.pojos.req.ConfigWorkReq;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.star.modules.work.entity.WorkConfigEntity;
@@ -32,6 +33,10 @@ public class WorkConfigService {
 			throw new IsxAppException("作业异常，请联系开发者");
 		}
 		return workConfigEntityOptional.get();
+	}
+
+	public void initSparkConfig(WorkConfigEntity workConfig) {
+		workConfig.setSparkConfig(WorkDefault.DEFAULT_SPARK_CONF);
 	}
 
 	public void configWork(ConfigWorkReq wocConfigWorkReq) {

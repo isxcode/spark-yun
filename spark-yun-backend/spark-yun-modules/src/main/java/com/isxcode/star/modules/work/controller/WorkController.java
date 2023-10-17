@@ -150,20 +150,20 @@ public class WorkController {
 		workConfigBizService.configWork(configWorkReq);
 	}
 
-	@Operation(summary = "获取同步作业配置接口")
-	@PostMapping("/getSyncWorkConfig")
-	@SuccessResponse("查询成功")
-	public GetSyncWorkConfigRes getSyncWorkConfig(@Valid @RequestBody GetSyncWorkConfigReq getSyncWorkConfigReq) {
-
-		return syncWorkBizService.getSyncWorkConfig(getSyncWorkConfigReq);
-	}
-
-	@Operation(summary = "配置作业接口")
+	@Operation(summary = "保存数据同步作业接口")
 	@PostMapping("/saveSyncWorkConfig")
 	@SuccessResponse("保存成功")
 	public void saveSyncWorkConfig(@Valid @RequestBody SaveSyncWorkConfigReq saveSyncWorkConfigReq) {
 
-		syncWorkBizService.saveSyncWorkConfig(saveSyncWorkConfigReq);
+		workBizService.saveSyncWorkConfig(saveSyncWorkConfigReq);
+	}
+
+	@Operation(summary = "获取数据同步作业配置接口")
+	@PostMapping("/getSyncWorkConfig")
+	@SuccessResponse("查询成功")
+	public GetSyncWorkConfigRes getSyncWorkConfig(@Valid @RequestBody GetSyncWorkConfigReq getSyncWorkConfigReq) {
+
+		return workBizService.getSyncWorkConfig(getSyncWorkConfigReq);
 	}
 
 	@Operation(summary = "获取数据源表信息")
@@ -204,13 +204,13 @@ public class WorkController {
 
 	/*
 	 * @Operation(summary = "数据同步配置预生成")
-	 * 
+	 *
 	 * @PostMapping("/getTmpSyncConf")
-	 * 
+	 *
 	 * @SuccessResponse("查询成功") public GetTmpSyncConfRes
 	 * getTmpSyncConf(@Valid @RequestBody GetTmpSyncConfReq getTmpSyncConfReq)
 	 * throws Exception {
-	 * 
+	 *
 	 * return syncWorkBizService.getTmpSyncConf(getTmpSyncConfReq); }
 	 */
 }
