@@ -3,15 +3,8 @@ server:
 
 spring:
 
-  servlet:
-    multipart:
-      max-file-size: 10MB
-      max-request-size: 100MB
-      enabled: true
-
   security:
     user:
-      roles: ADMIN
       name: admin
       password: admin123
 
