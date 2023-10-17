@@ -1,18 +1,12 @@
--- 同步作业配置表
-create table SY_SYNC_WORK_CONFIG
+-- 创建资源文件表
+create table SY_FILE
 (
-  id                      varchar(200)  not null comment '同步作业配置唯一id'
+  id                      varchar(200)  not null comment '文件配置唯一id'
     primary key,
-  work_id                 varchar(200)  not null comment '作业唯一id',
-  source_db_type          varchar(200)  not null comment '来源数据源类型',
-  source_db_id            varchar(200)  not null comment '来源数据源唯一id',
-  source_table            varchar(200)  not null comment '来源表名',
-  query_condition         varchar(200)  null comment '查询条件',
-  target_db_type          varchar(200)  not null comment '目标数据源类型',
-  target_db_id            varchar(200)  not null comment '目标数据源唯一id',
-  target_table            varchar(200)  not null comment '目标表名',
-  over_mode               varchar(200)  not null comment '写入模式',
-  colum_mapping           varchar(5000) not null comment '字段映射关系',
+  file_name               varchar(200) null comment '文件名称',
+  file_size               varchar(200) null comment '文件大小',
+  file_path               varchar(200) null comment '文件存储路径',
+  file_type               varchar(200) null comment '文件类型',
   create_by               varchar(200)  not null comment '创建人',
   create_date_time        datetime      not null comment '创建时间',
   last_modified_by        varchar(200)  not null comment '更新人',
@@ -22,31 +16,30 @@ create table SY_SYNC_WORK_CONFIG
   tenant_id               varchar(200)  not null comment '租户id'
 );
 
--- 创建资源文件表
-create table SY_FILE
-(
-  id                      varchar(200)  not null comment '文件配置唯一id'
-    primary key,
-  file_name               varchar(200)  null comment '文件名称',
-  file_size               varchar(200)  null comment '文件大小',
-  file_path               varchar(200)  null comment '文件存储路径',
-  file_type               varchar(200)  null comment '文件类型',
-  create_by               varchar(200)  not null comment '创建人',
-  create_date_time        datetime      not null comment '创建时间',
-  last_modified_by        varchar(200)  not null comment '更新人',
-  last_modified_date_time datetime      not null comment '更新时间',
-  version_number          int           not null comment '版本号',
-  deleted                 int default 0 not null comment '逻辑删除',
-  tenant_id               varchar(200)  not null comment '租户id',
-  constraint id
-    unique (id)
-);
+-- 添加同步作业的配置
+alter table SY_WORK_CONFIG
+  add sync_work_config text null comment '同步作业的配置' after corn;
 
-ALTER TABLE SY_WORK_CONFIG ADD sync_conf varchar(5000) NULL;
+-- 将cluster_id和spark_config合并成cluster_config
+alter table SY_WORK_CONFIG
+    drop column cluster_id;
 
-ALTER TABLE SY_SYNC_WORK_CONFIG ADD source_table_data varchar(5000) not NULL;
-ALTER TABLE SY_SYNC_WORK_CONFIG ADD target_table_data varchar(5000) not NULL;
+alter table SY_WORK_CONFIG
+    drop column spark_config;
 
-ALTER TABLE SY_WORK_CONFIG ADD bash_script varchar(5000) NULL;
+alter table SY_WORK_CONFIG
+    add cluster_config text null comment '计算集群配置' after sync_work_config;
 
-ALTER TABLE SY_WORK_CONFIG ADD cluster_node_id varchar(200) NULL;
+-- 添加数据同步规则
+alter table SY_WORK_CONFIG
+    add sync_rule text null comment '数据同步规则' after cluster_config;
+
+-- 将cron扩展成cron_config
+alter table SY_WORK_CONFIG ALTER COLUMN corn RENAME TO cron_config;
+alter table SY_WORK_CONFIG
+    alter cron_config text null comment '定时表达式';
+
+-- 统一脚本内容
+alter table SY_WORK_CONFIG ALTER COLUMN sql_script RENAME TO script;
+alter table SY_WORK_CONFIG
+    alter script text null comment '统一脚本内容，包括sql、bash、python脚本';

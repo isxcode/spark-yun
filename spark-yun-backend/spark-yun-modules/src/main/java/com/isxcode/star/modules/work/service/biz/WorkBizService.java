@@ -9,6 +9,9 @@ import com.isxcode.star.api.work.constants.WorkLog;
 import com.isxcode.star.api.work.constants.WorkStatus;
 import com.isxcode.star.api.work.constants.WorkType;
 import com.isxcode.star.api.work.exceptions.WorkRunException;
+import com.isxcode.star.api.work.pojos.dto.ClusterConfig;
+import com.isxcode.star.api.work.pojos.dto.CronConfig;
+import com.isxcode.star.api.work.pojos.dto.SyncRule;
 import com.isxcode.star.api.work.pojos.dto.SyncWorkConfig;
 import com.isxcode.star.api.work.pojos.req.*;
 import com.isxcode.star.api.work.pojos.res.*;
@@ -88,12 +91,28 @@ public class WorkBizService {
 
 		WorkEntity work = workMapper.addWorkReqToWorkEntity(addWorkReq);
 
-		// 初始化作业默认配置
 		WorkConfigEntity workConfig = new WorkConfigEntity();
+
+		// 初始化脚本
+		if (WorkType.QUERY_SPARK_SQL.equals(addWorkReq.getWorkType())
+				|| WorkType.EXECUTE_JDBC_SQL.equals(addWorkReq.getWorkType())
+				|| WorkType.QUERY_JDBC_SQL.equals(addWorkReq.getWorkType())) {
+			workConfigService.initWorkScript(workConfig, WorkType.QUERY_SPARK_SQL);
+		}
+
+		// 初始化计算引擎
 		if (WorkType.QUERY_SPARK_SQL.equals(addWorkReq.getWorkType())
 				|| WorkType.DATA_SYNC_JDBC.equals(addWorkReq.getWorkType())) {
-			workConfigService.initSparkConfig(workConfig);
+			workConfigService.initClusterConfig(workConfig);
 		}
+
+		// 初始化数据同步分区值
+		if (WorkType.DATA_SYNC_JDBC.equals(addWorkReq.getWorkType())) {
+			workConfigService.initSyncRule(workConfig);
+		}
+
+		// 初始化调度默认值
+		workConfigService.initCronConfig(workConfig);
 
 		// 添加作业的默认配置
 		workConfig = workConfigRepository.save(workConfig);
@@ -249,14 +268,15 @@ public class WorkBizService {
 			}
 
 			WorkConfigEntity workConfigEntity = workConfigRepository.findById(workEntity.getConfigId()).get();
-			List<ClusterNodeEntity> allEngineNodes = engineNodeRepository
-					.findAllByClusterIdAndStatus(workConfigEntity.getClusterId(), ClusterNodeStatus.RUNNING);
+			String clusterId = JSON.parseObject(workConfigEntity.getClusterConfig(), ClusterConfig.class)
+					.getClusterId();
+			List<ClusterNodeEntity> allEngineNodes = engineNodeRepository.findAllByClusterIdAndStatus(clusterId,
+					ClusterNodeStatus.RUNNING);
 			if (allEngineNodes.isEmpty()) {
 				throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "申请资源失败 : 集群不存在可用节点，请切换一个集群  \n");
 			}
 
-			Optional<ClusterEntity> clusterEntityOptional = calculateEngineRepository
-					.findById(workConfigEntity.getClusterId());
+			Optional<ClusterEntity> clusterEntityOptional = calculateEngineRepository.findById(clusterId);
 			if (!clusterEntityOptional.isPresent()) {
 				throw new IsxAppException("集群不存在");
 			}
@@ -302,7 +322,8 @@ public class WorkBizService {
 		}
 		WorkConfigEntity workConfig = workConfigEntityOptional.get();
 
-		return getEngineWork(workConfig.getClusterId());
+		// return getEngineWork(workConfig.getClusterId());
+		return null;
 	}
 
 	public GetWorkLogRes getWorkLog(GetYarnLogReq getYarnLogReq) {
@@ -322,19 +343,39 @@ public class WorkBizService {
 
 	public GetWorkRes getWork(GetWorkReq getWorkReq) {
 
-		Optional<WorkEntity> workEntityOptional = workRepository.findById(getWorkReq.getWorkId());
-		if (!workEntityOptional.isPresent()) {
-			throw new IsxAppException("作业不存在");
+		WorkEntity work = workService.getWorkEntity(getWorkReq.getWorkId());
+		WorkConfigEntity workConfig = workConfigService.getWorkConfigEntity(work.getConfigId());
+
+		GetWorkRes getWorkRes = new GetWorkRes();
+		getWorkRes.setName(work.getName());
+		getWorkRes.setWorkId(work.getId());
+		getWorkRes.setWorkflowId(work.getWorkflowId());
+
+		if (Strings.isEmpty(workConfig.getDatasourceId())) {
+			getWorkRes.setDatasourceId(workConfig.getDatasourceId());
 		}
 
-		Optional<WorkConfigEntity> workConfigEntityOptional = workConfigRepository
-				.findById(workEntityOptional.get().getConfigId());
-		if (!workConfigEntityOptional.isPresent()) {
-			throw new IsxAppException("作业异常不可用");
+		if (Strings.isEmpty(workConfig.getScript())) {
+			getWorkRes.setDatasourceId(workConfig.getScript());
 		}
 
-		return workMapper.workEntityAndWorkConfigEntityToGetWorkRes(workEntityOptional.get(),
-				workConfigEntityOptional.get());
+		if (Strings.isEmpty(workConfig.getCronConfig())) {
+			getWorkRes.setCronConfig(JSON.parseObject(workConfig.getScript(), CronConfig.class));
+		}
+
+		if (Strings.isEmpty(workConfig.getSyncWorkConfig())) {
+			getWorkRes.setSyncWorkConfig(JSON.parseObject(workConfig.getSyncWorkConfig(), SyncWorkConfig.class));
+		}
+
+		if (Strings.isEmpty(workConfig.getClusterConfig())) {
+			getWorkRes.setClusterConfig(JSON.parseObject(workConfig.getClusterConfig(), ClusterConfig.class));
+		}
+
+		if (Strings.isEmpty(workConfig.getSyncRule())) {
+			getWorkRes.setSyncRule(JSON.parseObject(workConfig.getSyncRule(), SyncRule.class));
+		}
+
+		return getWorkRes;
 	}
 
 	public ClusterNodeEntity getEngineWork(String calculateEngineId) {

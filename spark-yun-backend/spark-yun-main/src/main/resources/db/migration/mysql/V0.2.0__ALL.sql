@@ -21,3 +21,28 @@ create table SY_FILE
 -- 添加同步作业的配置
 alter table SY_WORK_CONFIG
   add sync_work_config text null comment '同步作业的配置' after corn;
+
+-- 统一脚本内容
+alter table SY_WORK_CONFIG
+    change sql_script script text null comment '统一脚本内容，包括sql、bash、python脚本';
+
+-- 将cluster_id和spark_config合并成cluster_config
+alter table SY_WORK_CONFIG
+    drop column cluster_id;
+
+alter table SY_WORK_CONFIG
+    drop column spark_config;
+
+alter table SY_WORK_CONFIG
+    add cluster_config text null comment '计算集群配置' after sync_work_config;
+
+-- 将cron扩展成cron_config
+alter table SY_WORK_CONFIG
+    change corn cron_config text null comment '定时表达式';
+
+-- 添加数据同步规则
+alter table SY_WORK_CONFIG
+    add sync_rule text null comment '数据同步规则' after cluster_config;
+
+
+

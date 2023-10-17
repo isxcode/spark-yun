@@ -1,21 +1,27 @@
 package com.isxcode.star.modules.work.service;
 
-import com.isxcode.star.api.work.constants.WorkDefault;
-import com.isxcode.star.api.work.pojos.req.ConfigWorkReq;
+import com.alibaba.fastjson.JSON;
+import com.isxcode.star.api.work.constants.ResourceLevel;
+import com.isxcode.star.api.work.constants.SetMode;
+import com.isxcode.star.api.work.constants.WorkType;
+import com.isxcode.star.api.work.pojos.dto.ClusterConfig;
+import com.isxcode.star.api.work.pojos.dto.CronConfig;
+import com.isxcode.star.api.work.pojos.dto.SyncRule;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.star.modules.work.entity.WorkConfigEntity;
-import com.isxcode.star.modules.work.entity.WorkEntity;
 import com.isxcode.star.modules.work.repository.WorkConfigRepository;
 import com.isxcode.star.modules.work.repository.WorkRepository;
+
 import java.util.Optional;
 import javax.transaction.Transactional;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.logging.log4j.util.Strings;
-import org.springframework.scheduling.support.CronExpression;
 import org.springframework.stereotype.Service;
 
-/** 用户模块接口的业务逻辑. */
+/**
+ * 用户模块接口的业务逻辑.
+ */
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -35,44 +41,32 @@ public class WorkConfigService {
 		return workConfigEntityOptional.get();
 	}
 
-	public void initSparkConfig(WorkConfigEntity workConfig) {
-		workConfig.setSparkConfig(WorkDefault.DEFAULT_SPARK_CONF);
+	public void initWorkScript(WorkConfigEntity workConfig, String workType) {
+
+		switch (workType) {
+			case WorkType.QUERY_SPARK_SQL :
+				workConfig.setScript("-- show databases");
+				break;
+			case WorkType.QUERY_JDBC_SQL :
+				workConfig.setScript("-- show databases");
+				break;
+			case WorkType.EXECUTE_JDBC_SQL :
+				workConfig.setScript("-- show databases");
+				break;
+		}
 	}
 
-	public void configWork(ConfigWorkReq wocConfigWorkReq) {
+	public void initClusterConfig(WorkConfigEntity workConfig) {
+		workConfig.setClusterConfig(JSON.toJSONString(
+				ClusterConfig.builder().setMode(SetMode.SIMPLE).resourceLevel(ResourceLevel.LOW).build()));
+	}
 
-		Optional<WorkEntity> workEntityOptional = workRepository.findById(wocConfigWorkReq.getWorkId());
-		if (!workEntityOptional.isPresent()) {
-			throw new IsxAppException("作业不存在");
-		}
+	public void initSyncRule(WorkConfigEntity workConfig) {
+		workConfig.setSyncRule(JSON
+				.toJSONString(SyncRule.builder().setMode(SetMode.SIMPLE).numConcurrency(1).numPartitions(1).build()));
+	}
 
-		Optional<WorkConfigEntity> workConfigEntityOptional = workConfigRepository
-				.findById(workEntityOptional.get().getConfigId());
-		if (!workConfigEntityOptional.isPresent()) {
-			throw new IsxAppException("作业异常，作业不可用。");
-		}
-		WorkConfigEntity workConfigEntity = workConfigEntityOptional.get();
-
-		if (!Strings.isEmpty(wocConfigWorkReq.getSqlScript())) {
-			workConfigEntity.setSqlScript(wocConfigWorkReq.getSqlScript());
-		}
-		if (!Strings.isEmpty(wocConfigWorkReq.getClusterId())) {
-			workConfigEntity.setClusterId(wocConfigWorkReq.getClusterId());
-		}
-		if (!Strings.isEmpty(wocConfigWorkReq.getDatasourceId())) {
-			workConfigEntity.setDatasourceId(wocConfigWorkReq.getDatasourceId());
-		}
-		if (!Strings.isEmpty(wocConfigWorkReq.getSparkConfig())) {
-			workConfigEntity.setSparkConfig(wocConfigWorkReq.getSparkConfig());
-		}
-		if (!Strings.isEmpty(wocConfigWorkReq.getCorn())) {
-			// 检验corn表达式
-			boolean validExpression = CronExpression.isValidExpression(wocConfigWorkReq.getCorn());
-			if (!validExpression) {
-				throw new IsxAppException("Corn表达式异常");
-			}
-			workConfigEntity.setCorn(wocConfigWorkReq.getCorn());
-		}
-		workConfigRepository.save(workConfigEntity);
+	public void initCronConfig(WorkConfigEntity workConfig) {
+		workConfig.setCronConfig(JSON.toJSONString(CronConfig.builder().enable(false).build()));
 	}
 }

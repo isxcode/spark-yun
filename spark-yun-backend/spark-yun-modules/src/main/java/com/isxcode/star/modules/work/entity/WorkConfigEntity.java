@@ -38,17 +38,17 @@ public class WorkConfigEntity {
 	@GenericGenerator(name = "sy-id-generator", strategy = "com.isxcode.star.config.GeneratedValueConfig")
 	private String id;
 
-	private String clusterId;
-
 	private String datasourceId;
 
-	private String sqlScript;
+	private String script;
 
-	private String sparkConfig;
-
-	private String corn;
+	private String cronConfig;
 
 	private String syncWorkConfig;
+
+	private String syncRule;
+
+	private String clusterConfig;
 
 	@CreatedDate
 	private LocalDateTime createDateTime;
