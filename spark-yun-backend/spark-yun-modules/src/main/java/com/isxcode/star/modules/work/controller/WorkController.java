@@ -110,6 +110,14 @@ public class WorkController {
 		return workBizService.getWork(getWorkReq);
 	}
 
+	@Operation(summary = "配置作业接口")
+	@PostMapping("/configWork")
+	@SuccessResponse("保存成功")
+	public void configWork(@Valid @RequestBody ConfigWorkReq configWorkReq) {
+
+		workConfigBizService.configWork(configWorkReq);
+	}
+
 	@Operation(summary = "查询作业提交日志接口")
 	@PostMapping("/getSubmitLog")
 	@SuccessResponse("查询成功")
@@ -140,30 +148,6 @@ public class WorkController {
 	public void topWork(@Valid @RequestBody TopWorkReq topWorkReq) {
 
 		workBizService.topWork(topWorkReq);
-	}
-
-	@Operation(summary = "配置作业接口")
-	@PostMapping("/configWork")
-	@SuccessResponse("保存成功")
-	public void configWork(@Valid @RequestBody ConfigWorkReq configWorkReq) {
-
-		workConfigBizService.configWork(configWorkReq);
-	}
-
-	@Operation(summary = "保存数据同步作业接口")
-	@PostMapping("/saveSyncWorkConfig")
-	@SuccessResponse("保存成功")
-	public void saveSyncWorkConfig(@Valid @RequestBody SaveSyncWorkConfigReq saveSyncWorkConfigReq) {
-
-		workBizService.saveSyncWorkConfig(saveSyncWorkConfigReq);
-	}
-
-	@Operation(summary = "获取数据同步作业配置接口")
-	@PostMapping("/getSyncWorkConfig")
-	@SuccessResponse("查询成功")
-	public GetSyncWorkConfigRes getSyncWorkConfig(@Valid @RequestBody GetSyncWorkConfigReq getSyncWorkConfigReq) {
-
-		return workBizService.getSyncWorkConfig(getSyncWorkConfigReq);
 	}
 
 	@Operation(summary = "获取数据源表信息")

@@ -1,7 +1,13 @@
 package com.isxcode.star.api.work.pojos.req;
 
+import com.isxcode.star.api.work.pojos.dto.ClusterConfig;
+import com.isxcode.star.api.work.pojos.dto.CronConfig;
+import com.isxcode.star.api.work.pojos.dto.SyncRule;
+import com.isxcode.star.api.work.pojos.dto.SyncWorkConfig;
 import io.swagger.v3.oas.annotations.media.Schema;
+
 import javax.validation.constraints.NotEmpty;
+
 import lombok.Data;
 
 @Data
@@ -11,27 +17,21 @@ public class ConfigWorkReq {
 	@NotEmpty(message = "workId不能为空")
 	private String workId;
 
-	@Schema(title = "运行脚本", example = "show databases;")
-	private String sqlScript;
-
 	@Schema(title = "数据源唯一id", example = "sy_fd34e4a53db640f5943a4352c4d549b9")
 	private String datasourceId;
 
-	@Schema(title = "计算引擎唯一id", example = "sy_354554267db34602896c35b4162fd4d8")
-	private String clusterId;
+	@Schema(title = "运行脚本", example = "show databases;")
+	private String script;
 
-	@Schema(title = "计算节点唯一id", example = "sy_354554267db34602896c35b4162fd4d8")
-	private String clusterNodeId;
+	@Schema(title = "cron定时配置")
+	private CronConfig cronConfig;
 
-	@Schema(title = "spark的配置文件", example = "{\"spark.executor.memory\":\"1g\",\"spark.driver.memory\":\"1g\"}")
-	private String sparkConfig;
+	@Schema(title = "cron定时配置")
+	private SyncWorkConfig syncWorkConfig;
 
-	@Schema(title = "数据同步的配置文件", example = "{\"partitionColumn\": \"id\", \"lowerBound\":\"1\",\"upperBound\":\"10000000\",\"numPartitions\": \"300\"}")
-	private String syncConf;
+	@Schema(title = "集群配置")
+	private ClusterConfig clusterConfig;
 
-	@Schema(title = "bash脚本语句", example = "cat /etc/hosts")
-	private String bashScript;
-
-	@Schema(title = "corn表达式", example = "0 0/3 * * * ?")
-	private String corn;
+	@Schema(title = "数据同步规则")
+	private SyncRule syncRule;
 }

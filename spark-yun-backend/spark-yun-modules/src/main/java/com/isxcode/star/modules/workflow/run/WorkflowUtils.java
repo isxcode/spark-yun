@@ -115,11 +115,11 @@ public class WorkflowUtils {
 
 	public static WorkRunContext genWorkRunContext(String instanceId, WorkEntity work, WorkConfigEntity workConfig) {
 
-		return WorkRunContext.builder().datasourceId(workConfig.getDatasourceId()).sqlScript(workConfig.getSqlScript())
+		return WorkRunContext.builder().datasourceId(workConfig.getDatasourceId()).sqlScript(workConfig.getScript())
 				// .bashScript(workConfig.getBashScript()).instanceId(instanceId).tenantId(TENANT_ID.get())
 				// .clusterId(workConfig.getClusterId()).clusterNodeId(workConfig.getClusterNodeId())
 				.workType(work.getWorkType()).workId(work.getId()).workName(work.getName())
-				.sparkConfig(JSON.parseObject(workConfig.getSparkConfig(), new TypeReference<Map<String, String>>() {
+				.sparkConfig(JSON.parseObject(workConfig.getCronConfig(), new TypeReference<Map<String, String>>() {
 				}.getType())).userId(USER_ID.get()).build();
 	}
 
