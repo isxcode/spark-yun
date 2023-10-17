@@ -174,9 +174,9 @@ const rules = reactive<FormRules>({
 function saveData() {
     SaveDataSync({
         ...formData,
-        sourceTableData: dataSyncTableRef.value.getSourceTableData(),
-        targetTableData: dataSyncTableRef.value.getTargetTableData(),
-        connect: dataSyncTableRef.value.getConnect()
+        sourceTableColumn: dataSyncTableRef.value.getSourceTableColumn(),
+        targetTableColumn: dataSyncTableRef.value.getTargetTableColumn(),
+        columnMap: dataSyncTableRef.value.getConnect()
     }).then((res: any) => {
         ElMessage.success('保存成功')
     }).catch(err => {
@@ -321,7 +321,7 @@ function locationNode() {
 function setConfigData() {
     configDetailRef.value.showModal((formData: any) => {
         return new Promise((resolve: any, reject: any) => {
-            
+
         })
     })
 }

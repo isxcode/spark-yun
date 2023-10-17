@@ -6,7 +6,7 @@
     </div>
     <div class="data-sync-body" id="container">
         <div class="source-table-container">
-            <el-table ref="sourceTableRef" :data="sourceTableData" row-key="code" border>
+            <el-table ref="sourceTableRef" :data="sourceTableColumn" row-key="code" border>
                 <el-table-column prop="code" :show-overflow-tooltip="true" label="字段名" />
                 <el-table-column prop="type" :show-overflow-tooltip="true" label="类型" />
                 <el-table-column label="操作" :show-overflow-tooltip="true">
@@ -34,20 +34,20 @@
                 </el-table-column>
             </el-table>
             <ul class="source-link-pointer">
-                <li v-for="row in sourceTableData" :key="row.code">
+                <li v-for="row in sourceTableColumn" :key="row.code">
                     <div class="lint-pointer" :class="`leftRow code-source-${row.code}`"></div>
                 </li>
             </ul>
         </div>
         <div class="target-link-line">
             <ul class="target-link-pointer">
-                <li v-for="row in targetTableData" :key="row.code">
+                <li v-for="row in targetTableColumn" :key="row.code">
                     <div class="lint-pointer" :class="`rightRow code-target-${row.code}`"></div>
                 </li>
             </ul>
         </div>
         <div class="target-table-container">
-            <el-table ref="targetTableRef" :data="targetTableData" row-key="code" border>
+            <el-table ref="targetTableRef" :data="targetTableColumn" row-key="code" border>
                 <el-table-column prop="code" :show-overflow-tooltip="true" label="字段名" />
                 <el-table-column prop="type" :show-overflow-tooltip="true" label="类型" />
             </el-table>
@@ -99,8 +99,8 @@ defineProps<{
 let instance: any = null
 const addCodeRef = ref()
 const connectNodeList = ref<connect[]>([])
-const sourceTableData = ref([])
-const targetTableData = ref([])
+const sourceTableColumn = ref([])
+const targetTableColumn = ref([])
 const buttons = ref([
   {type: 'primary', text: '同行映射', code: 'SameLine'},
   {type: 'primary', text: '同名映射', code: 'SameName'},
@@ -110,11 +110,11 @@ const buttons = ref([
 ])
 const connectCopy = ref()
 
-function getSourceTableData() {
-    return sourceTableData.value
+function getSourceTableColumn() {
+    return sourceTableColumn.value
 }
-function getTargetTableData() {
-    return targetTableData.value
+function getTargetTableColumn() {
+    return targetTableColumn.value
 }
 function getConnect() {
     getLinkData()
@@ -123,11 +123,11 @@ function getConnect() {
 
 // 初始化数据
 function initPageData(data: any) {
-    sourceTableData.value = data.sourceTableData
-    targetTableData.value = data.targetTableData
-    connectCopy.value = data.columMapping
+    sourceTableColumn.value = data.sourceTableColumn
+    targetTableColumn.value = data.targetTableColumn
+    connectCopy.value = data.columnMap
 
-    connectNodeList.value = data.columMapping
+    connectNodeList.value = data.columnMap
     setTimeout(() => {
         initJsPlumb()
         connectNodeList.value.forEach((data: any) => {
@@ -143,7 +143,7 @@ function initPageData(data: any) {
 function getTableColumnData(params: TableDetailParam, type: string) {
     GetTableColumnsByTableId(params).then((res: any) => {
         if (type === 'source') {
-            sourceTableData.value = (res.data.columns || []).map((column: any) => {
+            sourceTableColumn.value = (res.data.columns || []).map((column: any) => {
                 return {
                     code: column[0],
                     type: column[1],
@@ -151,7 +151,7 @@ function getTableColumnData(params: TableDetailParam, type: string) {
                 }
             })
         } else {
-            targetTableData.value = (res.data.columns || []).map((column: any) => {
+            targetTableColumn.value = (res.data.columns || []).map((column: any) => {
                 return {
                     code: column[0],
                     type: column[1]
@@ -257,14 +257,14 @@ function clickSelectLinkConnect(type: string) {
     connectNodeList.value = []
     instance.deleteEveryConnection()
     if (['SameLine', 'SameName'].includes(type)) {
-        sourceTableData.value.forEach((column: any, index: number) => {
-            if (type === 'SameLine' && targetTableData.value[index]) {
+        sourceTableColumn.value.forEach((column: any, index: number) => {
+            if (type === 'SameLine' && targetTableColumn.value[index]) {
                 connectNodeList.value.push({
                     source: column.code,
-                    target: targetTableData.value[index].code
+                    target: targetTableColumn.value[index].code
                 })
             }
-            if (type === 'SameName' && targetTableData.value.find(c => c.code === column.code)) {
+            if (type === 'SameName' && targetTableColumn.value.find(c => c.code === column.code)) {
                 connectNodeList.value.push({
                     source: column.code,
                     target: column.code
@@ -302,7 +302,7 @@ function removeCode(cData: codeParam) {
         cancelButtonText: '取消',
         type: 'warning'
     }).then(() => {
-        sourceTableData.value.splice(cData.$index, 1)
+        sourceTableColumn.value.splice(cData.$index, 1)
         instance.deleteEveryConnection()
         nextTick(() => {
             connectNodeList.value = connectNodeList.value.filter((item: any) => cData.row.code !== item.source)
@@ -321,7 +321,7 @@ function removeCode(cData: codeParam) {
 
 function addNewCode() {
     addCodeRef.value.showModal((formData: codeParam) => {
-        sourceTableData.value.push({ ...formData })
+        sourceTableColumn.value.push({ ...formData })
         nextTick(() => {
             initJsPlumb()
         })
@@ -354,8 +354,8 @@ onMounted(() => {
 
 defineExpose({
     getTableColumnData,
-    getSourceTableData,
-    getTargetTableData,
+    getSourceTableColumn,
+    getTargetTableColumn,
     getConnect,
     initPageData
 })
@@ -444,7 +444,7 @@ defineExpose({
                     z-index: 1000;
                     transform: scale(1);
                     transition: transform 0.15s linear;
-    
+
                     &:hover {
                         transform: scale(2);
                         transition: transform 0.15s linear;

@@ -31,9 +31,9 @@ interface SaveParams {
     targetDBId: string
     targetTable: string
     overMode: string
-    sourceTableData: tableColumn[]
-    targetTableData: tableColumn[]
-    connect: connect[]
+    sourceTableColumn: tableColumn[]
+    targetTableColumn: tableColumn[]
+    columnMap: connect[]
 }
 
 interface workIdParam {

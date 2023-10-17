@@ -14,7 +14,7 @@ public class WorkService {
 
 	private final WorkRepository workRepository;
 
-	public WorkEntity getWork(String workId) {
+	public WorkEntity getWorkEntity(String workId) {
 
 		return workRepository.findById(workId).orElseThrow(() -> new IsxAppException("作业不存在"));
 	}

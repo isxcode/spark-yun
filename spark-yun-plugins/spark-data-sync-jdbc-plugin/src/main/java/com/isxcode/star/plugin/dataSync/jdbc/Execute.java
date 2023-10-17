@@ -39,6 +39,7 @@ public class Execute {
 					.option("user", conf.getTargetDbInfo().getUser())
 					.option("password", conf.getTargetDbInfo().getPassword()).option("truncate", "true").load();
 			target.createOrReplaceTempView(targetTable);
+
 			String sourceColums = "";
 			for (String column : target.columns()) {
 				if (null == conf.getColumMapping().get(column)) {

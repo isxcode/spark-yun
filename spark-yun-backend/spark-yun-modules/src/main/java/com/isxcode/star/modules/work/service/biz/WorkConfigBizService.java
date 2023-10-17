@@ -64,9 +64,9 @@ public class WorkConfigBizService {
 		if (!Strings.isEmpty(wocConfigWorkReq.getClusterId())) {
 			workConfigEntity.setClusterId(wocConfigWorkReq.getClusterId());
 		}
-		if (!Strings.isEmpty(wocConfigWorkReq.getClusterNodeId())) {
-			workConfigEntity.setClusterNodeId(wocConfigWorkReq.getClusterNodeId());
-		}
+		// if (!Strings.isEmpty(wocConfigWorkReq.getClusterNodeId())) {
+		// workConfigEntity.setClusterNodeId(wocConfigWorkReq.getClusterNodeId());
+		// }
 		if (!Strings.isEmpty(wocConfigWorkReq.getDatasourceId())) {
 			workConfigEntity.setDatasourceId(wocConfigWorkReq.getDatasourceId());
 		}
@@ -74,11 +74,11 @@ public class WorkConfigBizService {
 			workConfigEntity.setSparkConfig(wocConfigWorkReq.getSparkConfig());
 		}
 		if (!Strings.isEmpty(wocConfigWorkReq.getSyncConf())) {
-			workConfigEntity.setSyncConf(wocConfigWorkReq.getSyncConf());
+			workConfigEntity.setSyncWorkConfig(wocConfigWorkReq.getSyncConf());
 		}
-		if (!Strings.isEmpty(wocConfigWorkReq.getBashScript())) {
-			workConfigEntity.setBashScript(wocConfigWorkReq.getBashScript());
-		}
+		// if (!Strings.isEmpty(wocConfigWorkReq.getBashScript())) {
+		// workConfigEntity.setBashScript(wocConfigWorkReq.getBashScript());
+		// }
 		if (!Strings.isEmpty(wocConfigWorkReq.getCorn())) {
 			// 检验corn表达式
 			boolean validExpression = CronExpression.isValidExpression(wocConfigWorkReq.getCorn());
