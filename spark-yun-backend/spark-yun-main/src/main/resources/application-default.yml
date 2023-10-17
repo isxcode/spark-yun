@@ -5,7 +5,6 @@ spring:
 
   security:
     user:
-      roles: ADMIN
       name: admin
       password: admin123
 
