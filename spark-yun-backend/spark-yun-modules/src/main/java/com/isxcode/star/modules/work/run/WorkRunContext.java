@@ -1,38 +1,74 @@
 package com.isxcode.star.modules.work.run;
 
-import java.util.Map;
+import com.isxcode.star.api.work.pojos.dto.ClusterConfig;
+import com.isxcode.star.api.work.pojos.dto.SyncWorkConfig;
 import lombok.Builder;
 import lombok.Data;
 
+/**
+ * 作业运行上下文.
+ */
 @Data
 @Builder
 public class WorkRunContext {
 
+	/**
+	 * 作业实例id.
+	 */
 	private String instanceId;
 
+	/**
+	 * 数据源.
+	 */
 	private String datasourceId;
 
-	private String clusterId;
+	/**
+	 * 计算集群信息.
+	 */
+	private ClusterConfig clusterConfig;
 
-	private String clusterNodeId;
+	/**
+	 * 同步作业信息.
+	 */
+	private SyncWorkConfig syncWorkConfig;
 
-	private String sqlScript;
+	/**
+	 * 脚本.
+	 */
+	private String script;
 
-	private String bashScript;
-
+	/**
+	 * 租户id.
+	 */
 	private String tenantId;
 
+	/**
+	 * 用户id.
+	 */
 	private String userId;
 
+	/**
+	 * 作业id.
+	 */
 	private String workId;
 
+	/**
+	 * 作业名称.
+	 */
 	private String workName;
 
+	/**
+	 * 作业类型.
+	 */
 	private String workType;
 
+	/**
+	 * 版本id.
+	 */
 	private String versionId;
 
+	/**
+	 * 日志构造器.
+	 */
 	private StringBuilder logBuilder;
-
-	private Map<String, String> sparkConfig;
 }

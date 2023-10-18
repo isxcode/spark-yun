@@ -1,6 +1,7 @@
 package com.isxcode.star.modules.work.run;
 
 import com.alibaba.fastjson.JSON;
+import com.isxcode.star.api.agent.pojos.req.PluginReq;
 import com.isxcode.star.api.agent.pojos.req.SparkSubmit;
 import com.isxcode.star.api.agent.pojos.req.YagExecuteWorkReq;
 import com.isxcode.star.api.agent.pojos.res.YagGetLogRes;
@@ -39,6 +40,9 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.*;
 
+/**
+ * 同步作业执行器.
+ */
 @Service
 @Slf4j
 public class SyncWorkExecutor extends WorkExecutor {
@@ -52,8 +56,6 @@ public class SyncWorkExecutor extends WorkExecutor {
 	private final WorkRepository workRepository;
 
 	private final WorkConfigRepository workConfigRepository;
-
-	private final DatasourceRepository datasourceRepository;
 
 	private final Locker locker;
 
@@ -72,7 +74,6 @@ public class SyncWorkExecutor extends WorkExecutor {
 		this.clusterNodeRepository = clusterNodeRepository;
 		this.workRepository = workRepository;
 		this.workConfigRepository = workConfigRepository;
-		this.datasourceRepository = datasourceRepository;
 		this.locker = locker;
 		this.httpUrlUtils = httpUrlUtils;
 		this.aesUtils = aesUtils;
@@ -84,15 +85,15 @@ public class SyncWorkExecutor extends WorkExecutor {
 		// 获取日志构造器
 		StringBuilder logBuilder = workRunContext.getLogBuilder();
 
-		// 检测计算集群是否存在
+		// 检测计算集群是否配置
 		logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始申请资源 \n");
-		if (Strings.isEmpty(workRunContext.getClusterId())) {
+		if (Strings.isEmpty(workRunContext.getClusterConfig().getClusterId())) {
 			throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "申请资源失败 : 计算引擎不存在  \n");
 		}
 
 		// 检查计算集群是否存在
 		Optional<ClusterEntity> calculateEngineEntityOptional = clusterRepository
-				.findById(workRunContext.getClusterId());
+				.findById(workRunContext.getClusterConfig().getClusterId());
 		if (!calculateEngineEntityOptional.isPresent()) {
 			throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "申请资源失败 : 计算引擎不存在  \n");
 		}
@@ -115,56 +116,25 @@ public class SyncWorkExecutor extends WorkExecutor {
 		logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始构建作业  \n");
 		YagExecuteWorkReq executeReq = new YagExecuteWorkReq();
 
-		workRunContext.getSparkConfig().put("spark.driver.extraClassPath",
-				"/Users/yuzu/Documents/zhiqingyun-agent/lib/mysql-connector-j-8.0.32.jar");
-
 		// 开始构造SparkSubmit
 		SparkSubmit sparkSubmit = SparkSubmit.builder().verbose(true)
-				.mainClass("com.isxcode.star.plugin.query.sql.Execute").appResource("spark-data-sync-jdbc-plugin.jar")
-				.conf(genSparkSubmitConfig(workRunContext.getSparkConfig())).build();
+				.mainClass("com.isxcode.star.plugin.dataSync.jdbc.Execute")
+				.appResource("spark-data-sync-jdbc-plugin.jar")
+				.conf(genSparkSubmitConfig(workRunContext.getClusterConfig().getSparkConfig())).build();
 
 		// 开始构造PluginReq
-		// SyncWorkConfigEntity syncWorkConfigEntity =
-		// syncWorkConfigRepository.findByWorkId(workInstance.getWorkId());
-		// String sourceDBId = syncWorkConfigEntity.getSourceDBId();
-		// String targetDBId = syncWorkConfigEntity.getTargetDBId();
-		//
-		// Optional<DatasourceEntity> sourceDBOption =
-		// datasourceRepository.findById(sourceDBId);
-		// if (!sourceDBOption.isPresent()) {
-		// throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "作业创建失败
-		// : 来源数据源不存在 \n");
-		// }
-		// Optional<DatasourceEntity> targetOption =
-		// datasourceRepository.findById(targetDBId);
-		// if (!targetOption.isPresent()) {
-		// throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "作业创建失败
-		// : 目标数据源不存在 \n");
-		// }
-		// JDBCSyncPluginReq pluginReq = JDBCSyncPluginReq.builder()
-		// .sourceDbInfo(DataSource.builder().url(sourceDBOption.get().getJdbcUrl())
-		// .tableName(syncWorkConfigEntity.getSourceTable()).user(sourceDBOption.get().getUsername())
-		// .password(aesUtils.decrypt(sourceDBOption.get().getPasswd())).build())
-		// .targetDbInfo(DataSource.builder().url(targetOption.get().getJdbcUrl())
-		// .tableName(syncWorkConfigEntity.getTargetTable()).user(targetOption.get().getUsername())
-		// .password(aesUtils.decrypt(targetOption.get().getPasswd())).build())
-		// .condition(syncWorkConfigEntity.getQueryCondition()).overMode(syncWorkConfigEntity.getOverMode())
-		// .columMapping(JSON.parseObject(syncWorkConfigEntity.getColumMapping(),
-		// new TypeReference<HashMap<String, List<String>>>() {
-		// }))
-		// .sparkConfig(genSparkConfig(workRunContext.getSparkConfig())).build();
-
-		// todo 传输数据库依赖
+		PluginReq pluginReq = PluginReq.builder().syncWorkConfig(workRunContext.getSyncWorkConfig())
+				.sparkConfig(genSparkConfig(workRunContext.getClusterConfig().getSparkConfig())).build();
 
 		// 开始构造executeReq
 		executeReq.setSparkSubmit(sparkSubmit);
-		// executeReq.setPluginReq(pluginReq);
+		executeReq.setPluginReq(pluginReq);
 		executeReq.setAgentHomePath(engineNode.getAgentHomePath() + File.separator + PathConstants.AGENT_PATH_NAME);
 		executeReq.setAgentType(calculateEngineEntityOptional.get().getClusterType());
 
 		// 构建作业完成，并打印作业配置信息
 		logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("构建作业完成 \n");
-		workRunContext.getSparkConfig().forEach((k, v) -> logBuilder.append(LocalDateTime.now())
+		workRunContext.getClusterConfig().getSparkConfig().forEach((k, v) -> logBuilder.append(LocalDateTime.now())
 				.append(WorkLog.SUCCESS_INFO).append(k).append(":").append(v).append(" \n"));
 		logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始提交作业  \n");
 		workInstance = updateInstance(workInstance, logBuilder);
@@ -289,7 +259,7 @@ public class SyncWorkExecutor extends WorkExecutor {
 					updateInstance(workInstance, logBuilder);
 				} else {
 					// 任务运行错误
-					throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "Kubernetes容器状态为失败" + "\n");
+					throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "任务运行异常" + "\n");
 				}
 
 				// 运行结束，则退出死循环

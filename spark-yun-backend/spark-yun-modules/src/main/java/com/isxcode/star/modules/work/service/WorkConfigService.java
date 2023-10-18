@@ -12,6 +12,8 @@ import com.isxcode.star.modules.work.entity.WorkConfigEntity;
 import com.isxcode.star.modules.work.repository.WorkConfigRepository;
 import com.isxcode.star.modules.work.repository.WorkRepository;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import javax.transaction.Transactional;
 
@@ -68,5 +70,37 @@ public class WorkConfigService {
 
 	public void initCronConfig(WorkConfigEntity workConfig) {
 		workConfig.setCronConfig(JSON.toJSONString(CronConfig.builder().enable(false).build()));
+	}
+
+	public Map<String, String> initSparkConfig(String resourceLevel) {
+
+		Map<String, String> sparkConfig = new HashMap<>();
+		switch (resourceLevel) {
+			case ResourceLevel.HIGH :
+				sparkConfig.put("hive.metastore.uris", "");
+				sparkConfig.put("spark.executor.instances", "10");
+				sparkConfig.put("spark.executor.cores", "4");
+				sparkConfig.put("spark.executor.memory", "4g");
+				sparkConfig.put("spark.driver.memory", "2g");
+				sparkConfig.put("spark.driver.cores", "1");
+				break;
+			case ResourceLevel.MEDIUM :
+				sparkConfig.put("hive.metastore.uris", "");
+				sparkConfig.put("spark.executor.instances", "5");
+				sparkConfig.put("spark.executor.cores", "2");
+				sparkConfig.put("spark.executor.memory", "2g");
+				sparkConfig.put("spark.driver.memory", "1g");
+				sparkConfig.put("spark.driver.cores", "1");
+				break;
+			case ResourceLevel.LOW :
+				sparkConfig.put("hive.metastore.uris", "");
+				sparkConfig.put("spark.executor.instances", "1");
+				sparkConfig.put("spark.executor.cores", "1");
+				sparkConfig.put("spark.executor.memory", "2g");
+				sparkConfig.put("spark.driver.memory", "1g");
+				sparkConfig.put("spark.driver.cores", "1");
+				break;
+		}
+		return sparkConfig;
 	}
 }

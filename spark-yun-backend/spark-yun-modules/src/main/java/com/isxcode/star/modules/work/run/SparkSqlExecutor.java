@@ -7,6 +7,7 @@ import com.isxcode.star.api.agent.pojos.req.YagExecuteWorkReq;
 import com.isxcode.star.api.agent.pojos.res.YagGetLogRes;
 import com.isxcode.star.api.api.constants.PathConstants;
 import com.isxcode.star.api.cluster.constants.ClusterNodeStatus;
+import com.isxcode.star.api.work.constants.SetMode;
 import com.isxcode.star.api.work.constants.WorkLog;
 import com.isxcode.star.api.work.exceptions.WorkRunException;
 import com.isxcode.star.api.work.pojos.res.RunWorkRes;
@@ -25,6 +26,7 @@ import com.isxcode.star.modules.work.entity.WorkInstanceEntity;
 import com.isxcode.star.modules.work.repository.WorkConfigRepository;
 import com.isxcode.star.modules.work.repository.WorkInstanceRepository;
 import com.isxcode.star.modules.work.repository.WorkRepository;
+import com.isxcode.star.modules.work.service.WorkConfigService;
 import com.isxcode.star.modules.workflow.repository.WorkflowInstanceRepository;
 import java.io.File;
 import java.io.IOException;
@@ -55,10 +57,12 @@ public class SparkSqlExecutor extends WorkExecutor {
 
 	private final HttpUrlUtils httpUrlUtils;
 
+	private final WorkConfigService workConfigService;
+
 	public SparkSqlExecutor(WorkInstanceRepository workInstanceRepository, ClusterRepository clusterRepository,
 			ClusterNodeRepository clusterNodeRepository, WorkflowInstanceRepository workflowInstanceRepository,
 			WorkRepository workRepository, WorkConfigRepository workConfigRepository, Locker locker,
-			HttpUrlUtils httpUrlUtils) {
+			HttpUrlUtils httpUrlUtils, WorkConfigService workConfigService) {
 
 		super(workInstanceRepository, workflowInstanceRepository);
 		this.workInstanceRepository = workInstanceRepository;
@@ -68,6 +72,7 @@ public class SparkSqlExecutor extends WorkExecutor {
 		this.workConfigRepository = workConfigRepository;
 		this.locker = locker;
 		this.httpUrlUtils = httpUrlUtils;
+		this.workConfigService = workConfigService;
 	}
 
 	@Override
@@ -78,19 +83,19 @@ public class SparkSqlExecutor extends WorkExecutor {
 
 		// 判断执行脚本是否为空
 		logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("检测脚本内容 \n");
-		if (Strings.isEmpty(workRunContext.getSqlScript())) {
+		if (Strings.isEmpty(workRunContext.getScript())) {
 			throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "检测脚本失败 : SQL内容为空不能执行  \n");
 		}
 
 		// 检测计算集群是否存在
 		logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始申请资源 \n");
-		if (Strings.isEmpty(workRunContext.getClusterId())) {
+		if (Strings.isEmpty(workRunContext.getClusterConfig().getClusterId())) {
 			throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "申请资源失败 : 计算引擎不存在  \n");
 		}
 
 		// 检查计算集群是否存在
 		Optional<ClusterEntity> calculateEngineEntityOptional = clusterRepository
-				.findById(workRunContext.getClusterId());
+				.findById(workRunContext.getClusterConfig().getClusterId());
 		if (!calculateEngineEntityOptional.isPresent()) {
 			throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "申请资源失败 : 计算引擎不存在  \n");
 		}
@@ -113,14 +118,20 @@ public class SparkSqlExecutor extends WorkExecutor {
 		logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始构建作业  \n");
 		YagExecuteWorkReq executeReq = new YagExecuteWorkReq();
 
+		// 如果集群配置是简易模式
+		if (SetMode.SIMPLE.equals(workRunContext.getClusterConfig().getSetMode())) {
+			workRunContext.getClusterConfig().setSparkConfig(
+					workConfigService.initSparkConfig(workRunContext.getClusterConfig().getResourceLevel()));
+		}
+
 		// 开始构造SparkSubmit
 		SparkSubmit sparkSubmit = SparkSubmit.builder().verbose(true)
 				.mainClass("com.isxcode.star.plugin.query.sql.Execute").appResource("spark-query-sql-plugin.jar")
-				.conf(genSparkSubmitConfig(workRunContext.getSparkConfig())).build();
+				.conf(genSparkSubmitConfig(workRunContext.getClusterConfig().getSparkConfig())).build();
 
 		// 开始构造PluginReq
-		PluginReq pluginReq = PluginReq.builder().sql(workRunContext.getSqlScript()).limit(200)
-				.sparkConfig(genSparkConfig(workRunContext.getSparkConfig())).build();
+		PluginReq pluginReq = PluginReq.builder().sql(workRunContext.getScript()).limit(200)
+				.sparkConfig(genSparkConfig(workRunContext.getClusterConfig().getSparkConfig())).build();
 
 		// 开始构造executeReq
 		executeReq.setSparkSubmit(sparkSubmit);
@@ -130,7 +141,7 @@ public class SparkSqlExecutor extends WorkExecutor {
 
 		// 构建作业完成，并打印作业配置信息
 		logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("构建作业完成 \n");
-		workRunContext.getSparkConfig().forEach((k, v) -> logBuilder.append(LocalDateTime.now())
+		workRunContext.getClusterConfig().getSparkConfig().forEach((k, v) -> logBuilder.append(LocalDateTime.now())
 				.append(WorkLog.SUCCESS_INFO).append(k).append(":").append(v).append(" \n"));
 		logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始提交作业  \n");
 		workInstance = updateInstance(workInstance, logBuilder);
