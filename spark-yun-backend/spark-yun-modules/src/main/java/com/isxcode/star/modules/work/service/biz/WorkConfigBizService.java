@@ -51,8 +51,8 @@ public class WorkConfigBizService {
 		// 如果作业是spark，且是高级模式，检查用户的json格式
 		if (WorkType.QUERY_SPARK_SQL.equals(work.getWorkType())
 				&& SetMode.ADVANCE.equals(wocConfigWorkReq.getClusterConfig().getSetMode())
-				&& !Strings.isEmpty(wocConfigWorkReq.getClusterConfig().getSparkConfig())
-				&& !JSON.isValid(wocConfigWorkReq.getClusterConfig().getSparkConfig())) {
+				&& wocConfigWorkReq.getClusterConfig().getSparkConfig() != null
+				&& !JSON.isValid(String.valueOf(wocConfigWorkReq.getClusterConfig().getSparkConfig()))) {
 			throw new IsxAppException("500", "sparkConfig中json格式不合法");
 		}
 
@@ -65,6 +65,10 @@ public class WorkConfigBizService {
 
 		// 用户更新集群配置
 		if (wocConfigWorkReq.getClusterConfig() != null) {
+			// 如果是等级的模式，需要帮用户默认填充sparkConfig
+			if (SetMode.SIMPLE.equals(wocConfigWorkReq.getClusterConfig().getSetMode())) {
+				workConfigService.initSparkConfig(wocConfigWorkReq.getClusterConfig().getResourceLevel());
+			}
 			workConfig.setClusterConfig(JSON.toJSONString(wocConfigWorkReq.getClusterConfig()));
 		}
 
