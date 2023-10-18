@@ -6,6 +6,7 @@ import static com.isxcode.star.common.config.CommonConfig.USER_ID;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.TypeReference;
+import com.isxcode.star.api.work.pojos.dto.ClusterConfig;
 import com.isxcode.star.api.workflow.pojos.dto.NodeInfo;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.star.common.utils.jgrapht.JgraphtUtils;
@@ -115,23 +116,26 @@ public class WorkflowUtils {
 
 	public static WorkRunContext genWorkRunContext(String instanceId, WorkEntity work, WorkConfigEntity workConfig) {
 
-		return WorkRunContext.builder().datasourceId(workConfig.getDatasourceId()).sqlScript(workConfig.getScript())
-				// .bashScript(workConfig.getBashScript()).instanceId(instanceId).tenantId(TENANT_ID.get())
-				// .clusterId(workConfig.getClusterId()).clusterNodeId(workConfig.getClusterNodeId())
-				.workType(work.getWorkType()).workId(work.getId()).workName(work.getName())
-				.sparkConfig(JSON.parseObject(workConfig.getCronConfig(), new TypeReference<Map<String, String>>() {
-				}.getType())).userId(USER_ID.get()).build();
+		return WorkRunContext.builder().datasourceId(workConfig.getDatasourceId()).script(workConfig.getScript())
+				.instanceId(instanceId).tenantId(TENANT_ID.get())
+				.clusterConfig(JSON.parseObject(workConfig.getClusterConfig(), ClusterConfig.class))
+				.workType(work.getWorkType()).workId(work.getId()).workName(work.getName()).userId(USER_ID.get())
+				.build();
 	}
 
 	public static WorkRunContext genWorkRunContext(String instanceId, VipWorkVersionEntity workVersion) {
 
-		return WorkRunContext.builder().datasourceId(workVersion.getDatasourceId())
-				.sqlScript(workVersion.getSqlScript()).bashScript(workVersion.getBashScript()).instanceId(instanceId)
-				.tenantId(TENANT_ID.get()).userId(USER_ID.get()).clusterId(workVersion.getClusterId())
-				.clusterNodeId(workVersion.getClusterNodeId()).workType(workVersion.getWorkType())
-				.workId(workVersion.getId())
-				.sparkConfig(JSON.parseObject(workVersion.getSparkConfig(), new TypeReference<Map<String, String>>() {
-				}.getType())).build();
+		// return WorkRunContext.builder().datasourceId(workVersion.getDatasourceId())
+		// .script(workVersion.getSqlScript()).instanceId(instanceId)
+		// .tenantId(TENANT_ID.get())
+		// .userId(USER_ID.get())
+		// .clusterConfig(JSON.parseObject(workVersion.get.getClusterConfig(),
+		// ClusterConfig.class)).workType(workVersion.getWorkType())
+		// .workId(workVersion.getId())
+		// .sparkConfig(JSON.parseObject(workVersion.getSparkConfig(), new
+		// TypeReference<Map<String, String>>() {
+		// }.getType())).build();
+		return null;
 	}
 
 	/** 获取所有下游的节点id. */

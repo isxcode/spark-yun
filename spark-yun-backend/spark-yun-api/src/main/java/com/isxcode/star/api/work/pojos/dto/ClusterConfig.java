@@ -3,6 +3,8 @@ package com.isxcode.star.api.work.pojos.dto;
 import lombok.Builder;
 import lombok.Data;
 
+import java.util.Map;
+
 /**
  * 资源配置信息.
  */
@@ -18,5 +20,5 @@ public class ClusterConfig {
 
 	private String clusterNodeId;
 
-	private String sparkConfig;
+	private Map<String, String> sparkConfig;
 }

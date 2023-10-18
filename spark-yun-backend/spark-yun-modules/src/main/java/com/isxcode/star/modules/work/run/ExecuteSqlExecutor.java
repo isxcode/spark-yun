@@ -64,7 +64,7 @@ public class ExecuteSqlExecutor extends WorkExecutor {
 		workInstance = updateInstance(workInstance, logBuilder);
 
 		// 检查脚本是否为空
-		if (Strings.isEmpty(workRunContext.getSqlScript())) {
+		if (Strings.isEmpty(workRunContext.getScript())) {
 			throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "Sql内容为空 \n");
 		}
 
@@ -77,7 +77,7 @@ public class ExecuteSqlExecutor extends WorkExecutor {
 				Statement statement = connection.createStatement()) {
 
 			// 清除注释
-			String noCommentSql = workRunContext.getSqlScript().replaceAll("/\\*(?:.|[\\n\\r])*?\\*/|--.*", "");
+			String noCommentSql = workRunContext.getScript().replaceAll("/\\*(?:.|[\\n\\r])*?\\*/|--.*", "");
 
 			// 清除脚本中的脏数据
 			List<String> sqls = Arrays.stream(noCommentSql.split(";")).filter(e -> !Strings.isEmpty(e))
