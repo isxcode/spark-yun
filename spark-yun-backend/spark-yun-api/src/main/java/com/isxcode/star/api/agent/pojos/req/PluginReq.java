@@ -2,6 +2,7 @@ package com.isxcode.star.api.agent.pojos.req;
 
 import java.util.Map;
 
+import com.isxcode.star.api.work.pojos.dto.SyncRule;
 import com.isxcode.star.api.work.pojos.dto.SyncWorkConfig;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,4 +24,6 @@ public class PluginReq {
 	private Map<String, String> sparkConfig;
 
 	private SyncWorkConfig syncWorkConfig;
+
+	private SyncRule syncRule;
 }
