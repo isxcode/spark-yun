@@ -50,3 +50,17 @@ export const WeekDateList = [
         value: '7',
     }
 ]
+export const ResourceLevelOptions = [
+    {
+        label: '高',
+        value: 'HIGH',
+    },
+    {
+        label: '中',
+        value: 'MEDIUM',
+    },
+    {
+        label: '低',
+        value: 'LOW',
+    }
+]
