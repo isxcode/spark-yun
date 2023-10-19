@@ -351,27 +351,27 @@ public class WorkBizService {
 		getWorkRes.setWorkId(work.getId());
 		getWorkRes.setWorkflowId(work.getWorkflowId());
 
-		if (Strings.isEmpty(workConfig.getDatasourceId())) {
+		if (!Strings.isEmpty(workConfig.getDatasourceId())) {
 			getWorkRes.setDatasourceId(workConfig.getDatasourceId());
 		}
 
-		if (Strings.isEmpty(workConfig.getScript())) {
+		if (!Strings.isEmpty(workConfig.getScript())) {
 			getWorkRes.setDatasourceId(workConfig.getScript());
 		}
 
-		if (Strings.isEmpty(workConfig.getCronConfig())) {
+		if (!Strings.isEmpty(workConfig.getCronConfig())) {
 			getWorkRes.setCronConfig(JSON.parseObject(workConfig.getScript(), CronConfig.class));
 		}
 
-		if (Strings.isEmpty(workConfig.getSyncWorkConfig())) {
+		if (!Strings.isEmpty(workConfig.getSyncWorkConfig())) {
 			getWorkRes.setSyncWorkConfig(JSON.parseObject(workConfig.getSyncWorkConfig(), SyncWorkConfig.class));
 		}
 
-		if (Strings.isEmpty(workConfig.getClusterConfig())) {
+		if (!Strings.isEmpty(workConfig.getClusterConfig())) {
 			getWorkRes.setClusterConfig(JSON.parseObject(workConfig.getClusterConfig(), ClusterConfig.class));
 		}
 
-		if (Strings.isEmpty(workConfig.getSyncRule())) {
+		if (!Strings.isEmpty(workConfig.getSyncRule())) {
 			getWorkRes.setSyncRule(JSON.parseObject(workConfig.getSyncRule(), SyncRule.class));
 		}
 
