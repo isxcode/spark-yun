@@ -86,6 +86,7 @@ export function SaveDataSync(params: SaveParams): Promise<any> {
     })
 }
 
+// TODO: 作废
 // 作业流-数据同步-保存数据
 export function GetDataSyncDetail(params: workIdParam): Promise<any> {
     return http.request({

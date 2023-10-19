@@ -120,10 +120,11 @@ import CodeMirror from 'vue-codemirror6'
 import {sql} from '@codemirror/lang-sql'
 import {DataSourceType, OverModeList} from './data.config.ts'
 import {GetDatasourceList} from '@/services/datasource.service'
-import {CreateTableWork, GetDataSourceTables, GetDataSyncDetail, SaveDataSync} from '@/services/data-sync.service'
+import {CreateTableWork, GetDataSourceTables, SaveDataSync} from '@/services/data-sync.service'
 import TableDetail from './table-detail/index.vue'
 import DataSyncTable from './data-sync-table/index.vue'
 import ConfigDetail from '../workflow-page/config-detail/index.vue'
+import { GetWorkItemConfig, SaveWorkItemConfig } from '@/services/workflow.service'
 
 interface Option {
   label: string
@@ -172,11 +173,14 @@ const rules = reactive<FormRules>({
 
 // 保存数据
 function saveData() {
-    SaveDataSync({
-        ...formData,
-        sourceTableColumn: dataSyncTableRef.value.getSourceTableColumn(),
-        targetTableColumn: dataSyncTableRef.value.getTargetTableColumn(),
-        columnMap: dataSyncTableRef.value.getConnect()
+    SaveWorkItemConfig({
+        workId: formData.workId,
+        syncWorkConfig: {
+            ...formData,
+            sourceTableColumn: dataSyncTableRef.value.getSourceTableColumn(),
+            targetTableColumn: dataSyncTableRef.value.getTargetTableColumn(),
+            columnMap: dataSyncTableRef.value.getConnect()
+        }
     }).then((res: any) => {
         ElMessage.success('保存成功')
     }).catch(err => {
@@ -185,17 +189,17 @@ function saveData() {
 }
 
 function getDate() {
-    GetDataSyncDetail({
+    GetWorkItemConfig({
         workId: props.workItemConfig.id
     }).then((res: any) => {
-        formData.sourceDBType = res.data.sourceDBType
-        formData.sourceDBId = res.data.sourceDBId
-        formData.sourceTable = res.data.sourceTable
-        formData.queryCondition = res.data.queryCondition
-        formData.targetDBType = res.data.targetDBType
-        formData.targetDBId = res.data.targetDBId
-        formData.targetTable = res.data.targetTable
-        formData.overMode = res.data.overMode
+        formData.sourceDBType = res.data.syncWorkConfig.sourceDBType
+        formData.sourceDBId = res.data.syncWorkConfig.sourceDBId
+        formData.sourceTable = res.data.syncWorkConfig.sourceTable
+        formData.queryCondition = res.data.syncWorkConfig.queryCondition
+        formData.targetDBType = res.data.syncWorkConfig.targetDBType
+        formData.targetDBId = res.data.syncWorkConfig.targetDBId
+        formData.targetTable = res.data.syncWorkConfig.targetTable
+        formData.overMode = res.data.syncWorkConfig.overMode
 
         nextTick(() => {
             getDataSource(true, formData.sourceDBType, 'source')
@@ -203,7 +207,7 @@ function getDate() {
             getDataSourceTable(true, formData.sourceDBId, 'source')
             getDataSourceTable(true, formData.targetDBId, 'target')
 
-            dataSyncTableRef.value.initPageData(res.data)
+            dataSyncTableRef.value.initPageData(res.data.syncWorkConfig)
         })
     }).catch(err => {
       console.error(err)
