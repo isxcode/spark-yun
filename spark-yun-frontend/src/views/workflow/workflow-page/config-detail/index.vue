@@ -9,17 +9,17 @@
               ref="form"
               label-position="left"
               label-width="120px"
-              :model="formData"
+              :model="clusterConfig"
               :rules="rules"
             >
               <el-form-item label="模式">
-                <el-radio-group v-model="formData.type" size="small">
-                  <el-radio-button label="0">简易</el-radio-button>
-                  <el-radio-button label="1">高级定义</el-radio-button>
+                <el-radio-group v-model="clusterConfig.setMode" size="small">
+                  <el-radio-button label="SIMPLE">简易</el-radio-button>
+                  <el-radio-button label="ADVANCE">高级定义</el-radio-button>
                 </el-radio-group>
               </el-form-item>
               <el-form-item label="计算集群">
-                <el-select v-model="formData.sourceLevel" placeholder="请选择">
+                <el-select v-model="clusterConfig.clusterId" placeholder="请选择">
                   <el-option
                     v-for="item in sourceLevelOptions"
                     :key="item.value"
@@ -28,18 +28,18 @@
                   />
                 </el-select>
               </el-form-item>
-              <el-form-item label="sparkConfig" v-if="formData.type === '1'">
+              <el-form-item label="sparkConfig" v-if="clusterConfig.setMode === 'ADVANCE'">
                 <el-input
-                  v-model="formData.sparkConfig"
+                  v-model="clusterConfig.sparkConfig"
                   :rows="6"
                   type="textarea"
                   placeholder="请输入"
                 />
               </el-form-item>
               <el-form-item label="资源等级" v-else>
-                <el-select v-model="formData.sourceLevel" placeholder="请选择">
+                <el-select v-model="clusterConfig.resourceLevel" placeholder="请选择">
                   <el-option
-                    v-for="item in sourceLevelOptions"
+                    v-for="item in resourceLevelOptions"
                     :key="item.value"
                     :label="item.label"
                     :value="item.value"
@@ -210,25 +210,24 @@
               ref="form"
               label-position="left"
               label-width="120px"
-              :model="formData"
-              :rules="rules"
+              :model="syncRule"
             >
               <el-form-item label="模式">
-                <el-radio-group v-model="formData.setMode" size="small">
-                  <el-radio-button label="0">简易</el-radio-button>
-                  <el-radio-button label="1">高级定义</el-radio-button>
+                <el-radio-group v-model="syncRule.setMode" size="small">
+                  <el-radio-button label="SIMPLE">简易</el-radio-button>
+                  <el-radio-button label="ADVANCE">高级定义</el-radio-button>
                 </el-radio-group>
               </el-form-item>
-              <el-form-item label="sparkConfig" v-if="formData.setMode === '1'">
+              <el-form-item label="sparkConfig" v-if="syncRule.setMode === 'ADVANCE'">
                 <el-input
-                  v-model="formData.sqlConfig"
+                  v-model="syncRule.sqlConfig"
                   placeholder="请输入"
                 />
               </el-form-item>
               <template v-else>
                 <el-form-item label="分区数">
                   <el-input-number
-                    v-model="formData.numPartitions"
+                    v-model="syncRule.numPartitions"
                     :min="0"
                     placeholder="请输入"
                     controls-position="right"
@@ -236,7 +235,7 @@
                 </el-form-item>
                 <el-form-item label="并发数">
                   <el-input-number
-                    v-model="formData.numConcurrency"
+                    v-model="syncRule.numConcurrency"
                     :min="0"
                     placeholder="请输入"
                     controls-position="right"
@@ -254,7 +253,7 @@
 import { computed, reactive, ref } from 'vue'
 import { FormInstance, FormRules } from 'element-plus'
 import BlockDrawer from '@/components/block-drawer/index.vue'
-import {ScheduleRange, WeekDateList} from './config-detail'
+import {ScheduleRange, WeekDateList, ResourceLevelOptions} from './config-detail'
 
 // const form = ref<FormInstance>()
 const callback = ref()
@@ -262,6 +261,9 @@ const callback = ref()
 const scheduleRange = ref(ScheduleRange);
 const weekDateList = ref(WeekDateList)
 const dayList = ref()
+
+const resourceLevelOptions = ref(ResourceLevelOptions) // 资源等级
+
 const drawerConfig = reactive({
   title: '配置',
   visible: false,
@@ -295,13 +297,21 @@ const formData = reactive({
   scheduleDate: '',  // 调度时间 - 日/周
   weekDate: '',      // 指定时间 - 星期
   monthDay: '',      // 指定时间 - 月
-
+});
+const clusterConfig = reactive({
+  setMode: 'SIMPLE ',       // 模式
+  resourceLevel: '',        // 资源等级
+  clusterId: '',            // 计算集群
+  sparkConfig: ''
+})
+// 数据同步规则
+const syncRule = reactive({
   // 数据同步
-  setMode: '',       // 模式
+  setMode: 'SIMPLE ',       // 模式
   numPartitions: undefined,     // 分区数
   numConcurrency: undefined,    // 并发数
-  sqlConfig: null
-});
+  sqlConfig: ''
+})
 const state = reactive({
   secondsText: '',
   minutesText: '',
