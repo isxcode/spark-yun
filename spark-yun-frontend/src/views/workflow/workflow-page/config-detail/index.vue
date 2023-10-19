@@ -214,21 +214,21 @@
               :rules="rules"
             >
               <el-form-item label="模式">
-                <el-radio-group v-model="formData.cronType" size="small">
+                <el-radio-group v-model="formData.setMode" size="small">
                   <el-radio-button label="0">简易</el-radio-button>
                   <el-radio-button label="1">高级定义</el-radio-button>
                 </el-radio-group>
               </el-form-item>
-              <el-form-item label="sparkConfig" v-if="formData.cronType === '1'">
+              <el-form-item label="sparkConfig" v-if="formData.setMode === '1'">
                 <el-input
-                  v-model="formData.sparkConfig"
+                  v-model="formData.sqlConfig"
                   placeholder="请输入"
                 />
               </el-form-item>
               <template v-else>
                 <el-form-item label="分区数">
                   <el-input-number
-                    v-model="num"
+                    v-model="formData.numPartitions"
                     :min="0"
                     placeholder="请输入"
                     controls-position="right"
@@ -236,7 +236,7 @@
                 </el-form-item>
                 <el-form-item label="并发数">
                   <el-input-number
-                    v-model="num"
+                    v-model="formData.numConcurrency"
                     :min="0"
                     placeholder="请输入"
                     controls-position="right"
@@ -296,6 +296,11 @@ const formData = reactive({
   weekDate: '',      // 指定时间 - 星期
   monthDay: '',      // 指定时间 - 月
 
+  // 数据同步
+  setMode: '',       // 模式
+  numPartitions: undefined,     // 分区数
+  numConcurrency: undefined,    // 并发数
+  sqlConfig: null
 });
 const state = reactive({
   secondsText: '',
