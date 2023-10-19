@@ -46,4 +46,8 @@ public class SyncWorkConfig {
 
 	@Schema(title = "字段映射关系", example = "[{\"source\": \"installed_rank\",\"target\": \"installed_rank\"}]")
 	private List<SyncColumnMap> columnMap;
+
+	private DatasourceConfig sourceDatabase;
+
+	private DatasourceConfig targetDatabase;
 }

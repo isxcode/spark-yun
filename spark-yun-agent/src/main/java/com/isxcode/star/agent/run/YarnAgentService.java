@@ -2,6 +2,7 @@ package com.isxcode.star.agent.run;
 
 import com.alibaba.fastjson2.JSON;
 import com.isxcode.star.agent.properties.SparkYunAgentProperties;
+import com.isxcode.star.api.agent.pojos.req.PluginReq;
 import com.isxcode.star.api.agent.pojos.req.SparkSubmit;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +31,7 @@ public class YarnAgentService implements AgentService {
 	}
 
 	@Override
-	public SparkLauncher genSparkLauncher(Object pluginReq, SparkSubmit sparkSubmit, String agentHomePath) {
+	public SparkLauncher genSparkLauncher(PluginReq pluginReq, SparkSubmit sparkSubmit, String agentHomePath) {
 
 		SparkLauncher sparkLauncher = new SparkLauncher().setVerbose(false).setMainClass(sparkSubmit.getMainClass())
 				.setDeployMode("cluster").setAppName("zhiqingyun-job").setMaster(getMaster())

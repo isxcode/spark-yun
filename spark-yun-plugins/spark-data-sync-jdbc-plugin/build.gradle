@@ -58,10 +58,10 @@ dependencies {
   implementation "org.json4s:json4s-core_${SPARK_SCALA_VERSION}:${JSON4S_VERSION}"
 
   // janino
-  implementation "org.codehaus.janino:janino:3.0.8"
+  implementation "org.codehaus.janino:janino:3.1.10"
 
   // commons-compiler
-  implementation "org.codehaus.janino:commons-compiler:3.0.8"
+  implementation "org.codehaus.janino:commons-compiler:3.1.10"
 
   // jackson-module
   implementation "com.fasterxml.jackson.module:jackson-module-scala_${SPARK_SCALA_VERSION}:2.10.0"
@@ -78,6 +78,7 @@ dependencies {
   // univocity-parsers
   implementation "com.univocity:univocity-parsers:2.8.2"
 
+  implementation "com.mysql:mysql-connector-j:${MYSQL_DRIVER_VERSION}"
 }
 
 jar {

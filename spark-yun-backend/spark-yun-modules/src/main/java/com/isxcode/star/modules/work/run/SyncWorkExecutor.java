@@ -7,8 +7,10 @@ import com.isxcode.star.api.agent.pojos.req.YagExecuteWorkReq;
 import com.isxcode.star.api.agent.pojos.res.YagGetLogRes;
 import com.isxcode.star.api.api.constants.PathConstants;
 import com.isxcode.star.api.cluster.constants.ClusterNodeStatus;
+import com.isxcode.star.api.work.constants.SetMode;
 import com.isxcode.star.api.work.constants.WorkLog;
 import com.isxcode.star.api.work.exceptions.WorkRunException;
+import com.isxcode.star.api.work.pojos.dto.DatasourceConfig;
 import com.isxcode.star.api.work.pojos.res.RunWorkRes;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.star.backend.api.base.pojos.BaseResponse;
@@ -20,13 +22,15 @@ import com.isxcode.star.modules.cluster.entity.ClusterEntity;
 import com.isxcode.star.modules.cluster.entity.ClusterNodeEntity;
 import com.isxcode.star.modules.cluster.repository.ClusterNodeRepository;
 import com.isxcode.star.modules.cluster.repository.ClusterRepository;
-import com.isxcode.star.modules.datasource.repository.DatasourceRepository;
+import com.isxcode.star.modules.datasource.entity.DatasourceEntity;
+import com.isxcode.star.modules.datasource.service.DatasourceService;
 import com.isxcode.star.modules.work.entity.WorkConfigEntity;
 import com.isxcode.star.modules.work.entity.WorkEntity;
 import com.isxcode.star.modules.work.entity.WorkInstanceEntity;
 import com.isxcode.star.modules.work.repository.WorkConfigRepository;
 import com.isxcode.star.modules.work.repository.WorkInstanceRepository;
 import com.isxcode.star.modules.work.repository.WorkRepository;
+import com.isxcode.star.modules.work.service.WorkConfigService;
 import com.isxcode.star.modules.workflow.repository.WorkflowInstanceRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
@@ -37,6 +41,10 @@ import org.springframework.web.client.ResourceAccessException;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -63,10 +71,15 @@ public class SyncWorkExecutor extends WorkExecutor {
 
 	private final AesUtils aesUtils;
 
+	private final WorkConfigService workConfigService;
+
+	private final DatasourceService datasourceService;
+
 	public SyncWorkExecutor(WorkInstanceRepository workInstanceRepository, ClusterRepository clusterRepository,
 			ClusterNodeRepository clusterNodeRepository, WorkflowInstanceRepository workflowInstanceRepository,
-			WorkRepository workRepository, WorkConfigRepository workConfigRepository,
-			DatasourceRepository datasourceRepository, Locker locker, HttpUrlUtils httpUrlUtils, AesUtils aesUtils) {
+			WorkRepository workRepository, WorkConfigRepository workConfigRepository, Locker locker,
+			HttpUrlUtils httpUrlUtils, AesUtils aesUtils, WorkConfigService workConfigService,
+			DatasourceService datasourceService) {
 
 		super(workInstanceRepository, workflowInstanceRepository);
 		this.workInstanceRepository = workInstanceRepository;
@@ -77,6 +90,8 @@ public class SyncWorkExecutor extends WorkExecutor {
 		this.locker = locker;
 		this.httpUrlUtils = httpUrlUtils;
 		this.aesUtils = aesUtils;
+		this.workConfigService = workConfigService;
+		this.datasourceService = datasourceService;
 	}
 
 	@Override
@@ -116,15 +131,57 @@ public class SyncWorkExecutor extends WorkExecutor {
 		logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始构建作业  \n");
 		YagExecuteWorkReq executeReq = new YagExecuteWorkReq();
 
+		// 如果集群配置是简易模式
+		if (SetMode.SIMPLE.equals(workRunContext.getClusterConfig().getSetMode())) {
+			workRunContext.getClusterConfig().setSparkConfig(
+					workConfigService.initSparkConfig(workRunContext.getClusterConfig().getResourceLevel()));
+		}
+
 		// 开始构造SparkSubmit
 		SparkSubmit sparkSubmit = SparkSubmit.builder().verbose(true)
 				.mainClass("com.isxcode.star.plugin.dataSync.jdbc.Execute")
 				.appResource("spark-data-sync-jdbc-plugin.jar")
 				.conf(genSparkSubmitConfig(workRunContext.getClusterConfig().getSparkConfig())).build();
 
+		// 封装来源Datasource的信息
+		DatasourceEntity sourceDatasource = datasourceService
+				.getDatasource(workRunContext.getSyncWorkConfig().getSourceDBId());
+		DatasourceConfig sourceConfig = DatasourceConfig.builder()
+				.driver(datasourceService.getDriverClass(sourceDatasource.getDbType()))
+				.url(sourceDatasource.getJdbcUrl()).dbTable(workRunContext.getSyncWorkConfig().getSourceTable())
+				.user(sourceDatasource.getUsername()).password(aesUtils.decrypt(sourceDatasource.getPasswd())).build();
+		workRunContext.getSyncWorkConfig().setSourceDatabase(sourceConfig);
+
+		// 封装去向Datasource的信息
+		DatasourceEntity targetDatasource = datasourceService
+				.getDatasource(workRunContext.getSyncWorkConfig().getTargetDBId());
+		DatasourceConfig targetConfig = DatasourceConfig.builder()
+				.driver(datasourceService.getDriverClass(targetDatasource.getDbType()))
+				.url(targetDatasource.getJdbcUrl()).dbTable(workRunContext.getSyncWorkConfig().getTargetTable())
+				.user(targetDatasource.getUsername()).password(aesUtils.decrypt(targetDatasource.getPasswd())).build();
+		workRunContext.getSyncWorkConfig().setTargetDatabase(targetConfig);
+
+		// 查询来源表最大值范围和最小值范围
+		try (Connection sourceConnection = datasourceService.getDbConnection(sourceDatasource);
+				Statement statement = sourceConnection.createStatement();) {
+			statement.setQueryTimeout(1800);
+
+			ResultSet resultSet = statement
+					.executeQuery("select max(" + workRunContext.getSyncWorkConfig().getPartitionColumn()
+							+ ") 'max',min(" + workRunContext.getSyncWorkConfig().getPartitionColumn() + ") 'max' from "
+							+ workRunContext.getSyncWorkConfig().getTargetTable());
+			resultSet.next();
+			workRunContext.getSyncRule().setUpperBound(String.valueOf(resultSet.getObject(1)));
+			workRunContext.getSyncRule().setLowerBound(String.valueOf(resultSet.getObject(2)));
+
+		} catch (SQLException e) {
+			throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "检测来源数据源 : " + e.getMessage() + "\n");
+		}
+
 		// 开始构造PluginReq
 		PluginReq pluginReq = PluginReq.builder().syncWorkConfig(workRunContext.getSyncWorkConfig())
-				.sparkConfig(genSparkConfig(workRunContext.getClusterConfig().getSparkConfig())).build();
+				.sparkConfig(genSparkConfig(workRunContext.getClusterConfig().getSparkConfig()))
+				.syncRule(workRunContext.getSyncRule()).build();
 
 		// 开始构造executeReq
 		executeReq.setSparkSubmit(sparkSubmit);
