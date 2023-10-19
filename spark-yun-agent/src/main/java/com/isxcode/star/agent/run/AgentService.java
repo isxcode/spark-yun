@@ -1,5 +1,6 @@
 package com.isxcode.star.agent.run;
 
+import com.isxcode.star.api.agent.pojos.req.PluginReq;
 import com.isxcode.star.api.agent.pojos.req.SparkSubmit;
 import org.apache.spark.launcher.SparkLauncher;
 
@@ -15,7 +16,8 @@ public interface AgentService {
 	 * @param sparkSubmit
 	 *            spark作业提交配置
 	 */
-	SparkLauncher genSparkLauncher(Object pluginReq, SparkSubmit sparkSubmit, String agentHomePath) throws IOException;
+	SparkLauncher genSparkLauncher(PluginReq pluginReq, SparkSubmit sparkSubmit, String agentHomePath)
+			throws IOException;
 
 	String executeWork(SparkLauncher sparkLauncher) throws IOException;
 

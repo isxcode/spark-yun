@@ -1,6 +1,7 @@
 package com.isxcode.star.modules.work.run;
 
 import com.isxcode.star.api.work.pojos.dto.ClusterConfig;
+import com.isxcode.star.api.work.pojos.dto.SyncRule;
 import com.isxcode.star.api.work.pojos.dto.SyncWorkConfig;
 import lombok.Builder;
 import lombok.Data;
@@ -31,6 +32,11 @@ public class WorkRunContext {
 	 * 同步作业信息.
 	 */
 	private SyncWorkConfig syncWorkConfig;
+
+	/**
+	 * 同步规则.
+	 */
+	private SyncRule syncRule;
 
 	/**
 	 * 脚本.

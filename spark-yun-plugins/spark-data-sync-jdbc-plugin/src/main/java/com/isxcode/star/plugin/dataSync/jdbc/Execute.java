@@ -1,104 +1,157 @@
 package com.isxcode.star.plugin.dataSync.jdbc;
 
+import com.alibaba.fastjson.JSON;
+import com.isxcode.star.api.agent.pojos.req.PluginReq;
+import com.isxcode.star.api.datasource.constants.DatasourceType;
+import com.isxcode.star.api.plugin.OverModeType;
+import com.isxcode.star.api.work.constants.SetMode;
+import org.apache.logging.log4j.util.Strings;
+import org.apache.spark.SparkConf;
+import org.apache.spark.api.java.JavaSparkContext;
+import org.apache.spark.sql.DataFrameReader;
+import org.apache.spark.sql.Dataset;
+import org.apache.spark.sql.Row;
+import org.apache.spark.sql.SparkSession;
+import org.apache.spark.sql.hive.HiveContext;
+
+import java.util.*;
+
 public class Execute {
 
-	/** 最后一句sql查询. */
 	public static void main(String[] args) {
 
-		// JDBCSyncPluginReq conf = parse(args);
-		//
-		// String sourceTable = "source_temp_table" + new Date().getTime();
-		// String targetTable = "target_temp_table" + new Date().getTime();
-		//
-		// try (SparkSession sparkSession = initSparkSession(conf.getSparkConfig())) {
-		// // 读取源数据并创建临时表
-		// Dataset<Row> source = sparkSession.read().format("jdbc").option("url",
-		// conf.getSourceDbInfo().getUrl())
-		// .option("dbtable", conf.getSourceDbInfo().getTableName())
-		// .option("user", conf.getSourceDbInfo().getUser())
-		// .option("password", conf.getSourceDbInfo().getPassword()).load();
-		// source.createOrReplaceTempView(sourceTable);
-		//
-		// // 读取目标数据并创建临时表
-		// Dataset<Row> target = sparkSession.read().format("jdbc").option("url",
-		// conf.getTargetDbInfo().getUrl())
-		// .option("dbtable", conf.getTargetDbInfo().getTableName())
-		// .option("user", conf.getTargetDbInfo().getUser())
-		// .option("password", conf.getTargetDbInfo().getPassword()).option("truncate",
-		// "true").load();
-		// target.createOrReplaceTempView(targetTable);
-		//
-		// String sourceColums = "";
-		// for (String column : target.columns()) {
-		// if (null == conf.getColumMapping().get(column)) {
-		// sourceColums += "null" + ",";
-		// } else {
-		// String sourceColum = conf.getColumMapping().get(column).get(1) != null
-		// && !"".equals(conf.getColumMapping().get(column).get(1))
-		// ? conf.getColumMapping().get(column).get(1)
-		// : conf.getColumMapping().get(column).get(0);
-		// // 含有"'"则表示希望写入固定值
-		// if (sourceColum.contains("'")) {
-		// sourceColums += sourceColum + ",";
-		// } else {
-		// sourceColums += '`' + sourceColum + '`' + ",";
-		// }
-		// }
-		//
-		// }
-		// sourceColums = sourceColums.substring(0, sourceColums.length() - 1);
-		//
-		// String sql;
-		// switch (conf.getOverMode()) {
-		// case OVERWRITE :
-		// sql = "INSERT OVERWRITE ";
-		// break;
-		// case INTO :
-		// sql = "INSERT INTO ";
-		// break;
-		// default :
-		// System.out.println("LogType:spark-yun\n暂不支持的写入模式！！！\nEnd of
-		// LogType:spark-yun");
-		// return;
-		// }
-		//
-		// sql = sql + sourceTable + " SELECT " + sourceColums + " FROM " + targetTable
-		// + " " + conf.getCondition();
-		//
-		// // 执行数据同步操作
-		// sparkSession.sql(sql);
-		//
-		// System.out.println("LogType:spark-yun\n同步成功\nEnd of LogType:spark-yun");
-		//
-		// }
+		PluginReq conf = parse(args);
+
+		try (SparkSession sparkSession = initSparkSession(conf.getSparkConfig())) {
+
+			// 创建来源表视图
+			String sourceTempView = genSourceTempView(sparkSession, conf);
+
+			// 创建去向表视图
+			String targetTempView = genTargetTempView(sparkSession, conf);
+
+			// 来源字段的转换sql收集
+			Map<String, String> sourceColTranslateSql = new HashMap<>();
+			conf.getSyncWorkConfig().getSourceTableColumn().forEach(e -> {
+				sourceColTranslateSql.put(e.getCode(), e.getSql());
+			});
+
+			// 封装字段信息
+			List<String> sourceCols = new ArrayList<>();
+			List<String> targetCols = new ArrayList<>();
+			conf.getSyncWorkConfig().getColumnMap().forEach(e -> {
+				sourceCols.add(Strings.isEmpty(sourceColTranslateSql.get(e.getSource()))
+						? e.getSource()
+						: sourceColTranslateSql.get(e.getSource()));
+				targetCols.add(e.getTarget());
+			});
+
+			// 判断是覆盖还是新增
+			String insertSql = OverModeType.OVERWRITE.equals(conf.getSyncWorkConfig().getOverMode())
+					? "insert overwrite"
+					: "insert into";
+
+			// 执行sql同步语句
+			sparkSession.sql(insertSql + " table " + targetTempView + " ( " + Strings.join(targetCols, ',')
+					+ " ) select " + Strings.join(sourceCols, ',') + " from " + sourceTempView);
+		}
 	}
 
-	// public static JDBCSyncPluginReq parse(String[] args) {
-	// if (args.length == 0) {
-	// throw new RuntimeException("args is empty");
-	// }
-	// return JSON.parseObject(Base64.getDecoder().decode(args[0]),
-	// JDBCSyncPluginReq.class);
-	// }
-	//
-	// public static SparkSession initSparkSession(Map<String, String> sparkConfig)
-	// {
-	//
-	// SparkSession.Builder sparkSessionBuilder = SparkSession.builder();
-	//
-	// SparkConf conf = new SparkConf();
-	// if (sparkConfig != null) {
-	// for (Map.Entry<String, String> entry : sparkConfig.entrySet()) {
-	// conf.set(entry.getKey(), entry.getValue());
-	// }
-	// }
-	//
-	// if (sparkConfig != null &&
-	// Strings.isEmpty(sparkConfig.get("hive.metastore.uris"))) {
-	// return sparkSessionBuilder.config(conf).getOrCreate();
-	// } else {
-	// return sparkSessionBuilder.config(conf).enableHiveSupport().getOrCreate();
-	// }
-	// }
+	/**
+	 * 构建来源视图.
+	 */
+	public static String genSourceTempView(SparkSession sparkSession, PluginReq conf) {
+
+		String sourceTableName = "zhiqingyun_src_" + conf.getSyncWorkConfig().getSourceDatabase().getDbTable();
+
+		if (DatasourceType.HIVE.equals(conf.getSyncWorkConfig().getSourceDBType())) {
+			JavaSparkContext sparkContext = new JavaSparkContext(initSparkConf(conf.getSparkConfig()));
+			HiveContext hiveContext = new HiveContext(sparkContext);
+			Dataset<Row> hiveDataset = hiveContext
+					.sql("select * from " + conf.getSyncWorkConfig().getSourceDatabase().getDbTable());
+			hiveDataset.createOrReplaceTempView(sourceTableName);
+		} else {
+			DataFrameReader frameReader = sparkSession.read().format("jdbc")
+					.option("driver", conf.getSyncWorkConfig().getSourceDatabase().getDriver())
+					.option("url", conf.getSyncWorkConfig().getSourceDatabase().getUrl())
+					.option("dbtable", conf.getSyncWorkConfig().getSourceDatabase().getDbTable())
+					.option("user", conf.getSyncWorkConfig().getSourceDatabase().getUser())
+					.option("password", conf.getSyncWorkConfig().getSourceDatabase().getPassword())
+					.option("partitionColumn", conf.getSyncWorkConfig().getPartitionColumn());
+
+			if (SetMode.SIMPLE.equals(conf.getSyncRule().getSetMode())) {
+				frameReader.option("lowerBound", conf.getSyncRule().getLowerBound());
+				frameReader.option("upperBound", conf.getSyncRule().getUpperBound());
+				frameReader.option("numPartitions", conf.getSyncRule().getNumPartitions());
+			} else {
+				conf.getSyncRule().getSqlConfig().forEach(frameReader::option);
+			}
+			Dataset<Row> source = frameReader.load();
+			source.createOrReplaceTempView(sourceTableName);
+		}
+
+		return sourceTableName;
+	}
+
+	/**
+	 * 构建去向视图.
+	 */
+	public static String genTargetTempView(SparkSession sparkSession, PluginReq conf) {
+
+		String targetTableName = "zhiqingyun_dist_" + conf.getSyncWorkConfig().getTargetDatabase().getDbTable();
+
+		if (DatasourceType.HIVE.equals(conf.getSyncWorkConfig().getTargetTable())) {
+			JavaSparkContext sparkContext = new JavaSparkContext(initSparkConf(conf.getSparkConfig()));
+			HiveContext hiveContext = new HiveContext(sparkContext);
+			Dataset<Row> hiveDataset = hiveContext.sql("select * from " + conf.getSyncWorkConfig().getTargetTable());
+			hiveDataset.createOrReplaceTempView(targetTableName);
+		} else {
+			DataFrameReader frameReader = sparkSession.read().format("jdbc")
+					.option("driver", conf.getSyncWorkConfig().getTargetDatabase().getDriver())
+					.option("url", conf.getSyncWorkConfig().getTargetDatabase().getUrl())
+					.option("dbtable", conf.getSyncWorkConfig().getTargetDatabase().getDbTable())
+					.option("user", conf.getSyncWorkConfig().getTargetDatabase().getUser())
+					.option("password", conf.getSyncWorkConfig().getTargetDatabase().getPassword())
+					.option("truncate", "true");
+
+			if (SetMode.ADVANCE.equals(conf.getSyncRule().getSetMode())) {
+				conf.getSyncRule().getSqlConfig().forEach(frameReader::option);
+			}
+			Dataset<Row> source = frameReader.load();
+			source.createOrReplaceTempView(targetTableName);
+		}
+
+		return targetTableName;
+	}
+
+	public static PluginReq parse(String[] args) {
+		if (args.length == 0) {
+			throw new RuntimeException("args is empty");
+		}
+		return JSON.parseObject(Base64.getDecoder().decode(args[0]), PluginReq.class);
+	}
+
+	public static SparkConf initSparkConf(Map<String, String> sparkConfig) {
+		SparkConf conf = new SparkConf();
+		if (sparkConfig != null) {
+			for (Map.Entry<String, String> entry : sparkConfig.entrySet()) {
+				conf.set(entry.getKey(), entry.getValue());
+			}
+		}
+		return conf;
+	}
+
+	public static SparkSession initSparkSession(Map<String, String> sparkConfig) {
+
+		SparkSession.Builder sparkSessionBuilder = SparkSession.builder();
+
+		SparkConf conf = initSparkConf(sparkConfig);
+
+		if (sparkConfig != null && Strings.isEmpty(sparkConfig.get("hive.metastore.uris"))) {
+			return sparkSessionBuilder.config(conf).getOrCreate();
+		} else {
+			return sparkSessionBuilder.config(conf).enableHiveSupport().getOrCreate();
+		}
+	}
 
 }
