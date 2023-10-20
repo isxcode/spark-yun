@@ -40,3 +40,4 @@ spark-yun-backend/spark-yun-main/src/main/resources/application-ispong.yml
 
 # 临时目录不提交
 tmp
+spark-warehouse
