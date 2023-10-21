@@ -477,7 +477,7 @@ defineExpose({
     .el-dropdown {
         position: absolute;
         right: 4px;
-        top: 15px;
+        top: 13px;
 
         .option-more {
             font-size: 14px;
