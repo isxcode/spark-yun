@@ -360,7 +360,7 @@ public class WorkBizService {
 		}
 
 		if (!Strings.isEmpty(workConfig.getCronConfig())) {
-			getWorkRes.setCronConfig(JSON.parseObject(workConfig.getScript(), CronConfig.class));
+			getWorkRes.setCronConfig(JSON.parseObject(workConfig.getCronConfig(), CronConfig.class));
 		}
 
 		if (!Strings.isEmpty(workConfig.getSyncWorkConfig())) {
