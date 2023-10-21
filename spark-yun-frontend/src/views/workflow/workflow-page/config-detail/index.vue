@@ -259,6 +259,7 @@ import { GetDatasourceList } from '@/services/datasource.service';
 import {json} from '@codemirror/lang-json'
 import CodeMirror from 'vue-codemirror6'
 import { GetWorkItemConfig, SaveWorkItemConfig } from '@/services/workflow.service';
+import { GetComputerGroupList } from '@/services/computer-group.service';
 
 // const form = ref<FormInstance>()
 
@@ -457,7 +458,7 @@ function getCron() {
 }
 
 function getClusterList() {
-  GetDatasourceList({
+  GetComputerGroupList({
     page: 0,
     pageSize: 10000,
     searchKeyWord: ''

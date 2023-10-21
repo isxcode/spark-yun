@@ -59,6 +59,12 @@
               </el-select>
               <el-button type="primary" link @click="showTableDetail">数据预览</el-button>
             </el-form-item>
+            <el-form-item label="分区键">
+              <el-select v-model="formData.sourceTable" clearable placeholder="请选择">
+                <el-option v-for="item in partKeyList" :key="item.value" :label="item.label"
+                           :value="item.value"/>
+              </el-select>
+            </el-form-item>
             <el-form-item prop="queryCondition" label="过滤条件">
               <code-mirror v-model="formData.queryCondition" basic :lang="lang"/>
             </el-form-item>
@@ -147,6 +153,7 @@ const targetList = ref<Option[]>([])
 const sourceTablesList = ref<Option[]>([])
 const targetTablesList = ref<Option[]>([])
 const overModeList = ref<Option[]>(OverModeList)
+const partKeyList = ref<Option[]>([])       // 分区键
 
 const typeList = ref(DataSourceType);
 const formData = reactive({
