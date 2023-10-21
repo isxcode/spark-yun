@@ -323,11 +323,7 @@ function locationNode() {
 
 // 配置打开
 function setConfigData() {
-    configDetailRef.value.showModal((formData: any) => {
-        return new Promise((resolve: any, reject: any) => {
-
-        })
-    })
+    configDetailRef.value.showModal(props.workItemConfig)
 }
 
 onMounted(() => {

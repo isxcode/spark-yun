@@ -10,7 +10,6 @@
               label-position="left"
               label-width="120px"
               :model="clusterConfig"
-              :rules="rules"
             >
               <el-form-item label="模式">
                 <el-radio-group v-model="clusterConfig.setMode" size="small">
@@ -21,7 +20,7 @@
               <el-form-item label="计算集群">
                 <el-select v-model="clusterConfig.clusterId" placeholder="请选择">
                   <el-option
-                    v-for="item in sourceLevelOptions"
+                    v-for="item in clusterList"
                     :key="item.value"
                     :label="item.label"
                     :value="item.value"
@@ -29,12 +28,7 @@
                 </el-select>
               </el-form-item>
               <el-form-item label="sparkConfig" v-if="clusterConfig.setMode === 'ADVANCE'">
-                <el-input
-                  v-model="clusterConfig.sparkConfig"
-                  :rows="6"
-                  type="textarea"
-                  placeholder="请输入"
-                />
+                <code-mirror v-model="clusterConfig.sparkConfig" basic :lang="lang"/>
               </el-form-item>
               <el-form-item label="资源等级" v-else>
                 <el-select v-model="clusterConfig.resourceLevel" placeholder="请选择">
@@ -56,27 +50,37 @@
               ref="form"
               label-position="left"
               label-width="120px"
-              :model="formData"
-              :rules="rules"
+              :model="cronConfig"
             >
               <el-form-item label="启用">
-                <el-switch v-model="formData.cronType" />
+                <el-switch v-model="cronConfig.enable" />
               </el-form-item>
               <el-form-item label="模式">
-                <el-radio-group v-model="formData.cronType" size="small">
-                  <el-radio-button label="0">简易</el-radio-button>
-                  <el-radio-button label="1">高级定义</el-radio-button>
+                <el-radio-group v-model="cronConfig.setMode" size="small">
+                  <el-radio-button label="SIMPLE">简易</el-radio-button>
+                  <el-radio-button label="ADVANCE">高级定义</el-radio-button>
                 </el-radio-group>
               </el-form-item>
-              <el-form-item label="cron表达式" v-if="formData.cronType === '1'">
+              <el-form-item label="生效时间">
+                <el-date-picker
+                  v-model="cronConfig.workDate"
+                  type="daterange"
+                  range-separator="至"
+                  start-placeholder="开始生效日期"
+                  end-placeholder="结束生效日期"
+                  value-format="YYYY-MM-DD"
+                />
+              </el-form-item>
+
+              <el-form-item label="cron表达式" v-if="cronConfig.setMode === 'ADVANCE'">
                 <el-input
-                  v-model="formData.sparkConfig"
+                  v-model="cronConfig.cron"
                   placeholder="请输入"
                 />
               </el-form-item>
               <template v-else>
                 <el-form-item label="调度周期">
-                  <el-select v-model="formData.range" placeholder="请选择" :disabled="!formData.scheduleStatus" @change="changeScheduleRangeEvent">
+                  <el-select v-model="cronConfig.range" placeholder="请选择" :disabled="!cronConfig.enable" @change="changeScheduleRangeEvent">
                     <el-option
                       v-for="item in scheduleRange"
                       :key="item.value"
@@ -86,17 +90,17 @@
                   </el-select>
                 </el-form-item>
                 <!-- 调度周期 -> 秒 -->
-                <template v-if="formData.range === 'sec'">
+                <template v-if="cronConfig.range === 'sec'">
                   <el-form-item label="结束时间">
-                    <el-date-picker :disabled="!formData.scheduleStatus" v-model="formData.endDate" type="date" placeholder="请选择" clearable />
+                    <el-date-picker :disabled="!cronConfig.enable" v-model="cronConfig.endDate" type="date" placeholder="请选择" clearable />
                   </el-form-item>
                 </template>
                 <!-- 调度周期 -> 分钟 -->
-                <template v-if="formData.range === 'min'">
+                <template v-if="cronConfig.range === 'min'">
                   <el-form-item label="开始时间">
                     <el-time-select
-                      v-model="formData.startDateMin"
-                      :disabled="!formData.scheduleStatus"
+                      v-model="cronConfig.startDateMin"
+                      :disabled="!cronConfig.enable"
                       start="00:00"
                       step="01:00"
                       end="23:00"
@@ -104,12 +108,12 @@
                     </el-time-select>
                   </el-form-item>
                   <el-form-item label="时间间隔（分钟）">
-                    <el-input-number :disabled="!formData.scheduleStatus" v-model="formData.minNum" :min="0" controls-position="right" />
+                    <el-input-number :disabled="!cronConfig.enable" v-model="cronConfig.minNum" :min="0" controls-position="right" />
                   </el-form-item>
                   <el-form-item label="结束时间">
                     <el-time-select
-                      v-model="formData.endDateMin"
-                      :disabled="!formData.scheduleStatus"
+                      v-model="cronConfig.endDateMin"
+                      :disabled="!cronConfig.enable"
                       start="00:00"
                       step="01:00"
                       end="23:00"
@@ -118,11 +122,11 @@
                   </el-form-item>
                 </template>
                 <!-- 调度周期 -> 小时 -->
-                <template v-if="formData.range === 'hour'">
+                <template v-if="cronConfig.range === 'hour'">
                   <el-form-item label="开始时间">
                     <el-time-select
-                      :disabled="!formData.scheduleStatus"
-                      v-model="formData.startDate"
+                      :disabled="!cronConfig.enable"
+                      v-model="cronConfig.startDate"
                       start="00:00"
                       step="01:00"
                       end="23:00"
@@ -130,12 +134,12 @@
                     </el-time-select>
                   </el-form-item>
                   <el-form-item label="时间间隔（小时）">
-                    <el-input-number :disabled="!formData.scheduleStatus" v-model="formData.hourNum" :min="0" controls-position="right" />
+                    <el-input-number :disabled="!cronConfig.enable" v-model="cronConfig.hourNum" :min="0" controls-position="right" />
                   </el-form-item>
                   <el-form-item label="结束时间">
                     <el-time-select
-                      v-model="formData.endDate"
-                      :disabled="!formData.scheduleStatus"
+                      v-model="cronConfig.endDate"
+                      :disabled="!cronConfig.enable"
                       start="00:00"
                       step="01:00"
                       end="23:00"
@@ -144,11 +148,11 @@
                   </el-form-item>
                 </template>
                 <!-- 调度周期 -> 日 -->
-                <template v-if="formData.range === 'day'">
+                <template v-if="cronConfig.range === 'day'">
                   <el-form-item label="调度时间">
                     <el-time-picker
-                      :disabled="!formData.scheduleStatus"
-                      v-model="formData.scheduleDate"
+                      :disabled="!cronConfig.enable"
+                      v-model="cronConfig.scheduleDate"
                       format="hh:mm"
                       value-format="hh:mm"
                       placeholder="请选择"
@@ -156,18 +160,18 @@
                   </el-form-item>
                 </template>
                 <!-- 调度周期 -> 月 -->
-                <template v-if="formData.range === 'month'">
+                <template v-if="cronConfig.range === 'month'">
                   <el-form-item label="调度时间">
                     <el-time-picker
-                      :disabled="!formData.scheduleStatus"
-                      v-model="formData.scheduleDate"
+                      :disabled="!cronConfig.enable"
+                      v-model="cronConfig.scheduleDate"
                       format="hh:mm"
                       value-format="hh:mm"
                       placeholder="请选择"
                     />
                   </el-form-item>
                   <el-form-item label="指定时间">
-                    <el-select v-model="formData.monthDay" :disabled="!formData.scheduleStatus" placeholder="请选择">
+                    <el-select v-model="cronConfig.monthDay" :disabled="!cronConfig.enable" placeholder="请选择">
                       <el-option
                         v-for="item in dayList"
                         :key="item.value"
@@ -178,18 +182,18 @@
                   </el-form-item>
                 </template>
                 <!-- 调度周期 -> 周 -->
-                <template v-if="formData.range === 'week'">
+                <template v-if="cronConfig.range === 'week'">
                   <el-form-item label="调度时间">
                     <el-time-picker
-                      :disabled="!formData.scheduleStatus"
-                      v-model="formData.scheduleDate"
+                      :disabled="!cronConfig.enable"
+                      v-model="cronConfig.scheduleDate"
                       format="hh:mm"
                       value-format="hh:mm"
                       placeholder="请选择"
                     />
                   </el-form-item>
                   <el-form-item label="指定时间">
-                    <el-select v-model="formData.weekDate" placeholder="请选择" :disabled="!formData.scheduleStatus">
+                    <el-select v-model="cronConfig.weekDate" placeholder="请选择" :disabled="!cronConfig.enable">
                       <el-option
                         v-for="item in weekDateList"
                         :key="item.value"
@@ -203,8 +207,8 @@
             </el-form>
           </div>
           <el-divider />
-          <!-- 定时调度 -->
-          <div class="config-item">
+          <!-- 同步规则 -->
+          <div class="config-item" v-if="workItemConfig.workType === 'DATA_SYNC_JDBC'">
             <div class="item-title">同步规则</div>
             <el-form
               ref="form"
@@ -219,10 +223,7 @@
                 </el-radio-group>
               </el-form-item>
               <el-form-item label="sparkConfig" v-if="syncRule.setMode === 'ADVANCE'">
-                <el-input
-                  v-model="syncRule.sqlConfig"
-                  placeholder="请输入"
-                />
+                <code-mirror v-model="syncRule.sqlConfig" basic :lang="lang"/>
               </el-form-item>
               <template v-else>
                 <el-form-item label="分区数">
@@ -251,16 +252,22 @@
 
 <script lang="ts" setup>
 import { computed, reactive, ref } from 'vue'
-import { FormInstance, FormRules } from 'element-plus'
+import { ElMessage, FormInstance, FormRules } from 'element-plus'
 import BlockDrawer from '@/components/block-drawer/index.vue'
 import {ScheduleRange, WeekDateList, ResourceLevelOptions} from './config-detail'
+import { GetDatasourceList } from '@/services/datasource.service';
+import {json} from '@codemirror/lang-json'
+import CodeMirror from 'vue-codemirror6'
+import { GetWorkItemConfig, SaveWorkItemConfig } from '@/services/workflow.service';
 
 // const form = ref<FormInstance>()
-const callback = ref()
 
 const scheduleRange = ref(ScheduleRange);
 const weekDateList = ref(WeekDateList)
+const clusterList = ref([])  // 计算集群
 const dayList = ref()
+const lang = ref<any>(json())
+const workItemConfig = ref()
 
 const resourceLevelOptions = ref(ResourceLevelOptions) // 资源等级
 
@@ -282,12 +289,20 @@ const drawerConfig = reactive({
   zIndex: 1100,
   closeOnClickModal: false,
 });
-const formData = reactive({
-  scheduleStatus: true, // 调度状态
-  workDateRange: '', // 生效时间
-  cronType: '',       // 配置类型    
-  corn: '',
-  range: '', // 调度周期
+// 集群设置
+let clusterConfig = reactive({
+  setMode: '',       // 模式
+  resourceLevel: '',        // 资源等级
+  clusterId: '',            // 计算集群
+  sparkConfig: ''
+})
+// 定时配置
+let cronConfig = reactive({
+  setMode: '',       // 模式
+  enable: true,             // 启用
+  cron: '',                 // cron表达式
+  workDate: '',             // 生效时间
+  range: '',         // 调度周期
   startDateMin: '',  // 开始时间 - 分钟
   minNum: '',        // 间隔时间 - 分钟
   endDateMin: '',    // 结束时间 - 分钟
@@ -297,17 +312,11 @@ const formData = reactive({
   scheduleDate: '',  // 调度时间 - 日/周
   weekDate: '',      // 指定时间 - 星期
   monthDay: '',      // 指定时间 - 月
-});
-const clusterConfig = reactive({
-  setMode: 'SIMPLE ',       // 模式
-  resourceLevel: '',        // 资源等级
-  clusterId: '',            // 计算集群
-  sparkConfig: ''
 })
 // 数据同步规则
-const syncRule = reactive({
+let syncRule = reactive({
   // 数据同步
-  setMode: 'SIMPLE ',       // 模式
+  setMode: '',       // 模式
   numPartitions: undefined,     // 分区数
   numConcurrency: undefined,    // 并发数
   sqlConfig: ''
@@ -328,7 +337,8 @@ const cron = computed(() => {
   } ${state.monthsText || '*'} ${state.weeksText || '?'} ${state.yearsText || '*'}`;
 });
 
-function showModal(callback: any) {
+function showModal(data?: any) {
+  // 调度日期初始化
   dayList.value = []
   for (let i = 1; i <= 31; i++) {
     dayList.value.push({
@@ -336,17 +346,67 @@ function showModal(callback: any) {
       value: `${i}`
     })
   }
-  callback.value = callback
+  if (!data) {
+    clusterConfig.setMode = 'SIMPLE'
+    cronConfig.setMode = 'SIMPLE'
+    syncRule.setMode = 'SIMPLE'
+  } else {
+    workItemConfig.value = data
+    getConfigDetailData()
+  }
+  // 获取集群参数
+  getClusterList()
+
   drawerConfig.visible = true;
 }
 
-function okEvent() {
-  getCron()
-  callback.value({
-    ...formData,
-    cron: cron
+function getConfigDetailData() {
+  GetWorkItemConfig({
+      workId: workItemConfig.value.id
+  }).then((res: any) => {
+    if (res.data.clusterConfig) {
+      Object.keys(clusterConfig).forEach((key: string) => {
+        clusterConfig[key] = res.data.clusterConfig[key]
+      })
+    }
+    if (res.data.cronConfig) {
+      Object.keys(cronConfig).forEach((key: string) => {
+        cronConfig[key] = res.data.cronConfig[key]
+      })
+    }
+    if (res.data.syncRule) {
+      Object.keys(syncRule).forEach((key: string) => {
+        syncRule[key] = res.data.syncRule[key]
+      })
+    }
+    clusterConfig.setMode = clusterConfig.setMode || 'SIMPLE'
+    cronConfig.setMode = cronConfig.setMode || 'SIMPLE'
+    syncRule.setMode = syncRule.setMode || 'SIMPLE'
+  }).catch((err: any) => {
+    console.error(err)
   })
-  drawerConfig.visible = false;
+}
+
+function okEvent() {
+  // 获取cron表达式
+  getCron()
+
+  SaveWorkItemConfig({
+    workId: workItemConfig.value.id,
+    clusterConfig: clusterConfig,
+    cronConfig: {
+      ...cronConfig,
+      cron: `${state.secondsText || '*'} ${state.minutesText || '*'} ${state.hoursText || '*'} ${
+    state.daysText || '*'
+  } ${state.monthsText || '*'} ${state.weeksText || '?'} ${state.yearsText || '*'}`
+    },
+    syncRule: syncRule
+  }).then((res: any) => {
+    ElMessage.success('保存成功')
+    drawerConfig.visible = false;
+  }).catch(err => {
+    console.error(err)
+  })
 }
 
 function closeEvent() {
@@ -354,46 +414,63 @@ function closeEvent() {
 }
 
 function changeScheduleRangeEvent() {
-  formData.startDateMin = ''
-  formData.minNum = ''
-  formData.endDateMin = ''
-  formData.startDate = ''
-  formData.hourNum = null
-  formData.endDate = ''
-  formData.scheduleDate = ''
-  formData.weekDate = ''
-  formData.monthDay = ''
+  cronConfig.startDateMin = ''
+  cronConfig.minNum = ''
+  cronConfig.endDateMin = ''
+  cronConfig.startDate = ''
+  cronConfig.hourNum = null
+  cronConfig.endDate = ''
+  cronConfig.scheduleDate = ''
+  cronConfig.weekDate = ''
+  cronConfig.monthDay = ''
 }
 
 function getCron() {
-  if (formData.range === 'min') {
+  if (cronConfig.range === 'min') {
     // 调度周期为分钟
     state.secondsText = '0'
-    state.minutesText = `0/${formData.minNum}`
-    state.hoursText = `${formData.startDateMin.split(':')[0]}-${formData.endDateMin.split(':')[0]}`
-  } else if (formData.range === 'hour') {
+    state.minutesText = `0/${cronConfig.minNum}`
+    state.hoursText = `${cronConfig.startDateMin.split(':')[0]}-${cronConfig.endDateMin.split(':')[0]}`
+  } else if (cronConfig.range === 'hour') {
     // 调度周期为小时
     state.secondsText = '0'
     state.minutesText = '0'
-    state.hoursText = `${formData.startDate.split(':')[0]}-${formData.endDate.split(':')[0]}/${formData.hourNum}`
-  } else if (formData.range === 'day') {
+    state.hoursText = `${cronConfig.startDate.split(':')[0]}-${cronConfig.endDate.split(':')[0]}/${cronConfig.hourNum}`
+  } else if (cronConfig.range === 'day') {
     // 调度周期为日
     state.secondsText = '0'
-    state.minutesText = `${formData.scheduleDate.split(':')[1]}`
-    state.hoursText = `${formData.scheduleDate.split(':')[0]}`
-  } else if (formData.range === 'month') {
+    state.minutesText = `${cronConfig.scheduleDate.split(':')[1]}`
+    state.hoursText = `${cronConfig.scheduleDate.split(':')[0]}`
+  } else if (cronConfig.range === 'month') {
     // 调度周期为日
     state.secondsText = '0'
-    state.minutesText = `${formData.scheduleDate.split(':')[1]}`
-    state.hoursText = `${formData.scheduleDate.split(':')[0]}`
-    state.daysText = `${formData.monthDay}`
-  } else if (formData.range === 'week') {
+    state.minutesText = `${cronConfig.scheduleDate.split(':')[1]}`
+    state.hoursText = `${cronConfig.scheduleDate.split(':')[0]}`
+    state.daysText = `${cronConfig.monthDay}`
+  } else if (cronConfig.range === 'week') {
     state.secondsText = '0'
-    state.minutesText = `${formData.scheduleDate.split(':')[1]}`
-    state.hoursText = `${formData.scheduleDate.split(':')[0]}`
+    state.minutesText = `${cronConfig.scheduleDate.split(':')[1]}`
+    state.hoursText = `${cronConfig.scheduleDate.split(':')[0]}`
     state.daysText = '?'
-    state.weeksText = `${formData.weekDate}`
+    state.weeksText = `${cronConfig.weekDate}`
   }
+}
+
+function getClusterList() {
+  GetDatasourceList({
+    page: 0,
+    pageSize: 10000,
+    searchKeyWord: ''
+  }).then((res: any) => {
+    clusterList.value = res.data.content.map((item: any) => {
+      return {
+        label: item.name,
+        value: item.id
+      }
+    })
+  }).catch(() => {
+    clusterList.value = []
+  })
 }
 
 defineExpose({
@@ -418,6 +495,50 @@ defineExpose({
         .el-form-item__content {
           .el-radio-group {
             justify-content: flex-end;
+          }
+          .vue-codemirror {
+            height: 100px;
+            width: 100%;
+
+            .cm-editor {
+              height: 100%;
+              outline: none;
+              border: 1px solid #dcdfe6;
+            }
+
+            .cm-gutters {
+              font-size: 12px;
+              font-family: v-sans, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+            }
+
+            .cm-content {
+              font-size: 12px;
+              font-family: v-sans, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+            }
+
+            .cm-tooltip-autocomplete {
+
+              // display: none !important;
+              ul {
+                li {
+                  height: 40px;
+                  display: flex;
+                  align-items: center;
+                  font-size: 12px;
+                  background-color: #ffffff;
+                  font-family: v-sans, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+                }
+
+                li[aria-selected] {
+                  background: #409EFF;
+                }
+
+                .cm-completionIcon {
+                  margin-right: -4px;
+                  opacity: 0;
+                }
+              }
+            }
           }
         }
       }
