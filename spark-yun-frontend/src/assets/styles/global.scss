@@ -104,9 +104,13 @@ body {
       }
     }
     .el-date-editor {
+      border-radius: getCssVar('border-radius', 'small');
       .el-input__prefix {
         left: unset;
         right: 5px;
+      }
+      .el-range-input,.el-range-separator {
+        font-size: getCssVar('font-size', 'extra-small');
       }
     }
     .el-radio-group {
