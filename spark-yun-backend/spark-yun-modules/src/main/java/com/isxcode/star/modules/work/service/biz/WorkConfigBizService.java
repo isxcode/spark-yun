@@ -84,7 +84,7 @@ public class WorkConfigBizService {
 
 		// 用户更新数据同步规则
 		if (wocConfigWorkReq.getSyncRule() != null) {
-			workConfig.setSyncWorkConfig(JSON.toJSONString(wocConfigWorkReq.getSyncRule()));
+			workConfig.setSyncRule(JSON.toJSONString(wocConfigWorkReq.getSyncRule()));
 		}
 
 		// 用户更新调度配置
