@@ -222,8 +222,8 @@
                   <el-radio-button label="ADVANCE">高级定义</el-radio-button>
                 </el-radio-group>
               </el-form-item>
-              <el-form-item label="sparkConfig" v-if="syncRule.setMode === 'ADVANCE'">
-                <code-mirror v-model="syncRule.sqlConfig" basic :lang="lang"/>
+              <el-form-item label="sqlConfig" v-if="syncRule.setMode === 'ADVANCE'">
+                <code-mirror v-model="syncRule.sqlConfig" basic :lang="sqllang"/>
               </el-form-item>
               <template v-else>
                 <el-form-item label="分区数">
@@ -255,8 +255,8 @@ import { computed, reactive, ref } from 'vue'
 import { ElMessage, FormInstance, FormRules } from 'element-plus'
 import BlockDrawer from '@/components/block-drawer/index.vue'
 import {ScheduleRange, WeekDateList, ResourceLevelOptions} from './config-detail'
-import { GetDatasourceList } from '@/services/datasource.service';
 import {json} from '@codemirror/lang-json'
+import {sql} from '@codemirror/lang-sql'
 import CodeMirror from 'vue-codemirror6'
 import { GetWorkItemConfig, SaveWorkItemConfig } from '@/services/workflow.service';
 import { GetComputerGroupList } from '@/services/computer-group.service';
@@ -268,6 +268,7 @@ const weekDateList = ref(WeekDateList)
 const clusterList = ref([])  // 计算集群
 const dayList = ref()
 const lang = ref<any>(json())
+const sqllang = ref<any>(sql())
 const workItemConfig = ref()
 
 const resourceLevelOptions = ref(ResourceLevelOptions) // 资源等级
