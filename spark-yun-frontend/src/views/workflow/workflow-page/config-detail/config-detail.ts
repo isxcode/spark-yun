@@ -64,3 +64,45 @@ export const ResourceLevelOptions = [
         value: 'LOW',
     }
 ]
+
+export const ClusterConfigRules = {
+    clusterId: [
+        {
+            required: true,
+            message: '请选择计算集群',
+            trigger: ['blur', 'change']
+        }
+    ]
+}
+export const CronConfigRules = {
+    workDate: [
+        {
+            required: true,
+            message: '请选择生效时间',
+            trigger: ['blur', 'change']
+        }
+    ],
+    cron: [
+        {
+            required: true,
+            message: '请输入cron表达式',
+            trigger: ['blur', 'change']
+        }
+    ],
+    range: [
+        {
+            required: true,
+            message: '请选择调度周期',
+            trigger: ['blur', 'change']
+        }
+    ]
+}
+export const SyncRuleConfigRules = {
+    // name: [
+    //     {
+    //         required: true,
+    //         message: '请输入数据源名称',
+    //         trigger: ['blur', 'change']
+    //     }
+    // ]
+}
