@@ -297,8 +297,8 @@ function createTableWork() {
 }
 
 // 分区键
-function getTableColumnData(e: boolean, dataSourceId: string, tableName) {
-    if (e) {
+function getTableColumnData(e: boolean, dataSourceId: string, tableName: string) {
+    if (e && dataSourceId && tableName) {
         GetTableColumnsByTableId({
             dataSourceId: dataSourceId,
             tableName: tableName
