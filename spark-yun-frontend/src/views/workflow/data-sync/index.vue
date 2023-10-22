@@ -60,7 +60,8 @@
               <el-button type="primary" link @click="showTableDetail">数据预览</el-button>
             </el-form-item>
             <el-form-item label="分区键">
-              <el-select v-model="formData.sourceTable" clearable placeholder="请选择">
+              <el-select v-model="formData.partitionColumn" clearable placeholder="请选择"
+                @visible-change="getTableColumnData($event, formData.sourceDBId, formData.sourceTable)">
                 <el-option v-for="item in partKeyList" :key="item.value" :label="item.label"
                            :value="item.value"/>
               </el-select>
@@ -126,7 +127,7 @@ import CodeMirror from 'vue-codemirror6'
 import {sql} from '@codemirror/lang-sql'
 import {DataSourceType, OverModeList} from './data.config.ts'
 import {GetDatasourceList} from '@/services/datasource.service'
-import {CreateTableWork, GetDataSourceTables, SaveDataSync} from '@/services/data-sync.service'
+import {CreateTableWork, GetDataSourceTables, GetTableColumnsByTableId, SaveDataSync} from '@/services/data-sync.service'
 import TableDetail from './table-detail/index.vue'
 import DataSyncTable from './data-sync-table/index.vue'
 import ConfigDetail from '../workflow-page/config-detail/index.vue'
@@ -162,6 +163,7 @@ const formData = reactive({
   sourceDBId: '',       // 来源数据源
   sourceTable: '',      // 来源数据库表名
   queryCondition: '',   // 来源数据库查询条件
+  partitionColumn: '',  // 分区键
 
   targetDBType: '',     // 目标数据库类型
   targetDBId: '',       // 目标数据源
@@ -294,11 +296,33 @@ function createTableWork() {
   })
 }
 
+// 分区键
+function getTableColumnData(e: boolean, dataSourceId: string, tableName) {
+    if (e) {
+        GetTableColumnsByTableId({
+            dataSourceId: dataSourceId,
+            tableName: tableName
+        }).then((res: any) => {
+            partKeyList.value = (res.data.columns || []).map((column: any) => {
+                return {
+                    label: column[0],
+                    value: column[1]
+                }
+            })
+        }).catch(err => {
+            console.error(err)
+        })
+    }
+}
+
 function tableChangeEvent(e: string, dataSourceId: string, type: string) {
-  dataSyncTableRef.value.getTableColumnData({
-    dataSourceId: dataSourceId,
-    tableName: e
-  }, type)
+    if (type === 'source') {
+        formData.partitionColumn = ''
+    }
+    dataSyncTableRef.value.getTableColumnData({
+        dataSourceId: dataSourceId,
+        tableName: e
+    }, type)
 }
 
 // 级联控制
