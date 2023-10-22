@@ -171,13 +171,6 @@ const formData = reactive({
   overMode: '',         // 写入模式
 })
 const rules = reactive<FormRules>({
-  // sourceDBType: [
-  //     {
-  //         required: true,
-  //         message: '请选择数据源类型',
-  //         trigger: ['blur', 'change']
-  //     }
-  // ]
 })
 
 // 保存数据
@@ -205,6 +198,7 @@ function getDate() {
         formData.sourceDBId = res.data.syncWorkConfig.sourceDBId
         formData.sourceTable = res.data.syncWorkConfig.sourceTable
         formData.queryCondition = res.data.syncWorkConfig.queryCondition
+        formData.partitionColumn = res.data.syncWorkConfig.partitionColumn
         formData.targetDBType = res.data.syncWorkConfig.targetDBType
         formData.targetDBId = res.data.syncWorkConfig.targetDBId
         formData.targetTable = res.data.syncWorkConfig.targetTable
