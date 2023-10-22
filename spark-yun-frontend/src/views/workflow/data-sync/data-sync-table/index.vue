@@ -6,12 +6,12 @@
     </div>
     <div class="data-sync-body" id="container">
         <div class="source-table-container">
-            <el-table ref="sourceTableRef" :data="sourceTableColumn" row-key="code" border>
+            <el-table ref="sourceTableRef" :data="sourceTableColumn" row-key="code">
                 <el-table-column prop="code" :show-overflow-tooltip="true" label="字段名" />
                 <el-table-column prop="type" :show-overflow-tooltip="true" label="类型" />
-                <el-table-column label="操作" :show-overflow-tooltip="true">
+                <el-table-column prop="sql" :show-overflow-tooltip="true" label="转换" />
+                <el-table-column label="" width="8px">
                     <template #default="scope">
-                        {{ scope.row.sql }}
                         <el-dropdown trigger="click">
                             <el-icon class="option-more" @click.stop>
                                 <MoreFilled />
@@ -47,7 +47,7 @@
             </ul>
         </div>
         <div class="target-table-container">
-            <el-table ref="targetTableRef" :data="targetTableColumn" row-key="code" border>
+            <el-table ref="targetTableRef" :data="targetTableColumn" row-key="code">
                 <el-table-column prop="code" :show-overflow-tooltip="true" label="字段名" />
                 <el-table-column prop="type" :show-overflow-tooltip="true" label="类型" />
             </el-table>
@@ -373,6 +373,9 @@ defineExpose({
         position: relative;
 
         .el-table {
+            border-top: 1px solid #ebeef5;
+            border-left: 1px solid #ebeef5;
+            border-right: 1px solid #ebeef5;
             // width: 100%;
             .el-table__row {
                 td.el-table__cell {
@@ -459,7 +462,9 @@ defineExpose({
 
 
         .el-table {
-            // width: 100%;
+            border-top: 1px solid #ebeef5;
+            border-left: 1px solid #ebeef5;
+            border-right: 1px solid #ebeef5;
             .el-table__row {
                 td.el-table__cell {
                     font-size: getCssVar('font-size', 'extra-small');
