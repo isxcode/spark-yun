@@ -314,7 +314,7 @@ let cronConfig = reactive({
   minNum: '',        // 间隔时间 - 分钟
   endDateMin: '',    // 结束时间 - 分钟
   startDate: '',     // 开始时间 - 小时
-  hourNum: null,     // 间隔时间 - 小时
+  hourNum: undefined,     // 间隔时间 - 小时
   endDate: '',       // 结束时间 - 小时
   scheduleDate: '',  // 调度时间 - 日/周
   weekDate: '',      // 指定时间 - 星期
