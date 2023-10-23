@@ -118,6 +118,14 @@
                 </el-card>
             </div>
             <data-sync-table ref="dataSyncTableRef" :formData="formData"></data-sync-table>
+            <div class="log-show" v-if="instanceId">
+                <el-tabs v-model="activeName" @tab-change="tabChangeEvent">
+                    <template v-for="tab in tabList" :key="tab.code">
+                    <el-tab-pane v-if="!tab.hide" :label="tab.name" :name="tab.code" />
+                    </template>
+                </el-tabs>
+                <component :is="currentTab" ref="containerInstanceRef" class="show-container" />
+            </div>
         </div>
         <!-- 数据预览 -->
         <table-detail ref="tableDetailRef"></table-detail>
@@ -127,7 +135,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, reactive, onMounted, defineProps, nextTick } from 'vue'
+import { ref, reactive, onMounted, defineProps, nextTick, markRaw } from 'vue'
 import { ElMessage, FormInstance, FormRules } from 'element-plus'
 import CodeMirror from 'vue-codemirror6'
 import { sql } from '@codemirror/lang-sql'
@@ -138,6 +146,8 @@ import TableDetail from './table-detail/index.vue'
 import DataSyncTable from './data-sync-table/index.vue'
 import ConfigDetail from '../workflow-page/config-detail/index.vue'
 import { GetWorkItemConfig, RunWorkItemConfig, SaveWorkItemConfig } from '@/services/workflow.service'
+import PublishLog from '../work-item/publish-log.vue'
+import RunningLog from '../work-item/running-log.vue'
 
 interface Option {
     label: string
@@ -161,8 +171,26 @@ const sourceTablesList = ref<Option[]>([])
 const targetTablesList = ref<Option[]>([])
 const overModeList = ref<Option[]>(OverModeList)
 const partKeyList = ref<Option[]>([])       // 分区键
-
 const typeList = ref(DataSourceType);
+
+// 日志展示相关
+const containerInstanceRef = ref(null)
+const activeName = ref()
+const currentTab = ref()
+const instanceId = ref('')
+const tabList = reactive([
+  {
+    name: '提交日志',
+    code: 'PublishLog',
+    hide: false
+  },
+  {
+    name: '运行日志',
+    code: 'RunningLog',
+    hide: false
+  }
+])
+
 const formData = reactive({
     workId: '',     // 作业id
     sourceDBType: '',     // 来源数据源类型
@@ -178,6 +206,19 @@ const formData = reactive({
 })
 const rules = reactive<FormRules>({
 })
+
+// 日志tab切换
+function tabChangeEvent(e: string) {
+  const lookup = {
+    PublishLog: PublishLog,
+    RunningLog: RunningLog
+  }
+  activeName.value = e
+  currentTab.value = markRaw(lookup[e])
+  nextTick(() => {
+    containerInstanceRef.value.initData(instanceId.value)
+  })
+}
 
 // 保存数据
 function saveData() {
@@ -229,8 +270,11 @@ function runWorkData() {
     RunWorkItemConfig({
         workId: props.workItemConfig.id
     }).then((res: any) => {
-        // instanceId.value = res.data.instanceId
+        instanceId.value = res.data.instanceId
         ElMessage.success(res.msg)
+        nextTick(() => {
+            containerInstanceRef.value.initData(instanceId.value)
+        })
         // initData(res.data.instanceId)
     }).catch(() => {
     })
@@ -373,6 +417,8 @@ function setConfigData() {
 onMounted(() => {
     formData.workId = props.workItemConfig.id
     getDate()
+    activeName.value = 'PublishLog'
+    currentTab.value = markRaw(PublishLog)
 })
 </script>
 
@@ -525,6 +571,27 @@ onMounted(() => {
 
             .el-select {
                 margin-left: 20px;
+            }
+        }
+
+        .log-show {
+            .el-tabs {
+                .el-tabs__item {
+                font-size: getCssVar('font-size', 'extra-small');
+                }
+
+                .el-tabs__content {
+                height: 0;
+                }
+
+                .el-tabs__nav-scroll {
+                border-bottom: 1px solid getCssVar('border-color');
+                }
+            }
+
+            .show-container {
+                height: calc(100vh - 368px);
+                overflow: auto;
             }
         }
     }
