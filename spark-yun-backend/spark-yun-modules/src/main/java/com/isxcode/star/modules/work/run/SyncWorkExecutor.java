@@ -7,6 +7,7 @@ import com.isxcode.star.api.agent.pojos.req.YagExecuteWorkReq;
 import com.isxcode.star.api.agent.pojos.res.YagGetLogRes;
 import com.isxcode.star.api.api.constants.PathConstants;
 import com.isxcode.star.api.cluster.constants.ClusterNodeStatus;
+import com.isxcode.star.api.datasource.constants.DatasourceType;
 import com.isxcode.star.api.work.constants.SetMode;
 import com.isxcode.star.api.work.constants.WorkLog;
 import com.isxcode.star.api.work.exceptions.WorkRunException;
@@ -166,23 +167,27 @@ public class SyncWorkExecutor extends WorkExecutor {
 				.user(targetDatasource.getUsername()).password(aesUtils.decrypt(targetDatasource.getPasswd())).build();
 		workRunContext.getSyncWorkConfig().setTargetDatabase(targetConfig);
 
-		// 查询来源表最大值范围和最小值范围
-		try (Connection sourceConnection = datasourceService.getDbConnection(sourceDatasource);
-				Statement statement = sourceConnection.createStatement();) {
-			statement.setQueryTimeout(1800);
+		// 查询来源表最大值范围和最小值范围，hive暂不做分区处理
+		if (!DatasourceType.HIVE.equals(sourceDatasource.getDbType())) {
 
-			ResultSet resultSet = statement
-					.executeQuery("select max(" + workRunContext.getSyncWorkConfig().getPartitionColumn()
-							+ ") 'max',min(" + workRunContext.getSyncWorkConfig().getPartitionColumn() + ") 'max' from "
-							+ workRunContext.getSyncWorkConfig().getTargetTable());
-			while (resultSet.next()) {
-				workRunContext.getSyncRule()
-						.setUpperBound(String.valueOf(resultSet.getObject(1) == null ? 0 : resultSet.getObject(1)));
-				workRunContext.getSyncRule()
-						.setLowerBound(String.valueOf(resultSet.getObject(2) == null ? 0 : resultSet.getObject(1)));
+			try (Connection sourceConnection = datasourceService.getDbConnection(sourceDatasource);
+					Statement statement = sourceConnection.createStatement();) {
+				statement.setQueryTimeout(1800);
+
+				ResultSet resultSet = statement
+						.executeQuery("select max(" + workRunContext.getSyncWorkConfig().getPartitionColumn()
+								+ ") 'max',min(" + workRunContext.getSyncWorkConfig().getPartitionColumn()
+								+ ") 'max' from " + workRunContext.getSyncWorkConfig().getTargetTable());
+				while (resultSet.next()) {
+					workRunContext.getSyncRule()
+							.setUpperBound(String.valueOf(resultSet.getObject(1) == null ? 0 : resultSet.getObject(1)));
+					workRunContext.getSyncRule()
+							.setLowerBound(String.valueOf(resultSet.getObject(2) == null ? 0 : resultSet.getObject(1)));
+				}
+			} catch (SQLException e) {
+				throw new WorkRunException(
+						LocalDateTime.now() + WorkLog.ERROR_INFO + "检测来源数据源 : " + e.getMessage() + "\n");
 			}
-		} catch (SQLException e) {
-			throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "检测来源数据源 : " + e.getMessage() + "\n");
 		}
 
 		// 开始构造PluginReq
