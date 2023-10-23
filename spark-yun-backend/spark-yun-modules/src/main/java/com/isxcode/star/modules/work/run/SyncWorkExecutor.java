@@ -120,6 +120,11 @@ public class SyncWorkExecutor extends WorkExecutor {
 			throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "申请资源失败 : 集群不存在可用节点，请切换一个集群  \n");
 		}
 
+		// 检测用户是否配置映射关系
+		if (workRunContext.getSyncWorkConfig().getColumnMap().isEmpty()) {
+			throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "检查作业失败 : 请配置字段映射关系  \n");
+		}
+
 		// 节点选择随机数
 		ClusterNodeEntity engineNode = allEngineNodes.get(new Random().nextInt(allEngineNodes.size()));
 		logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("申请资源完成，激活节点:【")
@@ -170,10 +175,12 @@ public class SyncWorkExecutor extends WorkExecutor {
 					.executeQuery("select max(" + workRunContext.getSyncWorkConfig().getPartitionColumn()
 							+ ") 'max',min(" + workRunContext.getSyncWorkConfig().getPartitionColumn() + ") 'max' from "
 							+ workRunContext.getSyncWorkConfig().getTargetTable());
-			resultSet.next();
-			workRunContext.getSyncRule().setUpperBound(String.valueOf(resultSet.getObject(1)));
-			workRunContext.getSyncRule().setLowerBound(String.valueOf(resultSet.getObject(2)));
-
+			while (resultSet.next()) {
+				workRunContext.getSyncRule()
+						.setUpperBound(String.valueOf(resultSet.getObject(1) == null ? 0 : resultSet.getObject(1)));
+				workRunContext.getSyncRule()
+						.setLowerBound(String.valueOf(resultSet.getObject(2) == null ? 0 : resultSet.getObject(1)));
+			}
 		} catch (SQLException e) {
 			throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "检测来源数据源 : " + e.getMessage() + "\n");
 		}
