@@ -36,9 +36,14 @@ import java.util.regex.Pattern;
 public class StandaloneAgentService implements AgentService {
 
 	@Override
-	public String getMaster() {
+	public String getMaster(String sparkHomePath) {
 
-		String sparkHome = System.getenv("SPARK_HOME");
+		String sparkHome;
+		if (Strings.isEmpty(sparkHomePath)) {
+			sparkHome = sparkHomePath;
+		} else {
+			sparkHome = System.getenv("SPARK_HOME");
+		}
 		String defaultSparkConfig = sparkHome + "/conf/spark-defaults.conf";
 
 		try (BufferedReader reader = new BufferedReader(new FileReader(defaultSparkConfig))) {
@@ -73,10 +78,11 @@ public class StandaloneAgentService implements AgentService {
 	}
 
 	@Override
-	public SparkLauncher genSparkLauncher(PluginReq pluginReq, SparkSubmit sparkSubmit, String agentHomePath) {
+	public SparkLauncher genSparkLauncher(PluginReq pluginReq, SparkSubmit sparkSubmit, String agentHomePath,
+			String sparkHomePath) {
 
 		SparkLauncher sparkLauncher = new SparkLauncher().setVerbose(false).setMainClass(sparkSubmit.getMainClass())
-				.setDeployMode("cluster").setAppName("zhiqingyun-job").setMaster(getMaster())
+				.setDeployMode("cluster").setAppName("zhiqingyun-job").setMaster(getMaster(sparkHomePath))
 				.setAppResource(
 						agentHomePath + File.separator + "plugins" + File.separator + sparkSubmit.getAppResource())
 				.setSparkHome(agentHomePath + File.separator + "spark-min");

@@ -26,15 +26,16 @@ public class YarnAgentService implements AgentService {
 	private final SparkYunAgentProperties sparkYunAgentProperties;
 
 	@Override
-	public String getMaster() {
+	public String getMaster(String sparkHomePath) {
 		return "yarn";
 	}
 
 	@Override
-	public SparkLauncher genSparkLauncher(PluginReq pluginReq, SparkSubmit sparkSubmit, String agentHomePath) {
+	public SparkLauncher genSparkLauncher(PluginReq pluginReq, SparkSubmit sparkSubmit, String agentHomePath,
+			String sparkHomePath) {
 
 		SparkLauncher sparkLauncher = new SparkLauncher().setVerbose(false).setMainClass(sparkSubmit.getMainClass())
-				.setDeployMode("cluster").setAppName("zhiqingyun-job").setMaster(getMaster())
+				.setDeployMode("cluster").setAppName("zhiqingyun-job").setMaster(getMaster(sparkHomePath))
 				.setAppResource(
 						agentHomePath + File.separator + "plugins" + File.separator + sparkSubmit.getAppResource())
 				.setSparkHome(agentHomePath + File.separator + "spark-min");
