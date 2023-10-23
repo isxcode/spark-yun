@@ -20,6 +20,10 @@ public class Execute {
 
 		PluginReq conf = parse(args);
 
+    if (DatasourceType.HIVE.equals(conf.getSyncWorkConfig().getTargetDBType()) || DatasourceType.HIVE.equals(conf.getSyncWorkConfig().getSourceDBType())) {
+      conf.getSparkConfig().put("hive.metastore.uris", "thrift://localhost:9870");
+    }
+
 		try (SparkSession sparkSession = initSparkSession(conf.getSparkConfig())) {
 
 			// 创建来源表视图
