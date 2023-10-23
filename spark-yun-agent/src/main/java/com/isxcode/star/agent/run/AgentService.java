@@ -8,7 +8,7 @@ import java.io.IOException;
 
 public interface AgentService {
 
-	String getMaster() throws IOException;
+	String getMaster(String sparkHomePath) throws IOException;
 
 	/**
 	 * @param pluginReq
@@ -16,8 +16,8 @@ public interface AgentService {
 	 * @param sparkSubmit
 	 *            spark作业提交配置
 	 */
-	SparkLauncher genSparkLauncher(PluginReq pluginReq, SparkSubmit sparkSubmit, String agentHomePath)
-			throws IOException;
+	SparkLauncher genSparkLauncher(PluginReq pluginReq, SparkSubmit sparkSubmit, String agentHomePath,
+			String sparkHomePath) throws IOException;
 
 	String executeWork(SparkLauncher sparkLauncher) throws IOException;
 

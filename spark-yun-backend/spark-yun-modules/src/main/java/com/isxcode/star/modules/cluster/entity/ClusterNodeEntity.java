@@ -69,6 +69,8 @@ public class ClusterNodeEntity {
 
 	private String hadoopHomePath;
 
+	private String sparkHomePath;
+
 	private String agentLog;
 
 	@CreatedDate

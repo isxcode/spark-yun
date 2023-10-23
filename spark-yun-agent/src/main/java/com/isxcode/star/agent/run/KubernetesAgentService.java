@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
 public class KubernetesAgentService implements AgentService {
 
 	@Override
-	public String getMaster() throws IOException {
+	public String getMaster(String sparkHomePath) throws IOException {
 
 		String getMasterCmd = "kubectl cluster-info";
 
@@ -51,11 +51,11 @@ public class KubernetesAgentService implements AgentService {
 	}
 
 	@Override
-	public SparkLauncher genSparkLauncher(PluginReq pluginReq, SparkSubmit sparkSubmit, String agentHomePath)
-			throws IOException {
+	public SparkLauncher genSparkLauncher(PluginReq pluginReq, SparkSubmit sparkSubmit, String agentHomePath,
+			String sparkHomePath) throws IOException {
 
 		SparkLauncher sparkLauncher = new SparkLauncher().setVerbose(false).setMainClass(sparkSubmit.getMainClass())
-				.setDeployMode("cluster").setAppName("zhiqingyun-job").setMaster(getMaster())
+				.setDeployMode("cluster").setAppName("zhiqingyun-job").setMaster(getMaster(sparkHomePath))
 				.setAppResource("local:///opt/spark/examples/jars/" + sparkSubmit.getAppResource())
 				.setSparkHome(agentHomePath + File.separator + "spark-min");
 

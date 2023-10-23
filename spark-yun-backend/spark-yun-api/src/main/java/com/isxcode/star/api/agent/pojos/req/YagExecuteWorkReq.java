@@ -12,4 +12,6 @@ public class YagExecuteWorkReq {
 	private String agentHomePath;
 
 	private String agentType;
+
+	private String sparkHomePath;
 }

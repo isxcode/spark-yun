@@ -44,5 +44,10 @@ alter table SY_WORK_CONFIG
 alter table SY_WORK_CONFIG
     add sync_rule text null comment '数据同步规则' after cluster_config;
 
+-- 添加spark_home_path
+alter table SY_CLUSTER_NODE
+    add spark_home_path varchar(200) null comment 'standalone模式spark的安装目录' after hadoop_home_path;
+
+
 
 
