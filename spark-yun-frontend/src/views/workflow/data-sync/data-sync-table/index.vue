@@ -367,6 +367,10 @@ defineExpose({
     position: relative;
     width: 99%;
 
+    .el-table__empty-block {
+        width: 100% !important;
+    }
+
     .source-table-container {
         width: 100%;
         margin-right: 100px;
