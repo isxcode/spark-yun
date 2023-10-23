@@ -7,12 +7,10 @@ import com.isxcode.star.api.plugin.OverModeType;
 import com.isxcode.star.api.work.constants.SetMode;
 import org.apache.logging.log4j.util.Strings;
 import org.apache.spark.SparkConf;
-import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.sql.DataFrameReader;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
-import org.apache.spark.sql.hive.HiveContext;
 
 import java.util.*;
 
@@ -41,7 +39,7 @@ public class Execute {
 			List<String> targetCols = new ArrayList<>();
 			conf.getSyncWorkConfig().getColumnMap().forEach(e -> {
 				sourceCols.add(Strings.isEmpty(sourceColTranslateSql.get(e.getSource()))
-						? e.getSource()
+						? "`" + e.getSource() + "`"
 						: sourceColTranslateSql.get(e.getSource()));
 				targetCols.add(e.getTarget());
 			});
@@ -65,11 +63,7 @@ public class Execute {
 		String sourceTableName = "zhiqingyun_src_" + conf.getSyncWorkConfig().getSourceDatabase().getDbTable();
 
 		if (DatasourceType.HIVE.equals(conf.getSyncWorkConfig().getSourceDBType())) {
-			JavaSparkContext sparkContext = new JavaSparkContext(initSparkConf(conf.getSparkConfig()));
-			HiveContext hiveContext = new HiveContext(sparkContext);
-			Dataset<Row> hiveDataset = hiveContext
-					.sql("select * from " + conf.getSyncWorkConfig().getSourceDatabase().getDbTable());
-			hiveDataset.createOrReplaceTempView(sourceTableName);
+			return conf.getSyncWorkConfig().getSourceDatabase().getDbTable();
 		} else {
 			DataFrameReader frameReader = sparkSession.read().format("jdbc")
 					.option("driver", conf.getSyncWorkConfig().getSourceDatabase().getDriver())
@@ -100,11 +94,8 @@ public class Execute {
 
 		String targetTableName = "zhiqingyun_dist_" + conf.getSyncWorkConfig().getTargetDatabase().getDbTable();
 
-		if (DatasourceType.HIVE.equals(conf.getSyncWorkConfig().getTargetTable())) {
-			JavaSparkContext sparkContext = new JavaSparkContext(initSparkConf(conf.getSparkConfig()));
-			HiveContext hiveContext = new HiveContext(sparkContext);
-			Dataset<Row> hiveDataset = hiveContext.sql("select * from " + conf.getSyncWorkConfig().getTargetTable());
-			hiveDataset.createOrReplaceTempView(targetTableName);
+		if (DatasourceType.HIVE.equals(conf.getSyncWorkConfig().getTargetDBType())) {
+			return conf.getSyncWorkConfig().getTargetDatabase().getDbTable();
 		} else {
 			DataFrameReader frameReader = sparkSession.read().format("jdbc")
 					.option("driver", conf.getSyncWorkConfig().getTargetDatabase().getDriver())
@@ -147,7 +138,7 @@ public class Execute {
 
 		SparkConf conf = initSparkConf(sparkConfig);
 
-		if (sparkConfig != null && Strings.isEmpty(sparkConfig.get("hive.metastore.uris"))) {
+		if (Strings.isEmpty(conf.get("hive.metastore.uris"))) {
 			return sparkSessionBuilder.config(conf).getOrCreate();
 		} else {
 			return sparkSessionBuilder.config(conf).enableHiveSupport().getOrCreate();
