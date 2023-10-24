@@ -23,6 +23,10 @@ ports:
     port: 8082
     description: spark worker
     visibility: public
+  - name: isxcode mysql
+    port: 30306
+    description: mysql port
+    visibility: public
 
 # 安装必要插件
 vscode:
