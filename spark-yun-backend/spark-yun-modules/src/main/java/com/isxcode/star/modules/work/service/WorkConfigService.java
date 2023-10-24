@@ -83,6 +83,7 @@ public class WorkConfigService {
 				sparkConfig.put("spark.executor.memory", "4g");
 				sparkConfig.put("spark.driver.memory", "2g");
 				sparkConfig.put("spark.driver.cores", "1");
+        sparkConfig.put("spark.cores.max", "10");
 				break;
 			case ResourceLevel.MEDIUM :
 				sparkConfig.put("hive.metastore.uris", "");
@@ -91,6 +92,7 @@ public class WorkConfigService {
 				sparkConfig.put("spark.executor.memory", "2g");
 				sparkConfig.put("spark.driver.memory", "1g");
 				sparkConfig.put("spark.driver.cores", "1");
+        sparkConfig.put("spark.cores.max", "5");
 				break;
 			case ResourceLevel.LOW :
 				sparkConfig.put("hive.metastore.uris", "");
@@ -99,6 +101,7 @@ public class WorkConfigService {
 				sparkConfig.put("spark.executor.memory", "2g");
 				sparkConfig.put("spark.driver.memory", "1g");
 				sparkConfig.put("spark.driver.cores", "1");
+        sparkConfig.put("spark.cores.max", "1");
 				break;
 		}
 		return sparkConfig;
