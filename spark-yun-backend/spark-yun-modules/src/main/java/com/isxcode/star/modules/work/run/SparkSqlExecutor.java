@@ -28,10 +28,12 @@ import com.isxcode.star.modules.work.repository.WorkInstanceRepository;
 import com.isxcode.star.modules.work.repository.WorkRepository;
 import com.isxcode.star.modules.work.service.WorkConfigService;
 import com.isxcode.star.modules.workflow.repository.WorkflowInstanceRepository;
+
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.*;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.http.HttpStatus;
@@ -185,6 +187,7 @@ public class SparkSqlExecutor extends WorkExecutor {
 			Map<String, String> paramsMap = new HashMap<>();
 			paramsMap.put("appId", submitWorkRes.getAppId());
 			paramsMap.put("agentType", calculateEngineEntityOptional.get().getClusterType());
+			paramsMap.put("sparkHomePath", engineNode.getSparkHomePath());
 			baseResponse = HttpUtils.doGet(
 					httpUrlUtils.genHttpUrl(engineNode.getHost(), engineNode.getAgentPort(), "/yag/getStatus"),
 					paramsMap, null, BaseResponse.class);
@@ -224,6 +227,7 @@ public class SparkSqlExecutor extends WorkExecutor {
 				Map<String, String> paramsMap2 = new HashMap<>();
 				paramsMap2.put("appId", submitWorkRes.getAppId());
 				paramsMap2.put("agentType", calculateEngineEntityOptional.get().getClusterType());
+				paramsMap2.put("sparkHomePath", engineNode.getSparkHomePath());
 				baseResponse = HttpUtils.doGet(
 						httpUrlUtils.genHttpUrl(engineNode.getHost(), engineNode.getAgentPort(), "/yag/getLog"),
 						paramsMap2, null, BaseResponse.class);
@@ -251,6 +255,7 @@ public class SparkSqlExecutor extends WorkExecutor {
 					Map<String, String> paramsMap3 = new HashMap<>();
 					paramsMap3.put("appId", submitWorkRes.getAppId());
 					paramsMap3.put("agentType", calculateEngineEntityOptional.get().getClusterType());
+					paramsMap3.put("sparkHomePath", engineNode.getSparkHomePath());
 					baseResponse = HttpUtils.doGet(
 							httpUrlUtils.genHttpUrl(engineNode.getHost(), engineNode.getAgentPort(), "/yag/getData"),
 							paramsMap3, null, BaseResponse.class);
@@ -303,6 +308,7 @@ public class SparkSqlExecutor extends WorkExecutor {
 					Map<String, String> paramsMap = new HashMap<>();
 					paramsMap.put("appId", wokRunWorkRes.getAppId());
 					paramsMap.put("agentType", cluster.getClusterType());
+					paramsMap.put("sparkHomePath", engineNode.getSparkHomePath());
 					BaseResponse<?> baseResponse = HttpUtils.doGet(
 							httpUrlUtils.genHttpUrl(engineNode.getHost(), engineNode.getAgentPort(), "/yag/stopJob"),
 							paramsMap, null, BaseResponse.class);
@@ -320,7 +326,9 @@ public class SparkSqlExecutor extends WorkExecutor {
 		}
 	}
 
-	/** 初始化spark作业提交配置. */
+	/**
+	 * 初始化spark作业提交配置.
+	 */
 	public Map<String, String> genSparkSubmitConfig(Map<String, String> sparkConfig) {
 
 		// 过滤掉，前缀不包含spark.xxx的配置，spark submit中必须都是spark.xxx
@@ -333,7 +341,9 @@ public class SparkSqlExecutor extends WorkExecutor {
 		return sparkSubmitConfig;
 	}
 
-	/** sparkConfig不能包含k8s的配置 */
+	/**
+	 * sparkConfig不能包含k8s的配置
+	 */
 	public Map<String, String> genSparkConfig(Map<String, String> sparkConfig) {
 
 		// k8s的配置不能提交到作业中

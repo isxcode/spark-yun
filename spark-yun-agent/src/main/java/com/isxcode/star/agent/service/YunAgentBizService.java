@@ -60,18 +60,18 @@ public class YunAgentBizService {
 		return ExecuteWorkRes.builder().appId(appId).build();
 	}
 
-	public YagGetStatusRes getStatus(String appId, String agentType) throws IOException {
+	public YagGetStatusRes getStatus(String appId, String agentType, String sparkHomePath) throws IOException {
 
 		String appStatus;
 		switch (agentType) {
 			case AgentType.YARN :
-				appStatus = yarnAgentService.getAppStatus(appId);
+				appStatus = yarnAgentService.getAppStatus(appId, sparkHomePath);
 				break;
 			case AgentType.K8S :
-				appStatus = kubernetesAgentService.getAppStatus(appId);
+				appStatus = kubernetesAgentService.getAppStatus(appId, sparkHomePath);
 				break;
 			case AgentType.StandAlone :
-				appStatus = standaloneAgentService.getAppStatus(appId);
+				appStatus = standaloneAgentService.getAppStatus(appId, sparkHomePath);
 				break;
 			default :
 				throw new IsxAppException("agent类型不支持");
@@ -80,18 +80,18 @@ public class YunAgentBizService {
 		return YagGetStatusRes.builder().appId(appId).appStatus(appStatus).build();
 	}
 
-	public YagGetLogRes getLog(String appId, String agentType) throws IOException {
+	public YagGetLogRes getLog(String appId, String agentType, String sparkHomePath) throws IOException {
 
 		String appLog;
 		switch (agentType) {
 			case AgentType.YARN :
-				appLog = yarnAgentService.getAppLog(appId);
+				appLog = yarnAgentService.getAppLog(appId, sparkHomePath);
 				break;
 			case AgentType.K8S :
-				appLog = kubernetesAgentService.getAppLog(appId);
+				appLog = kubernetesAgentService.getAppLog(appId, sparkHomePath);
 				break;
 			case AgentType.StandAlone :
-				appLog = standaloneAgentService.getAppLog(appId);
+				appLog = standaloneAgentService.getAppLog(appId, sparkHomePath);
 				break;
 			default :
 				throw new IsxAppException("agent类型不支持");
@@ -100,18 +100,18 @@ public class YunAgentBizService {
 		return YagGetLogRes.builder().log(appLog).build();
 	}
 
-	public YagGetDataRes getData(String appId, String agentType) throws IOException {
+	public YagGetDataRes getData(String appId, String agentType, String sparkHomePath) throws IOException {
 
 		String stdoutLog;
 		switch (agentType) {
 			case AgentType.YARN :
-				stdoutLog = yarnAgentService.getAppData(appId);
+				stdoutLog = yarnAgentService.getAppData(appId, sparkHomePath);
 				break;
 			case AgentType.K8S :
-				stdoutLog = kubernetesAgentService.getAppData(appId);
+				stdoutLog = kubernetesAgentService.getAppData(appId, sparkHomePath);
 				break;
 			case AgentType.StandAlone :
-				stdoutLog = standaloneAgentService.getAppData(appId);
+				stdoutLog = standaloneAgentService.getAppData(appId, sparkHomePath);
 				break;
 			default :
 				throw new IsxAppException("agent类型不支持");
@@ -120,17 +120,17 @@ public class YunAgentBizService {
 		return YagGetDataRes.builder().data(JSON.parseArray(stdoutLog, List.class)).build();
 	}
 
-	public void stopJob(String appId, String agentType) throws IOException {
+	public void stopJob(String appId, String agentType, String sparkHomePath) throws IOException {
 
 		switch (agentType) {
 			case AgentType.YARN :
-				yarnAgentService.killApp(appId);
+				yarnAgentService.killApp(appId, sparkHomePath);
 				break;
 			case AgentType.K8S :
-				kubernetesAgentService.killApp(appId);
+				kubernetesAgentService.killApp(appId, sparkHomePath);
 				break;
 			case AgentType.StandAlone :
-				standaloneAgentService.killApp(appId);
+				standaloneAgentService.killApp(appId, sparkHomePath);
 				break;
 			default :
 				throw new IsxAppException("agent类型不支持");

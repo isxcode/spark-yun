@@ -102,7 +102,7 @@ public class YarnAgentService implements AgentService {
 	}
 
 	@Override
-	public String getAppStatus(String appId) throws IOException {
+	public String getAppStatus(String appId, String sparkHomePath) throws IOException {
 
 		String getStatusCmdFormat = "yarn application -status %s";
 
@@ -141,7 +141,7 @@ public class YarnAgentService implements AgentService {
 	}
 
 	@Override
-	public String getAppLog(String appId) throws IOException {
+	public String getAppLog(String appId, String sparkHomePath) throws IOException {
 
 		String getLogCmdFormat = "yarn logs -applicationId %s";
 		Process process = Runtime.getRuntime().exec(String.format(getLogCmdFormat, appId));
@@ -181,7 +181,7 @@ public class YarnAgentService implements AgentService {
 	}
 
 	@Override
-	public String getAppData(String appId) throws IOException {
+	public String getAppData(String appId, String sparkHomePath) throws IOException {
 
 		String getLogCmdFormat = "yarn logs -applicationId %s";
 
@@ -215,7 +215,7 @@ public class YarnAgentService implements AgentService {
 	}
 
 	@Override
-	public void killApp(String appId) throws IOException {
+	public void killApp(String appId, String sparkHomePath) throws IOException {
 
 		String killAppCmdFormat = "yarn application -kill %s";
 		Process process = Runtime.getRuntime().exec(String.format(killAppCmdFormat, appId));
