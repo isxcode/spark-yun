@@ -20,6 +20,13 @@
       "request": "launch",
       "mainClass": "com.isxcode.star.SparkYunApplication",
       "projectName": "spark-yun-main"
+    },
+    {
+      "type": "java",
+      "name": "SparkPlugin-SyncWork",
+      "request": "launch",
+      "mainClass": "com.isxcode.star.plugin.dataSync.jdbc.Execute",
+      "projectName": "spark-data-sync-jdbc-plugin"
     }
   ]
 }
