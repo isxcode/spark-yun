@@ -56,5 +56,19 @@ fi
 # 解压SPARK_MIN_FILE，到指定目录SPARK_MIN_DIR
 tar vzxf "${TMP_DIR}"/"${SPARK_MIN_FILE}" --strip-components=1 -C "${SPARK_MIN_DIR}"
 
+# 修改spark-defaults.conf
+cp "${SPARK_MIN_DIR}"/conf/spark-defaults.conf.template "${SPARK_MIN_DIR}"/conf/spark-defaults.conf
+tee -a "${SPARK_MIN_DIR}"/conf/spark-defaults.conf <<-'EOF'
+spark.master          spark://localhost:7077
+spark.master.web.url  http://localhost:8081
+EOF
+
+# 修改spark-env.sh
+cp "${SPARK_MIN_DIR}"/conf/spark-env.sh.template "${SPARK_MIN_DIR}"/conf/spark-env.sh
+tee -a "${SPARK_MIN_DIR}"/conf/spark-env.sh <<-'EOF'
+export SPARK_MASTER_PORT=7077
+export SPARK_MASTER_WEBUI_PORT=8081
+EOF
+
 # 返回状态
 echo "【安装结果】：安装成功"
