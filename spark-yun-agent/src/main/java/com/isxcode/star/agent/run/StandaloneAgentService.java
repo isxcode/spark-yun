@@ -39,7 +39,7 @@ public class StandaloneAgentService implements AgentService {
 	public String getMaster(String sparkHomePath) {
 
 		String sparkHome;
-		if (Strings.isEmpty(sparkHomePath)) {
+		if (!Strings.isEmpty(sparkHomePath)) {
 			sparkHome = sparkHomePath;
 		} else {
 			sparkHome = System.getenv("SPARK_HOME");
@@ -59,9 +59,14 @@ public class StandaloneAgentService implements AgentService {
 		}
 	}
 
-	public String getMasterWebUrl() {
+	public String getMasterWebUrl(String sparkHomePath) {
 
-		String sparkHome = System.getenv("SPARK_HOME");
+		String sparkHome;
+		if (!Strings.isEmpty(sparkHomePath)) {
+			sparkHome = sparkHomePath;
+		} else {
+			sparkHome = System.getenv("SPARK_HOME");
+		}
 		String defaultSparkConfig = sparkHome + "/conf/spark-defaults.conf";
 
 		try (BufferedReader reader = new BufferedReader(new FileReader(defaultSparkConfig))) {
@@ -141,9 +146,9 @@ public class StandaloneAgentService implements AgentService {
 	}
 
 	@Override
-	public String getAppStatus(String submissionId) throws IOException {
+	public String getAppStatus(String submissionId, String sparkHomePath) throws IOException {
 
-		Document doc = Jsoup.connect(getMasterWebUrl()).get();
+		Document doc = Jsoup.connect(getMasterWebUrl(sparkHomePath)).get();
 
 		Element completedDriversTable = doc.selectFirst(".aggregated-completedDrivers table");
 		Elements completedDriversRows = completedDriversTable.select("tbody tr");
@@ -165,9 +170,9 @@ public class StandaloneAgentService implements AgentService {
 	}
 
 	@Override
-	public String getAppLog(String submissionId) throws IOException {
+	public String getAppLog(String submissionId, String sparkHomePath) throws IOException {
 
-		Document doc = Jsoup.connect(getMasterWebUrl()).get();
+		Document doc = Jsoup.connect(getMasterWebUrl(sparkHomePath)).get();
 
 		Element completedDriversTable = doc.selectFirst(".aggregated-completedDrivers table");
 		Elements completedDriversRows = completedDriversTable.select("tbody tr");
@@ -199,9 +204,9 @@ public class StandaloneAgentService implements AgentService {
 	}
 
 	@Override
-	public String getAppData(String submissionId) throws IOException {
+	public String getAppData(String submissionId, String sparkHomePath) throws IOException {
 
-		Document doc = Jsoup.connect(getMasterWebUrl()).get();
+		Document doc = Jsoup.connect(getMasterWebUrl(sparkHomePath)).get();
 
 		Element completedDriversTable = doc.selectFirst(".aggregated-completedDrivers table");
 		Elements completedDriversRows = completedDriversTable.select("tbody tr");
@@ -231,9 +236,9 @@ public class StandaloneAgentService implements AgentService {
 	}
 
 	@Override
-	public void killApp(String submissionId) throws IOException {
+	public void killApp(String submissionId, String sparkHomePath) throws IOException {
 
-		String url = getMasterWebUrl() + "/driver/kill/";
+		String url = getMasterWebUrl(sparkHomePath) + "/driver/kill/";
 
 		CloseableHttpClient httpClient = HttpClients.createDefault();
 		HttpPost httpPost = new HttpPost(url);

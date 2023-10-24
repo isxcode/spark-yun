@@ -133,7 +133,7 @@ public class KubernetesAgentService implements AgentService {
 	}
 
 	@Override
-	public String getAppStatus(String podName) throws IOException {
+	public String getAppStatus(String podName, String sparkHomePath) throws IOException {
 
 		String getStatusCmdFormat = "kubectl get pod %s -n zhiqingyun-space";
 
@@ -176,7 +176,7 @@ public class KubernetesAgentService implements AgentService {
 	}
 
 	@Override
-	public String getAppLog(String appId) throws IOException {
+	public String getAppLog(String appId, String sparkHomePath) throws IOException {
 
 		String getLogCmdFormat = "kubectl logs -f %s -n zhiqingyun-space";
 
@@ -220,7 +220,7 @@ public class KubernetesAgentService implements AgentService {
 	}
 
 	@Override
-	public String getAppData(String appId) throws IOException {
+	public String getAppData(String appId, String sparkHomePath) throws IOException {
 
 		String getLogCmdFormat = "kubectl logs -f %s -n zhiqingyun-space";
 
@@ -253,7 +253,7 @@ public class KubernetesAgentService implements AgentService {
 	}
 
 	@Override
-	public void killApp(String appId) throws IOException {
+	public void killApp(String appId, String sparkHomePath) throws IOException {
 
 		String killAppCmdFormat = "kubectl delete pod %s -n zhiqingyun-space";
 		Process process = Runtime.getRuntime().exec(String.format(killAppCmdFormat, appId));

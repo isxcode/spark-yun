@@ -10,8 +10,10 @@ import com.isxcode.star.api.main.constants.ModuleCode;
 import com.isxcode.star.common.annotations.successResponse.SuccessResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+
 import java.io.IOException;
 import javax.validation.Valid;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -39,36 +41,42 @@ public class YunAgentController {
 	@Operation(summary = "获取作业运行状态接口")
 	@GetMapping("/getStatus")
 	@SuccessResponse("获取成功")
-	public YagGetStatusRes getStatus(@RequestParam String appId, @RequestParam String agentType) throws IOException {
+	public YagGetStatusRes getStatus(@RequestParam String appId, @RequestParam String agentType,
+			@RequestParam String sparkHomePath) throws IOException {
 
-		return yunAgentBizService.getStatus(appId, agentType);
+		return yunAgentBizService.getStatus(appId, agentType, sparkHomePath);
 	}
 
 	@Operation(summary = "获取作业运行日志接口", description = "获取作业运行日志")
 	@GetMapping("/getLog")
 	@SuccessResponse("获取成功")
-	public YagGetLogRes getLog(@RequestParam String appId, @RequestParam String agentType) throws IOException {
+	public YagGetLogRes getLog(@RequestParam String appId, @RequestParam String agentType,
+			@RequestParam String sparkHomePath) throws IOException {
 
-		return yunAgentBizService.getLog(appId, agentType);
+		return yunAgentBizService.getLog(appId, agentType, sparkHomePath);
 	}
 
 	@Operation(summary = "获取作业运行返回数据接口", description = "获取query数据")
 	@GetMapping("/getData")
 	@SuccessResponse("获取成功")
-	public YagGetDataRes getData(@RequestParam String appId, @RequestParam String agentType) throws IOException {
+	public YagGetDataRes getData(@RequestParam String appId, @RequestParam String agentType,
+			@RequestParam String sparkHomePath) throws IOException {
 
-		return yunAgentBizService.getData(appId, agentType);
+		return yunAgentBizService.getData(appId, agentType, sparkHomePath);
 	}
 
 	@Operation(summary = "中止作业接口", description = "中止作业")
 	@GetMapping("/stopJob")
 	@SuccessResponse("中止成功")
-	public void stopJob(@RequestParam String appId, @RequestParam String agentType) throws IOException {
+	public void stopJob(@RequestParam String appId, @RequestParam String agentType, @RequestParam String sparkHomePath)
+			throws IOException {
 
-		yunAgentBizService.stopJob(appId, agentType);
+		yunAgentBizService.stopJob(appId, agentType, sparkHomePath);
 	}
 
-	/** 心跳检测. */
+	/**
+	 * 心跳检测.
+	 */
 	@Operation(summary = "心跳检测接口", description = "心跳检测")
 	@GetMapping("/heartCheck")
 	@SuccessResponse("正常心跳")
