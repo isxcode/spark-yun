@@ -14,13 +14,6 @@ if ! command -v java &>/dev/null; then
   exit 1
 fi
 
-# 判断java版本是否为1.8
-java_version=$(java -version 2>&1 | awk -F '"' '/version/ {print $2}')
-if [[ "$java_version" != "1.8"* ]]; then
-  echo "【安装结果】：未检测到java1.8.x环境"
-  exit 1
-fi
-
 # 获取当前路径
 BASE_PATH=$(cd "$(dirname "$0")" || exit ; pwd)
 cd "${BASE_PATH}" || exit
