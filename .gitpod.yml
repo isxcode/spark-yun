@@ -1,7 +1,7 @@
 tasks:
   - name: 本地启动
-    init: bash /workspace/spark-yun/.vscode/install-spark-standalone.sh
-    command: ./gradlew start
+    init: ./gradlew install
+    command: ./gradlew package
 ports:
   - name: server
     port: 8080
