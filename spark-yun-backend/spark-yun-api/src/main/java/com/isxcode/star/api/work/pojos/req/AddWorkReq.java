@@ -11,7 +11,13 @@ public class AddWorkReq {
 	@NotEmpty(message = "作业名称不能为空")
 	private String name;
 
-	@Schema(title = "作业类型", example = "QUERY_SPARK_SQL")
+	@Schema(title = "作业类型", example = "类型编码：" +
+    "SPARK_SQL： spark sql执行作业" +
+    "EXE_JDBC： jdbc执行作业" +
+    "QUERY_JDBC： jdbc查询作业" +
+    "DATA_SYNC_JDBC： 数据同步作业" +
+    "BASH： bash脚本作业" +
+    "PYTHON： python脚本作业")
 	@NotEmpty(message = "作业类型不能为空")
 	private String workType;
 
