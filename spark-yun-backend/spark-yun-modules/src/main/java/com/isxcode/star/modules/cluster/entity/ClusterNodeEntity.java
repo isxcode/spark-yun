@@ -73,6 +73,8 @@ public class ClusterNodeEntity {
 
 	private String agentLog;
 
+  private boolean defaultClusterNode;
+
 	@CreatedDate
 	private LocalDateTime createDateTime;
 

@@ -18,6 +18,8 @@ import com.isxcode.star.modules.cluster.repository.ClusterRepository;
 import com.isxcode.star.modules.cluster.run.*;
 import com.isxcode.star.modules.cluster.service.ClusterNodeService;
 import com.isxcode.star.modules.cluster.service.ClusterService;
+
+import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -36,7 +38,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 public class ClusterNodeBizService {
 
-	private final ClusterNodeRepository engineNodeRepository;
+	private final ClusterNodeRepository clusterNodeRepository;
 
 	private final ClusterRepository clusterRepository;
 
@@ -94,7 +96,7 @@ public class ClusterNodeBizService {
 		clusterNode.setStatus(ClusterNodeStatus.UN_INSTALL);
 
 		// 持久化数据
-		engineNodeRepository.save(clusterNode);
+		clusterNodeRepository.save(clusterNode);
 	}
 
 	public void updateClusterNode(UpdateClusterNodeReq updateClusterNodeReq) {
@@ -129,7 +131,7 @@ public class ClusterNodeBizService {
 
 		// 初始化节点状态，未检测
 		node.setStatus(ClusterNodeStatus.UN_CHECK);
-		engineNodeRepository.save(node);
+		clusterNodeRepository.save(node);
 
 		// 集群状态修改
 		cluster.setStatus(ClusterStatus.UN_CHECK);
@@ -138,7 +140,7 @@ public class ClusterNodeBizService {
 
 	public Page<EnoQueryNodeRes> pageClusterNode(PageClusterNodeReq enoQueryNodeReq) {
 
-		Page<ClusterNodeEntity> engineNodeEntities = engineNodeRepository.searchAll(enoQueryNodeReq.getSearchKeyWord(),
+		Page<ClusterNodeEntity> engineNodeEntities = clusterNodeRepository.searchAll(enoQueryNodeReq.getSearchKeyWord(),
 				enoQueryNodeReq.getClusterId(),
 				PageRequest.of(enoQueryNodeReq.getPage(), enoQueryNodeReq.getPageSize()));
 
@@ -147,7 +149,7 @@ public class ClusterNodeBizService {
 
 	public void deleteClusterNode(DeleteClusterNodeReq deleteClusterNodeReq) {
 
-		Optional<ClusterNodeEntity> engineNodeEntityOptional = engineNodeRepository
+		Optional<ClusterNodeEntity> engineNodeEntityOptional = clusterNodeRepository
 				.findById(deleteClusterNodeReq.getEngineNodeId());
 		if (!engineNodeEntityOptional.isPresent()) {
 			throw new IsxAppException("节点已删除");
@@ -158,7 +160,7 @@ public class ClusterNodeBizService {
 			throw new IsxAppException("请卸载节点后删除");
 		}
 
-		engineNodeRepository.deleteById(deleteClusterNodeReq.getEngineNodeId());
+		clusterNodeRepository.deleteById(deleteClusterNodeReq.getEngineNodeId());
 	}
 
 	public void checkAgent(CheckAgentReq checkAgentReq) {
@@ -182,7 +184,7 @@ public class ClusterNodeBizService {
 		engineNode.setAgentLog("检测中");
 
 		// 持久化
-		engineNodeRepository.saveAndFlush(engineNode);
+		clusterNodeRepository.saveAndFlush(engineNode);
 
 		// 异步调用
 		runAgentCheckService.run(checkAgentReq.getEngineNodeId(), scpFileEngineNodeDto, TENANT_ID.get(), USER_ID.get());
@@ -212,7 +214,7 @@ public class ClusterNodeBizService {
 		clusterNode.setAgentLog("激活中");
 
 		// 持久化
-		engineNodeRepository.saveAndFlush(clusterNode);
+		clusterNodeRepository.saveAndFlush(clusterNode);
 
 		// 异步调用
 		runAgentInstallService.run(installAgentReq.getEngineNodeId(), cluster.getClusterType(), scpFileEngineNodeDto,
@@ -240,7 +242,7 @@ public class ClusterNodeBizService {
 		engineNode.setAgentLog("卸载中");
 
 		// 持久化
-		engineNodeRepository.saveAndFlush(engineNode);
+		clusterNodeRepository.saveAndFlush(engineNode);
 
 		// 异步调用
 		runAgentRemoveService.run(removeAgentReq.getEngineNodeId(), scpFileEngineNodeDto, TENANT_ID.get(),
@@ -282,7 +284,7 @@ public class ClusterNodeBizService {
 		engineNode.setAgentLog("停止中");
 
 		// 持久化
-		engineNodeRepository.saveAndFlush(engineNode);
+		clusterNodeRepository.saveAndFlush(engineNode);
 
 		// 异步调用
 		runAgentStopService.run(stopAgentReq.getEngineNodeId(), scpFileEngineNodeDto, TENANT_ID.get(), USER_ID.get());
@@ -310,9 +312,24 @@ public class ClusterNodeBizService {
 		engineNode.setAgentLog("启动中");
 
 		// 持久化
-		engineNodeRepository.saveAndFlush(engineNode);
+		clusterNodeRepository.saveAndFlush(engineNode);
 
 		// 异步调用
 		runAgentStartService.run(startAgentReq.getEngineNodeId(), scpFileEngineNodeDto, TENANT_ID.get(), USER_ID.get());
 	}
+
+  public void setDefaultClusterNode(SetDefaultClusterNodeReq setDefaultClusterNodeReq) {
+
+    // 检测节点是否存在
+    ClusterNodeEntity clusterNode = clusterNodeService.getClusterNode(setDefaultClusterNodeReq.getClusterNodeId());
+
+    // 查询该集群下的所有节点
+    List<ClusterNodeEntity> allClusterNodes = clusterNodeRepository.findAllByClusterId(clusterNode.getClusterId());
+    allClusterNodes.forEach(e -> e.setDefaultClusterNode(false));
+    clusterNodeRepository.saveAll(allClusterNodes);
+
+    // 修改选中的为true
+    clusterNode.setDefaultClusterNode(true);
+    clusterNodeRepository.save(clusterNode);
+  }
 }
