@@ -22,4 +22,7 @@ public interface InstanceStatus {
 
 	/** 中止中. */
 	String ABORTING = "ABORTING";
+
+	/** 已完成，但不知道成功还是失败. */
+	String FINISHED = "FINISHED";
 }

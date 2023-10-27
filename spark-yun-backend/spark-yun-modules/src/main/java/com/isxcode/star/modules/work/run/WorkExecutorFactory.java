@@ -7,7 +7,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
-/** 执行器工厂类，返回对应作业的执行器. */
+/**
+ * 执行器工厂类，返回对应作业的执行器.
+ */
 @Slf4j
 @RequiredArgsConstructor
 @Component
@@ -26,6 +28,10 @@ public class WorkExecutorFactory {
 				return applicationContext.getBean(ExecuteSqlExecutor.class);
 			case WorkType.DATA_SYNC_JDBC :
 				return applicationContext.getBean(SyncWorkExecutor.class);
+			case WorkType.BASH :
+				return applicationContext.getBean(BashExecutor.class);
+			case WorkType.PYTHON :
+				return applicationContext.getBean(PythonExecutor.class);
 			default :
 				throw new IsxAppException("作业类型不存在");
 		}

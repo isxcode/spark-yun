@@ -50,11 +50,14 @@ alter table SY_CLUSTER_NODE
 
 -- 添加默认集群
 alter table SY_CLUSTER
-    add default_cluster boolean null comment '默认计算集群' after used_storage_num;
+    add default_cluster boolean null default false comment '默认计算集群' after used_storage_num;
 
 -- 添加默认集群节点
 alter table SY_CLUSTER_NODE
-    add default_cluster_node boolean null comment '默认集群节点' after spark_home_path;
+    add default_cluster_node boolean null default false comment '默认集群节点' after spark_home_path;
 
+-- 作业运行实例中，添加作业运行的pid
+alter table SY_WORK_INSTANCE
+    add work_pid varchar(100) null comment '作业运行的进程pid' after result_data;
 
 

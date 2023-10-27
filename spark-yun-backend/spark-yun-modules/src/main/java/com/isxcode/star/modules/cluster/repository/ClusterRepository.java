@@ -10,10 +10,14 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 @CacheConfig(cacheNames = {ModuleCode.CLUSTER})
 public interface ClusterRepository extends JpaRepository<ClusterEntity, String> {
 
 	@Query("SELECT C FROM ClusterEntity C WHERE C.name LIKE %:searchKeyWord% OR C.remark LIKE %:searchKeyWord% order by C.createDateTime desc ")
 	Page<ClusterEntity> pageCluster(@Param("searchKeyWord") String searchKeyWord, Pageable pageable);
+
+	Optional<ClusterEntity> findByDefaultCluster(boolean defaultCluster);
 }

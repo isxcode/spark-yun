@@ -318,18 +318,18 @@ public class ClusterNodeBizService {
 		runAgentStartService.run(startAgentReq.getEngineNodeId(), scpFileEngineNodeDto, TENANT_ID.get(), USER_ID.get());
 	}
 
-  public void setDefaultClusterNode(SetDefaultClusterNodeReq setDefaultClusterNodeReq) {
+	public void setDefaultClusterNode(SetDefaultClusterNodeReq setDefaultClusterNodeReq) {
 
-    // 检测节点是否存在
-    ClusterNodeEntity clusterNode = clusterNodeService.getClusterNode(setDefaultClusterNodeReq.getClusterNodeId());
+		// 检测节点是否存在
+		ClusterNodeEntity clusterNode = clusterNodeService.getClusterNode(setDefaultClusterNodeReq.getClusterNodeId());
 
-    // 查询该集群下的所有节点
-    List<ClusterNodeEntity> allClusterNodes = clusterNodeRepository.findAllByClusterId(clusterNode.getClusterId());
-    allClusterNodes.forEach(e -> e.setDefaultClusterNode(false));
-    clusterNodeRepository.saveAll(allClusterNodes);
+		// 查询该集群下的所有节点
+		List<ClusterNodeEntity> allClusterNodes = clusterNodeRepository.findAllByClusterId(clusterNode.getClusterId());
+		allClusterNodes.forEach(e -> e.setDefaultClusterNode(false));
+		clusterNodeRepository.saveAll(allClusterNodes);
 
-    // 修改选中的为true
-    clusterNode.setDefaultClusterNode(true);
-    clusterNodeRepository.save(clusterNode);
-  }
+		// 修改选中的为true
+		clusterNode.setDefaultClusterNode(true);
+		clusterNodeRepository.save(clusterNode);
+	}
 }
