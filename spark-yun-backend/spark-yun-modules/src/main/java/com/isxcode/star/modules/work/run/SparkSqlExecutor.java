@@ -92,7 +92,7 @@ public class SparkSqlExecutor extends WorkExecutor {
 		// 检测计算集群是否存在
 		logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始申请资源 \n");
 		if (Strings.isEmpty(workRunContext.getClusterConfig().getClusterId())) {
-			throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "申请资源失败 : 计算引擎不存在  \n");
+			throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "申请资源失败 : 计算引擎未配置  \n");
 		}
 
 		// 检查计算集群是否存在

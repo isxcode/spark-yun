@@ -2,6 +2,8 @@ package com.isxcode.star.modules.cluster.repository;
 
 import com.isxcode.star.modules.cluster.entity.ClusterNodeEntity;
 import java.util.List;
+import java.util.Optional;
+
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,7 +17,7 @@ import org.springframework.stereotype.Repository;
 @CacheConfig(cacheNames = {"SY_ENGINE_NODE"})
 public interface ClusterNodeRepository extends JpaRepository<ClusterNodeEntity, String> {
 
-	Page<ClusterNodeEntity> findAllByClusterId(String clusterId, Pageable pageable);
+	Optional<ClusterNodeEntity> findByClusterIdAndDefaultClusterNode(String clusterId, boolean defaultClusterNode);
 
 	List<ClusterNodeEntity> findAllByClusterId(String clusterId);
 

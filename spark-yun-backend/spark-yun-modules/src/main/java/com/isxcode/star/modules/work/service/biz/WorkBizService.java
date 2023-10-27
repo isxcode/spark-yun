@@ -96,13 +96,15 @@ public class WorkBizService {
 		// 初始化脚本
 		if (WorkType.QUERY_SPARK_SQL.equals(addWorkReq.getWorkType())
 				|| WorkType.EXECUTE_JDBC_SQL.equals(addWorkReq.getWorkType())
-				|| WorkType.QUERY_JDBC_SQL.equals(addWorkReq.getWorkType())) {
-			workConfigService.initWorkScript(workConfig, WorkType.QUERY_SPARK_SQL);
+				|| WorkType.QUERY_JDBC_SQL.equals(addWorkReq.getWorkType())
+				|| WorkType.BASH.equals(addWorkReq.getWorkType()) || WorkType.PYTHON.equals(addWorkReq.getWorkType())) {
+			workConfigService.initWorkScript(workConfig, addWorkReq.getWorkType());
 		}
 
 		// 初始化计算引擎
 		if (WorkType.QUERY_SPARK_SQL.equals(addWorkReq.getWorkType())
-				|| WorkType.DATA_SYNC_JDBC.equals(addWorkReq.getWorkType())) {
+				|| WorkType.DATA_SYNC_JDBC.equals(addWorkReq.getWorkType())
+				|| WorkType.BASH.equals(addWorkReq.getWorkType()) || WorkType.PYTHON.equals(addWorkReq.getWorkType())) {
 			workConfigService.initClusterConfig(workConfig);
 		}
 

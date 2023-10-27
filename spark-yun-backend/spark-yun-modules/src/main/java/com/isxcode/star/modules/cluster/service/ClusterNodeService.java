@@ -29,14 +29,10 @@ public class ClusterNodeService {
 	 */
 	public String getDefaultAgentHomePath(String agentHomePath, String username) {
 
-		if (Strings.isEmpty(agentHomePath)) {
-			if ("root".equals(username)) {
-				return "/root";
-			} else {
-				return "/home/" + username;
-			}
+		if ("root".equals(username)) {
+			return "/root";
 		} else {
-			return agentHomePath;
+			return "/home/" + username;
 		}
 	}
 
