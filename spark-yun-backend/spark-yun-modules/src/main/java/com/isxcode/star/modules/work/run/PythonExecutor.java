@@ -39,9 +39,8 @@ public class PythonExecutor extends WorkExecutor {
 	private final ClusterRepository clusterRepository;
 
 	public PythonExecutor(WorkInstanceRepository workInstanceRepository,
-                        WorkflowInstanceRepository workflowInstanceRepository,
-                        ClusterNodeRepository clusterNodeRepository, ClusterNodeMapper clusterNodeMapper, AesUtils aesUtils,
-                        ClusterRepository clusterRepository) {
+			WorkflowInstanceRepository workflowInstanceRepository, ClusterNodeRepository clusterNodeRepository,
+			ClusterNodeMapper clusterNodeMapper, AesUtils aesUtils, ClusterRepository clusterRepository) {
 
 		super(workInstanceRepository, workflowInstanceRepository);
 		this.clusterNodeRepository = clusterNodeRepository;
@@ -101,9 +100,9 @@ public class PythonExecutor extends WorkExecutor {
 					clusterNode.getAgentHomePath() + "/zhiqingyun-agent/works/" + workInstance.getId() + ".py");
 
 			// 执行命令获取pid
-			String executeBashWorkCommand = "nohup python3 " + clusterNode.getAgentHomePath() + "/zhiqingyun-agent/works/"
-					+ workInstance.getId() + ".py >> " + clusterNode.getAgentHomePath() + "/zhiqingyun-agent/works/"
-					+ workInstance.getId() + ".log 2>&1 & echo $!";
+			String executeBashWorkCommand = "nohup python3 " + clusterNode.getAgentHomePath()
+					+ "/zhiqingyun-agent/works/" + workInstance.getId() + ".py >> " + clusterNode.getAgentHomePath()
+					+ "/zhiqingyun-agent/works/" + workInstance.getId() + ".log 2>&1 & echo $!";
 			String pid = executeCommand(scpFileEngineNodeDto, executeBashWorkCommand, false).replace("\n", "");
 
 			// 保存pid
