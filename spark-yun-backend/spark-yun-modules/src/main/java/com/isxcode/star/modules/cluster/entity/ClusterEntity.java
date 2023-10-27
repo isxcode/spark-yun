@@ -59,7 +59,7 @@ public class ClusterEntity {
 
 	private String clusterType;
 
-  private boolean defaultCluster;
+	private Boolean defaultCluster;
 
 	@CreatedDate
 	private LocalDateTime createDateTime;

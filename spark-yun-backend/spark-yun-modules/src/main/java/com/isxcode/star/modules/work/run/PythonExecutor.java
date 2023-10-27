@@ -2,7 +2,6 @@ package com.isxcode.star.modules.work.run;
 
 import com.isxcode.star.api.cluster.pojos.dto.ScpFileEngineNodeDto;
 import com.isxcode.star.api.instance.constants.InstanceStatus;
-import com.isxcode.star.api.main.properties.SparkYunProperties;
 import com.isxcode.star.api.work.constants.WorkLog;
 import com.isxcode.star.api.work.exceptions.WorkRunException;
 import com.isxcode.star.common.utils.AesUtils;
@@ -22,13 +21,14 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Optional;
 
-import static com.isxcode.star.common.utils.ssh.SshUtils.*;
+import static com.isxcode.star.common.utils.ssh.SshUtils.executeCommand;
+import static com.isxcode.star.common.utils.ssh.SshUtils.scpText;
 
 @Service
 @Slf4j
-public class BashExecutor extends WorkExecutor {
+public class PythonExecutor extends WorkExecutor {
 
 	private final ClusterNodeRepository clusterNodeRepository;
 
@@ -38,10 +38,10 @@ public class BashExecutor extends WorkExecutor {
 
 	private final ClusterRepository clusterRepository;
 
-	public BashExecutor(WorkInstanceRepository workInstanceRepository,
-			WorkflowInstanceRepository workflowInstanceRepository,
-			ClusterNodeRepository clusterNodeRepository, ClusterNodeMapper clusterNodeMapper, AesUtils aesUtils,
-			ClusterRepository clusterRepository) {
+	public PythonExecutor(WorkInstanceRepository workInstanceRepository,
+                        WorkflowInstanceRepository workflowInstanceRepository,
+                        ClusterNodeRepository clusterNodeRepository, ClusterNodeMapper clusterNodeMapper, AesUtils aesUtils,
+                        ClusterRepository clusterRepository) {
 
 		super(workInstanceRepository, workflowInstanceRepository);
 		this.clusterNodeRepository = clusterNodeRepository;

@@ -111,6 +111,9 @@ tasks.register('build_zhiqingyun', Tar) {
   from('zhiqingyun/logs') {
     into 'zhiqingyun/logs'
   }
+  from('zhiqingyun/works') {
+    into 'zhiqingyun/works'
+  }
   from(rootDir.getAbsolutePath() + '/spark-yun-backend/spark-yun-main/build/libs/zhiqingyun.jar') {
     into 'zhiqingyun/lib'
   }

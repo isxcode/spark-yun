@@ -70,6 +70,8 @@ public class WorkInstanceEntity {
 
 	private Boolean quartzHasRun;
 
+	private String workPid;
+
 	@CreatedDate
 	private LocalDateTime createDateTime;
 

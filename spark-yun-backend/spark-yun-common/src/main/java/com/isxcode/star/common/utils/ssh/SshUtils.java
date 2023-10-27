@@ -126,4 +126,51 @@ public class SshUtils {
 			return output.toString();
 		}
 	}
+
+	/** scp传递文本. */
+	public static void scpText(ScpFileEngineNodeDto engineNode, String content, String dstPath)
+			throws JSchException, SftpException, InterruptedException {
+
+		// 初始化jsch
+		JSch jsch = new JSch();
+
+		if (engineNode.getPasswd().length() > 1000) {
+			jsch.addIdentity(engineNode.getUsername(), engineNode.getPasswd().getBytes(), null, null);
+		}
+
+		Session session = jsch.getSession(engineNode.getUsername(), engineNode.getHost(),
+				Integer.parseInt(engineNode.getPort()));
+
+		// 连接远程服务器
+		if (engineNode.getPasswd().length() < 1000) {
+			session.setPassword(engineNode.getPasswd());
+		}
+
+		session.setConfig("StrictHostKeyChecking", "no");
+		session.connect();
+
+		// 上传文件
+		ChannelSftp channel;
+		channel = (ChannelSftp) session.openChannel("sftp");
+		channel.connect(120000);
+		InputStream inputStream = new ByteArrayInputStream(content.getBytes());
+		channel.put(inputStream, dstPath);
+
+		// 文件校验
+		SftpATTRS attrs;
+		while (true) {
+			attrs = channel.stat(dstPath);
+			if (attrs != null) {
+				long remoteFileSize = attrs.getSize();
+				long localFileSize = content.getBytes().length;
+				if (remoteFileSize == localFileSize) {
+					break;
+				}
+			}
+			Thread.sleep(1000);
+		}
+
+		channel.disconnect();
+		session.disconnect();
+	}
 }
