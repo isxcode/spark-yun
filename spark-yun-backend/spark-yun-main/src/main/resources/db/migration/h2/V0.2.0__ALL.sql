@@ -46,4 +46,12 @@ alter table SY_WORK_CONFIG
 
 -- 添加spark_home_path
 alter table SY_CLUSTER_NODE
-    add spark_home_path varchar(200) null comment 'standalone模式spark的安装目录' after hadoop_home_path;
+    add spark_home_path varchar(200) null comment 'standalone模式spark的安装目录' after hadoop_home_path;;
+
+-- 添加默认集群
+alter table SY_CLUSTER
+    add default_cluster boolean null comment '默认计算集群' after used_storage_num;
+
+-- 添加默认集群节点
+alter table SY_CLUSTER_NODE
+    add default_cluster_node boolean null comment '默认集群节点' after spark_home_path;

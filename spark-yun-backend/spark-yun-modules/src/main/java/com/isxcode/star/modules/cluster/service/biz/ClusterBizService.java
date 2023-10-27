@@ -123,4 +123,19 @@ public class ClusterBizService {
 		cluster.setCheckDateTime(LocalDateTime.now());
 		clusterRepository.saveAndFlush(cluster);
 	}
+
+  public void setDefaultCluster(SetDefaultClusterReq setDefaultClusterReq) {
+
+    // 检查集群是否存在
+    ClusterEntity cluster = clusterService.getCluster(setDefaultClusterReq.getClusterId());
+
+    // 将租户下的所有其他集群的默认集群变为false
+    List<ClusterEntity> clusterEntities = clusterRepository.findAll();
+    clusterEntities.forEach(e -> e.setDefaultCluster(false));
+    clusterRepository.saveAll(clusterEntities);
+
+    // 将指定的集群的默认集群变为true
+    cluster.setDefaultCluster(true);
+    clusterRepository.save(cluster);
+  }
 }
