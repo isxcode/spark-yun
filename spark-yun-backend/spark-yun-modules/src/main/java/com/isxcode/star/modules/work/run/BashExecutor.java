@@ -2,7 +2,6 @@ package com.isxcode.star.modules.work.run;
 
 import com.isxcode.star.api.cluster.pojos.dto.ScpFileEngineNodeDto;
 import com.isxcode.star.api.instance.constants.InstanceStatus;
-import com.isxcode.star.api.main.properties.SparkYunProperties;
 import com.isxcode.star.api.work.constants.WorkLog;
 import com.isxcode.star.api.work.exceptions.WorkRunException;
 import com.isxcode.star.common.utils.AesUtils;
@@ -39,9 +38,8 @@ public class BashExecutor extends WorkExecutor {
 	private final ClusterRepository clusterRepository;
 
 	public BashExecutor(WorkInstanceRepository workInstanceRepository,
-			WorkflowInstanceRepository workflowInstanceRepository,
-			ClusterNodeRepository clusterNodeRepository, ClusterNodeMapper clusterNodeMapper, AesUtils aesUtils,
-			ClusterRepository clusterRepository) {
+			WorkflowInstanceRepository workflowInstanceRepository, ClusterNodeRepository clusterNodeRepository,
+			ClusterNodeMapper clusterNodeMapper, AesUtils aesUtils, ClusterRepository clusterRepository) {
 
 		super(workInstanceRepository, workflowInstanceRepository);
 		this.clusterNodeRepository = clusterNodeRepository;
