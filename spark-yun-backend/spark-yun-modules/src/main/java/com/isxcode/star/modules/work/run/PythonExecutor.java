@@ -58,7 +58,7 @@ public class PythonExecutor extends WorkExecutor {
 		// 判断执行脚本是否为空
 		logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("检测脚本内容 \n");
 		if (Strings.isEmpty(workRunContext.getScript())) {
-			throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "检测脚本失败 : BASH内容为空不能执行  \n");
+			throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "检测脚本失败 : PYTHON内容为空不能执行  \n");
 		}
 
 		// 检测计算集群是否存在
@@ -97,12 +97,12 @@ public class PythonExecutor extends WorkExecutor {
 		scpFileEngineNodeDto.setPasswd(aesUtils.decrypt(scpFileEngineNodeDto.getPasswd()));
 		try {
 			// 上传脚本
-			scpText(scpFileEngineNodeDto, workRunContext.getScript() + "\necho 'zhiqingyun_success'",
-					clusterNode.getAgentHomePath() + "/zhiqingyun-agent/works/" + workInstance.getId() + ".sh");
+			scpText(scpFileEngineNodeDto, workRunContext.getScript() + "\nprint('zhiqingyun_success')",
+					clusterNode.getAgentHomePath() + "/zhiqingyun-agent/works/" + workInstance.getId() + ".py");
 
 			// 执行命令获取pid
-			String executeBashWorkCommand = "nohup sh " + clusterNode.getAgentHomePath() + "/zhiqingyun-agent/works/"
-					+ workInstance.getId() + ".sh >> " + clusterNode.getAgentHomePath() + "/zhiqingyun-agent/works/"
+			String executeBashWorkCommand = "nohup python3 " + clusterNode.getAgentHomePath() + "/zhiqingyun-agent/works/"
+					+ workInstance.getId() + ".py >> " + clusterNode.getAgentHomePath() + "/zhiqingyun-agent/works/"
 					+ workInstance.getId() + ".log 2>&1 & echo $!";
 			String pid = executeCommand(scpFileEngineNodeDto, executeBashWorkCommand, false).replace("\n", "");
 
