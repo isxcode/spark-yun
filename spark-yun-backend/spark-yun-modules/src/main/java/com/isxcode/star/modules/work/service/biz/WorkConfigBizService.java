@@ -1,14 +1,15 @@
 package com.isxcode.star.modules.work.service.biz;
 
 import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.TypeReference;
 import com.isxcode.star.api.work.constants.SetMode;
-import com.isxcode.star.api.work.constants.WorkType;
 import com.isxcode.star.api.work.pojos.req.ConfigWorkReq;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.star.modules.work.entity.WorkConfigEntity;
 import com.isxcode.star.modules.work.entity.WorkEntity;
 import com.isxcode.star.modules.work.repository.WorkConfigRepository;
 
+import java.util.Map;
 import java.util.Optional;
 import javax.transaction.Transactional;
 
@@ -19,6 +20,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.scheduling.support.CronExpression;
 import org.springframework.stereotype.Service;
+
+import static com.fasterxml.jackson.databind.type.LogicalType.Map;
 
 /**
  * 用户模块接口的业务逻辑.
@@ -46,15 +49,31 @@ public class WorkConfigBizService {
 
 	public void configWork(ConfigWorkReq wocConfigWorkReq) {
 
-		WorkEntity work = workService.getWorkEntity(wocConfigWorkReq.getWorkId());
-
-		// 如果作业是spark，且是高级模式，检查用户的json格式
-		if (WorkType.QUERY_SPARK_SQL.equals(work.getWorkType())
-				&& SetMode.ADVANCE.equals(wocConfigWorkReq.getClusterConfig().getSetMode())
-				&& wocConfigWorkReq.getClusterConfig().getSparkConfig() != null
-				&& !JSON.isValid(String.valueOf(wocConfigWorkReq.getClusterConfig().getSparkConfig()))) {
-			throw new IsxAppException("500", "sparkConfig中json格式不合法");
+		// 先转换sparkConfigJson和sqlConfigJson
+		try {
+			if (wocConfigWorkReq.getClusterConfig() != null
+					&& !Strings.isEmpty(wocConfigWorkReq.getClusterConfig().getSparkConfigJson())) {
+				wocConfigWorkReq.getClusterConfig()
+						.setSparkConfig(JSON.parseObject(wocConfigWorkReq.getClusterConfig().getSparkConfigJson(),
+								new TypeReference<Map<String, String>>() {
+								}));
+			}
+		} catch (Exception e) {
+			throw new IsxAppException("集群spark配置json格式不合法");
 		}
+
+		try {
+			if (wocConfigWorkReq.getSyncRule() != null
+					&& !Strings.isEmpty(wocConfigWorkReq.getSyncRule().getSqlConfigJson())) {
+				wocConfigWorkReq.getSyncRule().setSqlConfig(JSON.parseObject(
+						wocConfigWorkReq.getSyncRule().getSqlConfigJson(), new TypeReference<Map<String, String>>() {
+						}));
+			}
+		} catch (Exception e) {
+			throw new IsxAppException("数据同步sqlConfig配置json格式不合法");
+		}
+
+		WorkEntity work = workService.getWorkEntity(wocConfigWorkReq.getWorkId());
 
 		WorkConfigEntity workConfig = workConfigService.getWorkConfigEntity(work.getConfigId());
 
@@ -74,7 +93,7 @@ public class WorkConfigBizService {
 
 		// 用户更新数据源
 		if (!Strings.isEmpty(wocConfigWorkReq.getDatasourceId())) {
-			workConfig.setClusterConfig(wocConfigWorkReq.getDatasourceId());
+			workConfig.setDatasourceId(wocConfigWorkReq.getDatasourceId());
 		}
 
 		// 用户更新数据同步

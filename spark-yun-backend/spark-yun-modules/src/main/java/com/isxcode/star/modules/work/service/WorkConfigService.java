@@ -52,19 +52,19 @@ public class WorkConfigService {
 
 		switch (workType) {
 			case WorkType.QUERY_SPARK_SQL :
-				workConfig.setScript("-- show databases");
+				workConfig.setScript("show databases");
 				break;
 			case WorkType.QUERY_JDBC_SQL :
-				workConfig.setScript("-- show databases");
+				workConfig.setScript("show databases");
 				break;
 			case WorkType.EXECUTE_JDBC_SQL :
-				workConfig.setScript("-- show databases");
+				workConfig.setScript("show databases");
 				break;
 			case WorkType.BASH :
-				workConfig.setScript("#!/bin/bash");
+				workConfig.setScript("#!/bin/bash \n" + "\n" + "pwd");
 				break;
 			case WorkType.PYTHON :
-				workConfig.setScript("println('hello world')");
+				workConfig.setScript("print('hello world')");
 				break;
 		}
 	}

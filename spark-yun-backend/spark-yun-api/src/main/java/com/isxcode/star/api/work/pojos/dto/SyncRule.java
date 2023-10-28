@@ -27,4 +27,6 @@ public class SyncRule {
 	private String upperBound;
 
 	private Map<String, String> sqlConfig;
+
+	private String sqlConfigJson;
 }

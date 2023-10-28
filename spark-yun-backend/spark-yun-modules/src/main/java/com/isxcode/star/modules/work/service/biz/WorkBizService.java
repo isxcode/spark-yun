@@ -87,7 +87,7 @@ public class WorkBizService {
 
 	private final WorkConfigMapper workConfigMapper;
 
-	public void addWork(AddWorkReq addWorkReq) {
+	public GetWorkRes addWork(AddWorkReq addWorkReq) {
 
 		WorkEntity work = workMapper.addWorkReqToWorkEntity(addWorkReq);
 
@@ -122,6 +122,9 @@ public class WorkBizService {
 		work.setStatus(WorkStatus.UN_PUBLISHED);
 
 		workRepository.save(work);
+
+		// 返回work内容
+		return getWork(GetWorkReq.builder().workId(work.getId()).build());
 	}
 
 	@Transactional
@@ -371,10 +374,13 @@ public class WorkBizService {
 
 		if (!Strings.isEmpty(workConfig.getClusterConfig())) {
 			getWorkRes.setClusterConfig(JSON.parseObject(workConfig.getClusterConfig(), ClusterConfig.class));
+			getWorkRes.getClusterConfig()
+					.setSparkConfigJson(JSON.toJSONString(getWorkRes.getClusterConfig().getSparkConfig()));
 		}
 
 		if (!Strings.isEmpty(workConfig.getSyncRule())) {
 			getWorkRes.setSyncRule(JSON.parseObject(workConfig.getSyncRule(), SyncRule.class));
+			getWorkRes.getSyncRule().setSqlConfigJson(JSON.toJSONString(getWorkRes.getSyncRule().getSqlConfig()));
 		}
 
 		return getWorkRes;
