@@ -153,6 +153,12 @@ export const PointColConfigs: colConfig[] = [
     customSlot: 'statusTag'
   },
   {
+    prop: 'defaultClusterNode',
+    title: '是否默认节点',
+    minWidth: 120,
+    customSlot: 'defaultNodeTag'
+  },
+  {
     prop: 'checkDateTime',
     title: '检测时间',
     minWidth: 140
