@@ -194,6 +194,12 @@ function initData(id?: string) {
                 item.hide = status === 'FAIL' ? true : false
               }
             })
+          } else if (['BASH', 'PYTHON'].includes(workConfig.workType)) {
+            tabList.forEach((item: any) => {
+              if (!['ReturnData'].includes(item.code)) {
+                item.hide = false
+              }
+            })
           }
         })
       })
