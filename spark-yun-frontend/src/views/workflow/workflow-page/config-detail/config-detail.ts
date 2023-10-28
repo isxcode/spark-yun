@@ -80,6 +80,13 @@ export const ClusterConfigRules = {
             message: '请选择计算集群',
             trigger: ['blur', 'change']
         }
+    ],
+    clusterNodeId: [
+        {
+            required: true,
+            message: '请选择集群节点',
+            trigger: ['blur', 'change']
+        }
     ]
 }
 export const CronConfigRules = {

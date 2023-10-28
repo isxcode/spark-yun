@@ -55,6 +55,16 @@
                     />
                   </el-select>
                 </el-form-item>
+                <el-form-item label="集群节点" prop="clusterNodeId" v-if="['BASH', 'PYTHON'].includes(workItemConfig.workType)">
+                  <el-select v-model="clusterConfig.clusterNodeId" placeholder="请选择" @visible-change="getClusterNodeList">
+                    <el-option
+                      v-for="item in clusterNodeList"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value"
+                    />
+                  </el-select>
+                </el-form-item>
                 <el-form-item label="sparkConfig" v-if="clusterConfig.setMode === 'ADVANCE'">
                   <code-mirror v-model="clusterConfig.sparkConfig" basic :lang="lang"/>
                 </el-form-item>
@@ -292,12 +302,13 @@ import {json} from '@codemirror/lang-json'
 import {sql} from '@codemirror/lang-sql'
 import CodeMirror from 'vue-codemirror6'
 import { GetWorkItemConfig, SaveWorkItemConfig } from '@/services/workflow.service';
-import { GetComputerGroupList } from '@/services/computer-group.service';
+import { GetComputerGroupList, GetComputerPointData } from '@/services/computer-group.service';
 import { GetDatasourceList } from '@/services/datasource.service'
 
 const scheduleRange = ref(ScheduleRange);
 const weekDateList = ref(WeekDateList)
 const clusterList = ref([])  // 计算集群
+const clusterNodeList = ref([])  // 集群节点
 const dataSourceList = ref([])
 const dayList = ref()
 const lang = ref<any>(json())
@@ -335,6 +346,7 @@ let clusterConfig = reactive({
   setMode: '',       // 模式
   resourceLevel: '',        // 资源等级
   clusterId: '',            // 计算集群
+  clusterNodeId: '',        // 集群节点
   sparkConfig: ''
 })
 // 定时配置
@@ -413,7 +425,7 @@ function getConfigDetailData() {
   GetWorkItemConfig({
       workId: workItemConfig.value.id
   }).then((res: any) => {
-    if (res.data.datasourceId) {
+    if (['QUERY_JDBC', 'EXE_JDBC'].includes(workItemConfig.value.workType)) {
       dataSourceForm.datasourceId = res.data.datasourceId
     }
     if (res.data.clusterConfig) {
@@ -455,7 +467,7 @@ function okEvent() {
     if (status) {
       SaveWorkItemConfig({
         workId: workItemConfig.value.id,
-        datasourceId: dataSourceForm.datasourceId,
+        datasourceId: dataSourceForm.datasourceId || undefined,
         clusterConfig: clusterConfig,
         cronConfig: {
           ...cronConfig,
@@ -535,9 +547,29 @@ function getClusterList() {
         value: item.id
       }
     })
+    getClusterNodeList()
   }).catch(() => {
     clusterList.value = []
   })
+}
+function getClusterNodeList(e: boolean) {
+  if (e && clusterConfig.clusterId) {
+    GetComputerPointData({
+      page: 0,
+      pageSize: 10000,
+      searchKeyWord: '',
+      clusterId: clusterConfig.clusterId
+    }).then((res: any) => {
+      clusterNodeList.value = res.data.content.map((item: any) => {
+        return {
+          label: item.name,
+          value: item.id
+        }
+      })
+    }).catch(() => {
+      clusterNodeList.value = []
+    })
+  }
 }
 function getDataSourceList() {
   GetDatasourceList({
