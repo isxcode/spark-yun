@@ -51,7 +51,7 @@
               <span class="btn-text">定位</span>
             </div>
           </div>
-          <code-mirror v-model="sqltextData" basic :lang="lang" />
+          <code-mirror v-model="sqltextData" basic :lang="workConfig.workType === 'PYTHON' ? pythonLang : lang" />
         </div>
         <div class="log-show">
           <el-tabs v-model="activeName" @tab-change="tabChangeEvent">
@@ -81,6 +81,7 @@ import RunningLog from './running-log.vue'
 import TotalDetail from './total-detail.vue'
 import CodeMirror from 'vue-codemirror6'
 import { sql } from '@codemirror/lang-sql'
+import { python } from '@codemirror/lang-python'
 
 import { GetWorkItemConfig, RunWorkItemConfig, SaveWorkItemConfig, TerWorkItemConfig } from '@/services/workflow.service'
 import { ElMessage } from 'element-plus'
@@ -97,6 +98,7 @@ const props = defineProps<{
 }>()
 
 const lang = ref(sql())
+const pythonLang = ref(python())
 const loading = ref(false)
 const networkError = ref(false)
 const runningLoading = ref(false)
@@ -172,6 +174,7 @@ function initData(id?: string) {
   })
     .then((res: any) => {
       workConfig = res.data
+      workConfig.workType = props.workItemConfig.workType
       sqltextData.value = res.data.script
       nextTick(() => {
         containerInstanceRef.value.initData(id || instanceId.value, (status: string) => {
