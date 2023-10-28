@@ -1,0 +1,25 @@
+html {
+  color-scheme: light;
+  --sk-color-home-primary: #00d980;
+  --sk-color-home-bgc: #ffffff;
+  --sk-box-show: 0 23px 40px rgba(0, 0, 0, 0.2);
+  --sk-color-cark-bgc: #f7f7f7;
+  --sk-color-font-white: #ffffff;
+  // 灰色字体
+  --sk-color-font-gray: #929292;
+  // 灰色字体 hover 加黑
+  --sk-color-font-gray-hover: #333333;
+}
+
+html.dark {
+  color-scheme: dark;
+  --sk-color-home-primary: #00d980;
+  --sk-color-home-bgc: #ffffff;
+  --sk-box-show: 0 23px 40px rgba(0, 0, 0, 0.2);
+  --sk-color-cark-bgc: #f7f7f7;
+  --sk-color-font-white: #333333;
+  // 灰色字体  黑夜模式
+  --sk-color-font-gray: #929292;
+  // 灰色字体 hover 黑夜模式
+  --sk-color-font-gray-hover: #ffffff;
+}
