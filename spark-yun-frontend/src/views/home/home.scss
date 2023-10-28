@@ -7,6 +7,11 @@
 
     .zqy-home__sidebar {
       width: 96px;
+      .zqy-home__nav {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
     }
 
     .zqy-home__main {
@@ -22,6 +27,10 @@
 
     .zqy-home__menu-wrap {
       padding-bottom: 100px;
+    }
+
+    .zqy-home__title {
+      display: none;
     }
   }
 
