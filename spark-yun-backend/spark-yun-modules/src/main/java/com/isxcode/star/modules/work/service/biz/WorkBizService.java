@@ -358,7 +358,7 @@ public class WorkBizService {
 		}
 
 		if (!Strings.isEmpty(workConfig.getScript())) {
-			getWorkRes.setDatasourceId(workConfig.getScript());
+			getWorkRes.setScript(workConfig.getScript());
 		}
 
 		if (!Strings.isEmpty(workConfig.getCronConfig())) {
