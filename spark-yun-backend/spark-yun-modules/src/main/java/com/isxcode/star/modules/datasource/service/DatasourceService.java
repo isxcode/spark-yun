@@ -26,49 +26,7 @@ public class DatasourceService {
 	public void loadDriverClass(String datasourceType) {
 
 		try {
-			switch (datasourceType) {
-				case DatasourceType.MYSQL :
-					Class.forName(DatasourceDriver.MYSQL_DRIVER);
-					break;
-				case DatasourceType.ORACLE :
-					Class.forName(DatasourceDriver.ORACLE_DRIVER);
-					break;
-				case DatasourceType.SQL_SERVER :
-					Class.forName(DatasourceDriver.SQL_SERVER_DRIVER);
-					break;
-				case DatasourceType.DORIS :
-					Class.forName(DatasourceDriver.DORIS_DRIVER);
-					break;
-				case DatasourceType.POSTGRE_SQL :
-					Class.forName(DatasourceDriver.POSTGRE_SQL_DRIVER);
-					break;
-				case DatasourceType.CLICKHOUSE :
-					Class.forName(DatasourceDriver.CLICKHOUSE_DRIVER);
-					break;
-				case DatasourceType.HANA_SAP :
-					Class.forName(DatasourceDriver.HANA_SAP_DRIVER);
-					break;
-				case DatasourceType.HIVE :
-					Class.forName(DatasourceDriver.HIVE_DRIVER);
-					break;
-				case DatasourceType.DM :
-					Class.forName(DatasourceDriver.DM_DRIVER);
-					break;
-				case DatasourceType.OCEANBASE :
-					Class.forName(DatasourceDriver.OCEAN_BASE_DRIVER);
-					break;
-				case DatasourceType.TIDB :
-					Class.forName(DatasourceDriver.TIDB_DRIVER);
-					break;
-				case DatasourceType.DB2 :
-					Class.forName(DatasourceDriver.DB2_DRIVER);
-					break;
-				case DatasourceType.STAR_ROCKS :
-					Class.forName(DatasourceDriver.STAR_ROCKS_DRIVER);
-					break;
-				default :
-					throw new IsxAppException("数据源暂不支持");
-			}
+			Class.forName(getDriverClass(datasourceType));
 		} catch (ClassNotFoundException e) {
 			log.error(e.getMessage());
 			throw new IsxAppException("找不到对应驱动");
