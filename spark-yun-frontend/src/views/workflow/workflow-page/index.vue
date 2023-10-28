@@ -333,7 +333,12 @@ function addData() {
                     ElMessage.success(res.msg)
                     initData()
                     resolve()
-                    showWorkConfig({ ...res.data, workType: formData.workType })
+                    
+                    showWorkConfig({
+                        id: res.data.workId,
+                        name: res.data.name,
+                        workType: formData.workType
+                    })
                 })
                 .catch((error: any) => {
                     reject(error)
