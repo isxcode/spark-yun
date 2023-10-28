@@ -66,7 +66,7 @@
                   </el-select>
                 </el-form-item>
                 <el-form-item label="sparkConfig" v-if="clusterConfig.setMode === 'ADVANCE'">
-                  <code-mirror v-model="clusterConfig.sparkConfig" basic :lang="lang"/>
+                  <code-mirror v-model="clusterConfig.sparkConfigJson" basic :lang="lang"/>
                 </el-form-item>
                 <el-form-item label="资源等级" v-else>
                   <el-select v-model="clusterConfig.resourceLevel" placeholder="请选择">
@@ -266,7 +266,7 @@
                 </el-radio-group>
               </el-form-item>
               <el-form-item label="sqlConfig" v-if="syncRule.setMode === 'ADVANCE'">
-                <code-mirror v-model="syncRule.sqlConfig" basic :lang="sqllang"/>
+                <code-mirror v-model="syncRule.sqlConfigJson" basic :lang="sqllang"/>
               </el-form-item>
               <template v-else>
                 <el-form-item label="分区数">
@@ -347,7 +347,8 @@ let clusterConfig = reactive({
   resourceLevel: '',        // 资源等级
   clusterId: '',            // 计算集群
   clusterNodeId: '',        // 集群节点
-  sparkConfig: ''
+  // sparkConfig: '',
+  sparkConfigJson: ''
 })
 // 定时配置
 let cronConfig = reactive({
@@ -372,7 +373,8 @@ let syncRule = reactive({
   setMode: '',       // 模式
   numPartitions: undefined,     // 分区数
   numConcurrency: undefined,    // 并发数
-  sqlConfig: ''
+  // sqlConfig: '',
+  sqlConfigJson: ''
 })
 const dataSourceRules = reactive<FormRules>(DataSourceRules)
 const clusterConfigRules = reactive<FormRules>(ClusterConfigRules)
