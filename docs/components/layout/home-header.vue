@@ -11,11 +11,7 @@
       </div>
       <div class="center">
         <div class="menu">
-          <div
-            class="menu-item"
-            v-for="item in menuData"
-            @click="handleMenuClick(item.path)"
-          >
+          <div class="menu-item" v-for="(item, index) in menuData" @click="handleMenuClick(item.path)" :key="index">
             {{ item.title }}
           </div>
         </div>
@@ -28,6 +24,7 @@
 </template>
 
 <script setup lang="ts">
+
 defineComponent("LayoutHomeHeader");
 const headerRef = ref<HTMLElement | null>(null);
 
