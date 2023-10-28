@@ -62,6 +62,16 @@
               </el-tag>
             </div>
           </template>
+          <template #defaultNodeTag="scopeSlot">
+            <div class="btn-group">
+              <el-tag v-if="scopeSlot.row.defaultClusterNode" class="ml-2" type="success">
+                是
+              </el-tag>
+              <el-tag v-if="!scopeSlot.row.defaultClusterNode" class="ml-2" type="danger">
+                否
+              </el-tag>
+            </div>
+          </template>
           <template #options="scopeSlot">
             <div class="btn-group">
               <span @click="showLog(scopeSlot.row)">日志</span>
@@ -80,6 +90,9 @@
                     </el-dropdown-item>
                     <el-dropdown-item @click="checkData(scopeSlot.row)">
                       检测
+                    </el-dropdown-item>
+                    <el-dropdown-item @click="setDefaultNode(scopeSlot.row)">
+                      设置默认节点
                     </el-dropdown-item>
                     <el-dropdown-item @click="installData(scopeSlot.row)">
                       安装
@@ -125,7 +138,8 @@ import {
   StopComputerPointData,
   StartComputerPointData,
   EditComputerPointData,
-  CleanComputerPointData
+  CleanComputerPointData,
+SetDefaultComputerPointNode
 } from '@/services/computer-group.service'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useRoute } from 'vue-router'
@@ -309,6 +323,20 @@ function checkData(data: any) {
     .catch(() => {
       data.checkLoading = false
     })
+}
+
+// 设置默认节点
+function setDefaultNode(data: any) {
+  SetDefaultComputerPointNode({
+    clusterNodeId: data.id
+  }).then((res: any) => {
+    data.checkLoading = false
+    ElMessage.success(res.msg)
+    initData(true)
+  })
+  .catch(() => {
+    data.checkLoading = false
+  })
 }
 
 // 删除
