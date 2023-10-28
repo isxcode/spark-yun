@@ -39,7 +39,7 @@
                 :model="clusterConfig"
                 :rules="clusterConfigRules"
               >
-                <el-form-item label="模式">
+                <el-form-item label="模式" v-if="!['BASH', 'PYTHON'].includes(workItemConfig.workType)">
                   <el-radio-group v-model="clusterConfig.setMode" size="small">
                     <el-radio-button label="SIMPLE">简易</el-radio-button>
                     <el-radio-button label="ADVANCE">高级定义</el-radio-button>
