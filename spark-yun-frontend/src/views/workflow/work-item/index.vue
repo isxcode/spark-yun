@@ -63,7 +63,9 @@
         </div>
       </div>
     </LoadingPage>
-    <ConfigModal ref="configModalRef" />
+    <!-- <ConfigModal ref="configModalRef" /> -->
+    <!-- 配置 -->
+    <config-detail ref="configDetailRef"></config-detail>
   </div>
 </template>
 
@@ -71,7 +73,8 @@
 import { reactive, ref, onMounted, markRaw } from 'vue'
 import Breadcrumb from '@/layout/bread-crumb/index.vue'
 import LoadingPage from '@/components/loading/index.vue'
-import ConfigModal from './config-modal/index.vue'
+// import ConfigModal from './config-modal/index.vue'
+import ConfigDetail from '../workflow-page/config-detail/index.vue'
 import PublishLog from './publish-log.vue'
 import ReturnData from './return-data.vue'
 import RunningLog from './running-log.vue'
@@ -99,7 +102,8 @@ const networkError = ref(false)
 const runningLoading = ref(false)
 const saveLoading = ref(false)
 const terLoading = ref(false)
-const configModalRef = ref(null)
+// const configModalRef = ref(null)
+const configDetailRef = ref()
 const activeName = ref()
 const currentTab = ref()
 const sqltextData = ref('')
@@ -168,7 +172,7 @@ function initData(id?: string) {
   })
     .then((res: any) => {
       workConfig = res.data
-      sqltextData.value = res.data.sqlScript
+      sqltextData.value = res.data.script
       nextTick(() => {
         containerInstanceRef.value.initData(id || instanceId.value, (status: string) => {
           // 运行结束
@@ -272,12 +276,12 @@ function terWorkData() {
 function saveData() {
   saveLoading.value = true
   SaveWorkItemConfig({
-    sqlScript: sqltextData.value,
+    script: sqltextData.value,
     workId: props.workItemConfig.id,
     datasourceId: workConfig.datasourceId,
-    sparkConfig: workConfig.sparkConfig,
-    clusterId: workConfig.clusterId,
-    corn: workConfig.corn
+    // sparkConfig: workConfig.sparkConfig,
+    // clusterId: workConfig.clusterId,
+    // corn: workConfig.corn
   })
     .then((res: any) => {
       ElMessage.success(res.msg)
@@ -290,26 +294,27 @@ function saveData() {
 
 // 配置打开
 function setConfigData() {
-  configModalRef.value.showModal((formData: any) => {
-    return new Promise((resolve: any, reject: any) => {
-      SaveWorkItemConfig({
-        sqlScript: sqltextData.value,
-        workId: props.workItemConfig.id,
-        datasourceId: formData.datasourceId,
-        clusterId: formData.clusterId,
-        sparkConfig: formData.sparkConfig,
-        corn: formData.corn,
-      })
-        .then((res: any) => {
-          ElMessage.success(res.msg)
-          initData()
-          resolve()
-        })
-        .catch((error: any) => {
-          reject(error)
-        })
-    })
-  }, workConfig)
+  configDetailRef.value.showModal(props.workItemConfig)
+  // configModalRef.value.showModal((formData: any) => {
+  //   return new Promise((resolve: any, reject: any) => {
+  //     SaveWorkItemConfig({
+  //       sqlScript: sqltextData.value,
+  //       workId: props.workItemConfig.id,
+  //       // datasourceId: formData.datasourceId,
+  //       // clusterId: formData.clusterId,
+  //       // sparkConfig: formData.sparkConfig,
+  //       // corn: formData.corn,
+  //     })
+  //       .then((res: any) => {
+  //         ElMessage.success(res.msg)
+  //         initData()
+  //         resolve()
+  //       })
+  //       .catch((error: any) => {
+  //         reject(error)
+  //       })
+  //   })
+  // }, workConfig)
 }
 
 onMounted(() => {
