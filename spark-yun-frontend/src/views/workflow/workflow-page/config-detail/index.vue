@@ -448,6 +448,8 @@ function getConfigDetailData() {
     clusterConfig.setMode = clusterConfig.setMode || 'SIMPLE'
     cronConfig.setMode = cronConfig.setMode || 'SIMPLE'
     syncRule.setMode = syncRule.setMode || 'SIMPLE'
+
+    getClusterNodeList(true)
   }).catch((err: any) => {
     console.error(err)
   })
@@ -549,7 +551,6 @@ function getClusterList() {
         value: item.id
       }
     })
-    getClusterNodeList()
   }).catch(() => {
     clusterList.value = []
   })
