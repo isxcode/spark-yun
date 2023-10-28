@@ -33,9 +33,9 @@ public class WorkController {
 	@Operation(summary = "添加作业接口")
 	@PostMapping("/addWork")
 	@SuccessResponse("创建成功")
-	public void addWork(@Valid @RequestBody AddWorkReq addWorkReq) {
+	public GetWorkRes addWork(@Valid @RequestBody AddWorkReq addWorkReq) {
 
-		workBizService.addWork(addWorkReq);
+		return workBizService.addWork(addWorkReq);
 	}
 
 	@Operation(summary = "更新作业接口")

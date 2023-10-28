@@ -25,4 +25,6 @@ public class ClusterConfig {
 	private String clusterNodeId;
 
 	private Map<String, String> sparkConfig;
+
+	private String sparkConfigJson;
 }
