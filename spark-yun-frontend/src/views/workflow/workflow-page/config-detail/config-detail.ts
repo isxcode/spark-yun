@@ -64,7 +64,15 @@ export const ResourceLevelOptions = [
         value: 'LOW',
     }
 ]
-
+export const DataSourceRules = {
+    datasourceId: [
+        {
+            required: true,
+            message: '请选择数据源',
+            trigger: ['blur', 'change']
+        }
+    ]
+}
 export const ClusterConfigRules = {
     clusterId: [
         {

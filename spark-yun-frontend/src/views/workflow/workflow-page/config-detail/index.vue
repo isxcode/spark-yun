@@ -2,39 +2,23 @@
   <BlockDrawer :drawer-config="drawerConfig">
     <el-scrollbar>
         <div class="work-flow-config">
-          <!-- 资源配置 -->
-          <div class="config-item">
-            <div class="item-title">资源配置</div>
+          <!-- 数据源配置 -->
+          <div class="config-item" v-if="['QUERY_JDBC', 'EXE_JDBC'].includes(workItemConfig.workType)">
+            <div class="item-title">数据源配置</div>
             <el-form
-              ref="clusterConfigForm"
+              ref="dataSourceConfig"
               label-position="left"
               label-width="120px"
-              :model="clusterConfig"
-              :rules="clusterConfigRules"
+              :model="dataSourceForm"
+              :rules="dataSourceRules"
             >
-              <el-form-item label="模式">
-                <el-radio-group v-model="clusterConfig.setMode" size="small">
-                  <el-radio-button label="SIMPLE">简易</el-radio-button>
-                  <el-radio-button label="ADVANCE">高级定义</el-radio-button>
-                </el-radio-group>
-              </el-form-item>
-              <el-form-item label="计算集群" prop="clusterId">
-                <el-select v-model="clusterConfig.clusterId" placeholder="请选择">
+              <el-form-item label="数据源" prop="datasourceId">
+                <el-select
+                  v-model="dataSourceForm.datasourceId"
+                  placeholder="请选择"
+                >
                   <el-option
-                    v-for="item in clusterList"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value"
-                  />
-                </el-select>
-              </el-form-item>
-              <el-form-item label="sparkConfig" v-if="clusterConfig.setMode === 'ADVANCE'">
-                <code-mirror v-model="clusterConfig.sparkConfig" basic :lang="lang"/>
-              </el-form-item>
-              <el-form-item label="资源等级" v-else>
-                <el-select v-model="clusterConfig.resourceLevel" placeholder="请选择">
-                  <el-option
-                    v-for="item in resourceLevelOptions"
+                    v-for="item in dataSourceList"
                     :key="item.value"
                     :label="item.label"
                     :value="item.value"
@@ -43,6 +27,50 @@
               </el-form-item>
             </el-form>
           </div>
+          <template v-else>
+            <el-divider />
+            <!-- 资源配置 -->
+            <div class="config-item">
+              <div class="item-title">资源配置</div>
+              <el-form
+                ref="clusterConfigForm"
+                label-position="left"
+                label-width="120px"
+                :model="clusterConfig"
+                :rules="clusterConfigRules"
+              >
+                <el-form-item label="模式">
+                  <el-radio-group v-model="clusterConfig.setMode" size="small">
+                    <el-radio-button label="SIMPLE">简易</el-radio-button>
+                    <el-radio-button label="ADVANCE">高级定义</el-radio-button>
+                  </el-radio-group>
+                </el-form-item>
+                <el-form-item label="计算集群" prop="clusterId">
+                  <el-select v-model="clusterConfig.clusterId" placeholder="请选择">
+                    <el-option
+                      v-for="item in clusterList"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value"
+                    />
+                  </el-select>
+                </el-form-item>
+                <el-form-item label="sparkConfig" v-if="clusterConfig.setMode === 'ADVANCE'">
+                  <code-mirror v-model="clusterConfig.sparkConfig" basic :lang="lang"/>
+                </el-form-item>
+                <el-form-item label="资源等级" v-else>
+                  <el-select v-model="clusterConfig.resourceLevel" placeholder="请选择">
+                    <el-option
+                      v-for="item in resourceLevelOptions"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value"
+                    />
+                  </el-select>
+                </el-form-item>
+              </el-form>
+            </div>
+          </template>
           <el-divider />
           <!-- 定时调度 -->
           <div class="config-item">
@@ -256,24 +284,27 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, reactive, ref } from 'vue'
+import { computed, nextTick, reactive, ref } from 'vue'
 import { ElMessage, FormInstance, FormRules } from 'element-plus'
 import BlockDrawer from '@/components/block-drawer/index.vue'
-import {ScheduleRange, WeekDateList, ResourceLevelOptions, ClusterConfigRules, SyncRuleConfigRules, CronConfigRules} from './config-detail'
+import {ScheduleRange, WeekDateList, ResourceLevelOptions, DataSourceRules, ClusterConfigRules, SyncRuleConfigRules, CronConfigRules} from './config-detail'
 import {json} from '@codemirror/lang-json'
 import {sql} from '@codemirror/lang-sql'
 import CodeMirror from 'vue-codemirror6'
 import { GetWorkItemConfig, SaveWorkItemConfig } from '@/services/workflow.service';
 import { GetComputerGroupList } from '@/services/computer-group.service';
+import { GetDatasourceList } from '@/services/datasource.service'
 
 const scheduleRange = ref(ScheduleRange);
 const weekDateList = ref(WeekDateList)
 const clusterList = ref([])  // 计算集群
+const dataSourceList = ref([])
 const dayList = ref()
 const lang = ref<any>(json())
 const sqllang = ref<any>(sql())
 const workItemConfig = ref()
 const resourceLevelOptions = ref(ResourceLevelOptions) // 资源等级
+const dataSourceConfig = ref<FormInstance>()
 const clusterConfigForm = ref<FormInstance>()
 const cronConfigForm = ref<FormInstance>()
 const syncRuleForm = ref<FormInstance>()
@@ -296,6 +327,9 @@ const drawerConfig = reactive({
   zIndex: 1100,
   closeOnClickModal: false,
 });
+let dataSourceForm = reactive({
+  datasourceId: '',         // 数据源id
+})
 // 集群设置
 let clusterConfig = reactive({
   setMode: '',       // 模式
@@ -328,6 +362,7 @@ let syncRule = reactive({
   numConcurrency: undefined,    // 并发数
   sqlConfig: ''
 })
+const dataSourceRules = reactive<FormRules>(DataSourceRules)
 const clusterConfigRules = reactive<FormRules>(ClusterConfigRules)
 const cronConfigRules = reactive<FormRules>(CronConfigRules)
 const syncRuleConfigRules = reactive<FormRules>(SyncRuleConfigRules)
@@ -361,11 +396,15 @@ function showModal(data?: any) {
     cronConfig.setMode = 'SIMPLE'
     syncRule.setMode = 'SIMPLE'
   } else {
+    if (!['QUERY_JDBC', 'EXE_JDBC'].includes(data.workType)) {
+      // 获取集群参数
+      getClusterList()
+    } else {
+      getDataSourceList()
+    }
     workItemConfig.value = data
     getConfigDetailData()
   }
-  // 获取集群参数
-  getClusterList()
 
   drawerConfig.visible = true;
 }
@@ -374,6 +413,9 @@ function getConfigDetailData() {
   GetWorkItemConfig({
       workId: workItemConfig.value.id
   }).then((res: any) => {
+    if (res.data.datasourceId) {
+      dataSourceForm.datasourceId = res.data.datasourceId
+    }
     if (res.data.clusterConfig) {
       Object.keys(clusterConfig).forEach((key: string) => {
         clusterConfig[key] = res.data.clusterConfig[key]
@@ -400,40 +442,38 @@ function getConfigDetailData() {
 function okEvent() {
   // 获取cron表达式
   getCron()
-  clusterConfigForm.value?.validate((valid) => {
-    if (valid) {
-      cronConfigForm.value?.validate((valid) => {
-        if (valid) {
-          syncRuleForm.value?.validate((valid) => {
-            if (valid) {
-              SaveWorkItemConfig({
-                workId: workItemConfig.value.id,
-                clusterConfig: clusterConfig,
-                cronConfig: {
-                  ...cronConfig,
-                  cron: `${state.secondsText || '*'} ${state.minutesText || '*'} ${state.hoursText || '*'} ${
-                state.daysText || '*'
-              } ${state.monthsText || '*'} ${state.weeksText || '?'} ${state.yearsText || '*'}`
-                },
-                syncRule: syncRule
-              }).then((res: any) => {
-                ElMessage.success('保存成功')
-                drawerConfig.visible = false;
-              }).catch(err => {
-                console.error(err)
-              })
-            } else {
-              ElMessage.warning('请将表单输入完整')
-            }
-          })
-        } else {
-          ElMessage.warning('请将表单输入完整')
-        }
+  let status = true
+  const formArr = [dataSourceConfig, clusterConfigForm, cronConfigForm, syncRuleForm]
+  formArr.forEach(f => {
+    f.value?.validate((valid: boolean) => {
+      if (!valid) {
+        status = false
+      }
+    })
+  })
+  setTimeout(() => {
+    if (status) {
+      SaveWorkItemConfig({
+        workId: workItemConfig.value.id,
+        datasourceId: dataSourceForm.datasourceId,
+        clusterConfig: clusterConfig,
+        cronConfig: {
+          ...cronConfig,
+          cron: `${state.secondsText || '*'} ${state.minutesText || '*'} ${state.hoursText || '*'} ${
+        state.daysText || '*'
+      } ${state.monthsText || '*'} ${state.weeksText || '?'} ${state.yearsText || '*'}`
+        },
+        syncRule: syncRule
+      }).then((res: any) => {
+        ElMessage.success('保存成功')
+        drawerConfig.visible = false;
+      }).catch(err => {
+        console.error(err)
       })
     } else {
       ElMessage.warning('请将表单输入完整')
     }
-  })
+  });
 }
 
 function closeEvent() {
@@ -497,6 +537,23 @@ function getClusterList() {
     })
   }).catch(() => {
     clusterList.value = []
+  })
+}
+function getDataSourceList() {
+  GetDatasourceList({
+    page: 0,
+    pageSize: 10000,
+    searchKeyWord: ''
+  }).then((res: any) => {
+    dataSourceList.value = res.data.content.map((item: any) => {
+      return {
+        label: item.name,
+        value: item.id
+      }
+    })
+  })
+  .catch(() => {
+    dataSourceList.value = []
   })
 }
 
