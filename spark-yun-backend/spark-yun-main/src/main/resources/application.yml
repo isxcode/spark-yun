@@ -15,7 +15,7 @@ server:
 spring:
 
   profiles:
-    active: mysql
+    active: h2
 
   security:
     user:
