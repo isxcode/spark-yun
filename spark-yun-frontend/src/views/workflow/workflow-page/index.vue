@@ -323,7 +323,7 @@ function queryRunWorkInstancesEvent() {
 
 // 添加作业
 function addData() {
-    addModalRef.value.showModal((formData: FormData) => {
+    addModalRef.value.showModal((formData: any) => {
         return new Promise((resolve: any, reject: any) => {
             AddWorkflowDetailList({
                 ...formData,
@@ -333,6 +333,7 @@ function addData() {
                     ElMessage.success(res.msg)
                     initData()
                     resolve()
+                    showWorkConfig({ ...res.data, workType: formData.workType })
                 })
                 .catch((error: any) => {
                     reject(error)
@@ -343,7 +344,7 @@ function addData() {
 
 // 编辑作业
 function editData(data: any) {
-    addModalRef.value.showModal((formData: FormData) => {
+    addModalRef.value.showModal((formData: any) => {
         return new Promise((resolve: any, reject: any) => {
             UpdateWorkflowDetailList(formData)
                 .then((res: any) => {
