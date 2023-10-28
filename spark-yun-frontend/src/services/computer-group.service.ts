@@ -81,6 +81,15 @@ export function CheckComputerPointData(params: any): Promise<any> {
   })
 }
 
+// 设置默认集群节点
+export function SetDefaultComputerPointNode(params: any): Promise<any> {
+  return http.request({
+    method: 'post',
+    url: '/cluster_node/setDefaultClusterNode',
+    params: params
+  })
+}
+
 // 编辑节点页面查询数据
 export function UpdateComputerPointData(params: any): Promise<any> {
   return http.request({
