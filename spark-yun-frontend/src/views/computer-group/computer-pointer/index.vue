@@ -161,7 +161,7 @@ const loading = ref(false)
 const networkError = ref(false)
 const addModalRef = ref(null)
 const showLogRef = ref(null)
-const timer = ref(null)
+const timer = ref()
 
 function initData(tableLoading?: boolean) {
   loading.value = tableLoading ? false : true
