@@ -85,6 +85,12 @@ export const colConfigs: colConfig[] = [
     customSlot: 'statusTag'
   },
   {
+    prop: 'defaultCluster',
+    title: '是否默认集群',
+    minWidth: 120,
+    customSlot: 'defaultTag'
+  },
+  {
     prop: 'checkDateTime',
     title: '检测时间',
     minWidth: 140
@@ -99,7 +105,7 @@ export const colConfigs: colConfig[] = [
     title: '操作',
     align: 'center',
     customSlot: 'options',
-    width: 120
+    width: 190
   }
 ]
 
