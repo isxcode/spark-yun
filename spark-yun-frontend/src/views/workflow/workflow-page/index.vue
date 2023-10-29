@@ -123,7 +123,6 @@ const route = useRoute()
 const searchParam = ref('')
 const workListItem = ref([])
 const zqyFlowRef = ref(null)
-const workflowName = ref('')
 const addModalRef = ref(null)
 const configDetailRef = ref(null)
 const zqyLogRef = ref(null)
@@ -244,6 +243,9 @@ function deleteData(data: any) {
       workId: data.id
     })
       .then((res: any) => {
+        if (data.id === workConfig.value.id) {
+            backToFlow()
+        }
         ElMessage.success(res.msg)
         initData()
       })
@@ -562,7 +564,6 @@ onMounted(() => {
     initData()
     initFlowData()
     getWorkFlows()
-    // workflowName.value = route.query.name
 
     eventBus.on('nodeMenuEvent', (e: any) => {
         console.log('eeee', e)

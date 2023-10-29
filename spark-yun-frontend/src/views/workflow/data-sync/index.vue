@@ -19,6 +19,12 @@
                 </el-icon>
                 <span class="btn-text">运行</span>
             </div>
+            <div class="btn-box" @click="terWorkData">
+                <el-icon>
+                    <Close />
+                </el-icon>
+                <span class="btn-text">中止</span>
+            </div>
             <div class="btn-box" @click="setConfigData">
                 <el-icon>
                     <Setting />
@@ -145,7 +151,7 @@ import { CreateTableWork, GetDataSourceTables, GetTableColumnsByTableId, SaveDat
 import TableDetail from './table-detail/index.vue'
 import DataSyncTable from './data-sync-table/index.vue'
 import ConfigDetail from '../workflow-page/config-detail/index.vue'
-import { GetWorkItemConfig, RunWorkItemConfig, SaveWorkItemConfig } from '@/services/workflow.service'
+import { GetWorkItemConfig, RunWorkItemConfig, SaveWorkItemConfig, TerWorkItemConfig } from '@/services/workflow.service'
 import PublishLog from '../work-item/publish-log.vue'
 import RunningLog from '../work-item/running-log.vue'
 
@@ -241,30 +247,30 @@ function getDate() {
     GetWorkItemConfig({
         workId: props.workItemConfig.id
     }).then((res: any) => {
-        formData.sourceDBType = res.data.syncWorkConfig.sourceDBType
-        formData.sourceDBId = res.data.syncWorkConfig.sourceDBId
-        formData.sourceTable = res.data.syncWorkConfig.sourceTable
-        formData.queryCondition = res.data.syncWorkConfig.queryCondition
-        formData.partitionColumn = res.data.syncWorkConfig.partitionColumn
-        formData.targetDBType = res.data.syncWorkConfig.targetDBType
-        formData.targetDBId = res.data.syncWorkConfig.targetDBId
-        formData.targetTable = res.data.syncWorkConfig.targetTable
-        formData.overMode = res.data.syncWorkConfig.overMode
-
-        nextTick(() => {
-            getDataSource(true, formData.sourceDBType, 'source')
-            getDataSource(true, formData.targetDBType, 'target')
-            getDataSourceTable(true, formData.sourceDBId, 'source')
-            getDataSourceTable(true, formData.targetDBId, 'target')
-
-            dataSyncTableRef.value.initPageData(res.data.syncWorkConfig)
-        })
+        if (res.data.syncWorkConfig) {
+            formData.sourceDBType = res.data.syncWorkConfig.sourceDBType
+            formData.sourceDBId = res.data.syncWorkConfig.sourceDBId
+            formData.sourceTable = res.data.syncWorkConfig.sourceTable
+            formData.queryCondition = res.data.syncWorkConfig.queryCondition
+            formData.partitionColumn = res.data.syncWorkConfig.partitionColumn
+            formData.targetDBType = res.data.syncWorkConfig.targetDBType
+            formData.targetDBId = res.data.syncWorkConfig.targetDBId
+            formData.targetTable = res.data.syncWorkConfig.targetTable
+            formData.overMode = res.data.syncWorkConfig.overMode
+    
+            nextTick(() => {
+                getDataSource(true, formData.sourceDBType, 'source')
+                getDataSource(true, formData.targetDBType, 'target')
+                getDataSourceTable(true, formData.sourceDBId, 'source')
+                getDataSourceTable(true, formData.targetDBId, 'target')
+    
+                dataSyncTableRef.value.initPageData(res.data.syncWorkConfig)
+            })
+        }
     }).catch(err => {
         console.error(err)
     })
 }
-
-
 // 运行
 function runWorkData() {
     RunWorkItemConfig({
@@ -277,6 +283,22 @@ function runWorkData() {
         })
         // initData(res.data.instanceId)
     }).catch(() => {
+    })
+}
+// 终止
+function terWorkData() {
+  if (!instanceId.value) {
+    ElMessage.warning('暂无可中止的作业')
+    return
+  }
+  TerWorkItemConfig({
+    workId: props.workItemConfig.id,
+    instanceId: instanceId.value
+  })
+    .then((res: any) => {
+      ElMessage.success(res.msg)
+    })
+    .catch(() => {
     })
 }
 
