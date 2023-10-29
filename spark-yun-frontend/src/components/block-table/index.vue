@@ -144,7 +144,7 @@ function columnSlotAdapter(column: any, colConfig: any) {
   &.el-pagination.is-background .btn-prev,
   &.el-pagination.is-background .btn-next,
   &.el-pagination.is-background .el-pager li {
-    background: #fff;
+    // background: #fff;
     border: getCssVar('border-color') solid 1px;
     &.active {
       background-color: getCssVar('color', 'primary');;
@@ -152,7 +152,7 @@ function columnSlotAdapter(column: any, colConfig: any) {
   }
 
   &.el-pagination.is-background .el-pager li.active:not(.disabled):hover {
-    color: #fff !important;
+    // color: #fff !important;
   }
 }
 .pagination-popper.el-select-dropdown {
