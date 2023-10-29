@@ -128,7 +128,7 @@
           </template>
           <template #workFlowOptions="scopeSlot">
             <div class="btn-group">
-              <span>DAG</span>
+              <span @click="showDagDetail(scopeSlot.row)">DAG</span>
               <el-dropdown trigger="click">
                 <span class="click-show-more">更多</span>
                 <template #dropdown>
@@ -151,6 +151,7 @@
       </div>
     </LoadingPage>
     <DetailModal ref="detailModalRef" />
+    <dag-detail ref="dagDetailRef"></dag-detail>
   </div>
 </template>
 
@@ -160,6 +161,7 @@ import Breadcrumb from '@/layout/bread-crumb/index.vue'
 import BlockTable from '@/components/block-table/index.vue'
 import LoadingPage from '@/components/loading/index.vue'
 import DetailModal from './detail-modal/index.vue'
+import DagDetail from './dag-detail/index.vue'
 
 import { BreadCrumbList, TableConfig, TableConfigWorkFlow } from './schedule.config'
 import { GetScheduleList, DeleteScheduleLog, ReStartRunning, GetScheduleWorkFlowList } from '@/services/schedule.service'
@@ -172,7 +174,8 @@ const tableConfigWorkFlow = reactive(TableConfigWorkFlow)
 const keyword = ref('')
 const loading = ref(false)
 const networkError = ref(false)
-const detailModalRef = ref(null)
+const detailModalRef = ref()
+const dagDetailRef = ref()
 const tableType = ref('')  // work or workflow
 const timer = ref()
 
@@ -341,6 +344,10 @@ function stopWorkFlow(data: any) {
         }
     }).catch(() => {
     })
+}
+// 展示工作流对应流程图
+function showDagDetail(data: any) {
+  dagDetailRef.value.showModal(data)
 }
 
 onMounted(() => {
