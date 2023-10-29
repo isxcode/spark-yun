@@ -19,6 +19,10 @@ interface AddParams {
   id?: string;
 }
 
+interface Cluster {
+  clusterId: string
+}
+
 export function GetComputerGroupList(params: SerchParams): Promise<any> {
   return http.request({
     method: 'post',
@@ -41,6 +45,15 @@ export function UpdateComputerGroupData(params: AddParams): Promise<any> {
   return http.request({
     method: 'post',
     url: '/cluster/updateCluster',
+    params: params
+  })
+}
+
+// 设置默认集群
+export function SetDefaultComputerGroup(params: Cluster): Promise<any> {
+  return http.request({
+    method: 'post',
+    url: '/cluster/setDefaultCluster',
     params: params
   })
 }
