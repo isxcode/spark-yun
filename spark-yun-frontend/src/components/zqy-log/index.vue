@@ -86,6 +86,12 @@ function getLogData() {
                     scrollToButtom()
                 })
             }
+            if (['SUCCESS', 'FAIL'].includes(res.data.status)) {
+                if (timer.value) {
+                    clearInterval(timer.value)
+                }
+                timer.value = null
+            }
         })
         .catch(() => {
             logMsg.value = ''

@@ -67,6 +67,12 @@ function getLogData(id: string) {
         }
         timer.value = null
       }
+      if (['SUCCESS', 'FAIL'].includes(res.data.status)) {
+          if (timer.value) {
+              clearInterval(timer.value)
+          }
+          timer.value = null
+      }
     })
     .catch((err: any) => {
       console.log('err', err)
