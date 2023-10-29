@@ -17,11 +17,20 @@ interface LogParam {
   instanceId: string;
 }
 
-// 获取调度历史查询数据
+// 获取调度历史查询数据---作业实例
 export function GetScheduleList(params: SerchParams): Promise<any> {
   return http.request({
     method: 'post',
     url: '/vip/woi/queryInstance',
+    params: params
+  })
+}
+
+// 获取调度历史查询数据---作业流实例
+export function GetScheduleWorkFlowList(params: SerchParams): Promise<any> {
+  return http.request({
+    method: 'post',
+    url: '/vip/wfi/queryWorkFlowInstances',
     params: params
   })
 }
