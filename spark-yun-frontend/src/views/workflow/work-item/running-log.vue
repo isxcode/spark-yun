@@ -60,6 +60,10 @@ function getLogData(id: string) {
     })
     .catch(() => {
       logMsg.value = ''
+      if (timer.value) {
+          clearInterval(timer.value)
+      }
+      timer.value = null
     })
 }
 
