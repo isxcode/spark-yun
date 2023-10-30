@@ -3,21 +3,30 @@ package com.isxcode.star.modules.datasource.service;
 import com.isxcode.star.api.datasource.constants.DatasourceDriver;
 import com.isxcode.star.api.datasource.constants.DatasourceType;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
+import com.isxcode.star.backend.api.base.properties.IsxAppProperties;
 import com.isxcode.star.common.utils.AesUtils;
+import com.isxcode.star.common.utils.path.PathUtils;
 import com.isxcode.star.modules.datasource.entity.DatasourceEntity;
 import com.isxcode.star.modules.datasource.repository.DatasourceRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.sql.Connection;
+import java.sql.Driver;
 import java.sql.DriverManager;
-import java.sql.SQLException;
+import java.util.Enumeration;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class DatasourceService {
+
+	private final IsxAppProperties isxAppProperties;
 
 	private final DatasourceRepository datasourceRepository;
 
@@ -72,12 +81,50 @@ public class DatasourceService {
 		return datasourceRepository.findById(datasourceId).orElseThrow(() -> new IsxAppException("数据源不存在"));
 	}
 
-	public Connection getDbConnection(DatasourceEntity datasource) throws SQLException {
+	@SneakyThrows
+	public Connection getDbConnection(DatasourceEntity datasource) {
 
-		loadDriverClass(datasource.getDbType());
+		Connection connection;
+		// 判断用户是否使用自定义驱动
+		if (false) {
 
-		DriverManager.setLoginTimeout(10);
-		return DriverManager.getConnection(datasource.getJdbcUrl(), datasource.getUsername(),
-				aesUtils.decrypt(datasource.getPasswd()));
+			// 用自己上传的启动，暂不开放
+			Driver oldDriver = null;
+			Driver newDriver = null;
+
+			// 卸载旧驱动
+			Enumeration<Driver> drivers = DriverManager.getDrivers();
+			while (drivers.hasMoreElements()) {
+				Driver driver = drivers.nextElement();
+				if (driver.getClass().getName().equals(getDriverClass(datasource.getDbType()))) {
+					oldDriver = driver;
+					DriverManager.deregisterDriver(driver);
+				}
+			}
+
+			// 加载新驱动
+			URL url = new File(PathUtils.parseProjectPath(isxAppProperties.getResourcesPath()) + File.separator
+					+ "/jdbc/hive-jdbc-uber-2.6.5.0-292.jar").toURI().toURL();
+			ClassLoader customClassLoader = new URLClassLoader(new URL[]{url});
+			Class<?> driverClass = customClassLoader.loadClass(getDriverClass(datasource.getDbType()));
+			newDriver = (Driver) driverClass.newInstance();
+			DriverManager.registerDriver(newDriver);
+
+			// 获取连接
+			DriverManager.setLoginTimeout(500);
+			connection = DriverManager.getConnection(datasource.getJdbcUrl(), datasource.getUsername(),
+					aesUtils.decrypt(datasource.getPasswd()));
+
+			// 重新组装回驱动
+			DriverManager.deregisterDriver(newDriver);
+			DriverManager.registerDriver(oldDriver);
+		} else {
+			// 获取连接
+			DriverManager.setLoginTimeout(500);
+			connection = DriverManager.getConnection(datasource.getJdbcUrl(), datasource.getUsername(),
+					aesUtils.decrypt(datasource.getPasswd()));
+		}
+
+		return connection;
 	}
 }
