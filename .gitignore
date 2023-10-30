@@ -44,3 +44,6 @@ spark-warehouse
 
 # 前端.idea不提交
 spark-yun-frontend/.idea
+
+# derby.log不提交
+derby.log
