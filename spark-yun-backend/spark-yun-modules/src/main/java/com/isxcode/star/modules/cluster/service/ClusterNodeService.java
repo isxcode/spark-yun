@@ -117,8 +117,9 @@ public class ClusterNodeService {
 				scpPercent = (int) (remoteFileSize * 100 / localFileSize);
 			}
 
+			clusterNode = clusterNodeRepository.findById(clusterNode.getId()).get();
 			clusterNode.setAgentLog(clusterNode.getAgentLog() + "\n进度:" + scpPercent + "%");
-			clusterNodeRepository.updateClusterNodeAgentLog(clusterNode.getId(), clusterNode.getAgentLog());
+			clusterNodeRepository.saveAndFlush(clusterNode);
 
 			Thread.sleep(10000);
 		}

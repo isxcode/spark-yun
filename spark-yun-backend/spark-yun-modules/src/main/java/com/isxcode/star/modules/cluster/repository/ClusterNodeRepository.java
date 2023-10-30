@@ -9,7 +9,6 @@ import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -31,9 +30,4 @@ public interface ClusterNodeRepository extends JpaRepository<ClusterNodeEntity, 
 			+ "OR E.remark LIKE %:keyword% " + "OR E.host LIKE %:keyword%) order by E.createDateTime desc ")
 	Page<ClusterNodeEntity> searchAll(@Param("keyword") String searchKeyWord, @Param("engineId") String engineId,
 			Pageable pageable);
-
-	@Modifying
-	@Query(value = "update SY_CLUSTER_NODE set agentLog = :agentLog where id = :id", nativeQuery = true)
-	void updateClusterNodeAgentLog(@Param("id") String id, @Param("agentLog") String agentLog);
-
 }
