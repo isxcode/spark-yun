@@ -14,12 +14,14 @@ import com.isxcode.star.api.main.properties.SparkYunProperties;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.star.modules.cluster.entity.ClusterNodeEntity;
 import com.isxcode.star.modules.cluster.repository.ClusterNodeRepository;
-import com.jcraft.jsch.JSchException;
-import com.jcraft.jsch.SftpException;
+import com.isxcode.star.modules.cluster.service.ClusterNodeService;
+import com.jcraft.jsch.*;
+
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Optional;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
@@ -32,6 +34,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(noRollbackFor = {IsxAppException.class})
 public class RunAgentInstallService {
 
+	private final ClusterNodeService clusterNodeService;
 	private final SparkYunProperties sparkYunProperties;
 
 	private final ClusterNodeRepository clusterNodeRepository;
@@ -89,9 +92,14 @@ public class RunAgentInstallService {
 			return;
 		}
 
-		// 下载安装包
-		scpFile(scpFileEngineNodeDto, "classpath:agent/zhiqingyun-agent.tar.gz",
+		// 异步上传安装包
+		clusterNodeService.scpAgentFile(scpFileEngineNodeDto, "classpath:agent/zhiqingyun-agent.tar.gz",
 				sparkYunProperties.getTmpDir() + File.separator + "zhiqingyun-agent.tar.gz");
+		log.debug("代理安装包上传中");
+
+		// 监听进度
+		clusterNodeService.checkScpPercent(scpFileEngineNodeDto, "classpath:agent/zhiqingyun-agent.tar.gz",
+				sparkYunProperties.getTmpDir() + File.separator + "zhiqingyun-agent.tar.gz", engineNode);
 		log.debug("下载安装包成功");
 
 		// 拷贝安装脚本
@@ -109,8 +117,12 @@ public class RunAgentInstallService {
 
 		AgentInfo agentInstallInfo = JSON.parseObject(executeLog, AgentInfo.class);
 
-		engineNode.setStatus(agentInstallInfo.getStatus());
-		engineNode.setAgentLog(agentInstallInfo.getLog());
+		if ("ERROR".equals(agentInstallInfo.getExecStatus())) {
+			engineNode.setStatus(agentInstallInfo.getExecStatus());
+		} else {
+			engineNode.setStatus(agentInstallInfo.getStatus());
+		}
+		engineNode.setAgentLog(engineNode.getAgentLog() + "\n" + agentInstallInfo.getLog());
 		engineNode.setCheckDateTime(LocalDateTime.now());
 		clusterNodeRepository.saveAndFlush(engineNode);
 	}
