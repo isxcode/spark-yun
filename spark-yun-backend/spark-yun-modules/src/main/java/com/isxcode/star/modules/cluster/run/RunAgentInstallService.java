@@ -11,7 +11,6 @@ import com.isxcode.star.api.cluster.constants.ClusterNodeStatus;
 import com.isxcode.star.api.cluster.pojos.dto.AgentInfo;
 import com.isxcode.star.api.cluster.pojos.dto.ScpFileEngineNodeDto;
 import com.isxcode.star.api.main.properties.SparkYunProperties;
-import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.star.modules.cluster.entity.ClusterNodeEntity;
 import com.isxcode.star.modules.cluster.repository.ClusterNodeRepository;
 import com.isxcode.star.modules.cluster.service.ClusterNodeService;
@@ -26,12 +25,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
-@Transactional(noRollbackFor = {IsxAppException.class})
 public class RunAgentInstallService {
 
 	private final ClusterNodeService clusterNodeService;
@@ -97,7 +94,7 @@ public class RunAgentInstallService {
 				sparkYunProperties.getTmpDir() + File.separator + "zhiqingyun-agent.tar.gz");
 		log.debug("代理安装包上传中");
 
-		// 监听进度
+		// 同步监听进度
 		clusterNodeService.checkScpPercent(scpFileEngineNodeDto, "classpath:agent/zhiqingyun-agent.tar.gz",
 				sparkYunProperties.getTmpDir() + File.separator + "zhiqingyun-agent.tar.gz", engineNode);
 		log.debug("下载安装包成功");
@@ -117,6 +114,7 @@ public class RunAgentInstallService {
 
 		AgentInfo agentInstallInfo = JSON.parseObject(executeLog, AgentInfo.class);
 
+		engineNode = clusterNodeService.getClusterNode(engineNode.getId());
 		if ("ERROR".equals(agentInstallInfo.getExecStatus())) {
 			engineNode.setStatus(agentInstallInfo.getExecStatus());
 		} else {
