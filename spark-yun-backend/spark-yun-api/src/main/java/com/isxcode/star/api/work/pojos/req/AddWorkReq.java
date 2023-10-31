@@ -22,4 +22,7 @@ public class AddWorkReq {
 
 	@Schema(title = "备注", example = "星期一执行的作业")
 	private String remark;
+
+  @Schema(title = "数据源", example = "新建sparksql作业和jdbc执行作业和jdbc查询作业，需要选择数据源，必填")
+  private String datasourceId;
 }
