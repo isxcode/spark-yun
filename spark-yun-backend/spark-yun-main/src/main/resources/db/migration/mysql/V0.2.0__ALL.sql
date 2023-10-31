@@ -60,4 +60,8 @@ alter table SY_CLUSTER_NODE
 alter table SY_WORK_INSTANCE
     add work_pid varchar(100) null comment '作业运行的进程pid' after result_data;
 
+-- hive数据源，添加hive.metastore.uris配置项
+alter table SY_DATASOURCE
+    add metastore_uris varchar(200) null comment 'hive数据源 hive.metastore.uris 配置' after db_type;
+
 
