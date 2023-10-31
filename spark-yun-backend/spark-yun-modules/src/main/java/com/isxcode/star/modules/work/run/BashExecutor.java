@@ -5,6 +5,7 @@ import com.isxcode.star.api.instance.constants.InstanceStatus;
 import com.isxcode.star.api.work.constants.WorkLog;
 import com.isxcode.star.api.work.exceptions.WorkRunException;
 import com.isxcode.star.common.utils.AesUtils;
+import com.isxcode.star.common.utils.ssh.SshUtils;
 import com.isxcode.star.modules.cluster.entity.ClusterEntity;
 import com.isxcode.star.modules.cluster.entity.ClusterNodeEntity;
 import com.isxcode.star.modules.cluster.mapper.ClusterNodeMapper;
@@ -160,6 +161,16 @@ public class BashExecutor extends WorkExecutor {
 				workInstance.setYarnLog(logCommand.replace("zhiqingyun_success", ""));
 				logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("保存日志成功 \n");
 				updateInstance(workInstance, logBuilder);
+
+				// 删除脚本和日志
+				try {
+					String clearWorkRunFile = "rm -f " + clusterNode.getAgentHomePath() + "/zhiqingyun-agent/works/"
+							+ workInstance.getId() + ".log && " + "rm -f " + clusterNode.getAgentHomePath()
+							+ "/zhiqingyun-agent/works/" + workInstance.getId() + ".sh";
+					SshUtils.executeCommand(scpFileEngineNodeDto, clearWorkRunFile, false);
+				} catch (JSchException | InterruptedException | IOException e) {
+					log.error("删除运行脚本失败");
+				}
 
 				// 判断脚本运行成功还是失败
 				if (!logCommand.contains("zhiqingyun_success")) {
