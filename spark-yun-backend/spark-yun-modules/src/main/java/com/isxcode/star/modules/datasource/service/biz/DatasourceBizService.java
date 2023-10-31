@@ -1,6 +1,7 @@
 package com.isxcode.star.modules.datasource.service.biz;
 
 import com.isxcode.star.api.datasource.constants.DatasourceStatus;
+import com.isxcode.star.api.datasource.constants.DatasourceType;
 import com.isxcode.star.api.datasource.pojos.req.*;
 import com.isxcode.star.api.datasource.pojos.res.GetConnectLogRes;
 import com.isxcode.star.api.datasource.pojos.res.PageDatasourceRes;
@@ -10,11 +11,14 @@ import com.isxcode.star.modules.datasource.entity.DatasourceEntity;
 import com.isxcode.star.modules.datasource.mapper.DatasourceMapper;
 import com.isxcode.star.modules.datasource.repository.DatasourceRepository;
 import com.isxcode.star.modules.datasource.service.DatasourceService;
+
 import java.sql.Connection;
 import java.time.LocalDateTime;
 import javax.transaction.Transactional;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -40,6 +44,12 @@ public class DatasourceBizService {
 		// 密码对成加密
 		datasource.setPasswd(aesUtils.encrypt(datasource.getPasswd()));
 
+		// 判断如果是hive数据源，metastore_uris没有填写，附加默认值，thrift://localhost:9083
+		if (DatasourceType.HIVE.equals(addDatasourceReq.getDbType())
+				&& Strings.isEmpty(addDatasourceReq.getMetastoreUris())) {
+			datasource.setMetastoreUris("thrift://localhost:9083");
+		}
+
 		datasource.setCheckDateTime(LocalDateTime.now());
 		datasource.setStatus(DatasourceStatus.UN_CHECK);
 		datasourceRepository.save(datasource);
@@ -53,6 +63,12 @@ public class DatasourceBizService {
 
 		// 密码对成加密
 		datasource.setPasswd(aesUtils.encrypt(datasource.getPasswd()));
+
+		// 判断如果是hive数据源，metastore_uris没有填写，附加默认值，thrift://localhost:9083
+		if (DatasourceType.HIVE.equals(updateDatasourceReq.getDbType())
+				&& Strings.isEmpty(updateDatasourceReq.getMetastoreUris())) {
+			datasource.setMetastoreUris("thrift://localhost:9083");
+		}
 
 		datasource.setCheckDateTime(LocalDateTime.now());
 		datasource.setStatus(DatasourceStatus.UN_CHECK);

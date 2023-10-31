@@ -54,6 +54,8 @@ public class DatasourceEntity {
 
 	private String connectLog;
 
+	private String metastoreUris;
+
 	@CreatedDate
 	private LocalDateTime createDateTime;
 
