@@ -25,8 +25,12 @@ public class AesUtils {
 	 */
 	public String encrypt(String data) {
 
-		if (Strings.isEmpty(data)) {
+		if (data == null) {
 			return null;
+		}
+
+		if (Strings.isEmpty(data)) {
+			return "";
 		}
 
 		return SecureUtil.aes(Arrays.copyOf(isxAppProperties.getAesSlat().getBytes(), 1 << 5)).encryptBase64(data);
@@ -37,8 +41,12 @@ public class AesUtils {
 	 */
 	public String decrypt(String data) {
 
-		if (Strings.isEmpty(data)) {
+		if (data == null) {
 			return null;
+		}
+
+		if (Strings.isEmpty(data)) {
+			return "";
 		}
 
 		return SecureUtil.aes(Arrays.copyOf(isxAppProperties.getAesSlat().getBytes(), 1 << 5)).decryptStr(data);
