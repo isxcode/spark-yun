@@ -6,20 +6,25 @@ import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.star.backend.api.base.properties.IsxAppProperties;
 import com.isxcode.star.common.utils.AesUtils;
 import com.isxcode.star.common.utils.path.PathUtils;
+import com.isxcode.star.modules.datasource.entity.DatabaseDriverEntity;
 import com.isxcode.star.modules.datasource.entity.DatasourceEntity;
 import com.isxcode.star.modules.datasource.repository.DatasourceRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.DriverManager;
-import java.util.Enumeration;
+import java.sql.SQLException;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
+import static com.isxcode.star.common.config.CommonConfig.JPA_TENANT_MODE;
 
 @Service
 @Slf4j
@@ -30,17 +35,14 @@ public class DatasourceService {
 
 	private final DatasourceRepository datasourceRepository;
 
+	private final DatabaseDriverService dataDriverService;
+
+	/**
+	 * 所有的驱动. driverId driver
+	 */
+	public final static Map<String, DriverShim> ALL_EXIST_DRIVER = new ConcurrentHashMap<>();
+
 	private final AesUtils aesUtils;
-
-	public void loadDriverClass(String datasourceType) {
-
-		try {
-			Class.forName(getDriverClass(datasourceType));
-		} catch (ClassNotFoundException e) {
-			log.error(e.getMessage());
-			throw new IsxAppException("找不到对应驱动");
-		}
-	}
 
 	public String getDriverClass(String datasourceType) {
 
@@ -81,50 +83,41 @@ public class DatasourceService {
 		return datasourceRepository.findById(datasourceId).orElseThrow(() -> new IsxAppException("数据源不存在"));
 	}
 
-	@SneakyThrows
-	public Connection getDbConnection(DatasourceEntity datasource) {
+	public Connection getDbConnection(DatasourceEntity datasource) throws SQLException {
 
-		Connection connection;
-		// 判断用户是否使用自定义驱动
-		if (false) {
+		// 判断驱动是否已经加载
+		DriverShim driver = ALL_EXIST_DRIVER.get(datasource.getDriverId());
+		if (driver == null) {
 
-			// 用自己上传的启动，暂不开放
-			Driver oldDriver = null;
-			Driver newDriver = null;
+			JPA_TENANT_MODE.set(false);
+			DatabaseDriverEntity driverEntity = dataDriverService.getDriver(datasource.getDriverId());
 
-			// 卸载旧驱动
-			Enumeration<Driver> drivers = DriverManager.getDrivers();
-			while (drivers.hasMoreElements()) {
-				Driver driver = drivers.nextElement();
-				if (driver.getClass().getName().equals(getDriverClass(datasource.getDbType()))) {
-					oldDriver = driver;
-					DriverManager.deregisterDriver(driver);
-				}
+			String driverPath = "TENANT_DRIVER".equals(driverEntity.getDriverType())
+					? driverEntity.getTenantId() + File.separator + driverEntity.getFileName()
+					: "system" + File.separator + driverEntity.getFileName();
+
+			// 先加载驱动到ALL_EXIST_DRIVER
+			try {
+				URL url = new File(PathUtils.parseProjectPath(isxAppProperties.getResourcesPath()) + File.separator
+						+ "jdbc" + File.separator + driverPath).toURI().toURL();
+				ClassLoader driverClassLoader = new URLClassLoader(new URL[]{url});
+				Class<?> driverClass = driverClassLoader.loadClass(getDriverClass(datasource.getDbType()));
+				driver = new DriverShim((Driver) driverClass.newInstance());
+				ALL_EXIST_DRIVER.put(datasource.getDriverId(), driver);
+			} catch (MalformedURLException | ClassNotFoundException | IllegalAccessException
+					| InstantiationException e) {
+				throw new RuntimeException(e);
 			}
-
-			// 加载新驱动
-			URL url = new File(PathUtils.parseProjectPath(isxAppProperties.getResourcesPath()) + File.separator
-					+ "/jdbc/hive-jdbc-uber-2.6.5.0-292.jar").toURI().toURL();
-			ClassLoader customClassLoader = new URLClassLoader(new URL[]{url});
-			Class<?> driverClass = customClassLoader.loadClass(getDriverClass(datasource.getDbType()));
-			newDriver = (Driver) driverClass.newInstance();
-			DriverManager.registerDriver(newDriver);
-
-			// 获取连接
-			DriverManager.setLoginTimeout(500);
-			connection = DriverManager.getConnection(datasource.getJdbcUrl(), datasource.getUsername(),
-					aesUtils.decrypt(datasource.getPasswd()));
-
-			// 重新组装回驱动
-			DriverManager.deregisterDriver(newDriver);
-			DriverManager.registerDriver(oldDriver);
-		} else {
-			// 获取连接
-			DriverManager.setLoginTimeout(500);
-			connection = DriverManager.getConnection(datasource.getJdbcUrl(), datasource.getUsername(),
-					aesUtils.decrypt(datasource.getPasswd()));
 		}
 
-		return connection;
+		java.util.Properties info = new java.util.Properties();
+		if (datasource.getUsername() != null) {
+			info.put("user", datasource.getUsername());
+		}
+		if (datasource.getPasswd() != null) {
+			info.put("password", aesUtils.decrypt(datasource.getPasswd()));
+		}
+		DriverManager.setLoginTimeout(500);
+		return driver.connect(datasource.getJdbcUrl(), info);
 	}
 }

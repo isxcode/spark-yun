@@ -4,16 +4,30 @@ import com.isxcode.star.api.datasource.constants.DatasourceStatus;
 import com.isxcode.star.api.datasource.constants.DatasourceType;
 import com.isxcode.star.api.datasource.pojos.req.*;
 import com.isxcode.star.api.datasource.pojos.res.GetConnectLogRes;
+import com.isxcode.star.api.datasource.pojos.res.PageDatabaseDriverRes;
 import com.isxcode.star.api.datasource.pojos.res.PageDatasourceRes;
 import com.isxcode.star.api.datasource.pojos.res.TestConnectRes;
+import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
+import com.isxcode.star.backend.api.base.properties.IsxAppProperties;
 import com.isxcode.star.common.utils.AesUtils;
+import com.isxcode.star.common.utils.path.PathUtils;
+import com.isxcode.star.modules.datasource.entity.DatabaseDriverEntity;
 import com.isxcode.star.modules.datasource.entity.DatasourceEntity;
 import com.isxcode.star.modules.datasource.mapper.DatasourceMapper;
+import com.isxcode.star.modules.datasource.repository.DatabaseDriverRepository;
 import com.isxcode.star.modules.datasource.repository.DatasourceRepository;
+import com.isxcode.star.modules.datasource.service.DatabaseDriverService;
 import com.isxcode.star.modules.datasource.service.DatasourceService;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.sql.Connection;
 import java.time.LocalDateTime;
+import java.util.List;
 import javax.transaction.Transactional;
 
 import lombok.RequiredArgsConstructor;
@@ -22,6 +36,11 @@ import org.apache.logging.log4j.util.Strings;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import static com.isxcode.star.common.config.CommonConfig.JPA_TENANT_MODE;
+import static com.isxcode.star.common.config.CommonConfig.TENANT_ID;
+import static com.isxcode.star.modules.datasource.service.DatasourceService.ALL_EXIST_DRIVER;
 
 @Service
 @Slf4j
@@ -36,6 +55,12 @@ public class DatasourceBizService {
 	private final AesUtils aesUtils;
 
 	private final DatasourceService datasourceService;
+
+	private final DatabaseDriverRepository databaseDriverRepository;
+
+	private final IsxAppProperties isxAppProperties;
+
+	private final DatabaseDriverService databaseDriverService;
 
 	public void addDatasource(AddDatasourceReq addDatasourceReq) {
 
@@ -93,8 +118,6 @@ public class DatasourceBizService {
 
 		DatasourceEntity datasource = datasourceService.getDatasource(testConnectReq.getDatasourceId());
 
-		datasourceService.loadDriverClass(datasource.getDbType());
-
 		// 测试连接
 		datasource.setCheckDateTime(LocalDateTime.now());
 
@@ -120,5 +143,69 @@ public class DatasourceBizService {
 		DatasourceEntity datasource = datasourceService.getDatasource(getConnectLogReq.getDatasourceId());
 
 		return GetConnectLogRes.builder().connectLog(datasource.getConnectLog()).build();
+	}
+
+	public void uploadDatabaseDriver(MultipartFile driverFile, String dbType, String name, String remark) {
+
+		// 判断驱动文件夹是否存在，没有则创建
+		String driverDirPath = PathUtils.parseProjectPath(isxAppProperties.getResourcesPath()) + File.separator + "jdbc"
+				+ File.separator + TENANT_ID.get();
+		if (!new File(driverDirPath).exists()) {
+			try {
+				Files.createDirectories(Paths.get(driverDirPath));
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+		}
+
+		// 保存驱动文件
+		try (InputStream inputStream = driverFile.getInputStream()) {
+			Files.copy(inputStream, Paths.get(driverDirPath).resolve(driverFile.getName()),
+					StandardCopyOption.REPLACE_EXISTING);
+		} catch (IOException e) {
+			throw new IsxAppException("上传许可证失败");
+		}
+
+		// 初始化驱动对象
+		DatabaseDriverEntity databaseDriver = DatabaseDriverEntity.builder().name(name).dbType(dbType)
+				.driverType("TENANT_DRIVER").remark(remark).isDefaultDriver(false).fileName(driverFile.getName())
+				.build();
+
+		// 持久化
+		databaseDriverRepository.save(databaseDriver);
+	}
+
+	public Page<PageDatabaseDriverRes> pageDatabaseDriver(PageDatabaseDriverReq pageDatabaseDriverReq) {
+
+		JPA_TENANT_MODE.set(false);
+		Page<DatabaseDriverEntity> pageDatabaseDriver = databaseDriverRepository.searchAll(
+				pageDatabaseDriverReq.getSearchKeyWord(), TENANT_ID.get(),
+				PageRequest.of(pageDatabaseDriverReq.getPage(), pageDatabaseDriverReq.getPageSize()));
+
+		return datasourceMapper.dataDriverEntityToPageDatabaseDriverResPage(pageDatabaseDriver);
+	}
+
+	public void deleteDatabaseDriver(DeleteDatabaseDriverReq deleteDatabaseDriverReq) {
+
+		DatabaseDriverEntity driver = databaseDriverService.getDriver(deleteDatabaseDriverReq.getDriverId());
+
+		// 系统驱动无法删除
+		if ("SYSTEM_DRIVER".equals(driver.getDriverType())) {
+			throw new IsxAppException("系统数据源驱动无法删除");
+		}
+
+		// 判断驱动是否被别人使用，使用则不能删除
+		List<DatasourceEntity> allDrivers = datasourceRepository.findAllByDriverId(driver.getId());
+		if (!allDrivers.isEmpty()) {
+			throw new IsxAppException("有数据源已使用当前驱动，无法删除");
+		}
+
+		// 卸载Map中的驱动
+		ALL_EXIST_DRIVER.remove(driver.getId());
+
+		// 将文件名改名字 xxx.jar xxx_${driverId}.jar_bak
+
+		// 删除数据库
+		databaseDriverRepository.deleteById(driver.getId());
 	}
 }

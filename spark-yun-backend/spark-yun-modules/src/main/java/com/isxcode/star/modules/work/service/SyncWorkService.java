@@ -1,10 +1,10 @@
 package com.isxcode.star.modules.work.service;
 
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
-import com.isxcode.star.common.connection.JDBCConnection;
 import com.isxcode.star.common.utils.AesUtils;
 import com.isxcode.star.modules.datasource.entity.DatasourceEntity;
 import com.isxcode.star.modules.datasource.repository.DatasourceRepository;
+import com.isxcode.star.modules.datasource.service.DatasourceService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -26,11 +26,13 @@ public class SyncWorkService {
 
 	private final DatasourceRepository datasourceRepository;
 
+	private final DatasourceService datasourceService;
+
 	private final AesUtils aesUtils;
 
 	/**
 	 * 返回筛选后的表名。
-	 * 
+	 *
 	 * @param metaData
 	 *            数据库连接的元数据。
 	 * @param catalog
@@ -58,7 +60,7 @@ public class SyncWorkService {
 
 	/**
 	 * 返回筛选后的视图名。
-	 * 
+	 *
 	 * @param metaData
 	 *            数据库连接的元数据。
 	 * @param catalog
@@ -84,7 +86,7 @@ public class SyncWorkService {
 
 	/**
 	 * 返回筛选后的数据表字段信息。
-	 * 
+	 *
 	 * @param metaData
 	 *            数据库连接的元数据。
 	 * @param catalog
@@ -114,7 +116,7 @@ public class SyncWorkService {
 
 	/**
 	 * 获取处理后的catalog与schema。
-	 * 
+	 *
 	 * @param dataBase
 	 *            传入的数据库名称。
 	 * @param catalog
@@ -145,7 +147,7 @@ public class SyncWorkService {
 
 	/**
 	 * 获取数据库连接。
-	 * 
+	 *
 	 * @param dataSourceId
 	 *            数据源唯一id。
 	 * @param driver
@@ -160,14 +162,12 @@ public class SyncWorkService {
 			throw new IsxAppException("数据源异常，请联系开发者");
 		}
 
-		return JDBCConnection.getConnection(datasourceEntityOptional.get().getJdbcUrl(),
-				datasourceEntityOptional.get().getUsername(),
-				aesUtils.decrypt(datasourceEntityOptional.get().getPasswd()), driver, classPath);
+		return datasourceService.getDbConnection(datasourceEntityOptional.get());
 	}
 
 	/**
 	 * 获取数据预览SQL。
-	 * 
+	 *
 	 * @param dataType
 	 *            数据库类型。
 	 * @param tableName
