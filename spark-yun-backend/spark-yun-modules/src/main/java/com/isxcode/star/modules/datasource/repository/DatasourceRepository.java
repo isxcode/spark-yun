@@ -9,6 +9,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 @CacheConfig(cacheNames = {"SY_DATASOURCE"})
 public interface DatasourceRepository extends JpaRepository<DatasourceEntity, String> {
@@ -17,4 +19,6 @@ public interface DatasourceRepository extends JpaRepository<DatasourceEntity, St
 			+ "OR D.dbType LIKE %:keyword% " + "OR D.username LIKE %:keyword% "
 			+ "OR D.jdbcUrl LIKE %:keyword% order by D.createDateTime desc ")
 	Page<DatasourceEntity> searchAll(@Param("keyword") String searchKeyWord, Pageable pageable);
+
+	List<DatasourceEntity> findAllByDriverId(String driverId);
 }

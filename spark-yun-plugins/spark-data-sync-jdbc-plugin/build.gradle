@@ -78,7 +78,7 @@ dependencies {
   // univocity-parsers
   implementation "com.univocity:univocity-parsers:2.8.2"
 
-  implementation "com.mysql:mysql-connector-j:${MYSQL_DRIVER_VERSION}"
+  implementation "com.mysql:mysql-connector-j:8.1.0"
 }
 
 jar {

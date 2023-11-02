@@ -2,7 +2,9 @@ package com.isxcode.star.modules.datasource.mapper;
 
 import com.isxcode.star.api.datasource.pojos.req.AddDatasourceReq;
 import com.isxcode.star.api.datasource.pojos.req.UpdateDatasourceReq;
+import com.isxcode.star.api.datasource.pojos.res.PageDatabaseDriverRes;
 import com.isxcode.star.api.datasource.pojos.res.PageDatasourceRes;
+import com.isxcode.star.modules.datasource.entity.DatabaseDriverEntity;
 import com.isxcode.star.modules.datasource.entity.DatasourceEntity;
 import java.util.List;
 import org.mapstruct.Mapper;
@@ -22,6 +24,7 @@ public interface DatasourceMapper {
 	@Mapping(source = "dasUpdateDatasourceReq.dbType", target = "dbType")
 	@Mapping(source = "dasUpdateDatasourceReq.jdbcUrl", target = "jdbcUrl")
 	@Mapping(source = "dasUpdateDatasourceReq.username", target = "username")
+	@Mapping(source = "dasUpdateDatasourceReq.metastoreUris", target = "metastoreUris")
 	@Mapping(source = "dasUpdateDatasourceReq.name", target = "name")
 	@Mapping(target = "id", source = "datasourceEntity.id")
 	DatasourceEntity dasUpdateDatasourceReqToDatasourceEntity(UpdateDatasourceReq dasUpdateDatasourceReq,
@@ -34,6 +37,18 @@ public interface DatasourceMapper {
 
 	default Page<PageDatasourceRes> datasourceEntityToQueryDatasourceResPage(Page<DatasourceEntity> pageDatasource) {
 		List<PageDatasourceRes> dtoList = datasourceEntityToQueryDatasourceResList(pageDatasource.getContent());
+		return new PageImpl<>(dtoList, pageDatasource.getPageable(), pageDatasource.getTotalElements());
+	}
+
+	@Mapping(target = "createDateTime", dateFormat = "yyyy-MM-dd HH:mm:ss")
+	PageDatabaseDriverRes dataDriverEntityToPageDatabaseDriverRes(DatabaseDriverEntity databaseDriverEntity);
+
+	List<PageDatabaseDriverRes> dataDriverEntityToPageDatabaseDriverResList(
+			List<DatabaseDriverEntity> datasourceEntity);
+
+	default Page<PageDatabaseDriverRes> dataDriverEntityToPageDatabaseDriverResPage(
+			Page<DatabaseDriverEntity> pageDatasource) {
+		List<PageDatabaseDriverRes> dtoList = dataDriverEntityToPageDatabaseDriverResList(pageDatasource.getContent());
 		return new PageImpl<>(dtoList, pageDatasource.getPageable(), pageDatasource.getTotalElements());
 	}
 }

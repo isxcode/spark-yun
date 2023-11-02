@@ -9,11 +9,10 @@ import com.isxcode.star.api.work.pojos.res.GetDataSourceColumnsRes;
 import com.isxcode.star.api.work.pojos.res.GetDataSourceDataRes;
 import com.isxcode.star.api.work.pojos.res.GetDataSourceTablesRes;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
-import com.isxcode.star.common.connection.JDBCConnection;
 import com.isxcode.star.common.utils.AesUtils;
 import com.isxcode.star.modules.datasource.entity.DatasourceEntity;
 import com.isxcode.star.modules.datasource.repository.DatasourceRepository;
-import com.isxcode.star.modules.work.repository.WorkRepository;
+import com.isxcode.star.modules.datasource.service.DatasourceService;
 import com.isxcode.star.modules.work.service.SyncWorkService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,7 +35,7 @@ import java.util.Optional;
 @Slf4j
 public class SyncWorkBizService {
 
-	private final WorkRepository workRepository;
+	private final DatasourceService datasourceService;
 
 	private final SyncWorkService syncWorkService;
 
@@ -76,9 +75,7 @@ public class SyncWorkBizService {
 			throw new IsxAppException("数据源异常，请联系开发者");
 		}
 
-		Connection connection = JDBCConnection.getConnection(datasourceEntityOptional.get().getJdbcUrl(),
-				datasourceEntityOptional.get().getUsername(),
-				aesUtils.decrypt(datasourceEntityOptional.get().getPasswd()), null, null);
+		Connection connection = datasourceService.getDbConnection(datasourceEntityOptional.get());
 
 		Statement statement = connection.createStatement();
 		String dataPreviewSql = syncWorkService.getDataPreviewSql(datasourceEntityOptional.get().getDbType(),
