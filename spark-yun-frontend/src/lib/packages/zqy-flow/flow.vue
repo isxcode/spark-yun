@@ -159,11 +159,12 @@ function initGraph() {
             allowNode: false,
             allowEdge: false,
             validateMagnet({ magnet }) {
-                if (!hideGridStatus.value) {
-                    return false
-                } else {
-                    return magnet.getAttribute('port-group') !== 'top'
-                }
+                // if (!hideGridStatus.value) {
+                //     return false
+                // } else {
+                //     return magnet.getAttribute('port-group') !== 'top'
+                // }
+                return magnet.getAttribute('port-group') !== 'top'
 
             },
             createEdge() {
