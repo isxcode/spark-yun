@@ -47,21 +47,106 @@ if [ ! -d "${SPARK_MIN_DIR}" ]; then
 fi
 
 # 解压SPARK_MIN_FILE，到指定目录SPARK_MIN_DIR
-tar vzxf "${TMP_DIR}"/"${SPARK_MIN_FILE}" --strip-components=1 -C "${SPARK_MIN_DIR}"
+if [ ! -f "${TMP_DIR}"/"${SPARK_MIN_FILE}" ]; then
+  tar vzxf "${TMP_DIR}"/"${SPARK_MIN_FILE}" --strip-components=1 -C "${SPARK_MIN_DIR}"
+fi
 
 # 修改spark-defaults.conf
-cp "${SPARK_MIN_DIR}"/conf/spark-defaults.conf.template "${SPARK_MIN_DIR}"/conf/spark-defaults.conf
-tee -a "${SPARK_MIN_DIR}"/conf/spark-defaults.conf <<-'EOF'
+if [ ! -f "${SPARK_MIN_DIR}"/conf/spark-defaults.conf ]; then
+  cp "${SPARK_MIN_DIR}"/conf/spark-defaults.conf.template "${SPARK_MIN_DIR}"/conf/spark-defaults.conf
+  tee -a "${SPARK_MIN_DIR}"/conf/spark-defaults.conf <<-'EOF'
 spark.master          spark://localhost:7077
 spark.master.web.url  http://localhost:8081
 EOF
+fi
 
 # 修改spark-env.sh
+if [ ! -f "${SPARK_MIN_DIR}"/conf/spark-env.sh ]; then
 cp "${SPARK_MIN_DIR}"/conf/spark-env.sh.template "${SPARK_MIN_DIR}"/conf/spark-env.sh
-tee -a "${SPARK_MIN_DIR}"/conf/spark-env.sh <<-'EOF'
+  tee -a "${SPARK_MIN_DIR}"/conf/spark-env.sh <<-'EOF'
 export SPARK_MASTER_PORT=7077
 export SPARK_MASTER_WEBUI_PORT=8081
 EOF
+fi
+
+# 创建resources文件夹
+JDBC_DIR="${BASE_PATH}"/resources/jdbc/system
+
+if [ ! -d "${JDBC_DIR}" ]; then
+    mkdir -p "${JDBC_DIR}"
+fi
+
+# 下载mysql8驱动
+if [ ! -f "${JDBC_DIR}"/mysql-connector-j-8.1.0.jar ]; then
+  wget https://repo1.maven.org/maven2/com/mysql/mysql-connector-j/8.1.0/mysql-connector-j-8.1.0.jar -O ${JDBC_DIR}/mysql-connector-j-8.1.0.jar
+  echo "mysql-connector-j-8.1.0.jar驱动下载成功"
+fi
+
+# 下载postgresql驱动
+if [ ! -f "${JDBC_DIR}"/postgresql-42.6.0.jar ]; then
+  wget https://repo1.maven.org/maven2/org/postgresql/postgresql/42.6.0/postgresql-42.6.0.jar -O ${JDBC_DIR}/postgresql-42.6.0.jar
+  echo "postgresql-42.6.0.jar驱动下载成功"
+fi
+
+# 下载dm驱动
+if [ ! -f "${JDBC_DIR}"/Dm8JdbcDriver18-8.1.1.49.jar ]; then
+  wget https://repo1.maven.org/maven2/com/dameng/Dm8JdbcDriver18/8.1.1.49/Dm8JdbcDriver18-8.1.1.49.jar -O ${JDBC_DIR}/Dm8JdbcDriver18-8.1.1.49.jar
+  echo "Dm8JdbcDriver18-8.1.1.49.jar驱动下载成功"
+fi
+
+# 下载clickhouse驱动
+if [ ! -f "${JDBC_DIR}"/clickhouse-jdbc-0.5.0.jar ]; then
+  wget https://repo1.maven.org/maven2/com/clickhouse/clickhouse-jdbc/0.5.0/clickhouse-jdbc-0.5.0.jar -O ${JDBC_DIR}/clickhouse-jdbc-0.5.0.jar
+  echo "clickhouse-jdbc-0.5.0.jar驱动下载成功"
+fi
+
+# 下载hana驱动
+if [ ! -f "${JDBC_DIR}"/ngdbc-2.18.13.jar ]; then
+  wget https://repo1.maven.org/maven2/com/sap/cloud/db/jdbc/ngdbc/2.18.13/ngdbc-2.18.13.jar -O ${JDBC_DIR}/ngdbc-2.18.13.jar
+  echo "ngdbc-2.18.13.jar驱动下载成功"
+fi
+
+# 下载doris驱动
+if [ ! -f "${JDBC_DIR}"/mysql-connector-java-5.1.49.jar ]; then
+  wget https://repo1.maven.org/maven2/mysql/mysql-connector-java/5.1.49/mysql-connector-java-5.1.49.jar -O ${JDBC_DIR}/mysql-connector-java-5.1.49.jar
+  echo "mysql-connector-java-5.1.49.jar驱动下载成功"
+fi
+
+# 下载sqlserver驱动
+if [ ! -f "${JDBC_DIR}"/mssql-jdbc-12.4.2.jre8.jar ]; then
+  wget https://repo1.maven.org/maven2/com/microsoft/sqlserver/mssql-jdbc/12.4.2.jre8/mssql-jdbc-12.4.2.jre8.jar -O ${JDBC_DIR}/mssql-jdbc-12.4.2.jre8.jar
+  echo "mssql-jdbc-12.4.2.jre8.jar驱动下载成功"
+fi
+
+# 下载hive3驱动
+if [ ! -f "${JDBC_DIR}"/hive-jdbc-3.1.3-standalone.jar ]; then
+  wget https://repo1.maven.org/maven2/org/apache/hive/hive-jdbc/3.1.3/hive-jdbc-3.1.3-standalone.jar -O ${JDBC_DIR}/hive-jdbc-3.1.3-standalone.jar
+  echo "hive-jdbc-3.1.3-standalone.jar驱动下载成功"
+fi
+
+# 下载hive2驱动
+if [ ! -f "${JDBC_DIR}"/hive-jdbc-2.1.1-standalone.jar ]; then
+  wget https://repo1.maven.org/maven2/org/apache/hive/hive-jdbc/2.1.1/hive-jdbc-2.1.1-standalone.jar -O ${JDBC_DIR}/hive-jdbc-2.1.1-standalone.jar
+  echo "hive-jdbc-2.1.1-standalone.jar驱动下载成功"
+fi
+
+# 下载oracle驱动
+if [ ! -f "${JDBC_DIR}"/ojdbc10-19.20.0.0.jar ]; then
+  wget https://repo1.maven.org/maven2/com/oracle/database/jdbc/ojdbc10/19.20.0.0/ojdbc10-19.20.0.0.jar -O ${JDBC_DIR}/ojdbc10-19.20.0.0.jar
+  echo "ojdbc10-19.20.0.0.jar驱动下载成功"
+fi
+
+# 下载oceanbase驱动
+if [ ! -f "${JDBC_DIR}"/oceanbase-client-2.4.6.jar ]; then
+  wget https://repo1.maven.org/maven2/com/oceanbase/oceanbase-client/2.4.6/oceanbase-client-2.4.6.jar -O ${JDBC_DIR}/oceanbase-client-2.4.6.jar
+  echo "oceanbase-client-2.4.6.jar驱动下载成功"
+fi
+
+# 下载db2驱动
+if [ ! -f "${JDBC_DIR}"/jcc-11.5.8.0.jar ]; then
+  wget https://repo1.maven.org/maven2/com/ibm/db2/jcc/11.5.8.0/jcc-11.5.8.0.jar -O ${JDBC_DIR}/jcc-11.5.8.0.jar
+  echo "jcc-11.5.8.0.jar驱动下载成功"
+fi
 
 # 返回状态
 echo "【安装结果】：安装成功"
