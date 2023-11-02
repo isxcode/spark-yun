@@ -113,14 +113,14 @@ public class WorkBizService {
 			workConfigService.initSyncRule(workConfig);
 		}
 
-    // 如果jdbc执行和jdbc查询，必填数据源
-    if (WorkType.EXECUTE_JDBC_SQL.equals(addWorkReq.getWorkType())
-      || WorkType.QUERY_JDBC_SQL.equals(addWorkReq.getWorkType())) {
-      if (Strings.isEmpty(addWorkReq.getDatasourceId())) {
-        throw new IsxAppException("数据源是必填项");
-      }
-      workConfig.setDatasourceId(addWorkReq.getDatasourceId());
-    }
+		// 如果jdbc执行和jdbc查询，必填数据源
+		if (WorkType.EXECUTE_JDBC_SQL.equals(addWorkReq.getWorkType())
+				|| WorkType.QUERY_JDBC_SQL.equals(addWorkReq.getWorkType())) {
+			if (Strings.isEmpty(addWorkReq.getDatasourceId())) {
+				throw new IsxAppException("数据源是必填项");
+			}
+			workConfig.setDatasourceId(addWorkReq.getDatasourceId());
+		}
 
 		// 初始化调度默认值
 		workConfigService.initCronConfig(workConfig);
