@@ -54,12 +54,12 @@ export const colConfigs: colConfig[] = [
     customSlot: 'nameSlot',
     showOverflowTooltip: true
   },
-  {
-    prop: 'clusterName',
-    title: '默认集群',
-    minWidth: 100,
-    showOverflowTooltip: true
-  },
+  // {
+  //   prop: 'clusterName',
+  //   title: '默认集群',
+  //   minWidth: 100,
+  //   showOverflowTooltip: true
+  // },
   // {
   //   prop: 'status',
   //   title: '发布状态',

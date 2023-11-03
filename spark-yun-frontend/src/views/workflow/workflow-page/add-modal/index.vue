@@ -35,10 +35,35 @@
           />
         </el-select>
       </el-form-item>
+      <el-form-item label="计算集群" prop="clusterId" v-if="['BASH', 'PYTHON', 'DATA_SYNC_JDBC', 'SPARK_SQL'].includes(formData.workType)">
+        <el-select
+          v-model="formData.clusterId"
+          placeholder="请选择"
+          @change="clusterIdChangeEvent"
+          @visible-change="getClusterList"
+        >
+          <el-option
+            v-for="item in clusterList"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="集群节点" prop="clusterNodeId" v-if="['BASH', 'PYTHON'].includes(formData.workType)">
+        <el-select v-model="formData.clusterNodeId" placeholder="请选择" @visible-change="getClusterNodeList">
+          <el-option
+            v-for="item in clusterNodeList"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          />
+        </el-select>
+      </el-form-item>
       <el-form-item label="是否连接hive" v-if="['SPARK_SQL'].includes(formData.workType)">
         <el-switch v-model="formData.enableHive" @change="enableHiveChange" />
       </el-form-item>
-      <el-form-item label="Hive数据源" :prop="formData.enableHive ? 'datasourceId' : ''" v-if="['SPARK_SQL'].includes(formData.workType) && showForm">
+      <el-form-item label="Hive数据源" :prop="formData.enableHive ? 'datasourceId' : ''" v-if="formData.enableHive && ['SPARK_SQL'].includes(formData.workType)">
         <el-select
           v-model="formData.datasourceId"
           placeholder="请选择"
@@ -60,31 +85,6 @@
         >
           <el-option
             v-for="item in dataSourceList"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-          />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="计算集群" prop="clusterId" v-if="['BASH', 'PYTHON', 'DATA_SYNC_JDBC', 'SPARK_SQL'].includes(formData.workType)">
-        <el-select
-          v-model="formData.clusterId"
-          placeholder="请选择"
-          @change="clusterIdChangeEvent"
-          @visible-change="getClusterList"
-        >
-          <el-option
-            v-for="item in clusterList"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-          />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="集群节点" prop="clusterNodeId" v-if="['BASH', 'PYTHON'].includes(formData.workType)">
-        <el-select v-model="formData.clusterNodeId" placeholder="请选择" @visible-change="getClusterNodeList">
-          <el-option
-            v-for="item in clusterNodeList"
             :key="item.value"
             :label="item.label"
             :value="item.value"
