@@ -18,6 +18,7 @@ import com.isxcode.star.api.workflow.pojos.res.GetWorkflowRes;
 import com.isxcode.star.api.workflow.pojos.res.PageWorkflowRes;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.star.common.locker.Locker;
+import com.isxcode.star.modules.cluster.repository.ClusterRepository;
 import com.isxcode.star.modules.work.entity.WorkConfigEntity;
 import com.isxcode.star.modules.work.entity.WorkEntity;
 import com.isxcode.star.modules.work.entity.WorkExportInfo;
@@ -89,6 +90,8 @@ public class WorkflowBizService {
 
 	private final Executor sparkYunWorkThreadPool;
 
+  private final ClusterRepository clusterRepository;
+
 	public WorkflowEntity getWorkflowEntity(String workflowId) {
 
 		Optional<WorkflowEntity> workflowEntityOptional = workflowRepository.findById(workflowId);
@@ -129,8 +132,17 @@ public class WorkflowBizService {
 		Page<WorkflowEntity> workflowEntityPage = workflowRepository.searchAll(wocQueryWorkflowReq.getSearchKeyWord(),
 				PageRequest.of(wocQueryWorkflowReq.getPage(), wocQueryWorkflowReq.getPageSize()));
 
-		return workflowMapper.workflowEntityPageToQueryWorkflowResPage(workflowEntityPage);
-	}
+    Page<PageWorkflowRes> pageWorkflowRes = workflowMapper.workflowEntityPageToQueryWorkflowResPage(workflowEntityPage);
+
+    // 翻译集群名称
+    pageWorkflowRes.getContent().forEach(e ->{
+      if (!Strings.isEmpty(e.getDefaultClusterId())) {
+        e.setClusterName(clusterRepository.findById(e.getDefaultClusterId()).get().getName());
+      }
+    } );
+
+    return pageWorkflowRes;
+  }
 
 	public void deleteWorkflow(DeleteWorkflowReq deleteWorkflowReq) {
 
