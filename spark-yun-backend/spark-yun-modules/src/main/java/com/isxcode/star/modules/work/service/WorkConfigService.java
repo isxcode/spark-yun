@@ -8,8 +8,6 @@ import com.isxcode.star.api.work.pojos.dto.ClusterConfig;
 import com.isxcode.star.api.work.pojos.dto.CronConfig;
 import com.isxcode.star.api.work.pojos.dto.SyncRule;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
-import com.isxcode.star.modules.cluster.entity.ClusterEntity;
-import com.isxcode.star.modules.cluster.entity.ClusterNodeEntity;
 import com.isxcode.star.modules.cluster.repository.ClusterNodeRepository;
 import com.isxcode.star.modules.cluster.repository.ClusterRepository;
 import com.isxcode.star.modules.work.entity.WorkConfigEntity;
@@ -69,26 +67,12 @@ public class WorkConfigService {
 		}
 	}
 
-	public void initClusterConfig(WorkConfigEntity workConfig) {
+	public void initClusterConfig(WorkConfigEntity workConfig, String clusterId, String clusterNodeId,
+			Boolean enableHive) {
 
-		// 判断用户是否设置默认引擎
-		Optional<ClusterEntity> defaultCluster = clusterRepository.findByDefaultCluster(true);
-		String defaultClusterId = null;
-		String defaultClusterNodeId = null;
-		if (defaultCluster.isPresent()) {
-			defaultClusterId = defaultCluster.get().getId();
-
-			// 判断用户是否设置默认引擎节点
-			Optional<ClusterNodeEntity> defaultClusterNode = clusterNodeRepository
-					.findByClusterIdAndDefaultClusterNode(defaultClusterId, true);
-			if (defaultClusterNode.isPresent()) {
-				defaultClusterNodeId = defaultClusterNode.get().getId();
-			}
-		}
-
-		workConfig.setClusterConfig(
-				JSON.toJSONString(ClusterConfig.builder().setMode(SetMode.SIMPLE).clusterId(defaultClusterId)
-						.clusterNodeId(defaultClusterNodeId).resourceLevel(ResourceLevel.LOW).build()));
+		workConfig
+				.setClusterConfig(JSON.toJSONString(ClusterConfig.builder().setMode(SetMode.SIMPLE).clusterId(clusterId)
+						.clusterNodeId(clusterNodeId).enableHive(enableHive).resourceLevel(ResourceLevel.LOW).build()));
 	}
 
 	public void initSyncRule(WorkConfigEntity workConfig) {

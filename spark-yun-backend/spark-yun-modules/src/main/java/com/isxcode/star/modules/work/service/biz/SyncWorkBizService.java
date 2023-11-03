@@ -1,13 +1,7 @@
 package com.isxcode.star.modules.work.service.biz;
 
-import com.isxcode.star.api.work.pojos.req.GetCreateTableSqlReq;
-import com.isxcode.star.api.work.pojos.req.GetDataSourceColumnsReq;
-import com.isxcode.star.api.work.pojos.req.GetDataSourceDataReq;
-import com.isxcode.star.api.work.pojos.req.GetDataSourceTablesReq;
-import com.isxcode.star.api.work.pojos.res.GetCreateTableSqlRes;
-import com.isxcode.star.api.work.pojos.res.GetDataSourceColumnsRes;
-import com.isxcode.star.api.work.pojos.res.GetDataSourceDataRes;
-import com.isxcode.star.api.work.pojos.res.GetDataSourceTablesRes;
+import com.isxcode.star.api.work.pojos.req.*;
+import com.isxcode.star.api.work.pojos.res.*;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.star.common.utils.AesUtils;
 import com.isxcode.star.modules.datasource.entity.DatasourceEntity;
@@ -142,5 +136,4 @@ public class SyncWorkBizService {
 			return null;
 		}
 	}
-
 }
