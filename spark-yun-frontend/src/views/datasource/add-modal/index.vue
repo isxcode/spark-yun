@@ -13,9 +13,8 @@
       >
         <el-input
           v-model="formData.name"
-          maxlength="20"
+          maxlength="200"
           placeholder="请输入"
-          show-word-limit
         />
       </el-form-item>
       <el-form-item
@@ -31,6 +30,29 @@
             :key="item.value"
             :label="item.label"
             :value="item.value"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item v-if="formData.dbType === 'HIVE'" label="hive.metastore.uris">
+        <el-input
+          v-model="formData.metastoreUris"
+          maxlength="100"
+          placeholder="请输入"
+        />
+      </el-form-item>
+      <el-form-item
+        label="数据源驱动"
+        prop="driverId"
+      >
+        <el-select
+          v-model="formData.driverId"
+          placeholder="请选择"
+        >
+          <el-option
+            v-for="item in driverIdList"
+            :key="item.id"
+            :label="item.name"
+            :value="item.id"
           />
         </el-select>
       </el-form-item>
@@ -50,9 +72,8 @@
       >
         <el-input
           v-model="formData.username"
-          maxlength="100"
+          maxlength="200"
           placeholder="请输入"
-          show-word-limit
         />
       </el-form-item>
       <el-form-item
@@ -69,7 +90,6 @@
       <el-form-item label="备注">
         <el-input
           v-model="formData.remark"
-          show-word-limit
           type="textarea"
           maxlength="200"
           :autosize="{ minRows: 4, maxRows: 4 }"
@@ -84,9 +104,11 @@
 import { reactive, defineExpose, ref, nextTick } from 'vue'
 import BlockModal from '@/components/block-modal/index.vue'
 import { ElMessage, FormInstance, FormRules } from 'element-plus'
+import { GetDriverListData } from '@/services/datasource.service';
 
 const form = ref<FormInstance>()
 const callback = ref<any>()
+const driverIdList = ref([])
 const modelConfig = reactive({
   title: '添加数据源',
   visible: false,
@@ -109,6 +131,8 @@ const modelConfig = reactive({
 const formData = reactive({
   name: '',
   dbType: '',
+  driverId: '',
+  metastoreUris: '',
   jdbcUrl: '',
   username: '',
   passwd: '',
@@ -180,6 +204,13 @@ const rules = reactive<FormRules>({
       trigger: [ 'blur', 'change' ]
     }
   ],
+  driverId: [
+    {
+      required: true,
+      message: '请选择数据源驱动',
+      trigger: [ 'blur', 'change' ]
+    }
+  ],
   jdbcUrl: [
     {
       required: true,
@@ -206,6 +237,7 @@ const rules = reactive<FormRules>({
 function showModal(cb: () => void, data: any): void {
   callback.value = cb
   modelConfig.visible = true
+  getDriverIdList()
   if (data) {
     formData.name = data.name
     formData.dbType = data.dbType
@@ -227,6 +259,17 @@ function showModal(cb: () => void, data: any): void {
   }
   nextTick(() => {
     form.value?.resetFields()
+  })
+}
+
+function getDriverIdList() {
+  GetDriverListData({
+    page: 0,
+    pageSize: 10000,
+    searchKeyWord: ''
+  }).then((res: any) => {
+    driverIdList.value = res.data.content
+  }).catch((error: any) => {
   })
 }
 
