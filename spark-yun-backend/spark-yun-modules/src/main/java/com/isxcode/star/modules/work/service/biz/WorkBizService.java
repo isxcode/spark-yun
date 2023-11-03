@@ -172,7 +172,28 @@ public class WorkBizService {
 		Page<WorkEntity> workPage = workRepository.pageSearchByWorkflowId(pageWorkReq.getSearchKeyWord(),
 				pageWorkReq.getWorkflowId(), PageRequest.of(pageWorkReq.getPage(), pageWorkReq.getPageSize()));
 
-		return workPage.map(workMapper::workEntityToPageWorkRes);
+		Page<PageWorkRes> map = workPage.map(workMapper::workEntityToPageWorkRes);
+
+		map.getContent().forEach(e -> {
+			WorkConfigEntity workConfig = workConfigRepository.findById(e.getConfigId()).get();
+			if (Strings.isEmpty(workConfig.getDatasourceId())) {
+				e.setDatasourceId(workConfig.getDatasourceId());
+			}
+
+			if (!Strings.isEmpty(workConfig.getClusterConfig())) {
+				ClusterConfig clusterConfig = JSON.parseObject(workConfig.getClusterConfig(), ClusterConfig.class);
+				if (!Strings.isEmpty(clusterConfig.getClusterId())) {
+					e.setClusterId(clusterConfig.getClusterId());
+				}
+				if (!Strings.isEmpty(clusterConfig.getClusterNodeId())) {
+					e.setClusterNodeId(clusterConfig.getClusterNodeId());
+				}
+				e.setEnableHive(clusterConfig.getEnableHive());
+			}
+
+		});
+
+		return map;
 	}
 
 	public void deleteWork(DeleteWorkReq deleteWorkReq) {
