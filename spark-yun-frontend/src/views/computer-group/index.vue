@@ -109,6 +109,7 @@ import { BreadCrumbList, TableConfig, FormData } from './computer-group.config'
 import { GetComputerGroupList, AddComputerGroupData, UpdateComputerGroupData, CheckComputerGroupData, DeleteComputerGroupData, SetDefaultComputerGroup } from '@/services/computer-group.service'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useRouter } from 'vue-router'
+import { Loading } from '@element-plus/icons-vue'
 
 const router = useRouter()
 const breadCrumbList = reactive(BreadCrumbList)
