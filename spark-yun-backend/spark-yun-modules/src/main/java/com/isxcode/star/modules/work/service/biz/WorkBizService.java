@@ -176,7 +176,7 @@ public class WorkBizService {
 
 		map.getContent().forEach(e -> {
 			WorkConfigEntity workConfig = workConfigRepository.findById(e.getConfigId()).get();
-			if (Strings.isEmpty(workConfig.getDatasourceId())) {
+			if (!Strings.isEmpty(workConfig.getDatasourceId())) {
 				e.setDatasourceId(workConfig.getDatasourceId());
 			}
 
