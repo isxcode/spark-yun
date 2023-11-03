@@ -7,11 +7,6 @@ server:
   tomcat:
     connection-timeout: 120s
 
-  multipart:
-    max-file-size: 10MB
-    max-request-size: 100MB
-    enabled: true
-
 spring:
 
   profiles:
@@ -20,6 +15,12 @@ spring:
   security:
     user:
       roles: ADMIN
+
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
+      enabled: true
 
   banner:
     location: classpath:banner/logo.txt
@@ -31,6 +32,7 @@ spring:
       max-active: 200
       min-idle: 10
       max-wait: 30000
+      test-while-idle: true
       filters: stat,wall,log4j2
       validationQuery: select 'x'
       stat-view-servlet:
