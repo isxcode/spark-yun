@@ -154,13 +154,13 @@ public class DatasourceBizService {
 			try {
 				Files.createDirectories(Paths.get(driverDirPath));
 			} catch (IOException e) {
-				throw new RuntimeException(e);
+				throw new IsxAppException("上传驱动，目录创建失败");
 			}
 		}
 
 		// 保存驱动文件
 		try (InputStream inputStream = driverFile.getInputStream()) {
-			Files.copy(inputStream, Paths.get(driverDirPath).resolve(driverFile.getName()),
+			Files.copy(inputStream, Paths.get(driverDirPath).resolve(driverFile.getOriginalFilename()),
 					StandardCopyOption.REPLACE_EXISTING);
 		} catch (IOException e) {
 			throw new IsxAppException("上传许可证失败");
@@ -168,8 +168,8 @@ public class DatasourceBizService {
 
 		// 初始化驱动对象
 		DatabaseDriverEntity databaseDriver = DatabaseDriverEntity.builder().name(name).dbType(dbType)
-				.driverType("TENANT_DRIVER").remark(remark).isDefaultDriver(false).fileName(driverFile.getName())
-				.build();
+				.driverType("TENANT_DRIVER").remark(remark).isDefaultDriver(false)
+				.fileName(driverFile.getOriginalFilename()).build();
 
 		// 持久化
 		databaseDriverRepository.save(databaseDriver);
@@ -187,7 +187,10 @@ public class DatasourceBizService {
 
 	public void deleteDatabaseDriver(DeleteDatabaseDriverReq deleteDatabaseDriverReq) {
 
+		// 支持查询所有的数据
+		JPA_TENANT_MODE.set(false);
 		DatabaseDriverEntity driver = databaseDriverService.getDriver(deleteDatabaseDriverReq.getDriverId());
+		JPA_TENANT_MODE.set(true);
 
 		// 系统驱动无法删除
 		if ("SYSTEM_DRIVER".equals(driver.getDriverType())) {
@@ -203,7 +206,17 @@ public class DatasourceBizService {
 		// 卸载Map中的驱动
 		ALL_EXIST_DRIVER.remove(driver.getId());
 
-		// 将文件名改名字 xxx.jar xxx_${driverId}.jar_bak
+		// 将文件名改名字 xxx.jar ${driverId}_xxx.jar_bak
+		try {
+			String jdbcDirPath = PathUtils.parseProjectPath(isxAppProperties.getResourcesPath()) + File.separator
+					+ "jdbc" + File.separator + TENANT_ID.get();
+			Files.copy(Paths.get(jdbcDirPath).resolve(driver.getFileName()),
+					Paths.get(jdbcDirPath).resolve(driver.getId() + "_" + driver.getFileName() + "_bak"),
+					StandardCopyOption.REPLACE_EXISTING);
+			Files.delete(Paths.get(jdbcDirPath).resolve(driver.getFileName()));
+		} catch (IOException e) {
+			throw new IsxAppException("删除驱动文件异常");
+		}
 
 		// 删除数据库
 		databaseDriverRepository.deleteById(driver.getId());
