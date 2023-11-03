@@ -1,10 +1,7 @@
 package com.isxcode.star.modules.datasource.controller;
 
 import com.isxcode.star.api.datasource.pojos.req.*;
-import com.isxcode.star.api.datasource.pojos.res.GetConnectLogRes;
-import com.isxcode.star.api.datasource.pojos.res.PageDatabaseDriverRes;
-import com.isxcode.star.api.datasource.pojos.res.PageDatasourceRes;
-import com.isxcode.star.api.datasource.pojos.res.TestConnectRes;
+import com.isxcode.star.api.datasource.pojos.res.*;
 import com.isxcode.star.api.main.constants.ModuleCode;
 import com.isxcode.star.api.user.constants.RoleType;
 import com.isxcode.star.common.annotations.successResponse.SuccessResponse;
@@ -108,4 +105,21 @@ public class DatasourceController {
 		datasourceBizService.deleteDatabaseDriver(deleteDatabaseDriverReq);
 	}
 
+	@PostMapping("/settingDefaultDatabaseDriver")
+	@Operation(summary = "设置默认驱动接口")
+	@SuccessResponse("设置成功")
+	public void settingDefaultDatabaseDriver(
+			@RequestBody SettingDefaultDatabaseDriverReq settingDefaultDatabaseDriverReq) {
+
+		datasourceBizService.settingDefaultDatabaseDriver(settingDefaultDatabaseDriverReq);
+	}
+
+	@PostMapping("/getDefaultDatabaseDriver")
+	@Operation(summary = "获取默认驱动接口")
+	@SuccessResponse("获取成功")
+	public GetDefaultDatabaseDriverRes getDefaultDatabaseDriver(
+			@RequestBody GetDefaultDatabaseDriverReq getDefaultDatabaseDriverReq) {
+
+		return datasourceBizService.getDefaultDatabaseDriver(getDefaultDatabaseDriverReq);
+	}
 }

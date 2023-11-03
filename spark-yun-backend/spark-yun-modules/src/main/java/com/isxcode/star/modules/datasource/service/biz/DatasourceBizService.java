@@ -3,10 +3,7 @@ package com.isxcode.star.modules.datasource.service.biz;
 import com.isxcode.star.api.datasource.constants.DatasourceStatus;
 import com.isxcode.star.api.datasource.constants.DatasourceType;
 import com.isxcode.star.api.datasource.pojos.req.*;
-import com.isxcode.star.api.datasource.pojos.res.GetConnectLogRes;
-import com.isxcode.star.api.datasource.pojos.res.PageDatabaseDriverRes;
-import com.isxcode.star.api.datasource.pojos.res.PageDatasourceRes;
-import com.isxcode.star.api.datasource.pojos.res.TestConnectRes;
+import com.isxcode.star.api.datasource.pojos.res.*;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.star.backend.api.base.properties.IsxAppProperties;
 import com.isxcode.star.common.utils.AesUtils;
@@ -28,6 +25,7 @@ import java.nio.file.StandardCopyOption;
 import java.sql.Connection;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import javax.transaction.Transactional;
 
 import lombok.RequiredArgsConstructor;
@@ -221,4 +219,39 @@ public class DatasourceBizService {
 		// 删除数据库
 		databaseDriverRepository.deleteById(driver.getId());
 	}
+
+	public void settingDefaultDatabaseDriver(SettingDefaultDatabaseDriverReq settingDefaultDatabaseDriverReq) {
+
+		DatabaseDriverEntity driver = databaseDriverService.getDriver(settingDefaultDatabaseDriverReq.getDriverId());
+
+		if (settingDefaultDatabaseDriverReq.getIsDefaultDriver()) {
+			// 将租户中其他的同类型驱动，默认状态都改成false
+			List<DatabaseDriverEntity> allDriver = databaseDriverRepository.findAllByDbType(driver.getDbType());
+			allDriver.forEach(e -> e.setIsDefaultDriver(false));
+			databaseDriverRepository.saveAll(allDriver);
+		}
+
+		driver.setIsDefaultDriver(settingDefaultDatabaseDriverReq.getIsDefaultDriver());
+		databaseDriverRepository.save(driver);
+	}
+
+	public GetDefaultDatabaseDriverRes getDefaultDatabaseDriver(
+			GetDefaultDatabaseDriverReq getDefaultDatabaseDriverReq) {
+
+		// 先查询租户的如果有直接返回
+		Optional<DatabaseDriverEntity> defaultDriver = databaseDriverRepository
+				.findByDriverTypeAndDbTypeAndIsDefaultDriver("TENANT_DRIVER", getDefaultDatabaseDriverReq.getDbType(),
+						true);
+		if (defaultDriver.isPresent()) {
+			return datasourceMapper.databaseDriverEntityToGetDefaultDatabaseDriverRes(defaultDriver.get());
+		}
+
+		// 查询系统默认的返回
+		JPA_TENANT_MODE.set(false);
+		Optional<DatabaseDriverEntity> systemDriver = databaseDriverRepository
+				.findByDriverTypeAndDbTypeAndIsDefaultDriver("SYSTEM_DRIVER", getDefaultDatabaseDriverReq.getDbType(),
+						true);
+		return datasourceMapper.databaseDriverEntityToGetDefaultDatabaseDriverRes(systemDriver.get());
+	}
+
 }

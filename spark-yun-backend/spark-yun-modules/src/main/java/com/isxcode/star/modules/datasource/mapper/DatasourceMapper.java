@@ -2,6 +2,7 @@ package com.isxcode.star.modules.datasource.mapper;
 
 import com.isxcode.star.api.datasource.pojos.req.AddDatasourceReq;
 import com.isxcode.star.api.datasource.pojos.req.UpdateDatasourceReq;
+import com.isxcode.star.api.datasource.pojos.res.GetDefaultDatabaseDriverRes;
 import com.isxcode.star.api.datasource.pojos.res.PageDatabaseDriverRes;
 import com.isxcode.star.api.datasource.pojos.res.PageDatasourceRes;
 import com.isxcode.star.modules.datasource.entity.DatabaseDriverEntity;
@@ -51,4 +52,7 @@ public interface DatasourceMapper {
 		List<PageDatabaseDriverRes> dtoList = dataDriverEntityToPageDatabaseDriverResList(pageDatasource.getContent());
 		return new PageImpl<>(dtoList, pageDatasource.getPageable(), pageDatasource.getTotalElements());
 	}
+
+	GetDefaultDatabaseDriverRes databaseDriverEntityToGetDefaultDatabaseDriverRes(
+			DatabaseDriverEntity databaseDriverEntity);
 }
