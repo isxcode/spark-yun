@@ -94,6 +94,7 @@ import AddModal from './add-modal/index.vue'
 import { BreadCrumbList, TableConfig } from './license.config'
 import { GetLicenseList, UploadLicenseFile, DisableLicense, EnableLicense, DeleteLicense } from '@/services/license.service'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { Loading } from '@element-plus/icons-vue'
 
 const breadCrumbList = reactive(BreadCrumbList)
 const tableConfig: any = reactive(TableConfig)

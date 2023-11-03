@@ -18,7 +18,7 @@
           show-word-limit
         />
       </el-form-item>
-      <el-form-item label="默认计算集群">
+      <!-- <el-form-item label="默认计算集群">
         <el-select
           v-model="formData.defaultClusterId"
           placeholder="请选择"
@@ -30,7 +30,7 @@
             :value="item.value"
           />
         </el-select>
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item label="备注">
         <el-input
           v-model="formData.remark"
@@ -75,7 +75,7 @@ const modelConfig = reactive({
 })
 const formData = reactive({
   name: '',
-  defaultClusterId: '',
+  // defaultClusterId: '',
   remark: '',
   id: ''
 })

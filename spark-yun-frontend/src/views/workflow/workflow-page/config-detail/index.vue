@@ -46,7 +46,7 @@
                   </el-radio-group>
                 </el-form-item>
                 <el-form-item label="计算集群" prop="clusterId">
-                  <el-select v-model="clusterConfig.clusterId" placeholder="请选择">
+                  <el-select v-model="clusterConfig.clusterId" placeholder="请选择" @change="clusterIdChangeEvent">
                     <el-option
                       v-for="item in clusterList"
                       :key="item.value"
@@ -590,6 +590,11 @@ function getDataSourceList() {
   .catch(() => {
     dataSourceList.value = []
   })
+}
+
+
+function clusterIdChangeEvent() {
+  clusterConfig.clusterNodeId = ''
 }
 
 defineExpose({
