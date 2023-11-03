@@ -177,7 +177,7 @@ public class SyncWorkExecutor extends WorkExecutor {
 				ResultSet resultSet = statement
 						.executeQuery("select max(" + workRunContext.getSyncWorkConfig().getPartitionColumn()
 								+ ") 'max',min(" + workRunContext.getSyncWorkConfig().getPartitionColumn()
-								+ ") 'max' from " + workRunContext.getSyncWorkConfig().getTargetTable());
+								+ ") 'max' from " + workRunContext.getSyncWorkConfig().getSourceTable());
 				while (resultSet.next()) {
 					workRunContext.getSyncRule()
 							.setUpperBound(String.valueOf(resultSet.getObject(1) == null ? 0 : resultSet.getObject(1)));
