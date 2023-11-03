@@ -104,8 +104,15 @@ public class DatasourceBizService {
 				dasQueryDatasourceReq.getSearchKeyWord(),
 				PageRequest.of(dasQueryDatasourceReq.getPage(), dasQueryDatasourceReq.getPageSize()));
 
-		return datasourceMapper.datasourceEntityToQueryDatasourceResPage(datasourceEntityPage);
-	}
+    Page<PageDatasourceRes> pageDatasourceRes = datasourceMapper.datasourceEntityToQueryDatasourceResPage(datasourceEntityPage);
+    pageDatasourceRes.getContent().forEach(e->{
+      if (!Strings.isEmpty(e.getDriverId())) {
+        e.setDriverName(databaseDriverRepository.findById(e.getDriverId()).get().getName());
+      }
+    });
+
+    return pageDatasourceRes;
+  }
 
 	public void deleteDatasource(DeleteDatasourceReq deleteDatasourceReq) {
 
