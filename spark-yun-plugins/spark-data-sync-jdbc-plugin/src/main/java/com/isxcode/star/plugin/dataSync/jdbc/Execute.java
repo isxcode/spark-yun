@@ -44,9 +44,9 @@ public class Execute {
 			List<String> targetCols = new ArrayList<>();
 			conf.getSyncWorkConfig().getColumnMap().forEach(e -> {
 				sourceCols.add(Strings.isEmpty(sourceColTranslateSql.get(e.getSource()))
-						? "`" + e.getSource() + "`"
+						? String.format("`%s`", e.getSource())
 						: sourceColTranslateSql.get(e.getSource()));
-				targetCols.add(e.getTarget());
+				targetCols.add(String.format("`%s`", e.getTarget()));
 			});
 
 			// 判断是覆盖还是新增
@@ -56,7 +56,7 @@ public class Execute {
 
 			// 执行sql同步语句
 			sparkSession.sql(insertSql + " table " + targetTempView + " ( " + Strings.join(targetCols, ',')
-					+ " ) select " + Strings.join(sourceCols, ',') + " from " + sourceTempView);
+        + " ) select " + Strings.join(sourceCols, ',') + " from " + sourceTempView);
 		}
 	}
 
@@ -70,22 +70,28 @@ public class Execute {
 		if (DatasourceType.HIVE.equals(conf.getSyncWorkConfig().getSourceDBType())) {
 			return conf.getSyncWorkConfig().getSourceDatabase().getDbTable();
 		} else {
-			DataFrameReader frameReader = sparkSession.read().format("jdbc")
-					.option("driver", conf.getSyncWorkConfig().getSourceDatabase().getDriver())
-					.option("url", conf.getSyncWorkConfig().getSourceDatabase().getUrl())
-					.option("dbtable", conf.getSyncWorkConfig().getSourceDatabase().getDbTable())
-					.option("user", conf.getSyncWorkConfig().getSourceDatabase().getUser())
-					.option("password", conf.getSyncWorkConfig().getSourceDatabase().getPassword())
-					.option("partitionColumn", conf.getSyncWorkConfig().getPartitionColumn());
 
-			if (SetMode.SIMPLE.equals(conf.getSyncRule().getSetMode())) {
-				frameReader.option("lowerBound", conf.getSyncRule().getLowerBound());
-				frameReader.option("upperBound", conf.getSyncRule().getUpperBound());
-				frameReader.option("numPartitions", conf.getSyncRule().getNumPartitions());
-			} else {
-				conf.getSyncRule().getSqlConfig().forEach(frameReader::option);
-			}
-			Dataset<Row> source = frameReader.load();
+      Properties prop = new Properties();
+      prop.put("user", conf.getSyncWorkConfig().getSourceDatabase().getUser());
+      prop.put("password", conf.getSyncWorkConfig().getSourceDatabase().getPassword());
+      prop.put("driver", conf.getSyncWorkConfig().getSourceDatabase().getDriver());
+      // 创建一个 ArrayList 存储查询条件字符串
+      List<String> predicates = new ArrayList<>();
+
+      // 生成查询条件并添加到列表中
+      for (int i = 0; i < conf.getSyncRule().getNumPartitions(); i++) {
+        //不同的数据库要使用各自支持hash函数
+        String predicate = String.format("CRC32(`%s`) %% %d = %d", conf.getSyncWorkConfig().getPartitionColumn(), conf.getSyncRule().getNumPartitions(), i);
+        predicates.add(predicate);
+      }
+
+      // 将列表转换为字符串数组
+      String[] predicate = predicates.toArray(new String[0]);
+
+      Dataset<Row> source = sparkSession.read().jdbc(conf.getSyncWorkConfig().getSourceDatabase().getUrl(),
+        conf.getSyncWorkConfig().getSourceDatabase().getDbTable(),
+        predicate, prop);
+
 			source.createOrReplaceTempView(sourceTableName);
 		}
 
