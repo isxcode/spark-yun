@@ -30,7 +30,7 @@ public class AddDatasourceReq {
 	@NotEmpty(message = "数据源类型不能为空")
 	private String dbType;
 
-  @Schema(title = "数据源驱动", example = "数据源驱动id")
+	@Schema(title = "数据源驱动", example = "数据源驱动id")
 	@NotEmpty(message = "数据源驱动不能为空")
 	private String driverId;
 

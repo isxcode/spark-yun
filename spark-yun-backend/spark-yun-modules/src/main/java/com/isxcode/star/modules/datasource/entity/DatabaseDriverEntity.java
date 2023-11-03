@@ -46,7 +46,7 @@ public class DatabaseDriverEntity {
 
 	private String remark;
 
-	private boolean isDefaultDriver;
+	private Boolean isDefaultDriver;
 
 	@CreatedDate
 	private LocalDateTime createDateTime;
