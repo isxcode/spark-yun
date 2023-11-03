@@ -27,4 +27,6 @@ public class ClusterConfig {
 	private Map<String, String> sparkConfig;
 
 	private String sparkConfigJson;
+
+	private Boolean enableHive;
 }

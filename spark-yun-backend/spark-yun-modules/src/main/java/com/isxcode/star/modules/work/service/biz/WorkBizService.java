@@ -93,6 +93,24 @@ public class WorkBizService {
 
 		WorkConfigEntity workConfig = new WorkConfigEntity();
 
+		// sparkSql要是支持访问hive，必须填写datasourceId
+		if (WorkType.QUERY_SPARK_SQL.equals(addWorkReq.getWorkType())) {
+			if (addWorkReq.getEnableHive()) {
+				if (Strings.isEmpty(addWorkReq.getDatasourceId())) {
+					throw new IsxAppException("开启hive，必须配置hive数据源");
+				} else {
+					workConfig.setDatasourceId(addWorkReq.getDatasourceId());
+				}
+			}
+		}
+
+		// sparkSql要是支持访问hive，必须填写datasourceId
+		if (WorkType.PYTHON.equals(addWorkReq.getWorkType()) || WorkType.BASH.equals(addWorkReq.getWorkType())) {
+			if (Strings.isEmpty(addWorkReq.getClusterNodeId())) {
+				throw new IsxAppException("缺少集群节点配置");
+			}
+		}
+
 		// 初始化脚本
 		if (WorkType.QUERY_SPARK_SQL.equals(addWorkReq.getWorkType())
 				|| WorkType.EXECUTE_JDBC_SQL.equals(addWorkReq.getWorkType())
@@ -105,7 +123,12 @@ public class WorkBizService {
 		if (WorkType.QUERY_SPARK_SQL.equals(addWorkReq.getWorkType())
 				|| WorkType.DATA_SYNC_JDBC.equals(addWorkReq.getWorkType())
 				|| WorkType.BASH.equals(addWorkReq.getWorkType()) || WorkType.PYTHON.equals(addWorkReq.getWorkType())) {
-			workConfigService.initClusterConfig(workConfig);
+			if (Strings.isEmpty(addWorkReq.getClusterId())) {
+				throw new IsxAppException("必须选择计算引擎");
+			} else {
+				workConfigService.initClusterConfig(workConfig, addWorkReq.getClusterId(),
+						addWorkReq.getClusterNodeId(), addWorkReq.getEnableHive());
+			}
 		}
 
 		// 初始化数据同步分区值
@@ -324,20 +347,6 @@ public class WorkBizService {
 			workInstanceEntity.setExecEndDateTime(new Date());
 			workInstanceRepository.saveAndFlush(workInstanceEntity);
 		}
-	}
-
-	public ClusterNodeEntity getEngineNodeByWorkId(String workId) {
-
-		WorkEntity work = workService.getWorkEntity(workId);
-
-		Optional<WorkConfigEntity> workConfigEntityOptional = workConfigRepository.findById(work.getConfigId());
-		if (!workConfigEntityOptional.isPresent()) {
-			throw new IsxAppException("作业异常，不可用作业");
-		}
-		WorkConfigEntity workConfig = workConfigEntityOptional.get();
-
-		// return getEngineWork(workConfig.getClusterId());
-		return null;
 	}
 
 	public GetWorkLogRes getWorkLog(GetYarnLogReq getYarnLogReq) {

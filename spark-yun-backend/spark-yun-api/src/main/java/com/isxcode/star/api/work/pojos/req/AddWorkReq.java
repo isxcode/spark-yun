@@ -25,4 +25,13 @@ public class AddWorkReq {
 
 	@Schema(title = "数据源", example = "新建sparksql作业和jdbc执行作业和jdbc查询作业，需要选择数据源，必填")
 	private String datasourceId;
+
+	@Schema(title = "集群id", example = "计算集群id")
+	private String clusterId;
+
+	@Schema(title = "集群节点id", example = "集群节点id")
+	private String clusterNodeId;
+
+	@Schema(title = "是否支持hive", example = "true/false")
+	private Boolean enableHive;
 }
