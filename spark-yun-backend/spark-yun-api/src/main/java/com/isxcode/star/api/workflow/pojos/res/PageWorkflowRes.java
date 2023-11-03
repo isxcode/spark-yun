@@ -14,4 +14,8 @@ public class PageWorkflowRes {
 	private String remark;
 
 	private String status;
+
+  private String defaultClusterId;
+
+  private String clusterName;
 }
