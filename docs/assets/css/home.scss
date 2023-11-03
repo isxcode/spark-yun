@@ -1,6 +1,6 @@
 html {
   color-scheme: light;
-  --sk-color-home-primary: #00d980;
+  --sk-color-home-primary: #E25A1B;
   --sk-color-home-bgc: #ffffff;
   --sk-box-show: 0 23px 40px rgba(0, 0, 0, 0.2);
   --sk-color-cark-bgc: #f7f7f7;
@@ -9,11 +9,17 @@ html {
   --sk-color-font-gray: #929292;
   // 灰色字体 hover 加黑
   --sk-color-font-gray-hover: #333333;
+  --color-primary-DEFAULT: red;
+}
+
+:root {
+  --color-primary-DEFAULT: 226 90 27;
+  --color-primary-500: 226 90 27;
 }
 
 html.dark {
   color-scheme: dark;
-  --sk-color-home-primary: #00d980;
+  --sk-color-home-primary: #E25A1B;
   --sk-color-home-bgc: #ffffff;
   --sk-box-show: 0 23px 40px rgba(0, 0, 0, 0.2);
   --sk-color-cark-bgc: #f7f7f7;
