@@ -21,6 +21,7 @@ public interface WorkflowMapper {
 	@Mapping(source = "wofUpdateWorkflowReq.name", target = "name")
 	@Mapping(source = "workflowEntity.id", target = "id")
 	@Mapping(source = "wofUpdateWorkflowReq.remark", target = "remark")
+	@Mapping(source = "wofUpdateWorkflowReq.defaultClusterId", target = "defaultClusterId")
 	WorkflowEntity updateWorkflowReqToWorkflowEntity(UpdateWorkflowReq wofUpdateWorkflowReq,
 			WorkflowEntity workflowEntity);
 
