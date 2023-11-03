@@ -25,7 +25,7 @@ public class PageDatasourceRes {
 
 	private String connectLog;
 
-  private String driverId;
+	private String driverId;
 
-  private String driverName;
+	private String driverName;
 }
