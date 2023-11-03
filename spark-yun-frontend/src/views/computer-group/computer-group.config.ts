@@ -84,12 +84,12 @@ export const colConfigs: colConfig[] = [
     minWidth: 100,
     customSlot: 'statusTag'
   },
-  {
-    prop: 'defaultCluster',
-    title: '是否默认集群',
-    minWidth: 120,
-    customSlot: 'defaultTag'
-  },
+  // {
+  //   prop: 'defaultCluster',
+  //   title: '是否默认集群',
+  //   minWidth: 120,
+  //   customSlot: 'defaultTag'
+  // },
   {
     prop: 'checkDateTime',
     title: '检测时间',
@@ -105,7 +105,7 @@ export const colConfigs: colConfig[] = [
     title: '操作',
     align: 'center',
     customSlot: 'options',
-    width: 190
+    width: 110
   }
 ]
 
@@ -158,12 +158,12 @@ export const PointColConfigs: colConfig[] = [
     minWidth: 100,
     customSlot: 'statusTag'
   },
-  {
-    prop: 'defaultClusterNode',
-    title: '是否默认节点',
-    minWidth: 120,
-    customSlot: 'defaultNodeTag'
-  },
+  // {
+  //   prop: 'defaultClusterNode',
+  //   title: '是否默认节点',
+  //   minWidth: 120,
+  //   customSlot: 'defaultNodeTag'
+  // },
   {
     prop: 'checkDateTime',
     title: '检测时间',

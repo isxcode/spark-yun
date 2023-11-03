@@ -91,9 +91,9 @@
                     <el-dropdown-item @click="checkData(scopeSlot.row)">
                       检测
                     </el-dropdown-item>
-                    <el-dropdown-item @click="setDefaultNode(scopeSlot.row)">
+                    <!-- <el-dropdown-item @click="setDefaultNode(scopeSlot.row)">
                       设置默认节点
-                    </el-dropdown-item>
+                    </el-dropdown-item> -->
                     <el-dropdown-item @click="installData(scopeSlot.row)">
                       安装
                     </el-dropdown-item>

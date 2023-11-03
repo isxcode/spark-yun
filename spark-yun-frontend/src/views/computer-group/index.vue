@@ -87,7 +87,7 @@
                 <Loading />
               </el-icon>
               <!-- <span @click="showPointDetail(scopeSlot.row)">节点</span> -->
-              <span @click="setDefaultNode(scopeSlot.row)">设置默认集群</span>
+              <!-- <span @click="setDefaultNode(scopeSlot.row)">设置默认集群</span> -->
               <span @click="deleteData(scopeSlot.row)">删除</span>
             </div>
           </template>

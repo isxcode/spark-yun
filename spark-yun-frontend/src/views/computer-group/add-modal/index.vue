@@ -97,11 +97,13 @@ function showModal(cb: () => void, data: any): void {
   callback.value = cb
   if (data) {
     formData.name = data.name
+    formData.clusterType = data.clusterType
     formData.remark = data.remark
     formData.id = data.id
     modelConfig.title = '编辑集群'
   } else {
     formData.name = ''
+    formData.clusterType = ''
     formData.remark = ''
     formData.id = ''
     modelConfig.title = '添加集群'
