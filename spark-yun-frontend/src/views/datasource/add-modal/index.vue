@@ -24,6 +24,7 @@
         <el-select
           v-model="formData.dbType"
           placeholder="请选择"
+          @change="dbTypeChange"
         >
           <el-option
             v-for="item in typeList"
@@ -47,6 +48,7 @@
         <el-select
           v-model="formData.driverId"
           placeholder="请选择"
+          @visible-change="getDriverIdList"
         >
           <el-option
             v-for="item in driverIdList"
@@ -237,7 +239,6 @@ const rules = reactive<FormRules>({
 function showModal(cb: () => void, data: any): void {
   callback.value = cb
   modelConfig.visible = true
-  getDriverIdList()
   if (data) {
     formData.name = data.name
     formData.dbType = data.dbType
@@ -245,6 +246,8 @@ function showModal(cb: () => void, data: any): void {
     formData.username = data.username
     formData.passwd = data.passwd
     formData.remark = data.remark
+    formData.driverId = data.driverId
+    formData.metastoreUris = data.metastoreUris
     formData.id = data.id
     modelConfig.title = '编辑数据源'
   } else {
@@ -254,23 +257,33 @@ function showModal(cb: () => void, data: any): void {
     formData.username = ''
     formData.passwd = ''
     formData.remark = ''
+    formData.driverId = ''
+    formData.metastoreUris = ''
     formData.id = ''
     modelConfig.title = '添加数据源'
   }
+  getDriverIdList(true)
   nextTick(() => {
     form.value?.resetFields()
   })
 }
 
-function getDriverIdList() {
-  GetDriverListData({
-    page: 0,
-    pageSize: 10000,
-    searchKeyWord: ''
-  }).then((res: any) => {
-    driverIdList.value = res.data.content
-  }).catch((error: any) => {
-  })
+function getDriverIdList(e: boolean) {
+  if (e && formData.dbType) {
+    GetDriverListData({
+      page: 0,
+      pageSize: 10000,
+      searchKeyWord: formData.dbType
+    }).then((res: any) => {
+      driverIdList.value = res.data.content
+    }).catch((error: any) => {
+    })
+  }
+}
+
+function dbTypeChange() {
+  formData.metastoreUris = ''
+  formData.driverId = ''
 }
 
 function okEvent() {
