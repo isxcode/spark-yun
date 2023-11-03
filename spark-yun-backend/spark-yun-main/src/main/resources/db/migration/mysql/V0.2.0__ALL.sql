@@ -66,7 +66,7 @@ alter table SY_DATASOURCE
 
 -- 数据源支持驱动添加
 alter table SY_DATASOURCE
-    add driver_id varchar(100) null comment '数据库驱动id' after metastore_uris;
+    add driver_id varchar(100) not null comment '数据库驱动id' after metastore_uris;
 
 -- 新增数据源驱动表
 create table SY_DATABASE_DRIVER
