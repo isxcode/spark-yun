@@ -70,7 +70,7 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, ref, onMounted, markRaw } from 'vue'
+import { reactive, ref, onMounted, markRaw, nextTick } from 'vue'
 import Breadcrumb from '@/layout/bread-crumb/index.vue'
 import LoadingPage from '@/components/loading/index.vue'
 // import ConfigModal from './config-modal/index.vue'
@@ -86,7 +86,7 @@ import { python } from '@codemirror/lang-python'
 import { GetWorkItemConfig, RunWorkItemConfig, SaveWorkItemConfig, TerWorkItemConfig } from '@/services/workflow.service'
 import { ElMessage } from 'element-plus'
 import { useRoute, useRouter } from 'vue-router'
-import { nextTick } from 'vue'
+import { Loading } from '@element-plus/icons-vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -166,8 +166,8 @@ const tabList = reactive([
   //   hide: true
   // }
 ])
-function initData(id?: string) {
-  loading.value = true
+function initData(id?: string, tableLoading?: boolean) {
+  loading.value = tableLoading ? false : true
   networkError.value = networkError.value || false
   GetWorkItemConfig({
     workId: props.workItemConfig.id
@@ -249,7 +249,7 @@ function runWorkData() {
       runningLoading.value = false
       instanceId.value = res.data.instanceId
       ElMessage.success(res.msg)
-      initData(res.data.instanceId)
+      initData(res.data.instanceId, true)
 
       // 点击运行，默认跳转到提交日志tab
       activeName.value = 'PublishLog'
@@ -274,7 +274,7 @@ function terWorkData() {
     .then((res: any) => {
       terLoading.value = false
       ElMessage.success(res.msg)
-      initData()
+      initData('', true)
     })
     .catch(() => {
       terLoading.value = false
@@ -304,26 +304,6 @@ function saveData() {
 // 配置打开
 function setConfigData() {
   configDetailRef.value.showModal(props.workItemConfig)
-  // configModalRef.value.showModal((formData: any) => {
-  //   return new Promise((resolve: any, reject: any) => {
-  //     SaveWorkItemConfig({
-  //       sqlScript: sqltextData.value,
-  //       workId: props.workItemConfig.id,
-  //       // datasourceId: formData.datasourceId,
-  //       // clusterId: formData.clusterId,
-  //       // sparkConfig: formData.sparkConfig,
-  //       // corn: formData.corn,
-  //     })
-  //       .then((res: any) => {
-  //         ElMessage.success(res.msg)
-  //         initData()
-  //         resolve()
-  //       })
-  //       .catch((error: any) => {
-  //         reject(error)
-  //       })
-  //   })
-  // }, workConfig)
 }
 
 onMounted(() => {
