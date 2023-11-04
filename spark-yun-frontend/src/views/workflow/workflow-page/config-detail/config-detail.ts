@@ -87,6 +87,13 @@ export const ClusterConfigRules = {
             message: '请选择集群节点',
             trigger: ['blur', 'change']
         }
+    ],
+    datasourceId: [
+        {
+            required: true,
+            message: '请选择Hive数据源',
+            trigger: ['blur', 'change']
+        }
     ]
 }
 export const CronConfigRules = {
