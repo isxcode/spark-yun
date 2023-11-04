@@ -20,7 +20,7 @@
                 <div class="search-box">
                     <el-input v-model="searchParam" placeholder="回车搜索作业名称" @input="inputEvent"
                         @keyup.enter="initData"></el-input>
-                    <el-button type="primary" @click="addData"><el-icon><Plus /></el-icon></el-button>
+                    <el-button type="primary" circle @click="addData"><el-icon><Plus /></el-icon></el-button>
                 </div>
                 <div class="list-box">
                     <template v-for="work in workListItem" :key="work.id">
@@ -700,9 +700,9 @@ onUnmounted(() => {
 
             .el-button {
                 margin-left: 4px;
-                margin-right: 8px;
-                height: 32px;
-                width: 36px;
+                margin-right: 4px;
+                // height: 32px;
+                width: 28px;
             }
         }
 
