@@ -611,6 +611,10 @@ onMounted(() => {
                 }
             }
 
+            pre {
+                width: 100px;
+            }
+
             .show-container {
                 height: calc(100vh - 368px);
                 overflow: auto;
