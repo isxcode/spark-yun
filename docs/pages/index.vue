@@ -4,19 +4,19 @@
     <div class="one-word-desc-product">
       <div class="content">
         <div class="top">
-          <div class="one-word">打造超轻量级大数据平台</div>
+          <div class="one-word">超轻量级大数据平台</div>
           <div class="one-desc">
-            我们的基于Spark的超轻量级大数据平台，高效处理和灵活扩展，帮助企业快速决策，提升竞争力
+            基于Spark打造企业级、超轻量、批处理大数据平台，Docker云原生一键部署，Github永久开源免费。
           </div>
           <div class="fast-use" id="code_block">
             <span class="line" line="1">
-              <span style="color: #ffcb6b">docker</span>
-              <span style="color: #c3e88d"> run</span>
-              <span style="color: #c3e88d"> -p</span>
-              <span style="color: #f78c6c"> 8080</span>
-              <span style="color: #c3e88d">:8080</span>
-              <span style="color: #c3e88d"> -d</span>
-              <span style="color: #c3e88d"> isxcode/zhiqingyun </span></span
+              <span style="color: #E25A1B">docker</span>
+              <span style="color: #E25A1B"> run</span>
+              <span style="color: #E25A1B"> -p</span>
+              <span style="color: #E25A1B"> 8080</span>
+              <span style="color: #E25A1B">:8080</span>
+              <span style="color: #E25A1B"> -d</span>
+              <span style="color: #E25A1B"> isxcode/zhiqingyun </span></span
             >
           </div>
           <div class="product-img">
@@ -226,7 +226,7 @@ const productServiceList = reactive([
 
 function handleServiceToUse(serviceItem: { url: string|URL|undefined; }) {
   window.open(serviceItem.url)
-  
+
 }
 </script>
 
@@ -248,7 +248,7 @@ function handleServiceToUse(serviceItem: { url: string|URL|undefined; }) {
         align-items: center;
 
         .one-word {
-          font-size: 48px;
+          font-size: 55px;
           font-weight: 700;
           text-align: center;
           line-height: 1.5;
@@ -256,7 +256,7 @@ function handleServiceToUse(serviceItem: { url: string|URL|undefined; }) {
         }
 
         .one-desc {
-          font-size: 24px;
+          font-size: 19px;
           font-weight: 400;
           text-align: center;
           line-height: 1.5;
@@ -442,9 +442,10 @@ function handleServiceToUse(serviceItem: { url: string|URL|undefined; }) {
 }
 
 #code_block {
-  background: #2d2d2d;
+  border: #E25A1B 1px solid;
   color: rgb(201, 209, 217);
   font-family: Consolas;
+  font-weight: lighter;
   text-align: left;
   padding: 4px;
   font-size: 18px;
@@ -456,6 +457,6 @@ function handleServiceToUse(serviceItem: { url: string|URL|undefined; }) {
   word-spacing: normal;
   word-break: normal;
   word-wrap: normal;
-  line-height: 1.5;
+  line-height: 1.8;
 }
 </style>

@@ -97,7 +97,7 @@ interface MenuData {
 
 const menuData: Array<MenuData> = reactive([
   {
-    title: "文档中心",
+    title: "帮助中心",
     path: "/install/docker-deploy",
     type: "router",
   },
