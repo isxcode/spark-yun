@@ -321,9 +321,9 @@ public class WorkBizService {
 			WorkEntity workEntity = workRepository.findById(workInstanceEntity.getWorkId()).get();
 
 			// 作业类型不对返回
-			if (!WorkType.QUERY_SPARK_SQL.equals(workEntity.getWorkType())) {
-				throw new IsxAppException("只有sparkSql作业才支持中止");
-			}
+      if (!WorkType.QUERY_SPARK_SQL.equals(workEntity.getWorkType()) && !WorkType.DATA_SYNC_JDBC.equals(workEntity.getWorkType())) {
+        throw new IsxAppException("只有sparkSql作业才支持中止");
+      }
 
 			WorkConfigEntity workConfigEntity = workConfigRepository.findById(workEntity.getConfigId()).get();
 			String clusterId = JSON.parseObject(workConfigEntity.getClusterConfig(), ClusterConfig.class)
@@ -352,6 +352,7 @@ public class WorkBizService {
 			Map<String, String> paramsMap = new HashMap<>();
 			paramsMap.put("appId", wokRunWorkRes.getAppId());
 			paramsMap.put("agentType", clusterEntityOptional.get().getClusterType());
+      paramsMap.put("sparkHomePath", engineNode.getSparkHomePath());
 			BaseResponse<?> baseResponse = HttpUtils.doGet(
 					httpUrlUtils.genHttpUrl(engineNode.getHost(), engineNode.getAgentPort(), "/yag/stopJob"), paramsMap,
 					null, BaseResponse.class);
