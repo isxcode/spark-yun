@@ -48,36 +48,68 @@
                 <template v-if="containerType === 'flow'">
                     <div class="option-btns">
                         <!-- 非运行状态 -->
-                        <template v-if="!runningStatus || true">
-                            <span v-if="!btnLoadingConfig.runningLoading" @click="runWorkFlowDataEvent">运行</span>
-                            <el-icon v-else class="is-loading"><Loading /></el-icon>
+                        <div class="btn-box" @click="runWorkFlowDataEvent">
+                            <el-icon v-if="!btnLoadingConfig.runningLoading">
+                                <VideoPlay />
+                            </el-icon>
+                            <el-icon v-else class="is-loading">
+                                <Loading />
+                            </el-icon>
+                            <span class="btn-text">运行</span>
+                        </div>
+                        <div class="btn-box" @click="stopWorkFlow">
+                            <el-icon v-if="!btnLoadingConfig.stopWorkFlowLoading">
+                                <Close />
+                            </el-icon>
+                            <el-icon v-else class="is-loading">
+                                <Loading />
+                            </el-icon>
+                            <span class="btn-text">中止</span>
+                        </div>
+                        <div class="btn-box" @click="reRunWorkFlowDataEvent">
+                            <el-icon v-if="!btnLoadingConfig.reRunLoading">
+                                <RefreshLeft />
+                            </el-icon>
+                            <el-icon v-else class="is-loading">
+                                <Loading />
+                            </el-icon>
+                            <span class="btn-text">重跑</span>
+                        </div>
+                        <div class="btn-box" @click="saveData">
+                            <el-icon v-if="!btnLoadingConfig.saveLoading">
+                                <Finished />
+                            </el-icon>
+                            <el-icon v-else class="is-loading">
+                                <Loading />
+                            </el-icon>
+                            <span class="btn-text">保存</span>
+                        </div>
+                        <div class="btn-box" @click="showConfigDetail">
+                            <el-icon>
+                                <Setting />
+                            </el-icon>
+                            <span class="btn-text">配置</span>
+                        </div>
+                        <div class="btn-box" @click="publishWorkFlow">
+                            <el-icon v-if="!btnLoadingConfig.publishLoading">
+                                <Promotion />
+                            </el-icon>
+                            <el-icon v-else class="is-loading">
+                                <Loading />
+                            </el-icon>
+                            <span class="btn-text">发布</span>
+                        </div>
+                        <div class="btn-box" @click="queryRunWorkInstancesEvent">
+                            <el-icon>
+                                <Refresh />
+                            </el-icon>
+                            <span class="btn-text">刷新</span>
+                        </div>
 
-                            <template v-if="workflowInstanceId || true">
-                                <span v-if="!btnLoadingConfig.reRunLoading" @click="reRunWorkFlowDataEvent">重跑</span>
-                                <el-icon v-else class="is-loading"><Loading /></el-icon>
-                            </template>
-
-                            <span v-if="!btnLoadingConfig.saveLoading || true" @click="saveData">保存</span>
-                            <el-icon v-else class="is-loading"><Loading /></el-icon>
-
-                            <!-- <span @click="showConfigDetail">配置</span> -->
-
-                            <span v-if="!btnLoadingConfig.publishLoading || true" @click="publishWorkFlow">发布</span>
-                            <el-icon v-else class="is-loading"><Loading /></el-icon>
-
-                            <!-- <span>下线</span> -->
-                        </template>
-                        <!-- 运行状态 -->
-                        <!-- <template v-else> -->
-                            <span v-if="!btnLoadingConfig.stopWorkFlowLoading" @click="stopWorkFlow">中止</span>
-                            <el-icon v-else class="is-loading"><Loading /></el-icon>
-                        <!-- </template> -->
                         <!-- <span v-if="!btnLoadingConfig.exportLoading" @click="exportWorkFlow">导出</span>
                         <el-icon v-else class="is-loading"><Loading /></el-icon>
                         <span v-if="!btnLoadingConfig.importLoading" @click="importWorkFlow">导入</span>
                         <el-icon v-else class="is-loading"><Loading /></el-icon> -->
-                        <!-- <span>收藏</span> -->
-                        <span @click="queryRunWorkInstancesEvent">刷新</span>
                     </div>
                     <ZqyFlow ref="zqyFlowRef"></ZqyFlow>
                 </template>
@@ -117,6 +149,7 @@ import DataSync from '../data-sync/index.vue'
 
 import { AddWorkflowDetailList, BreakFlowData, DeleteWorkflowDetailList, ExportWorkflowData, GetWorkflowData, GetWorkflowDetailList, GetWorkflowList, ImportWorkflowData, PublishWorkflowData, QueryRunWorkInstances, ReRunWorkflow, RerunCurrentNodeFlowData, RunAfterFlowData, RunWorkflowData, SaveWorkflowData, StopWorkflowData, UpdateWorkflowDetailList } from '@/services/workflow.service'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { Loading } from '@element-plus/icons-vue'
 
 const route = useRoute()
 
@@ -739,22 +772,28 @@ onUnmounted(() => {
             border-bottom: 1px solid getCssVar('border-color');
             display: flex;
             align-items: center;
-            padding-left: 12px;
+            padding-left: 20px;
             box-sizing: border-box;
             font-size: getCssVar('font-size', 'extra-small');
+            color: getCssVar('color', 'primary', 'light-5');
 
-            .el-icon {
-                margin-right: 8px;
-            }
-
-            span {
-                margin-right: 8px;
-                color: getCssVar('color', 'primary', 'light-5');
+            .btn-box {
+                font-size: getCssVar('font-size', 'extra-small');
+                display: flex;
                 cursor: pointer;
+                width: 48px;
+                margin-right: 8px;
+
+                &.btn-box__4 {
+                    width: 70px;
+                }
+
+                .btn-text {
+                    margin-left: 4px;
+                }
 
                 &:hover {
                     color: getCssVar('color', 'primary');;
-                    text-decoration: underline;
                 }
             }
         }
