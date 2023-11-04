@@ -2,13 +2,13 @@
   <BlockModal :model-config="modelConfig">
     <el-form
       ref="form"
-      class="add-computer-group"
+      class="add-driver-modal"
       label-position="top"
       :model="formData"
       :rules="rules"
     >
       <el-form-item
-        label="名称"
+        label="驱动名称"
         prop="name"
       >
         <el-input
@@ -24,7 +24,6 @@
         <el-select
           v-model="formData.dbType"
           placeholder="请选择"
-          @change="dbTypeChange"
         >
           <el-option
             v-for="item in typeList"
@@ -33,61 +32,6 @@
             :value="item.value"
           />
         </el-select>
-      </el-form-item>
-      <el-form-item
-        label="数据源驱动"
-        prop="driverId"
-      >
-        <el-select
-          v-model="formData.driverId"
-          placeholder="请选择"
-          @visible-change="getDriverIdList"
-        >
-          <el-option
-            v-for="item in driverIdList"
-            :key="item.id"
-            :label="item.name"
-            :value="item.id"
-          />
-        </el-select>
-      </el-form-item>
-      <el-form-item
-        label="连接信息"
-        prop="jdbcUrl"
-      >
-        <el-input
-          v-model="formData.jdbcUrl"
-          maxlength="100"
-          placeholder="请输入"
-        />
-      </el-form-item>
-      <el-form-item v-if="formData.dbType === 'HIVE'" label="hive.metastore.uris">
-        <el-input
-          v-model="formData.metastoreUris"
-          maxlength="100"
-          placeholder="请输入"
-        />
-      </el-form-item>
-      <el-form-item
-        label="用户名"
-        prop="username"
-      >
-        <el-input
-          v-model="formData.username"
-          maxlength="200"
-          placeholder="请输入"
-        />
-      </el-form-item>
-      <el-form-item
-        label="密码"
-      >
-        <el-input
-          v-model="formData.passwd"
-          maxlength="100"
-          type="password"
-          show-password
-          placeholder="请输入"
-        />
       </el-form-item>
       <el-form-item label="备注">
         <el-input
@@ -98,6 +42,26 @@
           placeholder="请输入"
         />
       </el-form-item>
+      <el-form-item label="驱动" prop="driver">
+        <el-upload
+          ref="uploadRef"
+          class="license-upload"
+          action=""
+          :limit="1"
+          :multiple="false"
+          :drag="true"
+          :auto-upload="false"
+          :on-change="handleChange"
+          :on-remove="removeChange"
+        >
+          <el-icon class="el-icon--upload">
+            <upload-filled />
+          </el-icon>
+          <div class="el-upload__text">
+            上传驱动 <em>点击上传</em>
+          </div>
+        </el-upload>
+      </el-form-item>
     </el-form>
   </BlockModal>
 </template>
@@ -106,13 +70,12 @@
 import { reactive, defineExpose, ref, nextTick } from 'vue'
 import BlockModal from '@/components/block-modal/index.vue'
 import { ElMessage, FormInstance, FormRules } from 'element-plus'
-import { GetDefaultDriverData, GetDriverListData } from '@/services/driver-management.service'
 
 const form = ref<FormInstance>()
 const callback = ref<any>()
-const driverIdList = ref([])
+const uploadRef = ref()
 const modelConfig = reactive({
-  title: '添加数据源',
+  title: '添加驱动',
   visible: false,
   width: '520px',
   okConfig: {
@@ -133,12 +96,8 @@ const modelConfig = reactive({
 const formData = reactive({
   name: '',
   dbType: '',
-  driverId: '',
-  metastoreUris: '',
-  jdbcUrl: '',
-  username: '',
-  passwd: '',
   remark: '',
+  driver: null,
   id: ''
 })
 const typeList = reactive([
@@ -195,43 +154,22 @@ const rules = reactive<FormRules>({
   name: [
     {
       required: true,
-      message: '请输入数据源名称',
+      message: '请输入驱动名称',
       trigger: [ 'blur', 'change' ]
     }
   ],
   dbType: [
     {
       required: true,
-      message: '请选择数据库类型',
+      message: '请选择类型',
       trigger: [ 'blur', 'change' ]
     }
   ],
-  driverId: [
+  driver: [
     {
       required: true,
-      message: '请选择数据源驱动',
-      trigger: [ 'blur', 'change' ]
-    }
-  ],
-  jdbcUrl: [
-    {
-      required: true,
-      message: '请输入jdbc连接信息',
-      trigger: [ 'blur', 'change' ]
-    }
-  ],
-  username: [
-    {
-      required: true,
-      message: '请输入用户名',
-      trigger: [ 'blur', 'change' ]
-    }
-  ],
-  passwd: [
-    {
-      required: true,
-      message: '请输入密码',
-      trigger: [ 'blur', 'change' ]
+      message: '请上传驱动',
+      trigger: 'change'
     }
   ]
 })
@@ -242,61 +180,19 @@ function showModal(cb: () => void, data: any): void {
   if (data) {
     formData.name = data.name
     formData.dbType = data.dbType
-    formData.jdbcUrl = data.jdbcUrl
-    formData.username = data.username
-    formData.passwd = data.passwd
     formData.remark = data.remark
-    formData.driverId = data.driverId
-    formData.metastoreUris = data.metastoreUris
     formData.id = data.id
-    modelConfig.title = '编辑数据源'
+    modelConfig.title = '编辑驱动'
   } else {
     formData.name = ''
     formData.dbType = ''
-    formData.jdbcUrl = ''
-    formData.username = ''
-    formData.passwd = ''
     formData.remark = ''
-    formData.driverId = ''
-    formData.metastoreUris = ''
     formData.id = ''
-    modelConfig.title = '添加数据源'
+    modelConfig.title = '添加驱动'
   }
-  getDriverIdList(true)
   nextTick(() => {
     form.value?.resetFields()
   })
-}
-
-function getDriverIdList(e: boolean) {
-  if (e && formData.dbType) {
-    GetDriverListData({
-      page: 0,
-      pageSize: 10000,
-      searchKeyWord: formData.dbType
-    }).then((res: any) => {
-      driverIdList.value = res.data.content
-    }).catch((error: any) => {
-    })
-  }
-}
-
-function dbTypeChange(e: string) {
-  formData.metastoreUris = ''
-  formData.driverId = ''
-
-  getDefaultDriver(e)
-}
-
-function getDefaultDriver(e: string) {
-  if (e) {
-    GetDefaultDriverData({
-      dbType: e
-    }).then((res: any) => {
-      formData.driverId = res.data.id
-    }).catch((error: any) => {
-    })
-  }
 }
 
 function okEvent() {
@@ -325,6 +221,16 @@ function okEvent() {
   })
 }
 
+function handleChange(e: any) {
+  // fileData.value = e.raw
+  formData.driver = e.raw
+}
+
+function removeChange(e: any) {
+  formData.driver = null
+  uploadRef.value.clearFiles()
+}
+
 function closeEvent() {
   modelConfig.visible = false
 }
@@ -335,8 +241,21 @@ defineExpose({
 </script>
 
 <style lang="scss">
-.add-computer-group {
+.add-driver-modal {
   padding: 12px 20px 0 20px;
   box-sizing: border-box;
+  .license-upload {
+    margin: 0px;
+    width: 100%;
+    .el-upload {
+      .el-upload-dragger {
+        padding: 12px 0;
+        border-radius: getCssVar('border-radius', 'small');
+        .el-upload__text {
+          font-size: getCssVar('font-size', 'extra-small');
+        }
+      }
+    }
+  }
 }
 </style>

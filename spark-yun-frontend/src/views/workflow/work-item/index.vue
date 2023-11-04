@@ -46,7 +46,7 @@
             </div>
             <div class="btn-box" @click="locationNode">
               <el-icon>
-                <RefreshLeft />
+                <Position />
               </el-icon>
               <span class="btn-text">定位</span>
             </div>

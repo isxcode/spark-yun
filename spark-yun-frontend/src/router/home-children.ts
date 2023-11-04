@@ -14,6 +14,8 @@ import License from '@/views/license/index.vue'
 import TenantUser from '@/views/tenant-user/index.vue'
 import PersonalInfo from '@/views/personal-info/index.vue'
 
+import DriverManagement from '@/views/driver-management/index.vue'
+
 export default [
   {
     path: 'computer-group',
@@ -44,6 +46,11 @@ export default [
     path: 'workflow-page',
     name: 'workflow-page',
     component: WorkflowPage
+  },
+  {
+    path: 'driver-management',
+    name: 'driver-management',
+    component: DriverManagement
   },
   {
     path: 'work-item',
