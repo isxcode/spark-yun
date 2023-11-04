@@ -5,7 +5,7 @@
         <img src="~assets/images/logo.png" alt="" />
       </div>
       <div class="info">
-        <div class="service">
+        <!-- <div class="service">
           <div class="title">服务</div>
           <div class="content">
             <div class="item">
@@ -19,7 +19,7 @@
               </a>
             </div>
           </div>
-        </div>
+        </div> -->
 
         <!-- <div class="company">
         <div class="title">公司</div>
@@ -35,28 +35,22 @@
         <div class="contact">
           <div class="title">联系我们</div>
           <div class="content">
-            <div class="item">zhiqingyun@163.com</div>
-            <div class="item">
-              <el-popover placement="top" trigger="hover" :width="64">
-                <img
-                  src="~assets/images/logo.png"
-                />
-                <template #reference>
-                  <span> 用户交流群 </span>
-                </template>
-              </el-popover>
-            </div>
-            <div class="item">
+            <div class="item">hello@isxcode.com</div>
+            <div class="item">ispong@outlook.com</div>
+            <!-- <div class="item">
               <a href="https://github.com/isxcode/spark-yun" target="_blank">
                 github
               </a>
-            </div>
+            </div> -->
           </div>
         </div>
       </div>
+      <div class="wx-img">
+        <img src="https://img.isxcode.com/picgo/wechat_zhiqingyun.jpg" />
+      </div>
     </div>
     <div class="s-footer-bottom">
-      <p>
+      <!-- <p>
         上海至爻数据有限公司&nbsp;
         <a href="https://zhiqingyun-demo.isxcode.com" target="_blank"></a>
         <a
@@ -75,8 +69,8 @@
         >
           <i class="beian"> </i>闽公网安备35020302033924号</a
         >
-      </p>
-      <p class="text-gray-500 dark:text-gray-400 text-sm">
+      </p> -->
+      <!-- <p class="text-gray-500 dark:text-gray-400 text-sm">
         Copyright © 2023 spark-cloud -
         <a
           href="https://github.com/nuxt/nuxt/blob/main/LICENSE"
@@ -86,14 +80,11 @@
         >
           All rights reserved
         </a>
-      </p>
+      </p> -->
     </div>
   </div>
 </template>
 
-<script setup lang="ts">
-const visible = ref(false);
-</script>
 
 <style lang="scss" scoped>
 .home-footer {
@@ -103,6 +94,7 @@ const visible = ref(false);
   border-top-width: 100%;
   .source-content {
     padding-top: 30px;
+    padding-bottom: 30px;
     display: flex;
     flex-direction: row;
     align-items: flex-start;
@@ -112,12 +104,12 @@ const visible = ref(false);
       margin-left: 80px;
     }
     .info {
-      width: 68%;
+      width: 62%;
       display: flex;
-      justify-content: flex-end;
+      justify-content: flex-start;
       padding: 0 20px;
       > div {
-        margin-left: 48px;
+        margin-left: 24px;
       }
       .title {
         font-size: 16px;
@@ -140,6 +132,9 @@ const visible = ref(false);
         }
       }
     }
+    .wx-img {
+      width: 94px;
+    }
   }
   .s-footer {
     position: relative;
@@ -148,7 +143,7 @@ const visible = ref(false);
   }
   .s-footer-bottom {
     margin: 0px auto;
-    width: 100%;  
+    width: 100%;
     text-align: center;
     line-height: 35px;
     font-size: 14px;
