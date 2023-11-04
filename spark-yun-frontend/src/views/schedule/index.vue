@@ -101,7 +101,7 @@
                 <template #dropdown>
                   <el-dropdown-menu>
                     <el-dropdown-item
-                      v-if="scopeSlot.row.status !== 'RUNNING' && scopeSlot.row.workType === 'SPARK_SQL'"
+                      v-if="['SPARK_SQL', 'DATA_SYNC_JDBC', 'BASH', 'PYTHON'].includes(scopeSlot.row.workType)"
                       @click="showDetailModal(scopeSlot.row, 'yarnLog')"
                     >
                       运行日志
