@@ -47,8 +47,16 @@ if [ ! -d "${SPARK_MIN_DIR}" ]; then
 fi
 
 # 解压SPARK_MIN_FILE，到指定目录SPARK_MIN_DIR
-if [ ! -f "${TMP_DIR}"/"${SPARK_MIN_FILE}" ]; then
+if [ ! -f "${SPARK_MIN_DIR}"/README.md ]; then
   tar vzxf "${TMP_DIR}"/"${SPARK_MIN_FILE}" --strip-components=1 -C "${SPARK_MIN_DIR}"
+  rm -rf "${SPARK_MIN_DIR}"/data
+  rm -rf "${SPARK_MIN_DIR}"/examples
+  rm -rf "${SPARK_MIN_DIR}"/licenses
+  rm -rf "${SPARK_MIN_DIR}"/python
+  rm -rf "${SPARK_MIN_DIR}"/R
+  rm "${SPARK_MIN_DIR}"/LICENSE
+  rm "${SPARK_MIN_DIR}"/NOTICE
+  rm "${SPARK_MIN_DIR}"/RELEASE
 fi
 
 # 修改spark-defaults.conf
