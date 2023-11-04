@@ -29,5 +29,5 @@ public class PageDatasourceRes {
 
 	private String driverName;
 
-  private String metastoreUris;
+	private String metastoreUris;
 }

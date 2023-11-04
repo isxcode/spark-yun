@@ -20,11 +20,6 @@ public class Execute {
 
 		PluginReq conf = parse(args);
 
-		if (DatasourceType.HIVE.equals(conf.getSyncWorkConfig().getTargetDBType())
-				|| DatasourceType.HIVE.equals(conf.getSyncWorkConfig().getSourceDBType())) {
-			conf.getSparkConfig().put("hive.metastore.uris", "thrift://localhost:9083");
-		}
-
 		try (SparkSession sparkSession = initSparkSession(conf.getSparkConfig())) {
 
 			// 创建来源表视图
@@ -56,7 +51,7 @@ public class Execute {
 
 			// 执行sql同步语句
 			sparkSession.sql(insertSql + " table " + targetTempView + " ( " + Strings.join(targetCols, ',')
-        + " ) select " + Strings.join(sourceCols, ',') + " from " + sourceTempView);
+					+ " ) select " + Strings.join(sourceCols, ',') + " from " + sourceTempView);
 		}
 	}
 
@@ -71,26 +66,26 @@ public class Execute {
 			return conf.getSyncWorkConfig().getSourceDatabase().getDbTable();
 		} else {
 
-      Properties prop = new Properties();
-      prop.put("user", conf.getSyncWorkConfig().getSourceDatabase().getUser());
-      prop.put("password", conf.getSyncWorkConfig().getSourceDatabase().getPassword());
-      prop.put("driver", conf.getSyncWorkConfig().getSourceDatabase().getDriver());
-      // 创建一个 ArrayList 存储查询条件字符串
-      List<String> predicates = new ArrayList<>();
+			Properties prop = new Properties();
+			prop.put("user", conf.getSyncWorkConfig().getSourceDatabase().getUser());
+			prop.put("password", conf.getSyncWorkConfig().getSourceDatabase().getPassword());
+			prop.put("driver", conf.getSyncWorkConfig().getSourceDatabase().getDriver());
+			// 创建一个 ArrayList 存储查询条件字符串
+			List<String> predicates = new ArrayList<>();
 
-      // 生成查询条件并添加到列表中
-      for (int i = 0; i < conf.getSyncRule().getNumPartitions(); i++) {
-        //不同的数据库要使用各自支持hash函数
-        String predicate = String.format("CRC32(`%s`) %% %d = %d", conf.getSyncWorkConfig().getPartitionColumn(), conf.getSyncRule().getNumPartitions(), i);
-        predicates.add(predicate);
-      }
+			// 生成查询条件并添加到列表中
+			for (int i = 0; i < conf.getSyncRule().getNumPartitions(); i++) {
+				// 不同的数据库要使用各自支持hash函数
+				String predicate = String.format("CRC32(`%s`) %% %d = %d",
+						conf.getSyncWorkConfig().getPartitionColumn(), conf.getSyncRule().getNumPartitions(), i);
+				predicates.add(predicate);
+			}
 
-      // 将列表转换为字符串数组
-      String[] predicate = predicates.toArray(new String[0]);
+			// 将列表转换为字符串数组
+			String[] predicate = predicates.toArray(new String[0]);
 
-      Dataset<Row> source = sparkSession.read().jdbc(conf.getSyncWorkConfig().getSourceDatabase().getUrl(),
-        conf.getSyncWorkConfig().getSourceDatabase().getDbTable(),
-        predicate, prop);
+			Dataset<Row> source = sparkSession.read().jdbc(conf.getSyncWorkConfig().getSourceDatabase().getUrl(),
+					conf.getSyncWorkConfig().getSourceDatabase().getDbTable(), predicate, prop);
 
 			source.createOrReplaceTempView(sourceTableName);
 		}
