@@ -91,7 +91,8 @@ public class WorkConfigBizService {
 
 			// 如果spark开启了hive数据源，要保存hiveStoreUrl配置
 			String hiveMetaStoreUris = null;
-			if (wocConfigWorkReq.getClusterConfig().getEnableHive()) {
+			if (wocConfigWorkReq.getClusterConfig().getEnableHive() != null
+					&& wocConfigWorkReq.getClusterConfig().getEnableHive()) {
 				Optional<DatasourceEntity> datasourceEntity = datasourceRepository
 						.findById(workConfig.getDatasourceId());
 				if (datasourceEntity.isPresent()) {
