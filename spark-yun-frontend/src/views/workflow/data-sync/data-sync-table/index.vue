@@ -4,7 +4,7 @@
                    @click="clickSelectLinkConnect(button.code)">{{ button.text }}
         </el-button>
     </div>
-    <div class="data-sync-body" id="container">
+    <div class="data-sync-body" id="container" v-if="showDataSync">
         <div class="source-table-container">
             <el-table ref="sourceTableRef" :data="sourceTableColumn" row-key="code">
                 <el-table-column prop="code" :show-overflow-tooltip="true" label="字段名" />
@@ -58,11 +58,12 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, defineProps, onMounted, nextTick } from 'vue'
+import { ref, defineProps, onMounted, nextTick, watch } from 'vue'
 import { jsPlumb } from 'jsplumb'
 import { GetTableColumnsByTableId } from '@/services/data-sync.service'
 import { ElMessageBox } from 'element-plus'
 import AddCode from '../add-code/index.vue'
+import { useAuthStore } from "@/store/useAuth"
 
 interface connect {
     source: string
@@ -96,6 +97,9 @@ defineProps<{
     formData: FormData
 }>()
 
+const authStore = useAuthStore()
+
+const showDataSync = ref(true)
 let instance: any = null
 const addCodeRef = ref()
 const connectNodeList = ref<connect[]>([])
@@ -109,6 +113,23 @@ const buttons = ref([
   {type: 'primary', text: '重置映射', code: 'resetLine'},
 ])
 const connectCopy = ref()
+
+watch(() => authStore.isCollapse, (newVal) => {
+    if (newVal) {
+        getLinkData()
+        instance.deleteEveryConnection()
+        nextTick(() => {
+            setTimeout(() => {
+                connectNodeList.value.forEach((data: any) => {
+                    instance.connect({
+                        source: document.querySelector(`.code-source-${data.source}`),
+                        target: document.querySelector(`.code-target-${data.target}`)
+                    })
+                })
+            }, 300)
+        })
+    }
+})
 
 function getSourceTableColumn() {
     return sourceTableColumn.value

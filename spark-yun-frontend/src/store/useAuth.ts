@@ -6,6 +6,7 @@ interface AuthState {
   tenantId: string
   role: string
   currentMenu: string
+  isCollapse: boolean
 }
 
 export const useAuthStore = defineStore('authStore', {
@@ -14,7 +15,8 @@ export const useAuthStore = defineStore('authStore', {
     token: '',
     tenantId: '',
     role: '',
-    currentMenu: ''
+    currentMenu: '',
+    isCollapse: false
   }),
   actions: {
     setUserInfo(this: AuthState, userInfo: Record<string, any>): void {
@@ -31,6 +33,9 @@ export const useAuthStore = defineStore('authStore', {
     },
     setCurrentMenu(this: AuthState, menu: string): void {
       this.currentMenu = menu
+    },
+    setCollapse(this: AuthState, isCollapse: boolean): void {
+      this.isCollapse = isCollapse
     }
   },
   persist: true

@@ -1,4 +1,4 @@
-import { computed, h, ref, resolveComponent, withModifiers, type CSSProperties } from "vue"
+import { computed, h, ref, resolveComponent, withModifiers, type CSSProperties, watch } from "vue"
 import { useAuthStore } from "@/store/useAuth"
 import type { Menu } from "../menu.config"
 import { useRoute, useRouter } from "vue-router"
@@ -13,7 +13,6 @@ export function useRouterMenu(menuListData: Menu[]) {
   const menuViewData = computed(() => menuListData.filter(menuItem => menuItem.authType?.includes(authStore.role || 'ROLE_TENANT_MEMBER')))
 
   const currentMenu = computed(() => menuViewData.value.find(menuData => menuData.code === route.name))
-
   if (!currentMenu.value) {
     router.replace({
       name: menuViewData.value[0].code
@@ -31,6 +30,10 @@ export function useRouterMenu(menuListData: Menu[]) {
       name: index
     })
   }
+
+  watch(() => isCollapse.value, (newVal) => {
+    authStore.setCollapse(newVal)
+  })
 
   return {
     menuViewData,
