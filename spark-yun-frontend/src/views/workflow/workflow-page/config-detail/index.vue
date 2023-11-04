@@ -55,6 +55,23 @@
                     />
                   </el-select>
                 </el-form-item>
+                <el-form-item label="是否连接hive" v-if="['SPARK_SQL'].includes(workItemConfig.workType)">
+                  <el-switch v-model="clusterConfig.enableHive" />
+                </el-form-item>
+                <el-form-item label="Hive数据源" :prop="'datasourceId'" v-if="clusterConfig.enableHive && ['SPARK_SQL'].includes(workItemConfig.workType)">
+                  <el-select
+                    v-model="clusterConfig.datasourceId"
+                    placeholder="请选择"
+                    @visible-change="getDataSourceList"
+                  >
+                    <el-option
+                      v-for="item in dataSourceList"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value"
+                    />
+                  </el-select>
+                </el-form-item>
                 <el-form-item label="集群节点" prop="clusterNodeId" v-if="['BASH', 'PYTHON'].includes(workItemConfig.workType)">
                   <el-select v-model="clusterConfig.clusterNodeId" placeholder="请选择" @visible-change="getClusterNodeList">
                     <el-option
@@ -347,6 +364,8 @@ let clusterConfig = reactive({
   resourceLevel: '',        // 资源等级
   clusterId: '',            // 计算集群
   clusterNodeId: '',        // 集群节点
+  enableHive: false,
+  datasourceId: '',   // hive数据源
   // sparkConfig: '',
   sparkConfigJson: ''
 })
@@ -413,9 +432,8 @@ function showModal(data?: any) {
     if (!['QUERY_JDBC', 'EXE_JDBC'].includes(data.workType)) {
       // 获取集群参数
       getClusterList()
-    } else {
-      getDataSourceList()
     }
+    getDataSourceList()
     workItemConfig.value = data
     getConfigDetailData()
   }
@@ -432,8 +450,13 @@ function getConfigDetailData() {
     }
     if (res.data.clusterConfig) {
       Object.keys(clusterConfig).forEach((key: string) => {
-        clusterConfig[key] = res.data.clusterConfig[key]
+        if (key !== 'datasourceId') {
+          clusterConfig[key] = res.data.clusterConfig[key]
+        }
       })
+    }
+    if (['SPARK_SQL'].includes(workItemConfig.value.workType)) {
+      clusterConfig.datasourceId = res.data.datasourceId
     }
     if (res.data.cronConfig) {
       Object.keys(cronConfig).forEach((key: string) => {
@@ -469,10 +492,15 @@ function okEvent() {
   })
   setTimeout(() => {
     if (status) {
+      const clusObj = clusterConfig
+      if (['SPARK_SQL'].includes(workItemConfig.value.workType)) {
+        dataSourceForm.datasourceId = clusObj.datasourceId
+        delete clusObj.datasourceId
+      }
       SaveWorkItemConfig({
         workId: workItemConfig.value.id,
         datasourceId: dataSourceForm.datasourceId || undefined,
-        clusterConfig: clusterConfig,
+        clusterConfig: clusObj,
         cronConfig: {
           ...cronConfig,
           cron: `${state.secondsText || '*'} ${state.minutesText || '*'} ${state.hoursText || '*'} ${

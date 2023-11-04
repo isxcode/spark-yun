@@ -35,62 +35,64 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="计算集群" prop="clusterId" v-if="['BASH', 'PYTHON', 'DATA_SYNC_JDBC', 'SPARK_SQL'].includes(formData.workType)">
-        <el-select
-          v-model="formData.clusterId"
-          placeholder="请选择"
-          @change="clusterIdChangeEvent"
-          @visible-change="getClusterList"
-        >
-          <el-option
-            v-for="item in clusterList"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-          />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="集群节点" prop="clusterNodeId" v-if="['BASH', 'PYTHON'].includes(formData.workType)">
-        <el-select v-model="formData.clusterNodeId" placeholder="请选择" @visible-change="getClusterNodeList">
-          <el-option
-            v-for="item in clusterNodeList"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-          />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="是否连接hive" v-if="['SPARK_SQL'].includes(formData.workType)">
-        <el-switch v-model="formData.enableHive" @change="enableHiveChange" />
-      </el-form-item>
-      <el-form-item label="Hive数据源" :prop="formData.enableHive ? 'datasourceId' : ''" v-if="formData.enableHive && ['SPARK_SQL'].includes(formData.workType)">
-        <el-select
-          v-model="formData.datasourceId"
-          placeholder="请选择"
-          @visible-change="getDataSourceList"
-        >
-          <el-option
-            v-for="item in dataSourceList"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-          />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="数据源" prop="datasourceId" v-if="['EXE_JDBC', 'QUERY_JDBC'].includes(formData.workType)">
-        <el-select
-          v-model="formData.datasourceId"
-          placeholder="请选择"
-          @visible-change="getDataSourceList"
-        >
-          <el-option
-            v-for="item in dataSourceList"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-          />
-        </el-select>
-      </el-form-item>
+      <template v-if="renderSense === 'new'">
+        <el-form-item label="计算集群" prop="clusterId" v-if="['BASH', 'PYTHON', 'DATA_SYNC_JDBC', 'SPARK_SQL'].includes(formData.workType)">
+          <el-select
+            v-model="formData.clusterId"
+            placeholder="请选择"
+            @change="clusterIdChangeEvent"
+            @visible-change="getClusterList"
+          >
+            <el-option
+              v-for="item in clusterList"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="集群节点" prop="clusterNodeId" v-if="['BASH', 'PYTHON'].includes(formData.workType)">
+          <el-select v-model="formData.clusterNodeId" placeholder="请选择" @visible-change="getClusterNodeList">
+            <el-option
+              v-for="item in clusterNodeList"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="是否连接hive" v-if="['SPARK_SQL'].includes(formData.workType)">
+          <el-switch v-model="formData.enableHive" @change="enableHiveChange" />
+        </el-form-item>
+        <el-form-item label="Hive数据源" :prop="formData.enableHive ? 'datasourceId' : ''" v-if="formData.enableHive && ['SPARK_SQL'].includes(formData.workType)">
+          <el-select
+            v-model="formData.datasourceId"
+            placeholder="请选择"
+            @visible-change="getDataSourceList"
+          >
+            <el-option
+              v-for="item in dataSourceList"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="数据源" prop="datasourceId" v-if="['EXE_JDBC', 'QUERY_JDBC'].includes(formData.workType)">
+          <el-select
+            v-model="formData.datasourceId"
+            placeholder="请选择"
+            @visible-change="getDataSourceList"
+          >
+            <el-option
+              v-for="item in dataSourceList"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
+        </el-form-item>
+      </template>
       <el-form-item label="备注">
         <el-input
           v-model="formData.remark"
@@ -118,6 +120,7 @@ const clusterList = ref([])  // 计算集群
 const clusterNodeList = ref([])  // 集群节点
 const dataSourceList = ref([])  // 数据源
 const showForm = ref(true)
+const renderSense = ref('')
 
 const modelConfig = reactive({
   title: '添加作业',
@@ -224,7 +227,7 @@ function showModal(cb: () => void, data: any): void {
     formData.datasourceId && getDataSourceList(true)
 
     modelConfig.title = '编辑作业'
-
+    renderSense.value = 'edit'
   } else {
     formData.name = ''
     formData.workType = ''
@@ -236,6 +239,7 @@ function showModal(cb: () => void, data: any): void {
     
     formData.id = ''
     modelConfig.title = '添加作业'
+    renderSense.value = 'new'
   }
   nextTick(() => {
     form.value?.resetFields()
