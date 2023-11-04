@@ -1,9 +1,9 @@
 <template>
   <div class="home-footer">
     <div class="source-content">
-      <div class="logo">
-        <img src="~assets/images/logo.png" alt="" />
-      </div>
+<!--      <div class="logo">-->
+<!--        <img src="~assets/images/logo.png" alt="" />-->
+<!--      </div>-->
       <div class="info">
         <!-- <div class="service">
           <div class="title">服务</div>
@@ -35,8 +35,11 @@
         <div class="contact">
           <div class="title">联系我们</div>
           <div class="content">
-            <div class="item">hello@isxcode.com</div>
-            <div class="item">ispong@outlook.com</div>
+<!--            <div class="item">hello@isxcode.com</div>-->
+            <div class="item">Copyright @ 2023 上海至爻数据有限公司 版权所有</div>
+            <div class="item">邮箱：ispong@outlook.com</div>
+            <div class="item">手机：18994591261</div>
+            <div class="item">地址：上海市徐汇区中山西路2020号501、502、503、504室</div>
             <!-- <div class="item">
               <a href="https://github.com/isxcode/spark-yun" target="_blank">
                 github
@@ -89,12 +92,12 @@
 <style lang="scss" scoped>
 .home-footer {
   margin: 0 auto;
-  width: 1200px;
+  width: 1400px;
   background-color: #fff;
   border-top-width: 100%;
   .source-content {
-    padding-top: 30px;
-    padding-bottom: 30px;
+    padding-top: 50px;
+    padding-bottom: 50px;
     display: flex;
     flex-direction: row;
     align-items: flex-start;
@@ -112,7 +115,7 @@
         margin-left: 24px;
       }
       .title {
-        font-size: 16px;
+        font-size: 20px;
         font-weight: bold;
         color: #333;
         margin-bottom: 20px;
@@ -133,7 +136,7 @@
       }
     }
     .wx-img {
-      width: 94px;
+      width: 145px;
     }
   }
   .s-footer {
@@ -161,3 +164,5 @@
   }
 }
 </style>
+<script setup lang="ts">
+</script>
