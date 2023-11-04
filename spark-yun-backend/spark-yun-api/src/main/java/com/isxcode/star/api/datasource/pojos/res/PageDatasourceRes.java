@@ -28,4 +28,6 @@ public class PageDatasourceRes {
 	private String driverId;
 
 	private String driverName;
+
+  private String metastoreUris;
 }
