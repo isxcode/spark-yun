@@ -137,18 +137,6 @@ public class SyncWorkExecutor extends WorkExecutor {
 		logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始构建作业  \n");
 		YagExecuteWorkReq executeReq = new YagExecuteWorkReq();
 
-		// 如果集群配置是简易模式
-		if (SetMode.SIMPLE.equals(workRunContext.getClusterConfig().getSetMode())) {
-			workRunContext.getClusterConfig().setSparkConfig(
-					workConfigService.initSparkConfig(workRunContext.getClusterConfig().getResourceLevel()));
-		}
-
-		// 开始构造SparkSubmit
-		SparkSubmit sparkSubmit = SparkSubmit.builder().verbose(true)
-				.mainClass("com.isxcode.star.plugin.dataSync.jdbc.Execute")
-				.appResource("spark-data-sync-jdbc-plugin.jar")
-				.conf(genSparkSubmitConfig(workRunContext.getClusterConfig().getSparkConfig())).build();
-
 		// 封装来源Datasource的信息
 		DatasourceEntity sourceDatasource = datasourceService
 				.getDatasource(workRunContext.getSyncWorkConfig().getSourceDBId());
@@ -189,6 +177,28 @@ public class SyncWorkExecutor extends WorkExecutor {
 						LocalDateTime.now() + WorkLog.ERROR_INFO + "检测来源数据源 : " + e.getMessage() + "\n");
 			}
 		}
+
+		// 如果来源或者去向存在hive数据源，需要补充hiveMetaStoreUris
+		String hiveMetaStoreUris = null;
+		if (DatasourceType.HIVE.equals(targetDatasource.getDbType())) {
+			hiveMetaStoreUris = targetDatasource.getMetastoreUris();
+		}
+
+		if (DatasourceType.HIVE.equals(sourceDatasource.getDbType())) {
+			hiveMetaStoreUris = sourceDatasource.getMetastoreUris();
+		}
+
+		// 如果集群配置是简易模式
+		if (SetMode.SIMPLE.equals(workRunContext.getClusterConfig().getSetMode())) {
+			workRunContext.getClusterConfig().setSparkConfig(workConfigService
+					.initSparkConfig(workRunContext.getClusterConfig().getResourceLevel(), hiveMetaStoreUris));
+		}
+
+		// 开始构造SparkSubmit
+		SparkSubmit sparkSubmit = SparkSubmit.builder().verbose(true)
+				.mainClass("com.isxcode.star.plugin.dataSync.jdbc.Execute")
+				.appResource("spark-data-sync-jdbc-plugin.jar")
+				.conf(genSparkSubmitConfig(workRunContext.getClusterConfig().getSparkConfig())).build();
 
 		// 开始构造PluginReq
 		PluginReq pluginReq = PluginReq.builder().syncWorkConfig(workRunContext.getSyncWorkConfig())

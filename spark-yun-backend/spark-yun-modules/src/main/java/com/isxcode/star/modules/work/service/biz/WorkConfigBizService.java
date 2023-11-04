@@ -5,6 +5,8 @@ import com.alibaba.fastjson2.TypeReference;
 import com.isxcode.star.api.work.constants.SetMode;
 import com.isxcode.star.api.work.pojos.req.ConfigWorkReq;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
+import com.isxcode.star.modules.datasource.entity.DatasourceEntity;
+import com.isxcode.star.modules.datasource.repository.DatasourceRepository;
 import com.isxcode.star.modules.work.entity.WorkConfigEntity;
 import com.isxcode.star.modules.work.entity.WorkEntity;
 import com.isxcode.star.modules.work.repository.WorkConfigRepository;
@@ -37,6 +39,8 @@ public class WorkConfigBizService {
 	private final WorkConfigService workConfigService;
 
 	private final WorkConfigRepository workConfigRepository;
+
+	private final DatasourceRepository datasourceRepository;
 
 	public WorkConfigEntity getWorkConfigEntity(String workConfigId) {
 
@@ -84,9 +88,21 @@ public class WorkConfigBizService {
 
 		// 用户更新集群配置
 		if (wocConfigWorkReq.getClusterConfig() != null) {
+
+			// 如果spark开启了hive数据源，要保存hiveStoreUrl配置
+			String hiveMetaStoreUris = null;
+			if (wocConfigWorkReq.getClusterConfig().getEnableHive()) {
+				Optional<DatasourceEntity> datasourceEntity = datasourceRepository
+						.findById(workConfig.getDatasourceId());
+				if (datasourceEntity.isPresent()) {
+					hiveMetaStoreUris = datasourceEntity.get().getMetastoreUris();
+				}
+			}
+
 			// 如果是等级的模式，需要帮用户默认填充sparkConfig
 			if (SetMode.SIMPLE.equals(wocConfigWorkReq.getClusterConfig().getSetMode())) {
-				workConfigService.initSparkConfig(wocConfigWorkReq.getClusterConfig().getResourceLevel());
+				workConfigService.initSparkConfig(wocConfigWorkReq.getClusterConfig().getResourceLevel(),
+						hiveMetaStoreUris);
 			}
 			workConfig.setClusterConfig(JSON.toJSONString(wocConfigWorkReq.getClusterConfig()));
 		}

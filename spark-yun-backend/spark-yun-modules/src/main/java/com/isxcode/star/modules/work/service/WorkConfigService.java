@@ -84,12 +84,12 @@ public class WorkConfigService {
 		workConfig.setCronConfig(JSON.toJSONString(CronConfig.builder().setMode(SetMode.SIMPLE).enable(false).build()));
 	}
 
-	public Map<String, String> initSparkConfig(String resourceLevel) {
+	public Map<String, String> initSparkConfig(String resourceLevel, String hiveMetastoreUris) {
 
 		Map<String, String> sparkConfig = new HashMap<>();
 		switch (resourceLevel) {
 			case ResourceLevel.HIGH :
-				sparkConfig.put("hive.metastore.uris", "");
+				sparkConfig.put("hive.metastore.uris", hiveMetastoreUris);
 				sparkConfig.put("spark.executor.instances", "10");
 				sparkConfig.put("spark.executor.cores", "4");
 				sparkConfig.put("spark.executor.memory", "4g");
@@ -100,7 +100,7 @@ public class WorkConfigService {
 				sparkConfig.put("spark.executor.extraJavaOptions", "-Dfile.encoding=utf-8");
 				break;
 			case ResourceLevel.MEDIUM :
-				sparkConfig.put("hive.metastore.uris", "");
+				sparkConfig.put("hive.metastore.uris", hiveMetastoreUris);
 				sparkConfig.put("spark.executor.instances", "5");
 				sparkConfig.put("spark.executor.cores", "2");
 				sparkConfig.put("spark.executor.memory", "2g");
@@ -111,7 +111,7 @@ public class WorkConfigService {
 				sparkConfig.put("spark.executor.extraJavaOptions", "-Dfile.encoding=utf-8");
 				break;
 			case ResourceLevel.LOW :
-				sparkConfig.put("hive.metastore.uris", "");
+				sparkConfig.put("hive.metastore.uris", hiveMetastoreUris);
 				sparkConfig.put("spark.executor.instances", "1");
 				sparkConfig.put("spark.executor.cores", "1");
 				sparkConfig.put("spark.executor.memory", "2g");
