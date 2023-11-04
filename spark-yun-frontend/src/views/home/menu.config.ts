@@ -22,6 +22,12 @@ export const menuListData: Array<Menu> = [
   {
     code: 'workflow',
     name: '作业流',
+    icon: 'SetUp',
+    authType: [ 'ROLE_TENANT_MEMBER', 'ROLE_TENANT_ADMIN' ]
+  },
+  {
+    code: 'driver-management',
+    name: '驱动管理',
     icon: 'Cpu',
     authType: [ 'ROLE_TENANT_MEMBER', 'ROLE_TENANT_ADMIN' ]
   },
