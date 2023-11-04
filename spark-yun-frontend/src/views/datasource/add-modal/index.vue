@@ -34,13 +34,6 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item v-if="formData.dbType === 'HIVE'" label="hive.metastore.uris">
-        <el-input
-          v-model="formData.metastoreUris"
-          maxlength="100"
-          placeholder="请输入"
-        />
-      </el-form-item>
       <el-form-item
         label="数据源驱动"
         prop="driverId"
@@ -64,6 +57,13 @@
       >
         <el-input
           v-model="formData.jdbcUrl"
+          maxlength="100"
+          placeholder="请输入"
+        />
+      </el-form-item>
+      <el-form-item v-if="formData.dbType === 'HIVE'" label="hive.metastore.uris">
+        <el-input
+          v-model="formData.metastoreUris"
           maxlength="100"
           placeholder="请输入"
         />
@@ -106,7 +106,7 @@
 import { reactive, defineExpose, ref, nextTick } from 'vue'
 import BlockModal from '@/components/block-modal/index.vue'
 import { ElMessage, FormInstance, FormRules } from 'element-plus'
-import { GetDriverListData } from '@/services/datasource.service';
+import { GetDefaultDriverData, GetDriverListData } from '@/services/datasource.service';
 
 const form = ref<FormInstance>()
 const callback = ref<any>()
@@ -281,9 +281,22 @@ function getDriverIdList(e: boolean) {
   }
 }
 
-function dbTypeChange() {
+function dbTypeChange(e: string) {
   formData.metastoreUris = ''
   formData.driverId = ''
+
+  getDefaultDriver(e)
+}
+
+function getDefaultDriver(e: string) {
+  if (e) {
+    GetDefaultDriverData({
+      dbType: e
+    }).then((res: any) => {
+      formData.driverId = res.data.id
+    }).catch((error: any) => {
+    })
+  }
 }
 
 function okEvent() {

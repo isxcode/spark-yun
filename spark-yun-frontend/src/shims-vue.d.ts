@@ -6,7 +6,5 @@ declare module "*.vue" {
   export default component;
 }
 
-declare module "easyele-ui";
-
 declare module "element-plus/dist/locale/zh-cn.mjs";
 
