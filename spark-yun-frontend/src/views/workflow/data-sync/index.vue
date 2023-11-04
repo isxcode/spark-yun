@@ -8,20 +8,29 @@
                 <span class="btn-text">返回</span>
             </div>
             <div class="btn-box" @click="saveData">
-                <el-icon>
+                <el-icon v-if="!btnLoadingConfig.saveLoading">
                     <Finished />
+                </el-icon>
+                <el-icon v-else class="is-loading">
+                    <Loading />
                 </el-icon>
                 <span class="btn-text">保存</span>
             </div>
             <div class="btn-box" @click="runWorkData">
-                <el-icon>
+                <el-icon v-if="!btnLoadingConfig.runningLoading">
                     <VideoPlay />
+                </el-icon>
+                <el-icon v-else class="is-loading">
+                    <Loading />
                 </el-icon>
                 <span class="btn-text">运行</span>
             </div>
             <div class="btn-box" @click="terWorkData">
-                <el-icon>
+                <el-icon v-if="!btnLoadingConfig.stopWorkFlowLoading">
                     <Close />
+                </el-icon>
+                <el-icon v-else class="is-loading">
+                    <Loading />
                 </el-icon>
                 <span class="btn-text">中止</span>
             </div>
@@ -154,6 +163,7 @@ import ConfigDetail from '../workflow-page/config-detail/index.vue'
 import { GetWorkItemConfig, RunWorkItemConfig, SaveWorkItemConfig, TerWorkItemConfig } from '@/services/workflow.service'
 import PublishLog from '../work-item/publish-log.vue'
 import RunningLog from '../work-item/running-log.vue'
+import { Loading } from '@element-plus/icons-vue'
 
 interface Option {
     label: string
@@ -212,6 +222,15 @@ const formData = reactive({
 })
 const rules = reactive<FormRules>({
 })
+const btnLoadingConfig = reactive({
+    runningLoading: false,
+    reRunLoading: false,
+    saveLoading: false,
+    publishLoading: false,
+    stopWorkFlowLoading: false,
+    importLoading: false,
+    exportLoading: false
+})
 
 // 日志tab切换
 function tabChangeEvent(e: string) {
@@ -228,6 +247,7 @@ function tabChangeEvent(e: string) {
 
 // 保存数据
 function saveData() {
+    btnLoadingConfig.saveLoading = true
     SaveWorkItemConfig({
         workId: formData.workId,
         syncWorkConfig: {
@@ -237,8 +257,10 @@ function saveData() {
             columnMap: dataSyncTableRef.value.getConnect()
         }
     }).then((res: any) => {
+        btnLoadingConfig.saveLoading = false
         ElMessage.success('保存成功')
     }).catch(err => {
+        btnLoadingConfig.saveLoading = false
         console.error(err)
     })
 }
@@ -273,6 +295,7 @@ function getDate() {
 }
 // 运行
 function runWorkData() {
+    btnLoadingConfig.runningLoading = true
     RunWorkItemConfig({
         workId: props.workItemConfig.id
     }).then((res: any) => {
@@ -281,8 +304,10 @@ function runWorkData() {
         nextTick(() => {
             containerInstanceRef.value.initData(instanceId.value)
         })
+        btnLoadingConfig.runningLoading = false
         // initData(res.data.instanceId)
     }).catch(() => {
+        btnLoadingConfig.runningLoading = false
     })
 }
 // 终止
@@ -291,15 +316,16 @@ function terWorkData() {
     ElMessage.warning('暂无可中止的作业')
     return
   }
+  btnLoadingConfig.stopWorkFlowLoading = true
   TerWorkItemConfig({
     workId: props.workItemConfig.id,
     instanceId: instanceId.value
+  }).then((res: any) => {
+    btnLoadingConfig.stopWorkFlowLoading = false
+    ElMessage.success(res.msg)
+  }).catch(() => {
+    btnLoadingConfig.stopWorkFlowLoading = false
   })
-    .then((res: any) => {
-      ElMessage.success(res.msg)
-    })
-    .catch(() => {
-    })
 }
 
 // 获取数据源
