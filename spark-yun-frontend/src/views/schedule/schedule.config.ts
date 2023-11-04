@@ -88,18 +88,18 @@ export const colConfigs: colConfig[] = [
   {
     prop: 'execStartDateTime',
     title: '耗时',
-    minWidth: 100
+    minWidth: 140,
   },
-  {
-    prop: 'nextPlanDateTime',
-    title: '下次计划时间',
-    minWidth: 140
-  },
-  {
-    prop: 'nextPlanDateTime',
-    title: '发布人',
-    minWidth: 100
-  },
+  // {
+  //   prop: 'nextPlanDateTime',
+  //   title: '下次计划时间',
+  //   minWidth: 140
+  // },
+  // {
+  //   prop: 'nextPlanDateTime',
+  //   title: '发布人',
+  //   minWidth: 100
+  // },
   {
     title: '操作',
     align: 'center',
@@ -172,7 +172,7 @@ export const colConfigsWorkflow: colConfig[] = [
   {
     prop: 'execStartDateTime',
     title: '耗时',
-    minWidth: 100
+    minWidth: 140
   },
   // {
   //   prop: 'nextPlanDateTime',
