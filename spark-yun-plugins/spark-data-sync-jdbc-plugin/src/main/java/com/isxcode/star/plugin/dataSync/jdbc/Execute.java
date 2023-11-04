@@ -13,6 +13,8 @@ import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
 
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Execute {
 
@@ -63,7 +65,9 @@ public class Execute {
 		String sourceTableName = "zhiqingyun_src_" + conf.getSyncWorkConfig().getSourceDatabase().getDbTable();
 
 		if (DatasourceType.HIVE.equals(conf.getSyncWorkConfig().getSourceDBType())) {
-			return conf.getSyncWorkConfig().getSourceDatabase().getDbTable();
+
+			return parseHiveDatabase(conf.getSyncWorkConfig().getSourceDatabase().getUrl())
+					+ conf.getSyncWorkConfig().getSourceDatabase().getDbTable();
 		} else {
 
 			Properties prop = new Properties();
@@ -101,7 +105,9 @@ public class Execute {
 		String targetTableName = "zhiqingyun_dist_" + conf.getSyncWorkConfig().getTargetDatabase().getDbTable();
 
 		if (DatasourceType.HIVE.equals(conf.getSyncWorkConfig().getTargetDBType())) {
-			return conf.getSyncWorkConfig().getTargetDatabase().getDbTable();
+
+			return parseHiveDatabase(conf.getSyncWorkConfig().getTargetDatabase().getUrl())
+					+ conf.getSyncWorkConfig().getTargetDatabase().getDbTable();
 		} else {
 			DataFrameReader frameReader = sparkSession.read().format("jdbc")
 					.option("driver", conf.getSyncWorkConfig().getTargetDatabase().getDriver())
@@ -148,6 +154,17 @@ public class Execute {
 			return sparkSessionBuilder.config(conf).getOrCreate();
 		} else {
 			return sparkSessionBuilder.config(conf).enableHiveSupport().getOrCreate();
+		}
+	}
+
+	public static String parseHiveDatabase(String jdbcUrl) {
+
+		Pattern pattern = Pattern.compile("^jdbc:hive2://.*?/(.*?)$");
+		Matcher matcher = pattern.matcher(jdbcUrl);
+		if (matcher.find()) {
+			return matcher.group(1) + ".";
+		} else {
+			return "";
 		}
 	}
 
