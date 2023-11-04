@@ -365,7 +365,7 @@ defineExpose({
 .data-sync-body {
     display: flex;
     position: relative;
-    width: 99%;
+    width: 100%;
 
     .el-table__empty-block {
         width: 100% !important;

@@ -16,6 +16,10 @@
 
     .zqy-home__main {
       width: calc(100vw - 96px);
+      // 适配输入框穿透问题
+      .flow-container {
+        max-width: calc(100vw - 300px);
+      }
     }
 
     .zqy-home__menu-footer {
@@ -44,6 +48,9 @@
 
   .zqy-home__main {
     width: calc(100vw - 220px);
+    .flow-container {
+      max-width: calc(100vw - 422px);
+    }
   }
 
   .zqy-home__nav {
