@@ -97,7 +97,9 @@ public class StandaloneAgentService implements AgentService {
 			if (jarFiles != null) {
 				for (File jar : jarFiles) {
 					try {
-						sparkLauncher.addJar(jar.toURI().toURL().toString());
+						if (!jar.getName().contains("hive")) {
+							sparkLauncher.addJar(jar.toURI().toURL().toString());
+						}
 					} catch (MalformedURLException e) {
 						log.error(e.getMessage());
 						throw new IsxAppException("50010", "添加lib中文件异常", e.getMessage());

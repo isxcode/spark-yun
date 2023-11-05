@@ -63,18 +63,21 @@ public class KubernetesAgentService implements AgentService {
 			File[] jarFiles = new File(agentHomePath + File.separator + "lib").listFiles();
 			if (jarFiles != null) {
 				for (int i = 0; i < jarFiles.length; i++) {
-					sparkLauncher.addJar("local:///opt/spark/examples/jars/lib/" + jarFiles[i].getName());
-					sparkLauncher.setConf("spark.kubernetes.driver.volumes.hostPath." + i + ".mount.path",
-							"/opt/spark/examples/jars/lib/" + jarFiles[i].getName());
-					sparkLauncher.setConf("spark.kubernetes.driver.volumes.hostPath." + i + ".mount.readOnly", "false");
-					sparkLauncher.setConf("spark.kubernetes.driver.volumes.hostPath." + i + ".options.path",
-							jarFiles[i].getPath());
-					sparkLauncher.setConf("spark.kubernetes.executor.volumes.hostPath." + i + ".mount.path",
-							"/opt/spark/examples/jars/lib/" + jarFiles[i].getName());
-					sparkLauncher.setConf("spark.kubernetes.executor.volumes.hostPath." + i + ".mount.readOnly",
-							"false");
-					sparkLauncher.setConf("spark.kubernetes.executor.volumes.hostPath." + i + ".options.path",
-							jarFiles[i].getPath());
+					if (!jarFiles[i].getName().contains("hive")) {
+						sparkLauncher.addJar("local:///opt/spark/examples/jars/lib/" + jarFiles[i].getName());
+						sparkLauncher.setConf("spark.kubernetes.driver.volumes.hostPath." + i + ".mount.path",
+								"/opt/spark/examples/jars/lib/" + jarFiles[i].getName());
+						sparkLauncher.setConf("spark.kubernetes.driver.volumes.hostPath." + i + ".mount.readOnly",
+								"false");
+						sparkLauncher.setConf("spark.kubernetes.driver.volumes.hostPath." + i + ".options.path",
+								jarFiles[i].getPath());
+						sparkLauncher.setConf("spark.kubernetes.executor.volumes.hostPath." + i + ".mount.path",
+								"/opt/spark/examples/jars/lib/" + jarFiles[i].getName());
+						sparkLauncher.setConf("spark.kubernetes.executor.volumes.hostPath." + i + ".mount.readOnly",
+								"false");
+						sparkLauncher.setConf("spark.kubernetes.executor.volumes.hostPath." + i + ".options.path",
+								jarFiles[i].getPath());
+					}
 				}
 			}
 		}
