@@ -52,12 +52,19 @@ public class TenantUserBizService {
 		}
 
 		// 如果租户id为空
-		if (Strings.isEmpty(TENANT_ID.get())) {
+		if (Strings.isEmpty(TENANT_ID.get()) && Strings.isEmpty(turAddTenantUserReq.getTenantId())) {
 			throw new IsxAppException("请指定租户id");
 		}
 
+		String tenantId;
+		if (!Strings.isEmpty(TENANT_ID.get())) {
+			tenantId = TENANT_ID.get();
+		} else {
+			tenantId = turAddTenantUserReq.getTenantId();
+		}
+
 		// 初始化租户用户
-		TenantUserEntity tenantUserEntity = TenantUserEntity.builder().tenantId(TENANT_ID.get())
+		TenantUserEntity tenantUserEntity = TenantUserEntity.builder().tenantId(tenantId)
 				.userId(turAddTenantUserReq.getUserId()).status(UserStatus.ENABLE).build();
 
 		// 初始化用户权限
@@ -69,7 +76,7 @@ public class TenantUserBizService {
 
 		// 判断用户当前是否有租户
 		if (Strings.isEmpty(userEntity.getCurrentTenantId())) {
-			userEntity.setCurrentTenantId(TENANT_ID.get());
+			userEntity.setCurrentTenantId(tenantId);
 			userRepository.save(userEntity);
 		}
 
@@ -79,7 +86,15 @@ public class TenantUserBizService {
 
 	public Page<PageTenantUserRes> pageTenantUser(PageTenantUserReq turAddTenantUserReq) {
 
-		return tenantUserRepository.searchTenantUser(TENANT_ID.get(), turAddTenantUserReq.getSearchKeyWord(),
+		// 如果请求体中有tenantId，使用请求体中的
+		String tenantId;
+		if (!Strings.isEmpty(turAddTenantUserReq.getTenantId())) {
+			tenantId = turAddTenantUserReq.getTenantId();
+		} else {
+			tenantId = TENANT_ID.get();
+		}
+
+		return tenantUserRepository.searchTenantUser(tenantId, turAddTenantUserReq.getSearchKeyWord(),
 				PageRequest.of(turAddTenantUserReq.getPage(), turAddTenantUserReq.getPageSize()));
 	}
 
