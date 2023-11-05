@@ -96,11 +96,11 @@ interface MenuData {
 }
 
 const menuData: Array<MenuData> = reactive([
-  {
-    title: "帮助中心",
-    path: "/install/docker-deploy",
-    type: "router",
-  },
+  // {
+  //   title: "帮助中心",
+  //   path: "/install/docker-deploy",
+  //   type: "router",
+  // },
   {
     title: "github",
     icon: "i-simple-icons-github",

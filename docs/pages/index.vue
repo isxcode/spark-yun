@@ -63,9 +63,9 @@
     </div>
     <!-- 产品资源 -->
     <div class="product-resources">
-      <div class="title">海量数据处理示例</div>
+      <div class="title">数据创造价值，大数据创造大价值</div>
       <div class="desc">
-        数十套处理某个方向数据的示例资源，即拿即用，快速开始
+        AI将至，至轻云与您携手实现企业级大数据平台落地
       </div>
       <div class="img-row">
         <div
@@ -139,17 +139,17 @@ const productAdvantagesList = reactive([
   {
     code: "2",
     layout: "right",
-    title: "数据源驱动自定义，版本兼容问题",
-    desc: "通过人工智能辅助编写和即时查询 带来最佳的coding体验",
-    img: "https://img.isxcode.com/picgo/20231102214455.png",
+    title: "驱动上传，任何姿势都能连",
+    desc: "支持海量数据源，如Mysql、Hive、Oracle、SqlServer、TiDB、Oceanbase、Doris、Clickhouse等。用户可自定义上传多版本驱动，解决企业中多环境数据源无法同时连接的难题。",
+    img: "https://img.isxcode.com/picgo/zhiqingyun2.jpg",
     url: "https://zhiqingyun-demo.isxcode.com"
   },
   {
     code: "3",
     layout: "left",
-    title: "连接到所有数据库",
-    desc: "选择Apache Hive、 Apache Impala 、 Presto Apache Flink SQL、 SparkSQL、 Apache Phoenix、 ksqlDB、 Elastic Search、 Apache Druid 、 PostgreSQL 、 Redshift 、 BigQuery 的多个解释器之一 ...",
-    img: "https://img.isxcode.com/picgo/20231102214652.png",
+    title: "创建租户，再大也能装下",
+    desc: "多租户模式，确保租户间数据隔离。租户内可单独协调集群资源、数据源驱动、作业流配置等。解决企业中规模较大、用户众多、权限难解的问题。",
+    img: "https://img.isxcode.com/picgo/zhiqingyun3.jpg",
     url: "https://zhiqingyun-demo.isxcode.com"
   },
 ]);
@@ -209,17 +209,17 @@ const productServiceList = reactive([
   {
     code: "1",
     layout: "right",
-    title: "适用各种操作系统，浏览器打开即用",
-    desc: "适用各种操作系统（MacOS Windows Linux），打开浏览器即用。作系统（MacOS Windows Linux），打开浏览器即用。作系统（MacOS Windows Linux），打开浏览器即用。",
-    img: "https://img.isxcode.com/picgo/20231102214652.png",
+    title: "编排作业，横竖都能拖拽",
+    desc: "拥有复杂的作业执行命令，包括运行、中止、重跑、重跑下游、中断、重跑当前、发布等。且支持可视化Cron表达式调度配置，解决企业中各种复杂应用场景。",
+    img: "https://img.isxcode.com/picgo/zhiqingyun4.jpg",
     url: "https://zhiqingyun-demo.isxcode.com",
   },
   {
     code: "2",
     layout: "left",
-    title: "像专业人士一样编写 SQL",
-    desc: "通过人工智能辅助编写和即时查询 带来最佳的coding体验",
-    img: "https://img.isxcode.com/picgo/20231102214855.png",
+    title: "能写代码？不单单只有SparkSql",
+    desc: "超多作业类型，包括数据同步、Bash、Python、SparkSql、Jdbc、自定义Jar等。提供客户二次开发模版，任何复杂的场景都可以通过写代码的方式解决。",
+    img: "https://img.isxcode.com/picgo/zhiqingyun5.jpg",
     url: "https://zhiqingyun-demo.isxcode.com",
   }
 ]);
