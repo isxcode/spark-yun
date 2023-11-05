@@ -131,15 +131,15 @@ const productAdvantagesList = reactive([
   {
     code: "1",
     layout: "left",
-    title: "适用各种操作系统，浏览器打开即用",
-    desc: "适用各种操作系统（MacOS Windows Linux），打开浏览器即用。作系统（MacOS Windows Linux），打开浏览器即用。作系统（MacOS Windows Linux），打开浏览器即用。",
-    img: "https://img.isxcode.com/picgo/20231102214409.png",
+    title: "多平台部署，从不娇生惯养",
+    desc: "支持大量计算引擎平台，如Kubernetes、Spark Standalone、Spark Cluster、Yarn、CDH。可无缝迁移，无缝切换，帮助企业更优管理集群资源。",
+    img: "https://img.isxcode.com/picgo/zhiqingyun1.jpg",
     url: "https://zhiqingyun-demo.isxcode.com"
   },
   {
     code: "2",
     layout: "right",
-    title: "像专业人士一样编写 SQL",
+    title: "数据源驱动自定义，版本兼容问题",
     desc: "通过人工智能辅助编写和即时查询 带来最佳的coding体验",
     img: "https://img.isxcode.com/picgo/20231102214455.png",
     url: "https://zhiqingyun-demo.isxcode.com"
