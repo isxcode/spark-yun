@@ -4,6 +4,7 @@ import com.isxcode.star.api.cluster.pojos.dto.ScpFileEngineNodeDto;
 import com.isxcode.star.api.cluster.pojos.req.AddClusterNodeReq;
 import com.isxcode.star.api.cluster.pojos.req.UpdateClusterNodeReq;
 import com.isxcode.star.api.cluster.pojos.res.EnoQueryNodeRes;
+import com.isxcode.star.api.cluster.pojos.res.GetClusterNodeRes;
 import com.isxcode.star.modules.cluster.entity.ClusterNodeEntity;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -56,4 +57,6 @@ public interface ClusterNodeMapper {
 	}
 
 	ScpFileEngineNodeDto engineNodeEntityToScpFileEngineNodeDto(ClusterNodeEntity engineNode);
+
+	GetClusterNodeRes clusterNodeEntityToGetClusterNodeRes(ClusterNodeEntity clusterNode);
 }
