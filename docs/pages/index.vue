@@ -127,6 +127,13 @@ definePageMeta({
   layout: "home",
 });
 
+useSeoMeta({
+  title: '至轻云',
+  ogTitle: '至轻云',
+  description:'打造超轻量级大数据平台',
+  ogDescription: '打造超轻量级大数据平台',
+});
+
 const productAdvantagesList = reactive([
   {
     code: "1",
