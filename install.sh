@@ -19,7 +19,7 @@ BASE_PATH=$(cd "$(dirname "$0")" || exit ; pwd)
 cd "${BASE_PATH}" || exit
 
 # 创建tmp目录
-TMP_DIR="${BASE_PATH}"/tmp
+TMP_DIR="${BASE_PATH}"/resources/tmp
 SPARK_MIN_FILE=spark-3.4.0-bin-hadoop3.tgz
 SPARK_MIN_DOWNLOAD_URL=https://archive.apache.org/dist/spark/spark-3.4.0/spark-3.4.0-bin-hadoop3.tgz
 SPARK_MIN_DIR="${BASE_PATH}"/spark-yun-dist/spark-min
