@@ -61,6 +61,13 @@ export const colConfigs: colConfig[] = [
       showOverflowTooltip: true
     },
     {
+        prop: 'defaultDriver',
+        title: '是否默认驱动',
+        minWidth: 100,
+        showOverflowTooltip: true,
+        customSlot: 'defaultTag'
+    },
+    {
         prop: 'remark',
         title: '备注',
         minWidth: 100
@@ -69,7 +76,7 @@ export const colConfigs: colConfig[] = [
         title: '操作',
         align: 'center',
         customSlot: 'options',
-        width: 60
+        width: 130
     }
 ]
 
