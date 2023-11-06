@@ -156,6 +156,14 @@ public class WorkflowController {
 		workflowConfigBizService.configWorkflow(configWorkflowReq);
 	}
 
+  @Operation(summary = "配置作业流接口（非dag图保存的内容）")
+  @PostMapping("/configWorkflowSetting")
+  @SuccessResponse("保存成功")
+  public void configWorkflowSetting(@Valid @RequestBody ConfigWorkflowSettingReq configWorkflowSettingReq) {
+
+    workflowConfigBizService.configWorkflowSetting(configWorkflowSettingReq);
+  }
+
 	@Operation(summary = "获取作业流默认计算引擎")
 	@PostMapping("/getWorkflowDefaultCluster")
 	@SuccessResponse("查询成功")

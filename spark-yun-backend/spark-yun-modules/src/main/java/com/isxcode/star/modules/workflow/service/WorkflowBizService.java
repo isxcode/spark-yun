@@ -8,8 +8,10 @@ import com.alibaba.fastjson.TypeReference;
 import com.isxcode.star.api.instance.constants.FlowInstanceStatus;
 import com.isxcode.star.api.instance.constants.InstanceStatus;
 import com.isxcode.star.api.instance.constants.InstanceType;
+import com.isxcode.star.api.work.constants.SetMode;
 import com.isxcode.star.api.work.constants.WorkLog;
 import com.isxcode.star.api.work.constants.WorkStatus;
+import com.isxcode.star.api.work.pojos.dto.CronConfig;
 import com.isxcode.star.api.work.pojos.req.GetWorkflowDefaultClusterReq;
 import com.isxcode.star.api.work.pojos.res.GetWorkflowDefaultClusterRes;
 import com.isxcode.star.api.workflow.constants.WorkflowStatus;
@@ -115,6 +117,7 @@ public class WorkflowBizService {
 
 		// 初始化工作流配置
 		WorkflowConfigEntity workflowConfig = new WorkflowConfigEntity();
+    workflowConfig.setCronConfig(JSON.toJSONString(CronConfig.builder().setMode(SetMode.SIMPLE).enable(false).build()));
 		workflowConfig = workflowConfigRepository.save(workflowConfig);
 
 		// 工作流绑定配置
@@ -248,6 +251,10 @@ public class WorkflowBizService {
 
 		GetWorkflowRes wofGetWorkflowRes = new GetWorkflowRes();
 		wofGetWorkflowRes.setWebConfig(JSON.parse(workflowConfig.getWebConfig()));
+
+    if (!Strings.isEmpty(workflowConfig.getCronConfig())) {
+      wofGetWorkflowRes.setCronConfig(JSON.parseObject(workflowConfig.getCronConfig(), CronConfig.class));
+    }
 
 		return wofGetWorkflowRes;
 	}
