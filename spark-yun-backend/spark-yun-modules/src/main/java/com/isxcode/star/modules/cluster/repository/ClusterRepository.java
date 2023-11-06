@@ -19,5 +19,4 @@ public interface ClusterRepository extends JpaRepository<ClusterEntity, String> 
 	@Query("SELECT C FROM ClusterEntity C WHERE C.name LIKE %:searchKeyWord% OR C.remark LIKE %:searchKeyWord% order by C.createDateTime desc ")
 	Page<ClusterEntity> pageCluster(@Param("searchKeyWord") String searchKeyWord, Pageable pageable);
 
-	Optional<ClusterEntity> findByDefaultCluster(boolean defaultCluster);
 }

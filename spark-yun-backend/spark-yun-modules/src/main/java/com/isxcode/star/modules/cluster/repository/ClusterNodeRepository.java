@@ -20,8 +20,6 @@ import org.springframework.stereotype.Repository;
 @CacheConfig(cacheNames = {"SY_ENGINE_NODE"})
 public interface ClusterNodeRepository extends JpaRepository<ClusterNodeEntity, String> {
 
-	Optional<ClusterNodeEntity> findByClusterIdAndDefaultClusterNode(String clusterId, boolean defaultClusterNode);
-
 	List<ClusterNodeEntity> findAllByClusterId(String clusterId);
 
 	List<ClusterNodeEntity> findAllByClusterIdAndStatus(String clusterId, String status);
