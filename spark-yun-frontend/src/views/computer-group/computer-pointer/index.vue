@@ -230,7 +230,7 @@ function editNodeData(data: any) {
 
 // 查看日志
 function showLog(e: any) {
-  showLogRef.value.showModal(e.agentLog)
+  showLogRef.value.showModal(e.id)
 }
 
 // 停止
