@@ -183,3 +183,12 @@ export function StartComputerPointData(params: any): Promise<any> {
     params: params
   })
 }
+
+// 获取节点数据
+export function GetComputerPointDetailData(params: any): Promise<any> {
+  return http.request({
+    method: 'post',
+    url: '/cluster_node/getClusterNode',
+    params: params
+  })
+}
