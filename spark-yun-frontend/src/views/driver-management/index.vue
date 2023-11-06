@@ -13,10 +13,20 @@
     <LoadingPage :visible="loading" :network-error="networkError" @loading-refresh="initData(false)">
       <div class="zqy-table">
         <BlockTable :table-config="tableConfig" @size-change="handleSizeChange" @current-change="handleCurrentChange">
+          <template #defaultTag="scopeSlot">
+            <div class="btn-group">
+              <el-tag v-if="scopeSlot.row.defaultCluster" class="ml-2" type="success">
+                是
+              </el-tag>
+              <el-tag v-if="!scopeSlot.row.defaultCluster" class="ml-2" type="danger">
+                否
+              </el-tag>
+            </div>
+          </template>
           <template #options="scopeSlot">
             <div class="btn-group">
+              <span @click="setDefaultDriver(scopeSlot.row)">默认驱动切换</span>
               <span @click="deleteData(scopeSlot.row)">删除</span>
-              <!-- <span v-if="!scopeSlot.row.pubLoading" @click="publishData(scopeSlot.row)">发布</span> -->
               <!-- <el-icon v-else class="is-loading"><Loading /></el-icon> -->
             </div>
           </template>
@@ -36,7 +46,7 @@ import BlockTable from '@/components/block-table/index.vue'
 import LoadingPage from '@/components/loading/index.vue'
 
 import { BreadCrumbList, TableConfig } from './driver.config'
-import { GetDefaultDriverData, GetDriverListData, DeleteDefaultDriverData, AddDefaultDriverData } from '@/services/driver-management.service'
+import { GetDefaultDriverData, GetDriverListData, DeleteDefaultDriverData, AddDefaultDriverData, SetDefaultDriverData } from '@/services/driver-management.service'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/store/useAuth'
@@ -116,6 +126,18 @@ function deleteData(data: any) {
   })
 }
 
+// 设置默认
+function setDefaultDriver(data: any) {
+  SetDefaultDriverData({
+    driverId: data.id,
+    isDefaultDriver: !data.defaultDriver
+  }).then((res: any) => {
+    ElMessage.success(res.msg)
+    initData(true)
+  }).catch(() => {
+  })
+}
+
 function showDetail(data: any) {
   router.push({
     name: 'workflow-page',
@@ -161,7 +183,7 @@ onMounted(() => {
   &.driver-table {
     .zqy-table {
       .btn-group {
-        justify-content: center;
+        // justify-content: center;
       }
     }
   }
