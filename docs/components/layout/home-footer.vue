@@ -48,9 +48,9 @@
           </div>
         </div>
       </div>
-      <div class="wx-img">
-        <img src="https://img.isxcode.com/picgo/wechat_zhiqingyun.jpg" />
-      </div>
+<!--      <div class="wx-img">-->
+<!--        <img src="https://img.isxcode.com/picgo/wechat_zhiqingyun.jpg" />-->
+<!--      </div>-->
     </div>
     <div class="s-footer-bottom">
       <!-- <p>
