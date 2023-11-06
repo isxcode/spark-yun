@@ -130,7 +130,7 @@
                 </template>
             </div>
         <AddModal ref="addModalRef" />
-        <ConfigDetail ref="configDetailRef"></ConfigDetail>
+        <workflow-config ref="workflowConfigRef"></workflow-config>
         <zqyLog ref="zqyLogRef"></zqyLog>
     </div>
 </template>
@@ -141,13 +141,13 @@ import { useRoute } from 'vue-router'
 import Breadcrumb from '@/layout/bread-crumb/index.vue'
 import ZqyFlow from '@/lib/packages/zqy-flow/flow.vue'
 import AddModal from './add-modal/index.vue'
-import ConfigDetail from './config-detail/index.vue'
+import WorkflowConfig from './workflow-config/index.vue'
 import eventBus from '@/utils/eventBus'
 import zqyLog from '@/components/zqy-log/index.vue'
 import WorkItem from '../work-item/index.vue'
 import DataSync from '../data-sync/index.vue'
 
-import { AddWorkflowDetailList, BreakFlowData, DeleteWorkflowDetailList, ExportWorkflowData, GetWorkflowData, GetWorkflowDetailList, GetWorkflowList, ImportWorkflowData, PublishWorkflowData, QueryRunWorkInstances, ReRunWorkflow, RerunCurrentNodeFlowData, RunAfterFlowData, RunWorkflowData, SaveWorkflowData, StopWorkflowData, UpdateWorkflowDetailList } from '@/services/workflow.service'
+import { AddWorkflowDetailList, BreakFlowData, DeleteWorkflowDetailList, ExportWorkflowData, GetWorkflowData, GetWorkflowDetailList, GetWorkflowList, ImportWorkflowData, PublishWorkflowData, QueryRunWorkInstances, ReRunWorkflow, RerunCurrentNodeFlowData, RunAfterFlowData, RunWorkflowData, SaveWorkflowConfigData, SaveWorkflowData, StopWorkflowData, UpdateWorkflowDetailList } from '@/services/workflow.service'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Loading } from '@element-plus/icons-vue'
 
@@ -157,7 +157,7 @@ const searchParam = ref('')
 const workListItem = ref([])
 const zqyFlowRef = ref(null)
 const addModalRef = ref(null)
-const configDetailRef = ref(null)
+const workflowConfigRef = ref(null)
 const zqyLogRef = ref(null)
 const containerType = ref('flow')
 const workConfig = ref()
@@ -167,6 +167,7 @@ const workFlowData = ref({
     name: '',
     id: ''
 })
+const cronConfig = ref()
 
 const workflowInstanceId = ref('')
 const timer = ref()
@@ -404,6 +405,7 @@ function initFlowData() {
         GetWorkflowData({
             workflowId: workFlowData.value.id
         }).then((res: any) => {
+            cronConfig.value = res.data?.cronConfig
             if (res.data?.webConfig) {
                 zqyFlowRef.value.initCellList(res.data.webConfig)
             }
@@ -475,23 +477,20 @@ function inputEvent(e: string) {
 
 // 配置设置
 function showConfigDetail() {
-    configDetailRef.value.showModal((data: any) => {
+    workflowConfigRef.value.showModal((data: any) => {
         return new Promise((resolve: any, reject: any) => {
-            console.log(data)
-            // AddWorkflowDetailList({
-            //     ...formData,
-            //     workflowId: workFlowData.value.id
-            // })
-            //     .then((res: any) => {
-            //         ElMessage.success(res.msg)
-            //         initData()
-                    resolve()
-            //     })
-            //     .catch((error: any) => {
-            //         reject(error)
-            //     })
+            SaveWorkflowConfigData({
+                workflowId: workFlowData.value.id,
+                cronConfig: data
+            }).then((res: any) => {
+                initFlowData()
+                ElMessage.success(res.msg)
+                resolve()
+            }).catch((err) => {
+                reject(err)
+            })
         })
-    })
+    }, cronConfig.value)
 }
 
 // 节点运行日志
