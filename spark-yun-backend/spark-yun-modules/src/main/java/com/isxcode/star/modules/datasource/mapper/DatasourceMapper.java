@@ -26,6 +26,7 @@ public interface DatasourceMapper {
 	@Mapping(source = "dasUpdateDatasourceReq.jdbcUrl", target = "jdbcUrl")
 	@Mapping(source = "dasUpdateDatasourceReq.username", target = "username")
 	@Mapping(source = "dasUpdateDatasourceReq.metastoreUris", target = "metastoreUris")
+  @Mapping(source = "dasUpdateDatasourceReq.driverId", target = "driverId")
 	@Mapping(source = "dasUpdateDatasourceReq.name", target = "name")
 	@Mapping(target = "id", source = "datasourceEntity.id")
 	DatasourceEntity dasUpdateDatasourceReqToDatasourceEntity(UpdateDatasourceReq dasUpdateDatasourceReq,
