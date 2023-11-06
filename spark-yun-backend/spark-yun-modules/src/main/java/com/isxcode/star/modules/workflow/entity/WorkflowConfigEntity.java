@@ -45,7 +45,7 @@ public class WorkflowConfigEntity {
 
 	private String dagEndList;
 
-  private String cronConfig;
+	private String cronConfig;
 
 	@CreatedDate
 	private LocalDateTime createDateTime;

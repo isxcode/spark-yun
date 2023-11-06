@@ -117,7 +117,8 @@ public class WorkflowBizService {
 
 		// 初始化工作流配置
 		WorkflowConfigEntity workflowConfig = new WorkflowConfigEntity();
-    workflowConfig.setCronConfig(JSON.toJSONString(CronConfig.builder().setMode(SetMode.SIMPLE).enable(false).build()));
+		workflowConfig
+				.setCronConfig(JSON.toJSONString(CronConfig.builder().setMode(SetMode.SIMPLE).enable(false).build()));
 		workflowConfig = workflowConfigRepository.save(workflowConfig);
 
 		// 工作流绑定配置
@@ -252,9 +253,9 @@ public class WorkflowBizService {
 		GetWorkflowRes wofGetWorkflowRes = new GetWorkflowRes();
 		wofGetWorkflowRes.setWebConfig(JSON.parse(workflowConfig.getWebConfig()));
 
-    if (!Strings.isEmpty(workflowConfig.getCronConfig())) {
-      wofGetWorkflowRes.setCronConfig(JSON.parseObject(workflowConfig.getCronConfig(), CronConfig.class));
-    }
+		if (!Strings.isEmpty(workflowConfig.getCronConfig())) {
+			wofGetWorkflowRes.setCronConfig(JSON.parseObject(workflowConfig.getCronConfig(), CronConfig.class));
+		}
 
 		return wofGetWorkflowRes;
 	}

@@ -13,6 +13,6 @@ public class ConfigWorkflowSettingReq {
 	@NotEmpty(message = "工作流id不能为空")
 	private String workflowId;
 
-  @Schema(title = "cron定时配置")
-  private CronConfig cronConfig;
+	@Schema(title = "cron定时配置")
+	private CronConfig cronConfig;
 }

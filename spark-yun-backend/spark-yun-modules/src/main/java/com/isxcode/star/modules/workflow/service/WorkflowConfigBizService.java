@@ -30,7 +30,7 @@ public class WorkflowConfigBizService {
 
 	private final WorkRepository workRepository;
 
-  private final WorkflowService workflowService;
+	private final WorkflowService workflowService;
 
 	public WorkflowConfigEntity getWorkflowConfig(String workflowConfigId) {
 
@@ -85,13 +85,13 @@ public class WorkflowConfigBizService {
 		workflowConfigRepository.save(workflowConfig);
 	}
 
-  public void configWorkflowSetting(ConfigWorkflowSettingReq configWorkflowSettingReq) {
+	public void configWorkflowSetting(ConfigWorkflowSettingReq configWorkflowSettingReq) {
 
-    WorkflowEntity workflow = workflowService.getWorkflow(configWorkflowSettingReq.getWorkflowId());
+		WorkflowEntity workflow = workflowService.getWorkflow(configWorkflowSettingReq.getWorkflowId());
 
-    WorkflowConfigEntity workflowConfig = workflowService.getWorkflowConfig(workflow.getConfigId());
+		WorkflowConfigEntity workflowConfig = workflowService.getWorkflowConfig(workflow.getConfigId());
 
-    workflowConfig.setCronConfig(JSON.toJSONString(configWorkflowSettingReq.getCronConfig()));
-    workflowConfigRepository.save(workflowConfig);
-  }
+		workflowConfig.setCronConfig(JSON.toJSONString(configWorkflowSettingReq.getCronConfig()));
+		workflowConfigRepository.save(workflowConfig);
+	}
 }
