@@ -106,14 +106,6 @@ public class ClusterNodeController {
 		clusterNodeBizService.cleanAgent(cleanAgentReq);
 	}
 
-	@Operation(summary = "设置默认集群节点")
-	@PostMapping("/setDefaultClusterNode")
-	@SuccessResponse("设置成功")
-	public void setDefaultClusterNode(@Valid @RequestBody SetDefaultClusterNodeReq setDefaultClusterNodeReq) {
-
-		clusterNodeBizService.setDefaultClusterNode(setDefaultClusterNodeReq);
-	}
-
 	@Operation(summary = "获取当前集群节点信息")
 	@PostMapping("/getClusterNode")
 	@SuccessResponse("获取成功")
