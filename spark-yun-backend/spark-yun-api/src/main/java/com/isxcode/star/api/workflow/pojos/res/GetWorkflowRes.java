@@ -8,5 +8,5 @@ public class GetWorkflowRes {
 
 	private Object webConfig;
 
-  private CronConfig cronConfig;
+	private CronConfig cronConfig;
 }

@@ -36,6 +36,6 @@ public class UpdateDatasourceReq {
 	@Schema(title = "hive特殊配置hive.metastore.uris", example = "默认值：thrift://localhost:9083，非必填")
 	private String metastoreUris;
 
-  @Schema(title = "数据源驱动", example = "sy_123")
-  private String driverId;
+	@Schema(title = "数据源驱动", example = "sy_123")
+	private String driverId;
 }

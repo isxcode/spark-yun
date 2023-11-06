@@ -20,7 +20,7 @@ public class WorkflowService {
 
 	private final WorkflowRepository workflowRepository;
 
-  private final WorkflowConfigRepository workflowConfigRepository;
+	private final WorkflowConfigRepository workflowConfigRepository;
 
 	public WorkInstanceEntity getWorkInstance(String workInstanceId) {
 
@@ -32,8 +32,8 @@ public class WorkflowService {
 		return workflowRepository.findById(workflowId).orElseThrow(() -> new IsxAppException("工作流不存在"));
 	}
 
-  public WorkflowConfigEntity getWorkflowConfig(String workflowConfigId) {
+	public WorkflowConfigEntity getWorkflowConfig(String workflowConfigId) {
 
-    return workflowConfigRepository.findById(workflowConfigId).orElseThrow(() -> new IsxAppException("工作流配置不存在"));
-  }
+		return workflowConfigRepository.findById(workflowConfigId).orElseThrow(() -> new IsxAppException("工作流配置不存在"));
+	}
 }
