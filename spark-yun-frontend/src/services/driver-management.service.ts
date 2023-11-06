@@ -43,4 +43,13 @@ export function AddDefaultDriverData(params: any): Promise<any> {
     })
 }
 
+// 设为默认驱动
+export function SetDefaultDriverData(params: any): Promise<any> {
+  return http.request({
+    method: 'post',
+    url: '/datasource/settingDefaultDatabaseDriver',
+    params: params
+  })
+}
+
 
