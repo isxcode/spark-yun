@@ -133,8 +133,8 @@ if [ ! -f "${JDBC_DIR}"/hive-jdbc-3.1.3-standalone.jar ]; then
 fi
 
 # 下载hive2驱动
-if [ ! -f "${JDBC_DIR}"/hive-jdbc-2.1.1-standalone.jar ]; then
-  wget https://repo1.maven.org/maven2/org/apache/hive/hive-jdbc/2.1.1/hive-jdbc-2.1.1-standalone.jar -O ${JDBC_DIR}/hive-jdbc-2.1.1-standalone.jar
+if [ ! -f "${JDBC_DIR}"/hive-jdbc-uber-2.6.3.0-235.jar ]; then
+  wget https://github.com/timveil/hive-jdbc-uber-jar/releases/download/v1.8-2.6.3/hive-jdbc-uber-2.6.3.0-235.jar -O ${JDBC_DIR}/hive-jdbc-uber-2.6.3.0-235.jar
   echo "hive-jdbc-2.1.1-standalone.jar驱动下载成功"
 fi
 
