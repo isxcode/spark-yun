@@ -108,3 +108,7 @@ alter table SY_WORKFLOW
 -- 数据源日志长度扩大
 alter table SY_DATASOURCE
     change connect_log connect_log text null comment '测试连接日志';
+
+-- 将cron扩展成cron_config
+alter table SY_WORKFLOW_CONFIG
+    change corn cron_config text null comment '定时表达式';
