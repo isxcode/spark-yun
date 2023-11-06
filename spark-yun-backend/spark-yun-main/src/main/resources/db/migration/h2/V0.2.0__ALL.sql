@@ -108,3 +108,7 @@ INSERT INTO SY_DATABASE_DRIVER (id, name, db_type, file_name, driver_type, creat
 -- 工作流添加默认计算引擎配置
 alter table SY_WORKFLOW
     add default_cluster_id varchar(200) null comment '默认计算引擎' after status;
+
+-- 数据源日志长度扩大
+alter table SY_DATASOURCE
+    alter connect_log text null comment '测试连接日志';
