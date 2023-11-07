@@ -19,7 +19,7 @@ public class PageDatabaseDriverRes {
 
 	private String remark;
 
-	private boolean isDefaultDriver;
+	private Boolean isDefaultDriver;
 
 	private String createBy;
 
