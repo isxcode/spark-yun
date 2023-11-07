@@ -85,6 +85,8 @@ public abstract class WorkExecutor {
 			// 更新作业实例成功状态
 			workInstance.setStatus(InstanceStatus.SUCCESS);
 			workInstance.setExecEndDateTime(new Date());
+			workInstance
+					.setDuration((System.currentTimeMillis() - workInstance.getExecStartDateTime().getTime()) / 1000);
 			logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("执行成功 \n");
 			workInstance.setSubmitLog(logBuilder.toString());
 			workInstanceRepository.save(workInstance);
@@ -110,6 +112,7 @@ public abstract class WorkExecutor {
 			// 更新作业实例失败状态
 			workInstance.setStatus(InstanceStatus.FAIL);
 			workInstance.setExecEndDateTime(new Date());
+			workInstance.setDuration((System.currentTimeMillis() - workInstance.getExecEndDateTime().getTime()) / 1000);
 			logBuilder.append(e.getMsg());
 			logBuilder.append(LocalDateTime.now()).append(WorkLog.ERROR_INFO).append("执行失败 \n");
 			workInstance.setSubmitLog(logBuilder.toString());

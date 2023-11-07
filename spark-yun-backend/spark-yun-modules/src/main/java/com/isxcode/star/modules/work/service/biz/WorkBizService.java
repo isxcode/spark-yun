@@ -368,6 +368,8 @@ public class WorkBizService {
 					+ "已中止  \n";
 			workInstanceEntity.setSubmitLog(submitLog);
 			workInstanceEntity.setExecEndDateTime(new Date());
+			workInstanceEntity.setDuration(
+					(System.currentTimeMillis() - workInstanceEntity.getExecStartDateTime().getTime()) / 1000);
 			workInstanceRepository.saveAndFlush(workInstanceEntity);
 		}
 	}

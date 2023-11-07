@@ -151,3 +151,7 @@ alter table SY_WORKFLOW_VERSION
 -- 作业流实例添加耗时
 alter table SY_WORKFLOW_INSTANCE
     add duration int null comment '耗时时间（秒）' after exec_end_date_time;
+
+-- 作业流实例添加耗时
+alter table SY_WORK_INSTANCE
+    add duration int null comment '耗时时间（秒）' after exec_end_date_time;

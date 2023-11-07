@@ -1,8 +1,5 @@
 package com.isxcode.star.api.instance.pojos.res;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.isxcode.star.backend.api.base.serializer.LocalDateTimeSerializer;
-import java.time.LocalDateTime;
 import lombok.Data;
 
 @Data
@@ -12,11 +9,9 @@ public class WfiQueryWorkFlowInstancesRes {
 
 	private String workflowName;
 
-	@JsonSerialize(using = LocalDateTimeSerializer.class)
-	private LocalDateTime startDateTime;
+	private String startDateTime;
 
-	@JsonSerialize(using = LocalDateTimeSerializer.class)
-	private LocalDateTime endDateTime;
+	private String endDateTime;
 
 	private String status;
 
@@ -24,9 +19,7 @@ public class WfiQueryWorkFlowInstancesRes {
 
 	private Long duration;
 
-	@JsonSerialize(using = LocalDateTimeSerializer.class)
-	private LocalDateTime nextPlanDateTime;
+	private String nextPlanDateTime;
 
-	@JsonSerialize(using = LocalDateTimeSerializer.class)
-	private LocalDateTime planStartDateTime;
+	private String planStartDateTime;
 }
