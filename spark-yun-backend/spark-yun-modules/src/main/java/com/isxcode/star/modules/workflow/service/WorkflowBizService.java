@@ -506,6 +506,8 @@ public class WorkflowBizService {
 			workInstance.setSubmitLog(submitLog);
 			workInstance.setStatus(InstanceStatus.ABORT);
 			workInstance.setExecEndDateTime(new Date());
+			workInstance
+					.setDuration((System.currentTimeMillis() - workInstance.getExecStartDateTime().getTime()) / 1000);
 			workInstanceRepository.save(workInstance);
 		} catch (Exception e) {
 			log.error(e.getMessage());
@@ -513,6 +515,8 @@ public class WorkflowBizService {
 			workInstance.setSubmitLog(submitLog);
 			workInstance.setStatus(InstanceStatus.FAIL);
 			workInstance.setExecEndDateTime(new Date());
+			workInstance
+					.setDuration((System.currentTimeMillis() - workInstance.getPlanStartDateTime().getTime()) / 1000);
 			workInstanceRepository.save(workInstance);
 		}
 	}

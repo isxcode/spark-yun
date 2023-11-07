@@ -72,6 +72,8 @@ public class WorkInstanceEntity {
 
 	private String workPid;
 
+	private Long duration;
+
 	@CreatedDate
 	private LocalDateTime createDateTime;
 

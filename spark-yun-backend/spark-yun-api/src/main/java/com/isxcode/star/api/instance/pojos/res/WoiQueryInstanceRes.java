@@ -33,4 +33,6 @@ public class WoiQueryInstanceRes {
 
 	@JsonSerialize(using = LocalDateTimeSerializer.class)
 	private LocalDateTime planStartDateTime;
+
+	private Long duration;
 }
