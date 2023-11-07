@@ -26,13 +26,6 @@ spring:
     locations: classpath:db/migration/mysql
     enabled: false
 
-  quartz:
-    properties:
-      org.quartz.dataSource.quartzDataSource.driver: com.mysql.cj.jdbc.Driver
-      org.quartz.dataSource.quartzDataSource.URL: jdbc:mysql://localhost:30306/zhiqingyun_1017
-      org.quartz.dataSource.quartzDataSource.user: root
-      org.quartz.dataSource.quartzDataSource.password: ispong123
-
 logging:
   level:
     root: info

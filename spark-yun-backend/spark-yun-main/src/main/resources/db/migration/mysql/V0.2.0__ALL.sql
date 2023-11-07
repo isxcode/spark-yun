@@ -109,6 +109,30 @@ alter table SY_WORKFLOW
 alter table SY_DATASOURCE
     change connect_log connect_log text null comment '测试连接日志';
 
--- 将cron扩展成cron_config
+-- SY_WORKFLOW_CONFIG将cron扩展成cron_config
 alter table SY_WORKFLOW_CONFIG
     change corn cron_config text null comment '定时表达式';
+
+-- SY_WORK_VERSION将cron扩展成cron_config
+alter table SY_WORK_VERSION
+    change corn cron_config text null comment '定时表达配置';
+
+-- SY_WORK_VERSION将cluster_id扩展成cluster_config
+alter table SY_WORK_VERSION
+    change cluster_id cluster_config text null comment '集群配置';
+
+-- SY_WORK_VERSION将sql_script扩展成script
+alter table SY_WORK_VERSION
+    change sql_script script text null comment '脚本内容';
+
+-- 删除SY_WORK_VERSION的spark_config
+alter table SY_WORK_VERSION
+    drop column spark_config;
+
+-- 添加同步作业的配置
+alter table SY_WORK_VERSION
+    add sync_work_config text null comment '同步作业的配置' after cron_config;
+
+-- 添加数据同步规则
+alter table SY_WORK_VERSION
+    add sync_rule text null comment '数据同步规则' after sync_work_config;
