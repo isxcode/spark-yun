@@ -163,7 +163,7 @@ const addModalRef = ref(null)
 const showLogRef = ref(null)
 const timer = ref()
 
-function initData(tableLoading?: boolean) {
+function initData(tableLoading?: boolean, type?: string) {
   loading.value = tableLoading ? false : true
   networkError.value = networkError.value || false
   GetComputerPointData({
@@ -173,8 +173,18 @@ function initData(tableLoading?: boolean) {
     clusterId: route.query.id
   })
     .then((res: any) => {
-      tableConfig.tableData = res.data.content
-      tableConfig.pagination.total = res.data.totalElements
+      if (type) {
+        res.data.content.forEach((item: any) => {
+          tableConfig.tableData.forEach((col: any) => {
+            if (item.id === col.id) {
+              col.status = item.status
+            }
+          })
+        })
+      } else {
+        tableConfig.tableData = res.data.content
+        tableConfig.pagination.total = res.data.totalElements
+      }
       loading.value = false
       tableConfig.loading = false
       networkError.value = false
@@ -230,7 +240,7 @@ function editNodeData(data: any) {
 
 // 查看日志
 function showLog(e: any) {
-  showLogRef.value.showModal(e.id)
+  showLogRef.value.showModal(e.id, 'cluster')
 }
 
 // 停止
@@ -376,7 +386,7 @@ function handleCurrentChange(e: number) {
 onMounted(() => {
   initData()
   timer.value = setInterval(() => {
-    initData(true)
+    initData(true, 'interval')
   }, 3000)
 })
 onUnmounted(() => {
