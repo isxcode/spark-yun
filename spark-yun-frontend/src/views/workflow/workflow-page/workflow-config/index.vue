@@ -16,6 +16,16 @@
                 <el-switch v-model="cronConfig.enable" />
               </el-form-item>
               <template v-if="cronConfig.enable">
+                <el-form-item label="类型" prop="type">
+                  <el-select v-model="cronConfig.type" placeholder="请选择">
+                    <el-option
+                      v-for="item in typeList"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value"
+                    />
+                  </el-select>
+                </el-form-item>
                 <el-form-item label="模式">
                   <el-radio-group v-model="cronConfig.setMode" size="small">
                     <el-radio-button label="SIMPLE">简易</el-radio-button>
@@ -188,6 +198,16 @@ const dayList = ref()
 const workItemConfig = ref()
 const cronConfigForm = ref<FormInstance>()
 const callback = ref<any>()
+  const typeList = ref([
+  {
+    label: '单一调度',
+    value: 'ALL'
+  },
+  {
+    label: '离散调度',
+    value: 'SINGLE'
+  }
+])
 
 const drawerConfig = reactive({
   title: '配置',
@@ -210,12 +230,13 @@ const drawerConfig = reactive({
 // 定时配置
 let cronConfig = reactive({
   setMode: '',       // 模式
+  type: '',
   enable: true,             // 启用
   cron: '',                 // cron表达式
   workDate: '',             // 生效时间
   range: '',         // 调度周期
   startDateMin: '',  // 开始时间 - 分钟
-  minNum: '',        // 间隔时间 - 分钟
+  minNum: undefined,        // 间隔时间 - 分钟
   endDateMin: '',    // 结束时间 - 分钟
   startDate: '',     // 开始时间 - 小时
   hourNum: undefined,     // 间隔时间 - 小时
@@ -268,7 +289,10 @@ function okEvent() {
   cronConfigForm.value?.validate((valid: boolean) => {
     if (valid) {
       callback.value({
-        ...cronConfig
+        ...cronConfig,
+        cron: `${state.secondsText || '*'} ${state.minutesText || '*'} ${state.hoursText || '*'} ${
+        state.daysText || '*'
+      } ${state.monthsText || '*'} ${state.weeksText || '?'} ${state.yearsText || '*'}`
       }).then((res: any) => {
         drawerConfig.okConfig.loading = false
         if (res === undefined) {
@@ -291,10 +315,10 @@ function closeEvent() {
 
 function changeScheduleRangeEvent() {
   cronConfig.startDateMin = ''
-  cronConfig.minNum = ''
+  cronConfig.minNum = undefined
   cronConfig.endDateMin = ''
   cronConfig.startDate = ''
-  cronConfig.hourNum = null
+  cronConfig.hourNum = undefined
   cronConfig.endDate = ''
   cronConfig.scheduleDate = ''
   cronConfig.weekDate = ''
