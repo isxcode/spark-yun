@@ -44,6 +44,24 @@
               </el-icon>
               <span class="btn-text">配置</span>
             </div>
+            <div class="btn-box" @click="publishData">
+              <el-icon v-if="!publishLoading">
+                <Promotion />
+              </el-icon>
+              <el-icon v-else class="is-loading">
+                <Loading />
+              </el-icon>
+              <span class="btn-text">发布</span>
+            </div>
+            <div class="btn-box" @click="stopData">
+              <el-icon v-if="!stopLoading">
+                <Failed />
+              </el-icon>
+              <el-icon v-else class="is-loading">
+                <Loading />
+              </el-icon>
+              <span class="btn-text">下线</span>
+            </div>
             <div class="btn-box" @click="locationNode">
               <el-icon>
                 <Position />
@@ -83,7 +101,7 @@ import CodeMirror from 'vue-codemirror6'
 import { sql } from '@codemirror/lang-sql'
 import { python } from '@codemirror/lang-python'
 
-import { GetWorkItemConfig, RunWorkItemConfig, SaveWorkItemConfig, TerWorkItemConfig } from '@/services/workflow.service'
+import { DeleteWorkData, GetWorkItemConfig, PublishWorkData, RunWorkItemConfig, SaveWorkItemConfig, TerWorkItemConfig } from '@/services/workflow.service'
 import { ElMessage } from 'element-plus'
 import { useRoute, useRouter } from 'vue-router'
 import { Loading } from '@element-plus/icons-vue'
@@ -104,6 +122,8 @@ const networkError = ref(false)
 const runningLoading = ref(false)
 const saveLoading = ref(false)
 const terLoading = ref(false)
+const publishLoading = ref(false)
+const stopLoading = ref(false)
 // const configModalRef = ref(null)
 const configDetailRef = ref()
 const activeName = ref()
@@ -299,6 +319,34 @@ function saveData() {
     .catch(() => {
       saveLoading.value = false
     })
+}
+
+// 发布
+function publishData() {
+  publishLoading.value = true
+  PublishWorkData({
+    workId: props.workItemConfig.id
+  }).then((res: any) => {
+    ElMessage.success(res.msg)
+    publishLoading.value = false
+  })
+  .catch((error: any) => {
+    publishLoading.value = false
+  })
+}
+
+// 下线
+function stopData() {
+  stopLoading.value = true
+  DeleteWorkData({
+    workId: props.workItemConfig.id
+  }).then((res: any) => {
+    ElMessage.success(res.msg)
+    stopLoading.value = false
+  })
+  .catch((error: any) => {
+    stopLoading.value = false
+  })
 }
 
 // 配置打开
