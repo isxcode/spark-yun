@@ -45,15 +45,6 @@ public interface DatasourceMapper {
 	@Mapping(target = "createDateTime", dateFormat = "yyyy-MM-dd HH:mm:ss")
 	PageDatabaseDriverRes dataDriverEntityToPageDatabaseDriverRes(DatabaseDriverEntity databaseDriverEntity);
 
-	List<PageDatabaseDriverRes> dataDriverEntityToPageDatabaseDriverResList(
-			List<DatabaseDriverEntity> datasourceEntity);
-
-	default Page<PageDatabaseDriverRes> dataDriverEntityToPageDatabaseDriverResPage(
-			Page<DatabaseDriverEntity> pageDatasource) {
-		List<PageDatabaseDriverRes> dtoList = dataDriverEntityToPageDatabaseDriverResList(pageDatasource.getContent());
-		return new PageImpl<>(dtoList, pageDatasource.getPageable(), pageDatasource.getTotalElements());
-	}
-
 	GetDefaultDatabaseDriverRes databaseDriverEntityToGetDefaultDatabaseDriverRes(
 			DatabaseDriverEntity databaseDriverEntity);
 }
