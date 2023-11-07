@@ -62,6 +62,8 @@ public class WorkflowInstanceEntity {
 
 	private Date execEndDateTime;
 
+	private Long duration;
+
 	@CreatedDate
 	private LocalDateTime createDateTime;
 

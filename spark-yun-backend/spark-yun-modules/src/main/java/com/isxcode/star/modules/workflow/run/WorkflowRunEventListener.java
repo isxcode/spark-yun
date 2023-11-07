@@ -80,7 +80,7 @@ public class WorkflowRunEventListener {
 
 			// 在调度中，如果自身定时器没有被触发，不可以跑
 			// 先接受定时器触发，才能接受spring的event事件触发
-			if (!Strings.isEmpty(event.getVersionId()) && !workInstance.getQuartzHasRun()) {
+			if (!Strings.isEmpty(event.getVersionId()) && workInstance.getQuartzHasRun()) {
 				return;
 			}
 
@@ -182,6 +182,8 @@ public class WorkflowRunEventListener {
 				workflowInstance.setRunLog(workflowInstanceRepository.getWorkflowLog(event.getFlowInstanceId()) + "\n"
 						+ LocalDateTime.now() + (flowIsError ? WorkLog.ERROR_INFO : WorkLog.SUCCESS_INFO)
 						+ (flowIsError ? "运行失败" : "运行成功"));
+				workflowInstance.setDuration(
+						(System.currentTimeMillis() - workflowInstance.getExecStartDateTime().getTime()) / 1000);
 				workflowInstance.setExecEndDateTime(new Date());
 				workflowInstanceRepository.saveAndFlush(workflowInstance);
 

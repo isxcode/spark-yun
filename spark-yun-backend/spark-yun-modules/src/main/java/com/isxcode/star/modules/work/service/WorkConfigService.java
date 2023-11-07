@@ -81,7 +81,8 @@ public class WorkConfigService {
 	}
 
 	public void initCronConfig(WorkConfigEntity workConfig) {
-		workConfig.setCronConfig(JSON.toJSONString(CronConfig.builder().setMode(SetMode.SIMPLE).enable(false).build()));
+		workConfig.setCronConfig(
+				JSON.toJSONString(CronConfig.builder().setMode(SetMode.SIMPLE).type("ALL").enable(false).build()));
 	}
 
 	public Map<String, String> initSparkConfig(String resourceLevel, String hiveMetastoreUris) {

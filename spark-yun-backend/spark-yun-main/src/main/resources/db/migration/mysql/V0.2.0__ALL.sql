@@ -136,3 +136,15 @@ alter table SY_WORK_VERSION
 -- 添加数据同步规则
 alter table SY_WORK_VERSION
     add sync_rule text null comment '数据同步规则' after sync_work_config;
+
+-- 修改错别字
+alter table SY_WORKFLOW_VERSION
+    change corn cron varchar(200) not null comment '定时表达式';
+
+-- 作业流版本里加dag图
+alter table SY_WORKFLOW_VERSION
+    add web_config text null comment '作业流的dag图' after cron;
+
+-- 作业流实例添加耗时
+alter table SY_WORKFLOW_INSTANCE
+    add duration int null comment '耗时时间（秒）' after exec_end_date_time;

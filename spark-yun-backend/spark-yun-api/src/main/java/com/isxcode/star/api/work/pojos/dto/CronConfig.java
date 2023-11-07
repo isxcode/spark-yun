@@ -75,4 +75,9 @@ public class CronConfig {
 	 * 每月.
 	 */
 	private String monthDay;
+
+	/**
+	 * 调度类型. 1. 单一调度 2. 离散调度
+	 */
+	private String type;
 }

@@ -21,4 +21,12 @@ public class WfiQueryWorkFlowInstancesRes {
 	private String status;
 
 	private String type;
+
+	private Long duration;
+
+	@JsonSerialize(using = LocalDateTimeSerializer.class)
+	private LocalDateTime nextPlanDateTime;
+
+	@JsonSerialize(using = LocalDateTimeSerializer.class)
+	private LocalDateTime planStartDateTime;
 }
