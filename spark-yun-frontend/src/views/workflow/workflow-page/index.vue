@@ -99,6 +99,15 @@
                             </el-icon>
                             <span class="btn-text">发布</span>
                         </div>
+                        <!-- <div class="btn-box" @click="publishWorkFlow">
+                            <el-icon v-if="!btnLoadingConfig.publishLoading">
+                                <Promotion />
+                            </el-icon>
+                            <el-icon v-else class="is-loading">
+                                <Loading />
+                            </el-icon>
+                            <span class="btn-text">下线</span>
+                        </div> -->
                         <div class="btn-box" @click="queryRunWorkInstancesEvent" v-if="workflowInstanceId">
                             <el-icon>
                                 <Refresh />
