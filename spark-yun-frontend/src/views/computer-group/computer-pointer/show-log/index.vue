@@ -31,12 +31,16 @@ const modelConfig = reactive({
     closeOnClickModal: false
 })
 
-function showModal(clusterNodeId: string): void {
-    getLogData(clusterNodeId)
-    if (!timer.value) {
-        timer.value = setInterval(() => {
-            getLogData(clusterNodeId)
-        }, 1000)
+function showModal(clusterNodeId: string, type?: string): void {
+    if (type === 'cluster') {
+        getLogData(clusterNodeId)
+        if (!timer.value) {
+            timer.value = setInterval(() => {
+                getLogData(clusterNodeId)
+            }, 1000)
+        }
+    } else {
+        logMsg.value = clusterNodeId
     }
     modelConfig.visible = true
 }
