@@ -377,7 +377,7 @@ let cronConfig = reactive({
   workDate: '',             // 生效时间
   range: '',         // 调度周期
   startDateMin: '',  // 开始时间 - 分钟
-  minNum: '',        // 间隔时间 - 分钟
+  minNum: undefined,        // 间隔时间 - 分钟
   endDateMin: '',    // 结束时间 - 分钟
   startDate: '',     // 开始时间 - 小时
   hourNum: undefined,     // 间隔时间 - 小时
@@ -526,10 +526,10 @@ function closeEvent() {
 
 function changeScheduleRangeEvent() {
   cronConfig.startDateMin = ''
-  cronConfig.minNum = ''
+  cronConfig.minNum = undefined
   cronConfig.endDateMin = ''
   cronConfig.startDate = ''
-  cronConfig.hourNum = null
+  cronConfig.hourNum = undefined
   cronConfig.endDate = ''
   cronConfig.scheduleDate = ''
   cronConfig.weekDate = ''

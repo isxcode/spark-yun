@@ -99,7 +99,7 @@
                             </el-icon>
                             <span class="btn-text">发布</span>
                         </div>
-                        <div class="btn-box" @click="queryRunWorkInstancesEvent">
+                        <div class="btn-box" @click="queryRunWorkInstancesEvent" v-if="workflowInstanceId">
                             <el-icon>
                                 <Refresh />
                             </el-icon>

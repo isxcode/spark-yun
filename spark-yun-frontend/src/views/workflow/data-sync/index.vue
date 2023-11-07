@@ -40,6 +40,24 @@
                 </el-icon>
                 <span class="btn-text">配置</span>
             </div>
+            <div class="btn-box" @click="publishData">
+              <el-icon v-if="!btnLoadingConfig.publishLoading">
+                <Promotion />
+              </el-icon>
+              <el-icon v-else class="is-loading">
+                <Loading />
+              </el-icon>
+              <span class="btn-text">发布</span>
+            </div>
+            <div class="btn-box" @click="stopData">
+              <el-icon v-if="!btnLoadingConfig.stopLoading">
+                <Failed />
+              </el-icon>
+              <el-icon v-else class="is-loading">
+                <Loading />
+              </el-icon>
+              <span class="btn-text">下线</span>
+            </div>
             <div class="btn-box" @click="locationNode">
                 <el-icon>
                     <Position />
@@ -160,7 +178,7 @@ import { CreateTableWork, GetDataSourceTables, GetTableColumnsByTableId, SaveDat
 import TableDetail from './table-detail/index.vue'
 import DataSyncTable from './data-sync-table/index.vue'
 import ConfigDetail from '../workflow-page/config-detail/index.vue'
-import { GetWorkItemConfig, RunWorkItemConfig, SaveWorkItemConfig, TerWorkItemConfig } from '@/services/workflow.service'
+import { DeleteWorkData, GetWorkItemConfig, PublishWorkData, RunWorkItemConfig, SaveWorkItemConfig, TerWorkItemConfig } from '@/services/workflow.service'
 import PublishLog from '../work-item/publish-log.vue'
 import RunningLog from '../work-item/running-log.vue'
 import { Loading } from '@element-plus/icons-vue'
@@ -229,7 +247,8 @@ const btnLoadingConfig = reactive({
     publishLoading: false,
     stopWorkFlowLoading: false,
     importLoading: false,
-    exportLoading: false
+    exportLoading: false,
+    stopLoading: false
 })
 
 // 日志tab切换
@@ -325,6 +344,34 @@ function terWorkData() {
     ElMessage.success(res.msg)
   }).catch(() => {
     btnLoadingConfig.stopWorkFlowLoading = false
+  })
+}
+
+// 发布
+function publishData() {
+  btnLoadingConfig.publishLoading = true
+  PublishWorkData({
+    workId: props.workItemConfig.id
+  }).then((res: any) => {
+    ElMessage.success(res.msg)
+    btnLoadingConfig.publishLoading = false
+  })
+  .catch((error: any) => {
+    btnLoadingConfig.publishLoading = false
+  })
+}
+
+// 下线
+function stopData() {
+  btnLoadingConfig.stopLoading = true
+  DeleteWorkData({
+    workId: props.workItemConfig.id
+  }).then((res: any) => {
+    ElMessage.success(res.msg)
+    btnLoadingConfig.stopLoading = false
+  })
+  .catch((error: any) => {
+    btnLoadingConfig.stopLoading = false
   })
 }
 
