@@ -56,7 +56,7 @@
             {{ getTypeData(scopeSlot.row.workType) }}
           </template>
           <template #duration="scopeSlot">
-            {{ scopeSlot.row.duration !== undefined ? formatSeconds(scopeSlot.row.duration) : '' }}
+            {{ scopeSlot.row.duration !== undefined && scopeSlot.row.duration !== null ? formatSeconds(scopeSlot.row.duration) : '-' }}
           </template>
           <template #statusTag="scopeSlot">
             <div class="btn-group">
