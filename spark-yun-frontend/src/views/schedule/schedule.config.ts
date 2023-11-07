@@ -86,9 +86,10 @@ export const colConfigs: colConfig[] = [
     minWidth: 140
   },
   {
-    prop: 'execStartDateTime',
+    prop: 'duration',
     title: '耗时',
     minWidth: 140,
+    customSlot: 'duration'
   },
   // {
   //   prop: 'nextPlanDateTime',
@@ -170,9 +171,10 @@ export const colConfigsWorkflow: colConfig[] = [
     minWidth: 140
   },
   {
-    prop: 'execStartDateTime',
+    prop: 'duration',
     title: '耗时',
-    minWidth: 140
+    minWidth: 140,
+    customSlot: 'duration'
   },
   // {
   //   prop: 'nextPlanDateTime',
