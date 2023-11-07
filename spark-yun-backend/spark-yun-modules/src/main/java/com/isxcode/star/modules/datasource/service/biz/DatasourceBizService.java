@@ -104,8 +104,8 @@ public class DatasourceBizService {
 				dasQueryDatasourceReq.getSearchKeyWord(),
 				PageRequest.of(dasQueryDatasourceReq.getPage(), dasQueryDatasourceReq.getPageSize()));
 
-		Page<PageDatasourceRes> pageDatasourceRes = datasourceMapper
-				.datasourceEntityToQueryDatasourceResPage(datasourceEntityPage);
+		Page<PageDatasourceRes> pageDatasourceRes = datasourceEntityPage
+				.map(datasourceMapper::datasourceEntityToQueryDatasourceRes);
 		pageDatasourceRes.getContent().forEach(e -> {
 			if (!Strings.isEmpty(e.getDriverId())) {
 				Optional<DatabaseDriverEntity> databaseDriver = databaseDriverRepository.findById(e.getDriverId());

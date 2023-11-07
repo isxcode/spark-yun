@@ -146,8 +146,8 @@ public class WorkflowBizService {
 		Page<WorkflowEntity> workflowEntityPage = workflowRepository.searchAll(wocQueryWorkflowReq.getSearchKeyWord(),
 				PageRequest.of(wocQueryWorkflowReq.getPage(), wocQueryWorkflowReq.getPageSize()));
 
-		Page<PageWorkflowRes> pageWorkflowRes = workflowMapper
-				.workflowEntityPageToQueryWorkflowResPage(workflowEntityPage);
+		Page<PageWorkflowRes> pageWorkflowRes = workflowEntityPage
+				.map(workflowMapper::workflowEntityToQueryWorkflowRes);
 
 		// 翻译集群名称
 		pageWorkflowRes.getContent().forEach(e -> {
