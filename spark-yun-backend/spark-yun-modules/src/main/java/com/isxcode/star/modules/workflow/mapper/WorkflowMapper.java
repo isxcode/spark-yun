@@ -9,8 +9,6 @@ import com.isxcode.star.modules.workflow.entity.WorkflowEntity;
 import java.util.List;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 
 /** mapstruct映射. */
 @Mapper(componentModel = "spring")
@@ -26,13 +24,6 @@ public interface WorkflowMapper {
 			WorkflowEntity workflowEntity);
 
 	PageWorkflowRes workflowEntityToQueryWorkflowRes(WorkflowEntity workflowEntity);
-
-	List<PageWorkflowRes> workflowEntityListToQueryWorkflowResList(List<WorkflowEntity> workflowEntities);
-
-	default Page<PageWorkflowRes> workflowEntityPageToQueryWorkflowResPage(Page<WorkflowEntity> workflowEntityPage) {
-		List<PageWorkflowRes> dtoList = workflowEntityListToQueryWorkflowResList(workflowEntityPage.getContent());
-		return new PageImpl<>(dtoList, workflowEntityPage.getPageable(), workflowEntityPage.getTotalElements());
-	}
 
 	@Mapping(source = "status", target = "runStatus")
 	@Mapping(source = "id", target = "workInstanceId")

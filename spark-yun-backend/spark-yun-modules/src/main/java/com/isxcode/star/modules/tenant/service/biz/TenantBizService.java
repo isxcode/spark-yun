@@ -130,7 +130,7 @@ public class TenantBizService {
 		Page<TenantEntity> tenantEntityPage = tenantRepository.searchAll(tetQueryTenantReq.getSearchKeyWord(),
 				PageRequest.of(tetQueryTenantReq.getPage(), tetQueryTenantReq.getPageSize()));
 
-		return tenantMapper.tenantEntityToTetQueryTenantResPage(tenantEntityPage);
+		return tenantEntityPage.map(tenantMapper::tenantEntityToTetQueryTenantRes);
 	}
 
 	public void updateTenantForSystemAdmin(UpdateTenantForSystemAdminReq tetUpdateTenantBySystemAdminReq) {

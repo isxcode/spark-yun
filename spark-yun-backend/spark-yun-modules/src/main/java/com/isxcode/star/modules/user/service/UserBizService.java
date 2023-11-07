@@ -265,7 +265,7 @@ public class UserBizService {
 		Page<UserEntity> userEntitiesPage = userRepository.searchAllUser(usrQueryAllUsersReq.getSearchKeyWord(),
 				PageRequest.of(usrQueryAllUsersReq.getPage(), usrQueryAllUsersReq.getPageSize()));
 
-		return userMapper.userEntityToUsrQueryAllUsersResPage(userEntitiesPage);
+		return userEntitiesPage.map(userMapper::userEntityToUsrQueryAllUsersRes);
 	}
 
 	public Page<PageEnableUserRes> pageEnableUser(PageEnableUserReq usrQueryAllEnableUsersReq) {

@@ -144,7 +144,7 @@ public class ClusterNodeBizService {
 				enoQueryNodeReq.getClusterId(),
 				PageRequest.of(enoQueryNodeReq.getPage(), enoQueryNodeReq.getPageSize()));
 
-		return engineNodeMapper.datasourceEntityPageToQueryDatasourceResPage(engineNodeEntities);
+		return engineNodeEntities.map(engineNodeMapper::nodeEntityToQueryNodeRes);
 	}
 
 	public void deleteClusterNode(DeleteClusterNodeReq deleteClusterNodeReq) {

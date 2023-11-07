@@ -42,13 +42,6 @@ public interface UserMapper {
 	@Mapping(target = "createDateTime", dateFormat = "yyyy-MM-dd HH:mm:ss")
 	PageUserRes userEntityToUsrQueryAllUsersRes(UserEntity userEntity);
 
-	List<PageUserRes> userEntityToUsrQueryAllUsersResList(List<UserEntity> userEntity);
-
-	default Page<PageUserRes> userEntityToUsrQueryAllUsersResPage(Page<UserEntity> userEntities) {
-		return new PageImpl<>(userEntityToUsrQueryAllUsersResList(userEntities.getContent()),
-				userEntities.getPageable(), userEntities.getTotalElements());
-	}
-
 	/** UsrQueryAllEnableUsersRes. */
 	@Mapping(target = "createDateTime", dateFormat = "yyyy-MM-dd HH:mm:ss")
 	PageEnableUserRes userEntityToUsrQueryAllEnableUsersRes(UserEntity userEntity);
