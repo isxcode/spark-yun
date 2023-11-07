@@ -2,7 +2,7 @@
   <Breadcrumb :bread-crumb-list="breadCrumbList" />
   <div class="zqy-seach-table zqy-schedule">
     <div class="zqy-table-top">
-      <el-radio-group v-model="tableType" @change="initData">
+      <el-radio-group v-model="tableType" @change="changeTypeEvent">
         <el-radio-button label="workflow">作业流</el-radio-button>
         <el-radio-button label="work">作业</el-radio-button>
       </el-radio-group>
@@ -228,6 +228,14 @@ function initData(tableLoading?: boolean) {
   }
 }
 
+function changeTypeEvent() {
+  tableConfigWorkFlow.pagination.currentPage = 1
+  tableConfigWorkFlow.pagination.pageSize = 10
+  tableConfig.pagination.currentPage = 1
+  tableConfig.pagination.pageSize = 10
+  initData()
+}
+
 function showDetailModal(data: any, type: string) {
   detailModalRef.value.showModal(
     () => {
@@ -310,11 +318,13 @@ function inputEvent(e: string) {
 
 function handleSizeChange(e: number) {
   tableConfig.pagination.pageSize = e
+  tableConfigWorkFlow.pagination.pageSize = e
   initData()
 }
 
 function handleCurrentChange(e: number) {
   tableConfig.pagination.currentPage = e
+  tableConfigWorkFlow.pagination.currentPage = e
   initData()
 }
 
