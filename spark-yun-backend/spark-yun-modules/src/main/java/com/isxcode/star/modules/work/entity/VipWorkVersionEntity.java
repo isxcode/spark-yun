@@ -42,17 +42,15 @@ public class VipWorkVersionEntity {
 
 	private String datasourceId;
 
-	private String clusterId;
+	private String clusterConfig;
 
-	private String clusterNodeId;
+	private String script;
 
-	private String sqlScript;
+	private String cronConfig;
 
-	private String bashScript;
+  private String syncWorkConfig;
 
-	private String sparkConfig;
-
-	private String corn;
+  private String syncRule;
 
 	@CreatedDate
 	private LocalDateTime createDateTime;

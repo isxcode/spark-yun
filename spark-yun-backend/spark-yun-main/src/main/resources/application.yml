@@ -69,10 +69,6 @@ spring:
     job-store-type: jdbc
     jdbc:
       initialize-schema: never
-    properties:
-      org.quartz.jobStore.class: org.quartz.impl.jdbcjobstore.JobStoreTX
-      org.quartz.jobStore.driverDelegateClass: org.quartz.impl.jdbcjobstore.StdJDBCDelegate
-      org.quartz.jobStore.dataSource: quartzDataSource
 
   cache:
     type: simple
