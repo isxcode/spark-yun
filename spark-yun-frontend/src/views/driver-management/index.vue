@@ -15,17 +15,18 @@
         <BlockTable :table-config="tableConfig" @size-change="handleSizeChange" @current-change="handleCurrentChange">
           <template #defaultTag="scopeSlot">
             <div class="btn-group">
-              <el-tag v-if="scopeSlot.row.defaultCluster" class="ml-2" type="success">
+              <el-tag v-if="scopeSlot.row.isDefaultDriver" class="ml-2" type="success">
                 是
               </el-tag>
-              <el-tag v-if="!scopeSlot.row.defaultCluster" class="ml-2" type="danger">
+              <el-tag v-if="!scopeSlot.row.isDefaultDriver" class="ml-2" type="danger">
                 否
               </el-tag>
             </div>
           </template>
           <template #options="scopeSlot">
             <div class="btn-group">
-              <span @click="setDefaultDriver(scopeSlot.row)">默认驱动切换</span>
+              <span v-if="!scopeSlot.row.isDefaultDriver" @click="setDefaultDriver(scopeSlot.row)">设为默认</span>
+              <span v-else @click="setDefaultDriver(scopeSlot.row)">取消默认</span>
               <span @click="deleteData(scopeSlot.row)">删除</span>
               <!-- <el-icon v-else class="is-loading"><Loading /></el-icon> -->
             </div>
@@ -130,7 +131,7 @@ function deleteData(data: any) {
 function setDefaultDriver(data: any) {
   SetDefaultDriverData({
     driverId: data.id,
-    isDefaultDriver: !data.defaultDriver
+    isDefaultDriver: !data.isDefaultDriver
   }).then((res: any) => {
     ElMessage.success(res.msg)
     initData(true)
