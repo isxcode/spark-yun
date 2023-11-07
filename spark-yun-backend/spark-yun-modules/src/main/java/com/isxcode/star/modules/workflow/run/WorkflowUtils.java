@@ -148,17 +148,10 @@ public class WorkflowUtils {
 
 	public static WorkRunContext genWorkRunContext(String instanceId, VipWorkVersionEntity workVersion) {
 
-		// return WorkRunContext.builder().datasourceId(workVersion.getDatasourceId())
-		// .script(workVersion.getSqlScript()).instanceId(instanceId)
-		// .tenantId(TENANT_ID.get())
-		// .userId(USER_ID.get())
-		// .clusterConfig(JSON.parseObject(workVersion.get.getClusterConfig(),
-		// ClusterConfig.class)).workType(workVersion.getWorkType())
-		// .workId(workVersion.getId())
-		// .sparkConfig(JSON.parseObject(workVersion.getSparkConfig(), new
-		// TypeReference<Map<String, String>>() {
-		// }.getType())).build();
-		return null;
+		return WorkRunContext.builder().datasourceId(workVersion.getDatasourceId()).script(workVersion.getScript())
+				.instanceId(instanceId).tenantId(TENANT_ID.get()).userId(USER_ID.get())
+				.clusterConfig(JSON.parseObject(workVersion.getClusterConfig(), ClusterConfig.class))
+				.workType(workVersion.getWorkType()).workId(workVersion.getId()).build();
 	}
 
 	/**

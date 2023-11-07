@@ -48,9 +48,9 @@ public class VipWorkVersionEntity {
 
 	private String cronConfig;
 
-  private String syncWorkConfig;
+	private String syncWorkConfig;
 
-  private String syncRule;
+	private String syncRule;
 
 	@CreatedDate
 	private LocalDateTime createDateTime;

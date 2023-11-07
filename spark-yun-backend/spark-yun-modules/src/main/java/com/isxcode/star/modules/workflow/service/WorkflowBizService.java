@@ -117,8 +117,8 @@ public class WorkflowBizService {
 
 		// 初始化工作流配置
 		WorkflowConfigEntity workflowConfig = new WorkflowConfigEntity();
-		workflowConfig
-				.setCronConfig(JSON.toJSONString(CronConfig.builder().setMode(SetMode.SIMPLE).enable(false).build()));
+		workflowConfig.setCronConfig(
+				JSON.toJSONString(CronConfig.builder().setMode(SetMode.SIMPLE).type("ALL").enable(false).build()));
 		workflowConfig = workflowConfigRepository.save(workflowConfig);
 
 		// 工作流绑定配置
@@ -482,6 +482,8 @@ public class WorkflowBizService {
 						.findById(abortFlowReq.getWorkflowInstanceId()).get();
 				workflowInstance.setStatus(InstanceStatus.ABORT);
 				workflowInstance.setExecEndDateTime(new Date());
+				workflowInstance.setDuration(
+						(System.currentTimeMillis() - workflowInstance.getExecStartDateTime().getTime()) / 1000);
 				workflowInstanceRepository.saveAndFlush(workflowInstance);
 			} finally {
 				locker.unlock(lock);
@@ -565,6 +567,8 @@ public class WorkflowBizService {
 					workflowInstance.setStatus(InstanceStatus.SUCCESS);
 				}
 				workflowInstance.setExecEndDateTime(new Date());
+				workflowInstance.setDuration(
+						(System.currentTimeMillis() - workflowInstance.getExecStartDateTime().getTime()) / 1000);
 				workflowInstanceRepository.saveAndFlush(workflowInstance);
 			}
 		});
