@@ -211,8 +211,8 @@
                       <el-time-picker
                         :disabled="!cronConfig.enable"
                         v-model="cronConfig.scheduleDate"
-                        format="hh:mm"
-                        value-format="hh:mm"
+                        format="HH:mm"
+                        value-format="HH:mm"
                         placeholder="请选择"
                       />
                     </el-form-item>
@@ -223,8 +223,8 @@
                       <el-time-picker
                         :disabled="!cronConfig.enable"
                         v-model="cronConfig.scheduleDate"
-                        format="hh:mm"
-                        value-format="hh:mm"
+                        format="HH:mm"
+                        value-format="HH:mm"
                         placeholder="请选择"
                       />
                     </el-form-item>
@@ -245,8 +245,8 @@
                       <el-time-picker
                         :disabled="!cronConfig.enable"
                         v-model="cronConfig.scheduleDate"
-                        format="hh:mm"
-                        value-format="hh:mm"
+                        format="HH:mm"
+                        value-format="HH:mm"
                         placeholder="请选择"
                       />
                     </el-form-item>
