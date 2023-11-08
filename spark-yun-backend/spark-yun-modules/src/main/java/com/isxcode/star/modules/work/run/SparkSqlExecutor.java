@@ -7,7 +7,6 @@ import com.isxcode.star.api.agent.pojos.req.YagExecuteWorkReq;
 import com.isxcode.star.api.agent.pojos.res.YagGetLogRes;
 import com.isxcode.star.api.api.constants.PathConstants;
 import com.isxcode.star.api.cluster.constants.ClusterNodeStatus;
-import com.isxcode.star.api.work.constants.SetMode;
 import com.isxcode.star.api.work.constants.WorkLog;
 import com.isxcode.star.api.work.exceptions.WorkRunException;
 import com.isxcode.star.api.work.pojos.res.RunWorkRes;
@@ -20,15 +19,12 @@ import com.isxcode.star.modules.cluster.entity.ClusterEntity;
 import com.isxcode.star.modules.cluster.entity.ClusterNodeEntity;
 import com.isxcode.star.modules.cluster.repository.ClusterNodeRepository;
 import com.isxcode.star.modules.cluster.repository.ClusterRepository;
-import com.isxcode.star.modules.datasource.entity.DatasourceEntity;
-import com.isxcode.star.modules.datasource.repository.DatasourceRepository;
 import com.isxcode.star.modules.work.entity.WorkConfigEntity;
 import com.isxcode.star.modules.work.entity.WorkEntity;
 import com.isxcode.star.modules.work.entity.WorkInstanceEntity;
 import com.isxcode.star.modules.work.repository.WorkConfigRepository;
 import com.isxcode.star.modules.work.repository.WorkInstanceRepository;
 import com.isxcode.star.modules.work.repository.WorkRepository;
-import com.isxcode.star.modules.work.service.WorkConfigService;
 import com.isxcode.star.modules.workflow.repository.WorkflowInstanceRepository;
 
 import java.io.File;
@@ -61,14 +57,10 @@ public class SparkSqlExecutor extends WorkExecutor {
 
 	private final HttpUrlUtils httpUrlUtils;
 
-	private final WorkConfigService workConfigService;
-
-	private final DatasourceRepository datasourceRepository;
-
 	public SparkSqlExecutor(WorkInstanceRepository workInstanceRepository, ClusterRepository clusterRepository,
 			ClusterNodeRepository clusterNodeRepository, WorkflowInstanceRepository workflowInstanceRepository,
 			WorkRepository workRepository, WorkConfigRepository workConfigRepository, Locker locker,
-			HttpUrlUtils httpUrlUtils, WorkConfigService workConfigService, DatasourceRepository datasourceRepository) {
+			HttpUrlUtils httpUrlUtils) {
 
 		super(workInstanceRepository, workflowInstanceRepository);
 		this.workInstanceRepository = workInstanceRepository;
@@ -78,8 +70,6 @@ public class SparkSqlExecutor extends WorkExecutor {
 		this.workConfigRepository = workConfigRepository;
 		this.locker = locker;
 		this.httpUrlUtils = httpUrlUtils;
-		this.workConfigService = workConfigService;
-		this.datasourceRepository = datasourceRepository;
 	}
 
 	@Override
@@ -124,23 +114,6 @@ public class SparkSqlExecutor extends WorkExecutor {
 		// 开始构建作业
 		logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始构建作业  \n");
 		YagExecuteWorkReq executeReq = new YagExecuteWorkReq();
-
-		// 如果使用了hive数据源，查询hive.metastore.uris
-		String hiveMetastoreUris = null;
-		if (workRunContext.getClusterConfig().getEnableHive()) {
-			Optional<DatasourceEntity> datasource = datasourceRepository.findById(workRunContext.getDatasourceId());
-			if (datasource.isPresent()) {
-				hiveMetastoreUris = datasource.get().getMetastoreUris();
-			} else {
-				throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "提交作业失败 : hive数据源不存在\n");
-			}
-		}
-
-		// 如果集群配置是简易模式
-		if (SetMode.SIMPLE.equals(workRunContext.getClusterConfig().getSetMode())) {
-			workRunContext.getClusterConfig().setSparkConfig(workConfigService
-					.initSparkConfig(workRunContext.getClusterConfig().getResourceLevel(), hiveMetastoreUris));
-		}
 
 		// 开始构造SparkSubmit
 		SparkSubmit sparkSubmit = SparkSubmit.builder().verbose(true)

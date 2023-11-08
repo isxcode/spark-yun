@@ -2,11 +2,15 @@ package com.isxcode.star.modules.work.service.biz;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.TypeReference;
+import com.isxcode.star.api.datasource.constants.DatasourceType;
 import com.isxcode.star.api.work.constants.SetMode;
+import com.isxcode.star.api.work.pojos.dto.ClusterConfig;
+import com.isxcode.star.api.work.pojos.dto.SyncWorkConfig;
 import com.isxcode.star.api.work.pojos.req.ConfigWorkReq;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.star.modules.datasource.entity.DatasourceEntity;
 import com.isxcode.star.modules.datasource.repository.DatasourceRepository;
+import com.isxcode.star.modules.datasource.service.DatasourceService;
 import com.isxcode.star.modules.work.entity.WorkConfigEntity;
 import com.isxcode.star.modules.work.entity.WorkEntity;
 import com.isxcode.star.modules.work.repository.WorkConfigRepository;
@@ -41,6 +45,8 @@ public class WorkConfigBizService {
 	private final WorkConfigRepository workConfigRepository;
 
 	private final DatasourceRepository datasourceRepository;
+
+	private final DatasourceService datasourceService;
 
 	public WorkConfigEntity getWorkConfigEntity(String workConfigId) {
 
@@ -86,36 +92,27 @@ public class WorkConfigBizService {
 			workConfig.setScript(wocConfigWorkReq.getScript());
 		}
 
+		// 用户更新数据同步
+		if (wocConfigWorkReq.getSyncWorkConfig() != null) {
+			workConfig.setSyncWorkConfig(JSON.toJSONString(wocConfigWorkReq.getSyncWorkConfig()));
+		}
+
 		// 用户更新集群配置
 		if (wocConfigWorkReq.getClusterConfig() != null) {
 
-			// 如果spark开启了hive数据源，要保存hiveStoreUrl配置
-			String hiveMetaStoreUris = null;
-			if (wocConfigWorkReq.getClusterConfig().getEnableHive() != null
-					&& wocConfigWorkReq.getClusterConfig().getEnableHive()) {
-				Optional<DatasourceEntity> datasourceEntity = datasourceRepository
-						.findById(workConfig.getDatasourceId());
-				if (datasourceEntity.isPresent()) {
-					hiveMetaStoreUris = datasourceEntity.get().getMetastoreUris();
-				}
-			}
-
 			// 如果是等级的模式，需要帮用户默认填充sparkConfig
 			if (SetMode.SIMPLE.equals(wocConfigWorkReq.getClusterConfig().getSetMode())) {
-				workConfigService.initSparkConfig(wocConfigWorkReq.getClusterConfig().getResourceLevel(),
-						hiveMetaStoreUris);
+				Map<String, String> sparkConfig = workConfigService
+						.initSparkConfig(wocConfigWorkReq.getClusterConfig().getResourceLevel());
+				wocConfigWorkReq.getClusterConfig().setSparkConfig(sparkConfig);
 			}
+
 			workConfig.setClusterConfig(JSON.toJSONString(wocConfigWorkReq.getClusterConfig()));
 		}
 
 		// 用户更新数据源
 		if (!Strings.isEmpty(wocConfigWorkReq.getDatasourceId())) {
 			workConfig.setDatasourceId(wocConfigWorkReq.getDatasourceId());
-		}
-
-		// 用户更新数据同步
-		if (wocConfigWorkReq.getSyncWorkConfig() != null) {
-			workConfig.setSyncWorkConfig(JSON.toJSONString(wocConfigWorkReq.getSyncWorkConfig()));
 		}
 
 		// 用户更新数据同步规则
@@ -134,7 +131,44 @@ public class WorkConfigBizService {
 			workConfig.setCronConfig(JSON.toJSONString(wocConfigWorkReq.getCronConfig()));
 		}
 
+		// 设置hive.metastore.uris的值,要么是sparkSql支持hive，要是数据同步中有hive数据源
+		if (!Strings.isEmpty(workConfig.getClusterConfig())) {
+			workConfig.setClusterConfig(JSON.toJSONString(getHiveStoreUri(workConfig)));
+		}
+
 		// 保存配置
 		workConfigRepository.save(workConfig);
+	}
+
+	public ClusterConfig getHiveStoreUri(WorkConfigEntity workConfig) {
+
+		String hiveMetaStoreUris = null;
+		ClusterConfig clusterConfig = JSON.parseObject(workConfig.getClusterConfig(), ClusterConfig.class);
+
+		// 如果是sparkSql作业，且开启hive数据源
+		if (clusterConfig.getEnableHive() != null && clusterConfig.getEnableHive()) {
+			Optional<DatasourceEntity> datasourceEntity = datasourceRepository.findById(workConfig.getDatasourceId());
+			if (datasourceEntity.isPresent()) {
+				hiveMetaStoreUris = datasourceEntity.get().getMetastoreUris();
+			}
+		}
+
+		// 如果是数据同步作业，需要自动装配hive
+		if (!Strings.isEmpty(workConfig.getSyncWorkConfig())) {
+			SyncWorkConfig syncWorkConfig = JSON.parseObject(workConfig.getSyncWorkConfig(), SyncWorkConfig.class);
+			if (DatasourceType.HIVE.equals(syncWorkConfig.getTargetDBType())) {
+				DatasourceEntity datasource = datasourceService.getDatasource(syncWorkConfig.getTargetDBId());
+				hiveMetaStoreUris = datasource.getMetastoreUris();
+			}
+			if (DatasourceType.HIVE.equals(syncWorkConfig.getSourceDBType())) {
+				DatasourceEntity datasource = datasourceService.getDatasource(syncWorkConfig.getSourceDBId());
+				hiveMetaStoreUris = datasource.getMetastoreUris();
+			}
+		}
+
+		if (hiveMetaStoreUris != null) {
+			clusterConfig.getSparkConfig().put("hive.metastore.uris", hiveMetaStoreUris);
+		}
+		return clusterConfig;
 	}
 }

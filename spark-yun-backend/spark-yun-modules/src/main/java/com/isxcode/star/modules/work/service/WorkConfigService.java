@@ -10,6 +10,8 @@ import com.isxcode.star.api.work.pojos.dto.SyncRule;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.star.modules.cluster.repository.ClusterNodeRepository;
 import com.isxcode.star.modules.cluster.repository.ClusterRepository;
+import com.isxcode.star.modules.datasource.entity.DatasourceEntity;
+import com.isxcode.star.modules.datasource.service.DatasourceService;
 import com.isxcode.star.modules.work.entity.WorkConfigEntity;
 import com.isxcode.star.modules.work.repository.WorkConfigRepository;
 
@@ -36,6 +38,8 @@ public class WorkConfigService {
 	private final ClusterNodeRepository clusterNodeRepository;
 
 	private final WorkConfigRepository workConfigRepository;
+
+	private final DatasourceService datasourceService;
 
 	public WorkConfigEntity getWorkConfigEntity(String workConfigId) {
 
@@ -68,11 +72,17 @@ public class WorkConfigService {
 	}
 
 	public void initClusterConfig(WorkConfigEntity workConfig, String clusterId, String clusterNodeId,
-			Boolean enableHive) {
+			Boolean enableHive, String datasourceId) {
 
-		workConfig
-				.setClusterConfig(JSON.toJSONString(ClusterConfig.builder().setMode(SetMode.SIMPLE).clusterId(clusterId)
-						.clusterNodeId(clusterNodeId).enableHive(enableHive).resourceLevel(ResourceLevel.LOW).build()));
+		Map<String, String> sparkConfig = initSparkConfig(ResourceLevel.LOW);
+		if (enableHive) {
+			DatasourceEntity datasource = datasourceService.getDatasource(datasourceId);
+			sparkConfig.put("hive.metastore.uris", datasource.getMetastoreUris());
+		}
+
+		workConfig.setClusterConfig(JSON.toJSONString(
+				ClusterConfig.builder().setMode(SetMode.SIMPLE).clusterId(clusterId).clusterNodeId(clusterNodeId)
+						.enableHive(enableHive).sparkConfig(sparkConfig).resourceLevel(ResourceLevel.LOW).build()));
 	}
 
 	public void initSyncRule(WorkConfigEntity workConfig) {
@@ -85,12 +95,11 @@ public class WorkConfigService {
 				JSON.toJSONString(CronConfig.builder().setMode(SetMode.SIMPLE).type("ALL").enable(false).build()));
 	}
 
-	public Map<String, String> initSparkConfig(String resourceLevel, String hiveMetastoreUris) {
+	public Map<String, String> initSparkConfig(String resourceLevel) {
 
 		Map<String, String> sparkConfig = new HashMap<>();
 		switch (resourceLevel) {
 			case ResourceLevel.HIGH :
-				sparkConfig.put("hive.metastore.uris", hiveMetastoreUris);
 				sparkConfig.put("spark.executor.instances", "10");
 				sparkConfig.put("spark.executor.cores", "4");
 				sparkConfig.put("spark.executor.memory", "4g");
@@ -101,7 +110,6 @@ public class WorkConfigService {
 				sparkConfig.put("spark.executor.extraJavaOptions", "-Dfile.encoding=utf-8");
 				break;
 			case ResourceLevel.MEDIUM :
-				sparkConfig.put("hive.metastore.uris", hiveMetastoreUris);
 				sparkConfig.put("spark.executor.instances", "5");
 				sparkConfig.put("spark.executor.cores", "2");
 				sparkConfig.put("spark.executor.memory", "2g");
@@ -112,7 +120,6 @@ public class WorkConfigService {
 				sparkConfig.put("spark.executor.extraJavaOptions", "-Dfile.encoding=utf-8");
 				break;
 			case ResourceLevel.LOW :
-				sparkConfig.put("hive.metastore.uris", hiveMetastoreUris);
 				sparkConfig.put("spark.executor.instances", "1");
 				sparkConfig.put("spark.executor.cores", "1");
 				sparkConfig.put("spark.executor.memory", "2g");

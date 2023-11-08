@@ -8,7 +8,6 @@ import com.isxcode.star.api.agent.pojos.res.YagGetLogRes;
 import com.isxcode.star.api.api.constants.PathConstants;
 import com.isxcode.star.api.cluster.constants.ClusterNodeStatus;
 import com.isxcode.star.api.datasource.constants.DatasourceType;
-import com.isxcode.star.api.work.constants.SetMode;
 import com.isxcode.star.api.work.constants.WorkLog;
 import com.isxcode.star.api.work.exceptions.WorkRunException;
 import com.isxcode.star.api.work.pojos.dto.DatasourceConfig;
@@ -176,22 +175,6 @@ public class SyncWorkExecutor extends WorkExecutor {
 				throw new WorkRunException(
 						LocalDateTime.now() + WorkLog.ERROR_INFO + "检测来源数据源 : " + e.getMessage() + "\n");
 			}
-		}
-
-		// 如果来源或者去向存在hive数据源，需要补充hiveMetaStoreUris
-		String hiveMetaStoreUris = null;
-		if (DatasourceType.HIVE.equals(targetDatasource.getDbType())) {
-			hiveMetaStoreUris = targetDatasource.getMetastoreUris();
-		}
-
-		if (DatasourceType.HIVE.equals(sourceDatasource.getDbType())) {
-			hiveMetaStoreUris = sourceDatasource.getMetastoreUris();
-		}
-
-		// 如果集群配置是简易模式
-		if (SetMode.SIMPLE.equals(workRunContext.getClusterConfig().getSetMode())) {
-			workRunContext.getClusterConfig().setSparkConfig(workConfigService
-					.initSparkConfig(workRunContext.getClusterConfig().getResourceLevel(), hiveMetaStoreUris));
 		}
 
 		// 开始构造SparkSubmit
