@@ -125,5 +125,58 @@
     padding: 0 16px;
     width: 220px;
     background-color: getCssVar('color', 'white');
+    transition: getCssVar('transition-duration') width ease-in-out
+  }
+}
+
+
+.zyq-home__menu-tenant {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 5px 12px;
+
+  .zyq-home__menu-title {
+    max-width: 72px;
+  }  
+}
+
+.zyq-home__menu-icon {
+  cursor: pointer;
+
+  &:hover {
+    color: getCssVar('color', 'primary');
+  }
+}
+
+.zyq-home__menu-avatar.el-popover.el-popper {
+  min-width: 120px !important;
+  width: 120px !important;
+  padding: 4px;
+}
+
+.zyq-home__tenant-popover.el-popover {
+  padding: 4px;
+}
+
+.zqy-home__menu-option {
+  height: 32px;
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  cursor: pointer;
+  border-radius: 4px;
+
+  .el-icon {
+    margin-right: 12px;
+  }
+
+  &:hover {
+    background-color: getCssVar('color-primary-light-9');
+    color: getCssVar('color-primary');
+  }
+
+  .zyq-home__menu-text {
+    max-width: 120px;
   }
 }
