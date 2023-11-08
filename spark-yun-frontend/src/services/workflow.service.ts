@@ -244,6 +244,14 @@ export function PublishWorkflowData(params: any): Promise<any> {
     params: params
   })
 }
+// 下线作业流--流程图
+export function UnderlineWorkflowData(params: any): Promise<any> {
+  return http.request({
+    method: 'post',
+    url: '/vip/work/killWorkflow',
+    params: params
+  })
+}
 
 // 发布作业流--流程图--重跑下游节点
 export function RunAfterFlowData(params: any): Promise<any> {
