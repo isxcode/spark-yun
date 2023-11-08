@@ -152,3 +152,7 @@ alter table SY_WORKFLOW_INSTANCE
 -- 作业流实例添加耗时
 alter table SY_WORK_INSTANCE
     add duration int null comment '耗时时间（秒）' after exec_end_date_time;
+
+-- SY_WORK_VERSION将cron扩展成cron_config
+alter table SY_WORKFLOW_VERSION
+    change cron cron_config text not null comment '调度配置';
