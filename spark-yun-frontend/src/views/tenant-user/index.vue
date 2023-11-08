@@ -8,6 +8,22 @@
       >
         添加成员
       </el-button>
+      <div class="zqy-tenant__select">
+        <el-select 
+          :model-value="currentTenant.id" 
+          placeholder="请选择租户" 
+          filterable
+          clearable
+          @change="handleTenantChnage"
+        >
+          <el-option
+            v-for="tenant in tenantList"
+            :key="tenant.id"
+            :label="tenant.name"
+            :value="tenant.id">
+          </el-option>
+        </el-select>
+      </div>
       <div class="zqy-seach">
         <el-input
           v-model="keyword"
@@ -94,6 +110,8 @@ import { BreadCrumbList, TableConfig } from './tenant-user.config'
 import { GetUserList, AddTenantUserData, DeleteTenantUser, GiveAuth, RemoveAuth } from '@/services/tenant-user.service'
 import { ElMessage, ElMessageBox } from 'element-plus'
 
+import { useSwitchTenant } from '@/hooks/switch-tenant'
+
 interface FormUser {
   isTenantAdmin: boolean;
   userId: string;
@@ -106,13 +124,21 @@ const loading = ref(false)
 const networkError = ref(false)
 const addModalRef = ref(null)
 
+const { currentTenant, tenantList, initSwitchTenant, onTenantChange } = useSwitchTenant()
+
+function handleTenantChnage(tenantId: string) {
+  onTenantChange(tenantId)
+  initData()
+}
+
 function initData(tableLoading?: boolean) {
   loading.value = tableLoading ? false : true
   networkError.value = networkError.value || false
   GetUserList({
     page: tableConfig.pagination.currentPage - 1,
     pageSize: tableConfig.pagination.pageSize,
-    searchKeyWord: keyword.value
+    searchKeyWord: keyword.value,
+    tenantId: currentTenant.value.id
   })
     .then((res: any) => {
       tableConfig.tableData = res.data.content
@@ -128,12 +154,17 @@ function initData(tableLoading?: boolean) {
       tableConfig.loading = false
       networkError.value = true
     })
+
+  initSwitchTenant()
 }
 
 function addData() {
   addModalRef.value.showModal((formData: FormUser) => {
     return new Promise((resolve: any, reject: any) => {
-      AddTenantUserData(formData)
+      AddTenantUserData({
+        ...formData,
+        tenantId: currentTenant.value.id
+      })
         .then((res: any) => {
           ElMessage.success(res.msg)
           initData()
@@ -216,3 +247,12 @@ onMounted(() => {
   initData()
 })
 </script>
+
+<style lang="scss">
+.zqy-tenant__select {
+  flex: 1;
+  display: flex;
+  justify-content: flex-start;
+  margin-left: 12px;
+}
+</style>
