@@ -233,17 +233,30 @@ public class DatasourceBizService {
 
 	public void settingDefaultDatabaseDriver(SettingDefaultDatabaseDriverReq settingDefaultDatabaseDriverReq) {
 
-		DatabaseDriverEntity driver = databaseDriverService.getDriver(settingDefaultDatabaseDriverReq.getDriverId());
+		JPA_TENANT_MODE.set(false);
+		Optional<DatabaseDriverEntity> databaseDriverEntityOptional = databaseDriverRepository
+				.findById(settingDefaultDatabaseDriverReq.getDriverId());
+		JPA_TENANT_MODE.set(true);
+
+		if (!databaseDriverEntityOptional.isPresent()) {
+			throw new IsxAppException("数据源驱动不存在");
+		}
+
+		DatabaseDriverEntity databaseDriver = databaseDriverEntityOptional.get();
+
+		if ("SYSTEM_DRIVER".equals(databaseDriver.getDriverType())) {
+			throw new IsxAppException("系统默认数据源驱动无法配置默认");
+		}
 
 		if (settingDefaultDatabaseDriverReq.getIsDefaultDriver()) {
 			// 将租户中其他的同类型驱动，默认状态都改成false
-			List<DatabaseDriverEntity> allDriver = databaseDriverRepository.findAllByDbType(driver.getDbType());
+			List<DatabaseDriverEntity> allDriver = databaseDriverRepository.findAllByDbType(databaseDriver.getDbType());
 			allDriver.forEach(e -> e.setIsDefaultDriver(false));
 			databaseDriverRepository.saveAll(allDriver);
 		}
 
-		driver.setIsDefaultDriver(settingDefaultDatabaseDriverReq.getIsDefaultDriver());
-		databaseDriverRepository.save(driver);
+		databaseDriver.setIsDefaultDriver(settingDefaultDatabaseDriverReq.getIsDefaultDriver());
+		databaseDriverRepository.save(databaseDriver);
 	}
 
 	public GetDefaultDatabaseDriverRes getDefaultDatabaseDriver(
