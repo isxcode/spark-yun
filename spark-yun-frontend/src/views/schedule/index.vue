@@ -44,7 +44,7 @@
                 手动执行
               </el-tag>
               <el-tag
-                v-if="scopeSlot.row.instanceType === 'WORK' || scopeSlot.row.type === 'WORK'"
+                v-if="scopeSlot.row.instanceType === 'AUTO' || scopeSlot.row.type === 'AUTO'"
                 class="ml-2"
                 type="info"
               >
@@ -86,6 +86,12 @@
                 class="ml-2"
               >
                 运行中
+              </el-tag>
+              <el-tag
+                v-if="scopeSlot.row.status === 'PENDING'"
+                class="ml-2"
+              >
+                等待中
               </el-tag>
               <el-tag
                 v-if="!scopeSlot.row.status"
