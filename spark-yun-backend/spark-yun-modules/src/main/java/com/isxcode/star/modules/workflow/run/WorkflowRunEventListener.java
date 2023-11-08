@@ -80,7 +80,7 @@ public class WorkflowRunEventListener {
 
 			// 在调度中，如果自身定时器没有被触发，不可以跑
 			// 先接受定时器触发，才能接受spring的event事件触发
-			if (!Strings.isEmpty(event.getVersionId()) && workInstance.getQuartzHasRun()) {
+			if (!Strings.isEmpty(event.getVersionId()) && !workInstance.getQuartzHasRun()) {
 				return;
 			}
 
@@ -150,7 +150,7 @@ public class WorkflowRunEventListener {
 			} else {
 				// 通过versionId封装workRunContext
 				VipWorkVersionEntity workVersion = vipWorkVersionRepository.findById(event.getVersionId()).get();
-				workRunContext = WorkflowUtils.genWorkRunContext(workInstance.getId(), workVersion);
+				workRunContext = WorkflowUtils.genWorkRunContext(workInstance.getId(), workVersion, event);
 			}
 
 			// 同步执行作业

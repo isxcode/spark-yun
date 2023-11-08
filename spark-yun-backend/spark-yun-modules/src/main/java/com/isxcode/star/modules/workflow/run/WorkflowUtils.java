@@ -146,12 +146,13 @@ public class WorkflowUtils {
 				.workId(work.getId()).workName(work.getName()).userId(USER_ID.get()).build();
 	}
 
-	public static WorkRunContext genWorkRunContext(String instanceId, VipWorkVersionEntity workVersion) {
+	public static WorkRunContext genWorkRunContext(String instanceId, VipWorkVersionEntity workVersion,
+			WorkflowRunEvent event) {
 
 		return WorkRunContext.builder().datasourceId(workVersion.getDatasourceId()).script(workVersion.getScript())
 				.instanceId(instanceId).tenantId(TENANT_ID.get()).userId(USER_ID.get())
 				.clusterConfig(JSON.parseObject(workVersion.getClusterConfig(), ClusterConfig.class))
-				.workType(workVersion.getWorkType()).workId(workVersion.getId()).build();
+				.workType(workVersion.getWorkType()).workName(event.getWorkName()).workId(workVersion.getId()).build();
 	}
 
 	/**
