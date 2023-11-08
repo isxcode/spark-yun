@@ -127,7 +127,7 @@ public class WorkBizService {
 				throw new IsxAppException("必须选择计算引擎");
 			} else {
 				workConfigService.initClusterConfig(workConfig, addWorkReq.getClusterId(),
-						addWorkReq.getClusterNodeId(), addWorkReq.getEnableHive());
+						addWorkReq.getClusterNodeId(), addWorkReq.getEnableHive(), addWorkReq.getDatasourceId());
 			}
 		}
 
