@@ -64,13 +64,20 @@
               <el-tag v-if="scopeSlot.row.status === 'UN_AUTO'">
                 未运行
               </el-tag>
+              <el-tag v-if="scopeSlot.row.status === 'STOP'">
+                已下线
+              </el-tag>
+              <el-tag v-if="scopeSlot.row.status === 'PUBLISHED'">
+                已发布
+              </el-tag>
             </div>
           </template>
           <template #options="scopeSlot">
             <div class="btn-group">
               <span @click="editData(scopeSlot.row)">编辑</span>
               <span @click="deleteData(scopeSlot.row)">删除</span>
-              <!-- <span v-if="!scopeSlot.row.pubLoading" @click="publishData(scopeSlot.row)">发布</span> -->
+              <span v-if="scopeSlot.row.status !== 'STOP'" @click="underlineWorkFlow(scopeSlot.row)">下线</span>
+              <span v-else @click="publishWorkFlow(scopeSlot.row)">发布</span>
               <!-- <el-icon v-else class="is-loading"><Loading /></el-icon> -->
             </div>
           </template>
@@ -90,7 +97,7 @@ import AddModal from './add-modal/index.vue'
 // import { useState } from '@/hooks/useStore'
 
 import { BreadCrumbList, TableConfig, FormData } from './workflow.config'
-import { GetWorkflowList, AddWorkflowData, UpdateWorkflowData, DeleteWorkflowData } from '@/services/workflow.service'
+import { GetWorkflowList, AddWorkflowData, UpdateWorkflowData, DeleteWorkflowData, UnderlineWorkflowData, PublishWorkflowData } from '@/services/workflow.service'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/store/useAuth'
@@ -163,19 +170,27 @@ function editData(data: any) {
   }, data)
 }
 
-// TODO:本版本暂未实现
-// function publishData(data: any) {
-//     data.pubLoading = true
-//     CheckDatasourceData({
-//         datasourceId: data.id
-//     }).then((res: any) => {
-//         data.pubLoading = false
-//         ElMessage.success(res.msg)
-//         initData()
-//     }).catch((error: any) => {
-//         data.pubLoading = false
-//     })
-// }
+// 下线工作流
+function underlineWorkFlow(data: any) {
+  UnderlineWorkflowData({
+    workflowId: data.id
+  }).then((res: any) => {
+    initData()
+    ElMessage.success(res.msg)
+  }).catch(() => {
+  })
+}
+
+// 发布作业流
+function publishWorkFlow(data: any) {
+  PublishWorkflowData({
+      workflowId: data.id
+  }).then((res: any) => {
+      ElMessage.success(res.msg)
+      initData()
+  }).catch(() => {
+  })
+}
 
 // 删除
 function deleteData(data: any) {

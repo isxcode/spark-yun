@@ -60,12 +60,12 @@ export const colConfigs: colConfig[] = [
   //   minWidth: 100,
   //   showOverflowTooltip: true
   // },
-  // {
-  //   prop: 'status',
-  //   title: '发布状态',
-  //   minWidth: 100,
-  //   customSlot: 'statusTag'
-  // },
+  {
+    prop: 'status',
+    title: '发布状态',
+    minWidth: 100,
+    customSlot: 'statusTag'
+  },
   {
     prop: 'remark',
     title: '备注',
@@ -75,7 +75,7 @@ export const colConfigs: colConfig[] = [
     title: '操作',
     align: 'center',
     customSlot: 'options',
-    width: 80
+    width: 110
   }
 ]
 
