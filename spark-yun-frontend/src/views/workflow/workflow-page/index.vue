@@ -99,15 +99,15 @@
                             </el-icon>
                             <span class="btn-text">发布</span>
                         </div>
-                        <!-- <div class="btn-box" @click="publishWorkFlow">
-                            <el-icon v-if="!btnLoadingConfig.publishLoading">
-                                <Promotion />
+                        <div class="btn-box" @click="underlineWorkFlow">
+                            <el-icon v-if="!btnLoadingConfig.underlineLoading">
+                                <Failed />
                             </el-icon>
                             <el-icon v-else class="is-loading">
                                 <Loading />
                             </el-icon>
                             <span class="btn-text">下线</span>
-                        </div> -->
+                        </div>
                         <div class="btn-box" @click="queryRunWorkInstancesEvent" v-if="workflowInstanceId">
                             <el-icon>
                                 <Refresh />
@@ -156,7 +156,7 @@ import zqyLog from '@/components/zqy-log/index.vue'
 import WorkItem from '../work-item/index.vue'
 import DataSync from '../data-sync/index.vue'
 
-import { AddWorkflowDetailList, BreakFlowData, DeleteWorkflowDetailList, ExportWorkflowData, GetWorkflowData, GetWorkflowDetailList, GetWorkflowList, ImportWorkflowData, PublishWorkflowData, QueryRunWorkInstances, ReRunWorkflow, RerunCurrentNodeFlowData, RunAfterFlowData, RunWorkflowData, SaveWorkflowConfigData, SaveWorkflowData, StopWorkflowData, UpdateWorkflowDetailList } from '@/services/workflow.service'
+import { AddWorkflowDetailList, BreakFlowData, DeleteWorkflowDetailList, ExportWorkflowData, GetWorkflowData, GetWorkflowDetailList, GetWorkflowList, ImportWorkflowData, PublishWorkflowData, QueryRunWorkInstances, ReRunWorkflow, RerunCurrentNodeFlowData, RunAfterFlowData, RunWorkflowData, SaveWorkflowConfigData, SaveWorkflowData, StopWorkflowData, UnderlineWorkflowData, UpdateWorkflowDetailList } from '@/services/workflow.service'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Loading } from '@element-plus/icons-vue'
 
@@ -189,7 +189,8 @@ const btnLoadingConfig = reactive({
     publishLoading: false,
     stopWorkFlowLoading: false,
     importLoading: false,
-    exportLoading: false
+    exportLoading: false,
+    underlineLoading: false
 })
 
 const breadCrumbList = reactive([
@@ -435,6 +436,19 @@ function publishWorkFlow() {
         ElMessage.success(res.msg)
     }).catch(() => {
         btnLoadingConfig.publishLoading = false
+    })
+}
+// 下线工作流
+function underlineWorkFlow() {
+    btnLoadingConfig.underlineLoading = true
+    UnderlineWorkflowData({
+        workflowId: workFlowData.value.id
+    }).then((res: any) => {
+        btnLoadingConfig.underlineLoading = false
+        ElMessage.success(res.msg)
+        queryRunWorkInstancesEvent()
+    }).catch(() => {
+        btnLoadingConfig.underlineLoading = false
     })
 }
 

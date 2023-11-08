@@ -40,7 +40,7 @@
                 </el-icon>
                 <span class="btn-text">配置</span>
             </div>
-            <div class="btn-box" @click="publishData">
+            <!-- <div class="btn-box" @click="publishData">
               <el-icon v-if="!btnLoadingConfig.publishLoading">
                 <Promotion />
               </el-icon>
@@ -57,7 +57,7 @@
                 <Loading />
               </el-icon>
               <span class="btn-text">下线</span>
-            </div>
+            </div> -->
             <div class="btn-box" @click="locationNode">
                 <el-icon>
                     <Position />
