@@ -65,7 +65,7 @@
                 <span class="btn-text">定位</span>
             </div>
         </div>
-        <div class="data-sync" id="data-sync">
+        <div class="data-sync" :class="{ 'data-sync__log': !!instanceId }" id="data-sync">
             <div class="data-sync-top">
                 <el-card class="box-card">
                     <template #header>
@@ -151,15 +151,26 @@
                 </el-card>
             </div>
             <data-sync-table ref="dataSyncTableRef" :formData="formData"></data-sync-table>
-            <div class="log-show" v-if="instanceId">
-                <el-tabs v-model="activeName" @tab-change="tabChangeEvent">
-                    <template v-for="tab in tabList" :key="tab.code">
-                    <el-tab-pane v-if="!tab.hide" :label="tab.name" :name="tab.code" />
-                    </template>
-                </el-tabs>
-                <component :is="currentTab" ref="containerInstanceRef" class="show-container" />
-            </div>
         </div>
+        <!-- 数据同步日志部分  v-if="instanceId" -->
+        <el-collapse v-if="!!instanceId" v-model="collapseActive" class="data-sync-log__collapse" ref="logCollapseRef">
+            <el-collapse-item title="查看日志" :disabled="true" name="1">
+                <template #title>
+                    <el-tabs v-model="activeName" @tab-change="tabChangeEvent">
+                        <template v-for="tab in tabList" :key="tab.code">
+                        <el-tab-pane v-if="!tab.hide" :label="tab.name" :name="tab.code" />
+                        </template>
+                    </el-tabs>
+                    <span class="log__collapse">
+                        <el-icon v-if="isCollapse" @click="changeCollapseDown"><ArrowDown /></el-icon>
+                        <el-icon v-else @click="changeCollapseUp"><ArrowUp /></el-icon>
+                    </span>
+                </template>
+                <div class="log-show">
+                    <component :is="currentTab" ref="containerInstanceRef" class="show-container" />
+                </div>
+            </el-collapse-item>
+        </el-collapse>
         <!-- 数据预览 -->
         <table-detail ref="tableDetailRef"></table-detail>
         <!-- 配置 -->
@@ -212,6 +223,9 @@ const containerInstanceRef = ref(null)
 const activeName = ref()
 const currentTab = ref()
 const instanceId = ref('')
+const logCollapseRef = ref()
+const collapseActive = ref('0')
+const isCollapse = ref(false)
 const tabList = reactive([
   {
     name: '提交日志',
@@ -325,6 +339,9 @@ function runWorkData() {
         })
         btnLoadingConfig.runningLoading = false
         // initData(res.data.instanceId)
+        nextTick(() => {
+            changeCollapseUp()
+        })
     }).catch(() => {
         btnLoadingConfig.runningLoading = false
     })
@@ -509,6 +526,15 @@ function setConfigData() {
     configDetailRef.value.showModal(props.workItemConfig)
 }
 
+function changeCollapseDown() {
+    logCollapseRef.value.setActiveNames('0')
+    isCollapse.value = false
+}
+function changeCollapseUp() {
+    logCollapseRef.value.setActiveNames('1')
+    isCollapse.value = true
+}
+
 onMounted(() => {
     formData.workId = props.workItemConfig.id
     getDate()
@@ -565,6 +591,10 @@ onMounted(() => {
         overflow: auto;
         height: calc(100vh - 100px);
         position: relative;
+
+        &.data-sync__log {
+            padding-bottom: 70px;
+        }
 
         .data-sync-top {
             display: flex;
@@ -669,20 +699,56 @@ onMounted(() => {
             }
         }
 
-        .log-show {
-            .el-tabs {
-                .el-tabs__item {
+    }
+    .data-sync-log__collapse {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 100;
+
+        .el-collapse-item__header {
+            // padding-left: 20px;
+            cursor: default;
+        }
+        .el-collapse-item__arrow {
+            display: none;
+        }
+        .el-collapse-item__content {
+            padding-bottom: 14px;
+        }
+
+        .log__collapse {
+            position: absolute;
+            right: 20px;
+            cursor: pointer;
+        }
+
+        .el-tabs {
+            width: 100%;
+            // padding: 0 20px;
+            height: 40px;
+            box-sizing: border-box;
+            .el-tabs__item {
                 font-size: getCssVar('font-size', 'extra-small');
-                }
-
-                .el-tabs__content {
-                height: 0;
-                }
-
-                .el-tabs__nav-scroll {
-                border-bottom: 1px solid getCssVar('border-color');
-                }
             }
+
+            .el-tabs__nav-scroll {
+                padding-left: 20px;
+                box-sizing: border-box;
+            }
+
+            .el-tabs__content {
+                height: 0;
+            }
+
+            .el-tabs__nav-scroll {
+                border-bottom: 1px solid getCssVar('border-color');
+            }
+        }
+        .log-show {
+            padding: 0 20px;
+            box-sizing: border-box;
 
             pre {
                 width: 100px;
@@ -691,6 +757,10 @@ onMounted(() => {
             .show-container {
                 height: calc(100vh - 368px);
                 overflow: auto;
+            }
+
+            .empty-page {
+                height: 80%;
             }
         }
     }
