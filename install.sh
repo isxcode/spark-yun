@@ -26,6 +26,12 @@ if ! command -v node &>/dev/null; then
   exit 1
 fi
 
+# 判断是否有java命令
+if ! command -v npm &>/dev/null; then
+  echo "【安装结果】：未检测到npm命令，请安装npm命令，参考安装命令：brew install node"
+  exit 1
+fi
+
 # 获取当前路径
 BASE_PATH=$(cd "$(dirname "$0")" || exit ; pwd)
 cd "${BASE_PATH}" || exit
