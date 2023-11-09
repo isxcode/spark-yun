@@ -150,7 +150,7 @@ public class Execute {
 
 		SparkConf conf = initSparkConf(sparkConfig);
 
-		if (Strings.isEmpty(conf.get("hive.metastore.uris"))) {
+		if (Strings.isEmpty(sparkConfig.get("hive.metastore.uris"))) {
 			return sparkSessionBuilder.config(conf).getOrCreate();
 		} else {
 			return sparkSessionBuilder.config(conf).enableHiveSupport().getOrCreate();
