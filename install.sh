@@ -4,13 +4,25 @@ echo "开始安装"
 
 # 判断tar解压命令
 if ! command -v tar &>/dev/null; then
-  echo "【安装结果】：未检测到tar命令"
+  echo "【安装结果】：未检测到tar命令,请安装tar命令,参考安装命令：brew install tar"
   exit 1
 fi
 
 # 判断是否有java命令
 if ! command -v java &>/dev/null; then
-  echo "【安装结果】：未检测到java命令"
+  echo "【安装结果】：未检测到java命令，请安装java命令，"
+  exit 1
+fi
+
+# 判断是否有java命令
+if ! command -v wget &>/dev/null; then
+  echo "【安装结果】：未检测到wget命令，请安装wget命令，参考安装命令：brew install wget"
+  exit 1
+fi
+
+# 判断是否有java命令
+if ! command -v node &>/dev/null; then
+  echo "【安装结果】：未检测到node命令，请安装node命令，参考安装命令：brew install node"
   exit 1
 fi
 
