@@ -5,6 +5,7 @@ import com.alibaba.fastjson2.TypeReference;
 import com.isxcode.star.api.datasource.constants.DatasourceType;
 import com.isxcode.star.api.work.constants.SetMode;
 import com.isxcode.star.api.work.pojos.dto.ClusterConfig;
+import com.isxcode.star.api.work.pojos.dto.SyncRule;
 import com.isxcode.star.api.work.pojos.dto.SyncWorkConfig;
 import com.isxcode.star.api.work.pojos.req.ConfigWorkReq;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
@@ -169,6 +170,14 @@ public class WorkConfigBizService {
 		if (hiveMetaStoreUris != null) {
 			clusterConfig.getSparkConfig().put("hive.metastore.uris", hiveMetaStoreUris);
 		}
+
+		// 补上spark.executor.instances
+		if (!Strings.isEmpty(workConfig.getSyncRule())) {
+			SyncRule syncRule = JSON.parseObject(workConfig.getSyncRule(), SyncRule.class);
+			clusterConfig.getSparkConfig().put("spark.executor.instances",
+					String.valueOf(syncRule.getNumConcurrency()));
+		}
+
 		return clusterConfig;
 	}
 }
