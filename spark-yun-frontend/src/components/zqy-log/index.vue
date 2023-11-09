@@ -105,6 +105,17 @@ function getYarnLogData() {
     })
         .then((res: any) => {
             logMsg.value = res.data.yarnLog
+            if (position.value) {
+                nextTick(() => {
+                    scrollToButtom()
+                })
+            }
+            if (['SUCCESS', 'FAIL'].includes(res.data.status)) {
+                if (timer.value) {
+                    clearInterval(timer.value)
+                }
+                timer.value = null
+            }
         })
         .catch(() => {
             logMsg.value = ''
