@@ -24,7 +24,16 @@
                 </div>
                 <div class="list-box">
                     <template v-for="work in workListItem" :key="work.id">
-                        <div class="list-item" :class="{ 'choose-item': workConfig && workConfig.id === work.id }" :draggable="true" @click="showWorkConfig(work)" @dragstart="handleDragEnd($event, work)">{{ work.name }}
+                        <div class="list-item" :class="{ 'choose-item': workConfig && workConfig.id === work.id }" :draggable="true" @click="showWorkConfig(work)" @dragstart="handleDragEnd($event, work)">
+                            {{ work.name }}
+                            <!-- <div class="item-left">
+                                <el-icon v-if="work.workType === 'QUERY_JDBC'"><Search /></el-icon>
+                                <el-icon v-if="work.workType === 'DATA_SYNC_JDBC'"><Van /></el-icon>
+                            </div>
+                            <div class="item-right">
+                                <span class="label-name">{{ work.name }}</span>
+                                <span class="label-name">{{ work.remark || '-' }}</span>
+                            </div> -->
                             <el-dropdown trigger="click">
                                 <el-icon class="option-more" @click.stop>
                                     <MoreFilled />
@@ -736,7 +745,7 @@ onUnmounted(() => {
 
             .list-item {
                 height: getCssVar('menu', 'item-height');
-                line-height: getCssVar('menu', 'item-height');
+                // line-height: getCssVar('menu', 'item-height');
                 padding-left: 12px;
                 padding-right: 12px;
                 box-sizing: border-box;
@@ -744,6 +753,23 @@ onUnmounted(() => {
                 cursor: pointer;
                 font-size: getCssVar('font-size', 'extra-small');
                 position: relative;
+
+                display: flex;
+                align-items: center;
+
+                // .item-left {
+                //     font-size: 16px;
+                //     margin-left: 12px;
+                // }
+
+                // .item-right {
+                //     margin-left: 8px;
+                //     display: flex;
+                //     flex-direction: column;
+                //     justify-content: space-between;
+                //     padding: 2px 0;
+                //     box-sizing: border-box;
+                // }
 
                 &.choose-item {
                     background-color: getCssVar('color', 'primary', 'light-8');
