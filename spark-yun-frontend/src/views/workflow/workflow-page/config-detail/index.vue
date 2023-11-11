@@ -26,9 +26,9 @@
                 </el-select>
               </el-form-item>
             </el-form>
+            <el-divider />
           </div>
           <template v-else>
-            <el-divider />
             <!-- 资源配置 -->
             <div class="config-item">
               <div class="item-title">资源配置</div>

@@ -100,13 +100,14 @@
                         </el-form-item>
                         <el-form-item label="分区键">
                             <el-select v-model="formData.partitionColumn" clearable placeholder="请选择"
-                                @visible-change="getTableColumnData($event, formData.sourceDBId, formData.sourceTable)">
+                                @visible-change="getTableColumnData($event, formData.sourceDBId, formData.sourceTable)"
+                                @change="pageChangeEvent">
                                 <el-option v-for="item in partKeyList" :key="item.value" :label="item.label"
                                     :value="item.value" />
                             </el-select>
                         </el-form-item>
                         <el-form-item prop="queryCondition" label="过滤条件">
-                            <code-mirror v-model="formData.queryCondition" basic :lang="lang" />
+                            <code-mirror v-model="formData.queryCondition" basic :lang="lang" @change="pageChangeEvent" />
                         </el-form-item>
                     </el-form>
                 </el-card>
@@ -142,7 +143,7 @@
                             <el-button type="primary" link @click="createTableWork">生成建表作业</el-button>
                         </el-form-item>
                         <el-form-item prop="overMode" label="写入模式">
-                            <el-select v-model="formData.overMode" clearable placeholder="请选择">
+                            <el-select v-model="formData.overMode" clearable placeholder="请选择" @change="pageChangeEvent">
                                 <el-option v-for="item in overModeList" :key="item.value" :label="item.label"
                                     :value="item.value" />
                             </el-select>
@@ -180,7 +181,7 @@
 
 <script lang="ts" setup>
 import { ref, reactive, onMounted, defineProps, nextTick, markRaw } from 'vue'
-import { ElMessage, FormInstance, FormRules } from 'element-plus'
+import { ElMessage, ElMessageBox, FormInstance, FormRules } from 'element-plus'
 import CodeMirror from 'vue-codemirror6'
 import { sql } from '@codemirror/lang-sql'
 import { DataSourceType, OverModeList } from './data.config.ts'
@@ -205,6 +206,7 @@ const props = defineProps<{
 
 const emit = defineEmits(['back', 'locationNode'])
 
+const changeStatus = ref(false)
 const configDetailRef = ref()
 const form = ref<FormInstance>()
 const tableDetailRef = ref()
@@ -290,6 +292,7 @@ function saveData() {
             columnMap: dataSyncTableRef.value.getConnect()
         }
     }).then((res: any) => {
+        changeStatus.value = false
         btnLoadingConfig.saveLoading = false
         ElMessage.success('保存成功')
     }).catch(err => {
@@ -328,23 +331,49 @@ function getDate() {
 }
 // 运行
 function runWorkData() {
-    btnLoadingConfig.runningLoading = true
-    RunWorkItemConfig({
-        workId: props.workItemConfig.id
-    }).then((res: any) => {
-        instanceId.value = res.data.instanceId
-        ElMessage.success(res.msg)
-        nextTick(() => {
-            containerInstanceRef.value.initData(instanceId.value)
+    if (changeStatus.value) {
+        ElMessageBox.confirm('作业尚未保存，是否确定要运行作业？', '警告', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+        }).then(() => {
+            btnLoadingConfig.runningLoading = true
+            RunWorkItemConfig({
+                workId: props.workItemConfig.id
+            }).then((res: any) => {
+                instanceId.value = res.data.instanceId
+                ElMessage.success(res.msg)
+                nextTick(() => {
+                    containerInstanceRef.value.initData(instanceId.value)
+                })
+                btnLoadingConfig.runningLoading = false
+                // initData(res.data.instanceId)
+                nextTick(() => {
+                    changeCollapseUp()
+                })
+            }).catch(() => {
+                btnLoadingConfig.runningLoading = false
+            })
         })
-        btnLoadingConfig.runningLoading = false
-        // initData(res.data.instanceId)
-        nextTick(() => {
-            changeCollapseUp()
+    } else {
+        btnLoadingConfig.runningLoading = true
+        RunWorkItemConfig({
+            workId: props.workItemConfig.id
+        }).then((res: any) => {
+            instanceId.value = res.data.instanceId
+            ElMessage.success(res.msg)
+            nextTick(() => {
+                containerInstanceRef.value.initData(instanceId.value)
+            })
+            btnLoadingConfig.runningLoading = false
+            // initData(res.data.instanceId)
+            nextTick(() => {
+                changeCollapseUp()
+            })
+        }).catch(() => {
+            btnLoadingConfig.runningLoading = false
         })
-    }).catch(() => {
-        btnLoadingConfig.runningLoading = false
-    })
+    }
 }
 // 终止
 function terWorkData() {
@@ -485,6 +514,7 @@ function getTableColumnData(e: boolean, dataSourceId: string, tableName: string)
 }
 
 function tableChangeEvent(e: string, dataSourceId: string, type: string) {
+    changeStatus.value = true
     if (type === 'source') {
         formData.partitionColumn = ''
     }
@@ -496,6 +526,7 @@ function tableChangeEvent(e: string, dataSourceId: string, type: string) {
 
 // 级联控制
 function dbTypeChange(type: string) {
+    changeStatus.value = true
     if (type === 'source') {
         formData.sourceDBId = ''
         formData.sourceTable = ''
@@ -506,6 +537,7 @@ function dbTypeChange(type: string) {
 }
 // 级联控制
 function dbIdChange(type: string) {
+    changeStatus.value = true
     if (type === 'source') {
         formData.sourceTable = ''
     } else {
@@ -515,10 +547,30 @@ function dbIdChange(type: string) {
 
 // 返回
 function goBack() {
-    emit('back', props.workItemConfig.id)
+    if (changeStatus.value) {
+        ElMessageBox.confirm('作业尚未保存，是否确定要返回吗？', '警告', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+        }).then(() => {
+        emit('back', props.workItemConfig.id)
+        })
+    } else {
+        emit('back', props.workItemConfig.id)
+    }
 }
 function locationNode() {
-    emit('locationNode', props.workItemConfig.id)
+    if (changeStatus.value) {
+        ElMessageBox.confirm('作业尚未保存，是否确定要返回吗？', '警告', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+        }).then(() => {
+        emit('locationNode', props.workItemConfig.id)
+        })
+    } else {
+        emit('locationNode', props.workItemConfig.id)
+    }
 }
 
 // 配置打开
@@ -533,6 +585,9 @@ function changeCollapseDown() {
 function changeCollapseUp() {
     logCollapseRef.value.setActiveNames('1')
     isCollapse.value = true
+}
+function pageChangeEvent() {
+    changeStatus.value = true
 }
 
 onMounted(() => {
