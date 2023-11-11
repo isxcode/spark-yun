@@ -497,21 +497,23 @@ function okEvent() {
         dataSourceForm.datasourceId = clusObj.datasourceId
         delete clusObj.datasourceId
       }
+      const cron = `${state.secondsText || '*'} ${state.minutesText || '*'} ${state.hoursText || '*'} ${
+        state.daysText || '*'
+      } ${state.monthsText || '*'} ${state.weeksText || '?'} ${state.yearsText || '*'}`
       SaveWorkItemConfig({
         workId: workItemConfig.value.id,
         datasourceId: dataSourceForm.datasourceId || undefined,
         clusterConfig: clusObj,
         cronConfig: {
           ...cronConfig,
-          cron: `${state.secondsText || '*'} ${state.minutesText || '*'} ${state.hoursText || '*'} ${
-        state.daysText || '*'
-      } ${state.monthsText || '*'} ${state.weeksText || '?'} ${state.yearsText || '*'}`
+          cron: cronConfig.setMode === 'SIMPLE' ? cron : cronConfig.cron
         },
         syncRule: syncRule
       }).then((res: any) => {
         ElMessage.success('保存成功')
         drawerConfig.visible = false;
       }).catch(err => {
+        clusterConfig.datasourceId = dataSourceForm.datasourceId
         console.error(err)
       })
     } else {
