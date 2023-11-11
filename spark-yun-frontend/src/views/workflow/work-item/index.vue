@@ -69,7 +69,7 @@
               <span class="btn-text">定位</span>
             </div>
           </div>
-          <code-mirror v-model="sqltextData" basic :lang="workConfig.workType === 'PYTHON' ? pythonLang : lang" />
+          <code-mirror v-model="sqltextData" basic :lang="workConfig.workType === 'PYTHON' ? pythonLang : lang" @change="sqlConfigChange"/>
         </div>
         <div class="log-show">
           <el-tabs v-model="activeName" @tab-change="tabChangeEvent">
@@ -102,7 +102,7 @@ import { sql } from '@codemirror/lang-sql'
 import { python } from '@codemirror/lang-python'
 
 import { DeleteWorkData, GetWorkItemConfig, PublishWorkData, RunWorkItemConfig, SaveWorkItemConfig, TerWorkItemConfig } from '@/services/workflow.service'
-import { ElMessage } from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import { useRoute, useRouter } from 'vue-router'
 import { Loading } from '@element-plus/icons-vue'
 
@@ -130,6 +130,7 @@ const activeName = ref()
 const currentTab = ref()
 const sqltextData = ref('')
 const instanceId = ref('')
+const changeStatus = ref(false)
 
 const containerInstanceRef = ref(null)
 
@@ -197,6 +198,7 @@ function initData(id?: string, tableLoading?: boolean) {
       workConfig.workType = props.workItemConfig.workType
       sqltextData.value = res.data.script
       nextTick(() => {
+        changeStatus.value = false
         containerInstanceRef.value.initData(id || instanceId.value, (status: string) => {
           // 运行结束
           if (workConfig.workType === 'SPARK_SQL') {
@@ -248,36 +250,87 @@ function tabChangeEvent(e: string) {
 
 // 返回
 function goBack() {
-  emit('back', props.workItemConfig.id)
+  if (changeStatus.value) {
+    ElMessageBox.confirm('作业尚未保存，是否确定要返回吗？', '警告', {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning'
+    }).then(() => {
+      emit('back', props.workItemConfig.id)
+    })
+  } else {
+    emit('back', props.workItemConfig.id)
+  }
 }
 function locationNode() {
-  emit('locationNode', props.workItemConfig.id)
+  if (changeStatus.value) {
+    ElMessageBox.confirm('作业尚未保存，是否确定要返回吗？', '警告', {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning'
+    }).then(() => {
+      emit('locationNode', props.workItemConfig.id)
+    })
+  } else {
+    emit('locationNode', props.workItemConfig.id)
+  }
 }
 
 // 运行
 function runWorkData() {
-  tabList.forEach((item: any) => {
-    if (['RunningLog', 'TotalDetail', 'ReturnData'].includes(item.code)) {
-      item.hide = true
-    }
-  })
-  runningLoading.value = true
-  RunWorkItemConfig({
-    workId: props.workItemConfig.id
-  })
-    .then((res: any) => {
-      runningLoading.value = false
-      instanceId.value = res.data.instanceId
-      ElMessage.success(res.msg)
-      initData(res.data.instanceId, true)
-
-      // 点击运行，默认跳转到提交日志tab
-      activeName.value = 'PublishLog'
-      currentTab.value = markRaw(PublishLog)
+  if (changeStatus.value) {
+    ElMessageBox.confirm('作业尚未保存，是否确定要运行作业？', '警告', {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning'
+    }).then(() => {
+      tabList.forEach((item: any) => {
+        if (['RunningLog', 'TotalDetail', 'ReturnData'].includes(item.code)) {
+          item.hide = true
+        }
+      })
+      runningLoading.value = true
+      RunWorkItemConfig({
+        workId: props.workItemConfig.id
+      })
+        .then((res: any) => {
+          runningLoading.value = false
+          instanceId.value = res.data.instanceId
+          ElMessage.success(res.msg)
+          initData(res.data.instanceId, true)
+    
+          // 点击运行，默认跳转到提交日志tab
+          activeName.value = 'PublishLog'
+          currentTab.value = markRaw(PublishLog)
+        })
+        .catch(() => {
+          runningLoading.value = false
+        })
     })
-    .catch(() => {
-      runningLoading.value = false
+  } else {
+    tabList.forEach((item: any) => {
+      if (['RunningLog', 'TotalDetail', 'ReturnData'].includes(item.code)) {
+        item.hide = true
+      }
     })
+    runningLoading.value = true
+    RunWorkItemConfig({
+      workId: props.workItemConfig.id
+    })
+      .then((res: any) => {
+        runningLoading.value = false
+        instanceId.value = res.data.instanceId
+        ElMessage.success(res.msg)
+        initData(res.data.instanceId, true)
+  
+        // 点击运行，默认跳转到提交日志tab
+        activeName.value = 'PublishLog'
+        currentTab.value = markRaw(PublishLog)
+      })
+      .catch(() => {
+        runningLoading.value = false
+      })
+  }
 }
 
 // 终止
@@ -313,6 +366,7 @@ function saveData() {
     // corn: workConfig.corn
   })
     .then((res: any) => {
+      changeStatus.value = false
       ElMessage.success(res.msg)
       saveLoading.value = false
     })
@@ -352,6 +406,10 @@ function stopData() {
 // 配置打开
 function setConfigData() {
   configDetailRef.value.showModal(props.workItemConfig)
+}
+
+function sqlConfigChange(e: string) {
+  changeStatus.value = true
 }
 
 onMounted(() => {
