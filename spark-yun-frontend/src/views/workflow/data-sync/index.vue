@@ -323,6 +323,7 @@ function getDate() {
                 getDataSourceTable(true, formData.targetDBId, 'target')
     
                 dataSyncTableRef.value.initPageData(res.data.syncWorkConfig)
+                changeStatus.value = false
             })
         }
     }).catch(err => {
