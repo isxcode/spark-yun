@@ -44,6 +44,7 @@
     width: 220px;
     background-color: getCssVar('color', 'white');
     transition: width getCssVar('transition-duration') ease-in-out;
+    border-right: 1px solid var(--el-border-color);
   }
 
   .zqy-home__main {
