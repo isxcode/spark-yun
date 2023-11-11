@@ -68,7 +68,7 @@
           <el-select
             v-model="formData.datasourceId"
             placeholder="请选择"
-            @visible-change="getDataSourceList"
+            @visible-change="getDataSourceList($event, 'HIVE')"
           >
             <el-option
               v-for="item in dataSourceList"
@@ -318,12 +318,12 @@ function getClusterNodeList(e: boolean) {
     })
   }
 }
-function getDataSourceList(e: boolean) {
+function getDataSourceList(e: boolean, searchType?: string) {
   if (e) {
     GetDatasourceList({
       page: 0,
       pageSize: 10000,
-      searchKeyWord: ''
+      searchKeyWord: searchType || ''
     }).then((res: any) => {
       dataSourceList.value = res.data.content.map((item: any) => {
         return {
