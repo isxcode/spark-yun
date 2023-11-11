@@ -196,7 +196,9 @@ function initData(id?: string, tableLoading?: boolean) {
     .then((res: any) => {
       workConfig = res.data
       workConfig.workType = props.workItemConfig.workType
-      sqltextData.value = res.data.script
+      if (!tableLoading) {
+        sqltextData.value = res.data.script
+      }
       nextTick(() => {
         changeStatus.value = false
         containerInstanceRef.value.initData(id || instanceId.value, (status: string) => {
