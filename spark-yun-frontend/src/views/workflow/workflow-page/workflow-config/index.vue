@@ -284,11 +284,12 @@ function okEvent() {
   cronConfigForm.value?.validate((valid: boolean) => {
     if (valid) {
       getCron()
-      callback.value({
-        ...cronConfig,
-        cron: `${state.secondsText || '*'} ${state.minutesText || '*'} ${state.hoursText || '*'} ${
+      const cron = `${state.secondsText || '*'} ${state.minutesText || '*'} ${state.hoursText || '*'} ${
         state.daysText || '*'
       } ${state.monthsText || '*'} ${state.weeksText || '?'} ${state.yearsText || '*'}`
+      callback.value({
+        ...cronConfig,
+        cron: cronConfig.setMode === 'SIMPLE' ? cron : cronConfig.cron
       }).then((res: any) => {
         drawerConfig.okConfig.loading = false
         if (res === undefined) {
