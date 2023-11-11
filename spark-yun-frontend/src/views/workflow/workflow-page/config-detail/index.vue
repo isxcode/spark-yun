@@ -62,7 +62,7 @@
                   <el-select
                     v-model="clusterConfig.datasourceId"
                     placeholder="请选择"
-                    @visible-change="getDataSourceList"
+                    @visible-change="getDataSourceList($event, 'HIVE')"
                   >
                     <el-option
                       v-for="item in dataSourceList"
@@ -433,7 +433,7 @@ function showModal(data?: any) {
       // 获取集群参数
       getClusterList()
     }
-    getDataSourceList()
+    getDataSourceList(true)
     workItemConfig.value = data
     getConfigDetailData()
   }
@@ -602,22 +602,24 @@ function getClusterNodeList(e: boolean) {
     })
   }
 }
-function getDataSourceList() {
-  GetDatasourceList({
-    page: 0,
-    pageSize: 10000,
-    searchKeyWord: ''
-  }).then((res: any) => {
-    dataSourceList.value = res.data.content.map((item: any) => {
-      return {
-        label: item.name,
-        value: item.id
-      }
+function getDataSourceList(e: boolean, searchType?: string) {
+  if (e) {
+    GetDatasourceList({
+      page: 0,
+      pageSize: 10000,
+      searchKeyWord: searchType || ''
+    }).then((res: any) => {
+      dataSourceList.value = res.data.content.map((item: any) => {
+        return {
+          label: item.name,
+          value: item.id
+        }
+      })
     })
-  })
-  .catch(() => {
-    dataSourceList.value = []
-  })
+    .catch(() => {
+      dataSourceList.value = []
+    })
+  }
 }
 
 
