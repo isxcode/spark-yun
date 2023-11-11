@@ -75,14 +75,14 @@
                     </template>
                     <el-form ref="form" label-position="left" label-width="70px" :model="formData" :rules="rules">
                         <el-form-item prop="sourceDBType" label="类型">
-                            <el-select v-model="formData.sourceDBType" clearable placeholder="请选择"
+                            <el-select v-model="formData.sourceDBType" clearable filterable placeholder="请选择"
                                 @change="dbTypeChange('source')">
                                 <el-option v-for="item in typeList" :key="item.value" :label="item.label"
                                     :value="item.value" />
                             </el-select>
                         </el-form-item>
                         <el-form-item prop="sourceDBId" label="数据源">
-                            <el-select v-model="formData.sourceDBId" clearable placeholder="请选择"
+                            <el-select v-model="formData.sourceDBId" clearable filterable placeholder="请选择"
                                 @visible-change="getDataSource($event, formData.sourceDBType, 'source')"
                                 @change="dbIdChange('source')">
                                 <el-option v-for="item in sourceList" :key="item.value" :label="item.label"
@@ -90,7 +90,7 @@
                             </el-select>
                         </el-form-item>
                         <el-form-item prop="sourceTable" label="表">
-                            <el-select v-model="formData.sourceTable" clearable placeholder="请选择"
+                            <el-select v-model="formData.sourceTable" clearable filterable placeholder="请选择"
                                 @visible-change="getDataSourceTable($event, formData.sourceDBId, 'source')"
                                 @change="tableChangeEvent($event, formData.sourceDBId, 'source')">
                                 <el-option v-for="item in sourceTablesList" :key="item.value" :label="item.label"
@@ -99,7 +99,7 @@
                             <el-button type="primary" link @click="showTableDetail">数据预览</el-button>
                         </el-form-item>
                         <el-form-item label="分区键">
-                            <el-select v-model="formData.partitionColumn" clearable placeholder="请选择"
+                            <el-select v-model="formData.partitionColumn" clearable filterable placeholder="请选择"
                                 @visible-change="getTableColumnData($event, formData.sourceDBId, formData.sourceTable)"
                                 @change="pageChangeEvent">
                                 <el-option v-for="item in partKeyList" :key="item.value" :label="item.label"
@@ -119,14 +119,14 @@
                     </template>
                     <el-form ref="form" label-position="left" label-width="70px" :model="formData" :rules="rules">
                         <el-form-item prop="targetDBType" label="类型">
-                            <el-select v-model="formData.targetDBType" clearable placeholder="请选择"
+                            <el-select v-model="formData.targetDBType" clearable filterable placeholder="请选择"
                                 @change="dbTypeChange('target')">
                                 <el-option v-for="item in typeList" :key="item.value" :label="item.label"
                                     :value="item.value" />
                             </el-select>
                         </el-form-item>
                         <el-form-item prop="targetDBId" label="数据源">
-                            <el-select v-model="formData.targetDBId" clearable placeholder="请选择"
+                            <el-select v-model="formData.targetDBId" clearable filterable placeholder="请选择"
                                 @visible-change="getDataSource($event, formData.targetDBType, 'target')"
                                 @change="dbIdChange('target')">
                                 <el-option v-for="item in targetList" :key="item.value" :label="item.label"
@@ -134,7 +134,7 @@
                             </el-select>
                         </el-form-item>
                         <el-form-item prop="targetTable" label="表">
-                            <el-select v-model="formData.targetTable" clearable placeholder="请选择"
+                            <el-select v-model="formData.targetTable" clearable filterable placeholder="请选择"
                                 @visible-change="getDataSourceTable($event, formData.targetDBId, 'target')"
                                 @change="tableChangeEvent($event, formData.targetDBId, 'target')">
                                 <el-option v-for="item in targetTablesList" :key="item.value" :label="item.label"
@@ -143,7 +143,7 @@
                             <el-button type="primary" link @click="createTableWork">生成建表作业</el-button>
                         </el-form-item>
                         <el-form-item prop="overMode" label="写入模式">
-                            <el-select v-model="formData.overMode" clearable placeholder="请选择" @change="pageChangeEvent">
+                            <el-select v-model="formData.overMode" clearable filterable placeholder="请选择" @change="pageChangeEvent">
                                 <el-option v-for="item in overModeList" :key="item.value" :label="item.label"
                                     :value="item.value" />
                             </el-select>
