@@ -516,7 +516,7 @@ public class WorkflowBizService {
 			workInstance.setStatus(InstanceStatus.FAIL);
 			workInstance.setExecEndDateTime(new Date());
 			workInstance
-					.setDuration((System.currentTimeMillis() - workInstance.getPlanStartDateTime().getTime()) / 1000);
+					.setDuration((System.currentTimeMillis() - workInstance.getExecStartDateTime().getTime()) / 1000);
 			workInstanceRepository.save(workInstance);
 		}
 	}
