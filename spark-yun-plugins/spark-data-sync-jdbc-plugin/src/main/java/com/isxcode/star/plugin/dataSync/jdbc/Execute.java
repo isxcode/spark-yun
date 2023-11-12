@@ -76,11 +76,13 @@ public class Execute {
 			prop.put("driver", conf.getSyncWorkConfig().getSourceDatabase().getDriver());
 			// 创建一个 ArrayList 存储查询条件字符串
 			List<String> predicates = new ArrayList<>();
+      //根据数据库类型获取合适的hash方法名
+      String hashName = getHash(conf.getSyncWorkConfig().getSourceDBType());
 
 			// 生成查询条件并添加到列表中
 			for (int i = 0; i < conf.getSyncRule().getNumPartitions(); i++) {
 				// 不同的数据库要使用各自支持hash函数
-				String predicate = String.format("CRC32(`%s`) %% %d = %d",
+				String predicate = String.format("%s(`%s`) %% %d = %d",hashName,
 						conf.getSyncWorkConfig().getPartitionColumn(), conf.getSyncRule().getNumPartitions(), i);
 				predicates.add(predicate);
 			}
@@ -167,5 +169,38 @@ public class Execute {
 			return "";
 		}
 	}
+
+  public static String getHash(String datasourceType) {
+    switch (datasourceType) {
+      case DatasourceType.MYSQL:
+        return "CRC32";
+      case DatasourceType.ORACLE:
+        return "ORA_HASH";
+      case DatasourceType.SQL_SERVER:
+        return "CHECKSUM";
+      case DatasourceType.POSTGRE_SQL:
+        return "md5";
+      case DatasourceType.CLICKHOUSE:
+        return "hg_sip_hash_64";
+      case DatasourceType.HIVE:
+        return "hash";
+      case DatasourceType.HANA_SAP:
+        return "HASH_SHA256";
+      case DatasourceType.DM:
+        return "ORA_HASH";
+      case DatasourceType.DORIS:
+        return "murmur_hash3_32";
+      case DatasourceType.OCEANBASE:
+        return "ORA_HASH";
+      case DatasourceType.TIDB:
+        return "CRC32";
+      case DatasourceType.STAR_ROCKS:
+        return "murmur_hash3_32";
+      case DatasourceType.DB2:
+        return "hash8";
+      default:
+        throw new RuntimeException("暂不支持的数据库");
+    }
+  }
 
 }
