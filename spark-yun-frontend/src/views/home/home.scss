@@ -59,11 +59,14 @@
     height: 80px;
     box-sizing: border-box;
     padding: 10px 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 
   .zqy-home__logo {
     height: 40px;
-    width: 40px;
+    // width: 40px;
   }
 
   .zqy-home__title {
