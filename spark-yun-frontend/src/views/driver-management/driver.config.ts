@@ -36,8 +36,8 @@ export interface SerchParams {
 
 export const BreadCrumbList: Array<BreadCrumb> = [
     {
-        name: '作业流',
-        code: 'workflow'
+        name: '驱动管理',
+        code: 'driver-management'
     }
 ]
 
