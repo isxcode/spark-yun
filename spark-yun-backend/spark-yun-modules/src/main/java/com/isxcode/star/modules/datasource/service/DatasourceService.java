@@ -103,15 +103,15 @@ public class DatasourceService {
 						+ "jdbc" + File.separator + driverPath).toURI().toURL();
 				ClassLoader driverClassLoader = new URLClassLoader(new URL[]{url});
 
-        // 特殊逻辑判断，如果驱动是mysql5的使用
-        String driverClassName = getDriverClass(datasource.getDbType());
-        if (DatasourceType.MYSQL.equals(datasource.getDbType())) {
-          if (driverPath.contains("-5")) {
-            driverClassName = "com.mysql.jdbc.Driver";
-          }
-        }
+				// 特殊逻辑判断，如果驱动是mysql5的使用
+				String driverClassName = getDriverClass(datasource.getDbType());
+				if (DatasourceType.MYSQL.equals(datasource.getDbType())) {
+					if (driverPath.contains("-5")) {
+						driverClassName = "com.mysql.jdbc.Driver";
+					}
+				}
 
-        Class<?> driverClass = driverClassLoader.loadClass(driverClassName);
+				Class<?> driverClass = driverClassLoader.loadClass(driverClassName);
 				driver = new DriverShim((Driver) driverClass.newInstance());
 				ALL_EXIST_DRIVER.put(datasource.getDriverId(), driver);
 			} catch (MalformedURLException | ClassNotFoundException | IllegalAccessException
