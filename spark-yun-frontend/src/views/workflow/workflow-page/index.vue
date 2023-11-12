@@ -23,7 +23,7 @@
                     <el-button type="primary" circle @click="addData"><el-icon><Plus /></el-icon></el-button>
                 </div>
                 <div class="list-box">
-                    <template v-for="work in workListItem" :key="work.id">
+                    <template v-if="workListItem.length" v-for="work in workListItem" :key="work.id">
                         <div class="list-item" :class="{ 'choose-item': workConfig && workConfig.id === work.id }" :draggable="true" @click="showWorkConfig(work)" @dragstart="handleDragEnd($event, work)">
                             {{ work.name }}
                             <!-- <div class="item-left">
@@ -51,6 +51,7 @@
                             </el-dropdown>
                         </div>
                     </template>
+                    <empty-page v-else></empty-page>
                 </div>
             </div>
             <div class="flow-container">
@@ -741,7 +742,9 @@ onUnmounted(() => {
             // padding: 0 4px;
             box-sizing: border-box;
             overflow: auto;
-            max-height: calc(100vh - 206px);
+            max-height: calc(100vh - 148px);
+            position: relative;
+            height: 100%;
 
             .list-item {
                 height: getCssVar('menu', 'item-height');
