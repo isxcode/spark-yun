@@ -130,7 +130,7 @@ fi
 
 if [[ "$OSTYPE" == "linux-gnu" ]]; then
     # 判断yarn是否正常运行
-    if ! timeout 10s yarn node -list &>/dev/null; then
+    if ! timeout 30s yarn node -list &>/dev/null; then
       json_output="{ \
             \"status\": \"INSTALL_ERROR\", \
             \"log\": \"未启动yarn服务\" \
