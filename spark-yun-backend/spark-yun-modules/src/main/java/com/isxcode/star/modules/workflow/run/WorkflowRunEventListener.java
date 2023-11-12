@@ -103,8 +103,8 @@ public class WorkflowRunEventListener {
 				// 如果父级有错，则状态直接变更为失败
 				workInstance.setStatus(InstanceStatus.FAIL);
 				workInstance.setSubmitLog("父级执行失败");
-				workInstance.setExecEndDateTime(new Date());
 				if (workInstance.getExecStartDateTime() != null) {
+					workInstance.setExecEndDateTime(new Date());
 					workInstance.setDuration(
 							(System.currentTimeMillis() - workInstance.getExecStartDateTime().getTime()) / 1000);
 				}
