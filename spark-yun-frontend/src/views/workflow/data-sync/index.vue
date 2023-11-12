@@ -140,7 +140,7 @@
                                 <el-option v-for="item in targetTablesList" :key="item.value" :label="item.label"
                                     :value="item.value" />
                             </el-select>
-                            <el-button type="primary" link @click="createTableWork">生成建表作业</el-button>
+                            <!-- <el-button type="primary" link @click="createTableWork">生成建表作业</el-button> -->
                         </el-form-item>
                         <el-form-item prop="overMode" label="写入模式">
                             <el-select v-model="formData.overMode" clearable filterable placeholder="请选择" @change="pageChangeEvent">
