@@ -23,7 +23,7 @@ public interface WorkInstanceRepository extends JpaRepository<WorkInstanceEntity
 			+ "from WorkInstanceEntity S \n" + "         left join WorkEntity SW on S.workId = SW.id\n"
 			+ "         left join WorkflowEntity SWF on SW.workflowId = SWF.id \n" + "WHERE S.tenantId=:tenantId and "
 			+ "(S.id LIKE %:keyword% " + "OR SW.name LIKE %:keyword% " + "OR SWF.name LIKE %:keyword% ) "
-			+ "order by S.createDateTime desc ")
+			+ "order by S.lastModifiedDateTime desc ")
 	Page<Map> searchAll(@Param("tenantId") String tenantId, @Param("keyword") String searchKeyWord, Pageable pageable);
 
 	WorkInstanceEntity findByWorkIdAndWorkflowInstanceId(String workId, String workflowInstanceId);
