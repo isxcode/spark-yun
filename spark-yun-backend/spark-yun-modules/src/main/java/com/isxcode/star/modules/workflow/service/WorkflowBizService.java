@@ -115,6 +115,12 @@ public class WorkflowBizService {
 
 	public void addWorkflow(AddWorkflowReq wofAddWorkflowReq) {
 
+		// 工作流唯一性
+		Optional<WorkflowEntity> workflowByName = workflowRepository.findByName(wofAddWorkflowReq.getName());
+		if (workflowByName.isPresent()) {
+			throw new IsxAppException("作业流名称已重复，请重新输入");
+		}
+
 		// 初始化工作流配置
 		WorkflowConfigEntity workflowConfig = new WorkflowConfigEntity();
 		workflowConfig.setCronConfig(

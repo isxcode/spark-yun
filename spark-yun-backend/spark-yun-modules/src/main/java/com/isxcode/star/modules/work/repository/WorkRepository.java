@@ -2,6 +2,8 @@ package com.isxcode.star.modules.work.repository;
 
 import com.isxcode.star.modules.work.entity.WorkEntity;
 import java.util.List;
+import java.util.Optional;
+
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -30,4 +32,6 @@ public interface WorkRepository extends JpaRepository<WorkEntity, String> {
 
 	@Query("select max(W.topIndex) from WorkEntity W where W.workflowId = :workflowId")
 	Integer findWorkflowMaxTopIndex(@Param("workflowId") String workflowId);
+
+	Optional<WorkEntity> findByNameAndAndWorkflowId(String name, String workflowId);
 }

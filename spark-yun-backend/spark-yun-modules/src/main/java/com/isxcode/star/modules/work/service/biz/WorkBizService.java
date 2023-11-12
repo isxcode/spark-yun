@@ -89,6 +89,13 @@ public class WorkBizService {
 
 	public GetWorkRes addWork(AddWorkReq addWorkReq) {
 
+		// 校验作业名的唯一性
+		Optional<WorkEntity> workByName = workRepository.findByNameAndAndWorkflowId(addWorkReq.getName(),
+				addWorkReq.getWorkflowId());
+		if (workByName.isPresent()) {
+			throw new IsxAppException("作业名称重复，请重新输入");
+		}
+
 		WorkEntity work = workMapper.addWorkReqToWorkEntity(addWorkReq);
 
 		WorkConfigEntity workConfig = new WorkConfigEntity();
