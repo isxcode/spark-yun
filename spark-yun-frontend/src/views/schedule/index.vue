@@ -82,6 +82,12 @@
                 已中止
               </el-tag>
               <el-tag
+                v-if="scopeSlot.row.status === 'ABORTING'"
+                class="ml-2"
+              >
+                中止中
+              </el-tag>
+              <el-tag
                 v-if="scopeSlot.row.status === 'RUNNING'"
                 class="ml-2"
               >
