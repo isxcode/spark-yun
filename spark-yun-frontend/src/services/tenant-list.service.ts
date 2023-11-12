@@ -49,7 +49,7 @@ export function AddTenantData(params: TenantParam): Promise<any> {
 export function UpdateTenantData(params: TenantParam): Promise<any> {
   return http.request({
     method: 'post',
-    url: '/tenant/updateTenantBySystemAdmin',
+    url: '/tenant/updateTenantForSystemAdmin',
     params: params
   })
 }
