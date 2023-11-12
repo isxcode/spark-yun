@@ -145,13 +145,13 @@ tasks.register('deploy', Exec) {
 
   if (System.properties['os.name'].toString().contains('Mac OS X') || System.properties['os.name'].toString().contains('Linux')) {
     commandLine 'bash', '-c', '''
-      docker buildx install.sh &&
+      docker buildx install &&
       docker buildx use zhiqingyun-builder &&
       docker buildx build --platform linux/amd64,linux/arm64/v8 -t isxcode/zhiqingyun:''' + version_number + ''' -f ./Dockerfile . --push
     '''
   } else {
     commandLine 'cmd', '/c', '''
-      docker buildx install.sh &&
+      docker buildx install &&
       docker buildx use zhiqingyun-builder &&
       docker buildx build --platform linux/amd64,linux/arm64/v8 -t isxcode/zhiqingyun:''' + version_number + ''' -f ./Dockerfile . --push
     '''
