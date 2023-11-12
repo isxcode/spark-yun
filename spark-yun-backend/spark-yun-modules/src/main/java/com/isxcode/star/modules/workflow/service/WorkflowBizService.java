@@ -636,6 +636,7 @@ public class WorkflowBizService {
 				e.setDuration(null);
 				e.setExecStartDateTime(null);
 				e.setExecEndDateTime(null);
+				e.setQuartzHasRun(true);
 			});
 			workInstanceRepository.saveAllAndFlush(workInstances);
 
