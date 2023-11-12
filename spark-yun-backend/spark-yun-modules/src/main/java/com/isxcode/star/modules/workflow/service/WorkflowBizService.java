@@ -633,6 +633,9 @@ public class WorkflowBizService {
 					.findAllByWorkflowInstanceId(reRunFlowReq.getWorkflowInstanceId());
 			workInstances.forEach(e -> {
 				e.setStatus(InstanceStatus.PENDING);
+				e.setDuration(null);
+				e.setExecStartDateTime(null);
+				e.setExecEndDateTime(null);
 			});
 			workInstanceRepository.saveAllAndFlush(workInstances);
 
@@ -640,6 +643,9 @@ public class WorkflowBizService {
 			WorkflowInstanceEntity workflowInstance2 = workflowInstanceRepository
 					.findById(reRunFlowReq.getWorkflowInstanceId()).get();
 			workflowInstance2.setStatus(InstanceStatus.RUNNING);
+			workflowInstance2.setExecStartDateTime(new Date());
+			workflowInstance2.setExecEndDateTime(null);
+			workflowInstance2.setDuration(null);
 			workflowInstanceRepository.saveAndFlush(workflowInstance2);
 
 			// 获取配置工作流配置信息
