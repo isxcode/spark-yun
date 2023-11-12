@@ -69,7 +69,8 @@ export const colConfigs: colConfig[] = [
   {
     prop: 'remark',
     title: '备注',
-    minWidth: 100
+    minWidth: 100,
+    showOverflowTooltip: true
   },
   {
     title: '操作',
@@ -120,7 +121,8 @@ export const DetailColConfigs: colConfig[] = [
   {
     prop: 'remark',
     title: '备注',
-    minWidth: 100
+    minWidth: 100,
+    showOverflowTooltip: true
   },
   {
     title: '操作',
