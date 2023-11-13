@@ -8,7 +8,6 @@ import com.isxcode.star.api.tenant.pojos.res.PageTenantUserRes;
 import com.isxcode.star.api.user.constants.RoleType;
 import com.isxcode.star.api.user.constants.UserStatus;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
-import com.isxcode.star.modules.tenant.mapper.TenantUserMapper;
 import com.isxcode.star.security.user.TenantUserEntity;
 import com.isxcode.star.security.user.TenantUserRepository;
 import com.isxcode.star.security.user.UserEntity;
@@ -54,9 +53,9 @@ public class TenantUserBizService {
 			tenantId = turAddTenantUserReq.getTenantId();
 		}
 
-    // 判断该用户是否已经是成员
-		Optional<TenantUserEntity> tenantUserEntityOptional = tenantUserRepository
-				.findByTenantIdAndUserId(tenantId, turAddTenantUserReq.getUserId());
+		// 判断该用户是否已经是成员
+		Optional<TenantUserEntity> tenantUserEntityOptional = tenantUserRepository.findByTenantIdAndUserId(tenantId,
+				turAddTenantUserReq.getUserId());
 		if (tenantUserEntityOptional.isPresent()) {
 			throw new IsxAppException("该成员已经是项目成员");
 		}

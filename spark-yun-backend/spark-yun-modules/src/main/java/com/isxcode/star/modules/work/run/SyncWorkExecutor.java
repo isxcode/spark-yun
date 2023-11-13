@@ -149,7 +149,6 @@ public class SyncWorkExecutor extends WorkExecutor {
 				.user(targetDatasource.getUsername()).password(aesUtils.decrypt(targetDatasource.getPasswd())).build();
 		workRunContext.getSyncWorkConfig().setTargetDatabase(targetConfig);
 
-
 		// 开始构造SparkSubmit
 		SparkSubmit sparkSubmit = SparkSubmit.builder().verbose(true)
 				.mainClass("com.isxcode.star.plugin.dataSync.jdbc.Execute")

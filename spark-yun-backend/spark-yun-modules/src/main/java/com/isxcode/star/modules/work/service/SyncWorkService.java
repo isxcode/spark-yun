@@ -1,7 +1,6 @@
 package com.isxcode.star.modules.work.service;
 
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
-import com.isxcode.star.common.utils.AesUtils;
 import com.isxcode.star.modules.datasource.entity.DatasourceEntity;
 import com.isxcode.star.modules.datasource.repository.DatasourceRepository;
 import com.isxcode.star.modules.datasource.service.DatasourceService;
@@ -27,8 +26,6 @@ public class SyncWorkService {
 	private final DatasourceRepository datasourceRepository;
 
 	private final DatasourceService datasourceService;
-
-	private final AesUtils aesUtils;
 
 	/**
 	 * 返回筛选后的表名。

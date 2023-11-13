@@ -8,8 +8,6 @@ import com.isxcode.star.api.work.pojos.dto.ClusterConfig;
 import com.isxcode.star.api.work.pojos.dto.CronConfig;
 import com.isxcode.star.api.work.pojos.dto.SyncRule;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
-import com.isxcode.star.modules.cluster.repository.ClusterNodeRepository;
-import com.isxcode.star.modules.cluster.repository.ClusterRepository;
 import com.isxcode.star.modules.datasource.entity.DatasourceEntity;
 import com.isxcode.star.modules.datasource.service.DatasourceService;
 import com.isxcode.star.modules.work.entity.WorkConfigEntity;
@@ -32,10 +30,6 @@ import org.springframework.stereotype.Service;
 @Transactional
 @Slf4j
 public class WorkConfigService {
-
-	private final ClusterRepository clusterRepository;
-
-	private final ClusterNodeRepository clusterNodeRepository;
 
 	private final WorkConfigRepository workConfigRepository;
 

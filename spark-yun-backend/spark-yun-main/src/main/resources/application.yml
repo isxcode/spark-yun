@@ -10,7 +10,7 @@ server:
 spring:
 
   profiles:
-    active: h2
+    active: local
 
   security:
     user:
