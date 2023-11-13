@@ -33,8 +33,6 @@ public class TenantUserBizService {
 
 	private final TenantUserRepository tenantUserRepository;
 
-	private final TenantUserMapper tenantUserMapper;
-
 	public void addTenantUser(AddTenantUserReq turAddTenantUserReq) {
 
 		// 判断对象用户是否合法
@@ -43,13 +41,6 @@ public class TenantUserBizService {
 			throw new IsxAppException("用户不存在");
 		}
 		UserEntity userEntity = userEntityOptional.get();
-
-		// 判断该用户是否已经是成员
-		Optional<TenantUserEntity> tenantUserEntityOptional = tenantUserRepository
-				.findByTenantIdAndUserId(TENANT_ID.get(), turAddTenantUserReq.getUserId());
-		if (tenantUserEntityOptional.isPresent()) {
-			throw new IsxAppException("该成员已经是项目成员");
-		}
 
 		// 如果租户id为空
 		if (Strings.isEmpty(TENANT_ID.get()) && Strings.isEmpty(turAddTenantUserReq.getTenantId())) {
@@ -61,6 +52,13 @@ public class TenantUserBizService {
 			tenantId = TENANT_ID.get();
 		} else {
 			tenantId = turAddTenantUserReq.getTenantId();
+		}
+
+    // 判断该用户是否已经是成员
+		Optional<TenantUserEntity> tenantUserEntityOptional = tenantUserRepository
+				.findByTenantIdAndUserId(tenantId, turAddTenantUserReq.getUserId());
+		if (tenantUserEntityOptional.isPresent()) {
+			throw new IsxAppException("该成员已经是项目成员");
 		}
 
 		// 初始化租户用户
