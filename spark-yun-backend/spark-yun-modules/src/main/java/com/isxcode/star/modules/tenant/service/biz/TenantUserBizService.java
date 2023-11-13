@@ -12,8 +12,10 @@ import com.isxcode.star.security.user.TenantUserEntity;
 import com.isxcode.star.security.user.TenantUserRepository;
 import com.isxcode.star.security.user.UserEntity;
 import com.isxcode.star.security.user.UserRepository;
+
 import java.util.Optional;
 import javax.transaction.Transactional;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
@@ -21,7 +23,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-/** 数据源模块service. */
+/**
+ * 数据源模块service.
+ */
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -47,10 +51,10 @@ public class TenantUserBizService {
 		}
 
 		String tenantId;
-		if (!Strings.isEmpty(TENANT_ID.get())) {
-			tenantId = TENANT_ID.get();
-		} else {
+		if (Strings.isEmpty(TENANT_ID.get())) {
 			tenantId = turAddTenantUserReq.getTenantId();
+		} else {
+			tenantId = TENANT_ID.get();
 		}
 
 		// 判断该用户是否已经是成员
