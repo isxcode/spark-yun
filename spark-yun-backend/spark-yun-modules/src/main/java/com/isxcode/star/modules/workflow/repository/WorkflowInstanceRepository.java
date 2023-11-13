@@ -34,9 +34,10 @@ public interface WorkflowInstanceRepository extends JpaRepository<WorkflowInstan
 	}
 
 	@Query(value = "select " + "   new com.isxcode.star.api.instance.pojos.ao.WfiWorkflowInstanceAo(" + "   W.id,"
-			+ "   WF.name," + "   W.execStartDateTime," + "   W.execEndDateTime," + "   W.status,"
-			+ "   W.instanceType) " + "from WorkflowInstanceEntity W left join WorkflowEntity WF on W.flowId = WF.id "
-			+ " where WF.name LIKE %:keyword% AND W.tenantId=:tenantId order by W.createDateTime desc")
+			+ "   WF.name," + "   W.duration," + "   W.nextPlanDateTime," + "   W.planStartDateTime,"
+			+ "   W.execStartDateTime," + "   W.execEndDateTime," + "   W.status," + "   W.instanceType) "
+			+ "from WorkflowInstanceEntity W left join WorkflowEntity WF on W.flowId = WF.id "
+			+ " where WF.name LIKE %:keyword% AND W.tenantId=:tenantId order by W.lastModifiedDateTime desc")
 	Page<WfiWorkflowInstanceAo> pageWorkFlowInstances(@Param("tenantId") String tenantId,
 			@Param("keyword") String searchKeyWord, Pageable pageable);
 }

@@ -62,6 +62,16 @@
               </el-tag>
             </div>
           </template>
+          <template #defaultNodeTag="scopeSlot">
+            <div class="btn-group">
+              <el-tag v-if="scopeSlot.row.defaultClusterNode" class="ml-2" type="success">
+                是
+              </el-tag>
+              <el-tag v-if="!scopeSlot.row.defaultClusterNode" class="ml-2" type="danger">
+                否
+              </el-tag>
+            </div>
+          </template>
           <template #options="scopeSlot">
             <div class="btn-group">
               <span @click="showLog(scopeSlot.row)">日志</span>
@@ -81,11 +91,17 @@
                     <el-dropdown-item @click="checkData(scopeSlot.row)">
                       检测
                     </el-dropdown-item>
+                    <!-- <el-dropdown-item @click="setDefaultNode(scopeSlot.row)">
+                      设置默认节点
+                    </el-dropdown-item> -->
                     <el-dropdown-item @click="installData(scopeSlot.row)">
                       安装
                     </el-dropdown-item>
                     <el-dropdown-item @click="uninstallData(scopeSlot.row)">
                       卸载
+                    </el-dropdown-item>
+                    <el-dropdown-item @click="cleanData(scopeSlot.row)">
+                      清理
                     </el-dropdown-item>
                     <el-dropdown-item @click="deleteData(scopeSlot.row)">
                       删除
@@ -112,7 +128,19 @@ import AddModal from './add-modal/index.vue'
 import ShowLog from './show-log/index.vue'
 
 import { PointTableConfig, FormData } from '../computer-group.config'
-import { GetComputerPointData, CheckComputerPointData, AddComputerPointData, InstallComputerPointData, UninstallComputerPointData, DeleteComputerPointData, StopComputerPointData, StartComputerPointData, EditComputerPointData } from '@/services/computer-group.service'
+import {
+  GetComputerPointData,
+  CheckComputerPointData,
+  AddComputerPointData,
+  InstallComputerPointData,
+  UninstallComputerPointData,
+  DeleteComputerPointData,
+  StopComputerPointData,
+  StartComputerPointData,
+  EditComputerPointData,
+  CleanComputerPointData,
+SetDefaultComputerPointNode
+} from '@/services/computer-group.service'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useRoute } from 'vue-router'
 
@@ -133,9 +161,9 @@ const loading = ref(false)
 const networkError = ref(false)
 const addModalRef = ref(null)
 const showLogRef = ref(null)
-const timer = ref(null)
+const timer = ref()
 
-function initData(tableLoading?: boolean) {
+function initData(tableLoading?: boolean, type?: string) {
   loading.value = tableLoading ? false : true
   networkError.value = networkError.value || false
   GetComputerPointData({
@@ -145,8 +173,18 @@ function initData(tableLoading?: boolean) {
     clusterId: route.query.id
   })
     .then((res: any) => {
-      tableConfig.tableData = res.data.content
-      tableConfig.pagination.total = res.data.totalElements
+      if (type) {
+        res.data.content.forEach((item: any) => {
+          tableConfig.tableData.forEach((col: any) => {
+            if (item.id === col.id) {
+              col.status = item.status
+            }
+          })
+        })
+      } else {
+        tableConfig.tableData = res.data.content
+        tableConfig.pagination.total = res.data.totalElements
+      }
       loading.value = false
       tableConfig.loading = false
       networkError.value = false
@@ -202,7 +240,7 @@ function editNodeData(data: any) {
 
 // 查看日志
 function showLog(e: any) {
-  showLogRef.value.showModal(e.agentLog)
+  showLogRef.value.showModal(e.id, 'cluster')
 }
 
 // 停止
@@ -265,6 +303,22 @@ function uninstallData(data: any) {
     })
 }
 
+// 清理
+function cleanData(data: any) {
+  data.cleanLoading = true
+  CleanComputerPointData({
+    engineNodeId: data.id
+  })
+    .then((res: any) => {
+      ElMessage.success(res.msg)
+      data.cleanLoading = false
+      initData(true)
+    })
+    .catch(() => {
+      data.cleanLoading = false
+    })
+}
+
 // 检测
 function checkData(data: any) {
   data.checkLoading = true
@@ -279,6 +333,20 @@ function checkData(data: any) {
     .catch(() => {
       data.checkLoading = false
     })
+}
+
+// 设置默认节点
+function setDefaultNode(data: any) {
+  SetDefaultComputerPointNode({
+    clusterNodeId: data.id
+  }).then((res: any) => {
+    data.checkLoading = false
+    ElMessage.success(res.msg)
+    initData(true)
+  })
+  .catch(() => {
+    data.checkLoading = false
+  })
 }
 
 // 删除
@@ -318,7 +386,7 @@ function handleCurrentChange(e: number) {
 onMounted(() => {
   initData()
   timer.value = setInterval(() => {
-    initData(true)
+    initData(true, 'interval')
   }, 3000)
 })
 onUnmounted(() => {
@@ -332,7 +400,7 @@ onUnmounted(() => {
 <style lang="scss">
 .zqy-seach-table {
   .click-show-more {
-    font-size: $--app-small-font-size;
+    font-size: getCssVar('font-size', 'extra-small');
   }
 
   &.zqy-computer-node {

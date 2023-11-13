@@ -219,6 +219,14 @@ export function ExportWorkflowData(params: any): Promise<any> {
     params: params
   })
 }
+// 作业流配置保存
+export function SaveWorkflowConfigData(params: any): Promise<any> {
+  return http.request({
+    method: 'post',
+    url: '/workflow/configWorkflowSetting',
+    params: params
+  })
+}
 // 导入作业--流程图
 export function ImportWorkflowData(params: any): Promise<any> {
   return http.request({
@@ -233,6 +241,14 @@ export function PublishWorkflowData(params: any): Promise<any> {
   return http.request({
     method: 'post',
     url: '/vip/work/deployWorkflow',
+    params: params
+  })
+}
+// 下线作业流--流程图
+export function UnderlineWorkflowData(params: any): Promise<any> {
+  return http.request({
+    method: 'post',
+    url: '/vip/work/killWorkflow',
     params: params
   })
 }

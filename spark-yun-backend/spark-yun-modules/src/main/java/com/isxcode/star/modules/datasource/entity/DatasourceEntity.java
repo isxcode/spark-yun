@@ -54,6 +54,10 @@ public class DatasourceEntity {
 
 	private String connectLog;
 
+	private String metastoreUris;
+
+	private String driverId;
+
 	@CreatedDate
 	private LocalDateTime createDateTime;
 

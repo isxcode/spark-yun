@@ -1,0 +1,38 @@
+server:
+  port: 8080
+
+spring:
+
+  security:
+    user:
+      name: admin
+      password: admin123
+
+  jpa:
+    database: h2
+
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:file:/var/lib/zhiqingyun/h2/data
+    username: root
+    password: root123
+
+  flyway:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:file:/var/lib/zhiqingyun/h2/data
+    user: root
+    password: root123
+    locations: classpath:db/migration/h2
+
+logging:
+  level:
+    root: info
+
+spark-yun:
+  default-agent-port: 30177
+  tmp-dir: /tmp
+
+isx-app:
+  use-port: true
+  use-ssl: false
+  resources-path: /var/lib/zhiqingyun

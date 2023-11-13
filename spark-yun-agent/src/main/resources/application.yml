@@ -10,3 +10,5 @@ management:
     metrics:
       enabled: true
 
+spark-yun:
+  submit-timeout: 300 # 提交作业的超时时间

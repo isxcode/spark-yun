@@ -79,6 +79,7 @@ public class UserBizService {
 		// 如果是系统管理员直接返回
 		if (RoleType.SYS_ADMIN.equals(userEntity.getRoleCode())) {
 			return LoginRes.builder().tenantId(userEntity.getCurrentTenantId()).username(userEntity.getUsername())
+					.phone(userEntity.getPhone()).email(userEntity.getEmail()).remark(userEntity.getRemark())
 					.token(jwtToken).role(userEntity.getRoleCode()).build();
 		}
 
@@ -110,8 +111,8 @@ public class UserBizService {
 		}
 
 		// 生成token并返回
-		return new LoginRes(userEntity.getUsername(), jwtToken, currentTenantId,
-				tenantUserEntityOptional.get().getRoleCode());
+		return new LoginRes(userEntity.getUsername(), userEntity.getPhone(), userEntity.getEmail(),
+				userEntity.getRemark(), jwtToken, currentTenantId, tenantUserEntityOptional.get().getRoleCode());
 	}
 
 	public GetUserRes getUser() {
@@ -166,8 +167,8 @@ public class UserBizService {
 		}
 
 		// 生成token并返回
-		return new GetUserRes(userEntity.getUsername(), jwtToken, currentTenantId,
-				tenantUserEntityOptional.get().getRoleCode());
+		return new GetUserRes(userEntity.getUsername(), userEntity.getPhone(), userEntity.getEmail(),
+				userEntity.getRemark(), jwtToken, currentTenantId, tenantUserEntityOptional.get().getRoleCode());
 	}
 
 	public void logout() {
@@ -264,7 +265,7 @@ public class UserBizService {
 		Page<UserEntity> userEntitiesPage = userRepository.searchAllUser(usrQueryAllUsersReq.getSearchKeyWord(),
 				PageRequest.of(usrQueryAllUsersReq.getPage(), usrQueryAllUsersReq.getPageSize()));
 
-		return userMapper.userEntityToUsrQueryAllUsersResPage(userEntitiesPage);
+		return userEntitiesPage.map(userMapper::userEntityToUsrQueryAllUsersRes);
 	}
 
 	public Page<PageEnableUserRes> pageEnableUser(PageEnableUserReq usrQueryAllEnableUsersReq) {
@@ -274,5 +275,18 @@ public class UserBizService {
 				PageRequest.of(usrQueryAllEnableUsersReq.getPage(), usrQueryAllEnableUsersReq.getPageSize()));
 
 		return userMapper.userEntityToUsrQueryAllEnableUsersResPage(userEntitiesPage);
+	}
+
+	public void updateUserInfo(UpdateUserInfoReq updateUserInfoReq) {
+
+		Optional<UserEntity> userEntityOptional = userRepository.findById(USER_ID.get());
+
+		if (!userEntityOptional.isPresent()) {
+			throw new IsxAppException("用户不存在");
+		}
+
+		UserEntity userEntity = userMapper.usrUpdateUserInfoToUserEntity(updateUserInfoReq, userEntityOptional.get());
+
+		userRepository.save(userEntity);
 	}
 }

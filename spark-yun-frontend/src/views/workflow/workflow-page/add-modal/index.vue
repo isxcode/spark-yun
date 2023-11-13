@@ -13,9 +13,8 @@
       >
         <el-input
           v-model="formData.name"
-          maxlength="20"
+          maxlength="200"
           placeholder="请输入"
-          show-word-limit
         />
       </el-form-item>
       <el-form-item
@@ -26,6 +25,7 @@
           v-model="formData.workType"
           placeholder="请选择"
           :disabled="formData.id ? true : false"
+          @change="workTypeChange"
         >
           <el-option
             v-for="item in typeList"
@@ -35,6 +35,64 @@
           />
         </el-select>
       </el-form-item>
+      <template v-if="renderSense === 'new'">
+        <el-form-item label="计算集群" prop="clusterId" v-if="['BASH', 'PYTHON', 'DATA_SYNC_JDBC', 'SPARK_SQL'].includes(formData.workType)">
+          <el-select
+            v-model="formData.clusterId"
+            placeholder="请选择"
+            @change="clusterIdChangeEvent"
+            @visible-change="getClusterList"
+          >
+            <el-option
+              v-for="item in clusterList"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="集群节点" prop="clusterNodeId" v-if="['BASH', 'PYTHON'].includes(formData.workType)">
+          <el-select v-model="formData.clusterNodeId" placeholder="请选择" @visible-change="getClusterNodeList">
+            <el-option
+              v-for="item in clusterNodeList"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="是否连接hive" v-if="['SPARK_SQL'].includes(formData.workType)">
+          <el-switch v-model="formData.enableHive" @change="enableHiveChange" />
+        </el-form-item>
+        <el-form-item label="Hive数据源" :prop="formData.enableHive ? 'datasourceId' : ''" v-if="formData.enableHive && ['SPARK_SQL'].includes(formData.workType)">
+          <el-select
+            v-model="formData.datasourceId"
+            placeholder="请选择"
+            @visible-change="getDataSourceList($event, 'HIVE')"
+          >
+            <el-option
+              v-for="item in dataSourceList"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="数据源" prop="datasourceId" v-if="['EXE_JDBC', 'QUERY_JDBC'].includes(formData.workType)">
+          <el-select
+            v-model="formData.datasourceId"
+            placeholder="请选择"
+            @visible-change="getDataSourceList"
+          >
+            <el-option
+              v-for="item in dataSourceList"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
+        </el-form-item>
+      </template>
       <el-form-item label="备注">
         <el-input
           v-model="formData.remark"
@@ -53,9 +111,17 @@
 import { reactive, defineExpose, ref, nextTick } from 'vue'
 import BlockModal from '@/components/block-modal/index.vue'
 import { ElMessage, FormInstance, FormRules } from 'element-plus'
+import { GetComputerGroupList, GetComputerPointData } from '@/services/computer-group.service';
+import { GetDatasourceList } from '@/services/datasource.service';
 
 const form = ref<FormInstance>()
 const callback = ref<any>()
+const clusterList = ref([])  // 计算集群
+const clusterNodeList = ref([])  // 集群节点
+const dataSourceList = ref([])  // 数据源
+const showForm = ref(true)
+const renderSense = ref('')
+
 const modelConfig = reactive({
   title: '添加作业',
   visible: false,
@@ -78,6 +144,10 @@ const modelConfig = reactive({
 const formData = reactive({
   name: '',
   workType: '',
+  clusterId: '', // 计算集群
+  clusterNodeId: '', // 集群节点
+  datasourceId: '', // 数据源
+  enableHive: false,
   remark: '',
   id: ''
 })
@@ -93,6 +163,18 @@ const typeList = reactive([
   {
     label: 'SparkSql查询作业',
     value: 'SPARK_SQL'
+  },
+  {
+    label: '数据同步作业',
+    value: 'DATA_SYNC_JDBC'
+  },
+  {
+    label: 'bash作业',
+    value: 'BASH'
+  },
+  {
+    label: 'python作业',
+    value: 'PYTHON'
   }
 ])
 const rules = reactive<FormRules>({
@@ -109,6 +191,27 @@ const rules = reactive<FormRules>({
       message: '请选择类型',
       trigger: [ 'blur', 'change' ]
     }
+  ],
+  clusterId: [
+    {
+      required: true,
+      message: '请选择计算集群',
+      trigger: [ 'blur', 'change' ]
+    }
+  ],
+  clusterNodeId: [
+    {
+      required: true,
+      message: '请选择集群节点',
+      trigger: [ 'blur', 'change' ]
+    }
+  ],
+  datasourceId: [
+    {
+      required: true,
+      message: '请选择数据源',
+      trigger: [ 'blur', 'change' ]
+    }
   ]
 })
 
@@ -116,17 +219,27 @@ function showModal(cb: () => void, data: any): void {
   callback.value = cb
   modelConfig.visible = true
   if (data && data.id) {
-    formData.name = data.name
-    formData.workType = data.workType
-    formData.remark = data.remark
-    formData.id = data.id
+    Object.keys(data).forEach((key: string) => {
+      formData[key] = data[key]
+    });
+    formData.clusterId && getClusterList(true)
+    formData.clusterNodeId && getClusterNodeList(true)
+    formData.datasourceId && getDataSourceList(true)
+
     modelConfig.title = '编辑作业'
+    renderSense.value = 'edit'
   } else {
     formData.name = ''
     formData.workType = ''
     formData.remark = ''
+    formData.clusterId = ''
+    formData.clusterNodeId = ''
+    formData.datasourceId = ''
+    formData.enableHive = false
+    
     formData.id = ''
     modelConfig.title = '添加作业'
+    renderSense.value = 'new'
   }
   nextTick(() => {
     form.value?.resetFields()
@@ -152,14 +265,83 @@ function okEvent() {
         })
         .catch((err: any) => {
           modelConfig.okConfig.loading = false
-          ElMessage.error(err)
         })
     } else {
       ElMessage.warning('请将表单输入完整')
     }
   })
 }
+function enableHiveChange() {
+  showForm.value = false
+  nextTick(() => {
+    showForm.value = true
+  })
+}
+function clusterIdChangeEvent() {
+  formData.clusterNodeId = ''
+}
 
+function getClusterList(e: boolean) {
+  if (e) {
+    GetComputerGroupList({
+      page: 0,
+      pageSize: 10000,
+      searchKeyWord: ''
+    }).then((res: any) => {
+      clusterList.value = res.data.content.map((item: any) => {
+        return {
+          label: item.name,
+          value: item.id
+        }
+      })
+    }).catch(() => {
+      clusterList.value = []
+    })
+  }
+}
+function getClusterNodeList(e: boolean) {
+  if (e && formData.clusterId) {
+    GetComputerPointData({
+      page: 0,
+      pageSize: 10000,
+      searchKeyWord: '',
+      clusterId: formData.clusterId
+    }).then((res: any) => {
+      clusterNodeList.value = res.data.content.map((item: any) => {
+        return {
+          label: item.name,
+          value: item.id
+        }
+      })
+    }).catch(() => {
+      clusterNodeList.value = []
+    })
+  }
+}
+function getDataSourceList(e: boolean, searchType?: string) {
+  if (e) {
+    GetDatasourceList({
+      page: 0,
+      pageSize: 10000,
+      searchKeyWord: searchType || ''
+    }).then((res: any) => {
+      dataSourceList.value = res.data.content.map((item: any) => {
+        return {
+          label: item.name,
+          value: item.id
+        }
+      })
+    })
+    .catch(() => {
+      dataSourceList.value = []
+    })
+  }
+}
+function workTypeChange() {
+  formData.datasourceId = ''
+  formData.clusterId = ''
+  formData.clusterNodeId = ''
+}
 function closeEvent() {
   modelConfig.visible = false
 }

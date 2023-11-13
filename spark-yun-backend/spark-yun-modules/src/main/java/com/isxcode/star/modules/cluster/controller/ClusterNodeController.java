@@ -2,12 +2,15 @@ package com.isxcode.star.modules.cluster.controller;
 
 import com.isxcode.star.api.cluster.pojos.req.*;
 import com.isxcode.star.api.cluster.pojos.res.EnoQueryNodeRes;
+import com.isxcode.star.api.cluster.pojos.res.GetClusterNodeRes;
 import com.isxcode.star.api.main.constants.ModuleCode;
 import com.isxcode.star.common.annotations.successResponse.SuccessResponse;
 import com.isxcode.star.modules.cluster.service.biz.ClusterNodeBizService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+
 import javax.validation.Valid;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -94,4 +97,21 @@ public class ClusterNodeController {
 
 		clusterNodeBizService.removeAgent(removeAgentReq);
 	}
+
+	@Operation(summary = "清理代理接口")
+	@PostMapping("/cleanAgent")
+	@SuccessResponse("清理成功")
+	public void cleanAgent(@Valid @RequestBody CleanAgentReq cleanAgentReq) {
+
+		clusterNodeBizService.cleanAgent(cleanAgentReq);
+	}
+
+	@Operation(summary = "获取当前集群节点信息")
+	@PostMapping("/getClusterNode")
+	@SuccessResponse("获取成功")
+	public GetClusterNodeRes getClusterNode(@Valid @RequestBody GetClusterNodeReq getClusterNodeReq) {
+
+		return clusterNodeBizService.getClusterNode(getClusterNodeReq);
+	}
+
 }

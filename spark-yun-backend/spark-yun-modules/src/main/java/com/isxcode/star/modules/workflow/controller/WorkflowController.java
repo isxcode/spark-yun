@@ -1,6 +1,8 @@
 package com.isxcode.star.modules.workflow.controller;
 
 import com.isxcode.star.api.main.constants.ModuleCode;
+import com.isxcode.star.api.work.pojos.req.GetWorkflowDefaultClusterReq;
+import com.isxcode.star.api.work.pojos.res.GetWorkflowDefaultClusterRes;
 import com.isxcode.star.api.workflow.pojos.req.*;
 import com.isxcode.star.api.workflow.pojos.res.GetRunWorkInstancesRes;
 import com.isxcode.star.api.workflow.pojos.res.GetWorkflowRes;
@@ -11,8 +13,10 @@ import com.isxcode.star.modules.workflow.service.WorkflowConfigBizService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
+
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -150,6 +154,23 @@ public class WorkflowController {
 	public void configWorkflow(@Valid @RequestBody ConfigWorkflowReq configWorkflowReq) {
 
 		workflowConfigBizService.configWorkflow(configWorkflowReq);
+	}
+
+	@Operation(summary = "配置作业流接口（非dag图保存的内容）")
+	@PostMapping("/configWorkflowSetting")
+	@SuccessResponse("保存成功")
+	public void configWorkflowSetting(@Valid @RequestBody ConfigWorkflowSettingReq configWorkflowSettingReq) {
+
+		workflowConfigBizService.configWorkflowSetting(configWorkflowSettingReq);
+	}
+
+	@Operation(summary = "获取作业流默认计算引擎")
+	@PostMapping("/getWorkflowDefaultCluster")
+	@SuccessResponse("查询成功")
+	public GetWorkflowDefaultClusterRes getWorkflowDefaultCluster(
+			@Valid @RequestBody GetWorkflowDefaultClusterReq getWorkflowDefaultClusterReq) {
+
+		return workflowBizService.getWorkflowDefaultCluster(getWorkflowDefaultClusterReq);
 	}
 
 	// @Operation(summary = "收藏工作流接口")

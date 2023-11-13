@@ -1,7 +1,7 @@
 tasks:
   - name: 本地启动
-    init: bash /workspace/spark-yun/.vscode/install-spark-standalone.sh
-    command: ./gradlew start
+    init: ./gradlew install
+    command: ./gradlew package
 ports:
   - name: server
     port: 8080
@@ -22,6 +22,10 @@ ports:
   - name: spark-worker
     port: 8082
     description: spark worker
+    visibility: public
+  - name: isxcode mysql
+    port: 30306
+    description: mysql port
     visibility: public
 
 # 安装必要插件

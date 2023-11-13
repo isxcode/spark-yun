@@ -20,4 +20,14 @@ public class PageWorkRes {
 	private String status;
 
 	private String corn;
+
+	private String datasourceId;
+
+	private String clusterId;
+
+	private String clusterNodeId;
+
+	private Boolean enableHive;
+
+	private String configId;
 }

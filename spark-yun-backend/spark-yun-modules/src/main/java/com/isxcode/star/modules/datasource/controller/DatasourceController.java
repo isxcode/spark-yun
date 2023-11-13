@@ -1,23 +1,21 @@
 package com.isxcode.star.modules.datasource.controller;
 
 import com.isxcode.star.api.datasource.pojos.req.*;
-import com.isxcode.star.api.datasource.pojos.res.GetConnectLogRes;
-import com.isxcode.star.api.datasource.pojos.res.PageDatasourceRes;
-import com.isxcode.star.api.datasource.pojos.res.TestConnectRes;
+import com.isxcode.star.api.datasource.pojos.res.*;
 import com.isxcode.star.api.main.constants.ModuleCode;
 import com.isxcode.star.api.user.constants.RoleType;
 import com.isxcode.star.common.annotations.successResponse.SuccessResponse;
 import com.isxcode.star.modules.datasource.service.biz.DatasourceBizService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+
 import javax.validation.Valid;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @Tag(name = "数据源模块")
 @RestController
@@ -79,5 +77,49 @@ public class DatasourceController {
 	public GetConnectLogRes getConnectLog(@Valid @RequestBody GetConnectLogReq getConnectLogReq) {
 
 		return datasourceBizService.getConnectLog(getConnectLogReq);
+	}
+
+	@PostMapping("/uploadDatabaseDriver")
+	@Operation(summary = "上传数据源驱动(Swagger有Bug不能使用)")
+	@SuccessResponse("上传成功")
+	public void uploadDatabaseDriver(@RequestParam("driver") MultipartFile driver,
+			@RequestParam("dbType") String dbType, @RequestParam("name") String name,
+			@RequestParam("remark") String remark) {
+
+		datasourceBizService.uploadDatabaseDriver(driver, dbType, name, remark);
+	}
+
+	@PostMapping("/pageDatabaseDriver")
+	@Operation(summary = "查询数据库驱动")
+	@SuccessResponse("查询成功")
+	public Page<PageDatabaseDriverRes> pageDatabaseDriver(@RequestBody PageDatabaseDriverReq pageDatabaseDriverReq) {
+
+		return datasourceBizService.pageDatabaseDriver(pageDatabaseDriverReq);
+	}
+
+	@PostMapping("/deleteDatabaseDriver")
+	@Operation(summary = "删除数据库驱动")
+	@SuccessResponse("删除成功")
+	public void deleteDatabaseDriver(@RequestBody DeleteDatabaseDriverReq deleteDatabaseDriverReq) {
+
+		datasourceBizService.deleteDatabaseDriver(deleteDatabaseDriverReq);
+	}
+
+	@PostMapping("/settingDefaultDatabaseDriver")
+	@Operation(summary = "设置默认驱动接口")
+	@SuccessResponse("设置成功")
+	public void settingDefaultDatabaseDriver(
+			@RequestBody SettingDefaultDatabaseDriverReq settingDefaultDatabaseDriverReq) {
+
+		datasourceBizService.settingDefaultDatabaseDriver(settingDefaultDatabaseDriverReq);
+	}
+
+	@PostMapping("/getDefaultDatabaseDriver")
+	@Operation(summary = "获取默认驱动接口")
+	@SuccessResponse("获取成功")
+	public GetDefaultDatabaseDriverRes getDefaultDatabaseDriver(
+			@RequestBody GetDefaultDatabaseDriverReq getDefaultDatabaseDriverReq) {
+
+		return datasourceBizService.getDefaultDatabaseDriver(getDefaultDatabaseDriverReq);
 	}
 }

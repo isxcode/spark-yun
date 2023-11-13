@@ -8,13 +8,14 @@ import com.isxcode.star.api.tenant.pojos.res.PageTenantUserRes;
 import com.isxcode.star.api.user.constants.RoleType;
 import com.isxcode.star.api.user.constants.UserStatus;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
-import com.isxcode.star.modules.tenant.mapper.TenantUserMapper;
 import com.isxcode.star.security.user.TenantUserEntity;
 import com.isxcode.star.security.user.TenantUserRepository;
 import com.isxcode.star.security.user.UserEntity;
 import com.isxcode.star.security.user.UserRepository;
+
 import java.util.Optional;
 import javax.transaction.Transactional;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
@@ -22,7 +23,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-/** 数据源模块service. */
+/**
+ * 数据源模块service.
+ */
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -33,8 +36,6 @@ public class TenantUserBizService {
 
 	private final TenantUserRepository tenantUserRepository;
 
-	private final TenantUserMapper tenantUserMapper;
-
 	public void addTenantUser(AddTenantUserReq turAddTenantUserReq) {
 
 		// 判断对象用户是否合法
@@ -44,20 +45,27 @@ public class TenantUserBizService {
 		}
 		UserEntity userEntity = userEntityOptional.get();
 
+		// 如果租户id为空
+		if (Strings.isEmpty(TENANT_ID.get()) && Strings.isEmpty(turAddTenantUserReq.getTenantId())) {
+			throw new IsxAppException("请指定租户id");
+		}
+
+		String tenantId;
+		if (Strings.isEmpty(TENANT_ID.get())) {
+			tenantId = turAddTenantUserReq.getTenantId();
+		} else {
+			tenantId = TENANT_ID.get();
+		}
+
 		// 判断该用户是否已经是成员
-		Optional<TenantUserEntity> tenantUserEntityOptional = tenantUserRepository
-				.findByTenantIdAndUserId(TENANT_ID.get(), turAddTenantUserReq.getUserId());
+		Optional<TenantUserEntity> tenantUserEntityOptional = tenantUserRepository.findByTenantIdAndUserId(tenantId,
+				turAddTenantUserReq.getUserId());
 		if (tenantUserEntityOptional.isPresent()) {
 			throw new IsxAppException("该成员已经是项目成员");
 		}
 
-		// 如果租户id为空
-		if (Strings.isEmpty(TENANT_ID.get())) {
-			throw new IsxAppException("请指定租户id");
-		}
-
 		// 初始化租户用户
-		TenantUserEntity tenantUserEntity = TenantUserEntity.builder().tenantId(TENANT_ID.get())
+		TenantUserEntity tenantUserEntity = TenantUserEntity.builder().tenantId(tenantId)
 				.userId(turAddTenantUserReq.getUserId()).status(UserStatus.ENABLE).build();
 
 		// 初始化用户权限
@@ -69,7 +77,7 @@ public class TenantUserBizService {
 
 		// 判断用户当前是否有租户
 		if (Strings.isEmpty(userEntity.getCurrentTenantId())) {
-			userEntity.setCurrentTenantId(TENANT_ID.get());
+			userEntity.setCurrentTenantId(tenantId);
 			userRepository.save(userEntity);
 		}
 
@@ -79,7 +87,15 @@ public class TenantUserBizService {
 
 	public Page<PageTenantUserRes> pageTenantUser(PageTenantUserReq turAddTenantUserReq) {
 
-		return tenantUserRepository.searchTenantUser(TENANT_ID.get(), turAddTenantUserReq.getSearchKeyWord(),
+		// 如果请求体中有tenantId，使用请求体中的
+		String tenantId;
+		if (!Strings.isEmpty(turAddTenantUserReq.getTenantId())) {
+			tenantId = turAddTenantUserReq.getTenantId();
+		} else {
+			tenantId = TENANT_ID.get();
+		}
+
+		return tenantUserRepository.searchTenantUser(tenantId, turAddTenantUserReq.getSearchKeyWord(),
 				PageRequest.of(turAddTenantUserReq.getPage(), turAddTenantUserReq.getPageSize()));
 	}
 

@@ -64,13 +64,20 @@
               <el-tag v-if="scopeSlot.row.status === 'UN_AUTO'">
                 未运行
               </el-tag>
+              <el-tag v-if="scopeSlot.row.status === 'STOP'">
+                已下线
+              </el-tag>
+              <el-tag v-if="scopeSlot.row.status === 'PUBLISHED'">
+                已发布
+              </el-tag>
             </div>
           </template>
           <template #options="scopeSlot">
             <div class="btn-group">
               <span @click="editData(scopeSlot.row)">编辑</span>
               <span @click="deleteData(scopeSlot.row)">删除</span>
-              <!-- <span v-if="!scopeSlot.row.pubLoading" @click="publishData(scopeSlot.row)">发布</span> -->
+              <span v-if="scopeSlot.row.status !== 'STOP'" @click="underlineWorkFlow(scopeSlot.row)">下线</span>
+              <span v-else @click="publishWorkFlow(scopeSlot.row)">发布</span>
               <!-- <el-icon v-else class="is-loading"><Loading /></el-icon> -->
             </div>
           </template>
@@ -87,15 +94,18 @@ import Breadcrumb from '@/layout/bread-crumb/index.vue'
 import BlockTable from '@/components/block-table/index.vue'
 import LoadingPage from '@/components/loading/index.vue'
 import AddModal from './add-modal/index.vue'
-import { useState } from '@/hooks/useStore'
+// import { useState } from '@/hooks/useStore'
 
 import { BreadCrumbList, TableConfig, FormData } from './workflow.config'
-import { GetWorkflowList, AddWorkflowData, UpdateWorkflowData, DeleteWorkflowData } from '@/services/workflow.service'
+import { GetWorkflowList, AddWorkflowData, UpdateWorkflowData, DeleteWorkflowData, UnderlineWorkflowData, PublishWorkflowData } from '@/services/workflow.service'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useRouter } from 'vue-router'
+import { useAuthStore } from '@/store/useAuth'
 
 const router = useRouter()
-const state = useState(['tenantId' ], 'authStoreModule')
+
+const authStore = useAuthStore()
+// const state = useState(['tenantId' ], 'authStoreModule')
 
 const breadCrumbList = reactive(BreadCrumbList)
 const tableConfig: any = reactive(TableConfig)
@@ -160,19 +170,27 @@ function editData(data: any) {
   }, data)
 }
 
-// TODO:本版本暂未实现
-// function publishData(data: any) {
-//     data.pubLoading = true
-//     CheckDatasourceData({
-//         datasourceId: data.id
-//     }).then((res: any) => {
-//         data.pubLoading = false
-//         ElMessage.success(res.msg)
-//         initData()
-//     }).catch((error: any) => {
-//         data.pubLoading = false
-//     })
-// }
+// 下线工作流
+function underlineWorkFlow(data: any) {
+  UnderlineWorkflowData({
+    workflowId: data.id
+  }).then((res: any) => {
+    initData()
+    ElMessage.success(res.msg)
+  }).catch(() => {
+  })
+}
+
+// 发布作业流
+function publishWorkFlow(data: any) {
+  PublishWorkflowData({
+      workflowId: data.id
+  }).then((res: any) => {
+      ElMessage.success(res.msg)
+      initData()
+  }).catch(() => {
+  })
+}
 
 // 删除
 function deleteData(data: any) {
@@ -183,7 +201,7 @@ function deleteData(data: any) {
   }).then(() => {
     DeleteWorkflowData({
       workflowId: data.id,
-      Tenant: state.tenantId.value
+      Tenant: authStore.tenantId
     })
       .then((res: any) => {
         ElMessage.success(res.msg)
@@ -228,9 +246,9 @@ onMounted(() => {
 .zqy-seach-table {
   .name-click {
     cursor: pointer;
-    color: $--app-unclick-color;
+    color: getCssVar('color', 'primary', 'light-5');
     &:hover {
-      color: $--app-primary-color;
+      color: getCssVar('color', 'primary');;
     }
   }
 }

@@ -33,6 +33,9 @@ public interface ModuleCode {
 	/** 许可证模块. */
 	String LICENSE = "/lic";
 
+	/** 资源文件模块. */
+	String FILE = "/file";
+
 	/** VIP作业模块. */
 	String VIP_WORK = "/vip/work";
 

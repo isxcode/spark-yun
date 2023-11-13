@@ -103,10 +103,16 @@ public class WorkflowRunEventListener {
 				// 如果父级有错，则状态直接变更为失败
 				workInstance.setStatus(InstanceStatus.FAIL);
 				workInstance.setSubmitLog("父级执行失败");
-				workInstance.setExecEndDateTime(new Date());
+				if (workInstance.getExecStartDateTime() != null) {
+					workInstance.setExecEndDateTime(new Date());
+					workInstance.setDuration(
+							(System.currentTimeMillis() - workInstance.getExecStartDateTime().getTime()) / 1000);
+				}
 			} else if (parentIsBreak || InstanceStatus.BREAK.equals(workInstance.getStatus())) {
 				workInstance.setStatus(InstanceStatus.BREAK);
 				workInstance.setExecEndDateTime(new Date());
+				workInstance.setDuration(
+						(System.currentTimeMillis() - workInstance.getExecStartDateTime().getTime()) / 1000);
 			} else {
 				workInstance.setStatus(InstanceStatus.RUNNING);
 			}
@@ -146,7 +152,7 @@ public class WorkflowRunEventListener {
 			} else {
 				// 通过versionId封装workRunContext
 				VipWorkVersionEntity workVersion = vipWorkVersionRepository.findById(event.getVersionId()).get();
-				workRunContext = WorkflowUtils.genWorkRunContext(workInstance.getId(), workVersion);
+				workRunContext = WorkflowUtils.genWorkRunContext(workInstance.getId(), workVersion, event);
 			}
 
 			// 同步执行作业
@@ -182,6 +188,8 @@ public class WorkflowRunEventListener {
 				workflowInstance.setRunLog(workflowInstanceRepository.getWorkflowLog(event.getFlowInstanceId()) + "\n"
 						+ LocalDateTime.now() + (flowIsError ? WorkLog.ERROR_INFO : WorkLog.SUCCESS_INFO)
 						+ (flowIsError ? "运行失败" : "运行成功"));
+				workflowInstance.setDuration(
+						(System.currentTimeMillis() - workflowInstance.getExecStartDateTime().getTime()) / 1000);
 				workflowInstance.setExecEndDateTime(new Date());
 				workflowInstanceRepository.saveAndFlush(workflowInstance);
 

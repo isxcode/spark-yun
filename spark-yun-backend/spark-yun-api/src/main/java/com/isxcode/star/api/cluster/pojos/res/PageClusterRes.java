@@ -24,4 +24,6 @@ public class PageClusterRes {
 	private String remark;
 
 	private String clusterType;
+
+	private Boolean defaultCluster;
 }

@@ -55,21 +55,28 @@ export const colConfigs: colConfig[] = [
     showOverflowTooltip: true
   },
   // {
-  //   prop: 'status',
-  //   title: '发布状态',
+  //   prop: 'clusterName',
+  //   title: '默认集群',
   //   minWidth: 100,
-  //   customSlot: 'statusTag'
+  //   showOverflowTooltip: true
   // },
+  {
+    prop: 'status',
+    title: '发布状态',
+    minWidth: 100,
+    customSlot: 'statusTag'
+  },
   {
     prop: 'remark',
     title: '备注',
-    minWidth: 100
+    minWidth: 100,
+    showOverflowTooltip: true
   },
   {
     title: '操作',
     align: 'center',
     customSlot: 'options',
-    width: 80
+    width: 110
   }
 ]
 
@@ -114,7 +121,8 @@ export const DetailColConfigs: colConfig[] = [
   {
     prop: 'remark',
     title: '备注',
-    minWidth: 100
+    minWidth: 100,
+    showOverflowTooltip: true
   },
   {
     title: '操作',

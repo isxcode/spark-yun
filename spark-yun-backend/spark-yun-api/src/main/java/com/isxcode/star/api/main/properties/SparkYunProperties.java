@@ -16,4 +16,7 @@ public class SparkYunProperties {
 
 	/** 代理默认端口号. */
 	private String defaultAgentPort = "30177";
+
+	/** 资源文件默认目录. */
+	private String resourceDir = "/var/lib/zhiqingyun";
 }

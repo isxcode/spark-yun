@@ -13,9 +13,8 @@
       >
         <el-input
           v-model="formData.name"
-          maxlength="20"
+          maxlength="200"
           placeholder="请输入"
-          show-word-limit
         />
       </el-form-item>
       <el-form-item
@@ -25,12 +24,30 @@
         <el-select
           v-model="formData.dbType"
           placeholder="请选择"
+          @change="dbTypeChange"
         >
           <el-option
             v-for="item in typeList"
             :key="item.value"
             :label="item.label"
             :value="item.value"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item
+        label="数据源驱动"
+        prop="driverId"
+      >
+        <el-select
+          v-model="formData.driverId"
+          placeholder="请选择"
+          @visible-change="getDriverIdList"
+        >
+          <el-option
+            v-for="item in driverIdList"
+            :key="item.id"
+            :label="item.name"
+            :value="item.id"
           />
         </el-select>
       </el-form-item>
@@ -44,15 +61,21 @@
           placeholder="请输入"
         />
       </el-form-item>
+      <el-form-item v-if="formData.dbType === 'HIVE'" label="hive.metastore.uris">
+        <el-input
+          v-model="formData.metastoreUris"
+          maxlength="100"
+          placeholder="请输入"
+        />
+      </el-form-item>
       <el-form-item
         label="用户名"
         prop="username"
       >
         <el-input
           v-model="formData.username"
-          maxlength="100"
+          maxlength="200"
           placeholder="请输入"
-          show-word-limit
         />
       </el-form-item>
       <el-form-item
@@ -69,7 +92,6 @@
       <el-form-item label="备注">
         <el-input
           v-model="formData.remark"
-          show-word-limit
           type="textarea"
           maxlength="200"
           :autosize="{ minRows: 4, maxRows: 4 }"
@@ -84,9 +106,11 @@
 import { reactive, defineExpose, ref, nextTick } from 'vue'
 import BlockModal from '@/components/block-modal/index.vue'
 import { ElMessage, FormInstance, FormRules } from 'element-plus'
+import { GetDefaultDriverData, GetDriverListData } from '@/services/driver-management.service'
 
 const form = ref<FormInstance>()
 const callback = ref<any>()
+const driverIdList = ref([])
 const modelConfig = reactive({
   title: '添加数据源',
   visible: false,
@@ -109,6 +133,8 @@ const modelConfig = reactive({
 const formData = reactive({
   name: '',
   dbType: '',
+  driverId: '',
+  metastoreUris: '',
   jdbcUrl: '',
   username: '',
   passwd: '',
@@ -180,6 +206,13 @@ const rules = reactive<FormRules>({
       trigger: [ 'blur', 'change' ]
     }
   ],
+  driverId: [
+    {
+      required: true,
+      message: '请选择数据源驱动',
+      trigger: [ 'blur', 'change' ]
+    }
+  ],
   jdbcUrl: [
     {
       required: true,
@@ -213,6 +246,8 @@ function showModal(cb: () => void, data: any): void {
     formData.username = data.username
     formData.passwd = data.passwd
     formData.remark = data.remark
+    formData.driverId = data.driverId
+    formData.metastoreUris = data.metastoreUris
     formData.id = data.id
     modelConfig.title = '编辑数据源'
   } else {
@@ -222,12 +257,46 @@ function showModal(cb: () => void, data: any): void {
     formData.username = ''
     formData.passwd = ''
     formData.remark = ''
+    formData.driverId = ''
+    formData.metastoreUris = ''
     formData.id = ''
     modelConfig.title = '添加数据源'
   }
+  getDriverIdList(true)
   nextTick(() => {
     form.value?.resetFields()
   })
+}
+
+function getDriverIdList(e: boolean) {
+  if (e && formData.dbType) {
+    GetDriverListData({
+      page: 0,
+      pageSize: 10000,
+      searchKeyWord: formData.dbType
+    }).then((res: any) => {
+      driverIdList.value = res.data.content
+    }).catch((error: any) => {
+    })
+  }
+}
+
+function dbTypeChange(e: string) {
+  formData.metastoreUris = ''
+  formData.driverId = ''
+
+  getDefaultDriver(e)
+}
+
+function getDefaultDriver(e: string) {
+  if (e) {
+    GetDefaultDriverData({
+      dbType: e
+    }).then((res: any) => {
+      formData.driverId = res.data.id
+    }).catch((error: any) => {
+    })
+  }
 }
 
 function okEvent() {

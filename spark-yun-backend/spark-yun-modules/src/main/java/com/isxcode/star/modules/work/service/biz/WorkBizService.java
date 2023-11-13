@@ -5,11 +5,14 @@ import com.alibaba.fastjson.JSONArray;
 import com.isxcode.star.api.cluster.constants.ClusterNodeStatus;
 import com.isxcode.star.api.instance.constants.InstanceStatus;
 import com.isxcode.star.api.instance.constants.InstanceType;
-import com.isxcode.star.api.work.constants.WorkDefault;
 import com.isxcode.star.api.work.constants.WorkLog;
 import com.isxcode.star.api.work.constants.WorkStatus;
 import com.isxcode.star.api.work.constants.WorkType;
 import com.isxcode.star.api.work.exceptions.WorkRunException;
+import com.isxcode.star.api.work.pojos.dto.ClusterConfig;
+import com.isxcode.star.api.work.pojos.dto.CronConfig;
+import com.isxcode.star.api.work.pojos.dto.SyncRule;
+import com.isxcode.star.api.work.pojos.dto.SyncWorkConfig;
 import com.isxcode.star.api.work.pojos.req.*;
 import com.isxcode.star.api.work.pojos.res.*;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
@@ -23,6 +26,7 @@ import com.isxcode.star.modules.cluster.repository.ClusterRepository;
 import com.isxcode.star.modules.work.entity.WorkConfigEntity;
 import com.isxcode.star.modules.work.entity.WorkEntity;
 import com.isxcode.star.modules.work.entity.WorkInstanceEntity;
+import com.isxcode.star.modules.work.mapper.WorkConfigMapper;
 import com.isxcode.star.modules.work.mapper.WorkMapper;
 import com.isxcode.star.modules.work.repository.WorkConfigRepository;
 import com.isxcode.star.modules.work.repository.WorkInstanceRepository;
@@ -30,15 +34,18 @@ import com.isxcode.star.modules.work.repository.WorkRepository;
 import com.isxcode.star.modules.work.run.WorkExecutor;
 import com.isxcode.star.modules.work.run.WorkExecutorFactory;
 import com.isxcode.star.modules.work.run.WorkRunContext;
+import com.isxcode.star.modules.work.service.WorkConfigService;
 import com.isxcode.star.modules.work.service.WorkService;
 import com.isxcode.star.modules.workflow.entity.WorkflowConfigEntity;
 import com.isxcode.star.modules.workflow.entity.WorkflowEntity;
 import com.isxcode.star.modules.workflow.repository.WorkflowConfigRepository;
 import com.isxcode.star.modules.workflow.repository.WorkflowRepository;
 import com.isxcode.star.modules.workflow.run.WorkflowUtils;
+
 import java.time.LocalDateTime;
 import java.util.*;
 import javax.transaction.Transactional;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
@@ -76,28 +83,93 @@ public class WorkBizService {
 
 	private final HttpUrlUtils httpUrlUtils;
 
-	public void addWork(AddWorkReq addWorkReq) {
+	private final WorkConfigService workConfigService;
+
+	private final WorkConfigMapper workConfigMapper;
+
+	public GetWorkRes addWork(AddWorkReq addWorkReq) {
+
+		// 校验作业名的唯一性
+		Optional<WorkEntity> workByName = workRepository.findByNameAndAndWorkflowId(addWorkReq.getName(),
+				addWorkReq.getWorkflowId());
+		if (workByName.isPresent()) {
+			throw new IsxAppException("作业名称重复，请重新输入");
+		}
 
 		WorkEntity work = workMapper.addWorkReqToWorkEntity(addWorkReq);
 
-		// 如果是sparkSql作业，初始化sparkConfig
-		WorkConfigEntity workConfigEntity = new WorkConfigEntity();
+		WorkConfigEntity workConfig = new WorkConfigEntity();
+
+		// sparkSql要是支持访问hive，必须填写datasourceId
 		if (WorkType.QUERY_SPARK_SQL.equals(addWorkReq.getWorkType())) {
-			workConfigEntity.setSparkConfig(WorkDefault.DEFAULT_SPARK_CONF);
+			if (addWorkReq.getEnableHive()) {
+				if (Strings.isEmpty(addWorkReq.getDatasourceId())) {
+					throw new IsxAppException("开启hive，必须配置hive数据源");
+				} else {
+					workConfig.setDatasourceId(addWorkReq.getDatasourceId());
+				}
+			}
 		}
 
-		// 添加默认作业配置
-		workConfigEntity = workConfigRepository.save(workConfigEntity);
-		work.setConfigId(workConfigEntity.getId());
+		// sparkSql要是支持访问hive，必须填写datasourceId
+		if (WorkType.PYTHON.equals(addWorkReq.getWorkType()) || WorkType.BASH.equals(addWorkReq.getWorkType())) {
+			if (Strings.isEmpty(addWorkReq.getClusterNodeId())) {
+				throw new IsxAppException("缺少集群节点配置");
+			}
+		}
+
+		// 初始化脚本
+		if (WorkType.QUERY_SPARK_SQL.equals(addWorkReq.getWorkType())
+				|| WorkType.EXECUTE_JDBC_SQL.equals(addWorkReq.getWorkType())
+				|| WorkType.QUERY_JDBC_SQL.equals(addWorkReq.getWorkType())
+				|| WorkType.BASH.equals(addWorkReq.getWorkType()) || WorkType.PYTHON.equals(addWorkReq.getWorkType())) {
+			workConfigService.initWorkScript(workConfig, addWorkReq.getWorkType());
+		}
+
+		// 初始化计算引擎
+		if (WorkType.QUERY_SPARK_SQL.equals(addWorkReq.getWorkType())
+				|| WorkType.DATA_SYNC_JDBC.equals(addWorkReq.getWorkType())
+				|| WorkType.BASH.equals(addWorkReq.getWorkType()) || WorkType.PYTHON.equals(addWorkReq.getWorkType())) {
+			if (Strings.isEmpty(addWorkReq.getClusterId())) {
+				throw new IsxAppException("必须选择计算引擎");
+			} else {
+				workConfigService.initClusterConfig(workConfig, addWorkReq.getClusterId(),
+						addWorkReq.getClusterNodeId(), addWorkReq.getEnableHive(), addWorkReq.getDatasourceId());
+			}
+		}
+
+		// 初始化数据同步分区值
+		if (WorkType.DATA_SYNC_JDBC.equals(addWorkReq.getWorkType())) {
+			workConfigService.initSyncRule(workConfig);
+		}
+
+		// 如果jdbc执行和jdbc查询，必填数据源
+		if (WorkType.EXECUTE_JDBC_SQL.equals(addWorkReq.getWorkType())
+				|| WorkType.QUERY_JDBC_SQL.equals(addWorkReq.getWorkType())) {
+			if (Strings.isEmpty(addWorkReq.getDatasourceId())) {
+				throw new IsxAppException("数据源是必填项");
+			}
+			workConfig.setDatasourceId(addWorkReq.getDatasourceId());
+		}
+
+		// 初始化调度默认值
+		workConfigService.initCronConfig(workConfig);
+
+		// 添加作业的默认配置
+		workConfig = workConfigRepository.save(workConfig);
+		work.setConfigId(workConfig.getId());
 		work.setStatus(WorkStatus.UN_PUBLISHED);
 
 		workRepository.save(work);
+
+		// 返回work内容
+		return getWork(GetWorkReq.builder().workId(work.getId()).build());
 	}
 
 	@Transactional
 	public void updateWork(UpdateWorkReq updateWorkReq) {
 
-		WorkEntity work = workService.getWork(updateWorkReq.getId());
+		WorkEntity work = workService.getWorkEntity(updateWorkReq.getId());
 		work = workMapper.updateWorkReqToWorkEntity(updateWorkReq, work);
 		workRepository.save(work);
 	}
@@ -107,12 +179,33 @@ public class WorkBizService {
 		Page<WorkEntity> workPage = workRepository.pageSearchByWorkflowId(pageWorkReq.getSearchKeyWord(),
 				pageWorkReq.getWorkflowId(), PageRequest.of(pageWorkReq.getPage(), pageWorkReq.getPageSize()));
 
-		return workPage.map(workMapper::workEntityToPageWorkRes);
+		Page<PageWorkRes> map = workPage.map(workMapper::workEntityToPageWorkRes);
+
+		map.getContent().forEach(e -> {
+			WorkConfigEntity workConfig = workConfigRepository.findById(e.getConfigId()).get();
+			if (!Strings.isEmpty(workConfig.getDatasourceId())) {
+				e.setDatasourceId(workConfig.getDatasourceId());
+			}
+
+			if (!Strings.isEmpty(workConfig.getClusterConfig())) {
+				ClusterConfig clusterConfig = JSON.parseObject(workConfig.getClusterConfig(), ClusterConfig.class);
+				if (!Strings.isEmpty(clusterConfig.getClusterId())) {
+					e.setClusterId(clusterConfig.getClusterId());
+				}
+				if (!Strings.isEmpty(clusterConfig.getClusterNodeId())) {
+					e.setClusterNodeId(clusterConfig.getClusterNodeId());
+				}
+				e.setEnableHive(clusterConfig.getEnableHive());
+			}
+
+		});
+
+		return map;
 	}
 
 	public void deleteWork(DeleteWorkReq deleteWorkReq) {
 
-		WorkEntity work = workService.getWork(deleteWorkReq.getWorkId());
+		WorkEntity work = workService.getWorkEntity(deleteWorkReq.getWorkId());
 
 		// 如果不是已下线状态或者未发布状态 不让删除
 		if (WorkStatus.UN_PUBLISHED.equals(work.getStatus()) || WorkStatus.STOP.equals(work.getStatus())) {
@@ -145,11 +238,13 @@ public class WorkBizService {
 		return workInstanceRepository.saveAndFlush(workInstanceEntity);
 	}
 
-	/** 提交作业. */
+	/**
+	 * 提交作业.
+	 */
 	public RunWorkRes runWork(RunWorkReq runWorkReq) {
 
 		// 获取作业信息
-		WorkEntity work = workService.getWork(runWorkReq.getWorkId());
+		WorkEntity work = workService.getWorkEntity(runWorkReq.getWorkId());
 
 		// 初始化作业实例
 		WorkInstanceEntity workInstance = genWorkInstance(work.getId());
@@ -206,7 +301,9 @@ public class WorkBizService {
 		return JSON.parseObject(workInstanceEntity.getSparkStarRes(), GetStatusRes.class);
 	}
 
-	/** 中止作业. */
+	/**
+	 * 中止作业.
+	 */
 	@Transactional
 	public void stopJob(StopJobReq stopJobReq) {
 
@@ -231,19 +328,21 @@ public class WorkBizService {
 			WorkEntity workEntity = workRepository.findById(workInstanceEntity.getWorkId()).get();
 
 			// 作业类型不对返回
-			if (!WorkType.QUERY_SPARK_SQL.equals(workEntity.getWorkType())) {
+			if (!WorkType.QUERY_SPARK_SQL.equals(workEntity.getWorkType())
+					&& !WorkType.DATA_SYNC_JDBC.equals(workEntity.getWorkType())) {
 				throw new IsxAppException("只有sparkSql作业才支持中止");
 			}
 
 			WorkConfigEntity workConfigEntity = workConfigRepository.findById(workEntity.getConfigId()).get();
-			List<ClusterNodeEntity> allEngineNodes = engineNodeRepository
-					.findAllByClusterIdAndStatus(workConfigEntity.getClusterId(), ClusterNodeStatus.RUNNING);
+			String clusterId = JSON.parseObject(workConfigEntity.getClusterConfig(), ClusterConfig.class)
+					.getClusterId();
+			List<ClusterNodeEntity> allEngineNodes = engineNodeRepository.findAllByClusterIdAndStatus(clusterId,
+					ClusterNodeStatus.RUNNING);
 			if (allEngineNodes.isEmpty()) {
 				throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "申请资源失败 : 集群不存在可用节点，请切换一个集群  \n");
 			}
 
-			Optional<ClusterEntity> clusterEntityOptional = calculateEngineRepository
-					.findById(workConfigEntity.getClusterId());
+			Optional<ClusterEntity> clusterEntityOptional = calculateEngineRepository.findById(clusterId);
 			if (!clusterEntityOptional.isPresent()) {
 				throw new IsxAppException("集群不存在");
 			}
@@ -261,6 +360,7 @@ public class WorkBizService {
 			Map<String, String> paramsMap = new HashMap<>();
 			paramsMap.put("appId", wokRunWorkRes.getAppId());
 			paramsMap.put("agentType", clusterEntityOptional.get().getClusterType());
+			paramsMap.put("sparkHomePath", engineNode.getSparkHomePath());
 			BaseResponse<?> baseResponse = HttpUtils.doGet(
 					httpUrlUtils.genHttpUrl(engineNode.getHost(), engineNode.getAgentPort(), "/yag/stopJob"), paramsMap,
 					null, BaseResponse.class);
@@ -275,21 +375,10 @@ public class WorkBizService {
 					+ "已中止  \n";
 			workInstanceEntity.setSubmitLog(submitLog);
 			workInstanceEntity.setExecEndDateTime(new Date());
+			workInstanceEntity.setDuration(
+					(System.currentTimeMillis() - workInstanceEntity.getExecStartDateTime().getTime()) / 1000);
 			workInstanceRepository.saveAndFlush(workInstanceEntity);
 		}
-	}
-
-	public ClusterNodeEntity getEngineNodeByWorkId(String workId) {
-
-		WorkEntity work = workService.getWork(workId);
-
-		Optional<WorkConfigEntity> workConfigEntityOptional = workConfigRepository.findById(work.getConfigId());
-		if (!workConfigEntityOptional.isPresent()) {
-			throw new IsxAppException("作业异常，不可用作业");
-		}
-		WorkConfigEntity workConfig = workConfigEntityOptional.get();
-
-		return getEngineWork(workConfig.getClusterId());
 	}
 
 	public GetWorkLogRes getWorkLog(GetYarnLogReq getYarnLogReq) {
@@ -309,19 +398,42 @@ public class WorkBizService {
 
 	public GetWorkRes getWork(GetWorkReq getWorkReq) {
 
-		Optional<WorkEntity> workEntityOptional = workRepository.findById(getWorkReq.getWorkId());
-		if (!workEntityOptional.isPresent()) {
-			throw new IsxAppException("作业不存在");
+		WorkEntity work = workService.getWorkEntity(getWorkReq.getWorkId());
+		WorkConfigEntity workConfig = workConfigService.getWorkConfigEntity(work.getConfigId());
+
+		GetWorkRes getWorkRes = new GetWorkRes();
+		getWorkRes.setName(work.getName());
+		getWorkRes.setWorkId(work.getId());
+		getWorkRes.setWorkflowId(work.getWorkflowId());
+
+		if (!Strings.isEmpty(workConfig.getDatasourceId())) {
+			getWorkRes.setDatasourceId(workConfig.getDatasourceId());
 		}
 
-		Optional<WorkConfigEntity> workConfigEntityOptional = workConfigRepository
-				.findById(workEntityOptional.get().getConfigId());
-		if (!workConfigEntityOptional.isPresent()) {
-			throw new IsxAppException("作业异常不可用");
+		if (!Strings.isEmpty(workConfig.getScript())) {
+			getWorkRes.setScript(workConfig.getScript());
 		}
 
-		return workMapper.workEntityAndWorkConfigEntityToGetWorkRes(workEntityOptional.get(),
-				workConfigEntityOptional.get());
+		if (!Strings.isEmpty(workConfig.getCronConfig())) {
+			getWorkRes.setCronConfig(JSON.parseObject(workConfig.getCronConfig(), CronConfig.class));
+		}
+
+		if (!Strings.isEmpty(workConfig.getSyncWorkConfig())) {
+			getWorkRes.setSyncWorkConfig(JSON.parseObject(workConfig.getSyncWorkConfig(), SyncWorkConfig.class));
+		}
+
+		if (!Strings.isEmpty(workConfig.getClusterConfig())) {
+			getWorkRes.setClusterConfig(JSON.parseObject(workConfig.getClusterConfig(), ClusterConfig.class));
+			getWorkRes.getClusterConfig()
+					.setSparkConfigJson(JSON.toJSONString(getWorkRes.getClusterConfig().getSparkConfig()));
+		}
+
+		if (!Strings.isEmpty(workConfig.getSyncRule())) {
+			getWorkRes.setSyncRule(JSON.parseObject(workConfig.getSyncRule(), SyncRule.class));
+			getWorkRes.getSyncRule().setSqlConfigJson(JSON.toJSONString(getWorkRes.getSyncRule().getSqlConfig()));
+		}
+
+		return getWorkRes;
 	}
 
 	public ClusterNodeEntity getEngineWork(String calculateEngineId) {
@@ -358,7 +470,7 @@ public class WorkBizService {
 
 	public void renameWork(RenameWorkReq wokRenameWorkReq) {
 
-		WorkEntity workEntity = workService.getWork(wokRenameWorkReq.getWorkId());
+		WorkEntity workEntity = workService.getWorkEntity(wokRenameWorkReq.getWorkId());
 
 		workEntity.setName(wokRenameWorkReq.getWorkName());
 
@@ -368,7 +480,7 @@ public class WorkBizService {
 	public void copyWork(CopyWorkReq wokCopyWorkReq) {
 
 		// 获取作业信息
-		WorkEntity work = workService.getWork(wokCopyWorkReq.getWorkId());
+		WorkEntity work = workService.getWorkEntity(wokCopyWorkReq.getWorkId());
 
 		// 获取作业配置
 		WorkConfigEntity workConfig = workConfigBizService.getWorkConfigEntity(work.getConfigId());
@@ -388,7 +500,7 @@ public class WorkBizService {
 
 	public void topWork(TopWorkReq topWorkReq) {
 
-		WorkEntity work = workService.getWork(topWorkReq.getWorkId());
+		WorkEntity work = workService.getWorkEntity(topWorkReq.getWorkId());
 
 		// 获取作业最大的
 		Integer maxTopIndex = workRepository.findWorkflowMaxTopIndex(work.getWorkflowId());
@@ -399,5 +511,25 @@ public class WorkBizService {
 			work.setTopIndex(maxTopIndex + 1);
 		}
 		workRepository.save(work);
+	}
+
+	public void saveSyncWorkConfig(SaveSyncWorkConfigReq saveSyncWorkConfigReq) {
+
+		WorkEntity work = workService.getWorkEntity(saveSyncWorkConfigReq.getWorkId());
+		WorkConfigEntity workConfig = workConfigService.getWorkConfigEntity(work.getConfigId());
+
+		workConfig.setSyncWorkConfig(JSON.toJSONString(saveSyncWorkConfigReq));
+
+		workConfigRepository.save(workConfig);
+	}
+
+	public GetSyncWorkConfigRes getSyncWorkConfig(GetSyncWorkConfigReq getSyncWorkConfigReq) {
+
+		WorkEntity work = workService.getWorkEntity(getSyncWorkConfigReq.getWorkId());
+		WorkConfigEntity workConfig = workConfigService.getWorkConfigEntity(work.getConfigId());
+
+		SyncWorkConfig syncWorkConfig = JSON.parseObject(workConfig.getSyncWorkConfig(), SyncWorkConfig.class);
+
+		return workConfigMapper.syncWorkConfigToGetSyncWorkConfigRes(syncWorkConfig);
 	}
 }

@@ -3,6 +3,7 @@
     v-model="visible"
     :title="modelConfig.title"
     :width="modelConfig.width"
+    :z-index="modelConfig.zIndex"
     :class="modelConfig.customClass + ' zqy-block-modal'"
     :close-on-press-escape="false"
     :close-on-click-modal="false"
@@ -109,13 +110,13 @@ function close() {
     }
     .el-dialog__title {
       font-size: 16px;
-      color: $--app-base-font-color;
+      color: getCssVar('text-color', 'primary');
     }
   }
   .el-dialog__body {
     overflow: auto;
     // max-height: calc(100vh - 96px);
-    max-height: calc(74vh - 120px);
+    max-height: calc(74vh - 110px);
     padding: 0 !important;
   }
   .custom-header-btn {

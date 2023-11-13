@@ -1,0 +1,35 @@
+server:
+  port: 8080
+
+spring:
+
+  security:
+    user:
+      name: admin
+      password: admin123
+
+  jpa:
+    database: mysql
+    show-sql: false
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:30306/zhiqingyun_1017
+    username: root
+    password: ispong123
+
+  flyway:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:30306/zhiqingyun_1017
+    user: root
+    password: ispong123
+    locations: classpath:db/migration/mysql
+    enabled: false
+
+logging:
+  level:
+    root: info
+
+isx-app:
+  use-ssl: false
+  resources-path: classpath:resources

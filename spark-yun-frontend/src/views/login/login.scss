@@ -1,0 +1,113 @@
+.zqy-login {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: linear-gradient(45deg, getCssVar('color', 'primary', 'light-7') 10%, getCssVar('color', 'white') 50%);
+
+  .zqy-login__header {
+    padding: 28px 56px;
+    user-select: none;
+    position: absolute;
+    z-index: 99;
+  }
+
+  .zqy-login__logo {
+    height: 43px;
+    width: 43px;
+  }
+
+  .zqy-login__title {
+    font-size: 25px;
+    font-weight: bolder;
+    margin-left: 17px;
+    line-height: 45px;
+    vertical-align: bottom;
+    color: getCssVar('color', 'primary');
+  }
+
+  .zqy-login__body {
+    flex: 1;
+    display: flex;
+    padding: 0 20px;
+    align-items: center;
+    justify-content: space-around;
+  }
+
+  .zqy-login__playground {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    // flex: 1;
+    height: 100%;
+  }
+
+  .zqy-login__slogan {
+    font-size: 40px;
+    font-weight: bold;
+    color: getCssVar('color', 'primary');
+    // margin-right: 20%;
+  }
+
+  .zqy-login__main {
+    display: flex;
+    align-items: center;
+    width: 350px;
+    height: 100%;
+  }
+
+  .zqy-login__form-wrap {
+    width: 100%;
+    padding: 20px 20% 20px 0;
+  }
+
+  .zqy-login__form {
+    .el-form-item {
+      margin-bottom: 36px;
+
+      &.is-error {
+        .el-input__wrapper {
+          padding: 1px;
+          box-shadow: none;
+        }
+
+        .zqy-login__input {
+          padding: 1px;
+          border-color: getCssVar('color', 'danger');
+        }
+      }
+
+      .zqy-login__input {
+        .el-input__inner {
+          padding: 1px;
+          font-size: 14px;
+        }
+      }
+
+      .el-form-item__error {
+        padding: 6px 0;
+      }
+    }
+  }
+
+  .zqy-login__input {
+    border-bottom: 1px solid black;
+    transition: all .4s linear;
+
+    &:hover {
+      border-color: getCssVar('color', 'primary');
+    }
+
+    .el-input__wrapper {
+      padding: 1px;
+      box-shadow: none;
+    }
+  }
+
+  .zqy-login__btn {
+    margin-top: 48px;
+    width: 100%;
+    font-size: 25px;
+  }
+}

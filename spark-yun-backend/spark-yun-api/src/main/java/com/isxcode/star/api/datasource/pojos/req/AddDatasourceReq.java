@@ -29,4 +29,11 @@ public class AddDatasourceReq {
 	@Schema(title = "数据源类型", example = DatasourceType.MYSQL)
 	@NotEmpty(message = "数据源类型不能为空")
 	private String dbType;
+
+	@Schema(title = "数据源驱动", example = "数据源驱动id")
+	@NotEmpty(message = "数据源驱动不能为空")
+	private String driverId;
+
+	@Schema(title = "hive特殊配置hive.metastore.uris", example = "默认值：thrift://localhost:9083，非必填")
+	private String metastoreUris;
 }

@@ -10,21 +10,31 @@ public class WfiWorkflowInstanceAo {
 
 	private String workflowName;
 
+	private Long duration;
+
+	private Date nextPlanDateTime;
+
+	private Date planStartDateTime;
+
 	private Date startDateTime;
 
 	private Date endDateTime;
 
 	private String status;
 
-	private String type;
-
-	public WfiWorkflowInstanceAo(String workflowInstanceId, String workflowName, Date startDateTime, Date endDateTime,
-			String status, String type) {
+	public WfiWorkflowInstanceAo(String workflowInstanceId, String workflowName, Long duration, Date nextPlanDateTime,
+			Date planStartDateTime, Date startDateTime, Date endDateTime, String status, String type) {
 		this.workflowInstanceId = workflowInstanceId;
 		this.workflowName = workflowName;
+		this.duration = duration;
+		this.nextPlanDateTime = nextPlanDateTime;
+		this.planStartDateTime = planStartDateTime;
 		this.startDateTime = startDateTime;
 		this.endDateTime = endDateTime;
 		this.status = status;
 		this.type = type;
 	}
+
+	private String type;
+
 }

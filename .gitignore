@@ -25,7 +25,7 @@ spark-yun-backend/spark-yun-main/src/main/resources/agent/**
 spark-yun-vip/**
 
 # 资源文件
-resources/license
+resources/**
 
 # 不提交spark-min
 spark-yun-dist/spark-min
@@ -37,3 +37,13 @@ isx
 
 # 个人配置不提交
 spark-yun-backend/spark-yun-main/src/main/resources/application-ispong.yml
+
+# 临时目录不提交
+tmp
+spark-warehouse
+
+# 前端.idea不提交
+spark-yun-frontend/.idea
+
+# derby.log不提交
+derby.log

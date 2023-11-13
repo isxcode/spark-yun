@@ -180,3 +180,13 @@ tasks.register('web', Exec) {
   }
 }
 
+// 自定义命令：安装项目依赖
+// gradle install
+tasks.register('install', Exec) {
+
+  if (System.properties['os.name'].toString().contains('Mac OS X') || System.properties['os.name'].toString().contains('Linux')) {
+    commandLine 'sh', '-c', 'bash install.sh'
+  } else {
+    commandLine 'cmd', '/c', 'install.bat'
+  }
+}

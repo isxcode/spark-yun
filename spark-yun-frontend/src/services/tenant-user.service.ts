@@ -12,11 +12,13 @@ interface SerchParams {
   page: number;
   pageSize: number;
   searchKeyWord: string;
+  tenantId?: string
 }
 
 interface FormUser {
-  tenantAdmin: boolean;
+  isTenantAdmin: boolean;
   userId: string;
+  tenantId: string
 }
 
 interface DeleteParam {

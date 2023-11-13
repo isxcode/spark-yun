@@ -4,14 +4,19 @@ import com.isxcode.star.api.main.constants.ModuleCode;
 import com.isxcode.star.api.work.pojos.req.*;
 import com.isxcode.star.api.work.pojos.res.*;
 import com.isxcode.star.common.annotations.successResponse.SuccessResponse;
+import com.isxcode.star.modules.work.service.biz.SyncWorkBizService;
 import com.isxcode.star.modules.work.service.biz.WorkBizService;
 import com.isxcode.star.modules.work.service.biz.WorkConfigBizService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import javax.validation.Valid;
 
 @Tag(name = "作业模块")
 @RestController
@@ -23,12 +28,14 @@ public class WorkController {
 
 	private final WorkConfigBizService workConfigBizService;
 
+	private final SyncWorkBizService syncWorkBizService;
+
 	@Operation(summary = "添加作业接口")
 	@PostMapping("/addWork")
 	@SuccessResponse("创建成功")
-	public void addWork(@Valid @RequestBody AddWorkReq addWorkReq) {
+	public GetWorkRes addWork(@Valid @RequestBody AddWorkReq addWorkReq) {
 
-		workBizService.addWork(addWorkReq);
+		return workBizService.addWork(addWorkReq);
 	}
 
 	@Operation(summary = "更新作业接口")
@@ -103,6 +110,14 @@ public class WorkController {
 		return workBizService.getWork(getWorkReq);
 	}
 
+	@Operation(summary = "配置作业接口")
+	@PostMapping("/configWork")
+	@SuccessResponse("保存成功")
+	public void configWork(@Valid @RequestBody ConfigWorkReq configWorkReq) {
+
+		workConfigBizService.configWork(configWorkReq);
+	}
+
 	@Operation(summary = "查询作业提交日志接口")
 	@PostMapping("/getSubmitLog")
 	@SuccessResponse("查询成功")
@@ -135,11 +150,51 @@ public class WorkController {
 		workBizService.topWork(topWorkReq);
 	}
 
-	@Operation(summary = "配置作业接口")
-	@PostMapping("/configWork")
-	@SuccessResponse("保存成功")
-	public void configWork(@Valid @RequestBody ConfigWorkReq configWorkReq) {
+	@Operation(summary = "获取数据源表信息")
+	@PostMapping("/getDataSourceTables")
+	@SuccessResponse("查询成功")
+	public GetDataSourceTablesRes getDataSourceTables(@Valid @RequestBody GetDataSourceTablesReq getDataSourceTablesReq)
+			throws Exception {
 
-		workConfigBizService.configWork(configWorkReq);
+		return syncWorkBizService.getDataSourceTables(getDataSourceTablesReq);
 	}
+
+	@Operation(summary = "获取数据表字段信息")
+	@PostMapping("/getDataSourceColumns")
+	@SuccessResponse("查询成功")
+	public GetDataSourceColumnsRes getDataSourceColumns(
+			@Valid @RequestBody GetDataSourceColumnsReq getDataSourceColumnsReq) throws Exception {
+
+		return syncWorkBizService.getDataSourceColumns(getDataSourceColumnsReq);
+	}
+
+	@Operation(summary = "数据预览")
+	@PostMapping("/getDataSourceData")
+	@SuccessResponse("查询成功")
+	public GetDataSourceDataRes getDataSourceData(@Valid @RequestBody GetDataSourceDataReq getDataSourceDataReq)
+			throws Exception {
+
+		return syncWorkBizService.getDataSourceData(getDataSourceDataReq);
+	}
+
+	@Operation(summary = "DDL预生成")
+	@PostMapping("/getCreateTableSql")
+	@SuccessResponse("查询成功")
+	public GetCreateTableSqlRes getCreateTableSql(@Valid @RequestBody GetCreateTableSqlReq getCreateTableSqlReq)
+			throws Exception {
+
+		return syncWorkBizService.getCreateTableSql(getCreateTableSqlReq);
+	}
+
+	/*
+	 * @Operation(summary = "数据同步配置预生成")
+	 *
+	 * @PostMapping("/getTmpSyncConf")
+	 *
+	 * @SuccessResponse("查询成功") public GetTmpSyncConfRes
+	 * getTmpSyncConf(@Valid @RequestBody GetTmpSyncConfReq getTmpSyncConfReq)
+	 * throws Exception {
+	 *
+	 * return syncWorkBizService.getTmpSyncConf(getTmpSyncConfReq); }
+	 */
 }

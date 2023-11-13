@@ -4,13 +4,10 @@ import com.isxcode.star.api.cluster.pojos.dto.ScpFileEngineNodeDto;
 import com.isxcode.star.api.cluster.pojos.req.AddClusterNodeReq;
 import com.isxcode.star.api.cluster.pojos.req.UpdateClusterNodeReq;
 import com.isxcode.star.api.cluster.pojos.res.EnoQueryNodeRes;
+import com.isxcode.star.api.cluster.pojos.res.GetClusterNodeRes;
 import com.isxcode.star.modules.cluster.entity.ClusterNodeEntity;
-import java.util.List;
-import java.util.stream.Collectors;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 
 /** mapstruct映射. */
 @Mapper(componentModel = "spring")
@@ -44,16 +41,7 @@ public interface ClusterNodeMapper {
 	@Mapping(target = "checkDateTime", dateFormat = "yyyy-MM-dd HH:mm:ss")
 	EnoQueryNodeRes nodeEntityToQueryNodeRes(ClusterNodeEntity nodeEntity);
 
-	default List<EnoQueryNodeRes> nodeEntityListToQueryNodeResList(List<ClusterNodeEntity> nodeEntities) {
-
-		return nodeEntities.stream().map(this::nodeEntityToQueryNodeRes).collect(Collectors.toList());
-	}
-
-	default Page<EnoQueryNodeRes> datasourceEntityPageToQueryDatasourceResPage(
-			Page<ClusterNodeEntity> engineNodeEntities) {
-		List<EnoQueryNodeRes> dtoList = nodeEntityListToQueryNodeResList(engineNodeEntities.getContent());
-		return new PageImpl<>(dtoList, engineNodeEntities.getPageable(), engineNodeEntities.getTotalElements());
-	}
-
 	ScpFileEngineNodeDto engineNodeEntityToScpFileEngineNodeDto(ClusterNodeEntity engineNode);
+
+	GetClusterNodeRes clusterNodeEntityToGetClusterNodeRes(ClusterNodeEntity clusterNode);
 }

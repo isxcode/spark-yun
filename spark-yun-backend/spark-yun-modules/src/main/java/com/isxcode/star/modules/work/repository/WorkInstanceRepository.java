@@ -18,12 +18,12 @@ public interface WorkInstanceRepository extends JpaRepository<WorkInstanceEntity
 	@Query(value = "" + "select S.id as id,\n" + "       SW.name  as workName,\n" + "       SWF.name as workflowName,\n"
 			+ "       S.instanceType as instanceType,\n" + "       SW.workType as workType,\n"
 			+ "       S.status as status,\n" + "       S.planStartDateTime as planStartDateTime,\n"
-			+ "       S.execStartDateTime as execStartDateTime,\n" + "       S.execEndDateTime as execEndDateTime,\n"
-			+ "       S.nextPlanDateTime as nextPlanDateTime\n" + "from WorkInstanceEntity S \n"
-			+ "         left join WorkEntity SW on S.workId = SW.id\n"
+			+ "       S.duration as duration,\n" + "       S.execStartDateTime as execStartDateTime,\n"
+			+ "       S.execEndDateTime as execEndDateTime,\n" + "       S.nextPlanDateTime as nextPlanDateTime\n"
+			+ "from WorkInstanceEntity S \n" + "         left join WorkEntity SW on S.workId = SW.id\n"
 			+ "         left join WorkflowEntity SWF on SW.workflowId = SWF.id \n" + "WHERE S.tenantId=:tenantId and "
 			+ "(S.id LIKE %:keyword% " + "OR SW.name LIKE %:keyword% " + "OR SWF.name LIKE %:keyword% ) "
-			+ "order by S.createDateTime desc ")
+			+ "order by S.lastModifiedDateTime desc ")
 	Page<Map> searchAll(@Param("tenantId") String tenantId, @Param("keyword") String searchKeyWord, Pageable pageable);
 
 	WorkInstanceEntity findByWorkIdAndWorkflowInstanceId(String workId, String workflowInstanceId);

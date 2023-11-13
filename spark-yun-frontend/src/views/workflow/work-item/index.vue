@@ -44,14 +44,32 @@
               </el-icon>
               <span class="btn-text">配置</span>
             </div>
+            <!-- <div class="btn-box" @click="publishData">
+              <el-icon v-if="!publishLoading">
+                <Promotion />
+              </el-icon>
+              <el-icon v-else class="is-loading">
+                <Loading />
+              </el-icon>
+              <span class="btn-text">发布</span>
+            </div>
+            <div class="btn-box" @click="stopData">
+              <el-icon v-if="!stopLoading">
+                <Failed />
+              </el-icon>
+              <el-icon v-else class="is-loading">
+                <Loading />
+              </el-icon>
+              <span class="btn-text">下线</span>
+            </div> -->
             <div class="btn-box" @click="locationNode">
               <el-icon>
-                <RefreshLeft />
+                <Position />
               </el-icon>
               <span class="btn-text">定位</span>
             </div>
           </div>
-          <code-mirror v-model="sqltextData" basic :lang="lang" />
+          <code-mirror v-model="sqltextData" basic :lang="workConfig.workType === 'PYTHON' ? pythonLang : lang" @change="sqlConfigChange"/>
         </div>
         <div class="log-show">
           <el-tabs v-model="activeName" @tab-change="tabChangeEvent">
@@ -63,26 +81,30 @@
         </div>
       </div>
     </LoadingPage>
-    <ConfigModal ref="configModalRef" />
+    <!-- <ConfigModal ref="configModalRef" /> -->
+    <!-- 配置 -->
+    <config-detail ref="configDetailRef"></config-detail>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { reactive, ref, onMounted, markRaw } from 'vue'
+import { reactive, ref, onMounted, markRaw, nextTick } from 'vue'
 import Breadcrumb from '@/layout/bread-crumb/index.vue'
 import LoadingPage from '@/components/loading/index.vue'
-import ConfigModal from './config-modal/index.vue'
+// import ConfigModal from './config-modal/index.vue'
+import ConfigDetail from '../workflow-page/config-detail/index.vue'
 import PublishLog from './publish-log.vue'
 import ReturnData from './return-data.vue'
 import RunningLog from './running-log.vue'
 import TotalDetail from './total-detail.vue'
 import CodeMirror from 'vue-codemirror6'
 import { sql } from '@codemirror/lang-sql'
+import { python } from '@codemirror/lang-python'
 
-import { GetWorkItemConfig, RunWorkItemConfig, SaveWorkItemConfig, TerWorkItemConfig } from '@/services/workflow.service'
-import { ElMessage } from 'element-plus'
+import { DeleteWorkData, GetWorkItemConfig, PublishWorkData, RunWorkItemConfig, SaveWorkItemConfig, TerWorkItemConfig } from '@/services/workflow.service'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import { useRoute, useRouter } from 'vue-router'
-import { nextTick } from 'vue'
+import { Loading } from '@element-plus/icons-vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -94,16 +116,21 @@ const props = defineProps<{
 }>()
 
 const lang = ref(sql())
+const pythonLang = ref(python())
 const loading = ref(false)
 const networkError = ref(false)
 const runningLoading = ref(false)
 const saveLoading = ref(false)
 const terLoading = ref(false)
-const configModalRef = ref(null)
+const publishLoading = ref(false)
+const stopLoading = ref(false)
+// const configModalRef = ref(null)
+const configDetailRef = ref()
 const activeName = ref()
 const currentTab = ref()
 const sqltextData = ref('')
 const instanceId = ref('')
+const changeStatus = ref(false)
 
 const containerInstanceRef = ref(null)
 
@@ -160,16 +187,20 @@ const tabList = reactive([
   //   hide: true
   // }
 ])
-function initData(id?: string) {
-  loading.value = true
+function initData(id?: string, tableLoading?: boolean) {
+  loading.value = tableLoading ? false : true
   networkError.value = networkError.value || false
   GetWorkItemConfig({
     workId: props.workItemConfig.id
   })
     .then((res: any) => {
       workConfig = res.data
-      sqltextData.value = res.data.sqlScript
+      workConfig.workType = props.workItemConfig.workType
+      if (!tableLoading) {
+        sqltextData.value = res.data.script
+      }
       nextTick(() => {
+        changeStatus.value = false
         containerInstanceRef.value.initData(id || instanceId.value, (status: string) => {
           // 运行结束
           if (workConfig.workType === 'SPARK_SQL') {
@@ -185,6 +216,12 @@ function initData(id?: string) {
             tabList.forEach((item: any) => {
               if (['ReturnData'].includes(item.code)) {
                 item.hide = status === 'FAIL' ? true : false
+              }
+            })
+          } else if (['BASH', 'PYTHON'].includes(workConfig.workType)) {
+            tabList.forEach((item: any) => {
+              if (!['ReturnData'].includes(item.code)) {
+                item.hide = false
               }
             })
           }
@@ -215,36 +252,87 @@ function tabChangeEvent(e: string) {
 
 // 返回
 function goBack() {
-  emit('back', props.workItemConfig.id)
+  if (changeStatus.value) {
+    ElMessageBox.confirm('作业尚未保存，是否确定要返回吗？', '警告', {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning'
+    }).then(() => {
+      emit('back', props.workItemConfig.id)
+    })
+  } else {
+    emit('back', props.workItemConfig.id)
+  }
 }
 function locationNode() {
-  emit('locationNode', props.workItemConfig.id)
+  if (changeStatus.value) {
+    ElMessageBox.confirm('作业尚未保存，是否确定要返回吗？', '警告', {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning'
+    }).then(() => {
+      emit('locationNode', props.workItemConfig.id)
+    })
+  } else {
+    emit('locationNode', props.workItemConfig.id)
+  }
 }
 
 // 运行
 function runWorkData() {
-  tabList.forEach((item: any) => {
-    if (['RunningLog', 'TotalDetail', 'ReturnData'].includes(item.code)) {
-      item.hide = true
-    }
-  })
-  runningLoading.value = true
-  RunWorkItemConfig({
-    workId: props.workItemConfig.id
-  })
-    .then((res: any) => {
-      runningLoading.value = false
-      instanceId.value = res.data.instanceId
-      ElMessage.success(res.msg)
-      initData(res.data.instanceId)
-
-      // 点击运行，默认跳转到提交日志tab
-      activeName.value = 'PublishLog'
-      currentTab.value = markRaw(PublishLog)
+  if (changeStatus.value) {
+    ElMessageBox.confirm('作业尚未保存，是否确定要运行作业？', '警告', {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning'
+    }).then(() => {
+      tabList.forEach((item: any) => {
+        if (['RunningLog', 'TotalDetail', 'ReturnData'].includes(item.code)) {
+          item.hide = true
+        }
+      })
+      runningLoading.value = true
+      RunWorkItemConfig({
+        workId: props.workItemConfig.id
+      })
+        .then((res: any) => {
+          runningLoading.value = false
+          instanceId.value = res.data.instanceId
+          ElMessage.success(res.msg)
+          initData(res.data.instanceId, true)
+    
+          // 点击运行，默认跳转到提交日志tab
+          activeName.value = 'PublishLog'
+          currentTab.value = markRaw(PublishLog)
+        })
+        .catch(() => {
+          runningLoading.value = false
+        })
     })
-    .catch(() => {
-      runningLoading.value = false
+  } else {
+    tabList.forEach((item: any) => {
+      if (['RunningLog', 'TotalDetail', 'ReturnData'].includes(item.code)) {
+        item.hide = true
+      }
     })
+    runningLoading.value = true
+    RunWorkItemConfig({
+      workId: props.workItemConfig.id
+    })
+      .then((res: any) => {
+        runningLoading.value = false
+        instanceId.value = res.data.instanceId
+        ElMessage.success(res.msg)
+        initData(res.data.instanceId, true)
+  
+        // 点击运行，默认跳转到提交日志tab
+        activeName.value = 'PublishLog'
+        currentTab.value = markRaw(PublishLog)
+      })
+      .catch(() => {
+        runningLoading.value = false
+      })
+  }
 }
 
 // 终止
@@ -261,7 +349,7 @@ function terWorkData() {
     .then((res: any) => {
       terLoading.value = false
       ElMessage.success(res.msg)
-      initData()
+      initData('', true)
     })
     .catch(() => {
       terLoading.value = false
@@ -272,14 +360,15 @@ function terWorkData() {
 function saveData() {
   saveLoading.value = true
   SaveWorkItemConfig({
-    sqlScript: sqltextData.value,
+    script: sqltextData.value,
     workId: props.workItemConfig.id,
     datasourceId: workConfig.datasourceId,
-    sparkConfig: workConfig.sparkConfig,
-    clusterId: workConfig.clusterId,
-    corn: workConfig.corn
+    // sparkConfig: workConfig.sparkConfig,
+    // clusterId: workConfig.clusterId,
+    // corn: workConfig.corn
   })
     .then((res: any) => {
+      changeStatus.value = false
       ElMessage.success(res.msg)
       saveLoading.value = false
     })
@@ -288,28 +377,41 @@ function saveData() {
     })
 }
 
+// 发布
+function publishData() {
+  publishLoading.value = true
+  PublishWorkData({
+    workId: props.workItemConfig.id
+  }).then((res: any) => {
+    ElMessage.success(res.msg)
+    publishLoading.value = false
+  })
+  .catch((error: any) => {
+    publishLoading.value = false
+  })
+}
+
+// 下线
+function stopData() {
+  stopLoading.value = true
+  DeleteWorkData({
+    workId: props.workItemConfig.id
+  }).then((res: any) => {
+    ElMessage.success(res.msg)
+    stopLoading.value = false
+  })
+  .catch((error: any) => {
+    stopLoading.value = false
+  })
+}
+
 // 配置打开
 function setConfigData() {
-  configModalRef.value.showModal((formData: any) => {
-    return new Promise((resolve: any, reject: any) => {
-      SaveWorkItemConfig({
-        sqlScript: sqltextData.value,
-        workId: props.workItemConfig.id,
-        datasourceId: formData.datasourceId,
-        clusterId: formData.clusterId,
-        sparkConfig: formData.sparkConfig,
-        corn: formData.corn,
-      })
-        .then((res: any) => {
-          ElMessage.success(res.msg)
-          initData()
-          resolve()
-        })
-        .catch((error: any) => {
-          reject(error)
-        })
-    })
-  }, workConfig)
+  configDetailRef.value.showModal(props.workItemConfig)
+}
+
+function sqlConfigChange(e: string) {
+  changeStatus.value = true
 }
 
 onMounted(() => {
@@ -324,7 +426,7 @@ onMounted(() => {
   .zqy-loading {
     padding: 0 20px;
     box-sizing: border-box;
-    height: calc(100vh - 116px);
+    height: calc(100vh - 55px);
   }
 
   .zqy-work-container {
@@ -373,13 +475,13 @@ onMounted(() => {
       }
 
       .sql-option-container {
-        height: $--app-item-height;
+        height: 50px;
         display: flex;
         align-items: center;
-        color: $--app-unclick-color;
+        color: getCssVar('color', 'primary', 'light-5');
 
         .btn-box {
-          font-size: $--app-small-font-size;
+          font-size: getCssVar('font-size', 'extra-small');
           display: flex;
           cursor: pointer;
           width: 48px;
@@ -394,15 +496,15 @@ onMounted(() => {
           }
 
           &:hover {
-            color: $--app-primary-color;
+            color: getCssVar('color', 'primary');;
           }
         }
       }
 
       .el-textarea {
         .el-textarea__inner {
-          border-radius: $--app-border-radius;
-          font-size: $--app-small-font-size;
+          border-radius: getCssVar('border-radius', 'small');
+          font-size: getCssVar('font-size', 'extra-small');
         }
       }
     }
@@ -410,7 +512,7 @@ onMounted(() => {
     .log-show {
       .el-tabs {
         .el-tabs__item {
-          font-size: $--app-small-font-size;
+          font-size: getCssVar('font-size', 'extra-small');
         }
 
         .el-tabs__content {
@@ -418,12 +520,12 @@ onMounted(() => {
         }
 
         .el-tabs__nav-scroll {
-          border-bottom: 1px solid $--app-border-color;
+          border-bottom: 1px solid getCssVar('border-color');
         }
       }
 
       .show-container {
-        height: calc(100vh - 420px);
+        height: calc(100vh - 368px);
         overflow: auto;
       }
     }

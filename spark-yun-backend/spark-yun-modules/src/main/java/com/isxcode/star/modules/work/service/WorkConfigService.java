@@ -1,29 +1,39 @@
 package com.isxcode.star.modules.work.service;
 
-import com.isxcode.star.api.work.pojos.req.ConfigWorkReq;
+import com.alibaba.fastjson.JSON;
+import com.isxcode.star.api.work.constants.ResourceLevel;
+import com.isxcode.star.api.work.constants.SetMode;
+import com.isxcode.star.api.work.constants.WorkType;
+import com.isxcode.star.api.work.pojos.dto.ClusterConfig;
+import com.isxcode.star.api.work.pojos.dto.CronConfig;
+import com.isxcode.star.api.work.pojos.dto.SyncRule;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
+import com.isxcode.star.modules.datasource.entity.DatasourceEntity;
+import com.isxcode.star.modules.datasource.service.DatasourceService;
 import com.isxcode.star.modules.work.entity.WorkConfigEntity;
-import com.isxcode.star.modules.work.entity.WorkEntity;
 import com.isxcode.star.modules.work.repository.WorkConfigRepository;
-import com.isxcode.star.modules.work.repository.WorkRepository;
+
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import javax.transaction.Transactional;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.logging.log4j.util.Strings;
-import org.springframework.scheduling.support.CronExpression;
 import org.springframework.stereotype.Service;
 
-/** 用户模块接口的业务逻辑. */
+/**
+ * 用户模块接口的业务逻辑.
+ */
 @Service
 @RequiredArgsConstructor
 @Transactional
 @Slf4j
 public class WorkConfigService {
 
-	private final WorkRepository workRepository;
-
 	private final WorkConfigRepository workConfigRepository;
+
+	private final DatasourceService datasourceService;
 
 	public WorkConfigEntity getWorkConfigEntity(String workConfigId) {
 
@@ -34,40 +44,86 @@ public class WorkConfigService {
 		return workConfigEntityOptional.get();
 	}
 
-	public void configWork(ConfigWorkReq wocConfigWorkReq) {
+	public void initWorkScript(WorkConfigEntity workConfig, String workType) {
 
-		Optional<WorkEntity> workEntityOptional = workRepository.findById(wocConfigWorkReq.getWorkId());
-		if (!workEntityOptional.isPresent()) {
-			throw new IsxAppException("作业不存在");
+		switch (workType) {
+			case WorkType.QUERY_SPARK_SQL :
+				workConfig.setScript("show databases");
+				break;
+			case WorkType.QUERY_JDBC_SQL :
+				workConfig.setScript("show databases");
+				break;
+			case WorkType.EXECUTE_JDBC_SQL :
+				workConfig.setScript("show databases");
+				break;
+			case WorkType.BASH :
+				workConfig.setScript("#!/bin/bash \n" + "\n" + "pwd");
+				break;
+			case WorkType.PYTHON :
+				workConfig.setScript("print('hello world')");
+				break;
+		}
+	}
+
+	public void initClusterConfig(WorkConfigEntity workConfig, String clusterId, String clusterNodeId,
+			Boolean enableHive, String datasourceId) {
+
+		Map<String, String> sparkConfig = initSparkConfig(ResourceLevel.LOW);
+		if (enableHive) {
+			DatasourceEntity datasource = datasourceService.getDatasource(datasourceId);
+			sparkConfig.put("hive.metastore.uris", datasource.getMetastoreUris());
 		}
 
-		Optional<WorkConfigEntity> workConfigEntityOptional = workConfigRepository
-				.findById(workEntityOptional.get().getConfigId());
-		if (!workConfigEntityOptional.isPresent()) {
-			throw new IsxAppException("作业异常，作业不可用。");
-		}
-		WorkConfigEntity workConfigEntity = workConfigEntityOptional.get();
+		workConfig.setClusterConfig(JSON.toJSONString(
+				ClusterConfig.builder().setMode(SetMode.SIMPLE).clusterId(clusterId).clusterNodeId(clusterNodeId)
+						.enableHive(enableHive).sparkConfig(sparkConfig).resourceLevel(ResourceLevel.LOW).build()));
+	}
 
-		if (!Strings.isEmpty(wocConfigWorkReq.getSqlScript())) {
-			workConfigEntity.setSqlScript(wocConfigWorkReq.getSqlScript());
+	public void initSyncRule(WorkConfigEntity workConfig) {
+		workConfig.setSyncRule(JSON
+				.toJSONString(SyncRule.builder().setMode(SetMode.SIMPLE).numConcurrency(1).numPartitions(1).build()));
+	}
+
+	public void initCronConfig(WorkConfigEntity workConfig) {
+		workConfig.setCronConfig(
+				JSON.toJSONString(CronConfig.builder().setMode(SetMode.SIMPLE).type("ALL").enable(false).build()));
+	}
+
+	public Map<String, String> initSparkConfig(String resourceLevel) {
+
+		Map<String, String> sparkConfig = new HashMap<>();
+		switch (resourceLevel) {
+			case ResourceLevel.HIGH :
+				sparkConfig.put("spark.executor.instances", "10");
+				sparkConfig.put("spark.executor.cores", "4");
+				sparkConfig.put("spark.executor.memory", "4g");
+				sparkConfig.put("spark.driver.memory", "2g");
+				sparkConfig.put("spark.driver.cores", "1");
+				sparkConfig.put("spark.cores.max", "10");
+				sparkConfig.put("spark.driver.extraJavaOptions", "-Dfile.encoding=utf-8");
+				sparkConfig.put("spark.executor.extraJavaOptions", "-Dfile.encoding=utf-8");
+				break;
+			case ResourceLevel.MEDIUM :
+				sparkConfig.put("spark.executor.instances", "5");
+				sparkConfig.put("spark.executor.cores", "2");
+				sparkConfig.put("spark.executor.memory", "2g");
+				sparkConfig.put("spark.driver.memory", "1g");
+				sparkConfig.put("spark.driver.cores", "1");
+				sparkConfig.put("spark.cores.max", "5");
+				sparkConfig.put("spark.driver.extraJavaOptions", "-Dfile.encoding=utf-8");
+				sparkConfig.put("spark.executor.extraJavaOptions", "-Dfile.encoding=utf-8");
+				break;
+			case ResourceLevel.LOW :
+				sparkConfig.put("spark.executor.instances", "1");
+				sparkConfig.put("spark.executor.cores", "1");
+				sparkConfig.put("spark.executor.memory", "2g");
+				sparkConfig.put("spark.driver.memory", "1g");
+				sparkConfig.put("spark.driver.cores", "1");
+				sparkConfig.put("spark.cores.max", "1");
+				sparkConfig.put("spark.driver.extraJavaOptions", "-Dfile.encoding=utf-8");
+				sparkConfig.put("spark.executor.extraJavaOptions", "-Dfile.encoding=utf-8");
+				break;
 		}
-		if (!Strings.isEmpty(wocConfigWorkReq.getClusterId())) {
-			workConfigEntity.setClusterId(wocConfigWorkReq.getClusterId());
-		}
-		if (!Strings.isEmpty(wocConfigWorkReq.getDatasourceId())) {
-			workConfigEntity.setDatasourceId(wocConfigWorkReq.getDatasourceId());
-		}
-		if (!Strings.isEmpty(wocConfigWorkReq.getSparkConfig())) {
-			workConfigEntity.setSparkConfig(wocConfigWorkReq.getSparkConfig());
-		}
-		if (!Strings.isEmpty(wocConfigWorkReq.getCorn())) {
-			// 检验corn表达式
-			boolean validExpression = CronExpression.isValidExpression(wocConfigWorkReq.getCorn());
-			if (!validExpression) {
-				throw new IsxAppException("Corn表达式异常");
-			}
-			workConfigEntity.setCorn(wocConfigWorkReq.getCorn());
-		}
-		workConfigRepository.save(workConfigEntity);
+		return sparkConfig;
 	}
 }

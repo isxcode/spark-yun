@@ -36,4 +36,6 @@ public class EnoQueryNodeRes {
 	private String port;
 
 	private String agentLog;
+
+	private Boolean defaultClusterNode;
 }

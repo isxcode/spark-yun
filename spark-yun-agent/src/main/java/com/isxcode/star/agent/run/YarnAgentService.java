@@ -1,34 +1,41 @@
 package com.isxcode.star.agent.run;
 
 import com.alibaba.fastjson2.JSON;
+import com.isxcode.star.agent.properties.SparkYunAgentProperties;
 import com.isxcode.star.api.agent.pojos.req.PluginReq;
 import com.isxcode.star.api.agent.pojos.req.SparkSubmit;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.util.Strings;
+import org.apache.spark.launcher.SparkLauncher;
+import org.springframework.stereotype.Service;
+
 import java.io.*;
 import java.net.MalformedURLException;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.logging.log4j.util.Strings;
-import org.apache.spark.launcher.SparkLauncher;
-import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class YarnAgentService implements AgentService {
 
+	private final SparkYunAgentProperties sparkYunAgentProperties;
+
 	@Override
-	public String getMaster() {
+	public String getMaster(String sparkHomePath) {
 		return "yarn";
 	}
 
 	@Override
-	public SparkLauncher genSparkLauncher(PluginReq pluginReq, SparkSubmit sparkSubmit, String agentHomePath) {
+	public SparkLauncher genSparkLauncher(PluginReq pluginReq, SparkSubmit sparkSubmit, String agentHomePath,
+			String sparkHomePath) {
 
 		SparkLauncher sparkLauncher = new SparkLauncher().setVerbose(false).setMainClass(sparkSubmit.getMainClass())
-				.setDeployMode("cluster").setAppName("zhiqingyun-job").setMaster(getMaster())
+				.setDeployMode("cluster").setAppName("zhiqingyun-job").setMaster(getMaster(sparkHomePath))
 				.setAppResource(
 						agentHomePath + File.separator + "plugins" + File.separator + sparkSubmit.getAppResource())
 				.setSparkHome(agentHomePath + File.separator + "spark-min");
@@ -38,7 +45,10 @@ public class YarnAgentService implements AgentService {
 			if (jarFiles != null) {
 				for (File jar : jarFiles) {
 					try {
-						sparkLauncher.addJar(jar.toURI().toURL().toString());
+						// 使用本地hive驱动
+						if (!jar.getName().contains("hive")) {
+							sparkLauncher.addJar(jar.toURI().toURL().toString());
+						}
 					} catch (MalformedURLException e) {
 						log.error(e.getMessage());
 						throw new IsxAppException("50010", "添加lib中文件异常", e.getMessage());
@@ -61,7 +71,7 @@ public class YarnAgentService implements AgentService {
 		InputStream inputStream = launch.getErrorStream();
 		BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
 
-		long timeoutExpiredMs = System.currentTimeMillis() + 30000;
+		long timeoutExpiredMs = System.currentTimeMillis() + sparkYunAgentProperties.getSubmitTimeout() * 1000;
 
 		StringBuilder errLog = new StringBuilder();
 		String line;
@@ -70,6 +80,7 @@ public class YarnAgentService implements AgentService {
 
 			long waitMillis = timeoutExpiredMs - System.currentTimeMillis();
 			if (waitMillis <= 0) {
+				launch.destroy();
 				throw new IsxAppException(errLog.toString());
 			}
 
@@ -94,7 +105,7 @@ public class YarnAgentService implements AgentService {
 	}
 
 	@Override
-	public String getAppStatus(String appId) throws IOException {
+	public String getAppStatus(String appId, String sparkHomePath) throws IOException {
 
 		String getStatusCmdFormat = "yarn application -status %s";
 
@@ -133,7 +144,7 @@ public class YarnAgentService implements AgentService {
 	}
 
 	@Override
-	public String getAppLog(String appId) throws IOException {
+	public String getAppLog(String appId, String sparkHomePath) throws IOException {
 
 		String getLogCmdFormat = "yarn logs -applicationId %s";
 		Process process = Runtime.getRuntime().exec(String.format(getLogCmdFormat, appId));
@@ -173,7 +184,7 @@ public class YarnAgentService implements AgentService {
 	}
 
 	@Override
-	public String getAppData(String appId) throws IOException {
+	public String getAppData(String appId, String sparkHomePath) throws IOException {
 
 		String getLogCmdFormat = "yarn logs -applicationId %s";
 
@@ -207,7 +218,7 @@ public class YarnAgentService implements AgentService {
 	}
 
 	@Override
-	public void killApp(String appId) throws IOException {
+	public void killApp(String appId, String sparkHomePath) throws IOException {
 
 		String killAppCmdFormat = "yarn application -kill %s";
 		Process process = Runtime.getRuntime().exec(String.format(killAppCmdFormat, appId));

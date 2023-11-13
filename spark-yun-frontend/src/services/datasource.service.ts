@@ -56,3 +56,22 @@ export function DeleteDatasourceData(params: any): Promise<any> {
     params: params
   })
 }
+
+// // 获取数据源驱动
+// export function GetDriverListData(params: any): Promise<any> {
+//   return http.request({
+//     method: 'post',
+//     url: '/datasource/pageDatabaseDriver',
+//     params: params
+//   })
+// }
+// // 获取默认驱动
+// export function GetDefaultDriverData(params: any): Promise<any> {
+//   return http.request({
+//     method: 'post',
+//     url: '/datasource/getDefaultDatabaseDriver',
+//     params: params
+//   })
+// }
+
+

@@ -6,6 +6,9 @@ import static com.isxcode.star.common.config.CommonConfig.USER_ID;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.TypeReference;
+import com.isxcode.star.api.work.pojos.dto.ClusterConfig;
+import com.isxcode.star.api.work.pojos.dto.SyncRule;
+import com.isxcode.star.api.work.pojos.dto.SyncWorkConfig;
 import com.isxcode.star.api.workflow.pojos.dto.NodeInfo;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.star.common.utils.jgrapht.JgraphtUtils;
@@ -13,14 +16,20 @@ import com.isxcode.star.modules.work.entity.VipWorkVersionEntity;
 import com.isxcode.star.modules.work.entity.WorkConfigEntity;
 import com.isxcode.star.modules.work.entity.WorkEntity;
 import com.isxcode.star.modules.work.run.WorkRunContext;
+
 import java.util.*;
 import java.util.stream.Collectors;
+
 import org.apache.logging.log4j.util.Strings;
 
-/** 工作流工具类. */
+/**
+ * 工作流工具类.
+ */
 public class WorkflowUtils {
 
-	/** 将数据库字段flowStr转成List<List<String>>结构. */
+	/**
+	 * 将数据库字段flowStr转成List<List<String>>结构.
+	 */
 	public static List<List<String>> translateFlow(String flowStr) {
 
 		List<List<String>> flowList = JSON.parseObject(flowStr, new TypeReference<List<List<String>>>() {
@@ -29,7 +38,9 @@ public class WorkflowUtils {
 		return flowList.stream().distinct().collect(Collectors.toList());
 	}
 
-	/** 对工作流的flow进行检查. */
+	/**
+	 * 对工作流的flow进行检查.
+	 */
 	public static void checkFlow(List<String> nodeIdList, List<List<String>> flowList) {
 
 		// 校验节点是否有空
@@ -43,7 +54,9 @@ public class WorkflowUtils {
 		JgraphtUtils.isCycle(nodeIdList, flowList);
 	}
 
-	/** 获取当前节点的父级节点. */
+	/**
+	 * 获取当前节点的父级节点.
+	 */
 	public static List<String> getParentNodes(List<List<String>> flowList, String nodeId) {
 
 		List<String> nodes = flowList.stream().filter(e -> Objects.equals(e.get(1), nodeId)).map(e -> e.get(0))
@@ -56,7 +69,9 @@ public class WorkflowUtils {
 		}
 	}
 
-	/** 获取当前节点的子级节点.. */
+	/**
+	 * 获取当前节点的子级节点..
+	 */
 	public static List<String> getSonNodes(List<List<String>> flowList, String nodeId) {
 
 		List<String> nodes = flowList.stream().filter(e -> Objects.equals(e.get(0), nodeId)).map(e -> e.get(1))
@@ -69,7 +84,9 @@ public class WorkflowUtils {
 		}
 	}
 
-	/** 获取工作流的所有开始节点. */
+	/**
+	 * 获取工作流的所有开始节点.
+	 */
 	public static List<String> getStartNodes(List<List<String>> flowList, List<String> nodeIdList) {
 
 		List<String> sonNodes = flowList.stream().map(sublist -> sublist.get(1)).collect(Collectors.toList());
@@ -77,7 +94,9 @@ public class WorkflowUtils {
 		return nodeIdList.stream().filter(e -> !sonNodes.contains(e)).collect(Collectors.toList());
 	}
 
-	/** 获取工作流的所有结束节点. */
+	/**
+	 * 获取工作流的所有结束节点.
+	 */
 	public static List<String> getEndNodes(List<List<String>> flowList, List<String> nodeIdList) {
 
 		List<String> sonNodes = flowList.stream().map(sublist -> sublist.get(0)).collect(Collectors.toList());
@@ -85,7 +104,9 @@ public class WorkflowUtils {
 		return nodeIdList.stream().filter(e -> !sonNodes.contains(e)).collect(Collectors.toList());
 	}
 
-	/** 从webConfig中解析出节点list. */
+	/**
+	 * 从webConfig中解析出节点list.
+	 */
 	public static List<String> parseNodeList(String webConfig) {
 
 		List<NodeInfo> nodeInfos = JSONArray.parseArray(webConfig, NodeInfo.class);
@@ -94,7 +115,9 @@ public class WorkflowUtils {
 				.collect(Collectors.toList());
 	}
 
-	/** 从webConfig中解析出节点映射关系. */
+	/**
+	 * 从webConfig中解析出节点映射关系.
+	 */
 	public static List<List<String>> parseNodeMapping(String webConfig) {
 
 		List<NodeInfo> nodeInfos = JSONArray.parseArray(webConfig, NodeInfo.class);
@@ -115,24 +138,28 @@ public class WorkflowUtils {
 
 	public static WorkRunContext genWorkRunContext(String instanceId, WorkEntity work, WorkConfigEntity workConfig) {
 
-		return WorkRunContext.builder().datasourceId(workConfig.getDatasourceId()).sqlScript(workConfig.getSqlScript())
-				.instanceId(instanceId).tenantId(TENANT_ID.get()).clusterId(workConfig.getClusterId())
-				.workType(work.getWorkType()).workId(work.getId()).workName(work.getName())
-				.sparkConfig(JSON.parseObject(workConfig.getSparkConfig(), new TypeReference<Map<String, String>>() {
-				}.getType())).userId(USER_ID.get()).build();
+		return WorkRunContext.builder().datasourceId(workConfig.getDatasourceId()).script(workConfig.getScript())
+				.instanceId(instanceId).tenantId(TENANT_ID.get())
+				.clusterConfig(JSON.parseObject(workConfig.getClusterConfig(), ClusterConfig.class))
+				.syncWorkConfig(JSON.parseObject(workConfig.getSyncWorkConfig(), SyncWorkConfig.class))
+				.syncRule(JSON.parseObject(workConfig.getSyncRule(), SyncRule.class)).workType(work.getWorkType())
+				.workId(work.getId()).workName(work.getName()).userId(USER_ID.get()).build();
 	}
 
-	public static WorkRunContext genWorkRunContext(String instanceId, VipWorkVersionEntity workVersion) {
+	public static WorkRunContext genWorkRunContext(String instanceId, VipWorkVersionEntity workVersion,
+			WorkflowRunEvent event) {
 
-		return WorkRunContext.builder().datasourceId(workVersion.getDatasourceId())
-				.sqlScript(workVersion.getSqlScript()).instanceId(instanceId).tenantId(TENANT_ID.get())
-				.userId(USER_ID.get()).clusterId(workVersion.getClusterId()).workType(workVersion.getWorkType())
-				.workId(workVersion.getId())
-				.sparkConfig(JSON.parseObject(workVersion.getSparkConfig(), new TypeReference<Map<String, String>>() {
-				}.getType())).build();
+		return WorkRunContext.builder().datasourceId(workVersion.getDatasourceId()).script(workVersion.getScript())
+				.instanceId(instanceId).tenantId(TENANT_ID.get()).userId(USER_ID.get())
+				.syncWorkConfig(JSON.parseObject(workVersion.getSyncWorkConfig(), SyncWorkConfig.class))
+				.syncRule(JSON.parseObject(workVersion.getSyncRule(), SyncRule.class))
+				.clusterConfig(JSON.parseObject(workVersion.getClusterConfig(), ClusterConfig.class))
+				.workType(workVersion.getWorkType()).workName(event.getWorkName()).workId(workVersion.getId()).build();
 	}
 
-	/** 获取所有下游的节点id. */
+	/**
+	 * 获取所有下游的节点id.
+	 */
 	public static List<String> parseAfterNodes(List<List<String>> webConfig, String workId) {
 
 		List<String> afterNodes = new ArrayList<>();

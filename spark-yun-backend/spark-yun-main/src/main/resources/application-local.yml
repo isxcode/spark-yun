@@ -5,7 +5,6 @@ spring:
 
   security:
     user:
-      roles: ADMIN
       name: admin
       password: admin123
 
@@ -25,13 +24,6 @@ spring:
     password: root123
     locations: classpath:db/migration/h2
 
-  quartz:
-    properties:
-      org.quartz.dataSource.quartzDataSource.driver: org.h2.Driver
-      org.quartz.dataSource.quartzDataSource.URL: jdbc:h2:file:~/.zhiqingyun/h2/data
-      org.quartz.dataSource.quartzDataSource.user: root
-      org.quartz.dataSource.quartzDataSource.password: root123
-
 logging:
   level:
     root: info
@@ -39,6 +31,7 @@ logging:
 spark-yun:
   default-agent-port: 30177
   tmp-dir: /tmp
+  resource-dir: /var/lib/zhiqingyun
 
 isx-app:
   use-port: true

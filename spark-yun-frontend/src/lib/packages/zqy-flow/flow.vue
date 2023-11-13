@@ -23,6 +23,7 @@ let dnd: any
 let container: HTMLElement | undefined;
 
 const runningStatus = ref(false)
+const hideGridStatus = ref(false)
 
 function initGraph() {
     Graph.registerNode(
@@ -158,10 +159,13 @@ function initGraph() {
             allowNode: false,
             allowEdge: false,
             validateMagnet({ magnet }) {
+                // if (!hideGridStatus.value) {
+                //     return false
+                // } else {
+                //     return magnet.getAttribute('port-group') !== 'top'
+                // }
                 return magnet.getAttribute('port-group') !== 'top'
 
-                // 限制连线配置
-                return true
             },
             createEdge() {
                 return _Graph.createEdge({
@@ -196,7 +200,7 @@ function initGraph() {
         }
     })
     _Graph.on('node:mouseenter', ({ node }) => {
-        if (!runningStatus.value) {
+        if (!runningStatus.value && !hideGridStatus.value) {
             node.addTools({
                 name: 'button-remove',
                 args: {
@@ -214,7 +218,7 @@ function initGraph() {
         node.removeTools()
     })
     _Graph.on('edge:mouseenter', ({ edge }) => {
-        if (!runningStatus.value) {
+        if (!runningStatus.value && !hideGridStatus.value) {
             edge.addTools({
                 name: 'button-remove',
                 args: { distance: '50%' }
@@ -225,7 +229,7 @@ function initGraph() {
         edge.removeTools()
     })
     _Graph.bindKey('backspace', () => {
-        if (!runningStatus.value) {
+        if (!runningStatus.value && !hideGridStatus.value) {
             const cells = _Graph.getSelectedCells()
             if (cells.length) {
                 _Graph.removeCells(cells)
@@ -292,6 +296,7 @@ function updateFlowStatus(statusList: Array<any>, isRunning: boolean) {
 
 // 设置是否隐藏网格以及工具---运行中
 function hideGrid(status: boolean) {
+    hideGridStatus.value = status
     if (status) {
         _Graph.hideGrid()
         _Graph.hideTools()
@@ -310,6 +315,9 @@ function zoomOut() {
 function locationCenter() {
   _Graph.centerContent()
 }
+function locationContentCenter() {
+  _Graph.center()
+}
 
 onMounted(() => {
     container = document.getElementById('container') as HTMLElement | undefined
@@ -322,13 +330,14 @@ defineExpose({
     initCellList,
     updateFlowStatus,
     hideGrid,
-    selectNodeEvent
+    selectNodeEvent,
+    locationContentCenter
 })
 </script>
 
 <style lang="scss" scoped>
 .zqy-flow {
-    height: calc(100vh - 162px);
+    height: calc(100vh - 106px);
 
     .my-selecting {
         border: 1px solid red;
@@ -389,7 +398,7 @@ defineExpose({
         margin-right: 8px;
         cursor: pointer;
         &:hover {
-            color: $--app-primary-color;
+            color: getCssVar('color', 'primary');;
         }
     }
 

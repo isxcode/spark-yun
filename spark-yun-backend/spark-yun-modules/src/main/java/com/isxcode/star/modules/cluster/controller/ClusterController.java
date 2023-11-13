@@ -62,4 +62,12 @@ public class ClusterController {
 
 		clusterBizService.checkCluster(checkClusterReq);
 	}
+
+	@Operation(summary = "设置默认集群")
+	@PostMapping("/setDefaultCluster")
+	@SuccessResponse("设置成功")
+	public void setDefaultCluster(@Valid @RequestBody SetDefaultClusterReq setDefaultClusterReq) {
+
+		clusterBizService.setDefaultCluster(setDefaultClusterReq);
+	}
 }

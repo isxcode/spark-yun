@@ -48,6 +48,8 @@ public class WorkflowEntity {
 
 	private String versionId;
 
+	private String defaultClusterId;
+
 	@CreatedDate
 	private LocalDateTime createDateTime;
 

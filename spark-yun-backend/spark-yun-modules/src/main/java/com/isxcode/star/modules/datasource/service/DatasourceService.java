@@ -2,76 +2,79 @@ package com.isxcode.star.modules.datasource.service;
 
 import com.isxcode.star.api.datasource.constants.DatasourceDriver;
 import com.isxcode.star.api.datasource.constants.DatasourceType;
-import com.isxcode.star.api.datasource.pojos.req.*;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
+import com.isxcode.star.backend.api.base.properties.IsxAppProperties;
 import com.isxcode.star.common.utils.AesUtils;
+import com.isxcode.star.common.utils.path.PathUtils;
+import com.isxcode.star.modules.datasource.entity.DatabaseDriverEntity;
 import com.isxcode.star.modules.datasource.entity.DatasourceEntity;
 import com.isxcode.star.modules.datasource.repository.DatasourceRepository;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.sql.Connection;
+import java.sql.Driver;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
+import static com.isxcode.star.common.config.CommonConfig.JPA_TENANT_MODE;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class DatasourceService {
 
+	private final IsxAppProperties isxAppProperties;
+
 	private final DatasourceRepository datasourceRepository;
+
+	private final DatabaseDriverService dataDriverService;
+
+	/**
+	 * 所有的驱动. driverId driver
+	 */
+	public final static Map<String, DriverShim> ALL_EXIST_DRIVER = new ConcurrentHashMap<>();
 
 	private final AesUtils aesUtils;
 
-	public void loadDriverClass(String datasourceType) {
+	public String getDriverClass(String datasourceType) {
 
-		try {
-			switch (datasourceType) {
-				case DatasourceType.MYSQL :
-					Class.forName(DatasourceDriver.MYSQL_DRIVER);
-					break;
-				case DatasourceType.ORACLE :
-					Class.forName(DatasourceDriver.ORACLE_DRIVER);
-					break;
-				case DatasourceType.SQL_SERVER :
-					Class.forName(DatasourceDriver.SQL_SERVER_DRIVER);
-					break;
-				case DatasourceType.DORIS :
-					Class.forName(DatasourceDriver.DORIS_DRIVER);
-					break;
-				case DatasourceType.POSTGRE_SQL :
-					Class.forName(DatasourceDriver.POSTGRE_SQL_DRIVER);
-					break;
-				case DatasourceType.CLICKHOUSE :
-					Class.forName(DatasourceDriver.CLICKHOUSE_DRIVER);
-					break;
-				case DatasourceType.HANA_SAP :
-					Class.forName(DatasourceDriver.HANA_SAP_DRIVER);
-					break;
-				case DatasourceType.HIVE :
-					Class.forName(DatasourceDriver.HIVE_DRIVER);
-					break;
-				case DatasourceType.DM :
-					Class.forName(DatasourceDriver.DM_DRIVER);
-					break;
-				case DatasourceType.OCEANBASE :
-					Class.forName(DatasourceDriver.OCEAN_BASE_DRIVER);
-					break;
-				case DatasourceType.TIDB :
-					Class.forName(DatasourceDriver.TIDB_DRIVER);
-					break;
-				case DatasourceType.DB2 :
-					Class.forName(DatasourceDriver.DB2_DRIVER);
-					break;
-				case DatasourceType.STAR_ROCKS :
-					Class.forName(DatasourceDriver.STAR_ROCKS_DRIVER);
-					break;
-				default :
-					throw new IsxAppException("数据源暂不支持");
-			}
-		} catch (ClassNotFoundException e) {
-			log.error(e.getMessage());
-			throw new IsxAppException("找不到对应驱动");
+		switch (datasourceType) {
+			case DatasourceType.MYSQL :
+				return DatasourceDriver.MYSQL_DRIVER;
+			case DatasourceType.ORACLE :
+				return DatasourceDriver.ORACLE_DRIVER;
+			case DatasourceType.SQL_SERVER :
+				return DatasourceDriver.SQL_SERVER_DRIVER;
+			case DatasourceType.DORIS :
+				return DatasourceDriver.DORIS_DRIVER;
+			case DatasourceType.POSTGRE_SQL :
+				return DatasourceDriver.POSTGRE_SQL_DRIVER;
+			case DatasourceType.CLICKHOUSE :
+				return DatasourceDriver.CLICKHOUSE_DRIVER;
+			case DatasourceType.HANA_SAP :
+				return DatasourceDriver.HANA_SAP_DRIVER;
+			case DatasourceType.HIVE :
+				return DatasourceDriver.HIVE_DRIVER;
+			case DatasourceType.DM :
+				return DatasourceDriver.DM_DRIVER;
+			case DatasourceType.OCEANBASE :
+				return DatasourceDriver.OCEAN_BASE_DRIVER;
+			case DatasourceType.TIDB :
+				return DatasourceDriver.TIDB_DRIVER;
+			case DatasourceType.DB2 :
+				return DatasourceDriver.DB2_DRIVER;
+			case DatasourceType.STAR_ROCKS :
+				return DatasourceDriver.STAR_ROCKS_DRIVER;
+			default :
+				throw new IsxAppException("数据源暂不支持");
 		}
 	}
 
@@ -82,10 +85,49 @@ public class DatasourceService {
 
 	public Connection getDbConnection(DatasourceEntity datasource) throws SQLException {
 
-		loadDriverClass(datasource.getDbType());
+		// 判断驱动是否已经加载
+		DriverShim driver = ALL_EXIST_DRIVER.get(datasource.getDriverId());
+		if (driver == null) {
 
-		DriverManager.setLoginTimeout(10);
-		return DriverManager.getConnection(datasource.getJdbcUrl(), datasource.getUsername(),
-				aesUtils.decrypt(datasource.getPasswd()));
+			JPA_TENANT_MODE.set(false);
+			DatabaseDriverEntity driverEntity = dataDriverService.getDriver(datasource.getDriverId());
+			JPA_TENANT_MODE.set(true);
+
+			String driverPath = "TENANT_DRIVER".equals(driverEntity.getDriverType())
+					? driverEntity.getTenantId() + File.separator + driverEntity.getFileName()
+					: "system" + File.separator + driverEntity.getFileName();
+
+			// 先加载驱动到ALL_EXIST_DRIVER
+			try {
+				URL url = new File(PathUtils.parseProjectPath(isxAppProperties.getResourcesPath()) + File.separator
+						+ "jdbc" + File.separator + driverPath).toURI().toURL();
+				ClassLoader driverClassLoader = new URLClassLoader(new URL[]{url});
+
+				// 特殊逻辑判断，如果驱动是mysql5的使用
+				String driverClassName = getDriverClass(datasource.getDbType());
+				if (DatasourceType.MYSQL.equals(datasource.getDbType())) {
+					if (driverPath.contains("-5")) {
+						driverClassName = "com.mysql.jdbc.Driver";
+					}
+				}
+
+				Class<?> driverClass = driverClassLoader.loadClass(driverClassName);
+				driver = new DriverShim((Driver) driverClass.newInstance());
+				ALL_EXIST_DRIVER.put(datasource.getDriverId(), driver);
+			} catch (MalformedURLException | ClassNotFoundException | IllegalAccessException
+					| InstantiationException e) {
+				throw new RuntimeException(e);
+			}
+		}
+
+		java.util.Properties info = new java.util.Properties();
+		if (datasource.getUsername() != null) {
+			info.put("user", datasource.getUsername());
+		}
+		if (datasource.getPasswd() != null) {
+			info.put("password", aesUtils.decrypt(datasource.getPasswd()));
+		}
+		DriverManager.setLoginTimeout(500);
+		return driver.connect(datasource.getJdbcUrl(), info);
 	}
 }

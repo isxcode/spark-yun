@@ -20,11 +20,20 @@
                 <div class="search-box">
                     <el-input v-model="searchParam" placeholder="回车搜索作业名称" @input="inputEvent"
                         @keyup.enter="initData"></el-input>
-                    <el-button type="primary" @click="addData"><el-icon><Plus /></el-icon></el-button>
+                    <el-button type="primary" circle @click="addData"><el-icon><Plus /></el-icon></el-button>
                 </div>
                 <div class="list-box">
-                    <template v-for="work in workListItem" :key="work.id">
-                        <div class="list-item" :class="{ 'choose-item': workConfig && workConfig.id === work.id }" :draggable="true" @click="showWorkConfig(work)" @dragstart="handleDragEnd($event, work)">{{ work.name }}
+                    <template v-if="workListItem.length" v-for="work in workListItem" :key="work.id">
+                        <div class="list-item" :class="{ 'choose-item': workConfig && workConfig.id === work.id }" :draggable="true" @click="showWorkConfig(work)" @dragstart="handleDragEnd($event, work)">
+                            {{ work.name }}
+                            <!-- <div class="item-left">
+                                <el-icon v-if="work.workType === 'QUERY_JDBC'"><Search /></el-icon>
+                                <el-icon v-if="work.workType === 'DATA_SYNC_JDBC'"><Van /></el-icon>
+                            </div>
+                            <div class="item-right">
+                                <span class="label-name">{{ work.name }}</span>
+                                <span class="label-name">{{ work.remark || '-' }}</span>
+                            </div> -->
                             <el-dropdown trigger="click">
                                 <el-icon class="option-more" @click.stop>
                                     <MoreFilled />
@@ -42,51 +51,105 @@
                             </el-dropdown>
                         </div>
                     </template>
+                    <empty-page v-else></empty-page>
                 </div>
             </div>
             <div class="flow-container">
                 <template v-if="containerType === 'flow'">
                     <div class="option-btns">
                         <!-- 非运行状态 -->
-                        <template v-if="!runningStatus || true">
-                            <span v-if="!btnLoadingConfig.runningLoading" @click="runWorkFlowDataEvent">运行</span>
-                            <el-icon v-else class="is-loading"><Loading /></el-icon>
+                        <div class="btn-box" @click="runWorkFlowDataEvent">
+                            <el-icon v-if="!btnLoadingConfig.runningLoading">
+                                <VideoPlay />
+                            </el-icon>
+                            <el-icon v-else class="is-loading">
+                                <Loading />
+                            </el-icon>
+                            <span class="btn-text">运行</span>
+                        </div>
+                        <div class="btn-box" @click="stopWorkFlow">
+                            <el-icon v-if="!btnLoadingConfig.stopWorkFlowLoading">
+                                <Close />
+                            </el-icon>
+                            <el-icon v-else class="is-loading">
+                                <Loading />
+                            </el-icon>
+                            <span class="btn-text">中止</span>
+                        </div>
+                        <div class="btn-box" @click="reRunWorkFlowDataEvent">
+                            <el-icon v-if="!btnLoadingConfig.reRunLoading">
+                                <RefreshLeft />
+                            </el-icon>
+                            <el-icon v-else class="is-loading">
+                                <Loading />
+                            </el-icon>
+                            <span class="btn-text">重跑</span>
+                        </div>
+                        <div class="btn-box" @click="saveData">
+                            <el-icon v-if="!btnLoadingConfig.saveLoading">
+                                <Finished />
+                            </el-icon>
+                            <el-icon v-else class="is-loading">
+                                <Loading />
+                            </el-icon>
+                            <span class="btn-text">保存</span>
+                        </div>
+                        <div class="btn-box" @click="showConfigDetail">
+                            <el-icon>
+                                <Setting />
+                            </el-icon>
+                            <span class="btn-text">配置</span>
+                        </div>
+                        <div class="btn-box" @click="publishWorkFlow">
+                            <el-icon v-if="!btnLoadingConfig.publishLoading">
+                                <Promotion />
+                            </el-icon>
+                            <el-icon v-else class="is-loading">
+                                <Loading />
+                            </el-icon>
+                            <span class="btn-text">发布</span>
+                        </div>
+                        <div class="btn-box" @click="underlineWorkFlow">
+                            <el-icon v-if="!btnLoadingConfig.underlineLoading">
+                                <Failed />
+                            </el-icon>
+                            <el-icon v-else class="is-loading">
+                                <Loading />
+                            </el-icon>
+                            <span class="btn-text">下线</span>
+                        </div>
+                        <div class="btn-box" @click="queryRunWorkInstancesEvent" v-if="workflowInstanceId">
+                            <el-icon>
+                                <Refresh />
+                            </el-icon>
+                            <span class="btn-text">刷新</span>
+                        </div>
 
-                            <template v-if="workflowInstanceId || true">
-                                <span v-if="!btnLoadingConfig.reRunLoading" @click="reRunWorkFlowDataEvent">重跑</span>
-                                <el-icon v-else class="is-loading"><Loading /></el-icon>
-                            </template>
-
-                            <span v-if="!btnLoadingConfig.saveLoading || true" @click="saveData">保存</span>
-                            <el-icon v-else class="is-loading"><Loading /></el-icon>
-
-                            <!-- <span @click="showConfigDetail">配置</span> -->
-
-                            <span v-if="!btnLoadingConfig.publishLoading || true" @click="publishWorkFlow">发布</span>
-                            <el-icon v-else class="is-loading"><Loading /></el-icon>
-
-                            <!-- <span>下线</span> -->
-                        </template>
-                        <!-- 运行状态 -->
-                        <!-- <template v-else> -->
-                            <span v-if="!btnLoadingConfig.stopWorkFlowLoading" @click="stopWorkFlow">中止</span>
-                            <el-icon v-else class="is-loading"><Loading /></el-icon>
-                        <!-- </template> -->
                         <!-- <span v-if="!btnLoadingConfig.exportLoading" @click="exportWorkFlow">导出</span>
                         <el-icon v-else class="is-loading"><Loading /></el-icon>
                         <span v-if="!btnLoadingConfig.importLoading" @click="importWorkFlow">导入</span>
                         <el-icon v-else class="is-loading"><Loading /></el-icon> -->
-                        <!-- <span>收藏</span> -->
-                        <span @click="queryRunWorkInstancesEvent">刷新</span>
                     </div>
                     <ZqyFlow ref="zqyFlowRef"></ZqyFlow>
                 </template>
                 <template v-else>
-                    <WorkItem v-if="showWorkItem" @back="backToFlow" @locationNode="locationNode" :workItemConfig="workConfig" :workFlowData="workFlowData"></WorkItem>
+                    <WorkItem
+                        v-if="showWorkItem && workConfig.workType !== 'DATA_SYNC_JDBC'"
+                        :workItemConfig="workConfig"
+                        :workFlowData="workFlowData"
+                        @back="backToFlow"
+                        @locationNode="locationNode"
+                    ></WorkItem>
+                    <data-sync
+                        v-if="showWorkItem && workConfig.workType === 'DATA_SYNC_JDBC'"
+                        :workItemConfig="workConfig"
+                        @back="backToFlow"
+                        @locationNode="locationNode"
+                    ></data-sync>
                 </template>
             </div>
         <AddModal ref="addModalRef" />
-        <ConfigDetail ref="configDetailRef"></ConfigDetail>
+        <workflow-config ref="workflowConfigRef"></workflow-config>
         <zqyLog ref="zqyLogRef"></zqyLog>
     </div>
 </template>
@@ -97,22 +160,23 @@ import { useRoute } from 'vue-router'
 import Breadcrumb from '@/layout/bread-crumb/index.vue'
 import ZqyFlow from '@/lib/packages/zqy-flow/flow.vue'
 import AddModal from './add-modal/index.vue'
-import ConfigDetail from './config-detail/index.vue'
+import WorkflowConfig from './workflow-config/index.vue'
 import eventBus from '@/utils/eventBus'
 import zqyLog from '@/components/zqy-log/index.vue'
 import WorkItem from '../work-item/index.vue'
+import DataSync from '../data-sync/index.vue'
 
-import { AddWorkflowDetailList, BreakFlowData, DeleteWorkflowDetailList, ExportWorkflowData, GetWorkflowData, GetWorkflowDetailList, GetWorkflowList, ImportWorkflowData, PublishWorkflowData, QueryRunWorkInstances, ReRunWorkflow, RerunCurrentNodeFlowData, RunAfterFlowData, RunWorkflowData, SaveWorkflowData, StopWorkflowData, UpdateWorkflowDetailList } from '@/services/workflow.service'
+import { AddWorkflowDetailList, BreakFlowData, DeleteWorkflowDetailList, ExportWorkflowData, GetWorkflowData, GetWorkflowDetailList, GetWorkflowList, ImportWorkflowData, PublishWorkflowData, QueryRunWorkInstances, ReRunWorkflow, RerunCurrentNodeFlowData, RunAfterFlowData, RunWorkflowData, SaveWorkflowConfigData, SaveWorkflowData, StopWorkflowData, UnderlineWorkflowData, UpdateWorkflowDetailList } from '@/services/workflow.service'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { Loading } from '@element-plus/icons-vue'
 
 const route = useRoute()
 
 const searchParam = ref('')
 const workListItem = ref([])
 const zqyFlowRef = ref(null)
-const workflowName = ref('')
 const addModalRef = ref(null)
-const configDetailRef = ref(null)
+const workflowConfigRef = ref(null)
 const zqyLogRef = ref(null)
 const containerType = ref('flow')
 const workConfig = ref()
@@ -122,6 +186,7 @@ const workFlowData = ref({
     name: '',
     id: ''
 })
+const cronConfig = ref()
 
 const workflowInstanceId = ref('')
 const timer = ref()
@@ -134,7 +199,8 @@ const btnLoadingConfig = reactive({
     publishLoading: false,
     stopWorkFlowLoading: false,
     importLoading: false,
-    exportLoading: false
+    exportLoading: false,
+    underlineLoading: false
 })
 
 const breadCrumbList = reactive([
@@ -231,6 +297,9 @@ function deleteData(data: any) {
       workId: data.id
     })
       .then((res: any) => {
+        if (data.id === workConfig.value.id) {
+            backToFlow()
+        }
         ElMessage.success(res.msg)
         initData()
       })
@@ -310,7 +379,7 @@ function queryRunWorkInstancesEvent() {
 
 // 添加作业
 function addData() {
-    addModalRef.value.showModal((formData: FormData) => {
+    addModalRef.value.showModal((formData: any) => {
         return new Promise((resolve: any, reject: any) => {
             AddWorkflowDetailList({
                 ...formData,
@@ -320,6 +389,12 @@ function addData() {
                     ElMessage.success(res.msg)
                     initData()
                     resolve()
+                    
+                    showWorkConfig({
+                        id: res.data.workId,
+                        name: res.data.name,
+                        workType: formData.workType
+                    })
                 })
                 .catch((error: any) => {
                     reject(error)
@@ -330,7 +405,7 @@ function addData() {
 
 // 编辑作业
 function editData(data: any) {
-    addModalRef.value.showModal((formData: FormData) => {
+    addModalRef.value.showModal((formData: any) => {
         return new Promise((resolve: any, reject: any) => {
             UpdateWorkflowDetailList(formData)
                 .then((res: any) => {
@@ -350,6 +425,7 @@ function initFlowData() {
         GetWorkflowData({
             workflowId: workFlowData.value.id
         }).then((res: any) => {
+            cronConfig.value = res.data?.cronConfig
             if (res.data?.webConfig) {
                 zqyFlowRef.value.initCellList(res.data.webConfig)
             }
@@ -370,6 +446,19 @@ function publishWorkFlow() {
         ElMessage.success(res.msg)
     }).catch(() => {
         btnLoadingConfig.publishLoading = false
+    })
+}
+// 下线工作流
+function underlineWorkFlow() {
+    btnLoadingConfig.underlineLoading = true
+    UnderlineWorkflowData({
+        workflowId: workFlowData.value.id
+    }).then((res: any) => {
+        btnLoadingConfig.underlineLoading = false
+        ElMessage.success(res.msg)
+        queryRunWorkInstancesEvent()
+    }).catch(() => {
+        btnLoadingConfig.underlineLoading = false
     })
 }
 
@@ -421,23 +510,20 @@ function inputEvent(e: string) {
 
 // 配置设置
 function showConfigDetail() {
-    configDetailRef.value.showModal((data: any) => {
+    workflowConfigRef.value.showModal((data: any) => {
         return new Promise((resolve: any, reject: any) => {
-            console.log(data)
-            // AddWorkflowDetailList({
-            //     ...formData,
-            //     workflowId: workFlowData.value.id
-            // })
-            //     .then((res: any) => {
-            //         ElMessage.success(res.msg)
-            //         initData()
-                    resolve()
-            //     })
-            //     .catch((error: any) => {
-            //         reject(error)
-            //     })
+            SaveWorkflowConfigData({
+                workflowId: workFlowData.value.id,
+                cronConfig: data
+            }).then((res: any) => {
+                initFlowData()
+                ElMessage.success(res.msg)
+                resolve()
+            }).catch((err) => {
+                reject(err)
+            })
         })
-    })
+    }, cronConfig.value)
 }
 
 // 节点运行日志
@@ -543,7 +629,6 @@ onMounted(() => {
     initData()
     initFlowData()
     getWorkFlows()
-    // workflowName.value = route.query.name
 
     eventBus.on('nodeMenuEvent', (e: any) => {
         console.log('eeee', e)
@@ -581,7 +666,7 @@ onUnmounted(() => {
 
 <style lang="scss">
 .workflow-page {
-    height: calc(100% - 54px);
+    height: calc(100% - 56px);
     display: flex;
     position: relative;
     overflow: hidden;
@@ -591,13 +676,13 @@ onUnmounted(() => {
         width: 200px;
         max-width: 200px;
         height: 100%;
-        border-right: 1px solid $--app-border-color;
+        border-right: 1px solid getCssVar('border-color');
 
         .option-container {
             height: 50px;
             width: 201px;
-            background-color: $--app-light-color;
-            border-bottom: 1px solid $--app-border-color;
+            background-color: getCssVar('color', 'white');
+            border-bottom: 1px solid getCssVar('border-color');
             display: flex;
             position: relative;
 
@@ -606,15 +691,15 @@ onUnmounted(() => {
                 width: 201px;
                 display: flex;
                 align-items: center;
-                font-size: $--app-normal-font-size;
-                color: $--app-base-font-color;
+                font-size: getCssVar('font-size', 'base');
+                color: getCssVar('text-color', 'primary');
                 padding-left: 12px;
-                border-right: 1px solid $--app-border-color;
+                border-right: 1px solid getCssVar('border-color');
                 box-sizing: border-box;
                 .option-title__href {
                     cursor: pointer;
                     &:hover {
-                        color: $--app-primary-color;
+                        color: getCssVar('color', 'primary');;
                         text-decoration: underline;
                     }
                 }
@@ -626,7 +711,7 @@ onUnmounted(() => {
                 top: 16px;
                 cursor: pointer;
                 &:hover {
-                    color: $--app-primary-color;
+                    color: getCssVar('color', 'primary');;
                 }
             }
         }
@@ -638,7 +723,7 @@ onUnmounted(() => {
             justify-content: space-between;
             align-items: center;
             width: 100%;
-            border-bottom: 1px solid $--app-border-color;
+            border-bottom: 1px solid getCssVar('border-color');
 
             .el-input {
                 margin-left: 8px;
@@ -647,9 +732,9 @@ onUnmounted(() => {
 
             .el-button {
                 margin-left: 4px;
-                margin-right: 8px;
-                height: 32px;
-                width: 36px;
+                margin-right: 4px;
+                // height: 32px;
+                width: 28px;
             }
         }
 
@@ -657,25 +742,44 @@ onUnmounted(() => {
             // padding: 0 4px;
             box-sizing: border-box;
             overflow: auto;
-            max-height: calc(100vh - 206px);
+            max-height: calc(100vh - 148px);
+            position: relative;
+            height: 100%;
 
             .list-item {
-                height: $--app-item-height;
-                line-height: $--app-item-height;
+                height: getCssVar('menu', 'item-height');
+                // line-height: getCssVar('menu', 'item-height');
                 padding-left: 12px;
                 padding-right: 12px;
                 box-sizing: border-box;
-                border-bottom: 1px solid $--app-border-color;
+                border-bottom: 1px solid getCssVar('border-color');
                 cursor: pointer;
-                font-size: $--app-small-font-size;
+                font-size: getCssVar('font-size', 'extra-small');
                 position: relative;
 
+                display: flex;
+                align-items: center;
+
+                // .item-left {
+                //     font-size: 16px;
+                //     margin-left: 12px;
+                // }
+
+                // .item-right {
+                //     margin-left: 8px;
+                //     display: flex;
+                //     flex-direction: column;
+                //     justify-content: space-between;
+                //     padding: 2px 0;
+                //     box-sizing: border-box;
+                // }
+
                 &.choose-item {
-                    background-color: $--app-click-color;
+                    background-color: getCssVar('color', 'primary', 'light-8');
                 }
 
                 &:hover {
-                    background-color: $--app-click-color;
+                    background-color: getCssVar('color', 'primary', 'light-8');
 
                     .el-dropdown {
                         display: block;
@@ -692,7 +796,7 @@ onUnmounted(() => {
                         font-size: 14px;
                         transform: rotate(90deg);
                         cursor: pointer;
-                        color: $--app-info-color;
+                        color: getCssVar('color', 'info');
                     }
                 }
             }
@@ -714,27 +818,33 @@ onUnmounted(() => {
         width: 100%;
 
         .option-btns {
-            height: 50px;
-            background-color: $--app-light-color;
-            border-bottom: 1px solid $--app-border-color;
+            height: 51px;
+            background-color: getCssVar('color', 'white');
+            border-bottom: 1px solid getCssVar('border-color');
             display: flex;
             align-items: center;
-            padding-left: 12px;
+            padding-left: 20px;
             box-sizing: border-box;
-            font-size: $--app-small-font-size;
+            font-size: getCssVar('font-size', 'extra-small');
+            color: getCssVar('color', 'primary', 'light-5');
 
-            .el-icon {
-                margin-right: 8px;
-            }
-
-            span {
-                margin-right: 8px;
-                color: $--app-unclick-color;
+            .btn-box {
+                font-size: getCssVar('font-size', 'extra-small');
+                display: flex;
                 cursor: pointer;
+                width: 48px;
+                margin-right: 8px;
+
+                &.btn-box__4 {
+                    width: 70px;
+                }
+
+                .btn-text {
+                    margin-left: 4px;
+                }
 
                 &:hover {
-                    color: $--app-primary-color;
-                    text-decoration: underline;
+                    color: getCssVar('color', 'primary');;
                 }
             }
         }

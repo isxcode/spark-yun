@@ -67,6 +67,12 @@ function getLogData(id: string) {
         }
         timer.value = null
       }
+      if (['SUCCESS', 'FAIL'].includes(res.data.status)) {
+          if (timer.value) {
+              clearInterval(timer.value)
+          }
+          timer.value = null
+      }
     })
     .catch((err: any) => {
       console.log('err', err)
@@ -101,8 +107,8 @@ defineExpose({
 <style lang="scss">
 .publish-log {
   pre {
-    color: $--app-base-font-color;
-    font-size: $--app-small-font-size;
+    color: getCssVar('text-color', 'primary');
+    font-size: getCssVar('font-size', 'extra-small');
     line-height: 21px;
     margin: 0;
   }

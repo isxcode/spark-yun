@@ -56,6 +56,7 @@ import ShowLog from '../computer-group/computer-pointer/show-log/index.vue'
 import { BreadCrumbList, TableConfig, FormData } from './datasource.config'
 import { GetDatasourceList, AddDatasourceData, UpdateDatasourceData, CheckDatasourceData, DeleteDatasourceData } from '@/services/datasource.service'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { Loading } from '@element-plus/icons-vue'
 
 const keyword = ref('')
 const loading = ref(false)

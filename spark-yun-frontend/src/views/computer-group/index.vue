@@ -63,6 +63,16 @@
               </el-tag>
             </div>
           </template>
+          <template #defaultTag="scopeSlot">
+            <div class="btn-group">
+              <el-tag v-if="scopeSlot.row.defaultCluster" class="ml-2" type="success">
+                是
+              </el-tag>
+              <el-tag v-if="!scopeSlot.row.defaultCluster" class="ml-2" type="danger">
+                否
+              </el-tag>
+            </div>
+          </template>
           <template #options="scopeSlot">
             <div class="btn-group">
               <span @click="editData(scopeSlot.row)">编辑</span>
@@ -77,6 +87,7 @@
                 <Loading />
               </el-icon>
               <!-- <span @click="showPointDetail(scopeSlot.row)">节点</span> -->
+              <!-- <span @click="setDefaultNode(scopeSlot.row)">设置默认集群</span> -->
               <span @click="deleteData(scopeSlot.row)">删除</span>
             </div>
           </template>
@@ -95,9 +106,10 @@ import LoadingPage from '@/components/loading/index.vue'
 import AddModal from './add-modal/index.vue'
 
 import { BreadCrumbList, TableConfig, FormData } from './computer-group.config'
-import { GetComputerGroupList, AddComputerGroupData, UpdateComputerGroupData, CheckComputerGroupData, DeleteComputerGroupData } from '@/services/computer-group.service'
+import { GetComputerGroupList, AddComputerGroupData, UpdateComputerGroupData, CheckComputerGroupData, DeleteComputerGroupData, SetDefaultComputerGroup } from '@/services/computer-group.service'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useRouter } from 'vue-router'
+import { Loading } from '@element-plus/icons-vue'
 
 const router = useRouter()
 const breadCrumbList = reactive(BreadCrumbList)
@@ -186,6 +198,18 @@ function showPointDetail(data: any) {
     query: {
       id: data.id
     }
+  })
+}
+
+// 设置默认节点
+function setDefaultNode(data: any) {
+  SetDefaultComputerGroup({
+    clusterId: data.id
+  }).then((res: any) => {
+    ElMessage.success(res.msg)
+    initData(true)
+  })
+  .catch(() => {
   })
 }
 

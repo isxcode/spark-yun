@@ -2,6 +2,7 @@ package com.isxcode.star.modules.workflow.service;
 
 import com.alibaba.fastjson.JSON;
 import com.isxcode.star.api.workflow.pojos.req.ConfigWorkflowReq;
+import com.isxcode.star.api.workflow.pojos.req.ConfigWorkflowSettingReq;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.star.modules.work.entity.WorkEntity;
 import com.isxcode.star.modules.work.repository.WorkRepository;
@@ -28,6 +29,8 @@ public class WorkflowConfigBizService {
 	private final WorkflowConfigRepository workflowConfigRepository;
 
 	private final WorkRepository workRepository;
+
+	private final WorkflowService workflowService;
 
 	public WorkflowConfigEntity getWorkflowConfig(String workflowConfigId) {
 
@@ -79,6 +82,16 @@ public class WorkflowConfigBizService {
 		workflowConfig.setNodeMapping(JSON.toJSONString(nodeMapping));
 
 		// 持久化配置
+		workflowConfigRepository.save(workflowConfig);
+	}
+
+	public void configWorkflowSetting(ConfigWorkflowSettingReq configWorkflowSettingReq) {
+
+		WorkflowEntity workflow = workflowService.getWorkflow(configWorkflowSettingReq.getWorkflowId());
+
+		WorkflowConfigEntity workflowConfig = workflowService.getWorkflowConfig(workflow.getConfigId());
+
+		workflowConfig.setCronConfig(JSON.toJSONString(configWorkflowSettingReq.getCronConfig()));
 		workflowConfigRepository.save(workflowConfig);
 	}
 }

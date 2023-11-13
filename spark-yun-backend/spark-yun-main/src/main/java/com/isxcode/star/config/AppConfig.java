@@ -35,6 +35,22 @@ public class AppConfig {
 		return threadPoolTaskExecutor;
 	}
 
+	@Bean("sparkYunThreadPool")
+	public Executor sparkYunThreadPool() {
+
+		ThreadPoolTaskExecutor threadPoolTaskExecutor = new ThreadPoolTaskExecutor();
+		threadPoolTaskExecutor.setCorePoolSize(100);
+		threadPoolTaskExecutor.setMaxPoolSize(200);
+		threadPoolTaskExecutor.setQueueCapacity(200);
+		threadPoolTaskExecutor.setKeepAliveSeconds(60);
+		threadPoolTaskExecutor.setAllowCoreThreadTimeOut(false);
+		threadPoolTaskExecutor.setThreadNamePrefix("sparkYunWorkThreadPool-");
+		threadPoolTaskExecutor.setRejectedExecutionHandler((r, executor) -> log.info("未执行的异常进程"));
+		threadPoolTaskExecutor.setWaitForTasksToCompleteOnShutdown(true);
+		threadPoolTaskExecutor.setAwaitTerminationSeconds(300);
+		return threadPoolTaskExecutor;
+	}
+
 	@Bean("springEventThreadPool")
 	public Executor springEventThreadPool() {
 

@@ -19,6 +19,10 @@ interface AddParams {
   id?: string;
 }
 
+interface Cluster {
+  clusterId: string
+}
+
 export function GetComputerGroupList(params: SerchParams): Promise<any> {
   return http.request({
     method: 'post',
@@ -41,6 +45,15 @@ export function UpdateComputerGroupData(params: AddParams): Promise<any> {
   return http.request({
     method: 'post',
     url: '/cluster/updateCluster',
+    params: params
+  })
+}
+
+// 设置默认集群
+export function SetDefaultComputerGroup(params: Cluster): Promise<any> {
+  return http.request({
+    method: 'post',
+    url: '/cluster/setDefaultCluster',
     params: params
   })
 }
@@ -77,6 +90,15 @@ export function CheckComputerPointData(params: any): Promise<any> {
   return http.request({
     method: 'post',
     url: '/cluster_node/checkAgent',
+    params: params
+  })
+}
+
+// 设置默认集群节点
+export function SetDefaultComputerPointNode(params: any): Promise<any> {
+  return http.request({
+    method: 'post',
+    url: '/cluster_node/setDefaultClusterNode',
     params: params
   })
 }
@@ -135,6 +157,15 @@ export function UninstallComputerPointData(params: any): Promise<any> {
   })
 }
 
+// 清理节点数据
+export function CleanComputerPointData(params: any): Promise<any> {
+  return http.request({
+    method: 'post',
+    url: '/cluster_node/cleanAgent',
+    params: params
+  })
+}
+
 // 停止节点数据
 export function StopComputerPointData(params: any): Promise<any> {
   return http.request({
@@ -149,6 +180,15 @@ export function StartComputerPointData(params: any): Promise<any> {
   return http.request({
     method: 'post',
     url: '/cluster_node/startAgent',
+    params: params
+  })
+}
+
+// 获取节点数据
+export function GetComputerPointDetailData(params: any): Promise<any> {
+  return http.request({
+    method: 'post',
+    url: '/cluster_node/getClusterNode',
     params: params
   })
 }

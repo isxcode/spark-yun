@@ -8,4 +8,10 @@ public interface WorkType {
 	String EXECUTE_JDBC_SQL = "EXE_JDBC";
 
 	String QUERY_JDBC_SQL = "QUERY_JDBC";
+
+	String DATA_SYNC_JDBC = "DATA_SYNC_JDBC";
+
+	String BASH = "BASH";
+
+	String PYTHON = "PYTHON";
 }

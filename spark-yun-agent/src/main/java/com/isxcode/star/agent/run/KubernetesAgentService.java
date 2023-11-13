@@ -4,22 +4,23 @@ import com.alibaba.fastjson.JSON;
 import com.isxcode.star.api.agent.pojos.req.PluginReq;
 import com.isxcode.star.api.agent.pojos.req.SparkSubmit;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.util.Strings;
+import org.apache.spark.launcher.SparkLauncher;
+import org.springframework.stereotype.Service;
+
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.logging.log4j.util.Strings;
-import org.apache.spark.launcher.SparkLauncher;
-import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
 public class KubernetesAgentService implements AgentService {
 
 	@Override
-	public String getMaster() throws IOException {
+	public String getMaster(String sparkHomePath) throws IOException {
 
 		String getMasterCmd = "kubectl cluster-info";
 
@@ -50,11 +51,11 @@ public class KubernetesAgentService implements AgentService {
 	}
 
 	@Override
-	public SparkLauncher genSparkLauncher(PluginReq pluginReq, SparkSubmit sparkSubmit, String agentHomePath)
-			throws IOException {
+	public SparkLauncher genSparkLauncher(PluginReq pluginReq, SparkSubmit sparkSubmit, String agentHomePath,
+			String sparkHomePath) throws IOException {
 
 		SparkLauncher sparkLauncher = new SparkLauncher().setVerbose(false).setMainClass(sparkSubmit.getMainClass())
-				.setDeployMode("cluster").setAppName("zhiqingyun-job").setMaster(getMaster())
+				.setDeployMode("cluster").setAppName("zhiqingyun-job").setMaster(getMaster(sparkHomePath))
 				.setAppResource("local:///opt/spark/examples/jars/" + sparkSubmit.getAppResource())
 				.setSparkHome(agentHomePath + File.separator + "spark-min");
 
@@ -62,18 +63,21 @@ public class KubernetesAgentService implements AgentService {
 			File[] jarFiles = new File(agentHomePath + File.separator + "lib").listFiles();
 			if (jarFiles != null) {
 				for (int i = 0; i < jarFiles.length; i++) {
-					sparkLauncher.addJar("local:///opt/spark/examples/jars/lib/" + jarFiles[i].getName());
-					sparkLauncher.setConf("spark.kubernetes.driver.volumes.hostPath." + i + ".mount.path",
-							"/opt/spark/examples/jars/lib/" + jarFiles[i].getName());
-					sparkLauncher.setConf("spark.kubernetes.driver.volumes.hostPath." + i + ".mount.readOnly", "false");
-					sparkLauncher.setConf("spark.kubernetes.driver.volumes.hostPath." + i + ".options.path",
-							jarFiles[i].getPath());
-					sparkLauncher.setConf("spark.kubernetes.executor.volumes.hostPath." + i + ".mount.path",
-							"/opt/spark/examples/jars/lib/" + jarFiles[i].getName());
-					sparkLauncher.setConf("spark.kubernetes.executor.volumes.hostPath." + i + ".mount.readOnly",
-							"false");
-					sparkLauncher.setConf("spark.kubernetes.executor.volumes.hostPath." + i + ".options.path",
-							jarFiles[i].getPath());
+					if (!jarFiles[i].getName().contains("hive")) {
+						sparkLauncher.addJar("local:///opt/spark/examples/jars/lib/" + jarFiles[i].getName());
+						sparkLauncher.setConf("spark.kubernetes.driver.volumes.hostPath." + i + ".mount.path",
+								"/opt/spark/examples/jars/lib/" + jarFiles[i].getName());
+						sparkLauncher.setConf("spark.kubernetes.driver.volumes.hostPath." + i + ".mount.readOnly",
+								"false");
+						sparkLauncher.setConf("spark.kubernetes.driver.volumes.hostPath." + i + ".options.path",
+								jarFiles[i].getPath());
+						sparkLauncher.setConf("spark.kubernetes.executor.volumes.hostPath." + i + ".mount.path",
+								"/opt/spark/examples/jars/lib/" + jarFiles[i].getName());
+						sparkLauncher.setConf("spark.kubernetes.executor.volumes.hostPath." + i + ".mount.readOnly",
+								"false");
+						sparkLauncher.setConf("spark.kubernetes.executor.volumes.hostPath." + i + ".options.path",
+								jarFiles[i].getPath());
+					}
 				}
 			}
 		}
@@ -132,7 +136,7 @@ public class KubernetesAgentService implements AgentService {
 	}
 
 	@Override
-	public String getAppStatus(String podName) throws IOException {
+	public String getAppStatus(String podName, String sparkHomePath) throws IOException {
 
 		String getStatusCmdFormat = "kubectl get pod %s -n zhiqingyun-space";
 
@@ -175,7 +179,7 @@ public class KubernetesAgentService implements AgentService {
 	}
 
 	@Override
-	public String getAppLog(String appId) throws IOException {
+	public String getAppLog(String appId, String sparkHomePath) throws IOException {
 
 		String getLogCmdFormat = "kubectl logs -f %s -n zhiqingyun-space";
 
@@ -219,7 +223,7 @@ public class KubernetesAgentService implements AgentService {
 	}
 
 	@Override
-	public String getAppData(String appId) throws IOException {
+	public String getAppData(String appId, String sparkHomePath) throws IOException {
 
 		String getLogCmdFormat = "kubectl logs -f %s -n zhiqingyun-space";
 
@@ -252,7 +256,7 @@ public class KubernetesAgentService implements AgentService {
 	}
 
 	@Override
-	public void killApp(String appId) throws IOException {
+	public void killApp(String appId, String sparkHomePath) throws IOException {
 
 		String killAppCmdFormat = "kubectl delete pod %s -n zhiqingyun-space";
 		Process process = Runtime.getRuntime().exec(String.format(killAppCmdFormat, appId));

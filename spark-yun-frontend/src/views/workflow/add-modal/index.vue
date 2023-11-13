@@ -18,6 +18,19 @@
           show-word-limit
         />
       </el-form-item>
+      <!-- <el-form-item label="默认计算集群">
+        <el-select
+          v-model="formData.defaultClusterId"
+          placeholder="请选择"
+        >
+          <el-option
+            v-for="item in clusterList"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          />
+        </el-select>
+      </el-form-item> -->
       <el-form-item label="备注">
         <el-input
           v-model="formData.remark"
@@ -36,9 +49,11 @@
 import { reactive, defineExpose, ref, nextTick } from 'vue'
 import BlockModal from '@/components/block-modal/index.vue'
 import { ElMessage, FormInstance, FormRules } from 'element-plus'
+import { GetComputerGroupList } from '@/services/computer-group.service';
 
 const form = ref<FormInstance>()
 const callback = ref<any>()
+const clusterList = ref([])  // 计算集群
 const modelConfig = reactive({
   title: '添加作业流',
   visible: false,
@@ -60,6 +75,7 @@ const modelConfig = reactive({
 })
 const formData = reactive({
   name: '',
+  // defaultClusterId: '',
   remark: '',
   id: ''
 })
@@ -87,6 +103,8 @@ function showModal(cb: () => void, data: any): void {
     formData.id = ''
     modelConfig.title = '添加作业流'
   }
+
+  getClusterList()
   nextTick(() => {
     form.value?.resetFields()
   })
@@ -116,6 +134,23 @@ function okEvent() {
     } else {
       ElMessage.warning('请将表单输入完整')
     }
+  })
+}
+
+function getClusterList() {
+  GetComputerGroupList({
+    page: 0,
+    pageSize: 10000,
+    searchKeyWord: ''
+  }).then((res: any) => {
+    clusterList.value = res.data.content.map((item: any) => {
+      return {
+        label: item.name,
+        value: item.id
+      }
+    })
+  }).catch(() => {
+    clusterList.value = []
   })
 }
 

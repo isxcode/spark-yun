@@ -86,6 +86,12 @@ function getLogData() {
                     scrollToButtom()
                 })
             }
+            if (['SUCCESS', 'FAIL'].includes(res.data.status)) {
+                if (timer.value) {
+                    clearInterval(timer.value)
+                }
+                timer.value = null
+            }
         })
         .catch(() => {
             logMsg.value = ''
@@ -99,6 +105,17 @@ function getYarnLogData() {
     })
         .then((res: any) => {
             logMsg.value = res.data.yarnLog
+            if (position.value) {
+                nextTick(() => {
+                    scrollToButtom()
+                })
+            }
+            if (['SUCCESS', 'FAIL'].includes(res.data.status)) {
+                if (timer.value) {
+                    clearInterval(timer.value)
+                }
+                timer.value = null
+            }
         })
         .catch(() => {
             logMsg.value = ''
@@ -183,7 +200,7 @@ defineExpose({
             overflow: auto;
 
             pre {
-                color: $--app-base-font-color;
+                color: getCssVar('text-color', 'primary');
                 font-size: 12px;
                 line-height: 21px;
                 margin: 0;

@@ -12,6 +12,16 @@ spring:
   profiles:
     active: local
 
+  security:
+    user:
+      roles: ADMIN
+
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
+      enabled: true
+
   banner:
     location: classpath:banner/logo.txt
 
@@ -22,6 +32,7 @@ spring:
       max-active: 200
       min-idle: 10
       max-wait: 30000
+      test-while-idle: true
       filters: stat,wall,log4j2
       validationQuery: select 'x'
       stat-view-servlet:
@@ -58,10 +69,6 @@ spring:
     job-store-type: jdbc
     jdbc:
       initialize-schema: never
-    properties:
-      org.quartz.jobStore.class: org.quartz.impl.jdbcjobstore.JobStoreTX
-      org.quartz.jobStore.driverDelegateClass: org.quartz.impl.jdbcjobstore.StdJDBCDelegate
-      org.quartz.jobStore.dataSource: quartzDataSource
 
   cache:
     type: simple
@@ -85,16 +92,4 @@ isx-app:
     - /login # 放行登录接口
     - /**/open/** # 放行所有的开放接口
     - /vip/api/custom/** # 放行所有自定义接口
-    - /tenant-user # 下面放行全部前端的刷新访问路径
-    - /computer-group
-    - /computer-pointer
-    - /datasource
-    - /workflow
-    - /workflow-detail
-    - /work-item
-    - /tenant-user
-    - /user-center
-    - /tenant-list
-    - /license
-    - /schedule
-    - /workflow-page
+    - /home/** # 放行全部前端的刷新访问路径

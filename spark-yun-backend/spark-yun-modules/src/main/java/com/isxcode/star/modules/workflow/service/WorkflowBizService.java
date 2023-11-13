@@ -8,8 +8,12 @@ import com.alibaba.fastjson.TypeReference;
 import com.isxcode.star.api.instance.constants.FlowInstanceStatus;
 import com.isxcode.star.api.instance.constants.InstanceStatus;
 import com.isxcode.star.api.instance.constants.InstanceType;
+import com.isxcode.star.api.work.constants.SetMode;
 import com.isxcode.star.api.work.constants.WorkLog;
 import com.isxcode.star.api.work.constants.WorkStatus;
+import com.isxcode.star.api.work.pojos.dto.CronConfig;
+import com.isxcode.star.api.work.pojos.req.GetWorkflowDefaultClusterReq;
+import com.isxcode.star.api.work.pojos.res.GetWorkflowDefaultClusterRes;
 import com.isxcode.star.api.workflow.constants.WorkflowStatus;
 import com.isxcode.star.api.workflow.pojos.dto.WorkInstanceInfo;
 import com.isxcode.star.api.workflow.pojos.req.*;
@@ -18,6 +22,9 @@ import com.isxcode.star.api.workflow.pojos.res.GetWorkflowRes;
 import com.isxcode.star.api.workflow.pojos.res.PageWorkflowRes;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.star.common.locker.Locker;
+import com.isxcode.star.modules.cluster.entity.ClusterEntity;
+import com.isxcode.star.modules.cluster.repository.ClusterRepository;
+import com.isxcode.star.modules.cluster.service.ClusterService;
 import com.isxcode.star.modules.work.entity.WorkConfigEntity;
 import com.isxcode.star.modules.work.entity.WorkEntity;
 import com.isxcode.star.modules.work.entity.WorkExportInfo;
@@ -38,6 +45,7 @@ import com.isxcode.star.modules.workflow.repository.WorkflowInstanceRepository;
 import com.isxcode.star.modules.workflow.repository.WorkflowRepository;
 import com.isxcode.star.modules.workflow.run.WorkflowRunEvent;
 import com.isxcode.star.modules.workflow.run.WorkflowUtils;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
@@ -49,6 +57,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletResponse;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
@@ -59,7 +68,9 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-/** 用户模块接口的业务逻辑. */
+/**
+ * 用户模块接口的业务逻辑.
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -89,6 +100,10 @@ public class WorkflowBizService {
 
 	private final Executor sparkYunWorkThreadPool;
 
+	private final ClusterRepository clusterRepository;
+
+	private final ClusterService clusterService;
+
 	public WorkflowEntity getWorkflowEntity(String workflowId) {
 
 		Optional<WorkflowEntity> workflowEntityOptional = workflowRepository.findById(workflowId);
@@ -100,8 +115,16 @@ public class WorkflowBizService {
 
 	public void addWorkflow(AddWorkflowReq wofAddWorkflowReq) {
 
+		// 工作流唯一性
+		Optional<WorkflowEntity> workflowByName = workflowRepository.findByName(wofAddWorkflowReq.getName());
+		if (workflowByName.isPresent()) {
+			throw new IsxAppException("作业流名称已重复，请重新输入");
+		}
+
 		// 初始化工作流配置
 		WorkflowConfigEntity workflowConfig = new WorkflowConfigEntity();
+		workflowConfig.setCronConfig(
+				JSON.toJSONString(CronConfig.builder().setMode(SetMode.SIMPLE).type("ALL").enable(false).build()));
 		workflowConfig = workflowConfigRepository.save(workflowConfig);
 
 		// 工作流绑定配置
@@ -129,7 +152,17 @@ public class WorkflowBizService {
 		Page<WorkflowEntity> workflowEntityPage = workflowRepository.searchAll(wocQueryWorkflowReq.getSearchKeyWord(),
 				PageRequest.of(wocQueryWorkflowReq.getPage(), wocQueryWorkflowReq.getPageSize()));
 
-		return workflowMapper.workflowEntityPageToQueryWorkflowResPage(workflowEntityPage);
+		Page<PageWorkflowRes> pageWorkflowRes = workflowEntityPage
+				.map(workflowMapper::workflowEntityToQueryWorkflowRes);
+
+		// 翻译集群名称
+		pageWorkflowRes.getContent().forEach(e -> {
+			if (!Strings.isEmpty(e.getDefaultClusterId())) {
+				e.setClusterName(clusterRepository.findById(e.getDefaultClusterId()).get().getName());
+			}
+		});
+
+		return pageWorkflowRes;
 	}
 
 	public void deleteWorkflow(DeleteWorkflowReq deleteWorkflowReq) {
@@ -137,7 +170,9 @@ public class WorkflowBizService {
 		workflowRepository.deleteById(deleteWorkflowReq.getWorkflowId());
 	}
 
-	/** 运行工作流，返回工作流实例id */
+	/**
+	 * 运行工作流，返回工作流实例id
+	 */
 	public String runWorkflow(RunWorkflowReq runWorkflowReq) {
 
 		// 获取工作流配置id
@@ -224,10 +259,16 @@ public class WorkflowBizService {
 		GetWorkflowRes wofGetWorkflowRes = new GetWorkflowRes();
 		wofGetWorkflowRes.setWebConfig(JSON.parse(workflowConfig.getWebConfig()));
 
+		if (!Strings.isEmpty(workflowConfig.getCronConfig())) {
+			wofGetWorkflowRes.setCronConfig(JSON.parseObject(workflowConfig.getCronConfig(), CronConfig.class));
+		}
+
 		return wofGetWorkflowRes;
 	}
 
-	/** 导出作业或者作业流 */
+	/**
+	 * 导出作业或者作业流
+	 */
 	public void exportWorkflow(ExportWorkflowReq wofExportWorkflowReq, HttpServletResponse response) {
 
 		// 导出作业流
@@ -400,7 +441,9 @@ public class WorkflowBizService {
 		}
 	}
 
-	/** 中止作业流 */
+	/**
+	 * 中止作业流
+	 */
 	public void abortFlow(AbortFlowReq abortFlowReq) {
 
 		// 将所有的PENDING作业实例，改为ABORT
@@ -445,6 +488,8 @@ public class WorkflowBizService {
 						.findById(abortFlowReq.getWorkflowInstanceId()).get();
 				workflowInstance.setStatus(InstanceStatus.ABORT);
 				workflowInstance.setExecEndDateTime(new Date());
+				workflowInstance.setDuration(
+						(System.currentTimeMillis() - workflowInstance.getExecStartDateTime().getTime()) / 1000);
 				workflowInstanceRepository.saveAndFlush(workflowInstance);
 			} finally {
 				locker.unlock(lock);
@@ -452,7 +497,9 @@ public class WorkflowBizService {
 		});
 	}
 
-	/** 中止作业节点实例. */
+	/**
+	 * 中止作业节点实例.
+	 */
 	public void abortWorkInstance(WorkInstanceEntity workInstance) {
 
 		WorkEntity workEntity = workRepository.findById(workInstance.getWorkId()).get();
@@ -465,6 +512,8 @@ public class WorkflowBizService {
 			workInstance.setSubmitLog(submitLog);
 			workInstance.setStatus(InstanceStatus.ABORT);
 			workInstance.setExecEndDateTime(new Date());
+			workInstance
+					.setDuration((System.currentTimeMillis() - workInstance.getExecStartDateTime().getTime()) / 1000);
 			workInstanceRepository.save(workInstance);
 		} catch (Exception e) {
 			log.error(e.getMessage());
@@ -472,11 +521,15 @@ public class WorkflowBizService {
 			workInstance.setSubmitLog(submitLog);
 			workInstance.setStatus(InstanceStatus.FAIL);
 			workInstance.setExecEndDateTime(new Date());
+			workInstance
+					.setDuration((System.currentTimeMillis() - workInstance.getExecStartDateTime().getTime()) / 1000);
 			workInstanceRepository.save(workInstance);
 		}
 	}
 
-	/** 中断作业. */
+	/**
+	 * 中断作业.
+	 */
 	public void breakFlow(BreakFlowReq breakFlowReq) {
 
 		WorkInstanceEntity workInstance = workflowService.getWorkInstance(breakFlowReq.getWorkInstanceId());
@@ -487,7 +540,9 @@ public class WorkflowBizService {
 		workInstanceRepository.save(workInstance);
 	}
 
-	/** 重跑当前节点. */
+	/**
+	 * 重跑当前节点.
+	 */
 	public void runCurrentNode(RunCurrentNodeReq runCurrentNodeReq) {
 
 		WorkInstanceEntity workInstance = workInstanceRepository.findById(runCurrentNodeReq.getWorkInstanceId()).get();
@@ -522,12 +577,16 @@ public class WorkflowBizService {
 					workflowInstance.setStatus(InstanceStatus.SUCCESS);
 				}
 				workflowInstance.setExecEndDateTime(new Date());
+				workflowInstance.setDuration(
+						(System.currentTimeMillis() - workflowInstance.getExecStartDateTime().getTime()) / 1000);
 				workflowInstanceRepository.saveAndFlush(workflowInstance);
 			}
 		});
 	}
 
-	/** 重跑作业流. */
+	/**
+	 * 重跑作业流.
+	 */
 	public void reRunFlow(ReRunFlowReq reRunFlowReq) {
 
 		// 先中止作业
@@ -580,6 +639,10 @@ public class WorkflowBizService {
 					.findAllByWorkflowInstanceId(reRunFlowReq.getWorkflowInstanceId());
 			workInstances.forEach(e -> {
 				e.setStatus(InstanceStatus.PENDING);
+				e.setDuration(null);
+				e.setExecStartDateTime(null);
+				e.setExecEndDateTime(null);
+				e.setQuartzHasRun(true);
 			});
 			workInstanceRepository.saveAllAndFlush(workInstances);
 
@@ -587,6 +650,9 @@ public class WorkflowBizService {
 			WorkflowInstanceEntity workflowInstance2 = workflowInstanceRepository
 					.findById(reRunFlowReq.getWorkflowInstanceId()).get();
 			workflowInstance2.setStatus(InstanceStatus.RUNNING);
+			workflowInstance2.setExecStartDateTime(new Date());
+			workflowInstance2.setExecEndDateTime(null);
+			workflowInstance2.setDuration(null);
 			workflowInstanceRepository.saveAndFlush(workflowInstance2);
 
 			// 获取配置工作流配置信息
@@ -656,4 +722,19 @@ public class WorkflowBizService {
 				.userId(USER_ID.get()).build();
 		eventPublisher.publishEvent(metaEvent);
 	}
+
+	public GetWorkflowDefaultClusterRes getWorkflowDefaultCluster(
+			GetWorkflowDefaultClusterReq getWorkflowDefaultClusterReq) {
+
+		// 查询工作流的默认计算引擎
+		WorkflowEntity workflow = workflowService.getWorkflow(getWorkflowDefaultClusterReq.getWorkflowId());
+
+		if (Strings.isEmpty(workflow.getDefaultClusterId())) {
+			return null;
+		}
+
+		ClusterEntity cluster = clusterService.getCluster(workflow.getDefaultClusterId());
+		return GetWorkflowDefaultClusterRes.builder().clusterId(cluster.getId()).clusterName(cluster.getName()).build();
+	}
+
 }

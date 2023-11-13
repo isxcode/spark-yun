@@ -9,6 +9,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 /** 只负责数据库查询逻辑. */
 @Repository
 @CacheConfig(cacheNames = {"sy_engines"})
@@ -18,4 +20,6 @@ public interface WorkflowRepository extends JpaRepository<WorkflowEntity, String
 	Page<WorkflowEntity> searchAll(@Param("keyword") String searchKeyWord, Pageable pageable);
 
 	long countByTenantId(String tenantId);
+
+	Optional<WorkflowEntity> findByName(String name);
 }

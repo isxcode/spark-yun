@@ -10,8 +10,6 @@ import com.isxcode.star.modules.tenant.entity.TenantEntity;
 import java.util.List;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 
 @Mapper(componentModel = "spring")
 public interface TenantMapper {
@@ -45,11 +43,4 @@ public interface TenantMapper {
 
 	@Mapping(target = "checkDateTime", dateFormat = "yyyy-MM-dd HH:mm:ss")
 	PageTenantRes tenantEntityToTetQueryTenantRes(TenantEntity tenantEntity);
-
-	List<PageTenantRes> tenantEntityToTetQueryTenantResList(List<TenantEntity> tenantEntities);
-
-	default Page<PageTenantRes> tenantEntityToTetQueryTenantResPage(Page<TenantEntity> tenantEntityPage) {
-		List<PageTenantRes> dtoList = tenantEntityToTetQueryTenantResList(tenantEntityPage.getContent());
-		return new PageImpl<>(dtoList, tenantEntityPage.getPageable(), tenantEntityPage.getTotalElements());
-	}
 }
