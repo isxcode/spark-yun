@@ -55,5 +55,5 @@ public interface ModuleCode {
 	String VIP_DATA_ASSET = "/vip/dat";
 
 	/** VIP自定义表单 */
-	String VIP_FORM = "/vip/fom";
+	String VIP_FORM = "/vip/form";
 }
