@@ -38,6 +38,12 @@ export const menuListData: Array<Menu> = [
     authType: [ 'ROLE_TENANT_MEMBER', 'ROLE_TENANT_ADMIN' ]
   },
   {
+    code: 'custom-form',
+    name: '自定义表单',
+    icon: 'Files',
+    authType: [ 'ROLE_TENANT_MEMBER', 'ROLE_TENANT_ADMIN' ]
+  },
+  {
     code: 'user-center',
     name: '用户中心',
     icon: 'UserFilled',
