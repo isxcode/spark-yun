@@ -15,6 +15,10 @@ import TenantUser from '@/views/tenant-user/index.vue'
 import PersonalInfo from '@/views/personal-info/index.vue'
 
 import DriverManagement from '@/views/driver-management/index.vue'
+import CustomForm from '@/views/custom-form/index.vue'
+import CustomFormList from '@/views/custom-form/custom-form-list.vue'
+import CustomFormQuery from '@/views/custom-form/custom-form-query/index.vue'
+import CustomFormSetting from '@/views/custom-form/form-setting/index.vue'
 
 export default [
   {
@@ -86,5 +90,30 @@ export default [
     path: 'personal-info',
     name: 'personalInfo',
     component: PersonalInfo
+  },
+  {
+    path: 'custom-form',
+    name: 'custom-form',
+    component: CustomForm,
+    redirect: {
+      name: 'form-list'
+    },
+    children: [
+      {
+        path: 'form-list',
+        name: 'form-list',
+        component: CustomFormList
+      },
+      {
+        path: 'form-query',
+        name: 'form-query',
+        component: CustomFormQuery
+      },
+      {
+        path: 'form-setting',
+        name: 'form-setting',
+        component: CustomFormSetting
+      }
+    ]
   }
 ]
