@@ -77,4 +77,10 @@ public class WorkRunContext {
 	 * 日志构造器.
 	 */
 	private StringBuilder logBuilder;
+
+  /**
+   * udf启用状态.
+   */
+  private Boolean udfStatus;
+
 }

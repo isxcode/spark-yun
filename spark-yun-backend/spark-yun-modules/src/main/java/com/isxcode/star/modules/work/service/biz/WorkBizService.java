@@ -23,11 +23,14 @@ import com.isxcode.star.modules.cluster.entity.ClusterEntity;
 import com.isxcode.star.modules.cluster.entity.ClusterNodeEntity;
 import com.isxcode.star.modules.cluster.repository.ClusterNodeRepository;
 import com.isxcode.star.modules.cluster.repository.ClusterRepository;
+import com.isxcode.star.modules.work.entity.UdfEntity;
 import com.isxcode.star.modules.work.entity.WorkConfigEntity;
 import com.isxcode.star.modules.work.entity.WorkEntity;
 import com.isxcode.star.modules.work.entity.WorkInstanceEntity;
+import com.isxcode.star.modules.work.mapper.UdfMapper;
 import com.isxcode.star.modules.work.mapper.WorkConfigMapper;
 import com.isxcode.star.modules.work.mapper.WorkMapper;
+import com.isxcode.star.modules.work.repository.UdfRepository;
 import com.isxcode.star.modules.work.repository.WorkConfigRepository;
 import com.isxcode.star.modules.work.repository.WorkInstanceRepository;
 import com.isxcode.star.modules.work.repository.WorkRepository;
@@ -41,11 +44,6 @@ import com.isxcode.star.modules.workflow.entity.WorkflowEntity;
 import com.isxcode.star.modules.workflow.repository.WorkflowConfigRepository;
 import com.isxcode.star.modules.workflow.repository.WorkflowRepository;
 import com.isxcode.star.modules.workflow.run.WorkflowUtils;
-
-import java.time.LocalDateTime;
-import java.util.*;
-import javax.transaction.Transactional;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
@@ -53,6 +51,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+
+import javax.transaction.Transactional;
+import java.time.LocalDateTime;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -86,6 +88,10 @@ public class WorkBizService {
 	private final WorkConfigService workConfigService;
 
 	private final WorkConfigMapper workConfigMapper;
+
+  private final UdfRepository udfRepository;
+
+  private final UdfMapper udfMapper;
 
 	public GetWorkRes addWork(AddWorkReq addWorkReq) {
 
@@ -532,4 +538,27 @@ public class WorkBizService {
 
 		return workConfigMapper.syncWorkConfigToGetSyncWorkConfigRes(syncWorkConfig);
 	}
+
+  public PageUdfRes addUdf(AddUdfReq addUdfReq) {
+    UdfEntity udfEntity = udfMapper.addUdfReqToUdfEntity(addUdfReq);
+    return udfMapper.udfEntityToPageUdfRes(udfRepository.save(udfEntity));
+  }
+
+  public void updateUdf(UpdateUdfReq updateUdfReq) {
+    UdfEntity udfEntity = udfRepository.findById(updateUdfReq.getId()).orElseThrow(() -> new IsxAppException("函数不存在"));
+
+    udfEntity = udfMapper.updateUdfReqToUdfEntity(updateUdfReq, udfEntity);
+    udfRepository.save(udfEntity);
+  }
+
+  public void deleteUdf(DeleteUdfReq deleteUdfReq) {
+    udfRepository.deleteById(deleteUdfReq.getUdfId());
+  }
+
+  public Page<PageUdfRes> getUdf(PageUdfReq pageUdfReq) {
+    Page<UdfEntity> udfPage = udfRepository.pageSearch(pageUdfReq.getSearchKeyWord(),
+       PageRequest.of(pageUdfReq.getPage(), pageUdfReq.getPageSize()));
+
+    return udfPage.map(udfMapper::udfEntityToPageUdfRes);
+  }
 }

@@ -1,19 +1,6 @@
 package com.isxcode.star.modules.work.entity;
 
-import static com.isxcode.star.common.config.CommonConfig.TENANT_ID;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
-import java.time.LocalDateTime;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.PrePersist;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-import javax.persistence.Version;
-
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.SQLDelete;
@@ -24,33 +11,36 @@ import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import javax.persistence.*;
+import java.time.LocalDateTime;
+
+import static com.isxcode.star.common.config.CommonConfig.TENANT_ID;
+
 @Data
 @Entity
-@SQLDelete(sql = "UPDATE SY_WORK_CONFIG SET deleted = 1 WHERE id = ? and version_number = ?")
+@SQLDelete(sql = "UPDATE SY_WORK_UDF SET deleted = 1 WHERE id = ? and version_number = ?")
 @Where(clause = "deleted = 0 ${TENANT_FILTER} ")
-@Table(name = "SY_WORK_CONFIG")
+@Table(name = "SY_WORK_UDF")
 @JsonIgnoreProperties({"hibernateLazyInitializer"})
 @EntityListeners(AuditingEntityListener.class)
-public class WorkConfigEntity {
+public class UdfEntity {
 
 	@Id
 	@GeneratedValue(generator = "sy-id-generator")
 	@GenericGenerator(name = "sy-id-generator", strategy = "com.isxcode.star.config.GeneratedValueConfig")
 	private String id;
 
-	private String datasourceId;
+  private String type;
 
-	private String script;
+	private String fileId;
 
-	private String cronConfig;
+	private String funcName;
 
-	private String syncWorkConfig;
+	private String className;
 
-	private String syncRule;
+	private String resultType;
 
-	private String clusterConfig;
-
-  private Boolean udfStatus;
+	private Boolean status;
 
 	@CreatedDate
 	private LocalDateTime createDateTime;
