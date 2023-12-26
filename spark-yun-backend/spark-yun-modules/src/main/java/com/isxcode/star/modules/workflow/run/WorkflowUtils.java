@@ -143,12 +143,12 @@ public class WorkflowUtils {
 				.clusterConfig(JSON.parseObject(workConfig.getClusterConfig(), ClusterConfig.class))
 				.syncWorkConfig(JSON.parseObject(workConfig.getSyncWorkConfig(), SyncWorkConfig.class))
 				.syncRule(JSON.parseObject(workConfig.getSyncRule(), SyncRule.class)).workType(work.getWorkType())
-				.workId(work.getId()).workName(work.getName()).userId(USER_ID.get()).build();
+				.workId(work.getId()).workName(work.getName()).userId(USER_ID.get()).udfStatus(workConfig.getUdfStatus()).build();
 	}
 
 	public static WorkRunContext genWorkRunContext(String instanceId, VipWorkVersionEntity workVersion,
 			WorkflowRunEvent event) {
-
+    //todo 维护udf配置信息
 		return WorkRunContext.builder().datasourceId(workVersion.getDatasourceId()).script(workVersion.getScript())
 				.instanceId(instanceId).tenantId(TENANT_ID.get()).userId(USER_ID.get())
 				.syncWorkConfig(JSON.parseObject(workVersion.getSyncWorkConfig(), SyncWorkConfig.class))

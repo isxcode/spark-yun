@@ -34,4 +34,7 @@ public class ConfigWorkReq {
 
 	@Schema(title = "数据同步规则")
 	private SyncRule syncRule;
+
+  @Schema(title = "udf函数状态")
+  private Boolean udfStatus;
 }
