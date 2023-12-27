@@ -5,7 +5,7 @@
         :label="formConfig.label || ' '"
         :style="{ 'width': '100%' }"
         :prop="!isDragger ? formConfig.formValueCode : ''"
-        :rules="formConfig.required ? rules : []"
+        :rules="rulesList"
     >
         <div class="form-render-item__btn">
             <el-icon @click="removeInstance"><Delete /></el-icon>
@@ -19,9 +19,18 @@
 import { defineProps, computed, defineEmits } from 'vue'
 
 const emit = defineEmits(['removeInstance'])
-const props = defineProps(['renderSence', 'formData', 'formConfig', 'isDragger', 'rules'])
+const props = defineProps(['renderSence', 'formData', 'formConfig', 'isDragger', 'rules', 'customRules'])
 const componentWidth = computed(() => {
     return `${props.formConfig.width * 25}%`
+})
+
+const rulesList = computed(() => {
+    const customRulesList = props.customRules && props.customRules.length ? props.customRules : []
+    if (props.formConfig.required) {
+        return [...props.rules, ...customRulesList]
+    } else {
+        return [...customRulesList]
+    }
 })
 
 function removeInstance() {

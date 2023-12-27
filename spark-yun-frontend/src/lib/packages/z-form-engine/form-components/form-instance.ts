@@ -6,6 +6,8 @@ import FormInputSwitch from './common/form-input-switch/index.vue'
 import FormInputRadio from './common/form-input-radio/index.vue'
 import FormInputCheckbox from './common/form-input-checkbox/index.vue'
 import FormInputMoney from './common/form-input-money/index.vue'
+import FormInputPhone from './common/form-input-phone/index.vue'
+import FormInputEmail from './common/form-input-email/index.vue'
 
 import FormStaticPlaceholder from './static/form-static-placeholder/index.vue'
 import FormStaticEmpty from './static/form-static-empty/index.vue'
@@ -18,7 +20,9 @@ const Common = {
     FormInputSwitch,
     FormInputRadio,
     FormInputCheckbox,
-    FormInputMoney
+    FormInputMoney,
+    FormInputPhone,
+    FormInputEmail
 }
 
 const Static = {

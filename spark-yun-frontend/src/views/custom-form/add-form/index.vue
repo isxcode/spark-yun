@@ -10,6 +10,74 @@
             <el-form-item label="表单名称" prop="name">
                 <el-input v-model="formData.name" maxlength="200" placeholder="请输入" />
             </el-form-item>
+            <el-form-item label="计算集群" prop="clusterId">
+                <el-select
+                    v-model="formData.clusterId"
+                    placeholder="请选择"
+                    @visible-change="getClusterList"
+                >
+                    <el-option
+                    v-for="item in clusterList"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                    />
+                </el-select>
+            </el-form-item>
+            <el-form-item label="数据源" prop="datasourceId">
+                <el-select
+                    v-model="formData.datasourceId"
+                    placeholder="请选择"
+                    @visible-change="getDataSourceList"
+                    @change="dataSourceChange"
+                >
+                    <el-option
+                        v-for="item in dataSourceList"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value"
+                    />
+                </el-select>
+            </el-form-item>
+            <el-form-item label="模式" prop="mode">
+                <el-radio-group v-model="formData.mode" @change="modeChange">
+                    <el-radio label="CHOOSE">选择已有表</el-radio>
+                    <el-radio label="CREATE">创建新表</el-radio>
+                </el-radio-group>
+            </el-form-item>
+            <el-form-item
+                v-if="formData.mode === 'CHOOSE'"
+                prop="sourceTable"
+                :rules="[{
+                    required: true,
+                    message: '请选择表名',
+                    trigger: ['change', 'blur']
+                }]"
+                label="表（选择已有表名）"
+            >
+                <el-select
+                    v-model="formData.sourceTable"
+                    clearable
+                    filterable
+                    placeholder="请选择"
+                    @visible-change="getDataSourceTable($event, formData.datasourceId)"
+                >
+                    <el-option v-for="item in sourceTablesList" :key="item.value" :label="item.label"
+                        :value="item.value" />
+                </el-select>
+            </el-form-item>
+            <el-form-item
+                v-else
+                prop="sourceTable"
+                :rules="[{
+                    required: true,
+                    message: '请输入表名',
+                    trigger: ['change', 'blur']
+                }]"
+                label="表（手动输入，生成新的表名）"
+            >
+                <el-input v-model="formData.sourceTable" maxlength="20" placeholder="请输入" />
+            </el-form-item>
             <el-form-item label="备注">
                 <el-input
                     v-model="formData.remark"
@@ -26,10 +94,31 @@
 <script lang="ts" setup>
 import { reactive, defineExpose, ref, nextTick } from 'vue'
 import { ElMessage, FormInstance, FormRules } from 'element-plus'
+import { GetComputerGroupList } from '@/services/computer-group.service'
+import { GetDatasourceList } from '@/services/datasource.service'
+import { GetDataSourceTables } from '@/services/data-sync.service'
+
+interface Option {
+    label: string
+    value: string
+}
+
+interface formDataParam {
+    name: string
+    clusterId: string
+    datasourceId: string
+    mode: string
+    sourceTable: string
+    remark: string
+    id?: string
+}
 
 const form = ref<FormInstance>()
 const callback = ref<any>()
-const userList = ref([])
+const clusterList = ref([])  // 计算集群
+const dataSourceList = ref([])  // 数据源
+const sourceTablesList = ref<Option[]>([])
+
 const modelConfig = reactive({
     title: '添加表单',
     visible: false,
@@ -49,8 +138,12 @@ const modelConfig = reactive({
     zIndex: 1100,
     closeOnClickModal: false
 })
-const formData = reactive({
+const formData = reactive<formDataParam>({
     name: '',
+    clusterId: '',
+    datasourceId: '',
+    mode: 'CHOOSE',
+    sourceTable: '',
     remark: '',
     id: ''
 })
@@ -61,20 +154,39 @@ const rules = reactive<FormRules>({
             message: '请输入表单名称',
             trigger: ['change', 'blur']
         }
+    ],
+    clusterId: [
+        {
+            required: true,
+            message: '请选择计算集群',
+            trigger: ['change', 'blur']
+        }
+    ],
+    datasourceId: [
+        {
+            required: true,
+            message: '请选择数据源',
+            trigger: ['change', 'blur']
+        }
     ]
 })
 
-function showModal(cb: () => void, data?: any): void {
+function showModal(cb: () => void, data?: formDataParam): void {
     callback.value = cb
     modelConfig.visible = true
     if (data) {
-        formData.name = data.name
-        formData.remark = data.remark
-        formData.id = data.id
+        Object.keys(data).forEach((key: string) => {
+            formData[key] = data[key]
+        })
         modelConfig.title = '编辑表单'
     } else {
-        formData.name= ''
+        formData.name = ''
+        formData.clusterId = ''
+        formData.datasourceId = ''
+        formData.mode = 'CHOOSE'
+        formData.sourceTable = ''
         formData.remark = ''
+        formData.id = ''
         modelConfig.title = '添加表单'
     }
     nextTick(() => {
@@ -88,8 +200,7 @@ function okEvent() {
             modelConfig.okConfig.loading = true
             callback
                 .value({
-                    ...formData,
-                    id: formData.id ? formData.id : undefined
+                    ...formData
                 })
                 .then((res: any) => {
                     modelConfig.okConfig.loading = false
@@ -106,6 +217,77 @@ function okEvent() {
             ElMessage.warning('请将表单输入完整')
         }
     })
+}
+
+function dataSourceChange() {
+    formData.sourceTable = ''
+    sourceTablesList.value = []
+}
+
+function modeChange(e: string) {
+    formData.sourceTable = ''
+    sourceTablesList.value = []
+}
+
+// 查询计算集群
+function getClusterList(e: boolean) {
+  if (e) {
+    GetComputerGroupList({
+      page: 0,
+      pageSize: 10000,
+      searchKeyWord: ''
+    }).then((res: any) => {
+      clusterList.value = res.data.content.map((item: any) => {
+        return {
+          label: item.name,
+          value: item.id
+        }
+      })
+    }).catch(() => {
+      clusterList.value = []
+    })
+  }
+}
+
+// 查询数据源
+function getDataSourceList(e: boolean, searchType?: string) {
+    if (e) {
+        GetDatasourceList({
+            page: 0,
+            pageSize: 10000,
+            searchKeyWord: searchType || ''
+        }).then((res: any) => {
+            dataSourceList.value = res.data.content.map((item: any) => {
+                return {
+                label: item.name,
+                value: item.id
+                }
+            })
+        })
+        .catch(() => {
+            dataSourceList.value = []
+        })
+    }
+}
+// 获取数据源表
+function getDataSourceTable(e: boolean, dataSourceId: string) {
+    if (e && dataSourceId) {
+        let options = []
+        GetDataSourceTables({
+            dataSourceId: dataSourceId,
+            tablePattern: ""
+        }).then((res: any) => {
+            options = (res.data || []).tables.map((item: any) => {
+                return {
+                    label: item,
+                    value: item
+                }
+            })
+            sourceTablesList.value = options
+        }).catch(err => {
+            console.error(err)
+        })
+    }
 }
 
 function closeEvent() {

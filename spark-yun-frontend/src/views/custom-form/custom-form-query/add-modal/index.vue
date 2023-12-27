@@ -73,6 +73,57 @@ const formConfigList = reactive([
     "name": "下拉选择"
   },
   {
+        uuid: '2c82156f-2cc2-abe1-f7fd-10bc3671774e',
+        type: 'simple',
+        formValueCode: '333',
+        codeType: 'custom',
+        label: '金额输入',
+        placeholder: '请输入',
+        disabled: false,
+        required: false,
+        isColumn: true,
+        precision: 2,
+        width: 2,
+        componentType: 'FormInputMoney',
+        valid: false,
+        icon: 'Document',
+        name: '金额输入'
+    },
+    {
+        uuid: '323515c0-ea7c-e5e1-ae28-9f37dd1d281f',
+        type: 'simple',
+        formValueCode: '1111',
+        codeType: 'custom',
+        label: '手机号输入',
+        placeholder: '请输入',
+        disabled: false,
+        required: true,
+        defaultValue: '13308749289',
+        isColumn: true,
+        width: 2,
+        componentType: 'FormInputPhone',
+        valid: false,
+        icon: 'Document',
+        name: '手机号输入'
+    },
+    {
+        uuid: '942365e6-938c-5694-ea81-8679d4ced15b',
+        type: 'simple',
+        formValueCode: '333dd',
+        codeType: 'custom',
+        label: '邮箱输入',
+        placeholder: '请输入',
+        disabled: false,
+        required: true,
+        isColumn: true,
+        defaultValue: '123@qq.com',
+        width: 2,
+        componentType: 'FormInputEmail',
+        valid: false,
+        icon: 'Document',
+        name: '邮箱输入'
+    },
+  {
     "uuid": "3bc1a3d8-4844-5524-9730-b5674cee01c4",
     "type": "simple",
     "formValueCode": "3",
@@ -172,6 +223,11 @@ const formConfigList = reactive([
 ] )
 function showModal(cb: () => void, data?: any): void {
     callback.value = cb
+    if (data) {
+      modelConfig.title = '编辑'
+    } else {
+      modelConfig.title = '添加'
+    }
     modelConfig.visible = true
 }
 

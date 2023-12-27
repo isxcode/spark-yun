@@ -34,7 +34,7 @@
                                 :isDragger="isDragger"
                                 :renderSence="renderSence"
                                 @removeInstance="removeInstance"
-                                @mousedown.prevent="mousedownEvent($event, element)"
+                                @click="mousedownEvent($event, element)"
                             ></component>
                         </span>
                     </template>
@@ -217,6 +217,8 @@ function removeInstance(e: ComponentInstance) {
         .el-scrollbar__wrap {
             .el-scrollbar__view {
                 height: 100%;
+                padding-bottom: 20px;
+                box-sizing: border-box;
             }
         }
     }

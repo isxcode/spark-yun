@@ -1,19 +1,19 @@
 <template>
     <form-render-item
-        class="form-input-money"
+        class="form-input-phone"
         :formConfig="formConfig"
         :rules="rules"
+        :customRules="customRules"
         :isDragger="isDragger"
     >
         <el-input
             v-model="formData"
+            clearable
             :disabled="formConfig.disabled"
             :placeholder="formConfig.placeholder"
             :maxlength="formConfig.maxlength"
             :readonly="isDragger"
-            @focus="focusEvent"
             @input="inputEvent"
-            @blur="blurEvent"
         />
     </form-render-item>
 </template>
@@ -22,32 +22,38 @@ import { defineProps, defineEmits, computed, ref, watch } from 'vue'
 import FormRenderItem from '../../form-render-item/index.vue'
 
 const validateAssetValue = (value: string): string => {
-    let val = value?.replace(/,/g, '').replace(/[^0-9.]/g, '')
-    let valueNum = Number(val)
-    return value && isNaN(valueNum) ? '' : val
+    let val = value?.replace(/[^0-9]/g, '')
+    return val
+}
+
+const checkPhone = (rule: any, value: any, callback: any) => {
+    const phoneReg = /^1[34578]\d{9}$$/
+    if (value && !phoneReg.test(value)) {
+        callback(new Error('电话号码格式不正确'))
+    } else {
+        callback()
+    }
 }
 
 const props = defineProps(['renderSence', 'modelValue', 'formConfig', 'isDragger'])
 const emit = defineEmits(['update:modelValue'])
 const formData = computed({
     get() {
-        if (focusStatus.value) {
-            return props.modelValue
-        } else {
-            return props.modelValue !== null && props.modelValue !== undefined && props.modelValue !== '' ? Number(props.modelValue).toLocaleString('zh-CN', {'minimumFractionDigits':2, 'maximumFractionDigits':2}) : ''
-        }
+        return props.modelValue
     },
     set(value) {
         emit('update:modelValue', value)
     }
 })
-const focusStatus = ref(false)
 const rules = ref([
     {
         required: true,
         message: `请输入${props.formConfig.label}`,
         trigger: ['blur', 'change']
     }
+])
+const customRules = ref([
+    { validator: checkPhone, trigger: ['blur', 'change'] }
 ])
 watch(() => props.formConfig.defaultValue, () => {
     if (props.renderSence === 'new') {
@@ -56,34 +62,18 @@ watch(() => props.formConfig.defaultValue, () => {
 }, {
     immediate: true
 })
-function keyupEvent(input: KeyboardEvent) {
-    let value = input.key
-    const returnValue = value.replace(/\D*(\d*)(\.?)(\d{0,2})\d*/,'$1$2$3').replace(/^0+(\d)/, '$1').match(/^\d*(\.?\d{0,2})/g)
-    return returnValue[0]
-}
-function focusEvent(e: any) {
-    focusStatus.value = true
-    emit('update:modelValue', validateAssetValue(e.target.value))
-}
+
 function inputEvent(input: string) {
     emit('update:modelValue', validateAssetValue(input))
-}
-
-function blurEvent(e: any) {
-    focusStatus.value = false
-    let value = e.target.value || ''
-    emit('update:modelValue', value ? parseFloat(validateAssetValue(value)) : null)
 }
 </script>
 
 <style lang="scss">
-.form-input-money {
-    .el-form-item__content {
-        .el-input {
-            .el-input__wrapper {
-                .el-input__inner {
-                    text-align: right !important;
-                }
+.form-input-phone {
+    &.form-input__dragger {
+        .el-form-item__content {
+            .el-input {
+                pointer-events: none;
             }
         }
     }
