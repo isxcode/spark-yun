@@ -162,6 +162,7 @@ function mouseenterEvent() {
             padding: 0 8px;
             font-size: 12px;
             margin: 10px 0 0 0;
+            color: getCssVar('text-color', 'primary');
         }
     }
     &.form-components-widget__out {
@@ -182,7 +183,7 @@ function mouseenterEvent() {
         .edit-item {
             margin-top: 8px;
             width: calc(50% - 14px);
-            border: 1px solid #b2b2b2;
+            border: 1px solid getCssVar('color', 'info');
             border-radius: 2px;
             height: 32px;
             display: inline-flex;
@@ -190,6 +191,7 @@ function mouseenterEvent() {
             padding-left: 8px;
             font-size: 12px;
             line-height: 32px;
+            color: var(--el-text-color-regular);
             cursor: grab;
             &:active {
                 cursor: grabbing;
