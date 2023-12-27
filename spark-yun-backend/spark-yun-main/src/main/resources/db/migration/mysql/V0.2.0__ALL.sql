@@ -180,3 +180,6 @@ create table SY_WORK_UDF
   deleted                 int default 0 not null comment '逻辑删除',
   tenant_id               varchar(200)  not null comment '租户id'
 );
+
+ALTER TABLE SY_WORK_CONFIG ADD jar_conf text NULL;
+ALTER TABLE SY_WORK_CONFIG CHANGE jar_conf jar_conf text NULL AFTER sync_rule;

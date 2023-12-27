@@ -36,21 +36,15 @@ public class YunAgentBizService {
 		String appId;
 		switch (yagExecuteWorkReq.getAgentType()) {
 			case AgentType.YARN :
-				sparkLauncher = yarnAgentService.genSparkLauncher(yagExecuteWorkReq.getPluginReq(),
-						yagExecuteWorkReq.getSparkSubmit(), yagExecuteWorkReq.getAgentHomePath(),
-						yagExecuteWorkReq.getSparkHomePath());
+				sparkLauncher = yarnAgentService.genSparkLauncher(yagExecuteWorkReq);
 				appId = yarnAgentService.executeWork(sparkLauncher);
 				break;
 			case AgentType.K8S :
-				sparkLauncher = kubernetesAgentService.genSparkLauncher(yagExecuteWorkReq.getPluginReq(),
-						yagExecuteWorkReq.getSparkSubmit(), yagExecuteWorkReq.getAgentHomePath(),
-						yagExecuteWorkReq.getSparkHomePath());
+				sparkLauncher = kubernetesAgentService.genSparkLauncher(yagExecuteWorkReq);
 				appId = kubernetesAgentService.executeWork(sparkLauncher);
 				break;
 			case AgentType.StandAlone :
-				sparkLauncher = standaloneAgentService.genSparkLauncher(yagExecuteWorkReq.getPluginReq(),
-						yagExecuteWorkReq.getSparkSubmit(), yagExecuteWorkReq.getAgentHomePath(),
-						yagExecuteWorkReq.getSparkHomePath());
+				sparkLauncher = standaloneAgentService.genSparkLauncher(yagExecuteWorkReq);
 				appId = standaloneAgentService.executeWork(sparkLauncher);
 				break;
 			default :

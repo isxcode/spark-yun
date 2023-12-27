@@ -41,4 +41,6 @@ public class GetWorkRes {
 	private String workflowId;
 
 	private String name;
+
+  private String jarConf;
 }

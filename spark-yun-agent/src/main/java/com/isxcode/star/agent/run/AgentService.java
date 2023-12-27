@@ -1,7 +1,6 @@
 package com.isxcode.star.agent.run;
 
-import com.isxcode.star.api.agent.pojos.req.PluginReq;
-import com.isxcode.star.api.agent.pojos.req.SparkSubmit;
+import com.isxcode.star.api.agent.pojos.req.YagExecuteWorkReq;
 import org.apache.spark.launcher.SparkLauncher;
 
 import java.io.IOException;
@@ -11,13 +10,10 @@ public interface AgentService {
 	String getMaster(String sparkHomePath) throws IOException;
 
 	/**
-	 * @param pluginReq
-	 *            插件请求体
-	 * @param sparkSubmit
-	 *            spark作业提交配置
+	 * @param yagExecuteWorkReq
+   *  请求体
 	 */
-	SparkLauncher genSparkLauncher(PluginReq pluginReq, SparkSubmit sparkSubmit, String agentHomePath,
-			String sparkHomePath) throws IOException;
+	SparkLauncher genSparkLauncher(YagExecuteWorkReq yagExecuteWorkReq) throws IOException;
 
 	String executeWork(SparkLauncher sparkLauncher) throws IOException;
 
