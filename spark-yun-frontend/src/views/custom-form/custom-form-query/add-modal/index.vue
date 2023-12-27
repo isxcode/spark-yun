@@ -232,6 +232,7 @@ function showModal(cb: () => void, data?: any): void {
 }
 
 function okEvent() {
+    console.log('分享表单数据', JSON.parse(JSON.stringify(formData)))
     modelConfig.visible = false
 }
 
