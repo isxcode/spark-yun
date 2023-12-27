@@ -14,4 +14,6 @@ public interface WorkType {
 	String BASH = "BASH";
 
 	String PYTHON = "PYTHON";
+
+  String SPARK_JAR = "SPARK_JAR";
 }

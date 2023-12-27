@@ -139,6 +139,11 @@ public class WorkConfigBizService {
       workConfig.setUdfStatus(wocConfigWorkReq.getUdfStatus());
     }
 
+    // 设置自定义作业配置信息
+    if (!Strings.isEmpty(wocConfigWorkReq.getJarConf())) {
+      workConfig.setJarConf(wocConfigWorkReq.getJarConf());
+    }
+
 		// 保存配置
 		workConfigRepository.save(workConfig);
 	}

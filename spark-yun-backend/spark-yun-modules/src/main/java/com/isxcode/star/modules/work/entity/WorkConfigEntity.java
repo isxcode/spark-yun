@@ -52,6 +52,8 @@ public class WorkConfigEntity {
 
   private Boolean udfStatus;
 
+  private String jarConf;
+
 	@CreatedDate
 	private LocalDateTime createDateTime;
 

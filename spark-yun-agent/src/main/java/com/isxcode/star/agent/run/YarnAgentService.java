@@ -2,8 +2,7 @@ package com.isxcode.star.agent.run;
 
 import com.alibaba.fastjson2.JSON;
 import com.isxcode.star.agent.properties.SparkYunAgentProperties;
-import com.isxcode.star.api.agent.pojos.req.PluginReq;
-import com.isxcode.star.api.agent.pojos.req.SparkSubmit;
+import com.isxcode.star.api.agent.pojos.req.YagExecuteWorkReq;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,17 +30,16 @@ public class YarnAgentService implements AgentService {
 	}
 
 	@Override
-	public SparkLauncher genSparkLauncher(PluginReq pluginReq, SparkSubmit sparkSubmit, String agentHomePath,
-			String sparkHomePath) {
+	public SparkLauncher genSparkLauncher(YagExecuteWorkReq yagExecuteWorkReq) {
 
-		SparkLauncher sparkLauncher = new SparkLauncher().setVerbose(false).setMainClass(sparkSubmit.getMainClass())
-				.setDeployMode("cluster").setAppName("zhiqingyun-job").setMaster(getMaster(sparkHomePath))
+		SparkLauncher sparkLauncher = new SparkLauncher().setVerbose(false).setMainClass(yagExecuteWorkReq.getSparkSubmit().getMainClass())
+				.setDeployMode("cluster").setAppName("zhiqingyun-job").setMaster(getMaster(yagExecuteWorkReq.getSparkHomePath()))
 				.setAppResource(
-						agentHomePath + File.separator + "plugins" + File.separator + sparkSubmit.getAppResource())
-				.setSparkHome(agentHomePath + File.separator + "spark-min");
+          yagExecuteWorkReq.getAgentHomePath() + File.separator + "plugins" + File.separator + yagExecuteWorkReq.getSparkSubmit().getAppResource())
+				.setSparkHome(yagExecuteWorkReq.getAgentHomePath() + File.separator + "spark-min");
 
-		if (!Strings.isEmpty(agentHomePath)) {
-			File[] jarFiles = new File(agentHomePath + File.separator + "lib").listFiles();
+		if (!Strings.isEmpty(yagExecuteWorkReq.getAgentHomePath())) {
+			File[] jarFiles = new File(yagExecuteWorkReq.getAgentHomePath() + File.separator + "lib").listFiles();
 			if (jarFiles != null) {
 				for (File jar : jarFiles) {
 					try {
@@ -57,9 +55,10 @@ public class YarnAgentService implements AgentService {
 			}
 		}
 
-		sparkLauncher.addAppArgs(Base64.getEncoder().encodeToString(JSON.toJSONString(pluginReq).getBytes()));
+		sparkLauncher.addAppArgs(Base64.getEncoder().encodeToString(yagExecuteWorkReq.getPluginReq() == null ?
+      yagExecuteWorkReq.getArgs().getBytes() : JSON.toJSONString(yagExecuteWorkReq.getPluginReq()).getBytes()));
 
-		sparkSubmit.getConf().forEach(sparkLauncher::setConf);
+    yagExecuteWorkReq.getSparkSubmit().getConf().forEach(sparkLauncher::setConf);
 
 		return sparkLauncher;
 	}
