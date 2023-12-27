@@ -21,7 +21,7 @@ export const httpOption = {
       const authStore = useAuthStore()
 
       config.headers['authorization'] = authStore.token
-      config.headers['tenant'] = authStore.tenantId
+      config.headers['tenant'] = config.headers['tenant'] || authStore.tenantId
 
       return config
     },

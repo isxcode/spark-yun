@@ -41,32 +41,32 @@ watch(() => route.name, (e) => {
   // &.zqy-form-engine {
   //   height: calc(100vh - 55px);
   // }
-  .form-card-container {
-    padding: 0 20px;
-    box-sizing: border-box;
-    .form-card-list {
-      width: 100%;
-      .form-card-item {
-        width: 24%;
-        height: 84px;
-        border: 1px solid getCssVar('border-color');
-        border-radius: 6px;
-        background-color: getCssVar('color', 'white');
-        box-shadow: getCssVar('box-shadow', 'lighter');
-        transition: transform 0.15s linear;
-        cursor: pointer;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        padding: 12px;
-        box-sizing: border-box;
-        font-size: getCssVar('font-size', 'extra-small');
-        &:hover {
-          transition: transform 0.15s linear;
-          transform: scale(1.03);
-        }
-      }
-    }
-  }
+  // .form-card-container {
+  //   padding: 0 20px;
+  //   box-sizing: border-box;
+  //   .form-card-list {
+  //     width: 100%;
+  //     .form-card-item {
+  //       width: 24%;
+  //       height: 84px;
+  //       border: 1px solid getCssVar('border-color');
+  //       border-radius: 6px;
+  //       background-color: getCssVar('color', 'white');
+  //       box-shadow: getCssVar('box-shadow', 'lighter');
+  //       transition: transform 0.15s linear;
+  //       cursor: pointer;
+  //       display: flex;
+  //       flex-direction: column;
+  //       justify-content: space-between;
+  //       padding: 12px;
+  //       box-sizing: border-box;
+  //       font-size: getCssVar('font-size', 'extra-small');
+  //       &:hover {
+  //         transition: transform 0.15s linear;
+  //         transform: scale(1.03);
+  //       }
+  //     }
+  //   }
+  // }
 }
 </style>
