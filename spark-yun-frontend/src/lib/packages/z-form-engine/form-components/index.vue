@@ -105,6 +105,16 @@ function startMoveEvent(e: any) {
 function removeInstance(e: ComponentInstance) {
     emit('removeInstance', e)
 }
+
+function validateForm(callback: any) {
+    ZFormEngineRef.value?.validate((valid: boolean) => {
+        callback(valid)
+    })
+}
+
+defineExpose({
+    validateForm
+})
 </script>
 
 <style lang="scss">

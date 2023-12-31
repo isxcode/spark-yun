@@ -40,21 +40,12 @@
                 </el-select>
             </el-form-item>
             <el-form-item label="模式" prop="mode">
-                <el-radio-group v-model="formData.mode" @change="modeChange">
+                <el-radio-group v-model="formData.mode" @change="dataSourceChange">
                     <el-radio label="CHOOSE">选择已有表</el-radio>
                     <el-radio label="CREATE">创建新表</el-radio>
                 </el-radio-group>
             </el-form-item>
-            <el-form-item
-                v-if="formData.mode === 'CHOOSE'"
-                prop="sourceTable"
-                :rules="[{
-                    required: true,
-                    message: '请选择表名',
-                    trigger: ['change', 'blur']
-                }]"
-                label="表（选择已有表名）"
-            >
+            <el-form-item v-if="formData.mode === 'CHOOSE'" prop="sourceTable" label="表（选择已有表名）">
                 <el-select
                     v-model="formData.sourceTable"
                     clearable
@@ -66,16 +57,7 @@
                         :value="item.value" />
                 </el-select>
             </el-form-item>
-            <el-form-item
-                v-else
-                prop="sourceTable"
-                :rules="[{
-                    required: true,
-                    message: '请输入表名',
-                    trigger: ['change', 'blur']
-                }]"
-                label="表（手动输入，生成新的表名）"
-            >
+            <el-form-item v-else prop="sourceTable_name" label="表（手动输入，生成新的表名）">
                 <el-input v-model="formData.sourceTable" maxlength="20" placeholder="请输入" />
             </el-form-item>
             <el-form-item label="备注">
@@ -168,6 +150,20 @@ const rules = reactive<FormRules>({
             message: '请选择数据源',
             trigger: ['change', 'blur']
         }
+    ],
+    sourceTable: [
+        {
+            required: true,
+            message: '请选择表名',
+            trigger: ['change', 'blur']
+        }
+    ],
+    sourceTable_name: [
+        {
+            required: true,
+            message: '请输入表名',
+            trigger: ['change', 'blur']
+        }
     ]
 })
 
@@ -224,11 +220,6 @@ function dataSourceChange() {
     sourceTablesList.value = []
 }
 
-function modeChange(e: string) {
-    formData.sourceTable = ''
-    sourceTablesList.value = []
-}
-
 // 查询计算集群
 function getClusterList(e: boolean) {
   if (e) {
@@ -277,7 +268,7 @@ function getDataSourceTable(e: boolean, dataSourceId: string) {
             dataSourceId: dataSourceId,
             tablePattern: ""
         }).then((res: any) => {
-            options = (res.data || []).tables.map((item: any) => {
+            options = res.data.tables.map((item: any) => {
                 return {
                     label: item,
                     value: item

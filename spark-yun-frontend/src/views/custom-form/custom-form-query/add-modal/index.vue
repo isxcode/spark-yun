@@ -1,6 +1,7 @@
 <template>
     <BlockModal :model-config="modelConfig">
         <z-form-engine
+            ref="formEngineRef"
             v-model="formData"
             renderSence="new"
             :formConfigList="formConfigList"
@@ -11,8 +12,10 @@
 <script lang="ts" setup>
 import { reactive, defineExpose, ref, nextTick } from 'vue'
 import ZFormEngine from '@/lib/packages/z-form-engine/index.vue'
+import { ElMessage } from 'element-plus'
 
 const callback = ref<any>()
+const formEngineRef = ref()
 const modelConfig = reactive({
     title: '添加',
     visible: false,
@@ -32,7 +35,7 @@ const modelConfig = reactive({
     zIndex: 1100,
     closeOnClickModal: false
 })
-const formData = reactive({})
+const formData = ref({})
 const formConfigList = reactive([
   {
     "uuid": "cdd90901-1d54-ae12-0595-fc8a415b4c64",
@@ -223,6 +226,7 @@ const formConfigList = reactive([
 ] )
 function showModal(cb: () => void, data?: any): void {
     callback.value = cb
+    formData.value = {}
     if (data) {
       modelConfig.title = '编辑'
     } else {
@@ -232,8 +236,14 @@ function showModal(cb: () => void, data?: any): void {
 }
 
 function okEvent() {
-    console.log('分享表单数据', JSON.parse(JSON.stringify(formData)))
-    modelConfig.visible = false
+  formEngineRef.value.validateForm((valid: boolean) => {
+    if (valid) {
+      console.log('表单保存', JSON.parse(JSON.stringify(formData.value)))
+      modelConfig.visible = false
+    } else {
+      ElMessage.warning('请将表单输入完整')
+    }
+  })
 }
 
 function closeEvent() {
