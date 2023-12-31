@@ -20,6 +20,7 @@
         :field="colConfig.prop"
         :fixed="colConfig.fixed"
         :show-overflow="colConfig.showOverflowTooltip || false"
+        v-bind="colConfig"
       >
         <template #default="{ row, rowIndex, column }">
           <slot
@@ -38,6 +39,7 @@
         :width="colConfig.width"
         :field="colConfig.prop"
         :show-overflow="colConfig.showOverflowTooltip || false"
+        v-bind="colConfig"
       />
     </template>
     <template #empty>

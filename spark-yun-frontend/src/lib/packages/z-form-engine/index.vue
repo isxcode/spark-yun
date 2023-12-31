@@ -10,6 +10,7 @@
         ></form-widget>
         <!-- 中间表单组件拖拽 -->
         <form-components
+            ref="formComponentRef"
             v-model="formData"
             :componentList="componentList"
             :currentInstance="instanceConfig.chooseItemData"
@@ -58,6 +59,7 @@ const props = withDefaults(defineProps<{
 })
 const emit = defineEmits(['update:modelValue'])
 const componentList = ref<ComponentInstance[]>([])
+const formComponentRef = ref()
 const formComps = reactive(FormComps)
 // 右侧配置相关参数
 const instanceConfig = reactive<InstanceConfig>({
@@ -128,8 +130,13 @@ function getFormItemConfigList() {
     return componentList.value || []
 }
 
+function validateForm(callback: any) {
+    formComponentRef.value?.validateForm(callback)
+}
+
 defineExpose({
-    getFormItemConfigList
+    getFormItemConfigList,
+    validateForm
 })
 </script>
 

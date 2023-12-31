@@ -123,7 +123,7 @@ function handleReflesh() {
     left: 12px;
     right: 8px;
     background-color: #f7f7f7;
-    z-index: 100;
+    z-index: 1000;
 
     .loader {
       left: 50%;
@@ -153,7 +153,8 @@ function handleReflesh() {
     transform: translate(-50%, -50%);
     margin-top: 58px;
     font-size: 12px;
-    color: getCssVar('color', 'primary');;
+    color: getCssVar('color', 'primary');
+    z-index: 1000;
   }
   .zqy-loading-network-error {
     position: absolute;
