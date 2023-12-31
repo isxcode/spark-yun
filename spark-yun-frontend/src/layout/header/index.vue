@@ -12,11 +12,10 @@
       <!-- <img src="../../assets/icons/logo.jpg" alt="至轻云"> -->
       至轻云
     </div>
-    <div
+    <!-- <div
       v-if="headerConfig.tenantList && headerConfig.tenantList.length > 0 && tenantSelect"
       class="zqy-tenant"
     >
-      <!-- <div class="zqy-tenant"> -->
       <el-select
         v-model="tenantSelect"
         @change="tenantChange"
@@ -29,24 +28,23 @@
           :value="tenant.id"
         />
       </el-select>
-    </div>
-    <div class="header-user">
+    </div> -->
+    <!-- <div class="header-user">
       <span class="redirect-url" @click="clickRedirectUrl">帮助文档</span>
       <el-dropdown @command="handleCommand">
         <span class="el-dropdown-link">
-          <!-- {{ headerConfig?.userInfo?.username }}<i class="el-icon-arrow-down el-icon--right"></i> -->
           <el-avatar :size="32">{{ headerConfig.userInfo && headerConfig.userInfo.username ? headerConfig.userInfo.username.slice(0, 1) : "" }}</el-avatar>
         </span>
         <template #dropdown>
           <el-dropdown-menu>
-            <!-- <el-dropdown-item>个人信息</el-dropdown-item> -->
+            <el-dropdown-item>个人信息</el-dropdown-item>
             <el-dropdown-item command="logout">
               退出登录
             </el-dropdown-item>
           </el-dropdown-menu>
         </template>
       </el-dropdown>
-    </div>
+    </div> -->
   </div>
 </template>
 

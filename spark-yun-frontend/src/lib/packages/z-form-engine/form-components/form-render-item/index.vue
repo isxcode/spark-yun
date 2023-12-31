@@ -69,7 +69,7 @@ function removeInstance() {
         z-index: 10;
     }
     &.form-render-item__edit {
-        padding: 12px 4px;
+        padding: 12px 8px;
         .el-form-item__label {
             margin-bottom: 0 !important;
         }

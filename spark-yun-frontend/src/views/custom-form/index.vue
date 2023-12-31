@@ -32,6 +32,8 @@ watch(() => route.name, (e) => {
     name: '自定义表单',
     code: 'custom-form'
   }, ...breadOtherList.filter(r => r.code === e)]
+}, {
+  immediate: true
 })
 
 </script>
