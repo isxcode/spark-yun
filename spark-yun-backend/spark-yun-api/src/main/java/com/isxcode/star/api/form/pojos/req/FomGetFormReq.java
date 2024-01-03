@@ -1,26 +1,14 @@
 package com.isxcode.star.api.form.pojos.req;
 
-import com.isxcode.star.api.form.pojos.dto.FomComponentDto;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
-import java.util.List;
+import javax.validation.constraints.NotEmpty;
 
 @Data
 public class FomGetFormReq {
 
-	private String name;
-
-	private String datasourceId;
-
-	private String mainTable;
-
-	private String insertSql;
-
-	private String deleteSql;
-
-	private String updateSql;
-
-	private String selectSql;
-
-	private List<FomComponentDto> components;
+  @Schema(title = "表单唯一id", example = "sy_fd34e4a53db640f5943a4352c4d549b9")
+  @NotEmpty(message = "formId不能为空")
+	private String formId;
 }

@@ -5,15 +5,19 @@ import lombok.Data;
 @Data
 public class FomComponentDto {
 
+  private String id;
+
 	private String name;
 
 	private String componentType;
 
+  private String icon;
+
 	private String componentKey;
 
-	private boolean isDisplay;
+	private Boolean isDisplay = Boolean.TRUE;
 
-	private boolean isPrimaryKey;
+	private Boolean isPrimaryKey = Boolean.FALSE;
 
 	private String showValue;
 
