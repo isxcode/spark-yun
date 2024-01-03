@@ -13,6 +13,8 @@ public class FomAddFormReq {
 
 	private String mainTable;
 
+  private String createMode;
+
 	private String insertSql;
 
 	private String deleteSql;
