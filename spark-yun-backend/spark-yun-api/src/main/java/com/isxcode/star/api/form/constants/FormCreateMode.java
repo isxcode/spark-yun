@@ -4,5 +4,5 @@ public interface FormCreateMode {
 
 	String CREATE = "CREATE";
 
-  String CHOOSE = "CHOOSE";
+	String CHOOSE = "CHOOSE";
 }

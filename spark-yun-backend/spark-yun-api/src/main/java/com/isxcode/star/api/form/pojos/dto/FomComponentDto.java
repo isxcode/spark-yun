@@ -5,13 +5,13 @@ import lombok.Data;
 @Data
 public class FomComponentDto {
 
-  private String id;
+	private String id;
 
 	private String name;
 
 	private String componentType;
 
-  private String icon;
+	private String icon;
 
 	private String componentKey;
 
