@@ -51,6 +51,13 @@ export const menuListData: Array<Menu> = [
     childPage: ['form-list', 'form-query', 'form-setting']
   },
   {
+    code: 'custom-api',
+    name: '自定义接口',
+    icon: 'MessageBox',
+    authType: [ 'ROLE_TENANT_MEMBER', 'ROLE_TENANT_ADMIN' ],
+    childPage: []
+  },
+  {
     code: 'user-center',
     name: '用户中心',
     icon: 'UserFilled',

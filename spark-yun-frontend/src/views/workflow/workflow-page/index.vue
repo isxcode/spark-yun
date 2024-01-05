@@ -22,37 +22,40 @@
                         @keyup.enter="initData"></el-input>
                     <el-button type="primary" circle @click="addData"><el-icon><Plus /></el-icon></el-button>
                 </div>
-                <div class="list-box">
-                    <template v-if="workListItem.length" v-for="work in workListItem" :key="work.id">
-                        <div class="list-item" :class="{ 'choose-item': workConfig && workConfig.id === work.id }" :draggable="true" @click="showWorkConfig(work)" @dragstart="handleDragEnd($event, work)">
-                            {{ work.name }}
-                            <!-- <div class="item-left">
-                                <el-icon v-if="work.workType === 'QUERY_JDBC'"><Search /></el-icon>
-                                <el-icon v-if="work.workType === 'DATA_SYNC_JDBC'"><Van /></el-icon>
+                <el-scrollbar>
+                    <div class="list-box">
+                        <template v-if="workListItem.length" v-for="work in workListItem" :key="work.id">
+                            <div class="list-item" :class="{ 'choose-item': workConfig && workConfig.id === work.id }" :draggable="true" @click="showWorkConfig(work)" @dragstart="handleDragEnd($event, work)">
+                                <!-- {{ work.name }} -->
+                                <!-- <div class="item-left">
+                                    <el-icon v-if="work.workType === 'QUERY_JDBC'"><Search /></el-icon>
+                                    <el-icon v-if="work.workType === 'DATA_SYNC_JDBC'"><Van /></el-icon>
+                                </div> -->
+                                <div class="item-right">
+                                    <span class="label-type">{{ workTypeName(work.workType) }}</span>
+                                    <!-- <span class="label-name">{{ work.name + work.name + work.name || '-' }}</span> -->
+                                    <span class="label-name"><EllipsisTooltip class="label-name-text" :label="work.name + work.name + work.name" /></span>
+                                </div>
+                                <el-dropdown trigger="click">
+                                    <el-icon class="option-more" @click.stop>
+                                        <MoreFilled />
+                                    </el-icon>
+                                    <template #dropdown>
+                                        <el-dropdown-menu>
+                                            <el-dropdown-item @click="editData(work)">编辑</el-dropdown-item>
+                                            <el-dropdown-item v-if="containerType === 'flow'" @click="changeContianer(work, 'config')">作业配置</el-dropdown-item>
+                                            <el-dropdown-item @click="deleteData(work)">删除</el-dropdown-item>
+                                            <!-- <el-dropdown-item>复制</el-dropdown-item>
+                                            <el-dropdown-item>导出</el-dropdown-item>
+                                            <el-dropdown-item>置顶</el-dropdown-item> -->
+                                        </el-dropdown-menu>
+                                    </template>
+                                </el-dropdown>
                             </div>
-                            <div class="item-right">
-                                <span class="label-name">{{ work.name }}</span>
-                                <span class="label-name">{{ work.remark || '-' }}</span>
-                            </div> -->
-                            <el-dropdown trigger="click">
-                                <el-icon class="option-more" @click.stop>
-                                    <MoreFilled />
-                                </el-icon>
-                                <template #dropdown>
-                                    <el-dropdown-menu>
-                                        <el-dropdown-item @click="editData(work)">编辑</el-dropdown-item>
-                                        <el-dropdown-item v-if="containerType === 'flow'" @click="changeContianer(work, 'config')">作业配置</el-dropdown-item>
-                                        <el-dropdown-item @click="deleteData(work)">删除</el-dropdown-item>
-                                        <!-- <el-dropdown-item>复制</el-dropdown-item>
-                                        <el-dropdown-item>导出</el-dropdown-item>
-                                        <el-dropdown-item>置顶</el-dropdown-item> -->
-                                    </el-dropdown-menu>
-                                </template>
-                            </el-dropdown>
-                        </div>
-                    </template>
-                    <empty-page v-else></empty-page>
-                </div>
+                        </template>
+                        <empty-page v-else></empty-page>
+                    </div>
+                </el-scrollbar>
             </div>
             <div class="flow-container">
                 <template v-if="containerType === 'flow'">
@@ -155,7 +158,7 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, ref, onMounted, onUnmounted, nextTick } from 'vue'
+import { reactive, ref, onMounted, onUnmounted, nextTick, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import Breadcrumb from '@/layout/bread-crumb/index.vue'
 import ZqyFlow from '@/lib/packages/zqy-flow/flow.vue'
@@ -165,10 +168,10 @@ import eventBus from '@/utils/eventBus'
 import zqyLog from '@/components/zqy-log/index.vue'
 import WorkItem from '../work-item/index.vue'
 import DataSync from '../data-sync/index.vue'
-
-import { AddWorkflowDetailList, BreakFlowData, DeleteWorkflowDetailList, ExportWorkflowData, GetWorkflowData, GetWorkflowDetailList, GetWorkflowList, ImportWorkflowData, PublishWorkflowData, QueryRunWorkInstances, ReRunWorkflow, RerunCurrentNodeFlowData, RunAfterFlowData, RunWorkflowData, SaveWorkflowConfigData, SaveWorkflowData, StopWorkflowData, UnderlineWorkflowData, UpdateWorkflowDetailList } from '@/services/workflow.service'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Loading } from '@element-plus/icons-vue'
+import EllipsisTooltip from '@/components/ellipsis-tooltip/ellipsis-tooltip.vue'
+import { AddWorkflowDetailList, BreakFlowData, DeleteWorkflowDetailList, ExportWorkflowData, GetWorkflowData, GetWorkflowDetailList, GetWorkflowList, ImportWorkflowData, PublishWorkflowData, QueryRunWorkInstances, ReRunWorkflow, RerunCurrentNodeFlowData, RunAfterFlowData, RunWorkflowData, SaveWorkflowConfigData, SaveWorkflowData, StopWorkflowData, UnderlineWorkflowData, UpdateWorkflowDetailList } from '@/services/workflow.service'
 
 const route = useRoute()
 
@@ -187,7 +190,6 @@ const workFlowData = ref({
     id: ''
 })
 const cronConfig = ref()
-
 const workflowInstanceId = ref('')
 const timer = ref()
 const runningStatus = ref(false)
@@ -202,7 +204,6 @@ const btnLoadingConfig = reactive({
     exportLoading: false,
     underlineLoading: false
 })
-
 const breadCrumbList = reactive([
     {
         name: '作业流',
@@ -213,6 +214,38 @@ const breadCrumbList = reactive([
         code: 'workflow-page'
     }
 ])
+const typeList = reactive([
+  {
+    label: 'Jdbc执行作业',
+    value: 'EXE_JDBC'
+  },
+  {
+    label: 'Jdbc查询作业',
+    value: 'QUERY_JDBC'
+  },
+  {
+    label: 'SparkSql查询作业',
+    value: 'SPARK_SQL'
+  },
+  {
+    label: '数据同步作业',
+    value: 'DATA_SYNC_JDBC'
+  },
+  {
+    label: 'bash作业',
+    value: 'BASH'
+  },
+  {
+    label: 'python作业',
+    value: 'PYTHON'
+  }
+])
+
+const workTypeName = computed(() => {
+    return (code: string) => {
+        return typeList.find(t => t.value === code)?.label
+    }
+})
 
 function initData() {
     GetWorkflowDetailList({
@@ -235,11 +268,7 @@ function getWorkFlows() {
     }).then((res: any) => {
         workFlowList.value = res.data.content
     }).catch(() => {
-    tableConfig.tableData = []
-    tableConfig.pagination.total = 0
-    loading.value = false
-    tableConfig.loading = false
-    networkError.value = true
+        workFlowList.value = []
     })
 }
 
@@ -677,6 +706,7 @@ onUnmounted(() => {
         max-width: 200px;
         height: 100%;
         border-right: 1px solid getCssVar('border-color');
+        background-color: getCssVar('color', 'white');
 
         .option-container {
             height: 50px;
@@ -737,70 +767,86 @@ onUnmounted(() => {
                 width: 28px;
             }
         }
-
-        .list-box {
-            // padding: 0 4px;
-            box-sizing: border-box;
-            overflow: auto;
+        .el-scrollbar {
+            width: 200px;
             max-height: calc(100vh - 148px);
-            position: relative;
-            height: 100%;
-
-            .list-item {
-                height: getCssVar('menu', 'item-height');
-                // line-height: getCssVar('menu', 'item-height');
-                padding-left: 12px;
-                padding-right: 12px;
-                box-sizing: border-box;
-                border-bottom: 1px solid getCssVar('border-color');
-                cursor: pointer;
-                font-size: getCssVar('font-size', 'extra-small');
-                position: relative;
-
-                display: flex;
-                align-items: center;
-
-                // .item-left {
-                //     font-size: 16px;
-                //     margin-left: 12px;
-                // }
-
-                // .item-right {
-                //     margin-left: 8px;
-                //     display: flex;
-                //     flex-direction: column;
-                //     justify-content: space-between;
-                //     padding: 2px 0;
-                //     box-sizing: border-box;
-                // }
-
-                &.choose-item {
-                    background-color: getCssVar('color', 'primary', 'light-8');
-                }
-
-                &:hover {
-                    background-color: getCssVar('color', 'primary', 'light-8');
-
-                    .el-dropdown {
-                        display: block;
-                    }
-                }
-
-                .el-dropdown {
-                    position: absolute;
-                    right: 8px;
-                    top: 15px;
-                    // display: none;
-
-                    .option-more {
-                        font-size: 14px;
-                        transform: rotate(90deg);
+            .el-scrollbar__view {
+                height: 100%;
+                .list-box {
+                    // padding: 0 4px;
+                    box-sizing: border-box;
+                    position: relative;
+                    height: 100%;
+        
+                    .list-item {
+                        height: 52px;
+                        // height: getCssVar('menu', 'item-height');
+                        // line-height: getCssVar('menu', 'item-height');
+                        // padding-left: 12px;
+                        padding-right: 12px;
+                        box-sizing: border-box;
+                        border-bottom: 1px solid getCssVar('border-color');
                         cursor: pointer;
-                        color: getCssVar('color', 'info');
+                        font-size: getCssVar('font-size', 'extra-small');
+                        position: relative;
+                        display: flex;
+                        align-items: center;
+        
+                        // .item-left {
+                        //     font-size: 16px;
+                        //     margin-left: 12px;
+                        // }
+        
+                        .item-right {
+                            margin-left: 8px;
+                            display: flex;
+                            flex-direction: column;
+                            justify-content: space-between;
+                            padding: 2px 0;
+                            box-sizing: border-box;
+                            font-size: 12px;
+                            height: 80%;
+                            .label-type {
+                                color: getCssVar('color', 'primary');
+                            }
+                            .label-name {
+                                color: getCssVar('color', 'info');
+                                .label-name-text {
+                                    max-width: 166px;
+                                }
+                            }
+                        }
+        
+                        &.choose-item {
+                            background-color: getCssVar('color', 'primary', 'light-8');
+                        }
+        
+                        &:hover {
+                            background-color: getCssVar('color', 'primary', 'light-8');
+        
+                            .el-dropdown {
+                                display: block;
+                            }
+                        }
+        
+                        .el-dropdown {
+                            position: absolute;
+                            right: 8px;
+                            top: 20px;
+                            // display: none;
+        
+                            .option-more {
+                                font-size: 14px;
+                                transform: rotate(90deg);
+                                cursor: pointer;
+                                color: getCssVar('color', 'info');
+                            }
+                        }
                     }
                 }
             }
         }
+
 
     }
 
