@@ -44,51 +44,7 @@ export const BreadCrumbList: Array<BreadCrumb> = [
   }
 ]
 
-export const colConfigs: colConfig[] = [
-  {
-    prop: 'username',
-    title: '用户名',
-    minWidth: 100,
-    showOverflowTooltip: true
-  },
-  {
-    prop: 'account',
-    title: '账号',
-    minWidth: 100,
-    showOverflowTooltip: true
-  },
-  {
-    prop: 'phone',
-    title: '手机号',
-    minWidth: 100,
-    showOverflowTooltip: true
-  },
-  {
-    prop: 'email',
-    title: '邮箱',
-    minWidth: 160,
-    showOverflowTooltip: true
-  },
-  {
-    prop: 'status',
-    title: '状态',
-    minWidth: 100,
-    customSlot: 'statusTag'
-  },
-  {
-    prop: 'remark',
-    title: '备注',
-    minWidth: 120,
-    showOverflowTooltip: true
-  },
-  {
-    title: '操作',
-    align: 'center',
-    customSlot: 'options',
-    fixed: 'right',
-    width: 100
-  }
-]
+export const colConfigs: colConfig[] = []
 
 export const TableConfig: TableConfig = {
   tableData: [],

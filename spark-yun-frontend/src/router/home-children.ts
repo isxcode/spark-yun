@@ -19,6 +19,7 @@ import CustomForm from '@/views/custom-form/index.vue'
 import CustomFormList from '@/views/custom-form/custom-form-list.vue'
 import CustomFormQuery from '@/views/custom-form/custom-form-query/index.vue'
 import CustomFormSetting from '@/views/custom-form/form-setting/index.vue'
+import CustomApi from '@/views/custom-api/index.vue'
 
 export default [
   {
@@ -115,5 +116,10 @@ export default [
         component: CustomFormSetting
       }
     ]
+  },
+  {
+    path: 'custom-api',
+    name: 'custom-api',
+    component: CustomApi
   }
 ]

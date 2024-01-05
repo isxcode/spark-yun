@@ -34,7 +34,7 @@
                                 :isDragger="isDragger"
                                 :renderSence="renderSence"
                                 @removeInstance="removeInstance"
-                                @click="mousedownEvent($event, element)"
+                                @mousedown="mousedownEvent($event, element)"
                             ></component>
                         </span>
                     </template>

@@ -1,108 +1,36 @@
 <template>
     <BlockModal :model-config="modelConfig">
-        <el-form
-            ref="form"
-            class="add-computer-group"
-            label-position="top"
-            :model="formData"
-            :rules="rules"
-        >
-            <el-form-item label="表单名称" prop="name">
-                <el-input v-model="formData.name" maxlength="200" placeholder="请输入" />
-            </el-form-item>
-            <el-form-item label="计算集群" prop="clusterId">
-                <el-select
-                    v-model="formData.clusterId"
-                    placeholder="请选择"
-                    @visible-change="getClusterList"
-                >
-                    <el-option
-                    v-for="item in clusterList"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value"
-                    />
-                </el-select>
-            </el-form-item>
-            <el-form-item label="数据源" prop="datasourceId">
-                <el-select
-                    v-model="formData.datasourceId"
-                    placeholder="请选择"
-                    @visible-change="getDataSourceList"
-                    @change="dataSourceChange"
-                >
-                    <el-option
-                        v-for="item in dataSourceList"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value"
-                    />
-                </el-select>
-            </el-form-item>
-            <el-form-item label="模式" prop="mode">
-                <el-radio-group v-model="formData.mode" @change="dataSourceChange">
-                    <el-radio label="CHOOSE">选择已有表</el-radio>
-                    <el-radio label="CREATE">创建新表</el-radio>
-                </el-radio-group>
-            </el-form-item>
-            <el-form-item v-if="formData.mode === 'CHOOSE'" prop="sourceTable" label="表（选择已有表名）">
-                <el-select
-                    v-model="formData.sourceTable"
-                    clearable
-                    filterable
-                    placeholder="请选择"
-                    @visible-change="getDataSourceTable($event, formData.datasourceId)"
-                >
-                    <el-option v-for="item in sourceTablesList" :key="item.value" :label="item.label"
-                        :value="item.value" />
-                </el-select>
-            </el-form-item>
-            <el-form-item v-else prop="sourceTable_name" label="表（手动输入，生成新的表名）">
-                <el-input v-model="formData.sourceTable" maxlength="20" placeholder="请输入" />
-            </el-form-item>
-            <el-form-item label="备注">
-                <el-input
-                    v-model="formData.remark"
-                    type="textarea"
-                    maxlength="200"
-                    :autosize="{ minRows: 4, maxRows: 4 }"
-                    placeholder="请输入"
-                />
-            </el-form-item>
-        </el-form>
+        <div class="form-setting-more">
+            <div class="item-title">分享设置</div>
+            <div class="set-item-container">
+                <div class="set-item">
+                    <span class="label">匿名分享</span>
+                    <el-switch v-model="shareConfig.nmShareStatus" />
+                </div>
+                <div class="set-item">
+                    <span class="label">列表分享</span>
+                    <el-switch v-model="shareConfig.listShareStatus" />
+                </div>
+                <div class="set-item">
+                    <span class="label">登录分享</span>
+                    <el-switch v-model="shareConfig.loginShareStatus" />
+                </div>
+            </div>
+            <!-- <div class="item-title">权限设置</div>
+            <div class="set-item-container">
+                暂无
+            </div> -->
+        </div>
     </BlockModal>
 </template>
   
 <script lang="ts" setup>
 import { reactive, defineExpose, ref, nextTick } from 'vue'
 import { ElMessage, FormInstance, FormRules } from 'element-plus'
-import { GetComputerGroupList } from '@/services/computer-group.service'
-import { GetDatasourceList } from '@/services/datasource.service'
-import { GetDataSourceTables } from '@/services/data-sync.service'
 
-interface Option {
-    label: string
-    value: string
-}
-
-interface formDataParam {
-    name: string
-    clusterId: string
-    datasourceId: string
-    mode: string
-    sourceTable: string
-    remark: string
-    id?: string
-}
-
-const form = ref<FormInstance>()
-const callback = ref<any>()
-const clusterList = ref([])  // 计算集群
-const dataSourceList = ref([])  // 数据源
-const sourceTablesList = ref<Option[]>([])
-
+const callback = ref()
 const modelConfig = reactive({
-    title: '添加表单',
+    title: '高级设置',
     visible: false,
     width: '520px',
     okConfig: {
@@ -120,165 +48,40 @@ const modelConfig = reactive({
     zIndex: 1100,
     closeOnClickModal: false
 })
-const formData = reactive<formDataParam>({
-    name: '',
-    clusterId: '',
-    datasourceId: '',
-    mode: 'CHOOSE',
-    sourceTable: '',
-    remark: '',
-    id: ''
-})
-const rules = reactive<FormRules>({
-    name: [
-        {
-            required: true,
-            message: '请输入表单名称',
-            trigger: ['change', 'blur']
-        }
-    ],
-    clusterId: [
-        {
-            required: true,
-            message: '请选择计算集群',
-            trigger: ['change', 'blur']
-        }
-    ],
-    datasourceId: [
-        {
-            required: true,
-            message: '请选择数据源',
-            trigger: ['change', 'blur']
-        }
-    ],
-    sourceTable: [
-        {
-            required: true,
-            message: '请选择表名',
-            trigger: ['change', 'blur']
-        }
-    ],
-    sourceTable_name: [
-        {
-            required: true,
-            message: '请输入表名',
-            trigger: ['change', 'blur']
-        }
-    ]
+const shareConfig = reactive({
+    nmShareStatus: false,
+    listShareStatus: false,
+    loginShareStatus: false
 })
 
-function showModal(cb: () => void, data?: formDataParam): void {
+function showModal(cb: () => void, data?: any): void {
     callback.value = cb
     modelConfig.visible = true
-    if (data) {
-        Object.keys(data).forEach((key: string) => {
-            formData[key] = data[key]
-        })
-        modelConfig.title = '编辑表单'
-    } else {
-        formData.name = ''
-        formData.clusterId = ''
-        formData.datasourceId = ''
-        formData.mode = 'CHOOSE'
-        formData.sourceTable = ''
-        formData.remark = ''
-        formData.id = ''
-        modelConfig.title = '添加表单'
-    }
-    nextTick(() => {
-        form.value?.resetFields()
-    })
 }
 
 function okEvent() {
-    form.value?.validate((valid) => {
-        if (valid) {
-            modelConfig.okConfig.loading = true
-            callback
-                .value({
-                    ...formData
-                })
-                .then((res: any) => {
-                    modelConfig.okConfig.loading = false
-                    if (res === undefined) {
-                        modelConfig.visible = false
-                    } else {
-                        modelConfig.visible = true
-                    }
-                })
-                .catch(() => {
-                    modelConfig.okConfig.loading = false
-                })
-        } else {
-            ElMessage.warning('请将表单输入完整')
-        }
-    })
-}
-
-function dataSourceChange() {
-    formData.sourceTable = ''
-    sourceTablesList.value = []
-}
-
-// 查询计算集群
-function getClusterList(e: boolean) {
-  if (e) {
-    GetComputerGroupList({
-      page: 0,
-      pageSize: 10000,
-      searchKeyWord: ''
-    }).then((res: any) => {
-      clusterList.value = res.data.content.map((item: any) => {
-        return {
-          label: item.name,
-          value: item.id
-        }
-      })
-    }).catch(() => {
-      clusterList.value = []
-    })
-  }
-}
-
-// 查询数据源
-function getDataSourceList(e: boolean, searchType?: string) {
-    if (e) {
-        GetDatasourceList({
-            page: 0,
-            pageSize: 10000,
-            searchKeyWord: searchType || ''
-        }).then((res: any) => {
-            dataSourceList.value = res.data.content.map((item: any) => {
-                return {
-                label: item.name,
-                value: item.id
-                }
-            })
-        })
-        .catch(() => {
-            dataSourceList.value = []
-        })
-    }
-}
-// 获取数据源表
-function getDataSourceTable(e: boolean, dataSourceId: string) {
-    if (e && dataSourceId) {
-        let options = []
-        GetDataSourceTables({
-            dataSourceId: dataSourceId,
-            tablePattern: ""
-        }).then((res: any) => {
-            options = res.data.tables.map((item: any) => {
-                return {
-                    label: item,
-                    value: item
-                }
-            })
-            sourceTablesList.value = options
-        }).catch(err => {
-            console.error(err)
-        })
-    }
+    // form.value?.validate((valid) => {
+    //     if (valid) {
+    //         modelConfig.okConfig.loading = true
+    //         callback
+    //             .value({
+    //                 ...formData
+    //             })
+    //             .then((res: any) => {
+    //                 modelConfig.okConfig.loading = false
+    //                 if (res === undefined) {
+    //                     modelConfig.visible = false
+    //                 } else {
+    //                     modelConfig.visible = true
+    //                 }
+    //             })
+    //             .catch(() => {
+    //                 modelConfig.okConfig.loading = false
+    //             })
+    //     } else {
+    //         ElMessage.warning('请将表单输入完整')
+    //     }
+    // })
 }
 
 function closeEvent() {
@@ -291,9 +94,29 @@ defineExpose({
 </script>
   
 <style lang="scss">
-.add-computer-group {
+.form-setting-more {
     padding: 12px 20px 0 20px;
     box-sizing: border-box;
+    .item-title {
+      font-size: 13px;
+      padding-bottom: 12px;
+      margin-bottom: 12px;
+      box-sizing: border-box;
+      border-bottom: 1px solid #ebeef5;
+      font-weight: bolder;
+      color: getCssVar('color', 'primary');
+    }
+    .set-item-container {
+        margin-bottom: 12px;
+        .set-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            .label {
+                font-size: 12px;
+            }
+        }
+    }
 }
 </style>
   
