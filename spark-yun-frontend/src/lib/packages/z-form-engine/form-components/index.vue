@@ -143,7 +143,7 @@ defineExpose({
                 &.form-item-container__error {
                     .el-form-item {
                         &.form-input__dragger {
-                            background-color: getCssVar('color', 'white');
+                            background-color: getCssVar('color', 'error', 'light-9');
                             user-select: none !important;
                         }
                     }
