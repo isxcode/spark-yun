@@ -17,10 +17,9 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.sql.Connection;
-import java.sql.Driver;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -129,5 +128,47 @@ public class DatasourceService {
 		}
 		DriverManager.setLoginTimeout(500);
 		return driver.connect(datasource.getJdbcUrl(), info);
+	}
+
+	public void executeSql(DatasourceEntity datasource, String sql) {
+
+		try (Connection connection = this.getDbConnection(datasource);
+				Statement statement = connection.createStatement()) {
+			statement.execute(sql);
+		} catch (Exception e) {
+			log.error(e.getMessage());
+			throw new IsxAppException("提交失败");
+		}
+	}
+
+	public List<List<String>> queryResult(DatasourceEntity datasource, String sql) {
+
+		List<List<String>> result = new ArrayList<>();
+		try (Connection connection = this.getDbConnection(datasource);
+				Statement statement = connection.createStatement()) {
+
+			ResultSet resultSet = statement.executeQuery(sql);
+
+			int columnCount = resultSet.getMetaData().getColumnCount();
+			// 表头
+			List<String> metaList = new ArrayList<>();
+			for (int i = 1; i <= columnCount; i++) {
+				metaList.add(resultSet.getMetaData().getColumnLabel(i));
+			}
+			result.add(metaList);
+
+			// 数据
+			while (resultSet.next()) {
+				metaList = new ArrayList<>();
+				for (int i = 1; i <= columnCount; i++) {
+					metaList.add(String.valueOf(resultSet.getObject(i)));
+				}
+				result.add(metaList);
+			}
+			return result;
+		} catch (Exception e) {
+			log.error(e.getMessage());
+			throw new IsxAppException("查询失败");
+		}
 	}
 }
