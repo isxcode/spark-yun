@@ -13,5 +13,5 @@ public class AddFormRes {
 
 	private String mainTable;
 
-  private String remark;
+	private String remark;
 }
