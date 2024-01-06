@@ -10,7 +10,7 @@ server:
 spring:
 
   profiles:
-    active: mysql
+    active: local
 
   security:
     user:
