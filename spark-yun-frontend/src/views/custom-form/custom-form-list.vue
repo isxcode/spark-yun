@@ -11,49 +11,54 @@
         </div>
         <LoadingPage :visible="loading" :network-error="networkError" @loading-refresh="initData(false)">
             <div class="form-card-container">
-                <el-scrollbar max-height="calc(100vh - 186px)" class="form-card-list">
-                    <template v-for="card in formList">
-                        <div class="form-card-item" @click="redirectQuery">
-                            <div class="card-item">
-                                <span class="name">名称：</span>
-                                <EllipsisTooltip class="card-item-name" :label="card.name" />
-                            </div>
-                            <div class="card-item">创建时间：{{card.createDate}}</div>
-                            <div class="card-item">状态：{{card.status}}</div>
-                            <div class="card-item">版本：{{card.version}}</div>
-                            <!-- <div class="card-item">
-                                <span class="url">表单链接：</span>
-                                <EllipsisTooltip class="card-item-url" :label="card.url" />
-                            </div> -->
-                            <el-dropdown trigger="click" popper-class="custom-form-popover">
-                                <div class="card-button" @click.stop>
-                                    <el-icon><MoreFilled /></el-icon>
+                <template v-if="formList?.length">
+                    <el-scrollbar max-height="calc(100vh - 186px)" class="form-card-list">
+                        <template v-for="card in formList">
+                            <div class="form-card-item" @click="redirectQuery">
+                                <div class="card-item">
+                                    <span class="name">名称：</span>
+                                    <EllipsisTooltip class="card-item-name" :label="card.name" />
                                 </div>
-                                <template #dropdown>
-                                    <el-dropdown-menu>
-                                        <el-dropdown-item @click="editData(card)">编辑</el-dropdown-item>
-                                        <el-dropdown-item @click="deleteData(card)">删除</el-dropdown-item>
-                                        <el-dropdown-item @click="shareForm(card)">分享</el-dropdown-item>
-                                        <el-dropdown-item @click="underlineForm(card)">下线</el-dropdown-item>
-                                        <el-dropdown-item @click="publishForm(card)">发布</el-dropdown-item>
-                                    </el-dropdown-menu>
-                                </template>
-                            </el-dropdown>
-                        </div>
-                    </template>
-                    <template v-for="card in emptyBox">
-                        <div class="form-card-item form-card-item__empty"></div>
-                    </template>
-                </el-scrollbar>
-                <el-pagination
-                    v-if="pagination"
-                    class="pagination"
-                    popper-class="pagination-popper"
-                    background
-                    layout="prev, pager, next, sizes, total, jumper" :hide-on-single-page="false" :total="pagination.total"
-                    :page-size="pagination.pageSize" :current-page="pagination.currentPage" :page-sizes="[10, 20]"
-                    @size-change="handleSizeChange" @current-change="handleCurrentChange"
-                />
+                                <div class="card-item">创建时间：{{card.createDate}}</div>
+                                <div class="card-item">状态：{{card.status}}</div>
+                                <div class="card-item">版本：{{card.version}}</div>
+                                <!-- <div class="card-item">
+                                    <span class="url">表单链接：</span>
+                                    <EllipsisTooltip class="card-item-url" :label="card.url" />
+                                </div> -->
+                                <el-dropdown trigger="click" popper-class="custom-form-popover">
+                                    <div class="card-button" @click.stop>
+                                        <el-icon><MoreFilled /></el-icon>
+                                    </div>
+                                    <template #dropdown>
+                                        <el-dropdown-menu>
+                                            <el-dropdown-item @click="editData(card)">编辑</el-dropdown-item>
+                                            <el-dropdown-item @click="deleteData(card)">删除</el-dropdown-item>
+                                            <el-dropdown-item @click="shareForm(card)">分享</el-dropdown-item>
+                                            <el-dropdown-item @click="underlineForm(card)">下线</el-dropdown-item>
+                                            <el-dropdown-item @click="publishForm(card)">发布</el-dropdown-item>
+                                        </el-dropdown-menu>
+                                    </template>
+                                </el-dropdown>
+                            </div>
+                        </template>
+                        <template v-for="card in emptyBox">
+                            <div class="form-card-item form-card-item__empty"></div>
+                        </template>
+                    </el-scrollbar>
+                    <el-pagination
+                        v-if="pagination"
+                        class="pagination"
+                        popper-class="pagination-popper"
+                        background
+                        layout="prev, pager, next, sizes, total, jumper" :hide-on-single-page="false" :total="pagination.total"
+                        :page-size="pagination.pageSize" :current-page="pagination.currentPage" :page-sizes="[10, 20]"
+                        @size-change="handleSizeChange" @current-change="handleCurrentChange"
+                    />
+                </template>
+                <template v-else>
+                    <empty-page></empty-page>
+                </template>
             </div>
         </LoadingPage>
         <add-form ref="addFormRef"></add-form>
