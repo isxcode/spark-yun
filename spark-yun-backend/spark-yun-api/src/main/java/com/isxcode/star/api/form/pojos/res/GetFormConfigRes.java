@@ -12,5 +12,5 @@ public class GetFormConfigRes {
 
 	private String formId;
 
-  private List<FormComponentDto> components;
+	private List<FormComponentDto> components;
 }
