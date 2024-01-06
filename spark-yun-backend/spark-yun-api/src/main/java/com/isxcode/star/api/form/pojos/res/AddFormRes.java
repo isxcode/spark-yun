@@ -1,9 +1,6 @@
 package com.isxcode.star.api.form.pojos.res;
 
-import com.isxcode.star.api.form.pojos.dto.FomComponentDto;
 import lombok.Data;
-
-import java.util.List;
 
 @Data
 public class AddFormRes {
