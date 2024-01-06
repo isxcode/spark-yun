@@ -41,6 +41,7 @@ import FormComponentsConfig from './form-components-config/index.vue'
 import { cloneDeep } from 'lodash-es'
 
 import { ComponentInstance } from './form-engine.interface'
+import { ElMessage } from 'element-plus'
 
 interface InstanceConfig {
     chooseItemData: ComponentInstance | null
@@ -127,6 +128,10 @@ function removeInstance(e: ComponentInstance) {
 
 // expose method
 function getFormItemConfigList() {
+    if (componentList.value.some(item => !item.valid)) {
+        ElMessage.warning('请将组件必填项配置输入完整')
+        return false
+    }
     return componentList.value || []
 }
 
