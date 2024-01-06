@@ -13,7 +13,7 @@ public class FomComponentDto {
 
 	private String icon;
 
-	private String componentKey;
+	private String formValueCode;
 
 	private Boolean isDisplay = Boolean.TRUE;
 
