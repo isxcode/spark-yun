@@ -22,6 +22,7 @@ public class FomSaveComponentsReq {
 
 	private String selectSql;
 
+	@NotEmpty(message = "组件不能为空")
 	@Schema(title = "组件列表")
 	private List<FomComponentDto> components;
 }
