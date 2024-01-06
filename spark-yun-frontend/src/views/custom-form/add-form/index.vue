@@ -196,7 +196,8 @@ function okEvent() {
             modelConfig.okConfig.loading = true
             callback
                 .value({
-                    ...formData
+                    ...formData,
+                    id: formData.id ? formData.id : undefined
                 })
                 .then((res: any) => {
                     modelConfig.okConfig.loading = false
