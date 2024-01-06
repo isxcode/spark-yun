@@ -10,7 +10,7 @@
             <el-form-item label="表单名称" prop="name">
                 <el-input v-model="formData.name" maxlength="200" placeholder="请输入" />
             </el-form-item>
-            <el-form-item label="计算集群" prop="clusterId">
+            <!-- <el-form-item label="计算集群" prop="clusterId">
                 <el-select
                     v-model="formData.clusterId"
                     placeholder="请选择"
@@ -23,7 +23,7 @@
                     :value="item.value"
                     />
                 </el-select>
-            </el-form-item>
+            </el-form-item> -->
             <el-form-item label="数据源" prop="datasourceId">
                 <el-select
                     v-model="formData.datasourceId"
@@ -39,15 +39,15 @@
                     />
                 </el-select>
             </el-form-item>
-            <el-form-item label="模式" prop="mode">
-                <el-radio-group v-model="formData.mode" @change="dataSourceChange">
+            <el-form-item label="模式" prop="createMode">
+                <el-radio-group v-model="formData.createMode" @change="dataSourceChange">
                     <el-radio label="CHOOSE">选择已有表</el-radio>
                     <el-radio label="CREATE">创建新表</el-radio>
                 </el-radio-group>
             </el-form-item>
-            <el-form-item v-if="formData.mode === 'CHOOSE'" prop="sourceTable" label="表（选择已有表名）">
+            <el-form-item v-if="formData.createMode === 'CHOOSE'" prop="mainTable" label="表（选择已有表名）">
                 <el-select
-                    v-model="formData.sourceTable"
+                    v-model="formData.mainTable"
                     clearable
                     filterable
                     placeholder="请选择"
@@ -58,7 +58,7 @@
                 </el-select>
             </el-form-item>
             <el-form-item v-else prop="sourceTable_name" label="表（手动输入，生成新的表名）">
-                <el-input v-model="formData.sourceTable" maxlength="20" placeholder="请输入" />
+                <el-input v-model="formData.mainTable" maxlength="20" placeholder="请输入" />
             </el-form-item>
             <el-form-item label="备注">
                 <el-input
@@ -87,10 +87,10 @@ interface Option {
 
 interface formDataParam {
     name: string
-    clusterId: string
+    // clusterId: string
     datasourceId: string
-    mode: string
-    sourceTable: string
+    createMode: string
+    mainTable: string
     remark: string
     id?: string
 }
@@ -122,10 +122,10 @@ const modelConfig = reactive({
 })
 const formData = reactive<formDataParam>({
     name: '',
-    clusterId: '',
+    // clusterId: '',
     datasourceId: '',
-    mode: 'CHOOSE',
-    sourceTable: '',
+    createMode: 'CHOOSE',
+    mainTable: '',
     remark: '',
     id: ''
 })
@@ -151,7 +151,7 @@ const rules = reactive<FormRules>({
             trigger: ['change', 'blur']
         }
     ],
-    sourceTable: [
+    mainTable: [
         {
             required: true,
             message: '请选择表名',
@@ -177,10 +177,10 @@ function showModal(cb: () => void, data?: formDataParam): void {
         modelConfig.title = '编辑表单'
     } else {
         formData.name = ''
-        formData.clusterId = ''
+        // formData.clusterId = ''
         formData.datasourceId = ''
-        formData.mode = 'CHOOSE'
-        formData.sourceTable = ''
+        formData.createMode = 'CHOOSE'
+        formData.mainTable = ''
         formData.remark = ''
         formData.id = ''
         modelConfig.title = '添加表单'
@@ -216,7 +216,7 @@ function okEvent() {
 }
 
 function dataSourceChange() {
-    formData.sourceTable = ''
+    formData.mainTable = ''
     sourceTablesList.value = []
 }
 
