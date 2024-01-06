@@ -71,14 +71,14 @@ import AddForm from './add-form/index.vue'
 import EllipsisTooltip from '@/components/ellipsis-tooltip/ellipsis-tooltip.vue'
 import { ElMessageBox } from 'element-plus'
 import ShareForm from './share-form-modal/index.vue'
-import { } from '@/services/custom-form.service'
+import { CreateCustomFormData, QueryCustomFormList } from '@/services/custom-form.service'
 
 interface formDataParam {
     name: string
-    clusterId: string
+    // clusterId: string
     datasourceId: string
-    mode: string
-    sourceTable: string
+    createMode: string
+    mainTable: string
     remark: string
     id?: string
 }
@@ -108,79 +108,75 @@ const emptyBox = computed(() => {
 })
 
 function initData(tableLoading?: boolean) {
-    // loading.value = tableLoading ? false : true
-    // networkError.value = networkError.value || false
-    // GetLicenseList({
-    //     page: tableConfig.pagination.currentPage - 1,
-    //     pageSize: tableConfig.pagination.pageSize,
-    //     searchKeyWord: keyword.value
-    // })
-    //     .then((res: any) => {
-    //     tableConfig.tableData = res.data.content
-    //     tableConfig.pagination.total = res.data.totalElements
-    //     loading.value = false
-    //     tableConfig.loading = false
-    //     networkError.value = false
-    //     })
-    //     .catch(() => {
-    //     tableConfig.tableData = []
-    //     tableConfig.pagination.total = 0
-    //     loading.value = false
-    //     tableConfig.loading = false
-    //     networkError.value = true
-    //     })
-    formList.value = [
-        {
-            name: '表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1',
-            clusterId: '集群1',
-            datasourceId: '数据源1',
-            remark: '备注',
-            createDate: '2023-12-14',
-            status: '未发布',
-            version: 1,
-            url: '表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1'
-        },
-        {
-            name: '表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1',
-            clusterId: '集群1',
-            datasourceId: '数据源1',
-            remark: '备注',
-            createDate: '2023-12-14',
-            status: '未发布',
-            version: 1,
-            url: '表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1'
-        },
-        {
-            name: '表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1',
-            clusterId: '集群1',
-            datasourceId: '数据源1',
-            remark: '备注',
-            createDate: '2023-12-14',
-            status: '未发布',
-            version: 1,
-            url: '表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1'
-        },
-        {
-            name: '表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1',
-            clusterId: '集群1',
-            datasourceId: '数据源1',
-            remark: '备注',
-            createDate: '2023-12-14',
-            status: '未发布',
-            version: 1,
-            url: '表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1'
-        },
-        {
-            name: '表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1',
-            clusterId: '集群1',
-            datasourceId: '数据源1',
-            remark: '备注',
-            createDate: '2023-12-14',
-            status: '未发布',
-            version: 1,
-            url: '表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1'
-        }
-    ]
+    loading.value = tableLoading ? false : true
+    networkError.value = networkError.value || false
+    QueryCustomFormList({
+        page: pagination.currentPage - 1,
+        pageSize: pagination.pageSize,
+        searchKeyWord: keyword.value || ''
+    }).then((res: any) => {
+        formList.value = res.data.content
+        pagination.total = res.data.totalElements
+        loading.value = false
+        networkError.value = false
+    }).catch(() => {
+        formList.value = []
+        pagination.total = 0
+        loading.value = false
+        networkError.value = true
+    })
+    // formList.value = [
+    //     {
+    //         name: '表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1',
+    //         clusterId: '集群1',
+    //         datasourceId: '数据源1',
+    //         remark: '备注',
+    //         createDate: '2023-12-14',
+    //         status: '未发布',
+    //         version: 1,
+    //         url: '表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1'
+    //     },
+    //     {
+    //         name: '表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1',
+    //         clusterId: '集群1',
+    //         datasourceId: '数据源1',
+    //         remark: '备注',
+    //         createDate: '2023-12-14',
+    //         status: '未发布',
+    //         version: 1,
+    //         url: '表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1'
+    //     },
+    //     {
+    //         name: '表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1',
+    //         clusterId: '集群1',
+    //         datasourceId: '数据源1',
+    //         remark: '备注',
+    //         createDate: '2023-12-14',
+    //         status: '未发布',
+    //         version: 1,
+    //         url: '表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1'
+    //     },
+    //     {
+    //         name: '表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1',
+    //         clusterId: '集群1',
+    //         datasourceId: '数据源1',
+    //         remark: '备注',
+    //         createDate: '2023-12-14',
+    //         status: '未发布',
+    //         version: 1,
+    //         url: '表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1'
+    //     },
+    //     {
+    //         name: '表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1',
+    //         clusterId: '集群1',
+    //         datasourceId: '数据源1',
+    //         remark: '备注',
+    //         createDate: '2023-12-14',
+    //         status: '未发布',
+    //         version: 1,
+    //         url: '表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1'
+    //     }
+    // ]
 }
 
 function inputEvent(e: string) {
@@ -202,15 +198,19 @@ function handleCurrentChange(e: number) {
 function addData() {
     addFormRef.value.showModal((data: formDataParam) => {
         return new Promise((resolve, reject) => {
-            // router.push({
-            //     name: 'form-setting',
-            //     // query: {
-            //     //   id: data.id,
-            //     //   name: data.name
-            //     // }
-            // })
-            console.log('保存的数据', data)
-            resolve()
+            CreateCustomFormData(data).then((res: any) => {
+                debugger
+                resolve(true)
+                router.push({
+                    name: 'form-setting',
+                    query: {
+                      id: res.formId,
+                      name: res.name
+                    }
+                })
+            }).catch(err => {
+                reject(err)
+            })
         })
     })
 }
