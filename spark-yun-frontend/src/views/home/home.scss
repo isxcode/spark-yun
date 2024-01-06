@@ -6,7 +6,7 @@
   &.is-collapse {
 
     .zqy-home__sidebar {
-      width: 96px;
+      width: 80px;
       .zqy-home__nav {
         display: flex;
         justify-content: center;
@@ -23,7 +23,7 @@
     }
 
     .zqy-home__menu-footer {
-      width: 96px;
+      width: 80px;
       height: 100px;
       flex-direction: column;
       justify-content: space-evenly;
@@ -49,6 +49,7 @@
 
   .zqy-home__main {
     width: calc(100vw - 220px);
+    padding-bottom: 24px;
     .flow-container {
       max-width: calc(100vw - 422px);
     }
@@ -90,13 +91,13 @@
 
   .zyq-home__avatar {
     cursor: pointer;
-    background-color: getCssVar('color', 'primary');;
+    background-color: getCssVar('color', 'primary');
     color: getCssVar('color', 'white');
     font-size: getCssVar('font-size', 'extra-small');
   }
 
   .zqy-home__menu-wrap {
-    padding: 10px 16px 60px 16px;
+    padding: 10px 8px 60px 8px;
     box-sizing: border-box;
     flex: 1;
     overflow-x: hidden;
