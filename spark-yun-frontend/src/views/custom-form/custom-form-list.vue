@@ -14,12 +14,12 @@
                 <template v-if="formList?.length">
                     <el-scrollbar max-height="calc(100vh - 186px)" class="form-card-list">
                         <template v-for="card in formList">
-                            <div class="form-card-item" @click="redirectQuery">
+                            <div class="form-card-item" @click="redirectQuery(card)">
                                 <div class="card-item">
                                     <span class="name">名称：</span>
                                     <EllipsisTooltip class="card-item-name" :label="card.name" />
                                 </div>
-                                <div class="card-item">创建时间：{{card.createDate}}</div>
+                                <!-- <div class="card-item">创建时间：{{card.createDate}}</div> -->
                                 <div class="card-item">状态：{{card.status}}</div>
                                 <div class="card-item">版本：{{card.version}}</div>
                                 <!-- <div class="card-item">
@@ -106,6 +106,9 @@ const shareFormRef = ref()
 const emptyBox = computed(() => {
     if (formList.value?.length > 4 && (formList.value?.length % 4)) {
         const length = 4 - formList.value?.length % 4
+        return new Array(length)
+    } else if (formList.value?.length < 4 && formList.value?.length > 0) {
+        const length = 4 - formList.value?.length
         return new Array(length)
     } else {
         return []
@@ -204,13 +207,12 @@ function addData() {
     addFormRef.value.showModal((data: formDataParam) => {
         return new Promise((resolve, reject) => {
             CreateCustomFormData(data).then((res: any) => {
-                debugger
                 resolve(true)
                 router.push({
                     name: 'form-setting',
                     query: {
-                      id: res.formId,
-                      name: res.name
+                      id: res.data.id,
+                      name: res.data.name
                     }
                 })
             }).catch(err => {
@@ -223,10 +225,10 @@ function addData() {
 function editData(card: any) {
     router.push({
         name: 'form-setting',
-        // query: {
-        //   id: data.id,
-        //   name: data.name
-        // }
+        query: {
+          id: card.id,
+          name: card.name
+        }
     })
 }
 function deleteData(card: any) {
@@ -263,13 +265,13 @@ function publishForm(card: any) {
     })
 }
 
-function redirectQuery() {
+function redirectQuery(data: any) {
     router.push({
         name: 'form-query',
-        // query: {
-        //   id: data.id,
-        //   name: data.name
-        // }
+        query: {
+          id: data.id,
+          name: data.name
+        }
     })
 }
 
