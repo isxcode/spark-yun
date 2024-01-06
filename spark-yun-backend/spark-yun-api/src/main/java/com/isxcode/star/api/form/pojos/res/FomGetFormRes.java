@@ -27,4 +27,6 @@ public class FomGetFormRes {
 	private String selectSql;
 
 	private List<FomComponentDto> components;
+
+	private String remark;
 }
