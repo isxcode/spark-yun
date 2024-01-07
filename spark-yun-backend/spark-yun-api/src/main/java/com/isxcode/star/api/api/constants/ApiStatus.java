@@ -2,7 +2,18 @@ package com.isxcode.star.api.api.constants;
 
 public interface ApiStatus {
 
-	String ENABLE = "ENABLE";
+  /**
+   * 已发布.
+   */
+  String PUBLISHED = "PUBLISHED";
 
-	String DISABLE = "DISABLE";
+  /**
+   * 已下线.
+   */
+  String OFFLINE = "OFFLINE";
+
+  /**
+   * 未发布.
+   */
+  String UNPUBLISHED = "UNPUBLISHED";
 }
