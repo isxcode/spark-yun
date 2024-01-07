@@ -49,10 +49,7 @@ public class DatasourceController {
 	@SuccessResponse("查询数据源成功")
 	public Page<PageDatasourceRes> pageDatasource(@Valid @RequestBody PageDatasourceReq pageDatasourceReq) {
 
-		System.out.println("SearchKeyWord:" + pageDatasourceReq.getSearchKeyWord());
-		long l = System.currentTimeMillis();
 		Page<PageDatasourceRes> pageDatasourceRes = datasourceBizService.pageDatasource(pageDatasourceReq);
-		System.out.println("执行完成时间:" + (System.currentTimeMillis() - l));
 		return pageDatasourceRes;
 	}
 

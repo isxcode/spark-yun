@@ -1,14 +1,14 @@
 package com.isxcode.star.api.form.pojos.req;
 
-import com.isxcode.star.api.form.pojos.dto.FormComponentDto;
+import com.isxcode.star.api.form.pojos.dto.DataBodyDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import javax.validation.constraints.NotEmpty;
-import java.util.List;
+import java.util.Map;
 
 @Data
-public class SaveFormConfigReq {
+public class AddDataReq {
 
 	@Schema(title = "表单唯一id", example = "sy_fd34e4a53db640f5943a4352c4d549b9")
 	@NotEmpty(message = "formId不能为空")
@@ -18,7 +18,7 @@ public class SaveFormConfigReq {
 	@NotEmpty(message = "formVersion不能为空")
 	private String formVersion;
 
-	@Schema(title = "组件列表")
-	@NotEmpty(message = "组件不能为空")
-	private List<FormComponentDto> components;
+	@Schema(title = "请求体", example = "")
+	@NotEmpty(message = "data不能为空")
+	private Map<String, DataBodyDto> data;
 }
