@@ -15,13 +15,13 @@ public class PageApiRes {
 
 	private String name;
 
-  private String path;
+	private String path;
 
-  private String status;
+	private String status;
 
 	private String remark;
 
-  private String apiType;
+	private String apiType;
 
 	@JsonSerialize(using = LocalDateTimeSerializer.class)
 	private LocalDateTime createDateTime;
