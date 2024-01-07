@@ -12,11 +12,11 @@ public class AddFormReq {
 	@NotEmpty(message = "name不能为空")
 	private String name;
 
-	@Schema(title = "数据源id", example = "1234567")
+	@Schema(title = "数据源id", example = "sy_973933ae11d64eddb3859021a91a520f")
 	@NotEmpty(message = "datasourceId不能为空")
 	private String datasourceId;
 
-	@Schema(title = "表单基于的主表", example = "table1")
+	@Schema(title = "表单基于的主表", example = "users")
 	@NotEmpty(message = "mainTable不能为空")
 	private String mainTable;
 

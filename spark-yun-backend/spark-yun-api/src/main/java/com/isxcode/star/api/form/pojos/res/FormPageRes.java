@@ -17,6 +17,8 @@ public class FormPageRes {
 
 	private String remark;
 
+	private String formVersion;
+
 	@JsonSerialize(using = LocalDateTimeSerializer.class)
 	private LocalDateTime createDateTime;
 
