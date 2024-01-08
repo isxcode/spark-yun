@@ -19,12 +19,16 @@
                                     <span class="name">名称：</span>
                                     <EllipsisTooltip class="card-item-name" :label="card.name" />
                                 </div>
-                                <!-- <div class="card-item">创建时间：{{card.createDate}}</div> -->
+                                <div class="card-item">创建时间：{{card.createDateTime}}</div>
                                 <div class="card-item">状态：{{card.status}}</div>
-                                <div class="card-item">版本：{{card.version}}</div>
+                                <!-- <div class="card-item">版本：{{card.version}}</div> -->
+                                <div class="card-item">
+                                    <span class="remark">备注：</span>
+                                    <EllipsisTooltip class="card-item-url" :label="card.remark" />
+                                </div>
                                 <!-- <div class="card-item">
-                                    <span class="url">表单链接：</span>
-                                    <EllipsisTooltip class="card-item-url" :label="card.url" />
+                                    <span class="url">备注：</span>
+                                    <EllipsisTooltip class="card-item-url" :label="card.remark" />
                                 </div> -->
                                 <el-dropdown trigger="click" popper-class="custom-form-popover">
                                     <div class="card-button" @click.stop>
@@ -32,7 +36,8 @@
                                     </div>
                                     <template #dropdown>
                                         <el-dropdown-menu>
-                                            <el-dropdown-item @click="editData(card)">编辑</el-dropdown-item>
+                                            <el-dropdown-item @click="editData(card)">配置</el-dropdown-item>
+                                            <el-dropdown-item @click="updateData(card)">编辑</el-dropdown-item>
                                             <el-dropdown-item @click="deleteData(card)">删除</el-dropdown-item>
                                             <el-dropdown-item @click="shareForm(card)">分享</el-dropdown-item>
                                             <el-dropdown-item @click="underlineForm(card)">下线</el-dropdown-item>
@@ -74,9 +79,9 @@ import { PaginationParam } from './custom-form.config'
 import { useRouter } from 'vue-router'
 import AddForm from './add-form/index.vue'
 import EllipsisTooltip from '@/components/ellipsis-tooltip/ellipsis-tooltip.vue'
-import { ElMessageBox } from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import ShareForm from './share-form-modal/index.vue'
-import { CreateCustomFormData, QueryCustomFormList } from '@/services/custom-form.service'
+import { CreateCustomFormData, DeleteCustomFormData, DeployCustomFormData, OfflineCustomFormData, QueryCustomFormList, UpdateCustomFormData } from '@/services/custom-form.service'
 
 interface formDataParam {
     name: string
@@ -133,58 +138,6 @@ function initData(tableLoading?: boolean) {
         loading.value = false
         networkError.value = true
     })
-    // formList.value = [
-    //     {
-    //         name: '表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1',
-    //         clusterId: '集群1',
-    //         datasourceId: '数据源1',
-    //         remark: '备注',
-    //         createDate: '2023-12-14',
-    //         status: '未发布',
-    //         version: 1,
-    //         url: '表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1'
-    //     },
-    //     {
-    //         name: '表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1',
-    //         clusterId: '集群1',
-    //         datasourceId: '数据源1',
-    //         remark: '备注',
-    //         createDate: '2023-12-14',
-    //         status: '未发布',
-    //         version: 1,
-    //         url: '表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1'
-    //     },
-    //     {
-    //         name: '表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1',
-    //         clusterId: '集群1',
-    //         datasourceId: '数据源1',
-    //         remark: '备注',
-    //         createDate: '2023-12-14',
-    //         status: '未发布',
-    //         version: 1,
-    //         url: '表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1'
-    //     },
-    //     {
-    //         name: '表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1',
-    //         clusterId: '集群1',
-    //         datasourceId: '数据源1',
-    //         remark: '备注',
-    //         createDate: '2023-12-14',
-    //         status: '未发布',
-    //         version: 1,
-    //         url: '表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1'
-    //     },
-    //     {
-    //         name: '表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1',
-    //         clusterId: '集群1',
-    //         datasourceId: '数据源1',
-    //         remark: '备注',
-    //         createDate: '2023-12-14',
-    //         status: '未发布',
-    //         version: 1,
-    //         url: '表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1表单1'
-    //     }
-    // ]
 }
 
 function inputEvent(e: string) {
@@ -212,7 +165,7 @@ function addData() {
                     name: 'form-setting',
                     query: {
                       id: res.data.id,
-                      name: res.data.name
+                      formVersion: res.data.formVersion
                     }
                 })
             }).catch(err => {
@@ -221,13 +174,29 @@ function addData() {
         })
     })
 }
+function updateData(card: any) {
+    addFormRef.value.showModal((data: formDataParam) => {
+        return new Promise((resolve, reject) => {
+            UpdateCustomFormData({
+                id: data.id,
+                name: data.name,
+                remark: data.remark
+            }).then((res: any) => {
+                ElMessage.success('更新成功')
+                resolve(true)
+            }).catch(err => {
+                reject(err)
+            })
+        })
+    }, card)
+}
 // 编辑表单配置
 function editData(card: any) {
     router.push({
         name: 'form-setting',
         query: {
           id: card.id,
-          name: card.name
+          formVersion: card.formVersion
         }
     })
 }
@@ -237,7 +206,12 @@ function deleteData(card: any) {
         cancelButtonText: '取消',
         type: 'warning'
     }).then(() => {
-        console.log('删除')
+        DeleteCustomFormData({
+            formId: card.id
+        }).then((res: any) => {
+            ElMessage.success('删除成功')
+        }).catch(err => {
+        })
     })
 }
 // 分享
@@ -251,7 +225,12 @@ function underlineForm(card: any) {
         cancelButtonText: '取消',
         type: 'warning'
     }).then(() => {
-        console.log('下线')
+        OfflineCustomFormData({
+            formId: card.id
+        }).then((res: any) => {
+            ElMessage.success('下线成功')
+        }).catch(err => {
+        })
     })
 }
 // 发布
@@ -261,7 +240,12 @@ function publishForm(card: any) {
         cancelButtonText: '取消',
         type: 'warning'
     }).then(() => {
-        console.log('发布')
+        DeployCustomFormData({
+            formId: card.id
+        }).then((res: any) => {
+            ElMessage.success('发布成功')
+        }).catch(err => {
+        })
     })
 }
 
@@ -270,7 +254,7 @@ function redirectQuery(data: any) {
         name: 'form-query',
         query: {
           id: data.id,
-          name: data.name
+          formVersion: data.formVersion
         }
     })
 }
@@ -279,7 +263,7 @@ onMounted(() => {
     initData()
 })
 </script>
-  
+
 <style lang="scss">
 .costom-form {
 

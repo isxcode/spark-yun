@@ -28,6 +28,7 @@
                 <el-select
                     v-model="formData.datasourceId"
                     placeholder="请选择"
+                    :disabled="isEdit"
                     @visible-change="getDataSourceList"
                     @change="dataSourceChange"
                 >
@@ -40,7 +41,7 @@
                 </el-select>
             </el-form-item>
             <el-form-item label="模式" prop="createMode">
-                <el-radio-group v-model="formData.createMode" @change="dataSourceChange">
+                <el-radio-group :disabled="isEdit" v-model="formData.createMode" @change="dataSourceChange">
                     <el-radio label="CHOOSE">选择已有表</el-radio>
                     <el-radio label="CREATE">创建新表</el-radio>
                 </el-radio-group>
@@ -51,6 +52,7 @@
                     clearable
                     filterable
                     placeholder="请选择"
+                    :disabled="isEdit"
                     @visible-change="getDataSourceTable($event, formData.datasourceId)"
                 >
                     <el-option v-for="item in sourceTablesList" :key="item.value" :label="item.label"
@@ -58,7 +60,7 @@
                 </el-select>
             </el-form-item>
             <el-form-item v-else prop="sourceTable_name" label="表（手动输入，生成新的表名）">
-                <el-input v-model="formData.mainTable" maxlength="20" placeholder="请输入" />
+                <el-input :disabled="isEdit" v-model="formData.mainTable" maxlength="20" placeholder="请输入" />
             </el-form-item>
             <el-form-item label="备注">
                 <el-input
@@ -100,6 +102,7 @@ const callback = ref<any>()
 const clusterList = ref([])  // 计算集群
 const dataSourceList = ref([])  // 数据源
 const sourceTablesList = ref<Option[]>([])
+const isEdit = ref(false)
 
 const modelConfig = reactive({
     title: '添加表单',
@@ -174,6 +177,7 @@ function showModal(cb: () => void, data?: formDataParam): void {
         Object.keys(data).forEach((key: string) => {
             formData[key] = data[key]
         })
+        isEdit.value = true
         modelConfig.title = '编辑表单'
     } else {
         formData.name = ''
@@ -183,6 +187,7 @@ function showModal(cb: () => void, data?: formDataParam): void {
         formData.mainTable = ''
         formData.remark = ''
         formData.id = ''
+        isEdit.value = false
         modelConfig.title = '添加表单'
     }
     nextTick(() => {
