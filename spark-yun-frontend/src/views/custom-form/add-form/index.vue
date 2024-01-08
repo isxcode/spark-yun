@@ -40,7 +40,7 @@
                     />
                 </el-select>
             </el-form-item>
-            <el-form-item label="模式" prop="createMode">
+            <el-form-item label="模式" prop="createMode" v-if="!isEdit">
                 <el-radio-group :disabled="isEdit" v-model="formData.createMode" @change="dataSourceChange">
                     <el-radio label="CHOOSE">选择已有表</el-radio>
                     <el-radio label="CREATE">创建新表</el-radio>
@@ -178,6 +178,8 @@ function showModal(cb: () => void, data?: formDataParam): void {
             formData[key] = data[key]
         })
         isEdit.value = true
+        getDataSourceList(true)
+        getDataSourceTable(true, formData.datasourceId)
         modelConfig.title = '编辑表单'
     } else {
         formData.name = ''
