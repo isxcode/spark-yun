@@ -87,7 +87,8 @@ function saveData() {
     if (components) {
         formConfigList.value = zFormEnginRef.value.getFormItemConfigList()
         SaveFormConfigData({
-            formId: baseFormConfig.value.id,
+            formId: baseFormConfig.value.formId,
+            formVersion: route.query.formVersion,
             components: formConfigList.value
         }).then((res: any) => {
             ElMessage.success('保存成功')

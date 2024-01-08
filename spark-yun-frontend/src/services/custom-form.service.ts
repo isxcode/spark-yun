@@ -8,6 +8,38 @@ export function CreateCustomFormData(params: any): Promise<any> {
         params: params
     })
 }
+// 更新表单
+export function UpdateCustomFormData(params: any): Promise<any> {
+    return http.request({
+        method: 'post',
+        url: '/vip/form/addForm',
+        params: params
+    })
+}
+// 发布表单
+export function DeployCustomFormData(params: any): Promise<any> {
+    return http.request({
+        method: 'post',
+        url: '/vip/form/deployForm',
+        params: params
+    })
+}
+// 下线表单
+export function OfflineCustomFormData(params: any): Promise<any> {
+    return http.request({
+        method: 'post',
+        url: '/vip/form/offlineForm',
+        params: params
+    })
+}
+// 下线表单
+export function DeleteCustomFormData(params: any): Promise<any> {
+    return http.request({
+        method: 'post',
+        url: '/vip/form/deleteData',
+        params: params
+    })
+}
 
 // 查询表单
 export function QueryCustomFormList(params: any): Promise<any> {
@@ -22,7 +54,7 @@ export function QueryCustomFormList(params: any): Promise<any> {
 export function QueryFormConfigById(params: any): Promise<any> {
     return http.request({
         method: 'post',
-        url: '/vip/form/getForm',
+        url: '/vip/form/getFormConfig',
         params: params
     })
 }
@@ -31,7 +63,7 @@ export function QueryFormConfigById(params: any): Promise<any> {
 export function SaveFormConfigData(params: any): Promise<any> {
     return http.request({
         method: 'post',
-        url: '/vip/form/saveFormComponents',
+        url: '/vip/form/saveFormConfig',
         params: params
     })
 }
@@ -40,7 +72,7 @@ export function SaveFormConfigData(params: any): Promise<any> {
 export function QueryFormDataList(params: any): Promise<any> {
     return http.request({
         method: 'post',
-        url: '/vip/form/queryData',
+        url: '/vip/form/pageData',
         params: params
     })
 }
