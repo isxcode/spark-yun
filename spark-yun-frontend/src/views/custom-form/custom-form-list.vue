@@ -39,7 +39,7 @@
                                             <el-dropdown-item @click="editData(card)">配置</el-dropdown-item>
                                             <el-dropdown-item @click="updateData(card)">编辑</el-dropdown-item>
                                             <el-dropdown-item @click="deleteData(card)">删除</el-dropdown-item>
-                                            <el-dropdown-item @click="shareForm(card)">分享</el-dropdown-item>
+                                            <!-- <el-dropdown-item @click="shareForm(card)">分享</el-dropdown-item> -->
                                             <el-dropdown-item @click="underlineForm(card)">下线</el-dropdown-item>
                                             <el-dropdown-item @click="publishForm(card)">发布</el-dropdown-item>
                                         </el-dropdown-menu>
@@ -209,6 +209,7 @@ function deleteData(card: any) {
         DeleteCustomFormData({
             formId: card.id
         }).then((res: any) => {
+            handleCurrentChange(1)
             ElMessage.success('删除成功')
         }).catch(err => {
         })
@@ -228,6 +229,7 @@ function underlineForm(card: any) {
         OfflineCustomFormData({
             formId: card.id
         }).then((res: any) => {
+            initData()
             ElMessage.success('下线成功')
         }).catch(err => {
         })
@@ -243,6 +245,7 @@ function publishForm(card: any) {
         DeployCustomFormData({
             formId: card.id
         }).then((res: any) => {
+            initData()
             ElMessage.success('发布成功')
         }).catch(err => {
         })

@@ -36,7 +36,7 @@ export function OfflineCustomFormData(params: any): Promise<any> {
 export function DeleteCustomFormData(params: any): Promise<any> {
     return http.request({
         method: 'post',
-        url: '/vip/form/deleteData',
+        url: '/vip/form/deleteForm',
         params: params
     })
 }
