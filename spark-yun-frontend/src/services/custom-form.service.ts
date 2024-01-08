@@ -12,7 +12,7 @@ export function CreateCustomFormData(params: any): Promise<any> {
 export function UpdateCustomFormData(params: any): Promise<any> {
     return http.request({
         method: 'post',
-        url: '/vip/form/addForm',
+        url: '/vip/form/updateForm',
         params: params
     })
 }
