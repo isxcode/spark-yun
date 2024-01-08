@@ -13,4 +13,8 @@ public class GetFormConfigRes {
 	private String formId;
 
 	private List<FormComponentDto> components;
+
+	private String datasourceId;
+
+	private String status;
 }
