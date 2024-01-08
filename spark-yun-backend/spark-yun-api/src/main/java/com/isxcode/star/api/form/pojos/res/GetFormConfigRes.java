@@ -17,4 +17,6 @@ public class GetFormConfigRes {
 	private String datasourceId;
 
 	private String status;
+
+  private String mainTable;
 }
