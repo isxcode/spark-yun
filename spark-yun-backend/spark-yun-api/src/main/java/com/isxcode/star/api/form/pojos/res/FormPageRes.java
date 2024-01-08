@@ -24,4 +24,10 @@ public class FormPageRes {
 
 	@JsonSerialize(using = LocalDateTimeSerializer.class)
 	private LocalDateTime lastModifiedDateTime;
+
+	private String status;
+
+	private String datasourceId;
+
+	private String mainTable;
 }
