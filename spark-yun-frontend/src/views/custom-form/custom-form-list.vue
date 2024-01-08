@@ -36,9 +36,9 @@
                                     </div>
                                     <template #dropdown>
                                         <el-dropdown-menu>
-                                            <el-dropdown-item v-if="card.status !== 'OFFLINE'" @click="editData(card)">配置</el-dropdown-item>
+                                            <el-dropdown-item v-if="card.status === 'OFFLINE'" @click="editData(card)">配置</el-dropdown-item>
                                             <el-dropdown-item @click="updateData(card)">编辑</el-dropdown-item>
-                                            <el-dropdown-item @click="deleteData(card)">删除</el-dropdown-item>
+                                            <el-dropdown-item v-if="card.status === 'OFFLINE'" @click="deleteData(card)">删除</el-dropdown-item>
                                             <!-- <el-dropdown-item @click="shareForm(card)">分享</el-dropdown-item> -->
                                             <el-dropdown-item v-if="card.status !== 'OFFLINE'"  @click="underlineForm(card)">下线</el-dropdown-item>
                                             <el-dropdown-item v-else @click="publishForm(card)">发布</el-dropdown-item>
