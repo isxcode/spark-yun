@@ -20,10 +20,10 @@
                                     <EllipsisTooltip class="card-item-name" :label="card.name" />
                                 </div>
                                 <div class="card-item">创建时间：{{card.createDateTime}}</div>
-                                <div class="card-item">状态：{{card.status}}</div>
+                                <div class="card-item">状态：{{card.status === 'OFFLINE' ? '下线' : '已发布'}}</div>
                                 <!-- <div class="card-item">版本：{{card.version}}</div> -->
                                 <div class="card-item">
-                                    <span class="remark">备注：</span>
+                                    <span class="name">备注：</span>
                                     <EllipsisTooltip class="card-item-url" :label="card.remark" />
                                 </div>
                                 <!-- <div class="card-item">
@@ -36,12 +36,12 @@
                                     </div>
                                     <template #dropdown>
                                         <el-dropdown-menu>
-                                            <el-dropdown-item @click="editData(card)">配置</el-dropdown-item>
+                                            <el-dropdown-item v-if="card.status !== 'OFFLINE'" @click="editData(card)">配置</el-dropdown-item>
                                             <el-dropdown-item @click="updateData(card)">编辑</el-dropdown-item>
                                             <el-dropdown-item @click="deleteData(card)">删除</el-dropdown-item>
                                             <!-- <el-dropdown-item @click="shareForm(card)">分享</el-dropdown-item> -->
-                                            <el-dropdown-item @click="underlineForm(card)">下线</el-dropdown-item>
-                                            <el-dropdown-item @click="publishForm(card)">发布</el-dropdown-item>
+                                            <el-dropdown-item v-if="card.status !== 'OFFLINE'"  @click="underlineForm(card)">下线</el-dropdown-item>
+                                            <el-dropdown-item v-else @click="publishForm(card)">发布</el-dropdown-item>
                                         </el-dropdown-menu>
                                     </template>
                                 </el-dropdown>
@@ -160,7 +160,7 @@ function addData() {
     addFormRef.value.showModal((data: formDataParam) => {
         return new Promise((resolve, reject) => {
             CreateCustomFormData(data).then((res: any) => {
-                resolve(true)
+                resolve()
                 router.push({
                     name: 'form-setting',
                     query: {
@@ -183,7 +183,8 @@ function updateData(card: any) {
                 remark: data.remark
             }).then((res: any) => {
                 ElMessage.success('更新成功')
-                resolve(true)
+                resolve()
+                initData()
             }).catch(err => {
                 reject(err)
             })
