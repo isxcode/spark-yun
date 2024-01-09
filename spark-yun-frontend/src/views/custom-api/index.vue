@@ -61,7 +61,7 @@ import BlockTable from '@/components/block-table/index.vue'
 import LoadingPage from '@/components/loading/index.vue'
 
 import { BreadCrumbList, TableConfig } from './costom-api.config'
-import {  } from '@/services/custom-api.service'
+import { QueryCustomApiList } from '@/services/custom-api.service'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/store/useAuth'
@@ -78,25 +78,25 @@ const addModalRef = ref()
 const testModalRef = ref()
 
 function initData(tableLoading?: boolean) {
-    // loading.value = tableLoading ? false : true
-    // networkError.value = networkError.value || false
-    // GetDriverListData({
-    //     page: tableConfig.pagination.currentPage - 1,
-    //     pageSize: tableConfig.pagination.pageSize,
-    //     searchKeyWord: keyword.value
-    // }).then((res: any) => {
-    //     tableConfig.tableData = res.data.content
-    //     tableConfig.pagination.total = res.data.totalElements
-    //     loading.value = false
-    //     tableConfig.loading = false
-    //     networkError.value = false
-    // }).catch(() => {
+    loading.value = tableLoading ? false : true
+    networkError.value = networkError.value || false
+    QueryCustomApiList({
+        page: tableConfig.pagination.currentPage - 1,
+        pageSize: tableConfig.pagination.pageSize,
+        searchKeyWord: keyword.value
+    }).then((res: any) => {
+        tableConfig.tableData = res.data.content
+        tableConfig.pagination.total = res.data.totalElements
+        loading.value = false
+        tableConfig.loading = false
+        networkError.value = false
+    }).catch(() => {
         tableConfig.tableData = [{}]
         tableConfig.pagination.total = 0
         loading.value = false
         tableConfig.loading = false
-        // networkError.value = true
-    // })
+        networkError.value = true
+    })
 }
 
 function addData() {
