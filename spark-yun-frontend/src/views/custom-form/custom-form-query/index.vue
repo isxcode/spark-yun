@@ -3,7 +3,7 @@
         <div class="zqy-table-top">
             <div class="btn-container">
                 <el-button type="primary" @click="addData">添加</el-button>
-                <el-button type="default" @click="editFormConfigEvent">配置</el-button>
+                <el-button v-if="status !== 'PUBLISHED'" type="default" @click="editFormConfigEvent">配置</el-button>
             </div>
             <div class="zqy-seach">
                 <el-input
@@ -42,18 +42,8 @@ import LoadingPage from '@/components/loading/index.vue'
 import AddModal from './add-modal/index.vue'
 import { useRouter, useRoute } from 'vue-router'
 import { BreadCrumbList, TableConfig } from './form-query.config'
-import { QueryFormConfigById, QueryFormDataList } from '@/services/custom-form.service'
+import { AddFormData, QueryFormConfigById, QueryFormDataList } from '@/services/custom-form.service'
 import { ElMessage, ElMessageBox } from 'element-plus'
-
-interface FormUser {
-    account: string
-    email: string
-    passwd?: string
-    phone: string
-    remark: string
-    username: string
-    id?: string
-}
 
 const route = useRoute()
 const router = useRouter()
@@ -66,6 +56,7 @@ const networkError = ref(false)
 const addModalRef = ref(null)
 
 const formConfigList = ref([])
+const status = ref('')
 
 function getFormConfigById(tableLoading?: boolean) {
     loading.value = tableLoading ? false : true
@@ -74,6 +65,7 @@ function getFormConfigById(tableLoading?: boolean) {
         formId: route.query.id
     }).then((res: any) => {
         formConfigList.value = res.data?.components
+        status.value = res.data?.status
         if (res.data?.components && res.data?.components.length) {
             tableConfig.colConfigs = [...(res.data?.components || []).map(item => {
                 return {
@@ -124,18 +116,20 @@ function initData(tableLoading?: boolean) {
 }
 
 function addData() {
-    addModalRef.value.showModal((formData: FormUser) => {
-        // return new Promise((resolve: any, reject: any) => {
-        //     AddUserData(formData)
-        //         .then((res: any) => {
-        //             ElMessage.success(res.msg)
-        //             initData()
-        //             resolve()
-        //         })
-        //         .catch((error: any) => {
-        //             reject(error)
-        //         })
-        // })
+    addModalRef.value.showModal((formData: any) => {
+        return new Promise((resolve: any, reject: any) => {
+            AddFormData({
+                formId: route.query.id,
+                formVersion: route.query.formVersion,
+                data: formData
+            }).then((res: any) => {
+                ElMessage.success(res.msg)
+                initData()
+                resolve()
+            }).catch((error: any) => {
+                reject(error)
+            })
+        })
     })
 }
 

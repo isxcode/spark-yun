@@ -91,7 +91,7 @@ function saveData() {
             formVersion: route.query.formVersion,
             components: formConfigList.value
         }).then((res: any) => {
-            ElMessage.success('保存成功')
+            ElMessage.success(res.msg)
         }).catch(err => {
         })
     }

@@ -27,7 +27,7 @@
                         <span :class="{'form-item-container__error': !element.valid}" class="form-item-container" :style="{ 'width': componentWidth(element.width) }">
                             <component
                                 :class="{ 'choose-item__active': chooseItemData.uuid === element.uuid && isDragger, 'choose-item': isDragger }"
-                                v-model="formData[element.formValueCode || element.uuid]"
+                                v-model="formData[element.uuid]"
                                 :is="computedRenderSenceComponent(element.componentType)"
                                 :formConfig="element"
                                 :formData="formData"
