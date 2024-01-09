@@ -46,7 +46,7 @@ public interface ModuleCode {
 	String VIP_WORKFLOW_INSTANCE = "/vip/wfi";
 
 	/** VIP自定义API模块. */
-	String VIP_API = "/vip/api";
+	String VIP_API = "/vip/api-module";
 
 	/** VIP数据地图模块 */
 	String VIP_DATA_MAP = "/vip/dmp";
