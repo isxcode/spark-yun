@@ -1,6 +1,5 @@
 package com.isxcode.star.api.form.pojos.req;
 
-import com.isxcode.star.api.form.pojos.dto.DataBodyDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
@@ -20,5 +19,5 @@ public class AddDataReq {
 
 	@Schema(title = "请求体", example = "")
 	@NotEmpty(message = "data不能为空")
-	private Map<String, DataBodyDto> data;
+	private Map<String, Object> data;
 }
