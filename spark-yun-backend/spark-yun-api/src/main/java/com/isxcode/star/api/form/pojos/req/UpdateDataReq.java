@@ -1,6 +1,5 @@
 package com.isxcode.star.api.form.pojos.req;
 
-import com.isxcode.star.api.form.pojos.dto.DataBodyDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
@@ -16,7 +15,7 @@ public class UpdateDataReq {
 
 	@Schema(title = "请求体", example = "")
 	@NotEmpty(message = "data不能为空")
-	private Map<String, DataBodyDto> oldData;
+	private Map<String, Object> oldData;
 
 	@Schema(title = "表单版本号", example = "fd34e4a53db640f5943a4352c4d549b9")
 	@NotEmpty(message = "formVersion不能为空")
@@ -24,5 +23,5 @@ public class UpdateDataReq {
 
 	@Schema(title = "请求体", example = "")
 	@NotEmpty(message = "data不能为空")
-	private Map<String, DataBodyDto> newData;
+	private Map<String, Object> newData;
 }
