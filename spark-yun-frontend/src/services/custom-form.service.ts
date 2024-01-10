@@ -32,7 +32,7 @@ export function OfflineCustomFormData(params: any): Promise<any> {
         params: params
     })
 }
-// 下线表单
+// 删除表单
 export function DeleteCustomFormData(params: any): Promise<any> {
     return http.request({
         method: 'post',
@@ -91,6 +91,15 @@ export function UpdateFormData(params: any): Promise<any> {
     return http.request({
         method: 'post',
         url: '/vip/form/updateData',
+        params: params
+    })
+}
+
+// 生成的表单-更新数据
+export function DeleteFormData(params: any): Promise<any> {
+    return http.request({
+        method: 'post',
+        url: '/vip/form/deleteData',
         params: params
     })
 }

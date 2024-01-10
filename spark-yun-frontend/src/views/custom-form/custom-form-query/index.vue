@@ -42,8 +42,9 @@ import LoadingPage from '@/components/loading/index.vue'
 import AddModal from './add-modal/index.vue'
 import { useRouter, useRoute } from 'vue-router'
 import { BreadCrumbList, TableConfig } from './form-query.config'
-import { AddFormData, QueryFormConfigById, QueryFormDataList } from '@/services/custom-form.service'
+import { AddFormData, DeleteFormData, QueryFormConfigById, QueryFormDataList, UpdateFormData } from '@/services/custom-form.service'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { cloneDeep, clone } from 'lodash-es'
 
 const route = useRoute()
 const router = useRouter()
@@ -69,7 +70,8 @@ function getFormConfigById(tableLoading?: boolean) {
         if (res.data?.components && res.data?.components.length) {
             tableConfig.colConfigs = [...(res.data?.components || []).map(item => {
                 return {
-                    prop: item.formValueCode,
+                    // prop: item.formValueCode,
+                    prop: item.uuid,
                     title: item.label,
                     minWidth: 100,
                     showOverflowTooltip: true
@@ -134,18 +136,24 @@ function addData() {
 }
 
 function editData(data: any) {
-    addModalRef.value.showModal((formData: FormUser) => {
-        // return new Promise((resolve: any, reject: any) => {
-        //     UpdateUserData(formData)
-        //         .then((res: any) => {
-        //             ElMessage.success(res.msg)
-        //             initData()
-        //             resolve()
-        //         })
-        //         .catch((error: any) => {
-        //             reject(error)
-        //         })
-        // })
+    delete data._X_ROW_KEY
+    const oldData = cloneDeep(data)
+    addModalRef.value.showModal((formData: any) => {
+        return new Promise((resolve: any, reject: any) => {
+            UpdateFormData({
+                formId: route.query.id,
+                formVersion: route.query.formVersion,
+                oldData: oldData,
+                newData: formData
+            }).then((res: any) => {
+                ElMessage.success(res.msg)
+                initData()
+                resolve()
+            })
+            .catch((error: any) => {
+                reject(error)
+            })
+        })
     }, data)
 }
 
@@ -156,7 +164,16 @@ function deleteData(data: any) {
         cancelButtonText: '取消',
         type: 'warning'
     }).then(() => {
-        
+        delete data._X_ROW_KEY
+        DeleteFormData({
+            formId: route.query.id,
+            formVersion: route.query.formVersion,
+            data: data
+        }).then((res: any) => {
+            ElMessage.success(res.msg)
+            initData()
+        }).catch((error: any) => {
+        })
     })
 }
 

@@ -4,7 +4,7 @@
         :class="{'form-render-item__edit': !isDragger, 'form-input__dragger': isDragger }"
         :label="formConfig.label || ' '"
         :style="{ 'width': '100%' }"
-        :prop="!isDragger ? formConfig.formValueCode : ''"
+        :prop="!isDragger ? formConfig.uuid : ''"
         :rules="rulesList"
     >
         <div class="form-render-item__btn">
