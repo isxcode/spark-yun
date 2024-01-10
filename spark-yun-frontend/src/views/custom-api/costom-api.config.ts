@@ -12,6 +12,7 @@ export interface colConfig {
     customSlot?: string;
     width?: number;
     minWidth?: number;
+    formatter?: any
 }
 
 export interface Pagination {
@@ -49,27 +50,33 @@ export const colConfigs: colConfig[] = [
         showOverflowTooltip: true
     },
     {
-      prop: 'dbType',
+      prop: 'apiType',
       title: '请求方式',
       minWidth: 100,
       showOverflowTooltip: true
     },
     {
-      prop: 'fileName',
+      prop: 'path',
       title: '访问地址',
       minWidth: 230,
       showOverflowTooltip: true
     },
     {
-        prop: 'fileName',
+        prop: 'status',
         title: '状态',
         minWidth: 100,
-        showOverflowTooltip: true
+        customSlot: 'statusTag'
     },
+    // {
+    //     prop: 'defaultDriver',
+    //     title: '创建人',
+    //     minWidth: 120,
+    //     showOverflowTooltip: true,
+    // },
     {
-        prop: 'defaultDriver',
-        title: '创建人',
-        minWidth: 120,
+        prop: 'createDateTime',
+        title: '创建时间',
+        minWidth: 140,
         showOverflowTooltip: true,
     },
     {

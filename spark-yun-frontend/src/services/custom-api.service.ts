@@ -4,7 +4,7 @@ import { http } from '@/utils/http'
 export function QueryCustomApiList(params: any): Promise<any> {
     return http.request({
         method: 'post',
-        url: '/vip/api/pageApi',
+        url: '/vip/api-module/pageApi',
         params: params
     })
 }
@@ -13,7 +13,7 @@ export function QueryCustomApiList(params: any): Promise<any> {
 export function CreateCustomApiData(params: any): Promise<any> {
     return http.request({
         method: 'post',
-        url: '/vip/api/addApi',
+        url: '/vip/api-module/addApi',
         params: params
     })
 }
@@ -21,7 +21,7 @@ export function CreateCustomApiData(params: any): Promise<any> {
 export function UpdateCustomApiData(params: any): Promise<any> {
     return http.request({
         method: 'post',
-        url: '/vip/api/updateApi',
+        url: '/vip/api-module/updateApi',
         params: params
     })
 }
@@ -29,7 +29,7 @@ export function UpdateCustomApiData(params: any): Promise<any> {
 export function DeleteCustomApiData(params: any): Promise<any> {
     return http.request({
         method: 'post',
-        url: '/vip/api/deleteApi',
+        url: '/vip/api-module/deleteApi',
         params: params
     })
 }
@@ -37,7 +37,7 @@ export function DeleteCustomApiData(params: any): Promise<any> {
 export function PublishCustomApiData(params: any): Promise<any> {
     return http.request({
         method: 'post',
-        url: '/vip/api/publishApi',
+        url: '/vip/api-module/publishApi',
         params: params
     })
 }
@@ -45,7 +45,7 @@ export function PublishCustomApiData(params: any): Promise<any> {
 export function OfflineCustomApiData(params: any): Promise<any> {
     return http.request({
         method: 'post',
-        url: '/vip/api/offlineApi',
+        url: '/vip/api-module/offlineApi',
         params: params
     })
 }

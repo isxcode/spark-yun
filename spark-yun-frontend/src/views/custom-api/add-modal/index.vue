@@ -20,20 +20,20 @@
             placeholder="请输入"
           />
         </el-form-item>
-        <el-form-item label="请求方式" prop="method">
-          <el-select v-model="formData.method" placeholder="请选择">
+        <el-form-item label="请求方式" prop="apiType">
+          <el-select v-model="formData.apiType" placeholder="请选择">
             <el-option label="GET" value="GET"/>
             <el-option label="POST" value="POST"/>
           </el-select>
         </el-form-item>
-        <el-form-item label="自定义访问路径" prop="url">
+        <el-form-item label="自定义访问路径" prop="path">
           <el-input
-            v-model="formData.url"
+            v-model="formData.path"
             maxlength="1000"
             placeholder="请输入"
           />
         </el-form-item>
-        <el-form-item label="计算集群" prop="clusterId">
+        <!-- <el-form-item label="计算集群" prop="clusterId">
           <el-select
             v-model="formData.clusterId"
             placeholder="请选择"
@@ -46,8 +46,8 @@
               :value="item.value"
             />
           </el-select>
-        </el-form-item>
-        <el-form-item label="数据源" prop="datasourceId">
+        </el-form-item> -->
+        <el-form-item label="数据源" prop="datasourceId" v-if="!isEdit">
           <el-select
             v-model="formData.datasourceId"
             placeholder="请选择"
@@ -75,30 +75,30 @@
         <!-- 接口配置 -->
         <div class="item-title">请求配置</div>
         <el-form-item label="请求头模式">
-          <el-radio-group v-model="formData.setMode" size="small">
-              <el-radio-button label="CUSTOM">自定义TOKEN</el-radio-button>
-              <el-radio-button label="DEFAULT">默认身份认证</el-radio-button>
-              <el-radio-button label="ANYBODY">任何人访问</el-radio-button>
-            </el-radio-group>
-          </el-form-item>
-        <el-form-item label="请求头设置" prop="headerConfig" :class="{ 'show-screen__full': reqHeaderFullStatus }">
+          <el-radio-group v-model="formData.tokenType" size="small">
+            <el-radio-button label="ANONYMOUS">任何人访问</el-radio-button>
+            <el-radio-button label="SYSTEM">系统认证</el-radio-button>
+            <el-radio-button label="CUSTOM">自定义</el-radio-button>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item v-if="formData.tokenType === 'CUSTOM'" label="请求头设置" prop="headerToken" :class="{ 'show-screen__full': reqHeaderFullStatus }">
           <el-icon class="modal-full-screen" @click="fullScreenEvent('reqHeaderFullStatus')"><FullScreen v-if="!reqHeaderFullStatus" /><Close v-else /></el-icon>
-          <code-mirror v-model="formData.headerConfig" basic :lang="jsonLang"/>
+          <code-mirror v-model="formData.headerToken" basic :lang="jsonLang"/>
         </el-form-item>
-        <el-form-item label="请求体设置" prop="bodyConfig" :class="{ 'show-screen__full': reqBodyFullStatus }">
+        <el-form-item label="请求体设置" prop="reqBody" :class="{ 'show-screen__full': reqBodyFullStatus }">
           <el-icon class="modal-full-screen" @click="fullScreenEvent('reqBodyFullStatus')"><FullScreen v-if="!reqBodyFullStatus" /><Close v-else /></el-icon>
-          <code-mirror v-model="formData.bodyConfig" basic :lang="jsonLang"/>
+          <code-mirror v-model="formData.reqBody" basic :lang="jsonLang"/>
         </el-form-item>
-        <el-form-item label="SQL设置" prop="sqlConfig" :class="{ 'show-screen__full': sqlFullStatus }">
+        <el-form-item label="SQL设置" prop="apiSql" :class="{ 'show-screen__full': sqlFullStatus }">
           <el-icon class="modal-full-screen" @click="fullScreenEvent('sqlFullStatus')"><FullScreen v-if="!sqlFullStatus" /><Close v-else /></el-icon>
-          <code-mirror v-model="formData.sqlConfig" basic :lang="sqlLang"/>
+          <code-mirror v-model="formData.apiSql" basic :lang="sqlLang"/>
         </el-form-item>
-        <el-form-item label="是否分页">
-          <el-switch v-model="formData.isPagination" />
+        <el-form-item label="开启分页">
+          <el-switch v-model="formData.pageType" />
         </el-form-item>
-        <el-form-item label="返回体设置（成功/失败）" prop="returnConfig" :class="{ 'show-screen__full': respBodyFullStatus }">
+        <el-form-item label="返回体设置（成功/失败）" prop="resBody" :class="{ 'show-screen__full': respBodyFullStatus }">
           <el-icon class="modal-full-screen" @click="fullScreenEvent('respBodyFullStatus')"><FullScreen v-if="!respBodyFullStatus" /><Close v-else /></el-icon>
-          <code-mirror v-model="formData.returnConfig" basic :lang="jsonLang"/>
+          <code-mirror v-model="formData.resBody" basic :lang="jsonLang"/>
         </el-form-item>
       </div>
     </el-form>
@@ -128,6 +128,7 @@ const reqHeaderFullStatus = ref(false)
 const reqBodyFullStatus = ref(false)
 const sqlFullStatus = ref(false)
 const respBodyFullStatus = ref(false)
+const isEdit = ref(false)
 
 const modelConfig = reactive({
   title: '添加接口',
@@ -152,29 +153,29 @@ const formData = reactive({
   id: '',
   // 基础配置
   name: '',             // 名称
-  method: '',           // 请求方式
-  url: '',              // 自定义访问路径
-  clusterId: '',        // 计算集群
+  apiType: '',           // 请求方式
+  path: '',              // 自定义访问路径
+  // clusterId: '',        // 计算集群
   datasourceId: '',     // 数据源
   remark: '',           // 备注
   // 请求配置
-  setMode: 'CUSTOM',    // 请求头模式
-  headerConfig: null,   // 请求头设置
-  bodyConfig: null,     // 请求体设置
-  sqlConfig: null,      // SQL设置
-  isPagination: false,  // 是否分页
-  returnConfig: null    // 返回体设置（成功/失败）
+  tokenType: 'ANONYMOUS',    // 请求头模式
+  headerToken: null,   // 请求头设置
+  reqBody: null,     // 请求体设置
+  apiSql: null,      // SQL设置
+  pageType: false,  // 是否分页
+  resBody: null    // 返回体设置（成功/失败）
 })
 const rules = reactive<FormRules>({
   name: [{ required: true, message: '请输入名称', trigger: [ 'blur', 'change' ]}],
-  method: [{ required: true, message: '请选择请求方式', trigger: [ 'blur', 'change' ]}],
-  url: [{ required: true, message: '请输入自定义访问路径', trigger: [ 'blur', 'change' ]}],
-  clusterId: [{ required: true, message: '请选择计算集群', trigger: [ 'blur', 'change' ]}],
+  apiType: [{ required: true, message: '请选择请求方式', trigger: [ 'blur', 'change' ]}],
+  path: [{ required: true, message: '请输入自定义访问路径', trigger: [ 'blur', 'change' ]}],
+  // clusterId: [{ required: true, message: '请选择计算集群', trigger: [ 'blur', 'change' ]}],
   datasourceId: [{ required: true, message: '请选择数据源', trigger: [ 'blur', 'change' ]}],
-  headerConfig: [{ required: true, message: '请输入请求头设置', trigger: [ 'blur', 'change' ]}],
-  bodyConfig: [{ required: true, message: '请输入请求体设置', trigger: [ 'blur', 'change' ]}],
-  sqlConfig: [{ required: true, message: '请输入SQL设置', trigger: [ 'blur', 'change' ]}],
-  returnConfig: [{ required: true, message: '请输入返回体设置（成功/失败）', trigger: [ 'blur', 'change' ]}],
+  headerToken: [{ required: true, message: '请输入请求头设置', trigger: [ 'blur', 'change' ]}],
+  reqBody: [{ required: true, message: '请输入请求体设置', trigger: [ 'blur', 'change' ]}],
+  apiSql: [{ required: true, message: '请输入SQL设置', trigger: [ 'blur', 'change' ]}],
+  resBody: [{ required: true, message: '请输入返回体设置（成功/失败）', trigger: [ 'blur', 'change' ]}],
 })
 
 function showModal(cb: () => void, data: any): void {
@@ -184,13 +185,15 @@ function showModal(cb: () => void, data: any): void {
     Object.keys(formData).forEach(key => {
       formData[key] = data[key]
     })
+    isEdit.value = true
     modelConfig.title = '编辑接口'
   } else {
     Object.keys(formData).forEach(key => {
       formData[key] = null
     })
-    formData.setMode = 'CUSTOM'
-    formData.isPagination = false
+    formData.tokenType = 'ANONYMOUS'
+    formData.pageType = false
+    isEdit.value = false
     modelConfig.title = '添加接口'
   }
   nextTick(() => {
