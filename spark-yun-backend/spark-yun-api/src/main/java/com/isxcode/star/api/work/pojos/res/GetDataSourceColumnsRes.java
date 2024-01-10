@@ -1,5 +1,6 @@
 package com.isxcode.star.api.work.pojos.res;
 
+import com.isxcode.star.api.datasource.pojos.dto.ColumnMetaDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,5 +14,5 @@ import java.util.List;
 @NoArgsConstructor
 public class GetDataSourceColumnsRes {
 
-	private List<List<String>> columns;
+	private List<ColumnMetaDto> columns;
 }

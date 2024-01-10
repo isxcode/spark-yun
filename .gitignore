@@ -47,3 +47,6 @@ spark-yun-frontend/.idea
 
 # derby.log不提交
 derby.log
+
+# 许可证不提交
+spark-yun-backend/spark-yun-main/resources/license/*
