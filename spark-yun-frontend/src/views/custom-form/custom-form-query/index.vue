@@ -101,8 +101,8 @@ function initData(tableLoading?: boolean) {
         formId: route.query.id,
         formVersion: route.query.formVersion
     }).then((res: any) => {
-        tableConfig.tableData = res.data.content
-        tableConfig.pagination.total = res.data.totalElements
+        tableConfig.tableData = res.data.data || []
+        tableConfig.pagination.total = res.data.count
         loading.value = false
         tableConfig.loading = false
         networkError.value = false

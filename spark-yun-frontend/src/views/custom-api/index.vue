@@ -21,10 +21,10 @@
                     @size-change="handleSizeChange"
                     @current-change="handleCurrentChange"
                 >
-                    <template #defaultTag="scopeSlot">
+                    <template #statusTag="scopeSlot">
                         <div class="btn-group">
-                            <el-tag v-if="scopeSlot.row.isDefaultDriver" class="ml-2" type="success">是</el-tag>
-                            <el-tag v-if="!scopeSlot.row.isDefaultDriver" class="ml-2" type="danger">否</el-tag>
+                            <el-tag v-if="scopeSlot.row.status === 'UNPUBLISHED'" class="ml-2" type="danger">未发布</el-tag>
+                            <el-tag v-else class="ml-2" type="success">已发布</el-tag>
                         </div>
                     </template>
                     <template #options="scopeSlot">
@@ -34,10 +34,10 @@
                                 <span class="click-show-more">更多</span>
                                 <template #dropdown>
                                 <el-dropdown-menu>
-                                    <el-dropdown-item @click="deleteData">删除</el-dropdown-item>
-                                    <el-dropdown-item @click="underlineApi">下线</el-dropdown-item>
-                                    <el-dropdown-item @click="publishApi">发布</el-dropdown-item>
-                                    <el-dropdown-item @click="testApi">测试</el-dropdown-item>
+                                    <el-dropdown-item v-if="scopeSlot.row.status === 'UNPUBLISHED'" @click="deleteData(scopeSlot.row)">删除</el-dropdown-item>
+                                    <el-dropdown-item v-if="scopeSlot.row.status !== 'UNPUBLISHED'" @click="underlineApi(scopeSlot.row)">下线</el-dropdown-item>
+                                    <el-dropdown-item v-if="scopeSlot.row.status === 'UNPUBLISHED'" @click="publishApi(scopeSlot.row)">发布</el-dropdown-item>
+                                    <el-dropdown-item v-if="scopeSlot.row.status !== 'UNPUBLISHED'" @click="testApi">测试</el-dropdown-item>
                                     <!-- <el-dropdown-item>历史</el-dropdown-item> -->
                                 </el-dropdown-menu>
                                 </template>
@@ -61,7 +61,7 @@ import BlockTable from '@/components/block-table/index.vue'
 import LoadingPage from '@/components/loading/index.vue'
 
 import { BreadCrumbList, TableConfig } from './costom-api.config'
-import { QueryCustomApiList } from '@/services/custom-api.service'
+import { QueryCustomApiList, CreateCustomApiData, UpdateCustomApiData, DeleteCustomApiData, PublishCustomApiData, OfflineCustomApiData } from '@/services/custom-api.service'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/store/useAuth'
@@ -102,18 +102,13 @@ function initData(tableLoading?: boolean) {
 function addData() {
     addModalRef.value.showModal((data: any) => {
         return new Promise((resolve: any, reject: any) => {
-            // const formData = new FormData()
-            // formData.append('dbType', data.dbType)
-            // formData.append('name', data.name)
-            // formData.append('remark', data.remark)
-            // formData.append('driver', data.driver)
-            // AddDefaultDriverData(formData).then((res: any) => {
-            //     ElMessage.success(res.data.msg)
-            //     initData()
-            //     resolve()
-            // }).catch((error: any) => {
-            //     reject(error)
-            // })
+            CreateCustomApiData(data).then((res: any) => {
+                initData()
+                ElMessage.success(res.msg)
+                resolve()
+            }).catch(err => {
+                reject(err)
+            })
         })
     })
 }
@@ -121,18 +116,13 @@ function addData() {
 function editData(row: any) {
     addModalRef.value.showModal((data: any) => {
         return new Promise((resolve: any, reject: any) => {
-            // const formData = new FormData()
-            // formData.append('dbType', data.dbType)
-            // formData.append('name', data.name)
-            // formData.append('remark', data.remark)
-            // formData.append('driver', data.driver)
-            // AddDefaultDriverData(formData).then((res: any) => {
-            //     ElMessage.success(res.data.msg)
-            //     initData()
-            //     resolve()
-            // }).catch((error: any) => {
-            //     reject(error)
-            // })
+            UpdateCustomApiData(data).then((res: any) => {
+                initData()
+                ElMessage.success(res.msg)
+                resolve()
+            }).catch(err => {
+                reject(err)
+            })
         })
     }, row)
 }
@@ -144,14 +134,12 @@ function deleteData(data: any) {
         cancelButtonText: '取消',
         type: 'warning'
     }).then(() => {
-        // DeleteDefaultDriverData({
-        //     driverId: data.id
-        // })
-        //     .then((res: any) => {
-        //         ElMessage.success(res.msg)
-        //         initData()
-        //     })
-        //     .catch(() => {})
+        DeleteCustomApiData({
+            id: data.id
+        }).then((res: any) => {
+            ElMessage.success(res.msg)
+            initData()
+        }).catch(() => {})
     })
 }
 // 下线
@@ -161,7 +149,12 @@ function underlineApi(data: any) {
         cancelButtonText: '取消',
         type: 'warning'
     }).then(() => {
-
+        OfflineCustomApiData({
+            id: data.id
+        }).then((res: any) => {
+            ElMessage.success(res.msg)
+            initData()
+        }).catch(() => {})
     })
 }
 // 发布接口
@@ -171,7 +164,12 @@ function publishApi(data: any) {
         cancelButtonText: '取消',
         type: 'warning'
     }).then(() => {
-
+        PublishCustomApiData({
+            id: data.id
+        }).then((res: any) => {
+            ElMessage.success(res.msg)
+            initData()
+        }).catch(() => {})
     })
 }
 // 测试api
