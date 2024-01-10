@@ -64,8 +64,8 @@ function getTableCodesMethod() {
         }).then((res: any) => {
             const arr = (res.data.columns || []).map((column: any) => {
                 return {
-                    label: column[0],
-                    value: column[0]
+                    label: column.name,
+                    value: column.name
                 }
             })
             resolve(arr)

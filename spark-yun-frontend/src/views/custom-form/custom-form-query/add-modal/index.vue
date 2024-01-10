@@ -54,6 +54,9 @@ function showModal(cb: () => void, data?: any): void {
     formData.value = {}
     getFormConfigById()
     if (data) {
+        formData.value = {
+            ...data
+        }
       modelConfig.title = '编辑'
     } else {
       modelConfig.title = '添加'

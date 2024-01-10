@@ -166,8 +166,8 @@ function getTableColumnData(params: TableDetailParam, type: string) {
         if (type === 'source') {
             sourceTableColumn.value = (res.data.columns || []).map((column: any) => {
                 return {
-                    code: column[0],
-                    type: column[1],
+                    code: column.name,
+                    type: column.name,
                     sql: ''
                 }
             })

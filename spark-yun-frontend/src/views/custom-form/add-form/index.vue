@@ -59,7 +59,7 @@
                         :value="item.value" />
                 </el-select>
             </el-form-item>
-            <el-form-item v-else prop="sourceTable_name" label="表（手动输入，生成新的表名）">
+            <el-form-item v-else prop="mainTable" label="表（手动输入，生成新的表名）">
                 <el-input :disabled="isEdit" v-model="formData.mainTable" maxlength="20" placeholder="请输入" />
             </el-form-item>
             <el-form-item label="备注">
@@ -161,13 +161,13 @@ const rules = reactive<FormRules>({
             trigger: ['change', 'blur']
         }
     ],
-    sourceTable_name: [
-        {
-            required: true,
-            message: '请输入表名',
-            trigger: ['change', 'blur']
-        }
-    ]
+    // mainTable_name: [
+    //     {
+    //         required: true,
+    //         message: '请输入表名',
+    //         trigger: ['change', 'blur']
+    //     }
+    // ]
 })
 
 function showModal(cb: () => void, data?: formDataParam): void {
