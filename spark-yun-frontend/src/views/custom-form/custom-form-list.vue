@@ -20,7 +20,7 @@
                                     <EllipsisTooltip class="card-item-name" :label="card.name" />
                                 </div>
                                 <div class="card-item">创建时间：{{card.createDateTime}}</div>
-                                <div class="card-item">状态：{{card.status === 'OFFLINE' ? '下线' : '已发布'}}</div>
+                                <div class="card-item">状态：{{card.status === 'UNPUBLISHED' ? '未发布' : '已发布'}}</div>
                                 <!-- <div class="card-item">版本：{{card.version}}</div> -->
                                 <div class="card-item">
                                     <span class="name">备注：</span>
@@ -36,11 +36,11 @@
                                     </div>
                                     <template #dropdown>
                                         <el-dropdown-menu>
-                                            <el-dropdown-item v-if="card.status === 'OFFLINE'" @click="editData(card)">配置</el-dropdown-item>
+                                            <el-dropdown-item v-if="card.status === 'UNPUBLISHED'" @click="editData(card)">配置</el-dropdown-item>
                                             <el-dropdown-item @click="updateData(card)">编辑</el-dropdown-item>
-                                            <el-dropdown-item v-if="card.status === 'OFFLINE'" @click="deleteData(card)">删除</el-dropdown-item>
+                                            <el-dropdown-item v-if="card.status === 'UNPUBLISHED'" @click="deleteData(card)">删除</el-dropdown-item>
                                             <!-- <el-dropdown-item @click="shareForm(card)">分享</el-dropdown-item> -->
-                                            <el-dropdown-item v-if="card.status !== 'OFFLINE'"  @click="underlineForm(card)">下线</el-dropdown-item>
+                                            <el-dropdown-item v-if="card.status !== 'UNPUBLISHED'"  @click="underlineForm(card)">下线</el-dropdown-item>
                                             <el-dropdown-item v-else @click="publishForm(card)">发布</el-dropdown-item>
                                         </el-dropdown-menu>
                                     </template>
@@ -70,7 +70,7 @@
         <ShareForm ref="shareFormRef"></ShareForm>
     </div>
 </template>
-  
+
 <script lang="ts" setup>
 import { ref, reactive, onMounted, computed } from 'vue'
 import Breadcrumb from '@/layout/bread-crumb/index.vue'

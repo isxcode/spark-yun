@@ -42,11 +42,11 @@
             </el-form-item>
             <el-form-item label="模式" prop="createMode" v-if="!isEdit">
                 <el-radio-group :disabled="isEdit" v-model="formData.createMode" @change="dataSourceChange">
-                    <el-radio label="CHOOSE">选择已有表</el-radio>
-                    <el-radio label="CREATE">创建新表</el-radio>
+                    <el-radio label="EXIST_TABLE">选择已有表</el-radio>
+                    <el-radio label="CREATE_TABLE">创建新表</el-radio>
                 </el-radio-group>
             </el-form-item>
-            <el-form-item v-if="formData.createMode === 'CHOOSE'" prop="mainTable" label="表（选择已有表名）">
+            <el-form-item v-if="formData.createMode === 'EXIST_TABLE'" prop="mainTable" label="表（选择已有表名）">
                 <el-select
                     v-model="formData.mainTable"
                     clearable
@@ -74,7 +74,7 @@
         </el-form>
     </BlockModal>
 </template>
-  
+
 <script lang="ts" setup>
 import { reactive, defineExpose, ref, nextTick } from 'vue'
 import { ElMessage, FormInstance, FormRules } from 'element-plus'
@@ -127,7 +127,7 @@ const formData = reactive<formDataParam>({
     name: '',
     // clusterId: '',
     datasourceId: '',
-    createMode: 'CHOOSE',
+    createMode: 'EXIST_TABLE',
     mainTable: '',
     remark: '',
     id: ''
@@ -185,7 +185,7 @@ function showModal(cb: () => void, data?: formDataParam): void {
         formData.name = ''
         // formData.clusterId = ''
         formData.datasourceId = ''
-        formData.createMode = 'CHOOSE'
+        formData.createMode = 'EXIST_TABLE'
         formData.mainTable = ''
         formData.remark = ''
         formData.id = ''
@@ -297,11 +297,10 @@ defineExpose({
     showModal
 })
 </script>
-  
+
 <style lang="scss">
 .add-computer-group {
     padding: 12px 20px 0 20px;
     box-sizing: border-box;
 }
 </style>
-  

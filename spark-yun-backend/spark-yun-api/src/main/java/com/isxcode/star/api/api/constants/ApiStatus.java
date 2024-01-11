@@ -8,11 +8,6 @@ public interface ApiStatus {
 	String PUBLISHED = "PUBLISHED";
 
 	/**
-	 * 已下线.
-	 */
-	String OFFLINE = "OFFLINE";
-
-	/**
 	 * 未发布.
 	 */
 	String UNPUBLISHED = "UNPUBLISHED";

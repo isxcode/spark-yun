@@ -4,6 +4,7 @@ import com.isxcode.star.api.api.pojos.dto.HeaderTokenDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 import lombok.Data;
 
@@ -30,9 +31,9 @@ public class AddApiReq {
 	@NotEmpty(message = "验证方式")
 	private String tokenType;
 
-	@Schema(title = "分页类型", example = "OPEN_PAGE 开启分页 / CLOSE_PAGE 关闭分页")
-	@NotEmpty(message = "pageType不能为空")
-	private String pageType;
+	@Schema(title = "分页类型", example = "true 开启分页 / false 关闭分页")
+	@NotNull(message = "pageType不能为空")
+	private Boolean pageType;
 
 	@Schema(title = "如果用户使用自定义认证方式，需要填写", example = "")
 	private HeaderTokenDto headerToken;

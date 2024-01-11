@@ -20,6 +20,10 @@ public class AddFormReq {
 	@NotEmpty(message = "mainTable不能为空")
 	private String mainTable;
 
+	@Schema(title = "该表是自建的表还是已存在的表", example = "EXIST_TABLE 已存在的表 | CREATE_TABLE 新建的表")
+	@NotEmpty(message = "createMode不能为空")
+	private String createMode;
+
 	@Schema(title = "备注", example = "备注123")
 	private String remark;
 }

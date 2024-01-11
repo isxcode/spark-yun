@@ -133,8 +133,11 @@ public class DatasourceService {
 		try (Connection connection = this.getDbConnection(datasource);
 				Statement statement = connection.createStatement()) {
 			statement.execute(sql);
-		} catch (Exception e) {
+		} catch (SQLException e) {
 			log.error(e.getMessage());
+			if (e.getErrorCode() == 1364) {
+
+			}
 			throw new IsxAppException("提交失败");
 		}
 	}
