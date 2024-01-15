@@ -12,14 +12,14 @@ tasks.register('npm_build', Exec) {
 
   if (System.properties['os.name'].toString().contains('Mac OS X')||System.properties['os.name'].toString().contains('Linux')) {
     commandLine 'sh', '-c', '''
-      npm install pnpm -g &&
-      pnpm install &&
+      rm -rf node_modules
+      pnpm install --force
       pnpm run build
     '''
   } else {
     commandLine 'cmd', '/c', '''
-      npm install pnpm -g &&
-      pnpm install &&
+      rm -rf node_modules
+      pnpm install --force
       pnpm run build
     '''
   }
