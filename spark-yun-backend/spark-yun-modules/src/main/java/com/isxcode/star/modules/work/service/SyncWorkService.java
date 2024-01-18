@@ -1,5 +1,6 @@
 package com.isxcode.star.modules.work.service;
 
+import com.isxcode.star.api.datasource.pojos.dto.ColumnMetaDto;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.star.modules.datasource.entity.DatasourceEntity;
 import com.isxcode.star.modules.datasource.repository.DatasourceRepository;
@@ -94,21 +95,51 @@ public class SyncWorkService {
 	 *            表名。
 	 * @return 筛选后的数据表字段信息。
 	 */
-	public List<List<String>> columns(DatabaseMetaData metaData, String catalog, String schema, String table)
+	public List<ColumnMetaDto> columns(DatabaseMetaData metaData, String catalog, String schema, String table)
 			throws SQLException {
-		List<List<String>> list = new ArrayList<>();
+
+		// 获取主键信息
+		Set<String> primaryKeys = getPrimaryKeys(metaData, catalog, schema, table);
+
+		List<ColumnMetaDto> list = new ArrayList<>();
 		ResultSet columns = metaData.getColumns(catalog, schema, table, null);
 		while (columns.next()) {
-			List<String> cList = new ArrayList<>();
-			cList.add(columns.getString("COLUMN_NAME"));
+			ColumnMetaDto columnMeta = new ColumnMetaDto();
+
+			// 获取字段名
+			columnMeta.setName(columns.getString("COLUMN_NAME"));
+
+			// 获取字段类型
 			String type = columns.getString("TYPE_NAME");
 			if ("VARCHAR".equals(type)) {
 				type += "(" + columns.getInt("COLUMN_SIZE") + ")";
 			}
-			cList.add(type);
-			list.add(cList);
+			columnMeta.setType(type);
+
+			// 是否为主键
+			columnMeta.setIsPrimaryColumn(primaryKeys.contains(columnMeta.getName()));
+
+			// 是否为必填字段
+			columnMeta.setIsNoNullColumn(columns.getInt("NULLABLE") == DatabaseMetaData.columnNoNulls);
+
+			// 字段长度
+			columnMeta.setColumnLength(columns.getInt("COLUMN_SIZE"));
+
+			list.add(columnMeta);
 		}
 		return list;
+	}
+
+	private Set<String> getPrimaryKeys(DatabaseMetaData metaData, String catalog, String schema, String table)
+			throws SQLException {
+
+		Set<String> primaryKeys = new HashSet<>();
+		ResultSet primaryKeyResultSet = metaData.getPrimaryKeys(catalog, schema, table);
+		while (primaryKeyResultSet.next()) {
+			String columnName = primaryKeyResultSet.getString("COLUMN_NAME");
+			primaryKeys.add(columnName);
+		}
+		return primaryKeys;
 	}
 
 	/**

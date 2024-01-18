@@ -1,5 +1,6 @@
 package com.isxcode.star.modules.work.service.biz;
 
+import com.isxcode.star.api.datasource.pojos.dto.ColumnMetaDto;
 import com.isxcode.star.api.work.pojos.req.*;
 import com.isxcode.star.api.work.pojos.res.*;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
@@ -55,7 +56,7 @@ public class SyncWorkBizService {
 
 		Connection connection = syncWorkService.getConnection(getDataSourceColumnsReq.getDataSourceId(), null, null);
 		Map<String, String> transform = getTransform(connection, getDataSourceColumnsReq.getTableName());
-		List<List<String>> columns = syncWorkService.columns(connection.getMetaData(), transform.get("catalog"),
+		List<ColumnMetaDto> columns = syncWorkService.columns(connection.getMetaData(), transform.get("catalog"),
 				transform.get("schema"), transform.get("tableName"));
 		connection.close();
 		return GetDataSourceColumnsRes.builder().columns(columns).build();

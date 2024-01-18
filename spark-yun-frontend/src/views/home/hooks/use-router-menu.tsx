@@ -12,15 +12,23 @@ export function useRouterMenu(menuListData: Menu[]) {
 
   const menuViewData = computed(() => menuListData.filter(menuItem => menuItem.authType?.includes(authStore.role || 'ROLE_TENANT_MEMBER')))
 
-  const currentMenu = computed(() => menuViewData.value.find(menuData => menuData.code === route.name))
+  const currentMenu = computed(() => {
+    let m = menuViewData.value.find(menuData => menuData.code === route.name)
+    if (!m) {
+      const current = menuViewData.value.find(m => m.childPage?.includes(route.name))
+      return current
+    } else {
+      return m
+    }
+  })
   if (!currentMenu.value) {
     router.replace({
       name: menuViewData.value[0].code
     })
   } else {
-    router.replace({
-      name: currentMenu.value?.code
-    })
+    // router.replace({
+    //   name: currentMenu.value?.code
+    // })
   }
 
   let isCollapse = ref(false)

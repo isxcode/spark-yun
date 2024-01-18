@@ -504,8 +504,8 @@ function getTableColumnData(e: boolean, dataSourceId: string, tableName: string)
         }).then((res: any) => {
             partKeyList.value = (res.data.columns || []).map((column: any) => {
                 return {
-                    label: column[0],
-                    value: column[0]
+                    label: column.name,
+                    value: column.name
                 }
             })
         }).catch(err => {

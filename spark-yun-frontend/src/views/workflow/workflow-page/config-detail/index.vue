@@ -321,6 +321,7 @@ import CodeMirror from 'vue-codemirror6'
 import { GetWorkItemConfig, SaveWorkItemConfig } from '@/services/workflow.service';
 import { GetComputerGroupList, GetComputerPointData } from '@/services/computer-group.service';
 import { GetDatasourceList } from '@/services/datasource.service'
+import { jsonFormatter } from '@/utils/formatter'
 
 const scheduleRange = ref(ScheduleRange);
 const weekDateList = ref(WeekDateList)
@@ -454,6 +455,7 @@ function getConfigDetailData() {
           clusterConfig[key] = res.data.clusterConfig[key]
         }
       })
+      clusterConfig.sparkConfigJson = jsonFormatter(clusterConfig.sparkConfigJson)
     }
     if (['SPARK_SQL'].includes(workItemConfig.value.workType)) {
       clusterConfig.datasourceId = res.data.datasourceId
@@ -467,6 +469,7 @@ function getConfigDetailData() {
       Object.keys(syncRule).forEach((key: string) => {
         syncRule[key] = res.data.syncRule[key]
       })
+      syncRule.sqlConfigJson = jsonFormatter(syncRule.sqlConfigJson)
     }
     clusterConfig.setMode = clusterConfig.setMode || 'SIMPLE'
     cronConfig.setMode = cronConfig.setMode || 'SIMPLE'
@@ -626,7 +629,6 @@ function getDataSourceList(e: boolean, searchType?: string) {
     })
   }
 }
-
 
 function clusterIdChangeEvent() {
   clusterConfig.clusterNodeId = ''

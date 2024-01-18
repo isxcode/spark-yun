@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class SparkYunApplication {
 
 	public static void main(String[] args) {
+
 		SpringApplication.run(SparkYunApplication.class, args);
 	}
 

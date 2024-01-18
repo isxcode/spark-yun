@@ -54,6 +54,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 					String.class);
 			USER_ID.set(userUuid);
 		} catch (Exception e) {
+			log.error(e.getMessage());
 			request.getRequestDispatcher(SecurityConstants.TOKEN_IS_INVALID_PATH).forward(request, response);
 			return;
 		}

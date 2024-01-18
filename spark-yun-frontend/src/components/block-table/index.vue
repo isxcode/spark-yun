@@ -18,6 +18,7 @@
         :key="colConfig.prop"
         :width="colConfig.width"
         :field="colConfig.prop"
+        :fixed="colConfig.fixed"
         :show-overflow="colConfig.showOverflowTooltip || false"
         v-bind="colConfig"
       >
@@ -28,7 +29,6 @@
             :index="rowIndex"
             :column="columnSlotAdapter(column, colConfig)"
             :col-index="colIndex"
-            v-bind="colConfig"
           />
         </template>
       </vxe-column>

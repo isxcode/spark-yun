@@ -1,0 +1,208 @@
+[
+    {
+        "uuid": "339d017b-9975-b242-d128-76ea8dcc87e8",
+        "type": "simple",
+        "formValueCode": "code1",
+        "codeType": "custom",
+        "label": "文本输入",
+        "placeholder": "请输入",
+        "disabled": false,
+        "required": false,
+        "isColumn": true,
+        "width": 2,
+        "componentType": "FormInputText",
+        "valid": true,
+        "icon": "Document",
+        "name": "文本输入"
+    },
+    {
+        "uuid": "ca0b4ce4-b194-c66b-8343-cbf3df8ea648",
+        "type": "simple",
+        "formValueCode": "code2",
+        "codeType": "custom",
+        "label": "下拉选择",
+        "placeholder": "请选择",
+        "disabled": false,
+        "multiple": false,
+        "isColumn": true,
+        "width": 2,
+        "componentType": "FormInputSelect",
+        "options": [
+            {
+                "label": "选项1",
+                "value": "1"
+            }
+        ],
+        "valid": true,
+        "icon": "Document",
+        "name": "下拉选择"
+    },
+    {
+        "uuid": "ab07bd3a-28c8-fe1c-4061-f7921754d523",
+        "type": "simple",
+        "formValueCode": "code3",
+        "codeType": "custom",
+        "label": "数字输入",
+        "placeholder": "请输入",
+        "disabled": false,
+        "required": false,
+        "isColumn": true,
+        "precision": null,
+        "width": 2,
+        "componentType": "FormInputNumber",
+        "valid": true,
+        "icon": "Document",
+        "name": "数字输入"
+    },
+    {
+        "uuid": "29a58f64-0106-652c-affd-5eb9eba5b198",
+        "type": "simple",
+        "formValueCode": "code4",
+        "codeType": "custom",
+        "label": "金额输入",
+        "placeholder": "请输入",
+        "disabled": false,
+        "required": false,
+        "isColumn": true,
+        "precision": 2,
+        "width": 2,
+        "componentType": "FormInputMoney",
+        "valid": true,
+        "icon": "Document",
+        "name": "金额输入"
+    },
+    {
+        "uuid": "7456dbc3-5fef-4755-d5a3-c6dc4a955ce2",
+        "type": "simple",
+        "formValueCode": "code5",
+        "codeType": "custom",
+        "label": "日期选择",
+        "placeholder": "请选择",
+        "disabled": false,
+        "required": false,
+        "isColumn": true,
+        "width": 2,
+        "dateType": "date",
+        "componentType": "FormInputDate",
+        "valid": true,
+        "icon": "Document",
+        "name": "日期选择"
+    },
+    {
+        "uuid": "1ab14d1b-c68f-0d73-7f60-7ae07dc3519a",
+        "type": "simple",
+        "formValueCode": "code6",
+        "codeType": "custom",
+        "label": "开关组件",
+        "disabled": false,
+        "required": false,
+        "width": 2,
+        "isColumn": true,
+        "componentType": "FormInputSwitch",
+        "switchInfo": {
+            "open": "是",
+            "close": "否"
+        },
+        "valid": true,
+        "icon": "Open",
+        "name": "开关组件"
+    },
+    {
+        "uuid": "a32f866f-29fe-921b-df12-8962730528be",
+        "type": "static",
+        "label": "占位符",
+        "width": 4,
+        "valid": true,
+        "componentType": "FormStaticEmpty",
+        "icon": "Document",
+        "name": "占位符"
+    },
+    {
+        "uuid": "3596e557-adf0-2530-a3df-dd5251065450",
+        "type": "static",
+        "label": "静态文本",
+        "width": 4,
+        "valid": true,
+        "componentType": "FormStaticPlaceholder",
+        "colorPicker": "#000000",
+        "icon": "Document",
+        "name": "静态文本"
+    },
+    {
+        "uuid": "1cd613fd-cfd6-d8f5-148c-80efd2632f47",
+        "type": "simple",
+        "formValueCode": "code7",
+        "codeType": "custom",
+        "label": "单选框",
+        "placeholder": "请选择",
+        "disabled": false,
+        "width": 4,
+        "isColumn": true,
+        "componentType": "FormInputRadio",
+        "options": [
+            {
+                "label": "选项1",
+                "value": "1"
+            }
+        ],
+        "valid": true,
+        "icon": "Document",
+        "name": "单选框",
+        "defaultValue": ""
+    },
+    {
+        "uuid": "9cc37dcb-7380-d2d5-5013-9ecfb45b8b24",
+        "type": "simple",
+        "formValueCode": "code8",
+        "codeType": "custom",
+        "label": "多选框",
+        "placeholder": "请选择",
+        "disabled": false,
+        "width": 4,
+        "multiple": true,
+        "componentType": "FormInputCheckbox",
+        "isColumn": true,
+        "options": [
+            {
+                "label": "选项1",
+                "value": "1"
+            }
+        ],
+        "valid": true,
+        "icon": "Document",
+        "name": "多选框",
+        "defaultValue": []
+    },
+    {
+        "uuid": "7a98146d-4636-f889-61c0-693cd762716f",
+        "type": "simple",
+        "formValueCode": "code9",
+        "codeType": "custom",
+        "label": "手机号输入",
+        "placeholder": "请输入",
+        "disabled": false,
+        "required": false,
+        "isColumn": true,
+        "width": 2,
+        "componentType": "FormInputPhone",
+        "valid": true,
+        "icon": "Document",
+        "name": "手机号输入"
+    },
+    {
+        "uuid": "d253667f-4db0-fd84-db44-690e6b74821d",
+        "type": "simple",
+        "formValueCode": "code10",
+        "codeType": "custom",
+        "label": "邮箱输入",
+        "placeholder": "请输入",
+        "disabled": false,
+        "required": false,
+        "isColumn": true,
+        "width": 2,
+        "componentType": "FormInputEmail",
+        "valid": true,
+        "icon": "Document",
+        "name": "邮箱输入"
+    }
+]

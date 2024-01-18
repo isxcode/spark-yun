@@ -17,10 +17,7 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.sql.Connection;
-import java.sql.Driver;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -129,5 +126,32 @@ public class DatasourceService {
 		}
 		DriverManager.setLoginTimeout(500);
 		return driver.connect(datasource.getJdbcUrl(), info);
+	}
+
+	public void executeSql(DatasourceEntity datasource, String sql) {
+
+		try (Connection connection = this.getDbConnection(datasource);
+				Statement statement = connection.createStatement()) {
+			statement.execute(sql);
+		} catch (SQLException e) {
+			log.error(e.getMessage());
+			if (e.getErrorCode() == 1364) {
+
+			}
+			throw new IsxAppException("提交失败");
+		}
+	}
+
+	public boolean tableIsExist(DatasourceEntity datasource, String tableName) {
+
+		try (Connection connection = this.getDbConnection(datasource);
+				PreparedStatement preparedStatement = connection
+						.prepareStatement("SELECT 1 FROM " + tableName + " WHERE 1 = 0")) {
+			preparedStatement.executeQuery();
+			return true;
+		} catch (SQLException e) {
+			log.error(e.getMessage());
+			return false;
+		}
 	}
 }
