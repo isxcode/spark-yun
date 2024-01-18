@@ -50,3 +50,6 @@ derby.log
 
 # 许可证不提交
 spark-yun-backend/spark-yun-main/resources/license/*
+
+# 自动化测试报告不提交
+spark-yun-autotest/Reports
