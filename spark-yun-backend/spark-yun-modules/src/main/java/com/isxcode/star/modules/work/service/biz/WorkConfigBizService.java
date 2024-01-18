@@ -15,11 +15,6 @@ import com.isxcode.star.modules.datasource.service.DatasourceService;
 import com.isxcode.star.modules.work.entity.WorkConfigEntity;
 import com.isxcode.star.modules.work.entity.WorkEntity;
 import com.isxcode.star.modules.work.repository.WorkConfigRepository;
-
-import java.util.Map;
-import java.util.Optional;
-import javax.transaction.Transactional;
-
 import com.isxcode.star.modules.work.service.WorkConfigService;
 import com.isxcode.star.modules.work.service.WorkService;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +23,9 @@ import org.apache.logging.log4j.util.Strings;
 import org.springframework.scheduling.support.CronExpression;
 import org.springframework.stereotype.Service;
 
-import static com.fasterxml.jackson.databind.type.LogicalType.Map;
+import javax.transaction.Transactional;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * 用户模块接口的业务逻辑.
@@ -137,6 +134,16 @@ public class WorkConfigBizService {
 			workConfig.setClusterConfig(JSON.toJSONString(getHiveStoreUri(workConfig)));
 		}
 
+    // 设置udf函数状态
+    if (wocConfigWorkReq.getUdfStatus() != null) {
+      workConfig.setUdfStatus(wocConfigWorkReq.getUdfStatus());
+    }
+
+    // 设置自定义作业配置信息
+    if (!Strings.isEmpty(wocConfigWorkReq.getJarConf())) {
+      workConfig.setJarConf(wocConfigWorkReq.getJarConf());
+    }
+
 		// 保存配置
 		workConfigRepository.save(workConfig);
 	}
@@ -172,7 +179,7 @@ public class WorkConfigBizService {
 		}
 
 		// 补上spark.executor.instances
-		if (!Strings.isEmpty(workConfig.getSyncRule())) {
+		if (!Strings.isEmpty(workConfig.getSyncRule()) && !Strings.isEmpty(workConfig.getSyncWorkConfig())) {
 			SyncRule syncRule = JSON.parseObject(workConfig.getSyncRule(), SyncRule.class);
 			clusterConfig.getSparkConfig().put("spark.executor.instances",
 					String.valueOf(syncRule.getNumConcurrency()));

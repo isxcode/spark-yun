@@ -3,6 +3,7 @@ package com.isxcode.star.modules.work.run;
 import com.isxcode.star.api.work.pojos.dto.ClusterConfig;
 import com.isxcode.star.api.work.pojos.dto.SyncRule;
 import com.isxcode.star.api.work.pojos.dto.SyncWorkConfig;
+import com.isxcode.star.modules.work.entity.SparkJarConfigEntity;
 import lombok.Builder;
 import lombok.Data;
 
@@ -77,4 +78,15 @@ public class WorkRunContext {
 	 * 日志构造器.
 	 */
 	private StringBuilder logBuilder;
+
+  /**
+   * udf启用状态.
+   */
+  private Boolean udfStatus;
+
+  /**
+   * udf启用状态.
+   */
+  private SparkJarConfigEntity jarConf;
+
 }

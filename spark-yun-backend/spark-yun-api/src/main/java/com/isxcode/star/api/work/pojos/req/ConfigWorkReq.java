@@ -34,4 +34,10 @@ public class ConfigWorkReq {
 
 	@Schema(title = "数据同步规则")
 	private SyncRule syncRule;
+
+  @Schema(title = "udf函数状态")
+  private Boolean udfStatus;
+
+  @Schema(title = "自定义jar作业的配置文件", example = "{\"jarFileId\": \"sy_87070db5b87a481b8cb685981c2ecf2c\",\"libFileId\": [\"sy_4b3a3ee6f41d487787444eb5e311c8f7\"],\"mainClass\": \"com.isxcode.star.plugin.dataSync.jdbc.Execute\",\"args\": \"xxxxx\"}")
+  private String jarConf;
 }

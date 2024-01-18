@@ -32,6 +32,8 @@ public class WorkExecutorFactory {
 				return applicationContext.getBean(BashExecutor.class);
 			case WorkType.PYTHON :
 				return applicationContext.getBean(PythonExecutor.class);
+      case WorkType.SPARK_JAR :
+        return applicationContext.getBean(SparkJarExecutor.class);
 			default :
 				throw new IsxAppException("作业类型不存在");
 		}

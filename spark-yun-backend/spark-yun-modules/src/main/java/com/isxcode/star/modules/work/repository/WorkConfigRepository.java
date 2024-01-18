@@ -7,6 +7,6 @@ import org.springframework.stereotype.Repository;
 
 /** 只负责数据库查询逻辑. */
 @Repository
-@CacheConfig(cacheNames = {"sy_work"})
+@CacheConfig(cacheNames = {"sy_work_config"})
 public interface WorkConfigRepository extends JpaRepository<WorkConfigEntity, String> {
 }

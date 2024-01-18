@@ -1,8 +1,7 @@
 package com.isxcode.star.agent.run;
 
 import com.alibaba.fastjson.JSON;
-import com.isxcode.star.api.agent.pojos.req.PluginReq;
-import com.isxcode.star.api.agent.pojos.req.SparkSubmit;
+import com.isxcode.star.api.agent.pojos.req.YagExecuteWorkReq;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
@@ -51,16 +50,15 @@ public class KubernetesAgentService implements AgentService {
 	}
 
 	@Override
-	public SparkLauncher genSparkLauncher(PluginReq pluginReq, SparkSubmit sparkSubmit, String agentHomePath,
-			String sparkHomePath) throws IOException {
+	public SparkLauncher genSparkLauncher(YagExecuteWorkReq yagExecuteWorkReq) throws IOException {
 
-		SparkLauncher sparkLauncher = new SparkLauncher().setVerbose(false).setMainClass(sparkSubmit.getMainClass())
-				.setDeployMode("cluster").setAppName("zhiqingyun-job").setMaster(getMaster(sparkHomePath))
-				.setAppResource("local:///opt/spark/examples/jars/" + sparkSubmit.getAppResource())
-				.setSparkHome(agentHomePath + File.separator + "spark-min");
+		SparkLauncher sparkLauncher = new SparkLauncher().setVerbose(false).setMainClass(yagExecuteWorkReq.getSparkSubmit().getMainClass())
+				.setDeployMode("cluster").setAppName("zhiqingyun-job").setMaster(getMaster(yagExecuteWorkReq.getSparkHomePath()))
+				.setAppResource("local:///opt/spark/examples/jars/" + yagExecuteWorkReq.getSparkSubmit().getAppResource())
+				.setSparkHome(yagExecuteWorkReq.getAgentHomePath() + File.separator + "spark-min");
 
-		if (!Strings.isEmpty(agentHomePath)) {
-			File[] jarFiles = new File(agentHomePath + File.separator + "lib").listFiles();
+		if (!Strings.isEmpty(yagExecuteWorkReq.getAgentHomePath())) {
+			File[] jarFiles = new File(yagExecuteWorkReq.getAgentHomePath() + File.separator + "lib").listFiles();
 			if (jarFiles != null) {
 				for (int i = 0; i < jarFiles.length; i++) {
 					if (!jarFiles[i].getName().contains("hive")) {
@@ -82,23 +80,24 @@ public class KubernetesAgentService implements AgentService {
 			}
 		}
 
-		sparkLauncher.addAppArgs(Base64.getEncoder().encodeToString(JSON.toJSONString(pluginReq).getBytes()));
+    sparkLauncher.addAppArgs(Base64.getEncoder().encodeToString(yagExecuteWorkReq.getPluginReq() == null ?
+      yagExecuteWorkReq.getArgs().getBytes() : JSON.toJSONString(yagExecuteWorkReq.getPluginReq()).getBytes()));
 
-		sparkSubmit.getConf().forEach(sparkLauncher::setConf);
+    yagExecuteWorkReq.getSparkSubmit().getConf().forEach(sparkLauncher::setConf);
 
 		sparkLauncher.setConf("spark.kubernetes.container.image", "apache/spark:v3.1.3");
 		sparkLauncher.setConf("spark.kubernetes.authenticate.driver.serviceAccountName", "zhiqingyun");
 		sparkLauncher.setConf("spark.kubernetes.namespace", "zhiqingyun-space");
 		sparkLauncher.setConf("spark.kubernetes.driver.volumes.hostPath.jar.mount.path",
-				"/opt/spark/examples/jars/" + sparkSubmit.getAppResource());
+				"/opt/spark/examples/jars/" + yagExecuteWorkReq.getSparkSubmit().getAppResource());
 		sparkLauncher.setConf("spark.kubernetes.driver.volumes.hostPath.jar.mount.readOnly", "false");
 		sparkLauncher.setConf("spark.kubernetes.driver.volumes.hostPath.jar.options.path",
-				agentHomePath + File.separator + "plugins" + File.separator + sparkSubmit.getAppResource());
+      yagExecuteWorkReq.getAgentHomePath() + File.separator + "plugins" + File.separator + yagExecuteWorkReq.getSparkSubmit().getAppResource());
 		sparkLauncher.setConf("spark.kubernetes.executor.volumes.hostPath.jar.mount.path",
-				"/opt/spark/examples/jars/" + sparkSubmit.getAppResource());
+				"/opt/spark/examples/jars/" + yagExecuteWorkReq.getSparkSubmit().getAppResource());
 		sparkLauncher.setConf("spark.kubernetes.executor.volumes.hostPath.jar.mount.readOnly", "false");
 		sparkLauncher.setConf("spark.kubernetes.executor.volumes.hostPath.jar.options.path",
-				agentHomePath + File.separator + "plugins" + File.separator + sparkSubmit.getAppResource());
+      yagExecuteWorkReq.getAgentHomePath() + File.separator + "plugins" + File.separator + yagExecuteWorkReq.getSparkSubmit().getAppResource());
 
 		return sparkLauncher;
 	}
