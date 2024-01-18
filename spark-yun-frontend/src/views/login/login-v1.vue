@@ -156,7 +156,7 @@ function clickToLogin() {
         width: 100%;
         text-align: center;
         .do-registered {
-          color: getCssVar('color', 'primary');;
+          color: getCssVar('color', 'primary');
           &:hover {
             cursor: pointer;
           }
