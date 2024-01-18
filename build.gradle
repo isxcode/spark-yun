@@ -176,14 +176,14 @@ tasks.register('web', Exec) {
       cd docs
       rm -rf node_modules
       pnpm install --force
-      pnpm run dev --host
+      pnpm run dev
      '''
   } else {
     commandLine 'cmd', '/c', '''
       cd docs
       rm -rf node_modules
       pnpm install --force
-      pnpm run dev --host
+      pnpm run dev
      '''
   }
 }
