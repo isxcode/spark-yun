@@ -1,6 +1,6 @@
 <template>
   <div class="main">
-  <LayoutHomeHeader />  
+    <LayoutHomeHeader />
     <slot />
   </div>
 </template>
@@ -8,8 +8,3 @@
 <script lang="ts" setup>
 defineComponent("Home");
 </script>
-
-<style lang="scss" scope>
-.main {
-}
-</style>
