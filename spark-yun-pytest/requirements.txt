@@ -1,0 +1,4 @@
+pytest~=7.1.2
+pyyaml~=6.0.1
+playwright~=1.40.0
+allure-pytest~=2.13.2
