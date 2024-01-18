@@ -1,0 +1,23 @@
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+  background-color: #f5f5f5;
+  border-radius: 5px;
+
+  &-thumb, &-track {
+    background-color: #c1c1c1;
+    border-radius: 5px;
+  }
+
+  &-track {
+    background-color: #f5f5f5;
+  }
+
+  &-corner, &:hover {
+    background-color: #f5f5f5;
+  }
+
+  &:hover {
+    cursor: pointer;
+  }
+}

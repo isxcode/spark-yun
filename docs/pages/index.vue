@@ -2,32 +2,53 @@
   <div class="main">
     <!-- 一句话产品 -->
     <div class="one-word-desc-product">
-      <div class="content">
-        <div class="top">
-          <div class="one-word">超轻量级大数据平台</div>
-          <div class="one-desc">
-            基于Spark打造企业级、超轻量、批处理大数据平台，Docker云原生一键部署，Github永久开源免费。
-          </div>
-          <div class="fast-use" id="code_block">
-            <span class="line" line="1">
-              <span style="color: #E25A1B">docker</span>
-              <span style="color: #E25A1B"> run</span>
-              <span style="color: #E25A1B"> -p</span>
-              <span style="color: #E25A1B"> 8080</span>
-              <span style="color: #E25A1B">:8080</span>
-              <span style="color: #E25A1B"> -d</span>
-              <span style="color: #E25A1B"> isxcode/zhiqingyun </span></span
-            >
-          </div>
-          <div class="product-img">
-            <img
-              src="https://img.isxcode.com/picgo/20231102213942.png"
-              alt=""
-            />
-          </div>
+      <div class="top">
+        <div class="one-word">至轻云-超轻量级大数据平台</div>
+        <div class="one-desc">
+          •企业级平台 &nbsp; &nbsp; •Docker一键部署 &nbsp; &nbsp;
+          •Github开源免费 &nbsp; &nbsp; •Spark纯原生
         </div>
-        <div class="bottom"></div>
+        <div class="fast-use" id="code_block">
+          <span class="line" line="1">
+            <span style="color: #e25a1b">docker</span>
+            <span style="color: #e25a1b"> run</span>
+            <span style="color: #e25a1b"> -p</span>
+            <span style="color: #e25a1b"> 8080</span>
+            <span style="color: #e25a1b">:8080</span>
+            <span style="color: #e25a1b"> -d</span>
+            <span style="color: #e25a1b"> isxcode/zhiqingyun</span>
+            <SvgIcon
+              class="copy-icon"
+              name="copy"
+              @click="handleCommandCopyClick"
+            ></SvgIcon>
+          </span>
+        </div>
+        <div class="product-img">
+          <img src="https://img.isxcode.com/picgo/20231102213942.png" alt="" />
+        </div>
       </div>
+      <div class="bottom">
+        <div class="opt-detail">
+          <el-button class="w-32 !h-9" type="primary" @click="jumpDoc">
+            快速入门
+          </el-button>
+          <el-button
+            class="w-32 ml-btn !h-9"
+            type="primary"
+            @click="
+              handleAdvantageToUse({
+                url: 'https://zhiqingyun-demo.isxcode.com',
+              })
+            "
+          >
+            立即体验
+          </el-button>
+        </div>
+      </div>
+      <video id="v1" autoplay loop muted>
+        <source src="~/assets/home/home.mp4" type="video/mp4" />
+      </video>
     </div>
     <!-- 产品优势 -->
     <div
@@ -64,18 +85,16 @@
     <!-- 产品资源 -->
     <div class="product-resources">
       <div class="title">数据创造价值，大数据创造大价值</div>
-      <div class="desc">
-        AI将至，至轻云与您携手实现企业级大数据平台落地
-      </div>
-      <div class="img-row">
-        <div
-          class="resource-item"
+      <div class="desc">AI将至，至轻云与您携手实现企业级大数据平台落地</div>
+      <div class="img-row w-11/12 2xl:w-8/12">
+        <!-- <div
+          class="resource-item w-2/12"
           v-for="(item, index) in resourceList"
           :key="index"
           @click="handleResourcesImgClick(item)"
         >
           <img :src="item.imgUrl" alt="" />
-        </div>
+        </div> -->
       </div>
     </div>
     <!-- 产品服务 -->
@@ -83,7 +102,7 @@
       <div
         v-for="(serviceItem, index) in productServiceList"
         :key="index"
-        class="product-advantages"
+        class="product-advantages "
         :class="{
           'product-advantages-bgc': serviceItem.layout === 'left',
         }"
@@ -96,10 +115,7 @@
           }"
         >
           <div class="img">
-            <img
-              :src="serviceItem.img"
-              alt=""
-            />
+            <img :src="serviceItem.img" alt="" />
           </div>
           <div class="superior-panel">
             <div class="introduction">
@@ -116,7 +132,21 @@
       </div>
     </div>
     <!-- 号召使用 -->
-    <!-- <div class="quick-use">立即开始</div> -->
+    <div class="quick-use">
+      <div class="title">开源助力企业升级大数据领域</div>
+      <!-- 按钮 免费试用 -->
+      <el-button
+        class="w-32 !h-9 quick-use-btn"
+        type="primary"
+        @click="
+          handleAdvantageToUse({
+            url: 'https://zhiqingyun-demo.isxcode.com',
+          })
+        "
+      >
+        免费试用
+      </el-button>
+    </div>
     <LayoutHomeFooter />
   </div>
 </template>
@@ -128,10 +158,10 @@ definePageMeta({
 });
 
 useSeoMeta({
-  title: '至轻云',
-  ogTitle: '至轻云',
-  description:'打造超轻量级大数据平台',
-  ogDescription: '打造超轻量级大数据平台',
+  title: "至轻云",
+  ogTitle: "至轻云",
+  description: "打造超轻量级大数据平台",
+  ogDescription: "打造超轻量级大数据平台",
 });
 
 const productAdvantagesList = reactive([
@@ -141,7 +171,7 @@ const productAdvantagesList = reactive([
     title: "多平台部署，从不娇生惯养",
     desc: "支持大量计算引擎平台，如Kubernetes、Spark Standalone、Spark Cluster、Yarn、CDH。可无缝迁移，无缝切换，帮助企业更优管理集群资源。",
     img: "https://img.isxcode.com/picgo/zhiqingyun1.jpg",
-    url: "https://zhiqingyun-demo.isxcode.com"
+    url: "https://zhiqingyun-demo.isxcode.com",
   },
   {
     code: "2",
@@ -149,7 +179,7 @@ const productAdvantagesList = reactive([
     title: "驱动上传，任何姿势都能连",
     desc: "支持海量数据源，如Mysql、Hive、Oracle、SqlServer、TiDB、Oceanbase、Doris、Clickhouse等。用户可自定义上传多版本驱动，解决企业中多环境数据源无法同时连接的难题。",
     img: "https://img.isxcode.com/picgo/zhiqingyun2.jpg",
-    url: "https://zhiqingyun-demo.isxcode.com"
+    url: "https://zhiqingyun-demo.isxcode.com",
   },
   {
     code: "3",
@@ -157,11 +187,11 @@ const productAdvantagesList = reactive([
     title: "创建租户，再大也能装下",
     desc: "多租户模式，确保租户间数据隔离。租户内可单独协调集群资源、数据源驱动、作业流配置等。解决企业中规模较大、用户众多、权限难解的问题。",
     img: "https://img.isxcode.com/picgo/zhiqingyun3.jpg",
-    url: "https://zhiqingyun-demo.isxcode.com"
+    url: "https://zhiqingyun-demo.isxcode.com",
   },
 ]);
 
-function handleAdvantageToUse(item: { url: string|URL|undefined; }) {
+function handleAdvantageToUse(item: { url: string | URL | undefined }) {
   window.open(item.url);
 }
 
@@ -208,8 +238,8 @@ const resourceList = reactive([
   },
 ]);
 
-function  handleResourcesImgClick(item: { url: string|URL|undefined; }) {
-  window.open(item.url)
+function handleResourcesImgClick(item: { url: string | URL | undefined }) {
+  window.open(item.url);
 }
 
 const productServiceList = reactive([
@@ -228,82 +258,124 @@ const productServiceList = reactive([
     desc: "超多作业类型，包括数据同步、Bash、Python、SparkSql、Jdbc、自定义Jar等。提供客户二次开发模版，任何复杂的场景都可以通过写代码的方式解决。",
     img: "https://img.isxcode.com/picgo/zhiqingyun5.jpg",
     url: "https://zhiqingyun-demo.isxcode.com",
-  }
+  },
 ]);
 
-function handleServiceToUse(serviceItem: { url: string|URL|undefined; }) {
-  window.open(serviceItem.url)
-
+function handleServiceToUse(serviceItem: { url: string | URL | undefined }) {
+  window.open(serviceItem.url);
 }
+
+const copyContent = async (text: string) => {
+  try {
+    await navigator.clipboard.writeText(text);
+  } catch (err) {
+    console.error("Failed to copy: ", err);
+  }
+};
+
+function handleCommandCopyClick() {
+  const codeBlock = document.getElementById("code_block");
+  const codeBlockText = codeBlock?.innerText;
+  if (codeBlockText) {
+    copyContent(codeBlockText);
+  }
+}
+
+function jumpDoc() {
+  const router = useRouter();
+  router.push("/docs/zh/install/docker-deploy");
+}
+
+onMounted(() => {
+  // const video = document.getElementById("v1") as HTMLVideoElement;
+  // video.playbackRate = 0.5;
+});
 </script>
 
 <style lang="scss" scope>
 .main {
   .one-word-desc-product {
-    background-color: var(--sk-color-home-bgc);
-    padding-top: 126px;
-    .content {
-      .top {
+    position: relative;
+    padding-top: 12vh;
+    flex-direction: column;
+    #v1 {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: -1;
+    }
+    .top {
+      height: calc(100vh - 20vh);
+      flex: 1;
+      display: flex;
+      align-items: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: center;
+      .one-word {
+        font-size: 55px;
+        font-weight: 700;
+        text-align: center;
+        line-height: 1.5;
+        margin-bottom: 5vh;
+      }
+      .one-desc {
+        font-size: 19px;
+        font-weight: 400;
+        text-align: center;
+        line-height: 1.5;
+        margin-bottom: 4vh;
+        color: var(--el-color-info);
+      }
+      .fast-use {
+        font-size: 24px;
+        font-weight: 400;
+        text-align: center;
+        line-height: 1.5;
+        margin-bottom: 4vh;
+      }
+      .product-img {
+        z-index: 9;
+        position: absolute;
+        bottom: 10vh;
         display: flex;
-        justify-content: space-between;
-        align-items: center;
-
-        // 居中布局
-        display: flex;
-        flex-direction: column;
         justify-content: center;
-        align-items: center;
-
-        .one-word {
-          font-size: 55px;
-          font-weight: 700;
-          text-align: center;
-          line-height: 1.5;
-          margin-bottom: 40px;
-        }
-
-        .one-desc {
-          font-size: 19px;
-          font-weight: 400;
-          text-align: center;
-          line-height: 1.5;
-          margin-bottom: 40px;
-          color: var(--el-color-info);
-        }
-
-        .fast-use {
-          font-size: 24px;
-          font-weight: 400;
-          text-align: center;
-          line-height: 1.5;
-          margin-bottom: 40px;
-        }
-
-        .product-img {
+        > img {
           width: 100%;
-          height: 360px;
-          margin-top: 30px;
-          margin-bottom: 40px;
-          display: flex;
-          justify-content: center;
-
-          > img {
-            width: 800px;
-            height: 560px;
-            box-shadow: var(--sk-box-show);
-            border-radius: 4px;
-          }
+          height: 58vh;
+          box-shadow: var(--sk-box-show);
+          border-radius: 4px;
         }
       }
-
-      .bottom {
-        width: 100%;
-        height: 220px;
-        background-color: var(--sk-color-home-primary);
+    }
+    .bottom {
+      min-height: 20vh;
+      width: 100%;
+      // background-color: var(--sk-color-home-primary);
+      background-image: url("~/assets/home/bg0.png");
+      background-repeat: no-repeat;
+      background-size: 100% auto;
+      display: flex;
+      flex-direction: column-reverse;
+      .opt-detail {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 3vh;
+        > button {
+          background: #fff;
+          border-color: #fff;
+          color: var(--sk-color-home-primary);
+        }
+        .ml-btn {
+          margin-left: 76px;
+        }
       }
     }
   }
-
   .product-advantages {
     border-top: 1px solid #edebeb;
     width: 100%;
@@ -312,25 +384,21 @@ function handleServiceToUse(serviceItem: { url: string|URL|undefined; }) {
     display: flex;
     justify-content: center;
     align-items: center;
-
     .advantages {
       width: 1108px;
       height: 400px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-
       .img {
-        width: 400px;
+        width: 44%;
         border-radius: 4px;
         box-shadow: var(--sk-box-show);
-
         > img {
           width: 100%;
           height: 100%;
         }
       }
-
       .superior-panel {
         padding: 18px 24px;
         width: 600px;
@@ -390,6 +458,40 @@ function handleServiceToUse(serviceItem: { url: string|URL|undefined; }) {
       flex-direction: row-reverse;
     }
   }
+  .quick-use {
+    height: 320px;
+    background-image: url("~/assets/home/bg2.png");
+    background-color: #f89126;
+    background-repeat: no-repeat;
+    background-size: auto 100%; 
+    background-position: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    > button {
+      background: #fff;
+      border-color: #fff;
+      color: var(--sk-color-home-primary);
+    }
+    .title {
+      font-size: 32px;
+      font-weight: 700;
+      text-align: center;
+      line-height: 1.5;
+      margin-bottom: 40px;
+      color: var(--sk-color-font-white);
+    }
+  }
+
+  @media screen and (min-device-width: 1600px) {
+    .product-advantages {
+      height: calc(600px * 1.2);
+      .advantages {
+        width: calc(1108px * 1.2);
+      }
+    }
+  }
   .product-advantages-bgc {
     background-color: var(--sk-color-cark-bgc);
   }
@@ -407,49 +509,28 @@ function handleServiceToUse(serviceItem: { url: string|URL|undefined; }) {
     .desc {
       margin-top: 32px;
       color: var(--sk-color-font-white);
-      // 透明度
       opacity: 0.8;
     }
-
     .img-row {
-      width: 1362px;
       height: 100%;
       display: flex;
       justify-content: center;
       flex-wrap: wrap;
       align-content: flex-start;
       margin-top: 20px;
-      .resource-item {
-        width: 256px;
-        height: 171.33px;
-        margin-left: 20px;
-        border-radius: 12px;
-        // box-shadow: var(--sk-box-show);
-        background-color: var(--sk-color-cark-bgc);
-        > img {
-          width: 100%;
-          height: 100%;
-          border-radius: 12px;
-        }
-      }
-      // 每行的第一个元素 不设置margin-left
-      .resource-item:nth-child(5n + 1) {
-        margin-left: 0;
-      }
-      // 第二行开始 设置margin-top
-      .resource-item:nth-child(n + 6) {
-        margin-top: 20px;
-      }
+      background-image: url("~/assets/home/kuxun.png");
+      background-repeat: no-repeat;
+      background-size: 100% auto;
     }
   }
   .border-bottom-br {
     border-bottom: 1px solid #dcdcdc;
-
   }
 }
 
 #code_block {
-  border: #E25A1B 1px solid;
+  background-color: #fff;
+  border: #e25a1b 1px solid;
   color: rgb(201, 209, 217);
   font-family: Consolas;
   font-weight: lighter;
@@ -465,5 +546,13 @@ function handleServiceToUse(serviceItem: { url: string|URL|undefined; }) {
   word-break: normal;
   word-wrap: normal;
   line-height: 1.8;
+  .copy-icon {
+    display: inline-block;
+    margin-bottom: 2px;
+    margin-left: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    color: #e25a1b;
+  }
 }
 </style>
