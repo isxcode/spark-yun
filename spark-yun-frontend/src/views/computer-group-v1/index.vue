@@ -2,38 +2,92 @@
   <Breadcrumb :bread-crumb-list="breadCrumbList" />
   <div class="zqy-seach-table">
     <div class="zqy-table-top">
-      <el-button type="primary" @click="addData">
-        添加数据源
+      <el-button
+        type="primary"
+        @click="addGroup"
+      >
+        添加集群
       </el-button>
       <div class="zqy-seach">
-        <el-input v-model="keyword" placeholder="请输入名称/类型/连接信息/用户名/备注 回车进行搜索" :maxlength="200" clearable
-          @input="inputEvent" @keyup.enter="initData(false)" />
+        <el-input
+          v-model="keyword"
+          placeholder="请输入集群名称/备注 回车进行搜索"
+          :maxlength="200"
+          clearable
+          @input="inputEvent"
+          @keyup.enter="initData(false)"
+        />
       </div>
     </div>
-    <LoadingPage :visible="loading" :network-error="networkError" @loading-refresh="initData(false)">
+    <LoadingPage
+      :visible="loading"
+      :network-error="networkError"
+      @loading-refresh="initData(false)"
+    >
       <div class="zqy-table">
-        <BlockTable :table-config="tableConfig" @size-change="handleSizeChange" @current-change="handleCurrentChange">
+        <BlockTable
+          :table-config="tableConfig"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+        >
+          <template #nameSlot="scopeSlot">
+            <span
+              class="name-click"
+              @click="showDetail(scopeSlot.row)"
+            >{{ scopeSlot.row.name }}</span>
+          </template>
           <template #statusTag="scopeSlot">
             <div class="btn-group">
-              <el-tag v-if="scopeSlot.row.status === 'ACTIVE'" class="ml-2" type="success">
+              <el-tag
+                v-if="scopeSlot.row.status === 'ACTIVE'"
+                class="ml-2"
+                type="success"
+              >
                 可用
               </el-tag>
-              <el-tag v-if="scopeSlot.row.status === 'FAIL'" class="ml-2" type="danger">
+              <el-tag
+                v-if="scopeSlot.row.status === 'NO_ACTIVE'"
+                class="ml-2"
+                type="danger"
+              >
                 不可用
+              </el-tag>
+              <el-tag
+                v-if="scopeSlot.row.status === 'NEW'"
+                type="info"
+              >
+                待配置
               </el-tag>
               <el-tag v-if="scopeSlot.row.status === 'UN_CHECK'">
                 待检测
               </el-tag>
             </div>
           </template>
+          <template #defaultTag="scopeSlot">
+            <div class="btn-group">
+              <el-tag v-if="scopeSlot.row.defaultCluster" class="ml-2" type="success">
+                是
+              </el-tag>
+              <el-tag v-if="!scopeSlot.row.defaultCluster" class="ml-2" type="danger">
+                否
+              </el-tag>
+            </div>
+          </template>
           <template #options="scopeSlot">
             <div class="btn-group">
-              <span @click="showLog(scopeSlot.row)">日志</span>
               <span @click="editData(scopeSlot.row)">编辑</span>
-              <span v-if="!scopeSlot.row.checkLoading" @click="checkData(scopeSlot.row)">检测</span>
-              <el-icon v-else class="is-loading">
+              <span
+                v-if="!scopeSlot.row.checkLoading"
+                @click="checkData(scopeSlot.row)"
+              >检测</span>
+              <el-icon
+                v-else
+                class="is-loading"
+              >
                 <Loading />
               </el-icon>
+              <!-- <span @click="showPointDetail(scopeSlot.row)">节点</span> -->
+              <!-- <span @click="setDefaultNode(scopeSlot.row)">设置默认集群</span> -->
               <span @click="deleteData(scopeSlot.row)">删除</span>
             </div>
           </template>
@@ -41,7 +95,6 @@
       </div>
     </LoadingPage>
     <AddModal ref="addModalRef" />
-    <ShowLog ref="showLogRef" />
   </div>
 </template>
 
@@ -51,26 +104,25 @@ import Breadcrumb from '@/layout/bread-crumb/index.vue'
 import BlockTable from '@/components/block-table/index.vue'
 import LoadingPage from '@/components/loading/index.vue'
 import AddModal from './add-modal/index.vue'
-import ShowLog from '../computer-group-v1/computer-pointer/show-log/index.vue'
 
-import { BreadCrumbList, TableConfig, FormData } from './datasource.config'
-import { GetDatasourceList, AddDatasourceData, UpdateDatasourceData, CheckDatasourceData, DeleteDatasourceData } from '@/services/datasource.service'
+import { BreadCrumbList, TableConfig, FormData } from './computer-group.config'
+import { GetComputerGroupList, AddComputerGroupData, UpdateComputerGroupData, CheckComputerGroupData, DeleteComputerGroupData, SetDefaultComputerGroup } from '@/services/computer-group.service'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { useRouter } from 'vue-router'
 import { Loading } from '@element-plus/icons-vue'
 
+const router = useRouter()
+const breadCrumbList = reactive(BreadCrumbList)
+const tableConfig: any = reactive(TableConfig)
 const keyword = ref('')
 const loading = ref(false)
 const networkError = ref(false)
 const addModalRef = ref(null)
-const showLogRef = ref(null)
-
-const breadCrumbList = reactive(BreadCrumbList)
-const tableConfig: any = reactive(TableConfig)
 
 function initData(tableLoading?: boolean) {
   loading.value = tableLoading ? false : true
   networkError.value = networkError.value || false
-  GetDatasourceList({
+  GetComputerGroupList({
     page: tableConfig.pagination.currentPage - 1,
     pageSize: tableConfig.pagination.pageSize,
     searchKeyWord: keyword.value
@@ -91,10 +143,10 @@ function initData(tableLoading?: boolean) {
     })
 }
 
-function addData() {
+function addGroup() {
   addModalRef.value.showModal((formData: FormData) => {
     return new Promise((resolve: any, reject: any) => {
-      AddDatasourceData(formData)
+      AddComputerGroupData(formData)
         .then((res: any) => {
           ElMessage.success(res.msg)
           initData()
@@ -107,15 +159,10 @@ function addData() {
   })
 }
 
-// 查看日志
-function showLog(e: any) {
-  showLogRef.value.showModal(e.connectLog)
-}
-
 function editData(data: any) {
   addModalRef.value.showModal((formData: FormData) => {
     return new Promise((resolve: any, reject: any) => {
-      UpdateDatasourceData(formData)
+      UpdateComputerGroupData(formData)
         .then((res: any) => {
           ElMessage.success(res.msg)
           initData()
@@ -131,34 +178,65 @@ function editData(data: any) {
 // 检测
 function checkData(data: any) {
   data.checkLoading = true
-  CheckDatasourceData({
-    datasourceId: data.id
+  CheckComputerGroupData({
+    engineId: data.id
   })
     .then((res: any) => {
       data.checkLoading = false
       ElMessage.success(res.msg)
-      initData(true)
+      initData()
     })
     .catch(() => {
       data.checkLoading = false
     })
 }
 
+// 查看节点
+function showPointDetail(data: any) {
+  router.push({
+    name: 'computer-pointer',
+    query: {
+      id: data.id
+    }
+  })
+}
+
+// 设置默认节点
+function setDefaultNode(data: any) {
+  SetDefaultComputerGroup({
+    clusterId: data.id
+  }).then((res: any) => {
+    ElMessage.success(res.msg)
+    initData(true)
+  })
+  .catch(() => {
+  })
+}
+
 // 删除
 function deleteData(data: any) {
-  ElMessageBox.confirm('确定删除该数据源吗？', '警告', {
+  ElMessageBox.confirm('确定删除该集群吗？', '警告', {
     confirmButtonText: '确定',
     cancelButtonText: '取消',
     type: 'warning'
   }).then(() => {
-    DeleteDatasourceData({
-      datasourceId: data.id
+    DeleteComputerGroupData({
+      engineId: data.id
     })
       .then((res: any) => {
         ElMessage.success(res.msg)
         initData()
       })
-      .catch(() => { })
+      .catch(() => {})
+  })
+}
+
+function showDetail(data: any) {
+  router.push({
+    name: 'computer-pointer',
+    query: {
+      id: data.id
+    }
   })
 }
 
