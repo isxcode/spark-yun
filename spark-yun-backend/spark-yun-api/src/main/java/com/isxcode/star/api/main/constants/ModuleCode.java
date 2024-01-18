@@ -93,7 +93,7 @@ public interface ModuleCode {
 	/**
 	 * VIP自定义表单
 	 */
-	String VIP_FORM = "/vip/fom";
+	String VIP_FORM = "/vip/form";
 
 	/**
 	 * 监控模块.
