@@ -1,3 +1,3 @@
 ## CONTRIBUTING
 
-- https://zhiqingyun.isxcode.com/zh-cn/develop/join
+- https://zhiqingyun.isxcode.com/docs/zh/contributing/join
