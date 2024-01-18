@@ -7,12 +7,12 @@ import java.util.List;
 @Data
 public class SparkJarConfigEntity {
 
-  private String jarFileId;
+	private String jarFileId;
 
-  private List<String> libFileIds;
+	private List<String> libFileIds;
 
-  private String mainClass;
+	private String mainClass;
 
-  private String args;
+	private String args;
 
 }

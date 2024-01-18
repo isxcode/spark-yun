@@ -52,9 +52,11 @@ public class KubernetesAgentService implements AgentService {
 	@Override
 	public SparkLauncher genSparkLauncher(YagExecuteWorkReq yagExecuteWorkReq) throws IOException {
 
-		SparkLauncher sparkLauncher = new SparkLauncher().setVerbose(false).setMainClass(yagExecuteWorkReq.getSparkSubmit().getMainClass())
-				.setDeployMode("cluster").setAppName("zhiqingyun-job").setMaster(getMaster(yagExecuteWorkReq.getSparkHomePath()))
-				.setAppResource("local:///opt/spark/examples/jars/" + yagExecuteWorkReq.getSparkSubmit().getAppResource())
+		SparkLauncher sparkLauncher = new SparkLauncher().setVerbose(false)
+				.setMainClass(yagExecuteWorkReq.getSparkSubmit().getMainClass()).setDeployMode("cluster")
+				.setAppName("zhiqingyun-job").setMaster(getMaster(yagExecuteWorkReq.getSparkHomePath()))
+				.setAppResource(
+						"local:///opt/spark/examples/jars/" + yagExecuteWorkReq.getSparkSubmit().getAppResource())
 				.setSparkHome(yagExecuteWorkReq.getAgentHomePath() + File.separator + "spark-min");
 
 		if (!Strings.isEmpty(yagExecuteWorkReq.getAgentHomePath())) {
@@ -80,10 +82,12 @@ public class KubernetesAgentService implements AgentService {
 			}
 		}
 
-    sparkLauncher.addAppArgs(Base64.getEncoder().encodeToString(yagExecuteWorkReq.getPluginReq() == null ?
-      yagExecuteWorkReq.getArgs().getBytes() : JSON.toJSONString(yagExecuteWorkReq.getPluginReq()).getBytes()));
+		sparkLauncher.addAppArgs(Base64.getEncoder()
+				.encodeToString(yagExecuteWorkReq.getPluginReq() == null
+						? yagExecuteWorkReq.getArgs().getBytes()
+						: JSON.toJSONString(yagExecuteWorkReq.getPluginReq()).getBytes()));
 
-    yagExecuteWorkReq.getSparkSubmit().getConf().forEach(sparkLauncher::setConf);
+		yagExecuteWorkReq.getSparkSubmit().getConf().forEach(sparkLauncher::setConf);
 
 		sparkLauncher.setConf("spark.kubernetes.container.image", "apache/spark:v3.1.3");
 		sparkLauncher.setConf("spark.kubernetes.authenticate.driver.serviceAccountName", "zhiqingyun");
@@ -92,12 +96,14 @@ public class KubernetesAgentService implements AgentService {
 				"/opt/spark/examples/jars/" + yagExecuteWorkReq.getSparkSubmit().getAppResource());
 		sparkLauncher.setConf("spark.kubernetes.driver.volumes.hostPath.jar.mount.readOnly", "false");
 		sparkLauncher.setConf("spark.kubernetes.driver.volumes.hostPath.jar.options.path",
-      yagExecuteWorkReq.getAgentHomePath() + File.separator + "plugins" + File.separator + yagExecuteWorkReq.getSparkSubmit().getAppResource());
+				yagExecuteWorkReq.getAgentHomePath() + File.separator + "plugins" + File.separator
+						+ yagExecuteWorkReq.getSparkSubmit().getAppResource());
 		sparkLauncher.setConf("spark.kubernetes.executor.volumes.hostPath.jar.mount.path",
 				"/opt/spark/examples/jars/" + yagExecuteWorkReq.getSparkSubmit().getAppResource());
 		sparkLauncher.setConf("spark.kubernetes.executor.volumes.hostPath.jar.mount.readOnly", "false");
 		sparkLauncher.setConf("spark.kubernetes.executor.volumes.hostPath.jar.options.path",
-      yagExecuteWorkReq.getAgentHomePath() + File.separator + "plugins" + File.separator + yagExecuteWorkReq.getSparkSubmit().getAppResource());
+				yagExecuteWorkReq.getAgentHomePath() + File.separator + "plugins" + File.separator
+						+ yagExecuteWorkReq.getSparkSubmit().getAppResource());
 
 		return sparkLauncher;
 	}

@@ -12,13 +12,13 @@ import org.mapstruct.Mapping;
 public interface UdfMapper {
 
 	UdfEntity addUdfReqToUdfEntity(AddUdfReq addUdfReq);
-  @Mapping(source = "updateUdfReq.type", target = "type")
-  @Mapping(source = "updateUdfReq.funcName", target = "funcName")
-  @Mapping(source = "updateUdfReq.className", target = "className")
-  @Mapping(source = "updateUdfReq.resultType", target = "resultType")
-  @Mapping(source = "updateUdfReq.status", target = "status")
-  @Mapping(source = "udfEntity.id", target = "id")
-  UdfEntity updateUdfReqToUdfEntity(UpdateUdfReq updateUdfReq, UdfEntity udfEntity);
+	@Mapping(source = "updateUdfReq.type", target = "type")
+	@Mapping(source = "updateUdfReq.funcName", target = "funcName")
+	@Mapping(source = "updateUdfReq.className", target = "className")
+	@Mapping(source = "updateUdfReq.resultType", target = "resultType")
+	@Mapping(source = "updateUdfReq.status", target = "status")
+	@Mapping(source = "udfEntity.id", target = "id")
+	UdfEntity updateUdfReqToUdfEntity(UpdateUdfReq updateUdfReq, UdfEntity udfEntity);
 
 	PageUdfRes udfEntityToPageUdfRes(UdfEntity udfEntity);
 }

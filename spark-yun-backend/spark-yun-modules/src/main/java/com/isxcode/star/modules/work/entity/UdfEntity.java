@@ -30,7 +30,7 @@ public class UdfEntity {
 	@GenericGenerator(name = "sy-id-generator", strategy = "com.isxcode.star.config.GeneratedValueConfig")
 	private String id;
 
-  private String type;
+	private String type;
 
 	private String fileId;
 

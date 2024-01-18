@@ -84,10 +84,11 @@ public class StandaloneAgentService implements AgentService {
 	@Override
 	public SparkLauncher genSparkLauncher(YagExecuteWorkReq yagExecuteWorkReq) {
 
-		SparkLauncher sparkLauncher = new SparkLauncher().setVerbose(false).setMainClass(yagExecuteWorkReq.getSparkSubmit().getMainClass())
-				.setDeployMode("cluster").setAppName("zhiqingyun-job").setMaster(getMaster(yagExecuteWorkReq.getSparkHomePath()))
-				.setAppResource(
-          yagExecuteWorkReq.getAgentHomePath() + File.separator + "plugins" + File.separator + yagExecuteWorkReq.getSparkSubmit().getAppResource())
+		SparkLauncher sparkLauncher = new SparkLauncher().setVerbose(false)
+				.setMainClass(yagExecuteWorkReq.getSparkSubmit().getMainClass()).setDeployMode("cluster")
+				.setAppName("zhiqingyun-job").setMaster(getMaster(yagExecuteWorkReq.getSparkHomePath()))
+				.setAppResource(yagExecuteWorkReq.getAgentHomePath() + File.separator + "plugins" + File.separator
+						+ yagExecuteWorkReq.getSparkSubmit().getAppResource())
 				.setSparkHome(yagExecuteWorkReq.getAgentHomePath() + File.separator + "spark-min");
 
 		if (!Strings.isEmpty(yagExecuteWorkReq.getAgentHomePath())) {
@@ -106,10 +107,12 @@ public class StandaloneAgentService implements AgentService {
 			}
 		}
 
-    sparkLauncher.addAppArgs(Base64.getEncoder().encodeToString(yagExecuteWorkReq.getPluginReq() == null ?
-      yagExecuteWorkReq.getArgs().getBytes() : JSON.toJSONString(yagExecuteWorkReq.getPluginReq()).getBytes()));
+		sparkLauncher.addAppArgs(Base64.getEncoder()
+				.encodeToString(yagExecuteWorkReq.getPluginReq() == null
+						? yagExecuteWorkReq.getArgs().getBytes()
+						: JSON.toJSONString(yagExecuteWorkReq.getPluginReq()).getBytes()));
 
-    yagExecuteWorkReq.getSparkSubmit().getConf().forEach(sparkLauncher::setConf);
+		yagExecuteWorkReq.getSparkSubmit().getConf().forEach(sparkLauncher::setConf);
 
 		return sparkLauncher;
 	}

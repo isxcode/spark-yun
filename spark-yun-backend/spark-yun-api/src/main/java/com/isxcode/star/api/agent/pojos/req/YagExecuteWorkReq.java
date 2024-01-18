@@ -15,5 +15,5 @@ public class YagExecuteWorkReq {
 
 	private String sparkHomePath;
 
-  private String args;
+	private String args;
 }

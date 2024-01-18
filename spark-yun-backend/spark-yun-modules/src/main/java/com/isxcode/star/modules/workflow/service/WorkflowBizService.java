@@ -739,31 +739,31 @@ public class WorkflowBizService {
 		return GetWorkflowDefaultClusterRes.builder().clusterId(cluster.getId()).clusterName(cluster.getName()).build();
 	}
 
+	public String invoke(InvokeReq invokeReq, HttpServletRequest request) {
 
-  public String invoke(InvokeReq invokeReq, HttpServletRequest request) {
+		String accessKey = request.getHeader("AccessKey");
 
-    String accessKey = request.getHeader("AccessKey");
+		// 检查是否存在AccessKey
+		if (accessKey == null) {
+			throw new IsxAppException("未配置AccessKey");
+		}
+		WorkflowEntity workflow = getWorkflowEntity(invokeReq.getWorkflowId());
+		Optional<WorkflowConfigEntity> workflowConfigEntityOptional = workflowConfigRepository
+				.findById(workflow.getConfigId());
+		if (!workflowConfigEntityOptional.isPresent()) {
+			throw new IsxAppException("工作流配置异常");
+		}
 
-    // 检查是否存在AccessKey
-    if (accessKey == null) {
-      throw new IsxAppException("未配置AccessKey");
-    }
-    WorkflowEntity workflow = getWorkflowEntity(invokeReq.getWorkflowId());
-    Optional<WorkflowConfigEntity> workflowConfigEntityOptional = workflowConfigRepository.findById(workflow.getConfigId());
-    if (!workflowConfigEntityOptional.isPresent()) {
-      throw new IsxAppException("工作流配置异常");
-    }
+		if (!accessKey.equals(workflowConfigEntityOptional.get().getAccessKey())) {
+			throw new IsxAppException("AccessKey不匹配");
+		}
 
-    if (!accessKey.equals(workflowConfigEntityOptional.get().getAccessKey())) {
-      throw new IsxAppException("AccessKey不匹配");
-    }
+		if (ON != workflowConfigEntityOptional.get().getExternalCall()) {
+			throw new IsxAppException("工作流外部触发已关闭");
+		}
 
-    if (ON!=workflowConfigEntityOptional.get().getExternalCall()) {
-      throw new IsxAppException("工作流外部触发已关闭");
-    }
-
-    RunWorkflowReq runWorkflow = new RunWorkflowReq();
-    runWorkflow.setWorkflowId(invokeReq.getWorkflowId());
-    return runWorkflow(runWorkflow);
-  }
+		RunWorkflowReq runWorkflow = new RunWorkflowReq();
+		runWorkflow.setWorkflowId(invokeReq.getWorkflowId());
+		return runWorkflow(runWorkflow);
+	}
 }

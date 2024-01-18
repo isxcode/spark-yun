@@ -29,14 +29,15 @@ public class Execute {
 		String[] sqls = realSql.split(";");
 
 		try (SparkSession sparkSession = initSparkSession(pluginReq)) {
-      for (UdfInfo udf : pluginReq.getUdfList()) {
-        if (UDF.equals(udf.getType())) {
-          sparkSession.udf().registerJava(udf.getFuncName(), udf.getClassName(), getResultType(udf.getResultType()));
-        }else if (UDAF.equals(udf.getType())){
-          sparkSession.udf().registerJavaUDAF(udf.getFuncName(), udf.getClassName());
-        }
+			for (UdfInfo udf : pluginReq.getUdfList()) {
+				if (UDF.equals(udf.getType())) {
+					sparkSession.udf().registerJava(udf.getFuncName(), udf.getClassName(),
+							getResultType(udf.getResultType()));
+				} else if (UDAF.equals(udf.getType())) {
+					sparkSession.udf().registerJavaUDAF(udf.getFuncName(), udf.getClassName());
+				}
 
-      }
+			}
 
 			for (int i = 0; i < sqls.length - 1; i++) {
 				if (!Strings.isEmpty(sqls[i])) {
@@ -48,28 +49,28 @@ public class Execute {
 		}
 	}
 
-  private static DataType getResultType(String resultType) {
-    switch (resultType) {
-      case "string":
-        return DataTypes.StringType;
-      case "int":
-        return DataTypes.IntegerType;
-      case "long":
-        return DataTypes.LongType;
-      case "double":
-        return DataTypes.DoubleType;
-      case "boolean":
-        return DataTypes.BooleanType;
-      case "date":
-        return DataTypes.DateType;
-      case "timestamp":
-        return DataTypes.TimestampType;
-      default:
-        return DataTypes.StringType;
-    }
-  }
+	private static DataType getResultType(String resultType) {
+		switch (resultType) {
+			case "string" :
+				return DataTypes.StringType;
+			case "int" :
+				return DataTypes.IntegerType;
+			case "long" :
+				return DataTypes.LongType;
+			case "double" :
+				return DataTypes.DoubleType;
+			case "boolean" :
+				return DataTypes.BooleanType;
+			case "date" :
+				return DataTypes.DateType;
+			case "timestamp" :
+				return DataTypes.TimestampType;
+			default :
+				return DataTypes.StringType;
+		}
+	}
 
-  public static PluginReq parse(String[] args) {
+	public static PluginReq parse(String[] args) {
 		if (args.length == 0) {
 			throw new RuntimeException("args is empty");
 		}

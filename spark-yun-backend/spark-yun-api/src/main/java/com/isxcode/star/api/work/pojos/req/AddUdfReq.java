@@ -8,9 +8,9 @@ import javax.validation.constraints.NotEmpty;
 @Data
 public class AddUdfReq {
 
-  @Schema(title = "udf类型", example = "UDF|UDAF")
-  @NotEmpty(message = "udf类别不能为空")
-  private String type;
+	@Schema(title = "udf类型", example = "UDF|UDAF")
+	@NotEmpty(message = "udf类别不能为空")
+	private String type;
 
 	@Schema(title = "udf文件id", example = "sy_48c4304593ea4897b6af999e48685896")
 	@NotEmpty(message = "udf文件id不能为空")
@@ -25,7 +25,7 @@ public class AddUdfReq {
 	private String className;
 
 	@Schema(title = "函数返回值类型", example = "值列表：string|int|long|double|boolean|date|timestamp")
-  @NotEmpty(message = "返回值类型不能为空")
+	@NotEmpty(message = "返回值类型不能为空")
 	private String resultType;
 
 	@Schema(title = "启用状态", example = "启用为true，停用为false")

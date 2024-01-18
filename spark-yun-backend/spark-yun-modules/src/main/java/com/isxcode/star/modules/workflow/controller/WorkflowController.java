@@ -15,7 +15,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -188,28 +187,29 @@ public class WorkflowController {
 	// workflowFavourBizService.favourWorkflow(workflowId);
 	// }
 
-  @Operation(summary = "启用外部调用作业流功能")
-  @PostMapping("/onExternalCall")
-  @SuccessResponse("保存成功")
-  public OnExternalCallRes onExternalCall(@Valid @RequestBody OnExternalCallReq onExternalCallReq, HttpServletRequest request) {
+	@Operation(summary = "启用外部调用作业流功能")
+	@PostMapping("/onExternalCall")
+	@SuccessResponse("保存成功")
+	public OnExternalCallRes onExternalCall(@Valid @RequestBody OnExternalCallReq onExternalCallReq,
+			HttpServletRequest request) {
 
-    return workflowConfigBizService.onExternalCall(onExternalCallReq,request);
-  }
+		return workflowConfigBizService.onExternalCall(onExternalCallReq, request);
+	}
 
-  @Operation(summary = "关闭外部调用作业流功能")
-  @PostMapping("/offExternalCall")
-  @SuccessResponse("保存成功")
-  public void offExternalCall(@Valid @RequestBody OffExternalCallReq offExternalCallReq) {
+	@Operation(summary = "关闭外部调用作业流功能")
+	@PostMapping("/offExternalCall")
+	@SuccessResponse("保存成功")
+	public void offExternalCall(@Valid @RequestBody OffExternalCallReq offExternalCallReq) {
 
-    workflowConfigBizService.offExternalCall(offExternalCallReq);
-  }
+		workflowConfigBizService.offExternalCall(offExternalCallReq);
+	}
 
-  @Operation(summary = "外部调用作业流")
-  @PostMapping("/invoke")
-  @SuccessResponse("调用成功")
-  public String invoke(@Valid @RequestBody InvokeReq invokeReq, HttpServletRequest request) {
+	@Operation(summary = "外部调用作业流")
+	@PostMapping("/invoke")
+	@SuccessResponse("调用成功")
+	public String invoke(@Valid @RequestBody InvokeReq invokeReq, HttpServletRequest request) {
 
-    return workflowBizService.invoke(invokeReq,request);
-  }
+		return workflowBizService.invoke(invokeReq, request);
+	}
 
 }

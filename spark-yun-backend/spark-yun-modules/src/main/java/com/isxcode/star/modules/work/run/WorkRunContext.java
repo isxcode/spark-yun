@@ -79,14 +79,14 @@ public class WorkRunContext {
 	 */
 	private StringBuilder logBuilder;
 
-  /**
-   * udf启用状态.
-   */
-  private Boolean udfStatus;
+	/**
+	 * udf启用状态.
+	 */
+	private Boolean udfStatus;
 
-  /**
-   * udf启用状态.
-   */
-  private SparkJarConfigEntity jarConf;
+	/**
+	 * udf启用状态.
+	 */
+	private SparkJarConfigEntity jarConf;
 
 }

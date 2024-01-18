@@ -13,12 +13,12 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UdfInfo {
-  private String type;
+	private String type;
 
-  private String funcName;
+	private String funcName;
 
-  private String className;
+	private String className;
 
-  private String resultType;
+	private String resultType;
 
 }

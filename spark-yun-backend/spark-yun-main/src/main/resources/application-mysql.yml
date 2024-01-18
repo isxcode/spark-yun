@@ -14,17 +14,17 @@ spring:
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:30306/zhiqingyun_0106
+    url: jdbc:mysql://localhost:3306/zhiqingyun
     username: root
-    password: ispong123
+    password: root123
 
   flyway:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:30306/zhiqingyun_0106
+    url: jdbc:mysql://localhost:3306/zhiqingyun
     user: root
-    password: ispong123
+    password: root123
     locations: classpath:db/migration/mysql
-    enabled: false
+    enabled: true
 
 logging:
   level:

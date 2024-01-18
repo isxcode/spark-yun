@@ -15,13 +15,12 @@ import java.util.List;
 @Repository
 @CacheConfig(cacheNames = {"SY_WORK_UDF"})
 public interface UdfRepository extends JpaRepository<UdfEntity, String> {
-  @Query("SELECT u FROM UdfEntity u " + "WHERE " + "(u.funcName LIKE %:searchKeyWord% "
-    + "OR u.className LIKE %:searchKeyWord% "
-    + "OR u.type LIKE %:searchKeyWord% "
-    + "OR u.resultType LIKE %:searchKeyWord%) order by u.createDateTime desc")
-  Page<UdfEntity> pageSearch(@Param("searchKeyWord") String searchKeyWord, Pageable pageable);
+	@Query("SELECT u FROM UdfEntity u " + "WHERE " + "(u.funcName LIKE %:searchKeyWord% "
+			+ "OR u.className LIKE %:searchKeyWord% " + "OR u.type LIKE %:searchKeyWord% "
+			+ "OR u.resultType LIKE %:searchKeyWord%) order by u.createDateTime desc")
+	Page<UdfEntity> pageSearch(@Param("searchKeyWord") String searchKeyWord, Pageable pageable);
 
-  //todo 增加租户过滤
-  List<UdfEntity> findAllByStatus(Boolean status);
+	// todo 增加租户过滤
+	List<UdfEntity> findAllByStatus(Boolean status);
 
 }

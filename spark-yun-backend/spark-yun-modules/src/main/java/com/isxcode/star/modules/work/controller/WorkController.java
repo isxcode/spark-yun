@@ -186,36 +186,36 @@ public class WorkController {
 		return syncWorkBizService.getCreateTableSql(getCreateTableSqlReq);
 	}
 
-  @Operation(summary = "添加udf")
-  @PostMapping("/addUdf")
-  @SuccessResponse("添加成功")
-  public PageUdfRes addUdf(@Valid @RequestBody AddUdfReq addUdfReq) {
+	@Operation(summary = "添加udf")
+	@PostMapping("/addUdf")
+	@SuccessResponse("添加成功")
+	public PageUdfRes addUdf(@Valid @RequestBody AddUdfReq addUdfReq) {
 
-    return workBizService.addUdf(addUdfReq);
-  }
+		return workBizService.addUdf(addUdfReq);
+	}
 
-  @Operation(summary = "更新udf")
-  @PostMapping("/updateUdf")
-  @SuccessResponse("更新成功")
-  public void updateUdf(@Valid @RequestBody UpdateUdfReq updateUdfReq) {
+	@Operation(summary = "更新udf")
+	@PostMapping("/updateUdf")
+	@SuccessResponse("更新成功")
+	public void updateUdf(@Valid @RequestBody UpdateUdfReq updateUdfReq) {
 
-    workBizService.updateUdf(updateUdfReq);
-  }
+		workBizService.updateUdf(updateUdfReq);
+	}
 
-  @Operation(summary = "删除udf")
-  @PostMapping("/deleteUdf")
-  @SuccessResponse("删除成功")
-  public void deleteUdf(@Valid @RequestBody DeleteUdfReq deleteUdfReq) {
+	@Operation(summary = "删除udf")
+	@PostMapping("/deleteUdf")
+	@SuccessResponse("删除成功")
+	public void deleteUdf(@Valid @RequestBody DeleteUdfReq deleteUdfReq) {
 
-    workBizService.deleteUdf(deleteUdfReq);
-  }
+		workBizService.deleteUdf(deleteUdfReq);
+	}
 
-  @Operation(summary = "查询udf")
-  @PostMapping("/pageUdf")
-  @SuccessResponse("查询成功")
-  public Page<PageUdfRes> pageUdf(@Valid @RequestBody PageUdfReq pageUdfReq) {
+	@Operation(summary = "查询udf")
+	@PostMapping("/pageUdf")
+	@SuccessResponse("查询成功")
+	public Page<PageUdfRes> pageUdf(@Valid @RequestBody PageUdfReq pageUdfReq) {
 
-    return workBizService.getUdf(pageUdfReq);
-  }
+		return workBizService.getUdf(pageUdfReq);
+	}
 
 }

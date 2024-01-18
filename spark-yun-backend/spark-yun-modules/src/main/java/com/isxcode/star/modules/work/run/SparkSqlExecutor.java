@@ -62,36 +62,37 @@ public class SparkSqlExecutor extends WorkExecutor {
 
 	private final WorkRepository workRepository;
 
-  private final UdfRepository udfRepository;
+	private final UdfRepository udfRepository;
 
 	private final WorkConfigRepository workConfigRepository;
 
-  private final FileRepository fileRepository;
+	private final FileRepository fileRepository;
 
-  private final ClusterNodeMapper clusterNodeMapper;
+	private final ClusterNodeMapper clusterNodeMapper;
 
-  private final AesUtils aesUtils;
+	private final AesUtils aesUtils;
 
-  private final Locker locker;
+	private final Locker locker;
 
 	private final HttpUrlUtils httpUrlUtils;
 
 	public SparkSqlExecutor(WorkInstanceRepository workInstanceRepository, ClusterRepository clusterRepository,
-                          ClusterNodeRepository clusterNodeRepository, WorkflowInstanceRepository workflowInstanceRepository,
-                          WorkRepository workRepository, UdfRepository udfRepository, WorkConfigRepository workConfigRepository, FileRepository fileRepository, ClusterNodeMapper clusterNodeMapper, AesUtils aesUtils, Locker locker,
-                          HttpUrlUtils httpUrlUtils) {
+			ClusterNodeRepository clusterNodeRepository, WorkflowInstanceRepository workflowInstanceRepository,
+			WorkRepository workRepository, UdfRepository udfRepository, WorkConfigRepository workConfigRepository,
+			FileRepository fileRepository, ClusterNodeMapper clusterNodeMapper, AesUtils aesUtils, Locker locker,
+			HttpUrlUtils httpUrlUtils) {
 
 		super(workInstanceRepository, workflowInstanceRepository);
 		this.workInstanceRepository = workInstanceRepository;
 		this.clusterRepository = clusterRepository;
 		this.clusterNodeRepository = clusterNodeRepository;
 		this.workRepository = workRepository;
-    this.udfRepository = udfRepository;
-    this.workConfigRepository = workConfigRepository;
-    this.fileRepository = fileRepository;
-    this.clusterNodeMapper = clusterNodeMapper;
-    this.aesUtils = aesUtils;
-    this.locker = locker;
+		this.udfRepository = udfRepository;
+		this.workConfigRepository = workConfigRepository;
+		this.fileRepository = fileRepository;
+		this.clusterNodeMapper = clusterNodeMapper;
+		this.aesUtils = aesUtils;
+		this.locker = locker;
 		this.httpUrlUtils = httpUrlUtils;
 	}
 
@@ -143,41 +144,32 @@ public class SparkSqlExecutor extends WorkExecutor {
 				.mainClass("com.isxcode.star.plugin.query.sql.Execute").appResource("spark-query-sql-plugin.jar")
 				.conf(genSparkSubmitConfig(workRunContext.getClusterConfig().getSparkConfig())).build();
 
-    List<UdfInfo> udfs = new ArrayList<>();
-    if (workRunContext.getUdfStatus()!=null && workRunContext.getUdfStatus()) {
-      ScpFileEngineNodeDto scpFileEngineNodeDto = clusterNodeMapper.engineNodeEntityToScpFileEngineNodeDto(engineNode);
-      scpFileEngineNodeDto.setPasswd(aesUtils.decrypt(scpFileEngineNodeDto.getPasswd()));
+		List<UdfInfo> udfs = new ArrayList<>();
+		if (workRunContext.getUdfStatus() != null && workRunContext.getUdfStatus()) {
+			ScpFileEngineNodeDto scpFileEngineNodeDto = clusterNodeMapper
+					.engineNodeEntityToScpFileEngineNodeDto(engineNode);
+			scpFileEngineNodeDto.setPasswd(aesUtils.decrypt(scpFileEngineNodeDto.getPasswd()));
 
-      udfRepository.findAllByStatus(true).forEach(udf -> {udfs.add(UdfInfo.builder()
-        .type(udf.getType())
-        .funcName(udf.getFuncName())
-        .className(udf.getClassName())
-        .resultType(udf.getResultType()).build());
+			udfRepository.findAllByStatus(true).forEach(udf -> {
+				udfs.add(UdfInfo.builder().type(udf.getType()).funcName(udf.getFuncName()).className(udf.getClassName())
+						.resultType(udf.getResultType()).build());
 
-        Optional<FileEntity> fileEntityOptional = fileRepository.findById(udf.getFileId());
-        //传输udf文件
-        try {
-          scpFile(
-            scpFileEngineNodeDto,
-            "/" + fileEntityOptional.get().getFilePath(),
-            engineNode.getAgentHomePath()
-              + File.separator
-              + PathConstants.AGENT_PATH_NAME
-              + File.separator
-              + "lib"
-              + File.separator
-              + fileEntityOptional.get().getFileName());
-        } catch (JSchException | SftpException | InterruptedException | IOException e) {
-          throw new RuntimeException(e);
-        }
+				Optional<FileEntity> fileEntityOptional = fileRepository.findById(udf.getFileId());
+				// 传输udf文件
+				try {
+					scpFile(scpFileEngineNodeDto, "/" + fileEntityOptional.get().getFilePath(),
+							engineNode.getAgentHomePath() + File.separator + PathConstants.AGENT_PATH_NAME
+									+ File.separator + "lib" + File.separator + fileEntityOptional.get().getFileName());
+				} catch (JSchException | SftpException | InterruptedException | IOException e) {
+					throw new RuntimeException(e);
+				}
 
-      });
-    }
+			});
+		}
 
 		// 开始构造PluginReq
 		PluginReq pluginReq = PluginReq.builder().sql(workRunContext.getScript()).limit(200)
-				.sparkConfig(genSparkConfig(workRunContext.getClusterConfig().getSparkConfig()))
-      .udfList(udfs).build();
+				.sparkConfig(genSparkConfig(workRunContext.getClusterConfig().getSparkConfig())).udfList(udfs).build();
 
 		// 开始构造executeReq
 		executeReq.setSparkSubmit(sparkSubmit);

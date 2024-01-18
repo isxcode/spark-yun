@@ -7,17 +7,17 @@ import lombok.Data;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class PageUdfRes {
 
-  private String id;
+	private String id;
 
-  private String type;
+	private String type;
 
-  private String udfFileId;
+	private String udfFileId;
 
-  private String funcName;
+	private String funcName;
 
-  private String className;
+	private String className;
 
-  private String resultType;
+	private String resultType;
 
-  private Boolean status;
+	private Boolean status;
 }

@@ -1,4 +1,0 @@
-ALTER TABLE SY_WORKFLOW_CONFIG ADD external_call CHAR NULL;
-ALTER TABLE SY_WORKFLOW_CONFIG CHANGE external_call external_call CHAR NULL AFTER dag_end_list;
-ALTER TABLE SY_WORKFLOW_CONFIG ADD access_key varchar(100) NULL;
-ALTER TABLE SY_WORKFLOW_CONFIG CHANGE access_key access_key varchar(100) NULL AFTER external_call;

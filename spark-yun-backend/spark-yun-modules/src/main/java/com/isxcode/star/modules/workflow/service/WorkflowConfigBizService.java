@@ -104,28 +104,28 @@ public class WorkflowConfigBizService {
 		workflowConfigRepository.save(workflowConfig);
 	}
 
-  public OnExternalCallRes onExternalCall(OnExternalCallReq onExternalCallReq, HttpServletRequest request) {
-    String workflowConfigId = onExternalCallReq.getWorkflowConfigId();
+	public OnExternalCallRes onExternalCall(OnExternalCallReq onExternalCallReq, HttpServletRequest request) {
+		String workflowConfigId = onExternalCallReq.getWorkflowConfigId();
 
-    WorkflowConfigEntity workflowConfig = getWorkflowConfig(workflowConfigId);
-    String accessKey = workflowConfig.getAccessKey();
-    if (null == accessKey || "".equals(accessKey)) {
-      accessKey = UUID.randomUUID().toString();
-      workflowConfig.setAccessKey(accessKey);
-    }
-    workflowConfig.setExternalCall(ON);
-    workflowConfigRepository.saveAndFlush(workflowConfig);
-    String url = request.getRequestURL().toString().replace("/workflow/onExternalCall","/workflow/invoke");
-    return OnExternalCallRes.builder().url(url).accessKey(accessKey).build();
+		WorkflowConfigEntity workflowConfig = getWorkflowConfig(workflowConfigId);
+		String accessKey = workflowConfig.getAccessKey();
+		if (null == accessKey || "".equals(accessKey)) {
+			accessKey = UUID.randomUUID().toString();
+			workflowConfig.setAccessKey(accessKey);
+		}
+		workflowConfig.setExternalCall(ON);
+		workflowConfigRepository.saveAndFlush(workflowConfig);
+		String url = request.getRequestURL().toString().replace("/workflow/onExternalCall", "/workflow/invoke");
+		return OnExternalCallRes.builder().url(url).accessKey(accessKey).build();
 
-  }
+	}
 
-  public void offExternalCall(OffExternalCallReq offExternalCallReq) {
-    String workflowConfigId = offExternalCallReq.getWorkflowConfigId();
+	public void offExternalCall(OffExternalCallReq offExternalCallReq) {
+		String workflowConfigId = offExternalCallReq.getWorkflowConfigId();
 
-    WorkflowConfigEntity workflowConfig = getWorkflowConfig(workflowConfigId);
-    workflowConfig.setExternalCall(OFF);
-    workflowConfigRepository.save(workflowConfig);
-  }
+		WorkflowConfigEntity workflowConfig = getWorkflowConfig(workflowConfigId);
+		workflowConfig.setExternalCall(OFF);
+		workflowConfigRepository.save(workflowConfig);
+	}
 
 }
