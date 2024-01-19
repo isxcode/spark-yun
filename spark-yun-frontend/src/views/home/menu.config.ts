@@ -9,6 +9,13 @@ export interface Menu {
 // ROLE_SYS_ADMIN
 export const menuListData: Array<Menu> = [
   {
+    code: 'index',
+    name: '首页',
+    icon: 'Monitor',
+    authType: [ 'ROLE_TENANT_MEMBER', 'ROLE_TENANT_ADMIN' ],
+    childPage: []
+  },
+  {
     code: 'computer-group',
     name: '计算集群',
     icon: 'UploadFilled',
