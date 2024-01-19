@@ -47,12 +47,6 @@ public class WorkflowConfigEntity {
 
 	private String cronConfig;
 
-	private char externalCall;
-
-	private String accessKey;
-
-	private String corn;
-
 	@CreatedDate
 	private LocalDateTime createDateTime;
 
