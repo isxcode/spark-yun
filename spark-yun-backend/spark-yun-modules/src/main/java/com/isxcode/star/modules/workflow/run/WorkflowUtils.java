@@ -145,8 +145,7 @@ public class WorkflowUtils {
 				.syncWorkConfig(JSON.parseObject(workConfig.getSyncWorkConfig(), SyncWorkConfig.class))
 				.syncRule(JSON.parseObject(workConfig.getSyncRule(), SyncRule.class)).workType(work.getWorkType())
 				.workId(work.getId()).workName(work.getName()).userId(USER_ID.get())
-				.udfStatus(workConfig.getUdfStatus())
-				.jarConf(JSON.parseObject(workConfig.getJarConf(), SparkJarConfigEntity.class)).build();
+			  .build();
 	}
 
 	public static WorkRunContext genWorkRunContext(String instanceId, VipWorkVersionEntity workVersion,
