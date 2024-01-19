@@ -50,10 +50,6 @@ public class WorkConfigEntity {
 
 	private String clusterConfig;
 
-	private Boolean udfStatus;
-
-	private String jarConf;
-
 	@CreatedDate
 	private LocalDateTime createDateTime;
 
