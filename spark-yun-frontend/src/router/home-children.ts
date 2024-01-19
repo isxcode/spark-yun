@@ -1,5 +1,6 @@
 // 开源免费部分
-import ComputerGroup from '@/views/computer-group/index.vue'
+import Index from '@/views/computer-group/index.vue'
+import ComputerGroup from '@/views/computer-group-v1/index.vue'
 import ComputerPointer from '@/views/computer-group-v1/computer-pointer/index.vue'
 import DataSource from '@/views/datasource/index.vue'
 import Workflow from '@/views/workflow/index.vue'
@@ -22,6 +23,11 @@ import CustomFormSetting from '@/views/custom-form/form-setting/index.vue'
 import CustomApi from '@/views/custom-api/index.vue'
 
 export default [
+  {
+    path: 'index',
+    name: 'index',
+    component: Index
+  },
   {
     path: 'computer-group',
     name: 'computer-group',
