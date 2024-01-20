@@ -12,7 +12,6 @@ import com.isxcode.star.api.work.pojos.dto.SyncWorkConfig;
 import com.isxcode.star.api.workflow.pojos.dto.NodeInfo;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.star.common.utils.jgrapht.JgraphtUtils;
-import com.isxcode.star.modules.work.entity.SparkJarConfigEntity;
 import com.isxcode.star.modules.work.entity.VipWorkVersionEntity;
 import com.isxcode.star.modules.work.entity.WorkConfigEntity;
 import com.isxcode.star.modules.work.entity.WorkEntity;
@@ -144,8 +143,7 @@ public class WorkflowUtils {
 				.clusterConfig(JSON.parseObject(workConfig.getClusterConfig(), ClusterConfig.class))
 				.syncWorkConfig(JSON.parseObject(workConfig.getSyncWorkConfig(), SyncWorkConfig.class))
 				.syncRule(JSON.parseObject(workConfig.getSyncRule(), SyncRule.class)).workType(work.getWorkType())
-				.workId(work.getId()).workName(work.getName()).userId(USER_ID.get())
-			  .build();
+				.workId(work.getId()).workName(work.getName()).userId(USER_ID.get()).build();
 	}
 
 	public static WorkRunContext genWorkRunContext(String instanceId, VipWorkVersionEntity workVersion,
