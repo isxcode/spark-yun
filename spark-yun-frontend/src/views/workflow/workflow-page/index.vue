@@ -34,7 +34,7 @@
                                 <div class="item-right">
                                     <span class="label-type">{{ workTypeName(work.workType) }}</span>
                                     <!-- <span class="label-name">{{ work.name + work.name + work.name || '-' }}</span> -->
-                                    <span class="label-name"><EllipsisTooltip class="label-name-text" :label="work.name + work.name + work.name" /></span>
+                                    <span class="label-name"><EllipsisTooltip class="label-name-text" :label="work.name" /></span>
                                 </div>
                                 <el-dropdown trigger="click">
                                     <el-icon class="option-more" @click.stop>
