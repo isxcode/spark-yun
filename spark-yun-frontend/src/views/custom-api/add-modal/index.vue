@@ -107,6 +107,9 @@
             </div>
           </div>
         </el-form-item>
+        <el-form-item label="开启分页">
+          <el-switch v-model="formData.pageType" />
+        </el-form-item>
         <el-form-item label="请求体设置" prop="reqBody" :class="{ 'show-screen__full': reqBodyFullStatus }">
           <el-icon class="modal-full-screen" @click="fullScreenEvent('reqBodyFullStatus')"><FullScreen v-if="!reqBodyFullStatus" /><Close v-else /></el-icon>
           <code-mirror v-model="formData.reqBody" basic :lang="jsonLang"/>
@@ -114,9 +117,6 @@
         <el-form-item label="SQL设置" prop="apiSql" :class="{ 'show-screen__full': sqlFullStatus }">
           <el-icon class="modal-full-screen" @click="fullScreenEvent('sqlFullStatus')"><FullScreen v-if="!sqlFullStatus" /><Close v-else /></el-icon>
           <code-mirror v-model="formData.apiSql" basic :lang="sqlLang"/>
-        </el-form-item>
-        <el-form-item label="开启分页">
-          <el-switch v-model="formData.pageType" />
         </el-form-item>
         <el-form-item label="返回体设置（成功/失败）" prop="resBody" :class="{ 'show-screen__full': respBodyFullStatus }">
           <el-icon class="modal-full-screen" @click="fullScreenEvent('respBodyFullStatus')"><FullScreen v-if="!respBodyFullStatus" /><Close v-else /></el-icon>
@@ -132,7 +132,7 @@
       <template v-if="stepIndex === 1">
         <el-button @click="closeEvent">取消</el-button>
         <el-button type="primary" @click="stepIndex = 0">上一步</el-button>
-        <el-button type="primary" @click="okEvent">确定</el-button>
+        <el-button :loading="okLoading" type="primary" @click="okEvent">确定</el-button>
       </template>
     </template>
   </BlockModal>
@@ -153,6 +153,17 @@ interface Option {
   value: string
 }
 
+const optionsRule = (rule: any, value: any, callback: any) => {
+    const valueList = (value || []).map(v => v.value).filter(v => !!v)
+    if (value && value.some((item: Option) => !item.label || !item.value)) {
+        callback(new Error('请将键/值输入完整'))
+    } else if (value && valueList.length !== Array.from(new Set(valueList)).length) {
+        callback(new Error('值重复，请重新输入'))
+    } else {
+        callback()
+    }
+}
+
 const form = ref<FormInstance>()
 const callback = ref<any>()
 const uploadRef = ref()
@@ -168,6 +179,8 @@ const sqlFullStatus = ref(false)
 const respBodyFullStatus = ref(false)
 const isEdit = ref(false)
 const stepIndex = ref(0)
+
+const okLoading = ref(false)
 
 const modelConfig = reactive({
   title: '添加接口',
@@ -225,7 +238,7 @@ const rules = reactive<FormRules>({
   path: [{ required: true, message: '请输入自定义访问路径', trigger: [ 'blur', 'change' ]}],
   // clusterId: [{ required: true, message: '请选择计算集群', trigger: [ 'blur', 'change' ]}],
   datasourceId: [{ required: true, message: '请选择数据源', trigger: [ 'blur', 'change' ]}],
-  headerToken: [{ required: true, message: '请输入请求头设置', trigger: [ 'blur', 'change' ]}],
+  headerToken: [{ validator: optionsRule, trigger: ['blur', 'change'] }],
   reqBody: [{ required: true, message: '请输入请求体设置', trigger: [ 'blur', 'change' ]}],
   apiSql: [{ required: true, message: '请输入SQL设置', trigger: [ 'blur', 'change' ]}],
   resBody: [{ required: true, message: '请输入返回体设置（成功/失败）', trigger: [ 'blur', 'change' ]}],
@@ -329,14 +342,14 @@ function removeItem(index: number) {
 function okEvent() {
   form.value?.validate((valid) => {
     if (valid) {
-      modelConfig.okConfig.loading = true
+      okLoading.value = true
       callback
         .value({
           ...formData,
           id: formData.id ? formData.id : undefined
         })
         .then((res: any) => {
-          modelConfig.okConfig.loading = false
+          okLoading.value = false
           if (res === undefined) {
             modelConfig.visible = false
           } else {
@@ -344,7 +357,7 @@ function okEvent() {
           }
         })
         .catch(() => {
-          modelConfig.okConfig.loading = false
+          okLoading.value = false
         })
     } else {
       ElMessage.warning('请将表单输入完整')
