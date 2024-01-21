@@ -3,6 +3,7 @@
         <el-switch
             v-model="formData"
             :width="32"
+            :disabled="formConfig.codeType === 'table'"
         >
         </el-switch>
     </el-form-item>
@@ -11,7 +12,7 @@
 <script lang="ts" setup>
 import { defineProps, defineEmits, computed } from 'vue'
 
-const props = defineProps(['renderSence', 'modelValue', 'formConfig',])
+const props = defineProps(['renderSence', 'modelValue', 'formConfig'])
 const emit = defineEmits(['update:modelValue'])
 const formData = computed({
     get() {

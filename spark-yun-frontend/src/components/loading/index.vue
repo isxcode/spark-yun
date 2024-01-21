@@ -38,9 +38,9 @@ import { defineProps, withDefaults, ref, watch, defineEmits, onMounted, onBefore
 
 const props: any = withDefaults(
   defineProps<{
-    visible: boolean;
+    visible?: boolean;
     timer?: number;
-    networkError: boolean;
+    networkError?: boolean;
   }>(),
   {
     visible: false,

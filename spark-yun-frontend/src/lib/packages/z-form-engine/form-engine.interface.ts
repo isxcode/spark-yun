@@ -1,6 +1,7 @@
 export interface ComponentInstance {
     componentType: string
     formValueCode: string
+    maxlength?: number
     label: string
     placeholder: string
     uuid: string

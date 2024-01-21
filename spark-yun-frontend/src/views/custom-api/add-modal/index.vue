@@ -1,5 +1,9 @@
 <template>
   <BlockModal :model-config="modelConfig">
+    <el-steps class="custom-api-form__step" :active="stepIndex" finish-status="success">
+      <el-step title="基础配置" />
+      <el-step title="接口配置" />
+    </el-steps>
     <el-form
       ref="form"
       class="custom-api-form"
@@ -7,9 +11,9 @@
       :model="formData"
       :rules="rules"
     >
-      <div class="api-item">
+      <div class="api-item" v-if="stepIndex === 0">
         <!-- 基础配置 -->
-        <div class="item-title">基础配置</div>
+        <!-- <div class="item-title">基础配置</div> -->
         <el-form-item
           label="名称"
           prop="name"
@@ -71,19 +75,37 @@
           />
         </el-form-item>
       </div>
-      <div class="api-item">
+      <div class="api-item" v-if="stepIndex === 1">
         <!-- 接口配置 -->
-        <div class="item-title">请求配置</div>
+        <!-- <div class="item-title">请求配置</div> -->
         <el-form-item label="请求头模式">
-          <el-radio-group v-model="formData.tokenType" size="small">
+          <el-radio-group v-model="formData.tokenType" size="small" @change="tokenTypeChangeEvent">
             <el-radio-button label="ANONYMOUS">任何人访问</el-radio-button>
             <el-radio-button label="SYSTEM">系统认证</el-radio-button>
             <el-radio-button label="CUSTOM">自定义</el-radio-button>
           </el-radio-group>
         </el-form-item>
         <el-form-item v-if="formData.tokenType === 'CUSTOM'" label="请求头设置" prop="headerToken" :class="{ 'show-screen__full': reqHeaderFullStatus }">
-          <el-icon class="modal-full-screen" @click="fullScreenEvent('reqHeaderFullStatus')"><FullScreen v-if="!reqHeaderFullStatus" /><Close v-else /></el-icon>
-          <code-mirror v-model="formData.headerToken" basic :lang="jsonLang"/>
+          <!-- <el-icon class="modal-full-screen" @click="fullScreenEvent('reqHeaderFullStatus')"><FullScreen v-if="!reqHeaderFullStatus" /><Close v-else /></el-icon>
+          <code-mirror v-model="formData.headerToken" basic :lang="jsonLang"/> -->
+          <span class="add-btn">
+            <el-icon @click="addNewOption"><CirclePlus /></el-icon>
+          </span>
+          <div class="form-options__list">
+            <div class="form-options__item" v-for="(element, index) in formData.headerToken">
+              <div class="input-item">
+                <span class="item-label">键</span>
+                <el-input v-model="element.label" placeholder="请输入"></el-input>
+              </div>
+              <div class="input-item">
+                <span class="item-label">值</span>
+                <el-input v-model="element.value" placeholder="请输入"></el-input>
+              </div>
+              <div class="option-btn">
+                <el-icon v-if="formData.headerToken.length > 1" class="remove" @click="removeItem(index)"><CircleClose /></el-icon>
+              </div>
+            </div>
+          </div>
         </el-form-item>
         <el-form-item label="请求体设置" prop="reqBody" :class="{ 'show-screen__full': reqBodyFullStatus }">
           <el-icon class="modal-full-screen" @click="fullScreenEvent('reqBodyFullStatus')"><FullScreen v-if="!reqBodyFullStatus" /><Close v-else /></el-icon>
@@ -102,6 +124,17 @@
         </el-form-item>
       </div>
     </el-form>
+    <template #customLeft>
+      <template v-if="stepIndex === 0">
+        <el-button @click="closeEvent">取消</el-button>
+        <el-button type="primary" @click="nextStepEvent">下一步</el-button>
+      </template>
+      <template v-if="stepIndex === 1">
+        <el-button @click="closeEvent">取消</el-button>
+        <el-button type="primary" @click="stepIndex = 0">上一步</el-button>
+        <el-button type="primary" @click="okEvent">确定</el-button>
+      </template>
+    </template>
   </BlockModal>
 </template>
 
@@ -114,6 +147,11 @@ import { GetComputerGroupList } from '@/services/computer-group.service'
 import CodeMirror from 'vue-codemirror6'
 import {json} from '@codemirror/lang-json'
 import {sql} from '@codemirror/lang-sql'
+
+interface Option {
+  label: string
+  value: string
+}
 
 const form = ref<FormInstance>()
 const callback = ref<any>()
@@ -129,27 +167,42 @@ const reqBodyFullStatus = ref(false)
 const sqlFullStatus = ref(false)
 const respBodyFullStatus = ref(false)
 const isEdit = ref(false)
+const stepIndex = ref(0)
 
 const modelConfig = reactive({
   title: '添加接口',
   visible: false,
   width: '60%',
-  okConfig: {
-    title: '确定',
-    ok: okEvent,
-    disabled: false,
-    loading: false
-  },
+  // okConfig: {
+  //   title: '确定',
+  //   ok: okEvent,
+  //   disabled: false,
+  //   loading: false
+  // },
   cancelConfig: {
     title: '取消',
     cancel: closeEvent,
-    disabled: false
+    disabled: false,
+    hide: true
   },
   needScale: false,
   zIndex: 1100,
   closeOnClickModal: false
 })
-const formData = reactive({
+const formData = reactive<{
+  id: string
+  name: string
+  apiType: string
+  path: string
+  datasourceId: string
+  remark: string
+  tokenType: string
+  headerToken: Option[]
+  reqBody: string | null
+  apiSql: string | null
+  pageType: boolean
+  resBody: string | null
+}>({
   id: '',
   // 基础配置
   name: '',             // 名称
@@ -160,7 +213,7 @@ const formData = reactive({
   remark: '',           // 备注
   // 请求配置
   tokenType: 'ANONYMOUS',    // 请求头模式
-  headerToken: null,   // 请求头设置
+  headerToken: [],   // 请求头设置
   reqBody: null,     // 请求体设置
   apiSql: null,      // SQL设置
   pageType: false,  // 是否分页
@@ -180,6 +233,7 @@ const rules = reactive<FormRules>({
 
 function showModal(cb: () => void, data: any): void {
   callback.value = cb
+  stepIndex.value = 0
   modelConfig.visible = true
   if (data) {
     Object.keys(formData).forEach(key => {
@@ -242,6 +296,36 @@ function getDataSourceList(e: boolean, searchType?: string) {
     }
 }
 
+function nextStepEvent() {
+  form.value?.validate((valid) => {
+    if (valid) {
+      stepIndex.value = 1
+    } else {
+      ElMessage.warning('请将表单输入完整')
+    }
+  })
+}
+
+function tokenTypeChangeEvent(e: string) {
+  if (e === 'CUSTOM') {
+    formData.headerToken = [
+      {
+        label: '',
+        value: ''
+      }
+    ]
+  }
+}
+function addNewOption() {
+    formData.headerToken.push({
+        label: '',
+        value: ''
+    })
+}
+function removeItem(index: number) {
+    formData.headerToken.splice(index, 1)
+}
+
 function okEvent() {
   form.value?.validate((valid) => {
     if (valid) {
@@ -290,6 +374,38 @@ defineExpose({
 </script>
 
 <style lang="scss">
+.custom-api-form__step {
+  margin: auto;
+  padding-top: 20px;
+  position: sticky;
+  top: 0;
+  background: #ffffff;
+  z-index: 10;
+  padding-left: 25%;
+  padding-right: 25%;
+  box-sizing: border-box;
+  border-bottom: 1px solid getCssVar('border-color');
+  .el-step__head {
+    &.is-process {
+      color: getCssVar('color', 'primary');
+      .el-step__line {
+        // background-color: getCssVar('color', 'primary');
+      }
+      .el-step__icon {
+        border-color: getCssVar('color', 'primary');
+      }
+    }
+  }
+  .el-step__main {
+    margin-left: -12px;
+    .el-step__title {
+      font-size: 12px;
+      &.is-process {
+        color: getCssVar('color', 'primary');
+      }
+    }
+  }
+}
 .custom-api-form {
   box-sizing: border-box;
   padding: 12px 20px 0 20px;
@@ -327,7 +443,7 @@ defineExpose({
           right: 0;
           cursor: pointer;
           &:hover {
-            color: getCssVar('color', 'primary');;
+            color: getCssVar('color', 'primary');
           }
         }
         .vue-codemirror {
@@ -377,6 +493,59 @@ defineExpose({
             }
           }
         }
+      }
+      .add-btn {
+          position: absolute;
+          right: 0;
+          top: -32px;
+          .el-icon {
+              color: getCssVar('color', 'primary');
+              cursor: pointer;
+              font-size: 16px;
+          }
+      }
+      .form-options__list {
+          width: 100%;
+          max-height: 210px;
+          overflow: auto;
+          .form-options__item {
+              display: flex;
+              margin-bottom: 8px;
+              .input-item {
+                  display: flex;
+                  font-size: 12px;
+                  margin-right: 8px;
+                  color: #303133;
+                  width: 100%;
+                  .item-label {
+                      margin-right: 8px;
+                  }
+                  .el-input {
+                      .el-input__wrapper {
+                          // padding: 0;
+                      }
+                  }
+              }
+              .option-btn {
+                  display: flex;
+                  height: 32px;
+                  align-items: center;
+                  .remove {
+                      color: red;
+                      cursor: pointer;
+                      margin-right: 8px;
+                      &:hover {
+                          color: getCssVar('color', 'primary');
+                      }
+                  }
+                  .move {
+                      color: getCssVar('color', 'primary');
+                      &:active {
+                          cursor: move;
+                      }
+                  }
+              }
+          }
       }
     }
   }

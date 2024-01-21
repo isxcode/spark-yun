@@ -15,6 +15,7 @@
                         :formConfig="formConfig"
                         :is="getConfigComponentName(config)"
                         :getTableCodesMethod="getTableCodesMethod"
+                        @formConfigChange="formConfigChange"
                     ></component>
                 </template>
             </el-form>
@@ -31,7 +32,7 @@ import FormSetConfig from './form-set-config'
 import FormConfigConmponents from './form-config-components'
 
 const props = defineProps(['modelValue', 'configList', 'formConfig', 'getTableCodesMethod'])
-const emit = defineEmits(['update:modelValue', 'componentListChange'])
+const emit = defineEmits(['update:modelValue', 'componentListChange', 'formConfigChange'])
 const formData = computed({
     get() {
         return props.modelValue
@@ -65,6 +66,10 @@ const getConfigComponentKey = computed(() => {
         return configInstance.formConfigValueCode
     }
 })
+
+function formConfigChange(e: any) {
+    emit('formConfigChange', e)
+}
 
 function validateChange(prop: string, isValid: boolean, message: string): void {
     props.formConfig.valid = isValid

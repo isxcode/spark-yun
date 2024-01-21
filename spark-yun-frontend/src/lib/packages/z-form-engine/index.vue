@@ -28,6 +28,7 @@
             :formConfig="instanceConfig.chooseItemData"
             :configList="instanceConfig.chooseItemConfigList"
             :getTableCodesMethod="getTableCodesMethod"
+            @formConfigChange="formConfigChange"
         ></form-components-config>
     </div>
 </template>
@@ -126,6 +127,16 @@ function removeInstance(e: ComponentInstance) {
     componentList.value = componentList.value.filter((config: ComponentInstance) => config.uuid !== e.uuid)
 }
 
+// 右侧配置事件
+function formConfigChange(e: any) {
+    componentList.value.forEach(c => {
+        if (c.uuid === e.uuid) {
+            c.required = e.required
+            c.maxlength = e.maxlength
+        }
+    })
+}
+
 // expose method
 function getFormItemConfigList() {
     if (componentList.value.some(item => !item.valid)) {
@@ -150,6 +161,5 @@ defineExpose({
     width: 100%;
     display: flex;
     height: 100%;
-    // height: calc(100vh - 4px);
 }
 </style>

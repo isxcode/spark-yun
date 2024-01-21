@@ -21,7 +21,7 @@
     >
       <slot name="customLeft" />
       <el-button
-        v-if="modelConfig.cancelConfig"
+        v-if="modelConfig.cancelConfig && !modelConfig.cancelConfig.hide"
         :disabled="modelConfig.cancelConfig.disabled || false"
         @click="clickToCancel"
       >
@@ -47,6 +47,7 @@ interface BtnConfig {
   title: string;
   disabled: boolean;
   loading: boolean;
+  hide?: boolean
 }
 
 interface OkBtnConfig extends BtnConfig {

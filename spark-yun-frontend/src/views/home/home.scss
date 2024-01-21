@@ -27,6 +27,7 @@
       height: 100px;
       flex-direction: column;
       justify-content: space-evenly;
+      border-right: 0;
     }
 
     .zqy-home__menu-wrap {
@@ -130,7 +131,8 @@
     padding: 0 16px;
     width: 220px;
     background-color: getCssVar('color', 'white');
-    transition: getCssVar('transition-duration') width ease-in-out
+    transition: getCssVar('transition-duration') width ease-in-out;
+    border-right: 1px solid var(--el-border-color);
   }
 }
 

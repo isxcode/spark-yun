@@ -8,8 +8,8 @@
     >
         <div class="form-code-select__type">
             <el-radio-group v-model="formConfig.codeType" class="ml-4" @change="codeTypeChange">
-                <el-radio label="custom" size="small">字段编码</el-radio>
                 <el-radio label="table" size="small">表字段</el-radio>
+                <el-radio label="custom" size="small">字段编码</el-radio>
             </el-radio-group>
         </div>
         <template v-if="formConfig.codeType === 'custom'">
@@ -22,6 +22,7 @@
                 filterable
                 placeholder="请选择"
                 @visible-change="visibleChange"
+                @change="changeEvent"
             >
                 <el-option
                     v-for="item in tableCodeList"
@@ -43,10 +44,12 @@ import { defineProps, defineEmits, computed, ref, watch, nextTick } from 'vue'
 interface Option {
     label: string
     value: string
+    required?: boolean
+    maxlength?: number
 }
 
 const props = defineProps(['renderSence', 'modelValue', 'formConfig', 'getTableCodesMethod'])
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(['update:modelValue', 'formConfigChange'])
 const formData = computed({
     get() {
         return props.modelValue
@@ -69,7 +72,7 @@ const rulesSelect = ref([
         trigger: ['blur', 'change']
     }
 ])
-const tableCodeList = ref<Option[]>([])
+const tableCodeList = ref<any[]>([])
 const loading = ref(false)
 const elFormItemRef = ref()
 
@@ -91,6 +94,25 @@ function visibleChange(e: boolean) {
             tableCodeList.value = res
         }).catch((err: any) => {
             loading.value = false
+        })
+    }
+}
+function changeEvent(e: string) {
+    const config = tableCodeList.value.find(o => o.value === e)
+    const changeAttr: any = {
+        required: undefined,
+        maxlength: undefined
+    }
+    if (config) {
+        if (config.required) {
+            changeAttr.required = true
+        }
+        if (config.maxlength) {
+            changeAttr.maxlength = config.maxlength
+        }
+        emit('formConfigChange', {
+            ...props.formConfig,
+            ...changeAttr
         })
     }
 }

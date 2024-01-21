@@ -197,8 +197,8 @@ function editFormConfigEvent() {
     router.push({
         name: 'form-setting',
         query: {
-          id: route.query.id,
-        //   name: data.name
+            id: route.query.id,
+            formVersion: route.query.formVersion
         }
     })
 }
