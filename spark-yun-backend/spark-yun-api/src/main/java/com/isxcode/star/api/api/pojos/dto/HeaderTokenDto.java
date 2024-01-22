@@ -7,7 +7,7 @@ import lombok.Data;
 public class HeaderTokenDto {
 
 	@Schema(title = "自定义token的key", example = "key")
-	private String tokenName;
+	private String label;
 
 	@Schema(title = "token令牌的值", example = "123456")
 	private String value;

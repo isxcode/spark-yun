@@ -8,6 +8,8 @@ import javax.validation.constraints.NotNull;
 
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 public class AddApiReq {
 
@@ -36,7 +38,7 @@ public class AddApiReq {
 	private Boolean pageType;
 
 	@Schema(title = "如果用户使用自定义认证方式，需要填写", example = "")
-	private HeaderTokenDto headerToken;
+	private List<HeaderTokenDto> headerToken;
 
 	@Schema(title = "请求体", example = "{\n" + "    \"age\":\"$age\",\n" + "    \"page\":\"$system.page\",\n"
 			+ "    \"pageSize\":\"$system.pageSize\"\n" + "}")
