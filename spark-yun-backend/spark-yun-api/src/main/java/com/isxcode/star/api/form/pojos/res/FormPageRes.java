@@ -31,5 +31,5 @@ public class FormPageRes {
 
 	private String mainTable;
 
-  private String datasourceName;
+	private String datasourceName;
 }
