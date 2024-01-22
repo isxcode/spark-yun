@@ -30,4 +30,6 @@ public class FormPageRes {
 	private String datasourceId;
 
 	private String mainTable;
+
+  private String datasourceName;
 }
