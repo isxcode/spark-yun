@@ -2,7 +2,7 @@ name: Create a new feature
 description: 创建一个新需求
 labels: ["需求"]
 body:
-  - type: markdown
+  - type: textarea
     id: describe
     attributes:
       label: Describe the feature (描述一下需求)
