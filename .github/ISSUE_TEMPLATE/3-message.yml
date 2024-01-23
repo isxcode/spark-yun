@@ -8,5 +8,6 @@ body:
       label: 将描述内容发送至【 hello@isxcode.com 】
       description: '联系方式: \n 咨询内容: \n 预约时间:'
       options:
-        - label: I agree to follow this project's [Code of Conduct](link/to/coc)
+        - label: yes
           required: true
+        - label: no
