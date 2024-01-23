@@ -14,4 +14,7 @@ public interface RoleType {
 
 	/** 普通成员. */
 	String NORMAL_MEMBER = "ROLE_NORMAL_MEMBER";
+
+	/** 匿名者权限. */
+	String ROLE_ANONYMOUS = "ROLE_ANONYMOUS";
 }

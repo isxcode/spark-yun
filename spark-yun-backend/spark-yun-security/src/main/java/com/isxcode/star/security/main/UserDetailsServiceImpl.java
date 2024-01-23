@@ -9,7 +9,9 @@ import com.isxcode.star.security.user.TenantUserEntity;
 import com.isxcode.star.security.user.TenantUserRepository;
 import com.isxcode.star.security.user.UserEntity;
 import com.isxcode.star.security.user.UserRepository;
+
 import java.util.Optional;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
@@ -30,7 +32,13 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 	@Override
 	public UserDetails loadUserByUsername(String userId) throws UsernameNotFoundException {
 
-		// 获取用户信息
+		if ("sy_anonymous".equals(userId)) {
+
+			// 返回用户信息
+			return User.withUsername(userId).password("")
+					.authorities(AuthorityUtils.commaSeparatedStringToAuthorityList("ROLE_ANONYMOUS")).build();
+		}
+
 		JPA_TENANT_MODE.set(false);
 		Optional<UserEntity> userEntityOptional = userRepository.findById(userId);
 		JPA_TENANT_MODE.set(true);

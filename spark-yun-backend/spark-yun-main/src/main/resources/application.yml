@@ -95,3 +95,5 @@ isx-app:
     - /**/api/**/** # 放行所有自定义接口
     - /**/api/**/**/** # 放行所有自定义接口
     - /home/** # 放行全部前端的刷新访问路径
+  anonymous-role-url:
+    - /vip/form/getFormConfigForAnonymous # 匿名者获取表单配置

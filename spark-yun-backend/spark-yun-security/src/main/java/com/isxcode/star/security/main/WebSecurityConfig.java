@@ -70,6 +70,10 @@ public class WebSecurityConfig {
 		// 访问h2,swagger，druid界面需要的权限
 		http.authorizeRequests().antMatchers(isxAppProperties.getAdminUrl().toArray(new String[0])).hasRole("ADMIN");
 
+		// 匿名者才可以访问的指定接口
+		http.authorizeRequests().antMatchers(isxAppProperties.getAnonymousRoleUrl().toArray(new String[0]))
+				.hasRole("ANONYMOUS");
+
 		// 任何人都可以访问的权限
 		http.authorizeRequests().antMatchers(isxAppProperties.getAnonymousUrl().toArray(new String[0])).permitAll();
 
