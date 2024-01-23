@@ -1,0 +1,18 @@
+name: Create a new feature
+description: 创建一个新需求
+labels: ["需求"]
+body:
+  - type: textarea
+    id: describe
+    attributes:
+      label: Describe the feature (描述一下需求)
+      placeholder: word description. (文字描述)
+    validations:
+      required: false
+  - type: textarea
+    id: suggestion
+    attributes:
+      label: Related suggestions (相关建议)
+      placeholder: Pictures, videos, links, text descriptions, etc.(图片、视频、链接、文字描述等)
+    validations:
+      required: false

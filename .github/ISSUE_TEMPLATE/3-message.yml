@@ -1,0 +1,19 @@
+name: Consultation message
+description: 咨询留言
+title: '不推荐提交'
+labels: ["咨询留言"]
+body:
+    - type: textarea
+      id: email
+      attributes:
+        label: 邮箱联系我们
+        placeholder: 'hello@isxcode.com'
+      validations:
+        required: true
+    - type: textarea
+      id: phone
+      attributes:
+        label: 电话联系我们
+        placeholder: '400-8848-170'
+      validations:
+        required: true
