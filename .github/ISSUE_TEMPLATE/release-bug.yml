@@ -1,7 +1,7 @@
-name: 创建需求
-description: 欢迎提交一个需求
-title: ":sparkles: "
-labels: ["需求"]
+name: 创建缺陷
+description: 欢迎提交一个缺陷
+title: ":bug: "
+labels: ["缺陷"]
 body:
   - type: input
     id: org
@@ -15,9 +15,9 @@ body:
   - type: textarea
     id: describe
     attributes:
-      label: 需求内容
-      description: "描述一下需求内容"
-      placeholder: 请填写需求内容...
-      value: 标题即是需求内容
+      label: 缺陷内容
+      description: "描述一下缺陷内容"
+      placeholder: 请填写缺陷内容...
+      value: 标题即是缺陷内容
     validations:
       required: true
