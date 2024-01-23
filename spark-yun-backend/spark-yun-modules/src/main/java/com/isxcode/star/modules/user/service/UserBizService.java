@@ -6,10 +6,7 @@ import com.isxcode.star.api.user.constants.RoleType;
 import com.isxcode.star.api.user.constants.UserStatus;
 import com.isxcode.star.api.user.pojos.req.*;
 import com.isxcode.star.api.user.pojos.req.UpdateUserReq;
-import com.isxcode.star.api.user.pojos.res.GetUserRes;
-import com.isxcode.star.api.user.pojos.res.LoginRes;
-import com.isxcode.star.api.user.pojos.res.PageEnableUserRes;
-import com.isxcode.star.api.user.pojos.res.PageUserRes;
+import com.isxcode.star.api.user.pojos.res.*;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.star.backend.api.base.properties.IsxAppProperties;
 import com.isxcode.star.common.utils.jwt.JwtUtils;
@@ -21,16 +18,20 @@ import com.isxcode.star.security.user.TenantUserEntity;
 import com.isxcode.star.security.user.TenantUserRepository;
 import com.isxcode.star.security.user.UserEntity;
 import com.isxcode.star.security.user.UserRepository;
+
 import java.util.List;
 import java.util.Optional;
 import javax.transaction.Transactional;
+
 import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-/** 用户模块. */
+/**
+ * 用户模块.
+ */
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -46,7 +47,9 @@ public class UserBizService {
 
 	private final TenantUserRepository tenantUserRepository;
 
-	/** 用户登录. */
+	/**
+	 * 用户登录.
+	 */
 	public LoginRes login(LoginReq usrLoginReq) {
 
 		// 判断用户是否存在
@@ -179,7 +182,9 @@ public class UserBizService {
 	public void addUser() {
 	}
 
-	/** 创建用户. */
+	/**
+	 * 创建用户.
+	 */
 	public void addUser(AddUserReq usrAddUserReq) {
 
 		// 判断账号是否存在
@@ -288,5 +293,13 @@ public class UserBizService {
 		UserEntity userEntity = userMapper.usrUpdateUserInfoToUserEntity(updateUserInfoReq, userEntityOptional.get());
 
 		userRepository.save(userEntity);
+	}
+
+	public GetAnonymousTokenRes getAnonymousToken(GetAnonymousTokenReq getAnonymousTokenReq) {
+
+		String jwtToken = JwtUtils.encrypt(isxAppProperties.getAesSlat(), "sy_anonymous", isxAppProperties.getJwtKey(),
+				getAnonymousTokenReq.getValidDay() * 24 * 60);
+
+		return GetAnonymousTokenRes.builder().token(jwtToken).build();
 	}
 }
