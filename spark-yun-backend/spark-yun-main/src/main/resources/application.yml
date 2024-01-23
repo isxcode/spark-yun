@@ -73,7 +73,9 @@ spring:
   cache:
     type: simple
 
-springdoc:
+  thymeleaf:
+    check-template-location: false
+
   api-docs:
     path: /swagger-ui/api-docs
   swagger-ui:
