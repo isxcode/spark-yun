@@ -1,0 +1,16 @@
+name: Consultation message
+description: 咨询留言
+title: "电话联系: 400-8848-170"
+labels: ["咨询留言"]
+body:
+  - type: checkboxes
+    id: submitStatus
+    attributes:
+      label: 将描述内容发送至【 hello@isxcode.com 】
+      description: "联系方式: \n
+                    咨询内容: \n
+                    预约时间: "
+      options:
+        - label: Yes
+          required: true
+        - label: No
