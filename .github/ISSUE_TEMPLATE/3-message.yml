@@ -5,7 +5,7 @@ labels: ["咨询留言"]
 body:
   - type: checkboxes
     attributes:
-      label: Code of Conduct
+      label: 将描述内容发送至【 hello@isxcode.com 】
       description: The Code of Conduct helps create a safe space for everyone. We require
         that everyone agrees to it.
       options:
