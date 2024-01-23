@@ -4,9 +4,16 @@ title: '不推荐提交'
 labels: ["咨询留言"]
 body:
     - type: textarea
-      id: link
+      id: email
       attributes:
-        label: 将描述内容发送至【 hello@isxcode.com 】
-        placeholder: '联系方式\n 咨询内容\n 预约时间'
+        label: 邮箱联系我们
+        placeholder: 'hello@isxcode.com'
+      validations:
+        required: true
+    - type: textarea
+      id: phone
+      attributes:
+        label: 电话联系我们
+        placeholder: '400-8848-170'
       validations:
         required: true
