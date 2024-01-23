@@ -19,8 +19,6 @@ body:
         - Backend (后端)
         - Web (官网)
       default: 0
-    validations:
-       required: true
   - type: dropdown
     id: level
     attributes:
@@ -31,8 +29,6 @@ body:
         - P2
         - P3
       default: 1
-    validations:
-      required: true
   - type: textarea
     id: describe
     attributes:
