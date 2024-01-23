@@ -19,8 +19,7 @@ export const httpOption = {
   transform: {
     requestInterceptors: (config: any) => {
       const authStore = useAuthStore()
-
-      config.headers['authorization'] = authStore.token
+      config.headers['authorization'] = config.headers['authorization'] || authStore.token
       config.headers['tenant'] = config.headers['tenant'] || authStore.tenantId
 
       return config
