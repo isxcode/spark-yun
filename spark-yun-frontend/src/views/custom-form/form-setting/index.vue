@@ -2,8 +2,8 @@
     <div class="form-setting-button">
         <el-button @click="redirectQuery">返回</el-button>
         <!-- <el-button @click="showSetting">高级设置</el-button> -->
-        <el-button type="primary" @click="publishForm">发布</el-button>
-        <el-button type="primary" @click="saveData">保存</el-button>
+        <el-button type="primary" :loading="saveLoading" @click="publishForm">发布</el-button>
+        <el-button type="primary" :loading="saveLoading" @click="saveData">保存</el-button>
     </div>
     <LoadingPage :visible="loading" :network-error="networkError" @loading-refresh="initData(false)">
         <z-form-engine
@@ -40,6 +40,7 @@ const formConfigList = ref()
 const networkError = ref(false)
 const loading = ref(false)
 const baseFormConfig = ref()
+const saveLoading = ref(false)
 
 function initData(tableLoading?: boolean) {
     loading.value = tableLoading ? false : true
@@ -90,13 +91,16 @@ function saveData() {
     const components = zFormEnginRef.value.getFormItemConfigList()
     if (components) {
         formConfigList.value = zFormEnginRef.value.getFormItemConfigList()
+        saveLoading.value = true
         SaveFormConfigData({
             formId: baseFormConfig.value.formId,
             formVersion: route.query.formVersion,
             components: formConfigList.value
         }).then((res: any) => {
+            saveLoading.value = false
             ElMessage.success(res.msg)
         }).catch(err => {
+            saveLoading.value = false
         })
     }
 }
@@ -108,13 +112,16 @@ function publishForm() {
         cancelButtonText: '取消',
         type: 'warning'
     }).then(() => {
+        saveLoading.value = true
         DeployCustomFormData({
             formId: route.query.id
         }).then((res: any) => {
             initData()
+            saveLoading.value = false
             ElMessage.success('发布成功')
             redirectQuery()
         }).catch(err => {
+            saveLoading.value = false
         })
     })
 }

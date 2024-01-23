@@ -103,3 +103,26 @@ export function DeleteFormData(params: any): Promise<any> {
         params: params
     })
 }
+
+//  ----------- 分享表单 ------------
+interface customTokenParam {
+    validDay: number
+}
+export function ShareFormGetCustomToken(params: customTokenParam): Promise<any> {
+    return http.request({
+        method: 'post',
+        url: '/user/getAnonymousToken',
+        params: params
+    })
+}
+
+export function ShareFormGetFormConfig(params: any, config: any): Promise<any> {
+    return http.request({
+        method: 'post',
+        url: '/vip/form/getFormConfigForAnonymous',
+        params: params,
+        headers: {
+            ...config
+        }
+    })
+}
