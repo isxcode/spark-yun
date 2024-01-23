@@ -85,14 +85,14 @@
             <el-radio-button label="CUSTOM">自定义</el-radio-button>
           </el-radio-group>
         </el-form-item>
-        <el-form-item v-if="formData.tokenType === 'CUSTOM'" label="请求头设置" prop="headerToken" :class="{ 'show-screen__full': reqHeaderFullStatus }">
+        <el-form-item v-if="formData.tokenType === 'CUSTOM'" label="请求头设置" prop="reqHeader" :class="{ 'show-screen__full': reqHeaderFullStatus }">
           <!-- <el-icon class="modal-full-screen" @click="fullScreenEvent('reqHeaderFullStatus')"><FullScreen v-if="!reqHeaderFullStatus" /><Close v-else /></el-icon>
           <code-mirror v-model="formData.headerToken" basic :lang="jsonLang"/> -->
           <span class="add-btn">
             <el-icon @click="addNewOption"><CirclePlus /></el-icon>
           </span>
           <div class="form-options__list">
-            <div class="form-options__item" v-for="(element, index) in formData.headerToken">
+            <div class="form-options__item" v-for="(element, index) in formData.reqHeader">
               <div class="input-item">
                 <span class="item-label">键</span>
                 <el-input v-model="element.label" placeholder="请输入"></el-input>
@@ -102,7 +102,7 @@
                 <el-input v-model="element.value" placeholder="请输入"></el-input>
               </div>
               <div class="option-btn">
-                <el-icon v-if="formData.headerToken.length > 1" class="remove" @click="removeItem(index)"><CircleClose /></el-icon>
+                <el-icon v-if="formData.reqHeader.length > 1" class="remove" @click="removeItem(index)"><CircleClose /></el-icon>
               </div>
             </div>
           </div>
@@ -147,6 +147,7 @@ import { GetComputerGroupList } from '@/services/computer-group.service'
 import CodeMirror from 'vue-codemirror6'
 import {json} from '@codemirror/lang-json'
 import {sql} from '@codemirror/lang-sql'
+import { GetCustomApiDetailData } from '@/services/custom-api.service'
 
 interface Option {
   label: string
@@ -210,7 +211,7 @@ const formData = reactive<{
   datasourceId: string
   remark: string
   tokenType: string
-  headerToken: Option[]
+  reqHeader: Option[]
   reqBody: string | null
   apiSql: string | null
   pageType: boolean
@@ -226,7 +227,7 @@ const formData = reactive<{
   remark: '',           // 备注
   // 请求配置
   tokenType: 'ANONYMOUS',    // 请求头模式
-  headerToken: [],   // 请求头设置
+  reqHeader: [],   // 请求头设置
   reqBody: null,     // 请求体设置
   apiSql: null,      // SQL设置
   pageType: false,  // 是否分页
@@ -238,7 +239,7 @@ const rules = reactive<FormRules>({
   path: [{ required: true, message: '请输入自定义访问路径', trigger: [ 'blur', 'change' ]}],
   // clusterId: [{ required: true, message: '请选择计算集群', trigger: [ 'blur', 'change' ]}],
   datasourceId: [{ required: true, message: '请选择数据源', trigger: [ 'blur', 'change' ]}],
-  headerToken: [{ validator: optionsRule, trigger: ['blur', 'change'] }],
+  reqHeader: [{ validator: optionsRule, trigger: ['blur', 'change'] }],
   reqBody: [{ required: true, message: '请输入请求体设置', trigger: [ 'blur', 'change' ]}],
   apiSql: [{ required: true, message: '请输入SQL设置', trigger: [ 'blur', 'change' ]}],
   resBody: [{ required: true, message: '请输入返回体设置（成功/失败）', trigger: [ 'blur', 'change' ]}],
@@ -249,9 +250,10 @@ function showModal(cb: () => void, data: any): void {
   stepIndex.value = 0
   modelConfig.visible = true
   if (data) {
-    Object.keys(formData).forEach(key => {
-      formData[key] = data[key]
-    })
+    // Object.keys(formData).forEach(key => {
+    //   formData[key] = data[key]
+    // })
+    getApiDetailData(data.id)
     isEdit.value = true
     modelConfig.title = '编辑接口'
   } else {
@@ -265,6 +267,21 @@ function showModal(cb: () => void, data: any): void {
   }
   nextTick(() => {
     form.value?.resetFields()
+  })
+}
+
+function getApiDetailData(id: string) {
+  GetCustomApiDetailData({
+    id: id
+  }).then((res: any) => {
+    Object.keys(formData).forEach(key => {
+      if (key === 'reqHeader') {
+        formData[key] = JSON.parse(res.data['reqHeader'])
+      } else {
+        formData[key] = res.data[key]
+      }
+    })
+  }).catch(() => {
   })
 }
 
@@ -298,8 +315,8 @@ function getDataSourceList(e: boolean, searchType?: string) {
         }).then((res: any) => {
             dataSourceList.value = res.data.content.map((item: any) => {
                 return {
-                label: item.name,
-                value: item.id
+                  label: item.name,
+                  value: item.id
                 }
             })
         })
@@ -321,7 +338,7 @@ function nextStepEvent() {
 
 function tokenTypeChangeEvent(e: string) {
   if (e === 'CUSTOM') {
-    formData.headerToken = [
+    formData.reqHeader = [
       {
         label: '',
         value: ''
@@ -330,13 +347,13 @@ function tokenTypeChangeEvent(e: string) {
   }
 }
 function addNewOption() {
-    formData.headerToken.push({
+    formData.reqHeader.push({
         label: '',
         value: ''
     })
 }
 function removeItem(index: number) {
-    formData.headerToken.splice(index, 1)
+    formData.reqHeader.splice(index, 1)
 }
 
 function okEvent() {
