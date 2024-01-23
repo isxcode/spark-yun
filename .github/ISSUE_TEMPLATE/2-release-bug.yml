@@ -1,5 +1,5 @@
-name: Create Release Bug
-description: 创建发版缺陷，测试人员提交
+name: Create Release Bug (For tester)
+description: 创建发版缺陷，测试人员使用
 labels: [ "回归缺陷" ]
 body:
   - type: input
@@ -14,6 +14,8 @@ body:
     attributes:
       label: Scope (范围)
       options:
+        - label: Don't Know (不清楚)
+          required: true
         - label: Frontend (前端)
         - label: Backend (后端)
         - label: Web (官网)
