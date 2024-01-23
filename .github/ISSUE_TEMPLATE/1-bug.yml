@@ -1,0 +1,19 @@
+name: Create bug
+description: 创建缺陷
+labels: ["缺陷"]
+body:
+  - type: input
+    id: branch
+    attributes:
+      label: Branch name (分支名)
+      placeholder: main
+      value: main
+    validations:
+      required: true
+  - type: textarea
+    id: describe
+    attributes:
+      label: Bug description (缺陷描述)
+      placeholder: Pictures, videos, cUrl, text descriptions, etc.(图片、视频、cUrl、文字描述等)
+    validations:
+      required: false
