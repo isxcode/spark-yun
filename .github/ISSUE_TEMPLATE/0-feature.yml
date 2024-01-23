@@ -13,6 +13,6 @@ body:
     id: suggestion
     attributes:
       label: Related suggestions (相关建议)
-      placeholder: Pictures, videos, links, text descriptions, etc.(图片、视频、 链接、文字描述等)
+      placeholder: Pictures, videos, links, text descriptions, etc.(图片、视频、链接、文字描述等)
     validations:
       required: false
