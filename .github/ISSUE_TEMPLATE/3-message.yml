@@ -7,9 +7,7 @@ body:
     id: submitStatus
     attributes:
       label: 将描述内容发送至【 hello@isxcode.com 】
-      description: "联系方式: \n
-                    咨询内容: \n
-                    预约时间: "
+      description: "联系方式: \n 咨询内容: \n 预约时间: "
       options:
         - label: Yes
           required: true
