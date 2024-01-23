@@ -49,3 +49,21 @@ export function OfflineCustomApiData(params: any): Promise<any> {
         params: params
     })
 }
+
+// 获取详情
+export function GetCustomApiDetailData(params: any): Promise<any> {
+    return http.request({
+        method: 'post',
+        url: '/vip/api-module/getApi',
+        params: params
+    })
+}
+
+// 测试api
+export function TestCustomApiData(params: any): Promise<any> {
+    return http.request({
+        method: 'post',
+        url: '/vip/api-module/testApi',
+        params: params
+    })
+}
