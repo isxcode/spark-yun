@@ -5,9 +5,9 @@ labels: ["咨询留言"]
 body:
   - type: checkboxes
     attributes:
-      label: 将描述内容发送至【 hello@isxcode.com 】
-      description: '联系方式: \n 咨询内容: \n 预约时间:'
+      label: Code of Conduct
+      description: The Code of Conduct helps create a safe space for everyone. We require
+        that everyone agrees to it.
       options:
-        - label: Yes
+        - label: I agree to follow this project's [Code of Conduct](link/to/coc)
           required: true
-        - label: No
