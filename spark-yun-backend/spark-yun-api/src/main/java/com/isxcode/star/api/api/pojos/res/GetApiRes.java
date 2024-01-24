@@ -1,6 +1,9 @@
 package com.isxcode.star.api.api.pojos.res;
 
+import com.isxcode.star.api.api.pojos.dto.HeaderTokenDto;
 import lombok.Data;
+
+import java.util.List;
 
 @Data
 public class GetApiRes {
@@ -17,7 +20,7 @@ public class GetApiRes {
 
 	private String tokenType;
 
-	private String reqHeader;
+	private List<HeaderTokenDto> reqHeader;
 
 	private String reqBody;
 
