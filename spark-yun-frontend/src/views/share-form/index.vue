@@ -1,7 +1,7 @@
 <template>
     <div class="z-share-form">
         <Header />
-        <LoadingPage :visible="loading" :network-error="networkError" @loading-refresh="getToken">
+        <LoadingPage :visible="loading" :network-error="networkError" @loading-refresh="getFormConfigById">
           <div class="share-form-button">
             <el-button :disabled="renderSence === 'readonly'" :loading="saveLoading" type="primary" @click="saveData">保存</el-button>
           </div>
@@ -27,6 +27,12 @@ import ZFormEngine from '@/lib/packages/z-form-engine/index.vue'
 import { ElMessage } from 'element-plus'
 import { AddFormData, ShareFormGetCustomToken, ShareFormGetFormConfig } from '@/services/custom-form.service'
 
+interface baseParam {
+  formId: string
+  formVersion: string
+  tenantId: string
+  token: string
+}
 
 const route = useRoute()
 
@@ -43,7 +49,12 @@ const formEngineRef = ref()
 const formConfigList = ref([])
 const saveLoading = ref(false)
 
-const shareFormConfig = ref({})
+const shareFormConfig = ref<baseParam>({
+  formId: '',
+  formVersion: '',
+  tenantId: '',
+  token: ''
+})
 const token = ref('')
 
 const formData = reactive({})
@@ -54,26 +65,28 @@ const formData = reactive({})
 //     immediate: true,
 //     deep: true
 // })
-function getToken(tableLoading?: boolean) {
+// function getToken(tableLoading?: boolean) {
+//   loading.value = tableLoading ? false : true
+//   networkError.value = networkError.value || false
+//   ShareFormGetCustomToken({
+//     validDay: 1
+//   }).then((res: any) => {
+//     token.value = res.data.token
+//     getFormConfigById()
+//   }).catch(() => {
+//     loading.value = false
+//     networkError.value = true
+//   })
+// }
+
+function getFormConfigById(tableLoading?: boolean) {
   loading.value = tableLoading ? false : true
   networkError.value = networkError.value || false
-  ShareFormGetCustomToken({
-    validDay: 1
-  }).then((res: any) => {
-    token.value = res.data.token
-    getFormConfigById()
-  }).catch(() => {
-    loading.value = false
-    networkError.value = true
-  })
-}
-
-function getFormConfigById() {
   ShareFormGetFormConfig({
     formId: shareFormConfig.value.formId
   }, {
-    authorization: token.value,
-    tenant: shareFormConfig.value.tenant
+    authorization: shareFormConfig.value.token,
+    tenant: shareFormConfig.value.tenantId
   }).then((res: any) => {
     formConfigList.value = res.data?.components
     loading.value = false
@@ -91,6 +104,9 @@ function saveData() {
         formId: shareFormConfig.value.formId,
         formVersion: shareFormConfig.value.formVersion,
         data: formData
+      }, {
+        authorization: shareFormConfig.value.token,
+        tenant: shareFormConfig.value.tenantId
       }).then((res: any) => {
         saveLoading.value = false
         ElMessage.success(res.msg)
@@ -109,7 +125,7 @@ onMounted(() => {
   if (params) {
     shareFormConfig.value = JSON.parse(window.atob(params))
     console.log('shareFormConfig.value', shareFormConfig.value)
-    getToken()
+    getFormConfigById()
   }
 })
 </script>

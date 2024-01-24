@@ -138,20 +138,20 @@ function clickToSPK() {
 }
 
 onMounted(() => {
-  nextTick(() => {
-    getTenantList()
-    eventBus.emit('tenantChange')
-  })
+  // nextTick(() => {
+  //   getTenantList()
+  //   eventBus.emit('tenantChange')
+  // })
 
-  eventBus.on('tenantListUpdate', () => {
-    getTenantList()
-  })
+  // eventBus.on('tenantListUpdate', () => {
+  //   getTenantList()
+  // })
 })
 
 onUnmounted(() => {
-  eventBus.off('tenantListUpdate', () => {
-    console.log('这里移除了bus')
-  })
+  // eventBus.off('tenantListUpdate', () => {
+  //   console.log('这里移除了bus')
+  // })
 })
 </script>
 
