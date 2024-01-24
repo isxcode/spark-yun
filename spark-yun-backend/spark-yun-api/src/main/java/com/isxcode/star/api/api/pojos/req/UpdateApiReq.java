@@ -38,8 +38,8 @@ public class UpdateApiReq {
 	@NotEmpty(message = "pageType不能为空")
 	private String pageType;
 
-  @Schema(title = "如果用户使用自定义认证方式，需要填写", example = "")
-  private List<HeaderTokenDto> reqHeader;
+	@Schema(title = "如果用户使用自定义认证方式，需要填写", example = "")
+	private List<HeaderTokenDto> reqHeader;
 
 	@Schema(title = "请求体", example = "{\n" + "    \"age\":\"${age}\",\n" + "    \"page\":\"${page}\",\n"
 			+ "    \"pageSize\":\"${pageSize}\"\n" + "}")
