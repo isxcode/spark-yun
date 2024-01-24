@@ -186,7 +186,7 @@ const okLoading = ref(false)
 const modelConfig = reactive({
   title: '添加接口',
   visible: false,
-  width: '60%',
+  width: '564px',
   // okConfig: {
   //   title: '确定',
   //   ok: okEvent,
@@ -276,7 +276,7 @@ function getApiDetailData(id: string) {
   }).then((res: any) => {
     Object.keys(formData).forEach(key => {
       if (key === 'reqHeader') {
-        formData[key] = JSON.parse(res.data['reqHeader'])
+        formData[key] = res.data['reqHeader']
       } else {
         formData[key] = res.data[key]
       }

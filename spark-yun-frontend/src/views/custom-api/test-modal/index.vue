@@ -14,14 +14,53 @@
           placeholder="请输入"
           :disabled="true"
         />
+        <span class="copy-url" id="api-path" :data-clipboard-text="formData.path" @click="copyUrlEvent('api-path')">复制</span>
       </el-form-item>
       <el-form-item label="请求头" prop="headerConfig" :class="{ 'show-screen__full': reqHeaderFullStatus }">
-        <el-icon class="modal-full-screen" @click="fullScreenEvent('reqHeaderFullStatus')"><FullScreen v-if="!reqHeaderFullStatus" /><Close v-else /></el-icon>
-        <code-mirror v-model="formData.headerConfig" basic :lang="jsonLang"/>
+        <!-- <el-icon class="modal-full-screen" @click="fullScreenEvent('reqHeaderFullStatus')"><FullScreen v-if="!reqHeaderFullStatus" /><Close v-else /></el-icon>
+        <code-mirror v-model="formData.headerConfig" basic :lang="jsonLang"/> -->
+        <span class="add-btn">
+          <el-icon @click="addNewOption(formData.headerConfig)"><CirclePlus /></el-icon>
+        </span>
+        <div class="form-options__list">
+          <div class="form-options__item" v-for="(element, index) in formData.headerConfig">
+            <div class="input-item">
+              <span class="item-label">键</span>
+              <el-input v-model="element.label" placeholder="请输入"></el-input>
+            </div>
+            <div class="input-item">
+              <span class="item-label">值</span>
+              <el-input v-model="element.value" placeholder="请输入"></el-input>
+            </div>
+            <div class="option-btn">
+              <el-icon v-if="formData.headerConfig.length > 1" class="remove" @click="removeItem(index, formData.headerConfig)"><CircleClose /></el-icon>
+            </div>
+          </div>
+        </div>
       </el-form-item>
-      <el-form-item label="请求体" prop="bodyConfig" :class="{ 'show-screen__full': reqBodyFullStatus }">
+      <el-form-item v-if="formData.method === 'POST'" label="请求体" prop="bodyParams" :class="{ 'show-screen__full': reqBodyFullStatus }">
         <el-icon class="modal-full-screen" @click="fullScreenEvent('reqBodyFullStatus')"><FullScreen v-if="!reqBodyFullStatus" /><Close v-else /></el-icon>
-        <code-mirror v-model="formData.bodyConfig" basic :lang="jsonLang"/>
+        <code-mirror v-model="formData.bodyParams" basic :lang="jsonLang"/>
+      </el-form-item>
+      <el-form-item v-if="formData.method === 'GET'" label="请求体" prop="bodyConfig">
+        <span class="add-btn">
+          <el-icon @click="addNewOption(formData.bodyConfig)"><CirclePlus /></el-icon>
+        </span>
+        <div class="form-options__list">
+          <div class="form-options__item" v-for="(element, index) in formData.bodyConfig">
+            <div class="input-item">
+              <span class="item-label">键</span>
+              <el-input v-model="element.label" placeholder="请输入"></el-input>
+            </div>
+            <div class="input-item">
+              <span class="item-label">值</span>
+              <el-input v-model="element.value" placeholder="请输入"></el-input>
+            </div>
+            <div class="option-btn">
+              <el-icon v-if="formData.bodyConfig.length > 1" class="remove" @click="removeItem(index, formData.bodyConfig)"><CircleClose /></el-icon>
+            </div>
+          </div>
+        </div>
       </el-form-item>
       <el-form-item label="响应体" prop="returnConfig" :class="{ 'show-screen__full': respBodyFullStatus }">
         <el-icon class="modal-full-screen" @click="fullScreenEvent('respBodyFullStatus')">
@@ -33,7 +72,7 @@
     </el-form>
   </BlockModal>
 </template>
-  
+
 <script lang="ts" setup>
 import { reactive, defineExpose, ref, nextTick } from 'vue'
 import BlockModal from '@/components/block-modal/index.vue'
@@ -43,6 +82,7 @@ import {json} from '@codemirror/lang-json'
 import { jsonFormatter } from '@/utils/formatter'
 import { useAuthStore } from '@/store/useAuth'
 import { TestCustomApiData } from '@/services/custom-api.service'
+import Clipboard from 'clipboard'
 
 const authStore = useAuthStore()
 
@@ -77,23 +117,25 @@ const formData = reactive({
   id: '',
   path: '',              // 自定义访问路径
   method: '',
-  headerConfig: null,   // 请求头
-  bodyConfig: null,     // 请求体
+  headerConfig: [],   // 请求头
+  bodyConfig: [],     // 请求体
+  bodyParams: null,
   returnConfig: null    // 返回体
 })
 const rules = reactive<FormRules>({
   // url: [{ required: true, message: '请输入自定义访问路径', trigger: [ 'blur', 'change' ]}],
-  headerConfig: [{ required: true, message: '请输入请求头设置', trigger: [ 'blur', 'change' ]}],
-  bodyConfig: [{ required: true, message: '请输入请求体设置', trigger: [ 'blur', 'change' ]}]
+  // headerConfig: [{ required: true, message: '请输入请求头设置', trigger: [ 'blur', 'change' ]}],
+  // bodyConfig: [{ required: true, message: '请输入请求体设置', trigger: [ 'blur', 'change' ]}]
 })
 
 function showModal(data: any): void {
   modelConfig.visible = true
   formData.id = data.id
-  formData.path = data.path
+  formData.path = `${location.origin}/${authStore.tenantId}${data.path}`
   formData.method = data.apiType
-  formData.headerConfig = null
-  formData.bodyConfig = null
+  formData.headerConfig = [{label: '', value: ''}]
+  formData.bodyConfig = [{label: '', value: ''}]
+  formData.bodyParams = null
   formData.returnConfig = null
   nextTick(() => {
     form.value?.resetFields()
@@ -104,14 +146,24 @@ function showModal(data: any): void {
 function okEvent() {
   form.value?.validate((valid) => {
     if (valid) {
-      let headerParams: any
+      const headerParams: any = {}
+      formData.headerConfig.forEach(item => {
+        headerParams[item.label] = item.value
+      })
       try {
-        headerParams = JSON.parse(formData.headerConfig)
+        let bodyParams: any = {}
+        if (formData.method === 'GET') {
+          formData.bodyConfig.forEach(item => {
+            bodyParams[item.label] = item.value
+          })
+        } else {
+          bodyParams = JSON.parse(formData.bodyParams)
+        }
         modelConfig.okConfig.loading = true
         TestCustomApiData({
           id: formData.id,
           headerParams: headerParams,
-          requestBody: formData.bodyConfig
+          requestBody: bodyParams
         }).then((res: any) => {
           ElMessage.success(res.msg)
           modelConfig.okConfig.loading = false
@@ -124,7 +176,8 @@ function okEvent() {
           modelConfig.okConfig.loading = false
         })
       } catch (error) {
-        ElMessage.error('请检查请求头是否输入正确')
+        console.warn('请求体输入有误', error)
+        ElMessage.warning('请求体格式输入有误')
       }
     } else {
       ElMessage.warning('请将表单输入完整')
@@ -145,6 +198,25 @@ function fullScreenEvent(type: string) {
     respBodyFullStatus.value = !respBodyFullStatus.value
   }
 }
+
+function addNewOption(data: any) {
+  data.push({
+    label: '',
+    value: ''
+  })
+}
+function removeItem(index: number, data: any) {
+  data.splice(index, 1)
+}
+
+function copyUrlEvent(id: string) {
+    let clipboard = new Clipboard('#' + id)
+    clipboard.on('success', () => {
+        ElMessage.success('复制成功')
+        clipboard.destroy()
+    })
+}
+
 
 defineExpose({
   showModal
@@ -190,6 +262,20 @@ defineExpose({
     }
     .el-form-item__content {
       position: relative;
+      flex-wrap: nowrap;
+      justify-content: space-between;
+
+      .copy-url {
+          min-width: 24px;
+          font-size: 12px;
+          margin-left: 10px;
+          color: getCssVar('color', 'primary');
+          cursor: pointer;
+          &:hover {
+              text-decoration: underline;
+          }
+
+      }
       .modal-full-screen {
         position: absolute;
         top: -26px;
