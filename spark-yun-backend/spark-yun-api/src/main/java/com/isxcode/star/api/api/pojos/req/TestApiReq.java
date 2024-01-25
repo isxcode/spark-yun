@@ -14,7 +14,7 @@ public class TestApiReq {
 	private String id;
 
 	@Schema(title = "post请求体", example = "")
-	private String requestBody;
+	private Object requestBody;
 
 	@Schema(title = "k:v get请求参数", example = "{\"key\":\"value\"}")
 	private Map<String, String> requestParams;
