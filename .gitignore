@@ -53,3 +53,6 @@ spark-yun-backend/spark-yun-main/resources/license/*
 
 # 自动化测试报告不提交
 spark-yun-autotest/Reports
+
+# 不提交spark-yun-vip文件夹
+spark-yun-vip
