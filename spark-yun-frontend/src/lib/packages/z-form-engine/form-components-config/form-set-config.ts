@@ -105,5 +105,11 @@ export default [
         formTypeCode: 'PRECISION',
         formInstanceName: 'FormPrecision',
         formConfigValueCode: 'precision'
+    },
+    // 数值精度
+    {
+        formTypeCode: 'PRIMARY_COLUMN',
+        formInstanceName: 'FormIsPrimaryColumn',
+        formConfigValueCode: 'isPrimaryColumn'
     }
 ]
