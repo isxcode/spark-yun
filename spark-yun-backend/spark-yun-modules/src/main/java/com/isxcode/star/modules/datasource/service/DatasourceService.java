@@ -206,7 +206,7 @@ public class DatasourceService {
 	}
 
 	public String parseDbName(String jdbcUrl) {
-		Pattern pattern = Pattern.compile("jdbc:\\w+://\\w+:\\d+/(\\w+)");
+		Pattern pattern = Pattern.compile("jdbc:\\w+://\\S+/(\\w+)");
 		Matcher matcher = pattern.matcher(jdbcUrl);
 		if (matcher.find()) {
 			return matcher.group(1);
