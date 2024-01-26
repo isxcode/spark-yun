@@ -21,7 +21,7 @@
                                 </div>
                                 <div class="card-item">
                                     <span class="name name_3">数据源：</span>
-                                    <EllipsisTooltip class="card-item-name card-item-name_3" :label="card.datasourceId" />
+                                    <EllipsisTooltip class="card-item-name card-item-name_3" :label="card.datasourceName" />
                                 </div>
                                 <div class="card-item">
                                     <span class="name">表名：</span>

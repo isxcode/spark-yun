@@ -26,6 +26,7 @@ export default {
     conponentSetConfig: [
         'LABEL',
         'CODE_SELECT',
+        'PRIMARY_COLUMN',
         'OPTIONS',
         'DEFAULTVALUE_MULTIPLE',
         'DISABLED',
