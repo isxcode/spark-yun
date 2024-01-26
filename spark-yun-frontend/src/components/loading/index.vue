@@ -120,8 +120,8 @@ function handleReflesh() {
     position: absolute;
     top: 0;
     bottom: 0;
-    left: 12px;
-    right: 8px;
+    left: 0;
+    right: 0;
     background-color: #f7f7f7;
     z-index: 1000;
 

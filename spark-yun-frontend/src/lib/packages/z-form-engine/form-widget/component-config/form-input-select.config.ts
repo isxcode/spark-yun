@@ -8,7 +8,7 @@ export default {
         uuid: '16 uuid',
         type: 'simple',
         formValueCode: '',
-        codeType: 'table',
+        codeType: 'custom',
         label: '下拉选择',
         placeholder: '请选择',
         disabled: false,

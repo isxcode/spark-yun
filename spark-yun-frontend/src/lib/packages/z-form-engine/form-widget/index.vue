@@ -81,6 +81,13 @@ const guid = function() {
     return (S4() + S4() + '-' + S4() + '-' + S4() + '-' + S4() + '-' +S4() + S4() +S4());
 }
 
+const guid_8 = function() {
+    function S4() {
+        return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
+    }
+    return (S4() + S4() + S4() + S4() + S4() + S4());
+}
+
 const props = defineProps(['modelValue'])
 const emit = defineEmits([ 'add-form-item', 'dbclick-add', 'removeInstance', 'update:modelValue' ])
 const currentItem = ref<ComponentInstance>()
@@ -132,14 +139,14 @@ function endMoveEvent(e: any) {
 function cloneItemData(e: ComponentInstance) {
     const item = cloneDeep(e)
     item.uuid = guid()
-    // item.formValueCode = guid()
+    item.formValueCode = guid_8()
     currentItem.value = item
     return item
 }
 function clickToAdd(data: ComponentInstance) {
     const item = cloneDeep(data)
     item.uuid = guid()
-    // item.formValueCode = guid()
+    item.formValueCode = guid_8()
     currentItem.value = item
     emit('dbclick-add', currentItem.value)
 }

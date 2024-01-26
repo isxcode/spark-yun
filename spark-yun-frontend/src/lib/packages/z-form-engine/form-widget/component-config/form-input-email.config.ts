@@ -8,7 +8,7 @@ export default {
         uuid: '16 uuid',
         type: 'simple',
         formValueCode: '',
-        codeType: 'table',
+        codeType: 'custom',
         label: '邮箱输入',
         placeholder: '请输入',
         disabled: false,
