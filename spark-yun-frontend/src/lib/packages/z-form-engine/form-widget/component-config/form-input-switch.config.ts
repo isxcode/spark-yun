@@ -8,7 +8,7 @@ export default {
         uuid: '16 uuid',
         type: 'simple',
         formValueCode: '',
-        codeType: 'table',
+        codeType: 'custom',
         label: '开关组件',
         disabled: false,
         required: false,
