@@ -20,5 +20,5 @@ public class GetFormConfigRes {
 
 	private String mainTable;
 
-  private String formVersion;
+	private String formVersion;
 }

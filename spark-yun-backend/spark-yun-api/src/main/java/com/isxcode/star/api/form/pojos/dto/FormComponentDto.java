@@ -41,5 +41,5 @@ public class FormComponentDto {
 
 	private List<ComponentOptionDto> options;
 
-  private SwitchOptionDto switchInfo;
+	private SwitchOptionDto switchInfo;
 }
