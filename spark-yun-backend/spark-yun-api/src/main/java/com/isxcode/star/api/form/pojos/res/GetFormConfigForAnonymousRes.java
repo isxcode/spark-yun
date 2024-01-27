@@ -20,5 +20,5 @@ public class GetFormConfigForAnonymousRes {
 
 	private String mainTable;
 
-  private String formVersion;
+	private String formVersion;
 }
