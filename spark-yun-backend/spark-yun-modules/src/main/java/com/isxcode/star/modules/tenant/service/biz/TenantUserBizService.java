@@ -51,7 +51,7 @@ public class TenantUserBizService {
 		}
 
 		String tenantId;
-		if (Strings.isEmpty(TENANT_ID.get())) {
+		if (Strings.isNotEmpty(turAddTenantUserReq.getTenantId())) {
 			tenantId = turAddTenantUserReq.getTenantId();
 		} else {
 			tenantId = TENANT_ID.get();
