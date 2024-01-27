@@ -40,4 +40,6 @@ public class FormComponentDto {
 	private Boolean isPrimaryColumn;
 
 	private List<ComponentOptionDto> options;
+
+  private SwitchOptionDto switchInfo;
 }
