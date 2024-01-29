@@ -13,7 +13,15 @@
                     @click="copyUrlEvent('share-url')">复制</span>
             </div>
         </div>
-        <div class="share-form-button">
+        <div class="share-option-container">
+            <div class="valid-day-input">
+                <span>生效时间（天）</span>
+                <el-input-number
+                    v-model="validDay"
+                    :min="1"
+                    controls-position="right"
+                />
+            </div>
             <el-button :loading="loading" type="primary" @click="getShareFormUrl">生成分享链接</el-button>
         </div>
     </BlockModal>
@@ -32,6 +40,7 @@ const url = ref('')
 const token = ref('')
 const cardInfo = ref()
 const loading = ref(false)
+const validDay = ref(1)
 
 const modelConfig = reactive({
     title: '分享表单',
@@ -56,7 +65,7 @@ function showModal(card: any): void {
 function getShareFormUrl() {
     loading.value = true
     ShareFormGetCustomToken({
-        validDay: 1
+        validDay: validDay.value
     }).then((res: any) => {
         token.value = res.data.token
         loading.value = false
@@ -138,10 +147,35 @@ defineExpose({
         }
     }
     
-    .share-form-button {
+    .share-option-container {
         padding: 20px;
         box-sizing: border-box;
         padding-top: 0;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        .valid-day-input {
+            display: flex;
+            align-items: center;
+
+            span {
+                font-size: 12px;
+                color: getCssVar('text-color', 'primary');
+            }
+            .el-input-number {
+                .el-input-number__decrease,.el-input-number__increase {
+                    border: 0;
+                    background-color: unset;
+                }
+                .el-input {
+                    .el-input__wrapper {
+                        box-shadow: none;
+                        border-bottom: 1px solid getCssVar('border-color');
+                    }
+                }
+            }
+        }
     }
 }
 </style>

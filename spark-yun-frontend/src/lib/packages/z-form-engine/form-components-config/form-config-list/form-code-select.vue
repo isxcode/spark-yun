@@ -101,7 +101,8 @@ function changeEvent(e: string) {
     const config = tableCodeList.value.find(o => o.value === e)
     const changeAttr: any = {
         required: undefined,
-        maxlength: undefined
+        maxlength: undefined,
+        isPrimaryColumn: undefined
     }
     if (config) {
         if (config.required) {
@@ -109,6 +110,9 @@ function changeEvent(e: string) {
         }
         if (config.maxlength) {
             changeAttr.maxlength = config.maxlength
+        }
+        if (config.isPrimaryColumn) {
+            changeAttr.isPrimaryColumn = true
         }
         emit('formConfigChange', {
             ...props.formConfig,
