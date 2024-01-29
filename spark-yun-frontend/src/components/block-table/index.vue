@@ -19,6 +19,7 @@
         :width="colConfig.width"
         :field="colConfig.prop"
         :fixed="colConfig.fixed"
+        :show-header-overflow="colConfig.showHeaderOverflow || false"
         :show-overflow="colConfig.showOverflowTooltip || false"
         v-bind="colConfig"
       >

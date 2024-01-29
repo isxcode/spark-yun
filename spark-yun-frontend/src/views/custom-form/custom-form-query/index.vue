@@ -68,12 +68,12 @@ function getFormConfigById(tableLoading?: boolean) {
         formConfigList.value = res.data?.components
         status.value = res.data?.status
         if (res.data?.components && res.data?.components.length) {
-            tableConfig.colConfigs = [...(res.data?.components || []).map(item => {
+            tableConfig.colConfigs = [...(res.data?.components || []).filter(item => item.type !== 'static').map(item => {
                 return {
-                    // prop: item.formValueCode,
                     prop: item.uuid,
                     title: item.label,
                     minWidth: 100,
+                    showHeaderOverflow: true,
                     showOverflowTooltip: true
                 }
             }), {
