@@ -70,6 +70,7 @@ function getTableCodesMethod() {
                     label: column.name,
                     value: column.name,
                     required: column.isNoNullColumn,
+                    isPrimaryColumn: column.isPrimaryColumn,
                     maxlength: column.columnLength
                 }
             })

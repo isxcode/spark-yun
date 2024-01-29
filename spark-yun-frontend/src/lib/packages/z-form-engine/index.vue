@@ -133,6 +133,7 @@ function formConfigChange(e: any) {
         if (c.uuid === e.uuid) {
             c.required = e.required
             c.maxlength = e.maxlength
+            c.isPrimaryColumn = e.isPrimaryColumn
         }
     })
 }

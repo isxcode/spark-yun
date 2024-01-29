@@ -13,4 +13,5 @@ export interface ComponentInstance {
     valid: boolean
     defaultValue: string | string[] | number | boolean
     type: string
+    isPrimaryColumn: boolean
 }
