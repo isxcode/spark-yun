@@ -110,15 +110,15 @@
         <el-form-item label="开启分页">
           <el-switch v-model="formData.pageType" />
         </el-form-item>
-        <el-form-item label="请求体设置" prop="reqBody" :class="{ 'show-screen__full': reqBodyFullStatus }">
+        <el-form-item label="请求体设置" :class="{ 'show-screen__full': reqBodyFullStatus }">
           <el-icon class="modal-full-screen" @click="fullScreenEvent('reqBodyFullStatus')"><FullScreen v-if="!reqBodyFullStatus" /><Close v-else /></el-icon>
           <code-mirror v-model="formData.reqBody" basic :lang="jsonLang"/>
         </el-form-item>
-        <el-form-item label="SQL设置" prop="apiSql" :class="{ 'show-screen__full': sqlFullStatus }">
+        <el-form-item label="SQL设置" :class="{ 'show-screen__full': sqlFullStatus }">
           <el-icon class="modal-full-screen" @click="fullScreenEvent('sqlFullStatus')"><FullScreen v-if="!sqlFullStatus" /><Close v-else /></el-icon>
           <code-mirror v-model="formData.apiSql" basic :lang="sqlLang"/>
         </el-form-item>
-        <el-form-item label="返回体设置（成功/失败）" prop="resBody" :class="{ 'show-screen__full': respBodyFullStatus }">
+        <el-form-item label="返回体设置" prop="resBody" :class="{ 'show-screen__full': respBodyFullStatus }">
           <el-icon class="modal-full-screen" @click="fullScreenEvent('respBodyFullStatus')"><FullScreen v-if="!respBodyFullStatus" /><Close v-else /></el-icon>
           <code-mirror v-model="formData.resBody" basic :lang="jsonLang"/>
         </el-form-item>
