@@ -139,14 +139,18 @@ function endMoveEvent(e: any) {
 function cloneItemData(e: ComponentInstance) {
     const item = cloneDeep(e)
     item.uuid = guid()
-    item.formValueCode = guid_8()
+    if (item.type !== 'static') {
+        item.formValueCode = guid_8()
+    }
     currentItem.value = item
     return item
 }
 function clickToAdd(data: ComponentInstance) {
     const item = cloneDeep(data)
     item.uuid = guid()
-    item.formValueCode = guid_8()
+    if (item.type !== 'static') {
+        item.formValueCode = guid_8()
+    }
     currentItem.value = item
     emit('dbclick-add', currentItem.value)
 }
