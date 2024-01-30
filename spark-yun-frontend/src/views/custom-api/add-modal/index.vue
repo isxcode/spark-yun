@@ -111,6 +111,7 @@
           <el-switch v-model="formData.pageType" />
         </el-form-item>
         <el-form-item label="请求体设置" :class="{ 'show-screen__full': reqBodyFullStatus }">
+          <span class="format-json" @click="formatterJsonEvent(formData, 'reqBody')">格式化JSON</span>
           <el-icon class="modal-full-screen" @click="fullScreenEvent('reqBodyFullStatus')"><FullScreen v-if="!reqBodyFullStatus" /><Close v-else /></el-icon>
           <code-mirror v-model="formData.reqBody" basic :lang="jsonLang"/>
         </el-form-item>
@@ -119,6 +120,7 @@
           <code-mirror v-model="formData.apiSql" basic :lang="sqlLang"/>
         </el-form-item>
         <el-form-item label="返回体设置" prop="resBody" :class="{ 'show-screen__full': respBodyFullStatus }">
+          <span class="format-json" @click="formatterJsonEvent(formData, 'resBody')">格式化JSON</span>
           <el-icon class="modal-full-screen" @click="fullScreenEvent('respBodyFullStatus')"><FullScreen v-if="!respBodyFullStatus" /><Close v-else /></el-icon>
           <code-mirror v-model="formData.resBody" basic :lang="jsonLang"/>
         </el-form-item>
@@ -146,12 +148,22 @@ import { GetDatasourceList } from '@/services/datasource.service'
 import { GetComputerGroupList } from '@/services/computer-group.service'
 import CodeMirror from 'vue-codemirror6'
 import {json} from '@codemirror/lang-json'
+import { jsonFormatter } from '@/utils/formatter'
 import {sql} from '@codemirror/lang-sql'
 import { GetCustomApiDetailData } from '@/services/custom-api.service'
 
 interface Option {
   label: string
   value: string
+}
+
+const checkPath = (rule: any, value: any, callback: any) => {
+    const phoneReg = /^\/([a-zA-Z0-9_]+(\/[a-zA-Z0-9_]+)*)$/
+    if (value && !phoneReg.test(value)) {
+        callback(new Error('路径输入有误'))
+    } else {
+        callback()
+    }
 }
 
 const optionsRule = (rule: any, value: any, callback: any) => {
@@ -167,7 +179,6 @@ const optionsRule = (rule: any, value: any, callback: any) => {
 
 const form = ref<FormInstance>()
 const callback = ref<any>()
-const uploadRef = ref()
 const clusterList = ref([])  // 计算集群
 const dataSourceList = ref([])  // 数据源
 
@@ -236,7 +247,10 @@ const formData = reactive<{
 const rules = reactive<FormRules>({
   name: [{ required: true, message: '请输入名称', trigger: [ 'blur', 'change' ]}],
   apiType: [{ required: true, message: '请选择请求方式', trigger: [ 'blur', 'change' ]}],
-  path: [{ required: true, message: '请输入自定义访问路径', trigger: [ 'blur', 'change' ]}],
+  path: [
+    { required: true, message: '请输入自定义访问路径', trigger: [ 'blur', 'change' ]},
+    { validator: checkPath, trigger: ['blur', 'change'] }
+  ],
   // clusterId: [{ required: true, message: '请选择计算集群', trigger: [ 'blur', 'change' ]}],
   datasourceId: [{ required: true, message: '请选择数据源', trigger: [ 'blur', 'change' ]}],
   reqHeader: [{ validator: optionsRule, trigger: ['blur', 'change'] }],
@@ -268,6 +282,15 @@ function showModal(cb: () => void, data: any): void {
   nextTick(() => {
     form.value?.resetFields()
   })
+}
+
+function formatterJsonEvent(formData: any, key: string) {
+  try {
+    formData[key] = jsonFormatter(formData[key])
+  } catch (error) {
+    console.error('请检查输入的JSON格式是否正确', error)
+    ElMessage.error('请检查输入的JSON格式是否正确')
+  }
 }
 
 function getApiDetailData(id: string) {
@@ -453,6 +476,17 @@ defineExpose({
     }
   }
   .el-form-item {
+    .format-json {
+      position: absolute;
+      top: -34px;
+      right: 20px;
+      font-size: 12px;
+      color: getCssVar('color', 'primary');
+      cursor: pointer;
+      &:hover {
+        text-decoration: underline;
+      }
+    }
     &.show-screen__full {
       position: fixed;
       width: 100%;

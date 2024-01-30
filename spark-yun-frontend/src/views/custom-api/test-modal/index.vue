@@ -39,6 +39,7 @@
         </div>
       </el-form-item>
       <el-form-item v-if="formData.method === 'POST'" label="请求体" prop="bodyParams" :class="{ 'show-screen__full': reqBodyFullStatus }">
+        <span class="format-json" @click="formatterJsonEvent(formData, 'bodyParams')">格式化JSON</span>
         <el-icon class="modal-full-screen" @click="fullScreenEvent('reqBodyFullStatus')"><FullScreen v-if="!reqBodyFullStatus" /><Close v-else /></el-icon>
         <code-mirror v-model="formData.bodyParams" basic :lang="jsonLang"/>
       </el-form-item>
@@ -62,7 +63,12 @@
           </div>
         </div>
       </el-form-item>
-      <el-form-item label="响应体" prop="returnConfig" :class="{ 'show-screen__full': respBodyFullStatus }">
+      <!-- 响应体 状态码 -->
+      <el-form-item class="resp-http-body" label="响应体" prop="returnConfig" :class="{ 'show-screen__full': respBodyFullStatus }">
+        <span class="format-json" @click="formatterJsonEvent(formData, 'bodyParams')">格式化JSON</span>
+        <span class="resp-http-status" :style="{ color: httpStatus == 500 ? 'red' : '' }">
+          {{ httpStatus }}
+        </span>
         <el-icon class="modal-full-screen" @click="fullScreenEvent('respBodyFullStatus')">
           <FullScreen v-if="!respBodyFullStatus" />
           <Close v-else />
@@ -81,7 +87,7 @@ import CodeMirror from 'vue-codemirror6'
 import {json} from '@codemirror/lang-json'
 import { jsonFormatter } from '@/utils/formatter'
 import { useAuthStore } from '@/store/useAuth'
-import { TestCustomApiData } from '@/services/custom-api.service'
+import { GetCustomApiDetailData, TestCustomApiData } from '@/services/custom-api.service'
 import Clipboard from 'clipboard'
 
 const authStore = useAuthStore()
@@ -93,6 +99,7 @@ const responseBodyRef = ref()
 const reqHeaderFullStatus = ref(false)
 const reqBodyFullStatus = ref(false)
 const respBodyFullStatus = ref(false)
+const httpStatus = ref()
 
 const modelConfig = reactive({
   title: '测试接口',
@@ -131,6 +138,7 @@ const rules = reactive<FormRules>({
 function showModal(data: any): void {
   modelConfig.visible = true
   formData.id = data.id
+  getApiDetailData(data.id)
   if (data.path.slice(0,1) !== '/') {
     data.path = '/' + data.path
   }
@@ -145,6 +153,35 @@ function showModal(data: any): void {
   })
 }
 
+function getApiDetailData(id: string) {
+  GetCustomApiDetailData({
+    id: id
+  }).then((res: any) => {
+    console.log('res', res)
+    formData.headerConfig = res.data.reqHeader.map((item: any) => {
+      item.value = ''
+      return {
+        ...item
+      }
+    })
+    const bodyJsonObj = JSON.parse(res.data.reqBody)
+    const bodyConfigArr = []
+    Object.keys(bodyJsonObj).forEach((key: string) => {
+      bodyJsonObj[key] = ''
+      bodyConfigArr.push({
+        label: key,
+        value: ''
+      })
+    })
+    if (res.data.apiType === 'POST') {
+      formData.bodyParams = jsonFormatter(JSON.stringify(bodyJsonObj))
+    } else {
+      formData.bodyConfig = bodyConfigArr
+    }
+    //  JSON.parse(formData.bodyParams)
+  }).catch(() => {
+  })
+}
 
 function okEvent() {
   form.value?.validate((valid) => {
@@ -170,6 +207,7 @@ function okEvent() {
         }).then((res: any) => {
           ElMessage.success(res.msg)
           modelConfig.okConfig.loading = false
+          httpStatus.value = res.data.httpStatus
           if (res.data.httpStatus === 200) {
             formData.returnConfig = jsonFormatter(JSON.stringify(res.data.body))
           } else {
@@ -191,7 +229,14 @@ function okEvent() {
 function closeEvent() {
   modelConfig.visible = false
 }
-
+function formatterJsonEvent(formData: any, key: string) {
+  try {
+    formData[key] = jsonFormatter(formData[key])
+  } catch (error) {
+    console.error('请检查输入的JSON格式是否正确', error)
+    ElMessage.error('请检查输入的JSON格式是否正确')
+  }
+}
 function fullScreenEvent(type: string) {
   if (type === 'reqHeaderFullStatus') {
     reqHeaderFullStatus.value = !reqHeaderFullStatus.value
@@ -244,6 +289,17 @@ defineExpose({
     }
   }
   .el-form-item {
+    .format-json {
+      position: absolute;
+      top: -34px;
+      right: 20px;
+      font-size: 12px;
+      color: getCssVar('color', 'primary');
+      cursor: pointer;
+      &:hover {
+        text-decoration: underline;
+      }
+    }
     &.show-screen__full {
       position: fixed;
       width: 100%;
@@ -330,6 +386,16 @@ defineExpose({
           }
         }
       }
+    }
+  }
+  .resp-http-body {
+    position: relative;
+    .resp-http-status {
+      position: absolute;
+      top: -35px;
+      left: 62px;
+      z-index: 10;
+      font-size: 12px;
     }
   }
 }
