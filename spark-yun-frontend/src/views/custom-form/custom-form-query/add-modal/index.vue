@@ -1,6 +1,6 @@
 <template>
     <BlockModal :model-config="modelConfig">
-        <LoadingPage :visible="loading" :network-error="networkError" @loading-refresh="initData(false)">
+        <LoadingPage :visible="loading">
             <z-form-engine
                 ref="formEngineRef"
                 v-model="formData"
@@ -44,6 +44,7 @@ const modelConfig = reactive({
         cancel: closeEvent,
         disabled: false
     },
+    customClass: 'custom-form-add',
     needScale: false,
     zIndex: 1100,
     closeOnClickModal: false
@@ -108,9 +109,10 @@ defineExpose({
 </script>
   
 <style lang="scss">
-.add-computer-group {
-    padding: 12px 20px 0 20px;
-    box-sizing: border-box;
+.custom-form-add {
+    .zqy-loading {
+        height: calc(60vh - 20px);
+    }
 }
 </style>
   
