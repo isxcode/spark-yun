@@ -14,7 +14,7 @@ spring:
 
   datasource:
     driver-class-name: org.h2.Driver
-    url: jdbc:h2:file:~/.zhiqingyun/h2/data
+    url: jdbc:h2:file:~/.zhiqingyun/h2/data;AUTO_SERVER=TRUE
     username: root
     password: root123
 
