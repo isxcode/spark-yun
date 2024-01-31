@@ -7,9 +7,18 @@ import lombok.Data;
 @Builder
 public class SecurityColumnDto {
 
-	private String componentUuid;
+	/**
+	 * 字段名.
+	 */
+	private String name;
 
+	/**
+	 * 字段值.
+	 */
 	private Object value;
 
+	/**
+	 * 字段类型.
+	 */
 	private String type;
 }

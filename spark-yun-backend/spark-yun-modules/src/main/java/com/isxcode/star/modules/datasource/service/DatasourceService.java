@@ -21,6 +21,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -212,5 +213,36 @@ public class DatasourceService {
 			return matcher.group(1);
 		}
 		throw new IsxAppException("数据源异常");
+	}
+
+	/**
+	 * 解析sql select * from table where a = '${value1}' and b = ${value2} 获取sql中的参数顺序
+	 * List [value1,value2]
+	 */
+	public List<SecurityColumnDto> transSecurityColumns(String sql) {
+
+		List<SecurityColumnDto> securityColumnList = new ArrayList<>();
+
+		// 使用正则截取${}中的字符
+		String pattern = "\\$\\{(?!UPDATE_COLUMN\\b)([^}]+)\\}";
+		Pattern regex = Pattern.compile(pattern);
+		Matcher matcher = regex.matcher(sql);
+		int columnIndex = 10;
+		while (matcher.find()) {
+			String name = matcher.group(1);
+			securityColumnList.add(SecurityColumnDto.builder().name(columnIndex + "." + name).build());
+			columnIndex++;
+
+		}
+		return securityColumnList;
+	}
+
+	/**
+	 * 解析sql，将 select * from table where a = '${value1}' and b = ${value2} 转成 select
+	 * * from table where a = '?' and b = ?
+	 */
+	public String transSecuritySql(String sql) {
+
+		return sql.replaceAll("\\$\\{(?!UPDATE_COLUMN\\b)([^}]+)\\}", "?");
 	}
 }
