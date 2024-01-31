@@ -31,6 +31,9 @@
           </el-select>
         </el-form-item>
         <el-form-item label="自定义访问路径" prop="path">
+          <el-tooltip content="路径规则：/path1、/path1/path2、/path1/path2/path3，仅支持三级" placement="top">
+            <el-icon style="left: 92px" class="tooltip-msg"><QuestionFilled /></el-icon>
+          </el-tooltip>
           <el-input
             v-model="formData.path"
             maxlength="1000"
@@ -79,6 +82,9 @@
         <!-- 接口配置 -->
         <!-- <div class="item-title">请求配置</div> -->
         <el-form-item label="请求头模式">
+          <el-tooltip content="任何人访问：无权限拦截。系统认证：通过至轻云用户权限拦截。自定义：用户自定义请求头拦截" placement="top">
+            <el-icon style="left: 68px" class="tooltip-msg"><QuestionFilled /></el-icon>
+          </el-tooltip>
           <el-radio-group v-model="formData.tokenType" size="small" @change="tokenTypeChangeEvent">
             <el-radio-button label="ANONYMOUS">任何人访问</el-radio-button>
             <el-radio-button label="SYSTEM">系统认证</el-radio-button>
@@ -108,18 +114,59 @@
           </div>
         </el-form-item>
         <el-form-item label="开启分页">
+          <el-tooltip content="分页系统参数如下：$system.page（分页的页数，从0开始），$system.pageSize（分页的每页条数），$system.count（总条数）" placement="top">
+            <el-icon style="left: 54px" class="tooltip-msg"><QuestionFilled /></el-icon>
+          </el-tooltip>
           <el-switch v-model="formData.pageType" />
         </el-form-item>
         <el-form-item label="请求体设置" :class="{ 'show-screen__full': reqBodyFullStatus }">
+          <el-tooltip placement="top">
+            <template #content>
+              <pre>
+{
+  "custom_page": "$system.page",
+  "custom_pageSize": "$system.pageSize",
+  "id": "$custom_id",
+  "age": "$custom_age"
+}
+json请求体，用户可以完全自定义。$custom_id：用户自定义参数，
+$system.xxx为至轻云系统分页参数，需开启分页</pre>
+            </template>
+            <el-icon style="left: 68px" class="tooltip-msg"><QuestionFilled /></el-icon>
+          </el-tooltip>
           <span class="format-json" @click="formatterJsonEvent(formData, 'reqBody')">格式化JSON</span>
           <el-icon class="modal-full-screen" @click="fullScreenEvent('reqBodyFullStatus')"><FullScreen v-if="!reqBodyFullStatus" /><Close v-else /></el-icon>
           <code-mirror v-model="formData.reqBody" basic :lang="jsonLang"/>
         </el-form-item>
         <el-form-item label="SQL设置" :class="{ 'show-screen__full': sqlFullStatus }">
+          <el-tooltip placement="top">
+            <template #content>
+              <pre>
+select 27429bf8f150 as username from table1 where 4ad4ca220877 = $custom_age or sy_id = '$custom_id'
+不支持*表达的语法，请求体中$custome_id会被继承到sql中，与请求体一一对应</pre>
+            </template>
+            <el-icon style="left: 48px" class="tooltip-msg"><QuestionFilled /></el-icon>
+          </el-tooltip>
           <el-icon class="modal-full-screen" @click="fullScreenEvent('sqlFullStatus')"><FullScreen v-if="!sqlFullStatus" /><Close v-else /></el-icon>
           <code-mirror v-model="formData.apiSql" basic :lang="sqlLang"/>
         </el-form-item>
         <el-form-item label="返回体设置" prop="resBody" :class="{ 'show-screen__full': respBodyFullStatus }">
+          <el-tooltip placement="top">
+            <template #content>
+              <pre>
+{
+  "count": "$system.count",
+  "$data": [
+      {
+        "custom_username": "$username"
+      }
+  ]
+}
+SQL设置中的username，会赋值到$username中,
+$system.count是系统分页参数，返回总条数</pre>
+            </template>
+            <el-icon style="left: 68px" class="tooltip-msg"><QuestionFilled /></el-icon>
+          </el-tooltip>
           <span class="format-json" @click="formatterJsonEvent(formData, 'resBody')">格式化JSON</span>
           <el-icon class="modal-full-screen" @click="fullScreenEvent('respBodyFullStatus')"><FullScreen v-if="!respBodyFullStatus" /><Close v-else /></el-icon>
           <code-mirror v-model="formData.resBody" basic :lang="jsonLang"/>
@@ -486,6 +533,13 @@ defineExpose({
       &:hover {
         text-decoration: underline;
       }
+    }
+    .tooltip-msg {
+      position: absolute;
+      top: -28px;
+      // left: 20px;
+      color: getCssVar('color', 'primary');
+      font-size: 16px;
     }
     &.show-screen__full {
       position: fixed;
