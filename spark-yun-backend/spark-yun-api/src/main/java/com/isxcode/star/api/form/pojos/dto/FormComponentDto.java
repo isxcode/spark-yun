@@ -44,4 +44,6 @@ public class FormComponentDto {
 	private SwitchOptionDto switchInfo;
 
 	private String colorPicker;
+
+	private String dateType;
 }
