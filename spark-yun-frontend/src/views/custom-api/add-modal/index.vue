@@ -538,7 +538,7 @@ defineExpose({
       position: absolute;
       top: -28px;
       // left: 20px;
-      color: getCssVar('color', 'primary');
+      color: getCssVar('color', 'info');
       font-size: 16px;
     }
     &.show-screen__full {
