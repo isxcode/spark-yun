@@ -18,4 +18,10 @@ public interface ColumnType {
 	String BIG_DECIMAL = "BIG_DECIMAL";
 
 	String TIMESTAMP = "TIMESTAMP";
+
+	String DATE = "DATE";
+
+	String DATE_TIME = "DATE_TIME";
+
+	String INT = "INT";
 }

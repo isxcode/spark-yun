@@ -166,6 +166,40 @@ public class DatasourceService {
 		}
 	}
 
+	public ResultSet securityQuerySql(String datasourceId, String securityExecuteSql,
+			List<SecurityColumnDto> securityColumns) throws SQLException {
+
+		DatasourceEntity datasource = this.getDatasource(datasourceId);
+
+		Connection connection = this.getDbConnection(datasource);
+		PreparedStatement statement = connection.prepareStatement(securityExecuteSql);
+		for (int i = 0; i < securityColumns.size(); i++) {
+			this.transAndSetParameter(statement, securityColumns.get(i), i);
+		}
+		return statement.executeQuery();
+	}
+
+	public long securityGetTableCount(String datasourceId, String securityExecuteSql,
+			List<SecurityColumnDto> securityColumns) {
+
+		DatasourceEntity datasource = this.getDatasource(datasourceId);
+
+		try (Connection connection = this.getDbConnection(datasource);
+				PreparedStatement statement = connection.prepareStatement(securityExecuteSql);) {
+			for (int i = 0; i < securityColumns.size(); i++) {
+				this.transAndSetParameter(statement, securityColumns.get(i), i);
+			}
+			ResultSet resultSet = statement.executeQuery();
+			while (resultSet.next()) {
+				return resultSet.getLong(1);
+			}
+		} catch (Exception e) {
+			log.error(e.getMessage());
+			throw new IsxAppException("提交失败");
+		}
+		throw new IsxAppException("查询总条数异常");
+	}
+
 	public boolean tableIsExist(DatasourceEntity datasource, String tableName) {
 
 		try (Connection connection = this.getDbConnection(datasource);
@@ -185,11 +219,16 @@ public class DatasourceService {
 			case ColumnType.STRING :
 				statement.setString(parameterIndex + 1, String.valueOf(securityColumnDto.getValue()));
 				break;
+			case ColumnType.INT :
+				statement.setInt(parameterIndex + 1, Integer.parseInt(String.valueOf(securityColumnDto.getValue())));
+				break;
 			case ColumnType.DOUBLE :
 				statement.setDouble(parameterIndex + 1,
 						Double.parseDouble(String.valueOf(securityColumnDto.getValue())));
 				break;
 			case ColumnType.TIMESTAMP :
+			case ColumnType.DATE :
+			case ColumnType.DATE_TIME :
 				statement.setTimestamp(parameterIndex + 1,
 						new Timestamp(Long.parseLong(String.valueOf(securityColumnDto.getValue()))));
 				break;
@@ -224,7 +263,7 @@ public class DatasourceService {
 		List<SecurityColumnDto> securityColumnList = new ArrayList<>();
 
 		// 使用正则截取${}中的字符
-		String pattern = "\\$\\{(?!UPDATE_COLUMN\\b)([^}]+)\\}";
+		String pattern = "'\\$\\{(?!UPDATE_COLUMN\\b)([^}]+)\\}'";
 		Pattern regex = Pattern.compile(pattern);
 		Matcher matcher = regex.matcher(sql);
 		int columnIndex = 10;
@@ -232,17 +271,22 @@ public class DatasourceService {
 			String name = matcher.group(1);
 			securityColumnList.add(SecurityColumnDto.builder().name(columnIndex + "." + name).build());
 			columnIndex++;
-
 		}
 		return securityColumnList;
 	}
 
 	/**
 	 * 解析sql，将 select * from table where a = '${value1}' and b = ${value2} 转成 select
-	 * * from table where a = '?' and b = ?
+	 * * from table where a = ? and b = ?
 	 */
 	public String transSecuritySql(String sql) {
 
-		return sql.replaceAll("\\$\\{(?!UPDATE_COLUMN\\b)([^}]+)\\}", "?");
+		return sql.replaceAll("'\\$\\{(?!UPDATE_COLUMN\\b)([^}]+)\\}'", "?");
+	}
+
+	public boolean isQueryStatement(String sql) {
+		String trimmedSql = sql.trim();
+		String firstWord = trimmedSql.split("\\s+")[0].toUpperCase();
+		return firstWord.equals("SELECT");
 	}
 }
