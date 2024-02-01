@@ -67,6 +67,12 @@ function getFormConfigById(tableLoading?: boolean) {
     }).then((res: any) => {
         formConfigList.value = res.data?.components
         status.value = res.data?.status
+        router.replace({
+            query: {
+                id: res.data?.formId,
+                formVersion: res.data?.formVersion
+            }
+        })
         if (res.data?.components && res.data?.components.length) {
             tableConfig.colConfigs = [...(res.data?.components || []).filter(item => item.type !== 'static').map(item => {
                 return {
