@@ -142,8 +142,8 @@ function addData() {
 }
 
 function editData(data: any) {
-    delete data._X_ROW_KEY
     const oldData = cloneDeep(data)
+    delete oldData._X_ROW_KEY
     addModalRef.value.showModal((formData: any) => {
         return new Promise((resolve: any, reject: any) => {
             UpdateFormData({
@@ -170,11 +170,12 @@ function deleteData(data: any) {
         cancelButtonText: '取消',
         type: 'warning'
     }).then(() => {
-        delete data._X_ROW_KEY
+        const oldData = cloneDeep(data)
+        delete oldData._X_ROW_KEY
         DeleteFormData({
             formId: route.query.id,
             formVersion: route.query.formVersion,
-            data: data
+            data: oldData
         }).then((res: any) => {
             ElMessage.success(res.msg)
             initData()
