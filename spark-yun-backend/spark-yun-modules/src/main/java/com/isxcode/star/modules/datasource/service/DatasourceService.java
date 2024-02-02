@@ -13,7 +13,11 @@ import com.isxcode.star.modules.datasource.entity.DatasourceEntity;
 import com.isxcode.star.modules.datasource.repository.DatasourceRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.calcite.sql.parser.SqlParseException;
 import org.springframework.stereotype.Service;
+import org.apache.calcite.sql.SqlKind;
+import org.apache.calcite.sql.parser.SqlParser;
+import org.apache.calcite.sql.SqlNode;
 
 import java.io.File;
 import java.math.BigDecimal;
@@ -285,8 +289,13 @@ public class DatasourceService {
 	}
 
 	public boolean isQueryStatement(String sql) {
-		String trimmedSql = sql.trim();
-		String firstWord = trimmedSql.split("\\s+")[0].toUpperCase();
-		return firstWord.equals("SELECT");
+
+		SqlParser parser = SqlParser.create(sql);
+		try {
+			SqlNode sqlNode = parser.parseStmt();
+			return sqlNode.getKind() == SqlKind.SELECT;
+		} catch (SqlParseException e) {
+			throw new RuntimeException(e);
+		}
 	}
 }
