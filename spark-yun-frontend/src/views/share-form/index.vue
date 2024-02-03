@@ -31,7 +31,7 @@ interface baseParam {
   formId: string
   formVersion: string
   tenantId: string
-  token: string
+  formToken: string
 }
 
 const route = useRoute()
@@ -54,7 +54,7 @@ const shareFormConfig = ref<baseParam>({
   formId: '',
   formVersion: '',
   tenantId: '',
-  token: ''
+  formToken: ''
 })
 const token = ref('')
 
@@ -86,7 +86,7 @@ function getFormConfigById(tableLoading?: boolean) {
   ShareFormGetFormConfig({
     formId: shareFormConfig.value.formId
   }, {
-    authorization: shareFormConfig.value.token,
+    authorization: shareFormConfig.value.formToken,
     tenant: shareFormConfig.value.tenantId
   }).then((res: any) => {
     formConfigList.value = res.data?.components
@@ -106,7 +106,7 @@ function saveData() {
         formVersion: shareFormConfig.value.formVersion,
         data: formData
       }, {
-        authorization: shareFormConfig.value.token,
+        authorization: shareFormConfig.value.formToken,
         tenant: shareFormConfig.value.tenantId
       }).then((res: any) => {
         saveLoading.value = false
