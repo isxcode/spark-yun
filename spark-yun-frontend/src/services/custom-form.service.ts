@@ -129,3 +129,29 @@ export function ShareFormGetFormConfig(params: any, config: any): Promise<any> {
         }
     })
 }
+
+interface FormLinkParam {
+    formLinkId: string
+}
+
+interface FormShareParam {
+    formId: string
+    validDay: number
+}
+// 获取分享表单链接的id接口
+export function GetFormLinkConfig(params: FormShareParam): Promise<any> {
+    return http.request({
+        method: 'post',
+        url: '/vip/form/getFormLink',
+        params: params
+    })
+}
+
+// 根据表单linkId 获取相关配置接口
+export function GetFormLinkInfoConfig(params: FormLinkParam): Promise<any> {
+    return http.request({
+        method: 'post',
+        url: '/vip/form/open/getFormLinkInfo',
+        params: params
+    })
+}

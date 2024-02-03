@@ -33,7 +33,7 @@ import EllipsisTooltip from '@/components/ellipsis-tooltip/ellipsis-tooltip.vue'
 import Clipboard from 'clipboard'
 import { ElMessage } from 'element-plus'
 import { useAuthStore } from '@/store/useAuth'
-import { ShareFormGetCustomToken } from '@/services/custom-form.service'
+import { GetFormLinkConfig, ShareFormGetCustomToken } from '@/services/custom-form.service'
 
 const authStore = useAuthStore()
 const url = ref('')
@@ -64,18 +64,19 @@ function showModal(card: any): void {
 
 function getShareFormUrl() {
     loading.value = true
-    ShareFormGetCustomToken({
+    GetFormLinkConfig({
+        formId: cardInfo.value.id,
         validDay: validDay.value
     }).then((res: any) => {
-        token.value = res.data.token
-        loading.value = false
-        const params = {
-            formId: cardInfo.value.id,
-            formVersion: cardInfo.value.formVersion,
-            tenantId: authStore.tenantId,
-            token: token.value
-        }
-        url.value = `${location.origin}/share/${window.btoa(JSON.stringify(params))}`
+        // token.value = res.data.token
+        // loading.value = false
+        // const params = {
+        //     formId: cardInfo.value.id,
+        //     formVersion: cardInfo.value.formVersion,
+        //     tenantId: authStore.tenantId,
+        //     token: token.value
+        // }
+        url.value = `${location.origin}/share/${res.data.formLinkId}`
     }).catch(() => {
     })
 }

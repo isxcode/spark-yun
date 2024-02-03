@@ -25,7 +25,7 @@ import { useRoute } from 'vue-router'
 import Header from '@/layout/header/index.vue'
 import ZFormEngine from '@/lib/packages/z-form-engine/index.vue'
 import { ElMessage } from 'element-plus'
-import { AddFormData, ShareFormGetCustomToken, ShareFormGetFormConfig } from '@/services/custom-form.service'
+import { AddFormData, GetFormLinkInfoConfig, ShareFormGetCustomToken, ShareFormGetFormConfig } from '@/services/custom-form.service'
 
 interface baseParam {
   formId: string
@@ -49,6 +49,7 @@ const formEngineRef = ref()
 const formConfigList = ref([])
 const saveLoading = ref(false)
 
+const shareLinkId = ref('')
 const shareFormConfig = ref<baseParam>({
   formId: '',
   formVersion: '',
@@ -120,12 +121,29 @@ function saveData() {
   })
 }
 
+function getlinkParams() {
+  return new Promise((resolve, reject) => {
+    loading.value = true
+    GetFormLinkInfoConfig({
+      formLinkId: shareLinkId.value
+    }).then((res: any) => {
+      shareFormConfig.value = res.data
+      resolve()
+    }).catch((error: any) => {
+      loading.value = false
+      reject(error)
+    })
+  })
+}
+
 onMounted(() => {
   const params = route.params.shareParam
   if (params) {
-    shareFormConfig.value = JSON.parse(window.atob(params))
-    console.log('shareFormConfig.value', shareFormConfig.value)
-    getFormConfigById()
+    shareLinkId.value = params
+    console.log('shareFormConfig.value', shareLinkId.value)
+    getlinkParams().then(() => {
+      getFormConfigById()
+    })
   }
 })
 </script>
