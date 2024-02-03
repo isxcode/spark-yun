@@ -52,7 +52,7 @@ export const menuListData: Array<Menu> = [
   },
   {
     code: 'custom-form',
-    name: '自定义表单',
+    name: '分享表单',
     icon: 'Files',
     authType: [ 'ROLE_TENANT_MEMBER', 'ROLE_TENANT_ADMIN' ],
     childPage: ['form-list', 'form-query', 'form-setting']

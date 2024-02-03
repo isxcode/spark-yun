@@ -11,6 +11,7 @@
             class="costom-form-engine"
             v-model="formData"
             renderSence="new"
+            :isAutoCreateTable="isAutoCreateTable"
             :isDragger="true"
             :formConfigList="formConfigList"
             :getTableCodesMethod="getTableCodesMethod"
@@ -41,6 +42,7 @@ const networkError = ref(false)
 const loading = ref(false)
 const baseFormConfig = ref()
 const saveLoading = ref(false)
+const isAutoCreateTable = ref(false)
 
 function initData(tableLoading?: boolean) {
     loading.value = tableLoading ? false : true
@@ -50,6 +52,7 @@ function initData(tableLoading?: boolean) {
     }).then((res: any) => {
         baseFormConfig.value = res.data
         formConfigList.value = res.data?.components || []
+        isAutoCreateTable.value = res.data?.createMode === 'AUTO_TABLE'
         loading.value = false
         networkError.value = false
     }).catch(() => {

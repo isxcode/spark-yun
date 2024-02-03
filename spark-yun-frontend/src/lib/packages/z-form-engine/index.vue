@@ -27,6 +27,7 @@
             v-model="instanceConfig.chooseItemData"
             :formConfig="instanceConfig.chooseItemData"
             :configList="instanceConfig.chooseItemConfigList"
+            :isAutoCreateTable="isAutoCreateTable"
             :getTableCodesMethod="getTableCodesMethod"
             @formConfigChange="formConfigChange"
         ></form-components-config>
@@ -52,11 +53,13 @@ const props = withDefaults(defineProps<{
     renderSence?: string
     modelValue: any
     isDragger?: boolean
+    isAutoCreateTable?: boolean
     formConfigList: ComponentInstance[]
     getTableCodesMethod?: Function
 }>(), {
     renderSence: 'new',
     isDragger: false,
+    isAutoCreateTable: false,
     formConfigList: []
 })
 const emit = defineEmits(['update:modelValue'])
