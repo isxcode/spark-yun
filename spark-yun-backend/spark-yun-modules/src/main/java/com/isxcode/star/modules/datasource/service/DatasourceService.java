@@ -219,30 +219,57 @@ public class DatasourceService {
 
 	public void transAndSetParameter(PreparedStatement statement, SecurityColumnDto securityColumnDto,
 			int parameterIndex) throws SQLException {
+
 		switch (securityColumnDto.getType()) {
 			case ColumnType.STRING :
-				statement.setString(parameterIndex + 1, String.valueOf(securityColumnDto.getValue()));
+				if (securityColumnDto.getValue() == null) {
+					statement.setNull(parameterIndex + 1, java.sql.Types.VARCHAR);
+				} else {
+					statement.setString(parameterIndex + 1, String.valueOf(securityColumnDto.getValue()));
+				}
 				break;
 			case ColumnType.INT :
-				statement.setInt(parameterIndex + 1, Integer.parseInt(String.valueOf(securityColumnDto.getValue())));
+				if (securityColumnDto.getValue() == null) {
+					statement.setNull(parameterIndex + 1, Types.INTEGER);
+				} else {
+					statement.setInt(parameterIndex + 1,
+							Integer.parseInt(String.valueOf(securityColumnDto.getValue())));
+				}
 				break;
 			case ColumnType.DOUBLE :
-				statement.setDouble(parameterIndex + 1,
-						Double.parseDouble(String.valueOf(securityColumnDto.getValue())));
+				if (securityColumnDto.getValue() == null) {
+					statement.setNull(parameterIndex + 1, Types.DOUBLE);
+
+				} else {
+					statement.setDouble(parameterIndex + 1,
+							Double.parseDouble(String.valueOf(securityColumnDto.getValue())));
+				}
 				break;
 			case ColumnType.TIMESTAMP :
 			case ColumnType.DATE :
 			case ColumnType.DATE_TIME :
-				statement.setTimestamp(parameterIndex + 1,
-						new Timestamp(Long.parseLong(String.valueOf(securityColumnDto.getValue()))));
+				if (securityColumnDto.getValue() == null) {
+					statement.setNull(parameterIndex + 1, Types.TIMESTAMP);
+				} else {
+					statement.setTimestamp(parameterIndex + 1,
+							new Timestamp(Long.parseLong(String.valueOf(securityColumnDto.getValue()))));
+				}
 				break;
 			case ColumnType.BIG_DECIMAL :
-				statement.setBigDecimal(parameterIndex + 1,
-						new BigDecimal(String.valueOf(securityColumnDto.getValue())));
+				if (securityColumnDto.getValue() == null) {
+					statement.setNull(parameterIndex + 1, Types.NUMERIC);
+				} else {
+					statement.setBigDecimal(parameterIndex + 1,
+							new BigDecimal(String.valueOf(securityColumnDto.getValue())));
+				}
 				break;
 			case ColumnType.BOOLEAN :
-				statement.setBoolean(parameterIndex + 1,
-						Boolean.parseBoolean(String.valueOf(securityColumnDto.getValue())));
+				if (securityColumnDto.getValue() == null) {
+					statement.setNull(parameterIndex + 1, Types.BOOLEAN);
+				} else {
+					statement.setBoolean(parameterIndex + 1,
+							Boolean.parseBoolean(String.valueOf(securityColumnDto.getValue())));
+				}
 				break;
 			default :
 				throw new IsxAppException("字段类型不支持");
