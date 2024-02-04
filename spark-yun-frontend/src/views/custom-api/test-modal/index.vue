@@ -158,25 +158,27 @@ function getApiDetailData(id: string) {
     id: id
   }).then((res: any) => {
     console.log('res', res)
-    formData.headerConfig = res.data.reqHeader.map((item: any) => {
-      item.value = ''
-      return {
-        ...item
-      }
-    })
-    const bodyJsonObj = JSON.parse(res.data.reqBody)
-    const bodyConfigArr = []
-    Object.keys(bodyJsonObj).forEach((key: string) => {
-      bodyJsonObj[key] = ''
-      bodyConfigArr.push({
-        label: key,
-        value: ''
+    if (res.data.reqHeader) {
+      formData.headerConfig = res.data.reqHeader.map((item: any) => {
+        item.value = ''
+        return {
+          ...item
+        }
       })
-    })
+    }
+    // const bodyJsonObj = JSON.parse(res.data.reqBody)
+    // const bodyConfigArr = []
+    // Object.keys(bodyJsonObj).forEach((key: string) => {
+    //   bodyJsonObj[key] = ''
+    //   bodyConfigArr.push({
+    //     label: key,
+    //     value: ''
+    //   })
+    // })
     if (res.data.apiType === 'POST') {
-      formData.bodyParams = jsonFormatter(JSON.stringify(bodyJsonObj))
+      formData.bodyParams = jsonFormatter(JSON.parse(res.data.reqJsonTemp))
     } else {
-      formData.bodyConfig = bodyConfigArr
+      formData.bodyConfig = res.data.reqGetTemp
     }
     //  JSON.parse(formData.bodyParams)
   }).catch(() => {

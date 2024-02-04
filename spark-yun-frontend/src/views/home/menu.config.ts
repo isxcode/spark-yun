@@ -59,7 +59,7 @@ export const menuListData: Array<Menu> = [
   },
   {
     code: 'custom-api',
-    name: '自定义接口',
+    name: '接口服务',
     icon: 'MessageBox',
     authType: [ 'ROLE_TENANT_MEMBER', 'ROLE_TENANT_ADMIN' ],
     childPage: []
