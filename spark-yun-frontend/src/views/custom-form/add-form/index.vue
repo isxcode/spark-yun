@@ -235,7 +235,7 @@ function dataSourceChange(e: string) {
     formData.mainTable = ''
     sourceTablesList.value = []
     if (e === 'AUTO_TABLE') {
-        formData.mainTable = `AU_${guid()}`
+        formData.mainTable = `SY_${guid()}`
     }
 }
 
