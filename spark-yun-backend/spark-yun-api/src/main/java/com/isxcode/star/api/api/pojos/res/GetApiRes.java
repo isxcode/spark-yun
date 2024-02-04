@@ -4,6 +4,7 @@ import com.isxcode.star.api.api.pojos.dto.HeaderTokenDto;
 import lombok.Data;
 
 import java.util.List;
+import java.util.Map;
 
 @Data
 public class GetApiRes {
@@ -31,4 +32,8 @@ public class GetApiRes {
 	private String datasourceId;
 
 	private Boolean pageType;
+
+	private String reqJsonTemp;
+
+	private Map<String, String> reqGetTemp;
 }
