@@ -298,4 +298,15 @@ public class DatasourceService {
 			throw new RuntimeException(e);
 		}
 	}
+
+	public boolean checkSqlValid(String sql) {
+
+		SqlParser parser = SqlParser.create(sql);
+		try {
+			parser.parseQuery(sql);
+			return true;
+		} catch (SqlParseException e) {
+			return false;
+		}
+	}
 }
