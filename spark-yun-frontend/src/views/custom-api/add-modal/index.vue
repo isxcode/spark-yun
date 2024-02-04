@@ -122,15 +122,26 @@
         <el-form-item label="请求体设置" :class="{ 'show-screen__full': reqBodyFullStatus }">
           <el-tooltip placement="top">
             <template #content>
-              <pre>
+<pre style="max-height: 300px; overflow: auto;">
+post模版:
 {
-  "custom_page": "$system.page",
-  "custom_pageSize": "$system.pageSize",
-  "id": "$custom_id",
-  "age": "$custom_age"
+  "req":{
+    "custom_a":"$a.date",
+    "custom_b":"$b.datetime",
+    "custom_c":"$c.timestamp",
+    "custom_d":"$d.string",
+    "custom_e":"$e.boolean",
+    "custom_f":"$f.double",
+    "custom_g":"$g.int"
+  },
+  "custom_page":"$page.int",
+  "custom_pageSize":"$pageSize.int"
 }
-json请求体，用户可以完全自定义。$custom_id：用户自定义参数，
-$system.xxx为至轻云系统分页参数，需开启分页</pre>
+
+get模版:
+custom_a=$a.date&custom_b=$b.datetime&custom_c=$c.timestamp&custom_d=$d.string&custom_e=
+$e.boolean&custom_f=$f.double&custom_g=$g.int&custom_page=$page.int&custom_pageSize=$pageSize.int
+</pre>
             </template>
             <el-icon style="left: 68px" class="tooltip-msg"><QuestionFilled /></el-icon>
           </el-tooltip>
@@ -142,8 +153,13 @@ $system.xxx为至轻云系统分页参数，需开启分页</pre>
           <el-tooltip placement="top">
             <template #content>
               <pre>
-select 27429bf8f150 as username from table1 where 4ad4ca220877 = $custom_age or sy_id = '$custom_id'
-不支持*表达的语法，请求体中$custome_id会被继承到sql中，与请求体一一对应</pre>
+不支持*表达语法，'${a}'对应请求中的"$a.date"
+插入模版：
+insert into demo (col1,col2,col3,col4,col5,col6,col7) values ('${a}','${b}','${c}','${d}','${e}','${f}','${g}')
+
+查询模版：
+select col1,col2,col3,col4,col5,col6,col7 from demo where col1 = '${a}' and col2= '${b}' 
+and col3= '${c}' and col4= '${d}' and col5= '${e}' and col6= '${f}' and col7= '${g}'</pre>
             </template>
             <el-icon style="left: 48px" class="tooltip-msg"><QuestionFilled /></el-icon>
           </el-tooltip>
@@ -153,17 +169,48 @@ select 27429bf8f150 as username from table1 where 4ad4ca220877 = $custom_age or 
         <el-form-item label="返回体设置" prop="resBody" :class="{ 'show-screen__full': respBodyFullStatus }">
           <el-tooltip placement="top">
             <template #content>
-              <pre>
+              <pre style="max-height: 300px; overflow: auto;">
+系统参数$count.long，需要开启分页激活
+
+单对象模版：
 {
-  "count": "$system.count",
-  "$data": [
-      {
-        "custom_username": "$username"
-      }
-  ]
+    "a": "$col1.date",
+    "b": "$col2.datetime",
+    "c": "$col3.timestamp",
+    "d": "$col4.string",
+    "e": "$col5.boolean",
+    "f": "$col6.double",
+    "g": "$col7.int"
 }
-SQL设置中的username，会赋值到$username中,
-$system.count是系统分页参数，返回总条数</pre>
+
+数组模版：
+[
+    {
+        "a": "$col1.date",
+        "b": "$col2.datetime",
+        "c": "$col3.timestamp",
+        "d": "$col4.string",
+        "e": "$col5.boolean",
+        "f": "$col6.double",
+        "g": "$col7.int"
+  }
+]
+
+分页模版：
+{
+  "$data": [
+    {
+      "a": "$col1.date",
+      "b": "$col2.datetime",
+      "c": "$col3.timestamp",
+      "d": "$col4.string",
+      "e": "$col5.boolean",
+      "f": "$col6.double",
+      "g": "$col7.int"
+    }
+  ],
+  "count": "$count.long"
+}</pre>
             </template>
             <el-icon style="left: 68px" class="tooltip-msg"><QuestionFilled /></el-icon>
           </el-tooltip>
