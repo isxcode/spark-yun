@@ -1,8 +1,9 @@
 <template>
     <div class="form-setting-button">
         <el-button @click="redirectQuery">返回</el-button>
-        <el-button @click="showSetting">高级设置</el-button>
-        <el-button type="primary" @click="saveData">保存</el-button>
+        <!-- <el-button @click="showSetting">高级设置</el-button> -->
+        <el-button type="primary" :loading="saveLoading" @click="publishForm">发布</el-button>
+        <el-button type="primary" :loading="saveLoading" @click="saveData">保存</el-button>
     </div>
     <LoadingPage :visible="loading" :network-error="networkError" @loading-refresh="initData(false)">
         <z-form-engine
@@ -10,6 +11,7 @@
             class="costom-form-engine"
             v-model="formData"
             renderSence="new"
+            :isAutoCreateTable="isAutoCreateTable"
             :isDragger="true"
             :formConfigList="formConfigList"
             :getTableCodesMethod="getTableCodesMethod"
@@ -25,8 +27,9 @@ import ZFormEngine from '@/lib/packages/z-form-engine/index.vue'
 import { useRouter, useRoute } from 'vue-router'
 import { GetTableColumnsByTableId } from '@/services/data-sync.service'
 import MoreSetting from './more-setting.vue'
-import { QueryFormConfigById, SaveFormConfigData } from '@/services/custom-form.service'
-import { ElMessage } from 'element-plus'
+import LoadingPage from '@/components/loading/index.vue'
+import { DeployCustomFormData, QueryFormConfigById, SaveFormConfigData } from '@/services/custom-form.service'
+import { ElMessage, ElMessageBox } from 'element-plus'
 
 const router = useRouter()
 const route = useRoute()
@@ -38,6 +41,8 @@ const formConfigList = ref()
 const networkError = ref(false)
 const loading = ref(false)
 const baseFormConfig = ref()
+const saveLoading = ref(false)
+const isAutoCreateTable = ref(false)
 
 function initData(tableLoading?: boolean) {
     loading.value = tableLoading ? false : true
@@ -47,6 +52,7 @@ function initData(tableLoading?: boolean) {
     }).then((res: any) => {
         baseFormConfig.value = res.data
         formConfigList.value = res.data?.components || []
+        isAutoCreateTable.value = res.data?.createMode === 'AUTO_TABLE'
         loading.value = false
         networkError.value = false
     }).catch(() => {
@@ -65,7 +71,10 @@ function getTableCodesMethod() {
             const arr = (res.data.columns || []).map((column: any) => {
                 return {
                     label: column.name,
-                    value: column.name
+                    value: column.name,
+                    required: column.isNoNullColumn,
+                    isPrimaryColumn: column.isPrimaryColumn,
+                    maxlength: column.columnLength
                 }
             })
             resolve(arr)
@@ -86,15 +95,39 @@ function saveData() {
     const components = zFormEnginRef.value.getFormItemConfigList()
     if (components) {
         formConfigList.value = zFormEnginRef.value.getFormItemConfigList()
+        saveLoading.value = true
         SaveFormConfigData({
             formId: baseFormConfig.value.formId,
             formVersion: route.query.formVersion,
             components: formConfigList.value
         }).then((res: any) => {
+            saveLoading.value = false
             ElMessage.success(res.msg)
         }).catch(err => {
+            saveLoading.value = false
         })
     }
+}
+
+// 发布
+function publishForm() {
+    ElMessageBox.confirm('确定发布该表单吗？', '警告', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+    }).then(() => {
+        saveLoading.value = true
+        DeployCustomFormData({
+            formId: route.query.id
+        }).then((res: any) => {
+            initData()
+            saveLoading.value = false
+            ElMessage.success('发布成功')
+            redirectQuery()
+        }).catch(err => {
+            saveLoading.value = false
+        })
+    })
 }
 
 onMounted(() => {

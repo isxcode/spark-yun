@@ -78,11 +78,14 @@ export function QueryFormDataList(params: any): Promise<any> {
 }
 
 // 生成的表单-添加数据
-export function AddFormData(params: any): Promise<any> {
+export function AddFormData(params: any, config: any = {}): Promise<any> {
     return http.request({
         method: 'post',
         url: '/vip/form/addData',
-        params: params
+        params: params,
+        headers: {
+            ...config
+        }
     })
 }
 
@@ -100,6 +103,55 @@ export function DeleteFormData(params: any): Promise<any> {
     return http.request({
         method: 'post',
         url: '/vip/form/deleteData',
+        params: params
+    })
+}
+
+//  ----------- 分享表单 ------------
+interface customTokenParam {
+    validDay: number
+}
+export function ShareFormGetCustomToken(params: customTokenParam): Promise<any> {
+    return http.request({
+        method: 'post',
+        url: '/user/getAnonymousToken',
+        params: params
+    })
+}
+
+export function ShareFormGetFormConfig(params: any, config: any): Promise<any> {
+    return http.request({
+        method: 'post',
+        url: '/vip/form/getFormConfigForAnonymous',
+        params: params,
+        headers: {
+            ...config
+        }
+    })
+}
+
+interface FormLinkParam {
+    formLinkId: string
+}
+
+interface FormShareParam {
+    formId: string
+    validDay: number
+}
+// 获取分享表单链接的id接口
+export function GetFormLinkConfig(params: FormShareParam): Promise<any> {
+    return http.request({
+        method: 'post',
+        url: '/vip/form/getFormLink',
+        params: params
+    })
+}
+
+// 根据表单linkId 获取相关配置接口
+export function GetFormLinkInfoConfig(params: FormLinkParam): Promise<any> {
+    return http.request({
+        method: 'post',
+        url: '/vip/form/open/getFormLinkInfo',
         params: params
     })
 }

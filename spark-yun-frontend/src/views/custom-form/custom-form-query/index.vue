@@ -67,13 +67,19 @@ function getFormConfigById(tableLoading?: boolean) {
     }).then((res: any) => {
         formConfigList.value = res.data?.components
         status.value = res.data?.status
+        router.replace({
+            query: {
+                id: res.data?.formId,
+                formVersion: res.data?.formVersion
+            }
+        })
         if (res.data?.components && res.data?.components.length) {
-            tableConfig.colConfigs = [...(res.data?.components || []).map(item => {
+            tableConfig.colConfigs = [...(res.data?.components || []).filter(item => item.type !== 'static').map(item => {
                 return {
-                    // prop: item.formValueCode,
                     prop: item.uuid,
                     title: item.label,
                     minWidth: 100,
+                    showHeaderOverflow: true,
                     showOverflowTooltip: true
                 }
             }), {
@@ -136,8 +142,8 @@ function addData() {
 }
 
 function editData(data: any) {
-    delete data._X_ROW_KEY
     const oldData = cloneDeep(data)
+    delete oldData._X_ROW_KEY
     addModalRef.value.showModal((formData: any) => {
         return new Promise((resolve: any, reject: any) => {
             UpdateFormData({
@@ -164,11 +170,12 @@ function deleteData(data: any) {
         cancelButtonText: '取消',
         type: 'warning'
     }).then(() => {
-        delete data._X_ROW_KEY
+        const oldData = cloneDeep(data)
+        delete oldData._X_ROW_KEY
         DeleteFormData({
             formId: route.query.id,
             formVersion: route.query.formVersion,
-            data: data
+            data: oldData
         }).then((res: any) => {
             ElMessage.success(res.msg)
             initData()
@@ -197,8 +204,8 @@ function editFormConfigEvent() {
     router.push({
         name: 'form-setting',
         query: {
-          id: route.query.id,
-        //   name: data.name
+            id: route.query.id,
+            formVersion: route.query.formVersion
         }
     })
 }

@@ -3,15 +3,14 @@ package com.isxcode.star.modules.user.controller;
 import com.isxcode.star.api.main.constants.ModuleCode;
 import com.isxcode.star.api.user.constants.RoleType;
 import com.isxcode.star.api.user.pojos.req.*;
-import com.isxcode.star.api.user.pojos.res.GetUserRes;
-import com.isxcode.star.api.user.pojos.res.LoginRes;
-import com.isxcode.star.api.user.pojos.res.PageEnableUserRes;
-import com.isxcode.star.api.user.pojos.res.PageUserRes;
+import com.isxcode.star.api.user.pojos.res.*;
 import com.isxcode.star.common.annotations.successResponse.SuccessResponse;
 import com.isxcode.star.modules.user.service.UserBizService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+
 import javax.validation.Valid;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.security.access.annotation.Secured;
@@ -122,5 +121,14 @@ public class UserController {
 	public Page<PageEnableUserRes> pageEnableUser(@Valid @RequestBody PageEnableUserReq pageEnableUserReq) {
 
 		return userBizService.pageEnableUser(pageEnableUserReq);
+	}
+
+	@Secured({RoleType.SYS_ADMIN, RoleType.TENANT_ADMIN})
+	@Operation(summary = "获取匿名者访问token接口")
+	@PostMapping("/getAnonymousToken")
+	@SuccessResponse("查询成功")
+	public GetAnonymousTokenRes getAnonymousToken(@Valid @RequestBody GetAnonymousTokenReq getAnonymousTokenReq) {
+
+		return userBizService.getAnonymousToken(getAnonymousTokenReq);
 	}
 }

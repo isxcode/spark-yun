@@ -32,7 +32,7 @@ const routes: Array<RouteRecordRaw> = [
     children: HomeChildren
   },
   {
-    path: '/share/:tenant',
+    path: '/share/:shareParam',
     name: 'share',
     component: ShareForm
   }

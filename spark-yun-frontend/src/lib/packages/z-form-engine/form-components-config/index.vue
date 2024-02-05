@@ -9,12 +9,14 @@
                 :label-position="'top'"
                 @validate="validateChange"
             >
-                <template v-for="(config, index) in configList" :key="index">
+                <template v-for="(config, index) in configListComp" :key="index">
                     <component
                         v-model="formData[getConfigComponentKey(config)]"
                         :formConfig="formConfig"
+                        :isAutoCreateTable="isAutoCreateTable"
                         :is="getConfigComponentName(config)"
                         :getTableCodesMethod="getTableCodesMethod"
+                        @formConfigChange="formConfigChange"
                     ></component>
                 </template>
             </el-form>
@@ -30,8 +32,8 @@ import { defineProps, defineEmits, computed, ref, shallowRef, markRaw } from 'vu
 import FormSetConfig from './form-set-config'
 import FormConfigConmponents from './form-config-components'
 
-const props = defineProps(['modelValue', 'configList', 'formConfig', 'getTableCodesMethod'])
-const emit = defineEmits(['update:modelValue', 'componentListChange'])
+const props = defineProps(['modelValue', 'configList', 'formConfig', 'getTableCodesMethod', 'isAutoCreateTable'])
+const emit = defineEmits(['update:modelValue', 'componentListChange', 'formConfigChange'])
 const formData = computed({
     get() {
         return props.modelValue
@@ -54,6 +56,14 @@ const getConfigComponentName = computed(() => {
         return markRaw(formConfigConmponents.value[configInstance.formInstanceName])
     }
 })
+const configListComp = computed(() => {
+    if (props.isAutoCreateTable) {
+        return props.configList.filter((config: string) => config !== 'CODE_SELECT')
+    } else {
+        return props.configList
+    }
+})
+
 const getConfigComponentKey = computed(() => {
     return (code: string) => {
         let configInstance
@@ -65,6 +75,10 @@ const getConfigComponentKey = computed(() => {
         return configInstance.formConfigValueCode
     }
 })
+
+function formConfigChange(e: any) {
+    emit('formConfigChange', e)
+}
 
 function validateChange(prop: string, isValid: boolean, message: string): void {
     props.formConfig.valid = isValid

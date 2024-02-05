@@ -16,6 +16,7 @@ import FormDefaultMultiple from './form-config-list/form-default-multiple.vue'
 import FormColorPicker from './form-config-list/form-color-picker.vue'
 import FormSwitchInfo from './form-config-list/form-switch-info.vue'
 import FormPrecision from './form-config-list/form-precision.vue'
+import FormIsPrimaryColumn from './form-config-list/form-isPrimaryColumn.vue'
 
 export default {
     FormLabel,
@@ -35,7 +36,8 @@ export default {
     FormDefaultMultiple,
     FormColorPicker,
     FormSwitchInfo,
-    FormPrecision
+    FormPrecision,
+    FormIsPrimaryColumn
 }
 
 // vite 写法

@@ -1,6 +1,7 @@
 export interface ComponentInstance {
     componentType: string
     formValueCode: string
+    maxlength?: number
     label: string
     placeholder: string
     uuid: string
@@ -12,4 +13,5 @@ export interface ComponentInstance {
     valid: boolean
     defaultValue: string | string[] | number | boolean
     type: string
+    isPrimaryColumn: boolean
 }

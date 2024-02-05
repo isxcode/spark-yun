@@ -22,6 +22,7 @@ export default {
     conponentSetConfig: [
         'LABEL',
         'CODE_SELECT',
+        'PRIMARY_COLUMN',
         'WIDTH',
         'PRECISION',
         'DEFAULTVALUE_NUMBER',

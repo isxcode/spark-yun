@@ -12,14 +12,25 @@
         <LoadingPage :visible="loading" :network-error="networkError" @loading-refresh="initData(false)">
             <div class="form-card-container">
                 <template v-if="formList?.length">
-                    <el-scrollbar max-height="calc(100vh - 186px)" class="form-card-list">
+                    <el-scrollbar max-height="calc(100vh - 146px)" class="form-card-list">
                         <template v-for="card in formList">
-                            <div class="form-card-item" @click="redirectQuery(card)">
+                            <div class="form-card-item">
                                 <div class="card-item">
                                     <span class="name">名称：</span>
                                     <EllipsisTooltip class="card-item-name" :label="card.name" />
                                 </div>
-                                <div class="card-item">创建时间：{{card.createDateTime}}</div>
+                                <div class="card-item">
+                                    <span class="name name_3">数据源：</span>
+                                    <EllipsisTooltip class="card-item-name card-item-name_3" :label="card.datasourceName" />
+                                </div>
+                                <div class="card-item">
+                                    <span class="name">表名：</span>
+                                    <EllipsisTooltip class="card-item-name" :label="card.mainTable" />
+                                </div>
+                                <div class="card-item">
+                                    <span class="name name_4">创建时间：</span>
+                                    <EllipsisTooltip class="card-item-name card-item-name_4" :label="card.createDateTime" />
+                                </div>
                                 <div class="card-item">状态：{{card.status === 'UNPUBLISHED' ? '未发布' : '已发布'}}</div>
                                 <!-- <div class="card-item">版本：{{card.version}}</div> -->
                                 <div class="card-item">
@@ -30,6 +41,9 @@
                                     <span class="url">备注：</span>
                                     <EllipsisTooltip class="card-item-url" :label="card.remark" />
                                 </div> -->
+                                <span class="show-detail" @click="redirectQuery(card)">
+                                    <el-icon><View /></el-icon>
+                                </span>
                                 <el-dropdown trigger="click" popper-class="custom-form-popover">
                                     <div class="card-button" @click.stop>
                                         <el-icon><MoreFilled /></el-icon>
@@ -39,7 +53,7 @@
                                             <el-dropdown-item v-if="card.status === 'UNPUBLISHED'" @click="editData(card)">配置</el-dropdown-item>
                                             <el-dropdown-item @click="updateData(card)">编辑</el-dropdown-item>
                                             <el-dropdown-item v-if="card.status === 'UNPUBLISHED'" @click="deleteData(card)">删除</el-dropdown-item>
-                                            <!-- <el-dropdown-item @click="shareForm(card)">分享</el-dropdown-item> -->
+                                            <el-dropdown-item @click="shareForm(card)">分享</el-dropdown-item>
                                             <el-dropdown-item v-if="card.status !== 'UNPUBLISHED'"  @click="underlineForm(card)">下线</el-dropdown-item>
                                             <el-dropdown-item v-else @click="publishForm(card)">发布</el-dropdown-item>
                                         </el-dropdown-menu>
@@ -96,7 +110,7 @@ interface formDataParam {
 const router = useRouter()
 const breadCrumbList = ref([
     {
-        name: '自定义表单',
+        name: '分享表单',
         code: 'custom-form'
     }
 ])
@@ -168,6 +182,7 @@ function addData() {
                       formVersion: res.data.formVersion
                     }
                 })
+                ElMessage.success(res.msg)
             }).catch(err => {
                 reject(err)
             })
@@ -182,7 +197,7 @@ function updateData(card: any) {
                 name: data.name,
                 remark: data.remark
             }).then((res: any) => {
-                ElMessage.success('更新成功')
+                ElMessage.success(res.msg)
                 resolve()
                 initData()
             }).catch(err => {
@@ -211,7 +226,7 @@ function deleteData(card: any) {
             formId: card.id
         }).then((res: any) => {
             handleCurrentChange(1)
-            ElMessage.success('删除成功')
+            ElMessage.success(res.msg)
         }).catch(err => {
         })
     })
@@ -270,15 +285,14 @@ onMounted(() => {
 
 <style lang="scss">
 .costom-form {
-
     .form-card-container {
-        box-sizing: border-box;
-        padding: 0 20px;
-
+        margin-top: -20px;
         .form-card-list {
             width: 100%;
+            margin-bottom: -20px;
             .el-scrollbar__wrap {
                 .el-scrollbar__view {
+                    padding: 20px 20px;
                     display: flex;
                     flex-wrap: wrap;
                     justify-content: space-between;
@@ -289,12 +303,12 @@ onMounted(() => {
 
             .form-card-item {
                 width: 24%;
-                height: 104px;
+                height: 150px;
                 border: 1px solid getCssVar('border-color');
                 border-radius: 6px;
                 background-color: getCssVar('color', 'white');
                 box-shadow: getCssVar('box-shadow', 'lighter');
-                transition: transform 0.1s linear;
+                transition: transform 0.15s linear;
                 display: inline-flex;
                 flex-direction: column;
                 justify-content: space-between;
@@ -310,18 +324,30 @@ onMounted(() => {
                     margin-top: 12px;
                 }
                 &:hover {
-                    transition: transform 0.1s linear;
-                    transform: scale(1.01);
+                    transition: transform 0.15s linear;
+                    transform: scale(1.03);
                 }
 
                 .card-item {
                     display: flex;
                     .name {
                         width: 40px;
+                        &.name_3 {
+                            min-width: 48px;
+                        }
+                        &.name_4 {
+                            min-width: 64px;
+                        }
                     }
                     .card-item-name {
                         display: inline-block;
-                        max-width: 74%;
+                        max-width: 72%;
+                        &.card-item-name_3 {
+                            max-width: 68%;
+                        }
+                        &.card-item-name_4 {
+                            max-width: 54%;
+                        }
                     }
                     .url {
                         width: 62px;
@@ -334,7 +360,7 @@ onMounted(() => {
                 .el-dropdown {
                     position: absolute;
                     right: 6px;
-                    bottom: 6px;
+                    bottom: 12px;
                     .card-button {
                         display: flex;
                         justify-content: center;
@@ -356,7 +382,28 @@ onMounted(() => {
                     cursor: default;
                     pointer-events: none;
                 }
+
+                .show-detail {
+                    position: absolute;
+                    right: 32px;
+                    bottom: 12px;
+                    cursor: pointer;
+                    display: flex;
+                    align-items: center;
+                    height: 16px;
+                    font-size: 16px;
+                    color: getCssVar('color', 'info');
+                    &:hover {
+                        color: getCssVar('color', 'primary');
+                        text-decoration: underline;
+                    }
+                }
             }
+        }
+
+        .el-pagination {
+            padding-right: 20px;
+            box-sizing: border-box;
         }
     }
 }

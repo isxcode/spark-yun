@@ -44,6 +44,7 @@
                 <el-radio-group :disabled="isEdit" v-model="formData.createMode" @change="dataSourceChange">
                     <el-radio label="EXIST_TABLE">选择已有表</el-radio>
                     <el-radio label="CREATE_TABLE">创建新表</el-radio>
+                    <el-radio label="AUTO_TABLE">自动创建表</el-radio>
                 </el-radio-group>
             </el-form-item>
             <el-form-item v-if="formData.createMode === 'EXIST_TABLE'" prop="mainTable" label="表（选择已有表名）">
@@ -59,7 +60,7 @@
                         :value="item.value" />
                 </el-select>
             </el-form-item>
-            <el-form-item v-else prop="mainTable" label="表（手动输入，生成新的表名）">
+            <el-form-item v-else-if="formData.createMode === 'CREATE_TABLE'" prop="mainTable" label="表（手动输入，生成新的表名）">
                 <el-input :disabled="isEdit" v-model="formData.mainTable" maxlength="20" placeholder="请输入" />
             </el-form-item>
             <el-form-item label="备注">
@@ -95,6 +96,13 @@ interface formDataParam {
     mainTable: string
     remark: string
     id?: string
+}
+
+const guid = function() {
+    function S4() {
+        return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
+    }
+    return (S4() + S4() + S4() + S4());
 }
 
 const form = ref<FormInstance>()
@@ -223,9 +231,12 @@ function okEvent() {
     })
 }
 
-function dataSourceChange() {
+function dataSourceChange(e: string) {
     formData.mainTable = ''
     sourceTablesList.value = []
+    if (e === 'AUTO_TABLE') {
+        formData.mainTable = `SY_${guid()}`
+    }
 }
 
 // 查询计算集群

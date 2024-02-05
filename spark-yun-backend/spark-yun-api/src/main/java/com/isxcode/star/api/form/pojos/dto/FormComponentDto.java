@@ -40,4 +40,10 @@ public class FormComponentDto {
 	private Boolean isPrimaryColumn;
 
 	private List<ComponentOptionDto> options;
+
+	private SwitchOptionDto switchInfo;
+
+	private String colorPicker;
+
+	private String dateType;
 }

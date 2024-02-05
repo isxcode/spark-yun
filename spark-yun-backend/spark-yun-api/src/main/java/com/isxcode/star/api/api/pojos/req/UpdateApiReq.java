@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import javax.validation.constraints.NotEmpty;
+import java.util.List;
 
 @Data
 public class UpdateApiReq {
@@ -38,7 +39,7 @@ public class UpdateApiReq {
 	private String pageType;
 
 	@Schema(title = "如果用户使用自定义认证方式，需要填写", example = "")
-	private HeaderTokenDto headerToken;
+	private List<HeaderTokenDto> reqHeader;
 
 	@Schema(title = "请求体", example = "{\n" + "    \"age\":\"${age}\",\n" + "    \"page\":\"${page}\",\n"
 			+ "    \"pageSize\":\"${pageSize}\"\n" + "}")

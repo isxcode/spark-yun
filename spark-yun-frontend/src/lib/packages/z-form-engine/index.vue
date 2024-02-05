@@ -27,7 +27,9 @@
             v-model="instanceConfig.chooseItemData"
             :formConfig="instanceConfig.chooseItemData"
             :configList="instanceConfig.chooseItemConfigList"
+            :isAutoCreateTable="isAutoCreateTable"
             :getTableCodesMethod="getTableCodesMethod"
+            @formConfigChange="formConfigChange"
         ></form-components-config>
     </div>
 </template>
@@ -51,11 +53,13 @@ const props = withDefaults(defineProps<{
     renderSence?: string
     modelValue: any
     isDragger?: boolean
+    isAutoCreateTable?: boolean
     formConfigList: ComponentInstance[]
     getTableCodesMethod?: Function
 }>(), {
     renderSence: 'new',
     isDragger: false,
+    isAutoCreateTable: false,
     formConfigList: []
 })
 const emit = defineEmits(['update:modelValue'])
@@ -126,6 +130,17 @@ function removeInstance(e: ComponentInstance) {
     componentList.value = componentList.value.filter((config: ComponentInstance) => config.uuid !== e.uuid)
 }
 
+// 右侧配置事件
+function formConfigChange(e: any) {
+    componentList.value.forEach(c => {
+        if (c.uuid === e.uuid) {
+            c.required = e.required
+            c.maxlength = e.maxlength
+            c.isPrimaryColumn = e.isPrimaryColumn
+        }
+    })
+}
+
 // expose method
 function getFormItemConfigList() {
     if (componentList.value.some(item => !item.valid)) {
@@ -150,6 +165,5 @@ defineExpose({
     width: 100%;
     display: flex;
     height: 100%;
-    // height: calc(100vh - 4px);
 }
 </style>

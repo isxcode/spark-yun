@@ -1,5 +1,9 @@
 <template>
   <BlockModal :model-config="modelConfig">
+    <el-steps class="custom-api-form__step" :active="stepIndex" finish-status="success">
+      <el-step title="基础配置" />
+      <el-step title="接口配置" />
+    </el-steps>
     <el-form
       ref="form"
       class="custom-api-form"
@@ -7,9 +11,9 @@
       :model="formData"
       :rules="rules"
     >
-      <div class="api-item">
+      <div class="api-item" v-if="stepIndex === 0">
         <!-- 基础配置 -->
-        <div class="item-title">基础配置</div>
+        <!-- <div class="item-title">基础配置</div> -->
         <el-form-item
           label="名称"
           prop="name"
@@ -27,6 +31,9 @@
           </el-select>
         </el-form-item>
         <el-form-item label="自定义访问路径" prop="path">
+          <el-tooltip content="路径规则：/path1、/path1/path2、/path1/path2/path3，仅支持三级" placement="top">
+            <el-icon style="left: 92px" class="tooltip-msg"><QuestionFilled /></el-icon>
+          </el-tooltip>
           <el-input
             v-model="formData.path"
             maxlength="1000"
@@ -71,37 +78,159 @@
           />
         </el-form-item>
       </div>
-      <div class="api-item">
+      <div class="api-item" v-if="stepIndex === 1">
         <!-- 接口配置 -->
-        <div class="item-title">请求配置</div>
+        <!-- <div class="item-title">请求配置</div> -->
         <el-form-item label="请求头模式">
-          <el-radio-group v-model="formData.tokenType" size="small">
+          <el-tooltip content="任何人访问：无权限拦截。系统认证：通过至轻云用户权限拦截。自定义：用户自定义请求头拦截" placement="top">
+            <el-icon style="left: 68px" class="tooltip-msg"><QuestionFilled /></el-icon>
+          </el-tooltip>
+          <el-radio-group v-model="formData.tokenType" size="small" @change="tokenTypeChangeEvent">
             <el-radio-button label="ANONYMOUS">任何人访问</el-radio-button>
             <el-radio-button label="SYSTEM">系统认证</el-radio-button>
             <el-radio-button label="CUSTOM">自定义</el-radio-button>
           </el-radio-group>
         </el-form-item>
-        <el-form-item v-if="formData.tokenType === 'CUSTOM'" label="请求头设置" prop="headerToken" :class="{ 'show-screen__full': reqHeaderFullStatus }">
-          <el-icon class="modal-full-screen" @click="fullScreenEvent('reqHeaderFullStatus')"><FullScreen v-if="!reqHeaderFullStatus" /><Close v-else /></el-icon>
-          <code-mirror v-model="formData.headerToken" basic :lang="jsonLang"/>
+        <el-form-item v-if="formData.tokenType === 'CUSTOM'" label="请求头设置" prop="reqHeader" :class="{ 'show-screen__full': reqHeaderFullStatus }">
+          <!-- <el-icon class="modal-full-screen" @click="fullScreenEvent('reqHeaderFullStatus')"><FullScreen v-if="!reqHeaderFullStatus" /><Close v-else /></el-icon>
+          <code-mirror v-model="formData.headerToken" basic :lang="jsonLang"/> -->
+          <span class="add-btn">
+            <el-icon @click="addNewOption"><CirclePlus /></el-icon>
+          </span>
+          <div class="form-options__list">
+            <div class="form-options__item" v-for="(element, index) in formData.reqHeader">
+              <div class="input-item">
+                <span class="item-label">键</span>
+                <el-input v-model="element.label" placeholder="请输入"></el-input>
+              </div>
+              <div class="input-item">
+                <span class="item-label">值</span>
+                <el-input v-model="element.value" placeholder="请输入"></el-input>
+              </div>
+              <div class="option-btn">
+                <el-icon v-if="formData.reqHeader.length > 1" class="remove" @click="removeItem(index)"><CircleClose /></el-icon>
+              </div>
+            </div>
+          </div>
         </el-form-item>
-        <el-form-item label="请求体设置" prop="reqBody" :class="{ 'show-screen__full': reqBodyFullStatus }">
+        <el-form-item label="开启分页">
+          <el-tooltip content="分页系统参数如下：$system.page（分页的页数，从0开始），$system.pageSize（分页的每页条数），$system.count（总条数）" placement="top">
+            <el-icon style="left: 54px" class="tooltip-msg"><QuestionFilled /></el-icon>
+          </el-tooltip>
+          <el-switch v-model="formData.pageType" />
+        </el-form-item>
+        <el-form-item label="请求体设置" :class="{ 'show-screen__full': reqBodyFullStatus }">
+          <el-tooltip placement="top">
+            <template #content>
+<pre style="max-height: 300px; overflow: auto;">
+post模版:
+{
+  "req":{
+    "custom_a":"$a.date",
+    "custom_b":"$b.datetime",
+    "custom_c":"$c.timestamp",
+    "custom_d":"$d.string",
+    "custom_e":"$e.boolean",
+    "custom_f":"$f.double",
+    "custom_g":"$g.int"
+  },
+  "custom_page":"$page.int",
+  "custom_pageSize":"$pageSize.int"
+}
+
+get模版:
+custom_a=$a.date&custom_b=$b.datetime&custom_c=$c.timestamp&custom_d=$d.string&custom_e=
+$e.boolean&custom_f=$f.double&custom_g=$g.int&custom_page=$page.int&custom_pageSize=$pageSize.int
+</pre>
+            </template>
+            <el-icon style="left: 68px" class="tooltip-msg"><QuestionFilled /></el-icon>
+          </el-tooltip>
+          <span class="format-json" @click="formatterJsonEvent(formData, 'reqBody')">格式化JSON</span>
           <el-icon class="modal-full-screen" @click="fullScreenEvent('reqBodyFullStatus')"><FullScreen v-if="!reqBodyFullStatus" /><Close v-else /></el-icon>
           <code-mirror v-model="formData.reqBody" basic :lang="jsonLang"/>
         </el-form-item>
-        <el-form-item label="SQL设置" prop="apiSql" :class="{ 'show-screen__full': sqlFullStatus }">
+        <el-form-item label="SQL设置" :class="{ 'show-screen__full': sqlFullStatus }">
+          <el-tooltip placement="top">
+            <template #content>
+              <pre>
+不支持*表达语法，'${a}'对应请求中的"$a.date"
+插入模版：
+insert into demo (col1,col2,col3,col4,col5,col6,col7) values ('${a}','${b}','${c}','${d}','${e}','${f}','${g}')
+
+查询模版：
+select col1,col2,col3,col4,col5,col6,col7 from demo where col1 = '${a}' and col2= '${b}' 
+and col3= '${c}' and col4= '${d}' and col5= '${e}' and col6= '${f}' and col7= '${g}'</pre>
+            </template>
+            <el-icon style="left: 48px" class="tooltip-msg"><QuestionFilled /></el-icon>
+          </el-tooltip>
           <el-icon class="modal-full-screen" @click="fullScreenEvent('sqlFullStatus')"><FullScreen v-if="!sqlFullStatus" /><Close v-else /></el-icon>
           <code-mirror v-model="formData.apiSql" basic :lang="sqlLang"/>
         </el-form-item>
-        <el-form-item label="开启分页">
-          <el-switch v-model="formData.pageType" />
-        </el-form-item>
-        <el-form-item label="返回体设置（成功/失败）" prop="resBody" :class="{ 'show-screen__full': respBodyFullStatus }">
+        <el-form-item label="返回体设置" prop="resBody" :class="{ 'show-screen__full': respBodyFullStatus }">
+          <el-tooltip placement="top">
+            <template #content>
+              <pre style="max-height: 300px; overflow: auto;">
+系统参数$count.long，需要开启分页激活
+
+单对象模版：
+{
+    "a": "$col1.date",
+    "b": "$col2.datetime",
+    "c": "$col3.timestamp",
+    "d": "$col4.string",
+    "e": "$col5.boolean",
+    "f": "$col6.double",
+    "g": "$col7.int"
+}
+
+数组模版：
+[
+    {
+        "a": "$col1.date",
+        "b": "$col2.datetime",
+        "c": "$col3.timestamp",
+        "d": "$col4.string",
+        "e": "$col5.boolean",
+        "f": "$col6.double",
+        "g": "$col7.int"
+  }
+]
+
+分页模版：
+{
+  "$data": [
+    {
+      "a": "$col1.date",
+      "b": "$col2.datetime",
+      "c": "$col3.timestamp",
+      "d": "$col4.string",
+      "e": "$col5.boolean",
+      "f": "$col6.double",
+      "g": "$col7.int"
+    }
+  ],
+  "count": "$count.long"
+}</pre>
+            </template>
+            <el-icon style="left: 68px" class="tooltip-msg"><QuestionFilled /></el-icon>
+          </el-tooltip>
+          <span class="format-json" @click="formatterJsonEvent(formData, 'resBody')">格式化JSON</span>
           <el-icon class="modal-full-screen" @click="fullScreenEvent('respBodyFullStatus')"><FullScreen v-if="!respBodyFullStatus" /><Close v-else /></el-icon>
           <code-mirror v-model="formData.resBody" basic :lang="jsonLang"/>
         </el-form-item>
       </div>
     </el-form>
+    <template #customLeft>
+      <template v-if="stepIndex === 0">
+        <el-button @click="closeEvent">取消</el-button>
+        <el-button type="primary" @click="nextStepEvent">下一步</el-button>
+      </template>
+      <template v-if="stepIndex === 1">
+        <el-button @click="closeEvent">取消</el-button>
+        <el-button type="primary" @click="stepIndex = 0">上一步</el-button>
+        <el-button :loading="okLoading" type="primary" @click="okEvent">确定</el-button>
+      </template>
+    </template>
   </BlockModal>
 </template>
 
@@ -113,11 +242,37 @@ import { GetDatasourceList } from '@/services/datasource.service'
 import { GetComputerGroupList } from '@/services/computer-group.service'
 import CodeMirror from 'vue-codemirror6'
 import {json} from '@codemirror/lang-json'
+import { jsonFormatter } from '@/utils/formatter'
 import {sql} from '@codemirror/lang-sql'
+import { GetCustomApiDetailData } from '@/services/custom-api.service'
+
+interface Option {
+  label: string
+  value: string
+}
+
+const checkPath = (rule: any, value: any, callback: any) => {
+    const phoneReg = /^\/([a-zA-Z0-9_]+(\/[a-zA-Z0-9_]+)*)$/
+    if (value && !phoneReg.test(value)) {
+        callback(new Error('路径输入有误'))
+    } else {
+        callback()
+    }
+}
+
+const optionsRule = (rule: any, value: any, callback: any) => {
+    const valueList = (value || []).map(v => v.value).filter(v => !!v)
+    if (value && value.some((item: Option) => !item.label || !item.value)) {
+        callback(new Error('请将键/值输入完整'))
+    } else if (value && valueList.length !== Array.from(new Set(valueList)).length) {
+        callback(new Error('值重复，请重新输入'))
+    } else {
+        callback()
+    }
+}
 
 const form = ref<FormInstance>()
 const callback = ref<any>()
-const uploadRef = ref()
 const clusterList = ref([])  // 计算集群
 const dataSourceList = ref([])  // 数据源
 
@@ -129,27 +284,44 @@ const reqBodyFullStatus = ref(false)
 const sqlFullStatus = ref(false)
 const respBodyFullStatus = ref(false)
 const isEdit = ref(false)
+const stepIndex = ref(0)
+
+const okLoading = ref(false)
 
 const modelConfig = reactive({
   title: '添加接口',
   visible: false,
-  width: '60%',
-  okConfig: {
-    title: '确定',
-    ok: okEvent,
-    disabled: false,
-    loading: false
-  },
+  width: '564px',
+  // okConfig: {
+  //   title: '确定',
+  //   ok: okEvent,
+  //   disabled: false,
+  //   loading: false
+  // },
   cancelConfig: {
     title: '取消',
     cancel: closeEvent,
-    disabled: false
+    disabled: false,
+    hide: true
   },
   needScale: false,
   zIndex: 1100,
   closeOnClickModal: false
 })
-const formData = reactive({
+const formData = reactive<{
+  id: string
+  name: string
+  apiType: string
+  path: string
+  datasourceId: string
+  remark: string
+  tokenType: string
+  reqHeader: Option[]
+  reqBody: string | null
+  apiSql: string | null
+  pageType: boolean
+  resBody: string | null
+}>({
   id: '',
   // 基础配置
   name: '',             // 名称
@@ -160,7 +332,7 @@ const formData = reactive({
   remark: '',           // 备注
   // 请求配置
   tokenType: 'ANONYMOUS',    // 请求头模式
-  headerToken: null,   // 请求头设置
+  reqHeader: [],   // 请求头设置
   reqBody: null,     // 请求体设置
   apiSql: null,      // SQL设置
   pageType: false,  // 是否分页
@@ -169,10 +341,13 @@ const formData = reactive({
 const rules = reactive<FormRules>({
   name: [{ required: true, message: '请输入名称', trigger: [ 'blur', 'change' ]}],
   apiType: [{ required: true, message: '请选择请求方式', trigger: [ 'blur', 'change' ]}],
-  path: [{ required: true, message: '请输入自定义访问路径', trigger: [ 'blur', 'change' ]}],
+  path: [
+    { required: true, message: '请输入自定义访问路径', trigger: [ 'blur', 'change' ]},
+    { validator: checkPath, trigger: ['blur', 'change'] }
+  ],
   // clusterId: [{ required: true, message: '请选择计算集群', trigger: [ 'blur', 'change' ]}],
   datasourceId: [{ required: true, message: '请选择数据源', trigger: [ 'blur', 'change' ]}],
-  headerToken: [{ required: true, message: '请输入请求头设置', trigger: [ 'blur', 'change' ]}],
+  reqHeader: [{ validator: optionsRule, trigger: ['blur', 'change'] }],
   reqBody: [{ required: true, message: '请输入请求体设置', trigger: [ 'blur', 'change' ]}],
   apiSql: [{ required: true, message: '请输入SQL设置', trigger: [ 'blur', 'change' ]}],
   resBody: [{ required: true, message: '请输入返回体设置（成功/失败）', trigger: [ 'blur', 'change' ]}],
@@ -180,11 +355,13 @@ const rules = reactive<FormRules>({
 
 function showModal(cb: () => void, data: any): void {
   callback.value = cb
+  stepIndex.value = 0
   modelConfig.visible = true
   if (data) {
-    Object.keys(formData).forEach(key => {
-      formData[key] = data[key]
-    })
+    // Object.keys(formData).forEach(key => {
+    //   formData[key] = data[key]
+    // })
+    getApiDetailData(data.id)
     isEdit.value = true
     modelConfig.title = '编辑接口'
   } else {
@@ -198,6 +375,30 @@ function showModal(cb: () => void, data: any): void {
   }
   nextTick(() => {
     form.value?.resetFields()
+  })
+}
+
+function formatterJsonEvent(formData: any, key: string) {
+  try {
+    formData[key] = jsonFormatter(formData[key])
+  } catch (error) {
+    console.error('请检查输入的JSON格式是否正确', error)
+    ElMessage.error('请检查输入的JSON格式是否正确')
+  }
+}
+
+function getApiDetailData(id: string) {
+  GetCustomApiDetailData({
+    id: id
+  }).then((res: any) => {
+    Object.keys(formData).forEach(key => {
+      if (key === 'reqHeader') {
+        formData[key] = res.data['reqHeader']
+      } else {
+        formData[key] = res.data[key]
+      }
+    })
+  }).catch(() => {
   })
 }
 
@@ -231,8 +432,8 @@ function getDataSourceList(e: boolean, searchType?: string) {
         }).then((res: any) => {
             dataSourceList.value = res.data.content.map((item: any) => {
                 return {
-                label: item.name,
-                value: item.id
+                  label: item.name,
+                  value: item.id
                 }
             })
         })
@@ -242,17 +443,47 @@ function getDataSourceList(e: boolean, searchType?: string) {
     }
 }
 
+function nextStepEvent() {
+  form.value?.validate((valid) => {
+    if (valid) {
+      stepIndex.value = 1
+    } else {
+      ElMessage.warning('请将表单输入完整')
+    }
+  })
+}
+
+function tokenTypeChangeEvent(e: string) {
+  if (e === 'CUSTOM') {
+    formData.reqHeader = [
+      {
+        label: '',
+        value: ''
+      }
+    ]
+  }
+}
+function addNewOption() {
+    formData.reqHeader.push({
+        label: '',
+        value: ''
+    })
+}
+function removeItem(index: number) {
+    formData.reqHeader.splice(index, 1)
+}
+
 function okEvent() {
   form.value?.validate((valid) => {
     if (valid) {
-      modelConfig.okConfig.loading = true
+      okLoading.value = true
       callback
         .value({
           ...formData,
           id: formData.id ? formData.id : undefined
         })
         .then((res: any) => {
-          modelConfig.okConfig.loading = false
+          okLoading.value = false
           if (res === undefined) {
             modelConfig.visible = false
           } else {
@@ -260,7 +491,7 @@ function okEvent() {
           }
         })
         .catch(() => {
-          modelConfig.okConfig.loading = false
+          okLoading.value = false
         })
     } else {
       ElMessage.warning('请将表单输入完整')
@@ -290,6 +521,38 @@ defineExpose({
 </script>
 
 <style lang="scss">
+.custom-api-form__step {
+  margin: auto;
+  padding-top: 20px;
+  position: sticky;
+  top: 0;
+  background: #ffffff;
+  z-index: 10;
+  padding-left: 25%;
+  padding-right: 25%;
+  box-sizing: border-box;
+  border-bottom: 1px solid getCssVar('border-color');
+  .el-step__head {
+    &.is-process {
+      color: getCssVar('color', 'primary');
+      .el-step__line {
+        // background-color: getCssVar('color', 'primary');
+      }
+      .el-step__icon {
+        border-color: getCssVar('color', 'primary');
+      }
+    }
+  }
+  .el-step__main {
+    margin-left: -12px;
+    .el-step__title {
+      font-size: 12px;
+      &.is-process {
+        color: getCssVar('color', 'primary');
+      }
+    }
+  }
+}
 .custom-api-form {
   box-sizing: border-box;
   padding: 12px 20px 0 20px;
@@ -307,6 +570,24 @@ defineExpose({
     }
   }
   .el-form-item {
+    .format-json {
+      position: absolute;
+      top: -34px;
+      right: 20px;
+      font-size: 12px;
+      color: getCssVar('color', 'primary');
+      cursor: pointer;
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+    .tooltip-msg {
+      position: absolute;
+      top: -28px;
+      // left: 20px;
+      color: getCssVar('color', 'info');
+      font-size: 16px;
+    }
     &.show-screen__full {
       position: fixed;
       width: 100%;
@@ -327,7 +608,7 @@ defineExpose({
           right: 0;
           cursor: pointer;
           &:hover {
-            color: getCssVar('color', 'primary');;
+            color: getCssVar('color', 'primary');
           }
         }
         .vue-codemirror {
@@ -377,6 +658,59 @@ defineExpose({
             }
           }
         }
+      }
+      .add-btn {
+          position: absolute;
+          right: 0;
+          top: -32px;
+          .el-icon {
+              color: getCssVar('color', 'primary');
+              cursor: pointer;
+              font-size: 16px;
+          }
+      }
+      .form-options__list {
+          width: 100%;
+          max-height: 210px;
+          overflow: auto;
+          .form-options__item {
+              display: flex;
+              margin-bottom: 8px;
+              .input-item {
+                  display: flex;
+                  font-size: 12px;
+                  margin-right: 8px;
+                  color: #303133;
+                  width: 100%;
+                  .item-label {
+                      margin-right: 8px;
+                  }
+                  .el-input {
+                      .el-input__wrapper {
+                          // padding: 0;
+                      }
+                  }
+              }
+              .option-btn {
+                  display: flex;
+                  height: 32px;
+                  align-items: center;
+                  .remove {
+                      color: red;
+                      cursor: pointer;
+                      margin-right: 8px;
+                      &:hover {
+                          color: getCssVar('color', 'primary');
+                      }
+                  }
+                  .move {
+                      color: getCssVar('color', 'primary');
+                      &:active {
+                          cursor: move;
+                      }
+                  }
+              }
+          }
       }
     }
   }
