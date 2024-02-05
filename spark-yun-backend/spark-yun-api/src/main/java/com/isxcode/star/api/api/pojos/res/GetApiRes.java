@@ -1,10 +1,10 @@
 package com.isxcode.star.api.api.pojos.res;
 
+import com.isxcode.star.api.api.pojos.dto.GetReqParamDto;
 import com.isxcode.star.api.api.pojos.dto.HeaderTokenDto;
 import lombok.Data;
 
 import java.util.List;
-import java.util.Map;
 
 @Data
 public class GetApiRes {
@@ -35,5 +35,5 @@ public class GetApiRes {
 
 	private String reqJsonTemp;
 
-	private Map<String, String> reqGetTemp;
+	private List<GetReqParamDto> reqGetTemp;
 }
