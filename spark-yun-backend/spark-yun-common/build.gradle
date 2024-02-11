@@ -23,4 +23,8 @@ dependencies {
 
   // jgrapht
   implementation 'org.jgrapht:jgrapht-core:1.4.0'
+
+  // spring security
+  api 'org.springframework.boot:spring-boot-starter-security'
+  testImplementation 'org.springframework.security:spring-security-test'
 }

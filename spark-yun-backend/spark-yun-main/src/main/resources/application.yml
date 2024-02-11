@@ -102,6 +102,9 @@ isx-app:
     - /swagger-ui/** # http://localhost:8080/swagger-ui/index.html
     - /h2-console/** # http://localhost:8080/h2-console
     - /druid/** # http://localhost:8080/druid/index.html
+    - /tools/setLogLevel # http://localhost:8080/tools/setLogLevel?level=debug
+    - /tools/getCacheList # http://localhost:8080/tools/getCacheList
+    - /tools/getCache # http://localhost:8080/tools/getCache?name=SY_USERS
   anonymous-url:
     - / # 让页面可以访问前端
     - /static/** # 放行前端资源文件

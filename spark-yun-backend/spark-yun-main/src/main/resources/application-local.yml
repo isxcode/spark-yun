@@ -28,6 +28,7 @@ spring:
 logging:
   level:
     root: info
+    com.isxcode.star: info
   logback:
     rollingpolicy:
       total-size-cap: 100MB
