@@ -56,3 +56,6 @@ spark-yun-autotest/Reports
 
 # 不提交spark-yun-vip文件夹
 spark-yun-vip
+
+# 日志不提交
+logs
