@@ -10,7 +10,7 @@ spring:
 
   jpa:
     database: h2
-    show-sql: true
+    show-sql: false
 
   datasource:
     driver-class-name: org.h2.Driver
@@ -28,6 +28,11 @@ spring:
 logging:
   level:
     root: info
+  logback:
+    rollingpolicy:
+      total-size-cap: 100MB
+      max-history: 30
+      max-file-size: 10MB
 
 spark-yun:
   default-agent-port: 30177
