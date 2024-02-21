@@ -1,7 +1,9 @@
 package com.isxcode.star.config;
 
 import java.io.Serializable;
-import java.util.UUID;
+
+import cn.hutool.core.lang.Snowflake;
+import cn.hutool.core.util.IdUtil;
 import org.hibernate.HibernateException;
 import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.id.IdentifierGenerator;
@@ -12,6 +14,7 @@ public class GeneratedValueConfig implements IdentifierGenerator {
 	@Override
 	public Serializable generate(SharedSessionContractImplementor session, Object object) throws HibernateException {
 
-		return "sy_" + UUID.randomUUID().toString().replace("-", "");
+		Snowflake snowflake = IdUtil.getSnowflake();
+		return "sy_" + snowflake.nextId();
 	}
 }
