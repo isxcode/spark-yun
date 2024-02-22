@@ -27,6 +27,7 @@ import java.io.InputStream;
 import java.net.URLEncoder;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Optional;
 
 import static com.isxcode.star.common.config.CommonConfig.TENANT_ID;
 
@@ -48,6 +49,12 @@ public class FileBizService {
 	private final FileMapper fileMapper;
 
 	public void uploadFile(MultipartFile file, String type, String remark) {
+
+		// 判断文件是否重复
+		Optional<FileEntity> fileByNameOptional = fileRepository.findByFileName(file.getOriginalFilename());
+		if (fileByNameOptional.isPresent()) {
+			throw new IsxAppException("文件已重复存在");
+		}
 
 		// 判断文件夹是否存在，不存在则创建
 		String fileDir = PathUtils.parseProjectPath(isxAppProperties.getResourcesPath()) + File.separator + "file"
