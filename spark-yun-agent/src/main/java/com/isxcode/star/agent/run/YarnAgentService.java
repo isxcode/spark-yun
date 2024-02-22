@@ -101,6 +101,8 @@ public class YarnAgentService implements AgentService {
 			}
 		} catch (InterruptedException e) {
 			throw new IsxAppException(e.getMessage());
+		} finally {
+			launch.destroy();
 		}
 
 		throw new IsxAppException("无法获取applicationId");
