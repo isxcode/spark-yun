@@ -8,6 +8,8 @@ import com.isxcode.star.api.tenant.pojos.res.PageTenantUserRes;
 import com.isxcode.star.api.user.constants.RoleType;
 import com.isxcode.star.api.user.constants.UserStatus;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
+import com.isxcode.star.modules.tenant.entity.TenantEntity;
+import com.isxcode.star.modules.tenant.service.TenantService;
 import com.isxcode.star.security.user.TenantUserEntity;
 import com.isxcode.star.security.user.TenantUserRepository;
 import com.isxcode.star.security.user.UserEntity;
@@ -36,7 +38,21 @@ public class TenantUserBizService {
 
 	private final TenantUserRepository tenantUserRepository;
 
+	private final TenantService tenantService;
+
 	public void addTenantUser(AddTenantUserReq turAddTenantUserReq) {
+
+		// 已req中的tenantId为主
+		String tenantId = Strings.isEmpty(turAddTenantUserReq.getTenantId())
+				? TENANT_ID.get()
+				: turAddTenantUserReq.getTenantId();
+
+		// 判断是否到租户的人员上限
+		TenantEntity tenant = tenantService.getTenant(tenantId);
+		long memberCount = tenantUserRepository.countByTenantId(tenantId);
+		if (memberCount + 1 > tenant.getMaxMemberNum()) {
+			throw new IsxAppException("超出租户的最大成员限制");
+		}
 
 		// 判断对象用户是否合法
 		Optional<UserEntity> userEntityOptional = userRepository.findById(turAddTenantUserReq.getUserId());
@@ -48,13 +64,6 @@ public class TenantUserBizService {
 		// 如果租户id为空
 		if (Strings.isEmpty(TENANT_ID.get()) && Strings.isEmpty(turAddTenantUserReq.getTenantId())) {
 			throw new IsxAppException("请指定租户id");
-		}
-
-		String tenantId;
-		if (Strings.isNotEmpty(turAddTenantUserReq.getTenantId())) {
-			tenantId = turAddTenantUserReq.getTenantId();
-		} else {
-			tenantId = TENANT_ID.get();
 		}
 
 		// 判断该用户是否已经是成员
