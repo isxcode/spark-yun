@@ -38,59 +38,61 @@ public class TenantUserBizService {
 
 	private final TenantUserRepository tenantUserRepository;
 
-  private final TenantService tenantService;
+	private final TenantService tenantService;
 
-  public void addTenantUser(AddTenantUserReq turAddTenantUserReq) {
+	public void addTenantUser(AddTenantUserReq turAddTenantUserReq) {
 
-    // 已req中的tenantId为主
-    String tenantId = Strings.isEmpty(turAddTenantUserReq.getTenantId()) ? TENANT_ID.get() : turAddTenantUserReq.getTenantId();
+		// 已req中的tenantId为主
+		String tenantId = Strings.isEmpty(turAddTenantUserReq.getTenantId())
+				? TENANT_ID.get()
+				: turAddTenantUserReq.getTenantId();
 
-    // 判断是否到租户的人员上限
-    TenantEntity tenant = tenantService.getTenant(tenantId);
-    long memberCount = tenantUserRepository.countByTenantId(tenantId);
-    if (memberCount + 1 > tenant.getMaxMemberNum()) {
-      throw new IsxAppException("超出租户的最大成员限制");
-    }
+		// 判断是否到租户的人员上限
+		TenantEntity tenant = tenantService.getTenant(tenantId);
+		long memberCount = tenantUserRepository.countByTenantId(tenantId);
+		if (memberCount + 1 > tenant.getMaxMemberNum()) {
+			throw new IsxAppException("超出租户的最大成员限制");
+		}
 
-    // 判断对象用户是否合法
-    Optional<UserEntity> userEntityOptional = userRepository.findById(turAddTenantUserReq.getUserId());
-    if (!userEntityOptional.isPresent()) {
-      throw new IsxAppException("用户不存在");
-    }
-    UserEntity userEntity = userEntityOptional.get();
+		// 判断对象用户是否合法
+		Optional<UserEntity> userEntityOptional = userRepository.findById(turAddTenantUserReq.getUserId());
+		if (!userEntityOptional.isPresent()) {
+			throw new IsxAppException("用户不存在");
+		}
+		UserEntity userEntity = userEntityOptional.get();
 
-    // 如果租户id为空
-    if (Strings.isEmpty(TENANT_ID.get()) && Strings.isEmpty(turAddTenantUserReq.getTenantId())) {
-      throw new IsxAppException("请指定租户id");
-    }
+		// 如果租户id为空
+		if (Strings.isEmpty(TENANT_ID.get()) && Strings.isEmpty(turAddTenantUserReq.getTenantId())) {
+			throw new IsxAppException("请指定租户id");
+		}
 
-    // 判断该用户是否已经是成员
-    Optional<TenantUserEntity> tenantUserEntityOptional = tenantUserRepository.findByTenantIdAndUserId(tenantId,
-      turAddTenantUserReq.getUserId());
-    if (tenantUserEntityOptional.isPresent()) {
-      throw new IsxAppException("该成员已经是项目成员");
-    }
+		// 判断该用户是否已经是成员
+		Optional<TenantUserEntity> tenantUserEntityOptional = tenantUserRepository.findByTenantIdAndUserId(tenantId,
+				turAddTenantUserReq.getUserId());
+		if (tenantUserEntityOptional.isPresent()) {
+			throw new IsxAppException("该成员已经是项目成员");
+		}
 
-    // 初始化租户用户
-    TenantUserEntity tenantUserEntity = TenantUserEntity.builder().tenantId(tenantId)
-      .userId(turAddTenantUserReq.getUserId()).status(UserStatus.ENABLE).build();
+		// 初始化租户用户
+		TenantUserEntity tenantUserEntity = TenantUserEntity.builder().tenantId(tenantId)
+				.userId(turAddTenantUserReq.getUserId()).status(UserStatus.ENABLE).build();
 
-    // 初始化用户权限
-    if (turAddTenantUserReq.getIsTenantAdmin()) {
-      tenantUserEntity.setRoleCode(RoleType.TENANT_ADMIN);
-    } else {
-      tenantUserEntity.setRoleCode(RoleType.TENANT_MEMBER);
-    }
+		// 初始化用户权限
+		if (turAddTenantUserReq.getIsTenantAdmin()) {
+			tenantUserEntity.setRoleCode(RoleType.TENANT_ADMIN);
+		} else {
+			tenantUserEntity.setRoleCode(RoleType.TENANT_MEMBER);
+		}
 
-    // 判断用户当前是否有租户
-    if (Strings.isEmpty(userEntity.getCurrentTenantId())) {
-      userEntity.setCurrentTenantId(tenantId);
-      userRepository.save(userEntity);
-    }
+		// 判断用户当前是否有租户
+		if (Strings.isEmpty(userEntity.getCurrentTenantId())) {
+			userEntity.setCurrentTenantId(tenantId);
+			userRepository.save(userEntity);
+		}
 
-    // 持久化数据
-    tenantUserRepository.save(tenantUserEntity);
-  }
+		// 持久化数据
+		tenantUserRepository.save(tenantUserEntity);
+	}
 
 	public Page<PageTenantUserRes> pageTenantUser(PageTenantUserReq turAddTenantUserReq) {
 
