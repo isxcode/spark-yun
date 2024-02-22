@@ -39,16 +39,12 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.*;
 
-import com.jcraft.jsch.JSchException;
-import com.jcraft.jsch.SftpException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.ResourceAccessException;
-
-import static com.isxcode.star.common.utils.ssh.SshUtils.scpFile;
 
 @Service
 @Slf4j
@@ -156,13 +152,16 @@ public class SparkSqlExecutor extends WorkExecutor {
 
 				Optional<FileEntity> fileEntityOptional = fileRepository.findById(udf.getFileId());
 				// 传输udf文件
-				try {
-					scpFile(scpFileEngineNodeDto, "/" + fileEntityOptional.get().getFilePath(),
-							engineNode.getAgentHomePath() + File.separator + PathConstants.AGENT_PATH_NAME
-									+ File.separator + "lib" + File.separator + fileEntityOptional.get().getFileName());
-				} catch (JSchException | SftpException | InterruptedException | IOException e) {
-					throw new RuntimeException(e);
-				}
+				// try {
+				// scpFile(scpFileEngineNodeDto, "/" + fileEntityOptional.get().getFilePath(),
+				// engineNode.getAgentHomePath() + File.separator +
+				// PathConstants.AGENT_PATH_NAME
+				// + File.separator + "lib" + File.separator +
+				// fileEntityOptional.get().getFileName());
+				// } catch (JSchException | SftpException | InterruptedException | IOException
+				// e) {
+				// throw new RuntimeException(e);
+				// }
 
 			});
 		}
