@@ -25,6 +25,9 @@ import com.isxcode.star.common.locker.Locker;
 import com.isxcode.star.modules.cluster.entity.ClusterEntity;
 import com.isxcode.star.modules.cluster.repository.ClusterRepository;
 import com.isxcode.star.modules.cluster.service.ClusterService;
+import com.isxcode.star.modules.tenant.entity.TenantEntity;
+import com.isxcode.star.modules.tenant.repository.TenantRepository;
+import com.isxcode.star.modules.tenant.service.TenantService;
 import com.isxcode.star.modules.work.entity.WorkConfigEntity;
 import com.isxcode.star.modules.work.entity.WorkEntity;
 import com.isxcode.star.modules.work.entity.WorkExportInfo;
@@ -105,6 +108,8 @@ public class WorkflowBizService {
 
 	private final ClusterService clusterService;
 
+  private final TenantService tenantService;
+
 	public WorkflowEntity getWorkflowEntity(String workflowId) {
 
 		Optional<WorkflowEntity> workflowEntityOptional = workflowRepository.findById(workflowId);
@@ -116,7 +121,14 @@ public class WorkflowBizService {
 
 	public void addWorkflow(AddWorkflowReq wofAddWorkflowReq) {
 
-		// 工作流唯一性
+    // 判断租户下的作业流上限
+    TenantEntity tenant = tenantService.getTenant(TENANT_ID.get());
+    long workflowCount = workflowRepository.count();
+    if (workflowCount + 1 > tenant.getMaxWorkflowNum()) {
+      throw new IsxAppException("超出租户的最大作业流限制");
+    }
+
+    // 工作流唯一性
 		Optional<WorkflowEntity> workflowByName = workflowRepository.findByName(wofAddWorkflowReq.getName());
 		if (workflowByName.isPresent()) {
 			throw new IsxAppException("作业流名称已重复，请重新输入");

@@ -130,8 +130,14 @@ public class TenantBizService {
 		Page<TenantEntity> tenantEntityPage = tenantRepository.searchAll(tetQueryTenantReq.getSearchKeyWord(),
 				PageRequest.of(tetQueryTenantReq.getPage(), tetQueryTenantReq.getPageSize()));
 
-		return tenantEntityPage.map(tenantMapper::tenantEntityToTetQueryTenantRes);
-	}
+    Page<PageTenantRes> result = tenantEntityPage.map(tenantMapper::tenantEntityToTetQueryTenantRes);
+    JPA_TENANT_MODE.set(false);
+    result.getContent().forEach(e -> {
+      e.setUsedWorkflowNum(String.valueOf(workflowRepository.countByTenantId(e.getId())));
+      e.setUsedMemberNum(String.valueOf(tenantUserRepository.countByTenantId(e.getId())));
+    });
+    return result;
+  }
 
 	public void updateTenantForSystemAdmin(UpdateTenantForSystemAdminReq tetUpdateTenantBySystemAdminReq) {
 
