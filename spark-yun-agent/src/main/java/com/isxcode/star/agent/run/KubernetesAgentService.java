@@ -136,8 +136,8 @@ public class KubernetesAgentService implements AgentService {
 		} catch (InterruptedException e) {
 			throw new IsxAppException(e.getMessage());
 		} finally {
-      launch.destroy();
-    }
+			launch.destroy();
+		}
 
 		throw new IsxAppException("无法获取podName");
 	}
