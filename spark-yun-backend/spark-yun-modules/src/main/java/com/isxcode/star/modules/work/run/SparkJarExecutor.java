@@ -31,8 +31,6 @@ import com.isxcode.star.modules.work.repository.WorkConfigRepository;
 import com.isxcode.star.modules.work.repository.WorkInstanceRepository;
 import com.isxcode.star.modules.work.repository.WorkRepository;
 import com.isxcode.star.modules.workflow.repository.WorkflowInstanceRepository;
-import com.jcraft.jsch.JSchException;
-import com.jcraft.jsch.SftpException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.http.HttpStatus;
@@ -44,8 +42,6 @@ import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.*;
-
-import static com.isxcode.star.common.utils.ssh.SshUtils.scpFile;
 
 @Service
 @Slf4j
@@ -141,27 +137,33 @@ public class SparkJarExecutor extends WorkExecutor {
 			throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "传输jar失败 : jar文件不存在  \n");
 		}
 
-		try {
-			scpFile(scpFileEngineNodeDto, "/" + fileEntityOptional.get().getFilePath(),
-					engineNode.getAgentHomePath() + File.separator + PathConstants.AGENT_PATH_NAME + File.separator
-							+ "plugins" + File.separator + fileEntityOptional.get().getFileName());
-		} catch (JSchException | SftpException | InterruptedException | IOException e) {
-			throw new WorkRunException(
-					LocalDateTime.now() + WorkLog.ERROR_INFO + "传输jar失败 : " + e.getMessage() + "  \n");
-		}
-		if (sparkJarConfigEntity.getLibFileIds() != null) {
-			sparkJarConfigEntity.getLibFileIds()
-					.forEach(fileId -> fileRepository.findById(fileId).ifPresent(fileEntity -> {
-						try {
-							scpFile(scpFileEngineNodeDto, fileEntity.getFilePath(),
-									engineNode.getAgentHomePath() + File.separator + PathConstants.AGENT_PATH_NAME
-											+ File.separator + "lib" + File.separator + fileEntity.getFileName());
-						} catch (JSchException | SftpException | InterruptedException | IOException e) {
-							throw new WorkRunException(
-									LocalDateTime.now() + WorkLog.ERROR_INFO + "传输lib失败 : " + e.getMessage() + "  \n");
-						}
-					}));
-		}
+		// try {
+		// scpFile(scpFileEngineNodeDto, "/" + fileEntityOptional.get().getFilePath(),
+		// engineNode.getAgentHomePath() + File.separator +
+		// PathConstants.AGENT_PATH_NAME + File.separator
+		// + "plugins" + File.separator + fileEntityOptional.get().getFileName());
+		// } catch (JSchException | SftpException | InterruptedException | IOException
+		// e) {
+		// throw new WorkRunException(
+		// LocalDateTime.now() + WorkLog.ERROR_INFO + "传输jar失败 : " + e.getMessage() + "
+		// \n");
+		// }
+		// if (sparkJarConfigEntity.getLibFileIds() != null) {
+		// sparkJarConfigEntity.getLibFileIds()
+		// .forEach(fileId -> fileRepository.findById(fileId).ifPresent(fileEntity -> {
+		// try {
+		// scpFile(scpFileEngineNodeDto, fileEntity.getFilePath(),
+		// engineNode.getAgentHomePath() + File.separator +
+		// PathConstants.AGENT_PATH_NAME
+		// + File.separator + "lib" + File.separator + fileEntity.getFileName());
+		// } catch (JSchException | SftpException | InterruptedException | IOException
+		// e) {
+		// throw new WorkRunException(
+		// LocalDateTime.now() + WorkLog.ERROR_INFO + "传输lib失败 : " + e.getMessage() + "
+		// \n");
+		// }
+		// }));
+		// }
 
 		// 开始构建作业
 		logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始构建作业  \n");

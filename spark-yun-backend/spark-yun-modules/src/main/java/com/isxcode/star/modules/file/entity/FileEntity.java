@@ -38,7 +38,7 @@ public class FileEntity {
 
 	private String fileSize;
 
-	private String filePath;
+	private String remark;
 
 	private String fileType;
 
