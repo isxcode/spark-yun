@@ -61,6 +61,9 @@ tasks.register('build_agent', Tar) {
   from('zhiqingyun-agent/works') {
     into 'zhiqingyun-agent/works'
   }
+  from('zhiqingyun-agent/file') {
+    into 'zhiqingyun-agent/file'
+  }
   from('build/zhiqingyun-agent/lib') {
     into 'zhiqingyun-agent/lib'
   }
@@ -85,9 +88,6 @@ tasks.register('build_zhiqingyun', Tar) {
   }
   from('zhiqingyun/logs') {
     into 'zhiqingyun/logs'
-  }
-  from('zhiqingyun/file') {
-    into 'zhiqingyun/file'
   }
   from(rootDir.getAbsolutePath() +'/resources/jdbc/system') {
     into 'zhiqingyun/resources/jdbc/system'
