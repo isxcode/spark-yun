@@ -138,11 +138,11 @@ public class WorkConfigBizService {
 		// if (wocConfigWorkReq.getUdfStatus() != null) {
 		// workConfig.setUdfStatus(wocConfigWorkReq.getUdfStatus());
 		// }
-		//
-		// // 设置自定义作业配置信息
-		// if (!Strings.isEmpty(wocConfigWorkReq.getJarConf())) {
-		// workConfig.setJarConf(wocConfigWorkReq.getJarConf());
-		// }
+
+		// 设置自定义作业配置信息
+		if (wocConfigWorkReq.getJarJobConfig() != null) {
+			workConfig.setJarJobConfig(JSON.toJSONString(wocConfigWorkReq.getJarJobConfig()));
+		}
 
 		// 保存配置
 		workConfigRepository.save(workConfig);

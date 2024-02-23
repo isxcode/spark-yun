@@ -50,6 +50,8 @@ public class WorkConfigEntity {
 
 	private String clusterConfig;
 
+	private String jarJobConfig;
+
 	@CreatedDate
 	private LocalDateTime createDateTime;
 

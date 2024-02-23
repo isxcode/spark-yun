@@ -102,51 +102,33 @@ public class WorkBizService {
 			throw new IsxAppException("作业名称重复，请重新输入");
 		}
 
+		// 将addWorkReq转成workEntity
 		WorkEntity work = workMapper.addWorkReqToWorkEntity(addWorkReq);
-
-		WorkConfigEntity workConfig = new WorkConfigEntity();
 
 		// sparkSql要是支持访问hive，必须填写datasourceId
 		if (WorkType.QUERY_SPARK_SQL.equals(addWorkReq.getWorkType())) {
 			if (addWorkReq.getEnableHive()) {
 				if (Strings.isEmpty(addWorkReq.getDatasourceId())) {
 					throw new IsxAppException("开启hive，必须配置hive数据源");
-				} else {
-					workConfig.setDatasourceId(addWorkReq.getDatasourceId());
 				}
 			}
 		}
 
-		// sparkSql要是支持访问hive，必须填写datasourceId
+		// python作业和bash作业，必须选择服务器节点
 		if (WorkType.PYTHON.equals(addWorkReq.getWorkType()) || WorkType.BASH.equals(addWorkReq.getWorkType())) {
 			if (Strings.isEmpty(addWorkReq.getClusterNodeId())) {
 				throw new IsxAppException("缺少集群节点配置");
 			}
 		}
 
-		// 初始化脚本
-		if (WorkType.QUERY_SPARK_SQL.equals(addWorkReq.getWorkType())
-				|| WorkType.EXECUTE_JDBC_SQL.equals(addWorkReq.getWorkType())
-				|| WorkType.QUERY_JDBC_SQL.equals(addWorkReq.getWorkType())
-				|| WorkType.BASH.equals(addWorkReq.getWorkType()) || WorkType.PYTHON.equals(addWorkReq.getWorkType())) {
-			workConfigService.initWorkScript(workConfig, addWorkReq.getWorkType());
-		}
-
-		// 初始化计算引擎
+		// sparkSql，数据同步，bash，python，必须配置集群
 		if (WorkType.QUERY_SPARK_SQL.equals(addWorkReq.getWorkType())
 				|| WorkType.DATA_SYNC_JDBC.equals(addWorkReq.getWorkType())
-				|| WorkType.BASH.equals(addWorkReq.getWorkType()) || WorkType.PYTHON.equals(addWorkReq.getWorkType())) {
+				|| WorkType.BASH.equals(addWorkReq.getWorkType()) || WorkType.PYTHON.equals(addWorkReq.getWorkType())
+				|| WorkType.SPARK_JAR.equals(addWorkReq.getWorkType())) {
 			if (Strings.isEmpty(addWorkReq.getClusterId())) {
 				throw new IsxAppException("必须选择计算引擎");
-			} else {
-				workConfigService.initClusterConfig(workConfig, addWorkReq.getClusterId(),
-						addWorkReq.getClusterNodeId(), addWorkReq.getEnableHive(), addWorkReq.getDatasourceId());
 			}
-		}
-
-		// 初始化数据同步分区值
-		if (WorkType.DATA_SYNC_JDBC.equals(addWorkReq.getWorkType())) {
-			workConfigService.initSyncRule(workConfig);
 		}
 
 		// 如果jdbc执行和jdbc查询，必填数据源
@@ -155,20 +137,48 @@ public class WorkBizService {
 			if (Strings.isEmpty(addWorkReq.getDatasourceId())) {
 				throw new IsxAppException("数据源是必填项");
 			}
-			workConfig.setDatasourceId(addWorkReq.getDatasourceId());
+		}
+
+		// 初始化作业的配置
+		WorkConfigEntity workConfig = new WorkConfigEntity();
+
+		// 配置添加数据源
+		workConfig.setDatasourceId(addWorkReq.getDatasourceId());
+
+		// 如果是sparkSql,jdbcQuerySql,jdbcExecuteSql,bash,python作业，需要初始化脚本内容，方便客户使用
+		if (WorkType.QUERY_SPARK_SQL.equals(addWorkReq.getWorkType())
+				|| WorkType.EXECUTE_JDBC_SQL.equals(addWorkReq.getWorkType())
+				|| WorkType.QUERY_JDBC_SQL.equals(addWorkReq.getWorkType())
+				|| WorkType.BASH.equals(addWorkReq.getWorkType()) || WorkType.PYTHON.equals(addWorkReq.getWorkType())) {
+			workConfigService.initWorkScript(workConfig, addWorkReq.getWorkType());
+		}
+
+		// 初始化数据同步分区值
+		if (WorkType.DATA_SYNC_JDBC.equals(addWorkReq.getWorkType())) {
+			workConfigService.initSyncRule(workConfig);
+		}
+
+		// 初始化计算引擎
+		if (WorkType.QUERY_SPARK_SQL.equals(addWorkReq.getWorkType())
+				|| WorkType.DATA_SYNC_JDBC.equals(addWorkReq.getWorkType())
+				|| WorkType.BASH.equals(addWorkReq.getWorkType()) || WorkType.PYTHON.equals(addWorkReq.getWorkType())
+				|| WorkType.SPARK_JAR.equals(addWorkReq.getWorkType())) {
+			workConfigService.initClusterConfig(workConfig, addWorkReq.getClusterId(), addWorkReq.getClusterNodeId(),
+					addWorkReq.getEnableHive(), addWorkReq.getDatasourceId());
 		}
 
 		// 初始化调度默认值
 		workConfigService.initCronConfig(workConfig);
 
-		// 添加作业的默认配置
+		// 作业配置持久化
 		workConfig = workConfigRepository.save(workConfig);
+
+		// 作业信息持久化
 		work.setConfigId(workConfig.getId());
 		work.setStatus(WorkStatus.UN_PUBLISHED);
-
 		workRepository.save(work);
 
-		// 返回work内容
+		// 返回work信息给前端
 		return getWork(GetWorkReq.builder().workId(work.getId()).build());
 	}
 

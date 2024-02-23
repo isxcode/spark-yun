@@ -106,6 +106,16 @@ public class FileBizService {
 		// 获取文件内容
 		FileEntity file = fileService.getFile(deleteFileReq.getFileId());
 
+		// 将原有的文件，加一个deleted的后缀
+		String fileDir = PathUtils.parseProjectPath(isxAppProperties.getResourcesPath()) + File.separator + "file"
+				+ File.separator + TENANT_ID.get();
+		try {
+			File localFile = PathUtils.createFile(fileDir + File.separator + file.getId());
+			localFile.renameTo(new File(fileDir + File.separator + file.getId() + ".deleted"));
+		} catch (IOException e) {
+			throw new IsxAppException("本地文件无法获取");
+		}
+
 		// 数据持久化
 		fileRepository.delete(file);
 	}

@@ -7,6 +7,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.TypeReference;
 import com.isxcode.star.api.work.pojos.dto.ClusterConfig;
+import com.isxcode.star.api.work.pojos.dto.JarJobConfig;
 import com.isxcode.star.api.work.pojos.dto.SyncRule;
 import com.isxcode.star.api.work.pojos.dto.SyncWorkConfig;
 import com.isxcode.star.api.workflow.pojos.dto.NodeInfo;
@@ -143,7 +144,8 @@ public class WorkflowUtils {
 				.clusterConfig(JSON.parseObject(workConfig.getClusterConfig(), ClusterConfig.class))
 				.syncWorkConfig(JSON.parseObject(workConfig.getSyncWorkConfig(), SyncWorkConfig.class))
 				.syncRule(JSON.parseObject(workConfig.getSyncRule(), SyncRule.class)).workType(work.getWorkType())
-				.workId(work.getId()).workName(work.getName()).userId(USER_ID.get()).build();
+				.jarJobConfig(JSON.parseObject(workConfig.getJarJobConfig(), JarJobConfig.class)).workId(work.getId())
+				.workName(work.getName()).userId(USER_ID.get()).build();
 	}
 
 	public static WorkRunContext genWorkRunContext(String instanceId, VipWorkVersionEntity workVersion,
@@ -154,6 +156,7 @@ public class WorkflowUtils {
 				.syncWorkConfig(JSON.parseObject(workVersion.getSyncWorkConfig(), SyncWorkConfig.class))
 				.syncRule(JSON.parseObject(workVersion.getSyncRule(), SyncRule.class))
 				.clusterConfig(JSON.parseObject(workVersion.getClusterConfig(), ClusterConfig.class))
+				.jarJobConfig(JSON.parseObject(workVersion.getJarJobConfig(), JarJobConfig.class))
 				.workType(workVersion.getWorkType()).workName(event.getWorkName()).workId(workVersion.getId()).build();
 	}
 
