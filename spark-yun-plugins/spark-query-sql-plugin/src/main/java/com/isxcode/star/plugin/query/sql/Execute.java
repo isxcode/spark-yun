@@ -2,6 +2,7 @@ package com.isxcode.star.plugin.query.sql;
 
 import com.alibaba.fastjson.JSON;
 import com.isxcode.star.api.agent.pojos.req.PluginReq;
+import com.isxcode.star.api.func.constants.FuncType;
 import org.apache.logging.log4j.util.Strings;
 import org.apache.spark.SparkConf;
 import org.apache.spark.sql.Dataset;
@@ -11,9 +12,6 @@ import org.apache.spark.sql.types.DataType;
 import org.apache.spark.sql.types.DataTypes;
 
 import java.util.*;
-
-import static com.isxcode.star.api.work.constants.UdfType.UDAF;
-import static com.isxcode.star.api.work.constants.UdfType.UDF;
 
 public class Execute {
 
@@ -34,10 +32,10 @@ public class Execute {
 			// 注册自定义函数
 			if (pluginReq.getFuncInfoList() != null) {
 				pluginReq.getFuncInfoList().forEach(e -> {
-					if (UDF.equals(e.getType())) {
+					if (FuncType.UDF.equals(e.getType())) {
 						sparkSession.udf().registerJava(e.getFuncName(), e.getClassName(),
 								getResultType(e.getResultType()));
-					} else if (UDAF.equals(e.getType())) {
+					} else if (FuncType.UDAF.equals(e.getType())) {
 						sparkSession.udf().registerJavaUDAF(e.getFuncName(), e.getClassName());
 					}
 				});
