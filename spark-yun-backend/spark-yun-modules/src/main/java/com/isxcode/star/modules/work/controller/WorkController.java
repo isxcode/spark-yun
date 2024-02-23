@@ -1,5 +1,10 @@
 package com.isxcode.star.modules.work.controller;
 
+import com.isxcode.star.api.func.pojos.req.AddFuncReq;
+import com.isxcode.star.api.func.pojos.req.DeleteFuncReq;
+import com.isxcode.star.api.func.pojos.req.PageFuncReq;
+import com.isxcode.star.api.func.pojos.req.UpdateFuncReq;
+import com.isxcode.star.api.func.pojos.res.PageFuncRes;
 import com.isxcode.star.api.main.constants.ModuleCode;
 import com.isxcode.star.api.work.pojos.req.*;
 import com.isxcode.star.api.work.pojos.res.*;
@@ -184,38 +189,6 @@ public class WorkController {
 			throws Exception {
 
 		return syncWorkBizService.getCreateTableSql(getCreateTableSqlReq);
-	}
-
-	@Operation(summary = "添加udf")
-	@PostMapping("/addUdf")
-	@SuccessResponse("添加成功")
-	public PageUdfRes addUdf(@Valid @RequestBody AddUdfReq addUdfReq) {
-
-		return workBizService.addUdf(addUdfReq);
-	}
-
-	@Operation(summary = "更新udf")
-	@PostMapping("/updateUdf")
-	@SuccessResponse("更新成功")
-	public void updateUdf(@Valid @RequestBody UpdateUdfReq updateUdfReq) {
-
-		workBizService.updateUdf(updateUdfReq);
-	}
-
-	@Operation(summary = "删除udf")
-	@PostMapping("/deleteUdf")
-	@SuccessResponse("删除成功")
-	public void deleteUdf(@Valid @RequestBody DeleteUdfReq deleteUdfReq) {
-
-		workBizService.deleteUdf(deleteUdfReq);
-	}
-
-	@Operation(summary = "查询udf")
-	@PostMapping("/pageUdf")
-	@SuccessResponse("查询成功")
-	public Page<PageUdfRes> pageUdf(@Valid @RequestBody PageUdfReq pageUdfReq) {
-
-		return workBizService.getUdf(pageUdfReq);
 	}
 
 }

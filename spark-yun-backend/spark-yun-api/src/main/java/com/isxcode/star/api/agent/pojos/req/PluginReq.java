@@ -3,9 +3,9 @@ package com.isxcode.star.api.agent.pojos.req;
 import java.util.List;
 import java.util.Map;
 
+import com.isxcode.star.api.func.pojos.dto.FuncInfo;
 import com.isxcode.star.api.work.pojos.dto.SyncRule;
 import com.isxcode.star.api.work.pojos.dto.SyncWorkConfig;
-import com.isxcode.star.api.work.pojos.dto.UdfInfo;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -29,5 +29,5 @@ public class PluginReq {
 
 	private SyncRule syncRule;
 
-	private List<UdfInfo> udfList;
+  private List<FuncInfo> funcInfoList;
 }

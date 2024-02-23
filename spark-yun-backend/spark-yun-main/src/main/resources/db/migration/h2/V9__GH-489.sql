@@ -40,3 +40,23 @@ alter table SY_WORK_VERSION
     add FUNC_CONFIG text;
 
 comment on column SY_WORK_VERSION.FUNC_CONFIG is '自定义函数配置';
+
+-- 修改自定义函数表
+alter table SY_WORK_UDF
+    rename to SY_FUNC;
+
+-- 加注释TYPE
+comment on column SY_FUNC.TYPE is 'UDF或者UDAF';
+
+-- 删除自定义函数的STATUS
+alter table SY_FUNC
+    drop column STATUS;
+
+-- 添加自定义函数备注字段
+alter table SY_FUNC
+    add REMARK varchar2(500);
+
+comment on column SY_FUNC.REMARK is '备注';
+
+
+

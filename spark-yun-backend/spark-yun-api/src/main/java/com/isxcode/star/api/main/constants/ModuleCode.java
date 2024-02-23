@@ -97,4 +97,9 @@ public interface ModuleCode {
 	 * 监控模块.
 	 */
 	String MONITOR = "monitor";
+
+  /**
+	 * 自定义函数.
+	 */
+	String FUNC = "func";
 }
