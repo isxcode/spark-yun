@@ -82,11 +82,6 @@ public class WorkRunContext {
 	private StringBuilder logBuilder;
 
 	/**
-	 * udf启用状态.
-	 */
-	private Boolean udfStatus;
-
-	/**
 	 * 用户自定义jar的配置
 	 */
 	private JarJobConfig jarJobConfig;

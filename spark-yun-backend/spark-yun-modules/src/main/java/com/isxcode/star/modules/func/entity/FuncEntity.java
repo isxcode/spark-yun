@@ -1,4 +1,4 @@
-package com.isxcode.star.modules.work.entity;
+package com.isxcode.star.modules.func.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
@@ -20,27 +20,27 @@ import static com.isxcode.star.common.config.CommonConfig.TENANT_ID;
 @Entity
 @SQLDelete(sql = "UPDATE SY_WORK_UDF SET deleted = 1 WHERE id = ? and version_number = ?")
 @Where(clause = "deleted = 0 ${TENANT_FILTER} ")
-@Table(name = "SY_WORK_UDF")
+@Table(name = "SY_FUNC")
 @JsonIgnoreProperties({"hibernateLazyInitializer"})
 @EntityListeners(AuditingEntityListener.class)
-public class UdfEntity {
+public class FuncEntity {
 
 	@Id
 	@GeneratedValue(generator = "sy-id-generator")
 	@GenericGenerator(name = "sy-id-generator", strategy = "com.isxcode.star.config.GeneratedValueConfig")
 	private String id;
 
-	private String type;
-
 	private String fileId;
 
 	private String funcName;
+
+  private String type;
 
 	private String className;
 
 	private String resultType;
 
-	private Boolean status;
+  private String remark;
 
 	@CreatedDate
 	private LocalDateTime createDateTime;

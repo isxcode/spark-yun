@@ -23,14 +23,11 @@ import com.isxcode.star.modules.cluster.entity.ClusterEntity;
 import com.isxcode.star.modules.cluster.entity.ClusterNodeEntity;
 import com.isxcode.star.modules.cluster.repository.ClusterNodeRepository;
 import com.isxcode.star.modules.cluster.repository.ClusterRepository;
-import com.isxcode.star.modules.work.entity.UdfEntity;
 import com.isxcode.star.modules.work.entity.WorkConfigEntity;
 import com.isxcode.star.modules.work.entity.WorkEntity;
 import com.isxcode.star.modules.work.entity.WorkInstanceEntity;
-import com.isxcode.star.modules.work.mapper.UdfMapper;
 import com.isxcode.star.modules.work.mapper.WorkConfigMapper;
 import com.isxcode.star.modules.work.mapper.WorkMapper;
-import com.isxcode.star.modules.work.repository.UdfRepository;
 import com.isxcode.star.modules.work.repository.WorkConfigRepository;
 import com.isxcode.star.modules.work.repository.WorkInstanceRepository;
 import com.isxcode.star.modules.work.repository.WorkRepository;
@@ -88,10 +85,6 @@ public class WorkBizService {
 	private final WorkConfigService workConfigService;
 
 	private final WorkConfigMapper workConfigMapper;
-
-	private final UdfRepository udfRepository;
-
-	private final UdfMapper udfMapper;
 
 	public GetWorkRes addWork(AddWorkReq addWorkReq) {
 
@@ -547,29 +540,5 @@ public class WorkBizService {
 		SyncWorkConfig syncWorkConfig = JSON.parseObject(workConfig.getSyncWorkConfig(), SyncWorkConfig.class);
 
 		return workConfigMapper.syncWorkConfigToGetSyncWorkConfigRes(syncWorkConfig);
-	}
-
-	public PageUdfRes addUdf(AddUdfReq addUdfReq) {
-		UdfEntity udfEntity = udfMapper.addUdfReqToUdfEntity(addUdfReq);
-		return udfMapper.udfEntityToPageUdfRes(udfRepository.save(udfEntity));
-	}
-
-	public void updateUdf(UpdateUdfReq updateUdfReq) {
-		UdfEntity udfEntity = udfRepository.findById(updateUdfReq.getId())
-				.orElseThrow(() -> new IsxAppException("函数不存在"));
-
-		udfEntity = udfMapper.updateUdfReqToUdfEntity(updateUdfReq, udfEntity);
-		udfRepository.save(udfEntity);
-	}
-
-	public void deleteUdf(DeleteUdfReq deleteUdfReq) {
-		udfRepository.deleteById(deleteUdfReq.getUdfId());
-	}
-
-	public Page<PageUdfRes> getUdf(PageUdfReq pageUdfReq) {
-		Page<UdfEntity> udfPage = udfRepository.pageSearch(pageUdfReq.getSearchKeyWord(),
-				PageRequest.of(pageUdfReq.getPage(), pageUdfReq.getPageSize()));
-
-		return udfPage.map(udfMapper::udfEntityToPageUdfRes);
 	}
 }

@@ -9,7 +9,6 @@ import com.isxcode.star.api.api.constants.PathConstants;
 import com.isxcode.star.api.cluster.constants.ClusterNodeStatus;
 import com.isxcode.star.api.work.constants.WorkLog;
 import com.isxcode.star.api.work.exceptions.WorkRunException;
-import com.isxcode.star.api.work.pojos.dto.UdfInfo;
 import com.isxcode.star.api.work.pojos.res.RunWorkRes;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.star.backend.api.base.pojos.BaseResponse;
@@ -22,17 +21,15 @@ import com.isxcode.star.modules.cluster.entity.ClusterNodeEntity;
 import com.isxcode.star.modules.cluster.mapper.ClusterNodeMapper;
 import com.isxcode.star.modules.cluster.repository.ClusterNodeRepository;
 import com.isxcode.star.modules.cluster.repository.ClusterRepository;
-import com.isxcode.star.modules.file.entity.FileEntity;
 import com.isxcode.star.modules.file.repository.FileRepository;
 import com.isxcode.star.modules.work.entity.WorkConfigEntity;
 import com.isxcode.star.modules.work.entity.WorkEntity;
 import com.isxcode.star.modules.work.entity.WorkInstanceEntity;
-import com.isxcode.star.modules.work.repository.UdfRepository;
+import com.isxcode.star.modules.func.repository.FuncRepository;
 import com.isxcode.star.modules.work.repository.WorkConfigRepository;
 import com.isxcode.star.modules.work.repository.WorkInstanceRepository;
 import com.isxcode.star.modules.work.repository.WorkRepository;
 import com.isxcode.star.modules.workflow.repository.WorkflowInstanceRepository;
-import com.isxcode.star.api.cluster.pojos.dto.ScpFileEngineNodeDto;
 
 import java.io.File;
 import java.io.IOException;
@@ -58,7 +55,7 @@ public class SparkSqlExecutor extends WorkExecutor {
 
 	private final WorkRepository workRepository;
 
-	private final UdfRepository udfRepository;
+	private final FuncRepository udfRepository;
 
 	private final WorkConfigRepository workConfigRepository;
 
@@ -73,10 +70,10 @@ public class SparkSqlExecutor extends WorkExecutor {
 	private final HttpUrlUtils httpUrlUtils;
 
 	public SparkSqlExecutor(WorkInstanceRepository workInstanceRepository, ClusterRepository clusterRepository,
-			ClusterNodeRepository clusterNodeRepository, WorkflowInstanceRepository workflowInstanceRepository,
-			WorkRepository workRepository, UdfRepository udfRepository, WorkConfigRepository workConfigRepository,
-			FileRepository fileRepository, ClusterNodeMapper clusterNodeMapper, AesUtils aesUtils, Locker locker,
-			HttpUrlUtils httpUrlUtils) {
+                          ClusterNodeRepository clusterNodeRepository, WorkflowInstanceRepository workflowInstanceRepository,
+                          WorkRepository workRepository, FuncRepository udfRepository, WorkConfigRepository workConfigRepository,
+                          FileRepository fileRepository, ClusterNodeMapper clusterNodeMapper, AesUtils aesUtils, Locker locker,
+                          HttpUrlUtils httpUrlUtils) {
 
 		super(workInstanceRepository, workflowInstanceRepository);
 		this.workInstanceRepository = workInstanceRepository;
@@ -140,35 +137,21 @@ public class SparkSqlExecutor extends WorkExecutor {
 				.mainClass("com.isxcode.star.plugin.query.sql.Execute").appResource("spark-query-sql-plugin.jar")
 				.conf(genSparkSubmitConfig(workRunContext.getClusterConfig().getSparkConfig())).build();
 
-		List<UdfInfo> udfs = new ArrayList<>();
-		if (workRunContext.getUdfStatus() != null && workRunContext.getUdfStatus()) {
-			ScpFileEngineNodeDto scpFileEngineNodeDto = clusterNodeMapper
-					.engineNodeEntityToScpFileEngineNodeDto(engineNode);
-			scpFileEngineNodeDto.setPasswd(aesUtils.decrypt(scpFileEngineNodeDto.getPasswd()));
+    // 导入自定义函数
 
-			udfRepository.findAllByStatus(true).forEach(udf -> {
-				udfs.add(UdfInfo.builder().type(udf.getType()).funcName(udf.getFuncName()).className(udf.getClassName())
-						.resultType(udf.getResultType()).build());
 
-				Optional<FileEntity> fileEntityOptional = fileRepository.findById(udf.getFileId());
-				// 传输udf文件
-				// try {
-				// scpFile(scpFileEngineNodeDto, "/" + fileEntityOptional.get().getFilePath(),
-				// engineNode.getAgentHomePath() + File.separator +
-				// PathConstants.AGENT_PATH_NAME
-				// + File.separator + "lib" + File.separator +
-				// fileEntityOptional.get().getFileName());
-				// } catch (JSchException | SftpException | InterruptedException | IOException
-				// e) {
-				// throw new RuntimeException(e);
-				// }
+//			udfRepository.findAllByStatus(true).forEach(udf -> {
+//				udfs.add(UdfInfo.builder().type(udf.getType()).funcName(udf.getFuncName()).className(udf.getClassName())
+//						.resultType(udf.getResultType()).build());
+//
+//
 
-			});
-		}
+//			});
+//		}
 
 		// 开始构造PluginReq
 		PluginReq pluginReq = PluginReq.builder().sql(workRunContext.getScript()).limit(200)
-				.sparkConfig(genSparkConfig(workRunContext.getClusterConfig().getSparkConfig())).udfList(udfs).build();
+				.sparkConfig(genSparkConfig(workRunContext.getClusterConfig().getSparkConfig())).build();
 
 		// 开始构造executeReq
 		executeReq.setSparkSubmit(sparkSubmit);
