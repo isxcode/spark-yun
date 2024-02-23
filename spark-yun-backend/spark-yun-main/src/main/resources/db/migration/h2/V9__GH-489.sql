@@ -6,3 +6,16 @@ alter table SY_FILE
 alter table SY_FILE
     add REMARK varchar2(500);
 comment on column SY_FILE.REMARK is '备注';
+
+-- 添加自定义jar作业配置
+alter table SY_WORK_CONFIG
+    add JAR_JOB_CONFIG text;
+
+comment on column SY_WORK_CONFIG.JAR_JOB_CONFIG is '自定义jar作业配置';
+
+-- 版本添加自定义作业配置
+alter table SY_WORK_VERSION
+    add JAR_JOB_CONFIG text;
+
+comment on column SY_WORK_VERSION.JAR_JOB_CONFIG is '自定义作业配置';
+

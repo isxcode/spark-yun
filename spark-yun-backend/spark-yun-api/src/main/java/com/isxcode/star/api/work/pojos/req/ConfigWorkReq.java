@@ -1,14 +1,13 @@
 package com.isxcode.star.api.work.pojos.req;
 
-import com.isxcode.star.api.work.pojos.dto.ClusterConfig;
-import com.isxcode.star.api.work.pojos.dto.CronConfig;
-import com.isxcode.star.api.work.pojos.dto.SyncRule;
-import com.isxcode.star.api.work.pojos.dto.SyncWorkConfig;
+import com.isxcode.star.api.work.pojos.dto.*;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import javax.validation.constraints.NotEmpty;
 
 import lombok.Data;
+
+import java.util.List;
 
 @Data
 public class ConfigWorkReq {
@@ -38,6 +37,9 @@ public class ConfigWorkReq {
 	@Schema(title = "udf函数状态")
 	private Boolean udfStatus;
 
-	@Schema(title = "自定义jar作业的配置文件", example = "{\"jarFileId\": \"sy_87070db5b87a481b8cb685981c2ecf2c\",\"libFileId\": [\"sy_4b3a3ee6f41d487787444eb5e311c8f7\"],\"mainClass\": \"com.isxcode.star.plugin.dataSync.jdbc.Execute\",\"args\": \"xxxxx\"}")
-	private String jarConf;
+	@Schema(title = "自定义jar作业的配置文件")
+	private JarJobConfig jarJobConfig;
+
+	@Schema(title = "自定义函数选择")
+	private List<String> funcList;
 }
