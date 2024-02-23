@@ -11,7 +11,7 @@ public class PageFuncRes {
 
 	private String type;
 
-  private String fileId;
+	private String fileId;
 
 	private String funcName;
 

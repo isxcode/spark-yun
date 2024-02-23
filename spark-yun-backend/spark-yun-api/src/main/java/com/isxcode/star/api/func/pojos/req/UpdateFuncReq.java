@@ -15,7 +15,7 @@ public class UpdateFuncReq {
 
 	@Schema(title = "udf类型", example = "UDF|UDAF")
 	@NotEmpty(message = "udf类别不能为空")
-  @Pattern(regexp = "^(UDF|UDAF)$", message = "类型不支持")
+	@Pattern(regexp = "^(UDF|UDAF)$", message = "类型不支持")
 	private String type;
 
 	@Schema(title = "函数名称", example = "a1")
@@ -28,9 +28,9 @@ public class UpdateFuncReq {
 
 	@Schema(title = "函数返回值类型", example = "值列表：String|int|double|boolean|date")
 	@NotEmpty(message = "返回值类型不能为空")
-  @Pattern(regexp = "^(string|int|long|double|boolean|date|timestamp)$", message = "类型不支持")
+	@Pattern(regexp = "^(string|int|long|double|boolean|date|timestamp)$", message = "类型不支持")
 	private String resultType;
 
-  @Schema(title = "备至", example = "描述函数的定义")
-  private String remark;
+	@Schema(title = "备至", example = "描述函数的定义")
+	private String remark;
 }
