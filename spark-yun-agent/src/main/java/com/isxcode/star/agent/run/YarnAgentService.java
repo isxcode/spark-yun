@@ -78,6 +78,15 @@ public class YarnAgentService implements AgentService {
 			});
 		}
 
+    // 添加自定义函数
+		if (yagExecuteWorkReq.getFuncConfig() != null) {
+			yagExecuteWorkReq.getFuncConfig().forEach(e -> {
+				String libPath = yagExecuteWorkReq.getAgentHomePath() + File.separator + "file" + File.separator + e
+						+ ".jar";
+				sparkLauncher.addJar(libPath);
+			});
+		}
+
 		if (WorkType.SPARK_JAR.equals(yagExecuteWorkReq.getWorkType())) {
 			sparkLauncher.addAppArgs(yagExecuteWorkReq.getArgs());
 		} else {
