@@ -91,14 +91,14 @@ public class WorkRunContext {
 	 */
 	private JarJobConfig jarJobConfig;
 
-  /**
-   * 自定义函数配置.
-   */
-  private List<String> funcConfig;
+	/**
+	 * 自定义函数配置.
+	 */
+	private List<String> funcConfig;
 
-  /**
-   * 依赖配置.
-   */
-  private List<String> libConfig;
+	/**
+	 * 依赖配置.
+	 */
+	private List<String> libConfig;
 
 }

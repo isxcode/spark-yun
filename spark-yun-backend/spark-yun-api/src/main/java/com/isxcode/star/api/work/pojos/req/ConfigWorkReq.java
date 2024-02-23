@@ -40,6 +40,6 @@ public class ConfigWorkReq {
 	@Schema(title = "自定义函数选择")
 	private List<String> funcList;
 
-  @Schema(title = "依赖选择")
+	@Schema(title = "依赖选择")
 	private List<String> LibList;
 }

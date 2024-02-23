@@ -26,8 +26,8 @@ public class YagExecuteWorkReq {
 	 */
 	private String workType;
 
-  /**
-   * 依赖配置.
-   */
-  private List<String> libConfig;
+	/**
+	 * 依赖配置.
+	 */
+	private List<String> libConfig;
 }

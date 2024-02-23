@@ -135,15 +135,15 @@ public class WorkConfigBizService {
 			workConfig.setClusterConfig(JSON.toJSONString(getHiveStoreUri(workConfig)));
 		}
 
-    // 设置用户自定义函数
-    if (wocConfigWorkReq.getFuncList() != null && !wocConfigWorkReq.getFuncList().isEmpty()) {
-      workConfig.setFuncConfig(JSONArray.toJSONString(wocConfigWorkReq.getFuncList()));
-    }
+		// 设置用户自定义函数
+		if (wocConfigWorkReq.getFuncList() != null && !wocConfigWorkReq.getFuncList().isEmpty()) {
+			workConfig.setFuncConfig(JSONArray.toJSONString(wocConfigWorkReq.getFuncList()));
+		}
 
-    // 设置用户程序依赖
-    if (wocConfigWorkReq.getLibList() != null && !wocConfigWorkReq.getLibList().isEmpty()) {
-      workConfig.setLibConfig(JSONArray.toJSONString(wocConfigWorkReq.getLibList()));
-    }
+		// 设置用户程序依赖
+		if (wocConfigWorkReq.getLibList() != null && !wocConfigWorkReq.getLibList().isEmpty()) {
+			workConfig.setLibConfig(JSONArray.toJSONString(wocConfigWorkReq.getLibList()));
+		}
 
 		// 设置自定义作业配置信息
 		if (wocConfigWorkReq.getJarJobConfig() != null) {
