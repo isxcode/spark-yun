@@ -30,4 +30,9 @@ public class YagExecuteWorkReq {
 	 * 依赖配置.
 	 */
 	private List<String> libConfig;
+
+  /**
+	 * 自定义函数配置.
+	 */
+	private List<String> funcConfig;
 }
