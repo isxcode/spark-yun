@@ -54,9 +54,9 @@ public class VipWorkVersionEntity {
 
 	private String jarJobConfig;
 
-  private String libConfig;
+	private String libConfig;
 
-  private String funcConfig;
+	private String funcConfig;
 
 	@CreatedDate
 	private LocalDateTime createDateTime;
