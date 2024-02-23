@@ -70,10 +70,10 @@ public class SparkSqlExecutor extends WorkExecutor {
 	private final HttpUrlUtils httpUrlUtils;
 
 	public SparkSqlExecutor(WorkInstanceRepository workInstanceRepository, ClusterRepository clusterRepository,
-                          ClusterNodeRepository clusterNodeRepository, WorkflowInstanceRepository workflowInstanceRepository,
-                          WorkRepository workRepository, FuncRepository udfRepository, WorkConfigRepository workConfigRepository,
-                          FileRepository fileRepository, ClusterNodeMapper clusterNodeMapper, AesUtils aesUtils, Locker locker,
-                          HttpUrlUtils httpUrlUtils) {
+			ClusterNodeRepository clusterNodeRepository, WorkflowInstanceRepository workflowInstanceRepository,
+			WorkRepository workRepository, FuncRepository udfRepository, WorkConfigRepository workConfigRepository,
+			FileRepository fileRepository, ClusterNodeMapper clusterNodeMapper, AesUtils aesUtils, Locker locker,
+			HttpUrlUtils httpUrlUtils) {
 
 		super(workInstanceRepository, workflowInstanceRepository);
 		this.workInstanceRepository = workInstanceRepository;
@@ -137,17 +137,16 @@ public class SparkSqlExecutor extends WorkExecutor {
 				.mainClass("com.isxcode.star.plugin.query.sql.Execute").appResource("spark-query-sql-plugin.jar")
 				.conf(genSparkSubmitConfig(workRunContext.getClusterConfig().getSparkConfig())).build();
 
-    // 导入自定义函数
+		// 导入自定义函数
 
+		// udfRepository.findAllByStatus(true).forEach(udf -> {
+		// udfs.add(UdfInfo.builder().type(udf.getType()).funcName(udf.getFuncName()).className(udf.getClassName())
+		// .resultType(udf.getResultType()).build());
+		//
+		//
 
-//			udfRepository.findAllByStatus(true).forEach(udf -> {
-//				udfs.add(UdfInfo.builder().type(udf.getType()).funcName(udf.getFuncName()).className(udf.getClassName())
-//						.resultType(udf.getResultType()).build());
-//
-//
-
-//			});
-//		}
+		// });
+		// }
 
 		// 开始构造PluginReq
 		PluginReq pluginReq = PluginReq.builder().sql(workRunContext.getScript()).limit(200)

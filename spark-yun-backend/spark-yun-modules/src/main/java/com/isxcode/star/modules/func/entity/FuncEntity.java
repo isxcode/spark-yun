@@ -34,13 +34,13 @@ public class FuncEntity {
 
 	private String funcName;
 
-  private String type;
+	private String type;
 
 	private String className;
 
 	private String resultType;
 
-  private String remark;
+	private String remark;
 
 	@CreatedDate
 	private LocalDateTime createDateTime;

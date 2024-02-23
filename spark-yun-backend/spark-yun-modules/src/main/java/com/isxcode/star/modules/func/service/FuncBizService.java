@@ -21,37 +21,37 @@ public class FuncBizService {
 
 	private final FuncRepository funcRepository;
 
-  private final FuncService funcService;
+	private final FuncService funcService;
 
 	private final FuncMapper funcMapper;
 
-  public void addFunc(AddFuncReq addFuncReq) {
+	public void addFunc(AddFuncReq addFuncReq) {
 
-    FuncEntity funcEntity = funcMapper.addFuncReqToFuncEntity(addFuncReq);
+		FuncEntity funcEntity = funcMapper.addFuncReqToFuncEntity(addFuncReq);
 
-    // 持久化数据
-    funcRepository.save(funcEntity);
-  }
+		// 持久化数据
+		funcRepository.save(funcEntity);
+	}
 
-  public void updateFunc(UpdateFuncReq updateFuncReq) {
+	public void updateFunc(UpdateFuncReq updateFuncReq) {
 
-    FuncEntity func = funcService.getFunc(updateFuncReq.getId());
-    func = funcMapper.updateFuncReqToFuncEntity(updateFuncReq, func);
-    funcRepository.save(func);
-  }
+		FuncEntity func = funcService.getFunc(updateFuncReq.getId());
+		func = funcMapper.updateFuncReqToFuncEntity(updateFuncReq, func);
+		funcRepository.save(func);
+	}
 
-  public void deleteFunc(DeleteFuncReq deleteFuncReq) {
+	public void deleteFunc(DeleteFuncReq deleteFuncReq) {
 
-    FuncEntity func = funcService.getFunc(deleteFuncReq.getId());
+		FuncEntity func = funcService.getFunc(deleteFuncReq.getId());
 
-    funcRepository.deleteById(func.getId());
-  }
+		funcRepository.deleteById(func.getId());
+	}
 
-  public Page<PageFuncRes> pageFunc(PageFuncReq pageFuncReq) {
+	public Page<PageFuncRes> pageFunc(PageFuncReq pageFuncReq) {
 
-    Page<FuncEntity> funcPage = funcRepository.pageSearch(pageFuncReq.getSearchKeyWord(),
-      PageRequest.of(pageFuncReq.getPage(), pageFuncReq.getPageSize()));
+		Page<FuncEntity> funcPage = funcRepository.pageSearch(pageFuncReq.getSearchKeyWord(),
+				PageRequest.of(pageFuncReq.getPage(), pageFuncReq.getPageSize()));
 
-    return funcPage.map(funcMapper::funcEntityToPageFuncRes);
-  }
+		return funcPage.map(funcMapper::funcEntityToPageFuncRes);
+	}
 }

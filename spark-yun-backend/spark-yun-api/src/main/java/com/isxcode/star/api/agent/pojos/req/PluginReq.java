@@ -29,5 +29,5 @@ public class PluginReq {
 
 	private SyncRule syncRule;
 
-  private List<FuncInfo> funcInfoList;
+	private List<FuncInfo> funcInfoList;
 }

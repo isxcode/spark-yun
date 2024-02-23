@@ -14,8 +14,8 @@ public class FuncService {
 
 	private final FuncRepository funcRepository;
 
-  public FuncEntity getFunc(String funcId) {
+	public FuncEntity getFunc(String funcId) {
 
-    return funcRepository.findById(funcId).orElseThrow(() -> new IsxAppException("自定义函数不存在"));
-  }
+		return funcRepository.findById(funcId).orElseThrow(() -> new IsxAppException("自定义函数不存在"));
+	}
 }

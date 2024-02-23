@@ -98,7 +98,7 @@ public interface ModuleCode {
 	 */
 	String MONITOR = "monitor";
 
-  /**
+	/**
 	 * 自定义函数.
 	 */
 	String FUNC = "func";

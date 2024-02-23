@@ -18,8 +18,8 @@ public interface FuncMapper {
 	@Mapping(source = "updateFuncReq.className", target = "className")
 	@Mapping(source = "updateFuncReq.resultType", target = "resultType")
 	@Mapping(source = "updateFuncReq.id", target = "id")
-  @Mapping(source = "updateFuncReq.remark", target = "remark")
-  FuncEntity updateFuncReqToFuncEntity(UpdateFuncReq updateFuncReq, FuncEntity udfEntity);
+	@Mapping(source = "updateFuncReq.remark", target = "remark")
+	FuncEntity updateFuncReqToFuncEntity(UpdateFuncReq updateFuncReq, FuncEntity udfEntity);
 
 	PageFuncRes funcEntityToPageFuncRes(FuncEntity funcEntity);
 }
