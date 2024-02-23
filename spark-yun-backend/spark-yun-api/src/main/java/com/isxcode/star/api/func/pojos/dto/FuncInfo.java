@@ -13,5 +13,5 @@ public class FuncInfo {
 
 	private String resultType;
 
-  private String fileId;
+	private String fileId;
 }
