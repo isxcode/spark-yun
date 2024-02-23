@@ -19,3 +19,24 @@ alter table SY_WORK_VERSION
 
 comment on column SY_WORK_VERSION.JAR_JOB_CONFIG is '自定义作业配置';
 
+-- 依赖配置
+alter table SY_WORK_CONFIG
+    add LIB_CONFIG text;
+
+comment on column SY_WORK_CONFIG.LIB_CONFIG is '作业依赖文件';
+
+-- 自定义配置
+alter table SY_WORK_CONFIG
+    add FUNC_CONFIG text;
+
+comment on column SY_WORK_CONFIG.FUNC_CONFIG is '自定义函数配置';
+
+alter table SY_WORK_VERSION
+    add LIB_CONFIG text;
+
+comment on column SY_WORK_VERSION.LIB_CONFIG is '依赖配置';
+
+alter table SY_WORK_VERSION
+    add FUNC_CONFIG text;
+
+comment on column SY_WORK_VERSION.FUNC_CONFIG is '自定义函数配置';

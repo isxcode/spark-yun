@@ -34,12 +34,12 @@ public class ConfigWorkReq {
 	@Schema(title = "数据同步规则")
 	private SyncRule syncRule;
 
-	@Schema(title = "udf函数状态")
-	private Boolean udfStatus;
-
 	@Schema(title = "自定义jar作业的配置文件")
 	private JarJobConfig jarJobConfig;
 
 	@Schema(title = "自定义函数选择")
 	private List<String> funcList;
+
+  @Schema(title = "依赖选择")
+	private List<String> LibList;
 }

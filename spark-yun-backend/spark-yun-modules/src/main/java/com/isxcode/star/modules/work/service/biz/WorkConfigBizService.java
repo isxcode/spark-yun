@@ -1,6 +1,7 @@
 package com.isxcode.star.modules.work.service.biz;
 
 import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.TypeReference;
 import com.isxcode.star.api.datasource.constants.DatasourceType;
 import com.isxcode.star.api.work.constants.SetMode;
@@ -134,10 +135,15 @@ public class WorkConfigBizService {
 			workConfig.setClusterConfig(JSON.toJSONString(getHiveStoreUri(workConfig)));
 		}
 
-		// // 设置udf函数状态
-		// if (wocConfigWorkReq.getUdfStatus() != null) {
-		// workConfig.setUdfStatus(wocConfigWorkReq.getUdfStatus());
-		// }
+    // 设置用户自定义函数
+    if (wocConfigWorkReq.getFuncList() != null && !wocConfigWorkReq.getFuncList().isEmpty()) {
+      workConfig.setFuncConfig(JSONArray.toJSONString(wocConfigWorkReq.getFuncList()));
+    }
+
+    // 设置用户程序依赖
+    if (wocConfigWorkReq.getLibList() != null && !wocConfigWorkReq.getLibList().isEmpty()) {
+      workConfig.setLibConfig(JSONArray.toJSONString(wocConfigWorkReq.getLibList()));
+    }
 
 		// 设置自定义作业配置信息
 		if (wocConfigWorkReq.getJarJobConfig() != null) {

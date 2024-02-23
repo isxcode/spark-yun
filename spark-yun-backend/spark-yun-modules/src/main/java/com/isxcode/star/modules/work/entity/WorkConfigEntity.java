@@ -52,6 +52,10 @@ public class WorkConfigEntity {
 
 	private String jarJobConfig;
 
+  private String funcConfig;
+
+  private String libConfig;
+
 	@CreatedDate
 	private LocalDateTime createDateTime;
 
