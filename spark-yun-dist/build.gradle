@@ -86,6 +86,9 @@ tasks.register('build_zhiqingyun', Tar) {
   from('zhiqingyun/logs') {
     into 'zhiqingyun/logs'
   }
+  from('zhiqingyun/file') {
+    into 'zhiqingyun/file'
+  }
   from(rootDir.getAbsolutePath() +'/resources/jdbc/system') {
     into 'zhiqingyun/resources/jdbc/system'
   }
