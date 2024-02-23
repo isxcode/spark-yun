@@ -26,5 +26,5 @@ public interface FuncMapper {
 
 	PageFuncRes funcEntityToPageFuncRes(FuncEntity funcEntity);
 
-  List<FuncInfo> funcEntityListToFuncInfoList(List<FuncEntity> funcEntities);
+	List<FuncInfo> funcEntityListToFuncInfoList(List<FuncEntity> funcEntities);
 }
