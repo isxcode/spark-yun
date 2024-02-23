@@ -82,8 +82,8 @@ public class Execute {
 			// 生成查询条件并添加到列表中
 			for (int i = 0; i < conf.getSyncRule().getNumPartitions(); i++) {
 				// 不同的数据库要使用各自支持hash函数
-				String predicate = String.format("%s(`%s`) %% %d = %d", hashName,
-						conf.getSyncWorkConfig().getPartitionColumn(), conf.getSyncRule().getNumPartitions(), i);
+				String predicate = String.format("%s(`%s`) %% %d in (%d,-%d)", hashName,
+						conf.getSyncWorkConfig().getPartitionColumn(), conf.getSyncRule().getNumPartitions(), i, i);
 				predicates.add(predicate);
 			}
 
@@ -181,7 +181,7 @@ public class Execute {
 			case DatasourceType.POSTGRE_SQL :
 				return "md5";
 			case DatasourceType.CLICKHOUSE :
-				return "hg_sip_hash_64";
+				return "sipHash64";
 			case DatasourceType.HIVE :
 				return "hash";
 			case DatasourceType.HANA_SAP :
