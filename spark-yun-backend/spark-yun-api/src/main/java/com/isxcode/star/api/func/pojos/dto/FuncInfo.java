@@ -12,4 +12,6 @@ public class FuncInfo {
 	private String className;
 
 	private String resultType;
+
+  private String fileId;
 }

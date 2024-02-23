@@ -1,5 +1,6 @@
 package com.isxcode.star.api.agent.pojos.req;
 
+import com.isxcode.star.api.func.pojos.dto.FuncInfo;
 import lombok.Data;
 
 import java.util.List;
@@ -34,5 +35,5 @@ public class YagExecuteWorkReq {
 	/**
 	 * 自定义函数配置.
 	 */
-	private List<String> funcConfig;
+	private List<FuncInfo> funcConfig;
 }
