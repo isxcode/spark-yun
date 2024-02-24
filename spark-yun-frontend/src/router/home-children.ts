@@ -22,6 +22,8 @@ import CustomFormQuery from '@/views/custom-form/custom-form-query/index.vue'
 import CustomFormSetting from '@/views/custom-form/form-setting/index.vue'
 import CustomApi from '@/views/custom-api/index.vue'
 
+import fileCenter from '@/views/file-center/index.vue'
+
 export default [
   {
     path: 'index',
@@ -87,6 +89,11 @@ export default [
     path: 'license',
     name: 'license',
     component: License
+  },
+  {
+    path: 'file-center',
+    name: 'file-center',
+    component: fileCenter
   },
   {
     path: 'schedule',
