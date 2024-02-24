@@ -30,6 +30,13 @@ export const menuListData: Array<Menu> = [
     childPage: []
   },
   {
+    code: 'file-center',
+    name: '资源中心',
+    icon: 'Files',
+    authType: [ 'ROLE_TENANT_MEMBER', 'ROLE_TENANT_ADMIN' ],
+    childPage: []
+  },
+  {
     code: 'workflow',
     name: '作业流',
     icon: 'SetUp',
