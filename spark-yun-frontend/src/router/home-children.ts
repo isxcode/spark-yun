@@ -23,6 +23,7 @@ import CustomFormSetting from '@/views/custom-form/form-setting/index.vue'
 import CustomApi from '@/views/custom-api/index.vue'
 
 import fileCenter from '@/views/file-center/index.vue'
+import CustomFunc from '@/views/custom-func/index.vue'
 
 export default [
   {
@@ -134,5 +135,10 @@ export default [
     path: 'custom-api',
     name: 'custom-api',
     component: CustomApi
+  },
+  {
+    path: 'custom-func',
+    name: 'custom-func',
+    component: CustomFunc
   }
 ]

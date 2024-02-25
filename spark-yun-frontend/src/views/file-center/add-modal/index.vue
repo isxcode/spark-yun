@@ -96,6 +96,15 @@ const formData = reactive({
   remark: '',
   fileData: null
 })
+const rules = reactive<FormRules>({
+  type: [
+    {
+      required: true,
+      message: '请选择类型',
+      trigger: [ 'blur', 'change' ]
+    }
+  ]
+})
 
 function showModal(cb: () => void): void {
   formData.type = ''
