@@ -62,6 +62,11 @@ export const colConfigs: colConfig[] = [
     }
   },
   {
+    prop: 'createDateTime',
+    title: '创建时间',
+    minWidth: 140
+  },
+  {
     prop: 'remark',
     title: '备注',
     minWidth: 100,
