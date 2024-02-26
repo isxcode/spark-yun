@@ -1,7 +1,6 @@
 package com.isxcode.star.modules.monitor.controller;
 
 import com.isxcode.star.api.main.constants.ModuleCode;
-import com.isxcode.star.api.monitor.req.GetClusterMonitorReq;
 import com.isxcode.star.api.monitor.req.GetInstanceMonitorReq;
 import com.isxcode.star.api.monitor.req.QueryInstancesReq;
 import com.isxcode.star.api.monitor.res.GetClusterMonitorRes;
@@ -43,9 +42,9 @@ public class MonitorController {
 	@Operation(summary = "获取集群监控数据接口")
 	@PostMapping("/getClusterMonitor")
 	@SuccessResponse("查询成功")
-	public GetClusterMonitorRes getClusterMonitor(@Valid @RequestBody GetClusterMonitorReq getClusterMonitorReq) {
+	public GetClusterMonitorRes getClusterMonitor() {
 
-		return monitorBizService.getClusterMonitor(getClusterMonitorReq);
+		return monitorBizService.getClusterMonitor();
 	}
 
 	@Secured({RoleType.NORMAL_MEMBER})
