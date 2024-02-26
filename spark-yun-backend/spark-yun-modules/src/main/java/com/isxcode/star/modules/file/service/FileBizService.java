@@ -1,5 +1,6 @@
 package com.isxcode.star.modules.file.service;
 
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.io.unit.DataSizeUtil;
 import com.isxcode.star.api.file.pojos.req.DeleteFileReq;
 import com.isxcode.star.api.file.pojos.req.DownloadFileReq;
@@ -81,6 +82,53 @@ public class FileBizService {
 		} catch (IOException e) {
 			throw new IsxAppException("上传资源文件失败");
 		}
+	}
+
+	public void updateFile(String fileId, MultipartFile file, String remark) {
+
+		// 校验文件是否存在
+		FileEntity fileEntity = fileService.getFile(fileId);
+
+		// 修改备注
+		fileEntity.setRemark(remark);
+
+		if (file != null) {
+
+			// 判断文件是否重复
+			if (!fileEntity.getFileName().equals(file.getOriginalFilename())) {
+				Optional<FileEntity> fileByNameOptional = fileRepository.findByFileName(file.getOriginalFilename());
+				if (fileByNameOptional.isPresent()) {
+					throw new IsxAppException("文件已重复存在");
+				}
+			}
+
+			// 将原有的文件，加一个update_${timestamp}的后缀
+			String fileDir = PathUtils.parseProjectPath(isxAppProperties.getResourcesPath()) + File.separator + "file"
+					+ File.separator + TENANT_ID.get();
+			try {
+				File localFile = PathUtils.createFile(fileDir + File.separator + fileEntity.getId());
+				localFile.renameTo(
+						new File(fileDir + File.separator + fileEntity.getId() + ".updated_" + DateUtil.now()));
+			} catch (IOException e) {
+				throw new IsxAppException("本地文件无法获取");
+			}
+
+			// 持久化文件
+			String filePath = fileDir + File.separator + fileEntity.getId();
+			try {
+				File folder = PathUtils.createFile(filePath);
+				File dest = new File(folder.getAbsolutePath());
+				file.transferTo(dest);
+			} catch (IOException e) {
+				throw new IsxAppException("上传资源文件失败");
+			}
+
+			fileEntity.setFileName(file.getOriginalFilename());
+			fileEntity.setFileSize(DataSizeUtil.format(file.getSize()));
+		}
+
+		// 数据持久化
+		fileRepository.save(fileEntity);
 	}
 
 	public void downloadFile(DownloadFileReq downloadFileReq, HttpServletResponse response) {
