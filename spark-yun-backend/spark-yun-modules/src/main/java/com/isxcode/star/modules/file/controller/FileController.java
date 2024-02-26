@@ -37,9 +37,18 @@ public class FileController {
 		fileBizService.uploadFile(file, type, remark);
 	}
 
+	@Operation(summary = "资源文件更新接口")
+	@PostMapping("/updateFile")
+	@SuccessResponse("更新成功")
+	public void updateFile(@RequestParam("fileId") @Schema(title = "资源文件id") String fileId,
+			@RequestParam(value = "file", required = false) @Schema(title = "文件") MultipartFile file,
+			@RequestParam(value = "remark", required = false) @Schema(title = "备注") String remark) {
+
+		fileBizService.updateFile(fileId, file, remark);
+	}
+
 	@Operation(summary = "资源文件下载")
 	@PostMapping("/downloadFile")
-	@SuccessResponse("下载成功")
 	public void downloadFile(@Valid @RequestBody DownloadFileReq downloadFileReq, HttpServletResponse response) {
 
 		fileBizService.downloadFile(downloadFileReq, response);

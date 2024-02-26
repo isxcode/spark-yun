@@ -5,6 +5,7 @@ import com.isxcode.star.api.func.pojos.req.DeleteFuncReq;
 import com.isxcode.star.api.func.pojos.req.PageFuncReq;
 import com.isxcode.star.api.func.pojos.req.UpdateFuncReq;
 import com.isxcode.star.api.func.pojos.res.PageFuncRes;
+import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.star.modules.func.entity.FuncEntity;
 import com.isxcode.star.modules.func.mapper.FuncMapper;
 import com.isxcode.star.modules.func.repository.FuncRepository;
@@ -13,6 +14,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +29,12 @@ public class FuncBizService {
 	private final FuncMapper funcMapper;
 
 	public void addFunc(AddFuncReq addFuncReq) {
+
+		// 判断函数名是否重复
+		Optional<FuncEntity> funcEntityOptional = funcRepository.findByFuncName(addFuncReq.getFuncName());
+		if (funcEntityOptional.isPresent()) {
+			throw new IsxAppException("函数已重复存在");
+		}
 
 		FuncEntity funcEntity = funcMapper.addFuncReqToFuncEntity(addFuncReq);
 

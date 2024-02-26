@@ -18,7 +18,7 @@ import static com.isxcode.star.common.config.CommonConfig.TENANT_ID;
 
 @Data
 @Entity
-@SQLDelete(sql = "UPDATE SY_WORK_UDF SET deleted = 1 WHERE id = ? and version_number = ?")
+@SQLDelete(sql = "UPDATE SY_FUNC SET deleted = 1 WHERE id = ? and version_number = ?")
 @Where(clause = "deleted = 0 ${TENANT_FILTER} ")
 @Table(name = "SY_FUNC")
 @JsonIgnoreProperties({"hibernateLazyInitializer"})
