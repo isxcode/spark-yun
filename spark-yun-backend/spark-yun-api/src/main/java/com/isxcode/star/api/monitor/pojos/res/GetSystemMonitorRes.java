@@ -1,6 +1,6 @@
-package com.isxcode.star.api.monitor.res;
+package com.isxcode.star.api.monitor.pojos.res;
 
-import com.isxcode.star.api.monitor.dto.SystemMonitorDto;
+import com.isxcode.star.api.monitor.pojos.dto.SystemMonitorDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Data;

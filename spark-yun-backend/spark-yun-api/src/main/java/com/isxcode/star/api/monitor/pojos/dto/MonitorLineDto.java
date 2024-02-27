@@ -1,4 +1,4 @@
-package com.isxcode.star.api.monitor.dto;
+package com.isxcode.star.api.monitor.pojos.dto;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.isxcode.star.backend.api.base.serializer.LocalDateMinuteSerializer;

@@ -1,4 +1,4 @@
-package com.isxcode.star.api.monitor.res;
+package com.isxcode.star.api.monitor.pojos.res;
 
 import lombok.Data;
 
