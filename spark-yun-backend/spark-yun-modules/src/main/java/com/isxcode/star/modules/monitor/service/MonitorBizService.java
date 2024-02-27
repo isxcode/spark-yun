@@ -1,16 +1,21 @@
 package com.isxcode.star.modules.monitor.service;
 
+import cn.hutool.core.date.DateTime;
+import cn.hutool.core.date.DateUnit;
+import cn.hutool.core.date.DateUtil;
 import com.alibaba.fastjson.JSON;
 import com.isxcode.star.api.api.constants.ApiStatus;
 import com.isxcode.star.api.cluster.constants.ClusterStatus;
 import com.isxcode.star.api.cluster.pojos.dto.ScpFileEngineNodeDto;
 import com.isxcode.star.api.datasource.constants.DatasourceStatus;
+import com.isxcode.star.api.instance.constants.InstanceStatus;
 import com.isxcode.star.api.main.properties.SparkYunProperties;
 import com.isxcode.star.api.monitor.constants.MonitorStatus;
 import com.isxcode.star.api.monitor.pojos.ao.WorkflowMonitorAo;
 import com.isxcode.star.api.monitor.pojos.dto.MonitorLineDto;
 import com.isxcode.star.api.monitor.pojos.dto.NodeMonitorInfo;
 import com.isxcode.star.api.monitor.pojos.dto.SystemMonitorDto;
+import com.isxcode.star.api.monitor.pojos.dto.WorkflowInstanceLineDto;
 import com.isxcode.star.api.monitor.pojos.req.GetClusterMonitorReq;
 import com.isxcode.star.api.monitor.pojos.req.GetInstanceMonitorReq;
 import com.isxcode.star.api.monitor.pojos.req.PageInstancesReq;
@@ -30,6 +35,7 @@ import com.isxcode.star.modules.datasource.repository.DatasourceRepository;
 import com.isxcode.star.modules.monitor.entity.MonitorEntity;
 import com.isxcode.star.modules.monitor.mapper.MonitorMapper;
 import com.isxcode.star.modules.monitor.repository.MonitorRepository;
+import com.isxcode.star.modules.workflow.entity.WorkflowInstanceEntity;
 import com.isxcode.star.modules.workflow.mapper.WorkflowMapper;
 import com.isxcode.star.modules.workflow.repository.WorkflowInstanceRepository;
 import com.isxcode.star.modules.workflow.repository.WorkflowRepository;
@@ -48,6 +54,8 @@ import javax.transaction.Transactional;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -160,7 +168,46 @@ public class MonitorBizService {
 
 	public GetInstanceMonitorRes getInstanceMonitor(GetInstanceMonitorReq getInstanceMonitorReq) {
 
-		return null;
+		// 查询当天的实例
+		DateTime startDateTime = DateUtil.beginOfDay(getInstanceMonitorReq.getLocalDate());
+		DateTime endDateTime = DateUtil.endOfDay(getInstanceMonitorReq.getLocalDate());
+		List<WorkflowInstanceEntity> workflowInstances = workflowInstanceRepository
+				.findAllByExecStartDateTimeAfterAndExecEndDateTimeBefore(startDateTime, endDateTime);
+
+		// 初始化数组
+		List<WorkflowInstanceLineDto> lines = new ArrayList<>();
+		long allNum = DateUtil.between(startDateTime, new Date(), DateUnit.HOUR);
+		for (int i = 0; i < allNum; i++) {
+			lines.add(WorkflowInstanceLineDto.builder().successNum(0L).failNum(0L).runningNum(0L).build());
+		}
+
+		// 逐条解析
+		workflowInstances.forEach(e -> {
+
+			// 开始小时和结束小时
+			int startHour = DateUtil.hour(e.getExecStartDateTime(), true) - 1;
+			int endHour = e.getExecStartDateTime() == null
+					? Integer.parseInt(String.valueOf(allNum)) - 1
+					: DateUtil.hour(e.getExecEndDateTime(), true) - 1;
+
+			// 补充运行中的个数
+			for (int i = startHour; i < endHour; i++) {
+				lines.get(i).setRunningNum(lines.get(i).getRunningNum() + 1);
+			}
+
+			// 成功和失败的实例叠加
+			if (InstanceStatus.FAIL.equals(e.getStatus())) {
+				for (int i = startHour; i < Integer.parseInt(String.valueOf(allNum)); i++) {
+					lines.get(i).setFailNum(lines.get(i).getFailNum() + 1);
+				}
+			} else if (InstanceStatus.SUCCESS.equals(e.getStatus())) {
+				for (int i = startHour; i < Integer.parseInt(String.valueOf(allNum)); i++) {
+					lines.get(i).setSuccessNum(lines.get(i).getSuccessNum() + 1);
+				}
+			}
+		});
+
+		return GetInstanceMonitorRes.builder().instanceNumLine(lines).build();
 	}
 
 	public Page<PageInstancesRes> pageInstances(PageInstancesReq pageInstancesReq) {
