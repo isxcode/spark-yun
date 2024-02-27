@@ -11,11 +11,12 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.Pattern;
 
@@ -49,9 +50,9 @@ public class FileController {
 
 	@Operation(summary = "资源文件下载")
 	@PostMapping("/downloadFile")
-	public void downloadFile(@Valid @RequestBody DownloadFileReq downloadFileReq, HttpServletResponse response) {
+	public ResponseEntity<Resource> downloadFile(@Valid @RequestBody DownloadFileReq downloadFileReq) {
 
-		fileBizService.downloadFile(downloadFileReq, response);
+		return fileBizService.downloadFile(downloadFileReq);
 	}
 
 	@Operation(summary = "资源文件删除")
