@@ -10,6 +10,7 @@ import com.isxcode.star.api.monitor.constants.MonitorStatus;
 import com.isxcode.star.api.monitor.dto.MonitorLineDto;
 import com.isxcode.star.api.monitor.dto.NodeMonitorInfo;
 import com.isxcode.star.api.monitor.dto.SystemMonitorDto;
+import com.isxcode.star.api.monitor.req.GetClusterMonitorReq;
 import com.isxcode.star.api.monitor.req.GetInstanceMonitorReq;
 import com.isxcode.star.api.monitor.req.QueryInstancesReq;
 import com.isxcode.star.api.monitor.res.GetClusterMonitorRes;
@@ -17,6 +18,7 @@ import com.isxcode.star.api.monitor.res.GetInstanceMonitorRes;
 import com.isxcode.star.api.monitor.res.GetSystemMonitorRes;
 import com.isxcode.star.api.monitor.res.QueryInstancesRes;
 import com.isxcode.star.api.workflow.constants.WorkflowStatus;
+import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.star.common.utils.AesUtils;
 import com.isxcode.star.modules.api.repository.ApiRepository;
 import com.isxcode.star.modules.cluster.entity.ClusterNodeEntity;
@@ -34,6 +36,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import com.isxcode.star.api.monitor.constants.TimeType;
 
 import javax.transaction.Transactional;
 
@@ -103,11 +106,46 @@ public class MonitorBizService {
 				.clusterMonitor(clusterMonitor).datasourceMonitor(datasourceMonitor).build();
 	}
 
-	public GetClusterMonitorRes getClusterMonitor() {
+	public GetClusterMonitorRes getClusterMonitor(GetClusterMonitorReq getClusterMonitorReq) {
 
-		List<MonitorLineDto> monitorLineDtos = monitorRepository.queryMonitorLine();
+		// 计算时间区间
+		LocalDateTime endDateTime = LocalDateTime.now();
+		LocalDateTime startDateTime;
+		switch (getClusterMonitorReq.getTimeType()) {
+			case TimeType.THIRTY_MIN :
+				startDateTime = endDateTime.minusMinutes(30);
+				break;
+			case TimeType.ONE_HOUR :
+				startDateTime = endDateTime.minusHours(1);
+				break;
+			case TimeType.TWO_HOUR :
+				startDateTime = endDateTime.minusHours(2);
+				break;
+			case TimeType.SIX_HOUR :
+				startDateTime = endDateTime.minusHours(6);
+				break;
+			case TimeType.TWELVE_HOUR :
+				startDateTime = endDateTime.minusHours(12);
+				break;
+			case TimeType.ONE_DAY :
+				startDateTime = endDateTime.minusDays(1);
+				break;
+			case TimeType.SEVEN_DAY :
+				startDateTime = endDateTime.minusDays(7);
+				break;
+			case TimeType.THIRTY_DAY :
+				startDateTime = endDateTime.minusDays(30);
+				break;
+			default :
+				throw new IsxAppException("时间类型不支持");
+		}
 
-		return GetClusterMonitorRes.builder().line(monitorLineDtos).build();
+		// 查询记录数
+		List<MonitorLineDto> monitorLine = monitorRepository.queryMonitorLine(getClusterMonitorReq.getClusterId(),
+				startDateTime, endDateTime);
+
+		// 返回结果
+		return GetClusterMonitorRes.builder().line(monitorLine).build();
 	}
 
 	public GetInstanceMonitorRes getInstanceMonitor(GetInstanceMonitorReq getInstanceMonitorReq) {
