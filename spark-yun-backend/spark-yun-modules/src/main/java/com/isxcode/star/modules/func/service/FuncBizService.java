@@ -6,6 +6,7 @@ import com.isxcode.star.api.func.pojos.req.PageFuncReq;
 import com.isxcode.star.api.func.pojos.req.UpdateFuncReq;
 import com.isxcode.star.api.func.pojos.res.PageFuncRes;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
+import com.isxcode.star.modules.file.service.FileService;
 import com.isxcode.star.modules.func.entity.FuncEntity;
 import com.isxcode.star.modules.func.mapper.FuncMapper;
 import com.isxcode.star.modules.func.repository.FuncRepository;
@@ -27,6 +28,8 @@ public class FuncBizService {
 	private final FuncService funcService;
 
 	private final FuncMapper funcMapper;
+
+  private final FileService fileService;
 
 	public void addFunc(AddFuncReq addFuncReq) {
 
@@ -61,6 +64,11 @@ public class FuncBizService {
 		Page<FuncEntity> funcPage = funcRepository.pageSearch(pageFuncReq.getSearchKeyWord(),
 				PageRequest.of(pageFuncReq.getPage(), pageFuncReq.getPageSize()));
 
-		return funcPage.map(funcMapper::funcEntityToPageFuncRes);
-	}
+    Page<PageFuncRes> result = funcPage.map(funcMapper::funcEntityToPageFuncRes);
+    result.getContent().forEach(e -> {
+      e.setFuncName(fileService.getFile(e.getFileId()).getFileName());
+    });
+
+    return result;
+  }
 }
