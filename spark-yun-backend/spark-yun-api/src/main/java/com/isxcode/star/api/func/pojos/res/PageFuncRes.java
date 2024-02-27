@@ -25,7 +25,7 @@ public class PageFuncRes {
 
 	private String remark;
 
-  private String fileName;
+	private String fileName;
 
 	@JsonSerialize(using = LocalDateTimeSerializer.class)
 	private LocalDateTime createDateTime;
