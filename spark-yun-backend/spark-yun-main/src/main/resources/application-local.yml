@@ -24,7 +24,6 @@ spring:
     user: root
     password: root123
     locations: classpath:db/migration/h2
-    enabled: false
 
 logging:
   level:
