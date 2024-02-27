@@ -1,5 +1,7 @@
 package com.isxcode.star.modules.workflow.mapper;
 
+import com.isxcode.star.api.monitor.pojos.ao.WorkflowMonitorAo;
+import com.isxcode.star.api.monitor.pojos.res.PageInstancesRes;
 import com.isxcode.star.api.workflow.pojos.dto.WorkInstanceInfo;
 import com.isxcode.star.api.workflow.pojos.req.AddWorkflowReq;
 import com.isxcode.star.api.workflow.pojos.req.UpdateWorkflowReq;
@@ -30,4 +32,6 @@ public interface WorkflowMapper {
 	WorkInstanceInfo workInstanceEntityToWorkInstanceInfo(WorkInstanceEntity workInstances);
 
 	List<WorkInstanceInfo> workInstanceEntityListToWorkInstanceInfoList(List<WorkInstanceEntity> workInstances);
+
+	PageInstancesRes workflowMonitorAoToPageInstancesRes(WorkflowMonitorAo workflowMonitorAo);
 }

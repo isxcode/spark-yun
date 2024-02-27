@@ -1,4 +1,4 @@
-package com.isxcode.star.api.monitor.dto;
+package com.isxcode.star.api.monitor.pojos.dto;
 
 import lombok.Builder;
 import lombok.Data;

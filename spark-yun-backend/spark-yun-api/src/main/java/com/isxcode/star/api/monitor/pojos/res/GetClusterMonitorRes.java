@@ -1,6 +1,6 @@
-package com.isxcode.star.api.monitor.res;
+package com.isxcode.star.api.monitor.pojos.res;
 
-import com.isxcode.star.api.monitor.dto.MonitorLineDto;
+import com.isxcode.star.api.monitor.pojos.dto.MonitorLineDto;
 import lombok.Builder;
 import lombok.Data;
 
