@@ -29,7 +29,7 @@ public class FuncBizService {
 
 	private final FuncMapper funcMapper;
 
-  private final FileService fileService;
+	private final FileService fileService;
 
 	public void addFunc(AddFuncReq addFuncReq) {
 
@@ -64,11 +64,11 @@ public class FuncBizService {
 		Page<FuncEntity> funcPage = funcRepository.pageSearch(pageFuncReq.getSearchKeyWord(),
 				PageRequest.of(pageFuncReq.getPage(), pageFuncReq.getPageSize()));
 
-    Page<PageFuncRes> result = funcPage.map(funcMapper::funcEntityToPageFuncRes);
-    result.getContent().forEach(e -> {
-      e.setFuncName(fileService.getFile(e.getFileId()).getFileName());
-    });
+		Page<PageFuncRes> result = funcPage.map(funcMapper::funcEntityToPageFuncRes);
+		result.getContent().forEach(e -> {
+			e.setFuncName(fileService.getFile(e.getFileId()).getFileName());
+		});
 
-    return result;
-  }
+		return result;
+	}
 }
