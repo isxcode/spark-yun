@@ -21,4 +21,6 @@ public interface DatasourceRepository extends JpaRepository<DatasourceEntity, St
 	Page<DatasourceEntity> searchAll(@Param("keyword") String searchKeyWord, Pageable pageable);
 
 	List<DatasourceEntity> findAllByDriverId(String driverId);
+
+	long countByStatus(String status);
 }

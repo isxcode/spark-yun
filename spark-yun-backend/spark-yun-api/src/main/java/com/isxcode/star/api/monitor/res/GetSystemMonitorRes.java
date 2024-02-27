@@ -16,7 +16,7 @@ public class GetSystemMonitorRes {
 	private SystemMonitorDto datasourceMonitor;
 
 	@Schema(title = "作业监控信息")
-	private SystemMonitorDto workMonitor;
+	private SystemMonitorDto workflowMonitor;
 
 	@Schema(title = "接口监控信息")
 	private SystemMonitorDto apiMonitor;

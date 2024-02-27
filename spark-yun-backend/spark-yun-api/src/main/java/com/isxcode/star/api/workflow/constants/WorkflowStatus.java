@@ -8,4 +8,9 @@ public interface WorkflowStatus {
 
 	/** 未调度. */
 	String UN_AUTO = "UN_AUTO";
+
+	/**
+	 * 已发布.
+	 */
+	String PUBLISHED = "PUBLISHED";
 }
