@@ -14,17 +14,19 @@ import com.isxcode.star.modules.file.mapper.FileMapper;
 import com.isxcode.star.modules.file.repository.FileRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.tomcat.util.http.fileupload.IOUtils;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URLEncoder;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -131,7 +133,7 @@ public class FileBizService {
 		fileRepository.save(fileEntity);
 	}
 
-	public void downloadFile(DownloadFileReq downloadFileReq, HttpServletResponse response) {
+	public ResponseEntity<Resource> downloadFile(DownloadFileReq downloadFileReq) {
 
 		// 获取文件信息
 		FileEntity file = fileService.getFile(downloadFileReq.getFileId());
@@ -139,11 +141,14 @@ public class FileBizService {
 				+ File.separator + TENANT_ID.get();
 
 		try {
-			InputStream inputStream = Files.newInputStream(Paths.get(fileDir + File.separator + file.getId()));
-			response.setCharacterEncoding("utf-8");
-			response.setHeader("Content-Disposition",
-					"attachment;filename=" + URLEncoder.encode(file.getFileName(), "UTF-8"));
-			IOUtils.copy(inputStream, response.getOutputStream());
+			InputStreamResource resource = new InputStreamResource(
+					Files.newInputStream(Paths.get(fileDir + File.separator + file.getId())));
+			HttpHeaders headers = new HttpHeaders();
+			headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+			headers.setContentDispositionFormData("attachment", URLEncoder.encode(file.getFileName(), "UTF-8"));
+
+			// 返回文件
+			return ResponseEntity.ok().headers(headers).body(resource);
 		} catch (IOException e) {
 			throw new IsxAppException("读取文件失败");
 		}
