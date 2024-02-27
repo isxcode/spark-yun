@@ -1,19 +1,20 @@
 package com.isxcode.star.modules.monitor.controller;
 
 import com.isxcode.star.api.main.constants.ModuleCode;
-import com.isxcode.star.api.monitor.req.GetClusterMonitorReq;
-import com.isxcode.star.api.monitor.req.GetInstanceMonitorReq;
-import com.isxcode.star.api.monitor.req.QueryInstancesReq;
-import com.isxcode.star.api.monitor.res.GetClusterMonitorRes;
-import com.isxcode.star.api.monitor.res.GetInstanceMonitorRes;
-import com.isxcode.star.api.monitor.res.GetSystemMonitorRes;
-import com.isxcode.star.api.monitor.res.QueryInstancesRes;
+import com.isxcode.star.api.monitor.pojos.req.GetClusterMonitorReq;
+import com.isxcode.star.api.monitor.pojos.req.GetInstanceMonitorReq;
+import com.isxcode.star.api.monitor.pojos.req.PageInstancesReq;
+import com.isxcode.star.api.monitor.pojos.res.GetClusterMonitorRes;
+import com.isxcode.star.api.monitor.pojos.res.GetInstanceMonitorRes;
+import com.isxcode.star.api.monitor.pojos.res.GetSystemMonitorRes;
+import com.isxcode.star.api.monitor.pojos.res.PageInstancesRes;
 import com.isxcode.star.api.user.constants.RoleType;
 import com.isxcode.star.common.annotations.successResponse.SuccessResponse;
 import com.isxcode.star.modules.monitor.service.MonitorBizService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -59,10 +60,10 @@ public class MonitorController {
 
 	@Secured({RoleType.NORMAL_MEMBER})
 	@Operation(summary = "查询实例列表接口")
-	@PostMapping("/queryInstances")
+	@PostMapping("/pageInstances")
 	@SuccessResponse("查询成功")
-	public QueryInstancesRes queryInstances(@Valid @RequestBody QueryInstancesReq queryInstancesReq) {
+	public Page<PageInstancesRes> pageInstances(@Valid @RequestBody PageInstancesReq pageInstancesReq) {
 
-		return monitorBizService.queryInstances(queryInstancesReq);
+		return monitorBizService.pageInstances(pageInstancesReq);
 	}
 }

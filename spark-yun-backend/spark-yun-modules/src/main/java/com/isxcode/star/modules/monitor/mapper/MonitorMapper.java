@@ -1,6 +1,6 @@
 package com.isxcode.star.modules.monitor.mapper;
 
-import com.isxcode.star.api.monitor.dto.NodeMonitorInfo;
+import com.isxcode.star.api.monitor.pojos.dto.NodeMonitorInfo;
 import com.isxcode.star.modules.monitor.entity.MonitorEntity;
 import org.mapstruct.Mapper;
 

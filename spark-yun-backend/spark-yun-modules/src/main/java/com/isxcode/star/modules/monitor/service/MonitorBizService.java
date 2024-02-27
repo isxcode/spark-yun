@@ -7,16 +7,17 @@ import com.isxcode.star.api.cluster.pojos.dto.ScpFileEngineNodeDto;
 import com.isxcode.star.api.datasource.constants.DatasourceStatus;
 import com.isxcode.star.api.main.properties.SparkYunProperties;
 import com.isxcode.star.api.monitor.constants.MonitorStatus;
-import com.isxcode.star.api.monitor.dto.MonitorLineDto;
-import com.isxcode.star.api.monitor.dto.NodeMonitorInfo;
-import com.isxcode.star.api.monitor.dto.SystemMonitorDto;
-import com.isxcode.star.api.monitor.req.GetClusterMonitorReq;
-import com.isxcode.star.api.monitor.req.GetInstanceMonitorReq;
-import com.isxcode.star.api.monitor.req.QueryInstancesReq;
-import com.isxcode.star.api.monitor.res.GetClusterMonitorRes;
-import com.isxcode.star.api.monitor.res.GetInstanceMonitorRes;
-import com.isxcode.star.api.monitor.res.GetSystemMonitorRes;
-import com.isxcode.star.api.monitor.res.QueryInstancesRes;
+import com.isxcode.star.api.monitor.pojos.ao.WorkflowMonitorAo;
+import com.isxcode.star.api.monitor.pojos.dto.MonitorLineDto;
+import com.isxcode.star.api.monitor.pojos.dto.NodeMonitorInfo;
+import com.isxcode.star.api.monitor.pojos.dto.SystemMonitorDto;
+import com.isxcode.star.api.monitor.pojos.req.GetClusterMonitorReq;
+import com.isxcode.star.api.monitor.pojos.req.GetInstanceMonitorReq;
+import com.isxcode.star.api.monitor.pojos.req.PageInstancesReq;
+import com.isxcode.star.api.monitor.pojos.res.GetClusterMonitorRes;
+import com.isxcode.star.api.monitor.pojos.res.GetInstanceMonitorRes;
+import com.isxcode.star.api.monitor.pojos.res.GetSystemMonitorRes;
+import com.isxcode.star.api.monitor.pojos.res.PageInstancesRes;
 import com.isxcode.star.api.workflow.constants.WorkflowStatus;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.star.common.utils.AesUtils;
@@ -29,11 +30,15 @@ import com.isxcode.star.modules.datasource.repository.DatasourceRepository;
 import com.isxcode.star.modules.monitor.entity.MonitorEntity;
 import com.isxcode.star.modules.monitor.mapper.MonitorMapper;
 import com.isxcode.star.modules.monitor.repository.MonitorRepository;
+import com.isxcode.star.modules.workflow.mapper.WorkflowMapper;
+import com.isxcode.star.modules.workflow.repository.WorkflowInstanceRepository;
 import com.isxcode.star.modules.workflow.repository.WorkflowRepository;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.SftpException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import com.isxcode.star.api.monitor.constants.TimeType;
@@ -47,6 +52,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 import static com.isxcode.star.common.config.CommonConfig.JPA_TENANT_MODE;
+import static com.isxcode.star.common.config.CommonConfig.TENANT_ID;
 import static com.isxcode.star.common.utils.ssh.SshUtils.executeCommand;
 import static com.isxcode.star.common.utils.ssh.SshUtils.scpFile;
 
@@ -74,7 +80,11 @@ public class MonitorBizService {
 
 	private final WorkflowRepository workflowRepository;
 
+	private final WorkflowInstanceRepository workflowInstanceRepository;
+
 	private final ApiRepository apiRepository;
+
+	private final WorkflowMapper workflowMapper;
 
 	public GetSystemMonitorRes getSystemMonitor() {
 
@@ -153,9 +163,14 @@ public class MonitorBizService {
 		return null;
 	}
 
-	public QueryInstancesRes queryInstances(QueryInstancesReq queryInstancesReq) {
+	public Page<PageInstancesRes> pageInstances(PageInstancesReq pageInstancesReq) {
 
-		return null;
+		JPA_TENANT_MODE.set(false);
+		Page<WorkflowMonitorAo> workflowMonitorAos = workflowInstanceRepository.searchWorkflowMonitor(TENANT_ID.get(),
+				pageInstancesReq.getSearchKeyWord(),
+				PageRequest.of(pageInstancesReq.getPage(), pageInstancesReq.getPageSize()));
+
+		return workflowMonitorAos.map(workflowMapper::workflowMonitorAoToPageInstancesRes);
 	}
 
 	@Scheduled(cron = "0 * * * * ?")

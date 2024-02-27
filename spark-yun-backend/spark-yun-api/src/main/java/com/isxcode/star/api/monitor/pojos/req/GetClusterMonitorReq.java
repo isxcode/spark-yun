@@ -1,4 +1,4 @@
-package com.isxcode.star.api.monitor.req;
+package com.isxcode.star.api.monitor.pojos.req;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
