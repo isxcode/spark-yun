@@ -136,8 +136,15 @@
                     <ZqyFlow ref="zqyFlowRef"></ZqyFlow>
                 </template>
                 <template v-else>
+                    <spark-jar
+                        v-if="showWorkItem && workConfig.workType === 'SPARK_JAR'"
+                        :workItemConfig="workConfig"
+                        :workFlowData="workFlowData"
+                        @back="backToFlow"
+                        @locationNode="locationNode"
+                    ></spark-jar>
                     <WorkItem
-                        v-if="showWorkItem && workConfig.workType !== 'DATA_SYNC_JDBC'"
+                        v-if="showWorkItem && workConfig.workType !== 'DATA_SYNC_JDBC' && workConfig.workType !== 'SPARK_JAR'"
                         :workItemConfig="workConfig"
                         :workFlowData="workFlowData"
                         @back="backToFlow"
@@ -168,6 +175,8 @@ import eventBus from '@/utils/eventBus'
 import zqyLog from '@/components/zqy-log/index.vue'
 import WorkItem from '../work-item/index.vue'
 import DataSync from '../data-sync/index.vue'
+import SparkJar from '../spark-jar/index.vue'
+
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Loading } from '@element-plus/icons-vue'
 import EllipsisTooltip from '@/components/ellipsis-tooltip/ellipsis-tooltip.vue'
@@ -238,6 +247,10 @@ const typeList = reactive([
   {
     label: 'python作业',
     value: 'PYTHON'
+  },
+  {
+    label: '自定义作业',
+    value: 'SPARK_JAR'
   }
 ])
 
@@ -326,11 +339,11 @@ function deleteData(data: any) {
       workId: data.id
     })
       .then((res: any) => {
+        initData()
         if (data.id === workConfig.value.id) {
             backToFlow()
         }
         ElMessage.success(res.msg)
-        initData()
       })
       .catch((error: any) => {
         console.error(error)
