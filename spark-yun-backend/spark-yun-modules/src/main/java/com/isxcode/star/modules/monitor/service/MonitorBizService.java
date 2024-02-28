@@ -176,7 +176,7 @@ public class MonitorBizService {
 
 		// 初始化数组
 		List<WorkflowInstanceLineDto> lines = new ArrayList<>();
-		long allNum = DateUtil.between(startDateTime, new Date(), DateUnit.HOUR);
+		long allNum = DateUtil.between(DateUtil.beginOfDay(new Date()), new Date(), DateUnit.HOUR);
 		for (int i = 0; i < allNum; i++) {
 			lines.add(WorkflowInstanceLineDto.builder().successNum(0L).failNum(0L).runningNum(0L).build());
 		}

@@ -9,7 +9,7 @@ import java.util.Date;
 @Data
 public class GetInstanceMonitorReq {
 
-	@Schema(title = "数据", example = "2020-12-12")
+	@Schema(title = "日期时间，例如2020-12-12", example = "2020-12-12")
 	@NotNull(message = "localDate不能为空")
 	private Date localDate;
 }
