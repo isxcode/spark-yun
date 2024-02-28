@@ -99,8 +99,6 @@ public class ExecuteSqlExecutor extends WorkExecutor {
 				workInstance = updateInstance(workInstance, logBuilder);
 			}
 		} catch (Exception e) {
-
-			log.error(e.getMessage());
 			throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + e.getMessage() + "\n");
 		}
 	}
