@@ -10,7 +10,7 @@ spring:
 
   jpa:
     database: h2
-    show-sql: true
+    show-sql: false
 
   datasource:
     driver-class-name: org.h2.Driver
@@ -38,3 +38,4 @@ isx-app:
   use-port: true
   use-ssl: false
   resources-path: classpath:resources
+  docker-mode: false
