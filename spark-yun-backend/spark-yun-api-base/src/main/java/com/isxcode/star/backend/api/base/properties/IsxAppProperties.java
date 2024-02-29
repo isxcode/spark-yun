@@ -68,8 +68,8 @@ public class IsxAppProperties {
 	 */
 	private boolean usePort = true;
 
-  /**
-   * docker镜像部署模式.
-   */
-  private boolean dockerMode = false;
+	/**
+	 * docker镜像部署模式.
+	 */
+	private boolean dockerMode = false;
 }
