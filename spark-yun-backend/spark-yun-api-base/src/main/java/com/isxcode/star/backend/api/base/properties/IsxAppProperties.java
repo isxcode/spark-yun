@@ -67,4 +67,9 @@ public class IsxAppProperties {
 	 * 使用端口号访问接口.
 	 */
 	private boolean usePort = true;
+
+  /**
+   * docker镜像部署模式.
+   */
+  private boolean dockerMode = false;
 }

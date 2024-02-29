@@ -38,3 +38,4 @@ isx-app:
   use-port: true
   use-ssl: false
   resources-path: classpath:resources
+  docker-mode: false
