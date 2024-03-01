@@ -62,6 +62,12 @@ public class DatasourceBizService {
 
 	public void addDatasource(AddDatasourceReq addDatasourceReq) {
 
+		// 检测数据源名称重复
+		Optional<DatasourceEntity> datasourceByName = datasourceRepository.findByName(addDatasourceReq.getName());
+		if (datasourceByName.isPresent()) {
+			throw new IsxAppException("数据名称重复");
+		}
+
 		DatasourceEntity datasource = datasourceMapper.dasAddDatasourceReqToDatasourceEntity(addDatasourceReq);
 
 		// 密码对成加密
@@ -79,6 +85,12 @@ public class DatasourceBizService {
 	}
 
 	public void updateDatasource(UpdateDatasourceReq updateDatasourceReq) {
+
+		// 检测数据源名称重复
+		Optional<DatasourceEntity> datasourceByName = datasourceRepository.findByName(updateDatasourceReq.getName());
+		if (datasourceByName.isPresent() && !datasourceByName.get().getId().equals(updateDatasourceReq.getId())) {
+			throw new IsxAppException("数据名称重复");
+		}
 
 		DatasourceEntity datasource = datasourceService.getDatasource(updateDatasourceReq.getId());
 
