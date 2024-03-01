@@ -10,6 +10,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @CacheConfig(cacheNames = {"SY_DATASOURCE"})
@@ -21,4 +22,6 @@ public interface DatasourceRepository extends JpaRepository<DatasourceEntity, St
 	Page<DatasourceEntity> searchAll(@Param("keyword") String searchKeyWord, Pageable pageable);
 
 	List<DatasourceEntity> findAllByDriverId(String driverId);
+
+	Optional<DatasourceEntity> findByName(String name);
 }
