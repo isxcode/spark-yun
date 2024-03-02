@@ -3,7 +3,7 @@
     <div class="zqy-seach-table">
         <div class="zqy-table-top">
             <el-button type="primary" @click="addData">
-                添加自定义函数
+                添加函数
             </el-button>
             <div class="zqy-seach">
                 <el-input v-model="keyword" placeholder="请输入备注 回车进行搜索" :maxlength="200" clearable @input="inputEvent"

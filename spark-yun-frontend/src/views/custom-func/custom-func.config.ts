@@ -31,7 +31,7 @@ export interface TableConfig {
 
 export const BreadCrumbList: Array<BreadCrumb> = [
   {
-    name: '自定义函数',
+    name: '函数仓库',
     code: 'custom-func'
   }
 ]

@@ -45,7 +45,7 @@ export const menuListData: Array<Menu> = [
   },
   {
     code: 'custom-func',
-    name: '自定义函数',
+    name: '函数仓库',
     icon: 'Mouse',
     authType: [ 'ROLE_TENANT_MEMBER', 'ROLE_TENANT_ADMIN' ],
     childPage: []

@@ -53,36 +53,45 @@
                     <!-- 这里是表单部分 -->
                     <el-form ref="form" label-position="top" label-width="70px" :model="jarJobConfig" :rules="rules">
                         <el-row :gutter="24">
-                            <el-col :span="12">
+                            <el-col :span="18">
                                 <el-form-item prop="appName" label="应用名称">
                                     <el-input v-model="jarJobConfig.appName" clearable placeholder="请输入"
                                         maxlength="200"></el-input>
                                 </el-form-item>
                             </el-col>
-                            <el-col :span="12">
-                                <el-form-item prop="libFileList" label="资源文件">
-                                    <el-select v-model="jarJobConfig.libFileList" collapse-tags multiple clearable
+                        </el-row>
+                        <el-row :gutter="24">
+                            <el-col :span="18">
+                                <el-form-item prop="jarFileId" label="资源文件">
+                                    <!-- <el-select v-model="jarJobConfig.libFileList" collapse-tags multiple clearable
                                         filterable placeholder="请选择">
                                         <el-option v-for="item in fileIdList" :key="item.value" :label="item.label"
                                             :value="item.value" />
+                                    </el-select> -->
+                                    <el-select v-model="jarJobConfig.jarFileId" clearable filterable placeholder="请选择">
+                                        <el-option v-for="item in fileIdList" :key="item.value" :label="item.label" :value="item.value" />
                                     </el-select>
                                 </el-form-item>
                             </el-col>
                         </el-row>
-                        <el-form-item prop="mainClass" label="mainClass">
-                            <el-input v-model="jarJobConfig.mainClass" clearable placeholder="请输入"
-                                maxlength="200"></el-input>
-                        </el-form-item>
+                        <el-row :gutter="24">
+                            <el-col :span="18">
+                                <el-form-item prop="mainClass" label="mainClass">
+                                    <el-input v-model="jarJobConfig.mainClass" clearable placeholder="请输入"
+                                        maxlength="200"></el-input>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
                         <el-form-item label="请求参数" class="jar-args-container">
-                            <el-tag v-for="tag in jarJobConfig.args" size="large" :key="tag" closable :disable-transitions="false"
-                                @close="handleClose(tag)">
-                                {{ tag }}
-                            </el-tag>
-                            <el-input v-if="inputVisible" ref="InputRef" v-model="inputValue" class="w-20"
-                                @keyup.enter="handleInputConfirm" @blur="handleInputConfirm" />
-                            <el-button v-else class="button-new-tag" size="small" @click="showInput">
-                                添加参数
-                            </el-button>
+                            <el-icon class="button-add" @click="addParam(jarJobConfig.args)"><CirclePlusFilled /></el-icon>
+                            <el-scrollbar>
+                                <template v-for="(tag, index) in jarJobConfig.args" :key="tag">
+                                    <div class="input-container">
+                                        <el-input v-model="jarJobConfig.args[index]" clearable placeholder="请输入" maxlength="2000"></el-input>
+                                        <el-icon class="button-remove" @click="handleClose(index)"><RemoveFilled /></el-icon>
+                                    </div>
+                                </template>
+                            </el-scrollbar>
                         </el-form-item>
                     </el-form>
                 </div>
@@ -127,9 +136,6 @@ const props = defineProps<{
     workFlowData: any
 }>()
 
-const InputRef = ref<InstanceType<typeof ElInput>>()
-const inputVisible = ref(false)
-const inputValue = ref('')
 const loading = ref(false)
 const networkError = ref(false)
 const runningLoading = ref(false)
@@ -159,7 +165,7 @@ let jarJobConfig = reactive({
 })
 const rules = reactive<FormRules>({
     appName: [{ required: true, message: '请输入应用名称', trigger: ['blur', 'change'] }],
-    libFileList: [{ required: true, message: '请选择资源文件', trigger: ['blur', 'change'] }],
+    jarFileId: [{ required: true, message: '请选择资源文件', trigger: ['blur', 'change'] }],
     mainClass: [{ required: true, message: '请输入mainClass', trigger: ['blur', 'change'] }]
 })
 
@@ -194,7 +200,9 @@ function initData(id?: string, tableLoading?: boolean) {
         .then((res: any) => {
             workConfig = res.data
             workConfig.workType = props.workItemConfig.workType
-            jarJobConfig = res.data.jarJobConfig
+            if (res.data.jarJobConfig) {
+                jarJobConfig = res.data.jarJobConfig
+            }
             nextTick(() => {
                 changeStatus.value = false
                 containerInstanceRef.value.initData(id || instanceId.value, (status: string) => {
@@ -408,25 +416,11 @@ function setConfigData() {
     configDetailRef.value.showModal(props.workItemConfig)
 }
 
-function sqlConfigChange(e: string) {
-    changeStatus.value = true
+function handleClose(index: number) {
+    jarJobConfig.args.splice(index, 1)
 }
-
-function handleClose(tag: string) {
-    jarJobConfig.args.splice(jarJobConfig.args.indexOf(tag), 1)
-}
-function showInput() {
-    inputVisible.value = true
-    nextTick(() => {
-        InputRef.value!.input!.focus()
-    })
-}
-function handleInputConfirm() {
-  if (inputValue.value) {
-    jarJobConfig.args.push(inputValue.value)
-  }
-  inputVisible.value = false
-  inputValue.value = ''
+function addParam(arr: string[]) {
+    arr.push('')
 }
 
 onMounted(() => {
@@ -439,19 +433,53 @@ onMounted(() => {
 
 <style lang="scss">
 .zqy-spark-jar {
+    .zqy-loading {
+        overflow-y: auto;
+    }
     .jar-args-container {
+        margin-bottom: 0;
+        .el-form-item {
+            margin-bottom: 12px;
+        }
+        .el-form-item__label {
+            margin-bottom: 0;
+        }
         .el-form-item__content {
-            display: inline-flex;
-            .el-input {
-                width: 120px;
+            position: relative;
+            .el-scrollbar {
+                width: 100%;
+                .el-scrollbar__view {
+                    max-height: 120px;
+                    padding-right: 20px;
+                    box-sizing: border-box;
+                }
             }
-            .el-button {
-                height: 32px;
+            .button-add {
+                position: absolute;
+                top: -27px;
+                z-index: 10;
+                left: 52px;
+                color: getCssVar('color', 'primary');
+                cursor: pointer;
+                &:hover {
+                    color: getCssVar('color', 'primary', 'light-3');
+                }
             }
-            .el-tag {
-                margin-right: 8px;
-                margin-bottom: 2px;
-                margin-top: 2px;
+            .input-container {
+                &+.input-container {
+                    margin-top: 12px;
+                }
+                display: flex;
+                width: 100%;
+                align-items: center;
+                .button-remove {
+                    margin-left: 12px;
+                    color: getCssVar('color', 'danger');
+                    cursor: pointer;
+                    &:hover {
+                        color: getCssVar('color', 'danger', 'light-3');
+                    }
+                }
             }
         }
     }
