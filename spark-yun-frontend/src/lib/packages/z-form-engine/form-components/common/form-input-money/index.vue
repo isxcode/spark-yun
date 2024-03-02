@@ -53,14 +53,7 @@ watch(() => props.formConfig.defaultValue, () => {
     if (props.renderSence === 'new') {
         emit('update:modelValue', props.formConfig.defaultValue)
     }
-}, {
-    immediate: true
 })
-function keyupEvent(input: KeyboardEvent) {
-    let value = input.key
-    const returnValue = value.replace(/\D*(\d*)(\.?)(\d{0,2})\d*/,'$1$2$3').replace(/^0+(\d)/, '$1').match(/^\d*(\.?\d{0,2})/g)
-    return returnValue[0]
-}
 function focusEvent(e: any) {
     focusStatus.value = true
     emit('update:modelValue', validateAssetValue(e.target.value))
