@@ -40,6 +40,18 @@ export function useLogin (callback: ((callback: LoginModel) => Promise<void>)) {
       }
     })
   }
+  const handleKeyup = function(e: any) {
+    if (e.type === 'keyup' && e.key === 'Enter') {
+      elFormRef.value?.validate((isValid) => {
+        if (isValid) {
+          btnLoading.value = true
+          callback({...loginModel}).finally(() => {
+            btnLoading.value = false
+          })
+        }
+      })
+    }
+  }
 
   return {
     renderLoginForm: () => (
@@ -49,6 +61,7 @@ export function useLogin (callback: ((callback: LoginModel) => Promise<void>)) {
           class="zqy-login__form"
           model={loginModel}
           rules={loginRule}
+          onKeyup={handleKeyup}
         >
           <el-form-item prop="account">
             <el-input
