@@ -754,7 +754,7 @@ onUnmounted(() => {
                 top: 16px;
                 cursor: pointer;
                 &:hover {
-                    color: getCssVar('color', 'primary');;
+                    color: getCssVar('color', 'primary');
                 }
             }
         }
