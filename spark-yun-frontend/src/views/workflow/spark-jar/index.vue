@@ -63,11 +63,6 @@
                         <el-row :gutter="24">
                             <el-col :span="18">
                                 <el-form-item prop="jarFileId" label="资源文件">
-                                    <!-- <el-select v-model="jarJobConfig.libFileList" collapse-tags multiple clearable
-                                        filterable placeholder="请选择">
-                                        <el-option v-for="item in fileIdList" :key="item.value" :label="item.label"
-                                            :value="item.value" />
-                                    </el-select> -->
                                     <el-select v-model="jarJobConfig.jarFileId" clearable filterable placeholder="请选择">
                                         <el-option v-for="item in fileIdList" :key="item.value" :label="item.label" :value="item.value" />
                                     </el-select>
@@ -158,7 +153,6 @@ let workConfig = reactive({
 })
 let jarJobConfig = reactive({
     appName: '',    // 应用名称
-    libFileList: [], // 资源文件
     jarFileId: '',  // 依赖
     mainClass: '',
     args: []        // 参数
