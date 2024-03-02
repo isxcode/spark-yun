@@ -15,8 +15,6 @@ public class JarJobConfig {
 
 	private String jarFileId;
 
-	private List<String> libFileList;
-
 	private String mainClass;
 
 	private String[] args;
