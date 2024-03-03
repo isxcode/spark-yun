@@ -66,7 +66,7 @@ public class FuncBizService {
 
 		Page<PageFuncRes> result = funcPage.map(funcMapper::funcEntityToPageFuncRes);
 		result.getContent().forEach(e -> {
-			e.setFuncName(fileService.getFile(e.getFileId()).getFileName());
+			e.setFileName(fileService.getFile(e.getFileId()).getFileName());
 		});
 
 		return result;
