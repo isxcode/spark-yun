@@ -5,7 +5,7 @@ import lombok.Data;
 @Data
 public class FuncFileDto {
 
-  private String funcId;
+	private String funcId;
 
-  private String funcName;
+	private String funcName;
 }

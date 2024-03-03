@@ -19,7 +19,7 @@ public class PluginReq {
 
 	private String sql;
 
-  private String database;
+	private String database;
 
 	private Integer limit;
 

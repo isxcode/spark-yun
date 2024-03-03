@@ -44,7 +44,7 @@ public class GetWorkRes {
 
 	private JarJobConfig jarJobConfig;
 
-  private List<FuncFileDto> funcList;
+	private List<FuncFileDto> funcList;
 
-  private List<FileListDto> libList;
+	private List<FileListDto> libList;
 }

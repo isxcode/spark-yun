@@ -89,13 +89,13 @@ public class WorkBizService {
 
 	private final WorkConfigMapper workConfigMapper;
 
-  private final FileRepository fileRepository;
+	private final FileRepository fileRepository;
 
-  private final FileMapper fileMapper;
+	private final FileMapper fileMapper;
 
-  private final FuncRepository funcRepository;
+	private final FuncRepository funcRepository;
 
-  private final FuncMapper funcMapper;
+	private final FuncMapper funcMapper;
 
 	public GetWorkRes addWork(AddWorkReq addWorkReq) {
 
@@ -453,25 +453,25 @@ public class WorkBizService {
 			getWorkRes.getSyncRule().setSqlConfigJson(JSON.toJSONString(getWorkRes.getSyncRule().getSqlConfig()));
 		}
 
-    // 翻译依赖配置
-    if (!Strings.isEmpty(workConfig.getLibConfig())) {
-      List<String> libId = JSON.parseArray(workConfig.getLibConfig(), String.class);
-      List<FileEntity> libList = fileRepository.findAllById(libId);
-      getWorkRes.setLibList(fileMapper.fileEntityListToFileListDtoList(libList));
-    }
+		// 翻译依赖配置
+		if (!Strings.isEmpty(workConfig.getLibConfig())) {
+			List<String> libId = JSON.parseArray(workConfig.getLibConfig(), String.class);
+			List<FileEntity> libList = fileRepository.findAllById(libId);
+			getWorkRes.setLibList(fileMapper.fileEntityListToFileListDtoList(libList));
+		}
 
-    // 翻译函数配置
-    if (!Strings.isEmpty(workConfig.getFuncConfig())) {
-      List<String> funcId = JSON.parseArray(workConfig.getFuncConfig(), String.class);
-      List<FuncEntity> funList = funcRepository.findAllById(funcId);
-      getWorkRes.setFuncList(funcMapper.funcEntityListToFuncFileDtoList(funList));
-    }
+		// 翻译函数配置
+		if (!Strings.isEmpty(workConfig.getFuncConfig())) {
+			List<String> funcId = JSON.parseArray(workConfig.getFuncConfig(), String.class);
+			List<FuncEntity> funList = funcRepository.findAllById(funcId);
+			getWorkRes.setFuncList(funcMapper.funcEntityListToFuncFileDtoList(funList));
+		}
 
-    // 翻译自定义jar配置
-     if (!Strings.isEmpty(workConfig.getJarJobConfig())) {
-       JarJobConfig jarJobConfig = JSON.parseObject(workConfig.getJarJobConfig(), JarJobConfig.class);
-       getWorkRes.setJarJobConfig(jarJobConfig);
-    }
+		// 翻译自定义jar配置
+		if (!Strings.isEmpty(workConfig.getJarJobConfig())) {
+			JarJobConfig jarJobConfig = JSON.parseObject(workConfig.getJarJobConfig(), JarJobConfig.class);
+			getWorkRes.setJarJobConfig(jarJobConfig);
+		}
 
 		return getWorkRes;
 	}
