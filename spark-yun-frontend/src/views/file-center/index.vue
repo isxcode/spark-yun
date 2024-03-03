@@ -150,19 +150,16 @@ function downloadFile(data: any) {
   DownloadFileData({
     fileId: data.id
   }).then((res: any) => {
-    let blob = new Blob([res])
-    let fileName = data.fileName
-    if ('msSaveOrOpenBlob' in navigator) {
-      window.navigator.msSaveOrOpenBlob(blob, fileName)
-    } else {
-      const link = document.createElement('a')
-      link.style.display = 'none'
-      link.href = URL.createObjectURL(blob)
-      link.download = fileName
-      document.body.appendChild(link)
-      link.click()
-      document.body.removeChild(link)
-    }
+    const blobURL = URL.createObjectURL(res);
+
+    // 创建一个链接元素并模拟点击下载
+    const link = document.createElement('a');
+    link.href = blobURL;
+    link.download = data.fileName; // 根据实际情况设置下载文件的名称和扩展名
+    link.click();
+
+    // 释放Blob URL
+    URL.revokeObjectURL(blobURL);
 
 
     data.downloadLoading = false

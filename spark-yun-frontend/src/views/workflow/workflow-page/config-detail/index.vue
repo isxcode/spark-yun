@@ -317,8 +317,8 @@
               <el-form-item label="函数">
                 <el-select v-model="fileConfig.funcList" collapse-tags multiple clearable
                   filterable placeholder="请选择">
-                    <el-option v-for="item in fileIdList" :key="item.value" :label="item.label"
-                        :value="item.value" />
+                    <el-option v-for="item in fileIdList" :key="item.id" :label="item.funcName"
+                        :value="item.id" />
                 </el-select>
               </el-form-item>
             </el-form>
@@ -359,6 +359,7 @@ import { GetComputerGroupList, GetComputerPointData } from '@/services/computer-
 import { GetDatasourceList } from '@/services/datasource.service'
 import { jsonFormatter } from '@/utils/formatter'
 import { GetFileCenterList } from '@/services/file-center.service'
+import { GetCustomFuncList } from '@/services/custom-func.service'
 
 const scheduleRange = ref(ScheduleRange);
 const weekDateList = ref(WeekDateList)
@@ -480,6 +481,7 @@ function showModal(data?: any) {
     }
     if (['SPARK_SQL', 'SPARK_JAR'].includes(data.workType)) {
       // 获取函数配置和依赖配置
+      getFuncList()
       getFileCenterList()
     }
     getDataSourceList(true)
@@ -495,23 +497,27 @@ function getFileCenterList() {
         page: 0,
         pageSize: 10000,
         searchKeyWord: '',
-        type: ''
+        type: 'LIB'
     }).then((res: any) => {
-        fileIdList.value = res.data.content.filter(item => item.fileType === 'FUNC').map(item => {
-            return {
-                label: item.fileName,
-                value: item.id
-            }
-        })
-        libIdList.value = res.data.content.filter(item => item.fileType === 'LIB').map(item => {
+        libIdList.value = res.data.content.map(item => {
             return {
                 label: item.fileName,
                 value: item.id
             }
         })
     }).catch(() => {
-        fileIdList.value = []
         libIdList.value = []
+    })
+}
+function getFuncList() {
+    GetCustomFuncList({
+        page: 0,
+        pageSize: 10000,
+        searchKeyWord: ''
+    }).then((res: any) => {
+        fileIdList.value = res.data.content
+    }).catch(() => {
+        fileIdList.value = []
     })
 }
 

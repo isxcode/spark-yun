@@ -80,9 +80,9 @@
                         <el-form-item label="请求参数" class="jar-args-container">
                             <el-icon class="button-add" @click="addParam(jarJobConfig.args)"><CirclePlusFilled /></el-icon>
                             <el-scrollbar>
-                                <template v-for="(tag, index) in jarJobConfig.args" :key="tag">
+                                <template v-for="(tag, index) in jarJobConfig.args" :key="index">
                                     <div class="input-container">
-                                        <el-input v-model="jarJobConfig.args[index]" clearable placeholder="请输入" maxlength="2000"></el-input>
+                                        <el-input v-model="jarJobConfig.args[index]" clearable placeholder="请输入" maxlength="2000" @blur.stop></el-input>
                                         <el-icon class="button-remove" @click="handleClose(index)"><RemoveFilled /></el-icon>
                                     </div>
                                 </template>
@@ -118,7 +118,7 @@ import TotalDetail from '../work-item/total-detail.vue'
 
 import { DeleteWorkData, GetWorkItemConfig, PublishWorkData, RunWorkItemConfig, SaveWorkItemConfig, TerWorkItemConfig } from '@/services/workflow.service'
 import { GetFileCenterList } from '@/services/file-center.service'
-import { ElMessage, ElMessageBox, ElInput } from 'element-plus'
+import { ElMessage, ElMessageBox, ElInput, FormRules } from 'element-plus'
 import { useRoute, useRouter } from 'vue-router'
 import { Loading } from '@element-plus/icons-vue'
 
@@ -193,9 +193,11 @@ function initData(id?: string, tableLoading?: boolean) {
     })
         .then((res: any) => {
             workConfig = res.data
-            workConfig.workType = props.workItemConfig.workType
+            workConfig.workType = props.workItemConfig.workTyper
             if (res.data.jarJobConfig) {
-                jarJobConfig = res.data.jarJobConfig
+                Object.keys(jarJobConfig).forEach((key: string) => {
+                    jarJobConfig[key] = res.data.jarJobConfig[key]
+                })
             }
             nextTick(() => {
                 changeStatus.value = false

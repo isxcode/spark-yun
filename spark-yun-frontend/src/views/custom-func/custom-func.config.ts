@@ -46,7 +46,7 @@ export const colConfigs: colConfig[] = [
   {
     prop: 'type',
     title: '类型',
-    minWidth: 110,
+    minWidth: 80,
     // formatter: (data: any) => {
     //   const obj = {
     //     JOB: '作业',
@@ -55,6 +55,12 @@ export const colConfigs: colConfig[] = [
     //   }
     //   return obj[data.cellValue]
     // }
+  },
+  {
+    prop: 'fileName',
+    title: '资源文件',
+    minWidth: 140,
+    showOverflowTooltip: true
   },
   {
     prop: 'className',
