@@ -31,6 +31,7 @@ export function DownloadFileData(params: any): Promise<any> {
   return http.request({
     method: 'post',
     url: '/file/downloadFile',
+    responseType: 'blob',
     params
   })
 }
