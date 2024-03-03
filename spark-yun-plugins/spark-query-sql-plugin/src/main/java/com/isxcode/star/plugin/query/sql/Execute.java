@@ -20,16 +20,16 @@ public class Execute {
 	 */
 	public static void main(String[] args) {
 
-    // 解析插件请求体
+		// 解析插件请求体
 		PluginReq pluginReq = parse(args);
 
-    // 过滤注释
+		// 过滤注释
 		String regex = "/\\*(?:.|[\\n\\r])*?\\*/|--.*";
 		String noCommentSql = pluginReq.getSql().replaceAll(regex, "");
 		String realSql = noCommentSql.replace("\n", " ");
 		String[] sqls = realSql.split(";");
 
-    // 获取sparkSession
+		// 获取sparkSession
 		try (SparkSession sparkSession = initSparkSession(pluginReq)) {
 
 			// 注册自定义函数
@@ -44,19 +44,19 @@ public class Execute {
 				});
 			}
 
-      // 选择db
-      if (!Strings.isEmpty(pluginReq.getDatabase())) {
-        sparkSession.sql("use " + pluginReq.getDatabase());
-      }
+			// 选择db
+			if (!Strings.isEmpty(pluginReq.getDatabase())) {
+				sparkSession.sql("use " + pluginReq.getDatabase());
+			}
 
-      // 除了最后一行sql，执行其他所有sql
+			// 除了最后一行sql，执行其他所有sql
 			for (int i = 0; i < sqls.length - 1; i++) {
 				if (!Strings.isEmpty(sqls[i])) {
 					sparkSession.sql(sqls[i]);
 				}
 			}
 
-      // 执行最后一行sql并打印输出
+			// 执行最后一行sql并打印输出
 			Dataset<Row> rowDataset = sparkSession.sql(sqls[sqls.length - 1]).limit(pluginReq.getLimit());
 			exportResult(rowDataset);
 		}

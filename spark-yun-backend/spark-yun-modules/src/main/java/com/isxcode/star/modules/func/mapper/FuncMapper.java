@@ -29,8 +29,8 @@ public interface FuncMapper {
 
 	List<FuncInfo> funcEntityListToFuncInfoList(List<FuncEntity> funcEntities);
 
-  @Mapping(target = "funcId", source = "id")
-  FuncFileDto funcEntityToFuncFileDto(FuncEntity funcEntity);
+	@Mapping(target = "funcId", source = "id")
+	FuncFileDto funcEntityToFuncFileDto(FuncEntity funcEntity);
 
-  List<FuncFileDto> funcEntityListToFuncFileDtoList(List<FuncEntity> funcEntities);
+	List<FuncFileDto> funcEntityListToFuncFileDtoList(List<FuncEntity> funcEntities);
 }

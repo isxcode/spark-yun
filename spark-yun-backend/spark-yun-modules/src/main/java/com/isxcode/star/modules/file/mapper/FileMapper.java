@@ -13,8 +13,8 @@ public interface FileMapper {
 
 	PageFileRes fileEntityToPageFileRes(FileEntity fileEntity);
 
-  @Mapping(source = "id", target = "fileId")
-  FileListDto fileEntityToFileListDto(FileEntity file);
+	@Mapping(source = "id", target = "fileId")
+	FileListDto fileEntityToFileListDto(FileEntity file);
 
-  List<FileListDto> fileEntityListToFileListDtoList(List<FileEntity> files);
+	List<FileListDto> fileEntityListToFileListDtoList(List<FileEntity> files);
 }

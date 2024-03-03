@@ -5,7 +5,7 @@ import lombok.Data;
 @Data
 public class FileListDto {
 
-  private String fileId;
+	private String fileId;
 
-  private String fileName;
+	private String fileName;
 }
