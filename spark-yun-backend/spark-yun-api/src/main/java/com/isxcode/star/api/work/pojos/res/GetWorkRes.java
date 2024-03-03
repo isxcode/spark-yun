@@ -1,6 +1,8 @@
 package com.isxcode.star.api.work.pojos.res;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.isxcode.star.api.file.pojos.dto.FileListDto;
+import com.isxcode.star.api.func.pojos.dto.FuncFileDto;
 import com.isxcode.star.api.work.pojos.dto.ClusterConfig;
 import com.isxcode.star.api.work.pojos.dto.CronConfig;
 import com.isxcode.star.api.work.pojos.dto.SyncRule;
@@ -9,6 +11,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import javax.validation.constraints.NotEmpty;
+import java.util.List;
 
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -43,4 +46,8 @@ public class GetWorkRes {
 	private String name;
 
 	private String jarConf;
+
+  private List<FuncFileDto> funcList;
+
+  private List<FileListDto> libList;
 }

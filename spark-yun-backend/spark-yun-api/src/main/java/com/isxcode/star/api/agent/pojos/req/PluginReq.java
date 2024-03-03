@@ -19,6 +19,8 @@ public class PluginReq {
 
 	private String sql;
 
+  private String database;
+
 	private Integer limit;
 
 	private String applicationId;

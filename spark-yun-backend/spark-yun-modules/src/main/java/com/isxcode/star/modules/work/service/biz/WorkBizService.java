@@ -23,6 +23,12 @@ import com.isxcode.star.modules.cluster.entity.ClusterEntity;
 import com.isxcode.star.modules.cluster.entity.ClusterNodeEntity;
 import com.isxcode.star.modules.cluster.repository.ClusterNodeRepository;
 import com.isxcode.star.modules.cluster.repository.ClusterRepository;
+import com.isxcode.star.modules.file.entity.FileEntity;
+import com.isxcode.star.modules.file.mapper.FileMapper;
+import com.isxcode.star.modules.file.repository.FileRepository;
+import com.isxcode.star.modules.func.entity.FuncEntity;
+import com.isxcode.star.modules.func.mapper.FuncMapper;
+import com.isxcode.star.modules.func.repository.FuncRepository;
 import com.isxcode.star.modules.work.entity.WorkConfigEntity;
 import com.isxcode.star.modules.work.entity.WorkEntity;
 import com.isxcode.star.modules.work.entity.WorkInstanceEntity;
@@ -85,6 +91,14 @@ public class WorkBizService {
 	private final WorkConfigService workConfigService;
 
 	private final WorkConfigMapper workConfigMapper;
+
+  private final FileRepository fileRepository;
+
+  private final FileMapper fileMapper;
+
+  private final FuncRepository funcRepository;
+
+  private final FuncMapper funcMapper;
 
 	public GetWorkRes addWork(AddWorkReq addWorkReq) {
 
@@ -441,6 +455,20 @@ public class WorkBizService {
 			getWorkRes.setSyncRule(JSON.parseObject(workConfig.getSyncRule(), SyncRule.class));
 			getWorkRes.getSyncRule().setSqlConfigJson(JSON.toJSONString(getWorkRes.getSyncRule().getSqlConfig()));
 		}
+
+    // 翻译依赖配置
+    if (!Strings.isEmpty(workConfig.getLibConfig())) {
+      List<String> libId = JSON.parseArray(workConfig.getLibConfig(), String.class);
+      List<FileEntity> libList = fileRepository.findAllById(libId);
+      getWorkRes.setLibList(fileMapper.fileEntityListToFileListDtoList(libList));
+    }
+
+    // 翻译函数配置
+    if (!Strings.isEmpty(workConfig.getFuncConfig())) {
+      List<String> funcId = JSON.parseArray(workConfig.getFuncConfig(), String.class);
+      List<FuncEntity> funList = funcRepository.findAllById(funcId);
+      getWorkRes.setFuncList(funcMapper.funcEntityListToFuncFileDtoList(funList));
+    }
 
 		return getWorkRes;
 	}

@@ -1,5 +1,6 @@
 package com.isxcode.star.modules.func.mapper;
 
+import com.isxcode.star.api.func.pojos.dto.FuncFileDto;
 import com.isxcode.star.api.func.pojos.dto.FuncInfo;
 import com.isxcode.star.api.func.pojos.req.AddFuncReq;
 import com.isxcode.star.api.func.pojos.req.UpdateFuncReq;
@@ -27,4 +28,9 @@ public interface FuncMapper {
 	PageFuncRes funcEntityToPageFuncRes(FuncEntity funcEntity);
 
 	List<FuncInfo> funcEntityListToFuncInfoList(List<FuncEntity> funcEntities);
+
+  @Mapping(target = "funcId", source = "id")
+  FuncFileDto funcEntityToFuncFileDto(FuncEntity funcEntity);
+
+  List<FuncFileDto> funcEntityListToFuncFileDtoList(List<FuncEntity> funcEntities);
 }

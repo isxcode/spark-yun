@@ -24,6 +24,10 @@ import com.isxcode.star.modules.cluster.entity.ClusterNodeEntity;
 import com.isxcode.star.modules.cluster.mapper.ClusterNodeMapper;
 import com.isxcode.star.modules.cluster.repository.ClusterNodeRepository;
 import com.isxcode.star.modules.cluster.repository.ClusterRepository;
+import com.isxcode.star.modules.datasource.entity.DatasourceEntity;
+import com.isxcode.star.modules.datasource.service.DatasourceService;
+import com.isxcode.star.modules.file.entity.FileEntity;
+import com.isxcode.star.modules.file.repository.FileRepository;
 import com.isxcode.star.modules.func.entity.FuncEntity;
 import com.isxcode.star.modules.func.mapper.FuncMapper;
 import com.isxcode.star.modules.func.repository.FuncRepository;
@@ -79,11 +83,15 @@ public class SparkSqlExecutor extends WorkExecutor {
 
 	private final IsxAppProperties isxAppProperties;
 
+  private final FileRepository fileRepository;
+
+  private final DatasourceService datasourceService;
+
 	public SparkSqlExecutor(WorkInstanceRepository workInstanceRepository, ClusterRepository clusterRepository,
-			ClusterNodeRepository clusterNodeRepository, WorkflowInstanceRepository workflowInstanceRepository,
-			WorkRepository workRepository, WorkConfigRepository workConfigRepository, Locker locker,
-			HttpUrlUtils httpUrlUtils, FuncRepository funcRepository, FuncMapper funcMapper,
-			ClusterNodeMapper clusterNodeMapper, AesUtils aesUtils, IsxAppProperties isxAppProperties) {
+                            ClusterNodeRepository clusterNodeRepository, WorkflowInstanceRepository workflowInstanceRepository,
+                            WorkRepository workRepository, WorkConfigRepository workConfigRepository, Locker locker,
+                            HttpUrlUtils httpUrlUtils, FuncRepository funcRepository, FuncMapper funcMapper,
+                            ClusterNodeMapper clusterNodeMapper, AesUtils aesUtils, IsxAppProperties isxAppProperties, FileRepository fileRepository, DatasourceService datasourceService) {
 
 		super(workInstanceRepository, workflowInstanceRepository);
 		this.workInstanceRepository = workInstanceRepository;
@@ -98,7 +106,9 @@ public class SparkSqlExecutor extends WorkExecutor {
 		this.clusterNodeMapper = clusterNodeMapper;
 		this.aesUtils = aesUtils;
 		this.isxAppProperties = isxAppProperties;
-	}
+        this.fileRepository = fileRepository;
+        this.datasourceService = datasourceService;
+    }
 
 	@Override
 	protected void execute(WorkRunContext workRunContext, WorkInstanceEntity workInstance) {
@@ -172,6 +182,28 @@ public class SparkSqlExecutor extends WorkExecutor {
 			pluginReq.setFuncInfoList(funcMapper.funcEntityListToFuncInfoList(allFunc));
 			executeReq.setFuncConfig(funcMapper.funcEntityListToFuncInfoList(allFunc));
 		}
+
+    // 上传依赖到制定节点路径
+    if (workRunContext.getLibConfig() != null) {
+      List<FileEntity> libFile = fileRepository.findAllById(workRunContext.getLibConfig());
+      libFile.forEach(e -> {
+        try {
+          scpJar(scpFileEngineNodeDto, fileDir + File.separator + e.getId(),
+            engineNode.getAgentHomePath() + File.separator + "zhiqingyun-agent" + File.separator
+              + "file" + File.separator + e.getId() + ".jar");
+        } catch (JSchException | SftpException | InterruptedException | IOException ex) {
+          throw new IsxAppException("jar文件上传失败");
+        }
+      });
+      executeReq.setLibConfig(workRunContext.getLibConfig());
+    }
+
+    // 解析db
+    DatasourceEntity datasource = datasourceService.getDatasource(workRunContext.getDatasourceId());
+    String database = datasourceService.parseDbName(datasource.getJdbcUrl());
+    if (!Strings.isEmpty(database)) {
+      pluginReq.setDatabase(database);
+    }
 
 		// 开始构造executeReq
 		executeReq.setSparkSubmit(sparkSubmit);
