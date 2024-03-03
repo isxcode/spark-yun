@@ -9,10 +9,7 @@ import com.isxcode.star.api.work.constants.WorkLog;
 import com.isxcode.star.api.work.constants.WorkStatus;
 import com.isxcode.star.api.work.constants.WorkType;
 import com.isxcode.star.api.work.exceptions.WorkRunException;
-import com.isxcode.star.api.work.pojos.dto.ClusterConfig;
-import com.isxcode.star.api.work.pojos.dto.CronConfig;
-import com.isxcode.star.api.work.pojos.dto.SyncRule;
-import com.isxcode.star.api.work.pojos.dto.SyncWorkConfig;
+import com.isxcode.star.api.work.pojos.dto.*;
 import com.isxcode.star.api.work.pojos.req.*;
 import com.isxcode.star.api.work.pojos.res.*;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
@@ -468,6 +465,12 @@ public class WorkBizService {
       List<String> funcId = JSON.parseArray(workConfig.getFuncConfig(), String.class);
       List<FuncEntity> funList = funcRepository.findAllById(funcId);
       getWorkRes.setFuncList(funcMapper.funcEntityListToFuncFileDtoList(funList));
+    }
+
+    // 翻译自定义jar配置
+     if (!Strings.isEmpty(workConfig.getJarJobConfig())) {
+       JarJobConfig jarJobConfig = JSON.parseObject(workConfig.getJarJobConfig(), JarJobConfig.class);
+       getWorkRes.setJarJobConfig(jarJobConfig);
     }
 
 		return getWorkRes;
