@@ -15,13 +15,13 @@
       v-if="logMsg"
       ref="preContentRef"
       @mousewheel="mousewheelEvent"
-    >{{ logMsg }}</pre>
+    >{{ logMsg + loadingMsg }}</pre>
     <EmptyPage v-else />
   </div>
 </template>
 
 <script lang="ts" setup>
-import { nextTick, onUnmounted, ref, defineExpose } from 'vue'
+import { nextTick, onUnmounted, ref, defineExpose, computed } from 'vue'
 import { GetSubmitLogData } from '@/services/workflow.service'
 import EmptyPage from '@/components/empty-page/index.vue'
 
@@ -32,8 +32,24 @@ const preContentRef = ref(null)
 const runId = ref('')
 const status = ref(false)
 const callback = ref()
+const loadingPoint = ref('.')
+const loadingTimer = ref()
+
+const loadingMsg = computed(() => {
+  const str = !status.value ? `加载中${loadingPoint.value}` : ''
+  return str
+})
 
 function initData(id: string, cb: any): void {
+
+  loadingTimer.value = setInterval(() => {
+    if (loadingPoint.value.length < 5) {
+      loadingPoint.value = loadingPoint.value + '.'
+    } else {
+      loadingPoint.value = '.'
+    }
+  }, 1000)
+
   runId.value = id
   callback.value = cb
   getLogData(runId.value)
@@ -97,6 +113,11 @@ onUnmounted(() => {
     clearInterval(timer.value)
   }
   timer.value = null
+
+  if (loadingTimer.value) {
+    clearInterval(loadingTimer.value)
+  }
+  loadingTimer.value = null
 })
 
 defineExpose({
