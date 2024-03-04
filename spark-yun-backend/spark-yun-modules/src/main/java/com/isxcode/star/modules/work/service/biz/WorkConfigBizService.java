@@ -21,10 +21,12 @@ import com.isxcode.star.modules.work.service.WorkService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.scheduling.support.CronExpression;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Optional;
 
@@ -136,13 +138,21 @@ public class WorkConfigBizService {
 		}
 
 		// 设置用户自定义函数
-		if (wocConfigWorkReq.getFuncList() != null && !wocConfigWorkReq.getFuncList().isEmpty()) {
-			workConfig.setFuncConfig(JSONArray.toJSONString(wocConfigWorkReq.getFuncList()));
-		}
+    if (wocConfigWorkReq.getFuncList() != null) {
+      if(!wocConfigWorkReq.getFuncList().isEmpty()){
+      workConfig.setFuncConfig(JSONArray.toJSONString(wocConfigWorkReq.getFuncList()));
+      }else{
+      workConfig.setFuncConfig("[]");
+      }
+    }
 
 		// 设置用户程序依赖
-		if (wocConfigWorkReq.getLibList() != null && !wocConfigWorkReq.getLibList().isEmpty()) {
-			workConfig.setLibConfig(JSONArray.toJSONString(wocConfigWorkReq.getLibList()));
+		if (wocConfigWorkReq.getLibList() != null ) {
+      if( !wocConfigWorkReq.getLibList().isEmpty()){
+        workConfig.setLibConfig(JSONArray.toJSONString(wocConfigWorkReq.getLibList()));
+      }else{
+        workConfig.setLibConfig("[]");
+      }
 		}
 
 		// 设置自定义作业配置信息
