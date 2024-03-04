@@ -162,31 +162,39 @@ function initPageData(data: any) {
 
 // 根据表名获取映射表字段
 function getTableColumnData(params: TableDetailParam, type: string) {
-    GetTableColumnsByTableId(params).then((res: any) => {
-        if (type === 'source') {
-            sourceTableColumn.value = (res.data.columns || []).map((column: any) => {
-                return {
-                    code: column.name,
-                    type: column.name,
-                    sql: ''
-                }
+    if (params.dataSourceId && params.tableName) {
+        GetTableColumnsByTableId(params).then((res: any) => {
+            if (type === 'source') {
+                sourceTableColumn.value = (res.data.columns || []).map((column: any) => {
+                    return {
+                        code: column.name,
+                        type: column.type,
+                        sql: ''
+                    }
+                })
+            } else {
+                targetTableColumn.value = (res.data.columns || []).map((column: any) => {
+                    return {
+                        code: column.name,
+                        type: column.type
+                    }
+                })
+            }
+            instance.deleteEveryConnection()
+            connectCopy.value = []
+            nextTick(() => {
+                initJsPlumb()
             })
-        } else {
-            targetTableColumn.value = (res.data.columns || []).map((column: any) => {
-                return {
-                    code: column.name,
-                    type: column.name
-                }
-            })
-        }
-        instance.deleteEveryConnection()
-        connectCopy.value = []
-        nextTick(() => {
-            initJsPlumb()
+        }).catch(err => {
+            console.error(err)
         })
-    }).catch(err => {
-        console.error(err)
-    })
+    } else {
+        if (type === 'source') {
+            sourceTableColumn.value = []
+        } else {
+            targetTableColumn.value = []
+        }
+    }
 }
 
 function tableLinkInit() {
