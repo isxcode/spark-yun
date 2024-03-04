@@ -157,7 +157,7 @@ public class SparkJarExecutor extends WorkExecutor {
 							+ File.separator + jarFile.getId() + ".jar");
 		} catch (JSchException | SftpException | InterruptedException | IOException e) {
 			log.debug(e.getMessage());
-			throw new IsxAppException("jar文件上传失败");
+			throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "jar文件上传失败\n");
 		}
 
 		// 上传依赖到制定节点路径
@@ -169,7 +169,7 @@ public class SparkJarExecutor extends WorkExecutor {
 							engineNode.getAgentHomePath() + File.separator + "zhiqingyun-agent" + File.separator
 									+ "file" + File.separator + e.getId() + ".jar");
 				} catch (JSchException | SftpException | InterruptedException | IOException ex) {
-					throw new IsxAppException("jar文件上传失败");
+					throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "jar文件上传失败\n");
 				}
 			});
 		}

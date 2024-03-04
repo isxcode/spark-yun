@@ -200,7 +200,7 @@ public class SyncWorkExecutor extends WorkExecutor {
 							engineNode.getAgentHomePath() + File.separator + "zhiqingyun-agent" + File.separator
 									+ "file" + File.separator + e.getFileId() + ".jar");
 				} catch (JSchException | SftpException | InterruptedException | IOException ex) {
-					throw new IsxAppException("jar文件上传失败");
+					throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + " : jar文件上传失败\n");
 				}
 			});
 			pluginReq.setFuncInfoList(funcMapper.funcEntityListToFuncInfoList(allFunc));
@@ -216,7 +216,7 @@ public class SyncWorkExecutor extends WorkExecutor {
 							engineNode.getAgentHomePath() + File.separator + "zhiqingyun-agent" + File.separator
 									+ "file" + File.separator + e.getId() + ".jar");
 				} catch (JSchException | SftpException | InterruptedException | IOException ex) {
-					throw new IsxAppException("jar文件上传失败");
+					throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "jar文件上传失败\n");
 				}
 			});
 			executeReq.setLibConfig(workRunContext.getLibConfig());
