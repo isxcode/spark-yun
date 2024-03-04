@@ -98,7 +98,7 @@ public interface ModuleCode {
 	 */
 	String MONITOR = "monitor";
 
-  /**
+	/**
 	 * 容器模块.
 	 */
 	String VIP_CONTAINER = "/vip/container";
