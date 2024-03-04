@@ -20,7 +20,7 @@ public interface ResourceLevel {
 	 */
 	String LOW = "LOW";
 
-  /**
+	/**
 	 * 自定义.
 	 */
 	String CUSTOM = "CUSTOM";
