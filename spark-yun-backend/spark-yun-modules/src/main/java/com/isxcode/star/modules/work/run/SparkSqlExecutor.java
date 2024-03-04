@@ -193,7 +193,7 @@ public class SparkSqlExecutor extends WorkExecutor {
 							engineNode.getAgentHomePath() + File.separator + "zhiqingyun-agent" + File.separator
 									+ "file" + File.separator + e.getId() + ".jar");
 				} catch (JSchException | SftpException | InterruptedException | IOException ex) {
-          throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "jar文件上传失败\n");
+					throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "jar文件上传失败\n");
 				}
 			});
 			executeReq.setLibConfig(workRunContext.getLibConfig());
@@ -201,14 +201,14 @@ public class SparkSqlExecutor extends WorkExecutor {
 
 		// 解析db
 		DatasourceEntity datasource = datasourceService.getDatasource(workRunContext.getDatasourceId());
-    try {
-      String database = datasourceService.parseDbName(datasource.getJdbcUrl());
-      	if (!Strings.isEmpty(database)) {
-			pluginReq.setDatabase(database);
+		try {
+			String database = datasourceService.parseDbName(datasource.getJdbcUrl());
+			if (!Strings.isEmpty(database)) {
+				pluginReq.setDatabase(database);
+			}
+		} catch (IsxAppException e) {
+			throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + e.getMsg() + "\n");
 		}
-    } catch (IsxAppException e) {
-      throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO  + e.getMsg() + "\n");
-    }
 
 		// 开始构造executeReq
 		executeReq.setSparkSubmit(sparkSubmit);
