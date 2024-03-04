@@ -26,9 +26,11 @@ tasks.register('build_agent_plugins', Copy) {
 
   dependsOn(':spark-yun-plugins:spark-query-sql-plugin:jar')
   dependsOn(':spark-yun-plugins:spark-data-sync-jdbc-plugin:jar')
+  dependsOn(':spark-yun-vip:spark-yun-plugins:spark-container-sql-plugin:jar')
 
   from rootDir.getAbsolutePath() + '/spark-yun-plugins/spark-query-sql-plugin/build/libs'
   from rootDir.getAbsolutePath() + '/spark-yun-plugins/spark-data-sync-jdbc-plugin/build/libs'
+  from rootDir.getAbsolutePath() + '/spark-yun-vip/spark-yun-plugins/spark-container-sql-plugin/build/libs'
   into 'build/zhiqingyun-agent/plugins'
 }
 
