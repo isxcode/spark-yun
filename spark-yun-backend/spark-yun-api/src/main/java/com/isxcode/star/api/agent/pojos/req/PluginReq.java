@@ -30,4 +30,6 @@ public class PluginReq {
 	private SyncRule syncRule;
 
 	private List<UdfInfo> udfList;
+
+  private int containerPort;
 }
