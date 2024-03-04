@@ -22,7 +22,6 @@ import com.isxcode.star.common.utils.http.HttpUtils;
 import com.isxcode.star.common.utils.path.PathUtils;
 import com.isxcode.star.modules.cluster.entity.ClusterEntity;
 import com.isxcode.star.modules.cluster.entity.ClusterNodeEntity;
-import com.isxcode.star.modules.cluster.mapper.ClusterMapper;
 import com.isxcode.star.modules.cluster.mapper.ClusterNodeMapper;
 import com.isxcode.star.modules.cluster.repository.ClusterNodeRepository;
 import com.isxcode.star.modules.cluster.repository.ClusterRepository;
@@ -39,7 +38,6 @@ import com.isxcode.star.modules.work.entity.WorkInstanceEntity;
 import com.isxcode.star.modules.work.repository.WorkConfigRepository;
 import com.isxcode.star.modules.work.repository.WorkInstanceRepository;
 import com.isxcode.star.modules.work.repository.WorkRepository;
-import com.isxcode.star.modules.work.service.WorkConfigService;
 import com.isxcode.star.modules.workflow.repository.WorkflowInstanceRepository;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.SftpException;
@@ -85,19 +83,20 @@ public class SyncWorkExecutor extends WorkExecutor {
 
 	private final DatasourceService datasourceService;
 
-  private final IsxAppProperties isxAppProperties;
+	private final IsxAppProperties isxAppProperties;
 
-  private final FuncRepository funcRepository;
+	private final FuncRepository funcRepository;
 
-  private final FuncMapper funcMapper;
+	private final FuncMapper funcMapper;
 
-  private final FileRepository fileRepository;
+	private final FileRepository fileRepository;
 
 	public SyncWorkExecutor(WorkInstanceRepository workInstanceRepository, ClusterRepository clusterRepository,
-                            ClusterNodeRepository clusterNodeRepository, WorkflowInstanceRepository workflowInstanceRepository,
-                            WorkRepository workRepository, WorkConfigRepository workConfigRepository, Locker locker,
-                            HttpUrlUtils httpUrlUtils, AesUtils aesUtils, ClusterNodeMapper clusterNodeMapper,
-                            DatasourceService datasourceService, IsxAppProperties isxAppProperties, FuncRepository funcRepository, FuncMapper funcMapper, FileRepository fileRepository) {
+			ClusterNodeRepository clusterNodeRepository, WorkflowInstanceRepository workflowInstanceRepository,
+			WorkRepository workRepository, WorkConfigRepository workConfigRepository, Locker locker,
+			HttpUrlUtils httpUrlUtils, AesUtils aesUtils, ClusterNodeMapper clusterNodeMapper,
+			DatasourceService datasourceService, IsxAppProperties isxAppProperties, FuncRepository funcRepository,
+			FuncMapper funcMapper, FileRepository fileRepository) {
 
 		super(workInstanceRepository, workflowInstanceRepository);
 		this.workInstanceRepository = workInstanceRepository;
@@ -110,11 +109,11 @@ public class SyncWorkExecutor extends WorkExecutor {
 		this.aesUtils = aesUtils;
 		this.clusterNodeMapper = clusterNodeMapper;
 		this.datasourceService = datasourceService;
-        this.isxAppProperties = isxAppProperties;
-        this.funcRepository = funcRepository;
-        this.funcMapper = funcMapper;
-        this.fileRepository = fileRepository;
-    }
+		this.isxAppProperties = isxAppProperties;
+		this.funcRepository = funcRepository;
+		this.funcMapper = funcMapper;
+		this.fileRepository = fileRepository;
+	}
 
 	@Override
 	protected void execute(WorkRunContext workRunContext, WorkInstanceEntity workInstance) {
@@ -187,7 +186,7 @@ public class SyncWorkExecutor extends WorkExecutor {
 				.sparkConfig(genSparkConfig(workRunContext.getClusterConfig().getSparkConfig()))
 				.syncRule(workRunContext.getSyncRule()).build();
 
-      // 导入自定义函数
+		// 导入自定义函数
 		ScpFileEngineNodeDto scpFileEngineNodeDto = clusterNodeMapper
 				.engineNodeEntityToScpFileEngineNodeDto(engineNode);
 		scpFileEngineNodeDto.setPasswd(aesUtils.decrypt(scpFileEngineNodeDto.getPasswd()));
