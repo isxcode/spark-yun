@@ -19,7 +19,7 @@
                             </el-icon>
                             <span class="btn-text">运行</span>
                         </div>
-                        <div v-if="workConfig.workType === 'SPARK_SQL'" class="btn-box" @click="terWorkData">
+                        <div v-if="workConfig.workType === 'SPARK_JAR'" class="btn-box" @click="terWorkData">
                             <el-icon v-if="!terLoading">
                                 <Close />
                             </el-icon>
@@ -193,7 +193,7 @@ function initData(id?: string, tableLoading?: boolean) {
     })
         .then((res: any) => {
             workConfig = res.data
-            workConfig.workType = props.workItemConfig.workTyper
+            workConfig.workType = props.workItemConfig.workType
             if (res.data.jarJobConfig) {
                 Object.keys(jarJobConfig).forEach((key: string) => {
                     jarJobConfig[key] = res.data.jarJobConfig[key]
