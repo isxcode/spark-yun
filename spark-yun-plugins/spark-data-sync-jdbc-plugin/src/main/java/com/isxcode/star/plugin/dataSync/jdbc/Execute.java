@@ -3,6 +3,7 @@ package com.isxcode.star.plugin.dataSync.jdbc;
 import com.alibaba.fastjson.JSON;
 import com.isxcode.star.api.agent.pojos.req.PluginReq;
 import com.isxcode.star.api.datasource.constants.DatasourceType;
+import com.isxcode.star.api.func.constants.FuncType;
 import com.isxcode.star.api.plugin.OverModeType;
 import com.isxcode.star.api.work.constants.SetMode;
 import org.apache.logging.log4j.util.Strings;
@@ -11,6 +12,8 @@ import org.apache.spark.sql.DataFrameReader;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
+import org.apache.spark.sql.types.DataType;
+import org.apache.spark.sql.types.DataTypes;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -20,26 +23,38 @@ public class Execute {
 
 	public static void main(String[] args) {
 
-		PluginReq conf = parse(args);
+		PluginReq pluginReq = parse(args);
 
-		try (SparkSession sparkSession = initSparkSession(conf.getSparkConfig())) {
+		try (SparkSession sparkSession = initSparkSession(pluginReq.getSparkConfig())) {
+
+      	// 注册自定义函数
+			if (pluginReq.getFuncInfoList() != null) {
+				pluginReq.getFuncInfoList().forEach(e -> {
+					if (FuncType.UDF.equals(e.getType())) {
+						sparkSession.udf().registerJava(e.getFuncName(), e.getClassName(),
+								getResultType(e.getResultType()));
+					} else if (FuncType.UDAF.equals(e.getType())) {
+						sparkSession.udf().registerJavaUDAF(e.getFuncName(), e.getClassName());
+					}
+				});
+			}
 
 			// 创建来源表视图
-			String sourceTempView = genSourceTempView(sparkSession, conf);
+			String sourceTempView = genSourceTempView(sparkSession, pluginReq);
 
 			// 创建去向表视图
-			String targetTempView = genTargetTempView(sparkSession, conf);
+			String targetTempView = genTargetTempView(sparkSession, pluginReq);
 
 			// 来源字段的转换sql收集
 			Map<String, String> sourceColTranslateSql = new HashMap<>();
-			conf.getSyncWorkConfig().getSourceTableColumn().forEach(e -> {
+			pluginReq.getSyncWorkConfig().getSourceTableColumn().forEach(e -> {
 				sourceColTranslateSql.put(e.getCode(), e.getSql());
 			});
 
 			// 封装字段信息
 			List<String> sourceCols = new ArrayList<>();
 			List<String> targetCols = new ArrayList<>();
-			conf.getSyncWorkConfig().getColumnMap().forEach(e -> {
+			pluginReq.getSyncWorkConfig().getColumnMap().forEach(e -> {
 				sourceCols.add(Strings.isEmpty(sourceColTranslateSql.get(e.getSource()))
 						? String.format("`%s`", e.getSource())
 						: sourceColTranslateSql.get(e.getSource()));
@@ -47,7 +62,7 @@ public class Execute {
 			});
 
 			// 判断是覆盖还是新增
-			String insertSql = OverModeType.OVERWRITE.equals(conf.getSyncWorkConfig().getOverMode())
+			String insertSql = OverModeType.OVERWRITE.equals(pluginReq.getSyncWorkConfig().getOverMode())
 					? "insert overwrite"
 					: "insert into";
 
@@ -200,6 +215,27 @@ public class Execute {
 				return "hash8";
 			default :
 				throw new RuntimeException("暂不支持的数据库");
+		}
+	}
+
+  	private static DataType getResultType(String resultType) {
+		switch (resultType) {
+			case "string" :
+				return DataTypes.StringType;
+			case "int" :
+				return DataTypes.IntegerType;
+			case "long" :
+				return DataTypes.LongType;
+			case "double" :
+				return DataTypes.DoubleType;
+			case "boolean" :
+				return DataTypes.BooleanType;
+			case "date" :
+				return DataTypes.DateType;
+			case "timestamp" :
+				return DataTypes.TimestampType;
+			default :
+				return DataTypes.StringType;
 		}
 	}
 

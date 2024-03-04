@@ -89,14 +89,6 @@ public class WorkBizService {
 
 	private final WorkConfigMapper workConfigMapper;
 
-	private final FileRepository fileRepository;
-
-	private final FileMapper fileMapper;
-
-	private final FuncRepository funcRepository;
-
-	private final FuncMapper funcMapper;
-
 	public GetWorkRes addWork(AddWorkReq addWorkReq) {
 
 		// 校验作业名的唯一性
@@ -456,15 +448,13 @@ public class WorkBizService {
 		// 翻译依赖配置
 		if (!Strings.isEmpty(workConfig.getLibConfig())) {
 			List<String> libId = JSON.parseArray(workConfig.getLibConfig(), String.class);
-			List<FileEntity> libList = fileRepository.findAllById(libId);
-			getWorkRes.setLibList(fileMapper.fileEntityListToFileListDtoList(libList));
+			getWorkRes.setLibList(libId);
 		}
 
 		// 翻译函数配置
 		if (!Strings.isEmpty(workConfig.getFuncConfig())) {
 			List<String> funcId = JSON.parseArray(workConfig.getFuncConfig(), String.class);
-			List<FuncEntity> funList = funcRepository.findAllById(funcId);
-			getWorkRes.setFuncList(funcMapper.funcEntityListToFuncFileDtoList(funList));
+			getWorkRes.setFuncList(funcId);
 		}
 
 		// 翻译自定义jar配置
