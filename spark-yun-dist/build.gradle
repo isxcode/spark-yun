@@ -8,7 +8,9 @@ tasks.register('build_agent_lib', Copy) {
     it.name.contains('fastjson2') ||
       it.name.contains('fastjson') ||
       it.name.contains('spark-yun-api') ||
-      it.name.contains('log4j-api')
+      it.name.contains('log4j-api') ||
+      it.name.contains('sparkjava') ||
+      it.name.contains('jetty-server')
   }
   dependencies.each { dependency ->
     from dependency
