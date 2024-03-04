@@ -27,7 +27,7 @@ public class Execute {
 
 		try (SparkSession sparkSession = initSparkSession(pluginReq.getSparkConfig())) {
 
-      	// 注册自定义函数
+			// 注册自定义函数
 			if (pluginReq.getFuncInfoList() != null) {
 				pluginReq.getFuncInfoList().forEach(e -> {
 					if (FuncType.UDF.equals(e.getType())) {
@@ -218,7 +218,7 @@ public class Execute {
 		}
 	}
 
-  	private static DataType getResultType(String resultType) {
+	private static DataType getResultType(String resultType) {
 		switch (resultType) {
 			case "string" :
 				return DataTypes.StringType;
