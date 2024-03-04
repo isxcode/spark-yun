@@ -5,9 +5,23 @@ package com.isxcode.star.api.container.constants;
  */
 public interface ContainerStatus {
 
+  /**
+   * 新建.
+   */
   String NEW = "NEW";
 
+  /**
+   * 运行中.
+   */
   String RUNNING = "RUNNING";
 
+  /**
+   * 停止.
+   */
   String STOP = "STOP";
+
+  /**
+   * 启动中.
+   */
+  String DEPLOYING = "DEPLOYING";
 }

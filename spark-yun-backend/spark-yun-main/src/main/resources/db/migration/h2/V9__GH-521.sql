@@ -13,6 +13,7 @@ create table SY_CONTAINER
   PORT                    CHARACTER VARYING(200) comment '容器端口号',
   SUBMIT_LOG              text comment '容器端口号',
   RUNNING_LOG             text comment '容器端口号',
+  APPLICATION_ID          CHARACTER VARYING(200) comment '应用id',
   CREATE_BY               CHARACTER VARYING(200) not null comment '创建人',
   CREATE_DATE_TIME        TIMESTAMP              not null comment '创建时间',
   LAST_MODIFIED_BY        CHARACTER VARYING(200) not null comment '更新人',
