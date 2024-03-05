@@ -20,6 +20,11 @@ public interface ContainerStatus {
 	 */
 	String STOP = "STOP";
 
+  /**
+	 * 启动.
+	 */
+	String FAIL = "FAIL";
+
 	/**
 	 * 启动中.
 	 */

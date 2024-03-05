@@ -10,4 +10,8 @@ public class DeployContainerRes {
 	private String appId;
 
 	private int port;
+
+  private String errLog;
+
+  private String status;
 }
