@@ -17,5 +17,5 @@ public interface WorkType {
 
 	String SPARK_JAR = "SPARK_JAR";
 
-  String API = "API";
+	String API = "API";
 }

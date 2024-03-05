@@ -153,7 +153,7 @@ public class WorkflowUtils {
 		return WorkRunContext.builder().datasourceId(workVersion.getDatasourceId()).script(workVersion.getScript())
 				.instanceId(instanceId).tenantId(TENANT_ID.get()).userId(USER_ID.get())
 				.syncWorkConfig(JSON.parseObject(workVersion.getSyncWorkConfig(), SyncWorkConfig.class))
-        .apiWorkConfig(JSON.parseObject(workVersion.getApiWorkConfig(), ApiWorkConfig.class))
+				.apiWorkConfig(JSON.parseObject(workVersion.getApiWorkConfig(), ApiWorkConfig.class))
 				.syncRule(JSON.parseObject(workVersion.getSyncRule(), SyncRule.class))
 				.clusterConfig(JSON.parseObject(workVersion.getClusterConfig(), ClusterConfig.class))
 				.workType(workVersion.getWorkType()).workName(event.getWorkName()).workId(workVersion.getId()).build();

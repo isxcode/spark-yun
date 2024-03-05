@@ -10,22 +10,22 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class ApiExecutor extends WorkExecutor {
 
-  private final WorkInstanceRepository workInstanceRepository;
+	private final WorkInstanceRepository workInstanceRepository;
 
+	public ApiExecutor(WorkInstanceRepository workInstanceRepository,
+			WorkflowInstanceRepository workflowInstanceRepository) {
 
-  public ApiExecutor(WorkInstanceRepository workInstanceRepository, WorkflowInstanceRepository workflowInstanceRepository) {
+		super(workInstanceRepository, workflowInstanceRepository);
+		this.workInstanceRepository = workInstanceRepository;
+	}
 
-    super(workInstanceRepository, workflowInstanceRepository);
-    this.workInstanceRepository = workInstanceRepository;
-  }
+	@Override
+	protected void execute(WorkRunContext workRunContext, WorkInstanceEntity workInstance) {
 
-  @Override
-  protected void execute(WorkRunContext workRunContext, WorkInstanceEntity workInstance) {
+	}
 
-  }
+	@Override
+	protected void abort(WorkInstanceEntity workInstance) {
 
-  @Override
-  protected void abort(WorkInstanceEntity workInstance) {
-
-  }
+	}
 }

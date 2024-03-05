@@ -95,10 +95,10 @@ public class WorkConfigBizService {
 			workConfig.setSyncWorkConfig(JSON.toJSONString(wocConfigWorkReq.getSyncWorkConfig()));
 		}
 
-    // 用户更新接口调用
-    if (wocConfigWorkReq.getApiWorkConfig() != null) {
-      workConfig.setApiWorkConfig(JSON.toJSONString(wocConfigWorkReq.getApiWorkConfig()));
-    }
+		// 用户更新接口调用
+		if (wocConfigWorkReq.getApiWorkConfig() != null) {
+			workConfig.setApiWorkConfig(JSON.toJSONString(wocConfigWorkReq.getApiWorkConfig()));
+		}
 
 		// 用户更新集群配置
 		if (wocConfigWorkReq.getClusterConfig() != null) {
