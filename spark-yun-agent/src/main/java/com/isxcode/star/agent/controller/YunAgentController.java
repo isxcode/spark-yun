@@ -91,13 +91,13 @@ public class YunAgentController {
 	public void heartCheck() {
 	}
 
-	/**
-	 * 检查容器状态.
-	 */
-	@Operation(summary = "容器心跳检测接口", description = "容器心跳检测")
-	@PostMapping("/containerCheck")
-	public ContainerCheckRes containerCheck(ContainerCheckReq containerCheckReq) {
+  /**
+   * 检查容器状态.
+   */
+  @Operation(summary = "容器心跳检测接口", description = "容器心跳检测")
+  @PostMapping("/containerCheck")
+  public ContainerCheckRes containerCheck(@RequestBody ContainerCheckReq containerCheckReq) {
 
-		return yunAgentBizService.containerCheck(containerCheckReq);
-	}
+    return yunAgentBizService.containerCheck(containerCheckReq);
+  }
 }
