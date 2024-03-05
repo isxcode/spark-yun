@@ -119,7 +119,7 @@ public class SparkContainerSqlExecutor extends WorkExecutor {
       // 讲data转为json存到实例中
       logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("数据保存成功  \n");
       workInstance.setSubmitLog(logBuilder.toString());
-      workInstance.setResultData(JSON.toJSONString(containerGetDataRes.getDate()));
+      workInstance.setResultData(JSON.toJSONString(containerGetDataRes.getData()));
       workInstanceRepository.saveAndFlush(workInstance);
     } catch (Exception e) {
       log.error(e.getMessage());
