@@ -52,7 +52,7 @@ public class VipWorkVersionEntity {
 
 	private String syncRule;
 
-  private String containerId;
+	private String containerId;
 
 	@CreatedDate
 	private LocalDateTime createDateTime;
