@@ -17,8 +17,8 @@ public interface WorkType {
 
 	String SPARK_JAR = "SPARK_JAR";
 
-  /**
-   * spark容器sql.
-   */
-  String SPARK_CONTAINER_SQL = "SPARK_CONTAINER_SQL";
+	/**
+	 * spark容器sql.
+	 */
+	String SPARK_CONTAINER_SQL = "SPARK_CONTAINER_SQL";
 }

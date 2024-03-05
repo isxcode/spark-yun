@@ -32,7 +32,7 @@ public class AddWorkReq {
 	@Schema(title = "集群节点id", example = "集群节点id")
 	private String clusterNodeId;
 
-  @Schema(title = "容器id", example = "容器id")
+	@Schema(title = "容器id", example = "容器id")
 	private String containerId;
 
 	@Schema(title = "是否支持hive", example = "true/false")
