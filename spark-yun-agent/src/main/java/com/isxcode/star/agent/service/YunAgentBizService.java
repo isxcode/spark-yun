@@ -77,7 +77,7 @@ public class YunAgentBizService {
 				throw new IsxAppException("agent类型不支持");
 		}
 
-    return YagGetStatusRes.builder().appId(appId).appStatus(appStatus).build();
+		return YagGetStatusRes.builder().appId(appId).appStatus(appStatus).build();
 	}
 
 	public YagGetLogRes getLog(String appId, String agentType, String sparkHomePath) throws IOException {
@@ -170,13 +170,14 @@ public class YunAgentBizService {
 		return DeployContainerRes.builder().appId(appId).port(port).build();
 	}
 
-  public ContainerCheckRes containerCheck(ContainerCheckReq containerCheckReq) {
+	public ContainerCheckRes containerCheck(ContainerCheckReq containerCheckReq) {
 
-    try {
-      ResponseEntity<ContainerCheckRes> forEntity = new RestTemplate().getForEntity("http://127.0.0.1:" + containerCheckReq.getPort() + "/check", ContainerCheckRes.class);
-      return forEntity.getBody();
-    } catch (Exception e) {
-      return ContainerCheckRes.builder().code("500").msg(e.getMessage()).build();
-    }
-  }
+		try {
+			ResponseEntity<ContainerCheckRes> forEntity = new RestTemplate().getForEntity(
+					"http://127.0.0.1:" + containerCheckReq.getPort() + "/check", ContainerCheckRes.class);
+			return forEntity.getBody();
+		} catch (Exception e) {
+			return ContainerCheckRes.builder().code("500").msg(e.getMessage()).build();
+		}
+	}
 }

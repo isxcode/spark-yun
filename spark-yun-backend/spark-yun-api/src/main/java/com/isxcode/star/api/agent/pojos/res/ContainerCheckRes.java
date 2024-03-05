@@ -9,5 +9,5 @@ public class ContainerCheckRes {
 
 	private String code;
 
-  private String msg;
+	private String msg;
 }
