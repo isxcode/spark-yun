@@ -1,9 +1,6 @@
 package com.isxcode.star.api.work.pojos.req;
 
-import com.isxcode.star.api.work.pojos.dto.ClusterConfig;
-import com.isxcode.star.api.work.pojos.dto.CronConfig;
-import com.isxcode.star.api.work.pojos.dto.SyncRule;
-import com.isxcode.star.api.work.pojos.dto.SyncWorkConfig;
+import com.isxcode.star.api.work.pojos.dto.*;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import javax.validation.constraints.NotEmpty;
@@ -26,8 +23,11 @@ public class ConfigWorkReq {
 	@Schema(title = "cron定时配置")
 	private CronConfig cronConfig;
 
-	@Schema(title = "cron定时配置")
+	@Schema(title = "数据同步作业配置")
 	private SyncWorkConfig syncWorkConfig;
+
+  @Schema(title = "接口调用作业配置")
+  private ApiWorkConfig apiWorkConfig;
 
 	@Schema(title = "集群配置")
 	private ClusterConfig clusterConfig;
