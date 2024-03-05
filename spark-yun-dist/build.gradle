@@ -9,8 +9,11 @@ tasks.register('build_agent_lib', Copy) {
       it.name.contains('fastjson') ||
       it.name.contains('spark-yun-api') ||
       it.name.contains('log4j-api') ||
-      it.name.contains('sparkjava') ||
-      it.name.contains('jetty-server')
+      it.name.contains('spark-core') ||
+      it.name.contains('jetty-server') ||
+      it.name.contains('jetty-util') ||
+      it.name.contains('jetty-http') ||
+      it.name.contains('jetty-io')
   }
   dependencies.each { dependency ->
     from dependency
@@ -90,7 +93,7 @@ tasks.register('build_zhiqingyun', Tar) {
   from('zhiqingyun/logs') {
     into 'zhiqingyun/logs'
   }
-  from(rootDir.getAbsolutePath() +'/resources/jdbc/system') {
+  from(rootDir.getAbsolutePath() + '/resources/jdbc/system') {
     into 'zhiqingyun/resources/jdbc/system'
   }
   from(rootDir.getAbsolutePath() + '/spark-yun-backend/spark-yun-main/build/libs/zhiqingyun.jar') {
@@ -105,4 +108,12 @@ tasks.register('build_zhiqingyun', Tar) {
 tasks.register('make', GradleBuild) {
 
   tasks = [":spark-yun-frontend:make", "build_agent", ":spark-yun-backend:make", "build_zhiqingyun"]
+}
+
+// 添加依赖
+dependencies {
+
+  implementation 'com.sparkjava:spark-core:2.9.4'
+
+  implementation group: 'org.eclipse.jetty', name: 'jetty-server', version: '9.4.51.v20230217'
 }
