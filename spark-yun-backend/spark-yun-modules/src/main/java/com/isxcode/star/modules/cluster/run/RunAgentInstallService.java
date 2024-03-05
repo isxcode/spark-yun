@@ -100,7 +100,7 @@ public class RunAgentInstallService {
 		log.debug("下载安装包成功");
 
     // 稍微睡一秒
-    Thread.sleep(1000);
+    Thread.sleep(2000);
 
 		// 拷贝安装脚本
 		scpFile(scpFileEngineNodeDto, "classpath:bash/agent-install.sh",
