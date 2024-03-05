@@ -479,11 +479,10 @@ function showModal(data?: any) {
       // 获取集群参数
       getClusterList()
     }
-    if (['SPARK_SQL', 'SPARK_JAR'].includes(data.workType)) {
-      // 获取函数配置和依赖配置
-      getFuncList()
-      getFileCenterList()
-    }
+    // 获取函数配置和依赖配置
+    getFuncList()
+    getFileCenterList()
+
     getDataSourceList(true)
     workItemConfig.value = data
     getConfigDetailData()
