@@ -16,4 +16,9 @@ public interface WorkType {
 	String PYTHON = "PYTHON";
 
 	String SPARK_JAR = "SPARK_JAR";
+
+  /**
+   * spark容器sql.
+   */
+  String SPARK_CONTAINER_SQL = "SPARK_CONTAINER_SQL";
 }

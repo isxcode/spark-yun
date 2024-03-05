@@ -89,4 +89,9 @@ public class WorkRunContext {
 	 */
 	private SparkJarConfigEntity jarConf;
 
+  /**
+   * 容器id.
+   */
+  private String containerId;
+
 }

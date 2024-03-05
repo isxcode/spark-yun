@@ -3,13 +3,15 @@ package com.isxcode.star.api.agent.pojos.req;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 @Data
 @Builder
 @AllArgsConstructor
-@NoArgsConstructor
-public class ContainerGetDataReq {
+@RequiredArgsConstructor
+public class ExecuteContainerSqlReq {
 
-	private String sql;
+  private String sql;
+
+  private String port;
 }

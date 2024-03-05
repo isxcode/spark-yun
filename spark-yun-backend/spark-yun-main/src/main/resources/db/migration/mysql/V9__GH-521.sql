@@ -21,3 +21,11 @@ create table SY_CONTAINER
   DELETED                 INTEGER default 0 not null comment '逻辑删除',
   TENANT_ID               varchar(200)      not null comment '租户id'
 );
+
+-- 作业支持容器sql
+alter table SY_WORK_CONFIG
+    add CONTAINER_ID varchar(200);
+
+-- 作业版本支持容器sql
+alter table SY_WORK_VERSION
+    add CONTAINER_ID varchar(200);

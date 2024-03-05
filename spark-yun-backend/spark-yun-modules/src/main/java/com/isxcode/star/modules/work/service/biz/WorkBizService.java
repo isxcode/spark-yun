@@ -125,12 +125,14 @@ public class WorkBizService {
 		}
 
 		// 初始化脚本
-		if (WorkType.QUERY_SPARK_SQL.equals(addWorkReq.getWorkType())
-				|| WorkType.EXECUTE_JDBC_SQL.equals(addWorkReq.getWorkType())
-				|| WorkType.QUERY_JDBC_SQL.equals(addWorkReq.getWorkType())
-				|| WorkType.BASH.equals(addWorkReq.getWorkType()) || WorkType.PYTHON.equals(addWorkReq.getWorkType())) {
-			workConfigService.initWorkScript(workConfig, addWorkReq.getWorkType());
-		}
+    if (WorkType.QUERY_SPARK_SQL.equals(addWorkReq.getWorkType())
+      || WorkType.EXECUTE_JDBC_SQL.equals(addWorkReq.getWorkType())
+      || WorkType.QUERY_JDBC_SQL.equals(addWorkReq.getWorkType())
+      || WorkType.BASH.equals(addWorkReq.getWorkType())
+      || WorkType.PYTHON.equals(addWorkReq.getWorkType())
+      || WorkType.SPARK_CONTAINER_SQL.equals(addWorkReq.getWorkType())) {
+      workConfigService.initWorkScript(workConfig, addWorkReq.getWorkType());
+    }
 
 		// 初始化计算引擎
 		if (WorkType.QUERY_SPARK_SQL.equals(addWorkReq.getWorkType())
@@ -156,6 +158,14 @@ public class WorkBizService {
 				throw new IsxAppException("数据源是必填项");
 			}
 			workConfig.setDatasourceId(addWorkReq.getDatasourceId());
+		}
+
+    // 如果jdbc执行和jdbc查询，必填数据源
+		if (WorkType.SPARK_CONTAINER_SQL.equals(addWorkReq.getWorkType())) {
+			if (Strings.isEmpty(addWorkReq.getContainerId())) {
+				throw new IsxAppException("容器是必填项");
+			}
+			workConfig.setContainerId(addWorkReq.getContainerId());
 		}
 
 		// 初始化调度默认值
