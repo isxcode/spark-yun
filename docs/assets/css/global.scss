@@ -4,7 +4,8 @@
   background-color: #f5f5f5;
   border-radius: 5px;
 
-  &-thumb, &-track {
+  &-thumb,
+  &-track {
     background-color: #c1c1c1;
     border-radius: 5px;
   }
@@ -13,11 +14,23 @@
     background-color: #f5f5f5;
   }
 
-  &-corner, &:hover {
+  &-corner,
+  &:hover {
     background-color: #f5f5f5;
   }
 
   &:hover {
     cursor: pointer;
+  }
+}
+
+html {
+  font-size: 16px;
+}
+
+@media screen and (max-width: 400px) {
+  html {
+    color: blue;
+    font-size: 14px;
   }
 }

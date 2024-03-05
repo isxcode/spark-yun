@@ -7,18 +7,18 @@
     >
       <div class="menu-folder-title">
         <span class="menu-folder-title-icon">
-          <SvgIcon name="home"></SvgIcon>
+          <!-- <SvgIcon name="home"></SvgIcon> -->
         </span>
         <SkEllipsis class="menu-folder-title-text" truncated>
           {{ link.title }}
         </SkEllipsis>
         <div class="menu-folder-title-is-collapsed">
-          <SvgIcon
+          <!-- <SvgIcon
             v-if="link.isCollapsed"
             name="arrow-right"
             color="#ccc"
           ></SvgIcon>
-          <SvgIcon v-else name="arrow-down" color="#ccc"></SvgIcon>
+          <SvgIcon v-else name="arrow-down" color="#ccc"></SvgIcon> -->
         </div>
       </div>
       <div v-show="!link.isCollapsed" class="menu-folder-content">
@@ -38,7 +38,7 @@
       @click.stop="handleMenuItemClick(link)"
     >
       <div class="menu-item-icon">
-        <SvgIcon name="home"></SvgIcon>
+        <!-- <SvgIcon name="home"></SvgIcon> -->
       </div>
       <SkEllipsis class="menu-item-text" truncated>
         {{ link.title }}
@@ -94,49 +94,49 @@ watch(
     .menu-folder-title {
       display: flex;
       align-items: center;
-      padding: 0 12px;
-      padding-left: 14px;
-      height: 32px;
+      padding: 0 0.75rem;
+      padding-left: 0.875rem;
+      height: 2rem;
       cursor: pointer;
       .menu-folder-title-icon {
-        margin-right: 8px;
+        margin-right: 0.5rem;
       }
       .menu-folder-title-text {
-        font-size: 14px;
+        font-size: 0.875rem;
         font-weight: 500;
       }
       .menu-folder-title-is-collapsed {
         margin-left: auto;
-        margin-right: 6px;
+        margin-right: 0.375rem;
       }
     }
     .menu-folder-content {
-      padding-left: 20px;
+      padding-left: 1.25rem;
     }
   }
   .menu-item {
     color: var(--sk-color-font-menu);
-    border-left: #ccc 2px solid;
-    padding: 0 12px;
-    height: 32px;
+    border-left: #ccc 0.125rem solid;
+    padding: 0 0.75rem;
+    height: 2rem;
     display: flex;
     align-items: center;
     cursor: pointer;
     transition: all 0.1s;
     &:hover {
-      border-left: var(--sk-color-home-primary) 2px solid;
+      border-left: var(--sk-color-home-primary) 0.125rem solid;
       color: var(--sk-color-font-menu-hover);
     }
     .menu-item-icon {
-      margin-right: 8px;
+      margin-right: 0.5rem;
     }
     .menu-item-text {
-      font-size: 14px;
+      font-size: 0.875rem;
       font-weight: 500;
     }
   }
   .menu-item-active {
-    border-left: var(--sk-color-home-primary) 2px solid;
+    border-left: var(--sk-color-home-primary) 0.125rem solid;
     color: var(--sk-color-home-primary) !important;
   }
 }

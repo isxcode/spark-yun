@@ -11,14 +11,8 @@
       </div>
       <div class="center">
         <div class="menu">
-          <div
-            class="menu-item"
-            v-for="(item, index) in menuData"
-            @click="handleMenuClick(item)"
-            :key="index"
-          >
-            <SvgIcon v-if="item.icon" :name="item.icon" class="icon-btn">
-            </SvgIcon>
+          <div class="menu-item" v-for="(item, index) in menuData" @click="handleMenuClick(item)" :key="index">
+            <SvgIcon v-if="item.icon" :name="item.icon" class="icon-btn"> </SvgIcon>
           </div>
         </div>
       </div>
@@ -29,11 +23,7 @@
           </span>
           <template #dropdown>
             <el-dropdown-menu>
-              <el-dropdown-item
-                v-for="(item, index) in langMap"
-                :key="index"
-                @click="handleLangChange(index)"
-              >
+              <el-dropdown-item v-for="(item, index) in langMap" :key="index" @click="handleLangChange(index)">
                 {{ item }}
               </el-dropdown-item>
             </el-dropdown-menu>
@@ -68,8 +58,6 @@ const headerRef = ref<HTMLElement | null>(null);
 
 onMounted(() => {
   window.addEventListener("scroll", handleScroll);
-  const video = document.getElementById("v1");
-  video.playbackRate = 0.5;
 });
 
 function handleScroll() {
@@ -86,7 +74,6 @@ function handleScroll() {
     headerRef.value!.style.boxShadow = "0 2px 4px -1px rgba(0,0,0,0.25)";
     headerRef.value!.style.backgroundColor = "rgba(255,255,255,0.3)";
     headerRef.value!.style.backdropFilter = "blur(10px)";
-
   } else {
     headerRef.value!.style.height = "80px";
     headerRef.value!.style.boxShadow = "none";
@@ -167,19 +154,19 @@ function handleQuickUseClick() {
   z-index: 999;
   transition: all 0.3s;
   width: 100%;
-  height: 80px;
+  height: 5rem;
   display: flex;
   align-items: center;
   background-color: transparent;
   .content {
-    width: 1220px;
+    width: 76.25rem;
     margin: 0 auto;
     display: flex;
     align-items: center;
     justify-content: space-between;
     .right {
       flex: 0;
-      flex-basis: 220px;
+      flex-basis: 13.75rem;
     }
     .center {
       flex: 1;
@@ -193,18 +180,18 @@ function handleQuickUseClick() {
       z-index: 999;
       .logo {
         color: var(--sk-color-home-primary);
-        width: 200px;
-        height: 54px;
+        width: 12.5rem;
+        height: 3.375rem;
         display: flex;
         flex-direction: row;
         align-items: center;
         > img {
-          height: 38px;
-          margin-bottom: 2px;
+          height: 2.375rem;
+          margin-bottom: 0.125rem;
         }
         h1 {
-          padding-left: 8px;
-          font-size: 24px;
+          padding-left: 0.5rem;
+          font-size: 1.5rem;
           z-index: 999;
           color: #3e3e3e;
           font-family: "阿里妈妈数黑体 Bold", sans-serif;
@@ -217,12 +204,12 @@ function handleQuickUseClick() {
       justify-content: flex-end;
 
       .menu-item {
-        padding: 0px 8px;
-        height: 32px;
-        line-height: 32px;
+        padding: 0rem 0.5rem;
+        height: 2rem;
+        line-height: 2rem;
         text-align: center;
-        border-radius: 20px;
-        margin-left: 6px;
+        border-radius: 1.25rem;
+        margin-left: 0.375rem;
         cursor: pointer;
         transition: all 0.3s;
         color: var(--sk-color-font-gray);
@@ -234,26 +221,26 @@ function handleQuickUseClick() {
         }
 
         > .icon-btn {
-          width: 24px;
-          height: 24px;
+          width: 1.5rem;
+          height: 1.5rem;
         }
       }
     }
     // .quick-use {
     //   width: auto;
-    //   padding: 0 12px;
-    //   height: 32px;
-    //   line-height: 32px;
+    //   padding: 0 0.75rem;
+    //   height: 2rem;
+    //   line-height: 2rem;
     //   text-align: center;
-    //   border-radius: 20px;
-    //   margin-left: 14px;
+    //   border-radius: 1.25rem;
+    //   margin-left: 0.875rem;
     //   cursor: pointer;
     //   transition: all 0.3s;
     //   color: var(--sk-color-font-gray);
-    //   border: 1px solid var(--sk-color-font-gray);
+    //   border: 0.0625rem solid var(--sk-color-font-gray);
     //   &:hover {
     //     color: var(--sk-color-font-gray-hover);
-    //     border: 1px solid var(--sk-color-font-gray-hover);
+    //     border: 0.0625rem solid var(--sk-color-font-gray-hover);
     //   }
     // }
     .left {
@@ -261,7 +248,7 @@ function handleQuickUseClick() {
       align-items: center;
     }
     .lang-change {
-      margin-left: 12px;
+      margin-left: 0.75rem;
       color: var(--sk-color-font-gray);
       &:hover {
         color: var(--sk-color-font-gray-hover);
@@ -271,11 +258,127 @@ function handleQuickUseClick() {
   @font-face {
     font-family: "阿里妈妈数黑体 Bold";
     font-weight: 700;
-    src: url("//at.alicdn.com/wf/webfont/aQ1mhUp3iaYf/5QDL7m0TZ7N4.woff2")
-        format("woff2"),
-      url("//at.alicdn.com/wf/webfont/aQ1mhUp3iaYf/q3FAWdnOd36Q.woff")
-        format("woff");
+    src: url("//at.alicdn.com/wf/webfont/aQ1mhUp3iaYf/5QDL7m0TZ7N4.woff2") format("woff2"), url("//at.alicdn.com/wf/webfont/aQ1mhUp3iaYf/q3FAWdnOd36Q.woff") format("woff");
     font-display: swap;
+  }
+}
+
+@media screen and (max-width: 375px) {
+  .home-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 999;
+    transition: all 0.3s;
+    width: 100%;
+    height: 5rem;
+    display: flex;
+    align-items: center;
+    background-color: transparent;
+    .content {
+      width: 100%;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      .right {
+        flex: 0;
+        flex-basis: 13.75rem;
+      }
+      .center {
+        flex: 1;
+      }
+      .left {
+        flex: 0;
+        flex-basis: auto;
+      }
+      .home-header-logo {
+        cursor: pointer;
+        z-index: 999;
+        .logo {
+          color: var(--sk-color-home-primary);
+          width: 12.5rem;
+          height: 3.375rem;
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          > img {
+            height: 2.375rem;
+            margin-bottom: 0.125rem;
+          }
+          h1 {
+            padding-left: 0.5rem;
+            font-size: 1.5rem;
+            z-index: 999;
+            color: #3e3e3e;
+            font-family: "阿里妈妈数黑体 Bold", sans-serif;
+          }
+        }
+      }
+      .menu {
+        flex: 1;
+        display: flex;
+        justify-content: flex-end;
+
+        .menu-item {
+          padding: 0rem 0.5rem;
+          height: 2rem;
+          line-height: 2rem;
+          text-align: center;
+          border-radius: 1.25rem;
+          margin-left: 0.375rem;
+          cursor: pointer;
+          transition: all 0.3s;
+          color: var(--sk-color-font-gray);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          &:hover {
+            color: var(--sk-color-font-gray-hover);
+          }
+
+          > .icon-btn {
+            width: 1.5rem;
+            height: 1.5rem;
+          }
+        }
+      }
+      // .quick-use {
+      //   width: auto;
+      //   padding: 0 0.75rem;
+      //   height: 2rem;
+      //   line-height: 2rem;
+      //   text-align: center;
+      //   border-radius: 1.25rem;
+      //   margin-left: 0.875rem;
+      //   cursor: pointer;
+      //   transition: all 0.3s;
+      //   color: var(--sk-color-font-gray);
+      //   border: 0.0625rem solid var(--sk-color-font-gray);
+      //   &:hover {
+      //     color: var(--sk-color-font-gray-hover);
+      //     border: 0.0625rem solid var(--sk-color-font-gray-hover);
+      //   }
+      // }
+      .left {
+        display: flex;
+        align-items: center;
+      }
+      .lang-change {
+        margin-left: 0.75rem;
+        color: var(--sk-color-font-gray);
+        &:hover {
+          color: var(--sk-color-font-gray-hover);
+        }
+      }
+    }
+    @font-face {
+      font-family: "阿里妈妈数黑体 Bold";
+      font-weight: 700;
+      src: url("//at.alicdn.com/wf/webfont/aQ1mhUp3iaYf/5QDL7m0TZ7N4.woff2") format("woff2"), url("//at.alicdn.com/wf/webfont/aQ1mhUp3iaYf/q3FAWdnOd36Q.woff") format("woff");
+      font-display: swap;
+    }
   }
 }
 </style>

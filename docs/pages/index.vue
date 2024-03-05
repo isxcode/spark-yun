@@ -4,10 +4,7 @@
     <div class="one-word-desc-product">
       <div class="top">
         <div class="one-word">至轻云-超轻量级大数据平台</div>
-        <div class="one-desc">
-          •企业级平台 &nbsp; &nbsp; •Docker一键部署 &nbsp; &nbsp;
-          •Github开源免费 &nbsp; &nbsp; •Spark纯原生
-        </div>
+        <div class="one-desc">•企业级平台 &nbsp; &nbsp; •Docker一键部署 &nbsp; &nbsp; •Github开源免费 &nbsp; &nbsp; •Spark纯原生</div>
         <div class="fast-use" id="code_block">
           <span class="line" line="1">
             <span style="color: #e25a1b">docker</span>
@@ -17,11 +14,7 @@
             <span style="color: #e25a1b">:8080</span>
             <span style="color: #e25a1b"> -d</span>
             <span style="color: #e25a1b"> isxcode/zhiqingyun</span>
-            <SvgIcon
-              class="copy-icon"
-              name="copy"
-              @click="handleCommandCopyClick"
-            ></SvgIcon>
+            <SvgIcon class="copy-icon" name="copy" @click="handleCommandCopyClick"></SvgIcon>
           </span>
         </div>
         <div class="product-img">
@@ -30,9 +23,7 @@
       </div>
       <div class="bottom">
         <div class="opt-detail">
-          <el-button class="w-32 !h-9" type="primary" @click="jumpDoc">
-            快速入门
-          </el-button>
+          <el-button class="w-32 !h-9" type="primary" @click="jumpDoc"> 快速入门 </el-button>
           <el-button
             class="w-32 ml-btn !h-9"
             type="primary"
@@ -102,7 +93,7 @@
       <div
         v-for="(serviceItem, index) in productServiceList"
         :key="index"
-        class="product-advantages "
+        class="product-advantages"
         :class="{
           'product-advantages-bgc': serviceItem.layout === 'left',
         }"
@@ -162,6 +153,11 @@ useSeoMeta({
   ogTitle: "至轻云",
   description: "打造超轻量级大数据平台",
   ogDescription: "打造超轻量级大数据平台",
+});
+
+onMounted(() => {
+  const video = document.getElementById("v1");
+  video.playbackRate = 0.5;
 });
 
 const productAdvantagesList = reactive([
@@ -285,11 +281,6 @@ function jumpDoc() {
   const router = useRouter();
   router.push("/docs/zh/install/docker-deploy");
 }
-
-onMounted(() => {
-  // const video = document.getElementById("v1") as HTMLVideoElement;
-  // video.playbackRate = 0.5;
-});
 </script>
 
 <style lang="scss" scope>
@@ -317,14 +308,14 @@ onMounted(() => {
       justify-content: flex-start;
       align-items: center;
       .one-word {
-        font-size: 55px;
+        font-size: 3.4375rem;
         font-weight: 700;
         text-align: center;
         line-height: 1.5;
         margin-bottom: 5vh;
       }
       .one-desc {
-        font-size: 19px;
+        font-size: 1.1875rem;
         font-weight: 400;
         text-align: center;
         line-height: 1.5;
@@ -332,7 +323,7 @@ onMounted(() => {
         color: var(--el-color-info);
       }
       .fast-use {
-        font-size: 24px;
+        font-size: 1.5rem;
         font-weight: 400;
         text-align: center;
         line-height: 1.5;
@@ -348,14 +339,13 @@ onMounted(() => {
           width: 100%;
           height: 58vh;
           box-shadow: var(--sk-box-show);
-          border-radius: 4px;
+          border-radius: 0.25rem;
         }
       }
     }
     .bottom {
       min-height: 20vh;
       width: 100%;
-      // background-color: var(--sk-color-home-primary);
       background-image: url("~/assets/home/bg0.png");
       background-repeat: no-repeat;
       background-size: 100% auto;
@@ -371,28 +361,28 @@ onMounted(() => {
           color: var(--sk-color-home-primary);
         }
         .ml-btn {
-          margin-left: 76px;
+          margin-left: 4.75rem;
         }
       }
     }
   }
   .product-advantages {
-    border-top: 1px solid #edebeb;
+    border-top: 0.0625rem solid #edebeb;
     width: 100%;
-    height: 600px;
+    height: 37.5rem;
     background-color: var(--sk-color-home-bgc);
     display: flex;
     justify-content: center;
     align-items: center;
     .advantages {
-      width: 1108px;
-      height: 400px;
+      width: 69.25rem;
+      height: 25rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
       .img {
         width: 44%;
-        border-radius: 4px;
+        border-radius: 0.25rem;
         box-shadow: var(--sk-box-show);
         > img {
           width: 100%;
@@ -400,9 +390,9 @@ onMounted(() => {
         }
       }
       .superior-panel {
-        padding: 18px 24px;
-        width: 600px;
-        height: 400px;
+        padding: 1.125rem 1.5rem;
+        width: 37.5rem;
+        height: 25rem;
         display: flex;
         flex-direction: column;
         align-items: flex-start;
@@ -415,32 +405,32 @@ onMounted(() => {
           align-items: flex-start;
 
           .title {
-            font-size: 32px;
+            font-size: 2rem;
             font-weight: 700;
             text-align: left;
             line-height: 1.5;
-            margin-bottom: 40px;
+            margin-bottom: 2.5rem;
           }
 
           .desc {
-            font-size: 18px;
+            font-size: 1.125rem;
             font-weight: 400;
             text-align: left;
             line-height: 1.5;
-            margin-bottom: 40px;
+            margin-bottom: 2.5rem;
             color: var(--el-color-info);
           }
         }
 
         .to-use {
           width: auto;
-          height: 32px;
+          height: 2rem;
           display: flex;
           align-items: center;
           color: var(--sk-color-home-primary);
           cursor: pointer;
           .txt {
-            font-size: 18px;
+            font-size: 1.125rem;
             font-weight: 400;
             line-height: 1.5;
             cursor: pointer;
@@ -459,11 +449,11 @@ onMounted(() => {
     }
   }
   .quick-use {
-    height: 320px;
+    height: 20rem;
     background-image: url("~/assets/home/bg2.png");
     background-color: #f89126;
     background-repeat: no-repeat;
-    background-size: auto 100%; 
+    background-size: auto 100%;
     background-position: center;
     display: flex;
     flex-direction: column;
@@ -475,20 +465,20 @@ onMounted(() => {
       color: var(--sk-color-home-primary);
     }
     .title {
-      font-size: 32px;
+      font-size: 2rem;
       font-weight: 700;
       text-align: center;
       line-height: 1.5;
-      margin-bottom: 40px;
+      margin-bottom: 2.5rem;
       color: var(--sk-color-font-white);
     }
   }
 
-  @media screen and (min-device-width: 1600px) {
+  @media screen and (min-device-width: 100rem) {
     .product-advantages {
-      height: calc(600px * 1.2);
+      height: calc(37.5rem * 1.2);
       .advantages {
-        width: calc(1108px * 1.2);
+        width: calc(69.25rem * 1.2);
       }
     }
   }
@@ -496,18 +486,18 @@ onMounted(() => {
     background-color: var(--sk-color-cark-bgc);
   }
   .product-resources {
-    height: 712px;
+    height: 44.5rem;
     display: flex;
     flex-direction: column;
     align-items: center;
     background-color: var(--sk-color-home-primary);
     .title {
-      font-size: 32px;
-      margin-top: 80px;
+      font-size: 2rem;
+      margin-top: 5rem;
       color: var(--sk-color-font-white);
     }
     .desc {
-      margin-top: 32px;
+      margin-top: 2rem;
       color: var(--sk-color-font-white);
       opacity: 0.8;
     }
@@ -517,29 +507,29 @@ onMounted(() => {
       justify-content: center;
       flex-wrap: wrap;
       align-content: flex-start;
-      margin-top: 20px;
+      margin-top: 1.25rem;
       background-image: url("~/assets/home/kuxun.png");
       background-repeat: no-repeat;
       background-size: 100% auto;
     }
   }
   .border-bottom-br {
-    border-bottom: 1px solid #dcdcdc;
+    border-bottom: 0.0625rem solid #dcdcdc;
   }
 }
 
 #code_block {
   background-color: #fff;
-  border: #e25a1b 1px solid;
+  border: #e25a1b 0.0625rem solid;
   color: rgb(201, 209, 217);
   font-family: Consolas;
   font-weight: lighter;
   text-align: left;
-  padding: 4px;
-  font-size: 18px;
-  padding-left: 14px;
-  padding-right: 14px;
-  border-radius: 5px;
+  padding: 0.25rem;
+  font-size: 1.125rem;
+  padding-left: 0.875rem;
+  padding-right: 0.875rem;
+  border-radius: 0.3125rem;
   counter-reset: line;
   white-space: pre;
   word-spacing: normal;
@@ -548,9 +538,9 @@ onMounted(() => {
   line-height: 1.8;
   .copy-icon {
     display: inline-block;
-    margin-bottom: 2px;
-    margin-left: 8px;
-    font-size: 16px;
+    margin-bottom: 0.125rem;
+    margin-left: 0.5rem;
+    font-size: 1rem;
     cursor: pointer;
     color: #e25a1b;
   }

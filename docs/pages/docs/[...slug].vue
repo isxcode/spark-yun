@@ -171,15 +171,15 @@ function scrollTo(element, headerOffset = 80) {
 
 <style scoped lang="scss">
 .docs {
-  margin: 20px auto;
-  margin-top: 72px;
+  margin: 1.25rem auto;
+  margin-top: 4.5rem;
   .left-side {
-    width: 310px;
+    width: 19.375rem;
     position: fixed;
     top: 0;
     bottom: 0;
-    margin-top: 80px;
-    border-right: 1px solid #ebebeb;
+    margin-top: 5rem;
+    border-right: 0.0625rem solid #ebebeb;
     .scroll-bar {
       .el-scrollbar__wrap {
         height: 100%;
@@ -194,28 +194,28 @@ function scrollTo(element, headerOffset = 80) {
   }
   .doc-content {
     box-sizing: border-box;
-    padding-left: 310px;
+    padding-left: 19.375rem;
     background-color: #fff;
     display: flex;
     flex-direction: row;
     .aside {
       flex: 0;
-      flex-basis: 260px;
+      flex-basis: 16.25rem;
       .aside-wrapper {
         box-sizing: border-box;
         overflow-x: auto;
-        width: 238px;
+        width: 14.875rem;
         position: sticky;
-        top: 120px;
+        top: 7.5rem;
         .aside-content {
         }
       }
     }
     .content {
       flex: 1;
-      padding: 64px 0 96px 66px;
+      padding: 4rem 0 6rem 4.125rem;
       .markdown-body {
-        width: calc(100vw - 310px - 66px - 260px);
+        width: calc(100vw - 19.375rem - 4.125rem - 16.25rem);
       }
     }
   }

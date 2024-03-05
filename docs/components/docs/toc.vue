@@ -75,45 +75,45 @@ const isActive = (id) => {
 
 .toc-content-item-title {
   color: var(--sk-color-font-menu);
-  font-size: 16px;
-  padding: 2px 0 2px 2px;
-  border-top-left-radius: 4px;
-  border-bottom-left-radius: 4px;
-  margin-bottom: 5px;
+  font-size: 1rem;
+  padding: 0.125rem 0 0.125rem 0.125rem;
+  border-top-left-radius: 0.25rem;
+  border-bottom-left-radius: 0.25rem;
+  margin-bottom: 0.3125rem;
   transition: all 0.2s;
 }
 
 .toc-content-item-title:hover {
   color: var(--sk-color-font-menu-hover);
-  border-right: 1px solid var(--sk-color-home-primary);
+  border-right: 0.0625rem solid var(--sk-color-home-primary);
 }
 
 .active {
   color: var(--sk-color-home-primary) !important;
-  border-right: 2px solid var(--sk-color-home-primary);
+  border-right: 0.125rem solid var(--sk-color-home-primary);
 }
 
 .toc-content-item-children {
-  /* margin-left: 20px; */
+  /* margin-left: 1.25rem; */
 }
 
 .md-h-1 {
-  padding-left: 12px;
+  padding-left: 0.75rem;
 }
 
 .md-h-2 {
-  padding-left: 24px;
+  padding-left: 1.5rem;
 }
 
 .md-h-3 {
-  padding-left: 36px;
+  padding-left: 2.25rem;
 }
 
 .md-h-4 {
-  padding-left: 48px;
+  padding-left: 3rem;
 }
 
 .md-h-5 {
-  padding-left: 60px;
+  padding-left: 3.75rem;
 }
 </style>
