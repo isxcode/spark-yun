@@ -1,17 +1,8 @@
-package com.isxcode.star.modules.work.entity;
-
-import static com.isxcode.star.common.config.CommonConfig.TENANT_ID;
+package com.isxcode.star.modules.container.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import java.time.LocalDateTime;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.PrePersist;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-import javax.persistence.Version;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.SQLDelete;
@@ -22,37 +13,48 @@ import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import javax.persistence.*;
+import java.time.LocalDateTime;
+
+import static com.isxcode.star.common.config.CommonConfig.TENANT_ID;
+
 @Data
 @Entity
-@SQLDelete(sql = "UPDATE SY_WORK_VERSION SET deleted = 1 WHERE id = ? and version_number = ?")
+@SQLDelete(sql = "UPDATE SY_CONTAINER SET deleted = 1 WHERE id = ? and version_number = ?")
 @Where(clause = "deleted = 0 ${TENANT_FILTER} ")
-@Table(name = "SY_WORK_VERSION")
+@Table(name = "SY_CONTAINER")
 @JsonIgnoreProperties({"hibernateLazyInitializer"})
 @EntityListeners(AuditingEntityListener.class)
-public class VipWorkVersionEntity {
+@Builder(toBuilder = true)
+@AllArgsConstructor
+public class ContainerEntity {
 
 	@Id
 	@GeneratedValue(generator = "sy-id-generator")
 	@GenericGenerator(name = "sy-id-generator", strategy = "com.isxcode.star.config.GeneratedValueConfig")
 	private String id;
 
-	private String workId;
+	private String name;
 
-	private String workType;
+	private String remark;
+
+	private String status;
 
 	private String datasourceId;
 
-	private String clusterConfig;
+	private String clusterId;
 
-	private String script;
+	private String resourceLevel;
 
-	private String cronConfig;
+	private String sparkConfig;
 
-	private String syncWorkConfig;
+	private Integer port;
 
-	private String syncRule;
+	private String submitLog;
 
-  private String containerId;
+	private String runningLog;
+
+	private String applicationId;
 
 	@CreatedDate
 	private LocalDateTime createDateTime;
@@ -66,13 +68,13 @@ public class VipWorkVersionEntity {
 	@LastModifiedBy
 	private String lastModifiedBy;
 
-	@Version
-	private Long versionNumber;
-
 	@Transient
 	private Integer deleted;
 
 	private String tenantId;
+
+	public ContainerEntity() {
+	}
 
 	@PrePersist
 	public void prePersist() {

@@ -3,6 +3,7 @@ package com.isxcode.star.agent.controller;
 import com.isxcode.star.agent.service.YunAgentBizService;
 import com.isxcode.star.api.agent.pojos.req.ContainerCheckReq;
 import com.isxcode.star.api.agent.pojos.req.DeployContainerReq;
+import com.isxcode.star.api.agent.pojos.req.ExecuteContainerSqlReq;
 import com.isxcode.star.api.agent.pojos.req.YagExecuteWorkReq;
 import com.isxcode.star.api.agent.pojos.res.*;
 import com.isxcode.star.api.main.constants.ModuleCode;
@@ -82,22 +83,23 @@ public class YunAgentController {
 		return yunAgentBizService.deployContainer(deployContainerReq);
 	}
 
-	/**
-	 * 心跳检测.
-	 */
 	@Operation(summary = "心跳检测接口", description = "心跳检测")
 	@GetMapping("/heartCheck")
 	@SuccessResponse("正常心跳")
 	public void heartCheck() {
 	}
 
-	/**
-	 * 检查容器状态.
-	 */
 	@Operation(summary = "容器心跳检测接口", description = "容器心跳检测")
 	@PostMapping("/containerCheck")
 	public ContainerCheckRes containerCheck(@RequestBody ContainerCheckReq containerCheckReq) {
 
 		return yunAgentBizService.containerCheck(containerCheckReq);
 	}
+
+  @Operation(summary = "通过sql调用容器获取数据", description = "获取数据")
+  @PostMapping("/executeContainerSql")
+  public ContainerGetDataRes executeContainerSql(@RequestBody ExecuteContainerSqlReq executeContainerSqlReq) {
+
+    return yunAgentBizService.executeContainerSql(executeContainerSqlReq);
+  }
 }
