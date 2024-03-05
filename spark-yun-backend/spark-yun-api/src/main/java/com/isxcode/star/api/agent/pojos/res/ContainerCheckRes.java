@@ -8,4 +8,6 @@ import lombok.Data;
 public class ContainerCheckRes {
 
 	private String code;
+
+  private String msg;
 }
