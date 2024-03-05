@@ -11,7 +11,7 @@ public class DeployContainerRes {
 
 	private int port;
 
-  private String errLog;
+	private String errLog;
 
-  private String status;
+	private String status;
 }
