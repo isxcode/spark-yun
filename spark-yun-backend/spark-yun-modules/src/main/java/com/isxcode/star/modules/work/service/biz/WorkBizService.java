@@ -9,10 +9,7 @@ import com.isxcode.star.api.work.constants.WorkLog;
 import com.isxcode.star.api.work.constants.WorkStatus;
 import com.isxcode.star.api.work.constants.WorkType;
 import com.isxcode.star.api.work.exceptions.WorkRunException;
-import com.isxcode.star.api.work.pojos.dto.ClusterConfig;
-import com.isxcode.star.api.work.pojos.dto.CronConfig;
-import com.isxcode.star.api.work.pojos.dto.SyncRule;
-import com.isxcode.star.api.work.pojos.dto.SyncWorkConfig;
+import com.isxcode.star.api.work.pojos.dto.*;
 import com.isxcode.star.api.work.pojos.req.*;
 import com.isxcode.star.api.work.pojos.res.*;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
@@ -427,6 +424,10 @@ public class WorkBizService {
 		if (!Strings.isEmpty(workConfig.getSyncWorkConfig())) {
 			getWorkRes.setSyncWorkConfig(JSON.parseObject(workConfig.getSyncWorkConfig(), SyncWorkConfig.class));
 		}
+
+    if (!Strings.isEmpty(workConfig.getApiWorkConfig())) {
+      getWorkRes.setApiWorkConfig(JSON.parseObject(workConfig.getApiWorkConfig(), ApiWorkConfig.class));
+    }
 
 		if (!Strings.isEmpty(workConfig.getClusterConfig())) {
 			getWorkRes.setClusterConfig(JSON.parseObject(workConfig.getClusterConfig(), ClusterConfig.class));
