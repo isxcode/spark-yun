@@ -5,6 +5,7 @@ import com.isxcode.star.agent.run.KubernetesAgentService;
 import com.isxcode.star.agent.run.StandaloneAgentService;
 import com.isxcode.star.agent.run.YarnAgentService;
 import com.isxcode.star.api.agent.constants.AgentType;
+import com.isxcode.star.api.agent.pojos.req.ContainerCheckReq;
 import com.isxcode.star.api.agent.pojos.req.DeployContainerReq;
 import com.isxcode.star.api.agent.pojos.req.YagExecuteWorkReq;
 import com.isxcode.star.api.agent.pojos.res.*;
@@ -17,7 +18,9 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.spark.launcher.SparkLauncher;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 /**
  * 代理服务层.
@@ -74,7 +77,7 @@ public class YunAgentBizService {
 				throw new IsxAppException("agent类型不支持");
 		}
 
-		return YagGetStatusRes.builder().appId(appId).appStatus(appStatus).build();
+    return YagGetStatusRes.builder().appId(appId).appStatus(appStatus).build();
 	}
 
 	public YagGetLogRes getLog(String appId, String agentType, String sparkHomePath) throws IOException {
@@ -166,4 +169,14 @@ public class YunAgentBizService {
 
 		return DeployContainerRes.builder().appId(appId).port(port).build();
 	}
+
+  public ContainerCheckRes containerCheck(ContainerCheckReq containerCheckReq) {
+
+    try {
+      ResponseEntity<ContainerCheckRes> forEntity = new RestTemplate().getForEntity("http://127.0.0.1:" + containerCheckReq.getPort() + "/check", ContainerCheckRes.class);
+      return forEntity.getBody();
+    } catch (Exception e) {
+      return ContainerCheckRes.builder().code("500").msg(e.getMessage()).build();
+    }
+  }
 }
