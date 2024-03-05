@@ -100,8 +100,7 @@ public class SparkContainerSqlExecutor extends WorkExecutor {
       ClusterNodeEntity engineNode = allEngineNodes.get(new Random().nextInt(allEngineNodes.size()));
 
       // 再次调用容器的check接口，确认容器是否成功启动
-//		ContainerCheckReq containerCheckReq = ContainerCheckReq.builder().port(String.valueOf(container.getPort())).build();
-      ExecuteContainerSqlReq executeContainerSqlReq = ExecuteContainerSqlReq.builder().port("30178").sql(workRunContext.getScript()).build();
+      ExecuteContainerSqlReq executeContainerSqlReq = ExecuteContainerSqlReq.builder().port(String.valueOf(containerEntityOptional.get().getPort())).sql(workRunContext.getScript()).build();
       BaseResponse<?> baseResponse;
       try {
         baseResponse = HttpUtils.doPost(
@@ -113,7 +112,7 @@ public class SparkContainerSqlExecutor extends WorkExecutor {
 
       ContainerGetDataRes containerGetDataRes = JSON.parseObject(JSON.toJSONString(baseResponse), ContainerGetDataRes.class);
       if (!"200".equals(containerGetDataRes.getCode())) {
-        throw new WorkRunException("运行异常");
+        throw new WorkRunException("运行异常" + containerGetDataRes.getMsg());
       }
 
       // 讲data转为json存到实例中
@@ -121,9 +120,9 @@ public class SparkContainerSqlExecutor extends WorkExecutor {
       workInstance.setSubmitLog(logBuilder.toString());
       workInstance.setResultData(JSON.toJSONString(containerGetDataRes.getData()));
       workInstanceRepository.saveAndFlush(workInstance);
-    } catch (Exception e) {
+    } catch (WorkRunException e) {
       log.error(e.getMessage());
-      throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + e.getMessage() + "\n");
+      throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + e.getMsg() + "\n");
     }
   }
 
