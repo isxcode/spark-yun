@@ -35,10 +35,10 @@ public class WorkRunContext {
 	 */
 	private SyncWorkConfig syncWorkConfig;
 
-  /**
-   * 接口调用作业信息.
-   */
-  private ApiWorkConfig apiWorkConfig;
+	/**
+	 * 接口调用作业信息.
+	 */
+	private ApiWorkConfig apiWorkConfig;
 
 	/**
 	 * 同步规则.
