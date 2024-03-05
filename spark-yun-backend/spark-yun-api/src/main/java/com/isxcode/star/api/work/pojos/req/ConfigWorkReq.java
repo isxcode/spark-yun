@@ -28,8 +28,8 @@ public class ConfigWorkReq {
 	@Schema(title = "数据同步作业配置")
 	private SyncWorkConfig syncWorkConfig;
 
-  @Schema(title = "接口调用作业配置")
-  private ApiWorkConfig apiWorkConfig;
+	@Schema(title = "接口调用作业配置")
+	private ApiWorkConfig apiWorkConfig;
 
 	@Schema(title = "集群配置")
 	private ClusterConfig clusterConfig;
