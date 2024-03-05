@@ -23,6 +23,9 @@ dependencies:
   '@vueuse/nuxt':
     specifier: ^10.3.0
     version: 10.3.0(nuxt@3.6.5)(vue@3.3.4)
+  lib-flexible:
+    specifier: ^0.3.2
+    version: 0.3.2
 
 devDependencies:
   '@nuxt/content':
@@ -6176,6 +6179,10 @@ packages:
     engines: {node: '>= 0.6.3'}
     dependencies:
       readable-stream: 2.3.8
+
+  /lib-flexible@0.3.2:
+    resolution: {integrity: sha512-9yowMWA70tKhKdCJDaltY0mNQG4OWo7pWKScnTp9aiSxS7s20ZYlwBRE3335nweOf5qKXVC7sDxJwMPM8/MFZg==}
+    dev: false
 
   /lilconfig@2.1.0:
     resolution: {integrity: sha512-utWOt/GHzuUxnLKxB6dk81RoOeoNeHgbrXiuGk4yyF5qlRz+iIVWu56E2fqGHFrXz0QNUhLB/8nKqvRH66JKGQ==}

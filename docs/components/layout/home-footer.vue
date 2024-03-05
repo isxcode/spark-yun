@@ -169,33 +169,33 @@
   background-color: #fff;
   border-top-width: 100%;
   .source-content {
-    padding-top: 50px;
-    padding-bottom: 50px;
+    padding-top: 3.125rem;
+    padding-bottom: 3.125rem;
     display: flex;
     flex-direction: row;
     align-items: flex-start;
     justify-content: center;
     .left {
-      margin-left: 80px;
+      margin-left: 5rem;
       display: flex;
       flex-direction: column;
       align-items: center;
       .logo {
         .name {
           font-family: "阿里妈妈数黑体 Bold", sans-serif;
-          font-size: 24px;
+          font-size: 1.5rem;
           text-align: center;
         }
       }
       .wx-official-account {
         width: 120%;
-        margin-top: 20px;
+        margin-top: 1.25rem;
         display: flex;
         flex-direction: column;
         align-items: center;
         .text {
-          margin-top: 10px;
-          font-size: 14px;
+          margin-top: 0.625rem;
+          font-size: 0.875rem;
           color: #666;
         }
       }
@@ -203,26 +203,26 @@
     .info {
       display: flex;
       justify-content: flex-start;
-      padding: 0 20px;
+      padding: 0 1.25rem;
       > div {
-        margin-left: 54px;
-        min-width: 86px;
+        margin-left: 3.375rem;
+        min-width: 5.375rem;
       }
       .title {
-        font-size: 16px;
+        font-size: 1rem;
         font-weight: bold;
         color: #333;
-        margin-bottom: 20px;
+        margin-bottom: 1.25rem;
       }
       .content {
         display: flex;
         flex-direction: column;
         .item {
-          height: 18px;
-          line-height: 18px;
-          font-size: 14px;
+          height: 1.125rem;
+          line-height: 1.125rem;
+          font-size: 0.875rem;
           color: #666;
-          margin-bottom: 10px;
+          margin-bottom: 0.625rem;
           a {
             color: #666;
           }
@@ -233,14 +233,14 @@
   .s-footer {
     position: relative;
     width: 100%;
-    min-width: 1140px;
+    min-width: 71.25rem;
   }
   .s-footer-bottom {
-    margin: 0px auto;
+    margin: 0rem auto;
     width: 100%;
     text-align: center;
-    line-height: 35px;
-    font-size: 14px;
+    line-height: 2.1875rem;
+    font-size: 0.875rem;
     color: #666;
     > span,
     a {
@@ -248,14 +248,14 @@
     }
   }
   .s-footer-bottom p {
-    font-size: 13px;
+    font-size: 0.8125rem;
     color: #666;
   }
   .s-footer-bottom p a {
     color: #666;
   }
   .s-footer-bottom p span {
-    margin: 0 5px;
+    margin: 0 0.3125rem;
   }
 }
 
