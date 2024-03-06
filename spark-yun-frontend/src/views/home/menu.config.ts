@@ -59,8 +59,8 @@ export const menuListData: Array<Menu> = [
   },
   {
     code: 'spark-container',
-    name: 'SPARK容器',
-    icon: 'Cpu',
+    name: 'Spark容器',
+    icon: 'Box',
     authType: [ 'ROLE_TENANT_MEMBER', 'ROLE_TENANT_ADMIN' ],
     childPage: []
   },

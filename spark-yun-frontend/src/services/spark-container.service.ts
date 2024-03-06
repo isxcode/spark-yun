@@ -5,65 +5,74 @@ interface SerchParams {
   searchKeyWord: string;
 }
 
-export function GetDatasourceList(params: SerchParams): Promise<any> {
+// spark容器-查询
+export function GetSparkContainerList(params: SerchParams): Promise<any> {
   return http.request({
     method: 'post',
-    url: '/datasource/pageDatasource',
+    url: '/vip/container/pageContainer',
     params: params
   })
 }
 
-// 添加
-export function AddDatasourceData(params: any): Promise<any> {
+// spark容器-添加
+export function AddSparkContainerData(params: any): Promise<any> {
   return http.request({
     method: 'post',
-    url: '/datasource/addDatasource',
+    url: '/vip/container/addContainer',
     params: params
   })
 }
 
-// 更新
-export function UpdateDatasourceData(params: any): Promise<any> {
+// spark容器-更新
+export function UpdateSparkContainerData(params: any): Promise<any> {
   return http.request({
     method: 'post',
-    url: '/datasource/updateDatasource',
+    url: '/vip/container/updateContainer',
     params: params
   })
 }
 
-// 检测
-export function CheckDatasourceData(params: any): Promise<any> {
+// spark容器-检测
+export function ChecSparkContainerkData(params: any): Promise<any> {
   return http.request({
     method: 'post',
-    url: '/datasource/testConnect',
+    url: '/vip/container/checkContainer',
     params: params
   })
 }
 
-// 删除
-export function DeleteDatasourceData(params: any): Promise<any> {
+// spark容器-删除
+export function DeleteSparkContainerkData(params: any): Promise<any> {
   return http.request({
     method: 'post',
-    url: '/datasource/deleteDatasource',
+    url: '/vip/container/deleteContainer',
     params: params
   })
 }
 
-// // 获取数据源驱动
-// export function GetDriverListData(params: any): Promise<any> {
-//   return http.request({
-//     method: 'post',
-//     url: '/datasource/pageDatabaseDriver',
-//     params: params
-//   })
-// }
-// // 获取默认驱动
-// export function GetDefaultDriverData(params: any): Promise<any> {
-//   return http.request({
-//     method: 'post',
-//     url: '/datasource/getDefaultDatabaseDriver',
-//     params: params
-//   })
-// }
+// spark容器-启动
+export function StartSparkContainerkData(params: any): Promise<any> {
+  return http.request({
+    method: 'post',
+    url: '/vip/container/startContainer',
+    params: params
+  })
+}
 
+// spark容器-停止
+export function StopSparkContainerkData(params: any): Promise<any> {
+  return http.request({
+    method: 'post',
+    url: '/vip/container/stopContainer',
+    params: params
+  })
+}
 
+// spark容器-获取日志信息
+export function GetSparkContainerkDetail(params: any): Promise<any> {
+  return http.request({
+    method: 'post',
+    url: '/vip/container/getContainer',
+    params: params
+  })
+}
