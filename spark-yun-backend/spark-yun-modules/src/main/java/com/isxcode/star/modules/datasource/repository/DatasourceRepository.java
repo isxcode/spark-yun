@@ -19,7 +19,8 @@ public interface DatasourceRepository extends JpaRepository<DatasourceEntity, St
 	@Query("SELECT D FROM DatasourceEntity D " + "WHERE ( D.name LIKE %:keyword% " + "OR D.remark LIKE %:keyword% "
 			+ "OR D.dbType LIKE %:keyword% " + "OR D.username LIKE %:keyword% "
 			+ "OR D.jdbcUrl LIKE %:keyword% ) and (:datasourceType is null or D.dbType = :datasourceType) order by D.createDateTime desc ")
-	Page<DatasourceEntity> searchAll(@Param("keyword") String searchKeyWord, @Param("datasourceType") String datasourceType, Pageable pageable);
+	Page<DatasourceEntity> searchAll(@Param("keyword") String searchKeyWord,
+			@Param("datasourceType") String datasourceType, Pageable pageable);
 
 	List<DatasourceEntity> findAllByDriverId(String driverId);
 
