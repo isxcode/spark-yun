@@ -5,20 +5,17 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/**
- * 数据同步配置信息.
- */
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class UdfInfo {
-	private String type;
+public class JarJobConfig {
 
-	private String funcName;
+	private String jarFileId;
 
-	private String className;
+	private String mainClass;
 
-	private String resultType;
+	private String[] args;
 
+	private String appName;
 }

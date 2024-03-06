@@ -84,7 +84,7 @@ public class KubernetesAgentService implements AgentService {
 
 		sparkLauncher.addAppArgs(Base64.getEncoder()
 				.encodeToString(yagExecuteWorkReq.getPluginReq() == null
-						? yagExecuteWorkReq.getArgs().getBytes()
+						? yagExecuteWorkReq.getArgsStr().getBytes()
 						: JSON.toJSONString(yagExecuteWorkReq.getPluginReq()).getBytes()));
 
 		yagExecuteWorkReq.getSparkSubmit().getConf().forEach(sparkLauncher::setConf);

@@ -1,15 +1,17 @@
-package com.isxcode.star.api.work.pojos.req;
+package com.isxcode.star.api.func.pojos.req;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Pattern;
 
 @Data
-public class AddUdfReq {
+public class AddFuncReq {
 
 	@Schema(title = "udf类型", example = "UDF|UDAF")
 	@NotEmpty(message = "udf类别不能为空")
+	@Pattern(regexp = "^(UDF|UDAF)$", message = "类型不支持")
 	private String type;
 
 	@Schema(title = "udf文件id", example = "sy_48c4304593ea4897b6af999e48685896")
@@ -26,9 +28,9 @@ public class AddUdfReq {
 
 	@Schema(title = "函数返回值类型", example = "值列表：string|int|long|double|boolean|date|timestamp")
 	@NotEmpty(message = "返回值类型不能为空")
+	@Pattern(regexp = "^(string|int|long|double|boolean|date|timestamp)$", message = "类型不支持")
 	private String resultType;
 
-	@Schema(title = "启用状态", example = "启用为true，停用为false")
-	private Boolean status;
-
+	@Schema(title = "备注", example = "描述该函数的定义")
+	private String remark;
 }

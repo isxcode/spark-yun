@@ -2,7 +2,7 @@ package com.isxcode.star.plugin.query.sql;
 
 import com.alibaba.fastjson.JSON;
 import com.isxcode.star.api.agent.pojos.req.PluginReq;
-import com.isxcode.star.api.work.pojos.dto.UdfInfo;
+import com.isxcode.star.api.func.constants.FuncType;
 import org.apache.logging.log4j.util.Strings;
 import org.apache.spark.SparkConf;
 import org.apache.spark.sql.Dataset;
@@ -13,37 +13,50 @@ import org.apache.spark.sql.types.DataTypes;
 
 import java.util.*;
 
-import static com.isxcode.star.api.work.constants.UdfType.UDAF;
-import static com.isxcode.star.api.work.constants.UdfType.UDF;
-
 public class Execute {
 
-	/** 最后一句sql查询. */
+	/**
+	 * 最后一句sql查询.
+	 */
 	public static void main(String[] args) {
 
+		// 解析插件请求体
 		PluginReq pluginReq = parse(args);
 
+		// 过滤注释
 		String regex = "/\\*(?:.|[\\n\\r])*?\\*/|--.*";
 		String noCommentSql = pluginReq.getSql().replaceAll(regex, "");
-		String realSql = noCommentSql.replace("\n", " ");
+		String realSql = noCommentSql.replaceAll("--.*", "").replace("\n", " ");
 		String[] sqls = realSql.split(";");
 
+		// 获取sparkSession
 		try (SparkSession sparkSession = initSparkSession(pluginReq)) {
-			for (UdfInfo udf : pluginReq.getUdfList()) {
-				if (UDF.equals(udf.getType())) {
-					sparkSession.udf().registerJava(udf.getFuncName(), udf.getClassName(),
-							getResultType(udf.getResultType()));
-				} else if (UDAF.equals(udf.getType())) {
-					sparkSession.udf().registerJavaUDAF(udf.getFuncName(), udf.getClassName());
-				}
 
+			// 注册自定义函数
+			if (pluginReq.getFuncInfoList() != null) {
+				pluginReq.getFuncInfoList().forEach(e -> {
+					if (FuncType.UDF.equals(e.getType())) {
+						sparkSession.udf().registerJava(e.getFuncName(), e.getClassName(),
+								getResultType(e.getResultType()));
+					} else if (FuncType.UDAF.equals(e.getType())) {
+						sparkSession.udf().registerJavaUDAF(e.getFuncName(), e.getClassName());
+					}
+				});
 			}
 
+			// 选择db
+			if (!Strings.isEmpty(pluginReq.getDatabase())) {
+				sparkSession.sql("use " + pluginReq.getDatabase());
+			}
+
+			// 除了最后一行sql，执行其他所有sql
 			for (int i = 0; i < sqls.length - 1; i++) {
 				if (!Strings.isEmpty(sqls[i])) {
 					sparkSession.sql(sqls[i]);
 				}
 			}
+
+			// 执行最后一行sql并打印输出
 			Dataset<Row> rowDataset = sparkSession.sql(sqls[sqls.length - 1]).limit(pluginReq.getLimit());
 			exportResult(rowDataset);
 		}

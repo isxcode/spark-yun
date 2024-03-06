@@ -317,6 +317,10 @@ function getTypeData(e: string) {
     {
       label: 'python作业',
       value: 'PYTHON'
+    },
+    {
+      label: '自定义作业',
+      value: 'SPARK_JAR'
     }
   ]
   return typeList.find(itme => itme.value === e)?.label

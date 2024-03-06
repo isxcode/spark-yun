@@ -1,14 +1,12 @@
 package com.isxcode.star.api.work.pojos.res;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.isxcode.star.api.work.pojos.dto.ClusterConfig;
-import com.isxcode.star.api.work.pojos.dto.CronConfig;
-import com.isxcode.star.api.work.pojos.dto.SyncRule;
-import com.isxcode.star.api.work.pojos.dto.SyncWorkConfig;
+import com.isxcode.star.api.work.pojos.dto.*;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import javax.validation.constraints.NotEmpty;
+import java.util.List;
 
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -42,5 +40,9 @@ public class GetWorkRes {
 
 	private String name;
 
-	private String jarConf;
+	private JarJobConfig jarJobConfig;
+
+	private List<String> funcList;
+
+	private List<String> libList;
 }

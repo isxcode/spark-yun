@@ -30,11 +30,25 @@ export const menuListData: Array<Menu> = [
     childPage: []
   },
   {
+    code: 'file-center',
+    name: '资源中心',
+    icon: 'Paperclip',
+    authType: [ 'ROLE_TENANT_MEMBER', 'ROLE_TENANT_ADMIN' ],
+    childPage: []
+  },
+  {
     code: 'workflow',
     name: '作业流',
     icon: 'SetUp',
     authType: [ 'ROLE_TENANT_MEMBER', 'ROLE_TENANT_ADMIN' ],
     childPage: ['workflow-page']
+  },
+  {
+    code: 'custom-func',
+    name: '函数仓库',
+    icon: 'Mouse',
+    authType: [ 'ROLE_TENANT_MEMBER', 'ROLE_TENANT_ADMIN' ],
+    childPage: []
   },
   {
     code: 'driver-management',
@@ -53,7 +67,7 @@ export const menuListData: Array<Menu> = [
   {
     code: 'custom-form',
     name: '分享表单',
-    icon: 'Files',
+    icon: 'Share',
     authType: [ 'ROLE_TENANT_MEMBER', 'ROLE_TENANT_ADMIN' ],
     childPage: ['form-list', 'form-query', 'form-setting']
   },

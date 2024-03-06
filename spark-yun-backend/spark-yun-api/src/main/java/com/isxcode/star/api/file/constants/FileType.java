@@ -3,9 +3,18 @@ package com.isxcode.star.api.file.constants;
 /** 文件类型. */
 public interface FileType {
 
-	String SPARK_JOB = "sparkJob";
+	/**
+	 * 自定义作业.
+	 */
+	String JOB = "JOB";
 
-	String LIB = "lib";
+	/**
+	 * 依赖文件.
+	 */
+	String LIB = "LIB";
 
-	String DRIVER = "driver";
+	/**
+	 * 自定义函数.
+	 */
+	String FUNC = "FUNC";
 }

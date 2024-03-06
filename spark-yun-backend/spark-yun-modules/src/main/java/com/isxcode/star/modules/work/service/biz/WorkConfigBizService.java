@@ -1,6 +1,7 @@
 package com.isxcode.star.modules.work.service.biz;
 
 import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.TypeReference;
 import com.isxcode.star.api.datasource.constants.DatasourceType;
 import com.isxcode.star.api.work.constants.SetMode;
@@ -134,15 +135,28 @@ public class WorkConfigBizService {
 			workConfig.setClusterConfig(JSON.toJSONString(getHiveStoreUri(workConfig)));
 		}
 
-		// // 设置udf函数状态
-		// if (wocConfigWorkReq.getUdfStatus() != null) {
-		// workConfig.setUdfStatus(wocConfigWorkReq.getUdfStatus());
-		// }
-		//
-		// // 设置自定义作业配置信息
-		// if (!Strings.isEmpty(wocConfigWorkReq.getJarConf())) {
-		// workConfig.setJarConf(wocConfigWorkReq.getJarConf());
-		// }
+		// 设置用户自定义函数
+		if (wocConfigWorkReq.getFuncList() != null) {
+			if (!wocConfigWorkReq.getFuncList().isEmpty()) {
+				workConfig.setFuncConfig(JSONArray.toJSONString(wocConfigWorkReq.getFuncList()));
+			} else {
+				workConfig.setFuncConfig("[]");
+			}
+		}
+
+		// 设置用户程序依赖
+		if (wocConfigWorkReq.getLibList() != null) {
+			if (!wocConfigWorkReq.getLibList().isEmpty()) {
+				workConfig.setLibConfig(JSONArray.toJSONString(wocConfigWorkReq.getLibList()));
+			} else {
+				workConfig.setLibConfig("[]");
+			}
+		}
+
+		// 设置自定义作业配置信息
+		if (wocConfigWorkReq.getJarJobConfig() != null) {
+			workConfig.setJarJobConfig(JSON.toJSONString(wocConfigWorkReq.getJarJobConfig()));
+		}
 
 		// 保存配置
 		workConfigRepository.save(workConfig);

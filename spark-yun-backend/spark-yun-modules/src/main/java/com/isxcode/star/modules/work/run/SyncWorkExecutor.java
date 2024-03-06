@@ -7,30 +7,40 @@ import com.isxcode.star.api.agent.pojos.req.YagExecuteWorkReq;
 import com.isxcode.star.api.agent.pojos.res.YagGetLogRes;
 import com.isxcode.star.api.api.constants.PathConstants;
 import com.isxcode.star.api.cluster.constants.ClusterNodeStatus;
+import com.isxcode.star.api.cluster.pojos.dto.ScpFileEngineNodeDto;
 import com.isxcode.star.api.work.constants.WorkLog;
 import com.isxcode.star.api.work.exceptions.WorkRunException;
 import com.isxcode.star.api.work.pojos.dto.DatasourceConfig;
 import com.isxcode.star.api.work.pojos.res.RunWorkRes;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.star.backend.api.base.pojos.BaseResponse;
+import com.isxcode.star.backend.api.base.properties.IsxAppProperties;
 import com.isxcode.star.common.locker.Locker;
 import com.isxcode.star.common.utils.AesUtils;
 import com.isxcode.star.common.utils.http.HttpUrlUtils;
 import com.isxcode.star.common.utils.http.HttpUtils;
+import com.isxcode.star.common.utils.path.PathUtils;
 import com.isxcode.star.modules.cluster.entity.ClusterEntity;
 import com.isxcode.star.modules.cluster.entity.ClusterNodeEntity;
+import com.isxcode.star.modules.cluster.mapper.ClusterNodeMapper;
 import com.isxcode.star.modules.cluster.repository.ClusterNodeRepository;
 import com.isxcode.star.modules.cluster.repository.ClusterRepository;
 import com.isxcode.star.modules.datasource.entity.DatasourceEntity;
 import com.isxcode.star.modules.datasource.service.DatasourceService;
+import com.isxcode.star.modules.file.entity.FileEntity;
+import com.isxcode.star.modules.file.repository.FileRepository;
+import com.isxcode.star.modules.func.entity.FuncEntity;
+import com.isxcode.star.modules.func.mapper.FuncMapper;
+import com.isxcode.star.modules.func.repository.FuncRepository;
 import com.isxcode.star.modules.work.entity.WorkConfigEntity;
 import com.isxcode.star.modules.work.entity.WorkEntity;
 import com.isxcode.star.modules.work.entity.WorkInstanceEntity;
 import com.isxcode.star.modules.work.repository.WorkConfigRepository;
 import com.isxcode.star.modules.work.repository.WorkInstanceRepository;
 import com.isxcode.star.modules.work.repository.WorkRepository;
-import com.isxcode.star.modules.work.service.WorkConfigService;
 import com.isxcode.star.modules.workflow.repository.WorkflowInstanceRepository;
+import com.jcraft.jsch.JSchException;
+import com.jcraft.jsch.SftpException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.http.HttpStatus;
@@ -42,6 +52,9 @@ import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.*;
+
+import static com.isxcode.star.common.config.CommonConfig.TENANT_ID;
+import static com.isxcode.star.common.utils.ssh.SshUtils.scpJar;
 
 /**
  * 同步作业执行器.
@@ -66,15 +79,24 @@ public class SyncWorkExecutor extends WorkExecutor {
 
 	private final AesUtils aesUtils;
 
-	private final WorkConfigService workConfigService;
+	private final ClusterNodeMapper clusterNodeMapper;
 
 	private final DatasourceService datasourceService;
+
+	private final IsxAppProperties isxAppProperties;
+
+	private final FuncRepository funcRepository;
+
+	private final FuncMapper funcMapper;
+
+	private final FileRepository fileRepository;
 
 	public SyncWorkExecutor(WorkInstanceRepository workInstanceRepository, ClusterRepository clusterRepository,
 			ClusterNodeRepository clusterNodeRepository, WorkflowInstanceRepository workflowInstanceRepository,
 			WorkRepository workRepository, WorkConfigRepository workConfigRepository, Locker locker,
-			HttpUrlUtils httpUrlUtils, AesUtils aesUtils, WorkConfigService workConfigService,
-			DatasourceService datasourceService) {
+			HttpUrlUtils httpUrlUtils, AesUtils aesUtils, ClusterNodeMapper clusterNodeMapper,
+			DatasourceService datasourceService, IsxAppProperties isxAppProperties, FuncRepository funcRepository,
+			FuncMapper funcMapper, FileRepository fileRepository) {
 
 		super(workInstanceRepository, workflowInstanceRepository);
 		this.workInstanceRepository = workInstanceRepository;
@@ -85,8 +107,12 @@ public class SyncWorkExecutor extends WorkExecutor {
 		this.locker = locker;
 		this.httpUrlUtils = httpUrlUtils;
 		this.aesUtils = aesUtils;
-		this.workConfigService = workConfigService;
+		this.clusterNodeMapper = clusterNodeMapper;
 		this.datasourceService = datasourceService;
+		this.isxAppProperties = isxAppProperties;
+		this.funcRepository = funcRepository;
+		this.funcMapper = funcMapper;
+		this.fileRepository = fileRepository;
 	}
 
 	@Override
@@ -159,6 +185,42 @@ public class SyncWorkExecutor extends WorkExecutor {
 		PluginReq pluginReq = PluginReq.builder().syncWorkConfig(workRunContext.getSyncWorkConfig())
 				.sparkConfig(genSparkConfig(workRunContext.getClusterConfig().getSparkConfig()))
 				.syncRule(workRunContext.getSyncRule()).build();
+
+		// 导入自定义函数
+		ScpFileEngineNodeDto scpFileEngineNodeDto = clusterNodeMapper
+				.engineNodeEntityToScpFileEngineNodeDto(engineNode);
+		scpFileEngineNodeDto.setPasswd(aesUtils.decrypt(scpFileEngineNodeDto.getPasswd()));
+		String fileDir = PathUtils.parseProjectPath(isxAppProperties.getResourcesPath()) + File.separator + "file"
+				+ File.separator + TENANT_ID.get();
+		if (workRunContext.getFuncConfig() != null) {
+			List<FuncEntity> allFunc = funcRepository.findAllById(workRunContext.getFuncConfig());
+			allFunc.forEach(e -> {
+				try {
+					scpJar(scpFileEngineNodeDto, fileDir + File.separator + e.getFileId(),
+							engineNode.getAgentHomePath() + File.separator + "zhiqingyun-agent" + File.separator
+									+ "file" + File.separator + e.getFileId() + ".jar");
+				} catch (JSchException | SftpException | InterruptedException | IOException ex) {
+					throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + " : jar文件上传失败\n");
+				}
+			});
+			pluginReq.setFuncInfoList(funcMapper.funcEntityListToFuncInfoList(allFunc));
+			executeReq.setFuncConfig(funcMapper.funcEntityListToFuncInfoList(allFunc));
+		}
+
+		// 上传依赖到制定节点路径
+		if (workRunContext.getLibConfig() != null) {
+			List<FileEntity> libFile = fileRepository.findAllById(workRunContext.getLibConfig());
+			libFile.forEach(e -> {
+				try {
+					scpJar(scpFileEngineNodeDto, fileDir + File.separator + e.getId(),
+							engineNode.getAgentHomePath() + File.separator + "zhiqingyun-agent" + File.separator
+									+ "file" + File.separator + e.getId() + ".jar");
+				} catch (JSchException | SftpException | InterruptedException | IOException ex) {
+					throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "jar文件上传失败\n");
+				}
+			});
+			executeReq.setLibConfig(workRunContext.getLibConfig());
+		}
 
 		// 开始构造executeReq
 		executeReq.setSparkSubmit(sparkSubmit);
