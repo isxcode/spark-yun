@@ -33,5 +33,5 @@ public class PluginReq {
 
 	private List<FuncInfo> funcInfoList;
 
-  private Map<String, Object> kafkaConfig;
+	private Map<String, Object> kafkaConfig;
 }
