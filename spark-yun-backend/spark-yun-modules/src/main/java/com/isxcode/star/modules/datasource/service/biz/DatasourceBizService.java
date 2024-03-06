@@ -113,7 +113,7 @@ public class DatasourceBizService {
 	public Page<PageDatasourceRes> pageDatasource(PageDatasourceReq dasQueryDatasourceReq) {
 
 		Page<DatasourceEntity> datasourceEntityPage = datasourceRepository.searchAll(
-				dasQueryDatasourceReq.getSearchKeyWord(),
+				dasQueryDatasourceReq.getSearchKeyWord(),dasQueryDatasourceReq.getDatasourceType(),
 				PageRequest.of(dasQueryDatasourceReq.getPage(), dasQueryDatasourceReq.getPageSize()));
 
 		Page<PageDatasourceRes> pageDatasourceRes = datasourceEntityPage
