@@ -1,11 +1,13 @@
 package com.isxcode.star.modules.work.run;
 
 import com.isxcode.star.api.work.pojos.dto.ClusterConfig;
+import com.isxcode.star.api.work.pojos.dto.JarJobConfig;
 import com.isxcode.star.api.work.pojos.dto.SyncRule;
 import com.isxcode.star.api.work.pojos.dto.SyncWorkConfig;
-import com.isxcode.star.modules.work.entity.SparkJarConfigEntity;
 import lombok.Builder;
 import lombok.Data;
+
+import java.util.List;
 
 /**
  * 作业运行上下文.
@@ -80,13 +82,18 @@ public class WorkRunContext {
 	private StringBuilder logBuilder;
 
 	/**
-	 * udf启用状态.
+	 * 用户自定义jar的配置
 	 */
-	private Boolean udfStatus;
+	private JarJobConfig jarJobConfig;
 
 	/**
-	 * udf启用状态.
+	 * 自定义函数配置.
 	 */
-	private SparkJarConfigEntity jarConf;
+	private List<String> funcConfig;
+
+	/**
+	 * 依赖配置.
+	 */
+	private List<String> libConfig;
 
 }

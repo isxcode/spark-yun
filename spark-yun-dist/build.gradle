@@ -61,6 +61,9 @@ tasks.register('build_agent', Tar) {
   from('zhiqingyun-agent/works') {
     into 'zhiqingyun-agent/works'
   }
+  from('zhiqingyun-agent/file') {
+    into 'zhiqingyun-agent/file'
+  }
   from('build/zhiqingyun-agent/lib') {
     into 'zhiqingyun-agent/lib'
   }

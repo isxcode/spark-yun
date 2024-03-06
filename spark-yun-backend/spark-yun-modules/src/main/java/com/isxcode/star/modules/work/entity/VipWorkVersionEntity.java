@@ -52,6 +52,12 @@ public class VipWorkVersionEntity {
 
 	private String syncRule;
 
+	private String jarJobConfig;
+
+	private String libConfig;
+
+	private String funcConfig;
+
 	@CreatedDate
 	private LocalDateTime createDateTime;
 

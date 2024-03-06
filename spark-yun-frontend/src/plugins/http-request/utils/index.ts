@@ -35,7 +35,7 @@ const transform: AxiosTransform = {
     } = res.data
 
     // 接口请求成功
-    if (code == ResultEnum.SUCCESS || code == ResultEnum.SUCCESS2) {
+    if (code == ResultEnum.SUCCESS || code == ResultEnum.SUCCESS2 || !code) {
       // 提示成功信息
       const successMsg = successMessageText || msg || '操作成功！'
       if (isShowMessage && isShowSuccessMessage) {

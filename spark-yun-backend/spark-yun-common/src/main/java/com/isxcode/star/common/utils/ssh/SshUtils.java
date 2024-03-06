@@ -10,6 +10,9 @@ import com.jcraft.jsch.SftpATTRS;
 import com.jcraft.jsch.SftpException;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.FileSystemResourceLoader;
 
@@ -163,6 +166,53 @@ public class SshUtils {
 			if (attrs != null) {
 				long remoteFileSize = attrs.getSize();
 				long localFileSize = content.getBytes().length;
+				if (remoteFileSize == localFileSize) {
+					break;
+				}
+			}
+			Thread.sleep(1000);
+		}
+
+		channel.disconnect();
+		session.disconnect();
+	}
+
+	/** scp传递Jar. */
+	public static void scpJar(ScpFileEngineNodeDto engineNode, String srcPath, String dstPath)
+			throws JSchException, SftpException, InterruptedException, IOException {
+
+		// 初始化jsch
+		JSch jsch = new JSch();
+
+		if (engineNode.getPasswd().length() > 1000) {
+			jsch.addIdentity(engineNode.getUsername(), engineNode.getPasswd().getBytes(), null, null);
+		}
+
+		Session session = jsch.getSession(engineNode.getUsername(), engineNode.getHost(),
+				Integer.parseInt(engineNode.getPort()));
+
+		// 连接远程服务器
+		if (engineNode.getPasswd().length() < 1000) {
+			session.setPassword(engineNode.getPasswd());
+		}
+
+		session.setConfig("StrictHostKeyChecking", "no");
+		session.connect();
+
+		// 上传文件
+		ChannelSftp channel;
+		channel = (ChannelSftp) session.openChannel("sftp");
+		channel.connect(120000);
+		FileSystemResourceLoader resourceLoader = new FileSystemResourceLoader();
+		channel.put(Files.newInputStream(Paths.get(srcPath)), dstPath);
+
+		// 文件校验
+		SftpATTRS attrs;
+		while (true) {
+			attrs = channel.stat(dstPath);
+			if (attrs != null) {
+				long remoteFileSize = attrs.getSize();
+				long localFileSize = Files.size(Paths.get(srcPath));
 				if (remoteFileSize == localFileSize) {
 					break;
 				}

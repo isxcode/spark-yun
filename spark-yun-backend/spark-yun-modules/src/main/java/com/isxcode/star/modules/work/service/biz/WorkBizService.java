@@ -9,10 +9,7 @@ import com.isxcode.star.api.work.constants.WorkLog;
 import com.isxcode.star.api.work.constants.WorkStatus;
 import com.isxcode.star.api.work.constants.WorkType;
 import com.isxcode.star.api.work.exceptions.WorkRunException;
-import com.isxcode.star.api.work.pojos.dto.ClusterConfig;
-import com.isxcode.star.api.work.pojos.dto.CronConfig;
-import com.isxcode.star.api.work.pojos.dto.SyncRule;
-import com.isxcode.star.api.work.pojos.dto.SyncWorkConfig;
+import com.isxcode.star.api.work.pojos.dto.*;
 import com.isxcode.star.api.work.pojos.req.*;
 import com.isxcode.star.api.work.pojos.res.*;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
@@ -23,14 +20,11 @@ import com.isxcode.star.modules.cluster.entity.ClusterEntity;
 import com.isxcode.star.modules.cluster.entity.ClusterNodeEntity;
 import com.isxcode.star.modules.cluster.repository.ClusterNodeRepository;
 import com.isxcode.star.modules.cluster.repository.ClusterRepository;
-import com.isxcode.star.modules.work.entity.UdfEntity;
 import com.isxcode.star.modules.work.entity.WorkConfigEntity;
 import com.isxcode.star.modules.work.entity.WorkEntity;
 import com.isxcode.star.modules.work.entity.WorkInstanceEntity;
-import com.isxcode.star.modules.work.mapper.UdfMapper;
 import com.isxcode.star.modules.work.mapper.WorkConfigMapper;
 import com.isxcode.star.modules.work.mapper.WorkMapper;
-import com.isxcode.star.modules.work.repository.UdfRepository;
 import com.isxcode.star.modules.work.repository.WorkConfigRepository;
 import com.isxcode.star.modules.work.repository.WorkInstanceRepository;
 import com.isxcode.star.modules.work.repository.WorkRepository;
@@ -89,10 +83,6 @@ public class WorkBizService {
 
 	private final WorkConfigMapper workConfigMapper;
 
-	private final UdfRepository udfRepository;
-
-	private final UdfMapper udfMapper;
-
 	public GetWorkRes addWork(AddWorkReq addWorkReq) {
 
 		// 校验作业名的唯一性
@@ -102,51 +92,33 @@ public class WorkBizService {
 			throw new IsxAppException("作业名称重复，请重新输入");
 		}
 
+		// 将addWorkReq转成workEntity
 		WorkEntity work = workMapper.addWorkReqToWorkEntity(addWorkReq);
-
-		WorkConfigEntity workConfig = new WorkConfigEntity();
 
 		// sparkSql要是支持访问hive，必须填写datasourceId
 		if (WorkType.QUERY_SPARK_SQL.equals(addWorkReq.getWorkType())) {
 			if (addWorkReq.getEnableHive()) {
 				if (Strings.isEmpty(addWorkReq.getDatasourceId())) {
 					throw new IsxAppException("开启hive，必须配置hive数据源");
-				} else {
-					workConfig.setDatasourceId(addWorkReq.getDatasourceId());
 				}
 			}
 		}
 
-		// sparkSql要是支持访问hive，必须填写datasourceId
+		// python作业和bash作业，必须选择服务器节点
 		if (WorkType.PYTHON.equals(addWorkReq.getWorkType()) || WorkType.BASH.equals(addWorkReq.getWorkType())) {
 			if (Strings.isEmpty(addWorkReq.getClusterNodeId())) {
 				throw new IsxAppException("缺少集群节点配置");
 			}
 		}
 
-		// 初始化脚本
-		if (WorkType.QUERY_SPARK_SQL.equals(addWorkReq.getWorkType())
-				|| WorkType.EXECUTE_JDBC_SQL.equals(addWorkReq.getWorkType())
-				|| WorkType.QUERY_JDBC_SQL.equals(addWorkReq.getWorkType())
-				|| WorkType.BASH.equals(addWorkReq.getWorkType()) || WorkType.PYTHON.equals(addWorkReq.getWorkType())) {
-			workConfigService.initWorkScript(workConfig, addWorkReq.getWorkType());
-		}
-
-		// 初始化计算引擎
+		// sparkSql，数据同步，bash，python，必须配置集群
 		if (WorkType.QUERY_SPARK_SQL.equals(addWorkReq.getWorkType())
 				|| WorkType.DATA_SYNC_JDBC.equals(addWorkReq.getWorkType())
-				|| WorkType.BASH.equals(addWorkReq.getWorkType()) || WorkType.PYTHON.equals(addWorkReq.getWorkType())) {
+				|| WorkType.BASH.equals(addWorkReq.getWorkType()) || WorkType.PYTHON.equals(addWorkReq.getWorkType())
+				|| WorkType.SPARK_JAR.equals(addWorkReq.getWorkType())) {
 			if (Strings.isEmpty(addWorkReq.getClusterId())) {
 				throw new IsxAppException("必须选择计算引擎");
-			} else {
-				workConfigService.initClusterConfig(workConfig, addWorkReq.getClusterId(),
-						addWorkReq.getClusterNodeId(), addWorkReq.getEnableHive(), addWorkReq.getDatasourceId());
 			}
-		}
-
-		// 初始化数据同步分区值
-		if (WorkType.DATA_SYNC_JDBC.equals(addWorkReq.getWorkType())) {
-			workConfigService.initSyncRule(workConfig);
 		}
 
 		// 如果jdbc执行和jdbc查询，必填数据源
@@ -155,20 +127,48 @@ public class WorkBizService {
 			if (Strings.isEmpty(addWorkReq.getDatasourceId())) {
 				throw new IsxAppException("数据源是必填项");
 			}
-			workConfig.setDatasourceId(addWorkReq.getDatasourceId());
+		}
+
+		// 初始化作业的配置
+		WorkConfigEntity workConfig = new WorkConfigEntity();
+
+		// 配置添加数据源
+		workConfig.setDatasourceId(addWorkReq.getDatasourceId());
+
+		// 如果是sparkSql,jdbcQuerySql,jdbcExecuteSql,bash,python作业，需要初始化脚本内容，方便客户使用
+		if (WorkType.QUERY_SPARK_SQL.equals(addWorkReq.getWorkType())
+				|| WorkType.EXECUTE_JDBC_SQL.equals(addWorkReq.getWorkType())
+				|| WorkType.QUERY_JDBC_SQL.equals(addWorkReq.getWorkType())
+				|| WorkType.BASH.equals(addWorkReq.getWorkType()) || WorkType.PYTHON.equals(addWorkReq.getWorkType())) {
+			workConfigService.initWorkScript(workConfig, addWorkReq.getWorkType());
+		}
+
+		// 初始化数据同步分区值
+		if (WorkType.DATA_SYNC_JDBC.equals(addWorkReq.getWorkType())) {
+			workConfigService.initSyncRule(workConfig);
+		}
+
+		// 初始化计算引擎
+		if (WorkType.QUERY_SPARK_SQL.equals(addWorkReq.getWorkType())
+				|| WorkType.DATA_SYNC_JDBC.equals(addWorkReq.getWorkType())
+				|| WorkType.BASH.equals(addWorkReq.getWorkType()) || WorkType.PYTHON.equals(addWorkReq.getWorkType())
+				|| WorkType.SPARK_JAR.equals(addWorkReq.getWorkType())) {
+			workConfigService.initClusterConfig(workConfig, addWorkReq.getClusterId(), addWorkReq.getClusterNodeId(),
+					addWorkReq.getEnableHive(), addWorkReq.getDatasourceId());
 		}
 
 		// 初始化调度默认值
 		workConfigService.initCronConfig(workConfig);
 
-		// 添加作业的默认配置
+		// 作业配置持久化
 		workConfig = workConfigRepository.save(workConfig);
+
+		// 作业信息持久化
 		work.setConfigId(workConfig.getId());
 		work.setStatus(WorkStatus.UN_PUBLISHED);
-
 		workRepository.save(work);
 
-		// 返回work内容
+		// 返回work信息给前端
 		return getWork(GetWorkReq.builder().workId(work.getId()).build());
 	}
 
@@ -439,6 +439,24 @@ public class WorkBizService {
 			getWorkRes.getSyncRule().setSqlConfigJson(JSON.toJSONString(getWorkRes.getSyncRule().getSqlConfig()));
 		}
 
+		// 翻译依赖配置
+		if (!Strings.isEmpty(workConfig.getLibConfig())) {
+			List<String> libId = JSON.parseArray(workConfig.getLibConfig(), String.class);
+			getWorkRes.setLibList(libId);
+		}
+
+		// 翻译函数配置
+		if (!Strings.isEmpty(workConfig.getFuncConfig())) {
+			List<String> funcId = JSON.parseArray(workConfig.getFuncConfig(), String.class);
+			getWorkRes.setFuncList(funcId);
+		}
+
+		// 翻译自定义jar配置
+		if (!Strings.isEmpty(workConfig.getJarJobConfig())) {
+			JarJobConfig jarJobConfig = JSON.parseObject(workConfig.getJarJobConfig(), JarJobConfig.class);
+			getWorkRes.setJarJobConfig(jarJobConfig);
+		}
+
 		return getWorkRes;
 	}
 
@@ -537,29 +555,5 @@ public class WorkBizService {
 		SyncWorkConfig syncWorkConfig = JSON.parseObject(workConfig.getSyncWorkConfig(), SyncWorkConfig.class);
 
 		return workConfigMapper.syncWorkConfigToGetSyncWorkConfigRes(syncWorkConfig);
-	}
-
-	public PageUdfRes addUdf(AddUdfReq addUdfReq) {
-		UdfEntity udfEntity = udfMapper.addUdfReqToUdfEntity(addUdfReq);
-		return udfMapper.udfEntityToPageUdfRes(udfRepository.save(udfEntity));
-	}
-
-	public void updateUdf(UpdateUdfReq updateUdfReq) {
-		UdfEntity udfEntity = udfRepository.findById(updateUdfReq.getId())
-				.orElseThrow(() -> new IsxAppException("函数不存在"));
-
-		udfEntity = udfMapper.updateUdfReqToUdfEntity(updateUdfReq, udfEntity);
-		udfRepository.save(udfEntity);
-	}
-
-	public void deleteUdf(DeleteUdfReq deleteUdfReq) {
-		udfRepository.deleteById(deleteUdfReq.getUdfId());
-	}
-
-	public Page<PageUdfRes> getUdf(PageUdfReq pageUdfReq) {
-		Page<UdfEntity> udfPage = udfRepository.pageSearch(pageUdfReq.getSearchKeyWord(),
-				PageRequest.of(pageUdfReq.getPage(), pageUdfReq.getPageSize()));
-
-		return udfPage.map(udfMapper::udfEntityToPageUdfRes);
 	}
 }

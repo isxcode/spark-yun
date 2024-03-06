@@ -305,6 +305,42 @@
               </template>
             </el-form>
           </div>
+          <!-- 函数配置 -->
+          <div class="config-item" v-if="['SPARK_SQL', 'DATA_SYNC_JDBC'].includes(workItemConfig.workType)">
+            <div class="item-title">函数配置</div>
+            <el-form
+              ref="syncRuleForm"
+              label-position="left"
+              label-width="120px"
+              :model="fileConfig"
+            >
+              <el-form-item label="函数">
+                <el-select v-model="fileConfig.funcList" collapse-tags multiple clearable
+                  filterable placeholder="请选择">
+                    <el-option v-for="item in fileIdList" :key="item.id" :label="item.funcName"
+                        :value="item.id" />
+                </el-select>
+              </el-form-item>
+            </el-form>
+          </div>
+          <!-- 依赖配置 -->
+          <div class="config-item" v-if="['SPARK_SQL', 'SPARK_JAR', 'DATA_SYNC_JDBC'].includes(workItemConfig.workType)">
+            <div class="item-title">依赖配置</div>
+            <el-form
+              ref="syncRuleForm"
+              label-position="left"
+              label-width="120px"
+              :model="fileConfig"
+            >
+              <el-form-item label="依赖">
+                <el-select v-model="fileConfig.libList" collapse-tags multiple clearable
+                    filterable placeholder="请选择">
+                    <el-option v-for="item in libIdList" :key="item.value" :label="item.label"
+                        :value="item.value" />
+                </el-select>
+              </el-form-item>
+            </el-form>
+          </div>
         </div>
       </el-scrollbar>
   </BlockDrawer>
@@ -322,6 +358,8 @@ import { GetWorkItemConfig, SaveWorkItemConfig } from '@/services/workflow.servi
 import { GetComputerGroupList, GetComputerPointData } from '@/services/computer-group.service';
 import { GetDatasourceList } from '@/services/datasource.service'
 import { jsonFormatter } from '@/utils/formatter'
+import { GetFileCenterList } from '@/services/file-center.service'
+import { GetCustomFuncList } from '@/services/custom-func.service'
 
 const scheduleRange = ref(ScheduleRange);
 const weekDateList = ref(WeekDateList)
@@ -332,6 +370,9 @@ const dayList = ref()
 const lang = ref<any>(json())
 const sqllang = ref<any>(sql())
 const workItemConfig = ref()
+const fileIdList = ref([]) // 资源文件
+const libIdList = ref([])  // 依赖
+
 const resourceLevelOptions = ref(ResourceLevelOptions) // 资源等级
 const dataSourceConfig = ref<FormInstance>()
 const clusterConfigForm = ref<FormInstance>()
@@ -396,6 +437,10 @@ let syncRule = reactive({
   // sqlConfig: '',
   sqlConfigJson: ''
 })
+const fileConfig = reactive({
+  funcList: [],
+  libList: []
+})
 const dataSourceRules = reactive<FormRules>(DataSourceRules)
 const clusterConfigRules = reactive<FormRules>(ClusterConfigRules)
 const cronConfigRules = reactive<FormRules>(CronConfigRules)
@@ -434,12 +479,45 @@ function showModal(data?: any) {
       // 获取集群参数
       getClusterList()
     }
+    // 获取函数配置和依赖配置
+    getFuncList()
+    getFileCenterList()
+
     getDataSourceList(true)
     workItemConfig.value = data
     getConfigDetailData()
   }
 
   drawerConfig.visible = true;
+}
+
+function getFileCenterList() {
+    GetFileCenterList({
+        page: 0,
+        pageSize: 10000,
+        searchKeyWord: '',
+        type: 'LIB'
+    }).then((res: any) => {
+        libIdList.value = res.data.content.map(item => {
+            return {
+                label: item.fileName,
+                value: item.id
+            }
+        })
+    }).catch(() => {
+        libIdList.value = []
+    })
+}
+function getFuncList() {
+    GetCustomFuncList({
+        page: 0,
+        pageSize: 10000,
+        searchKeyWord: ''
+    }).then((res: any) => {
+        fileIdList.value = res.data.content
+    }).catch(() => {
+        fileIdList.value = []
+    })
 }
 
 function getConfigDetailData() {
@@ -471,6 +549,8 @@ function getConfigDetailData() {
       })
       syncRule.sqlConfigJson = jsonFormatter(syncRule.sqlConfigJson)
     }
+    fileConfig.funcList = res.data.funcList || []
+    fileConfig.libList = res.data.libList || []
     clusterConfig.setMode = clusterConfig.setMode || 'SIMPLE'
     cronConfig.setMode = cronConfig.setMode || 'SIMPLE'
     syncRule.setMode = syncRule.setMode || 'SIMPLE'
@@ -511,7 +591,8 @@ function okEvent() {
           ...cronConfig,
           cron: cronConfig.setMode === 'SIMPLE' ? cron : cronConfig.cron
         },
-        syncRule: syncRule
+        syncRule: syncRule,
+        ...fileConfig
       }).then((res: any) => {
         ElMessage.success('保存成功')
         drawerConfig.visible = false;

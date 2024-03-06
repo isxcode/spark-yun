@@ -8,14 +8,18 @@ import com.isxcode.star.api.api.constants.PathConstants;
 import com.isxcode.star.api.cluster.constants.ClusterNodeStatus;
 import com.isxcode.star.api.cluster.pojos.dto.ScpFileEngineNodeDto;
 import com.isxcode.star.api.work.constants.WorkLog;
+import com.isxcode.star.api.work.constants.WorkType;
 import com.isxcode.star.api.work.exceptions.WorkRunException;
+import com.isxcode.star.api.work.pojos.dto.JarJobConfig;
 import com.isxcode.star.api.work.pojos.res.RunWorkRes;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.star.backend.api.base.pojos.BaseResponse;
+import com.isxcode.star.backend.api.base.properties.IsxAppProperties;
 import com.isxcode.star.common.locker.Locker;
 import com.isxcode.star.common.utils.AesUtils;
 import com.isxcode.star.common.utils.http.HttpUrlUtils;
 import com.isxcode.star.common.utils.http.HttpUtils;
+import com.isxcode.star.common.utils.path.PathUtils;
 import com.isxcode.star.modules.cluster.entity.ClusterEntity;
 import com.isxcode.star.modules.cluster.entity.ClusterNodeEntity;
 import com.isxcode.star.modules.cluster.mapper.ClusterNodeMapper;
@@ -23,7 +27,7 @@ import com.isxcode.star.modules.cluster.repository.ClusterNodeRepository;
 import com.isxcode.star.modules.cluster.repository.ClusterRepository;
 import com.isxcode.star.modules.file.entity.FileEntity;
 import com.isxcode.star.modules.file.repository.FileRepository;
-import com.isxcode.star.modules.work.entity.SparkJarConfigEntity;
+import com.isxcode.star.modules.file.service.FileService;
 import com.isxcode.star.modules.work.entity.WorkConfigEntity;
 import com.isxcode.star.modules.work.entity.WorkEntity;
 import com.isxcode.star.modules.work.entity.WorkInstanceEntity;
@@ -45,7 +49,8 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.*;
 
-import static com.isxcode.star.common.utils.ssh.SshUtils.scpFile;
+import static com.isxcode.star.common.config.CommonConfig.TENANT_ID;
+import static com.isxcode.star.common.utils.ssh.SshUtils.scpJar;
 
 @Service
 @Slf4j
@@ -61,7 +66,7 @@ public class SparkJarExecutor extends WorkExecutor {
 
 	private final WorkConfigRepository workConfigRepository;
 
-	private final FileRepository fileRepository;
+	private final IsxAppProperties isxAppProperties;
 
 	private final Locker locker;
 
@@ -71,10 +76,15 @@ public class SparkJarExecutor extends WorkExecutor {
 
 	private final AesUtils aesUtils;
 
+	private final FileService fileService;
+
+	private final FileRepository fileRepository;
+
 	public SparkJarExecutor(WorkInstanceRepository workInstanceRepository, ClusterRepository clusterRepository,
 			ClusterNodeRepository clusterNodeRepository, WorkflowInstanceRepository workflowInstanceRepository,
-			WorkRepository workRepository, WorkConfigRepository workConfigRepository, FileRepository fileRepository,
-			Locker locker, HttpUrlUtils httpUrlUtils, ClusterNodeMapper clusterNodeMapper, AesUtils aesUtils) {
+			WorkRepository workRepository, WorkConfigRepository workConfigRepository, IsxAppProperties isxAppProperties,
+			Locker locker, HttpUrlUtils httpUrlUtils, ClusterNodeMapper clusterNodeMapper, AesUtils aesUtils,
+			FileService fileService, FileRepository fileRepository) {
 
 		super(workInstanceRepository, workflowInstanceRepository);
 		this.workInstanceRepository = workInstanceRepository;
@@ -82,11 +92,13 @@ public class SparkJarExecutor extends WorkExecutor {
 		this.clusterNodeRepository = clusterNodeRepository;
 		this.workRepository = workRepository;
 		this.workConfigRepository = workConfigRepository;
-		this.fileRepository = fileRepository;
+		this.isxAppProperties = isxAppProperties;
 		this.locker = locker;
 		this.httpUrlUtils = httpUrlUtils;
 		this.clusterNodeMapper = clusterNodeMapper;
 		this.aesUtils = aesUtils;
+		this.fileService = fileService;
+		this.fileRepository = fileRepository;
 	}
 
 	@Override
@@ -94,12 +106,6 @@ public class SparkJarExecutor extends WorkExecutor {
 
 		// 获取日志构造器
 		StringBuilder logBuilder = workRunContext.getLogBuilder();
-
-		// 判断执行脚本是否为空
-		logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("检测脚本内容 \n");
-		if (Strings.isEmpty(workRunContext.getScript())) {
-			throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "检测脚本失败 : SQL内容为空不能执行  \n");
-		}
 
 		// 检测计算集群是否存在
 		logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始申请资源 \n");
@@ -128,58 +134,58 @@ public class SparkJarExecutor extends WorkExecutor {
 		logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("检测运行环境完成  \n");
 		workInstance = updateInstance(workInstance, logBuilder);
 
-		// 获取作业jar与lib文件信息并scp至所选节点
-		SparkJarConfigEntity sparkJarConfigEntity = workRunContext.getJarConf();
-		logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始传输jar与其依赖  \n");
-
-		ScpFileEngineNodeDto scpFileEngineNodeDto = clusterNodeMapper
-				.engineNodeEntityToScpFileEngineNodeDto(engineNode);
-		scpFileEngineNodeDto.setPasswd(aesUtils.decrypt(scpFileEngineNodeDto.getPasswd()));
-
-		Optional<FileEntity> fileEntityOptional = fileRepository.findById(sparkJarConfigEntity.getJarFileId());
-		if (!fileEntityOptional.isPresent()) {
-			throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "传输jar失败 : jar文件不存在  \n");
-		}
-
-		try {
-			scpFile(scpFileEngineNodeDto, "/" + fileEntityOptional.get().getFilePath(),
-					engineNode.getAgentHomePath() + File.separator + PathConstants.AGENT_PATH_NAME + File.separator
-							+ "plugins" + File.separator + fileEntityOptional.get().getFileName());
-		} catch (JSchException | SftpException | InterruptedException | IOException e) {
-			throw new WorkRunException(
-					LocalDateTime.now() + WorkLog.ERROR_INFO + "传输jar失败 : " + e.getMessage() + "  \n");
-		}
-		if (sparkJarConfigEntity.getLibFileIds() != null) {
-			sparkJarConfigEntity.getLibFileIds()
-					.forEach(fileId -> fileRepository.findById(fileId).ifPresent(fileEntity -> {
-						try {
-							scpFile(scpFileEngineNodeDto, fileEntity.getFilePath(),
-									engineNode.getAgentHomePath() + File.separator + PathConstants.AGENT_PATH_NAME
-											+ File.separator + "lib" + File.separator + fileEntity.getFileName());
-						} catch (JSchException | SftpException | InterruptedException | IOException e) {
-							throw new WorkRunException(
-									LocalDateTime.now() + WorkLog.ERROR_INFO + "传输lib失败 : " + e.getMessage() + "  \n");
-						}
-					}));
-		}
-
 		// 开始构建作业
 		logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始构建作业  \n");
 		YagExecuteWorkReq executeReq = new YagExecuteWorkReq();
 
+		// 获取作业jar与lib文件信息并scp至所选节点
+		JarJobConfig jarJobConfig = workRunContext.getJarJobConfig();
+		logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始传输jar与其依赖  \n");
+
+		// 获取jar
+		FileEntity jarFile = fileService.getFile(jarJobConfig.getJarFileId());
+
+		// 上传文件到制定节点路径 /file/id.jar
+		ScpFileEngineNodeDto scpFileEngineNodeDto = clusterNodeMapper
+				.engineNodeEntityToScpFileEngineNodeDto(engineNode);
+		scpFileEngineNodeDto.setPasswd(aesUtils.decrypt(scpFileEngineNodeDto.getPasswd()));
+		String fileDir = PathUtils.parseProjectPath(isxAppProperties.getResourcesPath()) + File.separator + "file"
+				+ File.separator + TENANT_ID.get();
+		try {
+			scpJar(scpFileEngineNodeDto, fileDir + File.separator + jarFile.getId(),
+					engineNode.getAgentHomePath() + File.separator + "zhiqingyun-agent" + File.separator + "file"
+							+ File.separator + jarFile.getId() + ".jar");
+		} catch (JSchException | SftpException | InterruptedException | IOException e) {
+			log.debug(e.getMessage());
+			throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "jar文件上传失败\n");
+		}
+
+		// 上传依赖到制定节点路径
+		if (workRunContext.getLibConfig() != null) {
+			List<FileEntity> libFile = fileRepository.findAllById(workRunContext.getLibConfig());
+			libFile.forEach(e -> {
+				try {
+					scpJar(scpFileEngineNodeDto, fileDir + File.separator + e.getId(),
+							engineNode.getAgentHomePath() + File.separator + "zhiqingyun-agent" + File.separator
+									+ "file" + File.separator + e.getId() + ".jar");
+				} catch (JSchException | SftpException | InterruptedException | IOException ex) {
+					throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "jar文件上传失败\n");
+				}
+			});
+		}
+
 		// 开始构造SparkSubmit
-		SparkSubmit sparkSubmit = SparkSubmit.builder().verbose(true).mainClass(sparkJarConfigEntity.getMainClass())
-				.appResource(fileEntityOptional.get().getFileName())
+		SparkSubmit sparkSubmit = SparkSubmit.builder().verbose(true).mainClass(jarJobConfig.getMainClass())
+				.appResource(jarFile.getId() + ".jar").appName(jarJobConfig.getAppName())
 				.conf(genSparkSubmitConfig(workRunContext.getClusterConfig().getSparkConfig())).build();
 
 		// 开始构造executeReq
 		executeReq.setSparkSubmit(sparkSubmit);
-
-		// executeReq.setPluginReq(JSON.parseObject(Base64.getDecoder().decode(sparkJarConfigEntity.getArgs()),
-		// Object.class));
-		executeReq.setArgs(sparkJarConfigEntity.getArgs());
+		executeReq.setArgs(jarJobConfig.getArgs());
 		executeReq.setAgentHomePath(engineNode.getAgentHomePath() + File.separator + PathConstants.AGENT_PATH_NAME);
 		executeReq.setAgentType(calculateEngineEntityOptional.get().getClusterType());
+		executeReq.setWorkType(WorkType.SPARK_JAR);
+		executeReq.setLibConfig(workRunContext.getLibConfig());
 
 		// 构建作业完成，并打印作业配置信息
 		logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("构建作业完成 \n");
@@ -257,8 +263,8 @@ public class SparkJarExecutor extends WorkExecutor {
 				// 运行结束逻辑
 
 				// 如果是中止，直接退出
-				if ("KILLED".equals(workStatusRes.getAppStatus().toUpperCase())
-						|| "TERMINATING".equals(workStatusRes.getAppStatus().toUpperCase())) {
+				if ("KILLED".equalsIgnoreCase(workStatusRes.getAppStatus())
+						|| "TERMINATING".equalsIgnoreCase(workStatusRes.getAppStatus())) {
 					throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "作业运行中止" + "\n");
 				}
 
@@ -378,17 +384,5 @@ public class SparkJarExecutor extends WorkExecutor {
 			}
 		});
 		return sparkSubmitConfig;
-	}
-
-	/**
-	 * sparkConfig不能包含k8s的配置
-	 */
-	public Map<String, String> genSparkConfig(Map<String, String> sparkConfig) {
-
-		// k8s的配置不能提交到作业中
-		sparkConfig.remove("spark.kubernetes.driver.podTemplateFile");
-		sparkConfig.remove("spark.kubernetes.executor.podTemplateFile");
-
-		return sparkConfig;
 	}
 }
