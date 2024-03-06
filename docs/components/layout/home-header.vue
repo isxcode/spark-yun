@@ -36,6 +36,8 @@
 </template>
 
 <script setup lang="ts">
+import { isMobile } from "~/util/isMobile.js";
+
 defineComponent("LayoutHomeHeader");
 
 // 不同的语言对应不同的显示文字
@@ -58,7 +60,22 @@ const headerRef = ref<HTMLElement | null>(null);
 
 onMounted(() => {
   window.addEventListener("scroll", handleScroll);
+  if (isMobile()) {
+    disableZoom();
+  }
 });
+
+function disableZoom(): void {
+  const existingViewportMeta: HTMLMetaElement | null = document.querySelector('meta[name="viewport"]');
+  if (existingViewportMeta) {
+    existingViewportMeta.remove();
+  }
+
+  const meta: HTMLMetaElement = document.createElement("meta");
+  meta.name = "viewport";
+  meta.content = "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no";
+  document.getElementsByTagName("head")[0].appendChild(meta);
+}
 
 function handleScroll() {
   const flag = window.location.pathname === "/";
@@ -72,8 +89,13 @@ function handleScroll() {
     headerRef.value!.style.backgroundColor = "#fff";
     headerRef.value!.style.height = "60px";
     headerRef.value!.style.boxShadow = "0 2px 4px -1px rgba(0,0,0,0.25)";
-    headerRef.value!.style.backgroundColor = "rgba(255,255,255,0.3)";
-    headerRef.value!.style.backdropFilter = "blur(10px)";
+    // 移动端设置白底
+    if (isMobile()) {
+      headerRef.value!.style.backgroundColor = "#fff";
+    } else {
+      headerRef.value!.style.backgroundColor = "rgba(255,255,255,0.3)";
+      headerRef.value!.style.backdropFilter = "blur(10px)";
+    }
   } else {
     headerRef.value!.style.height = "80px";
     headerRef.value!.style.boxShadow = "none";
@@ -226,23 +248,6 @@ function handleQuickUseClick() {
         }
       }
     }
-    // .quick-use {
-    //   width: auto;
-    //   padding: 0 0.75rem;
-    //   height: 2rem;
-    //   line-height: 2rem;
-    //   text-align: center;
-    //   border-radius: 1.25rem;
-    //   margin-left: 0.875rem;
-    //   cursor: pointer;
-    //   transition: all 0.3s;
-    //   color: var(--sk-color-font-gray);
-    //   border: 0.0625rem solid var(--sk-color-font-gray);
-    //   &:hover {
-    //     color: var(--sk-color-font-gray-hover);
-    //     border: 0.0625rem solid var(--sk-color-font-gray-hover);
-    //   }
-    // }
     .left {
       display: flex;
       align-items: center;
