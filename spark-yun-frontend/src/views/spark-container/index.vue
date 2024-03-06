@@ -3,10 +3,10 @@
   <div class="zqy-seach-table">
     <div class="zqy-table-top">
       <el-button type="primary" @click="addData">
-        添加数据源
+        添加容器
       </el-button>
       <div class="zqy-seach">
-        <el-input v-model="keyword" placeholder="请输入名称/类型/连接信息/用户名/备注 回车进行搜索" :maxlength="200" clearable
+        <el-input v-model="keyword" placeholder="请输入名称 回车进行搜索" :maxlength="200" clearable
           @input="inputEvent" @keyup.enter="initData(false)" />
       </div>
     </div>
@@ -15,26 +15,48 @@
         <BlockTable :table-config="tableConfig" @size-change="handleSizeChange" @current-change="handleCurrentChange">
           <template #statusTag="scopeSlot">
             <div class="btn-group">
-              <el-tag v-if="scopeSlot.row.status === 'ACTIVE'" class="ml-2" type="success">
-                可用
+              <el-tag v-if="scopeSlot.row.status === 'RUNNING'" class="ml-2" type="success">
+                运行中
               </el-tag>
               <el-tag v-if="scopeSlot.row.status === 'FAIL'" class="ml-2" type="danger">
-                不可用
+                失败
               </el-tag>
-              <el-tag v-if="scopeSlot.row.status === 'UN_CHECK'">
-                待检测
+              <el-tag v-if="scopeSlot.row.status === 'STOP'" class="ml-2" type="warning">
+                停止
+              </el-tag>
+              <el-tag v-if="scopeSlot.row.status === 'NEW'" type="info">
+                新建
+              </el-tag>
+              <el-tag v-if="scopeSlot.row.status === 'DEPLOYING'" type="primary">
+                启动中
               </el-tag>
             </div>
           </template>
           <template #options="scopeSlot">
             <div class="btn-group">
-              <span @click="showLog(scopeSlot.row)">日志</span>
               <span @click="editData(scopeSlot.row)">编辑</span>
-              <span v-if="!scopeSlot.row.checkLoading" @click="checkData(scopeSlot.row)">检测</span>
-              <el-icon v-else class="is-loading">
-                <Loading />
-              </el-icon>
-              <span @click="deleteData(scopeSlot.row)">删除</span>
+              <el-dropdown trigger="click">
+                <span class="click-show-more">更多</span>
+                <template #dropdown>
+                  <el-dropdown-menu>
+                    <el-dropdown-item @click="showLog(scopeSlot.row)">
+                      日志
+                    </el-dropdown-item>
+                    <el-dropdown-item @click="stopContainer(scopeSlot.row)">
+                      停止
+                    </el-dropdown-item>
+                    <el-dropdown-item @click="startContainer(scopeSlot.row)">
+                      启动
+                    </el-dropdown-item>
+                    <el-dropdown-item @click="checkData(scopeSlot.row)">
+                      检测
+                    </el-dropdown-item>
+                    <el-dropdown-item @click="deleteData(scopeSlot.row)">
+                      删除
+                    </el-dropdown-item>
+                  </el-dropdown-menu>
+                </template>
+              </el-dropdown>
             </div>
           </template>
         </BlockTable>
@@ -54,7 +76,7 @@ import AddModal from './add-modal/index.vue'
 import ShowLog from '../computer-group-v1/computer-pointer/show-log/index.vue'
 
 import { BreadCrumbList, TableConfig, FormData } from './spark-container.config.ts'
-import {  } from '@/services/spark-container.service.ts'
+import { GetSparkContainerList, AddSparkContainerData, UpdateSparkContainerData, ChecSparkContainerkData, DeleteSparkContainerkData, StartSparkContainerkData, StopSparkContainerkData, GetSparkContainerkDetail } from '@/services/spark-container.service.ts'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Loading } from '@element-plus/icons-vue'
 
@@ -63,6 +85,7 @@ const loading = ref(false)
 const networkError = ref(false)
 const addModalRef = ref(null)
 const showLogRef = ref(null)
+const timer = ref()
 
 const breadCrumbList = reactive(BreadCrumbList)
 const tableConfig: any = reactive(TableConfig)
@@ -70,31 +93,35 @@ const tableConfig: any = reactive(TableConfig)
 function initData(tableLoading?: boolean) {
   loading.value = tableLoading ? false : true
   networkError.value = networkError.value || false
-  GetDatasourceList({
+  GetSparkContainerList({
     page: tableConfig.pagination.currentPage - 1,
     pageSize: tableConfig.pagination.pageSize,
     searchKeyWord: keyword.value
+  }).then((res: any) => {
+    tableConfig.tableData = res.data.content
+    tableConfig.pagination.total = res.data.totalElements
+    loading.value = false
+    tableConfig.loading = false
+    networkError.value = false
+    if (!tableConfig.tableData.some(item => item.status === 'DEPLOYING')) {
+      if (timer.value) {
+        clearInterval(timer.value)
+      }
+      timer.value = null
+    }
+  }).catch(() => {
+    tableConfig.tableData = []
+    tableConfig.pagination.total = 0
+    loading.value = false
+    tableConfig.loading = false
+    networkError.value = true
   })
-    .then((res: any) => {
-      tableConfig.tableData = res.data.content
-      tableConfig.pagination.total = res.data.totalElements
-      loading.value = false
-      tableConfig.loading = false
-      networkError.value = false
-    })
-    .catch(() => {
-      tableConfig.tableData = []
-      tableConfig.pagination.total = 0
-      loading.value = false
-      tableConfig.loading = false
-      networkError.value = true
-    })
 }
 
 function addData() {
   addModalRef.value.showModal((formData: FormData) => {
     return new Promise((resolve: any, reject: any) => {
-      AddDatasourceData(formData)
+      AddSparkContainerData(formData)
         .then((res: any) => {
           ElMessage.success(res.msg)
           initData()
@@ -115,7 +142,7 @@ function showLog(e: any) {
 function editData(data: any) {
   addModalRef.value.showModal((formData: FormData) => {
     return new Promise((resolve: any, reject: any) => {
-      UpdateDatasourceData(formData)
+      UpdateSparkContainerData(formData)
         .then((res: any) => {
           ElMessage.success(res.msg)
           initData()
@@ -131,34 +158,58 @@ function editData(data: any) {
 // 检测
 function checkData(data: any) {
   data.checkLoading = true
-  CheckDatasourceData({
-    datasourceId: data.id
+  ChecSparkContainerkData({
+    id: data.id
+  }).then((res: any) => {
+    data.checkLoading = false
+    ElMessage.success(res.msg)
+    initData(true)
   })
-    .then((res: any) => {
-      data.checkLoading = false
-      ElMessage.success(res.msg)
-      initData(true)
-    })
-    .catch(() => {
-      data.checkLoading = false
-    })
+  .catch(() => {
+    data.checkLoading = false
+  })
+}
+// 启动
+function startContainer(data: any) {
+  StartSparkContainerkData({
+    id: data.id
+  }).then((res: any) => {
+    ElMessage.success(res.msg)
+    initData(true)
+    if (tableConfig.tableData.some(item => item.status === 'DEPLOYING')) {
+      timer.value = setInterval(() => {
+        initData(true, 'interval')
+      }, 3000)
+    }
+  })
+  .catch(() => {
+  })
+}
+// 停止
+function stopContainer(data: any) {
+  StopSparkContainerkData({
+    id: data.id
+  }).then((res: any) => {
+    ElMessage.success(res.msg)
+    initData(true)
+  })
+  .catch(() => {
+  })
 }
 
 // 删除
 function deleteData(data: any) {
-  ElMessageBox.confirm('确定删除该数据源吗？', '警告', {
+  ElMessageBox.confirm('确定删除该容器吗？', '警告', {
     confirmButtonText: '确定',
     cancelButtonText: '取消',
     type: 'warning'
   }).then(() => {
-    DeleteDatasourceData({
-      datasourceId: data.id
-    })
-      .then((res: any) => {
-        ElMessage.success(res.msg)
-        initData()
-      })
-      .catch(() => { })
+    DeleteSparkContainerkData({
+      id: data.id
+    }).then((res: any) => {
+      ElMessage.success(res.msg)
+      initData()
+    }).catch(() => { })
   })
 }
 

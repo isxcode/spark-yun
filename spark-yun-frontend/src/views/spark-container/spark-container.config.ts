@@ -41,7 +41,7 @@ export interface FormData {
 
 export const BreadCrumbList: Array<BreadCrumb> = [
   {
-    name: 'SPARK容器',
+    name: 'Spark容器',
     code: 'spark-container'
   }
 ]
@@ -49,28 +49,16 @@ export const BreadCrumbList: Array<BreadCrumb> = [
 export const colConfigs: colConfig[] = [
   {
     prop: 'name',
-    title: '数据源名称',
+    title: '容器名称',
     minWidth: 100,
     showOverflowTooltip: true
   },
-  {
-    prop: 'dbType',
-    title: '类型',
-    minWidth: 100,
-    showOverflowTooltip: true
-  },
-  {
-    prop: 'jdbcUrl',
-    title: '连接信息',
-    minWidth: 160,
-    showOverflowTooltip: true
-  },
-  {
-    prop: 'username',
-    title: '用户名',
-    minWidth: 100,
-    showOverflowTooltip: true
-  },
+  // {
+  //   prop: 'dbType',
+  //   title: '类型',
+  //   minWidth: 100,
+  //   showOverflowTooltip: true
+  // },
   {
     prop: 'status',
     title: '状态',
@@ -78,8 +66,8 @@ export const colConfigs: colConfig[] = [
     customSlot: 'statusTag'
   },
   {
-    prop: 'checkDateTime',
-    title: '检测时间',
+    prop: 'createDateTime',
+    title: '创建时间',
     minWidth: 140
   },
   {
@@ -92,7 +80,7 @@ export const colConfigs: colConfig[] = [
     title: '操作',
     align: 'center',
     customSlot: 'options',
-    width: 140
+    width: 80
   }
 ]
 
