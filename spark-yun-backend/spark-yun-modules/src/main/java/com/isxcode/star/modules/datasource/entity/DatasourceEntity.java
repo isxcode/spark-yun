@@ -58,7 +58,7 @@ public class DatasourceEntity {
 
 	private String driverId;
 
-  private String kafkaConfig;
+	private String kafkaConfig;
 
 	@CreatedDate
 	private LocalDateTime createDateTime;

@@ -103,7 +103,6 @@ public interface ModuleCode {
 	 */
 	String FUNC = "func";
 
-
 	/**
 	 * 实时同步函数.
 	 */
