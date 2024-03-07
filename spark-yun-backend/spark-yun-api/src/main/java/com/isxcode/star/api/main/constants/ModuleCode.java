@@ -107,4 +107,9 @@ public interface ModuleCode {
 	 * 容器模块.
 	 */
 	String VIP_CONTAINER = "/vip/container";
+
+	/**
+	 * 实时同步函数.
+	 */
+	String VIP_REAL = "/vip/real";
 }
