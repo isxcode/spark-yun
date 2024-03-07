@@ -8,7 +8,7 @@ import javax.validation.constraints.NotEmpty;
 @Data
 public class UpdateRealReq {
 
-  @Schema(title = "实时作业id", example = "sy_123")
+	@Schema(title = "实时作业id", example = "sy_123")
 	@NotEmpty(message = "id不能为空")
 	private String id;
 
