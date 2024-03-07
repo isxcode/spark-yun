@@ -37,6 +37,6 @@ public class AddDatasourceReq {
 	@Schema(title = "hive特殊配置hive.metastore.uris", example = "默认值：thrift://localhost:9083，非必填")
 	private String metastoreUris;
 
-  @Schema(title = "kafka数据源配置")
-  private KafkaConfig kafkaConfig;
+	@Schema(title = "kafka数据源配置")
+	private KafkaConfig kafkaConfig;
 }

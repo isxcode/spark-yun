@@ -29,5 +29,5 @@ public interface DatasourceType {
 
 	String DB2 = "DB2";
 
-  String KAFKA = "KAFKA";
+	String KAFKA = "KAFKA";
 }

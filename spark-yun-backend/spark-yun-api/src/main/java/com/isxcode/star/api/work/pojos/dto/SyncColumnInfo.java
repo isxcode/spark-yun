@@ -11,5 +11,5 @@ public class SyncColumnInfo {
 
 	private String sql;
 
-  private String jsonPath;
+	private String jsonPath;
 }
