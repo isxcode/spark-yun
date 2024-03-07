@@ -15,6 +15,7 @@ import org.mapstruct.Mapping;
 public interface DatasourceMapper {
 
 	/** dasAddDatasourceReq转DatasourceEntity. */
+  @Mapping(target = "kafkaConfig",ignore = true)
 	DatasourceEntity dasAddDatasourceReqToDatasourceEntity(AddDatasourceReq dasAddDatasourceReq);
 
 	@Mapping(source = "dasUpdateDatasourceReq.passwd", target = "passwd")
@@ -26,6 +27,7 @@ public interface DatasourceMapper {
 	@Mapping(source = "dasUpdateDatasourceReq.driverId", target = "driverId")
 	@Mapping(source = "dasUpdateDatasourceReq.name", target = "name")
 	@Mapping(target = "id", source = "datasourceEntity.id")
+  @Mapping(target = "kafkaConfig",ignore = true)
 	DatasourceEntity dasUpdateDatasourceReqToDatasourceEntity(UpdateDatasourceReq dasUpdateDatasourceReq,
 			DatasourceEntity datasourceEntity);
 
