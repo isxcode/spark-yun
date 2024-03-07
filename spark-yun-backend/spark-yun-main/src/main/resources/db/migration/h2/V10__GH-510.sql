@@ -1,3 +1,4 @@
+-- 新增实时作业表
 create table SY_REAL
 (
   id                      varchar(200)  not null comment '分享表单链接id'
@@ -19,3 +20,12 @@ create table SY_REAL
   deleted                 int default 0 not null comment '逻辑删除',
   tenant_id               varchar(200)  not null comment '租户id'
 );
+
+-- 新增kafka数据源配置
+alter table SY_DATASOURCE
+    add KAFKA_CONFIG text;
+comment on column SY_DATASOURCE.KAFKA_CONFIG is 'kafka数据源配置';
+
+-- 新增kafka驱动
+INSERT INTO SY_DATABASE_DRIVER (ID, NAME, DB_TYPE, FILE_NAME, DRIVER_TYPE, IS_DEFAULT_DRIVER, REMARK, CREATE_BY, CREATE_DATE_TIME, LAST_MODIFIED_BY, LAST_MODIFIED_DATE_TIME, VERSION_NUMBER, DELETED, TENANT_ID)
+VALUES ('kafka_client_3.1.2', 'kafka_client_3.1.2', 'KAFKA', 'kafka_client_3.1.2.jar', 'SYSTEM_DRIVER', true, '系统自带驱动', 'zhiqingyun', '2023-11-01 16:54:34.000000', 'zhiqingyun', '2023-11-01 16:54:39.000000', 1, 0, 'zhiqingyun');
