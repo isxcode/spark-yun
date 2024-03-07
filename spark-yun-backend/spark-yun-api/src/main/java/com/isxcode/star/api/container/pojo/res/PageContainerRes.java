@@ -17,7 +17,7 @@ public class PageContainerRes {
 
 	private String clusterId;
 
-  private String resourceLevel;
+	private String resourceLevel;
 
 	private String datasourceId;
 
