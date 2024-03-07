@@ -102,4 +102,10 @@ public interface ModuleCode {
 	 * 自定义函数.
 	 */
 	String FUNC = "func";
+
+
+	/**
+	 * 实时同步函数.
+	 */
+	String VIP_REAL = "/vip/real";
 }
