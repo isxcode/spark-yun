@@ -12,6 +12,7 @@ create table SY_REAL
   func_config             varchar(500) comment '函数配置',
   submit_log              text comment '提交日志',
   running_log             text comment '运行日志',
+  application_id          varchar(500) comment '应用id',
   remark                  varchar(500) comment '备注',
   create_by               varchar(200)  not null comment '创建人',
   create_date_time        datetime      not null comment '创建时间',
@@ -23,7 +24,7 @@ create table SY_REAL
 
 -- 新增kafka数据源配置
 alter table SY_DATASOURCE
-    add KAFKA_CONFIG text;
+  add KAFKA_CONFIG text;
 comment on column SY_DATASOURCE.KAFKA_CONFIG is 'kafka数据源配置';
 
 -- 新增kafka驱动

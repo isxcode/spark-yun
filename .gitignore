@@ -60,3 +60,6 @@ spark-yun-vip
 
 # 日志不提交
 logs
+
+# spark本地运行日志不提交
+metastore_db
