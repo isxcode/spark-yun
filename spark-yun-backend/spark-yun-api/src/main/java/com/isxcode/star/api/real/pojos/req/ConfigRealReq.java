@@ -10,9 +10,9 @@ import java.util.List;
 @Data
 public class ConfigRealReq {
 
-	@Schema(title = "API id", example = "sy_123")
-	@NotEmpty(message = "id不能为空")
-	private String id;
+  @Schema(title = "实时同步作业id", example = "sy_123")
+  @NotEmpty(message = "id不能为空")
+  private String realId;
 
 	@Schema(title = "数据同步规则")
 	private SyncWorkConfig syncConfig;
