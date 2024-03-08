@@ -23,11 +23,11 @@ public class KafkaConfig {
 	@Schema(title = "实时同步的时候添加")
 	private String startingOffsets;
 
-  @Schema(title = "实时时间")
-  private String durationTime;
+	@Schema(title = "实时时间")
+	private String durationTime;
 
-  @Schema(title = "group.id")
-  private String groupIdPrefix;
+	@Schema(title = "group.id")
+	private String groupIdPrefix;
 
 	private Map<String, String> properties;
 }
