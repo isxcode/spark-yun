@@ -374,20 +374,20 @@ public class DatasourceService {
 		}
 	}
 
-  public Set<String> queryKafkaTopic(KafkaConfig kafkaConfig) throws ExecutionException, InterruptedException {
+	public Set<String> queryKafkaTopic(KafkaConfig kafkaConfig) throws ExecutionException, InterruptedException {
 
-    Properties properties = new Properties();
-    if (kafkaConfig.getProperties() != null) {
-      properties.putAll(kafkaConfig.getProperties());
-    }
-    properties.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaConfig.getBootstrapServers());
-    properties.put(AdminClientConfig.REQUEST_TIMEOUT_MS_CONFIG, 3000);
-    properties.put(AdminClientConfig.RETRIES_CONFIG, 0);
-    properties.put(AdminClientConfig.DEFAULT_API_TIMEOUT_MS_CONFIG, 3000);
+		Properties properties = new Properties();
+		if (kafkaConfig.getProperties() != null) {
+			properties.putAll(kafkaConfig.getProperties());
+		}
+		properties.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaConfig.getBootstrapServers());
+		properties.put(AdminClientConfig.REQUEST_TIMEOUT_MS_CONFIG, 3000);
+		properties.put(AdminClientConfig.RETRIES_CONFIG, 0);
+		properties.put(AdminClientConfig.DEFAULT_API_TIMEOUT_MS_CONFIG, 3000);
 
-    try (AdminClient adminClient = AdminClient.create(properties)) {
-      ListTopicsResult listTopicsResult = adminClient.listTopics();
-      return listTopicsResult.names().get();
-    }
-  }
+		try (AdminClient adminClient = AdminClient.create(properties)) {
+			ListTopicsResult listTopicsResult = adminClient.listTopics();
+			return listTopicsResult.names().get();
+		}
+	}
 }
