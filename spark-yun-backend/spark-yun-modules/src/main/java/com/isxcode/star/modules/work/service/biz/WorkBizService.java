@@ -448,6 +448,10 @@ public class WorkBizService {
 			getWorkRes.getSyncRule().setSqlConfigJson(JSON.toJSONString(getWorkRes.getSyncRule().getSqlConfig()));
 		}
 
+		if (!Strings.isEmpty(workConfig.getContainerId())) {
+			getWorkRes.setContainerId(workConfig.getContainerId());
+		}
+
 		return getWorkRes;
 	}
 

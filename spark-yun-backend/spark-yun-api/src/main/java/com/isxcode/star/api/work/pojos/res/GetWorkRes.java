@@ -43,4 +43,6 @@ public class GetWorkRes {
 	private String name;
 
 	private String jarConf;
+
+	private String containerId;
 }
