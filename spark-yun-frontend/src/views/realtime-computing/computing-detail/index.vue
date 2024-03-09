@@ -52,10 +52,8 @@
                     </template>
                     <el-form ref="form" label-position="left" label-width="70px" :model="formData" :rules="rules">
                         <el-form-item prop="sourceDBType" label="类型">
-                            <el-select v-model="formData.sourceDBType" clearable filterable placeholder="请选择"
-                                @change="dbTypeChange('source')">
-                                <el-option v-for="item in typeList" :key="item.value" :label="item.label"
-                                    :value="item.value" />
+                            <el-select v-model="formData.sourceDBType" placeholder="请选择">
+                                <el-option v-for="item in [{ label: 'Kafka', value: 'KAFKA', }]" :key="item.value" :label="item.label" :value="item.value" />
                             </el-select>
                         </el-form-item>
                         <el-form-item prop="sourceDBId" label="数据源">
@@ -68,8 +66,8 @@
                         </el-form-item>
                         <el-form-item prop="sourceTable" label="topic">
                             <el-select v-model="formData.sourceTable" clearable filterable placeholder="请选择"
-                                @visible-change="getDataSourceTable($event, formData.sourceDBId, 'source')"
-                                @change="tableChangeEvent($event, formData.sourceDBId, 'source')">
+                                @visible-change="getTopicList($event, formData.sourceDBId)"
+                            >
                                 <el-option v-for="item in sourceTablesList" :key="item.value" :label="item.label"
                                     :value="item.value" />
                             </el-select>
@@ -211,7 +209,7 @@ const tabList = reactive([
 
 const formData = reactive({
     workId: '',           // 作业id
-    sourceDBType: '',     // 来源数据源类型
+    sourceDBType: 'KAFKA',     // 来源数据源类型
     sourceDBId: '',       // 来源数据源
     sourceTable: '',      // 来源数据库表名
     queryCondition: '',   // 来源数据库查询条件
@@ -344,6 +342,26 @@ function getDataSource(e: boolean, sourceType: string, type: string) {
     }
 }
 
+function getTopicList(e: boolean, dataSourceId: string) {
+    if (e && dataSourceId) {
+        GetTopicDataList({
+            datasourceId: dataSourceId
+        }).then((res: any) => {
+            sourceTablesList.value = res.data.map((item: any) => {
+                return {
+                    label: item,
+                    value: item
+                }
+            })
+        }).catch(err => {
+            console.error(err)
+            sourceTablesList.value = []
+        })
+    } else {
+        sourceTablesList.value = []
+    }
+}
+
 // 获取数据源表
 function getDataSourceTable(e: boolean, dataSourceId: string, type: string) {
     if (e && dataSourceId) {
@@ -351,7 +369,7 @@ function getDataSourceTable(e: boolean, dataSourceId: string, type: string) {
         GetTopicDataList({
             datasourceId: dataSourceId
         }).then((res: any) => {
-            options = res.data.tables.map((item: any) => {
+            options = res.data.map((item: any) => {
                 return {
                     label: item,
                     value: item
