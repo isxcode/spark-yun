@@ -17,9 +17,13 @@ public class PageContainerRes {
 
 	private String clusterId;
 
+	private String clusterName;
+
 	private String resourceLevel;
 
 	private String datasourceId;
+
+	private String datasourceName;
 
 	private String remark;
 
