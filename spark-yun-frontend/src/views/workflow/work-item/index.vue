@@ -212,7 +212,7 @@ function initData(id?: string, tableLoading?: boolean) {
                 item.hide = status === 'FAIL' ? true : false
               }
             })
-          } else if (workConfig.workType === 'QUERY_JDBC') {
+          } else if (['QUERY_JDBC', 'SPARK_CONTAINER_SQL'].includes(workConfig.workType)) {
             tabList.forEach((item: any) => {
               if (['ReturnData'].includes(item.code)) {
                 item.hide = status === 'FAIL' ? true : false

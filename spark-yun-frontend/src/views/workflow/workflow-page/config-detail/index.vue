@@ -28,7 +28,7 @@
             </el-form>
             <el-divider />
           </div>
-          <template v-else>
+          <template v-else-if="!['SPARK_CONTAINER_SQL'].includes(workItemConfig.workType)">
             <!-- 资源配置 -->
             <div class="config-item">
               <div class="item-title">资源配置</div>
