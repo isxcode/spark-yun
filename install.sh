@@ -95,6 +95,37 @@ export SPARK_MASTER_WEBUI_PORT=8081
 EOF
 fi
 
+# 下载spark的jars依赖
+# spark-sql-kafka
+if [ ! -f "${SPARK_MIN_DIR}"/jars/spark-sql-kafka-0-10_2.12-3.4.0.jar ]; then
+  wget https://repo1.maven.org/maven2/org/apache/spark/spark-sql-kafka-0-10_2.12/3.4.0/spark-sql-kafka-0-10_2.12-3.4.0.jar -O ${SPARK_MIN_DIR}/jars/spark-sql-kafka-0-10_2.12-3.4.0.jar
+  echo "spark-sql-kafka-0-10_2.12-3.4.0.jar下载成功"
+fi
+
+# kafka-client
+if [ ! -f "${SPARK_MIN_DIR}"/jars/kafka-clients-3.1.2.jar ]; then
+  wget https://repo1.maven.org/maven2/org/apache/kafka/kafka-clients/3.1.2/kafka-clients-3.1.2.jar -O ${SPARK_MIN_DIR}/jars/kafka-clients-3.1.2.jar
+  echo "kafka-clients-3.1.2.jar下载成功"
+fi
+
+# spark-streaming-kafka
+if [ ! -f "${SPARK_MIN_DIR}"/jars/spark-streaming-kafka-0-10_2.12-3.4.0.jar ]; then
+  wget https://repo1.maven.org/maven2/org/apache/spark/spark-streaming-kafka-0-10_2.12/3.4.0/spark-streaming-kafka-0-10_2.12-3.4.0.jar -O ${SPARK_MIN_DIR}/jars/spark-streaming-kafka-0-10_2.12-3.4.0.jar
+  echo "spark-streaming-kafka-0-10_2.12-3.4.0.jar下载成功"
+fi
+
+# spark-token-provider-kafka
+if [ ! -f "${SPARK_MIN_DIR}"/jars/spark-token-provider-kafka-0-10_2.12-3.4.0.jar ]; then
+  wget https://repo1.maven.org/maven2/org/apache/spark/spark-token-provider-kafka-0-10_2.12/3.4.0/spark-token-provider-kafka-0-10_2.12-3.4.0.jar -O ${SPARK_MIN_DIR}/jars/spark-token-provider-kafka-0-10_2.12-3.4.0.jar
+  echo "spark-token-provider-kafka-0-10_2.12-3.4.0.jar下载成功"
+fi
+
+# commons-pool2
+if [ ! -f "${SPARK_MIN_DIR}"/jars/commons-pool2-2.11.1.jar ]; then
+  wget https://repo1.maven.org/maven2/org/apache/commons/commons-pool2/2.11.1/commons-pool2-2.11.1.jar -O ${SPARK_MIN_DIR}/jars/commons-pool2-2.11.1.jar
+  echo "commons-pool2-2.11.1.jar下载成功"
+fi
+
 # 创建resources文件夹
 JDBC_DIR="${BASE_PATH}"/resources/jdbc/system
 
