@@ -59,6 +59,7 @@ public class ApiExecutor extends WorkExecutor {
 
 		Object response = null;
 		try {
+
 			if (ApiType.GET.equals(apiWorkConfig.getRequestType())) {
 				response = HttpUtils.doGet(apiWorkConfig.getRequestUrl(), apiWorkConfig.getRequestParam(),
 						apiWorkConfig.getRequestHeader(), Object.class);
@@ -67,14 +68,17 @@ public class ApiExecutor extends WorkExecutor {
 				response = HttpUtils.doPost(apiWorkConfig.getRequestUrl(), apiWorkConfig.getRequestHeader(),
 						apiWorkConfig.getRequestBody(), Object.class);
 			}
+
+      log.debug("获取远程返回数据:{}", response);
 		} catch (Exception e) {
-			throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "请求执行异常 : " + e.getMessage() + "\n");
+      log.debug(e.getMessage(), e);
+			throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "作业执行异常 : " + e.getMessage() + "\n");
 		}
+
 		// 保存运行日志
 		workInstance.setResultData(JSON.toJSONString(response));
-		logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("返回结果： \n").append(response)
+		logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("请求成功, 返回结果: \n").append(response)
 				.append(" \n");
-		logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("保存日志成功 \n");
 		updateInstance(workInstance, logBuilder);
 	}
 
