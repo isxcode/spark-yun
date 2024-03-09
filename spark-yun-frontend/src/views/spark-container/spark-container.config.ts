@@ -12,6 +12,7 @@ export interface colConfig {
   customSlot?: string;
   width?: number;
   minWidth?: number;
+  formatter?: any;
 }
 
 export interface Pagination {
@@ -53,12 +54,21 @@ export const colConfigs: colConfig[] = [
     minWidth: 100,
     showOverflowTooltip: true
   },
-  // {
-  //   prop: 'dbType',
-  //   title: '类型',
-  //   minWidth: 100,
-  //   showOverflowTooltip: true
-  // },
+  {
+    prop: 'resourceLevel',
+    title: '资源类型',
+    minWidth: 100,
+    showOverflowTooltip: true,
+    formatter: (data: any): string => {
+      const obj = {
+        HIGH: '高',
+        MEDIUM: '中',
+        LOW: '低',
+        CUSTOM: '自定义'
+      }
+      return obj[data.row.resourceLevel]
+    }
+  },
   {
     prop: 'status',
     title: '状态',
