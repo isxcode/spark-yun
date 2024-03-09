@@ -4,7 +4,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.util.Map;
-import java.util.Objects;
 
 @Data
 public class ApiWorkConfig {
@@ -22,7 +21,7 @@ public class ApiWorkConfig {
 	private Map<String, String> requestParam;
 
 	@Schema(title = "接口请求头")
-	private Map<String, Objects> requestHeader;
+	private Map<String, String> requestHeader;
 
 	@Schema(title = "接口请求体")
 	private Object requestBody;
