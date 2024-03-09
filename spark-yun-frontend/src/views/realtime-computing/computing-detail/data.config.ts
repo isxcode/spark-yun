@@ -24,6 +24,10 @@ export const DataSourceType = [
     value: 'HIVE',
   },
   {
+    label: 'kafka',
+    value: 'KAFKA',
+  },
+  {
     label: 'HanaSap',
     value: 'HANA_SAP',
   },
