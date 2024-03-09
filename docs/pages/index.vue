@@ -155,9 +155,14 @@ useSeoMeta({
   ogDescription: "打造超轻量级大数据平台",
 });
 
-onMounted(() => {
-  const video = document.getElementById("v1");
-  video.playbackRate = 0.5;
+onMounted(async () => {
+  await nextTick();
+  const video = document.getElementById("v1") as HTMLVideoElement;
+  if (video) {
+    video.playbackRate = 0.5;
+  } else {
+    console.error("Video element not found");
+  }
 });
 
 const productAdvantagesList = reactive([
@@ -188,53 +193,6 @@ const productAdvantagesList = reactive([
 ]);
 
 function handleAdvantageToUse(item: { url: string | URL | undefined }) {
-  window.open(item.url);
-}
-
-const resourceList = reactive([
-  {
-    imgUrl: "https://img.isxcode.com/picgo/20231102215123.png",
-    url: "https://zhiqingyun-demo.isxcode.com",
-  },
-  {
-    imgUrl: "https://img.isxcode.com/picgo/20231102215233.png",
-    url: "https://zhiqingyun-demo.isxcode.com",
-  },
-  {
-    imgUrl: "https://img.isxcode.com/picgo/20231102215311.png",
-    url: "https://zhiqingyun-demo.isxcode.com",
-  },
-  {
-    imgUrl: "https://img.isxcode.com/picgo/20231102215354.png",
-    url: "https://zhiqingyun-demo.isxcode.com",
-  },
-  {
-    imgUrl: "https://img.isxcode.com/picgo/20231102215506.png",
-    url: "https://zhiqingyun-demo.isxcode.com",
-  },
-  {
-    imgUrl: "https://img.isxcode.com/picgo/20231102215606.png",
-    url: "https://zhiqingyun-demo.isxcode.com",
-  },
-  {
-    imgUrl: "https://img.isxcode.com/picgo/20231102215711.png",
-    url: "https://zhiqingyun-demo.isxcode.com",
-  },
-  {
-    imgUrl: "https://img.isxcode.com/picgo/20231102215748.png",
-    url: "https://zhiqingyun-demo.isxcode.com",
-  },
-  {
-    imgUrl: "https://img.isxcode.com/picgo/20231102215946.png",
-    url: "https://zhiqingyun-demo.isxcode.com",
-  },
-  {
-    imgUrl: "https://img.isxcode.com/picgo/20231102220038.png",
-    url: "https://zhiqingyun-demo.isxcode.com",
-  },
-]);
-
-function handleResourcesImgClick(item: { url: string | URL | undefined }) {
   window.open(item.url);
 }
 
@@ -515,6 +473,242 @@ function jumpDoc() {
   }
   .border-bottom-br {
     border-bottom: 0.0625rem solid #dcdcdc;
+  }
+}
+
+@media screen and (max-width: 475px) {
+  .main {
+    .one-word-desc-product {
+      position: relative;
+      padding-top: 12vh;
+      flex-direction: column;
+      #v1 {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        z-index: -1;
+      }
+      .top {
+        height: calc(100vh - 20vh);
+        flex: 1;
+        display: flex;
+        align-items: center;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+        .one-word {
+          font-size: 3.4375rem;
+          font-weight: 700;
+          text-align: center;
+          line-height: 1.5;
+          margin-bottom: 5vh;
+        }
+        .one-desc {
+          font-size: 1.1875rem;
+          font-weight: 400;
+          text-align: center;
+          line-height: 1.5;
+          margin-bottom: 4vh;
+          color: var(--el-color-info);
+        }
+        .fast-use {
+          font-size: 1.5rem;
+          font-weight: 400;
+          text-align: center;
+          line-height: 1.5;
+          margin-bottom: 4vh;
+        }
+        .product-img {
+          z-index: 9;
+          position: absolute;
+          bottom: 10vh;
+          display: flex;
+          justify-content: center;
+          > img {
+            width: 100%;
+            height: 58vh;
+            box-shadow: var(--sk-box-show);
+            border-radius: 0.25rem;
+          }
+        }
+      }
+      .bottom {
+        min-height: 20vh;
+        width: 100%;
+        background-image: url("~/assets/home/bg0.png");
+        background-repeat: no-repeat;
+        background-size: 100% auto;
+        display: flex;
+        flex-direction: column-reverse;
+        .opt-detail {
+          display: flex;
+          justify-content: center;
+          margin-bottom: 3vh;
+          > button {
+            background: #fff;
+            border-color: #fff;
+            color: var(--sk-color-home-primary);
+          }
+          .ml-btn {
+            margin-left: 4.75rem;
+          }
+        }
+      }
+    }
+    .product-advantages {
+      border-top: 0.0625rem solid #edebeb;
+      width: 100%;
+      height: 37.5rem;
+      background-color: var(--sk-color-home-bgc);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      .advantages {
+        width: 100%;
+        height: 25rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        .img {
+          width: 44%;
+          border-radius: 0.25rem;
+          box-shadow: var(--sk-box-show);
+          > img {
+            width: 100%;
+            height: 100%;
+          }
+        }
+        .superior-panel {
+          padding: 1.125rem 1.5rem;
+          width: 37.5rem;
+          height: 25rem;
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+
+          .introduction {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: flex-start;
+
+            .title {
+              font-size: 2rem;
+              font-weight: 700;
+              text-align: left;
+              line-height: 1.5;
+              margin-bottom: 2.5rem;
+            }
+
+            .desc {
+              font-size: 1.125rem;
+              font-weight: 400;
+              text-align: left;
+              line-height: 1.5;
+              margin-bottom: 2.5rem;
+              color: var(--el-color-info);
+            }
+          }
+
+          .to-use {
+            width: auto;
+            height: 2rem;
+            display: flex;
+            align-items: center;
+            color: var(--sk-color-home-primary);
+            cursor: pointer;
+            .txt {
+              font-size: 1.125rem;
+              font-weight: 400;
+              line-height: 1.5;
+              cursor: pointer;
+            }
+            .icon {
+              cursor: pointer;
+            }
+          }
+        }
+      }
+      .left {
+        flex-direction: reverse;
+      }
+      .right {
+        flex-direction: row-reverse;
+      }
+    }
+    .quick-use {
+      height: 20rem;
+      background-image: url("~/assets/home/bg2.png");
+      background-color: #f89126;
+      background-repeat: no-repeat;
+      background-size: auto 100%;
+      background-position: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      > button {
+        background: #fff;
+        border-color: #fff;
+        color: var(--sk-color-home-primary);
+      }
+      .title {
+        font-size: 2rem;
+        font-weight: 700;
+        text-align: center;
+        line-height: 1.5;
+        margin-bottom: 2.5rem;
+        color: var(--sk-color-font-white);
+      }
+    }
+
+    @media screen and (min-device-width: 100rem) {
+      .product-advantages {
+        height: calc(37.5rem * 1.2);
+        .advantages {
+          width: calc(69.25rem * 1.2);
+        }
+      }
+    }
+    .product-advantages-bgc {
+      background-color: var(--sk-color-cark-bgc);
+    }
+    .product-resources {
+      height: 44.5rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background-color: var(--sk-color-home-primary);
+      .title {
+        font-size: 2rem;
+        margin-top: 5rem;
+        color: var(--sk-color-font-white);
+      }
+      .desc {
+        margin-top: 2rem;
+        color: var(--sk-color-font-white);
+        opacity: 0.8;
+      }
+      .img-row {
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        align-content: flex-start;
+        margin-top: 1.25rem;
+        background-image: url("~/assets/home/kuxun.png");
+        background-repeat: no-repeat;
+        background-size: 100% auto;
+      }
+    }
+    .border-bottom-br {
+      border-bottom: 0.0625rem solid #dcdcdc;
+    }
   }
 }
 
