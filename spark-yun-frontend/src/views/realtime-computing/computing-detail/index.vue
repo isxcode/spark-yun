@@ -1,4 +1,5 @@
 <template>
+    <Breadcrumb :bread-crumb-list="breadCrumbList" />
     <div class="data-sync-page">
         <div class="data-sync__option-container">
             <div class="btn-box" @click="goBack">
@@ -16,7 +17,7 @@
                 </el-icon>
                 <span class="btn-text">保存</span>
             </div>
-            <div class="btn-box" @click="runWorkData">
+            <div class="btn-box">
                 <el-icon v-if="!btnLoadingConfig.runningLoading">
                     <VideoPlay />
                 </el-icon>
@@ -25,44 +26,20 @@
                 </el-icon>
                 <span class="btn-text">运行</span>
             </div>
-            <div class="btn-box" @click="terWorkData">
+            <div class="btn-box">
                 <el-icon v-if="!btnLoadingConfig.stopWorkFlowLoading">
                     <Close />
                 </el-icon>
                 <el-icon v-else class="is-loading">
                     <Loading />
                 </el-icon>
-                <span class="btn-text">中止</span>
+                <span class="btn-text">停止</span>
             </div>
             <div class="btn-box" @click="setConfigData">
                 <el-icon>
                     <Setting />
                 </el-icon>
                 <span class="btn-text">配置</span>
-            </div>
-            <!-- <div class="btn-box" @click="publishData">
-              <el-icon v-if="!btnLoadingConfig.publishLoading">
-                <Promotion />
-              </el-icon>
-              <el-icon v-else class="is-loading">
-                <Loading />
-              </el-icon>
-              <span class="btn-text">发布</span>
-            </div>
-            <div class="btn-box" @click="stopData">
-              <el-icon v-if="!btnLoadingConfig.stopLoading">
-                <Failed />
-              </el-icon>
-              <el-icon v-else class="is-loading">
-                <Loading />
-              </el-icon>
-              <span class="btn-text">下线</span>
-            </div> -->
-            <div class="btn-box" @click="locationNode">
-                <el-icon>
-                    <Position />
-                </el-icon>
-                <span class="btn-text">定位</span>
             </div>
         </div>
         <div class="data-sync" :class="{ 'data-sync__log': !!instanceId }" id="data-sync">
@@ -181,30 +158,29 @@
 
 <script lang="ts" setup>
 import { ref, reactive, onMounted, defineProps, nextTick, markRaw } from 'vue'
+import Breadcrumb from '@/layout/bread-crumb/index.vue'
 import { ElMessage, ElMessageBox, FormInstance, FormRules } from 'element-plus'
 import CodeMirror from 'vue-codemirror6'
 import { sql } from '@codemirror/lang-sql'
-import { DataSourceType, OverModeList } from './data.config.ts'
+import { DataSourceType, OverModeList, BreadCrumbList } from './data.config.ts'
 import { GetDatasourceList } from '@/services/datasource.service'
-import { CreateTableWork, GetDataSourceTables, GetTableColumnsByTableId, SaveDataSync } from '@/services/data-sync.service'
+import { CreateTableWork, GetDataSourceTables, GetTableColumnsByTableId } from '@/services/data-sync.service'
 import TableDetail from './table-detail/index.vue'
 import DataSyncTable from './data-sync-table/index.vue'
-import ConfigDetail from '../workflow-page/config-detail/index.vue'
-import { DeleteWorkData, GetWorkItemConfig, PublishWorkData, RunWorkItemConfig, SaveWorkItemConfig, TerWorkItemConfig } from '@/services/workflow.service'
-import PublishLog from '../work-item/publish-log.vue'
-import RunningLog from '../work-item/running-log.vue'
+import ConfigDetail from '../config-detail/index.vue'
+import {  } from '@/services/realtime-computing.service.ts'
+import PublishLog from '@/views/workflow/work-item/publish-log.vue'
+import RunningLog from '@/views/workflow/work-item/running-log.vue'
 import { Loading } from '@element-plus/icons-vue'
+import { useRoute, useRouter } from 'vue-router'
 
 interface Option {
     label: string
     value: string
 }
-
-const props = defineProps<{
-    workItemConfig: any
-}>()
-
-const emit = defineEmits(['back', 'locationNode'])
+const route = useRoute()
+const router = useRouter()
+const emit = defineEmits(['back'])
 
 const changeStatus = ref(false)
 const configDetailRef = ref()
@@ -228,6 +204,7 @@ const instanceId = ref('')
 const logCollapseRef = ref()
 const collapseActive = ref('0')
 const isCollapse = ref(false)
+const breadCrumbList = reactive(BreadCrumbList)
 const tabList = reactive([
   {
     name: '提交日志',
@@ -242,7 +219,7 @@ const tabList = reactive([
 ])
 
 const formData = reactive({
-    workId: '',     // 作业id
+    workId: '',           // 作业id
     sourceDBType: '',     // 来源数据源类型
     sourceDBId: '',       // 来源数据源
     sourceTable: '',      // 来源数据库表名
@@ -257,14 +234,10 @@ const formData = reactive({
 const rules = reactive<FormRules>({
 })
 const btnLoadingConfig = reactive({
-    runningLoading: false,
-    reRunLoading: false,
     saveLoading: false,
     publishLoading: false,
-    stopWorkFlowLoading: false,
-    importLoading: false,
-    exportLoading: false,
-    stopLoading: false
+    runningLoading: false,
+    stopWorkFlowLoading: false
 })
 
 // 日志tab切换
@@ -301,9 +274,9 @@ function saveData() {
     })
 }
 
-function getDate() {
+function getData() {
     GetWorkItemConfig({
-        workId: props.workItemConfig.id
+        workId: route.query.id
     }).then((res: any) => {
         if (res.data.syncWorkConfig) {
             formData.sourceDBType = res.data.syncWorkConfig.sourceDBType
@@ -321,7 +294,7 @@ function getDate() {
                 getDataSource(true, formData.targetDBType, 'target')
                 getDataSourceTable(true, formData.sourceDBId, 'source')
                 getDataSourceTable(true, formData.targetDBId, 'target')
-    
+
                 dataSyncTableRef.value.initPageData(res.data.syncWorkConfig)
                 changeStatus.value = false
             })
@@ -330,75 +303,12 @@ function getDate() {
         console.error(err)
     })
 }
-// 运行
-function runWorkData() {
-    if (changeStatus.value) {
-        ElMessageBox.confirm('作业尚未保存，是否确定要运行作业？', '警告', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-        }).then(() => {
-            btnLoadingConfig.runningLoading = true
-            RunWorkItemConfig({
-                workId: props.workItemConfig.id
-            }).then((res: any) => {
-                instanceId.value = res.data.instanceId
-                ElMessage.success(res.msg)
-                nextTick(() => {
-                    containerInstanceRef.value.initData(instanceId.value)
-                })
-                btnLoadingConfig.runningLoading = false
-                // initData(res.data.instanceId)
-                nextTick(() => {
-                    changeCollapseUp()
-                })
-            }).catch(() => {
-                btnLoadingConfig.runningLoading = false
-            })
-        })
-    } else {
-        btnLoadingConfig.runningLoading = true
-        RunWorkItemConfig({
-            workId: props.workItemConfig.id
-        }).then((res: any) => {
-            instanceId.value = res.data.instanceId
-            ElMessage.success(res.msg)
-            nextTick(() => {
-                containerInstanceRef.value.initData(instanceId.value)
-            })
-            btnLoadingConfig.runningLoading = false
-            // initData(res.data.instanceId)
-            nextTick(() => {
-                changeCollapseUp()
-            })
-        }).catch(() => {
-            btnLoadingConfig.runningLoading = false
-        })
-    }
-}
-// 终止
-function terWorkData() {
-  if (!instanceId.value) {
-    ElMessage.warning('暂无可中止的作业')
-    return
-  }
-  btnLoadingConfig.stopWorkFlowLoading = true
-  TerWorkItemConfig({
-    workId: props.workItemConfig.id,
-    instanceId: instanceId.value
-  }).then((res: any) => {
-    btnLoadingConfig.stopWorkFlowLoading = false
-    ElMessage.success(res.msg)
-  }).catch(() => {
-    btnLoadingConfig.stopWorkFlowLoading = false
-  })
-}
 
 // 发布
 function publishData() {
   btnLoadingConfig.publishLoading = true
   PublishWorkData({
-    workId: props.workItemConfig.id
+    workId: route.query.id
   }).then((res: any) => {
     ElMessage.success(res.msg)
     btnLoadingConfig.publishLoading = false
@@ -412,7 +322,7 @@ function publishData() {
 function stopData() {
   btnLoadingConfig.stopLoading = true
   DeleteWorkData({
-    workId: props.workItemConfig.id
+    workId: route.query.id
   }).then((res: any) => {
     ElMessage.success(res.msg)
     btnLoadingConfig.stopLoading = false
@@ -549,34 +459,25 @@ function dbIdChange(type: string) {
 // 返回
 function goBack() {
     if (changeStatus.value) {
-        ElMessageBox.confirm('作业尚未保存，是否确定要返回吗？', '警告', {
+        ElMessageBox.confirm('实时计算保存，是否确定要返回吗？', '警告', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
         }).then(() => {
-        emit('back', props.workItemConfig.id)
+            router.push({
+                name: 'realtime-computing'
+            })
         })
     } else {
-        emit('back', props.workItemConfig.id)
-    }
-}
-function locationNode() {
-    if (changeStatus.value) {
-        ElMessageBox.confirm('作业尚未保存，是否确定要返回吗？', '警告', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-        }).then(() => {
-        emit('locationNode', props.workItemConfig.id)
+        router.push({
+            name: 'realtime-computing'
         })
-    } else {
-        emit('locationNode', props.workItemConfig.id)
     }
 }
 
 // 配置打开
 function setConfigData() {
-    configDetailRef.value.showModal(props.workItemConfig)
+    configDetailRef.value.showModal(route.query)
 }
 
 function changeCollapseDown() {
@@ -592,233 +493,13 @@ function pageChangeEvent() {
 }
 
 onMounted(() => {
-    formData.workId = props.workItemConfig.id
-    getDate()
+    formData.workId = route.query.id
+    getData()
     activeName.value = 'PublishLog'
     currentTab.value = markRaw(PublishLog)
 })
 </script>
 
 <style lang="scss">
-.data-sync-page {
-    position: relative;
-    padding-top: 50px;
-    background-color: #ffffff;
-    width: 100%;
 
-    .data-sync__option-container {
-        height: 50px;
-        display: flex;
-        align-items: center;
-        color: getCssVar('color', 'primary', 'light-5');
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        padding-left: 20px;
-        z-index: 10;
-        border-bottom: 1px solid getCssVar('border-color');
-
-        .btn-box {
-            font-size: getCssVar('font-size', 'extra-small');
-            display: flex;
-            cursor: pointer;
-            width: 48px;
-            margin-right: 8px;
-
-            &.btn-box__4 {
-                width: 70px;
-            }
-
-            .btn-text {
-                margin-left: 4px;
-            }
-
-            &:hover {
-                color: getCssVar('color', 'primary');
-            }
-        }
-    }
-
-    .data-sync {
-        width: 100%;
-        padding: 20px;
-        box-sizing: border-box;
-        overflow: auto;
-        height: calc(100vh - 100px);
-        position: relative;
-
-        &.data-sync__log {
-            padding-bottom: 70px;
-        }
-
-        .data-sync-top {
-            display: flex;
-            width: 100%;
-
-            .vue-codemirror {
-                height: 100px;
-                width: 100%;
-
-                .cm-editor {
-                    height: 100%;
-                    outline: none;
-                    border: 1px solid #dcdfe6;
-                }
-
-                .cm-gutters {
-                    font-size: 12px;
-                    font-family: v-sans, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-                }
-
-                .cm-content {
-                    font-size: 12px;
-                    font-family: v-sans, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-                }
-
-                .cm-tooltip-autocomplete {
-
-                    // display: none !important;
-                    ul {
-                        li {
-                            height: 40px;
-                            display: flex;
-                            align-items: center;
-                            font-size: 12px;
-                            background-color: #ffffff;
-                            font-family: v-sans, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-                        }
-
-                        li[aria-selected] {
-                            background: #409EFF;
-                        }
-
-                        .cm-completionIcon {
-                            margin-right: -4px;
-                            opacity: 0;
-                        }
-                    }
-                }
-            }
-
-            .el-card {
-                width: 100%;
-
-                &+.el-card {
-                    margin-left: 12px;
-                }
-
-                .el-card__header {
-                    padding: 0;
-                    border: 0;
-
-                    .card-header {
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                        height: 32px;
-                        font-size: 14px;
-                    }
-                }
-
-                .el-card__body {
-                    .el-form {
-                        .el-form-item {
-                            .el-form-item__label {
-                                position: relative;
-
-                                &::before {
-                                    position: absolute;
-                                    left: -8px;
-                                }
-                            }
-
-                            .el-form-item__content {
-                                flex-wrap: nowrap;
-                                justify-content: flex-end;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        .select-link-type {
-            height: 44px;
-            display: flex;
-            align-items: center;
-            font-size: 12px;
-            width: 100%;
-
-            .el-select {
-                margin-left: 20px;
-            }
-        }
-
-    }
-    .data-sync-log__collapse {
-        position: absolute;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        z-index: 100;
-
-        .el-collapse-item__header {
-            // padding-left: 20px;
-            cursor: default;
-        }
-        .el-collapse-item__arrow {
-            display: none;
-        }
-        .el-collapse-item__content {
-            padding-bottom: 14px;
-        }
-
-        .log__collapse {
-            position: absolute;
-            right: 20px;
-            cursor: pointer;
-        }
-
-        .el-tabs {
-            width: 100%;
-            // padding: 0 20px;
-            height: 40px;
-            box-sizing: border-box;
-            .el-tabs__item {
-                font-size: getCssVar('font-size', 'extra-small');
-            }
-
-            .el-tabs__nav-scroll {
-                padding-left: 20px;
-                box-sizing: border-box;
-            }
-
-            .el-tabs__content {
-                height: 0;
-            }
-
-            .el-tabs__nav-scroll {
-                border-bottom: 1px solid getCssVar('border-color');
-            }
-        }
-        .log-show {
-            padding: 0 20px;
-            box-sizing: border-box;
-
-            pre {
-                width: 100px;
-            }
-
-            .show-container {
-                height: calc(100vh - 368px);
-                overflow: auto;
-            }
-
-            .empty-page {
-                height: 80%;
-            }
-        }
-    }
-}
 </style>

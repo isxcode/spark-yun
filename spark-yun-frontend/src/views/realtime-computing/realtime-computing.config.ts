@@ -49,22 +49,27 @@ export const BreadCrumbList: Array<BreadCrumb> = [
 export const colConfigs: colConfig[] = [
   {
     prop: 'name',
-    title: '作业流名称',
+    title: '名称',
     minWidth: 100,
     customSlot: 'nameSlot',
     showOverflowTooltip: true
   },
-  // {
-  //   prop: 'clusterName',
-  //   title: '默认集群',
-  //   minWidth: 100,
-  //   showOverflowTooltip: true
-  // },
+  {
+    prop: 'clusterName',
+    title: '计算集群',
+    minWidth: 100,
+    showOverflowTooltip: true
+  },
   {
     prop: 'status',
     title: '发布状态',
     minWidth: 100,
     customSlot: 'statusTag'
+  },
+  {
+    prop: 'createDateTime',
+    title: '创建时间',
+    minWidth: 140
   },
   {
     prop: 'remark',

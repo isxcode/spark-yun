@@ -55,7 +55,7 @@ export const menuListData: Array<Menu> = [
     name: '实时计算',
     icon: 'Iphone',
     authType: [ 'ROLE_TENANT_MEMBER', 'ROLE_TENANT_ADMIN' ],
-    childPage: []
+    childPage: ['computing-detail']
   },
   {
     code: 'driver-management',
