@@ -73,7 +73,7 @@ import Breadcrumb from '@/layout/bread-crumb/index.vue'
 import BlockTable from '@/components/block-table/index.vue'
 import LoadingPage from '@/components/loading/index.vue'
 import AddModal from './add-modal/index.vue'
-import ShowLog from '../computer-group-v1/computer-pointer/show-log/index.vue'
+import ShowLog from './log-modal/index.vue'
 
 import { BreadCrumbList, TableConfig, FormData } from './spark-container.config.ts'
 import { GetSparkContainerList, AddSparkContainerData, UpdateSparkContainerData, ChecSparkContainerkData, DeleteSparkContainerkData, StartSparkContainerkData, StopSparkContainerkData, GetSparkContainerkDetail } from '@/services/spark-container.service.ts'
@@ -136,7 +136,7 @@ function addData() {
 
 // 查看日志
 function showLog(e: any) {
-  showLogRef.value.showModal(e.connectLog)
+  showLogRef.value.showModal(e)
 }
 
 function editData(data: any) {
