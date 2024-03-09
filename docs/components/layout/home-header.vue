@@ -161,10 +161,6 @@ function handleMenuClick(menuItem: MenuData) {
     window.open(menuItem.path);
   }
 }
-
-function handleQuickUseClick() {
-  window.open("https://zhiqingyun-demo.isxcode.com");
-}
 </script>
 
 <style lang="scss" scoped>
@@ -268,7 +264,7 @@ function handleQuickUseClick() {
   }
 }
 
-@media screen and (max-width: 375px) {
+@media screen and (max-width: 475px) {
   .home-header {
     position: fixed;
     top: 0;
@@ -349,23 +345,6 @@ function handleQuickUseClick() {
           }
         }
       }
-      // .quick-use {
-      //   width: auto;
-      //   padding: 0 0.75rem;
-      //   height: 2rem;
-      //   line-height: 2rem;
-      //   text-align: center;
-      //   border-radius: 1.25rem;
-      //   margin-left: 0.875rem;
-      //   cursor: pointer;
-      //   transition: all 0.3s;
-      //   color: var(--sk-color-font-gray);
-      //   border: 0.0625rem solid var(--sk-color-font-gray);
-      //   &:hover {
-      //     color: var(--sk-color-font-gray-hover);
-      //     border: 0.0625rem solid var(--sk-color-font-gray-hover);
-      //   }
-      // }
       .left {
         display: flex;
         align-items: center;
