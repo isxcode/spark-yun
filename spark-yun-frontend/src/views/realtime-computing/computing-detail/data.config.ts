@@ -58,3 +58,20 @@ export const OverModeList = [
     value: 'OVERWRITE',
   }
 ]
+
+export interface BreadCrumb {
+  name: string;
+  code: string;
+  hidden?: boolean;
+}
+
+export const BreadCrumbList: Array<BreadCrumb> = [
+  {
+    name: '实时计算',
+    code: 'realtime-computing'
+  },
+  {
+    name: '详情',
+    code: 'computing-detail'
+  }
+]
