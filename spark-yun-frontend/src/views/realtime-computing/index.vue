@@ -4,7 +4,7 @@
     <div class="zqy-table-top">
       <el-button
         type="primary"
-        @click="addGroup"
+        @click="addData"
       >
         添加实时计算
       </el-button>
@@ -75,10 +75,28 @@
           <template #options="scopeSlot">
             <div class="btn-group">
               <span @click="editData(scopeSlot.row)">编辑</span>
-              <span @click="deleteData(scopeSlot.row)">删除</span>
-              <span v-if="scopeSlot.row.status !== 'STOP'" @click="underlineWorkFlow(scopeSlot.row)">下线</span>
-              <span v-else @click="publishWorkFlow(scopeSlot.row)">发布</span>
-              <!-- <el-icon v-else class="is-loading"><Loading /></el-icon> -->
+              <el-dropdown trigger="click">
+                <span class="click-show-more">更多</span>
+                <template #dropdown>
+                  <el-dropdown-menu>
+                    <el-dropdown-item @click="showLog(scopeSlot.row)">
+                      日志
+                    </el-dropdown-item>
+                    <el-dropdown-item @click="stopComputing(scopeSlot.row)">
+                      停止
+                    </el-dropdown-item>
+                    <el-dropdown-item @click="startComputing(scopeSlot.row)">
+                      运行
+                    </el-dropdown-item>
+                    <el-dropdown-item @click="checkData(scopeSlot.row)">
+                      检测
+                    </el-dropdown-item>
+                    <el-dropdown-item @click="deleteData(scopeSlot.row)">
+                      删除
+                    </el-dropdown-item>
+                  </el-dropdown-menu>
+                </template>
+              </el-dropdown>
             </div>
           </template>
         </BlockTable>
@@ -95,15 +113,13 @@ import BlockTable from '@/components/block-table/index.vue'
 import LoadingPage from '@/components/loading/index.vue'
 import AddModal from './add-modal/index.vue'
 import { BreadCrumbList, TableConfig, FormData } from './realtime-computing.config.ts'
-import { GetWorkflowList, AddWorkflowData, UpdateWorkflowData, DeleteWorkflowData, UnderlineWorkflowData, PublishWorkflowData } from '@/services/workflow.service'
+import { SaveTimeComputingData, GetTimeComputingList, UpdateTimeComputingData, DeleteTimeComputingData, RunTimeComputingData } from '@/services/realtime-computing.service.ts'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/store/useAuth'
 
 const router = useRouter()
-
 const authStore = useAuthStore()
-// const state = useState(['tenantId' ], 'authStoreModule')
 
 const breadCrumbList = reactive(BreadCrumbList)
 const tableConfig: any = reactive(TableConfig)
@@ -115,7 +131,7 @@ const addModalRef = ref(null)
 function initData(tableLoading?: boolean) {
   loading.value = tableLoading ? false : true
   networkError.value = networkError.value || false
-  GetWorkflowList({
+  GetTimeComputingList({
     page: tableConfig.pagination.currentPage - 1,
     pageSize: tableConfig.pagination.pageSize,
     searchKeyWord: keyword.value
@@ -136,10 +152,10 @@ function initData(tableLoading?: boolean) {
     })
 }
 
-function addGroup() {
+function addData() {
   addModalRef.value.showModal((formData: FormData) => {
     return new Promise((resolve: any, reject: any) => {
-      AddWorkflowData(formData)
+      SaveTimeComputingData(formData)
         .then((res: any) => {
           ElMessage.success(res.msg)
           initData()
@@ -155,7 +171,7 @@ function addGroup() {
 function editData(data: any) {
   addModalRef.value.showModal((formData: FormData) => {
     return new Promise((resolve: any, reject: any) => {
-      UpdateWorkflowData(formData)
+      UpdateTimeComputingData(formData)
         .then((res: any) => {
           ElMessage.success(res.msg)
           initData()
@@ -168,10 +184,10 @@ function editData(data: any) {
   }, data)
 }
 
-// 下线工作流
-function underlineWorkFlow(data: any) {
+// 停止实时计算
+function stopComputing(data: any) {
   UnderlineWorkflowData({
-    workflowId: data.id
+    id: data.id
   }).then((res: any) => {
     initData()
     ElMessage.success(res.msg)
@@ -179,10 +195,10 @@ function underlineWorkFlow(data: any) {
   })
 }
 
-// 发布作业流
-function publishWorkFlow(data: any) {
-  PublishWorkflowData({
-      workflowId: data.id
+// 运行实时计算
+function startComputing(data: any) {
+  RunTimeComputingData({
+      id: data.id
   }).then((res: any) => {
       ElMessage.success(res.msg)
       initData()
@@ -192,26 +208,24 @@ function publishWorkFlow(data: any) {
 
 // 删除
 function deleteData(data: any) {
-  ElMessageBox.confirm('确定删除该作业流吗？', '警告', {
+  ElMessageBox.confirm('确定删除该实时计算吗？', '警告', {
     confirmButtonText: '确定',
     cancelButtonText: '取消',
     type: 'warning'
   }).then(() => {
-    DeleteWorkflowData({
-      workflowId: data.id,
-      Tenant: authStore.tenantId
+    DeleteTimeComputingData({
+      id: data.id
+    }).then((res: any) => {
+      ElMessage.success(res.msg)
+      initData()
     })
-      .then((res: any) => {
-        ElMessage.success(res.msg)
-        initData()
-      })
-      .catch(() => {})
+    .catch(() => {})
   })
 }
 
 function showDetail(data: any) {
   router.push({
-    name: 'workflow-page',
+    name: 'computing-detail',
     query: {
       id: data.id,
       name: data.name

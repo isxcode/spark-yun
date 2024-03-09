@@ -23,6 +23,7 @@ import CustomFormSetting from '@/views/custom-form/form-setting/index.vue'
 import CustomApi from '@/views/custom-api/index.vue'
 import SparkContainer from '@/views/spark-container/index.vue'
 import RealtimeComputing from '@/views/realtime-computing/index.vue'
+import ComputingDetail from '@/views/realtime-computing/computing-detail/index.vue'
 
 import fileCenter from '@/views/file-center/index.vue'
 import CustomFunc from '@/views/custom-func/index.vue'
@@ -152,5 +153,10 @@ export default [
     path: 'realtime-computing',
     name: 'realtime-computing',
     component: RealtimeComputing
+  },
+  {
+    path: 'computing-detail',
+    name: 'computing-detail',
+    component: ComputingDetail
   }
 ]
