@@ -66,20 +66,11 @@
                                     :value="item.value" />
                             </el-select>
                         </el-form-item>
-                        <el-form-item prop="sourceTable" label="表">
+                        <el-form-item prop="sourceTable" label="topic">
                             <el-select v-model="formData.sourceTable" clearable filterable placeholder="请选择"
                                 @visible-change="getDataSourceTable($event, formData.sourceDBId, 'source')"
                                 @change="tableChangeEvent($event, formData.sourceDBId, 'source')">
                                 <el-option v-for="item in sourceTablesList" :key="item.value" :label="item.label"
-                                    :value="item.value" />
-                            </el-select>
-                            <el-button type="primary" link @click="showTableDetail">数据预览</el-button>
-                        </el-form-item>
-                        <el-form-item label="分区键">
-                            <el-select v-model="formData.partitionColumn" clearable filterable placeholder="请选择"
-                                @visible-change="getTableColumnData($event, formData.sourceDBId, formData.sourceTable)"
-                                @change="pageChangeEvent">
-                                <el-option v-for="item in partKeyList" :key="item.value" :label="item.label"
                                     :value="item.value" />
                             </el-select>
                         </el-form-item>
@@ -168,7 +159,7 @@ import { CreateTableWork, GetDataSourceTables, GetTableColumnsByTableId } from '
 import TableDetail from './table-detail/index.vue'
 import DataSyncTable from './data-sync-table/index.vue'
 import ConfigDetail from '../config-detail/index.vue'
-import {  } from '@/services/realtime-computing.service.ts'
+import { GetTimeComputingDetail, GetTopicDataList } from '@/services/realtime-computing.service.ts'
 import PublishLog from '@/views/workflow/work-item/publish-log.vue'
 import RunningLog from '@/views/workflow/work-item/running-log.vue'
 import { Loading } from '@element-plus/icons-vue'
@@ -224,7 +215,6 @@ const formData = reactive({
     sourceDBId: '',       // 来源数据源
     sourceTable: '',      // 来源数据库表名
     queryCondition: '',   // 来源数据库查询条件
-    partitionColumn: '',  // 分区键
 
     targetDBType: '',     // 目标数据库类型
     targetDBId: '',       // 目标数据源
@@ -275,20 +265,17 @@ function saveData() {
 }
 
 function getData() {
-    GetWorkItemConfig({
-        workId: route.query.id
-    }).then((res: any) => {
+    GetTimeComputingDetail({id: route.query.id}).then((res: any) => {
         if (res.data.syncWorkConfig) {
             formData.sourceDBType = res.data.syncWorkConfig.sourceDBType
             formData.sourceDBId = res.data.syncWorkConfig.sourceDBId
             formData.sourceTable = res.data.syncWorkConfig.sourceTable
             formData.queryCondition = res.data.syncWorkConfig.queryCondition
-            formData.partitionColumn = res.data.syncWorkConfig.partitionColumn
             formData.targetDBType = res.data.syncWorkConfig.targetDBType
             formData.targetDBId = res.data.syncWorkConfig.targetDBId
             formData.targetTable = res.data.syncWorkConfig.targetTable
             formData.overMode = res.data.syncWorkConfig.overMode
-    
+
             nextTick(() => {
                 getDataSource(true, formData.sourceDBType, 'source')
                 getDataSource(true, formData.targetDBType, 'target')
@@ -361,9 +348,8 @@ function getDataSource(e: boolean, sourceType: string, type: string) {
 function getDataSourceTable(e: boolean, dataSourceId: string, type: string) {
     if (e && dataSourceId) {
         let options = []
-        GetDataSourceTables({
-            dataSourceId: dataSourceId,
-            tablePattern: ""
+        GetTopicDataList({
+            datasourceId: dataSourceId
         }).then((res: any) => {
             options = res.data.tables.map((item: any) => {
                 return {
@@ -426,9 +412,6 @@ function getTableColumnData(e: boolean, dataSourceId: string, tableName: string)
 
 function tableChangeEvent(e: string, dataSourceId: string, type: string) {
     changeStatus.value = true
-    if (type === 'source') {
-        formData.partitionColumn = ''
-    }
     dataSyncTableRef.value.getTableColumnData({
         dataSourceId: dataSourceId,
         tableName: e

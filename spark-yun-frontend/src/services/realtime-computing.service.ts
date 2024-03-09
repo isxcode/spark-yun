@@ -58,9 +58,17 @@ export function ConifgTimeComputingData(params: any): Promise<any> {
         params: params
     })
 }
+// 获取实时作业详情
+export function GetTimeComputingDetail(params: any): Promise<any> {
+    return http.request({
+        method: 'post',
+        url: '/vip/real/getReal',
+        params: params
+    })
+}
 
 // 查询topic列表
-export function getTopicDataList(params: any): Promise<any> {
+export function GetTopicDataList(params: any): Promise<any> {
     return http.request({
         method: 'post',
         url: '/vip/real/queryTopic',
@@ -69,7 +77,7 @@ export function getTopicDataList(params: any): Promise<any> {
 }
 
 // 查询json字段节点
-export function getJsonParamNodeList(params: any): Promise<any> {
+export function GetJsonParamNodeList(params: any): Promise<any> {
     return http.request({
         method: 'post',
         url: '/vip/real/queryColumnPath',
@@ -78,7 +86,7 @@ export function getJsonParamNodeList(params: any): Promise<any> {
 }
 
 // 查询json字段节点
-export function getJsonArrayNodeList(params: any): Promise<any> {
+export function GetJsonArrayNodeList(params: any): Promise<any> {
     return http.request({
         method: 'post',
         url: '/vip/real/queryArrayPath',
