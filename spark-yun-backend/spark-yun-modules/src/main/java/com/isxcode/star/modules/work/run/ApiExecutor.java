@@ -69,9 +69,9 @@ public class ApiExecutor extends WorkExecutor {
 						apiWorkConfig.getRequestBody(), Object.class);
 			}
 
-      log.debug("获取远程返回数据:{}", response);
+			log.debug("获取远程返回数据:{}", response);
 		} catch (Exception e) {
-      log.debug(e.getMessage(), e);
+			log.debug(e.getMessage(), e);
 			throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "作业执行异常 : " + e.getMessage() + "\n");
 		}
 
