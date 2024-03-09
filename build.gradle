@@ -67,6 +67,7 @@ allprojects {
 
     // mapstruct
     implementation "org.mapstruct:mapstruct:${MAPSTRUCT_VERSION}"
+    implementation "org.mapstruct:mapstruct-processor:${MAPSTRUCT_VERSION}"
     annotationProcessor "org.mapstruct:mapstruct-processor:${MAPSTRUCT_VERSION}"
     testAnnotationProcessor "org.mapstruct:mapstruct-processor:${MAPSTRUCT_VERSION}"
   }
