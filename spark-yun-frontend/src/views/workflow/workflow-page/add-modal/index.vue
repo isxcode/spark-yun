@@ -92,6 +92,20 @@
             />
           </el-select>
         </el-form-item>
+        <el-form-item label="Spark容器" prop="containerId" v-if="['SPARK_CONTAINER_SQL'].includes(formData.workType)">
+          <el-select
+            v-model="formData.containerId"
+            placeholder="请选择"
+            @visible-change="getSparkContainerList"
+          >
+            <el-option
+              v-for="item in sparkContainerList"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
+        </el-form-item>
       </template>
       <el-form-item label="备注">
         <el-input
@@ -113,6 +127,7 @@ import BlockModal from '@/components/block-modal/index.vue'
 import { ElMessage, FormInstance, FormRules } from 'element-plus'
 import { GetComputerGroupList, GetComputerPointData } from '@/services/computer-group.service';
 import { GetDatasourceList } from '@/services/datasource.service';
+import { GetSparkContainerList } from '@/services/spark-container.service';
 
 const form = ref<FormInstance>()
 const callback = ref<any>()
@@ -121,6 +136,7 @@ const clusterNodeList = ref([])  // 集群节点
 const dataSourceList = ref([])  // 数据源
 const showForm = ref(true)
 const renderSense = ref('')
+const sparkContainerList = ref([]) // spark容器
 
 const modelConfig = reactive({
   title: '添加作业',
@@ -147,6 +163,7 @@ const formData = reactive({
   clusterId: '', // 计算集群
   clusterNodeId: '', // 集群节点
   datasourceId: '', // 数据源
+  containerId: '', // spark容器
   enableHive: false,
   remark: '',
   id: ''
@@ -163,6 +180,10 @@ const typeList = reactive([
   {
     label: 'SparkSql查询作业',
     value: 'SPARK_SQL'
+  },
+  {
+    label: 'SparkSql容器作业',
+    value: 'SPARK_CONTAINER_SQL'
   },
   {
     label: '数据同步作业',
@@ -216,6 +237,13 @@ const rules = reactive<FormRules>({
       message: '请选择数据源',
       trigger: [ 'blur', 'change' ]
     }
+  ],
+  containerId: [
+    {
+      required: true,
+      message: '请选择Spark容器',
+      trigger: [ 'blur', 'change' ]
+    }
   ]
 })
 
@@ -229,6 +257,7 @@ function showModal(cb: () => void, data: any): void {
     formData.clusterId && getClusterList(true)
     formData.clusterNodeId && getClusterNodeList(true)
     formData.datasourceId && getDataSourceList(true)
+    formData.containerId && getSparkContainerList(true)
 
     modelConfig.title = '编辑作业'
     renderSense.value = 'edit'
@@ -338,6 +367,25 @@ function getDataSourceList(e: boolean, searchType?: string) {
     })
     .catch(() => {
       dataSourceList.value = []
+    })
+  }
+}
+function getSparkContainerList(e: boolean, searchType?: string) {
+  if (e) {
+    GetSparkContainerList({
+      page: 0,
+      pageSize: 10000,
+      searchKeyWord: ''
+    }).then((res: any) => {
+      sparkContainerList.value = res.data.content.map((item: any) => {
+        return {
+          label: item.name,
+          value: item.id
+        }
+      })
+    })
+    .catch(() => {
+      sparkContainerList.value = []
     })
   }
 }
