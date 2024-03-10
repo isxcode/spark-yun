@@ -32,4 +32,6 @@ public class PluginReq {
 	private List<UdfInfo> udfList;
 
 	private int containerPort;
+
+  private String database;
 }
