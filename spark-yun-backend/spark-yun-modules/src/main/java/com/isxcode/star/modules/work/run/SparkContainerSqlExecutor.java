@@ -83,7 +83,7 @@ public class SparkContainerSqlExecutor extends WorkExecutor {
 
     // 脚本检查通过
     logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始执行作业 \n");
-    logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始执行SQL:").append(workRunContext.getScript()).append("\n");
+    logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始执行SQL: \n").append(workRunContext.getScript()).append("\n");
 
     // 调用代理的接口，获取数据
     try {
@@ -121,7 +121,7 @@ public class SparkContainerSqlExecutor extends WorkExecutor {
       }
 
       // 记录结束执行时间
-      logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("查询SQL执行成功  \n");
+      logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("SQL执行成功  \n");
       workInstance = updateInstance(workInstance, logBuilder);
 
       // 讲data转为json存到实例中
