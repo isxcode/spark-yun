@@ -29,7 +29,6 @@
             </el-dropdown-menu>
           </template>
         </el-dropdown>
-        <!-- <div class="quick-use" @click="handleQuickUseClick">中英文</div> -->
       </div>
     </div>
   </header>
@@ -38,29 +37,29 @@
 <script setup lang="ts">
 import { isMobile } from "~/util/isMobile.js";
 
-defineComponent("LayoutHomeHeader");
+defineComponent({
+  name: "LayoutHomeHeader",
+});
 
-// 不同的语言对应不同的显示文字
 const langMap = reactive<Record<string, string>>({
   "zh-CN": "中文",
   "en-US": "English",
 });
-//  声明当前语言信息
 const currentLang = ref<string>("zh-CN");
-// 计算属性，根据当前语言信息获取对应的显示文字
 const currentLangText = computed(() => {
   return langMap[currentLang.value];
 });
-// 语言切换
 function handleLangChange(lang: string) {
   currentLang.value = lang;
 }
 
 const headerRef = ref<HTMLElement | null>(null);
 
+const mobileFlag = ref<boolean>(false);
 onMounted(() => {
   window.addEventListener("scroll", handleScroll);
-  if (isMobile()) {
+  mobileFlag.value = isMobile();
+  if (mobileFlag) {
     disableZoom();
   }
 });
@@ -77,30 +76,44 @@ function disableZoom(): void {
   document.getElementsByTagName("head")[0].appendChild(meta);
 }
 
+function setHeaderStyle(style: Record<string, string>) {
+  Object.keys(style).forEach((key) => {
+    headerRef.value!.style[key as string] = style[key as string];
+  });
+}
+
 function handleScroll() {
   const flag = window.location.pathname === "/";
+  const commonStyle = {
+    boxShadow: "0 2px 4px -1px rgba(0,0,0,0.25)",
+    height: mobileFlag.value ? "48px" : "60px",
+  };
+  const mobileStyle = {
+    backgroundColor: "#fff",
+  };
+  const desktopStyle = {
+    backgroundColor: "rgba(255,255,255,0.3)",
+    backdropFilter: "blur(10px)",
+  };
+  const topStyle = {
+    height: "80px",
+    boxShadow: "none",
+    backgroundColor: "transparent",
+    backdropFilter: "none",
+  };
+
   if (!flag) {
-    headerRef.value!.style.height = "60px";
-    headerRef.value!.style.boxShadow = "0 2px 4px -1px rgba(0,0,0,0.25)";
-    headerRef.value!.style.backgroundColor = "transparent";
+    setHeaderStyle(commonStyle);
+    if (mobileFlag.value) {
+      setHeaderStyle(mobileStyle);
+    }
     return;
   }
   if (window.scrollY > 0) {
-    headerRef.value!.style.backgroundColor = "#fff";
-    headerRef.value!.style.height = "60px";
-    headerRef.value!.style.boxShadow = "0 2px 4px -1px rgba(0,0,0,0.25)";
-    // 移动端设置白底
-    if (isMobile()) {
-      headerRef.value!.style.backgroundColor = "#fff";
-    } else {
-      headerRef.value!.style.backgroundColor = "rgba(255,255,255,0.3)";
-      headerRef.value!.style.backdropFilter = "blur(10px)";
-    }
+    setHeaderStyle(commonStyle);
+    setHeaderStyle(isMobile() ? mobileStyle : desktopStyle);
   } else {
-    headerRef.value!.style.height = "80px";
-    headerRef.value!.style.boxShadow = "none";
-    headerRef.value!.style.backgroundColor = "transparent";
-    headerRef.value!.style.backdropFilter = "none";
+    setHeaderStyle(topStyle);
   }
 }
 
@@ -116,7 +129,7 @@ watch(
     });
     if (!flag) {
       headerRef.value!.style.backgroundColor = "var(--sk-color-home-bgc)";
-      headerRef.value!.style.height = "60px";
+      headerRef.value!.style.height = mobileFlag.value ? "48px" : mobileFlag.value ? "48px" : "80px";
       headerRef.value!.style.boxShadow = "0 2px 4px -1px rgba(0,0,0,0.25)";
       return;
     }
@@ -127,13 +140,10 @@ watch(
   }
 );
 
-// logo 点击
 function handleLogoClick() {
   const router = useRouter();
   router.push("/");
 }
-
-// 菜单数据接口interface
 
 interface MenuData {
   title: string;
@@ -150,6 +160,7 @@ const menuData: Array<MenuData> = reactive([
     type: "link",
   },
 ]);
+
 function handleMenuClick(menuItem: MenuData) {
   if (menuItem.type === "router") {
     const router = useRouter();
@@ -273,7 +284,7 @@ function handleMenuClick(menuItem: MenuData) {
     z-index: 999;
     transition: all 0.3s;
     width: 100%;
-    height: 5rem;
+    height: 48px;
     display: flex;
     align-items: center;
     background-color: transparent;
@@ -304,8 +315,9 @@ function handleMenuClick(menuItem: MenuData) {
           display: flex;
           flex-direction: row;
           align-items: center;
+          margin-left: 1.25rem;
           > img {
-            height: 2.375rem;
+            height: 2rem;
             margin-bottom: 0.125rem;
           }
           h1 {
@@ -348,6 +360,7 @@ function handleMenuClick(menuItem: MenuData) {
       .left {
         display: flex;
         align-items: center;
+        margin-right: 1.25rem;
       }
       .lang-change {
         margin-left: 0.75rem;
