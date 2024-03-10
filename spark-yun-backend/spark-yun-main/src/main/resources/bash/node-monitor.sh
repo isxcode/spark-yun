@@ -20,8 +20,8 @@ NET_IO_READ=$(cat /proc/net/dev | grep eth0 | awk '{print $2}')
 NET_IO_WRITE=$(cat /proc/net/dev | grep eth0 | awk '{print $10}')
 
 # 获取磁盘IO读写速度（单位：字节/秒）
-DISK_IO_READ=$(iostat -d -k | awk '/Device/{flag=1;next}/^$/{flag=0}flag{printf "%.0f\n", $3 * 1024}')
-DISK_IO_WRITE=$(iostat -d -k | awk '/Device/{flag=1;next}/^$/{flag=0}flag{printf "%.0f\n", $4 * 1024}')
+DISK_IO_READ=$(iostat -d -k | awk '/Device/{flag=1;next}/^$/{flag=0}flag{printf "%.0f\n", $3}')
+DISK_IO_WRITE=$(iostat -d -k | awk '/Device/{flag=1;next}/^$/{flag=0}flag{printf "%.0f\n", $4}')
 
 # 返回json的日志
 json_output="{ \
@@ -32,8 +32,8 @@ json_output="{ \
   \"cpuPercent\": \"$CPU_PERCENT\", \
   \"networkIoReadSpeed\": \"$NET_IO_READ\", \
   \"networkIoWriteSpeed\": \"$NET_IO_WRITE\", \
-  \"diskIoReadSpeed\": \"$DISK_IO_READ\", \
-  \"diskIoWriteSpeed\": \"$DISK_IO_WRITE\" \
+  \"diskIoReadSpeedStr\": \"$DISK_IO_READ\", \
+  \"diskIoWriteSpeedStr\": \"$DISK_IO_WRITE\" \
 }"
 
 echo $json_output
