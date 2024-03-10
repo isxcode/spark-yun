@@ -23,14 +23,3 @@
     cursor: pointer;
   }
 }
-
-html {
-  font-size: 16px;
-}
-
-@media screen and (max-width: 400px) {
-  html {
-    color: blue;
-    font-size: 14px;
-  }
-}

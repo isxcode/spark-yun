@@ -3,8 +3,19 @@
     <!-- 一句话产品 -->
     <div class="one-word-desc-product">
       <div class="top">
-        <div class="one-word">至轻云-超轻量级大数据平台</div>
-        <div class="one-desc">•企业级平台 &nbsp; &nbsp; •Docker一键部署 &nbsp; &nbsp; •Github开源免费 &nbsp; &nbsp; •Spark纯原生</div>
+        <div class="one-word">
+          至轻云
+          <span v-if="!mobileFlag"> - </span>
+          <br v-if="mobileFlag" />
+          超轻量级大数据平台
+        </div>
+        <div v-if="!mobileFlag" class="one-desc">•企业级平台 &nbsp; &nbsp; •Docker一键部署 &nbsp; &nbsp; •Github开源免费 &nbsp; &nbsp; •Spark纯原生</div>
+        <div v-if="mobileFlag" class="one-desc-mobile">
+          <span> •企业级平台 </span>
+          <span> •Docker一键部署 </span>
+          <span> •Github开源免费 </span>
+          <span> •Spark纯原生 </span>
+        </div>
         <div class="fast-use" id="code_block">
           <span class="line" line="1">
             <span style="color: #e25a1b">docker</span>
@@ -143,6 +154,8 @@
 </template>
 
 <script lang="ts" setup>
+import { isMobile } from "@/util/isMobile";
+
 definePageMeta({
   title: "首页",
   layout: "home",
@@ -155,15 +168,27 @@ useSeoMeta({
   ogDescription: "打造超轻量级大数据平台",
 });
 
+const mobileFlag = ref(false);
 onMounted(async () => {
   await nextTick();
+  mobileFlag.value = isMobile();
   const video = document.getElementById("v1") as HTMLVideoElement;
   if (video) {
     video.playbackRate = 0.5;
   } else {
     console.error("Video element not found");
   }
+
+  window.addEventListener("resize", handleResize);
 });
+
+onUnmounted(() => {
+  window.removeEventListener("resize", handleResize);
+});
+
+function handleResize() {
+  mobileFlag.value = isMobile();
+}
 
 const productAdvantagesList = reactive([
   {
@@ -501,7 +526,7 @@ function jumpDoc() {
         justify-content: flex-start;
         align-items: center;
         .one-word {
-          font-size: 3.4375rem;
+          font-size: 2.4375rem;
           font-weight: 700;
           text-align: center;
           line-height: 1.5;
@@ -515,33 +540,49 @@ function jumpDoc() {
           margin-bottom: 4vh;
           color: var(--el-color-info);
         }
+        .one-desc-mobile {
+          width: 320px;
+          font-size: 1.1875rem;
+          font-weight: 400;
+          line-height: 1.5;
+          margin-bottom: 4vh;
+          display: flex;
+          flex-direction: row;
+          flex-wrap: wrap;
+          align-items: center;
+          > span {
+            width: 160px;
+          }
+        }
         .fast-use {
-          font-size: 1.5rem;
           font-weight: 400;
           text-align: center;
           line-height: 1.5;
           margin-bottom: 4vh;
+          #code_block {
+            font-size: 0.8rem;
+          }
         }
         .product-img {
           z-index: 9;
           position: absolute;
-          bottom: 10vh;
+          bottom: 6rem;
           display: flex;
           justify-content: center;
           > img {
-            width: 100%;
-            height: 58vh;
+            width: 86vw;
+            height: 100%;
             box-shadow: var(--sk-box-show);
             border-radius: 0.25rem;
           }
         }
       }
       .bottom {
-        min-height: 20vh;
+        min-height: 5rem;
         width: 100%;
         background-image: url("~/assets/home/bg0.png");
         background-repeat: no-repeat;
-        background-size: 100% auto;
+        background-size: auto 100%;
         display: flex;
         flex-direction: column-reverse;
         .opt-detail {
@@ -562,19 +603,21 @@ function jumpDoc() {
     .product-advantages {
       border-top: 0.0625rem solid #edebeb;
       width: 100%;
-      height: 37.5rem;
+      height: unset;
       background-color: var(--sk-color-home-bgc);
       display: flex;
       justify-content: center;
       align-items: center;
       .advantages {
         width: 100%;
-        height: 25rem;
+        height: unset;
         display: flex;
+        flex-direction: column;
         justify-content: space-between;
         align-items: center;
         .img {
-          width: 44%;
+          margin-top: 3rem;
+          width: 67vw;
           border-radius: 0.25rem;
           box-shadow: var(--sk-box-show);
           > img {
@@ -584,12 +627,12 @@ function jumpDoc() {
         }
         .superior-panel {
           padding: 1.125rem 1.5rem;
-          width: 37.5rem;
-          height: 25rem;
+          padding-bottom: 4rem;
+          width: unset;
+          height: unset;
           display: flex;
           flex-direction: column;
           align-items: flex-start;
-
           .introduction {
             width: 100%;
             display: flex;
@@ -598,23 +641,22 @@ function jumpDoc() {
             align-items: flex-start;
 
             .title {
-              font-size: 2rem;
+              margin-top: unset;
+              font-size: 1.25rem;
               font-weight: 700;
               text-align: left;
               line-height: 1.5;
-              margin-bottom: 2.5rem;
+              margin-bottom: 1.5rem;
             }
-
             .desc {
-              font-size: 1.125rem;
+              font-size: 1rem;
               font-weight: 400;
               text-align: left;
               line-height: 1.5;
-              margin-bottom: 2.5rem;
+              margin-bottom: 0rem;
               color: var(--el-color-info);
             }
           }
-
           .to-use {
             width: auto;
             height: 2rem;
@@ -623,7 +665,7 @@ function jumpDoc() {
             color: var(--sk-color-home-primary);
             cursor: pointer;
             .txt {
-              font-size: 1.125rem;
+              font-size: 1rem;
               font-weight: 400;
               line-height: 1.5;
               cursor: pointer;
@@ -638,11 +680,11 @@ function jumpDoc() {
         flex-direction: reverse;
       }
       .right {
-        flex-direction: row-reverse;
+        flex-direction: reverse;
       }
     }
     .quick-use {
-      height: 20rem;
+      height: 12rem;
       background-image: url("~/assets/home/bg2.png");
       background-color: #f89126;
       background-repeat: no-repeat;
@@ -658,11 +700,11 @@ function jumpDoc() {
         color: var(--sk-color-home-primary);
       }
       .title {
-        font-size: 2rem;
+        font-size: 1.5rem;
         font-weight: 700;
         text-align: center;
-        line-height: 1.5;
-        margin-bottom: 2.5rem;
+        line-height: 1.8;
+        margin-bottom: 1.5rem;
         color: var(--sk-color-font-white);
       }
     }
@@ -679,17 +721,18 @@ function jumpDoc() {
       background-color: var(--sk-color-cark-bgc);
     }
     .product-resources {
-      height: 44.5rem;
+      height: 20rem;
       display: flex;
       flex-direction: column;
       align-items: center;
       background-color: var(--sk-color-home-primary);
       .title {
-        font-size: 2rem;
+        font-size: 1.5rem;
         margin-top: 5rem;
         color: var(--sk-color-font-white);
       }
       .desc {
+        font-size: 0.85rem;
         margin-top: 2rem;
         color: var(--sk-color-font-white);
         opacity: 0.8;
@@ -737,6 +780,12 @@ function jumpDoc() {
     font-size: 1rem;
     cursor: pointer;
     color: #e25a1b;
+  }
+}
+
+@media screen and (max-width: 475px) {
+  #code_block {
+    font-size: 0.875rem;
   }
 }
 </style>
