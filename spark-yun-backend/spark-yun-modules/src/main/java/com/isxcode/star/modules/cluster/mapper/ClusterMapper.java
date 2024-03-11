@@ -37,7 +37,7 @@ public interface ClusterMapper {
 	PageClusterRes clusterEntityToPageClusterRes(ClusterEntity clusterEntity);
 
 	@Mapping(target = "checkDateTime", dateFormat = "yyyy-MM-dd HH:mm:ss")
-  QueryAllClusterRes clusterEntityToQueryAllClusterRes(ClusterEntity clusterEntity);
+	QueryAllClusterRes clusterEntityToQueryAllClusterRes(ClusterEntity clusterEntity);
 
-  List<QueryAllClusterRes> clusterEntityListToQueryAllClusterResList(List<ClusterEntity> clusterList);
+	List<QueryAllClusterRes> clusterEntityListToQueryAllClusterResList(List<ClusterEntity> clusterList);
 }

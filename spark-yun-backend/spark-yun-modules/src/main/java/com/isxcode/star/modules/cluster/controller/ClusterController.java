@@ -74,11 +74,11 @@ public class ClusterController {
 		clusterBizService.setDefaultCluster(setDefaultClusterReq);
 	}
 
-  @Operation(summary = "查询所有集群列表")
-  @PostMapping("/queryAllCluster")
-  @SuccessResponse("查询成功")
-  public List<QueryAllClusterRes> queryAllCluster() {
+	@Operation(summary = "查询所有集群列表")
+	@PostMapping("/queryAllCluster")
+	@SuccessResponse("查询成功")
+	public List<QueryAllClusterRes> queryAllCluster() {
 
-    return clusterBizService.queryAllCluster();
-  }
+		return clusterBizService.queryAllCluster();
+	}
 }
