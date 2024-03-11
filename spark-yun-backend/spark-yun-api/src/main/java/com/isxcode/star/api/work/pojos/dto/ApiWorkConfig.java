@@ -24,6 +24,6 @@ public class ApiWorkConfig {
 	private Map<String, String> requestHeader;
 
 	@Schema(title = "接口请求体")
-	private Object requestBody;
+	private String requestBody;
 
 }
