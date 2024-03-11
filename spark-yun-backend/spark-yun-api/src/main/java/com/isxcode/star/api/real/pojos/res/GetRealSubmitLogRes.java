@@ -11,7 +11,7 @@ public class GetRealSubmitLogRes {
 
 	private String id;
 
-  private String status;
+	private String status;
 
-  private String submitLog;
+	private String submitLog;
 }
