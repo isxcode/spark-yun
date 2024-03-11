@@ -77,8 +77,8 @@ public class ApiExecutor extends WorkExecutor {
 
 		// 保存运行日志
 		workInstance.setResultData(JSON.toJSONString(response));
-    logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("请求成功, 返回结果: \n").append(JSON.toJSONString(response, true))
-      .append(" \n");
+		logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("请求成功, 返回结果: \n")
+				.append(JSON.toJSONString(response, true)).append(" \n");
 		updateInstance(workInstance, logBuilder);
 	}
 
