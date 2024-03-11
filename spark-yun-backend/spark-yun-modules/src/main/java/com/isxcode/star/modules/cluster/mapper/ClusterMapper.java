@@ -4,9 +4,12 @@ import com.isxcode.star.api.cluster.constants.ClusterStatus;
 import com.isxcode.star.api.cluster.pojos.req.AddClusterReq;
 import com.isxcode.star.api.cluster.pojos.req.UpdateClusterReq;
 import com.isxcode.star.api.cluster.pojos.res.PageClusterRes;
+import com.isxcode.star.api.cluster.pojos.res.QueryAllClusterRes;
 import com.isxcode.star.modules.cluster.entity.ClusterEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+
+import java.util.List;
 
 /** mapstruct映射. */
 @Mapper(componentModel = "spring")
@@ -32,4 +35,9 @@ public interface ClusterMapper {
 	@Mapping(target = "storage", expression = "java( clusterEntity.getUsedStorageNum()+ \"G/\"  +clusterEntity.getAllStorageNum()+\"G\")")
 	@Mapping(target = "checkDateTime", dateFormat = "yyyy-MM-dd HH:mm:ss")
 	PageClusterRes clusterEntityToPageClusterRes(ClusterEntity clusterEntity);
+
+	@Mapping(target = "checkDateTime", dateFormat = "yyyy-MM-dd HH:mm:ss")
+  QueryAllClusterRes clusterEntityToQueryAllClusterRes(ClusterEntity clusterEntity);
+
+  List<QueryAllClusterRes> clusterEntityListToQueryAllClusterResList(List<ClusterEntity> clusterList);
 }
