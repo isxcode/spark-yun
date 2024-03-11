@@ -66,7 +66,7 @@ public class ApiExecutor extends WorkExecutor {
 			}
 			if (ApiType.POST.equals(apiWorkConfig.getRequestType())) {
 				response = HttpUtils.doPost(apiWorkConfig.getRequestUrl(), apiWorkConfig.getRequestHeader(),
-						apiWorkConfig.getRequestBody(), Object.class);
+						JSON.parseObject(apiWorkConfig.getRequestBody()), Object.class);
 			}
 
 			log.debug("获取远程返回数据:{}", response);
@@ -77,8 +77,8 @@ public class ApiExecutor extends WorkExecutor {
 
 		// 保存运行日志
 		workInstance.setResultData(JSON.toJSONString(response));
-		logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("请求成功, 返回结果: \n").append(response)
-				.append(" \n");
+    logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("请求成功, 返回结果: \n").append(JSON.toJSONString(response, true))
+      .append(" \n");
 		updateInstance(workInstance, logBuilder);
 	}
 
