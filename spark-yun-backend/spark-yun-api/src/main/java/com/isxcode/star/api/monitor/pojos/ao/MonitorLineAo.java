@@ -42,8 +42,8 @@ public class MonitorLineAo {
 	private Long usedStorageSize;
 
 	public MonitorLineAo(Long activeNodeSize, String tenantId, LocalDateTime dateTime, Double cpuPercent,
-                         Long diskIoReadSpeed, Long networkIoReadSpeed, Long diskIoWriteSpeed, Long networkIoWriteSpeed,
-                         Long usedMemorySize, Long usedStorageSize) {
+			Long diskIoReadSpeed, Long networkIoReadSpeed, Long diskIoWriteSpeed, Long networkIoWriteSpeed,
+			Long usedMemorySize, Long usedStorageSize) {
 
 		this.activeNodeSize = activeNodeSize;
 		this.tenantId = tenantId;
