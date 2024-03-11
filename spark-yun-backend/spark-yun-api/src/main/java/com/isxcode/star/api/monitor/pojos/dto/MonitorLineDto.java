@@ -1,12 +1,8 @@
 package com.isxcode.star.api.monitor.pojos.dto;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.isxcode.star.backend.api.base.serializer.LocalDateMinuteSerializer;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Data;
-
-import java.time.LocalDateTime;
 
 @Data
 @Builder

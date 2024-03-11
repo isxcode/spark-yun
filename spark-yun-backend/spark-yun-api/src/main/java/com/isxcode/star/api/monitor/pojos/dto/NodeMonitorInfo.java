@@ -23,11 +23,11 @@ public class NodeMonitorInfo {
 
 	private Long diskIoReadSpeed;
 
-  private String diskIoReadSpeedStr;
+	private String diskIoReadSpeedStr;
 
 	private Long diskIoWriteSpeed;
 
-  private String diskIoWriteSpeedStr;
+	private String diskIoWriteSpeedStr;
 
 	private Double cpuPercent;
 
