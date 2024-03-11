@@ -19,9 +19,9 @@ public class PageRealRes {
 
 	private String remark;
 
-  private String clusterId;
+	private String clusterId;
 
-  private String clusterName;
+	private String clusterName;
 
 	@JsonSerialize(using = LocalDateTimeSerializer.class)
 	private LocalDateTime createDateTime;
