@@ -129,7 +129,7 @@ watch(
     });
     if (!flag) {
       headerRef.value!.style.backgroundColor = "var(--sk-color-home-bgc)";
-      headerRef.value!.style.height = mobileFlag.value ? "48px" : mobileFlag.value ? "48px" : "80px";
+      headerRef.value!.style.height = mobileFlag.value ? "48px" : "60px";
       headerRef.value!.style.boxShadow = "0 2px 4px -1px rgba(0,0,0,0.25)";
       return;
     }
