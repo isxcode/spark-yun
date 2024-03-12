@@ -136,7 +136,6 @@
     <!-- 号召使用 -->
     <div class="quick-use">
       <div class="title">开源助力企业升级大数据领域</div>
-      <!-- 按钮 免费试用 -->
       <el-button
         class="w-32 !h-9 quick-use-btn"
         type="primary"
