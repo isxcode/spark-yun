@@ -56,6 +56,15 @@ public class YunAgentController {
 		return yunAgentBizService.getLog(appId, agentType, sparkHomePath);
 	}
 
+  @Operation(summary = "获取Stdout作业运行日志接口", description = "获取Stdout作业运行日志")
+	@GetMapping("/getStdoutLog")
+	@SuccessResponse("获取成功")
+	public YagGetStdoutLogRes getStdoutLog(@RequestParam String appId, @RequestParam String agentType,
+                                         @RequestParam String sparkHomePath) throws IOException {
+
+    return yunAgentBizService.getStdoutLog(appId, agentType, sparkHomePath);
+	}
+
 	@Operation(summary = "获取作业运行返回数据接口", description = "获取query数据")
 	@GetMapping("/getData")
 	@SuccessResponse("获取成功")
