@@ -209,7 +209,7 @@ public class StandaloneAgentService implements AgentService {
 		return preElement.text();
 	}
 
-  @Override
+	@Override
 	public String getStdoutLog(String submissionId, String sparkHomePath) throws IOException {
 
 		Document doc = Jsoup.connect(getMasterWebUrl(sparkHomePath)).get();
