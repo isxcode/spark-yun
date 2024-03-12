@@ -229,7 +229,7 @@ public class KubernetesAgentService implements AgentService {
 		}
 	}
 
-  @Override
+	@Override
 	public String getStdoutLog(String appId, String sparkHomePath) throws IOException {
 
 		String getLogCmdFormat = "kubectl logs -f %s -n zhiqingyun-space";
