@@ -11,5 +11,5 @@ public class GetRealRunningLogRes {
 
 	private String id;
 
-  private String runningLog;
+	private String runningLog;
 }

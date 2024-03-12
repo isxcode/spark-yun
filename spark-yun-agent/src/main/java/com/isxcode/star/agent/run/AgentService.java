@@ -21,7 +21,7 @@ public interface AgentService {
 
 	String getAppLog(String appId, String sparkHomePath) throws IOException;
 
-  String getStdoutLog(String appId, String sparkHomePath) throws IOException;
+	String getStdoutLog(String appId, String sparkHomePath) throws IOException;
 
 	String getAppData(String appId, String sparkHomePath) throws IOException;
 
