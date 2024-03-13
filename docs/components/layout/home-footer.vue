@@ -7,7 +7,7 @@
           <h1 class="name">至爻云</h1>
         </div>
         <div class="wx-official-account">
-          <img src="https://img.isxcode.com/picgo/wechat_zhiqingyun.jpg" />
+          <img src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiyao/qrcode_for_12.jpg" />
           <div class="text">微信公众号</div>
         </div>
       </div>
@@ -99,13 +99,13 @@
     </div>
 
     <div class="s-footer-bottom">
-      <span class="lg:w-1/6 sm:w-full sm:mr-4"> Coryright @2023-2024 至爻云 </span>
-      <a href="https://beian.miit.gov.cn/" target="_blank" rel="nofollow" class="footer-record lg:w-1/6 sm:w-full sm:mr-4"> 沪CP备2023031895号 </a>
-      <a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=2023031895" target="_blank" rel="nofollow" class="lg:w-1/6 sm:w-full sm:mr-4">
-        <i class="beian lg:w-1/6 sm:w-full"> </i>
-        沪公网安备2023031895号
-      </a>
-      <span class="lg:w-1/6 sm:w-full sm:mr-4"> 版权所有上海至爻数据有限公司&nbsp; </span>
+      <span class="lg:w-1/6 sm:w-full sm:mr-4"> Coryright  © 2023 -2024  至爻云 </span>
+      <a href="https://beian.miit.gov.cn/" target="_blank" rel="nofollow" class="footer-record lg:w-1/6 sm:w-full sm:mr-4"> 沪ICP备2023031895号  </a>
+<!--      <a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=2023031895" target="_blank" rel="nofollow" class="lg:w-1/6 sm:w-full sm:mr-4">-->
+<!--        <i class="beian lg:w-1/6 sm:w-full"> </i>-->
+<!--        沪公网安备2023031895号-->
+<!--      </a>-->
+      <span class="lg:w-1/6 sm:w-full sm:mr-4"> 版权所有   上海至爻数据有限公司&nbsp; </span>
     </div>
     <div v-if="mobileFlag" class="fixed-footer">电话咨询</div>
   </div>
