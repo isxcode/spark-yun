@@ -1,6 +1,5 @@
 package com.isxcode.star.modules.workflow.service;
 
-import static com.isxcode.star.api.workflow.constants.WorkflowExternalCallStatus.ON;
 import static com.isxcode.star.common.config.CommonConfig.TENANT_ID;
 import static com.isxcode.star.common.config.CommonConfig.USER_ID;
 
@@ -753,14 +752,14 @@ public class WorkflowBizService {
 		if (!workflowConfigEntityOptional.isPresent()) {
 			throw new IsxAppException("工作流配置异常");
 		}
-//
-//		if (!accessKey.equals(workflowConfigEntityOptional.get().getAccessKey())) {
-//			throw new IsxAppException("AccessKey不匹配");
-//		}
-//
-//		if (ON != workflowConfigEntityOptional.get().getExternalCall()) {
-//			throw new IsxAppException("工作流外部触发已关闭");
-//		}
+		//
+		// if (!accessKey.equals(workflowConfigEntityOptional.get().getAccessKey())) {
+		// throw new IsxAppException("AccessKey不匹配");
+		// }
+		//
+		// if (ON != workflowConfigEntityOptional.get().getExternalCall()) {
+		// throw new IsxAppException("工作流外部触发已关闭");
+		// }
 
 		RunWorkflowReq runWorkflow = new RunWorkflowReq();
 		runWorkflow.setWorkflowId(invokeReq.getWorkflowId());
