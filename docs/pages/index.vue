@@ -49,7 +49,7 @@
         </div>
       </div>
       <video id="v1" autoplay loop muted>
-        <source src="~/assets/home/home.mp4" type="video/mp4" />
+        <source src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/home.mp4" type="video/mp4" />
       </video>
     </div>
     <!-- 产品优势 -->
@@ -328,7 +328,7 @@ function jumpDoc() {
     .bottom {
       min-height: 20vh;
       width: 100%;
-      background-image: url("~/assets/home/bg0.png");
+      background-image: url("https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/bg0.png");
       background-repeat: no-repeat;
       background-size: 100% auto;
       display: flex;
@@ -432,7 +432,7 @@ function jumpDoc() {
   }
   .quick-use {
     height: 20rem;
-    background-image: url("~/assets/home/bg2.png");
+    background-image: url("https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/bg2.png");
     background-color: #f89126;
     background-repeat: no-repeat;
     background-size: auto 100%;
@@ -490,7 +490,7 @@ function jumpDoc() {
       flex-wrap: wrap;
       align-content: flex-start;
       margin-top: 1.25rem;
-      background-image: url("~/assets/home/kuxun.png");
+      background-image: url("https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/bg3.png");
       background-repeat: no-repeat;
       background-size: 100% auto;
     }
@@ -579,7 +579,7 @@ function jumpDoc() {
       .bottom {
         min-height: 5rem;
         width: 100%;
-        background-image: url("~/assets/home/bg0.png");
+        background-image: url("https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/bg0.png");
         background-repeat: no-repeat;
         background-size: auto 100%;
         display: flex;
@@ -684,7 +684,7 @@ function jumpDoc() {
     }
     .quick-use {
       height: 12rem;
-      background-image: url("~/assets/home/bg2.png");
+      background-image: url("https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/bg2.png");
       background-color: #f89126;
       background-repeat: no-repeat;
       background-size: auto 100%;
@@ -743,7 +743,7 @@ function jumpDoc() {
         flex-wrap: wrap;
         align-content: flex-start;
         margin-top: 1.25rem;
-        background-image: url("~/assets/home/kuxun.png");
+        background-image: url("https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/bg3.png");
         background-repeat: no-repeat;
         background-size: 100% auto;
       }
