@@ -55,6 +55,18 @@ export const colConfigs: colConfig[] = [
     showOverflowTooltip: true
   },
   {
+    prop: 'clusterName',
+    title: '集群',
+    minWidth: 100,
+    showOverflowTooltip: true
+  },
+  {
+    prop: 'datasourceName',
+    title: '数据源',
+    minWidth: 100,
+    showOverflowTooltip: true
+  },
+  {
     prop: 'resourceLevel',
     title: '资源类型',
     minWidth: 100,

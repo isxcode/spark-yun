@@ -129,7 +129,7 @@
                     value-format="YYYY-MM-DD"
                   />
                 </el-form-item>
-  
+
                 <el-form-item label="cron表达式" prop="cron" v-if="cronConfig.setMode === 'ADVANCE'">
                   <el-input
                     v-model="cronConfig.cron"
@@ -341,6 +341,24 @@
               </el-form-item>
             </el-form>
           </div>
+          <!-- 容器配置 -->
+          <div class="config-item" v-if="['SPARK_CONTAINER_SQL'].includes(workItemConfig.workType)">
+            <div class="item-title">容器配置</div>
+            <el-form
+              ref="syncRuleForm"
+              label-position="left"
+              label-width="120px"
+              :model="containerConfig"
+            >
+              <el-form-item label="依赖">
+                <el-select v-model="containerConfig.containerId" clearable
+                    filterable placeholder="请选择">
+                    <el-option v-for="item in containerIdList" :key="item.value" :label="item.label"
+                        :value="item.value" />
+                </el-select>
+              </el-form-item>
+            </el-form>
+          </div>
         </div>
       </el-scrollbar>
   </BlockDrawer>
@@ -360,6 +378,7 @@ import { GetDatasourceList } from '@/services/datasource.service'
 import { jsonFormatter } from '@/utils/formatter'
 import { GetFileCenterList } from '@/services/file-center.service'
 import { GetCustomFuncList } from '@/services/custom-func.service'
+import { GetSparkContainerList } from '@/services/spark-container.service'
 
 const scheduleRange = ref(ScheduleRange);
 const weekDateList = ref(WeekDateList)
@@ -378,6 +397,7 @@ const dataSourceConfig = ref<FormInstance>()
 const clusterConfigForm = ref<FormInstance>()
 const cronConfigForm = ref<FormInstance>()
 const syncRuleForm = ref<FormInstance>()
+const containerIdList = ref([]) // 容器列表
 
 const drawerConfig = reactive({
   title: '配置',
@@ -437,6 +457,10 @@ let syncRule = reactive({
   // sqlConfig: '',
   sqlConfigJson: ''
 })
+// 容器配置
+let containerConfig = reactive({
+  containerId: ''
+})
 const fileConfig = reactive({
   funcList: [],
   libList: []
@@ -478,6 +502,9 @@ function showModal(data?: any) {
     if (!['QUERY_JDBC', 'EXE_JDBC'].includes(data.workType)) {
       // 获取集群参数
       getClusterList()
+    }
+    if (['SPARK_CONTAINER_SQL'].includes(data.workType)) {
+      getSparkContainerList(true)
     }
     // 获取函数配置和依赖配置
     getFuncList()
@@ -555,6 +582,8 @@ function getConfigDetailData() {
     cronConfig.setMode = cronConfig.setMode || 'SIMPLE'
     syncRule.setMode = syncRule.setMode || 'SIMPLE'
 
+    containerConfig.containerId = res.data.containerId
+
     getClusterNodeList(true)
   }).catch((err: any) => {
     console.error(err)
@@ -592,6 +621,7 @@ function okEvent() {
           cron: cronConfig.setMode === 'SIMPLE' ? cron : cronConfig.cron
         },
         syncRule: syncRule,
+        ...containerConfig,
         ...fileConfig
       }).then((res: any) => {
         ElMessage.success('保存成功')
@@ -707,6 +737,26 @@ function getDataSourceList(e: boolean, searchType?: string) {
     })
     .catch(() => {
       dataSourceList.value = []
+    })
+  }
+}
+
+function getSparkContainerList(e: boolean, searchType?: string) {
+  if (e) {
+    GetSparkContainerList({
+      page: 0,
+      pageSize: 10000,
+      searchKeyWord: ''
+    }).then((res: any) => {
+      containerIdList.value = res.data.content.map((item: any) => {
+        return {
+          label: item.name,
+          value: item.id
+        }
+      })
+    })
+    .catch(() => {
+      containerIdList.value = []
     })
   }
 }
