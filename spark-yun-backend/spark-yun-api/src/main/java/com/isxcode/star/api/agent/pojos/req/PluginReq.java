@@ -32,4 +32,6 @@ public class PluginReq {
 	private SyncRule syncRule;
 
 	private List<FuncInfo> funcInfoList;
+
+  private int containerPort;
 }

@@ -102,4 +102,9 @@ public interface ModuleCode {
 	 * 自定义函数.
 	 */
 	String FUNC = "func";
+
+  /**
+	 * 容器模块.
+	 */
+	String VIP_CONTAINER = "/vip/container";
 }
