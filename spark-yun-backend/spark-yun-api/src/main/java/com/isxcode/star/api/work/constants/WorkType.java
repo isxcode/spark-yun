@@ -37,4 +37,9 @@ public interface WorkType {
 	 * 用户自定义spark作业.
 	 */
 	String SPARK_JAR = "SPARK_JAR";
+
+	/**
+	 * spark容器sql.
+	 */
+	String SPARK_CONTAINER_SQL = "SPARK_CONTAINER_SQL";
 }

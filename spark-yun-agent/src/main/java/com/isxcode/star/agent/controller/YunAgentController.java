@@ -1,11 +1,11 @@
 package com.isxcode.star.agent.controller;
 
 import com.isxcode.star.agent.service.YunAgentBizService;
+import com.isxcode.star.api.agent.pojos.req.ContainerCheckReq;
+import com.isxcode.star.api.agent.pojos.req.DeployContainerReq;
+import com.isxcode.star.api.agent.pojos.req.ExecuteContainerSqlReq;
 import com.isxcode.star.api.agent.pojos.req.YagExecuteWorkReq;
-import com.isxcode.star.api.agent.pojos.res.ExecuteWorkRes;
-import com.isxcode.star.api.agent.pojos.res.YagGetDataRes;
-import com.isxcode.star.api.agent.pojos.res.YagGetLogRes;
-import com.isxcode.star.api.agent.pojos.res.YagGetStatusRes;
+import com.isxcode.star.api.agent.pojos.res.*;
 import com.isxcode.star.api.main.constants.ModuleCode;
 import com.isxcode.star.common.annotations.successResponse.SuccessResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -74,12 +74,32 @@ public class YunAgentController {
 		yunAgentBizService.stopJob(appId, agentType, sparkHomePath);
 	}
 
-	/**
-	 * 心跳检测.
-	 */
+	@Operation(summary = "提交容器接口", description = "提交容器")
+	@PostMapping("/deployContainer")
+	@SuccessResponse("提交成功")
+	public DeployContainerRes deployContainer(@Valid @RequestBody DeployContainerReq deployContainerReq)
+			throws IOException {
+
+		return yunAgentBizService.deployContainer(deployContainerReq);
+	}
+
 	@Operation(summary = "心跳检测接口", description = "心跳检测")
 	@GetMapping("/heartCheck")
 	@SuccessResponse("正常心跳")
 	public void heartCheck() {
+	}
+
+	@Operation(summary = "容器心跳检测接口", description = "容器心跳检测")
+	@PostMapping("/containerCheck")
+	public ContainerCheckRes containerCheck(@RequestBody ContainerCheckReq containerCheckReq) {
+
+		return yunAgentBizService.containerCheck(containerCheckReq);
+	}
+
+	@Operation(summary = "通过sql调用容器获取数据", description = "获取数据")
+	@PostMapping("/executeContainerSql")
+	public ContainerGetDataRes executeContainerSql(@RequestBody ExecuteContainerSqlReq executeContainerSqlReq) {
+
+		return yunAgentBizService.executeContainerSql(executeContainerSqlReq);
 	}
 }

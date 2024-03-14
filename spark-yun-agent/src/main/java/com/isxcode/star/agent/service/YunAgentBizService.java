@@ -5,20 +5,24 @@ import com.isxcode.star.agent.run.KubernetesAgentService;
 import com.isxcode.star.agent.run.StandaloneAgentService;
 import com.isxcode.star.agent.run.YarnAgentService;
 import com.isxcode.star.api.agent.constants.AgentType;
-import com.isxcode.star.api.agent.pojos.req.YagExecuteWorkReq;
-import com.isxcode.star.api.agent.pojos.res.ExecuteWorkRes;
-import com.isxcode.star.api.agent.pojos.res.YagGetDataRes;
-import com.isxcode.star.api.agent.pojos.res.YagGetLogRes;
-import com.isxcode.star.api.agent.pojos.res.YagGetStatusRes;
+import com.isxcode.star.api.agent.pojos.req.*;
+import com.isxcode.star.api.agent.pojos.res.*;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
+
 import java.io.IOException;
+import java.net.ServerSocket;
 import java.util.List;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.spark.launcher.SparkLauncher;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
-/** 代理服务层. */
+/**
+ * 代理服务层.
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -128,6 +132,65 @@ public class YunAgentBizService {
 				break;
 			default :
 				throw new IsxAppException("agent类型不支持");
+		}
+	}
+
+	public static int findUnusedPort() {
+		try (ServerSocket socket = new ServerSocket(0)) {
+			return socket.getLocalPort();
+		} catch (IOException e) {
+			throw new IsxAppException("未存在可使用端口号");
+		}
+	}
+
+	public DeployContainerRes deployContainer(DeployContainerReq deployContainerReq) throws IOException {
+
+		SparkLauncher sparkLauncher;
+		String appId;
+
+		// 获取开放的端口号
+		int port = findUnusedPort();
+		deployContainerReq.getPluginReq().setContainerPort(port);
+
+		switch (deployContainerReq.getAgentType()) {
+			case AgentType.YARN :
+				sparkLauncher = yarnAgentService.genSparkLauncher(deployContainerReq);
+				appId = yarnAgentService.executeWork(sparkLauncher);
+				break;
+			case AgentType.K8S :
+				throw new IsxAppException("目前不支持k8s");
+			case AgentType.StandAlone :
+				throw new IsxAppException("目前不支持standalone");
+			default :
+				throw new IsxAppException("agent类型不支持");
+		}
+
+		return DeployContainerRes.builder().appId(appId).port(port).build();
+	}
+
+	public ContainerCheckRes containerCheck(ContainerCheckReq containerCheckReq) {
+
+		try {
+			ResponseEntity<ContainerCheckRes> forEntity = new RestTemplate().getForEntity(
+					"http://127.0.0.1:" + containerCheckReq.getPort() + "/check", ContainerCheckRes.class);
+			return forEntity.getBody();
+		} catch (Exception e) {
+			return ContainerCheckRes.builder().code("500").msg(e.getMessage()).build();
+		}
+	}
+
+	public ContainerGetDataRes executeContainerSql(ExecuteContainerSqlReq executeContainerSqlReq) {
+
+		ContainerGetDataReq containerGetDataReq = ContainerGetDataReq.builder().sql(executeContainerSqlReq.getSql())
+				.build();
+
+		try {
+			ResponseEntity<ContainerGetDataRes> forEntity = new RestTemplate().postForEntity(
+					"http://127.0.0.1:" + executeContainerSqlReq.getPort() + "/getData", containerGetDataReq,
+					ContainerGetDataRes.class);
+			return forEntity.getBody();
+		} catch (Exception e) {
+			return ContainerGetDataRes.builder().code("500").msg(e.getMessage()).build();
 		}
 	}
 }

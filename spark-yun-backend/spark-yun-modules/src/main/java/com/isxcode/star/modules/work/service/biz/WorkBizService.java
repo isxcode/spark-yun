@@ -139,7 +139,8 @@ public class WorkBizService {
 		if (WorkType.QUERY_SPARK_SQL.equals(addWorkReq.getWorkType())
 				|| WorkType.EXECUTE_JDBC_SQL.equals(addWorkReq.getWorkType())
 				|| WorkType.QUERY_JDBC_SQL.equals(addWorkReq.getWorkType())
-				|| WorkType.BASH.equals(addWorkReq.getWorkType()) || WorkType.PYTHON.equals(addWorkReq.getWorkType())) {
+				|| WorkType.BASH.equals(addWorkReq.getWorkType()) || WorkType.PYTHON.equals(addWorkReq.getWorkType())
+				|| WorkType.SPARK_CONTAINER_SQL.equals(addWorkReq.getWorkType())) {
 			workConfigService.initWorkScript(workConfig, addWorkReq.getWorkType());
 		}
 
@@ -155,6 +156,14 @@ public class WorkBizService {
 				|| WorkType.SPARK_JAR.equals(addWorkReq.getWorkType())) {
 			workConfigService.initClusterConfig(workConfig, addWorkReq.getClusterId(), addWorkReq.getClusterNodeId(),
 					addWorkReq.getEnableHive(), addWorkReq.getDatasourceId());
+		}
+
+		// 如果jdbc执行和jdbc查询，必填数据源
+		if (WorkType.SPARK_CONTAINER_SQL.equals(addWorkReq.getWorkType())) {
+			if (Strings.isEmpty(addWorkReq.getContainerId())) {
+				throw new IsxAppException("容器是必填项");
+			}
+			workConfig.setContainerId(addWorkReq.getContainerId());
 		}
 
 		// 初始化调度默认值
@@ -455,6 +464,10 @@ public class WorkBizService {
 		if (!Strings.isEmpty(workConfig.getJarJobConfig())) {
 			JarJobConfig jarJobConfig = JSON.parseObject(workConfig.getJarJobConfig(), JarJobConfig.class);
 			getWorkRes.setJarJobConfig(jarJobConfig);
+		}
+
+		if (!Strings.isEmpty(workConfig.getContainerId())) {
+			getWorkRes.setContainerId(workConfig.getContainerId());
 		}
 
 		return getWorkRes;

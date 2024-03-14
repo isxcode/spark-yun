@@ -108,7 +108,7 @@ public class ClusterNodeService {
 			try {
 				attrs = channel.stat(dstPath);
 			} catch (Exception e) {
-				return;
+				continue;
 			}
 
 			if (attrs != null) {

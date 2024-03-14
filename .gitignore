@@ -60,3 +60,6 @@ spark-yun-vip
 
 # 日志不提交
 logs
+
+# .DS_Store不提交
+*/**/.DS_Store

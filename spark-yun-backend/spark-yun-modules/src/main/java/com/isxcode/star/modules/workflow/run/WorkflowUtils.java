@@ -147,7 +147,7 @@ public class WorkflowUtils {
 				.jarJobConfig(JSON.parseObject(workConfig.getJarJobConfig(), JarJobConfig.class))
 				.funcConfig(JSON.parseArray(workConfig.getFuncConfig(), String.class))
 				.libConfig(JSON.parseArray(workConfig.getLibConfig(), String.class)).workId(work.getId())
-				.workName(work.getName()).userId(USER_ID.get()).build();
+				.containerId(workConfig.getContainerId()).workName(work.getName()).userId(USER_ID.get()).build();
 	}
 
 	public static WorkRunContext genWorkRunContext(String instanceId, VipWorkVersionEntity workVersion,
@@ -161,7 +161,8 @@ public class WorkflowUtils {
 				.jarJobConfig(JSON.parseObject(workVersion.getJarJobConfig(), JarJobConfig.class))
 				.funcConfig(JSON.parseArray(workVersion.getFuncConfig(), String.class))
 				.libConfig(JSON.parseArray(workVersion.getLibConfig(), String.class))
-				.workType(workVersion.getWorkType()).workName(event.getWorkName()).workId(workVersion.getId()).build();
+				.containerId(workVersion.getContainerId()).workType(workVersion.getWorkType())
+				.workName(event.getWorkName()).workId(workVersion.getId()).build();
 	}
 
 	/**

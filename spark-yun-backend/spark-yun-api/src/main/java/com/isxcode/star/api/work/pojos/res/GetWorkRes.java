@@ -45,4 +45,6 @@ public class GetWorkRes {
 	private List<String> funcList;
 
 	private List<String> libList;
+
+	private String containerId;
 }

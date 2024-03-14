@@ -2,6 +2,7 @@ package com.isxcode.star.agent.run;
 
 import com.alibaba.fastjson2.JSON;
 import com.isxcode.star.agent.properties.SparkYunAgentProperties;
+import com.isxcode.star.api.agent.pojos.req.DeployContainerReq;
 import com.isxcode.star.api.agent.pojos.req.YagExecuteWorkReq;
 import com.isxcode.star.api.work.constants.WorkType;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
@@ -97,6 +98,42 @@ public class YarnAgentService implements AgentService {
 		}
 
 		yagExecuteWorkReq.getSparkSubmit().getConf().forEach(sparkLauncher::setConf);
+
+		return sparkLauncher;
+	}
+
+	public SparkLauncher genSparkLauncher(DeployContainerReq deployContainerReq) {
+
+		SparkLauncher sparkLauncher = new SparkLauncher().setVerbose(false)
+				.setMainClass(deployContainerReq.getSparkSubmit().getMainClass()).setDeployMode("cluster")
+				.setAppName("zhiqingyun-job").setMaster(getMaster(deployContainerReq.getSparkHomePath()))
+				.setAppResource(deployContainerReq.getAgentHomePath() + File.separator + "plugins" + File.separator
+						+ deployContainerReq.getSparkSubmit().getAppResource())
+				.setSparkHome(deployContainerReq.getAgentHomePath() + File.separator + "spark-min");
+
+		if (!Strings.isEmpty(deployContainerReq.getAgentHomePath())) {
+			File[] jarFiles = new File(deployContainerReq.getAgentHomePath() + File.separator + "lib").listFiles();
+			if (jarFiles != null) {
+				for (File jar : jarFiles) {
+					try {
+						// 使用本地hive驱动
+						if (!jar.getName().contains("hive")) {
+							sparkLauncher.addJar(jar.toURI().toURL().toString());
+						}
+					} catch (MalformedURLException e) {
+						log.error(e.getMessage());
+						throw new IsxAppException("50010", "添加lib中文件异常", e.getMessage());
+					}
+				}
+			}
+		}
+
+		sparkLauncher.addAppArgs(Base64.getEncoder()
+				.encodeToString(deployContainerReq.getPluginReq() == null
+						? deployContainerReq.getArgs().getBytes()
+						: JSON.toJSONString(deployContainerReq.getPluginReq()).getBytes()));
+
+		deployContainerReq.getSparkSubmit().getConf().forEach(sparkLauncher::setConf);
 
 		return sparkLauncher;
 	}

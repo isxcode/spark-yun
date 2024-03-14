@@ -48,12 +48,9 @@ public class WorkConfigService {
 
 		switch (workType) {
 			case WorkType.QUERY_SPARK_SQL :
-				workConfig.setScript("show databases");
-				break;
 			case WorkType.QUERY_JDBC_SQL :
-				workConfig.setScript("show databases");
-				break;
 			case WorkType.EXECUTE_JDBC_SQL :
+			case WorkType.SPARK_CONTAINER_SQL :
 				workConfig.setScript("show databases");
 				break;
 			case WorkType.BASH :
@@ -102,6 +99,8 @@ public class WorkConfigService {
 				sparkConfig.put("spark.cores.max", "10");
 				sparkConfig.put("spark.driver.extraJavaOptions", "-Dfile.encoding=utf-8");
 				sparkConfig.put("spark.executor.extraJavaOptions", "-Dfile.encoding=utf-8");
+				sparkConfig.put("spark.sql.storeAssignmentPolicy", "LEGACY");
+				sparkConfig.put("spark.sql.legacy.timeParserPolicy", "LEGACY");
 				break;
 			case ResourceLevel.MEDIUM :
 				sparkConfig.put("spark.executor.instances", "5");
@@ -112,6 +111,8 @@ public class WorkConfigService {
 				sparkConfig.put("spark.cores.max", "5");
 				sparkConfig.put("spark.driver.extraJavaOptions", "-Dfile.encoding=utf-8");
 				sparkConfig.put("spark.executor.extraJavaOptions", "-Dfile.encoding=utf-8");
+				sparkConfig.put("spark.sql.storeAssignmentPolicy", "LEGACY");
+				sparkConfig.put("spark.sql.legacy.timeParserPolicy", "LEGACY");
 				break;
 			case ResourceLevel.LOW :
 				sparkConfig.put("spark.executor.instances", "1");
@@ -122,6 +123,8 @@ public class WorkConfigService {
 				sparkConfig.put("spark.cores.max", "1");
 				sparkConfig.put("spark.driver.extraJavaOptions", "-Dfile.encoding=utf-8");
 				sparkConfig.put("spark.executor.extraJavaOptions", "-Dfile.encoding=utf-8");
+				sparkConfig.put("spark.sql.storeAssignmentPolicy", "LEGACY");
+				sparkConfig.put("spark.sql.legacy.timeParserPolicy", "LEGACY");
 				break;
 		}
 		return sparkConfig;

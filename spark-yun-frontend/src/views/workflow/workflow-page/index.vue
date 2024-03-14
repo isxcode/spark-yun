@@ -237,6 +237,10 @@ const typeList = reactive([
     value: 'SPARK_SQL'
   },
   {
+    label: 'SparkSql容器作业',
+    value: 'SPARK_CONTAINER_SQL'
+  },
+  {
     label: '数据同步作业',
     value: 'DATA_SYNC_JDBC'
   },
