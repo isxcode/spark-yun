@@ -33,5 +33,5 @@ public class PluginReq {
 
 	private List<FuncInfo> funcInfoList;
 
-  private int containerPort;
+	private int containerPort;
 }

@@ -9,7 +9,7 @@ import java.util.List;
 @Builder
 public class ContainerGetDataRes {
 
-  private List<List<String>> date;
+	private List<List<String>> date;
 
-  private String code;
+	private String code;
 }
