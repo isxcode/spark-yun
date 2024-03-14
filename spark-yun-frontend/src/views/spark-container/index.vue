@@ -68,7 +68,7 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, ref, onMounted } from 'vue'
+import { reactive, ref, onMounted, onUnmounted } from 'vue'
 import Breadcrumb from '@/layout/bread-crumb/index.vue'
 import BlockTable from '@/components/block-table/index.vue'
 import LoadingPage from '@/components/loading/index.vue'
@@ -90,7 +90,7 @@ const timer = ref()
 const breadCrumbList = reactive(BreadCrumbList)
 const tableConfig: any = reactive(TableConfig)
 
-function initData(tableLoading?: boolean) {
+function initData(tableLoading?: boolean, type?: string) {
   loading.value = tableLoading ? false : true
   networkError.value = networkError.value || false
   GetSparkContainerList({
@@ -98,17 +98,27 @@ function initData(tableLoading?: boolean) {
     pageSize: tableConfig.pagination.pageSize,
     searchKeyWord: keyword.value
   }).then((res: any) => {
-    tableConfig.tableData = res.data.content
-    tableConfig.pagination.total = res.data.totalElements
+    if (type) {
+      res.data.content.forEach((item: any) => {
+        tableConfig.tableData.forEach((col: any) => {
+          if (item.id === col.id) {
+            col.status = item.status
+          }
+        })
+      })
+    } else {
+      tableConfig.tableData = res.data.content
+      tableConfig.pagination.total = res.data.totalElements
+    }
     loading.value = false
     tableConfig.loading = false
     networkError.value = false
-    if (!tableConfig.tableData.some(item => item.status === 'DEPLOYING')) {
-      if (timer.value) {
-        clearInterval(timer.value)
-      }
-      timer.value = null
-    }
+    // if (!tableConfig.tableData.some(item => item.status === 'DEPLOYING')) {
+    //   if (timer.value) {
+    //     clearInterval(timer.value)
+    //   }
+    //   timer.value = null
+    // }
   }).catch(() => {
     tableConfig.tableData = []
     tableConfig.pagination.total = 0
@@ -176,11 +186,11 @@ function startContainer(data: any) {
   }).then((res: any) => {
     ElMessage.success(res.msg)
     initData(true)
-    if (tableConfig.tableData.some(item => item.status === 'DEPLOYING')) {
-      timer.value = setInterval(() => {
-        initData(true, 'interval')
-      }, 3000)
-    }
+    // if (tableConfig.tableData.some(item => item.status === 'DEPLOYING')) {
+    //   timer.value = setInterval(() => {
+    //     initData(true, 'interval')
+    //   }, 3000)
+    // }
   })
   .catch(() => {
   })
@@ -231,6 +241,15 @@ function handleCurrentChange(e: number) {
 
 onMounted(() => {
   initData()
+  timer.value = setInterval(() => {
+    initData(true, 'interval')
+  }, 3000)
+})
+onUnmounted(() => {
+  if (timer.value) {
+    clearInterval(timer.value)
+  }
+  timer.value = null
 })
 </script>
 ./spark-container.config
