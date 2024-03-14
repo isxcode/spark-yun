@@ -581,7 +581,6 @@ function getConfigDetailData() {
     clusterConfig.setMode = clusterConfig.setMode || 'SIMPLE'
     cronConfig.setMode = cronConfig.setMode || 'SIMPLE'
     syncRule.setMode = syncRule.setMode || 'SIMPLE'
-
     containerConfig.containerId = res.data.containerId
 
     getClusterNodeList(true)
@@ -621,8 +620,8 @@ function okEvent() {
           cron: cronConfig.setMode === 'SIMPLE' ? cron : cronConfig.cron
         },
         syncRule: syncRule,
-        ...containerConfig,
-        ...fileConfig
+        ...fileConfig,
+        ...containerConfig
       }).then((res: any) => {
         ElMessage.success('保存成功')
         drawerConfig.visible = false;

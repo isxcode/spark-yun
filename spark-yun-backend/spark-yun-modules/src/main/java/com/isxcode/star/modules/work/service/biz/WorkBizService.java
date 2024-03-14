@@ -111,7 +111,7 @@ public class WorkBizService {
 			}
 		}
 
-		// 初始化计算引擎
+		// sparkSql，数据同步，bash，python，必须配置集群
 		if (WorkType.QUERY_SPARK_SQL.equals(addWorkReq.getWorkType())
 				|| WorkType.DATA_SYNC_JDBC.equals(addWorkReq.getWorkType())
 				|| WorkType.BASH.equals(addWorkReq.getWorkType()) || WorkType.PYTHON.equals(addWorkReq.getWorkType())
@@ -129,7 +129,7 @@ public class WorkBizService {
 			}
 		}
 
-    	// 初始化作业的配置
+		// 初始化作业的配置
 		WorkConfigEntity workConfig = new WorkConfigEntity();
 
 		// 配置添加数据源
@@ -148,7 +148,7 @@ public class WorkBizService {
 			workConfigService.initSyncRule(workConfig);
 		}
 
-    	// 初始化计算引擎
+		// 初始化计算引擎
 		if (WorkType.QUERY_SPARK_SQL.equals(addWorkReq.getWorkType())
 				|| WorkType.DATA_SYNC_JDBC.equals(addWorkReq.getWorkType())
 				|| WorkType.BASH.equals(addWorkReq.getWorkType()) || WorkType.PYTHON.equals(addWorkReq.getWorkType())
