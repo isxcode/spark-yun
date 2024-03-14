@@ -465,6 +465,10 @@ public class WorkBizService {
 			getWorkRes.setJarJobConfig(jarJobConfig);
 		}
 
+		if (!Strings.isEmpty(workConfig.getContainerId())) {
+			getWorkRes.setContainerId(workConfig.getContainerId());
+		}
+
 		return getWorkRes;
 	}
 
