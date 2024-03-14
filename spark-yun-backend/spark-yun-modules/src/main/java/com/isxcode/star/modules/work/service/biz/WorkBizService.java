@@ -111,7 +111,7 @@ public class WorkBizService {
 			}
 		}
 
-		// sparkSql，数据同步，bash，python，必须配置集群
+		// 初始化计算引擎
 		if (WorkType.QUERY_SPARK_SQL.equals(addWorkReq.getWorkType())
 				|| WorkType.DATA_SYNC_JDBC.equals(addWorkReq.getWorkType())
 				|| WorkType.BASH.equals(addWorkReq.getWorkType()) || WorkType.PYTHON.equals(addWorkReq.getWorkType())
@@ -157,7 +157,7 @@ public class WorkBizService {
 					addWorkReq.getEnableHive(), addWorkReq.getDatasourceId());
 		}
 
-    // 如果jdbc执行和jdbc查询，必填数据源
+		// 如果jdbc执行和jdbc查询，必填数据源
 		if (WorkType.SPARK_CONTAINER_SQL.equals(addWorkReq.getWorkType())) {
 			if (Strings.isEmpty(addWorkReq.getContainerId())) {
 				throw new IsxAppException("容器是必填项");

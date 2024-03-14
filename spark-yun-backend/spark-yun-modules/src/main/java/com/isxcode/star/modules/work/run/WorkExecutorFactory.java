@@ -15,29 +15,29 @@ import org.springframework.stereotype.Component;
 @Component
 public class WorkExecutorFactory {
 
-  private final ApplicationContext applicationContext;
+	private final ApplicationContext applicationContext;
 
-  public WorkExecutor create(String workType) {
+	public WorkExecutor create(String workType) {
 
-    switch (workType) {
-      case WorkType.QUERY_SPARK_SQL:
-        return applicationContext.getBean(SparkSqlExecutor.class);
-      case WorkType.QUERY_JDBC_SQL:
-        return applicationContext.getBean(QuerySqlExecutor.class);
-      case WorkType.EXECUTE_JDBC_SQL:
-        return applicationContext.getBean(ExecuteSqlExecutor.class);
-      case WorkType.DATA_SYNC_JDBC:
-        return applicationContext.getBean(SyncWorkExecutor.class);
-      case WorkType.BASH:
-        return applicationContext.getBean(BashExecutor.class);
-      case WorkType.PYTHON:
-        return applicationContext.getBean(PythonExecutor.class);
-      case WorkType.SPARK_JAR:
-        return applicationContext.getBean(SparkJarExecutor.class);
-      case WorkType.SPARK_CONTAINER_SQL:
-        return applicationContext.getBean(SparkContainerSqlExecutor.class);
-      default:
-        throw new IsxAppException("作业类型不存在");
-    }
-  }
+		switch (workType) {
+			case WorkType.QUERY_SPARK_SQL :
+				return applicationContext.getBean(SparkSqlExecutor.class);
+			case WorkType.QUERY_JDBC_SQL :
+				return applicationContext.getBean(QuerySqlExecutor.class);
+			case WorkType.EXECUTE_JDBC_SQL :
+				return applicationContext.getBean(ExecuteSqlExecutor.class);
+			case WorkType.DATA_SYNC_JDBC :
+				return applicationContext.getBean(SyncWorkExecutor.class);
+			case WorkType.BASH :
+				return applicationContext.getBean(BashExecutor.class);
+			case WorkType.PYTHON :
+				return applicationContext.getBean(PythonExecutor.class);
+			case WorkType.SPARK_JAR :
+				return applicationContext.getBean(SparkJarExecutor.class);
+			case WorkType.SPARK_CONTAINER_SQL :
+				return applicationContext.getBean(SparkContainerSqlExecutor.class);
+			default :
+				throw new IsxAppException("作业类型不存在");
+		}
+	}
 }

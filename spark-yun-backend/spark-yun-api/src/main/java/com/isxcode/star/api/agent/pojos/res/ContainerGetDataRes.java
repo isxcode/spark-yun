@@ -17,5 +17,5 @@ public class ContainerGetDataRes {
 
 	private String code;
 
-  private String msg;
+	private String msg;
 }
