@@ -129,32 +129,40 @@ public class WorkBizService {
 			}
 		}
 
-		// 初始化作业的配置
+    	// 初始化作业的配置
 		WorkConfigEntity workConfig = new WorkConfigEntity();
 
 		// 配置添加数据源
 		workConfig.setDatasourceId(addWorkReq.getDatasourceId());
 
 		// 如果是sparkSql,jdbcQuerySql,jdbcExecuteSql,bash,python作业，需要初始化脚本内容，方便客户使用
-		if (WorkType.QUERY_SPARK_SQL.equals(addWorkReq.getWorkType())
-				|| WorkType.EXECUTE_JDBC_SQL.equals(addWorkReq.getWorkType())
-				|| WorkType.QUERY_JDBC_SQL.equals(addWorkReq.getWorkType())
-				|| WorkType.BASH.equals(addWorkReq.getWorkType()) || WorkType.PYTHON.equals(addWorkReq.getWorkType())) {
-			workConfigService.initWorkScript(workConfig, addWorkReq.getWorkType());
-		}
+    if (WorkType.QUERY_SPARK_SQL.equals(addWorkReq.getWorkType())
+      || WorkType.EXECUTE_JDBC_SQL.equals(addWorkReq.getWorkType())
+      || WorkType.QUERY_JDBC_SQL.equals(addWorkReq.getWorkType())
+      || WorkType.BASH.equals(addWorkReq.getWorkType()) || WorkType.PYTHON.equals(addWorkReq.getWorkType()) || WorkType.SPARK_CONTAINER_SQL.equals(addWorkReq.getWorkType())) {
+      workConfigService.initWorkScript(workConfig, addWorkReq.getWorkType());
+    }
 
 		// 初始化数据同步分区值
 		if (WorkType.DATA_SYNC_JDBC.equals(addWorkReq.getWorkType())) {
 			workConfigService.initSyncRule(workConfig);
 		}
 
-		// 初始化计算引擎
+    	// 初始化计算引擎
 		if (WorkType.QUERY_SPARK_SQL.equals(addWorkReq.getWorkType())
 				|| WorkType.DATA_SYNC_JDBC.equals(addWorkReq.getWorkType())
 				|| WorkType.BASH.equals(addWorkReq.getWorkType()) || WorkType.PYTHON.equals(addWorkReq.getWorkType())
 				|| WorkType.SPARK_JAR.equals(addWorkReq.getWorkType())) {
 			workConfigService.initClusterConfig(workConfig, addWorkReq.getClusterId(), addWorkReq.getClusterNodeId(),
 					addWorkReq.getEnableHive(), addWorkReq.getDatasourceId());
+		}
+
+    // 如果jdbc执行和jdbc查询，必填数据源
+		if (WorkType.SPARK_CONTAINER_SQL.equals(addWorkReq.getWorkType())) {
+			if (Strings.isEmpty(addWorkReq.getContainerId())) {
+				throw new IsxAppException("容器是必填项");
+			}
+			workConfig.setContainerId(addWorkReq.getContainerId());
 		}
 
 		// 初始化调度默认值

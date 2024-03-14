@@ -56,6 +56,8 @@ public class WorkConfigEntity {
 
 	private String libConfig;
 
+  private String containerId;
+
 	@CreatedDate
 	private LocalDateTime createDateTime;
 
