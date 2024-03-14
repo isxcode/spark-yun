@@ -103,7 +103,7 @@ public interface ModuleCode {
 	 */
 	String FUNC = "func";
 
-  /**
+	/**
 	 * 容器模块.
 	 */
 	String VIP_CONTAINER = "/vip/container";

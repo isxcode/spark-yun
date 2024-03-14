@@ -136,12 +136,13 @@ public class WorkBizService {
 		workConfig.setDatasourceId(addWorkReq.getDatasourceId());
 
 		// 如果是sparkSql,jdbcQuerySql,jdbcExecuteSql,bash,python作业，需要初始化脚本内容，方便客户使用
-    if (WorkType.QUERY_SPARK_SQL.equals(addWorkReq.getWorkType())
-      || WorkType.EXECUTE_JDBC_SQL.equals(addWorkReq.getWorkType())
-      || WorkType.QUERY_JDBC_SQL.equals(addWorkReq.getWorkType())
-      || WorkType.BASH.equals(addWorkReq.getWorkType()) || WorkType.PYTHON.equals(addWorkReq.getWorkType()) || WorkType.SPARK_CONTAINER_SQL.equals(addWorkReq.getWorkType())) {
-      workConfigService.initWorkScript(workConfig, addWorkReq.getWorkType());
-    }
+		if (WorkType.QUERY_SPARK_SQL.equals(addWorkReq.getWorkType())
+				|| WorkType.EXECUTE_JDBC_SQL.equals(addWorkReq.getWorkType())
+				|| WorkType.QUERY_JDBC_SQL.equals(addWorkReq.getWorkType())
+				|| WorkType.BASH.equals(addWorkReq.getWorkType()) || WorkType.PYTHON.equals(addWorkReq.getWorkType())
+				|| WorkType.SPARK_CONTAINER_SQL.equals(addWorkReq.getWorkType())) {
+			workConfigService.initWorkScript(workConfig, addWorkReq.getWorkType());
+		}
 
 		// 初始化数据同步分区值
 		if (WorkType.DATA_SYNC_JDBC.equals(addWorkReq.getWorkType())) {
