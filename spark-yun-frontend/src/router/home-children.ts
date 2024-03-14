@@ -21,6 +21,7 @@ import CustomFormList from '@/views/custom-form/custom-form-list.vue'
 import CustomFormQuery from '@/views/custom-form/custom-form-query/index.vue'
 import CustomFormSetting from '@/views/custom-form/form-setting/index.vue'
 import CustomApi from '@/views/custom-api/index.vue'
+import SparkContainer from '@/views/spark-container/index.vue'
 
 import fileCenter from '@/views/file-center/index.vue'
 import CustomFunc from '@/views/custom-func/index.vue'
@@ -135,6 +136,11 @@ export default [
     path: 'custom-api',
     name: 'custom-api',
     component: CustomApi
+  },
+  {
+    path: 'spark-container',
+    name: 'spark-container',
+    component: SparkContainer
   },
   {
     path: 'custom-func',
