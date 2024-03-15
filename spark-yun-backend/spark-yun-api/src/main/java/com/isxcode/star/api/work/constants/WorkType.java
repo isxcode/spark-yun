@@ -16,4 +16,6 @@ public interface WorkType {
 	String PYTHON = "PYTHON";
 
 	String SPARK_JAR = "SPARK_JAR";
+
+	String PRQL = "PRQL";
 }
