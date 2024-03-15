@@ -14,4 +14,7 @@ dependencies {
 
   // calcite
   implementation "org.apache.calcite:calcite-core:${CALCITE_VERSION}"
+
+  // prql
+  implementation "org.prqllang:prql-java:${PRQL_VERSION}"
 }

@@ -34,6 +34,8 @@ public class WorkExecutorFactory {
 				return applicationContext.getBean(PythonExecutor.class);
 			case WorkType.SPARK_JAR :
 				return applicationContext.getBean(SparkJarExecutor.class);
+			case WorkType.PRQL :
+				return applicationContext.getBean(PRQLExecutor.class);
 			default :
 				throw new IsxAppException("作业类型不存在");
 		}
