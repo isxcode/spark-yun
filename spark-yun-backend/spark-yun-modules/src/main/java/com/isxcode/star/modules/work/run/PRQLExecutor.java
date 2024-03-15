@@ -70,9 +70,6 @@ public class PRQLExecutor extends WorkExecutor {
 
 			statement.setQueryTimeout(1800);
 
-			// 清除注释
-			String noCommentSql = workRunContext.getScript().replaceAll("/\\*(?:.|[\\n\\r])*?\\*/|--.*", "");
-
 			// 解析sql
 
 		} catch (Exception e) {
