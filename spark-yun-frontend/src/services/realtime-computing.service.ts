@@ -85,7 +85,7 @@ export function GetJsonParamNodeList(params: any): Promise<any> {
     })
 }
 
-// 查询json字段节点
+// 查询json数组节点
 export function GetJsonArrayNodeList(params: any): Promise<any> {
     return http.request({
         method: 'post',

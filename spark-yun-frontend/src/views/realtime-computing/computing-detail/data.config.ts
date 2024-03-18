@@ -24,10 +24,6 @@ export const DataSourceType = [
     value: 'HIVE',
   },
   {
-    label: 'kafka',
-    value: 'KAFKA',
-  },
-  {
     label: 'HanaSap',
     value: 'HANA_SAP',
   },
@@ -57,10 +53,10 @@ export const OverModeList = [
     label: '追加模式',
     value: 'INTO',
   },
-  {
-    label: '覆写模式',
-    value: 'OVERWRITE',
-  }
+  // {
+  //   label: '覆写模式',
+  //   value: 'OVERWRITE',
+  // }
 ]
 
 export interface BreadCrumb {
