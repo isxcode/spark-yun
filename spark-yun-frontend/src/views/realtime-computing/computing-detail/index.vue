@@ -50,7 +50,7 @@
                             <span>数据来源</span>
                         </div>
                     </template>
-                    <el-form ref="form" label-position="left" label-width="70px" :model="formData" :rules="rules">
+                    <el-form ref="form" label-position="left" label-width="88px" :model="formData" :rules="rules">
                         <el-form-item prop="sourceDBType" label="类型">
                             <el-select v-model="formData.sourceDBType" placeholder="请选择">
                                 <el-option v-for="item in [{ label: 'Kafka', value: 'KAFKA', }]" :key="item.value" :label="item.label" :value="item.value" />
@@ -70,6 +70,26 @@
                             >
                                 <el-option v-for="item in sourceTablesList" :key="item.value" :label="item.label"
                                     :value="item.value" />
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item prop="kafkaDataType" label="kafka数据类型">
+                            <el-select v-model="formData.kafkaDataType" disabled clearable filterable placeholder="请选择">
+                                <el-option label="JSON" value="JSON" />
+                                <el-option label="CSV" value="CSV" />
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item prop="jsonTemplate" label="Json模板">
+                            <code-mirror v-model="formData.jsonTemplate" basic :lang="jsonLang" />
+                        </el-form-item>
+                        <el-form-item prop="jsonDataType" label="解析类型">
+                            <el-select v-model="formData.jsonDataType" clearable filterable placeholder="请选择" @change="getCurrentTableColumn">
+                                <el-option label="数组节点" value="LIST" />
+                                <el-option label="对象节点" value="OBJECT" />
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item prop="rootJsonPath" label="节点" v-if="formData.jsonDataType === 'LIST'">
+                            <el-select v-model="formData.rootJsonPath" clearable filterable placeholder="请选择" @visible-change="getNodeList($event, formData.sourceDBId)">
+                                <el-option v-for="item in sourceTablesList" :key="item.value" :label="item.label" :value="item.value" />
                             </el-select>
                         </el-form-item>
                         <el-form-item prop="queryCondition" label="过滤条件">
@@ -101,12 +121,11 @@
                         </el-form-item>
                         <el-form-item prop="targetTable" label="表">
                             <el-select v-model="formData.targetTable" clearable filterable placeholder="请选择"
-                                @visible-change="getDataSourceTable($event, formData.targetDBId, 'target')"
+                                @visible-change="getDataSourceTable($event, formData.targetDBId)"
                                 @change="tableChangeEvent($event, formData.targetDBId, 'target')">
                                 <el-option v-for="item in targetTablesList" :key="item.value" :label="item.label"
                                     :value="item.value" />
                             </el-select>
-                            <!-- <el-button type="primary" link @click="createTableWork">生成建表作业</el-button> -->
                         </el-form-item>
                         <el-form-item prop="overMode" label="写入模式">
                             <el-select v-model="formData.overMode" clearable filterable placeholder="请选择" @change="pageChangeEvent">
@@ -151,13 +170,14 @@ import Breadcrumb from '@/layout/bread-crumb/index.vue'
 import { ElMessage, ElMessageBox, FormInstance, FormRules } from 'element-plus'
 import CodeMirror from 'vue-codemirror6'
 import { sql } from '@codemirror/lang-sql'
+import {json} from '@codemirror/lang-json'
 import { DataSourceType, OverModeList, BreadCrumbList } from './data.config.ts'
 import { GetDatasourceList } from '@/services/datasource.service'
-import { CreateTableWork, GetDataSourceTables, GetTableColumnsByTableId } from '@/services/data-sync.service'
+import { GetDataSourceTables, GetTableColumnsByTableId } from '@/services/data-sync.service'
 import TableDetail from './table-detail/index.vue'
 import DataSyncTable from './data-sync-table/index.vue'
 import ConfigDetail from '../config-detail/index.vue'
-import { GetTimeComputingDetail, GetTopicDataList } from '@/services/realtime-computing.service.ts'
+import { ConifgTimeComputingData, GetTimeComputingDetail, GetTopicDataList } from '@/services/realtime-computing.service.ts'
 import PublishLog from '@/views/workflow/work-item/publish-log.vue'
 import RunningLog from '@/views/workflow/work-item/running-log.vue'
 import { Loading } from '@element-plus/icons-vue'
@@ -177,6 +197,7 @@ const form = ref<FormInstance>()
 const tableDetailRef = ref()
 const dataSyncTableRef = ref()
 const lang = ref<any>(sql())
+const jsonLang = ref<any>(json())
 const sourceList = ref<Option[]>([])
 const targetList = ref<Option[]>([])
 const sourceTablesList = ref<Option[]>([])
@@ -212,6 +233,10 @@ const formData = reactive({
     sourceDBType: 'KAFKA',     // 来源数据源类型
     sourceDBId: '',       // 来源数据源
     sourceTable: '',      // 来源数据库表名
+    kafkaDataType: 'JSON',     // kafka数据类型
+    jsonTemplate: '',     // json模板
+    jsonDataType: '',     // 数据解析类型
+    rootJsonPath: '',     // 节点
     queryCondition: '',   // 来源数据库查询条件
 
     targetDBType: '',     // 目标数据库类型
@@ -244,9 +269,9 @@ function tabChangeEvent(e: string) {
 // 保存数据
 function saveData() {
     btnLoadingConfig.saveLoading = true
-    SaveWorkItemConfig({
-        workId: formData.workId,
-        syncWorkConfig: {
+    ConifgTimeComputingData({
+        realId: formData.workId,
+        syncConfig: {
             ...formData,
             sourceTableColumn: dataSyncTableRef.value.getSourceTableColumn(),
             targetTableColumn: dataSyncTableRef.value.getTargetTableColumn(),
@@ -264,43 +289,24 @@ function saveData() {
 
 function getData() {
     GetTimeComputingDetail({id: route.query.id}).then((res: any) => {
-        if (res.data.syncWorkConfig) {
-            formData.sourceDBType = res.data.syncWorkConfig.sourceDBType
-            formData.sourceDBId = res.data.syncWorkConfig.sourceDBId
-            formData.sourceTable = res.data.syncWorkConfig.sourceTable
-            formData.queryCondition = res.data.syncWorkConfig.queryCondition
-            formData.targetDBType = res.data.syncWorkConfig.targetDBType
-            formData.targetDBId = res.data.syncWorkConfig.targetDBId
-            formData.targetTable = res.data.syncWorkConfig.targetTable
-            formData.overMode = res.data.syncWorkConfig.overMode
+        if (res.data.syncConfig) {
+            Object.keys(formData).forEach((key: string) => {
+                formData[key] = res.data.syncConfig[key]
+            })
 
             nextTick(() => {
+                getTopicList(true, formData.sourceDBId)
                 getDataSource(true, formData.sourceDBType, 'source')
                 getDataSource(true, formData.targetDBType, 'target')
-                getDataSourceTable(true, formData.sourceDBId, 'source')
-                getDataSourceTable(true, formData.targetDBId, 'target')
+                getDataSourceTable(true, formData.sourceDBId)
 
-                dataSyncTableRef.value.initPageData(res.data.syncWorkConfig)
+                dataSyncTableRef.value.initPageData(res.data.syncConfig)
                 changeStatus.value = false
             })
         }
     }).catch(err => {
         console.error(err)
     })
-}
-
-// 发布
-function publishData() {
-  btnLoadingConfig.publishLoading = true
-  PublishWorkData({
-    workId: route.query.id
-  }).then((res: any) => {
-    ElMessage.success(res.msg)
-    btnLoadingConfig.publishLoading = false
-  })
-  .catch((error: any) => {
-    btnLoadingConfig.publishLoading = false
-  })
 }
 
 // 下线
@@ -342,6 +348,7 @@ function getDataSource(e: boolean, sourceType: string, type: string) {
     }
 }
 
+// 获取topic列表
 function getTopicList(e: boolean, dataSourceId: string) {
     if (e && dataSourceId) {
         GetTopicDataList({
@@ -363,67 +370,34 @@ function getTopicList(e: boolean, dataSourceId: string) {
 }
 
 // 获取数据源表
-function getDataSourceTable(e: boolean, dataSourceId: string, type: string) {
+function getDataSourceTable(e: boolean, dataSourceId: string) {
     if (e && dataSourceId) {
         let options = []
-        GetTopicDataList({
-            datasourceId: dataSourceId
+        GetDataSourceTables({
+            dataSourceId: dataSourceId,
+            tablePattern: ""
         }).then((res: any) => {
-            options = res.data.map((item: any) => {
+            options = res.data.tables.map((item: any) => {
                 return {
                     label: item,
                     value: item
                 }
             })
-            type === 'source' ? sourceTablesList.value = options : targetTablesList.value = options
+            targetTablesList.value = options
         }).catch(err => {
             console.error(err)
-            type === 'source' ? sourceTablesList.value = [] : targetTablesList.value = []
+            targetTablesList.value = []
         })
     } else {
-        type === 'source' ? sourceTablesList.value = [] : targetTablesList.value = []
+        targetTablesList.value = []
     }
 }
 
-// 数据预览
-function showTableDetail(): void {
-    if (formData.sourceDBId && formData.sourceTable) {
-        tableDetailRef.value.showModal({
-            dataSourceId: formData.sourceDBId,
-            tableName: formData.sourceTable
-        })
-    } else {
-        ElMessage.warning('请选择数据源和表')
-    }
-}
-
-// 生成建表作业
-function createTableWork() {
-    CreateTableWork({
-        dataSourceId: formData.sourceDBId,
-        tableName: formData.sourceTable
-    }).then((res: any) => {
-        ElMessage.success('操作成功')
-    }).catch(err => {
-        console.error(err)
-    })
-}
-
-// 分区键
-function getTableColumnData(e: boolean, dataSourceId: string, tableName: string) {
-    if (e && dataSourceId && tableName) {
-        GetTableColumnsByTableId({
-            dataSourceId: dataSourceId,
-            tableName: tableName
-        }).then((res: any) => {
-            partKeyList.value = (res.data.columns || []).map((column: any) => {
-                return {
-                    label: column.name,
-                    value: column.name
-                }
-            })
-        }).catch(err => {
-            console.error(err)
+function getCurrentTableColumn(e: string) {
+    if (e === 'OBJECT') {
+        changeStatus.value = true
+        dataSyncTableRef.value.getCurrentTableColumn({
+            jsonStr: formData.jsonTemplate
         })
     }
 }
@@ -454,6 +428,13 @@ function dbIdChange(type: string) {
         formData.sourceTable = ''
     } else {
         formData.targetTable = ''
+    }
+}
+
+// 获取节点
+function getNodeList(e: boolean, data: string) {
+    if (e) {
+
     }
 }
 
