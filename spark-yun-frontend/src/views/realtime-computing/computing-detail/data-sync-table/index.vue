@@ -9,6 +9,7 @@
             <el-table ref="sourceTableRef" :data="sourceTableColumn" row-key="code">
                 <el-table-column prop="code" :show-overflow-tooltip="true" label="字段名" />
                 <el-table-column prop="type" :show-overflow-tooltip="true" label="类型" />
+                <el-table-column prop="jsonPath" :show-overflow-tooltip="true" label="jsonPath" />
                 <el-table-column prop="sql" :show-overflow-tooltip="true" label="转换" />
                 <el-table-column label="" width="8px">
                     <template #default="scope">
@@ -64,6 +65,7 @@ import { GetTableColumnsByTableId } from '@/services/data-sync.service'
 import { ElMessageBox } from 'element-plus'
 import AddCode from '../add-code/index.vue'
 import { useAuthStore } from "@/store/useAuth"
+import { GetJsonParamNodeList } from '@/services/realtime-computing.service'
 
 interface connect {
     source: string
@@ -107,7 +109,7 @@ const sourceTableColumn = ref([])
 const targetTableColumn = ref([])
 const buttons = ref([
   {type: 'primary', text: '同行映射', code: 'SameLine'},
-  {type: 'primary', text: '同名映射', code: 'SameName'},
+//   {type: 'primary', text: '同名映射', code: 'SameName'},
   //   { type: 'primary', text: '智能映射', code: 'SameLine' },
   {type: 'primary', text: '取消映射', code: 'quitLine'},
   {type: 'primary', text: '重置映射', code: 'resetLine'},
@@ -161,13 +163,34 @@ function initPageData(data: any) {
 }
 
 // 根据表名获取映射表字段
+function getCurrentTableColumn(params: any, type: string) {
+    GetJsonParamNodeList(params).then((res: any) => {
+        sourceTableColumn.value = (res.data || []).map((column: any) => {
+            return {
+                code: column.name,
+                type: column.type,
+                jsonPath: column.jsonPath,
+                sql: ''
+            }
+        })
+        instance.deleteEveryConnection()
+        connectCopy.value = []
+        nextTick(() => {
+            initJsPlumb()
+        })
+    }).catch(err => {
+        console.error(err)
+    })
+}
+
+// 根据表名获取映射表字段
 function getTableColumnData(params: TableDetailParam, type: string) {
     GetTableColumnsByTableId(params).then((res: any) => {
         if (type === 'source') {
             sourceTableColumn.value = (res.data.columns || []).map((column: any) => {
                 return {
                     code: column.name,
-                    type: column.name,
+                    type: column.type,
                     sql: ''
                 }
             })
@@ -175,7 +198,7 @@ function getTableColumnData(params: TableDetailParam, type: string) {
             targetTableColumn.value = (res.data.columns || []).map((column: any) => {
                 return {
                     code: column.name,
-                    type: column.name
+                    type: column.type
                 }
             })
         }
@@ -374,6 +397,7 @@ onMounted(() => {
 })
 
 defineExpose({
+    getCurrentTableColumn,
     getTableColumnData,
     getSourceTableColumn,
     getTargetTableColumn,
