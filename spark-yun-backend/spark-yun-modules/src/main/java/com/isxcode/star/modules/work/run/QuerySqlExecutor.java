@@ -27,22 +27,15 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class QuerySqlExecutor extends WorkExecutor {
 
-	private final DatasourceBizService datasourceBizService;
-
 	private final DatasourceRepository datasourceRepository;
-
-	private final WorkInstanceRepository workInstanceRepository;
 
 	private final DatasourceService datasourceService;
 
-	public QuerySqlExecutor(DatasourceBizService datasourceBizService, DatasourceRepository datasourceRepository,
-			WorkInstanceRepository workInstanceRepository, WorkflowInstanceRepository workflowInstanceRepository,
-			DatasourceService datasourceService) {
+	public QuerySqlExecutor(DatasourceRepository datasourceRepository, WorkInstanceRepository workInstanceRepository,
+                          WorkflowInstanceRepository workflowInstanceRepository, DatasourceService datasourceService) {
 
 		super(workInstanceRepository, workflowInstanceRepository);
-		this.datasourceBizService = datasourceBizService;
 		this.datasourceRepository = datasourceRepository;
-		this.workInstanceRepository = workInstanceRepository;
 		this.datasourceService = datasourceService;
 	}
 
@@ -140,9 +133,8 @@ public class QuerySqlExecutor extends WorkExecutor {
 
 			// 讲data转为json存到实例中
 			logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("数据保存成功  \n");
-			workInstance.setSubmitLog(logBuilder.toString());
 			workInstance.setResultData(JSON.toJSONString(result));
-			workInstanceRepository.saveAndFlush(workInstance);
+      updateInstance(workInstance, logBuilder);
 		} catch (Exception e) {
 
 			log.error(e.getMessage());
