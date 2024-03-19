@@ -19,5 +19,7 @@ dependencies {
   implementation group: 'org.apache.kafka', name: 'kafka-clients', version: '3.1.2'
 
   // prql
-  implementation "org.prqllang:prql-java:${PRQL_VERSION}"
+//  implementation "org.prqllang:prql-java:${PRQL_VERSION}"
+
+  implementation fileTree(dir: rootDir.getAbsolutePath() + '/resources/libs', include: [ 'prql-java-0.5.2.jar'])
 }

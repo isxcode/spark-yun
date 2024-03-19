@@ -205,5 +205,28 @@ if [ ! -f "${JDBC_DIR}"/jcc-11.5.8.0.jar ]; then
   echo "jcc-11.5.8.0.jar驱动下载成功"
 fi
 
+# 创建libs文件夹
+LIBS_DIR="${BASE_PATH}"/resources/libs
+
+if [ ! -d "${LIBS_DIR}" ]; then
+    mkdir -p "${LIBS_DIR}"
+fi
+
+if [ ! -f "${LIBS_DIR}"/prql-java-0.5.2.jar ]; then
+  # TODO prql-java-0.5.2.jar URL 待补充
+  wget ${URL} -O ${LIBS_DIR}/prql-java-0.5.2.jar
+  echo "prql-java-0.5.2.jar下载成功"
+fi
+
+# prql 链接库
+if [ ! -f "${BASE_PATH}"/spark-yun-backend/spark-yun-main/src/main/resources/libprql_java.dylib ]; then
+  # TODO libprql_java.dylib URL 待补充
+  # 修改文件名为 prql_java.dylib
+  # 原因详见 https://github.com/PRQL/prql/blob/a9d81a429b6a2c940e94fcf177c402842c05f25b/prqlc/bindings/java/java/src/main/java/org/prql/prql4j/NativeLibraryLoader.java#L14
+  # 或 org.prql.prql4j.NativeLibraryLoader#sharedLibraryName
+  wget ${URL} -O ${BASE_PATH}/spark-yun-backend/spark-yun-main/src/main/resources/prql_java.dylib
+  echo "prql_java.dylib下载成功"
+fi
+
 # 返回状态
 echo "【安装结果】：安装成功"
