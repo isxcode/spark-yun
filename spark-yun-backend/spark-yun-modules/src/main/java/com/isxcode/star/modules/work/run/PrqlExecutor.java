@@ -30,8 +30,8 @@ public class PrqlExecutor extends WorkExecutor {
 	private final DatasourceService datasourceService;
 
 	public PrqlExecutor(WorkInstanceRepository workInstanceRepository,
-                      WorkflowInstanceRepository workflowInstanceRepository, DatasourceRepository datasourceRepository,
-                      DatasourceService datasourceService) {
+			WorkflowInstanceRepository workflowInstanceRepository, DatasourceRepository datasourceRepository,
+			DatasourceService datasourceService) {
 		super(workInstanceRepository, workflowInstanceRepository);
 		this.datasourceRepository = datasourceRepository;
 		this.datasourceService = datasourceService;
@@ -75,48 +75,49 @@ public class PrqlExecutor extends WorkExecutor {
 
 			statement.setQueryTimeout(1800);
 
-      logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始解析prql \n");
-      workInstance = updateInstance(workInstance, logBuilder);
+			logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始解析prql \n");
+			workInstance = updateInstance(workInstance, logBuilder);
 			// 解析sql
-      String sql = PrqlCompiler.toSql(workRunContext.getScript(), datasourceEntityOptional.get().getDbType(), true, true);
+			String sql = PrqlCompiler.toSql(workRunContext.getScript(), datasourceEntityOptional.get().getDbType(),
+					true, true);
 
-      logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO)
-        .append(String.format("prql转化完成: \n%s\n", sql));
-      workInstance = updateInstance(workInstance, logBuilder);
+			logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO)
+					.append(String.format("prql转化完成: \n%s\n", sql));
+			workInstance = updateInstance(workInstance, logBuilder);
 
-      logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始执行SQL \n");
-      workInstance = updateInstance(workInstance, logBuilder);
-      statement.execute(sql);
-      // 记录结束执行时间
-      logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("SQL执行成功  \n");
-      workInstance = updateInstance(workInstance, logBuilder);
+			logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始执行SQL \n");
+			workInstance = updateInstance(workInstance, logBuilder);
+			statement.execute(sql);
+			// 记录结束执行时间
+			logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("SQL执行成功  \n");
+			workInstance = updateInstance(workInstance, logBuilder);
 
-      ResultSet resultSet = statement.getResultSet();
-      // 记录返回结果
-      List<List<String>> result = new ArrayList<>();
+			ResultSet resultSet = statement.getResultSet();
+			// 记录返回结果
+			List<List<String>> result = new ArrayList<>();
 
-      // 封装表头
-      int columnCount = resultSet.getMetaData().getColumnCount();
-      List<String> metaList = new ArrayList<>();
-      for (int i = 1; i <= columnCount; i++) {
-        metaList.add(resultSet.getMetaData().getColumnName(i));
-      }
-      result.add(metaList);
+			// 封装表头
+			int columnCount = resultSet.getMetaData().getColumnCount();
+			List<String> metaList = new ArrayList<>();
+			for (int i = 1; i <= columnCount; i++) {
+				metaList.add(resultSet.getMetaData().getColumnName(i));
+			}
+			result.add(metaList);
 
-      // 封装数据
-      while (resultSet.next()) {
-        metaList = new ArrayList<>();
-        for (int i = 1; i <= columnCount; i++) {
-          metaList.add(String.valueOf(resultSet.getObject(i)));
-        }
-        result.add(metaList);
-      }
+			// 封装数据
+			while (resultSet.next()) {
+				metaList = new ArrayList<>();
+				for (int i = 1; i <= columnCount; i++) {
+					metaList.add(String.valueOf(resultSet.getObject(i)));
+				}
+				result.add(metaList);
+			}
 
-      // 讲data转为json存到实例中
-      logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("数据保存成功  \n");
-      workInstance.setResultData(JSON.toJSONString(result));
-      updateInstance(workInstance, logBuilder);
-    } catch (Exception e) {
+			// 讲data转为json存到实例中
+			logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("数据保存成功  \n");
+			workInstance.setResultData(JSON.toJSONString(result));
+			updateInstance(workInstance, logBuilder);
+		} catch (Exception e) {
 
 			log.error(e.getMessage(), e);
 			throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + e.getMessage() + "\n");
