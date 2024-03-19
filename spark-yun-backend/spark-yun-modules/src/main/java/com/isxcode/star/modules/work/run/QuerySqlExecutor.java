@@ -6,7 +6,6 @@ import com.isxcode.star.api.work.exceptions.WorkRunException;
 import com.isxcode.star.modules.datasource.entity.DatasourceEntity;
 import com.isxcode.star.modules.datasource.repository.DatasourceRepository;
 import com.isxcode.star.modules.datasource.service.DatasourceService;
-import com.isxcode.star.modules.datasource.service.biz.DatasourceBizService;
 import com.isxcode.star.modules.work.entity.WorkInstanceEntity;
 import com.isxcode.star.modules.work.repository.WorkInstanceRepository;
 import com.isxcode.star.modules.workflow.repository.WorkflowInstanceRepository;
@@ -32,7 +31,7 @@ public class QuerySqlExecutor extends WorkExecutor {
 	private final DatasourceService datasourceService;
 
 	public QuerySqlExecutor(DatasourceRepository datasourceRepository, WorkInstanceRepository workInstanceRepository,
-                          WorkflowInstanceRepository workflowInstanceRepository, DatasourceService datasourceService) {
+			WorkflowInstanceRepository workflowInstanceRepository, DatasourceService datasourceService) {
 
 		super(workInstanceRepository, workflowInstanceRepository);
 		this.datasourceRepository = datasourceRepository;
@@ -134,7 +133,7 @@ public class QuerySqlExecutor extends WorkExecutor {
 			// 讲data转为json存到实例中
 			logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("数据保存成功  \n");
 			workInstance.setResultData(JSON.toJSONString(result));
-      updateInstance(workInstance, logBuilder);
+			updateInstance(workInstance, logBuilder);
 		} catch (Exception e) {
 
 			log.error(e.getMessage());
