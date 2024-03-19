@@ -1,5 +1,7 @@
 FROM openjdk:8
 
+RUN rm -rf /etc/localtime && echo 'Asia/Shanghai' >/etc/timezone
+
 VOLUME /etc/zhiqingyun/conf
 VOLUME /var/lib/zhiqingyun
 
