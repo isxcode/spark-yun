@@ -187,16 +187,25 @@ public class MonitorBizService {
 		// 收集map中的数据
 		List<MonitorLineDto> line = new ArrayList<>();
 		lineMap.forEach((k, v) -> {
-      MonitorLineDto date = MonitorLineDto.builder().dateTime(k)
-        .activeNodeSize(v.getActiveNodeSize() == null ? null : v.getActiveNodeSize())
-        .cpuPercent(v.getCpuPercent() == null ? null : v.getCpuPercent() + "%")
-        .usedStorageSize(v.getUsedStorageSize() == null ? null : DataSizeUtil.format(v.getUsedStorageSize()))
-        .usedMemorySize(v.getUsedMemorySize() == null ? null : DataSizeUtil.format(v.getUsedMemorySize()))
-        .diskIoReadSpeed(v.getDiskIoReadSpeed() == null ? null : DataSizeUtil.format(v.getDiskIoReadSpeed() * 1024) + "/s")
-        .diskIoWriteSpeed(v.getDiskIoWriteSpeed() == null ? null : DataSizeUtil.format(v.getDiskIoWriteSpeed() / 1024 / 1024) + "/s")
-        .networkIoReadSpeed(v.getNetworkIoReadSpeed() == null ? null : DataSizeUtil.format(v.getNetworkIoReadSpeed() * 1024) + "/s")
-        .networkIoWriteSpeed(v.getNetworkIoWriteSpeed() == null ? null : DataSizeUtil.format(v.getNetworkIoWriteSpeed() / 1024 / 1024) + "/s")
-        .build();
+			MonitorLineDto date = MonitorLineDto.builder().dateTime(k)
+					.activeNodeSize(v.getActiveNodeSize() == null ? null : v.getActiveNodeSize())
+					.cpuPercent(v.getCpuPercent() == null ? null : v.getCpuPercent() + "%")
+					.usedStorageSize(
+							v.getUsedStorageSize() == null ? null : DataSizeUtil.format(v.getUsedStorageSize()))
+					.usedMemorySize(v.getUsedMemorySize() == null ? null : DataSizeUtil.format(v.getUsedMemorySize()))
+					.diskIoReadSpeed(v.getDiskIoReadSpeed() == null
+							? null
+							: DataSizeUtil.format(v.getDiskIoReadSpeed() * 1024) + "/s")
+					.diskIoWriteSpeed(v.getDiskIoWriteSpeed() == null
+							? null
+							: DataSizeUtil.format(v.getDiskIoWriteSpeed() / 1024 / 1024) + "/s")
+					.networkIoReadSpeed(v.getNetworkIoReadSpeed() == null
+							? null
+							: DataSizeUtil.format(v.getNetworkIoReadSpeed() * 1024) + "/s")
+					.networkIoWriteSpeed(v.getNetworkIoWriteSpeed() == null
+							? null
+							: DataSizeUtil.format(v.getNetworkIoWriteSpeed() / 1024 / 1024) + "/s")
+					.build();
 			line.add(date);
 		});
 
