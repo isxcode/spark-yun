@@ -272,6 +272,10 @@ $module-intro-img-width: 600px;
             line-height: 40px;
           }
 
+          .movie-btn {
+            display: none;
+          }
+
           .quick-btn {
             margin-left: 20px;
             width: 150px;
