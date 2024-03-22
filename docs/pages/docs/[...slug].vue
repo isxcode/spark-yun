@@ -49,7 +49,7 @@
 
 <script setup lang="ts">
 import { NavItem } from "@nuxt/content";
-import getContentDirTree from "~/util/getCOntentDirTree";
+import getContentDirTree from "~/util/getContentDirTree";
 import { useCounterStore, useMenuStore } from "~/store/index";
 definePageMeta({
   title: "首页",
