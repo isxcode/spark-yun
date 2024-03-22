@@ -4,7 +4,7 @@
       <div class="right">
         <div @click="handleLogoClick" class="home-header-logo">
           <div class="logo">
-            <img src="~assets/images/logo.png" alt="" />
+            <img src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/zhiqingyun-logo.jpg" alt=""/>
             <h1>至爻数据</h1>
           </div>
         </div>
@@ -21,25 +21,6 @@
             </SvgIcon>
           </div>
         </div>
-      </div>
-      <div class="left">
-        <el-dropdown class="lang-change" trigger="click" :hide-on-click="true">
-          <span class="el-dropdown-link">
-            {{ currentLangText }}
-          </span>
-          <template #dropdown>
-            <el-dropdown-menu>
-              <el-dropdown-item
-                v-for="(item, index) in langMap"
-                :key="index"
-                @click="handleLangChange(index)"
-              >
-                {{ item }}
-              </el-dropdown-item>
-            </el-dropdown-menu>
-          </template>
-        </el-dropdown>
-        <!-- <div class="quick-use" @click="handleQuickUseClick">中英文</div> -->
       </div>
     </div>
   </header>
@@ -59,6 +40,7 @@ const currentLang = ref<string>("zh-CN");
 const currentLangText = computed(() => {
   return langMap[currentLang.value];
 });
+
 // 语言切换
 function handleLangChange(lang: string) {
   currentLang.value = lang;
@@ -141,6 +123,7 @@ const menuData: Array<MenuData> = reactive([
     type: "link",
   },
 ]);
+
 function handleMenuClick(menuItem: MenuData) {
   if (menuItem.type === "router") {
     const router = useRouter();
@@ -171,26 +154,32 @@ function handleQuickUseClick() {
   display: flex;
   align-items: center;
   background-color: transparent;
+
   .content {
     width: 1220px;
     margin: 0 auto;
     display: flex;
     align-items: center;
     justify-content: space-between;
+
     .right {
       flex: 0;
       flex-basis: 220px;
     }
+
     .center {
       flex: 1;
     }
+
     .left {
       flex: 0;
       flex-basis: auto;
     }
+
     .home-header-logo {
       cursor: pointer;
       z-index: 999;
+
       .logo {
         color: var(--sk-color-home-primary);
         width: 200px;
@@ -198,12 +187,14 @@ function handleQuickUseClick() {
         display: flex;
         flex-direction: row;
         align-items: center;
+
         > img {
           height: 38px;
           margin-bottom: 2px;
         }
+
         h1 {
-          padding-left: 8px;
+          padding-left: 18px;
           font-size: 24px;
           z-index: 999;
           color: #3e3e3e;
@@ -211,6 +202,7 @@ function handleQuickUseClick() {
         }
       }
     }
+
     .menu {
       flex: 1;
       display: flex;
@@ -229,16 +221,19 @@ function handleQuickUseClick() {
         display: flex;
         align-items: center;
         justify-content: center;
+
         &:hover {
           color: var(--sk-color-font-gray-hover);
         }
 
         > .icon-btn {
-          width: 24px;
-          height: 24px;
+          color: black;
+          width: 30px;
+          height: 30px;
         }
       }
     }
+
     // .quick-use {
     //   width: auto;
     //   padding: 0 12px;
@@ -260,22 +255,146 @@ function handleQuickUseClick() {
       display: flex;
       align-items: center;
     }
+
     .lang-change {
       margin-left: 12px;
       color: var(--sk-color-font-gray);
+
       &:hover {
         color: var(--sk-color-font-gray-hover);
       }
     }
   }
+
   @font-face {
     font-family: "阿里妈妈数黑体 Bold";
     font-weight: 700;
-    src: url("//at.alicdn.com/wf/webfont/aQ1mhUp3iaYf/5QDL7m0TZ7N4.woff2")
-        format("woff2"),
-      url("//at.alicdn.com/wf/webfont/aQ1mhUp3iaYf/q3FAWdnOd36Q.woff")
-        format("woff");
+    src: url("//at.alicdn.com/wf/webfont/aQ1mhUp3iaYf/5QDL7m0TZ7N4.woff2") format("woff2"),
+    url("//at.alicdn.com/wf/webfont/aQ1mhUp3iaYf/q3FAWdnOd36Q.woff") format("woff");
     font-display: swap;
+  }
+
+}
+
+// -------------------------------------------------------------------- 移动端 ----------------------------------------------
+
+@media (max-width: 400px) {
+
+  .home-header {
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 999;
+    transition: all 0.3s;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    background-color: transparent;
+
+    .content {
+      width: 300px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      .right {
+        flex: 0;
+        flex-basis: 220px;
+      }
+
+      .center {
+        flex: 1;
+      }
+
+      .left {
+        flex: 0;
+        flex-basis: auto;
+      }
+
+      .home-header-logo {
+        cursor: pointer;
+        z-index: 999;
+
+        .logo {
+          color: var(--sk-color-home-primary);
+          width: 200px;
+          height: 54px;
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+
+          > img {
+            height: 38px;
+            margin-bottom: 2px;
+          }
+
+          h1 {
+            padding-left: 18px;
+            font-size: 24px;
+            z-index: 999;
+            color: #3e3e3e;
+            font-family: "阿里妈妈数黑体 Bold", sans-serif;
+          }
+        }
+      }
+
+      .menu {
+        flex: 1;
+        display: flex;
+        justify-content: flex-end;
+
+        .menu-item {
+          padding: 0px 8px;
+          height: 32px;
+          line-height: 32px;
+          text-align: center;
+          border-radius: 20px;
+          margin-left: 6px;
+          cursor: pointer;
+          transition: all 0.3s;
+          color: var(--sk-color-font-gray);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+
+          &:hover {
+            color: var(--sk-color-font-gray-hover);
+          }
+
+          > .icon-btn {
+            color: black;
+            width: 30px;
+            height: 30px;
+          }
+        }
+      }
+
+      .left {
+        display: flex;
+        align-items: center;
+      }
+
+      .lang-change {
+        margin-left: 12px;
+        color: var(--sk-color-font-gray);
+
+        &:hover {
+          color: var(--sk-color-font-gray-hover);
+        }
+      }
+    }
+
+    @font-face {
+      font-family: "阿里妈妈数黑体 Bold";
+      font-weight: 700;
+      src: url("//at.alicdn.com/wf/webfont/aQ1mhUp3iaYf/5QDL7m0TZ7N4.woff2") format("woff2"),
+      url("//at.alicdn.com/wf/webfont/aQ1mhUp3iaYf/q3FAWdnOd36Q.woff") format("woff");
+      font-display: swap;
+    }
+
   }
 }
 </style>
