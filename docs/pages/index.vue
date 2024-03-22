@@ -378,10 +378,6 @@ $module-intro-img-width: 600px;
         flex-wrap: wrap;
         justify-content: center;
 
-        .bus-img {
-          display: none;
-        }
-
         img {
           width: 220px;
           height: 150px;
@@ -683,6 +679,10 @@ $module-intro-img-width: 600px;
           margin: 20px auto auto;
           width: 300px;
 
+          .bus-img {
+            display: none;
+          }
+
           img {
             width: 200px;
           }
@@ -704,6 +704,7 @@ $module-intro-img-width: 600px;
 
       .left {
         width: 300px;
+
         img {
           width: 300px;
         }
@@ -754,6 +755,7 @@ $module-intro-img-width: 600px;
 
       .right-phone {
         display: block;
+
         img {
           width: 300px;
         }
