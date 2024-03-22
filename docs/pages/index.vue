@@ -26,7 +26,7 @@
               <SvgIcon name="arrow-right" class="link-right-svg"></SvgIcon>
             </div>
             <div class="movie-btn">
-              <p>产品视频</p>
+              <p>视频介绍</p>
               <SvgIcon name="arrow-right" class="link-right-svg"></SvgIcon>
             </div>
           </div>

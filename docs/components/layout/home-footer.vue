@@ -60,6 +60,13 @@
       </div>
     </div>
   </div>
+
+  <div class="fixed-footer">
+    <div class="content">
+      <SvgIcon class="phone-svg" name="phone"></SvgIcon>
+      <p class="phone-text">电话咨询</p>
+    </div>
+  </div>
 </template>
 
 <style lang="scss" scoped>
@@ -150,6 +157,10 @@
   }
 }
 
+.fixed-footer {
+  display: none;
+}
+
 @font-face {
   font-family: "阿里妈妈数黑体 Bold";
   font-weight: 700;
@@ -159,6 +170,36 @@
 }
 
 @media (max-width: 400px) {
+
+  .fixed-footer {
+    display: block;
+    position: fixed;
+    z-index: 999;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 50px;
+    line-height: 50px;
+    text-align: center;
+    border-top: 1px solid #e5e5e5;
+    background: #F9DED1;
+    .content {
+      width: 130px;
+      display: flex;
+      align-items: center;
+      margin: 0 auto;
+      .phone-svg {
+        width: 24px;
+        height: 24px;
+      }
+      .phone-text {
+        margin-left: 10px;
+        font-size: 1.25rem;
+        color: #e25a1b;
+      }
+    }
+  }
+
   .footer {
     padding-top: 40px;
 
@@ -229,12 +270,11 @@
     .content {
       font-size: 11px;
       height: 30px;
+      line-height: 130px;
       color: grey;
       width: 300px;
       margin: auto;
       display: flex;
-      align-items: center;
-      justify-content: center;
 
       .equal-columns {
         display: flex;
@@ -248,6 +288,7 @@
     }
   }
 }
+
 </style>
 <script setup lang="ts">
 
