@@ -49,7 +49,7 @@ const props: any = withDefaults(
 
 <style lang="scss">
 .zqy-breadcrumb {
-  height: 54px;
+  height: 55px;
   display: flex;
   align-items: center;
   padding-left: 20px;
