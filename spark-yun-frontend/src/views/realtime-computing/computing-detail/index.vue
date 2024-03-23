@@ -17,7 +17,7 @@
                 </el-icon>
                 <span class="btn-text">保存</span>
             </div>
-            <div class="btn-box">
+            <div class="btn-box" @click="startComputing">
                 <el-icon v-if="!btnLoadingConfig.runningLoading">
                     <VideoPlay />
                 </el-icon>
@@ -26,8 +26,8 @@
                 </el-icon>
                 <span class="btn-text">运行</span>
             </div>
-            <div class="btn-box">
-                <el-icon v-if="!btnLoadingConfig.stopWorkFlowLoading">
+            <div class="btn-box" @click="stopData">
+                <el-icon v-if="!btnLoadingConfig.stopLoading">
                     <Close />
                 </el-icon>
                 <el-icon v-else class="is-loading">
@@ -52,7 +52,7 @@
                     </template>
                     <el-form ref="form" label-position="left" label-width="88px" :model="formData" :rules="rules">
                         <el-form-item prop="sourceDBType" label="类型">
-                            <el-select v-model="formData.sourceDBType" placeholder="请选择">
+                            <el-select v-model="formData.sourceDBType" placeholder="请选择" @change="pageChangeEvent">
                                 <el-option v-for="item in [{ label: 'Kafka', value: 'KAFKA', }]" :key="item.value" :label="item.label" :value="item.value" />
                             </el-select>
                         </el-form-item>
@@ -65,21 +65,21 @@
                             </el-select>
                         </el-form-item>
                         <el-form-item prop="sourceTable" label="topic">
-                            <el-select v-model="formData.sourceTable" clearable filterable placeholder="请选择"
+                            <el-select v-model="formData.sourceTable" clearable filterable placeholder="请选择" @change="pageChangeEvent"
                                 @visible-change="getTopicList($event, formData.sourceDBId)"
                             >
                                 <el-option v-for="item in sourceTablesList" :key="item.value" :label="item.label"
                                     :value="item.value" />
                             </el-select>
                         </el-form-item>
-                        <el-form-item prop="kafkaDataType" label="kafka数据类型">
+                        <!-- <el-form-item prop="kafkaDataType" label="kafka数据类型">
                             <el-select v-model="formData.kafkaDataType" disabled clearable filterable placeholder="请选择">
                                 <el-option label="JSON" value="JSON" />
                                 <el-option label="CSV" value="CSV" />
                             </el-select>
-                        </el-form-item>
+                        </el-form-item> -->
                         <el-form-item prop="jsonTemplate" label="Json模板">
-                            <code-mirror v-model="formData.jsonTemplate" basic :lang="jsonLang" />
+                            <code-mirror v-model="formData.jsonTemplate" basic :lang="jsonLang" @change="pageChangeEvent" />
                         </el-form-item>
                         <el-form-item prop="jsonDataType" label="解析类型">
                             <el-select v-model="formData.jsonDataType" clearable filterable placeholder="请选择" @change="getCurrentTableColumn">
@@ -88,9 +88,7 @@
                             </el-select>
                         </el-form-item>
                         <el-form-item prop="rootJsonPath" label="节点" v-if="formData.jsonDataType === 'LIST'">
-                            <el-select v-model="formData.rootJsonPath" clearable filterable placeholder="请选择" @visible-change="getNodeList($event, formData.sourceDBId)">
-                                <el-option v-for="item in sourceTablesList" :key="item.value" :label="item.label" :value="item.value" />
-                            </el-select>
+                            <el-input v-model="formData.rootJsonPath" placeholder="请输入" @blur="rootJsonPathBlur"></el-input>
                         </el-form-item>
                         <el-form-item prop="queryCondition" label="过滤条件">
                             <code-mirror v-model="formData.queryCondition" basic :lang="lang" @change="pageChangeEvent" />
@@ -106,7 +104,7 @@
                     <el-form ref="form" label-position="left" label-width="70px" :model="formData" :rules="rules">
                         <el-form-item prop="targetDBType" label="类型">
                             <el-select v-model="formData.targetDBType" clearable filterable placeholder="请选择"
-                                @change="dbTypeChange('target')">
+                                @change="dbTypeChange">
                                 <el-option v-for="item in typeList" :key="item.value" :label="item.label"
                                     :value="item.value" />
                             </el-select>
@@ -139,7 +137,7 @@
             <data-sync-table ref="dataSyncTableRef" :formData="formData"></data-sync-table>
         </div>
         <!-- 数据同步日志部分  v-if="instanceId" -->
-        <el-collapse v-if="!!instanceId" v-model="collapseActive" class="data-sync-log__collapse" ref="logCollapseRef">
+        <el-collapse v-model="collapseActive" class="data-sync-log__collapse" ref="logCollapseRef">
             <el-collapse-item title="查看日志" :disabled="true" name="1">
                 <template #title>
                     <el-tabs v-model="activeName" @tab-change="tabChangeEvent">
@@ -177,9 +175,9 @@ import { GetDataSourceTables, GetTableColumnsByTableId } from '@/services/data-s
 import TableDetail from './table-detail/index.vue'
 import DataSyncTable from './data-sync-table/index.vue'
 import ConfigDetail from '../config-detail/index.vue'
-import { ConifgTimeComputingData, GetTimeComputingDetail, GetTopicDataList } from '@/services/realtime-computing.service.ts'
-import PublishLog from '@/views/workflow/work-item/publish-log.vue'
-import RunningLog from '@/views/workflow/work-item/running-log.vue'
+import { ConifgTimeComputingData, GetTimeComputingDetail, GetTopicDataList, RunTimeComputingData, StopTimeComputingData } from '@/services/realtime-computing.service.ts'
+import PublishLog from './publish-log.vue'
+import RunningLog from './running-log.vue'
 import { Loading } from '@element-plus/icons-vue'
 import { useRoute, useRouter } from 'vue-router'
 
@@ -203,7 +201,6 @@ const targetList = ref<Option[]>([])
 const sourceTablesList = ref<Option[]>([])
 const targetTablesList = ref<Option[]>([])
 const overModeList = ref<Option[]>(OverModeList)
-const partKeyList = ref<Option[]>([])       // 分区键
 const typeList = ref(DataSourceType);
 
 // 日志展示相关
@@ -250,7 +247,7 @@ const btnLoadingConfig = reactive({
     saveLoading: false,
     publishLoading: false,
     runningLoading: false,
-    stopWorkFlowLoading: false
+    stopLoading: false
 })
 
 // 日志tab切换
@@ -298,7 +295,7 @@ function getData() {
                 getTopicList(true, formData.sourceDBId)
                 getDataSource(true, formData.sourceDBType, 'source')
                 getDataSource(true, formData.targetDBType, 'target')
-                getDataSourceTable(true, formData.sourceDBId)
+                getDataSourceTable(true, formData.targetDBId)
 
                 dataSyncTableRef.value.initPageData(res.data.syncConfig)
                 changeStatus.value = false
@@ -309,18 +306,50 @@ function getData() {
     })
 }
 
-// 下线
+// 停止实时计算
 function stopData() {
-  btnLoadingConfig.stopLoading = true
-  DeleteWorkData({
-    workId: route.query.id
-  }).then((res: any) => {
-    ElMessage.success(res.msg)
-    btnLoadingConfig.stopLoading = false
-  })
-  .catch((error: any) => {
-    btnLoadingConfig.stopLoading = false
-  })
+    btnLoadingConfig.stopLoading = true
+    StopTimeComputingData({
+        id: route.query.id
+    }).then((res: any) => {
+        ElMessage.success(res.msg)
+        btnLoadingConfig.stopLoading = false
+    })
+    .catch((error: any) => {
+        btnLoadingConfig.stopLoading = false
+    })
+}
+
+// 运行实时计算
+function startComputing() {
+    if (changeStatus.value) {
+        ElMessageBox.confirm('作业尚未保存，是否确定要运行？', '警告', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+        }).then(() => {
+            runTimeFunc()
+        })
+    } else {
+        runTimeFunc()
+    }
+}
+function runTimeFunc() {
+    btnLoadingConfig.runningLoading = true
+    RunTimeComputingData({
+        id: route.query.id
+    }).then((res: any) => {
+        ElMessage.success(res.msg)
+        nextTick(() => {
+            containerInstanceRef.value.initData(instanceId.value)
+        })
+        btnLoadingConfig.runningLoading = false
+        nextTick(() => {
+            changeCollapseUp()
+        })
+    }).catch(() => {
+        btnLoadingConfig.runningLoading = false
+    })
 }
 
 // 获取数据源
@@ -394,8 +423,8 @@ function getDataSourceTable(e: boolean, dataSourceId: string) {
 }
 
 function getCurrentTableColumn(e: string) {
+    changeStatus.value = true
     if (e === 'OBJECT') {
-        changeStatus.value = true
         dataSyncTableRef.value.getCurrentTableColumn({
             jsonStr: formData.jsonTemplate
         })
@@ -411,16 +440,12 @@ function tableChangeEvent(e: string, dataSourceId: string, type: string) {
 }
 
 // 级联控制
-function dbTypeChange(type: string) {
+function dbTypeChange() {
     changeStatus.value = true
-    if (type === 'source') {
-        formData.sourceDBId = ''
-        formData.sourceTable = ''
-    } else {
-        formData.targetDBId = ''
-        formData.targetTable = ''
-    }
+    formData.targetDBId = ''
+    formData.targetTable = ''
 }
+
 // 级联控制
 function dbIdChange(type: string) {
     changeStatus.value = true
@@ -431,17 +456,10 @@ function dbIdChange(type: string) {
     }
 }
 
-// 获取节点
-function getNodeList(e: boolean, data: string) {
-    if (e) {
-
-    }
-}
-
 // 返回
 function goBack() {
     if (changeStatus.value) {
-        ElMessageBox.confirm('实时计算保存，是否确定要返回吗？', '警告', {
+        ElMessageBox.confirm('实时计算尚未保存，是否确定要返回吗？', '警告', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
@@ -455,6 +473,13 @@ function goBack() {
             name: 'realtime-computing'
         })
     }
+}
+
+function rootJsonPathBlur() {
+    dataSyncTableRef.value.getCurrentTableColumn({
+        jsonStr: formData.jsonTemplate,
+        rootPath: formData.rootJsonPath
+    })
 }
 
 // 配置打开
@@ -476,6 +501,7 @@ function pageChangeEvent() {
 
 onMounted(() => {
     formData.workId = route.query.id
+    instanceId.value = route.query.id
     getData()
     activeName.value = 'PublishLog'
     currentTab.value = markRaw(PublishLog)

@@ -1,12 +1,12 @@
 <template>
     <BlockModal :model-config="modelConfig">
         <el-form ref="form" class="add-computer-group" label-position="top" :model="formData" :rules="rules">
-            <el-form-item label="字段名" prop="code">
+            <!-- <el-form-item label="字段名" prop="code">
                 <el-input v-model="formData.code" maxlength="20" placeholder="请输入"/>
             </el-form-item>
             <el-form-item label="类型" prop="type">
                 <el-input v-model="formData.type" maxlength="20" placeholder="请输入"/>
-            </el-form-item>
+            </el-form-item> -->
             <el-form-item label="转换">
                 <code-mirror v-model="formData.sql" basic :lang="lang"/>
             </el-form-item>
@@ -21,8 +21,8 @@ import CodeMirror from 'vue-codemirror6'
 import {sql} from '@codemirror/lang-sql'
 
 interface codeParam {
-    code: string
-    type: string
+    // code: string
+    // type: string
     sql: string
 }
 const lang = ref<any>(sql())
@@ -49,39 +49,39 @@ const modelConfig = reactive({
     closeOnClickModal: false
 })
 const formData = reactive({
-    code: '',
-    type: '',
+    // code: '',
+    // type: '',
     sql: ''
 })
 const rules = reactive<FormRules>({
-    code: [
-        {
-            required: true,
-            message: '请输入字段名',
-            trigger: ['blur', 'change']
-        }
-    ],
-    type: [
-        {
-            required: true,
-            message: '请输入类型',
-            trigger: ['blur', 'change']
-        }
-    ]
+    // code: [
+    //     {
+    //         required: true,
+    //         message: '请输入字段名',
+    //         trigger: ['blur', 'change']
+    //     }
+    // ],
+    // type: [
+    //     {
+    //         required: true,
+    //         message: '请输入类型',
+    //         trigger: ['blur', 'change']
+    //     }
+    // ]
 })
 
 function showModal(cb: () => void, data: codeParam): void {
     callback.value = cb
     modelConfig.visible = true
     if (data) {
-        formData.code = data.code
-        formData.type = data.type
+        // formData.code = data.code
+        // formData.type = data.type
         formData.sql = data.sql
         modelConfig.title = '编辑'
         renderSence.value = 'edit'
     } else {
-        formData.code = ''
-        formData.type = ''
+        // formData.code = ''
+        // formData.type = ''
         formData.sql = ''
         modelConfig.title = '添加'
         renderSence.value = 'new'

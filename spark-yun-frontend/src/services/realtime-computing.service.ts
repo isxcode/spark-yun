@@ -50,6 +50,24 @@ export function RunTimeComputingData(params: any): Promise<any> {
     })
 }
 
+// 停止
+export function StopTimeComputingData(params: any): Promise<any> {
+    return http.request({
+        method: 'post',
+        url: '/vip/real/stopReal',
+        params: params
+    })
+}
+
+// 检测
+export function CheckComputingStatus(params: any): Promise<any> {
+    return http.request({
+        method: 'post',
+        url: '/vip/real/checkReal',
+        params: params
+    })
+}
+
 // 配置实时作业
 export function ConifgTimeComputingData(params: any): Promise<any> {
     return http.request({
@@ -90,6 +108,23 @@ export function GetJsonArrayNodeList(params: any): Promise<any> {
     return http.request({
         method: 'post',
         url: '/vip/real/queryArrayPath',
+        params: params
+    })
+}
+
+// 获取提交日志
+export function GetRealSubLog(params: any): Promise<any> {
+    return http.request({
+        method: 'post',
+        url: '/vip/real/getRealSubmitLog',
+        params: params
+    })
+}
+// 获取运行日志
+export function GetRealSubRunningLog(params: any): Promise<any> {
+    return http.request({
+        method: 'post',
+        url: '/vip/real/getRealRunningLog',
         params: params
     })
 }
