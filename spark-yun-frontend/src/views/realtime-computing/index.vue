@@ -39,36 +39,50 @@
           <template #statusTag="scopeSlot">
             <div class="btn-group">
               <el-tag
-                v-if="scopeSlot.row.status === 'ACTIVE'"
+                v-if="scopeSlot.row.status === 'SUCCESS'"
                 class="ml-2"
                 type="success"
               >
-                可用
+                成功
               </el-tag>
               <el-tag
-                v-if="scopeSlot.row.status === 'NO_ACTIVE'"
+                v-if="scopeSlot.row.status === 'FAIL'"
                 class="ml-2"
                 type="danger"
               >
-                不可用
+                失败
               </el-tag>
               <el-tag
-                v-if="scopeSlot.row.status === 'NEW'"
+                v-if="scopeSlot.row.status === 'ABORT'"
+                class="ml-2"
+                type="warning"
+              >
+                已中止
+              </el-tag>
+              <el-tag
+                v-if="scopeSlot.row.status === 'ABORTING'"
+                class="ml-2"
+              >
+                中止中
+              </el-tag>
+              <el-tag
+                v-if="scopeSlot.row.status === 'RUNNING'"
+                class="ml-2"
+              >
+                运行中
+              </el-tag>
+              <el-tag
+                v-if="scopeSlot.row.status === 'PENDING'"
+                class="ml-2"
+              >
+                等待中
+              </el-tag>
+              <el-tag
+                v-if="!scopeSlot.row.status"
+                class="ml-2"
                 type="info"
               >
-                待配置
-              </el-tag>
-              <el-tag v-if="scopeSlot.row.status === 'UN_CHECK'">
-                待检测
-              </el-tag>
-              <el-tag v-if="scopeSlot.row.status === 'UN_AUTO'">
                 未运行
-              </el-tag>
-              <el-tag v-if="scopeSlot.row.status === 'STOP'">
-                已下线
-              </el-tag>
-              <el-tag v-if="scopeSlot.row.status === 'PUBLISHED'">
-                已发布
               </el-tag>
             </div>
           </template>
@@ -80,7 +94,10 @@
                 <template #dropdown>
                   <el-dropdown-menu>
                     <el-dropdown-item @click="showLog(scopeSlot.row)">
-                      日志
+                      提交日志
+                    </el-dropdown-item>
+                    <el-dropdown-item v-if="scopeSlot.row.status === 'RUNNING'" @click="showRunningLog(scopeSlot.row)">
+                      运行日志
                     </el-dropdown-item>
                     <el-dropdown-item @click="stopComputing(scopeSlot.row)">
                       停止
@@ -103,23 +120,23 @@
       </div>
     </LoadingPage>
     <AddModal ref="addModalRef" />
+    <ShowLog ref="showLogRef" />
   </div>
 </template>
 
 <script lang="ts" setup>
-import { reactive, ref, onMounted } from 'vue'
+import { reactive, ref, onMounted, onUnmounted } from 'vue'
 import Breadcrumb from '@/layout/bread-crumb/index.vue'
 import BlockTable from '@/components/block-table/index.vue'
 import LoadingPage from '@/components/loading/index.vue'
 import AddModal from './add-modal/index.vue'
 import { BreadCrumbList, TableConfig, FormData } from './realtime-computing.config.ts'
-import { SaveTimeComputingData, GetTimeComputingList, UpdateTimeComputingData, DeleteTimeComputingData, RunTimeComputingData } from '@/services/realtime-computing.service.ts'
+import { SaveTimeComputingData, GetTimeComputingList, UpdateTimeComputingData, DeleteTimeComputingData, RunTimeComputingData, CheckComputingStatus, StopTimeComputingData } from '@/services/realtime-computing.service.ts'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useRouter } from 'vue-router'
-import { useAuthStore } from '@/store/useAuth'
+import ShowLog from './show-log/index.vue'
 
 const router = useRouter()
-const authStore = useAuthStore()
 
 const breadCrumbList = reactive(BreadCrumbList)
 const tableConfig: any = reactive(TableConfig)
@@ -127,8 +144,10 @@ const keyword = ref('')
 const loading = ref(false)
 const networkError = ref(false)
 const addModalRef = ref(null)
+const timer = ref()
+const showLogRef = ref(null)
 
-function initData(tableLoading?: boolean) {
+function initData(tableLoading?: boolean, type?: string) {
   loading.value = tableLoading ? false : true
   networkError.value = networkError.value || false
   GetTimeComputingList({
@@ -137,8 +156,18 @@ function initData(tableLoading?: boolean) {
     searchKeyWord: keyword.value
   })
     .then((res: any) => {
-      tableConfig.tableData = res.data.content
-      tableConfig.pagination.total = res.data.totalElements
+      if (type) {
+        res.data.content.forEach((item: any) => {
+          tableConfig.tableData.forEach((col: any) => {
+            if (item.id === col.id) {
+              col.status = item.status
+            }
+          })
+        })
+      } else {
+        tableConfig.tableData = res.data.content
+        tableConfig.pagination.total = res.data.totalElements
+      }
       loading.value = false
       tableConfig.loading = false
       networkError.value = false
@@ -186,7 +215,7 @@ function editData(data: any) {
 
 // 停止实时计算
 function stopComputing(data: any) {
-  UnderlineWorkflowData({
+  StopTimeComputingData({
     id: data.id
   }).then((res: any) => {
     initData()
@@ -198,6 +227,17 @@ function stopComputing(data: any) {
 // 运行实时计算
 function startComputing(data: any) {
   RunTimeComputingData({
+      id: data.id
+  }).then((res: any) => {
+      ElMessage.success(res.msg)
+      initData()
+  }).catch(() => {
+  })
+}
+
+// 检测实时计算
+function checkData(data: any) {
+  CheckComputingStatus({
       id: data.id
   }).then((res: any) => {
       ElMessage.success(res.msg)
@@ -233,6 +273,15 @@ function showDetail(data: any) {
   })
 }
 
+// 展示日志
+function showLog(data: any) {
+  showLogRef.value.showModal(data.id)
+}
+// 展示日志
+function showRunningLog(data: any) {
+  showLogRef.value.showModal(data.id, 'runningLog')
+}
+
 function inputEvent(e: string) {
   if (e === '') {
     initData()
@@ -251,6 +300,15 @@ function handleCurrentChange(e: number) {
 
 onMounted(() => {
   initData()
+  timer.value = setInterval(() => {
+    initData(true, 'interval')
+  }, 3000)
+})
+onUnmounted(() => {
+  if (timer.value) {
+    clearInterval(timer.value)
+  }
+  timer.value = null
 })
 </script>
 

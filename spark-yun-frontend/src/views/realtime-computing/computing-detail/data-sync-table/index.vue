@@ -7,8 +7,8 @@
     <div class="data-sync-body" id="container" v-if="showDataSync">
         <div class="source-table-container">
             <el-table ref="sourceTableRef" :data="sourceTableColumn" row-key="code">
-                <el-table-column prop="code" :show-overflow-tooltip="true" label="字段名" />
-                <el-table-column prop="type" :show-overflow-tooltip="true" label="类型" />
+                <el-table-column width="80" prop="code" :show-overflow-tooltip="true" label="字段名" />
+                <el-table-column width="60" prop="type" :show-overflow-tooltip="true" label="类型" />
                 <el-table-column prop="jsonPath" :show-overflow-tooltip="true" label="jsonPath" />
                 <el-table-column prop="sql" :show-overflow-tooltip="true" label="转换" />
                 <el-table-column label="" width="8px">
