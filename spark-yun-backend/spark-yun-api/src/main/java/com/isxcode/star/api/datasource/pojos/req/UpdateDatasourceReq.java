@@ -23,7 +23,6 @@ public class UpdateDatasourceReq {
 	private String jdbcUrl;
 
 	@Schema(title = "数据源用户名", example = "root")
-	@NotEmpty(message = "用户名不能为空")
 	private String username;
 
 	@Schema(title = "数据源密码", example = "ispong123")
