@@ -269,6 +269,7 @@ function showModal(cb: () => void, data: any): void {
 }
 
 function getDriverIdList(e: boolean) {
+  driverIdList.value = []
   if (e && formData.dbType) {
     GetDriverListData({
       page: 0,
