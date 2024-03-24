@@ -39,11 +39,10 @@
           <template #statusTag="scopeSlot">
             <div class="btn-group">
               <el-tag
-                v-if="scopeSlot.row.status === 'SUCCESS'"
+                v-if="scopeSlot.row.status === 'DEPLOYING'"
                 class="ml-2"
-                type="success"
               >
-                成功
+                部署中
               </el-tag>
               <el-tag
                 v-if="scopeSlot.row.status === 'FAIL'"
@@ -53,36 +52,24 @@
                 失败
               </el-tag>
               <el-tag
-                v-if="scopeSlot.row.status === 'ABORT'"
-                class="ml-2"
-                type="warning"
-              >
-                已中止
-              </el-tag>
-              <el-tag
-                v-if="scopeSlot.row.status === 'ABORTING'"
+                v-if="scopeSlot.row.status === 'STOP'"
                 class="ml-2"
               >
-                中止中
+                停止
               </el-tag>
               <el-tag
                 v-if="scopeSlot.row.status === 'RUNNING'"
                 class="ml-2"
+                type="success"
               >
                 运行中
               </el-tag>
               <el-tag
-                v-if="scopeSlot.row.status === 'PENDING'"
-                class="ml-2"
-              >
-                等待中
-              </el-tag>
-              <el-tag
-                v-if="!scopeSlot.row.status"
+                v-if="scopeSlot.row.status === 'NEW'"
                 class="ml-2"
                 type="info"
               >
-                未运行
+                新建
               </el-tag>
             </div>
           </template>
@@ -93,7 +80,7 @@
                 <span class="click-show-more">更多</span>
                 <template #dropdown>
                   <el-dropdown-menu>
-                    <el-dropdown-item @click="showLog(scopeSlot.row)">
+                    <el-dropdown-item v-if="scopeSlot.row.status !== 'NEW'" @click="showLog(scopeSlot.row)">
                       提交日志
                     </el-dropdown-item>
                     <el-dropdown-item v-if="scopeSlot.row.status === 'RUNNING'" @click="showRunningLog(scopeSlot.row)">
@@ -268,7 +255,8 @@ function showDetail(data: any) {
     name: 'computing-detail',
     query: {
       id: data.id,
-      name: data.name
+      name: data.name,
+      status: data.status
     }
   })
 }

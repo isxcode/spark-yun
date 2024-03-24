@@ -62,7 +62,7 @@ export const colConfigs: colConfig[] = [
   },
   {
     prop: 'status',
-    title: '发布状态',
+    title: '状态',
     minWidth: 100,
     customSlot: 'statusTag'
   },

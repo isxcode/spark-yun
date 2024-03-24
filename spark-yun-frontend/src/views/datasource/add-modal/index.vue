@@ -178,7 +178,7 @@ const typeList = reactive([
     value: 'HIVE',
   },
   {
-    label: 'kafka',
+    label: 'Kafka',
     value: 'KAFKA',
   },
   {

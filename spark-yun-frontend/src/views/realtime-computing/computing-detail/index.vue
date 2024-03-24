@@ -137,7 +137,7 @@
             <data-sync-table ref="dataSyncTableRef" :formData="formData"></data-sync-table>
         </div>
         <!-- 数据同步日志部分  v-if="instanceId" -->
-        <el-collapse v-model="collapseActive" class="data-sync-log__collapse" ref="logCollapseRef">
+        <el-collapse v-if="!!instanceId" v-model="collapseActive" class="data-sync-log__collapse" ref="logCollapseRef">
             <el-collapse-item title="查看日志" :disabled="true" name="1">
                 <template #title>
                     <el-tabs v-model="activeName" @tab-change="tabChangeEvent">
@@ -340,6 +340,7 @@ function runTimeFunc() {
         id: route.query.id
     }).then((res: any) => {
         ElMessage.success(res.msg)
+        instanceId.value = route.query.id
         nextTick(() => {
             containerInstanceRef.value.initData(instanceId.value)
         })
@@ -501,7 +502,10 @@ function pageChangeEvent() {
 
 onMounted(() => {
     formData.workId = route.query.id
-    instanceId.value = route.query.id
+
+    if (route.query.status !== 'NEW') {
+        instanceId.value = route.query.id
+    }
     getData()
     activeName.value = 'PublishLog'
     currentTab.value = markRaw(PublishLog)
