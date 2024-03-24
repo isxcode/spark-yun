@@ -207,8 +207,8 @@ public class SyncWorkService {
 				return "SELECT * FROM " + tableName + " WHERE ROWNUM <= 50";
 			case SQL_SERVER :
 				return "SELECT TOP 50 * FROM " + tableName;
-      case HANA_SAP:
-        return "SELECT * FROM \"" + tableName + "\" LIMIT 50";
+			case HANA_SAP :
+				return "SELECT * FROM \"" + tableName + "\" LIMIT 50";
 			default :
 				return "SELECT * FROM " + tableName + " LIMIT 50";
 		}
