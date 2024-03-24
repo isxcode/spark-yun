@@ -38,7 +38,10 @@ export function useMenuAvatar() {
 
   const handleCommand = function(command: AvatarMenuCommand) {
     if (command === 'logout') {
-      authStore.$reset()
+      setTimeout(() => {
+        authStore.$reset()
+      });
+      ElMessage.success('退出成功')
       router.push({ name: 'login' })
     } else if (command === 'personal-info') {
       router.push({ name: 'personalInfo' })
