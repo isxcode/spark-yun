@@ -407,7 +407,9 @@ function stopData() {
 
 // 配置打开
 function setConfigData() {
-  configDetailRef.value.showModal(props.workItemConfig)
+  configDetailRef.value.showModal(props.workItemConfig, () => {
+    initData()
+  })
 }
 
 function sqlConfigChange(e: string) {

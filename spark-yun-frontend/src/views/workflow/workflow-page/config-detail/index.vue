@@ -398,6 +398,7 @@ const clusterConfigForm = ref<FormInstance>()
 const cronConfigForm = ref<FormInstance>()
 const syncRuleForm = ref<FormInstance>()
 const containerIdList = ref([]) // 容器列表
+const callback = ref(null)
 
 const drawerConfig = reactive({
   title: '配置',
@@ -485,7 +486,8 @@ const cron = computed(() => {
   } ${state.monthsText || '*'} ${state.weeksText || '?'} ${state.yearsText || '*'}`;
 });
 
-function showModal(data?: any) {
+function showModal(data?: any, cb?: any) {
+  callback.value = cb
   // 调度日期初始化
   dayList.value = []
   for (let i = 1; i <= 31; i++) {
@@ -623,6 +625,9 @@ function okEvent() {
         ...fileConfig,
         ...containerConfig
       }).then((res: any) => {
+        if (callback.value && callback.value instanceof Function) {
+          callback.value()
+        }
         ElMessage.success('保存成功')
         drawerConfig.visible = false;
       }).catch(err => {
