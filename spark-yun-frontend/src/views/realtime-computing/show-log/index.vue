@@ -1,7 +1,7 @@
 <template>
     <BlockModal :model-config="modelConfig" @close="closeEvent">
         <div id="content" class="content-box">
-            <pre v-if="logMsg" ref="preContentRef">{{ logMsg + loadingMsg  }}</pre>
+            <pre v-if="logMsg" @mousewheel="mousewheelEvent" ref="preContentRef">{{ logMsg + loadingMsg  }}</pre>
         </div>
     </BlockModal>
 </template>
@@ -40,6 +40,7 @@ const loadingMsg = computed(() => {
 })
 
 function showModal(clusterNodeId: string, type?: string): void {
+    position.value = true
     // 日志添加loading
     loadingTimer.value = setInterval(() => {
         if (loadingPoint.value.length < 5) {
