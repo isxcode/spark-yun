@@ -71,6 +71,7 @@
 
 <style lang="scss" scoped>
 .footer {
+  font-family: "阿里妈妈方圆体 VF Regular", sans-serif;
   padding-top: 40px;
 
   .content {
@@ -136,6 +137,7 @@
 }
 
 .footer-copyright {
+  font-family: "阿里妈妈方圆体 VF Regular", sans-serif;
   width: 100%;
   border-top: lavender solid 1px;
 
@@ -169,9 +171,18 @@
   font-display: swap;
 }
 
+/* 在线链接服务仅供平台体验和调试使用，平台不承诺服务的稳定性，企业客户需下载字体包自行发布使用并做好备份。 */
+@font-face {
+  font-family: "阿里妈妈方圆体 VF Regular";
+  src: url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/yCsR9ZgiisKH.woff2") format("woff2"),
+  url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/2wULLpnB6zDt.woff") format("woff");
+  font-display: swap;
+}
+
 @media (max-width: 400px) {
 
   .fixed-footer {
+    font-family: "阿里妈妈方圆体 VF Regular", sans-serif;
     display: block;
     position: fixed;
     z-index: 999;
@@ -183,15 +194,18 @@
     text-align: center;
     border-top: 1px solid #e5e5e5;
     background: #F9DED1;
+
     .content {
       width: 130px;
       display: flex;
       align-items: center;
       margin: 0 auto;
+
       .phone-svg {
         width: 24px;
         height: 24px;
       }
+
       .phone-text {
         margin-left: 10px;
         font-size: 1.25rem;
@@ -201,6 +215,7 @@
   }
 
   .footer {
+    font-family: "阿里妈妈方圆体 VF Regular", sans-serif;
     padding-top: 40px;
 
     .content {
@@ -264,6 +279,7 @@
   }
 
   .footer-copyright {
+    font-family: "阿里妈妈方圆体 VF Regular", sans-serif;
     width: 100%;
     border-top: lavender solid 1px;
 

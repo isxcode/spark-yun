@@ -35,6 +35,9 @@
           <img src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/product.png" alt="">
         </div>
       </div>
+      <video id="v1" autoplay loop muted>
+        <source src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/bg-0.mp4" type="video/mp4"/>
+      </video>
     </div>
     <div class="module-about">
       <div class="content">
@@ -42,18 +45,18 @@
           选择至轻云
         </div>
         <div class="why-content">
-          至轻云，是一款超轻量级的企业级大数据平台. 提供开源Docker镜像,具备一键部署开箱即用特色. 且无需额外复杂的大数据组件安装.即可实现企业级数据离线/实时ETL，提供丰富的插件。持续更新迭代。轻量化、企业级软件，让企业快速处理海量数据，获得更多商业价值。
+          至轻云是一款超轻量级、企业级大数据平台。具有一键Docker部署，开箱即用特色。无需额外大数据组件安装，即可快速实现企业级大数据离线ETL、实时计算、复杂作业运行等场景。项目持续更新迭代，源码永久免费开源。助力企业快速处理海量数据，获得更多商业价值。
         </div>
         <div class="tech-title">
           相关技术
         </div>
         <div class="tech-img-div">
-          <img class="tech-img" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/k8s.png" alt="">
-          <img class="tech-img" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/hadoop.png" alt="">
-          <img class="tech-img" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/spark.png" alt="">
-          <img class="tech-img" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/hive.png" alt="">
-          <img class="tech-img" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/doris.png" alt="">
-          <img class="tech-img" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/clickhouse.png" alt="">
+          <img class="tech-img" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/t-k8s.png" alt="">
+          <img class="tech-img" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/t-hadoop.png" alt="">
+          <img class="tech-img" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/t-spark.png" alt="">
+          <img class="tech-img" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/t-hive.png" alt="">
+          <img class="tech-img" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/t-doris.png" alt="">
+          <img class="tech-img" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/t-clickhouse.png" alt="">
         </div>
       </div>
     </div>
@@ -199,7 +202,7 @@ $module-feat-left-bg-color: white;
 // 特点2背景色
 $module-feat-right-bg-color: rgba(255, 156, 110, 5%);
 // 特点高度
-$module-feat-height: 500px;
+$module-feat-height: 440px;
 // 结束板块高度
 $module-end-height: 300px;
 // 结束板块高度
@@ -210,14 +213,28 @@ $module-intro-img-width: 600px;
 
 .main {
 
+  font-family: "阿里妈妈方圆体 VF Regular", sans-serif;
+
   .module-intro {
     width: 100%;
     height: $module-intro-height;
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    background-image: url('https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/bg4.png');
+    background-image: url('https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/bg-0.mp4');
     padding-top: 200px;
+    position: relative;
+    overflow: hidden;
+
+    video {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: -1;
+    }
 
     .content {
       display: flex;
@@ -245,7 +262,7 @@ $module-intro-img-width: 600px;
           color: #e25a1b;
           width: 435px;
           border-radius: 3px;
-          font-size: 18px;
+          font-size: 17px;
           height: 38px;
           line-height: 38px;
 
@@ -326,7 +343,7 @@ $module-intro-img-width: 600px;
         margin: 25px auto auto;
         text-indent: 2em;
         width: 800px;
-        line-height: 22px;
+        line-height: 24px;
         font-size: 17px;
       }
 
@@ -355,7 +372,10 @@ $module-intro-img-width: 600px;
   .module-business {
     width: 100%;
     height: $module-business-height;
-    background: $primary-color;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-image: url('https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/bg-2.png');
     display: flex;
     align-items: center;
     justify-content: center;
@@ -408,12 +428,13 @@ $module-intro-img-width: 600px;
 
       img {
         width: 450px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
       }
     }
 
     .right {
       margin-left: 100px;
-      margin-top: 55px;
+      margin-top: 50px;
       width: 600px;;
 
       .line-1 {
@@ -424,12 +445,13 @@ $module-intro-img-width: 600px;
       .line-2 {
         width: 560px;
         height: 55px;
+        font-size: 17px;
         margin-top: 30px;
-        line-height: 22px;
+        line-height: 24px;
       }
 
       .line-3 {
-        margin-top: 30px;
+        margin-top: 35px;
         color: #e25a1b;
         font-family: "阿里妈妈数黑体 Bold", sans-serif;
       }
@@ -459,12 +481,13 @@ $module-intro-img-width: 600px;
 
       img {
         width: 450px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
       }
     }
 
     .left {
       width: 600px;;
-      margin-top: 55px;
+      margin-top: 50px;
 
       .line-1 {
         font-family: "阿里妈妈数黑体 Bold", sans-serif;
@@ -474,12 +497,13 @@ $module-intro-img-width: 600px;
       .line-2 {
         width: 560px;
         height: 55px;
+        font-size: 17px;
         margin-top: 30px;
-        line-height: 22px;
+        line-height: 24px;
       }
 
       .line-3 {
-        margin-top: 30px;
+        margin-top: 35px;
         color: #e25a1b;
         font-family: "阿里妈妈数黑体 Bold", sans-serif;
       }
@@ -489,7 +513,10 @@ $module-intro-img-width: 600px;
 
 .module-end {
   height: $module-end-height;
-  background: #e25a1b;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-image: url('https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/bg-1.png');
   display: flex;
   align-items: center;
   justify-content: center;
@@ -531,6 +558,22 @@ $module-intro-img-width: 600px;
   font-display: swap;
 }
 
+/* 在线链接服务仅供平台体验和调试使用，平台不承诺服务的稳定性，企业客户需下载字体包自行发布使用并做好备份。 */
+@font-face {
+  font-family: "阿里妈妈方圆体 VF Regular";
+  src: url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/yCsR9ZgiisKH.woff2") format("woff2"),
+  url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/2wULLpnB6zDt.woff") format("woff");
+  font-display: swap;
+}
+
+/* 在线链接服务仅供平台体验和调试使用，平台不承诺服务的稳定性，企业客户需下载字体包自行发布使用并做好备份。 */
+@font-face {
+  font-family: "阿里妈妈方圆体 VF Regular";
+  src: url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/eaebFoyj8XGb.woff2") format("woff2"),
+  url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/0KeqKNZYtLNN.woff") format("woff");
+  font-display: swap;
+}
+
 // ------------------------------------------------------- 移动端 ----------------------------------------------------------------------
 
 @media (max-width: 768px) {
@@ -540,10 +583,10 @@ $module-intro-img-width: 600px;
     .module-intro {
       width: 100%;
       height: 850px;
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
-      background-image: url('https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/bg4.png');
+      //background-size: cover;
+      //background-position: center;
+      //background-repeat: no-repeat;
+      //background-image: url('https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/bg4.png');
       padding-top: 400px;
 
       .content {
@@ -554,16 +597,16 @@ $module-intro-img-width: 600px;
 
           .name {
             text-align: center;
-            margin-top: 120px;
+            margin-top: 80px;
             font-family: "阿里妈妈数黑体 Bold", sans-serif;
-            font-size: 60px;
+            font-size: 66px;
           }
 
           .slogan {
             margin-top: 20px;
             text-align: center;
             font-family: "阿里妈妈数黑体 Bold", sans-serif;
-            font-size: 25px;
+            font-size: 27px;
           }
 
           .command {
@@ -576,7 +619,7 @@ $module-intro-img-width: 600px;
             margin: 25px auto auto;
 
             .guide-btn {
-              width: 120px;
+              width: 170px;
               border-radius: 3px;
               background: #e25a1b;
               color: white;
@@ -584,7 +627,7 @@ $module-intro-img-width: 600px;
               font-size: 18px;
               height: 40px;
               line-height: 40px;
-              margin-left: 50px;
+              margin-left: 40px;
             }
 
             .quick-btn {
@@ -643,7 +686,7 @@ $module-intro-img-width: 600px;
           text-indent: 2em;
           width: 300px;
           line-height: 22px;
-          font-size: 17px;
+          font-size: 18px;
         }
 
         .tech-title {
@@ -659,7 +702,10 @@ $module-intro-img-width: 600px;
     .module-business {
       width: 100%;
       height: 320px;
-      background: $primary-color;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-image: url('https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/bg-2.png');
       align-items: center;
 
       .content {
@@ -676,7 +722,7 @@ $module-intro-img-width: 600px;
           margin-top: 16px;
           color: white;
           text-align: center;
-          font-size: 12px;
+          font-size: 13px;
         }
 
         .business-img {
@@ -688,7 +734,7 @@ $module-intro-img-width: 600px;
           }
 
           img {
-            width: 200px;
+            width: 250px;
           }
         }
       }
@@ -697,7 +743,7 @@ $module-intro-img-width: 600px;
 
   .module-feat-left {
     width: 100%;
-    height: 450px;
+    height: 400px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -744,7 +790,7 @@ $module-intro-img-width: 600px;
   .module-feat-right {
 
     width: 100%;
-    height: 450px;
+    height: 400px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -759,6 +805,7 @@ $module-intro-img-width: 600px;
 
       .right-phone {
         display: block;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
 
         img {
           width: 300px;
@@ -793,7 +840,10 @@ $module-intro-img-width: 600px;
 
   .module-end {
     height: $module-end-height;
-    background: #e25a1b;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-image: url('https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/bg-1.png');
     display: flex;
     align-items: center;
     justify-content: center;
