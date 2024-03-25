@@ -15,5 +15,5 @@ public class GetRealRunningLogRes {
 
 	private String runningLog;
 
-  private String status;
+	private String status;
 }
