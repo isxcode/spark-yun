@@ -118,7 +118,7 @@ public class YunAgentBizService {
 		String[] split = appLog.split("\n");
 		List<String> list = Arrays.asList(split);
 		if (list.size() > 1) {
-      list = list.subList(list.size() - 1, list.size());
+			list = list.subList(list.size() - 1, list.size());
 		} else {
 			list = list.subList(0, list.size());
 		}
