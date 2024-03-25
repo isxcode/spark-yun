@@ -118,12 +118,12 @@ public class YunAgentBizService {
 				throw new IsxAppException("agent类型不支持");
 		}
 
-		// 只截取后10行的日志
+		// 只截取后1行的日志
 		appLog = appLog.replace("End of LogType:stdout", "").replace("LogType:stdout-start", "");
 		String[] split = appLog.split("\n");
 		List<String> list = Arrays.asList(split);
-		if (list.size() > 5) {
-			list = list.subList(list.size() - 5, list.size());
+		if (list.size() > 1) {
+      list = list.subList(list.size() - 1, list.size());
 		} else {
 			list = list.subList(0, list.size());
 		}
