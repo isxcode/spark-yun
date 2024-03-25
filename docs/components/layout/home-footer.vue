@@ -229,7 +229,7 @@
 
         .logo-img {
           margin: auto;
-          width: 80px;
+          width: 100px;
         }
 
         .logo-name {
@@ -242,8 +242,8 @@
 
         .wechat-img {
           margin: 20px auto auto;
-          width: 120px;
-          height: 120px;
+          width: 160px;
+          height: 160px;
         }
 
         .wechat-name {

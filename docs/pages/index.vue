@@ -218,10 +218,10 @@ $module-intro-img-width: 600px;
   .module-intro {
     width: 100%;
     height: $module-intro-height;
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-image: url('https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/bg-0.mp4');
+    //background-size: cover;
+    //background-position: center;
+    //background-repeat: no-repeat;
+    //background-image: url('https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/bg-0.mp4');
     padding-top: 200px;
     position: relative;
     overflow: hidden;
@@ -234,6 +234,7 @@ $module-intro-img-width: 600px;
       height: 100%;
       object-fit: cover;
       z-index: -1;
+      pointer-events: none;
     }
 
     .content {
@@ -561,8 +562,8 @@ $module-intro-img-width: 600px;
 /* 在线链接服务仅供平台体验和调试使用，平台不承诺服务的稳定性，企业客户需下载字体包自行发布使用并做好备份。 */
 @font-face {
   font-family: "阿里妈妈方圆体 VF Regular";
-  src: url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/yCsR9ZgiisKH.woff2") format("woff2"),
-  url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/2wULLpnB6zDt.woff") format("woff");
+  src: url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/KCcf7u3Tt9u6.woff2") format("woff2"),
+  url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/wHsNoFepjHa7.woff") format("woff");
   font-display: swap;
 }
 
@@ -597,7 +598,7 @@ $module-intro-img-width: 600px;
 
           .name {
             text-align: center;
-            margin-top: 80px;
+            margin-top: 10px;
             font-family: "阿里妈妈数黑体 Bold", sans-serif;
             font-size: 66px;
           }
