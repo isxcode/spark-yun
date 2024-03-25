@@ -12,7 +12,7 @@
 
 <script setup lang="ts">
 import { MonitorInfo } from './hooks/useMonitor'
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import * as echarts from 'echarts/core';
 import {
   TooltipComponent,
@@ -40,56 +40,66 @@ type EChartsOption = echarts.ComposeOption<
 
 const props = withDefaults(defineProps<{
   monitorData: MonitorInfo
+  dateTimeList: Array<string>
 }>(), {})
 
+const chartVm = ref<echarts.ECharts>()
 
 const chartContainerRef = ref<HTMLDivElement>()
 
-const options: EChartsOption = {
-  tooltip: {
-    trigger: 'axis'
-  },
-  grid: {
-    top: '8%',
-    left: '4%',
-    right: '8%',
-    containLabel: true
-  },
-  xAxis: {
-    type: 'category',
-    boundaryGap: false,
-    offset: 16,
-    data: ['01:00', '02:00', '03:00', '04:00'],
-    axisLine: {
-      show: false
+const options = computed<EChartsOption>(() => {
+  return {
+    tooltip: {
+      trigger: 'axis'
     },
-    axisTick: {
-      show: false
-    }
-  },
-  yAxis: {
-    type: 'value',
-    axisLabel: {
-      formatter (value) {
-        return value + props.monitorData.unit
+    grid: {
+      top: '8%',
+      left: '4%',
+      right: '8%',
+      containLabel: true
+    },
+    xAxis: {
+      type: 'category',
+      boundaryGap: false,
+      offset: 16,
+      data: props.dateTimeList || [],
+      axisLine: {
+        show: false
+      },
+      axisTick: {
+        show: false
       }
-    }
-  },
-  series: [
-    {
-      name: props.monitorData.type,
-      type: 'line',
-      color: props.monitorData.color,
-      data: props.monitorData.data
-    }
-  ]
-}
+    },
+    yAxis: {
+      type: 'value',
+      axisLabel: {
+        formatter (value) {
+          return value + props.monitorData.unit
+        }
+      }
+    },
+    series: [
+      {
+        name: props.monitorData.type,
+        type: 'line',
+        color: props.monitorData.color,
+        data: props.monitorData.data
+      }
+    ]
+  }
+})
+
+watch(() => options.value, (val) => {
+  if (chartVm.value) {
+    chartVm.value.setOption(options.value)
+  }
+})
 
 onMounted(() => {
   if (chartContainerRef.value) {
-    var myChart = echarts.init(chartContainerRef.value)
+    chartVm.value = echarts.init(chartContainerRef.value)
 
-    myChart.setOption(options)
+    chartVm.value.setOption(options.value)
   }
 })
 
