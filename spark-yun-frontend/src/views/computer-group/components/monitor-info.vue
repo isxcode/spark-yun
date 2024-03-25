@@ -37,13 +37,14 @@
     </div>
     <div class="monitor-info__body">
       <template v-for="monitorData in monitorDataList" :key="monitorData.type">
-        <monitor-chart :monitorData="monitorData"></monitor-chart>
+        <monitor-chart :monitorData="monitorData" :dateTimeList="dateTimeList"></monitor-chart>
       </template>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
+import { onMounted } from 'vue';
 import { useColony } from './hooks/useColony'
 import { useFrequency } from './hooks/useFrequency'
 import { useMonitor } from './hooks/useMonitor'
@@ -52,7 +53,11 @@ import MonitorChart from './monitor-chart.vue'
 
 const { currentColony, colonyList, onColonyChange } = useColony()
 const { currentFrequency, frequencyList, onFrequencyChange } = useFrequency()
-const { monitorDataList } = useMonitor()
+const { monitorDataList, dateTimeList, queryMonitorData } = useMonitor(currentColony, currentFrequency)
+
+onMounted(() => {
+  queryMonitorData()
+})
 
 </script>
 

@@ -9,67 +9,67 @@
     </div>
     <div class="vm-list__body">
       <el-table class="vm-list__table" :data="tableData">
-        <el-table-column prop="name" label="名称" width="120" show-overflow-tooltip/>
+        <el-table-column prop="workflowName" label="名称" width="120" show-overflow-tooltip/>
         <el-table-column prop="status" label="状态" align="center">
           <template #default="{ row }">
             <vm-status :status="row.status"></vm-status>
           </template>
         </el-table-column>
-        <el-table-column prop="publisher" label="发布人">
+        <el-table-column prop="lastModifiedBy" label="发布人">
           <template #default="{ row }">
-            <person-tag :person-name="row.publisherName" :person-url="row.publisherUrl"></person-tag>
+            <person-tag :person-name="row.lastModifiedBy"></person-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="startTime" label="开始时间" show-overflow-tooltip />
-        <el-table-column prop="endTime" label="结束时间" show-overflow-tooltip />
-        <el-table-column prop="publisher" label="操作" align="center">
+        <el-table-column prop="startDateTime" label="开始时间" show-overflow-tooltip />
+        <el-table-column prop="endDateTime" label="结束时间" show-overflow-tooltip />
+        <el-table-column label="操作" align="center">
           <template #default="{ row }">
             <el-icon class="vm-list__more"><MoreFilled /></el-icon>
           </template>
         </el-table-column>
       </el-table>
+      <el-pagination class="vm-list__pagination" small layout="prev, pager, next" :total="total" @current-change="handleCurrentChange"/>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { VmData } from './component'
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import VmStatus from './vm-status.vue';
 import PersonTag from './person-tag.vue';
+import { ComputeInstance, queryComputeInstances } from '@/views/computer-group/services/computer-group';
 
 const keyWord = ref('')
 
-const tableData = ref<Array<VmData>>([
-  {
-    name: '测试作业',
-    status: 'SUCCESS',
-    publisherName: 'ispong',
-    startTime: '2023-03-23 10:00:00',
-    endTime: '2023-03-23 10:00:00'
-  },
-  {
-    name: '测试作业2',
-    status: 'SUCCESS',
-    publisherName: 'dreamfish',
-    startTime: '2023-03-24 10:00:00',
-    endTime: '2023-03-24 10:00:00'
-  },
-  {
-    name: '测试作业3',
-    status: 'FAILED',
-    publisherName: 'ispong',
-    startTime: '2023-02-23 10:00:00',
-    endTime: '2023-02-23 10:00:00'
-  },
-  {
-    name: '测试作业4',
-    status: 'SUCCESS',
-    publisherName: 'ispong',
-    startTime: '2023-03-13 10:00:00',
-    endTime: '2023-03-13 10:00:00'
-  },
-])
+const tableData = ref<Array<ComputeInstance>>([])
+const total = ref<number>(0)
+const paginationInfo = ref<{
+  page: number,
+  pageSize: number
+}>({
+  page: 1,
+  pageSize: 10
+})
+
+function queryVmlistData() {
+  queryComputeInstances({
+    ...paginationInfo.value,
+    searchKeyword: keyWord.value
+  }).then(({ data }) => {
+    tableData.value = data.content
+    total.value = data.size
+  })
+}
+
+function handleCurrentChange(page: number) {
+  paginationInfo.value.page = page
+
+  queryVmlistData()
+}
+
+onMounted(() => {
+  queryVmlistData()
+})
 
 </script>
 
@@ -142,6 +142,11 @@ const tableData = ref<Array<VmData>>([
     &:hover {
       color: getCssVar('color', 'primary');
     }
+  }
+
+  .vm-list__pagination {
+    display: flex;
+    justify-content: flex-end;
   }
 }
 </style>

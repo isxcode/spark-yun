@@ -3,7 +3,7 @@
     <div class="vm-chart__header">
       <span class="vm-chart__title">实例图</span>
       <div class="vm-chart__ops">
-        <el-date-picker v-model="currentDate"></el-date-picker>
+        <el-date-picker v-model="currentDate" @change="queryVmChartData"></el-date-picker>
       </div>
     </div>
     <div class="vm-chart__body">
@@ -13,7 +13,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import dayjs from 'dayjs'
 import * as echarts from 'echarts/core';
 import {
@@ -27,6 +27,7 @@ import {
 import { LineChart, LineSeriesOption } from 'echarts/charts';
 import { UniversalTransition } from 'echarts/features';
 import { CanvasRenderer } from 'echarts/renderers';
+import { queryVmChartInfo } from '@/views/computer-group/services/computer-group';
 
 echarts.use([
   TooltipComponent,
@@ -44,69 +45,108 @@ type EChartsOption = echarts.ComposeOption<
   | LineSeriesOption
 >
 
+const chartVm = ref<echarts.ECharts>()
 
 const currentDate = ref<string>(dayjs().format('YYYY-MM-DD'))
 const chartContainerRef = ref<HTMLDivElement>()
 
-const options: EChartsOption = {
-  tooltip: {
-    trigger: 'axis'
-  },
-  legend: {
-    top: '6%',
-    right: '4%',
-    data: ['成功', '失败', '运行中']
-  },
-  grid: {
-    left: '4%',
-    right: '4%',
-    bottom: '16%',
-    containLabel: true
-  },
-  xAxis: {
-    type: 'category',
-    boundaryGap: false,
-    offset: 16,
-    data: ['01:00', '02:00', '03:00', '04:00', '05:00', '06:00', '07:00', '08:00', '09:00', '10:00'],
-    axisLine: {
-      show: false
+const chartSuccessData = ref<number[]>([])
+const chartRunningData = ref<number[]>([])
+const chartFailData = ref<number[]>([])
+const chartXAxisData = ref<string[]>([])
+
+const options = computed<EChartsOption>(() => {
+  return {
+    tooltip: {
+      trigger: 'axis'
     },
-    axisTick: {
-      show: false
-    }
-  },
-  yAxis: {
-    type: 'value'
-  },
-  series: [
-    {
-      name: '成功',
-      type: 'line',
-      color: '#43CF7C',
-      data: [10, 15, 20, 30, 20, 10, 10, 30, 20, 30]
+    legend: {
+      top: '6%',
+      right: '4%',
+      data: ['成功', '失败', '运行中']
     },
-    {
-      name: '失败',
-      type: 'line',
-      color: '#FA541C',
-      data: [40, 35, 30, 30, 30, 20, 20, 10, 10, 20]
+    grid: {
+      left: '4%',
+      right: '4%',
+      bottom: '16%',
+      containLabel: true
     },
-    {
-      name: '运行中',
-      type: 'line',
-      color: '#2A82E4',
-      data: [30, 20, 30, 10, 10, 40, 40, 30, 30, 40]
-    }
-  ]
-}
+    xAxis: {
+      type: 'category',
+      boundaryGap: false,
+      offset: 16,
+      data: chartXAxisData.value,
+      axisLine: {
+        show: false
+      },
+      axisTick: {
+        show: false
+      }
+    },
+    yAxis: {
+      type: 'value'
+    },
+    series: [
+      {
+        name: '成功',
+        type: 'line',
+        color: '#43CF7C',
+        data: chartSuccessData.value
+      },
+      {
+        name: '失败',
+        type: 'line',
+        color: '#FA541C',
+        data: chartFailData.value
+      },
+      {
+        name: '运行中',
+        type: 'line',
+        color: '#2A82E4',
+        data: chartRunningData.value
+      }
+    ]
+  }
+}) 
+
+watch(() => options.value, (val) => {
+  if (chartVm.value) {
+    chartVm.value.setOption(options.value)
+  }
+})
 
 onMounted(() => {
   if (chartContainerRef.value) {
-    var myChart = echarts.init(chartContainerRef.value)
+    chartVm.value = echarts.init(chartContainerRef.value)
 
-    myChart.setOption(options)
+    chartVm.value.setOption(options.value)
   }
+
+  queryVmChartData()
 })
+
+function queryVmChartData() {
+  queryVmChartInfo({
+    localDate: currentDate.value
+  }).then(({ data }) => {
+    if (data.instanceNumLine) {
+      let successData: number[] = []
+      let runningData: number[] = []
+      let failData: number[] = []
+      let localTime: string[] = []
+      data.instanceNumLine.forEach(vm => {
+        successData.push(vm.successNum)
+        runningData.push(vm.runningNum)
+        failData.push(vm.failNum)
+        localTime.push(vm.localTime)
+      })
+      chartSuccessData.value = successData
+      chartRunningData.value = runningData
+      chartFailData.value = failData
+      chartXAxisData.value = localTime
+    }
+  })
+}
 
 </script>
 
@@ -135,6 +175,12 @@ onMounted(() => {
     .vm-chart__container {
       width: 100%;
       height: 100%;
+    }
+  }
+
+  .vm-chart__ops {
+    .el-date-editor {
+      --el-date-editor-width: 160px
     }
   }
 }

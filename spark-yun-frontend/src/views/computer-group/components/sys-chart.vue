@@ -5,13 +5,13 @@
       <div ref="bodyContainer" class="sys-chart__container"></div>
     </div>
     <div class="sys-chart__footer">
-      <span class="sys-chart__mix">{{ chartData.mix }}/100</span>
+      <span class="sys-chart__mix">{{ chartData.mix }}/{{ chartData.total }}</span>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import { ChartInfo } from './component'
 import * as echarts from 'echarts/core'
 import { GaugeChart } from 'echarts/charts'
@@ -29,6 +29,8 @@ const props = withDefaults(defineProps<{
   chartData: () => ({} as ChartInfo)
 })
 
+const chartVm = ref<echarts.ECharts>()
+
 const options = computed<EChartsOption>(() => {
   const options: EChartsOption = {
     series: [
@@ -36,6 +38,7 @@ const options = computed<EChartsOption>(() => {
         type: 'gauge',
         startAngle: 0,
         endAngle: 360,
+        max: props.chartData.total,
         pointer: {
           show: false
         },
@@ -86,7 +89,9 @@ const options = computed<EChartsOption>(() => {
           borderRadius: 1000,
           borderColor: props.chartData.color,
           borderWidth: 2,
-          formatter: '{value}%'
+          formatter: (value) => {
+            return Math.round(value/props.chartData.total * 100) + '%'
+          } 
         }
       }
     ]
@@ -95,12 +100,18 @@ const options = computed<EChartsOption>(() => {
   return options
 })
 
+watch(() => options.value, (val) => {
+  if (chartVm.value) {
+    chartVm.value.setOption(options.value)
+  }
+})
+
 const bodyContainer = ref<HTMLDivElement>()
 
 onMounted(() => {
   if (bodyContainer.value) {
-    const chart = echarts.init(bodyContainer.value)
-    chart.setOption(options.value)
+    chartVm.value = echarts.init(bodyContainer.value)
+    chartVm.value.setOption(options.value)
   }
 })
 
