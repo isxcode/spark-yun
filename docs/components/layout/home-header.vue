@@ -135,10 +135,6 @@ function handleMenuClick(menuItem: MenuData) {
     window.open(menuItem.path);
   }
 }
-
-function handleQuickUseClick() {
-  window.open("https://zhiqingyun-demo.isxcode.com");
-}
 </script>
 
 <style lang="scss" scoped>

@@ -18,10 +18,10 @@
             ></SvgIcon>
           </div>
           <div class="btn-div">
-            <div class="guide-btn">
+            <div class="guide-btn" @click="handleGuideClick">
               <p>快速入门</p>
             </div>
-            <div class="quick-btn">
+            <div class="quick-btn" @click="handleQuickClick">
               <p>立即体验</p>
               <SvgIcon name="arrow-right" class="link-right-svg"></SvgIcon>
             </div>
@@ -68,7 +68,7 @@
         <div class="right">
           <div class="line-1">多平台部署，从不娇生惯养</div>
           <div class="line-2">支持大量计算引擎平台，如Kubernetes、Spark Standalone、Spark、Cluster、Yarn、CDH。可无缝迁移，无缝切换，帮助企业更优管理集群资源。</div>
-          <div class="line-3">立即体验</div>
+          <div class="line-3" @click="handleQuickClick">立即体验</div>
         </div>
       </div>
     </div>
@@ -80,7 +80,7 @@
         <div class="left">
           <div class="line-1">驱动上传，任何姿势都能连</div>
           <div class="line-2">支持海量数据源，如Mysql、Hive、Oracle、SqlServer、TiDB、Oceanbase、Doris、Clickhouse等。用户可自定义上传多版本驱动，解决企业中多环境数据源无法同时连接的难题。</div>
-          <div class="line-3">立即体验</div>
+          <div class="line-3" @click="handleQuickClick">立即体验</div>
         </div>
         <div class="right">
           <img src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/p-2.jpg" alt="">
@@ -95,7 +95,7 @@
         <div class="right">
           <div class="line-1">创建租户，再大也能装下</div>
           <div class="line-2">多租户模式，确保租户间数据隔离。租户内可单独协调集群资源、数据源驱动、作业流配置等。解决企业中规模较大、用户众多、权限难解的问题。</div>
-          <div class="line-3">立即体验</div>
+          <div class="line-3" @click="handleQuickClick">立即体验</div>
         </div>
       </div>
     </div>
@@ -125,7 +125,7 @@
         <div class="left">
           <div class="line-1">编排作业，横竖都能拖拽</div>
           <div class="line-2">拥有复杂的作业执行命令，包括运行、中止、重跑、重跑下游、中断、重跑当前、发布等。且支持可视化Cron表达式调度配置，解决企业中各种复杂应用场景。</div>
-          <div class="line-3">立即体验</div>
+          <div class="line-3" @click="handleQuickClick">立即体验</div>
         </div>
         <div class="right">
           <img class="feat-img" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/p-4.jpg" alt="">
@@ -140,14 +140,14 @@
         <div class="right">
           <div class="line-1">能写代码？不单单只有SparkSql</div>
           <div class="line-2">超多作业类型，包括数据同步、Bash、Python、SparkSql、Jdbc、自定义Jar等。提供客户二次开发模版，任何复杂的场景都可以通过写代码的方式解决。</div>
-          <div class="line-3">立即体验</div>
+          <div class="line-3" @click="handleQuickClick">立即体验</div>
         </div>
       </div>
     </div>
     <div class="module-end">
       <div class="content">
         <div class="line-1">开源助力企业升级大数据能力</div>
-        <div class="end-btn">免费试用</div>
+        <div class="end-btn" @click="handleQuickClick">免费试用</div>
       </div>
     </div>
   </div>
@@ -166,6 +166,15 @@ useSeoMeta({
   description: "打造超轻量级大数据平台",
   ogDescription: "打造超轻量级大数据平台",
 });
+
+function handleGuideClick() {
+  const router = useRouter();
+  router.push("/docs/zh/install/docker-deploy");
+}
+
+function handleQuickClick() {
+  window.open("https://zhiqingyun-demo.isxcode.com");
+}
 
 function handleCommandCopyClick() {
   const codeBlock = document.getElementById("command-shell");
@@ -268,6 +277,7 @@ $module-intro-img-width: 600px;
           line-height: 38px;
 
           .copy-icon {
+            cursor: pointer;
             margin-left: 15px;
             margin-top: 6px;
             width: 24px;
@@ -280,6 +290,7 @@ $module-intro-img-width: 600px;
           display: flex;
 
           .guide-btn {
+            cursor: pointer;
             width: 120px;
             border-radius: 3px;
             background: #e25a1b;
@@ -295,6 +306,7 @@ $module-intro-img-width: 600px;
           }
 
           .quick-btn {
+            cursor: pointer;
             margin-left: 20px;
             width: 150px;
             color: #e25a1b;
@@ -452,6 +464,7 @@ $module-intro-img-width: 600px;
       }
 
       .line-3 {
+        cursor: pointer;
         margin-top: 35px;
         color: #e25a1b;
         font-family: "阿里妈妈数黑体 Bold", sans-serif;
@@ -504,6 +517,7 @@ $module-intro-img-width: 600px;
       }
 
       .line-3 {
+        cursor: pointer;
         margin-top: 35px;
         color: #e25a1b;
         font-family: "阿里妈妈数黑体 Bold", sans-serif;
@@ -533,6 +547,7 @@ $module-intro-img-width: 600px;
     }
 
     .end-btn {
+      cursor: pointer;
       margin: 40px auto auto;
       background: white;
       color: #e25a1b;
@@ -562,8 +577,8 @@ $module-intro-img-width: 600px;
 /* 在线链接服务仅供平台体验和调试使用，平台不承诺服务的稳定性，企业客户需下载字体包自行发布使用并做好备份。 */
 @font-face {
   font-family: "阿里妈妈方圆体 VF Regular";
-  src: url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/KCcf7u3Tt9u6.woff2") format("woff2"),
-  url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/wHsNoFepjHa7.woff") format("woff");
+  src: url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/rht0cnNE4M4r.woff2") format("woff2"),
+  url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/drpiCeQewZGp.woff") format("woff");
   font-display: swap;
 }
 
@@ -620,6 +635,7 @@ $module-intro-img-width: 600px;
             margin: 25px auto auto;
 
             .guide-btn {
+              cursor: pointer;
               width: 170px;
               border-radius: 3px;
               background: #e25a1b;

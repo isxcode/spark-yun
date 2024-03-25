@@ -16,30 +16,30 @@
       <div class="right">
         <div class="column">
           <div class="title">产品</div>
-          <div class="link">至轻云</div>
-          <div class="link">至流云</div>
-          <div class="link">至慧云</div>
-          <div class="link">更多</div>
+          <div class="link" @click="clickZhiqingyun">至轻云</div>
+          <div class="link" @click="clickOther">至流云</div>
+          <div class="link" @click="clickOther">至慧云</div>
+          <div class="link" @click="clickOther">更多</div>
         </div>
         <div class="column">
           <div class="title">社区</div>
-          <div class="link">Gitee</div>
-          <div class="link">Github</div>
-          <div class="link">Slack</div>
-          <div class="link">Discord</div>
-          <div class="link">Linked</div>
+          <div class="link" @click="clickGitee">Gitee</div>
+          <div class="link" @click="clickGithub">Github</div>
+          <div class="link" @click="clickSlack">Slack</div>
+          <div class="link" @click="clickDiscord">Discord</div>
+          <div class="link" @click="clickLinked">Linkedin</div>
         </div>
         <div class="column">
           <div class="title">资源</div>
-          <div class="link">产品手册</div>
-          <div class="link">博客</div>
-          <div class="link">常见问题</div>
-          <div class="link">Docker hub</div>
+          <div class="link" @click="clickDocs">产品手册</div>
+          <div class="link" @click="clickBlogs">博客</div>
+          <div class="link" @click="clickFeishu">飞书文档</div>
+          <div class="link" @click="clickDockerHub">Docker hub</div>
         </div>
         <div class="column">
           <div class="title">关于我们</div>
-          <div class="link">至爻简介</div>
-          <div class="link">加入我们</div>
+          <div class="link" @click="clickOther">至爻简介</div>
+          <div class="link" @click="clickOther">加入我们</div>
         </div>
         <div class="column">
           <div class="title">联系我们</div>
@@ -127,6 +127,7 @@
         }
 
         .link {
+          cursor: pointer;
           margin-top: 22px;
           font-size: 14px;
         }
@@ -307,5 +308,56 @@
 
 </style>
 <script setup lang="ts">
+import {ElMessage} from 'element-plus'
+
+function clickZhiqingyun() {
+  const router = useRouter();
+  router.push("/");
+}
+
+function clickOther() {
+  ElMessage({
+    message: '敬请期待',
+    type: 'success',
+  })
+}
+
+function clickGitee() {
+  window.open("https://gitee.com/isxcode/spark-yun");
+}
+
+function clickGithub() {
+  window.open("https://github.com/isxcode/spark-yun/discussions");
+}
+
+function clickSlack() {
+  window.open("https://zhiqingyun.slack.com/archives/C06R8SJPVAQ");
+}
+
+function clickDiscord() {
+  window.open("https://discord.gg/uETedXUS");
+}
+
+function clickLinked() {
+  window.open("https://www.linkedin.com/groups/9802394/");
+}
+
+function clickDockerHub() {
+  window.open("https://hub.docker.com/r/isxcode/zhiqingyun");
+}
+
+function clickFeishu() {
+  window.open("https://mwur1opms2a.feishu.cn/wiki/space/7350313682586451971?ccm_open_type=lark_wiki_spaceLink&open_tab_from=wiki_home");
+}
+
+function clickBlogs() {
+  window.open("https://ispong.isxcode.com/tags/spark/");
+}
+
+function clickDocs() {
+  const router = useRouter();
+  router.push("/docs/zh/install/docker-deploy");
+}
+
 
 </script>
