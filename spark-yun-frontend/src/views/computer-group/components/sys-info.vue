@@ -18,34 +18,58 @@
 <script setup lang="ts">
 import SysChart from './sys-chart.vue'
 import { ChartInfo } from './component'
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
+import { querySystemBaseInfo } from '@/views/computer-group/services/computer-group';
 
 const sysInfoData = ref<Array<ChartInfo>>([
   {
-    type: 'computer-group',
+    type: 'clusterMonitor',
     title: '计算机群',
     mix: 75,
+    total: 100,
     color: '#ED7B09'
   },
   {
-    type: 'data-source',
+    type: 'datasourceMonitor',
     title: '数据源',
     mix: 35,
+    total: 100,
     color: '#1967BF'
   },
   {
-    type: 'publish-job',
+    type: 'workflowMonitor',
     title: '发布作业',
     mix: 65,
+    total: 100,
     color: '#03A89D'
   },
   {
-    type: 'publish-interface',
+    type: 'apiMonitor',
     title: '发布接口',
     mix: 99,
+    total: 100,
     color: '#4B19BF'
   }
 ])
+
+function querySysInfoData() {
+  querySystemBaseInfo().then(systemBaseInfo => {
+    sysInfoData.value = sysInfoData.value.map(info => {
+      let baseInfo = systemBaseInfo.data[info.type]
+
+      if (baseInfo) {
+        info.mix = baseInfo.activeNum
+        info.total = baseInfo.total
+      }
+
+      return info
+    })
+  })
+}
+
+onMounted(() => {
+  querySysInfoData()
+})
 
 </script>
 
