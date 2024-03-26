@@ -32,10 +32,12 @@
           </div>
         </div>
         <div class="right">
-          <img src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/product.png" alt="">
+          <vue3VideoPlay
+            poster="https://cdn.jsdelivr.net/gh/xdlumia/files/video-play/ironMan.jpg"
+          />
         </div>
       </div>
-      <video id="v1" autoplay loop muted>
+      <video class="bg-video" id="v1" autoplay loop muted>
         <source src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/bg-0.mp4" type="video/mp4"/>
       </video>
     </div>
@@ -266,7 +268,7 @@ $module-intro-img-width: 600px;
     position: relative;
     overflow: hidden;
 
-    video {
+    .bg-video {
       position: absolute;
       top: 0;
       left: 0;
@@ -356,10 +358,9 @@ $module-intro-img-width: 600px;
       }
 
       .right {
-        width: 600px;;
-
-        img {
-          width: $module-intro-img-width;
+        .product-video {
+          margin-top: 60px;
+          width: 600px;
         }
       }
     }
