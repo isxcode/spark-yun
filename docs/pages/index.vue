@@ -32,7 +32,9 @@
           </div>
         </div>
         <div class="right">
-
+          <video class="product-video" autoplay loop muted>
+            <source src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/product.mp4">
+          </video>
         </div>
       </div>
       <video class="bg-video" id="v1" autoplay loop muted>
@@ -357,7 +359,7 @@ $module-intro-img-width: 600px;
 
       .right {
         .product-video {
-          margin-top: 60px;
+          margin-top: 70px;
           width: 600px;
         }
       }
