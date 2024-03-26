@@ -51,12 +51,12 @@
           相关技术
         </div>
         <div class="tech-img-div">
-          <img class="tech-img" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/t-k8s.png" alt="">
-          <img class="tech-img" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/t-hadoop.png" alt="">
-          <img class="tech-img" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/t-spark.png" alt="">
-          <img class="tech-img" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/t-hive.png" alt="">
-          <img class="tech-img" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/t-doris.png" alt="">
-          <img class="tech-img" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/t-clickhouse.png" alt="">
+          <img class="tech-img" @click="handleK8sClick" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/t-k8s.png" alt="">
+          <img class="tech-img" @click="handleHadoopClick" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/t-hadoop.png" alt="">
+          <img class="tech-img" @click="handleSparkClick" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/t-spark.png" alt="">
+          <img class="tech-img" @click="handleHiveClick" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/t-hive.png" alt="">
+          <img class="tech-img" @click="handleDorisClick" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/t-doris.png" alt="">
+          <img class="tech-img" @click="handleClickhouseClick" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/t-clickhouse.png" alt="">
         </div>
       </div>
     </div>
@@ -155,6 +155,8 @@
 </template>
 
 <script lang="ts" setup>
+import {ElMessage} from 'element-plus'
+
 definePageMeta({
   title: "首页",
   layout: "home",
@@ -176,6 +178,30 @@ function handleQuickClick() {
   window.open("https://zhiqingyun-demo.isxcode.com");
 }
 
+function handleSparkClick() {
+  window.open("https://spark.apache.org/");
+}
+
+function handleHiveClick() {
+  window.open("https://hive.apache.org/");
+}
+
+function handleDorisClick() {
+  window.open("https://doris.apache.org/");
+}
+
+function handleClickhouseClick() {
+  window.open("https://clickhouse.com/");
+}
+
+function handleK8sClick() {
+  window.open("https://kubernetes.io/");
+}
+
+function handleHadoopClick() {
+  window.open("https://hadoop.apache.org/");
+}
+
 function handleCommandCopyClick() {
   const codeBlock = document.getElementById("command-shell");
   const codeBlockText = codeBlock?.innerText;
@@ -187,6 +213,11 @@ function handleCommandCopyClick() {
 const copyContent = async (text: string) => {
   try {
     await navigator.clipboard.writeText(text);
+    ElMessage({
+      duration: 800,
+      message: '复制成功',
+      type: 'success',
+    });
   } catch (err) {
     console.error("Failed to copy: ", err);
   }
@@ -222,7 +253,7 @@ $module-intro-img-width: 600px;
 
 .main {
 
-  font-family: "阿里妈妈方圆体 VF Regular", sans-serif;
+  font-family: "阿里巴巴普惠体 2.0 45 Light", sans-serif;
 
   .module-intro {
     width: 100%;
@@ -369,6 +400,11 @@ $module-intro-img-width: 600px;
       }
 
       .tech-img-div {
+
+        .tech-img {
+          cursor: pointer;
+        }
+
         display: flex;
         justify-content: space-between;
         margin: 20px auto auto;
@@ -576,17 +612,10 @@ $module-intro-img-width: 600px;
 
 /* 在线链接服务仅供平台体验和调试使用，平台不承诺服务的稳定性，企业客户需下载字体包自行发布使用并做好备份。 */
 @font-face {
-  font-family: "阿里妈妈方圆体 VF Regular";
-  src: url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/rht0cnNE4M4r.woff2") format("woff2"),
-  url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/drpiCeQewZGp.woff") format("woff");
-  font-display: swap;
-}
-
-/* 在线链接服务仅供平台体验和调试使用，平台不承诺服务的稳定性，企业客户需下载字体包自行发布使用并做好备份。 */
-@font-face {
-  font-family: "阿里妈妈方圆体 VF Regular";
-  src: url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/eaebFoyj8XGb.woff2") format("woff2"),
-  url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/0KeqKNZYtLNN.woff") format("woff");
+  font-family: "阿里巴巴普惠体 2.0 45 Light";
+  font-weight: 300;
+  src: url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/cHPsZ2tb5Gxv.woff2") format("woff2"),
+  url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/F8LRQLgsPF37.woff") format("woff");
   font-display: swap;
 }
 

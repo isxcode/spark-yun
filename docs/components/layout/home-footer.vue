@@ -55,7 +55,7 @@
     <div class="content">
       <div class="equal-columns">
         <div>Copyright © 2023-2024 至爻数据</div>
-        <div>沪ICP备2023031895号</div>
+        <div class="icp-click" @click="clickIcp">沪ICP备2023031895号-1</div>
         <div class="copyright-div">版权所有 上海至爻数据有限公司</div>
       </div>
     </div>
@@ -71,7 +71,7 @@
 
 <style lang="scss" scoped>
 .footer {
-  font-family: "阿里妈妈方圆体 VF Regular", sans-serif;
+  font-family: "阿里巴巴普惠体 2.0 45 Light", sans-serif;
   padding-top: 40px;
 
   .content {
@@ -138,7 +138,7 @@
 }
 
 .footer-copyright {
-  font-family: "阿里妈妈方圆体 VF Regular", sans-serif;
+  font-family: "阿里巴巴普惠体 2.0 45 Light", sans-serif;
   width: 100%;
   border-top: lavender solid 1px;
 
@@ -153,6 +153,10 @@
     justify-content: center;
 
     .equal-columns {
+      .icp-click {
+        cursor: pointer;
+      }
+
       display: flex;
       flex: 1;
       justify-content: space-between;
@@ -174,16 +178,16 @@
 
 /* 在线链接服务仅供平台体验和调试使用，平台不承诺服务的稳定性，企业客户需下载字体包自行发布使用并做好备份。 */
 @font-face {
-  font-family: "阿里妈妈方圆体 VF Regular";
-  src: url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/yCsR9ZgiisKH.woff2") format("woff2"),
-  url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/2wULLpnB6zDt.woff") format("woff");
+  font-family: "阿里巴巴普惠体 2.0 45 Light";
+  font-weight: 300;
+  src: url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/cHPsZ2tb5Gxv.woff2") format("woff2"),
+  url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/F8LRQLgsPF37.woff") format("woff");
   font-display: swap;
 }
 
 @media (max-width: 400px) {
 
   .fixed-footer {
-    font-family: "阿里妈妈方圆体 VF Regular", sans-serif;
     display: block;
     position: fixed;
     z-index: 999;
@@ -216,7 +220,6 @@
   }
 
   .footer {
-    font-family: "阿里妈妈方圆体 VF Regular", sans-serif;
     padding-top: 40px;
 
     .content {
@@ -280,7 +283,6 @@
   }
 
   .footer-copyright {
-    font-family: "阿里妈妈方圆体 VF Regular", sans-serif;
     width: 100%;
     border-top: lavender solid 1px;
 
@@ -357,6 +359,10 @@ function clickBlogs() {
 function clickDocs() {
   const router = useRouter();
   router.push("/docs/zh/install/docker-deploy");
+}
+
+function clickIcp() {
+  window.open("https://beian.miit.gov.cn/");
 }
 
 
