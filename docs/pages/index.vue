@@ -32,9 +32,7 @@
           </div>
         </div>
         <div class="right">
-          <vue3VideoPlay
-            poster="https://cdn.jsdelivr.net/gh/xdlumia/files/video-play/ironMan.jpg"
-          />
+
         </div>
       </div>
       <video class="bg-video" id="v1" autoplay loop muted>
