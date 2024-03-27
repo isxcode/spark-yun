@@ -68,8 +68,8 @@ public class ClusterNodeBizService {
 
 		ClusterNodeEntity clusterNode = engineNodeMapper.addClusterNodeReqToClusterNodeEntity(addClusterNodeReq);
 
-    // 是否安装spark-local组件
-    clusterNode.setInstallSparkLocal(addClusterNodeReq.getInstallSparkLocal());
+		// 是否安装spark-local组件
+		clusterNode.setInstallSparkLocal(addClusterNodeReq.getInstallSparkLocal());
 
 		// 密码对成加密
 		clusterNode.setPasswd(aesUtils.encrypt(addClusterNodeReq.getPasswd().trim()));
@@ -111,8 +111,8 @@ public class ClusterNodeBizService {
 		// 转换对象
 		ClusterNodeEntity node = engineNodeMapper.updateNodeReqToNodeEntity(updateClusterNodeReq, clusterNode);
 
-    // 是否安装spark-local组件
-    clusterNode.setInstallSparkLocal(updateClusterNodeReq.getInstallSparkLocal());
+		// 是否安装spark-local组件
+		clusterNode.setInstallSparkLocal(updateClusterNodeReq.getInstallSparkLocal());
 
 		// 设置安装地址
 		node.setAgentHomePath(clusterNodeService.getDefaultAgentHomePath(updateClusterNodeReq.getAgentHomePath(),

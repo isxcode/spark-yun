@@ -107,9 +107,9 @@ public class RunAgentInstallService {
 		// 运行安装脚本
 		String installCommand = "bash " + sparkYunProperties.getTmpDir() + File.separator + "agent-install.sh"
 				+ " --home-path=" + engineNode.getAgentHomePath() + " --agent-port=" + engineNode.getAgentPort();
-    if(engineNode.getInstallSparkLocal() != null) {
-      installCommand = installCommand + " --spark-local=" + engineNode.getInstallSparkLocal();
-    }
+		if (engineNode.getInstallSparkLocal() != null) {
+			installCommand = installCommand + " --spark-local=" + engineNode.getInstallSparkLocal();
+		}
 
 		log.debug("执行远程安装命令:{}", installCommand);
 
