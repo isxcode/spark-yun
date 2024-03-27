@@ -15,13 +15,13 @@
       v-if="logMsg"
       ref="preContentRef"
       @mousewheel="mousewheelEvent"
-    >{{ logMsg }}</pre>
+    >{{ logMsg + loadingMsg }}</pre>
     <EmptyPage v-else />
   </div>
 </template>
 
 <script lang="ts" setup>
-import { nextTick, onUnmounted, ref, defineExpose } from 'vue'
+import { nextTick, onUnmounted, computed, ref, defineExpose } from 'vue'
 import EmptyPage from '@/components/empty-page/index.vue'
 import { GetRealSubRunningLog } from '@/services/realtime-computing.service';
 
@@ -30,33 +30,52 @@ const position = ref(true)
 const timer = ref(null)
 const preContentRef = ref(null)
 const pubId = ref('')
+const status = ref(false)
+const loadingPoint = ref('.')
+const loadingTimer = ref()
+const isRequest = ref(false)
+
+const loadingMsg = computed(() => {
+  const str = !status.value ? `加载中${loadingPoint.value}` : ''
+  return str
+})
 
 function initData(id: string): void {
+  loadingTimer.value = setInterval(() => {
+    if (loadingPoint.value.length < 5) {
+      loadingPoint.value = loadingPoint.value + '.'
+    } else {
+      loadingPoint.value = '.'
+    }
+  }, 1000)
+
   pubId.value = id
   getLogData(pubId.value)
   if (!timer.value) {
     timer.value = setInterval(() => {
-      getLogData(pubId.value)
-    }, 3000)
+      !isRequest.value && getLogData(pubId.value)
+    }, 1000)
   }
 }
 
 // 获取日志
 function getLogData(id: string) {
-  if (!id) {
-    logMsg.value = ''
+  if (!id || status.value) {
     return
   }
+  isRequest.value = true
   GetRealSubRunningLog({
     id: id
   })
     .then((res: any) => {
+      status.value = ['FAIL', 'STOP'].includes(res.data.status) ? true : false
       logMsg.value = res.data.runningLog
       if (position.value) {
         nextTick(() => {
           scrollToButtom()
         })
       }
+      isRequest.value = false
     })
     .catch(() => {
       logMsg.value = ''
@@ -64,6 +83,7 @@ function getLogData(id: string) {
           clearInterval(timer.value)
       }
       timer.value = null
+      isRequest.value = false
     })
 }
 
@@ -84,6 +104,11 @@ onUnmounted(() => {
     clearInterval(timer.value)
   }
   timer.value = null
+
+  if (loadingTimer.value) {
+    clearInterval(loadingTimer.value)
+  }
+  loadingTimer.value = null
 })
 
 defineExpose({

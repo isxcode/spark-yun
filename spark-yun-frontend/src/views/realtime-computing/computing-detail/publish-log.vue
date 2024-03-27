@@ -31,16 +31,16 @@ const timer = ref(null)
 const preContentRef = ref(null)
 const runId = ref('')
 const status = ref(false)
-const callback = ref()
 const loadingPoint = ref('.')
 const loadingTimer = ref()
+const isRequest = ref(false)
 
 const loadingMsg = computed(() => {
   const str = !status.value ? `加载中${loadingPoint.value}` : ''
   return str
 })
 
-function initData(id: string, cb: any): void {
+function initData(id: string, flag: boolean): void {
 
   loadingTimer.value = setInterval(() => {
     if (loadingPoint.value.length < 5) {
@@ -50,34 +50,43 @@ function initData(id: string, cb: any): void {
     }
   }, 1000)
 
+  if (flag) {
+    status.value = false
+  }
+
   runId.value = id
-  callback.value = cb
   getLogData(runId.value)
   if (!timer.value) {
     timer.value = setInterval(() => {
-      getLogData(runId.value)
+      !isRequest.value && getLogData(runId.value)
     }, 3000)
   }
 }
 
 // 获取日志
 function getLogData(id: string) {
-  if (!id) {
+  if (!id || status.value) {
     return
   }
+  isRequest.value = true
   GetRealSubLog({
       id: id
   }).then((res: any) => {
-      status.value = ['FAIL', 'RUNNING'].includes(res.data.status) ? true : false
+      status.value = ['FAIL', 'STOP'].includes(res.data.status) ? true : false
       logMsg.value = res.data.submitLog
       if (position.value) {
           nextTick(() => {
               scrollToButtom()
           })
       }
+      isRequest.value = false
   }).catch((err: any) => {
+      if (timer.value) {
+          clearInterval(timer.value)
+      }
       console.log('err', err)
       logMsg.value = ''
+      isRequest.value = false
   })
 }
 
