@@ -21,6 +21,9 @@ if [ -e "${home_path}/zhiqingyun-agent.pid" ]; then
   fi
 fi
 
+# 停止spark-local
+nohup bash ${home_path}/zhiqingyun-agent/spark-min/sbin/stop-all.sh
+
 # 返回结果
 json_output="{ \
           \"status\": \"STOP\"

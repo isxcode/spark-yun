@@ -24,10 +24,12 @@ BASE_PATH=$(cd "$(dirname "$0")" || exit ; pwd)
 
 home_path=""
 agent_port=""
+spark_local="false"
 for arg in "$@"; do
   case "$arg" in
   --home-path=*) home_path="${arg#*=}" ;;
   --agent-port=*) agent_port="${arg#*=}" ;;
+  --spark-local=*) spark_local="${arg#*=}" ;;
   *) echo "未知参数: $arg" && exit 1 ;;
   esac
 done
@@ -48,6 +50,11 @@ tar -xf ${BASE_PATH}/zhiqingyun-agent.tar.gz -C ${home_path} > /dev/null
 # 运行jar包
 nohup java -jar -Xmx2048m ${home_path}/zhiqingyun-agent/lib/zhiqingyun-agent.jar --server.port=${agent_port} >>${home_path}/zhiqingyun-agent/logs/zhiqingyun-agent.log 2>&1 &
 echo $! >${home_path}/zhiqingyun-agent/zhiqingyun-agent.pid
+
+# 运行spark-local
+if [ ${spark_local} = "true" ]; then
+  nohup bash ${home_path}/zhiqingyun-agent/spark-min/sbin/start-all.sh
+fi
 
 # 检查是否安装
 if [ -e "${home_path}/zhiqingyun-agent/zhiqingyun-agent.pid" ]; then
