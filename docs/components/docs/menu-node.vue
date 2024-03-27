@@ -126,7 +126,8 @@ watch(
     transition: all 0.1s;
     &:hover {
       border-left: var(--sk-color-home-primary) 2px solid;
-      color: var(--sk-color-font-menu-hover);
+      color: var(--sk-color-home-primary);
+      background: #fffaf8;
     }
     .menu-item-icon {
       margin-right: 8px;
