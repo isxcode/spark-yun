@@ -32,9 +32,10 @@
           </div>
         </div>
         <div class="right">
-          <video class="product-video" autoplay loop muted>
-            <source src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/product.mp4">
-          </video>
+<!--          <video class="product-video" autoplay loop muted>-->
+<!--            <source src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/product.mp4">-->
+<!--          </video>-->
+          <div class="artplayer-app"></div>
         </div>
       </div>
       <video class="bg-video" id="v1" autoplay loop muted>
@@ -158,6 +159,7 @@
 
 <script lang="ts" setup>
 import {ElMessage} from 'element-plus'
+import Artplayer from "artplayer";
 
 definePageMeta({
   title: "首页",
@@ -170,6 +172,20 @@ useSeoMeta({
   description: "打造超轻量级大数据平台",
   ogDescription: "打造超轻量级大数据平台",
 });
+
+onMounted(()=>{
+  const art = new Artplayer({
+    container: '.artplayer-app',
+    url: 'https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/product.mp4',
+    // poster: 'https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/product.png',
+    fullscreen: true,
+    fullscreenWeb: true,
+    pip: true,
+    autoplay: false,
+    theme: '#e25a1b',
+    muted: true,
+  });
+})
 
 function handleGuideClick() {
   const router = useRouter();
@@ -358,9 +374,10 @@ $module-intro-img-width: 600px;
       }
 
       .right {
-        .product-video {
+        .artplayer-app {
+          height: 341px;
           margin-top: 70px;
-          width: 600px;
+          width: 630px;
         }
       }
     }
