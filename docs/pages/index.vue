@@ -173,7 +173,7 @@ useSeoMeta({
 
 function handleGuideClick() {
   const router = useRouter();
-  router.push("/docs/zh/install/docker-deploy");
+  router.push("/docs/zh/0/0");
 }
 
 function handleQuickClick() {

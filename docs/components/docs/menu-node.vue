@@ -10,7 +10,8 @@
           <SvgIcon name="home"></SvgIcon>
         </span>
         <SkEllipsis class="menu-folder-title-text" truncated>
-          {{ link.title }}
+          <span style="font-size: 18px" class="menu-folder-span">{{ link.title.split(' ')[0] }}</span>
+          {{ link.title.split(' ')[1] }}
         </SkEllipsis>
         <div class="menu-folder-title-is-collapsed">
           <SvgIcon
@@ -88,7 +89,7 @@ watch(
 );
 </script>
 
-<style lang="scss" scope>
+<style lang="scss" scoped>
 .menu-item-block {
   .menu-folder {
     .menu-folder-title {
@@ -99,9 +100,10 @@ watch(
       cursor: pointer;
       .menu-folder-title-icon {
         margin-right: 8px;
+        display: none;
       }
       .menu-folder-title-text {
-        font-size: 14px;
+        font-size: 16px;
         font-weight: 500;
       }
       .menu-folder-title-is-collapsed {
@@ -128,10 +130,11 @@ watch(
     }
     .menu-item-icon {
       margin-right: 8px;
+      display: none;
     }
     .menu-item-text {
       font-size: 14px;
-      font-weight: 500;
+      font-weight: 400;
     }
   }
   .menu-item-active {

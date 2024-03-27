@@ -184,7 +184,7 @@ function scrollTo(element, headerOffset = 80) {
   .left-side {
     margin-top: 80px;
     background: white;
-    width: 300px;
+    width: 250px;
     position: fixed;
     top: 0;
     bottom: 0;
@@ -232,8 +232,8 @@ function scrollTo(element, headerOffset = 80) {
 
       .markdown-body {
         // 文档内容
-        width: 850px;
-        margin-top: 80px;
+        width: 810px;
+        margin-top: 70px;
         height: calc(100% - 80px);
         overflow-x: hidden;
         position: fixed;

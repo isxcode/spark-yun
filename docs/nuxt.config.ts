@@ -31,9 +31,9 @@ export default defineNuxtConfig({
   lodash: {
     prefix: "_",
   },
-  // content: {
-  //   highlight: {
-  //     theme: 'github-light'
-  //   }
-  // }
+  content: {
+    // highlight: {
+    //   theme: 'github-light'
+    // }
+  }
 });

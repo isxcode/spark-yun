@@ -353,12 +353,12 @@ function clickFeishu() {
 }
 
 function clickBlogs() {
-  window.open("https://ispong.isxcode.com/tags/spark/");
+  window.open("/https://ispong.isxcode.com/tags/spark/");
 }
 
 function clickDocs() {
   const router = useRouter();
-  router.push("/docs/zh/install/docker-deploy");
+  router.push("/docs/zh/0/0");
 }
 
 function clickIcp() {
