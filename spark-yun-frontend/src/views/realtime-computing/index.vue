@@ -133,10 +133,12 @@ const networkError = ref(false)
 const addModalRef = ref(null)
 const timer = ref()
 const showLogRef = ref(null)
+const isRequest = ref(false)
 
 function initData(tableLoading?: boolean, type?: string) {
   loading.value = tableLoading ? false : true
   networkError.value = networkError.value || false
+  isRequest.value = true
   GetTimeComputingList({
     page: tableConfig.pagination.currentPage - 1,
     pageSize: tableConfig.pagination.pageSize,
@@ -158,8 +160,10 @@ function initData(tableLoading?: boolean, type?: string) {
       loading.value = false
       tableConfig.loading = false
       networkError.value = false
+      isRequest.value = false
     })
     .catch(() => {
+      isRequest.value = false
       tableConfig.tableData = []
       tableConfig.pagination.total = 0
       loading.value = false
@@ -289,7 +293,7 @@ function handleCurrentChange(e: number) {
 onMounted(() => {
   initData()
   timer.value = setInterval(() => {
-    initData(true, 'interval')
+    !isRequest.value && initData(true, 'interval')
   }, 3000)
 })
 onUnmounted(() => {

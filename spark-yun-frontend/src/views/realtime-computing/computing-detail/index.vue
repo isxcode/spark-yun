@@ -88,7 +88,9 @@
                             </el-select>
                         </el-form-item>
                         <el-form-item prop="rootJsonPath" label="节点" v-if="formData.jsonDataType === 'LIST'">
-                            <el-input v-model="formData.rootJsonPath" placeholder="请输入" @blur="rootJsonPathBlur"></el-input>
+                            <el-select v-model="formData.rootJsonPath" clearable filterable placeholder="请选择" @change="rootJsonPathBlur" @visible-change="getJsonNodeArray">
+                                <el-option v-for="item in nodeArrayList" :key="item.value" :label="item.label" :value="item.value" />
+                            </el-select>
                         </el-form-item>
                         <el-form-item prop="queryCondition" label="过滤条件">
                             <code-mirror v-model="formData.queryCondition" basic :lang="lang" @change="pageChangeEvent" />
@@ -175,7 +177,7 @@ import { GetDataSourceTables, GetTableColumnsByTableId } from '@/services/data-s
 import TableDetail from './table-detail/index.vue'
 import DataSyncTable from './data-sync-table/index.vue'
 import ConfigDetail from '../config-detail/index.vue'
-import { ConifgTimeComputingData, GetTimeComputingDetail, GetTopicDataList, RunTimeComputingData, StopTimeComputingData } from '@/services/realtime-computing.service.ts'
+import { ConifgTimeComputingData, GetJsonArrayNodeList, GetTimeComputingDetail, GetTopicDataList, RunTimeComputingData, StopTimeComputingData } from '@/services/realtime-computing.service.ts'
 import PublishLog from './publish-log.vue'
 import RunningLog from './running-log.vue'
 import { Loading } from '@element-plus/icons-vue'
@@ -202,6 +204,7 @@ const sourceTablesList = ref<Option[]>([])
 const targetTablesList = ref<Option[]>([])
 const overModeList = ref<Option[]>(OverModeList)
 const typeList = ref(DataSourceType);
+const nodeArrayList = ref([])
 
 // 日志展示相关
 const containerInstanceRef = ref(null)
@@ -259,7 +262,7 @@ function tabChangeEvent(e: string) {
   activeName.value = e
   currentTab.value = markRaw(lookup[e])
   nextTick(() => {
-    containerInstanceRef.value.initData(instanceId.value)
+    containerInstanceRef.value.initData(instanceId.value, true)
   })
 }
 
@@ -342,7 +345,7 @@ function runTimeFunc() {
         ElMessage.success(res.msg)
         instanceId.value = route.query.id
         nextTick(() => {
-            containerInstanceRef.value.initData(instanceId.value)
+            containerInstanceRef.value.initData(instanceId.value, true)
         })
         btnLoadingConfig.runningLoading = false
         nextTick(() => {
@@ -398,6 +401,28 @@ function getTopicList(e: boolean, dataSourceId: string) {
         sourceTablesList.value = []
     }
 }
+// 获取节点
+function getJsonNodeArray(e: boolean) {
+    if (!e) {
+        return
+    }
+    if (formData.jsonTemplate) {
+        GetJsonArrayNodeList({
+            jsonStr: formData.jsonTemplate
+        }).then((res: any) => {
+            nodeArrayList.value = res.data.map((item: any) => {
+                return {
+                    label: item,
+                    value: item
+                }
+            })
+        }).catch(err => {
+            console.error(err)
+        })
+    } else {
+        nodeArrayList.value = []
+    }
+}
 
 // 获取数据源表
 function getDataSourceTable(e: boolean, dataSourceId: string) {
@@ -429,6 +454,8 @@ function getCurrentTableColumn(e: string) {
         dataSyncTableRef.value.getCurrentTableColumn({
             jsonStr: formData.jsonTemplate
         })
+    } else {
+        getJsonNodeArray(true)
     }
 }
 

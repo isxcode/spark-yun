@@ -15,6 +15,7 @@ const logMsg = ref('')
 const timer = ref(null)
 const preContentRef = ref(null)
 const position = ref(true)
+const isRequest = ref(false)
 
 const modelConfig = reactive({
     title: '日志',
@@ -53,7 +54,7 @@ function showModal(clusterNodeId: string, type?: string): void {
     getLogData(clusterNodeId, type)
     if (!timer.value) {
         timer.value = setInterval(() => {
-            getLogData(clusterNodeId, type)
+            !isRequest.value && getLogData(clusterNodeId, type)
         }, 1000)
     }
     modelConfig.visible = true
@@ -63,6 +64,7 @@ function getLogData(id: string, type?: string) {
     if (!id) {
         return
     }
+    isRequest.value = true
     if (type === 'runningLog') {
         modelConfig.title = '运行日志'
         GetRealSubRunningLog({
@@ -75,9 +77,11 @@ function getLogData(id: string, type?: string) {
                     scrollToButtom()
                 })
             }
+            isRequest.value = false
         }).catch((err: any) => {
             console.log('err', err)
             logMsg.value = ''
+            isRequest.value = false
         })
     } else {
         GetRealSubLog({
@@ -90,9 +94,11 @@ function getLogData(id: string, type?: string) {
                     scrollToButtom()
                 })
             }
+            isRequest.value = false
         }).catch((err: any) => {
             console.log('err', err)
             logMsg.value = ''
+            isRequest.value = false
         })
     }
 }
