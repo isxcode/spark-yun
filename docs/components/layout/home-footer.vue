@@ -64,7 +64,7 @@
   <div class="fixed-footer">
     <div class="content">
       <SvgIcon class="phone-svg" name="phone"></SvgIcon>
-      <p class="phone-text">电话咨询</p>
+      <p class="phone-text"><a href="tel: 40088484170">电话咨询</a></p>
     </div>
   </div>
 </template>
