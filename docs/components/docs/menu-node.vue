@@ -94,8 +94,7 @@ watch(
     .menu-folder-title {
       display: flex;
       align-items: center;
-      padding: 0 12px;
-      padding-left: 14px;
+      padding: 0 12px 0 0;
       height: 32px;
       cursor: pointer;
       .menu-folder-title-icon {

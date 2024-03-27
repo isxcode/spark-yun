@@ -32,38 +32,39 @@
           </template>
         </ContentRenderer>
       </div>
-      <div class="aside">
-        <div class="aside-wrapper">
-          <div class="aside-content">
-            <DocsToc
-              :contentDirTree="toc"
-              :activeNodeIdList="['1', '2']"
-              @nodeClicked="handleTocItemClick"
-            />
-          </div>
-        </div>
-      </div>
+      <!--      <div class="aside">-->
+      <!--        <div class="aside-wrapper">-->
+      <!--          <div class="aside-content">-->
+      <!--            <DocsToc-->
+      <!--              :contentDirTree="toc"-->
+      <!--              :activeNodeIdList="['1', '2']"-->
+      <!--              @nodeClicked="handleTocItemClick"-->
+      <!--            />-->
+      <!--          </div>-->
+      <!--        </div>-->
+      <!--      </div>-->
     </article>
   </main>
 </template>
 
 <script setup lang="ts">
-import { NavItem } from "@nuxt/content";
+import {NavItem} from "@nuxt/content";
 import getContentDirTree from "~/util/getContentDirTree";
-import { useCounterStore, useMenuStore } from "~/store/index";
+import {useCounterStore, useMenuStore} from "~/store/index";
+
 definePageMeta({
   title: "首页",
   layout: "home",
 });
-const { params } = useRoute();
-const { data, pending, error, refresh } = await useAsyncData("docs", () =>
+const {params} = useRoute();
+const {data, pending, error, refresh} = await useAsyncData("docs", () =>
   queryContent("/" + params.slug.join("/")).findOne()
 );
 
 const markdownBodyRef = ref<HTMLElement | null>(null);
 const toc = ref<NavItem[]>([]);
 onMounted(() => {
-  const { height } = useCounterStore();
+  const {height} = useCounterStore();
   scrollbarRef.value.$el.querySelector(".el-scrollbar__wrap").scrollTop =
     height;
   const htmlStr = markdownBodyRef.value?.$el.innerHTML || "";
@@ -78,6 +79,7 @@ function processMenuData(data: Array<NavItem>) {
     return item;
   });
   data = data.flat();
+
   function deep(data: Array<NavItem>) {
     data.forEach((item) => {
       if (item._path.startsWith("/docs")) {
@@ -89,8 +91,9 @@ function processMenuData(data: Array<NavItem>) {
       }
     });
   }
+
   deep(data);
-  const { menuList, setMenuList } = useMenuStore();
+  const {menuList, setMenuList} = useMenuStore();
   const flag = isEqual(data, menuList);
   if (flag) {
     return menuList;
@@ -110,6 +113,7 @@ function processMenuData(data: Array<NavItem>) {
     });
     return data;
   }
+
   data = filterIndex(data);
   setMenuList(data);
   return menuList;
@@ -117,7 +121,8 @@ function processMenuData(data: Array<NavItem>) {
 
 const scrollbarRef = ref<HTMLElement | null>(null);
 const scrollBarScrollTop = ref(0);
-const { height, setHeightState } = useCounterStore();
+const {height, setHeightState} = useCounterStore();
+
 function handleMenuItemClick(link: NavItem) {
   scrollBarScrollTop.value = scrollbarRef.value?.$el.querySelector(
     ".el-scrollbar__wrap"
@@ -170,20 +175,26 @@ function scrollTo(element, headerOffset = 80) {
 </script>
 
 <style scoped lang="scss">
+// 整个文档
 .docs {
-  margin: 20px auto;
-  margin-top: 72px;
+  width: 1200px;
+  padding-top: 80px;
+  margin: auto;
+  // 侧边栏,不和文档一起
   .left-side {
-    width: 310px;
+    margin-top: 80px;
+    background: white;
+    width: 300px;
     position: fixed;
     top: 0;
     bottom: 0;
-    margin-top: 80px;
     border-right: 1px solid #ebebeb;
+
     .scroll-bar {
       .el-scrollbar__wrap {
         height: 100%;
         overflow: hidden;
+
         .el-scrollbar__view {
           height: 100%;
           overflow-y: auto;
@@ -192,30 +203,45 @@ function scrollTo(element, headerOffset = 80) {
       }
     }
   }
+
+  // 文档部分
   .doc-content {
+    margin-left: 350px;
     box-sizing: border-box;
-    padding-left: 310px;
-    background-color: #fff;
     display: flex;
     flex-direction: row;
+
     .aside {
       flex: 0;
       flex-basis: 260px;
+
       .aside-wrapper {
         box-sizing: border-box;
         overflow-x: auto;
         width: 238px;
         position: sticky;
         top: 120px;
+
         .aside-content {
         }
       }
     }
+
     .content {
       flex: 1;
-      padding: 64px 0 96px 66px;
+
       .markdown-body {
-        width: calc(100vw - 310px - 66px - 260px);
+        // 文档内容
+        width: 850px;
+        margin-top: 80px;
+        height: calc(100% - 80px);
+        overflow-x: hidden;
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        -ms-overflow-style: none;
+        overflow-y: scroll;
+        scrollbar-width: none;
       }
     }
   }

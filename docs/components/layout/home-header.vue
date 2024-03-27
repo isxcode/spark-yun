@@ -50,8 +50,6 @@ const headerRef = ref<HTMLElement | null>(null);
 
 onMounted(() => {
   window.addEventListener("scroll", handleScroll);
-  const video = document.getElementById("v1");
-  video.playbackRate = 0.5;
 });
 
 function handleScroll() {
