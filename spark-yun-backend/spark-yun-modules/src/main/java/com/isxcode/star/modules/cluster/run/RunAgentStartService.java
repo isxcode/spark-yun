@@ -72,9 +72,9 @@ public class RunAgentStartService {
 				+ " --home-path=" + engineNode.getAgentHomePath() + File.separator + PathConstants.AGENT_PATH_NAME
 				+ " --agent-port=" + engineNode.getAgentPort();
 
-    if(engineNode.getInstallSparkLocal() != null) {
-      startCommand = startCommand + " --spark-local=" + engineNode.getInstallSparkLocal();
-    }
+		if (engineNode.getInstallSparkLocal() != null) {
+			startCommand = startCommand + " --spark-local=" + engineNode.getInstallSparkLocal();
+		}
 
 		log.debug("执行远程命令:{}", startCommand);
 

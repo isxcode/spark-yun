@@ -70,7 +70,7 @@ public class ClusterNodeEntity {
 
 	private String passwd;
 
-  private Boolean installSparkLocal;
+	private Boolean installSparkLocal;
 
 	private String agentHomePath;
 
