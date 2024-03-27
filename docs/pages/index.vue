@@ -701,7 +701,10 @@ $module-intro-img-width: 600px;
 
         .right {
           display: none;
-          width: 600px;;
+          width: 600px;
+          .product-video {
+            display: none;
+          }
 
           img {
             width: $module-intro-img-width;
