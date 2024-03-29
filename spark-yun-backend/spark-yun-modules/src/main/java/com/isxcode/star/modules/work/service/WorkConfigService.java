@@ -1,6 +1,7 @@
 package com.isxcode.star.modules.work.service;
 
 import com.alibaba.fastjson.JSON;
+import com.isxcode.star.api.datasource.constants.DatasourceType;
 import com.isxcode.star.api.work.constants.ResourceLevel;
 import com.isxcode.star.api.work.constants.SetMode;
 import com.isxcode.star.api.work.constants.WorkType;
@@ -20,6 +21,7 @@ import javax.transaction.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 /**
@@ -51,7 +53,7 @@ public class WorkConfigService {
 			case WorkType.QUERY_JDBC_SQL :
 			case WorkType.EXECUTE_JDBC_SQL :
 			case WorkType.SPARK_CONTAINER_SQL :
-				workConfig.setScript("show databases");
+        workConfig.setScript(datasourceService.genDefaultSql(workConfig.getDatasourceId()));
 				break;
 			case WorkType.BASH :
 				workConfig.setScript("#!/bin/bash \n" + "\n" + "pwd");
