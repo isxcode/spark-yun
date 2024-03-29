@@ -338,19 +338,19 @@ public class DatasourceService {
 		}
 	}
 
-  public String genDefaultSql(String datasourceId) {
+	public String genDefaultSql(String datasourceId) {
 
-    if (StringUtils.isEmpty(datasourceId)) {
-      return "show databases";
-    }
+		if (StringUtils.isEmpty(datasourceId)) {
+			return "show databases";
+		}
 
-    DatasourceEntity datasource = getDatasource(datasourceId);
+		DatasourceEntity datasource = getDatasource(datasourceId);
 
-    switch (datasource.getDbType()) {
-      case DatasourceType.HANA_SAP:
-        return "SELECT TABLE_NAME FROM SYS.TABLES;";
-      default:
-        return "show databases";
-    }
-  }
+		switch (datasource.getDbType()) {
+			case DatasourceType.HANA_SAP :
+				return "SELECT TABLE_NAME FROM SYS.TABLES;";
+			default :
+				return "show databases";
+		}
+	}
 }
