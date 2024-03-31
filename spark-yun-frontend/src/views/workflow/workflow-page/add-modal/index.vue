@@ -175,6 +175,10 @@ const typeList = reactive([
   {
     label: 'python作业',
     value: 'PYTHON'
+  },
+  {
+    label: '接口调用作业',
+    value: 'API'
   }
 ])
 const rules = reactive<FormRules>({
