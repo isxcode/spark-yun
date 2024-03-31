@@ -143,6 +143,13 @@
                         @back="backToFlow"
                         @locationNode="locationNode"
                     ></spark-jar>
+                    <WorkApi
+                        v-if="showWorkItem && workConfig.workType === 'API'"
+                        :workItemConfig="workConfig"
+                        :workFlowData="workFlowData"
+                        @back="backToFlow"
+                        @locationNode="locationNode"
+                    ></WorkApi>
                     <WorkItem
                         v-if="showWorkItem && workConfig.workType !== 'DATA_SYNC_JDBC' && workConfig.workType !== 'SPARK_JAR'"
                         :workItemConfig="workConfig"
@@ -175,8 +182,6 @@ import eventBus from '@/utils/eventBus'
 import zqyLog from '@/components/zqy-log/index.vue'
 import WorkItem from '../work-item/index.vue'
 import DataSync from '../data-sync/index.vue'
-import SparkJar from '../spark-jar/index.vue'
-
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Loading } from '@element-plus/icons-vue'
 import EllipsisTooltip from '@/components/ellipsis-tooltip/ellipsis-tooltip.vue'
