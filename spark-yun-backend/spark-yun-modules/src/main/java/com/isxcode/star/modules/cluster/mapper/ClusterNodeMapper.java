@@ -19,6 +19,7 @@ public interface ClusterNodeMapper {
 	@Mapping(target = "allStorage", expression = "java(0.0)")
 	@Mapping(target = "cpuPercent", expression = "java(0.0)")
 	@Mapping(target = "checkDateTime", expression = "java(java.time.LocalDateTime.now())")
+	@Mapping(target = "installSparkLocal", expression = "java(false)")
 	ClusterNodeEntity addClusterNodeReqToClusterNodeEntity(AddClusterNodeReq addClusterNodeReq);
 
 	@Mapping(target = "id", source = "clusterNodeEntity.id")
@@ -32,6 +33,7 @@ public interface ClusterNodeMapper {
 	@Mapping(target = "agentHomePath", source = "clusterNodeEntity.agentHomePath")
 	@Mapping(target = "agentPort", source = "clusterNodeEntity.agentPort")
 	@Mapping(target = "hadoopHomePath", source = "clusterNodeEntity.hadoopHomePath")
+	@Mapping(target = "installSparkLocal", expression = "java(false)")
 	ClusterNodeEntity updateNodeReqToNodeEntity(UpdateClusterNodeReq enoUpdateNodeReq,
 			ClusterNodeEntity clusterNodeEntity);
 
