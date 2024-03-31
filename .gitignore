@@ -59,3 +59,7 @@ spark-yun-vip
 
 # 日志不提交
 logs
+
+# prql二进制文件
+spark-yun-backend/spark-yun-main/src/main/resources/prql_java.dylib
+spark-yun-backend/spark-yun-main/src/main/resources/prql_java-linux64.so
