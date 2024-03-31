@@ -5,6 +5,22 @@
       <el-button type="primary" @click="addData">
         添加数据源
       </el-button>
+      <div class="zqy-tenant__select">
+        <el-select 
+          v-model="datasourceType" 
+          placeholder="请选择数据源类型" 
+          filterable
+          clearable
+          @change="handleChnage"
+        >
+          <el-option
+            v-for="item in datasourceTypeList"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          ></el-option>
+        </el-select>
+      </div>
       <div class="zqy-seach">
         <el-input v-model="keyword" placeholder="请输入名称/类型/连接信息/用户名/备注 回车进行搜索" :maxlength="200" clearable
           @input="inputEvent" @keyup.enter="initData(false)" />
@@ -53,7 +69,7 @@ import LoadingPage from '@/components/loading/index.vue'
 import AddModal from './add-modal/index.vue'
 import ShowLog from '../computer-group-v1/computer-pointer/show-log/index.vue'
 
-import { BreadCrumbList, TableConfig, FormData } from './datasource.config'
+import { BreadCrumbList, TableConfig, FormData, typeList } from './datasource.config'
 import { GetDatasourceList, AddDatasourceData, UpdateDatasourceData, CheckDatasourceData, DeleteDatasourceData } from '@/services/datasource.service'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Loading } from '@element-plus/icons-vue'
@@ -63,6 +79,8 @@ const loading = ref(false)
 const networkError = ref(false)
 const addModalRef = ref(null)
 const showLogRef = ref(null)
+const datasourceType = ref('')
+const datasourceTypeList = ref(typeList)
 
 const breadCrumbList = reactive(BreadCrumbList)
 const tableConfig: any = reactive(TableConfig)
@@ -73,7 +91,8 @@ function initData(tableLoading?: boolean) {
   GetDatasourceList({
     page: tableConfig.pagination.currentPage - 1,
     pageSize: tableConfig.pagination.pageSize,
-    searchKeyWord: keyword.value
+    searchKeyWord: keyword.value,
+    datasourceType: datasourceType.value
   })
     .then((res: any) => {
       tableConfig.tableData = res.data.content
@@ -176,6 +195,10 @@ function handleSizeChange(e: number) {
 function handleCurrentChange(e: number) {
   tableConfig.pagination.currentPage = e
   initData(true)
+}
+
+function handleChnage() {
+  initData()
 }
 
 onMounted(() => {
