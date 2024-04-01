@@ -49,8 +49,7 @@ public class DatasourceController {
 	@SuccessResponse("查询数据源成功")
 	public Page<PageDatasourceRes> pageDatasource(@Valid @RequestBody PageDatasourceReq pageDatasourceReq) {
 
-		Page<PageDatasourceRes> pageDatasourceRes = datasourceBizService.pageDatasource(pageDatasourceReq);
-		return pageDatasourceRes;
+		return datasourceBizService.pageDatasource(pageDatasourceReq);
 	}
 
 	@Secured({RoleType.TENANT_ADMIN})
