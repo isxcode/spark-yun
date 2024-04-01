@@ -143,6 +143,13 @@
                         @back="backToFlow"
                         @locationNode="locationNode"
                     ></spark-jar>
+                    <WorkApi
+                        v-if="showWorkItem && workConfig.workType === 'API'"
+                        :workItemConfig="workConfig"
+                        :workFlowData="workFlowData"
+                        @back="backToFlow"
+                        @locationNode="locationNode"
+                    ></WorkApi>
                     <WorkItem
                         v-if="showWorkItem && workConfig.workType !== 'DATA_SYNC_JDBC' && workConfig.workType !== 'SPARK_JAR'"
                         :workItemConfig="workConfig"
@@ -175,8 +182,6 @@ import eventBus from '@/utils/eventBus'
 import zqyLog from '@/components/zqy-log/index.vue'
 import WorkItem from '../work-item/index.vue'
 import DataSync from '../data-sync/index.vue'
-import SparkJar from '../spark-jar/index.vue'
-
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Loading } from '@element-plus/icons-vue'
 import EllipsisTooltip from '@/components/ellipsis-tooltip/ellipsis-tooltip.vue'
@@ -255,6 +260,10 @@ const typeList = reactive([
   {
     label: '自定义作业',
     value: 'SPARK_JAR'
+  },
+  {
+    label: '接口调用作业',
+    value: 'API'
   }
 ])
 
@@ -435,7 +444,7 @@ function addData() {
                     ElMessage.success(res.msg)
                     initData()
                     resolve()
-                    
+
                     showWorkConfig({
                         id: res.data.workId,
                         name: res.data.name,
@@ -794,7 +803,7 @@ onUnmounted(() => {
                     box-sizing: border-box;
                     position: relative;
                     height: 100%;
-        
+
                     .list-item {
                         height: 52px;
                         // height: getCssVar('menu', 'item-height');
@@ -808,12 +817,12 @@ onUnmounted(() => {
                         position: relative;
                         display: flex;
                         align-items: center;
-        
+
                         // .item-left {
                         //     font-size: 16px;
                         //     margin-left: 12px;
                         // }
-        
+
                         .item-right {
                             margin-left: 8px;
                             display: flex;
@@ -833,25 +842,25 @@ onUnmounted(() => {
                                 }
                             }
                         }
-        
+
                         &.choose-item {
                             background-color: getCssVar('color', 'primary', 'light-8');
                         }
-        
+
                         &:hover {
                             background-color: getCssVar('color', 'primary', 'light-8');
-        
+
                             .el-dropdown {
                                 display: block;
                             }
                         }
-        
+
                         .el-dropdown {
                             position: absolute;
                             right: 8px;
                             top: 20px;
                             // display: none;
-        
+
                             .option-more {
                                 font-size: 14px;
                                 transform: rotate(90deg);

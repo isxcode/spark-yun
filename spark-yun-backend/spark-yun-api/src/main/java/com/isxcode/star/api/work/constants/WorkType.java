@@ -42,4 +42,6 @@ public interface WorkType {
 	 * spark容器sql.
 	 */
 	String SPARK_CONTAINER_SQL = "SPARK_CONTAINER_SQL";
+
+  String API = "API";
 }

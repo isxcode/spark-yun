@@ -1,5 +1,6 @@
 package com.isxcode.star.modules.work.run;
 
+import com.isxcode.star.api.work.pojos.dto.ApiWorkConfig;
 import com.isxcode.star.api.work.pojos.dto.ClusterConfig;
 import com.isxcode.star.api.work.pojos.dto.JarJobConfig;
 import com.isxcode.star.api.work.pojos.dto.SyncRule;
@@ -35,6 +36,11 @@ public class WorkRunContext {
 	 * 同步作业信息.
 	 */
 	private SyncWorkConfig syncWorkConfig;
+
+	/**
+	 * 接口调用作业信息.
+	 */
+	private ApiWorkConfig apiWorkConfig;
 
 	/**
 	 * 同步规则.

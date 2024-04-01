@@ -200,6 +200,10 @@ const typeList = reactive([
   {
     label: '自定义作业',
     value: 'SPARK_JAR'
+  },
+  {
+    label: '接口调用作业',
+    value: 'API'
   }
 ])
 const rules = reactive<FormRules>({
@@ -269,7 +273,7 @@ function showModal(cb: () => void, data: any): void {
     formData.clusterNodeId = ''
     formData.datasourceId = ''
     formData.enableHive = false
-    
+
     formData.id = ''
     modelConfig.title = '添加作业'
     renderSense.value = 'new'

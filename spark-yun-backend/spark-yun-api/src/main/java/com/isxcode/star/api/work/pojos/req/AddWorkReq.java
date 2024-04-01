@@ -14,9 +14,10 @@ public class AddWorkReq {
 	private String name;
 
 	@Schema(title = "作业类型", example = "类型编码：" + "SPARK_SQL： spark sql执行作业" + "EXE_JDBC： jdbc执行作业"
-			+ "QUERY_JDBC： jdbc查询作业" + "DATA_SYNC_JDBC： 数据同步作业" + "BASH： bash脚本作业" + "PYTHON： python脚本作业")
+			+ "QUERY_JDBC： jdbc查询作业" + "DATA_SYNC_JDBC： 数据同步作业" + "BASH： bash脚本作业" + "PYTHON： python脚本作业"
+			+ "API： 接口调用作业")
 	@NotEmpty(message = "作业类型不能为空")
-	@Pattern(regexp = "^(SPARK_SQL|EXE_JDBC|QUERY_JDBC|DATA_SYNC_JDBC|BASH|PYTHON|SPARK_JAR|SPARK_CONTAINER_SQL)$", message = "作业类型不支持")
+	@Pattern(regexp = "^(SPARK_SQL|EXE_JDBC|QUERY_JDBC|DATA_SYNC_JDBC|BASH|PYTHON|SPARK_JAR|SPARK_CONTAINER_SQL|API)$", message = "作业类型不支持")
 	private String workType;
 
 	@Schema(title = "工作流唯一id", example = "sy_48c4304593ea4897b6af999e48685896")

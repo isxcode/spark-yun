@@ -46,6 +46,8 @@ public class WorkConfigEntity {
 
 	private String syncWorkConfig;
 
+	private String ApiWorkConfig;
+
 	private String syncRule;
 
 	private String clusterConfig;

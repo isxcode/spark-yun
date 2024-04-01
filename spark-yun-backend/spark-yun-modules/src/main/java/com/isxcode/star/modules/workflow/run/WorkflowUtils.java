@@ -6,6 +6,7 @@ import static com.isxcode.star.common.config.CommonConfig.USER_ID;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.TypeReference;
+import com.isxcode.star.api.work.pojos.dto.ApiWorkConfig;
 import com.isxcode.star.api.work.pojos.dto.ClusterConfig;
 import com.isxcode.star.api.work.pojos.dto.JarJobConfig;
 import com.isxcode.star.api.work.pojos.dto.SyncRule;
@@ -147,6 +148,7 @@ public class WorkflowUtils {
 				.jarJobConfig(JSON.parseObject(workConfig.getJarJobConfig(), JarJobConfig.class))
 				.funcConfig(JSON.parseArray(workConfig.getFuncConfig(), String.class))
 				.libConfig(JSON.parseArray(workConfig.getLibConfig(), String.class)).workId(work.getId())
+        .apiWorkConfig(JSON.parseObject(workConfig.getApiWorkConfig(), ApiWorkConfig.class))
 				.containerId(workConfig.getContainerId()).workName(work.getName()).userId(USER_ID.get()).build();
 	}
 
@@ -162,6 +164,7 @@ public class WorkflowUtils {
 				.funcConfig(JSON.parseArray(workVersion.getFuncConfig(), String.class))
 				.libConfig(JSON.parseArray(workVersion.getLibConfig(), String.class))
 				.containerId(workVersion.getContainerId()).workType(workVersion.getWorkType())
+        .apiWorkConfig(JSON.parseObject(workVersion.getApiWorkConfig(), ApiWorkConfig.class))
 				.workName(event.getWorkName()).workId(workVersion.getId()).build();
 	}
 
