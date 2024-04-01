@@ -3,7 +3,7 @@
     <el-scrollbar>
         <div class="work-flow-config">
           <!-- 数据源配置 -->
-          <div class="config-item" v-if="['QUERY_JDBC', 'EXE_JDBC'].includes(workItemConfig.workType)">
+          <div class="config-item" v-if="['QUERY_JDBC', 'PRQL', 'EXE_JDBC'].includes(workItemConfig.workType)">
             <div class="item-title">数据源配置</div>
             <el-form
               ref="dataSourceConfig"
@@ -430,7 +430,7 @@ function showModal(data?: any) {
     cronConfig.setMode = 'SIMPLE'
     syncRule.setMode = 'SIMPLE'
   } else {
-    if (!['QUERY_JDBC', 'EXE_JDBC'].includes(data.workType)) {
+    if (!['QUERY_JDBC', 'PRQL', 'EXE_JDBC'].includes(data.workType)) {
       // 获取集群参数
       getClusterList()
     }
@@ -446,7 +446,7 @@ function getConfigDetailData() {
   GetWorkItemConfig({
       workId: workItemConfig.value.id
   }).then((res: any) => {
-    if (['QUERY_JDBC', 'EXE_JDBC'].includes(workItemConfig.value.workType)) {
+    if (['QUERY_JDBC', 'PRQL', 'EXE_JDBC'].includes(workItemConfig.value.workType)) {
       dataSourceForm.datasourceId = res.data.datasourceId
     }
     if (res.data.clusterConfig) {
