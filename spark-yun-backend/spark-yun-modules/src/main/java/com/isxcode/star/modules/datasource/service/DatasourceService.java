@@ -14,6 +14,7 @@ import com.isxcode.star.modules.datasource.repository.DatasourceRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.calcite.sql.parser.SqlParseException;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.apache.calcite.sql.SqlKind;
 import org.apache.calcite.sql.parser.SqlParser;
@@ -334,6 +335,22 @@ public class DatasourceService {
 			return true;
 		} catch (SqlParseException e) {
 			return false;
+		}
+	}
+
+	public String genDefaultSql(String datasourceId) {
+
+		if (StringUtils.isEmpty(datasourceId)) {
+			return "show databases";
+		}
+
+		DatasourceEntity datasource = getDatasource(datasourceId);
+
+		switch (datasource.getDbType()) {
+			case DatasourceType.HANA_SAP :
+				return "SELECT TABLE_NAME FROM SYS.TABLES;";
+			default :
+				return "show databases";
 		}
 	}
 }

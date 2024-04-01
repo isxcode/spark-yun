@@ -51,7 +51,7 @@ public class WorkConfigService {
 			case WorkType.QUERY_JDBC_SQL :
 			case WorkType.EXECUTE_JDBC_SQL :
 			case WorkType.SPARK_CONTAINER_SQL :
-				workConfig.setScript("show databases");
+				workConfig.setScript(datasourceService.genDefaultSql(workConfig.getDatasourceId()));
 				break;
 			case WorkType.BASH :
 				workConfig.setScript("#!/bin/bash \n" + "\n" + "pwd");
