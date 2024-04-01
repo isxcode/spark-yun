@@ -262,6 +262,7 @@ function tabChangeEvent(e: string) {
   activeName.value = e
   currentTab.value = markRaw(lookup[e])
   nextTick(() => {
+    changeCollapseUp()
     containerInstanceRef.value.initData(instanceId.value, true)
   })
 }
