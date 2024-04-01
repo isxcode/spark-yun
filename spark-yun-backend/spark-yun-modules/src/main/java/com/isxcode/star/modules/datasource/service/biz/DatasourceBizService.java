@@ -112,9 +112,9 @@ public class DatasourceBizService {
 
 	public Page<PageDatasourceRes> pageDatasource(PageDatasourceReq dasQueryDatasourceReq) {
 
-    if (Strings.isEmpty(dasQueryDatasourceReq.getDatasourceType())) {
-      dasQueryDatasourceReq.setDatasourceType(null);
-    }
+		if (Strings.isEmpty(dasQueryDatasourceReq.getDatasourceType())) {
+			dasQueryDatasourceReq.setDatasourceType(null);
+		}
 
 		Page<DatasourceEntity> datasourceEntityPage = datasourceRepository.searchAll(
 				dasQueryDatasourceReq.getSearchKeyWord(), dasQueryDatasourceReq.getDatasourceType(),
