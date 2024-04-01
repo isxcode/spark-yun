@@ -3,6 +3,7 @@ package com.isxcode.star.api.work.pojos.dto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
+import java.util.List;
 import java.util.Map;
 
 @Data
@@ -18,10 +19,10 @@ public class ApiWorkConfig {
 	private String requestType;
 
 	@Schema(title = "接口请求参数")
-	private Map<String, String> requestParam;
+	private List<ApiWorkValueDto> requestParam;
 
-	@Schema(title = "接口请求头")
-	private Map<String, String> requestHeader;
+  @Schema(title = "接口请求头")
+  private List<ApiWorkValueDto> requestHeader;
 
 	@Schema(title = "接口请求体")
 	private String requestBody;
