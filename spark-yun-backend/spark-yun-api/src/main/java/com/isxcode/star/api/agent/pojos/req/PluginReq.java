@@ -36,5 +36,5 @@ public class PluginReq {
 
 	private int containerPort;
 
-  private Map<String, Object> kafkaConfig;
+  private KafkaConfig kafkaConfig;
 }
