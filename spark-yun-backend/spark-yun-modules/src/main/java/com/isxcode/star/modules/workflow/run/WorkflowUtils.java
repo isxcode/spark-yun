@@ -6,6 +6,7 @@ import static com.isxcode.star.common.config.CommonConfig.USER_ID;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.TypeReference;
+import com.isxcode.star.api.work.pojos.dto.ApiWorkConfig;
 import com.isxcode.star.api.work.pojos.dto.ClusterConfig;
 import com.isxcode.star.api.work.pojos.dto.JarJobConfig;
 import com.isxcode.star.api.work.pojos.dto.SyncRule;
@@ -156,6 +157,7 @@ public class WorkflowUtils {
 		return WorkRunContext.builder().datasourceId(workVersion.getDatasourceId()).script(workVersion.getScript())
 				.instanceId(instanceId).tenantId(TENANT_ID.get()).userId(USER_ID.get())
 				.syncWorkConfig(JSON.parseObject(workVersion.getSyncWorkConfig(), SyncWorkConfig.class))
+        .apiWorkConfig(JSON.parseObject(workVersion.getApiWorkConfig(), ApiWorkConfig.class))
 				.syncRule(JSON.parseObject(workVersion.getSyncRule(), SyncRule.class))
 				.clusterConfig(JSON.parseObject(workVersion.getClusterConfig(), ClusterConfig.class))
 				.jarJobConfig(JSON.parseObject(workVersion.getJarJobConfig(), JarJobConfig.class))

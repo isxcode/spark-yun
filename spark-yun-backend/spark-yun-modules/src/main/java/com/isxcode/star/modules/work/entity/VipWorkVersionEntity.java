@@ -50,6 +50,8 @@ public class VipWorkVersionEntity {
 
 	private String syncWorkConfig;
 
+  private String apiWorkConfig;
+
 	private String syncRule;
 
 	private String containerId;

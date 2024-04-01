@@ -437,6 +437,10 @@ public class WorkBizService {
 			getWorkRes.setSyncWorkConfig(JSON.parseObject(workConfig.getSyncWorkConfig(), SyncWorkConfig.class));
 		}
 
+    if (!Strings.isEmpty(workConfig.getApiWorkConfig())) {
+      getWorkRes.setApiWorkConfig(JSON.parseObject(workConfig.getApiWorkConfig(), ApiWorkConfig.class));
+    }
+
 		if (!Strings.isEmpty(workConfig.getClusterConfig())) {
 			getWorkRes.setClusterConfig(JSON.parseObject(workConfig.getClusterConfig(), ClusterConfig.class));
 			getWorkRes.getClusterConfig()
