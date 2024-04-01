@@ -59,3 +59,7 @@ spark-yun-vip
 
 # 日志不提交
 logs
+
+# .DS_Store不提交
+spark-yun-backend/spark-yun-main/src/.DS_Store
+spark-yun-backend/spark-yun-main/src/main/.DS_Store
