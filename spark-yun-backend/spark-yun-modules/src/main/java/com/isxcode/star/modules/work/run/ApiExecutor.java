@@ -14,6 +14,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 @Slf4j
@@ -60,12 +62,19 @@ public class ApiExecutor extends WorkExecutor {
 		Object response = null;
 		try {
 
-			if (ApiType.GET.equals(apiWorkConfig.getRequestType())) {
-				response = HttpUtils.doGet(apiWorkConfig.getRequestUrl(), apiWorkConfig.getRequestParam(),
-						apiWorkConfig.getRequestHeader(), Object.class);
+      // 转换一下结构
+      Map<String, String> requestParam = new HashMap<>();
+      Map<String, String> requestHeader = new HashMap<>();
+
+      apiWorkConfig.getRequestParam().forEach(e -> requestParam.put(e.getLabel(), e.getValue()));
+      apiWorkConfig.getRequestHeader().forEach(e -> requestHeader.put(e.getLabel(), e.getValue()));
+
+      if (ApiType.GET.equals(apiWorkConfig.getRequestType())) {
+				response = HttpUtils.doGet(apiWorkConfig.getRequestUrl(), requestParam,
+						requestHeader, Object.class);
 			}
 			if (ApiType.POST.equals(apiWorkConfig.getRequestType())) {
-				response = HttpUtils.doPost(apiWorkConfig.getRequestUrl(), apiWorkConfig.getRequestHeader(),
+				response = HttpUtils.doPost(apiWorkConfig.getRequestUrl(), requestHeader,
 						JSON.parseObject(apiWorkConfig.getRequestBody()), Object.class);
 			}
 
