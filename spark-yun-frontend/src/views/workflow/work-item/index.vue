@@ -212,7 +212,7 @@ function initData(id?: string, tableLoading?: boolean) {
                 item.hide = status === 'FAIL' ? true : false
               }
             })
-          } else if (['QUERY_JDBC', 'SPARK_CONTAINER_SQL'].includes(workConfig.workType)) {
+          } else if (['QUERY_JDBC', 'SPARK_CONTAINER_SQL','PRQL'].includes(workConfig.workType)) {
             tabList.forEach((item: any) => {
               if (['ReturnData'].includes(item.code)) {
                 item.hide = status === 'FAIL' ? true : false
@@ -300,7 +300,7 @@ function runWorkData() {
           instanceId.value = res.data.instanceId
           ElMessage.success(res.msg)
           initData(res.data.instanceId, true)
-    
+
           // 点击运行，默认跳转到提交日志tab
           activeName.value = 'PublishLog'
           currentTab.value = markRaw(PublishLog)
@@ -324,7 +324,7 @@ function runWorkData() {
         instanceId.value = res.data.instanceId
         ElMessage.success(res.msg)
         initData(res.data.instanceId, true)
-  
+
         // 点击运行，默认跳转到提交日志tab
         activeName.value = 'PublishLog'
         currentTab.value = markRaw(PublishLog)

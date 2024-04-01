@@ -78,7 +78,7 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="数据源" prop="datasourceId" v-if="['EXE_JDBC', 'QUERY_JDBC'].includes(formData.workType)">
+        <el-form-item label="数据源" prop="datasourceId" v-if="['EXE_JDBC', 'QUERY_JDBC', 'PRQL'].includes(formData.workType)">
           <el-select
             v-model="formData.datasourceId"
             placeholder="请选择"
@@ -176,6 +176,10 @@ const typeList = reactive([
   {
     label: 'Jdbc查询作业',
     value: 'QUERY_JDBC'
+  },
+  {
+    label: 'Prql查询作业',
+    value: 'PRQL'
   },
   {
     label: 'SparkSql查询作业',
