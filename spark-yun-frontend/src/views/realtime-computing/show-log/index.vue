@@ -70,7 +70,7 @@ function getLogData(id: string, type?: string) {
         GetRealSubRunningLog({
             id: id
         }).then((res: any) => {
-            status.value = ['FAIL', 'RUNNING'].includes(res.data.status) ? true : false
+            status.value = ['FAIL', 'STOP'].includes(res.data.status) ? true : false
             logMsg.value = res.data.runningLog
             if (position.value) {
                 nextTick(() => {
@@ -87,7 +87,7 @@ function getLogData(id: string, type?: string) {
         GetRealSubLog({
             id: id
         }).then((res: any) => {
-            status.value = ['FAIL', 'RUNNING'].includes(res.data.status) ? true : false
+            status.value = ['FAIL', 'STOP'].includes(res.data.status) ? true : false
             logMsg.value = res.data.submitLog
             if (position.value) {
                 nextTick(() => {
