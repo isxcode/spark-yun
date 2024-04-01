@@ -102,7 +102,7 @@
                                 </div>
                             </div>
                         </el-form-item>
-                        <el-form-item label="请求体" prop="requestBody" :class="{ 'show-screen__full': reqBodyFullStatus }" v-if="apiWorkConfig.requestType === 'POST'">
+                        <el-form-item label="请求体" :class="{ 'show-screen__full': reqBodyFullStatus }" v-if="apiWorkConfig.requestType === 'POST'">
                             <span class="format-json" @click="formatterJsonEvent(apiWorkConfig, 'requestBody')">格式化JSON</span>
                             <el-icon class="modal-full-screen" @click="fullScreenEvent"><FullScreen v-if="!reqBodyFullStatus" /><Close v-else /></el-icon>
                             <code-mirror v-model="apiWorkConfig.requestBody" basic :lang="jsonLang"/>
@@ -214,8 +214,7 @@ const rules = reactive<FormRules>({
     requestHeader: [
         { required: true, message: '请输入接口地址', trigger: ['blur', 'change'] },
         { validator: optionsRule, trigger: ['blur', 'change'] }
-    ],
-    requestBody: [{ required: true, message: '请输入请求体', trigger: ['blur', 'change'] }]
+    ]
 })
 
 const tabList = reactive([
