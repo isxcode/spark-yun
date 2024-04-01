@@ -3,6 +3,7 @@ package com.isxcode.star.modules.datasource.service;
 import com.isxcode.star.api.datasource.constants.ColumnType;
 import com.isxcode.star.api.datasource.constants.DatasourceDriver;
 import com.isxcode.star.api.datasource.constants.DatasourceType;
+import com.isxcode.star.api.datasource.pojos.dto.KafkaConfig;
 import com.isxcode.star.api.datasource.pojos.dto.SecurityColumnDto;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.star.backend.api.base.properties.IsxAppProperties;
@@ -15,6 +16,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.calcite.sql.parser.SqlParseException;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.kafka.clients.admin.AdminClient;
+import org.apache.kafka.clients.admin.AdminClientConfig;
+import org.apache.kafka.clients.admin.ListTopicsResult;
 import org.springframework.stereotype.Service;
 import org.apache.calcite.sql.SqlKind;
 import org.apache.calcite.sql.parser.SqlParser;
@@ -26,10 +30,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutionException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -351,6 +354,40 @@ public class DatasourceService {
 				return "SELECT TABLE_NAME FROM SYS.TABLES;";
 			default :
 				return "show databases";
+		}
+	}
+
+  public void checkKafka(KafkaConfig kafkaConfig) throws ExecutionException, InterruptedException {
+
+		Properties properties = new Properties();
+		if (kafkaConfig.getProperties() != null) {
+			properties.putAll(kafkaConfig.getProperties());
+		}
+		properties.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaConfig.getBootstrapServers());
+		properties.put(AdminClientConfig.REQUEST_TIMEOUT_MS_CONFIG, 3000);
+		properties.put(AdminClientConfig.RETRIES_CONFIG, 0);
+		properties.put(AdminClientConfig.DEFAULT_API_TIMEOUT_MS_CONFIG, 3000);
+
+		try (AdminClient adminClient = AdminClient.create(properties)) {
+			ListTopicsResult listTopicsResult = adminClient.listTopics();
+			listTopicsResult.names().get();
+		}
+	}
+
+	public Set<String> queryKafkaTopic(KafkaConfig kafkaConfig) throws ExecutionException, InterruptedException {
+
+		Properties properties = new Properties();
+		if (kafkaConfig.getProperties() != null) {
+			properties.putAll(kafkaConfig.getProperties());
+		}
+		properties.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaConfig.getBootstrapServers());
+		properties.put(AdminClientConfig.REQUEST_TIMEOUT_MS_CONFIG, 3000);
+		properties.put(AdminClientConfig.RETRIES_CONFIG, 0);
+		properties.put(AdminClientConfig.DEFAULT_API_TIMEOUT_MS_CONFIG, 3000);
+
+		try (AdminClient adminClient = AdminClient.create(properties)) {
+			ListTopicsResult listTopicsResult = adminClient.listTopics();
+			return listTopicsResult.names().get();
 		}
 	}
 }

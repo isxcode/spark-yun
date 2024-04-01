@@ -2,6 +2,7 @@
 .idea/**
 */.idea/**
 !.idea/icon.svg
+!*/.idea/icon.svg
 
 # gradle缓存，不提交
 .gradle
@@ -60,6 +61,9 @@ spark-yun-vip
 
 # 日志不提交
 logs
+
+# spark本地运行日志不提交
+metastore_db
 
 # .DS_Store不提交
 */**/.DS_Store

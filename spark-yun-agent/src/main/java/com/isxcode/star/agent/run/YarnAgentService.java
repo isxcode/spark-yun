@@ -220,6 +220,46 @@ public class YarnAgentService implements AgentService {
 	}
 
 	@Override
+	public String getStdoutLog(String appId, String sparkHomePath) throws IOException {
+
+		String getLogCmdFormat = "yarn logs -applicationId %s";
+		Process process = Runtime.getRuntime().exec(String.format(getLogCmdFormat, appId));
+
+		InputStream inputStream = process.getInputStream();
+		BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
+
+		StringBuilder errLog = new StringBuilder();
+		String line;
+		while ((line = reader.readLine()) != null) {
+			errLog.append(line).append("\n");
+		}
+
+		try {
+			int exitCode = process.waitFor();
+			if (exitCode == 1) {
+				throw new IsxAppException(errLog.toString());
+			} else {
+				Pattern regex = Pattern.compile("LogType:stdout-start\\s*([\\s\\S]*?)\\s*End of LogType:stdout");
+				Matcher matcher = regex.matcher(errLog);
+				String log = "";
+				while (matcher.find()) {
+					String tmpLog = matcher.group();
+					if (tmpLog.contains("ERROR")) {
+						log = tmpLog;
+						break;
+					}
+					if (tmpLog.length() > log.length()) {
+						log = tmpLog;
+					}
+				}
+				return log;
+			}
+		} catch (InterruptedException e) {
+			throw new IsxAppException(e.getMessage());
+		}
+	}
+
+	@Override
 	public String getAppLog(String appId, String sparkHomePath) throws IOException {
 
 		String getLogCmdFormat = "yarn logs -applicationId %s";

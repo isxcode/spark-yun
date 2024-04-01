@@ -7,10 +7,13 @@ import com.isxcode.star.agent.run.YarnAgentService;
 import com.isxcode.star.api.agent.constants.AgentType;
 import com.isxcode.star.api.agent.pojos.req.*;
 import com.isxcode.star.api.agent.pojos.res.*;
+import com.isxcode.star.api.agent.pojos.req.YagExecuteWorkReq;
+import com.isxcode.star.api.agent.pojos.res.*;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.util.Arrays;
 import java.util.List;
 
 import lombok.RequiredArgsConstructor;
@@ -96,6 +99,39 @@ public class YunAgentBizService {
 		}
 
 		return YagGetLogRes.builder().log(appLog).build();
+	}
+
+	public YagGetStdoutLogRes getStdoutLog(String appId, String agentType, String sparkHomePath) throws IOException {
+
+		String appLog;
+		switch (agentType) {
+			case AgentType.YARN :
+				appLog = yarnAgentService.getStdoutLog(appId, sparkHomePath);
+				break;
+			case AgentType.K8S :
+				appLog = kubernetesAgentService.getStdoutLog(appId, sparkHomePath);
+				break;
+			case AgentType.StandAlone :
+				appLog = standaloneAgentService.getStdoutLog(appId, sparkHomePath);
+				break;
+			default :
+				throw new IsxAppException("agent类型不支持");
+		}
+
+		// 只截取后1行的日志
+		appLog = appLog.replace("End of LogType:stdout", "").replace("LogType:stdout-start", "");
+		String[] split = appLog.split("\n");
+		List<String> list = Arrays.asList(split);
+		if (list.size() > 1) {
+			list = list.subList(list.size() - 1, list.size());
+		} else {
+			list = list.subList(0, list.size());
+		}
+		StringBuilder stringBuilder = new StringBuilder();
+		for (String str : list) {
+			stringBuilder.append(str).append("\n");
+		}
+		return YagGetStdoutLogRes.builder().log(stringBuilder.toString()).build();
 	}
 
 	public YagGetDataRes getData(String appId, String agentType, String sparkHomePath) throws IOException {

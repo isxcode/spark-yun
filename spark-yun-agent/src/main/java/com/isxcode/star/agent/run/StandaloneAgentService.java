@@ -210,6 +210,40 @@ public class StandaloneAgentService implements AgentService {
 	}
 
 	@Override
+	public String getStdoutLog(String submissionId, String sparkHomePath) throws IOException {
+
+		Document doc = Jsoup.connect(getMasterWebUrl(sparkHomePath)).get();
+
+		Element completedDriversTable = doc.selectFirst(".aggregated-completedDrivers table");
+		Elements completedDriversRows = completedDriversTable.select("tbody tr");
+
+		Map<String, String> apps = new HashMap<>();
+
+		for (Element row : completedDriversRows) {
+			if (row.select("td:nth-child(3) a").first() != null) {
+				apps.put(row.selectFirst("td:nth-child(1)").text(),
+						row.select("td:nth-child(3) a").first().attr("href"));
+			}
+		}
+		String workUrl = apps.get(submissionId);
+
+		doc = Jsoup.connect(workUrl).get();
+		Elements rows = doc.select(".aggregated-finishedDrivers table tbody tr");
+		Map<String, String> driversMap = new HashMap<>();
+		for (Element row : rows) {
+			String driverId = row.select("td:nth-child(1)").text();
+			String stderrUrl = row.select("td:nth-child(7) a[href$=stdout]").attr("href");
+			driversMap.put(driverId, stderrUrl);
+		}
+
+		String errlogUrl = driversMap.get(submissionId);
+		doc = Jsoup.connect(errlogUrl).get();
+		Element preElement = doc.selectFirst("pre");
+
+		return preElement.text();
+	}
+
+	@Override
 	public String getAppData(String submissionId, String sparkHomePath) throws IOException {
 
 		Document doc = Jsoup.connect(getMasterWebUrl(sparkHomePath)).get();

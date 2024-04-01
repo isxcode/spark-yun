@@ -1,5 +1,6 @@
 package com.isxcode.star.api.work.pojos.dto;
 
+import com.isxcode.star.api.datasource.pojos.dto.KafkaConfig;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
@@ -46,6 +47,23 @@ public class SyncWorkConfig {
 
 	@Schema(title = "字段映射关系", example = "[{\"source\": \"installed_rank\",\"target\": \"installed_rank\"}]")
 	private List<SyncColumnMap> columnMap;
+
+	@Schema(title = "kafka解析方式", example = "JSON/CSV")
+	private String kafkaDataType;
+
+	@Schema(title = "csv分隔符", example = ";")
+	private String csvSplitBy;
+
+	@Schema(title = "json模版", example = "{}")
+	private String jsonTemplate;
+
+	@Schema(title = "json解析方式", example = "LIST/OBJECT")
+	private String jsonDataType;
+
+	@Schema(title = "根目录jsonPath", example = "$..")
+	private String rootJsonPath;
+
+	private KafkaConfig kafkaConfig;
 
 	private DatasourceConfig sourceDatabase;
 

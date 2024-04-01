@@ -2,8 +2,10 @@ package com.isxcode.star.api.work.pojos.dto;
 
 import lombok.Data;
 
+import java.io.Serializable;
+
 @Data
-public class SyncColumnInfo {
+public class SyncColumnInfo implements Serializable {
 
 	private String code;
 
@@ -11,4 +13,5 @@ public class SyncColumnInfo {
 
 	private String sql;
 
+	private String jsonPath;
 }

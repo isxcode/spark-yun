@@ -1,7 +1,10 @@
 package com.isxcode.star.api.datasource.pojos.req;
 
+import com.isxcode.star.api.datasource.pojos.dto.KafkaConfig;
 import io.swagger.v3.oas.annotations.media.Schema;
+
 import javax.validation.constraints.NotEmpty;
+
 import lombok.Data;
 
 @Data
@@ -20,7 +23,6 @@ public class UpdateDatasourceReq {
 	private String jdbcUrl;
 
 	@Schema(title = "数据源用户名", example = "root")
-	@NotEmpty(message = "用户名不能为空")
 	private String username;
 
 	@Schema(title = "数据源密码", example = "ispong123")
@@ -38,4 +40,7 @@ public class UpdateDatasourceReq {
 
 	@Schema(title = "数据源驱动", example = "sy_123")
 	private String driverId;
+
+	@Schema(title = "kafka数据源配置")
+	private KafkaConfig kafkaConfig;
 }

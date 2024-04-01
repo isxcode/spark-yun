@@ -14,4 +14,8 @@ dependencies {
 
   // calcite
   implementation "org.apache.calcite:calcite-core:${CALCITE_VERSION}"
+
+  // kafka-client
+  implementation group: 'org.apache.kafka', name: 'kafka-clients', version: '3.1.2'
+
 }

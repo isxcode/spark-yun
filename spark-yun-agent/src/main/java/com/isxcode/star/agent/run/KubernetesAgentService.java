@@ -230,6 +230,50 @@ public class KubernetesAgentService implements AgentService {
 	}
 
 	@Override
+	public String getStdoutLog(String appId, String sparkHomePath) throws IOException {
+
+		String getLogCmdFormat = "kubectl logs -f %s -n zhiqingyun-space";
+
+		Process process = Runtime.getRuntime().exec(String.format(getLogCmdFormat, appId));
+		InputStream inputStream = process.getInputStream();
+		InputStream errStream = process.getErrorStream();
+		BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
+		BufferedReader errReader = new BufferedReader(new InputStreamReader(errStream, StandardCharsets.UTF_8));
+
+		StringBuilder errLog = new StringBuilder();
+		String line;
+		while ((line = reader.readLine()) != null) {
+			errLog.append(line).append("\n");
+		}
+
+		if (Strings.isEmpty(errLog)) {
+			while ((line = errReader.readLine()) != null) {
+				errLog.append(line).append("\n");
+			}
+		}
+
+		try {
+			int exitCode = process.waitFor();
+			if (exitCode == 1) {
+				throw new IsxAppException(errLog.toString());
+			} else {
+				if (errLog.toString().contains("Error")) {
+					return errLog.toString();
+				}
+				Pattern regex = Pattern.compile("LogType:spark-yun\\s*([\\s\\S]*?)\\s*End of LogType:spark-yun");
+				Matcher matcher = regex.matcher(errLog);
+				String log = errLog.toString();
+				if (matcher.find()) {
+					log = log.replace(matcher.group(), "");
+				}
+				return log;
+			}
+		} catch (InterruptedException e) {
+			throw new IsxAppException(e.getMessage());
+		}
+	}
+
+	@Override
 	public String getAppData(String appId, String sparkHomePath) throws IOException {
 
 		String getLogCmdFormat = "kubectl logs -f %s -n zhiqingyun-space";

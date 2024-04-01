@@ -69,8 +69,19 @@
         />
       </el-form-item>
       <el-form-item
+        v-if="formData.dbType !== 'KAFKA'"
         label="用户名"
         prop="username"
+      >
+        <el-input
+          v-model="formData.username"
+          maxlength="200"
+          placeholder="请输入"
+        />
+      </el-form-item>
+      <el-form-item
+        v-if="formData.dbType === 'KAFKA'"
+        label="用户名"
       >
         <el-input
           v-model="formData.username"
@@ -165,6 +176,10 @@ const typeList = reactive([
   {
     label: 'Hive',
     value: 'HIVE',
+  },
+  {
+    label: 'Kafka',
+    value: 'KAFKA',
   },
   {
     label: 'HanaSap',

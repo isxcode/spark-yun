@@ -28,4 +28,6 @@ public interface DatasourceType {
 	String STAR_ROCKS = "STAR_ROCKS";
 
 	String DB2 = "DB2";
+
+	String KAFKA = "KAFKA";
 }
