@@ -4,7 +4,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.util.List;
-import java.util.Map;
 
 @Data
 public class ApiWorkConfig {
@@ -21,8 +20,8 @@ public class ApiWorkConfig {
 	@Schema(title = "接口请求参数")
 	private List<ApiWorkValueDto> requestParam;
 
-  @Schema(title = "接口请求头")
-  private List<ApiWorkValueDto> requestHeader;
+	@Schema(title = "接口请求头")
+	private List<ApiWorkValueDto> requestHeader;
 
 	@Schema(title = "接口请求体")
 	private String requestBody;

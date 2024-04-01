@@ -62,16 +62,15 @@ public class ApiExecutor extends WorkExecutor {
 		Object response = null;
 		try {
 
-      // 转换一下结构
-      Map<String, String> requestParam = new HashMap<>();
-      Map<String, String> requestHeader = new HashMap<>();
+			// 转换一下结构
+			Map<String, String> requestParam = new HashMap<>();
+			Map<String, String> requestHeader = new HashMap<>();
 
-      apiWorkConfig.getRequestParam().forEach(e -> requestParam.put(e.getLabel(), e.getValue()));
-      apiWorkConfig.getRequestHeader().forEach(e -> requestHeader.put(e.getLabel(), e.getValue()));
+			apiWorkConfig.getRequestParam().forEach(e -> requestParam.put(e.getLabel(), e.getValue()));
+			apiWorkConfig.getRequestHeader().forEach(e -> requestHeader.put(e.getLabel(), e.getValue()));
 
-      if (ApiType.GET.equals(apiWorkConfig.getRequestType())) {
-				response = HttpUtils.doGet(apiWorkConfig.getRequestUrl(), requestParam,
-						requestHeader, Object.class);
+			if (ApiType.GET.equals(apiWorkConfig.getRequestType())) {
+				response = HttpUtils.doGet(apiWorkConfig.getRequestUrl(), requestParam, requestHeader, Object.class);
 			}
 			if (ApiType.POST.equals(apiWorkConfig.getRequestType())) {
 				response = HttpUtils.doPost(apiWorkConfig.getRequestUrl(), requestHeader,
