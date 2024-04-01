@@ -224,6 +224,10 @@ const typeList = reactive([
     value: 'QUERY_JDBC'
   },
   {
+    label: 'Prql查询作业',
+    value: 'PRQL'
+  },
+  {
     label: 'SparkSql查询作业',
     value: 'SPARK_SQL'
   },
