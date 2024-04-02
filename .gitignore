@@ -69,3 +69,7 @@ metastore_db
 */**/.DS_Store
 spark-yun-backend/spark-yun-main/src/.DS_Store
 spark-yun-backend/spark-yun-main/src/main/.DS_Store
+
+# prql二进制文件
+spark-yun-backend/spark-yun-main/src/main/resources/libprql_java-osx-arm64.dylib
+spark-yun-backend/spark-yun-main/src/main/resources/libprql_java-linux64.so

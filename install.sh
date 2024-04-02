@@ -205,5 +205,30 @@ if [ ! -f "${JDBC_DIR}"/jcc-11.5.8.0.jar ]; then
   echo "jcc-11.5.8.0.jar驱动下载成功"
 fi
 
+# 创建项目依赖libs文件夹
+LIBS_DIR="${BASE_PATH}"/resources/libs
+
+if [ ! -d "${LIBS_DIR}" ]; then
+    mkdir -p "${LIBS_DIR}"
+fi
+
+# prql jar依赖文件
+if [ ! -f "${LIBS_DIR}"/prql-java-0.5.2.jar ]; then
+  wget https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/prql-java-0.5.2.jar -O ${LIBS_DIR}/prql-java-0.5.2.jar
+  echo "prql-java-0.5.2.jar下载成功"
+fi
+
+# prql 二进制文件(mac arm64)
+if [ ! -f "${BASE_PATH}"/spark-yun-backend/spark-yun-main/src/main/resources/libprql_java-osx-arm64.dylib ]; then
+  wget https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/libprql_java-osx-arm64.dylib -O ${BASE_PATH}/spark-yun-backend/spark-yun-main/src/main/resources/libprql_java-osx-arm64.dylib
+  echo "prql_java-osx-arm64.dylib下载成功"
+fi
+
+# prql 二进制文件(linux amd64)
+if [ ! -f "${BASE_PATH}"/spark-yun-backend/spark-yun-main/src/main/resources/libprql_java-linux64.so ]; then
+  wget https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/libprql_java-linux64.so -O ${BASE_PATH}/spark-yun-backend/spark-yun-main/src/main/resources/libprql_java-linux64.so
+  echo "prql_java-linux64.so下载成功"
+fi
+
 # 返回状态
 echo "【安装结果】：安装成功"

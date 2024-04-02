@@ -58,6 +58,8 @@ public class WorkConfigService {
 				break;
 			case WorkType.PYTHON :
 				workConfig.setScript("print('hello world')");
+			case WorkType.PRQL :
+				workConfig.setScript("from table_name");
 				break;
 		}
 	}
