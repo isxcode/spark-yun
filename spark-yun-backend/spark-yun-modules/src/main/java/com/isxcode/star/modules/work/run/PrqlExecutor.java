@@ -80,8 +80,8 @@ public class PrqlExecutor extends WorkExecutor {
 			logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始解析prql \n");
 			workInstance = updateInstance(workInstance, logBuilder);
 			// 解析sql
-			String sql = PrqlCompiler.toSql(workRunContext.getScript(),
-					translateDBType(datasourceEntityOptional.get().getDbType()), true, true);
+      String sql = PrqlCompiler.toSql(workRunContext.getScript().replace(";", ""),
+        translateDBType(datasourceEntityOptional.get().getDbType()), true, true);
 
 			String regex = "/\\*(?:.|[\\n\\r])*?\\*/|--.*";
 			String noCommentSql = sql.replaceAll(regex, "");

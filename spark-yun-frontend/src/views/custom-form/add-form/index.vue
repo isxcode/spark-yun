@@ -135,7 +135,7 @@ const formData = reactive<formDataParam>({
     name: '',
     // clusterId: '',
     datasourceId: '',
-    createMode: 'EXIST_TABLE',
+    createMode: 'AUTO_TABLE',
     mainTable: '',
     remark: '',
     id: ''

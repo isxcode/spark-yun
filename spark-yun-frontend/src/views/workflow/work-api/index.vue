@@ -208,12 +208,10 @@ const rules = reactive<FormRules>({
     requestUrl: [{ required: true, message: '请输入接口地址', trigger: ['blur', 'change'] }],
     requestType: [{ required: true, message: '请选择请求方式', trigger: ['blur', 'change'] }],
     requestParam: [
-        { required: true, message: '请输入接口地址', trigger: ['blur', 'change'] },
-        { validator: optionsRule, trigger: ['blur', 'change'] }
+
     ],
     requestHeader: [
-        { required: true, message: '请输入接口地址', trigger: ['blur', 'change'] },
-        { validator: optionsRule, trigger: ['blur', 'change'] }
+
     ]
 })
 
