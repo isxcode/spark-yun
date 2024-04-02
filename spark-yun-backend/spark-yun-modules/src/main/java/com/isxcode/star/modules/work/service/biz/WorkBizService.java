@@ -124,7 +124,7 @@ public class WorkBizService {
 		// 如果jdbc执行和jdbc查询 或者为prql查询，必填数据源
 		if (WorkType.EXECUTE_JDBC_SQL.equals(addWorkReq.getWorkType())
 				|| WorkType.QUERY_JDBC_SQL.equals(addWorkReq.getWorkType())
-				|| WorkType.PRQL.equalsIgnoreCase(addWorkReq.getWorkType())) {
+				|| WorkType.PRQL.equals(addWorkReq.getWorkType())) {
 			if (Strings.isEmpty(addWorkReq.getDatasourceId())) {
 				throw new IsxAppException("数据源是必填项");
 			}
@@ -142,7 +142,7 @@ public class WorkBizService {
 				|| WorkType.QUERY_JDBC_SQL.equals(addWorkReq.getWorkType())
 				|| WorkType.BASH.equals(addWorkReq.getWorkType()) || WorkType.PYTHON.equals(addWorkReq.getWorkType())
 				|| WorkType.SPARK_CONTAINER_SQL.equals(addWorkReq.getWorkType())
-        || WorkType.PRQL.equalsIgnoreCase(addWorkReq.getWorkType())) {
+        || WorkType.PRQL.equals(addWorkReq.getWorkType())) {
 			workConfigService.initWorkScript(workConfig, addWorkReq.getWorkType());
 		}
 
