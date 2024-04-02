@@ -28,6 +28,7 @@ spark-yun-vip/**
 
 # 资源文件
 resources/**
+spark-yun-backend/spark-yun-main/resources/**
 
 # 不提交spark-min
 spark-yun-dist/spark-min
