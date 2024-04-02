@@ -135,7 +135,7 @@ const formData = reactive<formDataParam>({
     name: '',
     // clusterId: '',
     datasourceId: '',
-    createMode: 'AUTO_TABLE',
+    createMode: 'EXIST_TABLE',
     mainTable: '',
     remark: '',
     id: ''
@@ -193,7 +193,7 @@ function showModal(cb: () => void, data?: formDataParam): void {
         formData.name = ''
         // formData.clusterId = ''
         formData.datasourceId = ''
-        formData.createMode = 'EXIST_TABLE'
+        formData.createMode = 'AUTO_TABLE'
         formData.mainTable = ''
         formData.remark = ''
         formData.id = ''
