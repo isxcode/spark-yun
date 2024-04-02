@@ -72,9 +72,9 @@ public class RunAgentInstallService {
 		String envCommand = "bash " + sparkYunProperties.getTmpDir() + File.separator
 				+ String.format("agent-%s.sh", clusterType) + " --home-path=" + engineNode.getAgentHomePath()
 				+ File.separator + PathConstants.AGENT_PATH_NAME + " --agent-port=" + engineNode.getAgentPort();
-    if (engineNode.getInstallSparkLocal() != null) {
-      envCommand = envCommand + " --spark-local=" + engineNode.getInstallSparkLocal();
-    }
+		if (engineNode.getInstallSparkLocal() != null) {
+			envCommand = envCommand + " --spark-local=" + engineNode.getInstallSparkLocal();
+		}
 		log.debug("执行远程命令:{}", envCommand);
 
 		// 获取返回结果
