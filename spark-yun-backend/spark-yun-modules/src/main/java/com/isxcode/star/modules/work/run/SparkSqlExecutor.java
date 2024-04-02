@@ -41,6 +41,7 @@ import com.isxcode.star.modules.workflow.repository.WorkflowInstanceRepository;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.SftpException;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -200,15 +201,17 @@ public class SparkSqlExecutor extends WorkExecutor {
 		}
 
 		// 解析db
-		DatasourceEntity datasource = datasourceService.getDatasource(workRunContext.getDatasourceId());
-		try {
-			String database = datasourceService.parseDbName(datasource.getJdbcUrl());
-			if (!Strings.isEmpty(database)) {
-				pluginReq.setDatabase(database);
-			}
-		} catch (IsxAppException e) {
-			throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + e.getMsg() + "\n");
-		}
+    if(StringUtils.isNotBlank(workRunContext.getDatasourceId())) {
+      DatasourceEntity datasource = datasourceService.getDatasource(workRunContext.getDatasourceId());
+      try {
+        String database = datasourceService.parseDbName(datasource.getJdbcUrl());
+        if (!Strings.isEmpty(database)) {
+          pluginReq.setDatabase(database);
+        }
+      } catch (IsxAppException e) {
+        throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + e.getMsg() + "\n");
+      }
+    }
 
 		// 开始构造executeReq
 		executeReq.setSparkSubmit(sparkSubmit);
