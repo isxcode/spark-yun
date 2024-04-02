@@ -41,7 +41,7 @@ export function useFrequency() {
     }
   ])
 
-  const currentFrequencyVal = ref('THIRTY_DAY')
+  const currentFrequencyVal = ref('THIRTY_MIN')
   const currentFrequency = computed<Frequency | undefined>(() => frequencyList.value.find(item => item.value === currentFrequencyVal.value))
 
   const onFrequencyChange = (command: string) => {

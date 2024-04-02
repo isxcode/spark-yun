@@ -27,7 +27,7 @@ import {
 import { LineChart, LineSeriesOption } from 'echarts/charts';
 import { UniversalTransition } from 'echarts/features';
 import { CanvasRenderer } from 'echarts/renderers';
-import { queryVmChartInfo } from '@/views/computer-group/services/computer-group';
+import { queryVmChartInfo } from '../services/computer-group';
 
 echarts.use([
   TooltipComponent,

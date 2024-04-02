@@ -37,7 +37,7 @@
 import { onMounted, ref } from 'vue'
 import VmStatus from './vm-status.vue';
 import PersonTag from './person-tag.vue';
-import { ComputeInstance, queryComputeInstances } from '@/views/computer-group/services/computer-group';
+import { ComputeInstance, queryComputeInstances } from '../services/computer-group';
 
 const keyWord = ref('')
 
@@ -48,13 +48,13 @@ const paginationInfo = ref<{
   pageSize: number
 }>({
   page: 1,
-  pageSize: 10
+  pageSize: 5
 })
 
 function queryVmlistData() {
   queryComputeInstances({
     ...paginationInfo.value,
-    searchKeyword: keyWord.value
+    SearchKeyword: keyWord.value
   }).then(({ data }) => {
     tableData.value = data.content
     total.value = data.size

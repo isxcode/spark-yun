@@ -51,7 +51,7 @@ import Breadcrumb from '@/layout/bread-crumb/index.vue'
 import BlockTable from '@/components/block-table/index.vue'
 import LoadingPage from '@/components/loading/index.vue'
 import AddModal from './add-modal/index.vue'
-import ShowLog from '../computer-group-v1/computer-pointer/show-log/index.vue'
+import ShowLog from '../computer-group/computer-pointer/show-log/index.vue'
 
 import { BreadCrumbList, TableConfig, FormData } from './datasource.config'
 import { GetDatasourceList, AddDatasourceData, UpdateDatasourceData, CheckDatasourceData, DeleteDatasourceData } from '@/services/datasource.service'
