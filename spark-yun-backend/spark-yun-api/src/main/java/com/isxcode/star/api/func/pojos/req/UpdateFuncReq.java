@@ -26,6 +26,10 @@ public class UpdateFuncReq {
 	@NotEmpty(message = "类名称不能为空")
 	private String className;
 
+	@Schema(title = "udf文件id", example = "sy_123")
+	@NotEmpty(message = "文件id不能为空")
+	private String fileId;
+
 	@Schema(title = "函数返回值类型", example = "值列表：String|int|double|boolean|date")
 	@NotEmpty(message = "返回值类型不能为空")
 	@Pattern(regexp = "^(string|int|long|double|boolean|date|timestamp)$", message = "类型不支持")

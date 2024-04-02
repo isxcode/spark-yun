@@ -126,21 +126,21 @@
 post模版:
 {
   "req":{
-    "custom_a":"$a.date",
-    "custom_b":"$b.datetime",
-    "custom_c":"$c.timestamp",
-    "custom_d":"$d.string",
-    "custom_e":"$e.boolean",
-    "custom_f":"$f.double",
-    "custom_g":"$g.int"
+    "custom_a":"${a.date}",
+    "custom_b":"${b.datetime}",
+    "custom_c":"${c.timestamp}",
+    "custom_d":"${d.string}",
+    "custom_e":"${e.boolean}",
+    "custom_f":"${f.double}",
+    "custom_g":"${g.int}"
   },
-  "custom_page":"$page.int",
-  "custom_pageSize":"$pageSize.int"
+  "custom_page":"${page.int}",
+  "custom_pageSize":"${pageSize.int}"
 }
 
 get模版:
-custom_a=$a.date&custom_b=$b.datetime&custom_c=$c.timestamp&custom_d=$d.string&custom_e=
-$e.boolean&custom_f=$f.double&custom_g=$g.int&custom_page=$page.int&custom_pageSize=$pageSize.int
+custom_a=${a.date}&custom_b=${b.datetime}&custom_c=${c.timestamp}&custom_d=${d.string}&custom_e=
+${e.boolean}&custom_f=${f.double}&custom_g=${g.int}&custom_page=${page.int}&custom_pageSize=${pageSize.int}
 </pre>
             </template>
             <el-icon style="left: 68px" class="tooltip-msg"><QuestionFilled /></el-icon>
@@ -158,7 +158,7 @@ $e.boolean&custom_f=$f.double&custom_g=$g.int&custom_page=$page.int&custom_pageS
 insert into demo (col1,col2,col3,col4,col5,col6,col7) values ('${a}','${b}','${c}','${d}','${e}','${f}','${g}')
 
 查询模版：
-select col1,col2,col3,col4,col5,col6,col7 from demo where col1 = '${a}' and col2= '${b}' 
+select col1,col2,col3,col4,col5,col6,col7 from demo where col1 = '${a}' and col2= '${b}'
 and col3= '${c}' and col4= '${d}' and col5= '${e}' and col6= '${f}' and col7= '${g}'</pre>
             </template>
             <el-icon style="left: 48px" class="tooltip-msg"><QuestionFilled /></el-icon>
@@ -174,25 +174,25 @@ and col3= '${c}' and col4= '${d}' and col5= '${e}' and col6= '${f}' and col7= '$
 
 单对象模版：
 {
-    "a": "$col1.date",
-    "b": "$col2.datetime",
-    "c": "$col3.timestamp",
-    "d": "$col4.string",
-    "e": "$col5.boolean",
-    "f": "$col6.double",
-    "g": "$col7.int"
+    "a": "${col1.date}",
+    "b": "${col2.datetime}",
+    "c": "${col3.timestamp}",
+    "d": "${col4.string}",
+    "e": "${col5.boolean}",
+    "f": "${col6.double}",
+    "g": "${col7.int}"
 }
 
 数组模版：
 [
     {
-        "a": "$col1.date",
-        "b": "$col2.datetime",
-        "c": "$col3.timestamp",
-        "d": "$col4.string",
-        "e": "$col5.boolean",
-        "f": "$col6.double",
-        "g": "$col7.int"
+        "a": "${col1.date}",
+        "b": "${col2.datetime}",
+        "c": "${col3.timestamp}",
+        "d": "${col4.string}",
+        "e": "${col5.boolean}",
+        "f": "${col6.double}",
+        "g": "${col7.int}"
   }
 ]
 
@@ -200,16 +200,16 @@ and col3= '${c}' and col4= '${d}' and col5= '${e}' and col6= '${f}' and col7= '$
 {
   "$data": [
     {
-      "a": "$col1.date",
-      "b": "$col2.datetime",
-      "c": "$col3.timestamp",
-      "d": "$col4.string",
-      "e": "$col5.boolean",
-      "f": "$col6.double",
-      "g": "$col7.int"
+      "a": "${col1.date}",
+      "b": "${col2.datetime}",
+      "c": "${col3.timestamp}",
+      "d": "${col4.string}",
+      "e": "${col5.boolean}",
+      "f": "${col6.double}",
+      "g": "${col7.int}"
     }
   ],
-  "count": "$count.long"
+  "count": "${count.long}"
 }</pre>
             </template>
             <el-icon style="left: 68px" class="tooltip-msg"><QuestionFilled /></el-icon>

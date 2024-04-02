@@ -143,7 +143,11 @@ public class SparkJarExecutor extends WorkExecutor {
 		logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始传输jar与其依赖  \n");
 
 		// 获取jar
-		FileEntity jarFile = fileService.getFile(jarJobConfig.getJarFileId());
+		Optional<FileEntity> fileEntityOptional = fileRepository.findById(jarJobConfig.getJarFileId());
+		if (!fileEntityOptional.isPresent()) {
+			throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "Jar文件异常 : 请检查文件是否存在 \n");
+		}
+		FileEntity jarFile = fileEntityOptional.get();
 
 		// 上传文件到制定节点路径 /file/id.jar
 		ScpFileEngineNodeDto scpFileEngineNodeDto = clusterNodeMapper

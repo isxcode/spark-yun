@@ -97,6 +97,8 @@ public class YarnAgentService implements AgentService {
 							: JSON.toJSONString(yagExecuteWorkReq.getPluginReq()).getBytes()));
 		}
 
+		// 调整spark.yarn.submit.waitAppCompletion，减少资源消耗
+		sparkLauncher.setConf("spark.yarn.submit.waitAppCompletion", "false");
 		yagExecuteWorkReq.getSparkSubmit().getConf().forEach(sparkLauncher::setConf);
 
 		return sparkLauncher;

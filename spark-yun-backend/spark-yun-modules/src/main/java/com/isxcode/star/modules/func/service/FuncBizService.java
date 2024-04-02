@@ -6,7 +6,8 @@ import com.isxcode.star.api.func.pojos.req.PageFuncReq;
 import com.isxcode.star.api.func.pojos.req.UpdateFuncReq;
 import com.isxcode.star.api.func.pojos.res.PageFuncRes;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
-import com.isxcode.star.modules.file.service.FileService;
+import com.isxcode.star.modules.file.entity.FileEntity;
+import com.isxcode.star.modules.file.repository.FileRepository;
 import com.isxcode.star.modules.func.entity.FuncEntity;
 import com.isxcode.star.modules.func.mapper.FuncMapper;
 import com.isxcode.star.modules.func.repository.FuncRepository;
@@ -29,7 +30,7 @@ public class FuncBizService {
 
 	private final FuncMapper funcMapper;
 
-	private final FileService fileService;
+	private final FileRepository fileRepository;
 
 	public void addFunc(AddFuncReq addFuncReq) {
 
@@ -66,7 +67,12 @@ public class FuncBizService {
 
 		Page<PageFuncRes> result = funcPage.map(funcMapper::funcEntityToPageFuncRes);
 		result.getContent().forEach(e -> {
-			e.setFileName(fileService.getFile(e.getFileId()).getFileName());
+			Optional<FileEntity> fileEntityOptional = fileRepository.findById(e.getFileId());
+			if (fileEntityOptional.isPresent()) {
+				e.setFileName(fileEntityOptional.get().getFileName());
+			} else {
+				e.setFileName("文件不存在");
+			}
 		});
 
 		return result;
