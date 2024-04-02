@@ -23,7 +23,7 @@ if [ -e "${home_path}/zhiqingyun-agent.pid" ]; then
 fi
 
 # 停止spark-local
-nohup bash ${home_path}/zhiqingyun-agent/spark-min/sbin/stop-all.sh
+nohup bash ${home_path}/spark-min/sbin/stop-all.sh
 
 # 删除安装目录
 rm -rf ${home_path}

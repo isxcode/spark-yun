@@ -51,7 +51,7 @@ echo $! >${home_path}/zhiqingyun-agent.pid
 
 # 运行spark-local
 if [ ${spark_local} = "true" ]; then
-  nohup bash ${home_path}/zhiqingyun-agent/spark-min/sbin/start-all.sh
+  nohup bash ${home_path}/spark-min/sbin/start-all.sh
 fi
 
 # 返回结果
