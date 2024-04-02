@@ -62,7 +62,7 @@ public class WorkConfigService {
 			case WorkType.PYTHON :
 				workConfig.setScript("print('hello world')");
 			case WorkType.PRQL :
-				workConfig.setScript("from employees\n" + "select {id, first_name, age}\n" + "sort age\n" + "take 10");
+				workConfig.setScript("from table_name");
 				break;
 		}
 	}

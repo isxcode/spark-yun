@@ -188,14 +188,14 @@ if [ ! -f "${LIBS_DIR}"/prql-java-0.5.2.jar ]; then
 fi
 
 # prql 二进制文件(mac arm64)
-if [ ! -f "${BASE_PATH}"/spark-yun-backend/spark-yun-main/src/main/resources/prql_java-osx-arm64.dylib ]; then
-  wget https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/prql_java-osx-arm64.dylib -O ${BASE_PATH}/spark-yun-backend/spark-yun-main/src/main/resources/prql_java.dylib
+if [ ! -f "${BASE_PATH}"/spark-yun-backend/spark-yun-main/src/main/resources/libprql_java-osx-arm64.dylib ]; then
+  wget https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/libprql_java-osx-arm64.dylib -O ${BASE_PATH}/spark-yun-backend/spark-yun-main/src/main/resources/libprql_java-osx-arm64.dylib
   echo "prql_java-osx-arm64.dylib下载成功"
 fi
 
 # prql 二进制文件(mac arm64)
-if [ ! -f "${BASE_PATH}"/spark-yun-backend/spark-yun-main/src/main/resources/prql_java-linux64.so ]; then
-  wget https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/prql_java-linux64.so -O ${BASE_PATH}/spark-yun-backend/spark-yun-main/src/main/resources/prql_java-linux64.so
+if [ ! -f "${BASE_PATH}"/spark-yun-backend/spark-yun-main/src/main/resources/libprql_java-linux64.so ]; then
+  wget https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/libprql_java-linux64.so -O ${BASE_PATH}/spark-yun-backend/spark-yun-main/src/main/resources/libprql_java-linux64.so
   echo "prql_java-linux64.so下载成功"
 fi
 

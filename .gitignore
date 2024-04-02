@@ -61,5 +61,5 @@ spark-yun-vip
 logs
 
 # prql二进制文件
-spark-yun-backend/spark-yun-main/src/main/resources/prql_java.dylib
-spark-yun-backend/spark-yun-main/src/main/resources/prql_java-linux64.so
+spark-yun-backend/spark-yun-main/src/main/resources/libprql_java-osx-arm64.dylib
+spark-yun-backend/spark-yun-main/src/main/resources/libprql_java-linux64.so
