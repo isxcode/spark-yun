@@ -357,7 +357,7 @@ public class DatasourceService {
 		}
 	}
 
-  public void checkKafka(KafkaConfig kafkaConfig) throws ExecutionException, InterruptedException {
+	public void checkKafka(KafkaConfig kafkaConfig) throws ExecutionException, InterruptedException {
 
 		Properties properties = new Properties();
 		if (kafkaConfig.getProperties() != null) {

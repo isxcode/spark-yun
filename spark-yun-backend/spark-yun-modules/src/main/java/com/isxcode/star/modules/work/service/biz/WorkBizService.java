@@ -142,7 +142,7 @@ public class WorkBizService {
 				|| WorkType.QUERY_JDBC_SQL.equals(addWorkReq.getWorkType())
 				|| WorkType.BASH.equals(addWorkReq.getWorkType()) || WorkType.PYTHON.equals(addWorkReq.getWorkType())
 				|| WorkType.SPARK_CONTAINER_SQL.equals(addWorkReq.getWorkType())
-        || WorkType.PRQL.equals(addWorkReq.getWorkType())) {
+				|| WorkType.PRQL.equals(addWorkReq.getWorkType())) {
 			workConfigService.initWorkScript(workConfig, addWorkReq.getWorkType());
 		}
 
