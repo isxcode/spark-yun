@@ -200,7 +200,8 @@ public class SyncWorkExecutor extends WorkExecutor {
 							engineNode.getAgentHomePath() + File.separator + "zhiqingyun-agent" + File.separator
 									+ "file" + File.separator + e.getFileId() + ".jar");
 				} catch (JSchException | SftpException | InterruptedException | IOException ex) {
-          throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + " : jar文件上传失败," + ex.getMessage() + "\n");
+					throw new WorkRunException(
+							LocalDateTime.now() + WorkLog.ERROR_INFO + " : jar文件上传失败," + ex.getMessage() + "\n");
 				}
 			});
 			pluginReq.setFuncInfoList(funcMapper.funcEntityListToFuncInfoList(allFunc));

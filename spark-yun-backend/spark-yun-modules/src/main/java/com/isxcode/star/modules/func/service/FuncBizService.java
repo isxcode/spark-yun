@@ -30,7 +30,7 @@ public class FuncBizService {
 
 	private final FuncMapper funcMapper;
 
-  private final FileRepository fileRepository;
+	private final FileRepository fileRepository;
 
 	public void addFunc(AddFuncReq addFuncReq) {
 
@@ -67,12 +67,12 @@ public class FuncBizService {
 
 		Page<PageFuncRes> result = funcPage.map(funcMapper::funcEntityToPageFuncRes);
 		result.getContent().forEach(e -> {
-      Optional<FileEntity> fileEntityOptional = fileRepository.findById(e.getFileId());
-      if (fileEntityOptional.isPresent()) {
-        e.setFileName(fileEntityOptional.get().getFileName());
-      } else {
-        e.setFileName("文件不存在");
-      }
+			Optional<FileEntity> fileEntityOptional = fileRepository.findById(e.getFileId());
+			if (fileEntityOptional.isPresent()) {
+				e.setFileName(fileEntityOptional.get().getFileName());
+			} else {
+				e.setFileName("文件不存在");
+			}
 		});
 
 		return result;
