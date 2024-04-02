@@ -28,128 +28,128 @@ import java.util.Optional;
 @Slf4j
 public class PrqlExecutor extends WorkExecutor {
 
-  private final DatasourceRepository datasourceRepository;
-  private final DatasourceService datasourceService;
+	private final DatasourceRepository datasourceRepository;
+	private final DatasourceService datasourceService;
 
-  public PrqlExecutor(WorkInstanceRepository workInstanceRepository,
-                      WorkflowInstanceRepository workflowInstanceRepository, DatasourceRepository datasourceRepository,
-                      DatasourceService datasourceService) {
-    super(workInstanceRepository, workflowInstanceRepository);
-    this.datasourceRepository = datasourceRepository;
-    this.datasourceService = datasourceService;
-  }
+	public PrqlExecutor(WorkInstanceRepository workInstanceRepository,
+			WorkflowInstanceRepository workflowInstanceRepository, DatasourceRepository datasourceRepository,
+			DatasourceService datasourceService) {
+		super(workInstanceRepository, workflowInstanceRepository);
+		this.datasourceRepository = datasourceRepository;
+		this.datasourceService = datasourceService;
+	}
 
-  @Override
-  protected void execute(WorkRunContext workRunContext, WorkInstanceEntity workInstance) {
+	@Override
+	protected void execute(WorkRunContext workRunContext, WorkInstanceEntity workInstance) {
 
-    // 获取日志构造器
-    StringBuilder logBuilder = workRunContext.getLogBuilder();
+		// 获取日志构造器
+		StringBuilder logBuilder = workRunContext.getLogBuilder();
 
-    // 检测数据源是否配置
-    logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始检测运行环境 \n");
-    if (Strings.isEmpty(workRunContext.getDatasourceId())) {
-      throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "检测运行环境失败: 未配置有效数据源  \n");
-    }
+		// 检测数据源是否配置
+		logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始检测运行环境 \n");
+		if (Strings.isEmpty(workRunContext.getDatasourceId())) {
+			throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "检测运行环境失败: 未配置有效数据源  \n");
+		}
 
-    // 检查数据源是否存在
-    Optional<DatasourceEntity> datasourceEntityOptional = datasourceRepository
-      .findById(workRunContext.getDatasourceId());
-    if (!datasourceEntityOptional.isPresent()) {
-      throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "检测运行环境失败: 未配置有效数据源  \n");
-    }
+		// 检查数据源是否存在
+		Optional<DatasourceEntity> datasourceEntityOptional = datasourceRepository
+				.findById(workRunContext.getDatasourceId());
+		if (!datasourceEntityOptional.isPresent()) {
+			throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "检测运行环境失败: 未配置有效数据源  \n");
+		}
 
-    // 数据源检查通过
-    logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("检测运行环境完成  \n");
-    workInstance = updateInstance(workInstance, logBuilder);
+		// 数据源检查通过
+		logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("检测运行环境完成  \n");
+		workInstance = updateInstance(workInstance, logBuilder);
 
-    // 检查脚本是否为空
-    if (Strings.isEmpty(workRunContext.getScript())) {
-      throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "Sql内容为空 \n");
-    }
+		// 检查脚本是否为空
+		if (Strings.isEmpty(workRunContext.getScript())) {
+			throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "Sql内容为空 \n");
+		}
 
-    // 脚本检查通过
-    logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始执行作业 \n");
-    workInstance = updateInstance(workInstance, logBuilder);
+		// 脚本检查通过
+		logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始执行作业 \n");
+		workInstance = updateInstance(workInstance, logBuilder);
 
-    // 开始执行sql
-    try (Connection connection = datasourceService.getDbConnection(datasourceEntityOptional.get());
-         Statement statement = connection.createStatement()) {
+		// 开始执行sql
+		try (Connection connection = datasourceService.getDbConnection(datasourceEntityOptional.get());
+				Statement statement = connection.createStatement()) {
 
-      statement.setQueryTimeout(1800);
+			statement.setQueryTimeout(1800);
 
-      logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始解析prql \n");
-      workInstance = updateInstance(workInstance, logBuilder);
-      // 解析sql
-      String sql = PrqlCompiler.toSql(workRunContext.getScript(), translateDBType(datasourceEntityOptional.get().getDbType()),
-        true, true);
+			logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始解析prql \n");
+			workInstance = updateInstance(workInstance, logBuilder);
+			// 解析sql
+			String sql = PrqlCompiler.toSql(workRunContext.getScript(),
+					translateDBType(datasourceEntityOptional.get().getDbType()), true, true);
 
-      String regex = "/\\*(?:.|[\\n\\r])*?\\*/|--.*";
-      String noCommentSql = sql.replaceAll(regex, "");
-      String realSql = noCommentSql.replaceAll("--.*", "").replace("\n", " ");
+			String regex = "/\\*(?:.|[\\n\\r])*?\\*/|--.*";
+			String noCommentSql = sql.replaceAll(regex, "");
+			String realSql = noCommentSql.replaceAll("--.*", "").replace("\n", " ");
 
-      logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO)
-        .append(String.format("prql转化完成: \n%s\n", realSql));
-      workInstance = updateInstance(workInstance, logBuilder);
+			logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO)
+					.append(String.format("prql转化完成: \n%s\n", realSql));
+			workInstance = updateInstance(workInstance, logBuilder);
 
-      logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始执行SQL \n");
-      workInstance = updateInstance(workInstance, logBuilder);
-      statement.execute(realSql);
+			logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始执行SQL \n");
+			workInstance = updateInstance(workInstance, logBuilder);
+			statement.execute(realSql);
 
-      // 记录结束执行时间
-      logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("SQL执行成功  \n");
-      workInstance = updateInstance(workInstance, logBuilder);
+			// 记录结束执行时间
+			logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("SQL执行成功  \n");
+			workInstance = updateInstance(workInstance, logBuilder);
 
-      ResultSet resultSet = statement.getResultSet();
+			ResultSet resultSet = statement.getResultSet();
 
-      // 记录返回结果
-      List<List<String>> result = new ArrayList<>();
+			// 记录返回结果
+			List<List<String>> result = new ArrayList<>();
 
-      // 封装表头
-      int columnCount = resultSet.getMetaData().getColumnCount();
-      List<String> metaList = new ArrayList<>();
-      for (int i = 1; i <= columnCount; i++) {
-        metaList.add(resultSet.getMetaData().getColumnName(i));
-      }
-      result.add(metaList);
+			// 封装表头
+			int columnCount = resultSet.getMetaData().getColumnCount();
+			List<String> metaList = new ArrayList<>();
+			for (int i = 1; i <= columnCount; i++) {
+				metaList.add(resultSet.getMetaData().getColumnName(i));
+			}
+			result.add(metaList);
 
-      // 封装数据
-      while (resultSet.next()) {
-        metaList = new ArrayList<>();
-        for (int i = 1; i <= columnCount; i++) {
-          metaList.add(String.valueOf(resultSet.getObject(i)));
-        }
-        result.add(metaList);
-      }
+			// 封装数据
+			while (resultSet.next()) {
+				metaList = new ArrayList<>();
+				for (int i = 1; i <= columnCount; i++) {
+					metaList.add(String.valueOf(resultSet.getObject(i)));
+				}
+				result.add(metaList);
+			}
 
-      // 讲data转为json存到实例中
-      logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("数据保存成功  \n");
-      workInstance.setResultData(JSON.toJSONString(result));
-      updateInstance(workInstance, logBuilder);
-    } catch (Exception e) {
+			// 讲data转为json存到实例中
+			logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("数据保存成功  \n");
+			workInstance.setResultData(JSON.toJSONString(result));
+			updateInstance(workInstance, logBuilder);
+		} catch (Exception e) {
 
-      log.error(e.getMessage(), e);
-      throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + e.getMessage() + "\n");
-    }
-  }
+			log.error(e.getMessage(), e);
+			throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + e.getMessage() + "\n");
+		}
+	}
 
-  @Override
-  protected void abort(WorkInstanceEntity workInstance) {
+	@Override
+	protected void abort(WorkInstanceEntity workInstance) {
 
-    Thread thread = WORK_THREAD.get(workInstance.getId());
-    thread.interrupt();
-  }
+		Thread thread = WORK_THREAD.get(workInstance.getId());
+		thread.interrupt();
+	}
 
-  public static String translateDBType(String dbType) {
+	public static String translateDBType(String dbType) {
 
-    switch (dbType) {
-      case DatasourceType.MYSQL:
-        return "mysql";
-      case DatasourceType.CLICKHOUSE:
-        return "clickhouse";
-      case DatasourceType.POSTGRE_SQL:
-        return "postgres";
-      default:
-        throw new IsxAppException("当前数据库类型不支持");
-    }
-  }
+		switch (dbType) {
+			case DatasourceType.MYSQL :
+				return "mysql";
+			case DatasourceType.CLICKHOUSE :
+				return "clickhouse";
+			case DatasourceType.POSTGRE_SQL :
+				return "postgres";
+			default :
+				throw new IsxAppException("当前数据库类型不支持");
+		}
+	}
 }
