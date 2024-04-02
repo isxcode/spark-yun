@@ -201,17 +201,17 @@ public class SparkSqlExecutor extends WorkExecutor {
 		}
 
 		// 解析db
-    if(StringUtils.isNotBlank(workRunContext.getDatasourceId())) {
-      DatasourceEntity datasource = datasourceService.getDatasource(workRunContext.getDatasourceId());
-      try {
-        String database = datasourceService.parseDbName(datasource.getJdbcUrl());
-        if (!Strings.isEmpty(database)) {
-          pluginReq.setDatabase(database);
-        }
-      } catch (IsxAppException e) {
-        throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + e.getMsg() + "\n");
-      }
-    }
+		if (StringUtils.isNotBlank(workRunContext.getDatasourceId())) {
+			DatasourceEntity datasource = datasourceService.getDatasource(workRunContext.getDatasourceId());
+			try {
+				String database = datasourceService.parseDbName(datasource.getJdbcUrl());
+				if (!Strings.isEmpty(database)) {
+					pluginReq.setDatabase(database);
+				}
+			} catch (IsxAppException e) {
+				throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + e.getMsg() + "\n");
+			}
+		}
 
 		// 开始构造executeReq
 		executeReq.setSparkSubmit(sparkSubmit);
