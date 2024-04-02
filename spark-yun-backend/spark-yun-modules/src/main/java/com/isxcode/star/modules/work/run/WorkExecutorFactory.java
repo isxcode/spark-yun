@@ -36,8 +36,8 @@ public class WorkExecutorFactory {
 				return applicationContext.getBean(SparkJarExecutor.class);
 			case WorkType.SPARK_CONTAINER_SQL :
 				return applicationContext.getBean(SparkContainerSqlExecutor.class);
-      case WorkType.API:
-        return applicationContext.getBean(ApiExecutor.class);
+			case WorkType.API :
+				return applicationContext.getBean(ApiExecutor.class);
 			case WorkType.PRQL :
 				return applicationContext.getBean(PrqlExecutor.class);
 			default :
