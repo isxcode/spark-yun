@@ -9,4 +9,6 @@ export interface ChartInfo {
 export interface ColonyInfo {
   id: string
   name: string
+  status: string
+  defaultCluster: boolean
 }

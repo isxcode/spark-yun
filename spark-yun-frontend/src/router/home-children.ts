@@ -1,7 +1,7 @@
 // 开源免费部分
-import Index from '@/views/computer-group/index.vue'
-import ComputerGroup from '@/views/computer-group-v1/index.vue'
-import ComputerPointer from '@/views/computer-group-v1/computer-pointer/index.vue'
+import HomeOverview from '@/views/home-overview/index.vue'
+import ComputerGroup from '@/views/computer-group/index.vue'
+import ComputerPointer from '@/views/computer-group/computer-pointer/index.vue'
 import DataSource from '@/views/datasource/index.vue'
 import Workflow from '@/views/workflow/index.vue'
 import WorkflowDetail from '@/views/workflow/workflow-detail/index.vue'
@@ -32,7 +32,7 @@ export default [
   {
     path: 'index',
     name: 'index',
-    component: Index
+    component: HomeOverview
   },
   {
     path: 'computer-group',

@@ -1,4 +1,4 @@
-import { computed, ref, type Ref } from "vue"
+import { computed, onUnmounted, ref, type Ref } from "vue"
 import { queryClusterMonitorInfo } from "../../services/computer-group"
 import type { ColonyInfo } from "../component"
 import type { Frequency } from "./useFrequency"
@@ -30,23 +30,23 @@ export function useMonitor(currentColony: Ref<ColonyInfo | undefined>, currentFr
       {
         type: 'cpuPercent',
         name: 'CPU',
-        value: currentInfo.value.cpuPercent,
+        value: currentInfo.value.cpuPercent || 0,
         unit: '%',
         color: '#2A82E4',
-        data: cpuMonitorDataList.value
+        data: cpuMonitorDataList.value 
       },
       {
         type: 'usedMemorySize',
         name: '内存',
-        value: currentInfo.value.usedMemorySize,
+        value: currentInfo.value.usedMemorySize || 0,
         unit: 'GB',
         color: '#FF8D1A',
-        data: memoryMonitorDataList.value
+        data: memoryMonitorDataList.value 
       },
       {
         type: 'diskIoWriteSpeed',
         name: 'IO读写',
-        value: currentInfo.value.diskIoWriteSpeed,
+        value: currentInfo.value.diskIoWriteSpeed || 0,
         unit: 'KB/s',
         color: '#00BAAD',
         data: diskIoMonitorList.value
@@ -54,7 +54,7 @@ export function useMonitor(currentColony: Ref<ColonyInfo | undefined>, currentFr
       {
         type: 'usedStorageSize',
         name: '存储',
-        value: currentInfo.value.usedStorageSize,
+        value: currentInfo.value.usedStorageSize || 0,
         unit: 'GB',
         color: '#D43030',
         data: storageMonitorDataList.value
@@ -102,6 +102,12 @@ export function useMonitor(currentColony: Ref<ColonyInfo | undefined>, currentFr
       }
     })
   }
+
+  const timer = setInterval(queryMonitorData, 3000)
+
+  onUnmounted(() => {
+    clearInterval(timer)
+  })
 
   return {
     monitorDataList,

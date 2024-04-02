@@ -31,7 +31,7 @@ export function useRouterMenu(menuListData: Menu[]) {
     // })
   }
 
-  let isCollapse = ref(false)
+  let isCollapse = ref(true)
 
   let handleSelect = (index: Menu["code"]) => {
     router.push({
@@ -49,7 +49,11 @@ export function useRouterMenu(menuListData: Menu[]) {
     isCollapse,
 
     renderHomeMenu: () => (
-      <div class="zqy-home__menu-wrap">
+      <div 
+        class="zqy-home__menu-wrap" 
+        onMouseenter={() => { isCollapse.value = false }} 
+        onMouseleave={() => { isCollapse.value = true}}
+      >
         <el-menu
           class="zqy-home__menu"
           collapse={isCollapse.value}
@@ -72,11 +76,11 @@ export function useRouterMenu(menuListData: Menu[]) {
         </el-menu>
         <div class="zqy-home__menu-footer">
           { renderMenuAvatar() }
-          <el-icon
+          {/* <el-icon
             class="zqy-home__icon zqy-home__ops"
             size={18}
             onClick={withModifiers(() => { isCollapse.value = !isCollapse.value }, ['native'])}
-          >{ isCollapse.value ? <expand /> : <fold />}</el-icon>
+          >{ isCollapse.value ? <expand /> : <fold />}</el-icon> */}
         </div>
       </div>
     )
