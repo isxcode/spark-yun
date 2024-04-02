@@ -44,4 +44,6 @@ public interface WorkType {
 	String SPARK_CONTAINER_SQL = "SPARK_CONTAINER_SQL";
 
   String API = "API";
+
+	String PRQL = "PRQL";
 }
