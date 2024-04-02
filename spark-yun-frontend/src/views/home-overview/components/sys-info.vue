@@ -3,7 +3,7 @@
     <div class="sys-info__header">
       <span class="sys-info__title">系统信息</span>
       <div class="sys-info__ops">
-        <el-icon class="sys-info__icon"><RefreshRight /></el-icon>
+        <el-icon class="sys-info__icon" @click="querySysInfoData"><RefreshRight /></el-icon>
         <el-icon class="sys-info__icon"><Setting /></el-icon>
       </div>
     </div>
@@ -19,7 +19,7 @@
 import SysChart from './sys-chart.vue'
 import { ChartInfo } from './component'
 import { onMounted, ref } from 'vue'
-import { querySystemBaseInfo } from '@/views/computer-group/services/computer-group';
+import { querySystemBaseInfo } from '../services/computer-group';
 
 const sysInfoData = ref<Array<ChartInfo>>([
   {

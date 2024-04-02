@@ -1,4 +1,5 @@
 import { http } from '@/utils/http'
+import type { ColonyInfo } from '../components/component'
 
 export type QueryComputeInstancesParam = {
   page: number
@@ -102,5 +103,13 @@ export function queryClusterMonitorInfo(data: QueryClusterMonitorInfoParams) {
     method: 'post',
     url: '/monitor/getClusterMonitor',
     data
+  })
+}
+
+
+export function queryAllClusterInfo() {
+  return http.request<ResponseWarp<ColonyInfo[]>>({
+    method: 'post',
+    url: '/cluster/queryAllCluster'
   })
 }

@@ -1,7 +1,7 @@
 <template>
   <div class="monitor-info">
     <div class="monitor-info__header">
-      <el-dropdown class="monitor-info__dropdown" trigger="click" @command="onColonyChange">
+      <el-dropdown class="monitor-info__dropdown" trigger="click" @command="handleColonyChange">
         <span class="monitor-info__active">
           {{ currentColony?.name }}
           <el-icon class="el-icon--right">
@@ -17,7 +17,7 @@
         </template>
       </el-dropdown>
       <div class="monitor-info__ops">
-        <el-dropdown class="monitor-info__dropdown" trigger="click" @command="onFrequencyChange">
+        <el-dropdown class="monitor-info__dropdown" trigger="click" @command="handleFrequencyChange">
         <span class="monitor-info__active">
           {{ currentFrequency?.name }}
           <el-icon class="el-icon--right">
@@ -51,13 +51,24 @@ import { useMonitor } from './hooks/useMonitor'
 import MonitorChart from './monitor-chart.vue'
 
 
-const { currentColony, colonyList, onColonyChange } = useColony()
+const { currentColony, colonyList, onColonyChange, queryColonyData } = useColony()
 const { currentFrequency, frequencyList, onFrequencyChange } = useFrequency()
 const { monitorDataList, dateTimeList, queryMonitorData } = useMonitor(currentColony, currentFrequency)
 
-onMounted(() => {
-  queryMonitorData()
+onMounted(async () => {
+  await queryColonyData()
+  await queryMonitorData()
 })
+
+function handleColonyChange(colonyId: string) {
+  onColonyChange(colonyId)
+  queryMonitorData()
+}
+
+function handleFrequencyChange(frequency: string) {
+  onFrequencyChange(frequency)
+  queryMonitorData()
+}
 
 </script>
 
