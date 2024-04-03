@@ -4,7 +4,7 @@ import type { ColonyInfo } from '../components/component'
 export type QueryComputeInstancesParam = {
   page: number
   pageSize: number
-  searchKeyword?: string
+  searchKeyWord?: string | null
 }
 
 export type ComputeInstance = {
@@ -24,7 +24,7 @@ export interface ResponseWarp<T> {
 }
 
 export type QueryComputeInstancesResponse = {
-  size: number
+  totalElements: number
   content: ComputeInstance[]
 }
 

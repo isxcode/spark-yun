@@ -25,7 +25,7 @@ const vmStatusClass = computed(() => {
 const vmStatus = computed<{ status: VmData['status'], name: string }>(() => {
   return {
     status: props.status,
-    name: props.status === 'FAILED' ? '失败' : '成功'
+    name: props.status === 'FAIL' ? '失败' : '成功'
   }
 })
 
@@ -44,7 +44,7 @@ const vmStatus = computed<{ status: VmData['status'], name: string }>(() => {
       background-color: #43CF7C;
     }
   }
-  &.is-failed {
+  &.is-fail {
     color: #FA541C;
     .vm-status__pointer {
       background-color: #FA541C;

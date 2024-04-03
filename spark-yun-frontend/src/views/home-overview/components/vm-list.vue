@@ -4,7 +4,7 @@
       <span class="vm-list__title">实例列表</span>
       <div class="vm-list__ops">
         <el-icon class="vm-list__icon"><RefreshRight /></el-icon>
-        <el-input class="vm-list__search" v-model="keyWord" placeholder="名称" />
+        <el-input class="vm-list__search" v-model="keyWord" placeholder="名称"  @keydown.enter="queryVmlistData"/>
       </div>
     </div>
     <div class="vm-list__body">
@@ -54,10 +54,10 @@ const paginationInfo = ref<{
 function queryVmlistData() {
   queryComputeInstances({
     ...paginationInfo.value,
-    SearchKeyword: keyWord.value
+    searchKeyWord: keyWord.value || null
   }).then(({ data }) => {
     tableData.value = data.content
-    total.value = data.size
+    total.value = data.totalElements
   })
 }
 
@@ -146,6 +146,8 @@ onMounted(() => {
 
   .vm-list__pagination {
     display: flex;
+    height: 52px;
+    align-items: center;
     justify-content: flex-end;
   }
 }
