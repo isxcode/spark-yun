@@ -45,7 +45,7 @@ public interface WorkflowInstanceRepository extends JpaRepository<WorkflowInstan
 	Page<WfiWorkflowInstanceAo> pageWorkFlowInstances(@Param("tenantId") String tenantId,
 			@Param("keyword") String searchKeyWord, Pageable pageable);
 
-	@Query("SELECT new com.isxcode.star.api.monitor.pojos.ao.WorkflowMonitorAo( W.id,W1.name,W.duration,W.execStartDateTime,W.execEndDateTime,W.status,U.username ) from WorkflowInstanceEntity W left join WorkflowEntity W1 on W.flowId = W1.id left join UserEntity U on W.lastModifiedBy = U.id where (W1.name like %:keyword% or :keyword is null) and W.tenantId=:tenantId order by W.status asc,W.lastModifiedDateTime desc")
+	@Query("SELECT new com.isxcode.star.api.monitor.pojos.ao.WorkflowMonitorAo( W.id,W1.name,W.duration,W.execStartDateTime,W.execEndDateTime,W.status,U.username ) from WorkflowInstanceEntity W left join WorkflowEntity W1 on W.flowId = W1.id left join UserEntity U on W.lastModifiedBy = U.id where W1.name like %:keyword% and W.tenantId=:tenantId order by W.status asc,W.lastModifiedDateTime desc")
 	Page<WorkflowMonitorAo> searchWorkflowMonitor(@Param("tenantId") String tenantId,
 			@Param("keyword") String searchKeyWord, Pageable pageable);
 
