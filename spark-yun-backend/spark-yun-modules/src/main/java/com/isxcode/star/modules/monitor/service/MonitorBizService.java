@@ -263,9 +263,9 @@ public class MonitorBizService {
 
 	public Page<PageInstancesRes> pageInstances(PageInstancesReq pageInstancesReq) {
 
-    if (pageInstancesReq.getSearchKeyWord() == null) {
-      pageInstancesReq.setSearchKeyWord("");
-    }
+		if (pageInstancesReq.getSearchKeyWord() == null) {
+			pageInstancesReq.setSearchKeyWord("");
+		}
 
 		JPA_TENANT_MODE.set(false);
 		Page<WorkflowMonitorAo> workflowMonitorAos = workflowInstanceRepository.searchWorkflowMonitor(TENANT_ID.get(),
