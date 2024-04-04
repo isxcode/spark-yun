@@ -95,9 +95,6 @@ tasks.register('build_zhiqingyun', Tar) {
   from(rootDir.getAbsolutePath() + '/spark-yun-backend/spark-yun-main/src/main/resources/application-local.yml') {
     into 'zhiqingyun/conf'
   }
-  from('zhiqingyun/logs') {
-    into 'zhiqingyun/logs'
-  }
   from(rootDir.getAbsolutePath() + '/resources/jdbc/system') {
     into 'zhiqingyun/resources/jdbc/system'
   }
