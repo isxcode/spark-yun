@@ -55,9 +55,9 @@ public class Execute {
 			List<String> sourceCols = new ArrayList<>();
 			List<String> targetCols = new ArrayList<>();
 			pluginReq.getSyncWorkConfig().getColumnMap().forEach(e -> {
-        sourceCols.add(Strings.isEmpty(sourceColTranslateSql.get(e.getSource()))
-          ? String.format("`%s`", e.getSource())
-          : sourceColTranslateSql.get(e.getSource()) + " ");
+				sourceCols.add(Strings.isEmpty(sourceColTranslateSql.get(e.getSource()))
+						? String.format("`%s`", e.getSource())
+						: sourceColTranslateSql.get(e.getSource()) + " ");
 				targetCols.add(String.format("`%s`", e.getTarget()));
 			});
 
