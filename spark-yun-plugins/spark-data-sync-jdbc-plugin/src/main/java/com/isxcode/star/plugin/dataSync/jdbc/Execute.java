@@ -25,11 +25,6 @@ public class Execute {
 
 		PluginReq pluginReq = parse(args);
 
-		String sourceDbType = pluginReq.getSyncWorkConfig().getSourceDBType();
-		String targetDbType = pluginReq.getSyncWorkConfig().getTargetDBType();
-		String sourceSpecialCode = DatasourceType.HANA_SAP.equals(sourceDbType) ? "\"" : "`";
-		String targetSpecialCode = DatasourceType.HANA_SAP.equals(targetDbType) ? "\"" : "`";
-
 		try (SparkSession sparkSession = initSparkSession(pluginReq.getSparkConfig())) {
 
 			// 注册自定义函数
@@ -45,7 +40,7 @@ public class Execute {
 			}
 
 			// 创建来源表视图
-			String sourceTempView = genSourceTempView(sparkSession, pluginReq, sourceSpecialCode);
+			String sourceTempView = genSourceTempView(sparkSession, pluginReq);
 
 			// 创建去向表视图
 			String targetTempView = genTargetTempView(sparkSession, pluginReq);
@@ -60,10 +55,10 @@ public class Execute {
 			List<String> sourceCols = new ArrayList<>();
 			List<String> targetCols = new ArrayList<>();
 			pluginReq.getSyncWorkConfig().getColumnMap().forEach(e -> {
-				sourceCols.add(Strings.isEmpty(sourceColTranslateSql.get(e.getSource()))
-						? String.format(sourceSpecialCode + "%s" + sourceSpecialCode, e.getSource())
-						: sourceColTranslateSql.get(e.getSource()));
-				targetCols.add(String.format(targetSpecialCode + "%s" + targetSpecialCode, e.getTarget()));
+        sourceCols.add(Strings.isEmpty(sourceColTranslateSql.get(e.getSource()))
+          ? String.format("`%s`", e.getSource())
+          : sourceColTranslateSql.get(e.getSource()) + " ");
+				targetCols.add(String.format("`%s`", e.getTarget()));
 			});
 
 			// 判断是覆盖还是新增
@@ -80,7 +75,7 @@ public class Execute {
 	/**
 	 * 构建来源视图.
 	 */
-	public static String genSourceTempView(SparkSession sparkSession, PluginReq conf, String sourceSpecialCode) {
+	public static String genSourceTempView(SparkSession sparkSession, PluginReq conf) {
 
 		String sourceTableName = "zhiqingyun_src_" + conf.getSyncWorkConfig().getSourceDatabase().getDbTable();
 
@@ -102,8 +97,7 @@ public class Execute {
 			// 生成查询条件并添加到列表中
 			for (int i = 0; i < conf.getSyncRule().getNumPartitions(); i++) {
 				// 不同的数据库要使用各自支持hash函数
-				String predicate = String.format(
-						"%s(" + sourceSpecialCode + "%s" + sourceSpecialCode + ") %% %d in (%d,-%d)", hashName,
+				String predicate = String.format("%s(`%s`) %% %d in (%d,-%d)", hashName,
 						conf.getSyncWorkConfig().getPartitionColumn(), conf.getSyncRule().getNumPartitions(), i, i);
 				predicates.add(predicate);
 			}
