@@ -2,7 +2,9 @@ package com.isxcode.star.common.annotations.successResponse;
 
 import com.isxcode.star.backend.api.base.exceptions.SuccessResponseException;
 import com.isxcode.star.backend.api.base.pojos.BaseResponse;
+
 import java.io.InputStream;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
@@ -36,10 +38,14 @@ public class SuccessResponseAdvice {
 				return;
 			}
 			baseResponse.setCode(String.valueOf(HttpStatus.OK.value()));
-			if (data.getClass().getDeclaredFields().length == 0) {
+			if (data == null) {
 				baseResponse.setData(null);
 			} else {
-				baseResponse.setData(data);
+				if (data.getClass().getDeclaredFields().length == 0) {
+					baseResponse.setData(null);
+				} else {
+					baseResponse.setData(data);
+				}
 			}
 			baseResponse.setMsg(getMsg(successResponse));
 			successResponse(baseResponse);

@@ -1,6 +1,7 @@
 package com.isxcode.star.modules.workflow.repository;
 
 import com.isxcode.star.api.instance.pojos.ao.WfiWorkflowInstanceAo;
+import com.isxcode.star.api.monitor.pojos.ao.WorkflowMonitorAo;
 import com.isxcode.star.modules.workflow.entity.WorkflowInstanceEntity;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
@@ -12,6 +13,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+
+import java.util.Date;
+import java.util.List;
 
 @Repository
 @CacheConfig(cacheNames = {"sy_workflow"})
@@ -40,4 +44,11 @@ public interface WorkflowInstanceRepository extends JpaRepository<WorkflowInstan
 			+ " where WF.name LIKE %:keyword% AND W.tenantId=:tenantId order by W.lastModifiedDateTime desc")
 	Page<WfiWorkflowInstanceAo> pageWorkFlowInstances(@Param("tenantId") String tenantId,
 			@Param("keyword") String searchKeyWord, Pageable pageable);
+
+	@Query("SELECT new com.isxcode.star.api.monitor.pojos.ao.WorkflowMonitorAo( W.id,W1.name,W.duration,W.execStartDateTime,W.execEndDateTime,W.status,U.username ) from WorkflowInstanceEntity W left join WorkflowEntity W1 on W.flowId = W1.id left join UserEntity U on W.lastModifiedBy = U.id where W1.name like %:keyword% and W.tenantId=:tenantId order by W.status asc,W.lastModifiedDateTime desc")
+	Page<WorkflowMonitorAo> searchWorkflowMonitor(@Param("tenantId") String tenantId,
+			@Param("keyword") String searchKeyWord, Pageable pageable);
+
+	List<WorkflowInstanceEntity> findAllByExecStartDateTimeAfterAndExecEndDateTimeBefore(Date execStartDateTime,
+			Date execEndDateTime);
 }

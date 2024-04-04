@@ -2,6 +2,7 @@ package com.isxcode.star.modules.cluster.controller;
 
 import com.isxcode.star.api.cluster.pojos.req.*;
 import com.isxcode.star.api.cluster.pojos.res.PageClusterRes;
+import com.isxcode.star.api.cluster.pojos.res.QueryAllClusterRes;
 import com.isxcode.star.api.main.constants.ModuleCode;
 import com.isxcode.star.common.annotations.successResponse.SuccessResponse;
 import com.isxcode.star.modules.cluster.service.biz.ClusterBizService;
@@ -14,6 +15,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @Tag(name = "计算引擎模块")
 @RestController
@@ -69,5 +72,13 @@ public class ClusterController {
 	public void setDefaultCluster(@Valid @RequestBody SetDefaultClusterReq setDefaultClusterReq) {
 
 		clusterBizService.setDefaultCluster(setDefaultClusterReq);
+	}
+
+	@Operation(summary = "查询所有集群列表")
+	@PostMapping("/queryAllCluster")
+	@SuccessResponse("查询成功")
+	public List<QueryAllClusterRes> queryAllCluster() {
+
+		return clusterBizService.queryAllCluster();
 	}
 }

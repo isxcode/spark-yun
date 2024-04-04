@@ -5,6 +5,7 @@ import com.isxcode.star.api.cluster.constants.ClusterStatus;
 import com.isxcode.star.api.cluster.pojos.dto.ScpFileEngineNodeDto;
 import com.isxcode.star.api.cluster.pojos.req.*;
 import com.isxcode.star.api.cluster.pojos.res.PageClusterRes;
+import com.isxcode.star.api.cluster.pojos.res.QueryAllClusterRes;
 import com.isxcode.star.common.utils.AesUtils;
 import com.isxcode.star.modules.cluster.entity.ClusterEntity;
 import com.isxcode.star.modules.cluster.entity.ClusterNodeEntity;
@@ -16,18 +17,22 @@ import com.isxcode.star.modules.cluster.run.RunAgentCheckService;
 import com.isxcode.star.modules.cluster.service.ClusterService;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.SftpException;
+
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.transaction.Transactional;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-/** 计算引擎模块. */
+/**
+ * 计算引擎模块.
+ */
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -51,6 +56,11 @@ public class ClusterBizService {
 	public void addCluster(AddClusterReq addClusterReq) {
 
 		ClusterEntity cluster = clusterMapper.addEngineReqToClusterEntity(addClusterReq);
+
+		// 判断租户中的集群数是否为0
+		long count = clusterRepository.count();
+		cluster.setDefaultCluster(count == 0);
+
 		clusterRepository.save(cluster);
 	}
 
@@ -137,5 +147,12 @@ public class ClusterBizService {
 		// 将指定的集群的默认集群变为true
 		cluster.setDefaultCluster(true);
 		clusterRepository.save(cluster);
+	}
+
+	public List<QueryAllClusterRes> queryAllCluster() {
+
+		List<ClusterEntity> all = clusterRepository.findAll();
+
+		return clusterMapper.clusterEntityListToQueryAllClusterResList(all);
 	}
 }
