@@ -145,7 +145,7 @@ public class PythonExecutor extends WorkExecutor {
 
 			if (InstanceStatus.RUNNING.equals(pidStatus)) {
 				try {
-					Thread.sleep(1000);
+					Thread.sleep(2000);
 				} catch (InterruptedException e) {
 					throw new WorkRunException(
 							LocalDateTime.now() + WorkLog.ERROR_INFO + "睡眠线程异常 : " + e.getMessage() + "\n");
