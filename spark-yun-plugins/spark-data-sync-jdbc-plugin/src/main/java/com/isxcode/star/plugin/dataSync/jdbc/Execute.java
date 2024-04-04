@@ -25,7 +25,12 @@ public class Execute {
 
 		PluginReq pluginReq = parse(args);
 
-		try (SparkSession sparkSession = initSparkSession(pluginReq.getSparkConfig())) {
+    String sourceDbType = pluginReq.getSyncWorkConfig().getSourceDatabase().getDbType();
+    String targetDbType = pluginReq.getSyncWorkConfig().getSourceDatabase().getDbType();
+    String sourceSpecialCode = DatasourceType.HANA_SAP.equals(sourceDbType) ? "\"" : "`";
+    String targetSpecialCode = DatasourceType.HANA_SAP.equals(targetDbType) ? "\"" : "`";
+
+    try (SparkSession sparkSession = initSparkSession(pluginReq.getSparkConfig())) {
 
 			// 注册自定义函数
 			if (pluginReq.getFuncInfoList() != null) {
@@ -55,10 +60,10 @@ public class Execute {
 			List<String> sourceCols = new ArrayList<>();
 			List<String> targetCols = new ArrayList<>();
 			pluginReq.getSyncWorkConfig().getColumnMap().forEach(e -> {
-				sourceCols.add(Strings.isEmpty(sourceColTranslateSql.get(e.getSource()))
-						? String.format("`%s`", e.getSource())
-						: sourceColTranslateSql.get(e.getSource()));
-				targetCols.add(String.format("`%s`", e.getTarget()));
+        sourceCols.add(Strings.isEmpty(sourceColTranslateSql.get(e.getSource()))
+          ? String.format(sourceSpecialCode + "%s" + sourceSpecialCode, e.getSource())
+          : sourceColTranslateSql.get(e.getSource()) + " ");
+        targetCols.add(String.format(targetSpecialCode + "%s" + targetSpecialCode, e.getTarget()));
 			});
 
 			// 判断是覆盖还是新增

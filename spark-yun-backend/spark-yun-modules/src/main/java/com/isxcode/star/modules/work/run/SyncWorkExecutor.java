@@ -163,7 +163,7 @@ public class SyncWorkExecutor extends WorkExecutor {
 		DatasourceConfig sourceConfig = DatasourceConfig.builder()
 				.driver(datasourceService.getDriverClass(sourceDatasource.getDbType()))
 				.url(sourceDatasource.getJdbcUrl()).dbTable(workRunContext.getSyncWorkConfig().getSourceTable())
-				.user(sourceDatasource.getUsername()).password(aesUtils.decrypt(sourceDatasource.getPasswd())).build();
+				.user(sourceDatasource.getUsername()).dbType(sourceDatasource.getDbType()).password(aesUtils.decrypt(sourceDatasource.getPasswd())).build();
 		workRunContext.getSyncWorkConfig().setSourceDatabase(sourceConfig);
 
 		// 封装去向Datasource的信息
@@ -172,7 +172,7 @@ public class SyncWorkExecutor extends WorkExecutor {
 		DatasourceConfig targetConfig = DatasourceConfig.builder()
 				.driver(datasourceService.getDriverClass(targetDatasource.getDbType()))
 				.url(targetDatasource.getJdbcUrl()).dbTable(workRunContext.getSyncWorkConfig().getTargetTable())
-				.user(targetDatasource.getUsername()).password(aesUtils.decrypt(targetDatasource.getPasswd())).build();
+				.user(targetDatasource.getUsername()).dbType(targetDatasource.getDbType()).password(aesUtils.decrypt(targetDatasource.getPasswd())).build();
 		workRunContext.getSyncWorkConfig().setTargetDatabase(targetConfig);
 
 		// 开始构造SparkSubmit
