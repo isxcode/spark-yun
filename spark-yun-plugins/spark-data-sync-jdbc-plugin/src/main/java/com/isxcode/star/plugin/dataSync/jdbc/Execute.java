@@ -21,223 +21,224 @@ import java.util.regex.Pattern;
 
 public class Execute {
 
-  public static void main(String[] args) {
+	public static void main(String[] args) {
 
-    PluginReq pluginReq = parse(args);
+		PluginReq pluginReq = parse(args);
 
-    String sourceDbType = pluginReq.getSyncWorkConfig().getSourceDBType();
-    String targetDbType = pluginReq.getSyncWorkConfig().getTargetDBType();
-    String sourceSpecialCode = DatasourceType.HANA_SAP.equals(sourceDbType) ? "\"" : "`";
-    String targetSpecialCode = DatasourceType.HANA_SAP.equals(targetDbType) ? "\"" : "`";
+		String sourceDbType = pluginReq.getSyncWorkConfig().getSourceDBType();
+		String targetDbType = pluginReq.getSyncWorkConfig().getTargetDBType();
+		String sourceSpecialCode = DatasourceType.HANA_SAP.equals(sourceDbType) ? "\"" : "`";
+		String targetSpecialCode = DatasourceType.HANA_SAP.equals(targetDbType) ? "\"" : "`";
 
-    try (SparkSession sparkSession = initSparkSession(pluginReq.getSparkConfig())) {
+		try (SparkSession sparkSession = initSparkSession(pluginReq.getSparkConfig())) {
 
-      // 注册自定义函数
-      if (pluginReq.getFuncInfoList() != null) {
-        pluginReq.getFuncInfoList().forEach(e -> {
-          if (FuncType.UDF.equals(e.getType())) {
-            sparkSession.udf().registerJava(e.getFuncName(), e.getClassName(),
-              getResultType(e.getResultType()));
-          } else if (FuncType.UDAF.equals(e.getType())) {
-            sparkSession.udf().registerJavaUDAF(e.getFuncName(), e.getClassName());
-          }
-        });
-      }
+			// 注册自定义函数
+			if (pluginReq.getFuncInfoList() != null) {
+				pluginReq.getFuncInfoList().forEach(e -> {
+					if (FuncType.UDF.equals(e.getType())) {
+						sparkSession.udf().registerJava(e.getFuncName(), e.getClassName(),
+								getResultType(e.getResultType()));
+					} else if (FuncType.UDAF.equals(e.getType())) {
+						sparkSession.udf().registerJavaUDAF(e.getFuncName(), e.getClassName());
+					}
+				});
+			}
 
-      // 创建来源表视图
-      String sourceTempView = genSourceTempView(sparkSession, pluginReq, sourceSpecialCode);
+			// 创建来源表视图
+			String sourceTempView = genSourceTempView(sparkSession, pluginReq, sourceSpecialCode);
 
-      // 创建去向表视图
-      String targetTempView = genTargetTempView(sparkSession, pluginReq);
+			// 创建去向表视图
+			String targetTempView = genTargetTempView(sparkSession, pluginReq);
 
-      // 来源字段的转换sql收集
-      Map<String, String> sourceColTranslateSql = new HashMap<>();
-      pluginReq.getSyncWorkConfig().getSourceTableColumn().forEach(e -> {
-        sourceColTranslateSql.put(e.getCode(), e.getSql());
-      });
+			// 来源字段的转换sql收集
+			Map<String, String> sourceColTranslateSql = new HashMap<>();
+			pluginReq.getSyncWorkConfig().getSourceTableColumn().forEach(e -> {
+				sourceColTranslateSql.put(e.getCode(), e.getSql());
+			});
 
-      // 封装字段信息
-      List<String> sourceCols = new ArrayList<>();
-      List<String> targetCols = new ArrayList<>();
-      pluginReq.getSyncWorkConfig().getColumnMap().forEach(e -> {
-        sourceCols.add(Strings.isEmpty(sourceColTranslateSql.get(e.getSource()))
-          ? String.format(sourceSpecialCode + "%s" + sourceSpecialCode, e.getSource())
-          : sourceColTranslateSql.get(e.getSource()));
-        targetCols.add(String.format(targetSpecialCode + "%s" + targetSpecialCode, e.getTarget()));
-      });
+			// 封装字段信息
+			List<String> sourceCols = new ArrayList<>();
+			List<String> targetCols = new ArrayList<>();
+			pluginReq.getSyncWorkConfig().getColumnMap().forEach(e -> {
+				sourceCols.add(Strings.isEmpty(sourceColTranslateSql.get(e.getSource()))
+						? String.format(sourceSpecialCode + "%s" + sourceSpecialCode, e.getSource())
+						: sourceColTranslateSql.get(e.getSource()));
+				targetCols.add(String.format(targetSpecialCode + "%s" + targetSpecialCode, e.getTarget()));
+			});
 
-      // 判断是覆盖还是新增
-      String insertSql = OverModeType.OVERWRITE.equals(pluginReq.getSyncWorkConfig().getOverMode())
-        ? "insert overwrite"
-        : "insert into";
+			// 判断是覆盖还是新增
+			String insertSql = OverModeType.OVERWRITE.equals(pluginReq.getSyncWorkConfig().getOverMode())
+					? "insert overwrite"
+					: "insert into";
 
-      // 执行sql同步语句
-      sparkSession.sql(insertSql + " table " + targetTempView + " ( " + Strings.join(targetCols, ',')
-        + " ) select " + Strings.join(sourceCols, ',') + " from " + sourceTempView);
-    }
-  }
+			// 执行sql同步语句
+			sparkSession.sql(insertSql + " table " + targetTempView + " ( " + Strings.join(targetCols, ',')
+					+ " ) select " + Strings.join(sourceCols, ',') + " from " + sourceTempView);
+		}
+	}
 
-  /**
-   * 构建来源视图.
-   */
-  public static String genSourceTempView(SparkSession sparkSession, PluginReq conf, String sourceSpecialCode) {
+	/**
+	 * 构建来源视图.
+	 */
+	public static String genSourceTempView(SparkSession sparkSession, PluginReq conf, String sourceSpecialCode) {
 
-    String sourceTableName = "zhiqingyun_src_" + conf.getSyncWorkConfig().getSourceDatabase().getDbTable();
+		String sourceTableName = "zhiqingyun_src_" + conf.getSyncWorkConfig().getSourceDatabase().getDbTable();
 
-    if (DatasourceType.HIVE.equals(conf.getSyncWorkConfig().getSourceDBType())) {
+		if (DatasourceType.HIVE.equals(conf.getSyncWorkConfig().getSourceDBType())) {
 
-      return parseHiveDatabase(conf.getSyncWorkConfig().getSourceDatabase().getUrl())
-        + conf.getSyncWorkConfig().getSourceDatabase().getDbTable();
-    } else {
+			return parseHiveDatabase(conf.getSyncWorkConfig().getSourceDatabase().getUrl())
+					+ conf.getSyncWorkConfig().getSourceDatabase().getDbTable();
+		} else {
 
-      Properties prop = new Properties();
-      prop.put("user", conf.getSyncWorkConfig().getSourceDatabase().getUser());
-      prop.put("password", conf.getSyncWorkConfig().getSourceDatabase().getPassword());
-      prop.put("driver", conf.getSyncWorkConfig().getSourceDatabase().getDriver());
-      // 创建一个 ArrayList 存储查询条件字符串
-      List<String> predicates = new ArrayList<>();
-      // 根据数据库类型获取合适的hash方法名
-      String hashName = getHash(conf.getSyncWorkConfig().getSourceDBType());
+			Properties prop = new Properties();
+			prop.put("user", conf.getSyncWorkConfig().getSourceDatabase().getUser());
+			prop.put("password", conf.getSyncWorkConfig().getSourceDatabase().getPassword());
+			prop.put("driver", conf.getSyncWorkConfig().getSourceDatabase().getDriver());
+			// 创建一个 ArrayList 存储查询条件字符串
+			List<String> predicates = new ArrayList<>();
+			// 根据数据库类型获取合适的hash方法名
+			String hashName = getHash(conf.getSyncWorkConfig().getSourceDBType());
 
-      // 生成查询条件并添加到列表中
-      for (int i = 0; i < conf.getSyncRule().getNumPartitions(); i++) {
-        // 不同的数据库要使用各自支持hash函数
-        String predicate = String.format("%s(" + sourceSpecialCode + "%s" + sourceSpecialCode + ") %% %d in (%d,-%d)", hashName,
-          conf.getSyncWorkConfig().getPartitionColumn(), conf.getSyncRule().getNumPartitions(), i, i);
-        predicates.add(predicate);
-      }
+			// 生成查询条件并添加到列表中
+			for (int i = 0; i < conf.getSyncRule().getNumPartitions(); i++) {
+				// 不同的数据库要使用各自支持hash函数
+				String predicate = String.format(
+						"%s(" + sourceSpecialCode + "%s" + sourceSpecialCode + ") %% %d in (%d,-%d)", hashName,
+						conf.getSyncWorkConfig().getPartitionColumn(), conf.getSyncRule().getNumPartitions(), i, i);
+				predicates.add(predicate);
+			}
 
-      // 将列表转换为字符串数组
-      String[] predicate = predicates.toArray(new String[0]);
+			// 将列表转换为字符串数组
+			String[] predicate = predicates.toArray(new String[0]);
 
-      Dataset<Row> source = sparkSession.read().jdbc(conf.getSyncWorkConfig().getSourceDatabase().getUrl(),
-        conf.getSyncWorkConfig().getSourceDatabase().getDbTable(), predicate, prop);
+			Dataset<Row> source = sparkSession.read().jdbc(conf.getSyncWorkConfig().getSourceDatabase().getUrl(),
+					conf.getSyncWorkConfig().getSourceDatabase().getDbTable(), predicate, prop);
 
-      source.createOrReplaceTempView(sourceTableName);
-    }
+			source.createOrReplaceTempView(sourceTableName);
+		}
 
-    return sourceTableName;
-  }
+		return sourceTableName;
+	}
 
-  /**
-   * 构建去向视图.
-   */
-  public static String genTargetTempView(SparkSession sparkSession, PluginReq conf) {
+	/**
+	 * 构建去向视图.
+	 */
+	public static String genTargetTempView(SparkSession sparkSession, PluginReq conf) {
 
-    String targetTableName = "zhiqingyun_dist_" + conf.getSyncWorkConfig().getTargetDatabase().getDbTable();
+		String targetTableName = "zhiqingyun_dist_" + conf.getSyncWorkConfig().getTargetDatabase().getDbTable();
 
-    if (DatasourceType.HIVE.equals(conf.getSyncWorkConfig().getTargetDBType())) {
+		if (DatasourceType.HIVE.equals(conf.getSyncWorkConfig().getTargetDBType())) {
 
-      return parseHiveDatabase(conf.getSyncWorkConfig().getTargetDatabase().getUrl())
-        + conf.getSyncWorkConfig().getTargetDatabase().getDbTable();
-    } else {
-      DataFrameReader frameReader = sparkSession.read().format("jdbc")
-        .option("driver", conf.getSyncWorkConfig().getTargetDatabase().getDriver())
-        .option("url", conf.getSyncWorkConfig().getTargetDatabase().getUrl())
-        .option("dbtable", conf.getSyncWorkConfig().getTargetDatabase().getDbTable())
-        .option("user", conf.getSyncWorkConfig().getTargetDatabase().getUser())
-        .option("password", conf.getSyncWorkConfig().getTargetDatabase().getPassword())
-        .option("truncate", "true");
+			return parseHiveDatabase(conf.getSyncWorkConfig().getTargetDatabase().getUrl())
+					+ conf.getSyncWorkConfig().getTargetDatabase().getDbTable();
+		} else {
+			DataFrameReader frameReader = sparkSession.read().format("jdbc")
+					.option("driver", conf.getSyncWorkConfig().getTargetDatabase().getDriver())
+					.option("url", conf.getSyncWorkConfig().getTargetDatabase().getUrl())
+					.option("dbtable", conf.getSyncWorkConfig().getTargetDatabase().getDbTable())
+					.option("user", conf.getSyncWorkConfig().getTargetDatabase().getUser())
+					.option("password", conf.getSyncWorkConfig().getTargetDatabase().getPassword())
+					.option("truncate", "true");
 
-      if (SetMode.ADVANCE.equals(conf.getSyncRule().getSetMode())) {
-        conf.getSyncRule().getSqlConfig().forEach(frameReader::option);
-      }
-      Dataset<Row> source = frameReader.load();
-      source.createOrReplaceTempView(targetTableName);
-    }
+			if (SetMode.ADVANCE.equals(conf.getSyncRule().getSetMode())) {
+				conf.getSyncRule().getSqlConfig().forEach(frameReader::option);
+			}
+			Dataset<Row> source = frameReader.load();
+			source.createOrReplaceTempView(targetTableName);
+		}
 
-    return targetTableName;
-  }
+		return targetTableName;
+	}
 
-  public static PluginReq parse(String[] args) {
-    if (args.length == 0) {
-      throw new RuntimeException("args is empty");
-    }
-    return JSON.parseObject(Base64.getDecoder().decode(args[0]), PluginReq.class);
-  }
+	public static PluginReq parse(String[] args) {
+		if (args.length == 0) {
+			throw new RuntimeException("args is empty");
+		}
+		return JSON.parseObject(Base64.getDecoder().decode(args[0]), PluginReq.class);
+	}
 
-  public static SparkConf initSparkConf(Map<String, String> sparkConfig) {
-    SparkConf conf = new SparkConf();
-    if (sparkConfig != null) {
-      for (Map.Entry<String, String> entry : sparkConfig.entrySet()) {
-        conf.set(entry.getKey(), entry.getValue());
-      }
-    }
-    return conf;
-  }
+	public static SparkConf initSparkConf(Map<String, String> sparkConfig) {
+		SparkConf conf = new SparkConf();
+		if (sparkConfig != null) {
+			for (Map.Entry<String, String> entry : sparkConfig.entrySet()) {
+				conf.set(entry.getKey(), entry.getValue());
+			}
+		}
+		return conf;
+	}
 
-  public static SparkSession initSparkSession(Map<String, String> sparkConfig) {
+	public static SparkSession initSparkSession(Map<String, String> sparkConfig) {
 
-    SparkSession.Builder sparkSessionBuilder = SparkSession.builder();
+		SparkSession.Builder sparkSessionBuilder = SparkSession.builder();
 
-    SparkConf conf = initSparkConf(sparkConfig);
+		SparkConf conf = initSparkConf(sparkConfig);
 
-    if (Strings.isEmpty(sparkConfig.get("hive.metastore.uris"))) {
-      return sparkSessionBuilder.config(conf).getOrCreate();
-    } else {
-      return sparkSessionBuilder.config(conf).enableHiveSupport().getOrCreate();
-    }
-  }
+		if (Strings.isEmpty(sparkConfig.get("hive.metastore.uris"))) {
+			return sparkSessionBuilder.config(conf).getOrCreate();
+		} else {
+			return sparkSessionBuilder.config(conf).enableHiveSupport().getOrCreate();
+		}
+	}
 
-  public static String parseHiveDatabase(String jdbcUrl) {
+	public static String parseHiveDatabase(String jdbcUrl) {
 
-    Pattern pattern = Pattern.compile("^jdbc:hive2://.*?/(.*?)$");
-    Matcher matcher = pattern.matcher(jdbcUrl);
-    if (matcher.find()) {
-      return matcher.group(1) + ".";
-    } else {
-      return "";
-    }
-  }
+		Pattern pattern = Pattern.compile("^jdbc:hive2://.*?/(.*?)$");
+		Matcher matcher = pattern.matcher(jdbcUrl);
+		if (matcher.find()) {
+			return matcher.group(1) + ".";
+		} else {
+			return "";
+		}
+	}
 
-  public static String getHash(String datasourceType) {
-    switch (datasourceType) {
-      case DatasourceType.MYSQL:
-      case DatasourceType.TIDB:
-        return "CRC32";
-      case DatasourceType.ORACLE:
-      case DatasourceType.OCEANBASE:
-      case DatasourceType.DM:
-        return "ORA_HASH";
-      case DatasourceType.SQL_SERVER:
-        return "CHECKSUM";
-      case DatasourceType.POSTGRE_SQL:
-        return "md5";
-      case DatasourceType.CLICKHOUSE:
-        return "sipHash64";
-      case DatasourceType.HIVE:
-        return "hash";
-      case DatasourceType.HANA_SAP:
-        return "HASH_SHA256";
-      case DatasourceType.DORIS:
-      case DatasourceType.STAR_ROCKS:
-        return "murmur_hash3_32";
-      case DatasourceType.DB2:
-        return "hash8";
-      default:
-        throw new RuntimeException("暂不支持的数据库");
-    }
-  }
+	public static String getHash(String datasourceType) {
+		switch (datasourceType) {
+			case DatasourceType.MYSQL :
+			case DatasourceType.TIDB :
+				return "CRC32";
+			case DatasourceType.ORACLE :
+			case DatasourceType.OCEANBASE :
+			case DatasourceType.DM :
+				return "ORA_HASH";
+			case DatasourceType.SQL_SERVER :
+				return "CHECKSUM";
+			case DatasourceType.POSTGRE_SQL :
+				return "md5";
+			case DatasourceType.CLICKHOUSE :
+				return "sipHash64";
+			case DatasourceType.HIVE :
+				return "hash";
+			case DatasourceType.HANA_SAP :
+				return "HASH_SHA256";
+			case DatasourceType.DORIS :
+			case DatasourceType.STAR_ROCKS :
+				return "murmur_hash3_32";
+			case DatasourceType.DB2 :
+				return "hash8";
+			default :
+				throw new RuntimeException("暂不支持的数据库");
+		}
+	}
 
-  private static DataType getResultType(String resultType) {
-    switch (resultType) {
-      case "string":
-        return DataTypes.StringType;
-      case "int":
-        return DataTypes.IntegerType;
-      case "long":
-        return DataTypes.LongType;
-      case "double":
-        return DataTypes.DoubleType;
-      case "boolean":
-        return DataTypes.BooleanType;
-      case "date":
-        return DataTypes.DateType;
-      case "timestamp":
-        return DataTypes.TimestampType;
-      default:
-        return DataTypes.StringType;
-    }
-  }
+	private static DataType getResultType(String resultType) {
+		switch (resultType) {
+			case "string" :
+				return DataTypes.StringType;
+			case "int" :
+				return DataTypes.IntegerType;
+			case "long" :
+				return DataTypes.LongType;
+			case "double" :
+				return DataTypes.DoubleType;
+			case "boolean" :
+				return DataTypes.BooleanType;
+			case "date" :
+				return DataTypes.DateType;
+			case "timestamp" :
+				return DataTypes.TimestampType;
+			default :
+				return DataTypes.StringType;
+		}
+	}
 
 }

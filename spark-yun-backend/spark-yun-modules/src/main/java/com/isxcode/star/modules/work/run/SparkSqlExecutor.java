@@ -210,10 +210,10 @@ public class SparkSqlExecutor extends WorkExecutor {
 			throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + e.getMsg() + "\n");
 		}
 
-    // 如果数据库id不为空,则替换hive的metastore url
-    if (!Strings.isEmpty(workRunContext.getDatasourceId())) {
-      sparkSubmit.getConf().put("hive.metastore.uris", datasource.getMetastoreUris());
-    }
+		// 如果数据库id不为空,则替换hive的metastore url
+		if (!Strings.isEmpty(workRunContext.getDatasourceId())) {
+			sparkSubmit.getConf().put("hive.metastore.uris", datasource.getMetastoreUris());
+		}
 
 		// 开始构造executeReq
 		executeReq.setSparkSubmit(sparkSubmit);
