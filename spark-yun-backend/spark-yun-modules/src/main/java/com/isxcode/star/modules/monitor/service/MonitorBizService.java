@@ -1,7 +1,10 @@
 package com.isxcode.star.modules.monitor.service;
 
 import com.alibaba.fastjson.JSON;
+import com.isxcode.star.api.api.constants.ApiStatus;
+import com.isxcode.star.api.cluster.constants.ClusterStatus;
 import com.isxcode.star.api.cluster.pojos.dto.ScpFileEngineNodeDto;
+import com.isxcode.star.api.datasource.constants.DatasourceStatus;
 import com.isxcode.star.api.main.properties.SparkYunProperties;
 import com.isxcode.star.api.monitor.constants.MonitorStatus;
 import com.isxcode.star.api.monitor.dto.MonitorLineDto;
@@ -13,13 +16,18 @@ import com.isxcode.star.api.monitor.res.GetClusterMonitorRes;
 import com.isxcode.star.api.monitor.res.GetInstanceMonitorRes;
 import com.isxcode.star.api.monitor.res.GetSystemMonitorRes;
 import com.isxcode.star.api.monitor.res.QueryInstancesRes;
+import com.isxcode.star.api.workflow.constants.WorkflowStatus;
 import com.isxcode.star.common.utils.AesUtils;
+import com.isxcode.star.modules.api.repository.ApiRepository;
 import com.isxcode.star.modules.cluster.entity.ClusterNodeEntity;
 import com.isxcode.star.modules.cluster.mapper.ClusterNodeMapper;
 import com.isxcode.star.modules.cluster.repository.ClusterNodeRepository;
+import com.isxcode.star.modules.cluster.repository.ClusterRepository;
+import com.isxcode.star.modules.datasource.repository.DatasourceRepository;
 import com.isxcode.star.modules.monitor.entity.MonitorEntity;
 import com.isxcode.star.modules.monitor.mapper.MonitorMapper;
 import com.isxcode.star.modules.monitor.repository.MonitorRepository;
+import com.isxcode.star.modules.workflow.repository.WorkflowRepository;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.SftpException;
 import lombok.RequiredArgsConstructor;
@@ -57,23 +65,41 @@ public class MonitorBizService {
 
 	private final MonitorRepository monitorRepository;
 
+	private final ClusterRepository clusterRepository;
+
+	private final DatasourceRepository datasourceRepository;
+
+	private final WorkflowRepository workflowRepository;
+
+	private final ApiRepository apiRepository;
+
 	public GetSystemMonitorRes getSystemMonitor() {
 
-		// 查询集群信息
-		SystemMonitorDto clusterMonitor = new SystemMonitorDto();
+		// 集群信息
+		long activeClusterNum = clusterRepository.countByStatus(ClusterStatus.ACTIVE);
+		long allClusterNum = clusterRepository.count();
+		SystemMonitorDto clusterMonitor = SystemMonitorDto.builder().total(allClusterNum).activeNum(activeClusterNum)
+				.build();
 
-		// 查询数据源
-		SystemMonitorDto datasourceMonitor = new SystemMonitorDto();
+		// 数据源信息
+		long activeDatasourceNum = datasourceRepository.countByStatus(DatasourceStatus.ACTIVE);
+		long allDatasourceNum = datasourceRepository.count();
+		SystemMonitorDto datasourceMonitor = SystemMonitorDto.builder().total(allDatasourceNum)
+				.activeNum(activeDatasourceNum).build();
 
-		// 查询作业信息
-		SystemMonitorDto workMonitor = new SystemMonitorDto();
+		// 发布作业信息
+		long publishedWorkflowNum = workflowRepository.countByStatus(WorkflowStatus.PUBLISHED);
+		long allWorkflowNum = workflowRepository.count();
+		SystemMonitorDto workMonitor = SystemMonitorDto.builder().total(allWorkflowNum).activeNum(publishedWorkflowNum)
+				.build();
 
-		// 查询接口信息
-		SystemMonitorDto apiMonitor = new SystemMonitorDto();
-		apiMonitor.setTotal(10);
-		apiMonitor.setActiveNum(7);
+		// 发布接口信息
+		long allApiNum = apiRepository.count();
+		long publishedApiNum = apiRepository.countByStatus(ApiStatus.PUBLISHED);
+		SystemMonitorDto apiMonitor = SystemMonitorDto.builder().total(allApiNum).activeNum(publishedApiNum).build();
 
-		return GetSystemMonitorRes.builder().apiMonitor(apiMonitor).workMonitor(workMonitor)
+		// 封装返回
+		return GetSystemMonitorRes.builder().apiMonitor(apiMonitor).workflowMonitor(workMonitor)
 				.clusterMonitor(clusterMonitor).datasourceMonitor(datasourceMonitor).build();
 	}
 

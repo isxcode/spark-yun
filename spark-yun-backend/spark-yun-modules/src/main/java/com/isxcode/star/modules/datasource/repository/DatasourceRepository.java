@@ -25,4 +25,6 @@ public interface DatasourceRepository extends JpaRepository<DatasourceEntity, St
 	List<DatasourceEntity> findAllByDriverId(String driverId);
 
 	Optional<DatasourceEntity> findByName(String name);
+
+	long countByStatus(String status);
 }

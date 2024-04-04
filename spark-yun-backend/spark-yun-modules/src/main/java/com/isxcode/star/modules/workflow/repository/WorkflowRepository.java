@@ -22,4 +22,6 @@ public interface WorkflowRepository extends JpaRepository<WorkflowEntity, String
 	long countByTenantId(String tenantId);
 
 	Optional<WorkflowEntity> findByName(String name);
+
+	long countByStatus(String status);
 }
