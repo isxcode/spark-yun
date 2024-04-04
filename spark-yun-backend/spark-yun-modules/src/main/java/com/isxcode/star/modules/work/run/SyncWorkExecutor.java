@@ -141,6 +141,11 @@ public class SyncWorkExecutor extends WorkExecutor {
 			throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "申请资源失败 : 集群不存在可用节点，请切换一个集群  \n");
 		}
 
+		// 检查分区键是否为空
+		if (Strings.isEmpty(workRunContext.getSyncWorkConfig().getPartitionColumn())) {
+			throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "检查作业失败 : 分区键为空  \n");
+		}
+
 		// 检测用户是否配置映射关系
 		if (workRunContext.getSyncWorkConfig().getColumnMap().isEmpty()) {
 			throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "检查作业失败 : 请配置字段映射关系  \n");
@@ -297,7 +302,7 @@ public class SyncWorkExecutor extends WorkExecutor {
 			List<String> runningStatus = Arrays.asList("RUNNING", "UNDEFINED", "SUBMITTED", "CONTAINERCREATING");
 			if (runningStatus.contains(workStatusRes.getAppStatus().toUpperCase())) {
 				try {
-					Thread.sleep(1000);
+					Thread.sleep(4000);
 				} catch (InterruptedException e) {
 					throw new WorkRunException(
 							LocalDateTime.now() + WorkLog.ERROR_INFO + "睡眠线程异常 : " + e.getMessage() + "\n");

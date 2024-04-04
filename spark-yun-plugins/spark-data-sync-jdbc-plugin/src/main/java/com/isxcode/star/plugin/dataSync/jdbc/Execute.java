@@ -57,7 +57,7 @@ public class Execute {
 			pluginReq.getSyncWorkConfig().getColumnMap().forEach(e -> {
 				sourceCols.add(Strings.isEmpty(sourceColTranslateSql.get(e.getSource()))
 						? String.format("`%s`", e.getSource())
-						: sourceColTranslateSql.get(e.getSource()));
+						: sourceColTranslateSql.get(e.getSource()) + " ");
 				targetCols.add(String.format("`%s`", e.getTarget()));
 			});
 
@@ -188,8 +188,11 @@ public class Execute {
 	public static String getHash(String datasourceType) {
 		switch (datasourceType) {
 			case DatasourceType.MYSQL :
+			case DatasourceType.TIDB :
 				return "CRC32";
 			case DatasourceType.ORACLE :
+			case DatasourceType.OCEANBASE :
+			case DatasourceType.DM :
 				return "ORA_HASH";
 			case DatasourceType.SQL_SERVER :
 				return "CHECKSUM";
@@ -201,14 +204,7 @@ public class Execute {
 				return "hash";
 			case DatasourceType.HANA_SAP :
 				return "HASH_SHA256";
-			case DatasourceType.DM :
-				return "ORA_HASH";
 			case DatasourceType.DORIS :
-				return "murmur_hash3_32";
-			case DatasourceType.OCEANBASE :
-				return "ORA_HASH";
-			case DatasourceType.TIDB :
-				return "CRC32";
 			case DatasourceType.STAR_ROCKS :
 				return "murmur_hash3_32";
 			case DatasourceType.DB2 :

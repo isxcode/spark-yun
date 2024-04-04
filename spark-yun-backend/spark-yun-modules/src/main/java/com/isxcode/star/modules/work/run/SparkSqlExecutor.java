@@ -210,6 +210,11 @@ public class SparkSqlExecutor extends WorkExecutor {
 			throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + e.getMsg() + "\n");
 		}
 
+		// 如果数据库id不为空,则替换hive的metastore url
+		if (!Strings.isEmpty(workRunContext.getDatasourceId())) {
+			pluginReq.getSparkConfig().put("hive.metastore.uris", datasource.getMetastoreUris());
+		}
+
 		// 开始构造executeReq
 		executeReq.setSparkSubmit(sparkSubmit);
 		executeReq.setPluginReq(pluginReq);
@@ -284,7 +289,7 @@ public class SparkSqlExecutor extends WorkExecutor {
 			List<String> runningStatus = Arrays.asList("RUNNING", "UNDEFINED", "SUBMITTED", "CONTAINERCREATING");
 			if (runningStatus.contains(workStatusRes.getAppStatus().toUpperCase())) {
 				try {
-					Thread.sleep(1000);
+					Thread.sleep(4000);
 				} catch (InterruptedException e) {
 					throw new WorkRunException(
 							LocalDateTime.now() + WorkLog.ERROR_INFO + "睡眠线程异常 : " + e.getMessage() + "\n");
