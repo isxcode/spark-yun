@@ -212,7 +212,7 @@ public class SparkSqlExecutor extends WorkExecutor {
 
 		// 如果数据库id不为空,则替换hive的metastore url
 		if (!Strings.isEmpty(workRunContext.getDatasourceId())) {
-			sparkSubmit.getConf().put("hive.metastore.uris", datasource.getMetastoreUris());
+      pluginReq.getSparkConfig().put("hive.metastore.uris", datasource.getMetastoreUris());
 		}
 
 		// 开始构造executeReq
