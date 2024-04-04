@@ -25,16 +25,12 @@
               <p>立即体验</p>
               <SvgIcon name="arrow-right" class="link-right-svg"></SvgIcon>
             </div>
-            <div class="movie-btn">
-              <p>视频介绍</p>
-              <SvgIcon name="arrow-right" class="link-right-svg"></SvgIcon>
+            <div class="movie-btn" @click="openVideo">
+              <p>产品介绍</p>
             </div>
           </div>
         </div>
         <div class="right">
-<!--          <video class="product-video" autoplay loop muted>-->
-<!--            <source src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/product.mp4">-->
-<!--          </video>-->
           <div class="artplayer-app"></div>
         </div>
       </div>
@@ -49,6 +45,9 @@
         </div>
         <div class="why-content">
           至轻云是一款超轻量级、企业级大数据平台。具有一键Docker部署，开箱即用特色。无需额外大数据组件安装，即可快速实现企业级大数据离线ETL、实时计算、复杂作业运行等场景。项目持续更新迭代，源码永久免费开源。助力企业快速处理海量数据，获得更多商业价值。
+        </div>
+        <div class="why-content-mobile">
+          至轻云是一款超轻量级、企业级大数据平台。具有一键Docker部署，开箱即用特色。无需额外大数据组件安装，即可快速实现企业级大数据离线ETL、实时计算、复杂作业运行等场景。
         </div>
         <div class="tech-title">
           相关技术
@@ -173,7 +172,7 @@ useSeoMeta({
   ogDescription: "打造超轻量级大数据平台",
 });
 
-onMounted(()=>{
+onMounted(() => {
   const art = new Artplayer({
     container: '.artplayer-app',
     url: 'https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/product.mp4',
@@ -241,10 +240,29 @@ const copyContent = async (text: string) => {
   }
 };
 
+function openVideo() {
+
+}
+
 </script>
 
 <style lang="scss" scoped>
 
+@font-face {
+  font-family: "阿里妈妈数黑体 Bold";
+  font-weight: 700;
+  src: url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/T4JjC1yVtRsU.woff2") format("woff2"),
+  url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/Y0ipOh97amn9.woff") format("woff");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "阿里巴巴普惠体 2.0 45 Light";
+  font-weight: 300;
+  src: url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/aE2qrdrsu4BG.woff2") format("woff2"),
+  url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/cZP0h8SyVUCW.woff") format("woff");
+  font-display: swap;
+}
 
 $font-size: 14px;
 // 介绍的高度
@@ -289,7 +307,7 @@ $module-intro-img-width: 600px;
       top: 0;
       left: 0;
       width: 100%;
-      height: 100%;
+      height: 105%;
       object-fit: cover;
       z-index: -1;
       pointer-events: none;
@@ -407,6 +425,10 @@ $module-intro-img-width: 600px;
         width: 800px;
         line-height: 24px;
         font-size: 17px;
+      }
+
+      .why-content-mobile {
+        display: none;
       }
 
       .tech-title {
@@ -620,23 +642,6 @@ $module-intro-img-width: 600px;
   width: $primary-width;
 }
 
-@font-face {
-  font-family: "阿里妈妈数黑体 Bold";
-  font-weight: 700;
-  src: url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/T4JjC1yVtRsU.woff2") format("woff2"),
-  url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/Y0ipOh97amn9.woff") format("woff");
-  font-display: swap;
-}
-
-/* 在线链接服务仅供平台体验和调试使用，平台不承诺服务的稳定性，企业客户需下载字体包自行发布使用并做好备份。 */
-@font-face {
-  font-family: "阿里巴巴普惠体 2.0 45 Light";
-  font-weight: 300;
-  src: url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/cHPsZ2tb5Gxv.woff2") format("woff2"),
-  url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/F8LRQLgsPF37.woff") format("woff");
-  font-display: swap;
-}
-
 // ------------------------------------------------------- 移动端 ----------------------------------------------------------------------
 
 @media (max-width: 768px) {
@@ -682,6 +687,7 @@ $module-intro-img-width: 600px;
             margin: 25px auto auto;
 
             .guide-btn {
+              display: none;
               cursor: pointer;
               width: 170px;
               border-radius: 3px;
@@ -699,19 +705,17 @@ $module-intro-img-width: 600px;
             }
 
             .movie-btn {
-              margin-left: 30px;
+              cursor: pointer;
               width: 150px;
-              color: #e25a1b;
+              margin: auto;
+              background: #e25a1b;
+              color: white;
               height: 40px;
               line-height: 40px;
               text-align: center;
-              display: flex;
-
-              .link-right-svg {
-                margin-top: 10px;
-                width: 20px;
-                height: 20px;
-              }
+              font-size: 20px;
+              display: block;
+              border-radius: 3px;
             }
           }
         }
@@ -719,6 +723,7 @@ $module-intro-img-width: 600px;
         .right {
           display: none;
           width: 600px;
+
           .product-video {
             display: none;
           }
@@ -748,12 +753,17 @@ $module-intro-img-width: 600px;
           font-size: 30px;
         }
 
-        .why-content {
+        .why-content-mobile {
+          display: block;
           margin: 25px auto auto;
           text-indent: 2em;
           width: 300px;
           line-height: 22px;
           font-size: 18px;
+        }
+
+        .why-content {
+          display: none;
         }
 
         .tech-title {
@@ -810,13 +820,13 @@ $module-intro-img-width: 600px;
 
   .module-feat-left {
     width: 100%;
-    height: 400px;
+    height: 480px;
     display: flex;
     align-items: center;
     justify-content: center;
 
     .content {
-      height: 360px;
+      height: 380px;
       flex-direction: column;
 
       .left {
@@ -833,7 +843,7 @@ $module-intro-img-width: 600px;
         width: 300px;
 
         .line-1 {
-          margin-top: 10px;
+          margin-top: 15px;
           font-family: "阿里妈妈数黑体 Bold", sans-serif;
           font-size: 25px;
           text-align: center;
@@ -857,13 +867,13 @@ $module-intro-img-width: 600px;
   .module-feat-right {
 
     width: 100%;
-    height: 400px;
+    height: 480px;
     display: flex;
     align-items: center;
     justify-content: center;
 
     .content {
-      height: 360px;
+      height: 380px;
       flex-direction: column;
 
       .right {
@@ -885,7 +895,7 @@ $module-intro-img-width: 600px;
         width: 300px;
 
         .line-1 {
-          margin-top: 10px;
+          margin-top: 15px;
           font-family: "阿里妈妈数黑体 Bold", sans-serif;
           font-size: 25px;
           text-align: center;
@@ -906,7 +916,7 @@ $module-intro-img-width: 600px;
   }
 
   .module-end {
-    height: $module-end-height;
+    height: 300px;
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;

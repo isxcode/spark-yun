@@ -271,17 +271,17 @@ vim /opt/hadoop/etc/hadoop/yarn-site.xml
   
     <property>
         <name>yarn.scheduler.maximum-allocation-vcores</name>
-        <value>8</value>
+        <value>2</value>
     </property>
   
     <property>
         <name>yarn.scheduler.maximum-allocation-mb</name>
-        <value>20480</value>
+        <value>5120</value>
     </property>
   
     <property>
         <name>yarn.scheduler.minimum-allocation-mb</name>
-        <value>1024</value>
+        <value>2048</value>
     </property>
   
     <property>
@@ -292,6 +292,11 @@ vim /opt/hadoop/etc/hadoop/yarn-site.xml
     <property>
         <name>yarn.resourcemanager.address</name>
         <value>isxcode:8032</value>
+    </property>
+  
+    <property>
+        <name>yarn.resourcemanager.scheduler.class</name>
+        <value>org.apache.hadoop.yarn.server.resourcemanager.scheduler.fair.FairScheduler</value>
     </property>
 
 </configuration>

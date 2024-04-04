@@ -1,5 +1,5 @@
 ---
-title: '🚚 使用场景'
+title: '使用场景'
 description: 'What a lovely page.'
 image:
   src: '/assets/image.jpg'

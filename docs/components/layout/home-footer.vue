@@ -51,6 +51,15 @@
     </div>
   </div>
 
+  <div class="org-info">
+    <div class="content">
+      <div class="link">公司: 上海至爻数据有限公司</div>
+      <div class="link">电话: 400-8848-170</div>
+      <div class="link">邮箱: hello@isxcode.com</div>
+      <div class="link">地址: 上海市徐汇区中山西路2020号501室</div>
+    </div>
+  </div>
+
   <div class="footer-copyright">
     <div class="content">
       <div class="equal-columns">
@@ -185,6 +194,10 @@
   font-display: swap;
 }
 
+.org-info{
+  display: none;
+}
+
 @media (max-width: 400px) {
 
   .fixed-footer {
@@ -224,7 +237,7 @@
 
     .content {
       width: 300px;
-      height: 300px;
+      height: 340px;
       margin: auto;
       display: flex;
 
@@ -241,7 +254,7 @@
           width: 300px;
           text-align: center;
           font-family: "阿里妈妈数黑体 Bold", sans-serif;
-          font-size: 18px;
+          font-size: 28px;
         }
 
         .wechat-img {
@@ -253,7 +266,7 @@
         .wechat-name {
           width: 300px;
           text-align: center;
-          font-size: 10px;
+          font-size: 12px;
           color: grey;
         }
       }
@@ -280,6 +293,18 @@
       }
     }
 
+  }
+
+  .org-info {
+    display: block;
+    width: 100%;
+
+    .content {
+      height: 120px;
+      line-height: 25px;
+      width: 300px;
+      margin: auto;
+    }
   }
 
   .footer-copyright {

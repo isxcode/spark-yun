@@ -1,5 +1,5 @@
 ---
-title: '🔖 版本历史'
+title: '版本历史'
 description: 'What a lovely page.'
 image:
   src: '/assets/image.jpg'

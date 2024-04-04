@@ -10,8 +10,7 @@
           <SvgIcon name="home"></SvgIcon>
         </span>
         <SkEllipsis class="menu-folder-title-text" truncated>
-          <span style="font-size: 18px" class="menu-folder-span">{{ link.title.split(' ')[0] }}</span>
-          {{ link.title.split(' ')[1] }}
+          {{ link.title}}
         </SkEllipsis>
         <div class="menu-folder-title-is-collapsed">
           <SvgIcon

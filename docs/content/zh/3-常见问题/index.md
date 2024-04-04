@@ -1,5 +1,5 @@
 ---
-title: '🔧 常见问题'
+title: '常见问题'
 description: 'What a lovely page.'
 image:
   src: '/assets/image.jpg'

@@ -1,5 +1,5 @@
 ---
-title: '✨ 开发手册'
+title: '开发手册'
 description: 'What a lovely page.'
 image:
   src: '/assets/image.jpg'

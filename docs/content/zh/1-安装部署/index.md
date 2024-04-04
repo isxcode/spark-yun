@@ -1,5 +1,5 @@
 ---
-title: '🚀 安装部署'
+title: '安装部署'
 description: 'What a lovely page.'
 image:
   src: '/assets/image.jpg'
