@@ -103,7 +103,7 @@ export function useMonitor(currentColony: Ref<ColonyInfo | undefined>, currentFr
     })
   }
 
-  const timer = setInterval(queryMonitorData, 3000)
+  const timer = setInterval(queryMonitorData, 60 * 1000)
 
   onUnmounted(() => {
     clearInterval(timer)

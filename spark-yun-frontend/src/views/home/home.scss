@@ -3,8 +3,9 @@
   width: 100vw;
   height: 100vh;
 
+  
   &.is-collapse {
-
+    
     .zqy-home__sidebar {
       width: 80px;
       .zqy-home__nav {
@@ -13,41 +14,50 @@
         align-items: center;
       }
     }
-
+    
     .zqy-home__main {
-      width: calc(100vw - 80px);
+      padding-left: 80px;
       // 适配输入框穿透问题
       .flow-container {
         max-width: calc(100vw - 282px);
       }
     }
-
+    
     .zqy-home__menu-footer {
-      width: 80px;
+      // width: 80px;
       padding-left: 24px;
       // height: 100px;
       // flex-direction: column;
       // justify-content: space-evenly;
     }
-
-
+    
+    
     .zqy-home__title {
       display: none;
     }
   }
-
+  
   .zqy-home__sidebar {
+    --el-transition-duration: 0.3s;
+
     display: flex;
+    position: absolute;
+    left: 0;
+    top: 0;
     flex-direction: column;
     width: 220px;
+    height: 100%;
     overflow: hidden;
     background-color: getCssVar('color', 'white');
     transition: width getCssVar('transition-duration') ease-in-out;
     border-right: 1px solid var(--el-border-color);
   }
-
+  
   .zqy-home__main {
-    width: calc(100vw - 220px);
+    width: 100vw;
+    padding-left: 220px;
+    box-sizing: border-box;
+    transition: all getCssVar('transition-duration') ease-in-out;
     // padding-bottom: 24px;
     .flow-container {
       max-width: calc(100vw - 422px);
@@ -101,6 +111,7 @@
     flex: 1;
     overflow-x: hidden;
     overflow-y: auto;
+    width: 100%;
     .zqy-home__menu.el-menu {
       border-right: 0;
       .el-menu-item {
@@ -118,7 +129,7 @@
   }
 
   .zqy-home__menu-footer {
-    position: fixed;
+    position: absolute;
     bottom: 0;
     left: 0;
     display: flex;
@@ -127,7 +138,7 @@
     height: 60px;
     box-sizing: border-box;
     padding: 0 16px;
-    width: 220px;
+    width: 100%;
     background-color: getCssVar('color', 'white');
     transition: getCssVar('transition-duration') width ease-in-out;
   }
