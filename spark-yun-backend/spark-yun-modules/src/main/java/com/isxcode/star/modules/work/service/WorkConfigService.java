@@ -100,7 +100,7 @@ public class WorkConfigService {
 				sparkConfig.put("spark.driver.memory", "2g");
 				sparkConfig.put("spark.driver.cores", "1");
 				sparkConfig.put("spark.cores.max", "10");
-        sparkConfig.put("spark.memory.fraction", "0.9");
+				sparkConfig.put("spark.memory.fraction", "0.9");
 				sparkConfig.put("spark.driver.extraJavaOptions", "-Dfile.encoding=utf-8");
 				sparkConfig.put("spark.executor.extraJavaOptions", "-Dfile.encoding=utf-8");
 				sparkConfig.put("spark.sql.storeAssignmentPolicy", "LEGACY");
@@ -113,7 +113,7 @@ public class WorkConfigService {
 				sparkConfig.put("spark.driver.memory", "1g");
 				sparkConfig.put("spark.driver.cores", "1");
 				sparkConfig.put("spark.cores.max", "5");
-        sparkConfig.put("spark.memory.fraction", "0.9");
+				sparkConfig.put("spark.memory.fraction", "0.9");
 				sparkConfig.put("spark.driver.extraJavaOptions", "-Dfile.encoding=utf-8");
 				sparkConfig.put("spark.executor.extraJavaOptions", "-Dfile.encoding=utf-8");
 				sparkConfig.put("spark.sql.storeAssignmentPolicy", "LEGACY");
@@ -126,7 +126,7 @@ public class WorkConfigService {
 				sparkConfig.put("spark.driver.memory", "1g");
 				sparkConfig.put("spark.driver.cores", "1");
 				sparkConfig.put("spark.cores.max", "1");
-        sparkConfig.put("spark.memory.fraction", "0.9");
+				sparkConfig.put("spark.memory.fraction", "0.9");
 				sparkConfig.put("spark.driver.extraJavaOptions", "-Dfile.encoding=utf-8");
 				sparkConfig.put("spark.executor.extraJavaOptions", "-Dfile.encoding=utf-8");
 				sparkConfig.put("spark.sql.storeAssignmentPolicy", "LEGACY");
