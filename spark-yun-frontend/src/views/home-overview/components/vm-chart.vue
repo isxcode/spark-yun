@@ -3,7 +3,8 @@
     <div class="vm-chart__header">
       <span class="vm-chart__title">实例图</span>
       <div class="vm-chart__ops">
-        <el-date-picker v-model="currentDate" @change="queryVmChartData"></el-date-picker>
+        <el-icon class="vm-chart__icon" @click="queryVmChartData"><RefreshRight /></el-icon>
+        <el-date-picker v-model="currentDate" @change="queryVmChartData" :clearable="false"></el-date-picker>
       </div>
     </div>
     <div class="vm-chart__body">
@@ -123,6 +124,12 @@ onMounted(() => {
   }
 
   queryVmChartData()
+  
+  window.addEventListener('resize', () => {
+    if (chartVm.value) {
+      chartVm.value.resize()
+    }
+  })
 })
 
 function queryVmChartData() {
@@ -179,6 +186,22 @@ function queryVmChartData() {
   }
 
   .vm-chart__ops {
+    display: flex;
+    align-items: center;
+
+    .vm-chart__icon {
+      margin-right: 12px;
+      cursor: pointer;
+
+      &:hover {
+        color: getCssVar('color', 'primary');
+      }
+
+      &:last-child {
+        margin-right: 0;
+      }
+    }
+
     .el-date-editor {
       --el-date-editor-width: 160px
     }
