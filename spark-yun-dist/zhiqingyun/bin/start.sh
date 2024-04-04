@@ -15,7 +15,7 @@ if [ -e "zhiqingyun.pid" ]; then
 fi
 
 # 启动项目
-nohup java -jar -Xmx2048m lib/zhiqingyun.jar --spring.profiles.active=local --spring.config.additional-location=conf/ >> logs/zhiqingyun.log 2>&1 &
+nohup java -jar -Xmx2048m lib/zhiqingyun.jar --spring.profiles.active=local --spring.config.additional-location=conf/ &
 echo $! >zhiqingyun.pid
 echo "【至轻云】: RUNNING"
-tail -f logs/zhiqingyun.log
+tail -f logs/spark-yun.log
