@@ -297,7 +297,7 @@ public class SyncWorkExecutor extends WorkExecutor {
 			List<String> runningStatus = Arrays.asList("RUNNING", "UNDEFINED", "SUBMITTED", "CONTAINERCREATING");
 			if (runningStatus.contains(workStatusRes.getAppStatus().toUpperCase())) {
 				try {
-					Thread.sleep(1000);
+					Thread.sleep(4000);
 				} catch (InterruptedException e) {
 					throw new WorkRunException(
 							LocalDateTime.now() + WorkLog.ERROR_INFO + "睡眠线程异常 : " + e.getMessage() + "\n");

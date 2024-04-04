@@ -60,7 +60,7 @@ public class SshUtils {
 					break;
 				}
 			}
-			Thread.sleep(1000);
+			Thread.sleep(2000);
 		}
 
 		channel.disconnect();
@@ -113,7 +113,7 @@ public class SshUtils {
 		}
 
 		while (!channel.isClosed()) {
-			Thread.sleep(1000);
+			Thread.sleep(2000);
 		}
 
 		// 判断命令是否执行完成
@@ -170,7 +170,7 @@ public class SshUtils {
 					break;
 				}
 			}
-			Thread.sleep(1000);
+			Thread.sleep(2000);
 		}
 
 		channel.disconnect();
@@ -217,7 +217,7 @@ public class SshUtils {
 					break;
 				}
 			}
-			Thread.sleep(1000);
+			Thread.sleep(2000);
 		}
 
 		channel.disconnect();
