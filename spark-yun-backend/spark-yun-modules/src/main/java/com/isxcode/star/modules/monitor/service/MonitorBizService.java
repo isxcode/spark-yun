@@ -236,7 +236,7 @@ public class MonitorBizService {
 		workflowInstances.forEach(e -> {
 
 			// 开始小时和结束小时
-			int startHour = DateUtil.hour(e.getExecStartDateTime(), true) - 1;
+			int startHour = DateUtil.hour(e.getExecStartDateTime(), true) == 0 ? 0 : DateUtil.hour(e.getExecStartDateTime(), true) - 1;
 			int endHour = e.getExecStartDateTime() == null
 					? Integer.parseInt(String.valueOf(allNum)) - 1
 					: DateUtil.hour(e.getExecEndDateTime(), true) - 1;
