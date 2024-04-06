@@ -684,10 +684,9 @@ $module-intro-img-width: 600px;
           left: 50%;
           transform: translate(-50%, -50%);
           .artplayer-app {
-            height: 350px;
+            height: 200px;
             margin-top: 70px;
-            width: 646px;
-            transform: rotate(90deg);
+            width: 360px;
           }
         }
 
