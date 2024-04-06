@@ -31,11 +31,11 @@
           </div>
         </div>
         <div class="right">
-          <div class="artplayer-app"></div>
+          <div v-show="!isMobile||showVideo" class="artplayer-app"></div>
         </div>
       </div>
       <video class="bg-video" id="v1" autoplay loop muted>
-        <source src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/bg-0.mp4" type="video/mp4"/>
+        <source v-show="!isMobile" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/bg-0.mp4" type="video/mp4"/>
       </video>
     </div>
     <div class="module-about">
@@ -172,6 +172,8 @@ useSeoMeta({
   description: "打造超轻量级大数据平台",
   ogDescription: "打造超轻量级大数据平台",
 });
+
+const isMobile = useMediaQuery('(max-width: 767px)')
 
 const props = defineProps({
   showVideo: {
@@ -674,6 +676,18 @@ $module-intro-img-width: 600px;
       .content {
         display: flex;
 
+        .right {
+          position: fixed;
+          top: 40%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          .artplayer-app {
+            height: 341px;
+            margin-top: 70px;
+            width: 300px;
+          }
+        }
+
         .left {
           width: 400px;
 
@@ -731,19 +745,6 @@ $module-intro-img-width: 600px;
               display: block;
               border-radius: 3px;
             }
-          }
-        }
-
-        .right {
-          display: none;
-          width: 600px;
-
-          .product-video {
-            display: none;
-          }
-
-          img {
-            width: $module-intro-img-width;
           }
         }
       }
