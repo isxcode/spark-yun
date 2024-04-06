@@ -163,6 +163,11 @@ public class WorkConfigBizService {
 			workConfig.setJarJobConfig(JSON.toJSONString(wocConfigWorkReq.getJarJobConfig()));
 		}
 
+		// 设置容器id
+		if (wocConfigWorkReq.getContainerId() != null) {
+			workConfig.setContainerId(wocConfigWorkReq.getContainerId());
+		}
+
 		// 保存配置
 		workConfigRepository.save(workConfig);
 	}

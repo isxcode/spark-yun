@@ -45,4 +45,7 @@ public class ConfigWorkReq {
 
 	@Schema(title = "依赖选择")
 	private List<String> LibList;
+
+	@Schema(title = "容器id", example = "sy_fd34e4a53db640f5943a4352c4d549b9")
+	private String containerId;
 }
