@@ -236,7 +236,9 @@ public class MonitorBizService {
 		workflowInstances.forEach(e -> {
 
 			// 开始小时和结束小时
-			int startHour = DateUtil.hour(e.getExecStartDateTime(), true) == 0 ? 0 : DateUtil.hour(e.getExecStartDateTime(), true) - 1;
+			int startHour = DateUtil.hour(e.getExecStartDateTime(), true) == 0
+					? 0
+					: DateUtil.hour(e.getExecStartDateTime(), true) - 1;
 			int endHour = e.getExecStartDateTime() == null
 					? Integer.parseInt(String.valueOf(allNum)) - 1
 					: DateUtil.hour(e.getExecEndDateTime(), true) - 1;
@@ -328,11 +330,11 @@ public class MonitorBizService {
 		// 获取节点信息
 		NodeMonitorInfo nodeMonitorInfo = JSON.parseObject(executeLog, NodeMonitorInfo.class);
 
-    // 报错直接返回
-    if (!MonitorStatus.SUCCESS.equals(nodeMonitorInfo.getStatus())) {
-      nodeMonitorInfo.setStatus(MonitorStatus.FAIL);
-      return nodeMonitorInfo;
-    }
+		// 报错直接返回
+		if (!MonitorStatus.SUCCESS.equals(nodeMonitorInfo.getStatus())) {
+			nodeMonitorInfo.setStatus(MonitorStatus.FAIL);
+			return nodeMonitorInfo;
+		}
 
 		// 解析一下速度
 		nodeMonitorInfo.setDiskIoReadSpeed(Long.parseLong(nodeMonitorInfo.getDiskIoReadSpeedStr().split(" ")[0]));
