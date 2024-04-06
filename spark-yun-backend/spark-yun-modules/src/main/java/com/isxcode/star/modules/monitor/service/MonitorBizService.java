@@ -328,6 +328,12 @@ public class MonitorBizService {
 		// 获取节点信息
 		NodeMonitorInfo nodeMonitorInfo = JSON.parseObject(executeLog, NodeMonitorInfo.class);
 
+    // 报错直接返回
+    if (!MonitorStatus.SUCCESS.equals(nodeMonitorInfo.getStatus())) {
+      nodeMonitorInfo.setStatus(MonitorStatus.FAIL);
+      return nodeMonitorInfo;
+    }
+
 		// 解析一下速度
 		nodeMonitorInfo.setDiskIoReadSpeed(Long.parseLong(nodeMonitorInfo.getDiskIoReadSpeedStr().split(" ")[0]));
 		nodeMonitorInfo.setDiskIoWriteSpeed(Long.parseLong(nodeMonitorInfo.getDiskIoWriteSpeedStr().split(" ")[0]));
