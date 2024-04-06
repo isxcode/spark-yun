@@ -10,7 +10,7 @@
           <SvgIcon name="home"></SvgIcon>
         </span>
         <SkEllipsis class="menu-folder-title-text" truncated>
-          {{ link.title }}
+          {{ link.title}}
         </SkEllipsis>
         <div class="menu-folder-title-is-collapsed">
           <SvgIcon
@@ -88,21 +88,21 @@ watch(
 );
 </script>
 
-<style lang="scss" scope>
+<style lang="scss" scoped>
 .menu-item-block {
   .menu-folder {
     .menu-folder-title {
       display: flex;
       align-items: center;
-      padding: 0 12px;
-      padding-left: 14px;
+      padding: 0 12px 0 0;
       height: 32px;
       cursor: pointer;
       .menu-folder-title-icon {
         margin-right: 8px;
+        display: none;
       }
       .menu-folder-title-text {
-        font-size: 14px;
+        font-size: 16px;
         font-weight: 500;
       }
       .menu-folder-title-is-collapsed {
@@ -125,14 +125,16 @@ watch(
     transition: all 0.1s;
     &:hover {
       border-left: var(--sk-color-home-primary) 2px solid;
-      color: var(--sk-color-font-menu-hover);
+      color: var(--sk-color-home-primary);
+      background: #fffaf8;
     }
     .menu-item-icon {
       margin-right: 8px;
+      display: none;
     }
     .menu-item-text {
       font-size: 14px;
-      font-weight: 500;
+      font-weight: 400;
     }
   }
   .menu-item-active {

@@ -1,7 +1,8 @@
-import { createSvgIconsPlugin } from "vite-plugin-svg-icons";
+import {createSvgIconsPlugin} from "vite-plugin-svg-icons";
 import path from "path";
+
 export default defineNuxtConfig({
-  devtools: { enabled: false },
+  devtools: {enabled: false},
   modules: [
     "@nuxt/content",
     "@pinia/nuxt",
@@ -14,7 +15,7 @@ export default defineNuxtConfig({
     autoImports: ["defineStore"],
   },
   // 引入plugins
-  plugins: [{ src: "~/plugins/svgicon.client.ts" }],
+  plugins: [{src: "~/plugins/svgicon.client.ts"}],
   css: [
     "element-plus/dist/index.css",
     "element-plus/theme-chalk/dark/css-vars.css",
@@ -30,4 +31,9 @@ export default defineNuxtConfig({
   lodash: {
     prefix: "_",
   },
+  content: {
+    // highlight: {
+    //   theme: 'github-light'
+    // }
+  }
 });

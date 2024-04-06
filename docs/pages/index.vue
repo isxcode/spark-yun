@@ -1,157 +1,169 @@
 <template>
   <div class="main">
-    <!-- 一句话产品 -->
-    <div class="one-word-desc-product">
-      <div class="top">
-        <div class="one-word">至轻云-超轻量级大数据平台</div>
-        <div class="one-desc">
-          •企业级平台 &nbsp; &nbsp; •Docker一键部署 &nbsp; &nbsp;
-          •Github开源免费 &nbsp; &nbsp; •Spark纯原生
-        </div>
-        <div class="fast-use" id="code_block">
-          <span class="line" line="1">
-            <span style="color: #e25a1b">docker</span>
-            <span style="color: #e25a1b"> run</span>
-            <span style="color: #e25a1b"> -p</span>
-            <span style="color: #e25a1b"> 8080</span>
-            <span style="color: #e25a1b">:8080</span>
-            <span style="color: #e25a1b"> -d</span>
-            <span style="color: #e25a1b"> isxcode/zhiqingyun</span>
+    <div class="module-intro">
+      <div class="content">
+        <div class="left">
+          <div class="name">
+            至轻云
+          </div>
+          <div class="slogan">
+            打造超轻量级大数据平台
+          </div>
+          <div class="command">
+            <p id="command-shell">docker run -p 8080:8080 isxcode/zhiqingyun</p>
             <SvgIcon
               class="copy-icon"
               name="copy"
               @click="handleCommandCopyClick"
             ></SvgIcon>
-          </span>
-        </div>
-        <div class="product-img">
-          <img src="https://img.isxcode.com/picgo/20231102213942.png" alt="" />
-        </div>
-      </div>
-      <div class="bottom">
-        <div class="opt-detail">
-          <el-button class="w-32 !h-9" type="primary" @click="jumpDoc">
-            快速入门
-          </el-button>
-          <el-button
-            class="w-32 ml-btn !h-9"
-            type="primary"
-            @click="
-              handleAdvantageToUse({
-                url: 'https://zhiqingyun-demo.isxcode.com',
-              })
-            "
-          >
-            立即体验
-          </el-button>
-        </div>
-      </div>
-      <video id="v1" autoplay loop muted>
-        <source src="~/assets/home/home.mp4" type="video/mp4" />
-      </video>
-    </div>
-    <!-- 产品优势 -->
-    <div
-      v-for="(advantageItem, index) in productAdvantagesList"
-      :key="index"
-      class="product-advantages"
-      :class="{
-        'product-advantages-bgc': advantageItem.layout === 'left',
-      }"
-    >
-      <div
-        class="advantages"
-        :class="{
-          left: advantageItem.layout === 'left',
-          right: advantageItem.layout === 'right',
-        }"
-      >
-        <div class="img">
-          <img :src="advantageItem.img" alt="" />
-        </div>
-        <div class="superior-panel">
-          <div class="introduction">
-            <div class="title">{{ advantageItem.title }}</div>
-            <div class="desc">
-              {{ advantageItem.desc }}
+          </div>
+          <div class="btn-div">
+            <div class="guide-btn" @click="handleGuideClick">
+              <p>快速入门</p>
             </div>
-          </div>
-          <div class="to-use" @click="handleAdvantageToUse(advantageItem)">
-            <span class="txt"> 快速使用 &nbsp; </span>
-          </div>
-        </div>
-      </div>
-    </div>
-    <!-- 产品资源 -->
-    <div class="product-resources">
-      <div class="title">数据创造价值，大数据创造大价值</div>
-      <div class="desc">AI将至，至轻云与您携手实现企业级大数据平台落地</div>
-      <div class="img-row w-11/12 2xl:w-8/12">
-        <!-- <div
-          class="resource-item w-2/12"
-          v-for="(item, index) in resourceList"
-          :key="index"
-          @click="handleResourcesImgClick(item)"
-        >
-          <img :src="item.imgUrl" alt="" />
-        </div> -->
-      </div>
-    </div>
-    <!-- 产品服务 -->
-    <div class="product-service border-bottom-br">
-      <div
-        v-for="(serviceItem, index) in productServiceList"
-        :key="index"
-        class="product-advantages "
-        :class="{
-          'product-advantages-bgc': serviceItem.layout === 'left',
-        }"
-      >
-        <div
-          class="advantages"
-          :class="{
-            left: serviceItem.layout === 'left',
-            right: serviceItem.layout === 'right',
-          }"
-        >
-          <div class="img">
-            <img :src="serviceItem.img" alt="" />
-          </div>
-          <div class="superior-panel">
-            <div class="introduction">
-              <div class="title">{{ serviceItem.title }}</div>
-              <div class="desc">
-                {{ serviceItem.desc }}
-              </div>
+            <div class="quick-btn" @click="handleQuickClick">
+              <p>立即体验</p>
+              <SvgIcon name="arrow-right" class="link-right-svg"></SvgIcon>
             </div>
-            <div class="to-use" @click="handleServiceToUse(serviceItem)">
-              <span class="txt"> 快速使用 &nbsp; </span>
+            <div class="movie-btn" @click="toggleVideo">
+              <p>视频介绍</p>
             </div>
           </div>
         </div>
+        <div class="right">
+          <div v-show="!isMobile||showVideo" class="artplayer-app"></div>
+        </div>
+      </div>
+<!--      <video v-if="!isMobile" class="bg-video" id="v1" autoplay loop muted>-->
+<!--        <source src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/bg-0.mp4" type="video/mp4"/>-->
+<!--      </video>-->
+<!--      <video v-else class="bg-video" id="v1" muted>-->
+<!--        <source src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/bg-0.mp4" type="video/mp4"/>-->
+<!--      </video>-->
+    </div>
+    <div class="module-about">
+      <div class="content">
+        <div class="why-title">
+          选择至轻云
+        </div>
+        <div class="why-content">
+          至轻云是一款超轻量级、企业级大数据平台。具有一键Docker部署，开箱即用特色。无需额外大数据组件安装，即可快速实现企业级大数据离线ETL、实时计算、复杂作业运行等场景。项目持续更新迭代，源码永久免费开源。助力企业快速处理海量数据，获得更多商业价值。
+        </div>
+        <div class="why-content-mobile">
+          至轻云是一款超轻量级、企业级大数据平台。具有一键Docker部署，开箱即用特色。无需额外大数据组件安装，即可快速实现企业级大数据离线ETL、实时计算、复杂作业运行等场景。
+        </div>
+        <div class="tech-title">
+          相关技术
+        </div>
+        <div class="tech-img-div">
+          <img class="tech-img" @click="handleK8sClick" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/t-k8s.png" alt="">
+          <img class="tech-img" @click="handleHadoopClick" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/t-hadoop.png" alt="">
+          <img class="tech-img" @click="handleSparkClick" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/t-spark.png" alt="">
+          <img class="tech-img" @click="handleHiveClick" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/t-hive.png" alt="">
+          <img class="tech-img" @click="handleDorisClick" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/t-doris.png" alt="">
+          <img class="tech-img" @click="handleClickhouseClick" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/t-clickhouse.png" alt="">
+        </div>
       </div>
     </div>
-    <!-- 号召使用 -->
-    <div class="quick-use">
-      <div class="title">开源助力企业升级大数据领域</div>
-      <!-- 按钮 免费试用 -->
-      <el-button
-        class="w-32 !h-9 quick-use-btn"
-        type="primary"
-        @click="
-          handleAdvantageToUse({
-            url: 'https://zhiqingyun-demo.isxcode.com',
-          })
-        "
-      >
-        免费试用
-      </el-button>
+    <div class="module-feat-left">
+      <div class="content">
+        <div class="left">
+          <img src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/p-1.jpg" alt="">
+        </div>
+        <div class="right">
+          <div class="line-1">多平台部署，从不娇生惯养</div>
+          <div class="line-2">支持大量计算引擎平台，如Kubernetes、Spark Standalone、Spark、Cluster、Yarn、CDH。可无缝迁移，无缝切换，帮助企业更优管理集群资源。</div>
+          <div class="line-3" @click="handleQuickClick">立即体验</div>
+        </div>
+      </div>
     </div>
-    <LayoutHomeFooter />
+    <div class="module-feat-right">
+      <div class="content">
+        <div class="right-phone">
+          <img src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/p-2.jpg" alt="">
+        </div>
+        <div class="left">
+          <div class="line-1">驱动上传，任何姿势都能连</div>
+          <div class="line-2">支持海量数据源，如Mysql、Hive、Oracle、SqlServer、TiDB、Oceanbase、Doris、Clickhouse等。用户可自定义上传多版本驱动，解决企业中多环境数据源无法同时连接的难题。</div>
+          <div class="line-3" @click="handleQuickClick">立即体验</div>
+        </div>
+        <div class="right">
+          <img src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/p-2.jpg" alt="">
+        </div>
+      </div>
+    </div>
+    <div class="module-feat-left">
+      <div class="content">
+        <div class="left">
+          <img src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/p-3.jpg" alt="">
+        </div>
+        <div class="right">
+          <div class="line-1">创建租户，再大也能装下</div>
+          <div class="line-2">多租户模式，确保租户间数据隔离。租户内可单独协调集群资源、数据源驱动、作业流配置等。解决企业中规模较大、用户众多、权限难解的问题。</div>
+          <div class="line-3" @click="handleQuickClick">立即体验</div>
+        </div>
+      </div>
+    </div>
+    <div class="module-business">
+      <div class="content">
+        <div class="line-1">数据创造价值，大数据创造大价值</div>
+        <div class="line-2">AI将至，至轻云与您携手实现企业级大数据平台落地</div>
+        <div class="business-img">
+          <img src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/b-1.png" alt="">
+          <img class="bus-img" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/b-2.png" alt="">
+          <img class="bus-img" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/b-3.png" alt="">
+          <img class="bus-img" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/b-4.png" alt="">
+          <img class="bus-img" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/b-5.png" alt="">
+          <img class="bus-img" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/b-6.png" alt="">
+          <img class="bus-img" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/b-7.png" alt="">
+          <img class="bus-img" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/b-8.png" alt="">
+          <img class="bus-img" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/b-9.png" alt="">
+          <img class="bus-img" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/b-10.png" alt="">
+        </div>
+      </div>
+    </div>
+    <div class="module-feat-right">
+      <div class="content">
+        <div class="right-phone">
+          <img class="feat-img" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/p-4.jpg" alt="">
+        </div>
+        <div class="left">
+          <div class="line-1">编排作业，横竖都能拖拽</div>
+          <div class="line-2">拥有复杂的作业执行命令，包括运行、中止、重跑、重跑下游、中断、重跑当前、发布等。且支持可视化Cron表达式调度配置，解决企业中各种复杂应用场景。</div>
+          <div class="line-3" @click="handleQuickClick">立即体验</div>
+        </div>
+        <div class="right">
+          <img class="feat-img" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/p-4.jpg" alt="">
+        </div>
+      </div>
+    </div>
+    <div class="module-feat-left">
+      <div class="content">
+        <div class="left">
+          <img class="feat-img" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/p-5.jpg" alt="">
+        </div>
+        <div class="right">
+          <div class="line-1">能写代码？不单单只有SparkSql</div>
+          <div class="line-2">超多作业类型，包括数据同步、Bash、Python、SparkSql、Jdbc、自定义Jar等。提供客户二次开发模版，任何复杂的场景都可以通过写代码的方式解决。</div>
+          <div class="line-3" @click="handleQuickClick">立即体验</div>
+        </div>
+      </div>
+    </div>
+    <div class="module-end">
+      <div class="content">
+        <div class="line-1">开源助力企业升级大数据能力</div>
+        <div class="end-btn" @click="handleQuickClick">免费试用</div>
+      </div>
+    </div>
   </div>
+  <LayoutHomeFooter/>
 </template>
 
 <script lang="ts" setup>
+import {ElMessage} from 'element-plus'
+import Artplayer from "artplayer";
+import {defineProps} from "vue";
+
 definePageMeta({
   title: "首页",
   layout: "home",
@@ -164,395 +176,786 @@ useSeoMeta({
   ogDescription: "打造超轻量级大数据平台",
 });
 
-const productAdvantagesList = reactive([
-  {
-    code: "1",
-    layout: "left",
-    title: "多平台部署，从不娇生惯养",
-    desc: "支持大量计算引擎平台，如Kubernetes、Spark Standalone、Spark Cluster、Yarn、CDH。可无缝迁移，无缝切换，帮助企业更优管理集群资源。",
-    img: "https://img.isxcode.com/picgo/zhiqingyun1.jpg",
-    url: "https://zhiqingyun-demo.isxcode.com",
-  },
-  {
-    code: "2",
-    layout: "right",
-    title: "驱动上传，任何姿势都能连",
-    desc: "支持海量数据源，如Mysql、Hive、Oracle、SqlServer、TiDB、Oceanbase、Doris、Clickhouse等。用户可自定义上传多版本驱动，解决企业中多环境数据源无法同时连接的难题。",
-    img: "https://img.isxcode.com/picgo/zhiqingyun2.jpg",
-    url: "https://zhiqingyun-demo.isxcode.com",
-  },
-  {
-    code: "3",
-    layout: "left",
-    title: "创建租户，再大也能装下",
-    desc: "多租户模式，确保租户间数据隔离。租户内可单独协调集群资源、数据源驱动、作业流配置等。解决企业中规模较大、用户众多、权限难解的问题。",
-    img: "https://img.isxcode.com/picgo/zhiqingyun3.jpg",
-    url: "https://zhiqingyun-demo.isxcode.com",
-  },
-]);
+const isMobile = useMediaQuery('(max-width: 767px)')
 
-function handleAdvantageToUse(item: { url: string | URL | undefined }) {
-  window.open(item.url);
+const props = defineProps({
+  showVideo: {
+    type: Boolean,
+    default: false,
+  },
+})
+
+const showVideo = ref(props.showVideo)
+
+const toggleVideo = () => {
+  showVideo.value = !showVideo.value
 }
 
-const resourceList = reactive([
-  {
-    imgUrl: "https://img.isxcode.com/picgo/20231102215123.png",
-    url: "https://zhiqingyun-demo.isxcode.com",
-  },
-  {
-    imgUrl: "https://img.isxcode.com/picgo/20231102215233.png",
-    url: "https://zhiqingyun-demo.isxcode.com",
-  },
-  {
-    imgUrl: "https://img.isxcode.com/picgo/20231102215311.png",
-    url: "https://zhiqingyun-demo.isxcode.com",
-  },
-  {
-    imgUrl: "https://img.isxcode.com/picgo/20231102215354.png",
-    url: "https://zhiqingyun-demo.isxcode.com",
-  },
-  {
-    imgUrl: "https://img.isxcode.com/picgo/20231102215506.png",
-    url: "https://zhiqingyun-demo.isxcode.com",
-  },
-  {
-    imgUrl: "https://img.isxcode.com/picgo/20231102215606.png",
-    url: "https://zhiqingyun-demo.isxcode.com",
-  },
-  {
-    imgUrl: "https://img.isxcode.com/picgo/20231102215711.png",
-    url: "https://zhiqingyun-demo.isxcode.com",
-  },
-  {
-    imgUrl: "https://img.isxcode.com/picgo/20231102215748.png",
-    url: "https://zhiqingyun-demo.isxcode.com",
-  },
-  {
-    imgUrl: "https://img.isxcode.com/picgo/20231102215946.png",
-    url: "https://zhiqingyun-demo.isxcode.com",
-  },
-  {
-    imgUrl: "https://img.isxcode.com/picgo/20231102220038.png",
-    url: "https://zhiqingyun-demo.isxcode.com",
-  },
-]);
+onMounted(() => {
+  const art = new Artplayer({
+    container: '.artplayer-app',
+    url: 'https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/product.mp4',
+    // poster: 'https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/product.png',
+    fullscreen: true,
+    fullscreenWeb: true,
+    pip: true,
+    autoplay: false,
+    theme: '#e25a1b',
+    muted: true,
+    autoSize: true
+  });
+})
 
-function handleResourcesImgClick(item: { url: string | URL | undefined }) {
-  window.open(item.url);
+function handleGuideClick() {
+  const router = useRouter();
+  router.push("/docs/zh/0/0");
 }
 
-const productServiceList = reactive([
-  {
-    code: "1",
-    layout: "right",
-    title: "编排作业，横竖都能拖拽",
-    desc: "拥有复杂的作业执行命令，包括运行、中止、重跑、重跑下游、中断、重跑当前、发布等。且支持可视化Cron表达式调度配置，解决企业中各种复杂应用场景。",
-    img: "https://img.isxcode.com/picgo/zhiqingyun4.jpg",
-    url: "https://zhiqingyun-demo.isxcode.com",
-  },
-  {
-    code: "2",
-    layout: "left",
-    title: "能写代码？不单单只有SparkSql",
-    desc: "超多作业类型，包括数据同步、Bash、Python、SparkSql、Jdbc、自定义Jar等。提供客户二次开发模版，任何复杂的场景都可以通过写代码的方式解决。",
-    img: "https://img.isxcode.com/picgo/zhiqingyun5.jpg",
-    url: "https://zhiqingyun-demo.isxcode.com",
-  },
-]);
-
-function handleServiceToUse(serviceItem: { url: string | URL | undefined }) {
-  window.open(serviceItem.url);
+function handleQuickClick() {
+  window.open("https://zhiqingyun-demo.isxcode.com");
 }
 
-const copyContent = async (text: string) => {
-  try {
-    await navigator.clipboard.writeText(text);
-  } catch (err) {
-    console.error("Failed to copy: ", err);
-  }
-};
+function handleSparkClick() {
+  window.open("https://spark.apache.org/");
+}
+
+function handleHiveClick() {
+  window.open("https://hive.apache.org/");
+}
+
+function handleDorisClick() {
+  window.open("https://doris.apache.org/");
+}
+
+function handleClickhouseClick() {
+  window.open("https://clickhouse.com/");
+}
+
+function handleK8sClick() {
+  window.open("https://kubernetes.io/");
+}
+
+function handleHadoopClick() {
+  window.open("https://hadoop.apache.org/");
+}
 
 function handleCommandCopyClick() {
-  const codeBlock = document.getElementById("code_block");
+  const codeBlock = document.getElementById("command-shell");
   const codeBlockText = codeBlock?.innerText;
   if (codeBlockText) {
     copyContent(codeBlockText);
   }
 }
 
-function jumpDoc() {
-  const router = useRouter();
-  router.push("/docs/zh/install/docker-deploy");
-}
+const copyContent = async (text: string) => {
+  try {
+    await navigator.clipboard.writeText(text);
+    ElMessage({
+      duration: 800,
+      message: '复制成功',
+      type: 'success',
+    });
+  } catch (err) {
+    console.error("Failed to copy: ", err);
+  }
+};
 
-onMounted(() => {
-  // const video = document.getElementById("v1") as HTMLVideoElement;
-  // video.playbackRate = 0.5;
-});
 </script>
 
-<style lang="scss" scope>
+<style lang="scss" scoped>
+
+@font-face {
+  font-family: "阿里妈妈数黑体 Bold";
+  font-weight: 700;
+  src: url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/T4JjC1yVtRsU.woff2") format("woff2"),
+  url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/Y0ipOh97amn9.woff") format("woff");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "阿里巴巴普惠体 2.0 45 Light";
+  font-weight: 300;
+  src: url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/aE2qrdrsu4BG.woff2") format("woff2"),
+  url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/cZP0h8SyVUCW.woff") format("woff");
+  font-display: swap;
+}
+
+$font-size: 14px;
+// 介绍的高度
+$module-intro-height: 850px;
+// 相关技术板块的高度
+$module-about-height: 460px;
+// 商业板块的高度
+$module-business-height: 550px;
+// 主题色
+$primary-color: #e25a1b;
+// 特点1背景色
+$module-feat-left-bg-color: white;
+// 特点2背景色
+$module-feat-right-bg-color: rgba(255, 156, 110, 5%);
+// 特点高度
+$module-feat-height: 440px;
+// 结束板块高度
+$module-end-height: 300px;
+// 结束板块高度
+$primary-width: 1200px;
+// 产品介绍图片大小
+$module-intro-img-width: 600px;
+
+
 .main {
-  .one-word-desc-product {
+
+  font-family: "阿里巴巴普惠体 2.0 45 Light", sans-serif;
+
+  .module-intro {
+    width: 100%;
+    height: $module-intro-height;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-image: url('https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/bg-0.jpg');
+    padding-top: 200px;
     position: relative;
-    padding-top: 12vh;
-    flex-direction: column;
-    #v1 {
+    overflow: hidden;
+
+    .bg-video {
       position: absolute;
       top: 0;
       left: 0;
       width: 100%;
-      height: 100%;
+      height: 105%;
       object-fit: cover;
       z-index: -1;
+      pointer-events: none;
     }
-    .top {
-      height: calc(100vh - 20vh);
-      flex: 1;
+
+    .content {
       display: flex;
-      align-items: center;
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-start;
-      align-items: center;
-      .one-word {
-        font-size: 55px;
-        font-weight: 700;
-        text-align: center;
-        line-height: 1.5;
-        margin-bottom: 5vh;
-      }
-      .one-desc {
-        font-size: 19px;
-        font-weight: 400;
-        text-align: center;
-        line-height: 1.5;
-        margin-bottom: 4vh;
-        color: var(--el-color-info);
-      }
-      .fast-use {
-        font-size: 24px;
-        font-weight: 400;
-        text-align: center;
-        line-height: 1.5;
-        margin-bottom: 4vh;
-      }
-      .product-img {
-        z-index: 9;
-        position: absolute;
-        bottom: 10vh;
-        display: flex;
-        justify-content: center;
-        > img {
-          width: 100%;
-          height: 58vh;
-          box-shadow: var(--sk-box-show);
-          border-radius: 4px;
+
+      .left {
+        width: 600px;;
+
+        .name {
+          margin-top: 120px;
+          font-family: "阿里妈妈数黑体 Bold", sans-serif;
+          font-size: 60px;
+        }
+
+        .slogan {
+          margin-top: 20px;
+          font-family: "阿里妈妈数黑体 Bold", sans-serif;
+          font-size: 40px;
+        }
+
+        .command {
+          display: flex;
+          margin-top: 20px;
+          padding-left: 15px;
+          border: #e25a1b solid 1px;
+          color: #e25a1b;
+          width: 435px;
+          border-radius: 3px;
+          font-size: 17px;
+          height: 38px;
+          line-height: 38px;
+
+          .copy-icon {
+            cursor: pointer;
+            margin-left: 15px;
+            margin-top: 6px;
+            width: 24px;
+            height: 24px;
+          }
+        }
+
+        .btn-div {
+          margin-top: 25px;
+          display: flex;
+
+          .guide-btn {
+            cursor: pointer;
+            width: 120px;
+            border-radius: 3px;
+            background: #e25a1b;
+            color: white;
+            text-align: center;
+            font-size: 18px;
+            height: 40px;
+            line-height: 40px;
+          }
+
+          .movie-btn {
+            display: none;
+          }
+
+          .quick-btn {
+            cursor: pointer;
+            margin-left: 20px;
+            width: 150px;
+            color: #e25a1b;
+            height: 40px;
+            line-height: 40px;
+            text-align: center;
+            display: flex;
+
+            .link-right-svg {
+              margin-top: 10px;
+              width: 20px;
+              height: 20px;
+            }
+          }
         }
       }
-    }
-    .bottom {
-      min-height: 20vh;
-      width: 100%;
-      // background-color: var(--sk-color-home-primary);
-      background-image: url("~/assets/home/bg0.png");
-      background-repeat: no-repeat;
-      background-size: 100% auto;
-      display: flex;
-      flex-direction: column-reverse;
-      .opt-detail {
-        display: flex;
-        justify-content: center;
-        margin-bottom: 3vh;
-        > button {
-          background: #fff;
-          border-color: #fff;
-          color: var(--sk-color-home-primary);
-        }
-        .ml-btn {
-          margin-left: 76px;
+
+      .right {
+        .artplayer-app {
+          height: 341px;
+          margin-top: 70px;
+          width: 630px;
         }
       }
     }
   }
-  .product-advantages {
-    border-top: 1px solid #edebeb;
+
+  .module-about {
     width: 100%;
-    height: 600px;
-    background-color: var(--sk-color-home-bgc);
+    background: white;
+    height: $module-about-height;
     display: flex;
-    justify-content: center;
     align-items: center;
-    .advantages {
-      width: 1108px;
-      height: 400px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      .img {
-        width: 44%;
-        border-radius: 4px;
-        box-shadow: var(--sk-box-show);
-        > img {
-          width: 100%;
-          height: 100%;
-        }
+    justify-content: center;
+    padding-top: 40px;
+
+    .content {
+      .why-title {
+        margin: auto;
+        text-align: center;
+        width: 400px;
+        font-family: "阿里妈妈数黑体 Bold", sans-serif;
+        font-size: 30px;
       }
-      .superior-panel {
-        padding: 18px 24px;
-        width: 600px;
-        height: 400px;
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
 
-        .introduction {
-          width: 100%;
-          display: flex;
-          flex-direction: column;
-          justify-content: space-between;
-          align-items: flex-start;
+      .why-content {
+        margin: 25px auto auto;
+        text-indent: 2em;
+        width: 800px;
+        line-height: 24px;
+        font-size: 17px;
+      }
 
-          .title {
-            font-size: 32px;
-            font-weight: 700;
-            text-align: left;
-            line-height: 1.5;
-            margin-bottom: 40px;
-          }
+      .why-content-mobile {
+        display: none;
+      }
 
-          .desc {
-            font-size: 18px;
-            font-weight: 400;
-            text-align: left;
-            line-height: 1.5;
-            margin-bottom: 40px;
-            color: var(--el-color-info);
-          }
-        }
+      .tech-title {
+        text-align: center;
+        margin: 40px auto auto;
+        width: 400px;
+        font-size: 12px;
+        color: lightgray;
+      }
 
-        .to-use {
-          width: auto;
-          height: 32px;
-          display: flex;
-          align-items: center;
-          color: var(--sk-color-home-primary);
+      .tech-img-div {
+
+        .tech-img {
           cursor: pointer;
-          .txt {
-            font-size: 18px;
-            font-weight: 400;
-            line-height: 1.5;
-            cursor: pointer;
-          }
-          .icon {
-            cursor: pointer;
-          }
+        }
+
+        display: flex;
+        justify-content: space-between;
+        margin: 20px auto auto;
+        width: 1200px;
+
+        img {
+          width: 150px;
+          height: 55px;
         }
       }
     }
-    .left {
-      flex-direction: reverse;
-    }
-    .right {
-      flex-direction: row-reverse;
-    }
-  }
-  .quick-use {
-    height: 320px;
-    background-image: url("~/assets/home/bg2.png");
-    background-color: #f89126;
-    background-repeat: no-repeat;
-    background-size: auto 100%; 
-    background-position: center;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    > button {
-      background: #fff;
-      border-color: #fff;
-      color: var(--sk-color-home-primary);
-    }
-    .title {
-      font-size: 32px;
-      font-weight: 700;
-      text-align: center;
-      line-height: 1.5;
-      margin-bottom: 40px;
-      color: var(--sk-color-font-white);
-    }
   }
 
-  @media screen and (min-device-width: 1600px) {
-    .product-advantages {
-      height: calc(600px * 1.2);
-      .advantages {
-        width: calc(1108px * 1.2);
+  .module-business {
+    width: 100%;
+    height: $module-business-height;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-image: url('https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/bg-2.png');
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .content {
+      .line-1 {
+        margin-top: 50px;
+        color: white;
+        text-align: center;
+        font-family: "阿里妈妈数黑体 Bold", sans-serif;
+        font-size: 35px;
+      }
+
+      .line-2 {
+        margin-top: 16px;
+        color: white;
+        text-align: center;
+      }
+
+      .business-img {
+        margin: 40px auto auto;
+        width: 1200px;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+
+        img {
+          width: 220px;
+          height: 150px;
+          margin: 6px;
+        }
       }
     }
-  }
-  .product-advantages-bgc {
-    background-color: var(--sk-color-cark-bgc);
-  }
-  .product-resources {
-    height: 712px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    background-color: var(--sk-color-home-primary);
-    .title {
-      font-size: 32px;
-      margin-top: 80px;
-      color: var(--sk-color-font-white);
-    }
-    .desc {
-      margin-top: 32px;
-      color: var(--sk-color-font-white);
-      opacity: 0.8;
-    }
-    .img-row {
-      height: 100%;
-      display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
-      align-content: flex-start;
-      margin-top: 20px;
-      background-image: url("~/assets/home/kuxun.png");
-      background-repeat: no-repeat;
-      background-size: 100% auto;
-    }
-  }
-  .border-bottom-br {
-    border-bottom: 1px solid #dcdcdc;
   }
 }
 
-#code_block {
-  background-color: #fff;
-  border: #e25a1b 1px solid;
-  color: rgb(201, 209, 217);
-  font-family: Consolas;
-  font-weight: lighter;
-  text-align: left;
-  padding: 4px;
-  font-size: 18px;
-  padding-left: 14px;
-  padding-right: 14px;
-  border-radius: 5px;
-  counter-reset: line;
-  white-space: pre;
-  word-spacing: normal;
-  word-break: normal;
-  word-wrap: normal;
-  line-height: 1.8;
-  .copy-icon {
-    display: inline-block;
-    margin-bottom: 2px;
-    margin-left: 8px;
-    font-size: 16px;
-    cursor: pointer;
-    color: #e25a1b;
+.module-feat-left {
+  width: 100%;
+  height: $module-feat-height;
+  background: $module-feat-right-bg-color;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .content {
+    display: flex;
+
+    .left {
+      width: 600px;;
+
+      img {
+        width: 450px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+      }
+    }
+
+    .right {
+      margin-left: 100px;
+      margin-top: 50px;
+      width: 600px;;
+
+      .line-1 {
+        font-family: "阿里妈妈数黑体 Bold", sans-serif;
+        font-size: 30px;
+      }
+
+      .line-2 {
+        width: 560px;
+        height: 55px;
+        font-size: 17px;
+        margin-top: 30px;
+        line-height: 24px;
+      }
+
+      .line-3 {
+        cursor: pointer;
+        margin-top: 35px;
+        color: #e25a1b;
+        font-family: "阿里妈妈数黑体 Bold", sans-serif;
+      }
+    }
   }
+
+}
+
+.module-feat-right {
+  width: 100%;
+  height: $module-feat-height;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: $module-feat-left-bg-color;
+
+  .content {
+    display: flex;
+
+    .right-phone {
+      display: none;
+    }
+
+    .right {
+      width: 600px;
+      margin-left: 100px;
+
+      img {
+        width: 450px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+      }
+    }
+
+    .left {
+      width: 600px;;
+      margin-top: 50px;
+
+      .line-1 {
+        font-family: "阿里妈妈数黑体 Bold", sans-serif;
+        font-size: 30px;
+      }
+
+      .line-2 {
+        width: 560px;
+        height: 55px;
+        font-size: 17px;
+        margin-top: 30px;
+        line-height: 24px;
+      }
+
+      .line-3 {
+        cursor: pointer;
+        margin-top: 35px;
+        color: #e25a1b;
+        font-family: "阿里妈妈数黑体 Bold", sans-serif;
+      }
+    }
+  }
+}
+
+.module-end {
+  height: $module-end-height;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-image: url('https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/bg-1.png');
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .content {
+    .line-1 {
+      width: 600px;
+      text-align: center;
+      color: white;
+      margin: auto;
+      font-family: "阿里妈妈数黑体 Bold", sans-serif;
+      font-size: 40px;
+    }
+
+    .end-btn {
+      cursor: pointer;
+      margin: 40px auto auto;
+      background: white;
+      color: #e25a1b;
+      width: 200px;
+      font-size: 20px;
+      border-radius: 3px;
+      height: 40px;
+      line-height: 40px;
+      text-align: center;
+    }
+  }
+}
+
+.content {
+  margin: auto;
+  width: $primary-width;
+}
+
+// ------------------------------------------------------- 移动端 ----------------------------------------------------------------------
+
+@media (max-width: 768px) {
+
+  .main {
+
+    .module-intro {
+      width: 100%;
+      height: 850px;
+      padding-top: 400px;
+
+      .content {
+        display: flex;
+
+        .right {
+          position: fixed;
+          top: 30%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          .artplayer-app {
+            height: 195px;
+            margin-top: 70px;
+            width: 360px;
+          }
+        }
+
+        .left {
+          width: 400px;
+
+          .name {
+            text-align: center;
+            margin-top: 10px;
+            font-family: "阿里妈妈数黑体 Bold", sans-serif;
+            font-size: 66px;
+          }
+
+          .slogan {
+            margin-top: 20px;
+            text-align: center;
+            font-family: "阿里妈妈数黑体 Bold", sans-serif;
+            font-size: 27px;
+          }
+
+          .command {
+            display: none;
+          }
+
+          .btn-div {
+            display: flex;
+            width: 300px;
+            margin: 25px auto auto;
+
+            .guide-btn {
+              display: none;
+              cursor: pointer;
+              width: 170px;
+              border-radius: 3px;
+              background: #e25a1b;
+              color: white;
+              text-align: center;
+              font-size: 18px;
+              height: 40px;
+              line-height: 40px;
+              margin-left: 40px;
+            }
+
+            .quick-btn {
+              display: none;
+            }
+
+            .movie-btn {
+              cursor: pointer;
+              width: 150px;
+              margin: auto;
+              background: #e25a1b;
+              color: white;
+              height: 40px;
+              line-height: 40px;
+              text-align: center;
+              font-size: 20px;
+              display: block;
+              border-radius: 3px;
+            }
+          }
+        }
+      }
+    }
+
+    .module-about {
+      width: 100%;
+      background: white;
+      height: 350px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding-top: 40px;
+
+      .content {
+        .why-title {
+          margin: auto;
+          text-align: center;
+          width: 300px;
+          font-family: "阿里妈妈数黑体 Bold", sans-serif;
+          font-size: 30px;
+        }
+
+        .why-content-mobile {
+          display: block;
+          margin: 25px auto auto;
+          text-indent: 2em;
+          width: 300px;
+          line-height: 22px;
+          font-size: 18px;
+        }
+
+        .why-content {
+          display: none;
+        }
+
+        .tech-title {
+          display: none;
+        }
+
+        .tech-img-div {
+          display: none;
+        }
+      }
+    }
+
+    .module-business {
+      width: 100%;
+      height: 320px;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-image: url('https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/bg-2.png');
+      align-items: center;
+
+      .content {
+        height: 350px;
+
+        .line-1 {
+          color: white;
+          text-align: center;
+          font-family: "阿里妈妈数黑体 Bold", sans-serif;
+          font-size: 20px;
+        }
+
+        .line-2 {
+          margin-top: 16px;
+          color: white;
+          text-align: center;
+          font-size: 13px;
+        }
+
+        .business-img {
+          margin: 20px auto auto;
+          width: 300px;
+
+          .bus-img {
+            display: none;
+          }
+
+          img {
+            width: 250px;
+          }
+        }
+      }
+    }
+  }
+
+  .module-feat-left {
+    width: 100%;
+    height: 480px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .content {
+      height: 380px;
+      flex-direction: column;
+
+      .left {
+        width: 300px;
+
+        img {
+          width: 300px;
+        }
+      }
+
+      .right {
+        margin-left: 0;
+        margin-top: 20px;
+        width: 300px;
+
+        .line-1 {
+          margin-top: 15px;
+          font-family: "阿里妈妈数黑体 Bold", sans-serif;
+          font-size: 25px;
+          text-align: center;
+        }
+
+        .line-2 {
+          height: 100px;
+          width: 300px;
+          margin-top: 30px;
+          line-height: 22px;
+        }
+
+        .line-3 {
+          display: none;
+        }
+      }
+    }
+
+  }
+
+  .module-feat-right {
+
+    width: 100%;
+    height: 480px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .content {
+      height: 380px;
+      flex-direction: column;
+
+      .right {
+        display: none;
+      }
+
+      .right-phone {
+        display: block;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+
+        img {
+          width: 300px;
+        }
+      }
+
+      .left {
+        margin-left: 0;
+        margin-top: 20px;
+        width: 300px;
+
+        .line-1 {
+          margin-top: 15px;
+          font-family: "阿里妈妈数黑体 Bold", sans-serif;
+          font-size: 25px;
+          text-align: center;
+        }
+
+        .line-2 {
+          height: 100px;
+          width: 300px;
+          margin-top: 30px;
+          line-height: 22px;
+        }
+
+        .line-3 {
+          display: none;
+        }
+      }
+    }
+  }
+
+  .module-end {
+    height: 300px;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-image: url('https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/bg-1.png');
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .content {
+      .line-1 {
+        width: 300px;
+        text-align: center;
+        color: white;
+        margin: auto;
+        font-family: "阿里妈妈数黑体 Bold", sans-serif;
+        font-size: 40px;
+      }
+
+      .end-btn {
+        display: none;
+      }
+    }
+  }
+
+  .content {
+    margin: auto;
+    width: 300px;
+  }
+
 }
 </style>
