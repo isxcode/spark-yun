@@ -298,6 +298,7 @@
   .org-info {
     display: block;
     width: 100%;
+    font-size: 14px;
 
     .content {
       height: 120px;

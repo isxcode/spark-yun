@@ -661,11 +661,15 @@ $module-intro-img-width: 600px;
     .module-intro {
       width: 100%;
       height: 850px;
-      //background-size: cover;
-      //background-position: center;
-      //background-repeat: no-repeat;
-      //background-image: url('https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/bg4.png');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-image: url('https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/bg-0.jpg');
       padding-top: 400px;
+
+      .bg-video {
+        display: none;
+      }
 
       .content {
         display: flex;
