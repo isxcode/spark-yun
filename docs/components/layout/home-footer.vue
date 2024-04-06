@@ -1,271 +1,395 @@
 <template>
-  <div class="home-footer">
-    <div class="source-content">
-      <div class="w-20 left">
-        <div class="logo">
-          <img src="~assets/images/logo.png" alt="" />
-          <h1 class="name">至爻云</h1>
+
+  <div class="footer">
+
+    <div class="content">
+      <div class="left">
+        <img class="logo-img" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/zhiqingyun-logo.jpg" alt=""/>
+        <div class="logo-name">
+          至爻数据
         </div>
-        <div class="wx-official-account">
-          <img src="https://img.isxcode.com/picgo/wechat_zhiqingyun.jpg" />
-          <div class="text">微信公众号</div>
+        <img class="wechat-img" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiyao/qrcode_for_12.jpg" alt=""/>
+        <div class="wechat-name">
+          微信公众号
         </div>
       </div>
-      <div class="info">
-        <div class="service">
-          <div class="title">产品中心</div>
-          <div class="content">
-            <div class="item">
-              <a href="https://zhiqingyun-demo.isxcode.com" target="_blank">
-                至流云
-              </a>
-            </div>
-            <div class="item">
-              <a href="https://zhiqingyun-demo.isxcode.com" target="_blank">
-                至微云
-              </a>
-            </div>
-            <div class="item">
-              <a href="https://zhiqingyun-demo.isxcode.com" target="_blank">
-                至数云
-              </a>
-            </div>
-            <div class="item">
-              <a href="https://zhiqingyun-demo.isxcode.com" target="_blank">
-                至视云
-              </a>
-            </div>
-            <div class="item">
-              <a href="https://zhiqingyun-demo.isxcode.com" target="_blank">
-                至慧云
-              </a>
-            </div>
-          </div>
+      <div class="right">
+        <div class="column">
+          <div class="title">产品</div>
+          <div class="link" @click="clickZhiqingyun">至轻云</div>
+          <div class="link" @click="clickOther">至流云</div>
+          <div class="link" @click="clickOther">至慧云</div>
+          <div class="link" @click="clickOther">更多</div>
         </div>
-
-        <!-- 媒体 -->
-        <div class="media">
-          <div class="title">媒体</div>
-          <div class="content">
-            <div class="item">
-              <a href="https://zhiqingyun-demo.isxcode.com" target="_blank">
-                知乎
-              </a>
-            </div>
-            <div class="item">
-              <a href="https://zhiqingyun-demo.isxcode.com" target="_blank">
-                微博
-              </a>
-            </div>
-            <div class="item">
-              <a href="https://zhiqingyun-demo.isxcode.com" target="_blank">
-                B站
-              </a>
-            </div>
-            <div class="item">
-              <a href="https://zhiqingyun-demo.isxcode.com" target="_blank">
-                Discord
-              </a>
-            </div>
-            <div class="item">
-              <a href="https://zhiqingyun-demo.isxcode.com" target="_blank">
-                Twitter
-              </a>
-            </div>
-          </div>
+        <div class="column">
+          <div class="title">社区</div>
+          <div class="link" @click="clickGitee">Gitee</div>
+          <div class="link" @click="clickGithub">Github</div>
+          <div class="link" @click="clickSlack">Slack</div>
+          <div class="link" @click="clickDiscord">Discord</div>
+          <div class="link" @click="clickLinked">Linkedin</div>
         </div>
-        <div class="resource">
-          <div class="title">资源社区</div>
-          <div class="content">
-            <div class="item">
-              <a href="https://zhiqingyun-demo.isxcode.com" target="_blank">
-                使用文档
-              </a>
-            </div>
-            <div class="item">
-              <a href="https://zhiqingyun-demo.isxcode.com" target="_blank">
-                Github
-              </a>
-            </div>
-            <div class="item">
-              <a href="https://zhiqingyun-demo.isxcode.com" target="_blank">
-                Gitee
-              </a>
-            </div>
-            <div class="item">
-              <a
-                href="https://hub.docker.com/u/isxcode"
-                target="_blank"
-                rel="nofollow"
-              >
-                Docker hub
-              </a>
-            </div>
-            <div class="item">
-              <a href="https://zhiqingyun-demo.isxcode.com" target="_blank">
-                博客
-              </a>
-            </div>
-            <!-- 常见问题 -->
-            <div class="item">
-              <a href="https://zhiqingyun-demo.isxcode.com" target="_blank">
-                常见问题
-              </a>
-            </div>
-          </div>
+        <div class="column">
+          <div class="title">资源</div>
+          <div class="link" @click="clickDocs">产品手册</div>
+          <div class="link" @click="clickBlogs">博客</div>
+          <div class="link" @click="clickFeishu">飞书文档</div>
+          <div class="link" @click="clickDockerHub">Docker hub</div>
         </div>
-
-        <div class="company">
+        <div class="column">
           <div class="title">关于我们</div>
-          <div class="content">
-            <div class="item">至爻简介</div>
-            <div class="item">加入我们</div>
-          </div>
+          <div class="link" @click="clickOther">至爻简介</div>
+          <div class="link" @click="clickOther">加入我们</div>
         </div>
-
-        <div class="contact">
-          <div class="title">联系方式</div>
-          <div class="content">
-            <div class="item">电话：400-8848-170</div>
-            <div class="item">邮箱：hello@isxcode.com</div>
-            <div class="item">
-              地址：上海市徐汇区中山西路2020号501、502、503、504室
-            </div>
-          </div>
+        <div class="column">
+          <div class="title">联系我们</div>
+          <div class="link">电话: 400-8848-170</div>
+          <div class="link">邮箱: hello@isxcode.com</div>
+          <div class="link">地址: 上海市徐汇区中山西路2020号501室</div>
         </div>
       </div>
     </div>
-    <!-- Coryright @2023-2024 至爻云
-    沪CP备2023031895号
-    沪公网安备2023031895号
-    版权所有 上海至爻数据有限公司 -->
+  </div>
 
-    <div class="s-footer-bottom">
-      <span class="lg:w-1/6 sm:w-full"> Coryright @2023-2024 至爻云 </span>
-      <a
-        href="https://beian.miit.gov.cn/"
-        target="_blank"
-        rel="nofollow"
-        class="footer-record lg:w-1/6 sm:w-full"
-      >
-        沪CP备2023031895号
-      </a>
-      <a
-        href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=2023031895"
-        target="_blank"
-        rel="nofollow"
-        class="lg:w-1/6 sm:w-full"
-      >
-        <i class="beian lg:w-1/6 sm:w-full"> </i>沪公网安备2023031895号</a
-      >
-      <span class="lg:w-1/6 sm:w-full"> 版权所有 上海至爻数据有限公司&nbsp; </span>
+  <div class="org-info">
+    <div class="content">
+      <div class="link">公司: 上海至爻数据有限公司</div>
+      <div class="link">电话: 400-8848-170</div>
+      <div class="link">邮箱: hello@isxcode.com</div>
+      <div class="link">地址: 上海市徐汇区中山西路2020号501室</div>
+    </div>
+  </div>
+
+  <div class="footer-copyright">
+    <div class="content">
+      <div class="equal-columns">
+        <div>Copyright © 2023-2024 至爻数据</div>
+        <div class="icp-click" @click="clickIcp">沪ICP备2023031895号-1</div>
+        <div class="copyright-div">版权所有 上海至爻数据有限公司</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="fixed-footer">
+    <div class="content">
+      <SvgIcon class="phone-svg" name="phone"></SvgIcon>
+      <p class="phone-text"><a href="tel: 4008848170">电话咨询</a></p>
     </div>
   </div>
 </template>
 
 <style lang="scss" scoped>
-.home-footer {
-  margin: 0 auto;
-  background-color: #fff;
-  border-top-width: 100%;
-  .source-content {
-    padding-top: 50px;
-    padding-bottom: 50px;
+.footer {
+  font-family: "阿里巴巴普惠体 2.0 45 Light", sans-serif;
+  padding-top: 40px;
+
+  .content {
+    width: 1200px;
+    height: 300px;
+    margin: auto;
     display: flex;
-    flex-direction: row;
-    align-items: flex-start;
-    justify-content: center;
+
     .left {
-      margin-left: 80px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      .logo {
-        .name {
-          font-family: "阿里妈妈数黑体 Bold", sans-serif;
-          font-size: 24px;
-          text-align: center;
-        }
+      width: 300px;
+
+      .logo-img {
+        margin: auto;
+        width: 80px;
       }
-      .wx-official-account {
-        width: 120%;
-        margin-top: 20px;
+
+      .logo-name {
+        margin-top: 10px;
+        width: 300px;
+        text-align: center;
+        font-family: "阿里妈妈数黑体 Bold", sans-serif;
+        font-size: 18px;
+      }
+
+      .wechat-img {
+        margin: 20px auto auto;
+        width: 120px;
+        height: 120px;
+      }
+
+      .wechat-name {
+        width: 300px;
+        text-align: center;
+        font-size: 10px;
+        color: grey;
+      }
+    }
+
+    .right {
+      margin-left: 120px;
+      width: 780px;
+      display: flex;
+
+      .column {
         display: flex;
         flex-direction: column;
-        align-items: center;
-        .text {
-          margin-top: 10px;
+        margin-right: 40px;
+
+        .title {
+          width: 75px;
+          font-size: 18px;
+          font-weight: bold;
+        }
+
+        .link {
+          cursor: pointer;
+          margin-top: 22px;
           font-size: 14px;
-          color: #666;
         }
       }
     }
-    .info {
+  }
+
+}
+
+.footer-copyright {
+  font-family: "阿里巴巴普惠体 2.0 45 Light", sans-serif;
+  width: 100%;
+  border-top: lavender solid 1px;
+
+  .content {
+    font-size: 12px;
+    height: 30px;
+    color: grey;
+    width: 1200px;
+    margin: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .equal-columns {
+      .icp-click {
+        cursor: pointer;
+      }
+
       display: flex;
-      justify-content: flex-start;
-      padding: 0 20px;
-      > div {
-        margin-left: 54px;
-        min-width: 86px;
-      }
-      .title {
-        font-size: 16px;
-        font-weight: bold;
-        color: #333;
-        margin-bottom: 20px;
-      }
-      .content {
-        display: flex;
-        flex-direction: column;
-        .item {
-          height: 18px;
-          line-height: 18px;
-          font-size: 14px;
-          color: #666;
-          margin-bottom: 10px;
-          a {
-            color: #666;
-          }
-        }
-      }
+      flex: 1;
+      justify-content: space-between;
     }
   }
-  .s-footer {
-    position: relative;
-    width: 100%;
-    min-width: 1140px;
-  }
-  .s-footer-bottom {
-    margin: 0px auto;
-    width: 100%;
-    text-align: center;
-    line-height: 35px;
-    font-size: 14px;
-    color: #666;
-    > span,
-    a {
-      display: inline-block;
-    }
-  }
-  .s-footer-bottom p {
-    font-size: 13px;
-    color: #666;
-  }
-  .s-footer-bottom p a {
-    color: #666;
-  }
-  .s-footer-bottom p span {
-    margin: 0 5px;
-  }
+}
+
+.fixed-footer {
+  display: none;
 }
 
 @font-face {
   font-family: "阿里妈妈数黑体 Bold";
   font-weight: 700;
-  src: url("//at.alicdn.com/wf/webfont/aQ1mhUp3iaYf/KV1x20rDnzTB.woff2")
-      format("woff2"),
-    url("//at.alicdn.com/wf/webfont/aQ1mhUp3iaYf/apdHoAjvEt5Q.woff")
-      format("woff");
+  src: url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/T4JjC1yVtRsU.woff2") format("woff2"),
+  url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/Y0ipOh97amn9.woff") format("woff");
   font-display: swap;
 }
+
+/* 在线链接服务仅供平台体验和调试使用，平台不承诺服务的稳定性，企业客户需下载字体包自行发布使用并做好备份。 */
+@font-face {
+  font-family: "阿里巴巴普惠体 2.0 45 Light";
+  font-weight: 300;
+  src: url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/cHPsZ2tb5Gxv.woff2") format("woff2"),
+  url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/F8LRQLgsPF37.woff") format("woff");
+  font-display: swap;
+}
+
+.org-info{
+  display: none;
+}
+
+@media (max-width: 400px) {
+
+  .fixed-footer {
+    display: block;
+    position: fixed;
+    z-index: 999;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 50px;
+    line-height: 50px;
+    text-align: center;
+    border-top: 1px solid #e5e5e5;
+    background: #F9DED1;
+
+    .content {
+      width: 130px;
+      display: flex;
+      align-items: center;
+      margin: 0 auto;
+
+      .phone-svg {
+        width: 24px;
+        height: 24px;
+      }
+
+      .phone-text {
+        margin-left: 10px;
+        font-size: 1.25rem;
+        color: #e25a1b;
+      }
+    }
+  }
+
+  .footer {
+    padding-top: 40px;
+
+    .content {
+      width: 300px;
+      height: 340px;
+      margin: auto;
+      display: flex;
+
+      .left {
+        width: 300px;
+
+        .logo-img {
+          margin: auto;
+          width: 100px;
+        }
+
+        .logo-name {
+          margin-top: 10px;
+          width: 300px;
+          text-align: center;
+          font-family: "阿里妈妈数黑体 Bold", sans-serif;
+          font-size: 28px;
+        }
+
+        .wechat-img {
+          margin: 20px auto auto;
+          width: 160px;
+          height: 160px;
+        }
+
+        .wechat-name {
+          width: 300px;
+          text-align: center;
+          font-size: 12px;
+          color: grey;
+        }
+      }
+
+      .right {
+        display: none;
+
+        .column {
+          display: flex;
+          flex-direction: column;
+          margin-right: 40px;
+
+          .title {
+            width: 75px;
+            font-size: 18px;
+            font-weight: bold;
+          }
+
+          .link {
+            margin-top: 22px;
+            font-size: 14px;
+          }
+        }
+      }
+    }
+
+  }
+
+  .org-info {
+    display: block;
+    width: 100%;
+    font-size: 14px;
+
+    .content {
+      height: 120px;
+      line-height: 25px;
+      width: 300px;
+      margin: auto;
+    }
+  }
+
+  .footer-copyright {
+    width: 100%;
+    border-top: lavender solid 1px;
+
+    .content {
+      font-size: 11px;
+      height: 30px;
+      line-height: 130px;
+      color: grey;
+      width: 300px;
+      margin: auto;
+      display: flex;
+
+      .equal-columns {
+        display: flex;
+        flex: 1;
+        justify-content: space-between;
+      }
+
+      .copyright-div {
+        display: none;
+      }
+    }
+  }
+}
+
 </style>
+<script setup lang="ts">
+import {ElMessage} from 'element-plus'
+
+function clickZhiqingyun() {
+  const router = useRouter();
+  router.push("/");
+}
+
+function clickOther() {
+  ElMessage({
+    message: '敬请期待',
+    type: 'success',
+  })
+}
+
+function clickGitee() {
+  window.open("https://gitee.com/isxcode/spark-yun");
+}
+
+function clickGithub() {
+  window.open("https://github.com/isxcode/spark-yun/discussions");
+}
+
+function clickSlack() {
+  window.open("https://zhiqingyun.slack.com/archives/C06R8SJPVAQ");
+}
+
+function clickDiscord() {
+  window.open("https://discord.gg/uETedXUS");
+}
+
+function clickLinked() {
+  window.open("https://www.linkedin.com/groups/9802394/");
+}
+
+function clickDockerHub() {
+  window.open("https://hub.docker.com/r/isxcode/zhiqingyun");
+}
+
+function clickFeishu() {
+  window.open("https://mwur1opms2a.feishu.cn/wiki/space/7350313682586451971?ccm_open_type=lark_wiki_spaceLink&open_tab_from=wiki_home");
+}
+
+function clickBlogs() {
+  window.open("/https://ispong.isxcode.com/tags/spark/");
+}
+
+function clickDocs() {
+  const router = useRouter();
+  router.push("/docs/zh/0/0");
+}
+
+function clickIcp() {
+  window.open("https://beian.miit.gov.cn/");
+}
+
+
+</script>
