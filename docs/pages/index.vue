@@ -34,8 +34,8 @@
           <div v-show="!isMobile||showVideo" class="artplayer-app"></div>
         </div>
       </div>
-      <video class="bg-video" id="v1" autoplay loop muted>
-        <source v-show="!isMobile" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/bg-0.mp4" type="video/mp4"/>
+      <video v-show="!isMobile" class="bg-video" id="v1" autoplay loop muted>
+        <source src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/bg-0.mp4" type="video/mp4"/>
       </video>
     </div>
     <div class="module-about">
@@ -199,6 +199,8 @@ onMounted(() => {
     autoplay: false,
     theme: '#e25a1b',
     muted: true,
+    autoSize: true,
+    autoMini: true,
   });
 })
 
@@ -678,13 +680,14 @@ $module-intro-img-width: 600px;
 
         .right {
           position: fixed;
-          top: 40%;
+          top: 50%;
           left: 50%;
           transform: translate(-50%, -50%);
           .artplayer-app {
-            height: 341px;
+            height: 350px;
             margin-top: 70px;
-            width: 300px;
+            width: 646px;
+            transform: rotate(90deg);
           }
         }
 
