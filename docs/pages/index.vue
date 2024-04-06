@@ -25,8 +25,8 @@
               <p>立即体验</p>
               <SvgIcon name="arrow-right" class="link-right-svg"></SvgIcon>
             </div>
-            <div class="movie-btn" @click="openVideo">
-              <p>产品介绍</p>
+            <div class="movie-btn" @click="toggleVideo">
+              <p>视频介绍</p>
             </div>
           </div>
         </div>
@@ -65,7 +65,7 @@
     <div class="module-feat-left">
       <div class="content">
         <div class="left">
-          <img src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/p-2.jpg" alt="">
+          <img src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/p-1.jpg" alt="">
         </div>
         <div class="right">
           <div class="line-1">多平台部署，从不娇生惯养</div>
@@ -92,7 +92,7 @@
     <div class="module-feat-left">
       <div class="content">
         <div class="left">
-          <img src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/p-2.jpg" alt="">
+          <img src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/p-3.jpg" alt="">
         </div>
         <div class="right">
           <div class="line-1">创建租户，再大也能装下</div>
@@ -159,6 +159,7 @@
 <script lang="ts" setup>
 import {ElMessage} from 'element-plus'
 import Artplayer from "artplayer";
+import {defineProps} from "vue";
 
 definePageMeta({
   title: "首页",
@@ -171,6 +172,19 @@ useSeoMeta({
   description: "打造超轻量级大数据平台",
   ogDescription: "打造超轻量级大数据平台",
 });
+
+const props = defineProps({
+  showVideo: {
+    type: Boolean,
+    default: false,
+  },
+})
+
+const showVideo = ref(props.showVideo)
+
+const toggleVideo = () => {
+  showVideo.value = !showVideo.value
+}
 
 onMounted(() => {
   const art = new Artplayer({
@@ -239,10 +253,6 @@ const copyContent = async (text: string) => {
     console.error("Failed to copy: ", err);
   }
 };
-
-function openVideo() {
-
-}
 
 </script>
 
