@@ -34,12 +34,12 @@
           <div v-show="!isMobile||showVideo" class="artplayer-app"></div>
         </div>
       </div>
-      <video v-if="!isMobile" class="bg-video" id="v1" autoplay loop muted>
-        <source src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/bg-0.mp4" type="video/mp4"/>
-      </video>
-      <video v-else class="bg-video" id="v1" muted>
-        <source src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/bg-0.mp4" type="video/mp4"/>
-      </video>
+<!--      <video v-if="!isMobile" class="bg-video" id="v1" autoplay loop muted>-->
+<!--        <source src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/bg-0.mp4" type="video/mp4"/>-->
+<!--      </video>-->
+<!--      <video v-else class="bg-video" id="v1" muted>-->
+<!--        <source src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/bg-0.mp4" type="video/mp4"/>-->
+<!--      </video>-->
     </div>
     <div class="module-about">
       <div class="content">
@@ -310,10 +310,10 @@ $module-intro-img-width: 600px;
   .module-intro {
     width: 100%;
     height: $module-intro-height;
-    //background-size: cover;
-    //background-position: center;
-    //background-repeat: no-repeat;
-    //background-image: url('https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/bg-0.mp4');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-image: url('https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/bg-0.jpg');
     padding-top: 200px;
     position: relative;
     overflow: hidden;
