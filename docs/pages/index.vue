@@ -34,7 +34,10 @@
           <div v-show="!isMobile||showVideo" class="artplayer-app"></div>
         </div>
       </div>
-      <video v-show="!isMobile" class="bg-video" id="v1" autoplay loop muted>
+      <video v-if="!isMobile" class="bg-video" id="v1" autoplay loop muted>
+        <source src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/bg-0.mp4" type="video/mp4"/>
+      </video>
+      <video v-else class="bg-video" id="v1" muted>
         <source src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/bg-0.mp4" type="video/mp4"/>
       </video>
     </div>
@@ -199,8 +202,7 @@ onMounted(() => {
     autoplay: false,
     theme: '#e25a1b',
     muted: true,
-    autoSize: true,
-    autoMini: true,
+    autoSize: true
   });
 })
 
@@ -665,15 +667,7 @@ $module-intro-img-width: 600px;
     .module-intro {
       width: 100%;
       height: 850px;
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
-      background-image: url('https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/bg-0.jpg');
       padding-top: 400px;
-
-      .bg-video {
-        display: none;
-      }
 
       .content {
         display: flex;
