@@ -272,7 +272,7 @@ function handleMenuClick(menuItem: MenuData) {
 
 // -------------------------------------------------------------------- 移动端 ----------------------------------------------
 
-@media (max-width: 400px) {
+@media (max-width: 768px) {
 
   .home-header {
     width: 100%;
