@@ -46,6 +46,7 @@ import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.SftpException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.mapstruct.ap.internal.util.Strings;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -274,7 +275,10 @@ public class MonitorBizService {
 				pageInstancesReq.getSearchKeyWord(),
 				PageRequest.of(pageInstancesReq.getPage(), pageInstancesReq.getPageSize()));
 
-		return workflowMonitorAos.map(workflowMapper::workflowMonitorAoToPageInstancesRes);
+		Page<PageInstancesRes> map = workflowMonitorAos.map(workflowMapper::workflowMonitorAoToPageInstancesRes);
+		map.getContent().forEach(e -> e.setStatus(
+				InstanceStatus.SUCCESS.equals(e.getStatus()) ? InstanceStatus.SUCCESS : InstanceStatus.FAIL));
+		return map;
 	}
 
 	@Scheduled(cron = "0 * * * * ?")
@@ -309,6 +313,9 @@ public class MonitorBizService {
 			}).whenComplete((result, throwable) -> {
 				// 持久化到数据库
 				MonitorEntity monitorEntity = monitorMapper.nodeMonitorInfoToMonitorEntity(result);
+				if (Strings.isEmpty(monitorEntity.getLog())) {
+					monitorEntity.setLog("存在异常监控");
+				}
 				monitorRepository.save(monitorEntity);
 			});
 		});

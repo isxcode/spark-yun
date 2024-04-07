@@ -198,7 +198,7 @@
   display: none;
 }
 
-@media (max-width: 400px) {
+@media (max-width: 768px) {
 
   .fixed-footer {
     display: block;

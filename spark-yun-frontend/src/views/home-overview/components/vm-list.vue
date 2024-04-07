@@ -47,7 +47,7 @@ const paginationInfo = ref<{
   page: number,
   pageSize: number
 }>({
-  page: 1,
+  page: 0,
   pageSize: 5
 })
 
@@ -62,7 +62,7 @@ function queryVmlistData() {
 }
 
 function handleCurrentChange(page: number) {
-  paginationInfo.value.page = page
+  paginationInfo.value.page = page - 1;
 
   queryVmlistData()
 }
@@ -96,7 +96,7 @@ onMounted(() => {
     box-shadow: getCssVar('box-shadow', 'lighter');
   }
 
-  .vm-list__ops { 
+  .vm-list__ops {
     display: flex;
     align-items: center;
   }
