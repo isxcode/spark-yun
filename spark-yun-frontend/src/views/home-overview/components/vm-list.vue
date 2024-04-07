@@ -47,7 +47,7 @@ const paginationInfo = ref<{
   page: number,
   pageSize: number
 }>({
-  page: 1,
+  page: 0,
   pageSize: 5
 })
 
@@ -96,7 +96,7 @@ onMounted(() => {
     box-shadow: getCssVar('box-shadow', 'lighter');
   }
 
-  .vm-list__ops { 
+  .vm-list__ops {
     display: flex;
     align-items: center;
   }
