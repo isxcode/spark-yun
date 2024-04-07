@@ -26,6 +26,7 @@ import com.isxcode.star.api.monitor.pojos.res.GetClusterMonitorRes;
 import com.isxcode.star.api.monitor.pojos.res.GetInstanceMonitorRes;
 import com.isxcode.star.api.monitor.pojos.res.GetSystemMonitorRes;
 import com.isxcode.star.api.monitor.pojos.res.PageInstancesRes;
+import com.isxcode.star.api.work.constants.WorkStatus;
 import com.isxcode.star.api.workflow.constants.WorkflowStatus;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.star.common.utils.AesUtils;
@@ -275,8 +276,10 @@ public class MonitorBizService {
 				pageInstancesReq.getSearchKeyWord(),
 				PageRequest.of(pageInstancesReq.getPage(), pageInstancesReq.getPageSize()));
 
-		return workflowMonitorAos.map(workflowMapper::workflowMonitorAoToPageInstancesRes);
-	}
+    Page<PageInstancesRes> map = workflowMonitorAos.map(workflowMapper::workflowMonitorAoToPageInstancesRes);
+    map.getContent().forEach(e -> e.setStatus(InstanceStatus.SUCCESS.equals(e.getStatus()) ? InstanceStatus.SUCCESS : InstanceStatus.FAIL));
+    return map;
+  }
 
 	@Scheduled(cron = "0 * * * * ?")
 	public void scheduleGetNodeMonitor() {

@@ -62,7 +62,7 @@ function queryVmlistData() {
 }
 
 function handleCurrentChange(page: number) {
-  paginationInfo.value.page = page
+  paginationInfo.value.page = page - 1;
 
   queryVmlistData()
 }
