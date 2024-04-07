@@ -1,5 +1,5 @@
 <div align="center">
-  <img width="600" alt="image" src="https://github.com/ispong/spark-yun/assets/34756621/8e3827ac-a24f-49d0-b27a-e6a900ae13c3">
+  <img width="600" alt="image" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/github_product.jpg">
 </div>
 
 ---
@@ -9,7 +9,7 @@
 </h1>
 
 <h3 align="center">
-  基于Spark打造超轻量级大数据平台
+  打造超轻量级大数据平台
 </h3>
 
 <div align="center">
@@ -23,42 +23,45 @@
 
 </div>
 
-### 特色
+### 产品特色
 
-- **代码开源**：允许用户自定义二次开发
-- **高可用**：支持高可用集群部署，提高用户环境抗灾能力
-- **多租户**：一套系统，租户数据隔离，多部门共同使用
-- **云原生**：支持docker快速部署，只需一行命令即可使用
-- **私有化部署**：用户可内网部署，提高用户数据安全性
-- **spark纯原生**：支持spark官网的所有原生用法和规则
+- **代码开源**：允许用户二次自定义功能开发
+- **高可用**：支持高可用集群部署，提高用户抗灾能力
+- **多租户**：一套系统多部门使用,支持多租户数据隔离
+- **云原生**：Docker快速部署，一键启动
+- **私有化部署**：可内网部署，提高用户数据安全性
+- **spark纯原生**：支持spark官网的所有原生用法
 
-### 体验
+### 产品体验
 
-- 演示地址：https://zhiqingyun-demo.isxcode.com
+> 如需产品讲解，请邮箱联系: `hello@isxcode.com`
+
+- 演示环境：https://zhiqingyun-demo.isxcode.com
 - 体验账号：user001
-- 用户密码：welcome1
+- 账号密码：welcome1
 
-### 部署
+### 快速部署
+
+> 推荐使用amd64架构平台
 
 ```bash
 docker run -p 8080:8080 -d isxcode/zhiqingyun
 ```
 
 - 访问地址：http://localhost:8080
-- 默认管理员账号：admin
-- 默认管理员密码：admin123
+- 管理员账号：admin
+- 管理员密码：admin123
 
-### 文档
+### 相关文档
 
-- [快速入门](https://zhiqingyun.isxcode.com)
-- [使用文档](https://zhiqingyun.isxcode.com)
+- [快速入门](https://zhiqingyun.isxcode.com/docs/zh/0/0)
+- [使用手册](https://zhiqingyun.isxcode.com/docs/zh/0/0)
 - [技术博客](https://ispong.isxcode.com/tags/spark/)
-- [常见问题](https://zhiqingyun.isxcode.com)
+- [常见问题](https://mwur1opms2a.feishu.cn/wiki/space/7350313682586451971?ccm_open_type=lark_wiki_spaceLink&open_tab_from=wiki_home)
 
 ### 关于我们
 
 邮箱：hello@isxcode.com <br/>
-电话：400-8848-170 <br/>
 微信公众号：<br/>
 
 <img width="230" alt="image" src="https://github.com/ispong/spark-yun/assets/34756621/ae6323bf-3455-434f-a919-949af1eca11f">
