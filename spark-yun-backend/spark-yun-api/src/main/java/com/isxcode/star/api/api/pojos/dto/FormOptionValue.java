@@ -7,7 +7,7 @@ import lombok.Data;
 @Builder
 public class FormOptionValue {
 
-  private String label;
+	private String label;
 
-  private String value;
+	private String value;
 }
