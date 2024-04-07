@@ -310,9 +310,9 @@ public class MonitorBizService {
 			}).whenComplete((result, throwable) -> {
 				// 持久化到数据库
 				MonitorEntity monitorEntity = monitorMapper.nodeMonitorInfoToMonitorEntity(result);
-        if (Strings.isEmpty(monitorEntity.getLog())) {
-          monitorEntity.setLog("存在异常监控");
-        }
+				if (Strings.isEmpty(monitorEntity.getLog())) {
+					monitorEntity.setLog("存在异常监控");
+				}
 				monitorRepository.save(monitorEntity);
 			});
 		});
