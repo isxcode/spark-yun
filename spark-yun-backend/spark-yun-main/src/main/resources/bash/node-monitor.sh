@@ -37,6 +37,3 @@ json_output="{ \
 }"
 
 echo $json_output
-
-# 删除检测脚本
-rm ${BASE_PATH}/node-monitor.sh
