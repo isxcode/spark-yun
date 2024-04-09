@@ -2,9 +2,10 @@
   <div class="sys-chart">
     <span class="sys-chart__title">{{ chartData.title }}</span>
     <div class="sys-chart__body">
-      <div ref="bodyContainer" class="sys-chart__container"></div>
+      <div v-if="!isEmpty" ref="bodyContainer" class="sys-chart__container"></div>
+      <el-empty v-else class="sys-chart__empty" description="暂无数据"></el-empty>
     </div>
-    <div class="sys-chart__footer">
+    <div class="sys-chart__footer" v-if="!isEmpty">
       <span class="sys-chart__mix">{{ chartData.mix }}/{{ chartData.total }}</span>
     </div>
   </div>
@@ -27,6 +28,19 @@ const props = withDefaults(defineProps<{
   chartData: ChartInfo
 }>(), {
   chartData: () => ({} as ChartInfo)
+})
+
+const isEmpty = computed(() => {
+  return props.chartData.mix === undefined || props.chartData.mix === null
+})
+
+watch(() => isEmpty.value, (newVal) => {
+  if (!newVal && bodyContainer.value) {
+    chartVm.value = echarts.init(bodyContainer.value)
+    chartVm.value.setOption(options.value)
+  }
+}, {
+  flush: 'post'
 })
 
 const chartVm = ref<echarts.ECharts>()
@@ -108,13 +122,6 @@ watch(() => options.value, (val) => {
 
 const bodyContainer = ref<HTMLDivElement>()
 
-onMounted(() => {
-  if (bodyContainer.value) {
-    chartVm.value = echarts.init(bodyContainer.value)
-    chartVm.value.setOption(options.value)
-  }
-})
-
 </script>
 
 <style lang="scss" scoped>
@@ -153,6 +160,12 @@ onMounted(() => {
   .sys-chart__footer {
     display: flex;
     justify-content: center;
+  }
+
+  .sys-chart__empty {
+    padding: 0;
+    
+    --el-empty-image-width: 60px;
   }
 }
 </style>

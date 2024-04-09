@@ -2,10 +2,11 @@
   <div class="monitor-chart">
     <div class="monitor-chart__header">
       <span class="monitor-chart__title">{{ monitorData.name }}</span>
-      <span class="monitir-chart__active">{{ monitorData.value + monitorData.unit }}</span>
+      <span class="monitor-chart__active" v-if="!isEmpty">{{ monitorData.value + monitorData.unit }}</span>
     </div>
     <div class="monitor-chart__body">
-      <div ref="chartContainerRef" class="monitor-chart__container"></div>
+      <div v-if="!isEmpty" ref="chartContainerRef" class="monitor-chart__container"></div>
+      <el-empty v-else="isEmpty"  class="monitor-chart__empty" description="暂无数据"></el-empty>
     </div>
   </div>
 </template>
@@ -43,6 +44,19 @@ const props = withDefaults(defineProps<{
   dateTimeList: Array<string>
 }>(), {})
 
+const isEmpty = computed(() => {
+  return props.monitorData.data.length === 0
+})
+
+watch(() => isEmpty.value, (newVal) => {
+  if (!newVal && chartContainerRef.value) {
+    chartVm.value = echarts.init(chartContainerRef.value)
+    chartVm.value.setOption(options.value)
+  }
+}, {
+  flush: 'post'
+})
+
 const chartVm = ref<echarts.ECharts>()
 
 const chartContainerRef = ref<HTMLDivElement>()
@@ -50,12 +64,13 @@ const chartContainerRef = ref<HTMLDivElement>()
 const options = computed<EChartsOption>(() => {
   return {
     tooltip: {
-      trigger: 'axis'
+      trigger: 'item'
     },
     grid: {
       top: '8%',
       left: '4%',
       right: '8%',
+      bottom: '0%',
       containLabel: true
     },
     xAxis: {
@@ -95,14 +110,6 @@ watch(() => options.value, (val) => {
   }
 })
 
-onMounted(() => {
-  if (chartContainerRef.value) {
-    chartVm.value = echarts.init(chartContainerRef.value)
-
-    chartVm.value.setOption(options.value)
-  }
-})
-
 </script>
 
 <style scoped lang="scss">
@@ -118,7 +125,7 @@ onMounted(() => {
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 100%;
+    height: calc(100% - 40px);
   }
 
   .monitor-chart__title, .monitor-chart__active {
@@ -136,6 +143,12 @@ onMounted(() => {
   .monitor-chart__container {
     width: 300px;
     height: 100%;
+  }
+
+  .monitor-chart__empty {
+    padding: 0;
+    
+    --el-empty-image-width: 60px;
   }
 }
 </style>

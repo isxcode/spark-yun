@@ -32,7 +32,8 @@
           </el-dropdown-menu>
         </template>
       </el-dropdown>
-        <el-icon class="sys-info__icon"><Setting /></el-icon>
+        <el-icon class="sys-info__icon" @click="queryMonitorData"><RefreshRight /></el-icon>
+        <!-- <el-icon class="sys-info__icon"><Setting /></el-icon> -->
       </div>
     </div>
     <div class="monitor-info__body">
