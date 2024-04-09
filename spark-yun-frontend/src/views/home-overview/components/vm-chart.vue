@@ -59,7 +59,7 @@ const chartXAxisData = ref<string[]>([])
 const options = computed<EChartsOption>(() => {
   return {
     tooltip: {
-      trigger: 'axis'
+      trigger: 'item'
     },
     legend: {
       top: '6%',

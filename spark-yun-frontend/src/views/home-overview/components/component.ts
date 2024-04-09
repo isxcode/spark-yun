@@ -1,7 +1,7 @@
 export interface ChartInfo {
   type: 'clusterMonitor' | 'datasourceMonitor' | 'workflowMonitor' | 'apiMonitor'
   title: string
-  mix: number
+  mix?: number
   total: number
   color: string
 }
