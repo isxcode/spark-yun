@@ -359,11 +359,11 @@ function clickGithub() {
 }
 
 function clickSlack() {
-  window.open("https://zhiqingyun.slack.com/archives/C06R8SJPVAQ");
+  window.open("https://join.slack.com/t/zhiqingyun/shared_invite/zt-2fixm4lxg-Y5F1Qc6OQJjb7Z0kmcuQ0A");
 }
 
 function clickDiscord() {
-  window.open("https://discord.gg/uETedXUS");
+  window.open("https://discord.gg/sEHPpmsp");
 }
 
 function clickLinked() {
