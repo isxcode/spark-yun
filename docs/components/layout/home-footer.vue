@@ -70,10 +70,10 @@
     </div>
   </div>
 
-  <div class="fixed-footer">
+  <div class="fixed-footer" @click="callPhoneNumber">
     <div class="content">
       <SvgIcon class="phone-svg" name="phone"></SvgIcon>
-      <p class="phone-text"><a href="tel: 4008848170">电话咨询</a></p>
+      <p class="phone-text"><a>电话咨询</a></p>
     </div>
   </div>
 </template>
@@ -391,5 +391,8 @@ function clickIcp() {
   window.open("https://beian.miit.gov.cn/");
 }
 
+function callPhoneNumber() {
+  window.location.href = `tel:4008848170`;
+}
 
 </script>
