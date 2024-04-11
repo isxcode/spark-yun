@@ -70,10 +70,10 @@
     </div>
   </div>
 
-  <div class="fixed-footer">
+  <div class="fixed-footer" @click="callPhoneNumber">
     <div class="content">
       <SvgIcon class="phone-svg" name="phone"></SvgIcon>
-      <p class="phone-text"><a href="tel: 4008848170">电话咨询</a></p>
+      <p class="phone-text"><a>电话咨询</a></p>
     </div>
   </div>
 </template>
@@ -359,11 +359,11 @@ function clickGithub() {
 }
 
 function clickSlack() {
-  window.open("https://zhiqingyun.slack.com/archives/C06R8SJPVAQ");
+  window.open("https://join.slack.com/t/zhiqingyun/shared_invite/zt-2fixm4lxg-Y5F1Qc6OQJjb7Z0kmcuQ0A");
 }
 
 function clickDiscord() {
-  window.open("https://discord.gg/uETedXUS");
+  window.open("https://discord.gg/sEHPpmsp");
 }
 
 function clickLinked() {
@@ -391,5 +391,8 @@ function clickIcp() {
   window.open("https://beian.miit.gov.cn/");
 }
 
+function callPhoneNumber() {
+  window.location.href = `tel:4008848170`;
+}
 
 </script>
