@@ -235,7 +235,8 @@ function showDetail(data: any) {
   router.push({
     name: 'computer-pointer',
     query: {
-      id: data.id
+      id: data.id,
+      type: data.clusterType
     }
   })
 }
