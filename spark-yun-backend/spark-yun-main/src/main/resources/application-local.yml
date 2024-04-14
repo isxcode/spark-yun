@@ -23,7 +23,7 @@ spring:
     url: jdbc:h2:file:~/.zhiqingyun/h2/data
     user: root
     password: root123
-    locations: classpath:db/release/h2
+    locations: classpath:db/migration/h2
 
 logging:
   level:
