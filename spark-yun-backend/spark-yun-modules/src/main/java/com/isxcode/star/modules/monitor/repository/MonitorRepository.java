@@ -18,7 +18,7 @@ import java.util.List;
 @CacheConfig(cacheNames = {"sy_file"})
 public interface MonitorRepository extends JpaRepository<MonitorEntity, String>, JpaSpecificationExecutor<FileEntity> {
 
-	@Query("select new com.isxcode.star.api.monitor.pojos.ao.MonitorLineAo ( count(1),M.clusterId, M.createDateTime,sum(M.cpuPercent) / count(1),sum(M.diskIoReadSpeed) / count(1),sum(M.diskIoWriteSpeed) / count(1),sum(M.networkIoReadSpeed) / count(1),sum(M.networkIoWriteSpeed) / count(1), sum(M.usedMemorySize) / count(1), sum(M.usedStorageSize) / count(1) ) from MonitorEntity M where M.clusterId=:clusterId and M.createDateTime between :startDateTime and :endDateTime group by M.clusterId, M.createDateTime ")
+	@Query("select new com.isxcode.star.api.monitor.pojos.ao.MonitorLineAo ( count(1),M.clusterId, M.createDateTime,sum(M.cpuPercent) / count(1),sum(M.diskIoReadSpeed) / count(1),sum(M.networkIoReadSpeed) / count(1),sum(M.diskIoWriteSpeed) / count(1),sum(M.networkIoWriteSpeed) / count(1), sum(M.usedMemorySize) / count(1), sum(M.usedStorageSize) / count(1) ) from MonitorEntity M where M.clusterId=:clusterId and M.createDateTime between :startDateTime and :endDateTime group by M.clusterId, M.createDateTime ")
 	List<MonitorLineAo> queryMonitorLine(@Param("clusterId") String clusterId,
 			@Param("startDateTime") LocalDateTime startDateTime, @Param("endDateTime") LocalDateTime endDateTime);
 

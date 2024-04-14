@@ -195,16 +195,16 @@ public class MonitorBizService {
 					.usedMemorySize(v.getUsedMemorySize() == null ? null : DataSizeUtil.format(v.getUsedMemorySize()))
 					.diskIoReadSpeed(v.getDiskIoReadSpeed() == null
 							? null
-							: DataSizeUtil.format(v.getDiskIoReadSpeed() * 1024) + "/s")
+							: v.getDiskIoReadSpeed() + "KB/s")
 					.diskIoWriteSpeed(v.getDiskIoWriteSpeed() == null
 							? null
-							: DataSizeUtil.format(v.getDiskIoWriteSpeed() / 1024 / 1024) + "/s")
+							: v.getDiskIoWriteSpeed() + "KB/s")
 					.networkIoReadSpeed(v.getNetworkIoReadSpeed() == null
 							? null
-							: DataSizeUtil.format(v.getNetworkIoReadSpeed() * 1024) + "/s")
+							: v.getNetworkIoReadSpeed() + "KB/s")
 					.networkIoWriteSpeed(v.getNetworkIoWriteSpeed() == null
 							? null
-							: DataSizeUtil.format(v.getNetworkIoWriteSpeed() / 1024 / 1024) + "/s")
+							: v.getNetworkIoWriteSpeed() + "KB/s")
 					.build();
 			line.add(date);
 		});
@@ -336,9 +336,15 @@ public class MonitorBizService {
 			return nodeMonitorInfo;
 		}
 
+    long diskIoReadSpeed = 0L,diskIoWriteSpeed = 0L;
+    for (int i = 0;i<nodeMonitorInfo.getDiskIoReadSpeedStr().split(" ").length;i++){
+      diskIoReadSpeed += Long.parseLong(nodeMonitorInfo.getDiskIoReadSpeedStr().split(" ")[i]);
+      diskIoWriteSpeed += Long.parseLong(nodeMonitorInfo.getDiskIoWriteSpeedStr().split(" ")[i]);
+    }
+
 		// 解析一下速度
-		nodeMonitorInfo.setDiskIoReadSpeed(Long.parseLong(nodeMonitorInfo.getDiskIoReadSpeedStr().split(" ")[0]));
-		nodeMonitorInfo.setDiskIoWriteSpeed(Long.parseLong(nodeMonitorInfo.getDiskIoWriteSpeedStr().split(" ")[0]));
+		nodeMonitorInfo.setDiskIoReadSpeed(diskIoReadSpeed);
+		nodeMonitorInfo.setDiskIoWriteSpeed(diskIoWriteSpeed);
 
 		return nodeMonitorInfo;
 	}
