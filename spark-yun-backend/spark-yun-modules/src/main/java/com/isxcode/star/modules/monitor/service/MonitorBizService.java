@@ -193,18 +193,11 @@ public class MonitorBizService {
 					.usedStorageSize(
 							v.getUsedStorageSize() == null ? null : DataSizeUtil.format(v.getUsedStorageSize()))
 					.usedMemorySize(v.getUsedMemorySize() == null ? null : DataSizeUtil.format(v.getUsedMemorySize()))
-					.diskIoReadSpeed(v.getDiskIoReadSpeed() == null
-							? null
-							: v.getDiskIoReadSpeed() + "KB/s")
-					.diskIoWriteSpeed(v.getDiskIoWriteSpeed() == null
-							? null
-							: v.getDiskIoWriteSpeed() + "KB/s")
-					.networkIoReadSpeed(v.getNetworkIoReadSpeed() == null
-							? null
-							: v.getNetworkIoReadSpeed() + "KB/s")
-					.networkIoWriteSpeed(v.getNetworkIoWriteSpeed() == null
-							? null
-							: v.getNetworkIoWriteSpeed() + "KB/s")
+					.diskIoReadSpeed(v.getDiskIoReadSpeed() == null ? null : v.getDiskIoReadSpeed() + "KB/s")
+					.diskIoWriteSpeed(v.getDiskIoWriteSpeed() == null ? null : v.getDiskIoWriteSpeed() + "KB/s")
+					.networkIoReadSpeed(v.getNetworkIoReadSpeed() == null ? null : v.getNetworkIoReadSpeed() + "KB/s")
+					.networkIoWriteSpeed(
+							v.getNetworkIoWriteSpeed() == null ? null : v.getNetworkIoWriteSpeed() + "KB/s")
 					.build();
 			line.add(date);
 		});
@@ -336,11 +329,11 @@ public class MonitorBizService {
 			return nodeMonitorInfo;
 		}
 
-    long diskIoReadSpeed = 0L,diskIoWriteSpeed = 0L;
-    for (int i = 0;i<nodeMonitorInfo.getDiskIoReadSpeedStr().split(" ").length;i++){
-      diskIoReadSpeed += Long.parseLong(nodeMonitorInfo.getDiskIoReadSpeedStr().split(" ")[i]);
-      diskIoWriteSpeed += Long.parseLong(nodeMonitorInfo.getDiskIoWriteSpeedStr().split(" ")[i]);
-    }
+		long diskIoReadSpeed = 0L, diskIoWriteSpeed = 0L;
+		for (int i = 0; i < nodeMonitorInfo.getDiskIoReadSpeedStr().split(" ").length; i++) {
+			diskIoReadSpeed += Long.parseLong(nodeMonitorInfo.getDiskIoReadSpeedStr().split(" ")[i]);
+			diskIoWriteSpeed += Long.parseLong(nodeMonitorInfo.getDiskIoWriteSpeedStr().split(" ")[i]);
+		}
 
 		// 解析一下速度
 		nodeMonitorInfo.setDiskIoReadSpeed(diskIoReadSpeed);
