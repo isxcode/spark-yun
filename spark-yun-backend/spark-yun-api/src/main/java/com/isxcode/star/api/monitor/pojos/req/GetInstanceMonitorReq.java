@@ -13,6 +13,6 @@ public class GetInstanceMonitorReq {
 
 	@Schema(title = "日期时间，例如2020-12-12", example = "2020-12-12")
 	@NotNull(message = "localDate不能为空")
-  @JsonSerialize(using = LocalDateSerializer.class)
+	@JsonSerialize(using = LocalDateSerializer.class)
 	private Date localDate;
 }
