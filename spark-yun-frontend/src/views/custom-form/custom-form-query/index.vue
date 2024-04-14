@@ -109,7 +109,24 @@ function initData(tableLoading?: boolean) {
         formId: route.query.id,
         formVersion: route.query.formVersion
     }).then((res: any) => {
-        tableConfig.tableData = res.data.data || []
+        tableConfig.tableData = (res.data.data || []).map(item => {
+            let columnData = {}
+            let formDetailData = {}
+            Object.keys(item).forEach((k: string) => {
+                if (item[k] && item[k] instanceof Array && item[k].length > 0) {
+                    columnData[k] = item[k].map(d => d.label).join('，')
+                    formDetailData[k] = item[k].map(d => d.value)
+                } else if (item[k] && item[k] instanceof Object && item[k].value) {
+                    columnData[k] = item[k].label
+                    formDetailData[k] = item[k].value
+                } else {
+                    columnData[k] = item[k]
+                    formDetailData[k] = item[k]
+                }
+            })
+            columnData.formDetailData = formDetailData
+            return columnData
+        })
         tableConfig.pagination.total = res.data.count
         loading.value = false
         tableConfig.loading = false
@@ -142,8 +159,7 @@ function addData() {
 }
 
 function editData(data: any) {
-    const oldData = cloneDeep(data)
-    delete oldData._X_ROW_KEY
+    const oldData = cloneDeep(data.formDetailData)
     addModalRef.value.showModal((formData: any) => {
         return new Promise((resolve: any, reject: any) => {
             UpdateFormData({
@@ -160,7 +176,7 @@ function editData(data: any) {
                 reject(error)
             })
         })
-    }, data)
+    }, data.formDetailData)
 }
 
 // 删除
