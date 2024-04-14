@@ -303,6 +303,10 @@ function getTypeData(e: string) {
       value: 'QUERY_JDBC'
     },
     {
+      label: 'Prql查询作业',
+      value: 'PRQL'
+    },
+    {
       label: 'SparkSql查询作业',
       value: 'SPARK_SQL'
     },
@@ -325,6 +329,10 @@ function getTypeData(e: string) {
     {
       label: '自定义作业',
       value: 'SPARK_JAR'
+    },
+    {
+      label: '接口调用作业',
+      value: 'API'
     }
   ]
   return typeList.find(itme => itme.value === e)?.label
