@@ -20,7 +20,7 @@
               </el-icon>
               <span class="btn-text">运行</span>
             </div>
-            <div v-if="workConfig.workType === 'SPARK_SQL'" class="btn-box" @click="terWorkData">
+            <div class="btn-box" @click="terWorkData">
               <el-icon v-if="!terLoading">
                 <Close />
               </el-icon>
