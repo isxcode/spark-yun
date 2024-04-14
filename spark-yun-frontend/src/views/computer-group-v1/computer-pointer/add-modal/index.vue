@@ -26,6 +26,9 @@
           placeholder="请输入"
         />
       </el-form-item>
+      <el-form-item v-if="clusterType === 'standalone'" label="是否安装Spark-Local组件">
+        <el-switch v-model="formData.installSparkLocal" />
+      </el-form-item>
       <el-form-item label="用户名" prop="username">
         <el-input v-model="formData.username" maxlength="100" placeholder="请输入" />
       </el-form-item>
@@ -65,10 +68,14 @@ import { reactive, defineExpose, ref, nextTick } from 'vue'
 import BlockModal from '@/components/block-modal/index.vue'
 import { ElMessage, FormInstance, FormRules } from 'element-plus'
 import { Validator } from '@/validator/index'
+import { useRoute } from 'vue-router'
+
+const route = useRoute()
 
 const form = ref<FormInstance>()
 const callback = ref<any>()
 const pwdType = ref('pwd')
+const clusterType = ref('')
 const modelConfig = reactive({
   title: '添加节点',
   visible: false,
@@ -97,6 +104,7 @@ const formData = reactive({
   agentHomePath: '',
   agentPort: '',
   hadoopHomePath: '',
+  installSparkLocal: false,
   remark: '',
   id: ''
 })
@@ -135,6 +143,7 @@ const rules = reactive<FormRules>({
 function showModal(cb: () => void, data: any): void {
   callback.value = cb
   pwdType.value = 'pwd'
+  clusterType.value = route.query.type
   if (data) {
     formData.name = data.name
     formData.host = data.host
@@ -144,6 +153,7 @@ function showModal(cb: () => void, data: any): void {
     formData.agentHomePath = data.agentHomePath
     formData.agentPort = data.agentPort
     formData.hadoopHomePath = data.hadoopHomePath
+    formData.installSparkLocal = data.installSparkLocal
     formData.remark = data.remark
     formData.id = data.id
     modelConfig.title = '编辑节点'
@@ -156,6 +166,7 @@ function showModal(cb: () => void, data: any): void {
     formData.agentHomePath = ''
     formData.agentPort = ''
     formData.hadoopHomePath = ''
+    formData.installSparkLocal = false
     formData.remark = ''
     formData.id = ''
     modelConfig.title = '添加节点'
