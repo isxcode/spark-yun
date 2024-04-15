@@ -17,5 +17,5 @@ if [ -e "zhiqingyun-agent.pid" ]; then
   fi
 fi
 
-echo "【至轻云代理】: CLOSED"
+echo "【至轻云代理】: HAS CLOSED"
 exit 0
