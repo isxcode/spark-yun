@@ -42,7 +42,6 @@ export const httpOption = {
     checkStatus: (status: number, msg: string, showMsg: any): void => {
       try {
         if (status == 401) {
-          showMsg('用户登录过期')
           router.push({
             name: 'login'
           })
