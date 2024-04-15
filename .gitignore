@@ -1,75 +1,46 @@
-# idea配置，不提交
-.idea/**
-*/.idea/**
-!.idea/icon.svg
-!*/.idea/icon.svg
+# idea配置不提交
+**/.idea/**
+!**/.idea/icon.svg
 
-# gradle缓存，不提交
+# gradle缓存不提交
 .gradle
 !gradle-wrapper.jar
 
-# 后端打包文件，不提交
+# 后端打包文件不提交
 **/build
 **/bin
+**/dist
 
-# 前端打包文件，不提交
-spark-yun-website/dist
-spark-yun-frontend/dist
+# .DS_Store不提交
+**/.DS_Store
 
-# 前端嵌入后端内容，不提交
+# 前端打包不提交
 spark-yun-backend/spark-yun-main/src/main/resources/templates/**
 spark-yun-backend/spark-yun-main/src/main/resources/static/**
 
-# 代理压缩包
-spark-yun-backend/spark-yun-main/src/main/resources/agent/**
+# 代理安装包不提交
+spark-yun-backend/spark-yun-main/src/main/resources/agent
 
-# 企业版代码，不提交
-spark-yun-vip/**
+# 企业版代码不提交
+spark-yun-vip
 
-# 资源文件
-resources/**
-spark-yun-backend/spark-yun-main/resources/**
+# 资源文件不提交
+resources
 
-# 不提交spark-min
+# spark-min不提交
 spark-yun-dist/spark-min
-!spark-yun-dist/zhiqingyun/bin
-!spark-yun-dist/zhiqingyun-agent/bin
-
-# isx工具不提交
-isx
-
-# 个人配置不提交
-spark-yun-backend/spark-yun-main/src/main/resources/application-ispong.yml
 
 # 临时目录不提交
-tmp
 spark-warehouse
-
-# 前端.idea不提交
-spark-yun-frontend/.idea
-
-# derby.log不提交
-derby.log
-
-# 许可证不提交
-spark-yun-backend/spark-yun-main/resources/license/*
 
 # 自动化测试报告不提交
 spark-yun-autotest/Reports
-
-# 不提交spark-yun-vip文件夹
-spark-yun-vip
 
 # 日志不提交
 logs
 
 # spark本地运行日志不提交
 metastore_db
-
-# .DS_Store不提交
-*/**/.DS_Store
-spark-yun-backend/spark-yun-main/src/.DS_Store
-spark-yun-backend/spark-yun-main/src/main/.DS_Store
 
 # prql二进制文件
 spark-yun-backend/spark-yun-main/src/main/resources/libprql_java-osx-arm64.dylib
