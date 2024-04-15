@@ -210,7 +210,6 @@
     height: 50px;
     line-height: 50px;
     text-align: center;
-    border-top: 1px solid #e5e5e5;
     background: #F9DED1;
 
     .content {
