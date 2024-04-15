@@ -20,8 +20,6 @@ else
       exit 0
 fi
 
-BASE_PATH=$(cd "$(dirname "$0")" || exit ; pwd)
-
 home_path=""
 agent_port=""
 for arg in "$@"; do
@@ -42,16 +40,24 @@ if [ ! -d "${home_path}/zhiqingyun-agent" ]; then
   exit 0
 fi
 
+cd "${home_path}"/zhiqingyun-agent || exit
+
 # 将文件解压到指定目录
-tar -xf ${BASE_PATH}/zhiqingyun-agent.tar.gz -C ${home_path} > /dev/null
+tar -xf /tmp/zhiqingyun-agent.tar.gz -C ${home_path} > /dev/null
+
+# 判断zhiqingyun-agent.log是否存在,不存在则新建
+if [ ! -f logs/zhiqingyun-agent.log ]; then
+  mkdir logs
+  touch logs/zhiqingyun-agent.log
+fi
 
 # 运行jar包
-nohup java -jar -Xmx2048m ${home_path}/zhiqingyun-agent/lib/zhiqingyun-agent.jar --server.port=${agent_port} >>${home_path}/zhiqingyun-agent/logs/zhiqingyun-agent.log 2>&1 &
-echo $! >${home_path}/zhiqingyun-agent/zhiqingyun-agent.pid
+nohup java -jar -Xmx2048m lib/zhiqingyun-agent.jar --server.port=${agent_port} --spring.config.additional-location=conf/ > /dev/null 2>&1 &
+echo $! >zhiqingyun-agent.pid
 
 # 检查是否安装
-if [ -e "${home_path}/zhiqingyun-agent/zhiqingyun-agent.pid" ]; then
-  pid=$(cat "${home_path}/zhiqingyun-agent/zhiqingyun-agent.pid")
+if [ -e "zhiqingyun-agent.pid" ]; then
+  pid=$(cat "zhiqingyun-agent.pid")
   sleep 10
   if ps -p $pid >/dev/null 2>&1; then
     json_output="{ \
@@ -69,4 +75,4 @@ if [ -e "${home_path}/zhiqingyun-agent/zhiqingyun-agent.pid" ]; then
 fi
 
 # 删除安装包 和 安装脚本
-rm ${BASE_PATH}/zhiqingyun-agent.tar.gz && rm ${BASE_PATH}/agent-install.sh
+rm /tmp/zhiqingyun-agent.tar.gz && rm /tmp/agent-install.sh
