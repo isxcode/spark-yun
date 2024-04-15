@@ -3,9 +3,9 @@
   width: 100vw;
   height: 100vh;
 
-  
+
   &.is-collapse {
-    
+
     .zqy-home__sidebar {
       width: 80px;
       .zqy-home__nav {
@@ -14,7 +14,7 @@
         align-items: center;
       }
     }
-    
+
     .zqy-home__main {
       padding-left: 80px;
       // 适配输入框穿透问题
@@ -22,7 +22,7 @@
         max-width: calc(100vw - 282px);
       }
     }
-    
+
     .zqy-home__menu-footer {
       // width: 80px;
       padding-left: 24px;
@@ -30,13 +30,13 @@
       // flex-direction: column;
       // justify-content: space-evenly;
     }
-    
-    
+
+
     .zqy-home__title {
       display: none;
     }
   }
-  
+
   .zqy-home__sidebar {
     --el-transition-duration: 0.3s;
 
@@ -52,7 +52,7 @@
     transition: width getCssVar('transition-duration') ease-in-out;
     border-right: 1px solid var(--el-border-color);
   }
-  
+
   .zqy-home__main {
     width: 100vw;
     padding-left: 220px;
@@ -75,7 +75,7 @@
   }
 
   .zqy-home__logo {
-    height: 40px;
+    height: 35px;
     // width: 40px;
   }
 
@@ -153,7 +153,7 @@
 
   .zyq-home__menu-title {
     max-width: 72px;
-  }  
+  }
 }
 
 .zyq-home__menu-icon {

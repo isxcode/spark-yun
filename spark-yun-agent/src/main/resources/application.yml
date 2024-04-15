@@ -1,14 +1,20 @@
 server:
   port: 30177
 
-management:
-  endpoints:
-    web:
-      exposure:
-        include: metrics
-  endpoint:
-    metrics:
-      enabled: true
+logging:
+  exception-conversion-word: '%wEx'
+  file:
+    name: ./logs/zhiqingyun-agent.log
+  pattern:
+    level: '%5p'
+    dateformat: 'yyyy-MM-dd HH:mm:ss.SSS'
+    console: '%clr(%d{${LOG_DATEFORMAT_PATTERN}}){faint} %clr(${LOG_LEVEL_PATTERN}) %clr(${PID:- }){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD}'
+    file: '%d{${LOG_DATEFORMAT_PATTERN}} ${LOG_LEVEL_PATTERN} %-5(${PID:- }) --- [%15.15t] %-40.40logger{39} : %m%n${LOG_EXCEPTION_CONVERSION_WORD}}'
+  register-shutdown-hook: false
+  logback:
+    rollingpolicy:
+      clean-history-on-start: false
+      file-name-pattern: '${LOG_FILE}.%d{yyyy-MM-dd}.%i.gz'
 
 spark-yun:
   submit-timeout: 300 # 提交作业的超时时间
