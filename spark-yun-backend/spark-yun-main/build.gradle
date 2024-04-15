@@ -17,3 +17,7 @@ dependencies {
 bootJar {
   archiveFileName = 'zhiqingyun.jar'
 }
+
+bootRun {
+    workingDir(rootDir.getAbsolutePath())
+}
