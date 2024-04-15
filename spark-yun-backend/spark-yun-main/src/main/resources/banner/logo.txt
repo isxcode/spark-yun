@@ -1,12 +1,29 @@
-${AnsiColor.RED}
-  ____                   _        __   __
- / ___| _ __   __ _ _ __| | __    \ \ / /   _ _ __
- \___ \| '_ \ / _` | '__| |/ /     \ V / | | | '_ \
-  ___) | |_) | (_| | |  |   <       | || |_| | | | |
- |____/| .__/ \__,_|_|  |_|\_\      |_| \__,_|_| |_|
-       |_|
+${AnsiColor.CYAN}
 
-${AnsiColor.GREEN}
+   SSSSSSSSSSSSSSS                                                        kkkkkkkk                YYYYYYY       YYYYYYY
+ SS:::::::::::::::S                                                       k::::::k                Y:::::Y       Y:::::Y
+S:::::SSSSSS::::::S                                                       k::::::k                Y:::::Y       Y:::::Y
+S:::::S     SSSSSSS                                                       k::::::k                Y::::::Y     Y::::::Y
+S:::::S           ppppp   ppppppppp     aaaaaaaaaaaaa  rrrrr   rrrrrrrrr   k:::::k    kkkkkkk     YYY:::::Y   Y:::::YYYuuuuuu    uuuuuunnnn  nnnnnnnn
+S:::::S           p::::ppp:::::::::p    a::::::::::::a r::::rrr:::::::::r  k:::::k   k:::::k         Y:::::Y Y:::::Y   u::::u    u::::un:::nn::::::::nn
+ S::::SSSS        p:::::::::::::::::p   aaaaaaaaa:::::ar:::::::::::::::::r k:::::k  k:::::k           Y:::::Y:::::Y    u::::u    u::::un::::::::::::::nn
+  SS::::::SSSSS   pp::::::ppppp::::::p           a::::arr::::::rrrrr::::::rk:::::k k:::::k             Y:::::::::Y     u::::u    u::::unn:::::::::::::::n
+    SSS::::::::SS  p:::::p     p:::::p    aaaaaaa:::::a r:::::r     r:::::rk::::::k:::::k               Y:::::::Y      u::::u    u::::u  n:::::nnnn:::::n
+       SSSSSS::::S p:::::p     p:::::p  aa::::::::::::a r:::::r     rrrrrrrk:::::::::::k                 Y:::::Y       u::::u    u::::u  n::::n    n::::n
+            S:::::Sp:::::p     p:::::p a::::aaaa::::::a r:::::r            k:::::::::::k                 Y:::::Y       u::::u    u::::u  n::::n    n::::n
+            S:::::Sp:::::p    p::::::pa::::a    a:::::a r:::::r            k::::::k:::::k                Y:::::Y       u:::::uuuu:::::u  n::::n    n::::n
+SSSSSSS     S:::::Sp:::::ppppp:::::::pa::::a    a:::::a r:::::r           k::::::k k:::::k               Y:::::Y       u:::::::::::::::uun::::n    n::::n
+S::::::SSSSSS:::::Sp::::::::::::::::p a:::::aaaa::::::a r:::::r           k::::::k  k:::::k           YYYY:::::YYYY     u:::::::::::::::un::::n    n::::n
+S:::::::::::::::SS p::::::::::::::pp   a::::::::::aa:::ar:::::r           k::::::k   k:::::k          Y:::::::::::Y      uu::::::::uu:::un::::n    n::::n
+ SSSSSSSSSSSSSSS   p::::::pppppppp      aaaaaaaaaa  aaaarrrrrrr           kkkkkkkk    kkkkkkk         YYYYYYYYYYYYY        uuuuuuuu  uuuunnnnnn    nnnnnn
+                   p:::::p
+                   p:::::p
+                  p:::::::p
+                  p:::::::p
+                  p:::::::p
+                  ppppppppp
+
+${AnsiColor.RED}
 项目: ${application.title}
 官网: ${application.website}
 描述: ${application.describe}
