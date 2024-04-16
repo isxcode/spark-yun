@@ -75,8 +75,8 @@ if [ ${spark_local} = "true" ]; then
   fi
   # 修改spark的配置文件
   interIp=$(ip addr show | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1' | head -n 1)
-  sed -i.bak -E "s/spark:\/\/localhost:7077/spark:\/\/$interIp:7077/g" "${home_path}/zhiqingyun-agent/spark-min/conf/spark-defaults.conf"
-  nohup bash ${home_path}/zhiqingyun-agent/spark-min/sbin/start-all.sh > /dev/null 2>&1 &
+  sed -i.bak -E "s/spark:\/\/localhost:7077/spark:\/\/$interIp:7077/g" spark-min/conf/spark-defaults.conf
+  nohup bash spark-min/sbin/start-all.sh > /dev/null 2>&1 &
 fi
 
 # 检查是否安装
