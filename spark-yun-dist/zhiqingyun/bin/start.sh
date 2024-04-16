@@ -9,13 +9,13 @@ cd ".." || exit
 if [ -e "zhiqingyun.pid" ]; then
   pid=$(cat "zhiqingyun.pid")
   if ps -p $pid >/dev/null 2>&1; then
-    echo "【至轻云】: RUNNING"
+    echo "【至轻云】: HAS RUNNING"
     exit 0
   fi
 fi
 
 # 启动项目
-nohup java -jar -Xmx2048m lib/zhiqingyun.jar --spring.profiles.active=local --spring.config.additional-location=conf/ &
+nohup java -jar -Xmx2048m lib/zhiqingyun.jar --spring.profiles.active=local --spring.config.additional-location=conf/ > /dev/null 2>&1 &
 echo $! >zhiqingyun.pid
 echo "【至轻云】: RUNNING"
 tail -f logs/spark-yun.log
