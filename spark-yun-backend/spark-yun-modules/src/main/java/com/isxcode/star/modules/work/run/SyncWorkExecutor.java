@@ -9,6 +9,7 @@ import com.isxcode.star.api.api.constants.PathConstants;
 import com.isxcode.star.api.cluster.constants.ClusterNodeStatus;
 import com.isxcode.star.api.cluster.pojos.dto.ScpFileEngineNodeDto;
 import com.isxcode.star.api.work.constants.WorkLog;
+import com.isxcode.star.api.work.constants.WorkType;
 import com.isxcode.star.api.work.exceptions.WorkRunException;
 import com.isxcode.star.api.work.pojos.dto.DatasourceConfig;
 import com.isxcode.star.api.work.pojos.res.RunWorkRes;
@@ -161,6 +162,9 @@ public class SyncWorkExecutor extends WorkExecutor {
 		// 开始构建作业
 		logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始构建作业  \n");
 		YagExecuteWorkReq executeReq = new YagExecuteWorkReq();
+		executeReq.setWorkId(workRunContext.getWorkId());
+		executeReq.setWorkType(WorkType.DATA_SYNC_JDBC);
+		executeReq.setWorkInstanceId(workInstance.getId());
 
 		// 封装来源Datasource的信息
 		DatasourceEntity sourceDatasource = datasourceService

@@ -27,6 +27,8 @@ public class YagExecuteWorkReq {
 	 */
 	private String workType;
 
+	private String workId;
+
 	/**
 	 * 依赖配置.
 	 */
@@ -36,4 +38,6 @@ public class YagExecuteWorkReq {
 	 * 自定义函数配置.
 	 */
 	private List<FuncInfo> funcConfig;
+
+	private String workInstanceId;
 }

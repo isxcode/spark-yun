@@ -137,6 +137,9 @@ public class SparkJarExecutor extends WorkExecutor {
 		// 开始构建作业
 		logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始构建作业  \n");
 		YagExecuteWorkReq executeReq = new YagExecuteWorkReq();
+		executeReq.setWorkId(workRunContext.getWorkId());
+		executeReq.setWorkType(WorkType.SPARK_JAR);
+		executeReq.setWorkInstanceId(workInstance.getId());
 
 		// 获取作业jar与lib文件信息并scp至所选节点
 		JarJobConfig jarJobConfig = workRunContext.getJarJobConfig();
@@ -188,7 +191,6 @@ public class SparkJarExecutor extends WorkExecutor {
 		executeReq.setArgs(jarJobConfig.getArgs());
 		executeReq.setAgentHomePath(engineNode.getAgentHomePath() + File.separator + PathConstants.AGENT_PATH_NAME);
 		executeReq.setAgentType(calculateEngineEntityOptional.get().getClusterType());
-		executeReq.setWorkType(WorkType.SPARK_JAR);
 		executeReq.setLibConfig(workRunContext.getLibConfig());
 		if (engineNode.getInstallSparkLocal()) {
 			executeReq.setSparkHomePath(engineNode.getAgentHomePath() + File.separator + PathConstants.AGENT_PATH_NAME
