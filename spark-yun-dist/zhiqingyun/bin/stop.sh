@@ -15,5 +15,5 @@ if [ -e "zhiqingyun.pid" ]; then
   fi
 fi
 
-echo "【至轻云】: CLOSED"
+echo "【至轻云】: HAS CLOSED"
 exit 0
