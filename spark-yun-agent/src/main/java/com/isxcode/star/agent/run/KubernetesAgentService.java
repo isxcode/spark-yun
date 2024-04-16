@@ -1,7 +1,8 @@
 package com.isxcode.star.agent.run;
 
-import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson2.JSON;
 import com.isxcode.star.api.agent.pojos.req.YagExecuteWorkReq;
+import com.isxcode.star.api.work.constants.WorkType;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
@@ -82,10 +83,14 @@ public class KubernetesAgentService implements AgentService {
 			}
 		}
 
-		sparkLauncher.addAppArgs(Base64.getEncoder()
-				.encodeToString(yagExecuteWorkReq.getPluginReq() == null
-						? yagExecuteWorkReq.getArgsStr().getBytes()
-						: JSON.toJSONString(yagExecuteWorkReq.getPluginReq()).getBytes()));
+		if (WorkType.SPARK_JAR.equals(yagExecuteWorkReq.getWorkType())) {
+			sparkLauncher.addAppArgs(yagExecuteWorkReq.getArgs());
+		} else {
+			sparkLauncher.addAppArgs(Base64.getEncoder()
+					.encodeToString(yagExecuteWorkReq.getPluginReq() == null
+							? yagExecuteWorkReq.getArgsStr().getBytes()
+							: JSON.toJSONString(yagExecuteWorkReq.getPluginReq()).getBytes()));
+		}
 
 		yagExecuteWorkReq.getSparkSubmit().getConf().forEach(sparkLauncher::setConf);
 

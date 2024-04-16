@@ -41,6 +41,7 @@ import com.isxcode.star.modules.workflow.repository.WorkflowInstanceRepository;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.SftpException;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -200,18 +201,17 @@ public class SparkSqlExecutor extends WorkExecutor {
 		}
 
 		// 解析db
-		DatasourceEntity datasource = datasourceService.getDatasource(workRunContext.getDatasourceId());
-		try {
-			String database = datasourceService.parseDbName(datasource.getJdbcUrl());
-			if (!Strings.isEmpty(database)) {
-				pluginReq.setDatabase(database);
+		if (StringUtils.isNotBlank(workRunContext.getDatasourceId())) {
+			DatasourceEntity datasource = datasourceService.getDatasource(workRunContext.getDatasourceId());
+			try {
+				String database = datasourceService.parseDbName(datasource.getJdbcUrl());
+				if (!Strings.isEmpty(database)) {
+					pluginReq.setDatabase(database);
+				}
+			} catch (IsxAppException e) {
+				throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + e.getMsg() + "\n");
 			}
-		} catch (IsxAppException e) {
-			throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + e.getMsg() + "\n");
-		}
-
-		// 如果数据库id不为空,则替换hive的metastore url
-		if (!Strings.isEmpty(workRunContext.getDatasourceId())) {
+			// 如果数据库id不为空,则替换hive的metastore url
 			pluginReq.getSparkConfig().put("hive.metastore.uris", datasource.getMetastoreUris());
 		}
 
@@ -219,7 +219,12 @@ public class SparkSqlExecutor extends WorkExecutor {
 		executeReq.setSparkSubmit(sparkSubmit);
 		executeReq.setPluginReq(pluginReq);
 		executeReq.setAgentHomePath(engineNode.getAgentHomePath() + File.separator + PathConstants.AGENT_PATH_NAME);
-		executeReq.setSparkHomePath(engineNode.getSparkHomePath());
+		if (engineNode.getInstallSparkLocal()) {
+			executeReq.setSparkHomePath(engineNode.getAgentHomePath() + File.separator + PathConstants.AGENT_PATH_NAME
+					+ File.separator + PathConstants.SPARK_MIN_HOME);
+		} else {
+			executeReq.setSparkHomePath(engineNode.getSparkHomePath());
+		}
 		executeReq.setAgentType(calculateEngineEntityOptional.get().getClusterType());
 
 		// 构建作业完成，并打印作业配置信息
@@ -267,7 +272,7 @@ public class SparkSqlExecutor extends WorkExecutor {
 			Map<String, String> paramsMap = new HashMap<>();
 			paramsMap.put("appId", submitWorkRes.getAppId());
 			paramsMap.put("agentType", calculateEngineEntityOptional.get().getClusterType());
-			paramsMap.put("sparkHomePath", engineNode.getSparkHomePath());
+			paramsMap.put("sparkHomePath", executeReq.getSparkHomePath());
 			baseResponse = HttpUtils.doGet(
 					httpUrlUtils.genHttpUrl(engineNode.getHost(), engineNode.getAgentPort(), "/yag/getStatus"),
 					paramsMap, null, BaseResponse.class);
@@ -307,7 +312,7 @@ public class SparkSqlExecutor extends WorkExecutor {
 				Map<String, String> paramsMap2 = new HashMap<>();
 				paramsMap2.put("appId", submitWorkRes.getAppId());
 				paramsMap2.put("agentType", calculateEngineEntityOptional.get().getClusterType());
-				paramsMap2.put("sparkHomePath", engineNode.getSparkHomePath());
+				paramsMap2.put("sparkHomePath", executeReq.getSparkHomePath());
 				baseResponse = HttpUtils.doGet(
 						httpUrlUtils.genHttpUrl(engineNode.getHost(), engineNode.getAgentPort(), "/yag/getLog"),
 						paramsMap2, null, BaseResponse.class);
@@ -335,7 +340,7 @@ public class SparkSqlExecutor extends WorkExecutor {
 					Map<String, String> paramsMap3 = new HashMap<>();
 					paramsMap3.put("appId", submitWorkRes.getAppId());
 					paramsMap3.put("agentType", calculateEngineEntityOptional.get().getClusterType());
-					paramsMap3.put("sparkHomePath", engineNode.getSparkHomePath());
+					paramsMap3.put("sparkHomePath", executeReq.getSparkHomePath());
 					baseResponse = HttpUtils.doGet(
 							httpUrlUtils.genHttpUrl(engineNode.getHost(), engineNode.getAgentPort(), "/yag/getData"),
 							paramsMap3, null, BaseResponse.class);

@@ -2,6 +2,7 @@ package com.isxcode.star.agent.run;
 
 import com.alibaba.fastjson2.JSON;
 import com.isxcode.star.api.agent.pojos.req.YagExecuteWorkReq;
+import com.isxcode.star.api.work.constants.WorkType;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.hc.client5.http.classic.methods.HttpPost;
@@ -84,12 +85,24 @@ public class StandaloneAgentService implements AgentService {
 	@Override
 	public SparkLauncher genSparkLauncher(YagExecuteWorkReq yagExecuteWorkReq) {
 
-		SparkLauncher sparkLauncher = new SparkLauncher().setVerbose(false)
-				.setMainClass(yagExecuteWorkReq.getSparkSubmit().getMainClass()).setDeployMode("cluster")
-				.setAppName("zhiqingyun-job").setMaster(getMaster(yagExecuteWorkReq.getSparkHomePath()))
-				.setAppResource(yagExecuteWorkReq.getAgentHomePath() + File.separator + "plugins" + File.separator
-						+ yagExecuteWorkReq.getSparkSubmit().getAppResource())
-				.setSparkHome(yagExecuteWorkReq.getAgentHomePath() + File.separator + "spark-min");
+		SparkLauncher sparkLauncher;
+		if (WorkType.SPARK_JAR.equals(yagExecuteWorkReq.getWorkType())) {
+			// 如果是自定义作业
+			sparkLauncher = new SparkLauncher().setVerbose(false)
+					.setMainClass(yagExecuteWorkReq.getSparkSubmit().getMainClass()).setDeployMode("cluster")
+					.setAppName(yagExecuteWorkReq.getSparkSubmit().getAppName())
+					.setMaster(getMaster(yagExecuteWorkReq.getSparkHomePath()))
+					.setAppResource(yagExecuteWorkReq.getAgentHomePath() + File.separator + "file" + File.separator
+							+ yagExecuteWorkReq.getSparkSubmit().getAppResource())
+					.setSparkHome(yagExecuteWorkReq.getAgentHomePath() + File.separator + "spark-min");
+		} else {
+			sparkLauncher = new SparkLauncher().setVerbose(false)
+					.setMainClass(yagExecuteWorkReq.getSparkSubmit().getMainClass()).setDeployMode("cluster")
+					.setAppName("zhiqingyun-job").setMaster(getMaster(yagExecuteWorkReq.getSparkHomePath()))
+					.setAppResource(yagExecuteWorkReq.getAgentHomePath() + File.separator + "plugins" + File.separator
+							+ yagExecuteWorkReq.getSparkSubmit().getAppResource())
+					.setSparkHome(yagExecuteWorkReq.getAgentHomePath() + File.separator + "spark-min");
+		}
 
 		if (!Strings.isEmpty(yagExecuteWorkReq.getAgentHomePath())) {
 			File[] jarFiles = new File(yagExecuteWorkReq.getAgentHomePath() + File.separator + "lib").listFiles();
@@ -107,10 +120,14 @@ public class StandaloneAgentService implements AgentService {
 			}
 		}
 
-		sparkLauncher.addAppArgs(Base64.getEncoder()
-				.encodeToString(yagExecuteWorkReq.getPluginReq() == null
-						? yagExecuteWorkReq.getArgsStr().getBytes()
-						: JSON.toJSONString(yagExecuteWorkReq.getPluginReq()).getBytes()));
+		if (WorkType.SPARK_JAR.equals(yagExecuteWorkReq.getWorkType())) {
+			sparkLauncher.addAppArgs(yagExecuteWorkReq.getArgs());
+		} else {
+			sparkLauncher.addAppArgs(Base64.getEncoder()
+					.encodeToString(yagExecuteWorkReq.getPluginReq() == null
+							? yagExecuteWorkReq.getArgsStr().getBytes()
+							: JSON.toJSONString(yagExecuteWorkReq.getPluginReq()).getBytes()));
+		}
 
 		yagExecuteWorkReq.getSparkSubmit().getConf().forEach(sparkLauncher::setConf);
 

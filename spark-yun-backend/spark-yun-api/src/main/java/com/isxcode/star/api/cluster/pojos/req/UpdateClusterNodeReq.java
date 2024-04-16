@@ -44,4 +44,7 @@ public class UpdateClusterNodeReq {
 
 	@Schema(title = "hadoop的home目录", example = "/opt/homebrew/Cellar/hadoop/3.3.4/libexec")
 	private String hadoopHomePath;
+
+	@Schema(title = "是否安装spark-local组件", example = "true")
+	private Boolean installSparkLocal;
 }
