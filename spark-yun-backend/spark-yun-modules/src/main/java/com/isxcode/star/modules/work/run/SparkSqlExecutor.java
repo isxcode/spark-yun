@@ -275,7 +275,7 @@ public class SparkSqlExecutor extends WorkExecutor {
 			Map<String, String> paramsMap = new HashMap<>();
 			paramsMap.put("appId", submitWorkRes.getAppId());
 			paramsMap.put("agentType", calculateEngineEntityOptional.get().getClusterType());
-			paramsMap.put("sparkHomePath", engineNode.getSparkHomePath());
+			paramsMap.put("sparkHomePath", executeReq.getSparkHomePath());
 			baseResponse = HttpUtils.doGet(
 					httpUrlUtils.genHttpUrl(engineNode.getHost(), engineNode.getAgentPort(), "/yag/getStatus"),
 					paramsMap, null, BaseResponse.class);
@@ -315,7 +315,7 @@ public class SparkSqlExecutor extends WorkExecutor {
 				Map<String, String> paramsMap2 = new HashMap<>();
 				paramsMap2.put("appId", submitWorkRes.getAppId());
 				paramsMap2.put("agentType", calculateEngineEntityOptional.get().getClusterType());
-				paramsMap2.put("sparkHomePath", engineNode.getSparkHomePath());
+				paramsMap2.put("sparkHomePath", executeReq.getSparkHomePath());
 				baseResponse = HttpUtils.doGet(
 						httpUrlUtils.genHttpUrl(engineNode.getHost(), engineNode.getAgentPort(), "/yag/getLog"),
 						paramsMap2, null, BaseResponse.class);
@@ -343,7 +343,7 @@ public class SparkSqlExecutor extends WorkExecutor {
 					Map<String, String> paramsMap3 = new HashMap<>();
 					paramsMap3.put("appId", submitWorkRes.getAppId());
 					paramsMap3.put("agentType", calculateEngineEntityOptional.get().getClusterType());
-					paramsMap3.put("sparkHomePath", engineNode.getSparkHomePath());
+					paramsMap3.put("sparkHomePath", executeReq.getSparkHomePath());
 					baseResponse = HttpUtils.doGet(
 							httpUrlUtils.genHttpUrl(engineNode.getHost(), engineNode.getAgentPort(), "/yag/getData"),
 							paramsMap3, null, BaseResponse.class);

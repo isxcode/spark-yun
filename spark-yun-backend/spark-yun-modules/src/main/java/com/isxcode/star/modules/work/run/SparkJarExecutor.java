@@ -190,6 +190,12 @@ public class SparkJarExecutor extends WorkExecutor {
 		executeReq.setAgentType(calculateEngineEntityOptional.get().getClusterType());
 		executeReq.setWorkType(WorkType.SPARK_JAR);
 		executeReq.setLibConfig(workRunContext.getLibConfig());
+    if (engineNode.getInstallSparkLocal()) {
+			executeReq.setSparkHomePath(engineNode.getAgentHomePath() + File.separator + PathConstants.AGENT_PATH_NAME
+					+ File.separator + PathConstants.SPARK_MIN_HOME);
+		} else {
+			executeReq.setSparkHomePath(engineNode.getSparkHomePath());
+		}
 
 		// 构建作业完成，并打印作业配置信息
 		logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("构建作业完成 \n");
@@ -236,7 +242,7 @@ public class SparkJarExecutor extends WorkExecutor {
 			Map<String, String> paramsMap = new HashMap<>();
 			paramsMap.put("appId", submitWorkRes.getAppId());
 			paramsMap.put("agentType", calculateEngineEntityOptional.get().getClusterType());
-			paramsMap.put("sparkHomePath", engineNode.getSparkHomePath());
+			paramsMap.put("sparkHomePath", executeReq.getSparkHomePath());
 			baseResponse = HttpUtils.doGet(
 					httpUrlUtils.genHttpUrl(engineNode.getHost(), engineNode.getAgentPort(), "/yag/getStatus"),
 					paramsMap, null, BaseResponse.class);
@@ -276,7 +282,7 @@ public class SparkJarExecutor extends WorkExecutor {
 				Map<String, String> paramsMap2 = new HashMap<>();
 				paramsMap2.put("appId", submitWorkRes.getAppId());
 				paramsMap2.put("agentType", calculateEngineEntityOptional.get().getClusterType());
-				paramsMap2.put("sparkHomePath", engineNode.getSparkHomePath());
+				paramsMap2.put("sparkHomePath", executeReq.getSparkHomePath());
 				baseResponse = HttpUtils.doGet(
 						httpUrlUtils.genHttpUrl(engineNode.getHost(), engineNode.getAgentPort(), "/yag/getLog"),
 						paramsMap2, null, BaseResponse.class);
@@ -304,7 +310,7 @@ public class SparkJarExecutor extends WorkExecutor {
 					Map<String, String> paramsMap3 = new HashMap<>();
 					paramsMap3.put("appId", submitWorkRes.getAppId());
 					paramsMap3.put("agentType", calculateEngineEntityOptional.get().getClusterType());
-					paramsMap3.put("sparkHomePath", engineNode.getSparkHomePath());
+					paramsMap3.put("sparkHomePath", executeReq.getSparkHomePath());
 					baseResponse = HttpUtils.doGet(
 							httpUrlUtils.genHttpUrl(engineNode.getHost(), engineNode.getAgentPort(), "/yag/getData"),
 							paramsMap3, null, BaseResponse.class);

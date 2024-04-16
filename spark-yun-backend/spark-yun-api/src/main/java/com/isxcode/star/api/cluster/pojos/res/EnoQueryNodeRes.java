@@ -38,4 +38,6 @@ public class EnoQueryNodeRes {
 	private String agentLog;
 
 	private Boolean defaultClusterNode;
+
+  private Boolean installSparkLocal;
 }

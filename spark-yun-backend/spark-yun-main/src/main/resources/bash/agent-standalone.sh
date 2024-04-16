@@ -84,7 +84,7 @@ fi
 if ! command -v java &>/dev/null; then
   json_output="{ \
     \"status\": \"INSTALL_ERROR\", \
-    \"log\": \"未检测到java命令，需要java1.8.x环境\" \
+    \"log\": \"未检测到java命令，需要java1.8.x环境,推荐命令: sudo yum install java-1.8.0-openjdk-devel java-1.8.0-openjdk -y \" \
   }"
   echo $json_output
   rm ${BASE_PATH}/agent-standalone.sh
