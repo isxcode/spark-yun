@@ -135,8 +135,6 @@ public class QuerySqlExecutor extends WorkExecutor {
 			workInstance.setResultData(JSON.toJSONString(result));
 			updateInstance(workInstance, logBuilder);
 		} catch (Exception e) {
-
-			log.error(e.getMessage());
 			throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + e.getMessage() + "\n");
 		}
 	}
