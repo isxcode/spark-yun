@@ -53,9 +53,12 @@ public class KubernetesAgentService implements AgentService {
 	@Override
 	public SparkLauncher genSparkLauncher(YagExecuteWorkReq yagExecuteWorkReq) throws IOException {
 
+		String appName = "zhiqingyun-" + yagExecuteWorkReq.getWorkType() + "-" + yagExecuteWorkReq.getWorkId() + "-"
+				+ yagExecuteWorkReq.getWorkInstanceId();
+
 		SparkLauncher sparkLauncher = new SparkLauncher().setVerbose(false)
 				.setMainClass(yagExecuteWorkReq.getSparkSubmit().getMainClass()).setDeployMode("cluster")
-				.setAppName("zhiqingyun-job").setMaster(getMaster(yagExecuteWorkReq.getSparkHomePath()))
+				.setAppName(appName).setMaster(getMaster(yagExecuteWorkReq.getSparkHomePath()))
 				.setAppResource(
 						"local:///opt/spark/examples/jars/" + yagExecuteWorkReq.getSparkSubmit().getAppResource())
 				.setSparkHome(yagExecuteWorkReq.getAgentHomePath() + File.separator + "spark-min");

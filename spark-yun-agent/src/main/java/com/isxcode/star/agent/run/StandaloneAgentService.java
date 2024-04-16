@@ -85,12 +85,16 @@ public class StandaloneAgentService implements AgentService {
 	@Override
 	public SparkLauncher genSparkLauncher(YagExecuteWorkReq yagExecuteWorkReq) {
 
+		String appName = "zhiqingyun-" + yagExecuteWorkReq.getWorkType() + "-" + yagExecuteWorkReq.getWorkId() + "-"
+				+ yagExecuteWorkReq.getWorkInstanceId();
+
 		SparkLauncher sparkLauncher;
 		if (WorkType.SPARK_JAR.equals(yagExecuteWorkReq.getWorkType())) {
 			// 如果是自定义作业
 			sparkLauncher = new SparkLauncher().setVerbose(false)
 					.setMainClass(yagExecuteWorkReq.getSparkSubmit().getMainClass()).setDeployMode("cluster")
-					.setAppName(yagExecuteWorkReq.getSparkSubmit().getAppName())
+					.setAppName(yagExecuteWorkReq.getSparkSubmit().getAppName() + "-" + yagExecuteWorkReq.getWorkType()
+							+ "-" + yagExecuteWorkReq.getWorkId() + "-" + yagExecuteWorkReq.getWorkInstanceId())
 					.setMaster(getMaster(yagExecuteWorkReq.getSparkHomePath()))
 					.setAppResource(yagExecuteWorkReq.getAgentHomePath() + File.separator + "file" + File.separator
 							+ yagExecuteWorkReq.getSparkSubmit().getAppResource())
@@ -98,7 +102,7 @@ public class StandaloneAgentService implements AgentService {
 		} else {
 			sparkLauncher = new SparkLauncher().setVerbose(false)
 					.setMainClass(yagExecuteWorkReq.getSparkSubmit().getMainClass()).setDeployMode("cluster")
-					.setAppName("zhiqingyun-job").setMaster(getMaster(yagExecuteWorkReq.getSparkHomePath()))
+					.setAppName(appName).setMaster(getMaster(yagExecuteWorkReq.getSparkHomePath()))
 					.setAppResource(yagExecuteWorkReq.getAgentHomePath() + File.separator + "plugins" + File.separator
 							+ yagExecuteWorkReq.getSparkSubmit().getAppResource())
 					.setSparkHome(yagExecuteWorkReq.getAgentHomePath() + File.separator + "spark-min");
@@ -231,21 +235,21 @@ public class StandaloneAgentService implements AgentService {
 
 		Document doc = Jsoup.connect(getMasterWebUrl(sparkHomePath)).get();
 
-		Element completedDriversTable = doc.selectFirst(".aggregated-completedDrivers table");
+		Element completedDriversTable = doc.selectFirst(".aggregated-activeDrivers table");
 		Elements completedDriversRows = completedDriversTable.select("tbody tr");
 
 		Map<String, String> apps = new HashMap<>();
 
 		for (Element row : completedDriversRows) {
 			if (row.select("td:nth-child(3) a").first() != null) {
-				apps.put(row.selectFirst("td:nth-child(1)").text(),
-						row.select("td:nth-child(3) a").first().attr("href"));
+				String metaSubmissionId = row.selectFirst("td:nth-child(1)").text().replace("(kill)", "").trim();
+				apps.put(metaSubmissionId, row.select("td:nth-child(3) a").first().attr("href"));
 			}
 		}
 		String workUrl = apps.get(submissionId);
 
 		doc = Jsoup.connect(workUrl).get();
-		Elements rows = doc.select(".aggregated-finishedDrivers table tbody tr");
+		Elements rows = doc.select(".aggregated-runningDrivers table tbody tr");
 		Map<String, String> driversMap = new HashMap<>();
 		for (Element row : rows) {
 			String driverId = row.select("td:nth-child(1)").text();

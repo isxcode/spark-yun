@@ -34,12 +34,16 @@ public class YarnAgentService implements AgentService {
 	@Override
 	public SparkLauncher genSparkLauncher(YagExecuteWorkReq yagExecuteWorkReq) {
 
+		String appName = "zhiqingyun-" + yagExecuteWorkReq.getWorkType() + "-" + yagExecuteWorkReq.getWorkId() + "-"
+				+ yagExecuteWorkReq.getWorkInstanceId();
+
 		SparkLauncher sparkLauncher;
 		if (WorkType.SPARK_JAR.equals(yagExecuteWorkReq.getWorkType())) {
 			// 如果是自定义作业
 			sparkLauncher = new SparkLauncher().setVerbose(false)
 					.setMainClass(yagExecuteWorkReq.getSparkSubmit().getMainClass()).setDeployMode("cluster")
-					.setAppName(yagExecuteWorkReq.getSparkSubmit().getAppName())
+					.setAppName(yagExecuteWorkReq.getSparkSubmit().getAppName() + "-" + yagExecuteWorkReq.getWorkType()
+							+ "-" + yagExecuteWorkReq.getWorkId() + "-" + yagExecuteWorkReq.getWorkInstanceId())
 					.setMaster(getMaster(yagExecuteWorkReq.getSparkHomePath()))
 					.setAppResource(yagExecuteWorkReq.getAgentHomePath() + File.separator + "file" + File.separator
 							+ yagExecuteWorkReq.getSparkSubmit().getAppResource())
@@ -47,7 +51,7 @@ public class YarnAgentService implements AgentService {
 		} else {
 			sparkLauncher = new SparkLauncher().setVerbose(false)
 					.setMainClass(yagExecuteWorkReq.getSparkSubmit().getMainClass()).setDeployMode("cluster")
-					.setAppName("zhiqingyun-job").setMaster(getMaster(yagExecuteWorkReq.getSparkHomePath()))
+					.setAppName(appName).setMaster(getMaster(yagExecuteWorkReq.getSparkHomePath()))
 					.setAppResource(yagExecuteWorkReq.getAgentHomePath() + File.separator + "plugins" + File.separator
 							+ yagExecuteWorkReq.getSparkSubmit().getAppResource())
 					.setSparkHome(yagExecuteWorkReq.getAgentHomePath() + File.separator + "spark-min");
