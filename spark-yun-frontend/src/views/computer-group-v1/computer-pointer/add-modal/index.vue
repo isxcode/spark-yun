@@ -26,9 +26,6 @@
           placeholder="请输入"
         />
       </el-form-item>
-      <el-form-item v-if="clusterType === 'standalone'" label="是否安装Spark-Local组件">
-        <el-switch v-model="formData.installSparkLocal" />
-      </el-form-item>
       <el-form-item label="用户名" prop="username">
         <el-input v-model="formData.username" maxlength="100" placeholder="请输入" />
       </el-form-item>
@@ -40,6 +37,9 @@
       </el-form-item>
       <el-form-item v-if="pwdType === 'pwd'" label="密码">
         <el-input v-model="formData.passwd" type="password" show-password placeholder="请输入" />
+      </el-form-item>
+      <el-form-item v-if="clusterType === 'standalone'" label="默认安装Spark">
+        <el-switch v-model="formData.installSparkLocal" />
       </el-form-item>
       <el-form-item v-else label="令牌">
         <el-input

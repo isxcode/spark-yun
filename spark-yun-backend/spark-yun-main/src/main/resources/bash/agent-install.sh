@@ -53,7 +53,24 @@ echo $! >${home_path}/zhiqingyun-agent/zhiqingyun-agent.pid
 
 # 运行spark-local
 if [ ${spark_local} = "true" ]; then
-  nohup bash ${home_path}/spark-min/sbin/start-all.sh
+  # 初始化ssh-key
+  if [ ! -f ${home_path}/.ssh/id_rsa.pub ]; then
+    nohup ssh-keygen -t rsa -b 4096 -N "" -f ${home_path}/.ssh/id_rsa > /dev/null 2>&1 &
+  fi
+  # 初始化authorized_keys
+  if [ ! -f ${home_path}/.ssh/authorized_keys ]; then
+    touch ${home_path}/.ssh/authorized_keys
+  fi
+  # 初始化免密
+  if ! grep -q "$(cat ${home_path}/.ssh/id_rsa.pub)" ${home_path}/.ssh/authorized_keys; then
+    sleep 2
+    cat ${home_path}/.ssh/id_rsa.pub >> ${home_path}/.ssh/authorized_keys
+    chmod 0600 ${home_path}/.ssh/authorized_keys
+  fi
+  # 修改spark的配置文件
+  interIp=$(ip addr show | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1' | head -n 1)
+  sed -i.bak -E "s/spark:\/\/localhost:7077/spark:\/\/$interIp:7077/g" "${home_path}/zhiqingyun-agent/spark-min/conf/spark-defaults.conf"
+  nohup bash ${home_path}/zhiqingyun-agent/spark-min/sbin/start-all.sh > /dev/null 2>&1 &
 fi
 
 # 检查是否安装
@@ -76,4 +93,4 @@ if [ -e "${home_path}/zhiqingyun-agent/zhiqingyun-agent.pid" ]; then
 fi
 
 # 删除安装包 和 安装脚本
-rm ${BASE_PATH}/zhiqingyun-agent.tar.gz && rm ${BASE_PATH}/agent-install.sh
+rm /tmp/zhiqingyun-agent.tar.gz && rm /tmp/agent-install.sh
