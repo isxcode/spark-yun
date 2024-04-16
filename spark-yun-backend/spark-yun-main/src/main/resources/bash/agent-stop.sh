@@ -22,7 +22,7 @@ if [ -e "${home_path}/zhiqingyun-agent.pid" ]; then
 fi
 
 # 停止spark-local
-nohup bash ${home_path}/spark-min/sbin/stop-all.sh
+nohup bash ${home_path}/spark-min/sbin/stop-all.sh > /dev/null 2>&1 &
 
 # 返回结果
 json_output="{ \
