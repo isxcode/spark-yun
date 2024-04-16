@@ -39,5 +39,5 @@ public class EnoQueryNodeRes {
 
 	private Boolean defaultClusterNode;
 
-  private Boolean installSparkLocal;
+	private Boolean installSparkLocal;
 }

@@ -190,7 +190,7 @@ public class SparkJarExecutor extends WorkExecutor {
 		executeReq.setAgentType(calculateEngineEntityOptional.get().getClusterType());
 		executeReq.setWorkType(WorkType.SPARK_JAR);
 		executeReq.setLibConfig(workRunContext.getLibConfig());
-    if (engineNode.getInstallSparkLocal()) {
+		if (engineNode.getInstallSparkLocal()) {
 			executeReq.setSparkHomePath(engineNode.getAgentHomePath() + File.separator + PathConstants.AGENT_PATH_NAME
 					+ File.separator + PathConstants.SPARK_MIN_HOME);
 		} else {
