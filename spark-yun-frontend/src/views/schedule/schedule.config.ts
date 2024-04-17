@@ -32,7 +32,7 @@ export interface TableConfig {
   tableData: Array<any>;
   colConfigs: Array<colConfig>;
   seqType: string;
-  pagination?: Pagination; // 分页数据
+  pagination: Pagination; // 分页数据
   loading?: boolean; // 表格loading
 }
 
