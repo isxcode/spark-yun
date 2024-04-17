@@ -17,7 +17,7 @@
         <div class="column">
           <div class="title">产品</div>
           <div class="link" @click="clickZhiqingyun">至轻云</div>
-          <div class="link" @click="clickOther">至流云</div>
+          <div class="link" @click="clickZhiliuyun">至流云</div>
           <div class="link" @click="clickOther">至慧云</div>
           <div class="link" @click="clickOther">更多</div>
         </div>
@@ -35,6 +35,7 @@
           <div class="link" @click="clickBlogs">博客</div>
           <div class="link" @click="clickFeishu">飞书文档</div>
           <div class="link" @click="clickDockerHub">Docker hub</div>
+          <div class="link" @click="downloadLicense">许可证下载</div>
         </div>
         <div class="column">
           <div class="title">关于我们</div>
@@ -342,6 +343,10 @@ function clickZhiqingyun() {
   router.push("/");
 }
 
+function clickZhiliuyun() {
+  window.open("https://zhiliuyun.isxcode.com");
+}
+
 function clickOther() {
   ElMessage({
     message: '敬请期待',
@@ -371,6 +376,10 @@ function clickLinked() {
 
 function clickDockerHub() {
   window.open("https://hub.docker.com/r/isxcode/zhiqingyun");
+}
+
+function downloadLicense() {
+  window.open("https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/license.lic");
 }
 
 function clickFeishu() {
