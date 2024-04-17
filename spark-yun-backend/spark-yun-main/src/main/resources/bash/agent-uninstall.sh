@@ -24,6 +24,7 @@ fi
 
 # 停止spark-local
 nohup bash ${home_path}/spark-min/sbin/stop-all.sh > /dev/null 2>&1 &
+sleep 5
 
 # 删除安装目录
 rm -rf ${home_path}
