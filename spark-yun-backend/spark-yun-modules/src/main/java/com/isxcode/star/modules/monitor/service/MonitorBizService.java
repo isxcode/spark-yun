@@ -220,12 +220,12 @@ public class MonitorBizService {
 
 		// 初始化数组
 		List<WorkflowInstanceLineDto> lines = new ArrayList<>();
-    long allNum;
-    if (DateUtil.isSameDay(new Date(), getInstanceMonitorReq.getLocalDate())) {
-      allNum = DateUtil.between(DateUtil.beginOfDay(new Date()), new Date(), DateUnit.HOUR);
-    }else{
-      allNum = 24;
-    }
+		long allNum;
+		if (DateUtil.isSameDay(new Date(), getInstanceMonitorReq.getLocalDate())) {
+			allNum = DateUtil.between(DateUtil.beginOfDay(new Date()), new Date(), DateUnit.HOUR);
+		} else {
+			allNum = 24;
+		}
 		for (int i = 0; i < allNum; i++) {
 			lines.add(WorkflowInstanceLineDto.builder().localTime(String.format("%02d", i + 1) + ":00").successNum(0L)
 					.failNum(0L).runningNum(0L).build());
