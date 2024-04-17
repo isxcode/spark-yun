@@ -409,6 +409,9 @@ onMounted(() => {
   if (!tableType.value) {
     tableType.value = 'workflow'
   }
+
+  tableConfigWorkFlow.pagination.currentPage = 1
+  tableConfigWorkFlow.pagination.pageSize = 10
   initData()
   timer.value = setInterval(() => {
     initData(true)
