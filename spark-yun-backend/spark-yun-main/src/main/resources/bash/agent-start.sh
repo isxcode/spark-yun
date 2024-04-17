@@ -20,8 +20,6 @@ else
       exit 0
 fi
 
-cd "${home_path}" || exit
-
 home_path=""
 agent_port=""
 spark_local="false"
@@ -44,6 +42,8 @@ if [ -e "zhiqingyun-agent.pid" ]; then
     exit 1
   fi
 fi
+
+cd "${home_path}" || exit
 
 # 运行jar包
 nohup java -jar -Xmx2048m lib/zhiqingyun-agent.jar --server.port=${agent_port} >>logs/zhiqingyun-agent.log 2>&1 &
