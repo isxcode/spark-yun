@@ -4,8 +4,6 @@
 # 启动脚本
 ######################
 
-BASE_PATH=$(cd "$(dirname "$0")" || exit ; pwd)
-
 if [[ "$OSTYPE" == "linux-gnu" ]]; then
     source /etc/profile
     source ~/.bashrc
@@ -18,9 +16,11 @@ else
                       \"log\": \"该系统不支持安装\" \
                     }"
       echo $json_output
-      rm ${BASE_PATH}/agent-start.sh
+      rm /tmp/agent-start.sh
       exit 0
 fi
+
+cd "${home_path}" || exit
 
 home_path=""
 agent_port=""
@@ -34,8 +34,8 @@ for arg in "$@"; do
   esac
 done
 
-if [ -e "${home_path}/zhiqingyun-agent.pid" ]; then
-  pid=$(cat "${home_path}/zhiqingyun-agent.pid")
+if [ -e "zhiqingyun-agent.pid" ]; then
+  pid=$(cat "zhiqingyun-agent.pid")
   if ps -p $pid >/dev/null 2>&1; then
     json_output="{ \
                 \"status\": \"STOP\", \
@@ -46,8 +46,8 @@ if [ -e "${home_path}/zhiqingyun-agent.pid" ]; then
 fi
 
 # 运行jar包
-nohup java -jar -Xmx2048m ${home_path}/lib/zhiqingyun-agent.jar --server.port=${agent_port} >>${home_path}/logs/zhiqingyun-agent.log 2>&1 &
-echo $! >${home_path}/zhiqingyun-agent.pid
+nohup java -jar -Xmx2048m lib/zhiqingyun-agent.jar --server.port=${agent_port} >>logs/zhiqingyun-agent.log 2>&1 &
+echo $! >zhiqingyun-agent.pid
 
 # 运行spark-local
 if [ ${spark_local} = "true" ]; then
@@ -67,8 +67,8 @@ if [ ${spark_local} = "true" ]; then
   fi
   # 修改spark的配置文件
   interIp=$(ip addr show | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1' | head -n 1)
-  sed -i.bak -E "s/spark:\/\/localhost:7077/spark:\/\/$interIp:7077/g" "${home_path}/spark-min/conf/spark-defaults.conf"
-  nohup bash ${home_path}/spark-min/sbin/start-all.sh > /dev/null 2>&1 &
+  sed -i.bak -E "s/spark:\/\/localhost:7077/spark:\/\/$interIp:7077/g" "spark-min/conf/spark-defaults.conf"
+  nohup bash spark-min/sbin/start-all.sh > /dev/null 2>&1 &
 fi
 
 # 返回结果
@@ -79,4 +79,4 @@ json_output="{ \
 echo $json_output
 
 # 删除启动脚本
-rm ${BASE_PATH}/agent-start.sh
+rm /tmp/agent-start.sh
