@@ -166,10 +166,12 @@ function handleCurrentChange(e: number) {
 }
 
 onMounted(() => {
+  tableConfig.pagination.currentPage = 1
+  tableConfig.pagination.pageSize = 10
   initData()
 })
 </script>
-  
+
 <style lang="scss">
 .zqy-seach-table {
   .name-click {

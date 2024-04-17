@@ -202,6 +202,8 @@ function handleChnage() {
 }
 
 onMounted(() => {
+  tableConfig.pagination.currentPage = 1
+  tableConfig.pagination.pageSize = 10
   initData()
 })
 </script>

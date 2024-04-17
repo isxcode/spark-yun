@@ -279,6 +279,8 @@ function redirectQuery(data: any) {
 }
 
 onMounted(() => {
+    pagination.currentPage = 1
+    pagination.pageSize = 10
     initData()
 })
 </script>
