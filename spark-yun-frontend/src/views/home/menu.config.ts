@@ -78,13 +78,13 @@ export const menuListData: Array<Menu> = [
     authType: [ 'ROLE_TENANT_MEMBER', 'ROLE_TENANT_ADMIN' ],
     childPage: []
   },
-  {
-    code: 'custom-form',
-    name: '分享表单',
-    icon: 'Share',
-    authType: [ 'ROLE_TENANT_MEMBER', 'ROLE_TENANT_ADMIN' ],
-    childPage: ['form-list', 'form-query', 'form-setting']
-  },
+  // {
+  //   code: 'custom-form',
+  //   name: '分享表单',
+  //   icon: 'Share',
+  //   authType: [ 'ROLE_TENANT_MEMBER', 'ROLE_TENANT_ADMIN' ],
+  //   childPage: ['form-list', 'form-query', 'form-setting']
+  // },
   {
     code: 'custom-api',
     name: '接口服务',

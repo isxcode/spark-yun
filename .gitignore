@@ -25,7 +25,11 @@ spark-yun-backend/spark-yun-main/src/main/resources/agent
 spark-yun-vip
 
 # 资源文件不提交
-resources
+resources/file
+resources/jdbc
+resources/libs
+resources/license
+resources/tmp
 
 # spark-min不提交
 spark-yun-dist/spark-min

@@ -59,6 +59,20 @@ docker run -p 8080:8080 -d isxcode/zhiqingyun
 - [技术博客](https://ispong.isxcode.com/tags/spark/)
 - [常见问题](https://mwur1opms2a.feishu.cn/wiki/space/7350313682586451971?ccm_open_type=lark_wiki_spaceLink&open_tab_from=wiki_home)
 
+### 开发手册
+
+- java-1.8
+- nodejs-18.14.2
+- vue-3.3.2
+- spring-2.7.9
+
+```bash
+git clone https://github.com/isxcode/spark-yun.git
+gradle install
+gradle clean package
+# 安装包: spark-yun/spark-yun-dist/build/distributions/zhiqingyun.tar.gz
+```
+
 ### 关于我们
 
 邮箱：hello@isxcode.com <br/>
