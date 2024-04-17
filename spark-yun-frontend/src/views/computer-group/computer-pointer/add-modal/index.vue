@@ -38,9 +38,6 @@
       <el-form-item v-if="pwdType === 'pwd'" label="密码">
         <el-input v-model="formData.passwd" type="password" show-password placeholder="请输入" />
       </el-form-item>
-      <el-form-item v-if="clusterType === 'standalone'" label="默认安装Spark">
-        <el-switch v-model="formData.installSparkLocal" />
-      </el-form-item>
       <el-form-item v-else label="令牌">
         <el-input
           v-model="formData.passwd"
@@ -49,6 +46,9 @@
           :autosize="{ minRows: 2, maxRows: 2 }"
           placeholder="请输入"
         />
+      </el-form-item>
+      <el-form-item v-if="clusterType === 'standalone'" label="默认安装Spark">
+        <el-switch v-model="formData.installSparkLocal" />
       </el-form-item>
       <el-form-item label="备注">
         <el-input
