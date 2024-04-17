@@ -92,6 +92,8 @@ function getFormConfigById(tableLoading?: boolean) {
         } else {
             tableConfig.colConfigs = []
         }
+        tableConfig.pagination.currentPage = 1
+        tableConfig.pagination.pageSize = 10
         initData()
     }).catch(() => {
         loading.value = false

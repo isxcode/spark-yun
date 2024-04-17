@@ -384,6 +384,8 @@ function handleCurrentChange(e: number) {
 }
 
 onMounted(() => {
+  tableConfig.pagination.currentPage = 1
+  tableConfig.pagination.pageSize = 10
   initData()
   timer.value = setInterval(() => {
     initData(true, 'interval')
