@@ -16,14 +16,22 @@ if [ -e "zhiqingyun-agent.pid" ]; then
   fi
 fi
 
-# 判断zhiliuyun-agent.log是否存在,不存在则新建
-if [ ! -f logs/zhiliuyun-agent.log ]; then
+# 判断zhiqingyun-agent.log是否存在,不存在则新建
+if [ ! -f logs/zhiqingyun-agent.log ]; then
   mkdir logs
-  touch logs/zhiliuyun-agent.log
+  touch logs/zhiqingyun-agent.log
 fi
 
+# 执行agent-env.sh
+source conf/agent-env.sh
+
 # 运行jar包
-nohup java -jar -Xmx2048m lib/zhiqingyun-agent.jar --spring.config.additional-location=conf/ > /dev/null 2>&1 &
+if ! command -v java &>/dev/null; then
+  nohup $JAVA_HOME/bin/java -jar -Xmx2048m lib/zhiqingyun-agent.jar --spring.config.additional-location=conf/ > /dev/null 2>&1 &
+else
+  nohup java -jar -Xmx2048m lib/zhiqingyun-agent.jar --spring.config.additional-location=conf/ > /dev/null 2>&1 &
+fi
+
 echo $! >zhiqingyun-agent.pid
 echo "【至轻云代理】: RUNNING"
 
