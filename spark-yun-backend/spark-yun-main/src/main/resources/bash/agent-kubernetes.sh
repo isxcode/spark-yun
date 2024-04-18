@@ -24,10 +24,12 @@ BASE_PATH=$(cd "$(dirname "$0")" || exit ; pwd)
 
 home_path=""
 agent_port=""
+spark_local="false"
 for arg in "$@"; do
   case "$arg" in
   --home-path=*) home_path="${arg#*=}" ;;
   --agent-port=*) agent_port="${arg#*=}" ;;
+  --spark-local=*) spark_local="${arg#*=}" ;;
   *) echo "未知参数: $arg" && exit 1 ;;
   esac
 done

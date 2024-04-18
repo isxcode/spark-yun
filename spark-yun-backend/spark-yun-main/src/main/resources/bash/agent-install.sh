@@ -33,16 +33,19 @@ for arg in "$@"; do
 done
 
 # 判断路径是否存在
-if [ ! -d "${home_path}/zhiqingyun-agent" ]; then
+if [ ! -d "${home_path}" ]; then
   json_output="{ \
             \"status\": \"INSTALL_ERROR\",\
-            \"log\": \"安装目录不存在"${home_path}/zhiqingyun-agent"\" \
+            \"log\": \"安装目录不存在"${home_path}"\" \
             }"
   echo $json_output
   exit 0
 fi
 
-cd "${home_path}"/zhiqingyun-agent || exit
+cd "${home_path}" || exit
+
+# 执行agent-env.sh
+source conf/agent-env.sh
 
 # 将文件解压到指定目录
 tar -xf /tmp/zhiqingyun-agent.tar.gz -C ${home_path} > /dev/null
@@ -54,24 +57,29 @@ if [ ! -f logs/zhiqingyun-agent.log ]; then
 fi
 
 # 运行jar包
-nohup java -jar -Xmx2048m lib/zhiqingyun-agent.jar --server.port=${agent_port} --spring.config.additional-location=conf/ > /dev/null 2>&1 &
+if ! command -v java &>/dev/null; then
+  nohup $JAVA_HOME/bin/java -jar -Xmx2048m lib/zhiqingyun-agent.jar --server.port=${agent_port} --spring.config.additional-location=conf/ > /dev/null 2>&1 &
+else
+  nohup java -jar -Xmx2048m lib/zhiqingyun-agent.jar --server.port=${agent_port} --spring.config.additional-location=conf/ > /dev/null 2>&1 &
+fi
+
 echo $! >zhiqingyun-agent.pid
 
 # 运行spark-local
 if [ ${spark_local} = "true" ]; then
   # 初始化ssh-key
-  if [ ! -f ${home_path}/.ssh/id_rsa.pub ]; then
-    nohup ssh-keygen -t rsa -b 4096 -N "" -f ${home_path}/.ssh/id_rsa > /dev/null 2>&1 &
+  if [ ! -f ~/.ssh/id_rsa.pub ]; then
+    nohup ssh-keygen -t rsa -b 4096 -N "" -f ~/.ssh/id_rsa > /dev/null 2>&1 &
   fi
   # 初始化authorized_keys
-  if [ ! -f ${home_path}/.ssh/authorized_keys ]; then
-    touch ${home_path}/.ssh/authorized_keys
+  if [ ! -f ~/.ssh/authorized_keys ]; then
+    touch ~/.ssh/authorized_keys
   fi
   # 初始化免密
-  if ! grep -q "$(cat ${home_path}/.ssh/id_rsa.pub)" ${home_path}/.ssh/authorized_keys; then
+  if ! grep -q "$(cat ~/.ssh/id_rsa.pub)" ~/.ssh/authorized_keys; then
     sleep 2
-    cat ${home_path}/.ssh/id_rsa.pub >> ${home_path}/.ssh/authorized_keys
-    chmod 0600 ${home_path}/.ssh/authorized_keys
+    cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
+    chmod 0600 ~/.ssh/authorized_keys
   fi
   # 修改spark的配置文件
   if netstat -tln | awk '$4 ~ /:'7077'$/ {exit 1}'; then
