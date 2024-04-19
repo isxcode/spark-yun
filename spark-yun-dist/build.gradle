@@ -70,9 +70,6 @@ tasks.register('build_agent', Tar) {
   from('zhiqingyun-agent/works') {
     into 'zhiqingyun-agent/works'
   }
-  from('zhiqingyun-agent/conf') {
-    into 'zhiqingyun-agent/conf'
-  }
   from('zhiqingyun-agent/file') {
     into 'zhiqingyun-agent/file'
   }
@@ -94,6 +91,9 @@ tasks.register('build_zhiqingyun', Tar) {
 
   from('zhiqingyun/bin') {
     into 'zhiqingyun/bin'
+  }
+  from('zhiqingyun/conf') {
+    into 'zhiqingyun/conf'
   }
   from(rootDir.getAbsolutePath() + '/spark-yun-backend/spark-yun-main/src/main/resources/application-local.yml') {
     into 'zhiqingyun/conf'
