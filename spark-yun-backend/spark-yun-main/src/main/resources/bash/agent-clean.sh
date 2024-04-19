@@ -1,11 +1,13 @@
 #!/bin/bash
 
 ######################
-# 卸载脚本
+# 清理代理
 ######################
 
+# 获取脚本文件当前路径
 BASE_PATH=$(cd "$(dirname "$0")" || exit ; pwd)
 
+# 获取外部参数
 user=""
 for arg in "$@"; do
   case "$arg" in
@@ -18,16 +20,19 @@ done
 rm -rf /tmp/hadoop-*/nm-local-dir/usercache/${user}/filecache
 
 # 删除hdfs中失败的spark作业缓存
-hadoop fs -rm -r /user/${user}/.sparkStaging
-
-# 删除spark中的work缓存
-rm -rf /opt/spark/work
+if command -v hadoop &>/dev/null; then
+  hadoop fs -rm -r /user/${user}/.sparkStaging
+fi
 
 # 清理k8s中容器
-kubectl delete --all pods --namespace=zhiqingyun-space
+if command -v kubectl &>/dev/null; then
+  kubectl delete --all pods --namespace=zhiqingyun-space
+fi
 
 # 清理docker中的容器
-docker ps -a | grep 'k8s_POD_zhiqingyun-job-*' | awk '{print $1}' | xargs docker rm
+if command -v docker &>/dev/null; then
+  docker ps -a | grep 'k8s_POD_zhiqingyun-*' | awk '{print $1}' | xargs docker rm
+fi
 
 # 返回结果
 json_output="{ \

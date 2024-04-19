@@ -70,7 +70,7 @@ public class RunAgentCheckService {
 
 		// 运行安装脚本
 		String checkCommand = "bash " + sparkYunProperties.getTmpDir() + File.separator + "agent-check.sh"
-				+ " --home-path=" + engineNode.getAgentHomePath() + File.separator + PathConstants.AGENT_PATH_NAME;
+				+ " --home-path=" + engineNode.getAgentHomePath();
 
 		log.debug("执行远程命令:{}", checkCommand);
 

@@ -69,7 +69,7 @@ public class RunAgentRemoveService {
 
 		// 运行停止脚本
 		String removeCommand = "bash " + sparkYunProperties.getTmpDir() + File.separator + "agent-uninstall.sh"
-				+ " --home-path=" + engineNode.getAgentHomePath() + File.separator + PathConstants.AGENT_PATH_NAME;
+				+ " --home-path=" + engineNode.getAgentHomePath();
 		log.debug("执行远程命令:{}", removeCommand);
 
 		// 获取返回结果

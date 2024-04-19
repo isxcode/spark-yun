@@ -1,9 +1,13 @@
 #!/bin/bash
 
-######################
-# 检测安装环境脚本
-######################
+##########################################
+# 安装前,检测k8s模式是否允许安装
+##########################################
 
+# 获取脚本文件当前路径
+BASE_PATH=$(cd "$(dirname "$0")" || exit ; pwd)
+
+# 初始化环境变量
 if [[ "$OSTYPE" == "linux-gnu" ]]; then
     source /etc/profile
     source ~/.bashrc
@@ -20,8 +24,7 @@ else
       exit 0
 fi
 
-BASE_PATH=$(cd "$(dirname "$0")" || exit ; pwd)
-
+# 获取外部参数
 home_path=""
 agent_port=""
 spark_local="false"
@@ -34,14 +37,29 @@ for arg in "$@"; do
   esac
 done
 
-# 判断home_path目录是否存在
-if [ ! -d "$home_path" ]; then
-  mkdir -p $home_path
+# 初始化agent_path
+agent_path="${home_path}/zhiqingyun-agent"
+
+# 创建zhiqingyun-agent目录
+if [ ! -d "${agent_path}" ]; then
+  mkdir -p "${agent_path}"
 fi
 
+# 帮助用户初始化agent-env.sh文件
+if [ ! -f "${agent_path}/conf/agent-env.sh" ]; then
+  mkdir "${agent_path}/conf"
+  touch "${agent_path}/conf/agent-env.sh"
+  echo '#export JAVA_HOME=' >> "${agent_path}/conf/agent-env.sh"
+  echo '#export HADOOP_HOME=' >> "${agent_path}/conf/agent-env.sh"
+  echo '#export HADOOP_CONF_DIR=' >> "${agent_path}/conf/agent-env.sh"
+fi
+
+# 导入用户自己配置的环境变量
+source "${agent_path}/conf/agent-env.sh"
+
 # 判断是否之前已安装代理
-if [ -e "${home_path}/zhiqingyun-agent.pid" ]; then
-  pid=$(cat "${home_path}/zhiqingyun-agent.pid")
+if [ -e "${agent_path}/zhiqingyun-agent.pid" ]; then
+  pid=$(cat "${agent_path}/zhiqingyun-agent.pid")
   if ps -p $pid >/dev/null 2>&1; then
     json_output="{ \
             \"status\": \"RUNNING\", \
@@ -74,37 +92,17 @@ fi
 
 # 判断是否有java命令
 if ! command -v java &>/dev/null; then
-  json_output="{ \
+  # 如果没有java命令,判断用户是否配置了JAVA_HOME环境变量
+  if [ ! -n "$JAVA_HOME" ]; then
+    json_output="{ \
     \"status\": \"INSTALL_ERROR\", \
-    \"log\": \"未检测到java1.8.x环境\" \
-  }"
-  echo $json_output
-  rm ${BASE_PATH}/agent-kubernetes.sh
-  exit 0
-fi
-
-# 判断java版本是否为1.8
-java_version=$(java -version 2>&1 | awk -F '"' '/version/ {print $2}')
-if [[ "$java_version" != "1.8"* ]]; then
-  json_output="{ \
-      \"status\": \"INSTALL_ERROR\", \
-      \"log\": \"未检测到java1.8.x环境\" \
+    \"log\": \"未检测到java1.8.x环境,节点请安装java 推荐命令: sudo yum install java-1.8.0-openjdk-devel java-1.8.0-openjdk -y,或者配置 ${agent_path}/conf/agent-env.sh文件中的JAVA_HOME变量\" \
     }"
-  echo $json_output
-  rm ${BASE_PATH}/agent-kubernetes.sh
-  exit 0
+    echo $json_output
+    rm ${BASE_PATH}/agent-kubernetes.sh
+    exit 0
+  fi
 fi
-
-# 判断mpstat命令
-#if ! command -v mpstat &>/dev/null; then
-#  json_output="{ \
-#        \"status\": \"INSTALL_ERROR\", \
-#        \"log\": \"未检测到mpstat命令\" \
-#      }"
-#  echo $json_output
-#  rm /tmp/sy-env-kubernetes.sh
-#  exit 0
-#fi
 
 # 判断是否有kubectl命令
 if ! command -v kubectl &>/dev/null; then
@@ -122,17 +120,6 @@ if ! kubectl cluster-info &>/dev/null; then
   json_output="{ \
           \"status\": \"INSTALL_ERROR\", \
           \"log\": \"kubectl无法访问k8s集群\" \
-        }"
-  echo $json_output
-  rm ${BASE_PATH}/agent-kubernetes.sh
-  exit 0
-fi
-
-# 判断端口号是否被占用
-if ! netstat -tln | awk '$4 ~ /:'"$agent_port"'$/ {exit 1}'; then
-  json_output="{ \
-          \"status\": \"INSTALL_ERROR\", \
-          \"log\": \"${agent_port} 端口号已被占用\" \
         }"
   echo $json_output
   rm ${BASE_PATH}/agent-kubernetes.sh
@@ -179,6 +166,17 @@ if [ "$hasRole" = "no" ]; then
                 \"status\": \"INSTALL_ERROR\", \
                 \"log\": \"zhiqingyun没有创建pod的权限，需要执行命令，kubectl create clusterrolebinding spark-role --clusterrole=edit --serviceaccount=zhiqingyun-space:zhiqingyun --namespace=zhiqingyun-space \" \
               }"
+  echo $json_output
+  rm ${BASE_PATH}/agent-kubernetes.sh
+  exit 0
+fi
+
+# 判断端口号是否被占用
+if ! netstat -tln | awk '$4 ~ /:'"$agent_port"'$/ {exit 1}'; then
+  json_output="{ \
+          \"status\": \"INSTALL_ERROR\", \
+          \"log\": \"${agent_port} 端口号已被占用\" \
+        }"
   echo $json_output
   rm ${BASE_PATH}/agent-kubernetes.sh
   exit 0

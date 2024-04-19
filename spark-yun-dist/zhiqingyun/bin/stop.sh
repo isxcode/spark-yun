@@ -5,7 +5,7 @@ BASE_PATH=$(cd "$(dirname "$0")" || exit ; pwd)
 cd "${BASE_PATH}" || exit
 cd ".." || exit
 
-# 项目启动后，关闭进程
+# 关闭进程
 if [ -e "zhiqingyun.pid" ]; then
   pid=$(cat "zhiqingyun.pid")
   if ps -p $pid >/dev/null 2>&1; then
