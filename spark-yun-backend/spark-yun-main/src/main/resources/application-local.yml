@@ -38,7 +38,6 @@ logging:
 spark-yun:
   default-agent-port: 30177
   tmp-dir: /tmp
-  resource-dir: /var/lib/zhiqingyun
 
 isx-app:
   use-port: true
