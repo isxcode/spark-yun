@@ -6,7 +6,6 @@ import static com.isxcode.star.common.utils.ssh.SshUtils.executeCommand;
 import static com.isxcode.star.common.utils.ssh.SshUtils.scpFile;
 
 import com.alibaba.fastjson.JSON;
-import com.isxcode.star.api.api.constants.PathConstants;
 import com.isxcode.star.api.cluster.constants.ClusterNodeStatus;
 import com.isxcode.star.api.cluster.pojos.dto.AgentInfo;
 import com.isxcode.star.api.cluster.pojos.dto.ScpFileEngineNodeDto;

@@ -6,7 +6,6 @@ import static com.isxcode.star.common.utils.ssh.SshUtils.executeCommand;
 import static com.isxcode.star.common.utils.ssh.SshUtils.scpFile;
 
 import com.alibaba.fastjson.JSON;
-import com.isxcode.star.api.api.constants.PathConstants;
 import com.isxcode.star.api.cluster.constants.ClusterNodeStatus;
 import com.isxcode.star.api.cluster.pojos.dto.AgentInfo;
 import com.isxcode.star.api.cluster.pojos.dto.ScpFileEngineNodeDto;
@@ -69,8 +68,7 @@ public class RunAgentStartService {
 
 		// 运行启动脚本
 		String startCommand = "bash " + sparkYunProperties.getTmpDir() + File.separator + "agent-start.sh"
-				+ " --home-path=" + engineNode.getAgentHomePath()
-				+ " --agent-port=" + engineNode.getAgentPort();
+				+ " --home-path=" + engineNode.getAgentHomePath() + " --agent-port=" + engineNode.getAgentPort();
 
 		if (engineNode.getInstallSparkLocal() != null) {
 			startCommand = startCommand + " --spark-local=" + engineNode.getInstallSparkLocal();
