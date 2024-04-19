@@ -86,6 +86,7 @@ public class SparkContainerSqlExecutor extends WorkExecutor {
 		logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始执行作业 \n");
 		logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始执行SQL: \n")
 				.append(workRunContext.getScript()).append("\n");
+    workInstance = updateInstance(workInstance, logBuilder);
 
 		// 调用代理的接口，获取数据
 		try {
