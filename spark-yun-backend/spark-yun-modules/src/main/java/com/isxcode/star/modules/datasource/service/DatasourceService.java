@@ -286,7 +286,7 @@ public class DatasourceService {
 		if (matcher.find()) {
 			return matcher.group(1);
 		}
-		throw new IsxAppException("数据源url解析db异常");
+		return "default";
 	}
 
 	/**
