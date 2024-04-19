@@ -69,7 +69,7 @@ public class RunAgentStartService {
 
 		// 运行启动脚本
 		String startCommand = "bash " + sparkYunProperties.getTmpDir() + File.separator + "agent-start.sh"
-				+ " --home-path=" + engineNode.getAgentHomePath() + File.separator + PathConstants.AGENT_PATH_NAME
+				+ " --home-path=" + engineNode.getAgentHomePath()
 				+ " --agent-port=" + engineNode.getAgentPort();
 
 		if (engineNode.getInstallSparkLocal() != null) {

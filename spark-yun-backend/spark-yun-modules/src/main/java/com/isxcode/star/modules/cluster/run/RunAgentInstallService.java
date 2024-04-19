@@ -70,8 +70,7 @@ public class RunAgentInstallService {
 
 		// 运行安装脚本
 		String envCommand = "bash " + sparkYunProperties.getTmpDir() + File.separator
-				+ String.format("agent-%s.sh", clusterType) + " --home-path=" + engineNode.getAgentHomePath()
-				+ File.separator + PathConstants.AGENT_PATH_NAME + " --agent-port=" + engineNode.getAgentPort();
+				+ String.format("agent-%s.sh", clusterType) + " --home-path=" + engineNode.getAgentHomePath() + " --agent-port=" + engineNode.getAgentPort();
 		if (engineNode.getInstallSparkLocal() != null) {
 			envCommand = envCommand + " --spark-local=" + engineNode.getInstallSparkLocal();
 		}
@@ -109,7 +108,7 @@ public class RunAgentInstallService {
 
 		// 运行安装脚本
 		String installCommand = "bash " + sparkYunProperties.getTmpDir() + File.separator + "agent-install.sh"
-				+ " --home-path=" + engineNode.getAgentHomePath() + File.separator + PathConstants.AGENT_PATH_NAME
+				+ " --home-path=" + engineNode.getAgentHomePath()
 				+ " --agent-port=" + engineNode.getAgentPort();
 		if (engineNode.getInstallSparkLocal() != null) {
 			installCommand = installCommand + " --spark-local=" + engineNode.getInstallSparkLocal();
