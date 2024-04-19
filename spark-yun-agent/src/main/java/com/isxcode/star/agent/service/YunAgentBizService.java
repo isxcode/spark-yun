@@ -226,6 +226,7 @@ public class YunAgentBizService {
 					ContainerGetDataRes.class);
 			return forEntity.getBody();
 		} catch (Exception e) {
+      log.error(e.getMessage());
 			return ContainerGetDataRes.builder().code("500").msg(e.getMessage()).build();
 		}
 	}

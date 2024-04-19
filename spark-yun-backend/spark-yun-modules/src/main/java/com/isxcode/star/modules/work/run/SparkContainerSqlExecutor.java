@@ -21,6 +21,7 @@ import com.isxcode.star.modules.workflow.repository.WorkflowInstanceRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -105,10 +106,11 @@ public class SparkContainerSqlExecutor extends WorkExecutor {
 					.build();
 			BaseResponse<?> baseResponse;
 			try {
-				baseResponse = HttpUtils.doPost(
+				baseResponse = new RestTemplate().postForEntity(
 						genHttpUrl(engineNode.getHost(), engineNode.getAgentPort(), "/yag/executeContainerSql"),
-						executeContainerSqlReq, BaseResponse.class);
-			} catch (IOException e) {
+						executeContainerSqlReq, BaseResponse.class).getBody();
+			} catch (Exception e) {
+        log.error(e.getMessage());
 				throw new WorkRunException(e.getMessage());
 			}
 
