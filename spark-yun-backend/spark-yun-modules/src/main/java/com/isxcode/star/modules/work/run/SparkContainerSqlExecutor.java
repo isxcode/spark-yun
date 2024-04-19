@@ -10,7 +10,6 @@ import com.isxcode.star.api.work.exceptions.WorkRunException;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.star.backend.api.base.pojos.BaseResponse;
 import com.isxcode.star.backend.api.base.properties.IsxAppProperties;
-import com.isxcode.star.common.utils.http.HttpUtils;
 import com.isxcode.star.modules.cluster.entity.ClusterNodeEntity;
 import com.isxcode.star.modules.cluster.repository.ClusterNodeRepository;
 import com.isxcode.star.modules.container.entity.ContainerEntity;
@@ -23,7 +22,6 @@ import org.apache.logging.log4j.util.Strings;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -86,7 +84,7 @@ public class SparkContainerSqlExecutor extends WorkExecutor {
 		logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始执行作业 \n");
 		logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始执行SQL: \n")
 				.append(workRunContext.getScript()).append("\n");
-    workInstance = updateInstance(workInstance, logBuilder);
+		workInstance = updateInstance(workInstance, logBuilder);
 
 		// 调用代理的接口，获取数据
 		try {
@@ -111,7 +109,7 @@ public class SparkContainerSqlExecutor extends WorkExecutor {
 						genHttpUrl(engineNode.getHost(), engineNode.getAgentPort(), "/yag/executeContainerSql"),
 						executeContainerSqlReq, BaseResponse.class).getBody();
 			} catch (Exception e) {
-        log.error(e.getMessage());
+				log.error(e.getMessage());
 				throw new WorkRunException(e.getMessage());
 			}
 
