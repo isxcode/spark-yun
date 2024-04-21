@@ -11,7 +11,7 @@ cd ".." || exit
 if [ -e "zhiqingyun-agent.pid" ]; then
   pid=$(cat "zhiqingyun-agent.pid")
   if ps -p $pid >/dev/null 2>&1; then
-   kill -15 ${pid}
+   kill -9 ${pid}
    echo "【至轻云代理】: CLOSED"
    exit 0
   fi

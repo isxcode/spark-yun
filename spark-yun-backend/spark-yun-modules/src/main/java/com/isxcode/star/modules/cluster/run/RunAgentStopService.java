@@ -6,7 +6,6 @@ import static com.isxcode.star.common.utils.ssh.SshUtils.executeCommand;
 import static com.isxcode.star.common.utils.ssh.SshUtils.scpFile;
 
 import com.alibaba.fastjson.JSON;
-import com.isxcode.star.api.api.constants.PathConstants;
 import com.isxcode.star.api.cluster.constants.ClusterNodeStatus;
 import com.isxcode.star.api.cluster.pojos.dto.AgentInfo;
 import com.isxcode.star.api.cluster.pojos.dto.ScpFileEngineNodeDto;
@@ -69,7 +68,7 @@ public class RunAgentStopService {
 
 		// 运行停止脚本
 		String stopCommand = "bash " + sparkYunProperties.getTmpDir() + File.separator + "agent-stop.sh"
-				+ " --home-path=" + engineNode.getAgentHomePath() + File.separator + PathConstants.AGENT_PATH_NAME;
+				+ " --home-path=" + engineNode.getAgentHomePath();
 		log.debug("执行远程命令:{}", stopCommand);
 
 		// 获取返回结果

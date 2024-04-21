@@ -1,11 +1,13 @@
 #!/bin/bash
 
 ######################
-# 检测脚本
+# 检测代理器
 ######################
 
+# 获取脚本文件当前路径
 BASE_PATH=$(cd "$(dirname "$0")" || exit ; pwd)
 
+# 获取外部参数
 home_path=""
 for arg in "$@"; do
   case "$arg" in
@@ -14,23 +16,28 @@ for arg in "$@"; do
   esac
 done
 
-# 判断home_path目录是否存在
-if [ ! -d "$home_path" ]; then
-  mkdir -p $home_path
+# 初始化agent_path
+agent_path="${home_path}/zhiqingyun-agent"
+
+# 创建zhiqingyun-agent目录
+if [ ! -d "${agent_path}" ]; then
+  mkdir -p "${agent_path}"
 fi
 
-# 检查是否有README.md文件，有则表示已安装，无则表示未安装
-if [ -e "${home_path}/README.md" ]; then
-  # 检查pid文件，无则表示未运行，有再判断pid是否运行
-  if [ -e "${home_path}/zhiqingyun-agent.pid" ]; then
-    pid=$(cat "${home_path}/zhiqingyun-agent.pid")
+# 检查代理当前状态
+if [ -e "${agent_path}/README.md" ]; then
+  if [ -e "${agent_path}/zhiqingyun-agent.pid" ]; then
+    pid=$(cat "${agent_path}/zhiqingyun-agent.pid")
     if ps -p $pid > /dev/null 2>&1; then
+        # 已启动
         CHECK_STATUS="RUNNING"
     else
+        # 未启动
         CHECK_STATUS="STOP"
     fi
   fi
 else
+  # 未安装
   CHECK_STATUS="UN_INSTALL"
 fi
 
@@ -62,5 +69,5 @@ json_output="{ \
 
 echo $json_output
 
-# 删除检测脚本
+# 删除当前脚本文件
 rm ${BASE_PATH}/agent-check.sh

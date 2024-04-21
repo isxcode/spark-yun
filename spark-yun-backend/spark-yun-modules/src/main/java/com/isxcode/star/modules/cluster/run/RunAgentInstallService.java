@@ -6,7 +6,6 @@ import static com.isxcode.star.common.utils.ssh.SshUtils.executeCommand;
 import static com.isxcode.star.common.utils.ssh.SshUtils.scpFile;
 
 import com.alibaba.fastjson.JSON;
-import com.isxcode.star.api.api.constants.PathConstants;
 import com.isxcode.star.api.cluster.constants.ClusterNodeStatus;
 import com.isxcode.star.api.cluster.pojos.dto.AgentInfo;
 import com.isxcode.star.api.cluster.pojos.dto.ScpFileEngineNodeDto;
@@ -71,7 +70,7 @@ public class RunAgentInstallService {
 		// 运行安装脚本
 		String envCommand = "bash " + sparkYunProperties.getTmpDir() + File.separator
 				+ String.format("agent-%s.sh", clusterType) + " --home-path=" + engineNode.getAgentHomePath()
-				+ File.separator + PathConstants.AGENT_PATH_NAME + " --agent-port=" + engineNode.getAgentPort();
+				+ " --agent-port=" + engineNode.getAgentPort();
 		if (engineNode.getInstallSparkLocal() != null) {
 			envCommand = envCommand + " --spark-local=" + engineNode.getInstallSparkLocal();
 		}
@@ -109,8 +108,7 @@ public class RunAgentInstallService {
 
 		// 运行安装脚本
 		String installCommand = "bash " + sparkYunProperties.getTmpDir() + File.separator + "agent-install.sh"
-				+ " --home-path=" + engineNode.getAgentHomePath() + File.separator + PathConstants.AGENT_PATH_NAME
-				+ " --agent-port=" + engineNode.getAgentPort();
+				+ " --home-path=" + engineNode.getAgentHomePath() + " --agent-port=" + engineNode.getAgentPort();
 		if (engineNode.getInstallSparkLocal() != null) {
 			installCommand = installCommand + " --spark-local=" + engineNode.getInstallSparkLocal();
 		}
