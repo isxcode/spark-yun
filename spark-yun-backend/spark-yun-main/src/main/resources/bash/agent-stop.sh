@@ -40,7 +40,7 @@ agent_path="${home_path}/zhiqingyun-agent"
 if [ -e "${agent_path}/zhiqingyun-agent.pid" ]; then
   pid=$(cat "${agent_path}/zhiqingyun-agent.pid")
   if ps -p $pid >/dev/null 2>&1; then
-   kill -15 ${pid}
+   kill -9 ${pid}
   fi
 fi
 

@@ -8,7 +8,6 @@ import com.isxcode.star.api.container.constants.ContainerStatus;
 import com.isxcode.star.api.work.constants.WorkLog;
 import com.isxcode.star.api.work.exceptions.WorkRunException;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
-import com.isxcode.star.backend.api.base.pojos.BaseResponse;
 import com.isxcode.star.backend.api.base.properties.IsxAppProperties;
 import com.isxcode.star.modules.cluster.entity.ClusterNodeEntity;
 import com.isxcode.star.modules.cluster.repository.ClusterNodeRepository;
@@ -103,18 +102,17 @@ public class SparkContainerSqlExecutor extends WorkExecutor {
 			ExecuteContainerSqlReq executeContainerSqlReq = ExecuteContainerSqlReq.builder()
 					.port(String.valueOf(containerEntityOptional.get().getPort())).sql(workRunContext.getScript())
 					.build();
-			BaseResponse<?> baseResponse;
+
+			ContainerGetDataRes containerGetDataRes;
 			try {
-				baseResponse = new RestTemplate().postForEntity(
+				containerGetDataRes = new RestTemplate().postForEntity(
 						genHttpUrl(engineNode.getHost(), engineNode.getAgentPort(), "/yag/executeContainerSql"),
-						executeContainerSqlReq, BaseResponse.class).getBody();
+						executeContainerSqlReq, ContainerGetDataRes.class).getBody();
 			} catch (Exception e) {
 				log.error(e.getMessage());
 				throw new WorkRunException(e.getMessage());
 			}
 
-			ContainerGetDataRes containerGetDataRes = JSON.parseObject(JSON.toJSONString(baseResponse),
-					ContainerGetDataRes.class);
 			if (!"200".equals(containerGetDataRes.getCode())) {
 				if (containerGetDataRes.getMsg().contains("Connection refused (Connection refused)")) {
 					throw new WorkRunException("运行异常: 请检查容器的运行状态");

@@ -9,7 +9,7 @@ cd ".." || exit
 if [ -e "zhiqingyun.pid" ]; then
   pid=$(cat "zhiqingyun.pid")
   if ps -p $pid >/dev/null 2>&1; then
-   kill -15 ${pid}
+   kill -9 ${pid}
    echo "【至轻云】: CLOSED"
    exit 0
   fi
