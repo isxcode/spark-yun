@@ -7,7 +7,7 @@
             至轻云
           </div>
           <div class="slogan">
-            打造超轻量级大数据平台
+            企业级大数据计算平台
           </div>
           <div class="command">
             <p id="command-shell">docker run -p 8080:8080 isxcode/zhiqingyun</p>
@@ -34,12 +34,12 @@
           <div v-show="!isMobile||showVideo" class="artplayer-app"></div>
         </div>
       </div>
-<!--      <video v-if="!isMobile" class="bg-video" id="v1" autoplay loop muted>-->
-<!--        <source src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/bg-0.mp4" type="video/mp4"/>-->
-<!--      </video>-->
-<!--      <video v-else class="bg-video" id="v1" muted>-->
-<!--        <source src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/bg-0.mp4" type="video/mp4"/>-->
-<!--      </video>-->
+      <!--      <video v-if="!isMobile" class="bg-video" id="v1" autoplay loop muted>-->
+      <!--        <source src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/bg-0.mp4" type="video/mp4"/>-->
+      <!--      </video>-->
+      <!--      <video v-else class="bg-video" id="v1" muted>-->
+      <!--        <source src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/bg-0.mp4" type="video/mp4"/>-->
+      <!--      </video>-->
     </div>
     <div class="module-about">
       <div class="content">
@@ -264,19 +264,21 @@ const copyContent = async (text: string) => {
 
 <style lang="scss" scoped>
 
+/* 在线链接服务仅供平台体验和调试使用，平台不承诺服务的稳定性，企业客户需下载字体包自行发布使用并做好备份。 */
 @font-face {
   font-family: "阿里妈妈数黑体 Bold";
   font-weight: 700;
-  src: url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/T4JjC1yVtRsU.woff2") format("woff2"),
-  url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/Y0ipOh97amn9.woff") format("woff");
+  src: url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/ztLF7EvLtc9K.woff2") format("woff2"),
+  url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/UIZLFe2Z55vA.woff") format("woff");
   font-display: swap;
 }
 
+/* 在线链接服务仅供平台体验和调试使用，平台不承诺服务的稳定性，企业客户需下载字体包自行发布使用并做好备份。 */
 @font-face {
   font-family: "阿里巴巴普惠体 2.0 45 Light";
   font-weight: 300;
-  src: url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/aE2qrdrsu4BG.woff2") format("woff2"),
-  url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/cZP0h8SyVUCW.woff") format("woff");
+  src: url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/2F1PZFomWoZG.woff2") format("woff2"),
+  url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/qKGRN4OSFxum.woff") format("woff");
   font-display: swap;
 }
 
