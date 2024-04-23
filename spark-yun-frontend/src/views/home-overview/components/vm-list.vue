@@ -27,6 +27,9 @@
             <el-icon class="vm-list__more"><MoreFilled /></el-icon>
           </template>
         </el-table-column>
+        <template #empty>
+          <el-empty class="vm-list__empty" description="暂无数据"></el-empty>
+        </template>
       </el-table>
       <el-pagination class="vm-list__pagination" small layout="prev, pager, next" :total="total" @current-change="handleCurrentChange"/>
     </div>
@@ -141,6 +144,14 @@ onMounted(() => {
 
     &:hover {
       color: getCssVar('color', 'primary');
+    }
+  }
+
+  .vm-list__empty {
+    padding: 20px 0 0;
+    --el-empty-image-width: 60px;
+    .el-empty__description {
+      margin-top: 0;
     }
   }
 

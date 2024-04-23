@@ -31,7 +31,7 @@ const props = withDefaults(defineProps<{
 })
 
 const isEmpty = computed(() => {
-  return props.chartData.mix === undefined || props.chartData.mix === null
+  return !props.chartData.mix
 })
 
 watch(() => isEmpty.value, (newVal) => {
