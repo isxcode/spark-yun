@@ -41,7 +41,7 @@ done
 agent_path="${home_path}/zhiqingyun-agent"
 
 # 导入用户自己配置的环境变量
-source ${agent_path}conf/agent-env.sh
+source ${agent_path}/conf/agent-env.sh
 
 # 将文件解压到指定目录
 tar -xf ${BASE_PATH}/zhiqingyun-agent.tar.gz -C ${home_path} > /dev/null
