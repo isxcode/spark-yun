@@ -19,11 +19,6 @@ done
 # 初始化agent_path
 agent_path="${home_path}/zhiqingyun-agent"
 
-# 创建zhiqingyun-agent目录
-if [ ! -d "${agent_path}" ]; then
-  mkdir -p "${agent_path}"
-fi
-
 # 检查代理当前状态
 if [ -e "${agent_path}/README.md" ]; then
   if [ -e "${agent_path}/zhiqingyun-agent.pid" ]; then
