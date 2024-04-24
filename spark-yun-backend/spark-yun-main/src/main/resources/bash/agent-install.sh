@@ -80,11 +80,24 @@ if [ ${spark_local} = "true" ]; then
     cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
     chmod 0600 ~/.ssh/authorized_keys
   fi
-  # 修改spark的配置文件,修改为内网ip
-  if netstat -tln | awk '$4 ~ /:'7077'$/ {exit 1}'; then
-    interIp=$(ip addr show | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1' | head -n 1)
-    sed -i.bak -E "s/spark:\/\/localhost:7077/spark:\/\/$interIp:7077/g" ${agent_path}/spark-min/conf/spark-defaults.conf
+
+  if [[ "$OSTYPE" == "linux-gnu" ]]; then
+    # 修改spark的配置文件,修改为内网ip
+    if netstat -tln | awk '$4 ~ /:'7077'$/ {exit 1}'; then
+      interIp=$(ip addr show | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1' | head -n 1)
+      sed -i.bak -E "s/spark:\/\/localhost:7077/spark:\/\/$interIp:7077/g" ${agent_path}/spark-min/conf/spark-defaults.conf
+      nohup bash ${agent_path}/spark-min/sbin/start-all.sh > /dev/null 2>&1 &
+    fi
+  elif [[ "$OSTYPE" == "darwin"* ]]; then
     nohup bash ${agent_path}/spark-min/sbin/start-all.sh > /dev/null 2>&1 &
+  else
+    json_output="{ \
+                      \"status\": \"INSTALL_ERROR\", \
+                      \"log\": \"该系统不支持安装\" \
+                    }"
+      echo $json_output
+      rm ${BASE_PATH}/agent-install.sh
+      exit 0
   fi
 fi
 
