@@ -74,14 +74,13 @@ public class YunAgentController {
 		return yunAgentBizService.getData(appId, agentType, sparkHomePath);
 	}
 
-	@Operation(summary = "中止作业接口", description = "中止作业")
-	@GetMapping("/stopJob")
-	@SuccessResponse("中止成功")
-	public void stopJob(@RequestParam String appId, @RequestParam String agentType, @RequestParam String sparkHomePath)
-			throws IOException {
-
-		yunAgentBizService.stopJob(appId, agentType, sparkHomePath);
-	}
+  @Operation(summary = "中止作业接口", description = "中止作业")
+  @GetMapping("/stopJob")
+  @SuccessResponse("中止成功")
+  public void stopJob(@RequestParam String appId, @RequestParam String agentType, @RequestParam String sparkHomePath, @RequestParam String agentHomePath)
+    throws IOException {
+    yunAgentBizService.stopJob(appId, agentType, sparkHomePath,agentHomePath);
+  }
 
 	@Operation(summary = "提交容器接口", description = "提交容器")
 	@PostMapping("/deployContainer")

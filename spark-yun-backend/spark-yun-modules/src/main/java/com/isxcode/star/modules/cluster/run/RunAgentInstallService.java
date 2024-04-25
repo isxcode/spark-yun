@@ -7,11 +7,14 @@ import static com.isxcode.star.common.utils.ssh.SshUtils.scpFile;
 
 import com.alibaba.fastjson.JSON;
 import com.isxcode.star.api.cluster.constants.ClusterNodeStatus;
+import com.isxcode.star.api.cluster.constants.ClusterStatus;
 import com.isxcode.star.api.cluster.pojos.dto.AgentInfo;
 import com.isxcode.star.api.cluster.pojos.dto.ScpFileEngineNodeDto;
 import com.isxcode.star.api.main.properties.SparkYunProperties;
+import com.isxcode.star.modules.cluster.entity.ClusterEntity;
 import com.isxcode.star.modules.cluster.entity.ClusterNodeEntity;
 import com.isxcode.star.modules.cluster.repository.ClusterNodeRepository;
+import com.isxcode.star.modules.cluster.repository.ClusterRepository;
 import com.isxcode.star.modules.cluster.service.ClusterNodeService;
 import com.jcraft.jsch.*;
 
@@ -34,6 +37,8 @@ public class RunAgentInstallService {
 	private final SparkYunProperties sparkYunProperties;
 
 	private final ClusterNodeRepository clusterNodeRepository;
+
+  private final ClusterRepository clusterRepository;
 
 	@Async("sparkYunWorkThreadPool")
 	public void run(String clusterNodeId, String clusterType, ScpFileEngineNodeDto scpFileEngineNodeDto,
@@ -129,5 +134,14 @@ public class RunAgentInstallService {
 		engineNode.setAgentLog(engineNode.getAgentLog() + "\n" + agentInstallInfo.getLog());
 		engineNode.setCheckDateTime(LocalDateTime.now());
 		clusterNodeRepository.saveAndFlush(engineNode);
+
+     // 如果状态是成功的话,将集群改为启用
+    if (ClusterNodeStatus.RUNNING.equals(agentInstallInfo.getStatus())) {
+      Optional<ClusterEntity> byId = clusterRepository.findById(engineNode.getClusterId());
+      ClusterEntity clusterEntity = byId.get();
+      clusterEntity.setStatus(ClusterStatus.ACTIVE);
+      clusterRepository.saveAndFlush(clusterEntity);
+    }
+
 	}
 }

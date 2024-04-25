@@ -314,28 +314,28 @@ public class KubernetesAgentService implements AgentService {
 		}
 	}
 
-	@Override
-	public void killApp(String appId, String sparkHomePath) throws IOException {
+  @Override
+  public void killApp(String appId, String sparkHomePath, String agentHomePath) throws IOException {
 
-		String killAppCmdFormat = "kubectl delete pod %s -n zhiqingyun-space";
-		Process process = Runtime.getRuntime().exec(String.format(killAppCmdFormat, appId));
+    String killAppCmdFormat = "kubectl delete pod %s -n zhiqingyun-space";
+    Process process = Runtime.getRuntime().exec(String.format(killAppCmdFormat, appId));
 
-		InputStream inputStream = process.getInputStream();
-		BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
+    InputStream inputStream = process.getInputStream();
+    BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
 
-		StringBuilder errLog = new StringBuilder();
-		String line;
-		while ((line = reader.readLine()) != null) {
-			errLog.append(line).append("\n");
-		}
+    StringBuilder errLog = new StringBuilder();
+    String line;
+    while ((line = reader.readLine()) != null) {
+      errLog.append(line).append("\n");
+    }
 
-		try {
-			int exitCode = process.waitFor();
-			if (exitCode == 1) {
-				throw new IsxAppException(errLog.toString());
-			}
-		} catch (InterruptedException e) {
-			throw new IsxAppException(e.getMessage());
-		}
-	}
+    try {
+      int exitCode = process.waitFor();
+      if (exitCode == 1) {
+        throw new IsxAppException(errLog.toString());
+      }
+    } catch (InterruptedException e) {
+      throw new IsxAppException(e.getMessage());
+    }
+  }
 }
