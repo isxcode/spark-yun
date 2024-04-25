@@ -378,6 +378,7 @@ public class WorkBizService {
 			paramsMap.put("appId", wokRunWorkRes.getAppId());
 			paramsMap.put("agentType", clusterEntityOptional.get().getClusterType());
 			paramsMap.put("sparkHomePath", engineNode.getSparkHomePath());
+			paramsMap.put("agentHomePath", engineNode.getAgentHomePath());
 			BaseResponse<?> baseResponse = HttpUtils.doGet(
 					httpUrlUtils.genHttpUrl(engineNode.getHost(), engineNode.getAgentPort(), "/yag/stopJob"), paramsMap,
 					null, BaseResponse.class);
@@ -408,7 +409,7 @@ public class WorkBizService {
 
 		WorkInstanceEntity workInstanceEntity = workInstanceEntityOptional.get();
 		if (Strings.isEmpty(workInstanceEntity.getYarnLog())) {
-			throw new IsxAppException("请等待作业运行完毕");
+			throw new IsxAppException("日志尚未生成,请等待作业运行完毕");
 		}
 		return GetWorkLogRes.builder().yarnLog(workInstanceEntity.getYarnLog()).build();
 	}

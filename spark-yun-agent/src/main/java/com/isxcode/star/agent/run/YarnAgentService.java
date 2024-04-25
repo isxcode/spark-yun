@@ -340,7 +340,7 @@ public class YarnAgentService implements AgentService {
 	}
 
 	@Override
-	public void killApp(String appId, String sparkHomePath) throws IOException {
+	public void killApp(String appId, String sparkHomePath, String agentHomePath) throws IOException {
 
 		String killAppCmdFormat = "yarn application -kill %s";
 		Process process = Runtime.getRuntime().exec(String.format(killAppCmdFormat, appId));

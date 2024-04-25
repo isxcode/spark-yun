@@ -153,8 +153,8 @@ public class StandaloneAgentService implements AgentService {
 			Pattern regex = Pattern.compile(pattern);
 			Matcher matcher = regex.matcher(line);
 			if (matcher.find()) {
-				return matcher.group().replace(" is RUNNING", "").replace(" is SUBMITTED", "").replace(" is FAILED",
-						"");
+				return matcher.group().replace(" is RUNNING", "").replace(" is FINISHED", "")
+						.replace(" is SUBMITTED", "").replace(" is FAILED", "");
 			}
 		}
 
@@ -275,7 +275,10 @@ public class StandaloneAgentService implements AgentService {
 		Map<String, String> apps = new HashMap<>();
 
 		for (Element row : completedDriversRows) {
-			apps.put(row.selectFirst("td:nth-child(1)").text(), row.select("td:nth-child(3) a").first().attr("href"));
+			Element first = row.select("td:nth-child(3) a").first();
+			if (first != null) {
+				apps.put(row.selectFirst("td:nth-child(1)").text(), first.attr("href"));
+			}
 		}
 
 		String workUrl = apps.get(submissionId);
@@ -297,7 +300,11 @@ public class StandaloneAgentService implements AgentService {
 	}
 
 	@Override
-	public void killApp(String submissionId, String sparkHomePath) throws IOException {
+	public void killApp(String submissionId, String sparkHomePath, String agentHomePath) throws IOException {
+
+		if (Strings.isEmpty(sparkHomePath) || "null".equals(sparkHomePath)) {
+			sparkHomePath = agentHomePath + "/zhiqingyun-agent/spark-min";
+		}
 
 		String url = getMasterWebUrl(sparkHomePath) + "/driver/kill/";
 

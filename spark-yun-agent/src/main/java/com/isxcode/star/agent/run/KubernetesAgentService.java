@@ -315,7 +315,7 @@ public class KubernetesAgentService implements AgentService {
 	}
 
 	@Override
-	public void killApp(String appId, String sparkHomePath) throws IOException {
+	public void killApp(String appId, String sparkHomePath, String agentHomePath) throws IOException {
 
 		String killAppCmdFormat = "kubectl delete pod %s -n zhiqingyun-space";
 		Process process = Runtime.getRuntime().exec(String.format(killAppCmdFormat, appId));

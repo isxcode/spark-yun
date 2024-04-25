@@ -7,18 +7,23 @@ import static com.isxcode.star.common.utils.ssh.SshUtils.scpFile;
 
 import com.alibaba.fastjson.JSON;
 import com.isxcode.star.api.cluster.constants.ClusterNodeStatus;
+import com.isxcode.star.api.cluster.constants.ClusterStatus;
 import com.isxcode.star.api.cluster.pojos.dto.AgentInfo;
 import com.isxcode.star.api.cluster.pojos.dto.ScpFileEngineNodeDto;
 import com.isxcode.star.api.main.properties.SparkYunProperties;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
+import com.isxcode.star.modules.cluster.entity.ClusterEntity;
 import com.isxcode.star.modules.cluster.entity.ClusterNodeEntity;
 import com.isxcode.star.modules.cluster.repository.ClusterNodeRepository;
+import com.isxcode.star.modules.cluster.repository.ClusterRepository;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.SftpException;
+
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Optional;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
@@ -34,6 +39,8 @@ public class RunAgentStartService {
 	private final SparkYunProperties sparkYunProperties;
 
 	private final ClusterNodeRepository clusterNodeRepository;
+
+	private final ClusterRepository clusterRepository;
 
 	@Async("sparkYunWorkThreadPool")
 	public void run(String clusterNodeId, ScpFileEngineNodeDto scpFileEngineNodeDto, String tenantId, String userId) {
@@ -87,5 +94,13 @@ public class RunAgentStartService {
 		engineNode.setAgentLog(agentStartInfo.getLog());
 		engineNode.setCheckDateTime(LocalDateTime.now());
 		clusterNodeRepository.saveAndFlush(engineNode);
+
+		// 如果状态是成功的话,将集群改为启用
+		if (ClusterNodeStatus.RUNNING.equals(agentStartInfo.getStatus())) {
+			Optional<ClusterEntity> byId = clusterRepository.findById(engineNode.getClusterId());
+			ClusterEntity clusterEntity = byId.get();
+			clusterEntity.setStatus(ClusterStatus.ACTIVE);
+			clusterRepository.saveAndFlush(clusterEntity);
+		}
 	}
 }

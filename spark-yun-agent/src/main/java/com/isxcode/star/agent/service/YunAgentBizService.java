@@ -154,17 +154,17 @@ public class YunAgentBizService {
 		return YagGetDataRes.builder().data(JSON.parseArray(stdoutLog, List.class)).build();
 	}
 
-	public void stopJob(String appId, String agentType, String sparkHomePath) throws IOException {
+	public void stopJob(String appId, String agentType, String sparkHomePath, String agentHomePath) throws IOException {
 
 		switch (agentType) {
 			case AgentType.YARN :
-				yarnAgentService.killApp(appId, sparkHomePath);
+				yarnAgentService.killApp(appId, sparkHomePath, agentHomePath);
 				break;
 			case AgentType.K8S :
-				kubernetesAgentService.killApp(appId, sparkHomePath);
+				kubernetesAgentService.killApp(appId, sparkHomePath, agentHomePath);
 				break;
 			case AgentType.StandAlone :
-				standaloneAgentService.killApp(appId, sparkHomePath);
+				standaloneAgentService.killApp(appId, sparkHomePath, agentHomePath);
 				break;
 			default :
 				throw new IsxAppException("agent类型不支持");

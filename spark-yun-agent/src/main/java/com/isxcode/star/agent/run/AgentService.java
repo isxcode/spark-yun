@@ -25,5 +25,5 @@ public interface AgentService {
 
 	String getAppData(String appId, String sparkHomePath) throws IOException;
 
-	void killApp(String appId, String sparkHomePath) throws IOException;
+	void killApp(String appId, String sparkHomePath, String agentHomePath) throws IOException;
 }

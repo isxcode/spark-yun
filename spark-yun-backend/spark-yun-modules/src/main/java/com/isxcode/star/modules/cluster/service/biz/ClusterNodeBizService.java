@@ -78,19 +78,8 @@ public class ClusterNodeBizService {
 		clusterNode.setPort(Strings.isEmpty(addClusterNodeReq.getPort()) ? "22" : addClusterNodeReq.getPort().trim());
 
 		// 设置默认代理安装地址
-		clusterNode.setAgentHomePath(clusterNodeService.getDefaultAgentHomePath(addClusterNodeReq.getAgentHomePath(),
-				addClusterNodeReq.getUsername().trim()));
-
-		// 添加特殊逻辑，从备注中获取安装路径
-		// 正则获取路径 $path{/root}
-		if (!Strings.isEmpty(addClusterNodeReq.getRemark())) {
-
-			Pattern regex = Pattern.compile("\\$path\\{(.*?)\\}");
-			Matcher matcher = regex.matcher(addClusterNodeReq.getRemark());
-			if (matcher.find()) {
-				clusterNode.setAgentHomePath(matcher.group(1));
-			}
-		}
+		clusterNode
+				.setAgentHomePath(clusterNodeService.getDefaultAgentHomePath(addClusterNodeReq.getUsername().trim()));
 
 		// 设置默认代理端口号
 		clusterNode.setAgentPort(clusterNodeService.getDefaultAgentPort(addClusterNodeReq.getAgentPort().trim()));
@@ -115,8 +104,7 @@ public class ClusterNodeBizService {
 		clusterNode.setInstallSparkLocal(updateClusterNodeReq.getInstallSparkLocal());
 
 		// 设置安装地址
-		node.setAgentHomePath(clusterNodeService.getDefaultAgentHomePath(updateClusterNodeReq.getAgentHomePath(),
-				updateClusterNodeReq.getUsername()));
+		node.setAgentHomePath(clusterNodeService.getDefaultAgentHomePath(updateClusterNodeReq.getUsername()));
 
 		// 添加特殊逻辑，从备注中获取安装路径
 		// 正则获取路径 $path{/root}
