@@ -153,8 +153,8 @@ public class StandaloneAgentService implements AgentService {
 			Pattern regex = Pattern.compile(pattern);
 			Matcher matcher = regex.matcher(line);
 			if (matcher.find()) {
-        return matcher.group().replace(" is RUNNING", "").replace(" is FINISHED", "").replace(" is SUBMITTED", "").replace(" is FAILED",
-          "");
+				return matcher.group().replace(" is RUNNING", "").replace(" is FINISHED", "")
+						.replace(" is SUBMITTED", "").replace(" is FAILED", "");
 			}
 		}
 
@@ -199,9 +199,9 @@ public class StandaloneAgentService implements AgentService {
 	@Override
 	public String getAppLog(String submissionId, String sparkHomePath) throws IOException {
 
-    Document doc = Jsoup.connect(getMasterWebUrl(sparkHomePath)).get();
+		Document doc = Jsoup.connect(getMasterWebUrl(sparkHomePath)).get();
 
-    Element completedDriversTable = doc.selectFirst(".aggregated-completedDrivers table");
+		Element completedDriversTable = doc.selectFirst(".aggregated-completedDrivers table");
 		Elements completedDriversRows = completedDriversTable.select("tbody tr");
 
 		Map<String, String> apps = new HashMap<>();
@@ -275,10 +275,10 @@ public class StandaloneAgentService implements AgentService {
 		Map<String, String> apps = new HashMap<>();
 
 		for (Element row : completedDriversRows) {
-      Element first = row.select("td:nth-child(3) a").first();
-      if (first != null) {
-        apps.put(row.selectFirst("td:nth-child(1)").text(), first.attr("href"));
-      }
+			Element first = row.select("td:nth-child(3) a").first();
+			if (first != null) {
+				apps.put(row.selectFirst("td:nth-child(1)").text(), first.attr("href"));
+			}
 		}
 
 		String workUrl = apps.get(submissionId);
@@ -299,30 +299,30 @@ public class StandaloneAgentService implements AgentService {
 		return preElement.text().replace("LogType:spark-yun", "").replace("End of ", "");
 	}
 
-  @Override
-  public void killApp(String submissionId, String sparkHomePath, String agentHomePath) throws IOException {
+	@Override
+	public void killApp(String submissionId, String sparkHomePath, String agentHomePath) throws IOException {
 
-    if (Strings.isEmpty(sparkHomePath) || "null".equals(sparkHomePath)) {
-      sparkHomePath = agentHomePath + "/zhiqingyun-agent/spark-min";
-    }
+		if (Strings.isEmpty(sparkHomePath) || "null".equals(sparkHomePath)) {
+			sparkHomePath = agentHomePath + "/zhiqingyun-agent/spark-min";
+		}
 
-    String url = getMasterWebUrl(sparkHomePath) + "/driver/kill/";
+		String url = getMasterWebUrl(sparkHomePath) + "/driver/kill/";
 
-    CloseableHttpClient httpClient = HttpClients.createDefault();
-    HttpPost httpPost = new HttpPost(url);
+		CloseableHttpClient httpClient = HttpClients.createDefault();
+		HttpPost httpPost = new HttpPost(url);
 
-    String payload = "id=" + submissionId + "&terminate=true";
-    StringEntity stringEntity = new StringEntity(payload, ContentType.APPLICATION_FORM_URLENCODED);
+		String payload = "id=" + submissionId + "&terminate=true";
+		StringEntity stringEntity = new StringEntity(payload, ContentType.APPLICATION_FORM_URLENCODED);
 
-    httpPost.setEntity(stringEntity);
+		httpPost.setEntity(stringEntity);
 
-    try (CloseableHttpResponse response = httpClient.execute(httpPost)) {
-      HttpEntity responseEntity = response.getEntity();
-      if (responseEntity != null) {
-        EntityUtils.toString(responseEntity);
-      }
-    } catch (ParseException e) {
-      throw new IsxAppException("中止失败");
-    }
-  }
+		try (CloseableHttpResponse response = httpClient.execute(httpPost)) {
+			HttpEntity responseEntity = response.getEntity();
+			if (responseEntity != null) {
+				EntityUtils.toString(responseEntity);
+			}
+		} catch (ParseException e) {
+			throw new IsxAppException("中止失败");
+		}
+	}
 }
