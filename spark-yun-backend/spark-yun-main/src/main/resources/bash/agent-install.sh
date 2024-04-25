@@ -89,7 +89,9 @@ if [ ${spark_local} = "true" ]; then
       nohup bash ${agent_path}/spark-min/sbin/start-all.sh > /dev/null 2>&1 &
     fi
   elif [[ "$OSTYPE" == "darwin"* ]]; then
-    nohup bash ${agent_path}/spark-min/sbin/start-all.sh > /dev/null 2>&1 &
+    nohup bash ${agent_path}/spark-min/sbin/start-master.sh  > /dev/null 2>&1 &
+    sleep 5
+    nohup bash ${agent_path}/spark-min/sbin/start-worker.sh --webui-port 8081 spark://localhost:7077 > /dev/null 2>&1 &
   else
     json_output="{ \
                       \"status\": \"INSTALL_ERROR\", \

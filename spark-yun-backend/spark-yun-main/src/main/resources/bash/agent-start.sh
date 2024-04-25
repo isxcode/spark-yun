@@ -71,7 +71,21 @@ echo $! >${agent_path}/zhiqingyun-agent.pid
 
 # 如果用户指定spark安装,默认帮他启动spark
 if [ ${spark_local} = "true" ]; then
-  nohup bash ${agent_path}/spark-min/sbin/start-all.sh > /dev/null 2>&1 &
+  if [[ "$OSTYPE" == "linux-gnu" ]]; then
+    nohup bash ${agent_path}/spark-min/sbin/start-all.sh > /dev/null 2>&1 &
+  elif [[ "$OSTYPE" == "darwin"* ]]; then
+    nohup bash ${agent_path}/spark-min/sbin/start-master.sh  > /dev/null 2>&1 &
+    sleep 5
+    nohup bash ${agent_path}/spark-min/sbin/start-worker.sh --webui-port 8081 spark://localhost:7077 > /dev/null 2>&1 &
+  else
+    json_output="{ \
+                      \"status\": \"INSTALL_ERROR\", \
+                      \"log\": \"该系统不支持安装\" \
+                    }"
+    echo $json_output
+    rm ${BASE_PATH}/agent-start.sh
+    exit 0
+  fi
 fi
 
 # 返回结果
