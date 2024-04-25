@@ -1,6 +1,5 @@
 package com.isxcode.star.modules.cluster.service;
 
-import cn.hutool.Hutool;
 import cn.hutool.system.SystemUtil;
 import com.isxcode.star.api.cluster.pojos.dto.ScpFileEngineNodeDto;
 import com.isxcode.star.api.main.properties.SparkYunProperties;
@@ -28,24 +27,25 @@ public class ClusterNodeService {
 
 	private final ClusterNodeRepository clusterNodeRepository;
 
-  /**
-   * 获取代理安装路径
-   *
-   * @param username 节点的用户名
-   * @return 代理安装的路径
-   */
-  public String getDefaultAgentHomePath(String username) {
+	/**
+	 * 获取代理安装路径
+	 *
+	 * @param username
+	 *            节点的用户名
+	 * @return 代理安装的路径
+	 */
+	public String getDefaultAgentHomePath(String username) {
 
-    if ("Mac OS X".equals(SystemUtil.getOsInfo().getName())) {
-      return "/Users/" + username;
-    }
+		if ("Mac OS X".equals(SystemUtil.getOsInfo().getName())) {
+			return "/Users/" + username;
+		}
 
-    if ("root".equals(username)) {
-      return "/root";
-    } else {
-      return "/home/" + username;
-    }
-  }
+		if ("root".equals(username)) {
+			return "/root";
+		} else {
+			return "/home/" + username;
+		}
+	}
 
 	/**
 	 * 获取代理默认端口号

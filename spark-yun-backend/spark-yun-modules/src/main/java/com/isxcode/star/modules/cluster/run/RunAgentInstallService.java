@@ -38,7 +38,7 @@ public class RunAgentInstallService {
 
 	private final ClusterNodeRepository clusterNodeRepository;
 
-  private final ClusterRepository clusterRepository;
+	private final ClusterRepository clusterRepository;
 
 	@Async("sparkYunWorkThreadPool")
 	public void run(String clusterNodeId, String clusterType, ScpFileEngineNodeDto scpFileEngineNodeDto,
@@ -135,13 +135,13 @@ public class RunAgentInstallService {
 		engineNode.setCheckDateTime(LocalDateTime.now());
 		clusterNodeRepository.saveAndFlush(engineNode);
 
-     // 如果状态是成功的话,将集群改为启用
-    if (ClusterNodeStatus.RUNNING.equals(agentInstallInfo.getStatus())) {
-      Optional<ClusterEntity> byId = clusterRepository.findById(engineNode.getClusterId());
-      ClusterEntity clusterEntity = byId.get();
-      clusterEntity.setStatus(ClusterStatus.ACTIVE);
-      clusterRepository.saveAndFlush(clusterEntity);
-    }
+		// 如果状态是成功的话,将集群改为启用
+		if (ClusterNodeStatus.RUNNING.equals(agentInstallInfo.getStatus())) {
+			Optional<ClusterEntity> byId = clusterRepository.findById(engineNode.getClusterId());
+			ClusterEntity clusterEntity = byId.get();
+			clusterEntity.setStatus(ClusterStatus.ACTIVE);
+			clusterRepository.saveAndFlush(clusterEntity);
+		}
 
 	}
 }

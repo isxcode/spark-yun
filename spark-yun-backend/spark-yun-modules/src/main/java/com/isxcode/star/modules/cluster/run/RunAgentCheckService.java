@@ -39,7 +39,7 @@ public class RunAgentCheckService {
 
 	private final ClusterNodeRepository clusterNodeRepository;
 
-  private final ClusterRepository clusterRepository;
+	private final ClusterRepository clusterRepository;
 
 	@Async("sparkYunWorkThreadPool")
 	public void run(String clusterNodeId, ScpFileEngineNodeDto scpFileEngineNodeDto, String tenantId, String userId) {
@@ -102,12 +102,12 @@ public class RunAgentCheckService {
 		engineNode.setCheckDateTime(LocalDateTime.now());
 		clusterNodeRepository.saveAndFlush(engineNode);
 
-    // 如果状态是成功的话,将集群改为启用
-    if (ClusterNodeStatus.RUNNING.equals(agentCheckInfo.getStatus())) {
-      Optional<ClusterEntity> byId = clusterRepository.findById(engineNode.getClusterId());
-      ClusterEntity clusterEntity = byId.get();
-      clusterEntity.setStatus(ClusterStatus.ACTIVE);
-      clusterRepository.saveAndFlush(clusterEntity);
-    }
+		// 如果状态是成功的话,将集群改为启用
+		if (ClusterNodeStatus.RUNNING.equals(agentCheckInfo.getStatus())) {
+			Optional<ClusterEntity> byId = clusterRepository.findById(engineNode.getClusterId());
+			ClusterEntity clusterEntity = byId.get();
+			clusterEntity.setStatus(ClusterStatus.ACTIVE);
+			clusterRepository.saveAndFlush(clusterEntity);
+		}
 	}
 }
