@@ -11,6 +11,6 @@ public class UpdateTenantForTenantAdminReq {
 	@NotEmpty(message = "租户id不能为空")
 	private String id;
 
-	@Schema(title = "租户简介", example = "这是中国超轻量级大数据平台")
+	@Schema(title = "租户简介", example = "企业级大数据计算平台")
 	private String introduce;
 }
