@@ -68,7 +68,7 @@
     <div class="module-feat-left">
       <div class="content">
         <div class="left">
-          <img src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/p-1.jpg" alt="">
+          <img src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/product-img/product-img/p-1.jpg" alt="">
         </div>
         <div class="right">
           <div class="line-1">多平台部署，从不娇生惯养</div>
@@ -80,7 +80,7 @@
     <div class="module-feat-right">
       <div class="content">
         <div class="right-phone">
-          <img src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/p-2.jpg" alt="">
+          <img src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/product-img/p-2.jpg" alt="">
         </div>
         <div class="left">
           <div class="line-1">驱动上传，任何姿势都能连</div>
@@ -88,14 +88,14 @@
           <div class="line-3" @click="handleQuickClick">立即体验</div>
         </div>
         <div class="right">
-          <img src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/p-2.jpg" alt="">
+          <img src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/product-img/p-2.jpg" alt="">
         </div>
       </div>
     </div>
     <div class="module-feat-left">
       <div class="content">
         <div class="left">
-          <img src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/p-3.jpg" alt="">
+          <img src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/product-img/p-3.jpg" alt="">
         </div>
         <div class="right">
           <div class="line-1">创建租户，再大也能装下</div>
@@ -125,7 +125,7 @@
     <div class="module-feat-right">
       <div class="content">
         <div class="right-phone">
-          <img class="feat-img" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/p-4.jpg" alt="">
+          <img class="feat-img" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/product-img/p-4.jpg" alt="">
         </div>
         <div class="left">
           <div class="line-1">编排作业，横竖都能拖拽</div>
@@ -133,14 +133,14 @@
           <div class="line-3" @click="handleQuickClick">立即体验</div>
         </div>
         <div class="right">
-          <img class="feat-img" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/p-4.jpg" alt="">
+          <img class="feat-img" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/product-img/p-4.jpg" alt="">
         </div>
       </div>
     </div>
     <div class="module-feat-left">
       <div class="content">
         <div class="left">
-          <img class="feat-img" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/p-5.jpg" alt="">
+          <img class="feat-img" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/product-img/p-5.jpg" alt="">
         </div>
         <div class="right">
           <div class="line-1">能写代码？不单单只有SparkSql</div>
