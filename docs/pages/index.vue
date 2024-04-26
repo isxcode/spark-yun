@@ -56,12 +56,12 @@
           相关技术
         </div>
         <div class="tech-img-div">
-          <img class="tech-img" @click="handleK8sClick" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/t-k8s.png" alt="">
-          <img class="tech-img" @click="handleHadoopClick" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/t-hadoop.png" alt="">
-          <img class="tech-img" @click="handleSparkClick" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/t-spark.png" alt="">
-          <img class="tech-img" @click="handleHiveClick" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/t-hive.png" alt="">
-          <img class="tech-img" @click="handleDorisClick" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/t-doris.png" alt="">
-          <img class="tech-img" @click="handleClickhouseClick" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/t-clickhouse.png" alt="">
+          <img class="tech-img" @click="handleK8sClick" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/tech-img/t-k8s.png" alt="">
+          <img class="tech-img" @click="handleHadoopClick" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/tech-img/t-hadoop.png" alt="">
+          <img class="tech-img" @click="handleSparkClick" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/tech-img/t-spark.png" alt="">
+          <img class="tech-img" @click="handleHiveClick" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/tech-img/t-hive.png" alt="">
+          <img class="tech-img" @click="handleDorisClick" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/tech-img/t-doris.png" alt="">
+          <img class="tech-img" @click="handleClickhouseClick" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/tech-img/t-clickhouse.png" alt="">
         </div>
       </div>
     </div>
@@ -109,16 +109,16 @@
         <div class="line-1">数据创造价值，大数据创造大价值</div>
         <div class="line-2">AI将至，至轻云与您携手实现企业级大数据平台落地</div>
         <div class="business-img">
-          <img src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/b-1.png" alt="">
-          <img class="bus-img" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/b-2.png" alt="">
-          <img class="bus-img" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/b-3.png" alt="">
-          <img class="bus-img" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/b-4.png" alt="">
-          <img class="bus-img" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/b-5.png" alt="">
-          <img class="bus-img" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/b-6.png" alt="">
-          <img class="bus-img" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/b-7.png" alt="">
-          <img class="bus-img" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/b-8.png" alt="">
-          <img class="bus-img" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/b-9.png" alt="">
-          <img class="bus-img" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/b-10.png" alt="">
+          <img src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/business-img/b-1.png" alt="">
+          <img class="bus-img" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/business-img/b-2.png" alt="">
+          <img class="bus-img" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/business-img/b-3.png" alt="">
+          <img class="bus-img" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/business-img/b-4.png" alt="">
+          <img class="bus-img" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/business-img/b-5.png" alt="">
+          <img class="bus-img" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/business-img/b-6.png" alt="">
+          <img class="bus-img" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/business-img/b-7.png" alt="">
+          <img class="bus-img" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/business-img/b-8.png" alt="">
+          <img class="bus-img" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/business-img/b-9.png" alt="">
+          <img class="bus-img" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/business-img/b-10.png" alt="">
         </div>
       </div>
     </div>
