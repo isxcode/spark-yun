@@ -62,7 +62,7 @@
     <div class="module-feat-left">
       <div class="content">
         <div class="left">
-          <img src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/product-img/product-img/p-1.jpg" alt="">
+          <img src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/product-img/p-1.jpg" alt="">
         </div>
         <div class="right">
           <div class="line-1">多平台部署，从不娇生惯养</div>
@@ -188,8 +188,7 @@ const toggleVideo = () => {
 onMounted(() => {
   const art = new Artplayer({
     container: '.artplayer-app',
-    url: 'https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/product.mp4',
-    // poster: 'https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/product.png',
+    url: 'https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/product-img/product.mp4',
     fullscreen: true,
     fullscreenWeb: true,
     pip: true,
