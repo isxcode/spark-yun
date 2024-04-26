@@ -50,7 +50,7 @@
           </el-button>
         </el-form-item>
         <el-form-item class="registered-content">
-          <span class="registered">基于spark打造超轻量级大数据平台
+          <span class="registered">企业级大数据计算平台
             <!-- <a class="do-registered" @click="clickRegistered"
                             >免费注册</a -->
           </span>

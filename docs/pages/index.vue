@@ -172,8 +172,8 @@ definePageMeta({
 useSeoMeta({
   title: "至轻云",
   ogTitle: "至轻云",
-  description: "打造超轻量级大数据平台",
-  ogDescription: "打造超轻量级大数据平台",
+  description: "企业级大数据计算平台",
+  ogDescription: "企业级大数据计算平台",
 });
 
 const isMobile = useMediaQuery('(max-width: 767px)')

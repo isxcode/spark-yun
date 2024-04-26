@@ -43,7 +43,7 @@ export default defineComponent({
         </div>
         <div class="zqy-login__body">
           <div class="zqy-login__playground">
-            <span class="zqy-login__slogan">超轻量级批处理大数据平台</span>
+            <span class="zqy-login__slogan">企业级大数据计算平台</span>
           </div>
           <div class="zqy-login__main">
             { renderLoginForm() }
