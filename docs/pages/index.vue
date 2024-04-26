@@ -41,10 +41,10 @@
           选择至轻云
         </div>
         <div class="why-content">
-          至轻云是一款超轻量级、企业级大数据平台。具有一键Docker部署，开箱即用特色。无需额外大数据组件安装，即可快速实现企业级大数据离线ETL、实时计算、复杂作业运行等场景。项目持续更新迭代，源码永久免费开源。助力企业快速处理海量数据，获得更多商业价值。
+          至轻云是一款超轻量级、企业级大数据平台。具有一键部署，开箱即用特色。无需额外大数据组件安装，即可快速实现企业级大数据离线ETL、实时计算、作业定时调度等场景。项目持续更新迭代，源码永久开源免费。助力企业快速处理海量数据，获得更多商业价值。
         </div>
         <div class="why-content-mobile">
-          至轻云是一款超轻量级、企业级大数据平台。具有一键Docker部署，开箱即用特色。无需额外大数据组件安装，即可快速实现企业级大数据离线ETL、实时计算、复杂作业运行等场景。
+          至轻云是一款超轻量级、企业级大数据平台。具有一键部署，开箱即用特色。无需额外大数据组件安装，即可快速实现企业级大数据离线ETL、实时计算、作业定时调度等场景。
         </div>
         <div class="tech-title">
           相关技术
@@ -66,7 +66,7 @@
         </div>
         <div class="right">
           <div class="line-1">多平台部署，从不娇生惯养</div>
-          <div class="line-2">支持大量计算引擎平台，如Kubernetes、Spark Standalone、Spark Cluster、Yarn、CDH、HDP、CDP。可无缝迁移，无缝切换，帮助企业更优管理集群资源。</div>
+          <div class="line-2">支持各种资源调度平台，如Kubernetes、Spark Standalone、Spark Cluster、Yarn、CDH等。可无缝切换，敏捷迁移，帮助企业更优分配集群资源。</div>
           <div class="line-3" @click="handleQuickClick">立即体验</div>
         </div>
       </div>
@@ -78,7 +78,7 @@
         </div>
         <div class="left">
           <div class="line-1">驱动上传，任何姿势都能连</div>
-          <div class="line-2">支持海量数据源，如Mysql、Hive、Oracle、SqlServer、TiDB、Oceanbase、Doris、Clickhouse等。用户可自定义上传多版本驱动，解决企业中多环境数据源无法同时连接的难题。</div>
+          <div class="line-2">支持海量数据源，如Mysql、Hive、Oracle、SqlServer、TiDB、Oceanbase、Doris、Clickhouse等。支持自定义驱动上传，解决企业中多版本数据源无法同时连接的难题。</div>
           <div class="line-3" @click="handleQuickClick">立即体验</div>
         </div>
         <div class="right">
@@ -93,7 +93,7 @@
         </div>
         <div class="right">
           <div class="line-1">创建租户，再大也能装下</div>
-          <div class="line-2">多租户模式，确保租户间数据隔离。租户内可单独协调集群资源、数据源驱动、作业流配置等。解决企业中规模较大、用户众多、权限难解的问题。</div>
+          <div class="line-2">支持多租户模式，确保租户数据隔离。租户内可单独协调集群资源、数据源驱动、作业流配置等。解决企业中部门规模较大、用户众多、权限难解的问题。</div>
           <div class="line-3" @click="handleQuickClick">立即体验</div>
         </div>
       </div>
@@ -101,7 +101,7 @@
     <div class="module-business">
       <div class="content">
         <div class="line-1">数据创造价值，大数据创造大价值</div>
-        <div class="line-2">AI将至，至轻云与您携手实现企业级大数据平台落地</div>
+        <div class="line-2">AI已至，至轻云与您携手实现企业级大数据平台落地</div>
         <div class="business-img">
           <img src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/business-img/b-1.png" alt="">
           <img class="bus-img" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/business-img/b-2.png" alt="">
@@ -123,7 +123,7 @@
         </div>
         <div class="left">
           <div class="line-1">编排作业，横竖都能拖拽</div>
-          <div class="line-2">拥有复杂的作业执行命令，包括运行、中止、重跑、重跑下游、中断、重跑当前、发布等。且支持可视化Cron表达式调度配置，解决企业中各种复杂应用场景。</div>
+          <div class="line-2">支持全量的作业生命周期指令，包括运行、中止、重跑、重跑下游、中断、重跑当前、发布等。且具备可视化定时调度设置，适配企业中各种复杂应用场景。</div>
           <div class="line-3" @click="handleQuickClick">立即体验</div>
         </div>
         <div class="right">
@@ -138,7 +138,7 @@
         </div>
         <div class="right">
           <div class="line-1">能写代码？不单单只有SparkSql</div>
-          <div class="line-2">超多作业类型，包括数据同步、Bash、Python、SparkSql、Jdbc、自定义Jar等。提供客户二次开发模版，任何复杂的场景都可以通过写代码的方式解决。</div>
+          <div class="line-2">支持超多作业类型，包括数据同步、Bash脚本、Python、SparkSql、自定义SparkJar、Prql等。免费提供用户开发模版，任何复杂的场景都可以通过写代码的方式解决。</div>
           <div class="line-3" @click="handleQuickClick">立即体验</div>
         </div>
       </div>
@@ -261,8 +261,8 @@ const copyContent = async (text: string) => {
 @font-face {
   font-family: "阿里妈妈数黑体 Bold";
   font-weight: 700;
-  src: url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/ztLF7EvLtc9K.woff2") format("woff2"),
-  url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/UIZLFe2Z55vA.woff") format("woff");
+  src: url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/H8l4dOabqZB6.woff2") format("woff2"),
+  url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/asWfYxsbrfvz.woff") format("woff");
   font-display: swap;
 }
 
@@ -270,8 +270,8 @@ const copyContent = async (text: string) => {
 @font-face {
   font-family: "阿里巴巴普惠体 2.0 45 Light";
   font-weight: 300;
-  src: url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/2F1PZFomWoZG.woff2") format("woff2"),
-  url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/qKGRN4OSFxum.woff") format("woff");
+  src: url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/u90TTYWjH7Ut.woff2") format("woff2"),
+  url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/njK1PTw1pmIt.woff") format("woff");
   font-display: swap;
 }
 
@@ -672,6 +672,7 @@ $module-intro-img-width: 600px;
           top: 30%;
           left: 50%;
           transform: translate(-50%, -50%);
+
           .artplayer-app {
             height: 195px;
             margin-top: 70px;
