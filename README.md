@@ -1,5 +1,5 @@
 <div align="center">
-  <img width="600" alt="image" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/github_product.jpg">
+  <img width="600" alt="image" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/product-img/product.jpg">
 </div>
 
 ---

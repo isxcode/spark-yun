@@ -34,12 +34,6 @@
           <div v-show="!isMobile||showVideo" class="artplayer-app"></div>
         </div>
       </div>
-      <!--      <video v-if="!isMobile" class="bg-video" id="v1" autoplay loop muted>-->
-      <!--        <source src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/bg-0.mp4" type="video/mp4"/>-->
-      <!--      </video>-->
-      <!--      <video v-else class="bg-video" id="v1" muted>-->
-      <!--        <source src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/bg-0.mp4" type="video/mp4"/>-->
-      <!--      </video>-->
     </div>
     <div class="module-about">
       <div class="content">
@@ -315,7 +309,7 @@ $module-intro-img-width: 600px;
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    background-image: url('https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/bg-0.jpg');
+    background-image: url('https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/web-img/bg-0.jpg');
     padding-top: 200px;
     position: relative;
     overflow: hidden;
@@ -482,7 +476,7 @@ $module-intro-img-width: 600px;
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    background-image: url('https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/bg-2.jpg');
+    background-image: url('https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/web-img/bg-2.jpg');
     display: flex;
     align-items: center;
     justify-content: center;
@@ -625,7 +619,7 @@ $module-intro-img-width: 600px;
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  background-image: url('https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/bg-1.jpg');
+  background-image: url('https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/web-img/bg-1.jpg');
   display: flex;
   align-items: center;
   justify-content: center;
@@ -795,7 +789,7 @@ $module-intro-img-width: 600px;
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
-      background-image: url('https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/bg-2.jpg');
+      background-image: url('https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/web-img/bg-2.jpg');
       align-items: center;
 
       .content {
@@ -933,7 +927,7 @@ $module-intro-img-width: 600px;
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    background-image: url('https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/bg-1.jpg');
+    background-image: url('https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/web-img/bg-1.jpg');
     display: flex;
     align-items: center;
     justify-content: center;
