@@ -18,6 +18,8 @@
           <div class="title">产品</div>
           <div class="link" @click="clickZhiqingyun">至轻云</div>
           <div class="link" @click="clickZhiliuyun">至流云</div>
+          <div class="link" @click="clickOther">至数云</div>
+          <div class="link" @click="clickOther">至视云</div>
           <div class="link" @click="clickOther">至慧云</div>
           <div class="link" @click="clickOther">更多</div>
         </div>
@@ -33,7 +35,6 @@
           <div class="title">资源</div>
           <div class="link" @click="clickDocs">产品手册</div>
           <div class="link" @click="clickBlogs">博客</div>
-          <div class="link" @click="clickFeishu">飞书文档</div>
           <div class="link" @click="clickDockerHub">Docker hub</div>
           <div class="link" @click="downloadPackage">安装包下载</div>
           <div class="link" @click="downloadLicense">许可证下载</div>
@@ -390,10 +391,6 @@ function downloadLicense() {
 
 function downloadPackage() {
   window.open("https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/zhiqingyun.tar.gz");
-}
-
-function clickFeishu() {
-  window.open("https://mwur1opms2a.feishu.cn/wiki/space/7350313682586451971?ccm_open_type=lark_wiki_spaceLink&open_tab_from=wiki_home");
 }
 
 function clickBlogs() {

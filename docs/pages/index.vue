@@ -72,7 +72,7 @@
         </div>
         <div class="right">
           <div class="line-1">多平台部署，从不娇生惯养</div>
-          <div class="line-2">支持大量计算引擎平台，如Kubernetes、Spark Standalone、Spark、Cluster、Yarn、CDH。可无缝迁移，无缝切换，帮助企业更优管理集群资源。</div>
+          <div class="line-2">支持大量计算引擎平台，如Kubernetes、Spark Standalone、Spark Cluster、Yarn、CDH、HDP、CDP。可无缝迁移，无缝切换，帮助企业更优管理集群资源。</div>
           <div class="line-3" @click="handleQuickClick">立即体验</div>
         </div>
       </div>
