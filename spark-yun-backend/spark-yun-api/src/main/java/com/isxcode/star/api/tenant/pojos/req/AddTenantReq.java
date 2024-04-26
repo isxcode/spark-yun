@@ -11,7 +11,7 @@ public class AddTenantReq {
 	@NotEmpty(message = "租户名称不能为空")
 	private String name;
 
-	@Schema(title = "租户描述", example = "这是中国超轻量级大数据平台")
+	@Schema(title = "租户描述", example = "企业级大数据计算平台")
 	private String remark;
 
 	@Schema(title = "最大工作流数", example = "10")

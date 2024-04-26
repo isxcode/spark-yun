@@ -1,5 +1,5 @@
 <div align="center">
-  <img width="600" alt="image" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/github_product.jpg">
+  <img width="600" alt="image" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/product-img/product.jpg">
 </div>
 
 ---
@@ -9,7 +9,7 @@
 </h1>
 
 <h3 align="center">
-  打造超轻量级大数据平台
+  企业级大数据计算平台
 </h3>
 
 <div align="center">
