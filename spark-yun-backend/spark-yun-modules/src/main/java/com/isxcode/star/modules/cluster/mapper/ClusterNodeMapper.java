@@ -33,7 +33,7 @@ public interface ClusterNodeMapper {
 	@Mapping(target = "agentHomePath", source = "clusterNodeEntity.agentHomePath")
 	@Mapping(target = "agentPort", source = "clusterNodeEntity.agentPort")
 	@Mapping(target = "hadoopHomePath", source = "clusterNodeEntity.hadoopHomePath")
-	@Mapping(target = "installSparkLocal", source = "clusterNodeEntity.installSparkLocal")
+	@Mapping(target = "installSparkLocal", source = "enoUpdateNodeReq.installSparkLocal")
 	ClusterNodeEntity updateNodeReqToNodeEntity(UpdateClusterNodeReq enoUpdateNodeReq,
 			ClusterNodeEntity clusterNodeEntity);
 
