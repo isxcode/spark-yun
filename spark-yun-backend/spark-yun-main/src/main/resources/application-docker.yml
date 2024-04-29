@@ -36,3 +36,4 @@ isx-app:
   use-port: true
   use-ssl: false
   resources-path: /var/lib/zhiqingyun
+  docker-mode: true
