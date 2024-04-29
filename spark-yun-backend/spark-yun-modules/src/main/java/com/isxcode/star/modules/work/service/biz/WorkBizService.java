@@ -346,7 +346,8 @@ public class WorkBizService {
 
 			// 作业类型不对返回
 			if (!WorkType.QUERY_SPARK_SQL.equals(workEntity.getWorkType())
-					&& !WorkType.DATA_SYNC_JDBC.equals(workEntity.getWorkType())) {
+					&& !WorkType.DATA_SYNC_JDBC.equals(workEntity.getWorkType())
+					&& !WorkType.SPARK_JAR.equals(workEntity.getWorkType())) {
 				throw new IsxAppException("只有sparkSql作业才支持中止");
 			}
 
