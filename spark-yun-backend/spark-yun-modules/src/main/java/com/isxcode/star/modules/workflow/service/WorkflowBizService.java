@@ -193,9 +193,10 @@ public class WorkflowBizService {
 		// 获取作业配置
 		WorkflowConfigEntity workflowConfig = workflowConfigRepository.findById(workflow.getConfigId()).get();
 
-    if (workflowConfig.getNodeList() == null || JSON.parseArray(workflowConfig.getNodeList(), String.class).isEmpty()) {
-      throw new IsxAppException("节点为空，请保存后运行");
-    }
+		if (workflowConfig.getNodeList() == null
+				|| JSON.parseArray(workflowConfig.getNodeList(), String.class).isEmpty()) {
+			throw new IsxAppException("节点为空，请保存后运行");
+		}
 
 		// 初始化作业流日志
 		String runLog = LocalDateTime.now() + WorkLog.SUCCESS_INFO + "开始执行";
