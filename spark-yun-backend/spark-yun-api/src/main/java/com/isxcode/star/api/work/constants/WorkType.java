@@ -46,4 +46,6 @@ public interface WorkType {
 	String API = "API";
 
 	String PRQL = "PRQL";
+
+	String CURL = "CURL";
 }
