@@ -12,9 +12,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ConfigViewCardReq {
 
-  private String id;
+	private String id;
 
-  private Object webConfig;
+	private Object webConfig;
 
-  private DataSql dataSql;
+	private DataSql dataSql;
 }
