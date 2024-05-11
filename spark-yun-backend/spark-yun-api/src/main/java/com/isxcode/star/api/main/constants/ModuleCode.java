@@ -112,4 +112,7 @@ public interface ModuleCode {
 	 * 实时同步函数.
 	 */
 	String VIP_REAL = "/vip/real";
+
+	/** VIP大屏模块. */
+	String VIP_VIEW = "/vip/view";
 }
