@@ -23,6 +23,12 @@
 
 </div>
 
+### 产品体验
+
+- 演示环境：https://zhiqingyun-demo.isxcode.com
+- 体验账号：user001
+- 账号密码：welcome1
+
 ### 产品特色
 
 - **代码开源**：允许用户二次自定义功能开发
@@ -31,14 +37,6 @@
 - **云原生**：Docker快速部署，一键启动
 - **私有化部署**：可内网部署，提高用户数据安全性
 - **spark纯原生**：支持spark官网的所有原生用法
-
-### 产品体验
-
-> 如需产品讲解，请邮箱联系: `hello@isxcode.com`
-
-- 演示环境：https://zhiqingyun-demo.isxcode.com
-- 体验账号：user001
-- 账号密码：welcome1
 
 ### 快速部署
 
@@ -56,8 +54,8 @@ docker run -p 8080:8080 -d isxcode/zhiqingyun
 
 - [快速入门](https://zhiqingyun.isxcode.com/docs/zh/0/0)
 - [使用手册](https://zhiqingyun.isxcode.com/docs/zh/0/0)
-- [技术博客](https://ispong.isxcode.com/tags/spark/)
-- [常见问题](https://mwur1opms2a.feishu.cn/wiki/space/7350313682586451971?ccm_open_type=lark_wiki_spaceLink&open_tab_from=wiki_home)
+- [部署说明](https://zhiqingyun.isxcode.com/docs/zh/0/0)
+- [相关博客](https://ispong.isxcode.com/tags/spark/)
 
 ### 开发手册
 
@@ -66,11 +64,14 @@ docker run -p 8080:8080 -d isxcode/zhiqingyun
 - vue-3.3.2
 - spring-2.7.9
 
+> 推荐使用mac或者linux系统
+
 ```bash
 git clone https://github.com/isxcode/spark-yun.git
-gradle install
-gradle clean package
-# 安装包: spark-yun/spark-yun-dist/build/distributions/zhiqingyun.tar.gz
+cd spark-yun
+./gradlew install
+./gradlew clean package
+# 安装包路径: spark-yun/spark-yun-dist/build/distributions/zhiqingyun.tar.gz
 ```
 
 ### 关于我们
@@ -78,4 +79,4 @@ gradle clean package
 邮箱：hello@isxcode.com <br/>
 微信公众号：<br/>
 
-<img width="230" alt="image" src="https://github.com/ispong/spark-yun/assets/34756621/ae6323bf-3455-434f-a919-949af1eca11f">
+<img width="200" alt="image" src="https://github.com/ispong/spark-yun/assets/34756621/ae6323bf-3455-434f-a919-949af1eca11f">
