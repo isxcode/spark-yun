@@ -197,7 +197,14 @@ onMounted(() => {
     muted: true,
     autoSize: true
   });
+  window.addEventListener("scroll", handleScroll);
 })
+
+function handleScroll() {
+  if (window.scrollY > 100) {
+    showVideo.value = false;
+  }
+}
 
 function handleGuideClick() {
   const router = useRouter();
