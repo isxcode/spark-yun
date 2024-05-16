@@ -60,14 +60,17 @@ function handleScroll() {
     headerRef.value!.style.backgroundColor = "transparent";
     return;
   }
+
   if (window.scrollY > 0) {
-    headerRef.value!.style.backgroundColor = "#fff";
+    // 滚动事件,触发Y轴改动下面的样式
     headerRef.value!.style.height = "60px";
     headerRef.value!.style.boxShadow = "0 2px 4px -1px rgba(0,0,0,0.25)";
     headerRef.value!.style.backgroundColor = "rgba(255,255,255,0.3)";
+    headerRef.value!.style.background = "rgba(255,255,255,0.3)";
+    headerRef.value!.style.background = "-webkit-rgba(255,255,255,0.3)";
     headerRef.value!.style.backdropFilter = "blur(10px)";
-
   } else {
+    // 滚到顶部恢复默认样式
     headerRef.value!.style.height = "80px";
     headerRef.value!.style.boxShadow = "none";
     headerRef.value!.style.backgroundColor = "transparent";
@@ -86,7 +89,7 @@ watch(
       return item === `/${path}`;
     });
     if (!flag) {
-      headerRef.value!.style.backgroundColor = "var(--sk-color-home-bgc)";
+      headerRef.value!.style.backgroundColor = "transparent";
       headerRef.value!.style.height = "60px";
       headerRef.value!.style.boxShadow = "0 2px 4px -1px rgba(0,0,0,0.25)";
       return;
