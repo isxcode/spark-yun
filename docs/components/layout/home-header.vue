@@ -67,8 +67,8 @@ function handleScroll() {
     headerRef.value!.style.boxShadow = "0 2px 4px -1px rgba(0,0,0,0.25)";
     headerRef.value!.style.backgroundColor = "rgba(255,255,255,0.3)";
     headerRef.value!.style.background = "rgba(255,255,255,0.3)";
-    headerRef.value!.style.background = "-webkit-rgba(255,255,255,0.3)";
     headerRef.value!.style.backdropFilter = "blur(10px)";
+    headerRef.value!.style.filter = "blur(10px)";
   } else {
     // 滚到顶部恢复默认样式
     headerRef.value!.style.height = "80px";
