@@ -2,16 +2,16 @@
 title: "Docker部署"
 ---
 
-### Docker hub官网
-
-https://hub.docker.com/r/isxcode/zhiqingyun
+### [Docker Hub 链接](https://hub.docker.com/r/isxcode/zhiqingyun)
 
 ##### 1. 将配置文件和资源文件拷贝出来
 
 ```bash
 mkdir -p /Users/ispong/zhiqingyun
 docker run --name zhiqingyun -d isxcode/zhiqingyun
+# 拷贝资源文件
 docker cp zhiqingyun:/var/lib/zhiqingyun /Users/ispong/zhiqingyun
+# 拷贝配置文件
 docker cp zhiqingyun:/etc/zhiqingyun/conf /Users/ispong/zhiqingyun
 docker stop zhiqingyun
 docker rm zhiqingyun
@@ -19,10 +19,10 @@ docker rm zhiqingyun
 
 ##### 2. 重新启动镜像
 
-▪ `ADMIN_PASSWORD`: admin账号密码，初次启动项目时生效<br/>
-▪ `LOG_LEVEL`: 日志级别设置，例如info、debug等 <br/>
-▪ `ACTIVE_ENV`: 设置项目配置文件，默认配置`docker` <br/>
-▪ `/var/lib/zhiqingyun`: 项目资源目录 <br/>
+▪ `ADMIN_PASSWORD`: admin账号密码，仅初次启动项目时生效,默认密码`admin123`<br/>
+▪ `LOG_LEVEL`: 日志级别设置，例如info、debug、error等 <br/>
+▪ `ACTIVE_ENV`: 配置文件，默认配置文件`docker` <br/>
+▪ `/var/lib/zhiqingyun`: 资源目录 <br/>
 ▪ `/etc/zhiqingyun/conf`: 配置文件目录 <br/>
 
 ```bash
@@ -40,10 +40,12 @@ docker run --restart=always \
 ##### 3. 访问项目
 
 ▪ 访问地址: http://localhost:8080 <br/>
-▪ 默认管理员账号：`admin` <br/>
-▪ 默认管理员密码：`admin123`
+▪ 管理员账号：`admin` <br/>
+▪ 管理员密码：`admin123`
 
-#### mysql数据源配置
+#### 配置Mysql数据源 (可选)
+
+> 修改项目配置文件
 
 ```bash
 vim /Users/ispong/zhiqingyun/conf/application-docker.yml
@@ -89,4 +91,10 @@ isx-app:
   use-ssl: false
   resources-path: /var/lib/zhiqingyun
   docker-mode: true
+```
+
+> 重启docker镜像
+
+```bash
+docker restart zhiqingyun
 ```
