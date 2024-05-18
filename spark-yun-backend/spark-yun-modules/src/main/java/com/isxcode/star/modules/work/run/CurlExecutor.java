@@ -1,5 +1,6 @@
 package com.isxcode.star.modules.work.run;
 
+import cn.hutool.core.collection.CollectionUtil;
 import com.alibaba.fastjson.JSON;
 import com.isxcode.star.api.work.constants.WorkLog;
 import com.isxcode.star.api.work.exceptions.WorkRunException;
@@ -41,39 +42,52 @@ public class CurlExecutor extends WorkExecutor {
 		logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始执行作业 \n");
 		workInstance = updateInstance(workInstance, logBuilder);
 
+		// curl请求结果, 成功日志, 失败日志
+		boolean result;
 		List<String> resultList = new ArrayList<>();
+		List<String> errorList = new ArrayList<>();
 		try {
 
-			ProcessBuilder hiveProcessBuilder = new ProcessBuilder(generateCommandList(workRunContext.getScript()));
-			Process hiveProcess = hiveProcessBuilder.start();
+			ProcessBuilder processBuilder = new ProcessBuilder(generateCommandList(workRunContext.getScript()));
+			Process process = processBuilder.start();
 
-			BufferedReader result = new BufferedReader(
-					new InputStreamReader(hiveProcess.getInputStream(), StandardCharsets.UTF_8));
-			BufferedReader error = new BufferedReader(
-					new InputStreamReader(hiveProcess.getErrorStream(), StandardCharsets.UTF_8));
+			BufferedReader resultReader = new BufferedReader(
+					new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8));
+			BufferedReader errorReader = new BufferedReader(
+					new InputStreamReader(process.getErrorStream(), StandardCharsets.UTF_8));
 
 			String line;
-			while ((line = result.readLine()) != null) {
+			while ((line = resultReader.readLine()) != null) {
 				resultList.add(line);
 			}
-			while ((line = error.readLine()) != null) {
-
+			while ((line = errorReader.readLine()) != null) {
+				errorList.add(line);
 			}
-			hiveProcess.waitFor();
-			if (hiveProcess.exitValue() != 0) {
+			process.waitFor();
 
+			// 判断请求状态, 保存运行结果
+			if (process.exitValue() == 0 || (process.exitValue() == 3 && CollectionUtil.isNotEmpty(resultList)
+					&& errorList.contains("curl: (3) URL rejected: Malformed input to a URL function"))) {
+				result = true;
+				workInstance.setResultData(JSON.toJSONString(resultList));
+			} else {
+				result = false;
+				workInstance.setResultData(JSON.toJSONString(errorList));
 			}
-			result.close();
-			hiveProcess.destroy();
+			logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("保存日志成功 \n");
+
+			resultReader.close();
+			process.destroy();
 		} catch (Exception e) {
 			log.debug(e.getMessage(), e);
 			throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "作业执行异常 : " + e.getMessage() + "\n");
 		}
 
-		// 保存运行日志
-		workInstance.setResultData(JSON.toJSONString(resultList));
-		logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("请求成功, 返回结果: \n")
-				.append(JSON.toJSONString(resultList, true)).append(" \n");
+		if (!result) {
+			throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "执行失败 \n");
+		}
+
+		logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("执行成功 \n");
 		updateInstance(workInstance, logBuilder);
 	}
 
