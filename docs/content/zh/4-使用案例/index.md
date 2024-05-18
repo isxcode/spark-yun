@@ -1,5 +1,5 @@
 ---
-title: '快速开始'
+title: '使用案例'
 description: 'What a lovely page.'
 image:
   src: '/assets/image.jpg'

@@ -170,7 +170,7 @@ tasks.register('deploy', Exec) {
 }
 
 // gradle web，单独启动官网
-tasks.register('web', Exec) {
+tasks.register('website', Exec) {
 
   if (System.properties['os.name'].toString().contains('Mac OS X') || System.properties['os.name'].toString().contains('Linux')) {
     commandLine 'sh', '-c', '''
