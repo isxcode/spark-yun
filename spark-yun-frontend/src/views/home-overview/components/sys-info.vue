@@ -24,7 +24,7 @@ import { querySystemBaseInfo } from '../services/computer-group';
 const sysInfoData = ref<Array<ChartInfo>>([
   {
     type: 'clusterMonitor',
-    title: '计算机群',
+    title: '计算集群',
     mix: undefined,
     total: 100,
     color: '#ED7B09'
