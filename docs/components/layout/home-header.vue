@@ -1,4 +1,7 @@
 <template>
+  <div ref="headerFilterRef" class="backdrop-blur">
+
+  </div>
   <header ref="headerRef" class="home-header">
     <div class="content">
       <div class="right">
@@ -48,6 +51,8 @@ function handleLangChange(lang: string) {
 
 const headerRef = ref<HTMLElement | null>(null);
 
+const headerFilterRef = ref<HTMLElement | null>(null);
+
 onMounted(() => {
   window.addEventListener("scroll", handleScroll);
 });
@@ -67,13 +72,15 @@ function handleScroll() {
     headerRef.value!.style.boxShadow = "0 2px 4px -1px rgba(0,0,0,0.25)";
     headerRef.value!.style.backgroundColor = "rgba(255,255,255,0.3)";
     headerRef.value!.style.background = "rgba(255,255,255,0.3)";
-    headerRef.value!.style.backdropFilter = "blur(10px)";
+    // headerRef.value!.style.backdropFilter = "blur(10px)";
+    headerFilterRef.value!.style.display = "block";
   } else {
     // 滚到顶部恢复默认样式
     headerRef.value!.style.height = "80px";
     headerRef.value!.style.boxShadow = "none";
     headerRef.value!.style.backgroundColor = "transparent";
     headerRef.value!.style.backdropFilter = "none";
+    headerFilterRef.value!.style.display = "none";
   }
 }
 
@@ -155,6 +162,17 @@ function handleMenuClick(menuItem: MenuData) {
   src: url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/u90TTYWjH7Ut.woff2") format("woff2"),
   url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/njK1PTw1pmIt.woff") format("woff");
   font-display: swap;
+}
+
+.backdrop-blur {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 19;
+  height: 60px;
+  filter: blur(15px);
 }
 
 .home-header {
