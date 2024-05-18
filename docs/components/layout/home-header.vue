@@ -170,10 +170,11 @@ function handleMenuClick(menuItem: MenuData) {
   top: 0;
   left: 0;
   right: 0;
-  z-index: 19;
+  z-index: 998;
   width: 100%;
-  height: 80px;
+  height: 60px;
   filter: blur(10px);
+  -webkit-filter: blur(10px);
 }
 
 .home-header {
