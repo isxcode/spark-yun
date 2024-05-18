@@ -101,4 +101,19 @@ jobs:
           region: oss-cn-shanghai
           bucket: isxcode
           source-dir: 'spark-yun-dist/build/distributions'
-          dest-dir: 'zhiqingyun_test_upload'
+          dest-dir: 'zhiqingyun'
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          platforms: linux/amd64,linux/arm64
+          tags: isxcode/zhiqingyun:latest
+          secrets: |
+            "github_token=${{ env.ADMIN_GITHUB_TOKEN }}"
