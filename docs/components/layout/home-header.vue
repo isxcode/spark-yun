@@ -175,6 +175,7 @@ function handleMenuClick(menuItem: MenuData) {
   height: 60px;
   filter: blur(10px);
   -webkit-filter: blur(10px);
+  background: transparent;
 }
 
 .home-header {
