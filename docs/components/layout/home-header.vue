@@ -172,7 +172,7 @@ function handleMenuClick(menuItem: MenuData) {
   right: 0;
   z-index: 19;
   width: 100%;
-  height: 60px;
+  height: 80px;
   filter: blur(10px);
 }
 
