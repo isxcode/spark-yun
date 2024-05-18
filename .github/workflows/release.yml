@@ -51,5 +51,5 @@ jobs:
         with:
           region: oss-cn-shanghai
           bucket: isxcode
-          source-dir: 'gradle'
+          source-dir: 'spark-yun-dist/build/distributions'
           dest-dir: 'zhiqingyun_test_upload'
