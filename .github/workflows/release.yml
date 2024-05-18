@@ -33,6 +33,7 @@ jobs:
         with:
           token: ${{ env.ADMIN_GITHUB_TOKEN }}
           repository: "isxcode/spark-yun"
+          ref: 'main'
 
       - name: Checkout spark-yun-vip
         uses: actions/checkout@v4
@@ -40,6 +41,7 @@ jobs:
           token: ${{ env.ADMIN_GITHUB_TOKEN }}
           repository: "isxcode/spark-yun-vip"
           path: "spark-yun/"
+          ref: 'main'
 
       - name: Cache gradle
         uses: actions/cache@v3
