@@ -98,4 +98,5 @@ jobs:
           key-secret: ${{ secrets.ALI_OSS_KEY_SECRET }}
           region: oss-cn-shanghai
           bucket: isxcode
-          assets: spark-yun/spark-yun-dist/build/distributions/zhiqingyun.tar.gz
+          assets: |
+            spark-yun/spark-yun-dist/build/distributions/zhiqingyun.tar.gz:/zhiqingyun_test_upload/
