@@ -2,7 +2,7 @@
   <!-- <Breadcrumb :bread-crumb-list="breadCrumbList" /> -->
   <div class="zqy-work-item">
     <LoadingPage :visible="loading" :network-error="networkError" @loading-refresh="initData">
-      <div class="zqy-work-container">
+      <div class="zqy-work-container" id="workItemCodeContainer">
         <div class="sql-code-container">
           <div class="sql-option-container">
             <div class="btn-box" @click="goBack">
@@ -69,7 +69,7 @@
               <span class="btn-text">定位</span>
             </div>
           </div>
-          <code-mirror v-model="sqltextData" basic :lang="workConfig.workType === 'PYTHON' ? pythonLang : lang" @change="sqlConfigChange"/>
+          <code-mirror id="workItemCodeArea" v-model="sqltextData" basic :lang="workConfig.workType === 'PYTHON' ? pythonLang : lang" @change="sqlConfigChange"/>
         </div>
         <div class="log-show">
           <el-tabs v-model="activeName" @tab-change="tabChangeEvent">
@@ -88,7 +88,7 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, ref, onMounted, markRaw, nextTick } from 'vue'
+import { reactive, ref, onMounted, markRaw, nextTick, onUnmounted } from 'vue'
 import Breadcrumb from '@/layout/bread-crumb/index.vue'
 import LoadingPage from '@/components/loading/index.vue'
 // import ConfigModal from './config-modal/index.vue'
@@ -105,6 +105,9 @@ import { DeleteWorkData, GetWorkItemConfig, PublishWorkData, RunWorkItemConfig, 
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useRoute, useRouter } from 'vue-router'
 import { Loading } from '@element-plus/icons-vue'
+import ResizeEngine from '@/utils/resize-engine'
+
+let resizeEngine: any
 
 const route = useRoute()
 const router = useRouter()
@@ -420,6 +423,13 @@ onMounted(() => {
   initData()
   activeName.value = 'PublishLog'
   currentTab.value = markRaw(PublishLog)
+
+  resizeEngine = new ResizeEngine('workItemCodeArea', 'workItemCodeContainer', 's')
+  resizeEngine.setElementResize()
+})
+
+onUnmounted(() => {
+  resizeEngine.removeElementResize()
 })
 </script>
 
@@ -429,13 +439,14 @@ onMounted(() => {
     padding: 0 20px;
     box-sizing: border-box;
     height: calc(100vh - 55px);
+    overflow: auto;
   }
 
   .zqy-work-container {
     .sql-code-container {
       .vue-codemirror {
-        // height: calc(100vh - 544px);
-        height: 190px;
+        height: calc(50vh - 120px);
+        // height: 190px;
         .cm-editor {
           height: 100%;
           outline: none;
