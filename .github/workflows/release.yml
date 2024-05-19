@@ -92,17 +92,6 @@ jobs:
       - name: Build with Gradle Wrapper
         run: ./gradlew clean package
 
-      - name: Upload Package to Ali oss
-        uses: chf007/aliyun-oss-upload-action@main
-        env:
-          OSS_ACCESS_KEY_ID: ${{ secrets.ALI_OSS_KEY_ID }}
-          OSS_ACCESS_KEY_SECRET: ${{ secrets.ALI_OSS_KEY_SECRET }}
-        with:
-          region: oss-cn-shanghai
-          bucket: isxcode
-          source-dir: 'spark-yun-dist/build/distributions'
-          dest-dir: 'zhiqingyun'
-
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
 
