@@ -111,5 +111,3 @@ jobs:
           platforms: linux/amd64,linux/arm64
           tags: isxcode/zhiqingyun:latest
           push: true
-          secrets: |
-            "github_token=${{ env.ADMIN_GITHUB_TOKEN }}"
