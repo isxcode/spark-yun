@@ -28,6 +28,11 @@ jobs:
 
     steps:
 
+      - name: Set timezone to Asia/Shanghai
+        run: |
+          sudo timedatectl set-timezone Asia/Shanghai
+          date
+
       - name: Checkout spark-yun
         uses: actions/checkout@v4
         with:
@@ -92,6 +97,20 @@ jobs:
       - name: Build with Gradle Wrapper
         run: ./gradlew clean package
 
+      - name: Delete zhiqingyun-agent.tar.gz
+        run: rm spark-yun-dist/build/distributions/zhiqingyun-agent.tar.gz
+
+      - name: Upload Package to Ali oss
+        uses: chf007/aliyun-oss-upload-action@main
+        env:
+          OSS_ACCESS_KEY_ID: ${{ secrets.ALI_OSS_KEY_ID }}
+          OSS_ACCESS_KEY_SECRET: ${{ secrets.ALI_OSS_KEY_SECRET }}
+        with:
+          region: oss-cn-shanghai
+          bucket: isxcode
+          source-dir: 'spark-yun-dist/build/distributions'
+          dest-dir: 'zhiqingyun'
+
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
 
@@ -104,7 +123,7 @@ jobs:
           username: ispong
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build
+      - name: Build and Push
         uses: docker/build-push-action@v5
         with:
           context: .
