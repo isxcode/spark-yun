@@ -411,6 +411,7 @@ public class SyncWorkExecutor extends WorkExecutor {
 					paramsMap.put("appId", wokRunWorkRes.getAppId());
 					paramsMap.put("agentType", cluster.getClusterType());
 					paramsMap.put("sparkHomePath", engineNode.getSparkHomePath());
+          paramsMap.put("agentHomePath", engineNode.getAgentHomePath());
 					BaseResponse<?> baseResponse = HttpUtils.doGet(
 							httpUrlUtils.genHttpUrl(engineNode.getHost(), engineNode.getAgentPort(), "/yag/stopJob"),
 							paramsMap, null, BaseResponse.class);
