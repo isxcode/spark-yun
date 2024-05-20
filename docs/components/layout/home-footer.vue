@@ -18,9 +18,9 @@
           <div class="title">产品</div>
           <div class="link" @click="clickZhiqingyun">至轻云</div>
           <div class="link" @click="clickZhiliuyun">至流云</div>
-          <div class="link" @click="clickOther">至数云</div>
-          <div class="link" @click="clickOther">至视云</div>
-          <div class="link" @click="clickOther">至慧云</div>
+          <div class="link" @click="clickZhishuyun">至数云</div>
+          <div class="link" @click="clickZhishiyun">至视云</div>
+          <div class="link" @click="clickZhihuiyun">至慧云</div>
           <div class="link" @click="clickOther">更多</div>
         </div>
         <div class="column">
@@ -352,6 +352,18 @@ function clickZhiliuyun() {
   window.open("https://zhiliuyun.isxcode.com");
 }
 
+function clickZhishiyun() {
+  window.open("https://zhishiyun.isxcode.com");
+}
+
+function clickZhihuiyun() {
+  window.open("https://zhihuiyun.isxcode.com");
+}
+
+function clickZhishuyun() {
+  window.open("https://zhishuyun.isxcode.com");
+}
+
 function clickOther() {
   ElMessage({
     message: '敬请期待',
@@ -360,7 +372,7 @@ function clickOther() {
 }
 
 function clickGithubProject() {
-  window.open("https://github.com/orgs/isxcode/projects/16/views/2");
+  window.open("https://github.com/orgs/isxcode/projects/16");
 }
 
 function clickGitee() {
