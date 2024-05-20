@@ -481,6 +481,7 @@ onMounted(() => {
     box-sizing: border-box;
     height: calc(100vh - 52px);
     overflow: auto;
+    background-color: getCssVar('color', 'white');
   }
 
   .zqy-work-container {
