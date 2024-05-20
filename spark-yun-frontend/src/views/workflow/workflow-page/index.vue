@@ -740,6 +740,7 @@ onUnmounted(() => {
         max-width: 200px;
         height: 100%;
         border-right: 1px solid getCssVar('border-color');
+        border-left: 1px solid getCssVar('border-color');
         background-color: getCssVar('color', 'white');
 
         .option-container {
