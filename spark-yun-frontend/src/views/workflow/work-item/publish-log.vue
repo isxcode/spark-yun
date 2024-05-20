@@ -41,6 +41,10 @@ const loadingMsg = computed(() => {
 })
 
 function initData(id: string, cb: any): void {
+  if (loadingTimer.value) {
+    clearInterval(loadingTimer.value)
+  }
+  loadingTimer.value = null
 
   loadingTimer.value = setInterval(() => {
     if (loadingPoint.value.length < 5) {
