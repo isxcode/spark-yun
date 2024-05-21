@@ -45,7 +45,7 @@ jobs:
         with:
           token: ${{ env.ADMIN_GITHUB_TOKEN }}
           repository: "isxcode/spark-yun-vip"
-          path: "spark-yun/"
+          path: "/home/runner/work/spark-yun/spark-yun/spark-yun-vip"
           ref: 'main'
 
       - name: Cache gradle
