@@ -50,21 +50,22 @@ public class Execute {
 				sparkSession.sql("use " + pluginReq.getDatabase());
 			}
 
-      // 过滤掉所有掉空sql
-      List<String> executeSql = Arrays.stream(sqls).filter(Strings::isNotBlank).collect(Collectors.toList());
+			// 过滤掉所有掉空sql
+			List<String> executeSql = Arrays.stream(sqls).filter(Strings::isNotBlank).collect(Collectors.toList());
 
-      // 除了最后一行sql，执行其他所有sql
-      for (int i = 0; i < executeSql.size() - 1; i++) {
-        sparkSession.sql(executeSql.get(i));
-      }
+			// 除了最后一行sql，执行其他所有sql
+			for (int i = 0; i < executeSql.size() - 1; i++) {
+				sparkSession.sql(executeSql.get(i));
+			}
 
 			// 执行最后一行sql并打印输出
-      if (executeSql.isEmpty()) {
-        exportResult(null);
-      } else {
-        Dataset<Row> rowDataset = sparkSession.sql(executeSql.get(executeSql.size() - 1)).limit(pluginReq.getLimit());
-        exportResult(rowDataset);
-      }
+			if (executeSql.isEmpty()) {
+				exportResult(null);
+			} else {
+				Dataset<Row> rowDataset = sparkSession.sql(executeSql.get(executeSql.size() - 1))
+						.limit(pluginReq.getLimit());
+				exportResult(rowDataset);
+			}
 		}
 	}
 
