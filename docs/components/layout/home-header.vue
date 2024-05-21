@@ -173,8 +173,8 @@ function handleMenuClick(menuItem: MenuData) {
   z-index: 998;
   width: 100%;
   height: 60px;
-  filter: blur(2px);
-  -webkit-filter: blur(2px);
+  filter: blur(0px);
+  -webkit-filter: blur(0px);
 }
 
 .home-header {
