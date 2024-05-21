@@ -165,9 +165,9 @@ definePageMeta({
 
 useSeoMeta({
   title: "至轻云",
-  ogTitle: "至轻云",
+  ogTitle: "至爻数据",
   description: "企业级大数据计算平台",
-  ogDescription: "企业级大数据计算平台",
+  ogDescription: "打造企业级开源软件全家桶",
 });
 
 const isMobile = useMediaQuery('(max-width: 767px)')
