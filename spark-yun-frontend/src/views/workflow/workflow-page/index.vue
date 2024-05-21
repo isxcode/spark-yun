@@ -4,7 +4,9 @@
             <div class="work-list">
                 <div class="option-container">
                     <div class="option-title">
-                        <span class="option-title__href" @click="backToFlow">{{ workFlowData.name }}</span>
+                        <span class="option-title__href" @click="backToFlow">
+                            <EllipsisTooltip class="title-tooltip" :label="workFlowData.name" />
+                        </span>
                     </div>
                     <el-dropdown trigger="click">
                         <el-icon class="change-workflow">
@@ -738,6 +740,7 @@ onUnmounted(() => {
         max-width: 200px;
         height: 100%;
         border-right: 1px solid getCssVar('border-color');
+        border-left: 1px solid getCssVar('border-color');
         background-color: getCssVar('color', 'white');
 
         .option-container {
@@ -760,6 +763,9 @@ onUnmounted(() => {
                 box-sizing: border-box;
                 .option-title__href {
                     cursor: pointer;
+                    .title-tooltip {
+                        max-width: 150px;
+                    }
                     &:hover {
                         color: getCssVar('color', 'primary');;
                         text-decoration: underline;
@@ -840,11 +846,14 @@ onUnmounted(() => {
                             height: 80%;
                             .label-type {
                                 color: getCssVar('color', 'primary');
+                                .label-name-text {
+                                    max-width: 170px;
+                                }
                             }
                             .label-name {
                                 color: getCssVar('color', 'info');
                                 .label-name-text {
-                                    max-width: 166px;
+                                    max-width: 170px;
                                 }
                             }
                         }
