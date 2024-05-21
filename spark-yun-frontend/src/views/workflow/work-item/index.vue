@@ -90,14 +90,6 @@
                 </div>
             </el-collapse-item>
         </el-collapse>
-        <!-- <div class="log-show">
-          <el-tabs v-model="activeName" @tab-change="tabChangeEvent">
-            <template v-for="tab in tabList" :key="tab.code">
-              <el-tab-pane v-if="!tab.hide" :label="tab.name" :name="tab.code" />
-            </template>
-          </el-tabs>
-          <component :is="currentTab" ref="containerInstanceRef" class="show-container" />
-        </div> -->
       </div>
     </LoadingPage>
     <!-- <ConfigModal ref="configModalRef" /> -->
@@ -322,18 +314,10 @@ function runWorkData() {
           runningLoading.value = false
           instanceId.value = res.data.instanceId
           ElMessage.success(res.msg)
-          // initData(res.data.instanceId, true)
-
-          nextTick(() => {
-            containerInstanceRef.value.initData(instanceId.value)
-          })
+          initData(res.data.instanceId, true)
           nextTick(() => {
             changeCollapseUp()
           })
-
-          // 点击运行，默认跳转到提交日志tab
-          // activeName.value = 'PublishLog'
-          // currentTab.value = markRaw(PublishLog)
         })
         .catch(() => {
           runningLoading.value = false
@@ -353,16 +337,10 @@ function runWorkData() {
         runningLoading.value = false
         instanceId.value = res.data.instanceId
         ElMessage.success(res.msg)
-        // initData(res.data.instanceId, true)
-        nextTick(() => {
-          containerInstanceRef.value.initData(instanceId.value)
-        })
+        initData(res.data.instanceId, true)
         nextTick(() => {
           changeCollapseUp()
         })
-        // 点击运行，默认跳转到提交日志tab
-        // activeName.value = 'PublishLog'
-        // currentTab.value = markRaw(PublishLog)
       })
       .catch(() => {
         runningLoading.value = false
@@ -613,18 +591,24 @@ onMounted(() => {
         .log-show {
             padding: 0 20px;
             box-sizing: border-box;
+            height: calc(100vh - 308px);
+            padding-top: 8px;
 
             pre {
                 width: 100px;
             }
 
             .show-container {
-                height: calc(100vh - 368px);
+                // height: calc(100vh - 368px);
                 overflow: auto;
             }
 
             .empty-page {
                 height: 80%;
+            }
+
+            .vxe-table--body-wrapper {
+              max-height: calc(100vh - 360px);
             }
         }
     }
