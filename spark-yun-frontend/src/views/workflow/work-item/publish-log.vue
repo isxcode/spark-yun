@@ -131,6 +131,7 @@ defineExpose({
 
 <style lang="scss">
 .publish-log {
+  height: 100%;
   pre {
     color: getCssVar('text-color', 'primary');
     font-size: getCssVar('font-size', 'extra-small');

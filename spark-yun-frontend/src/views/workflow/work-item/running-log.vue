@@ -93,6 +93,7 @@ defineExpose({
 
 <style lang="scss">
 .running-log {
+  height: 100%;
   pre {
     color: getCssVar('text-color', 'primary');
     font-size: 12px;
