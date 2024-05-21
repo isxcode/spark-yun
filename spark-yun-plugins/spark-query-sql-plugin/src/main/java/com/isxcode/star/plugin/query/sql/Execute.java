@@ -12,6 +12,7 @@ import org.apache.spark.sql.types.DataType;
 import org.apache.spark.sql.types.DataTypes;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Execute {
 
@@ -49,16 +50,21 @@ public class Execute {
 				sparkSession.sql("use " + pluginReq.getDatabase());
 			}
 
-			// 除了最后一行sql，执行其他所有sql
-			for (int i = 0; i < sqls.length - 1; i++) {
-				if (!Strings.isEmpty(sqls[i])) {
-					sparkSession.sql(sqls[i]);
-				}
-			}
+      // 过滤掉所有掉空sql
+      List<String> executeSql = Arrays.stream(sqls).filter(Strings::isNotBlank).collect(Collectors.toList());
+
+      // 除了最后一行sql，执行其他所有sql
+      for (int i = 0; i < executeSql.size() - 1; i++) {
+        sparkSession.sql(executeSql.get(i));
+      }
 
 			// 执行最后一行sql并打印输出
-			Dataset<Row> rowDataset = sparkSession.sql(sqls[sqls.length - 1]).limit(pluginReq.getLimit());
-			exportResult(rowDataset);
+      if (executeSql.isEmpty()) {
+        exportResult(null);
+      } else {
+        Dataset<Row> rowDataset = sparkSession.sql(executeSql.get(executeSql.size() - 1)).limit(pluginReq.getLimit());
+        exportResult(rowDataset);
+      }
 		}
 	}
 
@@ -112,6 +118,11 @@ public class Execute {
 	public static void exportResult(Dataset<Row> rowDataset) {
 
 		List<List<String>> result = new ArrayList<>();
+
+		if (rowDataset == null) {
+			System.out.println("LogType:spark-yun\n" + JSON.toJSONString(result) + "\nEnd of LogType:spark-yun");
+			return;
+		}
 
 		// 表头
 		result.add(Arrays.asList(rowDataset.columns()));
