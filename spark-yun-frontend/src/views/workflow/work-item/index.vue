@@ -202,28 +202,31 @@ function initData(id?: string, tableLoading?: boolean) {
       nextTick(() => {
         changeStatus.value = false
         containerInstanceRef.value.initData(id || instanceId.value, (status: string) => {
-          // 运行结束
-          if (workConfig.workType === 'SPARK_SQL') {
-            tabList.forEach((item: any) => {
-              if (['RunningLog', 'TotalDetail'].includes(item.code)) {
-                item.hide = false
-              }
-              if (item.code === 'ReturnData') {
-                item.hide = status === 'FAIL' ? true : false
-              }
-            })
-          } else if (['QUERY_JDBC', 'SPARK_CONTAINER_SQL','PRQL'].includes(workConfig.workType)) {
-            tabList.forEach((item: any) => {
-              if (['ReturnData'].includes(item.code)) {
-                item.hide = status === 'FAIL' ? true : false
-              }
-            })
-          } else if (['BASH', 'PYTHON'].includes(workConfig.workType)) {
-            tabList.forEach((item: any) => {
-              if (!['ReturnData'].includes(item.code)) {
-                item.hide = false
-              }
-            })
+
+          if (id) {
+            // 运行结束
+            if (workConfig.workType === 'SPARK_SQL') {
+              tabList.forEach((item: any) => {
+                if (['RunningLog', 'TotalDetail'].includes(item.code)) {
+                  item.hide = false
+                }
+                if (item.code === 'ReturnData') {
+                  item.hide = status === 'FAIL' ? true : false
+                }
+              })
+            } else if (['QUERY_JDBC', 'SPARK_CONTAINER_SQL','PRQL'].includes(workConfig.workType)) {
+              tabList.forEach((item: any) => {
+                if (['ReturnData'].includes(item.code)) {
+                  item.hide = status === 'FAIL' ? true : false
+                }
+              })
+            } else if (['BASH', 'PYTHON'].includes(workConfig.workType)) {
+              tabList.forEach((item: any) => {
+                if (!['ReturnData'].includes(item.code)) {
+                  item.hide = false
+                }
+              })
+            }
           }
         })
       })
