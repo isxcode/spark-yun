@@ -118,7 +118,7 @@ watch(() => authStore.isCollapse, () => {
     if (chartVm.value) {
       chartVm.value.resize()
     }
-  })
+  }, 300) // 菜单收起动画的执行时间
 })
 
 watch(() => options.value, (val) => {
