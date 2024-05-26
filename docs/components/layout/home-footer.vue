@@ -35,12 +35,14 @@
           <div class="link" @click="clickBlogs">博客</div>
           <div class="link" @click="clickFeishu">飞书文档</div>
           <div class="link" @click="clickDockerHub">Docker hub</div>
+          <div class="link" @click="downloadPackage">安装包下载</div>
           <div class="link" @click="downloadLicense">许可证下载</div>
         </div>
         <div class="column">
           <div class="title">关于我们</div>
           <div class="link" @click="clickOther">至爻简介</div>
           <div class="link" @click="clickOther">加入我们</div>
+          <div class="link" @click="clickGithubProject">开发进度</div>
         </div>
         <div class="column">
           <div class="title">联系我们</div>
@@ -190,12 +192,12 @@
 @font-face {
   font-family: "阿里巴巴普惠体 2.0 45 Light";
   font-weight: 300;
-  src: url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/cHPsZ2tb5Gxv.woff2") format("woff2"),
-  url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/F8LRQLgsPF37.woff") format("woff");
+  src: url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/kNeN6DiN6SKS.woff2") format("woff2"),
+  url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/KSZ7yv66SbZu.woff") format("woff");
   font-display: swap;
 }
 
-.org-info{
+.org-info {
   display: none;
 }
 
@@ -354,6 +356,10 @@ function clickOther() {
   })
 }
 
+function clickGithubProject() {
+  window.open("https://github.com/orgs/isxcode/projects/16/views/2");
+}
+
 function clickGitee() {
   window.open("https://gitee.com/isxcode/spark-yun");
 }
@@ -380,6 +386,10 @@ function clickDockerHub() {
 
 function downloadLicense() {
   window.open("https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/license.lic");
+}
+
+function downloadPackage() {
+  window.open("https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/zhiqingyun.tar.gz");
 }
 
 function clickFeishu() {
