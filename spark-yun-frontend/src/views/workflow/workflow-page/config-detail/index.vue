@@ -82,7 +82,8 @@
                     />
                   </el-select>
                 </el-form-item>
-                <el-form-item label="sparkConfig" v-if="clusterConfig.setMode === 'ADVANCE'">
+                <el-form-item label="sparkConfig" v-if="clusterConfig.setMode === 'ADVANCE'" :class="{ 'show-screen__full': sparkJsonFullStatus }">
+                  <el-icon class="modal-full-screen" @click="fullScreenEvent('sparkJsonFullStatus')"><FullScreen v-if="!sparkJsonFullStatus" /><Close v-else /></el-icon>
                   <code-mirror v-model="clusterConfig.sparkConfigJson" basic :lang="lang"/>
                 </el-form-item>
                 <el-form-item label="资源等级" v-else>
@@ -399,6 +400,9 @@ const cronConfigForm = ref<FormInstance>()
 const syncRuleForm = ref<FormInstance>()
 const containerIdList = ref([]) // 容器列表
 const callback = ref(null)
+
+// 输入框全屏
+const sparkJsonFullStatus = ref(false)
 
 const drawerConfig = reactive({
   title: '配置',
@@ -769,6 +773,13 @@ function clusterIdChangeEvent() {
   clusterConfig.clusterNodeId = ''
 }
 
+// 全屏
+function fullScreenEvent(type: string) {
+  if (type === 'sparkJsonFullStatus') {
+    sparkJsonFullStatus.value = !sparkJsonFullStatus.value
+  }
+}
+
 defineExpose({
   showModal,
 })
@@ -788,6 +799,34 @@ defineExpose({
       padding: 12px 0 0;
       box-sizing: border-box;
       .el-form-item {
+        // 全屏样式
+        &.show-screen__full {
+          position: fixed;
+          width: 100%;
+          height: 100%;
+          top: 0;
+          left: 0;
+          background-color: #ffffff;
+          padding: 12px 20px;
+          box-sizing: border-box;
+          transition: all 0.15s linear;
+          z-index: 10;
+          display: flex;
+          flex-direction: column;
+          .el-form-item__content {
+            align-items: flex-start;
+            height: 100%;
+            margin-top: 18px;
+            .modal-full-screen {
+              top: -36px;
+              right: 0;
+              left: unset;
+            }
+            .vue-codemirror {
+              height: calc(100% - 48px);
+            }
+          }
+        }
         .el-form-item__content {
           .el-radio-group {
             justify-content: flex-end;
@@ -834,6 +873,17 @@ defineExpose({
                   opacity: 0;
                 }
               }
+            }
+          }
+
+          // 全屏样式
+          .modal-full-screen {
+            position: absolute;
+            top: 8px;
+            left: -22px;
+            cursor: pointer;
+            &:hover {
+              color: getCssVar('color', 'primary');;
             }
           }
         }
