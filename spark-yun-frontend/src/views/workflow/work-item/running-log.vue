@@ -34,11 +34,11 @@ const pubId = ref('')
 function initData(id: string): void {
   pubId.value = id
   getLogData(pubId.value)
-  if (!timer.value) {
-    timer.value = setInterval(() => {
-      getLogData(pubId.value)
-    }, 3000)
-  }
+  // if (!timer.value) {
+  //   timer.value = setInterval(() => {
+  //     getLogData(pubId.value)
+  //   }, 3000)
+  // }
 }
 
 // 获取日志
@@ -60,10 +60,10 @@ function getLogData(id: string) {
     })
     .catch(() => {
       logMsg.value = ''
-      if (timer.value) {
-          clearInterval(timer.value)
-      }
-      timer.value = null
+      // if (timer.value) {
+      //     clearInterval(timer.value)
+      // }
+      // timer.value = null
     })
 }
 
@@ -80,10 +80,10 @@ function mousewheelEvent(e: any) {
 }
 
 onUnmounted(() => {
-  if (timer.value) {
-    clearInterval(timer.value)
-  }
-  timer.value = null
+  // if (timer.value) {
+  //   clearInterval(timer.value)
+  // }
+  // timer.value = null
 })
 
 defineExpose({
