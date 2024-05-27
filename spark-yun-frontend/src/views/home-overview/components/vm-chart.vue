@@ -4,7 +4,7 @@
       <span class="vm-chart__title">实例图</span>
       <div class="vm-chart__ops">
         <el-icon class="vm-chart__icon" @click="queryVmChartData"><RefreshRight /></el-icon>
-        <el-date-picker v-model="currentDate" @change="queryVmChartData" :clearable="false"></el-date-picker>
+        <el-date-picker v-model="currentDate" type="date" value-format="YYYY-MM-DD" @change="queryVmChartData" :clearable="false"></el-date-picker>
       </div>
     </div>
     <div class="vm-chart__body">
@@ -14,7 +14,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, nextTick, onMounted, ref, watch } from 'vue'
 import dayjs from 'dayjs'
 import * as echarts from 'echarts/core';
 import {
@@ -29,6 +29,7 @@ import { LineChart, LineSeriesOption } from 'echarts/charts';
 import { UniversalTransition } from 'echarts/features';
 import { CanvasRenderer } from 'echarts/renderers';
 import { queryVmChartInfo } from '../services/computer-group';
+import { useAuthStore } from '@/store/useAuth';
 
 echarts.use([
   TooltipComponent,
@@ -108,7 +109,17 @@ const options = computed<EChartsOption>(() => {
       }
     ]
   }
-}) 
+})
+
+const authStore = useAuthStore()
+
+watch(() => authStore.isCollapse, () => {
+  setTimeout(() => {
+    if (chartVm.value) {
+      chartVm.value.resize()
+    }
+  }, 300) // 菜单收起动画的执行时间
+})
 
 watch(() => options.value, (val) => {
   if (chartVm.value) {
@@ -124,12 +135,6 @@ onMounted(() => {
   }
 
   queryVmChartData()
-  
-  window.addEventListener('resize', () => {
-    if (chartVm.value) {
-      chartVm.value.resize()
-    }
-  })
 })
 
 function queryVmChartData() {
