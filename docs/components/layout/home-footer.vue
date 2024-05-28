@@ -408,7 +408,7 @@ function downloadPackage() {
 }
 
 function clickBlogs() {
-  window.open("/https://ispong.isxcode.com/tags/spark/");
+  window.open("https://ispong.isxcode.com/tags/spark/");
 }
 
 function clickDocs() {
