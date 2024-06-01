@@ -42,9 +42,9 @@ docker run -p 8080:8080 -d isxcode/zhiqingyun
 
 ### 立即体验
 
-- 演示环境：https://zhiqingyun-demo.isxcode.com
-- 体验账号：user001
-- 账号密码：welcome1
+演示地址：https://zhiqingyun-demo.isxcode.com </br>
+体验账号：user001 </br>
+账号密码：welcome1
 
 ### 相关文档
 
