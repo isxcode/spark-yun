@@ -41,7 +41,7 @@
 &nbsp;&nbsp;&nbsp;&nbsp; 体验账号：user001 </br>
 &nbsp;&nbsp;&nbsp;&nbsp; 账号密码：welcome1
 
-### 快速安装
+### 快速部署
 
 ```bash
 docker run -p 8080:8080 -d isxcode/zhiqingyun
@@ -56,7 +56,7 @@ docker run -p 8080:8080 -d isxcode/zhiqingyun
 
 ### 源码构建
 
-> 安装包路径: spark-yun/spark-yun-dist/build/distributions/zhiqingyun.tar.gz
+> 打包结果路径: spark-yun/spark-yun-dist/build/distributions/zhiqingyun.tar.gz
 
 ```bash
 git clone https://github.com/isxcode/spark-yun.git
