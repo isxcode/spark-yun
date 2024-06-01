@@ -35,17 +35,17 @@
 - **私有化部署**: 支持内网部署与访问，提升系统安全性。
 - **代码开源**: 永久开源且免费，实时公开产品进度，内容持续更新。
 
-### 快速安装
-
-```bash
-docker run -p 8080:8080 -d isxcode/zhiqingyun
-```
-
 ### 立即体验
 
 ▪ 演示地址：https://zhiqingyun-demo.isxcode.com </br>
 ▪ 体验账号：user001 </br>
 ▪ 账号密码：welcome1
+
+### 快速安装
+
+```bash
+docker run -p 8080:8080 -d isxcode/zhiqingyun
+```
 
 ### 相关文档
 
