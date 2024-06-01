@@ -60,6 +60,7 @@ docker run -p 8080:8080 -d isxcode/zhiqingyun
 
 ```bash
 git clone https://github.com/isxcode/spark-yun.git
+cd spark-yun
 ./gradlew install package
 ```
 
