@@ -21,28 +21,26 @@
           <div class="link" @click="clickZhishuyun">至数云</div>
           <div class="link" @click="clickZhishiyun">至视云</div>
           <div class="link" @click="clickZhihuiyun">至慧云</div>
-          <div class="link" @click="clickOther">更多</div>
         </div>
         <div class="column">
           <div class="title">社区</div>
-          <div class="link" @click="clickGitee">Gitee</div>
           <div class="link" @click="clickGithub">Github</div>
+          <div class="link" @click="clickGitee">Gitee</div>
           <div class="link" @click="clickSlack">Slack</div>
           <div class="link" @click="clickDiscord">Discord</div>
-          <div class="link" @click="clickLinked">Linkedin</div>
         </div>
         <div class="column">
           <div class="title">资源</div>
+          <div class="link" @click="clickBlogs">解决方案</div>
           <div class="link" @click="clickDocs">产品手册</div>
-          <div class="link" @click="clickBlogs">博客</div>
-          <div class="link" @click="clickDockerHub">Docker hub</div>
+          <div class="link" @click="clickDockerHub">Docker Hub</div>
           <div class="link" @click="downloadPackage">安装包下载</div>
           <div class="link" @click="downloadLicense">许可证下载</div>
         </div>
         <div class="column">
           <div class="title">关于我们</div>
           <div class="link" @click="clickOther">至爻简介</div>
-          <div class="link" @click="clickOther">加入我们</div>
+          <div class="link" @click="joinUs">加入我们</div>
           <div class="link" @click="clickGithubProject">开发进度</div>
         </div>
         <div class="column">
@@ -364,6 +362,11 @@ function clickZhishuyun() {
   window.open("https://zhishuyun.isxcode.com");
 }
 
+function joinUs(){
+  const router = useRouter();
+  router.push("/docs/zh/5/0");
+}
+
 function clickOther() {
   ElMessage({
     message: '敬请期待',
@@ -384,11 +387,11 @@ function clickGithub() {
 }
 
 function clickSlack() {
-  window.open("https://join.slack.com/t/zhiqingyun/shared_invite/zt-2fixm4lxg-Y5F1Qc6OQJjb7Z0kmcuQ0A");
+  window.open("https://join.slack.com/t/isxcode/shared_invite/zt-2k9pnkm68-6hJo9e0Mp1yax2mNYv8caA");
 }
 
 function clickDiscord() {
-  window.open("https://discord.gg/sEHPpmsp");
+  window.open("https://discord.gg/uWHWkGph2t");
 }
 
 function clickLinked() {
