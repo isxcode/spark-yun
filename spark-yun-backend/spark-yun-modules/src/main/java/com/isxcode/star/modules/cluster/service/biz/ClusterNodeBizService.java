@@ -23,6 +23,7 @@ import com.isxcode.star.modules.cluster.service.ClusterService;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
@@ -31,7 +32,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-/** 用户模块接口的业务逻辑. */
+/**
+ * 用户模块接口的业务逻辑.
+ */
 @Service
 @RequiredArgsConstructor
 @Transactional(noRollbackFor = {IsxAppException.class})
@@ -97,6 +100,15 @@ public class ClusterNodeBizService {
 
 		ClusterNodeEntity clusterNode = clusterNodeService.getClusterNode(updateClusterNodeReq.getId());
 
+		// 如果是安装中等状态，需要等待运行结束
+		if (ClusterNodeStatus.CHECKING.equals(clusterNode.getStatus())
+				|| ClusterNodeStatus.INSTALLING.equals(clusterNode.getStatus())
+				|| ClusterNodeStatus.REMOVING.equals(clusterNode.getStatus())
+				|| ClusterNodeStatus.STARTING.equals(clusterNode.getStatus())
+				|| ClusterNodeStatus.STOPPING.equals(clusterNode.getStatus())) {
+			throw new IsxAppException("进行中，稍后再试");
+		}
+
 		// 转换对象
 		ClusterNodeEntity node = engineNodeMapper.updateNodeReqToNodeEntity(updateClusterNodeReq, clusterNode);
 
@@ -149,8 +161,15 @@ public class ClusterNodeBizService {
 			throw new IsxAppException("节点已删除");
 		}
 
-		// 判断节点状态是否为已安装
-		if (ClusterNodeStatus.RUNNING.equals(engineNodeEntityOptional.get().getStatus())) {
+		ClusterNodeEntity clusterNode = engineNodeEntityOptional.get();
+
+		// 如果是安装中等状态，需要等待运行结束
+		if (ClusterNodeStatus.CHECKING.equals(clusterNode.getStatus())
+				|| ClusterNodeStatus.INSTALLING.equals(clusterNode.getStatus())
+				|| ClusterNodeStatus.REMOVING.equals(clusterNode.getStatus())
+				|| ClusterNodeStatus.STARTING.equals(clusterNode.getStatus())
+				|| ClusterNodeStatus.STOPPING.equals(clusterNode.getStatus())
+				|| ClusterNodeStatus.RUNNING.equals(clusterNode.getStatus())) {
 			throw new IsxAppException("请卸载节点后删除");
 		}
 
@@ -165,7 +184,9 @@ public class ClusterNodeBizService {
 		// 如果是安装中等状态，需要等待运行结束
 		if (ClusterNodeStatus.CHECKING.equals(engineNode.getStatus())
 				|| ClusterNodeStatus.INSTALLING.equals(engineNode.getStatus())
-				|| ClusterNodeStatus.REMOVING.equals(engineNode.getStatus())) {
+				|| ClusterNodeStatus.REMOVING.equals(engineNode.getStatus())
+				|| ClusterNodeStatus.STARTING.equals(engineNode.getStatus())
+				|| ClusterNodeStatus.STOPPING.equals(engineNode.getStatus())) {
 			throw new IsxAppException("进行中，稍后再试");
 		}
 
@@ -184,7 +205,9 @@ public class ClusterNodeBizService {
 		runAgentCheckService.run(checkAgentReq.getEngineNodeId(), scpFileEngineNodeDto, TENANT_ID.get(), USER_ID.get());
 	}
 
-	/** 安装节点. */
+	/**
+	 * 安装节点.
+	 */
 	public void installAgent(InstallAgentReq installAgentReq) {
 
 		ClusterNodeEntity clusterNode = clusterNodeService.getClusterNode(installAgentReq.getEngineNodeId());
@@ -194,7 +217,10 @@ public class ClusterNodeBizService {
 		// 如果是安装中等状态，需要等待运行结束
 		if (ClusterNodeStatus.CHECKING.equals(clusterNode.getStatus())
 				|| ClusterNodeStatus.INSTALLING.equals(clusterNode.getStatus())
-				|| ClusterNodeStatus.REMOVING.equals(clusterNode.getStatus())) {
+				|| ClusterNodeStatus.REMOVING.equals(clusterNode.getStatus())
+				|| ClusterNodeStatus.STARTING.equals(clusterNode.getStatus())
+				|| ClusterNodeStatus.STOPPING.equals(clusterNode.getStatus())
+				|| ClusterNodeStatus.RUNNING.equals(clusterNode.getStatus())) {
 			throw new IsxAppException("进行中，稍后再试");
 		}
 
@@ -248,6 +274,15 @@ public class ClusterNodeBizService {
 		// 获取节点信息
 		ClusterNodeEntity engineNode = clusterNodeService.getClusterNode(cleanAgentReq.getEngineNodeId());
 
+		// 如果是安装中等状态，需要等待运行结束
+		if (ClusterNodeStatus.CHECKING.equals(engineNode.getStatus())
+				|| ClusterNodeStatus.INSTALLING.equals(engineNode.getStatus())
+				|| ClusterNodeStatus.REMOVING.equals(engineNode.getStatus())
+				|| ClusterNodeStatus.STARTING.equals(engineNode.getStatus())
+				|| ClusterNodeStatus.STOPPING.equals(engineNode.getStatus())) {
+			throw new IsxAppException("进行中，稍后再试");
+		}
+
 		// 将节点信息转成工具类识别对象
 		ScpFileEngineNodeDto scpFileEngineNodeDto = engineNodeMapper.engineNodeEntityToScpFileEngineNodeDto(engineNode);
 		scpFileEngineNodeDto.setPasswd(aesUtils.decrypt(scpFileEngineNodeDto.getPasswd()));
@@ -256,7 +291,9 @@ public class ClusterNodeBizService {
 		runAgentCleanService.run(cleanAgentReq.getEngineNodeId(), scpFileEngineNodeDto, TENANT_ID.get(), USER_ID.get());
 	}
 
-	/** 停止节点. */
+	/**
+	 * 停止节点.
+	 */
 	public void stopAgent(StopAgentReq stopAgentReq) {
 
 		// 获取节点信息
@@ -265,7 +302,9 @@ public class ClusterNodeBizService {
 		// 如果是安装中等状态，需要等待运行结束
 		if (ClusterNodeStatus.CHECKING.equals(engineNode.getStatus())
 				|| ClusterNodeStatus.INSTALLING.equals(engineNode.getStatus())
-				|| ClusterNodeStatus.REMOVING.equals(engineNode.getStatus())) {
+				|| ClusterNodeStatus.REMOVING.equals(engineNode.getStatus())
+				|| ClusterNodeStatus.STARTING.equals(engineNode.getStatus())
+				|| ClusterNodeStatus.STOPPING.equals(engineNode.getStatus())) {
 			throw new IsxAppException("进行中，稍后再试");
 		}
 
@@ -284,7 +323,9 @@ public class ClusterNodeBizService {
 		runAgentStopService.run(stopAgentReq.getEngineNodeId(), scpFileEngineNodeDto, TENANT_ID.get(), USER_ID.get());
 	}
 
-	/** 激活中. */
+	/**
+	 * 激活中.
+	 */
 	public void startAgent(StartAgentReq startAgentReq) {
 
 		// 获取节点信息
@@ -293,7 +334,9 @@ public class ClusterNodeBizService {
 		// 如果是安装中等状态，需要等待运行结束
 		if (ClusterNodeStatus.CHECKING.equals(engineNode.getStatus())
 				|| ClusterNodeStatus.INSTALLING.equals(engineNode.getStatus())
-				|| ClusterNodeStatus.REMOVING.equals(engineNode.getStatus())) {
+				|| ClusterNodeStatus.REMOVING.equals(engineNode.getStatus())
+				|| ClusterNodeStatus.STARTING.equals(engineNode.getStatus())
+				|| ClusterNodeStatus.STOPPING.equals(engineNode.getStatus())) {
 			throw new IsxAppException("进行中，稍后再试");
 		}
 
