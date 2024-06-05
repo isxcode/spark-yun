@@ -2,6 +2,7 @@ package com.isxcode.star.agent.run;
 
 import com.alibaba.fastjson2.JSON;
 import com.isxcode.star.agent.properties.SparkYunAgentProperties;
+import com.isxcode.star.api.agent.constants.AgentType;
 import com.isxcode.star.api.agent.pojos.req.DeployContainerReq;
 import com.isxcode.star.api.agent.pojos.req.YagExecuteWorkReq;
 import com.isxcode.star.api.work.constants.WorkType;
@@ -362,5 +363,10 @@ public class YarnAgentService implements AgentService {
 		} catch (InterruptedException e) {
 			throw new IsxAppException(e.getMessage());
 		}
+	}
+
+	@Override
+	public String getAgentName() {
+		return AgentType.YARN;
 	}
 }

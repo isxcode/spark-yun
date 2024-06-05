@@ -1,10 +1,7 @@
 package com.isxcode.star.agent.service;
 
 import com.alibaba.fastjson.JSON;
-import com.isxcode.star.agent.run.KubernetesAgentService;
-import com.isxcode.star.agent.run.StandaloneAgentService;
-import com.isxcode.star.agent.run.YarnAgentService;
-import com.isxcode.star.api.agent.constants.AgentType;
+import com.isxcode.star.agent.run.AgentService;
 import com.isxcode.star.api.agent.pojos.req.*;
 import com.isxcode.star.api.agent.pojos.res.*;
 import com.isxcode.star.api.agent.pojos.req.YagExecuteWorkReq;
@@ -15,10 +12,12 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.spark.launcher.SparkLauncher;
+import org.springframework.context.ApplicationContext;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -31,92 +30,48 @@ import org.springframework.web.client.RestTemplate;
 @RequiredArgsConstructor
 public class YunAgentBizService {
 
-	private final KubernetesAgentService kubernetesAgentService;
+	private final ApplicationContext applicationContext;
 
-	private final YarnAgentService yarnAgentService;
+	public AgentService getAgentService(String agentType) {
 
-	private final StandaloneAgentService standaloneAgentService;
+		Optional<AgentService> agentServiceOptional = applicationContext.getBeansOfType(AgentService.class).values()
+				.stream().filter(agent -> agent.getAgentName().equals(agentType)).findFirst();
+
+		if (!agentServiceOptional.isPresent()) {
+			throw new IsxAppException("agent类型不支持");
+		}
+
+		return agentServiceOptional.get();
+	}
 
 	public ExecuteWorkRes executeWork(YagExecuteWorkReq yagExecuteWorkReq) throws IOException {
 
-		SparkLauncher sparkLauncher;
-		String appId;
-		switch (yagExecuteWorkReq.getAgentType()) {
-			case AgentType.YARN :
-				sparkLauncher = yarnAgentService.genSparkLauncher(yagExecuteWorkReq);
-				appId = yarnAgentService.executeWork(sparkLauncher);
-				break;
-			case AgentType.K8S :
-				sparkLauncher = kubernetesAgentService.genSparkLauncher(yagExecuteWorkReq);
-				appId = kubernetesAgentService.executeWork(sparkLauncher);
-				break;
-			case AgentType.StandAlone :
-				sparkLauncher = standaloneAgentService.genSparkLauncher(yagExecuteWorkReq);
-				appId = standaloneAgentService.executeWork(sparkLauncher);
-				break;
-			default :
-				throw new IsxAppException("agent类型不支持");
-		}
-
+		AgentService agentService = getAgentService(yagExecuteWorkReq.getAgentType());
+		SparkLauncher sparkLauncher = agentService.genSparkLauncher(yagExecuteWorkReq);
+		String appId = agentService.executeWork(sparkLauncher);
 		return ExecuteWorkRes.builder().appId(appId).build();
 	}
 
 	public YagGetStatusRes getStatus(String appId, String agentType, String sparkHomePath) throws IOException {
 
-		String appStatus;
-		switch (agentType) {
-			case AgentType.YARN :
-				appStatus = yarnAgentService.getAppStatus(appId, sparkHomePath);
-				break;
-			case AgentType.K8S :
-				appStatus = kubernetesAgentService.getAppStatus(appId, sparkHomePath);
-				break;
-			case AgentType.StandAlone :
-				appStatus = standaloneAgentService.getAppStatus(appId, sparkHomePath);
-				break;
-			default :
-				throw new IsxAppException("agent类型不支持");
-		}
+		AgentService agentService = getAgentService(agentType);
+		String appStatus = agentService.getAppStatus(appId, sparkHomePath);
 
 		return YagGetStatusRes.builder().appId(appId).appStatus(appStatus).build();
 	}
 
 	public YagGetLogRes getLog(String appId, String agentType, String sparkHomePath) throws IOException {
 
-		String appLog;
-		switch (agentType) {
-			case AgentType.YARN :
-				appLog = yarnAgentService.getAppLog(appId, sparkHomePath);
-				break;
-			case AgentType.K8S :
-				appLog = kubernetesAgentService.getAppLog(appId, sparkHomePath);
-				break;
-			case AgentType.StandAlone :
-				appLog = standaloneAgentService.getAppLog(appId, sparkHomePath);
-				break;
-			default :
-				throw new IsxAppException("agent类型不支持");
-		}
+		AgentService agentService = getAgentService(agentType);
+		String appLog = agentService.getAppLog(appId, sparkHomePath);
 
 		return YagGetLogRes.builder().log(appLog).build();
 	}
 
 	public YagGetStdoutLogRes getStdoutLog(String appId, String agentType, String sparkHomePath) throws IOException {
 
-		String appLog;
-		switch (agentType) {
-			case AgentType.YARN :
-				appLog = yarnAgentService.getStdoutLog(appId, sparkHomePath);
-				break;
-			case AgentType.K8S :
-				appLog = kubernetesAgentService.getStdoutLog(appId, sparkHomePath);
-				break;
-			case AgentType.StandAlone :
-				appLog = standaloneAgentService.getStdoutLog(appId, sparkHomePath);
-				break;
-			default :
-				throw new IsxAppException("agent类型不支持");
-		}
+		AgentService agentService = getAgentService(agentType);
+		String appLog = agentService.getStdoutLog(appId, sparkHomePath);
 
 		// 只截取后1行的日志
 		appLog = appLog.replace("End of LogType:stdout", "").replace("LogType:stdout-start", "");
@@ -136,39 +91,16 @@ public class YunAgentBizService {
 
 	public YagGetDataRes getData(String appId, String agentType, String sparkHomePath) throws IOException {
 
-		String stdoutLog;
-		switch (agentType) {
-			case AgentType.YARN :
-				stdoutLog = yarnAgentService.getAppData(appId, sparkHomePath);
-				break;
-			case AgentType.K8S :
-				stdoutLog = kubernetesAgentService.getAppData(appId, sparkHomePath);
-				break;
-			case AgentType.StandAlone :
-				stdoutLog = standaloneAgentService.getAppData(appId, sparkHomePath);
-				break;
-			default :
-				throw new IsxAppException("agent类型不支持");
-		}
+		AgentService agentService = getAgentService(agentType);
+		String stdoutLog = agentService.getAppData(appId, sparkHomePath);
 
 		return YagGetDataRes.builder().data(JSON.parseArray(stdoutLog, List.class)).build();
 	}
 
 	public void stopJob(String appId, String agentType, String sparkHomePath, String agentHomePath) throws IOException {
 
-		switch (agentType) {
-			case AgentType.YARN :
-				yarnAgentService.killApp(appId, sparkHomePath, agentHomePath);
-				break;
-			case AgentType.K8S :
-				kubernetesAgentService.killApp(appId, sparkHomePath, agentHomePath);
-				break;
-			case AgentType.StandAlone :
-				standaloneAgentService.killApp(appId, sparkHomePath, agentHomePath);
-				break;
-			default :
-				throw new IsxAppException("agent类型不支持");
-		}
+		AgentService agentService = getAgentService(agentType);
+		agentService.killApp(appId, sparkHomePath, agentHomePath);
 	}
 
 	public static int findUnusedPort() {
@@ -188,18 +120,9 @@ public class YunAgentBizService {
 		int port = findUnusedPort();
 		deployContainerReq.getPluginReq().setContainerPort(port);
 
-		switch (deployContainerReq.getAgentType()) {
-			case AgentType.YARN :
-				sparkLauncher = yarnAgentService.genSparkLauncher(deployContainerReq);
-				appId = yarnAgentService.executeWork(sparkLauncher);
-				break;
-			case AgentType.K8S :
-				throw new IsxAppException("目前不支持k8s");
-			case AgentType.StandAlone :
-				throw new IsxAppException("目前不支持standalone");
-			default :
-				throw new IsxAppException("agent类型不支持");
-		}
+		AgentService agentService = getAgentService(deployContainerReq.getAgentType());
+		sparkLauncher = agentService.genSparkLauncher(deployContainerReq);
+		appId = agentService.executeWork(sparkLauncher);
 
 		return DeployContainerRes.builder().appId(appId).port(port).build();
 	}

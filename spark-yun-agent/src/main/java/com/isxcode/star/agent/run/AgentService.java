@@ -1,5 +1,6 @@
 package com.isxcode.star.agent.run;
 
+import com.isxcode.star.api.agent.pojos.req.DeployContainerReq;
 import com.isxcode.star.api.agent.pojos.req.YagExecuteWorkReq;
 import org.apache.spark.launcher.SparkLauncher;
 
@@ -26,4 +27,8 @@ public interface AgentService {
 	String getAppData(String appId, String sparkHomePath) throws IOException;
 
 	void killApp(String appId, String sparkHomePath, String agentHomePath) throws IOException;
+
+	String getAgentName();
+
+	SparkLauncher genSparkLauncher(DeployContainerReq deployContainerReq) throws IOException;
 }

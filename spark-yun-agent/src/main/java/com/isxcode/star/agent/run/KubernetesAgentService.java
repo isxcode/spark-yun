@@ -1,6 +1,8 @@
 package com.isxcode.star.agent.run;
 
 import com.alibaba.fastjson2.JSON;
+import com.isxcode.star.api.agent.constants.AgentType;
+import com.isxcode.star.api.agent.pojos.req.DeployContainerReq;
 import com.isxcode.star.api.agent.pojos.req.YagExecuteWorkReq;
 import com.isxcode.star.api.work.constants.WorkType;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
@@ -337,5 +339,15 @@ public class KubernetesAgentService implements AgentService {
 		} catch (InterruptedException e) {
 			throw new IsxAppException(e.getMessage());
 		}
+	}
+
+	@Override
+	public String getAgentName() {
+		return AgentType.K8S;
+	}
+
+	@Override
+	public SparkLauncher genSparkLauncher(DeployContainerReq deployContainerReq) throws IOException {
+		throw new IsxAppException("暂不支持");
 	}
 }
