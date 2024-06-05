@@ -10,6 +10,7 @@ import com.isxcode.star.api.tenant.pojos.res.PageTenantRes;
 import com.isxcode.star.api.tenant.pojos.res.QueryUserTenantRes;
 import com.isxcode.star.api.user.constants.RoleType;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
+import com.isxcode.star.modules.license.repository.LicenseStore;
 import com.isxcode.star.modules.tenant.entity.TenantEntity;
 import com.isxcode.star.modules.tenant.mapper.TenantMapper;
 import com.isxcode.star.modules.tenant.repository.TenantRepository;
@@ -46,7 +47,34 @@ public class TenantBizService {
 
 	private final WorkflowRepository workflowRepository;
 
+	private final LicenseStore licenseStore;
+
 	public void addTenant(AddTenantReq tetAddTenantReq) {
+
+		if (tetAddTenantReq.getMaxWorkflowNum() == null) {
+			tetAddTenantReq.setMaxWorkflowNum(1);
+		}
+		if (tetAddTenantReq.getMaxMemberNum() == null) {
+			tetAddTenantReq.setMaxMemberNum(1);
+		}
+
+		// 判断租户数量是否达到上限
+		if (licenseStore.getLicense() != null) {
+			// 获取租户数总和
+			long tenantCount = tenantRepository.count();
+			// 比较租户数最大值
+			if (licenseStore.getLicense().getMaxTenantNum() < tenantCount + 1) {
+				throw new IsxAppException("租户数超出许可证限制数:" + licenseStore.getLicense().getMaxTenantNum() + ",请升级许可证");
+			}
+			// 比较成员数最大值
+			if (licenseStore.getLicense().getMaxMemberNum() < tetAddTenantReq.getMaxMemberNum()) {
+				throw new IsxAppException("成员数超出许可证限制数:" + licenseStore.getLicense().getMaxMemberNum() + ",请升级许可证");
+			}
+			// 比较作业流数最大值
+			if (licenseStore.getLicense().getMaxWorkflowNum() < tetAddTenantReq.getMaxWorkflowNum()) {
+				throw new IsxAppException("作业流数超出许可证限制数:" + licenseStore.getLicense().getMaxWorkflowNum() + ",请升级许可证");
+			}
+		}
 
 		// 判断名称是否存在
 		Optional<TenantEntity> tenantEntityOptional = tenantRepository.findByName(tetAddTenantReq.getName());

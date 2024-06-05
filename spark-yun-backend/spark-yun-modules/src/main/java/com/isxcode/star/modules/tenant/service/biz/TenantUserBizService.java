@@ -8,6 +8,7 @@ import com.isxcode.star.api.tenant.pojos.res.PageTenantUserRes;
 import com.isxcode.star.api.user.constants.RoleType;
 import com.isxcode.star.api.user.constants.UserStatus;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
+import com.isxcode.star.modules.license.repository.LicenseStore;
 import com.isxcode.star.modules.tenant.entity.TenantEntity;
 import com.isxcode.star.modules.tenant.service.TenantService;
 import com.isxcode.star.security.user.TenantUserEntity;
@@ -40,6 +41,8 @@ public class TenantUserBizService {
 
 	private final TenantService tenantService;
 
+	private final LicenseStore licenseStore;
+
 	public void addTenantUser(AddTenantUserReq turAddTenantUserReq) {
 
 		// 已req中的tenantId为主
@@ -52,6 +55,12 @@ public class TenantUserBizService {
 		long memberCount = tenantUserRepository.countByTenantId(tenantId);
 		if (memberCount + 1 > tenant.getMaxMemberNum()) {
 			throw new IsxAppException("超出租户的最大成员限制");
+		}
+		// 判断是否超过许可证成员最大值
+		if (licenseStore.getLicense() != null) {
+			if (memberCount + 1 > licenseStore.getLicense().getMaxMemberNum()) {
+				throw new IsxAppException("超出许可证租户的最大成员限制");
+			}
 		}
 
 		// 判断对象用户是否合法
