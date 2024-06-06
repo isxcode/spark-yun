@@ -205,7 +205,8 @@ public class SparkSqlExecutor extends WorkExecutor {
 		}
 
 		// 解析db
-		if (StringUtils.isNotBlank(workRunContext.getDatasourceId())) {
+		if (StringUtils.isNotBlank(workRunContext.getDatasourceId())
+				&& workRunContext.getClusterConfig().getEnableHive()) {
 			DatasourceEntity datasource = datasourceService.getDatasource(workRunContext.getDatasourceId());
 			try {
 				String database = datasourceService.parseDbName(datasource.getJdbcUrl());
