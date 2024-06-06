@@ -3,6 +3,7 @@ package com.isxcode.star.modules.cluster.controller;
 import com.isxcode.star.api.cluster.pojos.req.*;
 import com.isxcode.star.api.cluster.pojos.res.EnoQueryNodeRes;
 import com.isxcode.star.api.cluster.pojos.res.GetClusterNodeRes;
+import com.isxcode.star.api.cluster.pojos.res.TestAgentRes;
 import com.isxcode.star.api.main.constants.ModuleCode;
 import com.isxcode.star.common.annotations.successResponse.SuccessResponse;
 import com.isxcode.star.modules.cluster.service.biz.ClusterNodeBizService;
@@ -112,6 +113,14 @@ public class ClusterNodeController {
 	public GetClusterNodeRes getClusterNode(@Valid @RequestBody GetClusterNodeReq getClusterNodeReq) {
 
 		return clusterNodeBizService.getClusterNode(getClusterNodeReq);
+	}
+
+	@Operation(summary = "节点链接测试接口")
+	@PostMapping("/testAgent")
+	@SuccessResponse("测试完成")
+	public TestAgentRes testAgent(@Valid @RequestBody TestAgentReq testAgentReq) {
+
+		return clusterNodeBizService.testAgent(testAgentReq);
 	}
 
 }
