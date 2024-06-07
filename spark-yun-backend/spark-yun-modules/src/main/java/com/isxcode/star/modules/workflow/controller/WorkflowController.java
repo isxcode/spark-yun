@@ -6,7 +6,7 @@ import com.isxcode.star.api.work.pojos.res.GetWorkflowDefaultClusterRes;
 import com.isxcode.star.api.workflow.pojos.req.*;
 import com.isxcode.star.api.workflow.pojos.res.GetRunWorkInstancesRes;
 import com.isxcode.star.api.workflow.pojos.res.GetWorkflowRes;
-import com.isxcode.star.api.workflow.pojos.res.OnExternalCallRes;
+import com.isxcode.star.api.workflow.pojos.res.GetInvokeUrlRes;
 import com.isxcode.star.api.workflow.pojos.res.PageWorkflowRes;
 import com.isxcode.star.common.annotations.successResponse.SuccessResponse;
 import com.isxcode.star.modules.workflow.service.WorkflowBizService;
@@ -15,7 +15,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
@@ -175,25 +174,12 @@ public class WorkflowController {
 		return workflowBizService.getWorkflowDefaultCluster(getWorkflowDefaultClusterReq);
 	}
 
-	// @Operation(summary = "收藏工作流接口")
-	// @GetMapping("/favourWorkflow")
-	// @SuccessResponse("收藏成功")
-	// public void favourWorkflow(
-	// @Schema(description = "作业流唯一id", example =
-	// "sy_ba1f12b5c8154f999a02a5be2373a438")
-	// @RequestParam
-	// String workflowId) {
-	//
-	// workflowFavourBizService.favourWorkflow(workflowId);
-	// }
+	@Operation(summary = "获取作业流外部调用url接口")
+	@PostMapping("/getInvokeUrl")
+	@SuccessResponse("获取成功")
+	public GetInvokeUrlRes getInvokeUrl(@Valid @RequestBody GetInvokeUrlReq getInvokeUrlReq) {
 
-	@Operation(summary = "启用外部调用作业流功能")
-	@PostMapping("/onExternalCall")
-	@SuccessResponse("保存成功")
-	public OnExternalCallRes onExternalCall(@Valid @RequestBody OnExternalCallReq onExternalCallReq,
-			HttpServletRequest request) {
-
-		return workflowConfigBizService.onExternalCall(onExternalCallReq, request);
+		return workflowBizService.getInvokeUrl(getInvokeUrlReq);
 	}
 
 	@Operation(summary = "外部调用作业流")
