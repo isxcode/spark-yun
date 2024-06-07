@@ -3,7 +3,6 @@ package com.isxcode.star.modules.workflow.service;
 import com.alibaba.fastjson.JSON;
 import com.isxcode.star.api.workflow.pojos.req.ConfigWorkflowReq;
 import com.isxcode.star.api.workflow.pojos.req.ConfigWorkflowSettingReq;
-import com.isxcode.star.api.workflow.pojos.req.OffExternalCallReq;
 import com.isxcode.star.api.workflow.pojos.req.OnExternalCallReq;
 import com.isxcode.star.api.workflow.pojos.res.OnExternalCallRes;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
@@ -53,7 +52,7 @@ public class WorkflowConfigBizService {
 		String flowWebConfig = JSON.toJSONString(wfcConfigWorkflowReq.getWebConfig());
 
 		// 获取工作流
-		WorkflowEntity workflow = workflowBizService.getWorkflowEntity(wfcConfigWorkflowReq.getWorkflowId());
+		WorkflowEntity workflow = workflowService.getWorkflow(wfcConfigWorkflowReq.getWorkflowId());
 
 		// 从webConfig中解析出所有节点
 		List<String> nodeList = WorkflowUtils.parseNodeList(flowWebConfig);
@@ -97,6 +96,7 @@ public class WorkflowConfigBizService {
 		WorkflowConfigEntity workflowConfig = workflowService.getWorkflowConfig(workflow.getConfigId());
 
 		workflowConfig.setCronConfig(JSON.toJSONString(configWorkflowSettingReq.getCronConfig()));
+		workflowConfig.setInvokeStatus(configWorkflowSettingReq.getInvokeStatus());
 		workflowConfigRepository.save(workflowConfig);
 	}
 
@@ -116,14 +116,6 @@ public class WorkflowConfigBizService {
 		// "/workflow/invoke");
 		// return OnExternalCallRes.builder().url(url).accessKey(accessKey).build();
 		return null;
-	}
-
-	public void offExternalCall(OffExternalCallReq offExternalCallReq) {
-		String workflowConfigId = offExternalCallReq.getWorkflowConfigId();
-
-		WorkflowConfigEntity workflowConfig = getWorkflowConfig(workflowConfigId);
-		// workflowConfig.setExternalCall(OFF);
-		workflowConfigRepository.save(workflowConfig);
 	}
 
 }

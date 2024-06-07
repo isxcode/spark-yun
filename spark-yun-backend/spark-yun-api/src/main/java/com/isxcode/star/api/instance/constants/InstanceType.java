@@ -10,4 +10,7 @@ public interface InstanceType {
 
 	/** 自动调度. */
 	String AUTO = "AUTO";
+
+	/** 外部调用. */
+	String INVOKE = "INVOKE";
 }
