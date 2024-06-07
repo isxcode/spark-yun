@@ -64,6 +64,12 @@ cd spark-yun
 ./gradlew install package
 ```
 
+### 源码运行
+
+```bash
+./gradlew backend
+```
+
 ### 联系我们
 
 邮箱：hello@isxcode.com
