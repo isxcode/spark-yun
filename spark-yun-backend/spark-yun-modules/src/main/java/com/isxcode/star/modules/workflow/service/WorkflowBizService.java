@@ -21,6 +21,7 @@ import com.isxcode.star.api.workflow.pojos.dto.WorkflowToken;
 import com.isxcode.star.api.workflow.pojos.req.*;
 import com.isxcode.star.api.workflow.pojos.res.GetRunWorkInstancesRes;
 import com.isxcode.star.api.workflow.pojos.res.GetWorkflowRes;
+import com.isxcode.star.api.workflow.pojos.res.GetInvokeUrlRes;
 import com.isxcode.star.api.workflow.pojos.res.PageWorkflowRes;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.star.backend.api.base.properties.IsxAppProperties;
@@ -733,5 +734,14 @@ public class WorkflowBizService {
 
 		// 调用作业流执行
 		workflowService.runWorkflow(invokeWorkflowReq.getWorkflowId(), InstanceType.INVOKE);
+	}
+
+	public GetInvokeUrlRes getInvokeUrl(GetInvokeUrlReq getInvokeUrlReq) {
+
+		workflowService.getWorkflow(getInvokeUrlReq.getWorkflowId());
+
+		String invokeUrl = workflowService.getInvokeUrl(getInvokeUrlReq.getWorkflowId());
+
+		return GetInvokeUrlRes.builder().url(invokeUrl).build();
 	}
 }
