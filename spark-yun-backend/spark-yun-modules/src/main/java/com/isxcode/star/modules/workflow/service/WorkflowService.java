@@ -85,9 +85,9 @@ public class WorkflowService {
 		String token = JwtUtils.encrypt(isxAppProperties.getAesSlat(), workflowToken, isxAppProperties.getJwtKey(),
 				365 * 24 * 60);
 
-		return "curl '" + httpUrlBuilder + "'" + "  -H 'Content-Type: application/json;charset=UTF-8'"
-				+ "  -H 'Accept: application/json, text/plain, */*'" + "  --data-raw '{\"workflowId\":\"" + workflowId
-				+ "\",\"token\":\"" + token + "\"}'";
+		return "curl '" + httpUrlBuilder + "' \n" + "   -H 'Content-Type: application/json;charset=UTF-8' \n"
+				+ "   -H 'Accept: application/json, text/plain, */*' \n" + "   --data-raw '{\"workflowId\":\""
+				+ workflowId + "\",\"token\":\"" + token + "\"}'";
 	}
 
 	/**
