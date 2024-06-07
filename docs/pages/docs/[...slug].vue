@@ -241,7 +241,7 @@ function scrollTo(element, headerOffset = 80) {
         bottom: 0;
         -ms-overflow-style: none;
         overflow-y: scroll;
-        scrollbar-width: none;
+        scrollbar-width: thin;
       }
     }
   }
