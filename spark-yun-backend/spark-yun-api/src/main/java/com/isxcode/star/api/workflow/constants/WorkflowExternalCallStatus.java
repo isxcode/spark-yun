@@ -1,11 +1,17 @@
 package com.isxcode.star.api.workflow.constants;
 
-/** 工作流外部调用状态. */
+/**
+ * 工作流外部调用状态.
+ */
 public interface WorkflowExternalCallStatus {
 
-	/** 外部调用已打开. */
-	char ON = '1';
+	/**
+	 * 打开.
+	 */
+	String ON = "ON";
 
-	/** 外部调用已关闭. */
-	char OFF = '0';
+	/**
+	 * 关闭.
+	 */
+	String OFF = "OFF";
 }

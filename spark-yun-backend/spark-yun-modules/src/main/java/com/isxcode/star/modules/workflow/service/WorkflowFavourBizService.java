@@ -14,13 +14,13 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class WorkflowFavourBizService {
 
-	private final WorkflowBizService workflowBizService;
+	private final WorkflowService workflowServices;
 
 	private final WorkflowFavourRepository workflowFavourRepository;
 
 	public void favourWorkflow(String workflowId) {
 
-		workflowBizService.getWorkflowEntity(workflowId);
+		workflowServices.getWorkflow(workflowId);
 
 		// 判断工作流是否被收藏过
 		Optional<WorkflowFavourEntity> workflowFavourEntityOptional = workflowFavourRepository

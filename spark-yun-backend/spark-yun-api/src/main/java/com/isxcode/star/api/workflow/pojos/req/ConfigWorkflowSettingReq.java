@@ -15,4 +15,8 @@ public class ConfigWorkflowSettingReq {
 
 	@Schema(title = "cron定时配置")
 	private CronConfig cronConfig;
+
+	@Schema(title = "是否启动外部调用", example = "OFF关闭/ON开启")
+	@NotEmpty(message = "调用状态invokeStatus不能为空")
+	private String invokeStatus;
 }

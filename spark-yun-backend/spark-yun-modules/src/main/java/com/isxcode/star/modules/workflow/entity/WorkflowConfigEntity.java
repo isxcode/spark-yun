@@ -47,6 +47,8 @@ public class WorkflowConfigEntity {
 
 	private String cronConfig;
 
+	private String invokeStatus;
+
 	@CreatedDate
 	private LocalDateTime createDateTime;
 
