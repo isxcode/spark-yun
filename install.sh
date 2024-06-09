@@ -8,22 +8,21 @@ if ! command -v tar &>/dev/null; then
   exit 1
 fi
 
-# 判断是否有java命令
+# 判断是否有java环境
 if ! command -v java &>/dev/null; then
   echo "【安装结果】：未检测到java命令，请安装java命令，"
   exit 1
 fi
 
-# 判断是否有java命令
+# 判断是否有node环境
 if ! command -v node &>/dev/null; then
   echo "【安装结果】：未检测到node命令，请安装node命令，参考安装命令：brew install node"
   exit 1
 fi
 
-# 判断是否有java命令
-if ! command -v npm &>/dev/null; then
-  echo "【安装结果】：未检测到npm命令，请安装npm命令，参考安装命令：brew install node"
-  exit 1
+# 如果没有pnpm命令,需要安装
+if ! command -v pnpm &>/dev/null; then
+   npm install pnpm -g
 fi
 
 # 获取当前路径
