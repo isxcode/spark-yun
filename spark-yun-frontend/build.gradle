@@ -10,19 +10,11 @@ tasks.register('npm_build', Exec) {
 
   mustRunAfter("clean_backend_resources")
 
-  if (System.properties['os.name'].toString().contains('Mac OS X')||System.properties['os.name'].toString().contains('Linux')) {
-    commandLine 'sh', '-c', '''
+  commandLine 'sh', '-c', '''
       rm -rf node_modules
       pnpm install --force
       pnpm run build
     '''
-  } else {
-    commandLine 'cmd', '/c', '''
-      rm -rf node_modules
-      pnpm install --force
-      pnpm run build
-    '''
-  }
 }
 
 // 拷贝后端resources中的templates里

@@ -1,17 +1,8 @@
 tasks.register('autotest', Exec) {
 
-  if (System.properties['os.name'].toString().contains('Mac OS X') || System.properties['os.name'].toString().contains('Linux')) {
-    commandLine 'sh', '-c', '''
+  commandLine 'sh', '-c', '''
       pip3 install -r requirements.txt
       playwright install
       python3 Run_case.py
     '''
-  } else {
-    commandLine 'cmd', '/c', '''
-      pip3 install -r requirements.txt
-      playwright install
-      python3 Run_case.py
-    '''
-  }
-
 }
