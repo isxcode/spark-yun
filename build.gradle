@@ -118,95 +118,53 @@ tasks.register('package', GradleBuild) {
 // gradle start，启动项目
 tasks.register('start', Exec) {
 
-  if (System.properties['os.name'].toString().contains('Mac OS X') || System.properties['os.name'].toString().contains('Linux')) {
-    commandLine 'sh', '-c', '''
+  commandLine 'sh', '-c', '''
       rm -rf spark-yun-dist/build/distributions/zhiqingyun
       tar -vzxf spark-yun-dist/build/distributions/zhiqingyun.tar.gz -C spark-yun-dist/build/distributions/
       cd spark-yun-dist/build/distributions/zhiqingyun/bin
       bash start.sh
     '''
-  } else {
-    commandLine 'cmd', '/c', '''
-      rm -rf spark-yun-dist/build/distributions/zhiqingyun
-      tar -vzxf spark-yun-dist/build/distributions/zhiqingyun.tar.gz -C spark-yun-dist/build/distributions/
-      cd spark-yun-dist/build/distributions/zhiqingyun/bin
-      bash start.sh
-    '''
-  }
 }
 
 // gradle docker，构建docker镜像
 tasks.register('docker', Exec) {
 
-  if (System.properties['os.name'].toString().contains('Mac OS X') || System.properties['os.name'].toString().contains('Linux')) {
-    commandLine 'sh', '-c', '''
+  commandLine 'sh', '-c', '''
       docker buildx uninstall
       docker build -t isxcode/zhiqingyun:''' + version_number + ''' -f ./Dockerfile .
      '''
-  } else {
-    commandLine 'cmd', '/c', '''
-      docker buildx uninstall
-      docker build -t isxcode/zhiqingyun:''' + version_number + ''' -f ./Dockerfile .
-    '''
-  }
 }
 
 // gradle deploy，发布docker镜像
 tasks.register('deploy', Exec) {
 
-  if (System.properties['os.name'].toString().contains('Mac OS X') || System.properties['os.name'].toString().contains('Linux')) {
-    commandLine 'sh', '-c', '''
+  commandLine 'sh', '-c', '''
       docker buildx install
       docker buildx use zhiqingyun-builder
       docker buildx build --platform linux/amd64,linux/arm64/v8 -t isxcode/zhiqingyun:''' + version_number + ''' -f ./Dockerfile . --push
     '''
-  } else {
-    commandLine 'cmd', '/c', '''
-      docker buildx install
-      docker buildx use zhiqingyun-builder
-      docker buildx build --platform linux/amd64,linux/arm64/v8 -t isxcode/zhiqingyun:''' + version_number + ''' -f ./Dockerfile . --push
-    '''
-  }
 }
 
 // gradle web，单独启动官网
 tasks.register('website', Exec) {
 
-  if (System.properties['os.name'].toString().contains('Mac OS X') || System.properties['os.name'].toString().contains('Linux')) {
-    commandLine 'sh', '-c', '''
+  commandLine 'sh', '-c', '''
       cd docs
       rm -rf node_modules
       pnpm install --force
       pnpm run dev
      '''
-  } else {
-    commandLine 'cmd', '/c', '''
-      cd docs
-      rm -rf node_modules
-      pnpm install --force
-      pnpm run dev
-     '''
-  }
 }
 
 // gradle frontend，单独启动前端
 tasks.register('frontend', Exec) {
 
-  if (System.properties['os.name'].toString().contains('Mac OS X') || System.properties['os.name'].toString().contains('Linux')) {
-    commandLine 'sh', '-c', '''
+  commandLine 'sh', '-c', '''
       cd spark-yun-frontend
       rm -rf node_modules
       pnpm install --force
       pnpm run dev --host
     '''
-  } else {
-    commandLine 'cmd', '/c', '''
-      cd spark-yun-frontend
-      rm -rf node_modules
-      pnpm install --force
-      pnpm run dev --host
-    '''
-  }
 }
 
 // gradle backend，单独启动后端
@@ -223,10 +181,5 @@ tasks.register('autotest', Exec) {
 
 // gradle install，安装项目依赖
 tasks.register('install', Exec) {
-
-  if (System.properties['os.name'].toString().contains('Mac OS X') || System.properties['os.name'].toString().contains('Linux')) {
-    commandLine 'sh', '-c', 'bash install.sh'
-  } else {
-    commandLine 'cmd', '/c', 'install.bat'
-  }
+  commandLine 'sh', '-c', 'bash install.sh'
 }
