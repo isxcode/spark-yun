@@ -76,14 +76,15 @@ function mousewheelEvent(e: any) {
 }
 
 function closeEvent() {
-    modelConfig.visible = false
-}
-
-onUnmounted(() => {
     if (timer.value) {
         clearInterval(timer.value)
     }
     timer.value = null
+    modelConfig.visible = false
+}
+
+onUnmounted(() => {
+    
 })
 
 
