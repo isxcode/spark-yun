@@ -1,0 +1,42 @@
+name: release project
+
+on:
+  workflow_dispatch:
+    inputs:
+      admin_github_token:
+        description: '管理员github token'
+        required: true
+        type: string
+
+env:
+  ADMIN_GITHUB_TOKEN: ${{ inputs.admin_github_token }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+
+    strategy:
+      fail-fast: false
+      matrix:
+        node:
+          - '18'
+
+    steps:
+
+      - name: Set timezone to Asia/Shanghai
+        run: |
+          sudo timedatectl set-timezone Asia/Shanghai
+          date
+
+      - name: Checkout spark-yun
+        uses: actions/checkout@v4
+        with:
+          token: ${{ env.ADMIN_GITHUB_TOKEN }}
+          repository: "isxcode/spark-yun"
+          ref: 'main'
+
