@@ -57,4 +57,3 @@ jobs:
               echo "Waiting for service to be available..."
               sleep 1
             done
-            exit 0
