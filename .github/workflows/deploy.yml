@@ -65,5 +65,6 @@ jobs:
             bash /opt/zhiqingyun/bin/start.sh
             until curl -s https://zhiqingyun-demo.isxcode.com/tools/open/health | grep "UP"; do
               echo "Waiting for service to be available..."
-              sleep 5
+              sleep 1
             done
+            exit 0
