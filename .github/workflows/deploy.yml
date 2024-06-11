@@ -60,7 +60,9 @@ jobs:
             rm -rf /opt/zhiqingyun/conf/application-local.yml
             curl -ssL https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/application-local.yml -o /opt/zhiqingyun/conf/application-local.yml
             cp -r /opt/zhiqingyun/resources /opt/zhiqingyun/resources_bak/resources_${{ inputs.deploy_date }}_bak
-            bash /opt/zhiqingyun/bin/start.sh &
+            rm -rf /opt/zhiqingyun/bin/start.sh
+            curl -ssL https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/start.sh -o /opt/zhiqingyun/bin/start.sh
+            bash /opt/zhiqingyun/bin/start.sh
             until curl -s https://zhiqingyun-demo.isxcode.com/tools/open/health | grep "UP"; do
               echo "Waiting for service to be available..."
               sleep 5
