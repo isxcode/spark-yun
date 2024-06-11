@@ -40,7 +40,7 @@ jobs:
           repository: "isxcode/spark-yun"
           ref: 'main'
 
-      - name: deploy
+      - name: config ssl
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.HOST }}
@@ -48,6 +48,8 @@ jobs:
           password: ${{ secrets.PASSWORD }}
           script_stop: true
           script: |
+            rm -rf /data/nginx/ssl/zhiqingyun-demo.isxcode.com.pem
+            rm -rf /data/nginx/ssl/zhiqingyun-demo.isxcode.com.key
             wget https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/ssl/zhiqingyun-demo.isxcode.com.pem -O /data/nginx/ssl/zhiqingyun-demo.isxcode.com.pem
             wget https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/ssl/zhiqingyun-demo.isxcode.com.key -O /data/nginx/ssl/zhiqingyun-demo.isxcode.com.key
             nginx -s reload
