@@ -63,7 +63,8 @@ jobs:
             rm -rf /opt/zhiqingyun/bin/start.sh
             curl -ssL https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/start.sh -o /opt/zhiqingyun/bin/start.sh
             bash /opt/zhiqingyun/bin/start.sh
+            sleep 120
             until curl -s https://zhiqingyun-demo.isxcode.com/tools/open/health | grep "UP"; do
               echo "Waiting for service to be available..."
-              sleep 5
+              sleep 1
             done
