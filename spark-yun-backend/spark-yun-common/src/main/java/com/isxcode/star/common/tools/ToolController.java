@@ -1,4 +1,4 @@
-package com.isxcode.star.common.version;
+package com.isxcode.star.common.tools;
 
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import io.swagger.v3.oas.annotations.Operation;
@@ -8,6 +8,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.logging.LogLevel;
 import org.springframework.boot.logging.LoggingSystem;
 import org.springframework.cache.CacheManager;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -26,19 +28,23 @@ public class ToolController {
 
 	private final CacheManager cacheManager;
 
+	private final ResourceLoader resourceLoader;
+
 	@Operation(summary = "获取版本号接口")
 	@GetMapping("/open/version")
 	public String getLeoLastVersion() {
 
-		File file = new File("./VERSION");
-		FileInputStream fis;
 		try {
-			fis = new FileInputStream(file);
-			BufferedReader br = new BufferedReader(new InputStreamReader(fis));
-			String version = br.readLine();
-			br.close();
-			fis.close();
-			return version;
+			Resource resource = resourceLoader.getResource("classpath:VERSION");
+			InputStream inputStream = resource.getInputStream();
+			BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+			StringBuilder content = new StringBuilder();
+			String line;
+			while ((line = reader.readLine()) != null) {
+				content.append(line);
+			}
+			reader.close();
+			return content.toString();
 		} catch (IOException e) {
 			log.error(e.getMessage());
 			throw new IsxAppException("获取版本号异常", e.getMessage());
@@ -69,4 +75,10 @@ public class ToolController {
 		return Objects.requireNonNull(cacheManager.getCache(name)).getNativeCache().toString();
 	}
 
+	@Operation(summary = "返回当前应用状态")
+	@GetMapping("/open/health")
+	public String health() {
+
+		return "UP";
+	}
 }

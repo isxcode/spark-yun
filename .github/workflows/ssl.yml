@@ -50,6 +50,6 @@ jobs:
           script: |
             rm -rf /data/nginx/ssl/zhiqingyun-demo.isxcode.com.pem
             rm -rf /data/nginx/ssl/zhiqingyun-demo.isxcode.com.key
-            wget https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/ssl/zhiqingyun-demo.isxcode.com.pem -O /data/nginx/ssl/zhiqingyun-demo.isxcode.com.pem
-            wget https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/ssl/zhiqingyun-demo.isxcode.com.key -O /data/nginx/ssl/zhiqingyun-demo.isxcode.com.key
+            curl -ssL https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/ssl/zhiqingyun-demo.isxcode.com.pem -o /data/nginx/ssl/zhiqingyun-demo.isxcode.com.pem
+            curl -ssL https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/ssl/zhiqingyun-demo.isxcode.com.key -o /data/nginx/ssl/zhiqingyun-demo.isxcode.com.key
             nginx -s reload
