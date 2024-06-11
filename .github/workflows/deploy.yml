@@ -1,10 +1,14 @@
-name: release project
+name: deploy demo
 
 on:
   workflow_dispatch:
     inputs:
       admin_github_token:
         description: '管理员github token'
+        required: true
+        type: string
+      deploy_date:
+        description: '发布日期,例如2023-12-12'
         required: true
         type: string
 
@@ -40,3 +44,19 @@ jobs:
           repository: "isxcode/spark-yun"
           ref: 'main'
 
+      - name: deploy demo
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          script_stop: true
+          script: |
+            rm -rf /tmp/zhiqingyun.tar.gz
+            wget https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/zhiqingyun.tar.gz -O /tmp/zhiqingyun.tar.gz
+            bash /opt/zhiqingyun/bin/stop.sh
+            tar -vzxf /tmp/zhiqingyun.tar.gz -C /opt/
+            rm -rf /opt/zhiqingyun/conf/application-local.yml
+            wget https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/application-local.yml -O /opt/zhiqingyun/conf/application-local.yml
+            cp -r /opt/zhiqingyun/resources /opt/zhiqingyun/resources_bak/resources_${{ inputs.deploy_date }}_bak
+            bash /opt/zhiqingyun/bin/start.sh
