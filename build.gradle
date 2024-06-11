@@ -6,7 +6,7 @@ plugins {
   id "com.diffplug.spotless" version "${SPOTLESS_VERSION}"
 }
 
-def version_number = new File(rootDir.getAbsolutePath(), 'VERSION').readLines()[0].trim()
+def version_number = new File(rootDir.getAbsolutePath(), 'spark-yun-backend/spark-yun-main/src/main/resources/VERSION').readLines()[0].trim()
 
 allprojects {
 
