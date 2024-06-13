@@ -1,6 +1,6 @@
 package com.isxcode.star.api.view.pojo.res;
 
-import com.isxcode.star.api.view.pojo.dto.ViewData;
+import com.isxcode.star.api.view.pojo.dto.EchartOption;
 import lombok.Builder;
 import lombok.Data;
 
@@ -8,5 +8,5 @@ import lombok.Data;
 @Builder
 public class GetViewCardDataRes {
 
-	private ViewData viewData;
+	private EchartOption viewData;
 }
