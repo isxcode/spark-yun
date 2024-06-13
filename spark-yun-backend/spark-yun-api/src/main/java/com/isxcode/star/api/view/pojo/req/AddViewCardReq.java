@@ -12,7 +12,7 @@ public class AddViewCardReq {
 	@NotEmpty(message = "name不能为空")
 	private String name;
 
-	@Schema(title = "大屏组件名称", example = "Basic Line Chart / Basic Bar / Doughnut Chart with Rounded Corner ")
+	@Schema(title = "大屏组件名称", example = "Line/Bar/Pie ")
 	@NotEmpty(message = "type不能为空")
 	private String type;
 
