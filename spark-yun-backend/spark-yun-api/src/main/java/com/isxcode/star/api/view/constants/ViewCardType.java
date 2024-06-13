@@ -8,15 +8,20 @@ public interface ViewCardType {
 	/**
 	 * 基础折线图.
 	 */
-	String BASIC_LINE_CHART = "Basic Line Chart";
+	String LINE = "Line";
 
 	/**
 	 * 基础柱状图.
 	 */
-	String BASIC_BAR = "Basic Bar";
+	String BAR = "Bar";
 
 	/**
 	 * 环形图.
 	 */
-	String DOUGHNUT_CHART = "Doughnut Chart";
+	String PIE = "Pie";
+
+  /**
+   * 点图.
+   */
+  String SCATTER = "Scatter";
 }
