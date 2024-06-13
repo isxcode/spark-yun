@@ -33,7 +33,7 @@ export function useMonitor(currentColony: Ref<ColonyInfo | undefined>, currentFr
         value: currentInfo.value.cpuPercent || 0,
         unit: '%',
         color: '#2A82E4',
-        data: cpuMonitorDataList.value 
+        data: cpuMonitorDataList.value
       },
       {
         type: 'usedMemorySize',
@@ -41,15 +41,7 @@ export function useMonitor(currentColony: Ref<ColonyInfo | undefined>, currentFr
         value: currentInfo.value.usedMemorySize || 0,
         unit: 'GB',
         color: '#FF8D1A',
-        data: memoryMonitorDataList.value 
-      },
-      {
-        type: 'diskIoWriteSpeed',
-        name: 'IO读写',
-        value: currentInfo.value.diskIoWriteSpeed || 0,
-        unit: 'KB/s',
-        color: '#00BAAD',
-        data: diskIoMonitorList.value
+        data: memoryMonitorDataList.value
       },
       {
         type: 'usedStorageSize',
@@ -58,6 +50,14 @@ export function useMonitor(currentColony: Ref<ColonyInfo | undefined>, currentFr
         unit: 'GB',
         color: '#D43030',
         data: storageMonitorDataList.value
+      },
+      {
+        type: 'diskIoWriteSpeed',
+        name: 'IO读写',
+        value: currentInfo.value.diskIoWriteSpeed || 0,
+        unit: 'KB/s',
+        color: '#00BAAD',
+        data: diskIoMonitorList.value
       }
     ]
   })
