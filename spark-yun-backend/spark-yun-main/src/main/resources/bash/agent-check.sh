@@ -37,19 +37,19 @@ else
 fi
 
 # 获取所有内存
-ALL_MEMORY=$(grep MemTotal /proc/meminfo | awk '{print $2/1024/1024}' | bc -l | awk '{printf "%.2f\n", $1}')
+ALL_MEMORY=$(free | grep Mem: | awk '{printf "%.1f", $2/1024/1024}')
 
 # 获取已用内存
-USED_MEMORY=$(free | grep Mem: | awk '{printf "%.2f", $3/1024/1024}')
+USED_MEMORY=$(free | grep Mem: | awk '{printf "%.1f", $3/1024/1024}')
 
 # 获取所有存储
-ALL_STORAGE=$(lsblk -b | grep disk | awk '{total += $4} END {print total/1024/1024/1024}')
+ALL_STORAGE=$(lsblk -b | grep disk | awk '{total += $4} END {printf "%.1f", total/1024/1024/1024}')
 
 # 获取已用存储
-USED_STORAGE=$(df -h -t ext4 | awk '{total += $3} END {print total}')
+USED_STORAGE=$(df -B 1 -T | egrep 'ext4|xfs|btrfs' | awk '{total += $4} END {printf "%.1f",total/1024/1024/1024}')
 
 # 获取cpu使用率
-CPU_PERCENT=$(mpstat 1 1 | awk '/Average:/ {printf "%.2f", 100 - $NF}')
+CPU_PERCENT=$(mpstat 1 1 | awk 'END {printf "%.2f", 100 - $NF}')
 
 # 返回json的日志
 json_output="{ \
