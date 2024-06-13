@@ -20,8 +20,8 @@ public interface ViewCardType {
 	 */
 	String PIE = "Pie";
 
-  /**
-   * 点图.
-   */
-  String SCATTER = "Scatter";
+	/**
+	 * 点图.
+	 */
+	String SCATTER = "Scatter";
 }

@@ -17,5 +17,5 @@ public class GetViewCardRes {
 
 	private Object webConfig;
 
-  private EchartOption exampleData;
+	private EchartOption exampleData;
 }

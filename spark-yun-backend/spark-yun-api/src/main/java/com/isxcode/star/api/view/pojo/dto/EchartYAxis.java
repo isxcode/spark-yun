@@ -11,5 +11,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class EchartYAxis {
 
-  private String type;
+	private String type;
 }
