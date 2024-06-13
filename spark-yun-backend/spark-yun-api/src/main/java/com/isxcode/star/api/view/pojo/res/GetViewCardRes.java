@@ -2,7 +2,6 @@ package com.isxcode.star.api.view.pojo.res;
 
 import com.isxcode.star.api.view.pojo.dto.DataSql;
 import com.isxcode.star.api.view.pojo.dto.EchartOption;
-import com.isxcode.star.api.view.pojo.dto.ViewData;
 import lombok.Data;
 
 @Data
