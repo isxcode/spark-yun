@@ -10,10 +10,10 @@ BASE_PATH=$(cd "$(dirname "$0")" || exit ; pwd)
 USED_MEMORY=$(free | grep Mem: | awk '{printf "%.0f", $3 *1024}')
 
 # 获取已用存储
-USED_STORAGE=$(df -B 1 -t ext4 | awk '{total += $3} END {print total}')
+USED_STORAGE=$(df -B 1 -T | egrep 'ext4|xfs|btrfs' | awk '{total += $4} END {print total}')
 
 # 获取cpu使用率
-CPU_PERCENT=$(mpstat 1 1 | awk '/Average:/ {printf "%.2f", 100 - $NF}')
+CPU_PERCENT=$(mpstat 1 1 | awk 'END {printf "%.2f", 100 - $NF}')
 
 # 获取网络IO读写速度（单位：字节/秒）
 NET_IO_READ=$(cat /proc/net/dev | grep eth0 | awk '{print $2}')
