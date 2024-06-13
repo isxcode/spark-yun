@@ -11,5 +11,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class EchartTooltip {
 
-  private String trigger;
+	private String trigger;
 }

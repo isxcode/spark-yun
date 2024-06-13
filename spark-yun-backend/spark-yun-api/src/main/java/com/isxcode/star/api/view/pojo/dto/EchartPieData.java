@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class EchartPieData {
 
-  private double value;
+	private double value;
 
-  private String name;
+	private String name;
 }

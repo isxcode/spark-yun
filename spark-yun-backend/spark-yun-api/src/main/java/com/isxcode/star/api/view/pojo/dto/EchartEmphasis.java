@@ -11,5 +11,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class EchartEmphasis {
 
-  private EchartItemStyle itemStyle;
+	private EchartItemStyle itemStyle;
 }

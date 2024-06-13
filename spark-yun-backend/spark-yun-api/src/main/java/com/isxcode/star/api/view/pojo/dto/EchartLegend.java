@@ -11,9 +11,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class EchartLegend {
 
-  private long bottom;
+	private long bottom;
 
-  private String left;
+	private String left;
 
-  private String orient;
+	private String orient;
 }

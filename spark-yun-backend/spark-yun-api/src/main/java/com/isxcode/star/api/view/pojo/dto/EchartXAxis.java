@@ -13,7 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 public class EchartXAxis {
 
-  private String type;
+	private String type;
 
-  private List<String> data;
+	private List<String> data;
 }

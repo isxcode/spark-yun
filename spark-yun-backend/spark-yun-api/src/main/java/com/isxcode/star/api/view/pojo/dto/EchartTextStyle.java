@@ -11,6 +11,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class EchartTextStyle {
 
-  private String fontSize;
+	private String fontSize;
 
 }

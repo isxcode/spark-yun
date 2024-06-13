@@ -13,15 +13,15 @@ import java.util.List;
 @AllArgsConstructor
 public class EchartOption {
 
-  private EchartTitle title;
+	private EchartTitle title;
 
-  private EchartTooltip tooltip;
+	private EchartTooltip tooltip;
 
-  private EchartLegend legend;
+	private EchartLegend legend;
 
-  private List<EchartSeries> series;
+	private List<EchartSeries> series;
 
-  private EchartXAxis xAxis;
+	private EchartXAxis xAxis;
 
-  private EchartYAxis yAxis;
+	private EchartYAxis yAxis;
 }
