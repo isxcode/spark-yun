@@ -23,6 +23,8 @@ public class PageViewCardRes {
 
 	private String datasourceId;
 
+	private String datasourceName;
+
 	private String createBy;
 
 	@JsonSerialize(using = LocalDateTimeSerializer.class)

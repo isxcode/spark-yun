@@ -15,8 +15,6 @@ public class PageViewRes {
 
 	private String name;
 
-	private String type;
-
 	private String status;
 
 	private String remark;
