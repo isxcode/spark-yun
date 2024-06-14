@@ -11,5 +11,5 @@ public class PieData {
 
 	private String name;
 
-	private BigDecimal value;
+	private Double value;
 }
