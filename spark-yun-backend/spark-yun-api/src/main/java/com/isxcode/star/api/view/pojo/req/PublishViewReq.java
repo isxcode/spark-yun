@@ -6,9 +6,9 @@ import lombok.Data;
 import javax.validation.constraints.NotEmpty;
 
 @Data
-public class OfflineViewCardReq {
+public class PublishViewReq {
 
-	@Schema(title = "卡片id", example = "sy_123")
+	@Schema(title = "大屏id", example = "sy_123")
 	@NotEmpty(message = "id不能为空")
 	private String id;
 }

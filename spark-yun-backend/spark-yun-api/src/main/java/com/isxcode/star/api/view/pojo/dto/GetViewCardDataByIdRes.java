@@ -1,16 +1,15 @@
-package com.isxcode.star.api.view.pojo.res;
+package com.isxcode.star.api.view.pojo.dto;
 
-import com.isxcode.star.api.view.pojo.dto.CardInfo;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
-public class GetViewCardRes {
+public class GetViewCardDataByIdRes {
 
-	private CardInfo cardInfo;
+	private EchartOption viewData;
 }
