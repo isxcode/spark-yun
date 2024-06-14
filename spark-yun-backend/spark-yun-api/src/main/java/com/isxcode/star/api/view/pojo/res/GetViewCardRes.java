@@ -7,6 +7,8 @@ import lombok.Data;
 @Data
 public class GetViewCardRes {
 
+  private String id;
+
 	private String name;
 
 	private String type;
