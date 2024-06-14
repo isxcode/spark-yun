@@ -1,16 +1,19 @@
 package com.isxcode.star.api.view.pojo.res;
 
-import com.isxcode.star.api.view.pojo.dto.CardInfo;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class GetViewCardRes {
+public class GetSqlDataRes {
 
-	private CardInfo cardInfo;
+	private List<String> columns;
+
+	private List<List<String>> rows;
 }

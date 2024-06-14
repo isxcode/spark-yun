@@ -8,7 +8,7 @@ import javax.validation.constraints.NotEmpty;
 @Data
 public class PublishViewCardReq {
 
-	@Schema(title = "大屏id", example = "sy_123")
+	@Schema(title = "卡片id", example = "sy_123")
 	@NotEmpty(message = "id不能为空")
 	private String id;
 }
