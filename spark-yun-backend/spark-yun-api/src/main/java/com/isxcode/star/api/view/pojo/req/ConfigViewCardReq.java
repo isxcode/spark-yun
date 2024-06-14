@@ -16,5 +16,7 @@ public class ConfigViewCardReq {
 
 	private Object webConfig;
 
+  private Object exampleData;
+
 	private DataSql dataSql;
 }
