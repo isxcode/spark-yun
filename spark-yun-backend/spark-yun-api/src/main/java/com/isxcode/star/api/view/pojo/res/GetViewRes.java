@@ -6,11 +6,21 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-@Data
-public class GetViewCardRes {
+import java.util.List;
 
-	private CardInfo cardInfo;
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@Data
+public class GetViewRes {
+
+	private String id;
+
+	private String name;
+
+	private String status;
+
+	private Object webConfig;
+
+	private List<CardInfo> cards;
 }
