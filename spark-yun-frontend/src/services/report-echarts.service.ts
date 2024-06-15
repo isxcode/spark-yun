@@ -74,3 +74,71 @@ export function ConfigReportComponentData(params: any): Promise<any> {
         params: params
     })
 }
+
+// 报表大屏展示-配置大屏组件信息
+export function QueryReportView(params: any): Promise<any> {
+    return http.request({
+        method: 'post',
+        url: '/vip/view/pageView',
+        params: params
+    })
+}
+// 报表大屏展示-添加视图
+export function AddReportView(params: any): Promise<any> {
+    return http.request({
+        method: 'post',
+        url: '/vip/view/addView',
+        params: params
+    })
+}
+// 报表大屏展示-获取详情视图数据
+export function GetReportViewDetail(params: any): Promise<any> {
+    return http.request({
+        method: 'post',
+        url: '/vip/view/getView',
+        params: params
+    })
+}
+
+// 报表大屏展示-保存大屏配置数据
+export function SaveReportViewDetail(params: any): Promise<any> {
+    return http.request({
+        method: 'post',
+        url: '/vip/view/configView',
+        params: params
+    })
+}
+
+// 报表大屏展示-刷新真实数据接口
+export function RefreshReportViewItemData(params: any): Promise<any> {
+    return http.request({
+        method: 'post',
+        url: '/vip/view/getViewCardDataById',
+        params: params
+    })
+}
+
+// 报表大屏展示-发布大屏
+export function PublishReportViewData(params: any): Promise<any> {
+    return http.request({
+        method: 'post',
+        url: '/vip/view/publishView',
+        params: params
+    })
+}
+// 报表大屏展示-下线
+export function UnderlineReportViewData(params: any): Promise<any> {
+    return http.request({
+        method: 'post',
+        url: '/vip/view/offlineView',
+        params: params
+    })
+}
+// 报表大屏展示-删除
+export function DeleteReportViewData(params: any): Promise<any> {
+    return http.request({
+        method: 'post',
+        url: '/vip/view/deleteView',
+        params: params
+    })
+}

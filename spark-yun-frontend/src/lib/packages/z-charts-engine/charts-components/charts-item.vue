@@ -9,9 +9,11 @@
 import { ref, defineProps, onMounted, computed, onUnmounted, defineEmits, watch, nextTick } from 'vue'
 import * as echarts from 'echarts'
 
-const props = defineProps(['config', 'renderSence'])
+const props = defineProps(['config', 'renderSence', 'getPreviewOption', 'getRealDataOption'])
 const emit = defineEmits(['removeChart'])
 let myChart: any = null
+
+const timer = ref()
 
 const currentChartId = computed(() => {
     return props.config.uuid
@@ -25,14 +27,29 @@ function removeChart() {
     emit('removeChart', props.config)
 }
 
-onMounted(() => {
+onMounted(async () => {
 	if (props.config.i !== 'drop') {
 		myChart = echarts.init(document.getElementById(currentChartId.value))
-		myChart.setOption(props.config.option);
-		setTimeout(() => {
-			myChart.resize()
-		})
-	
+
+        // 拖拽时获取预览数据
+        if (props.renderSence === 'edit' && props.getPreviewOption && props.getPreviewOption instanceof Function) {
+            const option = await props.getPreviewOption(props.config)
+            myChart.setOption(option);
+            setTimeout(() => {
+                myChart.resize()
+            })
+        } else if (props.renderSence === 'readonly' && props.getRealDataOption && props.getRealDataOption instanceof Function) {
+            const option = await props.getRealDataOption(props.config)
+            myChart.setOption(option);
+            setTimeout(() => {
+                myChart.resize()
+            })
+            timer.value = setInterval(() => {
+                props.getRealDataOption(props.config).then(res => {
+                    myChart.setOption(res);
+                })
+            }, 60000)
+        }
 		window.addEventListener('resize', resizeChart)
 	}
 
@@ -40,6 +57,10 @@ onMounted(() => {
 
 onUnmounted(() => {
     window.removeEventListener('resize', resizeChart)
+    if (timer.value) {
+        clearInterval(timer.value)
+    }
+    timer.value = null
 })
 
 defineExpose({
