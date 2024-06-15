@@ -309,8 +309,16 @@ public class SyncWorkExecutor extends WorkExecutor {
 			// 解析返回状态，并保存
 			RunWorkRes workStatusRes = JSON.parseObject(JSON.toJSONString(baseResponse.getData()), RunWorkRes.class);
 			workInstance.setSparkStarRes(JSON.toJSONString(workStatusRes));
-			logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("运行状态:")
-					.append(workStatusRes.getAppStatus()).append("\n");
+
+			// 如果上一行是RUNNING，状态也是RUNNING，不更新日志，否则日志太长了
+			String[] split = logBuilder.toString().split("\n");
+			List<String> logList = Arrays.asList(split);
+			if (!(logList.get(logList.size() - 1).contains("RUNNING")
+					&& "RUNNING".equals(workStatusRes.getAppStatus()))) {
+				logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("运行状态:")
+						.append(workStatusRes.getAppStatus()).append("\n");
+			}
+
 			workInstance = updateInstance(workInstance, logBuilder);
 
 			// 如果状态是运行中，更新日志，继续执行
