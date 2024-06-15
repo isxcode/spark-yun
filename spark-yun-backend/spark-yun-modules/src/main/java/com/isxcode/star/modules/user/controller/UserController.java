@@ -1,11 +1,16 @@
 package com.isxcode.star.modules.user.controller;
 
+import com.isxcode.star.agent.grpc.ExecuteWorkRpcReq;
+import com.isxcode.star.agent.grpc.ExecuteWorkRpcRes;
+import com.isxcode.star.agent.grpc.GreeterGrpc;
 import com.isxcode.star.api.main.constants.ModuleCode;
 import com.isxcode.star.api.user.constants.RoleType;
 import com.isxcode.star.api.user.pojos.req.*;
 import com.isxcode.star.api.user.pojos.res.*;
 import com.isxcode.star.common.annotations.successResponse.SuccessResponse;
 import com.isxcode.star.modules.user.service.UserBizService;
+import io.grpc.ManagedChannel;
+import io.grpc.ManagedChannelBuilder;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
@@ -14,10 +19,7 @@ import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "用户模块")
 @RestController
@@ -130,5 +132,15 @@ public class UserController {
 	public GetAnonymousTokenRes getAnonymousToken(@Valid @RequestBody GetAnonymousTokenReq getAnonymousTokenReq) {
 
 		return userBizService.getAnonymousToken(getAnonymousTokenReq);
+	}
+
+	@GetMapping("/open/grpc")
+	public void open() {
+
+		ManagedChannel localhost = ManagedChannelBuilder.forAddress("localhost", 8081).usePlaintext().build();
+		GreeterGrpc.GreeterBlockingStub blockingStub = GreeterGrpc.newBlockingStub(localhost);
+		ExecuteWorkRpcReq song = ExecuteWorkRpcReq.newBuilder().setWorkId("song").build();
+		ExecuteWorkRpcRes executeWorkRpcRes = blockingStub.executeWork(song);
+		System.out.println(executeWorkRpcRes);
 	}
 }

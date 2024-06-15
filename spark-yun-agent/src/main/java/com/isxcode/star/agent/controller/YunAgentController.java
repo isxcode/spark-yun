@@ -8,10 +8,14 @@ import com.isxcode.star.api.agent.pojos.req.YagExecuteWorkReq;
 import com.isxcode.star.api.agent.pojos.res.*;
 import com.isxcode.star.api.main.constants.ModuleCode;
 import com.isxcode.star.common.annotations.successResponse.SuccessResponse;
+import io.grpc.Grpc;
+import io.grpc.InsecureServerCredentials;
+import io.grpc.Server;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 import javax.validation.Valid;
 
 import lombok.RequiredArgsConstructor;
@@ -110,4 +114,26 @@ public class YunAgentController {
 
 		return yunAgentBizService.executeContainerSql(executeContainerSqlReq);
 	}
+
+	public static void main(String[] args) throws IOException, InterruptedException {
+
+		final Server server = Grpc.newServerBuilderForPort(8081, InsecureServerCredentials.create())
+				.addService(new AgentServiceRpc()).build().start();
+
+		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+
+			server.shutdown();
+			try {
+				if (!server.awaitTermination(30, TimeUnit.SECONDS)) {
+					server.shutdownNow();
+					server.awaitTermination(5, TimeUnit.SECONDS);
+				}
+			} catch (InterruptedException ex) {
+				server.shutdownNow();
+			}
+		}));
+
+		server.awaitTermination();
+	}
+
 }

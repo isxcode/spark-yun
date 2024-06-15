@@ -2,6 +2,7 @@ dependencies {
 
   api(project(':spark-yun-backend:spark-yun-common'))
   api(project(':spark-yun-backend:spark-yun-security'))
+  api(project(':spark-yun-grpc'))
 
   // spring-cache
   api 'org.springframework.boot:spring-boot-starter-cache'
@@ -22,4 +23,9 @@ dependencies {
 //  implementation "org.prqllang:prql-java:${PRQL_VERSION}"
 
   implementation fileTree(dir: rootDir.getAbsolutePath() + '/resources/libs', include: [ 'prql-java-0.5.2.jar'])
+
+    // grpc
+  implementation 'io.grpc:grpc-netty:1.64.0'
+  implementation 'io.grpc:grpc-protobuf:1.64.0'
+  implementation 'io.grpc:grpc-stub:1.64.0'
 }

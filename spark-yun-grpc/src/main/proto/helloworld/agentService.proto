@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "com.isxcode.star.agent.grpc";
+option java_outer_classname = "AgentService";
+option objc_class_prefix = "HLW";
+
+package com.isxcode.star.agent.grpc;
+
+service Greeter {
+  rpc ExecuteWork (ExecuteWorkRpcReq) returns (ExecuteWorkRpcRes) {}
+}
+
+message ExecuteWorkRpcReq {
+  string workId = 1;
+}
+
+message ExecuteWorkRpcRes {
+  string appId = 1;
+}
