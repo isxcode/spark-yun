@@ -78,6 +78,20 @@ export const menuListData: Array<Menu> = [
     authType: [ 'ROLE_TENANT_MEMBER', 'ROLE_TENANT_ADMIN' ],
     childPage: []
   },
+  {
+    code: 'report-components',
+    name: '报表组件',
+    icon: 'Grid',
+    authType: [ 'ROLE_TENANT_MEMBER', 'ROLE_TENANT_ADMIN' ],
+    childPage: ['report-item']
+  },
+  {
+    code: 'report-views',
+    name: '数据大屏',
+    icon: 'Histogram',
+    authType: [ 'ROLE_TENANT_MEMBER', 'ROLE_TENANT_ADMIN' ],
+    childPage: ['report-views-detail']
+  },
   // {
   //   code: 'custom-form',
   //   name: '分享表单',
