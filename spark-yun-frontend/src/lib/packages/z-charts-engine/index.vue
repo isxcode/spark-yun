@@ -13,6 +13,8 @@
             class="charts-edit-container"
             :renderSence="renderSence"
             :chartList="componentList"
+            :getPreviewOption="getPreviewOption"
+            :getRealDataOption="getRealDataOption"
         ></ChartsComponents>
     </div>
 </template>
@@ -22,7 +24,7 @@ import { ref, defineProps, defineEmits } from 'vue'
 import ChartsChoose from './charts-choose/index.vue'
 import ChartsComponents from './charts-components/charts-grid-layout.vue'
 
-const props = defineProps(['chartsList', 'renderSence', 'componentList'])
+const props = defineProps(['chartsList', 'renderSence', 'componentList', 'getPreviewOption', 'getRealDataOption'])
 const emit = defineEmits(['getChartListEvent', 'previewChatEvent'])
 
 const chartComponentsRef = ref()

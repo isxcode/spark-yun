@@ -146,6 +146,7 @@ const chartConfig = reactive({
 
 function initData() {
     myChart = echarts.init(document.getElementById('currentChart'))
+    loading.value = true
     GetReportComponentData({
         id: route.query.id
     }).then((res: any) => {
@@ -155,7 +156,7 @@ function initData() {
             myChart.resize()
         })
         window.addEventListener('resize', resizeChart)
-        baseConfig.sqls = res.data.cardInfo.dataSql.sqlList
+        baseConfig.sqls = res.data.cardInfo?.dataSql?.sqlList || ['']
         baseConfig.sqls.forEach(s => {
             fullScreenArr.value.push(false)
         })
@@ -164,7 +165,11 @@ function initData() {
         baseConfig.datasourceId = res.data.cardInfo.datasourceId
 
         chartConfig.title = res.data.cardInfo.webConfig.title
-    }).catch(() => {})
+
+        loading.value = false
+    }).catch(() => {
+        loading.value = false
+    })
 }
 
 // 保存数据
@@ -225,7 +230,6 @@ function refreshDataEvent() {
         echartOption.value = res.data.viewData
         myChart.setOption(echartOption.value)
     }).catch(() => {
-        dataSourceList.value = []
     })
 }
 
