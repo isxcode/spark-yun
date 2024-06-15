@@ -1,36 +1,48 @@
 <template>
     <div class="charts-components" id="chartsComponentsInstance">
         <el-scrollbar>
-            <grid-layout
-                ref="gridlayoutRef"
-                :layout.sync="componentList"
-                :col-num="colNum"
-                :row-height="10"
-                :is-draggable="renderSence !== 'readonly'"
-                :is-resizable="renderSence !== 'readonly'"
-                :is-mirrored="false"
-                :vertical-compact="true"
-                :margin="[12, 12]"
-                :use-css-transforms="true"
-                @layout-updated="layoutUpdatedEvent"
-            >
-                <grid-item
-                    v-for="(item, index) in componentList"
-                    :ref="(el) => gridItemRef[index] = el"
-                    :x="item.x"
-                    :y="item.y"
-                    :w="item.w"
-                    :h="item.h"
-                    :i="item.i"
-                    :minW="30"
-                    :minH="15"
-                    :key="item.i"
-                    :static="false"
-                    @resize="resizeEvent($event, index)"
+            <template v-if="componentList.length">
+                <grid-layout
+                    ref="gridlayoutRef"
+                    :layout.sync="componentList"
+                    :col-num="colNum"
+                    :row-height="10"
+                    :is-draggable="renderSence !== 'readonly'"
+                    :is-resizable="renderSence !== 'readonly'"
+                    :is-mirrored="false"
+                    :vertical-compact="true"
+                    :margin="[12, 12]"
+                    :use-css-transforms="true"
+                    @layout-updated="layoutUpdatedEvent"
                 >
-                    <ChartsItem :ref="el => chartsItemRef[index] = el" :renderSence="renderSence" :config="item" @removeChart="removeChart"></ChartsItem>
-                </grid-item>
-            </grid-layout>
+                    <grid-item
+                        v-for="(item, index) in componentList"
+                        :ref="(el) => gridItemRef[index] = el"
+                        :x="item.x"
+                        :y="item.y"
+                        :w="item.w"
+                        :h="item.h"
+                        :i="item.i"
+                        :minW="30"
+                        :minH="15"
+                        :key="item.i"
+                        :static="false"
+                        @resize="resizeEvent($event, index)"
+                    >
+                        <ChartsItem
+                            :ref="el => chartsItemRef[index] = el"
+                            :renderSence="renderSence"
+                            :config="item"
+                            :getPreviewOption="getPreviewOption"
+                            :getRealDataOption="getRealDataOption"
+                            @removeChart="removeChart"
+                        ></ChartsItem>
+                    </grid-item>
+                </grid-layout>
+            </template>
+            <template v-else>
+                <EmptyPage></EmptyPage>
+            </template>
         </el-scrollbar>
     </div>
 </template>
@@ -38,6 +50,7 @@
 <script lang="ts" setup>
 import { defineProps, defineEmits, computed, markRaw, ref, shallowRef, watch, nextTick, onMounted } from 'vue'
 import ChartsItem from './charts-item.vue'
+import EmptyPage from '../empty-page/index.vue'
 
 interface ChartLayout {
     chartName: string
@@ -65,11 +78,10 @@ interface DragPos {
     h: number
     i: string
 }
-const props = defineProps(['renderSence', 'chartList'])
+const props = defineProps(['renderSence', 'chartList', 'getPreviewOption', 'getRealDataOption'])
 
 const emit = defineEmits(['update:modelValue', 'componentListChange', 'chooseItem', 'removeInstance'])
 const colNum = ref(300)
-const chooseItemData = ref({})
 const chartsItemRef = ref<any[]>([])
 const gridlayoutRef = ref()
 const gridItemRef = ref<any[]>([])

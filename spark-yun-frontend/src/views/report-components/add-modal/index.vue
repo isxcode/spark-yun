@@ -4,12 +4,12 @@
       <el-form-item label="名称" prop="name">
         <el-input v-model="formData.name" maxlength="200" placeholder="请输入" />
       </el-form-item>
-      <el-form-item label="图表类型" prop="type" v-if="!isEdit">
+      <el-form-item label="图表类型" prop="type">
         <el-select v-model="formData.type" placeholder="请选择">
           <el-option v-for="item in chartTypeList" :key="item.value" :label="item.label" :value="item.value" />
         </el-select>
       </el-form-item>
-      <el-form-item label="数据源" prop="datasourceId" v-if="!isEdit">
+      <el-form-item label="数据源" prop="datasourceId">
         <el-select v-model="formData.datasourceId" placeholder="请选择" @visible-change="getDataSourceList">
           <el-option v-for="item in dataSourceList" :key="item.value" :label="item.label" :value="item.value" />
         </el-select>

@@ -9,17 +9,24 @@
             ></el-input>
         </div>
         <div class="form-dragger-widget">
-            <div :draggable="true" v-for="(element, index) in chartsList" :key="index" class="edit-item" @drag="startMoveEvent(element, $event)" @dragend="endMoveEvent(element, $event)">
-                <span class="draggable-name">{{element.chartName}}</span>
-                <span class="draggable-type">{{element.typeName}}</span>
-                <el-button class="preview-chart" type="primary" link @click="previewChatEvent(element)">预览</el-button>
-            </div>
+            <template v-if="chartsList.length">
+                <div :draggable="true" v-for="(element, index) in chartsList" :key="index" class="edit-item" @drag="startMoveEvent(element, $event)" @dragend="endMoveEvent(element, $event)">
+                    <span class="draggable-name"><EllipsisTooltip class="label-name-text" :label="element.chartName" /></span>
+                    <span class="draggable-type">{{element.typeName}}</span>
+                    <el-button class="preview-chart" type="primary" link @click="previewChatEvent(element)">预览</el-button>
+                </div>
+            </template>
+            <template v-else>
+                <EmptyPage></EmptyPage>
+            </template>
         </div>
     </div>
 </template>
 
 <script lang="ts" setup>
 import { ref, defineEmits, nextTick, defineProps } from 'vue'
+import EmptyPage from '../empty-page/index.vue'
+import EllipsisTooltip from '../ellipsis-tooltip/ellipsis-tooltip.vue'
 
 const props = defineProps(['chartsList'])
 const emit = defineEmits([ 'endMoveEvent', 'startMoveEvent', 'getChartListEvent', 'previewChatEvent'])
@@ -80,11 +87,13 @@ function initData() {
             margin: 0 12px;
             width: 100%;
             .el-input__wrapper {
-                border-radius: 15px;
+                border-radius: 10px;
             }
         }
     }
     .form-dragger-widget {
+        position: relative;
+        height: calc(100vh - 114px);
 
         .edit-item {
             height: 50px;
@@ -95,7 +104,7 @@ function initData() {
             padding: 4px 24px;
             box-sizing: border-box;
             border: 1px solid #d5d5d5;
-            border-radius: 30px;
+            border-radius: 10px;
             cursor: grab;
             margin: 10px 12px 0;
             box-shadow: getCssVar('box-shadow', 'lighter');
@@ -117,6 +126,9 @@ function initData() {
             .draggable-type {
                 color: #f34c00;
                 line-height: normal;
+            }
+            .draggable-name {
+                max-width: 110px;
             }
             .preview-chart {
                 position: absolute;

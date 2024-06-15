@@ -59,14 +59,10 @@ export const colConfigs: colConfig[] = [
     customSlot: 'statusTag'
   },
   {
-    prop: 'createBy',
-    title: '创建人',
-    minWidth: 140
-  },
-  {
-    prop: 'checkDateTime',
-    title: '检测时间',
-    minWidth: 140
+    prop: 'createDateTime',
+    title: '创建时间',
+    minWidth: 140,
+    showOverflowTooltip: true,
   },
   {
     prop: 'remark',
@@ -78,7 +74,7 @@ export const colConfigs: colConfig[] = [
     title: '操作',
     align: 'center',
     customSlot: 'options',
-    width: 80
+    width: 100
   }
 ]
 
