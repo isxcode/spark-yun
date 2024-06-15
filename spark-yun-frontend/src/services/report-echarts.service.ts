@@ -25,6 +25,23 @@ export function DeleteReportComponentData(params: any): Promise<any> {
         params: params
     })
 }
+// 报表组件-刷新数据
+export function RefreshReportComponentData(params: any): Promise<any> {
+    return http.request({
+        method: 'post',
+        url: '/vip/view/getViewCardData',
+        params: params
+    })
+}
+// 报表组件-单个sql预览
+export function PreviewReportSingleComponentData(params: any): Promise<any> {
+    return http.request({
+        method: 'post',
+        url: '/vip/view/getSqlData',
+        params: params
+    })
+}
+
 // 报表组件-发布大屏组件
 export function PublishReportComponentData(params: any): Promise<any> {
     return http.request({
