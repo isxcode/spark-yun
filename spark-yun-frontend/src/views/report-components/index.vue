@@ -1,0 +1,202 @@
+<template>
+    <Breadcrumb :bread-crumb-list="breadCrumbList" />
+    <div class="zqy-seach-table report-component">
+        <div class="zqy-table-top">
+            <el-button type="primary" @click="addData">添加组件</el-button>
+            <div class="zqy-seach">
+                <el-input
+                    v-model="keyword"
+                    placeholder="请输入名称/备注 回车进行搜索"
+                    :maxlength="200"
+                    clearable
+                    @input="inputEvent"
+                    @keyup.enter="initData(false)"
+                />
+            </div>
+        </div>
+        <LoadingPage :visible="loading" :network-error="networkError" @loading-refresh="initData(false)">
+            <div class="zqy-table">
+                <BlockTable
+                    :table-config="tableConfig"
+                    @size-change="handleSizeChange"
+                    @current-change="handleCurrentChange"
+                >
+                    <template #nameSlot="scopeSlot">
+                        <span class="name-click" @click="showDetail(scopeSlot.row)">{{ scopeSlot.row.name }}</span>
+                    </template>
+                    <template #statusTag="scopeSlot">
+                        <div class="btn-group">
+                            <el-tag v-if="scopeSlot.row.status === 'NEW'" class="ml-2" type="info">新建</el-tag>
+                            <el-tag v-if="scopeSlot.row.status === 'OFFLINE'" class="ml-2" type="danger">已下线</el-tag>
+                            <el-tag v-if="scopeSlot.row.status === 'PUBLISHED'" class="ml-2" type="success">已发布</el-tag>
+                        </div>
+                    </template>
+                    <template #options="scopeSlot">
+                        <div class="btn-group">
+                            <span v-if="['NEW', 'OFFLINE'].includes(scopeSlot.row.status)" @click="publishReport(scopeSlot.row)">发布</span>
+                            <span v-else @click="underlineReport(scopeSlot.row)">下线</span>
+                            <span @click="deleteData(scopeSlot.row)">删除</span>
+                        </div>
+                    </template>
+                </BlockTable>
+            </div>
+        </LoadingPage>
+        <AddModal ref="addModalRef" />
+    </div>
+</template>
+
+<script lang="ts" setup>
+import { reactive, ref, onMounted } from 'vue'
+import AddModal from './add-modal/index.vue'
+import Breadcrumb from '@/layout/bread-crumb/index.vue'
+import BlockTable from '@/components/block-table/index.vue'
+import LoadingPage from '@/components/loading/index.vue'
+
+import { BreadCrumbList, TableConfig } from './report-components.config'
+import { QueryReportComponent, CreateReportComponentData, PublishReportComponentData, OfflineReportComponentData, DeleteReportComponentData } from '@/services/report-echarts.service'
+import { ElMessage, ElMessageBox } from 'element-plus'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+
+const breadCrumbList = reactive(BreadCrumbList)
+const tableConfig: any = reactive(TableConfig)
+const keyword = ref('')
+const loading = ref(false)
+const networkError = ref(false)
+const addModalRef = ref()
+
+function initData(tableLoading?: boolean) {
+    loading.value = tableLoading ? false : true
+    networkError.value = networkError.value || false
+    QueryReportComponent({
+        page: tableConfig.pagination.currentPage - 1,
+        pageSize: tableConfig.pagination.pageSize,
+        searchKeyWord: keyword.value
+    }).then((res: any) => {
+        tableConfig.tableData = res.data.content
+        tableConfig.pagination.total = res.data.totalElements
+        loading.value = false
+        tableConfig.loading = false
+        networkError.value = false
+    }).catch(() => {
+        tableConfig.tableData = [{}]
+        tableConfig.pagination.total = 0
+        loading.value = false
+        tableConfig.loading = false
+        networkError.value = true
+    })
+}
+
+function addData() {
+    addModalRef.value.showModal((data: any) => {
+        return new Promise((resolve: any, reject: any) => {
+            CreateReportComponentData(data).then((res: any) => {
+                initData()
+                ElMessage.success(res.msg)
+                resolve()
+            }).catch(err => {
+                reject(err)
+            })
+        })
+    })
+}
+
+// 删除
+function deleteData(data: any) {
+    ElMessageBox.confirm('确定删除该报表组件吗？', '警告', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+    }).then(() => {
+        DeleteReportComponentData({
+            id: data.id
+        }).then((res: any) => {
+            ElMessage.success(res.msg)
+            initData()
+        }).catch(() => {})
+    })
+}
+// 下线
+function underlineReport(data: any) {
+    ElMessageBox.confirm('确定下线该报表组件吗？', '警告', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+    }).then(() => {
+        OfflineReportComponentData({
+            id: data.id
+        }).then((res: any) => {
+            ElMessage.success(res.msg)
+            initData()
+        }).catch(() => {})
+    })
+}
+// 发布
+function publishReport(data: any) {
+    ElMessageBox.confirm('确定发布该报表组件吗？', '警告', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+    }).then(() => {
+        PublishReportComponentData({
+            id: data.id
+        }).then((res: any) => {
+            ElMessage.success(res.msg)
+            initData()
+        }).catch(() => {})
+    })
+}
+
+function showDetail(data: any) {
+  router.push({
+    name: 'report-item',
+    query: {
+        id: data.id
+    }
+  })
+}
+
+function inputEvent(e: string) {
+    if (e === '') {
+        initData()
+    }
+}
+
+function handleSizeChange(e: number) {
+    tableConfig.pagination.pageSize = e
+    initData()
+}
+
+function handleCurrentChange(e: number) {
+    tableConfig.pagination.currentPage = e
+    initData()
+}
+
+onMounted(() => {
+    tableConfig.pagination.currentPage = 1
+    tableConfig.pagination.pageSize = 10
+    initData()
+})
+</script>
+
+<style lang="scss">
+.zqy-seach-table {
+    .name-click {
+        cursor: pointer;
+        color: getCssVar('color', 'primary', 'light-5');
+
+        &:hover {
+            color: getCssVar('color', 'primary');
+        }
+    }
+    &.report-component {
+        .zqy-table {
+            .btn-group {
+                // justify-content: center;
+            }
+        }
+    }
+}
+</style>
+  ./report-components.config

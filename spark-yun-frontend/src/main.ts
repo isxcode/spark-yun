@@ -7,12 +7,10 @@ import "normalize.css"
 
 import VXETable from 'vxe-table'
 import 'vxe-table/lib/style.css'
-
 import '@antv/x6-vue-shape'
-
 import '@/assets/styles/global.scss'
-
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
+import VueGridLayout from 'vue-grid-layout'
 
 const app = createApp(App)
 for (const [ key, component ] of Object.entries(ElementPlusIconsVue)) {
@@ -23,4 +21,5 @@ app
   .use(VXETable)
   .use(pinia)
   .use(router)
+  .use(VueGridLayout)
   .mount('#app')
