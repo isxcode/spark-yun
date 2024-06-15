@@ -57,7 +57,7 @@ export const colConfigs: colConfig[] = [
         showOverflowTooltip: true
     },
     {
-        prop: 'datasourceId',
+        prop: 'datasourceName',
         title: '数据源',
         minWidth: 230,
         showOverflowTooltip: true

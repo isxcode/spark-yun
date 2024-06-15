@@ -38,8 +38,7 @@ const dataSourceList = ref([])  // 数据源
 const chartTypeList = ref([
   {
     label: '饼图',
-    // value: 'pie'
-    value: 'Basic Bar'
+    value: 'Pie'
   }
 ])
 

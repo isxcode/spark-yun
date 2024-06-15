@@ -2,9 +2,8 @@
     <Breadcrumb :bread-crumb-list="breadCrumbList" />
     <div class="report-item">
         <div class="report-button-container">
-            <el-button type="primary">保存</el-button>
-            <el-button type="primary">预览</el-button>
-            <el-button type="primary">发布</el-button>
+            <el-button type="primary" :loading="saveLoading" @click="saveConfigEvent">保存</el-button>
+            <el-button type="primary" :loading="saveLoading" @click="publishChartEvent">发布</el-button>
         </div>
         <LoadingPage :visible="loading" :network-error="networkError" @loading-refresh="initData(true)">
             <div v-if="showEcharts" class="charts-container" id="currentChart"></div>
@@ -52,7 +51,7 @@
                                         <el-icon class="sqls-container-add" @click="addSqlEvent"><CirclePlus /></el-icon>
                                         <div class="sqls-item" v-for="(sql, index) in baseConfig.sqls" :key="index" :class="{ 'show-screen__full': fullScreenArr[index] }">
                                             <div class="sql-option-container">
-                                                <span class="sql-option-preview">预览</span>
+                                                <span class="sql-option-preview" @click="previewChatEvent(sql)">预览</span>
                                                 <div class="sql-option-icon">
                                                     <el-icon v-if="baseConfig.sqls.length > 1" class="remove-sql" @click="removeSqlEvent(index)"><CircleClose /></el-icon>
                                                     <el-icon class="modal-full-screen" @click="fullScreenEvent(index)"><FullScreen v-if="!fullScreenArr[index]" /><Close v-else /></el-icon>
@@ -63,11 +62,11 @@
                                         </div>
                                     </el-form-item>
                                     <el-form-item>
-                                        <el-button type="primary">刷新数据</el-button>
+                                        <el-button type="primary" @click="refreshDataEvent">刷新数据</el-button>
                                     </el-form-item>
                                 </el-form>
                             </el-scrollbar>
-                        </div>  
+                        </div>
                     </el-tab-pane>
                     <el-tab-pane label="图表设置">
                         <div class="config-item">
@@ -85,7 +84,7 @@
                                             maxlength="200"
                                             placeholder="请输入"
                                         />
-                                    </el-form-item> 
+                                    </el-form-item>
                                     <el-form-item>
                                         <el-button type="primary" @click="updateChartEvent">更新图表</el-button>
                                     </el-form-item>
@@ -96,6 +95,7 @@
                 </el-tabs>
             </div>
         </LoadingPage>
+        <PreviewReport ref="previewReportRef"></PreviewReport>
     </div>
 </template>
 
@@ -107,13 +107,18 @@ import LoadingPage from '@/components/loading/index.vue'
 import * as echarts from 'echarts'
 import CodeMirror from 'vue-codemirror6'
 import {sql} from '@codemirror/lang-sql'
+import PreviewReport from '../preview-report/index.vue'
 
 import { BreadCrumbList, BaseConfigRules, ChartTypeList } from './report-item.config'
-import { GetReportComponentData } from '@/services/report-echarts.service'
-import { useRoute } from 'vue-router'
+import { ConfigReportComponentData, GetReportComponentData, RefreshReportComponentData, PublishReportComponentData } from '@/services/report-echarts.service'
+import { useRoute, useRouter } from 'vue-router'
+import { GetDatasourceList } from '@/services/datasource.service'
 
 const route = useRoute()
+const router = useRouter()
 
+const saveLoading = ref<boolean>(false)
+const previewReportRef = ref()
 const loading = ref(false)
 const showEcharts = ref(true)
 const networkError = ref(false)
@@ -122,51 +127,13 @@ const dataSourceList = ref([])  // 数据源
 const fullScreenArr = ref<boolean[]>([])   // 对应sql脚本全屏显示
 const sqlLang = ref<any>(sql())
 let myChart: any = null
-const echartOption = ref<any>(
-{
-    title: {
-        text: '测试饼图',
-        left: 'center'
-    },
-    tooltip: {
-        trigger: 'item'
-    },
-    legend: {
-        bottom: 10,
-        left: 'center'
-    },
-    series: [
-        {
-            // name: '测试饼图',
-            type: 'pie',
-            radius: '50%',
-            data: [
-                { value: 1048, name: 'Search Engine' },
-                { value: 735, name: 'Direct' },
-                { value: 580, name: 'Email' },
-                { value: 484, name: 'Union Ads' },
-                { value: 300, name: 'Video Ads1' },
-                { value: 300, name: 'Video Ads2' },
-                { value: 300, name: 'Video Ads3' },
-                { value: 300, name: 'Video Ads4' },
-            ],
-            emphasis: {
-                itemStyle: {
-                    shadowBlur: 10,
-                    shadowOffsetX: 0,
-                    shadowColor: 'rgba(0, 0, 0, 0.5)'
-                }
-            }
-        }
-    ]
-}
-)
+const echartOption = ref<any>()
 const breadCrumbList = reactive(BreadCrumbList)
 // 基础配置
 const baseConfigRules = reactive<FormRules>(BaseConfigRules)
 const baseConfig = reactive({
     name: '',           // 名称
-    type: 'pie',           // 类型
+    type: '',           // 类型
     datasourceId: '',   // 数据源
     sqls: [''],           // 聚合sql
 })
@@ -178,23 +145,60 @@ const chartConfig = reactive({
 })
 
 function initData() {
+    myChart = echarts.init(document.getElementById('currentChart'))
     GetReportComponentData({
         id: route.query.id
     }).then((res: any) => {
+        echartOption.value = res.data.cardInfo.exampleData
+        myChart.setOption(echartOption.value)
+        setTimeout(() => {
+            myChart.resize()
+        })
+        window.addEventListener('resize', resizeChart)
+        baseConfig.sqls = res.data.cardInfo.dataSql.sqlList
+        baseConfig.sqls.forEach(s => {
+            fullScreenArr.value.push(false)
+        })
+        baseConfig.name = res.data.cardInfo.name
+        baseConfig.type = res.data.cardInfo.type.toLowerCase()
+        baseConfig.datasourceId = res.data.cardInfo.datasourceId
 
+        chartConfig.title = res.data.cardInfo.webConfig.title
     }).catch(() => {})
+}
 
-    baseConfig.sqls.forEach(s => {
-        fullScreenArr.value.push(false)
+// 保存数据
+function saveConfigEvent() {
+    saveLoading.value = true
+    ConfigReportComponentData({
+        id: route.query.id,
+        webConfig: chartConfig,
+        exampleData: echartOption.value,
+        dataSql: {
+            sqlList: baseConfig.sqls
+        }
+    }).then((res: any) => {
+        saveLoading.value = false
+        ElMessage.success(res.msg)
+    }).catch(() => {
+        saveLoading.value = false
     })
+}
 
-    myChart = echarts.init(document.getElementById('currentChart'))
-    myChart.setOption(echartOption.value)
-    setTimeout(() => {
-        myChart.resize()
+// 发布
+function publishChartEvent() {
+    saveLoading.value = true
+    PublishReportComponentData({
+        id: route.query.id,
+    }).then((res: any) => {
+        saveLoading.value = false
+        ElMessage.success(res.msg)
+        router.push({
+            name: 'report-components'
+        })
+    }).catch(() => {
+        saveLoading.value = false
     })
-
-    window.addEventListener('resize', resizeChart)
 }
 
 // 基础配置事件
@@ -210,6 +214,21 @@ function removeSqlEvent(index: number) {
     baseConfig.sqls.splice(index, 1)
 }
 
+// 刷新数据
+function refreshDataEvent() {
+    RefreshReportComponentData({
+        id: route.query.id,
+        dataSql: {
+            sqlList: baseConfig.sqls
+        }
+    }).then((res: any) => {
+        echartOption.value = res.data.viewData
+        myChart.setOption(echartOption.value)
+    }).catch(() => {
+        dataSourceList.value = []
+    })
+}
+
 // 图表配置事件
 function updateChartEvent() {
     echartOption.value.title.text = chartConfig.title
@@ -219,8 +238,36 @@ function updateChartEvent() {
 function resizeChart() {
     myChart.resize()
 }
+// 查询数据源
+function getDataSourceList(e: boolean) {
+  if (e) {
+    GetDatasourceList({
+      page: 0,
+      pageSize: 10000,
+      searchKeyWord: ''
+    }).then((res: any) => {
+      dataSourceList.value = res.data.content.map((item: any) => {
+        return {
+          label: item.name,
+          value: item.id
+        }
+      })
+    }).catch(() => {
+        dataSourceList.value = []
+    })
+  }
+}
+
+// 预览
+function previewChatEvent(sql: string) {
+    previewReportRef.value.showModal({
+        datasourceId: baseConfig.datasourceId,
+        sql: sql
+    })
+}
 
 onMounted(() => {
+    getDataSourceList(true)
     initData()
 })
 

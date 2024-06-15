@@ -32,10 +32,10 @@
                         </div>
                     </template>
                     <template #options="scopeSlot">
-                        <div class="btn-group">
+                        <div class="btn-group" :style="{ 'justify-content': !['NEW', 'OFFLINE'].includes(scopeSlot.row.status) ? 'center' : 'space-between' }">
                             <span v-if="['NEW', 'OFFLINE'].includes(scopeSlot.row.status)" @click="publishReport(scopeSlot.row)">发布</span>
                             <span v-else @click="underlineReport(scopeSlot.row)">下线</span>
-                            <span @click="deleteData(scopeSlot.row)">删除</span>
+                            <span v-if="['NEW', 'OFFLINE'].includes(scopeSlot.row.status)" @click="deleteData(scopeSlot.row)">删除</span>
                         </div>
                     </template>
                 </BlockTable>
