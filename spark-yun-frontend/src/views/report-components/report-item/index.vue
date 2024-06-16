@@ -167,8 +167,9 @@ function initData() {
         chartConfig.title = res.data.cardInfo.webConfig.title
 
         loading.value = false
-    }).catch(() => {
+    }).catch((error: any) => {
         loading.value = false
+        console.error(error)
     })
 }
 

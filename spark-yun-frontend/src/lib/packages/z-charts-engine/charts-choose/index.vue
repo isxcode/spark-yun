@@ -101,7 +101,7 @@ function initData() {
             display: flex;
             flex-direction: column;
             justify-content: space-around;
-            padding: 4px 24px;
+            padding: 4px 12px;
             box-sizing: border-box;
             border: 1px solid #d5d5d5;
             border-radius: 10px;
