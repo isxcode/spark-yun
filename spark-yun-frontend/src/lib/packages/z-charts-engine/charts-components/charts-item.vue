@@ -34,7 +34,8 @@ onMounted(async () => {
         // 拖拽时获取预览数据
         if (props.renderSence === 'edit' && props.getPreviewOption && props.getPreviewOption instanceof Function) {
             const option = await props.getPreviewOption(props.config)
-            myChart.setOption(option);
+            props.config.webConfig = option.webConfig
+            myChart.setOption(option.exampleData);
             setTimeout(() => {
                 myChart.resize()
             })
@@ -44,11 +45,13 @@ onMounted(async () => {
             setTimeout(() => {
                 myChart.resize()
             })
-            timer.value = setInterval(() => {
-                props.getRealDataOption(props.config).then(res => {
-                    myChart.setOption(res);
-                })
-            }, 60000)
+            if (props.config?.webConfig?.time) {
+                timer.value = setInterval(() => {
+                    props.getRealDataOption(props.config).then(res => {
+                        myChart.setOption(res);
+                    })
+                }, props.config?.webConfig?.time * 1000)
+            }
         }
 		window.addEventListener('resize', resizeChart)
 	}
