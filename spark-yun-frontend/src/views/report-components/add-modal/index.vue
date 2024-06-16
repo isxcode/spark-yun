@@ -26,6 +26,7 @@
 import { reactive, defineExpose, ref, nextTick } from 'vue'
 import { ElMessage, FormInstance, FormRules } from 'element-plus'
 import { GetDatasourceList } from '@/services/datasource.service'
+import { ChartTypeList } from '../report-item/report-item.config'
 
 interface Option {
   label: string
@@ -35,12 +36,7 @@ interface Option {
 const form = ref<FormInstance>()
 const callback = ref<any>()
 const dataSourceList = ref([])  // 数据源
-const chartTypeList = ref([
-  {
-    label: '饼图',
-    value: 'Pie'
-  }
-])
+const chartTypeList = ref<Option[]>(ChartTypeList)
 
 const modelConfig = reactive({
   title: '添加组件',

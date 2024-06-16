@@ -39,6 +39,7 @@ import {
     PublishReportViewData
 } from '@/services/report-echarts.service'
 import { useRoute, useRouter } from 'vue-router'
+import { ChartTypeList } from '../../report-components/report-item/report-item.config'
 
 const authStore = useAuthStore()
 const route = useRoute()
@@ -59,6 +60,7 @@ const chartsList = ref([])
 const saveLoading = ref(false)
 const renderSence = ref('edit')
 const componentList = ref([])
+const chartTypeList = ref(ChartTypeList)
 const breadCrumbList = reactive(BreadCrumbList)
 
 // 后续迁出组件
@@ -107,11 +109,12 @@ function getChartComponents(e: string) {
         searchKeyWord: e
     }).then((res: any) => {
         chartsList.value = (res.data.content || []).filter(item => item.status === 'PUBLISHED').map((item: any) => {
+            const typeName = chartTypeList.value.find(t => t.value === item.type)
             return {
                 chartName: item.name,
                 id: item.id,
                 type: item.type.toLowerCase(),
-                typeName: item.type,
+                typeName: typeName?.label,
                 uuid: guid(),
                 x: 0,
                 y: 0,
