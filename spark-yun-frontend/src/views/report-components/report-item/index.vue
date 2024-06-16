@@ -85,6 +85,14 @@
                                             placeholder="请输入"
                                         />
                                     </el-form-item>
+                                    <el-form-item label="刷新间隔（秒）" prop="title">
+                                        <el-input-number
+                                            v-model="chartConfig.time"
+                                            :min="1"
+                                            controls-position="right"
+                                            placeholder="请输入"
+                                        />
+                                    </el-form-item>
                                     <el-form-item>
                                         <el-button type="primary" @click="updateChartEvent">更新图表</el-button>
                                     </el-form-item>
@@ -142,6 +150,7 @@ const baseConfig = reactive({
 const chartConfigRules = reactive<FormRules>(BaseConfigRules)
 const chartConfig = reactive({
     title: '',          // 标题
+    time: 60,           // 图表刷新间隔
 })
 
 function initData() {
@@ -164,7 +173,16 @@ function initData() {
         baseConfig.type = res.data.cardInfo.type.toLowerCase()
         baseConfig.datasourceId = res.data.cardInfo.datasourceId
 
-        chartConfig.title = res.data.cardInfo.webConfig.title
+        if (res.data.cardInfo?.webConfig?.title) {
+            chartConfig.title = res.data.cardInfo.webConfig.title
+        } else {
+            chartConfig.title = res.data.cardInfo.exampleData.title.text
+        }
+        if (res.data.cardInfo?.webConfig?.time) {
+            chartConfig.time = res.data.cardInfo.webConfig.time
+        } else {
+            chartConfig.time = 60
+        }
 
         loading.value = false
     }).catch((error: any) => {
