@@ -18,7 +18,15 @@ export const BreadCrumbList: Array<BreadCrumb> = [
 export const ChartTypeList = [
     {
         label: '饼图',
-        value: 'pie'
+        value: 'Pie'
+    },
+    {
+        label: '柱状图',
+        value: 'Bar'
+    },
+    {
+        label: '折线图',
+        value: 'Line'
     }
 ]
 
