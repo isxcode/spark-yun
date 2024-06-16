@@ -1,5 +1,6 @@
 package com.isxcode.star.api.view.pojo.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -21,7 +22,9 @@ public class EchartOption {
 
 	private List<EchartSeries> series;
 
+	@JsonProperty("xAxis")
 	private EchartXAxis xAxis;
 
+	@JsonProperty("yAxis")
 	private EchartYAxis yAxis;
 }
