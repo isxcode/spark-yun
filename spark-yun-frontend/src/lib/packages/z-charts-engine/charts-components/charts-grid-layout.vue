@@ -64,7 +64,8 @@ interface ChartLayout {
     h: number
     i: string
     active: boolean
-    option: any
+    option: any,
+    webConfig?: any
 }
 
 interface MouseXY {

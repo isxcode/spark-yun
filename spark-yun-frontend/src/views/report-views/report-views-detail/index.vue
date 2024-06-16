@@ -156,7 +156,7 @@ function getPreviewOption(config: any) {
         GetReportComponentData({
             id: config.id
         }).then((res: any) => {
-            resolve(res.data.cardInfo.exampleData)
+            resolve(res.data.cardInfo)
         }).catch(() => {})
     })
 }
