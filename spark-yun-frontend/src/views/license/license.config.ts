@@ -63,6 +63,11 @@ export const colConfigs: colConfig[] = [
     minWidth: 80
   },
   {
+    prop: 'maxWorkflowNum',
+    title: '作业流',
+    minWidth: 80
+  },
+  {
     prop: 'status',
     title: '状态',
     minWidth: 100,
