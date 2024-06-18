@@ -196,10 +196,10 @@ if [ ! -f "${JDBC_DIR}"/hive-jdbc-uber-2.6.3.0-235.jar ]; then
 fi
 
 # 下载oracle驱动
-if [ ! -f "${JDBC_DIR}"/ojdbc10-19.20.0.0.jar ]; then
-  echo "ojdbc10-19.20.0.0.jar驱动开始下载"
-  curl -ssL https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/install/ojdbc10-19.20.0.0.jar -o ${JDBC_DIR}/ojdbc10-19.20.0.0.jar
-  echo "ojdbc10-19.20.0.0.jar驱动下载成功"
+if [ ! -f "${JDBC_DIR}"/ojdbc8-19.23.0.0.jar ]; then
+  echo "ojdbc8-19.23.0.0.jar驱动开始下载"
+  curl -ssL https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/install/ojdbc8-19.23.0.0.jar -o ${JDBC_DIR}/ojdbc8-19.23.0.0.jar
+  echo "ojdbc8-19.23.0.0.jar驱动下载成功"
 fi
 
 # 下载oceanbase驱动
