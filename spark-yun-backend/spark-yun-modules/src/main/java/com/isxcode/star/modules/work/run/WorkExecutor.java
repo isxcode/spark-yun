@@ -60,9 +60,6 @@ public abstract class WorkExecutor {
 		// 获取作业实例
 		WorkInstanceEntity workInstance = workInstanceRepository.findById(workRunContext.getInstanceId()).get();
 
-		// 将线程存到Map
-		WORK_THREAD.put(workInstance.getId(), Thread.currentThread());
-
 		// 初始化日志
 		StringBuilder logBuilder = new StringBuilder();
 		logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始提交作业 \n");

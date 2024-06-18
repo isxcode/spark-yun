@@ -36,6 +36,9 @@ public class ApiExecutor extends WorkExecutor {
 	@Override
 	protected void execute(WorkRunContext workRunContext, WorkInstanceEntity workInstance) {
 
+    // 将线程存到Map
+		WORK_THREAD.put(workInstance.getId(), Thread.currentThread());
+
 		// 获取日志构造器
 		StringBuilder logBuilder = workRunContext.getLogBuilder();
 
