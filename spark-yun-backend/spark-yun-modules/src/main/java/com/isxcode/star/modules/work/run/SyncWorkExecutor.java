@@ -117,6 +117,11 @@ public class SyncWorkExecutor extends WorkExecutor {
 	}
 
 	@Override
+	public String getWorkType() {
+		return WorkType.DATA_SYNC_JDBC;
+	}
+
+	@Override
 	protected void execute(WorkRunContext workRunContext, WorkInstanceEntity workInstance) {
 
 		// 获取日志构造器

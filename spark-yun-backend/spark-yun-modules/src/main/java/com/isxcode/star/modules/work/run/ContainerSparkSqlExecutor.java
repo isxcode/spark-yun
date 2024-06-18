@@ -1,6 +1,7 @@
 package com.isxcode.star.modules.work.run;
 
 import com.isxcode.star.api.work.constants.WorkLog;
+import com.isxcode.star.api.work.constants.WorkType;
 import com.isxcode.star.api.work.exceptions.WorkRunException;
 import com.isxcode.star.modules.datasource.repository.DatasourceRepository;
 import com.isxcode.star.modules.datasource.service.DatasourceService;
@@ -31,6 +32,11 @@ public class ContainerSparkSqlExecutor extends WorkExecutor {
 		this.datasourceRepository = datasourceRepository;
 		this.workInstanceRepository = workInstanceRepository;
 		this.datasourceService = datasourceService;
+	}
+
+	@Override
+	public String getWorkType() {
+		return WorkType.SPARK_CONTAINER_SQL;
 	}
 
 	public void execute(WorkRunContext workRunContext, WorkInstanceEntity workInstance) {
