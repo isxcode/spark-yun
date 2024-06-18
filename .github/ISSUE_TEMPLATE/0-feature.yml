@@ -1,5 +1,6 @@
-name: Create a new feature
-description: 创建一个新需求
+name: Create feature
+description: 创建新需求
+title: '[Feature] '
 labels: ["需求"]
 body:
   - type: textarea

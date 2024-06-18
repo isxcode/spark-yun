@@ -1,0 +1,20 @@
+name: Improve suggestions
+description: 优化建议
+title: '[Improve] '
+labels: ["优化"]
+body:
+  - type: input
+    id: branch
+    attributes:
+      label: Branch name (分支名)
+      placeholder: main
+      value: main
+    validations:
+      required: true
+  - type: textarea
+    id: describe
+    attributes:
+      label: Improve description (优化建议)
+      placeholder: Pictures, videos, cUrl, text descriptions, etc.(图片、视频、cUrl、文字描述等)
+    validations:
+      required: false
