@@ -25,10 +25,7 @@ public class Execute {
 		PluginReq pluginReq = parse(args);
 
 		// 过滤注释
-		String regex = "/\\*(?:.|[\\n\\r])*?\\*/|--.*";
-		String noCommentSql = pluginReq.getSql().replaceAll(regex, "");
-		String realSql = noCommentSql.replaceAll("--.*", "").replace("\n", " ");
-		String[] sqls = realSql.split(";");
+		String[] sqls = pluginReq.getSql().split(";");
 
 		// 获取sparkSession
 		try (SparkSession sparkSession = initSparkSession(pluginReq)) {

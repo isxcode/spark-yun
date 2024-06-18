@@ -38,6 +38,8 @@ import com.isxcode.star.modules.work.entity.WorkInstanceEntity;
 import com.isxcode.star.modules.work.repository.WorkConfigRepository;
 import com.isxcode.star.modules.work.repository.WorkInstanceRepository;
 import com.isxcode.star.modules.work.repository.WorkRepository;
+import com.isxcode.star.modules.work.service.SqlCommentParseService;
+import com.isxcode.star.modules.work.service.SqlValueParseService;
 import com.isxcode.star.modules.workflow.repository.WorkflowInstanceRepository;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.SftpException;
@@ -89,12 +91,17 @@ public class SparkSqlExecutor extends WorkExecutor {
 
 	private final DatasourceService datasourceService;
 
+	private final SqlCommentParseService sqlCommentParseService;
+
+	private final SqlValueParseService sqlValueParseService;
+
 	public SparkSqlExecutor(WorkInstanceRepository workInstanceRepository, ClusterRepository clusterRepository,
 			ClusterNodeRepository clusterNodeRepository, WorkflowInstanceRepository workflowInstanceRepository,
 			WorkRepository workRepository, WorkConfigRepository workConfigRepository, Locker locker,
 			HttpUrlUtils httpUrlUtils, FuncRepository funcRepository, FuncMapper funcMapper,
 			ClusterNodeMapper clusterNodeMapper, AesUtils aesUtils, IsxAppProperties isxAppProperties,
-			FileRepository fileRepository, DatasourceService datasourceService) {
+			FileRepository fileRepository, DatasourceService datasourceService,
+			SqlCommentParseService sqlCommentParseService, SqlValueParseService sqlValueParseService) {
 
 		super(workInstanceRepository, workflowInstanceRepository);
 		this.workInstanceRepository = workInstanceRepository;
@@ -111,6 +118,8 @@ public class SparkSqlExecutor extends WorkExecutor {
 		this.isxAppProperties = isxAppProperties;
 		this.fileRepository = fileRepository;
 		this.datasourceService = datasourceService;
+		this.sqlCommentParseService = sqlCommentParseService;
+		this.sqlValueParseService = sqlValueParseService;
 	}
 
 	@Override
@@ -171,6 +180,14 @@ public class SparkSqlExecutor extends WorkExecutor {
 		SparkSubmit sparkSubmit = SparkSubmit.builder().verbose(true)
 				.mainClass("com.isxcode.star.plugin.query.sql.Execute").appResource("spark-query-sql-plugin.jar")
 				.conf(genSparkSubmitConfig(workRunContext.getClusterConfig().getSparkConfig())).build();
+
+		// 去掉sql中的注释
+		String sqlNoComment = sqlCommentParseService.removeSqlComment(workRunContext.getScript());
+
+		// 翻译sql中的${qing.currentDate}的系统变量
+		String hasValueSql = sqlValueParseService.setSqlValue(sqlNoComment);
+
+		// 翻译sql中的#{ date_to_str(date_add(now(),1),'yyyyMMdd') }的系统函数
 
 		// 开始构造PluginReq
 		PluginReq pluginReq = PluginReq.builder().sql(workRunContext.getScript()).limit(200)
