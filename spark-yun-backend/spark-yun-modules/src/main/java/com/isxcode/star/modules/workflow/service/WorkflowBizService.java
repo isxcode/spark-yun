@@ -25,6 +25,7 @@ import com.isxcode.star.common.locker.Locker;
 import com.isxcode.star.modules.cluster.entity.ClusterEntity;
 import com.isxcode.star.modules.cluster.repository.ClusterRepository;
 import com.isxcode.star.modules.cluster.service.ClusterService;
+import com.isxcode.star.modules.license.repository.LicenseStore;
 import com.isxcode.star.modules.tenant.entity.TenantEntity;
 import com.isxcode.star.modules.tenant.service.TenantService;
 import com.isxcode.star.modules.work.entity.WorkConfigEntity;
@@ -109,6 +110,8 @@ public class WorkflowBizService {
 
 	private final TenantService tenantService;
 
+	private final LicenseStore licenseStore;
+
 	public WorkflowEntity getWorkflowEntity(String workflowId) {
 
 		Optional<WorkflowEntity> workflowEntityOptional = workflowRepository.findById(workflowId);
@@ -125,6 +128,13 @@ public class WorkflowBizService {
 		long workflowCount = workflowRepository.count();
 		if (workflowCount + 1 > tenant.getMaxWorkflowNum()) {
 			throw new IsxAppException("超出租户的最大作业流限制");
+		}
+
+		// 判断作业流上限是否超过许可证
+		if (licenseStore.getLicense() != null) {
+			if (workflowCount + 1 > licenseStore.getLicense().getMaxWorkflowNum()) {
+				throw new IsxAppException("超出许可证租户的最大作业流限制");
+			}
 		}
 
 		// 工作流唯一性
