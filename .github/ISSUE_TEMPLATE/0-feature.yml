@@ -1,20 +1,19 @@
-name: Help docs
-description: 官方文档升级
-title: '[Docs] '
-labels: ["文档"]
+name: Create a new feature
+description: 创建一个新需求
+title: '[Feature] '
+labels: ["需求"]
 body:
-  - type: input
-    id: branch
-    attributes:
-      label: Branch name (分支名)
-      placeholder: main
-      value: main
-    validations:
-      required: true
   - type: textarea
     id: describe
     attributes:
-      label: Docs description (缺陷描述)
-      placeholder: Pictures, videos, cUrl, text descriptions, etc.(图片、视频、cUrl、文字描述等)
+      label: Describe the feature (描述一下需求)
+      placeholder: word description. (文字描述)
+    validations:
+      required: false
+  - type: textarea
+    id: suggestion
+    attributes:
+      label: Related suggestions (相关建议)
+      placeholder: Pictures, videos, links, text descriptions, etc.(图片、视频、链接、文字描述等)
     validations:
       required: false
