@@ -1,5 +1,6 @@
 name: Create bug
 description: 创建缺陷
+title: '[Bug] '
 labels: ["缺陷"]
 body:
   - type: input
@@ -15,5 +16,19 @@ body:
     attributes:
       label: Bug description (缺陷描述)
       placeholder: Pictures, videos, cUrl, text descriptions, etc.(图片、视频、cUrl、文字描述等)
+    validations:
+      required: false
+  - type: textarea
+    id: frontend
+    attributes:
+      label: Reproduction steps (复现步骤)
+      placeholder: Pictures, videos, etc.(图片、视频等)
+    validations:
+      required: false
+  - type: textarea
+    id: backend
+    attributes:
+      label: cUrls and response (请求和响应)
+      placeholder: 'curl http://localhost:8080/vip/form/pageForm '
     validations:
       required: false

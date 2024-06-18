@@ -1,7 +1,7 @@
-name: Help docs
-description: 官方文档升级
-title: '[Docs] '
-labels: ["文档"]
+name: Create improve
+description: 创建优化
+title: '[Improve] '
+labels: ["优化"]
 body:
   - type: input
     id: branch
@@ -14,7 +14,7 @@ body:
   - type: textarea
     id: describe
     attributes:
-      label: Docs description (缺陷描述)
+      label: Improve description (优化建议)
       placeholder: Pictures, videos, cUrl, text descriptions, etc.(图片、视频、cUrl、文字描述等)
     validations:
       required: false
