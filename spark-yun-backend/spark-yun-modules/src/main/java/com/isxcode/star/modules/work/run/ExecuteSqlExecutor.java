@@ -1,6 +1,7 @@
 package com.isxcode.star.modules.work.run;
 
 import com.isxcode.star.api.work.constants.WorkLog;
+import com.isxcode.star.api.work.constants.WorkType;
 import com.isxcode.star.api.work.exceptions.WorkRunException;
 import com.isxcode.star.modules.datasource.entity.DatasourceEntity;
 import com.isxcode.star.modules.datasource.repository.DatasourceRepository;
@@ -38,6 +39,11 @@ public class ExecuteSqlExecutor extends WorkExecutor {
 		this.datasourceRepository = datasourceRepository;
 		this.datasourceBizService = datasourceBizService;
 		this.datasourceService = datasourceService;
+	}
+
+	@Override
+	public String getWorkType() {
+		return WorkType.EXECUTE_JDBC_SQL;
 	}
 
 	@Override

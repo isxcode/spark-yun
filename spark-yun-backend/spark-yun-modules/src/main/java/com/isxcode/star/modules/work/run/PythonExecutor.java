@@ -3,6 +3,7 @@ package com.isxcode.star.modules.work.run;
 import com.isxcode.star.api.cluster.pojos.dto.ScpFileEngineNodeDto;
 import com.isxcode.star.api.instance.constants.InstanceStatus;
 import com.isxcode.star.api.work.constants.WorkLog;
+import com.isxcode.star.api.work.constants.WorkType;
 import com.isxcode.star.api.work.exceptions.WorkRunException;
 import com.isxcode.star.common.utils.AesUtils;
 import com.isxcode.star.common.utils.ssh.SshUtils;
@@ -49,6 +50,11 @@ public class PythonExecutor extends WorkExecutor {
 		this.clusterNodeMapper = clusterNodeMapper;
 		this.aesUtils = aesUtils;
 		this.clusterRepository = clusterRepository;
+	}
+
+	@Override
+	public String getWorkType() {
+		return WorkType.PYTHON;
 	}
 
 	public void execute(WorkRunContext workRunContext, WorkInstanceEntity workInstance) {

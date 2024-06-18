@@ -102,6 +102,11 @@ public class SparkJarExecutor extends WorkExecutor {
 	}
 
 	@Override
+	public String getWorkType() {
+		return WorkType.SPARK_JAR;
+	}
+
+	@Override
 	protected void execute(WorkRunContext workRunContext, WorkInstanceEntity workInstance) {
 
 		// 获取日志构造器

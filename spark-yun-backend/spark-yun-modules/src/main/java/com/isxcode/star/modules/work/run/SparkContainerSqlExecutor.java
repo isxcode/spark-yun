@@ -6,6 +6,7 @@ import com.isxcode.star.api.agent.pojos.res.ContainerGetDataRes;
 import com.isxcode.star.api.cluster.constants.ClusterNodeStatus;
 import com.isxcode.star.api.container.constants.ContainerStatus;
 import com.isxcode.star.api.work.constants.WorkLog;
+import com.isxcode.star.api.work.constants.WorkType;
 import com.isxcode.star.api.work.exceptions.WorkRunException;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.star.backend.api.base.properties.IsxAppProperties;
@@ -47,6 +48,11 @@ public class SparkContainerSqlExecutor extends WorkExecutor {
 		this.clusterNodeRepository = clusterNodeRepository;
 		this.isxAppProperties = isxAppProperties;
 		this.workInstanceRepository = workInstanceRepository1;
+	}
+
+	@Override
+	public String getWorkType() {
+		return WorkType.SPARK_CONTAINER_SQL;
 	}
 
 	public void execute(WorkRunContext workRunContext, WorkInstanceEntity workInstance) {

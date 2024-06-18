@@ -3,6 +3,7 @@ package com.isxcode.star.modules.work.run;
 import com.alibaba.fastjson.JSON;
 import com.isxcode.star.api.datasource.constants.DatasourceType;
 import com.isxcode.star.api.work.constants.WorkLog;
+import com.isxcode.star.api.work.constants.WorkType;
 import com.isxcode.star.api.work.exceptions.WorkRunException;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.star.modules.datasource.entity.DatasourceEntity;
@@ -37,6 +38,11 @@ public class PrqlExecutor extends WorkExecutor {
 		super(workInstanceRepository, workflowInstanceRepository);
 		this.datasourceRepository = datasourceRepository;
 		this.datasourceService = datasourceService;
+	}
+
+	@Override
+	public String getWorkType() {
+		return WorkType.PRQL;
 	}
 
 	@Override

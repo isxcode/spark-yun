@@ -3,6 +3,7 @@ package com.isxcode.star.modules.work.run;
 import com.alibaba.fastjson.JSON;
 import com.isxcode.star.api.api.constants.ApiType;
 import com.isxcode.star.api.work.constants.WorkLog;
+import com.isxcode.star.api.work.constants.WorkType;
 import com.isxcode.star.api.work.exceptions.WorkRunException;
 import com.isxcode.star.api.work.pojos.dto.ApiWorkConfig;
 import com.isxcode.star.common.utils.http.HttpUtils;
@@ -25,6 +26,11 @@ public class ApiExecutor extends WorkExecutor {
 			WorkflowInstanceRepository workflowInstanceRepository) {
 
 		super(workInstanceRepository, workflowInstanceRepository);
+	}
+
+	@Override
+	public String getWorkType() {
+		return WorkType.API;
 	}
 
 	@Override
