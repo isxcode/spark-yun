@@ -340,52 +340,58 @@ public class WorkBizService {
 			throw new IsxAppException("已中止");
 		}
 
+		WorkEntity workEntity = workRepository.findById(workInstanceEntity.getWorkId()).get();
+		WorkExecutor workExecutor = workExecutorFactory.create(workEntity.getWorkType());
+
 		// 获取中作业id
 		if (InstanceType.MANUAL.equals(workInstanceEntity.getInstanceType())) {
-			WorkEntity workEntity = workRepository.findById(workInstanceEntity.getWorkId()).get();
 
-			// 作业类型不对返回
+			// 普通作业中止
 			if (!WorkType.QUERY_SPARK_SQL.equals(workEntity.getWorkType())
 					&& !WorkType.DATA_SYNC_JDBC.equals(workEntity.getWorkType())
 					&& !WorkType.SPARK_JAR.equals(workEntity.getWorkType())) {
-				throw new IsxAppException("只有sparkSql作业才支持中止");
-			}
 
-			WorkConfigEntity workConfigEntity = workConfigRepository.findById(workEntity.getConfigId()).get();
-			String clusterId = JSON.parseObject(workConfigEntity.getClusterConfig(), ClusterConfig.class)
-					.getClusterId();
-			List<ClusterNodeEntity> allEngineNodes = engineNodeRepository.findAllByClusterIdAndStatus(clusterId,
-					ClusterNodeStatus.RUNNING);
-			if (allEngineNodes.isEmpty()) {
-				throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "申请资源失败 : 集群不存在可用节点，请切换一个集群  \n");
-			}
+				workExecutor.syncAbort(workInstanceEntity);
 
-			Optional<ClusterEntity> clusterEntityOptional = calculateEngineRepository.findById(clusterId);
-			if (!clusterEntityOptional.isPresent()) {
-				throw new IsxAppException("集群不存在");
-			}
+			} else {
 
-			// 节点选择随机数
-			ClusterNodeEntity engineNode = allEngineNodes.get(new Random().nextInt(allEngineNodes.size()));
+				WorkConfigEntity workConfigEntity = workConfigRepository.findById(workEntity.getConfigId()).get();
+				String clusterId = JSON.parseObject(workConfigEntity.getClusterConfig(), ClusterConfig.class)
+						.getClusterId();
+				List<ClusterNodeEntity> allEngineNodes = engineNodeRepository.findAllByClusterIdAndStatus(clusterId,
+						ClusterNodeStatus.RUNNING);
+				if (allEngineNodes.isEmpty()) {
+					throw new WorkRunException(
+							LocalDateTime.now() + WorkLog.ERROR_INFO + "申请资源失败 : 集群不存在可用节点，请切换一个集群  \n");
+				}
 
-			if (Strings.isEmpty(workInstanceEntity.getSparkStarRes())) {
-				throw new IsxAppException("还未提交，请稍后再试");
-			}
+				Optional<ClusterEntity> clusterEntityOptional = calculateEngineRepository.findById(clusterId);
+				if (!clusterEntityOptional.isPresent()) {
+					throw new IsxAppException("集群不存在");
+				}
 
-			// 解析实例的状态信息
-			RunWorkRes wokRunWorkRes = JSON.parseObject(workInstanceEntity.getSparkStarRes(), RunWorkRes.class);
+				// 节点选择随机数
+				ClusterNodeEntity engineNode = allEngineNodes.get(new Random().nextInt(allEngineNodes.size()));
 
-			Map<String, String> paramsMap = new HashMap<>();
-			paramsMap.put("appId", wokRunWorkRes.getAppId());
-			paramsMap.put("agentType", clusterEntityOptional.get().getClusterType());
-			paramsMap.put("sparkHomePath", engineNode.getSparkHomePath());
-			paramsMap.put("agentHomePath", engineNode.getAgentHomePath());
-			BaseResponse<?> baseResponse = HttpUtils.doGet(
-					httpUrlUtils.genHttpUrl(engineNode.getHost(), engineNode.getAgentPort(), "/yag/stopJob"), paramsMap,
-					null, BaseResponse.class);
+				if (Strings.isEmpty(workInstanceEntity.getSparkStarRes())) {
+					throw new IsxAppException("还未提交，请稍后再试");
+				}
 
-			if (!String.valueOf(HttpStatus.OK.value()).equals(baseResponse.getCode())) {
-				throw new IsxAppException(baseResponse.getCode(), baseResponse.getMsg(), baseResponse.getErr());
+				// 解析实例的状态信息
+				RunWorkRes wokRunWorkRes = JSON.parseObject(workInstanceEntity.getSparkStarRes(), RunWorkRes.class);
+
+				Map<String, String> paramsMap = new HashMap<>();
+				paramsMap.put("appId", wokRunWorkRes.getAppId());
+				paramsMap.put("agentType", clusterEntityOptional.get().getClusterType());
+				paramsMap.put("sparkHomePath", engineNode.getSparkHomePath());
+				paramsMap.put("agentHomePath", engineNode.getAgentHomePath());
+				BaseResponse<?> baseResponse = HttpUtils.doGet(
+						httpUrlUtils.genHttpUrl(engineNode.getHost(), engineNode.getAgentPort(), "/yag/stopJob"),
+						paramsMap, null, BaseResponse.class);
+
+				if (!String.valueOf(HttpStatus.OK.value()).equals(baseResponse.getCode())) {
+					throw new IsxAppException(baseResponse.getCode(), baseResponse.getMsg(), baseResponse.getErr());
+				}
 			}
 
 			// 修改实例状态

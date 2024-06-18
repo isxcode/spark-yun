@@ -1,6 +1,7 @@
 package com.isxcode.star.modules.work.run;
 
 import com.isxcode.star.api.work.constants.WorkLog;
+import com.isxcode.star.api.work.constants.WorkType;
 import com.isxcode.star.api.work.exceptions.WorkRunException;
 import com.isxcode.star.modules.datasource.entity.DatasourceEntity;
 import com.isxcode.star.modules.datasource.repository.DatasourceRepository;
@@ -41,7 +42,15 @@ public class ExecuteSqlExecutor extends WorkExecutor {
 	}
 
 	@Override
+	public String getWorkType() {
+		return WorkType.EXECUTE_JDBC_SQL;
+	}
+
+	@Override
 	public void execute(WorkRunContext workRunContext, WorkInstanceEntity workInstance) {
+
+		// 将线程存到Map
+		WORK_THREAD.put(workInstance.getId(), Thread.currentThread());
 
 		// 获取日志构造器
 		StringBuilder logBuilder = workRunContext.getLogBuilder();

@@ -74,7 +74,7 @@ function getLogData(id: string) {
   })
     .then((res: any) => {
       logMsg.value = res.data.log
-      status.value = ['FAIL', 'SUCCESS'].includes(res.data.status) ? true : false
+      status.value = ['FAIL', 'SUCCESS','ABORT'].includes(res.data.status) ? true : false
       if (position.value) {
         nextTick(() => {
           scrollToButtom()

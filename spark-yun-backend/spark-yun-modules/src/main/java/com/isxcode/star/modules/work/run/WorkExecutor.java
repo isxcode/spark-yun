@@ -30,6 +30,8 @@ public abstract class WorkExecutor {
 
 	private final WorkflowInstanceRepository workflowInstanceRepository;
 
+	public abstract String getWorkType();
+
 	protected abstract void execute(WorkRunContext workRunContext, WorkInstanceEntity workInstance);
 
 	protected abstract void abort(WorkInstanceEntity workInstance);
@@ -57,9 +59,6 @@ public abstract class WorkExecutor {
 
 		// 获取作业实例
 		WorkInstanceEntity workInstance = workInstanceRepository.findById(workRunContext.getInstanceId()).get();
-
-		// 将线程存到Map
-		WORK_THREAD.put(workInstance.getId(), Thread.currentThread());
 
 		// 初始化日志
 		StringBuilder logBuilder = new StringBuilder();
@@ -108,6 +107,11 @@ public abstract class WorkExecutor {
 
 			// 重新获取当前最新实例
 			workInstance = workInstanceRepository.findById(workRunContext.getInstanceId()).get();
+
+			// 如果是已中止，直接不处理
+			if (InstanceStatus.ABORT.equals(workInstance.getStatus())) {
+				return;
+			}
 
 			// 更新作业实例失败状态
 			workInstance.setStatus(InstanceStatus.FAIL);
