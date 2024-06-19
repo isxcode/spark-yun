@@ -1,4 +1,4 @@
-package com.isxcode.star.modules.work.run;
+package com.isxcode.star.modules.work.run.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.isxcode.star.api.agent.pojos.req.ExecuteContainerSqlReq;
@@ -16,6 +16,11 @@ import com.isxcode.star.modules.container.entity.ContainerEntity;
 import com.isxcode.star.modules.container.repository.ContainerRepository;
 import com.isxcode.star.modules.work.entity.WorkInstanceEntity;
 import com.isxcode.star.modules.work.repository.WorkInstanceRepository;
+import com.isxcode.star.modules.work.run.WorkExecutor;
+import com.isxcode.star.modules.work.run.WorkRunContext;
+import com.isxcode.star.modules.work.sql.SqlCommentService;
+import com.isxcode.star.modules.work.sql.SqlFunctionService;
+import com.isxcode.star.modules.work.sql.SqlValueService;
 import com.isxcode.star.modules.workflow.repository.WorkflowInstanceRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
@@ -39,15 +44,25 @@ public class SparkContainerSqlExecutor extends WorkExecutor {
 
 	private final WorkInstanceRepository workInstanceRepository;
 
+	private final SqlCommentService sqlCommentService;
+
+	private final SqlValueService sqlValueService;
+
+	private final SqlFunctionService sqlFunctionService;
+
 	public SparkContainerSqlExecutor(WorkInstanceRepository workInstanceRepository,
 			WorkflowInstanceRepository workflowInstanceRepository, ContainerRepository containerRepository,
 			ClusterNodeRepository clusterNodeRepository, IsxAppProperties isxAppProperties,
-			WorkInstanceRepository workInstanceRepository1) {
+			WorkInstanceRepository workInstanceRepository1, SqlCommentService sqlCommentService,
+			SqlValueService sqlValueService, SqlFunctionService sqlFunctionService) {
 		super(workInstanceRepository, workflowInstanceRepository);
 		this.containerRepository = containerRepository;
 		this.clusterNodeRepository = clusterNodeRepository;
 		this.isxAppProperties = isxAppProperties;
 		this.workInstanceRepository = workInstanceRepository1;
+		this.sqlCommentService = sqlCommentService;
+		this.sqlValueService = sqlValueService;
+		this.sqlFunctionService = sqlFunctionService;
 	}
 
 	@Override
@@ -107,10 +122,18 @@ public class SparkContainerSqlExecutor extends WorkExecutor {
 			// 节点选择随机数
 			ClusterNodeEntity engineNode = allEngineNodes.get(new Random().nextInt(allEngineNodes.size()));
 
+			// 去掉sql中的注释
+			String sqlNoComment = sqlCommentService.removeSqlComment(workRunContext.getScript());
+
+			// 翻译sql中的系统变量
+			String parseValueSql = sqlValueService.parseSqlValue(sqlNoComment);
+
+			// 翻译sql中的系统函数
+			String script = sqlFunctionService.parseSqlFunction(parseValueSql);
+
 			// 再次调用容器的check接口，确认容器是否成功启动
 			ExecuteContainerSqlReq executeContainerSqlReq = ExecuteContainerSqlReq.builder()
-					.port(String.valueOf(containerEntityOptional.get().getPort())).sql(workRunContext.getScript())
-					.build();
+					.port(String.valueOf(containerEntityOptional.get().getPort())).sql(script).build();
 
 			ContainerGetDataRes containerGetDataRes;
 			try {

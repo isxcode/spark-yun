@@ -1,24 +1,24 @@
-package com.isxcode.star.modules.work.run;
+package com.isxcode.star.modules.work.run.impl;
 
-import com.alibaba.fastjson.JSON;
 import com.isxcode.star.api.work.constants.WorkLog;
 import com.isxcode.star.api.work.constants.WorkType;
 import com.isxcode.star.api.work.exceptions.WorkRunException;
 import com.isxcode.star.modules.datasource.entity.DatasourceEntity;
 import com.isxcode.star.modules.datasource.repository.DatasourceRepository;
 import com.isxcode.star.modules.datasource.service.DatasourceService;
+import com.isxcode.star.modules.datasource.service.biz.DatasourceBizService;
 import com.isxcode.star.modules.work.entity.WorkInstanceEntity;
 import com.isxcode.star.modules.work.repository.WorkInstanceRepository;
+import com.isxcode.star.modules.work.run.WorkExecutor;
+import com.isxcode.star.modules.work.run.WorkRunContext;
 import com.isxcode.star.modules.work.sql.SqlCommentService;
 import com.isxcode.star.modules.work.sql.SqlFunctionService;
 import com.isxcode.star.modules.work.sql.SqlValueService;
 import com.isxcode.star.modules.workflow.repository.WorkflowInstanceRepository;
 
 import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.Statement;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -30,36 +30,40 @@ import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
-public class QuerySqlExecutor extends WorkExecutor {
+public class ExecuteSqlExecutor extends WorkExecutor {
 
 	private final DatasourceRepository datasourceRepository;
+
+	private final DatasourceBizService datasourceBizService;
 
 	private final DatasourceService datasourceService;
 
 	private final SqlCommentService sqlCommentService;
 
-	private final SqlFunctionService sqlFunctionService;
-
 	private final SqlValueService sqlValueService;
 
-	public QuerySqlExecutor(DatasourceRepository datasourceRepository, WorkInstanceRepository workInstanceRepository,
-			WorkflowInstanceRepository workflowInstanceRepository, DatasourceService datasourceService,
-			SqlCommentService sqlCommentService, SqlFunctionService sqlFunctionService,
-			SqlValueService sqlValueService) {
+	private final SqlFunctionService sqlFunctionService;
+
+	public ExecuteSqlExecutor(WorkInstanceRepository workInstanceRepository, DatasourceRepository datasourceRepository,
+			WorkflowInstanceRepository workflowInstanceRepository, DatasourceBizService datasourceBizService,
+			DatasourceService datasourceService, SqlCommentService sqlCommentService, SqlValueService sqlValueService,
+			SqlFunctionService sqlFunctionService) {
 
 		super(workInstanceRepository, workflowInstanceRepository);
 		this.datasourceRepository = datasourceRepository;
+		this.datasourceBizService = datasourceBizService;
 		this.datasourceService = datasourceService;
 		this.sqlCommentService = sqlCommentService;
-		this.sqlFunctionService = sqlFunctionService;
 		this.sqlValueService = sqlValueService;
+		this.sqlFunctionService = sqlFunctionService;
 	}
 
 	@Override
 	public String getWorkType() {
-		return WorkType.QUERY_JDBC_SQL;
+		return WorkType.EXECUTE_JDBC_SQL;
 	}
 
+	@Override
 	public void execute(WorkRunContext workRunContext, WorkInstanceEntity workInstance) {
 
 		// 将线程存到Map
@@ -94,11 +98,9 @@ public class QuerySqlExecutor extends WorkExecutor {
 		logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始执行作业 \n");
 		workInstance = updateInstance(workInstance, logBuilder);
 
-		// 开始执行sql
+		// 开始执行作业
 		try (Connection connection = datasourceService.getDbConnection(datasourceEntityOptional.get());
-				Statement statement = connection.createStatement();) {
-
-			statement.setQueryTimeout(1800);
+				Statement statement = connection.createStatement()) {
 
 			// 去掉sql中的注释
 			String sqlNoComment = sqlCommentService.removeSqlComment(workRunContext.getScript());
@@ -113,58 +115,21 @@ public class QuerySqlExecutor extends WorkExecutor {
 			List<String> sqls = Arrays.stream(script.split(";")).filter(e -> !Strings.isEmpty(e))
 					.collect(Collectors.toList());
 
-			// 执行每条sql，除了最后一条
-			for (int i = 0; i < sqls.size() - 1; i++) {
+			// 逐条执行sql
+			for (String sql : sqls) {
 
 				// 记录开始执行时间
-				logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始执行SQL: ")
-						.append(sqls.get(i)).append(" \n");
+				logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始执行SQL: ").append(sql)
+						.append(" \n");
 				workInstance = updateInstance(workInstance, logBuilder);
 
 				// 执行sql
-				statement.execute(sqls.get(i));
+				statement.execute(sql);
 
 				// 记录结束执行时间
 				logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("SQL执行成功  \n");
 				workInstance = updateInstance(workInstance, logBuilder);
 			}
-
-			// 执行最后一句查询语句
-			logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("执行查询SQL: ")
-					.append(sqls.get(sqls.size() - 1)).append(" \n");
-			workInstance = updateInstance(workInstance, logBuilder);
-
-			// 执行查询sql
-			ResultSet resultSet = statement.executeQuery(sqls.get(sqls.size() - 1));
-
-			// 记录结束执行时间
-			logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("查询SQL执行成功  \n");
-			workInstance = updateInstance(workInstance, logBuilder);
-
-			// 记录返回结果
-			List<List<String>> result = new ArrayList<>();
-
-			// 封装表头
-			int columnCount = resultSet.getMetaData().getColumnCount();
-			List<String> metaList = new ArrayList<>();
-			for (int i = 1; i <= columnCount; i++) {
-				metaList.add(resultSet.getMetaData().getColumnName(i));
-			}
-			result.add(metaList);
-
-			// 封装数据
-			while (resultSet.next()) {
-				metaList = new ArrayList<>();
-				for (int i = 1; i <= columnCount; i++) {
-					metaList.add(String.valueOf(resultSet.getObject(i)));
-				}
-				result.add(metaList);
-			}
-
-			// 讲data转为json存到实例中
-			logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("数据保存成功  \n");
-			workInstance.setResultData(JSON.toJSONString(result));
-			updateInstance(workInstance, logBuilder);
 		} catch (Exception e) {
 			throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + e.getMessage() + "\n");
 		}
