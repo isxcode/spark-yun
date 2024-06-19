@@ -5,6 +5,7 @@ import com.isxcode.star.api.datasource.constants.DatasourceDriver;
 import com.isxcode.star.api.datasource.constants.DatasourceType;
 import com.isxcode.star.api.datasource.pojos.dto.KafkaConfig;
 import com.isxcode.star.api.datasource.pojos.dto.SecurityColumnDto;
+import com.isxcode.star.api.work.exceptions.WorkRunException;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.star.backend.api.base.properties.IsxAppProperties;
 import com.isxcode.star.common.utils.AesUtils;
@@ -14,6 +15,7 @@ import com.isxcode.star.modules.datasource.entity.DatasourceEntity;
 import com.isxcode.star.modules.datasource.repository.DatasourceRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.calcite.sql.SqlSelect;
 import org.apache.calcite.sql.parser.SqlParseException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.kafka.clients.admin.AdminClient;
@@ -326,7 +328,7 @@ public class DatasourceService {
 			SqlNode sqlNode = parser.parseStmt();
 			return sqlNode.getKind() == SqlKind.SELECT;
 		} catch (SqlParseException e) {
-			throw new RuntimeException(e);
+			throw new WorkRunException(e.getMessage());
 		}
 	}
 
@@ -388,6 +390,57 @@ public class DatasourceService {
 		try (AdminClient adminClient = AdminClient.create(properties)) {
 			ListTopicsResult listTopicsResult = adminClient.listTopics();
 			return listTopicsResult.names().get();
+		}
+	}
+
+	/**
+	 * 判断sql是否有limit限制.
+	 */
+	public boolean hasLimit(String sql) {
+
+		SqlParser parser = SqlParser.create(sql);
+		try {
+			SqlNode sqlNode = parser.parseStmt();
+			if (sqlNode instanceof SqlSelect) {
+				SqlSelect select = (SqlSelect) sqlNode;
+				return select.getFetch() != null;
+			} else {
+				return false;
+			}
+		} catch (SqlParseException e) {
+			throw new WorkRunException(e.getMessage());
+		}
+	}
+
+	/**
+	 * 判断sql是否有where.
+	 */
+	public boolean hasWhere(String sql) {
+
+		SqlParser parser = SqlParser.create(sql);
+		try {
+			SqlNode sqlNode = parser.parseStmt();
+			if (sqlNode instanceof SqlSelect) {
+				SqlSelect select = (SqlSelect) sqlNode;
+				return select.getWhere() != null;
+			} else {
+				return false;
+			}
+		} catch (SqlParseException e) {
+			throw new WorkRunException(e.getMessage());
+		}
+	}
+
+	/**
+	 * 生成sql的limit sql.
+	 */
+	public String getSqlLimitSql(String dbType, Boolean hasWhere) {
+
+		switch (dbType) {
+			case DatasourceType.ORACLE :
+				return hasWhere ? " AND ROWNUM <= 200" : " WHERE ROWNUM <= 200";
+			default :
+				return " limit 200";
 		}
 	}
 }

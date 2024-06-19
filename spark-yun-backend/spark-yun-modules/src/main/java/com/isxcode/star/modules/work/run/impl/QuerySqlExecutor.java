@@ -131,13 +131,22 @@ public class QuerySqlExecutor extends WorkExecutor {
 				workInstance = updateInstance(workInstance, logBuilder);
 			}
 
+			// 执行查询sql，给lastSql添加查询条数限制
+			String lastSql = sqls.get(sqls.size() - 1);
+			if (!datasourceService.isQueryStatement(lastSql)) {
+				throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "最后sql不是查询语句 \n");
+			}
+			if (!datasourceService.hasLimit(lastSql)) {
+				lastSql = lastSql + datasourceService.getSqlLimitSql(datasourceEntityOptional.get().getDbType(),
+						datasourceService.hasWhere(lastSql));
+			}
+
 			// 执行最后一句查询语句
-			logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("执行查询SQL: \n")
-					.append(sqls.get(sqls.size() - 1)).append(" \n");
+			logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("执行查询SQL: \n").append(lastSql)
+					.append(" \n");
 			workInstance = updateInstance(workInstance, logBuilder);
 
-			// 执行查询sql
-			ResultSet resultSet = statement.executeQuery(sqls.get(sqls.size() - 1));
+			ResultSet resultSet = statement.executeQuery(lastSql);
 
 			// 记录结束执行时间
 			logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("查询SQL执行成功  \n");
