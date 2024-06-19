@@ -1,65 +1,68 @@
-package com.isxcode.star.modules.work.run;
+package com.isxcode.star.modules.work.run.impl;
 
 import com.alibaba.fastjson.JSON;
-import com.isxcode.star.api.datasource.constants.DatasourceType;
 import com.isxcode.star.api.work.constants.WorkLog;
 import com.isxcode.star.api.work.constants.WorkType;
 import com.isxcode.star.api.work.exceptions.WorkRunException;
-import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.star.modules.datasource.entity.DatasourceEntity;
 import com.isxcode.star.modules.datasource.repository.DatasourceRepository;
 import com.isxcode.star.modules.datasource.service.DatasourceService;
 import com.isxcode.star.modules.work.entity.WorkInstanceEntity;
 import com.isxcode.star.modules.work.repository.WorkInstanceRepository;
+import com.isxcode.star.modules.work.run.WorkExecutor;
+import com.isxcode.star.modules.work.run.WorkRunContext;
 import com.isxcode.star.modules.work.sql.SqlCommentService;
 import com.isxcode.star.modules.work.sql.SqlFunctionService;
 import com.isxcode.star.modules.work.sql.SqlValueService;
 import com.isxcode.star.modules.workflow.repository.WorkflowInstanceRepository;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.logging.log4j.util.Strings;
-import org.prql.prql4j.PrqlCompiler;
-import org.springframework.stereotype.Service;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
+import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.util.Strings;
+import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
-public class PrqlExecutor extends WorkExecutor {
+public class QuerySqlExecutor extends WorkExecutor {
 
 	private final DatasourceRepository datasourceRepository;
+
 	private final DatasourceService datasourceService;
 
 	private final SqlCommentService sqlCommentService;
 
-	private final SqlValueService sqlValueService;
-
 	private final SqlFunctionService sqlFunctionService;
 
-	public PrqlExecutor(WorkInstanceRepository workInstanceRepository,
-			WorkflowInstanceRepository workflowInstanceRepository, DatasourceRepository datasourceRepository,
-			DatasourceService datasourceService, SqlCommentService sqlCommentService, SqlValueService sqlValueService,
-			SqlFunctionService sqlFunctionService) {
+	private final SqlValueService sqlValueService;
+
+	public QuerySqlExecutor(DatasourceRepository datasourceRepository, WorkInstanceRepository workInstanceRepository,
+			WorkflowInstanceRepository workflowInstanceRepository, DatasourceService datasourceService,
+			SqlCommentService sqlCommentService, SqlFunctionService sqlFunctionService,
+			SqlValueService sqlValueService) {
+
 		super(workInstanceRepository, workflowInstanceRepository);
 		this.datasourceRepository = datasourceRepository;
 		this.datasourceService = datasourceService;
 		this.sqlCommentService = sqlCommentService;
-		this.sqlValueService = sqlValueService;
 		this.sqlFunctionService = sqlFunctionService;
+		this.sqlValueService = sqlValueService;
 	}
 
 	@Override
 	public String getWorkType() {
-		return WorkType.PRQL;
+		return WorkType.QUERY_JDBC_SQL;
 	}
 
-	@Override
-	protected void execute(WorkRunContext workRunContext, WorkInstanceEntity workInstance) {
+	public void execute(WorkRunContext workRunContext, WorkInstanceEntity workInstance) {
 
 		// 将线程存到Map
 		WORK_THREAD.put(workInstance.getId(), Thread.currentThread());
@@ -95,12 +98,9 @@ public class PrqlExecutor extends WorkExecutor {
 
 		// 开始执行sql
 		try (Connection connection = datasourceService.getDbConnection(datasourceEntityOptional.get());
-				Statement statement = connection.createStatement()) {
+				Statement statement = connection.createStatement();) {
 
 			statement.setQueryTimeout(1800);
-
-			logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始解析prql \n");
-			workInstance = updateInstance(workInstance, logBuilder);
 
 			// 去掉sql中的注释
 			String sqlNoComment = sqlCommentService.removeSqlComment(workRunContext.getScript());
@@ -111,32 +111,37 @@ public class PrqlExecutor extends WorkExecutor {
 			// 翻译sql中的系统函数
 			String script = sqlFunctionService.parseSqlFunction(parseValueSql);
 
-			// 解析sql
-			String sql;
-			try {
-				sql = PrqlCompiler.toSql(script.replace(";", ""),
-						translateDBType(datasourceEntityOptional.get().getDbType()), true, true);
-			} catch (NoClassDefFoundError error) {
-				throw new Exception(error.getMessage());
+			// 清除脚本中的脏数据
+			List<String> sqls = Arrays.stream(script.split(";")).filter(e -> !Strings.isEmpty(e))
+					.collect(Collectors.toList());
+
+			// 执行每条sql，除了最后一条
+			for (int i = 0; i < sqls.size() - 1; i++) {
+
+				// 记录开始执行时间
+				logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始执行SQL: ")
+						.append(sqls.get(i)).append(" \n");
+				workInstance = updateInstance(workInstance, logBuilder);
+
+				// 执行sql
+				statement.execute(sqls.get(i));
+
+				// 记录结束执行时间
+				logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("SQL执行成功  \n");
+				workInstance = updateInstance(workInstance, logBuilder);
 			}
 
-			String regex = "/\\*(?:.|[\\n\\r])*?\\*/|--.*";
-			String noCommentSql = sql.replaceAll(regex, "");
-			String realSql = noCommentSql.replaceAll("--.*", "").replace("\n", " ");
-
-			logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO)
-					.append(String.format("prql转化完成: \n%s\n", realSql));
+			// 执行最后一句查询语句
+			logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("执行查询SQL: ")
+					.append(sqls.get(sqls.size() - 1)).append(" \n");
 			workInstance = updateInstance(workInstance, logBuilder);
 
-			logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始执行SQL \n");
-			workInstance = updateInstance(workInstance, logBuilder);
-			statement.execute(realSql);
+			// 执行查询sql
+			ResultSet resultSet = statement.executeQuery(sqls.get(sqls.size() - 1));
 
 			// 记录结束执行时间
-			logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("SQL执行成功  \n");
+			logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("查询SQL执行成功  \n");
 			workInstance = updateInstance(workInstance, logBuilder);
-
-			ResultSet resultSet = statement.getResultSet();
 
 			// 记录返回结果
 			List<List<String>> result = new ArrayList<>();
@@ -163,8 +168,6 @@ public class PrqlExecutor extends WorkExecutor {
 			workInstance.setResultData(JSON.toJSONString(result));
 			updateInstance(workInstance, logBuilder);
 		} catch (Exception e) {
-
-			log.error(e.getMessage(), e);
 			throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + e.getMessage() + "\n");
 		}
 	}
@@ -174,19 +177,5 @@ public class PrqlExecutor extends WorkExecutor {
 
 		Thread thread = WORK_THREAD.get(workInstance.getId());
 		thread.interrupt();
-	}
-
-	public static String translateDBType(String dbType) {
-
-		switch (dbType) {
-			case DatasourceType.MYSQL :
-				return "mysql";
-			case DatasourceType.CLICKHOUSE :
-				return "clickhouse";
-			case DatasourceType.POSTGRE_SQL :
-				return "postgres";
-			default :
-				throw new IsxAppException("当前数据库类型不支持");
-		}
 	}
 }

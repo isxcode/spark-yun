@@ -1,4 +1,4 @@
-package com.isxcode.star.modules.work.run;
+package com.isxcode.star.modules.work.run.impl;
 
 import com.isxcode.star.api.cluster.pojos.dto.ScpFileEngineNodeDto;
 import com.isxcode.star.api.instance.constants.InstanceStatus;
@@ -14,6 +14,8 @@ import com.isxcode.star.modules.cluster.repository.ClusterNodeRepository;
 import com.isxcode.star.modules.cluster.repository.ClusterRepository;
 import com.isxcode.star.modules.work.entity.WorkInstanceEntity;
 import com.isxcode.star.modules.work.repository.WorkInstanceRepository;
+import com.isxcode.star.modules.work.run.WorkExecutor;
+import com.isxcode.star.modules.work.run.WorkRunContext;
 import com.isxcode.star.modules.workflow.repository.WorkflowInstanceRepository;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.SftpException;
@@ -23,15 +25,14 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.Optional;
+import java.util.*;
 import java.util.regex.Pattern;
 
-import static com.isxcode.star.common.utils.ssh.SshUtils.executeCommand;
-import static com.isxcode.star.common.utils.ssh.SshUtils.scpText;
+import static com.isxcode.star.common.utils.ssh.SshUtils.*;
 
 @Service
 @Slf4j
-public class PythonExecutor extends WorkExecutor {
+public class BashExecutor extends WorkExecutor {
 
 	private final ClusterNodeRepository clusterNodeRepository;
 
@@ -41,7 +42,7 @@ public class PythonExecutor extends WorkExecutor {
 
 	private final ClusterRepository clusterRepository;
 
-	public PythonExecutor(WorkInstanceRepository workInstanceRepository,
+	public BashExecutor(WorkInstanceRepository workInstanceRepository,
 			WorkflowInstanceRepository workflowInstanceRepository, ClusterNodeRepository clusterNodeRepository,
 			ClusterNodeMapper clusterNodeMapper, AesUtils aesUtils, ClusterRepository clusterRepository) {
 
@@ -54,7 +55,7 @@ public class PythonExecutor extends WorkExecutor {
 
 	@Override
 	public String getWorkType() {
-		return WorkType.PYTHON;
+		return WorkType.BASH;
 	}
 
 	public void execute(WorkRunContext workRunContext, WorkInstanceEntity workInstance) {
@@ -68,12 +69,12 @@ public class PythonExecutor extends WorkExecutor {
 		// 判断执行脚本是否为空
 		logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("检测脚本内容 \n");
 		if (Strings.isEmpty(workRunContext.getScript())) {
-			throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "检测脚本失败 : PYTHON内容为空不能执行  \n");
+			throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "检测脚本失败 : BASH内容为空不能执行  \n");
 		}
 
 		// 禁用rm指令
 		if (Pattern.compile("\\brm\\b", Pattern.CASE_INSENSITIVE).matcher(workRunContext.getScript()).find()) {
-			throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "检测语句失败 : PYTHON内容包含rm指令不能执行  \n");
+			throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "检测语句失败 : BASH内容包含rm指令不能执行  \n");
 		}
 
 		// 检测计算集群是否存在
@@ -112,13 +113,13 @@ public class PythonExecutor extends WorkExecutor {
 		scpFileEngineNodeDto.setPasswd(aesUtils.decrypt(scpFileEngineNodeDto.getPasswd()));
 		try {
 			// 上传脚本
-			scpText(scpFileEngineNodeDto, workRunContext.getScript() + "\nprint('zhiqingyun_success')",
-					clusterNode.getAgentHomePath() + "/zhiqingyun-agent/works/" + workInstance.getId() + ".py");
+			scpText(scpFileEngineNodeDto, workRunContext.getScript() + "\necho 'zhiqingyun_success'",
+					clusterNode.getAgentHomePath() + "/zhiqingyun-agent/works/" + workInstance.getId() + ".sh");
 
 			// 执行命令获取pid
-			String executeBashWorkCommand = "nohup python3 " + clusterNode.getAgentHomePath()
-					+ "/zhiqingyun-agent/works/" + workInstance.getId() + ".py >> " + clusterNode.getAgentHomePath()
-					+ "/zhiqingyun-agent/works/" + workInstance.getId() + ".log 2>&1 & echo $!";
+			String executeBashWorkCommand = "nohup sh " + clusterNode.getAgentHomePath() + "/zhiqingyun-agent/works/"
+					+ workInstance.getId() + ".sh >> " + clusterNode.getAgentHomePath() + "/zhiqingyun-agent/works/"
+					+ workInstance.getId() + ".log 2>&1 & echo $!";
 			String pid = executeCommand(scpFileEngineNodeDto, executeBashWorkCommand, false).replace("\n", "");
 
 			// 保存pid
@@ -182,7 +183,7 @@ public class PythonExecutor extends WorkExecutor {
 				try {
 					String clearWorkRunFile = "rm -f " + clusterNode.getAgentHomePath() + "/zhiqingyun-agent/works/"
 							+ workInstance.getId() + ".log && " + "rm -f " + clusterNode.getAgentHomePath()
-							+ "/zhiqingyun-agent/works/" + workInstance.getId() + ".py";
+							+ "/zhiqingyun-agent/works/" + workInstance.getId() + ".sh";
 					SshUtils.executeCommand(scpFileEngineNodeDto, clearWorkRunFile, false);
 				} catch (JSchException | InterruptedException | IOException e) {
 					log.error("删除运行脚本失败");
