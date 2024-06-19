@@ -196,6 +196,11 @@ public class SparkSqlExecutor extends WorkExecutor {
 		// 翻译sql中的系统函数
 		String script = sqlFunctionService.parseSqlFunction(parseValueSql);
 
+		// 打印sql日志
+		logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("SparkSql:  \n").append(script)
+				.append("\n");
+		workInstance = updateInstance(workInstance, logBuilder);
+
 		// 开始构造PluginReq
 		PluginReq pluginReq = PluginReq.builder().sql(script).limit(200)
 				.sparkConfig(genSparkConfig(workRunContext.getClusterConfig().getSparkConfig())).build();

@@ -16,6 +16,8 @@ import com.isxcode.star.modules.work.entity.WorkInstanceEntity;
 import com.isxcode.star.modules.work.repository.WorkInstanceRepository;
 import com.isxcode.star.modules.work.run.WorkExecutor;
 import com.isxcode.star.modules.work.run.WorkRunContext;
+import com.isxcode.star.modules.work.sql.SqlFunctionService;
+import com.isxcode.star.modules.work.sql.SqlValueService;
 import com.isxcode.star.modules.workflow.repository.WorkflowInstanceRepository;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.SftpException;
@@ -43,15 +45,22 @@ public class PythonExecutor extends WorkExecutor {
 
 	private final ClusterRepository clusterRepository;
 
+	private final SqlValueService sqlValueService;
+
+	private final SqlFunctionService sqlFunctionService;
+
 	public PythonExecutor(WorkInstanceRepository workInstanceRepository,
 			WorkflowInstanceRepository workflowInstanceRepository, ClusterNodeRepository clusterNodeRepository,
-			ClusterNodeMapper clusterNodeMapper, AesUtils aesUtils, ClusterRepository clusterRepository) {
+			ClusterNodeMapper clusterNodeMapper, AesUtils aesUtils, ClusterRepository clusterRepository,
+			SqlValueService sqlValueService, SqlFunctionService sqlFunctionService) {
 
 		super(workInstanceRepository, workflowInstanceRepository);
 		this.clusterNodeRepository = clusterNodeRepository;
 		this.clusterNodeMapper = clusterNodeMapper;
 		this.aesUtils = aesUtils;
 		this.clusterRepository = clusterRepository;
+		this.sqlValueService = sqlValueService;
+		this.sqlFunctionService = sqlFunctionService;
 	}
 
 	@Override
@@ -103,6 +112,15 @@ public class PythonExecutor extends WorkExecutor {
 			throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "检测集群失败 : 指定运行节点不存在  \n");
 		}
 
+		// 翻译脚本中的系统变量
+		String parseValueSql = sqlValueService.parseSqlValue(workRunContext.getScript());
+
+		// 翻译脚本中的系统函数
+		String script = sqlFunctionService.parseSqlFunction(parseValueSql);
+		logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("Python脚本: \n").append(script)
+				.append("\n");
+		workInstance = updateInstance(workInstance, logBuilder);
+
 		// 脚本检查通过
 		logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始执行作业 \n");
 		workInstance = updateInstance(workInstance, logBuilder);
@@ -114,7 +132,7 @@ public class PythonExecutor extends WorkExecutor {
 		scpFileEngineNodeDto.setPasswd(aesUtils.decrypt(scpFileEngineNodeDto.getPasswd()));
 		try {
 			// 上传脚本
-			scpText(scpFileEngineNodeDto, workRunContext.getScript() + "\nprint('zhiqingyun_success')",
+			scpText(scpFileEngineNodeDto, script + "\nprint('zhiqingyun_success')",
 					clusterNode.getAgentHomePath() + "/zhiqingyun-agent/works/" + workInstance.getId() + ".py");
 
 			// 执行命令获取pid

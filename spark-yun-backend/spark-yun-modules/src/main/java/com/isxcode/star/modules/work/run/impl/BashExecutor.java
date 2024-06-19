@@ -16,6 +16,8 @@ import com.isxcode.star.modules.work.entity.WorkInstanceEntity;
 import com.isxcode.star.modules.work.repository.WorkInstanceRepository;
 import com.isxcode.star.modules.work.run.WorkExecutor;
 import com.isxcode.star.modules.work.run.WorkRunContext;
+import com.isxcode.star.modules.work.sql.SqlFunctionService;
+import com.isxcode.star.modules.work.sql.SqlValueService;
 import com.isxcode.star.modules.workflow.repository.WorkflowInstanceRepository;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.SftpException;
@@ -42,15 +44,22 @@ public class BashExecutor extends WorkExecutor {
 
 	private final ClusterRepository clusterRepository;
 
+	private final SqlValueService sqlValueService;
+
+	private final SqlFunctionService sqlFunctionService;
+
 	public BashExecutor(WorkInstanceRepository workInstanceRepository,
 			WorkflowInstanceRepository workflowInstanceRepository, ClusterNodeRepository clusterNodeRepository,
-			ClusterNodeMapper clusterNodeMapper, AesUtils aesUtils, ClusterRepository clusterRepository) {
+			ClusterNodeMapper clusterNodeMapper, AesUtils aesUtils, ClusterRepository clusterRepository,
+			SqlValueService sqlValueService, SqlFunctionService sqlFunctionService) {
 
 		super(workInstanceRepository, workflowInstanceRepository);
 		this.clusterNodeRepository = clusterNodeRepository;
 		this.clusterNodeMapper = clusterNodeMapper;
 		this.aesUtils = aesUtils;
 		this.clusterRepository = clusterRepository;
+		this.sqlValueService = sqlValueService;
+		this.sqlFunctionService = sqlFunctionService;
 	}
 
 	@Override
@@ -72,8 +81,17 @@ public class BashExecutor extends WorkExecutor {
 			throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "检测脚本失败 : BASH内容为空不能执行  \n");
 		}
 
+		// 翻译脚本中的系统变量
+		String parseValueSql = sqlValueService.parseSqlValue(workRunContext.getScript());
+
+		// 翻译脚本中的系统函数
+		String script = sqlFunctionService.parseSqlFunction(parseValueSql);
+		logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("Bash脚本: \n").append(script)
+				.append("\n");
+		workInstance = updateInstance(workInstance, logBuilder);
+
 		// 禁用rm指令
-		if (Pattern.compile("\\brm\\b", Pattern.CASE_INSENSITIVE).matcher(workRunContext.getScript()).find()) {
+		if (Pattern.compile("\\brm\\b", Pattern.CASE_INSENSITIVE).matcher(script).find()) {
 			throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "检测语句失败 : BASH内容包含rm指令不能执行  \n");
 		}
 
@@ -113,7 +131,7 @@ public class BashExecutor extends WorkExecutor {
 		scpFileEngineNodeDto.setPasswd(aesUtils.decrypt(scpFileEngineNodeDto.getPasswd()));
 		try {
 			// 上传脚本
-			scpText(scpFileEngineNodeDto, workRunContext.getScript() + "\necho 'zhiqingyun_success'",
+			scpText(scpFileEngineNodeDto, script + "\necho 'zhiqingyun_success'",
 					clusterNode.getAgentHomePath() + "/zhiqingyun-agent/works/" + workInstance.getId() + ".sh");
 
 			// 执行命令获取pid
