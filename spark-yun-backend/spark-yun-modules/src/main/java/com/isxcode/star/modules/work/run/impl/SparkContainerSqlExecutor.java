@@ -104,9 +104,7 @@ public class SparkContainerSqlExecutor extends WorkExecutor {
 		}
 
 		// 脚本检查通过
-		logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始执行作业 \n");
-		logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始执行SQL: \n")
-				.append(workRunContext.getScript()).append("\n");
+		logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始解析作业 \n");
 		workInstance = updateInstance(workInstance, logBuilder);
 
 		// 调用代理的接口，获取数据
@@ -130,6 +128,11 @@ public class SparkContainerSqlExecutor extends WorkExecutor {
 
 			// 翻译sql中的系统函数
 			String script = sqlFunctionService.parseSqlFunction(parseValueSql);
+
+			// 打印sql
+			logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始执行SQL: \n").append(script)
+					.append("\n");
+			workInstance = updateInstance(workInstance, logBuilder);
 
 			// 再次调用容器的check接口，确认容器是否成功启动
 			ExecuteContainerSqlReq executeContainerSqlReq = ExecuteContainerSqlReq.builder()

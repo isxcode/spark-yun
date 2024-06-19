@@ -113,6 +113,11 @@ public class PrqlExecutor extends WorkExecutor {
 			// 翻译sql中的系统函数
 			String script = sqlFunctionService.parseSqlFunction(parseValueSql);
 
+			// 打印日志
+			logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("执行PRQL: \n").append(script)
+					.append(" \n");
+			workInstance = updateInstance(workInstance, logBuilder);
+
 			// 解析sql
 			String sql;
 			try {
@@ -122,17 +127,13 @@ public class PrqlExecutor extends WorkExecutor {
 				throw new Exception(error.getMessage());
 			}
 
-			String regex = "/\\*(?:.|[\\n\\r])*?\\*/|--.*";
-			String noCommentSql = sql.replaceAll(regex, "");
-			String realSql = noCommentSql.replaceAll("--.*", "").replace("\n", " ");
-
 			logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO)
-					.append(String.format("prql转化完成: \n%s\n", realSql));
+					.append(String.format("prql转化完成: \n%s\n", sql));
 			workInstance = updateInstance(workInstance, logBuilder);
 
 			logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始执行SQL \n");
 			workInstance = updateInstance(workInstance, logBuilder);
-			statement.execute(realSql);
+			statement.execute(sql);
 
 			// 记录结束执行时间
 			logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("SQL执行成功  \n");

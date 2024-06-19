@@ -119,7 +119,7 @@ public class QuerySqlExecutor extends WorkExecutor {
 			for (int i = 0; i < sqls.size() - 1; i++) {
 
 				// 记录开始执行时间
-				logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始执行SQL: ")
+				logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始执行SQL: \n")
 						.append(sqls.get(i)).append(" \n");
 				workInstance = updateInstance(workInstance, logBuilder);
 
@@ -132,7 +132,7 @@ public class QuerySqlExecutor extends WorkExecutor {
 			}
 
 			// 执行最后一句查询语句
-			logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("执行查询SQL: ")
+			logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("执行查询SQL: \n")
 					.append(sqls.get(sqls.size() - 1)).append(" \n");
 			workInstance = updateInstance(workInstance, logBuilder);
 

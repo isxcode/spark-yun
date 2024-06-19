@@ -119,7 +119,7 @@ public class ExecuteSqlExecutor extends WorkExecutor {
 			for (String sql : sqls) {
 
 				// 记录开始执行时间
-				logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始执行SQL: ").append(sql)
+				logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始执行SQL: \n").append(sql)
 						.append(" \n");
 				workInstance = updateInstance(workInstance, logBuilder);
 

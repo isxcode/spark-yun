@@ -41,6 +41,9 @@ import com.isxcode.star.modules.work.repository.WorkInstanceRepository;
 import com.isxcode.star.modules.work.repository.WorkRepository;
 import com.isxcode.star.modules.work.run.WorkExecutor;
 import com.isxcode.star.modules.work.run.WorkRunContext;
+import com.isxcode.star.modules.work.sql.SqlCommentService;
+import com.isxcode.star.modules.work.sql.SqlFunctionService;
+import com.isxcode.star.modules.work.sql.SqlValueService;
 import com.isxcode.star.modules.workflow.repository.WorkflowInstanceRepository;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.SftpException;
@@ -94,12 +97,19 @@ public class SyncWorkExecutor extends WorkExecutor {
 
 	private final FileRepository fileRepository;
 
+	private final SqlCommentService sqlCommentService;
+
+	private final SqlValueService sqlValueService;
+
+	private final SqlFunctionService sqlFunctionService;
+
 	public SyncWorkExecutor(WorkInstanceRepository workInstanceRepository, ClusterRepository clusterRepository,
 			ClusterNodeRepository clusterNodeRepository, WorkflowInstanceRepository workflowInstanceRepository,
 			WorkRepository workRepository, WorkConfigRepository workConfigRepository, Locker locker,
 			HttpUrlUtils httpUrlUtils, AesUtils aesUtils, ClusterNodeMapper clusterNodeMapper,
 			DatasourceService datasourceService, IsxAppProperties isxAppProperties, FuncRepository funcRepository,
-			FuncMapper funcMapper, FileRepository fileRepository) {
+			FuncMapper funcMapper, FileRepository fileRepository, SqlCommentService sqlCommentService,
+			SqlValueService sqlValueService, SqlFunctionService sqlFunctionService) {
 
 		super(workInstanceRepository, workflowInstanceRepository);
 		this.workInstanceRepository = workInstanceRepository;
@@ -116,6 +126,9 @@ public class SyncWorkExecutor extends WorkExecutor {
 		this.funcRepository = funcRepository;
 		this.funcMapper = funcMapper;
 		this.fileRepository = fileRepository;
+		this.sqlCommentService = sqlCommentService;
+		this.sqlValueService = sqlValueService;
+		this.sqlFunctionService = sqlFunctionService;
 	}
 
 	@Override
@@ -199,6 +212,25 @@ public class SyncWorkExecutor extends WorkExecutor {
 				.mainClass("com.isxcode.star.plugin.dataSync.jdbc.Execute")
 				.appResource("spark-data-sync-jdbc-plugin.jar")
 				.conf(genSparkSubmitConfig(workRunContext.getClusterConfig().getSparkConfig())).build();
+
+		// 过滤条件支持系统参数和函数解析
+		if (!Strings.isEmpty(workRunContext.getSyncWorkConfig().getQueryCondition())) {
+
+			// 去掉sql中的注释
+			String sqlNoComment = sqlCommentService
+					.removeSqlComment(workRunContext.getSyncWorkConfig().getQueryCondition());
+
+			// 翻译sql中的系统变量
+			String parseValueSql = sqlValueService.parseSqlValue(sqlNoComment);
+
+			// 翻译sql中的系统函数
+			String conditionScript = sqlFunctionService.parseSqlFunction(parseValueSql);
+
+			logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("过滤条件:  \n")
+					.append(conditionScript).append("\n");
+			workInstance = updateInstance(workInstance, logBuilder);
+			workRunContext.getSyncWorkConfig().setQueryCondition(conditionScript);
+		}
 
 		// 开始构造PluginReq
 		PluginReq pluginReq = PluginReq.builder().syncWorkConfig(workRunContext.getSyncWorkConfig())
