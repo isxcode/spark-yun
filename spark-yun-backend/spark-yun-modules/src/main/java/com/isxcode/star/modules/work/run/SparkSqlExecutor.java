@@ -38,8 +38,9 @@ import com.isxcode.star.modules.work.entity.WorkInstanceEntity;
 import com.isxcode.star.modules.work.repository.WorkConfigRepository;
 import com.isxcode.star.modules.work.repository.WorkInstanceRepository;
 import com.isxcode.star.modules.work.repository.WorkRepository;
-import com.isxcode.star.modules.work.service.SqlCommentParseService;
-import com.isxcode.star.modules.work.service.SqlValueParseService;
+import com.isxcode.star.modules.work.sql.SqlCommentService;
+import com.isxcode.star.modules.work.sql.SqlFunctionService;
+import com.isxcode.star.modules.work.sql.SqlValueService;
 import com.isxcode.star.modules.workflow.repository.WorkflowInstanceRepository;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.SftpException;
@@ -91,17 +92,19 @@ public class SparkSqlExecutor extends WorkExecutor {
 
 	private final DatasourceService datasourceService;
 
-	private final SqlCommentParseService sqlCommentParseService;
+	private final SqlCommentService sqlCommentService;
 
-	private final SqlValueParseService sqlValueParseService;
+	private final SqlValueService sqlValueService;
+
+	private final SqlFunctionService sqlFunctionService;
 
 	public SparkSqlExecutor(WorkInstanceRepository workInstanceRepository, ClusterRepository clusterRepository,
 			ClusterNodeRepository clusterNodeRepository, WorkflowInstanceRepository workflowInstanceRepository,
 			WorkRepository workRepository, WorkConfigRepository workConfigRepository, Locker locker,
 			HttpUrlUtils httpUrlUtils, FuncRepository funcRepository, FuncMapper funcMapper,
 			ClusterNodeMapper clusterNodeMapper, AesUtils aesUtils, IsxAppProperties isxAppProperties,
-			FileRepository fileRepository, DatasourceService datasourceService,
-			SqlCommentParseService sqlCommentParseService, SqlValueParseService sqlValueParseService) {
+			FileRepository fileRepository, DatasourceService datasourceService, SqlCommentService sqlCommentService,
+			SqlValueService sqlValueService, SqlFunctionService sqlFunctionService) {
 
 		super(workInstanceRepository, workflowInstanceRepository);
 		this.workInstanceRepository = workInstanceRepository;
@@ -118,8 +121,9 @@ public class SparkSqlExecutor extends WorkExecutor {
 		this.isxAppProperties = isxAppProperties;
 		this.fileRepository = fileRepository;
 		this.datasourceService = datasourceService;
-		this.sqlCommentParseService = sqlCommentParseService;
-		this.sqlValueParseService = sqlValueParseService;
+		this.sqlCommentService = sqlCommentService;
+		this.sqlValueService = sqlValueService;
+		this.sqlFunctionService = sqlFunctionService;
 	}
 
 	@Override
@@ -182,15 +186,16 @@ public class SparkSqlExecutor extends WorkExecutor {
 				.conf(genSparkSubmitConfig(workRunContext.getClusterConfig().getSparkConfig())).build();
 
 		// 去掉sql中的注释
-		String sqlNoComment = sqlCommentParseService.removeSqlComment(workRunContext.getScript());
+		String sqlNoComment = sqlCommentService.removeSqlComment(workRunContext.getScript());
 
-		// 翻译sql中的${qing.currentDate}的系统变量
-		String hasValueSql = sqlValueParseService.setSqlValue(sqlNoComment);
+		// 翻译sql中的系统变量
+		String parseValueSql = sqlValueService.parseSqlValue(sqlNoComment);
 
-		// 翻译sql中的#{ date_to_str(date_add(now(),1),'yyyyMMdd') }的系统函数
+		// 翻译sql中的系统函数
+		String script = sqlFunctionService.parseSqlFunction(parseValueSql);
 
 		// 开始构造PluginReq
-		PluginReq pluginReq = PluginReq.builder().sql(workRunContext.getScript()).limit(200)
+		PluginReq pluginReq = PluginReq.builder().sql(script).limit(200)
 				.sparkConfig(genSparkConfig(workRunContext.getClusterConfig().getSparkConfig())).build();
 
 		// 导入自定义函数
