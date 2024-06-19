@@ -1,4 +1,4 @@
-package com.isxcode.star.modules.work.run;
+package com.isxcode.star.modules.work.run.impl;
 
 import com.isxcode.star.api.work.constants.WorkLog;
 import com.isxcode.star.api.work.constants.WorkType;
@@ -9,7 +9,13 @@ import com.isxcode.star.modules.datasource.service.DatasourceService;
 import com.isxcode.star.modules.datasource.service.biz.DatasourceBizService;
 import com.isxcode.star.modules.work.entity.WorkInstanceEntity;
 import com.isxcode.star.modules.work.repository.WorkInstanceRepository;
+import com.isxcode.star.modules.work.run.WorkExecutor;
+import com.isxcode.star.modules.work.run.WorkRunContext;
+import com.isxcode.star.modules.work.sql.SqlCommentService;
+import com.isxcode.star.modules.work.sql.SqlFunctionService;
+import com.isxcode.star.modules.work.sql.SqlValueService;
 import com.isxcode.star.modules.workflow.repository.WorkflowInstanceRepository;
+
 import java.sql.Connection;
 import java.sql.Statement;
 import java.time.LocalDateTime;
@@ -17,6 +23,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.stereotype.Service;
@@ -31,14 +38,24 @@ public class ExecuteSqlExecutor extends WorkExecutor {
 
 	private final DatasourceService datasourceService;
 
+	private final SqlCommentService sqlCommentService;
+
+	private final SqlValueService sqlValueService;
+
+	private final SqlFunctionService sqlFunctionService;
+
 	public ExecuteSqlExecutor(WorkInstanceRepository workInstanceRepository, DatasourceRepository datasourceRepository,
-			DatasourceBizService datasourceBizService, WorkflowInstanceRepository workflowInstanceRepository,
-			DatasourceService datasourceService) {
+			WorkflowInstanceRepository workflowInstanceRepository, DatasourceBizService datasourceBizService,
+			DatasourceService datasourceService, SqlCommentService sqlCommentService, SqlValueService sqlValueService,
+			SqlFunctionService sqlFunctionService) {
 
 		super(workInstanceRepository, workflowInstanceRepository);
 		this.datasourceRepository = datasourceRepository;
 		this.datasourceBizService = datasourceBizService;
 		this.datasourceService = datasourceService;
+		this.sqlCommentService = sqlCommentService;
+		this.sqlValueService = sqlValueService;
+		this.sqlFunctionService = sqlFunctionService;
 	}
 
 	@Override
@@ -85,11 +102,17 @@ public class ExecuteSqlExecutor extends WorkExecutor {
 		try (Connection connection = datasourceService.getDbConnection(datasourceEntityOptional.get());
 				Statement statement = connection.createStatement()) {
 
-			// 清除注释
-			String noCommentSql = workRunContext.getScript().replaceAll("/\\*(?:.|[\\n\\r])*?\\*/|--.*", "");
+			// 去掉sql中的注释
+			String sqlNoComment = sqlCommentService.removeSqlComment(workRunContext.getScript());
+
+			// 翻译sql中的系统变量
+			String parseValueSql = sqlValueService.parseSqlValue(sqlNoComment);
+
+			// 翻译sql中的系统函数
+			String script = sqlFunctionService.parseSqlFunction(parseValueSql);
 
 			// 清除脚本中的脏数据
-			List<String> sqls = Arrays.stream(noCommentSql.split(";")).filter(e -> !Strings.isEmpty(e))
+			List<String> sqls = Arrays.stream(script.split(";")).filter(e -> !Strings.isEmpty(e))
 					.collect(Collectors.toList());
 
 			// 逐条执行sql

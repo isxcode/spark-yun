@@ -1,4 +1,4 @@
-package com.isxcode.star.modules.work.run;
+package com.isxcode.star.modules.work.run.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.isxcode.star.api.agent.pojos.req.PluginReq;
@@ -11,7 +11,6 @@ import com.isxcode.star.api.cluster.pojos.dto.ScpFileEngineNodeDto;
 import com.isxcode.star.api.work.constants.WorkLog;
 import com.isxcode.star.api.work.constants.WorkType;
 import com.isxcode.star.api.work.exceptions.WorkRunException;
-import com.isxcode.star.api.work.pojos.dto.DatasourceConfig;
 import com.isxcode.star.api.work.pojos.res.RunWorkRes;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.star.backend.api.base.pojos.BaseResponse;
@@ -39,10 +38,16 @@ import com.isxcode.star.modules.work.entity.WorkInstanceEntity;
 import com.isxcode.star.modules.work.repository.WorkConfigRepository;
 import com.isxcode.star.modules.work.repository.WorkInstanceRepository;
 import com.isxcode.star.modules.work.repository.WorkRepository;
+import com.isxcode.star.modules.work.run.WorkExecutor;
+import com.isxcode.star.modules.work.run.WorkRunContext;
+import com.isxcode.star.modules.work.sql.SqlCommentService;
+import com.isxcode.star.modules.work.sql.SqlFunctionService;
+import com.isxcode.star.modules.work.sql.SqlValueService;
 import com.isxcode.star.modules.workflow.repository.WorkflowInstanceRepository;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.SftpException;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -57,12 +62,9 @@ import java.util.*;
 import static com.isxcode.star.common.config.CommonConfig.TENANT_ID;
 import static com.isxcode.star.common.utils.ssh.SshUtils.scpJar;
 
-/**
- * 同步作业执行器.
- */
 @Service
 @Slf4j
-public class SyncWorkExecutor extends WorkExecutor {
+public class SparkSqlExecutor extends WorkExecutor {
 
 	private final WorkInstanceRepository workInstanceRepository;
 
@@ -78,26 +80,33 @@ public class SyncWorkExecutor extends WorkExecutor {
 
 	private final HttpUrlUtils httpUrlUtils;
 
-	private final AesUtils aesUtils;
-
-	private final ClusterNodeMapper clusterNodeMapper;
-
-	private final DatasourceService datasourceService;
-
-	private final IsxAppProperties isxAppProperties;
-
 	private final FuncRepository funcRepository;
 
 	private final FuncMapper funcMapper;
 
+	private final ClusterNodeMapper clusterNodeMapper;
+
+	private final AesUtils aesUtils;
+
+	private final IsxAppProperties isxAppProperties;
+
 	private final FileRepository fileRepository;
 
-	public SyncWorkExecutor(WorkInstanceRepository workInstanceRepository, ClusterRepository clusterRepository,
+	private final DatasourceService datasourceService;
+
+	private final SqlCommentService sqlCommentService;
+
+	private final SqlValueService sqlValueService;
+
+	private final SqlFunctionService sqlFunctionService;
+
+	public SparkSqlExecutor(WorkInstanceRepository workInstanceRepository, ClusterRepository clusterRepository,
 			ClusterNodeRepository clusterNodeRepository, WorkflowInstanceRepository workflowInstanceRepository,
 			WorkRepository workRepository, WorkConfigRepository workConfigRepository, Locker locker,
-			HttpUrlUtils httpUrlUtils, AesUtils aesUtils, ClusterNodeMapper clusterNodeMapper,
-			DatasourceService datasourceService, IsxAppProperties isxAppProperties, FuncRepository funcRepository,
-			FuncMapper funcMapper, FileRepository fileRepository) {
+			HttpUrlUtils httpUrlUtils, FuncRepository funcRepository, FuncMapper funcMapper,
+			ClusterNodeMapper clusterNodeMapper, AesUtils aesUtils, IsxAppProperties isxAppProperties,
+			FileRepository fileRepository, DatasourceService datasourceService, SqlCommentService sqlCommentService,
+			SqlValueService sqlValueService, SqlFunctionService sqlFunctionService) {
 
 		super(workInstanceRepository, workflowInstanceRepository);
 		this.workInstanceRepository = workInstanceRepository;
@@ -107,18 +116,21 @@ public class SyncWorkExecutor extends WorkExecutor {
 		this.workConfigRepository = workConfigRepository;
 		this.locker = locker;
 		this.httpUrlUtils = httpUrlUtils;
-		this.aesUtils = aesUtils;
-		this.clusterNodeMapper = clusterNodeMapper;
-		this.datasourceService = datasourceService;
-		this.isxAppProperties = isxAppProperties;
 		this.funcRepository = funcRepository;
 		this.funcMapper = funcMapper;
+		this.clusterNodeMapper = clusterNodeMapper;
+		this.aesUtils = aesUtils;
+		this.isxAppProperties = isxAppProperties;
 		this.fileRepository = fileRepository;
+		this.datasourceService = datasourceService;
+		this.sqlCommentService = sqlCommentService;
+		this.sqlValueService = sqlValueService;
+		this.sqlFunctionService = sqlFunctionService;
 	}
 
 	@Override
 	public String getWorkType() {
-		return WorkType.DATA_SYNC_JDBC;
+		return WorkType.QUERY_SPARK_SQL;
 	}
 
 	@Override
@@ -130,10 +142,16 @@ public class SyncWorkExecutor extends WorkExecutor {
 		// 获取日志构造器
 		StringBuilder logBuilder = workRunContext.getLogBuilder();
 
-		// 检测计算集群是否配置
+		// 判断执行脚本是否为空
+		logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("检测脚本内容 \n");
+		if (Strings.isEmpty(workRunContext.getScript())) {
+			throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "检测脚本失败 : SQL内容为空不能执行  \n");
+		}
+
+		// 检测计算集群是否存在
 		logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始申请资源 \n");
 		if (Strings.isEmpty(workRunContext.getClusterConfig().getClusterId())) {
-			throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "申请资源失败 : 计算引擎不存在  \n");
+			throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "申请资源失败 : 计算引擎未配置  \n");
 		}
 
 		// 检查计算集群是否存在
@@ -150,16 +168,6 @@ public class SyncWorkExecutor extends WorkExecutor {
 			throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "申请资源失败 : 集群不存在可用节点，请切换一个集群  \n");
 		}
 
-		// 检查分区键是否为空
-		if (Strings.isEmpty(workRunContext.getSyncWorkConfig().getPartitionColumn())) {
-			throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "检查作业失败 : 分区键为空  \n");
-		}
-
-		// 检测用户是否配置映射关系
-		if (workRunContext.getSyncWorkConfig().getColumnMap().isEmpty()) {
-			throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "检查作业失败 : 请配置字段映射关系  \n");
-		}
-
 		// 节点选择随机数
 		ClusterNodeEntity engineNode = allEngineNodes.get(new Random().nextInt(allEngineNodes.size()));
 		logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("申请资源完成，激活节点:【")
@@ -171,37 +179,26 @@ public class SyncWorkExecutor extends WorkExecutor {
 		logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始构建作业  \n");
 		YagExecuteWorkReq executeReq = new YagExecuteWorkReq();
 		executeReq.setWorkId(workRunContext.getWorkId());
-		executeReq.setWorkType(WorkType.DATA_SYNC_JDBC);
+		executeReq.setWorkType(WorkType.QUERY_SPARK_SQL);
 		executeReq.setWorkInstanceId(workInstance.getId());
-
-		// 封装来源Datasource的信息
-		DatasourceEntity sourceDatasource = datasourceService
-				.getDatasource(workRunContext.getSyncWorkConfig().getSourceDBId());
-		DatasourceConfig sourceConfig = DatasourceConfig.builder()
-				.driver(datasourceService.getDriverClass(sourceDatasource.getDbType()))
-				.url(sourceDatasource.getJdbcUrl()).dbTable(workRunContext.getSyncWorkConfig().getSourceTable())
-				.user(sourceDatasource.getUsername()).password(aesUtils.decrypt(sourceDatasource.getPasswd())).build();
-		workRunContext.getSyncWorkConfig().setSourceDatabase(sourceConfig);
-
-		// 封装去向Datasource的信息
-		DatasourceEntity targetDatasource = datasourceService
-				.getDatasource(workRunContext.getSyncWorkConfig().getTargetDBId());
-		DatasourceConfig targetConfig = DatasourceConfig.builder()
-				.driver(datasourceService.getDriverClass(targetDatasource.getDbType()))
-				.url(targetDatasource.getJdbcUrl()).dbTable(workRunContext.getSyncWorkConfig().getTargetTable())
-				.user(targetDatasource.getUsername()).password(aesUtils.decrypt(targetDatasource.getPasswd())).build();
-		workRunContext.getSyncWorkConfig().setTargetDatabase(targetConfig);
 
 		// 开始构造SparkSubmit
 		SparkSubmit sparkSubmit = SparkSubmit.builder().verbose(true)
-				.mainClass("com.isxcode.star.plugin.dataSync.jdbc.Execute")
-				.appResource("spark-data-sync-jdbc-plugin.jar")
+				.mainClass("com.isxcode.star.plugin.query.sql.Execute").appResource("spark-query-sql-plugin.jar")
 				.conf(genSparkSubmitConfig(workRunContext.getClusterConfig().getSparkConfig())).build();
 
+		// 去掉sql中的注释
+		String sqlNoComment = sqlCommentService.removeSqlComment(workRunContext.getScript());
+
+		// 翻译sql中的系统变量
+		String parseValueSql = sqlValueService.parseSqlValue(sqlNoComment);
+
+		// 翻译sql中的系统函数
+		String script = sqlFunctionService.parseSqlFunction(parseValueSql);
+
 		// 开始构造PluginReq
-		PluginReq pluginReq = PluginReq.builder().syncWorkConfig(workRunContext.getSyncWorkConfig())
-				.sparkConfig(genSparkConfig(workRunContext.getClusterConfig().getSparkConfig()))
-				.syncRule(workRunContext.getSyncRule()).build();
+		PluginReq pluginReq = PluginReq.builder().sql(script).limit(200)
+				.sparkConfig(genSparkConfig(workRunContext.getClusterConfig().getSparkConfig())).build();
 
 		// 导入自定义函数
 		ScpFileEngineNodeDto scpFileEngineNodeDto = clusterNodeMapper
@@ -217,8 +214,7 @@ public class SyncWorkExecutor extends WorkExecutor {
 							engineNode.getAgentHomePath() + File.separator + "zhiqingyun-agent" + File.separator
 									+ "file" + File.separator + e.getFileId() + ".jar");
 				} catch (JSchException | SftpException | InterruptedException | IOException ex) {
-					throw new WorkRunException(
-							LocalDateTime.now() + WorkLog.ERROR_INFO + " : jar文件上传失败," + ex.getMessage() + "\n");
+					throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "jar文件上传失败\n");
 				}
 			});
 			pluginReq.setFuncInfoList(funcMapper.funcEntityListToFuncInfoList(allFunc));
@@ -238,6 +234,22 @@ public class SyncWorkExecutor extends WorkExecutor {
 				}
 			});
 			executeReq.setLibConfig(workRunContext.getLibConfig());
+		}
+
+		// 解析db
+		if (StringUtils.isNotBlank(workRunContext.getDatasourceId())
+				&& workRunContext.getClusterConfig().getEnableHive()) {
+			DatasourceEntity datasource = datasourceService.getDatasource(workRunContext.getDatasourceId());
+			try {
+				String database = datasourceService.parseDbName(datasource.getJdbcUrl());
+				if (!Strings.isEmpty(database)) {
+					pluginReq.setDatabase(database);
+				}
+			} catch (IsxAppException e) {
+				throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + e.getMsg() + "\n");
+			}
+			// 如果数据库id不为空,则替换hive的metastore url
+			pluginReq.getSparkConfig().put("hive.metastore.uris", datasource.getMetastoreUris());
 		}
 
 		// 开始构造executeReq

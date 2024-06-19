@@ -1,4 +1,4 @@
-package com.isxcode.star.modules.work.run;
+package com.isxcode.star.modules.work.run.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.isxcode.star.api.datasource.constants.DatasourceType;
@@ -11,6 +11,11 @@ import com.isxcode.star.modules.datasource.repository.DatasourceRepository;
 import com.isxcode.star.modules.datasource.service.DatasourceService;
 import com.isxcode.star.modules.work.entity.WorkInstanceEntity;
 import com.isxcode.star.modules.work.repository.WorkInstanceRepository;
+import com.isxcode.star.modules.work.run.WorkExecutor;
+import com.isxcode.star.modules.work.run.WorkRunContext;
+import com.isxcode.star.modules.work.sql.SqlCommentService;
+import com.isxcode.star.modules.work.sql.SqlFunctionService;
+import com.isxcode.star.modules.work.sql.SqlValueService;
 import com.isxcode.star.modules.workflow.repository.WorkflowInstanceRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
@@ -32,12 +37,22 @@ public class PrqlExecutor extends WorkExecutor {
 	private final DatasourceRepository datasourceRepository;
 	private final DatasourceService datasourceService;
 
+	private final SqlCommentService sqlCommentService;
+
+	private final SqlValueService sqlValueService;
+
+	private final SqlFunctionService sqlFunctionService;
+
 	public PrqlExecutor(WorkInstanceRepository workInstanceRepository,
 			WorkflowInstanceRepository workflowInstanceRepository, DatasourceRepository datasourceRepository,
-			DatasourceService datasourceService) {
+			DatasourceService datasourceService, SqlCommentService sqlCommentService, SqlValueService sqlValueService,
+			SqlFunctionService sqlFunctionService) {
 		super(workInstanceRepository, workflowInstanceRepository);
 		this.datasourceRepository = datasourceRepository;
 		this.datasourceService = datasourceService;
+		this.sqlCommentService = sqlCommentService;
+		this.sqlValueService = sqlValueService;
+		this.sqlFunctionService = sqlFunctionService;
 	}
 
 	@Override
@@ -88,10 +103,20 @@ public class PrqlExecutor extends WorkExecutor {
 
 			logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始解析prql \n");
 			workInstance = updateInstance(workInstance, logBuilder);
+
+			// 去掉sql中的注释
+			String sqlNoComment = sqlCommentService.removeSqlComment(workRunContext.getScript());
+
+			// 翻译sql中的系统变量
+			String parseValueSql = sqlValueService.parseSqlValue(sqlNoComment);
+
+			// 翻译sql中的系统函数
+			String script = sqlFunctionService.parseSqlFunction(parseValueSql);
+
 			// 解析sql
 			String sql;
 			try {
-				sql = PrqlCompiler.toSql(workRunContext.getScript().replace(";", ""),
+				sql = PrqlCompiler.toSql(script.replace(";", ""),
 						translateDBType(datasourceEntityOptional.get().getDbType()), true, true);
 			} catch (NoClassDefFoundError error) {
 				throw new Exception(error.getMessage());
