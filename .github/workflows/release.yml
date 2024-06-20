@@ -68,13 +68,15 @@ jobs:
         with:
           version: 9.0.6
           run_install: false
-        run: pnpm -v
+        run: |
+          echo pnpm version: `pnpm -v`
 
       - name: Install Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 18
-        run: node -v
+        run: |
+          echo node version: `node -v`
 
       - name: Get pnpm store directory
         shell: bash
