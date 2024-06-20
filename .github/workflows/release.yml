@@ -68,6 +68,9 @@ jobs:
         with:
           version: 9.0.6
           run_install: false
+
+      - name: Print pnpm version
+        shell: bash
         run: |
           echo pnpm version: `pnpm -v`
 
@@ -75,6 +78,9 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 18
+
+      - name: Print node version
+        shell: bash
         run: |
           echo node version: `node -v`
 
