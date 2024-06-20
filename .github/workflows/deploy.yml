@@ -59,6 +59,7 @@ jobs:
             tar -vzxf /tmp/zhiqingyun.tar.gz -C /opt/
             rm -rf /opt/zhiqingyun/conf/application-local.yml
             curl -ssL https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/application-local.yml -o /opt/zhiqingyun/conf/application-local.yml
+            rm -rf /opt/zhiqingyun/resources_bak/resources_${{ inputs.deploy_date }}_bak
             cp -r /opt/zhiqingyun/resources /opt/zhiqingyun/resources_bak/resources_${{ inputs.deploy_date }}_bak
             rm -rf /opt/zhiqingyun/bin/start.sh
             curl -ssL https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/start.sh -o /opt/zhiqingyun/bin/start.sh
