@@ -22,7 +22,8 @@ fi
 
 # 如果没有pnpm命令,需要安装
 if ! command -v pnpm &>/dev/null; then
-   npm install pnpm -g
+   echo "安装pnpm@9.0.6"
+   npm install pnpm@9.0.6 -g
 fi
 
 # 获取当前路径
