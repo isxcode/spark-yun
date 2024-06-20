@@ -1,4 +1,4 @@
-name: release project
+name: build zhiqingyun
 
 on:
   workflow_dispatch:
@@ -17,6 +17,7 @@ env:
   ADMIN_GITHUB_TOKEN: ${{ inputs.admin_github_token }}
 
 jobs:
+
   build:
     runs-on: ubuntu-latest
 
@@ -132,8 +133,39 @@ jobs:
           tags: isxcode/zhiqingyun:${{ inputs.version_number }}
           push: true
 
-      - name: Delete zhiqingyun-agent.tar.gz
-        run: rm spark-yun-dist/build/distributions/zhiqingyun-agent.tar.gz
+      - name: Upload zhiqingyun tar
+        uses: actions/upload-artifact@v4
+        with:
+          name: zhiqingyun
+          path: ./spark-yun-dist/build/distributions/zhiqingyun.tar.gz
+
+  upload-oss:
+    needs: build
+
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+
+    steps:
+
+      - name: Set timezone to Asia/Shanghai
+        run: |
+          sudo timedatectl set-timezone Asia/Shanghai
+          date
+
+      - name: Mkdir distributions
+        shell: bash
+        run: |
+          mkdir distributions
+
+      - name: Download zhiqingyun tar
+        uses: actions/download-artifact@v4
+        with:
+          name: zhiqingyun
+          path: ./distributions
 
       - name: Upload Package to Ali oss
         uses: chf007/aliyun-oss-upload-action@main
@@ -143,5 +175,5 @@ jobs:
         with:
           region: oss-cn-shanghai
           bucket: isxcode
-          source-dir: 'spark-yun-dist/build/distributions'
+          source-dir: 'distributions'
           dest-dir: 'zhiqingyun'
