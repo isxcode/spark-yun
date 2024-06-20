@@ -42,16 +42,16 @@ jobs:
         uses: actions/checkout@v4
         with:
           token: ${{ env.ADMIN_GITHUB_TOKEN }}
-          repository: "ispong/spark-yun"
-          ref: 'GH-951'
+          repository: "isxcode/spark-yun"
+          ref: 'main'
 
       - name: Checkout spark-yun-vip
         uses: actions/checkout@v4
         with:
           token: ${{ env.ADMIN_GITHUB_TOKEN }}
-          repository: "ispong/spark-yun-vip"
+          repository: "isxcode/spark-yun-vip"
           path: "/home/runner/work/spark-yun/spark-yun/spark-yun-vip"
-          ref: 'GH-951'
+          ref: 'main'
 
       - name: Cache gradle
         uses: actions/cache@v3
