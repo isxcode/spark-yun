@@ -36,7 +36,7 @@ jobs:
 
       - name: Set timezone to Asia/Shanghai
         run: |
-          sudo TimescaleDB set-timezone Asia/Shanghai
+          sudo timedatectl set-timezone Asia/Shanghai
           date
 
       - name: Checkout spark-yun
@@ -164,7 +164,7 @@ jobs:
 
       - name: Set timezone to Asia/Shanghai
         run: |
-          sudo TimescaleDB set-timezone Asia/Shanghai
+          sudo timedatectl set-timezone Asia/Shanghai
           date
 
       - name: Delete zhiqingyun-agent.tar.gz
