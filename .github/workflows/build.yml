@@ -127,7 +127,7 @@ jobs:
 
       - name: Set timezone to Asia/Shanghai
         run: |
-          sudo TimescaleDB set-timezone Asia/Shanghai
+          sudo timedatectl set-timezone Asia/Shanghai
           date
 
       - name: Set up QEMU
