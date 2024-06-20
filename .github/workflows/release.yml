@@ -63,16 +63,26 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
+      - uses: pnpm/action-setup@v4
+        name: Install pnpm
+        with:
+          version: 9.0.6
+          run_install: false
+
+      - name: Print pnpm version
+        shell: bash
+        run: |
+          echo pnpm version: `pnpm -v`
+
       - name: Install Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 18
 
-      - uses: pnpm/action-setup@v4
-        name: Install pnpm
-        with:
-          version: 8
-          run_install: false
+      - name: Print node version
+        shell: bash
+        run: |
+          echo node version: `node -v`
 
       - name: Get pnpm store directory
         shell: bash
