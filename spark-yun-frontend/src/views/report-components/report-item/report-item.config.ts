@@ -6,7 +6,7 @@ export interface BreadCrumb {
 
 export const BreadCrumbList: Array<BreadCrumb> = [
     {
-        name: '报表组件',
+        name: '大屏卡片',
         code: 'report-components'
     },
     {

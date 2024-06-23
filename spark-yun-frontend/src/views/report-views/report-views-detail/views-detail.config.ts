@@ -6,11 +6,11 @@ export interface BreadCrumb {
 
 export const BreadCrumbList: Array<BreadCrumb> = [
     {
-        name: '报表视图',
+        name: '数据大屏',
         code: 'report-views'
     },
     {
-        name: '视图详情',
+        name: '大屏详情',
         code: 'report-views-detail'
     }
 ]

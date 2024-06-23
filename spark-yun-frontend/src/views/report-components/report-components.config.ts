@@ -37,7 +37,7 @@ export interface SerchParams {
 
 export const BreadCrumbList: Array<BreadCrumb> = [
     {
-        name: '报表组件',
+        name: '大屏卡片',
         code: 'report-components'
     }
 ]
@@ -54,12 +54,13 @@ export const colConfigs: colConfig[] = [
         prop: 'type',
         title: '类型',
         minWidth: 100,
+        customSlot: 'typeSlot',
         showOverflowTooltip: true
     },
     {
         prop: 'datasourceName',
         title: '数据源',
-        minWidth: 230,
+        minWidth: 100,
         showOverflowTooltip: true
     },
     {
