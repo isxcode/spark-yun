@@ -83,6 +83,7 @@
                                             v-model="chartConfig.title"
                                             maxlength="200"
                                             placeholder="请输入"
+                                            @blur="updateChartEvent"
                                         />
                                     </el-form-item>
                                     <el-form-item label="刷新间隔（秒）" prop="title">
@@ -160,7 +161,14 @@ function initData() {
         id: route.query.id
     }).then((res: any) => {
         echartOption.value = res.data.cardInfo.exampleData
-        myChart.setOption(echartOption.value)
+        if (!echartOption.value.title) {
+            echartOption.value.title = {
+                title: res.data.cardInfo.name,
+                left: 'center'
+            }
+            chartConfig.title = res.data.cardInfo.name
+        }
+        myChart.setOption({...echartOption.value})
         setTimeout(() => {
             myChart.resize()
         })
@@ -170,13 +178,13 @@ function initData() {
             fullScreenArr.value.push(false)
         })
         baseConfig.name = res.data.cardInfo.name
-        baseConfig.type = res.data.cardInfo.type.toLowerCase()
+        baseConfig.type = res.data.cardInfo.type
         baseConfig.datasourceId = res.data.cardInfo.datasourceId
 
         if (res.data.cardInfo?.webConfig?.title) {
             chartConfig.title = res.data.cardInfo.webConfig.title
-        } else {
-            chartConfig.title = res.data.cardInfo.exampleData.title.text
+        } else if (res.data.cardInfo.exampleData?.title?.text) {
+            chartConfig.title = res.data.cardInfo.exampleData.title?.text
         }
         if (res.data.cardInfo?.webConfig?.time) {
             chartConfig.time = res.data.cardInfo.webConfig.time

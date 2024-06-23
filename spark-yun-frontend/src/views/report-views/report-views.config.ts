@@ -39,7 +39,7 @@ export interface TableConfig {
 
 export const BreadCrumbList: Array<BreadCrumb> = [
   {
-    name: '报表视图',
+    name: '数据大屏',
     code: 'report-views'
   }
 ]
@@ -49,7 +49,7 @@ export const colConfigs: colConfig[] = [
     prop: 'name',
     title: '名称',
     minWidth: 100,
-    customSlot: 'nameSlot',
+    // customSlot: 'nameSlot',
     showOverflowTooltip: true
   },
   {
