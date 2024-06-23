@@ -2,7 +2,7 @@
     <Breadcrumb :bread-crumb-list="breadCrumbList" />
     <div class="zqy-seach-table report-component">
         <div class="zqy-table-top">
-            <el-button type="primary" @click="addData">添加组件</el-button>
+            <el-button type="primary" @click="addData">添加卡片</el-button>
             <div class="zqy-seach">
                 <el-input
                     v-model="keyword"
@@ -23,6 +23,9 @@
                 >
                     <template #nameSlot="scopeSlot">
                         <span class="name-click" @click="showDetail(scopeSlot.row)">{{ scopeSlot.row.name }}</span>
+                    </template>
+                    <template #typeSlot="scopeSlot">
+                        {{ typeName(scopeSlot.row.type) }}
                     </template>
                     <template #statusTag="scopeSlot">
                         <div class="btn-group">
@@ -46,7 +49,7 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, ref, onMounted } from 'vue'
+import { reactive, ref, onMounted, computed } from 'vue'
 import AddModal from './add-modal/index.vue'
 import Breadcrumb from '@/layout/bread-crumb/index.vue'
 import BlockTable from '@/components/block-table/index.vue'
@@ -56,6 +59,12 @@ import { BreadCrumbList, TableConfig } from './report-components.config'
 import { QueryReportComponent, CreateReportComponentData, PublishReportComponentData, OfflineReportComponentData, DeleteReportComponentData } from '@/services/report-echarts.service'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useRouter } from 'vue-router'
+import { ChartTypeList } from './report-item/report-item.config'
+
+interface Option {
+    label: string
+    value: string
+}
 
 const router = useRouter()
 
@@ -65,6 +74,13 @@ const keyword = ref('')
 const loading = ref(false)
 const networkError = ref(false)
 const addModalRef = ref()
+
+const typeName = computed(() => {
+    return (type: string) => {
+        const nameObj = ChartTypeList.find((item: Option) => item.value === type)
+        return nameObj?.label ? nameObj.label : ''
+    }
+})
 
 function initData(tableLoading?: boolean) {
     loading.value = tableLoading ? false : true
@@ -92,7 +108,7 @@ function addData() {
     addModalRef.value.showModal((data: any) => {
         return new Promise((resolve: any, reject: any) => {
             CreateReportComponentData(data).then((res: any) => {
-                initData()
+                showDetail(res.data.cardInfo)
                 ElMessage.success(res.msg)
                 resolve()
             }).catch(err => {
@@ -104,7 +120,7 @@ function addData() {
 
 // 删除
 function deleteData(data: any) {
-    ElMessageBox.confirm('确定删除该报表组件吗？', '警告', {
+    ElMessageBox.confirm('确定删除该大屏卡片吗？', '警告', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
@@ -119,7 +135,7 @@ function deleteData(data: any) {
 }
 // 下线
 function underlineReport(data: any) {
-    ElMessageBox.confirm('确定下线该报表组件吗？', '警告', {
+    ElMessageBox.confirm('确定下线该大屏卡片吗？', '警告', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
@@ -134,7 +150,7 @@ function underlineReport(data: any) {
 }
 // 发布
 function publishReport(data: any) {
-    ElMessageBox.confirm('确定发布该报表组件吗？', '警告', {
+    ElMessageBox.confirm('确定发布该大屏卡片吗？', '警告', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'

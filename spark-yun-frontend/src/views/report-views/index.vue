@@ -21,9 +21,9 @@
                     @size-change="handleSizeChange"
                     @current-change="handleCurrentChange"
                 >
-                    <template #nameSlot="scopeSlot">
+                    <!-- <template #nameSlot="scopeSlot">
                         <span class="name-click" @click="showDetail(scopeSlot.row)">{{ scopeSlot.row.name }}</span>
-                    </template>
+                    </template> -->
                     <template #statusTag="scopeSlot">
                         <div class="btn-group">
                             <el-tag v-if="scopeSlot.row.status === 'NEW'" class="ml-2" type="info">新建</el-tag>
@@ -35,6 +35,7 @@
                         <div class="btn-group">
                             <span v-if="['NEW', 'OFFLINE'].includes(scopeSlot.row.status)" @click="publishReport(scopeSlot.row)">发布</span>
                             <span v-else @click="underlineReport(scopeSlot.row)">下线</span>
+                            <span v-if="['NEW', 'OFFLINE'].includes(scopeSlot.row.status)" @click="showDetail(scopeSlot.row)">配置</span>
                             <span v-if="['NEW', 'OFFLINE'].includes(scopeSlot.row.status)" @click="deleteData(scopeSlot.row)">删除</span>
                             <span v-if="['PUBLISHED'].includes(scopeSlot.row.status)" @click="previewReport(scopeSlot.row)">预览</span>
                             <span v-if="['PUBLISHED'].includes(scopeSlot.row.status)" @click="shareReport(scopeSlot.row)">分享</span>
@@ -105,7 +106,7 @@ function addData() {
         return new Promise((resolve: any, reject: any) => {
             AddReportView(formData).then((res: any) => {
                 ElMessage.success(res.msg)
-                initData()
+                showDetail(res.data)
                 resolve()
             }).catch((error: any) => {
                 reject(error)

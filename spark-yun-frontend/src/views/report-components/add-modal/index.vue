@@ -39,7 +39,7 @@ const dataSourceList = ref([])  // 数据源
 const chartTypeList = ref<Option[]>(ChartTypeList)
 
 const modelConfig = reactive({
-  title: '添加组件',
+  title: '添加卡片',
   visible: false,
   width: '564px',
   okConfig: {
@@ -86,12 +86,12 @@ function showModal(cb: () => void, data: any): void {
     Object.keys(formData).forEach(key => {
       formData[key] = data[key]
     })
-    modelConfig.title = '编辑组件'
+    modelConfig.title = '编辑卡片'
   } else {
     Object.keys(formData).forEach(key => {
       formData[key] = null
     })
-    modelConfig.title = '添加组件'
+    modelConfig.title = '添加卡片'
   }
   nextTick(() => {
     form.value?.resetFields()
