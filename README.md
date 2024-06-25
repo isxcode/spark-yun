@@ -9,7 +9,7 @@
 </h1>
 
 <h3 align="center">
-  打造企业级大数据计算平台
+  打造企业级超轻量大数据计算平台
 </h3>
 
 <div align="center">
