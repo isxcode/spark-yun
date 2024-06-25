@@ -11,9 +11,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class EchartPieData {
+public class EchartAxisPointer {
 
-	private double value;
+	private String type;
 
-	private String name;
+	private Boolean snap;
 }

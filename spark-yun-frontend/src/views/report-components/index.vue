@@ -120,7 +120,7 @@ function addData() {
 
 // 删除
 function deleteData(data: any) {
-    ElMessageBox.confirm('确定删除该大屏卡片吗？', '警告', {
+    ElMessageBox.confirm('确定删除该数据卡片吗？', '警告', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
@@ -135,7 +135,7 @@ function deleteData(data: any) {
 }
 // 下线
 function underlineReport(data: any) {
-    ElMessageBox.confirm('确定下线该大屏卡片吗？', '警告', {
+    ElMessageBox.confirm('确定下线该数据卡片吗？', '警告', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
@@ -150,7 +150,7 @@ function underlineReport(data: any) {
 }
 // 发布
 function publishReport(data: any) {
-    ElMessageBox.confirm('确定发布该大屏卡片吗？', '警告', {
+    ElMessageBox.confirm('确定发布该数据卡片吗？', '警告', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
