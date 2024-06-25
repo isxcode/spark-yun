@@ -47,14 +47,9 @@
 docker run -p 8080:8080 -d isxcode/zhiqingyun
 ```
 
-### 相关文档
-
-- [快速入门](https://zhiqingyun.isxcode.com/docs/zh/0/0)
-- [产品手册](https://zhiqingyun.isxcode.com/docs/zh/2/0)
-- [部署文档](https://zhiqingyun.isxcode.com/docs/zh/1/0-docker)
-- [博客](https://ispong.isxcode.com/tags/spark/)
-
 ### 源码构建
+
+##### mac/linux
 
 > 打包结果路径: spark-yun/spark-yun-dist/build/distributions/zhiqingyun.tar.gz
 
@@ -64,11 +59,22 @@ cd spark-yun
 ./gradlew install package
 ```
 
-### 源码运行
+##### windows
+
+> 注意！请使用git bash工具执行命令
 
 ```bash
-./gradlew backend
+git clone https://github.com/isxcode/spark-yun.git
+cd spark-yun
+./gradlew.bat install package
 ```
+
+### 相关文档
+
+- [快速入门](https://zhiqingyun.isxcode.com/docs/zh/0/0)
+- [产品手册](https://zhiqingyun.isxcode.com/docs/zh/2/0)
+- [部署文档](https://zhiqingyun.isxcode.com/docs/zh/1/0-docker)
+- [博客](https://ispong.isxcode.com/tags/spark/)
 
 ### 联系我们
 
