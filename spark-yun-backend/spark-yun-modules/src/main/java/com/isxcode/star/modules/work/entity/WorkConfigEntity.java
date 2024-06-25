@@ -60,6 +60,8 @@ public class WorkConfigEntity {
 
 	private String containerId;
 
+	private String alarmList;
+
 	@CreatedDate
 	private LocalDateTime createDateTime;
 
