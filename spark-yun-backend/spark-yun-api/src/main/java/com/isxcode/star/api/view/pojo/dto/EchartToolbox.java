@@ -11,9 +11,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class EchartPieData {
+public class EchartToolbox {
 
-	private double value;
+	private Boolean show;
 
-	private String name;
+	private EchartToolboxFeature feature;
 }

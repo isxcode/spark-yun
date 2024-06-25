@@ -1,5 +1,6 @@
 package com.isxcode.star.api.view.pojo.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,7 +10,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class GetViewCardDataByIdRes {
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class EchartToolboxFeature {
 
-	private EchartOption viewData;
+	private Object saveAsImage;
 }

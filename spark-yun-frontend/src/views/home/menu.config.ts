@@ -80,7 +80,7 @@ export const menuListData: Array<Menu> = [
   },
   {
     code: 'report-components',
-    name: '大屏卡片',
+    name: '数据卡片',
     icon: 'Grid',
     authType: [ 'ROLE_TENANT_MEMBER', 'ROLE_TENANT_ADMIN' ],
     childPage: ['report-item']
