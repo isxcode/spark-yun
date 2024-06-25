@@ -112,4 +112,9 @@ public interface ModuleCode {
 	 * 实时同步函数.
 	 */
 	String VIP_REAL = "/vip/real";
+
+	/**
+	 * 基线告警模块.
+	 */
+	String ALARM = "alarm";
 }
