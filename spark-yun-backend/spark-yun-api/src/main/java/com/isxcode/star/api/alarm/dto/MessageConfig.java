@@ -6,8 +6,8 @@ import lombok.Data;
 @Data
 public class MessageConfig {
 
-  private String accessKey;
+	private String accessKey;
 
-  @Schema(title = "阿里云短信模版", example = "SMS_154950909")
-  private String smsTemplate;
+	@Schema(title = "阿里云短信模版", example = "SMS_154950909")
+	private String smsTemplate;
 }
