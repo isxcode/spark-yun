@@ -62,7 +62,7 @@ public class AlarmEntity {
 	@LastModifiedBy
 	private String lastModifiedBy;
 
-  @Version
+	@Version
 	private Long versionNumber;
 
 	@Transient
