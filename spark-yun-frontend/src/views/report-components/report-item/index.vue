@@ -417,17 +417,21 @@ onUnmounted(() => {
 
                                 .sql-option-container {
                                     display: flex;
-                                    justify-content: space-between;
+                                    justify-content: flex-end;
                                     align-items: center;
                                     .sql-option-preview {
+                                        margin-right: 8px;
                                         font-size: 12px;
                                         color: #666;
                                         cursor: pointer;
+                                        color: getCssVar('color', 'primary', 'light-3');
                                         &:hover {
                                             color: getCssVar('color', 'primary');
                                         }
                                     }
                                     .sql-option-icon {
+                                        padding-top: 3px;
+                                        box-sizing: border-box;
                                         .remove-sql {
                                             color: getCssVar('color', 'danger');
                                             cursor: pointer;
@@ -435,7 +439,7 @@ onUnmounted(() => {
                                         }
                                         .modal-full-screen {
                                             cursor: pointer;
-                                            color: #666;
+                                            color: getCssVar('color', 'primary', 'light-3');
                                             &:hover {
                                                 color: getCssVar('color', 'primary');
                                             }
