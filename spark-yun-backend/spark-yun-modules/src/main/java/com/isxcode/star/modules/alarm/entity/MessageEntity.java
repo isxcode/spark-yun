@@ -20,7 +20,7 @@ import static com.isxcode.star.common.config.CommonConfig.TENANT_ID;
 
 @Data
 @Entity
-@SQLDelete(sql = "UPDATE SY_MESSAGE SET deleted = 1 WHERE id = ?")
+@SQLDelete(sql = "UPDATE SY_MESSAGE SET deleted = 1 WHERE id = ? and version_number = ?")
 @Where(clause = "deleted = 0 ${TENANT_FILTER} ")
 @Table(name = "SY_MESSAGE")
 @JsonIgnoreProperties({"hibernateLazyInitializer"})
@@ -29,43 +29,46 @@ import static com.isxcode.star.common.config.CommonConfig.TENANT_ID;
 @AllArgsConstructor
 public class MessageEntity {
 
-	@Id
-	@GeneratedValue(generator = "sy-id-generator")
-	@GenericGenerator(name = "sy-id-generator", strategy = "com.isxcode.star.config.GeneratedValueConfig")
-	private String id;
+  @Id
+  @GeneratedValue(generator = "sy-id-generator")
+  @GenericGenerator(name = "sy-id-generator", strategy = "com.isxcode.star.config.GeneratedValueConfig")
+  private String id;
 
-	private String name;
+  private String name;
 
-	private String remark;
+  private String remark;
 
-	private String status;
+  private String status;
 
-	private String msgType;
+  private String msgType;
 
-	private String msgConfig;
+  private String msgConfig;
 
-	@CreatedDate
-	private LocalDateTime createDateTime;
+  @CreatedDate
+  private LocalDateTime createDateTime;
 
-	@LastModifiedDate
-	private LocalDateTime lastModifiedDateTime;
+  @LastModifiedDate
+  private LocalDateTime lastModifiedDateTime;
 
-	@CreatedBy
-	private String createBy;
+  @CreatedBy
+  private String createBy;
 
-	@LastModifiedBy
-	private String lastModifiedBy;
+  @LastModifiedBy
+  private String lastModifiedBy;
 
-	@Transient
-	private Integer deleted;
+  @Transient
+  private Integer deleted;
 
-	private String tenantId;
+  @Version
+  private Long versionNumber;
 
-	public MessageEntity() {
-	}
+  private String tenantId;
 
-	@PrePersist
-	public void prePersist() {
-		this.tenantId = TENANT_ID.get();
-	}
+  public MessageEntity() {
+  }
+
+  @PrePersist
+  public void prePersist() {
+    this.tenantId = TENANT_ID.get();
+  }
 }

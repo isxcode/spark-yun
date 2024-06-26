@@ -1,8 +1,10 @@
-package com.isxcode.star.modules.alarm.service;
+package com.isxcode.star.modules.user.service;
 
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.star.modules.alarm.entity.MessageEntity;
 import com.isxcode.star.modules.alarm.repository.MessageRepository;
+import com.isxcode.star.security.user.UserEntity;
+import com.isxcode.star.security.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -13,12 +15,12 @@ import javax.transaction.Transactional;
 @RequiredArgsConstructor
 @Transactional
 @Slf4j
-public class AlarmService {
+public class UserService {
 
-  private final MessageRepository messageRepository;
+  private final UserRepository userRepository;
 
-  public MessageEntity getMessage(String messageId) {
+  public UserEntity getUser(String userId) {
 
-    return messageRepository.findById(messageId).orElseThrow(() -> new IsxAppException("消息体不存在"));
+    return userRepository.findById(userId).orElseThrow(() -> new IsxAppException("用户不存在"));
   }
 }
