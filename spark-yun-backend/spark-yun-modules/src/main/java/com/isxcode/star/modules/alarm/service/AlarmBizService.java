@@ -6,9 +6,9 @@ import com.isxcode.star.api.alarm.req.*;
 import com.isxcode.star.api.alarm.res.PageMessageRes;
 import com.isxcode.star.modules.alarm.entity.MessageEntity;
 import com.isxcode.star.modules.alarm.mapper.AlarmMapper;
-import com.isxcode.star.modules.alarm.message.MessageAction;
 import com.isxcode.star.modules.alarm.message.MessageContext;
 import com.isxcode.star.modules.alarm.message.MessageFactory;
+import com.isxcode.star.modules.alarm.message.MessageRunner;
 import com.isxcode.star.modules.alarm.repository.MessageRepository;
 import com.isxcode.star.modules.user.service.UserService;
 import com.isxcode.star.security.user.UserEntity;
@@ -87,12 +87,12 @@ public class AlarmBizService {
 
 		MessageEntity message = alarmService.getMessage(checkMessageReq.getId());
 
-		MessageAction messageAction = messageFactory.getMessageAction(message.getMsgType());
+		MessageRunner messageAction = messageFactory.getMessageAction(message.getMsgType());
 
 		UserEntity user = userService.getUser(checkMessageReq.getUserId());
 
-		messageAction.sendMessage(
-				MessageContext.builder().content(checkMessageReq.getContent()).email(user.getEmail()).build());
+		messageAction
+				.send(MessageContext.builder().content(checkMessageReq.getContent()).email(user.getEmail()).build());
 	}
 
 }
