@@ -3,10 +3,15 @@ package com.isxcode.star.modules.alarm.message.aciton;
 import com.isxcode.star.api.alarm.constants.MessageType;
 import com.isxcode.star.modules.alarm.message.MessageContext;
 import com.isxcode.star.modules.alarm.message.MessageRunner;
+import com.isxcode.star.modules.alarm.repository.AlarmInstanceRepository;
 import org.springframework.stereotype.Service;
 
 @Service
 public class EmailMessage extends MessageRunner {
+
+	protected EmailMessage(AlarmInstanceRepository alarmInstanceRepository) {
+		super(alarmInstanceRepository);
+	}
 
 	@Override
 	public String getActionName() {

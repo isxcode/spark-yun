@@ -286,6 +286,10 @@ public class WorkflowBizService {
 			wofGetWorkflowRes.setCronConfig(JSON.parseObject(workflowConfig.getCronConfig(), CronConfig.class));
 		}
 
+		if (!Strings.isEmpty(workflowConfig.getAlarmList())) {
+			wofGetWorkflowRes.setAlarmList(JSON.parseArray(workflowConfig.getAlarmList(), String.class));
+		}
+
 		return wofGetWorkflowRes;
 	}
 
