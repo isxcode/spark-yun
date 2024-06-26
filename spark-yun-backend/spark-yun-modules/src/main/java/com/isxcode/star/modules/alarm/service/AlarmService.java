@@ -15,10 +15,10 @@ import javax.transaction.Transactional;
 @Slf4j
 public class AlarmService {
 
-  private final MessageRepository messageRepository;
+	private final MessageRepository messageRepository;
 
-  public MessageEntity getMessage(String messageId) {
+	public MessageEntity getMessage(String messageId) {
 
-    return messageRepository.findById(messageId).orElseThrow(() -> new IsxAppException("消息体不存在"));
-  }
+		return messageRepository.findById(messageId).orElseThrow(() -> new IsxAppException("消息体不存在"));
+	}
 }

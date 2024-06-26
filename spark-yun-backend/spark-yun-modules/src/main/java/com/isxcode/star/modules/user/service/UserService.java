@@ -1,8 +1,6 @@
 package com.isxcode.star.modules.user.service;
 
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
-import com.isxcode.star.modules.alarm.entity.MessageEntity;
-import com.isxcode.star.modules.alarm.repository.MessageRepository;
 import com.isxcode.star.security.user.UserEntity;
 import com.isxcode.star.security.user.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -17,10 +15,10 @@ import javax.transaction.Transactional;
 @Slf4j
 public class UserService {
 
-  private final UserRepository userRepository;
+	private final UserRepository userRepository;
 
-  public UserEntity getUser(String userId) {
+	public UserEntity getUser(String userId) {
 
-    return userRepository.findById(userId).orElseThrow(() -> new IsxAppException("用户不存在"));
-  }
+		return userRepository.findById(userId).orElseThrow(() -> new IsxAppException("用户不存在"));
+	}
 }

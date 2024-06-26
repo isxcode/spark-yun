@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class MessageContext {
 
-  private String email;
+	private String email;
 
-  private String content;
+	private String content;
 }
