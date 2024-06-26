@@ -7,6 +7,7 @@ import com.isxcode.star.api.work.constants.WorkType;
 import com.isxcode.star.api.work.exceptions.WorkRunException;
 import com.isxcode.star.api.work.pojos.dto.ApiWorkConfig;
 import com.isxcode.star.common.utils.http.HttpUtils;
+import com.isxcode.star.modules.alarm.service.AlarmService;
 import com.isxcode.star.modules.work.entity.WorkInstanceEntity;
 import com.isxcode.star.modules.work.repository.WorkInstanceRepository;
 import com.isxcode.star.modules.work.run.WorkExecutor;
@@ -25,9 +26,9 @@ import java.util.Map;
 public class ApiExecutor extends WorkExecutor {
 
 	public ApiExecutor(WorkInstanceRepository workInstanceRepository,
-			WorkflowInstanceRepository workflowInstanceRepository) {
+			WorkflowInstanceRepository workflowInstanceRepository, AlarmService alarmService) {
 
-		super(workInstanceRepository, workflowInstanceRepository);
+		super(workInstanceRepository, workflowInstanceRepository, alarmService);
 	}
 
 	@Override

@@ -3,6 +3,7 @@ package com.isxcode.star.modules.work.run.impl;
 import com.isxcode.star.api.work.constants.WorkLog;
 import com.isxcode.star.api.work.constants.WorkType;
 import com.isxcode.star.api.work.exceptions.WorkRunException;
+import com.isxcode.star.modules.alarm.service.AlarmService;
 import com.isxcode.star.modules.datasource.entity.DatasourceEntity;
 import com.isxcode.star.modules.datasource.repository.DatasourceRepository;
 import com.isxcode.star.modules.datasource.service.DatasourceService;
@@ -47,9 +48,9 @@ public class ExecuteSqlExecutor extends WorkExecutor {
 	public ExecuteSqlExecutor(WorkInstanceRepository workInstanceRepository, DatasourceRepository datasourceRepository,
 			WorkflowInstanceRepository workflowInstanceRepository, DatasourceBizService datasourceBizService,
 			DatasourceService datasourceService, SqlCommentService sqlCommentService, SqlValueService sqlValueService,
-			SqlFunctionService sqlFunctionService) {
+			SqlFunctionService sqlFunctionService, AlarmService alarmService) {
 
-		super(workInstanceRepository, workflowInstanceRepository);
+		super(workInstanceRepository, workflowInstanceRepository, alarmService);
 		this.datasourceRepository = datasourceRepository;
 		this.datasourceBizService = datasourceBizService;
 		this.datasourceService = datasourceService;

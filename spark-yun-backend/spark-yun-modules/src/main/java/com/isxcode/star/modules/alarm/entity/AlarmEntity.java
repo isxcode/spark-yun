@@ -20,7 +20,7 @@ import static com.isxcode.star.common.config.CommonConfig.TENANT_ID;
 
 @Data
 @Entity
-@SQLDelete(sql = "UPDATE SY_ALARM SET deleted = 1 WHERE id = ?")
+@SQLDelete(sql = "UPDATE SY_ALARM SET deleted = 1 WHERE id = ? and version_number = ?")
 @Where(clause = "deleted = 0 ${TENANT_FILTER} ")
 @Table(name = "SY_ALARM")
 @JsonIgnoreProperties({"hibernateLazyInitializer"})
@@ -42,7 +42,7 @@ public class AlarmEntity {
 
 	private String alarmType;
 
-	private String eventType;
+	private String alarmEvent;
 
 	private String msgList;
 

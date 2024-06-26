@@ -481,6 +481,10 @@ public class WorkBizService {
 			getWorkRes.setContainerId(workConfig.getContainerId());
 		}
 
+		if (!Strings.isEmpty(workConfig.getAlarmList())) {
+			getWorkRes.setAlarmList(JSON.parseArray(workConfig.getAlarmList(), String.class));
+		}
+
 		return getWorkRes;
 	}
 

@@ -21,6 +21,7 @@ import com.isxcode.star.common.utils.AesUtils;
 import com.isxcode.star.common.utils.http.HttpUrlUtils;
 import com.isxcode.star.common.utils.http.HttpUtils;
 import com.isxcode.star.common.utils.path.PathUtils;
+import com.isxcode.star.modules.alarm.service.AlarmService;
 import com.isxcode.star.modules.cluster.entity.ClusterEntity;
 import com.isxcode.star.modules.cluster.entity.ClusterNodeEntity;
 import com.isxcode.star.modules.cluster.mapper.ClusterNodeMapper;
@@ -109,9 +110,9 @@ public class SyncWorkExecutor extends WorkExecutor {
 			HttpUrlUtils httpUrlUtils, AesUtils aesUtils, ClusterNodeMapper clusterNodeMapper,
 			DatasourceService datasourceService, IsxAppProperties isxAppProperties, FuncRepository funcRepository,
 			FuncMapper funcMapper, FileRepository fileRepository, SqlCommentService sqlCommentService,
-			SqlValueService sqlValueService, SqlFunctionService sqlFunctionService) {
+			SqlValueService sqlValueService, SqlFunctionService sqlFunctionService, AlarmService alarmService) {
 
-		super(workInstanceRepository, workflowInstanceRepository);
+		super(workInstanceRepository, workflowInstanceRepository, alarmService);
 		this.workInstanceRepository = workInstanceRepository;
 		this.clusterRepository = clusterRepository;
 		this.clusterNodeRepository = clusterNodeRepository;

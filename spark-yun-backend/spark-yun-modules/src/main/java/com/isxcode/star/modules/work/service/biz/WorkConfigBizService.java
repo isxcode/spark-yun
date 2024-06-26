@@ -170,6 +170,11 @@ public class WorkConfigBizService {
 			workConfig.setContainerId(wocConfigWorkReq.getContainerId());
 		}
 
+		// 设置容器id
+		if (wocConfigWorkReq.getAlarmList() != null) {
+			workConfig.setAlarmList(JSON.toJSONString(wocConfigWorkReq.getAlarmList()));
+		}
+
 		// 保存配置
 		workConfigRepository.save(workConfig);
 	}

@@ -6,6 +6,7 @@ import com.isxcode.star.api.work.constants.WorkLog;
 import com.isxcode.star.api.work.constants.WorkType;
 import com.isxcode.star.api.work.exceptions.WorkRunException;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
+import com.isxcode.star.modules.alarm.service.AlarmService;
 import com.isxcode.star.modules.datasource.entity.DatasourceEntity;
 import com.isxcode.star.modules.datasource.repository.DatasourceRepository;
 import com.isxcode.star.modules.datasource.service.DatasourceService;
@@ -46,8 +47,8 @@ public class PrqlExecutor extends WorkExecutor {
 	public PrqlExecutor(WorkInstanceRepository workInstanceRepository,
 			WorkflowInstanceRepository workflowInstanceRepository, DatasourceRepository datasourceRepository,
 			DatasourceService datasourceService, SqlCommentService sqlCommentService, SqlValueService sqlValueService,
-			SqlFunctionService sqlFunctionService) {
-		super(workInstanceRepository, workflowInstanceRepository);
+			SqlFunctionService sqlFunctionService, AlarmService alarmService) {
+		super(workInstanceRepository, workflowInstanceRepository, alarmService);
 		this.datasourceRepository = datasourceRepository;
 		this.datasourceService = datasourceService;
 		this.sqlCommentService = sqlCommentService;

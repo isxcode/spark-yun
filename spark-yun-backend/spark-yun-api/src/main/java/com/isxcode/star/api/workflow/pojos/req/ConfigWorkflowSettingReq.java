@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import javax.validation.constraints.NotEmpty;
+import java.util.List;
 
 @Data
 public class ConfigWorkflowSettingReq {
@@ -15,4 +16,7 @@ public class ConfigWorkflowSettingReq {
 
 	@Schema(title = "cron定时配置")
 	private CronConfig cronConfig;
+
+	@Schema(title = "告警")
+	private List<String> alarmList;
 }
