@@ -62,6 +62,8 @@ public class VipWorkVersionEntity {
 
 	private String funcConfig;
 
+	private String alarmList;
+
 	@CreatedDate
 	private LocalDateTime createDateTime;
 

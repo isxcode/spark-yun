@@ -26,7 +26,7 @@ create table SY_ALARM
   remark                  varchar(500) comment '告警备注',
   status                  varchar(100)  not null comment '消息状态，启动/停止',
   alarm_type              varchar(200)  not null comment '告警类型，作业/作业流',
-  event_type              varchar(200)  not null comment '告警的事件，开始运行/运行失败/运行结束',
+  alarm_event             varchar(200)  not null comment '告警的事件，开始运行/运行失败/运行结束',
   msg_list                varchar(100)  not null comment '使用的消息体',
   alarm_template          text          not null comment '告警的模版',
   receiver_list           text          null comment '告警接受者',
@@ -47,7 +47,7 @@ create table SY_ALARM_INSTANCE
   alarm_id       varchar(200)  not null comment '告警id',
   send_status    varchar(100)  not null comment '是否发送成功',
   alarm_type     varchar(200)  not null comment '告警类型，作业/作业流',
-  event_type     varchar(200)  not null comment '触发的事件',
+  alarm_event    varchar(200)  not null comment '触发的事件',
   msg_type       varchar(100)  not null comment '告警的消息体',
   content        text          not null comment '发送消息的内容',
   receiver       varchar(200)  not null comment '消息接受者',
@@ -67,5 +67,17 @@ alter table SY_WORKFLOW_CONFIG
   add ALARM_LIST text;
 
 comment on column SY_WORKFLOW_CONFIG.ALARM_LIST is '绑定的基线';
+
+-- 作业添加基线
+alter table SY_WORK_VERSION
+  add ALARM_LIST text;
+
+comment on column SY_WORK_VERSION.ALARM_LIST is '绑定的基线';
+
+-- 作业流添加基线
+alter table SY_WORKFLOW_VERSION
+  add ALARM_LIST text;
+
+comment on column SY_WORKFLOW_VERSION.ALARM_LIST is '绑定的基线';
 
 

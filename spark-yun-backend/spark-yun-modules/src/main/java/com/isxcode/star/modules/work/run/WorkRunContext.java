@@ -107,4 +107,9 @@ public class WorkRunContext {
 	 */
 	private String containerId;
 
+	/**
+	 * 告警id.
+	 */
+	private List<String> alarmList;
+
 }

@@ -1,8 +1,8 @@
 package com.isxcode.star.modules.alarm.controller;
 
 import com.isxcode.star.api.alarm.req.*;
+import com.isxcode.star.api.alarm.res.PageAlarmRes;
 import com.isxcode.star.api.alarm.res.PageMessageRes;
-import com.isxcode.star.api.cluster.pojos.req.*;
 import com.isxcode.star.api.main.constants.ModuleCode;
 import com.isxcode.star.common.annotations.successResponse.SuccessResponse;
 import com.isxcode.star.modules.alarm.service.AlarmBizService;
@@ -80,58 +80,52 @@ public class AlarmController {
 
 		alarmBizService.checkMessage(checkMessageReq);
 	}
-	//
-	//
-	// @Operation(summary = "添加告警接口")
-	// @PostMapping("/addAlarm")
-	// @SuccessResponse("添加成功")
-	// public void addAlarm(@Valid @RequestBody AddClusterReq addClusterReq) {
-	//
-	// alarmBizService.addAlarm(addClusterReq);
-	// }
-	//
-	// @Operation(summary = "更新告警接口")
-	// @PostMapping("/updateAlarm")
-	// @SuccessResponse("更新成功")
-	// public void updateAlarm(@Valid @RequestBody UpdateClusterReq
-	// updateClusterReq) {
-	//
-	// alarmBizService.updateAlarm(updateClusterReq);
-	// }
-	//
-	// @Operation(summary = "分页查询告警接口")
-	// @PostMapping("/pageAlarm")
-	// @SuccessResponse("查询成功")
-	// public Page<PageClusterRes> pageAlarm(@Valid @RequestBody PageClusterReq
-	// pageClusterReq) {
-	//
-	// return alarmBizService.pageAlarm(pageClusterReq);
-	// }
-	//
-	// @Operation(summary = "删除告警接口")
-	// @PostMapping("/deleteAlarm")
-	// @SuccessResponse("删除成功")
-	// public void deleteAlarm(@Valid @RequestBody DeleteClusterReq
-	// deleteClusterReq) {
-	//
-	// alarmBizService.deleteAlarm(deleteClusterReq);
-	// }
-	//
-	// @Operation(summary = "启动告警接口")
-	// @PostMapping("/enableAlarm")
-	// @SuccessResponse("启用成功")
-	// public void enableAlarm(@Valid @RequestBody CheckClusterReq checkClusterReq)
-	// {
-	//
-	// alarmBizService.enableAlarm(checkClusterReq);
-	// }
-	//
-	// @Operation(summary = "禁用告警接口")
-	// @PostMapping("/disableAlarm")
-	// @SuccessResponse("禁用成功")
-	// public void disableAlarm(@Valid @RequestBody CheckClusterReq checkClusterReq)
-	// {
-	//
-	// alarmBizService.disableAlarm(checkClusterReq);
-	// }
+
+	@Operation(summary = "添加告警接口")
+	@PostMapping("/addAlarm")
+	@SuccessResponse("添加成功")
+	public void addAlarm(@Valid @RequestBody AddAlarmReq addAlarmReq) {
+
+		alarmBizService.addAlarm(addAlarmReq);
+	}
+
+	@Operation(summary = "更新告警接口")
+	@PostMapping("/updateAlarm")
+	@SuccessResponse("更新成功")
+	public void updateAlarm(@Valid @RequestBody UpdateAlarmReq updateAlarmReq) {
+
+		alarmBizService.updateAlarm(updateAlarmReq);
+	}
+
+	@Operation(summary = "分页查询告警接口")
+	@PostMapping("/pageAlarm")
+	@SuccessResponse("查询成功")
+	public Page<PageAlarmRes> pageAlarm(@Valid @RequestBody PageAlarmReq pageAlarmReq) {
+
+		return alarmBizService.pageAlarm(pageAlarmReq);
+	}
+
+	@Operation(summary = "删除告警接口")
+	@PostMapping("/deleteAlarm")
+	@SuccessResponse("删除成功")
+	public void deleteAlarm(@Valid @RequestBody DeleteAlarmReq deleteAlarmReq) {
+
+		alarmBizService.deleteAlarm(deleteAlarmReq);
+	}
+
+	@Operation(summary = "启动告警接口")
+	@PostMapping("/enableAlarm")
+	@SuccessResponse("启用成功")
+	public void enableAlarm(@Valid @RequestBody EnableAlarmReq enableAlarmReq) {
+
+		alarmBizService.enableAlarm(enableAlarmReq);
+	}
+
+	@Operation(summary = "禁用告警接口")
+	@PostMapping("/disableAlarm")
+	@SuccessResponse("禁用成功")
+	public void disableAlarm(@Valid @RequestBody DisableAlarmReq disableAlarmReq) {
+
+		alarmBizService.disableAlarm(disableAlarmReq);
+	}
 }

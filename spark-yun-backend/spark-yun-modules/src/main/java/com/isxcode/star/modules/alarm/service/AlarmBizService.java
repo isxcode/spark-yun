@@ -1,14 +1,18 @@
 package com.isxcode.star.modules.alarm.service;
 
 import com.alibaba.fastjson.JSON;
+import com.isxcode.star.api.alarm.constants.AlarmStatus;
 import com.isxcode.star.api.alarm.constants.MessageStatus;
 import com.isxcode.star.api.alarm.req.*;
+import com.isxcode.star.api.alarm.res.PageAlarmRes;
 import com.isxcode.star.api.alarm.res.PageMessageRes;
+import com.isxcode.star.modules.alarm.entity.AlarmEntity;
 import com.isxcode.star.modules.alarm.entity.MessageEntity;
 import com.isxcode.star.modules.alarm.mapper.AlarmMapper;
 import com.isxcode.star.modules.alarm.message.MessageContext;
 import com.isxcode.star.modules.alarm.message.MessageFactory;
 import com.isxcode.star.modules.alarm.message.MessageRunner;
+import com.isxcode.star.modules.alarm.repository.AlarmRepository;
 import com.isxcode.star.modules.alarm.repository.MessageRepository;
 import com.isxcode.star.modules.user.service.UserService;
 import com.isxcode.star.security.user.UserEntity;
@@ -27,6 +31,8 @@ import javax.transaction.Transactional;
 public class AlarmBizService {
 
 	private final MessageRepository messageRepository;
+
+	private final AlarmRepository alarmRepository;
 
 	private final AlarmService alarmService;
 
@@ -93,6 +99,55 @@ public class AlarmBizService {
 
 		messageAction
 				.send(MessageContext.builder().content(checkMessageReq.getContent()).email(user.getEmail()).build());
+	}
+
+	public void addAlarm(AddAlarmReq addAlarmReq) {
+
+		AlarmEntity alarm = alarmMapper.addAlarmReqToAlarmEntity(addAlarmReq);
+		alarm.setReceiverList(JSON.toJSONString(addAlarmReq.getReceiverList()));
+		alarm.setMsgList(JSON.toJSONString(addAlarmReq.getMsgList()));
+		alarm.setStatus(AlarmStatus.DISABLE);
+		alarmRepository.save(alarm);
+	}
+
+	public void updateAlarm(UpdateAlarmReq updateAlarmReq) {
+
+		AlarmEntity alarm = alarmService.getAlarm(updateAlarmReq.getId());
+		alarm.setName(updateAlarmReq.getName());
+		alarm.setRemark(updateAlarmReq.getRemark());
+		alarm.setAlarmType(updateAlarmReq.getAlarmType());
+		alarm.setAlarmEvent(updateAlarmReq.getAlarmEvent());
+		alarm.setReceiverList(JSON.toJSONString(updateAlarmReq.getReceiverList()));
+		alarm.setMsgList(JSON.toJSONString(updateAlarmReq.getMsgList()));
+		alarmRepository.save(alarm);
+	}
+
+	public Page<PageAlarmRes> pageAlarm(PageAlarmReq pageAlarmReq) {
+
+		Page<AlarmEntity> alarmEntities = alarmRepository.searchAll(pageAlarmReq.getSearchKeyWord(),
+				PageRequest.of(pageAlarmReq.getPage(), pageAlarmReq.getPageSize()));
+
+		return alarmEntities.map(alarmMapper::alarmEntityToPageAlarmRes);
+	}
+
+	public void deleteAlarm(DeleteAlarmReq deleteAlarmReq) {
+
+		AlarmEntity alarm = alarmService.getAlarm(deleteAlarmReq.getId());
+		alarmRepository.delete(alarm);
+	}
+
+	public void enableAlarm(EnableAlarmReq enableAlarmReq) {
+
+		AlarmEntity alarm = alarmService.getAlarm(enableAlarmReq.getId());
+		alarm.setStatus(AlarmStatus.ENABLE);
+		alarmRepository.save(alarm);
+	}
+
+	public void disableAlarm(DisableAlarmReq disableAlarmReq) {
+
+		AlarmEntity alarm = alarmService.getAlarm(disableAlarmReq.getId());
+		alarm.setStatus(AlarmStatus.DISABLE);
+		alarmRepository.save(alarm);
 	}
 
 }

@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.isxcode.star.api.work.constants.WorkLog;
 import com.isxcode.star.api.work.constants.WorkType;
 import com.isxcode.star.api.work.exceptions.WorkRunException;
+import com.isxcode.star.modules.alarm.service.AlarmService;
 import com.isxcode.star.modules.datasource.entity.DatasourceEntity;
 import com.isxcode.star.modules.datasource.repository.DatasourceRepository;
 import com.isxcode.star.modules.datasource.service.DatasourceService;
@@ -46,10 +47,10 @@ public class QuerySqlExecutor extends WorkExecutor {
 
 	public QuerySqlExecutor(DatasourceRepository datasourceRepository, WorkInstanceRepository workInstanceRepository,
 			WorkflowInstanceRepository workflowInstanceRepository, DatasourceService datasourceService,
-			SqlCommentService sqlCommentService, SqlFunctionService sqlFunctionService,
-			SqlValueService sqlValueService) {
+			SqlCommentService sqlCommentService, SqlFunctionService sqlFunctionService, SqlValueService sqlValueService,
+			AlarmService alarmService) {
 
-		super(workInstanceRepository, workflowInstanceRepository);
+		super(workInstanceRepository, workflowInstanceRepository, alarmService);
 		this.datasourceRepository = datasourceRepository;
 		this.datasourceService = datasourceService;
 		this.sqlCommentService = sqlCommentService;

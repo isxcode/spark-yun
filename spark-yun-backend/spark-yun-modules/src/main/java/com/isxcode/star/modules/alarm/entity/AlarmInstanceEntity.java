@@ -36,7 +36,7 @@ public class AlarmInstanceEntity {
 
 	private String alarmType;
 
-	private String eventType;
+	private String alarmEvent;
 
 	private String msgType;
 

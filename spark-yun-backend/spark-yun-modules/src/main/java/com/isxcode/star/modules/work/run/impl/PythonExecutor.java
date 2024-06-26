@@ -7,6 +7,7 @@ import com.isxcode.star.api.work.constants.WorkType;
 import com.isxcode.star.api.work.exceptions.WorkRunException;
 import com.isxcode.star.common.utils.AesUtils;
 import com.isxcode.star.common.utils.ssh.SshUtils;
+import com.isxcode.star.modules.alarm.service.AlarmService;
 import com.isxcode.star.modules.cluster.entity.ClusterEntity;
 import com.isxcode.star.modules.cluster.entity.ClusterNodeEntity;
 import com.isxcode.star.modules.cluster.mapper.ClusterNodeMapper;
@@ -52,9 +53,9 @@ public class PythonExecutor extends WorkExecutor {
 	public PythonExecutor(WorkInstanceRepository workInstanceRepository,
 			WorkflowInstanceRepository workflowInstanceRepository, ClusterNodeRepository clusterNodeRepository,
 			ClusterNodeMapper clusterNodeMapper, AesUtils aesUtils, ClusterRepository clusterRepository,
-			SqlValueService sqlValueService, SqlFunctionService sqlFunctionService) {
+			SqlValueService sqlValueService, SqlFunctionService sqlFunctionService, AlarmService alarmService) {
 
-		super(workInstanceRepository, workflowInstanceRepository);
+		super(workInstanceRepository, workflowInstanceRepository, alarmService);
 		this.clusterNodeRepository = clusterNodeRepository;
 		this.clusterNodeMapper = clusterNodeMapper;
 		this.aesUtils = aesUtils;
