@@ -62,6 +62,9 @@ public class AlarmEntity {
 	@LastModifiedBy
 	private String lastModifiedBy;
 
+  @Version
+	private Long versionNumber;
+
 	@Transient
 	private Integer deleted;
 

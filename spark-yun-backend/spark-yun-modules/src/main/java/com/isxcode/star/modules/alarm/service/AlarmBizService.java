@@ -1,30 +1,106 @@
 package com.isxcode.star.modules.alarm.service;
 
+import com.alibaba.fastjson.JSON;
+import com.isxcode.star.api.alarm.constants.MessageStatus;
+import com.isxcode.star.api.alarm.req.*;
+import com.isxcode.star.api.alarm.res.PageMessageRes;
+import com.isxcode.star.api.cluster.pojos.req.PageClusterNodeReq;
+import com.isxcode.star.api.cluster.pojos.res.EnoQueryNodeRes;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
+import com.isxcode.star.modules.alarm.entity.MessageEntity;
+import com.isxcode.star.modules.alarm.mapper.AlarmMapper;
+import com.isxcode.star.modules.alarm.message.MessageAction;
+import com.isxcode.star.modules.alarm.message.MessageContext;
+import com.isxcode.star.modules.alarm.message.MessageFactory;
+import com.isxcode.star.modules.alarm.repository.MessageRepository;
 import com.isxcode.star.modules.cluster.entity.ClusterEntity;
+import com.isxcode.star.modules.cluster.entity.ClusterNodeEntity;
 import com.isxcode.star.modules.cluster.repository.ClusterRepository;
+import com.isxcode.star.modules.user.service.UserBizService;
+import com.isxcode.star.modules.user.service.UserService;
+import com.isxcode.star.security.user.UserEntity;
+import com.isxcode.star.security.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.Optional;
 
-/** 计算引擎模块. */
 @Service
 @RequiredArgsConstructor
 @Transactional
 @Slf4j
 public class AlarmBizService {
 
-	private final ClusterRepository clusterRepository;
+  private final MessageRepository messageRepository;
 
-	public ClusterEntity getCluster(String clusterId) {
+  private final AlarmService alarmService;
 
-		return clusterRepository.findById(clusterId).orElseThrow(() -> new IsxAppException("计算引擎不存在"));
-	}
+  private final AlarmMapper alarmMapper;
 
-	public void checkCluster(String clusterId) {
+  private final MessageFactory messageFactory;
 
-		clusterRepository.findById(clusterId).orElseThrow(() -> new IsxAppException("计算引擎不存在"));
-	}
+  private final UserService userService;
+
+  public void addMessage(AddMessageReq addMessageReq) {
+
+    MessageEntity messageEntity = alarmMapper.addMessageReqToMessageEntity(addMessageReq);
+    messageEntity.setMsgConfig(JSON.toJSONString(addMessageReq.getMessageConfig()));
+    messageEntity.setStatus(MessageStatus.NEW);
+    messageRepository.save(messageEntity);
+  }
+
+  public void updateMessage(UpdateMessageReq updateMessageReq) {
+
+    MessageEntity message = alarmService.getMessage(updateMessageReq.getId());
+    message.setMsgConfig(JSON.toJSONString(updateMessageReq.getMessageConfig()));
+    message.setName(updateMessageReq.getName());
+    message.setRemark(updateMessageReq.getRemark());
+    message.setMsgType(updateMessageReq.getMsgType());
+    message.setStatus(MessageStatus.UN_CHECK);
+    messageRepository.save(message);
+  }
+
+  public Page<PageMessageRes> pageMessage(PageMessageReq pageMessageReq) {
+
+    Page<MessageEntity> messageEntities = messageRepository.searchAll(pageMessageReq.getSearchKeyWord(),
+      PageRequest.of(pageMessageReq.getPage(), pageMessageReq.getPageSize()));
+
+    return messageEntities.map(alarmMapper::messageEntityToPageMessageRes);
+  }
+
+  public void deleteMessage(DeleteMessageReq deleteMessageReq) {
+
+    MessageEntity message = alarmService.getMessage(deleteMessageReq.getId());
+    messageRepository.delete(message);
+  }
+
+  public void enableMessage(EnableMessageReq enableMessageReq) {
+
+    MessageEntity message = alarmService.getMessage(enableMessageReq.getId());
+    message.setStatus(MessageStatus.ACTIVE);
+    messageRepository.save(message);
+  }
+
+  public void disableMessage(DisableMessageReq disableMessageReq) {
+
+   MessageEntity message = alarmService.getMessage(disableMessageReq.getId());
+    message.setStatus(MessageStatus.DISABLE);
+    messageRepository.save(message);
+  }
+
+  public void checkMessage(CheckMessageReq checkMessageReq) {
+
+    MessageEntity message = alarmService.getMessage(checkMessageReq.getId());
+
+    MessageAction messageAction = messageFactory.getMessageAction(message.getMsgType());
+
+    UserEntity user = userService.getUser(checkMessageReq.getUserId());
+
+    messageAction.sendMessage(MessageContext.builder().content(checkMessageReq.getContent()).email(user.getEmail()).build());
+  }
+
 }
