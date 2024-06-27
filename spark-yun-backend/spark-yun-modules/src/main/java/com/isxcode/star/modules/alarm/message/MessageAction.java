@@ -4,5 +4,5 @@ public interface MessageAction {
 
 	String getActionName();
 
-	void sendMessage(MessageContext messageContext);
+	Object sendMessage(MessageContext messageContext);
 }

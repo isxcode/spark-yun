@@ -2,6 +2,7 @@ package com.isxcode.star.modules.user.mapper;
 
 import com.isxcode.star.api.user.constants.RoleType;
 import com.isxcode.star.api.user.constants.UserStatus;
+import com.isxcode.star.api.user.pojos.dto.UserInfo;
 import com.isxcode.star.api.user.pojos.req.AddUserReq;
 import com.isxcode.star.api.user.pojos.req.UpdateUserReq;
 import com.isxcode.star.api.user.pojos.req.UpdateUserInfoReq;
@@ -52,4 +53,6 @@ public interface UserMapper {
 		return new PageImpl<>(userEntityToUsrQueryAllEnableUsersResList(userEntities.getContent()),
 				userEntities.getPageable(), userEntities.getTotalElements());
 	}
+
+  List<UserInfo> userEntityToUserInfo(List<UserEntity> userEntity);
 }

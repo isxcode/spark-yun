@@ -24,7 +24,7 @@ public class EmailMessage extends MessageRunner {
 	}
 
 	@Override
-	public void sendMessage(MessageContext messageContext) {
+	public Object sendMessage(MessageContext messageContext) {
 
 		if (Strings.isEmpty(messageContext.getEmail())) {
 			throw new RuntimeException("用户邮箱为空");
@@ -49,5 +49,7 @@ public class EmailMessage extends MessageRunner {
 		message.setSubject(messageContext.getMessageConfig().getSubject());
 		message.setText(messageContext.getContent());
 		mailSender.send(message);
+
+    return "邮件发送成功";
 	}
 }
