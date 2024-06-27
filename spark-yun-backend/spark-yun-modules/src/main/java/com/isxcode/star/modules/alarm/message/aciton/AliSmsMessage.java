@@ -50,7 +50,7 @@ public class AliSmsMessage extends MessageRunner {
 			if (!"OK".equals(sendSmsResponse.getBody().getCode())) {
 				throw new RuntimeException(sendSmsResponse.getBody().getMessage());
 			}
-      return JSON.toJSONString(sendSmsResponse);
+			return JSON.toJSONString(sendSmsResponse);
 		} catch (Exception e) {
 			TeaException error = new TeaException(e.getMessage(), e);
 			throw new RuntimeException(Common.assertAsString(error.message));

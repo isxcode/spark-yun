@@ -26,7 +26,7 @@ public class MessageContext {
 
 	private String alarmEvent;
 
-	private String msgType;
+	private String msgId;
 
 	private String receiver;
 
@@ -36,5 +36,5 @@ public class MessageContext {
 
 	private String tenantId;
 
-  private String instanceId;
+	private String instanceId;
 }

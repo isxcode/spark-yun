@@ -2,6 +2,7 @@ package com.isxcode.star.modules.alarm.controller;
 
 import com.isxcode.star.api.alarm.req.*;
 import com.isxcode.star.api.alarm.res.CheckMessageRes;
+import com.isxcode.star.api.alarm.res.PageAlarmInstanceRes;
 import com.isxcode.star.api.alarm.res.PageAlarmRes;
 import com.isxcode.star.api.alarm.res.PageMessageRes;
 import com.isxcode.star.api.main.constants.ModuleCode;
@@ -128,5 +129,21 @@ public class AlarmController {
 	public void disableAlarm(@Valid @RequestBody DisableAlarmReq disableAlarmReq) {
 
 		alarmBizService.disableAlarm(disableAlarmReq);
+	}
+
+	@Operation(summary = "分页查询告警实例接口")
+	@PostMapping("/pageAlarmInstance")
+	@SuccessResponse("查询成功")
+	public Page<PageAlarmInstanceRes> pageAlarmInstance(@Valid @RequestBody PageAlarmInstanceReq pageAlarmInstanceReq) {
+
+		return alarmBizService.pageAlarmInstance(pageAlarmInstanceReq);
+	}
+
+	@Operation(summary = "删除告警实例接口")
+	@PostMapping("/deleteAlarmInstance")
+	@SuccessResponse("删除成功")
+	public void deleteAlarmInstance(@Valid @RequestBody DeleteAlarmInstanceReq deleteAlarmInstanceReq) {
+
+		alarmBizService.deleteAlarmInstance(deleteAlarmInstanceReq);
 	}
 }
