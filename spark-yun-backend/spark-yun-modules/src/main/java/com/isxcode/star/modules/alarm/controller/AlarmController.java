@@ -1,6 +1,7 @@
 package com.isxcode.star.modules.alarm.controller;
 
 import com.isxcode.star.api.alarm.req.*;
+import com.isxcode.star.api.alarm.res.CheckMessageRes;
 import com.isxcode.star.api.alarm.res.PageAlarmRes;
 import com.isxcode.star.api.alarm.res.PageMessageRes;
 import com.isxcode.star.api.main.constants.ModuleCode;
@@ -76,9 +77,9 @@ public class AlarmController {
 	@Operation(summary = "检测消息体接口")
 	@PostMapping("/checkMessage")
 	@SuccessResponse("检测成功")
-	public void checkMessage(@Valid @RequestBody CheckMessageReq checkMessageReq) {
+	public CheckMessageRes checkMessage(@Valid @RequestBody CheckMessageReq checkMessageReq) {
 
-		alarmBizService.checkMessage(checkMessageReq);
+		return alarmBizService.checkMessage(checkMessageReq);
 	}
 
 	@Operation(summary = "添加告警接口")

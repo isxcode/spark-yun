@@ -25,4 +25,10 @@ dependencies {
 
   // groovy-all
   implementation 'org.apache.groovy:groovy-all:4.0.15'
+
+  // spring-email
+  implementation 'org.springframework.boot:spring-boot-starter-mail'
+
+  // ali sms sdk
+  implementation 'com.aliyun:dysmsapi20170525:3.0.0'
 }
