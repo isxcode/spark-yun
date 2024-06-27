@@ -2,6 +2,7 @@ package com.isxcode.star.modules.alarm.service;
 
 import com.alibaba.fastjson.JSON;
 import com.isxcode.star.api.alarm.constants.AlarmSendStatus;
+import com.isxcode.star.api.alarm.constants.AlarmStatus;
 import com.isxcode.star.api.alarm.constants.MessageStatus;
 import com.isxcode.star.api.alarm.dto.MessageConfig;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
@@ -72,6 +73,11 @@ public class AlarmService {
 
         // 查询告警信息
         AlarmEntity alarm = getAlarm(alarmId);
+
+        // 如果警告没开启，默认跳过
+        if (!AlarmStatus.ENABLE.equals(alarm.getStatus())) {
+          return;
+        }
 
         // 满足当前事件当发送
         if (alarmEvent.equals(alarm.getAlarmEvent())) {
