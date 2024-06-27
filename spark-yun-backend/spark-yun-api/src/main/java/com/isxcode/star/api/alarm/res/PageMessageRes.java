@@ -23,4 +23,8 @@ public class PageMessageRes {
 
 	@JsonSerialize(using = LocalDateTimeSerializer.class)
 	private LocalDateTime createDateTime;
+
+	private String createBy;
+
+	private String createByUsername;
 }

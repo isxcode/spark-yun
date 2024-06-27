@@ -14,8 +14,9 @@ public class CheckMessageReq {
 
 	@Schema(title = "发送的人", example = "sy_123")
 	@NotEmpty(message = "发送人不能为空")
-	private String userId;
+	private String receiver;
 
 	@Schema(title = "发送内容", example = "hello")
+	@NotEmpty(message = "内容不能为空")
 	private String content;
 }

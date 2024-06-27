@@ -28,11 +28,6 @@ public interface MessageStatus {
 	String CHECK_FAIL = "CHECK_FAIL";
 
 	/**
-	 * 检测中.
-	 */
-	String CHECKING = "CHECKING";
-
-	/**
 	 * 禁用.
 	 */
 	String DISABLE = "DISABLE";
