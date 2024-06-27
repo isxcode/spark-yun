@@ -18,8 +18,10 @@ import com.isxcode.star.modules.alarm.message.MessageFactory;
 import com.isxcode.star.modules.alarm.message.MessageRunner;
 import com.isxcode.star.modules.alarm.repository.AlarmRepository;
 import com.isxcode.star.modules.alarm.repository.MessageRepository;
+import com.isxcode.star.modules.user.mapper.UserMapper;
 import com.isxcode.star.modules.user.service.UserService;
 import com.isxcode.star.security.user.UserEntity;
+import com.isxcode.star.security.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -27,6 +29,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -47,7 +50,11 @@ public class AlarmBizService {
 
 	private final UserService userService;
 
-	public void addMessage(AddMessageReq addMessageReq) {
+  private final UserRepository userRepository;
+
+  private final UserMapper userMapper;
+
+  public void addMessage(AddMessageReq addMessageReq) {
 
 		// 名称不能重复
 		Optional<MessageEntity> byName = messageRepository.findByName(addMessageReq.getName());
@@ -97,9 +104,9 @@ public class AlarmBizService {
 		MessageEntity message = alarmService.getMessage(enableMessageReq.getId());
 
 		// 状态必须是检测成功才能启动
-		if (!MessageStatus.CHECK_SUCCESS.equals(message.getStatus())) {
-			throw new IsxAppException("检测通过后，才可以启用");
-		}
+    if (!MessageStatus.CHECK_SUCCESS.equals(message.getStatus()) && !MessageStatus.DISABLE.equals(message.getStatus())) {
+      throw new IsxAppException("检测通过后，才可以启用");
+    }
 
 		message.setStatus(MessageStatus.ACTIVE);
 		messageRepository.save(message);
@@ -138,10 +145,15 @@ public class AlarmBizService {
 
 	public void addAlarm(AddAlarmReq addAlarmReq) {
 
-		AlarmEntity alarm = alarmMapper.addAlarmReqToAlarmEntity(addAlarmReq);
+    // 名称不能重复
+    Optional<AlarmEntity> byName = alarmRepository.findByName(addAlarmReq.getName());
+    if (byName.isPresent()) {
+      throw new IsxAppException("名称不能重复");
+    }
+
+    AlarmEntity alarm = alarmMapper.addAlarmReqToAlarmEntity(addAlarmReq);
 		alarm.setReceiverList(JSON.toJSONString(addAlarmReq.getReceiverList()));
-		alarm.setMsgList(JSON.toJSONString(addAlarmReq.getMsgList()));
-		alarm.setStatus(AlarmStatus.DISABLE);
+		alarm.setStatus(AlarmStatus.ENABLE);
 		alarmRepository.save(alarm);
 	}
 
@@ -153,7 +165,7 @@ public class AlarmBizService {
 		alarm.setAlarmType(updateAlarmReq.getAlarmType());
 		alarm.setAlarmEvent(updateAlarmReq.getAlarmEvent());
 		alarm.setReceiverList(JSON.toJSONString(updateAlarmReq.getReceiverList()));
-		alarm.setMsgList(JSON.toJSONString(updateAlarmReq.getMsgList()));
+    alarm.setMsgId(updateAlarmReq.getMsgId());
 		alarmRepository.save(alarm);
 	}
 
@@ -162,8 +174,19 @@ public class AlarmBizService {
 		Page<AlarmEntity> alarmEntities = alarmRepository.searchAll(pageAlarmReq.getSearchKeyWord(),
 				PageRequest.of(pageAlarmReq.getPage(), pageAlarmReq.getPageSize()));
 
-		return alarmEntities.map(alarmMapper::alarmEntityToPageAlarmRes);
-	}
+    Page<PageAlarmRes> result = alarmEntities.map(alarmMapper::alarmEntityToPageAlarmRes);
+
+    // 翻译消息体
+    result.getContent().forEach(e -> {
+      e.setMsgName(alarmService.getMessage(e.getMsgId()).getName());
+      e.setCreateByUsername(userService.getUser(e.getCreateBy()).getUsername());
+      List<String> receiverList = JSON.parseArray(e.getReceiverList(), String.class);
+      List<UserEntity> receiverUsers = userRepository.findAllById(receiverList);
+      e.setReceiverUsers(userMapper.userEntityToUserInfo(receiverUsers));
+    });
+
+    return result;
+  }
 
 	public void deleteAlarm(DeleteAlarmReq deleteAlarmReq) {
 

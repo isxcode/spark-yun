@@ -35,4 +35,6 @@ public class MessageContext {
 	private MessageConfig messageConfig;
 
 	private String tenantId;
+
+  private String instanceId;
 }

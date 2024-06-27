@@ -1,5 +1,6 @@
 package com.isxcode.star.modules.alarm.message.aciton;
 
+import com.alibaba.fastjson.JSON;
 import com.aliyun.dysmsapi20170525.models.SendSmsRequest;
 import com.aliyun.dysmsapi20170525.models.SendSmsResponse;
 import com.aliyun.tea.TeaException;
@@ -27,7 +28,7 @@ public class AliSmsMessage extends MessageRunner {
 	}
 
 	@Override
-	public void sendMessage(MessageContext messageContext) {
+	public Object sendMessage(MessageContext messageContext) {
 
 		if (Strings.isEmpty(messageContext.getPhone())) {
 			throw new RuntimeException("用户手机号为空");
@@ -49,6 +50,7 @@ public class AliSmsMessage extends MessageRunner {
 			if (!"OK".equals(sendSmsResponse.getBody().getCode())) {
 				throw new RuntimeException(sendSmsResponse.getBody().getMessage());
 			}
+      return JSON.toJSONString(sendSmsResponse);
 		} catch (Exception e) {
 			TeaException error = new TeaException(e.getMessage(), e);
 			throw new RuntimeException(Common.assertAsString(error.message));

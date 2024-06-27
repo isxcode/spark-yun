@@ -25,9 +25,9 @@ public class AddAlarmReq {
 	@NotEmpty(message = "告警事件不能为空")
 	private String alarmEvent;
 
-	@Schema(title = "消息体列表", example = "sy_123")
-	@NotEmpty(message = "消息体不能为空")
-	private List<String> msgList;
+  @Schema(title = "消息体", example = "sy_123")
+  @NotEmpty(message = "消息体不能为空")
+  private String msgId;
 
 	@Schema(title = "通知的人", example = "sy_123")
 	@NotEmpty(message = "通知的人不能为空")

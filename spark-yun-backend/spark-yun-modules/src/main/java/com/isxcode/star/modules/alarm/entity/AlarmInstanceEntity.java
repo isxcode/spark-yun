@@ -42,7 +42,11 @@ public class AlarmInstanceEntity {
 
 	private String content;
 
+  private String response;
+
 	private String receiver;
+
+  private String instanceId;
 
 	private LocalDateTime sendDateTime;
 

@@ -16,7 +16,6 @@ public interface AlarmMapper {
 
 	PageMessageRes messageEntityToPageMessageRes(MessageEntity messageEntity);
 
-	@Mapping(target = "msgList", ignore = true)
 	@Mapping(target = "receiverList", ignore = true)
 	AlarmEntity addAlarmReqToAlarmEntity(AddAlarmReq addAlarmReq);
 
