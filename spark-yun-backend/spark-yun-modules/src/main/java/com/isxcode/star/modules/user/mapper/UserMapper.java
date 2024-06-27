@@ -54,5 +54,5 @@ public interface UserMapper {
 				userEntities.getPageable(), userEntities.getTotalElements());
 	}
 
-  List<UserInfo> userEntityToUserInfo(List<UserEntity> userEntity);
+	List<UserInfo> userEntityToUserInfo(List<UserEntity> userEntity);
 }

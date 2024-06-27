@@ -7,6 +7,7 @@ import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
@@ -38,20 +39,23 @@ public class AlarmInstanceEntity {
 
 	private String alarmEvent;
 
-	private String msgType;
+	private String msgId;
 
 	private String content;
 
-  private String response;
+	private String response;
 
 	private String receiver;
 
-  private String instanceId;
+	private String instanceId;
 
 	private LocalDateTime sendDateTime;
 
 	@Transient
 	private Integer deleted;
+
+	@CreatedDate
+	private LocalDateTime createDateTime;
 
 	private String tenantId;
 

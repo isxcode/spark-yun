@@ -42,20 +42,21 @@ create table SY_ALARM
 -- 添加消息告警实例表
 create table SY_ALARM_INSTANCE
 (
-  id             varchar(200)  not null comment '告警实例id'
+  id               varchar(200)  not null comment '告警实例id'
     primary key,
-  alarm_id       varchar(200)  not null comment '告警id',
-  send_status    varchar(100)  not null comment '是否发送成功',
-  alarm_type     varchar(200)  not null comment '告警类型，作业/作业流',
-  alarm_event    varchar(200)  not null comment '触发的事件',
-  msg_type       varchar(100)  not null comment '告警的消息体',
-  content        text          not null comment '发送消息的内容',
-  response       text          not null comment '事件响应',
-  instance_id    varchar(200)  not null comment '任务实例id',
-  receiver       varchar(200)  not null comment '消息接受者',
-  send_date_time datetime      not null comment '发送的时间',
-  deleted        int default 0 not null comment '逻辑删除',
-  tenant_id      varchar(200)  not null comment '租户id'
+  alarm_id         varchar(200)  not null comment '告警id',
+  send_status      varchar(100)  not null comment '是否发送成功',
+  alarm_type       varchar(200)  not null comment '告警类型，作业/作业流',
+  alarm_event      varchar(200)  not null comment '触发的事件',
+  msg_id           varchar(100)  not null comment '告警的消息体',
+  content          text          not null comment '发送消息的内容',
+  response         text          not null comment '事件响应',
+  instance_id      varchar(200)  not null comment '任务实例id',
+  receiver         varchar(200)  not null comment '消息接受者',
+  send_date_time   datetime      not null comment '发送的时间',
+  create_date_time datetime      not null comment '创建时间',
+  deleted          int default 0 not null comment '逻辑删除',
+  tenant_id        varchar(200)  not null comment '租户id'
 );
 
 -- 作业添加基线
