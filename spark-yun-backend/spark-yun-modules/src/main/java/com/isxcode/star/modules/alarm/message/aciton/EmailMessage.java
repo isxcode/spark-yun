@@ -50,6 +50,6 @@ public class EmailMessage extends MessageRunner {
 		message.setText(messageContext.getContent());
 		mailSender.send(message);
 
-    return "邮件发送成功";
+		return "邮件发送成功";
 	}
 }

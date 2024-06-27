@@ -1,7 +1,6 @@
 package com.isxcode.star.modules.alarm.repository;
 
 import com.isxcode.star.modules.alarm.entity.AlarmEntity;
-import com.isxcode.star.modules.alarm.entity.MessageEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -17,5 +16,5 @@ public interface AlarmRepository extends JpaRepository<AlarmEntity, String> {
 	@Query("SELECT A FROM AlarmEntity A WHERE A.name LIKE %:keyword% OR A.remark LIKE %:keyword% order by A.createDateTime desc ")
 	Page<AlarmEntity> searchAll(@Param("keyword") String searchKeyWord, Pageable pageable);
 
-  Optional<AlarmEntity> findByName(String name);
+	Optional<AlarmEntity> findByName(String name);
 }

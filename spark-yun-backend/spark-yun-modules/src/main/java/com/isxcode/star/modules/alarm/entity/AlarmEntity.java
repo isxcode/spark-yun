@@ -44,7 +44,7 @@ public class AlarmEntity {
 
 	private String alarmEvent;
 
-  private String msgId;
+	private String msgId;
 
 	private String alarmTemplate;
 
