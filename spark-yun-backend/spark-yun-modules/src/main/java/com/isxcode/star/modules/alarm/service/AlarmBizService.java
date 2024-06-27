@@ -1,11 +1,15 @@
 package com.isxcode.star.modules.alarm.service;
 
 import com.alibaba.fastjson.JSON;
+import com.isxcode.star.api.alarm.constants.AlarmSendStatus;
 import com.isxcode.star.api.alarm.constants.AlarmStatus;
 import com.isxcode.star.api.alarm.constants.MessageStatus;
+import com.isxcode.star.api.alarm.dto.MessageConfig;
 import com.isxcode.star.api.alarm.req.*;
+import com.isxcode.star.api.alarm.res.CheckMessageRes;
 import com.isxcode.star.api.alarm.res.PageAlarmRes;
 import com.isxcode.star.api.alarm.res.PageMessageRes;
+import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.star.modules.alarm.entity.AlarmEntity;
 import com.isxcode.star.modules.alarm.entity.MessageEntity;
 import com.isxcode.star.modules.alarm.mapper.AlarmMapper;
@@ -23,6 +27,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -43,6 +48,12 @@ public class AlarmBizService {
 	private final UserService userService;
 
 	public void addMessage(AddMessageReq addMessageReq) {
+
+		// 名称不能重复
+		Optional<MessageEntity> byName = messageRepository.findByName(addMessageReq.getName());
+		if (byName.isPresent()) {
+			throw new IsxAppException("消息体名称重复");
+		}
 
 		MessageEntity messageEntity = alarmMapper.addMessageReqToMessageEntity(addMessageReq);
 		messageEntity.setMsgConfig(JSON.toJSONString(addMessageReq.getMessageConfig()));
@@ -66,7 +77,13 @@ public class AlarmBizService {
 		Page<MessageEntity> messageEntities = messageRepository.searchAll(pageMessageReq.getSearchKeyWord(),
 				PageRequest.of(pageMessageReq.getPage(), pageMessageReq.getPageSize()));
 
-		return messageEntities.map(alarmMapper::messageEntityToPageMessageRes);
+		Page<PageMessageRes> result = messageEntities.map(alarmMapper::messageEntityToPageMessageRes);
+
+		// 翻译创建人名称
+		result.getContent().forEach(e -> {
+			e.setCreateByUsername(userService.getUser(e.getCreateBy()).getUsername());
+		});
+		return result;
 	}
 
 	public void deleteMessage(DeleteMessageReq deleteMessageReq) {
@@ -78,6 +95,12 @@ public class AlarmBizService {
 	public void enableMessage(EnableMessageReq enableMessageReq) {
 
 		MessageEntity message = alarmService.getMessage(enableMessageReq.getId());
+
+		// 状态必须是检测成功才能启动
+		if (!MessageStatus.CHECK_SUCCESS.equals(message.getStatus())) {
+			throw new IsxAppException("检测通过后，才可以启用");
+		}
+
 		message.setStatus(MessageStatus.ACTIVE);
 		messageRepository.save(message);
 	}
@@ -89,16 +112,28 @@ public class AlarmBizService {
 		messageRepository.save(message);
 	}
 
-	public void checkMessage(CheckMessageReq checkMessageReq) {
+	public CheckMessageRes checkMessage(CheckMessageReq checkMessageReq) {
 
 		MessageEntity message = alarmService.getMessage(checkMessageReq.getId());
+		MessageConfig messageConfig = JSON.parseObject(message.getMsgConfig(), MessageConfig.class);
+		MessageContext messageContext = MessageContext.builder().messageConfig(messageConfig)
+				.content(checkMessageReq.getContent()).build();
 
-		MessageRunner messageAction = messageFactory.getMessageAction(message.getMsgType());
+		UserEntity user = userService.getUser(checkMessageReq.getReceiver());
+		messageContext.setEmail(user.getEmail());
+		messageContext.setPhone(user.getPhone());
 
-		UserEntity user = userService.getUser(checkMessageReq.getUserId());
-
-		messageAction
-				.send(MessageContext.builder().content(checkMessageReq.getContent()).email(user.getEmail()).build());
+		try {
+			MessageRunner messageAction = messageFactory.getMessageAction(message.getMsgType());
+			messageAction.sendMessage(messageContext);
+			message.setStatus(MessageStatus.CHECK_SUCCESS);
+			messageRepository.save(message);
+			return CheckMessageRes.builder().checkStatus(AlarmSendStatus.SUCCESS).log("检测成功").build();
+		} catch (Exception e) {
+			message.setStatus(MessageStatus.CHECK_FAIL);
+			messageRepository.save(message);
+			return CheckMessageRes.builder().checkStatus(AlarmSendStatus.FAIL).log(e.getMessage()).build();
+		}
 	}
 
 	public void addAlarm(AddAlarmReq addAlarmReq) {

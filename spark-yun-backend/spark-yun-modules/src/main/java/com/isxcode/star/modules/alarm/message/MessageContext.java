@@ -16,6 +16,8 @@ public class MessageContext {
 
 	private String email;
 
+	private String phone;
+
 	private String content;
 
 	private String alarmId;

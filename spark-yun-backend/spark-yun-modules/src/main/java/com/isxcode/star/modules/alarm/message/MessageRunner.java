@@ -1,7 +1,6 @@
 package com.isxcode.star.modules.alarm.message;
 
 import com.isxcode.star.api.alarm.constants.AlarmSendStatus;
-import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.star.modules.alarm.entity.AlarmInstanceEntity;
 import com.isxcode.star.modules.alarm.repository.AlarmInstanceRepository;
 
@@ -31,7 +30,6 @@ public abstract class MessageRunner implements MessageAction {
 			AlarmInstanceEntity alarmInstanceEntity = messageContextToAlarmInstanceEntity(messageContext);
 			alarmInstanceEntity.setSendStatus(AlarmSendStatus.FAIL);
 			alarmInstanceRepository.save(alarmInstanceEntity);
-			throw new IsxAppException("运行异常，" + e.getMessage());
 		}
 	}
 
