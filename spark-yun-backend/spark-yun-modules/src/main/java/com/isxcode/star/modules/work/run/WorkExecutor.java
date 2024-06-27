@@ -98,11 +98,6 @@ public abstract class WorkExecutor {
 			// 开始执行作业
 			execute(workRunContext, workInstance);
 
-			// 任务开始运行，异步发送消息
-			if (InstanceType.AUTO.equals(workInstance.getInstanceType())) {
-				alarmService.sendWorkMessage(workRunContext, workInstance, AlarmEventType.RUN_END);
-			}
-
 			// 重新获取当前最新实例
 			workInstance = workInstanceRepository.findById(workRunContext.getInstanceId()).get();
 
@@ -168,6 +163,11 @@ public abstract class WorkExecutor {
 			if (InstanceType.AUTO.equals(workInstance.getInstanceType())) {
 				alarmService.sendWorkMessage(workRunContext, workInstance, AlarmEventType.RUN_FAIL);
 			}
+		}
+
+		// 任务开始运行，异步发送消息
+		if (InstanceType.AUTO.equals(workInstance.getInstanceType())) {
+			alarmService.sendWorkMessage(workRunContext, workInstance, AlarmEventType.RUN_END);
 		}
 
 		// 执行完请求线程
