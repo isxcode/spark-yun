@@ -1,6 +1,5 @@
 package com.isxcode.star.modules.alarm.message;
 
-import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +20,6 @@ public class MessageFactory {
 
 	public MessageRunner getMessageAction(String messageType) {
 
-		return Optional.ofNullable(actionMap.get(messageType)).orElseThrow(() -> new IsxAppException("该通知方法不支持"));
+		return Optional.ofNullable(actionMap.get(messageType)).orElseThrow(() -> new RuntimeException("该通知方法不支持"));
 	}
 }
