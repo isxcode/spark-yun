@@ -35,9 +35,8 @@ import com.isxcode.star.modules.work.service.WorkConfigService;
 import com.isxcode.star.modules.work.service.WorkService;
 import com.isxcode.star.modules.workflow.entity.WorkflowConfigEntity;
 import com.isxcode.star.modules.workflow.entity.WorkflowEntity;
-import com.isxcode.star.modules.workflow.repository.WorkflowConfigRepository;
-import com.isxcode.star.modules.workflow.repository.WorkflowRepository;
 import com.isxcode.star.modules.workflow.run.WorkflowUtils;
+import com.isxcode.star.modules.workflow.service.WorkflowService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
@@ -71,9 +70,7 @@ public class WorkBizService {
 
 	private final WorkConfigBizService workConfigBizService;
 
-	private final WorkflowConfigRepository workflowConfigRepository;
-
-	private final WorkflowRepository workflowRepository;
+	private final WorkflowService workflowService;
 
 	private final WorkService workService;
 
@@ -224,26 +221,26 @@ public class WorkBizService {
 
 		WorkEntity work = workService.getWorkEntity(deleteWorkReq.getWorkId());
 
-		// 如果不是已下线状态或者未发布状态 不让删除
-		if (WorkStatus.UN_PUBLISHED.equals(work.getStatus()) || WorkStatus.STOP.equals(work.getStatus())) {
-			// 删除作业配置
-			Optional<WorkConfigEntity> workConfigEntityOptional = workConfigRepository.findById(work.getConfigId());
-			workConfigEntityOptional
-					.ifPresent(workConfigEntity -> workConfigRepository.deleteById(workConfigEntity.getId()));
-
-			workRepository.deleteById(deleteWorkReq.getWorkId());
-		} else {
-			throw new IsxAppException("请下线作业");
-		}
-
 		// 拖拽到DAG中的作业无法删除
-		WorkflowEntity workflow = workflowRepository.findById(work.getWorkflowId()).get();
-		WorkflowConfigEntity workflowConfig = workflowConfigRepository.findById(workflow.getConfigId()).get();
+		WorkflowEntity workflow = workflowService.getWorkflow(work.getWorkflowId());
+		WorkflowConfigEntity workflowConfig = workflowService.getWorkflowConfig(workflow.getConfigId());
 		if (workflowConfig.getNodeList() != null) {
 			if (JSONArray.parseObject(workflowConfig.getNodeList(), String.class).contains(deleteWorkReq.getWorkId())) {
 				throw new IsxAppException("作业在DAG图中无法删除");
 			}
 		}
+
+		// 发布的作业无法删除
+		if (WorkStatus.PUBLISHED.equals(work.getStatus())) {
+			throw new IsxAppException("请下线作业");
+		}
+
+		// 删除作业配置
+		WorkConfigEntity workConfig = workConfigService.getWorkConfigEntity(work.getConfigId());
+		workConfigRepository.delete(workConfig);
+
+		// 删除作业
+		workRepository.delete(work);
 	}
 
 	@Transactional

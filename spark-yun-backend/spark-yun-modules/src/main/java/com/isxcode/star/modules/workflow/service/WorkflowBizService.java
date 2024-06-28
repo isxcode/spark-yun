@@ -189,7 +189,27 @@ public class WorkflowBizService {
 
 	public void deleteWorkflow(DeleteWorkflowReq deleteWorkflowReq) {
 
-		workflowRepository.deleteById(deleteWorkflowReq.getWorkflowId());
+		// 发布的作业需要下线
+		WorkflowEntity workflow = workflowService.getWorkflow(deleteWorkflowReq.getWorkflowId());
+
+		if (WorkflowStatus.PUBLISHED.equals(workflow.getStatus())) {
+			throw new IsxAppException("请先下线");
+		}
+
+		// 删除作业流
+		workflowRepository.delete(workflow);
+
+		// 删除作业流配置
+		WorkflowConfigEntity workflowConfig = workflowService.getWorkflowConfig(workflow.getConfigId());
+		workflowConfigRepository.delete(workflowConfig);
+
+		// 删除所有的作业
+		List<WorkEntity> allByWorkflowId = workRepository.findAllByWorkflowId(workflow.getId());
+		workRepository.deleteAll(allByWorkflowId);
+
+		// 删除作业配置
+		List<String> configIdList = allByWorkflowId.stream().map(WorkEntity::getConfigId).collect(Collectors.toList());
+		workConfigRepository.deleteAllById(configIdList);
 	}
 
 	/**
