@@ -31,7 +31,9 @@ public class SqlValueService {
 		// 替换正则
 		while (matcher.find()) {
 			String group = matcher.group();
-			sql = sql.replace(group, valueMap.get(group.trim()));
+			if (valueMap.get(group.trim()) != null) {
+				sql = sql.replace(group, valueMap.get(group.trim()));
+			}
 		}
 
 		return sql;

@@ -92,7 +92,7 @@ public abstract class WorkExecutor {
 
 			// 任务开始运行，异步发送消息
 			if (InstanceType.AUTO.equals(workInstance.getInstanceType())) {
-				alarmService.sendWorkMessage(workRunContext, workInstance, AlarmEventType.START_RUN);
+				alarmService.sendWorkMessage(workInstance, AlarmEventType.START_RUN);
 			}
 
 			// 开始执行作业
@@ -122,7 +122,7 @@ public abstract class WorkExecutor {
 
 			// 任务运行成功，异步发送消息
 			if (InstanceType.AUTO.equals(workInstance.getInstanceType())) {
-				alarmService.sendWorkMessage(workRunContext, workInstance, AlarmEventType.RUN_SUCCESS);
+				alarmService.sendWorkMessage(workInstance, AlarmEventType.RUN_SUCCESS);
 			}
 
 			// 执行完请求线程
@@ -160,13 +160,13 @@ public abstract class WorkExecutor {
 
 			// 任务运行失败，异步发送消息
 			if (InstanceType.AUTO.equals(workInstance.getInstanceType())) {
-				alarmService.sendWorkMessage(workRunContext, workInstance, AlarmEventType.RUN_FAIL);
+				alarmService.sendWorkMessage(workInstance, AlarmEventType.RUN_FAIL);
 			}
 		}
 
 		// 任务开始运行，异步发送消息
 		if (InstanceType.AUTO.equals(workInstance.getInstanceType())) {
-			alarmService.sendWorkMessage(workRunContext, workInstance, AlarmEventType.RUN_END);
+			alarmService.sendWorkMessage(workInstance, AlarmEventType.RUN_END);
 		}
 
 		// 执行完请求线程
