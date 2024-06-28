@@ -165,8 +165,7 @@ public class WorkflowUtils {
 				.libConfig(JSON.parseArray(workVersion.getLibConfig(), String.class))
 				.containerId(workVersion.getContainerId()).workType(workVersion.getWorkType())
 				.apiWorkConfig(JSON.parseObject(workVersion.getApiWorkConfig(), ApiWorkConfig.class))
-				.alarmList(JSON.parseArray(workVersion.getAlarmList(), String.class)).workName(event.getWorkName())
-				.workId(workVersion.getId()).build();
+				.workName(event.getWorkName()).workId(workVersion.getId()).build();
 	}
 
 	/**
