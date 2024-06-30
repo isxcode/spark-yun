@@ -173,14 +173,29 @@ function getRealDataOption(config: any) {
 }
 
 function publishEvent() {
+    if (!route.query.id) {
+        return;
+    }
     saveLoading.value = true
-    PublishReportViewData({
+
+    componentList.value = ZChartsEngineRef.value.getComponentList()
+    SaveReportViewDetail({
         id: route.query.id,
+        webConfig: {
+            cardList: componentList.value
+        },
+        cardList: componentList.value.map((item: any) => item.id)
     }).then((res: any) => {
-        saveLoading.value = false
-        ElMessage.success(res.msg)
-        router.push({
-            name: 'report-views'
+        PublishReportViewData({
+            id: route.query.id
+        }).then((res: any) => {
+            saveLoading.value = false
+            ElMessage.success(res.msg)
+            router.push({
+                name: 'report-views'
+            })
+        }).catch(() => {
+            saveLoading.value = false
         })
     }).catch(() => {
         saveLoading.value = false
