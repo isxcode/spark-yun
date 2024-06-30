@@ -220,13 +220,24 @@ function saveConfigEvent() {
 // 发布
 function publishChartEvent() {
     saveLoading.value = true
-    PublishReportComponentData({
+    ConfigReportComponentData({
         id: route.query.id,
+        webConfig: chartConfig,
+        exampleData: echartOption.value,
+        dataSql: {
+            sqlList: baseConfig.sqls
+        }
     }).then((res: any) => {
-        saveLoading.value = false
-        ElMessage.success(res.msg)
-        router.push({
-            name: 'report-components'
+        PublishReportComponentData({
+            id: route.query.id,
+        }).then((res: any) => {
+            saveLoading.value = false
+            ElMessage.success(res.msg)
+            router.push({
+                name: 'report-components'
+            })
+        }).catch(() => {
+            saveLoading.value = false
         })
     }).catch(() => {
         saveLoading.value = false
