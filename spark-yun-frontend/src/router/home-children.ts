@@ -28,6 +28,11 @@ import ComputingDetail from '@/views/realtime-computing/computing-detail/index.v
 import fileCenter from '@/views/file-center/index.vue'
 import CustomFunc from '@/views/custom-func/index.vue'
 
+import ReportComponents from '@/views/report-components/index.vue'
+import ReportItem from '@/views/report-components/report-item/index.vue'
+import ReportViews from '@/views/report-views/index.vue'
+import ReportViewsDetail from '@/views/report-views/report-views-detail/index.vue'
+
 export default [
   {
     path: 'index',
@@ -158,5 +163,25 @@ export default [
     path: 'computing-detail',
     name: 'computing-detail',
     component: ComputingDetail
+  },
+  {
+    path: 'report-components',
+    name: 'report-components',
+    component: ReportComponents,
+  },
+  {
+    path: 'report-item',
+    name: 'report-item',
+    component: ReportItem
+  },
+  {
+    path: 'report-views',
+    name: 'report-views',
+    component: ReportViews
+  },
+  {
+    path: 'report-views-detail',
+    name: 'report-views-detail',
+    component: ReportViewsDetail
   }
 ]

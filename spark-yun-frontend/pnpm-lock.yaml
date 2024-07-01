@@ -67,7 +67,7 @@ importers:
         version: 2.1.6(typescript@5.0.4)(vue@3.3.4)
       pinia-plugin-persistedstate:
         specifier: ^3.2.0
-        version: 3.2.0(pinia@2.1.6)
+        version: 3.2.0(pinia@2.1.6(typescript@5.0.4)(vue@3.3.4))
       qs:
         specifier: ^6.11.2
         version: 6.11.2
@@ -77,6 +77,9 @@ importers:
       vue-codemirror6:
         specifier: ^1.1.24
         version: 1.1.27(@lezer/common@1.0.4)(vue@3.3.4)
+      vue-grid-layout:
+        specifier: 3.0.0-beta1
+        version: 3.0.0-beta1(@interactjs/core@1.10.27(@interactjs/utils@1.10.27))(@interactjs/utils@1.10.27)
       vue-router:
         specifier: ^4.2.0
         version: 4.2.4(vue@3.3.4)
@@ -110,19 +113,19 @@ importers:
         version: 18.17.14
       '@vitejs/plugin-vue':
         specifier: ^4.2.3
-        version: 4.3.4(vite@4.4.9)(vue@3.3.4)
+        version: 4.3.4(vite@4.4.9(@types/node@18.17.14)(sass@1.66.1))(vue@3.3.4)
       '@vitejs/plugin-vue-jsx':
         specifier: ^3.0.2
-        version: 3.0.2(vite@4.4.9)(vue@3.3.4)
+        version: 3.0.2(vite@4.4.9(@types/node@18.17.14)(sass@1.66.1))(vue@3.3.4)
       '@vue/eslint-config-prettier':
         specifier: ^7.1.0
         version: 7.1.0(eslint@8.48.0)(prettier@2.8.8)
       '@vue/eslint-config-typescript':
         specifier: ^11.0.3
-        version: 11.0.3(eslint-plugin-vue@9.17.0)(eslint@8.48.0)(typescript@5.0.4)
+        version: 11.0.3(eslint-plugin-vue@9.17.0(eslint@8.48.0))(eslint@8.48.0)(typescript@5.0.4)
       '@vue/test-utils':
         specifier: ^2.3.2
-        version: 2.4.1(vue@3.3.4)
+        version: 2.4.1(@vue/server-renderer@3.3.4(vue@3.3.4))(vue@3.3.4)
       '@vue/tsconfig':
         specifier: ^0.4.0
         version: 0.4.0
@@ -149,13 +152,13 @@ importers:
         version: 5.0.4
       unplugin-vue-components:
         specifier: ^0.25.2
-        version: 0.25.2(vue@3.3.4)
+        version: 0.25.2(@babel/parser@7.22.15)(rollup@3.28.1)(vue@3.3.4)
       vite:
         specifier: ^4.3.5
         version: 4.4.9(@types/node@18.17.14)(sass@1.66.1)
       vite-plugin-static-copy:
         specifier: ^0.15.0
-        version: 0.15.0(vite@4.4.9)
+        version: 0.15.0(vite@4.4.9(@types/node@18.17.14)(sass@1.66.1))
       vitest:
         specifier: ^0.31.0
         version: 0.31.4(jsdom@22.1.0)(sass@1.66.1)
@@ -568,6 +571,79 @@ packages:
   '@humanwhocodes/object-schema@1.2.1':
     resolution: {integrity: sha512-ZnQMnLV4e7hDlUvw8H+U8ASL02SS2Gn6+9Ac3wGGLIe7+je2AeAOxPY+izIPJDfFDb7eDjev0Us8MO1iFRN8hA==}
 
+  '@interactjs/actions@1.10.27':
+    resolution: {integrity: sha512-FCRg5KwB+stkPcAMx/Cn0fgGP6p4LyMX9S/Upcn/W+hpYme31bPi54PCqmOebzz6myTthN6zFf9jMyLOqtI/gg==}
+    peerDependencies:
+      '@interactjs/core': 1.10.27
+      '@interactjs/utils': 1.10.27
+
+  '@interactjs/auto-scroll@1.10.27':
+    resolution: {integrity: sha512-zPg5TnVsZv+9Hnt4qnbxLvBMf+rIWHkoJVoSETEbLNaj90C8hIyr0pVwukSUySSgDhCgQ7np0f3pg4INLq9beQ==}
+    peerDependencies:
+      '@interactjs/utils': 1.10.27
+
+  '@interactjs/auto-start@1.10.27':
+    resolution: {integrity: sha512-ECLBO/nxmaF1knncJKIE5F7la3KKRgEkn0Cu2JTPOYj9xy/LpfYElo3wkRHsodgOqF651nR70GK2/IzPR2lO9A==}
+    peerDependencies:
+      '@interactjs/core': 1.10.27
+      '@interactjs/utils': 1.10.27
+
+  '@interactjs/core@1.10.27':
+    resolution: {integrity: sha512-SliUr/3ZbLAdED8LokzYzWHWMdCB5Cq+UnpXuRy+BIod1j97m4IUFf/D1iIKUBBjBcucgXbz28z96WnenVCB7Q==}
+    peerDependencies:
+      '@interactjs/utils': 1.10.27
+
+  '@interactjs/dev-tools@1.10.27':
+    resolution: {integrity: sha512-YolmBwRaKH1gWbvyLeV3m5QSwtD38lOZnCBA87PCAlcd9PQAC2gb03fEPeEyD336bE20oLB8f0WZt4Wre+afiw==}
+    peerDependencies:
+      '@interactjs/modifiers': 1.10.27
+      '@interactjs/utils': 1.10.27
+
+  '@interactjs/inertia@1.10.27':
+    resolution: {integrity: sha512-S/SVj/M0D+wWWPVXHcXN/YUWOK51LFJsEA+CTgVnFhlSU04+1FUvNLwilCZcHgECu1RJxZNKDwZysDATg+r8jQ==}
+    peerDependencies:
+      '@interactjs/core': 1.10.27
+      '@interactjs/modifiers': 1.10.27
+      '@interactjs/utils': 1.10.27
+
+  '@interactjs/interact@1.10.27':
+    resolution: {integrity: sha512-XdH3A2UUzjEFGGJgFuJlhiz99tE8jB8xNh/DmnoMuL6uOQPxNA+sWRnzEVjG0+zY2P3/dbhEpi4Cn3FLPzydwA==}
+
+  '@interactjs/interactjs@1.10.27':
+    resolution: {integrity: sha512-UwhfUZMZVXUY72efPABuKSBz1sUY+r+49v8t6Ku9o5Jq76AKg9mwmdGszIlOn3ppnFDDjvtzK/8TL+Sbd0EQEA==}
+
+  '@interactjs/modifiers@1.10.27':
+    resolution: {integrity: sha512-ei/qfoQ+9/8k6WzNzdNqHI6cWkIV576N4Ap16r5CoqOWwhA6Xzj3OMHf1g0t1O4eSq2HdJsVJn3eLNfw9HsbeQ==}
+    peerDependencies:
+      '@interactjs/core': 1.10.27
+      '@interactjs/utils': 1.10.27
+
+  '@interactjs/offset@1.10.27':
+    resolution: {integrity: sha512-AezsLiuK+Qv4jXdYuRa65HJ2pMFMZPlqiAep6ZRLwhP9HE7O75c0EAm+gfx+dpPrHNHs6J9LaiKSZl+B+A2qAw==}
+    peerDependencies:
+      '@interactjs/core': 1.10.27
+      '@interactjs/utils': 1.10.27
+
+  '@interactjs/pointer-events@1.10.27':
+    resolution: {integrity: sha512-Yo5SS6PhWfC93gHNxnwwW0wvebo5hSYJKGaSnAHO4f9Lh25yibecMnmPBmiEfWVcdMboK/kXrme43mHQaRegVg==}
+    peerDependencies:
+      '@interactjs/core': 1.10.27
+      '@interactjs/utils': 1.10.27
+
+  '@interactjs/reflow@1.10.27':
+    resolution: {integrity: sha512-Msm0QdYFr40oSsPFxyCR3dHN/pQx34k7QSkdN1uIsUn/drrm+YSFvrvVOu99DFOwr7gTThr5vNe06Sz4vubTSA==}
+    peerDependencies:
+      '@interactjs/core': 1.10.27
+      '@interactjs/utils': 1.10.27
+
+  '@interactjs/snappers@1.10.27':
+    resolution: {integrity: sha512-HZLZ0XSi6HI08OmTv/HKG6AltQoaKAALLQ+KDW92utj3XSgw7oren0KsWUKPhaPg3Av7R1jFQd08s+uafqIlLw==}
+    peerDependencies:
+      '@interactjs/utils': 1.10.27
+
+  '@interactjs/utils@1.10.27':
+    resolution: {integrity: sha512-+qfLOio2OxQqg1cXSnRaCl+N8MQDQLDS9w+aOGxH8YLAhIMyt7Asxx/46//sT8orgsi16pmlBPtngPHT9s8zKw==}
+
   '@jridgewell/gen-mapping@0.3.3':
     resolution: {integrity: sha512-HLhSWOLRi875zjjMG/r+Nv0oCW8umGb0BgEhyX3dDX3egwZtB8PqLnjz3yedt8R5StBrzcg4aBpnh8UA9D1BoQ==}
     engines: {node: '>=6.0.0'}
@@ -953,6 +1029,9 @@ packages:
   balanced-match@1.0.2:
     resolution: {integrity: sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw==}
 
+  batch-processor@1.0.0:
+    resolution: {integrity: sha512-xoLQD8gmmR32MeuBHgH0Tzd5PuSZx71ZsbhVxOCRbgktZEPe4SQy7s9Z50uPp0F/f7iw2XmkHN2xkgbMfckMDA==}
+
   binary-extensions@2.2.0:
     resolution: {integrity: sha512-jDctJ/IVQbZoJykoeHbhXpOlNBqGNcwXJKJog42E5HDPUwQTSdjCHdihjj0DlnheQ7blbT6dHOafNAiS8ooQKA==}
     engines: {node: '>=8'}
@@ -1173,6 +1252,9 @@ packages:
     resolution: {integrity: sha512-fAWpbKCyt+l1dsqSNPOs/F/dBN4Wp5CGAyxbiS5zqDwI4q3QPM+LxLU2h3GUHMIBtMGCvmsG98j5HPMkTKkvcA==}
     peerDependencies:
       vue: ^3.2.0
+
+  element-resize-detector@1.2.4:
+    resolution: {integrity: sha512-Fl5Ftk6WwXE0wqCgNoseKWndjzZlDCwuPTcoVZfCP9R3EHQF8qUtr3YUPNETegRBOKqQKPW3n4kiIWngGi8tKg==}
 
   entities@4.5.0:
     resolution: {integrity: sha512-V0hjH4dGPh9Ao5p0MoRY6BVqtwCjhz6vI5LT8AJ55H+4g9/4vbHx1I54fS0XuclLhDHArPQCiMjDxjaL8fPxhw==}
@@ -1753,6 +1835,9 @@ packages:
   minimatch@9.0.3:
     resolution: {integrity: sha512-RHiac9mvaRw0x3AYRgDC1CxAP7HTcNrrECeA8YYJeWnpo+2Q5CegtZjaotWTWxDG3UeGA1coE05iH1mPjT/2mg==}
     engines: {node: '>=16 || 14 >=14.17'}
+
+  mitt@2.1.0:
+    resolution: {integrity: sha512-ILj2TpLiysu2wkBbWjAmww7TkZb65aiQO+DkVdUTBpBXq+MHYiETENkKFMtsJZX1Lf4pe4QOrTSjIfUwN5lRdg==}
 
   mitt@3.0.1:
     resolution: {integrity: sha512-vKivATfr97l2/QBCYAkXYDbrIWPM2IIKEl7YPhjCvKlG3kE2gm+uBo6nEXK3M5/Ffh/FLpKExzOQ3JJoJGFKBw==}
@@ -2409,11 +2494,25 @@ packages:
       '@vue/composition-api':
         optional: true
 
+  vue-demi@0.14.8:
+    resolution: {integrity: sha512-Uuqnk9YE9SsWeReYqK2alDI5YzciATE0r2SkA6iMAtuXvNTMNACJLJEXNXaEy94ECuBe4Sk6RzRU80kjdbIo1Q==}
+    engines: {node: '>=12'}
+    hasBin: true
+    peerDependencies:
+      '@vue/composition-api': ^1.0.0-rc.1
+      vue: ^3.0.0-0 || ^2.6.0
+    peerDependenciesMeta:
+      '@vue/composition-api':
+        optional: true
+
   vue-eslint-parser@9.3.1:
     resolution: {integrity: sha512-Clr85iD2XFZ3lJ52/ppmUDG/spxQu6+MAeHXjjyI4I1NUYZ9xmenQp4N0oaHJhrA8OOxltCVxMRfANGa70vU0g==}
     engines: {node: ^14.17.0 || >=16.0.0}
     peerDependencies:
       eslint: '>=6.0.0'
+
+  vue-grid-layout@3.0.0-beta1:
+    resolution: {integrity: sha512-MsW0yfYNtnAO/uDhfZvkP6effxSJxvhAFbIL37x6Rn3vW9xf0WHVefKaSbQMLpSq3mXnR6ut0pg2Cd5lqIIZzg==}
 
   vue-router@4.2.4:
     resolution: {integrity: sha512-9PISkmaCO02OzPVOMq2w82ilty6+xJmQrarYZDkjZBfl4RvYAlt4PKnEX21oW4KTtWfa9OuO/b3qk1Od3AEdCQ==}
@@ -2606,7 +2705,7 @@ snapshots:
     dependencies:
       '@antv/x6': 1.34.14
       vue: 3.3.4
-      vue-demi: 0.14.6(vue@3.3.4)
+      vue-demi: 0.14.8(vue@3.3.4)
 
   '@antv/x6@1.34.14':
     dependencies:
@@ -2989,6 +3088,104 @@ snapshots:
 
   '@humanwhocodes/object-schema@1.2.1': {}
 
+  '@interactjs/actions@1.10.27(@interactjs/core@1.10.27(@interactjs/utils@1.10.27))(@interactjs/utils@1.10.27)':
+    dependencies:
+      '@interactjs/core': 1.10.27(@interactjs/utils@1.10.27)
+      '@interactjs/utils': 1.10.27
+    optionalDependencies:
+      '@interactjs/interact': 1.10.27
+
+  '@interactjs/auto-scroll@1.10.27(@interactjs/utils@1.10.27)':
+    dependencies:
+      '@interactjs/utils': 1.10.27
+    optionalDependencies:
+      '@interactjs/interact': 1.10.27
+
+  '@interactjs/auto-start@1.10.27(@interactjs/core@1.10.27(@interactjs/utils@1.10.27))(@interactjs/utils@1.10.27)':
+    dependencies:
+      '@interactjs/core': 1.10.27(@interactjs/utils@1.10.27)
+      '@interactjs/utils': 1.10.27
+    optionalDependencies:
+      '@interactjs/interact': 1.10.27
+
+  '@interactjs/core@1.10.27(@interactjs/utils@1.10.27)':
+    dependencies:
+      '@interactjs/utils': 1.10.27
+
+  '@interactjs/dev-tools@1.10.27(@interactjs/modifiers@1.10.27(@interactjs/core@1.10.27(@interactjs/utils@1.10.27))(@interactjs/utils@1.10.27))(@interactjs/utils@1.10.27)':
+    dependencies:
+      '@interactjs/modifiers': 1.10.27(@interactjs/core@1.10.27(@interactjs/utils@1.10.27))(@interactjs/utils@1.10.27)
+      '@interactjs/utils': 1.10.27
+    optionalDependencies:
+      '@interactjs/interact': 1.10.27
+      vue: 3.3.4
+
+  '@interactjs/inertia@1.10.27(@interactjs/core@1.10.27(@interactjs/utils@1.10.27))(@interactjs/modifiers@1.10.27(@interactjs/core@1.10.27(@interactjs/utils@1.10.27))(@interactjs/utils@1.10.27))(@interactjs/utils@1.10.27)':
+    dependencies:
+      '@interactjs/core': 1.10.27(@interactjs/utils@1.10.27)
+      '@interactjs/modifiers': 1.10.27(@interactjs/core@1.10.27(@interactjs/utils@1.10.27))(@interactjs/utils@1.10.27)
+      '@interactjs/offset': 1.10.27(@interactjs/core@1.10.27(@interactjs/utils@1.10.27))(@interactjs/utils@1.10.27)
+      '@interactjs/utils': 1.10.27
+    optionalDependencies:
+      '@interactjs/interact': 1.10.27
+
+  '@interactjs/interact@1.10.27':
+    dependencies:
+      '@interactjs/core': 1.10.27(@interactjs/utils@1.10.27)
+      '@interactjs/utils': 1.10.27
+
+  '@interactjs/interactjs@1.10.27':
+    dependencies:
+      '@interactjs/actions': 1.10.27(@interactjs/core@1.10.27(@interactjs/utils@1.10.27))(@interactjs/utils@1.10.27)
+      '@interactjs/auto-scroll': 1.10.27(@interactjs/utils@1.10.27)
+      '@interactjs/auto-start': 1.10.27(@interactjs/core@1.10.27(@interactjs/utils@1.10.27))(@interactjs/utils@1.10.27)
+      '@interactjs/core': 1.10.27(@interactjs/utils@1.10.27)
+      '@interactjs/dev-tools': 1.10.27(@interactjs/modifiers@1.10.27(@interactjs/core@1.10.27(@interactjs/utils@1.10.27))(@interactjs/utils@1.10.27))(@interactjs/utils@1.10.27)
+      '@interactjs/inertia': 1.10.27(@interactjs/core@1.10.27(@interactjs/utils@1.10.27))(@interactjs/modifiers@1.10.27(@interactjs/core@1.10.27(@interactjs/utils@1.10.27))(@interactjs/utils@1.10.27))(@interactjs/utils@1.10.27)
+      '@interactjs/interact': 1.10.27
+      '@interactjs/modifiers': 1.10.27(@interactjs/core@1.10.27(@interactjs/utils@1.10.27))(@interactjs/utils@1.10.27)
+      '@interactjs/offset': 1.10.27(@interactjs/core@1.10.27(@interactjs/utils@1.10.27))(@interactjs/utils@1.10.27)
+      '@interactjs/pointer-events': 1.10.27(@interactjs/core@1.10.27(@interactjs/utils@1.10.27))(@interactjs/utils@1.10.27)
+      '@interactjs/reflow': 1.10.27(@interactjs/core@1.10.27(@interactjs/utils@1.10.27))(@interactjs/utils@1.10.27)
+      '@interactjs/utils': 1.10.27
+
+  '@interactjs/modifiers@1.10.27(@interactjs/core@1.10.27(@interactjs/utils@1.10.27))(@interactjs/utils@1.10.27)':
+    dependencies:
+      '@interactjs/core': 1.10.27(@interactjs/utils@1.10.27)
+      '@interactjs/snappers': 1.10.27(@interactjs/utils@1.10.27)
+      '@interactjs/utils': 1.10.27
+    optionalDependencies:
+      '@interactjs/interact': 1.10.27
+
+  '@interactjs/offset@1.10.27(@interactjs/core@1.10.27(@interactjs/utils@1.10.27))(@interactjs/utils@1.10.27)':
+    dependencies:
+      '@interactjs/core': 1.10.27(@interactjs/utils@1.10.27)
+      '@interactjs/utils': 1.10.27
+    optionalDependencies:
+      '@interactjs/interact': 1.10.27
+
+  '@interactjs/pointer-events@1.10.27(@interactjs/core@1.10.27(@interactjs/utils@1.10.27))(@interactjs/utils@1.10.27)':
+    dependencies:
+      '@interactjs/core': 1.10.27(@interactjs/utils@1.10.27)
+      '@interactjs/utils': 1.10.27
+    optionalDependencies:
+      '@interactjs/interact': 1.10.27
+
+  '@interactjs/reflow@1.10.27(@interactjs/core@1.10.27(@interactjs/utils@1.10.27))(@interactjs/utils@1.10.27)':
+    dependencies:
+      '@interactjs/core': 1.10.27(@interactjs/utils@1.10.27)
+      '@interactjs/utils': 1.10.27
+    optionalDependencies:
+      '@interactjs/interact': 1.10.27
+
+  '@interactjs/snappers@1.10.27(@interactjs/utils@1.10.27)':
+    dependencies:
+      '@interactjs/utils': 1.10.27
+    optionalDependencies:
+      '@interactjs/interact': 1.10.27
+
+  '@interactjs/utils@1.10.27': {}
+
   '@jridgewell/gen-mapping@0.3.3':
     dependencies:
       '@jridgewell/set-array': 1.1.2
@@ -3060,11 +3257,13 @@ snapshots:
     dependencies:
       '@babel/runtime': 7.22.15
 
-  '@rollup/pluginutils@5.0.4':
+  '@rollup/pluginutils@5.0.4(rollup@3.28.1)':
     dependencies:
       '@types/estree': 1.0.1
       estree-walker: 2.0.2
       picomatch: 2.3.1
+    optionalDependencies:
+      rollup: 3.28.1
 
   '@rushstack/eslint-patch@1.3.3': {}
 
@@ -3104,7 +3303,7 @@ snapshots:
 
   '@types/web-bluetooth@0.0.16': {}
 
-  '@typescript-eslint/eslint-plugin@5.62.0(@typescript-eslint/parser@5.62.0)(eslint@8.48.0)(typescript@5.0.4)':
+  '@typescript-eslint/eslint-plugin@5.62.0(@typescript-eslint/parser@5.62.0(eslint@8.48.0)(typescript@5.0.4))(eslint@8.48.0)(typescript@5.0.4)':
     dependencies:
       '@eslint-community/regexpp': 4.8.0
       '@typescript-eslint/parser': 5.62.0(eslint@8.48.0)(typescript@5.0.4)
@@ -3118,6 +3317,7 @@ snapshots:
       natural-compare-lite: 1.4.0
       semver: 7.5.4
       tsutils: 3.21.0(typescript@5.0.4)
+    optionalDependencies:
       typescript: 5.0.4
     transitivePeerDependencies:
       - supports-color
@@ -3129,6 +3329,7 @@ snapshots:
       '@typescript-eslint/typescript-estree': 5.62.0(typescript@5.0.4)
       debug: 4.3.4
       eslint: 8.48.0
+    optionalDependencies:
       typescript: 5.0.4
     transitivePeerDependencies:
       - supports-color
@@ -3145,6 +3346,7 @@ snapshots:
       debug: 4.3.4
       eslint: 8.48.0
       tsutils: 3.21.0(typescript@5.0.4)
+    optionalDependencies:
       typescript: 5.0.4
     transitivePeerDependencies:
       - supports-color
@@ -3160,6 +3362,7 @@ snapshots:
       is-glob: 4.0.3
       semver: 7.5.4
       tsutils: 3.21.0(typescript@5.0.4)
+    optionalDependencies:
       typescript: 5.0.4
     transitivePeerDependencies:
       - supports-color
@@ -3184,7 +3387,7 @@ snapshots:
       '@typescript-eslint/types': 5.62.0
       eslint-visitor-keys: 3.4.3
 
-  '@vitejs/plugin-vue-jsx@3.0.2(vite@4.4.9)(vue@3.3.4)':
+  '@vitejs/plugin-vue-jsx@3.0.2(vite@4.4.9(@types/node@18.17.14)(sass@1.66.1))(vue@3.3.4)':
     dependencies:
       '@babel/core': 7.22.15
       '@babel/plugin-transform-typescript': 7.22.15(@babel/core@7.22.15)
@@ -3194,7 +3397,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@vitejs/plugin-vue@4.3.4(vite@4.4.9)(vue@3.3.4)':
+  '@vitejs/plugin-vue@4.3.4(vite@4.4.9(@types/node@18.17.14)(sass@1.66.1))(vue@3.3.4)':
     dependencies:
       vite: 4.4.9(@types/node@18.17.14)(sass@1.66.1)
       vue: 3.3.4
@@ -3293,17 +3496,18 @@ snapshots:
     dependencies:
       eslint: 8.48.0
       eslint-config-prettier: 8.10.0(eslint@8.48.0)
-      eslint-plugin-prettier: 4.2.1(eslint-config-prettier@8.10.0)(eslint@8.48.0)(prettier@2.8.8)
+      eslint-plugin-prettier: 4.2.1(eslint-config-prettier@8.10.0(eslint@8.48.0))(eslint@8.48.0)(prettier@2.8.8)
       prettier: 2.8.8
 
-  '@vue/eslint-config-typescript@11.0.3(eslint-plugin-vue@9.17.0)(eslint@8.48.0)(typescript@5.0.4)':
+  '@vue/eslint-config-typescript@11.0.3(eslint-plugin-vue@9.17.0(eslint@8.48.0))(eslint@8.48.0)(typescript@5.0.4)':
     dependencies:
-      '@typescript-eslint/eslint-plugin': 5.62.0(@typescript-eslint/parser@5.62.0)(eslint@8.48.0)(typescript@5.0.4)
+      '@typescript-eslint/eslint-plugin': 5.62.0(@typescript-eslint/parser@5.62.0(eslint@8.48.0)(typescript@5.0.4))(eslint@8.48.0)(typescript@5.0.4)
       '@typescript-eslint/parser': 5.62.0(eslint@8.48.0)(typescript@5.0.4)
       eslint: 8.48.0
       eslint-plugin-vue: 9.17.0(eslint@8.48.0)
-      typescript: 5.0.4
       vue-eslint-parser: 9.3.1(eslint@8.48.0)
+    optionalDependencies:
+      typescript: 5.0.4
     transitivePeerDependencies:
       - supports-color
 
@@ -3316,8 +3520,9 @@ snapshots:
       '@vue/shared': 3.3.4
       minimatch: 9.0.3
       muggle-string: 0.3.1
-      typescript: 5.0.4
       vue-template-compiler: 2.7.14
+    optionalDependencies:
+      typescript: 5.0.4
 
   '@vue/reactivity-transform@3.3.4':
     dependencies:
@@ -3350,11 +3555,13 @@ snapshots:
 
   '@vue/shared@3.3.4': {}
 
-  '@vue/test-utils@2.4.1(vue@3.3.4)':
+  '@vue/test-utils@2.4.1(@vue/server-renderer@3.3.4(vue@3.3.4))(vue@3.3.4)':
     dependencies:
       js-beautify: 1.14.9
       vue: 3.3.4
       vue-component-type-helpers: 1.8.4
+    optionalDependencies:
+      '@vue/server-renderer': 3.3.4(vue@3.3.4)
 
   '@vue/tsconfig@0.4.0': {}
 
@@ -3461,6 +3668,8 @@ snapshots:
       - debug
 
   balanced-match@1.0.2: {}
+
+  batch-processor@1.0.0: {}
 
   binary-extensions@2.2.0: {}
 
@@ -3721,6 +3930,10 @@ snapshots:
     transitivePeerDependencies:
       - '@vue/composition-api'
 
+  element-resize-detector@1.2.4:
+    dependencies:
+      batch-processor: 1.0.0
+
   entities@4.5.0: {}
 
   error-ex@1.3.2:
@@ -3818,12 +4031,13 @@ snapshots:
     dependencies:
       eslint: 8.48.0
 
-  eslint-plugin-prettier@4.2.1(eslint-config-prettier@8.10.0)(eslint@8.48.0)(prettier@2.8.8):
+  eslint-plugin-prettier@4.2.1(eslint-config-prettier@8.10.0(eslint@8.48.0))(eslint@8.48.0)(prettier@2.8.8):
     dependencies:
       eslint: 8.48.0
-      eslint-config-prettier: 8.10.0(eslint@8.48.0)
       prettier: 2.8.8
       prettier-linter-helpers: 1.0.0
+    optionalDependencies:
+      eslint-config-prettier: 8.10.0(eslint@8.48.0)
 
   eslint-plugin-vue@9.17.0(eslint@8.48.0):
     dependencies:
@@ -4389,6 +4603,8 @@ snapshots:
     dependencies:
       brace-expansion: 2.0.1
 
+  mitt@2.1.0: {}
+
   mitt@3.0.1: {}
 
   ml-array-max@1.2.4:
@@ -4545,16 +4761,17 @@ snapshots:
 
   pify@3.0.0: {}
 
-  pinia-plugin-persistedstate@3.2.0(pinia@2.1.6):
+  pinia-plugin-persistedstate@3.2.0(pinia@2.1.6(typescript@5.0.4)(vue@3.3.4)):
     dependencies:
       pinia: 2.1.6(typescript@5.0.4)(vue@3.3.4)
 
   pinia@2.1.6(typescript@5.0.4)(vue@3.3.4):
     dependencies:
       '@vue/devtools-api': 6.5.0
-      typescript: 5.0.4
       vue: 3.3.4
       vue-demi: 0.14.6(vue@3.3.4)
+    optionalDependencies:
+      typescript: 5.0.4
 
   pkg-types@1.0.3:
     dependencies:
@@ -4883,10 +5100,10 @@ snapshots:
 
   universalify@2.0.0: {}
 
-  unplugin-vue-components@0.25.2(vue@3.3.4):
+  unplugin-vue-components@0.25.2(@babel/parser@7.22.15)(rollup@3.28.1)(vue@3.3.4):
     dependencies:
       '@antfu/utils': 0.7.6
-      '@rollup/pluginutils': 5.0.4
+      '@rollup/pluginutils': 5.0.4(rollup@3.28.1)
       chokidar: 3.5.3
       debug: 4.3.4
       fast-glob: 3.3.1
@@ -4896,6 +5113,8 @@ snapshots:
       resolve: 1.22.4
       unplugin: 1.4.0
       vue: 3.3.4
+    optionalDependencies:
+      '@babel/parser': 7.22.15
     transitivePeerDependencies:
       - rollup
       - supports-color
@@ -4949,7 +5168,7 @@ snapshots:
       - supports-color
       - terser
 
-  vite-plugin-static-copy@0.15.0(vite@4.4.9):
+  vite-plugin-static-copy@0.15.0(vite@4.4.9(@types/node@18.17.14)(sass@1.66.1)):
     dependencies:
       chokidar: 3.5.3
       fast-glob: 3.3.1
@@ -4959,13 +5178,13 @@ snapshots:
 
   vite@4.4.9(@types/node@18.17.14)(sass@1.66.1):
     dependencies:
-      '@types/node': 18.17.14
       esbuild: 0.18.20
       postcss: 8.4.29
       rollup: 3.28.1
-      sass: 1.66.1
     optionalDependencies:
+      '@types/node': 18.17.14
       fsevents: 2.3.3
+      sass: 1.66.1
 
   vitest@0.31.4(jsdom@22.1.0)(sass@1.66.1):
     dependencies:
@@ -4983,7 +5202,6 @@ snapshots:
       chai: 4.3.8
       concordance: 5.0.4
       debug: 4.3.4
-      jsdom: 22.1.0
       local-pkg: 0.4.3
       magic-string: 0.30.3
       pathe: 1.1.1
@@ -4995,6 +5213,8 @@ snapshots:
       vite: 4.4.9(@types/node@18.17.14)(sass@1.66.1)
       vite-node: 0.31.4(@types/node@18.17.14)(sass@1.66.1)
       why-is-node-running: 2.2.2
+    optionalDependencies:
+      jsdom: 22.1.0
     transitivePeerDependencies:
       - less
       - lightningcss
@@ -5008,7 +5228,7 @@ snapshots:
     dependencies:
       codemirror: 6.0.1(@lezer/common@1.0.4)
       vue: 3.3.4
-      vue-demi: 0.14.6(vue@3.3.4)
+      vue-demi: 0.14.8(vue@3.3.4)
     transitivePeerDependencies:
       - '@lezer/common'
       - '@vue/composition-api'
@@ -5016,6 +5236,10 @@ snapshots:
   vue-component-type-helpers@1.8.4: {}
 
   vue-demi@0.14.6(vue@3.3.4):
+    dependencies:
+      vue: 3.3.4
+
+  vue-demi@0.14.8(vue@3.3.4):
     dependencies:
       vue: 3.3.4
 
@@ -5031,6 +5255,19 @@ snapshots:
       semver: 7.5.4
     transitivePeerDependencies:
       - supports-color
+
+  vue-grid-layout@3.0.0-beta1(@interactjs/core@1.10.27(@interactjs/utils@1.10.27))(@interactjs/utils@1.10.27):
+    dependencies:
+      '@interactjs/actions': 1.10.27(@interactjs/core@1.10.27(@interactjs/utils@1.10.27))(@interactjs/utils@1.10.27)
+      '@interactjs/auto-start': 1.10.27(@interactjs/core@1.10.27(@interactjs/utils@1.10.27))(@interactjs/utils@1.10.27)
+      '@interactjs/dev-tools': 1.10.27(@interactjs/modifiers@1.10.27(@interactjs/core@1.10.27(@interactjs/utils@1.10.27))(@interactjs/utils@1.10.27))(@interactjs/utils@1.10.27)
+      '@interactjs/interactjs': 1.10.27
+      '@interactjs/modifiers': 1.10.27(@interactjs/core@1.10.27(@interactjs/utils@1.10.27))(@interactjs/utils@1.10.27)
+      element-resize-detector: 1.2.4
+      mitt: 2.1.0
+    transitivePeerDependencies:
+      - '@interactjs/core'
+      - '@interactjs/utils'
 
   vue-router@4.2.4(vue@3.3.4):
     dependencies:
