@@ -44,6 +44,8 @@ public class WorkflowEntity {
 
 	private String status;
 
+	private LocalDateTime nextDateTime;
+
 	private String configId;
 
 	private String versionId;
