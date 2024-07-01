@@ -325,7 +325,13 @@ public class DatasourceService {
 
 		SqlParser parser = SqlParser.create(sql);
 		try {
-			SqlNode sqlNode = parser.parseStmt();
+
+			String sqlUpper = sql.trim().toUpperCase();
+			if (sqlUpper.startsWith("SHOW TABLES") || sqlUpper.startsWith("SHOW DATABASES")) {
+				return true;
+			}
+
+			SqlNode sqlNode = parser.parseQuery();
 			return sqlNode.getKind() == SqlKind.SELECT;
 		} catch (SqlParseException e) {
 			throw new WorkRunException(e.getMessage());
@@ -397,6 +403,11 @@ public class DatasourceService {
 	 * 判断sql是否有limit限制.
 	 */
 	public boolean hasLimit(String sql) {
+
+		String sqlUpper = sql.trim().toUpperCase();
+		if (sqlUpper.startsWith("SHOW TABLES") || sqlUpper.startsWith("SHOW DATABASES")) {
+			return true;
+		}
 
 		SqlParser parser = SqlParser.create(sql);
 		try {

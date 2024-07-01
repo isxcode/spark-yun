@@ -133,9 +133,11 @@ public class QuerySqlExecutor extends WorkExecutor {
 
 			// 执行查询sql，给lastSql添加查询条数限制
 			String lastSql = sqls.get(sqls.size() - 1);
+
 			if (!datasourceService.isQueryStatement(lastSql)) {
 				throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "最后sql不是查询语句 \n");
 			}
+
 			if (!datasourceService.hasLimit(lastSql)) {
 				lastSql = lastSql + datasourceService.getSqlLimitSql(datasourceEntityOptional.get().getDbType(),
 						datasourceService.hasWhere(lastSql));
