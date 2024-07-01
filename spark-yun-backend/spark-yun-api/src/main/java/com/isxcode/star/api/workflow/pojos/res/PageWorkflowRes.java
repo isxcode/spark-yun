@@ -1,7 +1,11 @@
 package com.isxcode.star.api.workflow.pojos.res;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.isxcode.star.backend.api.base.serializer.LocalDateMinuteSerializer;
 import lombok.Data;
+
+import java.time.LocalDateTime;
 
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -18,4 +22,7 @@ public class PageWorkflowRes {
 	private String defaultClusterId;
 
 	private String clusterName;
+
+	@JsonSerialize(using = LocalDateMinuteSerializer.class)
+	private LocalDateTime nextDateTime;
 }
