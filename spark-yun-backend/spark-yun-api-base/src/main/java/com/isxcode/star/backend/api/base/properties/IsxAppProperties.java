@@ -72,4 +72,10 @@ public class IsxAppProperties {
 	 * docker镜像部署模式.
 	 */
 	private boolean dockerMode = false;
+
+  /**
+   * 简单配置模式 simple.
+   * 高级配置模式 advance.
+   */
+  private String configMode = "simple";
 }

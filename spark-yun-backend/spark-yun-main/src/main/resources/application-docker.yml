@@ -27,3 +27,4 @@ isx-app:
   resources-path: /var/lib/zhiqingyun # 资源文件，例如许可证、驱动、头像等资源路径
   use-ssl: false # 是否开启ssl
   docker-mode: true # 是否采用docker部署模式
+  config-mode: simple # 简单配置模式，高级配置模式advance

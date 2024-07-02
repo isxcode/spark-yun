@@ -17,10 +17,10 @@ spring:
   # h2驱动: org.h2.Driver
   # mysql驱动: com.mysql.cj.jdbc.Driver
   datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://121.89.247.94:30102/zhi_db
-    username: zhi
-    password: zhi123
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:file:~/.zhiqingyun/h2/data;AUTO_SERVER=TRUE
+    username: root
+    password: root123
 
 # 应用配置
 isx-app:
@@ -28,3 +28,4 @@ isx-app:
   admin-passwd: admin123 # 配置至轻云后台admin账号的密码
   use-ssl: false # 是否开启ssl
   docker-mode: false # 是否采用docker部署模式
+  config-mode: simple # 简单配置模式，高级配置模式advance
