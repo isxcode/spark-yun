@@ -82,7 +82,13 @@ spring:
     path: /swagger-ui.html
   packages-to-scan: com.isxcode.star
 
+  flyway:
+    enabled: true
+
 logging:
+  level:
+    root: info
+    com.isxcode.star: info
   exception-conversion-word: '%wEx'
   file:
     name: ./logs/spark-yun.log
@@ -96,6 +102,9 @@ logging:
     rollingpolicy:
       clean-history-on-start: false
       file-name-pattern: '${LOG_FILE}.%d{yyyy-MM-dd}.%i.gz'
+      total-size-cap: 100MB
+      max-history: 30
+      max-file-size: 10MB
 
 isx-app:
   admin-url:
