@@ -25,31 +25,31 @@ import java.util.Collections;
 @RequiredArgsConstructor
 public class FlywayConfig {
 
-  private final FlywayProperties flywayProperties;
+	private final FlywayProperties flywayProperties;
 
-  private final DataSourceProperties dataSourceProperties;
+	private final DataSourceProperties dataSourceProperties;
 
-  private final IsxAppProperties isxAppProperties;
+	private final IsxAppProperties isxAppProperties;
 
-  @PostConstruct
-  public void changeFlywayProperties() {
+	@PostConstruct
+	public void changeFlywayProperties() {
 
-    if ("simple".equals(isxAppProperties.getConfigMode())) {
-      flywayProperties.setDriverClassName(dataSourceProperties.getDriverClassName());
-      flywayProperties.setUrl(dataSourceProperties.getUrl());
-      flywayProperties.setUser(dataSourceProperties.getUsername());
-      flywayProperties.setPassword(dataSourceProperties.getPassword());
-      if ("org.h2.Driver".equals(dataSourceProperties.getDriverClassName())) {
-        flywayProperties.setLocations(Collections.singletonList("classpath:db/migration/h2"));
-      } else {
-        flywayProperties.setLocations(Collections.singletonList("classpath:db/migration/mysql"));
-      }
-    }
-  }
+		if ("simple".equals(isxAppProperties.getConfigMode())) {
+			flywayProperties.setDriverClassName(dataSourceProperties.getDriverClassName());
+			flywayProperties.setUrl(dataSourceProperties.getUrl());
+			flywayProperties.setUser(dataSourceProperties.getUsername());
+			flywayProperties.setPassword(dataSourceProperties.getPassword());
+			if ("org.h2.Driver".equals(dataSourceProperties.getDriverClassName())) {
+				flywayProperties.setLocations(Collections.singletonList("classpath:db/migration/h2"));
+			} else {
+				flywayProperties.setLocations(Collections.singletonList("classpath:db/migration/mysql"));
+			}
+		}
+	}
 
-  @Bean
-  @Primary
-  public FlywayProperties flywayProperties() {
-    return flywayProperties;
-  }
+	@Bean
+	@Primary
+	public FlywayProperties flywayProperties() {
+		return flywayProperties;
+	}
 }

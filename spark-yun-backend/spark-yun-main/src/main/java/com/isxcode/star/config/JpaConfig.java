@@ -25,27 +25,27 @@ import javax.annotation.PostConstruct;
 @RequiredArgsConstructor
 public class JpaConfig {
 
-  private final JpaProperties jpaProperties;
+	private final JpaProperties jpaProperties;
 
-  private final DataSourceProperties dataSourceProperties;
+	private final DataSourceProperties dataSourceProperties;
 
-  private final IsxAppProperties isxAppProperties;
+	private final IsxAppProperties isxAppProperties;
 
-  @PostConstruct
-  public void changeJpaProperties() {
+	@PostConstruct
+	public void changeJpaProperties() {
 
-    if ("simple".equals(isxAppProperties.getConfigMode())) {
-      if ("org.h2.Driver".equals(dataSourceProperties.getDriverClassName())) {
-        jpaProperties.setDatabase(Database.H2);
-      } else {
-        jpaProperties.setDatabase(Database.MYSQL);
-      }
-    }
-  }
+		if ("simple".equals(isxAppProperties.getConfigMode())) {
+			if ("org.h2.Driver".equals(dataSourceProperties.getDriverClassName())) {
+				jpaProperties.setDatabase(Database.H2);
+			} else {
+				jpaProperties.setDatabase(Database.MYSQL);
+			}
+		}
+	}
 
-  @Bean
-  @Primary
-  public JpaProperties jpaProperties() {
-    return jpaProperties;
-  }
+	@Bean
+	@Primary
+	public JpaProperties jpaProperties() {
+		return jpaProperties;
+	}
 }
