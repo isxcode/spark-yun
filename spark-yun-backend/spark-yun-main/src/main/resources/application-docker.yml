@@ -15,7 +15,7 @@ spring:
 
   # 业务数据库的配置信息，默认使用h2数据库
   # h2驱动: org.h2.Driver
-  # mysql驱动: com.mysql.cj.jdbc.Driver
+  # mysql驱动: com.mysql.cj.jdbc.Driver，需要空的db，首次启动日志有warning，忽略不计
   datasource:
     driver-class-name: org.h2.Driver
     url: jdbc:h2:file:/var/lib/zhiqingyun/h2/data
