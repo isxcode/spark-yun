@@ -1,39 +1,29 @@
+# 服务端口号
 server:
   port: 8080
 
 spring:
 
+  # 配置后台服务,设置管理员账号密码
+  # druid: http://localhost:8080/druid/index.html
+  # h2: http://localhost:8080/h2-console
+  # swagger: http://localhost:8080/swagger-ui/index.html
   security:
     user:
       name: admin
       password: admin123
 
-  jpa:
-    database: h2
-
+  # 业务数据库的配置信息，默认使用h2数据库
+  # h2驱动: org.h2.Driver
+  # mysql驱动: com.mysql.cj.jdbc.Driver
   datasource:
     driver-class-name: org.h2.Driver
     url: jdbc:h2:file:/var/lib/zhiqingyun/h2/data
     username: root
     password: root123
 
-  flyway:
-    driver-class-name: org.h2.Driver
-    url: jdbc:h2:file:/var/lib/zhiqingyun/h2/data
-    user: root
-    password: root123
-    locations: classpath:db/migration/h2
-
-logging:
-  level:
-    root: info
-
-spark-yun:
-  default-agent-port: 30177
-  tmp-dir: /tmp
-
+# 应用配置
 isx-app:
-  use-port: true
-  use-ssl: false
-  resources-path: /var/lib/zhiqingyun
-  docker-mode: true
+  resources-path: /var/lib/zhiqingyun # 资源文件，例如许可证、驱动、头像等资源路径
+  use-ssl: false # 是否开启ssl
+  docker-mode: true # 是否采用docker部署模式
