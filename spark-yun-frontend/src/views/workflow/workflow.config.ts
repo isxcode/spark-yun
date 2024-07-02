@@ -66,6 +66,12 @@ export const colConfigs: colConfig[] = [
     minWidth: 100,
     customSlot: 'statusTag'
   },
+   {
+    prop: 'nextDateTime',
+    title: '下一次执行时间',
+    minWidth: 100,
+    showOverflowTooltip: true
+  },
   {
     prop: 'remark',
     title: '备注',
