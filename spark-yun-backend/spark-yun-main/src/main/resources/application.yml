@@ -16,6 +16,9 @@ spring:
     user:
       roles: ADMIN
 
+  main:
+    banner-mode: log
+
   servlet:
     multipart:
       max-file-size: 100MB
