@@ -5,6 +5,14 @@ BASE_PATH=$(cd "$(dirname "$0")" || exit ; pwd)
 cd "${BASE_PATH}" || exit
 cd ".." || exit
 
+print_log="true"
+for arg in "$@"; do
+  case "$arg" in
+    --print-log=*) print_log="${arg#*=}" ;;
+    *) echo "未知参数: $arg" && exit 1 ;;
+  esac
+done
+
 # 导入用户指定环境变量
 source "conf/zhiqingyun-env.sh"
 
@@ -32,4 +40,6 @@ fi
 echo $! >zhiqingyun.pid
 
 echo "【至轻云】: STARTING"
-tail -f logs/spark-yun.log
+if [ "$print_log" == "true" ]; then
+  tail -f logs/spark-yun.log
+fi
