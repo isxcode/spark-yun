@@ -4,7 +4,7 @@ server:
 
 spring:
 
-  # 配置后台服务,设置管理员账号密码
+  # 配置后台服务访问管理员账号密码
   # druid: http://localhost:8080/druid/index.html
   # h2: http://localhost:8080/h2-console
   # swagger: http://localhost:8080/swagger-ui/index.html
@@ -13,12 +13,12 @@ spring:
       name: admin
       password: admin123
 
-  # 业务数据库的配置信息，默认使用h2数据库
+  # 业务数据库的信息配置，默认使用h2数据库，使用全新的db
   # h2驱动: org.h2.Driver
-  # mysql驱动: com.mysql.cj.jdbc.Driver，需要空的db，首次启动日志有warning，忽略不计
+  # mysql驱动: com.mysql.cj.jdbc.Driver
   datasource:
     driver-class-name: org.h2.Driver
-    url: jdbc:h2:file:/var/lib/zhiqingyun/h2/data
+    url: jdbc:h2:file:/var/lib/zhiqingyun/h2/data;AUTO_SERVER=TRUE
     username: root
     password: root123
 
@@ -27,4 +27,3 @@ isx-app:
   resources-path: /var/lib/zhiqingyun # 资源文件，例如许可证、驱动、头像等资源路径
   use-ssl: false # 是否开启ssl
   docker-mode: true # 是否采用docker部署模式
-  config-mode: simple # 简单配置模式，高级配置模式advance
