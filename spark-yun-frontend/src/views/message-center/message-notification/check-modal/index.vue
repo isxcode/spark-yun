@@ -14,7 +14,7 @@
             </el-form-item>
             <el-form-item label="通知对象" prop="receiver">
                 <el-select v-model="formData.receiver" placeholder="请选择">
-                    <el-option v-for="item in userList" :key="item.id" :label="item.username" :value="item.id" />
+                    <el-option v-for="item in userList" :key="item.userId" :label="item.username" :value="item.userId" />
                 </el-select>
             </el-form-item>
             <el-form-item label="通知内容" prop="content">
