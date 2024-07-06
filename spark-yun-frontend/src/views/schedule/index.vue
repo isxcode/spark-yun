@@ -6,6 +6,21 @@
         <el-radio-button label="workflow">作业流</el-radio-button>
         <el-radio-button label="work">作业</el-radio-button>
       </el-radio-group>
+      <div class="zqy-tenant__select">
+        <el-select
+          v-model="executeStatus"
+          clearable
+          placeholder="请选择类型进行搜索"
+          @change="initData(false)"
+        >
+          <el-option
+            v-for="item in typeList"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          />
+        </el-select>
+      </div>
       <div class="zqy-seach">
         <el-input
           v-model="keyword"
@@ -193,6 +208,33 @@ const detailModalRef = ref()
 const dagDetailRef = ref()
 const tableType = ref('')  // work or workflow
 const timer = ref()
+const executeStatus = ref('')
+const typeList = ref([
+  {
+    label: '成功',
+    value: 'SUCCESS',
+  },
+  {
+    label: '失败',
+    value: 'FAIL',
+  },
+  {
+    label: '已中止',
+    value: 'ABORT',
+  },
+  {
+    label: '中止中',
+    value: 'ABORTING',
+  },
+  {
+    label: '运行中',
+    value: 'RUNNING',
+  },
+  {
+    label: '等待中',
+    value: 'PENDING',
+  }
+])
 
 function initData(tableLoading?: boolean) {
   loading.value = tableLoading ? false : true
@@ -201,7 +243,8 @@ function initData(tableLoading?: boolean) {
     GetScheduleWorkFlowList({
       page: tableConfigWorkFlow.pagination.currentPage - 1,
       pageSize: tableConfigWorkFlow.pagination.pageSize,
-      searchKeyWord: keyword.value
+      searchKeyWord: keyword.value,
+      executeStatus: executeStatus.value
     })
       .then((res: any) => {
         tableConfigWorkFlow.tableData = res.data.content
