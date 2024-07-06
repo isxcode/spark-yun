@@ -60,6 +60,7 @@ public class ClusterNodeService {
 			}
 			throw new IsxAppException("不支持该节点服务器系统");
 		} catch (JSchException | InterruptedException | IOException e) {
+			log.error(e.getMessage(), e);
 			throw new IsxAppException("无法获取节点信息");
 		}
 	}
@@ -128,6 +129,7 @@ public class ClusterNodeService {
 			try {
 				attrs = channel.stat(dstPath);
 			} catch (Exception e) {
+				log.error(e.getMessage(), e);
 				continue;
 			}
 

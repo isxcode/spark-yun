@@ -130,6 +130,7 @@ public class DatasourceService {
 				ALL_EXIST_DRIVER.put(datasource.getDriverId(), driver);
 			} catch (MalformedURLException | ClassNotFoundException | IllegalAccessException
 					| InstantiationException e) {
+				log.error(e.getMessage(), e);
 				throw new RuntimeException(e);
 			}
 		}
@@ -151,7 +152,7 @@ public class DatasourceService {
 				Statement statement = connection.createStatement()) {
 			statement.execute(sql);
 		} catch (SQLException e) {
-			log.error(e.getMessage());
+			log.error(e.getMessage(), e);
 			if (e.getErrorCode() == 1364) {
 				throw new IsxAppException("表不存在");
 			}
@@ -171,7 +172,7 @@ public class DatasourceService {
 			}
 			statement.execute();
 		} catch (Exception e) {
-			log.error(e.getMessage());
+			log.error(e.getMessage(), e);
 			throw new IsxAppException("提交失败");
 		}
 	}
@@ -204,7 +205,7 @@ public class DatasourceService {
 				return resultSet.getLong(1);
 			}
 		} catch (Exception e) {
-			log.error(e.getMessage());
+			log.error(e.getMessage(), e);
 			throw new IsxAppException("提交失败");
 		}
 		throw new IsxAppException("查询总条数异常");
@@ -218,7 +219,7 @@ public class DatasourceService {
 			preparedStatement.executeQuery();
 			return true;
 		} catch (SQLException e) {
-			log.error(e.getMessage());
+			log.error(e.getMessage(), e);
 			return false;
 		}
 	}
@@ -334,6 +335,7 @@ public class DatasourceService {
 			SqlNode sqlNode = parser.parseQuery();
 			return sqlNode.getKind() == SqlKind.SELECT;
 		} catch (SqlParseException e) {
+			log.error(e.getMessage(), e);
 			throw new WorkRunException(e.getMessage());
 		}
 	}
@@ -345,6 +347,7 @@ public class DatasourceService {
 			parser.parseQuery(sql);
 			return true;
 		} catch (SqlParseException e) {
+			log.error(e.getMessage(), e);
 			return false;
 		}
 	}
@@ -419,6 +422,7 @@ public class DatasourceService {
 				return false;
 			}
 		} catch (SqlParseException e) {
+			log.error(e.getMessage(), e);
 			throw new WorkRunException(e.getMessage());
 		}
 	}
@@ -438,6 +442,7 @@ public class DatasourceService {
 				return false;
 			}
 		} catch (SqlParseException e) {
+			log.error(e.getMessage(), e);
 			throw new WorkRunException(e.getMessage());
 		}
 	}

@@ -104,6 +104,7 @@ public abstract class WorkExecutor {
 			WORK_THREAD.remove(workInstance.getId());
 
 		} catch (WorkRunException e) {
+			log.debug(e.getMessage(), e);
 
 			// 重新获取当前最新实例
 			workInstance = workInstanceRepository.findById(workRunContext.getInstanceId()).get();

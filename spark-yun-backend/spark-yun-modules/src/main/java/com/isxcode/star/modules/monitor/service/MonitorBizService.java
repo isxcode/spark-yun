@@ -304,6 +304,7 @@ public class MonitorBizService {
 					nodeMonitor.setCreateDateTime(now);
 					return nodeMonitor;
 				} catch (Exception ex) {
+					log.debug(ex.getMessage(), ex);
 					return NodeMonitorInfo.builder().clusterNodeId(e.getId()).clusterId(e.getClusterId())
 							.status(MonitorStatus.FAIL).log(ex.getMessage()).tenantId(e.getTenantId())
 							.createDateTime(now).build();
@@ -342,9 +343,11 @@ public class MonitorBizService {
 		}
 
 		long diskIoReadSpeed = 0L, diskIoWriteSpeed = 0L;
-		for (int i = 0; i < nodeMonitorInfo.getDiskIoReadSpeedStr().split(" ").length; i++) {
-			diskIoReadSpeed += Long.parseLong(nodeMonitorInfo.getDiskIoReadSpeedStr().split(" ")[i]);
-			diskIoWriteSpeed += Long.parseLong(nodeMonitorInfo.getDiskIoWriteSpeedStr().split(" ")[i]);
+		if (!Strings.isEmpty(nodeMonitorInfo.getDiskIoReadSpeedStr())) {
+			for (int i = 0; i < nodeMonitorInfo.getDiskIoReadSpeedStr().split(" ").length; i++) {
+				diskIoReadSpeed += Long.parseLong(nodeMonitorInfo.getDiskIoReadSpeedStr().split(" ")[i]);
+				diskIoWriteSpeed += Long.parseLong(nodeMonitorInfo.getDiskIoWriteSpeedStr().split(" ")[i]);
+			}
 		}
 
 		// 解析一下速度

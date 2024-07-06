@@ -51,7 +51,7 @@ public class RunAgentRemoveService {
 		try {
 			removeAgent(scpFileEngineNodeDto, clusterNodeEntity);
 		} catch (Exception e) {
-			log.error(e.getMessage());
+			log.error(e.getMessage(), e);
 			clusterNodeEntity.setCheckDateTime(LocalDateTime.now());
 			clusterNodeEntity.setAgentLog(e.getMessage());
 			clusterNodeEntity.setStatus(ClusterNodeStatus.CHECK_ERROR);

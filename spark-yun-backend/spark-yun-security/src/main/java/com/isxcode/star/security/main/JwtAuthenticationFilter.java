@@ -54,7 +54,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 					String.class);
 			USER_ID.set(userUuid);
 		} catch (Exception e) {
-			log.error(e.getMessage());
+			log.debug(e.getMessage(), e);
 			request.getRequestDispatcher(SecurityConstants.TOKEN_IS_INVALID_PATH).forward(request, response);
 			return;
 		}
@@ -63,7 +63,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		try {
 			authenticationManager.authenticate(new AuthenticationToken(userUuid, tenantId));
 		} catch (Exception e) {
-			log.error(e.getMessage());
+			log.debug(e.getMessage(), e);
 			request.getRequestDispatcher(SecurityConstants.AUTH_ERROR_PATH).forward(request, response);
 			return;
 		}

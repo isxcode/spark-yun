@@ -162,7 +162,7 @@ public class DatasourceBizService {
 				datasourceRepository.save(datasource);
 				return new TestConnectRes(true, "连接成功");
 			} catch (Exception e) {
-				log.error(e.getMessage());
+				log.debug(e.getMessage(), e);
 				datasource.setStatus(DatasourceStatus.FAIL);
 				datasource.setConnectLog("测试连接失败：" + e.getMessage());
 				datasourceRepository.save(datasource);
@@ -177,7 +177,8 @@ public class DatasourceBizService {
 					return new TestConnectRes(true, "连接成功");
 				}
 			} catch (Exception e) {
-				log.error(e.getMessage());
+				log.debug(e.getMessage(), e);
+
 				datasource.setStatus(DatasourceStatus.FAIL);
 				datasource.setConnectLog("测试连接失败：" + e.getMessage());
 				datasourceRepository.save(datasource);
@@ -203,6 +204,7 @@ public class DatasourceBizService {
 			try {
 				Files.createDirectories(Paths.get(driverDirPath));
 			} catch (IOException e) {
+				log.debug(e.getMessage(), e);
 				throw new IsxAppException("上传驱动，目录创建失败");
 			}
 		}
@@ -212,6 +214,7 @@ public class DatasourceBizService {
 			Files.copy(inputStream, Paths.get(driverDirPath).resolve(driverFile.getOriginalFilename()),
 					StandardCopyOption.REPLACE_EXISTING);
 		} catch (IOException e) {
+			log.debug(e.getMessage(), e);
 			throw new IsxAppException("上传许可证失败");
 		}
 
@@ -264,6 +267,7 @@ public class DatasourceBizService {
 					StandardCopyOption.REPLACE_EXISTING);
 			Files.delete(Paths.get(jdbcDirPath).resolve(driver.getFileName()));
 		} catch (IOException e) {
+			log.debug(e.getMessage(), e);
 			throw new IsxAppException("删除驱动文件异常");
 		}
 

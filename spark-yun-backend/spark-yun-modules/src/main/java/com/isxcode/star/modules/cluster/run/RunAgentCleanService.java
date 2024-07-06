@@ -43,7 +43,7 @@ public class RunAgentCleanService {
 		try {
 			cleanAgent(scpFileEngineNodeDto, clusterNodeEntity);
 		} catch (Exception e) {
-			log.error(e.getMessage());
+			log.error(e.getMessage(), e);
 			throw new IsxAppException("清理失败");
 		}
 	}

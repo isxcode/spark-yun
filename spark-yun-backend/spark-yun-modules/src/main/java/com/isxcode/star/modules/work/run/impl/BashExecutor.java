@@ -146,6 +146,8 @@ public class BashExecutor extends WorkExecutor {
 					.append("】\n");
 			workInstance = updateInstance(workInstance, logBuilder);
 		} catch (JSchException | SftpException | InterruptedException | IOException e) {
+
+			log.debug(e.getMessage(), e);
 			throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "提交作业异常 : " + e.getMessage() + "\n");
 		}
 
