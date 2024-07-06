@@ -28,6 +28,11 @@ import ComputingDetail from '@/views/realtime-computing/computing-detail/index.v
 import fileCenter from '@/views/file-center/index.vue'
 import CustomFunc from '@/views/custom-func/index.vue'
 
+// 消息告警
+import MessageNotifications from '@/views/message-center/message-notification/index.vue'
+import WarningConfig from '@/views/message-center/warning-config/index.vue'
+import WarningSchedule from '@/views/message-center/warning-schedule/index.vue'
+
 export default [
   {
     path: 'index',
@@ -158,5 +163,20 @@ export default [
     path: 'computing-detail',
     name: 'computing-detail',
     component: ComputingDetail
-  }
+  },
+  {
+    path: 'message-notifications',
+    name: 'message-notifications',
+    component: MessageNotifications
+  },
+  {
+    path: 'warning-config',
+    name: 'warning-config',
+    component: WarningConfig
+  },
+  {
+    path: 'warning-schedule',
+    name: 'warning-schedule',
+    component: WarningSchedule
+  },
 ]
