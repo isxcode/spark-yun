@@ -98,7 +98,7 @@ public class ClusterBizService {
 			try {
 				runAgentCheckService.checkAgent(scpFileEngineNodeDto, e);
 			} catch (JSchException | IOException | InterruptedException | SftpException ex) {
-				log.error(ex.getMessage());
+				log.error(ex.getMessage(), ex);
 				e.setCheckDateTime(LocalDateTime.now());
 				e.setAgentLog(ex.getMessage());
 				e.setStatus(ClusterNodeStatus.CHECK_ERROR);

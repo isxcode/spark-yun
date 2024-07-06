@@ -355,7 +355,7 @@ public class WorkflowBizService {
 				throw new IsxAppException("作业数量为空不能导出");
 			}
 		} catch (UnsupportedEncodingException e) {
-			log.error(e.getMessage());
+			log.debug(e.getMessage(), e);
 			throw new IsxAppException(e.getMessage());
 		}
 
@@ -371,7 +371,7 @@ public class WorkflowBizService {
 			out.write(JSON.toJSONString(workflowExportInfo));
 			out.flush();
 		} catch (IOException e) {
-			log.error(e.getMessage());
+			log.debug(e.getMessage(), e);
 			throw new IsxAppException(e.getMessage());
 		}
 	}
@@ -383,7 +383,7 @@ public class WorkflowBizService {
 		try {
 			exportWorkflowInfoStr = new String(workFile.getBytes(), StandardCharsets.UTF_8);
 		} catch (IOException e) {
-			log.error(e.getMessage());
+			log.debug(e.getMessage(), e);
 			throw new IsxAppException(e.getMessage());
 		}
 
@@ -559,7 +559,7 @@ public class WorkflowBizService {
 					.setDuration((System.currentTimeMillis() - workInstance.getExecStartDateTime().getTime()) / 1000);
 			workInstanceRepository.save(workInstance);
 		} catch (Exception e) {
-			log.error(e.getMessage());
+			log.debug(e.getMessage(), e);
 			String submitLog = workInstance.getSubmitLog() + LocalDateTime.now() + WorkLog.SUCCESS_INFO + "中止失败 \n";
 			workInstance.setSubmitLog(submitLog);
 			workInstance.setStatus(InstanceStatus.FAIL);

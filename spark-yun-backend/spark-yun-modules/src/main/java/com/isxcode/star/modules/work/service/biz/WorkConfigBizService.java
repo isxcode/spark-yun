@@ -68,6 +68,7 @@ public class WorkConfigBizService {
 								}));
 			}
 		} catch (Exception e) {
+			log.debug(e.getMessage(), e);
 			throw new IsxAppException("集群spark配置json格式不合法");
 		}
 
@@ -79,6 +80,7 @@ public class WorkConfigBizService {
 						}));
 			}
 		} catch (Exception e) {
+			log.debug(e.getMessage(), e);
 			throw new IsxAppException("数据同步sqlConfig配置json格式不合法");
 		}
 

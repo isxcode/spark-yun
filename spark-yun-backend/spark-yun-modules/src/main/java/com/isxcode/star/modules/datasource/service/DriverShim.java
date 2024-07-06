@@ -20,6 +20,7 @@
  */
 package com.isxcode.star.modules.datasource.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.slf4j.Logger;
@@ -41,6 +42,7 @@ import java.util.Properties;
  * @author Jeremy Long
  * @see Driver
  */
+@Slf4j
 class DriverShim implements Driver {
 
 	/**
@@ -132,12 +134,14 @@ class DriverShim implements Driver {
 		try {
 			m = driver.getClass().getMethod("getParentLogger");
 		} catch (Throwable e) {
+			log.error(e.getMessage(), e);
 			throw new SQLFeatureNotSupportedException();
 		}
 		if (m != null) {
 			try {
 				return (java.util.logging.Logger) m.invoke(m);
 			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
+				log.error(ex.getMessage(), ex);
 				LOGGER.trace("", ex);
 			}
 		}

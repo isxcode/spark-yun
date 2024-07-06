@@ -68,7 +68,7 @@ public class YarnAgentService implements AgentService {
 							sparkLauncher.addJar(jar.toURI().toURL().toString());
 						}
 					} catch (MalformedURLException e) {
-						log.error(e.getMessage());
+						log.error(e.getMessage(), e);
 						throw new IsxAppException("50010", "添加lib中文件异常", e.getMessage());
 					}
 				}
@@ -128,7 +128,7 @@ public class YarnAgentService implements AgentService {
 							sparkLauncher.addJar(jar.toURI().toURL().toString());
 						}
 					} catch (MalformedURLException e) {
-						log.error(e.getMessage());
+						log.error(e.getMessage(), e);
 						throw new IsxAppException("50010", "添加lib中文件异常", e.getMessage());
 					}
 				}
@@ -179,6 +179,7 @@ public class YarnAgentService implements AgentService {
 				throw new IsxAppException(errLog.toString());
 			}
 		} catch (InterruptedException e) {
+			log.error(e.getMessage(), e);
 			throw new IsxAppException(e.getMessage());
 		} finally {
 			launch.destroy();
@@ -220,6 +221,7 @@ public class YarnAgentService implements AgentService {
 				throw new IsxAppException(errLog.toString());
 			}
 		} catch (InterruptedException e) {
+			log.error(e.getMessage(), e);
 			throw new IsxAppException(e.getMessage());
 		}
 
@@ -262,6 +264,7 @@ public class YarnAgentService implements AgentService {
 				return log;
 			}
 		} catch (InterruptedException e) {
+			log.error(e.getMessage(), e);
 			throw new IsxAppException(e.getMessage());
 		}
 	}
@@ -302,6 +305,7 @@ public class YarnAgentService implements AgentService {
 				return log;
 			}
 		} catch (InterruptedException e) {
+			log.error(e.getMessage(), e);
 			throw new IsxAppException(e.getMessage());
 		}
 	}
@@ -336,6 +340,7 @@ public class YarnAgentService implements AgentService {
 				return log;
 			}
 		} catch (InterruptedException e) {
+			log.error(e.getMessage(), e);
 			throw new IsxAppException(e.getMessage());
 		}
 	}
@@ -361,6 +366,7 @@ public class YarnAgentService implements AgentService {
 				throw new IsxAppException(errLog.toString());
 			}
 		} catch (InterruptedException e) {
+			log.error(e.getMessage(), e);
 			throw new IsxAppException(e.getMessage());
 		}
 	}

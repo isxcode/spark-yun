@@ -107,6 +107,7 @@ public class YunAgentBizService {
 		try (ServerSocket socket = new ServerSocket(0)) {
 			return socket.getLocalPort();
 		} catch (IOException e) {
+			log.error(e.getMessage(), e);
 			throw new IsxAppException("未存在可使用端口号");
 		}
 	}
@@ -134,6 +135,7 @@ public class YunAgentBizService {
 					"http://127.0.0.1:" + containerCheckReq.getPort() + "/check", ContainerCheckRes.class);
 			return forEntity.getBody();
 		} catch (Exception e) {
+			log.error(e.getMessage(), e);
 			return ContainerCheckRes.builder().code("500").msg(e.getMessage()).build();
 		}
 	}
@@ -149,7 +151,8 @@ public class YunAgentBizService {
 					ContainerGetDataRes.class);
 			return forEntity.getBody();
 		} catch (Exception e) {
-			log.error(e.getMessage());
+			log.error(e.getMessage(), e);
+
 			return ContainerGetDataRes.builder().code("500").msg(e.getMessage()).build();
 		}
 	}

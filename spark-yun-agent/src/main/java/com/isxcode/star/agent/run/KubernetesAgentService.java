@@ -48,6 +48,8 @@ public class KubernetesAgentService implements AgentService {
 						.replaceAll("\\[", "");
 			}
 		} catch (InterruptedException e) {
+
+			log.error(e.getMessage(), e);
 			throw new IsxAppException(e.getMessage());
 		}
 	}
@@ -144,6 +146,7 @@ public class KubernetesAgentService implements AgentService {
 				throw new IsxAppException(errLog.toString());
 			}
 		} catch (InterruptedException e) {
+			log.error(e.getMessage(), e);
 			throw new IsxAppException(e.getMessage());
 		} finally {
 			launch.destroy();
@@ -189,6 +192,7 @@ public class KubernetesAgentService implements AgentService {
 				throw new IsxAppException(errLog.toString());
 			}
 		} catch (InterruptedException e) {
+			log.error(e.getMessage(), e);
 			throw new IsxAppException(e.getMessage());
 		}
 
@@ -235,6 +239,7 @@ public class KubernetesAgentService implements AgentService {
 				return log;
 			}
 		} catch (InterruptedException e) {
+			log.error(e.getMessage(), e);
 			throw new IsxAppException(e.getMessage());
 		}
 	}
@@ -279,6 +284,7 @@ public class KubernetesAgentService implements AgentService {
 				return log;
 			}
 		} catch (InterruptedException e) {
+			log.error(e.getMessage(), e);
 			throw new IsxAppException(e.getMessage());
 		}
 	}
@@ -312,6 +318,7 @@ public class KubernetesAgentService implements AgentService {
 				return log;
 			}
 		} catch (InterruptedException e) {
+			log.error(e.getMessage(), e);
 			throw new IsxAppException(e.getMessage());
 		}
 	}
@@ -337,6 +344,7 @@ public class KubernetesAgentService implements AgentService {
 				throw new IsxAppException(errLog.toString());
 			}
 		} catch (InterruptedException e) {
+			log.error(e.getMessage(), e);
 			throw new IsxAppException(e.getMessage());
 		}
 	}

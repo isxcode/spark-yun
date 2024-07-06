@@ -9,6 +9,8 @@ import io.jsonwebtoken.JwtParserBuilder;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import lombok.extern.slf4j.Slf4j;
+
 import java.security.Key;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -18,6 +20,7 @@ import java.util.Map;
 import java.util.UUID;
 
 /** jwt加密工具类. */
+@Slf4j
 public class JwtUtils {
 
 	private static final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
@@ -31,6 +34,7 @@ public class JwtUtils {
 		try {
 			claimsStr = new ObjectMapper().writeValueAsString(obj);
 		} catch (JsonProcessingException e) {
+			log.error(e.getMessage(), e);
 			throw new IsxAppException("jwt加密异常");
 		}
 		if (aesKey != null) {
@@ -80,6 +84,7 @@ public class JwtUtils {
 		try {
 			return objectMapper.readValue(targetJsonStr, targetClass);
 		} catch (JsonProcessingException e) {
+			log.error(e.getMessage(), e);
 			throw new IsxAppException("jwt解密异常");
 		}
 	}
