@@ -130,6 +130,8 @@ public class ExecuteSqlExecutor extends WorkExecutor {
 				logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("SQL执行成功  \n");
 				workInstance = updateInstance(workInstance, logBuilder);
 			}
+		} catch (WorkRunException e) {
+			throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + e.getMsg() + "\n");
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
 			throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + e.getMessage() + "\n");
