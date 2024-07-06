@@ -65,6 +65,7 @@ public class SuccessResponseAdvice {
 		try {
 			return messageSource.getMessage(successResponse.msg(), null, LocaleContextHolder.getLocale());
 		} catch (NoSuchMessageException e) {
+			log.error(e.getMessage(), e);
 			return successResponse.msg();
 		}
 	}

@@ -1,9 +1,12 @@
 package com.isxcode.star.common.utils.md5;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 /** md5加密工具类. */
+@Slf4j
 public class Md5Utils {
 
 	/** md5加密. */
@@ -12,6 +15,7 @@ public class Md5Utils {
 		try {
 			md = MessageDigest.getInstance("MD5");
 		} catch (NoSuchAlgorithmException e) {
+			log.error(e.getMessage(), e);
 			throw new RuntimeException(e);
 		}
 		byte[] messageDigest = md.digest(input.getBytes());

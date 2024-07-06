@@ -134,6 +134,7 @@ public class SyncWorkBizService {
 				return connection.getSchema();
 			}
 		} catch (SQLException e) {
+			log.debug(e.getMessage(), e);
 			return null;
 		}
 	}

@@ -302,8 +302,10 @@ public class SparkSqlExecutor extends WorkExecutor {
 			workInstance.setSparkStarRes(JSON.toJSONString(submitWorkRes));
 			workInstance = updateInstance(workInstance, logBuilder);
 		} catch (IOException | ResourceAccessException e) {
+			log.error(e.getMessage(), e);
 			throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "提交作业失败 : " + e.getMessage() + "\n");
 		} catch (HttpServerErrorException e1) {
+			log.error(e1.getMessage(), e1);
 			if (HttpStatus.BAD_GATEWAY.value() == e1.getRawStatusCode()) {
 				throw new WorkRunException(
 						LocalDateTime.now() + WorkLog.ERROR_INFO + "提交作业失败 : 无法访问节点服务器,请检查服务器防火墙或者计算集群\n");

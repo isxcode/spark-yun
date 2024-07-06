@@ -165,7 +165,7 @@ public class SparkContainerSqlExecutor extends WorkExecutor {
 			workInstance.setResultData(JSON.toJSONString(containerGetDataRes.getData()));
 			workInstanceRepository.saveAndFlush(workInstance);
 		} catch (WorkRunException e) {
-			log.error(e.getMessage());
+			log.error(e.getMessage(), e);
 			throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + e.getMsg() + "\n");
 		}
 	}

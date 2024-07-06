@@ -304,6 +304,7 @@ public class MonitorBizService {
 					nodeMonitor.setCreateDateTime(now);
 					return nodeMonitor;
 				} catch (Exception ex) {
+					log.debug(ex.getMessage(), ex);
 					return NodeMonitorInfo.builder().clusterNodeId(e.getId()).clusterId(e.getClusterId())
 							.status(MonitorStatus.FAIL).log(ex.getMessage()).tenantId(e.getTenantId())
 							.createDateTime(now).build();

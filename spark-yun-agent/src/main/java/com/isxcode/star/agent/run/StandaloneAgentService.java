@@ -57,6 +57,7 @@ public class StandaloneAgentService implements AgentService {
 			}
 			throw new IsxAppException("无法获取master url");
 		} catch (IOException e) {
+			log.error(e.getMessage(), e);
 			throw new IsxAppException("无法获取master url");
 		}
 	}
@@ -80,6 +81,7 @@ public class StandaloneAgentService implements AgentService {
 			}
 			throw new IsxAppException("无法获取master url");
 		} catch (IOException e) {
+			log.error(e.getMessage(), e);
 			throw new IsxAppException("无法获取master url");
 		}
 	}
@@ -119,7 +121,7 @@ public class StandaloneAgentService implements AgentService {
 							sparkLauncher.addJar(jar.toURI().toURL().toString());
 						}
 					} catch (MalformedURLException e) {
-						log.error(e.getMessage());
+						log.error(e.getMessage(), e);
 						throw new IsxAppException("50010", "添加lib中文件异常", e.getMessage());
 					}
 				}
@@ -166,6 +168,7 @@ public class StandaloneAgentService implements AgentService {
 				throw new IsxAppException(errLog.toString());
 			}
 		} catch (InterruptedException e) {
+			log.error(e.getMessage(), e);
 			throw new IsxAppException(e.getMessage());
 		} finally {
 			launch.destroy();
@@ -324,6 +327,7 @@ public class StandaloneAgentService implements AgentService {
 				EntityUtils.toString(responseEntity);
 			}
 		} catch (ParseException e) {
+			log.error(e.getMessage(), e);
 			throw new IsxAppException("中止失败");
 		}
 	}
