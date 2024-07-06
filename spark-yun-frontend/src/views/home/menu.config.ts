@@ -78,6 +78,27 @@ export const menuListData: Array<Menu> = [
     authType: [ 'ROLE_TENANT_MEMBER', 'ROLE_TENANT_ADMIN' ],
     childPage: []
   },
+  {
+    code: 'message-notifications',
+    name: '消息通知',
+    icon: 'Message',
+    authType: [ 'ROLE_TENANT_MEMBER', 'ROLE_TENANT_ADMIN' ],
+    childPage: []
+  },
+  {
+    code: 'warning-config',
+    name: '告警配置',
+    icon: 'TakeawayBox',
+    authType: [ 'ROLE_TENANT_MEMBER', 'ROLE_TENANT_ADMIN' ],
+    childPage: []
+  },
+  {
+    code: 'warning-schedule',
+    name: '告警实例',
+    icon: 'List',
+    authType: [ 'ROLE_TENANT_MEMBER', 'ROLE_TENANT_ADMIN' ],
+    childPage: []
+  },
   // {
   //   code: 'custom-form',
   //   name: '分享表单',
