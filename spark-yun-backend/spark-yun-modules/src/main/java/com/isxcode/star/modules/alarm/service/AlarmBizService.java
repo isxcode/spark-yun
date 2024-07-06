@@ -94,6 +94,10 @@ public class AlarmBizService {
 		// 翻译创建人名称
 		result.getContent().forEach(e -> {
 			e.setCreateByUsername(userService.getUser(e.getCreateBy()).getUsername());
+			MessageConfig messageConfig = JSON.parseObject(e.getMsgConfig(), MessageConfig.class);
+			messageConfig.setAccessKeySecret("");
+			messageConfig.setPassword("");
+			e.setMessageConfig(messageConfig);
 		});
 		return result;
 	}
