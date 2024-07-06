@@ -11,6 +11,7 @@ interface SerchParams {
   page: number;
   pageSize: number;
   searchKeyWord: string;
+  executeStatus: string
 }
 
 interface LogParam {
