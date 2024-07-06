@@ -21,12 +21,16 @@ public class PageTenantUserRes {
 
 	private String email;
 
-	public PageTenantUserRes(String id, String account, String username, String phone, String email, String roleCode) {
+	private String userId;
+
+	public PageTenantUserRes(String id, String account, String username, String phone, String email, String roleCode,
+			String userId) {
 		this.id = id;
 		this.username = username;
 		this.account = account;
 		this.roleCode = roleCode;
 		this.phone = phone;
 		this.email = email;
+		this.userId = userId;
 	}
 }
