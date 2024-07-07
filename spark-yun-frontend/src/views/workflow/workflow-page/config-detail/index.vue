@@ -360,6 +360,24 @@
               </el-form-item>
             </el-form>
           </div>
+          <!-- 基线告警 -->
+          <div class="config-item">
+            <div class="item-title">基线告警</div>
+            <el-form
+              ref="syncRuleForm"
+              label-position="left"
+              label-width="120px"
+              :model="messageConfig"
+            >
+              <el-form-item label="告警">
+                <el-select v-model="messageConfig.alarmList" clearable multiple collapse-tags collapse-tags-tooltip
+                    filterable placeholder="请选择">
+                    <el-option v-for="item in alarmConfigList" :key="item.id" :label="item.name"
+                        :value="item.id" />
+                </el-select>
+              </el-form-item>
+            </el-form>
+          </div>
         </div>
       </el-scrollbar>
   </BlockDrawer>
@@ -380,6 +398,7 @@ import { jsonFormatter } from '@/utils/formatter'
 import { GetFileCenterList } from '@/services/file-center.service'
 import { GetCustomFuncList } from '@/services/custom-func.service'
 import { GetSparkContainerList } from '@/services/spark-container.service'
+import { GetAlarmPagesList } from '@/services/message-center.service'
 
 const scheduleRange = ref(ScheduleRange);
 const weekDateList = ref(WeekDateList)
@@ -400,6 +419,7 @@ const cronConfigForm = ref<FormInstance>()
 const syncRuleForm = ref<FormInstance>()
 const containerIdList = ref([]) // 容器列表
 const callback = ref(null)
+const alarmConfigList = ref([])
 
 // 输入框全屏
 const sparkJsonFullStatus = ref(false)
@@ -466,6 +486,10 @@ let syncRule = reactive({
 let containerConfig = reactive({
   containerId: ''
 })
+// 基线告警
+let messageConfig = reactive({
+  alarmList: []
+})
 const fileConfig = reactive({
   funcList: [],
   libList: []
@@ -521,6 +545,8 @@ function showModal(data?: any, cb?: any) {
     getConfigDetailData()
   }
 
+  getAlarmConfigList()
+
   drawerConfig.visible = true;
 }
 
@@ -550,6 +576,18 @@ function getFuncList() {
         fileIdList.value = res.data.content
     }).catch(() => {
         fileIdList.value = []
+    })
+}
+
+function getAlarmConfigList() {
+    GetAlarmPagesList({
+        page: 0,
+        pageSize: 10000,
+        searchKeyWord: ''
+    }).then((res: any) => {
+      alarmConfigList.value = res.data.content.filter((item: any) => item.alarmType === 'WORK')
+    }).catch(() => {
+      alarmConfigList.value = []
     })
 }
 
@@ -589,6 +627,8 @@ function getConfigDetailData() {
     syncRule.setMode = syncRule.setMode || 'SIMPLE'
     containerConfig.containerId = res.data.containerId
 
+    messageConfig.alarmList = res.data.alarmList
+
     getClusterNodeList(true)
   }).catch((err: any) => {
     console.error(err)
@@ -627,7 +667,8 @@ function okEvent() {
         },
         syncRule: syncRule,
         ...fileConfig,
-        ...containerConfig
+        ...containerConfig,
+        ...messageConfig
       }).then((res: any) => {
         if (callback.value && callback.value instanceof Function) {
           callback.value()
@@ -826,6 +867,9 @@ defineExpose({
               height: calc(100% - 48px);
             }
           }
+        }
+        .el-form-item__label {
+          pointer-events: none;
         }
         .el-form-item__content {
           .el-radio-group {
