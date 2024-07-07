@@ -163,6 +163,7 @@ function okEvent() {
         name: formData.name,
         msgType: formData.msgType,
         remark: formData.remark,
+        id: formData.id,
         messageConfig: {}
       }
       if (formData.msgType === 'ALI_SMS') {

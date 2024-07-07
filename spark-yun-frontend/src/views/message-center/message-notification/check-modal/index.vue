@@ -17,8 +17,8 @@
                     <el-option v-for="item in userList" :key="item.userId" :label="item.username" :value="item.userId" />
                 </el-select>
             </el-form-item>
-            <el-form-item label="通知内容" prop="content">
-                <span class="format-json" @click="formatterJsonEvent(formData, 'content')">格式化JSON</span>
+            <el-form-item label="通知内容" prop="content" :class="{ 'show-screen__full': fullStatus }">
+                <span v-if="formData.msgType === 'ALI_SMS'" class="format-json" @click="formatterJsonEvent(formData, 'content')">格式化JSON</span>
                 <el-icon class="modal-full-screen" @click="fullScreenEvent()">
                     <FullScreen v-if="!fullStatus" />
                     <Close v-else />

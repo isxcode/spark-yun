@@ -1,6 +1,6 @@
 <template>
     <Breadcrumb :bread-crumb-list="breadCrumbList" />
-    <div class="zqy-seach-table">
+    <div class="zqy-seach-table message-notification">
         <div class="zqy-table-top">
             <el-button type="primary" @click="addData">
                 新增
@@ -22,10 +22,21 @@
                             <el-tag v-if="scopeSlot.row.status === 'ACTIVE'" type="success" class="ml-2">启用</el-tag>
                             <el-tag v-if="scopeSlot.row.status === 'UN_CHECK'" type="info" class="ml-2">未检测</el-tag>
                             <el-tag v-if="scopeSlot.row.status === 'NEW'" class="ml-2">新建</el-tag>
+                            <el-popover
+                                placement="right"
+                                title="响应信息"
+                                :width="400"
+                                trigger="hover"
+                                :content="scopeSlot.row.response"
+                            >
+                                <template #reference>
+                                    <el-icon class="hover-tooltip" v-if="scopeSlot.row.response"><Warning /></el-icon>
+                                </template>
+                            </el-popover>
                         </div>
                     </template>
                     <template #options="scopeSlot">
-                        <div class="btn-group">
+                        <div class="btn-group btn-group-msg">
                             <span @click="editData(scopeSlot.row)">编辑</span>
                             <span v-if="['CHECK_SUCCESS', 'DISABLE'].includes(scopeSlot.row.status)" @click="enableData(scopeSlot.row)">启用</span>
                             <span v-if="['ACTIVE'].includes(scopeSlot.row.status)" @click="disableData(scopeSlot.row)">禁用</span>
@@ -194,3 +205,19 @@ onMounted(() => {
     initData()
 })
 </script>
+
+<style lang="scss">
+.message-notification {
+    &.zqy-seach-table {
+        .zqy-table {
+            .btn-group-msg {
+                justify-content: space-around;
+            }
+            .hover-tooltip {
+                font-size: 16px;
+                color: getCssVar('color', 'danger');
+            }
+        }
+    }
+}
+</style>

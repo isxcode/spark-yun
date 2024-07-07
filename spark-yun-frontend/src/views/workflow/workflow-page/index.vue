@@ -208,6 +208,7 @@ const workFlowData = ref({
     id: ''
 })
 const cronConfig = ref()
+const alarmList = ref([])
 const workflowInstanceId = ref('')
 const timer = ref()
 const runningStatus = ref(false)
@@ -489,6 +490,7 @@ function initFlowData() {
             workflowId: workFlowData.value.id
         }).then((res: any) => {
             cronConfig.value = res.data?.cronConfig
+            alarmList.value = res.data?.alarmList
             if (res.data?.webConfig) {
                 zqyFlowRef.value.initCellList(res.data.webConfig)
             }
@@ -577,7 +579,7 @@ function showConfigDetail() {
         return new Promise((resolve: any, reject: any) => {
             SaveWorkflowConfigData({
                 workflowId: workFlowData.value.id,
-                cronConfig: data
+                ...data
             }).then((res: any) => {
                 initFlowData()
                 ElMessage.success(res.msg)
@@ -586,7 +588,10 @@ function showConfigDetail() {
                 reject(err)
             })
         })
-    }, cronConfig.value)
+    }, {
+        cronConfig: cronConfig.value,
+        alarmList: alarmList.value
+    })
 }
 
 // 节点运行日志
