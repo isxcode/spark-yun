@@ -22,6 +22,8 @@ public class PageMessageRes {
 
 	private String status;
 
+	private String response;
+
 	@JsonSerialize(using = LocalDateTimeSerializer.class)
 	private LocalDateTime createDateTime;
 
