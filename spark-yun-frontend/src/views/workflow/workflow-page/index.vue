@@ -47,8 +47,8 @@
                                             <el-dropdown-item @click="editData(work)">编辑</el-dropdown-item>
                                             <el-dropdown-item v-if="containerType === 'flow'" @click="changeContianer(work, 'config')">作业配置</el-dropdown-item>
                                             <el-dropdown-item @click="deleteData(work)">删除</el-dropdown-item>
-                                            <!-- <el-dropdown-item>复制</el-dropdown-item>
-                                            <el-dropdown-item>导出</el-dropdown-item>
+                                            <el-dropdown-item @click="copyData(work)">复制</el-dropdown-item>
+                                            <!-- <el-dropdown-item>导出</el-dropdown-item>
                                             <el-dropdown-item>置顶</el-dropdown-item> -->
                                         </el-dropdown-menu>
                                     </template>
@@ -168,6 +168,7 @@
                 </template>
             </div>
         <AddModal ref="addModalRef" />
+        <CopyModal ref="copyModalRef"></CopyModal>
         <workflow-config ref="workflowConfigRef"></workflow-config>
         <zqyLog ref="zqyLogRef"></zqyLog>
     </div>
@@ -179,6 +180,7 @@ import { useRoute } from 'vue-router'
 import Breadcrumb from '@/layout/bread-crumb/index.vue'
 import ZqyFlow from '@/lib/packages/zqy-flow/flow.vue'
 import AddModal from './add-modal/index.vue'
+import CopyModal from './copy-modal/index.vue'
 import WorkflowConfig from './workflow-config/index.vue'
 import eventBus from '@/utils/eventBus'
 import zqyLog from '@/components/zqy-log/index.vue'
@@ -189,7 +191,7 @@ import sparkJar from '../spark-jar/index.vue';
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Loading } from '@element-plus/icons-vue'
 import EllipsisTooltip from '@/components/ellipsis-tooltip/ellipsis-tooltip.vue'
-import { AddWorkflowDetailList, BreakFlowData, DeleteWorkflowDetailList, ExportWorkflowData, GetWorkflowData, GetWorkflowDetailList, GetWorkflowList, ImportWorkflowData, PublishWorkflowData, QueryRunWorkInstances, ReRunWorkflow, RerunCurrentNodeFlowData, RunAfterFlowData, RunWorkflowData, SaveWorkflowConfigData, SaveWorkflowData, StopWorkflowData, UnderlineWorkflowData, UpdateWorkflowDetailList } from '@/services/workflow.service'
+import { AddWorkflowDetailList, BreakFlowData, DeleteWorkflowDetailList, ExportWorkflowData, GetWorkflowData, GetWorkflowDetailList, GetWorkflowList, ImportWorkflowData, PublishWorkflowData, QueryRunWorkInstances, ReRunWorkflow, RerunCurrentNodeFlowData, RunAfterFlowData, RunWorkflowData, SaveWorkflowConfigData, SaveWorkflowData, StopWorkflowData, UnderlineWorkflowData, UpdateWorkflowDetailList, CopyWorkflowDetailList } from '@/services/workflow.service'
 
 const route = useRoute()
 
@@ -211,6 +213,7 @@ const cronConfig = ref()
 const workflowInstanceId = ref('')
 const timer = ref()
 const runningStatus = ref(false)
+const copyModalRef = ref()
 
 const btnLoadingConfig = reactive({
     runningLoading: false,
@@ -479,6 +482,21 @@ function editData(data: any) {
                 .catch((error: any) => {
                     reject(error)
                 })
+        })
+    }, data)
+}
+
+function copyData(data: any) {
+    copyModalRef.value.showModal((formData: any) => {
+        return new Promise((resolve: any, reject: any) => {
+            CopyWorkflowDetailList(formData).then((res: any) => {
+                ElMessage.success(res.msg)
+                initData()
+                resolve()
+            })
+            .catch((error: any) => {
+                reject(error)
+            })
         })
     }, data)
 }
