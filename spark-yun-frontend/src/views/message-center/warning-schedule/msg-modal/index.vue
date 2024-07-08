@@ -1,6 +1,6 @@
 <template>
     <BlockModal :model-config="modelConfig">
-        <el-form ref="form" class="add-computer-group message-check-form" label-position="top" :model="formData">
+        <el-form ref="form" class="add-computer-group message-modal-res" label-position="top" :model="formData">
             <el-form-item label="详情" :class="{ 'show-screen__full': fullStatus }">
                 <el-icon class="modal-full-screen" @click="fullScreenEvent()">
                     <FullScreen v-if="!fullStatus" />
@@ -55,7 +55,7 @@ defineExpose({
 </script>
 
 <style lang="scss">
-.message-check-form {
+.message-modal-res {
     .el-form-item {
         .format-json {
             position: absolute;
