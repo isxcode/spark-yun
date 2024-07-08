@@ -11,7 +11,7 @@
       </el-form-item>
       <!-- 如果选择了阿里短信 -->
       <template v-if="formData.msgType === 'ALI_SMS'">
-        <el-form-item label="region" prop="region">
+        <el-form-item label="服务地址(region)" prop="region">
           <el-select v-model="formData.region" placeholder="请选择">
             <el-option v-for="item in regionList" :key="item.regionId" :label="item.regionName" :value="item.regionId" />
           </el-select>
@@ -19,36 +19,36 @@
         <el-form-item label="AccessKeyId" prop="accessKeyId">
           <el-input v-model="formData.accessKeyId" maxlength="1000" placeholder="请输入" />
         </el-form-item>
-        <el-form-item label="Secret" prop="accessKeySecret">
+        <el-form-item label="AccessKeySecret" prop="accessKeySecret">
           <el-input v-model="formData.accessKeySecret" maxlength="1000" placeholder="请输入" />
         </el-form-item>
-        <el-form-item label="SignName(短信签名名称)" prop="signName">
+        <el-form-item label="短信签名名称(SignName)" prop="signName">
           <el-input v-model="formData.signName" maxlength="200" placeholder="请输入" />
         </el-form-item>
-        <el-form-item label="TemplateCode(短信模板Code)" prop="templateCode">
+        <el-form-item label="短信模板Code(TemplateCode)" prop="templateCode">
           <el-input v-model="formData.templateCode" maxlength="200" placeholder="请输入" />
         </el-form-item>
-        <el-form-item label="TemplateParam(参考模板内容，选填)">
+        <el-form-item label="短信模版样例(TemplateParam)">
           <el-input v-model="formData.contentTemplate" type="textarea" maxlength="1000" :autosize="{ minRows: 4, maxRows: 4 }" placeholder="请输入" />
         </el-form-item>
       </template>
       <template v-else-if="formData.msgType === 'EMAIL'">
-        <el-form-item label="地址" prop="host">
+        <el-form-item label="服务地址(Host)" prop="host">
           <el-input v-model="formData.host" maxlength="200" placeholder="请输入" />
         </el-form-item>
-        <el-form-item label="端口" prop="port">
+        <el-form-item label="端口号(Port)" prop="port">
           <el-input v-model="formData.port" maxlength="200" placeholder="请输入" />
         </el-form-item>
-        <el-form-item label="账号" prop="username">
+        <el-form-item label="账号(Username)" prop="username">
           <el-input v-model="formData.username" maxlength="200" placeholder="请输入" />
         </el-form-item>
         <el-form-item label="密码" prop="password">
           <el-input :show-password="true" v-model="formData.password" maxlength="200" placeholder="请输入" />
         </el-form-item>
-        <el-form-item label="Subject" prop="subject">
+        <el-form-item label="主题(Subject)" prop="subject">
           <el-input v-model="formData.subject" maxlength="200" placeholder="请输入" />
         </el-form-item>
-        <el-form-item label="TemplateParam(参考模板内容，选填)">
+        <el-form-item label="邮箱模版样例">
           <el-input v-model="formData.contentTemplate" type="textarea" maxlength="1000" :autosize="{ minRows: 4, maxRows: 4 }" placeholder="请输入" />
         </el-form-item>
       </template>

@@ -9,7 +9,7 @@
                     <el-option v-for="item in typeList" :key="item.value" :label="item.label" :value="item.value" />
                 </el-select>
             </el-form-item>
-            <el-form-item label="参考消息模板">
+            <el-form-item label="通知内容模板">
                 <el-input :disabled="true" v-model="formData.contentTemplate" maxlength="200" placeholder="请输入" />
             </el-form-item>
             <el-form-item label="通知对象" prop="receiver">

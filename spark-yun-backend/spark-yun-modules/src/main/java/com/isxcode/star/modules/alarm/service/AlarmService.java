@@ -77,9 +77,21 @@ public class AlarmService {
 		return messageRepository.findById(messageId).orElseThrow(() -> new IsxAppException("消息体不存在"));
 	}
 
+	public String getMessageName(String messageId) {
+
+		MessageEntity messageEntity = messageRepository.findById(messageId).orElse(null);
+		return messageEntity == null ? messageId : messageEntity.getName();
+	}
+
 	public AlarmEntity getAlarm(String alarmId) {
 
 		return alarmRepository.findById(alarmId).orElseThrow(() -> new IsxAppException("告警不存在"));
+	}
+
+	public String getAlarmName(String alarmId) {
+
+		AlarmEntity alarmEntity = alarmRepository.findById(alarmId).orElse(null);
+		return alarmEntity == null ? alarmId : alarmEntity.getName();
 	}
 
 	public AlarmInstanceEntity getAlarmInstance(String alarmInstanceId) {
