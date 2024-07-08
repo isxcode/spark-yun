@@ -56,12 +56,6 @@ export const colConfigs: colConfig[] = [
         }
     },
     {
-        prop: 'instanceId',
-        title: '任务实例ID',
-        minWidth: 125,
-        showOverflowTooltip: true
-    },
-    {
         prop: 'alarmEvent',
         title: '告警事件',
         minWidth: 80,
@@ -74,6 +68,12 @@ export const colConfigs: colConfig[] = [
             }
             return obj[data.cellValue]
         }
+    },
+    {
+        prop: 'instanceId',
+        title: '任务实例ID',
+        minWidth: 125,
+        showOverflowTooltip: true
     },
     {
         prop: 'msgName',

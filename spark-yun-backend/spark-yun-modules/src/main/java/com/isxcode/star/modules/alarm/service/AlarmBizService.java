@@ -191,7 +191,7 @@ public class AlarmBizService {
 
 		// 翻译消息体
 		result.getContent().forEach(e -> {
-			e.setMsgName(alarmService.getMessage(e.getMsgId()).getName());
+			e.setMsgName(alarmService.getMessageName(e.getMsgId()));
 			e.setCreateByUsername(userService.getUser(e.getCreateBy()).getUsername());
 			List<String> receiverList = JSON.parseArray(e.getReceiverList(), String.class);
 			List<UserEntity> receiverUsers = userRepository.findAllById(receiverList);
@@ -232,8 +232,8 @@ public class AlarmBizService {
 
 		// 翻译告警名称
 		result.getContent().forEach(e -> {
-			e.setAlarmName(alarmService.getAlarm(e.getAlarmId()).getName());
-			e.setMsgName(alarmService.getMessage(e.getMsgId()).getName());
+			e.setAlarmName(alarmService.getAlarmName(e.getAlarmId()));
+			e.setMsgName(alarmService.getMessageName(e.getMsgId()));
 			e.setReceiverUsername(userService.getUser(e.getReceiver()).getUsername());
 		});
 
