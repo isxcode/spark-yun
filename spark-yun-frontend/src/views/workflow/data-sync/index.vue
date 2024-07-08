@@ -82,6 +82,9 @@
                             </el-select>
                         </el-form-item>
                         <el-form-item prop="sourceDBId" label="数据源">
+                            <el-tooltip content="数据源所在服务器带宽,直接影响同步速度,推荐内网ip" placement="top">
+                                <el-icon style="left: -30px" class="tooltip-msg"><QuestionFilled /></el-icon>
+                            </el-tooltip>
                             <el-select v-model="formData.sourceDBId" clearable filterable placeholder="请选择"
                                 @visible-change="getDataSource($event, formData.sourceDBType, 'source')"
                                 @change="dbIdChange('source')">
@@ -724,6 +727,13 @@ onMounted(() => {
                 .el-card__body {
                     .el-form {
                         .el-form-item {
+                            position: relative;
+                            .tooltip-msg {
+                                position: absolute;
+                                top: 7px;
+                                color: getCssVar('color', 'info');
+                                font-size: 16px;
+                            }
                             .el-form-item__label {
                                 position: relative;
 
