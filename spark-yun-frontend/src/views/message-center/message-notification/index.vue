@@ -27,6 +27,7 @@
                                 title="响应信息"
                                 :width="400"
                                 trigger="hover"
+                                popper-class="message-error-tooltip"
                                 :content="scopeSlot.row.response"
                             >
                                 <template #reference>
@@ -40,7 +41,7 @@
                             <span @click="editData(scopeSlot.row)">编辑</span>
                             <span v-if="['CHECK_SUCCESS', 'DISABLE'].includes(scopeSlot.row.status)" @click="enableData(scopeSlot.row)">启用</span>
                             <span v-if="['ACTIVE'].includes(scopeSlot.row.status)" @click="disableData(scopeSlot.row)">禁用</span>
-                            <span v-if="!['ACTIVE'].includes(scopeSlot.row.status)" @click="deleteData(scopeSlot.row)">删除</span>
+                            <span @click="deleteData(scopeSlot.row)">删除</span>
                             <span @click="checkData(scopeSlot.row)">检测</span>
                         </div>
                     </template>
@@ -215,9 +216,15 @@ onMounted(() => {
             }
             .hover-tooltip {
                 font-size: 16px;
-                color: getCssVar('color', 'danger');
+                color: getCssVar('color', 'danger', 'light-5');
             }
         }
     }
+}
+.message-error-tooltip {
+    .el-popover__title {
+        font-size: 14px;
+    }
+    font-size: 12px;
 }
 </style>

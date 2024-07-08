@@ -820,6 +820,7 @@ onUnmounted(() => {
                     box-sizing: border-box;
                     position: relative;
                     height: 100%;
+                    padding: 8px;
 
                     .list-item {
                         height: 52px;
@@ -828,12 +829,16 @@ onUnmounted(() => {
                         // padding-left: 12px;
                         padding-right: 12px;
                         box-sizing: border-box;
-                        border-bottom: 1px solid getCssVar('border-color');
+                        border: 1px solid getCssVar('border-color');
+                        border-radius: 8px;
+                        // padding-left: 8px;
                         cursor: pointer;
                         font-size: getCssVar('font-size', 'extra-small');
                         position: relative;
                         display: flex;
                         align-items: center;
+                        margin-bottom: 8px;
+                        box-shadow: getCssVar('box-shadow', 'lighter');
 
                         // .item-left {
                         //     font-size: 16px;
