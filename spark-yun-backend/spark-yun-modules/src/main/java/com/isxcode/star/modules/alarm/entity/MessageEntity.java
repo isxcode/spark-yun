@@ -44,6 +44,8 @@ public class MessageEntity {
 
 	private String msgConfig;
 
+	private String response;
+
 	@CreatedDate
 	private LocalDateTime createDateTime;
 

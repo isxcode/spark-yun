@@ -29,6 +29,8 @@ public class PageAlarmRes {
 
 	private String status;
 
+	private String alarmTemplate;
+
 	@JsonSerialize(using = LocalDateTimeSerializer.class)
 	private LocalDateTime createDateTime;
 
