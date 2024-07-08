@@ -8,6 +8,7 @@ create table SY_MESSAGE
   remark                  varchar(500) comment '消息体备注',
   msg_type                varchar(200)  not null comment '消息体类型，邮箱/阿里短信/飞书',
   msg_config              text          not null comment '消息体配置信息',
+  response                text comment '检测响应',
   create_by               varchar(200)  not null comment '创建人',
   create_date_time        datetime      not null comment '创建时间',
   last_modified_by        varchar(200)  not null comment '更新人',

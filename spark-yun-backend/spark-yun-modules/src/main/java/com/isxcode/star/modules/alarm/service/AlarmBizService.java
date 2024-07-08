@@ -144,10 +144,12 @@ public class AlarmBizService {
 			MessageRunner messageAction = messageFactory.getMessageAction(message.getMsgType());
 			messageAction.sendMessage(messageContext);
 			message.setStatus(MessageStatus.CHECK_SUCCESS);
+			message.setResponse("检测成功");
 			messageRepository.save(message);
 			return CheckMessageRes.builder().checkStatus(AlarmSendStatus.SUCCESS).log("检测成功").build();
 		} catch (Exception e) {
 			message.setStatus(MessageStatus.CHECK_FAIL);
+			message.setResponse(e.getMessage());
 			messageRepository.save(message);
 			return CheckMessageRes.builder().checkStatus(AlarmSendStatus.FAIL).log(e.getMessage()).build();
 		}
@@ -174,6 +176,7 @@ public class AlarmBizService {
 		alarm.setRemark(updateAlarmReq.getRemark());
 		alarm.setAlarmType(updateAlarmReq.getAlarmType());
 		alarm.setAlarmEvent(updateAlarmReq.getAlarmEvent());
+		alarm.setAlarmTemplate(updateAlarmReq.getAlarmTemplate());
 		alarm.setReceiverList(JSON.toJSONString(updateAlarmReq.getReceiverList()));
 		alarm.setMsgId(updateAlarmReq.getMsgId());
 		alarmRepository.save(alarm);
