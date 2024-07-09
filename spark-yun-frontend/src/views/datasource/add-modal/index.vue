@@ -55,6 +55,26 @@
         label="连接信息"
         prop="jdbcUrl"
       >
+        <el-tooltip placement="top">
+            <template #content>
+              <pre>
+mysql: jdbc:mysql://${host}:${ip}/${database}
+oracle: jdbc:oracle:thin:@${host}:${ip}/${database}
+sqlserver: jdbc:sqlserver://${host}:${ip};databaseName=${database}
+postgre: jdbc:postgresql://${host}:${ip}/${database}
+clickhouse: jdbc:clickhouse://${host}:${ip}/${database}
+hive: jdbc:hive2://${host}:${ip}/${database}
+sap: jdbc:sap://${host}:${ip}/${database}
+达梦: jdbc:dm://${host}:${ip}/${database}
+doris: jdbc:mysql://${host}:${ip}/${database}
+oceanbase: jdbc:oceanbase://${host}:${ip}/${database}
+tidb: jdbc:mysql://${host}:${ip}/${database}
+starrocks: jdbc:mysql://${host}:${ip}/${database}
+db2: jdbc:db2://${host}:${ip}/${database}
+              </pre>
+            </template>
+            <el-icon style="left: 50px" class="tooltip-msg"><QuestionFilled /></el-icon>
+        </el-tooltip>
         <el-input
           v-model="formData.jdbcUrl"
           maxlength="100"
@@ -62,6 +82,9 @@
         />
       </el-form-item>
       <el-form-item v-if="formData.dbType === 'HIVE'" label="hive.metastore.uris">
+        <el-tooltip content="thift://${host}:${port}，默认端口号9083" placement="top">
+            <el-icon style="left: 104px" class="tooltip-msg"><QuestionFilled /></el-icon>
+        </el-tooltip>
         <el-input
           v-model="formData.metastoreUris"
           maxlength="100"
@@ -354,5 +377,11 @@ defineExpose({
 .add-computer-group {
   padding: 12px 20px 0 20px;
   box-sizing: border-box;
+  .tooltip-msg {
+      position: absolute;
+      top: -28px;
+      color: getCssVar('color', 'info');
+      font-size: 16px;
+  }
 }
 </style>
