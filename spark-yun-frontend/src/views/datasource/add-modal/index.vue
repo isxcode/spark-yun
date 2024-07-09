@@ -58,19 +58,20 @@
         <el-tooltip placement="top">
             <template #content>
               <pre>
-mysql: jdbc:mysql://:/
-oracle: jdbc:oracle:thin:@::
-sqlserver: jdbc:sqlserver://:;databaseName=
-postgre: jdbc:postgresql://:/
-clickhouse: jdbc:clickhouse://:/
-hive: jdbc:hive2://:/
-sap: jdbc:sap://:/
-达梦: jdbc:dm://:/
-doris: jdbc:mysql://:/
-oceanbase: jdbc:oceanbase://:/
-tidb: jdbc:mysql://:/
-starrocks: jdbc:mysql://:/
-db2: jdbc:db2://:/</pre>
+mysql: jdbc:mysql://${host}>:${ip}/${database}
+oracle: jdbc:oracle:thin:@:${host}>:${ip}/${database}
+sqlserver: jdbc:sqlserver://:${host}>:${ip};databaseName=${database}
+postgre: jdbc:postgresql://${host}>:${ip}/${database}
+clickhouse: jdbc:clickhouse://${host}>:${ip}/${database}
+hive: jdbc:hive2://${host}>:${ip}/${database}
+sap: jdbc:sap://${host}>:${ip}/${database}
+达梦: jdbc:dm://${host}>:${ip}/${database}
+doris: jdbc:mysql://:${host}>:${ip}/${database}
+oceanbase: jdbc:oceanbase://:${host}>:${ip}/${database}
+tidb: jdbc:mysql://:${host}>:${ip}/${database}
+starrocks: jdbc:mysql://:${host}>:${ip}/${database}
+db2: jdbc:db2://:${host}>:${ip}/${database}
+              </pre>
             </template>
             <el-icon style="left: 50px" class="tooltip-msg"><QuestionFilled /></el-icon>
         </el-tooltip>
@@ -81,7 +82,7 @@ db2: jdbc:db2://:/</pre>
         />
       </el-form-item>
       <el-form-item v-if="formData.dbType === 'HIVE'" label="hive.metastore.uris">
-        <el-tooltip content="thift://127.0.0.1:9083" placement="top">
+        <el-tooltip content="thift://${host}:${port}，默认端口号9083" placement="top">
             <el-icon style="left: 104px" class="tooltip-msg"><QuestionFilled /></el-icon>
         </el-tooltip>
         <el-input
