@@ -84,6 +84,15 @@ export function UpdateWorkflowDetailList(params: any): Promise<any> {
   })
 }
 
+// 作业-复制
+export function CopyWorkflowDetailList(params: any): Promise<any> {
+  return http.request({
+    method: 'post',
+    url: '/work/copyWork',
+    params: params
+  })
+}
+
 // 作业-删除
 export function DeleteWorkflowDetailList(params: any): Promise<any> {
   return http.request({
