@@ -77,7 +77,7 @@ public class AlarmController {
 
 	@Operation(summary = "检测消息体接口")
 	@PostMapping("/checkMessage")
-	@SuccessResponse("检测成功")
+	@SuccessResponse("检测完成")
 	public CheckMessageRes checkMessage(@Valid @RequestBody CheckMessageReq checkMessageReq) {
 
 		return alarmBizService.checkMessage(checkMessageReq);

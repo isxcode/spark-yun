@@ -41,7 +41,7 @@ public interface WorkflowInstanceRepository extends JpaRepository<WorkflowInstan
 			+ "   WF.name," + "   W.duration," + "   W.nextPlanDateTime," + "   W.planStartDateTime,"
 			+ "   W.execStartDateTime," + "   W.execEndDateTime," + "   W.status," + "   W.instanceType) "
 			+ "from WorkflowInstanceEntity W left join WorkflowEntity WF on W.flowId = WF.id "
-			+ " where WF.name LIKE %:keyword% AND (:executeStatus is null or W.status=:executeStatus ) AND W.tenantId=:tenantId order by W.lastModifiedDateTime desc")
+			+ " where WF.name LIKE %:keyword% AND (:executeStatus is null or :executeStatus ='' or W.status=:executeStatus ) AND W.tenantId=:tenantId order by W.lastModifiedDateTime desc")
 	Page<WfiWorkflowInstanceAo> pageWorkFlowInstances(@Param("tenantId") String tenantId,
 			@Param("keyword") String searchKeyWord, @Param("executeStatus") String executeStatus, Pageable pageable);
 
