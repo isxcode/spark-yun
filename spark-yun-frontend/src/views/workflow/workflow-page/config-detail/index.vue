@@ -288,7 +288,7 @@
               </el-form-item>
               <template v-else>
                 <el-form-item label="分区数">
-                  <el-tooltip content="分区数推荐大于等于并发数,且成倍数关系" placement="top">
+                  <el-tooltip content="推荐：分区数大于等于并发数,且成倍数关系" placement="top">
                       <el-icon style="left: -80px" class="tooltip-msg"><QuestionFilled /></el-icon>
                   </el-tooltip>
                   <el-input-number

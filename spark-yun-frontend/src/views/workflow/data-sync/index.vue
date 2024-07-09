@@ -82,7 +82,7 @@
                             </el-select>
                         </el-form-item>
                         <el-form-item prop="sourceDBId" label="数据源">
-                            <el-tooltip content="数据源带宽直接影响同步速度,推荐使用内网ip" placement="top">
+                            <el-tooltip content="数据源网速直接影响同步速度,推荐使用内网ip" placement="top">
                                 <el-icon style="left: -30px" class="tooltip-msg"><QuestionFilled /></el-icon>
                             </el-tooltip>
                             <el-select v-model="formData.sourceDBId" clearable filterable placeholder="请选择"
