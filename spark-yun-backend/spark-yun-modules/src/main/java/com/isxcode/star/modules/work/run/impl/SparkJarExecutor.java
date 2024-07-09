@@ -20,6 +20,7 @@ import com.isxcode.star.common.utils.AesUtils;
 import com.isxcode.star.common.utils.http.HttpUrlUtils;
 import com.isxcode.star.common.utils.http.HttpUtils;
 import com.isxcode.star.common.utils.path.PathUtils;
+import com.isxcode.star.modules.alarm.service.AlarmService;
 import com.isxcode.star.modules.cluster.entity.ClusterEntity;
 import com.isxcode.star.modules.cluster.entity.ClusterNodeEntity;
 import com.isxcode.star.modules.cluster.mapper.ClusterNodeMapper;
@@ -86,9 +87,9 @@ public class SparkJarExecutor extends WorkExecutor {
 			ClusterNodeRepository clusterNodeRepository, WorkflowInstanceRepository workflowInstanceRepository,
 			WorkRepository workRepository, WorkConfigRepository workConfigRepository, IsxAppProperties isxAppProperties,
 			Locker locker, HttpUrlUtils httpUrlUtils, ClusterNodeMapper clusterNodeMapper, AesUtils aesUtils,
-			FileService fileService, FileRepository fileRepository) {
+			FileService fileService, FileRepository fileRepository, AlarmService alarmService) {
 
-		super(workInstanceRepository, workflowInstanceRepository);
+		super(workInstanceRepository, workflowInstanceRepository, alarmService);
 		this.workInstanceRepository = workInstanceRepository;
 		this.clusterRepository = clusterRepository;
 		this.clusterNodeRepository = clusterNodeRepository;

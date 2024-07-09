@@ -97,6 +97,11 @@ public class WorkflowConfigBizService {
 		WorkflowConfigEntity workflowConfig = workflowService.getWorkflowConfig(workflow.getConfigId());
 
 		workflowConfig.setCronConfig(JSON.toJSONString(configWorkflowSettingReq.getCronConfig()));
+
+		if (configWorkflowSettingReq.getAlarmList() != null) {
+			workflowConfig.setAlarmList(JSON.toJSONString(configWorkflowSettingReq.getAlarmList()));
+		}
+
 		workflowConfigRepository.save(workflowConfig);
 	}
 

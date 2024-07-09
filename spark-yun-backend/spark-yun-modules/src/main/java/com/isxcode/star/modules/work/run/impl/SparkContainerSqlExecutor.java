@@ -10,6 +10,7 @@ import com.isxcode.star.api.work.constants.WorkType;
 import com.isxcode.star.api.work.exceptions.WorkRunException;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.star.backend.api.base.properties.IsxAppProperties;
+import com.isxcode.star.modules.alarm.service.AlarmService;
 import com.isxcode.star.modules.cluster.entity.ClusterNodeEntity;
 import com.isxcode.star.modules.cluster.repository.ClusterNodeRepository;
 import com.isxcode.star.modules.container.entity.ContainerEntity;
@@ -54,8 +55,8 @@ public class SparkContainerSqlExecutor extends WorkExecutor {
 			WorkflowInstanceRepository workflowInstanceRepository, ContainerRepository containerRepository,
 			ClusterNodeRepository clusterNodeRepository, IsxAppProperties isxAppProperties,
 			WorkInstanceRepository workInstanceRepository1, SqlCommentService sqlCommentService,
-			SqlValueService sqlValueService, SqlFunctionService sqlFunctionService) {
-		super(workInstanceRepository, workflowInstanceRepository);
+			SqlValueService sqlValueService, SqlFunctionService sqlFunctionService, AlarmService alarmService) {
+		super(workInstanceRepository, workflowInstanceRepository, alarmService);
 		this.containerRepository = containerRepository;
 		this.clusterNodeRepository = clusterNodeRepository;
 		this.isxAppProperties = isxAppProperties;

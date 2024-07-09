@@ -47,6 +47,8 @@ export const httpOption = {
           })
         } else if (status == 403) {
           message.error('许可证无效，请联系管理员')
+        } else if (status == 404) {
+          message.error('请升级到企业版')
         } else {
           showMsg(msg)
         }

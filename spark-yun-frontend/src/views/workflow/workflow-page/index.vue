@@ -208,6 +208,7 @@ const workFlowData = ref({
     id: ''
 })
 const cronConfig = ref()
+const alarmList = ref([])
 const workflowInstanceId = ref('')
 const timer = ref()
 const runningStatus = ref(false)
@@ -489,6 +490,7 @@ function initFlowData() {
             workflowId: workFlowData.value.id
         }).then((res: any) => {
             cronConfig.value = res.data?.cronConfig
+            alarmList.value = res.data?.alarmList
             if (res.data?.webConfig) {
                 zqyFlowRef.value.initCellList(res.data.webConfig)
             }
@@ -577,7 +579,7 @@ function showConfigDetail() {
         return new Promise((resolve: any, reject: any) => {
             SaveWorkflowConfigData({
                 workflowId: workFlowData.value.id,
-                cronConfig: data
+                ...data
             }).then((res: any) => {
                 initFlowData()
                 ElMessage.success(res.msg)
@@ -586,7 +588,10 @@ function showConfigDetail() {
                 reject(err)
             })
         })
-    }, cronConfig.value)
+    }, {
+        cronConfig: cronConfig.value,
+        alarmList: alarmList.value
+    })
 }
 
 // 节点运行日志
@@ -815,6 +820,7 @@ onUnmounted(() => {
                     box-sizing: border-box;
                     position: relative;
                     height: 100%;
+                    padding: 8px;
 
                     .list-item {
                         height: 52px;
@@ -823,12 +829,16 @@ onUnmounted(() => {
                         // padding-left: 12px;
                         padding-right: 12px;
                         box-sizing: border-box;
-                        border-bottom: 1px solid getCssVar('border-color');
+                        border: 1px solid getCssVar('border-color');
+                        border-radius: 8px;
+                        // padding-left: 8px;
                         cursor: pointer;
                         font-size: getCssVar('font-size', 'extra-small');
                         position: relative;
                         display: flex;
                         align-items: center;
+                        margin-bottom: 8px;
+                        box-shadow: getCssVar('box-shadow', 'lighter');
 
                         // .item-left {
                         //     font-size: 16px;

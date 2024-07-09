@@ -49,3 +49,6 @@ metastore_db
 # prql二进制文件
 spark-yun-backend/spark-yun-main/src/main/resources/libprql_java-osx-arm64.dylib
 spark-yun-backend/spark-yun-main/src/main/resources/libprql_java-linux64.so
+
+# 自动化测试代码不提交
+**/__pycache__

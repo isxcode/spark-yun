@@ -33,6 +33,11 @@ import ReportItem from '@/views/report-components/report-item/index.vue'
 import ReportViews from '@/views/report-views/index.vue'
 import ReportViewsDetail from '@/views/report-views/report-views-detail/index.vue'
 
+// 消息告警
+import MessageNotifications from '@/views/message-center/message-notification/index.vue'
+import WarningConfig from '@/views/message-center/warning-config/index.vue'
+import WarningSchedule from '@/views/message-center/warning-schedule/index.vue'
+
 export default [
   {
     path: 'index',
@@ -183,5 +188,20 @@ export default [
     path: 'report-views-detail',
     name: 'report-views-detail',
     component: ReportViewsDetail
-  }
+  },
+  {
+    path: 'message-notifications',
+    name: 'message-notifications',
+    component: MessageNotifications
+  },
+  {
+    path: 'warning-config',
+    name: 'warning-config',
+    component: WarningConfig
+  },
+  {
+    path: 'warning-schedule',
+    name: 'warning-schedule',
+    component: WarningSchedule
+  },
 ]

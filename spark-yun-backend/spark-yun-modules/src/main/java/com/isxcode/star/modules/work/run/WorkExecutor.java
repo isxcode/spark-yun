@@ -3,23 +3,30 @@ package com.isxcode.star.modules.work.run;
 import static com.isxcode.star.common.config.CommonConfig.TENANT_ID;
 import static com.isxcode.star.common.config.CommonConfig.USER_ID;
 
+import com.isxcode.star.api.alarm.constants.AlarmEventType;
 import com.isxcode.star.api.instance.constants.InstanceStatus;
+import com.isxcode.star.api.instance.constants.InstanceType;
 import com.isxcode.star.api.work.constants.WorkLog;
 import com.isxcode.star.api.work.exceptions.WorkRunException;
+import com.isxcode.star.modules.alarm.service.AlarmService;
 import com.isxcode.star.modules.work.entity.WorkInstanceEntity;
 import com.isxcode.star.modules.work.repository.WorkInstanceRepository;
 import com.isxcode.star.modules.workflow.entity.WorkflowInstanceEntity;
 import com.isxcode.star.modules.workflow.repository.WorkflowInstanceRepository;
+
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.scheduling.annotation.Async;
 
-/** 作业执行器. */
+/**
+ * 作业执行器.
+ */
 @Slf4j
 @RequiredArgsConstructor
 public abstract class WorkExecutor {
@@ -30,20 +37,26 @@ public abstract class WorkExecutor {
 
 	private final WorkflowInstanceRepository workflowInstanceRepository;
 
+	private final AlarmService alarmService;
+
 	public abstract String getWorkType();
 
 	protected abstract void execute(WorkRunContext workRunContext, WorkInstanceEntity workInstance);
 
 	protected abstract void abort(WorkInstanceEntity workInstance);
 
-	/** 更新实例的日志和状态 */
+	/**
+	 * 更新实例的日志和状态
+	 */
 	public WorkInstanceEntity updateInstance(WorkInstanceEntity workInstance, StringBuilder logBuilder) {
 
 		workInstance.setSubmitLog(logBuilder.toString());
 		return workInstanceRepository.saveAndFlush(workInstance);
 	}
 
-	/** 异步执行作业. */
+	/**
+	 * 异步执行作业.
+	 */
 	@Async("sparkYunWorkThreadPool")
 	public void asyncExecute(WorkRunContext workRunContext) {
 
@@ -54,7 +67,9 @@ public abstract class WorkExecutor {
 		syncExecute(workRunContext);
 	}
 
-	/** 同步执行作业. */
+	/**
+	 * 同步执行作业.
+	 */
 	public void syncExecute(WorkRunContext workRunContext) {
 
 		// 获取作业实例
@@ -74,6 +89,11 @@ public abstract class WorkExecutor {
 
 			// 日志需要贯穿上下文
 			workRunContext.setLogBuilder(logBuilder);
+
+			// 任务开始运行，异步发送消息
+			if (InstanceType.AUTO.equals(workInstance.getInstanceType())) {
+				alarmService.sendWorkMessage(workInstance, AlarmEventType.START_RUN);
+			}
 
 			// 开始执行作业
 			execute(workRunContext, workInstance);
@@ -98,6 +118,11 @@ public abstract class WorkExecutor {
 						+ LocalDateTime.now() + WorkLog.SUCCESS_INFO + "作业: 【" + workRunContext.getWorkName() + "】运行成功";
 				workflowInstance.setRunLog(runLog);
 				workflowInstanceRepository.setWorkflowLog(workflowInstance.getId(), runLog);
+			}
+
+			// 任务运行成功，异步发送消息
+			if (InstanceType.AUTO.equals(workInstance.getInstanceType())) {
+				alarmService.sendWorkMessage(workInstance, AlarmEventType.RUN_SUCCESS);
 			}
 
 			// 执行完请求线程
@@ -133,6 +158,16 @@ public abstract class WorkExecutor {
 				workflowInstance.setRunLog(runLog);
 				workflowInstanceRepository.setWorkflowLog(workflowInstance.getId(), runLog);
 			}
+
+			// 任务运行失败，异步发送消息
+			if (InstanceType.AUTO.equals(workInstance.getInstanceType())) {
+				alarmService.sendWorkMessage(workInstance, AlarmEventType.RUN_FAIL);
+			}
+		}
+
+		// 任务开始运行，异步发送消息
+		if (InstanceType.AUTO.equals(workInstance.getInstanceType())) {
+			alarmService.sendWorkMessage(workInstance, AlarmEventType.RUN_END);
 		}
 
 		// 执行完请求线程

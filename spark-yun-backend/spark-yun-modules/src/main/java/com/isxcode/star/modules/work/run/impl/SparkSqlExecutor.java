@@ -20,6 +20,7 @@ import com.isxcode.star.common.utils.AesUtils;
 import com.isxcode.star.common.utils.http.HttpUrlUtils;
 import com.isxcode.star.common.utils.http.HttpUtils;
 import com.isxcode.star.common.utils.path.PathUtils;
+import com.isxcode.star.modules.alarm.service.AlarmService;
 import com.isxcode.star.modules.cluster.entity.ClusterEntity;
 import com.isxcode.star.modules.cluster.entity.ClusterNodeEntity;
 import com.isxcode.star.modules.cluster.mapper.ClusterNodeMapper;
@@ -106,9 +107,9 @@ public class SparkSqlExecutor extends WorkExecutor {
 			HttpUrlUtils httpUrlUtils, FuncRepository funcRepository, FuncMapper funcMapper,
 			ClusterNodeMapper clusterNodeMapper, AesUtils aesUtils, IsxAppProperties isxAppProperties,
 			FileRepository fileRepository, DatasourceService datasourceService, SqlCommentService sqlCommentService,
-			SqlValueService sqlValueService, SqlFunctionService sqlFunctionService) {
+			SqlValueService sqlValueService, SqlFunctionService sqlFunctionService, AlarmService alarmService) {
 
-		super(workInstanceRepository, workflowInstanceRepository);
+		super(workInstanceRepository, workflowInstanceRepository, alarmService);
 		this.workInstanceRepository = workInstanceRepository;
 		this.clusterRepository = clusterRepository;
 		this.clusterNodeRepository = clusterNodeRepository;

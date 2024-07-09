@@ -174,7 +174,7 @@ tasks.register('backend', GradleBuild) {
 }
 
 // gradle test，单独启动自动化测试
-tasks.register('autotest', Exec) {
+tasks.register('autotest', GradleBuild) {
 
   tasks = [":spark-yun-autotest:autotest"]
 }
