@@ -11,15 +11,15 @@ import java.util.stream.Collectors;
 @Service
 public class MessageFactory {
 
-	private final Map<String, MessageAction> actionMap;
+	private final Map<String, MessageRunner> actionMap;
 
 	public MessageFactory(ApplicationContext applicationContext) {
 
-		actionMap = applicationContext.getBeansOfType(MessageAction.class).values().stream()
-				.collect(Collectors.toMap(MessageAction::getActionName, action -> action));
+		actionMap = applicationContext.getBeansOfType(MessageRunner.class).values().stream()
+				.collect(Collectors.toMap(MessageRunner::getActionName, action -> action));
 	}
 
-	public MessageAction getMessageAction(String messageType) {
+	public MessageRunner getMessageAction(String messageType) {
 
 		return Optional.ofNullable(actionMap.get(messageType)).orElseThrow(() -> new IsxAppException("该通知方法不支持"));
 	}
