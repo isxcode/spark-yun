@@ -49,47 +49,7 @@ log_error() {
     echo "错误: $message" >&2
 }
 
-# 验证命令行参数
-if [ "$#" -ne 1 ]; then
-    echo "用法: $0 <选项>"
-    echo "选项:"
-    echo "  init        - 执行初始化操作"
-    echo "  all         - 运行所有测试用例"
-    echo "  login       - 运行登录界面测试用例"
-    echo "  engine      - 运行计算引擎测试用例"
-    echo "  datasource  - 运行数据源测试用例"
-    echo "  workflow    - 运行作业流测试用例"
-    echo "  report      - 运行测试报告"
-    exit 1
-fi
-
-# 根据命令行参数执行相应操作
-case "$1" in
-    init)
-        initialize
-        ;;
-    all)
-        for case_file in "${CASE_FILES[@]}"; do
-            execute_tests "$case_file"
-        done
-        ;;
-    login)
-        execute_tests "${LOGIN_CASE_FILE}"
-        ;;
-    engine)
-        execute_tests "${ENGINE_CASE_FILE}"
-        ;;
-    datasource)
-        execute_tests "${DATASOURCE_CASE_FILE}"
-        ;;
-    workflow)
-        execute_tests "${WORKFLOW_CASE_FILE}"
-        ;;
-    report)
-        show_report
-        ;;
-    *)
-        log_error "无效的选项: $1"
-        exit 1
-        ;;
-esac
+# 测试所有
+for case_file in "${CASE_FILES[@]}"; do
+  execute_tests "$case_file"
+done
