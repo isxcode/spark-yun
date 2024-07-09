@@ -60,7 +60,7 @@
               <pre>
 mysql: jdbc:mysql://${host}:${ip}/${database}
 oracle: jdbc:oracle:thin:@${host}:${ip}/${database}
-sqlserver: jdbc:sqlserver://:${host}:${ip};databaseName=${database}
+sqlserver: jdbc:sqlserver://${host}:${ip};databaseName=${database}
 postgre: jdbc:postgresql://${host}:${ip}/${database}
 clickhouse: jdbc:clickhouse://${host}:${ip}/${database}
 hive: jdbc:hive2://${host}:${ip}/${database}
