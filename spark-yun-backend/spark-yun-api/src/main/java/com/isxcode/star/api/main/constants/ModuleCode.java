@@ -115,4 +115,9 @@ public interface ModuleCode {
 
 	/** VIP大屏模块. */
 	String VIP_VIEW = "/vip/view";
+
+	/**
+	 * 基线告警模块.
+	 */
+	String ALARM = "alarm";
 }
