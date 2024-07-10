@@ -264,7 +264,8 @@ function initData(tableLoading?: boolean) {
     GetScheduleList({
       page: tableConfig.pagination.currentPage - 1,
       pageSize: tableConfig.pagination.pageSize,
-      searchKeyWord: keyword.value
+      searchKeyWord: keyword.value,
+      executeStatus: executeStatus.value
     })
       .then((res: any) => {
         tableConfig.tableData = res.data.content
