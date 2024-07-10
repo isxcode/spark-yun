@@ -144,6 +144,7 @@ public class AlarmBizService {
 			MessageRunner messageAction = messageFactory.getMessageAction(message.getMsgType());
 			messageAction.sendMessage(messageContext);
 			message.setStatus(MessageStatus.CHECK_SUCCESS);
+      message.setResponse(null);
 			messageRepository.save(message);
 			return CheckMessageRes.builder().checkStatus(AlarmSendStatus.SUCCESS).log("检测成功").build();
 		} catch (Exception e) {
