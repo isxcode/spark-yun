@@ -22,7 +22,7 @@ public interface WorkInstanceRepository extends JpaRepository<WorkInstanceEntity
 			+ "       S.execEndDateTime as execEndDateTime,\n" + "       S.nextPlanDateTime as nextPlanDateTime\n"
 			+ "from WorkInstanceEntity S \n" + "         left join WorkEntity SW on S.workId = SW.id\n"
 			+ "         left join WorkflowEntity SWF on SW.workflowId = SWF.id \n"
-			+ "WHERE (:executeStatus is null or :executeStatus = '' or S.status=:executeStatus) AND S.tenantId=:tenantId and "
+			+ "WHERE (:executeStatus is null or :executeStatus = '' or S.status = :executeStatus) AND S.tenantId=:tenantId and "
 			+ "(S.id LIKE %:keyword% " + "OR SW.name LIKE %:keyword% " + "OR SWF.name LIKE %:keyword% ) "
 			+ "order by S.lastModifiedDateTime desc ")
 	Page<Map> searchAll(@Param("tenantId") String tenantId, @Param("keyword") String searchKeyWord,
