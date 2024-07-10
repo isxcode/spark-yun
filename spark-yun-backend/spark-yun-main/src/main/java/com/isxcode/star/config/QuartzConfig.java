@@ -8,47 +8,43 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
-import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
-import org.springframework.boot.autoconfigure.orm.jpa.JpaProperties;
+import org.springframework.boot.autoconfigure.quartz.QuartzAutoConfiguration;
+import org.springframework.boot.autoconfigure.quartz.QuartzProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
-import org.springframework.orm.jpa.vendor.Database;
 
 import javax.annotation.PostConstruct;
 
 @Slf4j
 @Configuration
-@AutoConfigureBefore(HibernateJpaAutoConfiguration.class)
-@EnableConfigurationProperties({DataSourceProperties.class, JpaProperties.class, IsxAppProperties.class})
+@AutoConfigureBefore(QuartzAutoConfiguration.class)
+@EnableConfigurationProperties({DataSourceProperties.class, QuartzProperties.class, IsxAppProperties.class})
 @ConditionalOnClass(JdbcUtils.class)
 @RequiredArgsConstructor
-public class JpaConfig {
+public class QuartzConfig {
 
-	private final JpaProperties jpaProperties;
+	private final QuartzProperties quartzProperties;
 
 	private final DataSourceProperties dataSourceProperties;
 
 	private final IsxAppProperties isxAppProperties;
 
 	@PostConstruct
-	public void changeJpaProperties() {
+	public void changeQuartzProperties() {
 
 		if ("simple".equals(isxAppProperties.getConfigMode())) {
-			if (DatasourceDriver.H2_DRIVER.equals(dataSourceProperties.getDriverClassName())) {
-				jpaProperties.setDatabase(Database.H2);
-			} else if (DatasourceDriver.POSTGRE_SQL_DRIVER.equals(dataSourceProperties.getDriverClassName())) {
-				jpaProperties.setDatabase(Database.POSTGRESQL);
-			} else {
-				jpaProperties.setDatabase(Database.MYSQL);
+			if (DatasourceDriver.POSTGRE_SQL_DRIVER.equals(dataSourceProperties.getDriverClassName())) {
+				quartzProperties.getProperties().put("org.quartz.jobStore.driverDelegateClass",
+						"org.quartz.impl.jdbcjobstore.PostgreSQLDelegate");
 			}
 		}
 	}
 
 	@Bean
 	@Primary
-	public JpaProperties jpaProperties() {
-		return jpaProperties;
+	public QuartzProperties quartzProperties() {
+		return quartzProperties;
 	}
 }

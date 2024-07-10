@@ -16,11 +16,9 @@ dependencies {
   implementation "org.apache.calcite:calcite-core:${CALCITE_VERSION}"
 
   // kafka-client
-  implementation group: 'org.apache.kafka', name: 'kafka-clients', version: '3.1.2'
+  implementation 'org.apache.kafka:kafka-clients:3.1.2'
 
   // prql
-//  implementation "org.prqllang:prql-java:${PRQL_VERSION}"
-
   implementation fileTree(dir: rootDir.getAbsolutePath() + '/resources/libs', include: [ 'prql-java-0.5.2.jar'])
 
   // groovy-all
@@ -31,4 +29,7 @@ dependencies {
 
   // ali sms sdk
   implementation 'com.aliyun:dysmsapi20170525:3.0.0'
+
+  // postgresql
+  implementation 'org.postgresql:postgresql:42.7.3'
 }

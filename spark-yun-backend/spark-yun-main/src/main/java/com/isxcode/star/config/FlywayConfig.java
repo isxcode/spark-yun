@@ -1,6 +1,7 @@
 package com.isxcode.star.config;
 
 import com.alibaba.druid.util.JdbcUtils;
+import com.isxcode.star.api.datasource.constants.DatasourceDriver;
 import com.isxcode.star.backend.api.base.properties.IsxAppProperties;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,8 +40,10 @@ public class FlywayConfig {
 			flywayProperties.setUrl(dataSourceProperties.getUrl());
 			flywayProperties.setUser(dataSourceProperties.getUsername());
 			flywayProperties.setPassword(dataSourceProperties.getPassword());
-			if ("org.h2.Driver".equals(dataSourceProperties.getDriverClassName())) {
+			if (DatasourceDriver.H2_DRIVER.equals(dataSourceProperties.getDriverClassName())) {
 				flywayProperties.setLocations(Collections.singletonList("classpath:db/migration/h2"));
+			} else if (DatasourceDriver.POSTGRE_SQL_DRIVER.equals(dataSourceProperties.getDriverClassName())) {
+				flywayProperties.setLocations(Collections.singletonList("classpath:db/migration/postgres"));
 			} else {
 				flywayProperties.setLocations(Collections.singletonList("classpath:db/migration/mysql"));
 			}
