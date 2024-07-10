@@ -28,4 +28,6 @@ public interface DatasourceDriver {
 	String STAR_ROCKS_DRIVER = "com.mysql.jdbc.Driver";
 
 	String DB2_DRIVER = "com.ibm.db2.jcc.DB2Driver";
+
+	String H2_DRIVER = "org.h2.Driver";
 }
