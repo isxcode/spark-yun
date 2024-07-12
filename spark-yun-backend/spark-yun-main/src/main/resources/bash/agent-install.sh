@@ -66,6 +66,26 @@ echo $! >${agent_path}/zhiqingyun-agent.pid
 # 如果用户需要默认spark
 if [ ${spark_local} = "true" ]; then
 
+  # 如何需要本地安装，则自动修改配置
+  # 修改spark-defaults.conf
+  if [ ! -f ${agent_path}/spark-min/conf/spark-defaults.conf ]; then
+    cp ${agent_path}/spark-min/conf/spark-defaults.conf.template ${agent_path}/spark-min/conf/spark-defaults.conf
+    cat <<-'EOF' >> ${agent_path}/spark-min/conf/spark-defaults.conf
+spark.master          spark://localhost:7077
+spark.master.web.url  http://localhost:8081
+EOF
+  fi
+
+  # 修改spark-env.sh
+  if [ ! -f ${agent_path}/spark-min/conf/spark-env.sh ]; then
+    cp ${agent_path}/spark-min/conf/spark-env.sh.template ${agent_path}/spark-min/conf/spark-env.sh
+    cat <<-'EOF' >> ${agent_path}/spark-min/conf/spark-env.sh
+export SPARK_MASTER_PORT=7077
+export SPARK_MASTER_WEBUI_PORT=8081
+export SPARK_WORKER_OPTS="-Dspark.worker.cleanup.enabled=true -Dspark.worker.cleanup.appDataTtl=1800 -Dspark.worker.cleanup.interval=60"
+EOF
+  fi
+
   # 如果用户没有id_rsa.pub,帮他初始化
   if [ ! -f ~/.ssh/id_rsa.pub ]; then
     nohup ssh-keygen -t rsa -b 4096 -N "" -f ~/.ssh/id_rsa > /dev/null 2>&1 &
@@ -97,9 +117,9 @@ if [ ${spark_local} = "true" ]; then
                       \"status\": \"INSTALL_ERROR\", \
                       \"log\": \"该系统不支持安装\" \
                     }"
-      echo $json_output
-      rm ${BASE_PATH}/agent-install.sh
-      exit 0
+    echo $json_output
+    rm ${BASE_PATH}/agent-install.sh
+    exit 0
   fi
 fi
 
