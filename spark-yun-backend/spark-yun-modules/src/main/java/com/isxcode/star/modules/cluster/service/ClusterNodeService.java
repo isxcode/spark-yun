@@ -129,7 +129,7 @@ public class ClusterNodeService {
 			try {
 				attrs = channel.stat(dstPath);
 			} catch (Exception e) {
-				log.error(e.getMessage(), e);
+				log.debug("上传文件不存在，继续获取文件，不影响安装");
 				continue;
 			}
 

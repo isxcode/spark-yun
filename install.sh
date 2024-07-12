@@ -72,24 +72,6 @@ if [ ! -f "${SPARK_MIN_DIR}"/README.md ]; then
   rm "${SPARK_MIN_DIR}"/RELEASE
 fi
 
-# 修改spark-defaults.conf
-if [ ! -f "${SPARK_MIN_DIR}"/conf/spark-defaults.conf ]; then
-  cp "${SPARK_MIN_DIR}"/conf/spark-defaults.conf.template "${SPARK_MIN_DIR}"/conf/spark-defaults.conf
-  tee -a "${SPARK_MIN_DIR}"/conf/spark-defaults.conf <<-'EOF'
-spark.master          spark://localhost:7077
-spark.master.web.url  http://localhost:8081
-EOF
-fi
-
-# 修改spark-env.sh
-if [ ! -f "${SPARK_MIN_DIR}"/conf/spark-env.sh ]; then
-cp "${SPARK_MIN_DIR}"/conf/spark-env.sh.template "${SPARK_MIN_DIR}"/conf/spark-env.sh
-  tee -a "${SPARK_MIN_DIR}"/conf/spark-env.sh <<-'EOF'
-export SPARK_MASTER_PORT=7077
-export SPARK_MASTER_WEBUI_PORT=8081
-EOF
-fi
-
 # 下载spark的jars依赖
 # spark-sql-kafka
 if [ ! -f "${SPARK_MIN_DIR}"/jars/spark-sql-kafka-0-10_2.12-3.4.0.jar ]; then
