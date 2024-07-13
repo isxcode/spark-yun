@@ -60,6 +60,23 @@
         />
       </el-form-item>
     </el-form>
+    <template #customLeft>
+      <div class="test-button">
+        <el-button :loading="testLoading" type="primary" @click="testFun">链接测试</el-button>
+        <el-popover
+          placement="right"
+          title="测试结果"
+          :width="400"
+          trigger="hover"
+          popper-class="message-error-tooltip"
+          :content="testResult?.log"
+        >
+          <template #reference>
+            <el-icon class="hover-tooltip" v-if="testResult?.status === 'FAIL'"><Warning /></el-icon>
+          </template>
+        </el-popover>
+      </div>
+    </template>
   </BlockModal>
 </template>
 
@@ -69,6 +86,7 @@ import BlockModal from '@/components/block-modal/index.vue'
 import { ElMessage, FormInstance, FormRules } from 'element-plus'
 import { Validator } from '@/validator/index'
 import { useRoute } from 'vue-router'
+import { TestComputerPointHostData } from '@/services/computer-group.service'
 
 const route = useRoute()
 
@@ -76,10 +94,13 @@ const form = ref<FormInstance>()
 const callback = ref<any>()
 const pwdType = ref('pwd')
 const clusterType = ref('')
+const testLoading = ref(false)
+const testResult = ref()
 const modelConfig = reactive({
   title: '添加节点',
   visible: false,
   width: '520px',
+  customClass: 'compute-add-modal',
   okConfig: {
     title: '确定',
     ok: okEvent,
@@ -144,6 +165,11 @@ function showModal(cb: () => void, data: any): void {
   callback.value = cb
   pwdType.value = 'pwd'
   clusterType.value = route.query.type
+
+  testResult.value = {
+    log: '',
+    status: ''
+  }
   if (data) {
     formData.name = data.name
     formData.host = data.host
@@ -176,6 +202,26 @@ function showModal(cb: () => void, data: any): void {
     form.value?.resetFields()
   })
   modelConfig.visible = true
+}
+
+function testFun() {
+  if (formData.host && formData.port && formData.username && formData.passwd) {
+    testLoading.value = true
+    TestComputerPointHostData({
+      host: formData.host,
+      port: formData.port,
+      username: formData.username,
+      passwd: formData.passwd
+    }).then((res: any) => {
+      testLoading.value = false
+      testResult.value = res.data
+      ElMessage.success(res.msg)
+    }).catch(() => {
+      testLoading.value = false
+    })
+  } else {
+    ElMessage.warning('请将参数填写完整')
+  }
 }
 
 function pwdTypeChangeEvent() {
@@ -222,5 +268,26 @@ defineExpose({
 .add-computer-group {
   padding: 12px 20px 0 20px;
   box-sizing: border-box;
+}
+.compute-add-modal {
+  .test-button {
+    position: absolute;
+    left: 20px;
+    bottom: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .hover-tooltip {
+    margin-left: 8px;
+    font-size: 16px;
+    color: getCssVar('color', 'danger', 'light-5');
+  }
+}
+.message-error-tooltip {
+    .el-popover__title {
+        font-size: 14px;
+    }
+    font-size: 12px;
 }
 </style>
