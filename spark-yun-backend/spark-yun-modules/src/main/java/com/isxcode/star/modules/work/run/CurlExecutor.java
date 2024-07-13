@@ -37,6 +37,8 @@ public class CurlExecutor extends WorkExecutor {
 		if (Strings.isEmpty(workRunContext.getScript())) {
 			throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "检测脚本失败 : CURL内容为空不能执行  \n");
 		}
+		logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("执行内容: \n");
+		logBuilder.append(workRunContext.getScript()).append("\n");
 
 		// 脚本检查通过
 		logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始执行作业 \n");
@@ -74,7 +76,7 @@ public class CurlExecutor extends WorkExecutor {
 				result = false;
 				workInstance.setResultData(JSON.toJSONString(errorList));
 			}
-			logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("保存日志成功 \n");
+			logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("保存结果成功 \n");
 
 			resultReader.close();
 			process.destroy();
@@ -86,8 +88,6 @@ public class CurlExecutor extends WorkExecutor {
 		if (!result) {
 			throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "执行失败 \n");
 		}
-
-		logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("执行成功 \n");
 		updateInstance(workInstance, logBuilder);
 	}
 
