@@ -192,3 +192,12 @@ export function GetComputerPointDetailData(params: any): Promise<any> {
     params: params
   })
 }
+
+// 链接测试接口
+export function TestComputerPointHostData(params: any): Promise<any> {
+  return http.request({
+    method: 'post',
+    url: '/cluster_node/testAgent',
+    params: params
+  })
+}
