@@ -208,6 +208,7 @@ const workFlowData = ref({
     id: ''
 })
 const cronConfig = ref()
+const otherConfig = ref()
 const workflowInstanceId = ref('')
 const timer = ref()
 const runningStatus = ref(false)
@@ -489,6 +490,7 @@ function initFlowData() {
             workflowId: workFlowData.value.id
         }).then((res: any) => {
             cronConfig.value = res.data?.cronConfig
+            otherConfig.value = res.data
             if (res.data?.webConfig) {
                 zqyFlowRef.value.initCellList(res.data.webConfig)
             }
@@ -575,10 +577,12 @@ function inputEvent(e: string) {
 function showConfigDetail() {
     workflowConfigRef.value.showModal((data: any) => {
         return new Promise((resolve: any, reject: any) => {
-            SaveWorkflowConfigData({
+            const saveParam = {
                 workflowId: workFlowData.value.id,
-                cronConfig: data
-            }).then((res: any) => {
+                ...data,
+                invokeStatus: data.invokeStatus ? 'ON' : 'OFF'
+            }
+            SaveWorkflowConfigData(saveParam).then((res: any) => {
                 initFlowData()
                 ElMessage.success(res.msg)
                 resolve()
@@ -586,7 +590,10 @@ function showConfigDetail() {
                 reject(err)
             })
         })
-    }, cronConfig.value)
+    }, {
+        cronConfig: cronConfig.value,
+        ...otherConfig.value
+    })
 }
 
 // 节点运行日志
