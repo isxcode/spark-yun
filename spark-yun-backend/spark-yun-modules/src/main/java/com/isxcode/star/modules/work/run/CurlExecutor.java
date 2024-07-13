@@ -1,9 +1,11 @@
 package com.isxcode.star.modules.work.run;
 
-import cn.hutool.core.collection.CollectionUtil;
-import com.alibaba.fastjson.JSON;
+import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.util.RuntimeUtil;
 import com.isxcode.star.api.work.constants.WorkLog;
 import com.isxcode.star.api.work.exceptions.WorkRunException;
+import com.isxcode.star.backend.api.base.properties.IsxAppProperties;
+import com.isxcode.star.common.utils.path.PathUtils;
 import com.isxcode.star.modules.work.entity.WorkInstanceEntity;
 import com.isxcode.star.modules.work.repository.WorkInstanceRepository;
 import com.isxcode.star.modules.workflow.repository.WorkflowInstanceRepository;
@@ -11,20 +13,20 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.stereotype.Service;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
+import java.io.File;
 import java.time.LocalDateTime;
-import java.util.*;
 
 @Service
 @Slf4j
 public class CurlExecutor extends WorkExecutor {
 
+	private final IsxAppProperties isxAppProperties;
+
 	public CurlExecutor(WorkInstanceRepository workInstanceRepository,
-			WorkflowInstanceRepository workflowInstanceRepository) {
+			WorkflowInstanceRepository workflowInstanceRepository, IsxAppProperties isxAppProperties) {
 
 		super(workInstanceRepository, workflowInstanceRepository);
+		this.isxAppProperties = isxAppProperties;
 	}
 
 	public void execute(WorkRunContext workRunContext, WorkInstanceEntity workInstance) {
@@ -35,111 +37,45 @@ public class CurlExecutor extends WorkExecutor {
 		// 判断执行脚本是否为空
 		logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("检测脚本内容 \n");
 		if (Strings.isEmpty(workRunContext.getScript())) {
-			throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "检测脚本失败 : CURL内容为空不能执行  \n");
+			throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "检测脚本失败 : Curl内容为空不能执行  \n");
 		}
-		logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("执行内容: \n");
-		logBuilder.append(workRunContext.getScript()).append("\n");
 
 		// 脚本检查通过
 		logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始执行作业 \n");
+		logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("执行作业内容: \n")
+				.append(workRunContext.getScript()).append("\n");
 		workInstance = updateInstance(workInstance, logBuilder);
 
-		// curl请求结果, 成功日志, 失败日志
-		boolean result;
-		List<String> resultList = new ArrayList<>();
-		List<String> errorList = new ArrayList<>();
-		try {
+		// 将脚本推送到本地
+		String bashFile = PathUtils.parseProjectPath(isxAppProperties.getResourcesPath()) + File.separator + "work"
+				+ File.separator + workRunContext.getTenantId() + File.separator + workInstance.getId() + ".sh";
+		FileUtil.writeUtf8String(workRunContext.getScript() + " \\\n && echo 'zhiqingyun_success'", bashFile);
 
-			ProcessBuilder processBuilder = new ProcessBuilder(generateCommandList(workRunContext.getScript()));
-			Process process = processBuilder.start();
+		// 执行命令
+    String executeBashWorkCommand = "bash " + PathUtils.parseProjectPath(isxAppProperties.getResourcesPath())
+      + File.separator + "work" + File.separator + workRunContext.getTenantId() + File.separator
+      + workInstance.getId() + ".sh";
+		String result = RuntimeUtil.execForStr(executeBashWorkCommand);
 
-			BufferedReader resultReader = new BufferedReader(
-					new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8));
-			BufferedReader errorReader = new BufferedReader(
-					new InputStreamReader(process.getErrorStream(), StandardCharsets.UTF_8));
-
-			String line;
-			while ((line = resultReader.readLine()) != null) {
-				resultList.add(line);
-			}
-			while ((line = errorReader.readLine()) != null) {
-				errorList.add(line);
-			}
-			process.waitFor();
-
-			// 判断请求状态, 保存运行结果
-			if (process.exitValue() == 0 || (process.exitValue() == 3 && CollectionUtil.isNotEmpty(resultList)
-					&& errorList.contains("curl: (3) URL rejected: Malformed input to a URL function"))) {
-				result = true;
-				workInstance.setResultData(JSON.toJSONString(resultList));
-			} else {
-				result = false;
-				workInstance.setResultData(JSON.toJSONString(errorList));
-			}
-			logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("保存结果成功 \n");
-
-			resultReader.close();
-			process.destroy();
-		} catch (Exception e) {
-			log.debug(e.getMessage(), e);
-			throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "作业执行异常 : " + e.getMessage() + "\n");
-		}
-
-		if (!result) {
-			throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "执行失败 \n");
-		}
+		// 保存运行日志
+		workInstance.setYarnLog(result.replace("&& echo 'zhiqingyun_success'", "").replace("zhiqingyun_success", ""));
+		logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("保存结果成功 \n");
 		updateInstance(workInstance, logBuilder);
-	}
 
-	private List<String> generateCommandList(final String command) {
-
-		int index = 0;
-		boolean isApos = false;
-		boolean isQuote = false;
-
-		List<String> commands = new ArrayList<>();
-		StringBuilder buffer = new StringBuilder(command.length());
-
-		while (index < command.length()) {
-			final char c = command.charAt(index);
-
-			switch (c) {
-				case ' ' :
-					if (!isQuote && !isApos) {
-						String arg = buffer.toString();
-						buffer = new StringBuilder(command.length() - index);
-						if (!arg.isEmpty()) {
-							commands.add(arg);
-						}
-					} else {
-						buffer.append(c);
-					}
-					break;
-				case '\'' :
-					if (!isQuote) {
-						isApos = !isApos;
-					} else {
-						buffer.append(c);
-					}
-					break;
-				case '"' :
-					if (!isApos) {
-						isQuote = !isQuote;
-					} else {
-						buffer.append(c);
-					}
-					break;
-				default :
-					buffer.append(c);
-			}
-			index++;
+		// 删除脚本和日志
+		try {
+			String clearWorkRunFile = "rm -f " + PathUtils.parseProjectPath(isxAppProperties.getResourcesPath())
+					+ File.separator + "work" + File.separator + workRunContext.getTenantId() + File.separator
+					+ workInstance.getId() + ".sh";
+			RuntimeUtil.execForStr(clearWorkRunFile);
+		} catch (Exception e) {
+			log.error("删除运行脚本失败");
 		}
 
-		if (buffer.length() > 0) {
-			String arg = buffer.toString();
-			commands.add(arg);
+		// 判断脚本运行成功还是失败
+		if (!result.contains("zhiqingyun_success") || result.contains("echo 'zhiqingyun_success'")) {
+			throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "任务运行异常" + "\n");
 		}
-		return commands;
 	}
 
 	@Override
