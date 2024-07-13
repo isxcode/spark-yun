@@ -15,6 +15,7 @@ import com.isxcode.star.api.work.constants.WorkStatus;
 import com.isxcode.star.api.work.pojos.dto.CronConfig;
 import com.isxcode.star.api.work.pojos.req.GetWorkflowDefaultClusterReq;
 import com.isxcode.star.api.work.pojos.res.GetWorkflowDefaultClusterRes;
+import com.isxcode.star.api.workflow.constants.WorkflowExternalCallStatus;
 import com.isxcode.star.api.workflow.constants.WorkflowStatus;
 import com.isxcode.star.api.workflow.pojos.dto.WorkInstanceInfo;
 import com.isxcode.star.api.workflow.pojos.dto.WorkflowToken;
@@ -134,6 +135,7 @@ public class WorkflowBizService {
 		WorkflowConfigEntity workflowConfig = new WorkflowConfigEntity();
 		workflowConfig.setCronConfig(
 				JSON.toJSONString(CronConfig.builder().setMode(SetMode.SIMPLE).type("ALL").enable(false).build()));
+    workflowConfig.setInvokeStatus(WorkflowExternalCallStatus.OFF);
 		workflowConfig = workflowConfigRepository.save(workflowConfig);
 
 		// 工作流绑定配置
