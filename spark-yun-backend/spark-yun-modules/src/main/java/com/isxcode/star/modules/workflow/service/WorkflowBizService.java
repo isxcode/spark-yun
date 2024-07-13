@@ -135,7 +135,7 @@ public class WorkflowBizService {
 		WorkflowConfigEntity workflowConfig = new WorkflowConfigEntity();
 		workflowConfig.setCronConfig(
 				JSON.toJSONString(CronConfig.builder().setMode(SetMode.SIMPLE).type("ALL").enable(false).build()));
-    workflowConfig.setInvokeStatus(WorkflowExternalCallStatus.OFF);
+		workflowConfig.setInvokeStatus(WorkflowExternalCallStatus.OFF);
 		workflowConfig = workflowConfigRepository.save(workflowConfig);
 
 		// 工作流绑定配置
