@@ -178,6 +178,26 @@
               </template>
             </el-form>
           </div>
+          <!-- 外部调用 -->
+          <div class="config-item">
+            <div class="item-title">外部调用</div>
+            <el-form
+              label-position="left"
+              label-width="120px"
+              :model="otherConfig"
+            >
+              <el-form-item label="启用">
+                <el-switch v-model="otherConfig.invokeStatus" />
+              </el-form-item>
+              <el-form-item v-if="otherConfig.invokeUrl" label="调用链接" class="invoke-url-copy">
+                <el-input v-model="otherConfig.invokeUrl" :disabled="true" />
+                <span
+                  class="invoke-url-copy__text"
+                  @click="copyUrlEvent(otherConfig.invokeUrl)"
+                >复制</span>
+              </el-form-item>
+            </el-form>
+          </div>
         </div>
       </el-scrollbar>
   </BlockDrawer>
@@ -251,6 +271,11 @@ const state = reactive({
   monthsText: '',
   yearsText: ''
 })
+// 外部调用
+let otherConfig = reactive({
+  invokeStatus: false,
+  invokeUrl: ''
+})
 
 const cron = computed(() => {
   return `${state.secondsText || '*'} ${state.minutesText || '*'} ${state.hoursText || '*'} ${
@@ -272,8 +297,10 @@ function showModal(cb: () => void, data: any) {
     cronConfig.setMode = 'SIMPLE'
   } else {
     Object.keys(cronConfig).forEach((key: string) => {
-      cronConfig[key] = data[key]
+      cronConfig[key] = data.cronConfig[key]
     })
+    otherConfig.invokeStatus = data.invokeStatus === 'OFF' || !data.invokeStatus ? false : true
+    otherConfig.invokeUrl = data.invokeUrl
   }
 
   drawerConfig.visible = true;
@@ -288,8 +315,11 @@ function okEvent() {
         state.daysText || '*'
       } ${state.monthsText || '*'} ${state.weeksText || '?'} ${state.yearsText || '*'}`
       callback.value({
-        ...cronConfig,
-        cron: cronConfig.setMode === 'SIMPLE' ? cron : cronConfig.cron
+        cronConfig: {
+          ...cronConfig,
+          cron: cronConfig.setMode === 'SIMPLE' ? cron : cronConfig.cron,
+        },
+        ...otherConfig
       }).then((res: any) => {
         drawerConfig.okConfig.loading = false
         if (res === undefined) {
@@ -357,6 +387,19 @@ function cronTypeChange(e: string) {
   cronConfig.cron = ''
 }
 
+async function copyUrlEvent(text: string) {
+  try {
+    await navigator.clipboard.writeText(text);
+    ElMessage({
+      duration: 800,
+      message: '复制成功',
+      type: 'success',
+    });
+  } catch (err) {
+    console.error("Failed to copy: ", err);
+  }
+}
+
 defineExpose({
   showModal,
 })
@@ -379,6 +422,22 @@ defineExpose({
         .el-form-item__content {
           .el-radio-group {
             justify-content: flex-end;
+          }
+        }
+        &.invoke-url-copy {
+          .el-input {
+            width: calc(100% - 36px);
+          }
+          .invoke-url-copy__text {
+            position: absolute;
+            right: 0;
+            font-size: 12px;
+            color: getCssVar('color', 'primary');
+            cursor: pointer;
+            user-select: none;
+            &:hover {
+              text-decoration: underline;
+            }
           }
         }
       }
