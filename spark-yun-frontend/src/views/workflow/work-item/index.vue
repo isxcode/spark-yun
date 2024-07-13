@@ -199,7 +199,7 @@ function initData(id?: string, tableLoading?: boolean) {
                 item.hide = status === 'FAIL' ? true : false
               }
             })
-          } else if (['BASH', 'PYTHON'].includes(workConfig.workType)) {
+          } else if (['BASH', 'PYTHON', 'CURL'].includes(workConfig.workType)) {
             tabList.forEach((item: any) => {
               if (!['ReturnData'].includes(item.code)) {
                 item.hide = false
