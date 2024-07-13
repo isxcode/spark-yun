@@ -182,6 +182,7 @@ import { BreadCrumbList, TableConfig, TableConfigWorkFlow } from './schedule.con
 import { GetScheduleList, DeleteScheduleLog, ReStartRunning, GetScheduleWorkFlowList } from '@/services/schedule.service'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { ReRunWorkflow, StopWorkflowData } from '@/services/workflow.service'
+import { TypeList } from '../workflow/workflow.config'
 
 const breadCrumbList = reactive(BreadCrumbList)
 const tableConfig: any = reactive(TableConfig)
@@ -216,6 +217,11 @@ function initData(tableLoading?: boolean) {
         loading.value = false
         tableConfigWorkFlow.loading = false
         networkError.value = true
+
+        if (timer.value) {
+          clearInterval(timer.value)
+        }
+        timer.value = null
       })
   } else {
     GetScheduleList({
@@ -236,6 +242,11 @@ function initData(tableLoading?: boolean) {
         loading.value = false
         tableConfig.loading = false
         networkError.value = true
+
+        if (timer.value) {
+          clearInterval(timer.value)
+        }
+        timer.value = null
       })
   }
 }
@@ -293,40 +304,7 @@ function getTypeData(e: string) {
   if (!e) {
     return
   }
-  const typeList = [
-    {
-      label: 'Jdbc执行作业',
-      value: 'EXE_JDBC'
-    },
-    {
-      label: 'Jdbc查询作业',
-      value: 'QUERY_JDBC'
-    },
-    {
-      label: 'SparkSql查询作业',
-      value: 'SPARK_SQL'
-    },
-    {
-      label: 'SparkSql容器作业',
-      value: 'SPARK_CONTAINER_SQL'
-    },
-    {
-      label: '数据同步作业',
-      value: 'DATA_SYNC_JDBC'
-    },
-    {
-      label: 'bash作业',
-      value: 'BASH'
-    },
-    {
-      label: 'python作业',
-      value: 'PYTHON'
-    },
-    {
-      label: '自定义作业',
-      value: 'SPARK_JAR'
-    }
-  ]
+  const typeList = [...TypeList]
   return typeList.find(itme => itme.value === e)?.label
 }
 
