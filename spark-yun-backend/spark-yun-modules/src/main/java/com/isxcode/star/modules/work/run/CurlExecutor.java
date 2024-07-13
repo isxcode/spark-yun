@@ -52,9 +52,9 @@ public class CurlExecutor extends WorkExecutor {
 		FileUtil.writeUtf8String(workRunContext.getScript() + " \\\n && echo 'zhiqingyun_success'", bashFile);
 
 		// 执行命令
-    String executeBashWorkCommand = "bash " + PathUtils.parseProjectPath(isxAppProperties.getResourcesPath())
-      + File.separator + "work" + File.separator + workRunContext.getTenantId() + File.separator
-      + workInstance.getId() + ".sh";
+		String executeBashWorkCommand = "bash " + PathUtils.parseProjectPath(isxAppProperties.getResourcesPath())
+				+ File.separator + "work" + File.separator + workRunContext.getTenantId() + File.separator
+				+ workInstance.getId() + ".sh";
 		String result = RuntimeUtil.execForStr(executeBashWorkCommand);
 
 		// 保存运行日志
