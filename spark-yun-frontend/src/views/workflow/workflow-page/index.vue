@@ -13,7 +13,7 @@
                             <Switch />
                         </el-icon>
                         <template #dropdown>
-                            <el-dropdown-menu>
+                            <el-dropdown-menu style="max-height: 300px">
                                 <el-dropdown-item @click="changeWorkFlow(workFlow)" v-for="workFlow in workFlowList">{{ workFlow.name }}</el-dropdown-item>
                             </el-dropdown-menu>
                         </template>

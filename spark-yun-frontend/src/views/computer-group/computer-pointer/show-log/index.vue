@@ -1,7 +1,7 @@
 <template>
     <BlockModal :model-config="modelConfig" @close="closeEvent">
         <div id="content" class="content-box">
-            <pre v-if="logMsg" ref="preContentRef">{{ logMsg }}</pre>
+            <LogContainer v-if="logMsg" :logMsg="logMsg" :status="true"></LogContainer>
         </div>
     </BlockModal>
 </template>
@@ -13,8 +13,6 @@ import { GetComputerPointDetailData } from '@/services/computer-group.service';
 
 const logMsg = ref('')
 const timer = ref(null)
-const preContentRef = ref(null)
-const position = ref(true)
 
 const modelConfig = reactive({
     title: '日志',
@@ -53,26 +51,10 @@ function getLogData(id: string) {
         clusterNodeId: id
     }).then((res: any) => {
         logMsg.value = res.data.agentLog
-        if (position.value) {
-            nextTick(() => {
-                scrollToButtom()
-            })
-        }
     }).catch((err: any) => {
         console.log('err', err)
         logMsg.value = ''
     })
-}
-
-function scrollToButtom() {
-  if (preContentRef.value) {
-    document.getElementById('content').scrollTop = preContentRef.value?.scrollHeight // 滚动高度
-  }
-}
-function mousewheelEvent(e: any) {
-  if (!(e.deltaY > 0)) {
-    position.value = false
-  }
 }
 
 function closeEvent() {
@@ -83,34 +65,7 @@ function closeEvent() {
     modelConfig.visible = false
 }
 
-onUnmounted(() => {
-    
-})
-
-
 defineExpose({
     showModal
 })
 </script>
-  
-<style lang="scss">
-.zqy-log-modal {
-    .modal-content {
-        .content-box {
-            min-height: 60vh;
-            max-height: 60vh;
-            padding: 12px 20px;
-            box-sizing: border-box;
-            overflow: auto;
-
-            pre {
-                color: getCssVar('text-color', 'primary');
-                font-size: 12px;
-                line-height: 21px;
-                margin: 0;
-            }
-        }
-    }
-}
-</style>
-  
