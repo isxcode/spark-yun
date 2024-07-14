@@ -19,4 +19,10 @@ public class FileService {
 
 		return fileRepository.findById(fileId).orElseThrow(() -> new IsxAppException("资源不存在"));
 	}
+
+	public String getFileName(String fileId) {
+
+		FileEntity fileEntity = fileRepository.findById(fileId).orElse(null);
+		return fileEntity == null ? fileId : fileEntity.getFileName();
+	}
 }
