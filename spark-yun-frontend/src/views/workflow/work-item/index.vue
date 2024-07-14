@@ -19,7 +19,7 @@
               </el-icon>
               <span class="btn-text">运行</span>
             </div>
-            <div class="btn-box" @click="terWorkData">
+            <div v-if="workConfig.workType === 'SPARK_SQL'" class="btn-box" @click="terWorkData">
               <el-icon v-if="!terLoading">
                 <Close />
               </el-icon>
@@ -70,25 +70,14 @@
           </div>
           <code-mirror v-model="sqltextData" basic :lang="workConfig.workType === 'PYTHON' ? pythonLang : lang" @change="sqlConfigChange"/>
         </div>
-        <!-- 查看日志部分  v-if="instanceId" -->
-        <el-collapse v-model="collapseActive" class="work-item-log__collapse" ref="logCollapseRef">
-            <el-collapse-item title="查看日志" :disabled="true" name="1">
-                <template #title>
-                    <el-tabs v-model="activeName" @tab-change="tabChangeEvent">
-                        <template v-for="tab in tabList" :key="tab.code">
-                        <el-tab-pane v-if="!tab.hide" :label="tab.name" :name="tab.code" />
-                        </template>
-                    </el-tabs>
-                    <span class="log__collapse">
-                        <el-icon v-if="isCollapse" @click="changeCollapseDown"><ArrowDown /></el-icon>
-                        <el-icon v-else @click="changeCollapseUp"><ArrowUp /></el-icon>
-                    </span>
-                </template>
-                <div class="log-show">
-                    <component :is="currentTab" ref="containerInstanceRef" class="show-container" />
-                </div>
-            </el-collapse-item>
-        </el-collapse>
+        <div class="log-show">
+          <el-tabs v-model="activeName" @tab-change="tabChangeEvent">
+            <template v-for="tab in tabList" :key="tab.code">
+              <el-tab-pane v-if="!tab.hide" :label="tab.name" :name="tab.code" />
+            </template>
+          </el-tabs>
+          <component :is="currentTab" ref="containerInstanceRef" class="show-container" />
+        </div>
       </div>
     </LoadingPage>
     <!-- <ConfigModal ref="configModalRef" /> -->
@@ -98,7 +87,7 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, ref, onMounted, markRaw, nextTick, onUnmounted } from 'vue'
+import { reactive, ref, onMounted, markRaw, nextTick } from 'vue'
 import Breadcrumb from '@/layout/bread-crumb/index.vue'
 import LoadingPage from '@/components/loading/index.vue'
 // import ConfigModal from './config-modal/index.vue'
@@ -115,7 +104,6 @@ import { DeleteWorkData, GetWorkItemConfig, PublishWorkData, RunWorkItemConfig, 
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useRoute, useRouter } from 'vue-router'
 import { Loading } from '@element-plus/icons-vue'
-import ResizeEngine from '@/utils/resize-engine'
 
 const route = useRoute()
 const router = useRouter()
@@ -142,9 +130,6 @@ const currentTab = ref()
 const sqltextData = ref('')
 const instanceId = ref('')
 const changeStatus = ref(false)
-const logCollapseRef = ref()  // 折叠日志
-const collapseActive = ref('0')
-const isCollapse = ref(false)
 
 const containerInstanceRef = ref(null)
 
@@ -216,7 +201,7 @@ function initData(id?: string, tableLoading?: boolean) {
                   item.hide = status === 'FAIL' ? true : false
                 }
               })
-            } else if (['BASH', 'PYTHON'].includes(workConfig.workType)) {
+            } else if (['BASH', 'PYTHON', 'CURL'].includes(workConfig.workType)) {
               tabList.forEach((item: any) => {
                 if (!['ReturnData'].includes(item.code)) {
                   item.hide = false
@@ -299,9 +284,10 @@ function runWorkData() {
           instanceId.value = res.data.instanceId
           ElMessage.success(res.msg)
           initData(res.data.instanceId, true)
-          nextTick(() => {
-            changeCollapseUp()
-          })
+
+          // 点击运行，默认跳转到提交日志tab
+          activeName.value = 'PublishLog'
+          currentTab.value = markRaw(PublishLog)
         })
         .catch(() => {
           runningLoading.value = false
@@ -322,9 +308,10 @@ function runWorkData() {
         instanceId.value = res.data.instanceId
         ElMessage.success(res.msg)
         initData(res.data.instanceId, true)
-        nextTick(() => {
-          changeCollapseUp()
-        })
+
+        // 点击运行，默认跳转到提交日志tab
+        activeName.value = 'PublishLog'
+        currentTab.value = markRaw(PublishLog)
       })
       .catch(() => {
         runningLoading.value = false
@@ -413,27 +400,11 @@ function sqlConfigChange(e: string) {
   changeStatus.value = true
 }
 
-function changeCollapseDown() {
-    logCollapseRef.value.setActiveNames('0')
-    isCollapse.value = false
-}
-function changeCollapseUp() {
-    logCollapseRef.value.setActiveNames('1')
-    isCollapse.value = true
-}
-
 onMounted(() => {
   initData()
   activeName.value = 'PublishLog'
   currentTab.value = markRaw(PublishLog)
-
-  // resizeEngine = new ResizeEngine('workItemCodeArea', 'workItemCodeContainer', 's')
-  // resizeEngine.setElementResize()
 })
-
-// onUnmounted(() => {
-//   resizeEngine.removeElementResize()
-// })
 </script>
 
 <style lang="scss">
@@ -441,16 +412,14 @@ onMounted(() => {
   .zqy-loading {
     padding: 0 20px;
     box-sizing: border-box;
-    height: calc(100vh - 52px);
-    overflow: auto;
-    background-color: getCssVar('color', 'white');
+    height: calc(100vh - 55px);
   }
 
   .zqy-work-container {
     .sql-code-container {
       .vue-codemirror {
-        height: calc(100vh - 170px);
-        // height: 190px;
+        // height: calc(100vh - 544px);
+        height: 190px;
         .cm-editor {
           height: 100%;
           outline: none;
@@ -526,97 +495,26 @@ onMounted(() => {
       }
     }
 
-    .work-item-log__collapse {
-        position: absolute;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        z-index: 100;
-
-        .el-collapse-item__header {
-            // padding-left: 20px;
-            cursor: default;
-        }
-        .el-collapse-item__arrow {
-            display: none;
-        }
-        .el-collapse-item__content {
-            padding-bottom: 14px;
+    .log-show {
+      .el-tabs {
+        .el-tabs__item {
+          font-size: getCssVar('font-size', 'extra-small');
         }
 
-        .log__collapse {
-            position: absolute;
-            right: 20px;
-            cursor: pointer;
+        .el-tabs__content {
+          height: 0;
         }
 
-        .el-tabs {
-            width: 100%;
-            // padding: 0 20px;
-            height: 40px;
-            box-sizing: border-box;
-            .el-tabs__item {
-                font-size: getCssVar('font-size', 'extra-small');
-            }
-
-            .el-tabs__nav-scroll {
-                padding-left: 20px;
-                box-sizing: border-box;
-            }
-
-            .el-tabs__content {
-                height: 0;
-            }
-
-            .el-tabs__nav-scroll {
-                border-bottom: 1px solid getCssVar('border-color');
-            }
+        .el-tabs__nav-scroll {
+          border-bottom: 1px solid getCssVar('border-color');
         }
-        .log-show {
-            padding: 0 20px;
-            box-sizing: border-box;
-            height: calc(100vh - 308px);
-            padding-top: 8px;
+      }
 
-            pre {
-                width: 100px;
-            }
-
-            .show-container {
-                // height: calc(100vh - 368px);
-                overflow: auto;
-            }
-
-            .empty-page {
-                height: 80%;
-            }
-
-            .vxe-table--body-wrapper {
-              max-height: calc(100vh - 360px);
-            }
-        }
+      .show-container {
+        height: calc(100vh - 368px);
+        overflow: auto;
+      }
     }
-
-    // .log-show {
-    //   .el-tabs {
-    //     .el-tabs__item {
-    //       font-size: getCssVar('font-size', 'extra-small');
-    //     }
-
-    //     .el-tabs__content {
-    //       height: 0;
-    //     }
-
-    //     .el-tabs__nav-scroll {
-    //       border-bottom: 1px solid getCssVar('border-color');
-    //     }
-    //   }
-
-    //   .show-container {
-    //     height: calc(100vh - 368px);
-    //     overflow: auto;
-    //   }
-    // }
   }
 }
 </style>
