@@ -591,6 +591,7 @@ function showConfigDetail() {
             })
         })
     }, {
+        workflowId: workFlowData.value.id,
         cronConfig: cronConfig.value,
         ...otherConfig.value
     })

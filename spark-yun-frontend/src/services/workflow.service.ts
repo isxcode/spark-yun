@@ -286,3 +286,12 @@ export function ReRunWorkflow(params: any): Promise<any> {
     params: params
   })
 }
+
+// 外部调用获取链接
+export function GetInvokeUrl(params: any): Promise<any> {
+  return http.request({
+    method: 'post',
+    url: '/workflow/getInvokeUrl',
+    params: params
+  })
+}
