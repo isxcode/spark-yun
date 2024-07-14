@@ -186,7 +186,7 @@ function showModal(cb: () => void, data: any): void {
   } else {
     formData.name = ''
     formData.host = ''
-    formData.port = ''
+    formData.port = '22'
     formData.username = ''
     formData.passwd = ''
     formData.agentHomePath = ''
@@ -209,7 +209,7 @@ function testFun() {
     testLoading.value = true
     TestComputerPointHostData({
       host: formData.host,
-      port: formData.port,
+      port: formData.port || '22',
       username: formData.username,
       passwd: formData.passwd
     }).then((res: any) => {
