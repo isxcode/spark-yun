@@ -212,6 +212,7 @@ const workFlowData = ref({
 })
 const cronConfig = ref()
 const alarmList = ref([])
+const otherConfig = ref()
 const workflowInstanceId = ref('')
 const timer = ref()
 const runningStatus = ref(false)
@@ -469,6 +470,7 @@ function initFlowData() {
         }).then((res: any) => {
             cronConfig.value = res.data?.cronConfig
             alarmList.value = res.data?.alarmList
+            otherConfig.value = res.data
             if (res.data?.webConfig) {
                 zqyFlowRef.value.initCellList(res.data.webConfig)
             }
@@ -555,10 +557,12 @@ function inputEvent(e: string) {
 function showConfigDetail() {
     workflowConfigRef.value.showModal((data: any) => {
         return new Promise((resolve: any, reject: any) => {
-            SaveWorkflowConfigData({
+            const saveParam = {
                 workflowId: workFlowData.value.id,
-                ...data
-            }).then((res: any) => {
+                ...data,
+                invokeStatus: data.invokeStatus ? 'ON' : 'OFF'
+            }
+            SaveWorkflowConfigData(saveParam).then((res: any) => {
                 initFlowData()
                 ElMessage.success(res.msg)
                 resolve()
@@ -567,8 +571,10 @@ function showConfigDetail() {
             })
         })
     }, {
+        workflowId: workFlowData.value.id,
         cronConfig: cronConfig.value,
-        alarmList: alarmList.value
+        alarmList: alarmList.value,
+       ...otherConfig.value
     })
 }
 

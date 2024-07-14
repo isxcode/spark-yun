@@ -49,6 +49,8 @@ public class WorkflowConfigEntity {
 
 	private String alarmList;
 
+	private String invokeStatus;
+
 	@CreatedDate
 	private LocalDateTime createDateTime;
 

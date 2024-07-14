@@ -42,7 +42,7 @@
                     value-format="YYYY-MM-DD"
                   />
                 </el-form-item>
-  
+
                 <el-form-item label="cron表达式" prop="cron" v-if="cronConfig.setMode === 'ADVANCE'">
                   <el-input
                     v-model="cronConfig.cron"
@@ -195,6 +195,26 @@
               </el-form-item>
             </el-form>
           </div>
+          <!-- 外部调用 -->
+          <div class="config-item">
+            <div class="item-title">外部调用</div>
+            <el-form
+              label-position="left"
+              label-width="120px"
+              :model="otherConfig"
+            >
+              <el-form-item label="启用">
+                <el-switch v-model="otherConfig.invokeStatus" @change="getInvokeUrl" />
+              </el-form-item>
+              <el-form-item v-if="otherConfig.invokeUrl" label="调用链接" class="invoke-url-copy">
+                <el-input v-model="otherConfig.invokeUrl" :disabled="true" />
+                <span
+                  class="invoke-url-copy__text"
+                  @click="copyUrlEvent(otherConfig.invokeUrl)"
+                >复制</span>
+              </el-form-item>
+            </el-form>
+          </div>
         </div>
       </el-scrollbar>
   </BlockDrawer>
@@ -206,6 +226,7 @@ import { ElMessage, FormInstance, FormRules } from 'element-plus'
 import BlockDrawer from '@/components/block-drawer/index.vue'
 import {ScheduleRange, WeekDateList, CronConfigRules} from './config-detail'
 import { GetAlarmPagesList } from '@/services/message-center.service';
+import { GetInvokeUrl } from '@/services/workflow.service';
 
 const scheduleRange = ref(ScheduleRange);
 const weekDateList = ref(WeekDateList)
@@ -223,6 +244,7 @@ const callback = ref<any>()
   }
 ])
 const alarmConfigList = ref([])
+const workflowId = ref('')
 const cronConfigRules = reactive<FormRules>(CronConfigRules)
 const drawerConfig = reactive({
   title: '配置',
@@ -274,6 +296,11 @@ const state = reactive({
   monthsText: '',
   yearsText: ''
 })
+// 外部调用
+let otherConfig = reactive({
+  invokeStatus: false,
+  invokeUrl: ''
+})
 
 const cron = computed(() => {
   return `${state.secondsText || '*'} ${state.minutesText || '*'} ${state.hoursText || '*'} ${
@@ -294,10 +321,13 @@ function showModal(cb: () => void, data: any) {
   if (!data) {
     cronConfig.setMode = 'SIMPLE'
   } else {
+    workflowId.value = data.workflowId
     Object.keys(cronConfig).forEach((key: string) => {
       cronConfig[key] = data.cronConfig[key]
     })
     messageConfig.alarmList = data.alarmList
+    otherConfig.invokeStatus = data.invokeStatus === 'OFF' || !data.invokeStatus ? false : true
+    otherConfig.invokeUrl = data.invokeUrl
   }
   getAlarmConfigList()
 
@@ -330,7 +360,8 @@ function okEvent() {
           ...cronConfig,
           cron: cronConfig.setMode === 'SIMPLE' ? cron : cronConfig.cron,
         },
-        ...messageConfig
+        ...messageConfig,
+        ...otherConfig
       }).then((res: any) => {
         drawerConfig.okConfig.loading = false
         if (res === undefined) {
@@ -398,6 +429,32 @@ function cronTypeChange(e: string) {
   cronConfig.cron = ''
 }
 
+function getInvokeUrl(e: boolean) {
+  if (e) {
+    GetInvokeUrl({
+      workflowId: workflowId.value
+    }).then((res: any) => {
+      otherConfig.invokeUrl = res.data.url
+    }).catch((error: any) => {
+      otherConfig.invokeUrl = ''
+      console.error(error)
+    })
+  }
+}
+
+async function copyUrlEvent(text: string) {
+  try {
+    await navigator.clipboard.writeText(text);
+    ElMessage({
+      duration: 800,
+      message: '复制成功',
+      type: 'success',
+    });
+  } catch (err) {
+    console.error("Failed to copy: ", err);
+  }
+}
+
 defineExpose({
   showModal,
 })
@@ -423,6 +480,22 @@ defineExpose({
         .el-form-item__content {
           .el-radio-group {
             justify-content: flex-end;
+          }
+        }
+        &.invoke-url-copy {
+          .el-input {
+            width: calc(100% - 36px);
+          }
+          .invoke-url-copy__text {
+            position: absolute;
+            right: 0;
+            font-size: 12px;
+            color: getCssVar('color', 'primary');
+            cursor: pointer;
+            user-select: none;
+            &:hover {
+              text-decoration: underline;
+            }
           }
         }
       }

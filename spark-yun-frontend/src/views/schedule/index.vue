@@ -65,6 +65,13 @@
               >
                 调度执行
               </el-tag>
+              <el-tag
+                v-if="scopeSlot.row.instanceType === 'INVOKE' || scopeSlot.row.type === 'INVOKE'"
+                class="ml-2"
+                type="info"
+              >
+                外部调用
+              </el-tag>
             </div>
           </template>
           <template #typeSlot="scopeSlot">

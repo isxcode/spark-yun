@@ -5,10 +5,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class OnExternalCallRes {
+public class GetInvokeUrlRes {
 
 	private String url;
-
-	private String accessKey;
-
 }
