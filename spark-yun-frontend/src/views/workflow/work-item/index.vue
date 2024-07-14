@@ -496,6 +496,10 @@ onMounted(() => {
     }
 
     .log-show {
+      position: relative;
+      .zqy-download-log {
+        top: 13px;
+      }
       .el-tabs {
         .el-tabs__item {
           font-size: getCssVar('font-size', 'extra-small');

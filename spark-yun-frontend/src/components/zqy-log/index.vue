@@ -3,7 +3,7 @@
         <div id="content" class="content-box">
             <!-- 日志展示 -->
             <template v-if="['log', 'yarnLog'].includes(modalType)">
-                <pre v-if="logMsg" ref="preContentRef" @mousewheel="mousewheelEvent">{{ logMsg }}</pre>
+                <LogContainer v-if="logMsg" :logMsg="logMsg" :status="true"></LogContainer>
             </template>
             <!-- 结果展示 -->
             <template v-else-if="modalType === 'result'">
@@ -12,9 +12,9 @@
         </div>
     </BlockModal>
 </template>
-  
+
 <script lang="ts" setup>
-import { reactive, ref, nextTick, onUnmounted } from 'vue'
+import { reactive, ref, onUnmounted } from 'vue'
 import BlockModal from '../block-modal/index.vue'
 import BlockTable from '../block-table/index.vue'
 
@@ -23,9 +23,7 @@ import { GetLogData, GetYarnLogData, GetResultData } from '@/services/schedule.s
 const callback = ref<any>()
 const logMsg = ref('')
 const info = ref('')
-const position = ref(false)
 const timer = ref(null)
-const preContentRef = ref(null)
 const modalType = ref('')
 
 const tableConfig = reactive({
@@ -54,7 +52,6 @@ function showModal(cb: () => void, data: any): void {
     info.value = data.id
     modalType.value = data.type
     if (modalType.value === 'log') {
-        position.value = true
         getLogData()
         if (!timer.value) {
             timer.value = setInterval(() => {
@@ -67,7 +64,6 @@ function showModal(cb: () => void, data: any): void {
         modelConfig.width = '64%'
         modelConfig.title = '结果'
     } else if (modalType.value === 'yarnLog') {
-        position.value = true
         modelConfig.title = '运行日志'
         getYarnLogData()
     }
@@ -81,11 +77,6 @@ function getLogData() {
     })
         .then((res: any) => {
             logMsg.value = res.data.log
-            if (position.value) {
-                nextTick(() => {
-                    scrollToButtom()
-                })
-            }
             if (['SUCCESS', 'FAIL'].includes(res.data.status)) {
                 if (timer.value) {
                     clearInterval(timer.value)
@@ -105,11 +96,6 @@ function getYarnLogData() {
     })
         .then((res: any) => {
             logMsg.value = res.data.yarnLog
-            if (position.value) {
-                nextTick(() => {
-                    scrollToButtom()
-                })
-            }
             if (['SUCCESS', 'FAIL'].includes(res.data.status)) {
                 if (timer.value) {
                     clearInterval(timer.value)
@@ -157,18 +143,6 @@ function getResultDatalist() {
     })
 }
 
-function scrollToButtom() {
-    if (preContentRef.value) {
-        document.getElementById('content').scrollTop = preContentRef.value.scrollHeight // 滚动高度
-    }
-}
-
-function mousewheelEvent(e: any) {
-    if (!(e.deltaY > 0)) {
-        position.value = false
-    }
-}
-
 function closeEvent() {
     if (timer.value) {
         clearInterval(timer.value)
@@ -192,18 +166,16 @@ defineExpose({
 <style lang="scss">
 .zqy-log-modal {
     .modal-content {
+        position: relative;
         .content-box {
-            min-height: 60vh;
+            min-height: 59vh;
             max-height: 60vh;
             padding: 12px 20px;
             box-sizing: border-box;
             overflow: auto;
-
-            pre {
-                color: getCssVar('text-color', 'primary');
-                font-size: 12px;
-                line-height: 21px;
-                margin: 0;
+            .zqy-download-log {
+                top: 6px;
+                right: 20px;
             }
         }
     }

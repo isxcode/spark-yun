@@ -90,7 +90,7 @@
                         </el-form-item>
                     </el-form>
                 </div>
-                <div class="log-show">
+                <div class="log-show log-show-datasync">
                     <el-tabs v-model="activeName" @tab-change="tabChangeEvent">
                         <template v-for="tab in tabList" :key="tab.code">
                             <el-tab-pane v-if="!tab.hide" :label="tab.name" :name="tab.code" />
