@@ -116,7 +116,7 @@ public class WorkflowBizService {
 
 	private final LicenseStore licenseStore;
 
-  private final IsxAppProperties isxAppProperties;
+	private final IsxAppProperties isxAppProperties;
 
 	public WorkflowEntity getWorkflowEntity(String workflowId) {
 
