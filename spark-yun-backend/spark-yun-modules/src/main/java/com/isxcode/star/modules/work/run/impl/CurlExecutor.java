@@ -27,18 +27,19 @@ public class CurlExecutor extends WorkExecutor {
 	private final IsxAppProperties isxAppProperties;
 
 	public CurlExecutor(WorkInstanceRepository workInstanceRepository,
-			WorkflowInstanceRepository workflowInstanceRepository, IsxAppProperties isxAppProperties, AlarmService alarmService) {
+			WorkflowInstanceRepository workflowInstanceRepository, IsxAppProperties isxAppProperties,
+			AlarmService alarmService) {
 
-    super(workInstanceRepository, workflowInstanceRepository, alarmService);
+		super(workInstanceRepository, workflowInstanceRepository, alarmService);
 		this.isxAppProperties = isxAppProperties;
 	}
 
-  @Override
-  public String getWorkType() {
-    return WorkType.CURL;
-  }
+	@Override
+	public String getWorkType() {
+		return WorkType.CURL;
+	}
 
-  public void execute(WorkRunContext workRunContext, WorkInstanceEntity workInstance) {
+	public void execute(WorkRunContext workRunContext, WorkInstanceEntity workInstance) {
 
 		// 获取日志构造器
 		StringBuilder logBuilder = workRunContext.getLogBuilder();
