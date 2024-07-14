@@ -1,13 +1,17 @@
-package com.isxcode.star.modules.work.run;
+package com.isxcode.star.modules.work.run.impl;
 
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.RuntimeUtil;
 import com.isxcode.star.api.work.constants.WorkLog;
+import com.isxcode.star.api.work.constants.WorkType;
 import com.isxcode.star.api.work.exceptions.WorkRunException;
 import com.isxcode.star.backend.api.base.properties.IsxAppProperties;
 import com.isxcode.star.common.utils.path.PathUtils;
+import com.isxcode.star.modules.alarm.service.AlarmService;
 import com.isxcode.star.modules.work.entity.WorkInstanceEntity;
 import com.isxcode.star.modules.work.repository.WorkInstanceRepository;
+import com.isxcode.star.modules.work.run.WorkExecutor;
+import com.isxcode.star.modules.work.run.WorkRunContext;
 import com.isxcode.star.modules.workflow.repository.WorkflowInstanceRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
@@ -23,13 +27,18 @@ public class CurlExecutor extends WorkExecutor {
 	private final IsxAppProperties isxAppProperties;
 
 	public CurlExecutor(WorkInstanceRepository workInstanceRepository,
-			WorkflowInstanceRepository workflowInstanceRepository, IsxAppProperties isxAppProperties) {
+			WorkflowInstanceRepository workflowInstanceRepository, IsxAppProperties isxAppProperties, AlarmService alarmService) {
 
-		super(workInstanceRepository, workflowInstanceRepository);
+    super(workInstanceRepository, workflowInstanceRepository, alarmService);
 		this.isxAppProperties = isxAppProperties;
 	}
 
-	public void execute(WorkRunContext workRunContext, WorkInstanceEntity workInstance) {
+  @Override
+  public String getWorkType() {
+    return WorkType.CURL;
+  }
+
+  public void execute(WorkRunContext workRunContext, WorkInstanceEntity workInstance) {
 
 		// 获取日志构造器
 		StringBuilder logBuilder = workRunContext.getLogBuilder();
