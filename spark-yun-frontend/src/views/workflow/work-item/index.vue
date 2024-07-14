@@ -1,5 +1,4 @@
 <template>
-  <!-- <Breadcrumb :bread-crumb-list="breadCrumbList" /> -->
   <div class="zqy-work-item">
     <LoadingPage :visible="loading" :network-error="networkError" @loading-refresh="initData">
       <div class="zqy-work-container">
@@ -162,24 +161,6 @@ let workConfig = reactive({
   sparkConfig: ''
 })
 
-const breadCrumbList = reactive([
-  {
-    name: '作业流',
-    code: 'workflow'
-  },
-  {
-    name: '作业',
-    code: 'workflow-detail',
-    query: {
-      // id: route.query.workflowId
-      id: props.workFlowData.id
-    }
-  },
-  {
-    name: '作业详情',
-    code: 'work-item'
-  }
-])
 const tabList = reactive([
   {
     name: '提交日志',
