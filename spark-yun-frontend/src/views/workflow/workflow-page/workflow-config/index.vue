@@ -204,7 +204,7 @@
               :model="otherConfig"
             >
               <el-form-item label="启用">
-                <el-switch v-model="otherConfig.invokeStatus" />
+                <el-switch v-model="otherConfig.invokeStatus" @change="getInvokeUrl" />
               </el-form-item>
               <el-form-item v-if="otherConfig.invokeUrl" label="调用链接" class="invoke-url-copy">
                 <el-input v-model="otherConfig.invokeUrl" :disabled="true" />
@@ -226,6 +226,7 @@ import { ElMessage, FormInstance, FormRules } from 'element-plus'
 import BlockDrawer from '@/components/block-drawer/index.vue'
 import {ScheduleRange, WeekDateList, CronConfigRules} from './config-detail'
 import { GetAlarmPagesList } from '@/services/message-center.service';
+import { GetInvokeUrl } from '@/services/workflow.service';
 
 const scheduleRange = ref(ScheduleRange);
 const weekDateList = ref(WeekDateList)
@@ -243,6 +244,7 @@ const callback = ref<any>()
   }
 ])
 const alarmConfigList = ref([])
+const workflowId = ref('')
 const cronConfigRules = reactive<FormRules>(CronConfigRules)
 const drawerConfig = reactive({
   title: '配置',
@@ -319,6 +321,7 @@ function showModal(cb: () => void, data: any) {
   if (!data) {
     cronConfig.setMode = 'SIMPLE'
   } else {
+    workflowId.value = data.workflowId
     Object.keys(cronConfig).forEach((key: string) => {
       cronConfig[key] = data.cronConfig[key]
     })
@@ -424,6 +427,19 @@ function getCron() {
 
 function cronTypeChange(e: string) {
   cronConfig.cron = ''
+}
+
+function getInvokeUrl(e: boolean) {
+  if (e) {
+    GetInvokeUrl({
+      workflowId: workflowId.value
+    }).then((res: any) => {
+      otherConfig.invokeUrl = res.data.url
+    }).catch((error: any) => {
+      otherConfig.invokeUrl = ''
+      console.error(error)
+    })
+  }
 }
 
 async function copyUrlEvent(text: string) {

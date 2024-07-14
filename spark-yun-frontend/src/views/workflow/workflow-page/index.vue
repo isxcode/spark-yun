@@ -571,6 +571,7 @@ function showConfigDetail() {
             })
         })
     }, {
+        workflowId: workFlowData.value.id,
         cronConfig: cronConfig.value,
         alarmList: alarmList.value,
        ...otherConfig.value
