@@ -61,6 +61,7 @@ declare module 'vue' {
     ElUpload: typeof import('element-plus/es')['ElUpload']
     EmptyPage: typeof import('./src/components/empty-page/index.vue')['default']
     Loading: typeof import('./src/components/loading/index.vue')['default']
+    LogContainer: typeof import('./src/components/log-container/index.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     ZqyLog: typeof import('./src/components/zqy-log/index.vue')['default']

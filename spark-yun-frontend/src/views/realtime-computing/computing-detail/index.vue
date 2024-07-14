@@ -152,7 +152,7 @@
                         <el-icon v-else @click="changeCollapseUp"><ArrowUp /></el-icon>
                     </span>
                 </template>
-                <div class="log-show">
+                <div class="log-show log-show-download">
                     <component :is="currentTab" ref="containerInstanceRef" class="show-container" />
                 </div>
             </el-collapse-item>
@@ -541,5 +541,10 @@ onMounted(() => {
 </script>
 
 <style lang="scss">
-
+.log-show-download {
+    .zqy-download-log {
+        right: 40px;
+        top: 12px;
+    }
+}
 </style>
