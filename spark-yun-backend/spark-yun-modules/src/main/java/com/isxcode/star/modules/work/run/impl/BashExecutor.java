@@ -169,7 +169,7 @@ public class BashExecutor extends WorkExecutor {
 						LocalDateTime.now() + WorkLog.ERROR_INFO + "获取pid状态异常 : " + e.getMessage() + "\n");
 			}
 
-			// 保存作业运行状体
+			// 保存作业运行状态
 			logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("运行状态:").append(pidStatus)
 					.append("\n");
 			workInstance = updateInstance(workInstance, logBuilder);

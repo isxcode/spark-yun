@@ -28,7 +28,7 @@
             </el-form>
             <el-divider />
           </div>
-          <template v-else-if="!['SPARK_CONTAINER_SQL'].includes(workItemConfig.workType)">
+          <template v-else-if="!['SPARK_CONTAINER_SQL', 'CURL'].includes(workItemConfig.workType)">
             <!-- 资源配置 -->
             <div class="config-item" v-if="!['API'].includes(workItemConfig.workType)">
               <div class="item-title">资源配置</div>

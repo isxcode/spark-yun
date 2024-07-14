@@ -149,3 +149,50 @@ export const DetailTableConfig: TableConfig = {
   seqType: 'seq',
   loading: false
 }
+
+export const TypeList = [
+  {
+    label: 'Jdbc执行作业',
+    value: 'EXE_JDBC'
+  },
+  {
+    label: 'Jdbc查询作业',
+    value: 'QUERY_JDBC'
+  },
+  {
+    label: 'Prql查询作业',
+    value: 'PRQL'
+  },
+  {
+    label: 'Curl作业',
+    value: 'CURL'
+  },
+  {
+    label: 'SparkSql查询作业',
+    value: 'SPARK_SQL'
+  },
+  {
+    label: 'SparkSql容器作业',
+    value: 'SPARK_CONTAINER_SQL'
+  },
+  {
+    label: '数据同步作业',
+    value: 'DATA_SYNC_JDBC'
+  },
+  {
+    label: 'bash作业',
+    value: 'BASH'
+  },
+  {
+    label: 'python作业',
+    value: 'PYTHON'
+  },
+  {
+    label: '自定义作业',
+    value: 'SPARK_JAR'
+  },
+  {
+    label: '接口调用作业',
+    value: 'API'
+  }
+]

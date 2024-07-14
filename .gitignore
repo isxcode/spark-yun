@@ -13,6 +13,7 @@
 
 # .DS_Store不提交
 **/.DS_Store
+.DS_Store
 
 # 前端打包不提交
 spark-yun-backend/spark-yun-main/src/main/resources/templates/**
