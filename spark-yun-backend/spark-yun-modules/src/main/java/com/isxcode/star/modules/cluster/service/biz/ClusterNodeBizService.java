@@ -9,8 +9,10 @@ import com.isxcode.star.api.cluster.pojos.dto.ScpFileEngineNodeDto;
 import com.isxcode.star.api.cluster.pojos.req.*;
 import com.isxcode.star.api.cluster.pojos.res.EnoQueryNodeRes;
 import com.isxcode.star.api.cluster.pojos.res.GetClusterNodeRes;
+import com.isxcode.star.api.cluster.pojos.res.TestAgentRes;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.star.common.utils.AesUtils;
+import com.isxcode.star.common.utils.ssh.SshUtils;
 import com.isxcode.star.modules.cluster.entity.ClusterEntity;
 import com.isxcode.star.modules.cluster.entity.ClusterNodeEntity;
 import com.isxcode.star.modules.cluster.mapper.ClusterNodeMapper;
@@ -20,10 +22,12 @@ import com.isxcode.star.modules.cluster.run.*;
 import com.isxcode.star.modules.cluster.service.ClusterNodeService;
 import com.isxcode.star.modules.cluster.service.ClusterService;
 
+import java.io.IOException;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.jcraft.jsch.JSchException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
@@ -204,6 +208,24 @@ public class ClusterNodeBizService {
 
 		// 异步调用
 		runAgentCheckService.run(checkAgentReq.getEngineNodeId(), scpFileEngineNodeDto, TENANT_ID.get(), USER_ID.get());
+	}
+
+	public TestAgentRes testAgent(TestAgentReq testAgentReq) {
+
+		ScpFileEngineNodeDto scpFileEngineNodeDto = ScpFileEngineNodeDto.builder().host(testAgentReq.getHost())
+				.port(testAgentReq.getPort()).passwd(testAgentReq.getPasswd()).username(testAgentReq.getUsername())
+				.build();
+		String testAgent = "echo 'hello'";
+		try {
+			String testBack = SshUtils.executeCommand(scpFileEngineNodeDto, testAgent, false);
+			if ("hello\n".equals(testBack)) {
+				return TestAgentRes.builder().status("SUCCESS").log("链接成功").build();
+			} else {
+				return TestAgentRes.builder().status("FAIL").log(testBack).build();
+			}
+		} catch (JSchException | InterruptedException | IOException e) {
+			return TestAgentRes.builder().status("FAIL").log(e.getMessage()).build();
+		}
 	}
 
 	/**
