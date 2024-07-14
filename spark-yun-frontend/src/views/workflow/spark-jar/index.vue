@@ -298,6 +298,9 @@ function runWorkData() {
                 }
             })
             runningLoading.value = true
+            // 点击运行，默认跳转到提交日志tab
+            activeName.value = 'PublishLog'
+            currentTab.value = markRaw(PublishLog)
             RunWorkItemConfig({
                 workId: props.workItemConfig.id
             })
@@ -306,10 +309,6 @@ function runWorkData() {
                     instanceId.value = res.data.instanceId
                     ElMessage.success(res.msg)
                     initData(res.data.instanceId, true)
-
-                    // 点击运行，默认跳转到提交日志tab
-                    activeName.value = 'PublishLog'
-                    currentTab.value = markRaw(PublishLog)
                 })
                 .catch(() => {
                     runningLoading.value = false
