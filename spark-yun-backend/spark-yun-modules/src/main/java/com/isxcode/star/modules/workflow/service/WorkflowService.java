@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.isxcode.star.api.instance.constants.FlowInstanceStatus;
 import com.isxcode.star.api.instance.constants.InstanceStatus;
+import com.isxcode.star.api.instance.constants.InstanceType;
 import com.isxcode.star.api.work.constants.WorkLog;
 import com.isxcode.star.api.workflow.pojos.dto.WorkflowToken;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
@@ -16,9 +17,11 @@ import com.isxcode.star.modules.work.repository.WorkRepository;
 import com.isxcode.star.modules.workflow.entity.WorkflowConfigEntity;
 import com.isxcode.star.modules.workflow.entity.WorkflowEntity;
 import com.isxcode.star.modules.workflow.entity.WorkflowInstanceEntity;
+import com.isxcode.star.modules.workflow.entity.WorkflowVersionEntity;
 import com.isxcode.star.modules.workflow.repository.WorkflowConfigRepository;
 import com.isxcode.star.modules.workflow.repository.WorkflowInstanceRepository;
 import com.isxcode.star.modules.workflow.repository.WorkflowRepository;
+import com.isxcode.star.modules.workflow.repository.WorkflowVersionRepository;
 import com.isxcode.star.modules.workflow.run.WorkflowRunEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -54,6 +57,8 @@ public class WorkflowService {
 	private final IsxAppProperties isxAppProperties;
 
 	private final ServerProperties serverProperties;
+
+	private final WorkflowVersionRepository workflowVersionRepository;
 
 	public WorkInstanceEntity getWorkInstance(String workInstanceId) {
 
@@ -93,7 +98,7 @@ public class WorkflowService {
 	/**
 	 * 运行工作流，返回工作流实例id
 	 */
-	public String runWorkflow(String workflowId, String executeType) {
+	public String runWorkflow(String workflowId) {
 
 		// 获取工作流配置id
 		WorkflowEntity workflow = getWorkflow(workflowId);
@@ -111,8 +116,8 @@ public class WorkflowService {
 
 		// 创建工作流实例
 		WorkflowInstanceEntity workflowInstance = WorkflowInstanceEntity.builder().flowId(workflowId)
-				.webConfig(workflowConfig.getWebConfig()).status(FlowInstanceStatus.RUNNING).instanceType(executeType)
-				.execStartDateTime(new Date()).runLog(runLog).build();
+				.webConfig(workflowConfig.getWebConfig()).status(FlowInstanceStatus.RUNNING)
+				.instanceType(InstanceType.MANUAL).execStartDateTime(new Date()).runLog(runLog).build();
 		workflowInstance = workflowInstanceRepository.saveAndFlush(workflowInstance);
 
 		workflowInstanceRepository.setWorkflowLog(workflowInstance.getId(), runLog);
@@ -121,8 +126,9 @@ public class WorkflowService {
 		List<String> nodeList = JSON.parseArray(workflowConfig.getNodeList(), String.class);
 		List<WorkInstanceEntity> workInstances = new ArrayList<>();
 		for (String workId : nodeList) {
-			WorkInstanceEntity metaInstance = WorkInstanceEntity.builder().workId(workId).instanceType(executeType)
-					.status(InstanceStatus.PENDING).workflowInstanceId(workflowInstance.getId()).build();
+			WorkInstanceEntity metaInstance = WorkInstanceEntity.builder().workId(workId)
+					.instanceType(InstanceType.MANUAL).status(InstanceStatus.PENDING)
+					.workflowInstanceId(workflowInstance.getId()).build();
 			workInstances.add(metaInstance);
 		}
 		workInstanceRepository.saveAllAndFlush(workInstances);
@@ -142,6 +148,55 @@ public class WorkflowService {
 					.dagEndList(endNodes).dagStartList(startNodes).flowInstanceId(workflowInstance.getId())
 					.nodeMapping(nodeMapping).nodeList(nodeList).tenantId(TENANT_ID.get()).userId(USER_ID.get())
 					.build();
+			eventPublisher.publishEvent(metaEvent);
+		}
+
+		return workflowInstance.getId();
+	}
+
+	public String runInvokeWorkflow(String workflowId) {
+
+		// 获取工作流配置id
+		WorkflowEntity workflow = getWorkflow(workflowId);
+
+		// 获取工作流的版本信息
+		WorkflowVersionEntity workflowVersion = workflowVersionRepository.findById(workflow.getVersionId()).get();
+
+		// 初始化工作流实例
+		WorkflowInstanceEntity workflowInstance = WorkflowInstanceEntity.builder()
+				.flowId(workflowVersion.getWorkflowId()).status(FlowInstanceStatus.RUNNING)
+				.instanceType(InstanceType.INVOKE).versionId(workflow.getVersionId())
+				.webConfig(workflowVersion.getWebConfig()).execStartDateTime(new Date()).build();
+		workflowInstance = workflowInstanceRepository.saveAndFlush(workflowInstance);
+
+		// 初始化作业实例
+		List<String> nodeList = com.alibaba.fastjson.JSON.parseArray(workflowVersion.getNodeList(), String.class);
+		List<WorkInstanceEntity> workInstances = new ArrayList<>();
+		List<WorkEntity> allWorks = workRepository.findAllById(nodeList);
+		for (WorkEntity metaWork : allWorks) {
+			WorkInstanceEntity metaInstance = WorkInstanceEntity.builder().workId(metaWork.getId())
+					.versionId(metaWork.getVersionId()).instanceType(InstanceType.INVOKE).status(InstanceStatus.PENDING)
+					.quartzHasRun(true).workflowInstanceId(workflowInstance.getId()).build();
+			workInstances.add(metaInstance);
+		}
+
+		workInstanceRepository.saveAllAndFlush(workInstances);
+
+		// 直接执行一次作业流的点击
+		List<String> startNodes = com.alibaba.fastjson.JSON.parseArray(workflowVersion.getDagStartList(), String.class);
+		List<String> endNodes = com.alibaba.fastjson.JSON.parseArray(workflowVersion.getDagEndList(), String.class);
+		List<List<String>> nodeMapping = com.alibaba.fastjson.JSON.parseObject(workflowVersion.getNodeMapping(),
+				new TypeReference<List<List<String>>>() {
+				});
+
+		// 封装event推送时间，开始执行任务
+		// 异步触发工作流
+		List<WorkEntity> startNodeWorks = workRepository.findAllByWorkIds(startNodes);
+		for (WorkEntity work : startNodeWorks) {
+			WorkflowRunEvent metaEvent = WorkflowRunEvent.builder().workId(work.getId()).workName(work.getName())
+					.dagEndList(endNodes).dagStartList(startNodes).flowInstanceId(workflowInstance.getId())
+					.versionId(work.getVersionId()).nodeMapping(nodeMapping).nodeList(nodeList)
+					.tenantId(TENANT_ID.get()).userId(USER_ID.get()).build();
 			eventPublisher.publishEvent(metaEvent);
 		}
 
