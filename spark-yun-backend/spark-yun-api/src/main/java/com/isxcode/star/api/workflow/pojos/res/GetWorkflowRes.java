@@ -13,4 +13,8 @@ public class GetWorkflowRes {
 	private CronConfig cronConfig;
 
 	private List<String> alarmList;
+
+	private String invokeStatus;
+
+	private String invokeUrl;
 }

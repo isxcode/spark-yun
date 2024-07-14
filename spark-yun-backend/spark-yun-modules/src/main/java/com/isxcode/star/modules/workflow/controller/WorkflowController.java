@@ -196,20 +196,12 @@ public class WorkflowController {
 		return workflowConfigBizService.onExternalCall(onExternalCallReq, request);
 	}
 
-	@Operation(summary = "关闭外部调用作业流功能")
-	@PostMapping("/offExternalCall")
-	@SuccessResponse("保存成功")
-	public void offExternalCall(@Valid @RequestBody OffExternalCallReq offExternalCallReq) {
-
-		workflowConfigBizService.offExternalCall(offExternalCallReq);
-	}
-
 	@Operation(summary = "外部调用作业流")
-	@PostMapping("/invoke")
+	@PostMapping("/open/invokeWorkflow")
 	@SuccessResponse("调用成功")
-	public String invoke(@Valid @RequestBody InvokeReq invokeReq, HttpServletRequest request) {
+	public void invokeWorkflow(@Valid @RequestBody InvokeWorkflowReq invokeWorkflowReq) {
 
-		return workflowBizService.invoke(invokeReq, request);
+		workflowBizService.invokeWorkflow(invokeWorkflowReq);
 	}
 
 }
