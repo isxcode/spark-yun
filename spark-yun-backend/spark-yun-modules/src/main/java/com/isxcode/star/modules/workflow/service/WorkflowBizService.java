@@ -8,7 +8,6 @@ import static com.isxcode.star.common.config.CommonConfig.USER_ID;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.isxcode.star.api.instance.constants.InstanceStatus;
-import com.isxcode.star.api.instance.constants.InstanceType;
 import com.isxcode.star.api.work.constants.SetMode;
 import com.isxcode.star.api.work.constants.WorkLog;
 import com.isxcode.star.api.work.constants.WorkStatus;
@@ -186,7 +185,7 @@ public class WorkflowBizService {
 	 */
 	public String runWorkflow(RunWorkflowReq runWorkflowReq) {
 
-		return workflowService.runWorkflow(runWorkflowReq.getWorkflowId(), InstanceType.MANUAL);
+		return workflowService.runWorkflow(runWorkflowReq.getWorkflowId());
 	}
 
 	public GetRunWorkInstancesRes getRunWorkInstances(GetRunWorkInstancesReq getRunWorkInstancesReq) {
@@ -708,6 +707,11 @@ public class WorkflowBizService {
 		WorkflowEntity workflow = workflowService.getWorkflow(invokeWorkflowReq.getWorkflowId());
 		WorkflowConfigEntity workflowConfig = workflowService.getWorkflowConfig(workflow.getConfigId());
 
+		// 只能调用发布后的作业流
+		if (!WorkflowStatus.PUBLISHED.equals(workflow.getStatus())) {
+			throw new IsxAppException("未发布的作业流，无法远程调用");
+		}
+
 		// 判断是否启动外部调用
 		if (OFF.equals(workflowConfig.getInvokeStatus())) {
 			throw new IsxAppException("作业流未开启外部调用");
@@ -735,7 +739,7 @@ public class WorkflowBizService {
 		TENANT_ID.set(workflowToken.getTenantId());
 
 		// 调用作业流执行
-		workflowService.runWorkflow(invokeWorkflowReq.getWorkflowId(), InstanceType.INVOKE);
+		workflowService.runInvokeWorkflow(invokeWorkflowReq.getWorkflowId());
 	}
 
 	public GetInvokeUrlRes getInvokeUrl(GetInvokeUrlReq getInvokeUrlReq) {
