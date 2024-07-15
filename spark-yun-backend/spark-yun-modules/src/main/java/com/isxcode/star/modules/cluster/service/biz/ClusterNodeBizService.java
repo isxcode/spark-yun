@@ -110,7 +110,7 @@ public class ClusterNodeBizService {
             || ClusterNodeStatus.REMOVING.equals(clusterNode.getStatus())
             || ClusterNodeStatus.STARTING.equals(clusterNode.getStatus())
             || ClusterNodeStatus.STOPPING.equals(clusterNode.getStatus())) {
-            throw new IsxAppException("进行中，稍后再试");
+            throw new IsxAppException("当前状态无法操作，请稍后再试");
         }
 
         // 转换对象
@@ -180,7 +180,7 @@ public class ClusterNodeBizService {
             || ClusterNodeStatus.REMOVING.equals(engineNode.getStatus())
             || ClusterNodeStatus.STARTING.equals(engineNode.getStatus())
             || ClusterNodeStatus.STOPPING.equals(engineNode.getStatus())) {
-            throw new IsxAppException("进行中，稍后再试");
+            throw new IsxAppException("当前状态无法操作，请稍后再试");
         }
 
         // 转换请求节点检测对象
@@ -231,7 +231,7 @@ public class ClusterNodeBizService {
             || ClusterNodeStatus.STARTING.equals(clusterNode.getStatus())
             || ClusterNodeStatus.STOPPING.equals(clusterNode.getStatus())
             || ClusterNodeStatus.RUNNING.equals(clusterNode.getStatus())) {
-            throw new IsxAppException("进行中，稍后再试");
+            throw new IsxAppException("当前状态无法操作，请稍后再试");
         }
 
         // 将节点信息转成工具类识别对象
@@ -260,7 +260,7 @@ public class ClusterNodeBizService {
         if (ClusterNodeStatus.CHECKING.equals(engineNode.getStatus())
             || ClusterNodeStatus.INSTALLING.equals(engineNode.getStatus())
             || ClusterNodeStatus.REMOVING.equals(engineNode.getStatus())) {
-            throw new IsxAppException("进行中，稍后再试");
+            throw new IsxAppException("当前状态无法操作，请稍后再试");
         }
 
         // 将节点信息转成工具类识别对象
@@ -290,7 +290,7 @@ public class ClusterNodeBizService {
             || ClusterNodeStatus.REMOVING.equals(engineNode.getStatus())
             || ClusterNodeStatus.STARTING.equals(engineNode.getStatus())
             || ClusterNodeStatus.STOPPING.equals(engineNode.getStatus())) {
-            throw new IsxAppException("进行中，稍后再试");
+            throw new IsxAppException("当前状态无法操作，请稍后再试");
         }
 
         // 将节点信息转成工具类识别对象
@@ -315,7 +315,7 @@ public class ClusterNodeBizService {
             || ClusterNodeStatus.REMOVING.equals(engineNode.getStatus())
             || ClusterNodeStatus.STARTING.equals(engineNode.getStatus())
             || ClusterNodeStatus.STOPPING.equals(engineNode.getStatus())) {
-            throw new IsxAppException("进行中，稍后再试");
+            throw new IsxAppException("当前状态无法操作，请稍后再试");
         }
 
         // 将节点信息转成工具类识别对象
@@ -347,7 +347,7 @@ public class ClusterNodeBizService {
             || ClusterNodeStatus.REMOVING.equals(engineNode.getStatus())
             || ClusterNodeStatus.STARTING.equals(engineNode.getStatus())
             || ClusterNodeStatus.STOPPING.equals(engineNode.getStatus())) {
-            throw new IsxAppException("进行中，稍后再试");
+            throw new IsxAppException("当前状态无法操作，请稍后再试");
         }
 
         // 将节点信息转成工具类识别对象
