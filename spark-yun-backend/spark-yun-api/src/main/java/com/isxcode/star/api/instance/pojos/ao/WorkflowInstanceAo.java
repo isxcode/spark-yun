@@ -4,7 +4,7 @@ import java.util.Date;
 import lombok.Data;
 
 @Data
-public class WfiWorkflowInstanceAo {
+public class WorkflowInstanceAo {
 
     private String workflowInstanceId;
 
@@ -22,7 +22,7 @@ public class WfiWorkflowInstanceAo {
 
     private String status;
 
-    public WfiWorkflowInstanceAo(String workflowInstanceId, String workflowName, Long duration, Date nextPlanDateTime,
+    public WorkflowInstanceAo(String workflowInstanceId, String workflowName, Long duration, Date nextPlanDateTime,
         Date planStartDateTime, Date startDateTime, Date endDateTime, String status, String type) {
         this.workflowInstanceId = workflowInstanceId;
         this.workflowName = workflowName;

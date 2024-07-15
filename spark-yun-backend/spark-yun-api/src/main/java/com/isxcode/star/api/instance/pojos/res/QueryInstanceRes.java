@@ -8,7 +8,7 @@ import lombok.Data;
 
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class WoiQueryInstanceRes {
+public class QueryInstanceRes {
 
     private String id;
 

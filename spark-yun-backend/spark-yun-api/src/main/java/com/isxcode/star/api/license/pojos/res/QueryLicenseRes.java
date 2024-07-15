@@ -3,7 +3,7 @@ package com.isxcode.star.api.license.pojos.res;
 import lombok.Data;
 
 @Data
-public class LicQueryLicenseRes {
+public class QueryLicenseRes {
 
     private String id;
 

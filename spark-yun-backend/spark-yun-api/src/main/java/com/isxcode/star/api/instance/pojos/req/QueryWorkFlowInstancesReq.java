@@ -7,7 +7,7 @@ import lombok.EqualsAndHashCode;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class WoiQueryInstanceReq extends BasePageRequest {
+public class QueryWorkFlowInstancesReq extends BasePageRequest {
 
     @Schema(title = "运行状态")
     private String executeStatus;

@@ -3,7 +3,7 @@ package com.isxcode.star.api.instance.pojos.res;
 import lombok.Data;
 
 @Data
-public class WfiQueryWorkFlowInstancesRes {
+public class QueryWorkFlowInstancesRes {
 
     private String workflowInstanceId;
 

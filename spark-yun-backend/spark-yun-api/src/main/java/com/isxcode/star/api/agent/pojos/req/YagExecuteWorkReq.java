@@ -22,21 +22,12 @@ public class YagExecuteWorkReq {
 
     private String argsStr;
 
-    /**
-     * 作业类型.
-     */
     private String workType;
 
     private String workId;
 
-    /**
-     * 依赖配置.
-     */
     private List<String> libConfig;
 
-    /**
-     * 自定义函数配置.
-     */
     private List<FuncInfo> funcConfig;
 
     private String workInstanceId;

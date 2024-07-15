@@ -3,7 +3,7 @@ package com.isxcode.star.api.user.pojos.dto;
 import lombok.Data;
 
 @Data
-public class UsrUserDto {
+public class UserDto {
 
     private String id;
 
