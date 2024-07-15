@@ -1,5 +1,6 @@
 package com.isxcode.star.modules.cluster.repository;
 
+import com.isxcode.star.api.main.constants.ModuleCode;
 import com.isxcode.star.modules.cluster.entity.ClusterNodeEntity;
 
 import java.util.List;
@@ -12,11 +13,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-/**
- * 只负责数据库查询逻辑.
- */
 @Repository
-@CacheConfig(cacheNames = {"SY_ENGINE_NODE"})
+@CacheConfig(cacheNames = {ModuleCode.CLUSTER_NODE})
 public interface ClusterNodeRepository extends JpaRepository<ClusterNodeEntity, String> {
 
     List<ClusterNodeEntity> findAllByClusterId(String clusterId);

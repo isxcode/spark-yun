@@ -1,5 +1,6 @@
 package com.isxcode.star.modules.datasource.repository;
 
+import com.isxcode.star.api.main.constants.ModuleCode;
 import com.isxcode.star.modules.datasource.entity.DatasourceEntity;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.data.domain.Page;
@@ -13,7 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-@CacheConfig(cacheNames = {"SY_DATASOURCE"})
+@CacheConfig(cacheNames = {ModuleCode.DATASOURCE})
 public interface DatasourceRepository extends JpaRepository<DatasourceEntity, String> {
 
     @Query("SELECT D FROM DatasourceEntity D " + "WHERE ( D.name LIKE %:keyword% " + "OR D.remark LIKE %:keyword% "

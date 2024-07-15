@@ -1,5 +1,6 @@
 package com.isxcode.star.modules.work.repository;
 
+import com.isxcode.star.api.main.constants.ModuleCode;
 import com.isxcode.star.modules.work.entity.WorkInstanceEntity;
 import java.util.List;
 import java.util.Map;
@@ -12,10 +13,10 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-@CacheConfig(cacheNames = {"sy_work"})
+@CacheConfig(cacheNames = {ModuleCode.WORK})
 public interface WorkInstanceRepository extends JpaRepository<WorkInstanceEntity, String> {
 
-    @Query(value = "" + "select S.id as id,\n" + "       SW.name  as workName,\n" + "       SWF.name as workflowName,\n"
+    @Query(value = "select S.id as id,\n" + "       SW.name  as workName,\n" + "       SWF.name as workflowName,\n"
         + "       S.instanceType as instanceType,\n" + "       SW.workType as workType,\n"
         + "       S.status as status,\n" + "       S.planStartDateTime as planStartDateTime,\n"
         + "       S.duration as duration,\n" + "       S.execStartDateTime as execStartDateTime,\n"

@@ -1,5 +1,6 @@
 package com.isxcode.star.modules.datasource.repository;
 
+import com.isxcode.star.api.main.constants.ModuleCode;
 import com.isxcode.star.modules.datasource.entity.DatabaseDriverEntity;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.data.domain.Page;
@@ -13,7 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-@CacheConfig(cacheNames = {"SY_DATABASE_DRIVER"})
+@CacheConfig(cacheNames = {ModuleCode.DATASOURCE})
 public interface DatabaseDriverRepository extends JpaRepository<DatabaseDriverEntity, String> {
 
     @Query("select D from DatabaseDriverEntity  D where (D.name like %:keyword% or D.remark like %:keyword% or D.dbType like %:keyword% ) and (D.tenantId = :tenantId or D.driverType = 'SYSTEM_DRIVER') order by D.createDateTime desc,D.name desc ")
