@@ -3,12 +3,6 @@
   "configurations": [
     {
       "type": "java",
-      "name": "Current File",
-      "request": "launch",
-      "mainClass": "${file}"
-    },
-    {
-      "type": "java",
       "name": "SparkYunAgentApplication",
       "request": "launch",
       "mainClass": "com.isxcode.star.agent.SparkYunAgentApplication",
@@ -20,13 +14,6 @@
       "request": "launch",
       "mainClass": "com.isxcode.star.SparkYunApplication",
       "projectName": "spark-yun-main"
-    },
-    {
-      "type": "java",
-      "name": "SparkPlugin-SyncWork",
-      "request": "launch",
-      "mainClass": "com.isxcode.star.plugin.dataSync.jdbc.Execute",
-      "projectName": "spark-data-sync-jdbc-plugin"
     }
   ]
 }
