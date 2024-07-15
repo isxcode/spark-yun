@@ -1,5 +1,6 @@
 package com.isxcode.star.modules.file.repository;
 
+import com.isxcode.star.api.main.constants.ModuleCode;
 import com.isxcode.star.modules.file.entity.FileEntity;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.data.domain.Page;
@@ -12,7 +13,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-@CacheConfig(cacheNames = {"sy_file"})
+@CacheConfig(cacheNames = {ModuleCode.FILE})
 public interface FileRepository extends JpaRepository<FileEntity, String> {
 
     Optional<FileEntity> findByFileName(String fileName);

@@ -1,5 +1,6 @@
 package com.isxcode.star.security.user;
 
+import com.isxcode.star.api.main.constants.ModuleCode;
 import com.isxcode.star.api.tenant.pojos.res.PageTenantUserRes;
 import java.util.List;
 import java.util.Optional;
@@ -12,7 +13,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-@CacheConfig(cacheNames = {"SY_DATASOURCE"})
+@CacheConfig(cacheNames = {ModuleCode.TENANT_USER})
 public interface TenantUserRepository extends JpaRepository<TenantUserEntity, String> {
 
     Optional<TenantUserEntity> findByTenantIdAndUserId(String tenantId, String userId);
