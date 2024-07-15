@@ -51,6 +51,7 @@ public class CurlExecutor extends WorkExecutor {
         }
 
         // 脚本检查通过
+        workRunContext.setScript(workRunContext.getScript().replace("curl ", "curl -s "));
         logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始执行作业 \n");
         logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("执行作业内容: \n")
             .append(workRunContext.getScript()).append("\n");
