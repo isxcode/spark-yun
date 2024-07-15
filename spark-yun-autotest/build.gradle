@@ -2,7 +2,7 @@
 // brew install allure
 tasks.register('autotest', Exec) {
 
-  commandLine 'sh', '-c', '''
+    commandLine 'sh', '-c', '''
       pip3 install -r requirements.txt
       playwright install
       bash autotest.sh
