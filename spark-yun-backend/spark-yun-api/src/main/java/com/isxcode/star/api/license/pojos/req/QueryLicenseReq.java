@@ -6,5 +6,5 @@ import lombok.EqualsAndHashCode;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class LicQueryLicenseReq extends BasePageRequest {
+public class QueryLicenseReq extends BasePageRequest {
 }

@@ -7,7 +7,7 @@ import com.isxcode.star.api.cluster.constants.ClusterNodeStatus;
 import com.isxcode.star.api.cluster.constants.ClusterStatus;
 import com.isxcode.star.api.cluster.pojos.dto.ScpFileEngineNodeDto;
 import com.isxcode.star.api.cluster.pojos.req.*;
-import com.isxcode.star.api.cluster.pojos.res.EnoQueryNodeRes;
+import com.isxcode.star.api.cluster.pojos.res.QueryNodeRes;
 import com.isxcode.star.api.cluster.pojos.res.GetClusterNodeRes;
 import com.isxcode.star.api.cluster.pojos.res.TestAgentRes;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
@@ -149,7 +149,7 @@ public class ClusterNodeBizService {
         clusterRepository.save(cluster);
     }
 
-    public Page<EnoQueryNodeRes> pageClusterNode(PageClusterNodeReq enoQueryNodeReq) {
+    public Page<QueryNodeRes> pageClusterNode(PageClusterNodeReq enoQueryNodeReq) {
 
         Page<ClusterNodeEntity> engineNodeEntities = clusterNodeRepository.searchAll(enoQueryNodeReq.getSearchKeyWord(),
             enoQueryNodeReq.getClusterId(), PageRequest.of(enoQueryNodeReq.getPage(), enoQueryNodeReq.getPageSize()));

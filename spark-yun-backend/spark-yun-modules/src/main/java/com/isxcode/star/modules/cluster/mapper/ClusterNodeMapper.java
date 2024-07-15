@@ -3,7 +3,7 @@ package com.isxcode.star.modules.cluster.mapper;
 import com.isxcode.star.api.cluster.pojos.dto.ScpFileEngineNodeDto;
 import com.isxcode.star.api.cluster.pojos.req.AddClusterNodeReq;
 import com.isxcode.star.api.cluster.pojos.req.UpdateClusterNodeReq;
-import com.isxcode.star.api.cluster.pojos.res.EnoQueryNodeRes;
+import com.isxcode.star.api.cluster.pojos.res.QueryNodeRes;
 import com.isxcode.star.api.cluster.pojos.res.GetClusterNodeRes;
 import com.isxcode.star.modules.cluster.entity.ClusterNodeEntity;
 import org.mapstruct.Mapper;
@@ -43,7 +43,7 @@ public interface ClusterNodeMapper {
         expression = "java( nodeEntity.getUsedStorage()+ \"G/\" +nodeEntity.getAllStorage()+\"G\")")
     @Mapping(target = "cpu", source = "cpuPercent")
     @Mapping(target = "checkDateTime", dateFormat = "yyyy-MM-dd HH:mm:ss")
-    EnoQueryNodeRes nodeEntityToQueryNodeRes(ClusterNodeEntity nodeEntity);
+    QueryNodeRes nodeEntityToQueryNodeRes(ClusterNodeEntity nodeEntity);
 
     ScpFileEngineNodeDto engineNodeEntityToScpFileEngineNodeDto(ClusterNodeEntity engineNode);
 
