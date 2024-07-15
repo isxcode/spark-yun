@@ -11,18 +11,18 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class PageApiRes {
 
-	private String id;
+    private String id;
 
-	private String name;
+    private String name;
 
-	private String path;
+    private String path;
 
-	private String status;
+    private String status;
 
-	private String remark;
+    private String remark;
 
-	private String apiType;
+    private String apiType;
 
-	@JsonSerialize(using = LocalDateTimeSerializer.class)
-	private LocalDateTime createDateTime;
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    private LocalDateTime createDateTime;
 }

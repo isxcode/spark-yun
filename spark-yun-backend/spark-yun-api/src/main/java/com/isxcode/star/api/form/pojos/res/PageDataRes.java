@@ -8,7 +8,7 @@ import java.util.Map;
 @Data
 public class PageDataRes {
 
-	private List<Map<String, Object>> data;
+    private List<Map<String, Object>> data;
 
-	private Integer count;
+    private Integer count;
 }

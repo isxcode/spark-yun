@@ -7,11 +7,11 @@ import lombok.Data;
 @Data
 public class LoginReq {
 
-	@Schema(title = "账号", example = "admin")
-	@NotEmpty(message = "账号不能为空")
-	private String account;
+    @Schema(title = "账号", example = "admin")
+    @NotEmpty(message = "账号不能为空")
+    private String account;
 
-	@Schema(title = "密码", example = "admin123")
-	@NotEmpty(message = "密码不能为空")
-	private String passwd;
+    @Schema(title = "密码", example = "admin123")
+    @NotEmpty(message = "密码不能为空")
+    private String passwd;
 }

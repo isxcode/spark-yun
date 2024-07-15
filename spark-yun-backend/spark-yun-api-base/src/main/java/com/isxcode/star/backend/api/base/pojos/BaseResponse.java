@@ -12,30 +12,30 @@ import lombok.NoArgsConstructor;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class BaseResponse<T> {
 
-	private String code;
+    private String code;
 
-	private String msg;
+    private String msg;
 
-	private String err;
+    private String err;
 
-	private T data;
+    private T data;
 
-	public BaseResponse(String code, String message) {
+    public BaseResponse(String code, String message) {
 
-		this.code = code;
-		this.msg = message;
-	}
+        this.code = code;
+        this.msg = message;
+    }
 
-	public BaseResponse(String code, String message, String err) {
+    public BaseResponse(String code, String message, String err) {
 
-		this.err = err;
-		this.code = code;
-		this.msg = message;
-	}
+        this.err = err;
+        this.code = code;
+        this.msg = message;
+    }
 
-	public BaseResponse(AbstractIsxAppExceptionEnum abstractSparkYunExceptionEnum) {
+    public BaseResponse(AbstractIsxAppExceptionEnum abstractSparkYunExceptionEnum) {
 
-		this.code = abstractSparkYunExceptionEnum.getCode();
-		this.msg = abstractSparkYunExceptionEnum.getMsg();
-	}
+        this.code = abstractSparkYunExceptionEnum.getCode();
+        this.msg = abstractSparkYunExceptionEnum.getMsg();
+    }
 }

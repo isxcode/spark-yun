@@ -12,10 +12,10 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class DatabaseDriverService {
 
-	private final DatabaseDriverRepository databaseDriverRepository;
+    private final DatabaseDriverRepository databaseDriverRepository;
 
-	public DatabaseDriverEntity getDriver(String driverId) {
+    public DatabaseDriverEntity getDriver(String driverId) {
 
-		return databaseDriverRepository.findById(driverId).orElseThrow(() -> new IsxAppException("数据源驱动不存在"));
-	}
+        return databaseDriverRepository.findById(driverId).orElseThrow(() -> new IsxAppException("数据源驱动不存在"));
+    }
 }

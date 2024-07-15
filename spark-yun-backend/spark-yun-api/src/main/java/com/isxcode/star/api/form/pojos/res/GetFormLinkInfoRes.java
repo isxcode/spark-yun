@@ -7,11 +7,11 @@ import lombok.Data;
 @Builder
 public class GetFormLinkInfoRes {
 
-	private String formId;
+    private String formId;
 
-	private String formVersion;
+    private String formVersion;
 
-	private String tenantId;
+    private String tenantId;
 
-	private String formToken;
+    private String formToken;
 }

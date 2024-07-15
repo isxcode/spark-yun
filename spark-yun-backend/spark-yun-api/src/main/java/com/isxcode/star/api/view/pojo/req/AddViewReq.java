@@ -8,10 +8,10 @@ import javax.validation.constraints.NotEmpty;
 @Data
 public class AddViewReq {
 
-	@Schema(title = "大屏名称", example = "大屏测试")
-	@NotEmpty(message = "name不能为空")
-	private String name;
+    @Schema(title = "大屏名称", example = "大屏测试")
+    @NotEmpty(message = "name不能为空")
+    private String name;
 
-	@Schema(title = "备注", example = "备注123")
-	private String remark;
+    @Schema(title = "备注", example = "备注123")
+    private String remark;
 }

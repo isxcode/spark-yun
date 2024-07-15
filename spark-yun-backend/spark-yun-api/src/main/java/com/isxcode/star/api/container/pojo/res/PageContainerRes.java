@@ -9,24 +9,24 @@ import java.time.LocalDateTime;
 @Data
 public class PageContainerRes {
 
-	private String id;
+    private String id;
 
-	private String name;
+    private String name;
 
-	private String status;
+    private String status;
 
-	private String clusterId;
+    private String clusterId;
 
-	private String clusterName;
+    private String clusterName;
 
-	private String resourceLevel;
+    private String resourceLevel;
 
-	private String datasourceId;
+    private String datasourceId;
 
-	private String datasourceName;
+    private String datasourceName;
 
-	private String remark;
+    private String remark;
 
-	@JsonSerialize(using = LocalDateTimeSerializer.class)
-	private LocalDateTime createDateTime;
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    private LocalDateTime createDateTime;
 }

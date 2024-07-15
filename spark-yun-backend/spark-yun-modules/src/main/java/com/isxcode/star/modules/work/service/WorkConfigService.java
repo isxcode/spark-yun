@@ -31,105 +31,105 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class WorkConfigService {
 
-	private final WorkConfigRepository workConfigRepository;
+    private final WorkConfigRepository workConfigRepository;
 
-	private final DatasourceService datasourceService;
+    private final DatasourceService datasourceService;
 
-	public WorkConfigEntity getWorkConfigEntity(String workConfigId) {
+    public WorkConfigEntity getWorkConfigEntity(String workConfigId) {
 
-		Optional<WorkConfigEntity> workConfigEntityOptional = workConfigRepository.findById(workConfigId);
-		if (!workConfigEntityOptional.isPresent()) {
-			throw new IsxAppException("作业异常，请联系开发者");
-		}
-		return workConfigEntityOptional.get();
-	}
+        Optional<WorkConfigEntity> workConfigEntityOptional = workConfigRepository.findById(workConfigId);
+        if (!workConfigEntityOptional.isPresent()) {
+            throw new IsxAppException("作业异常，请联系开发者");
+        }
+        return workConfigEntityOptional.get();
+    }
 
-	public void initWorkScript(WorkConfigEntity workConfig, String workType) {
+    public void initWorkScript(WorkConfigEntity workConfig, String workType) {
 
-		switch (workType) {
-			case WorkType.QUERY_SPARK_SQL :
-			case WorkType.QUERY_JDBC_SQL :
-			case WorkType.EXECUTE_JDBC_SQL :
-			case WorkType.SPARK_CONTAINER_SQL :
-				workConfig.setScript(datasourceService.genDefaultSql(workConfig.getDatasourceId()));
-				break;
-			case WorkType.BASH :
-				workConfig.setScript("#!/bin/bash \n" + "\n" + "pwd");
-				break;
-			case WorkType.PYTHON :
-				workConfig.setScript("print('hello world')");
-				break;
-			case WorkType.PRQL :
-				workConfig.setScript("from table_name");
-				break;
-		}
-	}
+        switch (workType) {
+            case WorkType.QUERY_SPARK_SQL:
+            case WorkType.QUERY_JDBC_SQL:
+            case WorkType.EXECUTE_JDBC_SQL:
+            case WorkType.SPARK_CONTAINER_SQL:
+                workConfig.setScript(datasourceService.genDefaultSql(workConfig.getDatasourceId()));
+                break;
+            case WorkType.BASH:
+                workConfig.setScript("#!/bin/bash \n" + "\n" + "pwd");
+                break;
+            case WorkType.PYTHON:
+                workConfig.setScript("print('hello world')");
+                break;
+            case WorkType.PRQL:
+                workConfig.setScript("from table_name");
+                break;
+        }
+    }
 
-	public void initClusterConfig(WorkConfigEntity workConfig, String clusterId, String clusterNodeId,
-			Boolean enableHive, String datasourceId) {
+    public void initClusterConfig(WorkConfigEntity workConfig, String clusterId, String clusterNodeId,
+        Boolean enableHive, String datasourceId) {
 
-		Map<String, String> sparkConfig = initSparkConfig(ResourceLevel.LOW);
-		if (enableHive) {
-			DatasourceEntity datasource = datasourceService.getDatasource(datasourceId);
-			sparkConfig.put("hive.metastore.uris", datasource.getMetastoreUris());
-		}
+        Map<String, String> sparkConfig = initSparkConfig(ResourceLevel.LOW);
+        if (enableHive) {
+            DatasourceEntity datasource = datasourceService.getDatasource(datasourceId);
+            sparkConfig.put("hive.metastore.uris", datasource.getMetastoreUris());
+        }
 
-		workConfig.setClusterConfig(JSON.toJSONString(
-				ClusterConfig.builder().setMode(SetMode.SIMPLE).clusterId(clusterId).clusterNodeId(clusterNodeId)
-						.enableHive(enableHive).sparkConfig(sparkConfig).resourceLevel(ResourceLevel.LOW).build()));
-	}
+        workConfig.setClusterConfig(JSON.toJSONString(
+            ClusterConfig.builder().setMode(SetMode.SIMPLE).clusterId(clusterId).clusterNodeId(clusterNodeId)
+                .enableHive(enableHive).sparkConfig(sparkConfig).resourceLevel(ResourceLevel.LOW).build()));
+    }
 
-	public void initSyncRule(WorkConfigEntity workConfig) {
-		workConfig.setSyncRule(JSON
-				.toJSONString(SyncRule.builder().setMode(SetMode.SIMPLE).numConcurrency(1).numPartitions(1).build()));
-	}
+    public void initSyncRule(WorkConfigEntity workConfig) {
+        workConfig.setSyncRule(
+            JSON.toJSONString(SyncRule.builder().setMode(SetMode.SIMPLE).numConcurrency(1).numPartitions(1).build()));
+    }
 
-	public void initCronConfig(WorkConfigEntity workConfig) {
-		workConfig.setCronConfig(
-				JSON.toJSONString(CronConfig.builder().setMode(SetMode.SIMPLE).type("ALL").enable(false).build()));
-	}
+    public void initCronConfig(WorkConfigEntity workConfig) {
+        workConfig.setCronConfig(
+            JSON.toJSONString(CronConfig.builder().setMode(SetMode.SIMPLE).type("ALL").enable(false).build()));
+    }
 
-	public Map<String, String> initSparkConfig(String resourceLevel) {
+    public Map<String, String> initSparkConfig(String resourceLevel) {
 
-		Map<String, String> sparkConfig = new HashMap<>();
-		switch (resourceLevel) {
-			case ResourceLevel.HIGH :
-				sparkConfig.put("spark.executor.instances", "10");
-				sparkConfig.put("spark.executor.cores", "4");
-				sparkConfig.put("spark.executor.memory", "4g");
-				sparkConfig.put("spark.driver.memory", "2g");
-				sparkConfig.put("spark.driver.cores", "1");
-				sparkConfig.put("spark.cores.max", "10");
-				break;
-			case ResourceLevel.MEDIUM :
-				sparkConfig.put("spark.executor.instances", "5");
-				sparkConfig.put("spark.executor.cores", "2");
-				sparkConfig.put("spark.executor.memory", "2g");
-				sparkConfig.put("spark.driver.memory", "1g");
-				sparkConfig.put("spark.driver.cores", "1");
-				sparkConfig.put("spark.cores.max", "5");
-				break;
-			case ResourceLevel.LOW :
-				sparkConfig.put("spark.executor.instances", "1");
-				sparkConfig.put("spark.executor.cores", "1");
-				sparkConfig.put("spark.executor.memory", "2g");
-				sparkConfig.put("spark.driver.memory", "1g");
-				sparkConfig.put("spark.driver.cores", "1");
-				sparkConfig.put("spark.cores.max", "1");
-				break;
-		}
+        Map<String, String> sparkConfig = new HashMap<>();
+        switch (resourceLevel) {
+            case ResourceLevel.HIGH:
+                sparkConfig.put("spark.executor.instances", "10");
+                sparkConfig.put("spark.executor.cores", "4");
+                sparkConfig.put("spark.executor.memory", "4g");
+                sparkConfig.put("spark.driver.memory", "2g");
+                sparkConfig.put("spark.driver.cores", "1");
+                sparkConfig.put("spark.cores.max", "10");
+                break;
+            case ResourceLevel.MEDIUM:
+                sparkConfig.put("spark.executor.instances", "5");
+                sparkConfig.put("spark.executor.cores", "2");
+                sparkConfig.put("spark.executor.memory", "2g");
+                sparkConfig.put("spark.driver.memory", "1g");
+                sparkConfig.put("spark.driver.cores", "1");
+                sparkConfig.put("spark.cores.max", "5");
+                break;
+            case ResourceLevel.LOW:
+                sparkConfig.put("spark.executor.instances", "1");
+                sparkConfig.put("spark.executor.cores", "1");
+                sparkConfig.put("spark.executor.memory", "2g");
+                sparkConfig.put("spark.driver.memory", "1g");
+                sparkConfig.put("spark.driver.cores", "1");
+                sparkConfig.put("spark.cores.max", "1");
+                break;
+        }
 
-		sparkConfig.put("spark.driver.extraJavaOptions", "-Dfile.encoding=utf-8");
-		sparkConfig.put("spark.executor.extraJavaOptions", "-Dfile.encoding=utf-8");
-		sparkConfig.put("spark.sql.storeAssignmentPolicy", "LEGACY");
-		sparkConfig.put("spark.sql.legacy.timeParserPolicy", "LEGACY");
-		sparkConfig.put("spark.sql.autoBroadcastJoinThreshold", "-1");
-		sparkConfig.put("spark.sql.parquet.writeLegacyFormat", "true");
-		sparkConfig.put("spark.sql.parquet.enableVectorizedReader", "false");
-		sparkConfig.put("spark.sql.legacy.parquet.int96RebaseModeInRead", "LEGACY");
-		sparkConfig.put("spark.sql.legacy.parquet.int96RebaseModeInWrite", "LEGACY");
-		sparkConfig.put("spark.sql.legacy.parquet.datetimeRebaseModeInRead", "LEGACY");
-		sparkConfig.put("spark.sql.legacy.parquet.datetimeRebaseModeInWrite", "LEGACY");
-		return sparkConfig;
-	}
+        sparkConfig.put("spark.driver.extraJavaOptions", "-Dfile.encoding=utf-8");
+        sparkConfig.put("spark.executor.extraJavaOptions", "-Dfile.encoding=utf-8");
+        sparkConfig.put("spark.sql.storeAssignmentPolicy", "LEGACY");
+        sparkConfig.put("spark.sql.legacy.timeParserPolicy", "LEGACY");
+        sparkConfig.put("spark.sql.autoBroadcastJoinThreshold", "-1");
+        sparkConfig.put("spark.sql.parquet.writeLegacyFormat", "true");
+        sparkConfig.put("spark.sql.parquet.enableVectorizedReader", "false");
+        sparkConfig.put("spark.sql.legacy.parquet.int96RebaseModeInRead", "LEGACY");
+        sparkConfig.put("spark.sql.legacy.parquet.int96RebaseModeInWrite", "LEGACY");
+        sparkConfig.put("spark.sql.legacy.parquet.datetimeRebaseModeInRead", "LEGACY");
+        sparkConfig.put("spark.sql.legacy.parquet.datetimeRebaseModeInWrite", "LEGACY");
+        return sparkConfig;
+    }
 }

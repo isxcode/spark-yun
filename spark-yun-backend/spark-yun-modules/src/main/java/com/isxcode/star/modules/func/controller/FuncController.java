@@ -25,37 +25,37 @@ import javax.validation.Valid;
 @RequiredArgsConstructor
 public class FuncController {
 
-	private final FuncBizService funcBizService;
+    private final FuncBizService funcBizService;
 
-	@Operation(summary = "添加自定义函数")
-	@PostMapping("/addFunc")
-	@SuccessResponse("添加成功")
-	public void addFunc(@Valid @RequestBody AddFuncReq addFuncReq) {
+    @Operation(summary = "添加自定义函数")
+    @PostMapping("/addFunc")
+    @SuccessResponse("添加成功")
+    public void addFunc(@Valid @RequestBody AddFuncReq addFuncReq) {
 
-		funcBizService.addFunc(addFuncReq);
-	}
+        funcBizService.addFunc(addFuncReq);
+    }
 
-	@Operation(summary = "更新自定义函数")
-	@PostMapping("/updateFunc")
-	@SuccessResponse("更新成功")
-	public void updateFunc(@Valid @RequestBody UpdateFuncReq updateFuncReq) {
+    @Operation(summary = "更新自定义函数")
+    @PostMapping("/updateFunc")
+    @SuccessResponse("更新成功")
+    public void updateFunc(@Valid @RequestBody UpdateFuncReq updateFuncReq) {
 
-		funcBizService.updateFunc(updateFuncReq);
-	}
+        funcBizService.updateFunc(updateFuncReq);
+    }
 
-	@Operation(summary = "删除自定义函数")
-	@PostMapping("/deleteFunc")
-	@SuccessResponse("删除成功")
-	public void deleteFunc(@Valid @RequestBody DeleteFuncReq deleteFuncReq) {
+    @Operation(summary = "删除自定义函数")
+    @PostMapping("/deleteFunc")
+    @SuccessResponse("删除成功")
+    public void deleteFunc(@Valid @RequestBody DeleteFuncReq deleteFuncReq) {
 
-		funcBizService.deleteFunc(deleteFuncReq);
-	}
+        funcBizService.deleteFunc(deleteFuncReq);
+    }
 
-	@Operation(summary = "查询自定义函数")
-	@PostMapping("/pageFunc")
-	@SuccessResponse("查询成功")
-	public Page<PageFuncRes> pageFunc(@Valid @RequestBody PageFuncReq pageFuncReq) {
+    @Operation(summary = "查询自定义函数")
+    @PostMapping("/pageFunc")
+    @SuccessResponse("查询成功")
+    public Page<PageFuncRes> pageFunc(@Valid @RequestBody PageFuncReq pageFuncReq) {
 
-		return funcBizService.pageFunc(pageFuncReq);
-	}
+        return funcBizService.pageFunc(pageFuncReq);
+    }
 }

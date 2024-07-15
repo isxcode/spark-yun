@@ -14,13 +14,13 @@ import java.util.List;
 @Data
 public class GetViewRes {
 
-	private String id;
+    private String id;
 
-	private String name;
+    private String name;
 
-	private String status;
+    private String status;
 
-	private Object webConfig;
+    private Object webConfig;
 
-	private List<CardInfo> cards;
+    private List<CardInfo> cards;
 }

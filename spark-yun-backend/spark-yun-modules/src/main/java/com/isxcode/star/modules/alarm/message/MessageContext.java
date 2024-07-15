@@ -14,27 +14,27 @@ import java.time.LocalDateTime;
 @Builder
 public class MessageContext {
 
-	private String email;
+    private String email;
 
-	private String phone;
+    private String phone;
 
-	private String content;
+    private String content;
 
-	private String alarmId;
+    private String alarmId;
 
-	private String alarmType;
+    private String alarmType;
 
-	private String alarmEvent;
+    private String alarmEvent;
 
-	private String msgId;
+    private String msgId;
 
-	private String receiver;
+    private String receiver;
 
-	private LocalDateTime sendDateTime;
+    private LocalDateTime sendDateTime;
 
-	private MessageConfig messageConfig;
+    private MessageConfig messageConfig;
 
-	private String tenantId;
+    private String tenantId;
 
-	private String instanceId;
+    private String instanceId;
 }

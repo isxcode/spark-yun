@@ -15,8 +15,8 @@ import java.util.Optional;
 @CacheConfig(cacheNames = {"SY_FUNC"})
 public interface FuncRepository extends JpaRepository<FuncEntity, String> {
 
-	@Query("SELECT F FROM FuncEntity F WHERE (F.funcName LIKE %:searchKeyWord% OR F.className LIKE %:searchKeyWord% OR F.type LIKE %:searchKeyWord% OR F.resultType LIKE %:searchKeyWord%) order by F.createDateTime desc")
-	Page<FuncEntity> pageSearch(@Param("searchKeyWord") String searchKeyWord, Pageable pageable);
+    @Query("SELECT F FROM FuncEntity F WHERE (F.funcName LIKE %:searchKeyWord% OR F.className LIKE %:searchKeyWord% OR F.type LIKE %:searchKeyWord% OR F.resultType LIKE %:searchKeyWord%) order by F.createDateTime desc")
+    Page<FuncEntity> pageSearch(@Param("searchKeyWord") String searchKeyWord, Pageable pageable);
 
-	Optional<FuncEntity> findByFuncName(String funcName);
+    Optional<FuncEntity> findByFuncName(String funcName);
 }

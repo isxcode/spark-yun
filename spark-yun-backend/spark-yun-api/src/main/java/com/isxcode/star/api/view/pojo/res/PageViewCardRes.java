@@ -11,22 +11,22 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class PageViewCardRes {
 
-	private String id;
+    private String id;
 
-	private String name;
+    private String name;
 
-	private String type;
+    private String type;
 
-	private String status;
+    private String status;
 
-	private String remark;
+    private String remark;
 
-	private String datasourceId;
+    private String datasourceId;
 
-	private String datasourceName;
+    private String datasourceName;
 
-	private String createBy;
+    private String createBy;
 
-	@JsonSerialize(using = LocalDateTimeSerializer.class)
-	private LocalDateTime createDateTime;
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    private LocalDateTime createDateTime;
 }

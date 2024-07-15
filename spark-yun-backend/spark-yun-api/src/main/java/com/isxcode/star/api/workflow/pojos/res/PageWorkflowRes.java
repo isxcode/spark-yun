@@ -11,18 +11,18 @@ import java.time.LocalDateTime;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class PageWorkflowRes {
 
-	private String id;
+    private String id;
 
-	private String name;
+    private String name;
 
-	private String remark;
+    private String remark;
 
-	private String status;
+    private String status;
 
-	private String defaultClusterId;
+    private String defaultClusterId;
 
-	private String clusterName;
+    private String clusterName;
 
-	@JsonSerialize(using = LocalDateMinuteSerializer.class)
-	private LocalDateTime nextDateTime;
+    @JsonSerialize(using = LocalDateMinuteSerializer.class)
+    private LocalDateTime nextDateTime;
 }

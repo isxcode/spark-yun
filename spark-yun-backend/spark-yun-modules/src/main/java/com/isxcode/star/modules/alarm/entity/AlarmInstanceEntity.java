@@ -26,44 +26,43 @@ import static com.isxcode.star.common.config.CommonConfig.TENANT_ID;
 @AllArgsConstructor
 public class AlarmInstanceEntity {
 
-	@Id
-	@GeneratedValue(generator = "sy-id-generator")
-	@GenericGenerator(name = "sy-id-generator", strategy = "com.isxcode.star.config.GeneratedValueConfig")
-	private String id;
+    @Id
+    @GeneratedValue(generator = "sy-id-generator")
+    @GenericGenerator(name = "sy-id-generator", strategy = "com.isxcode.star.config.GeneratedValueConfig")
+    private String id;
 
-	private String alarmId;
+    private String alarmId;
 
-	private String sendStatus;
+    private String sendStatus;
 
-	private String alarmType;
+    private String alarmType;
 
-	private String alarmEvent;
+    private String alarmEvent;
 
-	private String msgId;
+    private String msgId;
 
-	private String content;
+    private String content;
 
-	private String response;
+    private String response;
 
-	private String receiver;
+    private String receiver;
 
-	private String instanceId;
+    private String instanceId;
 
-	private LocalDateTime sendDateTime;
+    private LocalDateTime sendDateTime;
 
-	@Transient
-	private Integer deleted;
+    @Transient
+    private Integer deleted;
 
-	@CreatedDate
-	private LocalDateTime createDateTime;
+    @CreatedDate
+    private LocalDateTime createDateTime;
 
-	private String tenantId;
+    private String tenantId;
 
-	public AlarmInstanceEntity() {
-	}
+    public AlarmInstanceEntity() {}
 
-	@PrePersist
-	public void prePersist() {
-		this.tenantId = TENANT_ID.get();
-	}
+    @PrePersist
+    public void prePersist() {
+        this.tenantId = TENANT_ID.get();
+    }
 }

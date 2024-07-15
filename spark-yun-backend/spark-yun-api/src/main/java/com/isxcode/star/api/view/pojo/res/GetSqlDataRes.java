@@ -13,7 +13,7 @@ import java.util.List;
 @Data
 public class GetSqlDataRes {
 
-	private List<String> columns;
+    private List<String> columns;
 
-	private List<List<String>> rows;
+    private List<List<String>> rows;
 }

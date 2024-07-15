@@ -25,26 +25,26 @@ import javax.annotation.PostConstruct;
 @RequiredArgsConstructor
 public class QuartzConfig {
 
-	private final QuartzProperties quartzProperties;
+    private final QuartzProperties quartzProperties;
 
-	private final DataSourceProperties dataSourceProperties;
+    private final DataSourceProperties dataSourceProperties;
 
-	private final IsxAppProperties isxAppProperties;
+    private final IsxAppProperties isxAppProperties;
 
-	@PostConstruct
-	public void changeQuartzProperties() {
+    @PostConstruct
+    public void changeQuartzProperties() {
 
-		if ("simple".equals(isxAppProperties.getConfigMode())) {
-			if (DatasourceDriver.POSTGRE_SQL_DRIVER.equals(dataSourceProperties.getDriverClassName())) {
-				quartzProperties.getProperties().put("org.quartz.jobStore.driverDelegateClass",
-						"org.quartz.impl.jdbcjobstore.PostgreSQLDelegate");
-			}
-		}
-	}
+        if ("simple".equals(isxAppProperties.getConfigMode())) {
+            if (DatasourceDriver.POSTGRE_SQL_DRIVER.equals(dataSourceProperties.getDriverClassName())) {
+                quartzProperties.getProperties().put("org.quartz.jobStore.driverDelegateClass",
+                    "org.quartz.impl.jdbcjobstore.PostgreSQLDelegate");
+            }
+        }
+    }
 
-	@Bean
-	@Primary
-	public QuartzProperties quartzProperties() {
-		return quartzProperties;
-	}
+    @Bean
+    @Primary
+    public QuartzProperties quartzProperties() {
+        return quartzProperties;
+    }
 }

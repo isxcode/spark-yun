@@ -12,15 +12,15 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class WorkService {
 
-	private final WorkRepository workRepository;
+    private final WorkRepository workRepository;
 
-	public WorkEntity getWorkEntity(String workId) {
+    public WorkEntity getWorkEntity(String workId) {
 
-		return workRepository.findById(workId).orElseThrow(() -> new IsxAppException("作业不存在"));
-	}
+        return workRepository.findById(workId).orElseThrow(() -> new IsxAppException("作业不存在"));
+    }
 
-	public void checkWork(String workId) {
+    public void checkWork(String workId) {
 
-		workRepository.findById(workId).orElseThrow(() -> new IsxAppException("作业不存在"));
-	}
+        workRepository.findById(workId).orElseThrow(() -> new IsxAppException("作业不存在"));
+    }
 }

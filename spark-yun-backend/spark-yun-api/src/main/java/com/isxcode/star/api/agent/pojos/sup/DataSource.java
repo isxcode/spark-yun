@@ -10,9 +10,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class DataSource {
-	private String url;
-	private String user;
-	private String password;
-	private String tableName;
+    private String url;
+    private String user;
+    private String password;
+    private String tableName;
 
 }

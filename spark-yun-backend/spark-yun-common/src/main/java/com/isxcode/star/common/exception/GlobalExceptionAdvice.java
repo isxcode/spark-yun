@@ -27,84 +27,84 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class GlobalExceptionAdvice extends ResponseEntityExceptionHandler {
 
-	@ExceptionHandler(AbstractIsxAppException.class)
-	public ResponseEntity<BaseResponse<?>> customException(AbstractIsxAppException abstractSparkYunException) {
+    @ExceptionHandler(AbstractIsxAppException.class)
+    public ResponseEntity<BaseResponse<?>> customException(AbstractIsxAppException abstractSparkYunException) {
 
-		BaseResponse<?> errorResponse = new BaseResponse<>();
-		errorResponse.setMsg(abstractSparkYunException.getMsg());
-		errorResponse.setCode(abstractSparkYunException.getCode() == null
-				? String.valueOf(HttpStatus.INTERNAL_SERVER_ERROR.value())
-				: abstractSparkYunException.getCode());
-		errorResponse.setErr(abstractSparkYunException.getErr() == null ? null : abstractSparkYunException.getErr());
+        BaseResponse<?> errorResponse = new BaseResponse<>();
+        errorResponse.setMsg(abstractSparkYunException.getMsg());
+        errorResponse.setCode(
+            abstractSparkYunException.getCode() == null ? String.valueOf(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                : abstractSparkYunException.getCode());
+        errorResponse.setErr(abstractSparkYunException.getErr() == null ? null : abstractSparkYunException.getErr());
 
-		if ("401".equals(abstractSparkYunException.getCode())) {
-			return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
-		}
+        if ("401".equals(abstractSparkYunException.getCode())) {
+            return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
+        }
 
-		if ("403".equals(abstractSparkYunException.getCode())) {
-			return new ResponseEntity<>(errorResponse, HttpStatus.FORBIDDEN);
-		}
+        if ("403".equals(abstractSparkYunException.getCode())) {
+            return new ResponseEntity<>(errorResponse, HttpStatus.FORBIDDEN);
+        }
 
-		return new ResponseEntity<>(errorResponse, HttpStatus.OK);
-	}
+        return new ResponseEntity<>(errorResponse, HttpStatus.OK);
+    }
 
-	@ExceptionHandler(SuccessResponseException.class)
-	public ResponseEntity<BaseResponse<Object>> successException(SuccessResponseException successException) {
+    @ExceptionHandler(SuccessResponseException.class)
+    public ResponseEntity<BaseResponse<Object>> successException(SuccessResponseException successException) {
 
-		return new ResponseEntity<>(successException.getBaseResponse(), HttpStatus.OK);
-	}
+        return new ResponseEntity<>(successException.getBaseResponse(), HttpStatus.OK);
+    }
 
-	@ExceptionHandler(AccessDeniedException.class)
-	public ResponseEntity<BaseResponse<Object>> accessDeniedException(AccessDeniedException accessDeniedException) {
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<BaseResponse<Object>> accessDeniedException(AccessDeniedException accessDeniedException) {
 
-		BaseResponse baseResponse = new BaseResponse();
-		baseResponse.setCode("401");
-		baseResponse.setMsg("当前用户没有权限");
-		baseResponse.setErr(accessDeniedException.getMessage());
+        BaseResponse baseResponse = new BaseResponse();
+        baseResponse.setCode("401");
+        baseResponse.setMsg("当前用户没有权限");
+        baseResponse.setErr(accessDeniedException.getMessage());
 
-		return new ResponseEntity<>(baseResponse, HttpStatus.OK);
-	}
+        return new ResponseEntity<>(baseResponse, HttpStatus.OK);
+    }
 
-	@ExceptionHandler(EmptyResultDataAccessException.class)
-	public ResponseEntity<BaseResponse<Object>> emptyResultDataAccessException(
-			EmptyResultDataAccessException emptyResultDataAccessException) {
+    @ExceptionHandler(EmptyResultDataAccessException.class)
+    public ResponseEntity<BaseResponse<Object>> emptyResultDataAccessException(
+        EmptyResultDataAccessException emptyResultDataAccessException) {
 
-		BaseResponse baseResponse = new BaseResponse();
-		baseResponse.setCode("55500");
-		baseResponse.setMsg("请稍后再试");
-		baseResponse.setErr(emptyResultDataAccessException.getMessage());
+        BaseResponse baseResponse = new BaseResponse();
+        baseResponse.setCode("55500");
+        baseResponse.setMsg("请稍后再试");
+        baseResponse.setErr(emptyResultDataAccessException.getMessage());
 
-		return new ResponseEntity<>(baseResponse, HttpStatus.OK);
-	}
+        return new ResponseEntity<>(baseResponse, HttpStatus.OK);
+    }
 
-	@ExceptionHandler(ObjectOptimisticLockingFailureException.class)
-	public ResponseEntity<BaseResponse<Object>> objectOptimisticLockingFailureException(
-			ObjectOptimisticLockingFailureException objectOptimisticLockingFailureException) {
+    @ExceptionHandler(ObjectOptimisticLockingFailureException.class)
+    public ResponseEntity<BaseResponse<Object>> objectOptimisticLockingFailureException(
+        ObjectOptimisticLockingFailureException objectOptimisticLockingFailureException) {
 
-		BaseResponse baseResponse = new BaseResponse();
-		baseResponse.setCode("55500");
-		baseResponse.setMsg("请稍后再试");
-		baseResponse.setErr(objectOptimisticLockingFailureException.getMessage());
+        BaseResponse baseResponse = new BaseResponse();
+        baseResponse.setCode("55500");
+        baseResponse.setMsg("请稍后再试");
+        baseResponse.setErr(objectOptimisticLockingFailureException.getMessage());
 
-		return new ResponseEntity<>(baseResponse, HttpStatus.OK);
-	}
+        return new ResponseEntity<>(baseResponse, HttpStatus.OK);
+    }
 
-	@ExceptionHandler(Exception.class)
-	public ResponseEntity<BaseResponse<?>> allException(Exception exception) {
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<BaseResponse<?>> allException(Exception exception) {
 
-		BaseResponse<?> baseResponse = new BaseResponse<>();
-		baseResponse.setCode(String.valueOf(HttpStatus.OK.value()));
-		baseResponse.setMsg(exception.getMessage() == null ? exception.getClass().getName() : exception.getMessage());
-		exception.printStackTrace();
-		return new ResponseEntity<>(baseResponse, HttpStatus.OK);
-	}
+        BaseResponse<?> baseResponse = new BaseResponse<>();
+        baseResponse.setCode(String.valueOf(HttpStatus.OK.value()));
+        baseResponse.setMsg(exception.getMessage() == null ? exception.getClass().getName() : exception.getMessage());
+        exception.printStackTrace();
+        return new ResponseEntity<>(baseResponse, HttpStatus.OK);
+    }
 
-	@Override
-	@NonNull
-	protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
-			@NonNull HttpHeaders headers, @NonNull HttpStatus status, @NonNull WebRequest request) {
-		ObjectError objectError = ex.getBindingResult().getAllErrors().get(0);
-		return new ResponseEntity<>(new BaseResponse<>(String.valueOf(HttpStatus.BAD_REQUEST.value()),
-				objectError.getDefaultMessage(), "请求参数不合法"), HttpStatus.OK);
-	}
+    @Override
+    @NonNull
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
+        @NonNull HttpHeaders headers, @NonNull HttpStatus status, @NonNull WebRequest request) {
+        ObjectError objectError = ex.getBindingResult().getAllErrors().get(0);
+        return new ResponseEntity<>(new BaseResponse<>(String.valueOf(HttpStatus.BAD_REQUEST.value()),
+            objectError.getDefaultMessage(), "请求参数不合法"), HttpStatus.OK);
+    }
 }

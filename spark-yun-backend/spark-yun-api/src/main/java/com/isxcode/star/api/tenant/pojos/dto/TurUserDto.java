@@ -5,13 +5,13 @@ import lombok.Data;
 @Data
 public class TurUserDto {
 
-	private String name;
+    private String name;
 
-	private String account;
+    private String account;
 
-	private String status;
+    private String status;
 
-	private String role;
+    private String role;
 
-	private String createDateTime;
+    private String createDateTime;
 }

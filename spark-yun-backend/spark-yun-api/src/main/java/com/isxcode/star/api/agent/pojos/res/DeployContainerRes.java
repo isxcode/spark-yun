@@ -7,11 +7,11 @@ import lombok.Data;
 @Builder
 public class DeployContainerRes {
 
-	private String appId;
+    private String appId;
 
-	private int port;
+    private int port;
 
-	private String errLog;
+    private String errLog;
 
-	private String status;
+    private String status;
 }

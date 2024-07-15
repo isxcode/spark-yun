@@ -16,19 +16,19 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class EchartOption {
 
-	private EchartTitle title;
+    private EchartTitle title;
 
-	private EchartTooltip tooltip;
+    private EchartTooltip tooltip;
 
-	private EchartToolbox toolbox;
+    private EchartToolbox toolbox;
 
-	private EchartLegend legend;
+    private EchartLegend legend;
 
-	private List<EchartSeries> series;
+    private List<EchartSeries> series;
 
-	@JsonProperty("xAxis")
-	private EchartXAxis xAxis;
+    @JsonProperty("xAxis")
+    private EchartXAxis xAxis;
 
-	@JsonProperty("yAxis")
-	private EchartYAxis yAxis;
+    @JsonProperty("yAxis")
+    private EchartYAxis yAxis;
 }

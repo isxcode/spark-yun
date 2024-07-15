@@ -7,9 +7,9 @@ import lombok.Data;
 @Builder
 public class GetStatusRes {
 
-	private String yarnApplicationState;
+    private String yarnApplicationState;
 
-	private String finalApplicationStatus;
+    private String finalApplicationStatus;
 
-	private String trackingUrl;
+    private String trackingUrl;
 }

@@ -7,7 +7,7 @@ import lombok.Data;
 @Builder
 public class GetSubmitLogRes {
 
-	private String log;
+    private String log;
 
-	private String status;
+    private String status;
 }

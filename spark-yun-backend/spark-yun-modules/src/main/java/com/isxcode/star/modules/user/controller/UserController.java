@@ -25,110 +25,110 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class UserController {
 
-	private final UserBizService userBizService;
+    private final UserBizService userBizService;
 
-	@Operation(summary = "用户登录接口")
-	@PostMapping("/open/login")
-	@SuccessResponse("登录成功")
-	public LoginRes login(@Valid @RequestBody LoginReq loginReq) {
+    @Operation(summary = "用户登录接口")
+    @PostMapping("/open/login")
+    @SuccessResponse("登录成功")
+    public LoginRes login(@Valid @RequestBody LoginReq loginReq) {
 
-		return userBizService.login(loginReq);
-	}
+        return userBizService.login(loginReq);
+    }
 
-	@Operation(summary = "用户退出接口")
-	@PostMapping("/logout")
-	@SuccessResponse("退出成功")
-	public void logout() {
+    @Operation(summary = "用户退出接口")
+    @PostMapping("/logout")
+    @SuccessResponse("退出成功")
+    public void logout() {
 
-		userBizService.logout();
-	}
+        userBizService.logout();
+    }
 
-	@Secured({RoleType.SYS_ADMIN})
-	@Operation(summary = "获取用户信息接口")
-	@PostMapping("/getUser")
-	@SuccessResponse("获取成功")
-	public GetUserRes getUser() {
+    @Secured({RoleType.SYS_ADMIN})
+    @Operation(summary = "获取用户信息接口")
+    @PostMapping("/getUser")
+    @SuccessResponse("获取成功")
+    public GetUserRes getUser() {
 
-		return userBizService.getUser();
-	}
+        return userBizService.getUser();
+    }
 
-	@Secured({RoleType.SYS_ADMIN})
-	@Operation(summary = "创建用户接口")
-	@PostMapping("/addUser")
-	@SuccessResponse("创建成功")
-	public void addUser(@Valid @RequestBody AddUserReq addUserReq) {
+    @Secured({RoleType.SYS_ADMIN})
+    @Operation(summary = "创建用户接口")
+    @PostMapping("/addUser")
+    @SuccessResponse("创建成功")
+    public void addUser(@Valid @RequestBody AddUserReq addUserReq) {
 
-		userBizService.addUser(addUserReq);
-	}
+        userBizService.addUser(addUserReq);
+    }
 
-	@Secured({RoleType.SYS_ADMIN})
-	@Operation(summary = "更新用户接口")
-	@PostMapping("/updateUser")
-	@SuccessResponse("更新成功")
-	public void updateUser(@Valid @RequestBody UpdateUserReq updateUserReq) {
+    @Secured({RoleType.SYS_ADMIN})
+    @Operation(summary = "更新用户接口")
+    @PostMapping("/updateUser")
+    @SuccessResponse("更新成功")
+    public void updateUser(@Valid @RequestBody UpdateUserReq updateUserReq) {
 
-		userBizService.updateUser(updateUserReq);
-	}
+        userBizService.updateUser(updateUserReq);
+    }
 
-	@Secured({RoleType.SYS_ADMIN})
-	@Operation(summary = "更新用户信息")
-	@PostMapping("/updateUserInfo")
-	@SuccessResponse("信息更新成功")
-	public void updateUserInfo(@Valid @RequestBody UpdateUserInfoReq updateUserInfoReq) {
-		userBizService.updateUserInfo(updateUserInfoReq);
-	}
+    @Secured({RoleType.SYS_ADMIN})
+    @Operation(summary = "更新用户信息")
+    @PostMapping("/updateUserInfo")
+    @SuccessResponse("信息更新成功")
+    public void updateUserInfo(@Valid @RequestBody UpdateUserInfoReq updateUserInfoReq) {
+        userBizService.updateUserInfo(updateUserInfoReq);
+    }
 
-	@Secured({RoleType.SYS_ADMIN})
-	@Operation(summary = "禁用用户接口")
-	@PostMapping("/disableUser")
-	@SuccessResponse("禁用成功")
-	public void disableUser(@Valid @RequestBody DisableUserReq disableUserReq) {
+    @Secured({RoleType.SYS_ADMIN})
+    @Operation(summary = "禁用用户接口")
+    @PostMapping("/disableUser")
+    @SuccessResponse("禁用成功")
+    public void disableUser(@Valid @RequestBody DisableUserReq disableUserReq) {
 
-		userBizService.disableUser(disableUserReq);
-	}
+        userBizService.disableUser(disableUserReq);
+    }
 
-	@Secured({RoleType.SYS_ADMIN})
-	@Operation(summary = "启用用户接口")
-	@PostMapping("/enableUser")
-	@SuccessResponse("启用成功")
-	public void enableUser(@Valid @RequestBody EnableUserReq enableUserReq) {
+    @Secured({RoleType.SYS_ADMIN})
+    @Operation(summary = "启用用户接口")
+    @PostMapping("/enableUser")
+    @SuccessResponse("启用成功")
+    public void enableUser(@Valid @RequestBody EnableUserReq enableUserReq) {
 
-		userBizService.enableUser(enableUserReq);
-	}
+        userBizService.enableUser(enableUserReq);
+    }
 
-	@Secured({RoleType.SYS_ADMIN})
-	@Operation(summary = "删除用户接口")
-	@PostMapping("/deleteUser")
-	@SuccessResponse("删除成功")
-	public void deleteUser(@Valid @RequestBody DeleteUserReq deleteUserReq) {
+    @Secured({RoleType.SYS_ADMIN})
+    @Operation(summary = "删除用户接口")
+    @PostMapping("/deleteUser")
+    @SuccessResponse("删除成功")
+    public void deleteUser(@Valid @RequestBody DeleteUserReq deleteUserReq) {
 
-		userBizService.deleteUser(deleteUserReq);
-	}
+        userBizService.deleteUser(deleteUserReq);
+    }
 
-	@Secured({RoleType.SYS_ADMIN})
-	@Operation(summary = "查询所有用户接口")
-	@PostMapping("/pageUser")
-	@SuccessResponse("查询成功")
-	public Page<PageUserRes> pageUser(@Valid @RequestBody PageUserReq pageUserReq) {
+    @Secured({RoleType.SYS_ADMIN})
+    @Operation(summary = "查询所有用户接口")
+    @PostMapping("/pageUser")
+    @SuccessResponse("查询成功")
+    public Page<PageUserRes> pageUser(@Valid @RequestBody PageUserReq pageUserReq) {
 
-		return userBizService.pageUser(pageUserReq);
-	}
+        return userBizService.pageUser(pageUserReq);
+    }
 
-	@Secured({RoleType.SYS_ADMIN, RoleType.TENANT_ADMIN})
-	@Operation(summary = "查询所有启用用户接口")
-	@PostMapping("/pageEnableUser")
-	@SuccessResponse("查询成功")
-	public Page<PageEnableUserRes> pageEnableUser(@Valid @RequestBody PageEnableUserReq pageEnableUserReq) {
+    @Secured({RoleType.SYS_ADMIN, RoleType.TENANT_ADMIN})
+    @Operation(summary = "查询所有启用用户接口")
+    @PostMapping("/pageEnableUser")
+    @SuccessResponse("查询成功")
+    public Page<PageEnableUserRes> pageEnableUser(@Valid @RequestBody PageEnableUserReq pageEnableUserReq) {
 
-		return userBizService.pageEnableUser(pageEnableUserReq);
-	}
+        return userBizService.pageEnableUser(pageEnableUserReq);
+    }
 
-	@Secured({RoleType.SYS_ADMIN, RoleType.TENANT_ADMIN})
-	@Operation(summary = "获取匿名者访问token接口")
-	@PostMapping("/getAnonymousToken")
-	@SuccessResponse("查询成功")
-	public GetAnonymousTokenRes getAnonymousToken(@Valid @RequestBody GetAnonymousTokenReq getAnonymousTokenReq) {
+    @Secured({RoleType.SYS_ADMIN, RoleType.TENANT_ADMIN})
+    @Operation(summary = "获取匿名者访问token接口")
+    @PostMapping("/getAnonymousToken")
+    @SuccessResponse("查询成功")
+    public GetAnonymousTokenRes getAnonymousToken(@Valid @RequestBody GetAnonymousTokenReq getAnonymousTokenReq) {
 
-		return userBizService.getAnonymousToken(getAnonymousTokenReq);
-	}
+        return userBizService.getAnonymousToken(getAnonymousTokenReq);
+    }
 }

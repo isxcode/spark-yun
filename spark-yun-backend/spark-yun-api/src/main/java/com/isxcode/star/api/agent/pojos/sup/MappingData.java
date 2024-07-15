@@ -13,10 +13,10 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class MappingData {
-	private List<HashMap<String, String>> sourceTableData;
+    private List<HashMap<String, String>> sourceTableData;
 
-	private List<HashMap<String, String>> targetTableData;
+    private List<HashMap<String, String>> targetTableData;
 
-	private List<HashMap<String, String>> connect;
+    private List<HashMap<String, String>> connect;
 
 }

@@ -5,17 +5,17 @@ import lombok.Data;
 @Data
 public class CardInfo {
 
-	private String id;
+    private String id;
 
-	private String name;
+    private String name;
 
-	private String type;
+    private String type;
 
-	private String datasourceId;
+    private String datasourceId;
 
-	private DataSql dataSql;
+    private DataSql dataSql;
 
-	private Object webConfig;
+    private Object webConfig;
 
-	private EchartOption exampleData;
+    private EchartOption exampleData;
 }

@@ -7,35 +7,35 @@ import lombok.Data;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class GetClusterNodeRes {
 
-	private String id;
+    private String id;
 
-	private String name;
+    private String name;
 
-	private String remark;
+    private String remark;
 
-	private String host;
+    private String host;
 
-	private String username;
+    private String username;
 
-	private String memory;
+    private String memory;
 
-	private String cpu;
+    private String cpu;
 
-	private String storage;
+    private String storage;
 
-	private String status;
+    private String status;
 
-	private String checkDateTime;
+    private String checkDateTime;
 
-	private String agentHomePath;
+    private String agentHomePath;
 
-	private String agentPort;
+    private String agentPort;
 
-	private String hadoopHomePath;
+    private String hadoopHomePath;
 
-	private String port;
+    private String port;
 
-	private String agentLog;
+    private String agentLog;
 
-	private Boolean defaultClusterNode;
+    private Boolean defaultClusterNode;
 }

@@ -11,9 +11,9 @@ import lombok.NoArgsConstructor;
 @Data
 public class AddViewRes {
 
-	private String id;
+    private String id;
 
-	private String name;
+    private String name;
 
-	private String status;
+    private String status;
 }

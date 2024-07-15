@@ -9,9 +9,9 @@ import lombok.Data;
 @Builder
 public class GetRunWorkInstancesRes {
 
-	private String flowStatus;
+    private String flowStatus;
 
-	private String flowRunLog;
+    private String flowRunLog;
 
-	private List<WorkInstanceInfo> workInstances;
+    private List<WorkInstanceInfo> workInstances;
 }

@@ -7,5 +7,5 @@ import lombok.Data;
 @Builder
 public class GetFormLinkRes {
 
-	private String formLinkId;
+    private String formLinkId;
 }

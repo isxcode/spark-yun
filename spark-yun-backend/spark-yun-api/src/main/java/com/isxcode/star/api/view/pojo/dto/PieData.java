@@ -7,7 +7,7 @@ import lombok.Data;
 @Builder
 public class PieData {
 
-	private String name;
+    private String name;
 
-	private Double value;
+    private Double value;
 }

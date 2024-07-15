@@ -16,22 +16,22 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface WorkflowMapper {
 
-	WorkflowEntity addWorkflowReqToWorkflowEntity(AddWorkflowReq addWorkflowReq);
+    WorkflowEntity addWorkflowReqToWorkflowEntity(AddWorkflowReq addWorkflowReq);
 
-	@Mapping(source = "wofUpdateWorkflowReq.name", target = "name")
-	@Mapping(source = "workflowEntity.id", target = "id")
-	@Mapping(source = "wofUpdateWorkflowReq.remark", target = "remark")
-	@Mapping(source = "wofUpdateWorkflowReq.defaultClusterId", target = "defaultClusterId")
-	WorkflowEntity updateWorkflowReqToWorkflowEntity(UpdateWorkflowReq wofUpdateWorkflowReq,
-			WorkflowEntity workflowEntity);
+    @Mapping(source = "wofUpdateWorkflowReq.name", target = "name")
+    @Mapping(source = "workflowEntity.id", target = "id")
+    @Mapping(source = "wofUpdateWorkflowReq.remark", target = "remark")
+    @Mapping(source = "wofUpdateWorkflowReq.defaultClusterId", target = "defaultClusterId")
+    WorkflowEntity updateWorkflowReqToWorkflowEntity(UpdateWorkflowReq wofUpdateWorkflowReq,
+        WorkflowEntity workflowEntity);
 
-	PageWorkflowRes workflowEntityToQueryWorkflowRes(WorkflowEntity workflowEntity);
+    PageWorkflowRes workflowEntityToQueryWorkflowRes(WorkflowEntity workflowEntity);
 
-	@Mapping(source = "status", target = "runStatus")
-	@Mapping(source = "id", target = "workInstanceId")
-	WorkInstanceInfo workInstanceEntityToWorkInstanceInfo(WorkInstanceEntity workInstances);
+    @Mapping(source = "status", target = "runStatus")
+    @Mapping(source = "id", target = "workInstanceId")
+    WorkInstanceInfo workInstanceEntityToWorkInstanceInfo(WorkInstanceEntity workInstances);
 
-	List<WorkInstanceInfo> workInstanceEntityListToWorkInstanceInfoList(List<WorkInstanceEntity> workInstances);
+    List<WorkInstanceInfo> workInstanceEntityListToWorkInstanceInfoList(List<WorkInstanceEntity> workInstances);
 
-	PageInstancesRes workflowMonitorAoToPageInstancesRes(WorkflowMonitorAo workflowMonitorAo);
+    PageInstancesRes workflowMonitorAoToPageInstancesRes(WorkflowMonitorAo workflowMonitorAo);
 }

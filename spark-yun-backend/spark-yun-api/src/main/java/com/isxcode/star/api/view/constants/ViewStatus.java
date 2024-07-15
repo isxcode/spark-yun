@@ -2,28 +2,28 @@ package com.isxcode.star.api.view.constants;
 
 public interface ViewStatus {
 
-	/**
-	 * 新建.
-	 */
-	String NEW = "NEW";
+    /**
+     * 新建.
+     */
+    String NEW = "NEW";
 
-	/**
-	 * 可用.
-	 */
-	String ACTIVE = "ACTIVE";
+    /**
+     * 可用.
+     */
+    String ACTIVE = "ACTIVE";
 
-	/**
-	 * 异常.
-	 */
-	String ERROR = "ERROR";
+    /**
+     * 异常.
+     */
+    String ERROR = "ERROR";
 
-	/**
-	 * 已发布.
-	 */
-	String PUBLISHED = "PUBLISHED";
+    /**
+     * 已发布.
+     */
+    String PUBLISHED = "PUBLISHED";
 
-	/**
-	 * 下线.
-	 */
-	String OFFLINE = "OFFLINE";
+    /**
+     * 下线.
+     */
+    String OFFLINE = "OFFLINE";
 }

@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class EchartAxisPointer {
 
-	private String type;
+    private String type;
 
-	private Boolean snap;
+    private Boolean snap;
 }

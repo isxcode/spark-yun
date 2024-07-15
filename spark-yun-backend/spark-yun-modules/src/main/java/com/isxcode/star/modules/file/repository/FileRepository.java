@@ -15,8 +15,8 @@ import java.util.Optional;
 @CacheConfig(cacheNames = {"sy_file"})
 public interface FileRepository extends JpaRepository<FileEntity, String> {
 
-	Optional<FileEntity> findByFileName(String fileName);
+    Optional<FileEntity> findByFileName(String fileName);
 
-	@Query("SELECT F FROM FileEntity F WHERE (:type is null OR F.fileType = :type OR :type='') and ( F.fileName LIKE %:keyword% OR F.remark LIKE %:keyword% ) order by F.createDateTime desc ")
-	Page<FileEntity> searchAll(@Param("keyword") String searchKeyWord, @Param("type") String type, Pageable pageable);
+    @Query("SELECT F FROM FileEntity F WHERE (:type is null OR F.fileType = :type OR :type='') and ( F.fileName LIKE %:keyword% OR F.remark LIKE %:keyword% ) order by F.createDateTime desc ")
+    Page<FileEntity> searchAll(@Param("keyword") String searchKeyWord, @Param("type") String type, Pageable pageable);
 }

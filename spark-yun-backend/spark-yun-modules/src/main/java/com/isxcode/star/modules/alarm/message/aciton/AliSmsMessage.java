@@ -18,42 +18,42 @@ import org.springframework.stereotype.Service;
 @Service
 public class AliSmsMessage extends MessageRunner {
 
-	protected AliSmsMessage(AlarmInstanceRepository alarmInstanceRepository) {
-		super(alarmInstanceRepository);
-	}
+    protected AliSmsMessage(AlarmInstanceRepository alarmInstanceRepository) {
+        super(alarmInstanceRepository);
+    }
 
-	@Override
-	public String getActionName() {
-		return MessageType.ALI_SMS;
-	}
+    @Override
+    public String getActionName() {
+        return MessageType.ALI_SMS;
+    }
 
-	@Override
-	public Object sendMessage(MessageContext messageContext) {
+    @Override
+    public Object sendMessage(MessageContext messageContext) {
 
-		if (Strings.isEmpty(messageContext.getPhone())) {
-			throw new RuntimeException("用户手机号为空");
-		}
+        if (Strings.isEmpty(messageContext.getPhone())) {
+            throw new RuntimeException("用户手机号为空");
+        }
 
-		try {
-			Config config = new Config().setAccessKeyId(messageContext.getMessageConfig().getAccessKeyId())
-					.setAccessKeySecret(messageContext.getMessageConfig().getAccessKeySecret())
-					.setRegionId(messageContext.getMessageConfig().getRegion()).setEndpoint("dysmsapi.aliyuncs.com");
+        try {
+            Config config = new Config().setAccessKeyId(messageContext.getMessageConfig().getAccessKeyId())
+                .setAccessKeySecret(messageContext.getMessageConfig().getAccessKeySecret())
+                .setRegionId(messageContext.getMessageConfig().getRegion()).setEndpoint("dysmsapi.aliyuncs.com");
 
-			Client client = new Client(config);
-			SendSmsRequest sendSmsRequest = new SendSmsRequest()
-					.setSignName(messageContext.getMessageConfig().getSignName())
-					.setTemplateCode(messageContext.getMessageConfig().getTemplateCode())
-					.setPhoneNumbers(messageContext.getPhone()).setTemplateParam(messageContext.getContent());
+            Client client = new Client(config);
+            SendSmsRequest sendSmsRequest =
+                new SendSmsRequest().setSignName(messageContext.getMessageConfig().getSignName())
+                    .setTemplateCode(messageContext.getMessageConfig().getTemplateCode())
+                    .setPhoneNumbers(messageContext.getPhone()).setTemplateParam(messageContext.getContent());
 
-			RuntimeOptions runtime = new RuntimeOptions();
-			SendSmsResponse sendSmsResponse = client.sendSmsWithOptions(sendSmsRequest, runtime);
-			if (!"OK".equals(sendSmsResponse.getBody().getCode())) {
-				throw new RuntimeException(sendSmsResponse.getBody().getMessage());
-			}
-			return JSON.toJSONString(sendSmsResponse);
-		} catch (Exception e) {
-			TeaException error = new TeaException(e.getMessage(), e);
-			throw new RuntimeException(Common.assertAsString(error.message));
-		}
-	}
+            RuntimeOptions runtime = new RuntimeOptions();
+            SendSmsResponse sendSmsResponse = client.sendSmsWithOptions(sendSmsRequest, runtime);
+            if (!"OK".equals(sendSmsResponse.getBody().getCode())) {
+                throw new RuntimeException(sendSmsResponse.getBody().getMessage());
+            }
+            return JSON.toJSONString(sendSmsResponse);
+        } catch (Exception e) {
+            TeaException error = new TeaException(e.getMessage(), e);
+            throw new RuntimeException(Common.assertAsString(error.message));
+        }
+    }
 }

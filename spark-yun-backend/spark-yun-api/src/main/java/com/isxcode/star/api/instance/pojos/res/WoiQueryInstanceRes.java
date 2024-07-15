@@ -10,29 +10,29 @@ import lombok.Data;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class WoiQueryInstanceRes {
 
-	private String id;
+    private String id;
 
-	private String workName;
+    private String workName;
 
-	private String workType;
+    private String workType;
 
-	private String workflowName;
+    private String workflowName;
 
-	private String instanceType;
+    private String instanceType;
 
-	private String status;
+    private String status;
 
-	@JsonSerialize(using = LocalDateTimeSerializer.class)
-	private LocalDateTime execStartDateTime;
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    private LocalDateTime execStartDateTime;
 
-	@JsonSerialize(using = LocalDateTimeSerializer.class)
-	private LocalDateTime execEndDateTime;
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    private LocalDateTime execEndDateTime;
 
-	@JsonSerialize(using = LocalDateTimeSerializer.class)
-	private LocalDateTime nextPlanDateTime;
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    private LocalDateTime nextPlanDateTime;
 
-	@JsonSerialize(using = LocalDateTimeSerializer.class)
-	private LocalDateTime planStartDateTime;
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    private LocalDateTime planStartDateTime;
 
-	private Long duration;
+    private Long duration;
 }

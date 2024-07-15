@@ -12,15 +12,15 @@ import java.util.List;
 @NoArgsConstructor
 public class GetRealRes {
 
-	private String id;
+    private String id;
 
-	private List<String> libConfig;
+    private List<String> libConfig;
 
-	private List<String> funcConfig;
+    private List<String> funcConfig;
 
-	private String sparkConfig;
+    private String sparkConfig;
 
-	private String clusterId;
+    private String clusterId;
 
-	private SyncWorkConfig syncConfig;
+    private SyncWorkConfig syncConfig;
 }

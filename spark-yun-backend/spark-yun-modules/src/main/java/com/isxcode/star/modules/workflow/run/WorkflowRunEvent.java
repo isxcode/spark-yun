@@ -10,36 +10,36 @@ import lombok.Data;
 @Data
 public class WorkflowRunEvent {
 
-	private String flowInstanceId;
+    private String flowInstanceId;
 
-	private String workId;
+    private String workId;
 
-	private String workName;
+    private String workName;
 
-	private String versionId;
+    private String versionId;
 
-	private List<List<String>> nodeMapping;
+    private List<List<String>> nodeMapping;
 
-	private List<String> nodeList;
+    private List<String> nodeList;
 
-	private List<String> dagStartList;
+    private List<String> dagStartList;
 
-	private List<String> dagEndList;
+    private List<String> dagEndList;
 
-	private String userId;
+    private String userId;
 
-	private String tenantId;
+    private String tenantId;
 
-	public WorkflowRunEvent(String workId, String workName, WorkflowRunEvent workRunEvent) {
+    public WorkflowRunEvent(String workId, String workName, WorkflowRunEvent workRunEvent) {
 
-		this.workId = workId;
-		this.workName = workName;
-		this.flowInstanceId = workRunEvent.getFlowInstanceId();
-		this.nodeMapping = workRunEvent.getNodeMapping();
-		this.nodeList = workRunEvent.getNodeList();
-		this.dagStartList = workRunEvent.getDagStartList();
-		this.dagEndList = workRunEvent.getDagEndList();
-		this.userId = workRunEvent.getUserId();
-		this.tenantId = workRunEvent.getTenantId();
-	}
+        this.workId = workId;
+        this.workName = workName;
+        this.flowInstanceId = workRunEvent.getFlowInstanceId();
+        this.nodeMapping = workRunEvent.getNodeMapping();
+        this.nodeList = workRunEvent.getNodeList();
+        this.dagStartList = workRunEvent.getDagStartList();
+        this.dagEndList = workRunEvent.getDagEndList();
+        this.userId = workRunEvent.getUserId();
+        this.tenantId = workRunEvent.getTenantId();
+    }
 }

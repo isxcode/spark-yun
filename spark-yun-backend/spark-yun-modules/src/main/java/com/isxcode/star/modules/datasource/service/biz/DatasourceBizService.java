@@ -48,278 +48,278 @@ import static com.isxcode.star.modules.datasource.service.DatasourceService.ALL_
 @Transactional
 public class DatasourceBizService {
 
-	private final DatasourceRepository datasourceRepository;
+    private final DatasourceRepository datasourceRepository;
 
-	private final DatasourceMapper datasourceMapper;
+    private final DatasourceMapper datasourceMapper;
 
-	private final AesUtils aesUtils;
+    private final AesUtils aesUtils;
 
-	private final DatasourceService datasourceService;
+    private final DatasourceService datasourceService;
 
-	private final DatabaseDriverRepository databaseDriverRepository;
+    private final DatabaseDriverRepository databaseDriverRepository;
 
-	private final IsxAppProperties isxAppProperties;
+    private final IsxAppProperties isxAppProperties;
 
-	private final DatabaseDriverService databaseDriverService;
+    private final DatabaseDriverService databaseDriverService;
 
-	public void addDatasource(AddDatasourceReq addDatasourceReq) {
+    public void addDatasource(AddDatasourceReq addDatasourceReq) {
 
-		// 检测数据源名称重复
-		Optional<DatasourceEntity> datasourceByName = datasourceRepository.findByName(addDatasourceReq.getName());
-		if (datasourceByName.isPresent()) {
-			throw new IsxAppException("数据名称重复");
-		}
+        // 检测数据源名称重复
+        Optional<DatasourceEntity> datasourceByName = datasourceRepository.findByName(addDatasourceReq.getName());
+        if (datasourceByName.isPresent()) {
+            throw new IsxAppException("数据名称重复");
+        }
 
-		DatasourceEntity datasource = datasourceMapper.dasAddDatasourceReqToDatasourceEntity(addDatasourceReq);
+        DatasourceEntity datasource = datasourceMapper.dasAddDatasourceReqToDatasourceEntity(addDatasourceReq);
 
-		// 密码对成加密
-		datasource.setPasswd(aesUtils.encrypt(datasource.getPasswd()));
+        // 密码对成加密
+        datasource.setPasswd(aesUtils.encrypt(datasource.getPasswd()));
 
-		// 判断如果是hive数据源，metastore_uris没有填写，附加默认值，thrift://localhost:9083
-		if (DatasourceType.HIVE.equals(addDatasourceReq.getDbType())
-				&& Strings.isEmpty(addDatasourceReq.getMetastoreUris())) {
-			datasource.setMetastoreUris("thrift://localhost:9083");
-		}
+        // 判断如果是hive数据源，metastore_uris没有填写，附加默认值，thrift://localhost:9083
+        if (DatasourceType.HIVE.equals(addDatasourceReq.getDbType())
+            && Strings.isEmpty(addDatasourceReq.getMetastoreUris())) {
+            datasource.setMetastoreUris("thrift://localhost:9083");
+        }
 
-		// 如果是kafka数据源，添加kafka配置
-		if (DatasourceType.KAFKA.equals(addDatasourceReq.getDbType())) {
-			datasource.setKafkaConfig(
-					JSON.toJSONString(KafkaConfig.builder().bootstrapServers(addDatasourceReq.getJdbcUrl()).build()));
-		}
+        // 如果是kafka数据源，添加kafka配置
+        if (DatasourceType.KAFKA.equals(addDatasourceReq.getDbType())) {
+            datasource.setKafkaConfig(
+                JSON.toJSONString(KafkaConfig.builder().bootstrapServers(addDatasourceReq.getJdbcUrl()).build()));
+        }
 
-		datasource.setCheckDateTime(LocalDateTime.now());
-		datasource.setStatus(DatasourceStatus.UN_CHECK);
-		datasourceRepository.save(datasource);
-	}
+        datasource.setCheckDateTime(LocalDateTime.now());
+        datasource.setStatus(DatasourceStatus.UN_CHECK);
+        datasourceRepository.save(datasource);
+    }
 
-	public void updateDatasource(UpdateDatasourceReq updateDatasourceReq) {
+    public void updateDatasource(UpdateDatasourceReq updateDatasourceReq) {
 
-		// 检测数据源名称重复
-		Optional<DatasourceEntity> datasourceByName = datasourceRepository.findByName(updateDatasourceReq.getName());
-		if (datasourceByName.isPresent() && !datasourceByName.get().getId().equals(updateDatasourceReq.getId())) {
-			throw new IsxAppException("数据名称重复");
-		}
+        // 检测数据源名称重复
+        Optional<DatasourceEntity> datasourceByName = datasourceRepository.findByName(updateDatasourceReq.getName());
+        if (datasourceByName.isPresent() && !datasourceByName.get().getId().equals(updateDatasourceReq.getId())) {
+            throw new IsxAppException("数据名称重复");
+        }
 
-		DatasourceEntity datasource = datasourceService.getDatasource(updateDatasourceReq.getId());
+        DatasourceEntity datasource = datasourceService.getDatasource(updateDatasourceReq.getId());
 
-		datasource = datasourceMapper.dasUpdateDatasourceReqToDatasourceEntity(updateDatasourceReq, datasource);
+        datasource = datasourceMapper.dasUpdateDatasourceReqToDatasourceEntity(updateDatasourceReq, datasource);
 
-		// 密码对成加密
-		datasource.setPasswd(aesUtils.encrypt(datasource.getPasswd()));
+        // 密码对成加密
+        datasource.setPasswd(aesUtils.encrypt(datasource.getPasswd()));
 
-		// 判断如果是hive数据源，metastore_uris没有填写，附加默认值，thrift://localhost:9083
-		if (DatasourceType.HIVE.equals(updateDatasourceReq.getDbType())
-				&& Strings.isEmpty(updateDatasourceReq.getMetastoreUris())) {
-			datasource.setMetastoreUris("thrift://localhost:9083");
-		}
+        // 判断如果是hive数据源，metastore_uris没有填写，附加默认值，thrift://localhost:9083
+        if (DatasourceType.HIVE.equals(updateDatasourceReq.getDbType())
+            && Strings.isEmpty(updateDatasourceReq.getMetastoreUris())) {
+            datasource.setMetastoreUris("thrift://localhost:9083");
+        }
 
-		datasource.setCheckDateTime(LocalDateTime.now());
-		datasource.setStatus(DatasourceStatus.UN_CHECK);
-		datasourceRepository.save(datasource);
-	}
+        datasource.setCheckDateTime(LocalDateTime.now());
+        datasource.setStatus(DatasourceStatus.UN_CHECK);
+        datasourceRepository.save(datasource);
+    }
 
-	public Page<PageDatasourceRes> pageDatasource(PageDatasourceReq dasQueryDatasourceReq) {
+    public Page<PageDatasourceRes> pageDatasource(PageDatasourceReq dasQueryDatasourceReq) {
 
-		if (Strings.isEmpty(dasQueryDatasourceReq.getDatasourceType())) {
-			dasQueryDatasourceReq.setDatasourceType(null);
-		}
+        if (Strings.isEmpty(dasQueryDatasourceReq.getDatasourceType())) {
+            dasQueryDatasourceReq.setDatasourceType(null);
+        }
 
-		Page<DatasourceEntity> datasourceEntityPage = datasourceRepository.searchAll(
-				dasQueryDatasourceReq.getSearchKeyWord(), dasQueryDatasourceReq.getDatasourceType(),
-				PageRequest.of(dasQueryDatasourceReq.getPage(), dasQueryDatasourceReq.getPageSize()));
+        Page<DatasourceEntity> datasourceEntityPage = datasourceRepository.searchAll(
+            dasQueryDatasourceReq.getSearchKeyWord(), dasQueryDatasourceReq.getDatasourceType(),
+            PageRequest.of(dasQueryDatasourceReq.getPage(), dasQueryDatasourceReq.getPageSize()));
 
-		Page<PageDatasourceRes> pageDatasourceRes = datasourceEntityPage
-				.map(datasourceMapper::datasourceEntityToQueryDatasourceRes);
-		pageDatasourceRes.getContent().forEach(e -> {
-			if (!Strings.isEmpty(e.getDriverId())) {
-				Optional<DatabaseDriverEntity> databaseDriver = databaseDriverRepository.findById(e.getDriverId());
-				if (databaseDriver.isPresent()) {
-					e.setDriverName(databaseDriver.get().getName());
-				}
-			}
-		});
+        Page<PageDatasourceRes> pageDatasourceRes =
+            datasourceEntityPage.map(datasourceMapper::datasourceEntityToQueryDatasourceRes);
+        pageDatasourceRes.getContent().forEach(e -> {
+            if (!Strings.isEmpty(e.getDriverId())) {
+                Optional<DatabaseDriverEntity> databaseDriver = databaseDriverRepository.findById(e.getDriverId());
+                if (databaseDriver.isPresent()) {
+                    e.setDriverName(databaseDriver.get().getName());
+                }
+            }
+        });
 
-		return pageDatasourceRes;
-	}
+        return pageDatasourceRes;
+    }
 
-	public void deleteDatasource(DeleteDatasourceReq deleteDatasourceReq) {
+    public void deleteDatasource(DeleteDatasourceReq deleteDatasourceReq) {
 
-		datasourceRepository.deleteById(deleteDatasourceReq.getDatasourceId());
-	}
+        datasourceRepository.deleteById(deleteDatasourceReq.getDatasourceId());
+    }
 
-	public TestConnectRes testConnect(GetConnectLogReq testConnectReq) {
+    public TestConnectRes testConnect(GetConnectLogReq testConnectReq) {
 
-		DatasourceEntity datasource = datasourceService.getDatasource(testConnectReq.getDatasourceId());
+        DatasourceEntity datasource = datasourceService.getDatasource(testConnectReq.getDatasourceId());
 
-		// 测试连接
-		datasource.setCheckDateTime(LocalDateTime.now());
+        // 测试连接
+        datasource.setCheckDateTime(LocalDateTime.now());
 
-		if (DatasourceType.KAFKA.equals(datasource.getDbType())) {
-			try {
-				datasourceService.checkKafka(JSON.parseObject(datasource.getKafkaConfig(), KafkaConfig.class));
-				datasource.setStatus(DatasourceStatus.ACTIVE);
-				datasource.setConnectLog("测试连接成功！");
-				datasourceRepository.save(datasource);
-				return new TestConnectRes(true, "连接成功");
-			} catch (Exception e) {
-				log.debug(e.getMessage(), e);
-				datasource.setStatus(DatasourceStatus.FAIL);
-				datasource.setConnectLog("测试连接失败：" + e.getMessage());
-				datasourceRepository.save(datasource);
-				return new TestConnectRes(false, e.getMessage());
-			}
-		} else {
-			try (Connection connection = datasourceService.getDbConnection(datasource)) {
-				if (connection != null) {
-					datasource.setStatus(DatasourceStatus.ACTIVE);
-					datasource.setConnectLog("测试连接成功！");
-					datasourceRepository.save(datasource);
-					return new TestConnectRes(true, "连接成功");
-				}
-			} catch (Exception e) {
-				log.debug(e.getMessage(), e);
+        if (DatasourceType.KAFKA.equals(datasource.getDbType())) {
+            try {
+                datasourceService.checkKafka(JSON.parseObject(datasource.getKafkaConfig(), KafkaConfig.class));
+                datasource.setStatus(DatasourceStatus.ACTIVE);
+                datasource.setConnectLog("测试连接成功！");
+                datasourceRepository.save(datasource);
+                return new TestConnectRes(true, "连接成功");
+            } catch (Exception e) {
+                log.debug(e.getMessage(), e);
+                datasource.setStatus(DatasourceStatus.FAIL);
+                datasource.setConnectLog("测试连接失败：" + e.getMessage());
+                datasourceRepository.save(datasource);
+                return new TestConnectRes(false, e.getMessage());
+            }
+        } else {
+            try (Connection connection = datasourceService.getDbConnection(datasource)) {
+                if (connection != null) {
+                    datasource.setStatus(DatasourceStatus.ACTIVE);
+                    datasource.setConnectLog("测试连接成功！");
+                    datasourceRepository.save(datasource);
+                    return new TestConnectRes(true, "连接成功");
+                }
+            } catch (Exception e) {
+                log.debug(e.getMessage(), e);
 
-				datasource.setStatus(DatasourceStatus.FAIL);
-				datasource.setConnectLog("测试连接失败：" + e.getMessage());
-				datasourceRepository.save(datasource);
-				return new TestConnectRes(false, e.getMessage());
-			}
-		}
-		return new TestConnectRes(false, "连接失败");
-	}
+                datasource.setStatus(DatasourceStatus.FAIL);
+                datasource.setConnectLog("测试连接失败：" + e.getMessage());
+                datasourceRepository.save(datasource);
+                return new TestConnectRes(false, e.getMessage());
+            }
+        }
+        return new TestConnectRes(false, "连接失败");
+    }
 
-	public GetConnectLogRes getConnectLog(GetConnectLogReq getConnectLogReq) {
+    public GetConnectLogRes getConnectLog(GetConnectLogReq getConnectLogReq) {
 
-		DatasourceEntity datasource = datasourceService.getDatasource(getConnectLogReq.getDatasourceId());
+        DatasourceEntity datasource = datasourceService.getDatasource(getConnectLogReq.getDatasourceId());
 
-		return GetConnectLogRes.builder().connectLog(datasource.getConnectLog()).build();
-	}
+        return GetConnectLogRes.builder().connectLog(datasource.getConnectLog()).build();
+    }
 
-	public void uploadDatabaseDriver(MultipartFile driverFile, String dbType, String name, String remark) {
+    public void uploadDatabaseDriver(MultipartFile driverFile, String dbType, String name, String remark) {
 
-		// 判断驱动文件夹是否存在，没有则创建
-		String driverDirPath = PathUtils.parseProjectPath(isxAppProperties.getResourcesPath()) + File.separator + "jdbc"
-				+ File.separator + TENANT_ID.get();
-		if (!new File(driverDirPath).exists()) {
-			try {
-				Files.createDirectories(Paths.get(driverDirPath));
-			} catch (IOException e) {
-				log.debug(e.getMessage(), e);
-				throw new IsxAppException("上传驱动，目录创建失败");
-			}
-		}
+        // 判断驱动文件夹是否存在，没有则创建
+        String driverDirPath = PathUtils.parseProjectPath(isxAppProperties.getResourcesPath()) + File.separator + "jdbc"
+            + File.separator + TENANT_ID.get();
+        if (!new File(driverDirPath).exists()) {
+            try {
+                Files.createDirectories(Paths.get(driverDirPath));
+            } catch (IOException e) {
+                log.debug(e.getMessage(), e);
+                throw new IsxAppException("上传驱动，目录创建失败");
+            }
+        }
 
-		// 保存驱动文件
-		try (InputStream inputStream = driverFile.getInputStream()) {
-			Files.copy(inputStream, Paths.get(driverDirPath).resolve(driverFile.getOriginalFilename()),
-					StandardCopyOption.REPLACE_EXISTING);
-		} catch (IOException e) {
-			log.debug(e.getMessage(), e);
-			throw new IsxAppException("上传许可证失败");
-		}
+        // 保存驱动文件
+        try (InputStream inputStream = driverFile.getInputStream()) {
+            Files.copy(inputStream, Paths.get(driverDirPath).resolve(driverFile.getOriginalFilename()),
+                StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            log.debug(e.getMessage(), e);
+            throw new IsxAppException("上传许可证失败");
+        }
 
-		// 初始化驱动对象
-		DatabaseDriverEntity databaseDriver = DatabaseDriverEntity.builder().name(name).dbType(dbType)
-				.driverType("TENANT_DRIVER").remark(remark).isDefaultDriver(false)
-				.fileName(driverFile.getOriginalFilename()).build();
+        // 初始化驱动对象
+        DatabaseDriverEntity databaseDriver =
+            DatabaseDriverEntity.builder().name(name).dbType(dbType).driverType("TENANT_DRIVER").remark(remark)
+                .isDefaultDriver(false).fileName(driverFile.getOriginalFilename()).build();
 
-		// 持久化
-		databaseDriverRepository.save(databaseDriver);
-	}
+        // 持久化
+        databaseDriverRepository.save(databaseDriver);
+    }
 
-	public Page<PageDatabaseDriverRes> pageDatabaseDriver(PageDatabaseDriverReq pageDatabaseDriverReq) {
+    public Page<PageDatabaseDriverRes> pageDatabaseDriver(PageDatabaseDriverReq pageDatabaseDriverReq) {
 
-		JPA_TENANT_MODE.set(false);
-		Page<DatabaseDriverEntity> pageDatabaseDriver = databaseDriverRepository.searchAll(
-				pageDatabaseDriverReq.getSearchKeyWord(), TENANT_ID.get(),
-				PageRequest.of(pageDatabaseDriverReq.getPage(), pageDatabaseDriverReq.getPageSize()));
+        JPA_TENANT_MODE.set(false);
+        Page<DatabaseDriverEntity> pageDatabaseDriver =
+            databaseDriverRepository.searchAll(pageDatabaseDriverReq.getSearchKeyWord(), TENANT_ID.get(),
+                PageRequest.of(pageDatabaseDriverReq.getPage(), pageDatabaseDriverReq.getPageSize()));
 
-		return pageDatabaseDriver.map(datasourceMapper::dataDriverEntityToPageDatabaseDriverRes);
-	}
+        return pageDatabaseDriver.map(datasourceMapper::dataDriverEntityToPageDatabaseDriverRes);
+    }
 
-	public void deleteDatabaseDriver(DeleteDatabaseDriverReq deleteDatabaseDriverReq) {
+    public void deleteDatabaseDriver(DeleteDatabaseDriverReq deleteDatabaseDriverReq) {
 
-		// 支持查询所有的数据
-		JPA_TENANT_MODE.set(false);
-		DatabaseDriverEntity driver = databaseDriverService.getDriver(deleteDatabaseDriverReq.getDriverId());
-		JPA_TENANT_MODE.set(true);
+        // 支持查询所有的数据
+        JPA_TENANT_MODE.set(false);
+        DatabaseDriverEntity driver = databaseDriverService.getDriver(deleteDatabaseDriverReq.getDriverId());
+        JPA_TENANT_MODE.set(true);
 
-		// 系统驱动无法删除
-		if ("SYSTEM_DRIVER".equals(driver.getDriverType())) {
-			throw new IsxAppException("系统数据源驱动无法删除");
-		}
+        // 系统驱动无法删除
+        if ("SYSTEM_DRIVER".equals(driver.getDriverType())) {
+            throw new IsxAppException("系统数据源驱动无法删除");
+        }
 
-		// 判断驱动是否被别人使用，使用则不能删除
-		List<DatasourceEntity> allDrivers = datasourceRepository.findAllByDriverId(driver.getId());
-		if (!allDrivers.isEmpty()) {
-			throw new IsxAppException("有数据源已使用当前驱动，无法删除");
-		}
+        // 判断驱动是否被别人使用，使用则不能删除
+        List<DatasourceEntity> allDrivers = datasourceRepository.findAllByDriverId(driver.getId());
+        if (!allDrivers.isEmpty()) {
+            throw new IsxAppException("有数据源已使用当前驱动，无法删除");
+        }
 
-		// 卸载Map中的驱动
-		ALL_EXIST_DRIVER.remove(driver.getId());
+        // 卸载Map中的驱动
+        ALL_EXIST_DRIVER.remove(driver.getId());
 
-		// 将文件名改名字 xxx.jar ${driverId}_xxx.jar_bak
-		try {
-			String jdbcDirPath = PathUtils.parseProjectPath(isxAppProperties.getResourcesPath()) + File.separator
-					+ "jdbc" + File.separator + TENANT_ID.get();
-			Files.copy(Paths.get(jdbcDirPath).resolve(driver.getFileName()),
-					Paths.get(jdbcDirPath).resolve(driver.getId() + "_" + driver.getFileName() + "_bak"),
-					StandardCopyOption.REPLACE_EXISTING);
-			Files.delete(Paths.get(jdbcDirPath).resolve(driver.getFileName()));
-		} catch (IOException e) {
-			log.debug(e.getMessage(), e);
-			throw new IsxAppException("删除驱动文件异常");
-		}
+        // 将文件名改名字 xxx.jar ${driverId}_xxx.jar_bak
+        try {
+            String jdbcDirPath = PathUtils.parseProjectPath(isxAppProperties.getResourcesPath()) + File.separator
+                + "jdbc" + File.separator + TENANT_ID.get();
+            Files.copy(Paths.get(jdbcDirPath).resolve(driver.getFileName()),
+                Paths.get(jdbcDirPath).resolve(driver.getId() + "_" + driver.getFileName() + "_bak"),
+                StandardCopyOption.REPLACE_EXISTING);
+            Files.delete(Paths.get(jdbcDirPath).resolve(driver.getFileName()));
+        } catch (IOException e) {
+            log.debug(e.getMessage(), e);
+            throw new IsxAppException("删除驱动文件异常");
+        }
 
-		// 删除数据库
-		databaseDriverRepository.deleteById(driver.getId());
-	}
+        // 删除数据库
+        databaseDriverRepository.deleteById(driver.getId());
+    }
 
-	public void settingDefaultDatabaseDriver(SettingDefaultDatabaseDriverReq settingDefaultDatabaseDriverReq) {
+    public void settingDefaultDatabaseDriver(SettingDefaultDatabaseDriverReq settingDefaultDatabaseDriverReq) {
 
-		JPA_TENANT_MODE.set(false);
-		Optional<DatabaseDriverEntity> databaseDriverEntityOptional = databaseDriverRepository
-				.findById(settingDefaultDatabaseDriverReq.getDriverId());
-		JPA_TENANT_MODE.set(true);
+        JPA_TENANT_MODE.set(false);
+        Optional<DatabaseDriverEntity> databaseDriverEntityOptional =
+            databaseDriverRepository.findById(settingDefaultDatabaseDriverReq.getDriverId());
+        JPA_TENANT_MODE.set(true);
 
-		if (!databaseDriverEntityOptional.isPresent()) {
-			throw new IsxAppException("数据源驱动不存在");
-		}
+        if (!databaseDriverEntityOptional.isPresent()) {
+            throw new IsxAppException("数据源驱动不存在");
+        }
 
-		DatabaseDriverEntity databaseDriver = databaseDriverEntityOptional.get();
+        DatabaseDriverEntity databaseDriver = databaseDriverEntityOptional.get();
 
-		if ("SYSTEM_DRIVER".equals(databaseDriver.getDriverType())) {
-			throw new IsxAppException("系统默认数据源驱动无法配置默认");
-		}
+        if ("SYSTEM_DRIVER".equals(databaseDriver.getDriverType())) {
+            throw new IsxAppException("系统默认数据源驱动无法配置默认");
+        }
 
-		if (settingDefaultDatabaseDriverReq.getIsDefaultDriver()) {
-			// 将租户中其他的同类型驱动，默认状态都改成false
-			List<DatabaseDriverEntity> allDriver = databaseDriverRepository.findAllByDbType(databaseDriver.getDbType());
-			allDriver.forEach(e -> e.setIsDefaultDriver(false));
-			databaseDriverRepository.saveAll(allDriver);
-		}
+        if (settingDefaultDatabaseDriverReq.getIsDefaultDriver()) {
+            // 将租户中其他的同类型驱动，默认状态都改成false
+            List<DatabaseDriverEntity> allDriver = databaseDriverRepository.findAllByDbType(databaseDriver.getDbType());
+            allDriver.forEach(e -> e.setIsDefaultDriver(false));
+            databaseDriverRepository.saveAll(allDriver);
+        }
 
-		databaseDriver.setIsDefaultDriver(settingDefaultDatabaseDriverReq.getIsDefaultDriver());
-		databaseDriverRepository.save(databaseDriver);
-	}
+        databaseDriver.setIsDefaultDriver(settingDefaultDatabaseDriverReq.getIsDefaultDriver());
+        databaseDriverRepository.save(databaseDriver);
+    }
 
-	public GetDefaultDatabaseDriverRes getDefaultDatabaseDriver(
-			GetDefaultDatabaseDriverReq getDefaultDatabaseDriverReq) {
+    public GetDefaultDatabaseDriverRes getDefaultDatabaseDriver(
+        GetDefaultDatabaseDriverReq getDefaultDatabaseDriverReq) {
 
-		// 先查询租户的如果有直接返回
-		Optional<DatabaseDriverEntity> defaultDriver = databaseDriverRepository
-				.findByDriverTypeAndDbTypeAndIsDefaultDriver("TENANT_DRIVER", getDefaultDatabaseDriverReq.getDbType(),
-						true);
-		if (defaultDriver.isPresent()) {
-			return datasourceMapper.databaseDriverEntityToGetDefaultDatabaseDriverRes(defaultDriver.get());
-		}
+        // 先查询租户的如果有直接返回
+        Optional<DatabaseDriverEntity> defaultDriver =
+            databaseDriverRepository.findByDriverTypeAndDbTypeAndIsDefaultDriver("TENANT_DRIVER",
+                getDefaultDatabaseDriverReq.getDbType(), true);
+        if (defaultDriver.isPresent()) {
+            return datasourceMapper.databaseDriverEntityToGetDefaultDatabaseDriverRes(defaultDriver.get());
+        }
 
-		// 查询系统默认的返回
-		JPA_TENANT_MODE.set(false);
-		Optional<DatabaseDriverEntity> systemDriver = databaseDriverRepository
-				.findByDriverTypeAndDbTypeAndIsDefaultDriver("SYSTEM_DRIVER", getDefaultDatabaseDriverReq.getDbType(),
-						true);
-		return datasourceMapper.databaseDriverEntityToGetDefaultDatabaseDriverRes(systemDriver.get());
-	}
+        // 查询系统默认的返回
+        JPA_TENANT_MODE.set(false);
+        Optional<DatabaseDriverEntity> systemDriver =
+            databaseDriverRepository.findByDriverTypeAndDbTypeAndIsDefaultDriver("SYSTEM_DRIVER",
+                getDefaultDatabaseDriverReq.getDbType(), true);
+        return datasourceMapper.databaseDriverEntityToGetDefaultDatabaseDriverRes(systemDriver.get());
+    }
 
 }

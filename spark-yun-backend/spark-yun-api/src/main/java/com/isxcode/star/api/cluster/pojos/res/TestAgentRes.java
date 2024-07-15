@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class TestAgentRes {
 
-	private String status;
+    private String status;
 
-	private String log;
+    private String log;
 }

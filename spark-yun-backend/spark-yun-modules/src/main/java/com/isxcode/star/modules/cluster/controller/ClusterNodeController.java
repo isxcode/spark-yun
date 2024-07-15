@@ -25,102 +25,102 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class ClusterNodeController {
 
-	private final ClusterNodeBizService clusterNodeBizService;
+    private final ClusterNodeBizService clusterNodeBizService;
 
-	@Operation(summary = "添加引擎节点接口")
-	@PostMapping("/addClusterNode")
-	@SuccessResponse("添加成功")
-	public void addClusterNode(@Valid @RequestBody AddClusterNodeReq addClusterNodeReq) {
+    @Operation(summary = "添加引擎节点接口")
+    @PostMapping("/addClusterNode")
+    @SuccessResponse("添加成功")
+    public void addClusterNode(@Valid @RequestBody AddClusterNodeReq addClusterNodeReq) {
 
-		clusterNodeBizService.addClusterNode(addClusterNodeReq);
-	}
+        clusterNodeBizService.addClusterNode(addClusterNodeReq);
+    }
 
-	@Operation(summary = "更新引擎节点接口")
-	@PostMapping("/updateClusterNode")
-	@SuccessResponse("更新成功")
-	public void updateClusterNode(@Valid @RequestBody UpdateClusterNodeReq updateClusterNodeReq) {
+    @Operation(summary = "更新引擎节点接口")
+    @PostMapping("/updateClusterNode")
+    @SuccessResponse("更新成功")
+    public void updateClusterNode(@Valid @RequestBody UpdateClusterNodeReq updateClusterNodeReq) {
 
-		clusterNodeBizService.updateClusterNode(updateClusterNodeReq);
-	}
+        clusterNodeBizService.updateClusterNode(updateClusterNodeReq);
+    }
 
-	@Operation(summary = "查询节点列表接口")
-	@PostMapping("/pageClusterNode")
-	@SuccessResponse("查询节点列表成功")
-	public Page<EnoQueryNodeRes> pageClusterNode(@Valid @RequestBody PageClusterNodeReq pageClusterNodeReq) {
+    @Operation(summary = "查询节点列表接口")
+    @PostMapping("/pageClusterNode")
+    @SuccessResponse("查询节点列表成功")
+    public Page<EnoQueryNodeRes> pageClusterNode(@Valid @RequestBody PageClusterNodeReq pageClusterNodeReq) {
 
-		return clusterNodeBizService.pageClusterNode(pageClusterNodeReq);
-	}
+        return clusterNodeBizService.pageClusterNode(pageClusterNodeReq);
+    }
 
-	@Operation(summary = "删除节点接口")
-	@PostMapping("/deleteClusterNode")
-	@SuccessResponse("删除成功")
-	public void deleteClusterNode(@Valid @RequestBody DeleteClusterNodeReq deleteClusterNodeReq) {
+    @Operation(summary = "删除节点接口")
+    @PostMapping("/deleteClusterNode")
+    @SuccessResponse("删除成功")
+    public void deleteClusterNode(@Valid @RequestBody DeleteClusterNodeReq deleteClusterNodeReq) {
 
-		clusterNodeBizService.deleteClusterNode(deleteClusterNodeReq);
-	}
+        clusterNodeBizService.deleteClusterNode(deleteClusterNodeReq);
+    }
 
-	@Operation(summary = "检测节点接口")
-	@PostMapping("/checkAgent")
-	@SuccessResponse("开始检测")
-	public void checkAgent(@Valid @RequestBody CheckAgentReq checkAgentReq) {
+    @Operation(summary = "检测节点接口")
+    @PostMapping("/checkAgent")
+    @SuccessResponse("开始检测")
+    public void checkAgent(@Valid @RequestBody CheckAgentReq checkAgentReq) {
 
-		clusterNodeBizService.checkAgent(checkAgentReq);
-	}
+        clusterNodeBizService.checkAgent(checkAgentReq);
+    }
 
-	@Operation(summary = "安装节点接口")
-	@PostMapping("/installAgent")
-	@SuccessResponse("激活中")
-	public void installAgent(@Valid @RequestBody InstallAgentReq installAgentReq) {
+    @Operation(summary = "安装节点接口")
+    @PostMapping("/installAgent")
+    @SuccessResponse("激活中")
+    public void installAgent(@Valid @RequestBody InstallAgentReq installAgentReq) {
 
-		clusterNodeBizService.installAgent(installAgentReq);
-	}
+        clusterNodeBizService.installAgent(installAgentReq);
+    }
 
-	@Operation(summary = "停止节点接口")
-	@PostMapping("/stopAgent")
-	@SuccessResponse("停止中")
-	public void stopAgent(@Valid @RequestBody StopAgentReq stopAgentReq) {
+    @Operation(summary = "停止节点接口")
+    @PostMapping("/stopAgent")
+    @SuccessResponse("停止中")
+    public void stopAgent(@Valid @RequestBody StopAgentReq stopAgentReq) {
 
-		clusterNodeBizService.stopAgent(stopAgentReq);
-	}
+        clusterNodeBizService.stopAgent(stopAgentReq);
+    }
 
-	@Operation(summary = "激活节点接口")
-	@PostMapping("/startAgent")
-	@SuccessResponse("激活中")
-	public void startAgent(@Valid @RequestBody StartAgentReq startAgentReq) {
+    @Operation(summary = "激活节点接口")
+    @PostMapping("/startAgent")
+    @SuccessResponse("激活中")
+    public void startAgent(@Valid @RequestBody StartAgentReq startAgentReq) {
 
-		clusterNodeBizService.startAgent(startAgentReq);
-	}
+        clusterNodeBizService.startAgent(startAgentReq);
+    }
 
-	@Operation(summary = "卸载代理接口")
-	@PostMapping("/removeAgent")
-	@SuccessResponse("卸载中")
-	public void removeAgent(@Valid @RequestBody RemoveAgentReq removeAgentReq) {
+    @Operation(summary = "卸载代理接口")
+    @PostMapping("/removeAgent")
+    @SuccessResponse("卸载中")
+    public void removeAgent(@Valid @RequestBody RemoveAgentReq removeAgentReq) {
 
-		clusterNodeBizService.removeAgent(removeAgentReq);
-	}
+        clusterNodeBizService.removeAgent(removeAgentReq);
+    }
 
-	@Operation(summary = "清理代理接口")
-	@PostMapping("/cleanAgent")
-	@SuccessResponse("清理成功")
-	public void cleanAgent(@Valid @RequestBody CleanAgentReq cleanAgentReq) {
+    @Operation(summary = "清理代理接口")
+    @PostMapping("/cleanAgent")
+    @SuccessResponse("清理成功")
+    public void cleanAgent(@Valid @RequestBody CleanAgentReq cleanAgentReq) {
 
-		clusterNodeBizService.cleanAgent(cleanAgentReq);
-	}
+        clusterNodeBizService.cleanAgent(cleanAgentReq);
+    }
 
-	@Operation(summary = "获取当前集群节点信息")
-	@PostMapping("/getClusterNode")
-	@SuccessResponse("获取成功")
-	public GetClusterNodeRes getClusterNode(@Valid @RequestBody GetClusterNodeReq getClusterNodeReq) {
+    @Operation(summary = "获取当前集群节点信息")
+    @PostMapping("/getClusterNode")
+    @SuccessResponse("获取成功")
+    public GetClusterNodeRes getClusterNode(@Valid @RequestBody GetClusterNodeReq getClusterNodeReq) {
 
-		return clusterNodeBizService.getClusterNode(getClusterNodeReq);
-	}
+        return clusterNodeBizService.getClusterNode(getClusterNodeReq);
+    }
 
-	@Operation(summary = "节点链接测试接口")
-	@PostMapping("/testAgent")
-	@SuccessResponse("测试完成")
-	public TestAgentRes testAgent(@Valid @RequestBody TestAgentReq testAgentReq) {
+    @Operation(summary = "节点链接测试接口")
+    @PostMapping("/testAgent")
+    @SuccessResponse("测试完成")
+    public TestAgentRes testAgent(@Valid @RequestBody TestAgentReq testAgentReq) {
 
-		return clusterNodeBizService.testAgent(testAgentReq);
-	}
+        return clusterNodeBizService.testAgent(testAgentReq);
+    }
 
 }

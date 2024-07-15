@@ -7,7 +7,7 @@ import lombok.Data;
 @Data
 public class EnableTenantReq {
 
-	@Schema(title = "租户唯一id", example = "sy_123456789")
-	@NotEmpty(message = "租户id不能为空")
-	private String tenantId;
+    @Schema(title = "租户唯一id", example = "sy_123456789")
+    @NotEmpty(message = "租户id不能为空")
+    private String tenantId;
 }

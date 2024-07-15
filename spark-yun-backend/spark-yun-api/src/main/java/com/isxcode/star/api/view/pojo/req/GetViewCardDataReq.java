@@ -16,11 +16,11 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 public class GetViewCardDataReq {
 
-	@Schema(title = "大屏id", example = "sy_123")
-	@NotEmpty(message = "id不能为空")
-	private String id;
+    @Schema(title = "大屏id", example = "sy_123")
+    @NotEmpty(message = "id不能为空")
+    private String id;
 
-	@Schema(title = "聚合sql", example = "")
-	@NotNull(message = "dataSql不能为空")
-	private DataSql dataSql;
+    @Schema(title = "聚合sql", example = "")
+    @NotNull(message = "dataSql不能为空")
+    private DataSql dataSql;
 }

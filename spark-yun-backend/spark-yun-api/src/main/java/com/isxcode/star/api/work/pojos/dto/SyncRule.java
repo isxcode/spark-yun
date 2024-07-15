@@ -16,17 +16,17 @@ import java.util.Map;
 @NoArgsConstructor
 public class SyncRule {
 
-	private String setMode;
+    private String setMode;
 
-	private Integer numPartitions;
+    private Integer numPartitions;
 
-	private Integer numConcurrency;
+    private Integer numConcurrency;
 
-	private String lowerBound;
+    private String lowerBound;
 
-	private String upperBound;
+    private String upperBound;
 
-	private Map<String, String> sqlConfig;
+    private Map<String, String> sqlConfig;
 
-	private String sqlConfigJson;
+    private String sqlConfigJson;
 }

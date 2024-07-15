@@ -16,17 +16,17 @@ import java.util.Map;
 @NoArgsConstructor
 public class ClusterConfig {
 
-	private String setMode;
+    private String setMode;
 
-	private String resourceLevel;
+    private String resourceLevel;
 
-	private String clusterId;
+    private String clusterId;
 
-	private String clusterNodeId;
+    private String clusterNodeId;
 
-	private Map<String, String> sparkConfig;
+    private Map<String, String> sparkConfig;
 
-	private String sparkConfigJson;
+    private String sparkConfigJson;
 
-	private Boolean enableHive;
+    private Boolean enableHive;
 }

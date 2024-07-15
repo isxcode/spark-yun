@@ -9,10 +9,10 @@ import java.time.format.DateTimeFormatter;
 
 public class LocalDateDeserializer extends JsonDeserializer<LocalDate> {
 
-	@Override
-	public LocalDate deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
+    @Override
+    public LocalDate deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
 
-		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-		return LocalDate.parse(p.getText(), dtf);
-	}
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        return LocalDate.parse(p.getText(), dtf);
+    }
 }

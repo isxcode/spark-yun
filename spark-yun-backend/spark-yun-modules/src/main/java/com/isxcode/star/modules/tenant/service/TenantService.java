@@ -15,10 +15,10 @@ import javax.transaction.Transactional;
 @Transactional
 public class TenantService {
 
-	private final TenantRepository tenantRepository;
+    private final TenantRepository tenantRepository;
 
-	public TenantEntity getTenant(String tenantId) {
+    public TenantEntity getTenant(String tenantId) {
 
-		return tenantRepository.findById(tenantId).orElseThrow(() -> new IsxAppException("404", "租户不存在"));
-	}
+        return tenantRepository.findById(tenantId).orElseThrow(() -> new IsxAppException("404", "租户不存在"));
+    }
 }

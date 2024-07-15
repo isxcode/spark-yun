@@ -11,25 +11,25 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class FormPageRes {
 
-	private String id;
+    private String id;
 
-	private String name;
+    private String name;
 
-	private String remark;
+    private String remark;
 
-	private String formVersion;
+    private String formVersion;
 
-	@JsonSerialize(using = LocalDateTimeSerializer.class)
-	private LocalDateTime createDateTime;
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    private LocalDateTime createDateTime;
 
-	@JsonSerialize(using = LocalDateTimeSerializer.class)
-	private LocalDateTime lastModifiedDateTime;
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    private LocalDateTime lastModifiedDateTime;
 
-	private String status;
+    private String status;
 
-	private String datasourceId;
+    private String datasourceId;
 
-	private String mainTable;
+    private String mainTable;
 
-	private String datasourceName;
+    private String datasourceName;
 }

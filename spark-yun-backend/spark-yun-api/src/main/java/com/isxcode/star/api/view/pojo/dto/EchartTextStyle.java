@@ -13,6 +13,6 @@ import lombok.NoArgsConstructor;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class EchartTextStyle {
 
-	private String fontSize;
+    private String fontSize;
 
 }

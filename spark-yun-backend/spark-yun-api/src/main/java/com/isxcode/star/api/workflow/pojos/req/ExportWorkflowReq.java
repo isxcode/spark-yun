@@ -7,9 +7,9 @@ import lombok.Data;
 @Data
 public class ExportWorkflowReq {
 
-	@Schema(title = "作业流唯一id", example = "xxxx")
-	private String workflowId;
+    @Schema(title = "作业流唯一id", example = "xxxx")
+    private String workflowId;
 
-	@Schema(title = "需要导出的作业id列表", example = "")
-	private List<String> workIds;
+    @Schema(title = "需要导出的作业id列表", example = "")
+    private List<String> workIds;
 }

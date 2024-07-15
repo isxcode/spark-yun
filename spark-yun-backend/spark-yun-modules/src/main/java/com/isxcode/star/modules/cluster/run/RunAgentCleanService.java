@@ -27,48 +27,48 @@ import static com.isxcode.star.common.utils.ssh.SshUtils.scpFile;
 @Transactional(noRollbackFor = {IsxAppException.class})
 public class RunAgentCleanService {
 
-	private final SparkYunProperties sparkYunProperties;
+    private final SparkYunProperties sparkYunProperties;
 
-	private final ClusterNodeRepository clusterNodeRepository;
+    private final ClusterNodeRepository clusterNodeRepository;
 
-	public void run(String clusterNodeId, ScpFileEngineNodeDto scpFileEngineNodeDto, String tenantId, String userId) {
+    public void run(String clusterNodeId, ScpFileEngineNodeDto scpFileEngineNodeDto, String tenantId, String userId) {
 
-		// 获取节点信息
-		Optional<ClusterNodeEntity> clusterNodeEntityOptional = clusterNodeRepository.findById(clusterNodeId);
-		if (!clusterNodeEntityOptional.isPresent()) {
-			return;
-		}
-		ClusterNodeEntity clusterNodeEntity = clusterNodeEntityOptional.get();
+        // 获取节点信息
+        Optional<ClusterNodeEntity> clusterNodeEntityOptional = clusterNodeRepository.findById(clusterNodeId);
+        if (!clusterNodeEntityOptional.isPresent()) {
+            return;
+        }
+        ClusterNodeEntity clusterNodeEntity = clusterNodeEntityOptional.get();
 
-		try {
-			cleanAgent(scpFileEngineNodeDto, clusterNodeEntity);
-		} catch (Exception e) {
-			log.error(e.getMessage(), e);
-			throw new IsxAppException("清理失败");
-		}
-	}
+        try {
+            cleanAgent(scpFileEngineNodeDto, clusterNodeEntity);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            throw new IsxAppException("清理失败");
+        }
+    }
 
-	public void cleanAgent(ScpFileEngineNodeDto scpFileEngineNodeDto, ClusterNodeEntity engineNode)
-			throws JSchException, IOException, InterruptedException, SftpException {
+    public void cleanAgent(ScpFileEngineNodeDto scpFileEngineNodeDto, ClusterNodeEntity engineNode)
+        throws JSchException, IOException, InterruptedException, SftpException {
 
-		// 拷贝检测脚本
-		scpFile(scpFileEngineNodeDto, "classpath:bash/agent-clean.sh",
-				sparkYunProperties.getTmpDir() + File.separator + "agent-clean.sh");
+        // 拷贝检测脚本
+        scpFile(scpFileEngineNodeDto, "classpath:bash/agent-clean.sh",
+            sparkYunProperties.getTmpDir() + File.separator + "agent-clean.sh");
 
-		// 运行清理脚本
-		String cleanCommand = "bash " + sparkYunProperties.getTmpDir() + File.separator + "agent-clean.sh" + " --user="
-				+ engineNode.getUsername();
-		log.debug("执行远程命令:{}", cleanCommand);
+        // 运行清理脚本
+        String cleanCommand = "bash " + sparkYunProperties.getTmpDir() + File.separator + "agent-clean.sh" + " --user="
+            + engineNode.getUsername();
+        log.debug("执行远程命令:{}", cleanCommand);
 
-		// 获取返回结果
-		String executeLog = executeCommand(scpFileEngineNodeDto, cleanCommand, false);
-		log.debug("远程返回值:{}", executeLog);
+        // 获取返回结果
+        String executeLog = executeCommand(scpFileEngineNodeDto, cleanCommand, false);
+        log.debug("远程返回值:{}", executeLog);
 
-		AgentInfo agentStartInfo = JSON.parseObject(executeLog, AgentInfo.class);
+        AgentInfo agentStartInfo = JSON.parseObject(executeLog, AgentInfo.class);
 
-		// 修改状态
-		if (!"CLEAN_SUCCESS".equals(agentStartInfo.getStatus())) {
-			throw new IsxAppException("清理失败");
-		}
-	}
+        // 修改状态
+        if (!"CLEAN_SUCCESS".equals(agentStartInfo.getStatus())) {
+            throw new IsxAppException("清理失败");
+        }
+    }
 }

@@ -9,6 +9,6 @@ import lombok.EqualsAndHashCode;
 @Data
 public class WfiQueryWorkFlowInstancesReq extends BasePageRequest {
 
-	@Schema(title = "运行状态")
-	private String executeStatus;
+    @Schema(title = "运行状态")
+    private String executeStatus;
 }

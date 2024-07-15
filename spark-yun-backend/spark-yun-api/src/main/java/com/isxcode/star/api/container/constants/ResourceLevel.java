@@ -5,23 +5,23 @@ package com.isxcode.star.api.container.constants;
  */
 public interface ResourceLevel {
 
-	/**
-	 * 高.
-	 */
-	String HIGH = "HIGH";
+    /**
+     * 高.
+     */
+    String HIGH = "HIGH";
 
-	/**
-	 * 中.
-	 */
-	String MEDIUM = "MEDIUM";
+    /**
+     * 中.
+     */
+    String MEDIUM = "MEDIUM";
 
-	/**
-	 * 低.
-	 */
-	String LOW = "LOW";
+    /**
+     * 低.
+     */
+    String LOW = "LOW";
 
-	/**
-	 * 自定义.
-	 */
-	String CUSTOM = "CUSTOM";
+    /**
+     * 自定义.
+     */
+    String CUSTOM = "CUSTOM";
 }

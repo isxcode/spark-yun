@@ -7,5 +7,5 @@ import org.mapstruct.Mapper;
 @Mapper(componentModel = "spring")
 public interface FileMapper {
 
-	PageFileRes fileEntityToPageFileRes(FileEntity fileEntity);
+    PageFileRes fileEntityToPageFileRes(FileEntity fileEntity);
 }

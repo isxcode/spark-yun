@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class YagGetLogRes {
 
-	private String log;
+    private String log;
 
-	private String appId;
+    private String appId;
 }

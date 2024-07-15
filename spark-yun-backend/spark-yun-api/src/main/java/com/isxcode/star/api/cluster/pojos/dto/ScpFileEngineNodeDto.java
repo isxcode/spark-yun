@@ -11,11 +11,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ScpFileEngineNodeDto {
 
-	private String username;
+    private String username;
 
-	private String passwd;
+    private String passwd;
 
-	private String port;
+    private String port;
 
-	private String host;
+    private String host;
 }

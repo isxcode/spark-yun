@@ -7,5 +7,5 @@ import lombok.Data;
 @Builder
 public class GetAnonymousTokenRes {
 
-	private String token;
+    private String token;
 }

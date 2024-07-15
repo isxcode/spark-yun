@@ -9,6 +9,6 @@ import lombok.EqualsAndHashCode;
 @Data
 public class PageFileReq extends BasePageRequest {
 
-	@Schema(title = "资源文件类型", example = "JOB/LIB/FUNC")
-	private String type;
+    @Schema(title = "资源文件类型", example = "JOB/LIB/FUNC")
+    private String type;
 }
