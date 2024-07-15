@@ -1,7 +1,5 @@
 package com.isxcode.star.modules.user.mapper;
 
-import com.isxcode.star.api.user.constants.RoleType;
-import com.isxcode.star.api.user.constants.UserStatus;
 import com.isxcode.star.api.user.pojos.dto.UserInfo;
 import com.isxcode.star.api.user.pojos.req.AddUserReq;
 import com.isxcode.star.api.user.pojos.req.UpdateUserReq;
@@ -18,18 +16,16 @@ import org.springframework.data.domain.PageImpl;
 @Mapper(componentModel = "spring")
 public interface UserMapper {
 
-    @Mapping(target = "status", constant = UserStatus.ENABLE)
-    @Mapping(target = "roleCode", constant = RoleType.NORMAL_MEMBER)
-    UserEntity usrAddUserReqToUserEntity(AddUserReq usrAddUserReq);
+    UserEntity addUserReqToUserEntity(AddUserReq addUserReq);
 
     @Mapping(target = "passwd", source = "userEntity.passwd")
     @Mapping(target = "id", source = "userEntity.id")
-    @Mapping(target = "remark", source = "usrUpdateUserReq.remark")
-    @Mapping(target = "account", source = "usrUpdateUserReq.account")
-    @Mapping(target = "username", source = "usrUpdateUserReq.username")
-    @Mapping(target = "phone", source = "usrUpdateUserReq.phone")
-    @Mapping(target = "email", source = "usrUpdateUserReq.email")
-    UserEntity usrUpdateUserReqToUserEntity(UpdateUserReq usrUpdateUserReq, UserEntity userEntity);
+    @Mapping(target = "remark", source = "updateUserReq.remark")
+    @Mapping(target = "account", source = "updateUserReq.account")
+    @Mapping(target = "username", source = "updateUserReq.username")
+    @Mapping(target = "phone", source = "updateUserReq.phone")
+    @Mapping(target = "email", source = "updateUserReq.email")
+    UserEntity updateUserReqToUserEntity(UpdateUserReq updateUserReq, UserEntity userEntity);
 
     @Mapping(target = "passwd", source = "userEntity.passwd")
     @Mapping(target = "id", source = "userEntity.id")
@@ -37,13 +33,11 @@ public interface UserMapper {
     @Mapping(target = "phone", source = "updateUserInfoReq.phone")
     @Mapping(target = "email", source = "updateUserInfoReq.email")
     @Mapping(target = "remark", source = "updateUserInfoReq.remark")
-    UserEntity usrUpdateUserInfoToUserEntity(UpdateUserInfoReq updateUserInfoReq, UserEntity userEntity);
+    UserEntity updateUserInfoToUserEntity(UpdateUserInfoReq updateUserInfoReq, UserEntity userEntity);
 
-    /** UsrQueryAllUsersRes. */
     @Mapping(target = "createDateTime", dateFormat = "yyyy-MM-dd HH:mm:ss")
     PageUserRes userEntityToUsrQueryAllUsersRes(UserEntity userEntity);
 
-    /** UsrQueryAllEnableUsersRes. */
     @Mapping(target = "createDateTime", dateFormat = "yyyy-MM-dd HH:mm:ss")
     PageEnableUserRes userEntityToUsrQueryAllEnableUsersRes(UserEntity userEntity);
 

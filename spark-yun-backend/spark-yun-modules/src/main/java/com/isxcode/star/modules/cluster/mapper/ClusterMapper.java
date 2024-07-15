@@ -11,7 +11,7 @@ import org.mapstruct.Mapping;
 
 import java.util.List;
 
-/** mapstruct映射. */
+
 @Mapper(componentModel = "spring")
 public interface ClusterMapper {
 
