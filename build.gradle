@@ -97,8 +97,8 @@ spotless {
   java {
     target '*/**/*.java'
     targetExclude('*/build/**/*.java')
-    targetExclude('spark-yun-dist/**/*.java')
-    eclipse()
+    targetExclude('flink-yun-dist/**/*.java')
+    eclipse().configFile(rootDir.getAbsolutePath() + '.spotless/eclipse-java-google-style.xml')
     removeUnusedImports()
   }
 }
