@@ -5,21 +5,21 @@ import lombok.Data;
 @Data
 public class WfiQueryWorkFlowInstancesRes {
 
-	private String workflowInstanceId;
+    private String workflowInstanceId;
 
-	private String workflowName;
+    private String workflowName;
 
-	private String startDateTime;
+    private String startDateTime;
 
-	private String endDateTime;
+    private String endDateTime;
 
-	private String status;
+    private String status;
 
-	private String type;
+    private String type;
 
-	private Long duration;
+    private Long duration;
 
-	private String nextPlanDateTime;
+    private String nextPlanDateTime;
 
-	private String planStartDateTime;
+    private String planStartDateTime;
 }

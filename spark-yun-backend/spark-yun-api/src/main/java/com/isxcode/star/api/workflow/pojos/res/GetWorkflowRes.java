@@ -8,13 +8,13 @@ import java.util.List;
 @Data
 public class GetWorkflowRes {
 
-	private Object webConfig;
+    private Object webConfig;
 
-	private CronConfig cronConfig;
+    private CronConfig cronConfig;
 
-	private List<String> alarmList;
+    private List<String> alarmList;
 
-	private String invokeStatus;
+    private String invokeStatus;
 
-	private String invokeUrl;
+    private String invokeUrl;
 }

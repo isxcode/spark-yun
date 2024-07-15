@@ -13,5 +13,5 @@ import java.util.List;
 @AllArgsConstructor
 public class DataSql {
 
-	private List<String> sqlList;
+    private List<String> sqlList;
 }

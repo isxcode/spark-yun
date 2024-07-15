@@ -7,7 +7,7 @@ import lombok.Data;
 @Data
 public class WfiGetWorkflowInstanceRes {
 
-	private String webConfig;
+    private String webConfig;
 
-	private List<WorkInstanceVo> workInstances;
+    private List<WorkInstanceVo> workInstances;
 }

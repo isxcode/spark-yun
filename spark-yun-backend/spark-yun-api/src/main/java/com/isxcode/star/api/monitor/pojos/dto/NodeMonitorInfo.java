@@ -9,33 +9,33 @@ import java.time.LocalDateTime;
 @Builder
 public class NodeMonitorInfo {
 
-	private String status;
+    private String status;
 
-	private String log;
+    private String log;
 
-	private Long usedStorageSize;
+    private Long usedStorageSize;
 
-	private Long usedMemorySize;
+    private Long usedMemorySize;
 
-	private Long networkIoReadSpeed;
+    private Long networkIoReadSpeed;
 
-	private Long networkIoWriteSpeed;
+    private Long networkIoWriteSpeed;
 
-	private Long diskIoReadSpeed;
+    private Long diskIoReadSpeed;
 
-	private String diskIoReadSpeedStr;
+    private String diskIoReadSpeedStr;
 
-	private Long diskIoWriteSpeed;
+    private Long diskIoWriteSpeed;
 
-	private String diskIoWriteSpeedStr;
+    private String diskIoWriteSpeedStr;
 
-	private Double cpuPercent;
+    private Double cpuPercent;
 
-	private String clusterNodeId;
+    private String clusterNodeId;
 
-	private String clusterId;
+    private String clusterId;
 
-	private String tenantId;
+    private String tenantId;
 
-	private LocalDateTime createDateTime;
+    private LocalDateTime createDateTime;
 }

@@ -7,9 +7,9 @@ import lombok.Data;
 @Builder
 public class RunRealWorkRes {
 
-	private String status;
+    private String status;
 
-	private String errLog;
+    private String errLog;
 
-	private String appId;
+    private String appId;
 }

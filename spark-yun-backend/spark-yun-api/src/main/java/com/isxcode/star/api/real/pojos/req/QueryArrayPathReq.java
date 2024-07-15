@@ -8,7 +8,7 @@ import javax.validation.constraints.NotEmpty;
 @Data
 public class QueryArrayPathReq {
 
-	@Schema(title = "json", example = "{}")
-	@NotEmpty(message = "jsonStr不能为空")
-	private String jsonStr;
+    @Schema(title = "json", example = "{}")
+    @NotEmpty(message = "jsonStr不能为空")
+    private String jsonStr;
 }

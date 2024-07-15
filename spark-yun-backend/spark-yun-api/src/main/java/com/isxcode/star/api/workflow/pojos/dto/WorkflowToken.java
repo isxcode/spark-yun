@@ -8,11 +8,11 @@ import lombok.*;
 @NoArgsConstructor
 public class WorkflowToken {
 
-	private String userId;
+    private String userId;
 
-	private String tenantId;
+    private String tenantId;
 
-	private String type;
+    private String type;
 
-	private String workflowId;
+    private String workflowId;
 }

@@ -37,152 +37,152 @@ import java.util.Random;
 @Slf4j
 public class SparkContainerSqlExecutor extends WorkExecutor {
 
-	private final ContainerRepository containerRepository;
+    private final ContainerRepository containerRepository;
 
-	private final ClusterNodeRepository clusterNodeRepository;
+    private final ClusterNodeRepository clusterNodeRepository;
 
-	private final IsxAppProperties isxAppProperties;
+    private final IsxAppProperties isxAppProperties;
 
-	private final WorkInstanceRepository workInstanceRepository;
+    private final WorkInstanceRepository workInstanceRepository;
 
-	private final SqlCommentService sqlCommentService;
+    private final SqlCommentService sqlCommentService;
 
-	private final SqlValueService sqlValueService;
+    private final SqlValueService sqlValueService;
 
-	private final SqlFunctionService sqlFunctionService;
+    private final SqlFunctionService sqlFunctionService;
 
-	public SparkContainerSqlExecutor(WorkInstanceRepository workInstanceRepository,
-			WorkflowInstanceRepository workflowInstanceRepository, ContainerRepository containerRepository,
-			ClusterNodeRepository clusterNodeRepository, IsxAppProperties isxAppProperties,
-			WorkInstanceRepository workInstanceRepository1, SqlCommentService sqlCommentService,
-			SqlValueService sqlValueService, SqlFunctionService sqlFunctionService, AlarmService alarmService) {
-		super(workInstanceRepository, workflowInstanceRepository, alarmService);
-		this.containerRepository = containerRepository;
-		this.clusterNodeRepository = clusterNodeRepository;
-		this.isxAppProperties = isxAppProperties;
-		this.workInstanceRepository = workInstanceRepository1;
-		this.sqlCommentService = sqlCommentService;
-		this.sqlValueService = sqlValueService;
-		this.sqlFunctionService = sqlFunctionService;
-	}
+    public SparkContainerSqlExecutor(WorkInstanceRepository workInstanceRepository,
+        WorkflowInstanceRepository workflowInstanceRepository, ContainerRepository containerRepository,
+        ClusterNodeRepository clusterNodeRepository, IsxAppProperties isxAppProperties,
+        WorkInstanceRepository workInstanceRepository1, SqlCommentService sqlCommentService,
+        SqlValueService sqlValueService, SqlFunctionService sqlFunctionService, AlarmService alarmService) {
+        super(workInstanceRepository, workflowInstanceRepository, alarmService);
+        this.containerRepository = containerRepository;
+        this.clusterNodeRepository = clusterNodeRepository;
+        this.isxAppProperties = isxAppProperties;
+        this.workInstanceRepository = workInstanceRepository1;
+        this.sqlCommentService = sqlCommentService;
+        this.sqlValueService = sqlValueService;
+        this.sqlFunctionService = sqlFunctionService;
+    }
 
-	@Override
-	public String getWorkType() {
-		return WorkType.SPARK_CONTAINER_SQL;
-	}
+    @Override
+    public String getWorkType() {
+        return WorkType.SPARK_CONTAINER_SQL;
+    }
 
-	public void execute(WorkRunContext workRunContext, WorkInstanceEntity workInstance) {
+    public void execute(WorkRunContext workRunContext, WorkInstanceEntity workInstance) {
 
-		// 将线程存到Map
-		WORK_THREAD.put(workInstance.getId(), Thread.currentThread());
+        // 将线程存到Map
+        WORK_THREAD.put(workInstance.getId(), Thread.currentThread());
 
-		// 获取日志构造器
-		StringBuilder logBuilder = workRunContext.getLogBuilder();
+        // 获取日志构造器
+        StringBuilder logBuilder = workRunContext.getLogBuilder();
 
-		// 检测数据源是否配置
-		logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始检测运行环境 \n");
-		if (Strings.isEmpty(workRunContext.getContainerId())) {
-			throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "检测运行环境失败: 未配置有效容器  \n");
-		}
+        // 检测数据源是否配置
+        logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始检测运行环境 \n");
+        if (Strings.isEmpty(workRunContext.getContainerId())) {
+            throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "检测运行环境失败: 未配置有效容器  \n");
+        }
 
-		// 检查数据源是否存在
-		Optional<ContainerEntity> containerEntityOptional = containerRepository
-				.findById(workRunContext.getContainerId());
-		if (!containerEntityOptional.isPresent()) {
-			throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "检测运行环境失败: 有效容器不存在  \n");
-		}
-		if (!ContainerStatus.RUNNING.equals(containerEntityOptional.get().getStatus())) {
-			throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "检测运行环境失败: Spark容器已停止,请重新启动 \n");
-		}
+        // 检查数据源是否存在
+        Optional<ContainerEntity> containerEntityOptional =
+            containerRepository.findById(workRunContext.getContainerId());
+        if (!containerEntityOptional.isPresent()) {
+            throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "检测运行环境失败: 有效容器不存在  \n");
+        }
+        if (!ContainerStatus.RUNNING.equals(containerEntityOptional.get().getStatus())) {
+            throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "检测运行环境失败: Spark容器已停止,请重新启动 \n");
+        }
 
-		// 容器检查通过
-		logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("检测运行环境完成  \n");
-		workInstance = updateInstance(workInstance, logBuilder);
+        // 容器检查通过
+        logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("检测运行环境完成  \n");
+        workInstance = updateInstance(workInstance, logBuilder);
 
-		// 检查脚本是否为空
-		if (Strings.isEmpty(workRunContext.getScript())) {
-			throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "Sql内容为空 \n");
-		}
+        // 检查脚本是否为空
+        if (Strings.isEmpty(workRunContext.getScript())) {
+            throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "Sql内容为空 \n");
+        }
 
-		// 脚本检查通过
-		logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始解析作业 \n");
-		workInstance = updateInstance(workInstance, logBuilder);
+        // 脚本检查通过
+        logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始解析作业 \n");
+        workInstance = updateInstance(workInstance, logBuilder);
 
-		// 调用代理的接口，获取数据
-		try {
+        // 调用代理的接口，获取数据
+        try {
 
-			// 获取集群节点
-			List<ClusterNodeEntity> allEngineNodes = clusterNodeRepository.findAllByClusterIdAndStatus(
-					containerEntityOptional.get().getClusterId(), ClusterNodeStatus.RUNNING);
-			if (allEngineNodes.isEmpty()) {
-				throw new IsxAppException("集群不存在可用节点");
-			}
+            // 获取集群节点
+            List<ClusterNodeEntity> allEngineNodes = clusterNodeRepository
+                .findAllByClusterIdAndStatus(containerEntityOptional.get().getClusterId(), ClusterNodeStatus.RUNNING);
+            if (allEngineNodes.isEmpty()) {
+                throw new IsxAppException("集群不存在可用节点");
+            }
 
-			// 节点选择随机数
-			ClusterNodeEntity engineNode = allEngineNodes.get(new Random().nextInt(allEngineNodes.size()));
+            // 节点选择随机数
+            ClusterNodeEntity engineNode = allEngineNodes.get(new Random().nextInt(allEngineNodes.size()));
 
-			// 去掉sql中的注释
-			String sqlNoComment = sqlCommentService.removeSqlComment(workRunContext.getScript());
+            // 去掉sql中的注释
+            String sqlNoComment = sqlCommentService.removeSqlComment(workRunContext.getScript());
 
-			// 翻译sql中的系统变量
-			String parseValueSql = sqlValueService.parseSqlValue(sqlNoComment);
+            // 翻译sql中的系统变量
+            String parseValueSql = sqlValueService.parseSqlValue(sqlNoComment);
 
-			// 翻译sql中的系统函数
-			String script = sqlFunctionService.parseSqlFunction(parseValueSql);
+            // 翻译sql中的系统函数
+            String script = sqlFunctionService.parseSqlFunction(parseValueSql);
 
-			// 打印sql
-			logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始执行SQL: \n").append(script)
-					.append("\n");
-			workInstance = updateInstance(workInstance, logBuilder);
+            // 打印sql
+            logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始执行SQL: \n").append(script)
+                .append("\n");
+            workInstance = updateInstance(workInstance, logBuilder);
 
-			// 再次调用容器的check接口，确认容器是否成功启动
-			ExecuteContainerSqlReq executeContainerSqlReq = ExecuteContainerSqlReq.builder()
-					.port(String.valueOf(containerEntityOptional.get().getPort())).sql(script).build();
+            // 再次调用容器的check接口，确认容器是否成功启动
+            ExecuteContainerSqlReq executeContainerSqlReq = ExecuteContainerSqlReq.builder()
+                .port(String.valueOf(containerEntityOptional.get().getPort())).sql(script).build();
 
-			ContainerGetDataRes containerGetDataRes;
-			try {
-				containerGetDataRes = new RestTemplate().postForEntity(
-						genHttpUrl(engineNode.getHost(), engineNode.getAgentPort(), "/yag/executeContainerSql"),
-						executeContainerSqlReq, ContainerGetDataRes.class).getBody();
-			} catch (Exception e) {
-				log.error(e.getMessage());
-				throw new WorkRunException(e.getMessage());
-			}
+            ContainerGetDataRes containerGetDataRes;
+            try {
+                containerGetDataRes = new RestTemplate().postForEntity(
+                    genHttpUrl(engineNode.getHost(), engineNode.getAgentPort(), "/yag/executeContainerSql"),
+                    executeContainerSqlReq, ContainerGetDataRes.class).getBody();
+            } catch (Exception e) {
+                log.error(e.getMessage());
+                throw new WorkRunException(e.getMessage());
+            }
 
-			if (!"200".equals(containerGetDataRes.getCode())) {
-				if (containerGetDataRes.getMsg().contains("Connection refused (Connection refused)")) {
-					throw new WorkRunException("运行异常: 请检查容器的运行状态");
-				}
-				throw new WorkRunException("运行异常" + containerGetDataRes.getMsg());
-			}
+            if (!"200".equals(containerGetDataRes.getCode())) {
+                if (containerGetDataRes.getMsg().contains("Connection refused (Connection refused)")) {
+                    throw new WorkRunException("运行异常: 请检查容器的运行状态");
+                }
+                throw new WorkRunException("运行异常" + containerGetDataRes.getMsg());
+            }
 
-			// 记录结束执行时间
-			logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("SQL执行成功  \n");
-			workInstance = updateInstance(workInstance, logBuilder);
+            // 记录结束执行时间
+            logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("SQL执行成功  \n");
+            workInstance = updateInstance(workInstance, logBuilder);
 
-			// 讲data转为json存到实例中
-			logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("数据保存成功  \n");
-			workInstance.setSubmitLog(logBuilder.toString());
-			workInstance.setResultData(JSON.toJSONString(containerGetDataRes.getData()));
-			workInstanceRepository.saveAndFlush(workInstance);
-		} catch (WorkRunException e) {
-			log.error(e.getMessage(), e);
-			throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + e.getMsg() + "\n");
-		}
-	}
+            // 讲data转为json存到实例中
+            logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("数据保存成功  \n");
+            workInstance.setSubmitLog(logBuilder.toString());
+            workInstance.setResultData(JSON.toJSONString(containerGetDataRes.getData()));
+            workInstanceRepository.saveAndFlush(workInstance);
+        } catch (WorkRunException e) {
+            log.error(e.getMessage(), e);
+            throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + e.getMsg() + "\n");
+        }
+    }
 
-	@Override
-	protected void abort(WorkInstanceEntity workInstance) {
+    @Override
+    protected void abort(WorkInstanceEntity workInstance) {
 
-		Thread thread = WORK_THREAD.get(workInstance.getId());
-		thread.interrupt();
-	}
+        Thread thread = WORK_THREAD.get(workInstance.getId());
+        thread.interrupt();
+    }
 
-	public String genHttpUrl(String host, String port, String path) {
+    public String genHttpUrl(String host, String port, String path) {
 
-		String httpProtocol = isxAppProperties.isUseSsl() ? "https://" : "http://";
-		String httpHost = isxAppProperties.isUsePort() ? host + ":" + port : host;
+        String httpProtocol = isxAppProperties.isUseSsl() ? "https://" : "http://";
+        String httpHost = isxAppProperties.isUsePort() ? host + ":" + port : host;
 
-		return httpProtocol + httpHost + path;
-	}
+        return httpProtocol + httpHost + path;
+    }
 }

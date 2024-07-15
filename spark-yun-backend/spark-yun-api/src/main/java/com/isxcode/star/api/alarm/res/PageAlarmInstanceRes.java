@@ -11,32 +11,32 @@ import java.time.LocalDateTime;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class PageAlarmInstanceRes {
 
-	private String id;
+    private String id;
 
-	private String alarmId;
+    private String alarmId;
 
-	private String alarmName;
+    private String alarmName;
 
-	private String sendStatus;
+    private String sendStatus;
 
-	private String alarmType;
+    private String alarmType;
 
-	private String alarmEvent;
+    private String alarmEvent;
 
-	private String msgId;
+    private String msgId;
 
-	private String msgName;
+    private String msgName;
 
-	private String content;
+    private String content;
 
-	private String receiver;
+    private String receiver;
 
-	private String receiverUsername;
+    private String receiverUsername;
 
-	@JsonSerialize(using = LocalDateTimeSerializer.class)
-	private LocalDateTime sendDateTime;
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    private LocalDateTime sendDateTime;
 
-	private String instanceId;
+    private String instanceId;
 
-	private String response;
+    private String response;
 }

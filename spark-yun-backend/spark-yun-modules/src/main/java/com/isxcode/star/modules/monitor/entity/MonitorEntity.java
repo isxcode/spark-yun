@@ -25,37 +25,37 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class MonitorEntity {
 
-	@Id
-	@GeneratedValue(generator = "sy-id-generator")
-	@GenericGenerator(name = "sy-id-generator", strategy = "com.isxcode.star.config.GeneratedValueConfig")
-	private String id;
+    @Id
+    @GeneratedValue(generator = "sy-id-generator")
+    @GenericGenerator(name = "sy-id-generator", strategy = "com.isxcode.star.config.GeneratedValueConfig")
+    private String id;
 
-	private String clusterId;
+    private String clusterId;
 
-	private String clusterNodeId;
+    private String clusterNodeId;
 
-	private String status;
+    private String status;
 
-	private String log;
+    private String log;
 
-	private Long usedStorageSize;
+    private Long usedStorageSize;
 
-	private Long usedMemorySize;
+    private Long usedMemorySize;
 
-	private Long networkIoReadSpeed;
+    private Long networkIoReadSpeed;
 
-	private Long networkIoWriteSpeed;
+    private Long networkIoWriteSpeed;
 
-	private Long diskIoReadSpeed;
+    private Long diskIoReadSpeed;
 
-	private Long diskIoWriteSpeed;
+    private Long diskIoWriteSpeed;
 
-	private Double cpuPercent;
+    private Double cpuPercent;
 
-	private LocalDateTime createDateTime;
+    private LocalDateTime createDateTime;
 
-	@Transient
-	private Integer deleted;
+    @Transient
+    private Integer deleted;
 
-	private String tenantId;
+    private String tenantId;
 }

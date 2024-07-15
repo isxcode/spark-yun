@@ -14,17 +14,17 @@ import lombok.NoArgsConstructor;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class RunWorkRes {
 
-	private String appStatus;
+    private String appStatus;
 
-	private String message;
+    private String message;
 
-	private String log;
+    private String log;
 
-	private List<List<String>> data;
+    private List<List<String>> data;
 
-	private String appId;
+    private String appId;
 
-	private String trackingUrl;
+    private String trackingUrl;
 
-	private String instanceId;
+    private String instanceId;
 }

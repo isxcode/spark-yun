@@ -7,10 +7,10 @@ import lombok.Data;
 @Data
 public class ConfigWorkflowReq {
 
-	@Schema(title = "工作流id", example = "123")
-	@NotEmpty(message = "工作流id不能为空")
-	private String workflowId;
+    @Schema(title = "工作流id", example = "123")
+    @NotEmpty(message = "工作流id不能为空")
+    private String workflowId;
 
-	@Schema(title = "工作流配置信息", example = "123")
-	private Object webConfig;
+    @Schema(title = "工作流配置信息", example = "123")
+    private Object webConfig;
 }

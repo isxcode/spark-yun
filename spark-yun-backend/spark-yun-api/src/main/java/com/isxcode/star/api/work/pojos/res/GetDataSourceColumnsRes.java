@@ -14,5 +14,5 @@ import java.util.List;
 @NoArgsConstructor
 public class GetDataSourceColumnsRes {
 
-	private List<ColumnMetaDto> columns;
+    private List<ColumnMetaDto> columns;
 }

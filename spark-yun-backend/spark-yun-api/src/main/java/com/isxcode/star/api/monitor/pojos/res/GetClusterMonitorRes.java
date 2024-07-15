@@ -10,5 +10,5 @@ import java.util.List;
 @Builder
 public class GetClusterMonitorRes {
 
-	private List<MonitorLineDto> line;
+    private List<MonitorLineDto> line;
 }

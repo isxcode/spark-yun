@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class GetSqlDataReq {
 
-	private String sql;
+    private String sql;
 
-	private String datasourceId;
+    private String datasourceId;
 }

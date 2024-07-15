@@ -23,103 +23,103 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 public class DatasourceController {
 
-	private final DatasourceBizService datasourceBizService;
+    private final DatasourceBizService datasourceBizService;
 
-	@Secured({RoleType.TENANT_ADMIN})
-	@Operation(summary = "添加数据源接口")
-	@PostMapping("/addDatasource")
-	@SuccessResponse("添加成功")
-	public void addDatasource(@Valid @RequestBody AddDatasourceReq addDatasourceReq) {
+    @Secured({RoleType.TENANT_ADMIN})
+    @Operation(summary = "添加数据源接口")
+    @PostMapping("/addDatasource")
+    @SuccessResponse("添加成功")
+    public void addDatasource(@Valid @RequestBody AddDatasourceReq addDatasourceReq) {
 
-		datasourceBizService.addDatasource(addDatasourceReq);
-	}
+        datasourceBizService.addDatasource(addDatasourceReq);
+    }
 
-	@Secured({RoleType.TENANT_ADMIN})
-	@Operation(summary = "更新数据源接口")
-	@PostMapping("/updateDatasource")
-	@SuccessResponse("更新成功")
-	public void updateDatasource(@Valid @RequestBody UpdateDatasourceReq updateDatasourceReq) {
+    @Secured({RoleType.TENANT_ADMIN})
+    @Operation(summary = "更新数据源接口")
+    @PostMapping("/updateDatasource")
+    @SuccessResponse("更新成功")
+    public void updateDatasource(@Valid @RequestBody UpdateDatasourceReq updateDatasourceReq) {
 
-		datasourceBizService.updateDatasource(updateDatasourceReq);
-	}
+        datasourceBizService.updateDatasource(updateDatasourceReq);
+    }
 
-	@Secured({RoleType.TENANT_MEMBER, RoleType.TENANT_ADMIN})
-	@Operation(summary = "查询数据源列表接口")
-	@PostMapping("/pageDatasource")
-	@SuccessResponse("查询数据源成功")
-	public Page<PageDatasourceRes> pageDatasource(@Valid @RequestBody PageDatasourceReq pageDatasourceReq) {
+    @Secured({RoleType.TENANT_MEMBER, RoleType.TENANT_ADMIN})
+    @Operation(summary = "查询数据源列表接口")
+    @PostMapping("/pageDatasource")
+    @SuccessResponse("查询数据源成功")
+    public Page<PageDatasourceRes> pageDatasource(@Valid @RequestBody PageDatasourceReq pageDatasourceReq) {
 
-		return datasourceBizService.pageDatasource(pageDatasourceReq);
-	}
+        return datasourceBizService.pageDatasource(pageDatasourceReq);
+    }
 
-	@Secured({RoleType.TENANT_ADMIN})
-	@Operation(summary = "删除数据源接口")
-	@PostMapping("/deleteDatasource")
-	@SuccessResponse("删除成功")
-	public void deleteDatasource(@Valid @RequestBody DeleteDatasourceReq deleteDatasourceReq) {
+    @Secured({RoleType.TENANT_ADMIN})
+    @Operation(summary = "删除数据源接口")
+    @PostMapping("/deleteDatasource")
+    @SuccessResponse("删除成功")
+    public void deleteDatasource(@Valid @RequestBody DeleteDatasourceReq deleteDatasourceReq) {
 
-		datasourceBizService.deleteDatasource(deleteDatasourceReq);
-	}
+        datasourceBizService.deleteDatasource(deleteDatasourceReq);
+    }
 
-	@Secured({RoleType.TENANT_MEMBER, RoleType.TENANT_ADMIN})
-	@Operation(summary = "测试数据源连接接口")
-	@PostMapping("/testConnect")
-	@SuccessResponse("检测完成")
-	public TestConnectRes testConnect(@Valid @RequestBody GetConnectLogReq testConnectReq) {
+    @Secured({RoleType.TENANT_MEMBER, RoleType.TENANT_ADMIN})
+    @Operation(summary = "测试数据源连接接口")
+    @PostMapping("/testConnect")
+    @SuccessResponse("检测完成")
+    public TestConnectRes testConnect(@Valid @RequestBody GetConnectLogReq testConnectReq) {
 
-		return datasourceBizService.testConnect(testConnectReq);
-	}
+        return datasourceBizService.testConnect(testConnectReq);
+    }
 
-	@Secured({RoleType.TENANT_MEMBER, RoleType.TENANT_ADMIN})
-	@Operation(summary = "查询连接日志")
-	@PostMapping("/getConnectLog")
-	@SuccessResponse("获取成功")
-	public GetConnectLogRes getConnectLog(@Valid @RequestBody GetConnectLogReq getConnectLogReq) {
+    @Secured({RoleType.TENANT_MEMBER, RoleType.TENANT_ADMIN})
+    @Operation(summary = "查询连接日志")
+    @PostMapping("/getConnectLog")
+    @SuccessResponse("获取成功")
+    public GetConnectLogRes getConnectLog(@Valid @RequestBody GetConnectLogReq getConnectLogReq) {
 
-		return datasourceBizService.getConnectLog(getConnectLogReq);
-	}
+        return datasourceBizService.getConnectLog(getConnectLogReq);
+    }
 
-	@PostMapping("/uploadDatabaseDriver")
-	@Operation(summary = "上传数据源驱动(Swagger有Bug不能使用)")
-	@SuccessResponse("上传成功")
-	public void uploadDatabaseDriver(@RequestParam("driver") MultipartFile driver,
-			@RequestParam("dbType") String dbType, @RequestParam("name") String name,
-			@RequestParam("remark") String remark) {
+    @PostMapping("/uploadDatabaseDriver")
+    @Operation(summary = "上传数据源驱动(Swagger有Bug不能使用)")
+    @SuccessResponse("上传成功")
+    public void uploadDatabaseDriver(@RequestParam("driver") MultipartFile driver,
+        @RequestParam("dbType") String dbType, @RequestParam("name") String name,
+        @RequestParam("remark") String remark) {
 
-		datasourceBizService.uploadDatabaseDriver(driver, dbType, name, remark);
-	}
+        datasourceBizService.uploadDatabaseDriver(driver, dbType, name, remark);
+    }
 
-	@PostMapping("/pageDatabaseDriver")
-	@Operation(summary = "查询数据库驱动")
-	@SuccessResponse("查询成功")
-	public Page<PageDatabaseDriverRes> pageDatabaseDriver(@RequestBody PageDatabaseDriverReq pageDatabaseDriverReq) {
+    @PostMapping("/pageDatabaseDriver")
+    @Operation(summary = "查询数据库驱动")
+    @SuccessResponse("查询成功")
+    public Page<PageDatabaseDriverRes> pageDatabaseDriver(@RequestBody PageDatabaseDriverReq pageDatabaseDriverReq) {
 
-		return datasourceBizService.pageDatabaseDriver(pageDatabaseDriverReq);
-	}
+        return datasourceBizService.pageDatabaseDriver(pageDatabaseDriverReq);
+    }
 
-	@PostMapping("/deleteDatabaseDriver")
-	@Operation(summary = "删除数据库驱动")
-	@SuccessResponse("删除成功")
-	public void deleteDatabaseDriver(@RequestBody DeleteDatabaseDriverReq deleteDatabaseDriverReq) {
+    @PostMapping("/deleteDatabaseDriver")
+    @Operation(summary = "删除数据库驱动")
+    @SuccessResponse("删除成功")
+    public void deleteDatabaseDriver(@RequestBody DeleteDatabaseDriverReq deleteDatabaseDriverReq) {
 
-		datasourceBizService.deleteDatabaseDriver(deleteDatabaseDriverReq);
-	}
+        datasourceBizService.deleteDatabaseDriver(deleteDatabaseDriverReq);
+    }
 
-	@PostMapping("/settingDefaultDatabaseDriver")
-	@Operation(summary = "设置默认驱动接口")
-	@SuccessResponse("设置成功")
-	public void settingDefaultDatabaseDriver(
-			@RequestBody SettingDefaultDatabaseDriverReq settingDefaultDatabaseDriverReq) {
+    @PostMapping("/settingDefaultDatabaseDriver")
+    @Operation(summary = "设置默认驱动接口")
+    @SuccessResponse("设置成功")
+    public void settingDefaultDatabaseDriver(
+        @RequestBody SettingDefaultDatabaseDriverReq settingDefaultDatabaseDriverReq) {
 
-		datasourceBizService.settingDefaultDatabaseDriver(settingDefaultDatabaseDriverReq);
-	}
+        datasourceBizService.settingDefaultDatabaseDriver(settingDefaultDatabaseDriverReq);
+    }
 
-	@PostMapping("/getDefaultDatabaseDriver")
-	@Operation(summary = "获取默认驱动接口")
-	@SuccessResponse("获取成功")
-	public GetDefaultDatabaseDriverRes getDefaultDatabaseDriver(
-			@RequestBody GetDefaultDatabaseDriverReq getDefaultDatabaseDriverReq) {
+    @PostMapping("/getDefaultDatabaseDriver")
+    @Operation(summary = "获取默认驱动接口")
+    @SuccessResponse("获取成功")
+    public GetDefaultDatabaseDriverRes getDefaultDatabaseDriver(
+        @RequestBody GetDefaultDatabaseDriverReq getDefaultDatabaseDriverReq) {
 
-		return datasourceBizService.getDefaultDatabaseDriver(getDefaultDatabaseDriverReq);
-	}
+        return datasourceBizService.getDefaultDatabaseDriver(getDefaultDatabaseDriverReq);
+    }
 }

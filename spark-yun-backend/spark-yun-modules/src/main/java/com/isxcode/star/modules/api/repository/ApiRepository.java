@@ -15,10 +15,10 @@ import org.springframework.stereotype.Repository;
 @CacheConfig(cacheNames = {"SY_API"})
 public interface ApiRepository extends JpaRepository<ApiEntity, String> {
 
-	Optional<ApiEntity> findByPathAndApiType(String path, String tenantId);
+    Optional<ApiEntity> findByPathAndApiType(String path, String tenantId);
 
-	@Query("select A from ApiEntity A where A.name LIKE %:keyword% or A.remark LIKE %:keyword% order by A.lastModifiedDateTime desc")
-	Page<ApiEntity> pageApi(@Param("keyword") String searchKeyWord, Pageable pageable);
+    @Query("select A from ApiEntity A where A.name LIKE %:keyword% or A.remark LIKE %:keyword% order by A.lastModifiedDateTime desc")
+    Page<ApiEntity> pageApi(@Param("keyword") String searchKeyWord, Pageable pageable);
 
-	long countByStatus(String status);
+    long countByStatus(String status);
 }

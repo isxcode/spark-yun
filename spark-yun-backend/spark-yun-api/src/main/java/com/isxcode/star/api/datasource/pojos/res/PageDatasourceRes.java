@@ -7,27 +7,27 @@ import lombok.Data;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class PageDatasourceRes {
 
-	private String name;
+    private String name;
 
-	private String id;
+    private String id;
 
-	private String jdbcUrl;
+    private String jdbcUrl;
 
-	private String username;
+    private String username;
 
-	private String remark;
+    private String remark;
 
-	private String status;
+    private String status;
 
-	private String checkDateTime;
+    private String checkDateTime;
 
-	private String dbType;
+    private String dbType;
 
-	private String connectLog;
+    private String connectLog;
 
-	private String driverId;
+    private String driverId;
 
-	private String driverName;
+    private String driverName;
 
-	private String metastoreUris;
+    private String metastoreUris;
 }

@@ -15,10 +15,10 @@ import javax.transaction.Transactional;
 @Slf4j
 public class UserService {
 
-	private final UserRepository userRepository;
+    private final UserRepository userRepository;
 
-	public UserEntity getUser(String userId) {
+    public UserEntity getUser(String userId) {
 
-		return userRepository.findById(userId).orElseThrow(() -> new IsxAppException("用户不存在"));
-	}
+        return userRepository.findById(userId).orElseThrow(() -> new IsxAppException("用户不存在"));
+    }
 }

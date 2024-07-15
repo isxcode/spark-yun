@@ -24,52 +24,52 @@ import static java.util.regex.Pattern.compile;
 @RequiredArgsConstructor
 public class SqlFunctionService {
 
-	private final ResourceLoader resourceLoader;
+    private final ResourceLoader resourceLoader;
 
-	/**
-	 * 解析函数 #{ add_date(${qing.currentDate},1) }.
-	 */
-	public String parseSqlFunction(String sql) {
+    /**
+     * 解析函数 #{ add_date(${qing.currentDate},1) }.
+     */
+    public String parseSqlFunction(String sql) {
 
-		Binding binding = new Binding();
-		GroovyShell shell = new GroovyShell(binding);
+        Binding binding = new Binding();
+        GroovyShell shell = new GroovyShell(binding);
 
-		Pattern pattern = compile("(#\\{).+?}");
-		Matcher matcher = pattern.matcher(sql);
+        Pattern pattern = compile("(#\\{).+?}");
+        Matcher matcher = pattern.matcher(sql);
 
-		// 获取groovy函数脚本
-		String groovyFunctions = getGroovyFunctions();
+        // 获取groovy函数脚本
+        String groovyFunctions = getGroovyFunctions();
 
-		// 替换正则
-		while (matcher.find()) {
-			String group = matcher.group();
-			String functionStr = group.replace("#{", "").replace("}", "");
-			shell.evaluate(groovyFunctions + "result=" + functionStr);
-			String result = String.valueOf(binding.getVariable("result"));
-			sql = sql.replace(group, result);
-		}
-		return sql;
-	}
+        // 替换正则
+        while (matcher.find()) {
+            String group = matcher.group();
+            String functionStr = group.replace("#{", "").replace("}", "");
+            shell.evaluate(groovyFunctions + "result=" + functionStr);
+            String result = String.valueOf(binding.getVariable("result"));
+            sql = sql.replace(group, result);
+        }
+        return sql;
+    }
 
-	/**
-	 * 获取groovy函数.
-	 */
-	public String getGroovyFunctions() {
+    /**
+     * 获取groovy函数.
+     */
+    public String getGroovyFunctions() {
 
-		try {
-			Resource resource = resourceLoader.getResource("classpath:functions.groovy");
-			InputStream inputStream = resource.getInputStream();
-			BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-			StringBuilder content = new StringBuilder();
-			String line;
-			while ((line = reader.readLine()) != null) {
-				content.append(line).append("\n");
-			}
-			reader.close();
-			return content.toString();
-		} catch (IOException e) {
-			throw new IsxAppException("获取groovy函数异常");
-		}
-	}
+        try {
+            Resource resource = resourceLoader.getResource("classpath:functions.groovy");
+            InputStream inputStream = resource.getInputStream();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+            StringBuilder content = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                content.append(line).append("\n");
+            }
+            reader.close();
+            return content.toString();
+        } catch (IOException e) {
+            throw new IsxAppException("获取groovy函数异常");
+        }
+    }
 
 }

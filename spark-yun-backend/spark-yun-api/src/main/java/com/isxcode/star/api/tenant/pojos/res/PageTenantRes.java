@@ -7,21 +7,21 @@ import lombok.Data;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class PageTenantRes {
 
-	private String id;
+    private String id;
 
-	private String name;
+    private String name;
 
-	private String usedMemberNum;
+    private String usedMemberNum;
 
-	private String maxMemberNum;
+    private String maxMemberNum;
 
-	private String usedWorkflowNum;
+    private String usedWorkflowNum;
 
-	private String maxWorkflowNum;
+    private String maxWorkflowNum;
 
-	private String remark;
+    private String remark;
 
-	private String status;
+    private String status;
 
-	private String checkDateTime;
+    private String checkDateTime;
 }

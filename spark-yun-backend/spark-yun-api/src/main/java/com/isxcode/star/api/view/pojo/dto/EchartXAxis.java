@@ -15,7 +15,7 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class EchartXAxis {
 
-	private String type;
+    private String type;
 
-	private List<String> data;
+    private List<String> data;
 }

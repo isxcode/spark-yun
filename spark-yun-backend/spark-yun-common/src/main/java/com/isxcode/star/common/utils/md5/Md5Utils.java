@@ -9,25 +9,25 @@ import java.security.NoSuchAlgorithmException;
 @Slf4j
 public class Md5Utils {
 
-	/** md5加密. */
-	public static String hashStr(String input) {
-		MessageDigest md;
-		try {
-			md = MessageDigest.getInstance("MD5");
-		} catch (NoSuchAlgorithmException e) {
-			log.error(e.getMessage(), e);
-			throw new RuntimeException(e);
-		}
-		byte[] messageDigest = md.digest(input.getBytes());
+    /** md5加密. */
+    public static String hashStr(String input) {
+        MessageDigest md;
+        try {
+            md = MessageDigest.getInstance("MD5");
+        } catch (NoSuchAlgorithmException e) {
+            log.error(e.getMessage(), e);
+            throw new RuntimeException(e);
+        }
+        byte[] messageDigest = md.digest(input.getBytes());
 
-		StringBuilder hexString = new StringBuilder();
-		for (byte b : messageDigest) {
-			String hex = Integer.toHexString(0xFF & b);
-			if (hex.length() == 1) {
-				hexString.append('0');
-			}
-			hexString.append(hex);
-		}
-		return hexString.toString();
-	}
+        StringBuilder hexString = new StringBuilder();
+        for (byte b : messageDigest) {
+            String hex = Integer.toHexString(0xFF & b);
+            if (hex.length() == 1) {
+                hexString.append('0');
+            }
+            hexString.append(hex);
+        }
+        return hexString.toString();
+    }
 }

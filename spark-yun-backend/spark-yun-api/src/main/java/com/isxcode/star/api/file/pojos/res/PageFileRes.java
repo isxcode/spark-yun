@@ -11,19 +11,19 @@ import java.time.LocalDateTime;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class PageFileRes {
 
-	private String id;
+    private String id;
 
-	private String fileName;
+    private String fileName;
 
-	private String fileSize;
+    private String fileSize;
 
-	private String fileType;
+    private String fileType;
 
-	private String remark;
+    private String remark;
 
-	@JsonSerialize(using = LocalDateTimeSerializer.class)
-	private LocalDateTime createDateTime;
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    private LocalDateTime createDateTime;
 
-	@JsonSerialize(using = LocalDateTimeSerializer.class)
-	private LocalDateTime lastModifiedDateTime;
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    private LocalDateTime lastModifiedDateTime;
 }

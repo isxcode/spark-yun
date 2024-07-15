@@ -6,6 +6,6 @@ import lombok.Data;
 @Data
 public class WfiGetWorkflowInstanceReq {
 
-	@NotEmpty(message = "作业流实例id不能为空")
-	private String workflowInstanceId;
+    @NotEmpty(message = "作业流实例id不能为空")
+    private String workflowInstanceId;
 }

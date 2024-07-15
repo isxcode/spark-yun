@@ -22,56 +22,55 @@ import org.springframework.http.HttpStatus;
 @RequiredArgsConstructor
 public class SuccessResponseAdvice {
 
-	private final MessageSource messageSource;
+    private final MessageSource messageSource;
 
-	@Pointcut("@annotation(com.isxcode.star.common.annotations.successResponse.SuccessResponse)")
-	public void operateLog() {
-	}
+    @Pointcut("@annotation(com.isxcode.star.common.annotations.successResponse.SuccessResponse)")
+    public void operateLog() {}
 
-	@AfterReturning(returning = "data", value = "operateLog()&&@annotation(successResponse)")
-	public void afterReturning(JoinPoint joinPoint, Object data, SuccessResponse successResponse) {
+    @AfterReturning(returning = "data", value = "operateLog()&&@annotation(successResponse)")
+    public void afterReturning(JoinPoint joinPoint, Object data, SuccessResponse successResponse) {
 
-		MethodSignature signature = (MethodSignature) joinPoint.getSignature();
-		BaseResponse<Object> baseResponse = new BaseResponse<>();
-		if (!"void".equals(signature.getReturnType().getName())) {
-			if (data instanceof InputStream) {
-				return;
-			}
-			baseResponse.setCode(String.valueOf(HttpStatus.OK.value()));
-			if (data == null) {
-				baseResponse.setData(null);
-			} else {
-				if (data.getClass().getDeclaredFields().length == 0) {
-					baseResponse.setData(null);
-				} else {
-					baseResponse.setData(data);
-				}
-			}
-			baseResponse.setMsg(getMsg(successResponse));
-			successResponse(baseResponse);
-		} else {
-			baseResponse.setCode(String.valueOf(HttpStatus.OK.value()));
-			baseResponse.setMsg(getMsg(successResponse));
-			successResponse(baseResponse);
-		}
-	}
+        MethodSignature signature = (MethodSignature) joinPoint.getSignature();
+        BaseResponse<Object> baseResponse = new BaseResponse<>();
+        if (!"void".equals(signature.getReturnType().getName())) {
+            if (data instanceof InputStream) {
+                return;
+            }
+            baseResponse.setCode(String.valueOf(HttpStatus.OK.value()));
+            if (data == null) {
+                baseResponse.setData(null);
+            } else {
+                if (data.getClass().getDeclaredFields().length == 0) {
+                    baseResponse.setData(null);
+                } else {
+                    baseResponse.setData(data);
+                }
+            }
+            baseResponse.setMsg(getMsg(successResponse));
+            successResponse(baseResponse);
+        } else {
+            baseResponse.setCode(String.valueOf(HttpStatus.OK.value()));
+            baseResponse.setMsg(getMsg(successResponse));
+            successResponse(baseResponse);
+        }
+    }
 
-	public String getMsg(SuccessResponse successResponse) {
+    public String getMsg(SuccessResponse successResponse) {
 
-		if (!successResponse.value().isEmpty()) {
-			return successResponse.value();
-		}
+        if (!successResponse.value().isEmpty()) {
+            return successResponse.value();
+        }
 
-		try {
-			return messageSource.getMessage(successResponse.msg(), null, LocaleContextHolder.getLocale());
-		} catch (NoSuchMessageException e) {
-			log.error(e.getMessage(), e);
-			return successResponse.msg();
-		}
-	}
+        try {
+            return messageSource.getMessage(successResponse.msg(), null, LocaleContextHolder.getLocale());
+        } catch (NoSuchMessageException e) {
+            log.error(e.getMessage(), e);
+            return successResponse.msg();
+        }
+    }
 
-	public void successResponse(BaseResponse<Object> baseResponse) {
+    public void successResponse(BaseResponse<Object> baseResponse) {
 
-		throw new SuccessResponseException(baseResponse);
-	}
+        throw new SuccessResponseException(baseResponse);
+    }
 }

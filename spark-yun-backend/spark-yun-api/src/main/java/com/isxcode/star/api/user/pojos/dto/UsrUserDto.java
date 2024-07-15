@@ -5,19 +5,19 @@ import lombok.Data;
 @Data
 public class UsrUserDto {
 
-	private String id;
+    private String id;
 
-	private String username;
+    private String username;
 
-	private String account;
+    private String account;
 
-	private String status;
+    private String status;
 
-	private String createDateTime;
+    private String createDateTime;
 
-	private String phone;
+    private String phone;
 
-	private String email;
+    private String email;
 
-	private String remark;
+    private String remark;
 }

@@ -13,25 +13,25 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class SparkSubmit {
 
-	private Map<String, String> conf;
+    private Map<String, String> conf;
 
-	private String appResource;
+    private String appResource;
 
-	private String appName;
+    private String appName;
 
-	private String master;
+    private String master;
 
-	private String deployMode;
+    private String deployMode;
 
-	private List<String> appArgs;
+    private List<String> appArgs;
 
-	private List<String> jars;
+    private List<String> jars;
 
-	private String javaHome;
+    private String javaHome;
 
-	private String mainClass;
+    private String mainClass;
 
-	private String sparkHome;
+    private String sparkHome;
 
-	private boolean verbose;
+    private boolean verbose;
 }

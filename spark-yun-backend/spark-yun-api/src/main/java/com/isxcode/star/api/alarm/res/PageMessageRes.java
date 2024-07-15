@@ -12,26 +12,26 @@ import java.time.LocalDateTime;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class PageMessageRes {
 
-	private String id;
+    private String id;
 
-	private String name;
+    private String name;
 
-	private String remark;
+    private String remark;
 
-	private String msgType;
+    private String msgType;
 
-	private String status;
+    private String status;
 
-	private String response;
+    private String response;
 
-	@JsonSerialize(using = LocalDateTimeSerializer.class)
-	private LocalDateTime createDateTime;
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    private LocalDateTime createDateTime;
 
-	private String createBy;
+    private String createBy;
 
-	private String createByUsername;
+    private String createByUsername;
 
-	private String msgConfig;
+    private String msgConfig;
 
-	private MessageConfig messageConfig;
+    private MessageConfig messageConfig;
 }

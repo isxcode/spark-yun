@@ -37,70 +37,70 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @EntityListeners(AuditingEntityListener.class)
 public class ClusterNodeEntity {
 
-	@Id
-	@GeneratedValue(generator = "sy-id-generator")
-	@GenericGenerator(name = "sy-id-generator", strategy = "com.isxcode.star.config.GeneratedValueConfig")
-	private String id;
+    @Id
+    @GeneratedValue(generator = "sy-id-generator")
+    @GenericGenerator(name = "sy-id-generator", strategy = "com.isxcode.star.config.GeneratedValueConfig")
+    private String id;
 
-	private String name;
+    private String name;
 
-	private String remark;
+    private String remark;
 
-	private String status;
+    private String status;
 
-	private LocalDateTime checkDateTime;
+    private LocalDateTime checkDateTime;
 
-	private Double allMemory;
+    private Double allMemory;
 
-	private Double usedMemory;
+    private Double usedMemory;
 
-	private Double allStorage;
+    private Double allStorage;
 
-	private Double usedStorage;
+    private Double usedStorage;
 
-	private Double cpuPercent;
+    private Double cpuPercent;
 
-	private String clusterId;
+    private String clusterId;
 
-	private String host;
+    private String host;
 
-	private String port;
+    private String port;
 
-	private String username;
+    private String username;
 
-	private String passwd;
+    private String passwd;
 
-	private Boolean installSparkLocal;
+    private Boolean installSparkLocal;
 
-	private String agentHomePath;
+    private String agentHomePath;
 
-	private String agentPort;
+    private String agentPort;
 
-	private String hadoopHomePath;
+    private String hadoopHomePath;
 
-	private String sparkHomePath;
+    private String sparkHomePath;
 
-	private String agentLog;
+    private String agentLog;
 
-	@CreatedDate
-	private LocalDateTime createDateTime;
+    @CreatedDate
+    private LocalDateTime createDateTime;
 
-	@LastModifiedDate
-	private LocalDateTime lastModifiedDateTime;
+    @LastModifiedDate
+    private LocalDateTime lastModifiedDateTime;
 
-	@CreatedBy
-	private String createBy;
+    @CreatedBy
+    private String createBy;
 
-	@LastModifiedBy
-	private String lastModifiedBy;
+    @LastModifiedBy
+    private String lastModifiedBy;
 
-	@Transient
-	private Integer deleted;
+    @Transient
+    private Integer deleted;
 
-	private String tenantId;
+    private String tenantId;
 
-	@PrePersist
-	public void prePersist() {
-		this.tenantId = TENANT_ID.get();
-	}
+    @PrePersist
+    public void prePersist() {
+        this.tenantId = TENANT_ID.get();
+    }
 }

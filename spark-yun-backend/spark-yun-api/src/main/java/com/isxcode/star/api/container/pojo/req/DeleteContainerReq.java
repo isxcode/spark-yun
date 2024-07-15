@@ -8,7 +8,7 @@ import javax.validation.constraints.NotEmpty;
 @Data
 public class DeleteContainerReq {
 
-	@Schema(title = "containerId", example = "sy_213")
-	@NotEmpty(message = "id不能为空")
-	private String id;
+    @Schema(title = "containerId", example = "sy_213")
+    @NotEmpty(message = "id不能为空")
+    private String id;
 }

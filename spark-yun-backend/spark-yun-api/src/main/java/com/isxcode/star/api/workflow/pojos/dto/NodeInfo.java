@@ -5,11 +5,11 @@ import lombok.Data;
 @Data
 public class NodeInfo {
 
-	private String id;
+    private String id;
 
-	private String shape;
+    private String shape;
 
-	private LineInfo source;
+    private LineInfo source;
 
-	private LineInfo target;
+    private LineInfo target;
 }

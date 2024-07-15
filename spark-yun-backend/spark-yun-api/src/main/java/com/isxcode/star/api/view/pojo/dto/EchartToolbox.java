@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class EchartToolbox {
 
-	private Boolean show;
+    private Boolean show;
 
-	private EchartToolboxFeature feature;
+    private EchartToolboxFeature feature;
 }

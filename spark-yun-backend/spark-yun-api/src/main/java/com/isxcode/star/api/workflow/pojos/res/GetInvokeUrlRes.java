@@ -7,5 +7,5 @@ import lombok.Data;
 @Builder
 public class GetInvokeUrlRes {
 
-	private String url;
+    private String url;
 }

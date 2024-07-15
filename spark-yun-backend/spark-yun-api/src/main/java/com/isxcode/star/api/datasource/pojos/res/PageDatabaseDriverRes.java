@@ -7,21 +7,21 @@ import lombok.Data;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class PageDatabaseDriverRes {
 
-	private String id;
+    private String id;
 
-	private String name;
+    private String name;
 
-	private String dbType;
+    private String dbType;
 
-	private String fileName;
+    private String fileName;
 
-	private String driverType;
+    private String driverType;
 
-	private String remark;
+    private String remark;
 
-	private Boolean isDefaultDriver;
+    private Boolean isDefaultDriver;
 
-	private String createBy;
+    private String createBy;
 
-	private String createDateTime;
+    private String createDateTime;
 }

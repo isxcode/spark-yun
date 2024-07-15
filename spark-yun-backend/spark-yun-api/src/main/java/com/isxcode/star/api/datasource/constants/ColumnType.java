@@ -5,23 +5,23 @@ package com.isxcode.star.api.datasource.constants;
  */
 public interface ColumnType {
 
-	String NULL = "NULL";
+    String NULL = "NULL";
 
-	String STRING = "STRING";
+    String STRING = "STRING";
 
-	String BOOLEAN = "BOOLEAN";
+    String BOOLEAN = "BOOLEAN";
 
-	String DOUBLE = "DOUBLE";
+    String DOUBLE = "DOUBLE";
 
-	String LONG = "LONG";
+    String LONG = "LONG";
 
-	String BIG_DECIMAL = "BIG_DECIMAL";
+    String BIG_DECIMAL = "BIG_DECIMAL";
 
-	String TIMESTAMP = "TIMESTAMP";
+    String TIMESTAMP = "TIMESTAMP";
 
-	String DATE = "DATE";
+    String DATE = "DATE";
 
-	String DATE_TIME = "DATE_TIME";
+    String DATE_TIME = "DATE_TIME";
 
-	String INT = "INT";
+    String INT = "INT";
 }

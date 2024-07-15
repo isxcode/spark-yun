@@ -13,7 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 public class GetDataSourceDataRes {
 
-	private List<String> columns;
+    private List<String> columns;
 
-	private List<List<String>> rows;
+    private List<List<String>> rows;
 }

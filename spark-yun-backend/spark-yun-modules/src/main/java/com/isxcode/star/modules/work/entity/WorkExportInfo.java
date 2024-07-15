@@ -7,7 +7,7 @@ import lombok.Data;
 @Builder
 public class WorkExportInfo {
 
-	private WorkEntity work;
+    private WorkEntity work;
 
-	private WorkConfigEntity workConfig;
+    private WorkConfigEntity workConfig;
 }

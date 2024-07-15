@@ -9,6 +9,6 @@ import lombok.EqualsAndHashCode;
 @Data
 public class PageDatasourceReq extends BasePageRequest {
 
-	@Schema(title = "数据源类型")
-	private String datasourceType;
+    @Schema(title = "数据源类型")
+    private String datasourceType;
 }

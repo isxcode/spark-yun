@@ -13,14 +13,14 @@ import lombok.NoArgsConstructor;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class EchartTitle {
 
-	private String text;
+    private String text;
 
-	private String left;
+    private String left;
 
-	private String top;
+    private String top;
 
-	private EchartTextStyle textStyle;
+    private EchartTextStyle textStyle;
 
-	private String subText;
+    private String subText;
 
 }

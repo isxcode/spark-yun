@@ -7,9 +7,9 @@ import lombok.Data;
 @Builder
 public class JsonItemDto {
 
-	private String jsonPath;
+    private String jsonPath;
 
-	private String type;
+    private String type;
 
-	private String express;
+    private String express;
 }

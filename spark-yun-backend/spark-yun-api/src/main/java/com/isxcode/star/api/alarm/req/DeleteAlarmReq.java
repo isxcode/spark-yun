@@ -8,7 +8,7 @@ import javax.validation.constraints.NotEmpty;
 @Data
 public class DeleteAlarmReq {
 
-	@Schema(title = "告警id", example = "sy_123")
-	@NotEmpty(message = "告警id不能为空")
-	private String id;
+    @Schema(title = "告警id", example = "sy_123")
+    @NotEmpty(message = "告警id不能为空")
+    private String id;
 }

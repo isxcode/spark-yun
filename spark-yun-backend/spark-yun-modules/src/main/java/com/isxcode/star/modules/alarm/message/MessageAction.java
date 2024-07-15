@@ -2,7 +2,7 @@ package com.isxcode.star.modules.alarm.message;
 
 public interface MessageAction {
 
-	String getActionName();
+    String getActionName();
 
-	Object sendMessage(MessageContext messageContext);
+    Object sendMessage(MessageContext messageContext);
 }

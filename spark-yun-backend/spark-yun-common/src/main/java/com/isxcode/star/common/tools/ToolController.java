@@ -26,59 +26,59 @@ import java.util.Objects;
 @Slf4j
 public class ToolController {
 
-	private final CacheManager cacheManager;
+    private final CacheManager cacheManager;
 
-	private final ResourceLoader resourceLoader;
+    private final ResourceLoader resourceLoader;
 
-	@Operation(summary = "获取版本号接口")
-	@GetMapping("/open/version")
-	public String getLeoLastVersion() {
+    @Operation(summary = "获取版本号接口")
+    @GetMapping("/open/version")
+    public String getLeoLastVersion() {
 
-		try {
-			Resource resource = resourceLoader.getResource("classpath:VERSION");
-			InputStream inputStream = resource.getInputStream();
-			BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-			StringBuilder content = new StringBuilder();
-			String line;
-			while ((line = reader.readLine()) != null) {
-				content.append(line);
-			}
-			reader.close();
-			return content.toString();
-		} catch (IOException e) {
-			log.error(e.getMessage());
-			throw new IsxAppException("获取版本号异常", e.getMessage());
-		}
-	}
+        try {
+            Resource resource = resourceLoader.getResource("classpath:VERSION");
+            InputStream inputStream = resource.getInputStream();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+            StringBuilder content = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                content.append(line);
+            }
+            reader.close();
+            return content.toString();
+        } catch (IOException e) {
+            log.error(e.getMessage());
+            throw new IsxAppException("获取版本号异常", e.getMessage());
+        }
+    }
 
-	@Operation(summary = "切换系统日志等级")
-	@GetMapping("/setLogLevel")
-	public String setLogLevel(@RequestParam String level) {
+    @Operation(summary = "切换系统日志等级")
+    @GetMapping("/setLogLevel")
+    public String setLogLevel(@RequestParam String level) {
 
-		LoggingSystem system = LoggingSystem.get(LoggingSystem.class.getClassLoader());
-		LogLevel logLevel = LogLevel.valueOf(level.trim().toUpperCase(Locale.ENGLISH));
-		system.setLogLevel("com.isxcode.star", logLevel);
-		return "当前日志等级：" + logLevel.name();
-	}
+        LoggingSystem system = LoggingSystem.get(LoggingSystem.class.getClassLoader());
+        LogLevel logLevel = LogLevel.valueOf(level.trim().toUpperCase(Locale.ENGLISH));
+        system.setLogLevel("com.isxcode.star", logLevel);
+        return "当前日志等级：" + logLevel.name();
+    }
 
-	@Operation(summary = "获取缓存列表")
-	@GetMapping("/getCacheList")
-	public String getCacheList() {
+    @Operation(summary = "获取缓存列表")
+    @GetMapping("/getCacheList")
+    public String getCacheList() {
 
-		return cacheManager.getCacheNames().toString();
-	}
+        return cacheManager.getCacheNames().toString();
+    }
 
-	@Operation(summary = "获取制定缓存信息")
-	@GetMapping("/getCache")
-	public String getCache(@RequestParam String name) {
+    @Operation(summary = "获取制定缓存信息")
+    @GetMapping("/getCache")
+    public String getCache(@RequestParam String name) {
 
-		return Objects.requireNonNull(cacheManager.getCache(name)).getNativeCache().toString();
-	}
+        return Objects.requireNonNull(cacheManager.getCache(name)).getNativeCache().toString();
+    }
 
-	@Operation(summary = "返回当前应用状态")
-	@GetMapping("/open/health")
-	public String health() {
+    @Operation(summary = "返回当前应用状态")
+    @GetMapping("/open/health")
+    public String health() {
 
-		return "UP";
-	}
+        return "UP";
+    }
 }

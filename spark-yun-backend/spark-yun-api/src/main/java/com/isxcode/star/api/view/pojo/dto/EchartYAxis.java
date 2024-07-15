@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class EchartYAxis {
 
-	private String type;
+    private String type;
 
-	private EchartAxisPointer axisPointer;
+    private EchartAxisPointer axisPointer;
 }

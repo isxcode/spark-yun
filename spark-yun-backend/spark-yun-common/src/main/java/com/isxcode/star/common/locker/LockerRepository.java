@@ -11,8 +11,8 @@ import org.springframework.stereotype.Repository;
 @CacheConfig(cacheNames = {"SY_LOCKER"})
 public interface LockerRepository extends JpaRepository<LockerEntity, Integer> {
 
-	@Query(value = "select min(L.id) from LockerEntity L where L.name = :name")
-	Integer getMinId(@Param("name") String name);
+    @Query(value = "select min(L.id) from LockerEntity L where L.name = :name")
+    Integer getMinId(@Param("name") String name);
 
-	List<LockerEntity> findAllByName(String name);
+    List<LockerEntity> findAllByName(String name);
 }

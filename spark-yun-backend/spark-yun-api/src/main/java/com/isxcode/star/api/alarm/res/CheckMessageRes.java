@@ -7,7 +7,7 @@ import lombok.Data;
 @Builder
 public class CheckMessageRes {
 
-	private String checkStatus;
+    private String checkStatus;
 
-	private String log;
+    private String log;
 }

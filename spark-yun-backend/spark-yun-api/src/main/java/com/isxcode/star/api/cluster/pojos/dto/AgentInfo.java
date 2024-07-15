@@ -5,21 +5,21 @@ import lombok.Data;
 @Data
 public class AgentInfo {
 
-	private String execStatus;
+    private String execStatus;
 
-	private String status;
+    private String status;
 
-	private String log;
+    private String log;
 
-	private String allMemory;
+    private String allMemory;
 
-	private String usedMemory;
+    private String usedMemory;
 
-	private String allStorage;
+    private String allStorage;
 
-	private String usedStorage;
+    private String usedStorage;
 
-	private String cpuPercent;
+    private String cpuPercent;
 
-	private String hadoopHome;
+    private String hadoopHome;
 }

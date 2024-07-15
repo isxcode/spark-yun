@@ -9,6 +9,6 @@ import lombok.EqualsAndHashCode;
 @Data
 public class PageTenantUserReq extends BasePageRequest {
 
-	@Schema(title = "租户id", example = "sy_f8402cd43898421687fcc7c8b98a359c")
-	private String tenantId;
+    @Schema(title = "租户id", example = "sy_f8402cd43898421687fcc7c8b98a359c")
+    private String tenantId;
 }

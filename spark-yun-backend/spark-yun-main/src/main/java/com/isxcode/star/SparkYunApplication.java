@@ -10,14 +10,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @SpringBootApplication
 public class SparkYunApplication {
 
-	public static void main(String[] args) {
+    public static void main(String[] args) {
 
-		SpringApplication.run(SparkYunApplication.class, args);
-	}
+        SpringApplication.run(SparkYunApplication.class, args);
+    }
 
-	@RequestMapping(value = {"/*", "/home/**", "/share/**"})
-	public String index() {
+    @RequestMapping(value = {"/*", "/home/**", "/share/**"})
+    public String index() {
 
-		return "index";
-	}
+        return "index";
+    }
 }

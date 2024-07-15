@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class GetWorkflowDefaultClusterRes {
 
-	private String clusterId;
+    private String clusterId;
 
-	private String clusterName;
+    private String clusterName;
 }

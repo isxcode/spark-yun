@@ -13,5 +13,5 @@ import java.util.List;
 @NoArgsConstructor
 public class GetDataSourceTablesRes {
 
-	private List<String> tables;
+    private List<String> tables;
 }

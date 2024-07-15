@@ -13,9 +13,9 @@ import lombok.NoArgsConstructor;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class EchartItemStyle {
 
-	private double shadowBlur;
+    private double shadowBlur;
 
-	private double shadowOffsetX;
+    private double shadowOffsetX;
 
-	private String shadowColor;
+    private String shadowColor;
 }

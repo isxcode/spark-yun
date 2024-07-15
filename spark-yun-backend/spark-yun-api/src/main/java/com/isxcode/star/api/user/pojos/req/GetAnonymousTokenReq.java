@@ -8,7 +8,7 @@ import javax.validation.constraints.NotNull;
 @Data
 public class GetAnonymousTokenReq {
 
-	@Schema(title = "有效天数", description = "1")
-	@NotNull(message = "validDay不能为空")
-	private Integer validDay;
+    @Schema(title = "有效天数", description = "1")
+    @NotNull(message = "validDay不能为空")
+    private Integer validDay;
 }

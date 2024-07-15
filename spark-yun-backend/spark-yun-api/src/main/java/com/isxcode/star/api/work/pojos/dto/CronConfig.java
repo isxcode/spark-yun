@@ -18,66 +18,66 @@ import java.util.List;
 @NoArgsConstructor
 public class CronConfig {
 
-	private String setMode;
+    private String setMode;
 
-	private boolean enable;
+    private boolean enable;
 
-	/**
-	 * 小时开始.
-	 */
-	private LocalTime startDate;
+    /**
+     * 小时开始.
+     */
+    private LocalTime startDate;
 
-	/**
-	 * 小时间隔.
-	 */
-	private Integer hourNum;
+    /**
+     * 小时间隔.
+     */
+    private Integer hourNum;
 
-	/**
-	 * 小时结束.
-	 */
-	private LocalTime endDate;
+    /**
+     * 小时结束.
+     */
+    private LocalTime endDate;
 
-	private String cron;
+    private String cron;
 
-	private List<LocalDate> workDate;
+    private List<LocalDate> workDate;
 
-	/**
-	 * 间隔类型.
-	 */
-	private String range;
+    /**
+     * 间隔类型.
+     */
+    private String range;
 
-	/**
-	 * 分钟开始.
-	 */
-	private LocalTime startDateMin;
+    /**
+     * 分钟开始.
+     */
+    private LocalTime startDateMin;
 
-	/**
-	 * 时间间隔分钟.
-	 */
-	private Integer minNum;
+    /**
+     * 时间间隔分钟.
+     */
+    private Integer minNum;
 
-	/**
-	 * 分钟结束.
-	 */
-	private LocalTime endDateMin;
+    /**
+     * 分钟结束.
+     */
+    private LocalTime endDateMin;
 
-	/**
-	 * 每日定时.
-	 */
-	private LocalTime scheduleDate;
+    /**
+     * 每日定时.
+     */
+    private LocalTime scheduleDate;
 
-	/**
-	 * 每周.
-	 */
-	private String weekDate;
+    /**
+     * 每周.
+     */
+    private String weekDate;
 
-	/**
-	 * 每月.
-	 */
-	private String monthDay;
+    /**
+     * 每月.
+     */
+    private String monthDay;
 
-	/**
-	 * 调度类型. 1. 单一调度 2. 离散调度
-	 */
-	private String type;
+    /**
+     * 调度类型. 1. 单一调度 2. 离散调度
+     */
+    private String type;
 }

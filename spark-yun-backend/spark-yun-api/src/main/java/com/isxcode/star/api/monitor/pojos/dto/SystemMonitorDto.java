@@ -8,9 +8,9 @@ import lombok.Data;
 @Builder
 public class SystemMonitorDto {
 
-	@Schema(title = "卡片总数")
-	private Long total;
+    @Schema(title = "卡片总数")
+    private Long total;
 
-	@Schema(title = "激活数")
-	private Long activeNum;
+    @Schema(title = "激活数")
+    private Long activeNum;
 }

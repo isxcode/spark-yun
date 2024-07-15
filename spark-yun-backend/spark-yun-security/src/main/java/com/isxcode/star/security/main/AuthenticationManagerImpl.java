@@ -14,21 +14,21 @@ import org.springframework.security.core.AuthenticationException;
  */
 public class AuthenticationManagerImpl implements AuthenticationManager {
 
-	private final List<AuthenticationProvider> authenticationProviders;
+    private final List<AuthenticationProvider> authenticationProviders;
 
-	public AuthenticationManagerImpl(List<AuthenticationProvider> authenticationProviders) {
+    public AuthenticationManagerImpl(List<AuthenticationProvider> authenticationProviders) {
 
-		this.authenticationProviders = authenticationProviders;
-	}
+        this.authenticationProviders = authenticationProviders;
+    }
 
-	@Override
-	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
+    @Override
+    public Authentication authenticate(Authentication authentication) throws AuthenticationException {
 
-		for (AuthenticationProvider provider : authenticationProviders) {
+        for (AuthenticationProvider provider : authenticationProviders) {
 
-			return provider.authenticate(authentication);
-		}
+            return provider.authenticate(authentication);
+        }
 
-		return authentication;
-	}
+        return authentication;
+    }
 }

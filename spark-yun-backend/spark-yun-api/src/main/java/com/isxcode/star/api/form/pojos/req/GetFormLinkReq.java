@@ -9,12 +9,12 @@ import javax.validation.constraints.NotNull;
 @Data
 public class GetFormLinkReq {
 
-	@Schema(title = "表单id", example = "sy_123")
-	@NotEmpty(message = "formId不能为空")
-	private String formId;
+    @Schema(title = "表单id", example = "sy_123")
+    @NotEmpty(message = "formId不能为空")
+    private String formId;
 
-	@Schema(title = "有效天数", description = "1")
-	@NotNull(message = "validDay不能为空")
-	private Integer validDay;
+    @Schema(title = "有效天数", description = "1")
+    @NotNull(message = "validDay不能为空")
+    private Integer validDay;
 
 }

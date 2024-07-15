@@ -5,13 +5,13 @@ package com.isxcode.star.api.workflow.constants;
  */
 public interface WorkflowExternalCallStatus {
 
-	/**
-	 * 打开.
-	 */
-	String ON = "ON";
+    /**
+     * 打开.
+     */
+    String ON = "ON";
 
-	/**
-	 * 关闭.
-	 */
-	String OFF = "OFF";
+    /**
+     * 关闭.
+     */
+    String OFF = "OFF";
 }

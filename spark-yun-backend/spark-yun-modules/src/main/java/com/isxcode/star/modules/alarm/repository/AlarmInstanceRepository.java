@@ -11,6 +11,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface AlarmInstanceRepository extends JpaRepository<AlarmInstanceEntity, String> {
 
-	@Query("SELECT A FROM AlarmInstanceEntity A order by A.createDateTime desc ")
-	Page<AlarmInstanceEntity> searchAll(@Param("keyword") String searchKeyWord, Pageable pageable);
+    @Query("SELECT A FROM AlarmInstanceEntity A order by A.createDateTime desc ")
+    Page<AlarmInstanceEntity> searchAll(@Param("keyword") String searchKeyWord, Pageable pageable);
 }

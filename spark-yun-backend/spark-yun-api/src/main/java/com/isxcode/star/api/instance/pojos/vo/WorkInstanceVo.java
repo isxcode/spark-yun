@@ -8,13 +8,13 @@ import lombok.Data;
 @Data
 public class WorkInstanceVo {
 
-	@JsonSerialize(using = LocalDateTimeSerializer.class)
-	private LocalDateTime startDateTime;
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    private LocalDateTime startDateTime;
 
-	@JsonSerialize(using = LocalDateTimeSerializer.class)
-	private LocalDateTime endDateTime;
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    private LocalDateTime endDateTime;
 
-	private String status;
+    private String status;
 
-	private String type;
+    private String type;
 }

@@ -16,12 +16,12 @@ import java.util.Optional;
 @CacheConfig(cacheNames = {"SY_DATABASE_DRIVER"})
 public interface DatabaseDriverRepository extends JpaRepository<DatabaseDriverEntity, String> {
 
-	@Query("select D from DatabaseDriverEntity  D where (D.name like %:keyword% or D.remark like %:keyword% or D.dbType like %:keyword% ) and (D.tenantId = :tenantId or D.driverType = 'SYSTEM_DRIVER') order by D.createDateTime desc,D.name desc ")
-	Page<DatabaseDriverEntity> searchAll(@Param("keyword") String searchKeyWord, @Param("tenantId") String tenantId,
-			Pageable pageable);
+    @Query("select D from DatabaseDriverEntity  D where (D.name like %:keyword% or D.remark like %:keyword% or D.dbType like %:keyword% ) and (D.tenantId = :tenantId or D.driverType = 'SYSTEM_DRIVER') order by D.createDateTime desc,D.name desc ")
+    Page<DatabaseDriverEntity> searchAll(@Param("keyword") String searchKeyWord, @Param("tenantId") String tenantId,
+        Pageable pageable);
 
-	List<DatabaseDriverEntity> findAllByDbType(String dbType);
+    List<DatabaseDriverEntity> findAllByDbType(String dbType);
 
-	Optional<DatabaseDriverEntity> findByDriverTypeAndDbTypeAndIsDefaultDriver(String driverType, String dbType,
-			boolean defaultDriver);
+    Optional<DatabaseDriverEntity> findByDriverTypeAndDbTypeAndIsDefaultDriver(String driverType, String dbType,
+        boolean defaultDriver);
 }

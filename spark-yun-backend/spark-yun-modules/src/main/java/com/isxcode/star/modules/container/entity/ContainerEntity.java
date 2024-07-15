@@ -29,55 +29,54 @@ import static com.isxcode.star.common.config.CommonConfig.TENANT_ID;
 @AllArgsConstructor
 public class ContainerEntity {
 
-	@Id
-	@GeneratedValue(generator = "sy-id-generator")
-	@GenericGenerator(name = "sy-id-generator", strategy = "com.isxcode.star.config.GeneratedValueConfig")
-	private String id;
+    @Id
+    @GeneratedValue(generator = "sy-id-generator")
+    @GenericGenerator(name = "sy-id-generator", strategy = "com.isxcode.star.config.GeneratedValueConfig")
+    private String id;
 
-	private String name;
+    private String name;
 
-	private String remark;
+    private String remark;
 
-	private String status;
+    private String status;
 
-	private String datasourceId;
+    private String datasourceId;
 
-	private String clusterId;
+    private String clusterId;
 
-	private String resourceLevel;
+    private String resourceLevel;
 
-	private String sparkConfig;
+    private String sparkConfig;
 
-	private Integer port;
+    private Integer port;
 
-	private String submitLog;
+    private String submitLog;
 
-	private String runningLog;
+    private String runningLog;
 
-	private String applicationId;
+    private String applicationId;
 
-	@CreatedDate
-	private LocalDateTime createDateTime;
+    @CreatedDate
+    private LocalDateTime createDateTime;
 
-	@LastModifiedDate
-	private LocalDateTime lastModifiedDateTime;
+    @LastModifiedDate
+    private LocalDateTime lastModifiedDateTime;
 
-	@CreatedBy
-	private String createBy;
+    @CreatedBy
+    private String createBy;
 
-	@LastModifiedBy
-	private String lastModifiedBy;
+    @LastModifiedBy
+    private String lastModifiedBy;
 
-	@Transient
-	private Integer deleted;
+    @Transient
+    private Integer deleted;
 
-	private String tenantId;
+    private String tenantId;
 
-	public ContainerEntity() {
-	}
+    public ContainerEntity() {}
 
-	@PrePersist
-	public void prePersist() {
-		this.tenantId = TENANT_ID.get();
-	}
+    @PrePersist
+    public void prePersist() {
+        this.tenantId = TENANT_ID.get();
+    }
 }

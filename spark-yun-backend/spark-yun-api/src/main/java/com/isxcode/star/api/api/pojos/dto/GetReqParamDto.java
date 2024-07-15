@@ -8,9 +8,9 @@ import lombok.Data;
 @Builder
 public class GetReqParamDto {
 
-	@Schema(title = "自定义token的key", example = "key")
-	private String label;
+    @Schema(title = "自定义token的key", example = "key")
+    private String label;
 
-	@Schema(title = "token令牌的值", example = "123456")
-	private String value;
+    @Schema(title = "token令牌的值", example = "123456")
+    private String value;
 }

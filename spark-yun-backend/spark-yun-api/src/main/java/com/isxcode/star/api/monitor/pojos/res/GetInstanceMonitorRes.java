@@ -10,5 +10,5 @@ import java.util.List;
 @Builder
 public class GetInstanceMonitorRes {
 
-	List<WorkflowInstanceLineDto> instanceNumLine;
+    List<WorkflowInstanceLineDto> instanceNumLine;
 }

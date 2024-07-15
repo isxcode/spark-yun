@@ -8,7 +8,7 @@ import javax.validation.constraints.NotEmpty;
 @Data
 public class DeleteFuncReq {
 
-	@Schema(title = "udf唯一id", example = "sy_123456789")
-	@NotEmpty(message = "自定义函数id不能为空")
-	private String id;
+    @Schema(title = "udf唯一id", example = "sy_123456789")
+    @NotEmpty(message = "自定义函数id不能为空")
+    private String id;
 }
