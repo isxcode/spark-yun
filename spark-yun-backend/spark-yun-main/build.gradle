@@ -1,21 +1,18 @@
 dependencies {
 
-  api(project(':spark-yun-backend:spark-yun-modules'))
-  api(project(':spark-yun-vip:spark-yun-backend'))
+    api(project(':spark-yun-backend:spark-yun-modules'))
+    api(project(':spark-yun-vip:spark-yun-backend'))
 
-  // thymeleaf
-  implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 
-  // druid
-  implementation "com.alibaba:druid-spring-boot-starter:${DRUID_VERSION}"
+    implementation "com.alibaba:druid-spring-boot-starter:${DRUID_VERSION}"
 
-  // flyway
-  implementation "org.flywaydb:flyway-core:${FLYWAY_VERSION}"
-  implementation "org.flywaydb:flyway-mysql:${FLYWAY_VERSION}"
+    implementation "org.flywaydb:flyway-core:${FLYWAY_VERSION}"
+    implementation "org.flywaydb:flyway-mysql:${FLYWAY_VERSION}"
 }
 
 bootJar {
-  archiveFileName = 'zhiqingyun.jar'
+    archiveFileName = 'zhiqingyun.jar'
 }
 
 bootRun {

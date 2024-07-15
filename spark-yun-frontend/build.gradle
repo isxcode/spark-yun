@@ -1,16 +1,16 @@
 // 清理后端的resources中的前端文件
 tasks.register('clean_backend_resources', Delete) {
 
-  delete '../spark-yun-backend/spark-yun-main/src/main/resources/templates'
-  delete '../spark-yun-backend/spark-yun-main/src/main/resources/static'
+    delete '../spark-yun-backend/spark-yun-main/src/main/resources/templates'
+    delete '../spark-yun-backend/spark-yun-main/src/main/resources/static'
 }
 
 // 打包前端项目
 tasks.register('npm_build', Exec) {
 
-  mustRunAfter("clean_backend_resources")
+    mustRunAfter("clean_backend_resources")
 
-  commandLine 'sh', '-c', '''
+    commandLine 'sh', '-c', '''
       rm -rf node_modules
       pnpm install --force
       pnpm run build
@@ -20,24 +20,24 @@ tasks.register('npm_build', Exec) {
 // 拷贝后端resources中的templates里
 tasks.register('copy_to_templates', Copy) {
 
-  mustRunAfter("npm_build")
+    mustRunAfter("npm_build")
 
-  from 'dist/index.html'
-  into '../spark-yun-backend/spark-yun-main/src/main/resources/templates/'
+    from 'dist/index.html'
+    into '../spark-yun-backend/spark-yun-main/src/main/resources/templates/'
 }
 
 // 拷贝到static中
 tasks.register('copy_to_static', Copy) {
 
-  mustRunAfter("npm_build")
+    mustRunAfter("npm_build")
 
-  from 'dist/static'
-  into '../spark-yun-backend/spark-yun-main/src/main/resources/static/'
+    from 'dist/static'
+    into '../spark-yun-backend/spark-yun-main/src/main/resources/static/'
 }
 
 // 打包并安装前端项目
 tasks.register('make', GradleBuild) {
 
-  // 串行执行
-  tasks = ["clean_backend_resources", "npm_build", "copy_to_templates", "copy_to_static"]
+    // 串行执行
+    tasks = ["clean_backend_resources", "npm_build", "copy_to_templates", "copy_to_static"]
 }

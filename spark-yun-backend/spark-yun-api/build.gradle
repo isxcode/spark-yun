@@ -1,4 +1,4 @@
 dependencies {
 
-  api(project(":spark-yun-backend:spark-yun-api-base"))
+    api(project(":spark-yun-backend:spark-yun-api-base"))
 }
