@@ -620,7 +620,14 @@ public class WorkflowBizService {
         // 初始化工作流实例状态
         WorkflowInstanceEntity workflowInstance =
             workflowInstanceRepository.findById(reRunFlowReq.getWorkflowInstanceId()).get();
-        workflowInstance.setStatus(InstanceStatus.ABORTING);
+
+        // 如果作业流状态是成功或者失败，直接改成运行中
+        if (InstanceStatus.SUCCESS.equals(workflowInstance.getStatus())
+            || InstanceStatus.FAIL.equals(workflowInstance.getStatus())) {
+            workflowInstance.setStatus(InstanceStatus.RUNNING);
+        } else {
+            workflowInstance.setStatus(InstanceStatus.ABORTING);
+        }
         workflowInstanceRepository.saveAndFlush(workflowInstance);
 
         // 异步调用中止作业的方法
