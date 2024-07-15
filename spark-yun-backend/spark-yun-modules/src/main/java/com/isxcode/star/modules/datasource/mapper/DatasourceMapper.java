@@ -10,11 +10,9 @@ import com.isxcode.star.modules.datasource.entity.DatasourceEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-/** mapstruct映射. */
 @Mapper(componentModel = "spring")
 public interface DatasourceMapper {
 
-    /** dasAddDatasourceReq转DatasourceEntity. */
     @Mapping(target = "kafkaConfig", ignore = true)
     DatasourceEntity dasAddDatasourceReqToDatasourceEntity(AddDatasourceReq dasAddDatasourceReq);
 

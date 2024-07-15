@@ -9,7 +9,6 @@ import com.isxcode.star.modules.cluster.entity.ClusterNodeEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-/** mapstruct映射. */
 @Mapper(componentModel = "spring")
 public interface ClusterNodeMapper {
 

@@ -209,7 +209,9 @@ public class UserBizService {
         }
 
         // UsrAddUserReq To UserEntity
-        UserEntity userEntity = userMapper.usrAddUserReqToUserEntity(usrAddUserReq);
+        UserEntity userEntity = userMapper.addUserReqToUserEntity(usrAddUserReq);
+        userEntity.setStatus(UserStatus.ENABLE);
+        userEntity.setRoleCode(RoleType.NORMAL_MEMBER);
         userEntity.setPasswd(Md5Utils.hashStr(userEntity.getPasswd()));
 
         // 数据持久化
@@ -224,8 +226,7 @@ public class UserBizService {
             throw new IsxAppException("用户不存在");
         }
 
-        // UsrUpdateUserReq To UserEntity
-        UserEntity userEntity = userMapper.usrUpdateUserReqToUserEntity(usrUpdateUserReq, userEntityOptional.get());
+        UserEntity userEntity = userMapper.updateUserReqToUserEntity(usrUpdateUserReq, userEntityOptional.get());
 
         userRepository.save(userEntity);
     }
@@ -289,7 +290,7 @@ public class UserBizService {
             throw new IsxAppException("用户不存在");
         }
 
-        UserEntity userEntity = userMapper.usrUpdateUserInfoToUserEntity(updateUserInfoReq, userEntityOptional.get());
+        UserEntity userEntity = userMapper.updateUserInfoToUserEntity(updateUserInfoReq, userEntityOptional.get());
 
         userRepository.save(userEntity);
     }

@@ -12,7 +12,6 @@ import java.util.List;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-/** mapstruct映射. */
 @Mapper(componentModel = "spring")
 public interface WorkflowMapper {
 
