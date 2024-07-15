@@ -114,35 +114,24 @@ public class ClusterNodeBizService {
         }
 
         // 转换对象
-        ClusterNodeEntity node = engineNodeMapper.updateNodeReqToNodeEntity(updateClusterNodeReq, clusterNode);
+        clusterNode = engineNodeMapper.updateNodeReqToNodeEntity(updateClusterNodeReq, clusterNode);
 
         // 是否安装spark-local组件
         clusterNode.setInstallSparkLocal(updateClusterNodeReq.getInstallSparkLocal());
 
+        // 密码对成加密
+        clusterNode.setPasswd(aesUtils.encrypt(updateClusterNodeReq.getPasswd().trim()));
+
         // 设置安装地址
-        node.setAgentHomePath(
+        clusterNode.setAgentHomePath(
             clusterNodeService.getDefaultAgentHomePath(updateClusterNodeReq.getUsername(), clusterNode));
 
-        // 添加特殊逻辑，从备注中获取安装路径
-        // 正则获取路径 $path{/root}
-        if (!Strings.isEmpty(updateClusterNodeReq.getRemark())) {
-
-            Pattern regex = Pattern.compile("\\$path\\{(.*?)\\}");
-            Matcher matcher = regex.matcher(updateClusterNodeReq.getRemark());
-            if (matcher.find()) {
-                node.setAgentHomePath(matcher.group(1));
-            }
-        }
-
-        // 密码对成加密
-        node.setPasswd(aesUtils.encrypt(updateClusterNodeReq.getPasswd()));
-
         // 设置代理端口号
-        node.setAgentPort(clusterNodeService.getDefaultAgentPort(updateClusterNodeReq.getAgentPort()));
+        clusterNode.setAgentPort(clusterNodeService.getDefaultAgentPort(updateClusterNodeReq.getAgentPort()));
 
         // 初始化节点状态，未检测
-        node.setStatus(ClusterNodeStatus.UN_CHECK);
-        clusterNodeRepository.save(node);
+        clusterNode.setStatus(ClusterNodeStatus.UN_CHECK);
+        clusterNodeRepository.save(clusterNode);
 
         // 集群状态修改
         cluster.setStatus(ClusterStatus.UN_CHECK);
