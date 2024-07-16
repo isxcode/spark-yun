@@ -6,6 +6,7 @@ import lombok.Data;
 
 import javax.validation.constraints.NotEmpty;
 import java.util.List;
+import java.util.Map;
 
 @Data
 public class ConfigRealReq {
@@ -24,7 +25,7 @@ public class ConfigRealReq {
     private List<String> LibList;
 
     @Schema(title = "spark配置")
-    private String sparkConfig;
+    private Map<String, String> sparkConfig;
 
     @Schema(title = "集群id")
     private String clusterId;
