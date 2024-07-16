@@ -13,7 +13,8 @@
       "name": "SparkYunApplication",
       "request": "launch",
       "mainClass": "com.isxcode.star.SparkYunApplication",
-      "projectName": "spark-yun-main"
+      "projectName": "spark-yun-main",
+      "cwd": "/workspace/spark-yun/spark-yun-backend"
     }
   ]
 }
