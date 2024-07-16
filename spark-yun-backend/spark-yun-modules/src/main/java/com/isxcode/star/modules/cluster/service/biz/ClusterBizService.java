@@ -6,6 +6,7 @@ import com.isxcode.star.api.cluster.pojos.dto.ScpFileEngineNodeDto;
 import com.isxcode.star.api.cluster.pojos.req.*;
 import com.isxcode.star.api.cluster.pojos.res.PageClusterRes;
 import com.isxcode.star.api.cluster.pojos.res.QueryAllClusterRes;
+import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.star.common.utils.AesUtils;
 import com.isxcode.star.modules.cluster.entity.ClusterEntity;
 import com.isxcode.star.modules.cluster.entity.ClusterNodeEntity;
@@ -21,9 +22,11 @@ import com.jcraft.jsch.SftpException;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 
+import jdk.nashorn.internal.runtime.options.Option;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -55,9 +58,16 @@ public class ClusterBizService {
 
     public void addCluster(AddClusterReq addClusterReq) {
 
+        // 集群名字不能重复
+        Optional<ClusterEntity> clusterByName = clusterRepository.findByName(addClusterReq.getName());
+        if (clusterByName.isPresent()) {
+            throw new IsxAppException("集群名称重复");
+        }
+
+        // 转换对象
         ClusterEntity cluster = clusterMapper.addEngineReqToClusterEntity(addClusterReq);
 
-        // 判断租户中的集群数是否为0
+        // 第一个集群设置为默认集群
         long count = clusterRepository.count();
         cluster.setDefaultCluster(count == 0);
 
