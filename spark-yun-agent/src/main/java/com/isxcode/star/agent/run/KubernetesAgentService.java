@@ -100,7 +100,7 @@ public class KubernetesAgentService implements AgentService {
 
         yagExecuteWorkReq.getSparkSubmit().getConf().forEach(sparkLauncher::setConf);
 
-        sparkLauncher.setConf("spark.kubernetes.container.image", "apache/spark:v3.1.3");
+        sparkLauncher.setConf("spark.kubernetes.container.image", "spark:3.4.1");
         sparkLauncher.setConf("spark.kubernetes.authenticate.driver.serviceAccountName", "zhiqingyun");
         sparkLauncher.setConf("spark.kubernetes.namespace", "zhiqingyun-space");
         sparkLauncher.setConf("spark.kubernetes.driver.volumes.hostPath.jar.mount.path",
