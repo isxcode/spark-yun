@@ -355,6 +355,6 @@ public class KubernetesAgentService implements AgentService {
 
     @Override
     public SparkLauncher genSparkLauncher(DeployContainerReq deployContainerReq) throws IOException {
-        throw new IsxAppException("暂不支持");
+        throw new IsxAppException("k8s暂不支持");
     }
 }
