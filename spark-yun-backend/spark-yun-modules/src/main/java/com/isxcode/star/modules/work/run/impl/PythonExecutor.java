@@ -144,7 +144,7 @@ public class PythonExecutor extends WorkExecutor {
 
             // 保存pid
             workInstance.setWorkPid(pid);
-            logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("BASH作业提交成功，pid:【").append(pid)
+            logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("Python作业提交成功，pid:【").append(pid)
                 .append("】\n");
             workInstance = updateInstance(workInstance, logBuilder);
         } catch (JSchException | SftpException | InterruptedException | IOException e) {
