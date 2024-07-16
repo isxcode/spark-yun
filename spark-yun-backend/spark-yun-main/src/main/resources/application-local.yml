@@ -18,10 +18,10 @@ spring:
   # mysql驱动: com.mysql.cj.jdbc.Driver
   # postgres驱动: org.postgresql.Driver
   datasource:
-    driver-class-name: org.h2.Driver
-    url: jdbc:h2:file:~/.zhiqingyun/h2/data;AUTO_SERVER=TRUE
-    username: root
-    password: root123
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://121.89.247.94:30102/zhi_db
+    username: zhi
+    password: zhi123
 
 # 至轻云应用配置
 isx-app:
