@@ -126,10 +126,6 @@ public class WorkConfigService {
         sparkConfig.put("spark.sql.autoBroadcastJoinThreshold", "-1");
         sparkConfig.put("spark.sql.parquet.writeLegacyFormat", "true");
         sparkConfig.put("spark.sql.parquet.enableVectorizedReader", "false");
-        sparkConfig.put("spark.sql.legacy.parquet.int96RebaseModeInRead", "LEGACY");
-        sparkConfig.put("spark.sql.legacy.parquet.int96RebaseModeInWrite", "LEGACY");
-        sparkConfig.put("spark.sql.legacy.parquet.datetimeRebaseModeInRead", "LEGACY");
-        sparkConfig.put("spark.sql.legacy.parquet.datetimeRebaseModeInWrite", "LEGACY");
         return sparkConfig;
     }
 }
