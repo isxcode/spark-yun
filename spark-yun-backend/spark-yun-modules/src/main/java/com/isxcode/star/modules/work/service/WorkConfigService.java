@@ -66,7 +66,7 @@ public class WorkConfigService {
     }
 
     public void initClusterConfig(WorkConfigEntity workConfig, String clusterId, String clusterNodeId,
-        Boolean enableHive, String datasourceId) {
+                                  Boolean enableHive, String datasourceId) {
 
         Map<String, String> sparkConfig = initSparkConfig(ResourceLevel.LOW);
         if (enableHive) {
@@ -126,6 +126,10 @@ public class WorkConfigService {
         sparkConfig.put("spark.sql.autoBroadcastJoinThreshold", "-1");
         sparkConfig.put("spark.sql.parquet.writeLegacyFormat", "true");
         sparkConfig.put("spark.sql.parquet.enableVectorizedReader", "false");
+        sparkConfig.put("spark.sql.parquet.int96RebaseModeInRead", "LEGACY");
+        sparkConfig.put("spark.sql.parquet.int96RebaseModeInWrite", "LEGACY");
+        sparkConfig.put("spark.sql.parquet.datetimeRebaseModeInRead", "LEGACY");
+        sparkConfig.put("spark.sql.parquet.datetimeRebaseModeInWrite", "LEGACY");
         return sparkConfig;
     }
 }
