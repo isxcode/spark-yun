@@ -64,7 +64,7 @@ public class YarnAgentService implements AgentService {
                 for (File jar : jarFiles) {
                     try {
                         // 使用本地hive驱动
-                        if (!jar.getName().contains("hive")) {
+                        if (!jar.getName().contains("hive") && !jar.getName().contains("zhiqingyun-agent.jar")) {
                             sparkLauncher.addJar(jar.toURI().toURL().toString());
                         }
                     } catch (MalformedURLException e) {
