@@ -7,7 +7,7 @@ dependencies {
     implementation "org.apache.spark:spark-streaming_${SPARK_SCALA_VERSION}:${SPARK_VERSION}"
 
     // spark-streaming-kafka
-    implementation "org.apache.spark:spark-streaming-kafka-0-10_${SPARK_SCALA_VERSION}:${SPARK_KAFKA_VERSION}"
+    implementation "org.apache.spark:spark-streaming-kafka-0-10_${SPARK_SCALA_VERSION}:${SPARK_VERSION}"
 
     // spark-core
     implementation "org.apache.spark:spark-core_${SPARK_SCALA_VERSION}:${SPARK_VERSION}"
@@ -77,8 +77,6 @@ dependencies {
 
     // univocity-parsers
     implementation "com.univocity:univocity-parsers:2.8.2"
-
-    implementation "com.mysql:mysql-connector-j:8.1.0"
 }
 
 jar {

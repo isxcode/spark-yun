@@ -6,7 +6,6 @@ import com.isxcode.star.api.cluster.pojos.dto.ScpFileEngineNodeDto;
 import com.isxcode.star.api.cluster.pojos.req.*;
 import com.isxcode.star.api.cluster.pojos.res.PageClusterRes;
 import com.isxcode.star.api.cluster.pojos.res.QueryAllClusterRes;
-import com.isxcode.star.api.instance.constants.InstanceStatus;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.star.common.utils.AesUtils;
 import com.isxcode.star.modules.cluster.entity.ClusterEntity;

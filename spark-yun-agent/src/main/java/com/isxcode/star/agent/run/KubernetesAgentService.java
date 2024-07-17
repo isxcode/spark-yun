@@ -71,18 +71,19 @@ public class KubernetesAgentService implements AgentService {
             File[] jarFiles = new File(yagExecuteWorkReq.getAgentHomePath() + File.separator + "lib").listFiles();
             if (jarFiles != null) {
                 for (int i = 0; i < jarFiles.length; i++) {
-                    if (!jarFiles[i].getName().contains("hive")) {
+                    if (!jarFiles[i].getName().contains("hive")
+                        && !jarFiles[i].getName().contains("zhiqingyun-agent.jar")) {
                         sparkLauncher.addJar("local:///opt/spark/examples/jars/lib/" + jarFiles[i].getName());
                         sparkLauncher.setConf("spark.kubernetes.driver.volumes.hostPath." + i + ".mount.path",
                             "/opt/spark/examples/jars/lib/" + jarFiles[i].getName());
                         sparkLauncher.setConf("spark.kubernetes.driver.volumes.hostPath." + i + ".mount.readOnly",
-                            "false");
+                            "true");
                         sparkLauncher.setConf("spark.kubernetes.driver.volumes.hostPath." + i + ".options.path",
                             jarFiles[i].getPath());
                         sparkLauncher.setConf("spark.kubernetes.executor.volumes.hostPath." + i + ".mount.path",
                             "/opt/spark/examples/jars/lib/" + jarFiles[i].getName());
                         sparkLauncher.setConf("spark.kubernetes.executor.volumes.hostPath." + i + ".mount.readOnly",
-                            "false");
+                            "true");
                         sparkLauncher.setConf("spark.kubernetes.executor.volumes.hostPath." + i + ".options.path",
                             jarFiles[i].getPath());
                     }
@@ -102,16 +103,17 @@ public class KubernetesAgentService implements AgentService {
 
         sparkLauncher.setConf("spark.kubernetes.container.image", "spark:3.4.1");
         sparkLauncher.setConf("spark.kubernetes.authenticate.driver.serviceAccountName", "zhiqingyun");
+        sparkLauncher.setConf("spark.kubernetes.authenticate.executor.serviceAccountName", "zhiqingyun");
         sparkLauncher.setConf("spark.kubernetes.namespace", "zhiqingyun-space");
         sparkLauncher.setConf("spark.kubernetes.driver.volumes.hostPath.jar.mount.path",
             "/opt/spark/examples/jars/" + yagExecuteWorkReq.getSparkSubmit().getAppResource());
-        sparkLauncher.setConf("spark.kubernetes.driver.volumes.hostPath.jar.mount.readOnly", "false");
+        sparkLauncher.setConf("spark.kubernetes.driver.volumes.hostPath.jar.mount.readOnly", "true");
         sparkLauncher.setConf("spark.kubernetes.driver.volumes.hostPath.jar.options.path",
             yagExecuteWorkReq.getAgentHomePath() + File.separator + "plugins" + File.separator
                 + yagExecuteWorkReq.getSparkSubmit().getAppResource());
         sparkLauncher.setConf("spark.kubernetes.executor.volumes.hostPath.jar.mount.path",
             "/opt/spark/examples/jars/" + yagExecuteWorkReq.getSparkSubmit().getAppResource());
-        sparkLauncher.setConf("spark.kubernetes.executor.volumes.hostPath.jar.mount.readOnly", "false");
+        sparkLauncher.setConf("spark.kubernetes.executor.volumes.hostPath.jar.mount.readOnly", "true");
         sparkLauncher.setConf("spark.kubernetes.executor.volumes.hostPath.jar.options.path",
             yagExecuteWorkReq.getAgentHomePath() + File.separator + "plugins" + File.separator
                 + yagExecuteWorkReq.getSparkSubmit().getAppResource());
