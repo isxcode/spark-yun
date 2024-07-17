@@ -82,7 +82,7 @@ db2: jdbc:db2://${host}:${ip}/${database}
         />
       </el-form-item>
       <el-form-item v-if="formData.dbType === 'HIVE'" label="hive.metastore.uris">
-        <el-tooltip content="thift://${host}:${port}，默认端口号9083" placement="top">
+        <el-tooltip content="thrift://${host}:${port}，默认端口号9083" placement="top">
             <el-icon style="left: 104px" class="tooltip-msg"><QuestionFilled /></el-icon>
         </el-tooltip>
         <el-input
