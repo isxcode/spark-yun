@@ -112,6 +112,24 @@ public class StandaloneAgentService implements AgentService {
                 .setSparkHome(yagExecuteWorkReq.getAgentHomePath() + File.separator + "spark-min");
         }
 
+        // 添加额外依赖
+        if (yagExecuteWorkReq.getLibConfig() != null) {
+            yagExecuteWorkReq.getLibConfig().forEach(e -> {
+                String libPath =
+                    yagExecuteWorkReq.getAgentHomePath() + File.separator + "file" + File.separator + e + ".jar";
+                sparkLauncher.addJar(libPath);
+            });
+        }
+
+        // 添加自定义函数
+        if (yagExecuteWorkReq.getFuncConfig() != null) {
+            yagExecuteWorkReq.getFuncConfig().forEach(e -> {
+                String libPath = yagExecuteWorkReq.getAgentHomePath() + File.separator + "file" + File.separator
+                    + e.getFileId() + ".jar";
+                sparkLauncher.addJar(libPath);
+            });
+        }
+
         if (!Strings.isEmpty(yagExecuteWorkReq.getAgentHomePath())) {
             File[] jarFiles = new File(yagExecuteWorkReq.getAgentHomePath() + File.separator + "lib").listFiles();
             if (jarFiles != null) {
