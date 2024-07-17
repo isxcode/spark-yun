@@ -44,12 +44,12 @@ fi
 
 # 下载spark二进制文件
 if [ ! -f "${TMP_DIR}"/"${SPARK_MIN_FILE}" ]; then
-    echo "spark开始下载，请耐心等待"
+    echo "spark-3.4.1开始下载，请耐心等待"
     curl -ssL "${SPARK_MIN_DOWNLOAD_URL}" -o "${TMP_DIR}"/"${SPARK_MIN_FILE}"
     if [ $? -eq 0 ]; then
-        echo "spark下载成功"
+        echo "spark-3.4.1下载成功"
     else
-        echo "【安装结果】：spark下载失败"
+        echo "【安装结果】：spark-3.4.1下载失败"
         exit 1
     fi
 fi
