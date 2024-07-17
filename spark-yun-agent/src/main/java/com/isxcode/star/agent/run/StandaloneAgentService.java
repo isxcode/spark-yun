@@ -135,7 +135,7 @@ public class StandaloneAgentService implements AgentService {
             if (jarFiles != null) {
                 for (File jar : jarFiles) {
                     try {
-                        if (!jar.getName().contains("hive")) {
+                        if (!jar.getName().contains("hive") && !jar.getName().contains("zhiqingyun-agent.jar")) {
                             sparkLauncher.addJar(jar.toURI().toURL().toString());
                         }
                     } catch (MalformedURLException e) {
@@ -356,6 +356,37 @@ public class StandaloneAgentService implements AgentService {
 
     @Override
     public SparkLauncher genSparkLauncher(DeployContainerReq deployContainerReq) throws IOException {
-        throw new IsxAppException("暂不支持");
+
+        SparkLauncher sparkLauncher = new SparkLauncher().setVerbose(false)
+            .setMainClass(deployContainerReq.getSparkSubmit().getMainClass()).setDeployMode("cluster")
+            .setAppName("zhiqingyun-job").setMaster(getMaster(deployContainerReq.getSparkHomePath()))
+            .setAppResource(deployContainerReq.getAgentHomePath() + File.separator + "plugins" + File.separator
+                + deployContainerReq.getSparkSubmit().getAppResource())
+            .setSparkHome(deployContainerReq.getAgentHomePath() + File.separator + "spark-min");
+
+        if (!Strings.isEmpty(deployContainerReq.getAgentHomePath())) {
+            File[] jarFiles = new File(deployContainerReq.getAgentHomePath() + File.separator + "lib").listFiles();
+            if (jarFiles != null) {
+                for (File jar : jarFiles) {
+                    try {
+                        // 使用本地hive驱动
+                        if (!jar.getName().contains("hive") && !jar.getName().contains("zhiqingyun-agent.jar")) {
+                            sparkLauncher.addJar(jar.toURI().toURL().toString());
+                        }
+                    } catch (MalformedURLException e) {
+                        log.error(e.getMessage(), e);
+                        throw new IsxAppException("50010", "添加lib中文件异常", e.getMessage());
+                    }
+                }
+            }
+        }
+
+        sparkLauncher.addAppArgs(Base64.getEncoder()
+            .encodeToString(deployContainerReq.getPluginReq() == null ? deployContainerReq.getArgs().getBytes()
+                : JSON.toJSONString(deployContainerReq.getPluginReq()).getBytes()));
+
+        deployContainerReq.getSparkSubmit().getConf().forEach(sparkLauncher::setConf);
+
+        return sparkLauncher;
     }
 }
