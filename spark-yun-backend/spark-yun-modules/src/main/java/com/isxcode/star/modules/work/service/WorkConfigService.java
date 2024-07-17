@@ -66,7 +66,7 @@ public class WorkConfigService {
     }
 
     public void initClusterConfig(WorkConfigEntity workConfig, String clusterId, String clusterNodeId,
-                                  Boolean enableHive, String datasourceId) {
+        Boolean enableHive, String datasourceId) {
 
         Map<String, String> sparkConfig = initSparkConfig(ResourceLevel.LOW);
         if (enableHive) {
