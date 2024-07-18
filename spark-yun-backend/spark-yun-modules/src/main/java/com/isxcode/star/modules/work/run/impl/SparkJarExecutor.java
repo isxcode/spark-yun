@@ -203,12 +203,7 @@ public class SparkJarExecutor extends WorkExecutor {
         executeReq.setAgentHomePath(engineNode.getAgentHomePath() + File.separator + PathConstants.AGENT_PATH_NAME);
         executeReq.setAgentType(calculateEngineEntityOptional.get().getClusterType());
         executeReq.setLibConfig(workRunContext.getLibConfig());
-        if (engineNode.getInstallSparkLocal()) {
-            executeReq.setSparkHomePath(engineNode.getAgentHomePath() + File.separator + PathConstants.AGENT_PATH_NAME
-                + File.separator + PathConstants.SPARK_MIN_HOME);
-        } else {
-            executeReq.setSparkHomePath(engineNode.getSparkHomePath());
-        }
+        executeReq.setSparkHomePath(engineNode.getSparkHomePath());
 
         // 构建作业完成，并打印作业配置信息
         logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("构建作业完成 \n");

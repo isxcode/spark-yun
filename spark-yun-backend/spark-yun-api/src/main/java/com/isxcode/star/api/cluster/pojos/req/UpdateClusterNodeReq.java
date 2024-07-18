@@ -48,4 +48,7 @@ public class UpdateClusterNodeReq {
 
     @Schema(title = "是否安装spark-local组件", example = "true")
     private Boolean installSparkLocal;
+
+    @Schema(title = "sparkHome", example = "/xxx")
+    private String sparkHomePath;
 }

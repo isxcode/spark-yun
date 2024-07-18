@@ -3,6 +3,7 @@ package com.isxcode.star.modules.cluster.service.biz;
 import static com.isxcode.star.common.config.CommonConfig.TENANT_ID;
 import static com.isxcode.star.common.config.CommonConfig.USER_ID;
 
+import com.isxcode.star.api.api.constants.PathConstants;
 import com.isxcode.star.api.cluster.constants.ClusterNodeStatus;
 import com.isxcode.star.api.cluster.constants.ClusterStatus;
 import com.isxcode.star.api.cluster.pojos.dto.ScpFileEngineNodeDto;
@@ -22,6 +23,7 @@ import com.isxcode.star.modules.cluster.run.*;
 import com.isxcode.star.modules.cluster.service.ClusterNodeService;
 import com.isxcode.star.modules.cluster.service.ClusterService;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Optional;
 
@@ -92,6 +94,14 @@ public class ClusterNodeBizService {
         clusterNode.setAgentHomePath(
             clusterNodeService.getDefaultAgentHomePath(addClusterNodeReq.getUsername().trim(), clusterNode));
 
+        // 如果是默认安装spark,设置默认路径
+        if (addClusterNodeReq.getInstallSparkLocal()) {
+            clusterNode.setSparkHomePath(clusterNode.getAgentHomePath() + File.separator + PathConstants.AGENT_PATH_NAME
+                + File.separator + PathConstants.SPARK_MIN_HOME);
+        } else {
+            clusterNode.setSparkHomePath(addClusterNodeReq.getSparkHomePath());
+        }
+
         // 持久化数据
         clusterNodeRepository.save(clusterNode);
     }
@@ -123,6 +133,14 @@ public class ClusterNodeBizService {
         // 设置安装地址
         clusterNode.setAgentHomePath(
             clusterNodeService.getDefaultAgentHomePath(updateClusterNodeReq.getUsername(), clusterNode));
+
+        // 如果是默认安装spark,设置默认路径
+        if (updateClusterNodeReq.getInstallSparkLocal()) {
+            clusterNode.setSparkHomePath(clusterNode.getAgentHomePath() + File.separator + PathConstants.AGENT_PATH_NAME
+                + File.separator + PathConstants.SPARK_MIN_HOME);
+        } else {
+            clusterNode.setSparkHomePath(updateClusterNodeReq.getSparkHomePath());
+        }
 
         // 设置代理端口号
         clusterNode.setAgentPort(clusterNodeService.getDefaultAgentPort(updateClusterNodeReq.getAgentPort()));
