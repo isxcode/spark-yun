@@ -55,6 +55,10 @@ public class CurlExecutor extends WorkExecutor {
             && !workRunContext.getScript().contains("curl --silent ")) {
             workRunContext.setScript(workRunContext.getScript().replace("curl ", "curl -s "));
         }
+
+        // 添加网络状态字段
+        workRunContext.setScript(workRunContext.getScript().replace("curl", "curl -w \"%{http_code}\" "));
+
         logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始执行作业 \n");
         logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("执行作业内容: \n")
             .append(workRunContext.getScript()).append("\n");
@@ -87,7 +91,7 @@ public class CurlExecutor extends WorkExecutor {
         }
 
         // 判断脚本运行成功还是失败
-        if (!result.contains("zhiqingyun_success") || result.contains("echo 'zhiqingyun_success'")) {
+        if (!result.contains("200zhiqingyun_success")) {
             throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "任务运行异常" + "\n");
         }
     }

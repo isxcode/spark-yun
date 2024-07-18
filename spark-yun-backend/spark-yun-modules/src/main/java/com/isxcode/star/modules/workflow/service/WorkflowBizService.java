@@ -24,6 +24,7 @@ import com.isxcode.star.api.workflow.pojos.res.GetWorkflowRes;
 import com.isxcode.star.api.workflow.pojos.res.GetInvokeUrlRes;
 import com.isxcode.star.api.workflow.pojos.res.PageWorkflowRes;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
+import com.isxcode.star.backend.api.base.exceptions.IsxErrorException;
 import com.isxcode.star.backend.api.base.properties.IsxAppProperties;
 import com.isxcode.star.common.locker.Locker;
 import com.isxcode.star.common.utils.jwt.JwtUtils;
@@ -758,12 +759,12 @@ public class WorkflowBizService {
 
         // 只能调用发布后的作业流
         if (!WorkflowStatus.PUBLISHED.equals(workflow.getStatus())) {
-            throw new IsxAppException("未发布的作业流，无法远程调用");
+            throw new IsxErrorException("未发布的作业流，无法远程调用");
         }
 
         // 判断是否启动外部调用
         if (OFF.equals(workflowConfig.getInvokeStatus())) {
-            throw new IsxAppException("作业流未开启外部调用");
+            throw new IsxErrorException("作业流未开启外部调用");
         }
 
         // 检验token是否生效
@@ -772,15 +773,15 @@ public class WorkflowBizService {
             workflowToken = JwtUtils.decrypt(isxAppProperties.getJwtKey(), invokeWorkflowReq.getToken(),
                 isxAppProperties.getAesSlat(), WorkflowToken.class);
         } catch (Exception e) {
-            throw new IsxAppException("作业流token解析异常:" + e.getMessage());
+            throw new IsxErrorException("作业流token解析异常:" + e.getMessage());
         }
 
         if (!"WORKFLOW_INVOKE".equals(workflowToken.getType())) {
-            throw new IsxAppException("非作业流外部调用token");
+            throw new IsxErrorException("非作业流外部调用token");
         }
 
         if (!invokeWorkflowReq.getWorkflowId().equals(workflowToken.getWorkflowId())) {
-            throw new IsxAppException("token无法调用该作业流");
+            throw new IsxErrorException("token无法调用该作业流");
         }
 
         // 赋予userId和租户id
