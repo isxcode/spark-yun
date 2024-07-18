@@ -1,6 +1,7 @@
 package com.isxcode.star.common.exception;
 
 import com.isxcode.star.backend.api.base.exceptions.AbstractIsxAppException;
+import com.isxcode.star.backend.api.base.exceptions.IsxErrorException;
 import com.isxcode.star.backend.api.base.exceptions.SuccessResponseException;
 import com.isxcode.star.backend.api.base.pojos.BaseResponse;
 import java.nio.file.AccessDeniedException;
@@ -46,6 +47,15 @@ public class GlobalExceptionAdvice extends ResponseEntityExceptionHandler {
         }
 
         return new ResponseEntity<>(errorResponse, HttpStatus.OK);
+    }
+
+    @ExceptionHandler(IsxErrorException.class)
+    public ResponseEntity<BaseResponse<?>> customException(IsxErrorException isxErrorException) {
+
+        BaseResponse<?> errorResponse = new BaseResponse<>();
+        errorResponse.setMsg(isxErrorException.getMsg());
+        errorResponse.setCode("500");
+        return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(SuccessResponseException.class)
