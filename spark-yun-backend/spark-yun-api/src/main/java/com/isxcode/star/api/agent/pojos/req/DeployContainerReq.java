@@ -16,4 +16,6 @@ public class DeployContainerReq {
     private String sparkHomePath;
 
     private String args;
+
+    private String containerId;
 }
