@@ -144,15 +144,15 @@ public class KubernetesAgentService implements AgentService {
         if (yagExecuteWorkReq.getFuncConfig() != null) {
             for (int i = 0; i < yagExecuteWorkReq.getFuncConfig().size(); i++) {
                 sparkLauncher.setConf("spark.kubernetes.driver.volumes.hostPath.func" + i + ".mount.path",
-                    "/opt/spark/jars/" + yagExecuteWorkReq.getFuncConfig().get(i) + ".jar");
+                    "/opt/spark/jars/" + yagExecuteWorkReq.getFuncConfig().get(i).getFileId() + ".jar");
                 sparkLauncher.setConf("spark.kubernetes.driver.volumes.hostPath.func" + i + ".options.path",
                     yagExecuteWorkReq.getAgentHomePath() + File.separator + "file" + File.separator
-                        + yagExecuteWorkReq.getFuncConfig().get(i) + ".jar");
+                        + yagExecuteWorkReq.getFuncConfig().get(i).getFileId() + ".jar");
                 sparkLauncher.setConf("spark.kubernetes.executor.volumes.hostPath.func" + i + ".mount.path",
-                    "/opt/spark/jars/" + yagExecuteWorkReq.getFuncConfig().get(i) + ".jar");
+                    "/opt/spark/jars/" + yagExecuteWorkReq.getFuncConfig().get(i).getFileId() + ".jar");
                 sparkLauncher.setConf("spark.kubernetes.executor.volumes.hostPath.func" + i + ".options.path",
                     yagExecuteWorkReq.getAgentHomePath() + File.separator + "file" + File.separator
-                        + yagExecuteWorkReq.getFuncConfig().get(i) + ".jar");
+                        + yagExecuteWorkReq.getFuncConfig().get(i).getFileId() + ".jar");
             }
         }
 
