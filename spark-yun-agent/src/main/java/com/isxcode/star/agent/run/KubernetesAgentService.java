@@ -14,9 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -90,6 +88,32 @@ public class KubernetesAgentService implements AgentService {
                             "true");
                         sparkLauncher.setConf("spark.kubernetes.executor.volumes.hostPath." + i + ".options.path",
                             jarFiles[i].getPath());
+                    }
+                }
+            }
+        }
+
+        // 引入实时同步的包
+        if ("REAL_WORK".equals(yagExecuteWorkReq.getWorkType())) {
+            File[] kafkaFiles = new File(yagExecuteWorkReq.getSparkHomePath() + File.separator + "jars").listFiles();
+            if (kafkaFiles != null) {
+                List<String> kafkaFileList = Arrays.asList("spark-sql-kafka-0-10_2.12-3.4.1.jar",
+                    "spark-streaming-kafka-0-10_2.12-3.4.1.jar", "spark-token-provider-kafka-0-10_2.12-3.4.1.jar",
+                    "commons-pool2-2.11.1.jar", "kafka-clients-3.1.2.jar");
+                for (int i = 0; i < kafkaFiles.length; i++) {
+                    if (kafkaFileList.contains(kafkaFiles[i].getName())) {
+                        sparkLauncher.setConf("spark.kubernetes.driver.volumes.hostPath.kafka" + i + ".mount.path",
+                            "/opt/spark/jars/" + kafkaFiles[i].getName());
+                        sparkLauncher.setConf("spark.kubernetes.driver.volumes.hostPath.kafka" + i + ".mount.readOnly",
+                            "true");
+                        sparkLauncher.setConf("spark.kubernetes.driver.volumes.hostPath.kafka" + i + ".options.path",
+                            kafkaFiles[i].getPath());
+                        sparkLauncher.setConf("spark.kubernetes.executor.volumes.hostPath.kafka" + i + ".mount.path",
+                            "/opt/spark/jars/" + kafkaFiles[i].getName());
+                        sparkLauncher.setConf(
+                            "spark.kubernetes.executor.volumes.hostPath.kafka" + i + ".mount.readOnly", "true");
+                        sparkLauncher.setConf("spark.kubernetes.executor.volumes.hostPath.kafka" + i + ".options.path",
+                            kafkaFiles[i].getPath());
                     }
                 }
             }
@@ -271,7 +295,7 @@ public class KubernetesAgentService implements AgentService {
     @Override
     public String getAppLog(String appId, String sparkHomePath) throws IOException {
 
-        String getLogCmdFormat = "kubectl logs -f %s -n zhiqingyun-space";
+        String getLogCmdFormat = "kubectl logs %s -n zhiqingyun-space";
 
         Process process = Runtime.getRuntime().exec(String.format(getLogCmdFormat, appId));
         InputStream inputStream = process.getInputStream();
@@ -316,22 +340,16 @@ public class KubernetesAgentService implements AgentService {
     @Override
     public String getStdoutLog(String appId, String sparkHomePath) throws IOException {
 
-        String getLogCmdFormat = "kubectl logs -f %s -n zhiqingyun-space";
+        String getLogCmdFormat = "kubectl logs %s -n zhiqingyun-space";
 
         Process process = Runtime.getRuntime().exec(String.format(getLogCmdFormat, appId));
         InputStream inputStream = process.getInputStream();
-        InputStream errStream = process.getErrorStream();
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
-        BufferedReader errReader = new BufferedReader(new InputStreamReader(errStream, StandardCharsets.UTF_8));
 
         StringBuilder errLog = new StringBuilder();
         String line;
         while ((line = reader.readLine()) != null) {
-            errLog.append(line).append("\n");
-        }
-
-        if (Strings.isEmpty(errLog)) {
-            while ((line = errReader.readLine()) != null) {
+            if (line.contains("累计处理条数")) {
                 errLog.append(line).append("\n");
             }
         }
@@ -341,16 +359,7 @@ public class KubernetesAgentService implements AgentService {
             if (exitCode == 1) {
                 throw new IsxAppException(errLog.toString());
             } else {
-                if (errLog.toString().contains("Error")) {
-                    return errLog.toString();
-                }
-                Pattern regex = Pattern.compile("LogType:spark-yun\\s*([\\s\\S]*?)\\s*End of LogType:spark-yun");
-                Matcher matcher = regex.matcher(errLog);
-                String log = errLog.toString();
-                if (matcher.find()) {
-                    log = log.replace(matcher.group(), "");
-                }
-                return log;
+                return errLog.toString();
             }
         } catch (InterruptedException e) {
             log.error(e.getMessage(), e);
