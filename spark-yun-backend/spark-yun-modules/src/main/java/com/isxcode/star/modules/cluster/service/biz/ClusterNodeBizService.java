@@ -3,6 +3,7 @@ package com.isxcode.star.modules.cluster.service.biz;
 import static com.isxcode.star.common.config.CommonConfig.TENANT_ID;
 import static com.isxcode.star.common.config.CommonConfig.USER_ID;
 
+import com.isxcode.star.api.agent.constants.AgentType;
 import com.isxcode.star.api.api.constants.PathConstants;
 import com.isxcode.star.api.cluster.constants.ClusterNodeStatus;
 import com.isxcode.star.api.cluster.constants.ClusterStatus;
@@ -71,7 +72,7 @@ public class ClusterNodeBizService {
 
     public void addClusterNode(AddClusterNodeReq addClusterNodeReq) {
 
-        clusterService.checkCluster(addClusterNodeReq.getClusterId());
+        ClusterEntity cluster = clusterService.getCluster(addClusterNodeReq.getClusterId());
 
         ClusterNodeEntity clusterNode = engineNodeMapper.addClusterNodeReqToClusterNodeEntity(addClusterNodeReq);
 
@@ -95,7 +96,7 @@ public class ClusterNodeBizService {
             clusterNodeService.getDefaultAgentHomePath(addClusterNodeReq.getUsername().trim(), clusterNode));
 
         // 如果是默认安装spark,设置默认路径
-        if (addClusterNodeReq.getInstallSparkLocal()) {
+        if (addClusterNodeReq.getInstallSparkLocal() || !AgentType.StandAlone.equals(cluster.getClusterType())) {
             clusterNode.setSparkHomePath(clusterNode.getAgentHomePath() + File.separator + PathConstants.AGENT_PATH_NAME
                 + File.separator + PathConstants.SPARK_MIN_HOME);
         } else {
@@ -135,7 +136,7 @@ public class ClusterNodeBizService {
             clusterNodeService.getDefaultAgentHomePath(updateClusterNodeReq.getUsername(), clusterNode));
 
         // 如果是默认安装spark,设置默认路径
-        if (updateClusterNodeReq.getInstallSparkLocal()) {
+        if (updateClusterNodeReq.getInstallSparkLocal() || !AgentType.StandAlone.equals(cluster.getClusterType())) {
             clusterNode.setSparkHomePath(clusterNode.getAgentHomePath() + File.separator + PathConstants.AGENT_PATH_NAME
                 + File.separator + PathConstants.SPARK_MIN_HOME);
         } else {
