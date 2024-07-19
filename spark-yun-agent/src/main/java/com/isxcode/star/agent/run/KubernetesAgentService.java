@@ -91,14 +91,10 @@ public class KubernetesAgentService implements AgentService {
                         sparkLauncher.addJar("local:///opt/spark/examples/jars/lib/" + jarFiles[i].getName());
                         sparkLauncher.setConf("spark.kubernetes.driver.volumes.hostPath." + i + ".mount.path",
                             "/opt/spark/examples/jars/lib/" + jarFiles[i].getName());
-                        sparkLauncher.setConf("spark.kubernetes.driver.volumes.hostPath." + i + ".mount.readOnly",
-                            "true");
                         sparkLauncher.setConf("spark.kubernetes.driver.volumes.hostPath." + i + ".options.path",
                             jarFiles[i].getPath());
                         sparkLauncher.setConf("spark.kubernetes.executor.volumes.hostPath." + i + ".mount.path",
                             "/opt/spark/examples/jars/lib/" + jarFiles[i].getName());
-                        sparkLauncher.setConf("spark.kubernetes.executor.volumes.hostPath." + i + ".mount.readOnly",
-                            "true");
                         sparkLauncher.setConf("spark.kubernetes.executor.volumes.hostPath." + i + ".options.path",
                             jarFiles[i].getPath());
                     }
@@ -117,14 +113,10 @@ public class KubernetesAgentService implements AgentService {
                     if (kafkaFileList.contains(kafkaFiles[i].getName())) {
                         sparkLauncher.setConf("spark.kubernetes.driver.volumes.hostPath.kafka" + i + ".mount.path",
                             "/opt/spark/jars/" + kafkaFiles[i].getName());
-                        sparkLauncher.setConf("spark.kubernetes.driver.volumes.hostPath.kafka" + i + ".mount.readOnly",
-                            "true");
                         sparkLauncher.setConf("spark.kubernetes.driver.volumes.hostPath.kafka" + i + ".options.path",
                             kafkaFiles[i].getPath());
                         sparkLauncher.setConf("spark.kubernetes.executor.volumes.hostPath.kafka" + i + ".mount.path",
                             "/opt/spark/jars/" + kafkaFiles[i].getName());
-                        sparkLauncher.setConf(
-                            "spark.kubernetes.executor.volumes.hostPath.kafka" + i + ".mount.readOnly", "true");
                         sparkLauncher.setConf("spark.kubernetes.executor.volumes.hostPath.kafka" + i + ".options.path",
                             kafkaFiles[i].getPath());
                     }
@@ -135,17 +127,13 @@ public class KubernetesAgentService implements AgentService {
         // 添加额外依赖
         if (yagExecuteWorkReq.getLibConfig() != null) {
             for (int i = 0; i < yagExecuteWorkReq.getLibConfig().size(); i++) {
-                sparkLauncher
-                    .addJar("local:///opt/spark/examples/jars/lib/" + yagExecuteWorkReq.getLibConfig().get(i) + ".jar");
                 sparkLauncher.setConf("spark.kubernetes.driver.volumes.hostPath.lib" + i + ".mount.path",
-                    "/opt/spark/examples/jars/lib/" + yagExecuteWorkReq.getLibConfig().get(i) + ".jar");
-                sparkLauncher.setConf("spark.kubernetes.driver.volumes.hostPath.lib" + i + ".mount.readOnly", "true");
+                    "/opt/spark/jars/" + yagExecuteWorkReq.getLibConfig().get(i) + ".jar");
                 sparkLauncher.setConf("spark.kubernetes.driver.volumes.hostPath.lib" + i + ".options.path",
                     yagExecuteWorkReq.getAgentHomePath() + File.separator + "file" + File.separator
                         + yagExecuteWorkReq.getLibConfig().get(i) + ".jar");
                 sparkLauncher.setConf("spark.kubernetes.executor.volumes.hostPath.lib" + i + ".mount.path",
-                    "/opt/spark/examples/jars/lib/" + yagExecuteWorkReq.getLibConfig().get(i) + ".jar");
-                sparkLauncher.setConf("spark.kubernetes.executor.volumes.hostPath.lib" + i + ".mount.readOnly", "true");
+                    "/opt/spark/jars/" + yagExecuteWorkReq.getLibConfig().get(i) + ".jar");
                 sparkLauncher.setConf("spark.kubernetes.executor.volumes.hostPath.lib" + i + ".options.path",
                     yagExecuteWorkReq.getAgentHomePath() + File.separator + "file" + File.separator
                         + yagExecuteWorkReq.getLibConfig().get(i) + ".jar");
@@ -155,18 +143,13 @@ public class KubernetesAgentService implements AgentService {
         // 添加自定义函数
         if (yagExecuteWorkReq.getFuncConfig() != null) {
             for (int i = 0; i < yagExecuteWorkReq.getFuncConfig().size(); i++) {
-                sparkLauncher.addJar(
-                    "local:///opt/spark/examples/jars/lib/" + yagExecuteWorkReq.getFuncConfig().get(i) + ".jar");
                 sparkLauncher.setConf("spark.kubernetes.driver.volumes.hostPath.func" + i + ".mount.path",
-                    "/opt/spark/examples/jars/lib/" + yagExecuteWorkReq.getFuncConfig().get(i) + ".jar");
-                sparkLauncher.setConf("spark.kubernetes.driver.volumes.hostPath.func" + i + ".mount.readOnly", "true");
+                    "/opt/spark/jars/" + yagExecuteWorkReq.getFuncConfig().get(i) + ".jar");
                 sparkLauncher.setConf("spark.kubernetes.driver.volumes.hostPath.func" + i + ".options.path",
                     yagExecuteWorkReq.getAgentHomePath() + File.separator + "file" + File.separator
                         + yagExecuteWorkReq.getFuncConfig().get(i) + ".jar");
                 sparkLauncher.setConf("spark.kubernetes.executor.volumes.hostPath.func" + i + ".mount.path",
-                    "/opt/spark/examples/jars/lib/" + yagExecuteWorkReq.getFuncConfig().get(i) + ".jar");
-                sparkLauncher.setConf("spark.kubernetes.executor.volumes.hostPath.func" + i + ".mount.readOnly",
-                    "true");
+                    "/opt/spark/jars/" + yagExecuteWorkReq.getFuncConfig().get(i) + ".jar");
                 sparkLauncher.setConf("spark.kubernetes.executor.volumes.hostPath.func" + i + ".options.path",
                     yagExecuteWorkReq.getAgentHomePath() + File.separator + "file" + File.separator
                         + yagExecuteWorkReq.getFuncConfig().get(i) + ".jar");
@@ -233,10 +216,8 @@ public class KubernetesAgentService implements AgentService {
         sparkLauncher.setConf("spark.kubernetes.namespace", "zhiqingyun-space");
         sparkLauncher.setConf("spark.kubernetes.driver.volumes.hostPath.jar.mount.path",
             "/opt/spark/examples/jars/" + yagExecuteWorkReq.getSparkSubmit().getAppResource());
-        sparkLauncher.setConf("spark.kubernetes.driver.volumes.hostPath.jar.mount.readOnly", "true");
         sparkLauncher.setConf("spark.kubernetes.executor.volumes.hostPath.jar.mount.path",
             "/opt/spark/examples/jars/" + yagExecuteWorkReq.getSparkSubmit().getAppResource());
-        sparkLauncher.setConf("spark.kubernetes.executor.volumes.hostPath.jar.mount.readOnly", "true");
 
         // 映射appResource文件
         if (WorkType.SPARK_JAR.equals(yagExecuteWorkReq.getWorkType())) {
