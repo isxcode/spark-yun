@@ -1,6 +1,7 @@
 package com.isxcode.star.modules.work.run.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.isxcode.star.api.agent.pojos.req.PluginReq;
 import com.isxcode.star.api.agent.pojos.req.SparkSubmit;
 import com.isxcode.star.api.agent.pojos.req.YagExecuteWorkReq;
 import com.isxcode.star.api.agent.pojos.res.YagGetLogRes;
@@ -196,6 +197,10 @@ public class SparkJarExecutor extends WorkExecutor {
         SparkSubmit sparkSubmit = SparkSubmit.builder().verbose(true).mainClass(jarJobConfig.getMainClass())
             .appResource(jarFile.getId() + ".jar").appName(jarJobConfig.getAppName())
             .conf(genSparkSubmitConfig(workRunContext.getClusterConfig().getSparkConfig())).build();
+
+        // 传递自定义参数
+        executeReq
+            .setPluginReq(PluginReq.builder().sparkConfig(workRunContext.getClusterConfig().getSparkConfig()).build());
 
         // 开始构造executeReq
         executeReq.setSparkSubmit(sparkSubmit);
