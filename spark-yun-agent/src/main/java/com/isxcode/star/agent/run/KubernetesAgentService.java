@@ -1,5 +1,6 @@
 package com.isxcode.star.agent.run;
 
+import cn.hutool.core.io.FileUtil;
 import com.alibaba.fastjson2.JSON;
 import com.isxcode.star.api.agent.constants.AgentType;
 import com.isxcode.star.api.agent.pojos.req.DeployContainerReq;
@@ -14,6 +15,9 @@ import org.springframework.stereotype.Service;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -91,6 +95,50 @@ public class KubernetesAgentService implements AgentService {
             }
         }
 
+        Map<String, String> pluginSparkConfig = yagExecuteWorkReq.getPluginReq().getSparkConfig();
+
+        // 配置域名映射
+        Map<String, String> hostMapping = new HashMap<>();
+        if (Strings.isNotEmpty(pluginSparkConfig.get("qing.host1.name"))
+            && Strings.isNotEmpty(pluginSparkConfig.get("qing.host1.value"))) {
+            hostMapping.put(pluginSparkConfig.get("qing.host1.name"), pluginSparkConfig.get("qing.host1.value"));
+        }
+        if (Strings.isNotEmpty(pluginSparkConfig.get("qing.host2.name"))
+            && Strings.isNotEmpty(pluginSparkConfig.get("qing.host2.value"))) {
+            hostMapping.put(pluginSparkConfig.get("qing.host2.name"), pluginSparkConfig.get("qing.host2.value"));
+        }
+        if (Strings.isNotEmpty(pluginSparkConfig.get("qing.host3.name"))
+            && Strings.isNotEmpty(pluginSparkConfig.get("qing.host3.value"))) {
+            hostMapping.put(pluginSparkConfig.get("qing.host3.name"), pluginSparkConfig.get("qing.host3.value"));
+        }
+        AtomicReference<String> podContent;
+        if (!hostMapping.isEmpty()) {
+            podContent = new AtomicReference<>("apiVersion: v1\n" + "kind: Pod\n" + "metadata:\n" + "  name: host-pod\n"
+                + "spec:\n" + "  hostAliases:\n");
+            hostMapping.forEach((k, v) -> {
+                podContent
+                    .set(podContent + "    - ip: \"" + v + "\"\n      hostnames:\n" + "        - \"" + k + "\"\n");
+            });
+        } else {
+            podContent = null;
+        }
+
+        // 配置hive操作人
+        String hiveUsername = "";
+        if (Strings.isNotEmpty(pluginSparkConfig.get("qing.hive.username"))) {
+            hiveUsername = pluginSparkConfig.get("qing.hive.username");
+        }
+
+        // 删除自定义参数
+        pluginSparkConfig.remove("qing.host1.name");
+        pluginSparkConfig.remove("qing.host1.value");
+        pluginSparkConfig.remove("qing.host2.name");
+        pluginSparkConfig.remove("qing.host2.value");
+        pluginSparkConfig.remove("qing.host3.name");
+        pluginSparkConfig.remove("qing.host3.value");
+        pluginSparkConfig.remove("qing.hive.username");
+        yagExecuteWorkReq.getPluginReq().setSparkConfig(pluginSparkConfig);
+
         if (WorkType.SPARK_JAR.equals(yagExecuteWorkReq.getWorkType())) {
             sparkLauncher.addAppArgs(yagExecuteWorkReq.getArgs());
         } else {
@@ -117,6 +165,26 @@ public class KubernetesAgentService implements AgentService {
         sparkLauncher.setConf("spark.kubernetes.executor.volumes.hostPath.jar.options.path",
             yagExecuteWorkReq.getAgentHomePath() + File.separator + "plugins" + File.separator
                 + yagExecuteWorkReq.getSparkSubmit().getAppResource());
+
+        // 配置操作人
+        if (Strings.isNotEmpty(hiveUsername)) {
+            sparkLauncher.setConf("spark.kubernetes.driverEnv.SPARK_USER", hiveUsername);
+            sparkLauncher.setConf("spark.kubernetes.driverEnv.HADOOP_USER_NAME", hiveUsername);
+            sparkLauncher.setConf("spark.executorEnv.SPARK_USER", hiveUsername);
+            sparkLauncher.setConf("spark.executorEnv.HADOOP_USER_NAME", hiveUsername);
+        }
+
+        // 将文本写到pod-init.yaml中
+        if (!hostMapping.isEmpty()) {
+            String podFileName = yagExecuteWorkReq.getWorkInstanceId() + ".yml";
+            String podPath =
+                yagExecuteWorkReq.getAgentHomePath() + File.separator + "pods" + File.separator + podFileName;
+            FileUtil.writeUtf8String(podContent.get(), podPath);
+
+            // 配置pod-init.yaml
+            sparkLauncher.setConf("spark.kubernetes.driver.podTemplateFile", podPath);
+            sparkLauncher.setConf("spark.kubernetes.executor.podTemplateFile", podPath);
+        }
 
         return sparkLauncher;
     }
