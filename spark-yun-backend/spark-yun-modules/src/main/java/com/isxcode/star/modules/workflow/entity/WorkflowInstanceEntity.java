@@ -37,52 +37,52 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @EntityListeners(AuditingEntityListener.class)
 public class WorkflowInstanceEntity {
 
-	@Id
-	@GeneratedValue(generator = "sy-id-generator")
-	@GenericGenerator(name = "sy-id-generator", strategy = "com.isxcode.star.config.GeneratedValueConfig")
-	private String id;
+    @Id
+    @GeneratedValue(generator = "sy-id-generator")
+    @GenericGenerator(name = "sy-id-generator", strategy = "com.isxcode.star.config.GeneratedValueConfig")
+    private String id;
 
-	private String versionId;
+    private String versionId;
 
-	private String flowId;
+    private String flowId;
 
-	private String instanceType;
+    private String instanceType;
 
-	private String status;
+    private String status;
 
-	private String runLog;
+    private String runLog;
 
-	private String webConfig;
+    private String webConfig;
 
-	private Date planStartDateTime;
+    private Date planStartDateTime;
 
-	private Date nextPlanDateTime;
+    private Date nextPlanDateTime;
 
-	private Date execStartDateTime;
+    private Date execStartDateTime;
 
-	private Date execEndDateTime;
+    private Date execEndDateTime;
 
-	private Long duration;
+    private Long duration;
 
-	@CreatedDate
-	private LocalDateTime createDateTime;
+    @CreatedDate
+    private LocalDateTime createDateTime;
 
-	@LastModifiedDate
-	private LocalDateTime lastModifiedDateTime;
+    @LastModifiedDate
+    private LocalDateTime lastModifiedDateTime;
 
-	@CreatedBy
-	private String createBy;
+    @CreatedBy
+    private String createBy;
 
-	@LastModifiedBy
-	private String lastModifiedBy;
+    @LastModifiedBy
+    private String lastModifiedBy;
 
-	@Transient
-	private Integer deleted;
+    @Transient
+    private Integer deleted;
 
-	private String tenantId;
+    private String tenantId;
 
-	@PrePersist
-	public void prePersist() {
-		this.tenantId = TENANT_ID.get();
-	}
+    @PrePersist
+    public void prePersist() {
+        this.tenantId = TENANT_ID.get();
+    }
 }

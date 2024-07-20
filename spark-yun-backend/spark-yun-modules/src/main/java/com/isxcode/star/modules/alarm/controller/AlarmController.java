@@ -25,125 +25,125 @@ import javax.validation.Valid;
 @RequiredArgsConstructor
 public class AlarmController {
 
-	private final AlarmBizService alarmBizService;
+    private final AlarmBizService alarmBizService;
 
-	@Operation(summary = "添加消息体接口")
-	@PostMapping("/addMessage")
-	@SuccessResponse("添加成功")
-	public void addMessage(@Valid @RequestBody AddMessageReq addMessageReq) {
+    @Operation(summary = "添加消息体接口")
+    @PostMapping("/addMessage")
+    @SuccessResponse("添加成功")
+    public void addMessage(@Valid @RequestBody AddMessageReq addMessageReq) {
 
-		alarmBizService.addMessage(addMessageReq);
-	}
+        alarmBizService.addMessage(addMessageReq);
+    }
 
-	@Operation(summary = "更新消息体接口")
-	@PostMapping("/updateMessage")
-	@SuccessResponse("更新成功")
-	public void updateMessage(@Valid @RequestBody UpdateMessageReq updateMessageReq) {
+    @Operation(summary = "更新消息体接口")
+    @PostMapping("/updateMessage")
+    @SuccessResponse("更新成功")
+    public void updateMessage(@Valid @RequestBody UpdateMessageReq updateMessageReq) {
 
-		alarmBizService.updateMessage(updateMessageReq);
-	}
+        alarmBizService.updateMessage(updateMessageReq);
+    }
 
-	@Operation(summary = "分页查询消息体接口")
-	@PostMapping("/pageMessage")
-	@SuccessResponse("查询成功")
-	public Page<PageMessageRes> pageMessage(@Valid @RequestBody PageMessageReq pageMessageReq) {
+    @Operation(summary = "分页查询消息体接口")
+    @PostMapping("/pageMessage")
+    @SuccessResponse("查询成功")
+    public Page<PageMessageRes> pageMessage(@Valid @RequestBody PageMessageReq pageMessageReq) {
 
-		return alarmBizService.pageMessage(pageMessageReq);
-	}
+        return alarmBizService.pageMessage(pageMessageReq);
+    }
 
-	@Operation(summary = "删除消息体接口")
-	@PostMapping("/deleteMessage")
-	@SuccessResponse("删除成功")
-	public void deleteMessage(@Valid @RequestBody DeleteMessageReq deleteMessageReq) {
+    @Operation(summary = "删除消息体接口")
+    @PostMapping("/deleteMessage")
+    @SuccessResponse("删除成功")
+    public void deleteMessage(@Valid @RequestBody DeleteMessageReq deleteMessageReq) {
 
-		alarmBizService.deleteMessage(deleteMessageReq);
-	}
+        alarmBizService.deleteMessage(deleteMessageReq);
+    }
 
-	@Operation(summary = "启动消息体接口")
-	@PostMapping("/enableMessage")
-	@SuccessResponse("启用成功")
-	public void enableMessage(@Valid @RequestBody EnableMessageReq enableMessageReq) {
+    @Operation(summary = "启动消息体接口")
+    @PostMapping("/enableMessage")
+    @SuccessResponse("启用成功")
+    public void enableMessage(@Valid @RequestBody EnableMessageReq enableMessageReq) {
 
-		alarmBizService.enableMessage(enableMessageReq);
-	}
+        alarmBizService.enableMessage(enableMessageReq);
+    }
 
-	@Operation(summary = "禁用消息体接口")
-	@PostMapping("/disableMessage")
-	@SuccessResponse("禁用成功")
-	public void disableMessage(@Valid @RequestBody DisableMessageReq disableMessageReq) {
+    @Operation(summary = "禁用消息体接口")
+    @PostMapping("/disableMessage")
+    @SuccessResponse("禁用成功")
+    public void disableMessage(@Valid @RequestBody DisableMessageReq disableMessageReq) {
 
-		alarmBizService.disableMessage(disableMessageReq);
-	}
+        alarmBizService.disableMessage(disableMessageReq);
+    }
 
-	@Operation(summary = "检测消息体接口")
-	@PostMapping("/checkMessage")
-	@SuccessResponse("检测完成")
-	public CheckMessageRes checkMessage(@Valid @RequestBody CheckMessageReq checkMessageReq) {
+    @Operation(summary = "检测消息体接口")
+    @PostMapping("/checkMessage")
+    @SuccessResponse("检测完成")
+    public CheckMessageRes checkMessage(@Valid @RequestBody CheckMessageReq checkMessageReq) {
 
-		return alarmBizService.checkMessage(checkMessageReq);
-	}
+        return alarmBizService.checkMessage(checkMessageReq);
+    }
 
-	@Operation(summary = "添加告警接口")
-	@PostMapping("/addAlarm")
-	@SuccessResponse("添加成功")
-	public void addAlarm(@Valid @RequestBody AddAlarmReq addAlarmReq) {
+    @Operation(summary = "添加告警接口")
+    @PostMapping("/addAlarm")
+    @SuccessResponse("添加成功")
+    public void addAlarm(@Valid @RequestBody AddAlarmReq addAlarmReq) {
 
-		alarmBizService.addAlarm(addAlarmReq);
-	}
+        alarmBizService.addAlarm(addAlarmReq);
+    }
 
-	@Operation(summary = "更新告警接口")
-	@PostMapping("/updateAlarm")
-	@SuccessResponse("更新成功")
-	public void updateAlarm(@Valid @RequestBody UpdateAlarmReq updateAlarmReq) {
+    @Operation(summary = "更新告警接口")
+    @PostMapping("/updateAlarm")
+    @SuccessResponse("更新成功")
+    public void updateAlarm(@Valid @RequestBody UpdateAlarmReq updateAlarmReq) {
 
-		alarmBizService.updateAlarm(updateAlarmReq);
-	}
+        alarmBizService.updateAlarm(updateAlarmReq);
+    }
 
-	@Operation(summary = "分页查询告警接口")
-	@PostMapping("/pageAlarm")
-	@SuccessResponse("查询成功")
-	public Page<PageAlarmRes> pageAlarm(@Valid @RequestBody PageAlarmReq pageAlarmReq) {
+    @Operation(summary = "分页查询告警接口")
+    @PostMapping("/pageAlarm")
+    @SuccessResponse("查询成功")
+    public Page<PageAlarmRes> pageAlarm(@Valid @RequestBody PageAlarmReq pageAlarmReq) {
 
-		return alarmBizService.pageAlarm(pageAlarmReq);
-	}
+        return alarmBizService.pageAlarm(pageAlarmReq);
+    }
 
-	@Operation(summary = "删除告警接口")
-	@PostMapping("/deleteAlarm")
-	@SuccessResponse("删除成功")
-	public void deleteAlarm(@Valid @RequestBody DeleteAlarmReq deleteAlarmReq) {
+    @Operation(summary = "删除告警接口")
+    @PostMapping("/deleteAlarm")
+    @SuccessResponse("删除成功")
+    public void deleteAlarm(@Valid @RequestBody DeleteAlarmReq deleteAlarmReq) {
 
-		alarmBizService.deleteAlarm(deleteAlarmReq);
-	}
+        alarmBizService.deleteAlarm(deleteAlarmReq);
+    }
 
-	@Operation(summary = "启动告警接口")
-	@PostMapping("/enableAlarm")
-	@SuccessResponse("启用成功")
-	public void enableAlarm(@Valid @RequestBody EnableAlarmReq enableAlarmReq) {
+    @Operation(summary = "启动告警接口")
+    @PostMapping("/enableAlarm")
+    @SuccessResponse("启用成功")
+    public void enableAlarm(@Valid @RequestBody EnableAlarmReq enableAlarmReq) {
 
-		alarmBizService.enableAlarm(enableAlarmReq);
-	}
+        alarmBizService.enableAlarm(enableAlarmReq);
+    }
 
-	@Operation(summary = "禁用告警接口")
-	@PostMapping("/disableAlarm")
-	@SuccessResponse("禁用成功")
-	public void disableAlarm(@Valid @RequestBody DisableAlarmReq disableAlarmReq) {
+    @Operation(summary = "禁用告警接口")
+    @PostMapping("/disableAlarm")
+    @SuccessResponse("禁用成功")
+    public void disableAlarm(@Valid @RequestBody DisableAlarmReq disableAlarmReq) {
 
-		alarmBizService.disableAlarm(disableAlarmReq);
-	}
+        alarmBizService.disableAlarm(disableAlarmReq);
+    }
 
-	@Operation(summary = "分页查询告警实例接口")
-	@PostMapping("/pageAlarmInstance")
-	@SuccessResponse("查询成功")
-	public Page<PageAlarmInstanceRes> pageAlarmInstance(@Valid @RequestBody PageAlarmInstanceReq pageAlarmInstanceReq) {
+    @Operation(summary = "分页查询告警实例接口")
+    @PostMapping("/pageAlarmInstance")
+    @SuccessResponse("查询成功")
+    public Page<PageAlarmInstanceRes> pageAlarmInstance(@Valid @RequestBody PageAlarmInstanceReq pageAlarmInstanceReq) {
 
-		return alarmBizService.pageAlarmInstance(pageAlarmInstanceReq);
-	}
+        return alarmBizService.pageAlarmInstance(pageAlarmInstanceReq);
+    }
 
-	@Operation(summary = "删除告警实例接口")
-	@PostMapping("/deleteAlarmInstance")
-	@SuccessResponse("删除成功")
-	public void deleteAlarmInstance(@Valid @RequestBody DeleteAlarmInstanceReq deleteAlarmInstanceReq) {
+    @Operation(summary = "删除告警实例接口")
+    @PostMapping("/deleteAlarmInstance")
+    @SuccessResponse("删除成功")
+    public void deleteAlarmInstance(@Valid @RequestBody DeleteAlarmInstanceReq deleteAlarmInstanceReq) {
 
-		alarmBizService.deleteAlarmInstance(deleteAlarmInstanceReq);
-	}
+        alarmBizService.deleteAlarmInstance(deleteAlarmInstanceReq);
+    }
 }

@@ -1,27 +1,21 @@
 dependencies {
 
-  api(project(':spark-yun-backend:spark-yun-api'))
-  api(project(':spark-yun-backend:spark-yun-common'))
+    api(project(':spark-yun-backend:spark-yun-api'))
+    api(project(':spark-yun-backend:spark-yun-common'))
 
-  // spark-core
-  implementation "org.apache.spark:spark-core_${SPARK_SCALA_VERSION}:${SPARK_VERSION}"
+    implementation "org.apache.spark:spark-core_${SPARK_SCALA_VERSION}:${SPARK_VERSION}"
 
-  // spark-yarn
-  implementation "org.apache.spark:spark-yarn_${SPARK_SCALA_VERSION}:${SPARK_VERSION}"
+    implementation "org.apache.spark:spark-yarn_${SPARK_SCALA_VERSION}:${SPARK_VERSION}"
 
-  // spark-launcher
-  implementation "org.apache.spark:spark-launcher_${SPARK_SCALA_VERSION}:${SPARK_VERSION}"
+    implementation "org.apache.spark:spark-launcher_${SPARK_SCALA_VERSION}:${SPARK_VERSION}"
 
-  // hadoop-yarn-client
-  implementation "org.apache.hadoop:hadoop-yarn-client:${HADOOP_VERSION}"
+    implementation "org.apache.hadoop:hadoop-yarn-client:${HADOOP_VERSION}"
 
-  // jsoup
-  implementation "org.jsoup:jsoup:${JSOUP_VERSION}"
+    implementation "org.jsoup:jsoup:${JSOUP_VERSION}"
 
-  implementation group: 'org.apache.httpcomponents.client5', name: 'httpclient5', version: '5.2.1'
-
+    implementation "org.apache.httpcomponents.client5:httpclient5:${HTTPCLIENT_VERSION}"
 }
 
 bootJar {
-  archiveFileName = 'zhiqingyun-agent.jar'
+    archiveFileName = 'zhiqingyun-agent.jar'
 }

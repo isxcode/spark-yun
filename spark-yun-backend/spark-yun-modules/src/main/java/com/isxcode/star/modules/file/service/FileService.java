@@ -13,16 +13,16 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class FileService {
 
-	private final FileRepository fileRepository;
+    private final FileRepository fileRepository;
 
-	public FileEntity getFile(String fileId) {
+    public FileEntity getFile(String fileId) {
 
-		return fileRepository.findById(fileId).orElseThrow(() -> new IsxAppException("资源不存在"));
-	}
+        return fileRepository.findById(fileId).orElseThrow(() -> new IsxAppException("资源不存在"));
+    }
 
-	public String getFileName(String fileId) {
+    public String getFileName(String fileId) {
 
-		FileEntity fileEntity = fileRepository.findById(fileId).orElse(null);
-		return fileEntity == null ? fileId : fileEntity.getFileName();
-	}
+        FileEntity fileEntity = fileRepository.findById(fileId).orElse(null);
+        return fileEntity == null ? fileId : fileEntity.getFileName();
+    }
 }

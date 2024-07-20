@@ -127,10 +127,10 @@ if ! kubectl cluster-info &>/dev/null; then
 fi
 
 # 执行拉取spark镜像命令
-if ! docker image inspect apache/spark:v3.1.3 &>/dev/null; then
+if ! docker image inspect spark:3.4.1 &>/dev/null; then
   json_output="{ \
             \"status\": \"INSTALL_ERROR\", \
-            \"log\": \"没有apache/spark:v3.1.3镜像，需要执行拉取镜像命令，docker pull apache/spark:v3.1.3\" \
+            \"log\": \"没有spark:3.4.1镜像，需要执行拉取镜像命令，docker pull spark:3.4.1\" \
           }"
   echo $json_output
   rm ${BASE_PATH}/agent-kubernetes.sh

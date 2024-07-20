@@ -5,5 +5,5 @@ import lombok.Data;
 @Data
 public class LineInfo {
 
-	private String cell;
+    private String cell;
 }

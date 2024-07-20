@@ -8,7 +8,7 @@ import javax.validation.constraints.NotEmpty;
 @Data
 public class GetDefaultDatabaseDriverReq {
 
-	@Schema(description = "数据源类型", example = "MYSQL")
-	@NotEmpty(message = "数据源类型不能为空")
-	private String dbType;
+    @Schema(description = "数据源类型", example = "MYSQL")
+    @NotEmpty(message = "数据源类型不能为空")
+    private String dbType;
 }

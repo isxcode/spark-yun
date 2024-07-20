@@ -11,9 +11,9 @@ import lombok.NoArgsConstructor;
 @Builder
 public class GetRealRunningLogRes {
 
-	private String id;
+    private String id;
 
-	private String runningLog;
+    private String runningLog;
 
-	private String status;
+    private String status;
 }

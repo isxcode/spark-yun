@@ -1,124 +1,109 @@
 plugins {
-  id 'java'
-  id 'checkstyle'
-  id 'org.springframework.boot' version "${SPRING_VERSION}"
-  id 'io.spring.dependency-management' version "${SPRING_MANAGER_VERSION}"
-  id "com.diffplug.spotless" version "${SPOTLESS_VERSION}"
+    id 'java'
+    id 'checkstyle'
+    id 'org.springframework.boot' version "${SPRING_VERSION}"
+    id 'io.spring.dependency-management' version "${SPRING_MANAGER_VERSION}"
+    id "com.diffplug.spotless" version "${SPOTLESS_VERSION}"
 }
 
 def version_number = new File(rootDir.getAbsolutePath(), 'spark-yun-backend/spark-yun-main/src/main/resources/VERSION').readLines()[0].trim()
 
 allprojects {
 
-  apply plugin: 'org.springframework.boot'
-  apply plugin: 'io.spring.dependency-management'
-  apply plugin: 'java-library'
-  apply plugin: 'checkstyle'
+    apply plugin: 'org.springframework.boot'
+    apply plugin: 'io.spring.dependency-management'
+    apply plugin: 'java-library'
+    apply plugin: 'checkstyle'
 
-  sourceCompatibility = JavaVersion.VERSION_1_8
-  targetCompatibility = JavaVersion.VERSION_1_8
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
 
-  group = 'com.isxcode.star'
-  version = version_number
+    group = 'com.isxcode.star'
+    version = version_number
 
-  repositories {
-    maven { url 'https://maven.aliyun.com/nexus/content/groups/public/' }
-    mavenLocal()
-    mavenCentral()
-    maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
-    maven { url "https://plugins.gradle.org/m2/" }
-  }
-
-  configurations.configureEach {
-    exclude group: "org.apache.logging.log4j", module: "log4j-slf4j-impl"
-    exclude group: "org.slf4j", module: "slf4j-reload4j"
-  }
-
-  dependencies {
-
-    // spring-web
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-
-    // spring-aop
-    implementation 'org.springframework.boot:spring-boot-starter-aop'
-
-    // spring-validation
-    implementation 'org.springframework.boot:spring-boot-starter-validation'
-
-    // spring-configuration
-    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
-
-    // spring-test
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-
-    // spring-openapi
-    implementation "org.springdoc:springdoc-openapi-ui:${OPENAPI_VERSION}"
-
-    // lombok
-    compileOnly "org.projectlombok:lombok:${LOMBOK_VERSION}"
-    annotationProcessor "org.projectlombok:lombok:${LOMBOK_VERSION}"
-
-    // fastjson
-    implementation "com.alibaba:fastjson:${FASTJSON_VERSION}"
-
-    // junit
-    implementation "org.junit.jupiter:junit-jupiter:${JUPITER_VERSION}"
-    testImplementation "org.junit.jupiter:junit-jupiter-api:${JUPITER_VERSION}"
-
-    // mapstruct
-    implementation "org.mapstruct:mapstruct:${MAPSTRUCT_VERSION}"
-    implementation "org.mapstruct:mapstruct-processor:${MAPSTRUCT_VERSION}"
-    annotationProcessor "org.mapstruct:mapstruct-processor:${MAPSTRUCT_VERSION}"
-    testAnnotationProcessor "org.mapstruct:mapstruct-processor:${MAPSTRUCT_VERSION}"
-  }
-
-  configurations {
-    compileOnly {
-      extendsFrom annotationProcessor
+    repositories {
+        maven { url 'https://maven.aliyun.com/nexus/content/groups/public/' }
+        mavenLocal()
+        mavenCentral()
+        maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
+        maven { url "https://plugins.gradle.org/m2/" }
     }
-  }
 
-  // checkstyle
-  tasks.withType(Checkstyle).configureEach {
-    maxWarnings = 100
-    maxErrors = 0
-    ignoreFailures = false
-    config resources.text.fromFile(rootDir.getAbsolutePath() + '/.checkstyle/checkstyle.xml')
-    reports {
-      xml.required = false
-      html.required = true
-      html.stylesheet resources.text.fromFile(rootDir.getAbsolutePath() + '/.checkstyle/checkstyle-simple.xsl')
+    configurations.configureEach {
+        exclude group: "org.apache.logging.log4j", module: "log4j-slf4j-impl"
+        exclude group: "org.slf4j", module: "slf4j-reload4j"
     }
-  }
+
+    dependencies {
+
+        implementation 'org.springframework.boot:spring-boot-starter-web'
+
+        implementation 'org.springframework.boot:spring-boot-starter-aop'
+
+        implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+        annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+
+        testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+        implementation "org.springdoc:springdoc-openapi-ui:${OPENAPI_VERSION}"
+
+        compileOnly "org.projectlombok:lombok:${LOMBOK_VERSION}"
+        annotationProcessor "org.projectlombok:lombok:${LOMBOK_VERSION}"
+
+        implementation "com.alibaba:fastjson:${FASTJSON_VERSION}"
+
+        implementation "org.junit.jupiter:junit-jupiter:${JUPITER_VERSION}"
+        testImplementation "org.junit.jupiter:junit-jupiter-api:${JUPITER_VERSION}"
+
+        implementation "org.mapstruct:mapstruct:${MAPSTRUCT_VERSION}"
+        implementation "org.mapstruct:mapstruct-processor:${MAPSTRUCT_VERSION}"
+        annotationProcessor "org.mapstruct:mapstruct-processor:${MAPSTRUCT_VERSION}"
+        testAnnotationProcessor "org.mapstruct:mapstruct-processor:${MAPSTRUCT_VERSION}"
+    }
+
+    configurations {
+        compileOnly {
+            extendsFrom annotationProcessor
+        }
+    }
+
+    tasks.withType(Checkstyle).configureEach {
+        maxWarnings = 100
+        maxErrors = 0
+        ignoreFailures = false
+        config resources.text.fromFile(rootDir.getAbsolutePath() + '/.checkstyle/checkstyle.xml')
+        reports {
+            xml.required = false
+            html.required = true
+            html.stylesheet resources.text.fromFile(rootDir.getAbsolutePath() + '/.checkstyle/checkstyle-simple.xsl')
+        }
+    }
 }
 
-// spotless
 spotless {
-  java {
-    target '*/**/*.java'
-    targetExclude('*/build/**/*.java')
-    targetExclude('spark-yun-dist/**/*.java')
-    eclipse()
-    removeUnusedImports()
-  }
+    java {
+        target '*/**/*.java'
+        targetExclude('*/build/**/*.java')
+        targetExclude('flink-yun-dist/**/*.java')
+        eclipse().configFile(rootDir.getAbsolutePath() + '/.spotless/eclipse-java-google-style.xml')
+        removeUnusedImports()
+    }
 }
 
-// gradle format，格式化代码
 tasks.register('format', GradleBuild) {
 
-  tasks = [":spotlessApply", ":checkstyleMain"]
+    tasks = [":spotlessApply", ":checkstyleMain"]
 }
 
-// gradle package，打包项目
 tasks.register('package', GradleBuild) {
 
-  tasks = [":spark-yun-dist:make"]
+    tasks = [":spark-yun-dist:make"]
 }
 
-// gradle start，启动项目
 tasks.register('start', Exec) {
 
-  commandLine 'sh', '-c', '''
+    commandLine 'sh', '-c', '''
       rm -rf spark-yun-dist/build/distributions/zhiqingyun
       tar -vzxf spark-yun-dist/build/distributions/zhiqingyun.tar.gz -C spark-yun-dist/build/distributions/
       cd spark-yun-dist/build/distributions/zhiqingyun/bin
@@ -126,29 +111,17 @@ tasks.register('start', Exec) {
     '''
 }
 
-// gradle docker，构建docker镜像
 tasks.register('docker', Exec) {
 
-  commandLine 'sh', '-c', '''
+    commandLine 'sh', '-c', '''
       docker buildx uninstall
       docker build -t isxcode/zhiqingyun:''' + version_number + ''' -f ./Dockerfile .
      '''
 }
 
-// gradle deploy，发布docker镜像
-tasks.register('deploy', Exec) {
-
-  commandLine 'sh', '-c', '''
-      docker buildx install
-      docker buildx use zhiqingyun-builder
-      docker buildx build --platform linux/amd64,linux/arm64/v8 -t isxcode/zhiqingyun:''' + version_number + ''' -f ./Dockerfile . --push
-    '''
-}
-
-// gradle web，单独启动官网
 tasks.register('website', Exec) {
 
-  commandLine 'sh', '-c', '''
+    commandLine 'sh', '-c', '''
       cd docs
       rm -rf node_modules
       pnpm install --force
@@ -156,10 +129,9 @@ tasks.register('website', Exec) {
      '''
 }
 
-// gradle frontend，单独启动前端
 tasks.register('frontend', Exec) {
 
-  commandLine 'sh', '-c', '''
+    commandLine 'sh', '-c', '''
       cd spark-yun-frontend
       rm -rf node_modules
       pnpm install --force
@@ -167,19 +139,16 @@ tasks.register('frontend', Exec) {
     '''
 }
 
-// gradle backend，单独启动后端
 tasks.register('backend', GradleBuild) {
 
-  tasks = [":spark-yun-backend:spark-yun-main:bootRun"]
+    tasks = [":spark-yun-backend:spark-yun-main:bootRun"]
 }
 
-// gradle test，单独启动自动化测试
 tasks.register('autotest', GradleBuild) {
 
-  tasks = [":spark-yun-autotest:autotest"]
+    tasks = [":spark-yun-autotest:autotest"]
 }
 
-// gradle install，安装项目依赖
 tasks.register('install', Exec) {
-  commandLine 'sh', '-c', 'bash install.sh'
+    commandLine 'sh', '-c', 'bash install.sh'
 }

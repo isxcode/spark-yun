@@ -13,32 +13,32 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class PageAlarmRes {
 
-	private String id;
+    private String id;
 
-	private String name;
+    private String name;
 
-	private String remark;
+    private String remark;
 
-	private String msgId;
+    private String msgId;
 
-	private String msgName;
+    private String msgName;
 
-	private String alarmType;
+    private String alarmType;
 
-	private String alarmEvent;
+    private String alarmEvent;
 
-	private String status;
+    private String status;
 
-	private String alarmTemplate;
+    private String alarmTemplate;
 
-	@JsonSerialize(using = LocalDateTimeSerializer.class)
-	private LocalDateTime createDateTime;
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    private LocalDateTime createDateTime;
 
-	private String createBy;
+    private String createBy;
 
-	private String createByUsername;
+    private String createByUsername;
 
-	private String receiverList;
+    private String receiverList;
 
-	private List<UserInfo> receiverUsers;
+    private List<UserInfo> receiverUsers;
 }

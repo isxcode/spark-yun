@@ -11,8 +11,8 @@ import org.springframework.stereotype.Component;
 @EnableConfigurationProperties(SparkYunAgentProperties.class)
 public class SparkYunAgentProperties {
 
-	/**
-	 * 提交作业的超时时间，默认60s
-	 */
-	private Integer submitTimeout = 120;
+    /**
+     * 提交作业的超时时间，默认60s
+     */
+    private Integer submitTimeout = 120;
 }

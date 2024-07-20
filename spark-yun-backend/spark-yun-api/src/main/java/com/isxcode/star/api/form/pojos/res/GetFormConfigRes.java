@@ -10,15 +10,15 @@ import java.util.List;
 @AllArgsConstructor
 public class GetFormConfigRes {
 
-	private String formId;
+    private String formId;
 
-	private List<FormComponentDto> components;
+    private List<FormComponentDto> components;
 
-	private String datasourceId;
+    private String datasourceId;
 
-	private String status;
+    private String status;
 
-	private String mainTable;
+    private String mainTable;
 
-	private String formVersion;
+    private String formVersion;
 }

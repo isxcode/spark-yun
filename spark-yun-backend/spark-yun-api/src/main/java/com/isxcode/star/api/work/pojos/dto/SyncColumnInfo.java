@@ -7,11 +7,11 @@ import java.io.Serializable;
 @Data
 public class SyncColumnInfo implements Serializable {
 
-	private String code;
+    private String code;
 
-	private String type;
+    private String type;
 
-	private String sql;
+    private String sql;
 
-	private String jsonPath;
+    private String jsonPath;
 }

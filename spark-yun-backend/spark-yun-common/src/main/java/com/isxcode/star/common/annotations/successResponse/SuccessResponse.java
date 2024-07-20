@@ -13,7 +13,7 @@ import java.lang.annotation.Target;
 @Documented
 public @interface SuccessResponse {
 
-	String value() default "";
+    String value() default "";
 
-	String msg() default "";
+    String msg() default "";
 }

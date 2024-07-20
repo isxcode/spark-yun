@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class YagGetDataRes {
 
-	private List<List> data;
+    private List<List> data;
 
-	private String applicationId;
+    private String applicationId;
 }

@@ -11,26 +11,26 @@ import java.time.LocalDateTime;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class PageFuncRes {
 
-	private String id;
+    private String id;
 
-	private String type;
+    private String type;
 
-	private String fileId;
+    private String fileId;
 
-	private String funcName;
+    private String funcName;
 
-	private String className;
+    private String className;
 
-	private String resultType;
+    private String resultType;
 
-	private String remark;
+    private String remark;
 
-	private String fileName;
+    private String fileName;
 
-	@JsonSerialize(using = LocalDateTimeSerializer.class)
-	private LocalDateTime createDateTime;
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    private LocalDateTime createDateTime;
 
-	@JsonSerialize(using = LocalDateTimeSerializer.class)
-	private LocalDateTime lastModifiedDateTime;
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    private LocalDateTime lastModifiedDateTime;
 
 }

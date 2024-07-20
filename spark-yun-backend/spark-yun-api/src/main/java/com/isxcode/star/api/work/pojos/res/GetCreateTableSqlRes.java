@@ -11,6 +11,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class GetCreateTableSqlRes {
 
-	private String sql;
+    private String sql;
 
 }

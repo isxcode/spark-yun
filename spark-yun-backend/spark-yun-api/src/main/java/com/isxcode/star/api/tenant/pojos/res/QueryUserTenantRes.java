@@ -5,9 +5,9 @@ import lombok.Data;
 @Data
 public class QueryUserTenantRes {
 
-	private boolean isCurrentTenant;
+    private boolean isCurrentTenant;
 
-	private String id;
+    private String id;
 
-	private String name;
+    private String name;
 }

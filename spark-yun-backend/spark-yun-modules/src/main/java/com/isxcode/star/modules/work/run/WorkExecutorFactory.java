@@ -16,17 +16,17 @@ import java.util.Optional;
 @Component
 public class WorkExecutorFactory {
 
-	private final ApplicationContext applicationContext;
+    private final ApplicationContext applicationContext;
 
-	public WorkExecutor create(String workType) {
+    public WorkExecutor create(String workType) {
 
-		Optional<WorkExecutor> workExecutorOptional = applicationContext.getBeansOfType(WorkExecutor.class).values()
-				.stream().filter(agent -> agent.getWorkType().equals(workType)).findFirst();
+        Optional<WorkExecutor> workExecutorOptional = applicationContext.getBeansOfType(WorkExecutor.class).values()
+            .stream().filter(agent -> agent.getWorkType().equals(workType)).findFirst();
 
-		if (!workExecutorOptional.isPresent()) {
-			throw new IsxAppException("作业类型不支持");
-		}
+        if (!workExecutorOptional.isPresent()) {
+            throw new IsxAppException("作业类型不支持");
+        }
 
-		return workExecutorOptional.get();
-	}
+        return workExecutorOptional.get();
+    }
 }

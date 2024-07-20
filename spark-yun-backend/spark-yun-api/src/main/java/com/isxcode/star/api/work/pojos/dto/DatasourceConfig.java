@@ -14,13 +14,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class DatasourceConfig {
 
-	private String driver;
+    private String driver;
 
-	private String url;
+    private String url;
 
-	private String dbTable;
+    private String dbTable;
 
-	private String user;
+    private String user;
 
-	private String password;
+    private String password;
 }

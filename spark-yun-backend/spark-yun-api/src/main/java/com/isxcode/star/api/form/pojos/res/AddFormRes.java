@@ -5,15 +5,15 @@ import lombok.Data;
 @Data
 public class AddFormRes {
 
-	private String id;
+    private String id;
 
-	private String name;
+    private String name;
 
-	private String datasourceId;
+    private String datasourceId;
 
-	private String mainTable;
+    private String mainTable;
 
-	private String remark;
+    private String remark;
 
-	private String formVersion;
+    private String formVersion;
 }

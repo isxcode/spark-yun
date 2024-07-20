@@ -12,5 +12,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class GetDataRes {
 
-	private List<List<String>> data;
+    private List<List<String>> data;
 }

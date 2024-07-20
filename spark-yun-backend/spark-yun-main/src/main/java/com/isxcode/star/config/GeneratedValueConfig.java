@@ -11,10 +11,10 @@ import org.hibernate.id.IdentifierGenerator;
 /** id生成器. */
 public class GeneratedValueConfig implements IdentifierGenerator {
 
-	@Override
-	public Serializable generate(SharedSessionContractImplementor session, Object object) throws HibernateException {
+    @Override
+    public Serializable generate(SharedSessionContractImplementor session, Object object) throws HibernateException {
 
-		Snowflake snowflake = IdUtil.getSnowflake();
-		return "sy_" + snowflake.nextIdStr();
-	}
+        Snowflake snowflake = IdUtil.getSnowflake();
+        return "sy_" + snowflake.nextIdStr();
+    }
 }

@@ -8,5 +8,5 @@ import lombok.Data;
 @Builder
 public class GetViewCardDataRes {
 
-	private EchartOption viewData;
+    private EchartOption viewData;
 }

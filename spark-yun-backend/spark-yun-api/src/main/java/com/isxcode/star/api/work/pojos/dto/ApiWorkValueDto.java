@@ -5,7 +5,7 @@ import lombok.Data;
 @Data
 public class ApiWorkValueDto {
 
-	private String label;
+    private String label;
 
-	private String value;
+    private String value;
 }

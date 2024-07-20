@@ -12,5 +12,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class GetViewCardDataByIdRes {
 
-	private EchartOption viewData;
+    private EchartOption viewData;
 }

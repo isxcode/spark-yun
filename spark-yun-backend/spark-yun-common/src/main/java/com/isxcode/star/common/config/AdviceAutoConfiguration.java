@@ -13,17 +13,17 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class AdviceAutoConfiguration {
 
-	private final MessageSource messageSource;
+    private final MessageSource messageSource;
 
-	@Bean
-	GlobalExceptionAdvice initGlobalExceptionAdvice() {
+    @Bean
+    GlobalExceptionAdvice initGlobalExceptionAdvice() {
 
-		return new GlobalExceptionAdvice();
-	}
+        return new GlobalExceptionAdvice();
+    }
 
-	@Bean
-	SuccessResponseAdvice initSuccessResponseAdvice() {
+    @Bean
+    SuccessResponseAdvice initSuccessResponseAdvice() {
 
-		return new SuccessResponseAdvice(messageSource);
-	}
+        return new SuccessResponseAdvice(messageSource);
+    }
 }

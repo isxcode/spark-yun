@@ -8,7 +8,7 @@ import javax.validation.constraints.NotEmpty;
 @Data
 public class GetWorkflowDefaultClusterReq {
 
-	@Schema(title = "作业流唯一id", example = "sy_123456789")
-	@NotEmpty(message = "作业流id不能为空")
-	private String workflowId;
+    @Schema(title = "作业流唯一id", example = "sy_123456789")
+    @NotEmpty(message = "作业流id不能为空")
+    private String workflowId;
 }

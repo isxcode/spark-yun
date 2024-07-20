@@ -13,8 +13,8 @@ import java.util.Optional;
 @Repository
 public interface AlarmRepository extends JpaRepository<AlarmEntity, String> {
 
-	@Query("SELECT A FROM AlarmEntity A WHERE A.name LIKE %:keyword% OR A.remark LIKE %:keyword% order by A.createDateTime desc ")
-	Page<AlarmEntity> searchAll(@Param("keyword") String searchKeyWord, Pageable pageable);
+    @Query("SELECT A FROM AlarmEntity A WHERE A.name LIKE %:keyword% OR A.remark LIKE %:keyword% order by A.createDateTime desc ")
+    Page<AlarmEntity> searchAll(@Param("keyword") String searchKeyWord, Pageable pageable);
 
-	Optional<AlarmEntity> findByName(String name);
+    Optional<AlarmEntity> findByName(String name);
 }

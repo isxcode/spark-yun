@@ -24,53 +24,53 @@ import java.util.Optional;
 @Slf4j
 public class FuncBizService {
 
-	private final FuncRepository funcRepository;
+    private final FuncRepository funcRepository;
 
-	private final FuncService funcService;
+    private final FuncService funcService;
 
-	private final FuncMapper funcMapper;
+    private final FuncMapper funcMapper;
 
-	private final FileRepository fileRepository;
-	private final FileService fileService;
+    private final FileRepository fileRepository;
+    private final FileService fileService;
 
-	public void addFunc(AddFuncReq addFuncReq) {
+    public void addFunc(AddFuncReq addFuncReq) {
 
-		// 判断函数名是否重复
-		Optional<FuncEntity> funcEntityOptional = funcRepository.findByFuncName(addFuncReq.getFuncName());
-		if (funcEntityOptional.isPresent()) {
-			throw new IsxAppException("函数已重复存在");
-		}
+        // 判断函数名是否重复
+        Optional<FuncEntity> funcEntityOptional = funcRepository.findByFuncName(addFuncReq.getFuncName());
+        if (funcEntityOptional.isPresent()) {
+            throw new IsxAppException("函数已重复存在");
+        }
 
-		FuncEntity funcEntity = funcMapper.addFuncReqToFuncEntity(addFuncReq);
+        FuncEntity funcEntity = funcMapper.addFuncReqToFuncEntity(addFuncReq);
 
-		// 持久化数据
-		funcRepository.save(funcEntity);
-	}
+        // 持久化数据
+        funcRepository.save(funcEntity);
+    }
 
-	public void updateFunc(UpdateFuncReq updateFuncReq) {
+    public void updateFunc(UpdateFuncReq updateFuncReq) {
 
-		FuncEntity func = funcService.getFunc(updateFuncReq.getId());
-		func = funcMapper.updateFuncReqToFuncEntity(updateFuncReq, func);
-		funcRepository.save(func);
-	}
+        FuncEntity func = funcService.getFunc(updateFuncReq.getId());
+        func = funcMapper.updateFuncReqToFuncEntity(updateFuncReq, func);
+        funcRepository.save(func);
+    }
 
-	public void deleteFunc(DeleteFuncReq deleteFuncReq) {
+    public void deleteFunc(DeleteFuncReq deleteFuncReq) {
 
-		FuncEntity func = funcService.getFunc(deleteFuncReq.getId());
+        FuncEntity func = funcService.getFunc(deleteFuncReq.getId());
 
-		funcRepository.deleteById(func.getId());
-	}
+        funcRepository.deleteById(func.getId());
+    }
 
-	public Page<PageFuncRes> pageFunc(PageFuncReq pageFuncReq) {
+    public Page<PageFuncRes> pageFunc(PageFuncReq pageFuncReq) {
 
-		Page<FuncEntity> funcPage = funcRepository.pageSearch(pageFuncReq.getSearchKeyWord(),
-				PageRequest.of(pageFuncReq.getPage(), pageFuncReq.getPageSize()));
+        Page<FuncEntity> funcPage = funcRepository.pageSearch(pageFuncReq.getSearchKeyWord(),
+            PageRequest.of(pageFuncReq.getPage(), pageFuncReq.getPageSize()));
 
-		Page<PageFuncRes> result = funcPage.map(funcMapper::funcEntityToPageFuncRes);
-		result.getContent().forEach(e -> {
-			e.setFileName(fileService.getFileName(e.getFileId()));
-		});
+        Page<PageFuncRes> result = funcPage.map(funcMapper::funcEntityToPageFuncRes);
+        result.getContent().forEach(e -> {
+            e.setFileName(fileService.getFileName(e.getFileId()));
+        });
 
-		return result;
-	}
+        return result;
+    }
 }

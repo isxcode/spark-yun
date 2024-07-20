@@ -13,13 +13,13 @@ import lombok.NoArgsConstructor;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class YagGetStatusRes {
 
-	private String yarnApplicationState;
+    private String yarnApplicationState;
 
-	private String finalApplicationStatus;
+    private String finalApplicationStatus;
 
-	private String trackingUrl;
+    private String trackingUrl;
 
-	private String appStatus;
+    private String appStatus;
 
-	private String appId;
+    private String appId;
 }

@@ -13,9 +13,9 @@ import java.util.List;
 @NoArgsConstructor
 public class ConfigViewReq {
 
-	private String id;
+    private String id;
 
-	private Object webConfig;
+    private Object webConfig;
 
-	private List<String> cardList;
+    private List<String> cardList;
 }

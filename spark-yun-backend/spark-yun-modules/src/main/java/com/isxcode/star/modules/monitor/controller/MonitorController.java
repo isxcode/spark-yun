@@ -29,41 +29,41 @@ import javax.validation.Valid;
 @RequiredArgsConstructor
 public class MonitorController {
 
-	private final MonitorBizService monitorBizService;
+    private final MonitorBizService monitorBizService;
 
-	@Secured({RoleType.NORMAL_MEMBER})
-	@Operation(summary = "获取系统基础信息接口")
-	@PostMapping("/getSystemBaseInfo")
-	@SuccessResponse("查询成功")
-	public GetSystemMonitorRes getSystemMonitor() {
+    @Secured({RoleType.NORMAL_MEMBER})
+    @Operation(summary = "获取系统基础信息接口")
+    @PostMapping("/getSystemBaseInfo")
+    @SuccessResponse("查询成功")
+    public GetSystemMonitorRes getSystemMonitor() {
 
-		return monitorBizService.getSystemMonitor();
-	}
+        return monitorBizService.getSystemMonitor();
+    }
 
-	@Secured({RoleType.NORMAL_MEMBER})
-	@Operation(summary = "获取集群监控数据接口")
-	@PostMapping("/getClusterMonitor")
-	@SuccessResponse("查询成功")
-	public GetClusterMonitorRes getClusterMonitor(@RequestBody GetClusterMonitorReq getClusterMonitorReq) {
+    @Secured({RoleType.NORMAL_MEMBER})
+    @Operation(summary = "获取集群监控数据接口")
+    @PostMapping("/getClusterMonitor")
+    @SuccessResponse("查询成功")
+    public GetClusterMonitorRes getClusterMonitor(@RequestBody GetClusterMonitorReq getClusterMonitorReq) {
 
-		return monitorBizService.getClusterMonitor(getClusterMonitorReq);
-	}
+        return monitorBizService.getClusterMonitor(getClusterMonitorReq);
+    }
 
-	@Secured({RoleType.NORMAL_MEMBER})
-	@Operation(summary = "添加实例图接口")
-	@PostMapping("/getInstanceMonitor")
-	@SuccessResponse("查询成功")
-	public GetInstanceMonitorRes getInstanceMonitor(@Valid @RequestBody GetInstanceMonitorReq getInstanceMonitorReq) {
+    @Secured({RoleType.NORMAL_MEMBER})
+    @Operation(summary = "添加实例图接口")
+    @PostMapping("/getInstanceMonitor")
+    @SuccessResponse("查询成功")
+    public GetInstanceMonitorRes getInstanceMonitor(@Valid @RequestBody GetInstanceMonitorReq getInstanceMonitorReq) {
 
-		return monitorBizService.getInstanceMonitor(getInstanceMonitorReq);
-	}
+        return monitorBizService.getInstanceMonitor(getInstanceMonitorReq);
+    }
 
-	@Secured({RoleType.NORMAL_MEMBER})
-	@Operation(summary = "查询实例列表接口")
-	@PostMapping("/pageInstances")
-	@SuccessResponse("查询成功")
-	public Page<PageInstancesRes> pageInstances(@Valid @RequestBody PageInstancesReq pageInstancesReq) {
+    @Secured({RoleType.NORMAL_MEMBER})
+    @Operation(summary = "查询实例列表接口")
+    @PostMapping("/pageInstances")
+    @SuccessResponse("查询成功")
+    public Page<PageInstancesRes> pageInstances(@Valid @RequestBody PageInstancesReq pageInstancesReq) {
 
-		return monitorBizService.pageInstances(pageInstancesReq);
-	}
+        return monitorBizService.pageInstances(pageInstancesReq);
+    }
 }

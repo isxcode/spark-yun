@@ -28,89 +28,88 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 @RequiredArgsConstructor
 public class UserLogAdvice {
 
-	private final UserActionRepository userActionRepository;
+    private final UserActionRepository userActionRepository;
 
-	private UserActionEntity userActionEntity;
+    private UserActionEntity userActionEntity;
 
-	private final IsxAppProperties isxAppProperties;
+    private final IsxAppProperties isxAppProperties;
 
-	@Pointcut("@annotation(com.isxcode.star.common.userlog.UserLog)")
-	public void operateUserLog() {
-	}
+    @Pointcut("@annotation(com.isxcode.star.common.userlog.UserLog)")
+    public void operateUserLog() {}
 
-	@Before(value = "operateUserLog()")
-	public void before(JoinPoint joinPoint) {
+    @Before(value = "operateUserLog()")
+    public void before(JoinPoint joinPoint) {
 
-		if (!isxAppProperties.isLogAdvice()) {
-			return;
-		}
+        if (!isxAppProperties.isLogAdvice()) {
+            return;
+        }
 
-		userActionEntity = new UserActionEntity();
-		userActionEntity.setStartTimestamp(System.currentTimeMillis());
-		if (Strings.isEmpty(USER_ID.get())) {
-			userActionEntity.setUserId("anonymous");
-		} else {
-			userActionEntity.setUserId(USER_ID.get());
-		}
+        userActionEntity = new UserActionEntity();
+        userActionEntity.setStartTimestamp(System.currentTimeMillis());
+        if (Strings.isEmpty(USER_ID.get())) {
+            userActionEntity.setUserId("anonymous");
+        } else {
+            userActionEntity.setUserId(USER_ID.get());
+        }
 
-		if (Strings.isEmpty(TENANT_ID.get())) {
-			userActionEntity.setTenantId("anonymous");
-		} else {
-			userActionEntity.setTenantId(TENANT_ID.get());
-		}
+        if (Strings.isEmpty(TENANT_ID.get())) {
+            userActionEntity.setTenantId("anonymous");
+        } else {
+            userActionEntity.setTenantId(TENANT_ID.get());
+        }
 
-		ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-		HttpServletRequest request = attributes.getRequest();
+        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        HttpServletRequest request = attributes.getRequest();
 
-		userActionEntity.setReqPath(request.getRequestURI());
+        userActionEntity.setReqPath(request.getRequestURI());
 
-		userActionEntity.setReqMethod(request.getMethod());
+        userActionEntity.setReqMethod(request.getMethod());
 
-		JSONObject jsonObject = new JSONObject();
-		Enumeration<String> headerNames = request.getHeaderNames();
-		while (headerNames.hasMoreElements()) {
-			String name = headerNames.nextElement();
-			String value = request.getHeader(name);
-			jsonObject.put(name, value);
-		}
-		userActionEntity.setReqHeader(jsonObject.toJSONString());
+        JSONObject jsonObject = new JSONObject();
+        Enumeration<String> headerNames = request.getHeaderNames();
+        while (headerNames.hasMoreElements()) {
+            String name = headerNames.nextElement();
+            String value = request.getHeader(name);
+            jsonObject.put(name, value);
+        }
+        userActionEntity.setReqHeader(jsonObject.toJSONString());
 
-		if ("GET".equals(request.getMethod())) {
-			userActionEntity.setReqBody(request.getQueryString());
-		}
+        if ("GET".equals(request.getMethod())) {
+            userActionEntity.setReqBody(request.getQueryString());
+        }
 
-		if ("POST".equals(request.getMethod())) {
-			if (joinPoint.getArgs().length > 0) {
-				userActionEntity.setReqBody(JSON.toJSONString(joinPoint.getArgs()[0]));
-			}
-		}
-	}
+        if ("POST".equals(request.getMethod())) {
+            if (joinPoint.getArgs().length > 0) {
+                userActionEntity.setReqBody(JSON.toJSONString(joinPoint.getArgs()[0]));
+            }
+        }
+    }
 
-	@After(value = "operateUserLog()")
-	public void after(JoinPoint joinPoint) {
+    @After(value = "operateUserLog()")
+    public void after(JoinPoint joinPoint) {
 
-		if (!isxAppProperties.isLogAdvice()) {
-			return;
-		}
+        if (!isxAppProperties.isLogAdvice()) {
+            return;
+        }
 
-		if (Strings.isEmpty(USER_ID.get())) {
-			userActionEntity.setCreateBy("anonymous");
-		}
-		userActionEntity.setEndTimestamp(System.currentTimeMillis());
-		try {
-			userActionRepository.save(userActionEntity);
-		} catch (Exception e) {
-			log.error(e.getMessage());
-		}
-	}
+        if (Strings.isEmpty(USER_ID.get())) {
+            userActionEntity.setCreateBy("anonymous");
+        }
+        userActionEntity.setEndTimestamp(System.currentTimeMillis());
+        try {
+            userActionRepository.save(userActionEntity);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+        }
+    }
 
-	@AfterThrowing(value = "operateUserLog()", throwing = "successResponseException")
-	public void afterThrowing(JoinPoint joinPoint, SuccessResponseException successResponseException) {
+    @AfterThrowing(value = "operateUserLog()", throwing = "successResponseException")
+    public void afterThrowing(JoinPoint joinPoint, SuccessResponseException successResponseException) {
 
-		if (!isxAppProperties.isLogAdvice()) {
-			return;
-		}
+        if (!isxAppProperties.isLogAdvice()) {
+            return;
+        }
 
-		userActionEntity.setResBody(JSON.toJSONString(successResponseException.getBaseResponse()));
-	}
+        userActionEntity.setResBody(JSON.toJSONString(successResponseException.getBaseResponse()));
+    }
 }

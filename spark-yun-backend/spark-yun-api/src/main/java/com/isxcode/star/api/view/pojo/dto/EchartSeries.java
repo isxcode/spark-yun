@@ -15,13 +15,13 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class EchartSeries {
 
-	private String name;
+    private String name;
 
-	private String type;
+    private String type;
 
-	private String radius;
+    private String radius;
 
-	private List<Object> data;
+    private List<Object> data;
 
-	private EchartEmphasis emphasis;
+    private EchartEmphasis emphasis;
 }

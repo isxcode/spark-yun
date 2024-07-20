@@ -12,5 +12,5 @@ import lombok.NoArgsConstructor;
 @Data
 public class GetViewCardRes {
 
-	private CardInfo cardInfo;
+    private CardInfo cardInfo;
 }

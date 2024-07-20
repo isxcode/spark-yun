@@ -9,7 +9,7 @@ import lombok.Data;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class GetTenantRes {
 
-	private String id;
+    private String id;
 
-	private String name;
+    private String name;
 }

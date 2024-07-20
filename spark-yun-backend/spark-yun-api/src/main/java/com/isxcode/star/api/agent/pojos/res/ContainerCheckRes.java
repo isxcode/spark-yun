@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ContainerCheckRes {
 
-	private String code;
+    private String code;
 
-	private String msg;
+    private String msg;
 }

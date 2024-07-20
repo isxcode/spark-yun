@@ -9,7 +9,7 @@ import lombok.Data;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class TestConnectRes {
 
-	private Boolean canConnect;
+    private Boolean canConnect;
 
-	private String connectLog;
+    private String connectLog;
 }

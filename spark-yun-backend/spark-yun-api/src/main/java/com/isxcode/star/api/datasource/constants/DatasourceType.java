@@ -3,31 +3,31 @@ package com.isxcode.star.api.datasource.constants;
 /** 数据源类型. */
 public interface DatasourceType {
 
-	String MYSQL = "MYSQL";
+    String MYSQL = "MYSQL";
 
-	String ORACLE = "ORACLE";
+    String ORACLE = "ORACLE";
 
-	String SQL_SERVER = "SQL_SERVER";
+    String SQL_SERVER = "SQL_SERVER";
 
-	String POSTGRE_SQL = "POSTGRE_SQL";
+    String POSTGRE_SQL = "POSTGRE_SQL";
 
-	String CLICKHOUSE = "CLICKHOUSE";
+    String CLICKHOUSE = "CLICKHOUSE";
 
-	String HIVE = "HIVE";
+    String HIVE = "HIVE";
 
-	String HANA_SAP = "HANA_SAP";
+    String HANA_SAP = "HANA_SAP";
 
-	String DM = "DM";
+    String DM = "DM";
 
-	String DORIS = "DORIS";
+    String DORIS = "DORIS";
 
-	String OCEANBASE = "OCEANBASE";
+    String OCEANBASE = "OCEANBASE";
 
-	String TIDB = "TIDB";
+    String TIDB = "TIDB";
 
-	String STAR_ROCKS = "STAR_ROCKS";
+    String STAR_ROCKS = "STAR_ROCKS";
 
-	String DB2 = "DB2";
+    String DB2 = "DB2";
 
-	String KAFKA = "KAFKA";
+    String KAFKA = "KAFKA";
 }

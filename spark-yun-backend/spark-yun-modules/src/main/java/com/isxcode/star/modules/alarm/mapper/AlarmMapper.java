@@ -14,14 +14,14 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface AlarmMapper {
 
-	MessageEntity addMessageReqToMessageEntity(AddMessageReq addMessageReq);
+    MessageEntity addMessageReqToMessageEntity(AddMessageReq addMessageReq);
 
-	PageMessageRes messageEntityToPageMessageRes(MessageEntity messageEntity);
+    PageMessageRes messageEntityToPageMessageRes(MessageEntity messageEntity);
 
-	@Mapping(target = "receiverList", ignore = true)
-	AlarmEntity addAlarmReqToAlarmEntity(AddAlarmReq addAlarmReq);
+    @Mapping(target = "receiverList", ignore = true)
+    AlarmEntity addAlarmReqToAlarmEntity(AddAlarmReq addAlarmReq);
 
-	PageAlarmRes alarmEntityToPageAlarmRes(AlarmEntity alarmEntity);
+    PageAlarmRes alarmEntityToPageAlarmRes(AlarmEntity alarmEntity);
 
-	PageAlarmInstanceRes alarmInstanceEntityToPageAlarmInstanceRes(AlarmInstanceEntity alarmInstanceEntity);
+    PageAlarmInstanceRes alarmInstanceEntityToPageAlarmInstanceRes(AlarmInstanceEntity alarmInstanceEntity);
 }

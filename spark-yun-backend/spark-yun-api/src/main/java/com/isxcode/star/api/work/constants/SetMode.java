@@ -5,13 +5,13 @@ package com.isxcode.star.api.work.constants;
  */
 public interface SetMode {
 
-	/**
-	 * 简易模式.
-	 */
-	String SIMPLE = "SIMPLE";
+    /**
+     * 简易模式.
+     */
+    String SIMPLE = "SIMPLE";
 
-	/**
-	 * 高级定义模式.
-	 */
-	String ADVANCE = "ADVANCE";
+    /**
+     * 高级定义模式.
+     */
+    String ADVANCE = "ADVANCE";
 }

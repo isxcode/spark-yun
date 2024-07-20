@@ -5,9 +5,9 @@ import org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy;
 
 public class JpaTableUpperCaseStrategy extends SpringPhysicalNamingStrategy {
 
-	@Override
-	protected boolean isCaseInsensitive(JdbcEnvironment jdbcEnvironment) {
+    @Override
+    protected boolean isCaseInsensitive(JdbcEnvironment jdbcEnvironment) {
 
-		return false;
-	}
+        return false;
+    }
 }

@@ -13,9 +13,9 @@ import lombok.NoArgsConstructor;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class GetDefaultDatabaseDriverRes {
 
-	private String id;
+    private String id;
 
-	private String name;
+    private String name;
 
-	private String dbType;
+    private String dbType;
 }

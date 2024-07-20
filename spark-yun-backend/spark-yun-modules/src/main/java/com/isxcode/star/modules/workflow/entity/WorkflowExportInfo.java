@@ -9,9 +9,9 @@ import lombok.Data;
 @Builder
 public class WorkflowExportInfo {
 
-	private WorkflowEntity workflow;
+    private WorkflowEntity workflow;
 
-	private WorkflowConfigEntity workflowConfig;
+    private WorkflowConfigEntity workflowConfig;
 
-	private List<WorkExportInfo> works;
+    private List<WorkExportInfo> works;
 }

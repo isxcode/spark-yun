@@ -8,7 +8,7 @@ import javax.validation.constraints.NotEmpty;
 @Data
 public class GetClusterNodeReq {
 
-	@Schema(title = "计算引擎唯一id", example = "sy_b0288cadb2ab4325ae519ff329a95cda")
-	@NotEmpty(message = "节点id不能为空")
-	private String clusterNodeId;
+    @Schema(title = "计算引擎唯一id", example = "sy_b0288cadb2ab4325ae519ff329a95cda")
+    @NotEmpty(message = "节点id不能为空")
+    private String clusterNodeId;
 }

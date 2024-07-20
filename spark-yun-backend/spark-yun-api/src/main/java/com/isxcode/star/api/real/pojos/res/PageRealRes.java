@@ -11,18 +11,18 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class PageRealRes {
 
-	private String id;
+    private String id;
 
-	private String name;
+    private String name;
 
-	private String status;
+    private String status;
 
-	private String remark;
+    private String remark;
 
-	private String clusterId;
+    private String clusterId;
 
-	private String clusterName;
+    private String clusterName;
 
-	@JsonSerialize(using = LocalDateTimeSerializer.class)
-	private LocalDateTime createDateTime;
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    private LocalDateTime createDateTime;
 }

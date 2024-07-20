@@ -33,115 +33,115 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class RunAgentInstallService {
 
-	private final ClusterNodeService clusterNodeService;
-	private final SparkYunProperties sparkYunProperties;
+    private final ClusterNodeService clusterNodeService;
+    private final SparkYunProperties sparkYunProperties;
 
-	private final ClusterNodeRepository clusterNodeRepository;
+    private final ClusterNodeRepository clusterNodeRepository;
 
-	private final ClusterRepository clusterRepository;
+    private final ClusterRepository clusterRepository;
 
-	@Async("sparkYunWorkThreadPool")
-	public void run(String clusterNodeId, String clusterType, ScpFileEngineNodeDto scpFileEngineNodeDto,
-			String tenantId, String userId) {
+    @Async("sparkYunWorkThreadPool")
+    public void run(String clusterNodeId, String clusterType, ScpFileEngineNodeDto scpFileEngineNodeDto,
+        String tenantId, String userId) {
 
-		USER_ID.set(userId);
-		TENANT_ID.set(tenantId);
+        USER_ID.set(userId);
+        TENANT_ID.set(tenantId);
 
-		// 获取节点信息
-		Optional<ClusterNodeEntity> clusterNodeEntityOptional = clusterNodeRepository.findById(clusterNodeId);
-		if (!clusterNodeEntityOptional.isPresent()) {
-			return;
-		}
-		ClusterNodeEntity clusterNodeEntity = clusterNodeEntityOptional.get();
+        // 获取节点信息
+        Optional<ClusterNodeEntity> clusterNodeEntityOptional = clusterNodeRepository.findById(clusterNodeId);
+        if (!clusterNodeEntityOptional.isPresent()) {
+            return;
+        }
+        ClusterNodeEntity clusterNodeEntity = clusterNodeEntityOptional.get();
 
-		try {
-			installAgent(scpFileEngineNodeDto, clusterNodeEntity, clusterType);
-		} catch (Exception e) {
-			log.error(e.getMessage(), e);
-			clusterNodeEntity.setCheckDateTime(LocalDateTime.now());
-			clusterNodeEntity.setAgentLog(e.getMessage());
-			clusterNodeEntity.setStatus(ClusterNodeStatus.UN_INSTALL);
-			clusterNodeRepository.saveAndFlush(clusterNodeEntity);
-		}
-	}
+        try {
+            installAgent(scpFileEngineNodeDto, clusterNodeEntity, clusterType);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            clusterNodeEntity.setCheckDateTime(LocalDateTime.now());
+            clusterNodeEntity.setAgentLog(e.getMessage());
+            clusterNodeEntity.setStatus(ClusterNodeStatus.UN_INSTALL);
+            clusterNodeRepository.saveAndFlush(clusterNodeEntity);
+        }
+    }
 
-	public void installAgent(ScpFileEngineNodeDto scpFileEngineNodeDto, ClusterNodeEntity engineNode,
-			String clusterType) throws JSchException, IOException, InterruptedException, SftpException {
+    public void installAgent(ScpFileEngineNodeDto scpFileEngineNodeDto, ClusterNodeEntity engineNode,
+        String clusterType) throws JSchException, IOException, InterruptedException, SftpException {
 
-		// 先检查节点是否可以安装
-		scpFile(scpFileEngineNodeDto, "classpath:bash/" + String.format("agent-%s.sh", clusterType),
-				sparkYunProperties.getTmpDir() + File.separator + String.format("agent-%s.sh", clusterType));
+        // 先检查节点是否可以安装
+        scpFile(scpFileEngineNodeDto, "classpath:bash/" + String.format("agent-%s.sh", clusterType),
+            sparkYunProperties.getTmpDir() + File.separator + String.format("agent-%s.sh", clusterType));
 
-		// 运行安装脚本
-		String envCommand = "bash " + sparkYunProperties.getTmpDir() + File.separator
-				+ String.format("agent-%s.sh", clusterType) + " --home-path=" + engineNode.getAgentHomePath()
-				+ " --agent-port=" + engineNode.getAgentPort();
-		if (engineNode.getInstallSparkLocal() != null) {
-			envCommand = envCommand + " --spark-local=" + engineNode.getInstallSparkLocal();
-		}
-		log.debug("执行远程命令:{}", envCommand);
+        // 运行安装脚本
+        String envCommand =
+            "bash " + sparkYunProperties.getTmpDir() + File.separator + String.format("agent-%s.sh", clusterType)
+                + " --home-path=" + engineNode.getAgentHomePath() + " --agent-port=" + engineNode.getAgentPort();
+        if (engineNode.getInstallSparkLocal() != null) {
+            envCommand = envCommand + " --spark-local=" + engineNode.getInstallSparkLocal();
+        }
+        log.debug("执行远程命令:{}", envCommand);
 
-		// 获取返回结果
-		String executeLog = executeCommand(scpFileEngineNodeDto, envCommand, false);
-		log.debug("远程返回值:{}", executeLog);
+        // 获取返回结果
+        String executeLog = executeCommand(scpFileEngineNodeDto, envCommand, false);
+        log.debug("远程返回值:{}", executeLog);
 
-		AgentInfo agentEnvInfo = JSON.parseObject(executeLog, AgentInfo.class);
+        AgentInfo agentEnvInfo = JSON.parseObject(executeLog, AgentInfo.class);
 
-		// 如果不可以安装直接返回
-		if (!ClusterNodeStatus.CAN_INSTALL.equals(agentEnvInfo.getStatus())) {
-			engineNode.setStatus(agentEnvInfo.getStatus());
-			engineNode.setAgentLog(agentEnvInfo.getLog());
-			engineNode.setCheckDateTime(LocalDateTime.now());
-			clusterNodeRepository.saveAndFlush(engineNode);
-			return;
-		}
+        // 如果不可以安装直接返回
+        if (!ClusterNodeStatus.CAN_INSTALL.equals(agentEnvInfo.getStatus())) {
+            engineNode.setStatus(agentEnvInfo.getStatus());
+            engineNode.setAgentLog(agentEnvInfo.getLog());
+            engineNode.setCheckDateTime(LocalDateTime.now());
+            clusterNodeRepository.saveAndFlush(engineNode);
+            return;
+        }
 
-		// 异步上传安装包
-		clusterNodeService.scpAgentFile(scpFileEngineNodeDto, "classpath:agent/zhiqingyun-agent.tar.gz",
-				sparkYunProperties.getTmpDir() + File.separator + "zhiqingyun-agent.tar.gz");
-		log.debug("代理安装包上传中");
+        // 异步上传安装包
+        clusterNodeService.scpAgentFile(scpFileEngineNodeDto, "classpath:agent/zhiqingyun-agent.tar.gz",
+            sparkYunProperties.getTmpDir() + File.separator + "zhiqingyun-agent.tar.gz");
+        log.debug("代理安装包上传中");
 
-		// 同步监听进度
-		clusterNodeService.checkScpPercent(scpFileEngineNodeDto, "classpath:agent/zhiqingyun-agent.tar.gz",
-				sparkYunProperties.getTmpDir() + File.separator + "zhiqingyun-agent.tar.gz", engineNode);
-		log.debug("下载安装包成功");
+        // 同步监听进度
+        clusterNodeService.checkScpPercent(scpFileEngineNodeDto, "classpath:agent/zhiqingyun-agent.tar.gz",
+            sparkYunProperties.getTmpDir() + File.separator + "zhiqingyun-agent.tar.gz", engineNode);
+        log.debug("下载安装包成功");
 
-		// 拷贝安装脚本
-		scpFile(scpFileEngineNodeDto, "classpath:bash/agent-install.sh",
-				sparkYunProperties.getTmpDir() + File.separator + "agent-install.sh");
-		log.debug("下载安装脚本成功");
+        // 拷贝安装脚本
+        scpFile(scpFileEngineNodeDto, "classpath:bash/agent-install.sh",
+            sparkYunProperties.getTmpDir() + File.separator + "agent-install.sh");
+        log.debug("下载安装脚本成功");
 
-		// 运行安装脚本
-		String installCommand = "bash " + sparkYunProperties.getTmpDir() + File.separator + "agent-install.sh"
-				+ " --home-path=" + engineNode.getAgentHomePath() + " --agent-port=" + engineNode.getAgentPort();
-		if (engineNode.getInstallSparkLocal() != null) {
-			installCommand = installCommand + " --spark-local=" + engineNode.getInstallSparkLocal();
-		}
+        // 运行安装脚本
+        String installCommand = "bash " + sparkYunProperties.getTmpDir() + File.separator + "agent-install.sh"
+            + " --home-path=" + engineNode.getAgentHomePath() + " --agent-port=" + engineNode.getAgentPort();
+        if (engineNode.getInstallSparkLocal() != null) {
+            installCommand = installCommand + " --spark-local=" + engineNode.getInstallSparkLocal();
+        }
 
-		log.debug("执行远程安装命令:{}", installCommand);
+        log.debug("执行远程安装命令:{}", installCommand);
 
-		executeLog = executeCommand(scpFileEngineNodeDto, installCommand, false);
-		log.debug("远程安装返回值:{}", executeLog);
+        executeLog = executeCommand(scpFileEngineNodeDto, installCommand, false);
+        log.debug("远程安装返回值:{}", executeLog);
 
-		AgentInfo agentInstallInfo = JSON.parseObject(executeLog, AgentInfo.class);
+        AgentInfo agentInstallInfo = JSON.parseObject(executeLog, AgentInfo.class);
 
-		engineNode = clusterNodeService.getClusterNode(engineNode.getId());
-		if ("ERROR".equals(agentInstallInfo.getExecStatus())) {
-			engineNode.setStatus(agentInstallInfo.getExecStatus());
-		} else {
-			engineNode.setStatus(agentInstallInfo.getStatus());
-		}
-		engineNode.setAgentLog(engineNode.getAgentLog() + "\n" + agentInstallInfo.getLog());
-		engineNode.setCheckDateTime(LocalDateTime.now());
-		clusterNodeRepository.saveAndFlush(engineNode);
+        engineNode = clusterNodeService.getClusterNode(engineNode.getId());
+        if ("ERROR".equals(agentInstallInfo.getExecStatus())) {
+            engineNode.setStatus(agentInstallInfo.getExecStatus());
+        } else {
+            engineNode.setStatus(agentInstallInfo.getStatus());
+        }
+        engineNode.setAgentLog(engineNode.getAgentLog() + "\n" + agentInstallInfo.getLog());
+        engineNode.setCheckDateTime(LocalDateTime.now());
+        clusterNodeRepository.saveAndFlush(engineNode);
 
-		// 如果状态是成功的话,将集群改为启用
-		if (ClusterNodeStatus.RUNNING.equals(agentInstallInfo.getStatus())) {
-			Optional<ClusterEntity> byId = clusterRepository.findById(engineNode.getClusterId());
-			ClusterEntity clusterEntity = byId.get();
-			clusterEntity.setStatus(ClusterStatus.ACTIVE);
-			clusterRepository.saveAndFlush(clusterEntity);
-		}
+        // 如果状态是成功的话,将集群改为启用
+        if (ClusterNodeStatus.RUNNING.equals(agentInstallInfo.getStatus())) {
+            Optional<ClusterEntity> byId = clusterRepository.findById(engineNode.getClusterId());
+            ClusterEntity clusterEntity = byId.get();
+            clusterEntity.setStatus(ClusterStatus.ACTIVE);
+            clusterRepository.saveAndFlush(clusterEntity);
+        }
 
-	}
+    }
 }

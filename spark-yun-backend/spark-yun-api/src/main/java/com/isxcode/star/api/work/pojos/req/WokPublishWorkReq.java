@@ -5,9 +5,9 @@ import lombok.Data;
 @Data
 public class WokPublishWorkReq {
 
-	private String corn;
+    private String corn;
 
-	private String content;
+    private String content;
 
-	private String name;
+    private String name;
 }

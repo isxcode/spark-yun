@@ -7,5 +7,5 @@ import lombok.Data;
 @Builder
 public class GetWorkLogRes {
 
-	private String yarnLog;
+    private String yarnLog;
 }

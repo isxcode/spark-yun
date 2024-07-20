@@ -13,5 +13,5 @@ import lombok.NoArgsConstructor;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class EchartEmphasis {
 
-	private EchartItemStyle itemStyle;
+    private EchartItemStyle itemStyle;
 }

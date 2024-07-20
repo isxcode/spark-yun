@@ -11,11 +11,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class JarJobConfig {
 
-	private String jarFileId;
+    private String jarFileId;
 
-	private String mainClass;
+    private String mainClass;
 
-	private String[] args;
+    private String[] args;
 
-	private String appName;
+    private String appName;
 }

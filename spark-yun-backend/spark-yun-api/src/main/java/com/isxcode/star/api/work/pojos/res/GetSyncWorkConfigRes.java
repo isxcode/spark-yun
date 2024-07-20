@@ -15,30 +15,30 @@ import java.util.List;
 @NoArgsConstructor
 public class GetSyncWorkConfigRes {
 
-	private String workId;
+    private String workId;
 
-	private String sourceDBType;
+    private String sourceDBType;
 
-	private String sourceDBId;
+    private String sourceDBId;
 
-	private String sourceTable;
+    private String sourceTable;
 
-	private String partitionColumn;
+    private String partitionColumn;
 
-	private String queryCondition;
+    private String queryCondition;
 
-	private String targetDBType;
+    private String targetDBType;
 
-	private String targetDBId;
+    private String targetDBId;
 
-	private String targetTable;
+    private String targetTable;
 
-	private String overMode;
+    private String overMode;
 
-	private List<SyncColumnInfo> sourceTableColumn;
+    private List<SyncColumnInfo> sourceTableColumn;
 
-	private List<SyncColumnInfo> targetTableColumn;
+    private List<SyncColumnInfo> targetTableColumn;
 
-	private List<SyncColumnMap> columnMap;
+    private List<SyncColumnMap> columnMap;
 
 }

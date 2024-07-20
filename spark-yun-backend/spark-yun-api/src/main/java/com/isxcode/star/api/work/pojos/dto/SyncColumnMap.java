@@ -5,7 +5,7 @@ import lombok.Data;
 @Data
 public class SyncColumnMap {
 
-	private String source;
+    private String source;
 
-	private String target;
+    private String target;
 }

@@ -9,9 +9,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class JpaAuditorConfig implements AuditorAware<String> {
 
-	@Override
-	public Optional<String> getCurrentAuditor() {
+    @Override
+    public Optional<String> getCurrentAuditor() {
 
-		return Optional.ofNullable(USER_ID.get());
-	}
+        return Optional.ofNullable(USER_ID.get());
+    }
 }

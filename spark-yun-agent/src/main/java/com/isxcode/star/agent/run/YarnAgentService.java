@@ -25,354 +25,354 @@ import java.util.regex.Pattern;
 @RequiredArgsConstructor
 public class YarnAgentService implements AgentService {
 
-	private final SparkYunAgentProperties sparkYunAgentProperties;
+    private final SparkYunAgentProperties sparkYunAgentProperties;
 
-	@Override
-	public String getMaster(String sparkHomePath) {
-		return "yarn";
-	}
+    @Override
+    public String getMaster(String sparkHomePath) {
+        return "yarn";
+    }
 
-	@Override
-	public SparkLauncher genSparkLauncher(YagExecuteWorkReq yagExecuteWorkReq) {
+    @Override
+    public SparkLauncher genSparkLauncher(YagExecuteWorkReq yagExecuteWorkReq) {
 
-		String appName = "zhiqingyun-" + yagExecuteWorkReq.getWorkType() + "-" + yagExecuteWorkReq.getWorkId() + "-"
-				+ yagExecuteWorkReq.getWorkInstanceId();
+        String appName = "zhiqingyun-" + yagExecuteWorkReq.getWorkType() + "-" + yagExecuteWorkReq.getWorkId() + "-"
+            + yagExecuteWorkReq.getWorkInstanceId();
 
-		SparkLauncher sparkLauncher;
-		if (WorkType.SPARK_JAR.equals(yagExecuteWorkReq.getWorkType())) {
-			// 如果是自定义作业
-			sparkLauncher = new SparkLauncher().setVerbose(false)
-					.setMainClass(yagExecuteWorkReq.getSparkSubmit().getMainClass()).setDeployMode("cluster")
-					.setAppName(yagExecuteWorkReq.getSparkSubmit().getAppName() + "-" + yagExecuteWorkReq.getWorkType()
-							+ "-" + yagExecuteWorkReq.getWorkId() + "-" + yagExecuteWorkReq.getWorkInstanceId())
-					.setMaster(getMaster(yagExecuteWorkReq.getSparkHomePath()))
-					.setAppResource(yagExecuteWorkReq.getAgentHomePath() + File.separator + "file" + File.separator
-							+ yagExecuteWorkReq.getSparkSubmit().getAppResource())
-					.setSparkHome(yagExecuteWorkReq.getAgentHomePath() + File.separator + "spark-min");
-		} else {
-			sparkLauncher = new SparkLauncher().setVerbose(false)
-					.setMainClass(yagExecuteWorkReq.getSparkSubmit().getMainClass()).setDeployMode("cluster")
-					.setAppName(appName).setMaster(getMaster(yagExecuteWorkReq.getSparkHomePath()))
-					.setAppResource(yagExecuteWorkReq.getAgentHomePath() + File.separator + "plugins" + File.separator
-							+ yagExecuteWorkReq.getSparkSubmit().getAppResource())
-					.setSparkHome(yagExecuteWorkReq.getAgentHomePath() + File.separator + "spark-min");
-		}
+        SparkLauncher sparkLauncher;
+        if (WorkType.SPARK_JAR.equals(yagExecuteWorkReq.getWorkType())) {
+            // 如果是自定义作业
+            sparkLauncher = new SparkLauncher().setVerbose(false)
+                .setMainClass(yagExecuteWorkReq.getSparkSubmit().getMainClass()).setDeployMode("cluster")
+                .setAppName(yagExecuteWorkReq.getSparkSubmit().getAppName() + "-" + yagExecuteWorkReq.getWorkType()
+                    + "-" + yagExecuteWorkReq.getWorkId() + "-" + yagExecuteWorkReq.getWorkInstanceId())
+                .setMaster(getMaster(yagExecuteWorkReq.getSparkHomePath()))
+                .setAppResource(yagExecuteWorkReq.getAgentHomePath() + File.separator + "file" + File.separator
+                    + yagExecuteWorkReq.getSparkSubmit().getAppResource())
+                .setSparkHome(yagExecuteWorkReq.getAgentHomePath() + File.separator + "spark-min");
+        } else {
+            sparkLauncher = new SparkLauncher().setVerbose(false)
+                .setMainClass(yagExecuteWorkReq.getSparkSubmit().getMainClass()).setDeployMode("cluster")
+                .setAppName(appName).setMaster(getMaster(yagExecuteWorkReq.getSparkHomePath()))
+                .setAppResource(yagExecuteWorkReq.getAgentHomePath() + File.separator + "plugins" + File.separator
+                    + yagExecuteWorkReq.getSparkSubmit().getAppResource())
+                .setSparkHome(yagExecuteWorkReq.getAgentHomePath() + File.separator + "spark-min");
+        }
 
-		if (!Strings.isEmpty(yagExecuteWorkReq.getAgentHomePath())) {
-			File[] jarFiles = new File(yagExecuteWorkReq.getAgentHomePath() + File.separator + "lib").listFiles();
-			if (jarFiles != null) {
-				for (File jar : jarFiles) {
-					try {
-						// 使用本地hive驱动
-						if (!jar.getName().contains("hive")) {
-							sparkLauncher.addJar(jar.toURI().toURL().toString());
-						}
-					} catch (MalformedURLException e) {
-						log.error(e.getMessage(), e);
-						throw new IsxAppException("50010", "添加lib中文件异常", e.getMessage());
-					}
-				}
-			}
-		}
+        if (!Strings.isEmpty(yagExecuteWorkReq.getAgentHomePath())) {
+            File[] jarFiles = new File(yagExecuteWorkReq.getAgentHomePath() + File.separator + "lib").listFiles();
+            if (jarFiles != null) {
+                for (File jar : jarFiles) {
+                    try {
+                        // 使用本地hive驱动
+                        if (!jar.getName().contains("hive") && !jar.getName().contains("zhiqingyun-agent.jar")) {
+                            sparkLauncher.addJar(jar.toURI().toURL().toString());
+                        }
+                    } catch (MalformedURLException e) {
+                        log.error(e.getMessage(), e);
+                        throw new IsxAppException("50010", "添加lib中文件异常", e.getMessage());
+                    }
+                }
+            }
+        }
 
-		// 添加额外依赖
-		if (yagExecuteWorkReq.getLibConfig() != null) {
-			yagExecuteWorkReq.getLibConfig().forEach(e -> {
-				String libPath = yagExecuteWorkReq.getAgentHomePath() + File.separator + "file" + File.separator + e
-						+ ".jar";
-				sparkLauncher.addJar(libPath);
-			});
-		}
+        // 添加额外依赖
+        if (yagExecuteWorkReq.getLibConfig() != null) {
+            yagExecuteWorkReq.getLibConfig().forEach(e -> {
+                String libPath =
+                    yagExecuteWorkReq.getAgentHomePath() + File.separator + "file" + File.separator + e + ".jar";
+                sparkLauncher.addJar(libPath);
+            });
+        }
 
-		// 添加自定义函数
-		if (yagExecuteWorkReq.getFuncConfig() != null) {
-			yagExecuteWorkReq.getFuncConfig().forEach(e -> {
-				String libPath = yagExecuteWorkReq.getAgentHomePath() + File.separator + "file" + File.separator
-						+ e.getFileId() + ".jar";
-				sparkLauncher.addJar(libPath);
-			});
-		}
+        // 添加自定义函数
+        if (yagExecuteWorkReq.getFuncConfig() != null) {
+            yagExecuteWorkReq.getFuncConfig().forEach(e -> {
+                String libPath = yagExecuteWorkReq.getAgentHomePath() + File.separator + "file" + File.separator
+                    + e.getFileId() + ".jar";
+                sparkLauncher.addJar(libPath);
+            });
+        }
 
-		if (WorkType.SPARK_JAR.equals(yagExecuteWorkReq.getWorkType())) {
-			sparkLauncher.addAppArgs(yagExecuteWorkReq.getArgs());
-		} else {
-			sparkLauncher.addAppArgs(Base64.getEncoder()
-					.encodeToString(yagExecuteWorkReq.getPluginReq() == null
-							? yagExecuteWorkReq.getArgsStr().getBytes()
-							: JSON.toJSONString(yagExecuteWorkReq.getPluginReq()).getBytes()));
-		}
+        if (WorkType.SPARK_JAR.equals(yagExecuteWorkReq.getWorkType())) {
+            sparkLauncher.addAppArgs(yagExecuteWorkReq.getArgs());
+        } else {
+            sparkLauncher.addAppArgs(Base64.getEncoder()
+                .encodeToString(yagExecuteWorkReq.getPluginReq() == null ? yagExecuteWorkReq.getArgsStr().getBytes()
+                    : JSON.toJSONString(yagExecuteWorkReq.getPluginReq()).getBytes()));
+        }
 
-		// 调整spark.yarn.submit.waitAppCompletion，减少资源消耗
-		sparkLauncher.setConf("spark.yarn.submit.waitAppCompletion", "false");
-		yagExecuteWorkReq.getSparkSubmit().getConf().forEach(sparkLauncher::setConf);
+        // 调整spark.yarn.submit.waitAppCompletion，减少资源消耗
+        sparkLauncher.setConf("spark.yarn.submit.waitAppCompletion", "false");
+        yagExecuteWorkReq.getSparkSubmit().getConf().forEach(sparkLauncher::setConf);
 
-		return sparkLauncher;
-	}
+        return sparkLauncher;
+    }
 
-	public SparkLauncher genSparkLauncher(DeployContainerReq deployContainerReq) {
+    public SparkLauncher genSparkLauncher(DeployContainerReq deployContainerReq) {
 
-		SparkLauncher sparkLauncher = new SparkLauncher().setVerbose(false)
-				.setMainClass(deployContainerReq.getSparkSubmit().getMainClass()).setDeployMode("cluster")
-				.setAppName("zhiqingyun-job").setMaster(getMaster(deployContainerReq.getSparkHomePath()))
-				.setAppResource(deployContainerReq.getAgentHomePath() + File.separator + "plugins" + File.separator
-						+ deployContainerReq.getSparkSubmit().getAppResource())
-				.setSparkHome(deployContainerReq.getAgentHomePath() + File.separator + "spark-min");
+        String appName = "zhiqingyun-SPARK_CONTAINER-" + deployContainerReq.getContainerId();
 
-		if (!Strings.isEmpty(deployContainerReq.getAgentHomePath())) {
-			File[] jarFiles = new File(deployContainerReq.getAgentHomePath() + File.separator + "lib").listFiles();
-			if (jarFiles != null) {
-				for (File jar : jarFiles) {
-					try {
-						// 使用本地hive驱动
-						if (!jar.getName().contains("hive")) {
-							sparkLauncher.addJar(jar.toURI().toURL().toString());
-						}
-					} catch (MalformedURLException e) {
-						log.error(e.getMessage(), e);
-						throw new IsxAppException("50010", "添加lib中文件异常", e.getMessage());
-					}
-				}
-			}
-		}
+        SparkLauncher sparkLauncher = new SparkLauncher().setVerbose(false)
+            .setMainClass(deployContainerReq.getSparkSubmit().getMainClass()).setDeployMode("cluster")
+            .setAppName(appName).setMaster(getMaster(deployContainerReq.getSparkHomePath()))
+            .setAppResource(deployContainerReq.getAgentHomePath() + File.separator + "plugins" + File.separator
+                + deployContainerReq.getSparkSubmit().getAppResource())
+            .setSparkHome(deployContainerReq.getAgentHomePath() + File.separator + "spark-min");
 
-		sparkLauncher.addAppArgs(Base64.getEncoder()
-				.encodeToString(deployContainerReq.getPluginReq() == null
-						? deployContainerReq.getArgs().getBytes()
-						: JSON.toJSONString(deployContainerReq.getPluginReq()).getBytes()));
+        if (!Strings.isEmpty(deployContainerReq.getAgentHomePath())) {
+            File[] jarFiles = new File(deployContainerReq.getAgentHomePath() + File.separator + "lib").listFiles();
+            if (jarFiles != null) {
+                for (File jar : jarFiles) {
+                    try {
+                        // 使用本地hive驱动
+                        if (!jar.getName().contains("hive") && !jar.getName().contains("zhiqingyun-agent.jar")) {
+                            sparkLauncher.addJar(jar.toURI().toURL().toString());
+                        }
+                    } catch (MalformedURLException e) {
+                        log.error(e.getMessage(), e);
+                        throw new IsxAppException("50010", "添加lib中文件异常", e.getMessage());
+                    }
+                }
+            }
+        }
 
-		deployContainerReq.getSparkSubmit().getConf().forEach(sparkLauncher::setConf);
+        sparkLauncher.addAppArgs(Base64.getEncoder()
+            .encodeToString(deployContainerReq.getPluginReq() == null ? deployContainerReq.getArgs().getBytes()
+                : JSON.toJSONString(deployContainerReq.getPluginReq()).getBytes()));
 
-		return sparkLauncher;
-	}
+        deployContainerReq.getSparkSubmit().getConf().forEach(sparkLauncher::setConf);
 
-	@Override
-	public String executeWork(SparkLauncher sparkLauncher) throws IOException {
+        return sparkLauncher;
+    }
 
-		Process launch = sparkLauncher.launch();
-		InputStream inputStream = launch.getErrorStream();
-		BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
+    @Override
+    public String executeWork(SparkLauncher sparkLauncher) throws IOException {
 
-		long timeoutExpiredMs = System.currentTimeMillis() + sparkYunAgentProperties.getSubmitTimeout() * 1000;
+        Process launch = sparkLauncher.launch();
+        InputStream inputStream = launch.getErrorStream();
+        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
 
-		StringBuilder errLog = new StringBuilder();
-		String line;
-		while ((line = reader.readLine()) != null) {
-			errLog.append(line).append("\n");
+        long timeoutExpiredMs = System.currentTimeMillis() + sparkYunAgentProperties.getSubmitTimeout() * 1000;
 
-			long waitMillis = timeoutExpiredMs - System.currentTimeMillis();
-			if (waitMillis <= 0) {
-				launch.destroy();
-				throw new IsxAppException(errLog.toString());
-			}
+        StringBuilder errLog = new StringBuilder();
+        String line;
+        while ((line = reader.readLine()) != null) {
+            errLog.append(line).append("\n");
 
-			String pattern = "Submitted application application_\\d+_\\d+";
-			Pattern regex = Pattern.compile(pattern);
-			Matcher matcher = regex.matcher(line);
-			if (matcher.find()) {
-				return matcher.group().replace("Submitted application ", "");
-			}
-		}
+            long waitMillis = timeoutExpiredMs - System.currentTimeMillis();
+            if (waitMillis <= 0) {
+                launch.destroy();
+                throw new IsxAppException(errLog.toString());
+            }
 
-		try {
-			int exitCode = launch.waitFor();
-			if (exitCode == 1) {
-				throw new IsxAppException(errLog.toString());
-			}
-		} catch (InterruptedException e) {
-			log.error(e.getMessage(), e);
-			throw new IsxAppException(e.getMessage());
-		} finally {
-			launch.destroy();
-		}
+            String pattern = "Submitted application application_\\d+_\\d+";
+            Pattern regex = Pattern.compile(pattern);
+            Matcher matcher = regex.matcher(line);
+            if (matcher.find()) {
+                return matcher.group().replace("Submitted application ", "");
+            }
+        }
 
-		throw new IsxAppException("无法获取applicationId");
-	}
+        try {
+            int exitCode = launch.waitFor();
+            if (exitCode == 1) {
+                throw new IsxAppException(errLog.toString());
+            }
+        } catch (InterruptedException e) {
+            log.error(e.getMessage(), e);
+            throw new IsxAppException(e.getMessage());
+        } finally {
+            launch.destroy();
+        }
 
-	@Override
-	public String getAppStatus(String appId, String sparkHomePath) throws IOException {
+        throw new IsxAppException("无法获取applicationId");
+    }
 
-		String getStatusCmdFormat = "yarn application -status %s";
+    @Override
+    public String getAppStatus(String appId, String sparkHomePath) throws IOException {
 
-		Process process = Runtime.getRuntime().exec(String.format(getStatusCmdFormat, appId));
+        String getStatusCmdFormat = "yarn application -status %s";
 
-		InputStream inputStream = process.getInputStream();
-		BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
+        Process process = Runtime.getRuntime().exec(String.format(getStatusCmdFormat, appId));
 
-		StringBuilder errLog = new StringBuilder();
-		String line;
-		while ((line = reader.readLine()) != null) {
-			errLog.append(line).append("\n");
+        InputStream inputStream = process.getInputStream();
+        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
 
-			String pattern = "Final-State : (\\w+)";
-			Pattern regex = Pattern.compile(pattern);
-			Matcher matcher = regex.matcher(line);
-			if (matcher.find()) {
-				String status = matcher.group(1);
-				if ("UNDEFINED".equals(status)) {
-					status = "RUNNING";
-				}
-				return status;
-			}
-		}
+        StringBuilder errLog = new StringBuilder();
+        String line;
+        while ((line = reader.readLine()) != null) {
+            errLog.append(line).append("\n");
 
-		try {
-			int exitCode = process.waitFor();
-			if (exitCode == 1) {
-				throw new IsxAppException(errLog.toString());
-			}
-		} catch (InterruptedException e) {
-			log.error(e.getMessage(), e);
-			throw new IsxAppException(e.getMessage());
-		}
+            String pattern = "Final-State : (\\w+)";
+            Pattern regex = Pattern.compile(pattern);
+            Matcher matcher = regex.matcher(line);
+            if (matcher.find()) {
+                String status = matcher.group(1);
+                if ("UNDEFINED".equals(status)) {
+                    status = "RUNNING";
+                }
+                return status;
+            }
+        }
 
-		throw new IsxAppException("获取状态异常");
-	}
+        try {
+            int exitCode = process.waitFor();
+            if (exitCode == 1) {
+                throw new IsxAppException(errLog.toString());
+            }
+        } catch (InterruptedException e) {
+            log.error(e.getMessage(), e);
+            throw new IsxAppException(e.getMessage());
+        }
 
-	@Override
-	public String getStdoutLog(String appId, String sparkHomePath) throws IOException {
+        throw new IsxAppException("获取状态异常");
+    }
 
-		String getLogCmdFormat = "yarn logs -applicationId %s";
-		Process process = Runtime.getRuntime().exec(String.format(getLogCmdFormat, appId));
+    @Override
+    public String getStdoutLog(String appId, String sparkHomePath) throws IOException {
 
-		InputStream inputStream = process.getInputStream();
-		BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
+        String getLogCmdFormat = "yarn logs -applicationId %s";
+        Process process = Runtime.getRuntime().exec(String.format(getLogCmdFormat, appId));
 
-		StringBuilder errLog = new StringBuilder();
-		String line;
-		while ((line = reader.readLine()) != null) {
-			errLog.append(line).append("\n");
-		}
+        InputStream inputStream = process.getInputStream();
+        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
 
-		try {
-			int exitCode = process.waitFor();
-			if (exitCode == 1) {
-				throw new IsxAppException(errLog.toString());
-			} else {
-				Pattern regex = Pattern.compile("LogType:stdout-start\\s*([\\s\\S]*?)\\s*End of LogType:stdout");
-				Matcher matcher = regex.matcher(errLog);
-				String log = "";
-				while (matcher.find()) {
-					String tmpLog = matcher.group();
-					if (tmpLog.contains("ERROR")) {
-						log = tmpLog;
-						break;
-					}
-					if (tmpLog.length() > log.length()) {
-						log = tmpLog;
-					}
-				}
-				return log;
-			}
-		} catch (InterruptedException e) {
-			log.error(e.getMessage(), e);
-			throw new IsxAppException(e.getMessage());
-		}
-	}
+        StringBuilder errLog = new StringBuilder();
+        String line;
+        while ((line = reader.readLine()) != null) {
+            errLog.append(line).append("\n");
+        }
 
-	@Override
-	public String getAppLog(String appId, String sparkHomePath) throws IOException {
+        try {
+            int exitCode = process.waitFor();
+            if (exitCode == 1) {
+                throw new IsxAppException(errLog.toString());
+            } else {
+                Pattern regex = Pattern.compile("LogType:stdout-start\\s*([\\s\\S]*?)\\s*End of LogType:stdout");
+                Matcher matcher = regex.matcher(errLog);
+                String log = "";
+                while (matcher.find()) {
+                    String tmpLog = matcher.group();
+                    if (tmpLog.contains("ERROR")) {
+                        log = tmpLog;
+                        break;
+                    }
+                    if (tmpLog.length() > log.length()) {
+                        log = tmpLog;
+                    }
+                }
+                return log;
+            }
+        } catch (InterruptedException e) {
+            log.error(e.getMessage(), e);
+            throw new IsxAppException(e.getMessage());
+        }
+    }
 
-		String getLogCmdFormat = "yarn logs -applicationId %s";
-		Process process = Runtime.getRuntime().exec(String.format(getLogCmdFormat, appId));
+    @Override
+    public String getAppLog(String appId, String sparkHomePath) throws IOException {
 
-		InputStream inputStream = process.getInputStream();
-		BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
+        String getLogCmdFormat = "yarn logs -applicationId %s";
+        Process process = Runtime.getRuntime().exec(String.format(getLogCmdFormat, appId));
 
-		StringBuilder errLog = new StringBuilder();
-		String line;
-		while ((line = reader.readLine()) != null) {
-			errLog.append(line).append("\n");
-		}
+        InputStream inputStream = process.getInputStream();
+        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
 
-		try {
-			int exitCode = process.waitFor();
-			if (exitCode == 1) {
-				throw new IsxAppException(errLog.toString());
-			} else {
-				Pattern regex = Pattern.compile("LogType:stderr\\s*([\\s\\S]*?)\\s*End of LogType:stderr");
-				Matcher matcher = regex.matcher(errLog);
-				String log = "";
-				while (matcher.find()) {
-					String tmpLog = matcher.group();
-					if (tmpLog.contains("ERROR")) {
-						log = tmpLog;
-						break;
-					}
-					if (tmpLog.length() > log.length()) {
-						log = tmpLog;
-					}
-				}
-				return log;
-			}
-		} catch (InterruptedException e) {
-			log.error(e.getMessage(), e);
-			throw new IsxAppException(e.getMessage());
-		}
-	}
+        StringBuilder errLog = new StringBuilder();
+        String line;
+        while ((line = reader.readLine()) != null) {
+            errLog.append(line).append("\n");
+        }
 
-	@Override
-	public String getAppData(String appId, String sparkHomePath) throws IOException {
+        try {
+            int exitCode = process.waitFor();
+            if (exitCode == 1) {
+                throw new IsxAppException(errLog.toString());
+            } else {
+                Pattern regex = Pattern.compile("LogType:stderr\\s*([\\s\\S]*?)\\s*End of LogType:stderr");
+                Matcher matcher = regex.matcher(errLog);
+                String log = "";
+                while (matcher.find()) {
+                    String tmpLog = matcher.group();
+                    if (tmpLog.contains("ERROR")) {
+                        log = tmpLog;
+                        break;
+                    }
+                    if (tmpLog.length() > log.length()) {
+                        log = tmpLog;
+                    }
+                }
+                return log;
+            }
+        } catch (InterruptedException e) {
+            log.error(e.getMessage(), e);
+            throw new IsxAppException(e.getMessage());
+        }
+    }
 
-		String getLogCmdFormat = "yarn logs -applicationId %s";
+    @Override
+    public String getAppData(String appId, String sparkHomePath) throws IOException {
 
-		Process process = Runtime.getRuntime().exec(String.format(getLogCmdFormat, appId));
+        String getLogCmdFormat = "yarn logs -applicationId %s";
 
-		InputStream inputStream = process.getInputStream();
-		BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
+        Process process = Runtime.getRuntime().exec(String.format(getLogCmdFormat, appId));
 
-		StringBuilder errLog = new StringBuilder();
-		String line;
-		while ((line = reader.readLine()) != null) {
-			errLog.append(line).append("\n");
-		}
+        InputStream inputStream = process.getInputStream();
+        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
 
-		try {
-			int exitCode = process.waitFor();
-			if (exitCode == 1) {
-				throw new IsxAppException(errLog.toString());
-			} else {
-				Pattern regex = Pattern.compile("LogType:spark-yun\\s*([\\s\\S]*?)\\s*End of LogType:spark-yun");
-				Matcher matcher = regex.matcher(errLog);
-				String log = "";
-				while (matcher.find() && Strings.isEmpty(log)) {
-					log = matcher.group().replace("LogType:spark-yun\n", "").replace("\nEnd of LogType:spark-yun", "");
-				}
-				return log;
-			}
-		} catch (InterruptedException e) {
-			log.error(e.getMessage(), e);
-			throw new IsxAppException(e.getMessage());
-		}
-	}
+        StringBuilder errLog = new StringBuilder();
+        String line;
+        while ((line = reader.readLine()) != null) {
+            errLog.append(line).append("\n");
+        }
 
-	@Override
-	public void killApp(String appId, String sparkHomePath, String agentHomePath) throws IOException {
+        try {
+            int exitCode = process.waitFor();
+            if (exitCode == 1) {
+                throw new IsxAppException(errLog.toString());
+            } else {
+                Pattern regex = Pattern.compile("LogType:spark-yun\\s*([\\s\\S]*?)\\s*End of LogType:spark-yun");
+                Matcher matcher = regex.matcher(errLog);
+                String log = "";
+                while (matcher.find() && Strings.isEmpty(log)) {
+                    log = matcher.group().replace("LogType:spark-yun\n", "").replace("\nEnd of LogType:spark-yun", "");
+                }
+                return log;
+            }
+        } catch (InterruptedException e) {
+            log.error(e.getMessage(), e);
+            throw new IsxAppException(e.getMessage());
+        }
+    }
 
-		String killAppCmdFormat = "yarn application -kill %s";
-		Process process = Runtime.getRuntime().exec(String.format(killAppCmdFormat, appId));
+    @Override
+    public void killApp(String appId, String sparkHomePath, String agentHomePath) throws IOException {
 
-		InputStream inputStream = process.getInputStream();
-		BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
+        String killAppCmdFormat = "yarn application -kill %s";
+        Process process = Runtime.getRuntime().exec(String.format(killAppCmdFormat, appId));
 
-		StringBuilder errLog = new StringBuilder();
-		String line;
-		while ((line = reader.readLine()) != null) {
-			errLog.append(line).append("\n");
-		}
+        InputStream inputStream = process.getInputStream();
+        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
 
-		try {
-			int exitCode = process.waitFor();
-			if (exitCode == 1) {
-				throw new IsxAppException(errLog.toString());
-			}
-		} catch (InterruptedException e) {
-			log.error(e.getMessage(), e);
-			throw new IsxAppException(e.getMessage());
-		}
-	}
+        StringBuilder errLog = new StringBuilder();
+        String line;
+        while ((line = reader.readLine()) != null) {
+            errLog.append(line).append("\n");
+        }
 
-	@Override
-	public String getAgentName() {
-		return AgentType.YARN;
-	}
+        try {
+            int exitCode = process.waitFor();
+            if (exitCode == 1) {
+                throw new IsxAppException(errLog.toString());
+            }
+        } catch (InterruptedException e) {
+            log.error(e.getMessage(), e);
+            throw new IsxAppException(e.getMessage());
+        }
+    }
+
+    @Override
+    public String getAgentName() {
+        return AgentType.YARN;
+    }
 }

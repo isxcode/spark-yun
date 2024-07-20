@@ -11,17 +11,17 @@ import lombok.Data;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class GetUserRes {
 
-	private String username;
+    private String username;
 
-	private String phone;
+    private String phone;
 
-	private String email;
+    private String email;
 
-	private String remark;
+    private String remark;
 
-	private String token;
+    private String token;
 
-	private String tenantId;
+    private String tenantId;
 
-	private String role;
+    private String role;
 }
