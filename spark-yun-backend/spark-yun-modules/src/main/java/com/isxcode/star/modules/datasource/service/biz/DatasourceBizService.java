@@ -107,6 +107,12 @@ public class DatasourceBizService {
         // 密码对成加密
         datasource.setPasswd(aesUtils.encrypt(datasource.getPasswd()));
 
+        // 如果是kafka数据源，赋予kafka配置
+        if (DatasourceType.KAFKA.equals(datasource.getDbType())) {
+            datasource.setKafkaConfig(
+                JSON.toJSONString(KafkaConfig.builder().bootstrapServers(updateDatasourceReq.getJdbcUrl()).build()));
+        }
+
         // 判断如果是hive数据源，metastore_uris没有填写，附加默认值，thrift://localhost:9083
         if (DatasourceType.HIVE.equals(updateDatasourceReq.getDbType())
             && Strings.isEmpty(updateDatasourceReq.getMetastoreUris())) {
