@@ -480,6 +480,124 @@ public class KubernetesAgentService implements AgentService {
 
     @Override
     public SparkLauncher genSparkLauncher(DeployContainerReq deployContainerReq) throws IOException {
-        throw new IsxAppException("k8s暂不支持");
+
+        String appName = "zhiqingyun-SPARK_CONTAINER-" + deployContainerReq.getContainerId();
+
+        SparkLauncher sparkLauncher = new SparkLauncher().setVerbose(false)
+            .setMainClass(deployContainerReq.getSparkSubmit().getMainClass()).setDeployMode("cluster")
+            .setAppName(appName).setMaster(getMaster(deployContainerReq.getSparkHomePath()))
+            .setAppResource("local:///opt/spark/examples/jars/" + deployContainerReq.getSparkSubmit().getAppResource())
+            .setSparkHome(deployContainerReq.getAgentHomePath() + File.separator + "spark-min");
+
+        if (!Strings.isEmpty(deployContainerReq.getAgentHomePath())) {
+            File[] jarFiles = new File(deployContainerReq.getAgentHomePath() + File.separator + "lib").listFiles();
+            if (jarFiles != null) {
+                for (int i = 0; i < jarFiles.length; i++) {
+                    if (!jarFiles[i].getName().contains("hive")
+                        && !jarFiles[i].getName().contains("zhiqingyun-agent.jar")) {
+                        sparkLauncher.addJar("local:///opt/spark/examples/jars/lib/" + jarFiles[i].getName());
+                        sparkLauncher.setConf("spark.kubernetes.driver.volumes.hostPath." + i + ".mount.path",
+                            "/opt/spark/examples/jars/lib/" + jarFiles[i].getName());
+                        sparkLauncher.setConf("spark.kubernetes.driver.volumes.hostPath." + i + ".options.path",
+                            jarFiles[i].getPath());
+                        sparkLauncher.setConf("spark.kubernetes.executor.volumes.hostPath." + i + ".mount.path",
+                            "/opt/spark/examples/jars/lib/" + jarFiles[i].getName());
+                        sparkLauncher.setConf("spark.kubernetes.executor.volumes.hostPath." + i + ".options.path",
+                            jarFiles[i].getPath());
+                    }
+                }
+            }
+        }
+
+        Map<String, String> pluginSparkConfig = deployContainerReq.getPluginReq().getSparkConfig();
+
+        // 配置域名映射
+        Map<String, String> hostMapping = new HashMap<>();
+        if (Strings.isNotEmpty(pluginSparkConfig.get("qing.host1.name"))
+            && Strings.isNotEmpty(pluginSparkConfig.get("qing.host1.value"))) {
+            hostMapping.put(pluginSparkConfig.get("qing.host1.name"), pluginSparkConfig.get("qing.host1.value"));
+        }
+        if (Strings.isNotEmpty(pluginSparkConfig.get("qing.host2.name"))
+            && Strings.isNotEmpty(pluginSparkConfig.get("qing.host2.value"))) {
+            hostMapping.put(pluginSparkConfig.get("qing.host2.name"), pluginSparkConfig.get("qing.host2.value"));
+        }
+        if (Strings.isNotEmpty(pluginSparkConfig.get("qing.host3.name"))
+            && Strings.isNotEmpty(pluginSparkConfig.get("qing.host3.value"))) {
+            hostMapping.put(pluginSparkConfig.get("qing.host3.name"), pluginSparkConfig.get("qing.host3.value"));
+        }
+        AtomicReference<String> podContent;
+        if (!hostMapping.isEmpty()) {
+            podContent = new AtomicReference<>("apiVersion: v1\n" + "kind: Pod\n" + "metadata:\n" + "  name: host-pod\n"
+                + "spec:\n" + "  hostAliases:\n");
+            hostMapping.forEach((k, v) -> {
+                podContent
+                    .set(podContent + "    - ip: \"" + v + "\"\n      hostnames:\n" + "        - \"" + k + "\"\n");
+            });
+        } else {
+            podContent = null;
+        }
+
+        // deployContainerReq.getPluginReq().setContainerPort(port);
+
+        // 配置hive操作人
+        String hiveUsername = "";
+        if (Strings.isNotEmpty(pluginSparkConfig.get("qing.hive.username"))) {
+            hiveUsername = pluginSparkConfig.get("qing.hive.username");
+        }
+
+        // 删除自定义参数
+        pluginSparkConfig.remove("qing.host1.name");
+        pluginSparkConfig.remove("qing.host1.value");
+        pluginSparkConfig.remove("qing.host2.name");
+        pluginSparkConfig.remove("qing.host2.value");
+        pluginSparkConfig.remove("qing.host3.name");
+        pluginSparkConfig.remove("qing.host3.value");
+        pluginSparkConfig.remove("qing.hive.username");
+        deployContainerReq.getPluginReq().setSparkConfig(pluginSparkConfig);
+
+        sparkLauncher.addAppArgs(Base64.getEncoder()
+            .encodeToString(deployContainerReq.getPluginReq() == null ? deployContainerReq.getArgs().getBytes()
+                : JSON.toJSONString(deployContainerReq.getPluginReq()).getBytes()));
+
+        deployContainerReq.getSparkSubmit().getConf().forEach(sparkLauncher::setConf);
+
+        sparkLauncher.setConf("spark.kubernetes.container.image", "spark:3.4.1");
+        sparkLauncher.setConf("spark.kubernetes.authenticate.driver.serviceAccountName", "zhiqingyun");
+        sparkLauncher.setConf("spark.kubernetes.authenticate.executor.serviceAccountName", "zhiqingyun");
+        sparkLauncher.setConf("spark.kubernetes.namespace", "zhiqingyun-space");
+        sparkLauncher.setConf("spark.kubernetes.driver.volumes.hostPath.jar.mount.path",
+            "/opt/spark/examples/jars/" + deployContainerReq.getSparkSubmit().getAppResource());
+        sparkLauncher.setConf("spark.kubernetes.executor.volumes.hostPath.jar.mount.path",
+            "/opt/spark/examples/jars/" + deployContainerReq.getSparkSubmit().getAppResource());
+
+        // 映射appResource文件
+        sparkLauncher.setConf("spark.kubernetes.driver.volumes.hostPath.jar.options.path",
+            deployContainerReq.getAgentHomePath() + File.separator + "plugins" + File.separator
+                + deployContainerReq.getSparkSubmit().getAppResource());
+        sparkLauncher.setConf("spark.kubernetes.executor.volumes.hostPath.jar.options.path",
+            deployContainerReq.getAgentHomePath() + File.separator + "plugins" + File.separator
+                + deployContainerReq.getSparkSubmit().getAppResource());
+
+        // 配置操作人
+        if (Strings.isNotEmpty(hiveUsername)) {
+            sparkLauncher.setConf("spark.kubernetes.driverEnv.SPARK_USER", hiveUsername);
+            sparkLauncher.setConf("spark.kubernetes.driverEnv.HADOOP_USER_NAME", hiveUsername);
+            sparkLauncher.setConf("spark.executorEnv.SPARK_USER", hiveUsername);
+            sparkLauncher.setConf("spark.executorEnv.HADOOP_USER_NAME", hiveUsername);
+        }
+
+        // 将文本写到pod-init.yaml中
+        if (!hostMapping.isEmpty()) {
+            String podFileName = deployContainerReq.getContainerId() + ".yml";
+            String podPath =
+                deployContainerReq.getAgentHomePath() + File.separator + "pods" + File.separator + podFileName;
+            FileUtil.writeUtf8String(podContent.get(), podPath);
+
+            // 配置pod-init.yaml
+            sparkLauncher.setConf("spark.kubernetes.driver.podTemplateFile", podPath);
+            sparkLauncher.setConf("spark.kubernetes.executor.podTemplateFile", podPath);
+        }
+
+        return sparkLauncher;
     }
 }

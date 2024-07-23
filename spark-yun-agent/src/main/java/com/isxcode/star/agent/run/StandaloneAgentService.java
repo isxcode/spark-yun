@@ -357,9 +357,11 @@ public class StandaloneAgentService implements AgentService {
     @Override
     public SparkLauncher genSparkLauncher(DeployContainerReq deployContainerReq) throws IOException {
 
+        String appName = "zhiqingyun-SPARK_CONTAINER-" + deployContainerReq.getContainerId();
+
         SparkLauncher sparkLauncher = new SparkLauncher().setVerbose(false)
             .setMainClass(deployContainerReq.getSparkSubmit().getMainClass()).setDeployMode("cluster")
-            .setAppName("zhiqingyun-job").setMaster(getMaster(deployContainerReq.getSparkHomePath()))
+            .setAppName(appName).setMaster(getMaster(deployContainerReq.getSparkHomePath()))
             .setAppResource(deployContainerReq.getAgentHomePath() + File.separator + "plugins" + File.separator
                 + deployContainerReq.getSparkSubmit().getAppResource())
             .setSparkHome(deployContainerReq.getAgentHomePath() + File.separator + "spark-min");
