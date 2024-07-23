@@ -29,4 +29,6 @@ public class PageContainerRes {
 
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime createDateTime;
+
+    private String sparkConfig;
 }

@@ -29,7 +29,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="资源类型" prop="resourceLevel">
-        <el-select v-model="formData.resourceLevel" placeholder="请选择" @change="resourceLevelChange">
+        <el-select v-model="formData.resourceLevel" placeholder="请选择">
           <el-option v-for="item in typeList" :key="item.value" :label="item.label" :value="item.value" />
         </el-select>
       </el-form-item>
@@ -183,10 +183,6 @@ function getDataSourceList(e: boolean, searchType?: string) {
       dataSourceList.value = []
     })
   }
-}
-
-function resourceLevelChange(e: string) {
-  formData.sparkConfig = ''
 }
 
 function okEvent() {
