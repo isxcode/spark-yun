@@ -119,6 +119,11 @@ public class SparkJarExecutor extends WorkExecutor {
         // 获取日志构造器
         StringBuilder logBuilder = workRunContext.getLogBuilder();
 
+        // 获取作业jar与lib文件信息并scp至所选节点
+        if (workRunContext.getJarJobConfig() == null) {
+            throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "作业配置异常 : 请检查作业配置 \n");
+        }
+
         // 检测计算集群是否存在
         logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始申请资源 \n");
         if (Strings.isEmpty(workRunContext.getClusterConfig().getClusterId())) {
