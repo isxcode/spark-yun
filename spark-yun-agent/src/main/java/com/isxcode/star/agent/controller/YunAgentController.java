@@ -100,8 +100,6 @@ public class YunAgentController {
     @PostMapping("/containerCheck")
     public ContainerCheckRes containerCheck(@RequestBody ContainerCheckReq containerCheckReq) {
 
-        System.out.println("开始测试");
-        System.out.println(containerCheckReq.toString());
         return yunAgentBizService.containerCheck(containerCheckReq);
     }
 
