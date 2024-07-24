@@ -1,9 +1,7 @@
 package com.isxcode.star.agent.service;
 
-import cn.hutool.core.util.RuntimeUtil;
 import com.alibaba.fastjson.JSON;
 import com.isxcode.star.agent.run.AgentService;
-import com.isxcode.star.api.agent.constants.AgentType;
 import com.isxcode.star.api.agent.pojos.req.*;
 import com.isxcode.star.api.agent.pojos.res.*;
 import com.isxcode.star.api.agent.pojos.req.YagExecuteWorkReq;
@@ -130,17 +128,6 @@ public class YunAgentBizService {
     }
 
     public ContainerCheckRes containerCheck(ContainerCheckReq containerCheckReq) {
-
-        System.out.println("containerCheckReq.toString()" + containerCheckReq.toString());
-
-        // 如果是k8s容器，在check之前，挂载端口号映射
-        if (AgentType.K8S.equals(containerCheckReq.getAgentType())) {
-            String mapK8sPortShell = "kubectl port-forward " + containerCheckReq.getAppId() + " "
-                + containerCheckReq.getPort() + ":" + containerCheckReq.getPort() + " -n zhiqingyun-space &";
-            System.out.println("mapK8sPortShell:" + mapK8sPortShell);
-            String s = RuntimeUtil.execForStr(mapK8sPortShell);
-            System.out.println("s:" + s);
-        }
 
         try {
             ResponseEntity<ContainerCheckRes> forEntity = new RestTemplate()
