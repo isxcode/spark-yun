@@ -152,7 +152,7 @@ const transform: AxiosTransform = {
     if (!isCancel && response) {
       const status = response.status
       const msg = response.data && response.data.message ? response.data.message : message
-      checkStatus(status, msg, showErrorMessage)
+      checkStatus(status, msg, showErrorMessage, response)
     } else {
       console.warn(error, '请求被取消！')
     }
