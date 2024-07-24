@@ -12,4 +12,8 @@ import lombok.RequiredArgsConstructor;
 public class ContainerCheckReq {
 
     private String port;
+
+    private String appId;
+
+    private String agentType;
 }
