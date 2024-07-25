@@ -70,9 +70,11 @@
           trigger="hover"
           popper-class="message-error-tooltip"
           :content="testResult?.log"
+          :disabled="testResult?.status === 'SUCCESS'"
         >
           <template #reference>
-            <el-icon class="hover-tooltip" v-if="testResult?.status === 'FAIL'"><Warning /></el-icon>
+            <el-icon class="hover-tooltip" v-if="testResult?.status === 'FAIL'"><WarningFilled /></el-icon>
+            <el-icon class="hover-tooltip success" v-else-if="testResult?.status === 'SUCCESS'"><SuccessFilled /></el-icon>
           </template>
         </el-popover>
       </div>
@@ -281,7 +283,10 @@ defineExpose({
   .hover-tooltip {
     margin-left: 8px;
     font-size: 16px;
-    color: getCssVar('color', 'danger', 'light-5');
+    color: getCssVar('color', 'danger');
+    &.success {
+      color: getCssVar('color', 'success');
+    }
   }
 }
 .message-error-tooltip {
