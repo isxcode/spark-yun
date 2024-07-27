@@ -164,4 +164,7 @@ function columnSlotAdapter(column: any, colConfig: any) {
     text-align: center;
   }
 }
+.vxe-table--loading .vxe-table--loading-wrapper {
+  color: getCssVar('color', 'primary');
+}
 </style>
