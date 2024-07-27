@@ -51,11 +51,12 @@
     background-color: getCssVar('color', 'white');
     transition: width getCssVar('transition-duration') ease-in-out;
     border-right: 1px solid var(--el-border-color);
+    z-index: 999;
   }
 
   .zqy-home__main {
     width: 100vw;
-    padding-left: 220px;
+    padding-left: 80px;
     box-sizing: border-box;
     transition: all getCssVar('transition-duration') ease-in-out;
     // padding-bottom: 24px;
