@@ -150,6 +150,12 @@
                       重新运行
                     </el-dropdown-item>
                     <el-dropdown-item
+                      v-if="scopeSlot.row.status === 'RUNNING' && scopeSlot.row.instanceType === 'WORK'"
+                      @click="stopWork(scopeSlot.row)"
+                    >
+                      中止
+                    </el-dropdown-item>
+                    <el-dropdown-item
                       v-if="scopeSlot.row.status === 'SUCCESS' && scopeSlot.row.workType !== 'EXE_JDBC'"
                       @click="showDetailModal(scopeSlot.row, 'result')"
                     >
@@ -203,7 +209,7 @@ import DagDetail from './dag-detail/index.vue'
 import { BreadCrumbList, TableConfig, TableConfigWorkFlow } from './schedule.config'
 import { GetScheduleList, DeleteScheduleLog, ReStartRunning, GetScheduleWorkFlowList } from '@/services/schedule.service'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { ReRunWorkflow, StopWorkflowData } from '@/services/workflow.service'
+import { ReRunWorkflow, StopWorkflowData, TerWorkItemConfig } from '@/services/workflow.service'
 import { TypeList } from '../workflow/workflow.config'
 
 const breadCrumbList = reactive(BreadCrumbList)
@@ -324,6 +330,17 @@ function retry(data: any) {
   ReStartRunning({
     instanceId: data.id
   })
+    .then((res: any) => {
+      ElMessage.success(res.msg)
+      initData()
+    })
+    .catch((error: any) => {
+      console.error(error)
+    })
+}
+
+function stopWork(data: any) {
+  TerWorkItemConfig({instanceId: data.id})
     .then((res: any) => {
       ElMessage.success(res.msg)
       initData()
