@@ -185,7 +185,7 @@ public class DatasourceBizService {
                     datasource.setStatus(DatasourceStatus.FAIL);
                     datasource.setConnectLog("测试连接失败: 请检查连接协议");
                     datasourceRepository.save(datasource);
-                    return new TestConnectRes(false, "测试连接失败: 请检查连接协议");
+                    return new TestConnectRes(false, "请检查连接协议");
                 }
             } catch (Exception e) {
                 log.debug(e.getMessage(), e);
