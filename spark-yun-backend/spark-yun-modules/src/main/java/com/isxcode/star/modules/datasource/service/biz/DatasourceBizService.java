@@ -181,6 +181,11 @@ public class DatasourceBizService {
                     datasource.setConnectLog("测试连接成功！");
                     datasourceRepository.save(datasource);
                     return new TestConnectRes(true, "连接成功");
+                } else {
+                    datasource.setStatus(DatasourceStatus.FAIL);
+                    datasource.setConnectLog("测试连接失败: 请检查连接协议");
+                    datasourceRepository.save(datasource);
+                    return new TestConnectRes(false, "请检查连接协议");
                 }
             } catch (Exception e) {
                 log.debug(e.getMessage(), e);
@@ -191,7 +196,6 @@ public class DatasourceBizService {
                 return new TestConnectRes(false, e.getMessage());
             }
         }
-        return new TestConnectRes(false, "连接失败");
     }
 
     public GetConnectLogRes getConnectLog(GetConnectLogReq getConnectLogReq) {
