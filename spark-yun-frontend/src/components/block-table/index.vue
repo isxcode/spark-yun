@@ -135,6 +135,11 @@ function columnSlotAdapter(column: any, colConfig: any) {
   .vxe-table--empty-content {
     height: 132px;
   }
+  .vxe-loading {
+    .vxe-loading--chunk {
+      color: getCssVar('color', 'primary');
+    }
+  }
 }
 .pagination {
   display: flex;
@@ -163,8 +168,5 @@ function columnSlotAdapter(column: any, colConfig: any) {
   .el-select-dropdown__item {
     text-align: center;
   }
-}
-.vxe-table--loading .vxe-table--loading-wrapper {
-  color: getCssVar('color', 'primary');
 }
 </style>
