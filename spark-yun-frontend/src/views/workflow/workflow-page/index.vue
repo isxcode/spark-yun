@@ -965,6 +965,7 @@ onUnmounted(() => {
     .flow-container {
         width: 100%;
         max-width: calc(100vw - 282px);
+        background-color: getCssVar('color', 'white');
 
         .option-btns {
             height: 51px;

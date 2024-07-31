@@ -1,55 +1,55 @@
 <template>
     <div class="zqy-work-item zqy-spark-jar">
+        <div class="header-options">
+            <div class="btn-box" @click="goBack">
+                <el-icon>
+                    <RefreshLeft />
+                </el-icon>
+                <span class="btn-text">返回</span>
+            </div>
+            <div class="btn-box" @click="runWorkData">
+                <el-icon v-if="!runningLoading">
+                    <VideoPlay />
+                </el-icon>
+                <el-icon v-else class="is-loading">
+                    <Loading />
+                </el-icon>
+                <span class="btn-text">运行</span>
+            </div>
+            <div v-if="workConfig.workType === 'SPARK_JAR'" class="btn-box" @click="terWorkData">
+                <el-icon v-if="!terLoading">
+                    <Close />
+                </el-icon>
+                <el-icon v-else class="is-loading">
+                    <Loading />
+                </el-icon>
+                <span class="btn-text">中止</span>
+            </div>
+            <div class="btn-box" @click="saveData">
+                <el-icon v-if="!saveLoading">
+                    <Finished />
+                </el-icon>
+                <el-icon v-else class="is-loading">
+                    <Loading />
+                </el-icon>
+                <span class="btn-text">保存</span>
+            </div>
+            <div class="btn-box" @click="setConfigData">
+                <el-icon>
+                    <Setting />
+                </el-icon>
+                <span class="btn-text">配置</span>
+            </div>
+            <div class="btn-box" @click="locationNode">
+                <el-icon>
+                    <Position />
+                </el-icon>
+                <span class="btn-text">定位</span>
+            </div>
+        </div>
         <LoadingPage :visible="loading" :network-error="networkError" @loading-refresh="initData">
-            <div class="zqy-work-container">
+            <div class="zqy-work-container jar-work-container">
                 <div class="sql-code-container">
-                    <div class="sql-option-container">
-                        <div class="btn-box" @click="goBack">
-                            <el-icon>
-                                <RefreshLeft />
-                            </el-icon>
-                            <span class="btn-text">返回</span>
-                        </div>
-                        <div class="btn-box" @click="runWorkData">
-                            <el-icon v-if="!runningLoading">
-                                <VideoPlay />
-                            </el-icon>
-                            <el-icon v-else class="is-loading">
-                                <Loading />
-                            </el-icon>
-                            <span class="btn-text">运行</span>
-                        </div>
-                        <div v-if="workConfig.workType === 'SPARK_JAR'" class="btn-box" @click="terWorkData">
-                            <el-icon v-if="!terLoading">
-                                <Close />
-                            </el-icon>
-                            <el-icon v-else class="is-loading">
-                                <Loading />
-                            </el-icon>
-                            <span class="btn-text">中止</span>
-                        </div>
-                        <div class="btn-box" @click="saveData">
-                            <el-icon v-if="!saveLoading">
-                                <Finished />
-                            </el-icon>
-                            <el-icon v-else class="is-loading">
-                                <Loading />
-                            </el-icon>
-                            <span class="btn-text">保存</span>
-                        </div>
-                        <div class="btn-box" @click="setConfigData">
-                            <el-icon>
-                                <Setting />
-                            </el-icon>
-                            <span class="btn-text">配置</span>
-                        </div>
-                        <div class="btn-box" @click="locationNode">
-                            <el-icon>
-                                <Position />
-                            </el-icon>
-                            <span class="btn-text">定位</span>
-                        </div>
-                    </div>
                     <!-- 这里是表单部分 -->
                     <el-form ref="form" label-position="top" label-width="70px" :model="jarJobConfig" :rules="rules">
                         <el-row :gutter="24">
@@ -428,8 +428,57 @@ onMounted(() => {
 
 <style lang="scss">
 .zqy-spark-jar {
+    position: relative;
+    background-color: getCssVar('color', 'white');
     .zqy-loading {
+        box-sizing: border-box;
         overflow-y: auto;
+        margin-top: 50px;
+        height: calc(100vh - 105px);
+
+        .jar-work-container {
+            .sql-code-container {
+                margin-top: 12px;
+            }
+        }
+    }
+    .header-options {
+        position: absolute;
+        top: -50px;
+        left: 0;
+        padding-left: 18px;
+        z-index: 500;
+
+        display: flex;
+        align-items: center;
+        background-color: getCssVar('color', 'white');
+        width: 100%;
+
+        height: 50px;
+        display: flex;
+        align-items: center;
+        color: getCssVar('color', 'primary', 'light-5');
+        border-bottom: 1px solid getCssVar('border-color');
+
+        .btn-box {
+          font-size: getCssVar('font-size', 'extra-small');
+          display: flex;
+          cursor: pointer;
+          width: 48px;
+          margin-right: 8px;
+
+          &.btn-box__4 {
+            width: 70px;
+          }
+
+          .btn-text {
+            margin-left: 4px;
+          }
+
+          &:hover {
+            color: getCssVar('color', 'primary');;
+          }
+        }
     }
     .jar-args-container {
         margin-bottom: 0;
@@ -476,11 +525,6 @@ onMounted(() => {
                     }
                 }
             }
-        }
-    }
-    .log-show-jar {
-        .show-container {
-            max-height: calc(100vh - 488px);
         }
     }
 }
