@@ -61,12 +61,12 @@
                                 <template #dropdown>
                                     <el-dropdown-menu>
                                         <el-dropdown-item @click="editData(work)">编辑</el-dropdown-item>
-                                        <el-dropdown-item
+                                        <!-- <el-dropdown-item
                                             v-if="containerType === 'flow'"
                                             @click="changeContianer(work, 'config')"
                                         >
                                             作业配置
-                                        </el-dropdown-item>
+                                        </el-dropdown-item> -->
                                         <el-dropdown-item @click="deleteData(work)">删除</el-dropdown-item>
                                         <el-dropdown-item @click="copyData(work)">复制</el-dropdown-item>
                                         <!-- <el-dropdown-item>导出</el-dropdown-item>
