@@ -342,6 +342,9 @@ function runWorkData() {
         type: 'warning'
         }).then(() => {
             btnLoadingConfig.runningLoading = true
+            // 运行自动切换到提交日志
+            tabChangeEvent('PublishLog')
+
             RunWorkItemConfig({
                 workId: props.workItemConfig.id
             }).then((res: any) => {
@@ -351,7 +354,6 @@ function runWorkData() {
                     containerInstanceRef.value.initData(instanceId.value)
                 })
                 btnLoadingConfig.runningLoading = false
-                // initData(res.data.instanceId)
                 nextTick(() => {
                     changeCollapseUp()
                 })
@@ -361,6 +363,9 @@ function runWorkData() {
         })
     } else {
         btnLoadingConfig.runningLoading = true
+        // 运行自动切换到提交日志
+        tabChangeEvent('PublishLog')
+
         RunWorkItemConfig({
             workId: props.workItemConfig.id
         }).then((res: any) => {
