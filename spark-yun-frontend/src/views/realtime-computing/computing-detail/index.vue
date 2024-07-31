@@ -332,9 +332,11 @@ function startComputing() {
         cancelButtonText: '取消',
         type: 'warning'
         }).then(() => {
+            tabChangeEvent('PublishLog')
             runTimeFunc()
         })
     } else {
+        tabChangeEvent('PublishLog')
         runTimeFunc()
     }
 }
