@@ -886,14 +886,10 @@ onUnmounted(() => {
 
                     .list-item {
                         height: 52px;
-                        // height: getCssVar('menu', 'item-height');
-                        // line-height: getCssVar('menu', 'item-height');
-                        // padding-left: 12px;
                         padding-right: 12px;
                         box-sizing: border-box;
                         border: 1px solid getCssVar('border-color');
                         border-radius: 8px;
-                        // padding-left: 8px;
                         cursor: pointer;
                         font-size: getCssVar('font-size', 'extra-small');
                         position: relative;
@@ -901,11 +897,6 @@ onUnmounted(() => {
                         align-items: center;
                         margin-bottom: 8px;
                         box-shadow: getCssVar('box-shadow', 'lighter');
-
-                        // .item-left {
-                        //     font-size: 16px;
-                        //     margin-left: 12px;
-                        // }
 
                         .item-right {
                             margin-left: 8px;

@@ -90,7 +90,7 @@
                         </el-form-item>
                     </el-form>
                 </div>
-                <div class="log-show log-show-datasync">
+                <div class="log-show log-show-jar">
                     <el-tabs v-model="activeName" @tab-change="tabChangeEvent">
                         <template v-for="tab in tabList" :key="tab.code">
                             <el-tab-pane v-if="!tab.hide" :label="tab.name" :name="tab.code" />
@@ -476,6 +476,11 @@ onMounted(() => {
                     }
                 }
             }
+        }
+    }
+    .log-show-jar {
+        .show-container {
+            max-height: calc(100vh - 488px);
         }
     }
 }
