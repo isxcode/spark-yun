@@ -18,10 +18,6 @@
 
     .zqy-home__main {
       padding-left: 80px;
-      // 适配输入框穿透问题
-      .flow-container {
-        max-width: calc(100vw - 282px);
-      }
     }
 
     .zqy-home__menu-footer {
@@ -60,10 +56,6 @@
     padding-left: 80px;
     box-sizing: border-box;
     transition: all getCssVar('transition-duration') ease-in-out;
-    // padding-bottom: 24px;
-    .flow-container {
-      max-width: calc(100vw - 422px);
-    }
   }
 
   .zqy-home__nav {
