@@ -207,10 +207,12 @@ public class WorkConfigBizService {
             clusterConfig.getSparkConfig().put("hive.metastore.uris", hiveMetaStoreUris);
         }
 
-        // 补上spark.executor.instances
+        // 根据分区配置修改并发数instances
         if (!Strings.isEmpty(workConfig.getSyncRule()) && !Strings.isEmpty(workConfig.getSyncWorkConfig())) {
             SyncRule syncRule = JSON.parseObject(workConfig.getSyncRule(), SyncRule.class);
             clusterConfig.getSparkConfig().put("spark.executor.instances",
+                String.valueOf(syncRule.getNumConcurrency()));
+            clusterConfig.getSparkConfig().put("spark.cores.max",
                 String.valueOf(syncRule.getNumConcurrency()));
         }
 
