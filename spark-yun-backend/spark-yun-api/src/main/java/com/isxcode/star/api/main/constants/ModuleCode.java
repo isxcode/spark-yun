@@ -53,7 +53,7 @@ public interface ModuleCode {
     /**
      * 许可证模块.
      */
-    String LICENSE = "/lic";
+    String LICENSE = "/vip/lic";
 
     /**
      * 资源文件模块.
