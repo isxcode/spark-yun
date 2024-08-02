@@ -97,6 +97,12 @@ public class DatasourceService {
         return datasourceRepository.findById(datasourceId).orElseThrow(() -> new IsxAppException("数据源不存在"));
     }
 
+    public String getDatasourceName(String datasourceId) {
+
+        DatasourceEntity datasource = datasourceRepository.findById(datasourceId).orElse(null);
+        return datasource == null ? datasourceId : datasource.getName();
+    }
+
     public Connection getDbConnection(DatasourceEntity datasource) throws SQLException {
 
         // 判断驱动是否已经加载

@@ -21,4 +21,10 @@ public class UserService {
 
         return userRepository.findById(userId).orElseThrow(() -> new IsxAppException("用户不存在"));
     }
+
+    public String getUserName(String userId) {
+
+        UserEntity user = userRepository.findById(userId).orElse(null);
+        return user == null ? userId : user.getUsername();
+    }
 }
