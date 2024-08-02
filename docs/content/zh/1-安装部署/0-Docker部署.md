@@ -4,6 +4,18 @@ title: "Docker部署"
 
 ### [Docker Hub 链接](https://hub.docker.com/r/isxcode/zhiqingyun)
 
+> 国内阿里云镜像地址
+
+```bash
+# amd64架构
+docker pull registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun:latest-amd64
+docker run -p 8080:8080 registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun:latest-amd64
+
+# arm64架构
+docker pull registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun:latest-arm64
+docker run -p 8080:8080 registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun:latest-arm64
+```
+
 ##### 1. 将配置文件和资源文件拷贝出来
 
 ```bash
