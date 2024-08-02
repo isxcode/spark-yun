@@ -177,3 +177,38 @@ jobs:
           bucket: isxcode
           source-dir: 'distributions'
           dest-dir: 'zhiqingyun'
+
+  upload-ali:
+      needs: build
+
+      runs-on: ubuntu-latest
+
+      permissions:
+        contents: read
+        packages: write
+        id-token: write
+
+      steps:
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          registry: registry.cn-shanghai.aliyuncs.com
+          username: ispong
+          password: ${{ secrets.ALI_DOCKERHUB_TOKEN }}
+
+      - name: Pull docker images
+        run: |
+          docker pull --platform=linux/amd64 isxcode/zhiqingyun
+          docker tag isxcode/zhiqingyun registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun:latest-amd64
+          docker push registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun:latest-amd64
+          docker rmi isxcode/zhiqingyun
+          docker pull --platform=linux/arm64 isxcode/zhiqingyun
+          docker tag isxcode/zhiqingyun registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun:latest-arm64
+          docker push registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun:latest-arm64

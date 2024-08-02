@@ -46,7 +46,7 @@ public class WorkConfigEntity {
 
     private String syncWorkConfig;
 
-    private String ApiWorkConfig;
+    private String apiWorkConfig;
 
     private String syncRule;
 
