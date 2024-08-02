@@ -456,7 +456,9 @@ public class WorkBizService {
 
         if (!Strings.isEmpty(workConfig.getSyncRule())) {
             getWorkRes.setSyncRule(JSON.parseObject(workConfig.getSyncRule(), SyncRule.class));
-            getWorkRes.getSyncRule().setSqlConfigJson(JSON.toJSONString(getWorkRes.getSyncRule().getSqlConfig()));
+            if (getWorkRes.getSyncRule().getSqlConfig() != null) {
+                getWorkRes.getSyncRule().setSqlConfigJson(JSON.toJSONString(getWorkRes.getSyncRule().getSqlConfig()));
+            }
         }
 
         // 翻译依赖配置
