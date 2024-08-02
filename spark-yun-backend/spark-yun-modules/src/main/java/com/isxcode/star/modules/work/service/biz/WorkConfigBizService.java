@@ -212,8 +212,7 @@ public class WorkConfigBizService {
             SyncRule syncRule = JSON.parseObject(workConfig.getSyncRule(), SyncRule.class);
             clusterConfig.getSparkConfig().put("spark.executor.instances",
                 String.valueOf(syncRule.getNumConcurrency()));
-            clusterConfig.getSparkConfig().put("spark.cores.max",
-                String.valueOf(syncRule.getNumConcurrency()));
+            clusterConfig.getSparkConfig().put("spark.cores.max", String.valueOf(syncRule.getNumConcurrency()));
         }
 
         return clusterConfig;
