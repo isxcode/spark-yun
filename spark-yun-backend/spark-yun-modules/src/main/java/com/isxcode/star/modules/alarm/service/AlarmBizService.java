@@ -93,7 +93,7 @@ public class AlarmBizService {
 
         // 翻译创建人名称
         result.getContent().forEach(e -> {
-            e.setCreateByUsername(userService.getUser(e.getCreateBy()).getUsername());
+            e.setCreateByUsername(userService.getUserName(e.getCreateBy()));
             MessageConfig messageConfig = JSON.parseObject(e.getMsgConfig(), MessageConfig.class);
             messageConfig.setAccessKeySecret("");
             messageConfig.setPassword("");
@@ -192,7 +192,7 @@ public class AlarmBizService {
         // 翻译消息体
         result.getContent().forEach(e -> {
             e.setMsgName(alarmService.getMessageName(e.getMsgId()));
-            e.setCreateByUsername(userService.getUser(e.getCreateBy()).getUsername());
+            e.setCreateByUsername(userService.getUserName(e.getCreateBy()));
             List<String> receiverList = JSON.parseArray(e.getReceiverList(), String.class);
             List<UserEntity> receiverUsers = userRepository.findAllById(receiverList);
             e.setReceiverUsers(userMapper.userEntityToUserInfo(receiverUsers));

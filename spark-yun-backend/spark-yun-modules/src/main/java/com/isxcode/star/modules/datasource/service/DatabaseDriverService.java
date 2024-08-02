@@ -18,4 +18,10 @@ public class DatabaseDriverService {
 
         return databaseDriverRepository.findById(driverId).orElseThrow(() -> new IsxAppException("数据源驱动不存在"));
     }
+
+    public String getDriverName(String driverId) {
+
+        DatabaseDriverEntity databaseDriver = databaseDriverRepository.findById(driverId).orElse(null);
+        return databaseDriver == null ? driverId : databaseDriver.getName();
+    }
 }
