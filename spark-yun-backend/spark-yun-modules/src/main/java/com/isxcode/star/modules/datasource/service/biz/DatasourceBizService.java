@@ -138,9 +138,8 @@ public class DatasourceBizService {
             datasourceEntityPage.map(datasourceMapper::datasourceEntityToQueryDatasourceRes);
         pageDatasourceRes.getContent().forEach(e -> {
             if (!Strings.isEmpty(e.getDriverId())) {
-                Optional<DatabaseDriverEntity> databaseDriver = databaseDriverRepository.findById(e.getDriverId());
-                if (databaseDriver.isPresent()) {
-                    e.setDriverName(databaseDriver.get().getName());
+                if (!Strings.isEmpty(e.getDriverId())) {
+                    e.setDriverName(databaseDriverService.getDriverName(e.getDriverId()));
                 }
             }
         });

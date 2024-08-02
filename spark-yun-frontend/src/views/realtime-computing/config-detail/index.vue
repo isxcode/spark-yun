@@ -1,7 +1,7 @@
 <template>
   <BlockDrawer :drawer-config="drawerConfig">
     <el-scrollbar>
-        <div class="work-flow-config">
+        <div class="work-flow-config realtime-flow-config">
           <!-- 资源配置 -->
           <div class="config-item">
             <div class="item-title">资源配置</div>
@@ -27,6 +27,10 @@
                     :value="item.value"
                   />
                 </el-select>
+              </el-form-item>
+              <el-form-item label="sparkConfig" :class="{ 'show-screen__full': sparkJsonFullStatus }">
+                  <el-icon class="modal-full-screen" @click="fullScreenEvent('sparkJsonFullStatus')"><FullScreen v-if="!sparkJsonFullStatus" /><Close v-else /></el-icon>
+                  <code-mirror v-model="clusterConfig.sparkConfigJson" basic :lang="lang"/>
               </el-form-item>
               <!-- <el-form-item label="sparkConfig" v-if="clusterConfig.setMode === 'ADVANCE'">
                 <code-mirror v-model="clusterConfig.sparkConfigJson" basic :lang="lang"/>
@@ -104,6 +108,8 @@ const clusterNodeList = ref([])  // 集群节点
 const clusterConfigForm = ref<FormInstance>()
 const lang = ref<any>(json())
 const resourceLevelOptions = ref(ResourceLevelOptions) // 资源等级
+// 输入框全屏
+const sparkJsonFullStatus = ref(false)
 
 const drawerConfig = reactive({
   title: '配置',
@@ -200,25 +206,7 @@ function getClusterList() {
     clusterList.value = []
   })
 }
-function getClusterNodeList(e: boolean) {
-  if (e && clusterConfig.clusterId) {
-    GetComputerPointData({
-      page: 0,
-      pageSize: 10000,
-      searchKeyWord: '',
-      clusterId: clusterConfig.clusterId
-    }).then((res: any) => {
-      clusterNodeList.value = res.data.content.map((item: any) => {
-        return {
-          label: item.name,
-          value: item.id
-        }
-      })
-    }).catch(() => {
-      clusterNodeList.value = []
-    })
-  }
-}
+
 function clusterIdChangeEvent() {
   clusterConfig.clusterNodeId = ''
 }
@@ -233,8 +221,8 @@ function getConfigDetailData() {
     //       clusterConfig[key] = res.data.clusterConfig[key]
     //     }
     //   })
-    //   clusterConfig.sparkConfigJson = jsonFormatter(clusterConfig.sparkConfigJson)
     // }
+    clusterConfig.sparkConfigJson = jsonFormatter(res.data.sparkConfigJson || res.data.sparkConfig)
     clusterConfig.clusterId = res.data.clusterId
     fileConfig.funcList = res.data.funcConfig || []
     fileConfig.libList = res.data.libConfig || []
@@ -258,6 +246,7 @@ function okEvent() {
       ConifgTimeComputingData({
         realId: workItemConfig.value.id,
         clusterId: clusterConfig.clusterId,
+        sparkConfigJson: clusterConfig.sparkConfigJson,
         ...fileConfig
       }).then((res: any) => {
         ElMessage.success('保存成功')
@@ -270,6 +259,12 @@ function okEvent() {
     }
   })
 }
+// 全屏
+function fullScreenEvent(type: string) {
+  if (type === 'sparkJsonFullStatus') {
+    sparkJsonFullStatus.value = !sparkJsonFullStatus.value
+  }
+}
 
 function closeEvent() {
   drawerConfig.visible = false;
@@ -281,8 +276,46 @@ defineExpose({
 </script>
 
 <style lang="scss">
-.work-flow-config {
+.realtime-flow-config {
   padding: 12px;
+
+  &.realtime-flow-config {
+    .el-form-item {
+      position: relative;
+      // 全屏样式
+      &.show-screen__full {
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        background-color: #ffffff;
+        padding: 12px 20px;
+        box-sizing: border-box;
+        transition: all 0.15s linear;
+        z-index: 10;
+        display: flex;
+        flex-direction: column;
+        .el-form-item__content {
+          align-items: flex-start;
+          height: 100%;
+          margin-top: 18px;
+          .modal-full-screen {
+            top: -36px;
+            right: 0;
+            left: unset;
+          }
+          .vue-codemirror {
+            height: calc(100% - 48px);
+          }
+        }
+      }
+      .modal-full-screen {
+          top: 9px;
+          left: 24px;
+      }
+    }
+  }
   .config-item {
     .item-title {
       font-size: 12px;

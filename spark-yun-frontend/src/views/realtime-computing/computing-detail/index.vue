@@ -142,7 +142,7 @@
         <el-collapse v-if="!!instanceId" v-model="collapseActive" class="data-sync-log__collapse" ref="logCollapseRef">
             <el-collapse-item title="查看日志" :disabled="true" name="1">
                 <template #title>
-                    <el-tabs v-model="activeName" @tab-change="tabChangeEvent">
+                    <el-tabs v-model="activeName" @tab-click="changeCollapseUp" @tab-change="tabChangeEvent">
                         <template v-for="tab in tabList" :key="tab.code">
                         <el-tab-pane v-if="!tab.hide" :label="tab.name" :name="tab.code" />
                         </template>
@@ -332,9 +332,11 @@ function startComputing() {
         cancelButtonText: '取消',
         type: 'warning'
         }).then(() => {
+            tabChangeEvent('PublishLog')
             runTimeFunc()
         })
     } else {
+        tabChangeEvent('PublishLog')
         runTimeFunc()
     }
 }

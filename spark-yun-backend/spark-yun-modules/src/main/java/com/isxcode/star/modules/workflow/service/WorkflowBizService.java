@@ -188,7 +188,7 @@ public class WorkflowBizService {
         // 翻译集群名称
         pageWorkflowRes.getContent().forEach(e -> {
             if (!Strings.isEmpty(e.getDefaultClusterId())) {
-                e.setClusterName(clusterRepository.findById(e.getDefaultClusterId()).get().getName());
+                e.setClusterName(clusterService.getClusterName(e.getDefaultClusterId()));
             }
         });
 

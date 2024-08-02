@@ -22,8 +22,8 @@ fi
 
 # 检查pnpm命令
 if ! command -v pnpm &>/dev/null; then
-   echo "【安装结果】：未检测到pnpm命令，请安装pnpm，参考命令：npm install pnpm@9.0.6 -g"
-   exit 1
+   echo "【提示】：未检测到pnpm命令，已经执行命令: npm install pnpm@9.0.6 -g"
+   npm install pnpm@9.0.6 -g
 fi
 
 # 进入项目目录
