@@ -31,8 +31,8 @@ export const httpOption = {
     }
   },
   requestOptions: {
-    urlPrefix: 'http://isxcode.com:30211',
-    // urlPrefix: import.meta.env.VITE_VUE_APP_BASE_DOMAIN,
+    // urlPrefix: 'http://isxcode.com:30211',
+    urlPrefix: import.meta.env.VITE_VUE_APP_BASE_DOMAIN,
     showSuccessMessage: (msg: string): void => {
       message.success(msg)
     },
