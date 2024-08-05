@@ -108,6 +108,13 @@
     width: 100%;
     .zqy-home__menu.el-menu {
       border-right: 0;
+      .el-sub-menu {
+        .el-menu {
+          .el-menu-item {
+            padding-left: 44px;
+          }
+        }
+      }
       .el-menu-item {
         border-radius: getCssVar('border-radius', 'base');
 
