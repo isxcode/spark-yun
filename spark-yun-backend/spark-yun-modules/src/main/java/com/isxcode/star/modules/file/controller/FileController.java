@@ -33,7 +33,7 @@ public class FileController {
     @SuccessResponse("上传成功")
     public void uploadFile(@RequestParam("file") @Schema(title = "文件") MultipartFile file,
         @RequestParam("type") @Schema(title = "文件类型")
-        @Pattern(regexp = "^(JOB|FUNC|LIB)$", message = "只能是JOB/FUNC/LIB其中一个") String type,
+        @Pattern(regexp = "^(JOB|FUNC|LIB|EXCEL)$", message = "只能是JOB/FUNC/LIB/EXCEL其中一个") String type,
         @RequestParam(value = "remark", required = false) @Schema(title = "备注") String remark) {
 
         fileBizService.uploadFile(file, type, remark);
