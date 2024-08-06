@@ -22,4 +22,10 @@ dependencies {
     implementation "org.apache.groovy:groovy-all:${GROOVY_VERSION}"
 
     implementation "com.aliyun:dysmsapi20170525:${ALI_SMS_VERSION}"
+
+    implementation 'org.apache.poi:poi:4.1.2'
+    implementation 'org.apache.poi:poi-ooxml:4.1.2'
+//    implementation 'org.apache.poi:poi-ooxml-schemas:4.1.2'
+//    implementation 'org.apache.xmlbeans:xmlbeans:3.1.0'
+//    implementation 'org.apache.commons:commons-collections4:4.4'
 }
