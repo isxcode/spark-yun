@@ -1,6 +1,8 @@
 package com.isxcode.star.api.work.constants;
 
-/** 作业类型. */
+/**
+ * 作业类型.
+ */
 public interface WorkType {
 
     /**
@@ -48,4 +50,9 @@ public interface WorkType {
     String PRQL = "PRQL";
 
     String CURL = "CURL";
+
+    /**
+     * Excel导入作业.
+     */
+    String EXCEL_SYNC_JDBC = "EXCEL_SYNC_JDBC";
 }
