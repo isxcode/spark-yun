@@ -105,12 +105,12 @@ public class ExcelSyncExecutor extends WorkExecutor {
     private final SqlFunctionService sqlFunctionService;
 
     public ExcelSyncExecutor(WorkInstanceRepository workInstanceRepository, ClusterRepository clusterRepository,
-                             ClusterNodeRepository clusterNodeRepository, WorkflowInstanceRepository workflowInstanceRepository,
-                             WorkRepository workRepository, WorkConfigRepository workConfigRepository, Locker locker,
-                             HttpUrlUtils httpUrlUtils, AesUtils aesUtils, ClusterNodeMapper clusterNodeMapper,
-                             DatasourceService datasourceService, IsxAppProperties isxAppProperties, FuncRepository funcRepository,
-                             FuncMapper funcMapper, FileRepository fileRepository, SqlCommentService sqlCommentService,
-                             SqlValueService sqlValueService, SqlFunctionService sqlFunctionService, AlarmService alarmService) {
+        ClusterNodeRepository clusterNodeRepository, WorkflowInstanceRepository workflowInstanceRepository,
+        WorkRepository workRepository, WorkConfigRepository workConfigRepository, Locker locker,
+        HttpUrlUtils httpUrlUtils, AesUtils aesUtils, ClusterNodeMapper clusterNodeMapper,
+        DatasourceService datasourceService, IsxAppProperties isxAppProperties, FuncRepository funcRepository,
+        FuncMapper funcMapper, FileRepository fileRepository, SqlCommentService sqlCommentService,
+        SqlValueService sqlValueService, SqlFunctionService sqlFunctionService, AlarmService alarmService) {
 
         super(workInstanceRepository, workflowInstanceRepository, alarmService);
         this.workInstanceRepository = workInstanceRepository;
