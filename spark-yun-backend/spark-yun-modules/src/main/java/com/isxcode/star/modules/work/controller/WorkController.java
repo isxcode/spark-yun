@@ -189,12 +189,12 @@ public class WorkController {
         return syncWorkBizService.getCreateTableSql(getCreateTableSqlReq);
     }
 
-    @Operation(summary = "获取数据表字段信息")
+    @Operation(summary = "获取Excel文件的字段信息")
     @PostMapping("/getExcelColumns")
     @SuccessResponse("查询成功")
-    public GetDataSourceColumnsRes getExcelColumns() {
+    public GetExcelColumnsRes getExcelColumns(@Valid @RequestBody GetExcelColumnsReq getExcelColumnsReq) {
 
-        return excelSyncService.getDataSourceColumns("sy_1820754340072329216", true);
+        return excelSyncService.getExcelColumns(getExcelColumnsReq);
     }
 
     @Operation(summary = "excel数据预览")

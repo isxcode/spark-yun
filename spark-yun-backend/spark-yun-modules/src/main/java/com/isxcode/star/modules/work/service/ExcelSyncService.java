@@ -5,8 +5,9 @@ import cn.hutool.core.io.FileUtil;
 import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelUtil;
 import com.isxcode.star.api.datasource.pojos.dto.ColumnMetaDto;
+import com.isxcode.star.api.work.pojos.req.GetExcelColumnsReq;
 import com.isxcode.star.api.work.pojos.req.GetExcelDataReq;
-import com.isxcode.star.api.work.pojos.res.GetDataSourceColumnsRes;
+import com.isxcode.star.api.work.pojos.res.GetExcelColumnsRes;
 import com.isxcode.star.api.work.pojos.res.GetExcelDataRes;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.star.backend.api.base.properties.IsxAppProperties;
@@ -21,7 +22,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import static com.isxcode.star.common.config.CommonConfig.TENANT_ID;
 
@@ -34,41 +34,42 @@ public class ExcelSyncService {
 
     private final IsxAppProperties isxAppProperties;
 
-    public GetDataSourceColumnsRes getDataSourceColumns(String fileId, Boolean hasTable) {
+    public GetExcelColumnsRes getExcelColumns(GetExcelColumnsReq getExcelColumnsReq) {
 
-        // 从资源文件中获取.xlsx文件
-        // 读取第一列
-        FileEntity file = fileService.getFile(fileId);
+        // 判断文件是否存在
+        FileEntity file = fileService.getFile(getExcelColumnsReq.getFileId());
+
+        // 获取文件的绝对路径
         String filePath = PathUtils.parseProjectPath(isxAppProperties.getResourcesPath()) + File.separator + "file"
-            + File.separator + TENANT_ID.get() + File.separator + "sy_1820754340072329216.xlsx";
+            + File.separator + TENANT_ID.get() + File.separator + file.getId();
 
+        // 读取文件数据
         ExcelReader reader = ExcelUtil.getReader(FileUtil.file(filePath));
-        // List<Object> objects = reader.readRow(0);
-        List<Map<String, Object>> readAll = reader.readAll();
+        List<List<Object>> read = reader.read();
 
-        // CsvWriteConfig.defaultConfig().setFieldSeparator()
-
-        // // 使用 CsvWriter 写入 CSV 文件
-        // CsvWriter writer = CsvUtil.getWriter(FileUtil.file(csvFilePath), CHARSET_UTF_8);
-        // for (Map<String, Object> row : readAll) {
-        // writer.write(row.values().toArray(new String[0]));
-        // }
-
-        // 关闭资源
-        // reader.close();
-        // writer.close();
-
-        List<Object> header = reader.readRow(0);
-
-        int columnCount = header.size();
-
-        List<ColumnMetaDto> columns = new ArrayList<>();
-        if (hasTable) {
-        } else {
-
+        // 校验excel合法性
+        if (read.isEmpty()) {
+            throw new IsxAppException("Excel为空");
+        }
+        if (read.size() == 1 && getExcelColumnsReq.isHasHeader()) {
+            throw new IsxAppException("Excel为空");
+        }
+        if (read.get(0).size() != read.get(1).size()) {
+            throw new IsxAppException("Excel表头和字段不齐");
         }
 
-        return GetDataSourceColumnsRes.builder().columns(columns).build();
+        List<ColumnMetaDto> columns = new ArrayList<>();
+
+        List<Object> header = read.get(0);
+        if (getExcelColumnsReq.isHasHeader()) {
+            header.forEach(e -> columns.add(ColumnMetaDto.builder().type("String").name(String.valueOf(e)).build()));
+        } else {
+            for (int i = 0; i < header.size(); i++) {
+                columns.add(ColumnMetaDto.builder().type("String").name("col" + i).build());
+            }
+        }
+
+        return GetExcelColumnsRes.builder().columns(columns).build();
     }
 
     public GetExcelDataRes getExcelData(GetExcelDataReq getExcelDataReq) {
