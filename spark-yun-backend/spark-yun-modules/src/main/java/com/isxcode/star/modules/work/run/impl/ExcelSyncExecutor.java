@@ -166,13 +166,8 @@ public class ExcelSyncExecutor extends WorkExecutor {
             throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "申请资源失败 : 集群不存在可用节点，请切换一个集群  \n");
         }
 
-        // 检查分区键是否为空
-        if (Strings.isEmpty(workRunContext.getSyncWorkConfig().getPartitionColumn())) {
-            throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "检查作业失败 : 分区键为空  \n");
-        }
-
         // 检测用户是否配置映射关系
-        if (workRunContext.getSyncWorkConfig().getColumnMap().isEmpty()) {
+        if (workRunContext.getExcelSyncConfig().getColumnMap().isEmpty()) {
             throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "检查作业失败 : 请配置字段映射关系  \n");
         }
 
@@ -190,35 +185,26 @@ public class ExcelSyncExecutor extends WorkExecutor {
         executeReq.setWorkType(WorkType.DATA_SYNC_JDBC);
         executeReq.setWorkInstanceId(workInstance.getId());
 
-        // 封装来源Datasource的信息
-        DatasourceEntity sourceDatasource =
-            datasourceService.getDatasource(workRunContext.getSyncWorkConfig().getSourceDBId());
-        DatasourceConfig sourceConfig =
-            DatasourceConfig.builder().driver(datasourceService.getDriverClass(sourceDatasource.getDbType()))
-                .url(sourceDatasource.getJdbcUrl()).dbTable(workRunContext.getSyncWorkConfig().getSourceTable())
-                .user(sourceDatasource.getUsername()).password(aesUtils.decrypt(sourceDatasource.getPasswd())).build();
-        workRunContext.getSyncWorkConfig().setSourceDatabase(sourceConfig);
-
         // 封装去向Datasource的信息
         DatasourceEntity targetDatasource =
-            datasourceService.getDatasource(workRunContext.getSyncWorkConfig().getTargetDBId());
+            datasourceService.getDatasource(workRunContext.getExcelSyncConfig().getTargetDBId());
         DatasourceConfig targetConfig =
             DatasourceConfig.builder().driver(datasourceService.getDriverClass(targetDatasource.getDbType()))
-                .url(targetDatasource.getJdbcUrl()).dbTable(workRunContext.getSyncWorkConfig().getTargetTable())
+                .url(targetDatasource.getJdbcUrl()).dbTable(workRunContext.getExcelSyncConfig().getTargetTable())
                 .user(targetDatasource.getUsername()).password(aesUtils.decrypt(targetDatasource.getPasswd())).build();
-        workRunContext.getSyncWorkConfig().setTargetDatabase(targetConfig);
+        workRunContext.getExcelSyncConfig().setTargetDatabase(targetConfig);
 
         // 开始构造SparkSubmit
         SparkSubmit sparkSubmit = SparkSubmit.builder().verbose(true)
-            .mainClass("com.isxcode.star.plugin.dataSync.jdbc.Execute").appResource("spark-data-sync-jdbc-plugin.jar")
+            .mainClass("com.isxcode.star.plugin.excelSync.jdbc.Execute").appResource("spark-excel-sync-jdbc-plugin.jar")
             .conf(genSparkSubmitConfig(workRunContext.getClusterConfig().getSparkConfig())).build();
 
         // 过滤条件支持系统参数和函数解析
-        if (!Strings.isEmpty(workRunContext.getSyncWorkConfig().getQueryCondition())) {
+        if (!Strings.isEmpty(workRunContext.getExcelSyncConfig().getQueryCondition())) {
 
             // 去掉sql中的注释
             String sqlNoComment =
-                sqlCommentService.removeSqlComment(workRunContext.getSyncWorkConfig().getQueryCondition());
+                sqlCommentService.removeSqlComment(workRunContext.getExcelSyncConfig().getQueryCondition());
 
             // 翻译sql中的系统变量
             String parseValueSql = sqlValueService.parseSqlValue(sqlNoComment);
@@ -229,11 +215,11 @@ public class ExcelSyncExecutor extends WorkExecutor {
             logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("过滤条件:  \n")
                 .append(conditionScript).append("\n");
             workInstance = updateInstance(workInstance, logBuilder);
-            workRunContext.getSyncWorkConfig().setQueryCondition(conditionScript);
+            workRunContext.getExcelSyncConfig().setQueryCondition(conditionScript);
         }
 
         // 开始构造PluginReq
-        PluginReq pluginReq = PluginReq.builder().syncWorkConfig(workRunContext.getSyncWorkConfig())
+        PluginReq pluginReq = PluginReq.builder().excelSyncConfig(workRunContext.getExcelSyncConfig())
             .sparkConfig(genSparkConfig(workRunContext.getClusterConfig().getSparkConfig()))
             .syncRule(workRunContext.getSyncRule()).build();
 
