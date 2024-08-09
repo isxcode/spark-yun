@@ -194,5 +194,9 @@ export const TypeList = [
   {
     label: '接口调用作业',
     value: 'API'
+  },
+  {
+    label: 'Excel导入',
+    value: 'EXCEL_SYNC_JDBC'
   }
 ]
