@@ -85,8 +85,8 @@ public class SyncWorkBizService {
             columns.add(resultSet.getMetaData().getColumnName(i));
         }
 
-        // 封装数据
-        while (resultSet.next()) {
+        // 封装数据，最多200条
+        while (resultSet.next() && rows.size() < 200) {
             List<String> row = new ArrayList<>();
             for (int i = 1; i <= columnCount; i++) {
                 row.add(String.valueOf(resultSet.getObject(i)));

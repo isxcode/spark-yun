@@ -18,7 +18,7 @@
                 <el-form-item
                     label="计算集群"
                     prop="clusterId"
-                    v-if="['BASH', 'PYTHON', 'DATA_SYNC_JDBC', 'SPARK_SQL', 'SPARK_JAR'].includes(formData.workType)"
+                    v-if="['BASH', 'PYTHON', 'DATA_SYNC_JDBC', 'SPARK_SQL', 'SPARK_JAR','EXCEL_SYNC_JDBC'].includes(formData.workType)"
                 >
                     <el-select
                         v-model="formData.clusterId"

@@ -70,6 +70,10 @@ const typeList = ref([
   {
     label: '依赖',
     value: 'LIB',
+  },
+  {
+    label: 'Excel',
+    value: 'EXCEL',
   }
 ])
 const modelConfig = reactive({
