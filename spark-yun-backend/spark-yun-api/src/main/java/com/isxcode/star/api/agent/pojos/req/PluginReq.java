@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.isxcode.star.api.datasource.pojos.dto.KafkaConfig;
 import com.isxcode.star.api.func.pojos.dto.FuncInfo;
+import com.isxcode.star.api.work.pojos.dto.ExcelSyncConfig;
 import com.isxcode.star.api.work.pojos.dto.SyncRule;
 import com.isxcode.star.api.work.pojos.dto.SyncWorkConfig;
 import lombok.AllArgsConstructor;
@@ -29,6 +30,8 @@ public class PluginReq {
     private Map<String, String> sparkConfig;
 
     private SyncWorkConfig syncWorkConfig;
+
+    private ExcelSyncConfig excelSyncConfig;
 
     private SyncRule syncRule;
 
