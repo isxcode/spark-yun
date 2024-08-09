@@ -14,6 +14,9 @@ public class ExcelSyncConfig {
     @Schema(title = "来源excel唯一id", example = "sy_4f07ab7b1fe54dab9be884e410c53af4")
     private String sourceFileId;
 
+    @Schema(title = "是否存在表头", example = "true")
+    private boolean hasHeader;
+
     @Schema(title = "来源数据库查询条件", example = "WHERE id = 1")
     private String queryCondition;
 
@@ -37,8 +40,6 @@ public class ExcelSyncConfig {
 
     @Schema(title = "字段映射关系", example = "[{\"source\": \"installed_rank\",\"target\": \"installed_rank\"}]")
     private List<SyncColumnMap> columnMap;
-
-    private DatasourceConfig sourceDatabase;
 
     private DatasourceConfig targetDatabase;
 }

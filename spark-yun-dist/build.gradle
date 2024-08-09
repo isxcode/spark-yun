@@ -31,6 +31,7 @@ tasks.register('build_agent_plugins', Copy) {
 
     dependsOn(':spark-yun-plugins:spark-query-sql-plugin:jar')
     dependsOn(':spark-yun-plugins:spark-data-sync-jdbc-plugin:jar')
+    dependsOn(':spark-yun-plugins:spark-excel-sync-jdbc-plugin:jar')
     dependsOn(':spark-yun-vip:spark-yun-plugins:spark-container-sql-plugin:jar')
     dependsOn(':spark-yun-vip:spark-yun-plugins:spark-real-sync-plugin:jar')
 
