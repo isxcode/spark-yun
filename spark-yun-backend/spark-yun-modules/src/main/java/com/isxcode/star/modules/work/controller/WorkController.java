@@ -197,12 +197,12 @@ public class WorkController {
         return excelSyncService.getDataSourceColumns("sy_1820754340072329216", true);
     }
 
-    @Operation(summary = "数据预览")
+    @Operation(summary = "excel数据预览")
     @PostMapping("/getExcelData")
     @SuccessResponse("查询成功")
-    public GetDataSourceDataRes getExcelData() {
+    public GetExcelDataRes getExcelData(@Valid @RequestBody GetExcelDataReq getExcelDataReq) {
 
-        return excelSyncService.getDataSourceData("sy_1820754340072329216");
+        return excelSyncService.getExcelData(getExcelDataReq);
     }
 
 }

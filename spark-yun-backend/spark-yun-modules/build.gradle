@@ -23,9 +23,11 @@ dependencies {
 
     implementation "com.aliyun:dysmsapi20170525:${ALI_SMS_VERSION}"
 
-    implementation 'org.apache.poi:poi:4.1.2'
-    implementation 'org.apache.poi:poi-ooxml:4.1.2'
+    implementation 'org.apache.poi:poi-ooxml:5.2.5'
+    implementation 'org.apache.xmlbeans:xmlbeans:5.2.0'
+    implementation 'pull-parser:pull-parser:2.1.10'
+
 //    implementation 'org.apache.poi:poi-ooxml-schemas:4.1.2'
-//    implementation 'org.apache.xmlbeans:xmlbeans:3.1.0'
+
 //    implementation 'org.apache.commons:commons-collections4:4.4'
 }
