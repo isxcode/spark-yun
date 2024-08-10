@@ -28,6 +28,9 @@ public class GetWorkRes {
     @Schema(title = "同步作业配置")
     private SyncWorkConfig syncWorkConfig;
 
+    @Schema(title = "Excel作业配置")
+    private ExcelSyncConfig excelSyncConfig;
+
     @Schema(title = "接口调用作业配置")
     private ApiWorkConfig apiWorkConfig;
 
