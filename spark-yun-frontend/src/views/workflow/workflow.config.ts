@@ -196,7 +196,7 @@ export const TypeList = [
     value: 'API'
   },
   {
-    label: 'Excel导入',
+    label: 'Excel导入作业',
     value: 'EXCEL_SYNC_JDBC'
   }
 ]
