@@ -17,6 +17,12 @@ public class ExcelSyncConfig {
     @Schema(title = "是否存在表头", example = "true")
     private boolean hasHeader;
 
+    @Schema(title = "是否开启文件替换", example = "false")
+    private boolean fileReplace;
+
+    @Schema(title = "文件名规则", example = "某某文件")
+    private String filePattern;
+
     @Schema(title = "来源数据库查询条件", example = "WHERE id = 1")
     private String queryCondition;
 
