@@ -18,5 +18,7 @@ EXPOSE 8080
 ENV ADMIN_PASSWORD=${ADMIN_PASSWORD}
 ENV ACTIVE_ENV=${ACTIVE_ENV}
 ENV LOG_LEVEL=${LOG_LEVEL}
+ENV PARAMS=""
+ENV JVMOPTIONS=""
 
-CMD java -jar /opt/zhiqingyun/zhiqingyun.jar --logging.level.root=${LOG_LEVEL} --spring.profiles.active=${ACTIVE_ENV} --isx-app.admin-passwd=${ADMIN_PASSWORD} --spring.config.additional-location=/etc/zhiqingyun/conf/
+ENTRYPOINT ["sh","-c","java $JVMOPTIONS -jar /opt/zhiqingyun/zhiqingyun.jar --logging.level.root=${LOG_LEVEL} --spring.profiles.active=${ACTIVE_ENV} --isx-app.admin-passwd=${ADMIN_PASSWORD} --spring.config.additional-location=/etc/zhiqingyun/conf/ $PARAMS"]
