@@ -96,6 +96,11 @@ public class WorkConfigBizService {
             workConfig.setSyncWorkConfig(JSON.toJSONString(wocConfigWorkReq.getSyncWorkConfig()));
         }
 
+        // 用户更新Excel数据同步
+        if (wocConfigWorkReq.getExcelSyncConfig() != null) {
+            workConfig.setExcelSyncConfig(JSON.toJSONString(wocConfigWorkReq.getExcelSyncConfig()));
+        }
+
         // 用户更新接口调用
         if (wocConfigWorkReq.getApiWorkConfig() != null) {
             workConfig.setApiWorkConfig(JSON.toJSONString(wocConfigWorkReq.getApiWorkConfig()));

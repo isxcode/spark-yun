@@ -1,5 +1,11 @@
 package com.isxcode.star.modules.work.run.impl;
 
+import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.text.csv.CsvUtil;
+import cn.hutool.core.text.csv.CsvWriteConfig;
+import cn.hutool.core.text.csv.CsvWriter;
+import cn.hutool.poi.excel.ExcelReader;
+import cn.hutool.poi.excel.ExcelUtil;
 import com.alibaba.fastjson.JSON;
 import com.isxcode.star.api.agent.pojos.req.PluginReq;
 import com.isxcode.star.api.agent.pojos.req.SparkSubmit;
@@ -31,6 +37,7 @@ import com.isxcode.star.modules.datasource.entity.DatasourceEntity;
 import com.isxcode.star.modules.datasource.service.DatasourceService;
 import com.isxcode.star.modules.file.entity.FileEntity;
 import com.isxcode.star.modules.file.repository.FileRepository;
+import com.isxcode.star.modules.file.service.FileService;
 import com.isxcode.star.modules.func.entity.FuncEntity;
 import com.isxcode.star.modules.func.mapper.FuncMapper;
 import com.isxcode.star.modules.func.repository.FuncRepository;
@@ -57,6 +64,7 @@ import org.springframework.web.client.ResourceAccessException;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -104,13 +112,16 @@ public class ExcelSyncExecutor extends WorkExecutor {
 
     private final SqlFunctionService sqlFunctionService;
 
+    private final FileService fileService;
+
     public ExcelSyncExecutor(WorkInstanceRepository workInstanceRepository, ClusterRepository clusterRepository,
         ClusterNodeRepository clusterNodeRepository, WorkflowInstanceRepository workflowInstanceRepository,
         WorkRepository workRepository, WorkConfigRepository workConfigRepository, Locker locker,
         HttpUrlUtils httpUrlUtils, AesUtils aesUtils, ClusterNodeMapper clusterNodeMapper,
         DatasourceService datasourceService, IsxAppProperties isxAppProperties, FuncRepository funcRepository,
         FuncMapper funcMapper, FileRepository fileRepository, SqlCommentService sqlCommentService,
-        SqlValueService sqlValueService, SqlFunctionService sqlFunctionService, AlarmService alarmService) {
+        SqlValueService sqlValueService, SqlFunctionService sqlFunctionService, AlarmService alarmService,
+        FileService fileService, FileService fileService1) {
 
         super(workInstanceRepository, workflowInstanceRepository, alarmService);
         this.workInstanceRepository = workInstanceRepository;
@@ -130,6 +141,7 @@ public class ExcelSyncExecutor extends WorkExecutor {
         this.sqlCommentService = sqlCommentService;
         this.sqlValueService = sqlValueService;
         this.sqlFunctionService = sqlFunctionService;
+        this.fileService = fileService1;
     }
 
     @Override
@@ -193,6 +205,25 @@ public class ExcelSyncExecutor extends WorkExecutor {
                 .url(targetDatasource.getJdbcUrl()).dbTable(workRunContext.getExcelSyncConfig().getTargetTable())
                 .user(targetDatasource.getUsername()).password(aesUtils.decrypt(targetDatasource.getPasswd())).build();
         workRunContext.getExcelSyncConfig().setTargetDatabase(targetConfig);
+
+        String sourceFileId = workRunContext.getExcelSyncConfig().getSourceFileId();
+        FileEntity file = fileService.getFile(sourceFileId);
+        String filePath = PathUtils.parseProjectPath(isxAppProperties.getResourcesPath()) + File.separator + "file"
+            + File.separator + TENANT_ID.get() + File.separator + file.getId();
+        ExcelReader reader = ExcelUtil.getReader(FileUtil.file(filePath));
+        List<List<Object>> read = reader.read();
+        CsvWriteConfig.defaultConfig().setFieldSeparator(',').setTextDelimiter(';');
+        CsvWriter writer =
+            CsvUtil.getWriter(FileUtil.file("/Users/ispong/Downloads/Book1.csv"), StandardCharsets.UTF_8);
+        for (List<Object> rowMeta : read) {
+            List<String> row = new ArrayList<>();
+            rowMeta.forEach(e -> {
+                row.add(String.valueOf(e));
+            });
+            writer.write(row.toArray(new String[0]));
+        }
+        reader.close();
+        writer.close();
 
         // 开始构造SparkSubmit
         SparkSubmit sparkSubmit = SparkSubmit.builder().verbose(true)

@@ -47,14 +47,14 @@ public class Execute {
 
             // 来源字段的转换sql收集
             Map<String, String> sourceColTranslateSql = new HashMap<>();
-            pluginReq.getSyncWorkConfig().getSourceTableColumn().forEach(e -> {
+            pluginReq.getExcelSyncConfig().getSourceTableColumn().forEach(e -> {
                 sourceColTranslateSql.put(e.getCode(), e.getSql());
             });
 
             // 封装字段信息
             List<String> sourceCols = new ArrayList<>();
             List<String> targetCols = new ArrayList<>();
-            pluginReq.getSyncWorkConfig().getColumnMap().forEach(e -> {
+            pluginReq.getExcelSyncConfig().getColumnMap().forEach(e -> {
                 sourceCols.add(
                     Strings.isEmpty(sourceColTranslateSql.get(e.getSource())) ? String.format("`%s`", e.getSource())
                         : sourceColTranslateSql.get(e.getSource()) + " ");
@@ -63,7 +63,7 @@ public class Execute {
 
             // 判断是覆盖还是新增
             String insertSql =
-                OverModeType.OVERWRITE.equals(pluginReq.getSyncWorkConfig().getOverMode()) ? "insert overwrite"
+                OverModeType.OVERWRITE.equals(pluginReq.getExcelSyncConfig().getOverMode()) ? "insert overwrite"
                     : "insert into";
 
             // 执行sql同步语句
@@ -77,13 +77,19 @@ public class Execute {
      */
     public static String genSourceTempView(SparkSession sparkSession, PluginReq conf) {
 
-        String sourceTableName = "zhiqingyun_src_" + conf.getSyncWorkConfig().getSourceDatabase().getDbTable();
+        String sourceTableName = "zhiqingyun_src_" + conf.getExcelSyncConfig().getSourceFileId();
 
         Map<String, String> optionsMap = new HashMap<>();
-        optionsMap.put("delimiter", ";");
-        optionsMap.put("header", "true");
 
-        Dataset<Row> source = sparkSession.read().options(optionsMap).csv(path);
+        if (conf.getExcelSyncConfig().isHasHeader()) {
+            optionsMap.put("header", "true");
+        }
+        optionsMap.put("delimiter", ";");
+        optionsMap.put("encoding", "UTF-8");
+        optionsMap.put("sep", ",");
+        optionsMap.put("quote", "\"");
+
+        Dataset<Row> source = sparkSession.read().options(optionsMap).csv("/Users/ispong/Downloads/Book1.csv");
         source.createOrReplaceTempView(sourceTableName);
 
         return sourceTableName;
@@ -94,19 +100,19 @@ public class Execute {
      */
     public static String genTargetTempView(SparkSession sparkSession, PluginReq conf) {
 
-        String targetTableName = "zhiqingyun_dist_" + conf.getSyncWorkConfig().getTargetDatabase().getDbTable();
+        String targetTableName = "zhiqingyun_dist_" + conf.getExcelSyncConfig().getTargetDatabase().getDbTable();
 
-        if (DatasourceType.HIVE.equals(conf.getSyncWorkConfig().getTargetDBType())) {
+        if (DatasourceType.HIVE.equals(conf.getExcelSyncConfig().getTargetDBType())) {
 
-            return parseHiveDatabase(conf.getSyncWorkConfig().getTargetDatabase().getUrl())
-                + conf.getSyncWorkConfig().getTargetDatabase().getDbTable();
+            return parseHiveDatabase(conf.getExcelSyncConfig().getTargetDatabase().getUrl())
+                + conf.getExcelSyncConfig().getTargetDatabase().getDbTable();
         } else {
             DataFrameReader frameReader = sparkSession.read().format("jdbc")
-                .option("driver", conf.getSyncWorkConfig().getTargetDatabase().getDriver())
-                .option("url", conf.getSyncWorkConfig().getTargetDatabase().getUrl())
-                .option("dbtable", conf.getSyncWorkConfig().getTargetDatabase().getDbTable())
-                .option("user", conf.getSyncWorkConfig().getTargetDatabase().getUser())
-                .option("password", conf.getSyncWorkConfig().getTargetDatabase().getPassword())
+                .option("driver", conf.getExcelSyncConfig().getTargetDatabase().getDriver())
+                .option("url", conf.getExcelSyncConfig().getTargetDatabase().getUrl())
+                .option("dbtable", conf.getExcelSyncConfig().getTargetDatabase().getDbTable())
+                .option("user", conf.getExcelSyncConfig().getTargetDatabase().getUser())
+                .option("password", conf.getExcelSyncConfig().getTargetDatabase().getPassword())
                 .option("truncate", "true");
 
             if (SetMode.ADVANCE.equals(conf.getSyncRule().getSetMode())) {
