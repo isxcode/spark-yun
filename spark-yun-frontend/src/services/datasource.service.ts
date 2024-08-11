@@ -11,7 +11,7 @@ interface SerchParams {
   page: number;
   pageSize: number;
   searchKeyWord: string;
-  datasourceType: string
+  datasourceType?: string
 }
 
 export function GetDatasourceList(params: SerchParams): Promise<any> {

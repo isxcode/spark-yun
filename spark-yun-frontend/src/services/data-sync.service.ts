@@ -95,3 +95,21 @@ export function GetDataSyncDetail(params: workIdParam): Promise<any> {
         params: params
     })
 }
+
+// 作业流-Excel导入-数据预览
+export function GetExcelDataPreviewDetail(params: any): Promise<any> {
+    return http.request({
+        method: 'post',
+        url: '/work/getExcelData',
+        params: params
+    })
+}
+
+// 作业流-Excel导入-获取Excel字段信息
+export function GetExcelTableColumnsCodes(params: any): Promise<any> {
+    return http.request({
+        method: 'post',
+        url: '/work/getExcelColumns',
+        params: params
+    })
+}
