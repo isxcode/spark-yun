@@ -7,7 +7,7 @@
             至轻云
           </div>
           <div class="slogan">
-            企业级大数据计算平台
+            企业级大数据计算中台
           </div>
           <div class="command">
             <p id="command-shell">docker run -p 8080:8080 isxcode/zhiqingyun</p>
@@ -41,10 +41,10 @@
           选择至轻云
         </div>
         <div class="why-content">
-          至轻云是一款超轻量级、企业级大数据平台。具有一键部署，开箱即用特色。无需额外大数据组件安装，即可快速实现企业级大数据离线ETL、实时计算、作业定时调度等场景。项目持续更新迭代，源码永久开源免费。助力企业快速处理海量数据，获得更多商业价值。
+          至轻云是一款超轻量级、企业级大数据中台。具有一键部署，开箱即用特色。无需额外大数据组件安装，即可快速实现数据离线ETL、实时计算、作业定时调度等场景。项目持续更新迭代，源码永久开源免费。助力企业快速处理海量数据，获得更多商业价值。
         </div>
         <div class="why-content-mobile">
-          至轻云是一款超轻量级、企业级大数据平台。具有一键部署，开箱即用特色。无需额外大数据组件安装，即可快速实现企业级大数据离线ETL、实时计算、作业定时调度等场景。
+          至轻云是一款超轻量级、企业级大数据中台。具有一键部署，开箱即用特色。无需额外大数据组件安装，即可快速实现数据离线ETL、实时计算、作业定时调度等场景。
         </div>
         <div class="tech-title">
           相关技术
@@ -77,7 +77,7 @@
           <img src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/product-img/p-2.jpg" alt="">
         </div>
         <div class="left">
-          <div class="line-1">驱动上传，任何姿势都能连</div>
+          <div class="line-1">驱动上传，海量数据源都能连</div>
           <div class="line-2">支持海量数据源，如Mysql、Hive、Oracle、SqlServer、TiDB、Oceanbase、Doris、Clickhouse等。支持自定义驱动上传，解决企业中多版本数据源无法同时连接的难题。</div>
           <div class="line-3" @click="handleQuickClick">立即体验</div>
         </div>
@@ -92,8 +92,8 @@
           <img src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/product-img/p-3.jpg" alt="">
         </div>
         <div class="right">
-          <div class="line-1">创建租户，再大也能装下</div>
-          <div class="line-2">支持多租户模式，确保租户数据隔离。租户内可单独协调集群资源、数据源驱动、作业流配置等。解决企业中部门规模较大、用户众多、权限难解的问题。</div>
+          <div class="line-1">大数据大屏，再多也能展示</div>
+          <div class="line-2">通过强大数据处理和可视化技术，将复杂数据转化为直观图表，支持实时监控和分析，帮助企业快速决策。其灵活定制功能适应多种行业需求，确保信息准确及时。</div>
           <div class="line-3" @click="handleQuickClick">立即体验</div>
         </div>
       </div>
@@ -145,7 +145,7 @@
     </div>
     <div class="module-end">
       <div class="content">
-        <div class="line-1">开源助力企业升级大数据能力</div>
+        <div class="line-1">开源助力企业拥有大数据能力</div>
         <div class="end-btn" @click="handleQuickClick">免费试用</div>
       </div>
     </div>
@@ -166,7 +166,7 @@ definePageMeta({
 useSeoMeta({
   title: "至轻云",
   ogTitle: "至爻数据",
-  description: "企业级大数据计算平台",
+  description: "企业级大数据计算中台",
   ogDescription: "打造企业级开源软件全家桶",
 });
 
@@ -264,21 +264,15 @@ const copyContent = async (text: string) => {
 
 <style lang="scss" scoped>
 
-/* 在线链接服务仅供平台体验和调试使用，平台不承诺服务的稳定性，企业客户需下载字体包自行发布使用并做好备份。 */
 @font-face {
-  font-family: "阿里妈妈数黑体 Bold";
-  font-weight: 700;
-  src: url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/H8l4dOabqZB6.woff2") format("woff2"),
-  url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/asWfYxsbrfvz.woff") format("woff");
+  font-family: "阿里妈妈数黑体 Bold";font-weight: 700;src: url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/zvbiHc8d5YKq.woff2") format("woff2"),
+  url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/77SsXIN8kN6W.woff") format("woff");
   font-display: swap;
 }
 
-/* 在线链接服务仅供平台体验和调试使用，平台不承诺服务的稳定性，企业客户需下载字体包自行发布使用并做好备份。 */
 @font-face {
-  font-family: "阿里巴巴普惠体 2.0 45 Light";
-  font-weight: 300;
-  src: url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/u90TTYWjH7Ut.woff2") format("woff2"),
-  url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/njK1PTw1pmIt.woff") format("woff");
+  font-family: "阿里巴巴普惠体 2.0 45 Light";font-weight: 300;src: url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/gNfz1OU32n2u.woff2") format("woff2"),
+  url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/S8FwZRcLPw9r.woff") format("woff");
   font-display: swap;
 }
 
