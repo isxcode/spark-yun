@@ -613,7 +613,7 @@ onMounted(() => {
     padding-top: 50px;
     background-color: #ffffff;
     width: 100%;
-    border-left: 1px solid var(--el-border-color);
+    // border-left: 1px solid var(--el-border-color);
 
     .data-sync__option-container {
         height: 50px;
