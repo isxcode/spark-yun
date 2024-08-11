@@ -268,7 +268,7 @@
           </div>
           <el-divider />
           <!-- 同步规则 -->
-          <div class="config-item" v-if="workItemConfig.workType === 'DATA_SYNC_JDBC'">
+          <div class="config-item" v-if="['EXCEL_SYNC_JDBC', 'DATA_SYNC_JDBC'].includes(workItemConfig.workType)">
             <div class="item-title">同步规则</div>
             <el-form
               ref="syncRuleForm"
@@ -310,7 +310,7 @@
             </el-form>
           </div>
           <!-- 函数配置 -->
-          <div class="config-item" v-if="['SPARK_SQL', 'DATA_SYNC_JDBC'].includes(workItemConfig.workType)">
+          <div class="config-item" v-if="['SPARK_SQL', 'DATA_SYNC_JDBC', 'EXCEL_SYNC_JDBC'].includes(workItemConfig.workType)">
             <div class="item-title">函数配置</div>
             <el-form
               ref="syncRuleForm"
@@ -328,7 +328,7 @@
             </el-form>
           </div>
           <!-- 依赖配置 -->
-          <div class="config-item" v-if="['SPARK_SQL', 'SPARK_JAR', 'DATA_SYNC_JDBC'].includes(workItemConfig.workType)">
+          <div class="config-item" v-if="['SPARK_SQL', 'SPARK_JAR', 'DATA_SYNC_JDBC', 'EXCEL_SYNC_JDBC'].includes(workItemConfig.workType)">
             <div class="item-title">依赖配置</div>
             <el-form
               ref="syncRuleForm"

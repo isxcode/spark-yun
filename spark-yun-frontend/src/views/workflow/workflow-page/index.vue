@@ -175,7 +175,8 @@
                 ></WorkApi>
                 <WorkItem
                     v-if="
-                        showWorkItem && workConfig.workType !== 'DATA_SYNC_JDBC' && workConfig.workType !== 'SPARK_JAR'
+                        showWorkItem &&
+                        !['SPARK_JAR', 'DATA_SYNC_JDBC', 'EXCEL_SYNC_JDBC'].includes(workConfig.workType)
                     "
                     :workItemConfig="workConfig"
                     :workFlowData="workFlowData"
@@ -188,6 +189,12 @@
                     @back="backToFlow"
                     @locationNode="locationNode"
                 ></data-sync>
+                <ExcelImport
+                    v-if="showWorkItem && workConfig.workType === 'EXCEL_SYNC_JDBC'"
+                    :workItemConfig="workConfig"
+                    @back="backToFlow"
+                    @locationNode="locationNode"
+                ></ExcelImport>
             </template>
         </div>
         <AddModal ref="addModalRef" />
@@ -209,6 +216,7 @@ import eventBus from '@/utils/eventBus'
 import zqyLog from '@/components/zqy-log/index.vue'
 import WorkItem from '../work-item/index.vue'
 import DataSync from '../data-sync/index.vue'
+import ExcelImport from '../excel-import/index.vue'
 import WorkApi from '../work-api/index.vue'
 import sparkJar from '../spark-jar/index.vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
