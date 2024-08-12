@@ -1,6 +1,7 @@
 package com.isxcode.star.plugin.excelSync.jdbc;
 
 import com.alibaba.fastjson.JSON;
+import com.isxcode.star.api.agent.constants.AgentType;
 import com.isxcode.star.api.agent.pojos.req.PluginReq;
 import com.isxcode.star.api.datasource.constants.DatasourceType;
 import com.isxcode.star.api.func.constants.FuncType;
@@ -8,6 +9,7 @@ import com.isxcode.star.api.plugin.OverModeType;
 import com.isxcode.star.api.work.constants.SetMode;
 import org.apache.logging.log4j.util.Strings;
 import org.apache.spark.SparkConf;
+import org.apache.spark.SparkFiles;
 import org.apache.spark.sql.DataFrameReader;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
@@ -89,7 +91,18 @@ public class Execute {
         optionsMap.put("sep", ",");
         optionsMap.put("quote", "\"");
 
-        Dataset<Row> source = sparkSession.read().options(optionsMap).csv("/Users/ispong/Downloads/Book1.csv");
+        String csvFilePath;
+        if (AgentType.K8S.equals(conf.getAgentType())) {
+            csvFilePath = "file://" + conf.getCsvFilePath();
+        } else if (AgentType.YARN.equals(conf.getAgentType())) {
+            String rootDirectory = SparkFiles.getRootDirectory();
+            String[] split = rootDirectory.split("/");
+            csvFilePath = "/user/" + split[5] + "/.sparkStaging/" + split[7] + "/" + conf.getCsvFileName();
+        } else {
+            csvFilePath = SparkFiles.get(conf.getCsvFileName());
+        }
+
+        Dataset<Row> source = sparkSession.read().options(optionsMap).csv(csvFilePath);
         source.createOrReplaceTempView(sourceTableName);
 
         return sourceTableName;

@@ -75,6 +75,11 @@ public class YarnAgentService implements AgentService {
             }
         }
 
+        // 引入excel/csv文件
+        if (yagExecuteWorkReq.getPluginReq().getCsvFilePath() != null) {
+            sparkLauncher.addFile(yagExecuteWorkReq.getPluginReq().getCsvFilePath());
+        }
+
         // 添加额外依赖
         if (yagExecuteWorkReq.getLibConfig() != null) {
             yagExecuteWorkReq.getLibConfig().forEach(e -> {

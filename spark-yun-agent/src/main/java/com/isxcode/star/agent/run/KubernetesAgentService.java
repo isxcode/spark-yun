@@ -140,6 +140,16 @@ public class KubernetesAgentService implements AgentService {
             }
         }
 
+        // 添加excel/csv文件
+        String csvFilePath = yagExecuteWorkReq.getPluginReq().getCsvFilePath();
+        if (yagExecuteWorkReq.getPluginReq().getCsvFilePath() != null) {
+            sparkLauncher.setConf("spark.kubernetes.driver.volumes.hostPath.excel.mount.path", csvFilePath);
+            sparkLauncher.setConf("spark.kubernetes.driver.volumes.hostPath.excel.options.path", csvFilePath);
+            sparkLauncher.setConf("spark.kubernetes.executor.volumes.hostPath.excel.mount.path", csvFilePath);
+            sparkLauncher.setConf("spark.kubernetes.executor.volumes.hostPath.excel.options.path", csvFilePath);
+            sparkLauncher.addFile("local://" + csvFilePath);
+        }
+
         // 添加自定义函数
         if (yagExecuteWorkReq.getFuncConfig() != null) {
             for (int i = 0; i < yagExecuteWorkReq.getFuncConfig().size(); i++) {
