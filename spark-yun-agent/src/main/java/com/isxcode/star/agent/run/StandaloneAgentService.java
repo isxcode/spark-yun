@@ -122,6 +122,11 @@ public class StandaloneAgentService implements AgentService {
         }
 
         // 添加自定义函数
+        if (yagExecuteWorkReq.getPluginReq().getCsvFilePath() != null) {
+            sparkLauncher.addFile(yagExecuteWorkReq.getPluginReq().getCsvFilePath());
+        }
+
+        // 添加自定义函数
         if (yagExecuteWorkReq.getFuncConfig() != null) {
             yagExecuteWorkReq.getFuncConfig().forEach(e -> {
                 String libPath = yagExecuteWorkReq.getAgentHomePath() + File.separator + "file" + File.separator

@@ -40,4 +40,10 @@ public class PluginReq {
     private int containerPort;
 
     private KafkaConfig kafkaConfig;
+
+    private String csvFilePath;
+
+    private String csvFileName;
+
+    private String agentType;
 }

@@ -206,25 +206,6 @@ public class ExcelSyncExecutor extends WorkExecutor {
                 .user(targetDatasource.getUsername()).password(aesUtils.decrypt(targetDatasource.getPasswd())).build();
         workRunContext.getExcelSyncConfig().setTargetDatabase(targetConfig);
 
-        String sourceFileId = workRunContext.getExcelSyncConfig().getSourceFileId();
-        FileEntity file = fileService.getFile(sourceFileId);
-        String filePath = PathUtils.parseProjectPath(isxAppProperties.getResourcesPath()) + File.separator + "file"
-            + File.separator + TENANT_ID.get() + File.separator + file.getId();
-        ExcelReader reader = ExcelUtil.getReader(FileUtil.file(filePath));
-        List<List<Object>> read = reader.read();
-        CsvWriteConfig.defaultConfig().setFieldSeparator(',').setTextDelimiter(';');
-        CsvWriter writer =
-            CsvUtil.getWriter(FileUtil.file("/Users/ispong/Downloads/Book1.csv"), StandardCharsets.UTF_8);
-        for (List<Object> rowMeta : read) {
-            List<String> row = new ArrayList<>();
-            rowMeta.forEach(e -> {
-                row.add(String.valueOf(e));
-            });
-            writer.write(row.toArray(new String[0]));
-        }
-        reader.close();
-        writer.close();
-
         // 开始构造SparkSubmit
         SparkSubmit sparkSubmit = SparkSubmit.builder().verbose(true)
             .mainClass("com.isxcode.star.plugin.excelSync.jdbc.Execute").appResource("spark-excel-sync-jdbc-plugin.jar")
@@ -254,10 +235,48 @@ public class ExcelSyncExecutor extends WorkExecutor {
             .sparkConfig(genSparkConfig(workRunContext.getClusterConfig().getSparkConfig()))
             .syncRule(workRunContext.getSyncRule()).build();
 
-        // 导入自定义函数
+        // 获取节点信息
         ScpFileEngineNodeDto scpFileEngineNodeDto =
             clusterNodeMapper.engineNodeEntityToScpFileEngineNodeDto(engineNode);
         scpFileEngineNodeDto.setPasswd(aesUtils.decrypt(scpFileEngineNodeDto.getPasswd()));
+
+        // 将excel文件转成csv，并推送到远程
+        String sourceFileId = workRunContext.getExcelSyncConfig().getSourceFileId();
+        FileEntity file = fileService.getFile(sourceFileId);
+        String csvFileName = sourceFileId + ".csv";
+        String filePath = PathUtils.parseProjectPath(isxAppProperties.getResourcesPath()) + File.separator + "file"
+            + File.separator + TENANT_ID.get() + File.separator + file.getId();
+        String csvFilePath = PathUtils.parseProjectPath(isxAppProperties.getResourcesPath()) + File.separator + "file"
+            + File.separator + TENANT_ID.get() + File.separator + csvFileName;
+        ExcelReader reader = ExcelUtil.getReader(FileUtil.file(filePath));
+        List<List<Object>> read = reader.read();
+        CsvWriteConfig.defaultConfig().setFieldSeparator(',').setTextDelimiter(';');
+        CsvWriter writer = CsvUtil.getWriter(FileUtil.file(csvFilePath), StandardCharsets.UTF_8);
+        for (List<Object> rowMeta : read) {
+            List<String> row = new ArrayList<>();
+            rowMeta.forEach(e -> {
+                row.add(String.valueOf(e));
+            });
+            writer.write(row.toArray(new String[0]));
+        }
+        reader.close();
+        writer.close();
+
+        // 上传csv文件
+        try {
+            scpJar(scpFileEngineNodeDto, csvFilePath, engineNode.getAgentHomePath() + File.separator
+                + "zhiqingyun-agent" + File.separator + "file" + File.separator + csvFileName);
+            // 删除本地的csv文件
+            FileUtil.del(csvFilePath);
+            pluginReq.setCsvFilePath(engineNode.getAgentHomePath() + File.separator + "zhiqingyun-agent"
+                + File.separator + "file" + File.separator + csvFileName);
+            pluginReq.setCsvFileName(csvFileName);
+        } catch (JSchException | SftpException | InterruptedException | IOException ex) {
+            FileUtil.del(csvFilePath);
+            throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "excel文件上传失败\n");
+        }
+
+        // 导入自定义函数
         String fileDir = PathUtils.parseProjectPath(isxAppProperties.getResourcesPath()) + File.separator + "file"
             + File.separator + TENANT_ID.get();
         if (workRunContext.getFuncConfig() != null) {
@@ -273,6 +292,7 @@ public class ExcelSyncExecutor extends WorkExecutor {
                 }
             });
             pluginReq.setFuncInfoList(funcMapper.funcEntityListToFuncInfoList(allFunc));
+            pluginReq.setAgentType(calculateEngineEntityOptional.get().getClusterType());
             executeReq.setFuncConfig(funcMapper.funcEntityListToFuncInfoList(allFunc));
         }
 
