@@ -7,13 +7,16 @@ import cn.hutool.poi.excel.ExcelUtil;
 import com.isxcode.star.api.datasource.pojos.dto.ColumnMetaDto;
 import com.isxcode.star.api.work.pojos.req.GetExcelColumnsReq;
 import com.isxcode.star.api.work.pojos.req.GetExcelDataReq;
+import com.isxcode.star.api.work.pojos.req.ParseExcelNameReq;
 import com.isxcode.star.api.work.pojos.res.GetExcelColumnsRes;
 import com.isxcode.star.api.work.pojos.res.GetExcelDataRes;
+import com.isxcode.star.api.work.pojos.res.ParseExcelNameRes;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.star.backend.api.base.properties.IsxAppProperties;
 import com.isxcode.star.common.utils.path.PathUtils;
 import com.isxcode.star.modules.file.entity.FileEntity;
 import com.isxcode.star.modules.file.service.FileService;
+import com.isxcode.star.modules.work.sql.SqlFunctionService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -33,6 +36,7 @@ public class ExcelSyncService {
     private final FileService fileService;
 
     private final IsxAppProperties isxAppProperties;
+    private final SqlFunctionService sqlFunctionService;
 
     public GetExcelColumnsRes getExcelColumns(GetExcelColumnsReq getExcelColumnsReq) {
 
@@ -126,4 +130,9 @@ public class ExcelSyncService {
         return GetExcelDataRes.builder().columns(columns).rows(rows).build();
     }
 
+    public ParseExcelNameRes parseExcelName(ParseExcelNameReq parseExcelNameReq) {
+
+        String fileName = sqlFunctionService.parseSqlFunction(parseExcelNameReq.getFilePattern());
+        return ParseExcelNameRes.builder().fileName(fileName).build();
+    }
 }

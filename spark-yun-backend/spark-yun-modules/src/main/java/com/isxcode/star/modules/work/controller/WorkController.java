@@ -205,4 +205,12 @@ public class WorkController {
         return excelSyncService.getExcelData(getExcelDataReq);
     }
 
+    @Operation(summary = "预览excel文件名接口")
+    @PostMapping("/parseExcelName")
+    @SuccessResponse("查询成功")
+    public ParseExcelNameRes parseExcelName(@Valid @RequestBody ParseExcelNameReq parseExcelNameReq) {
+
+        return excelSyncService.parseExcelName(parseExcelNameReq);
+    }
+
 }

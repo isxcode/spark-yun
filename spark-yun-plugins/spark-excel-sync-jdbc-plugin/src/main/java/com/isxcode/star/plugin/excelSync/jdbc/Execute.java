@@ -69,8 +69,14 @@ public class Execute {
                     : "insert into";
 
             // 执行sql同步语句
-            sparkSession.sql(insertSql + " table " + targetTempView + " ( " + Strings.join(targetCols, ',')
-                + " ) select " + Strings.join(sourceCols, ',') + " from " + sourceTempView);
+            if (Strings.isNotEmpty(pluginReq.getExcelSyncConfig().getQueryCondition())) {
+                sparkSession.sql(insertSql + " table " + targetTempView + " ( " + Strings.join(targetCols, ',')
+                    + " ) select " + Strings.join(sourceCols, ',') + " from " + sourceTempView + " where "
+                    + pluginReq.getExcelSyncConfig().getQueryCondition());
+            } else {
+                sparkSession.sql(insertSql + " table " + targetTempView + " ( " + Strings.join(targetCols, ',')
+                    + " ) select " + Strings.join(sourceCols, ',') + " from " + sourceTempView);
+            }
         }
     }
 
@@ -83,14 +89,14 @@ public class Execute {
 
         Map<String, String> optionsMap = new HashMap<>();
 
-        if (conf.getExcelSyncConfig().isHasHeader()) {
-            optionsMap.put("header", "true");
-        }
+        // 永远都会有表头
+        optionsMap.put("header", "true");
         optionsMap.put("delimiter", ";");
         optionsMap.put("encoding", "UTF-8");
         optionsMap.put("sep", ",");
         optionsMap.put("quote", "\"");
 
+        // 翻译不同平台的地址
         String csvFilePath;
         if (AgentType.K8S.equals(conf.getAgentType())) {
             csvFilePath = "file://" + conf.getCsvFilePath();

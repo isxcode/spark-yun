@@ -240,9 +240,26 @@ public class ExcelSyncExecutor extends WorkExecutor {
             clusterNodeMapper.engineNodeEntityToScpFileEngineNodeDto(engineNode);
         scpFileEngineNodeDto.setPasswd(aesUtils.decrypt(scpFileEngineNodeDto.getPasswd()));
 
-        // 将excel文件转成csv，并推送到远程
-        String sourceFileId = workRunContext.getExcelSyncConfig().getSourceFileId();
+        // 如果用户开启了文件替换功能，自动替换文件
+        String sourceFileId;
+        if (workRunContext.getExcelSyncConfig().isFileReplace()) {
+            String fileName = sqlFunctionService.parseSqlFunction(workRunContext.getExcelSyncConfig().getFilePattern());
+            Optional<FileEntity> fileEntityOptional = fileRepository.findByFileName(fileName);
+            if (!fileEntityOptional.isPresent()) {
+                throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + fileName + "不存在 \n");
+            }
+            sourceFileId = fileEntityOptional.get().getId();
+        } else {
+            sourceFileId = workRunContext.getExcelSyncConfig().getSourceFileId();
+        }
+
+        // 打印文件名
         FileEntity file = fileService.getFile(sourceFileId);
+        logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO)
+            .append("当前同步的excel文件:" + file.getFileName() + "  \n");
+        workInstance = updateInstance(workInstance, logBuilder);
+
+        // 将excel文件转成csv，并推送到远程
         String csvFileName = sourceFileId + ".csv";
         String filePath = PathUtils.parseProjectPath(isxAppProperties.getResourcesPath()) + File.separator + "file"
             + File.separator + TENANT_ID.get() + File.separator + file.getId();
@@ -252,6 +269,15 @@ public class ExcelSyncExecutor extends WorkExecutor {
         List<List<Object>> read = reader.read();
         CsvWriteConfig.defaultConfig().setFieldSeparator(',').setTextDelimiter(';');
         CsvWriter writer = CsvUtil.getWriter(FileUtil.file(csvFilePath), StandardCharsets.UTF_8);
+        // 如果没有表头，先插入一行表头
+        if (!workRunContext.getExcelSyncConfig().isHasHeader()) {
+            List<String> row = new ArrayList<>();
+            for (int i = 0; i < workRunContext.getExcelSyncConfig().getSourceTableColumn().size(); i++) {
+                row.add("col" + i);
+            }
+            writer.write(row.toArray(new String[0]));
+        }
+        // 插入数据
         for (List<Object> rowMeta : read) {
             List<String> row = new ArrayList<>();
             rowMeta.forEach(e -> {
