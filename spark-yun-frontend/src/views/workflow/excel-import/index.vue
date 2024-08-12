@@ -56,19 +56,20 @@
                         </div>
                     </template>
                     <el-form ref="form" label-position="left" label-width="70px" :model="formData" :rules="rules">
-                        <el-form-item prop="sourceFileId" label="Excel">
+                        <el-form-item prop="sourceFileId" label="Excel文件">
                             <el-select v-model="formData.sourceFileId" clearable filterable placeholder="请选择" @change="getTableColummList" @visible-change="getFileCenterList">
                                 <el-option v-for="item in fileList" :key="item.value" :label="item.label" :value="item.value" />
                             </el-select>
                         </el-form-item>
-                        <el-form-item label="是否有表头" label-width="80px">
-                            <el-switch v-model="formData.hasHeader" @change="pageChangeEvent"></el-switch>
-                            <el-button type="primary" link @click="showTableDetail">数据预览</el-button>
+                        <el-form-item label="存在表头" label-width="80px">
+                            <el-switch v-model="formData.hasHeader" @change="getTableColummList(formData.sourceFileId)"></el-switch>
+                            <el-button style="margin-left: 24px" type="primary" link @click="showTableDetail">数据预览</el-button>
                         </el-form-item>
-                        <el-form-item prop="sourceTable" label="是否开启文件替换" label-width="140px">
+                        <el-form-item prop="sourceTable" label="开启文件替换" label-width="140px">
                             <el-switch v-model="formData.fileReplace" @change="pageChangeEvent"></el-switch>
+                            <el-button style="margin-left: 12px" type="primary" link :disabled="!formData.fileReplace" :loading="fileNameLoading" @click="showReplaceEvent">文件名预览</el-button>
                         </el-form-item>
-                        <el-form-item prop="filePattern" label="替换规则">
+                        <el-form-item prop="filePattern" label="替换规则" v-if="formData.fileReplace">
                             <el-input v-model="formData.filePattern" clearable placeholder="请输入" @change="pageChangeEvent"></el-input>
                         </el-form-item>
                         <el-form-item prop="queryCondition" label="过滤条件">
@@ -152,7 +153,7 @@ import { sql } from '@codemirror/lang-sql'
 import { DataSourceType, OverModeList } from './data.config.ts'
 import { GetDatasourceList } from '@/services/datasource.service'
 import { GetFileCenterList } from '@/services/file-center.service'
-import { GetDataSourceTables } from '@/services/data-sync.service'
+import { GetDataSourceTables, GetExcelReplaceName } from '@/services/data-sync.service'
 import TableDetail from './table-detail/index.vue'
 import DataSyncTable from './data-sync-table/index.vue'
 import ConfigDetail from '../workflow-page/config-detail/index.vue'
@@ -183,9 +184,9 @@ const targetList = ref([])
 const sourceTablesList = ref<Option[]>([])
 const targetTablesList = ref<Option[]>([])
 const overModeList = ref<Option[]>(OverModeList)
-const partKeyList = ref<Option[]>([])       // 分区键
 const typeList = ref(DataSourceType);
 const fileList = ref<Option[]>([])
+const fileNameLoading = ref<boolean>(false)   // 文件名预览loading
 
 // 日志展示相关
 const containerInstanceRef = ref(null)
@@ -443,6 +444,25 @@ function showTableDetail(): void {
     } else {
         ElMessage.warning('请选择Excel文件')
     }
+}
+
+// 文件名预览
+function showReplaceEvent() {
+    if (!formData.filePattern) {
+        ElMessage.error('请输入替换规则')
+        return
+    }
+    fileNameLoading.value = true
+    GetExcelReplaceName({
+        filePattern: formData.filePattern
+    }).then((res: any) => {
+        ElMessageBox.alert(res.data.fileName, '文件名预览', {
+            confirmButtonText: '关闭'
+        })
+        fileNameLoading.value = false
+    }).catch(() => {
+        fileNameLoading.value = false
+    })
 }
 
 function getTableColummList(e: string) {

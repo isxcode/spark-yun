@@ -10,6 +10,9 @@
       <!-- 日志展示 -->
       <template v-if="['log', 'yarnLog'].includes(modalType)">
         <LogContainer v-if="logMsg" :logMsg="logMsg" :status="true"></LogContainer>
+        <template v-else>
+          <empty-page label="暂无日志"></empty-page>
+        </template>
       </template>
       <!-- 结果展示 -->
       <template v-else-if="modalType === 'result'">

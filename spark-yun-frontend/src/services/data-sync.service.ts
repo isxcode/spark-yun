@@ -105,6 +105,15 @@ export function GetExcelDataPreviewDetail(params: any): Promise<any> {
     })
 }
 
+// 作业流-Excel导入-文件名预览
+export function GetExcelReplaceName(params: any): Promise<any> {
+    return http.request({
+        method: 'post',
+        url: '/work/parseExcelName',
+        params: params
+    })
+}
+
 // 作业流-Excel导入-获取Excel字段信息
 export function GetExcelTableColumnsCodes(params: any): Promise<any> {
     return http.request({
