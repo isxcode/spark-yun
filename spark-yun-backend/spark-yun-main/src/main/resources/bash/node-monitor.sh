@@ -30,8 +30,8 @@ json_output="{ \
   \"usedMemorySize\": \"$USED_MEMORY\", \
   \"usedStorageSize\": \"$USED_STORAGE\", \
   \"cpuPercent\": \"$CPU_PERCENT\", \
-  \"networkIoReadSpeed\": \"$NET_IO_READ\", \
-  \"networkIoWriteSpeed\": \"$NET_IO_WRITE\", \
+  \"networkIoReadSpeedStr\": \"$NET_IO_READ\", \
+  \"networkIoWriteSpeedStr\": \"$NET_IO_WRITE\", \
   \"diskIoReadSpeedStr\": \"$DISK_IO_READ\", \
   \"diskIoWriteSpeedStr\": \"$DISK_IO_WRITE\" \
 }"
