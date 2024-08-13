@@ -64,10 +64,13 @@ dependencies {
     implementation "org.codehaus.janino:commons-compiler:3.1.10"
 
     // jackson-module
-    implementation "com.fasterxml.jackson.module:jackson-module-scala_${SPARK_SCALA_VERSION}:2.10.0"
+    implementation "com.fasterxml.jackson.module:jackson-module-scala_${SPARK_SCALA_VERSION}:2.13.5"
 
     // commons-compiler
-    implementation "com.fasterxml.jackson.core:jackson-databind:2.10.0"
+    implementation "com.fasterxml.jackson.core:jackson-databind:2.13.5"
+
+    // jackson-core
+    implementation "com.fasterxml.jackson.core:jackson-core:2.13.5"
 
     // lz4-java
     implementation "org.lz4:lz4-java:1.5.0"

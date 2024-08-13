@@ -49,3 +49,6 @@ spark-yun-backend/spark-yun-main/src/main/resources/libprql_java-linux64.so
 
 # 自动化测试代码不提交
 **/__pycache__
+
+# derby.log不提交
+derby.log
