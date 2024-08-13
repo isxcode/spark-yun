@@ -73,6 +73,7 @@ export function useRouterMenu(menuListData: Menu[]) {
       >
         <el-menu
           class="zqy-home__menu"
+          unique-opened={true}
           collapse={isCollapse.value}
           default-active={currentMenu.value?.code}
           onSelect={handleSelect}
