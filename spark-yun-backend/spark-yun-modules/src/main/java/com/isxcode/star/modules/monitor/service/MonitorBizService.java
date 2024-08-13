@@ -338,17 +338,21 @@ public class MonitorBizService {
             return nodeMonitorInfo;
         }
 
-        long diskIoReadSpeed = 0L, diskIoWriteSpeed = 0L;
+        long diskIoReadSpeed = 0L, diskIoWriteSpeed = 0L, networkIoReadSpeed = 0L, networkIoWriteSpeed = 0L;
         if (!Strings.isEmpty(nodeMonitorInfo.getDiskIoReadSpeedStr())) {
             for (int i = 0; i < nodeMonitorInfo.getDiskIoReadSpeedStr().split(" ").length; i++) {
                 diskIoReadSpeed += Long.parseLong(nodeMonitorInfo.getDiskIoReadSpeedStr().split(" ")[i]);
                 diskIoWriteSpeed += Long.parseLong(nodeMonitorInfo.getDiskIoWriteSpeedStr().split(" ")[i]);
+                networkIoReadSpeed += Long.parseLong(nodeMonitorInfo.getNetworkIoReadSpeedStr().split(" ")[i]);
+                networkIoWriteSpeed += Long.parseLong(nodeMonitorInfo.getNetworkIoWriteSpeedStr().split(" ")[i]);
             }
         }
 
         // 解析一下速度
         nodeMonitorInfo.setDiskIoReadSpeed(diskIoReadSpeed);
         nodeMonitorInfo.setDiskIoWriteSpeed(diskIoWriteSpeed);
+        nodeMonitorInfo.setNetworkIoReadSpeed(networkIoReadSpeed);
+        nodeMonitorInfo.setNetworkIoWriteSpeed(networkIoWriteSpeed);
 
         return nodeMonitorInfo;
     }
