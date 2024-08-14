@@ -388,6 +388,7 @@ public class SparkSqlExecutor extends WorkExecutor {
 
                 // 如果运行成功，则保存返回数据
                 List<String> successStatus = Arrays.asList("FINISHED", "SUCCEEDED", "COMPLETED");
+                log.debug("sparkSql返回执行状态:{}", workStatusRes.getAppStatus().toUpperCase());
                 if (successStatus.contains(workStatusRes.getAppStatus().toUpperCase())) {
 
                     // 获取数据
