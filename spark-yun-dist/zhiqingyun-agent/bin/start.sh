@@ -10,7 +10,7 @@ cd "${BASE_PATH}" || exit
 cd ".." || exit
 
 # 执行agent-env.sh
-source "conf/zhiqingyun-env.sh"
+source "conf/agent-env.sh"
 
 # 项目已经在运行中
 if [ -e "zhiqingyun-agent.pid" ]; then
