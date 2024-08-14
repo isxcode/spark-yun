@@ -189,7 +189,8 @@ function initGraph() {
         },
         keyboard: true,
         clipboard: true,
-        history: true
+        history: true,
+        autoResize: true
     })
     dnd = new Addon.Dnd({
         target: _Graph,
@@ -403,7 +404,7 @@ defineExpose({
     }
 
     .section-cot #container {
-        height: 100%;
+        height: 100% !important;
         position: relative;
         flex: 1;
     }
