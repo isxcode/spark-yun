@@ -176,9 +176,9 @@
                 <span class="click-show-more">更多</span>
                 <template #dropdown>
                   <el-dropdown-menu>
-                    <el-dropdown-item>
+                    <!-- <el-dropdown-item>
                       删除
-                    </el-dropdown-item>
+                    </el-dropdown-item> -->
                     <el-dropdown-item @click="reRunWorkFlowDataEvent(scopeSlot.row)">
                       重跑
                     </el-dropdown-item>
