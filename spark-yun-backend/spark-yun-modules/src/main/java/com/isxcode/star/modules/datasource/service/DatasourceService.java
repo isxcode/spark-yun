@@ -388,7 +388,10 @@ public class DatasourceService {
 
         try (AdminClient adminClient = AdminClient.create(properties)) {
             ListTopicsResult listTopicsResult = adminClient.listTopics();
-            listTopicsResult.names().get();
+            Set<String> strings = listTopicsResult.names().get();
+            if (!strings.contains(kafkaConfig.getTopic())) {
+                throw new RuntimeException("topic不存在");
+            }
         }
     }
 
