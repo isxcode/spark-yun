@@ -192,6 +192,7 @@ function getTableColumnData(params: TableDetailParam, type: string) {
     if (!params.dataSourceId) {
         if (type === 'source') {
             sourceTableColumn.value = []
+            instance.deleteEveryConnection()
         }
         return
     }
