@@ -65,14 +65,14 @@
                                         :value="item.value" />
                                 </el-select>
                             </el-form-item>
-                            <el-form-item prop="kafkaConfig.topic" label="topic">
+                            <!-- <el-form-item prop="kafkaConfig.topic" label="topic">
                                 <el-select v-model="formData.kafkaConfig.topic" clearable filterable placeholder="请选择" @change="pageChangeEvent"
                                     @visible-change="getTopicList($event, formData.sourceDBId)"
                                 >
                                     <el-option v-for="item in topList" :key="item.value" :label="item.label"
                                         :value="item.value" />
                                 </el-select>
-                            </el-form-item>
+                            </el-form-item> -->
                             <el-form-item prop="jsonTemplate" label="Json模板">
                                 <code-mirror v-model="formData.jsonTemplate" basic :lang="jsonLang" @change="pageChangeEvent" />
                             </el-form-item>
