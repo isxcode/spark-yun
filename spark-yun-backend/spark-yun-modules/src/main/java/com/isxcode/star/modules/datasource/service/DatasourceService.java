@@ -15,6 +15,7 @@ import com.isxcode.star.modules.datasource.entity.DatasourceEntity;
 import com.isxcode.star.modules.datasource.repository.DatasourceRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.calcite.sql.SqlOrderBy;
 import org.apache.calcite.sql.SqlSelect;
 import org.apache.calcite.sql.parser.SqlParseException;
 import org.apache.commons.lang3.StringUtils;
@@ -339,7 +340,7 @@ public class DatasourceService {
             }
 
             SqlNode sqlNode = parser.parseQuery();
-            return sqlNode.getKind() == SqlKind.SELECT;
+            return sqlNode.getKind() == SqlKind.SELECT || sqlNode.getKind() == SqlKind.ORDER_BY;
         } catch (SqlParseException e) {
             log.error(e.getMessage(), e);
             throw new WorkRunException(e.getMessage());
@@ -424,6 +425,9 @@ public class DatasourceService {
             if (sqlNode instanceof SqlSelect) {
                 SqlSelect select = (SqlSelect) sqlNode;
                 return select.getFetch() != null;
+            } else if (sqlNode instanceof SqlOrderBy) {
+                SqlOrderBy orderBy = (SqlOrderBy) sqlNode;
+                return orderBy.fetch != null;
             } else {
                 return false;
             }
