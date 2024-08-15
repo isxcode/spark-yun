@@ -109,6 +109,11 @@ if [ ! -f "${SPARK_JAR_DIR}"/bcprov-jdk18on-1.78.1.jar ]; then
   curl -ssL "${OSS_DOWNLOAD_URL}"/bcprov-jdk18on-1.78.1.jar -o "${SPARK_JAR_DIR}"/bcprov-jdk18on-1.78.1.jar
   echo "bcprov-jdk18on-1.78.1.jar下载成功"
 fi
+if [ ! -f "${SPARK_JAR_DIR}"/commons-dbutils-1.7.jar ]; then
+  echo "commons-dbutils-1.7.jar开始下载"
+  curl -ssL "${OSS_DOWNLOAD_URL}"/commons-dbutils-1.7.jar -o "${SPARK_JAR_DIR}"/commons-dbutils-1.7.jar
+  echo "commons-dbutils-1.7.jar下载成功"
+fi
 
 # 创建系统驱动目录
 JDBC_DIR="${BASE_PATH}"/resources/jdbc/system
