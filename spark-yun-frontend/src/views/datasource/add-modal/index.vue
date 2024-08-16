@@ -306,6 +306,9 @@ function showModal(cb: () => void, data: any): void {
     formData.passwd = data.passwd
     formData.remark = data.remark
     formData.driverId = data.driverId
+    formData.kafkaConfig = {
+      topic: data.kafkaConfig.topic
+    }
     formData.metastoreUris = data.metastoreUris
     formData.id = data.id
     modelConfig.title = '编辑数据源'
@@ -316,6 +319,9 @@ function showModal(cb: () => void, data: any): void {
     formData.username = ''
     formData.passwd = ''
     formData.remark = ''
+    formData.kafkaConfig = {
+      topic: ''
+    }
     formData.driverId = ''
     formData.metastoreUris = ''
     formData.id = ''
