@@ -85,7 +85,7 @@ export function GetResultData(params: LogParam): Promise<any> {
   })
 }
 
-// 删除调度历史
+// 删除调度历史-作业
 export function DeleteScheduleLog(params: LogParam): Promise<any> {
   return http.request({
     method: 'get',
@@ -93,3 +93,13 @@ export function DeleteScheduleLog(params: LogParam): Promise<any> {
     params: params
   })
 }
+
+// 删除调度历史-作业流
+export function DeleteWorkFlowScheduleLog(params: workflowInstanceId): Promise<any> {
+  return http.request({
+    method: 'post',
+    url: '/vip/wfi/deleteWorkflowInstance',
+    params: params
+  })
+}
+
