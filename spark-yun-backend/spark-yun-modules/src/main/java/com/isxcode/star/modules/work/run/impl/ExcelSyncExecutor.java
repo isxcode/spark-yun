@@ -14,6 +14,7 @@ import com.isxcode.star.api.agent.pojos.res.YagGetLogRes;
 import com.isxcode.star.api.api.constants.PathConstants;
 import com.isxcode.star.api.cluster.constants.ClusterNodeStatus;
 import com.isxcode.star.api.cluster.pojos.dto.ScpFileEngineNodeDto;
+import com.isxcode.star.api.datasource.constants.DatasourceType;
 import com.isxcode.star.api.work.constants.WorkLog;
 import com.isxcode.star.api.work.constants.WorkType;
 import com.isxcode.star.api.work.exceptions.WorkRunException;
@@ -335,6 +336,11 @@ public class ExcelSyncExecutor extends WorkExecutor {
                 }
             });
             executeReq.setLibConfig(workRunContext.getLibConfig());
+        }
+
+        // 当目标数据源是hive的，塞入hive.metastore.uris值
+        if (DatasourceType.HIVE.equals(targetDatasource.getDbType())) {
+            pluginReq.getSparkConfig().put("hive.metastore.uris", targetDatasource.getMetastoreUris());
         }
 
         // 开始构造executeReq
