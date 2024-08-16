@@ -105,7 +105,7 @@ public class Execute {
             String[] split = rootDirectory.split("/");
             csvFilePath = "/user/" + split[5] + "/.sparkStaging/" + split[7] + "/" + conf.getCsvFileName();
         } else {
-            csvFilePath = SparkFiles.get(conf.getCsvFileName());
+            csvFilePath = "file://" + SparkFiles.getRootDirectory() + "/" + conf.getCsvFileName();
         }
 
         Dataset<Row> source = sparkSession.read().options(optionsMap).csv(csvFilePath);

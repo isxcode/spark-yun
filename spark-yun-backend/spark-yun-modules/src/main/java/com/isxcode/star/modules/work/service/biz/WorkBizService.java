@@ -349,6 +349,7 @@ public class WorkBizService {
             // 普通作业中止
             if (!WorkType.QUERY_SPARK_SQL.equals(workEntity.getWorkType())
                 && !WorkType.DATA_SYNC_JDBC.equals(workEntity.getWorkType())
+                && !WorkType.EXCEL_SYNC_JDBC.equals(workEntity.getWorkType())
                 && !WorkType.SPARK_JAR.equals(workEntity.getWorkType())) {
 
                 workExecutor.syncAbort(workInstanceEntity);
