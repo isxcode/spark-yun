@@ -30,6 +30,8 @@ public interface DatasourceMapper {
         DatasourceEntity datasourceEntity);
 
     @Mapping(target = "checkDateTime", dateFormat = "yyyy-MM-dd HH:mm:ss")
+    @Mapping(target = "kafkaConfigStr", source = "kafkaConfig")
+    @Mapping(target = "kafkaConfig", ignore = true)
     PageDatasourceRes datasourceEntityToQueryDatasourceRes(DatasourceEntity datasourceEntity);
 
     @Mapping(target = "createDateTime", dateFormat = "yyyy-MM-dd HH:mm:ss")
