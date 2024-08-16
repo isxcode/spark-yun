@@ -55,7 +55,7 @@ import BlockModal from '@/components/block-modal/index.vue'
 import { ElMessage, FormInstance, FormRules } from 'element-plus'
 import { GetComputerGroupList } from '@/services/computer-group.service';
 import { GetDatasourceList } from '@/services/datasource.service'
-import CodeMirror from 'vue-codemirror6'
+// import CodeMirror from 'vue-codemirror6'
 import {json} from '@codemirror/lang-json'
 import { jsonFormatter } from '@/utils/formatter'
 
