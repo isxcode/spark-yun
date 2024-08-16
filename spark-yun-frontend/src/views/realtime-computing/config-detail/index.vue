@@ -97,7 +97,7 @@ import { ClusterConfigRules, ResourceLevelOptions} from './config-detail'
 import { GetComputerGroupList } from '@/services/computer-group.service'
 import { jsonFormatter } from '@/utils/formatter'
 import {json} from '@codemirror/lang-json'
-import CodeMirror from 'vue-codemirror6'
+// import CodeMirror from 'vue-codemirror6'
 
 const workItemConfig = ref()
 const fileIdList = ref([]) // 资源文件

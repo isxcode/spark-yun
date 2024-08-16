@@ -83,7 +83,7 @@
 import { reactive, defineExpose, ref, nextTick } from 'vue'
 import BlockModal from '@/components/block-modal/index.vue'
 import { ElMessage, FormInstance, FormRules } from 'element-plus'
-import CodeMirror from 'vue-codemirror6'
+// import CodeMirror from 'vue-codemirror6'
 import {json} from '@codemirror/lang-json'
 import { jsonFormatter } from '@/utils/formatter'
 import { useAuthStore } from '@/store/useAuth'

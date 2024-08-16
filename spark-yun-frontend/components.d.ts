@@ -10,6 +10,7 @@ declare module 'vue' {
     BlockDrawer: typeof import('./src/components/block-drawer/index.vue')['default']
     BlockModal: typeof import('./src/components/block-modal/index.vue')['default']
     BlockTable: typeof import('./src/components/block-table/index.vue')['default']
+    CodeMirror: typeof import('./src/components/code-mirror/index.vue')['default']
     ElAvatar: typeof import('element-plus/es')['ElAvatar']
     ElBreadcrumb: typeof import('element-plus/es')['ElBreadcrumb']
     ElBreadcrumbItem: typeof import('element-plus/es')['ElBreadcrumbItem']

@@ -33,7 +33,7 @@
 import { reactive, defineExpose, ref } from 'vue'
 import { ElMessage, FormInstance, FormRules } from 'element-plus'
 import { GetUserList } from '@/services/tenant-user.service'
-import CodeMirror from 'vue-codemirror6'
+// import CodeMirror from 'vue-codemirror6'
 import {json} from '@codemirror/lang-json'
 import { jsonFormatter } from '@/utils/formatter'
 
