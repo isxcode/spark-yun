@@ -142,6 +142,9 @@ public class DatasourceBizService {
                     e.setDriverName(databaseDriverService.getDriverName(e.getDriverId()));
                 }
             }
+            if (DatasourceType.KAFKA.equals(e.getDbType())) {
+                e.setKafkaConfig(JSON.parseObject(e.getKafkaConfigStr(), KafkaConfig.class));
+            }
         });
 
         return pageDatasourceRes;
