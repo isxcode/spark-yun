@@ -208,7 +208,7 @@
 import { ref, reactive, onMounted, defineProps, nextTick, markRaw } from 'vue'
 import Breadcrumb from '@/layout/bread-crumb/index.vue'
 import { ElMessage, ElMessageBox, FormInstance, FormRules } from 'element-plus'
-import CodeMirror from 'vue-codemirror6'
+// import CodeMirror from 'vue-codemirror6'
 import { sql } from '@codemirror/lang-sql'
 import {json} from '@codemirror/lang-json'
 import { DataSourceType, CurrentSourceType, OverModeList, BreadCrumbList } from './data.config.ts'

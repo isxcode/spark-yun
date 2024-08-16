@@ -96,7 +96,7 @@ import PublishLog from './publish-log.vue'
 import ReturnData from './return-data.vue'
 import RunningLog from './running-log.vue'
 import TotalDetail from './total-detail.vue'
-import CodeMirror from 'vue-codemirror6'
+// import CodeMirror from 'vue-codemirror6'
 import { sql } from '@codemirror/lang-sql'
 import { python } from '@codemirror/lang-python'
 
