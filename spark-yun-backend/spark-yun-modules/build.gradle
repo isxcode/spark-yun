@@ -27,7 +27,6 @@ dependencies {
     implementation 'org.apache.xmlbeans:xmlbeans:5.2.0'
     implementation 'pull-parser:pull-parser:2.1.10'
 
-//    implementation 'org.apache.poi:poi-ooxml-schemas:4.1.2'
-
-//    implementation 'org.apache.commons:commons-collections4:4.4'
+    // commons-dbutils
+    implementation 'commons-dbutils:commons-dbutils:1.7'
 }

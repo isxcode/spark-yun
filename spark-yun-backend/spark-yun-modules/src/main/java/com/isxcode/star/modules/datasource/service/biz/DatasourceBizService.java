@@ -181,7 +181,7 @@ public class DatasourceBizService {
                 return new TestConnectRes(false, e.getMessage());
             }
         } else {
-            Datasource datasource1 = dataSourceFactory.getDatasource(datasource.getId());
+            Datasource datasource1 = dataSourceFactory.getDatasource(datasource.getDbType());
             try (Connection connection = datasource1.getConnection(datasource)) {
                 if (connection != null) {
                     datasource.setStatus(DatasourceStatus.ACTIVE);
