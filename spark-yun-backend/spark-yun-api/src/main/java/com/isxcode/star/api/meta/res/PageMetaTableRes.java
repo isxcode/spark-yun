@@ -19,13 +19,11 @@ public class PageMetaTableRes {
 
     private String tableName;
 
-    private String remark;
-
-    private String status;
-
-    @JsonSerialize(using = LocalDateTimeSerializer.class)
-    private LocalDateTime updateDateTime;
+    private String tableCommand;
 
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime createDateTime;
+
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    private LocalDateTime lastModifiedDateTime;
 }
