@@ -1,8 +1,6 @@
 package com.isxcode.star.modules.work.service;
 
 import com.isxcode.star.api.datasource.pojos.dto.ColumnMetaDto;
-import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
-import com.isxcode.star.modules.datasource.entity.DatasourceEntity;
 import com.isxcode.star.modules.datasource.repository.DatasourceRepository;
 import com.isxcode.star.modules.datasource.service.DatasourceService;
 import lombok.RequiredArgsConstructor;
@@ -10,7 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
-import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -156,23 +153,6 @@ public class SyncWorkService {
         result.put("schema", schema);
 
         return result;
-    }
-
-    /**
-     * 获取数据库连接。
-     *
-     * @param dataSourceId 数据源唯一id。
-     * @param driver 数据库驱动文件路径。
-     * @param classPath 数据库驱动类名。
-     * @return 数据库连接。
-     */
-    public Connection getConnection(String dataSourceId, String driver, String classPath) throws Exception {
-        Optional<DatasourceEntity> datasourceEntityOptional = datasourceRepository.findById(dataSourceId);
-        if (!datasourceEntityOptional.isPresent()) {
-            throw new IsxAppException("数据源异常，请联系开发者");
-        }
-
-        return datasourceService.getDbConnection(datasourceEntityOptional.get());
     }
 
     /**

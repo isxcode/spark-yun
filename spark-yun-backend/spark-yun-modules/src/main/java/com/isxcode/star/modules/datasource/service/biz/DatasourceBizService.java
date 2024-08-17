@@ -30,6 +30,8 @@ import java.util.List;
 import java.util.Optional;
 import javax.transaction.Transactional;
 
+import com.isxcode.star.modules.datasource.source.DataSourceFactory;
+import com.isxcode.star.modules.datasource.source.Datasource;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
@@ -61,6 +63,8 @@ public class DatasourceBizService {
     private final IsxAppProperties isxAppProperties;
 
     private final DatabaseDriverService databaseDriverService;
+
+    private final DataSourceFactory dataSourceFactory;
 
     public void addDatasource(AddDatasourceReq addDatasourceReq) {
 
@@ -177,7 +181,8 @@ public class DatasourceBizService {
                 return new TestConnectRes(false, e.getMessage());
             }
         } else {
-            try (Connection connection = datasourceService.getDbConnection(datasource)) {
+            Datasource datasource1 = dataSourceFactory.getDatasource(datasource.getId());
+            try (Connection connection = datasource1.getConnection(datasource)) {
                 if (connection != null) {
                     datasource.setStatus(DatasourceStatus.ACTIVE);
                     datasource.setConnectLog("测试连接成功！");
