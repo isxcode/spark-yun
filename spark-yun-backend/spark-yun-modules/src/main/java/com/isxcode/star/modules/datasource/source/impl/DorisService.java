@@ -2,7 +2,8 @@ package com.isxcode.star.modules.datasource.source.impl;
 
 import com.isxcode.star.api.datasource.constants.DatasourceDriver;
 import com.isxcode.star.api.datasource.constants.DatasourceType;
-import com.isxcode.star.api.datasource.pojos.dto.QueryTablesDto;
+import com.isxcode.star.api.datasource.pojos.dto.QueryColumnDto;
+import com.isxcode.star.api.datasource.pojos.dto.QueryTableDto;
 import com.isxcode.star.backend.api.base.properties.IsxAppProperties;
 import com.isxcode.star.common.utils.AesUtils;
 import com.isxcode.star.modules.datasource.service.DatabaseDriverService;
@@ -34,7 +35,13 @@ public class DorisService extends Datasource {
     }
 
     @Override
-    protected List<QueryTablesDto> queryTables(Connection connection, String database) throws SQLException {
+    protected List<QueryTableDto> queryTable(Connection connection, String database) throws SQLException {
+        return Collections.emptyList();
+    }
+
+    @Override
+    protected List<QueryColumnDto> queryColumn(Connection connection, String database, String tableName)
+        throws SQLException {
         return Collections.emptyList();
     }
 }

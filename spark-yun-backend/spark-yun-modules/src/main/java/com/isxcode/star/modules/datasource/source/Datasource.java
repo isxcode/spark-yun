@@ -1,7 +1,8 @@
 package com.isxcode.star.modules.datasource.source;
 
 import com.isxcode.star.api.datasource.constants.DatasourceType;
-import com.isxcode.star.api.datasource.pojos.dto.QueryTablesDto;
+import com.isxcode.star.api.datasource.pojos.dto.QueryColumnDto;
+import com.isxcode.star.api.datasource.pojos.dto.QueryTableDto;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.star.backend.api.base.properties.IsxAppProperties;
 import com.isxcode.star.common.utils.AesUtils;
@@ -38,13 +39,26 @@ public abstract class Datasource {
 
     public abstract String getDriverName();
 
-    protected abstract List<QueryTablesDto> queryTables(Connection connection, String database) throws SQLException;
+    protected abstract List<QueryTableDto> queryTable(Connection connection, String database) throws SQLException;
 
-    public List<QueryTablesDto> queryTables(DatasourceEntity datasourceEntity, String database) {
+    protected abstract List<QueryColumnDto> queryColumn(Connection connection, String database, String tableName)
+        throws SQLException;
+
+    public List<QueryTableDto> queryTable(DatasourceEntity datasourceEntity, String database) {
 
         try {
             Connection connection = getConnection(datasourceEntity);
-            return queryTables(connection, database);
+            return queryTable(connection, database);
+        } catch (Exception e) {
+            throw new IsxAppException(e.getMessage());
+        }
+    }
+
+    public List<QueryColumnDto> queryColumn(DatasourceEntity datasourceEntity, String database, String tableName) {
+
+        try {
+            Connection connection = getConnection(datasourceEntity);
+            return queryColumn(connection, database, tableName);
         } catch (Exception e) {
             throw new IsxAppException(e.getMessage());
         }
