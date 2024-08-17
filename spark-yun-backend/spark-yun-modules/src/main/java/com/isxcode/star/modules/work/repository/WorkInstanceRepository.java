@@ -42,5 +42,5 @@ public interface WorkInstanceRepository extends JpaRepository<WorkInstanceEntity
     @Query("select W from WorkInstanceEntity W where W.workflowInstanceId = :workflowInstanceId and W.workId in (:workIds)")
     List<WorkInstanceEntity> findAllByWorkflowInstanceIdAndWorkIds(String workflowInstanceId, List<String> workIds);
 
-    void deleteByWorkflowInstanceId(String workflowInstanceId);
+    void deleteAllByWorkflowInstanceId(String workflowInstanceId);
 }
