@@ -19,7 +19,7 @@ public class PageMetaDatabaseRes {
 
     private String dbType;
 
-    private String dbCommand;
+    private String dbCommend;
 
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime createDateTime;
