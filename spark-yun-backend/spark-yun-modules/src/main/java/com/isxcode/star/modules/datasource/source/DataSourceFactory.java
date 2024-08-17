@@ -1,26 +1,27 @@
 package com.isxcode.star.modules.datasource.source;
 
-import com.isxcode.star.modules.datasource.entity.DatasourceEntity;
+import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
-import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
-@Service
+@Component
+@RequiredArgsConstructor
 public class DataSourceFactory {
 
-    private final Map<String, SourceService> sourceMap;
+    private final ApplicationContext applicationContext;
 
-    public DataSourceFactory(ApplicationContext applicationContext) {
+    public Datasource getDatasource(String datasourceType) {
 
-        sourceMap = applicationContext.getBeansOfType(SourceService.class).values().stream()
-                .collect(Collectors.toMap(SourceService::getDataSourceType, action -> action));
-    }
+        Optional<Datasource> datasourceOptional = applicationContext.getBeansOfType(Datasource.class).values().stream()
+            .filter(agent -> agent.getDataSourceType().equals(datasourceType)).findFirst();
 
-    public SourceService getDatasource(String dataSourceType) {
+        if (!datasourceOptional.isPresent()) {
+            throw new IsxAppException("数据源类型不支持");
+        }
 
-        return Optional.ofNullable(sourceMap.get(dataSourceType)).orElseThrow(() -> new RuntimeException("该数据源不支持"));
+        return datasourceOptional.get();
     }
 }
