@@ -43,8 +43,8 @@ public class SyncWorkBizService {
 
     public GetDataSourceTablesRes getDataSourceTables(GetDataSourceTablesReq getDataSourceTablesReq) throws Exception {
 
-        Datasource datasource1 = dataSourceFactory.getDatasource(getDataSourceTablesReq.getDataSourceId());
         DatasourceEntity datasource = datasourceService.getDatasource(getDataSourceTablesReq.getDataSourceId());
+        Datasource datasource1 = dataSourceFactory.getDatasource(datasource.getDbType());
         Connection connection = datasource1.getConnection(datasource);
         Map<String, String> transform = getTransform(connection, getDataSourceTablesReq.getTablePattern());
         List<String> tables = syncWorkService.tables(connection.getMetaData(), transform.get("catalog"),
@@ -59,8 +59,8 @@ public class SyncWorkBizService {
     public GetDataSourceColumnsRes getDataSourceColumns(GetDataSourceColumnsReq getDataSourceColumnsReq)
         throws Exception {
 
-        Datasource datasource1 = dataSourceFactory.getDatasource(getDataSourceColumnsReq.getDataSourceId());
         DatasourceEntity datasource = datasourceService.getDatasource(getDataSourceColumnsReq.getDataSourceId());
+        Datasource datasource1 = dataSourceFactory.getDatasource(datasource.getDbType());
         Connection connection = datasource1.getConnection(datasource);
         Map<String, String> transform = getTransform(connection, getDataSourceColumnsReq.getTableName());
         List<ColumnMetaDto> columns = syncWorkService.columns(connection.getMetaData(), transform.get("catalog"),
@@ -77,7 +77,7 @@ public class SyncWorkBizService {
             throw new IsxAppException("数据源异常，请联系开发者");
         }
 
-        Datasource datasource1 = dataSourceFactory.getDatasource(datasourceEntityOptional.get().getId());
+        Datasource datasource1 = dataSourceFactory.getDatasource(datasourceEntityOptional.get().getDbType());
         Connection connection = datasource1.getConnection(datasourceEntityOptional.get());
 
         Statement statement = connection.createStatement();
@@ -108,8 +108,8 @@ public class SyncWorkBizService {
 
     public GetCreateTableSqlRes getCreateTableSql(GetCreateTableSqlReq getCreateTableSqlReq) throws Exception {
 
-        Datasource datasource1 = dataSourceFactory.getDatasource(getCreateTableSqlReq.getDataSourceId());
         DatasourceEntity datasource = datasourceService.getDatasource(getCreateTableSqlReq.getDataSourceId());
+        Datasource datasource1 = dataSourceFactory.getDatasource(datasource.getDbType());
         Connection connection = datasource1.getConnection(datasource);
         Map<String, String> transform = getTransform(connection, getCreateTableSqlReq.getTableName());
         ResultSet columns = connection.getMetaData().getColumns(transform.get("catalog"), transform.get("schema"),

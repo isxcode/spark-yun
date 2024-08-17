@@ -1,6 +1,7 @@
 package com.isxcode.star.modules.datasource.source;
 
 import com.isxcode.star.api.datasource.constants.DatasourceType;
+import com.isxcode.star.api.datasource.pojos.dto.QueryTablesDto;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.star.backend.api.base.properties.IsxAppProperties;
 import com.isxcode.star.common.utils.AesUtils;
@@ -37,13 +38,13 @@ public abstract class Datasource {
 
     public abstract String getDriverName();
 
-    protected abstract List<String> queryTables(Connection connection);
+    protected abstract List<QueryTablesDto> queryTables(Connection connection, String database) throws SQLException;
 
-    public List<String> queryTables(DatasourceEntity datasourceEntity) {
+    public List<QueryTablesDto> queryTables(DatasourceEntity datasourceEntity, String database) {
 
         try {
             Connection connection = getConnection(datasourceEntity);
-            return queryTables(connection);
+            return queryTables(connection, database);
         } catch (Exception e) {
             throw new IsxAppException(e.getMessage());
         }
