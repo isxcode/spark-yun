@@ -8,4 +8,6 @@ public class QueryTableDto {
     private String datasourceId;
 
     private String tableName;
+
+    private String tableComment;
 }

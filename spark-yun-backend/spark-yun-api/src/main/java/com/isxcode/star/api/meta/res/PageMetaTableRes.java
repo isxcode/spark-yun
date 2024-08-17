@@ -19,7 +19,7 @@ public class PageMetaTableRes {
 
     private String tableName;
 
-    private String tableCommand;
+    private String tableCommend;
 
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime createDateTime;
