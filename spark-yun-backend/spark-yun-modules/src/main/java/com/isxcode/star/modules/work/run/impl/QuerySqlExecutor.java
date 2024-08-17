@@ -8,6 +8,8 @@ import com.isxcode.star.modules.alarm.service.AlarmService;
 import com.isxcode.star.modules.datasource.entity.DatasourceEntity;
 import com.isxcode.star.modules.datasource.repository.DatasourceRepository;
 import com.isxcode.star.modules.datasource.service.DatasourceService;
+import com.isxcode.star.modules.datasource.source.DataSourceFactory;
+import com.isxcode.star.modules.datasource.source.Datasource;
 import com.isxcode.star.modules.work.entity.WorkInstanceEntity;
 import com.isxcode.star.modules.work.repository.WorkInstanceRepository;
 import com.isxcode.star.modules.work.run.WorkExecutor;
@@ -45,10 +47,12 @@ public class QuerySqlExecutor extends WorkExecutor {
 
     private final SqlValueService sqlValueService;
 
+    private final DataSourceFactory dataSourceFactory;
+
     public QuerySqlExecutor(DatasourceRepository datasourceRepository, WorkInstanceRepository workInstanceRepository,
         WorkflowInstanceRepository workflowInstanceRepository, DatasourceService datasourceService,
         SqlCommentService sqlCommentService, SqlFunctionService sqlFunctionService, SqlValueService sqlValueService,
-        AlarmService alarmService) {
+        AlarmService alarmService, DataSourceFactory dataSourceFactory) {
 
         super(workInstanceRepository, workflowInstanceRepository, alarmService);
         this.datasourceRepository = datasourceRepository;
@@ -56,6 +60,7 @@ public class QuerySqlExecutor extends WorkExecutor {
         this.sqlCommentService = sqlCommentService;
         this.sqlFunctionService = sqlFunctionService;
         this.sqlValueService = sqlValueService;
+        this.dataSourceFactory = dataSourceFactory;
     }
 
     @Override
@@ -98,7 +103,8 @@ public class QuerySqlExecutor extends WorkExecutor {
         workInstance = updateInstance(workInstance, logBuilder);
 
         // 开始执行sql
-        try (Connection connection = datasourceService.getDbConnection(datasourceEntityOptional.get());
+        Datasource datasource1 = dataSourceFactory.getDatasource(datasourceEntityOptional.get().getDbType());
+        try (Connection connection = datasource1.getConnection(datasourceEntityOptional.get());
             Statement statement = connection.createStatement();) {
 
             statement.setQueryTimeout(1800);
