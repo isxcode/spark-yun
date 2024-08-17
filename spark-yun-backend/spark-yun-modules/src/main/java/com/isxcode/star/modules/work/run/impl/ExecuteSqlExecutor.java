@@ -8,6 +8,8 @@ import com.isxcode.star.modules.datasource.entity.DatasourceEntity;
 import com.isxcode.star.modules.datasource.repository.DatasourceRepository;
 import com.isxcode.star.modules.datasource.service.DatasourceService;
 import com.isxcode.star.modules.datasource.service.biz.DatasourceBizService;
+import com.isxcode.star.modules.datasource.source.DataSourceFactory;
+import com.isxcode.star.modules.datasource.source.Datasource;
 import com.isxcode.star.modules.work.entity.WorkInstanceEntity;
 import com.isxcode.star.modules.work.repository.WorkInstanceRepository;
 import com.isxcode.star.modules.work.run.WorkExecutor;
@@ -45,10 +47,12 @@ public class ExecuteSqlExecutor extends WorkExecutor {
 
     private final SqlFunctionService sqlFunctionService;
 
+    private final DataSourceFactory dataSourceFactory;
+
     public ExecuteSqlExecutor(WorkInstanceRepository workInstanceRepository, DatasourceRepository datasourceRepository,
         WorkflowInstanceRepository workflowInstanceRepository, DatasourceBizService datasourceBizService,
         DatasourceService datasourceService, SqlCommentService sqlCommentService, SqlValueService sqlValueService,
-        SqlFunctionService sqlFunctionService, AlarmService alarmService) {
+        SqlFunctionService sqlFunctionService, AlarmService alarmService, DataSourceFactory dataSourceFactory) {
 
         super(workInstanceRepository, workflowInstanceRepository, alarmService);
         this.datasourceRepository = datasourceRepository;
@@ -57,6 +61,7 @@ public class ExecuteSqlExecutor extends WorkExecutor {
         this.sqlCommentService = sqlCommentService;
         this.sqlValueService = sqlValueService;
         this.sqlFunctionService = sqlFunctionService;
+        this.dataSourceFactory = dataSourceFactory;
     }
 
     @Override
@@ -100,7 +105,8 @@ public class ExecuteSqlExecutor extends WorkExecutor {
         workInstance = updateInstance(workInstance, logBuilder);
 
         // 开始执行作业
-        try (Connection connection = datasourceService.getDbConnection(datasourceEntityOptional.get());
+        Datasource datasource1 = dataSourceFactory.getDatasource(datasourceEntityOptional.get().getDbType());
+        try (Connection connection = datasource1.getConnection(datasourceEntityOptional.get());
             Statement statement = connection.createStatement()) {
 
             // 去掉sql中的注释

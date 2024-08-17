@@ -8,8 +8,6 @@ import com.isxcode.star.api.work.exceptions.WorkRunException;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.star.backend.api.base.properties.IsxAppProperties;
 import com.isxcode.star.common.utils.AesUtils;
-import com.isxcode.star.common.utils.path.PathUtils;
-import com.isxcode.star.modules.datasource.entity.DatabaseDriverEntity;
 import com.isxcode.star.modules.datasource.entity.DatasourceEntity;
 import com.isxcode.star.modules.datasource.repository.DatasourceRepository;
 import com.isxcode.star.modules.datasource.source.DataSourceFactory;
@@ -28,11 +26,7 @@ import org.apache.calcite.sql.SqlKind;
 import org.apache.calcite.sql.parser.SqlParser;
 import org.apache.calcite.sql.SqlNode;
 
-import java.io.File;
 import java.math.BigDecimal;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.sql.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -40,7 +34,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.isxcode.star.common.config.CommonConfig.JPA_TENANT_MODE;
 
 @Service
 @Slf4j
@@ -79,58 +72,10 @@ public class DatasourceService {
         return datasource == null ? datasourceId : datasource.getName();
     }
 
-    public Connection getDbConnection(DatasourceEntity datasource) throws SQLException {
-
-        // 判断驱动是否已经加载
-        DriverShim driver = ALL_EXIST_DRIVER.get(datasource.getDriverId());
-        if (driver == null) {
-
-            JPA_TENANT_MODE.set(false);
-            DatabaseDriverEntity driverEntity = dataDriverService.getDriver(datasource.getDriverId());
-            JPA_TENANT_MODE.set(true);
-
-            String driverPath = "TENANT_DRIVER".equals(driverEntity.getDriverType())
-                ? driverEntity.getTenantId() + File.separator + driverEntity.getFileName()
-                : "system" + File.separator + driverEntity.getFileName();
-
-            // 先加载驱动到ALL_EXIST_DRIVER
-            try {
-                URL url = new File(PathUtils.parseProjectPath(isxAppProperties.getResourcesPath()) + File.separator
-                    + "jdbc" + File.separator + driverPath).toURI().toURL();
-                ClassLoader driverClassLoader = new URLClassLoader(new URL[] {url});
-
-                // 特殊逻辑判断，如果驱动是mysql5的使用
-                String driverClassName = getDriverClass(datasource.getDbType());
-                if (DatasourceType.MYSQL.equals(datasource.getDbType())) {
-                    if (driverPath.contains("-5")) {
-                        driverClassName = "com.mysql.jdbc.Driver";
-                    }
-                }
-
-                Class<?> driverClass = driverClassLoader.loadClass(driverClassName);
-                driver = new DriverShim((Driver) driverClass.newInstance());
-                ALL_EXIST_DRIVER.put(datasource.getDriverId(), driver);
-            } catch (MalformedURLException | ClassNotFoundException | IllegalAccessException
-                | InstantiationException e) {
-                log.error(e.getMessage(), e);
-                throw new RuntimeException(e);
-            }
-        }
-
-        Properties properties = new Properties();
-        if (datasource.getUsername() != null) {
-            properties.put("user", datasource.getUsername());
-        }
-        if (datasource.getPasswd() != null) {
-            properties.put("password", aesUtils.decrypt(datasource.getPasswd()));
-        }
-        DriverManager.setLoginTimeout(500);
-        return driver.connect(datasource.getJdbcUrl(), properties);
-    }
-
     public void executeSql(DatasourceEntity datasource, String sql) {
 
-        try (Connection connection = this.getDbConnection(datasource);
+        Datasource datasource1 = dataSourceFactory.getDatasource(datasource.getId());
+        try (Connection connection = datasource1.getConnection(datasource);
             Statement statement = connection.createStatement()) {
             statement.execute(sql);
         } catch (SQLException e) {
@@ -147,7 +92,8 @@ public class DatasourceService {
 
         DatasourceEntity datasource = this.getDatasource(datasourceId);
 
-        try (Connection connection = this.getDbConnection(datasource);
+        Datasource datasource1 = dataSourceFactory.getDatasource(datasource.getId());
+        try (Connection connection = datasource1.getConnection(datasource);
             PreparedStatement statement = connection.prepareStatement(securityExecuteSql);) {
             for (int i = 0; i < securityColumns.size(); i++) {
                 this.transAndSetParameter(statement, securityColumns.get(i), i);
@@ -164,7 +110,8 @@ public class DatasourceService {
 
         DatasourceEntity datasource = this.getDatasource(datasourceId);
 
-        Connection connection = this.getDbConnection(datasource);
+        Datasource datasource1 = dataSourceFactory.getDatasource(datasource.getDbType());
+        Connection connection = datasource1.getConnection(datasource);
         PreparedStatement statement = connection.prepareStatement(securityExecuteSql);
         for (int i = 0; i < securityColumns.size(); i++) {
             this.transAndSetParameter(statement, securityColumns.get(i), i);
@@ -177,7 +124,8 @@ public class DatasourceService {
 
         DatasourceEntity datasource = this.getDatasource(datasourceId);
 
-        try (Connection connection = this.getDbConnection(datasource);
+        Datasource datasource1 = dataSourceFactory.getDatasource(datasource.getDbType());
+        try (Connection connection = datasource1.getConnection(datasource);
             PreparedStatement statement = connection.prepareStatement(securityExecuteSql);) {
             for (int i = 0; i < securityColumns.size(); i++) {
                 this.transAndSetParameter(statement, securityColumns.get(i), i);
@@ -195,7 +143,8 @@ public class DatasourceService {
 
     public boolean tableIsExist(DatasourceEntity datasource, String tableName) {
 
-        try (Connection connection = this.getDbConnection(datasource);
+        Datasource datasource1 = dataSourceFactory.getDatasource(datasource.getDbType());
+        try (Connection connection = datasource1.getConnection(datasource);
             PreparedStatement preparedStatement =
                 connection.prepareStatement("SELECT 1 FROM " + tableName + " WHERE 1 = 0")) {
             preparedStatement.executeQuery();
