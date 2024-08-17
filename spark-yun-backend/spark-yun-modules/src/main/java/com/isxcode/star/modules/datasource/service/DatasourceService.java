@@ -1,7 +1,6 @@
 package com.isxcode.star.modules.datasource.service;
 
 import com.isxcode.star.api.datasource.constants.ColumnType;
-import com.isxcode.star.api.datasource.constants.DatasourceDriver;
 import com.isxcode.star.api.datasource.constants.DatasourceType;
 import com.isxcode.star.api.datasource.pojos.dto.KafkaConfig;
 import com.isxcode.star.api.datasource.pojos.dto.SecurityColumnDto;
@@ -14,7 +13,7 @@ import com.isxcode.star.modules.datasource.entity.DatabaseDriverEntity;
 import com.isxcode.star.modules.datasource.entity.DatasourceEntity;
 import com.isxcode.star.modules.datasource.repository.DatasourceRepository;
 import com.isxcode.star.modules.datasource.source.DataSourceFactory;
-import com.isxcode.star.modules.datasource.source.SourceService;
+import com.isxcode.star.modules.datasource.source.Datasource;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.calcite.sql.SqlOrderBy;
@@ -65,7 +64,7 @@ public class DatasourceService {
 
     public String getDriverClass(String datasourceType) {
 
-        SourceService factoryDatasource = dataSourceFactory.getDatasource(datasourceType);
+        Datasource factoryDatasource = dataSourceFactory.getDatasource(datasourceType);
         return factoryDatasource.getDriverName();
     }
 

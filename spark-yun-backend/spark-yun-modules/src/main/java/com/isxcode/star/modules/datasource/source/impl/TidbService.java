@@ -2,13 +2,24 @@ package com.isxcode.star.modules.datasource.source.impl;
 
 import com.isxcode.star.api.datasource.constants.DatasourceDriver;
 import com.isxcode.star.api.datasource.constants.DatasourceType;
-import com.isxcode.star.modules.datasource.entity.DatasourceEntity;
-import com.isxcode.star.modules.datasource.source.SourceService;
+import com.isxcode.star.backend.api.base.properties.IsxAppProperties;
+import com.isxcode.star.common.utils.AesUtils;
+import com.isxcode.star.modules.datasource.service.DatabaseDriverService;
+import com.isxcode.star.modules.datasource.source.Datasource;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
 
+import java.sql.Connection;
 import java.util.Collections;
 import java.util.List;
 
-public class TidbService implements SourceService {
+@Service
+@Slf4j
+public class TidbService extends Datasource {
+
+    public TidbService(DatabaseDriverService dataDriverService, IsxAppProperties isxAppProperties, AesUtils aesUtils) {
+        super(dataDriverService, isxAppProperties, aesUtils);
+    }
 
     @Override
     public String getDataSourceType() {
@@ -21,7 +32,7 @@ public class TidbService implements SourceService {
     }
 
     @Override
-    public List<String> queryTables(DatasourceEntity datasourceEntity) {
+    protected List<String> queryTables(Connection connection) {
         return Collections.emptyList();
     }
 }
