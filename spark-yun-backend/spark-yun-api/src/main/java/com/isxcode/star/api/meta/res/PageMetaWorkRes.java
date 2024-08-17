@@ -2,6 +2,7 @@ package com.isxcode.star.api.meta.res;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.isxcode.star.api.work.pojos.dto.CronConfig;
 import com.isxcode.star.backend.api.base.serializer.LocalDateTimeSerializer;
 import lombok.Data;
 
@@ -21,7 +22,15 @@ public class PageMetaWorkRes {
 
     private String status;
 
-    private String cornConfig;
+    private String cronConfigStr;
+
+    private String tablePattern;
+
+    private String dbType;
+
+    private String collectType;
+
+    private CronConfig cronConfig;
 
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime nextStartTime;
