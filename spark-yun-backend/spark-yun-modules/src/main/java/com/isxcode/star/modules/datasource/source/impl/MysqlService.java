@@ -43,7 +43,6 @@ public class MysqlService extends Datasource {
     protected List<QueryTablesDto> queryTables(Connection connection, String database) throws SQLException {
 
         QueryRunner qr = new QueryRunner();
-
         List<QueryTablesDto> query = qr.query(connection,
             "SELECT tables.table_name as tableName FROM information_schema.tables WHERE table_schema = '" + database
                 + "'",
