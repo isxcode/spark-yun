@@ -13,6 +13,8 @@ import com.isxcode.star.common.utils.path.PathUtils;
 import com.isxcode.star.modules.datasource.entity.DatabaseDriverEntity;
 import com.isxcode.star.modules.datasource.entity.DatasourceEntity;
 import com.isxcode.star.modules.datasource.repository.DatasourceRepository;
+import com.isxcode.star.modules.datasource.source.DataSourceFactory;
+import com.isxcode.star.modules.datasource.source.SourceService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.calcite.sql.SqlOrderBy;
@@ -52,6 +54,8 @@ public class DatasourceService {
 
     private final DatabaseDriverService dataDriverService;
 
+    private final DataSourceFactory dataSourceFactory;
+
     /**
      * 所有的驱动. driverId driver
      */
@@ -61,36 +65,8 @@ public class DatasourceService {
 
     public String getDriverClass(String datasourceType) {
 
-        switch (datasourceType) {
-            case DatasourceType.MYSQL:
-                return DatasourceDriver.MYSQL_DRIVER;
-            case DatasourceType.ORACLE:
-                return DatasourceDriver.ORACLE_DRIVER;
-            case DatasourceType.SQL_SERVER:
-                return DatasourceDriver.SQL_SERVER_DRIVER;
-            case DatasourceType.DORIS:
-                return DatasourceDriver.DORIS_DRIVER;
-            case DatasourceType.POSTGRE_SQL:
-                return DatasourceDriver.POSTGRE_SQL_DRIVER;
-            case DatasourceType.CLICKHOUSE:
-                return DatasourceDriver.CLICKHOUSE_DRIVER;
-            case DatasourceType.HANA_SAP:
-                return DatasourceDriver.HANA_SAP_DRIVER;
-            case DatasourceType.HIVE:
-                return DatasourceDriver.HIVE_DRIVER;
-            case DatasourceType.DM:
-                return DatasourceDriver.DM_DRIVER;
-            case DatasourceType.OCEANBASE:
-                return DatasourceDriver.OCEAN_BASE_DRIVER;
-            case DatasourceType.TIDB:
-                return DatasourceDriver.TIDB_DRIVER;
-            case DatasourceType.DB2:
-                return DatasourceDriver.DB2_DRIVER;
-            case DatasourceType.STAR_ROCKS:
-                return DatasourceDriver.STAR_ROCKS_DRIVER;
-            default:
-                throw new IsxAppException("数据源暂不支持");
-        }
+        SourceService factoryDatasource = dataSourceFactory.getDatasource(datasourceType);
+        return factoryDatasource.getDriverName();
     }
 
     public DatasourceEntity getDatasource(String datasourceId) {
@@ -142,15 +118,15 @@ public class DatasourceService {
             }
         }
 
-        java.util.Properties info = new java.util.Properties();
+        Properties properties = new Properties();
         if (datasource.getUsername() != null) {
-            info.put("user", datasource.getUsername());
+            properties.put("user", datasource.getUsername());
         }
         if (datasource.getPasswd() != null) {
-            info.put("password", aesUtils.decrypt(datasource.getPasswd()));
+            properties.put("password", aesUtils.decrypt(datasource.getPasswd()));
         }
         DriverManager.setLoginTimeout(500);
-        return driver.connect(datasource.getJdbcUrl(), info);
+        return driver.connect(datasource.getJdbcUrl(), properties);
     }
 
     public void executeSql(DatasourceEntity datasource, String sql) {
