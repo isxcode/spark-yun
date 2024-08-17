@@ -74,7 +74,7 @@ public class DatasourceService {
 
     public void executeSql(DatasourceEntity datasource, String sql) {
 
-        Datasource datasource1 = dataSourceFactory.getDatasource(datasource.getId());
+        Datasource datasource1 = dataSourceFactory.getDatasource(datasource.getDbType());
         try (Connection connection = datasource1.getConnection(datasource);
             Statement statement = connection.createStatement()) {
             statement.execute(sql);
@@ -92,7 +92,7 @@ public class DatasourceService {
 
         DatasourceEntity datasource = this.getDatasource(datasourceId);
 
-        Datasource datasource1 = dataSourceFactory.getDatasource(datasource.getId());
+        Datasource datasource1 = dataSourceFactory.getDatasource(datasource.getDbType());
         try (Connection connection = datasource1.getConnection(datasource);
             PreparedStatement statement = connection.prepareStatement(securityExecuteSql);) {
             for (int i = 0; i < securityColumns.size(); i++) {
