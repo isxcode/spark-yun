@@ -307,7 +307,7 @@ function showModal(cb: () => void, data: any): void {
     formData.remark = data.remark
     formData.driverId = data.driverId
     formData.kafkaConfig = {
-      topic: data.kafkaConfig.topic
+      topic: data?.kafkaConfig?.topic
     }
     formData.metastoreUris = data.metastoreUris
     formData.id = data.id
