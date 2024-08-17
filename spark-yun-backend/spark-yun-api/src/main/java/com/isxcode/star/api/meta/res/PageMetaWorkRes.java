@@ -9,21 +9,23 @@ import java.time.LocalDateTime;
 
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class PageMetaDatabaseRes {
+public class PageMetaWorkRes {
 
-    private String datasourceId;
+    private String id;
 
     private String name;
 
-    private String dbName;
+    private String datasourceName;
 
-    private String dbType;
+    private String datasourceId;
 
-    private String dbCommand;
+    private String status;
+
+    private String cornConfig;
+
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    private LocalDateTime nextStartTime;
 
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime createDateTime;
-
-    @JsonSerialize(using = LocalDateTimeSerializer.class)
-    private LocalDateTime lastModifiedDateTime;
 }
