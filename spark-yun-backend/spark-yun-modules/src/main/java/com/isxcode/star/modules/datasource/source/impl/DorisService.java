@@ -35,13 +35,14 @@ public class DorisService extends Datasource {
     }
 
     @Override
-    protected List<QueryTableDto> queryTable(Connection connection, String database) throws SQLException {
+    protected List<QueryTableDto> queryTable(Connection connection, String database, String datasourceId)
+        throws SQLException {
         return Collections.emptyList();
     }
 
     @Override
-    protected List<QueryColumnDto> queryColumn(Connection connection, String database, String tableName)
-        throws SQLException {
+    protected List<QueryColumnDto> queryColumn(Connection connection, String database, String datasourceId,
+        String tableName) throws SQLException {
         return Collections.emptyList();
     }
 }
