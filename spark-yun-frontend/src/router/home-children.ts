@@ -38,6 +38,11 @@ import MessageNotifications from '@/views/message-center/message-notification/in
 import WarningConfig from '@/views/message-center/warning-config/index.vue'
 import WarningSchedule from '@/views/message-center/warning-schedule/index.vue'
 
+// 元数据
+import AcquisitionTask from '@/views/metadata-page/acquisition-task/index.vue'
+// import AcquisitionInstance from '@/views/metadata-page/acquisition-instance/index.vue'
+import MetadataManagement from '@/views/metadata-page/metadata-management/index.vue'
+
 export default [
   {
     path: 'index',
@@ -203,5 +208,15 @@ export default [
     path: 'warning-schedule',
     name: 'warning-schedule',
     component: WarningSchedule
+  },
+  {
+    path: 'acquisition-task',
+    name: 'acquisition-task',
+    component: AcquisitionTask
+  },
+  {
+    path: 'metadata-management',
+    name: 'metadata-management',
+    component: MetadataManagement
   },
 ]

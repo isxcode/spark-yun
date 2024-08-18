@@ -89,6 +89,35 @@ export const menuListData: Array<Menu> = [
     ]
   },
   {
+    code: 'metadata-page',
+    name: '元数据',
+    icon: 'Coin',
+    authType: [ 'ROLE_TENANT_MEMBER', 'ROLE_TENANT_ADMIN' ],
+    children: [
+      {
+        code: 'acquisition-task',
+        name: '采集任务',
+        icon: 'Collection',
+        authType: [ 'ROLE_TENANT_MEMBER', 'ROLE_TENANT_ADMIN' ],
+        childPage: []
+      },
+      // {
+      //   code: 'acquisition-instance',
+      //   name: '采集任务实例',
+      //   icon: 'SetUp',
+      //   authType: [ 'ROLE_TENANT_MEMBER', 'ROLE_TENANT_ADMIN' ],
+      //   childPage: []
+      // },
+      {
+        code: 'metadata-management',
+        name: '元数据管理',
+        icon: 'Connection',
+        authType: [ 'ROLE_TENANT_MEMBER', 'ROLE_TENANT_ADMIN' ],
+        childPage: []
+      }
+    ]
+  },
+  {
     code: 'schedule-management',
     name: '任务调度',
     icon: 'ScaleToOriginal',
@@ -171,10 +200,17 @@ export const menuListData: Array<Menu> = [
         code: 'tenant-user',
         name: '租户成员',
         icon: 'User',
-        authType: [ 'ROLE_TENANT_ADMIN', 'ROLE_SYS_ADMIN' ],
+        authType: [ 'ROLE_TENANT_ADMIN' ],
         childPage: []
       }
     ]
+  },
+  {
+    code: 'tenant-user',
+    name: '租户成员',
+    icon: 'User',
+    authType: [ 'ROLE_SYS_ADMIN' ],
+    childPage: []
   },
   {
     code: 'user-center',
