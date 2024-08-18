@@ -28,10 +28,6 @@ public class AddMetaWokReq {
     @Schema(title = "指定表名规则", example = "")
     private String tablePattern;
 
-    @Schema(title = "是否开启调度", example = "ENABLE 开启/ DISABLE 关闭")
-    @NotEmpty(message = "是否开启调度不能为空")
-    private String status;
-
     @Schema(title = "调度规则", example = "")
     private CronConfig cronConfig;
 
