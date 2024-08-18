@@ -1,0 +1,63 @@
+import { http } from '@/utils/http'
+// ------------------------------- 采集任务 -----------------------------------
+// 元数据 - 采集任务 - 分页查询
+export function GetMetadataTaskList(params: any): Promise<any> {
+    return http.request({
+        method: 'post',
+        url: '/vip/meta/pageMetaWork',
+        params: params
+    })
+}
+
+// 元数据 - 采集任务 - 添加
+export function AddMetadataTaskData(params: any): Promise<any> {
+    return http.request({
+        method: 'post',
+        url: '/vip/meta/addMetaWork',
+        params: params
+    })
+}
+
+// 元数据 - 采集任务 - 编辑更新
+export function UpdateMetadataTaskData(params: any): Promise<any> {
+    return http.request({
+        method: 'post',
+        url: '/vip/meta/updateMetaWork',
+        params: params
+    })
+}
+
+// 元数据 - 采集任务 - 删除任务
+export function DeleteMetadataTaskData(params: any): Promise<any> {
+    return http.request({
+        method: 'post',
+        url: '/vip/meta/deleteMetaWork',
+        params: params
+    })
+}
+
+// 元数据 - 采集任务 - 立即采集
+export function TriggerMetadataTaskData(params: any): Promise<any> {
+    return http.request({
+        method: 'post',
+        url: '/vip/metatriggerMetaWork',
+        params: params
+    })
+}
+
+// ------------------------------- 元数据管理 -----------------------------------
+export function GetMetadataManagementList(params: any): Promise<any> {
+    return http.request({
+        method: 'post',
+        url: '/vip/meta/pageMetaDatabase',
+        params: params
+    })
+}
+// 元数据 - 元数据管理 - 刷新
+export function RefreshMetadataManagementList(params: any): Promise<any> {
+    return http.request({
+        method: 'post',
+        url: '/vip/meta/pageMetaWork',
+        params: params
+    })
+}

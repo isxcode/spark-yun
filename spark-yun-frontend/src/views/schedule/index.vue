@@ -504,6 +504,13 @@ onUnmounted(() => {
   }
 
   &.zqy-schedule {
+    .zqy-table-top {
+      .el-radio-group {
+        .el-radio-button__inner {
+          font-size: getCssVar('font-size', 'extra-small');
+        }
+      }
+    }
     .zqy-seach {
       display: flex;
       align-items: center;
