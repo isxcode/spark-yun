@@ -206,13 +206,6 @@ export const menuListData: Array<Menu> = [
     ]
   },
   {
-    code: 'tenant-user',
-    name: '租户成员',
-    icon: 'User',
-    authType: [ 'ROLE_SYS_ADMIN' ],
-    childPage: []
-  },
-  {
     code: 'user-center',
     name: '用户中心',
     icon: 'UserFilled',
@@ -223,6 +216,13 @@ export const menuListData: Array<Menu> = [
     code: 'tenant-list',
     name: '租户列表',
     icon: 'List',
+    authType: [ 'ROLE_SYS_ADMIN' ],
+    childPage: []
+  },
+  {
+    code: 'tenant-user',
+    name: '租户成员',
+    icon: 'User',
     authType: [ 'ROLE_SYS_ADMIN' ],
     childPage: []
   },
