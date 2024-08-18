@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class PageMetaTableRes {
+public class PageMetaColumnRes {
 
     private String datasourceName;
 
@@ -19,7 +19,11 @@ public class PageMetaTableRes {
 
     private String tableName;
 
-    private String tableCommend;
+    private String columnType;
+
+    private String columnName;
+
+    private String columnComment;
 
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime lastModifiedDateTime;
