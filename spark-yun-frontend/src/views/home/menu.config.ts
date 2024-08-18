@@ -101,13 +101,13 @@ export const menuListData: Array<Menu> = [
         authType: [ 'ROLE_TENANT_MEMBER', 'ROLE_TENANT_ADMIN' ],
         childPage: []
       },
-      // {
-      //   code: 'acquisition-instance',
-      //   name: '采集任务实例',
-      //   icon: 'SetUp',
-      //   authType: [ 'ROLE_TENANT_MEMBER', 'ROLE_TENANT_ADMIN' ],
-      //   childPage: []
-      // },
+      {
+        code: 'acquisition-instance',
+        name: '采集任务实例',
+        icon: 'List',
+        authType: [ 'ROLE_TENANT_MEMBER', 'ROLE_TENANT_ADMIN' ],
+        childPage: []
+      },
       {
         code: 'metadata-management',
         name: '元数据管理',

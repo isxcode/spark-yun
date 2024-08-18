@@ -5,70 +5,82 @@
             <el-radio-group v-model="tableType" @change="changeTypeEvent">
                 <el-radio-button label="db">数据源</el-radio-button>
                 <el-radio-button label="table">表</el-radio-button>
+                <el-radio-button label="code">字段</el-radio-button>
             </el-radio-group>
-            <div class="zqy-seach">
+            <div class="zqy-tenant__select" v-if="tableType === 'table'">
+                <el-select
+                    v-model="datasourceId"
+                    placeholder="请选择数据源"
+                    filterable
+                    clearable
+                    @change="datasourceIdChangeEvent"
+                >
+                    <el-option
+                        v-for="item in dataSourceList"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value"
+                    ></el-option>
+                </el-select>
+            </div>
+            <div class="zqy-seach meta-list-search">
+                <el-button v-if="tableType === 'db'" type="primary" :loading="refreshLoading" @click="refreshDataEvent">
+                    刷新数据
+                </el-button>
+                <el-button v-if="tableType === 'table'" type="primary" :loading="refreshLoading" @click="acquisetionTriggerEvent">
+                    立即采集
+                </el-button>
                 <el-input v-model="keyword" placeholder="请输入搜索条件 回车进行搜索" :maxlength="200" clearable @input="inputEvent"
                     @keyup.enter="initData(false)" />
             </div>
         </div>
         <LoadingPage :visible="loading" :network-error="networkError" @loading-refresh="initData(false)">
             <div class="zqy-table">
-                <BlockTable :table-config="tableConfig" @size-change="handleSizeChange"
-                    @current-change="handleCurrentChange">
-                    <template #statusTag="scopeSlot">
-                        <div class="btn-group">
-                            <el-tag v-if="scopeSlot.row.status === 'DISABLE'" type="warning" class="ml-2">禁用</el-tag>
-                            <el-tag v-if="scopeSlot.row.status === 'ENABLE'" type="success" class="ml-2">启用</el-tag>
-                            <el-tag v-if="scopeSlot.row.status === 'NEW'" class="ml-2">新建</el-tag>
-                        </div>
-                    </template>
-                    <template #options="scopeSlot">
-                        <div class="btn-group btn-group-msg">
-                            <!-- <span v-if="['DISABLE'].includes(scopeSlot.row.status)" @click="enableData(scopeSlot.row)">启用</span>
-                            <span v-if="['ENABLE'].includes(scopeSlot.row.status)" @click="disableData(scopeSlot.row)">禁用</span> -->
-                        </div>
-                    </template>
-                </BlockTable>
+                <component
+                    :is="tabComponent"
+                    ref="currentTabRef"
+                    @redirectToTable="redirectToTable"
+                ></component>
             </div>
         </LoadingPage>
+        <AddModal ref="addModalRef" />
     </div>
 </template>
 
 <script lang="ts" setup>
-import { reactive, ref, onMounted } from 'vue'
+import { reactive, ref, onMounted, markRaw, nextTick } from 'vue'
 import Breadcrumb from '@/layout/bread-crumb/index.vue'
 import LoadingPage from '@/components/loading/index.vue'
-
-import { BreadCrumbList, TableConfig } from './list.config'
-import { GetMetadataManagementList, RefreshMetadataManagementList } from '@/services/metadata-page.service'
-import { ElMessage, ElMessageBox } from 'element-plus'
+import { BreadCrumbList } from './list.config'
+import datasourceList from './datasource-list.vue'
+import tableList from './table-list.vue'
+import codeList from './code-list.vue'
+import { AddMetadataTaskData, RefreshMetadataManagementList, TriggerMetadataTaskData } from '@/services/metadata-page.service'
+import { GetDatasourceList } from '@/services/datasource.service'
+import { ElMessage } from 'element-plus'
+import AddModal from '../acquisition-task/add-modal/index.vue'
 
 const breadCrumbList = reactive(BreadCrumbList)
-const tableConfig: any = reactive(TableConfig)
 const keyword = ref('')
 const loading = ref(false)
 const networkError = ref(false)
 const tableType = ref('db')
+const tabComponent = ref()
+const currentTabRef = ref()
+const refreshLoading = ref<boolean>(false)
+const addModalRef = ref<any>(null)
+
+const datasourceId = ref('')
+const dataSourceList = ref([])
 
 function initData(tableLoading?: boolean) {
     loading.value = tableLoading ? false : true
     networkError.value = networkError.value || false
-    GetMetadataManagementList({
-        page: tableConfig.pagination.currentPage - 1,
-        pageSize: tableConfig.pagination.pageSize,
-        searchKeyWord: keyword.value
-    }).then((res: any) => {
-        tableConfig.tableData = res.data.content
-        tableConfig.pagination.total = res.data.totalElements
+    currentTabRef.value?.initData(keyword.value, datasourceId.value).then(() => {
         loading.value = false
-        tableConfig.loading = false
         networkError.value = false
-    })
-    .catch(() => {
-        tableConfig.tableData = []
-        tableConfig.pagination.total = 0
+    }).catch(() => {
         loading.value = false
-        tableConfig.loading = false
         networkError.value = true
     })
 }
@@ -79,20 +91,85 @@ function inputEvent(e: string) {
     }
 }
 
-function handleSizeChange(e: number) {
-    tableConfig.pagination.pageSize = e
+function changeTypeEvent(e: string, id?: string) {
+    const lookup: any = {
+        db: datasourceList,
+        table: tableList,
+        code: codeList
+    }
+    tabComponent.value = markRaw(lookup[e])
+    if (!id) {
+        datasourceId.value = ''
+    }
+    keyword.value = ''
+    nextTick(() => {
+        initData()
+    })
+}
+
+// 立即采集
+function acquisetionTriggerEvent() {
+    addModalRef.value.showModal((data: any) => {
+        return new Promise((resolve: any, reject: any) => {
+            AddMetadataTaskData(data).then((resp: any) => {
+                TriggerMetadataTaskData({
+                    id: resp.data
+                }).then((res: any) => {
+                    ElMessage.success(res.msg)
+                    initData()
+                    resolve()
+                }).catch((error: any) => {
+                    reject(error)
+                })
+            }).catch((error: any) => {
+                reject(error)
+            })
+        })
+    })
+}
+
+function refreshDataEvent() {
+    refreshLoading.value = true
+    RefreshMetadataManagementList().then((res: any) => {
+        ElMessage.success(res.msg)
+        initData()
+        refreshLoading.value = false
+    }).catch(() => {
+        refreshLoading.value = false
+    })
+}
+
+function getDataSourceList() {
+    GetDatasourceList({
+        page: 0,
+        pageSize: 10000,
+        searchKeyWord: ''
+    }).then((res: any) => {
+        dataSourceList.value = res.data.content.map((item: any) => {
+            return {
+                label: item.name,
+                value: item.id
+            }
+        })
+    }).catch(() => {
+        dataSourceList.value = []
+    })
+}
+
+function datasourceIdChangeEvent() {
     initData()
 }
 
-function handleCurrentChange(e: number) {
-    tableConfig.pagination.currentPage = e
-    initData()
+function redirectToTable(data: any) {
+    keyword.value = ''
+    datasourceId.value = data.datasourceId
+    changeTypeEvent('table', datasourceId.value)
+    tableType.value = 'table'
 }
 
 onMounted(() => {
-    tableConfig.pagination.currentPage = 1
-    tableConfig.pagination.pageSize = 10
-    initData()
+    getDataSourceList()
+    changeTypeEvent('db')
 })
 </script>
 
@@ -102,6 +179,13 @@ onMounted(() => {
         .el-radio-group {
             .el-radio-button__inner {
             font-size: getCssVar('font-size', 'extra-small');
+            }
+        }
+        .meta-list-search {
+            display: flex;
+            align-items: center;
+            .el-button {
+                margin-right: 12px;
             }
         }
     }
