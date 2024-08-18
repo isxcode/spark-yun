@@ -46,6 +46,7 @@ export function TriggerMetadataTaskData(params: any): Promise<any> {
 }
 
 // ------------------------------- 元数据管理 -----------------------------------
+// 元数据 - 元数据管理 - 查询数据源接口
 export function GetMetadataManagementList(params: any): Promise<any> {
     return http.request({
         method: 'post',
@@ -53,11 +54,26 @@ export function GetMetadataManagementList(params: any): Promise<any> {
         params: params
     })
 }
-// 元数据 - 元数据管理 - 刷新
-export function RefreshMetadataManagementList(params: any): Promise<any> {
+// 元数据 - 元数据管理 - 刷新元数据（采集数据）
+export function RefreshMetadataManagementList(): Promise<any> {
     return http.request({
         method: 'post',
-        url: '/vip/meta/pageMetaWork',
+        url: '/vip/meta/refreshMetaDatabase'
+    })
+}
+// 元数据 - 元数据管理 - 查询表接口
+export function GetMetadataTableList(params: any): Promise<any> {
+    return http.request({
+        method: 'post',
+        url: '/vip/meta/pageMetaTable',
+        params: params
+    })
+}
+// 元数据 - 元数据管理 - 查询字段列表
+export function GetMetadataCodesList(params: any): Promise<any> {
+    return http.request({
+        method: 'post',
+        url: '/vip/meta/pageMetaColumn',
         params: params
     })
 }
