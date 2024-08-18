@@ -338,7 +338,7 @@ const formData = reactive({
   name: '',
   dbType: '',
   datasourceId: '',
-  collectType: '',
+  collectType: 'ALL_TABLE',
   tablePattern: '',
   cronConfig: {
     setMode: 'SIMPLE',       // 模式
@@ -389,10 +389,10 @@ function showModal(cb: () => void, data: any): void {
     })
   }
   if (data) {
-    formData.datasourceId && getDataSourceList(true)
     Object.keys(formData).forEach((key: string) => {
       formData[key] = data[key]
     })
+    formData.datasourceId && getDataSourceList(true)
     modelConfig.title = '编辑'
   } else {
     Object.keys(formData).forEach((key: string) => {
@@ -416,6 +416,7 @@ function showModal(cb: () => void, data: any): void {
       } else {
         formData[key] = ''
       }
+      formData.collectType = 'ALL_TABLE'
     })
     modelConfig.title = '新增'
   }
