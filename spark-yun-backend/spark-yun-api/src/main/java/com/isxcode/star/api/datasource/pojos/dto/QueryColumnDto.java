@@ -12,4 +12,6 @@ public class QueryColumnDto {
     private String columnName;
 
     private String columnType;
+
+    private String columnComment;
 }
