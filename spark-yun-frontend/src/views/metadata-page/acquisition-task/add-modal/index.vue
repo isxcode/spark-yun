@@ -1,6 +1,6 @@
 <template>
   <BlockModal :model-config="modelConfig">
-    <el-form ref="form" class="add-computer-group message-check-form" label-position="top" :model="formData"
+    <el-form ref="form" class="add-computer-group acquisition-task-add" label-position="top" :model="formData"
       :rules="rules">
       <el-form-item label="采集任务名称" prop="name">
         <el-input v-model="formData.name" maxlength="200" placeholder="请输入" />
@@ -24,161 +24,157 @@
       <el-form-item v-if="formData.collectType === 'CUSTOM_TABLE'" label="正则表达式" prop="tablePattern">
         <el-input v-model="formData.tablePattern" maxlength="200" placeholder="请输入" />
       </el-form-item>
-      <el-form-item label="采集任务是否开启">
-        <el-switch v-model="formData.status" active-value="ENABLE" inactive-value="DISABLE" />
-      </el-form-item>
-      <el-form-item label="启用调度">
-        <el-switch v-model="formData.cronConfig.enable" />
-      </el-form-item>
       <template v-if="formData.cronConfig.enable">
-        <el-form-item label="模式">
-          <el-radio-group v-model="formData.cronConfig.setMode" size="small" @change="cronTypeChange">
-            <el-radio-button label="SIMPLE">简易</el-radio-button>
-            <el-radio-button label="ADVANCE">高级定义</el-radio-button>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item label="生效时间" prop="workDate">
-          <el-date-picker
-            v-model="formData.cronConfig.workDate"
-            type="daterange"
-            range-separator="至"
-            start-placeholder="开始生效日期"
-            end-placeholder="结束生效日期"
-            value-format="YYYY-MM-DD"
-          />
-        </el-form-item>
-        <el-form-item label="cron表达式" prop="cron" v-if="formData.cronConfig.setMode === 'ADVANCE'">
-          <el-input
-            v-model="formData.cronConfig.cron"
-            placeholder="请输入"
-          />
-        </el-form-item>
-        <template v-else>
-          <el-form-item label="调度周期" prop="range">
-            <el-select v-model="formData.cronConfig.range" placeholder="请选择" :disabled="!formData.cronConfig.enable" @change="changeScheduleRangeEvent">
-              <el-option
-                v-for="item in scheduleRange"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-              />
-            </el-select>
+        <div class="cron-config">
+          <el-form-item label="调度配置">
+            <el-radio-group v-model="formData.cronConfig.setMode" size="small" @change="cronTypeChange">
+              <el-radio-button label="SIMPLE">简易</el-radio-button>
+              <el-radio-button label="ADVANCE">高级定义</el-radio-button>
+            </el-radio-group>
           </el-form-item>
-          <!-- 调度周期 -> 秒 -->
-          <template v-if="formData.cronConfig.range === 'sec'">
-            <el-form-item label="结束时间" prop="endDate">
-              <el-date-picker :disabled="!formData.cronConfig.enable" v-model="formData.cronConfig.endDate" type="date" placeholder="请选择" clearable />
-            </el-form-item>
-          </template>
-          <!-- 调度周期 -> 分钟 -->
-          <template v-if="formData.cronConfig.range === 'min'">
-            <el-form-item label="开始时间" prop="startDateMin">
-              <el-time-select
-                v-model="formData.cronConfig.startDateMin"
-                :disabled="!formData.cronConfig.enable"
-                start="00:00"
-                step="01:00"
-                end="23:00"
-                placeholder="请选择">
-              </el-time-select>
-            </el-form-item>
-            <el-form-item label="时间间隔（分钟）" prop="minNum">
-              <el-input-number :disabled="!formData.cronConfig.enable" v-model="formData.cronConfig.minNum" :min="0" controls-position="right" />
-            </el-form-item>
-            <el-form-item label="结束时间" prop="endDateMin">
-              <el-time-select
-                v-model="formData.cronConfig.endDateMin"
-                :disabled="!formData.cronConfig.enable"
-                start="00:00"
-                step="01:00"
-                end="23:00"
-                placeholder="请选择">
-              </el-time-select>
-            </el-form-item>
-          </template>
-          <!-- 调度周期 -> 小时 -->
-          <template v-if="formData.cronConfig.range === 'hour'">
-            <el-form-item label="开始时间" prop="startDate">
-              <el-time-select
-                :disabled="!formData.cronConfig.enable"
-                v-model="formData.cronConfig.startDate"
-                start="00:00"
-                step="01:00"
-                end="23:00"
-                placeholder="请选择">
-              </el-time-select>
-            </el-form-item>
-            <el-form-item label="时间间隔（小时）" prop="hourNum">
-              <el-input-number :disabled="!formData.cronConfig.enable" v-model="formData.cronConfig.hourNum" :min="0" controls-position="right" />
-            </el-form-item>
-            <el-form-item label="结束时间" prop="endDate">
-              <el-time-select
-                v-model="formData.cronConfig.endDate"
-                :disabled="!formData.cronConfig.enable"
-                start="00:00"
-                step="01:00"
-                end="23:00"
-                placeholder="请选择">
-              </el-time-select>
-            </el-form-item>
-          </template>
-          <!-- 调度周期 -> 日 -->
-          <template v-if="formData.cronConfig.range === 'day'">
-            <el-form-item label="调度时间" prop="scheduleDate">
-              <el-time-picker
-                :disabled="!formData.cronConfig.enable"
-                v-model="formData.cronConfig.scheduleDate"
-                format="HH:mm"
-                value-format="HH:mm"
-                placeholder="请选择"
-              />
-            </el-form-item>
-          </template>
-          <!-- 调度周期 -> 月 -->
-          <template v-if="formData.cronConfig.range === 'month'">
-            <el-form-item label="调度时间" prop="scheduleDate">
-              <el-time-picker
-                :disabled="!formData.cronConfig.enable"
-                v-model="formData.cronConfig.scheduleDate"
-                format="HH:mm"
-                value-format="HH:mm"
-                placeholder="请选择"
-              />
-            </el-form-item>
-            <el-form-item label="指定时间" prop="monthDay">
-              <el-select v-model="formData.cronConfig.monthDay" :disabled="!formData.cronConfig.enable" placeholder="请选择">
+          <el-form-item label="生效时间" prop="cronConfig.workDate">
+            <el-date-picker
+              v-model="formData.cronConfig.workDate"
+              type="daterange"
+              range-separator="至"
+              start-placeholder="开始生效日期"
+              end-placeholder="结束生效日期"
+              value-format="YYYY-MM-DD"
+            />
+          </el-form-item>
+          <el-form-item label="cron表达式" prop="cronConfig.cron" v-if="formData.cronConfig.setMode === 'ADVANCE'">
+            <el-input
+              v-model="formData.cronConfig.cron"
+              placeholder="请输入"
+            />
+          </el-form-item>
+          <template v-else>
+            <el-form-item label="调度周期" prop="cronConfig.range">
+              <el-select v-model="formData.cronConfig.range" placeholder="请选择" :disabled="!formData.cronConfig.enable" @change="changeScheduleRangeEvent">
                 <el-option
-                  v-for="item in dayList"
+                  v-for="item in scheduleRange"
                   :key="item.value"
                   :label="item.label"
                   :value="item.value"
                 />
               </el-select>
             </el-form-item>
-          </template>
-          <!-- 调度周期 -> 周 -->
-          <template v-if="formData.cronConfig.range === 'week'">
-            <el-form-item label="调度时间" prop="scheduleDate">
-              <el-time-picker
-                :disabled="!formData.cronConfig.enable"
-                v-model="formData.cronConfig.scheduleDate"
-                format="HH:mm"
-                value-format="HH:mm"
-                placeholder="请选择"
-              />
-            </el-form-item>
-            <el-form-item label="指定时间" prop="weekDate">
-              <el-select v-model="formData.cronConfig.weekDate" placeholder="请选择" :disabled="!formData.cronConfig.enable">
-                <el-option
-                  v-for="item in weekDateList"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
+            <!-- 调度周期 -> 秒 -->
+            <template v-if="formData.cronConfig.range === 'sec'">
+              <el-form-item label="结束时间" prop="cronConfig.endDate">
+                <el-date-picker :disabled="!formData.cronConfig.enable" v-model="formData.cronConfig.endDate" type="date" placeholder="请选择" clearable />
+              </el-form-item>
+            </template>
+            <!-- 调度周期 -> 分钟 -->
+            <template v-if="formData.cronConfig.range === 'min'">
+              <el-form-item label="开始时间" prop="cronConfig.startDateMin">
+                <el-time-select
+                  v-model="formData.cronConfig.startDateMin"
+                  :disabled="!formData.cronConfig.enable"
+                  start="00:00"
+                  step="01:00"
+                  end="23:00"
+                  placeholder="请选择">
+                </el-time-select>
+              </el-form-item>
+              <el-form-item label="时间间隔（分钟）" prop="cronConfig.minNum">
+                <el-input-number class="time-num-input" :disabled="!formData.cronConfig.enable" placeholder="请输入" v-model="formData.cronConfig.minNum" :min="0" controls-position="right" />
+              </el-form-item>
+              <el-form-item label="结束时间" prop="cronConfig.endDateMin">
+                <el-time-select
+                  v-model="formData.cronConfig.endDateMin"
+                  :disabled="!formData.cronConfig.enable"
+                  start="00:00"
+                  step="01:00"
+                  end="23:00"
+                  placeholder="请选择">
+                </el-time-select>
+              </el-form-item>
+            </template>
+            <!-- 调度周期 -> 小时 -->
+            <template v-if="formData.cronConfig.range === 'hour'">
+              <el-form-item label="开始时间" prop="cronConfig.startDate">
+                <el-time-select
+                  :disabled="!formData.cronConfig.enable"
+                  v-model="formData.cronConfig.startDate"
+                  start="00:00"
+                  step="01:00"
+                  end="23:00"
+                  placeholder="请选择">
+                </el-time-select>
+              </el-form-item>
+              <el-form-item label="时间间隔（小时）" prop="cronConfig.hourNum">
+                <el-input-number class="time-num-input" :disabled="!formData.cronConfig.enable" placeholder="请输入" v-model="formData.cronConfig.hourNum" :min="0" controls-position="right" />
+              </el-form-item>
+              <el-form-item label="结束时间" prop="cronConfig.endDate">
+                <el-time-select
+                  v-model="formData.cronConfig.endDate"
+                  :disabled="!formData.cronConfig.enable"
+                  start="00:00"
+                  step="01:00"
+                  end="23:00"
+                  placeholder="请选择">
+                </el-time-select>
+              </el-form-item>
+            </template>
+            <!-- 调度周期 -> 日 -->
+            <template v-if="formData.cronConfig.range === 'day'">
+              <el-form-item label="调度时间" prop="cronConfig.scheduleDate">
+                <el-time-picker
+                  :disabled="!formData.cronConfig.enable"
+                  v-model="formData.cronConfig.scheduleDate"
+                  format="HH:mm"
+                  value-format="HH:mm"
+                  placeholder="请选择"
                 />
-              </el-select>
-            </el-form-item>
+              </el-form-item>
+            </template>
+            <!-- 调度周期 -> 月 -->
+            <template v-if="formData.cronConfig.range === 'month'">
+              <el-form-item label="调度时间" prop="cronConfig.scheduleDate">
+                <el-time-picker
+                  :disabled="!formData.cronConfig.enable"
+                  v-model="formData.cronConfig.scheduleDate"
+                  format="HH:mm"
+                  value-format="HH:mm"
+                  placeholder="请选择"
+                />
+              </el-form-item>
+              <el-form-item label="指定时间" prop="cronConfig.monthDay">
+                <el-select v-model="formData.cronConfig.monthDay" :disabled="!formData.cronConfig.enable" placeholder="请选择">
+                  <el-option
+                    v-for="item in dayList"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                  />
+                </el-select>
+              </el-form-item>
+            </template>
+            <!-- 调度周期 -> 周 -->
+            <template v-if="formData.cronConfig.range === 'week'">
+              <el-form-item label="调度时间" prop="cronConfig.scheduleDate">
+                <el-time-picker
+                  :disabled="!formData.cronConfig.enable"
+                  v-model="formData.cronConfig.scheduleDate"
+                  format="HH:mm"
+                  value-format="HH:mm"
+                  placeholder="请选择"
+                />
+              </el-form-item>
+              <el-form-item label="指定时间" prop="cronConfig.weekDate">
+                <el-select v-model="formData.cronConfig.weekDate" placeholder="请选择" :disabled="!formData.cronConfig.enable">
+                  <el-option
+                    v-for="item in weekDateList"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                  />
+                </el-select>
+              </el-form-item>
+            </template>
           </template>
-        </template>
+        </div>
       </template>
 
       <el-form-item label="备注">
@@ -329,16 +325,24 @@ const modelConfig = reactive({
   zIndex: 1100,
   closeOnClickModal: false
 })
+const state = reactive({
+  secondsText: '',
+  minutesText: '',
+  hoursText: '',
+  daysText: '',
+  weeksText: '',
+  monthsText: '',
+  yearsText: ''
+})
 const formData = reactive({
   name: '',
   dbType: '',
   datasourceId: '',
   collectType: '',
   tablePattern: '',
-  status: 'ENABLE',
   cronConfig: {
     setMode: 'SIMPLE',       // 模式
-    enable: false,             // 启用
+    enable: true,             // 启用
     cron: '',                 // cron表达式
     workDate: '',             // 生效时间
     range: '',         // 调度周期
@@ -361,6 +365,19 @@ const rules = reactive<FormRules>({
   datasourceId: [{ required: true, message: '请选择数据源', trigger: ['blur', 'change'] }],
   collectType: [{ required: true, message: '请选择表', trigger: ['blur', 'change'] }],
   tablePattern: [{ required: true, message: '请输入正则表达式', trigger: ['blur', 'change'] }],
+
+  'cronConfig.workDate': [{ required: true, message: '请选择生效时间', trigger: ['blur', 'change'] }],
+  'cronConfig.cron': [{ required: true, message: '请输入cron表达式', trigger: ['blur', 'change'] }],
+  'cronConfig.range': [{ required: true, message: '请选择调度周期', trigger: ['blur', 'change'] }],
+  'cronConfig.startDateMin': [{ required: true, message: '请选择开始时间', trigger: ['blur', 'change'] }],
+  'cronConfig.minNum': [{ required: true, message: '请输入时间间隔（分钟）', trigger: ['blur', 'change'] }],
+  'cronConfig.hourNum': [{ required: true, message: '请输入时间间隔（小时）', trigger: ['blur', 'change'] }],
+  'cronConfig.endDateMin': [{ required: true, message: '请选择结束时间', trigger: ['blur', 'change'] }],
+  'cronConfig.startDate': [{ required: true, message: '请选择开始时间', trigger: ['blur', 'change'] }],
+  'cronConfig.endDate': [{ required: true, message: '请选择结束时间', trigger: ['blur', 'change'] }],
+  'cronConfig.scheduleDate': [{ required: true, message: '请选择调度时间', trigger: ['blur', 'change'] }],
+  'cronConfig.monthDay': [{ required: true, message: '请选择指定时间', trigger: ['blur', 'change'] }],
+  'cronConfig.weekDate': [{ required: true, message: '请选择指定时间', trigger: ['blur', 'change'] }],
 })
 
 function showModal(cb: () => void, data: any): void {
@@ -382,7 +399,7 @@ function showModal(cb: () => void, data: any): void {
       if (key == 'cronConfig') {
         formData[key] = {
           setMode: 'SIMPLE',       // 模式
-          enable: false,             // 启用
+          enable: true,             // 启用
           cron: '',                 // cron表达式
           workDate: '',             // 生效时间
           range: '',         // 调度周期
@@ -407,10 +424,46 @@ function showModal(cb: () => void, data: any): void {
   modelConfig.visible = true
 }
 
+function getCron() {
+  if (formData.cronConfig.range === 'min') {
+    // 调度周期为分钟
+    state.secondsText = '0'
+    state.minutesText = `0/${formData.cronConfig.minNum}`
+    state.hoursText = `${formData.cronConfig.startDateMin.split(':')[0]}-${formData.cronConfig.endDateMin.split(':')[0]}`
+  } else if (formData.cronConfig.range === 'hour') {
+    // 调度周期为小时
+    state.secondsText = '0'
+    state.minutesText = '0'
+    state.hoursText = `${formData.cronConfig.startDate.split(':')[0]}-${formData.cronConfig.endDate.split(':')[0]}/${formData.cronConfig.hourNum}`
+  } else if (formData.cronConfig.range === 'day') {
+    // 调度周期为日
+    state.secondsText = '0'
+    state.minutesText = `${formData.cronConfig.scheduleDate.split(':')[1]}`
+    state.hoursText = `${formData.cronConfig.scheduleDate.split(':')[0]}`
+  } else if (formData.cronConfig.range === 'month') {
+    // 调度周期为日
+    state.secondsText = '0'
+    state.minutesText = `${formData.cronConfig.scheduleDate.split(':')[1]}`
+    state.hoursText = `${formData.cronConfig.scheduleDate.split(':')[0]}`
+    state.daysText = `${formData.cronConfig.monthDay}`
+  } else if (formData.cronConfig.range === 'week') {
+    state.secondsText = '0'
+    state.minutesText = `${formData.cronConfig.scheduleDate.split(':')[1]}`
+    state.hoursText = `${formData.cronConfig.scheduleDate.split(':')[0]}`
+    state.daysText = '?'
+    state.weeksText = `${formData.cronConfig.weekDate}`
+  }
+}
+
 function okEvent() {
   form.value?.validate((valid) => {
     if (valid) {
       modelConfig.okConfig.loading = true
+      getCron()
+      const cron = `${state.secondsText || '*'} ${state.minutesText || '*'} ${state.hoursText || '*'} ${
+        state.daysText || '*'
+      } ${state.monthsText || '*'} ${state.weeksText || '?'} ${state.yearsText || '*'}`
+      formData.cronConfig.cron = formData.cronConfig.setMode === 'SIMPLE' ? cron : formData.cronConfig.cron
       callback.value(formData).then((res: any) => {
         modelConfig.okConfig.loading = false
         if (res === undefined) {
@@ -480,116 +533,25 @@ defineExpose({
 </script>
 
 <style lang="scss">
-.message-check-form {
+.acquisition-task-add {
   .el-form-item {
-    .format-json {
-      position: absolute;
-      top: -34px;
-      right: 20px;
-      font-size: 12px;
-      color: getCssVar('color', 'primary');
-      cursor: pointer;
-
-      &:hover {
-        text-decoration: underline;
-      }
-    }
-
-    &.show-screen__full {
-      position: fixed;
-      width: 100%;
-      height: 100%;
-      top: 0;
-      left: 0;
-      background-color: #ffffff;
-      padding: 12px 20px;
-      box-sizing: border-box;
-      transition: all 0.15s linear;
-      z-index: 10;
-
-      .el-form-item__content {
-        align-items: flex-start;
-        height: 100%;
-
-        .vue-codemirror {
-          height: calc(100% - 36px);
-        }
-      }
-    }
-
     .el-form-item__content {
       position: relative;
       flex-wrap: nowrap;
       justify-content: space-between;
-
-      .copy-url {
-        min-width: 24px;
-        font-size: 12px;
-        margin-left: 10px;
-        color: getCssVar('color', 'primary');
-        cursor: pointer;
-
-        &:hover {
-          text-decoration: underline;
-        }
-
-      }
-
-      .modal-full-screen {
-        position: absolute;
-        top: -26px;
-        right: 0;
-        cursor: pointer;
-
-        &:hover {
-          color: getCssVar('color', 'primary');
-          ;
-        }
-      }
-
-      .vue-codemirror {
-        height: 130px;
-        width: 100%;
-
-        .cm-editor {
-          height: 100%;
-          outline: none;
-          border: 1px solid #dcdfe6;
-        }
-
-        .cm-gutters {
-          font-size: 12px;
-          font-family: v-sans, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-        }
-
-        .cm-content {
-          font-size: 12px;
-          font-family: v-sans, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-        }
-
-        .cm-tooltip-autocomplete {
-          ul {
-            li {
-              height: 40px;
-              display: flex;
-              align-items: center;
-              font-size: 12px;
-              background-color: #ffffff;
-              font-family: v-sans, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-            }
-
-            li[aria-selected] {
-              background: #409EFF;
-            }
-
-            .cm-completionIcon {
-              margin-right: -4px;
-              opacity: 0;
-            }
-          }
+      .time-num-input {
+        height: 36px;
+        .el-input-number__decrease {
+          top: 16px
         }
       }
     }
+  }
+  .cron-config {
+    border: 1px solid getCssVar('border-color');
+    padding: 8px 12px;
+    margin-bottom: 12px;
+    border-radius: 5px;
   }
 }
 </style>
