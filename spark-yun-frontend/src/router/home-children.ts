@@ -40,7 +40,7 @@ import WarningSchedule from '@/views/message-center/warning-schedule/index.vue'
 
 // 元数据
 import AcquisitionTask from '@/views/metadata-page/acquisition-task/index.vue'
-// import AcquisitionInstance from '@/views/metadata-page/acquisition-instance/index.vue'
+import AcquisitionInstance from '@/views/metadata-page/acquisition-instance/index.vue'
 import MetadataManagement from '@/views/metadata-page/metadata-management/index.vue'
 
 export default [
@@ -213,6 +213,11 @@ export default [
     path: 'acquisition-task',
     name: 'acquisition-task',
     component: AcquisitionTask
+  },
+  {
+    path: 'acquisition-instance',
+    name: 'acquisition-instance',
+    component: AcquisitionInstance
   },
   {
     path: 'metadata-management',
