@@ -40,7 +40,7 @@ export function DeleteMetadataTaskData(params: any): Promise<any> {
 export function TriggerMetadataTaskData(params: any): Promise<any> {
     return http.request({
         method: 'post',
-        url: '/vip/metatriggerMetaWork',
+        url: '/vip/meta/fastTriggerMetaWork',
         params: params
     })
 }
