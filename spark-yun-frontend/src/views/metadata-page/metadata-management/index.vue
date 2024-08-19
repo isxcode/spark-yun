@@ -113,7 +113,7 @@ function acquisetionTriggerEvent() {
         return new Promise((resolve: any, reject: any) => {
             AddMetadataTaskData(data).then((resp: any) => {
                 TriggerMetadataTaskData({
-                    id: resp.data
+                    id: resp.data.id
                 }).then((res: any) => {
                     ElMessage.success(res.msg)
                     initData()
