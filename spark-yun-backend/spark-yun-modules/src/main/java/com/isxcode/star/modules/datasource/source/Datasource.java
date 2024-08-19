@@ -45,6 +45,15 @@ public abstract class Datasource {
     protected abstract List<QueryColumnDto> queryColumn(Connection connection, String database, String datasourceId,
         String tableName) throws SQLException;
 
+    protected abstract Long getTableTotalSize(Connection connection, String database, String tableName)
+        throws SQLException;
+
+    protected abstract Long getTableTotalRows(Connection connection, String database, String tableName)
+        throws SQLException;
+
+    protected abstract Long getTableColumnCount(Connection connection, String database, String tableName)
+        throws SQLException;
+
     public List<QueryTableDto> queryTable(DatasourceEntity datasourceEntity, String database, String tablePattern) {
 
         try {
@@ -61,6 +70,36 @@ public abstract class Datasource {
         try {
             Connection connection = getConnection(datasourceEntity);
             return queryColumn(connection, database, datasourceId, tableName);
+        } catch (Exception e) {
+            throw new IsxAppException(e.getMessage());
+        }
+    }
+
+    public Long getTableTotalRows(DatasourceEntity datasourceEntity, String database, String tableName) {
+
+        try {
+            Connection connection = getConnection(datasourceEntity);
+            return getTableTotalRows(connection, database, tableName);
+        } catch (Exception e) {
+            throw new IsxAppException(e.getMessage());
+        }
+    }
+
+    public Long getTableTotalSize(DatasourceEntity datasourceEntity, String database, String tableName) {
+
+        try {
+            Connection connection = getConnection(datasourceEntity);
+            return getTableTotalSize(connection, database, tableName);
+        } catch (Exception e) {
+            throw new IsxAppException(e.getMessage());
+        }
+    }
+
+    public Long getTableColumnCount(DatasourceEntity datasourceEntity, String database, String tableName) {
+
+        try {
+            Connection connection = getConnection(datasourceEntity);
+            return getTableColumnCount(connection, database, tableName);
         } catch (Exception e) {
             throw new IsxAppException(e.getMessage());
         }
