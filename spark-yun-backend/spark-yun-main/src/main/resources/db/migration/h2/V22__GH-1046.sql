@@ -90,7 +90,7 @@ create table SY_META_INSTANCE
     trigger_type            varchar(200)  not null comment '触发类型',
     status                  varchar(500)  not null comment '实例类型',
     start_date_time         datetime      not null comment '开始时间',
-    end_date_time           datetime      not null comment '结束时间',
+    end_date_time           datetime comment '结束时间',
     collect_log             longtext comment '采集日志',
     create_by               varchar(200)  not null comment '创建人',
     create_date_time        datetime      not null comment '创建时间',
