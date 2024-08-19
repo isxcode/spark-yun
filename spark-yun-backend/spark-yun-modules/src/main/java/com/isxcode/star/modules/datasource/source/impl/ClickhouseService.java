@@ -46,4 +46,19 @@ public class ClickhouseService extends Datasource {
         String tableName) throws SQLException {
         return Collections.emptyList();
     }
+
+    @Override
+    protected Long getTableTotalSize(Connection connection, String database, String tableName) throws SQLException {
+        return 0L;
+    }
+
+    @Override
+    protected Long getTableTotalRows(Connection connection, String database, String tableName) throws SQLException {
+        return 0L;
+    }
+
+    @Override
+    protected Long getTableColumnCount(Connection connection, String database, String tableName) throws SQLException {
+        return 0L;
+    }
 }
