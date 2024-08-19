@@ -36,8 +36,8 @@ public class ClickhouseService extends Datasource {
     }
 
     @Override
-    protected List<QueryTableDto> queryTable(Connection connection, String database, String datasourceId)
-        throws SQLException {
+    protected List<QueryTableDto> queryTable(Connection connection, String database, String datasourceId,
+        String tablePattern) throws SQLException {
         return Collections.emptyList();
     }
 

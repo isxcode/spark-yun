@@ -39,17 +39,17 @@ public abstract class Datasource {
 
     public abstract String getDriverName();
 
-    protected abstract List<QueryTableDto> queryTable(Connection connection, String database, String datasourceId)
-        throws SQLException;
+    protected abstract List<QueryTableDto> queryTable(Connection connection, String database, String datasourceId,
+        String tablePattern) throws SQLException;
 
     protected abstract List<QueryColumnDto> queryColumn(Connection connection, String database, String datasourceId,
         String tableName) throws SQLException;
 
-    public List<QueryTableDto> queryTable(DatasourceEntity datasourceEntity, String database) {
+    public List<QueryTableDto> queryTable(DatasourceEntity datasourceEntity, String database, String tablePattern) {
 
         try {
             Connection connection = getConnection(datasourceEntity);
-            return queryTable(connection, database, datasourceEntity.getId());
+            return queryTable(connection, database, datasourceEntity.getId(), tablePattern);
         } catch (Exception e) {
             throw new IsxAppException(e.getMessage());
         }
