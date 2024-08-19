@@ -16,54 +16,64 @@
                     @current-change="handleCurrentChange">
                     <template #statusTag="scopeSlot">
                         <div class="btn-group">
-                            <el-tag v-if="scopeSlot.row.status === 'DISABLE'" type="warning" class="ml-2">禁用</el-tag>
-                            <el-tag v-if="scopeSlot.row.status === 'ENABLE'" type="success" class="ml-2">启用</el-tag>
-                            <el-tag v-if="scopeSlot.row.status === 'NEW'" class="ml-2">新建</el-tag>
+                            <el-tag v-if="scopeSlot.row.status === 'FAIL'" type="danger" class="ml-2">失败</el-tag>
+                            <el-tag v-if="scopeSlot.row.status === 'ABORT'" type="warning" class="ml-2">已中止</el-tag>
+                            <el-tag v-if="scopeSlot.row.status === 'SUCCESS'" type="success" class="ml-2">成功</el-tag>
+                            <el-tag v-if="scopeSlot.row.status === 'COLLECTING'" class="ml-2">采集中</el-tag>
                         </div>
                     </template>
                     <template #options="scopeSlot">
                         <div class="btn-group btn-group-msg">
-                            <span @click="editData(scopeSlot.row)">编辑</span>
-                            <span v-if="['DISABLE'].includes(scopeSlot.row.status)" @click="enableData(scopeSlot.row)">启用</span>
-                            <span v-if="['ENABLE'].includes(scopeSlot.row.status)" @click="disableData(scopeSlot.row)">禁用</span>
+                            <span v-if="['COLLECTING'].includes(scopeSlot.row.status)" @click="abortData(scopeSlot.row)">中止</span>
                             <span @click="deleteData(scopeSlot.row)">删除</span>
+                            <span @click="showLog(scopeSlot.row)">日志</span>
                         </div>
                     </template>
                 </BlockTable>
             </div>
         </LoadingPage>
-        <AddModal ref="addModalRef" />
+        <ShowLog ref="showLogRef" />
     </div>
 </template>
 
 <script lang="ts" setup>
-import { reactive, ref, onMounted } from 'vue'
+import { reactive, ref, onMounted, onUnmounted } from 'vue'
 import Breadcrumb from '@/layout/bread-crumb/index.vue'
 import BlockTable from '@/components/block-table/index.vue'
 import LoadingPage from '@/components/loading/index.vue'
-import AddModal from './add-modal/index.vue'
-
 import { BreadCrumbList, TableConfig } from './list.config'
-import { GetAlarmPagesList, AddAlarmData, UpdateAlarmData, DeleteAlarmData, DisabledAlarmData, EnableAlarmData } from '@/services/message-center.service'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { AbortMetadataInstanceList, RefreshMetadataInstanceList, RemoveMetadataInstanceList } from '@/services/metadata-page.service'
+import ShowLog from '../../computer-group/computer-pointer/show-log/index.vue'
 
 const breadCrumbList = reactive(BreadCrumbList)
 const tableConfig: any = reactive(TableConfig)
 const keyword = ref('')
 const loading = ref(false)
 const networkError = ref(false)
-const addModalRef = ref(null)
+const showLogRef = ref(null)
+const timer = ref()
 
-function initData(tableLoading?: boolean) {
+function initData(tableLoading?: boolean, type?: string) {
     loading.value = tableLoading ? false : true
     networkError.value = networkError.value || false
-    GetAlarmPagesList({
+    RefreshMetadataInstanceList({
         page: tableConfig.pagination.currentPage - 1,
         pageSize: tableConfig.pagination.pageSize,
         searchKeyWord: keyword.value
     }).then((res: any) => {
-        tableConfig.tableData = res.data.content
-        tableConfig.pagination.total = res.data.totalElements
+        if (type) {
+            res.data.content.forEach((item: any) => {
+                tableConfig.tableData.forEach((col: any) => {
+                    if (item.id === col.id) {
+                        col.status = item.status
+                    }
+                })
+            })
+        } else {
+            tableConfig.tableData = res.data.content
+            tableConfig.pagination.total = res.data.totalElements
+        }
         loading.value = false
         tableConfig.loading = false
         networkError.value = false
@@ -77,41 +87,18 @@ function initData(tableLoading?: boolean) {
     })
 }
 
-function addData() {
-    addModalRef.value.showModal((data: any) => {
-        return new Promise((resolve: any, reject: any) => {
-            AddAlarmData(data).then((res: any) => {
-                ElMessage.success(res.msg)
-                initData()
-                resolve()
-            }).catch((error: any) => {
-                reject(error)
-            })
-        })
-    })
-}
-function editData(data: any) {
-    addModalRef.value.showModal((data: any) => {
-        return new Promise((resolve: any, reject: any) => {
-            UpdateAlarmData(data).then((res: any) => {
-                ElMessage.success(res.msg)
-                initData()
-                resolve()
-            }).catch((error: any) => {
-                reject(error)
-            })
-        })
-    }, data)
+function showLog(data: any) {
+    showLogRef.value.showModal(data.collectLog)
 }
 
 // 删除
 function deleteData(data: any) {
-    ElMessageBox.confirm('确定删除该告警配置吗？', '警告', {
+    ElMessageBox.confirm('确定删除该采集实例吗？', '警告', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
     }).then(() => {
-        DeleteAlarmData({
+        RemoveMetadataInstanceList({
             id: data.id
         }).then((res: any) => {
             ElMessage.success(res.msg)
@@ -119,29 +106,15 @@ function deleteData(data: any) {
         }).catch(() => { })
     })
 }
-// 启用
-function enableData(data: any) {
-    ElMessageBox.confirm('确定启用该告警配置吗？', '警告', {
+
+// 中止
+function abortData(data: any) {
+    ElMessageBox.confirm('确定中止该采集实例吗？', '警告', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
     }).then(() => {
-        EnableAlarmData({
-            id: data.id
-        }).then((res: any) => {
-            ElMessage.success(res.msg)
-            initData()
-        }).catch(() => { })
-    })
-}
-// 禁用
-function disableData(data: any) {
-    ElMessageBox.confirm('确定禁用该告警配置吗？', '警告', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-    }).then(() => {
-        DisabledAlarmData({
+        AbortMetadataInstanceList({
             id: data.id
         }).then((res: any) => {
             ElMessage.success(res.msg)
@@ -170,6 +143,15 @@ onMounted(() => {
     tableConfig.pagination.currentPage = 1
     tableConfig.pagination.pageSize = 10
     initData()
+    timer.value = setInterval(() => {
+        initData(true, 'interval')
+    }, 10000)
+})
+onUnmounted(() => {
+  if (timer.value) {
+    clearInterval(timer.value)
+  }
+  timer.value = null
 })
 </script>
 

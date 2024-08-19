@@ -27,6 +27,7 @@
                             <span v-if="['DISABLE'].includes(scopeSlot.row.status)" @click="enableData(scopeSlot.row)">启用</span>
                             <span v-if="['ENABLE'].includes(scopeSlot.row.status)" @click="disableData(scopeSlot.row)">禁用</span>
                             <span @click="deleteData(scopeSlot.row)">删除</span>
+                            <span @click="triggerData(scopeSlot.row)">立即采集</span>
                         </div>
                     </template>
                 </BlockTable>
@@ -43,7 +44,7 @@ import LoadingPage from '@/components/loading/index.vue'
 import AddModal from './add-modal/index.vue'
 
 import { BreadCrumbList, TableConfig } from './list.config'
-import { GetMetadataTaskList, AddMetadataTaskData, UpdateMetadataTaskData, DeleteMetadataTaskData, TriggerMetadataTaskData } from '@/services/metadata-page.service'
+import { GetMetadataTaskList, AddMetadataTaskData, UpdateMetadataTaskData, DeleteMetadataTaskData, TriggerMetadataTaskData, EnableMetadataTaskData, DisableMetadataTaskData } from '@/services/metadata-page.service'
 import { ElMessage, ElMessageBox } from 'element-plus'
 
 const breadCrumbList = reactive(BreadCrumbList)
@@ -118,36 +119,51 @@ function deleteData(data: any) {
         }).catch(() => { })
     })
 }
+// 立即采集
+function triggerData(data: any) {
+    ElMessageBox.confirm('确定要执行立即采集吗？', '警告', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+    }).then(() => {
+        TriggerMetadataTaskData({
+            id: data.id
+        }).then((res: any) => {
+            ElMessage.success(res.msg)
+            initData()
+        }).catch(() => { })
+    })
+}
 // 启用
-// function enableData(data: any) {
-//     ElMessageBox.confirm('确定启用该告警配置吗？', '警告', {
-//         confirmButtonText: '确定',
-//         cancelButtonText: '取消',
-//         type: 'warning'
-//     }).then(() => {
-//         EnableAlarmData({
-//             id: data.id
-//         }).then((res: any) => {
-//             ElMessage.success(res.msg)
-//             initData()
-//         }).catch(() => { })
-//     })
-// }
+function enableData(data: any) {
+    ElMessageBox.confirm('确定启用该采集任务吗？', '警告', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+    }).then(() => {
+        EnableMetadataTaskData({
+            id: data.id
+        }).then((res: any) => {
+            ElMessage.success(res.msg)
+            initData()
+        }).catch(() => { })
+    })
+}
 // 禁用
-// function disableData(data: any) {
-//     ElMessageBox.confirm('确定禁用该告警配置吗？', '警告', {
-//         confirmButtonText: '确定',
-//         cancelButtonText: '取消',
-//         type: 'warning'
-//     }).then(() => {
-//         DisabledAlarmData({
-//             id: data.id
-//         }).then((res: any) => {
-//             ElMessage.success(res.msg)
-//             initData()
-//         }).catch(() => { })
-//     })
-// }
+function disableData(data: any) {
+    ElMessageBox.confirm('确定禁用该采集任务吗？', '警告', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+    }).then(() => {
+        DisableMetadataTaskData({
+            id: data.id
+        }).then((res: any) => {
+            ElMessage.success(res.msg)
+            initData()
+        }).catch(() => { })
+    })
+}
 
 function inputEvent(e: string) {
     if (e === '') {
