@@ -36,6 +36,24 @@ export function DeleteMetadataTaskData(params: any): Promise<any> {
     })
 }
 
+// 元数据 - 采集任务 - 启用
+export function EnableMetadataTaskData(params: any): Promise<any> {
+    return http.request({
+        method: 'post',
+        url: '/vip/meta/enableMetaWork',
+        params: params
+    })
+}
+
+// 元数据 - 采集任务 - 禁用
+export function DisableMetadataTaskData(params: any): Promise<any> {
+    return http.request({
+        method: 'post',
+        url: '/vip/meta/disableMetaWork',
+        params: params
+    })
+}
+
 // 元数据 - 采集任务 - 立即采集
 export function TriggerMetadataTaskData(params: any): Promise<any> {
     return http.request({
@@ -74,6 +92,34 @@ export function GetMetadataCodesList(params: any): Promise<any> {
     return http.request({
         method: 'post',
         url: '/vip/meta/pageMetaColumn',
+        params: params
+    })
+}
+
+// ------------------------------- 元数据管理 -----------------------------------
+// 元数据 - 采集实例 - 实例查询
+export function RefreshMetadataInstanceList(params: any): Promise<any> {
+    return http.request({
+        method: 'post',
+        url: '/vip/meta/pageMetaWorkInstance',
+        params: params
+    })
+}
+
+// 元数据 - 采集实例 - 中止
+export function AbortMetadataInstanceList(params: any): Promise<any> {
+    return http.request({
+        method: 'post',
+        url: '/vip/meta/abortMetaWorkInstance',
+        params: params
+    })
+}
+
+// 元数据 - 采集实例 - 删除
+export function RemoveMetadataInstanceList(params: any): Promise<any> {
+    return http.request({
+        method: 'post',
+        url: '/vip/meta/deleteMetaWorkInstance',
         params: params
     })
 }

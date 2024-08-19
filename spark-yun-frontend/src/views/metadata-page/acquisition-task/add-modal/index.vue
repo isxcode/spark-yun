@@ -390,7 +390,26 @@ function showModal(cb: () => void, data: any): void {
   }
   if (data) {
     Object.keys(formData).forEach((key: string) => {
-      formData[key] = data[key]
+      if (key == 'cronConfig' && !data[key]) {
+        formData[key] = {
+          setMode: 'SIMPLE',       // 模式
+          enable: true,             // 启用
+          cron: '',                 // cron表达式
+          workDate: '',             // 生效时间
+          range: '',         // 调度周期
+          startDateMin: '',  // 开始时间 - 分钟
+          minNum: undefined,        // 间隔时间 - 分钟
+          endDateMin: '',    // 结束时间 - 分钟
+          startDate: '',     // 开始时间 - 小时
+          hourNum: undefined,     // 间隔时间 - 小时
+          endDate: '',       // 结束时间 - 小时
+          scheduleDate: '',  // 调度时间 - 日/周
+          weekDate: '',      // 指定时间 - 星期
+          monthDay: '',      // 指定时间 - 月
+        }
+      } else {
+        formData[key] = data[key]
+      }
     })
     formData.datasourceId && getDataSourceList(true)
     modelConfig.title = '编辑'
