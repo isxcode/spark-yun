@@ -11,9 +11,11 @@ import com.isxcode.star.modules.datasource.source.Datasource;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.BeanListHandler;
+import org.apache.commons.dbutils.handlers.ScalarHandler;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.stereotype.Service;
 
+import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
@@ -60,10 +62,42 @@ public class MysqlService extends Datasource {
     @Override
     protected List<QueryColumnDto> queryColumn(Connection connection, String database, String datasourceId,
         String tableName) throws SQLException {
+
         QueryRunner qr = new QueryRunner();
         List<QueryColumnDto> query = qr.query(connection, "SELECT '" + datasourceId + "' as datasourceId,'" + tableName
             + "' as tableName, COLUMN_NAME as columnName,COLUMN_TYPE as columnType,COLUMN_COMMENT as columnComment FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = '"
             + database + "' AND TABLE_NAME = '" + tableName + "'", new BeanListHandler<>(QueryColumnDto.class));
+        connection.close();
+        return query;
+    }
+
+    @Override
+    protected Long getTableTotalSize(Connection connection, String database, String tableName) throws SQLException {
+
+        QueryRunner qr = new QueryRunner();
+        BigInteger query = qr.query(connection,
+            "SELECT data_length + index_length FROM information_schema.tables WHERE table_schema = '" + database
+                + "' AND table_name = '" + tableName + "'",
+            new ScalarHandler<>());
+        connection.close();
+        return Long.parseLong(String.valueOf(query));
+    }
+
+    @Override
+    protected Long getTableTotalRows(Connection connection, String database, String tableName) throws SQLException {
+
+        QueryRunner qr = new QueryRunner();
+        Long query = qr.query(connection, "SELECT count(*) FROM " + tableName, new ScalarHandler<>());
+        connection.close();
+        return query;
+    }
+
+    @Override
+    protected Long getTableColumnCount(Connection connection, String database, String tableName) throws SQLException {
+
+        QueryRunner qr = new QueryRunner();
+        Long query = qr.query(connection, "SELECT COUNT(1) FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = '"
+            + database + "' AND TABLE_NAME = '" + tableName + "'", new ScalarHandler<>());
         connection.close();
         return query;
     }
