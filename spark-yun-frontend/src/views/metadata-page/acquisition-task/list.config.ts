@@ -63,13 +63,13 @@ export const colConfigs: colConfig[] = [
     {
         prop: 'createDateTime',
         title: '创建时间',
-        minWidth: 170
+        minWidth: 140
     },
     {
         title: '操作',
         align: 'center',
         customSlot: 'options',
-        width: 120
+        width: 160
     }
 ]
 

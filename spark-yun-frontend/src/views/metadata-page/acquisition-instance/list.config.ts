@@ -31,61 +31,33 @@ export interface TableConfig {
 
 export const BreadCrumbList: Array<BreadCrumb> = [
     {
-        name: '告警配置',
-        code: 'warning-config'
+        name: '采集实例',
+        code: 'acquisition-instance'
     }
 ]
 
 export const colConfigs: colConfig[] = [
     {
-        prop: 'name',
-        title: '名称',
-        minWidth: 125,
+        prop: 'id',
+        title: '实例ID',
+        minWidth: 145,
         showOverflowTooltip: true
     },
     {
-        prop: 'alarmType',
+        prop: 'metaWorkName',
+        title: '任务',
+        minWidth: 120
+    },
+    {
+        prop: 'triggerType',
         title: '类型',
-        minWidth: 80,
+        minWidth: 100,
         formatter: (data: any) => {
             const obj = {
-                WORK: '作业',
-                WORKFLOW: '作业流'
+                FAST_TRIGGER: '立即采集',
+                AUTO_TRIGGER: '自动采集'
             }
             return obj[data.cellValue]
-        }
-    },
-    {
-        prop: 'alarmEvent',
-        title: '告警事件',
-        minWidth: 80,
-        formatter: (data: any) => {
-            const obj = {
-                START_RUN: '开始运行',
-                RUN_END: '运行结束',
-                RUN_SUCCESS: '运行成功',
-                RUN_FAIL: '运行失败'
-            }
-            return obj[data.cellValue]
-        }
-    },
-    {
-        prop: 'msgName',
-        title: '消息通知',
-        minWidth: 125,
-        showOverflowTooltip: true
-    },
-    {
-        prop: 'receiverUsers',
-        title: '通知人',
-        showOverflowTooltip: true,
-        minWidth: 140,
-        formatter: (data: any) => {
-            if (data.cellValue && data.cellValue.length > 0) {
-                return data.cellValue.map((item: any) => item.username).join('，')
-            } else {
-                return ''
-            }
         }
     },
     {
@@ -95,20 +67,19 @@ export const colConfigs: colConfig[] = [
         customSlot: 'statusTag'
     },
     {
-        prop: 'createDateTime',
-        title: '创建时间',
-        minWidth: 140
+        prop: 'startDateTime',
+        title: '开始时间',
+        minWidth: 170
     },
     {
-        prop: 'createByUsername',
-        title: '创建人',
+        prop: 'endDateTime',
+        title: '结束时间',
+        minWidth: 170
+    },
+    {
+        prop: 'duration',
+        title: '耗时（秒）',
         minWidth: 100
-    },
-    {
-        prop: 'remark',
-        title: '备注',
-        minWidth: 100,
-        showOverflowTooltip: true
     },
     {
         title: '操作',

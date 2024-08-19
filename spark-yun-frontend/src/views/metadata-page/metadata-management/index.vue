@@ -58,7 +58,7 @@ import codeList from './code-list.vue'
 import { AddMetadataTaskData, RefreshMetadataManagementList, TriggerMetadataTaskData } from '@/services/metadata-page.service'
 import { GetDatasourceList } from '@/services/datasource.service'
 import { ElMessage } from 'element-plus'
-import AddModal from '../acquisition-task/add-modal/index.vue'
+import AddModal from './add-modal/index.vue'
 
 const breadCrumbList = reactive(BreadCrumbList)
 const keyword = ref('')
@@ -71,6 +71,7 @@ const refreshLoading = ref<boolean>(false)
 const addModalRef = ref<any>(null)
 
 const datasourceId = ref('')
+const dbType = ref('')
 const dataSourceList = ref([])
 
 function initData(tableLoading?: boolean) {
@@ -100,6 +101,7 @@ function changeTypeEvent(e: string, id?: string) {
     tabComponent.value = markRaw(lookup[e])
     if (!id) {
         datasourceId.value = ''
+        dbType.value = ''
     }
     keyword.value = ''
     nextTick(() => {
@@ -125,6 +127,9 @@ function acquisetionTriggerEvent() {
                 reject(error)
             })
         })
+    }, {
+        datasourceId: datasourceId.value,
+        dbType: dbType.value
     })
 }
 
@@ -163,6 +168,7 @@ function datasourceIdChangeEvent() {
 function redirectToTable(data: any) {
     keyword.value = ''
     datasourceId.value = data.datasourceId
+    dbType.value = data.dbType
     changeTypeEvent('table', datasourceId.value)
     tableType.value = 'table'
 }

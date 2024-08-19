@@ -95,6 +95,13 @@ export const menuListData: Array<Menu> = [
     authType: [ 'ROLE_TENANT_MEMBER', 'ROLE_TENANT_ADMIN' ],
     children: [
       {
+        code: 'metadata-management',
+        name: '元数据管理',
+        icon: 'Connection',
+        authType: [ 'ROLE_TENANT_MEMBER', 'ROLE_TENANT_ADMIN' ],
+        childPage: []
+      },
+      {
         code: 'acquisition-task',
         name: '采集任务',
         icon: 'Collection',
@@ -103,15 +110,8 @@ export const menuListData: Array<Menu> = [
       },
       {
         code: 'acquisition-instance',
-        name: '采集任务实例',
+        name: '采集实例',
         icon: 'List',
-        authType: [ 'ROLE_TENANT_MEMBER', 'ROLE_TENANT_ADMIN' ],
-        childPage: []
-      },
-      {
-        code: 'metadata-management',
-        name: '元数据管理',
-        icon: 'Connection',
         authType: [ 'ROLE_TENANT_MEMBER', 'ROLE_TENANT_ADMIN' ],
         childPage: []
       }
