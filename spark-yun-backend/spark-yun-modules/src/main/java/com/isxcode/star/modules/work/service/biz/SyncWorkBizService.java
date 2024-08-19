@@ -18,8 +18,6 @@ import javax.transaction.Transactional;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -78,32 +76,7 @@ public class SyncWorkBizService {
         }
 
         Datasource datasource1 = dataSourceFactory.getDatasource(datasourceEntityOptional.get().getDbType());
-        Connection connection = datasource1.getConnection(datasourceEntityOptional.get());
-
-        Statement statement = connection.createStatement();
-        String dataPreviewSql = syncWorkService.getDataPreviewSql(datasourceEntityOptional.get().getDbType(),
-            getDataSourceDataReq.getTableName());
-        ResultSet resultSet = statement.executeQuery(dataPreviewSql);
-        List<String> columns = new ArrayList<>();
-        List<List<String>> rows = new ArrayList<>();
-
-        // 封装表头
-        int columnCount = resultSet.getMetaData().getColumnCount();
-        for (int i = 1; i <= columnCount; i++) {
-            columns.add(resultSet.getMetaData().getColumnName(i));
-        }
-
-        // 封装数据，最多200条
-        while (resultSet.next() && rows.size() < 200) {
-            List<String> row = new ArrayList<>();
-            for (int i = 1; i <= columnCount; i++) {
-                row.add(String.valueOf(resultSet.getObject(i)));
-            }
-            rows.add(row);
-        }
-        statement.close();
-        connection.close();
-        return GetDataSourceDataRes.builder().columns(columns).rows(rows).build();
+        return datasource1.getTableData(datasourceEntityOptional.get(), getDataSourceDataReq.getTableName(), "200");
     }
 
     public GetCreateTableSqlRes getCreateTableSql(GetCreateTableSqlReq getCreateTableSqlReq) throws Exception {

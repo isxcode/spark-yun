@@ -61,4 +61,10 @@ public class OracleService extends Datasource {
     protected Long getTableColumnCount(Connection connection, String database, String tableName) throws SQLException {
         return 0L;
     }
+
+    @Override
+    protected String getTableDataSql(String tableName, String rowNumber) {
+
+        return "SELECT * FROM " + tableName + ("ALL".equals(rowNumber) ? "" : " WHERE ROWNUM <= " + rowNumber);
+    }
 }

@@ -61,4 +61,10 @@ public class SqlServerService extends Datasource {
     protected Long getTableColumnCount(Connection connection, String database, String tableName) throws SQLException {
         return 0L;
     }
+
+    @Override
+    protected String getTableDataSql(String tableName, String rowNumber) {
+
+        return "SELECT " + ("ALL".equals(rowNumber) ? "" : " TOP " + rowNumber) + " * FROM " + tableName;
+    }
 }

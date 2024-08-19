@@ -154,24 +154,4 @@ public class SyncWorkService {
 
         return result;
     }
-
-    /**
-     * 获取数据预览SQL。
-     *
-     * @param dataType 数据库类型。
-     * @param tableName 数据库表名。
-     * @return 数据预览SQL。
-     */
-    public String getDataPreviewSql(String dataType, String tableName) {
-        switch (dataType) {
-            case ORACLE:
-                return "SELECT * FROM " + tableName + " WHERE ROWNUM <= 50";
-            case SQL_SERVER:
-                return "SELECT TOP 50 * FROM " + tableName;
-            case HANA_SAP:
-                return "SELECT * FROM \"" + tableName + "\" LIMIT 50";
-            default:
-                return "SELECT * FROM " + tableName + " LIMIT 50";
-        }
-    }
 }
