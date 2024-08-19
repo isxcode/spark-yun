@@ -3,6 +3,7 @@ package com.isxcode.star.modules.datasource.source;
 import com.isxcode.star.api.datasource.constants.DatasourceType;
 import com.isxcode.star.api.datasource.pojos.dto.QueryColumnDto;
 import com.isxcode.star.api.datasource.pojos.dto.QueryTableDto;
+import com.isxcode.star.api.work.pojos.res.GetDataSourceDataRes;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.star.backend.api.base.properties.IsxAppProperties;
 import com.isxcode.star.common.utils.AesUtils;
@@ -19,6 +20,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
@@ -53,6 +55,8 @@ public abstract class Datasource {
 
     protected abstract Long getTableColumnCount(Connection connection, String database, String tableName)
         throws SQLException;
+
+    protected abstract String getTableDataSql(String tableName, String rowNumber);
 
     public List<QueryTableDto> queryTable(DatasourceEntity datasourceEntity, String database, String tablePattern) {
 
@@ -152,5 +156,34 @@ public abstract class Datasource {
         }
         DriverManager.setLoginTimeout(500);
         return driver.connect(datasource.getJdbcUrl(), properties);
+    }
+
+    public GetDataSourceDataRes getTableData(DatasourceEntity datasourceEntity, String tableName, String rowNumber)
+        throws SQLException {
+
+        Connection connection = getConnection(datasourceEntity);
+
+        Statement statement = connection.createStatement();
+        String dataPreviewSql = getTableDataSql(tableName, rowNumber);
+        ResultSet resultSet = statement.executeQuery(dataPreviewSql);
+        List<String> columns = new ArrayList<>();
+        List<List<String>> rows = new ArrayList<>();
+
+        // 封装表头
+        int columnCount = resultSet.getMetaData().getColumnCount();
+        for (int i = 1; i <= columnCount; i++) {
+            columns.add(resultSet.getMetaData().getColumnName(i));
+        }
+
+        while (resultSet.next()) {
+            List<String> row = new ArrayList<>();
+            for (int i = 1; i <= columnCount; i++) {
+                row.add(String.valueOf(resultSet.getObject(i)));
+            }
+            rows.add(row);
+        }
+        statement.close();
+        connection.close();
+        return GetDataSourceDataRes.builder().columns(columns).rows(rows).build();
     }
 }
