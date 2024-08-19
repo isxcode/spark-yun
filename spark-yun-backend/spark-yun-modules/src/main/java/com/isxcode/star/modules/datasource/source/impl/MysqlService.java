@@ -11,6 +11,7 @@ import com.isxcode.star.modules.datasource.source.Datasource;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.BeanListHandler;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.stereotype.Service;
 
 import java.sql.Connection;
@@ -36,12 +37,22 @@ public class MysqlService extends Datasource {
     }
 
     @Override
-    protected List<QueryTableDto> queryTable(Connection connection, String database, String datasourceId)
-        throws SQLException {
+    protected List<QueryTableDto> queryTable(Connection connection, String database, String datasourceId,
+        String tablePattern) throws SQLException {
         QueryRunner qr = new QueryRunner();
-        List<QueryTableDto> query = qr.query(connection, "SELECT '" + datasourceId
-            + "' as datasourceId,tables.table_name as tableName,tables.table_comment as tableComment FROM information_schema.tables WHERE table_schema = '"
-            + database + "'", new BeanListHandler<>(QueryTableDto.class));
+
+        List<QueryTableDto> query;
+        if (Strings.isNotEmpty(tablePattern)) {
+            query = qr.query(connection, "SELECT '" + datasourceId
+                + "' as datasourceId,tables.table_name as tableName,tables.table_comment as tableComment FROM information_schema.tables WHERE table_schema = '"
+                + database + "' AND  tables.table_name REGEXP '" + tablePattern + "'",
+                new BeanListHandler<>(QueryTableDto.class));
+        } else {
+            query = qr.query(connection, "SELECT '" + datasourceId
+                + "' as datasourceId,tables.table_name as tableName,tables.table_comment as tableComment FROM information_schema.tables WHERE table_schema = '"
+                + database + "'", new BeanListHandler<>(QueryTableDto.class));
+        }
+
         connection.close();
         return query;
     }

@@ -35,8 +35,8 @@ public class HiveService extends Datasource {
     }
 
     @Override
-    protected List<QueryTableDto> queryTable(Connection connection, String database, String datasourceId)
-        throws SQLException {
+    protected List<QueryTableDto> queryTable(Connection connection, String database, String datasourceId,
+        String tablePattern) throws SQLException {
         throw new RuntimeException("不支持hive数据源");
     }
 
