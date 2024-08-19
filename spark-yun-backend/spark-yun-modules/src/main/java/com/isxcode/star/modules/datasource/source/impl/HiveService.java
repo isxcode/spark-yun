@@ -37,7 +37,7 @@ public class HiveService extends Datasource {
     @Override
     protected List<QueryTableDto> queryTable(Connection connection, String database, String datasourceId)
         throws SQLException {
-        return Collections.emptyList();
+        throw new RuntimeException("不支持hive数据源");
     }
 
     @Override
