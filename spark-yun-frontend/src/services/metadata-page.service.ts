@@ -55,10 +55,19 @@ export function DisableMetadataTaskData(params: any): Promise<any> {
 }
 
 // 元数据 - 采集任务 - 立即采集
-export function TriggerMetadataTaskData(params: any): Promise<any> {
+export function FastTriggerMetadataTaskData(params: any): Promise<any> {
     return http.request({
         method: 'post',
         url: '/vip/meta/fastTriggerMetaWork',
+        params: params
+    })
+}
+
+// 元数据 - 采集任务 - 立即采集
+export function TriggerMetadataTaskData(params: any): Promise<any> {
+    return http.request({
+        method: 'post',
+        url: '/vip/meta/triggerMetaWork',
         params: params
     })
 }
