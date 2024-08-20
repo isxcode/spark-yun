@@ -55,7 +55,11 @@ import { BreadCrumbList } from './list.config'
 import datasourceList from './datasource-list.vue'
 import tableList from './table-list.vue'
 import codeList from './code-list.vue'
-import { AddMetadataTaskData, RefreshMetadataManagementList, TriggerMetadataTaskData } from '@/services/metadata-page.service'
+import {
+  AddMetadataTaskData,
+  FastTriggerMetadataTaskData,
+  RefreshMetadataManagementList
+} from '@/services/metadata-page.service'
 import { GetDatasourceList } from '@/services/datasource.service'
 import { ElMessage } from 'element-plus'
 import AddModal from './add-modal/index.vue'
@@ -114,7 +118,7 @@ function acquisetionTriggerEvent() {
     addModalRef.value.showModal((data: any) => {
         return new Promise((resolve: any, reject: any) => {
             AddMetadataTaskData(data).then((resp: any) => {
-                TriggerMetadataTaskData({
+                FastTriggerMetadataTaskData({
                     id: resp.data.id
                 }).then((res: any) => {
                     ElMessage.success(res.msg)

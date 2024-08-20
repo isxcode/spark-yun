@@ -5,7 +5,7 @@
             <span
               class="name-click"
               @click="redirectToTable(scopeSlot.row)"
-            >{{ scopeSlot.row.name }}</span>
+            >{{ scopeSlot.row.dbName }}</span>
           </template>
     </BlockTable>
 </template>
@@ -20,34 +20,34 @@ const tableConfig = reactive({
     tableData: [],
     colConfigs: [
         {
+            prop: 'name',
+            title: '数据源',
+            minWidth: 125,
+            showOverflowTooltip: true
+        },
+        {
             prop: 'dbName',
-            title: '数据库名称',
+            title: '数据库',
             minWidth: 125,
             showOverflowTooltip: true,
             customSlot: 'nameSlot'
         },
         {
             prop: 'dbType',
-            title: '数据源类型',
+            title: '类型',
             minWidth: 125,
             showOverflowTooltip: true
         },
         {
-            prop: 'name',
-            title: '数据源名称',
-            minWidth: 125,
-            showOverflowTooltip: true
+            prop: 'dbComment',
+            title: '备注',
+            minWidth: 140
         },
         {
             prop: 'lastModifiedDateTime',
             title: '更新时间',
             minWidth: 140
         },
-        {
-            prop: 'dbComment',
-            title: '备注',
-            minWidth: 140
-        }
     ],
     pagination: {
         currentPage: 1,
