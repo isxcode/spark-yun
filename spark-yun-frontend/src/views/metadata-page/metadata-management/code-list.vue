@@ -31,24 +31,24 @@ const tableConfig = reactive({
         },
         {
             prop: 'dbName',
-            title: '数据库名称',
+            title: '数据库',
             minWidth: 125,
             showOverflowTooltip: true
         },
         {
             prop: 'datasourceName',
-            title: '数据源名称',
+            title: '数据源',
             minWidth: 125,
             showOverflowTooltip: true
         },
         {
-            prop: 'lastModifiedDateTime',
-            title: '更新时间',
+            prop: 'columnComment',
+            title: '备注',
             minWidth: 140
         },
         {
-            prop: 'columnComment',
-            title: '备注',
+            prop: 'lastModifiedDateTime',
+            title: '更新时间',
             minWidth: 140
         }
     ],
