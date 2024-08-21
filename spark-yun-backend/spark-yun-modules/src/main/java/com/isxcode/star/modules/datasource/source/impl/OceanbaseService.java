@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -38,13 +37,13 @@ public class OceanbaseService extends Datasource {
     @Override
     protected List<QueryTableDto> queryTable(Connection connection, String database, String datasourceId,
         String tablePattern) throws SQLException {
-        return Collections.emptyList();
+        throw new RuntimeException("该数据源暂不支持");
     }
 
     @Override
     protected List<QueryColumnDto> queryColumn(Connection connection, String database, String datasourceId,
         String tableName) throws SQLException {
-        return Collections.emptyList();
+        throw new RuntimeException("该数据源暂不支持");
     }
 
     @Override

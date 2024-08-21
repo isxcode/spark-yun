@@ -11,9 +11,8 @@ import com.isxcode.star.modules.datasource.source.Datasource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.Collections;
+import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -37,28 +36,116 @@ public class HiveService extends Datasource {
     @Override
     protected List<QueryTableDto> queryTable(Connection connection, String database, String datasourceId,
         String tablePattern) throws SQLException {
-        throw new RuntimeException("不支持hive数据源");
+
+        Statement statement = connection.createStatement();
+        ResultSet resultSet = statement.executeQuery("SHOW TABLES IN " + database);
+        ArrayList<QueryTableDto> tables = new ArrayList<>();
+        while (resultSet.next()) {
+            QueryTableDto dto = new QueryTableDto();
+            dto.setTableName(resultSet.getString(1));
+            dto.setDatasourceId(datasourceId);
+            if (tablePattern.isEmpty() || dto.getTableName().matches(tablePattern)) {
+                tables.add(dto);
+            }
+        }
+
+        // 获取表的备注
+        for (QueryTableDto table : tables) {
+            resultSet = statement.executeQuery("DESCRIBE FORMATTED " + database + "." + table.getTableName());
+            while (resultSet.next()) {
+                if (resultSet.getString(2) != null && "comment".equals(resultSet.getString(2).trim())) {
+                    if (resultSet.getString(3) != null) {
+                        table.setTableComment(resultSet.getString(3));
+                    }
+                    break;
+                }
+            }
+        }
+
+        connection.close();
+        return tables;
     }
 
     @Override
     protected List<QueryColumnDto> queryColumn(Connection connection, String database, String datasourceId,
         String tableName) throws SQLException {
-        return Collections.emptyList();
+        Statement statement = connection.createStatement();
+        ResultSet resultSet = statement.executeQuery("DESCRIBE FORMATTED " + database + "." + tableName);
+        ArrayList<QueryColumnDto> columns = new ArrayList<>();
+        while (resultSet.next()) {
+            if (resultSet.getString(1).isEmpty() || "# Partition Information".equals(resultSet.getString(1))
+                || "# col_name            ".equals(resultSet.getString(1))) {
+                continue;
+            }
+            if ("# Detailed Table Information".equals(resultSet.getString(1))) {
+                break;
+            }
+            QueryColumnDto dto = new QueryColumnDto();
+            dto.setDatasourceId(datasourceId);
+            dto.setTableName(tableName);
+            dto.setColumnName(resultSet.getString(1));
+            dto.setColumnType(resultSet.getString(2));
+            if (resultSet.getString(3) != null) {
+                dto.setColumnComment(resultSet.getString(3));
+            }
+            columns.add(dto);
+        }
+        connection.close();
+        return columns;
     }
 
     @Override
     protected Long getTableTotalSize(Connection connection, String database, String tableName) throws SQLException {
-        return 0L;
+        Statement statement = connection.createStatement();
+        ResultSet resultSet = statement.executeQuery("DESCRIBE FORMATTED " + database + "." + tableName);
+        Long tableTotalSize = 0L;
+        while (resultSet.next()) {
+
+            if (resultSet.getString(2) != null && "rawDataSize".equals(resultSet.getString(2).trim())) {
+                tableTotalSize = Long.parseLong(resultSet.getString(3).trim());
+            }
+        }
+        connection.close();
+        return tableTotalSize;
     }
 
     @Override
     protected Long getTableTotalRows(Connection connection, String database, String tableName) throws SQLException {
-        return 0L;
+
+        Statement statement = connection.createStatement();
+        ResultSet resultSet = statement.executeQuery("DESCRIBE FORMATTED " + database + "." + tableName);
+        Long tableTotalSize = 0L;
+        while (resultSet.next()) {
+
+            if (resultSet.getString(2) != null && "numRows".equals(resultSet.getString(2).trim())) {
+                tableTotalSize = Long.parseLong(resultSet.getString(3).trim());
+            }
+        }
+        connection.close();
+        return tableTotalSize;
     }
 
     @Override
     protected Long getTableColumnCount(Connection connection, String database, String tableName) throws SQLException {
-        return 0L;
+
+        Statement statement = connection.createStatement();
+        ResultSet resultSet = statement.executeQuery("DESCRIBE FORMATTED " + database + "." + tableName);
+        ArrayList<QueryColumnDto> columns = new ArrayList<>();
+        while (resultSet.next()) {
+            if (resultSet.getString(1).isEmpty() || "# Partition Information".equals(resultSet.getString(1))
+                || "# col_name            ".equals(resultSet.getString(1))) {
+                continue;
+            }
+            if ("# Detailed Table Information".equals(resultSet.getString(1))) {
+                break;
+            }
+            QueryColumnDto dto = new QueryColumnDto();
+            dto.setTableName(tableName);
+            dto.setColumnName(resultSet.getString(1));
+            columns.add(dto);
+        }
+        connection.close();
+        return Long.parseLong(String.valueOf(columns.size()));
     }
 
     @Override
