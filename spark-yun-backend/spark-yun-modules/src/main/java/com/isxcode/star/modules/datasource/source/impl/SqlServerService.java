@@ -66,4 +66,9 @@ public class SqlServerService extends Datasource {
 
         return "SELECT " + ("ALL".equals(rowNumber) ? "" : " TOP " + rowNumber) + " * FROM " + tableName;
     }
+
+    @Override
+    protected void refreshTableInfo(Connection connection, String database, String tableName) {
+
+    }
 }

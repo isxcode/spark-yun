@@ -66,4 +66,9 @@ public class OracleService extends Datasource {
 
         return "SELECT * FROM " + tableName + ("ALL".equals(rowNumber) ? "" : " WHERE ROWNUM <= " + rowNumber);
     }
+
+    @Override
+    protected void refreshTableInfo(Connection connection, String database, String tableName) {
+
+    }
 }

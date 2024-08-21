@@ -107,4 +107,9 @@ public class MysqlService extends Datasource {
 
         return "SELECT * FROM " + tableName + ("ALL".equals(rowNumber) ? "" : " LIMIT " + rowNumber);
     }
+
+    @Override
+    protected void refreshTableInfo(Connection connection, String database, String tableName) {
+
+    }
 }
