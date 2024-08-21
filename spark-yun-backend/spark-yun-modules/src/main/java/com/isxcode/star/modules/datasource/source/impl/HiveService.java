@@ -153,4 +153,12 @@ public class HiveService extends Datasource {
 
         return "SELECT * FROM " + tableName + ("ALL".equals(rowNumber) ? "" : " LIMIT " + rowNumber);
     }
+
+    @Override
+    protected void refreshTableInfo(Connection connection, String database, String tableName) throws SQLException {
+
+        Statement statement = connection.createStatement();
+        statement.execute("analyze table " + database + "." + tableName + " compute statistics");
+        connection.close();
+    }
 }
