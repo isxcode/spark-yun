@@ -19,4 +19,6 @@ public class ConfigViewCardReq {
     private Object exampleData;
 
     private DataSql dataSql;
+
+    private String datasourceId;
 }
