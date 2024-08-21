@@ -206,6 +206,7 @@ function saveConfigEvent() {
         id: route.query.id,
         webConfig: chartConfig,
         exampleData: echartOption.value,
+        datasourceId: baseConfig.datasourceId,
         dataSql: {
             sqlList: baseConfig.sqls
         }
@@ -224,6 +225,7 @@ function publishChartEvent() {
         id: route.query.id,
         webConfig: chartConfig,
         exampleData: echartOption.value,
+        datasourceId: baseConfig.datasourceId,
         dataSql: {
             sqlList: baseConfig.sqls
         }
