@@ -58,6 +58,9 @@ public abstract class Datasource {
 
     protected abstract String getTableDataSql(String tableName, String rowNumber);
 
+    protected abstract void refreshTableInfo(Connection connection, String database, String tableName)
+        throws SQLException;
+
     public List<QueryTableDto> queryTable(DatasourceEntity datasourceEntity, String database, String tablePattern) {
 
         try {
@@ -104,6 +107,16 @@ public abstract class Datasource {
         try {
             Connection connection = getConnection(datasourceEntity);
             return getTableColumnCount(connection, database, tableName);
+        } catch (Exception e) {
+            throw new IsxAppException(e.getMessage());
+        }
+    }
+
+    public void refreshTableInfo(DatasourceEntity datasourceEntity, String database, String tableName) {
+
+        try {
+            Connection connection = getConnection(datasourceEntity);
+            refreshTableInfo(connection, database, tableName);
         } catch (Exception e) {
             throw new IsxAppException(e.getMessage());
         }
