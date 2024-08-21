@@ -101,7 +101,7 @@ public class DatasourceService {
             statement.execute();
         } catch (Exception e) {
             log.error(e.getMessage(), e);
-            throw new IsxAppException("提交失败");
+            throw new IsxAppException("提交失败," + e.getMessage());
         }
     }
 
@@ -136,7 +136,7 @@ public class DatasourceService {
             }
         } catch (Exception e) {
             log.error(e.getMessage(), e);
-            throw new IsxAppException("提交失败");
+            throw new IsxAppException("提交失败," + e.getMessage());
         }
         throw new IsxAppException("查询总条数异常");
     }
