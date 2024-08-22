@@ -8,12 +8,15 @@
             >{{ scopeSlot.row.dbName }}</span>
         </template>
     </BlockTable>
+    <PreviewModal ref="previewModalRef"></PreviewModal>
 </template>
 
 <script lang="ts" setup>
 import { reactive, ref, onMounted } from 'vue'
 import { GetMetadataCodesList } from '@/services/metadata-page.service'
+import PreviewModal from './preview-modal/index.vue'
 
+const previewModalRef = ref<any>(null)
 const tableConfig = reactive({
     tableData: [],
     colConfigs: [
@@ -27,7 +30,8 @@ const tableConfig = reactive({
             prop: 'tableName',
             title: '表名',
             minWidth: 125,
-            showOverflowTooltip: true
+            showOverflowTooltip: true,
+            customSlot: 'nameSlot'
         },
         {
             prop: 'columnType',
@@ -89,7 +93,7 @@ function initData(searchKeyWord?: string) {
 }
 
 function showPreviewModal(data: any) {
-    
+    previewModalRef.value.showModal(data)
 }
 
 function handleSizeChange(e: number) {
