@@ -132,6 +132,15 @@ export function GetTableDetailData(params: any): Promise<any> {
     })
 }
 
+// 元数据 - 元数据管理 - 刷新基础信息
+export function RefreshTableDetailData(params: any): Promise<any> {
+    return http.request({
+        method: 'post',
+        url: '/vip/meta/refreshMetaTableInfo',
+        params: params
+    })
+}
+
 // 元数据 - 元数据管理 - 导出
 export function ExportTableDetailData(params: any): Promise<any> {
     return http.request({
