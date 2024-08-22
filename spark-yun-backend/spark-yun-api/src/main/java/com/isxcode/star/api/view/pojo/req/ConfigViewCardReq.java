@@ -21,4 +21,6 @@ public class ConfigViewCardReq {
     private DataSql dataSql;
 
     private String datasourceId;
+
+    private String name;
 }
