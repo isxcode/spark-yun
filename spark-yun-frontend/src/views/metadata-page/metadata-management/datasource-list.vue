@@ -6,7 +6,7 @@
               class="name-click"
               @click="redirectToTable(scopeSlot.row)"
             >{{ scopeSlot.row.dbName }}</span>
-          </template>
+        </template>
     </BlockTable>
 </template>
 

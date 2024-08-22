@@ -1,6 +1,12 @@
 <template>
     <BlockTable :table-config="tableConfig" @size-change="handleSizeChange"
         @current-change="handleCurrentChange">
+        <template #nameSlot="scopeSlot">
+            <span
+              class="name-click"
+              @click="showPreviewModal(scopeSlot.row)"
+            >{{ scopeSlot.row.dbName }}</span>
+        </template>
     </BlockTable>
 </template>
 
@@ -80,6 +86,10 @@ function initData(searchKeyWord?: string) {
             reject()
         })
     })
+}
+
+function showPreviewModal(data: any) {
+    
 }
 
 function handleSizeChange(e: number) {

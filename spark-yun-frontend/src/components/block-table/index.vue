@@ -1,6 +1,7 @@
 <template>
   <vxe-table
     class="block-table"
+    :class="{ 'block-table__empty': !tableConfig.tableData?.length }"
     :row-config="{ isHover: true }"
     :data="tableConfig.tableData"
     :loading="tableConfig.loading"
@@ -117,6 +118,11 @@ function columnSlotAdapter(column: any, colConfig: any) {
 
 <style lang="scss">
 .block-table {
+  &.block-table__empty {
+    .vxe-table--render-wrapper {
+      min-height: 176px;
+    }
+  }
   .vxe-table--header tr.vxe-header--row > th {
     height: getCssVar('menu', 'item-height');
     padding: 0;
