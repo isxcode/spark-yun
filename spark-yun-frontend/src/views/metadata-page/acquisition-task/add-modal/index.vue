@@ -24,6 +24,9 @@
       <el-form-item v-if="formData.collectType === 'CUSTOM_TABLE'" label="正则表达式" prop="tablePattern">
         <el-input v-model="formData.tablePattern" maxlength="200" placeholder="请输入" />
       </el-form-item>
+      <el-form-item label="启用调度">
+        <el-switch v-model="formData.cronConfig.enable" />
+      </el-form-item>
       <template v-if="formData.cronConfig.enable">
         <div class="cron-config">
           <el-form-item label="调度配置">
@@ -342,7 +345,7 @@ const formData = reactive({
   tablePattern: '',
   cronConfig: {
     setMode: 'SIMPLE',       // 模式
-    enable: true,             // 启用
+    enable: false,             // 启用
     cron: '',                 // cron表达式
     workDate: '',             // 生效时间
     range: '',         // 调度周期
@@ -393,7 +396,7 @@ function showModal(cb: () => void, data: any): void {
       if (key == 'cronConfig' && !data[key]) {
         formData[key] = {
           setMode: 'SIMPLE',       // 模式
-          enable: true,             // 启用
+          enable: false,             // 启用
           cron: '',                 // cron表达式
           workDate: '',             // 生效时间
           range: '',         // 调度周期
@@ -418,7 +421,7 @@ function showModal(cb: () => void, data: any): void {
       if (key == 'cronConfig') {
         formData[key] = {
           setMode: 'SIMPLE',       // 模式
-          enable: true,             // 启用
+          enable: false,             // 启用
           cron: '',                 // cron表达式
           workDate: '',             // 生效时间
           range: '',         // 调度周期

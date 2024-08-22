@@ -1,13 +1,22 @@
 <template>
     <BlockTable :table-config="tableConfig" @size-change="handleSizeChange"
         @current-change="handleCurrentChange">
+        <template #nameSlot="scopeSlot">
+            <span
+              class="name-click"
+              @click="showPreviewModal(scopeSlot.row)"
+            >{{ scopeSlot.row.dbName }}</span>
+        </template>
     </BlockTable>
+    <PreviewModal ref="previewModalRef"></PreviewModal>
 </template>
 
 <script lang="ts" setup>
 import { reactive, ref, onMounted } from 'vue'
 import { GetMetadataTableList } from '@/services/metadata-page.service'
+import PreviewModal from './preview-modal/index.vue'
 
+const previewModalRef = ref<any>(null)
 const tableConfig = reactive({
     tableData: [],
     colConfigs: [
@@ -15,7 +24,8 @@ const tableConfig = reactive({
             prop: 'tableName',
             title: '表名',
             minWidth: 125,
-            showOverflowTooltip: true
+            showOverflowTooltip: true,
+            customSlot: 'nameSlot'
         },
         {
             prop: 'datasourceName',
@@ -70,6 +80,10 @@ function initData(searchKeyWord?: string, datasourceId?: string) {
             reject()
         })
     })
+}
+
+function showPreviewModal(data: any) {
+    previewModalRef.value.showModal(data)
 }
 
 function handleSizeChange(e: number) {

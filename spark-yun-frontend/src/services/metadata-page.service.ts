@@ -105,7 +105,44 @@ export function GetMetadataCodesList(params: any): Promise<any> {
     })
 }
 
-// ------------------------------- 元数据管理 -----------------------------------
+// 元数据 - 元数据管理 - 表基础信息
+export function GetTableBasicInfo(params: any): Promise<any> {
+    return http.request({
+        method: 'post',
+        url: '/vip/meta/getMetaTableInfo',
+        params: params
+    })
+}
+
+// 元数据 - 元数据管理 - 表字段信息
+export function GetTableCodeInfo(params: any): Promise<any> {
+    return http.request({
+        method: 'post',
+        url: '/vip/meta/getMetaTableColumn',
+        params: params
+    })
+}
+
+// 元数据 - 元数据管理 - 预览数据信息
+export function GetTableDetailData(params: any): Promise<any> {
+    return http.request({
+        method: 'post',
+        url: '/vip/meta/getMetaTableData',
+        params: params
+    })
+}
+
+// 元数据 - 元数据管理 - 导出
+export function ExportTableDetailData(params: any): Promise<any> {
+    return http.request({
+        method: 'post',
+        url: '/vip/meta/exportTableExcel',
+        params: params,
+        responseType: 'blob'
+    })
+}
+
+// ------------------------------- 元数据实例 -----------------------------------
 // 元数据 - 采集实例 - 实例查询
 export function RefreshMetadataInstanceList(params: any): Promise<any> {
     return http.request({
