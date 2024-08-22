@@ -10,11 +10,11 @@
                 :is="tabComponent"
                 :datasourceId="infoData.datasourceId"
                 :tableName="infoData.tableName"
-                ref="currentTabRef"
             ></component>
         </div>
         <template #customLeft>
             <el-button @click="closeEvent">关闭</el-button>
+            <el-button v-if="activeName === 'basicInfo'" type="primary" :loading="exportLoading" @click="refreshEvent">刷新</el-button>
             <el-button v-if="activeName === 'codeInfo'" type="primary" :loading="exportLoading" @click="exportEvent">导出</el-button>
         </template>
     </BlockModal>
@@ -26,14 +26,14 @@ import BlockModal from '@/components/block-modal/index.vue'
 import basicInfo from './basic-info.vue'
 import codeInfo from './code-info.vue'
 import dataPreview from './data-preview.vue'
-import { ExportTableDetailData } from '@/services/metadata-page.service'
+import { ExportTableDetailData, RefreshTableDetailData } from '@/services/metadata-page.service'
+import { ElMessage } from 'element-plus'
 
 // const loading = ref<boolean>(false)
 // const networkError = ref<boolean>(false)
 const activeName = ref<string>('basicInfo')
 const exportLoading = ref<boolean>(false)
 const tabComponent = ref<any>()
-const currentTabRef = ref<any>()
 const infoData = ref<any>()
 
 const modelConfig = reactive<any>({
@@ -43,10 +43,16 @@ const modelConfig = reactive<any>({
     customClass: 'table-code-preview',
     needScale: false,
     zIndex: 1100,
+    cancelConfig: {
+        title: '取消',
+        cancel: closeEvent,
+        hide: true
+    },
     closeOnClickModal: false
 })
 
 function showModal(data: any): void {
+    activeName.value = 'basicInfo'
     changeTypeEvent({ paneName: 'basicInfo' })
     infoData.value = data
     modelConfig.visible = true
@@ -59,6 +65,19 @@ function changeTypeEvent(e: any) {
         dataPreview: dataPreview
     }
     tabComponent.value = markRaw(lookup[e.paneName])
+}
+
+function refreshEvent() {
+    exportLoading.value = true
+    RefreshTableDetailData({
+        datasourceId: infoData.value.datasourceId,
+        tableName: infoData.value.tableName
+    }).then((res: any) => {
+        ElMessage.success('刷新成功')
+        exportLoading.value = false
+    }).catch(() => {
+        exportLoading.value = false
+    })
 }
 
 function exportEvent() {

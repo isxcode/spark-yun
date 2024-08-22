@@ -91,7 +91,7 @@ function clickToCancel() {
 }
 
 function close() {
-  props.modelConfig.cancelConfig.cancel()
+  props.modelConfig?.cancelConfig?.cancel()
 }
 </script>
 

@@ -1,6 +1,12 @@
 <template>
-    <el-descriptions>
-        <el-descriptions-item label="表名">{{ 2 }}</el-descriptions-item>
+    <el-descriptions :column="1" size="small">
+        <el-descriptions-item label="表名">{{ info?.tableName }}</el-descriptions-item>
+        <el-descriptions-item label="字段数量">{{ info?.columnCount }}</el-descriptions-item>
+        <el-descriptions-item label="表总条数">{{ info?.totalRows }}</el-descriptions-item>
+        <el-descriptions-item label="表大小">{{ info?.totalSizeStr }}</el-descriptions-item>
+        <el-descriptions-item label="采集时间">{{ info?.collectDateTime }}</el-descriptions-item>
+        <el-descriptions-item label="刷新时间">{{ info?.refreshDateTime }}</el-descriptions-item>
+        <el-descriptions-item label="备注">{{ info?.tableComment }}</el-descriptions-item>
     </el-descriptions>
 </template>
 
