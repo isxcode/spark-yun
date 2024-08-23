@@ -40,14 +40,14 @@ const tableConfig = reactive({
             showOverflowTooltip: true
         },
         {
-            prop: 'dbName',
-            title: '数据库',
+            prop: 'datasourceName',
+            title: '数据源',
             minWidth: 125,
             showOverflowTooltip: true
         },
         {
-            prop: 'datasourceName',
-            title: '数据源',
+            prop: 'dbName',
+            title: '数据库',
             minWidth: 125,
             showOverflowTooltip: true
         },

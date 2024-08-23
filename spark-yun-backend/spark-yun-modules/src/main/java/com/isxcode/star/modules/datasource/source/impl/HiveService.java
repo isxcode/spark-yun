@@ -40,7 +40,7 @@ public class HiveService extends Datasource {
     @Override
     public List<QueryTableDto> queryTable(ConnectInfo connectInfo) throws IsxAppException {
 
-        Assert.isNull(connectInfo.getDatabase(), "datasource不能为空");
+        Assert.notNull(connectInfo.getDatabase(), "datasbase不能为空");
 
         try (Connection connection = getConnection(connectInfo); Statement statement = connection.createStatement();) {
 
@@ -79,8 +79,8 @@ public class HiveService extends Datasource {
     @Override
     public List<QueryColumnDto> queryColumn(ConnectInfo connectInfo) throws IsxAppException {
 
-        Assert.isNull(connectInfo.getDatabase(), "datasource不能为空");
-        Assert.isNull(connectInfo.getTableName(), "tableName不能为空");
+        Assert.notNull(connectInfo.getDatabase(), "datasource不能为空");
+        Assert.notNull(connectInfo.getTableName(), "tableName不能为空");
 
         try (Connection connection = getConnection(connectInfo); Statement statement = connection.createStatement();) {
             ResultSet resultSet = statement
@@ -114,8 +114,8 @@ public class HiveService extends Datasource {
     @Override
     public Long getTableTotalSize(ConnectInfo connectInfo) throws IsxAppException {
 
-        Assert.isNull(connectInfo.getDatabase(), "datasource不能为空");
-        Assert.isNull(connectInfo.getTableName(), "tableName不能为空");
+        Assert.notNull(connectInfo.getDatabase(), "datasource不能为空");
+        Assert.notNull(connectInfo.getTableName(), "tableName不能为空");
 
         try (Connection connection = getConnection(connectInfo); Statement statement = connection.createStatement();) {
             ResultSet resultSet = statement
@@ -136,8 +136,8 @@ public class HiveService extends Datasource {
     @Override
     public Long getTableTotalRows(ConnectInfo connectInfo) throws IsxAppException {
 
-        Assert.isNull(connectInfo.getDatabase(), "datasource不能为空");
-        Assert.isNull(connectInfo.getTableName(), "tableName不能为空");
+        Assert.notNull(connectInfo.getDatabase(), "datasource不能为空");
+        Assert.notNull(connectInfo.getTableName(), "tableName不能为空");
 
         try (Connection connection = getConnection(connectInfo); Statement statement = connection.createStatement();) {
             ResultSet resultSet = statement
@@ -164,8 +164,8 @@ public class HiveService extends Datasource {
     @Override
     public GetDataSourceDataRes getTableData(ConnectInfo connectInfo) throws IsxAppException {
 
-        Assert.isNull(connectInfo.getTableName(), "tableName不能为空");
-        Assert.isNull(connectInfo.getRowNumber(), "rowNumber不能为空");
+        Assert.notNull(connectInfo.getTableName(), "tableName不能为空");
+        Assert.notNull(connectInfo.getRowNumber(), "rowNumber不能为空");
 
         String getTableDataSql = "SELECT * FROM " + connectInfo.getTableName()
             + ("ALL".equals(connectInfo.getRowNumber()) ? "" : " LIMIT " + connectInfo.getRowNumber());
@@ -176,8 +176,8 @@ public class HiveService extends Datasource {
     @Override
     public void refreshTableInfo(ConnectInfo connectInfo) throws IsxAppException {
 
-        Assert.isNull(connectInfo.getDatabase(), "database不能为空");
-        Assert.isNull(connectInfo.getTableName(), "tableName不能为空");
+        Assert.notNull(connectInfo.getDatabase(), "database不能为空");
+        Assert.notNull(connectInfo.getTableName(), "tableName不能为空");
 
         try (Connection connection = getConnection(connectInfo); Statement statement = connection.createStatement();) {
             statement.execute("analyze table " + connectInfo.getDatabase() + "." + connectInfo.getTableName()

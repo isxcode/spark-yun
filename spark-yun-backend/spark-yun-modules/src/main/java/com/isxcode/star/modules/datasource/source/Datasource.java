@@ -203,13 +203,14 @@ public abstract class Datasource {
     public ResultSet securityQuerySql(ConnectInfo connectInfo, String securityExecuteSql,
         List<SecurityColumnDto> securityColumns) throws IsxAppException {
 
-        try (Connection connection = getConnection(connectInfo);
-            PreparedStatement statement = connection.prepareStatement(securityExecuteSql);) {
+        try {
+            Connection connection = getConnection(connectInfo);
+            PreparedStatement statement = connection.prepareStatement(securityExecuteSql);
             for (int i = 0; i < securityColumns.size(); i++) {
                 this.transAndSetParameter(statement, securityColumns.get(i), i);
             }
             return statement.executeQuery();
-        } catch (Exception e) {
+        } catch (SQLException e) {
             log.error(e.getMessage(), e);
             throw new IsxAppException(e.getMessage());
         }

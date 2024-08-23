@@ -45,7 +45,7 @@ public class MysqlService extends Datasource {
     @Override
     public List<QueryTableDto> queryTable(ConnectInfo connectInfo) throws IsxAppException {
 
-        Assert.isNull(connectInfo.getDatabase(), "datasource不能为空");
+        Assert.notNull(connectInfo.getDatabase(), "datasource不能为空");
 
         QueryRunner qr = new QueryRunner();
         try (Connection connection = getConnection(connectInfo)) {
@@ -68,8 +68,8 @@ public class MysqlService extends Datasource {
     @Override
     public List<QueryColumnDto> queryColumn(ConnectInfo connectInfo) throws IsxAppException {
 
-        Assert.isNull(connectInfo.getDatabase(), "datasource不能为空");
-        Assert.isNull(connectInfo.getTableName(), "tableName不能为空");
+        Assert.notNull(connectInfo.getDatabase(), "datasource不能为空");
+        Assert.notNull(connectInfo.getTableName(), "tableName不能为空");
 
         QueryRunner qr = new QueryRunner();
         try (Connection connection = getConnection(connectInfo)) {
@@ -87,8 +87,8 @@ public class MysqlService extends Datasource {
     @Override
     public Long getTableTotalSize(ConnectInfo connectInfo) throws IsxAppException {
 
-        Assert.isNull(connectInfo.getDatabase(), "datasource不能为空");
-        Assert.isNull(connectInfo.getTableName(), "tableName不能为空");
+        Assert.notNull(connectInfo.getDatabase(), "datasource不能为空");
+        Assert.notNull(connectInfo.getTableName(), "tableName不能为空");
 
         QueryRunner qr = new QueryRunner();
         try (Connection connection = getConnection(connectInfo)) {
@@ -106,7 +106,7 @@ public class MysqlService extends Datasource {
     @Override
     public Long getTableTotalRows(ConnectInfo connectInfo) throws IsxAppException {
 
-        Assert.isNull(connectInfo.getTableName(), "tableName不能为空");
+        Assert.notNull(connectInfo.getTableName(), "tableName不能为空");
 
         QueryRunner qr = new QueryRunner();
         try (Connection connection = getConnection(connectInfo)) {
@@ -120,7 +120,7 @@ public class MysqlService extends Datasource {
     @Override
     public Long getTableColumnCount(ConnectInfo connectInfo) throws IsxAppException {
 
-        Assert.isNull(connectInfo.getTableName(), "tableName不能为空");
+        Assert.notNull(connectInfo.getTableName(), "tableName不能为空");
 
         QueryRunner qr = new QueryRunner();
         try (Connection connection = getConnection(connectInfo)) {
@@ -137,8 +137,8 @@ public class MysqlService extends Datasource {
     @Override
     public GetDataSourceDataRes getTableData(ConnectInfo connectInfo) throws IsxAppException {
 
-        Assert.isNull(connectInfo.getTableName(), "tableName不能为空");
-        Assert.isNull(connectInfo.getRowNumber(), "rowNumber不能为空");
+        Assert.notNull(connectInfo.getTableName(), "tableName不能为空");
+        Assert.notNull(connectInfo.getRowNumber(), "rowNumber不能为空");
 
         String getTableDataSql = "SELECT * FROM " + connectInfo.getTableName()
             + ("ALL".equals(connectInfo.getRowNumber()) ? "" : " LIMIT " + connectInfo.getRowNumber());
