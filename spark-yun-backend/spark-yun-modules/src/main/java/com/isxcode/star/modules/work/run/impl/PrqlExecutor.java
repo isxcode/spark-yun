@@ -2,12 +2,14 @@ package com.isxcode.star.modules.work.run.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.isxcode.star.api.datasource.constants.DatasourceType;
+import com.isxcode.star.api.datasource.pojos.dto.ConnectInfo;
 import com.isxcode.star.api.work.constants.WorkLog;
 import com.isxcode.star.api.work.constants.WorkType;
 import com.isxcode.star.api.work.exceptions.WorkRunException;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.star.modules.alarm.service.AlarmService;
 import com.isxcode.star.modules.datasource.entity.DatasourceEntity;
+import com.isxcode.star.modules.datasource.mapper.DatasourceMapper;
 import com.isxcode.star.modules.datasource.repository.DatasourceRepository;
 import com.isxcode.star.modules.datasource.service.DatasourceService;
 import com.isxcode.star.modules.datasource.source.DataSourceFactory;
@@ -48,10 +50,13 @@ public class PrqlExecutor extends WorkExecutor {
 
     private final DataSourceFactory dataSourceFactory;
 
+    private final DatasourceMapper datasourceMapper;
+
     public PrqlExecutor(WorkInstanceRepository workInstanceRepository,
         WorkflowInstanceRepository workflowInstanceRepository, DatasourceRepository datasourceRepository,
         DatasourceService datasourceService, SqlCommentService sqlCommentService, SqlValueService sqlValueService,
-        SqlFunctionService sqlFunctionService, AlarmService alarmService, DataSourceFactory dataSourceFactory) {
+        SqlFunctionService sqlFunctionService, AlarmService alarmService, DataSourceFactory dataSourceFactory,
+        DatasourceMapper datasourceMapper) {
         super(workInstanceRepository, workflowInstanceRepository, alarmService);
         this.datasourceRepository = datasourceRepository;
         this.datasourceService = datasourceService;
@@ -59,6 +64,7 @@ public class PrqlExecutor extends WorkExecutor {
         this.sqlValueService = sqlValueService;
         this.sqlFunctionService = sqlFunctionService;
         this.dataSourceFactory = dataSourceFactory;
+        this.datasourceMapper = datasourceMapper;
     }
 
     @Override
@@ -87,6 +93,7 @@ public class PrqlExecutor extends WorkExecutor {
         if (!datasourceEntityOptional.isPresent()) {
             throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "检测运行环境失败: 未配置有效数据源  \n");
         }
+        DatasourceEntity datasourceEntity = datasourceEntityOptional.get();
 
         // 数据源检查通过
         logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("检测运行环境完成  \n");
@@ -102,8 +109,9 @@ public class PrqlExecutor extends WorkExecutor {
         workInstance = updateInstance(workInstance, logBuilder);
 
         // 开始执行sql
-        Datasource datasource1 = dataSourceFactory.getDatasource(datasourceEntityOptional.get().getDbType());
-        try (Connection connection = datasource1.getConnection(datasourceEntityOptional.get());
+        ConnectInfo connectInfo = datasourceMapper.datasourceEntityToConnectInfo(datasourceEntity);
+        Datasource datasource = dataSourceFactory.getDatasource(connectInfo.getDbType());
+        try (Connection connection = datasource.getConnection(connectInfo);
             Statement statement = connection.createStatement()) {
 
             statement.setQueryTimeout(1800);

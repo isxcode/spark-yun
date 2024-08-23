@@ -2,14 +2,18 @@ package com.isxcode.star.modules.datasource.source.impl;
 
 import com.isxcode.star.api.datasource.constants.DatasourceDriver;
 import com.isxcode.star.api.datasource.constants.DatasourceType;
+import com.isxcode.star.api.datasource.pojos.dto.ConnectInfo;
 import com.isxcode.star.api.datasource.pojos.dto.QueryColumnDto;
 import com.isxcode.star.api.datasource.pojos.dto.QueryTableDto;
+import com.isxcode.star.api.work.pojos.res.GetDataSourceDataRes;
+import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.star.backend.api.base.properties.IsxAppProperties;
 import com.isxcode.star.common.utils.AesUtils;
 import com.isxcode.star.modules.datasource.service.DatabaseDriverService;
 import com.isxcode.star.modules.datasource.source.Datasource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -34,131 +38,154 @@ public class HiveService extends Datasource {
     }
 
     @Override
-    protected List<QueryTableDto> queryTable(Connection connection, String database, String datasourceId,
-        String tablePattern) throws SQLException {
+    public List<QueryTableDto> queryTable(ConnectInfo connectInfo) throws IsxAppException {
 
-        Statement statement = connection.createStatement();
-        ResultSet resultSet = statement.executeQuery("SHOW TABLES IN " + database);
-        ArrayList<QueryTableDto> tables = new ArrayList<>();
-        while (resultSet.next()) {
-            QueryTableDto dto = new QueryTableDto();
-            dto.setTableName(resultSet.getString(1));
-            dto.setDatasourceId(datasourceId);
-            if (tablePattern.isEmpty() || dto.getTableName().matches(tablePattern)) {
-                tables.add(dto);
-            }
-        }
+        Assert.isNull(connectInfo.getDatabase(), "datasource不能为空");
 
-        // 获取表的备注
-        for (QueryTableDto table : tables) {
-            resultSet = statement.executeQuery("DESCRIBE FORMATTED " + database + "." + table.getTableName());
+        try (Connection connection = getConnection(connectInfo); Statement statement = connection.createStatement();) {
+
+            ResultSet resultSet = statement.executeQuery("SHOW TABLES IN " + connectInfo.getDatabase());
+            ArrayList<QueryTableDto> tables = new ArrayList<>();
             while (resultSet.next()) {
-                if (resultSet.getString(2) != null && "comment".equals(resultSet.getString(2).trim())) {
-                    if (resultSet.getString(3) != null) {
-                        table.setTableComment(resultSet.getString(3));
-                    }
-                    break;
+                QueryTableDto meta = QueryTableDto.builder().tableName(resultSet.getString(1))
+                    .datasourceId(connectInfo.getDatasourceId()).build();
+                if (connectInfo.getTablePattern().isEmpty()
+                    || meta.getTableName().matches(connectInfo.getTablePattern())) {
+                    tables.add(meta);
                 }
             }
+
+            // 获取表的备注
+            for (QueryTableDto table : tables) {
+                resultSet = statement
+                    .executeQuery("DESCRIBE FORMATTED " + connectInfo.getDatabase() + "." + table.getTableName());
+                while (resultSet.next()) {
+                    if (resultSet.getString(2) != null && "comment".equals(resultSet.getString(2).trim())) {
+                        if (resultSet.getString(3) != null) {
+                            table.setTableComment(resultSet.getString(3));
+                        }
+                        break;
+                    }
+                }
+            }
+
+            return tables;
+        } catch (SQLException e) {
+            log.error(e.getMessage(), e);
+            throw new IsxAppException(e.getMessage());
         }
-
-        connection.close();
-        return tables;
     }
 
     @Override
-    protected List<QueryColumnDto> queryColumn(Connection connection, String database, String datasourceId,
-        String tableName) throws SQLException {
-        Statement statement = connection.createStatement();
-        ResultSet resultSet = statement.executeQuery("DESCRIBE FORMATTED " + database + "." + tableName);
-        ArrayList<QueryColumnDto> columns = new ArrayList<>();
-        while (resultSet.next()) {
-            if (resultSet.getString(1).isEmpty() || "# Partition Information".equals(resultSet.getString(1))
-                || "# col_name            ".equals(resultSet.getString(1))) {
-                continue;
+    public List<QueryColumnDto> queryColumn(ConnectInfo connectInfo) throws IsxAppException {
+
+        Assert.isNull(connectInfo.getDatabase(), "datasource不能为空");
+        Assert.isNull(connectInfo.getTableName(), "tableName不能为空");
+
+        try (Connection connection = getConnection(connectInfo); Statement statement = connection.createStatement();) {
+            ResultSet resultSet = statement
+                .executeQuery("DESCRIBE FORMATTED " + connectInfo.getDatabase() + "." + connectInfo.getTableName());
+            ArrayList<QueryColumnDto> columns = new ArrayList<>();
+            while (resultSet.next()) {
+                // 跳过
+                if (resultSet.getString(1).isEmpty() || "# Partition Information".equals(resultSet.getString(1))
+                    || "# col_name            ".equals(resultSet.getString(1))) {
+                    continue;
+                }
+                // 中止
+                if ("# Detailed Table Information".equals(resultSet.getString(1))) {
+                    break;
+                }
+                QueryColumnDto meta = QueryColumnDto.builder().datasourceId(connectInfo.getDatasourceId())
+                    .tableName(connectInfo.getTableName()).columnName(resultSet.getString(1))
+                    .columnType(resultSet.getString(2)).build();
+                if (resultSet.getString(3) != null) {
+                    meta.setColumnComment(resultSet.getString(3));
+                }
+                columns.add(meta);
             }
-            if ("# Detailed Table Information".equals(resultSet.getString(1))) {
-                break;
-            }
-            QueryColumnDto dto = new QueryColumnDto();
-            dto.setDatasourceId(datasourceId);
-            dto.setTableName(tableName);
-            dto.setColumnName(resultSet.getString(1));
-            dto.setColumnType(resultSet.getString(2));
-            if (resultSet.getString(3) != null) {
-                dto.setColumnComment(resultSet.getString(3));
-            }
-            columns.add(dto);
+            return columns;
+        } catch (SQLException e) {
+            log.error(e.getMessage(), e);
+            throw new IsxAppException(e.getMessage());
         }
-        connection.close();
-        return columns;
     }
 
     @Override
-    protected Long getTableTotalSize(Connection connection, String database, String tableName) throws SQLException {
-        Statement statement = connection.createStatement();
-        ResultSet resultSet = statement.executeQuery("DESCRIBE FORMATTED " + database + "." + tableName);
-        Long tableTotalSize = 0L;
-        while (resultSet.next()) {
+    public Long getTableTotalSize(ConnectInfo connectInfo) throws IsxAppException {
 
-            if (resultSet.getString(2) != null && "rawDataSize".equals(resultSet.getString(2).trim())) {
-                tableTotalSize = Long.parseLong(resultSet.getString(3).trim());
+        Assert.isNull(connectInfo.getDatabase(), "datasource不能为空");
+        Assert.isNull(connectInfo.getTableName(), "tableName不能为空");
+
+        try (Connection connection = getConnection(connectInfo); Statement statement = connection.createStatement();) {
+            ResultSet resultSet = statement
+                .executeQuery("DESCRIBE FORMATTED " + connectInfo.getDatabase() + "." + connectInfo.getTableName());
+            Long tableTotalSize = 0L;
+            while (resultSet.next()) {
+                if (resultSet.getString(2) != null && "rawDataSize".equals(resultSet.getString(2).trim())) {
+                    tableTotalSize = Long.parseLong(resultSet.getString(3).trim());
+                }
             }
+            return tableTotalSize;
+        } catch (SQLException e) {
+            log.error(e.getMessage(), e);
+            throw new IsxAppException(e.getMessage());
         }
-        connection.close();
-        return tableTotalSize;
     }
 
     @Override
-    protected Long getTableTotalRows(Connection connection, String database, String tableName) throws SQLException {
+    public Long getTableTotalRows(ConnectInfo connectInfo) throws IsxAppException {
 
-        Statement statement = connection.createStatement();
-        ResultSet resultSet = statement.executeQuery("DESCRIBE FORMATTED " + database + "." + tableName);
-        Long tableTotalSize = 0L;
-        while (resultSet.next()) {
+        Assert.isNull(connectInfo.getDatabase(), "datasource不能为空");
+        Assert.isNull(connectInfo.getTableName(), "tableName不能为空");
 
-            if (resultSet.getString(2) != null && "numRows".equals(resultSet.getString(2).trim())) {
-                tableTotalSize = Long.parseLong(resultSet.getString(3).trim());
+        try (Connection connection = getConnection(connectInfo); Statement statement = connection.createStatement();) {
+            ResultSet resultSet = statement
+                .executeQuery("DESCRIBE FORMATTED " + connectInfo.getDatabase() + "." + connectInfo.getTableName());
+            Long tableTotalSize = 0L;
+            while (resultSet.next()) {
+                if (resultSet.getString(2) != null && "numRows".equals(resultSet.getString(2).trim())) {
+                    tableTotalSize = Long.parseLong(resultSet.getString(3).trim());
+                }
             }
+            return tableTotalSize;
+        } catch (SQLException e) {
+            log.error(e.getMessage(), e);
+            throw new IsxAppException(e.getMessage());
         }
-        connection.close();
-        return tableTotalSize;
     }
 
     @Override
-    protected Long getTableColumnCount(Connection connection, String database, String tableName) throws SQLException {
+    public Long getTableColumnCount(ConnectInfo connectInfo) throws IsxAppException {
 
-        Statement statement = connection.createStatement();
-        ResultSet resultSet = statement.executeQuery("DESCRIBE FORMATTED " + database + "." + tableName);
-        ArrayList<QueryColumnDto> columns = new ArrayList<>();
-        while (resultSet.next()) {
-            if (resultSet.getString(1).isEmpty() || "# Partition Information".equals(resultSet.getString(1))
-                || "# col_name            ".equals(resultSet.getString(1))) {
-                continue;
-            }
-            if ("# Detailed Table Information".equals(resultSet.getString(1))) {
-                break;
-            }
-            QueryColumnDto dto = new QueryColumnDto();
-            dto.setTableName(tableName);
-            dto.setColumnName(resultSet.getString(1));
-            columns.add(dto);
+        return Long.parseLong(String.valueOf(queryColumn(connectInfo).size()));
+    }
+
+    @Override
+    public GetDataSourceDataRes getTableData(ConnectInfo connectInfo) throws IsxAppException {
+
+        Assert.isNull(connectInfo.getTableName(), "tableName不能为空");
+        Assert.isNull(connectInfo.getRowNumber(), "rowNumber不能为空");
+
+        String getTableDataSql = "SELECT * FROM " + connectInfo.getTableName()
+            + ("ALL".equals(connectInfo.getRowNumber()) ? "" : " LIMIT " + connectInfo.getRowNumber());
+
+        return getTableData(connectInfo, getTableDataSql);
+    }
+
+    @Override
+    public void refreshTableInfo(ConnectInfo connectInfo) throws IsxAppException {
+
+        Assert.isNull(connectInfo.getDatabase(), "database不能为空");
+        Assert.isNull(connectInfo.getTableName(), "tableName不能为空");
+
+        try (Connection connection = getConnection(connectInfo); Statement statement = connection.createStatement();) {
+            statement.execute("analyze table " + connectInfo.getDatabase() + "." + connectInfo.getTableName()
+                + " compute statistics");
+        } catch (SQLException e) {
+            log.error(e.getMessage(), e);
+            throw new IsxAppException(e.getMessage());
         }
-        connection.close();
-        return Long.parseLong(String.valueOf(columns.size()));
     }
 
-    @Override
-    protected String getTableDataSql(String tableName, String rowNumber) {
-
-        return "SELECT * FROM " + tableName + ("ALL".equals(rowNumber) ? "" : " LIMIT " + rowNumber);
-    }
-
-    @Override
-    protected void refreshTableInfo(Connection connection, String database, String tableName) throws SQLException {
-
-        Statement statement = connection.createStatement();
-        statement.execute("analyze table " + database + "." + tableName + " compute statistics");
-        connection.close();
-    }
 }

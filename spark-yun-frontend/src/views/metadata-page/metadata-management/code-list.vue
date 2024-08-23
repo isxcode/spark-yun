@@ -5,7 +5,7 @@
             <span
               class="name-click"
               @click="showPreviewModal(scopeSlot.row)"
-            >{{ scopeSlot.row.dbName }}</span>
+            >{{ scopeSlot.row.tableName }}</span>
         </template>
     </BlockTable>
     <PreviewModal ref="previewModalRef"></PreviewModal>

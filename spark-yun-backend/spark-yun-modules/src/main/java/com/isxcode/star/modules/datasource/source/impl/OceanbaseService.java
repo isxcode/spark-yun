@@ -2,8 +2,11 @@ package com.isxcode.star.modules.datasource.source.impl;
 
 import com.isxcode.star.api.datasource.constants.DatasourceDriver;
 import com.isxcode.star.api.datasource.constants.DatasourceType;
+import com.isxcode.star.api.datasource.pojos.dto.ConnectInfo;
 import com.isxcode.star.api.datasource.pojos.dto.QueryColumnDto;
 import com.isxcode.star.api.datasource.pojos.dto.QueryTableDto;
+import com.isxcode.star.api.work.pojos.res.GetDataSourceDataRes;
+import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.star.backend.api.base.properties.IsxAppProperties;
 import com.isxcode.star.common.utils.AesUtils;
 import com.isxcode.star.modules.datasource.service.DatabaseDriverService;
@@ -11,8 +14,6 @@ import com.isxcode.star.modules.datasource.source.Datasource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.List;
 
 @Service
@@ -35,40 +36,38 @@ public class OceanbaseService extends Datasource {
     }
 
     @Override
-    protected List<QueryTableDto> queryTable(Connection connection, String database, String datasourceId,
-        String tablePattern) throws SQLException {
+    public List<QueryTableDto> queryTable(ConnectInfo connectInfo) throws IsxAppException {
         throw new RuntimeException("该数据源暂不支持");
     }
 
     @Override
-    protected List<QueryColumnDto> queryColumn(Connection connection, String database, String datasourceId,
-        String tableName) throws SQLException {
+    public List<QueryColumnDto> queryColumn(ConnectInfo connectInfo) throws IsxAppException {
         throw new RuntimeException("该数据源暂不支持");
     }
 
     @Override
-    protected Long getTableTotalSize(Connection connection, String database, String tableName) throws SQLException {
+    public Long getTableTotalSize(ConnectInfo connectInfo) throws IsxAppException {
         return 0L;
     }
 
     @Override
-    protected Long getTableTotalRows(Connection connection, String database, String tableName) throws SQLException {
+    public Long getTableTotalRows(ConnectInfo connectInfo) throws IsxAppException {
         return 0L;
     }
 
     @Override
-    protected Long getTableColumnCount(Connection connection, String database, String tableName) throws SQLException {
+    public Long getTableColumnCount(ConnectInfo connectInfo) throws IsxAppException {
         return 0L;
     }
 
     @Override
-    protected String getTableDataSql(String tableName, String rowNumber) {
-
-        return "SELECT * FROM " + tableName + ("ALL".equals(rowNumber) ? "" : " LIMIT " + rowNumber);
+    public GetDataSourceDataRes getTableData(ConnectInfo connectInfo) throws IsxAppException {
+        return null;
     }
 
     @Override
-    protected void refreshTableInfo(Connection connection, String database, String tableName) {
+    public void refreshTableInfo(ConnectInfo connectInfo) throws IsxAppException {
 
     }
+
 }

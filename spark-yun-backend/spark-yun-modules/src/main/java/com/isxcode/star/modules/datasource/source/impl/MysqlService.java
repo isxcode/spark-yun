@@ -2,8 +2,11 @@ package com.isxcode.star.modules.datasource.source.impl;
 
 import com.isxcode.star.api.datasource.constants.DatasourceDriver;
 import com.isxcode.star.api.datasource.constants.DatasourceType;
+import com.isxcode.star.api.datasource.pojos.dto.ConnectInfo;
 import com.isxcode.star.api.datasource.pojos.dto.QueryColumnDto;
 import com.isxcode.star.api.datasource.pojos.dto.QueryTableDto;
+import com.isxcode.star.api.work.pojos.res.GetDataSourceDataRes;
+import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.star.backend.api.base.properties.IsxAppProperties;
 import com.isxcode.star.common.utils.AesUtils;
 import com.isxcode.star.modules.datasource.service.DatabaseDriverService;
@@ -14,6 +17,7 @@ import org.apache.commons.dbutils.handlers.BeanListHandler;
 import org.apache.commons.dbutils.handlers.ScalarHandler;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 import java.math.BigInteger;
 import java.sql.Connection;
@@ -39,77 +43,111 @@ public class MysqlService extends Datasource {
     }
 
     @Override
-    protected List<QueryTableDto> queryTable(Connection connection, String database, String datasourceId,
-        String tablePattern) throws SQLException {
-        QueryRunner qr = new QueryRunner();
+    public List<QueryTableDto> queryTable(ConnectInfo connectInfo) throws IsxAppException {
 
-        List<QueryTableDto> query;
-        if (Strings.isNotEmpty(tablePattern)) {
-            query = qr.query(connection, "SELECT '" + datasourceId
-                + "' as datasourceId,tables.table_name as tableName,tables.table_comment as tableComment FROM information_schema.tables WHERE table_schema = '"
-                + database + "' AND  tables.table_name REGEXP '" + tablePattern + "'",
-                new BeanListHandler<>(QueryTableDto.class));
-        } else {
-            query = qr.query(connection, "SELECT '" + datasourceId
-                + "' as datasourceId,tables.table_name as tableName,tables.table_comment as tableComment FROM information_schema.tables WHERE table_schema = '"
-                + database + "'", new BeanListHandler<>(QueryTableDto.class));
+        Assert.isNull(connectInfo.getDatabase(), "datasource不能为空");
+
+        QueryRunner qr = new QueryRunner();
+        try (Connection connection = getConnection(connectInfo)) {
+            if (Strings.isNotEmpty(connectInfo.getTablePattern())) {
+                return qr.query(connection, "SELECT '" + connectInfo.getDatasourceId()
+                    + "' as datasourceId,tables.table_name as tableName,tables.table_comment as tableComment FROM information_schema.tables WHERE table_schema = '"
+                    + connectInfo.getDatabase() + "' AND  tables.table_name REGEXP '" + connectInfo.getTablePattern()
+                    + "'", new BeanListHandler<>(QueryTableDto.class));
+            } else {
+                return qr.query(connection, "SELECT '" + connectInfo.getDatasourceId()
+                    + "' as datasourceId,tables.table_name as tableName,tables.table_comment as tableComment FROM information_schema.tables WHERE table_schema = '"
+                    + connectInfo.getDatabase() + "'", new BeanListHandler<>(QueryTableDto.class));
+            }
+        } catch (SQLException e) {
+            log.error(e.getMessage(), e);
+            throw new IsxAppException(e.getMessage());
         }
-
-        connection.close();
-        return query;
     }
 
     @Override
-    protected List<QueryColumnDto> queryColumn(Connection connection, String database, String datasourceId,
-        String tableName) throws SQLException {
+    public List<QueryColumnDto> queryColumn(ConnectInfo connectInfo) throws IsxAppException {
+
+        Assert.isNull(connectInfo.getDatabase(), "datasource不能为空");
+        Assert.isNull(connectInfo.getTableName(), "tableName不能为空");
 
         QueryRunner qr = new QueryRunner();
-        List<QueryColumnDto> query = qr.query(connection, "SELECT '" + datasourceId + "' as datasourceId,'" + tableName
-            + "' as tableName, COLUMN_NAME as columnName,COLUMN_TYPE as columnType,COLUMN_COMMENT as columnComment FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = '"
-            + database + "' AND TABLE_NAME = '" + tableName + "'", new BeanListHandler<>(QueryColumnDto.class));
-        connection.close();
-        return query;
+        try (Connection connection = getConnection(connectInfo)) {
+            return qr.query(connection, "SELECT '" + connectInfo.getDatasourceId() + "' as datasourceId,'"
+                + connectInfo.getTableName()
+                + "' as tableName, COLUMN_NAME as columnName,COLUMN_TYPE as columnType,COLUMN_COMMENT as columnComment FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = '"
+                + connectInfo.getDatabase() + "' AND TABLE_NAME = '" + connectInfo.getTableName() + "'",
+                new BeanListHandler<>(QueryColumnDto.class));
+        } catch (SQLException e) {
+            log.error(e.getMessage(), e);
+            throw new IsxAppException(e.getMessage());
+        }
     }
 
     @Override
-    protected Long getTableTotalSize(Connection connection, String database, String tableName) throws SQLException {
+    public Long getTableTotalSize(ConnectInfo connectInfo) throws IsxAppException {
+
+        Assert.isNull(connectInfo.getDatabase(), "datasource不能为空");
+        Assert.isNull(connectInfo.getTableName(), "tableName不能为空");
 
         QueryRunner qr = new QueryRunner();
-        BigInteger query = qr.query(connection,
-            "SELECT data_length + index_length FROM information_schema.tables WHERE table_schema = '" + database
-                + "' AND table_name = '" + tableName + "'",
-            new ScalarHandler<>());
-        connection.close();
-        return Long.parseLong(String.valueOf(query));
+        try (Connection connection = getConnection(connectInfo)) {
+            BigInteger result = qr.query(connection,
+                "SELECT data_length + index_length FROM information_schema.tables WHERE table_schema = '"
+                    + connectInfo.getDatabase() + "' AND table_name = '" + connectInfo.getTableName() + "'",
+                new ScalarHandler<>());
+            return Long.parseLong(String.valueOf(result));
+        } catch (SQLException e) {
+            log.error(e.getMessage(), e);
+            throw new IsxAppException(e.getMessage());
+        }
     }
 
     @Override
-    protected Long getTableTotalRows(Connection connection, String database, String tableName) throws SQLException {
+    public Long getTableTotalRows(ConnectInfo connectInfo) throws IsxAppException {
+
+        Assert.isNull(connectInfo.getTableName(), "tableName不能为空");
 
         QueryRunner qr = new QueryRunner();
-        Long query = qr.query(connection, "SELECT count(*) FROM " + tableName, new ScalarHandler<>());
-        connection.close();
-        return query;
+        try (Connection connection = getConnection(connectInfo)) {
+            return qr.query(connection, "SELECT count(*) FROM " + connectInfo.getTableName(), new ScalarHandler<>());
+        } catch (SQLException e) {
+            log.error(e.getMessage(), e);
+            throw new IsxAppException(e.getMessage());
+        }
     }
 
     @Override
-    protected Long getTableColumnCount(Connection connection, String database, String tableName) throws SQLException {
+    public Long getTableColumnCount(ConnectInfo connectInfo) throws IsxAppException {
+
+        Assert.isNull(connectInfo.getTableName(), "tableName不能为空");
 
         QueryRunner qr = new QueryRunner();
-        Long query = qr.query(connection, "SELECT COUNT(1) FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = '"
-            + database + "' AND TABLE_NAME = '" + tableName + "'", new ScalarHandler<>());
-        connection.close();
-        return query;
+        try (Connection connection = getConnection(connectInfo)) {
+            return qr.query(
+                connection, "SELECT COUNT(1) FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = '"
+                    + connectInfo.getDatabase() + "' AND TABLE_NAME = '" + connectInfo.getTableName() + "'",
+                new ScalarHandler<>());
+        } catch (SQLException e) {
+            log.error(e.getMessage(), e);
+            throw new IsxAppException(e.getMessage());
+        }
     }
 
     @Override
-    protected String getTableDataSql(String tableName, String rowNumber) {
+    public GetDataSourceDataRes getTableData(ConnectInfo connectInfo) throws IsxAppException {
 
-        return "SELECT * FROM " + tableName + ("ALL".equals(rowNumber) ? "" : " LIMIT " + rowNumber);
+        Assert.isNull(connectInfo.getTableName(), "tableName不能为空");
+        Assert.isNull(connectInfo.getRowNumber(), "rowNumber不能为空");
+
+        String getTableDataSql = "SELECT * FROM " + connectInfo.getTableName()
+            + ("ALL".equals(connectInfo.getRowNumber()) ? "" : " LIMIT " + connectInfo.getRowNumber());
+        return getTableData(connectInfo, getTableDataSql);
     }
 
     @Override
-    protected void refreshTableInfo(Connection connection, String database, String tableName) {
+    public void refreshTableInfo(ConnectInfo connectInfo) throws IsxAppException {
 
     }
+
 }
