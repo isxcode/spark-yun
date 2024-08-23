@@ -20,17 +20,17 @@ const tableConfig = reactive({
     tableData: [],
     colConfigs: [
         {
+          prop: 'dbName',
+          title: '数据库',
+          minWidth: 125,
+          showOverflowTooltip: true,
+          customSlot: 'nameSlot'
+        },
+        {
             prop: 'name',
             title: '数据源',
             minWidth: 125,
             showOverflowTooltip: true
-        },
-        {
-            prop: 'dbName',
-            title: '数据库',
-            minWidth: 125,
-            showOverflowTooltip: true,
-            customSlot: 'nameSlot'
         },
         {
             prop: 'dbType',

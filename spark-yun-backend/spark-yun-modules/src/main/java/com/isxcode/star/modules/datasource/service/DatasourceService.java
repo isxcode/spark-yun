@@ -1,6 +1,5 @@
 package com.isxcode.star.modules.datasource.service;
 
-import com.isxcode.star.api.datasource.constants.ColumnType;
 import com.isxcode.star.api.datasource.constants.DatasourceType;
 import com.isxcode.star.api.datasource.pojos.dto.KafkaConfig;
 import com.isxcode.star.api.datasource.pojos.dto.SecurityColumnDto;
@@ -26,7 +25,6 @@ import org.apache.calcite.sql.SqlKind;
 import org.apache.calcite.sql.parser.SqlParser;
 import org.apache.calcite.sql.SqlNode;
 
-import java.math.BigDecimal;
 import java.sql.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -72,149 +70,55 @@ public class DatasourceService {
         return datasource == null ? datasourceId : datasource.getName();
     }
 
-    public void executeSql(DatasourceEntity datasource, String sql) {
 
-        Datasource datasource1 = dataSourceFactory.getDatasource(datasource.getDbType());
-        try (Connection connection = datasource1.getConnection(datasource);
-            Statement statement = connection.createStatement()) {
-            statement.execute(sql);
-        } catch (SQLException e) {
+    public String genDefaultSql(String datasourceId) {
+
+        if (StringUtils.isEmpty(datasourceId)) {
+            return "show databases";
+        }
+
+        DatasourceEntity datasource = getDatasource(datasourceId);
+
+        switch (datasource.getDbType()) {
+            case DatasourceType.HANA_SAP:
+                return "SELECT TABLE_NAME FROM SYS.TABLES;";
+            default:
+                return "show databases";
+        }
+    }
+
+    public boolean isQueryStatement(String sql) {
+
+        SqlParser parser = SqlParser.create(sql);
+        try {
+
+            String sqlUpper = sql.trim().toUpperCase();
+            if (sqlUpper.startsWith("SHOW TABLES") || sqlUpper.startsWith("SHOW DATABASES")) {
+                return true;
+            }
+
+            SqlNode sqlNode = parser.parseQuery();
+            return sqlNode.getKind() == SqlKind.SELECT || sqlNode.getKind() == SqlKind.ORDER_BY;
+        } catch (SqlParseException e) {
             log.error(e.getMessage(), e);
-            if (e.getErrorCode() == 1364) {
-                throw new IsxAppException("表不存在");
-            }
-            throw new IsxAppException("提交失败");
+            throw new WorkRunException(e.getMessage());
         }
     }
 
-    public void securityExecuteSql(String datasourceId, String securityExecuteSql,
-        List<SecurityColumnDto> securityColumns) {
+    public boolean checkSqlValid(String sql) {
 
-        DatasourceEntity datasource = this.getDatasource(datasourceId);
-
-        Datasource datasource1 = dataSourceFactory.getDatasource(datasource.getDbType());
-        try (Connection connection = datasource1.getConnection(datasource);
-            PreparedStatement statement = connection.prepareStatement(securityExecuteSql);) {
-            for (int i = 0; i < securityColumns.size(); i++) {
-                this.transAndSetParameter(statement, securityColumns.get(i), i);
-            }
-            statement.execute();
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
-            throw new IsxAppException("提交失败," + e.getMessage());
-        }
-    }
-
-    public ResultSet securityQuerySql(String datasourceId, String securityExecuteSql,
-        List<SecurityColumnDto> securityColumns) throws SQLException {
-
-        DatasourceEntity datasource = this.getDatasource(datasourceId);
-
-        Datasource datasource1 = dataSourceFactory.getDatasource(datasource.getDbType());
-        Connection connection = datasource1.getConnection(datasource);
-        PreparedStatement statement = connection.prepareStatement(securityExecuteSql);
-        for (int i = 0; i < securityColumns.size(); i++) {
-            this.transAndSetParameter(statement, securityColumns.get(i), i);
-        }
-        return statement.executeQuery();
-    }
-
-    public long securityGetTableCount(String datasourceId, String securityExecuteSql,
-        List<SecurityColumnDto> securityColumns) {
-
-        DatasourceEntity datasource = this.getDatasource(datasourceId);
-
-        Datasource datasource1 = dataSourceFactory.getDatasource(datasource.getDbType());
-        try (Connection connection = datasource1.getConnection(datasource);
-            PreparedStatement statement = connection.prepareStatement(securityExecuteSql);) {
-            for (int i = 0; i < securityColumns.size(); i++) {
-                this.transAndSetParameter(statement, securityColumns.get(i), i);
-            }
-            ResultSet resultSet = statement.executeQuery();
-            while (resultSet.next()) {
-                return resultSet.getLong(1);
-            }
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
-            throw new IsxAppException("提交失败," + e.getMessage());
-        }
-        throw new IsxAppException("查询总条数异常");
-    }
-
-    public boolean tableIsExist(DatasourceEntity datasource, String tableName) {
-
-        Datasource datasource1 = dataSourceFactory.getDatasource(datasource.getDbType());
-        try (Connection connection = datasource1.getConnection(datasource);
-            PreparedStatement preparedStatement =
-                connection.prepareStatement("SELECT 1 FROM " + tableName + " WHERE 1 = 0")) {
-            preparedStatement.executeQuery();
+        SqlParser parser = SqlParser.create(sql);
+        try {
+            parser.parseQuery(sql);
             return true;
-        } catch (SQLException e) {
+        } catch (SqlParseException e) {
             log.error(e.getMessage(), e);
             return false;
         }
     }
 
-    public void transAndSetParameter(PreparedStatement statement, SecurityColumnDto securityColumnDto,
-        int parameterIndex) throws SQLException {
-
-        switch (securityColumnDto.getType()) {
-            case ColumnType.STRING:
-                if (securityColumnDto.getValue() == null) {
-                    statement.setNull(parameterIndex + 1, java.sql.Types.VARCHAR);
-                } else {
-                    statement.setString(parameterIndex + 1, String.valueOf(securityColumnDto.getValue()));
-                }
-                break;
-            case ColumnType.INT:
-                if (securityColumnDto.getValue() == null) {
-                    statement.setNull(parameterIndex + 1, Types.INTEGER);
-                } else {
-                    statement.setInt(parameterIndex + 1,
-                        Integer.parseInt(String.valueOf(securityColumnDto.getValue())));
-                }
-                break;
-            case ColumnType.DOUBLE:
-                if (securityColumnDto.getValue() == null) {
-                    statement.setNull(parameterIndex + 1, Types.DOUBLE);
-
-                } else {
-                    statement.setDouble(parameterIndex + 1,
-                        Double.parseDouble(String.valueOf(securityColumnDto.getValue())));
-                }
-                break;
-            case ColumnType.TIMESTAMP:
-            case ColumnType.DATE:
-            case ColumnType.DATE_TIME:
-                if (securityColumnDto.getValue() == null) {
-                    statement.setNull(parameterIndex + 1, Types.TIMESTAMP);
-                } else {
-                    statement.setTimestamp(parameterIndex + 1,
-                        new Timestamp(Long.parseLong(String.valueOf(securityColumnDto.getValue()))));
-                }
-                break;
-            case ColumnType.BIG_DECIMAL:
-                if (securityColumnDto.getValue() == null) {
-                    statement.setNull(parameterIndex + 1, Types.NUMERIC);
-                } else {
-                    statement.setBigDecimal(parameterIndex + 1,
-                        new BigDecimal(String.valueOf(securityColumnDto.getValue())));
-                }
-                break;
-            case ColumnType.BOOLEAN:
-                if (securityColumnDto.getValue() == null) {
-                    statement.setNull(parameterIndex + 1, Types.BOOLEAN);
-                } else {
-                    statement.setBoolean(parameterIndex + 1,
-                        Boolean.parseBoolean(String.valueOf(securityColumnDto.getValue())));
-                }
-                break;
-            default:
-                throw new IsxAppException("字段类型不支持");
-        }
-    }
-
     public String parseDbName(String jdbcUrl) {
+
         Pattern pattern = Pattern.compile("jdbc:\\w+://\\S+/(\\w+)");
         Matcher matcher = pattern.matcher(jdbcUrl);
         if (matcher.find()) {
@@ -251,52 +155,6 @@ public class DatasourceService {
     public String transSecuritySql(String sql) {
 
         return sql.replaceAll("'\\$\\{(?!UPDATE_COLUMN\\b)([^}]+)\\}'", "?");
-    }
-
-    public boolean isQueryStatement(String sql) {
-
-        SqlParser parser = SqlParser.create(sql);
-        try {
-
-            String sqlUpper = sql.trim().toUpperCase();
-            if (sqlUpper.startsWith("SHOW TABLES") || sqlUpper.startsWith("SHOW DATABASES")) {
-                return true;
-            }
-
-            SqlNode sqlNode = parser.parseQuery();
-            return sqlNode.getKind() == SqlKind.SELECT || sqlNode.getKind() == SqlKind.ORDER_BY;
-        } catch (SqlParseException e) {
-            log.error(e.getMessage(), e);
-            throw new WorkRunException(e.getMessage());
-        }
-    }
-
-    public boolean checkSqlValid(String sql) {
-
-        SqlParser parser = SqlParser.create(sql);
-        try {
-            parser.parseQuery(sql);
-            return true;
-        } catch (SqlParseException e) {
-            log.error(e.getMessage(), e);
-            return false;
-        }
-    }
-
-    public String genDefaultSql(String datasourceId) {
-
-        if (StringUtils.isEmpty(datasourceId)) {
-            return "show databases";
-        }
-
-        DatasourceEntity datasource = getDatasource(datasourceId);
-
-        switch (datasource.getDbType()) {
-            case DatasourceType.HANA_SAP:
-                return "SELECT TABLE_NAME FROM SYS.TABLES;";
-            default:
-                return "show databases";
-        }
     }
 
     public void checkKafka(KafkaConfig kafkaConfig) throws ExecutionException, InterruptedException {

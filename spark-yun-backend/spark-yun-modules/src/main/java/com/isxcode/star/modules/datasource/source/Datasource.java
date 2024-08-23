@@ -1,21 +1,24 @@
 package com.isxcode.star.modules.datasource.source;
 
+import com.isxcode.star.api.datasource.constants.ColumnType;
 import com.isxcode.star.api.datasource.constants.DatasourceType;
+import com.isxcode.star.api.datasource.pojos.dto.ConnectInfo;
 import com.isxcode.star.api.datasource.pojos.dto.QueryColumnDto;
 import com.isxcode.star.api.datasource.pojos.dto.QueryTableDto;
+import com.isxcode.star.api.datasource.pojos.dto.SecurityColumnDto;
 import com.isxcode.star.api.work.pojos.res.GetDataSourceDataRes;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.star.backend.api.base.properties.IsxAppProperties;
 import com.isxcode.star.common.utils.AesUtils;
 import com.isxcode.star.common.utils.path.PathUtils;
 import com.isxcode.star.modules.datasource.entity.DatabaseDriverEntity;
-import com.isxcode.star.modules.datasource.entity.DatasourceEntity;
 import com.isxcode.star.modules.datasource.service.DatabaseDriverService;
 import com.isxcode.star.modules.datasource.service.DriverShim;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
+import java.math.BigDecimal;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -23,6 +26,8 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static com.isxcode.star.common.config.CommonConfig.JPA_TENANT_MODE;
 import static com.isxcode.star.modules.datasource.service.DatasourceService.ALL_EXIST_DRIVER;
@@ -41,162 +46,264 @@ public abstract class Datasource {
 
     public abstract String getDriverName();
 
-    protected abstract List<QueryTableDto> queryTable(Connection connection, String database, String datasourceId,
-        String tablePattern) throws SQLException;
+    public abstract List<QueryTableDto> queryTable(ConnectInfo connectInfo) throws IsxAppException;
 
-    protected abstract List<QueryColumnDto> queryColumn(Connection connection, String database, String datasourceId,
-        String tableName) throws SQLException;
+    public abstract List<QueryColumnDto> queryColumn(ConnectInfo connectInfo) throws IsxAppException;
 
-    protected abstract Long getTableTotalSize(Connection connection, String database, String tableName)
-        throws SQLException;
+    public abstract Long getTableTotalSize(ConnectInfo connectInfo) throws IsxAppException;
 
-    protected abstract Long getTableTotalRows(Connection connection, String database, String tableName)
-        throws SQLException;
+    public abstract Long getTableTotalRows(ConnectInfo connectInfo) throws IsxAppException;
 
-    protected abstract Long getTableColumnCount(Connection connection, String database, String tableName)
-        throws SQLException;
+    public abstract Long getTableColumnCount(ConnectInfo connectInfo) throws IsxAppException;
 
-    protected abstract String getTableDataSql(String tableName, String rowNumber);
+    public abstract GetDataSourceDataRes getTableData(ConnectInfo connectInfo) throws IsxAppException;
 
-    protected abstract void refreshTableInfo(Connection connection, String database, String tableName)
-        throws SQLException;
+    public abstract void refreshTableInfo(ConnectInfo connectInfo) throws IsxAppException;
 
-    public List<QueryTableDto> queryTable(DatasourceEntity datasourceEntity, String database, String tablePattern) {
-
-        try {
-            Connection connection = getConnection(datasourceEntity);
-            return queryTable(connection, database, datasourceEntity.getId(), tablePattern);
-        } catch (Exception e) {
-            throw new IsxAppException(e.getMessage());
-        }
-    }
-
-    public List<QueryColumnDto> queryColumn(DatasourceEntity datasourceEntity, String database, String datasourceId,
-        String tableName) {
-
-        try {
-            Connection connection = getConnection(datasourceEntity);
-            return queryColumn(connection, database, datasourceId, tableName);
-        } catch (Exception e) {
-            throw new IsxAppException(e.getMessage());
-        }
-    }
-
-    public Long getTableTotalRows(DatasourceEntity datasourceEntity, String database, String tableName) {
-
-        try {
-            Connection connection = getConnection(datasourceEntity);
-            return getTableTotalRows(connection, database, tableName);
-        } catch (Exception e) {
-            throw new IsxAppException(e.getMessage());
-        }
-    }
-
-    public Long getTableTotalSize(DatasourceEntity datasourceEntity, String database, String tableName) {
-
-        try {
-            Connection connection = getConnection(datasourceEntity);
-            return getTableTotalSize(connection, database, tableName);
-        } catch (Exception e) {
-            throw new IsxAppException(e.getMessage());
-        }
-    }
-
-    public Long getTableColumnCount(DatasourceEntity datasourceEntity, String database, String tableName) {
-
-        try {
-            Connection connection = getConnection(datasourceEntity);
-            return getTableColumnCount(connection, database, tableName);
-        } catch (Exception e) {
-            throw new IsxAppException(e.getMessage());
-        }
-    }
-
-    public void refreshTableInfo(DatasourceEntity datasourceEntity, String database, String tableName) {
-
-        try {
-            Connection connection = getConnection(datasourceEntity);
-            refreshTableInfo(connection, database, tableName);
-        } catch (Exception e) {
-            throw new IsxAppException(e.getMessage());
-        }
-    }
-
-    public Connection getConnection(DatasourceEntity datasource) throws SQLException {
+    public Connection getConnection(ConnectInfo connectInfo) throws IsxAppException {
 
         // 判断驱动是否已经加载
-        DriverShim driver = ALL_EXIST_DRIVER.get(datasource.getDriverId());
+        DriverShim driver = ALL_EXIST_DRIVER.get(connectInfo.getDriverId());
+
         if (driver == null) {
 
+            // 获取驱动
             JPA_TENANT_MODE.set(false);
-            DatabaseDriverEntity driverEntity = dataDriverService.getDriver(datasource.getDriverId());
+            DatabaseDriverEntity driverEntity = dataDriverService.getDriver(connectInfo.getDriverId());
             JPA_TENANT_MODE.set(true);
 
-            String driverPath = "TENANT_DRIVER".equals(driverEntity.getDriverType())
-                ? driverEntity.getTenantId() + File.separator + driverEntity.getFileName()
-                : "system" + File.separator + driverEntity.getFileName();
+            // 获取驱动路径
+            String driverPath = PathUtils.parseProjectPath(isxAppProperties.getResourcesPath()) + File.separator
+                + "jdbc" + File.separator
+                + ("TENANT_DRIVER".equals(driverEntity.getDriverType())
+                    ? driverEntity.getTenantId() + File.separator + driverEntity.getFileName()
+                    : "system" + File.separator + driverEntity.getFileName());
 
             // 先加载驱动到ALL_EXIST_DRIVER
+            URL url;
             try {
-                URL url = new File(PathUtils.parseProjectPath(isxAppProperties.getResourcesPath()) + File.separator
-                    + "jdbc" + File.separator + driverPath).toURI().toURL();
-                ClassLoader driverClassLoader = new URLClassLoader(new URL[] {url});
-
-                // 特殊逻辑判断，如果驱动是mysql5的使用
-                String driverClassName = getDriverName();
-                if (DatasourceType.MYSQL.equals(datasource.getDbType())) {
-                    if (driverPath.contains("-5")) {
-                        driverClassName = "com.mysql.jdbc.Driver";
-                    }
-                }
-
-                Class<?> driverClass = driverClassLoader.loadClass(driverClassName);
-                driver = new DriverShim((Driver) driverClass.newInstance());
-                ALL_EXIST_DRIVER.put(datasource.getDriverId(), driver);
-            } catch (MalformedURLException | ClassNotFoundException | IllegalAccessException
-                | InstantiationException e) {
+                url = new File(driverPath).toURI().toURL();
+            } catch (MalformedURLException e) {
                 log.error(e.getMessage(), e);
-                throw new RuntimeException(e);
+                throw new IsxAppException(e.getMessage());
             }
+            ClassLoader driverClassLoader = new URLClassLoader(new URL[] {url});
+
+            // 特殊逻辑判断，如果驱动是mysql5的使用
+            String driverClassName = getDriverName();
+            if (DatasourceType.MYSQL.equals(connectInfo.getDbType())) {
+                if (driverPath.contains("-5")) {
+                    driverClassName = "com.mysql.jdbc.Driver";
+                }
+            }
+
+            // 加载驱动
+            Class<?> driverClass;
+            try {
+                driverClass = driverClassLoader.loadClass(driverClassName);
+            } catch (ClassNotFoundException e) {
+                log.error(e.getMessage(), e);
+                throw new IsxAppException(e.getMessage());
+            }
+            try {
+                driver = new DriverShim((Driver) driverClass.newInstance());
+            } catch (InstantiationException | IllegalAccessException e) {
+                log.error(e.getMessage(), e);
+                throw new IsxAppException(e.getMessage());
+            }
+            ALL_EXIST_DRIVER.put(connectInfo.getDriverId(), driver);
         }
 
+        // 配置账号密码
         Properties properties = new Properties();
-        if (datasource.getUsername() != null) {
-            properties.put("user", datasource.getUsername());
+        if (connectInfo.getUsername() != null) {
+            properties.put("user", connectInfo.getUsername());
         }
-        if (datasource.getPasswd() != null) {
-            properties.put("password", aesUtils.decrypt(datasource.getPasswd()));
+        if (connectInfo.getPasswd() != null) {
+            properties.put("password", aesUtils.decrypt(connectInfo.getPasswd()));
         }
+
+        // 数据源连接超时时间设定
         DriverManager.setLoginTimeout(500);
-        return driver.connect(datasource.getJdbcUrl(), properties);
+        try {
+            return driver.connect(connectInfo.getJdbcUrl(), properties);
+        } catch (SQLException e) {
+            log.error(e.getMessage(), e);
+            throw new IsxAppException(e.getMessage());
+        }
     }
 
-    public GetDataSourceDataRes getTableData(DatasourceEntity datasourceEntity, String tableName, String rowNumber)
-        throws SQLException {
+    public GetDataSourceDataRes getTableData(ConnectInfo connectInfo, String getTableDataSql) throws IsxAppException {
 
-        Connection connection = getConnection(datasourceEntity);
+        try (Connection connection = getConnection(connectInfo);
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(getTableDataSql);) {
+            List<String> columns = new ArrayList<>();
+            List<List<String>> rows = new ArrayList<>();
 
-        Statement statement = connection.createStatement();
-        String dataPreviewSql = getTableDataSql(tableName, rowNumber);
-        ResultSet resultSet = statement.executeQuery(dataPreviewSql);
-        List<String> columns = new ArrayList<>();
-        List<List<String>> rows = new ArrayList<>();
-
-        // 封装表头
-        int columnCount = resultSet.getMetaData().getColumnCount();
-        for (int i = 1; i <= columnCount; i++) {
-            columns.add(resultSet.getMetaData().getColumnName(i));
-        }
-
-        while (resultSet.next()) {
-            List<String> row = new ArrayList<>();
+            // 封装表头
+            int columnCount = resultSet.getMetaData().getColumnCount();
             for (int i = 1; i <= columnCount; i++) {
-                row.add(String.valueOf(resultSet.getObject(i)));
+                columns.add(resultSet.getMetaData().getColumnName(i));
             }
-            rows.add(row);
+
+            // 封装数据
+            while (resultSet.next()) {
+                List<String> row = new ArrayList<>();
+                for (int i = 1; i <= columnCount; i++) {
+                    row.add(String.valueOf(resultSet.getObject(i)));
+                }
+                rows.add(row);
+            }
+            statement.close();
+            connection.close();
+            return GetDataSourceDataRes.builder().columns(columns).rows(rows).build();
+        } catch (SQLException e) {
+            log.error(e.getMessage(), e);
+            throw new IsxAppException(e.getMessage());
         }
-        statement.close();
-        connection.close();
-        return GetDataSourceDataRes.builder().columns(columns).rows(rows).build();
+    }
+
+    public String parseDbName(String jdbcUrl) {
+
+        Pattern pattern = Pattern.compile("jdbc:\\w+://\\S+/(\\w+)");
+        Matcher matcher = pattern.matcher(jdbcUrl);
+        if (matcher.find()) {
+            return matcher.group(1);
+        }
+        return "default";
+    }
+
+    public void executeSql(ConnectInfo connectInfo, String sql) throws IsxAppException {
+
+        try (Connection connection = getConnection(connectInfo)) {
+            Statement statement = connection.createStatement();
+            statement.execute(sql);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            throw new IsxAppException(e.getMessage());
+        }
+    }
+
+    public void securityExecuteSql(ConnectInfo connectInfo, String securityExecuteSql,
+        List<SecurityColumnDto> securityColumns) throws IsxAppException {
+
+        try (Connection connection = getConnection(connectInfo);
+            PreparedStatement statement = connection.prepareStatement(securityExecuteSql);) {
+            for (int i = 0; i < securityColumns.size(); i++) {
+                this.transAndSetParameter(statement, securityColumns.get(i), i);
+            }
+            statement.execute();
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            throw new IsxAppException("提交失败," + e.getMessage());
+        }
+    }
+
+    public ResultSet securityQuerySql(ConnectInfo connectInfo, String securityExecuteSql,
+        List<SecurityColumnDto> securityColumns) throws IsxAppException {
+
+        try (Connection connection = getConnection(connectInfo);
+            PreparedStatement statement = connection.prepareStatement(securityExecuteSql);) {
+            for (int i = 0; i < securityColumns.size(); i++) {
+                this.transAndSetParameter(statement, securityColumns.get(i), i);
+            }
+            return statement.executeQuery();
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            throw new IsxAppException(e.getMessage());
+        }
+    }
+
+    public boolean tableIsExist(ConnectInfo connectInfo, String tableName) {
+
+        try (Connection connection = getConnection(connectInfo);
+            PreparedStatement preparedStatement =
+                connection.prepareStatement("SELECT 1 FROM " + tableName + " WHERE 1 = 0")) {
+            preparedStatement.executeQuery();
+            return true;
+        } catch (SQLException e) {
+            log.error(e.getMessage(), e);
+            return false;
+        }
+    }
+
+    public void transAndSetParameter(PreparedStatement statement, SecurityColumnDto securityColumnDto,
+        int parameterIndex) throws SQLException {
+
+        switch (securityColumnDto.getType()) {
+            case ColumnType.STRING:
+                if (securityColumnDto.getValue() == null) {
+                    statement.setNull(parameterIndex + 1, java.sql.Types.VARCHAR);
+                } else {
+                    statement.setString(parameterIndex + 1, String.valueOf(securityColumnDto.getValue()));
+                }
+                break;
+            case ColumnType.INT:
+                if (securityColumnDto.getValue() == null) {
+                    statement.setNull(parameterIndex + 1, Types.INTEGER);
+                } else {
+                    statement.setInt(parameterIndex + 1,
+                        Integer.parseInt(String.valueOf(securityColumnDto.getValue())));
+                }
+                break;
+            case ColumnType.DOUBLE:
+                if (securityColumnDto.getValue() == null) {
+                    statement.setNull(parameterIndex + 1, Types.DOUBLE);
+
+                } else {
+                    statement.setDouble(parameterIndex + 1,
+                        Double.parseDouble(String.valueOf(securityColumnDto.getValue())));
+                }
+                break;
+            case ColumnType.TIMESTAMP:
+            case ColumnType.DATE:
+            case ColumnType.DATE_TIME:
+                if (securityColumnDto.getValue() == null) {
+                    statement.setNull(parameterIndex + 1, Types.TIMESTAMP);
+                } else {
+                    statement.setTimestamp(parameterIndex + 1,
+                        new Timestamp(Long.parseLong(String.valueOf(securityColumnDto.getValue()))));
+                }
+                break;
+            case ColumnType.BIG_DECIMAL:
+                if (securityColumnDto.getValue() == null) {
+                    statement.setNull(parameterIndex + 1, Types.NUMERIC);
+                } else {
+                    statement.setBigDecimal(parameterIndex + 1,
+                        new BigDecimal(String.valueOf(securityColumnDto.getValue())));
+                }
+                break;
+            case ColumnType.BOOLEAN:
+                if (securityColumnDto.getValue() == null) {
+                    statement.setNull(parameterIndex + 1, Types.BOOLEAN);
+                } else {
+                    statement.setBoolean(parameterIndex + 1,
+                        Boolean.parseBoolean(String.valueOf(securityColumnDto.getValue())));
+                }
+                break;
+            default:
+                throw new IsxAppException("字段类型不支持");
+        }
+    }
+
+    public long securityGetTableCount(ConnectInfo connectInfo, String securityExecuteSql,
+        List<SecurityColumnDto> securityColumns) {
+
+        try (Connection connection = getConnection(connectInfo);
+            PreparedStatement statement = connection.prepareStatement(securityExecuteSql);) {
+
+            for (int i = 0; i < securityColumns.size(); i++) {
+                this.transAndSetParameter(statement, securityColumns.get(i), i);
+            }
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                return resultSet.getLong(1);
+            }
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            throw new IsxAppException("提交失败," + e.getMessage());
+        }
+        throw new IsxAppException("查询总条数异常");
     }
 }
