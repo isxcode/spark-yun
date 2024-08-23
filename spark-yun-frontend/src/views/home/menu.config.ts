@@ -105,20 +105,20 @@ export const menuListData: Array<Menu> = [
   },
   {
     code: 'metadata-page',
-    name: '元数据维护',
+    name: '元数据',
     icon: 'Coin',
     authType: ['ROLE_TENANT_MEMBER', 'ROLE_TENANT_ADMIN'],
     children: [
       {
         code: 'metadata-management',
-        name: '元数据',
+        name: '元数据维护',
         icon: 'Connection',
         authType: ['ROLE_TENANT_MEMBER', 'ROLE_TENANT_ADMIN'],
         childPage: []
       },
       {
         code: 'acquisition-task',
-        name: '元数据采集',
+        name: '数据采集',
         icon: 'Collection',
         authType: ['ROLE_TENANT_MEMBER', 'ROLE_TENANT_ADMIN'],
         childPage: []
