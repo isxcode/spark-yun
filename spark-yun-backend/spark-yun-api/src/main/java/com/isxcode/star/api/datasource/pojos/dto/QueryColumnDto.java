@@ -20,4 +20,6 @@ public class QueryColumnDto {
     private String columnType;
 
     private String columnComment;
+
+    private Boolean isPartitionColumn;
 }

@@ -12,12 +12,14 @@ import com.isxcode.star.common.utils.AesUtils;
 import com.isxcode.star.modules.datasource.service.DatabaseDriverService;
 import com.isxcode.star.modules.datasource.source.Datasource;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -86,10 +88,14 @@ public class HiveService extends Datasource {
             ResultSet resultSet = statement
                 .executeQuery("DESCRIBE FORMATTED " + connectInfo.getDatabase() + "." + connectInfo.getTableName());
             ArrayList<QueryColumnDto> columns = new ArrayList<>();
+            Boolean isPartitionColumn = false;
             while (resultSet.next()) {
                 // 跳过
-                if (resultSet.getString(1).isEmpty() || "# Partition Information".equals(resultSet.getString(1))
-                    || "# col_name            ".equals(resultSet.getString(1))) {
+                if (resultSet.getString(1).isEmpty() || "# col_name            ".equals(resultSet.getString(1))) {
+                    continue;
+                }
+                if ("# Partition Information".equals(resultSet.getString(1))) {
+                    isPartitionColumn = true;
                     continue;
                 }
                 // 中止
@@ -97,8 +103,8 @@ public class HiveService extends Datasource {
                     break;
                 }
                 QueryColumnDto meta = QueryColumnDto.builder().datasourceId(connectInfo.getDatasourceId())
-                    .tableName(connectInfo.getTableName()).columnName(resultSet.getString(1))
-                    .columnType(resultSet.getString(2)).build();
+                    .tableName(connectInfo.getTableName()).isPartitionColumn(isPartitionColumn)
+                    .columnName(resultSet.getString(1)).columnType(resultSet.getString(2)).build();
                 if (resultSet.getString(3) != null) {
                     meta.setColumnComment(resultSet.getString(3));
                 }
@@ -122,7 +128,7 @@ public class HiveService extends Datasource {
                 .executeQuery("DESCRIBE FORMATTED " + connectInfo.getDatabase() + "." + connectInfo.getTableName());
             Long tableTotalSize = 0L;
             while (resultSet.next()) {
-                if (resultSet.getString(2) != null && "rawDataSize".equals(resultSet.getString(2).trim())) {
+                if (resultSet.getString(2) != null && "totalSize".equals(resultSet.getString(2).trim())) {
                     tableTotalSize = Long.parseLong(resultSet.getString(3).trim());
                 }
             }
@@ -179,9 +185,21 @@ public class HiveService extends Datasource {
         Assert.notNull(connectInfo.getDatabase(), "database不能为空");
         Assert.notNull(connectInfo.getTableName(), "tableName不能为空");
 
-        try (Connection connection = getConnection(connectInfo); Statement statement = connection.createStatement();) {
-            statement.execute("analyze table " + connectInfo.getDatabase() + "." + connectInfo.getTableName()
-                + " compute statistics");
+        // 获取表的分区字段
+        List<QueryColumnDto> columns = queryColumn(connectInfo);
+        List<String> partitionColumnList = columns.stream().filter(QueryColumnDto::getIsPartitionColumn)
+            .map(QueryColumnDto::getColumnName).collect(Collectors.toList());
+
+        try (Connection connection = getConnection(connectInfo); Statement statement = connection.createStatement()) {
+
+            if (partitionColumnList.isEmpty()) {
+                statement.execute("analyze table " + connectInfo.getDatabase() + "." + connectInfo.getTableName()
+                    + " compute statistics");
+            } else {
+                statement.execute("analyze table " + connectInfo.getDatabase() + "." + connectInfo.getTableName()
+                    + " partition(" + Strings.join(partitionColumnList, ',') + ") compute statistics");
+            }
+
         } catch (SQLException e) {
             log.error(e.getMessage(), e);
             throw new IsxAppException(e.getMessage());
