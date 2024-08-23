@@ -49,6 +49,7 @@ create table SY_META_COLUMN
     column_name             varchar(200)  not null comment '字段名',
     column_type             varchar(200)  not null comment '字段类型',
     column_comment          varchar(500) comment '字段备注',
+    is_partition_column     boolean not null comment '是否为分区字段',
     create_by               varchar(200)  not null comment '创建人',
     create_date_time        datetime      not null comment '创建时间',
     last_modified_by        varchar(200)  not null comment '更新人',
