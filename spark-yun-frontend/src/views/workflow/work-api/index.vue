@@ -139,7 +139,7 @@ import { DeleteWorkData, GetWorkItemConfig, PublishWorkData, RunWorkItemConfig, 
 import { ElMessage, ElMessageBox, ElInput, FormRules } from 'element-plus'
 import { useRoute, useRouter } from 'vue-router'
 import { Loading } from '@element-plus/icons-vue'
-import CodeMirror from 'vue-codemirror6'
+// import CodeMirror from 'vue-codemirror6'
 import {json} from '@codemirror/lang-json'
 import { jsonFormatter } from '@/utils/formatter'
 

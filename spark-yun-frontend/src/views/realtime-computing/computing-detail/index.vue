@@ -1,6 +1,6 @@
 <template>
     <Breadcrumb :bread-crumb-list="breadCrumbList" />
-    <div class="data-sync-page">
+    <div class="data-sync-page computing-detail">
         <div class="data-sync__option-container">
             <div class="btn-box" @click="goBack">
                 <el-icon>
@@ -52,49 +52,89 @@
                     </template>
                     <el-form ref="form" label-position="left" label-width="88px" :model="formData" :rules="rules">
                         <el-form-item prop="sourceDBType" label="类型">
-                            <el-select v-model="formData.sourceDBType" placeholder="请选择" @change="pageChangeEvent">
-                                <el-option v-for="item in [{ label: 'Kafka', value: 'KAFKA', }]" :key="item.value" :label="item.label" :value="item.value" />
+                            <el-select v-model="formData.sourceDBType" placeholder="请选择" @change="sourceDBTypeChangeEvent">
+                                <el-option v-for="item in sourceTypeList" :key="item.value" :label="item.label" :value="item.value" />
                             </el-select>
                         </el-form-item>
-                        <el-form-item prop="sourceDBId" label="数据源">
-                            <el-select v-model="formData.sourceDBId" clearable filterable placeholder="请选择"
-                                @visible-change="getDataSource($event, formData.sourceDBType, 'source')"
-                                @change="dbIdChange('source')">
-                                <el-option v-for="item in sourceList" :key="item.value" :label="item.label"
-                                    :value="item.value" />
-                            </el-select>
-                        </el-form-item>
-                        <el-form-item prop="sourceTable" label="topic">
-                            <el-select v-model="formData.sourceTable" clearable filterable placeholder="请选择" @change="pageChangeEvent"
-                                @visible-change="getTopicList($event, formData.sourceDBId)"
-                            >
-                                <el-option v-for="item in sourceTablesList" :key="item.value" :label="item.label"
-                                    :value="item.value" />
-                            </el-select>
-                        </el-form-item>
-                        <!-- <el-form-item prop="kafkaDataType" label="kafka数据类型">
-                            <el-select v-model="formData.kafkaDataType" disabled clearable filterable placeholder="请选择">
-                                <el-option label="JSON" value="JSON" />
-                                <el-option label="CSV" value="CSV" />
-                            </el-select>
-                        </el-form-item> -->
-                        <el-form-item prop="jsonTemplate" label="Json模板">
-                            <code-mirror v-model="formData.jsonTemplate" basic :lang="jsonLang" @change="pageChangeEvent" />
-                        </el-form-item>
-                        <el-form-item prop="jsonDataType" label="解析类型">
-                            <el-select v-model="formData.jsonDataType" clearable filterable placeholder="请选择" @change="getCurrentTableColumn">
-                                <el-option label="数组节点" value="LIST" />
-                                <el-option label="对象节点" value="OBJECT" />
-                            </el-select>
-                        </el-form-item>
-                        <el-form-item prop="rootJsonPath" label="节点" v-if="formData.jsonDataType === 'LIST'">
-                            <el-select v-model="formData.rootJsonPath" clearable filterable placeholder="请选择" @change="rootJsonPathBlur" @visible-change="getJsonNodeArray">
-                                <el-option v-for="item in nodeArrayList" :key="item.value" :label="item.label" :value="item.value" />
-                            </el-select>
-                        </el-form-item>
-                        <el-form-item prop="queryCondition" label="过滤条件">
-                            <code-mirror v-model="formData.queryCondition" basic :lang="lang" @change="pageChangeEvent" />
-                        </el-form-item>
+                        <template v-if="formData.sourceDBType === 'KAFKA'">
+                            <el-form-item prop="sourceDBId" label="数据源">
+                                <el-select v-model="formData.sourceDBId" clearable filterable placeholder="请选择"
+                                    @visible-change="getDataSource($event, formData.sourceDBType, 'source')"
+                                    @change="dbIdChange('source')">
+                                    <el-option v-for="item in sourceList" :key="item.value" :label="item.label"
+                                        :value="item.value" />
+                                </el-select>
+                            </el-form-item>
+                            <!-- <el-form-item prop="kafkaConfig.topic" label="topic">
+                                <el-select v-model="formData.kafkaConfig.topic" clearable filterable placeholder="请选择" @change="pageChangeEvent"
+                                    @visible-change="getTopicList($event, formData.sourceDBId)"
+                                >
+                                    <el-option v-for="item in topList" :key="item.value" :label="item.label"
+                                        :value="item.value" />
+                                </el-select>
+                            </el-form-item> -->
+                            <el-form-item prop="jsonTemplate" label="Json模板">
+                                <code-mirror v-model="formData.jsonTemplate" basic :lang="jsonLang" @change="pageChangeEvent" />
+                            </el-form-item>
+                            <el-form-item prop="jsonDataType" label="解析类型">
+                                <el-select v-model="formData.jsonDataType" clearable filterable placeholder="请选择" @change="getCurrentTableColumn">
+                                    <el-option label="数组节点" value="LIST" />
+                                    <el-option label="对象节点" value="OBJECT" />
+                                </el-select>
+                            </el-form-item>
+                            <el-form-item prop="rootJsonPath" label="节点" v-if="formData.jsonDataType === 'LIST'">
+                                <el-select v-model="formData.rootJsonPath" clearable filterable placeholder="请选择" @change="rootJsonPathBlur" @visible-change="getJsonNodeArray">
+                                    <el-option v-for="item in nodeArrayList" :key="item.value" :label="item.label" :value="item.value" />
+                                </el-select>
+                            </el-form-item>
+                            <el-form-item prop="queryCondition" label="过滤条件">
+                                <code-mirror v-model="formData.queryCondition" basic :lang="lang" @change="pageChangeEvent" />
+                            </el-form-item>
+                        </template>
+                        <template v-else>
+                            <el-form-item prop="sourceDBId" label="数据源">
+                                <!-- <el-tooltip content="数据源网速直接影响同步速度,推荐使用内网ip" placement="top">
+                                    <el-icon style="left: -30px" class="tooltip-msg"><QuestionFilled /></el-icon>
+                                </el-tooltip> -->
+                                <el-select v-model="formData.sourceDBId" clearable filterable placeholder="请选择"
+                                    @visible-change="getDataSource($event, formData.sourceDBType, 'source')"
+                                    @change="dbIdChange('source')">
+                                    <el-option v-for="item in sourceList" :key="item.value" :label="item.label"
+                                        :value="item.value" />
+                                </el-select>
+                            </el-form-item>
+                            <el-form-item prop="sourceTable" label="表">
+                                <el-select v-model="formData.sourceTable" clearable filterable placeholder="请选择"
+                                    @visible-change="getDataSourceTable($event, formData.sourceDBId, 'source')"
+                                    @change="tableChangeEvent($event, formData.sourceDBId, 'source')">
+                                    <el-option v-for="item in sourceTablesList" :key="item.value" :label="item.label"
+                                        :value="item.value" />
+                                </el-select>
+                            </el-form-item>
+                            <el-form-item prop="kafkaSourceId" label="Kafka数据源">
+                                <el-select
+                                    v-model="formData.kafkaSourceId"
+                                    clearable
+                                    filterable
+                                    placeholder="请选择"
+                                    @visible-change="getKafkaSourceTable($event, 'KAFKA')"
+                                >
+                                    <el-option
+                                        v-for="item in kafkaSourceList"
+                                        :key="item.value"
+                                        :label="item.label"
+                                        :value="item.value"
+                                    />
+                                </el-select>
+                            </el-form-item>
+                            <el-form-item prop="cat" label="Cat">
+                                <el-checkbox-group v-model="formData.cat">
+                                    <el-checkbox label="u">更新</el-checkbox>
+                                    <el-checkbox label="c">插入</el-checkbox>
+                                    <el-checkbox label="d">删除</el-checkbox>
+                                </el-checkbox-group>
+                            </el-form-item>
+                        </template>
                     </el-form>
                 </el-card>
                 <el-card class="box-card">
@@ -121,18 +161,18 @@
                         </el-form-item>
                         <el-form-item prop="targetTable" label="表">
                             <el-select v-model="formData.targetTable" clearable filterable placeholder="请选择"
-                                @visible-change="getDataSourceTable($event, formData.targetDBId)"
+                                @visible-change="getDataSourceTable($event, formData.targetDBId, 'target')"
                                 @change="tableChangeEvent($event, formData.targetDBId, 'target')">
                                 <el-option v-for="item in targetTablesList" :key="item.value" :label="item.label"
                                     :value="item.value" />
                             </el-select>
                         </el-form-item>
-                        <el-form-item prop="overMode" label="写入模式">
+                        <!-- <el-form-item prop="overMode" label="写入模式">
                             <el-select v-model="formData.overMode" clearable filterable placeholder="请选择" @change="pageChangeEvent">
                                 <el-option v-for="item in overModeList" :key="item.value" :label="item.label"
                                     :value="item.value" />
                             </el-select>
-                        </el-form-item>
+                        </el-form-item> -->
                     </el-form>
                 </el-card>
             </div>
@@ -168,10 +208,10 @@
 import { ref, reactive, onMounted, defineProps, nextTick, markRaw } from 'vue'
 import Breadcrumb from '@/layout/bread-crumb/index.vue'
 import { ElMessage, ElMessageBox, FormInstance, FormRules } from 'element-plus'
-import CodeMirror from 'vue-codemirror6'
+// import CodeMirror from 'vue-codemirror6'
 import { sql } from '@codemirror/lang-sql'
 import {json} from '@codemirror/lang-json'
-import { DataSourceType, OverModeList, BreadCrumbList } from './data.config.ts'
+import { DataSourceType, CurrentSourceType, OverModeList, BreadCrumbList } from './data.config.ts'
 import { GetDatasourceList } from '@/services/datasource.service'
 import { GetDataSourceTables, GetTableColumnsByTableId } from '@/services/data-sync.service'
 import TableDetail from './table-detail/index.vue'
@@ -200,9 +240,12 @@ const lang = ref<any>(sql())
 const jsonLang = ref<any>(json())
 const sourceList = ref<Option[]>([])
 const targetList = ref<Option[]>([])
+const topList = ref<Option[]>([])
 const sourceTablesList = ref<Option[]>([])
 const targetTablesList = ref<Option[]>([])
-const overModeList = ref<Option[]>(OverModeList)
+const kafkaSourceList = ref<Option[]>([])
+// const overModeList = ref<Option[]>(OverModeList)
+const sourceTypeList = ref<Option[]>(CurrentSourceType)
 const typeList = ref(DataSourceType);
 const nodeArrayList = ref([])
 
@@ -230,10 +273,15 @@ const tabList = reactive([
 
 const formData = reactive({
     workId: '',           // 作业id
-    sourceDBType: 'KAFKA',     // 来源数据源类型
+    sourceDBType: '',     // 来源数据源类型
     sourceDBId: '',       // 来源数据源
     sourceTable: '',      // 来源数据库表名
-    kafkaDataType: 'JSON',     // kafka数据类型
+    kafkaConfig: {        // topic
+        topic: ''
+    },
+    kafkaSourceId: '',    // kafka数据源
+    cat: [],              // cat
+    kafkaDataType: 'JSON',// kafka数据类型
     jsonTemplate: '',     // json模板
     jsonDataType: '',     // 数据解析类型
     rootJsonPath: '',     // 节点
@@ -244,8 +292,7 @@ const formData = reactive({
     targetTable: '',      // 目标数据库表名
     overMode: '',         // 写入模式
 })
-const rules = reactive<FormRules>({
-})
+const rules = reactive<FormRules>({})
 const btnLoadingConfig = reactive({
     saveLoading: false,
     publishLoading: false,
@@ -296,10 +343,15 @@ function getData() {
             })
 
             nextTick(() => {
-                getTopicList(true, formData.sourceDBId)
                 getDataSource(true, formData.sourceDBType, 'source')
                 getDataSource(true, formData.targetDBType, 'target')
-                getDataSourceTable(true, formData.targetDBId)
+                if (formData.sourceDBType !== 'KAFKA') {
+                    getDataSourceTable(true, formData.sourceDBId, 'source')
+                    getKafkaSourceTable(true, 'KAFKA')
+                } else {
+                    getTopicList(true, formData.sourceDBId)
+                }
+                getDataSourceTable(true, formData.targetDBId, 'target')
 
                 dataSyncTableRef.value.initPageData(res.data.syncConfig)
                 changeStatus.value = false
@@ -390,7 +442,7 @@ function getTopicList(e: boolean, dataSourceId: string) {
         GetTopicDataList({
             datasourceId: dataSourceId
         }).then((res: any) => {
-            sourceTablesList.value = res.data.map((item: any) => {
+            topList.value = res.data.map((item: any) => {
                 return {
                     label: item,
                     value: item
@@ -398,10 +450,10 @@ function getTopicList(e: boolean, dataSourceId: string) {
             })
         }).catch(err => {
             console.error(err)
-            sourceTablesList.value = []
+            topList.value = []
         })
     } else {
-        sourceTablesList.value = []
+        topList.value = []
     }
 }
 // 获取节点
@@ -428,7 +480,7 @@ function getJsonNodeArray(e: boolean) {
 }
 
 // 获取数据源表
-function getDataSourceTable(e: boolean, dataSourceId: string) {
+function getDataSourceTable(e: boolean, dataSourceId: string, type: string) {
     if (e && dataSourceId) {
         let options = []
         GetDataSourceTables({
@@ -441,13 +493,36 @@ function getDataSourceTable(e: boolean, dataSourceId: string) {
                     value: item
                 }
             })
-            targetTablesList.value = options
+            type === 'source' ? sourceTablesList.value = options : targetTablesList.value = options
         }).catch(err => {
             console.error(err)
-            targetTablesList.value = []
+            type === 'source' ? sourceTablesList.value = [] : targetTablesList.value = []
         })
     } else {
-        targetTablesList.value = []
+        type === 'source' ? sourceTablesList.value = [] : targetTablesList.value = []
+    }
+}
+
+// 获取kafka数据源表
+function getKafkaSourceTable(e: boolean, sourceType: string) {
+    if (e && sourceType) {
+        GetDatasourceList({
+            page: 0,
+            pageSize: 10000,
+            searchKeyWord: sourceType || ''
+        }).then((res: any) => {
+            kafkaSourceList.value = res.data.content.map((item: any) => {
+                return {
+                    label: item.name,
+                    value: item.id
+                }
+            })
+        }).catch(err => {
+            console.error(err)
+            kafkaSourceList.value = []
+        })
+    } else {
+        kafkaSourceList.value = []
     }
 }
 
@@ -530,6 +605,16 @@ function pageChangeEvent() {
     changeStatus.value = true
 }
 
+function sourceDBTypeChangeEvent() {
+    changeStatus.value = true
+    formData.sourceDBId = ''
+    formData.sourceTable = ''
+    dataSyncTableRef.value.getTableColumnData({
+        dataSourceId: '',
+        tableName: ''
+    }, 'source')
+}
+
 onMounted(() => {
     formData.workId = route.query.id
 
@@ -543,10 +628,33 @@ onMounted(() => {
 </script>
 
 <style lang="scss">
-.log-show-download {
-    .zqy-download-log {
-        right: 40px;
-        top: 12px;
+.computing-detail {
+    .data-sync {
+        .data-sync-top {
+            .box-card {
+                .el-form {
+                    .el-form-item {
+                        .el-form-item__content {
+                            .el-checkbox-group {
+                                .el-checkbox {
+                                    .el-checkbox__label {
+                                        font-size: 12px;
+                                        line-height: normal;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    .log-show-download {
+        .zqy-download-log {
+            right: 40px;
+            top: 12px;
+        }
     }
 }
 </style>

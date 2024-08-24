@@ -4,6 +4,7 @@ import com.isxcode.star.api.main.constants.ModuleCode;
 import com.isxcode.star.api.work.pojos.req.*;
 import com.isxcode.star.api.work.pojos.res.*;
 import com.isxcode.star.common.annotations.successResponse.SuccessResponse;
+import com.isxcode.star.modules.work.service.ExcelSyncService;
 import com.isxcode.star.modules.work.service.biz.SyncWorkBizService;
 import com.isxcode.star.modules.work.service.biz.WorkBizService;
 import com.isxcode.star.modules.work.service.biz.WorkConfigBizService;
@@ -29,6 +30,8 @@ public class WorkController {
     private final WorkConfigBizService workConfigBizService;
 
     private final SyncWorkBizService syncWorkBizService;
+
+    private final ExcelSyncService excelSyncService;
 
     @Operation(summary = "添加作业接口")
     @PostMapping("/addWork")
@@ -184,6 +187,30 @@ public class WorkController {
         throws Exception {
 
         return syncWorkBizService.getCreateTableSql(getCreateTableSqlReq);
+    }
+
+    @Operation(summary = "获取Excel文件的字段信息")
+    @PostMapping("/getExcelColumns")
+    @SuccessResponse("查询成功")
+    public GetExcelColumnsRes getExcelColumns(@Valid @RequestBody GetExcelColumnsReq getExcelColumnsReq) {
+
+        return excelSyncService.getExcelColumns(getExcelColumnsReq);
+    }
+
+    @Operation(summary = "excel数据预览")
+    @PostMapping("/getExcelData")
+    @SuccessResponse("查询成功")
+    public GetExcelDataRes getExcelData(@Valid @RequestBody GetExcelDataReq getExcelDataReq) {
+
+        return excelSyncService.getExcelData(getExcelDataReq);
+    }
+
+    @Operation(summary = "预览excel文件名接口")
+    @PostMapping("/parseExcelName")
+    @SuccessResponse("查询成功")
+    public ParseExcelNameRes parseExcelName(@Valid @RequestBody ParseExcelNameReq parseExcelNameReq) {
+
+        return excelSyncService.parseExcelName(parseExcelNameReq);
     }
 
 }

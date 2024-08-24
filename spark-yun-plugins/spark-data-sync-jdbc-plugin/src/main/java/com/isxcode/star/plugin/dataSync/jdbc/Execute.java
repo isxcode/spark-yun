@@ -67,8 +67,14 @@ public class Execute {
                     : "insert into";
 
             // 执行sql同步语句
-            sparkSession.sql(insertSql + " table " + targetTempView + " ( " + Strings.join(targetCols, ',')
-                + " ) select " + Strings.join(sourceCols, ',') + " from " + sourceTempView);
+            if (Strings.isNotEmpty(pluginReq.getSyncWorkConfig().getQueryCondition())) {
+                sparkSession.sql(insertSql + " table " + targetTempView + " ( " + Strings.join(targetCols, ',')
+                    + " ) select " + Strings.join(sourceCols, ',') + " from " + sourceTempView + " where "
+                    + pluginReq.getSyncWorkConfig().getQueryCondition());
+            } else {
+                sparkSession.sql(insertSql + " table " + targetTempView + " ( " + Strings.join(targetCols, ',')
+                    + " ) select " + Strings.join(sourceCols, ',') + " from " + sourceTempView);
+            }
         }
     }
 

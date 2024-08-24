@@ -6,7 +6,7 @@
     </div>
     <div class="data-sync-body" id="container" v-if="showDataSync">
         <div class="source-table-container">
-            <el-table ref="sourceTableRef" :data="sourceTableColumn" row-key="code">
+            <el-table v-if="formData.sourceDBType === 'KAFKA'" ref="sourceTableRef" :data="sourceTableColumn" row-key="code">
                 <el-table-column width="80" prop="code" :show-overflow-tooltip="true" label="字段名" />
                 <el-table-column width="60" prop="type" :show-overflow-tooltip="true" label="类型" />
                 <el-table-column prop="jsonPath" :show-overflow-tooltip="true" label="jsonPath" />
@@ -33,6 +33,10 @@
                         </el-dropdown>
                     </template>
                 </el-table-column>
+            </el-table>
+            <el-table v-else ref="sourceTableRef" :data="sourceTableColumn" row-key="code">
+                <el-table-column prop="code" :show-overflow-tooltip="true" label="字段名" />
+                <el-table-column prop="type" :show-overflow-tooltip="true" label="类型" />
             </el-table>
             <ul class="source-link-pointer">
                 <li v-for="row in sourceTableColumn" :key="row.code">
@@ -185,6 +189,13 @@ function getCurrentTableColumn(params: any, type: string) {
 
 // 根据表名获取映射表字段
 function getTableColumnData(params: TableDetailParam, type: string) {
+    if (!params.dataSourceId) {
+        if (type === 'source') {
+            sourceTableColumn.value = []
+            instance.deleteEveryConnection()
+        }
+        return
+    }
     GetTableColumnsByTableId(params).then((res: any) => {
         if (type === 'source') {
             sourceTableColumn.value = (res.data.columns || []).map((column: any) => {

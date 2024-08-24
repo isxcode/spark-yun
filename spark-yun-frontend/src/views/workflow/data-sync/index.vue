@@ -185,7 +185,7 @@
 <script lang="ts" setup>
 import { ref, reactive, onMounted, defineProps, nextTick, markRaw } from 'vue'
 import { ElMessage, ElMessageBox, FormInstance, FormRules } from 'element-plus'
-import CodeMirror from 'vue-codemirror6'
+// import CodeMirror from 'vue-codemirror6'
 import { sql } from '@codemirror/lang-sql'
 import { DataSourceType, OverModeList } from './data.config.ts'
 import { GetDatasourceList } from '@/services/datasource.service'
@@ -613,7 +613,7 @@ onMounted(() => {
     padding-top: 50px;
     background-color: #ffffff;
     width: 100%;
-    border-left: 1px solid var(--el-border-color);
+    // border-left: 1px solid var(--el-border-color);
 
     .data-sync__option-container {
         height: 50px;

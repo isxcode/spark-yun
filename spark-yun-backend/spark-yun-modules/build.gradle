@@ -22,4 +22,11 @@ dependencies {
     implementation "org.apache.groovy:groovy-all:${GROOVY_VERSION}"
 
     implementation "com.aliyun:dysmsapi20170525:${ALI_SMS_VERSION}"
+
+    implementation 'org.apache.poi:poi-ooxml:5.2.5'
+    implementation 'org.apache.xmlbeans:xmlbeans:5.2.0'
+    implementation 'pull-parser:pull-parser:2.1.10'
+
+    // commons-dbutils
+    implementation 'commons-dbutils:commons-dbutils:1.7'
 }

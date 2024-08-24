@@ -81,6 +81,17 @@ db2: jdbc:db2://${host}:${ip}/${database}
           placeholder="请输入"
         />
       </el-form-item>
+      <el-form-item
+        v-if="formData.dbType === 'KAFKA'"
+        label="topic"
+        prop="kafkaConfig.topic"
+      >
+        <el-input
+          v-model="formData.kafkaConfig.topic"
+          maxlength="200"
+          placeholder="请输入"
+        />
+      </el-form-item>
       <el-form-item v-if="formData.dbType === 'HIVE'" label="hive.metastore.uris">
         <el-tooltip content="thrift://${host}:${port}，默认端口号9083" placement="top">
             <el-icon style="left: 104px" class="tooltip-msg"><QuestionFilled /></el-icon>
@@ -170,6 +181,9 @@ const formData = reactive({
   driverId: '',
   metastoreUris: '',
   jdbcUrl: '',
+  kafkaConfig: {
+    topic: '',
+  },
   username: '',
   passwd: '',
   remark: '',
@@ -258,6 +272,13 @@ const rules = reactive<FormRules>({
       trigger: [ 'blur', 'change' ]
     }
   ],
+  'kafkaConfig.topic': [
+    {
+      required: true,
+      message: '请输入topic',
+      trigger: [ 'blur', 'change' ]
+    }
+  ],
   username: [
     {
       required: true,
@@ -285,6 +306,9 @@ function showModal(cb: () => void, data: any): void {
     formData.passwd = data.passwd
     formData.remark = data.remark
     formData.driverId = data.driverId
+    formData.kafkaConfig = {
+      topic: data?.kafkaConfig?.topic
+    }
     formData.metastoreUris = data.metastoreUris
     formData.id = data.id
     modelConfig.title = '编辑数据源'
@@ -295,6 +319,9 @@ function showModal(cb: () => void, data: any): void {
     formData.username = ''
     formData.passwd = ''
     formData.remark = ''
+    formData.kafkaConfig = {
+      topic: ''
+    }
     formData.driverId = ''
     formData.metastoreUris = ''
     formData.id = ''

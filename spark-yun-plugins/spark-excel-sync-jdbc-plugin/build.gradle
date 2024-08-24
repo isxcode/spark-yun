@@ -1,0 +1,87 @@
+dependencies {
+
+    // spark-yun-api
+    api(project(':spark-yun-backend:spark-yun-api'))
+
+    // spark-streaming
+    implementation "org.apache.spark:spark-streaming_${SPARK_SCALA_VERSION}:${SPARK_VERSION}"
+
+    // spark-streaming-kafka
+    implementation "org.apache.spark:spark-streaming-kafka-0-10_${SPARK_SCALA_VERSION}:${SPARK_VERSION}"
+
+    // spark-core
+    implementation "org.apache.spark:spark-core_${SPARK_SCALA_VERSION}:${SPARK_VERSION}"
+
+    // spark-catalyst
+    implementation "org.apache.spark:spark-catalyst_${SPARK_SCALA_VERSION}:${SPARK_VERSION}"
+
+    // spark-sql
+    implementation "org.apache.spark:spark-sql_${SPARK_SCALA_VERSION}:${SPARK_VERSION}"
+
+    // spark-hive
+    implementation "org.apache.spark:spark-hive_${SPARK_SCALA_VERSION}:${SPARK_VERSION}"
+
+    // spark-network-common
+    implementation "org.apache.spark:spark-network-common_${SPARK_SCALA_VERSION}:${SPARK_VERSION}"
+
+    // spark-network-shuffle
+    implementation "org.apache.spark:spark-network-shuffle_${SPARK_SCALA_VERSION}:${SPARK_VERSION}"
+
+    // spark-yarn
+    implementation "org.apache.spark:spark-yarn_${SPARK_SCALA_VERSION}:${SPARK_VERSION}"
+
+    // spark-kvstore
+    implementation "org.apache.spark:spark-kvstore_${SPARK_SCALA_VERSION}:${SPARK_VERSION}"
+
+    // spark-launcher
+    implementation "org.apache.spark:spark-launcher_${SPARK_SCALA_VERSION}:${SPARK_VERSION}"
+
+    // jersey-container-servlet-core
+    implementation "org.glassfish.jersey.containers:jersey-container-servlet-core:2.27"
+
+    // hive-common
+    implementation "org.apache.hive:hive-common:${HIVE_VERSION}"
+
+    // hadoop-yarn-client
+    implementation "org.apache.hadoop:hadoop-yarn-client:${HADOOP_VERSION}"
+
+    // hadoop-hdfs
+    implementation "org.apache.hadoop:hadoop-hdfs:${HADOOP_VERSION}"
+
+    // hadoop-mapreduce-client-core
+    implementation "org.apache.hadoop:hadoop-mapreduce-client-core:${HADOOP_VERSION}"
+
+    // json4s-jackson
+    implementation "org.json4s:json4s-jackson_${SPARK_SCALA_VERSION}:${JSON4S_VERSION}"
+
+    // json4s-core
+    implementation "org.json4s:json4s-core_${SPARK_SCALA_VERSION}:${JSON4S_VERSION}"
+
+    // janino
+    implementation "org.codehaus.janino:janino:3.1.10"
+
+    // commons-compiler
+    implementation "org.codehaus.janino:commons-compiler:3.1.10"
+
+    // jackson-module
+    implementation "com.fasterxml.jackson.module:jackson-module-scala_${SPARK_SCALA_VERSION}:2.13.5"
+
+    // commons-compiler
+    implementation "com.fasterxml.jackson.core:jackson-databind:2.13.5"
+
+    // jackson-core
+    implementation "com.fasterxml.jackson.core:jackson-core:2.13.5"
+
+    // lz4-java
+    implementation "org.lz4:lz4-java:1.5.0"
+
+    // xbean-asm6-shaded
+    implementation "org.apache.xbean:xbean-asm6-shaded:4.8"
+
+    // univocity-parsers
+    implementation "com.univocity:univocity-parsers:2.8.2"
+}
+
+jar {
+    archiveFileName = "spark-excel-sync-jdbc-plugin.jar"
+}

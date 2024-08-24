@@ -68,4 +68,9 @@ public class SyncWorkConfig {
     private DatasourceConfig sourceDatabase;
 
     private DatasourceConfig targetDatabase;
+
+    @Schema(title = "实时作业监听的类型， u/d/c")
+    private List<String> cat;
+
+    private String kafkaSourceId;
 }

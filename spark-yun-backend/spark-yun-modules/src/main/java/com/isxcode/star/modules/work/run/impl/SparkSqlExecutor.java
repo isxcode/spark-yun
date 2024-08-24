@@ -8,6 +8,7 @@ import com.isxcode.star.api.agent.pojos.res.YagGetLogRes;
 import com.isxcode.star.api.api.constants.PathConstants;
 import com.isxcode.star.api.cluster.constants.ClusterNodeStatus;
 import com.isxcode.star.api.cluster.pojos.dto.ScpFileEngineNodeDto;
+import com.isxcode.star.api.datasource.pojos.dto.ConnectInfo;
 import com.isxcode.star.api.work.constants.WorkLog;
 import com.isxcode.star.api.work.constants.WorkType;
 import com.isxcode.star.api.work.exceptions.WorkRunException;
@@ -27,7 +28,10 @@ import com.isxcode.star.modules.cluster.mapper.ClusterNodeMapper;
 import com.isxcode.star.modules.cluster.repository.ClusterNodeRepository;
 import com.isxcode.star.modules.cluster.repository.ClusterRepository;
 import com.isxcode.star.modules.datasource.entity.DatasourceEntity;
+import com.isxcode.star.modules.datasource.mapper.DatasourceMapper;
 import com.isxcode.star.modules.datasource.service.DatasourceService;
+import com.isxcode.star.modules.datasource.source.DataSourceFactory;
+import com.isxcode.star.modules.datasource.source.Datasource;
 import com.isxcode.star.modules.file.entity.FileEntity;
 import com.isxcode.star.modules.file.repository.FileRepository;
 import com.isxcode.star.modules.func.entity.FuncEntity;
@@ -101,13 +105,18 @@ public class SparkSqlExecutor extends WorkExecutor {
 
     private final SqlFunctionService sqlFunctionService;
 
+    private final DatasourceMapper datasourceMapper;
+
+    private final DataSourceFactory dataSourceFactory;
+
     public SparkSqlExecutor(WorkInstanceRepository workInstanceRepository, ClusterRepository clusterRepository,
         ClusterNodeRepository clusterNodeRepository, WorkflowInstanceRepository workflowInstanceRepository,
         WorkRepository workRepository, WorkConfigRepository workConfigRepository, Locker locker,
         HttpUrlUtils httpUrlUtils, FuncRepository funcRepository, FuncMapper funcMapper,
         ClusterNodeMapper clusterNodeMapper, AesUtils aesUtils, IsxAppProperties isxAppProperties,
         FileRepository fileRepository, DatasourceService datasourceService, SqlCommentService sqlCommentService,
-        SqlValueService sqlValueService, SqlFunctionService sqlFunctionService, AlarmService alarmService) {
+        SqlValueService sqlValueService, SqlFunctionService sqlFunctionService, AlarmService alarmService,
+        DatasourceMapper datasourceMapper, DataSourceFactory dataSourceFactory) {
 
         super(workInstanceRepository, workflowInstanceRepository, alarmService);
         this.workInstanceRepository = workInstanceRepository;
@@ -127,6 +136,8 @@ public class SparkSqlExecutor extends WorkExecutor {
         this.sqlCommentService = sqlCommentService;
         this.sqlValueService = sqlValueService;
         this.sqlFunctionService = sqlFunctionService;
+        this.datasourceMapper = datasourceMapper;
+        this.dataSourceFactory = dataSourceFactory;
     }
 
     @Override
@@ -245,9 +256,11 @@ public class SparkSqlExecutor extends WorkExecutor {
         // 解析db
         if (StringUtils.isNotBlank(workRunContext.getDatasourceId())
             && workRunContext.getClusterConfig().getEnableHive()) {
-            DatasourceEntity datasource = datasourceService.getDatasource(workRunContext.getDatasourceId());
+            DatasourceEntity datasourceEntity = datasourceService.getDatasource(workRunContext.getDatasourceId());
+            ConnectInfo connectInfo = datasourceMapper.datasourceEntityToConnectInfo(datasourceEntity);
+            Datasource datasource = dataSourceFactory.getDatasource(connectInfo.getDbType());
             try {
-                String database = datasourceService.parseDbName(datasource.getJdbcUrl());
+                String database = datasource.parseDbName(datasourceEntity.getJdbcUrl());
                 if (!Strings.isEmpty(database)) {
                     pluginReq.setDatabase(database);
                 }
@@ -255,7 +268,7 @@ public class SparkSqlExecutor extends WorkExecutor {
                 throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + e.getMsg() + "\n");
             }
             // 如果数据库id不为空,则替换hive的metastore url
-            pluginReq.getSparkConfig().put("hive.metastore.uris", datasource.getMetastoreUris());
+            pluginReq.getSparkConfig().put("hive.metastore.uris", datasourceEntity.getMetastoreUris());
         }
 
         // 开始构造executeReq
@@ -388,6 +401,7 @@ public class SparkSqlExecutor extends WorkExecutor {
 
                 // 如果运行成功，则保存返回数据
                 List<String> successStatus = Arrays.asList("FINISHED", "SUCCEEDED", "COMPLETED");
+                log.debug("sparkSql返回执行状态:{}", workStatusRes.getAppStatus().toUpperCase());
                 if (successStatus.contains(workStatusRes.getAppStatus().toUpperCase())) {
 
                     // 获取数据

@@ -114,7 +114,7 @@ import { ElMessage, FormInstance, FormRules } from 'element-plus'
 import Breadcrumb from '@/layout/bread-crumb/index.vue'
 import LoadingPage from '@/components/loading/index.vue'
 import * as echarts from 'echarts'
-import CodeMirror from 'vue-codemirror6'
+// import CodeMirror from 'vue-codemirror6'
 import {sql} from '@codemirror/lang-sql'
 import PreviewReport from '../preview-report/index.vue'
 
@@ -206,6 +206,8 @@ function saveConfigEvent() {
         id: route.query.id,
         webConfig: chartConfig,
         exampleData: echartOption.value,
+        datasourceId: baseConfig.datasourceId,
+        name: baseConfig.name,
         dataSql: {
             sqlList: baseConfig.sqls
         }
@@ -224,6 +226,8 @@ function publishChartEvent() {
         id: route.query.id,
         webConfig: chartConfig,
         exampleData: echartOption.value,
+        datasourceId: baseConfig.datasourceId,
+        name: baseConfig.name,
         dataSql: {
             sqlList: baseConfig.sqls
         }

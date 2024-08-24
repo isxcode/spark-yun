@@ -3,6 +3,7 @@ package com.isxcode.star.modules.datasource.service.biz;
 import com.alibaba.fastjson2.JSON;
 import com.isxcode.star.api.datasource.constants.DatasourceStatus;
 import com.isxcode.star.api.datasource.constants.DatasourceType;
+import com.isxcode.star.api.datasource.pojos.dto.ConnectInfo;
 import com.isxcode.star.api.datasource.pojos.dto.KafkaConfig;
 import com.isxcode.star.api.datasource.pojos.req.*;
 import com.isxcode.star.api.datasource.pojos.res.*;
@@ -30,6 +31,8 @@ import java.util.List;
 import java.util.Optional;
 import javax.transaction.Transactional;
 
+import com.isxcode.star.modules.datasource.source.DataSourceFactory;
+import com.isxcode.star.modules.datasource.source.Datasource;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
@@ -62,6 +65,8 @@ public class DatasourceBizService {
 
     private final DatabaseDriverService databaseDriverService;
 
+    private final DataSourceFactory dataSourceFactory;
+
     public void addDatasource(AddDatasourceReq addDatasourceReq) {
 
         // 检测数据源名称重复
@@ -83,8 +88,8 @@ public class DatasourceBizService {
 
         // 如果是kafka数据源，添加kafka配置
         if (DatasourceType.KAFKA.equals(addDatasourceReq.getDbType())) {
-            datasource.setKafkaConfig(
-                JSON.toJSONString(KafkaConfig.builder().bootstrapServers(addDatasourceReq.getJdbcUrl()).build()));
+            addDatasourceReq.getKafkaConfig().setBootstrapServers(addDatasourceReq.getJdbcUrl());
+            datasource.setKafkaConfig(JSON.toJSONString(addDatasourceReq.getKafkaConfig()));
         }
 
         datasource.setCheckDateTime(LocalDateTime.now());
@@ -109,8 +114,8 @@ public class DatasourceBizService {
 
         // 如果是kafka数据源，赋予kafka配置
         if (DatasourceType.KAFKA.equals(datasource.getDbType())) {
-            datasource.setKafkaConfig(
-                JSON.toJSONString(KafkaConfig.builder().bootstrapServers(updateDatasourceReq.getJdbcUrl()).build()));
+            updateDatasourceReq.getKafkaConfig().setBootstrapServers(updateDatasourceReq.getJdbcUrl());
+            datasource.setKafkaConfig(JSON.toJSONString(updateDatasourceReq.getKafkaConfig()));
         }
 
         // 判断如果是hive数据源，metastore_uris没有填写，附加默认值，thrift://localhost:9083
@@ -142,6 +147,9 @@ public class DatasourceBizService {
                     e.setDriverName(databaseDriverService.getDriverName(e.getDriverId()));
                 }
             }
+            if (DatasourceType.KAFKA.equals(e.getDbType())) {
+                e.setKafkaConfig(JSON.parseObject(e.getKafkaConfigStr(), KafkaConfig.class));
+            }
         });
 
         return pageDatasourceRes;
@@ -154,44 +162,46 @@ public class DatasourceBizService {
 
     public TestConnectRes testConnect(GetConnectLogReq testConnectReq) {
 
-        DatasourceEntity datasource = datasourceService.getDatasource(testConnectReq.getDatasourceId());
+        DatasourceEntity datasourceEntity = datasourceService.getDatasource(testConnectReq.getDatasourceId());
 
         // 测试连接
-        datasource.setCheckDateTime(LocalDateTime.now());
+        datasourceEntity.setCheckDateTime(LocalDateTime.now());
 
-        if (DatasourceType.KAFKA.equals(datasource.getDbType())) {
+        if (DatasourceType.KAFKA.equals(datasourceEntity.getDbType())) {
             try {
-                datasourceService.checkKafka(JSON.parseObject(datasource.getKafkaConfig(), KafkaConfig.class));
-                datasource.setStatus(DatasourceStatus.ACTIVE);
-                datasource.setConnectLog("测试连接成功！");
-                datasourceRepository.save(datasource);
+                datasourceService.checkKafka(JSON.parseObject(datasourceEntity.getKafkaConfig(), KafkaConfig.class));
+                datasourceEntity.setStatus(DatasourceStatus.ACTIVE);
+                datasourceEntity.setConnectLog("测试连接成功！");
+                datasourceRepository.save(datasourceEntity);
                 return new TestConnectRes(true, "连接成功");
             } catch (Exception e) {
                 log.debug(e.getMessage(), e);
-                datasource.setStatus(DatasourceStatus.FAIL);
-                datasource.setConnectLog("测试连接失败：" + e.getMessage());
-                datasourceRepository.save(datasource);
+                datasourceEntity.setStatus(DatasourceStatus.FAIL);
+                datasourceEntity.setConnectLog("测试连接失败：" + e.getMessage());
+                datasourceRepository.save(datasourceEntity);
                 return new TestConnectRes(false, e.getMessage());
             }
         } else {
-            try (Connection connection = datasourceService.getDbConnection(datasource)) {
+            ConnectInfo connectInfo = datasourceMapper.datasourceEntityToConnectInfo(datasourceEntity);
+            Datasource datasource = dataSourceFactory.getDatasource(connectInfo.getDbType());
+            try (Connection connection = datasource.getConnection(connectInfo)) {
                 if (connection != null) {
-                    datasource.setStatus(DatasourceStatus.ACTIVE);
-                    datasource.setConnectLog("测试连接成功！");
-                    datasourceRepository.save(datasource);
+                    datasourceEntity.setStatus(DatasourceStatus.ACTIVE);
+                    datasourceEntity.setConnectLog("测试连接成功！");
+                    datasourceRepository.save(datasourceEntity);
                     return new TestConnectRes(true, "连接成功");
                 } else {
-                    datasource.setStatus(DatasourceStatus.FAIL);
-                    datasource.setConnectLog("测试连接失败: 请检查连接协议");
-                    datasourceRepository.save(datasource);
+                    datasourceEntity.setStatus(DatasourceStatus.FAIL);
+                    datasourceEntity.setConnectLog("测试连接失败: 请检查连接协议");
+                    datasourceRepository.save(datasourceEntity);
                     return new TestConnectRes(false, "请检查连接协议");
                 }
             } catch (Exception e) {
                 log.debug(e.getMessage(), e);
 
-                datasource.setStatus(DatasourceStatus.FAIL);
-                datasource.setConnectLog("测试连接失败：" + e.getMessage());
-                datasourceRepository.save(datasource);
+                datasourceEntity.setStatus(DatasourceStatus.FAIL);
+                datasourceEntity.setConnectLog("测试连接失败：" + e.getMessage());
+                datasourceRepository.save(datasourceEntity);
                 return new TestConnectRes(false, e.getMessage());
             }
         }

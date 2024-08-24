@@ -41,7 +41,7 @@ import java.util.Properties;
  * @see Driver
  */
 @Slf4j
-class DriverShim implements Driver {
+public class DriverShim implements Driver {
 
     /**
      * The logger.
@@ -57,7 +57,7 @@ class DriverShim implements Driver {
      *
      * @param driver the database driver to wrap
      */
-    DriverShim(Driver driver) {
+    public DriverShim(Driver driver) {
         this.driver = driver;
     }
 

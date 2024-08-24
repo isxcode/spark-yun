@@ -19,7 +19,11 @@ public class NodeMonitorInfo {
 
     private Long networkIoReadSpeed;
 
+    private String networkIoReadSpeedStr;
+
     private Long networkIoWriteSpeed;
+
+    private String networkIoWriteSpeedStr;
 
     private Long diskIoReadSpeed;
 

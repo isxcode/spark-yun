@@ -1,5 +1,5 @@
 <template>
-    <BlockModal :model-config="modelConfig" @close="closeEvent">
+    <BlockModal :model-config="modelConfig" @close="closeEvent" top="10vh">
         <div class="zqy-dag-modal__dag">
             <ZqyFlow ref="zqyFlowRef"></ZqyFlow>
         </div>
@@ -77,7 +77,7 @@ function initFlowData() {
             zqyFlowRef.value.initCellList(JSON.parse(res.data.webConfig))
             zqyFlowRef.value.hideGrid(true)
             nextTick(() => {
-                zqyFlowRef.value.locationContentCenter()
+                // zqyFlowRef.value.locationContentCenter()
 
                 // 判断是否开始运行
                 runningStatus.value = true
@@ -190,10 +190,6 @@ defineExpose({
         height: calc(62vh - 32px);
         .zqy-flow {
             height: calc(62vh - 32px);
-            .x6-graph {
-                height: 100% !important;
-                width: 100% !important;
-            }
         }
     }
 }

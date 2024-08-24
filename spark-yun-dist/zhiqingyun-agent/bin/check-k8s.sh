@@ -38,7 +38,7 @@ fi
 
 # 执行拉取spark镜像命令
 if ! docker image inspect spark:3.4.1 &>/dev/null; then
-  echo "【结果】：没有spark:3.4.1镜像，需要执行拉取镜像命令，docker pull spark:3.4.1"
+  echo "【结果】：没有spark:3.4.1镜像，需要执行拉取镜像命令，docker pull spark:3.4.1 或者 docker pull registry.cn-shanghai.aliyuncs.com/isxcode/spark:3.4.1-amd64 && docker tag registry.cn-shanghai.aliyuncs.com/isxcode/spark:3.4.1-amd64 spark:3.4.1 "
   exit 0
 fi
 

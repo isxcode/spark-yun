@@ -1,13 +1,17 @@
 package com.isxcode.star.modules.work.run.impl;
 
+import com.isxcode.star.api.datasource.pojos.dto.ConnectInfo;
 import com.isxcode.star.api.work.constants.WorkLog;
 import com.isxcode.star.api.work.constants.WorkType;
 import com.isxcode.star.api.work.exceptions.WorkRunException;
 import com.isxcode.star.modules.alarm.service.AlarmService;
 import com.isxcode.star.modules.datasource.entity.DatasourceEntity;
+import com.isxcode.star.modules.datasource.mapper.DatasourceMapper;
 import com.isxcode.star.modules.datasource.repository.DatasourceRepository;
 import com.isxcode.star.modules.datasource.service.DatasourceService;
 import com.isxcode.star.modules.datasource.service.biz.DatasourceBizService;
+import com.isxcode.star.modules.datasource.source.DataSourceFactory;
+import com.isxcode.star.modules.datasource.source.Datasource;
 import com.isxcode.star.modules.work.entity.WorkInstanceEntity;
 import com.isxcode.star.modules.work.repository.WorkInstanceRepository;
 import com.isxcode.star.modules.work.run.WorkExecutor;
@@ -45,10 +49,15 @@ public class ExecuteSqlExecutor extends WorkExecutor {
 
     private final SqlFunctionService sqlFunctionService;
 
+    private final DataSourceFactory dataSourceFactory;
+
+    private final DatasourceMapper datasourceMapper;
+
     public ExecuteSqlExecutor(WorkInstanceRepository workInstanceRepository, DatasourceRepository datasourceRepository,
         WorkflowInstanceRepository workflowInstanceRepository, DatasourceBizService datasourceBizService,
         DatasourceService datasourceService, SqlCommentService sqlCommentService, SqlValueService sqlValueService,
-        SqlFunctionService sqlFunctionService, AlarmService alarmService) {
+        SqlFunctionService sqlFunctionService, AlarmService alarmService, DataSourceFactory dataSourceFactory,
+        DatasourceMapper datasourceMapper) {
 
         super(workInstanceRepository, workflowInstanceRepository, alarmService);
         this.datasourceRepository = datasourceRepository;
@@ -57,6 +66,8 @@ public class ExecuteSqlExecutor extends WorkExecutor {
         this.sqlCommentService = sqlCommentService;
         this.sqlValueService = sqlValueService;
         this.sqlFunctionService = sqlFunctionService;
+        this.dataSourceFactory = dataSourceFactory;
+        this.datasourceMapper = datasourceMapper;
     }
 
     @Override
@@ -85,6 +96,7 @@ public class ExecuteSqlExecutor extends WorkExecutor {
         if (!datasourceEntityOptional.isPresent()) {
             throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "检测运行环境失败: 未配置有效数据源  \n");
         }
+        DatasourceEntity datasourceEntity = datasourceEntityOptional.get();
 
         // 数据源检查通过
         logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("检测运行环境完成  \n");
@@ -100,7 +112,9 @@ public class ExecuteSqlExecutor extends WorkExecutor {
         workInstance = updateInstance(workInstance, logBuilder);
 
         // 开始执行作业
-        try (Connection connection = datasourceService.getDbConnection(datasourceEntityOptional.get());
+        ConnectInfo connectInfo = datasourceMapper.datasourceEntityToConnectInfo(datasourceEntity);
+        Datasource datasource = dataSourceFactory.getDatasource(connectInfo.getDbType());
+        try (Connection connection = datasource.getConnection(connectInfo);
             Statement statement = connection.createStatement()) {
 
             // 去掉sql中的注释

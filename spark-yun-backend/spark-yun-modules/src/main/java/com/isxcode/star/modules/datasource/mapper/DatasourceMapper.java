@@ -1,5 +1,6 @@
 package com.isxcode.star.modules.datasource.mapper;
 
+import com.isxcode.star.api.datasource.pojos.dto.ConnectInfo;
 import com.isxcode.star.api.datasource.pojos.req.AddDatasourceReq;
 import com.isxcode.star.api.datasource.pojos.req.UpdateDatasourceReq;
 import com.isxcode.star.api.datasource.pojos.res.GetDefaultDatabaseDriverRes;
@@ -30,6 +31,8 @@ public interface DatasourceMapper {
         DatasourceEntity datasourceEntity);
 
     @Mapping(target = "checkDateTime", dateFormat = "yyyy-MM-dd HH:mm:ss")
+    @Mapping(target = "kafkaConfigStr", source = "kafkaConfig")
+    @Mapping(target = "kafkaConfig", ignore = true)
     PageDatasourceRes datasourceEntityToQueryDatasourceRes(DatasourceEntity datasourceEntity);
 
     @Mapping(target = "createDateTime", dateFormat = "yyyy-MM-dd HH:mm:ss")
@@ -37,4 +40,6 @@ public interface DatasourceMapper {
 
     GetDefaultDatabaseDriverRes databaseDriverEntityToGetDefaultDatabaseDriverRes(
         DatabaseDriverEntity databaseDriverEntity);
+
+    ConnectInfo datasourceEntityToConnectInfo(DatasourceEntity datasourceEntity);
 }

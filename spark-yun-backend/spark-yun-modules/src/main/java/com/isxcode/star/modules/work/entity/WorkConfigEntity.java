@@ -46,6 +46,8 @@ public class WorkConfigEntity {
 
     private String syncWorkConfig;
 
+    private String excelSyncConfig;
+
     private String apiWorkConfig;
 
     private String syncRule;

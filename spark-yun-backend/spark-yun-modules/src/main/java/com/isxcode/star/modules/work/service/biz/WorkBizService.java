@@ -111,6 +111,7 @@ public class WorkBizService {
         // sparkSql，数据同步，bash，python，必须配置集群
         if (WorkType.QUERY_SPARK_SQL.equals(addWorkReq.getWorkType())
             || WorkType.DATA_SYNC_JDBC.equals(addWorkReq.getWorkType())
+            || WorkType.EXCEL_SYNC_JDBC.equals(addWorkReq.getWorkType())
             || WorkType.BASH.equals(addWorkReq.getWorkType()) || WorkType.PYTHON.equals(addWorkReq.getWorkType())
             || WorkType.SPARK_JAR.equals(addWorkReq.getWorkType())) {
             if (Strings.isEmpty(addWorkReq.getClusterId())) {
@@ -144,13 +145,15 @@ public class WorkBizService {
         }
 
         // 初始化数据同步分区值
-        if (WorkType.DATA_SYNC_JDBC.equals(addWorkReq.getWorkType())) {
+        if (WorkType.DATA_SYNC_JDBC.equals(addWorkReq.getWorkType())
+            || (WorkType.EXCEL_SYNC_JDBC.equals(addWorkReq.getWorkType()))) {
             workConfigService.initSyncRule(workConfig);
         }
 
         // 初始化计算引擎
         if (WorkType.QUERY_SPARK_SQL.equals(addWorkReq.getWorkType())
             || WorkType.DATA_SYNC_JDBC.equals(addWorkReq.getWorkType())
+            || WorkType.EXCEL_SYNC_JDBC.equals(addWorkReq.getWorkType())
             || WorkType.BASH.equals(addWorkReq.getWorkType()) || WorkType.PYTHON.equals(addWorkReq.getWorkType())
             || WorkType.SPARK_JAR.equals(addWorkReq.getWorkType())) {
             workConfigService.initClusterConfig(workConfig, addWorkReq.getClusterId(), addWorkReq.getClusterNodeId(),
@@ -346,6 +349,7 @@ public class WorkBizService {
             // 普通作业中止
             if (!WorkType.QUERY_SPARK_SQL.equals(workEntity.getWorkType())
                 && !WorkType.DATA_SYNC_JDBC.equals(workEntity.getWorkType())
+                && !WorkType.EXCEL_SYNC_JDBC.equals(workEntity.getWorkType())
                 && !WorkType.SPARK_JAR.equals(workEntity.getWorkType())) {
 
                 workExecutor.syncAbort(workInstanceEntity);
@@ -442,6 +446,10 @@ public class WorkBizService {
 
         if (!Strings.isEmpty(workConfig.getSyncWorkConfig())) {
             getWorkRes.setSyncWorkConfig(JSON.parseObject(workConfig.getSyncWorkConfig(), SyncWorkConfig.class));
+        }
+
+        if (!Strings.isEmpty(workConfig.getExcelSyncConfig())) {
+            getWorkRes.setExcelSyncConfig(JSON.parseObject(workConfig.getExcelSyncConfig(), ExcelSyncConfig.class));
         }
 
         if (!Strings.isEmpty(workConfig.getApiWorkConfig())) {
