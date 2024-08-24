@@ -13,7 +13,7 @@
                         <Sort />
                     </el-icon>
                     <template #dropdown>
-                        <el-dropdown-menu style="max-height: 300px">
+                        <el-dropdown-menu style="max-height: 340px; overflow: auto; padding: 12px 8px;">
                             <el-dropdown-item @click="changeWorkFlow(workFlow)" v-for="workFlow in workFlowList">
                                 {{ workFlow.name }}
                             </el-dropdown-item>
