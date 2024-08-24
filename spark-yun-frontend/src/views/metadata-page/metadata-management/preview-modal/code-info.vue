@@ -17,33 +17,32 @@ const tableConfig = reactive({
         {
             prop: 'columnName',
             title: '字段名',
-            minWidth: 125,
+            minWidth: 100,
             showOverflowTooltip: true
         },
         {
             prop: 'columnType',
             title: '字段类型',
-            minWidth: 125,
+            minWidth: 100,
             showOverflowTooltip: true
         },
-        // {
-        //     prop: 'columnType',
-        //     title: '主键',
-        //     minWidth: 125,
-        //     showOverflowTooltip: true
-        // },
-        // {
-        //     prop: 'columnType',
-        //     title: '分区键',
-        //     minWidth: 125,
-        //     showOverflowTooltip: true
-        // },
+        {
+            prop: 'isPartitionColumn',
+            title: '分区键',
+            minWidth: 100,
+            align: 'center',
+            showOverflowTooltip: true,
+            formatter: (data: any): string => {
+                return data.row.isPartitionColumn ? '是' : '否'
+            }
+        },
         {
             prop: 'columnComment',
             title: '备注',
-            minWidth: 140
-        },
+            minWidth: 100
+        }
     ],
+    seqType: 'seq',
     loading: false
 })
 
