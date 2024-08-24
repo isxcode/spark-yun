@@ -189,12 +189,13 @@ onMounted(() => {
   const art = new Artplayer({
     container: '.artplayer-app',
     url: 'https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/product-img/product.mp4',
+    poster:'https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/product-img/product.jpg',
     fullscreen: true,
     fullscreenWeb: true,
     pip: true,
     autoplay: false,
     theme: '#e25a1b',
-    muted: true,
+    muted: false,
     autoSize: true
   });
   window.addEventListener("scroll", handleScroll);
@@ -435,8 +436,8 @@ $module-intro-img-width: 600px;
         margin: 25px auto auto;
         text-indent: 2em;
         width: 800px;
-        line-height: 24px;
-        font-size: 17px;
+        line-height: 26px;
+        font-size: 18px;
       }
 
       .why-content-mobile {
