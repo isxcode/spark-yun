@@ -3,7 +3,7 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, defineProps, reactive } from 'vue'
+import { onMounted, defineProps, reactive, nextTick } from 'vue'
 import { GetTableDetailData } from '@/services/metadata-page.service';
 
 const props = defineProps<{
@@ -28,20 +28,22 @@ function initData() {
             return {
                 prop: colunm,
                 title: colunm,
-                minWidth: 100,
+                minWidth: 160,
                 showHeaderOverflow: true,
                 showOverflowTooltip: true
             }
         })
-        tableConfig.tableData = []
-        res.data.rows.forEach(rowData => {
-            const columnData = {}
-            col.forEach((cl, index) => {
-                columnData[cl] = rowData[index]
+        nextTick(() => {
+            tableConfig.tableData = []
+            res.data.rows.forEach(rowData => {
+                const columnData = {}
+                col.forEach((cl, index) => {
+                    columnData[cl] = rowData[index]
+                })
+                tableConfig.tableData.push(columnData)
             })
-            tableConfig.tableData.push(columnData)
+            tableConfig.loading = false
         })
-        tableConfig.loading = false
     }).catch(() => {
         tableConfig.colConfigs = []
         tableConfig.tableData = []
