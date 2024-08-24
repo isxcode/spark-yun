@@ -76,7 +76,7 @@
             <div class="btn-group">
               <span @click="editData(scopeSlot.row)">编辑</span>
               <span @click="deleteData(scopeSlot.row)">删除</span>
-              <span v-if="scopeSlot.row.status !== 'STOP'" @click="underlineWorkFlow(scopeSlot.row)">下线</span>
+              <span v-if="!['UN_AUTO', 'STOP'].includes(scopeSlot.row.status)" @click="underlineWorkFlow(scopeSlot.row)">下线</span>
               <span v-else @click="publishWorkFlow(scopeSlot.row)">发布</span>
               <!-- <el-icon v-else class="is-loading"><Loading /></el-icon> -->
             </div>

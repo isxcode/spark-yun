@@ -22,11 +22,11 @@
         </el-table-column>
         <el-table-column prop="startDateTime" label="开始时间" show-overflow-tooltip />
         <el-table-column prop="endDateTime" label="结束时间" show-overflow-tooltip />
-        <el-table-column label="操作" align="center">
+        <!-- <el-table-column label="操作" align="center">
           <template #default="{ row }">
             <el-icon class="vm-list__more"><MoreFilled /></el-icon>
           </template>
-        </el-table-column>
+        </el-table-column> -->
         <template #empty>
           <el-empty class="vm-list__empty" description="暂无数据"></el-empty>
         </template>

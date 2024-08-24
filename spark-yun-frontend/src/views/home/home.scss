@@ -53,6 +53,7 @@
 
   .zqy-home__main {
     width: 100vw;
+    background-color: getCssVar('color', 'white');
     padding-left: 80px;
     box-sizing: border-box;
     transition: all getCssVar('transition-duration') ease-in-out;
