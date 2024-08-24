@@ -39,7 +39,7 @@
         </div>
         <div class="column">
           <div class="title">关于</div>
-          <div class="link" @click="clickOther">至爻数据</div>
+          <div class="link" @click="aboutUs">至爻数据</div>
           <div class="link" @click="joinUs">加入我们</div>
           <div class="link" @click="clickGithubProject">开发进度</div>
         </div>
@@ -358,14 +358,12 @@ function clickZhishuyun() {
 
 function joinUs(){
   const router = useRouter();
-  router.push("/docs/zh/5/0");
+  router.push("/docs/zh/6/0");
 }
 
-function clickOther() {
-  ElMessage({
-    message: '敬请期待',
-    type: 'success',
-  })
+function aboutUs(){
+  const router = useRouter();
+  router.push("/docs/zh/7/0");
 }
 
 function clickGithubProject() {
