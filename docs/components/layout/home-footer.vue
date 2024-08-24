@@ -15,7 +15,7 @@
       </div>
       <div class="right">
         <div class="column">
-          <div class="title">矩阵</div>
+          <div class="title">产品</div>
           <div class="link" @click="clickZhiqingyun">至轻云</div>
           <div class="link" @click="clickZhiliuyun">至流云</div>
           <div class="link" @click="clickZhishuyun">至数云</div>
@@ -31,15 +31,15 @@
         </div>
         <div class="column">
           <div class="title">资源</div>
-          <div class="link" @click="clickBlogs">解决方案</div>
           <div class="link" @click="clickDocs">产品手册</div>
+          <div class="link" @click="clickBlogs">博客</div>
           <div class="link" @click="clickDockerHub">Docker Hub</div>
           <div class="link" @click="downloadPackage">安装包下载</div>
           <div class="link" @click="downloadLicense">许可证下载</div>
         </div>
         <div class="column">
-          <div class="title">关于至爻</div>
-          <div class="link" @click="clickOther">至爻简介</div>
+          <div class="title">关于</div>
+          <div class="link" @click="aboutUs">至爻数据</div>
           <div class="link" @click="joinUs">加入我们</div>
           <div class="link" @click="clickGithubProject">开发进度</div>
         </div>
@@ -83,8 +83,8 @@
 <style lang="scss" scoped>
 
 @font-face {
-  font-family: "阿里妈妈数黑体 Bold";font-weight: 700;src: url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/zvbiHc8d5YKq.woff2") format("woff2"),
-  url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/77SsXIN8kN6W.woff") format("woff");
+  font-family: "阿里妈妈数黑体 Bold";font-weight: 700;src: url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/xsJVuIFqaDN3.woff2") format("woff2"),
+  url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/5fkSoUFx3Gkk.woff") format("woff");
   font-display: swap;
 }
 
@@ -358,14 +358,12 @@ function clickZhishuyun() {
 
 function joinUs(){
   const router = useRouter();
-  router.push("/docs/zh/5/0");
+  router.push("/docs/zh/6/0");
 }
 
-function clickOther() {
-  ElMessage({
-    message: '敬请期待',
-    type: 'success',
-  })
+function aboutUs(){
+  const router = useRouter();
+  router.push("/docs/zh/7/0");
 }
 
 function clickGithubProject() {

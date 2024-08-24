@@ -73,8 +73,7 @@ cd spark-yun
 
 - [快速入门](https://zhiqingyun.isxcode.com/docs/zh/0/0)
 - [产品手册](https://zhiqingyun.isxcode.com/docs/zh/2/0)
-- [部署文档](https://zhiqingyun.isxcode.com/docs/zh/1/0-docker)
-- [阿里云部署](https://zhiqingyun.isxcode.com/docs/zh/4/0)
+- [安装文档](https://zhiqingyun.isxcode.com/docs/zh/1/0-docker)
 - [博客](https://ispong.isxcode.com/tags/spark/)
 
 ### 联系我们

@@ -65,8 +65,8 @@
           <img src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/product-img/p-1.jpg" alt="">
         </div>
         <div class="right">
-          <div class="line-1">多平台部署，从不娇生惯养</div>
-          <div class="line-2">支持各种资源调度平台，如Kubernetes、Spark Standalone、Spark Cluster、Yarn、CDH等。可无缝切换，敏捷迁移，帮助企业更优分配集群资源。</div>
+          <div class="line-1">能写代码？不单单只有Sql</div>
+          <div class="line-2">支持超多作业类型，包括数据同步、Bash脚本、Python、SparkSql、自定义SparkJar、Prql等。免费提供用户开发模版，任何复杂的场景都可以通过写代码的方式解决。</div>
           <div class="line-3" @click="handleQuickClick">立即体验</div>
         </div>
       </div>
@@ -77,8 +77,8 @@
           <img src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/product-img/p-2.jpg" alt="">
         </div>
         <div class="left">
-          <div class="line-1">驱动上传，海量数据源都能连</div>
-          <div class="line-2">支持海量数据源，如Mysql、Hive、Oracle、SqlServer、TiDB、Oceanbase、Doris、Clickhouse等。支持自定义驱动上传，解决企业中多版本数据源无法同时连接的难题。</div>
+          <div class="line-1">编排作业，横竖都能拖拽</div>
+          <div class="line-2">支持全量的作业生命周期指令，包括运行、中止、重跑、重跑下游、中断、重跑当前、发布等。且具备可视化定时调度设置，适配企业中各种复杂应用场景。</div>
           <div class="line-3" @click="handleQuickClick">立即体验</div>
         </div>
         <div class="right">
@@ -92,7 +92,7 @@
           <img src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/product-img/p-3.jpg" alt="">
         </div>
         <div class="right">
-          <div class="line-1">大数据大屏，再多也能展示</div>
+          <div class="line-1">数据大屏，大数据也能展示</div>
           <div class="line-2">通过强大数据处理和可视化技术，将复杂数据转化为直观图表，支持实时监控和分析，帮助企业快速决策。其灵活定制功能适应多种行业需求，确保信息准确及时。</div>
           <div class="line-3" @click="handleQuickClick">立即体验</div>
         </div>
@@ -122,8 +122,8 @@
           <img class="feat-img" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/product-img/p-4.jpg" alt="">
         </div>
         <div class="left">
-          <div class="line-1">编排作业，横竖都能拖拽</div>
-          <div class="line-2">支持全量的作业生命周期指令，包括运行、中止、重跑、重跑下游、中断、重跑当前、发布等。且具备可视化定时调度设置，适配企业中各种复杂应用场景。</div>
+          <div class="line-1">驱动上传，支持海量数据源</div>
+          <div class="line-2">支持海量数据源，如Mysql、Hive、Oracle、SqlServer、TiDB、Oceanbase、Doris、Clickhouse等。支持自定义驱动上传，解决企业中多版本数据源无法同时连接的难题。</div>
           <div class="line-3" @click="handleQuickClick">立即体验</div>
         </div>
         <div class="right">
@@ -137,8 +137,8 @@
           <img class="feat-img" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/product-img/p-5.jpg" alt="">
         </div>
         <div class="right">
-          <div class="line-1">能写代码？不单单只有SparkSql</div>
-          <div class="line-2">支持超多作业类型，包括数据同步、Bash脚本、Python、SparkSql、自定义SparkJar、Prql等。免费提供用户开发模版，任何复杂的场景都可以通过写代码的方式解决。</div>
+          <div class="line-1">多平台部署，从不娇生惯养</div>
+          <div class="line-2">支持各种资源调度平台，如Kubernetes、Spark Standalone、Spark Cluster、Yarn、CDH等。可无缝切换，敏捷迁移，帮助企业更优分配集群资源。</div>
           <div class="line-3" @click="handleQuickClick">立即体验</div>
         </div>
       </div>
@@ -189,12 +189,13 @@ onMounted(() => {
   const art = new Artplayer({
     container: '.artplayer-app',
     url: 'https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/product-img/product.mp4',
+    poster:'https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/product-img/product.jpg',
     fullscreen: true,
     fullscreenWeb: true,
     pip: true,
     autoplay: false,
     theme: '#e25a1b',
-    muted: true,
+    muted: false,
     autoSize: true
   });
   window.addEventListener("scroll", handleScroll);
@@ -265,8 +266,8 @@ const copyContent = async (text: string) => {
 <style lang="scss" scoped>
 
 @font-face {
-  font-family: "阿里妈妈数黑体 Bold";font-weight: 700;src: url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/zvbiHc8d5YKq.woff2") format("woff2"),
-  url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/77SsXIN8kN6W.woff") format("woff");
+  font-family: "阿里妈妈数黑体 Bold";font-weight: 700;src: url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/xsJVuIFqaDN3.woff2") format("woff2"),
+  url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/5fkSoUFx3Gkk.woff") format("woff");
   font-display: swap;
 }
 
@@ -435,8 +436,8 @@ $module-intro-img-width: 600px;
         margin: 25px auto auto;
         text-indent: 2em;
         width: 800px;
-        line-height: 24px;
-        font-size: 17px;
+        line-height: 26px;
+        font-size: 18px;
       }
 
       .why-content-mobile {
