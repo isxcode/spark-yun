@@ -15,7 +15,7 @@
       </div>
       <div class="right">
         <div class="column">
-          <div class="title">矩阵</div>
+          <div class="title">产品</div>
           <div class="link" @click="clickZhiqingyun">至轻云</div>
           <div class="link" @click="clickZhiliuyun">至流云</div>
           <div class="link" @click="clickZhishuyun">至数云</div>
@@ -31,15 +31,15 @@
         </div>
         <div class="column">
           <div class="title">资源</div>
-          <div class="link" @click="clickBlogs">解决方案</div>
           <div class="link" @click="clickDocs">产品手册</div>
+          <div class="link" @click="clickBlogs">博客</div>
           <div class="link" @click="clickDockerHub">Docker Hub</div>
           <div class="link" @click="downloadPackage">安装包下载</div>
           <div class="link" @click="downloadLicense">许可证下载</div>
         </div>
         <div class="column">
-          <div class="title">关于至爻</div>
-          <div class="link" @click="clickOther">至爻简介</div>
+          <div class="title">关于</div>
+          <div class="link" @click="clickOther">至爻数据</div>
           <div class="link" @click="joinUs">加入我们</div>
           <div class="link" @click="clickGithubProject">开发进度</div>
         </div>
