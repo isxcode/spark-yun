@@ -5,7 +5,8 @@ import { useRouter } from "vue-router";
 import { ElMessage } from "element-plus";
 import { useAuthStore } from "@/store/useAuth";
 
-import logoURL from '@/assets/imgs/logo.png';
+import logoURL from '@/assets/imgs/logo-view.png';
+import loginText from '@/assets/imgs/login-text.svg'
 import './login.scss'
 
 export default defineComponent({
@@ -37,15 +38,14 @@ export default defineComponent({
 
     return () => (
       <div class="zqy-login">
-        <div class="zqy-login__header">
-          <img class="zqy-login__logo" src={logoURL} alt="logo" />
-          <span class="zqy-login__title">至轻云</span>
-        </div>
         <div class="zqy-login__body">
           <div class="zqy-login__playground">
-            <span class="zqy-login__slogan">打造企业级大数据计算平台</span>
+            <img class="zqy-login__logo" src={logoURL} alt="logo" />
           </div>
           <div class="zqy-login__main">
+            <div class="zqy-login__text">
+              <img src={loginText} />
+            </div>
             { renderLoginForm() }
           </div>
         </div>
