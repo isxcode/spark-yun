@@ -137,16 +137,16 @@ const rules = reactive<FormRules>({
 })
 
 function showModal(cb: () => void, data: any): void {
+  Object.keys(formData).forEach((key: string) => {
+    formData[key] = ''
+    formData.collectType = 'ALL_TABLE'
+  })
   if (data && data.datasourceId && data.dbType) {
     formData.datasourceId = data.datasourceId
     formData.dbType = data.dbType
     formData.datasourceId && getDataSourceList(true)
     renderSence.value = 'edit'
   } else {
-    Object.keys(formData).forEach((key: string) => {
-      formData[key] = ''
-      formData.collectType = 'ALL_TABLE'
-    })
     renderSence.value = 'new'
   }
 
