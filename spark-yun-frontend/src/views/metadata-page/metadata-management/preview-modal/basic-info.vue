@@ -33,4 +33,8 @@ function initData() {
 onMounted(() => {
     initData()
 })
+
+defineExpose({
+    initData
+})
 </script>
