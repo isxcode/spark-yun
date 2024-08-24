@@ -136,6 +136,17 @@ function columnSlotAdapter(column: any, colConfig: any) {
     padding: 0;
     .vxe-cell {
       font-size: getCssVar('font-size', 'extra-small');
+
+      .name-click {
+        cursor: pointer;
+        font-weight: bold;
+        color: getCssVar('color', 'primary', 'light-3');
+
+        &:hover {
+          color: getCssVar('color', 'primary');
+          text-decoration: underline;
+        }
+      }
     }
   }
   .vxe-table--empty-content {
@@ -144,6 +155,13 @@ function columnSlotAdapter(column: any, colConfig: any) {
   .vxe-loading {
     .vxe-loading--chunk {
       color: getCssVar('color', 'primary');
+    }
+  }
+}
+.vxe-table--tooltip-wrapper {
+  &.is--active {
+    &.is--visible {
+      z-index: 3000 !important;
     }
   }
 }
