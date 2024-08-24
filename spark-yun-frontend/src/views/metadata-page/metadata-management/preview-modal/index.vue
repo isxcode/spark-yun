@@ -7,6 +7,7 @@
         </el-tabs>
         <div class="info-container">
             <component
+                ref="preTabRef"
                 :is="tabComponent"
                 :datasourceId="infoData.datasourceId"
                 :tableName="infoData.tableName"
@@ -15,7 +16,7 @@
         <template #customLeft>
             <el-button @click="closeEvent">关闭</el-button>
             <el-button v-if="activeName === 'basicInfo'" type="primary" :loading="exportLoading" @click="refreshEvent">刷新</el-button>
-            <el-button v-if="activeName === 'codeInfo'" type="primary" :loading="exportLoading" @click="exportEvent">导出</el-button>
+            <el-button v-if="activeName === 'dataPreview'" type="primary" :loading="exportLoading" @click="exportEvent">导出</el-button>
         </template>
     </BlockModal>
 </template>
@@ -35,6 +36,7 @@ const activeName = ref<string>('basicInfo')
 const exportLoading = ref<boolean>(false)
 const tabComponent = ref<any>()
 const infoData = ref<any>()
+const preTabRef = ref<any>()
 
 const modelConfig = reactive<any>({
     title: '详情',
@@ -75,6 +77,7 @@ function refreshEvent() {
     }).then((res: any) => {
         ElMessage.success('刷新成功')
         exportLoading.value = false
+        preTabRef.value?.initData()
     }).catch(() => {
         exportLoading.value = false
     })
@@ -90,7 +93,7 @@ function exportEvent() {
         // 创建一个链接元素并模拟点击下载
         const link = document.createElement('a')
         link.href = blobURL
-        link.download = `${infoData.value.tableName}.xlsx`  // 根据实际情况设置下载文件的名称和扩展名
+        link.download = `${infoData.value.tableName}.xls`  // 根据实际情况设置下载文件的名称和扩展名
         link.click()
         // 释放Blob URL
         URL.revokeObjectURL(blobURL)
