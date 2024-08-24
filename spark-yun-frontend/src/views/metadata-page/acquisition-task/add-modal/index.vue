@@ -347,7 +347,7 @@ const formData = reactive({
     setMode: 'SIMPLE',       // 模式
     enable: false,             // 启用
     cron: '',                 // cron表达式
-    workDate: '',             // 生效时间
+    workDate: [],             // 生效时间
     range: '',         // 调度周期
     startDateMin: '',  // 开始时间 - 分钟
     minNum: undefined,        // 间隔时间 - 分钟
@@ -398,7 +398,7 @@ function showModal(cb: () => void, data: any): void {
           setMode: 'SIMPLE',       // 模式
           enable: false,             // 启用
           cron: '',                 // cron表达式
-          workDate: '',             // 生效时间
+          workDate: [],             // 生效时间
           range: '',         // 调度周期
           startDateMin: '',  // 开始时间 - 分钟
           minNum: undefined,        // 间隔时间 - 分钟
@@ -423,7 +423,7 @@ function showModal(cb: () => void, data: any): void {
           setMode: 'SIMPLE',       // 模式
           enable: false,             // 启用
           cron: '',                 // cron表达式
-          workDate: '',             // 生效时间
+          workDate: [],             // 生效时间
           range: '',         // 调度周期
           startDateMin: '',  // 开始时间 - 分钟
           minNum: undefined,        // 间隔时间 - 分钟
