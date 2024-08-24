@@ -82,21 +82,10 @@ spring:
     url: jdbc:mysql://192.168.199.146:30306/zhiqingyun_db
     username: root
     password: ispong123
-
-  flyway:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://192.168.199.146:30306/zhiqingyun_db
-    user: root
-    password: ispong123
-    locations: classpath:db/migration/mysql
-
+    
 logging:
   level:
     root: info
-
-spark-yun:
-  default-agent-port: 30177
-  tmp-dir: /tmp
 
 isx-app:
   use-port: true
