@@ -75,7 +75,7 @@ public class MysqlService extends Datasource {
         try (Connection connection = getConnection(connectInfo)) {
             return qr.query(connection, "SELECT '" + connectInfo.getDatasourceId() + "' as datasourceId,'"
                 + connectInfo.getTableName()
-                + "' as tableName, COLUMN_NAME as columnName,COLUMN_TYPE as columnType,COLUMN_COMMENT as columnComment FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = '"
+                + "' as tableName, COLUMN_NAME as columnName,COLUMN_TYPE as columnType,COLUMN_COMMENT as columnComment,false as isPartitionColumn FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = '"
                 + connectInfo.getDatabase() + "' AND TABLE_NAME = '" + connectInfo.getTableName() + "'",
                 new BeanListHandler<>(QueryColumnDto.class));
         } catch (SQLException e) {
