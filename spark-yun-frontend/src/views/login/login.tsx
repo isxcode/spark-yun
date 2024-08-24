@@ -6,6 +6,7 @@ import { ElMessage } from "element-plus";
 import { useAuthStore } from "@/store/useAuth";
 
 import logoURL from '@/assets/imgs/logo-view.png';
+import logoIcon from '@/assets/imgs/logo-a.png'
 import loginText from '@/assets/imgs/login-text.svg'
 import './login.scss'
 
@@ -38,13 +39,14 @@ export default defineComponent({
 
     return () => (
       <div class="zqy-login">
+        <img class="zqy-logo-icon" src={logoIcon}/>
         <div class="zqy-login__body">
           <div class="zqy-login__playground">
             <img class="zqy-login__logo" src={logoURL} alt="logo" />
           </div>
           <div class="zqy-login__main">
             <div class="zqy-login__text">
-              <img src={loginText} />
+              {/* <img src={loginText} /> */}
             </div>
             { renderLoginForm() }
           </div>
