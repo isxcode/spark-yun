@@ -4,83 +4,81 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  background: linear-gradient(45deg, getCssVar('color', 'primary', 'light-7') 10%, getCssVar('color', 'white') 50%);
-
-  .zqy-login__header {
-    padding: 28px 56px;
-    user-select: none;
-    position: absolute;
-    z-index: 99;
-  }
-
-  .zqy-login__logo {
-    height: 38px;
-    //width: 43px;
-  }
-
-  .zqy-login__title {
-    font-size: 25px;
-    font-weight: bolder;
-    margin-left: 17px;
-    line-height: 45px;
-    vertical-align: bottom;
-    color: getCssVar('color', 'primary');
-  }
 
   .zqy-login__body {
     flex: 1;
     display: flex;
     padding: 0 20px;
     align-items: center;
-    justify-content: space-around;
   }
 
   .zqy-login__playground {
     display: flex;
-    justify-content: flex-end;
     align-items: center;
-    // flex: 1;
+    justify-content: flex-end;
+    flex: 6;
     height: 100%;
-  }
+    margin-right: 80px;
 
-  .zqy-login__slogan {
-    font-size: 45px;
-    font-weight: bold;
-    color: getCssVar('color', 'primary');
-    // margin-right: 20%;
+    img {
+      width: 70%;
+    }
   }
 
   .zqy-login__main {
     display: flex;
-    align-items: center;
-    width: 350px;
+    flex: 4;
+    flex-direction: column;
+    justify-content: center;
     height: 100%;
+    .zqy-login__text {
+      width: 65%;
+      height: 70px;
+      img {
+        width: 100%;
+        height: 100%;
+      }
+    }
   }
 
   .zqy-login__form-wrap {
-    width: 100%;
-    padding: 20px 20% 20px 0;
+    width: 49%;
+    padding: 50px 8%;
+    border-radius: 3%;
+    box-shadow: 0 0 10px var(--el-border-color);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .zqy-login__main__title {
+    margin: 0;
+    margin: 30px 0 40px;
+    font-weight: 600;
+    color: var(--el-color-black);
+    font-size: 24px;
   }
 
   .zqy-login__form {
+    width: 100%;
     .el-form-item {
       margin-bottom: 36px;
 
       &.is-error {
         .el-input__wrapper {
-          padding: 1px;
+          padding: 0 8px;
           box-shadow: none;
         }
 
         .zqy-login__input {
-          padding: 1px;
           border-color: getCssVar('color', 'danger');
+          line-height: 40px;
         }
       }
 
       .zqy-login__input {
+        height: 40px;
         .el-input__inner {
-          padding: 1px;
           font-size: 14px;
         }
       }
@@ -92,7 +90,8 @@
   }
 
   .zqy-login__input {
-    border-bottom: 1px solid black;
+    border: 1px solid var(--el-border-color);
+    border-radius: 3px;
     transition: all .4s linear;
 
     &:hover {
@@ -100,14 +99,22 @@
     }
 
     .el-input__wrapper {
-      padding: 1px;
+      padding: 0 8px;
       box-shadow: none;
     }
   }
 
   .zqy-login__btn {
-    margin-top: 48px;
     width: 100%;
     font-size: 25px;
+    background: linear-gradient(45deg,var(--el-color-primary-light-3),var(--el-color-primary));
+    color: var(--vxe-icon-background-color);
+    font-size: 16px;
+    border-radius: 3px;
+    height: 48px;
+    &:hover {
+      background-color: var(--el-color-primary);
+      color: var(--vxe-icon-background-color);
+    }
   }
 }

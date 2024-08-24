@@ -1,6 +1,8 @@
 import type { ElForm, FormRules } from "element-plus";
 import { reactive, readonly, ref } from "vue";
 
+import logo from '@/assets/imgs/logo1.svg';
+
 export interface LoginModel {
   account: string,
   passwd: string
@@ -56,28 +58,35 @@ export function useLogin (callback: ((callback: LoginModel) => Promise<void>)) {
   return {
     renderLoginForm: () => (
       <div class="zqy-login__form-wrap">
+        <img src={logo}/>
+        <div class="zqy-login__main__title">
+          用户登录
+        </div>
         <el-form
           ref={elFormRef}
           class="zqy-login__form"
           model={loginModel}
           rules={loginRule}
           onKeyup={handleKeyup}
+          label-position="top"
         >
           <el-form-item prop="account">
             <el-input
+              prefix-icon="User"
               class="zqy-login__input"
               v-model={loginModel.account}
-              placeholder="账号/邮箱/手机号"
+              placeholder="请输入账号/邮箱/手机号"
             ></el-input>
           </el-form-item>
           <el-form-item prop="passwd">
             <el-input
+              prefix-icon="Lock"
               class="zqy-login__input"
               v-model={loginModel.passwd}
               type="password"
               show-password
               autocomplete="new-password"
-              placeholder="密码"
+              placeholder="请输入密码"
             ></el-input>
           </el-form-item>
         </el-form>
@@ -86,7 +95,7 @@ export function useLogin (callback: ((callback: LoginModel) => Promise<void>)) {
           type="text"
           loading={btnLoading.value}
           onClick={handleLogin}
-        >登录</el-button>
+        >确认登录</el-button>
       </div>
     ),
 
