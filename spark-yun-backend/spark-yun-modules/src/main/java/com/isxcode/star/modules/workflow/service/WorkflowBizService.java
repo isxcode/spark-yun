@@ -225,6 +225,20 @@ public class WorkflowBizService {
      */
     public String runWorkflow(RunWorkflowReq runWorkflowReq) {
 
+        // 判断租户下的作业流上限
+        TenantEntity tenant = tenantService.getTenant(TENANT_ID.get());
+        long workflowCount = workflowRepository.count();
+        if (workflowCount + 1 > tenant.getMaxWorkflowNum()) {
+            throw new IsxAppException("超出租户的最大作业流限制");
+        }
+
+        // 判断作业流上限是否超过许可证
+        if (licenseStore.getLicense() != null) {
+            if (workflowCount + 1 > licenseStore.getLicense().getMaxWorkflowNum()) {
+                throw new IsxAppException("超出许可证租户的最大作业流限制");
+            }
+        }
+
         return workflowService.runWorkflow(runWorkflowReq.getWorkflowId());
     }
 
