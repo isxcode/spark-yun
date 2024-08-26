@@ -45,7 +45,7 @@ public class MysqlService extends Datasource {
     @Override
     public List<QueryTableDto> queryTable(ConnectInfo connectInfo) throws IsxAppException {
 
-        Assert.notNull(connectInfo.getDatabase(), "datasource不能为空");
+        Assert.notNull(connectInfo.getDatabase(), "datasbase不能为空");
 
         QueryRunner qr = new QueryRunner();
         try (Connection connection = getConnection(connectInfo)) {
