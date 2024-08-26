@@ -1,7 +1,7 @@
 application:
   title: 至轻云
   website: https://zhiqingyun.isxcode.com
-  describe: 企业级大数据计算中台
+  describe: 企业级大数据计算平台
 
 server:
   tomcat:

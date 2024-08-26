@@ -7,7 +7,7 @@
             至轻云
           </div>
           <div class="slogan">
-            企业级大数据计算中台
+            企业级大数据计算平台
           </div>
           <div class="command">
             <p id="command-shell">docker run -p 8080:8080 isxcode/zhiqingyun</p>
@@ -166,7 +166,7 @@ definePageMeta({
 useSeoMeta({
   title: "至轻云",
   ogTitle: "至爻数据",
-  description: "企业级大数据计算中台",
+  description: "企业级大数据计算平台",
   ogDescription: "打造企业级开源软件全家桶",
 });
 
