@@ -19,7 +19,6 @@ import org.apache.logging.log4j.util.Strings;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
-import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
@@ -92,11 +91,10 @@ public class DorisService extends Datasource {
 
         QueryRunner qr = new QueryRunner();
         try (Connection connection = getConnection(connectInfo)) {
-            BigInteger result = qr.query(
+            return qr.query(
                 connection, "SELECT data_length FROM information_schema.tables WHERE table_schema = '"
                     + connectInfo.getDatabase() + "' AND table_name = '" + connectInfo.getTableName() + "'",
                 new ScalarHandler<>());
-            return Long.parseLong(String.valueOf(result));
         } catch (SQLException e) {
             log.error(e.getMessage(), e);
             throw new IsxAppException(e.getMessage());
