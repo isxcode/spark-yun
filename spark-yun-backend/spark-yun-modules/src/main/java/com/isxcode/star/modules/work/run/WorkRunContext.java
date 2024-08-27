@@ -6,9 +6,6 @@ import lombok.Data;
 
 import java.util.List;
 
-/**
- * 作业运行上下文.
- */
 @Data
 @Builder
 public class WorkRunContext {

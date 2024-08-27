@@ -14,14 +14,12 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface TenantMapper {
 
-    /** TetAddTenantReq To TenantEntity. */
     @Mapping(target = "checkDateTime", expression = "java(java.time.LocalDateTime.now())")
     @Mapping(target = "status", constant = UserStatus.ENABLE)
     @Mapping(target = "usedMemberNum", constant = "1L")
     @Mapping(target = "usedWorkflowNum", constant = "0L")
     TenantEntity tetAddTenantReqToTenantEntity(AddTenantReq tetAddTenantReq);
 
-    /** TenantEntity To TetQueryUserTenantRes. */
     QueryUserTenantRes tenantEntityToTetQueryUserTenantRes(TenantEntity tenantEntity);
 
     List<QueryUserTenantRes> tenantEntityToTetQueryUserTenantResList(List<TenantEntity> tenantEntities);

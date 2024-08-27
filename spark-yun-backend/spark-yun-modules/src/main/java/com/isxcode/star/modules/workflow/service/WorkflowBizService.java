@@ -29,7 +29,6 @@ import com.isxcode.star.backend.api.base.properties.IsxAppProperties;
 import com.isxcode.star.common.locker.Locker;
 import com.isxcode.star.common.utils.jwt.JwtUtils;
 import com.isxcode.star.modules.cluster.entity.ClusterEntity;
-import com.isxcode.star.modules.cluster.repository.ClusterRepository;
 import com.isxcode.star.modules.cluster.service.ClusterService;
 import com.isxcode.star.modules.license.repository.LicenseStore;
 import com.isxcode.star.modules.tenant.entity.TenantEntity;
@@ -77,9 +76,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-/**
- * 用户模块接口的业务逻辑.
- */
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -109,8 +105,6 @@ public class WorkflowBizService {
 
     private final Executor sparkYunWorkThreadPool;
 
-    private final ClusterRepository clusterRepository;
-
     private final ClusterService clusterService;
 
     private final TenantService tenantService;
@@ -118,15 +112,6 @@ public class WorkflowBizService {
     private final LicenseStore licenseStore;
 
     private final IsxAppProperties isxAppProperties;
-
-    public WorkflowEntity getWorkflowEntity(String workflowId) {
-
-        Optional<WorkflowEntity> workflowEntityOptional = workflowRepository.findById(workflowId);
-        if (!workflowEntityOptional.isPresent()) {
-            throw new IsxAppException("作业流不存在");
-        }
-        return workflowEntityOptional.get();
-    }
 
     public void addWorkflow(AddWorkflowReq wofAddWorkflowReq) {
 
@@ -464,9 +449,6 @@ public class WorkflowBizService {
         }
     }
 
-    /**
-     * 中止作业流
-     */
     public void abortFlow(AbortFlowReq abortFlowReq) {
 
         // 将所有的PENDING作业实例，改为ABORT
@@ -520,9 +502,6 @@ public class WorkflowBizService {
         });
     }
 
-    /**
-     * 中止作业节点实例.
-     */
     public void abortWorkInstance(WorkInstanceEntity workInstance) {
 
         WorkEntity workEntity = workRepository.findById(workInstance.getWorkId()).get();
@@ -550,9 +529,6 @@ public class WorkflowBizService {
         }
     }
 
-    /**
-     * 中断作业.
-     */
     public void breakFlow(BreakFlowReq breakFlowReq) {
 
         WorkInstanceEntity workInstance = workflowService.getWorkInstance(breakFlowReq.getWorkInstanceId());
@@ -563,9 +539,6 @@ public class WorkflowBizService {
         workInstanceRepository.save(workInstance);
     }
 
-    /**
-     * 重跑当前节点.
-     */
     public void runCurrentNode(RunCurrentNodeReq runCurrentNodeReq) {
 
         WorkInstanceEntity workInstance = workInstanceRepository.findById(runCurrentNodeReq.getWorkInstanceId()).get();
@@ -607,9 +580,6 @@ public class WorkflowBizService {
         });
     }
 
-    /**
-     * 重跑作业流.
-     */
     public void reRunFlow(ReRunFlowReq reRunFlowReq) {
 
         // 先中止作业

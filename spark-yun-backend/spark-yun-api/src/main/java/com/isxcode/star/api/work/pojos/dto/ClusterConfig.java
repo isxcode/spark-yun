@@ -7,9 +7,6 @@ import lombok.NoArgsConstructor;
 
 import java.util.Map;
 
-/**
- * 资源配置信息.
- */
 @Data
 @Builder
 @AllArgsConstructor

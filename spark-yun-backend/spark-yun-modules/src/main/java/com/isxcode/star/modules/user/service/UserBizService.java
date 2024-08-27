@@ -29,9 +29,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-/**
- * 用户模块.
- */
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -47,9 +44,6 @@ public class UserBizService {
 
     private final TenantUserRepository tenantUserRepository;
 
-    /**
-     * 用户登录.
-     */
     public LoginRes login(LoginReq usrLoginReq) {
 
         // 判断用户是否存在
@@ -179,11 +173,6 @@ public class UserBizService {
         System.out.println("用户退出登录");
     }
 
-    public void addUser() {}
-
-    /**
-     * 创建用户.
-     */
     public void addUser(AddUserReq usrAddUserReq) {
 
         // 判断账号是否存在

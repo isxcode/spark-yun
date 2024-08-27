@@ -80,9 +80,6 @@ public class Execute {
         }
     }
 
-    /**
-     * 构建来源视图.
-     */
     public static String genSourceTempView(SparkSession sparkSession, PluginReq conf) {
 
         String sourceTableName = "zhiqingyun_src_" + conf.getExcelSyncConfig().getSourceFileId();
@@ -114,9 +111,6 @@ public class Execute {
         return sourceTableName;
     }
 
-    /**
-     * 构建去向视图.
-     */
     public static String genTargetTempView(SparkSession sparkSession, PluginReq conf) {
 
         String targetTableName = "zhiqingyun_dist_" + conf.getExcelSyncConfig().getTargetDatabase().getDbTable();
@@ -182,35 +176,6 @@ public class Execute {
             return matcher.group(1) + ".";
         } else {
             return "";
-        }
-    }
-
-    public static String getHash(String datasourceType) {
-        switch (datasourceType) {
-            case DatasourceType.MYSQL:
-            case DatasourceType.TIDB:
-                return "CRC32";
-            case DatasourceType.ORACLE:
-            case DatasourceType.OCEANBASE:
-            case DatasourceType.DM:
-                return "ORA_HASH";
-            case DatasourceType.SQL_SERVER:
-                return "CHECKSUM";
-            case DatasourceType.POSTGRE_SQL:
-                return "md5";
-            case DatasourceType.CLICKHOUSE:
-                return "sipHash64";
-            case DatasourceType.HIVE:
-                return "hash";
-            case DatasourceType.HANA_SAP:
-                return "HASH_SHA256";
-            case DatasourceType.DORIS:
-            case DatasourceType.STAR_ROCKS:
-                return "murmur_hash3_32";
-            case DatasourceType.DB2:
-                return "hash8";
-            default:
-                throw new RuntimeException("暂不支持的数据库");
         }
     }
 

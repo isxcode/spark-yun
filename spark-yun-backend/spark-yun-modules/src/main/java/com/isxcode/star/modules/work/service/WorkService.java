@@ -18,9 +18,4 @@ public class WorkService {
 
         return workRepository.findById(workId).orElseThrow(() -> new IsxAppException("作业不存在"));
     }
-
-    public void checkWork(String workId) {
-
-        workRepository.findById(workId).orElseThrow(() -> new IsxAppException("作业不存在"));
-    }
 }

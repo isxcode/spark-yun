@@ -32,9 +32,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-/**
- * 计算引擎模块.
- */
 @Service
 @RequiredArgsConstructor
 @Transactional

@@ -2,9 +2,6 @@ package com.isxcode.star.modules.work.sql;
 
 import org.springframework.stereotype.Service;
 
-/**
- * 解析sql中的注解.
- */
 @Service
 public class SqlCommentService {
 

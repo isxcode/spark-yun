@@ -21,8 +21,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "租户模块")
-@RestController
 @RequestMapping(ModuleCode.TENANT)
+@RestController
 @RequiredArgsConstructor
 public class TenantController {
 

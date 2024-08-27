@@ -22,7 +22,6 @@ import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-/** 计算引擎. */
 @Data
 @Entity
 @SQLDelete(sql = "UPDATE SY_CLUSTER SET deleted = 1 WHERE id = ? and version_number = ?")

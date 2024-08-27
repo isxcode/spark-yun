@@ -34,9 +34,6 @@ import java.util.Optional;
 
 import static com.isxcode.star.common.config.CommonConfig.TENANT_ID;
 
-/**
- * 资源文件接口的业务逻辑.
- */
 @Service
 @RequiredArgsConstructor
 @Transactional

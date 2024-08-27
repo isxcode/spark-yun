@@ -5,53 +5,40 @@ import com.isxcode.star.api.datasource.pojos.dto.KafkaConfig;
 import com.isxcode.star.api.datasource.pojos.dto.SecurityColumnDto;
 import com.isxcode.star.api.work.exceptions.WorkRunException;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
-import com.isxcode.star.backend.api.base.properties.IsxAppProperties;
-import com.isxcode.star.common.utils.AesUtils;
 import com.isxcode.star.modules.datasource.entity.DatasourceEntity;
 import com.isxcode.star.modules.datasource.repository.DatasourceRepository;
 import com.isxcode.star.modules.datasource.source.DataSourceFactory;
 import com.isxcode.star.modules.datasource.source.Datasource;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.calcite.sql.SqlKind;
+import org.apache.calcite.sql.SqlNode;
 import org.apache.calcite.sql.SqlOrderBy;
 import org.apache.calcite.sql.SqlSelect;
 import org.apache.calcite.sql.parser.SqlParseException;
+import org.apache.calcite.sql.parser.SqlParser;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.AdminClientConfig;
 import org.apache.kafka.clients.admin.ListTopicsResult;
 import org.springframework.stereotype.Service;
-import org.apache.calcite.sql.SqlKind;
-import org.apache.calcite.sql.parser.SqlParser;
-import org.apache.calcite.sql.SqlNode;
 
-import java.sql.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class DatasourceService {
 
-    private final IsxAppProperties isxAppProperties;
-
     private final DatasourceRepository datasourceRepository;
-
-    private final DatabaseDriverService dataDriverService;
 
     private final DataSourceFactory dataSourceFactory;
 
-    /**
-     * 所有的驱动. driverId driver
-     */
     public final static Map<String, DriverShim> ALL_EXIST_DRIVER = new ConcurrentHashMap<>();
-
-    private final AesUtils aesUtils;
 
     public String getDriverClass(String datasourceType) {
 

@@ -20,9 +20,6 @@ import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.util.Strings;
 
-/**
- * 工作流工具类.
- */
 public class WorkflowUtils {
 
     /**
@@ -150,7 +147,6 @@ public class WorkflowUtils {
 
     public static WorkRunContext genWorkRunContext(String instanceId, VipWorkVersionEntity workVersion,
         WorkflowRunEvent event) {
-        // todo 维护udf配置信息 维护自定义作业配置信息
         return WorkRunContext.builder().datasourceId(workVersion.getDatasourceId()).script(workVersion.getScript())
             .instanceId(instanceId).tenantId(TENANT_ID.get()).userId(USER_ID.get())
             .syncWorkConfig(JSON.parseObject(workVersion.getSyncWorkConfig(), SyncWorkConfig.class))
