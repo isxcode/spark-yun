@@ -37,9 +37,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-/**
- * 用户模块接口的业务逻辑.
- */
 @Service
 @RequiredArgsConstructor
 @Transactional(noRollbackFor = {IsxAppException.class})

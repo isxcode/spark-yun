@@ -26,9 +26,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-/**
- * 数据源模块service.
- */
 @Service
 @Slf4j
 @RequiredArgsConstructor

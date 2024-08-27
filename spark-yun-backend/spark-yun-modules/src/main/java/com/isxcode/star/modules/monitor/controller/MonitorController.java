@@ -24,8 +24,8 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 
 @Tag(name = "监控模块")
-@RestController
 @RequestMapping(ModuleCode.MONITOR)
+@RestController
 @RequiredArgsConstructor
 public class MonitorController {
 

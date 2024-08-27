@@ -18,14 +18,11 @@ import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
-/** 用户模块接口的业务逻辑. */
 @Service
 @RequiredArgsConstructor
 @Transactional
 @Slf4j
 public class WorkflowConfigBizService {
-
-    private final WorkflowBizService workflowBizService;
 
     private final WorkflowConfigRepository workflowConfigRepository;
 
@@ -43,7 +40,6 @@ public class WorkflowConfigBizService {
         return workflowConfigEntityOptional.get();
     }
 
-    /** 配置工作流. */
     public void configWorkflow(ConfigWorkflowReq wfcConfigWorkflowReq) {
 
         String flowWebConfig = JSON.toJSONString(wfcConfigWorkflowReq.getWebConfig());

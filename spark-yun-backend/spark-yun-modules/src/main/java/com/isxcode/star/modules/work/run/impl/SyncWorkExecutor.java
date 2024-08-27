@@ -63,9 +63,6 @@ import java.util.*;
 import static com.isxcode.star.common.config.CommonConfig.TENANT_ID;
 import static com.isxcode.star.common.utils.ssh.SshUtils.scpJar;
 
-/**
- * 同步作业执行器.
- */
 @Service
 @Slf4j
 public class SyncWorkExecutor extends WorkExecutor {
@@ -480,9 +477,6 @@ public class SyncWorkExecutor extends WorkExecutor {
         }
     }
 
-    /**
-     * 初始化spark作业提交配置.
-     */
     public Map<String, String> genSparkSubmitConfig(Map<String, String> sparkConfig) {
 
         // 过滤掉，前缀不包含spark.xxx的配置，spark submit中必须都是spark.xxx
@@ -495,9 +489,6 @@ public class SyncWorkExecutor extends WorkExecutor {
         return sparkSubmitConfig;
     }
 
-    /**
-     * sparkConfig不能包含k8s的配置
-     */
     public Map<String, String> genSparkConfig(Map<String, String> sparkConfig) {
 
         // k8s的配置不能提交到作业中

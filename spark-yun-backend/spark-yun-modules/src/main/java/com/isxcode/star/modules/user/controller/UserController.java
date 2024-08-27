@@ -20,8 +20,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "用户模块")
-@RestController
 @RequestMapping(ModuleCode.USER)
+@RestController
 @RequiredArgsConstructor
 public class UserController {
 
@@ -71,7 +71,7 @@ public class UserController {
     }
 
     @Secured({RoleType.SYS_ADMIN})
-    @Operation(summary = "更新用户信息")
+    @Operation(summary = "更新用户信息接口")
     @PostMapping("/updateUserInfo")
     @SuccessResponse("信息更新成功")
     public void updateUserInfo(@Valid @RequestBody UpdateUserInfoReq updateUserInfoReq) {

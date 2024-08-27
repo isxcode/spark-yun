@@ -28,8 +28,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 @Tag(name = "作业流模块")
-@RestController
 @RequestMapping(ModuleCode.WORKFLOW)
+@RestController
 @RequiredArgsConstructor
 public class WorkflowController {
 
@@ -166,7 +166,7 @@ public class WorkflowController {
         workflowConfigBizService.configWorkflowSetting(configWorkflowSettingReq);
     }
 
-    @Operation(summary = "获取作业流默认计算引擎")
+    @Operation(summary = "获取作业流默认计算引擎接口")
     @PostMapping("/getWorkflowDefaultCluster")
     @SuccessResponse("查询成功")
     public GetWorkflowDefaultClusterRes getWorkflowDefaultCluster(
@@ -183,7 +183,7 @@ public class WorkflowController {
         return workflowBizService.getInvokeUrl(getInvokeUrlReq);
     }
 
-    @Operation(summary = "外部调用作业流")
+    @Operation(summary = "外部调用作业流接口")
     @PostMapping("/open/invokeWorkflow")
     @SuccessResponse("调用成功")
     public void invokeWorkflow(@Valid @RequestBody InvokeWorkflowReq invokeWorkflowReq) {

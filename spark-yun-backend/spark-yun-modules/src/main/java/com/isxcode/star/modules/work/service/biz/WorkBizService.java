@@ -23,7 +23,6 @@ import com.isxcode.star.modules.cluster.repository.ClusterRepository;
 import com.isxcode.star.modules.work.entity.WorkConfigEntity;
 import com.isxcode.star.modules.work.entity.WorkEntity;
 import com.isxcode.star.modules.work.entity.WorkInstanceEntity;
-import com.isxcode.star.modules.work.mapper.WorkConfigMapper;
 import com.isxcode.star.modules.work.mapper.WorkMapper;
 import com.isxcode.star.modules.work.repository.WorkConfigRepository;
 import com.isxcode.star.modules.work.repository.WorkInstanceRepository;
@@ -77,8 +76,6 @@ public class WorkBizService {
     private final HttpUrlUtils httpUrlUtils;
 
     private final WorkConfigService workConfigService;
-
-    private final WorkConfigMapper workConfigMapper;
 
     public GetWorkRes addWork(AddWorkReq addWorkReq) {
 
@@ -498,25 +495,6 @@ public class WorkBizService {
         return getWorkRes;
     }
 
-    public ClusterNodeEntity getEngineWork(String calculateEngineId) {
-
-        if (Strings.isEmpty(calculateEngineId)) {
-            throw new IsxAppException("作业未配置计算引擎");
-        }
-
-        Optional<ClusterEntity> calculateEngineEntityOptional = calculateEngineRepository.findById(calculateEngineId);
-        if (!calculateEngineEntityOptional.isPresent()) {
-            throw new IsxAppException("计算引擎不存在");
-        }
-
-        List<ClusterNodeEntity> allEngineNodes = engineNodeRepository
-            .findAllByClusterIdAndStatus(calculateEngineEntityOptional.get().getId(), ClusterNodeStatus.RUNNING);
-        if (allEngineNodes.isEmpty()) {
-            throw new IsxAppException("计算引擎无可用节点，请换一个计算引擎");
-        }
-        return allEngineNodes.get(0);
-    }
-
     public GetSubmitLogRes getSubmitLog(GetSubmitLogReq getSubmitLogReq) {
 
         Optional<WorkInstanceEntity> workInstanceEntityOptional =
@@ -573,25 +551,5 @@ public class WorkBizService {
             work.setTopIndex(maxTopIndex + 1);
         }
         workRepository.save(work);
-    }
-
-    public void saveSyncWorkConfig(SaveSyncWorkConfigReq saveSyncWorkConfigReq) {
-
-        WorkEntity work = workService.getWorkEntity(saveSyncWorkConfigReq.getWorkId());
-        WorkConfigEntity workConfig = workConfigService.getWorkConfigEntity(work.getConfigId());
-
-        workConfig.setSyncWorkConfig(JSON.toJSONString(saveSyncWorkConfigReq));
-
-        workConfigRepository.save(workConfig);
-    }
-
-    public GetSyncWorkConfigRes getSyncWorkConfig(GetSyncWorkConfigReq getSyncWorkConfigReq) {
-
-        WorkEntity work = workService.getWorkEntity(getSyncWorkConfigReq.getWorkId());
-        WorkConfigEntity workConfig = workConfigService.getWorkConfigEntity(work.getConfigId());
-
-        SyncWorkConfig syncWorkConfig = JSON.parseObject(workConfig.getSyncWorkConfig(), SyncWorkConfig.class);
-
-        return workConfigMapper.syncWorkConfigToGetSyncWorkConfigRes(syncWorkConfig);
     }
 }

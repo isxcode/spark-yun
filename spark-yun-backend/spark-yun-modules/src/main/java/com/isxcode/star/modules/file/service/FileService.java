@@ -6,9 +6,6 @@ import com.isxcode.star.modules.file.repository.FileRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-/**
- * 资源文件接口的业务逻辑.
- */
 @Service
 @RequiredArgsConstructor
 public class FileService {

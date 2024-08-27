@@ -6,7 +6,6 @@ import com.isxcode.star.api.work.pojos.req.*;
 import com.isxcode.star.api.work.pojos.res.*;
 import com.isxcode.star.modules.datasource.entity.DatasourceEntity;
 import com.isxcode.star.modules.datasource.mapper.DatasourceMapper;
-import com.isxcode.star.modules.datasource.repository.DatasourceRepository;
 import com.isxcode.star.modules.datasource.service.DatasourceService;
 import com.isxcode.star.modules.datasource.source.DataSourceFactory;
 import com.isxcode.star.modules.datasource.source.Datasource;
@@ -22,9 +21,6 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
-/**
- * 用户模块接口的业务逻辑.
- */
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -34,8 +30,6 @@ public class SyncWorkBizService {
     private final DatasourceService datasourceService;
 
     private final SyncWorkService syncWorkService;
-
-    private final DatasourceRepository datasourceRepository;
 
     private final DataSourceFactory dataSourceFactory;
 

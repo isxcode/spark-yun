@@ -20,8 +20,8 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 
 @Tag(name = "基线告警模块")
-@RestController
 @RequestMapping(ModuleCode.ALARM)
+@RestController
 @RequiredArgsConstructor
 public class AlarmController {
 

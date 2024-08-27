@@ -20,8 +20,8 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 
 @Tag(name = "作业模块")
-@RestController
 @RequestMapping(ModuleCode.WORK)
+@RestController
 @RequiredArgsConstructor
 public class WorkController {
 
@@ -153,7 +153,7 @@ public class WorkController {
         workBizService.topWork(topWorkReq);
     }
 
-    @Operation(summary = "获取数据源表信息")
+    @Operation(summary = "获取数据源表信息接口")
     @PostMapping("/getDataSourceTables")
     @SuccessResponse("查询成功")
     public GetDataSourceTablesRes getDataSourceTables(@Valid @RequestBody GetDataSourceTablesReq getDataSourceTablesReq)
@@ -162,7 +162,7 @@ public class WorkController {
         return syncWorkBizService.getDataSourceTables(getDataSourceTablesReq);
     }
 
-    @Operation(summary = "获取数据表字段信息")
+    @Operation(summary = "获取数据表字段信息接口")
     @PostMapping("/getDataSourceColumns")
     @SuccessResponse("查询成功")
     public GetDataSourceColumnsRes getDataSourceColumns(
@@ -171,7 +171,7 @@ public class WorkController {
         return syncWorkBizService.getDataSourceColumns(getDataSourceColumnsReq);
     }
 
-    @Operation(summary = "数据预览")
+    @Operation(summary = "数据预览接口")
     @PostMapping("/getDataSourceData")
     @SuccessResponse("查询成功")
     public GetDataSourceDataRes getDataSourceData(@Valid @RequestBody GetDataSourceDataReq getDataSourceDataReq)
@@ -180,7 +180,7 @@ public class WorkController {
         return syncWorkBizService.getDataSourceData(getDataSourceDataReq);
     }
 
-    @Operation(summary = "DDL预生成")
+    @Operation(summary = "DDL预生成接口")
     @PostMapping("/getCreateTableSql")
     @SuccessResponse("查询成功")
     public GetCreateTableSqlRes getCreateTableSql(@Valid @RequestBody GetCreateTableSqlReq getCreateTableSqlReq)
@@ -189,7 +189,7 @@ public class WorkController {
         return syncWorkBizService.getCreateTableSql(getCreateTableSqlReq);
     }
 
-    @Operation(summary = "获取Excel文件的字段信息")
+    @Operation(summary = "获取Excel文件的字段信息接口")
     @PostMapping("/getExcelColumns")
     @SuccessResponse("查询成功")
     public GetExcelColumnsRes getExcelColumns(@Valid @RequestBody GetExcelColumnsReq getExcelColumnsReq) {
@@ -197,7 +197,7 @@ public class WorkController {
         return excelSyncService.getExcelColumns(getExcelColumnsReq);
     }
 
-    @Operation(summary = "excel数据预览")
+    @Operation(summary = "excel数据预览接口")
     @PostMapping("/getExcelData")
     @SuccessResponse("查询成功")
     public GetExcelDataRes getExcelData(@Valid @RequestBody GetExcelDataReq getExcelDataReq) {

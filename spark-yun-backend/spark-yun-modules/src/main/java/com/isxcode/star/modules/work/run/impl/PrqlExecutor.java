@@ -11,7 +11,6 @@ import com.isxcode.star.modules.alarm.service.AlarmService;
 import com.isxcode.star.modules.datasource.entity.DatasourceEntity;
 import com.isxcode.star.modules.datasource.mapper.DatasourceMapper;
 import com.isxcode.star.modules.datasource.repository.DatasourceRepository;
-import com.isxcode.star.modules.datasource.service.DatasourceService;
 import com.isxcode.star.modules.datasource.source.DataSourceFactory;
 import com.isxcode.star.modules.datasource.source.Datasource;
 import com.isxcode.star.modules.work.entity.WorkInstanceEntity;
@@ -40,7 +39,6 @@ import java.util.Optional;
 public class PrqlExecutor extends WorkExecutor {
 
     private final DatasourceRepository datasourceRepository;
-    private final DatasourceService datasourceService;
 
     private final SqlCommentService sqlCommentService;
 
@@ -54,12 +52,10 @@ public class PrqlExecutor extends WorkExecutor {
 
     public PrqlExecutor(WorkInstanceRepository workInstanceRepository,
         WorkflowInstanceRepository workflowInstanceRepository, DatasourceRepository datasourceRepository,
-        DatasourceService datasourceService, SqlCommentService sqlCommentService, SqlValueService sqlValueService,
-        SqlFunctionService sqlFunctionService, AlarmService alarmService, DataSourceFactory dataSourceFactory,
-        DatasourceMapper datasourceMapper) {
+        SqlCommentService sqlCommentService, SqlValueService sqlValueService, SqlFunctionService sqlFunctionService,
+        AlarmService alarmService, DataSourceFactory dataSourceFactory, DatasourceMapper datasourceMapper) {
         super(workInstanceRepository, workflowInstanceRepository, alarmService);
         this.datasourceRepository = datasourceRepository;
-        this.datasourceService = datasourceService;
         this.sqlCommentService = sqlCommentService;
         this.sqlValueService = sqlValueService;
         this.sqlFunctionService = sqlFunctionService;

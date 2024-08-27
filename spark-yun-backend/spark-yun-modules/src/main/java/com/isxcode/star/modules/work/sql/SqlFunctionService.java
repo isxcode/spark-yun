@@ -17,9 +17,6 @@ import java.util.regex.Pattern;
 
 import static java.util.regex.Pattern.compile;
 
-/**
- * 解析sql中的函数.
- */
 @Service
 @RequiredArgsConstructor
 public class SqlFunctionService {

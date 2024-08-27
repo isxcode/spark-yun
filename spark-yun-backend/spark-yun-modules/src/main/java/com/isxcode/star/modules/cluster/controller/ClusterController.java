@@ -19,8 +19,8 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @Tag(name = "计算引擎模块")
-@RestController
 @RequestMapping(ModuleCode.CLUSTER)
+@RestController
 @RequiredArgsConstructor
 public class ClusterController {
 
@@ -66,7 +66,7 @@ public class ClusterController {
         clusterBizService.checkCluster(checkClusterReq);
     }
 
-    @Operation(summary = "设置默认集群")
+    @Operation(summary = "设置默认集群接口")
     @PostMapping("/setDefaultCluster")
     @SuccessResponse("设置成功")
     public void setDefaultCluster(@Valid @RequestBody SetDefaultClusterReq setDefaultClusterReq) {
@@ -74,7 +74,7 @@ public class ClusterController {
         clusterBizService.setDefaultCluster(setDefaultClusterReq);
     }
 
-    @Operation(summary = "查询所有集群列表")
+    @Operation(summary = "查询所有集群列表接口")
     @PostMapping("/queryAllCluster")
     @SuccessResponse("查询成功")
     public List<QueryAllClusterRes> queryAllCluster() {

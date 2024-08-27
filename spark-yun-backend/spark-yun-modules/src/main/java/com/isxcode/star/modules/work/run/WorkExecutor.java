@@ -24,9 +24,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.scheduling.annotation.Async;
 
-/**
- * 作业执行器.
- */
 @Slf4j
 @RequiredArgsConstructor
 public abstract class WorkExecutor {
@@ -45,18 +42,12 @@ public abstract class WorkExecutor {
 
     protected abstract void abort(WorkInstanceEntity workInstance);
 
-    /**
-     * 更新实例的日志和状态
-     */
     public WorkInstanceEntity updateInstance(WorkInstanceEntity workInstance, StringBuilder logBuilder) {
 
         workInstance.setSubmitLog(logBuilder.toString());
         return workInstanceRepository.saveAndFlush(workInstance);
     }
 
-    /**
-     * 异步执行作业.
-     */
     @Async("sparkYunWorkThreadPool")
     public void asyncExecute(WorkRunContext workRunContext) {
 
@@ -67,9 +58,6 @@ public abstract class WorkExecutor {
         syncExecute(workRunContext);
     }
 
-    /**
-     * 同步执行作业.
-     */
     public void syncExecute(WorkRunContext workRunContext) {
 
         // 获取作业实例

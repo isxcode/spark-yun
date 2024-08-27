@@ -29,7 +29,6 @@ import com.isxcode.star.modules.cluster.repository.ClusterNodeRepository;
 import com.isxcode.star.modules.cluster.repository.ClusterRepository;
 import com.isxcode.star.modules.file.entity.FileEntity;
 import com.isxcode.star.modules.file.repository.FileRepository;
-import com.isxcode.star.modules.file.service.FileService;
 import com.isxcode.star.modules.work.entity.WorkConfigEntity;
 import com.isxcode.star.modules.work.entity.WorkEntity;
 import com.isxcode.star.modules.work.entity.WorkInstanceEntity;
@@ -80,15 +79,13 @@ public class SparkJarExecutor extends WorkExecutor {
 
     private final AesUtils aesUtils;
 
-    private final FileService fileService;
-
     private final FileRepository fileRepository;
 
     public SparkJarExecutor(WorkInstanceRepository workInstanceRepository, ClusterRepository clusterRepository,
         ClusterNodeRepository clusterNodeRepository, WorkflowInstanceRepository workflowInstanceRepository,
         WorkRepository workRepository, WorkConfigRepository workConfigRepository, IsxAppProperties isxAppProperties,
         Locker locker, HttpUrlUtils httpUrlUtils, ClusterNodeMapper clusterNodeMapper, AesUtils aesUtils,
-        FileService fileService, FileRepository fileRepository, AlarmService alarmService) {
+        FileRepository fileRepository, AlarmService alarmService) {
 
         super(workInstanceRepository, workflowInstanceRepository, alarmService);
         this.workInstanceRepository = workInstanceRepository;
@@ -101,7 +98,6 @@ public class SparkJarExecutor extends WorkExecutor {
         this.httpUrlUtils = httpUrlUtils;
         this.clusterNodeMapper = clusterNodeMapper;
         this.aesUtils = aesUtils;
-        this.fileService = fileService;
         this.fileRepository = fileRepository;
     }
 
@@ -414,9 +410,6 @@ public class SparkJarExecutor extends WorkExecutor {
         }
     }
 
-    /**
-     * 初始化spark作业提交配置.
-     */
     public Map<String, String> genSparkSubmitConfig(Map<String, String> sparkConfig) {
 
         // 过滤掉，前缀不包含spark.xxx的配置，spark submit中必须都是spark.xxx
