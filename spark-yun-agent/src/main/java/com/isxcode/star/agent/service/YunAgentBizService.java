@@ -43,34 +43,49 @@ public class YunAgentBizService {
         return agentServiceOptional.get();
     }
 
-    public ExecuteWorkRes executeWork(YagExecuteWorkReq yagExecuteWorkReq) throws IOException {
+    public ExecuteWorkRes executeWork(YagExecuteWorkReq yagExecuteWorkReq) {
 
         AgentService agentService = getAgentService(yagExecuteWorkReq.getAgentType());
-        SparkLauncher sparkLauncher = agentService.genSparkLauncher(yagExecuteWorkReq);
-        String appId = agentService.executeWork(sparkLauncher);
-        return ExecuteWorkRes.builder().appId(appId).build();
+        try {
+            SparkLauncher sparkLauncher = agentService.genSparkLauncher(yagExecuteWorkReq);
+            String appId = agentService.executeWork(sparkLauncher);
+            return ExecuteWorkRes.builder().appId(appId).build();
+        } catch (IOException e) {
+            throw new IsxAppException(e.getMessage());
+        }
     }
 
-    public YagGetStatusRes getStatus(String appId, String agentType, String sparkHomePath) throws IOException {
+    public YagGetStatusRes getStatus(String appId, String agentType, String sparkHomePath) {
 
         AgentService agentService = getAgentService(agentType);
-        String appStatus = agentService.getAppStatus(appId, sparkHomePath);
-
-        return YagGetStatusRes.builder().appId(appId).appStatus(appStatus).build();
+        try {
+            String appStatus = agentService.getAppStatus(appId, sparkHomePath);
+            return YagGetStatusRes.builder().appId(appId).appStatus(appStatus).build();
+        } catch (IOException e) {
+            throw new IsxAppException(e.getMessage());
+        }
     }
 
-    public YagGetLogRes getLog(String appId, String agentType, String sparkHomePath) throws IOException {
+    public YagGetLogRes getLog(String appId, String agentType, String sparkHomePath) {
 
         AgentService agentService = getAgentService(agentType);
-        String appLog = agentService.getAppLog(appId, sparkHomePath);
-
-        return YagGetLogRes.builder().log(appLog).build();
+        try {
+            String appLog = agentService.getAppLog(appId, sparkHomePath);
+            return YagGetLogRes.builder().log(appLog).build();
+        } catch (IOException e) {
+            throw new IsxAppException(e.getMessage());
+        }
     }
 
-    public YagGetStdoutLogRes getStdoutLog(String appId, String agentType, String sparkHomePath) throws IOException {
+    public YagGetStdoutLogRes getStdoutLog(String appId, String agentType, String sparkHomePath) {
 
         AgentService agentService = getAgentService(agentType);
-        String appLog = agentService.getStdoutLog(appId, sparkHomePath);
+        String appLog;
+        try {
+            appLog = agentService.getStdoutLog(appId, sparkHomePath);
+        } catch (IOException e) {
+            throw new IsxAppException(e.getMessage());
+        }
 
         // 只截取后1行的日志
         appLog = appLog.replace("End of LogType:stdout", "").replace("LogType:stdout-start", "");
@@ -88,18 +103,27 @@ public class YunAgentBizService {
         return YagGetStdoutLogRes.builder().log(stringBuilder.toString()).build();
     }
 
-    public YagGetDataRes getData(String appId, String agentType, String sparkHomePath) throws IOException {
+    public YagGetDataRes getData(String appId, String agentType, String sparkHomePath) {
 
         AgentService agentService = getAgentService(agentType);
-        String stdoutLog = agentService.getAppData(appId, sparkHomePath);
+        String stdoutLog;
+        try {
+            stdoutLog = agentService.getAppData(appId, sparkHomePath);
+        } catch (IOException e) {
+            throw new IsxAppException(e.getMessage());
+        }
 
         return YagGetDataRes.builder().data(JSON.parseArray(stdoutLog, List.class)).build();
     }
 
-    public void stopJob(String appId, String agentType, String sparkHomePath, String agentHomePath) throws IOException {
+    public void stopJob(String appId, String agentType, String sparkHomePath, String agentHomePath) {
 
         AgentService agentService = getAgentService(agentType);
-        agentService.killApp(appId, sparkHomePath, agentHomePath);
+        try {
+            agentService.killApp(appId, sparkHomePath, agentHomePath);
+        } catch (IOException e) {
+            throw new IsxAppException(e.getMessage());
+        }
     }
 
     public static int findUnusedPort() {
@@ -111,7 +135,7 @@ public class YunAgentBizService {
         }
     }
 
-    public DeployContainerRes deployContainer(DeployContainerReq deployContainerReq) throws IOException {
+    public DeployContainerRes deployContainer(DeployContainerReq deployContainerReq) {
 
         SparkLauncher sparkLauncher;
         String appId;
@@ -121,10 +145,13 @@ public class YunAgentBizService {
         deployContainerReq.getPluginReq().setContainerPort(port);
 
         AgentService agentService = getAgentService(deployContainerReq.getAgentType());
-        sparkLauncher = agentService.genSparkLauncher(deployContainerReq);
-        appId = agentService.executeWork(sparkLauncher);
-
-        return DeployContainerRes.builder().appId(appId).port(port).build();
+        try {
+            sparkLauncher = agentService.genSparkLauncher(deployContainerReq);
+            appId = agentService.executeWork(sparkLauncher);
+            return DeployContainerRes.builder().appId(appId).port(port).build();
+        } catch (IOException e) {
+            throw new IsxAppException(e.getMessage());
+        }
     }
 
     public ContainerCheckRes containerCheck(ContainerCheckReq containerCheckReq) {
