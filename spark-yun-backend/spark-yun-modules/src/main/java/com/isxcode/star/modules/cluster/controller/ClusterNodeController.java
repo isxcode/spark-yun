@@ -19,9 +19,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@Tag(name = "引擎节点模块")
-@RestController
+@Tag(name = "集群节点模块")
 @RequestMapping(ModuleCode.CLUSTER_NODE)
+@RestController
 @RequiredArgsConstructor
 public class ClusterNodeController {
 
@@ -107,7 +107,7 @@ public class ClusterNodeController {
         clusterNodeBizService.cleanAgent(cleanAgentReq);
     }
 
-    @Operation(summary = "获取当前集群节点信息")
+    @Operation(summary = "获取当前集群节点信息接口")
     @PostMapping("/getClusterNode")
     @SuccessResponse("获取成功")
     public GetClusterNodeRes getClusterNode(@Valid @RequestBody GetClusterNodeReq getClusterNodeReq) {

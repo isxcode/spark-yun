@@ -7,12 +7,6 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 
-/**
- * ClassName: UpdateUserStatusReq Package: com.isxcode.star.api.user.pojos.req Description:
- *
- * @Author 一只有梦想的咸鱼
- * @Version 1.0
- */
 @Data()
 public class UpdateUserInfoReq {
 

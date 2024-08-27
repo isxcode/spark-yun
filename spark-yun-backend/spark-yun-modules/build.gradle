@@ -27,6 +27,5 @@ dependencies {
     implementation 'org.apache.xmlbeans:xmlbeans:5.2.0'
     implementation 'pull-parser:pull-parser:2.1.10'
 
-    // commons-dbutils
     implementation 'commons-dbutils:commons-dbutils:1.7'
 }

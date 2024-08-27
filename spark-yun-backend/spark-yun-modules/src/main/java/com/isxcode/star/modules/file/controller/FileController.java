@@ -21,8 +21,8 @@ import javax.validation.Valid;
 import javax.validation.constraints.Pattern;
 
 @Tag(name = "资源文件中心模块")
-@RestController
 @RequestMapping(ModuleCode.FILE)
+@RestController
 @RequiredArgsConstructor
 public class FileController {
 
@@ -49,14 +49,14 @@ public class FileController {
         fileBizService.updateFile(fileId, file, remark);
     }
 
-    @Operation(summary = "资源文件下载")
+    @Operation(summary = "资源文件下载接口")
     @PostMapping("/downloadFile")
     public ResponseEntity<Resource> downloadFile(@Valid @RequestBody DownloadFileReq downloadFileReq) {
 
         return fileBizService.downloadFile(downloadFileReq);
     }
 
-    @Operation(summary = "资源文件删除")
+    @Operation(summary = "资源文件删除接口")
     @PostMapping("/deleteFile")
     @SuccessResponse("删除成功")
     public void deleteFile(@Valid @RequestBody DeleteFileReq deleteFileReq) {
@@ -64,7 +64,7 @@ public class FileController {
         fileBizService.deleteFile(deleteFileReq);
     }
 
-    @Operation(summary = "资源文件查询")
+    @Operation(summary = "资源文件查询接口")
     @PostMapping("/pageFile")
     @SuccessResponse("查询成功")
     public Page<PageFileRes> pageFile(@Valid @RequestBody PageFileReq pageFileReq) {

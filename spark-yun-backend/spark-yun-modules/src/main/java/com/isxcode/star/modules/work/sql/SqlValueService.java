@@ -11,9 +11,6 @@ import java.util.regex.Pattern;
 
 import static java.util.regex.Pattern.compile;
 
-/**
- * sql中变量分析.
- */
 @Service
 public class SqlValueService {
 

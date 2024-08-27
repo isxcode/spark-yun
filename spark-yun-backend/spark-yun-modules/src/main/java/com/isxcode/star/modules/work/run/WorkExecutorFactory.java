@@ -8,9 +8,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
-/**
- * 执行器工厂类，返回对应作业的执行器.
- */
 @Slf4j
 @RequiredArgsConstructor
 @Component

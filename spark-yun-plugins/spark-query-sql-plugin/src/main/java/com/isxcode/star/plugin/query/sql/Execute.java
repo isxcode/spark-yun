@@ -16,9 +16,6 @@ import java.util.stream.Collectors;
 
 public class Execute {
 
-    /**
-     * 最后一句sql查询.
-     */
     public static void main(String[] args) {
 
         // 解析插件请求体

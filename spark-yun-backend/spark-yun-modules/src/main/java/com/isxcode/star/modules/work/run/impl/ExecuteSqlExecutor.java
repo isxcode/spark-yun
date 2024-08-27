@@ -8,8 +8,6 @@ import com.isxcode.star.modules.alarm.service.AlarmService;
 import com.isxcode.star.modules.datasource.entity.DatasourceEntity;
 import com.isxcode.star.modules.datasource.mapper.DatasourceMapper;
 import com.isxcode.star.modules.datasource.repository.DatasourceRepository;
-import com.isxcode.star.modules.datasource.service.DatasourceService;
-import com.isxcode.star.modules.datasource.service.biz.DatasourceBizService;
 import com.isxcode.star.modules.datasource.source.DataSourceFactory;
 import com.isxcode.star.modules.datasource.source.Datasource;
 import com.isxcode.star.modules.work.entity.WorkInstanceEntity;
@@ -20,6 +18,9 @@ import com.isxcode.star.modules.work.sql.SqlCommentService;
 import com.isxcode.star.modules.work.sql.SqlFunctionService;
 import com.isxcode.star.modules.work.sql.SqlValueService;
 import com.isxcode.star.modules.workflow.repository.WorkflowInstanceRepository;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.util.Strings;
+import org.springframework.stereotype.Service;
 
 import java.sql.Connection;
 import java.sql.Statement;
@@ -29,19 +30,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import lombok.extern.slf4j.Slf4j;
-import org.apache.logging.log4j.util.Strings;
-import org.springframework.stereotype.Service;
-
 @Service
 @Slf4j
 public class ExecuteSqlExecutor extends WorkExecutor {
 
     private final DatasourceRepository datasourceRepository;
-
-    private final DatasourceBizService datasourceBizService;
-
-    private final DatasourceService datasourceService;
 
     private final SqlCommentService sqlCommentService;
 
@@ -54,15 +47,12 @@ public class ExecuteSqlExecutor extends WorkExecutor {
     private final DatasourceMapper datasourceMapper;
 
     public ExecuteSqlExecutor(WorkInstanceRepository workInstanceRepository, DatasourceRepository datasourceRepository,
-        WorkflowInstanceRepository workflowInstanceRepository, DatasourceBizService datasourceBizService,
-        DatasourceService datasourceService, SqlCommentService sqlCommentService, SqlValueService sqlValueService,
-        SqlFunctionService sqlFunctionService, AlarmService alarmService, DataSourceFactory dataSourceFactory,
-        DatasourceMapper datasourceMapper) {
+        WorkflowInstanceRepository workflowInstanceRepository, SqlCommentService sqlCommentService,
+        SqlValueService sqlValueService, SqlFunctionService sqlFunctionService, AlarmService alarmService,
+        DataSourceFactory dataSourceFactory, DatasourceMapper datasourceMapper) {
 
         super(workInstanceRepository, workflowInstanceRepository, alarmService);
         this.datasourceRepository = datasourceRepository;
-        this.datasourceBizService = datasourceBizService;
-        this.datasourceService = datasourceService;
         this.sqlCommentService = sqlCommentService;
         this.sqlValueService = sqlValueService;
         this.sqlFunctionService = sqlFunctionService;

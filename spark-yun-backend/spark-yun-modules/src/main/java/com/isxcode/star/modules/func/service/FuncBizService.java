@@ -6,7 +6,6 @@ import com.isxcode.star.api.func.pojos.req.PageFuncReq;
 import com.isxcode.star.api.func.pojos.req.UpdateFuncReq;
 import com.isxcode.star.api.func.pojos.res.PageFuncRes;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
-import com.isxcode.star.modules.file.repository.FileRepository;
 import com.isxcode.star.modules.file.service.FileService;
 import com.isxcode.star.modules.func.entity.FuncEntity;
 import com.isxcode.star.modules.func.mapper.FuncMapper;
@@ -30,7 +29,6 @@ public class FuncBizService {
 
     private final FuncMapper funcMapper;
 
-    private final FileRepository fileRepository;
     private final FileService fileService;
 
     public void addFunc(AddFuncReq addFuncReq) {

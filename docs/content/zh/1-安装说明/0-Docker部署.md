@@ -2,34 +2,46 @@
 title: "Docker部署"
 ---
 
-### [Docker Hub 链接](https://hub.docker.com/r/isxcode/zhiqingyun)
+### Docker快速部署
 
-> 国内阿里云镜像地址
-
-```bash
-# amd64架构
-docker pull registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun:latest-amd64
-docker run -p 8080:8080 registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun:latest-amd64
-
-# arm64架构
-docker pull registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun:latest-arm64
-docker run -p 8080:8080 registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun:latest-arm64
-```
-
-##### 1. 将配置文件和资源文件拷贝出来
+##### 1. 创建至轻云存储目录（可选）
 
 ```bash
 mkdir -p /Users/ispong/zhiqingyun
+```
+
+##### 2. 启动至轻云（可选）
+
+> 国内用户选择以下地址，arm64多用于macOS系统用户，普通服务器选择latest-amd64版本 <br/>
+> docker run --name zhiqingyun -d registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun:latest-amd64 <br/>
+> docker run --name zhiqingyun -d registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun:latest-arm64
+
+```bash
 docker run --name zhiqingyun -d isxcode/zhiqingyun
-# 拷贝资源文件
+```
+
+##### 3. 将docker中的资源文件拷贝出来（可选）
+
+```bash
 docker cp zhiqingyun:/var/lib/zhiqingyun /Users/ispong/zhiqingyun
-# 拷贝配置文件
+```
+
+##### 4.将docker中的配置文件拷贝出来（可选）
+
+```bash
 docker cp zhiqingyun:/etc/zhiqingyun/conf /Users/ispong/zhiqingyun
+```
+
+##### 5.删除docker容器（可选）
+
+```bash
 docker stop zhiqingyun
 docker rm zhiqingyun
 ```
 
-##### 2. 重新启动镜像
+##### 6.重新启动至轻云
+
+> 参数说明
 
 ▪ `ADMIN_PASSWORD`: admin账号密码，仅初次启动项目时生效,默认密码`admin123`<br/>
 ▪ `LOG_LEVEL`: 日志级别设置，例如info、debug、error等 <br/>
@@ -41,61 +53,27 @@ docker rm zhiqingyun
 docker run --restart=always \
     --name zhiqingyun\
     -e ADMIN_PASSWORD=admin123 \
-    -e LOG_LEVEL=info \
-    -e ACTIVE_ENV=docker \
     -v /Users/ispong/zhiqingyun/zhiqingyun:/var/lib/zhiqingyun \
     -v /Users/ispong/zhiqingyun/conf:/etc/zhiqingyun/conf \
     -p 8080:8080 \
-    -d isxcode/zhiqingyun
+    -d isxcode/zhiqingyun:latest
 ```
 
-##### 3. 访问项目
+> 快速启动
+
+```bash
+docker run --restart=always \
+    --name zhiqingyun\
+    -p 8080:8080 \
+    -d isxcode/zhiqingyun:latest
+```
+
+##### 7. 访问项目
 
 ▪ 访问地址: http://localhost:8080 <br/>
 ▪ 管理员账号：`admin` <br/>
 ▪ 管理员密码：`admin123`
 
-#### 配置Mysql数据源 (可选)
+##### 8. 上传许可证
 
-> 修改项目配置文件
-
-```bash
-vim /Users/ispong/zhiqingyun/conf/application-docker.yml
-```
-
-```yml
-server:
-  port: 8080
-
-spring:
-
-  security:
-    user:
-      name: admin
-      password: admin123
-
-  jpa:
-    database: mysql
-
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://192.168.199.146:30306/zhiqingyun_db
-    username: root
-    password: ispong123
-    
-logging:
-  level:
-    root: info
-
-isx-app:
-  use-port: true
-  use-ssl: false
-  resources-path: /var/lib/zhiqingyun
-  docker-mode: true
-```
-
-> 重启docker镜像
-
-```bash
-docker restart zhiqingyun
-```
+[下载许可证链接](https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/license.lic)
