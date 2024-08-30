@@ -6,12 +6,14 @@ import com.isxcode.star.api.alarm.res.PageAlarmInstanceRes;
 import com.isxcode.star.api.alarm.res.PageAlarmRes;
 import com.isxcode.star.api.alarm.res.PageMessageRes;
 import com.isxcode.star.api.main.constants.ModuleCode;
+import com.isxcode.star.api.user.constants.RoleType;
 import com.isxcode.star.common.annotations.successResponse.SuccessResponse;
 import com.isxcode.star.modules.alarm.service.AlarmBizService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -51,6 +53,7 @@ public class AlarmController {
         return alarmBizService.pageMessage(pageMessageReq);
     }
 
+    @Secured({RoleType.TENANT_ADMIN})
     @Operation(summary = "删除消息体接口")
     @PostMapping("/deleteMessage")
     @SuccessResponse("删除成功")
@@ -107,6 +110,7 @@ public class AlarmController {
         return alarmBizService.pageAlarm(pageAlarmReq);
     }
 
+    @Secured({RoleType.TENANT_ADMIN})
     @Operation(summary = "删除告警接口")
     @PostMapping("/deleteAlarm")
     @SuccessResponse("删除成功")
