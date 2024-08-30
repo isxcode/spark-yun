@@ -75,6 +75,18 @@ public class GlobalExceptionAdvice extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(baseResponse, HttpStatus.OK);
     }
 
+    @ExceptionHandler(org.springframework.security.access.AccessDeniedException.class)
+    public ResponseEntity<BaseResponse<Object>> accessDeniedException(
+        org.springframework.security.access.AccessDeniedException accessDeniedException) {
+
+        BaseResponse baseResponse = new BaseResponse();
+        baseResponse.setCode("401");
+        baseResponse.setMsg("当前用户没有权限");
+        baseResponse.setErr(accessDeniedException.getMessage());
+
+        return new ResponseEntity<>(baseResponse, HttpStatus.OK);
+    }
+
     @ExceptionHandler(EmptyResultDataAccessException.class)
     public ResponseEntity<BaseResponse<Object>> emptyResultDataAccessException(
         EmptyResultDataAccessException emptyResultDataAccessException) {

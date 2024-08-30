@@ -1,6 +1,7 @@
 package com.isxcode.star.modules.workflow.controller;
 
 import com.isxcode.star.api.main.constants.ModuleCode;
+import com.isxcode.star.api.user.constants.RoleType;
 import com.isxcode.star.api.work.pojos.req.GetWorkflowDefaultClusterReq;
 import com.isxcode.star.api.work.pojos.res.GetWorkflowDefaultClusterRes;
 import com.isxcode.star.api.workflow.pojos.req.*;
@@ -20,6 +21,7 @@ import javax.validation.Valid;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -61,6 +63,7 @@ public class WorkflowController {
         return workflowBizService.pageWorkflow(pageWorkflowReq);
     }
 
+    @Secured({RoleType.TENANT_ADMIN})
     @Operation(summary = "删除作业流接口")
     @PostMapping("/deleteWorkflow")
     @SuccessResponse("删除成功")

@@ -1,6 +1,7 @@
 package com.isxcode.star.modules.work.controller;
 
 import com.isxcode.star.api.main.constants.ModuleCode;
+import com.isxcode.star.api.user.constants.RoleType;
 import com.isxcode.star.api.work.pojos.req.*;
 import com.isxcode.star.api.work.pojos.res.*;
 import com.isxcode.star.common.annotations.successResponse.SuccessResponse;
@@ -12,6 +13,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -89,6 +91,7 @@ public class WorkController {
         return workBizService.getStatus(getStatusReq);
     }
 
+    @Secured({RoleType.TENANT_ADMIN})
     @Operation(summary = "删除作业接口")
     @PostMapping("/deleteWork")
     @SuccessResponse("删除成功")

@@ -6,12 +6,14 @@ import com.isxcode.star.api.main.constants.ModuleCode;
 import com.isxcode.star.api.func.pojos.req.AddFuncReq;
 import com.isxcode.star.api.func.pojos.req.DeleteFuncReq;
 import com.isxcode.star.api.func.pojos.req.PageFuncReq;
+import com.isxcode.star.api.user.constants.RoleType;
 import com.isxcode.star.common.annotations.successResponse.SuccessResponse;
 import com.isxcode.star.modules.func.service.FuncBizService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -43,6 +45,7 @@ public class FuncController {
         funcBizService.updateFunc(updateFuncReq);
     }
 
+    @Secured({RoleType.TENANT_ADMIN})
     @Operation(summary = "删除自定义函数接口")
     @PostMapping("/deleteFunc")
     @SuccessResponse("删除成功")
