@@ -34,7 +34,7 @@ public class TenantUserController {
         tenantUserBizService.addTenantUser(addTenantUserReq);
     }
 
-    @Secured({RoleType.SYS_ADMIN, RoleType.TENANT_ADMIN})
+    @Secured({RoleType.SYS_ADMIN, RoleType.TENANT_ADMIN, RoleType.NORMAL_MEMBER})
     @Operation(summary = "查询租户用户列表接口")
     @PostMapping("/pageTenantUser")
     @SuccessResponse("查询成功")

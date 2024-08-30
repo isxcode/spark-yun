@@ -5,6 +5,7 @@ import com.isxcode.star.api.file.pojos.req.DownloadFileReq;
 import com.isxcode.star.api.file.pojos.req.PageFileReq;
 import com.isxcode.star.api.file.pojos.res.PageFileRes;
 import com.isxcode.star.api.main.constants.ModuleCode;
+import com.isxcode.star.api.user.constants.RoleType;
 import com.isxcode.star.common.annotations.successResponse.SuccessResponse;
 import com.isxcode.star.modules.file.service.FileBizService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -14,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -56,6 +58,7 @@ public class FileController {
         return fileBizService.downloadFile(downloadFileReq);
     }
 
+    @Secured({RoleType.TENANT_ADMIN})
     @Operation(summary = "资源文件删除接口")
     @PostMapping("/deleteFile")
     @SuccessResponse("删除成功")

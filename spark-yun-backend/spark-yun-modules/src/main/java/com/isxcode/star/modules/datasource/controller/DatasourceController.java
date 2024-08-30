@@ -97,6 +97,7 @@ public class DatasourceController {
         return datasourceBizService.pageDatabaseDriver(pageDatabaseDriverReq);
     }
 
+    @Secured({RoleType.TENANT_ADMIN})
     @PostMapping("/deleteDatabaseDriver")
     @Operation(summary = "删除数据库驱动接口")
     @SuccessResponse("删除成功")

@@ -5,6 +5,7 @@ import com.isxcode.star.api.cluster.pojos.res.QueryNodeRes;
 import com.isxcode.star.api.cluster.pojos.res.GetClusterNodeRes;
 import com.isxcode.star.api.cluster.pojos.res.TestAgentRes;
 import com.isxcode.star.api.main.constants.ModuleCode;
+import com.isxcode.star.api.user.constants.RoleType;
 import com.isxcode.star.common.annotations.successResponse.SuccessResponse;
 import com.isxcode.star.modules.cluster.service.biz.ClusterNodeBizService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -14,6 +15,7 @@ import javax.validation.Valid;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -51,6 +53,7 @@ public class ClusterNodeController {
         return clusterNodeBizService.pageClusterNode(pageClusterNodeReq);
     }
 
+    @Secured({RoleType.TENANT_ADMIN})
     @Operation(summary = "删除节点接口")
     @PostMapping("/deleteClusterNode")
     @SuccessResponse("删除成功")
