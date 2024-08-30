@@ -37,23 +37,16 @@ export const menuListData: Array<Menu> = [
         childPage: []
       },
       {
-        code: 'file-center',
-        name: '资源中心',
-        icon: 'Paperclip',
-        authType: [ 'ROLE_TENANT_MEMBER', 'ROLE_TENANT_ADMIN' ],
-        childPage: []
-      },
-      {
-        code: 'spark-container',
-        name: '计算容器',
-        icon: 'Box',
-        authType: [ 'ROLE_TENANT_MEMBER', 'ROLE_TENANT_ADMIN' ],
-        childPage: []
-      },
-      {
         code: 'driver-management',
         name: '驱动管理',
         icon: 'Cpu',
+        authType: [ 'ROLE_TENANT_MEMBER', 'ROLE_TENANT_ADMIN' ],
+        childPage: []
+      },
+      {
+        code: 'file-center',
+        name: '资源中心',
+        icon: 'Paperclip',
         authType: [ 'ROLE_TENANT_MEMBER', 'ROLE_TENANT_ADMIN' ],
         childPage: []
       }
@@ -73,18 +66,25 @@ export const menuListData: Array<Menu> = [
         childPage: ['workflow-page']
       },
       {
-        code: 'custom-func',
-        name: '函数仓库',
-        icon: 'Mouse',
-        authType: [ 'ROLE_TENANT_MEMBER', 'ROLE_TENANT_ADMIN' ],
-        childPage: []
-      },
-      {
         code: 'realtime-computing',
         name: '实时计算',
         icon: 'Iphone',
         authType: [ 'ROLE_TENANT_MEMBER', 'ROLE_TENANT_ADMIN' ],
         childPage: ['computing-detail']
+      },
+      {
+        code: 'spark-container',
+        name: '计算容器',
+        icon: 'Box',
+        authType: [ 'ROLE_TENANT_MEMBER', 'ROLE_TENANT_ADMIN' ],
+        childPage: []
+      },
+      {
+        code: 'custom-func',
+        name: '函数仓库',
+        icon: 'Mouse',
+        authType: [ 'ROLE_TENANT_MEMBER', 'ROLE_TENANT_ADMIN' ],
+        childPage: []
       }
     ]
   },
@@ -111,7 +111,7 @@ export const menuListData: Array<Menu> = [
     children: [
       {
         code: 'metadata-management',
-        name: '元数据维护',
+        name: '数据地图',
         icon: 'Connection',
         authType: ['ROLE_TENANT_MEMBER', 'ROLE_TENANT_ADMIN'],
         childPage: []
