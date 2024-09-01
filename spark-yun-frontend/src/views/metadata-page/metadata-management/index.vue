@@ -154,7 +154,7 @@ function getDataSourceList() {
         pageSize: 10000,
         searchKeyWord: ''
     }).then((res: any) => {
-        dataSourceList.value = res.data.content.map((item: any) => {
+        dataSourceList.value = res.data.content.filter((item: any) => item.dbType !== 'KAFKA').map((item: any) => {
             return {
                 label: item.name,
                 value: item.id
