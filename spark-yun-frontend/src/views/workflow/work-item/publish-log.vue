@@ -26,10 +26,12 @@ const timer = ref(null)
 const runId = ref('')
 const status = ref(false)
 const callback = ref()
+const loading = ref<boolean>(false)
 
 function initData(id: string, cb: any): void {
   runId.value = id
   callback.value = cb
+  loading.value = true
   getLogData(runId.value)
   if (!timer.value) {
     timer.value = setInterval(() => {
@@ -62,10 +64,16 @@ function getLogData(id: string) {
           }
           timer.value = null
       }
+      setTimeout(() => {
+        loading.value = false
+      }, 300)
     })
     .catch((err: any) => {
       console.log('err', err)
       logMsg.value = ''
+      setTimeout(() => {
+        loading.value = false
+      }, 300)
     })
 }
 
@@ -84,6 +92,7 @@ defineExpose({
 <style lang="scss">
 .publish-log {
   height: 100%;
+  position: static;
   .empty-page {
     height: 100%;
   }

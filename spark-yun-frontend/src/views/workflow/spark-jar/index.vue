@@ -90,14 +90,28 @@
                         </el-form-item>
                     </el-form>
                 </div>
-                <div class="log-show log-show-jar">
-                    <el-tabs v-model="activeName" @tab-change="tabChangeEvent">
-                        <template v-for="tab in tabList" :key="tab.code">
+                <el-collapse v-model="collapseActive" class="work-item-log__collapse" ref="logCollapseRef">
+                    <el-collapse-item title="查看日志" :disabled="true" name="1">
+                        <template #title>
+                        <el-tabs v-model="activeName" @tab-click="changeCollapseUp" @tab-change="tabChangeEvent">
+                            <template v-for="tab in tabList" :key="tab.code">
                             <el-tab-pane v-if="!tab.hide" :label="tab.name" :name="tab.code" />
+                            </template>
+                        </el-tabs>
+                        <span class="log__collapse">
+                            <el-icon v-if="isCollapse" @click="changeCollapseDown">
+                            <ArrowDown />
+                            </el-icon>
+                            <el-icon v-else @click="changeCollapseUp">
+                            <ArrowUp />
+                            </el-icon>
+                        </span>
                         </template>
-                    </el-tabs>
-                    <component :is="currentTab" ref="containerInstanceRef" class="show-container" />
-                </div>
+                        <div class="log-show log-show-datasync">
+                            <component :is="currentTab" ref="containerInstanceRef" class="show-container" />
+                        </div>
+                    </el-collapse-item>
+                </el-collapse>
             </div>
         </LoadingPage>
         <!-- 配置 -->
@@ -146,6 +160,10 @@ const changeStatus = ref(false)
 const fileIdList = ref([])
 
 const containerInstanceRef = ref(null)
+
+const logCollapseRef = ref()
+const collapseActive = ref('0')
+const isCollapse = ref(false)
 
 let workConfig = reactive({
     workId: '',
@@ -309,6 +327,9 @@ function runWorkData() {
                     instanceId.value = res.data.instanceId
                     ElMessage.success(res.msg)
                     initData(res.data.instanceId, true)
+                    nextTick(() => {
+                        changeCollapseUp()
+                    })
                 })
                 .catch(() => {
                     runningLoading.value = false
@@ -333,6 +354,9 @@ function runWorkData() {
                 // 点击运行，默认跳转到提交日志tab
                 activeName.value = 'PublishLog'
                 currentTab.value = markRaw(PublishLog)
+                nextTick(() => {
+                    changeCollapseUp()
+                })
             })
             .catch(() => {
                 runningLoading.value = false
@@ -410,6 +434,14 @@ function stopData() {
 function setConfigData() {
     configDetailRef.value.showModal(props.workItemConfig)
 }
+function changeCollapseDown() {
+  logCollapseRef.value.setActiveNames('0')
+  isCollapse.value = false
+}
+function changeCollapseUp() {
+  logCollapseRef.value.setActiveNames('1')
+  isCollapse.value = true
+}
 
 function handleClose(index: number) {
     jarJobConfig.args.splice(index, 1)
@@ -432,13 +464,95 @@ onMounted(() => {
     background-color: getCssVar('color', 'white');
     .zqy-loading {
         box-sizing: border-box;
-        overflow-y: auto;
+        // overflow-y: auto;
         margin-top: 50px;
-        height: calc(100vh - 105px);
+        padding: 0;
+        // height: calc(100vh - 105px);
 
         .jar-work-container {
+            overflow: auto;
+            padding: 0 20px;
+            height: calc(100vh - 108px);
             .sql-code-container {
                 margin-top: 12px;
+            }
+
+            .work-item-log__collapse {
+                position: absolute;
+                left: 0;
+                right: 0;
+                bottom: 46px;
+                z-index: 100;
+
+                .el-collapse-item__header {
+                    // padding-left: 20px;
+                    cursor: default;
+                }
+
+                .el-collapse-item__arrow {
+                    display: none;
+                }
+
+                .el-collapse-item__content {
+                    padding-bottom: 14px;
+                }
+
+                .log__collapse {
+                    position: absolute;
+                    right: 20px;
+                    cursor: pointer;
+                }
+
+                .el-tabs {
+                    width: 100%;
+                    // padding: 0 20px;
+                    height: 40px;
+                    box-sizing: border-box;
+
+                    .el-tabs__item {
+                        font-size: getCssVar('font-size', 'extra-small');
+                    }
+
+                    .el-tabs__nav-scroll {
+                        padding-left: 20px;
+                        box-sizing: border-box;
+                    }
+
+                    .el-tabs__content {
+                        height: 0;
+                    }
+
+                    .el-tabs__nav-scroll {
+                        border-bottom: 1px solid getCssVar('border-color');
+                    }
+                }
+
+                .log-show {
+                    padding: 0 20px;
+                    box-sizing: border-box;
+
+                    &.log-show-datasync {
+                        height: calc(100vh - 306px);
+
+                        .zqy-download-log {
+                            right: 40px;
+                            top: 12px;
+                        }
+                    }
+
+                    pre {
+                        width: 100px;
+                    }
+
+                    .show-container {
+                        height: calc(100vh - 310px);
+                        overflow: auto;
+                    }
+
+                    .empty-page {
+                        height: 80%;
+                    }
+                }
             }
         }
     }
@@ -493,7 +607,7 @@ onMounted(() => {
             .el-scrollbar {
                 width: 100%;
                 .el-scrollbar__view {
-                    max-height: 120px;
+                    max-height: calc(100vh - 450px);
                     padding-right: 20px;
                     box-sizing: border-box;
                 }
