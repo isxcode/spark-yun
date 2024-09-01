@@ -9,10 +9,20 @@
                 <el-icon @click="zoomIn"><ZoomIn /></el-icon>
                 <el-icon @click="locationCenter"><MapLocation /></el-icon>
             </div>
+            <!-- 后续动态注入 -->
+            <div class="status-container">
+                <span class="status-tag status-SUCCESS">成功</span>
+                <span class="status-tag status-PENDING">等待中</span>
+                <span class="status-tag status-RUNNING">运行中</span>
+                <span class="status-tag status-BREAK">中断</span>
+                <span class="status-tag status-FAIL">失败</span>
+                <span class="status-tag status-ABORT">已中止</span>
+                <span class="status-tag status-ABORTING">中止中</span>
+            </div>
         </section>
     </div>
 </template>
-  
+
 <script setup lang='ts'>
 import { nextTick, onMounted, createVNode, ref } from 'vue'
 import { Graph, Path, Addon } from '@antv/x6'
@@ -337,6 +347,14 @@ defineExpose({
 </script>
 
 <style lang="scss" scoped>
+$--status-SUCCESS: #52c41a;
+$--status-PENDING: #F5B041;
+$--status-BREAK: #3f3a24;
+$--status-FAIL: #ff4d4f;
+$--status-ABORT: #9f26e1;
+$--status-ABORTING: #b2b2b2;
+$--status-RUNNING: #1890ff;
+
 .zqy-flow {
     height: calc(100vh - 106px);
 
@@ -379,6 +397,72 @@ defineExpose({
         height: 100%;
         display: flex;
         position: relative;
+
+        .status-container {
+            position: absolute;
+            bottom: 42px;
+            left: 20px;
+            display: flex;
+            flex-direction: column;
+            .status-tag {
+                font-size: 12px;
+                position: relative;
+                margin: 2px 0;
+                &::before {
+                    content: "";
+                    width: 6px;
+                    height: 6px;
+                    border-radius: 4px;
+                    position: absolute;
+                    left: -10px;
+                    top: 4px;
+                }
+            }
+            .status {
+                &-SUCCESS {
+                    color: $--status-SUCCESS;
+                    &::before {
+                        background-color: $--status-SUCCESS;
+                    }
+                }
+                &-PENDING {
+                    color: $--status-PENDING;
+                    &::before {
+                        background-color: $--status-PENDING;
+                    }
+                }
+                &-BREAK {
+                    color: $--status-BREAK;
+                    &::before {
+                        background-color: $--status-BREAK;
+                    }
+                }
+                &-FAIL {
+                    color: $--status-FAIL;
+                    &::before {
+                        background-color: $--status-FAIL;
+                    }
+                }
+                &-ABORT {
+                    color: $--status-ABORT;
+                    &::before {
+                        background-color: $--status-ABORT;
+                    }
+                }
+                &-ABORTING {
+                    color: $--status-ABORTING;
+                    &::before {
+                        background-color: $--status-ABORTING;
+                    }
+                }
+                &-RUNNING {
+                    color: $--status-RUNNING;
+                    &::before {
+                        background-color: $--status-RUNNING;
+                    }
+                }
+            }
+        }
     }
 
     .section-cot .btn-container {
