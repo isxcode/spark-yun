@@ -89,14 +89,18 @@ function exportEvent() {
         datasourceId: infoData.value.datasourceId,
         tableName: infoData.value.tableName
     }).then((res: any) => {
-        const blobURL = URL.createObjectURL(res)
-        // 创建一个链接元素并模拟点击下载
-        const link = document.createElement('a')
-        link.href = blobURL
-        link.download = `${infoData.value.tableName}.xls`  // 根据实际情况设置下载文件的名称和扩展名
-        link.click()
-        // 释放Blob URL
-        URL.revokeObjectURL(blobURL)
+        if (res.type === 'application/json') {
+            ElMessage.error('暂不支持10000条数据导出')
+        } else {
+            const blobURL = URL.createObjectURL(res)
+            // 创建一个链接元素并模拟点击下载
+            const link = document.createElement('a')
+            link.href = blobURL
+            link.download = `${infoData.value.tableName}.xls`  // 根据实际情况设置下载文件的名称和扩展名
+            link.click()
+            // 释放Blob URL
+            URL.revokeObjectURL(blobURL)
+        }
         exportLoading.value = false
     }).catch(() => {
         exportLoading.value = false
