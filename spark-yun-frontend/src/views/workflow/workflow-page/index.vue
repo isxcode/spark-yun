@@ -1,212 +1,222 @@
 <template>
     <Breadcrumb :bread-crumb-list="breadCrumbList" />
-    <div class="workflow-page">
-        <div class="work-list">
-            <div class="option-container">
-                <div class="option-title">
-                    <span class="option-title__href" @click="backToFlow">
-                        <EllipsisTooltip class="title-tooltip" :label="workFlowData.name" />
-                    </span>
+    <LoadingPage
+        :visible="loading"
+    >
+        <div class="workflow-page">
+            <div class="work-list">
+                <div class="option-container">
+                    <div class="option-title">
+                        <span class="option-title__href" @click="backToFlow">
+                            <EllipsisTooltip class="title-tooltip" :label="workFlowData.name" />
+                        </span>
+                    </div>
+                    <el-dropdown trigger="click">
+                        <el-icon class="change-workflow">
+                            <Sort />
+                        </el-icon>
+                        <template #dropdown>
+                            <el-dropdown-menu style="max-height: 340px; overflow: auto; padding: 12px 8px;">
+                                <el-dropdown-item
+                                    @click="changeWorkFlow(workFlow)"
+                                    v-for="workFlow in workFlowList"
+                                    class="workflow-page__change-item"
+                                    :class="{ 'workflow-choose-item': workFlow.id === workFlowData.id }"
+                                >
+                                    {{ workFlow.name }}
+                                </el-dropdown-item>
+                            </el-dropdown-menu>
+                        </template>
+                    </el-dropdown>
                 </div>
-                <el-dropdown trigger="click">
-                    <el-icon class="change-workflow">
-                        <Sort />
-                    </el-icon>
-                    <template #dropdown>
-                        <el-dropdown-menu style="max-height: 340px; overflow: auto; padding: 12px 8px;">
-                            <el-dropdown-item @click="changeWorkFlow(workFlow)" v-for="workFlow in workFlowList">
-                                {{ workFlow.name }}
-                            </el-dropdown-item>
-                        </el-dropdown-menu>
-                    </template>
-                </el-dropdown>
-            </div>
-            <div class="search-box">
-                <el-input
-                    v-model="searchParam"
-                    placeholder="回车搜索作业名称"
-                    @input="inputEvent"
-                    @keyup.enter="initData"
-                ></el-input>
-                <el-button type="primary" circle @click="addData">
-                    <el-icon><Plus /></el-icon>
-                </el-button>
-            </div>
-            <el-scrollbar>
-                <div class="list-box">
-                    <template v-if="workListItem.length" v-for="work in workListItem" :key="work.id">
-                        <div
-                            class="list-item"
-                            :class="{ 'choose-item': workConfig && workConfig.id === work.id }"
-                            :draggable="true"
-                            @click="showWorkConfig(work)"
-                            @dragstart="handleDragEnd($event, work)"
-                        >
-                            <!-- {{ work.name }} -->
-                            <!-- <div class="item-left">
-                                    <el-icon v-if="work.workType === 'QUERY_JDBC'"><Search /></el-icon>
-                                    <el-icon v-if="work.workType === 'DATA_SYNC_JDBC'"><Van /></el-icon>
-                                </div> -->
-                            <div class="item-right">
-                                <span class="label-type">
-                                    <EllipsisTooltip class="label-name-text" :label="work.name" />
-                                </span>
-                                <!-- <span class="label-name">{{ work.name + work.name + work.name || '-' }}</span> -->
-                                <span class="label-name">{{ workTypeName(work.workType) }}</span>
+                <div class="search-box">
+                    <el-input
+                        v-model="searchParam"
+                        placeholder="回车搜索作业名称"
+                        @input="inputEvent"
+                        @keyup.enter="initData"
+                    ></el-input>
+                    <el-button type="primary" circle @click="addData">
+                        <el-icon><Plus /></el-icon>
+                    </el-button>
+                </div>
+                <el-scrollbar>
+                    <div class="list-box">
+                        <template v-if="workListItem.length" v-for="work in workListItem" :key="work.id">
+                            <div
+                                class="list-item"
+                                :class="{ 'choose-item': workConfig && workConfig.id === work.id }"
+                                :draggable="true"
+                                @click="showWorkConfig(work)"
+                                @dragstart="handleDragEnd($event, work)"
+                            >
+                                <!-- {{ work.name }} -->
+                                <!-- <div class="item-left">
+                                        <el-icon v-if="work.workType === 'QUERY_JDBC'"><Search /></el-icon>
+                                        <el-icon v-if="work.workType === 'DATA_SYNC_JDBC'"><Van /></el-icon>
+                                    </div> -->
+                                <div class="item-right">
+                                    <span class="label-type">
+                                        <EllipsisTooltip class="label-name-text" :label="work.name" />
+                                    </span>
+                                    <!-- <span class="label-name">{{ work.name + work.name + work.name || '-' }}</span> -->
+                                    <span class="label-name">{{ workTypeName(work.workType) }}</span>
+                                </div>
+                                <el-dropdown trigger="click">
+                                    <el-icon class="option-more" @click.stop>
+                                        <MoreFilled />
+                                    </el-icon>
+                                    <template #dropdown>
+                                        <el-dropdown-menu>
+                                            <el-dropdown-item @click="editData(work)">编辑</el-dropdown-item>
+                                            <!-- <el-dropdown-item
+                                                v-if="containerType === 'flow'"
+                                                @click="changeContianer(work, 'config')"
+                                            >
+                                                作业配置
+                                            </el-dropdown-item> -->
+                                            <el-dropdown-item @click="deleteData(work)">删除</el-dropdown-item>
+                                            <el-dropdown-item @click="copyData(work)">复制</el-dropdown-item>
+                                            <!-- <el-dropdown-item>导出</el-dropdown-item>
+                                                <el-dropdown-item>置顶</el-dropdown-item> -->
+                                        </el-dropdown-menu>
+                                    </template>
+                                </el-dropdown>
                             </div>
-                            <el-dropdown trigger="click">
-                                <el-icon class="option-more" @click.stop>
-                                    <MoreFilled />
-                                </el-icon>
-                                <template #dropdown>
-                                    <el-dropdown-menu>
-                                        <el-dropdown-item @click="editData(work)">编辑</el-dropdown-item>
-                                        <!-- <el-dropdown-item
-                                            v-if="containerType === 'flow'"
-                                            @click="changeContianer(work, 'config')"
-                                        >
-                                            作业配置
-                                        </el-dropdown-item> -->
-                                        <el-dropdown-item @click="deleteData(work)">删除</el-dropdown-item>
-                                        <el-dropdown-item @click="copyData(work)">复制</el-dropdown-item>
-                                        <!-- <el-dropdown-item>导出</el-dropdown-item>
-                                            <el-dropdown-item>置顶</el-dropdown-item> -->
-                                    </el-dropdown-menu>
-                                </template>
-                            </el-dropdown>
+                        </template>
+                        <empty-page v-else></empty-page>
+                    </div>
+                </el-scrollbar>
+            </div>
+            <div class="flow-container">
+                <template v-if="containerType === 'flow'">
+                    <div class="option-btns">
+                        <!-- 非运行状态 -->
+                        <div class="btn-box" @click="runWorkFlowDataEvent">
+                            <el-icon v-if="!btnLoadingConfig.runningLoading">
+                                <VideoPlay />
+                            </el-icon>
+                            <el-icon v-else class="is-loading">
+                                <Loading />
+                            </el-icon>
+                            <span class="btn-text">运行</span>
                         </div>
-                    </template>
-                    <empty-page v-else></empty-page>
-                </div>
-            </el-scrollbar>
-        </div>
-        <div class="flow-container">
-            <template v-if="containerType === 'flow'">
-                <div class="option-btns">
-                    <!-- 非运行状态 -->
-                    <div class="btn-box" @click="runWorkFlowDataEvent">
-                        <el-icon v-if="!btnLoadingConfig.runningLoading">
-                            <VideoPlay />
-                        </el-icon>
-                        <el-icon v-else class="is-loading">
-                            <Loading />
-                        </el-icon>
-                        <span class="btn-text">运行</span>
-                    </div>
-                    <div class="btn-box" @click="stopWorkFlow">
-                        <el-icon v-if="!btnLoadingConfig.stopWorkFlowLoading">
-                            <Close />
-                        </el-icon>
-                        <el-icon v-else class="is-loading">
-                            <Loading />
-                        </el-icon>
-                        <span class="btn-text">中止</span>
-                    </div>
-                    <div class="btn-box" @click="reRunWorkFlowDataEvent">
-                        <el-icon v-if="!btnLoadingConfig.reRunLoading">
-                            <RefreshLeft />
-                        </el-icon>
-                        <el-icon v-else class="is-loading">
-                            <Loading />
-                        </el-icon>
-                        <span class="btn-text">重跑</span>
-                    </div>
-                    <div class="btn-box" @click="saveData">
-                        <el-icon v-if="!btnLoadingConfig.saveLoading">
-                            <Finished />
-                        </el-icon>
-                        <el-icon v-else class="is-loading">
-                            <Loading />
-                        </el-icon>
-                        <span class="btn-text">保存</span>
-                    </div>
-                    <div class="btn-box" @click="showConfigDetail">
-                        <el-icon>
-                            <Setting />
-                        </el-icon>
-                        <span class="btn-text">配置</span>
-                    </div>
-                    <div class="btn-box" @click="publishWorkFlow">
-                        <el-icon v-if="!btnLoadingConfig.publishLoading">
-                            <Promotion />
-                        </el-icon>
-                        <el-icon v-else class="is-loading">
-                            <Loading />
-                        </el-icon>
-                        <span class="btn-text">发布</span>
-                    </div>
-                    <div class="btn-box" @click="underlineWorkFlow">
-                        <el-icon v-if="!btnLoadingConfig.underlineLoading">
-                            <Failed />
-                        </el-icon>
-                        <el-icon v-else class="is-loading">
-                            <Loading />
-                        </el-icon>
-                        <span class="btn-text">下线</span>
-                    </div>
-                    <div class="btn-box" @click="queryRunWorkInstancesEvent" v-if="workflowInstanceId">
-                        <el-icon>
-                            <Refresh />
-                        </el-icon>
-                        <span class="btn-text">刷新</span>
-                    </div>
+                        <div class="btn-box" @click="stopWorkFlow">
+                            <el-icon v-if="!btnLoadingConfig.stopWorkFlowLoading">
+                                <Close />
+                            </el-icon>
+                            <el-icon v-else class="is-loading">
+                                <Loading />
+                            </el-icon>
+                            <span class="btn-text">中止</span>
+                        </div>
+                        <div class="btn-box" @click="reRunWorkFlowDataEvent">
+                            <el-icon v-if="!btnLoadingConfig.reRunLoading">
+                                <RefreshLeft />
+                            </el-icon>
+                            <el-icon v-else class="is-loading">
+                                <Loading />
+                            </el-icon>
+                            <span class="btn-text">重跑</span>
+                        </div>
+                        <div class="btn-box" @click="saveData">
+                            <el-icon v-if="!btnLoadingConfig.saveLoading">
+                                <Finished />
+                            </el-icon>
+                            <el-icon v-else class="is-loading">
+                                <Loading />
+                            </el-icon>
+                            <span class="btn-text">保存</span>
+                        </div>
+                        <div class="btn-box" @click="showConfigDetail">
+                            <el-icon>
+                                <Setting />
+                            </el-icon>
+                            <span class="btn-text">配置</span>
+                        </div>
+                        <div class="btn-box" @click="publishWorkFlow">
+                            <el-icon v-if="!btnLoadingConfig.publishLoading">
+                                <Promotion />
+                            </el-icon>
+                            <el-icon v-else class="is-loading">
+                                <Loading />
+                            </el-icon>
+                            <span class="btn-text">发布</span>
+                        </div>
+                        <div class="btn-box" @click="underlineWorkFlow">
+                            <el-icon v-if="!btnLoadingConfig.underlineLoading">
+                                <Failed />
+                            </el-icon>
+                            <el-icon v-else class="is-loading">
+                                <Loading />
+                            </el-icon>
+                            <span class="btn-text">下线</span>
+                        </div>
+                        <div class="btn-box" @click="queryRunWorkInstancesEvent" v-if="workflowInstanceId">
+                            <el-icon>
+                                <Refresh />
+                            </el-icon>
+                            <span class="btn-text">刷新</span>
+                        </div>
 
-                    <!-- <span v-if="!btnLoadingConfig.exportLoading" @click="exportWorkFlow">导出</span>
-                        <el-icon v-else class="is-loading"><Loading /></el-icon>
-                        <span v-if="!btnLoadingConfig.importLoading" @click="importWorkFlow">导入</span>
-                        <el-icon v-else class="is-loading"><Loading /></el-icon> -->
-                </div>
-                <ZqyFlow ref="zqyFlowRef"></ZqyFlow>
-            </template>
-            <template v-else>
-                <spark-jar
-                    v-if="showWorkItem && workConfig.workType === 'SPARK_JAR'"
-                    :workItemConfig="workConfig"
-                    :workFlowData="workFlowData"
-                    @back="backToFlow"
-                    @locationNode="locationNode"
-                ></spark-jar>
-                <WorkApi
-                    v-if="showWorkItem && workConfig.workType === 'API'"
-                    :workItemConfig="workConfig"
-                    :workFlowData="workFlowData"
-                    @back="backToFlow"
-                    @locationNode="locationNode"
-                ></WorkApi>
-                <WorkItem
-                    v-if="
-                        showWorkItem &&
-                        !['SPARK_JAR', 'DATA_SYNC_JDBC', 'EXCEL_SYNC_JDBC'].includes(workConfig.workType)
-                    "
-                    :workItemConfig="workConfig"
-                    :workFlowData="workFlowData"
-                    @back="backToFlow"
-                    @locationNode="locationNode"
-                ></WorkItem>
-                <data-sync
-                    v-if="showWorkItem && workConfig.workType === 'DATA_SYNC_JDBC'"
-                    :workItemConfig="workConfig"
-                    @back="backToFlow"
-                    @locationNode="locationNode"
-                ></data-sync>
-                <ExcelImport
-                    v-if="showWorkItem && workConfig.workType === 'EXCEL_SYNC_JDBC'"
-                    :workItemConfig="workConfig"
-                    @back="backToFlow"
-                    @locationNode="locationNode"
-                ></ExcelImport>
-            </template>
+                        <!-- <span v-if="!btnLoadingConfig.exportLoading" @click="exportWorkFlow">导出</span>
+                            <el-icon v-else class="is-loading"><Loading /></el-icon>
+                            <span v-if="!btnLoadingConfig.importLoading" @click="importWorkFlow">导入</span>
+                            <el-icon v-else class="is-loading"><Loading /></el-icon> -->
+                    </div>
+                    <ZqyFlow ref="zqyFlowRef"></ZqyFlow>
+                </template>
+                <template v-else>
+                    <spark-jar
+                        v-if="showWorkItem && workConfig.workType === 'SPARK_JAR'"
+                        :workItemConfig="workConfig"
+                        :workFlowData="workFlowData"
+                        @back="backToFlow"
+                        @locationNode="locationNode"
+                    ></spark-jar>
+                    <WorkApi
+                        v-if="showWorkItem && workConfig.workType === 'API'"
+                        :workItemConfig="workConfig"
+                        :workFlowData="workFlowData"
+                        @back="backToFlow"
+                        @locationNode="locationNode"
+                    ></WorkApi>
+                    <WorkItem
+                        v-if="
+                            showWorkItem &&
+                            !['SPARK_JAR', 'DATA_SYNC_JDBC', 'EXCEL_SYNC_JDBC'].includes(workConfig.workType)
+                        "
+                        :workItemConfig="workConfig"
+                        :workFlowData="workFlowData"
+                        @back="backToFlow"
+                        @locationNode="locationNode"
+                    ></WorkItem>
+                    <data-sync
+                        v-if="showWorkItem && workConfig.workType === 'DATA_SYNC_JDBC'"
+                        :workItemConfig="workConfig"
+                        @back="backToFlow"
+                        @locationNode="locationNode"
+                    ></data-sync>
+                    <ExcelImport
+                        v-if="showWorkItem && workConfig.workType === 'EXCEL_SYNC_JDBC'"
+                        :workItemConfig="workConfig"
+                        @back="backToFlow"
+                        @locationNode="locationNode"
+                    ></ExcelImport>
+                </template>
+            </div>
+            <AddModal ref="addModalRef" />
+            <CopyModal ref="copyModalRef"></CopyModal>
+            <workflow-config ref="workflowConfigRef"></workflow-config>
+            <zqyLog ref="zqyLogRef"></zqyLog>
         </div>
-        <AddModal ref="addModalRef" />
-        <CopyModal ref="copyModalRef"></CopyModal>
-        <workflow-config ref="workflowConfigRef"></workflow-config>
-        <zqyLog ref="zqyLogRef"></zqyLog>
-    </div>
+    </LoadingPage>
 </template>
 
 <script lang="ts" setup>
 import { reactive, ref, onMounted, onUnmounted, nextTick, computed } from 'vue'
 import { useRoute } from 'vue-router'
+import LoadingPage from '@/components/loading/index.vue'
 import Breadcrumb from '@/layout/bread-crumb/index.vue'
 import ZqyFlow from '@/lib/packages/zqy-flow/flow.vue'
 import AddModal from './add-modal/index.vue'
@@ -269,6 +279,7 @@ const workflowInstanceId = ref('')
 const timer = ref()
 const runningStatus = ref(false)
 const copyModalRef = ref()
+const loading = ref<boolean>(false)
 
 const btnLoadingConfig = reactive({
     runningLoading: false,
@@ -527,6 +538,7 @@ function copyData(data: any) {
 
 function initFlowData() {
     return new Promise((resolve, reject) => {
+        loading.value = true
         GetWorkflowData({
             workflowId: workFlowData.value.id
         })
@@ -537,9 +549,11 @@ function initFlowData() {
                 if (res.data?.webConfig) {
                     zqyFlowRef.value.initCellList(res.data.webConfig)
                 }
+                loading.value = false
                 resolve()
             })
             .catch(() => {
+                loading.value = false
                 reject()
             })
     })
@@ -1006,6 +1020,13 @@ onUnmounted(() => {
                 }
             }
         }
+    }
+}
+.workflow-page__change-item {
+    border-radius: 4px;
+    &.workflow-choose-item {
+        background-color: getCssVar('color', 'primary', 'light-9');
+        color: getCssVar('color', 'primary');
     }
 }
 </style>
