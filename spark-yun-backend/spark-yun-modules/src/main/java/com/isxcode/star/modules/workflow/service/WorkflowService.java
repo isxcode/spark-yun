@@ -65,6 +65,11 @@ public class WorkflowService {
         return workInstanceRepository.findById(workInstanceId).orElseThrow(() -> new IsxAppException("实例不存在"));
     }
 
+    public WorkflowInstanceEntity getWorkflowInstance(String workflowInstanceId) {
+
+        return workflowInstanceRepository.findById(workflowInstanceId).orElseThrow(() -> new IsxAppException("实例不存在"));
+    }
+
     public WorkflowEntity getWorkflow(String workflowId) {
 
         return workflowRepository.findById(workflowId).orElseThrow(() -> new IsxAppException("工作流不存在"));
