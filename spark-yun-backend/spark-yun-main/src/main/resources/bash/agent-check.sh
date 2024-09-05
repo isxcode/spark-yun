@@ -63,6 +63,3 @@ json_output="{ \
 }"
 
 echo $json_output
-
-# 删除当前脚本文件
-rm ${BASE_PATH}/agent-check.sh
