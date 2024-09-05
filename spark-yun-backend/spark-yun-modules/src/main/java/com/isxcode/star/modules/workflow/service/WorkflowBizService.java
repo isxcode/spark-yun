@@ -451,6 +451,13 @@ public class WorkflowBizService {
 
     public void abortFlow(AbortFlowReq abortFlowReq) {
 
+        // 检查状态
+        WorkflowInstanceEntity workflowInstanceNew =
+            workflowService.getWorkflowInstance(abortFlowReq.getWorkflowInstanceId());
+        if (!InstanceStatus.RUNNING.equals(workflowInstanceNew.getStatus())) {
+            throw new IsxAppException("该实例不是运行中状态");
+        }
+
         // 将所有的PENDING作业实例，改为ABORT
         List<WorkInstanceEntity> pendingWorkInstances = workInstanceRepository
             .findAllByWorkflowInstanceIdAndStatus(abortFlowReq.getWorkflowInstanceId(), InstanceStatus.PENDING);
