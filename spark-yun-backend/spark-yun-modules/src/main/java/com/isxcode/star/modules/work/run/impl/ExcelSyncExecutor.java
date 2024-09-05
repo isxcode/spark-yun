@@ -18,6 +18,7 @@ import com.isxcode.star.api.datasource.constants.DatasourceType;
 import com.isxcode.star.api.work.constants.WorkLog;
 import com.isxcode.star.api.work.constants.WorkType;
 import com.isxcode.star.api.work.exceptions.WorkRunException;
+import com.isxcode.star.api.work.pojos.dto.ClusterConfig;
 import com.isxcode.star.api.work.pojos.dto.DatasourceConfig;
 import com.isxcode.star.api.work.pojos.res.RunWorkRes;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
@@ -513,13 +514,14 @@ public class ExcelSyncExecutor extends WorkExecutor {
                     // 关闭远程线程
                     WorkEntity work = workRepository.findById(workInstance.getWorkId()).get();
                     WorkConfigEntity workConfig = workConfigRepository.findById(work.getConfigId()).get();
+                    ClusterConfig clusterConfig = JSON.parseObject(workConfig.getClusterConfig(), ClusterConfig.class);
                     List<ClusterNodeEntity> allEngineNodes = clusterNodeRepository
-                        .findAllByClusterIdAndStatus(workConfig.getClusterConfig(), ClusterNodeStatus.RUNNING);
+                        .findAllByClusterIdAndStatus(clusterConfig.getClusterId(), ClusterNodeStatus.RUNNING);
                     if (allEngineNodes.isEmpty()) {
                         throw new WorkRunException(
                             LocalDateTime.now() + WorkLog.ERROR_INFO + "申请资源失败 : 集群不存在可用节点，请切换一个集群  \n");
                     }
-                    ClusterEntity cluster = clusterRepository.findById(workConfig.getClusterConfig()).get();
+                    ClusterEntity cluster = clusterRepository.findById(clusterConfig.getClusterId()).get();
 
                     // 节点选择随机数
                     ClusterNodeEntity engineNode = allEngineNodes.get(new Random().nextInt(allEngineNodes.size()));
