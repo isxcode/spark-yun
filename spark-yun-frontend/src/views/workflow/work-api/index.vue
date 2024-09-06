@@ -57,14 +57,17 @@
                                 maxlength="1000"></el-input>
                         </el-form-item>
                         <el-form-item label="请求方式" prop="requestType">
-                            <el-select v-model="apiWorkConfig.requestType" placeholder="请选择" @change="requestTypeChange">
-                                <el-option label="GET" value="GET"/>
-                                <el-option label="POST" value="POST"/>
+                            <el-select v-model="apiWorkConfig.requestType" placeholder="请选择"
+                                @change="requestTypeChange">
+                                <el-option label="GET" value="GET" />
+                                <el-option label="POST" value="POST" />
                             </el-select>
                         </el-form-item>
                         <el-form-item label="请求头" prop="requestHeader">
                             <span class="add-btn">
-                                <el-icon @click="addNewOption('requestHeader')"><CirclePlus /></el-icon>
+                                <el-icon @click="addNewOption('requestHeader')">
+                                    <CirclePlus />
+                                </el-icon>
                             </span>
                             <div class="form-options__list">
                                 <div class="form-options__item" v-for="(element, index) in apiWorkConfig.requestHeader">
@@ -77,14 +80,19 @@
                                         <el-input v-model="element.value" placeholder="请输入"></el-input>
                                     </div>
                                     <div class="option-btn">
-                                        <el-icon v-if="apiWorkConfig.requestHeader.length > 1" class="remove" @click="removeItem(index, 'requestHeader')"><CircleClose /></el-icon>
+                                        <el-icon v-if="apiWorkConfig.requestHeader.length > 1" class="remove"
+                                            @click="removeItem(index, 'requestHeader')">
+                                            <CircleClose />
+                                        </el-icon>
                                     </div>
                                 </div>
                             </div>
                         </el-form-item>
                         <el-form-item label="请求参数" prop="requestParam">
                             <span class="add-btn">
-                                <el-icon @click="addNewOption('requestParam')"><CirclePlus /></el-icon>
+                                <el-icon @click="addNewOption('requestParam')">
+                                    <CirclePlus />
+                                </el-icon>
                             </span>
                             <div class="form-options__list">
                                 <div class="form-options__item" v-for="(element, index) in apiWorkConfig.requestParam">
@@ -97,27 +105,49 @@
                                         <el-input v-model="element.value" placeholder="请输入"></el-input>
                                     </div>
                                     <div class="option-btn">
-                                        <el-icon v-if="apiWorkConfig.requestParam.length > 1" class="remove" @click="removeItem(index, 'requestParam')"><CircleClose /></el-icon>
+                                        <el-icon v-if="apiWorkConfig.requestParam.length > 1" class="remove"
+                                            @click="removeItem(index, 'requestParam')">
+                                            <CircleClose />
+                                        </el-icon>
                                     </div>
                                 </div>
                             </div>
                         </el-form-item>
-                        <el-form-item label="请求体" :class="{ 'show-screen__full': reqBodyFullStatus }" v-if="apiWorkConfig.requestType === 'POST'">
-                            <span class="format-json" @click="formatterJsonEvent(apiWorkConfig, 'requestBody')">格式化JSON</span>
-                            <el-icon class="modal-full-screen" @click="fullScreenEvent"><FullScreen v-if="!reqBodyFullStatus" /><Close v-else /></el-icon>
-                            <code-mirror v-model="apiWorkConfig.requestBody" basic :lang="jsonLang"/>
+                        <el-form-item label="请求体" :class="{ 'show-screen__full': reqBodyFullStatus }"
+                            v-if="apiWorkConfig.requestType === 'POST'">
+                            <span class="format-json"
+                                @click="formatterJsonEvent(apiWorkConfig, 'requestBody')">格式化JSON</span>
+                            <el-icon class="modal-full-screen" @click="fullScreenEvent">
+                                <FullScreen v-if="!reqBodyFullStatus" />
+                                <Close v-else />
+                            </el-icon>
+                            <code-mirror v-model="apiWorkConfig.requestBody" basic :lang="jsonLang" />
                         </el-form-item>
                     </el-form>
                 </div>
-                <div class="log-show log-show-datasync">
-                    <el-tabs v-model="activeName" @tab-change="tabChangeEvent">
-                        <template v-for="tab in tabList" :key="tab.code">
-                            <el-tab-pane v-if="!tab.hide" :label="tab.name" :name="tab.code" />
-                        </template>
-                    </el-tabs>
-                    <component :is="currentTab" ref="containerInstanceRef" class="show-container" />
-                </div>
             </div>
+            <el-collapse v-model="collapseActive" class="work-item-log__collapse" ref="logCollapseRef">
+                <el-collapse-item title="查看日志" :disabled="true" name="1">
+                    <template #title>
+                        <el-tabs v-model="activeName" @tab-click="changeCollapseUp" @tab-change="tabChangeEvent">
+                            <template v-for="tab in tabList" :key="tab.code">
+                                <el-tab-pane v-if="!tab.hide" :label="tab.name" :name="tab.code" />
+                            </template>
+                        </el-tabs>
+                        <span class="log__collapse">
+                            <el-icon v-if="isCollapse" @click="changeCollapseDown">
+                                <ArrowDown />
+                            </el-icon>
+                            <el-icon v-else @click="changeCollapseUp">
+                                <ArrowUp />
+                            </el-icon>
+                        </span>
+                    </template>
+                    <div class="log-show log-show-datasync">
+                        <component :is="currentTab" ref="containerInstanceRef" class="show-container" />
+                    </div>
+                </el-collapse-item>
+            </el-collapse>
         </LoadingPage>
         <!-- 配置 -->
         <config-detail ref="configDetailRef"></config-detail>
@@ -140,12 +170,12 @@ import { ElMessage, ElMessageBox, ElInput, FormRules } from 'element-plus'
 import { useRoute, useRouter } from 'vue-router'
 import { Loading } from '@element-plus/icons-vue'
 // import CodeMirror from 'vue-codemirror6'
-import {json} from '@codemirror/lang-json'
+import { json } from '@codemirror/lang-json'
 import { jsonFormatter } from '@/utils/formatter'
 
 interface Option {
-  label: string
-  value: string
+    label: string
+    value: string
 }
 const emit = defineEmits(['back', 'locationNode'])
 
@@ -182,6 +212,10 @@ const reqBodyFullStatus = ref(false)
 const form = ref<FormInstance>()
 
 const containerInstanceRef = ref(null)
+
+const logCollapseRef = ref()
+const collapseActive = ref('0')
+const isCollapse = ref(false)
 
 let workConfig = reactive({
     workId: '',
@@ -321,6 +355,9 @@ function runWorkData() {
                     // 点击运行，默认跳转到提交日志tab
                     activeName.value = 'PublishLog'
                     currentTab.value = markRaw(PublishLog)
+                    nextTick(() => {
+                        changeCollapseUp()
+                    })
                 })
                 .catch(() => {
                     runningLoading.value = false
@@ -345,6 +382,9 @@ function runWorkData() {
                 // 点击运行，默认跳转到提交日志tab
                 activeName.value = 'PublishLog'
                 currentTab.value = markRaw(PublishLog)
+                nextTick(() => {
+                    changeCollapseUp()
+                })
             })
             .catch(() => {
                 runningLoading.value = false
@@ -426,6 +466,14 @@ function stopData() {
 function setConfigData() {
     configDetailRef.value.showModal(props.workItemConfig)
 }
+function changeCollapseDown() {
+    logCollapseRef.value.setActiveNames('0')
+    isCollapse.value = false
+}
+function changeCollapseUp() {
+    logCollapseRef.value.setActiveNames('1')
+    isCollapse.value = true
+}
 
 function addNewOption(type: string) {
     if (type === 'requestHeader') {
@@ -473,16 +521,23 @@ onMounted(() => {
 .zqy-work-api {
     position: relative;
     background-color: getCssVar('color', 'white');
+
     .zqy-loading {
-        overflow-y: auto;
+        // overflow-y: auto;
         margin-top: 50px;
+        // height: calc(100vh - 102px);
+        padding: 0;
 
         .api-work-container {
+            overflow: auto;
+            padding: 0 20px;
+            height: calc(100vh - 150px);
             .sql-code-container {
                 margin-top: 12px;
             }
         }
     }
+
     .header-options {
         position: absolute;
         top: -50px;
@@ -502,35 +557,39 @@ onMounted(() => {
         border-bottom: 1px solid getCssVar('border-color');
 
         .btn-box {
-          font-size: getCssVar('font-size', 'extra-small');
-          display: flex;
-          cursor: pointer;
-          width: 48px;
-          margin-right: 8px;
+            font-size: getCssVar('font-size', 'extra-small');
+            display: flex;
+            cursor: pointer;
+            width: 48px;
+            margin-right: 8px;
 
-          &.btn-box__4 {
-            width: 70px;
-          }
+            &.btn-box__4 {
+                width: 70px;
+            }
 
-          .btn-text {
-            margin-left: 4px;
-          }
+            .btn-text {
+                margin-left: 4px;
+            }
 
-          &:hover {
-            color: getCssVar('color', 'primary');;
-          }
+            &:hover {
+                color: getCssVar('color', 'primary');
+                ;
+            }
         }
     }
+
     .el-form-item {
         .modal-full-screen {
             position: absolute;
             top: -26px;
             right: 0;
             cursor: pointer;
+
             &:hover {
                 color: getCssVar('color', 'primary');
             }
         }
+
         .format-json {
             position: absolute;
             top: -34px;
@@ -538,10 +597,12 @@ onMounted(() => {
             font-size: 12px;
             color: getCssVar('color', 'primary');
             cursor: pointer;
+
             &:hover {
                 text-decoration: underline;
             }
         }
+
         &.show-screen__full {
             position: fixed;
             width: 100%;
@@ -553,119 +614,214 @@ onMounted(() => {
             box-sizing: border-box;
             transition: all 0.15s linear;
             z-index: 10;
+
             .el-form-item__content {
                 align-items: flex-start;
                 height: 100%;
+
                 .modal-full-screen {
                     position: absolute;
                     top: -26px;
                     right: 0;
                     cursor: pointer;
+
                     &:hover {
                         color: getCssVar('color', 'primary');
                     }
                 }
+
                 .vue-codemirror {
                     height: calc(100% - 36px);
                 }
             }
         }
+
         .el-form-item__content {
             .vue-codemirror {
                 height: 130px;
                 width: 100%;
 
                 .cm-editor {
-                height: 100%;
-                outline: none;
-                border: 1px solid #dcdfe6;
+                    height: 100%;
+                    outline: none;
+                    border: 1px solid #dcdfe6;
                 }
 
                 .cm-gutters {
-                font-size: 12px;
-                font-family: v-sans, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+                    font-size: 12px;
+                    font-family: v-sans, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
                 }
 
                 .cm-content {
-                font-size: 12px;
-                font-family: v-sans, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+                    font-size: 12px;
+                    font-family: v-sans, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
                 }
 
                 .cm-tooltip-autocomplete {
-                ul {
-                    li {
-                    height: 40px;
-                    display: flex;
-                    align-items: center;
-                    font-size: 12px;
-                    background-color: #ffffff;
-                    font-family: v-sans, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-                    }
+                    ul {
+                        li {
+                            height: 40px;
+                            display: flex;
+                            align-items: center;
+                            font-size: 12px;
+                            background-color: #ffffff;
+                            font-family: v-sans, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+                        }
 
-                    li[aria-selected] {
-                    background: #409EFF;
-                    }
+                        li[aria-selected] {
+                            background: #409EFF;
+                        }
 
-                    .cm-completionIcon {
-                    margin-right: -4px;
-                    opacity: 0;
+                        .cm-completionIcon {
+                            margin-right: -4px;
+                            opacity: 0;
+                        }
                     }
-                }
                 }
             }
+
             .add-btn {
                 position: absolute;
                 right: 0;
                 top: -32px;
+
                 .el-icon {
                     color: getCssVar('color', 'primary');
                     cursor: pointer;
                     font-size: 16px;
                 }
             }
+
             .form-options__list {
                 width: 100%;
                 max-height: 210px;
                 overflow: auto;
+
                 .form-options__item {
                     display: flex;
                     margin-bottom: 8px;
+
                     .input-item {
                         display: flex;
                         font-size: 12px;
                         margin-right: 8px;
                         color: #303133;
                         width: 100%;
+
                         .item-label {
                             margin-right: 8px;
                         }
+
                         .el-input {
                             .el-input__wrapper {
                                 // padding: 0;
                             }
                         }
                     }
+
                     .option-btn {
                         display: flex;
                         height: 32px;
                         align-items: center;
                         margin-right: -8px;
+
                         .remove {
                             color: red;
                             cursor: pointer;
                             margin-right: 8px;
+
                             &:hover {
                                 color: getCssVar('color', 'primary');
                             }
                         }
+
                         .move {
                             color: getCssVar('color', 'primary');
+
                             &:active {
                                 cursor: move;
                             }
                         }
                     }
                 }
+            }
+        }
+    }
+
+    .work-item-log__collapse {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 46px;
+        z-index: 100;
+
+        .el-collapse-item__header {
+            // padding-left: 20px;
+            cursor: default;
+        }
+
+        .el-collapse-item__arrow {
+            display: none;
+        }
+
+        .el-collapse-item__content {
+            padding-bottom: 14px;
+        }
+
+        .log__collapse {
+            position: absolute;
+            right: 20px;
+            cursor: pointer;
+        }
+
+        .el-tabs {
+            width: 100%;
+            // padding: 0 20px;
+            height: 40px;
+            box-sizing: border-box;
+
+            .el-tabs__item {
+                font-size: getCssVar('font-size', 'extra-small');
+            }
+
+            .el-tabs__nav-scroll {
+                padding-left: 20px;
+                box-sizing: border-box;
+            }
+
+            .el-tabs__content {
+                height: 0;
+            }
+
+            .el-tabs__nav-scroll {
+                border-bottom: 1px solid getCssVar('border-color');
+            }
+        }
+
+        .log-show {
+            padding: 0 20px;
+            box-sizing: border-box;
+
+            &.log-show-datasync {
+                height: calc(100vh - 306px);
+
+                .zqy-download-log {
+                    right: 40px;
+                    top: 12px;
+                }
+            }
+
+            pre {
+                width: 100px;
+            }
+
+            .show-container {
+                height: calc(100vh - 310px);
+                overflow: auto;
+            }
+
+            .empty-page {
+                height: 80%;
             }
         }
     }

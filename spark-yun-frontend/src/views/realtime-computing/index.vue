@@ -169,6 +169,10 @@ function initData(tableLoading?: boolean, type?: string) {
       loading.value = false
       tableConfig.loading = false
       networkError.value = true
+      if (timer.value) {
+        clearInterval(timer.value)
+      }
+      timer.value = null
     })
 }
 

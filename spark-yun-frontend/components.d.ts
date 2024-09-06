@@ -71,4 +71,7 @@ declare module 'vue' {
     ZqyLog: typeof import('./src/components/zqy-log/index.vue')['default']
     ZSvgIcon: typeof import('./src/components/z-svg-icon/index.vue')['default']
   }
+  export interface ComponentCustomProperties {
+    vLoading: typeof import('element-plus/es')['ElLoadingDirective']
+  }
 }

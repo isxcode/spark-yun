@@ -194,7 +194,7 @@ export const menuListData: Array<Menu> = [
     code: 'tenant-management',
     name: '租户管理',
     icon: 'OfficeBuilding',
-    authType: [ 'ROLE_TENANT_MEMBER', 'ROLE_TENANT_ADMIN' ],
+    authType: [ 'ROLE_TENANT_ADMIN' ],
     children: [
       {
         code: 'tenant-user',

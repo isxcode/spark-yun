@@ -150,7 +150,7 @@
                       重新运行
                     </el-dropdown-item>
                     <el-dropdown-item
-                      v-if="scopeSlot.row.status === 'RUNNING' && scopeSlot.row.instanceType === 'WORK'"
+                      v-if="scopeSlot.row.status === 'RUNNING'"
                       @click="stopWork(scopeSlot.row)"
                     >
                       中止
