@@ -1,9 +1,8 @@
 package com.isxcode.star.modules.work.run.impl;
 
 import com.alibaba.fastjson.JSON;
-import com.isxcode.star.api.agent.pojos.req.PluginReq;
-import com.isxcode.star.api.agent.pojos.req.SparkSubmit;
-import com.isxcode.star.api.agent.pojos.req.SubmitWorkReq;
+import com.isxcode.star.api.agent.constants.AgentUrl;
+import com.isxcode.star.api.agent.pojos.req.*;
 import com.isxcode.star.api.agent.pojos.res.GetWorkStderrLogRes;
 import com.isxcode.star.api.api.constants.PathConstants;
 import com.isxcode.star.api.cluster.constants.ClusterNodeStatus;
@@ -294,7 +293,7 @@ public class SyncWorkExecutor extends WorkExecutor {
         RunWorkRes submitWorkRes;
         try {
             baseResponse = HttpUtils.doPost(
-                httpUrlUtils.genHttpUrl(engineNode.getHost(), engineNode.getAgentPort(), "/yag/executeWork"),
+                httpUrlUtils.genHttpUrl(engineNode.getHost(), engineNode.getAgentPort(), AgentUrl.SUBMIT_WORK_URL),
                 executeReq, BaseResponse.class);
             log.debug("获取远程提交作业日志:{}", baseResponse.toString());
             if (!String.valueOf(HttpStatus.OK.value()).equals(baseResponse.getCode())) {
@@ -327,13 +326,8 @@ public class SyncWorkExecutor extends WorkExecutor {
         while (true) {
 
             // 获取作业状态并保存
-            Map<String, String> paramsMap = new HashMap<>();
-            paramsMap.put("appId", submitWorkRes.getAppId());
-            paramsMap.put("agentType", calculateEngineEntityOptional.get().getClusterType());
-            paramsMap.put("sparkHomePath", executeReq.getSparkHomePath());
-            baseResponse = HttpUtils.doGet(
-                httpUrlUtils.genHttpUrl(engineNode.getHost(), engineNode.getAgentPort(), "/yag/getStatus"), paramsMap,
-                null, BaseResponse.class);
+            GetWorkStatusReq getWorkStatusReq = GetWorkStatusReq.builder().appId(submitWorkRes.getAppId()).clusterType(calculateEngineEntityOptional.get().getClusterType()).sparkHomePath(executeReq.getSparkHomePath()).build();
+            baseResponse = HttpUtils.doPost(httpUrlUtils.genHttpUrl(engineNode.getHost(), engineNode.getAgentPort(), AgentUrl.GET_WORK_STATUS_URL), getWorkStatusReq, BaseResponse.class);
             log.debug("获取远程获取状态日志:{}", baseResponse.toString());
 
             if (!String.valueOf(HttpStatus.OK.value()).equals(baseResponse.getCode())) {
@@ -375,13 +369,8 @@ public class SyncWorkExecutor extends WorkExecutor {
                 }
 
                 // 获取日志并保存
-                Map<String, String> paramsMap2 = new HashMap<>();
-                paramsMap2.put("appId", submitWorkRes.getAppId());
-                paramsMap2.put("agentType", calculateEngineEntityOptional.get().getClusterType());
-                paramsMap2.put("sparkHomePath", executeReq.getSparkHomePath());
-                baseResponse = HttpUtils.doGet(
-                    httpUrlUtils.genHttpUrl(engineNode.getHost(), engineNode.getAgentPort(), "/yag/getLog"), paramsMap2,
-                    null, BaseResponse.class);
+                GetWorkStderrLogReq getWorkStderrLogReq = GetWorkStderrLogReq.builder().appId(submitWorkRes.getAppId()).clusterType(calculateEngineEntityOptional.get().getClusterType()).sparkHomePath(executeReq.getSparkHomePath()).build();
+                baseResponse = HttpUtils.doPost(httpUrlUtils.genHttpUrl(engineNode.getHost(), engineNode.getAgentPort(), AgentUrl.GET_WORK_STDERR_LOG_URL), getWorkStderrLogReq, BaseResponse.class);
                 log.debug("获取远程返回日志:{}", baseResponse.toString());
 
                 if (!String.valueOf(HttpStatus.OK.value()).equals(baseResponse.getCode())) {
@@ -396,32 +385,11 @@ public class SyncWorkExecutor extends WorkExecutor {
                 if (yagGetLogRes != null) {
                     workInstance.setYarnLog(yagGetLogRes.getLog());
                 }
-                workInstance = updateInstance(workInstance, logBuilder);
+                updateInstance(workInstance, logBuilder);
 
                 // 如果运行成功，则保存返回数据
                 List<String> successStatus = Arrays.asList("FINISHED", "SUCCEEDED", "COMPLETED");
-                if (successStatus.contains(workStatusRes.getAppStatus().toUpperCase())) {
-
-                    // 获取数据
-                    Map<String, String> paramsMap3 = new HashMap<>();
-                    paramsMap3.put("appId", submitWorkRes.getAppId());
-                    paramsMap3.put("agentType", calculateEngineEntityOptional.get().getClusterType());
-                    paramsMap3.put("sparkHomePath", executeReq.getSparkHomePath());
-                    baseResponse = HttpUtils.doGet(
-                        httpUrlUtils.genHttpUrl(engineNode.getHost(), engineNode.getAgentPort(), "/yag/getData"),
-                        paramsMap3, null, BaseResponse.class);
-                    log.debug("获取远程返回数据:{}", baseResponse.toString());
-
-                    if (!String.valueOf(HttpStatus.OK.value()).equals(baseResponse.getCode())) {
-                        throw new WorkRunException(
-                            LocalDateTime.now() + WorkLog.ERROR_INFO + "获取作业数据异常 : " + baseResponse.getErr() + "\n");
-                    }
-
-                    // 解析数据并保存
-                    workInstance.setResultData(JSON.toJSONString(baseResponse.getData()));
-                    logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("数据保存成功 \n");
-                    updateInstance(workInstance, logBuilder);
-                } else {
+                if (!successStatus.contains(workStatusRes.getAppStatus().toUpperCase())) {
                     // 任务运行错误
                     throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "任务运行异常" + "\n");
                 }
@@ -457,14 +425,8 @@ public class SyncWorkExecutor extends WorkExecutor {
                     // 节点选择随机数
                     ClusterNodeEntity engineNode = allEngineNodes.get(new Random().nextInt(allEngineNodes.size()));
 
-                    Map<String, String> paramsMap = new HashMap<>();
-                    paramsMap.put("appId", wokRunWorkRes.getAppId());
-                    paramsMap.put("agentType", cluster.getClusterType());
-                    paramsMap.put("sparkHomePath", engineNode.getSparkHomePath());
-                    paramsMap.put("agentHomePath", engineNode.getAgentHomePath());
-                    BaseResponse<?> baseResponse = HttpUtils.doGet(
-                        httpUrlUtils.genHttpUrl(engineNode.getHost(), engineNode.getAgentPort(), "/yag/stopJob"),
-                        paramsMap, null, BaseResponse.class);
+                    StopWorkReq stopWorkReq = StopWorkReq.builder().appId(wokRunWorkRes.getAppId()).clusterType(cluster.getClusterType()).sparkHomePath(engineNode.getSparkHomePath()).agentHomePath(engineNode.getAgentHomePath()).build();
+                    BaseResponse<?> baseResponse = HttpUtils.doPost(httpUrlUtils.genHttpUrl(engineNode.getHost(), engineNode.getAgentPort(), AgentUrl.STOP_WORK_URL), stopWorkReq, BaseResponse.class);
 
                     if (!String.valueOf(HttpStatus.OK.value()).equals(baseResponse.getCode())) {
                         throw new IsxAppException(baseResponse.getCode(), baseResponse.getMsg(), baseResponse.getErr());
