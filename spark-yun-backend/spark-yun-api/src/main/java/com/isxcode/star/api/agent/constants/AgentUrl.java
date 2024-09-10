@@ -21,4 +21,6 @@ public interface AgentUrl {
     String CONTAINER_CHECK_URL = "/" + ModuleCode.SPARK_YUN_AGENT + "/containerCheck";
 
     String EXECUTE_CONTAINER_SQL_URL = "/" + ModuleCode.SPARK_YUN_AGENT + "/executeContainerSql";
+
+    String DEPLOY_CONTAINER_URL = "/" + ModuleCode.SPARK_YUN_AGENT + "/deployContainer";
 }

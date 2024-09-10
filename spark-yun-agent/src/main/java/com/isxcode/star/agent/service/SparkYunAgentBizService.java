@@ -27,7 +27,7 @@ public class SparkYunAgentBizService {
 
     public SubmitWorkRes submitWork(SubmitWorkReq submitWorkReq) {
 
-        AgentService agentService = agentFactory.getAgentService(submitWorkReq.getAgentType());
+        AgentService agentService = agentFactory.getAgentService(submitWorkReq.getClusterType());
         try {
             SparkLauncher sparkLauncher = agentService.getSparkLauncher(submitWorkReq);
             String appId = agentService.submitWork(sparkLauncher);
@@ -151,6 +151,24 @@ public class SparkYunAgentBizService {
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             return ExecuteContainerSqlRes.builder().code("500").msg(e.getMessage()).build();
+        }
+    }
+
+    public DeployContainerRes deployContainer(SubmitWorkReq submitWorkReq) {
+
+        AgentService agentService = agentFactory.getAgentService(submitWorkReq.getClusterType());
+        try {
+            int port = findUnusedPort();
+            submitWorkReq.getPluginReq().setContainerPort(port);
+            SparkLauncher sparkLauncher = agentService.getSparkLauncher(submitWorkReq);
+            String appId = agentService.submitWork(sparkLauncher);
+            return DeployContainerRes.builder().appId(appId).port(port).build();
+        } catch (IsxAppException e) {
+            log.error(e.getMessage(), e);
+            throw new IsxAppException(e.getMsg());
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            throw new IsxAppException(e.getMessage());
         }
     }
 }

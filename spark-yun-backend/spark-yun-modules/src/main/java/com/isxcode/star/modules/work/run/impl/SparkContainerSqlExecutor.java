@@ -1,6 +1,7 @@
 package com.isxcode.star.modules.work.run.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.isxcode.star.api.agent.constants.AgentUrl;
 import com.isxcode.star.api.agent.pojos.req.ExecuteContainerSqlReq;
 import com.isxcode.star.api.agent.pojos.res.ExecuteContainerSqlRes;
 import com.isxcode.star.api.cluster.constants.ClusterNodeStatus;
@@ -142,7 +143,7 @@ public class SparkContainerSqlExecutor extends WorkExecutor {
             ExecuteContainerSqlRes containerGetDataRes;
             try {
                 containerGetDataRes = new RestTemplate().postForEntity(
-                    genHttpUrl(engineNode.getHost(), engineNode.getAgentPort(), "/yag/executeContainerSql"),
+                    genHttpUrl(engineNode.getHost(), engineNode.getAgentPort(), AgentUrl.EXECUTE_CONTAINER_SQL_URL),
                     executeContainerSqlReq, ExecuteContainerSqlRes.class).getBody();
             } catch (Exception e) {
                 log.error(e.getMessage());
