@@ -6,7 +6,7 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class YagExecuteWorkReq {
+public class SubmitWorkReq {
 
     private PluginReq pluginReq;
 
@@ -14,7 +14,7 @@ public class YagExecuteWorkReq {
 
     private String agentHomePath;
 
-    private String agentType;
+    private String clusterType;
 
     private String sparkHomePath;
 

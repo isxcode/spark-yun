@@ -1,10 +1,10 @@
-package com.isxcode.star.agent.run;
+package com.isxcode.star.agent.run.impl;
 
 import com.alibaba.fastjson2.JSON;
 import com.isxcode.star.agent.properties.SparkYunAgentProperties;
+import com.isxcode.star.agent.run.AgentService;
 import com.isxcode.star.api.agent.constants.AgentType;
-import com.isxcode.star.api.agent.pojos.req.DeployContainerReq;
-import com.isxcode.star.api.agent.pojos.req.YagExecuteWorkReq;
+import com.isxcode.star.api.agent.pojos.req.SubmitWorkReq;
 import com.isxcode.star.api.work.constants.WorkType;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import lombok.RequiredArgsConstructor;
@@ -28,38 +28,44 @@ public class YarnAgentService implements AgentService {
     private final SparkYunAgentProperties sparkYunAgentProperties;
 
     @Override
+    public String getAgentType() {
+        return AgentType.YARN;
+    }
+
+    @Override
     public String getMaster(String sparkHomePath) {
         return "yarn";
     }
 
     @Override
-    public SparkLauncher genSparkLauncher(YagExecuteWorkReq yagExecuteWorkReq) {
+    public SparkLauncher getSparkLauncher(SubmitWorkReq submitWorkReq) {
 
-        String appName = "zhiqingyun-" + yagExecuteWorkReq.getWorkType() + "-" + yagExecuteWorkReq.getWorkId() + "-"
-            + yagExecuteWorkReq.getWorkInstanceId();
 
-        SparkLauncher sparkLauncher;
-        if (WorkType.SPARK_JAR.equals(yagExecuteWorkReq.getWorkType())) {
-            // 如果是自定义作业
-            sparkLauncher = new SparkLauncher().setVerbose(false)
-                .setMainClass(yagExecuteWorkReq.getSparkSubmit().getMainClass()).setDeployMode("cluster")
-                .setAppName(yagExecuteWorkReq.getSparkSubmit().getAppName() + "-" + yagExecuteWorkReq.getWorkType()
-                    + "-" + yagExecuteWorkReq.getWorkId() + "-" + yagExecuteWorkReq.getWorkInstanceId())
-                .setMaster(getMaster(yagExecuteWorkReq.getSparkHomePath()))
-                .setAppResource(yagExecuteWorkReq.getAgentHomePath() + File.separator + "file" + File.separator
-                    + yagExecuteWorkReq.getSparkSubmit().getAppResource())
-                .setSparkHome(yagExecuteWorkReq.getAgentHomePath() + File.separator + "spark-min");
+        SparkLauncher sparkLauncher = new SparkLauncher().setVerbose(false)
+            .setMainClass(submitWorkReq.getSparkSubmit().getMainClass()).setDeployMode("cluster")
+            .setAppName(submitWorkReq.getSparkSubmit().getAppName() + "-" + submitWorkReq.getWorkType() + "-"
+                + submitWorkReq.getWorkId() + "-" + submitWorkReq.getWorkInstanceId())
+            .setMaster(getMaster(submitWorkReq.getSparkHomePath()))
+            .setAppResource(submitWorkReq.getAgentHomePath() + File.separator + "file" + File.separator
+                + submitWorkReq.getSparkSubmit().getAppResource())
+            .setSparkHome(submitWorkReq.getAgentHomePath() + File.separator + "spark-min");
+
+        if (WorkType.SPARK_JAR.equals(submitWorkReq.getWorkType())) {
+            sparkLauncher
+                .setAppName(submitWorkReq.getSparkSubmit().getAppName() + "-" + submitWorkReq.getWorkType() + "-"
+                    + submitWorkReq.getWorkId() + "-" + submitWorkReq.getWorkInstanceId())
+                .setAppResource(submitWorkReq.getAgentHomePath() + File.separator + "file" + File.separator
+                    + submitWorkReq.getSparkSubmit().getAppResource());
         } else {
-            sparkLauncher = new SparkLauncher().setVerbose(false)
-                .setMainClass(yagExecuteWorkReq.getSparkSubmit().getMainClass()).setDeployMode("cluster")
-                .setAppName(appName).setMaster(getMaster(yagExecuteWorkReq.getSparkHomePath()))
-                .setAppResource(yagExecuteWorkReq.getAgentHomePath() + File.separator + "plugins" + File.separator
-                    + yagExecuteWorkReq.getSparkSubmit().getAppResource())
-                .setSparkHome(yagExecuteWorkReq.getAgentHomePath() + File.separator + "spark-min");
+            sparkLauncher
+                .setAppName("zhiqingyun-" + submitWorkReq.getWorkType() + "-" + submitWorkReq.getWorkId() + "-"
+                    + submitWorkReq.getWorkInstanceId())
+                .setAppResource(submitWorkReq.getAgentHomePath() + File.separator + "plugins" + File.separator
+                    + submitWorkReq.getSparkSubmit().getAppResource());
         }
 
-        if (!Strings.isEmpty(yagExecuteWorkReq.getAgentHomePath())) {
-            File[] jarFiles = new File(yagExecuteWorkReq.getAgentHomePath() + File.separator + "lib").listFiles();
+        if (!Strings.isEmpty(submitWorkReq.getAgentHomePath())) {
+            File[] jarFiles = new File(submitWorkReq.getAgentHomePath() + File.separator + "lib").listFiles();
             if (jarFiles != null) {
                 for (File jar : jarFiles) {
                     try {
@@ -76,82 +82,40 @@ public class YarnAgentService implements AgentService {
         }
 
         // 引入excel/csv文件
-        if (yagExecuteWorkReq.getPluginReq().getCsvFilePath() != null) {
-            sparkLauncher.addFile(yagExecuteWorkReq.getPluginReq().getCsvFilePath());
+        if (submitWorkReq.getPluginReq().getCsvFilePath() != null) {
+            sparkLauncher.addFile(submitWorkReq.getPluginReq().getCsvFilePath());
         }
 
         // 添加额外依赖
-        if (yagExecuteWorkReq.getLibConfig() != null) {
-            yagExecuteWorkReq.getLibConfig().forEach(e -> {
-                String libPath =
-                    yagExecuteWorkReq.getAgentHomePath() + File.separator + "file" + File.separator + e + ".jar";
-                sparkLauncher.addJar(libPath);
-            });
+        if (submitWorkReq.getLibConfig() != null) {
+            submitWorkReq.getLibConfig().forEach(e -> sparkLauncher
+                .addJar(submitWorkReq.getAgentHomePath() + File.separator + "file" + File.separator + e + ".jar"));
         }
 
         // 添加自定义函数
-        if (yagExecuteWorkReq.getFuncConfig() != null) {
-            yagExecuteWorkReq.getFuncConfig().forEach(e -> {
-                String libPath = yagExecuteWorkReq.getAgentHomePath() + File.separator + "file" + File.separator
-                    + e.getFileId() + ".jar";
-                sparkLauncher.addJar(libPath);
-            });
+        if (submitWorkReq.getFuncConfig() != null) {
+            submitWorkReq.getFuncConfig().forEach(e -> sparkLauncher.addJar(
+                submitWorkReq.getAgentHomePath() + File.separator + "file" + File.separator + e.getFileId() + ".jar"));
         }
 
-        if (WorkType.SPARK_JAR.equals(yagExecuteWorkReq.getWorkType())) {
-            sparkLauncher.addAppArgs(yagExecuteWorkReq.getArgs());
+        if (WorkType.SPARK_JAR.equals(submitWorkReq.getWorkType())) {
+            sparkLauncher.addAppArgs(submitWorkReq.getArgs());
         } else {
             sparkLauncher.addAppArgs(Base64.getEncoder()
-                .encodeToString(yagExecuteWorkReq.getPluginReq() == null ? yagExecuteWorkReq.getArgsStr().getBytes()
-                    : JSON.toJSONString(yagExecuteWorkReq.getPluginReq()).getBytes()));
+                .encodeToString(submitWorkReq.getPluginReq() == null ? submitWorkReq.getArgsStr().getBytes()
+                    : JSON.toJSONString(submitWorkReq.getPluginReq()).getBytes()));
         }
 
         // 调整spark.yarn.submit.waitAppCompletion，减少资源消耗
         sparkLauncher.setConf("spark.yarn.submit.waitAppCompletion", "false");
-        yagExecuteWorkReq.getSparkSubmit().getConf().forEach(sparkLauncher::setConf);
+        submitWorkReq.getSparkSubmit().getConf().forEach(sparkLauncher::setConf);
 
         return sparkLauncher;
     }
 
-    public SparkLauncher genSparkLauncher(DeployContainerReq deployContainerReq) {
-
-        String appName = "zhiqingyun-SPARK_CONTAINER-" + deployContainerReq.getContainerId();
-
-        SparkLauncher sparkLauncher = new SparkLauncher().setVerbose(false)
-            .setMainClass(deployContainerReq.getSparkSubmit().getMainClass()).setDeployMode("cluster")
-            .setAppName(appName).setMaster(getMaster(deployContainerReq.getSparkHomePath()))
-            .setAppResource(deployContainerReq.getAgentHomePath() + File.separator + "plugins" + File.separator
-                + deployContainerReq.getSparkSubmit().getAppResource())
-            .setSparkHome(deployContainerReq.getAgentHomePath() + File.separator + "spark-min");
-
-        if (!Strings.isEmpty(deployContainerReq.getAgentHomePath())) {
-            File[] jarFiles = new File(deployContainerReq.getAgentHomePath() + File.separator + "lib").listFiles();
-            if (jarFiles != null) {
-                for (File jar : jarFiles) {
-                    try {
-                        // 使用本地hive驱动
-                        if (!jar.getName().contains("hive") && !jar.getName().contains("zhiqingyun-agent.jar")) {
-                            sparkLauncher.addJar(jar.toURI().toURL().toString());
-                        }
-                    } catch (MalformedURLException e) {
-                        log.error(e.getMessage(), e);
-                        throw new IsxAppException("50010", "添加lib中文件异常", e.getMessage());
-                    }
-                }
-            }
-        }
-
-        sparkLauncher.addAppArgs(Base64.getEncoder()
-            .encodeToString(deployContainerReq.getPluginReq() == null ? deployContainerReq.getArgs().getBytes()
-                : JSON.toJSONString(deployContainerReq.getPluginReq()).getBytes()));
-
-        deployContainerReq.getSparkSubmit().getConf().forEach(sparkLauncher::setConf);
-
-        return sparkLauncher;
-    }
 
     @Override
-    public String executeWork(SparkLauncher sparkLauncher) throws IOException {
+    public String submitWork(SparkLauncher sparkLauncher) throws Exception {
 
         Process launch = sparkLauncher.launch();
         InputStream inputStream = launch.getErrorStream();
@@ -194,7 +158,7 @@ public class YarnAgentService implements AgentService {
     }
 
     @Override
-    public String getAppStatus(String appId, String sparkHomePath) throws IOException {
+    public String getWorkStatus(String appId, String sparkHomePath) throws Exception {
 
         String getStatusCmdFormat = "yarn application -status %s";
 
@@ -234,7 +198,7 @@ public class YarnAgentService implements AgentService {
     }
 
     @Override
-    public String getStdoutLog(String appId, String sparkHomePath) throws IOException {
+    public String getStdoutLog(String appId, String sparkHomePath) throws Exception {
 
         String getLogCmdFormat = "yarn logs -applicationId %s";
         Process process = Runtime.getRuntime().exec(String.format(getLogCmdFormat, appId));
@@ -275,7 +239,7 @@ public class YarnAgentService implements AgentService {
     }
 
     @Override
-    public String getAppLog(String appId, String sparkHomePath) throws IOException {
+    public String getStderrLog(String appId, String sparkHomePath) throws Exception {
 
         String getLogCmdFormat = "yarn logs -applicationId %s";
         Process process = Runtime.getRuntime().exec(String.format(getLogCmdFormat, appId));
@@ -316,7 +280,7 @@ public class YarnAgentService implements AgentService {
     }
 
     @Override
-    public String getAppData(String appId, String sparkHomePath) throws IOException {
+    public String getWorkDataStr(String appId, String sparkHomePath) throws Exception {
 
         String getLogCmdFormat = "yarn logs -applicationId %s";
 
@@ -351,7 +315,7 @@ public class YarnAgentService implements AgentService {
     }
 
     @Override
-    public void killApp(String appId, String sparkHomePath, String agentHomePath) throws IOException {
+    public void stopWork(String appId, String sparkHomePath, String agentHomePath) throws Exception {
 
         String killAppCmdFormat = "yarn application -kill %s";
         Process process = Runtime.getRuntime().exec(String.format(killAppCmdFormat, appId));
@@ -374,10 +338,5 @@ public class YarnAgentService implements AgentService {
             log.error(e.getMessage(), e);
             throw new IsxAppException(e.getMessage());
         }
-    }
-
-    @Override
-    public String getAgentName() {
-        return AgentType.YARN;
     }
 }

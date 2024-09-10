@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class YagGetStdoutLogRes {
+public class GetWorkStderrLogRes {
 
     private String log;
 
