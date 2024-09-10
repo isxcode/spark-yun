@@ -33,8 +33,10 @@ public class SparkYunAgentBizService {
             String appId = agentService.submitWork(sparkLauncher);
             return SubmitWorkRes.builder().appId(appId).build();
         } catch (IsxAppException e) {
+            log.error(e.getMessage(), e);
             throw new IsxAppException(e.getMsg());
         } catch (Exception e) {
+            log.error(e.getMessage(), e);
             throw new IsxAppException(e.getMessage());
         }
     }
@@ -47,6 +49,7 @@ public class SparkYunAgentBizService {
                 agentService.getWorkStatus(getWorkStatusReq.getAppId(), getWorkStatusReq.getSparkHomePath());
             return GetWorkStatusRes.builder().appId(getWorkStatusReq.getAppId()).appStatus(appStatus).build();
         } catch (Exception e) {
+            log.error(e.getMessage(), e);
             throw new IsxAppException(e.getMessage());
         }
     }
@@ -59,6 +62,7 @@ public class SparkYunAgentBizService {
                 agentService.getStderrLog(getWorkStderrLogReq.getAppId(), getWorkStderrLogReq.getSparkHomePath());
             return GetWorkStderrLogRes.builder().log(appLog).build();
         } catch (Exception e) {
+            log.error(e.getMessage(), e);
             throw new IsxAppException(e.getMessage());
         }
     }
@@ -70,6 +74,7 @@ public class SparkYunAgentBizService {
         try {
             appLog = agentService.getStdoutLog(getWorkStdoutLogReq.getAppId(), getWorkStdoutLogReq.getSparkHomePath());
         } catch (Exception e) {
+            log.error(e.getMessage(), e);
             throw new IsxAppException(e.getMessage());
         }
 
@@ -92,6 +97,7 @@ public class SparkYunAgentBizService {
         try {
             workDataStr = agentService.getWorkDataStr(getWorkDataReq.getAppId(), getWorkDataReq.getSparkHomePath());
         } catch (Exception e) {
+            log.error(e.getMessage(), e);
             throw new IsxAppException(e.getMessage());
         }
 
@@ -105,6 +111,7 @@ public class SparkYunAgentBizService {
             agentService.stopWork(stopWorkReq.getAppId(), stopWorkReq.getSparkHomePath(),
                 stopWorkReq.getAgentHomePath());
         } catch (Exception e) {
+            log.error(e.getMessage(), e);
             throw new IsxAppException(e.getMessage());
         }
     }
