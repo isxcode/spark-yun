@@ -80,7 +80,7 @@ export function DeleteComputerGroupData(params: any): Promise<any> {
 export function GetComputerPointData(params: any): Promise<any> {
   return http.request({
     method: 'post',
-    url: '/cluster_node/pageClusterNode',
+    url: '/cluster-node/pageClusterNode',
     params: params
   })
 }
@@ -89,7 +89,7 @@ export function GetComputerPointData(params: any): Promise<any> {
 export function CheckComputerPointData(params: any): Promise<any> {
   return http.request({
     method: 'post',
-    url: '/cluster_node/checkAgent',
+    url: '/cluster-node/checkAgent',
     params: params
   })
 }
@@ -98,7 +98,7 @@ export function CheckComputerPointData(params: any): Promise<any> {
 export function SetDefaultComputerPointNode(params: any): Promise<any> {
   return http.request({
     method: 'post',
-    url: '/cluster_node/setDefaultClusterNode',
+    url: '/cluster-node/setDefaultClusterNode',
     params: params
   })
 }
@@ -107,7 +107,7 @@ export function SetDefaultComputerPointNode(params: any): Promise<any> {
 export function UpdateComputerPointData(params: any): Promise<any> {
   return http.request({
     method: 'post',
-    url: '/cluster_node/updateClusterNode',
+    url: '/cluster-node/updateClusterNode',
     params: params
   })
 }
@@ -116,7 +116,7 @@ export function UpdateComputerPointData(params: any): Promise<any> {
 export function AddComputerPointData(params: any): Promise<any> {
   return http.request({
     method: 'post',
-    url: '/cluster_node/addClusterNode',
+    url: '/cluster-node/addClusterNode',
     params: params
   })
 }
@@ -125,7 +125,7 @@ export function AddComputerPointData(params: any): Promise<any> {
 export function EditComputerPointData(params: any): Promise<any> {
   return http.request({
     method: 'post',
-    url: '/cluster_node/updateClusterNode',
+    url: '/cluster-node/updateClusterNode',
     params: params
   })
 }
@@ -134,7 +134,7 @@ export function EditComputerPointData(params: any): Promise<any> {
 export function DeleteComputerPointData(params: any): Promise<any> {
   return http.request({
     method: 'post',
-    url: '/cluster_node/deleteClusterNode',
+    url: '/cluster-node/deleteClusterNode',
     params: params
   })
 }
@@ -143,7 +143,7 @@ export function DeleteComputerPointData(params: any): Promise<any> {
 export function InstallComputerPointData(params: any): Promise<any> {
   return http.request({
     method: 'post',
-    url: '/cluster_node/installAgent',
+    url: '/cluster-node/installAgent',
     params: params
   })
 }
@@ -152,7 +152,7 @@ export function InstallComputerPointData(params: any): Promise<any> {
 export function UninstallComputerPointData(params: any): Promise<any> {
   return http.request({
     method: 'post',
-    url: '/cluster_node/removeAgent',
+    url: '/cluster-node/removeAgent',
     params: params
   })
 }
@@ -161,7 +161,7 @@ export function UninstallComputerPointData(params: any): Promise<any> {
 export function CleanComputerPointData(params: any): Promise<any> {
   return http.request({
     method: 'post',
-    url: '/cluster_node/cleanAgent',
+    url: '/cluster-node/cleanAgent',
     params: params
   })
 }
@@ -170,7 +170,7 @@ export function CleanComputerPointData(params: any): Promise<any> {
 export function StopComputerPointData(params: any): Promise<any> {
   return http.request({
     method: 'post',
-    url: '/cluster_node/stopAgent',
+    url: '/cluster-node/stopAgent',
     params: params
   })
 }
@@ -179,7 +179,7 @@ export function StopComputerPointData(params: any): Promise<any> {
 export function StartComputerPointData(params: any): Promise<any> {
   return http.request({
     method: 'post',
-    url: '/cluster_node/startAgent',
+    url: '/cluster-node/startAgent',
     params: params
   })
 }
@@ -188,7 +188,7 @@ export function StartComputerPointData(params: any): Promise<any> {
 export function GetComputerPointDetailData(params: any): Promise<any> {
   return http.request({
     method: 'post',
-    url: '/cluster_node/getClusterNode',
+    url: '/cluster-node/getClusterNode',
     params: params
   })
 }
@@ -197,7 +197,7 @@ export function GetComputerPointDetailData(params: any): Promise<any> {
 export function TestComputerPointHostData(params: any): Promise<any> {
   return http.request({
     method: 'post',
-    url: '/cluster_node/testAgent',
+    url: '/cluster-node/testAgent',
     params: params
   })
 }

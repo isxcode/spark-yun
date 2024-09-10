@@ -1,6 +1,6 @@
 package com.isxcode.star.modules.meta.repository;
 
-import com.isxcode.star.api.main.constants.ModuleCode;
+import com.isxcode.star.api.main.constants.ModuleVipCode;
 import com.isxcode.star.modules.meta.entity.MetaDatabaseEntity;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.data.domain.Page;
@@ -11,7 +11,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-@CacheConfig(cacheNames = {ModuleCode.VIP_META})
+@CacheConfig(cacheNames = {ModuleVipCode.VIP_META})
 public interface MetaDatabaseRepository extends JpaRepository<MetaDatabaseEntity, String> {
 
     @Query("SELECT M FROM MetaDatabaseEntity M WHERE M.dbName LIKE %:keyword% OR M.dbComment LIKE %:keyword% order by M.createDateTime desc")

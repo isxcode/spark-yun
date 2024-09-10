@@ -4,7 +4,7 @@ import { http } from '@/utils/http'
 export function QueryCustomApiList(params: any): Promise<any> {
     return http.request({
         method: 'post',
-        url: '/vip/api-module/pageApi',
+        url: '/vip/api-service/pageApi',
         params: params
     })
 }
@@ -13,7 +13,7 @@ export function QueryCustomApiList(params: any): Promise<any> {
 export function CreateCustomApiData(params: any): Promise<any> {
     return http.request({
         method: 'post',
-        url: '/vip/api-module/addApi',
+        url: '/vip/api-service/addApi',
         params: params
     })
 }
@@ -21,7 +21,7 @@ export function CreateCustomApiData(params: any): Promise<any> {
 export function UpdateCustomApiData(params: any): Promise<any> {
     return http.request({
         method: 'post',
-        url: '/vip/api-module/updateApi',
+        url: '/vip/api-service/updateApi',
         params: params
     })
 }
@@ -29,7 +29,7 @@ export function UpdateCustomApiData(params: any): Promise<any> {
 export function DeleteCustomApiData(params: any): Promise<any> {
     return http.request({
         method: 'post',
-        url: '/vip/api-module/deleteApi',
+        url: '/vip/api-service/deleteApi',
         params: params
     })
 }
@@ -37,7 +37,7 @@ export function DeleteCustomApiData(params: any): Promise<any> {
 export function PublishCustomApiData(params: any): Promise<any> {
     return http.request({
         method: 'post',
-        url: '/vip/api-module/publishApi',
+        url: '/vip/api-service/publishApi',
         params: params
     })
 }
@@ -45,7 +45,7 @@ export function PublishCustomApiData(params: any): Promise<any> {
 export function OfflineCustomApiData(params: any): Promise<any> {
     return http.request({
         method: 'post',
-        url: '/vip/api-module/offlineApi',
+        url: '/vip/api-service/offlineApi',
         params: params
     })
 }
@@ -54,7 +54,7 @@ export function OfflineCustomApiData(params: any): Promise<any> {
 export function GetCustomApiDetailData(params: any): Promise<any> {
     return http.request({
         method: 'post',
-        url: '/vip/api-module/getApi',
+        url: '/vip/api-service/getApi',
         params: params
     })
 }
@@ -63,7 +63,7 @@ export function GetCustomApiDetailData(params: any): Promise<any> {
 export function TestCustomApiData(params: any): Promise<any> {
     return http.request({
         method: 'post',
-        url: '/vip/api-module/testApi',
+        url: '/vip/api-service/testApi',
         params: params
     })
 }

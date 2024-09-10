@@ -26,7 +26,7 @@ interface workflowInstanceId {
 export function GetScheduleList(params: SerchParams): Promise<any> {
   return http.request({
     method: 'post',
-    url: '/vip/woi/queryInstance',
+    url: '/vip/work-instance/queryInstance',
     params: params
   })
 }
@@ -35,7 +35,7 @@ export function GetScheduleList(params: SerchParams): Promise<any> {
 export function GetScheduleWorkFlowList(params: SerchParams): Promise<any> {
   return http.request({
     method: 'post',
-    url: '/vip/wfi/queryWorkFlowInstances',
+    url: '/vip/workflow-instance/queryWorkFlowInstances',
     params: params
   })
 }
@@ -44,7 +44,7 @@ export function GetScheduleWorkFlowList(params: SerchParams): Promise<any> {
 export function GetScheduleDetail(params: workflowInstanceId): Promise<any> {
   return http.request({
     method: 'post',
-    url: '/vip/wfi/getWorkflowInstance',
+    url: '/vip/workflow-instance/getWorkflowInstance',
     params: params
   })
 }
@@ -71,7 +71,7 @@ export function GetYarnLogData(params: LogParam): Promise<any> {
 export function ReStartRunning(params: LogParam): Promise<any> {
   return http.request({
     method: 'get',
-    url: '/vip/woi/restartInstance',
+    url: '/vip/work-instance/restartInstance',
     params: params
   })
 }
@@ -89,7 +89,7 @@ export function GetResultData(params: LogParam): Promise<any> {
 export function DeleteScheduleLog(params: LogParam): Promise<any> {
   return http.request({
     method: 'get',
-    url: '/vip/woi/deleteInstance',
+    url: '/vip/work-instance/deleteInstance',
     params: params
   })
 }
@@ -98,7 +98,7 @@ export function DeleteScheduleLog(params: LogParam): Promise<any> {
 export function DeleteWorkFlowScheduleLog(params: workflowInstanceId): Promise<any> {
   return http.request({
     method: 'post',
-    url: '/vip/wfi/deleteWorkflowInstance',
+    url: '/vip/workflow-instance/deleteWorkflowInstance',
     params: params
   })
 }
