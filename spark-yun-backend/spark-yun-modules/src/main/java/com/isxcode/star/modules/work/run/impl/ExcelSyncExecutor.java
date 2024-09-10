@@ -9,8 +9,8 @@ import cn.hutool.poi.excel.ExcelUtil;
 import com.alibaba.fastjson.JSON;
 import com.isxcode.star.api.agent.pojos.req.PluginReq;
 import com.isxcode.star.api.agent.pojos.req.SparkSubmit;
-import com.isxcode.star.api.agent.pojos.req.YagExecuteWorkReq;
-import com.isxcode.star.api.agent.pojos.res.YagGetLogRes;
+import com.isxcode.star.api.agent.pojos.req.SubmitWorkReq;
+import com.isxcode.star.api.agent.pojos.res.GetWorkStderrLogRes;
 import com.isxcode.star.api.api.constants.PathConstants;
 import com.isxcode.star.api.cluster.constants.ClusterNodeStatus;
 import com.isxcode.star.api.cluster.pojos.dto.ScpFileEngineNodeDto;
@@ -191,7 +191,7 @@ public class ExcelSyncExecutor extends WorkExecutor {
 
         // 开始构建作业
         logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始构建作业  \n");
-        YagExecuteWorkReq executeReq = new YagExecuteWorkReq();
+        SubmitWorkReq executeReq = new SubmitWorkReq();
         executeReq.setWorkId(workRunContext.getWorkId());
         executeReq.setWorkType(WorkType.DATA_SYNC_JDBC);
         executeReq.setWorkInstanceId(workInstance.getId());
@@ -459,8 +459,8 @@ public class ExcelSyncExecutor extends WorkExecutor {
                 }
 
                 // 解析日志并保存
-                YagGetLogRes yagGetLogRes =
-                    JSON.parseObject(JSON.toJSONString(baseResponse.getData()), YagGetLogRes.class);
+                GetWorkStderrLogRes yagGetLogRes =
+                    JSON.parseObject(JSON.toJSONString(baseResponse.getData()), GetWorkStderrLogRes.class);
                 logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("日志保存成功 \n");
                 if (yagGetLogRes != null) {
                     workInstance.setYarnLog(yagGetLogRes.getLog());

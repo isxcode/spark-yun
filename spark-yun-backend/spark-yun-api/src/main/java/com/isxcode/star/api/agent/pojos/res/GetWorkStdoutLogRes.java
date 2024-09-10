@@ -11,7 +11,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ExecuteWorkRes {
+public class GetWorkStdoutLogRes {
+
+    private String log;
 
     private String appId;
 }

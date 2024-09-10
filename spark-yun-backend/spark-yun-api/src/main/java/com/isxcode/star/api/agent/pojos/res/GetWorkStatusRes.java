@@ -6,14 +6,20 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Builder
 @Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class YagGetLogRes {
+public class GetWorkStatusRes {
 
-    private String log;
+    private String yarnApplicationState;
+
+    private String finalApplicationStatus;
+
+    private String trackingUrl;
+
+    private String appStatus;
 
     private String appId;
 }
