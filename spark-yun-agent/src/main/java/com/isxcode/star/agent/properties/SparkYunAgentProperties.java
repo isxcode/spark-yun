@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 public class SparkYunAgentProperties {
 
     /**
-     * 提交作业的超时时间，默认60s
+     * 提交作业的超时时间，默认120s
      */
     private Integer submitTimeout = 120;
 }

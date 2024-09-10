@@ -17,4 +17,4 @@ logging:
       file-name-pattern: '${LOG_FILE}.%d{yyyy-MM-dd}.%i.gz'
 
 spark-yun:
-  submit-timeout: 300 # 提交作业的超时时间
+  submit-timeout: 300 # 提交作业的超时时间,单位秒
