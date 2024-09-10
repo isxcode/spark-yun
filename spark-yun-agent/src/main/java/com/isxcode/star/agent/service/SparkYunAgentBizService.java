@@ -32,6 +32,8 @@ public class SparkYunAgentBizService {
             SparkLauncher sparkLauncher = agentService.getSparkLauncher(submitWorkReq);
             String appId = agentService.submitWork(sparkLauncher);
             return SubmitWorkRes.builder().appId(appId).build();
+        } catch (IsxAppException e) {
+            throw new IsxAppException(e.getMsg());
         } catch (Exception e) {
             throw new IsxAppException(e.getMessage());
         }

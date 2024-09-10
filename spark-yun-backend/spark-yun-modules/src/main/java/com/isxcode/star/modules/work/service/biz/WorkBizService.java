@@ -2,24 +2,14 @@ package com.isxcode.star.modules.work.service.biz;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
-import com.isxcode.star.api.cluster.constants.ClusterNodeStatus;
 import com.isxcode.star.api.instance.constants.InstanceStatus;
 import com.isxcode.star.api.instance.constants.InstanceType;
-import com.isxcode.star.api.work.constants.WorkLog;
 import com.isxcode.star.api.work.constants.WorkStatus;
 import com.isxcode.star.api.work.constants.WorkType;
-import com.isxcode.star.api.work.exceptions.WorkRunException;
 import com.isxcode.star.api.work.pojos.dto.*;
 import com.isxcode.star.api.work.pojos.req.*;
 import com.isxcode.star.api.work.pojos.res.*;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
-import com.isxcode.star.backend.api.base.pojos.BaseResponse;
-import com.isxcode.star.common.utils.http.HttpUrlUtils;
-import com.isxcode.star.common.utils.http.HttpUtils;
-import com.isxcode.star.modules.cluster.entity.ClusterEntity;
-import com.isxcode.star.modules.cluster.entity.ClusterNodeEntity;
-import com.isxcode.star.modules.cluster.repository.ClusterNodeRepository;
-import com.isxcode.star.modules.cluster.repository.ClusterRepository;
 import com.isxcode.star.modules.work.entity.WorkConfigEntity;
 import com.isxcode.star.modules.work.entity.WorkEntity;
 import com.isxcode.star.modules.work.entity.WorkInstanceEntity;
@@ -41,12 +31,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.time.LocalDateTime;
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -61,10 +50,6 @@ public class WorkBizService {
 
     private final WorkMapper workMapper;
 
-    private final ClusterRepository calculateEngineRepository;
-
-    private final ClusterNodeRepository engineNodeRepository;
-
     private final WorkInstanceRepository workInstanceRepository;
 
     private final WorkConfigBizService workConfigBizService;
@@ -72,8 +57,6 @@ public class WorkBizService {
     private final WorkflowService workflowService;
 
     private final WorkService workService;
-
-    private final HttpUrlUtils httpUrlUtils;
 
     private final WorkConfigService workConfigService;
 
@@ -340,67 +323,8 @@ public class WorkBizService {
         WorkEntity workEntity = workRepository.findById(workInstanceEntity.getWorkId()).get();
         WorkExecutor workExecutor = workExecutorFactory.create(workEntity.getWorkType());
 
-        // 获取中作业id
         if (InstanceType.MANUAL.equals(workInstanceEntity.getInstanceType())) {
-
-            // 普通作业中止
-            if (!WorkType.QUERY_SPARK_SQL.equals(workEntity.getWorkType())
-                && !WorkType.DATA_SYNC_JDBC.equals(workEntity.getWorkType())
-                && !WorkType.EXCEL_SYNC_JDBC.equals(workEntity.getWorkType())
-                && !WorkType.SPARK_JAR.equals(workEntity.getWorkType())) {
-
-                workExecutor.syncAbort(workInstanceEntity);
-
-            } else {
-
-                WorkConfigEntity workConfigEntity = workConfigRepository.findById(workEntity.getConfigId()).get();
-                String clusterId =
-                    JSON.parseObject(workConfigEntity.getClusterConfig(), ClusterConfig.class).getClusterId();
-                List<ClusterNodeEntity> allEngineNodes =
-                    engineNodeRepository.findAllByClusterIdAndStatus(clusterId, ClusterNodeStatus.RUNNING);
-                if (allEngineNodes.isEmpty()) {
-                    throw new WorkRunException(
-                        LocalDateTime.now() + WorkLog.ERROR_INFO + "申请资源失败 : 集群不存在可用节点，请切换一个集群  \n");
-                }
-
-                Optional<ClusterEntity> clusterEntityOptional = calculateEngineRepository.findById(clusterId);
-                if (!clusterEntityOptional.isPresent()) {
-                    throw new IsxAppException("集群不存在");
-                }
-
-                // 节点选择随机数
-                ClusterNodeEntity engineNode = allEngineNodes.get(new Random().nextInt(allEngineNodes.size()));
-
-                if (Strings.isEmpty(workInstanceEntity.getSparkStarRes())) {
-                    throw new IsxAppException("还未提交，请稍后再试");
-                }
-
-                // 解析实例的状态信息
-                RunWorkRes wokRunWorkRes = JSON.parseObject(workInstanceEntity.getSparkStarRes(), RunWorkRes.class);
-
-                Map<String, String> paramsMap = new HashMap<>();
-                paramsMap.put("appId", wokRunWorkRes.getAppId());
-                paramsMap.put("agentType", clusterEntityOptional.get().getClusterType());
-                paramsMap.put("sparkHomePath", engineNode.getSparkHomePath());
-                paramsMap.put("agentHomePath", engineNode.getAgentHomePath());
-                BaseResponse<?> baseResponse = HttpUtils.doGet(
-                    httpUrlUtils.genHttpUrl(engineNode.getHost(), engineNode.getAgentPort(), "/yag/stopJob"), paramsMap,
-                    null, BaseResponse.class);
-
-                if (!String.valueOf(HttpStatus.OK.value()).equals(baseResponse.getCode())) {
-                    throw new IsxAppException(baseResponse.getCode(), baseResponse.getMsg(), baseResponse.getErr());
-                }
-            }
-
-            // 修改实例状态
-            workInstanceEntity.setStatus(InstanceStatus.ABORT);
-            String submitLog =
-                workInstanceEntity.getSubmitLog() + LocalDateTime.now() + WorkLog.SUCCESS_INFO + "已中止  \n";
-            workInstanceEntity.setSubmitLog(submitLog);
-            workInstanceEntity.setExecEndDateTime(new Date());
-            workInstanceEntity
-                .setDuration((System.currentTimeMillis() - workInstanceEntity.getExecStartDateTime().getTime()) / 1000);
-            workInstanceRepository.saveAndFlush(workInstanceEntity);
+            workExecutor.syncAbort(workInstanceEntity);
         }
     }
 

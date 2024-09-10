@@ -1,8 +1,11 @@
 package com.isxcode.star.common.utils.http;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.util.Map;
+
+import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -45,8 +48,7 @@ public class HttpUtils {
         return doGet(url, null, headerParams, targetClass);
     }
 
-    public static <T> T doPost(String url, Map<String, String> headerParams, Object requestParams, Class<T> targetCls)
-        throws IOException {
+    public static <T> T doPost(String url, Map<String, String> headerParams, Object requestParams, Class<T> targetCls) {
 
         HttpHeaders headers = new HttpHeaders();
 
@@ -58,12 +60,17 @@ public class HttpUtils {
             headerParams.forEach(headers::add);
         }
 
-        HttpEntity<String> requestEntity =
-            new HttpEntity<>(new ObjectMapper().writeValueAsString(requestParams), headers);
+        HttpEntity<String> requestEntity;
+        try {
+            requestEntity = new HttpEntity<>(new ObjectMapper().writeValueAsString(requestParams), headers);
+        } catch (JsonProcessingException e) {
+            log.error(e.getMessage(), e);
+            throw new IsxAppException(e.getMessage());
+        }
         return new RestTemplate().exchange(url, HttpMethod.POST, requestEntity, targetCls).getBody();
     }
 
-    public static <T> T doPost(String url, Object requestParams, Class<T> targetCls) throws IOException {
+    public static <T> T doPost(String url, Object requestParams, Class<T> targetCls) {
 
         return doPost(url, null, requestParams, targetCls);
     }
