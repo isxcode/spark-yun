@@ -1,6 +1,5 @@
 package com.isxcode.star.modules.meta.repository;
 
-import com.isxcode.star.api.main.constants.ModuleCode;
 import com.isxcode.star.api.main.constants.ModuleVipCode;
 import com.isxcode.star.modules.meta.entity.MetaTableEntity;
 import com.isxcode.star.modules.meta.entity.MetaTableId;
