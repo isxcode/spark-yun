@@ -244,7 +244,7 @@ public class SparkJarExecutor extends WorkExecutor {
                 .append(submitWorkRes.getAppId()).append("\n");
             workInstance.setSparkStarRes(JSON.toJSONString(submitWorkRes));
             workInstance = updateInstance(workInstance, logBuilder);
-        } catch (IOException | ResourceAccessException e) {
+        } catch (ResourceAccessException e) {
             throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "提交作业失败 : " + e.getMessage() + "\n");
         } catch (HttpServerErrorException e1) {
             if (HttpStatus.BAD_GATEWAY.value() == e1.getRawStatusCode()) {
