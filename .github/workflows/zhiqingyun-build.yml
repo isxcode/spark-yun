@@ -168,15 +168,15 @@ jobs:
           path: ./distributions
 
       - name: Upload Package to Ali oss
-        uses: chf007/aliyun-oss-upload-action@main
-        env:
-          OSS_ACCESS_KEY_ID: ${{ secrets.ALI_OSS_KEY_ID }}
-          OSS_ACCESS_KEY_SECRET: ${{ secrets.ALI_OSS_KEY_SECRET }}
+        uses: tvrcgo/oss-action@master
         with:
+          key-id: ${{ secrets.ALI_OSS_KEY_ID }}
+          key-secret: ${{ secrets.ALI_OSS_KEY_SECRET }}
           region: oss-cn-shanghai
           bucket: isxcode
-          source-dir: 'distributions'
-          dest-dir: 'zhiqingyun'
+          timeout: 1200
+          assets: |
+            distributions/**:/zhiqingyun/
 
   upload-ali:
       needs: build
