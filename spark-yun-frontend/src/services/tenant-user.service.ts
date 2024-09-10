@@ -29,7 +29,7 @@ interface DeleteParam {
 export function GetUserList(params: SerchParams): Promise<any> {
   return http.request({
     method: 'post',
-    url: '/tenant_user/pageTenantUser',
+    url: '/tenant-user/pageTenantUser',
     params: params
   })
 }
@@ -47,7 +47,7 @@ export function GetUserInfoList(params: SerchParams): Promise<any> {
 export function AddTenantUserData(params: FormUser): Promise<any> {
   return http.request({
     method: 'post',
-    url: '/tenant_user/addTenantUser',
+    url: '/tenant-user/addTenantUser',
     params: params
   })
 }
@@ -56,7 +56,7 @@ export function AddTenantUserData(params: FormUser): Promise<any> {
 export function EditTenantUserData(params: FormUser): Promise<any> {
   return http.request({
     method: 'post',
-    url: '/tenant_user/addTenantUser',
+    url: '/tenant-user/addTenantUser',
     params: params
   })
 }
@@ -65,7 +65,7 @@ export function EditTenantUserData(params: FormUser): Promise<any> {
 export function DeleteTenantUser(params: DeleteParam): Promise<any> {
   return http.request({
     method: 'post',
-    url: '/tenant_user/removeTenantUser',
+    url: '/tenant-user/removeTenantUser',
     params: params
   })
 }
@@ -74,7 +74,7 @@ export function DeleteTenantUser(params: DeleteParam): Promise<any> {
 export function GiveAuth(params: DeleteParam): Promise<any> {
   return http.request({
     method: 'post',
-    url: '/tenant_user/setTenantAdmin',
+    url: '/tenant-user/setTenantAdmin',
     params: params
   })
 }
@@ -83,7 +83,7 @@ export function GiveAuth(params: DeleteParam): Promise<any> {
 export function RemoveAuth(params: DeleteParam): Promise<any> {
   return http.request({
     method: 'post',
-    url: '/tenant_user/removeTenantAdmin',
+    url: '/tenant-user/removeTenantAdmin',
     params: params
   })
 }

@@ -1,6 +1,6 @@
 package com.isxcode.star.modules.meta.repository;
 
-import com.isxcode.star.api.main.constants.ModuleCode;
+import com.isxcode.star.api.main.constants.ModuleVipCode;
 import com.isxcode.star.modules.meta.entity.MetaWorkEntity;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.data.domain.Page;
@@ -12,7 +12,7 @@ import org.springframework.stereotype.Repository;
 
 
 @Repository
-@CacheConfig(cacheNames = {ModuleCode.VIP_META})
+@CacheConfig(cacheNames = {ModuleVipCode.VIP_META})
 public interface MetaWorkRepository extends JpaRepository<MetaWorkEntity, String> {
 
     @Query("SELECT M FROM MetaWorkEntity M WHERE  M.name LIKE %:keyword% OR M.remark LIKE %:keyword% order by M.createDateTime desc")

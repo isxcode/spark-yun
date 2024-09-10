@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 @Tag(name = "至轻云代理模块")
-@RequestMapping(ModuleCode.YUN_AGENT)
+@RequestMapping(ModuleCode.SPARK_YUN_AGENT)
 @RestController
 @RequiredArgsConstructor
 public class YunAgentController {

@@ -2,6 +2,7 @@ package com.isxcode.star.modules.workflow.repository;
 
 import com.isxcode.star.api.instance.pojos.ao.WorkflowInstanceAo;
 import com.isxcode.star.api.main.constants.ModuleCode;
+import com.isxcode.star.api.main.constants.ModuleVipCode;
 import com.isxcode.star.api.monitor.pojos.ao.WorkflowMonitorAo;
 import com.isxcode.star.modules.workflow.entity.WorkflowInstanceEntity;
 import org.springframework.cache.annotation.CacheConfig;
@@ -19,7 +20,7 @@ import java.util.Date;
 import java.util.List;
 
 @Repository
-@CacheConfig(cacheNames = {ModuleCode.VIP_WORKFLOW_INSTANCE})
+@CacheConfig(cacheNames = {ModuleVipCode.VIP_WORKFLOW_INSTANCE})
 public interface WorkflowInstanceRepository extends JpaRepository<WorkflowInstanceEntity, String> {
 
     @CachePut(key = "#workflowInstanceId")

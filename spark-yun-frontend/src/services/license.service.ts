@@ -20,7 +20,7 @@ interface LicenseIdParam {
 export function GetLicenseList(params: SerchParams): Promise<any> {
   return http.request({
     method: 'post',
-    url: '/vip/lic/queryLicense',
+    url: '/vip/license/queryLicense',
     params: params
   })
 }
@@ -29,7 +29,7 @@ export function GetLicenseList(params: SerchParams): Promise<any> {
 export function UploadLicenseFile(params: any): Promise<any> {
   return http.uploadFile({
     method: 'post',
-    url: '/vip/lic/uploadLicense',
+    url: '/vip/license/uploadLicense',
     params
   })
 }
@@ -38,7 +38,7 @@ export function UploadLicenseFile(params: any): Promise<any> {
 export function DisableLicense(params: LicenseIdParam): Promise<any> {
   return http.request({
     method: 'get',
-    url: '/vip/lic/disableLicense',
+    url: '/vip/license/disableLicense',
     params: params
   })
 }
@@ -47,7 +47,7 @@ export function DisableLicense(params: LicenseIdParam): Promise<any> {
 export function EnableLicense(params: LicenseIdParam): Promise<any> {
   return http.request({
     method: 'get',
-    url: '/vip/lic/enableLicense',
+    url: '/vip/license/enableLicense',
     params: params
   })
 }
@@ -56,7 +56,7 @@ export function EnableLicense(params: LicenseIdParam): Promise<any> {
 export function DeleteLicense(params: LicenseIdParam): Promise<any> {
   return http.request({
     method: 'get',
-    url: '/vip/lic/deleteLicense',
+    url: '/vip/license/deleteLicense',
     params: params
   })
 }
