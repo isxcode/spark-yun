@@ -276,7 +276,7 @@ public class SyncWorkExecutor extends WorkExecutor {
         executeReq.setPluginReq(pluginReq);
         executeReq.setAgentHomePath(engineNode.getAgentHomePath() + File.separator + PathConstants.AGENT_PATH_NAME);
         executeReq.setSparkHomePath(engineNode.getSparkHomePath());
-        executeReq.setAgentType(calculateEngineEntityOptional.get().getClusterType());
+        executeReq.setClusterType(calculateEngineEntityOptional.get().getClusterType());
 
         // 构建作业完成，并打印作业配置信息
         logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("构建作业完成 \n");
@@ -326,8 +326,12 @@ public class SyncWorkExecutor extends WorkExecutor {
         while (true) {
 
             // 获取作业状态并保存
-            GetWorkStatusReq getWorkStatusReq = GetWorkStatusReq.builder().appId(submitWorkRes.getAppId()).clusterType(calculateEngineEntityOptional.get().getClusterType()).sparkHomePath(executeReq.getSparkHomePath()).build();
-            baseResponse = HttpUtils.doPost(httpUrlUtils.genHttpUrl(engineNode.getHost(), engineNode.getAgentPort(), AgentUrl.GET_WORK_STATUS_URL), getWorkStatusReq, BaseResponse.class);
+            GetWorkStatusReq getWorkStatusReq = GetWorkStatusReq.builder().appId(submitWorkRes.getAppId())
+                .clusterType(calculateEngineEntityOptional.get().getClusterType())
+                .sparkHomePath(executeReq.getSparkHomePath()).build();
+            baseResponse = HttpUtils.doPost(
+                httpUrlUtils.genHttpUrl(engineNode.getHost(), engineNode.getAgentPort(), AgentUrl.GET_WORK_STATUS_URL),
+                getWorkStatusReq, BaseResponse.class);
             log.debug("获取远程获取状态日志:{}", baseResponse.toString());
 
             if (!String.valueOf(HttpStatus.OK.value()).equals(baseResponse.getCode())) {
@@ -369,8 +373,11 @@ public class SyncWorkExecutor extends WorkExecutor {
                 }
 
                 // 获取日志并保存
-                GetWorkStderrLogReq getWorkStderrLogReq = GetWorkStderrLogReq.builder().appId(submitWorkRes.getAppId()).clusterType(calculateEngineEntityOptional.get().getClusterType()).sparkHomePath(executeReq.getSparkHomePath()).build();
-                baseResponse = HttpUtils.doPost(httpUrlUtils.genHttpUrl(engineNode.getHost(), engineNode.getAgentPort(), AgentUrl.GET_WORK_STDERR_LOG_URL), getWorkStderrLogReq, BaseResponse.class);
+                GetWorkStderrLogReq getWorkStderrLogReq = GetWorkStderrLogReq.builder().appId(submitWorkRes.getAppId())
+                    .clusterType(calculateEngineEntityOptional.get().getClusterType())
+                    .sparkHomePath(executeReq.getSparkHomePath()).build();
+                baseResponse = HttpUtils.doPost(httpUrlUtils.genHttpUrl(engineNode.getHost(), engineNode.getAgentPort(),
+                    AgentUrl.GET_WORK_STDERR_LOG_URL), getWorkStderrLogReq, BaseResponse.class);
                 log.debug("获取远程返回日志:{}", baseResponse.toString());
 
                 if (!String.valueOf(HttpStatus.OK.value()).equals(baseResponse.getCode())) {
@@ -425,8 +432,11 @@ public class SyncWorkExecutor extends WorkExecutor {
                     // 节点选择随机数
                     ClusterNodeEntity engineNode = allEngineNodes.get(new Random().nextInt(allEngineNodes.size()));
 
-                    StopWorkReq stopWorkReq = StopWorkReq.builder().appId(wokRunWorkRes.getAppId()).clusterType(cluster.getClusterType()).sparkHomePath(engineNode.getSparkHomePath()).agentHomePath(engineNode.getAgentHomePath()).build();
-                    BaseResponse<?> baseResponse = HttpUtils.doPost(httpUrlUtils.genHttpUrl(engineNode.getHost(), engineNode.getAgentPort(), AgentUrl.STOP_WORK_URL), stopWorkReq, BaseResponse.class);
+                    StopWorkReq stopWorkReq = StopWorkReq.builder().appId(wokRunWorkRes.getAppId())
+                        .clusterType(cluster.getClusterType()).sparkHomePath(engineNode.getSparkHomePath())
+                        .agentHomePath(engineNode.getAgentHomePath()).build();
+                    BaseResponse<?> baseResponse = HttpUtils.doPost(httpUrlUtils.genHttpUrl(engineNode.getHost(),
+                        engineNode.getAgentPort(), AgentUrl.STOP_WORK_URL), stopWorkReq, BaseResponse.class);
 
                     if (!String.valueOf(HttpStatus.OK.value()).equals(baseResponse.getCode())) {
                         throw new IsxAppException(baseResponse.getCode(), baseResponse.getMsg(), baseResponse.getErr());

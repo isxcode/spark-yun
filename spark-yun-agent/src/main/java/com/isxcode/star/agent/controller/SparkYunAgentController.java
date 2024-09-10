@@ -87,4 +87,12 @@ public class SparkYunAgentController {
 
         return sparkYunAgentBizService.executeContainerSql(executeContainerSqlReq);
     }
+
+    @Operation(summary = "提交计算容器接口")
+    @PostMapping(AgentUrl.DEPLOY_CONTAINER_URL)
+    @SuccessResponse("提交成功")
+    public DeployContainerRes deployContainer(@Valid @RequestBody SubmitWorkReq submitWorkReq) {
+
+        return sparkYunAgentBizService.deployContainer(submitWorkReq);
+    }
 }

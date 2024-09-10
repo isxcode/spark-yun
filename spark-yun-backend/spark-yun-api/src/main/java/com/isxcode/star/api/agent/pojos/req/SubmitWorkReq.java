@@ -14,7 +14,7 @@ public class SubmitWorkReq {
 
     private String agentHomePath;
 
-    private String agentType;
+    private String clusterType;
 
     private String sparkHomePath;
 
