@@ -1,25 +1,20 @@
 package com.isxcode.star.api.agent.pojos.res;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Data
 @Builder
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class YagGetStatusRes {
+public class GetWorkDataRes {
 
-    private String yarnApplicationState;
+    private List<List> data;
 
-    private String finalApplicationStatus;
-
-    private String trackingUrl;
-
-    private String appStatus;
-
-    private String appId;
+    private String applicationId;
 }

@@ -6,7 +6,7 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class YagExecuteWorkReq {
+public class SubmitWorkReq {
 
     private PluginReq pluginReq;
 

@@ -1,60 +1,52 @@
 package com.isxcode.star.agent.run;
 
-import com.isxcode.star.api.agent.pojos.req.DeployContainerReq;
-import com.isxcode.star.api.agent.pojos.req.YagExecuteWorkReq;
+import com.isxcode.star.api.agent.pojos.req.SubmitWorkReq;
 import org.apache.spark.launcher.SparkLauncher;
-
-import java.io.IOException;
 
 public interface AgentService {
 
     /**
-     * 获取spark提交的master信息.
+     * 获取当前代理的类型
      */
-    String getMaster(String sparkHomePath) throws IOException;
+    String getAgentType();
 
     /**
-     * 初始化spark提交的SparkLauncher.
+     * 获取spark提交的master
      */
-    SparkLauncher genSparkLauncher(YagExecuteWorkReq yagExecuteWorkReq) throws IOException;
+    String getMaster(String sparkHomePath) throws Exception;
 
     /**
-     * 执行spark作业.
+     * 初始化spark提交的sparkLauncher
      */
-    String executeWork(SparkLauncher sparkLauncher) throws IOException;
+    SparkLauncher getSparkLauncher(SubmitWorkReq submitWorkReq) throws Exception;
 
     /**
-     * 获取spark作业的状态.
+     * 执行spark作业
      */
-    String getAppStatus(String appId, String sparkHomePath) throws IOException;
+    String submitWork(SparkLauncher sparkLauncher) throws Exception;
 
     /**
-     * 获取spark作业的运行日志.
+     * 获取spark作业的状态
      */
-    String getAppLog(String appId, String sparkHomePath) throws IOException;
+    String getWorkStatus(String appId, String sparkHomePath) throws Exception;
 
     /**
-     * 获取spark作业的输出日志.
+     * 获取spark作业的Stderr日志
      */
-    String getStdoutLog(String appId, String sparkHomePath) throws IOException;
+    String getStderrLog(String appId, String sparkHomePath) throws Exception;
 
     /**
-     * 获取spark作业返回的数据.
+     * 获取spark作业的Stdout日志
      */
-    String getAppData(String appId, String sparkHomePath) throws IOException;
+    String getStdoutLog(String appId, String sparkHomePath) throws Exception;
 
     /**
-     * 中止spark作业.
+     * 获取spark作业返回的数据的字符串
      */
-    void killApp(String appId, String sparkHomePath, String agentHomePath) throws IOException;
+    String getWorkDataStr(String appId, String sparkHomePath) throws Exception;
 
     /**
-     * 获取当前代理的类型.
+     * 中止spark作业
      */
-    String getAgentName();
-
-    /**
-     * 获取容器话部署的SparkLauncher.
-     */
-    SparkLauncher genSparkLauncher(DeployContainerReq deployContainerReq) throws IOException;
+    void stopWork(String appId, String sparkHomePath, String agentHomePath) throws Exception;
 }
