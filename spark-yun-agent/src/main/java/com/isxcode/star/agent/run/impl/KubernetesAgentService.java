@@ -125,9 +125,10 @@ public class KubernetesAgentService implements AgentService {
         if (WorkType.REAL_WORK.equals(submitWorkReq.getWorkType())) {
             File[] kafkaFiles = new File(submitWorkReq.getSparkHomePath() + File.separator + "jars").listFiles();
             if (kafkaFiles != null) {
-                List<String> kafkaFileList = Arrays.asList("spark-sql-kafka-0-10_2.12-3.4.1.jar",
-                    "spark-streaming-kafka-0-10_2.12-3.4.1.jar", "spark-token-provider-kafka-0-10_2.12-3.4.1.jar",
-                    "commons-pool2-2.11.1.jar", "kafka-clients-3.1.2.jar");
+                List<String> kafkaFileList =
+                    Arrays.asList("spark-sql-kafka-0-10_2.12-3.4.1.jar", "spark-streaming-kafka-0-10_2.12-3.4.1.jar",
+                        "spark-token-provider-kafka-0-10_2.12-3.4.1.jar", "commons-pool2-2.11.1.jar",
+                        "kafka-clients-3.1.2.jar", "commons-dbutils-1.7.jar", "HikariCP-4.0.3.jar");
                 for (int i = 0; i < kafkaFiles.length; i++) {
                     if (kafkaFileList.contains(kafkaFiles[i].getName())) {
                         sparkLauncher.setConf("spark.kubernetes.driver.volumes.hostPath.kafka" + i + ".mount.path",
