@@ -10,7 +10,7 @@
         <el-select
           v-model="executeStatus"
           clearable
-          placeholder="请选择类型进行搜索"
+          placeholder="请选择状态进行搜索"
           @change="initData(false)"
         >
           <el-option
@@ -30,12 +30,6 @@
           @input="inputEvent"
           @keyup.enter="initData(false)"
         />
-        <el-button
-          type="primary"
-          @click="initData(false)"
-        >
-          刷新
-        </el-button>
       </div>
     </div>
     <LoadingPage
@@ -144,22 +138,22 @@
                       运行日志
                     </el-dropdown-item>
                     <el-dropdown-item
-                      v-if="scopeSlot.row.status !== 'RUNNING' && scopeSlot.row.instanceType === 'WORK'"
-                      @click="retry(scopeSlot.row)"
+                        v-if="scopeSlot.row.status === 'SUCCESS' && scopeSlot.row.workType !== 'EXE_JDBC'"
+                        @click="showDetailModal(scopeSlot.row, 'result')"
                     >
-                      重新运行
+                      运行结果
                     </el-dropdown-item>
                     <el-dropdown-item
-                      v-if="scopeSlot.row.status === 'RUNNING'"
-                      @click="stopWork(scopeSlot.row)"
+                        v-if="scopeSlot.row.status === 'RUNNING'"
+                        @click="stopWork(scopeSlot.row)"
                     >
                       中止
                     </el-dropdown-item>
                     <el-dropdown-item
-                      v-if="scopeSlot.row.status === 'SUCCESS' && scopeSlot.row.workType !== 'EXE_JDBC'"
-                      @click="showDetailModal(scopeSlot.row, 'result')"
+                      v-if="scopeSlot.row.status !== 'RUNNING'"
+                      @click="retry(scopeSlot.row)"
                     >
-                      运行结果
+                      重跑
                     </el-dropdown-item>
                     <el-dropdown-item @click="deleteSchedule(scopeSlot.row)">
                       删除
@@ -176,14 +170,14 @@
                 <span class="click-show-more">更多</span>
                 <template #dropdown>
                   <el-dropdown-menu>
-                    <el-dropdown-item @click="deleteWorkflowSchedule(scopeSlot.row)">
-                      删除
-                    </el-dropdown-item>
                     <el-dropdown-item @click="reRunWorkFlowDataEvent(scopeSlot.row)">
                       重跑
                     </el-dropdown-item>
                     <el-dropdown-item @click="stopWorkFlow(scopeSlot.row)">
                       中止
+                    </el-dropdown-item>
+                    <el-dropdown-item @click="deleteWorkflowSchedule(scopeSlot.row)">
+                      删除
                     </el-dropdown-item>
                   </el-dropdown-menu>
                 </template>
