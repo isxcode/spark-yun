@@ -214,6 +214,40 @@ public class DatasourceBizService {
         }
     }
 
+    public CheckConnectRes checkConnect(CheckConnectReq checkConnectReq) {
+
+        DatasourceEntity datasourceEntity = datasourceMapper.checkConnectReqToDatasourceEntity(checkConnectReq);
+        if (Strings.isNotEmpty(checkConnectReq.getPasswd())) {
+            datasourceEntity.setPasswd(aesUtils.encrypt(checkConnectReq.getPasswd()));
+        }
+
+        if (DatasourceType.KAFKA.equals(datasourceEntity.getDbType())) {
+            try {
+                datasourceService.checkKafka(checkConnectReq.getKafkaConfig());
+                return new CheckConnectRes(true, "连接成功");
+            } catch (Exception e) {
+                log.debug(e.getMessage(), e);
+                return new CheckConnectRes(false, e.getMessage());
+            }
+        } else {
+            ConnectInfo connectInfo = datasourceMapper.datasourceEntityToConnectInfo(datasourceEntity);
+            Datasource datasource = dataSourceFactory.getDatasource(connectInfo.getDbType());
+            try (Connection connection = datasource.getConnection(connectInfo)) {
+                if (connection != null) {
+                    return new CheckConnectRes(true, "连接成功");
+                } else {
+                    return new CheckConnectRes(false, "请检查连接协议");
+                }
+            } catch (IsxAppException exception) {
+                log.debug(exception.getMessage(), exception);
+                return new CheckConnectRes(false, exception.getMsg());
+            } catch (Exception e) {
+                log.debug(e.getMessage(), e);
+                return new CheckConnectRes(false, e.getMessage());
+            }
+        }
+    }
+
     public GetConnectLogRes getConnectLog(GetConnectLogReq getConnectLogReq) {
 
         DatasourceEntity datasource = datasourceService.getDatasource(getConnectLogReq.getDatasourceId());
