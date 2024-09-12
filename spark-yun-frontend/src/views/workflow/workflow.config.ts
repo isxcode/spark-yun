@@ -63,7 +63,7 @@ export const colConfigs: colConfig[] = [
   {
     prop: 'nextDateTime',
     title: '下次执行时间',
-    minWidth: 100,
+    minWidth: 120,
     showOverflowTooltip: true
   },
   {
@@ -74,7 +74,7 @@ export const colConfigs: colConfig[] = [
   {
     prop: 'createDateTime',
     title: '创建时间',
-    minWidth: 100
+    minWidth: 140
   },
   {
     prop: 'remark',

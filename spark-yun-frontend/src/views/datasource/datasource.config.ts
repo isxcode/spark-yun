@@ -121,7 +121,7 @@ export const colConfigs: colConfig[] = [
   {
     prop: 'username',
     title: '用户名',
-    minWidth: 60,
+    minWidth: 80,
     showOverflowTooltip: true
   },
   {
