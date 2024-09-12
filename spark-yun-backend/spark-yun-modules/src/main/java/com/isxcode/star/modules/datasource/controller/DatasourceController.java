@@ -25,7 +25,6 @@ public class DatasourceController {
 
     private final DatasourceBizService datasourceBizService;
 
-    @Secured({RoleType.TENANT_ADMIN})
     @Operation(summary = "添加数据源接口")
     @PostMapping("/addDatasource")
     @SuccessResponse("添加成功")
