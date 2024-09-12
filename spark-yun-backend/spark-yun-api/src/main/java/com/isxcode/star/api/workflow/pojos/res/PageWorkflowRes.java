@@ -3,6 +3,7 @@ package com.isxcode.star.api.workflow.pojos.res;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.isxcode.star.backend.api.base.serializer.LocalDateMinuteSerializer;
+import com.isxcode.star.backend.api.base.serializer.LocalDateTimeSerializer;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -25,4 +26,11 @@ public class PageWorkflowRes {
 
     @JsonSerialize(using = LocalDateMinuteSerializer.class)
     private LocalDateTime nextDateTime;
+
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    private LocalDateTime createDateTime;
+
+    private String createBy;
+
+    private String createUsername;
 }
