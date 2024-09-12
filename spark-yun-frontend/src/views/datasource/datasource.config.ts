@@ -102,32 +102,32 @@ export const typeList = [
 export const colConfigs: colConfig[] = [
   {
     prop: 'name',
-    title: '数据源名称',
+    title: '名称',
     minWidth: 100,
     showOverflowTooltip: true
   },
   {
     prop: 'dbType',
     title: '类型',
-    minWidth: 100,
+    minWidth: 60,
     showOverflowTooltip: true
   },
   {
     prop: 'jdbcUrl',
     title: '连接信息',
-    minWidth: 160,
+    minWidth: 180,
     showOverflowTooltip: true
   },
   {
     prop: 'username',
     title: '用户名',
-    minWidth: 100,
+    minWidth: 80,
     showOverflowTooltip: true
   },
   {
     prop: 'status',
     title: '状态',
-    minWidth: 100,
+    minWidth: 60,
     customSlot: 'statusTag'
   },
   {
@@ -138,14 +138,14 @@ export const colConfigs: colConfig[] = [
   {
     prop: 'remark',
     title: '备注',
-    minWidth: 100,
+    minWidth: 140,
     showOverflowTooltip: true
   },
   {
     title: '操作',
     align: 'center',
     customSlot: 'options',
-    width: 140
+    width: 80
   }
 ]
 

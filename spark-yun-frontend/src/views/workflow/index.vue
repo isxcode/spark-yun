@@ -74,11 +74,21 @@
           </template>
           <template #options="scopeSlot">
             <div class="btn-group">
-              <span @click="editData(scopeSlot.row)">编辑</span>
-              <span @click="deleteData(scopeSlot.row)">删除</span>
               <span v-if="!['UN_AUTO', 'STOP'].includes(scopeSlot.row.status)" @click="underlineWorkFlow(scopeSlot.row)">下线</span>
               <span v-else @click="publishWorkFlow(scopeSlot.row)">发布</span>
-              <!-- <el-icon v-else class="is-loading"><Loading /></el-icon> -->
+              <el-dropdown trigger="click">
+                <span class="click-show-more">更多</span>
+                <template #dropdown>
+                  <el-dropdown-menu>
+                    <el-dropdown-item @click="editData(scopeSlot.row)">
+                      编辑
+                    </el-dropdown-item>
+                    <el-dropdown-item @click="deleteData(scopeSlot.row)">
+                      删除
+                    </el-dropdown-item>
+                  </el-dropdown-menu>
+                </template>
+              </el-dropdown>
             </div>
           </template>
         </BlockTable>

@@ -4,12 +4,12 @@
       <span class="vm-list__title">实例列表</span>
       <div class="vm-list__ops">
         <el-icon class="vm-list__icon"><RefreshRight /></el-icon>
-        <el-input class="vm-list__search" v-model="keyWord" placeholder="名称"  @keydown.enter="queryVmlistData"/>
+        <el-input class="vm-list__search" v-model="keyWord" placeholder="作业流"  @keydown.enter="queryVmlistData"/>
       </div>
     </div>
     <div class="vm-list__body">
       <el-table class="vm-list__table" :data="tableData">
-        <el-table-column prop="workflowName" label="名称" width="120" show-overflow-tooltip/>
+        <el-table-column prop="workflowName" label="作业流" width="120" show-overflow-tooltip/>
         <el-table-column prop="status" label="状态" align="center">
           <template #default="{ row }">
             <vm-status :status="row.status"></vm-status>

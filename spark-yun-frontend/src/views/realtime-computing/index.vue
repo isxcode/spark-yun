@@ -6,7 +6,7 @@
         type="primary"
         @click="addData"
       >
-        添加实时计算
+        添加实时
       </el-button>
       <div class="zqy-seach">
         <el-input
@@ -75,7 +75,7 @@
           </template>
           <template #options="scopeSlot">
             <div class="btn-group">
-              <span @click="editData(scopeSlot.row)">编辑</span>
+              <span @click="checkData(scopeSlot.row)">检测</span>
               <el-dropdown trigger="click">
                 <span class="click-show-more">更多</span>
                 <template #dropdown>
@@ -86,14 +86,14 @@
                     <el-dropdown-item v-if="scopeSlot.row.status === 'RUNNING'" @click="showRunningLog(scopeSlot.row)">
                       运行日志
                     </el-dropdown-item>
-                    <el-dropdown-item @click="stopComputing(scopeSlot.row)">
-                      停止
+                    <el-dropdown-item @click="editData(scopeSlot.row)">
+                      编辑
                     </el-dropdown-item>
                     <el-dropdown-item @click="startComputing(scopeSlot.row)">
                       运行
                     </el-dropdown-item>
-                    <el-dropdown-item @click="checkData(scopeSlot.row)">
-                      检测
+                    <el-dropdown-item @click="stopComputing(scopeSlot.row)">
+                      停止
                     </el-dropdown-item>
                     <el-dropdown-item @click="deleteData(scopeSlot.row)">
                       删除
@@ -122,6 +122,7 @@ import { SaveTimeComputingData, GetTimeComputingList, UpdateTimeComputingData, D
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useRouter } from 'vue-router'
 import ShowLog from './show-log/index.vue'
+import {Loading} from "@element-plus/icons-vue";
 
 const router = useRouter()
 

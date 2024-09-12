@@ -52,7 +52,6 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.*;
 
-import static com.isxcode.star.common.config.CommonConfig.TENANT_ID;
 import static com.isxcode.star.common.utils.ssh.SshUtils.scpJar;
 
 @Service
@@ -170,14 +169,14 @@ public class SparkJarExecutor extends WorkExecutor {
             clusterNodeMapper.engineNodeEntityToScpFileEngineNodeDto(engineNode);
         scpFileEngineNodeDto.setPasswd(aesUtils.decrypt(scpFileEngineNodeDto.getPasswd()));
         String fileDir = PathUtils.parseProjectPath(isxAppProperties.getResourcesPath()) + File.separator + "file"
-            + File.separator + TENANT_ID.get();
+            + File.separator + jarFile.getTenantId();
         try {
             scpJar(scpFileEngineNodeDto, fileDir + File.separator + jarFile.getId(),
                 engineNode.getAgentHomePath() + File.separator + "zhiqingyun-agent" + File.separator + "file"
                     + File.separator + jarFile.getId() + ".jar");
         } catch (JSchException | SftpException | InterruptedException | IOException e) {
             log.debug(e.getMessage());
-            throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "jar文件上传失败\n");
+            throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "jar文件上传失败\n" + e.getMessage());
         }
 
         // 上传依赖到制定节点路径

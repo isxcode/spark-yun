@@ -25,6 +25,11 @@ public class Execute {
 
         PluginReq pluginReq = parse(args);
 
+        String sourcePredicateTemplate =
+            DatasourceType.SQL_SERVER.equals(pluginReq.getSyncWorkConfig().getSourceDBType())
+                ? "%s(%s) %% %d in (%d,-%d)"
+                : "%s(`%s`) %% %d in (%d,-%d)";
+
         try (SparkSession sparkSession = initSparkSession(pluginReq.getSparkConfig())) {
 
             // 注册自定义函数
@@ -40,7 +45,7 @@ public class Execute {
             }
 
             // 创建来源表视图
-            String sourceTempView = genSourceTempView(sparkSession, pluginReq);
+            String sourceTempView = genSourceTempView(sparkSession, pluginReq, sourcePredicateTemplate);
 
             // 创建去向表视图
             String targetTempView = genTargetTempView(sparkSession, pluginReq);
@@ -81,7 +86,7 @@ public class Execute {
     /**
      * 构建来源视图.
      */
-    public static String genSourceTempView(SparkSession sparkSession, PluginReq conf) {
+    public static String genSourceTempView(SparkSession sparkSession, PluginReq conf, String sourcePredicateTemplate) {
 
         String sourceTableName = "zhiqingyun_src_" + conf.getSyncWorkConfig().getSourceDatabase().getDbTable();
 
@@ -103,7 +108,7 @@ public class Execute {
             // 生成查询条件并添加到列表中
             for (int i = 0; i < conf.getSyncRule().getNumPartitions(); i++) {
                 // 不同的数据库要使用各自支持hash函数
-                String predicate = String.format("%s(`%s`) %% %d in (%d,-%d)", hashName,
+                String predicate = String.format(sourcePredicateTemplate, hashName,
                     conf.getSyncWorkConfig().getPartitionColumn(), conf.getSyncRule().getNumPartitions(), i, i);
                 predicates.add(predicate);
             }

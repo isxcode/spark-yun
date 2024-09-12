@@ -39,13 +39,13 @@ export const BreadCrumbList: Array<BreadCrumb> = [
 export const colConfigs: colConfig[] = [
   {
     prop: 'fileName',
-    title: '文件名称',
+    title: '名称',
     minWidth: 125,
     showOverflowTooltip: true
   },
   {
     prop: 'fileSize',
-    title: '文件大小',
+    title: '大小',
     minWidth: 110
   },
   {
@@ -61,6 +61,11 @@ export const colConfigs: colConfig[] = [
       }
       return obj[data.cellValue]
     }
+  },
+  {
+    prop: 'createUsername',
+    title: '创建人',
+    minWidth: 120
   },
   {
     prop: 'createDateTime',

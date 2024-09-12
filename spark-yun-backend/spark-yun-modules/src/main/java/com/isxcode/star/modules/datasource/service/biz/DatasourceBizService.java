@@ -33,6 +33,7 @@ import javax.transaction.Transactional;
 
 import com.isxcode.star.modules.datasource.source.DataSourceFactory;
 import com.isxcode.star.modules.datasource.source.Datasource;
+import com.isxcode.star.modules.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
@@ -66,6 +67,7 @@ public class DatasourceBizService {
     private final DatabaseDriverService databaseDriverService;
 
     private final DataSourceFactory dataSourceFactory;
+    private final UserService userService;
 
     public void addDatasource(AddDatasourceReq addDatasourceReq) {
 
@@ -196,6 +198,13 @@ public class DatasourceBizService {
                     datasourceRepository.save(datasourceEntity);
                     return new TestConnectRes(false, "请检查连接协议");
                 }
+            } catch (IsxAppException exception) {
+                log.debug(exception.getMessage(), exception);
+
+                datasourceEntity.setStatus(DatasourceStatus.FAIL);
+                datasourceEntity.setConnectLog("测试连接失败：" + exception.getMsg());
+                datasourceRepository.save(datasourceEntity);
+                return new TestConnectRes(false, exception.getMessage());
             } catch (Exception e) {
                 log.debug(e.getMessage(), e);
 
@@ -203,6 +212,40 @@ public class DatasourceBizService {
                 datasourceEntity.setConnectLog("测试连接失败：" + e.getMessage());
                 datasourceRepository.save(datasourceEntity);
                 return new TestConnectRes(false, e.getMessage());
+            }
+        }
+    }
+
+    public CheckConnectRes checkConnect(CheckConnectReq checkConnectReq) {
+
+        DatasourceEntity datasourceEntity = datasourceMapper.checkConnectReqToDatasourceEntity(checkConnectReq);
+        if (Strings.isNotEmpty(checkConnectReq.getPasswd())) {
+            datasourceEntity.setPasswd(aesUtils.encrypt(checkConnectReq.getPasswd()));
+        }
+
+        if (DatasourceType.KAFKA.equals(datasourceEntity.getDbType())) {
+            try {
+                datasourceService.checkKafka(checkConnectReq.getKafkaConfig());
+                return new CheckConnectRes(true, "连接成功");
+            } catch (Exception e) {
+                log.debug(e.getMessage(), e);
+                return new CheckConnectRes(false, e.getMessage());
+            }
+        } else {
+            ConnectInfo connectInfo = datasourceMapper.datasourceEntityToConnectInfo(datasourceEntity);
+            Datasource datasource = dataSourceFactory.getDatasource(connectInfo.getDbType());
+            try (Connection connection = datasource.getConnection(connectInfo)) {
+                if (connection != null) {
+                    return new CheckConnectRes(true, "连接成功");
+                } else {
+                    return new CheckConnectRes(false, "请检查连接协议");
+                }
+            } catch (IsxAppException exception) {
+                log.debug(exception.getMessage(), exception);
+                return new CheckConnectRes(false, exception.getMsg());
+            } catch (Exception e) {
+                log.debug(e.getMessage(), e);
+                return new CheckConnectRes(false, e.getMessage());
             }
         }
     }
@@ -253,7 +296,12 @@ public class DatasourceBizService {
             databaseDriverRepository.searchAll(pageDatabaseDriverReq.getSearchKeyWord(), TENANT_ID.get(),
                 PageRequest.of(pageDatabaseDriverReq.getPage(), pageDatabaseDriverReq.getPageSize()));
 
-        return pageDatabaseDriver.map(datasourceMapper::dataDriverEntityToPageDatabaseDriverRes);
+        Page<PageDatabaseDriverRes> map =
+            pageDatabaseDriver.map(datasourceMapper::dataDriverEntityToPageDatabaseDriverRes);
+
+        map.getContent().forEach(e -> e.setCreateUsername(userService.getUserName(e.getCreateBy())));
+
+        return map;
     }
 
     public void deleteDatabaseDriver(DeleteDatabaseDriverReq deleteDatabaseDriverReq) {
@@ -308,7 +356,7 @@ public class DatasourceBizService {
         DatabaseDriverEntity databaseDriver = databaseDriverEntityOptional.get();
 
         if ("SYSTEM_DRIVER".equals(databaseDriver.getDriverType())) {
-            throw new IsxAppException("系统默认数据源驱动无法配置默认");
+            throw new IsxAppException("系统驱动无法默认");
         }
 
         if (settingDefaultDatabaseDriverReq.getIsDefaultDriver()) {

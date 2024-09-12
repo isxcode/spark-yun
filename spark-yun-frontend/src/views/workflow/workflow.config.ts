@@ -49,28 +49,32 @@ export const BreadCrumbList: Array<BreadCrumb> = [
 export const colConfigs: colConfig[] = [
   {
     prop: 'name',
-    title: '作业流名称',
-    minWidth: 100,
+    title: '名称',
+    minWidth: 120,
     customSlot: 'nameSlot',
     showOverflowTooltip: true
   },
-  // {
-  //   prop: 'clusterName',
-  //   title: '默认集群',
-  //   minWidth: 100,
-  //   showOverflowTooltip: true
-  // },
   {
     prop: 'status',
     title: '发布状态',
-    minWidth: 100,
+    minWidth: 80,
     customSlot: 'statusTag'
   },
-   {
+  {
     prop: 'nextDateTime',
-    title: '下一次执行时间',
-    minWidth: 100,
+    title: '下次执行时间',
+    minWidth: 120,
     showOverflowTooltip: true
+  },
+  {
+    prop: 'createUsername',
+    title: '创建人',
+    minWidth: 80
+  },
+  {
+    prop: 'createDateTime',
+    title: '创建时间',
+    minWidth: 140
   },
   {
     prop: 'remark',
@@ -82,7 +86,7 @@ export const colConfigs: colConfig[] = [
     title: '操作',
     align: 'center',
     customSlot: 'options',
-    width: 110
+    width: 80
   }
 ]
 

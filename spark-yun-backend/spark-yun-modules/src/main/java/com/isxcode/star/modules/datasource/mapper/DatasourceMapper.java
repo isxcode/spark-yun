@@ -2,6 +2,7 @@ package com.isxcode.star.modules.datasource.mapper;
 
 import com.isxcode.star.api.datasource.pojos.dto.ConnectInfo;
 import com.isxcode.star.api.datasource.pojos.req.AddDatasourceReq;
+import com.isxcode.star.api.datasource.pojos.req.CheckConnectReq;
 import com.isxcode.star.api.datasource.pojos.req.UpdateDatasourceReq;
 import com.isxcode.star.api.datasource.pojos.res.GetDefaultDatabaseDriverRes;
 import com.isxcode.star.api.datasource.pojos.res.PageDatabaseDriverRes;
@@ -16,6 +17,9 @@ public interface DatasourceMapper {
 
     @Mapping(target = "kafkaConfig", ignore = true)
     DatasourceEntity dasAddDatasourceReqToDatasourceEntity(AddDatasourceReq dasAddDatasourceReq);
+
+    @Mapping(target = "kafkaConfig", ignore = true)
+    DatasourceEntity checkConnectReqToDatasourceEntity(CheckConnectReq checkConnectReq);
 
     @Mapping(source = "dasUpdateDatasourceReq.passwd", target = "passwd")
     @Mapping(source = "dasUpdateDatasourceReq.remark", target = "remark")

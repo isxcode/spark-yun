@@ -35,7 +35,7 @@
         </el-select>
       </el-form-item>
       <el-form-item
-        label="数据源驱动"
+        label="驱动"
         prop="driverId"
       >
         <el-select

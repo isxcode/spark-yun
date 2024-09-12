@@ -25,7 +25,6 @@ public class DatasourceController {
 
     private final DatasourceBizService datasourceBizService;
 
-    @Secured({RoleType.TENANT_ADMIN})
     @Operation(summary = "添加数据源接口")
     @PostMapping("/addDatasource")
     @SuccessResponse("添加成功")
@@ -61,13 +60,20 @@ public class DatasourceController {
         datasourceBizService.deleteDatasource(deleteDatasourceReq);
     }
 
-    @Secured({RoleType.TENANT_MEMBER, RoleType.TENANT_ADMIN})
-    @Operation(summary = "测试数据源连接接口")
+    @Operation(summary = "测试数据源连接接口(列表中测试)")
     @PostMapping("/testConnect")
     @SuccessResponse("检测完成")
     public TestConnectRes testConnect(@Valid @RequestBody GetConnectLogReq testConnectReq) {
 
         return datasourceBizService.testConnect(testConnectReq);
+    }
+
+    @Operation(summary = "测试数据源连接接口(弹窗中测试)")
+    @PostMapping("/checkConnect")
+    @SuccessResponse("检测完成")
+    public CheckConnectRes checkConnect(@Valid @RequestBody CheckConnectReq checkConnectReq) {
+
+        return datasourceBizService.checkConnect(checkConnectReq);
     }
 
     @Secured({RoleType.TENANT_MEMBER, RoleType.TENANT_ADMIN})

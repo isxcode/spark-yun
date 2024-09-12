@@ -3,7 +3,7 @@
     <div class="zqy-seach-table message-notification">
         <div class="zqy-table-top">
             <el-button type="primary" @click="addData">
-                新增
+                新增基线
             </el-button>
             <div class="zqy-seach">
                 <el-input v-model="keyword" placeholder="请输入搜索条件 回车进行搜索" :maxlength="200" clearable @input="inputEvent"
@@ -23,10 +23,21 @@
                     </template>
                     <template #options="scopeSlot">
                         <div class="btn-group btn-group-msg">
-                            <span @click="editData(scopeSlot.row)">编辑</span>
-                            <span v-if="['DISABLE'].includes(scopeSlot.row.status)" @click="enableData(scopeSlot.row)">启用</span>
-                            <span v-if="['ENABLE'].includes(scopeSlot.row.status)" @click="disableData(scopeSlot.row)">禁用</span>
-                            <span @click="deleteData(scopeSlot.row)">删除</span>
+                          <span v-if="['DISABLE'].includes(scopeSlot.row.status)" @click="enableData(scopeSlot.row)">启用</span>
+                          <span v-if="['ENABLE'].includes(scopeSlot.row.status)" @click="disableData(scopeSlot.row)">禁用</span>
+                          <el-dropdown trigger="click">
+                            <span class="click-show-more">更多</span>
+                            <template #dropdown>
+                              <el-dropdown-menu>
+                                <el-dropdown-item @click="editData(scopeSlot.row)">
+                                  编辑
+                                </el-dropdown-item>
+                                <el-dropdown-item @click="deleteData(scopeSlot.row)">
+                                  删除
+                                </el-dropdown-item>
+                              </el-dropdown-menu>
+                            </template>
+                          </el-dropdown>
                         </div>
                     </template>
                 </BlockTable>
@@ -46,6 +57,7 @@ import AddModal from './add-modal/index.vue'
 import { BreadCrumbList, TableConfig } from './list.config'
 import { GetAlarmPagesList, AddAlarmData, UpdateAlarmData, DeleteAlarmData, DisabledAlarmData, EnableAlarmData } from '@/services/message-center.service'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import {Loading} from "@element-plus/icons-vue";
 
 const breadCrumbList = reactive(BreadCrumbList)
 const tableConfig: any = reactive(TableConfig)

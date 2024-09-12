@@ -25,4 +25,8 @@ public class PageRealRes {
 
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime createDateTime;
+
+    private String createBy;
+
+    private String createUsername;
 }

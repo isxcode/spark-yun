@@ -33,6 +33,7 @@ import com.isxcode.star.modules.cluster.service.ClusterService;
 import com.isxcode.star.modules.license.repository.LicenseStore;
 import com.isxcode.star.modules.tenant.entity.TenantEntity;
 import com.isxcode.star.modules.tenant.service.TenantService;
+import com.isxcode.star.modules.user.service.UserService;
 import com.isxcode.star.modules.work.entity.WorkConfigEntity;
 import com.isxcode.star.modules.work.entity.WorkEntity;
 import com.isxcode.star.modules.work.entity.WorkExportInfo;
@@ -112,6 +113,7 @@ public class WorkflowBizService {
     private final LicenseStore licenseStore;
 
     private final IsxAppProperties isxAppProperties;
+    private final UserService userService;
 
     public void addWorkflow(AddWorkflowReq wofAddWorkflowReq) {
 
@@ -170,12 +172,7 @@ public class WorkflowBizService {
         Page<PageWorkflowRes> pageWorkflowRes =
             workflowEntityPage.map(workflowMapper::workflowEntityToQueryWorkflowRes);
 
-        // 翻译集群名称
-        pageWorkflowRes.getContent().forEach(e -> {
-            if (!Strings.isEmpty(e.getDefaultClusterId())) {
-                e.setClusterName(clusterService.getClusterName(e.getDefaultClusterId()));
-            }
-        });
+        pageWorkflowRes.getContent().forEach(e -> e.setCreateUsername(userService.getUserName(e.getCreateBy())));
 
         return pageWorkflowRes;
     }
