@@ -8,9 +8,6 @@
       <div class="zqy-seach">
         <el-input v-model="keyword" placeholder="请输入节点名称/地址/备注 回车进行搜索" :maxlength="200" clearable @input="inputEvent"
           @keyup.enter="initData(false)" />
-        <el-button type="primary" @click="initData(false)">
-          刷新
-        </el-button>
       </div>
     </div>
     <LoadingPage :visible="loading" :network-error="networkError" @loading-refresh="initData(false)">
@@ -74,7 +71,7 @@
           </template>
           <template #options="scopeSlot">
             <div class="btn-group">
-              <span @click="showLog(scopeSlot.row)">日志</span>
+              <span @click="checkData(scopeSlot.row)">检测</span>
               <el-dropdown trigger="click">
                 <span class="click-show-more">更多</span>
                 <template #dropdown>
@@ -82,14 +79,14 @@
                     <el-dropdown-item @click="editNodeData(scopeSlot.row)">
                       编辑
                     </el-dropdown-item>
+                    <el-dropdown-item @click="showLog(scopeSlot.row)">
+                      日志
+                    </el-dropdown-item>
                     <el-dropdown-item v-if="scopeSlot.row.status === 'RUNNING'" @click="stopAgent(scopeSlot.row)">
                       停止
                     </el-dropdown-item>
                     <el-dropdown-item v-if="scopeSlot.row.status === 'STOP'" @click="startAgent(scopeSlot.row)">
                       激活
-                    </el-dropdown-item>
-                    <el-dropdown-item @click="checkData(scopeSlot.row)">
-                      检测
                     </el-dropdown-item>
                     <!-- <el-dropdown-item @click="setDefaultNode(scopeSlot.row)">
                       设置默认节点

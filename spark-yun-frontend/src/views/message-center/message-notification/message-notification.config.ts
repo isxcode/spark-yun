@@ -31,7 +31,7 @@ export interface TableConfig {
 
 export const BreadCrumbList: Array<BreadCrumb> = [
     {
-        name: '消息通知',
+        name: '消息体',
         code: 'message-notifications'
     }
 ]
