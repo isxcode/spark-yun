@@ -196,6 +196,13 @@ public class DatasourceBizService {
                     datasourceRepository.save(datasourceEntity);
                     return new TestConnectRes(false, "请检查连接协议");
                 }
+            } catch (IsxAppException exception) {
+                log.debug(exception.getMessage(), exception);
+
+                datasourceEntity.setStatus(DatasourceStatus.FAIL);
+                datasourceEntity.setConnectLog("测试连接失败：" + exception.getMsg());
+                datasourceRepository.save(datasourceEntity);
+                return new TestConnectRes(false, exception.getMessage());
             } catch (Exception e) {
                 log.debug(e.getMessage(), e);
 
