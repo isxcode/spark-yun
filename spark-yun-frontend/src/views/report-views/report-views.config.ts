@@ -74,7 +74,7 @@ export const colConfigs: colConfig[] = [
     title: '操作',
     align: 'center',
     customSlot: 'options',
-    width: 100
+    width: 80
   }
 ]
 
