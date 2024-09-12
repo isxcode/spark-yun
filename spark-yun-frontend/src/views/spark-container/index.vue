@@ -45,17 +45,17 @@
                 <span class="click-show-more">更多</span>
                 <template #dropdown>
                   <el-dropdown-menu>
-                    <el-dropdown-item @click="editData(scopeSlot.row)">
-                      编辑
-                    </el-dropdown-item>
                     <el-dropdown-item @click="showLog(scopeSlot.row)">
                       日志
                     </el-dropdown-item>
-                    <el-dropdown-item @click="stopContainer(scopeSlot.row)">
-                      停止
+                    <el-dropdown-item @click="editData(scopeSlot.row)">
+                      编辑
                     </el-dropdown-item>
                     <el-dropdown-item @click="startContainer(scopeSlot.row)">
                       启动
+                    </el-dropdown-item>
+                    <el-dropdown-item @click="stopContainer(scopeSlot.row)">
+                      停止
                     </el-dropdown-item>
                     <el-dropdown-item @click="deleteData(scopeSlot.row)">
                       删除

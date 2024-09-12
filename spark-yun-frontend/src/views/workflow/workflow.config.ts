@@ -68,7 +68,7 @@ export const colConfigs: colConfig[] = [
   },
    {
     prop: 'nextDateTime',
-    title: '下一次执行时间',
+    title: '下次执行时间',
     minWidth: 100,
     showOverflowTooltip: true
   },
@@ -82,7 +82,7 @@ export const colConfigs: colConfig[] = [
     title: '操作',
     align: 'center',
     customSlot: 'options',
-    width: 110
+    width: 80
   }
 ]
 

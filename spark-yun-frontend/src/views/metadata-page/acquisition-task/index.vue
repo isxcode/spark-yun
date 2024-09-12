@@ -3,7 +3,7 @@
     <div class="zqy-seach-table message-notification">
         <div class="zqy-table-top">
             <el-button type="primary" @click="addData">
-                新增
+                新增采集
             </el-button>
             <div class="zqy-seach">
                 <el-input v-model="keyword" placeholder="请输入搜索条件 回车进行搜索" :maxlength="200" clearable @input="inputEvent"
@@ -22,13 +22,26 @@
                         </div>
                     </template>
                     <template #options="scopeSlot">
-                        <div class="btn-group btn-group-msg">
-                            <span @click="editData(scopeSlot.row)">编辑</span>
-                            <span v-if="['DISABLE'].includes(scopeSlot.row.status)" @click="enableData(scopeSlot.row)">启用</span>
-                            <span v-if="['ENABLE'].includes(scopeSlot.row.status)" @click="disableData(scopeSlot.row)">禁用</span>
-                            <span @click="deleteData(scopeSlot.row)">删除</span>
-                            <span @click="triggerData(scopeSlot.row)">立即采集</span>
-                        </div>
+                      <div class="btn-group btn-group-msg">
+                        <span v-if="['ENABLE'].includes(scopeSlot.row.status)" @click="disableData(scopeSlot.row)">禁用</span>
+                        <span v-if="['DISABLE'].includes(scopeSlot.row.status)" @click="enableData(scopeSlot.row)">启用</span>
+                        <el-dropdown trigger="click">
+                          <span class="click-show-more">更多</span>
+                          <template #dropdown>
+                            <el-dropdown-menu>
+                              <el-dropdown-item @click="editData(scopeSlot.row)">
+                                编辑
+                              </el-dropdown-item>
+                              <el-dropdown-item @click="triggerData(scopeSlot.row)">
+                                立即采集
+                              </el-dropdown-item>
+                              <el-dropdown-item @click="deleteData(scopeSlot.row)">
+                                删除
+                              </el-dropdown-item>
+                            </el-dropdown-menu>
+                          </template>
+                        </el-dropdown>
+                      </div>
                     </template>
                 </BlockTable>
             </div>

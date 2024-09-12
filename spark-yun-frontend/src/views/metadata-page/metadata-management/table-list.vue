@@ -35,7 +35,7 @@ const tableConfig = reactive({
         },
         {
             prop: 'dbName',
-            title: '数据库',
+            title: '库名',
             minWidth: 125,
             showOverflowTooltip: true
         },
