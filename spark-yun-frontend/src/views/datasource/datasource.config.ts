@@ -102,7 +102,7 @@ export const typeList = [
 export const colConfigs: colConfig[] = [
   {
     prop: 'name',
-    title: '数据源名称',
+    title: '名称',
     minWidth: 100,
     showOverflowTooltip: true
   },

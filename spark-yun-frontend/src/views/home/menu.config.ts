@@ -38,7 +38,7 @@ export const menuListData: Array<Menu> = [
       },
       {
         code: 'driver-management',
-        name: '驱动管理',
+        name: '驱动上传',
         icon: 'Cpu',
         authType: [ 'ROLE_TENANT_MEMBER', 'ROLE_TENANT_ADMIN' ],
         childPage: []
@@ -140,14 +140,14 @@ export const menuListData: Array<Menu> = [
     children: [
       {
         code: 'message-notifications',
-        name: '消息通知',
+        name: '消息体',
         icon: 'Message',
         authType: [ 'ROLE_TENANT_MEMBER', 'ROLE_TENANT_ADMIN' ],
         childPage: []
       },
       {
         code: 'warning-config',
-        name: '告警配置',
+        name: '基线配置',
         icon: 'TakeawayBox',
         authType: [ 'ROLE_TENANT_MEMBER', 'ROLE_TENANT_ADMIN' ],
         childPage: []

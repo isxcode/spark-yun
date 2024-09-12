@@ -75,20 +75,29 @@
           </template>
           <template #options="scopeSlot">
             <div class="btn-group">
-              <span @click="setDefaultNode(scopeSlot.row)">设为默认</span>
-              <span @click="editData(scopeSlot.row)">编辑</span>
-              <span
-                v-if="!scopeSlot.row.checkLoading"
-                @click="checkData(scopeSlot.row)"
-              >检测</span>
+              <span v-if="!scopeSlot.row.checkLoading" @click="checkData(scopeSlot.row)">检测</span>
               <el-icon
-                v-else
-                class="is-loading"
+                  v-else
+                  class="is-loading"
               >
                 <Loading />
               </el-icon>
-              <!-- <span @click="showPointDetail(scopeSlot.row)">节点</span> -->
-              <span @click="deleteData(scopeSlot.row)">删除</span>
+              <el-dropdown trigger="click">
+                <span class="click-show-more">更多</span>
+                <template #dropdown>
+                  <el-dropdown-menu>
+                    <el-dropdown-item @click="editData(scopeSlot.row)">
+                      编辑
+                    </el-dropdown-item>
+                    <el-dropdown-item @click="setDefaultNode(scopeSlot.row)">
+                      默认
+                    </el-dropdown-item>
+                    <el-dropdown-item @click="deleteData(scopeSlot.row)">
+                      删除
+                    </el-dropdown-item>
+                  </el-dropdown-menu>
+                </template>
+              </el-dropdown>
             </div>
           </template>
         </BlockTable>

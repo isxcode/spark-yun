@@ -8,7 +8,7 @@
       :rules="rules"
     >
       <el-form-item
-        label="驱动名称"
+        label="名称"
         prop="name"
       >
         <el-input

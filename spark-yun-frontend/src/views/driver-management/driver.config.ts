@@ -36,7 +36,7 @@ export interface SerchParams {
 
 export const BreadCrumbList: Array<BreadCrumb> = [
     {
-        name: '驱动管理',
+        name: '驱动上传',
         code: 'driver-management'
     }
 ]
@@ -44,7 +44,7 @@ export const BreadCrumbList: Array<BreadCrumb> = [
 export const colConfigs: colConfig[] = [
     {
         prop: 'name',
-        title: '驱动名称',
+        title: '名称',
         minWidth: 100,
         showOverflowTooltip: true
     },
@@ -62,7 +62,7 @@ export const colConfigs: colConfig[] = [
     },
     {
         prop: 'defaultDriver',
-        title: '是否默认驱动',
+        title: '默认驱动',
         minWidth: 120,
         showOverflowTooltip: true,
         customSlot: 'defaultTag'

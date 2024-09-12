@@ -34,11 +34,20 @@
           </template>
           <template #options="scopeSlot">
             <div class="btn-group">
-              <span @click="editData(scopeSlot.row)">编辑</span>
+              <span v-if="!scopeSlot.row.checkLoading" @click="checkData(scopeSlot.row)">检测</span>
+              <el-icon
+                  v-else
+                  class="is-loading"
+              >
+                <Loading />
+              </el-icon>
               <el-dropdown trigger="click">
                 <span class="click-show-more">更多</span>
                 <template #dropdown>
                   <el-dropdown-menu>
+                    <el-dropdown-item @click="editData(scopeSlot.row)">
+                      编辑
+                    </el-dropdown-item>
                     <el-dropdown-item @click="showLog(scopeSlot.row)">
                       日志
                     </el-dropdown-item>
@@ -47,9 +56,6 @@
                     </el-dropdown-item>
                     <el-dropdown-item @click="startContainer(scopeSlot.row)">
                       启动
-                    </el-dropdown-item>
-                    <el-dropdown-item @click="checkData(scopeSlot.row)">
-                      检测
                     </el-dropdown-item>
                     <el-dropdown-item @click="deleteData(scopeSlot.row)">
                       删除

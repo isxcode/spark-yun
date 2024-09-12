@@ -6,7 +6,7 @@
         type="primary"
         @click="addData"
       >
-        添加实时计算
+        添加实时
       </el-button>
       <div class="zqy-seach">
         <el-input
