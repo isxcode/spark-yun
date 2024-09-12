@@ -50,27 +50,31 @@ export const colConfigs: colConfig[] = [
   {
     prop: 'name',
     title: '名称',
-    minWidth: 100,
+    minWidth: 120,
     customSlot: 'nameSlot',
     showOverflowTooltip: true
   },
-  // {
-  //   prop: 'clusterName',
-  //   title: '默认集群',
-  //   minWidth: 100,
-  //   showOverflowTooltip: true
-  // },
   {
     prop: 'status',
     title: '发布状态',
-    minWidth: 100,
+    minWidth: 80,
     customSlot: 'statusTag'
   },
-   {
+  {
     prop: 'nextDateTime',
     title: '下次执行时间',
     minWidth: 100,
     showOverflowTooltip: true
+  },
+  {
+    prop: 'createUsername',
+    title: '创建人',
+    minWidth: 80
+  },
+  {
+    prop: 'createDateTime',
+    title: '创建时间',
+    minWidth: 100
   },
   {
     prop: 'remark',

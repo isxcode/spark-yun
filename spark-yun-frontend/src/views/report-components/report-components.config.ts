@@ -69,12 +69,12 @@ export const colConfigs: colConfig[] = [
         minWidth: 100,
         customSlot: 'statusTag'
     },
-    // {
-    //     prop: 'defaultDriver',
-    //     title: '创建人',
-    //     minWidth: 120,
-    //     showOverflowTooltip: true,
-    // },
+    {
+        prop: 'createUsername',
+        title: '创建人',
+        minWidth: 100,
+        showOverflowTooltip: true,
+    },
     {
         prop: 'createDateTime',
         title: '创建时间',

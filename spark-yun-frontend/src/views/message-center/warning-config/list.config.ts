@@ -71,7 +71,7 @@ export const colConfigs: colConfig[] = [
     },
     {
         prop: 'msgName',
-        title: '消息通知',
+        title: '消息体',
         minWidth: 125,
         showOverflowTooltip: true
     },
@@ -95,14 +95,14 @@ export const colConfigs: colConfig[] = [
         customSlot: 'statusTag'
     },
     {
-        prop: 'createDateTime',
-        title: '创建时间',
-        minWidth: 140
-    },
-    {
         prop: 'createByUsername',
         title: '创建人',
         minWidth: 100
+    },
+    {
+        prop: 'createDateTime',
+        title: '创建时间',
+        minWidth: 140
     },
     {
         prop: 'remark',

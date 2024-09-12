@@ -62,13 +62,13 @@ export const colConfigs: colConfig[] = [
         customSlot: 'statusTag'
     },
     {
-        prop: 'createDateTime',
-        title: '创建时间',
+        prop: 'createByUsername',
+        title: '创建人',
         minWidth: 140
     },
     {
-        prop: 'createByUsername',
-        title: '创建人',
+        prop: 'createDateTime',
+        title: '创建时间',
         minWidth: 140
     },
     {
