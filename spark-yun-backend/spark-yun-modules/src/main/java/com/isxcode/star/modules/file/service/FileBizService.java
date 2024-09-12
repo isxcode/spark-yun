@@ -12,6 +12,7 @@ import com.isxcode.star.common.utils.path.PathUtils;
 import com.isxcode.star.modules.file.entity.FileEntity;
 import com.isxcode.star.modules.file.mapper.FileMapper;
 import com.isxcode.star.modules.file.repository.FileRepository;
+import com.isxcode.star.modules.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.InputStreamResource;
@@ -47,6 +48,7 @@ public class FileBizService {
     private final IsxAppProperties isxAppProperties;
 
     private final FileMapper fileMapper;
+    private final UserService userService;
 
     public void uploadFile(MultipartFile file, String type, String remark) {
 
@@ -179,6 +181,10 @@ public class FileBizService {
         Page<FileEntity> fileEntitiePage = fileRepository.searchAll(pageFileReq.getSearchKeyWord(),
             pageFileReq.getType(), PageRequest.of(pageFileReq.getPage(), pageFileReq.getPageSize()));
 
-        return fileEntitiePage.map(fileMapper::fileEntityToPageFileRes);
+        Page<PageFileRes> map = fileEntitiePage.map(fileMapper::fileEntityToPageFileRes);
+
+        map.getContent().forEach(e -> e.setCreateUsername(userService.getUserName(e.getCreateBy())));
+
+        return map;
     }
 }

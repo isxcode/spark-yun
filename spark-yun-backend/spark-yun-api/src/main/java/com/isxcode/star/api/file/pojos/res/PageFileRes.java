@@ -21,6 +21,10 @@ public class PageFileRes {
 
     private String remark;
 
+    private String createBy;
+
+    private String createUsername;
+
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime createDateTime;
 

@@ -33,6 +33,7 @@ import javax.transaction.Transactional;
 
 import com.isxcode.star.modules.datasource.source.DataSourceFactory;
 import com.isxcode.star.modules.datasource.source.Datasource;
+import com.isxcode.star.modules.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
@@ -66,6 +67,7 @@ public class DatasourceBizService {
     private final DatabaseDriverService databaseDriverService;
 
     private final DataSourceFactory dataSourceFactory;
+    private final UserService userService;
 
     public void addDatasource(AddDatasourceReq addDatasourceReq) {
 
@@ -294,7 +296,12 @@ public class DatasourceBizService {
             databaseDriverRepository.searchAll(pageDatabaseDriverReq.getSearchKeyWord(), TENANT_ID.get(),
                 PageRequest.of(pageDatabaseDriverReq.getPage(), pageDatabaseDriverReq.getPageSize()));
 
-        return pageDatabaseDriver.map(datasourceMapper::dataDriverEntityToPageDatabaseDriverRes);
+        Page<PageDatabaseDriverRes> map =
+            pageDatabaseDriver.map(datasourceMapper::dataDriverEntityToPageDatabaseDriverRes);
+
+        map.getContent().forEach(e -> e.setCreateUsername(userService.getUserName(e.getCreateBy())));
+
+        return map;
     }
 
     public void deleteDatabaseDriver(DeleteDatabaseDriverReq deleteDatabaseDriverReq) {
@@ -349,7 +356,7 @@ public class DatasourceBizService {
         DatabaseDriverEntity databaseDriver = databaseDriverEntityOptional.get();
 
         if ("SYSTEM_DRIVER".equals(databaseDriver.getDriverType())) {
-            throw new IsxAppException("系统默认数据源驱动无法配置默认");
+            throw new IsxAppException("系统驱动无法默认");
         }
 
         if (settingDefaultDatabaseDriverReq.getIsDefaultDriver()) {

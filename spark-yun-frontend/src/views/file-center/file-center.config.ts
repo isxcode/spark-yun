@@ -63,6 +63,11 @@ export const colConfigs: colConfig[] = [
     }
   },
   {
+    prop: 'createUsername',
+    title: '创建人',
+    minWidth: 120
+  },
+  {
     prop: 'createDateTime',
     title: '创建时间',
     minWidth: 140
