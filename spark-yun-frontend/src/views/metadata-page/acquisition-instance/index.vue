@@ -22,9 +22,20 @@
                     </template>
                     <template #options="scopeSlot">
                         <div class="btn-group btn-group-msg">
-                            <span v-if="['COLLECTING'].includes(scopeSlot.row.status)" @click="abortData(scopeSlot.row)">中止</span>
-                            <span @click="deleteData(scopeSlot.row)">删除</span>
-                            <span @click="showLog(scopeSlot.row)">日志</span>
+                          <span @click="showLog(scopeSlot.row)">日志</span>
+                          <el-dropdown trigger="click">
+                            <span class="click-show-more">更多</span>
+                            <template #dropdown>
+                              <el-dropdown-menu>
+                                <el-dropdown-item v-if="['COLLECTING'].includes(scopeSlot.row.status)" @click="abortData(scopeSlot.row)">
+                                  中止
+                                </el-dropdown-item>
+                                <el-dropdown-item @click="deleteData(scopeSlot.row)">
+                                  删除
+                                </el-dropdown-item>
+                              </el-dropdown-menu>
+                            </template>
+                          </el-dropdown>
                         </div>
                     </template>
                 </BlockTable>

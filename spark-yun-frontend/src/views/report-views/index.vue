@@ -33,17 +33,17 @@
                     </template>
                     <template #options="scopeSlot">
                         <div class="btn-group">
-                            <span v-if="['NEW', 'OFFLINE'].includes(scopeSlot.row.status)" @click="publishReport(scopeSlot.row)">发布</span>
-                            <span v-else @click="underlineReport(scopeSlot.row)">下线</span>
+                            <span v-if="['NEW', 'OFFLINE'].includes(scopeSlot.row.status)" @click="showDetail(scopeSlot.row)">配置</span>
+                            <span v-if="['PUBLISHED'].includes(scopeSlot.row.status)" @click="previewReport(scopeSlot.row)">预览</span>
                             <el-dropdown trigger="click">
                               <span class="click-show-more">更多</span>
                               <template #dropdown>
                                 <el-dropdown-menu>
-                                  <el-dropdown-item v-if="['NEW', 'OFFLINE'].includes(scopeSlot.row.status)" @click="showDetail(scopeSlot.row)">
-                                    配置
+                                  <el-dropdown-item v-if="['NEW', 'OFFLINE'].includes(scopeSlot.row.status)" @click="publishReport(scopeSlot.row)">
+                                    发布
                                   </el-dropdown-item>
-                                  <el-dropdown-item v-if="['PUBLISHED'].includes(scopeSlot.row.status)" @click="previewReport(scopeSlot.row)">
-                                    预览
+                                  <el-dropdown-item v-else @click="underlineReport(scopeSlot.row)">
+                                    下线
                                   </el-dropdown-item>
                                   <el-dropdown-item v-if="['PUBLISHED'].includes(scopeSlot.row.status)" @click="shareReport(scopeSlot.row)">
                                     分享

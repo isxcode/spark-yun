@@ -20,9 +20,20 @@
                     </template>
                     <template #options="scopeSlot">
                         <div class="btn-group btn-group-msg">
-                            <span @click="deleteData(scopeSlot.row)">删除</span>
-                            <span @click="showMsg(scopeSlot.row.content)">内容</span>
-                            <span @click="showMsg(scopeSlot.row.response)">响应</span>
+                          <span @click="showMsg(scopeSlot.row.response)">响应</span>
+                          <el-dropdown trigger="click">
+                            <span class="click-show-more">更多</span>
+                              <template #dropdown>
+                                <el-dropdown-menu>
+                                  <el-dropdown-item @click="showMsg(scopeSlot.row.content)">
+                                    内容
+                                  </el-dropdown-item>
+                                  <el-dropdown-item @click="deleteData(scopeSlot.row)">
+                                    删除
+                                  </el-dropdown-item>
+                                </el-dropdown-menu>
+                              </template>
+                          </el-dropdown>
                         </div>
                     </template>
                 </BlockTable>
