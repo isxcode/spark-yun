@@ -173,7 +173,7 @@
                     <el-dropdown-item @click="reRunWorkFlowDataEvent(scopeSlot.row)">
                       重跑
                     </el-dropdown-item>
-                    <el-dropdown-item @click="stopWorkFlow(scopeSlot.row)">
+                    <el-dropdown-item v-if="!['SUCCESS','FAIL','ABORT'].includes(scopeSlot.row.status)" @click="stopWorkFlow(scopeSlot.row)">
                       中止
                     </el-dropdown-item>
                     <el-dropdown-item @click="deleteWorkflowSchedule(scopeSlot.row)">

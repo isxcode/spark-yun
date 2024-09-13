@@ -49,7 +49,7 @@
                                 <el-dropdown-item v-if="['CHECK_SUCCESS', 'DISABLE'].includes(scopeSlot.row.status)" @click="enableData(scopeSlot.row)">
                                   启动
                                 </el-dropdown-item>
-                                <el-dropdown-item v-if="['ACTIVE'].includes(scopeSlot.row.status)"  @click="stopContainer(scopeSlot.row)">
+                                <el-dropdown-item v-if="['ACTIVE'].includes(scopeSlot.row.status)"  @click="disableData(scopeSlot.row)">
                                   禁用
                                 </el-dropdown-item>
                                 <el-dropdown-item @click="deleteData(scopeSlot.row)">

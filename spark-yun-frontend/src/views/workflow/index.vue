@@ -64,10 +64,10 @@
               <el-tag v-if="scopeSlot.row.status === 'UN_AUTO'">
                 未运行
               </el-tag>
-              <el-tag v-if="scopeSlot.row.status === 'STOP'">
+              <el-tag v-if="scopeSlot.row.status === 'STOP'" class="ml-2" type="danger">
                 已下线
               </el-tag>
-              <el-tag v-if="scopeSlot.row.status === 'PUBLISHED'">
+              <el-tag v-if="scopeSlot.row.status === 'PUBLISHED'" class="ml-2" type="success">
                 已发布
               </el-tag>
             </div>
