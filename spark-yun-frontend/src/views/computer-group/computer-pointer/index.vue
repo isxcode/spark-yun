@@ -88,10 +88,7 @@
                     <el-dropdown-item v-if="scopeSlot.row.status === 'STOP'" @click="startAgent(scopeSlot.row)">
                       激活
                     </el-dropdown-item>
-                    <!-- <el-dropdown-item @click="setDefaultNode(scopeSlot.row)">
-                      设置默认节点
-                    </el-dropdown-item> -->
-                    <el-dropdown-item @click="installData(scopeSlot.row)">
+                    <el-dropdown-item v-if="scopeSlot.row.status === 'UN_INSTALL'" @click="installData(scopeSlot.row)">
                       安装
                     </el-dropdown-item>
                     <el-dropdown-item @click="uninstallData(scopeSlot.row)">

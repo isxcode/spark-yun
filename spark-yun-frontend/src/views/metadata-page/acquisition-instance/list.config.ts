@@ -69,12 +69,12 @@ export const colConfigs: colConfig[] = [
     {
         prop: 'startDateTime',
         title: '开始时间',
-        minWidth: 170
+        minWidth: 140
     },
     {
         prop: 'endDateTime',
         title: '结束时间',
-        minWidth: 170
+        minWidth: 140
     },
     {
         prop: 'duration',
