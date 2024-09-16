@@ -73,9 +73,9 @@ jobs:
 
       - name: Tar dist
         run: |
-          cd /home/runner/work/spark-yun/spark-yun/docs/.output
-          tar -czf dist.tar.gz ./public
-          mv dist.tar.gz /home/runner/work/spark-yun/spark-yun/
+          cd /home/runner/work/spark-yun/spark-yun/docs
+          tar -czf website.tar.gz ./.output
+          mv website.tar.gz /home/runner/work/spark-yun/spark-yun/
 
       - name: Copy website via ssh password
         uses: appleboy/scp-action@v0.1.7
@@ -84,7 +84,7 @@ jobs:
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
           port: 22
-          source: "dist.tar.gz"
+          source: "website.tar.gz"
           target: /tmp/
 
       - name: deploy website
@@ -93,10 +93,12 @@ jobs:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
-          script_stop: true
+          script_stop: false
           timeout: 1800s
           script: |
-            tar -vzxf /tmp/dist.tar.gz -C /data/nginx/html
+            pm2 delete all
+            tar -vzxf /tmp/website.tar.gz -C /opt/
+            pm2 start /opt/.output/server/index.mjs
             rm -rf /data/nginx/ssl/zhiqingyun.isxcode.com.pem
             rm -rf /data/nginx/ssl/zhiqingyun.isxcode.com.key
             cp /root/zhiqingyun.isxcode.com.pem /data/nginx/ssl/zhiqingyun.isxcode.com.pem
