@@ -1,0 +1,104 @@
+name: website deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      admin_github_token:
+        description: '管理员github token'
+        required: true
+        type: string
+
+env:
+  ADMIN_GITHUB_TOKEN: ${{ inputs.admin_github_token }}
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+
+    strategy:
+      fail-fast: false
+      matrix:
+        node:
+          - '18'
+
+    steps:
+
+      - name: Set timezone to Asia/Shanghai
+        run: |
+          sudo timedatectl set-timezone Asia/Shanghai
+          date
+
+      - name: Checkout spark-yun
+        uses: actions/checkout@v4
+        with:
+          token: ${{ env.ADMIN_GITHUB_TOKEN }}
+          repository: "isxcode/spark-yun"
+          ref: 'main'
+
+      - uses: pnpm/action-setup@v4
+        name: Install pnpm
+        with:
+          version: 9.0.6
+          run_install: false
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - uses: actions/cache@v4
+        name: Setup pnpm cache
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Build with Nodejs
+        run: |
+          cd docs
+          pnpm install --force
+          pnpm run generate
+
+      - name: Tar dist
+        run: |
+          cd /home/runner/work/spark-yun/spark-yun/docs/.output
+          tar -czf dist.tar.gz ./public
+          mv dist.tar.gz /home/runner/work/spark-yun/spark-yun/
+
+      - name: Copy website via ssh password
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          port: 22
+          source: "dist.tar.gz"
+          target: /tmp/
+
+      - name: deploy website
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          script_stop: true
+          timeout: 1800s
+          script: |
+            tar -vzxf /tmp/dist.tar.gz -C /data/nginx/html
+            rm -rf /data/nginx/ssl/zhiqingyun.isxcode.com.pem
+            rm -rf /data/nginx/ssl/zhiqingyun.isxcode.com.key
+            cp /root/zhiqingyun.isxcode.com.pem /data/nginx/ssl/zhiqingyun.isxcode.com.pem
+            cp /root/zhiqingyun.isxcode.com.key /data/nginx/ssl/zhiqingyun.isxcode.com.key
+            nginx -s reload
