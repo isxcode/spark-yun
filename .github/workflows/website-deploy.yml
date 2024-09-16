@@ -69,7 +69,7 @@ jobs:
         run: |
           cd docs
           pnpm install --force
-          pnpm run generate
+          pnpm run build
 
       - name: Tar dist
         run: |
