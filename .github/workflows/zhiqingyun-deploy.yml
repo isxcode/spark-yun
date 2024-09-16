@@ -1,4 +1,4 @@
-name: deploy demo
+name: deploy zhiqingyun
 
 on:
   workflow_dispatch:
@@ -72,8 +72,8 @@ jobs:
           script: |
             rm -rf /data/nginx/ssl/zhiqingyun-demo.isxcode.com.pem
             rm -rf /data/nginx/ssl/zhiqingyun-demo.isxcode.com.key
-            curl -ssL https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/ssl/zhiqingyun-demo.isxcode.com.pem -o /data/nginx/ssl/zhiqingyun-demo.isxcode.com.pem
-            curl -ssL https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/ssl/zhiqingyun-demo.isxcode.com.key -o /data/nginx/ssl/zhiqingyun-demo.isxcode.com.key
+            cp /root/zhiqingyun-demo.isxcode.com.pem /data/nginx/ssl/zhiqingyun-demo.isxcode.com.pem
+            cp /root/zhiqingyun-demo.isxcode.com.key /data/nginx/ssl/zhiqingyun-demo.isxcode.com.key
             nginx -s reload
 
   deploy:
@@ -101,15 +101,13 @@ jobs:
           script_stop: true
           timeout: 1800s
           script: |
-            bash /opt/zhiqingyun/bin/stop.sh
             tar -vzxf /tmp/zhiqingyun.tar.gz -C /opt/
+            bash /opt/zhiqingyun/bin/stop.sh
             rm -rf /opt/zhiqingyun/conf/application-local.yml
-            curl -ssL https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/application-local.yml -o /opt/zhiqingyun/conf/application-local.yml
+            cp /root/application-local.yml /opt/zhiqingyun/conf/application-local.yml
             rm -rf /opt/zhiqingyun/resources_bak/resources_${{ inputs.deploy_date }}_bak
             cp -r /opt/zhiqingyun/resources /opt/zhiqingyun/resources_bak/resources_${{ inputs.deploy_date }}_bak
-            rm -rf /opt/zhiqingyun/bin/start.sh
-            curl -ssL https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/start.sh -o /opt/zhiqingyun/bin/start.sh
-            bash /opt/zhiqingyun/bin/start.sh
+            bash /opt/zhiqingyun/bin/start.sh --print-log=false
             sleep 120
             until curl -s https://zhiqingyun-demo.isxcode.com/tools/open/health | grep "UP"; do
               echo "Waiting for service to be available..."

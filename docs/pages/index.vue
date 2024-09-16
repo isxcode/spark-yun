@@ -78,7 +78,7 @@
         </div>
         <div class="left">
           <div class="line-1">编排作业，横竖都能拖拽</div>
-          <div class="line-2">支持全量的作业生命周期指令，包括运行、中止、重跑、重跑下游、中断、重跑当前、发布等。且具备可视化定时调度设置，适配企业中各种复杂应用场景。</div>
+          <div class="line-2">支持全量的作业生命周期指令，包括运行、中止、重跑、重跑下游、重跑当前、中断、发布等。且具备可视化定时调度设置，适配企业中各种复杂应用场景。</div>
           <div class="line-3" @click="handleQuickClick">立即体验</div>
         </div>
         <div class="right">
