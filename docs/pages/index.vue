@@ -41,10 +41,10 @@
           选择至轻云
         </div>
         <div class="why-content">
-          至轻云是一款超轻量级、企业级大数据中台。具有一键部署，开箱即用特色。无需额外大数据组件安装，即可快速实现数据离线ETL、实时计算、作业定时调度等场景。项目持续更新迭代，源码永久开源免费。助力企业快速处理海量数据，获得更多商业价值。
+          至轻云是一款超轻量级、企业级大数据计算平台。一键部署，开箱即用。可快速实现大数据ETL、实时计算、可视化调度、自定义接口、数据大屏等场景。助力企业处理海量数据，获得更多商业价值。
         </div>
         <div class="why-content-mobile">
-          至轻云是一款超轻量级、企业级大数据中台。具有一键部署，开箱即用特色。无需额外大数据组件安装，即可快速实现数据离线ETL、实时计算、作业定时调度等场景。
+          至轻云是一款超轻量级、企业级大数据计算平台。一键部署，开箱即用。可快速实现大数据ETL、实时计算、可视化调度、自定义接口、数据大屏等场景。助力企业处理海量数据，获得更多商业价值。
         </div>
         <div class="tech-title">
           相关技术
@@ -62,11 +62,14 @@
     <div class="module-feat-left">
       <div class="content">
         <div class="left">
+          <img id="zoom" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/product-img/p-1.jpg" alt="">
+        </div>
+        <div class="left-phone">
           <img src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/product-img/p-1.jpg" alt="">
         </div>
         <div class="right">
           <div class="line-1">能写代码？不单单只有Sql</div>
-          <div class="line-2">支持超多作业类型，包括数据同步、Bash脚本、Python、SparkSql、自定义SparkJar、Prql等。免费提供用户开发模版，任何复杂的场景都可以通过写代码的方式解决。</div>
+          <div class="line-2">支持超多作业类型，包括SparkSql、SparkJar、可视化数据同步、JdbcSql、Prql、Excel导入、Python脚本、Bash脚本、Curl脚本、接口调用等。</div>
           <div class="line-3" @click="handleQuickClick">立即体验</div>
         </div>
       </div>
@@ -77,23 +80,26 @@
           <img src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/product-img/p-2.jpg" alt="">
         </div>
         <div class="left">
-          <div class="line-1">编排作业，横竖都能拖拽</div>
-          <div class="line-2">支持全量的作业生命周期指令，包括运行、中止、重跑、重跑下游、重跑当前、中断、发布等。且具备可视化定时调度设置，适配企业中各种复杂应用场景。</div>
+          <div class="line-1">作业调度，横竖都能拖拽</div>
+          <div class="line-2">支持全量的作业生命周期指令，包括运行、中止、中断、下线、发布、重跑、重跑下游、重跑当前、外部调用等。</div>
           <div class="line-3" @click="handleQuickClick">立即体验</div>
         </div>
         <div class="right">
-          <img src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/product-img/p-2.jpg" alt="">
+          <img id="zoom" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/product-img/p-2.jpg" alt="">
         </div>
       </div>
     </div>
     <div class="module-feat-left">
       <div class="content">
         <div class="left">
+          <img id="zoom" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/product-img/p-3.jpg" alt="">
+        </div>
+        <div class="left-phone">
           <img src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/product-img/p-3.jpg" alt="">
         </div>
         <div class="right">
-          <div class="line-1">数据大屏，大数据也能展示</div>
-          <div class="line-2">通过强大数据处理和可视化技术，将复杂数据转化为直观图表，支持实时监控和分析，帮助企业快速决策。其灵活定制功能适应多种行业需求，确保信息准确及时。</div>
+          <div class="line-1">数据大屏，展示大数据</div>
+          <div class="line-2">强大的数据处理和可视化技术，将复杂数据转化为直观图表，支持实时监控和分析，助力企业决策，灵活适应行业内需求。</div>
           <div class="line-3" @click="handleQuickClick">立即体验</div>
         </div>
       </div>
@@ -122,23 +128,26 @@
           <img class="feat-img" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/product-img/p-4.jpg" alt="">
         </div>
         <div class="left">
-          <div class="line-1">驱动上传，支持海量数据源</div>
-          <div class="line-2">支持海量数据源，如Mysql、Hive、Oracle、SqlServer、TiDB、Oceanbase、Doris、Clickhouse等。支持自定义驱动上传，解决企业中多版本数据源无法同时连接的难题。</div>
+          <div class="line-1">实时计算，让数据更高效</div>
+          <div class="line-2">支持实时计算和数据库实时同步功能，利用Kafka和Debezium高效处理数据流，确保快速传输和更新，保证数据一致性与可靠性。</div>
           <div class="line-3" @click="handleQuickClick">立即体验</div>
         </div>
         <div class="right">
-          <img class="feat-img" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/product-img/p-4.jpg" alt="">
+          <img id="zoom" class="feat-img" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/product-img/p-4.jpg" alt="">
         </div>
       </div>
     </div>
     <div class="module-feat-left">
       <div class="content">
         <div class="left">
+          <img id="zoom" class="feat-img" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/product-img/p-5.jpg" alt="">
+        </div>
+         <div class="left-phone">
           <img class="feat-img" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/product-img/p-5.jpg" alt="">
         </div>
         <div class="right">
           <div class="line-1">多平台部署，从不娇生惯养</div>
-          <div class="line-2">支持各种资源调度平台，如Kubernetes、Spark Standalone、Spark Cluster、Yarn、CDH等。可无缝切换，敏捷迁移，帮助企业更优分配集群资源。</div>
+          <div class="line-2">支持多种资源调度平台，如Kubernetes、Yarn、CDH、Spark Standalone、Spark Cluster等。</div>
           <div class="line-3" @click="handleQuickClick">立即体验</div>
         </div>
       </div>
@@ -157,6 +166,16 @@
 import {ElMessage} from 'element-plus'
 import Artplayer from "artplayer";
 import {defineProps} from "vue";
+import mediumZoom from "medium-zoom";
+
+onMounted(async () => {
+    await nextTick()
+    mediumZoom(document.querySelectorAll('#zoom'),{
+       margin: 100,
+       scrollOffset: 1,
+       background: '#fffaf8',
+    })
+})
 
 definePageMeta({
   title: "首页",
@@ -202,7 +221,7 @@ onMounted(() => {
 })
 
 function handleScroll() {
-  if (window.scrollY > 100) {
+  if (window.scrollY > 50) {
     showVideo.value = false;
   }
 }
@@ -266,14 +285,14 @@ const copyContent = async (text: string) => {
 <style lang="scss" scoped>
 
 @font-face {
-  font-family: "阿里妈妈数黑体 Bold";font-weight: 700;src: url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/xsJVuIFqaDN3.woff2") format("woff2"),
-  url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/5fkSoUFx3Gkk.woff") format("woff");
+  font-family: "阿里妈妈数黑体 Bold";font-weight: 700;src: url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/fxITmChMPbzu.woff2") format("woff2"),
+  url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/LJtJgtgpkS9F.woff") format("woff");
   font-display: swap;
 }
 
 @font-face {
-  font-family: "阿里巴巴普惠体 2.0 45 Light";font-weight: 300;src: url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/gNfz1OU32n2u.woff2") format("woff2"),
-  url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/S8FwZRcLPw9r.woff") format("woff");
+  font-family: "阿里巴巴普惠体 2.0 45 Light";font-weight: 300;src: url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/ZDyJM2ttTReK.woff2") format("woff2"),
+  url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/pkAPEWm8dB4R.woff") format("woff");
   font-display: swap;
 }
 
@@ -435,7 +454,7 @@ $module-intro-img-width: 600px;
       .why-content {
         margin: 25px auto auto;
         text-indent: 2em;
-        width: 800px;
+        width: 810px;
         line-height: 26px;
         font-size: 18px;
       }
@@ -524,6 +543,10 @@ $module-intro-img-width: 600px;
 
   .content {
     display: flex;
+
+    .left-phone {
+      display: none;
+    }
 
     .left {
       width: 600px;;
@@ -839,6 +862,11 @@ $module-intro-img-width: 600px;
       flex-direction: column;
 
       .left {
+        display: none;
+      }
+
+      .left-phone{
+        display: block;
         width: 300px;
 
         img {

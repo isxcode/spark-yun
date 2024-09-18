@@ -7,6 +7,16 @@ on:
         description: '管理员github token'
         required: true
         type: string
+      repository:
+        description: '项目库'
+        required: true
+        type: string
+        default: isxcode/spark-yun
+      branch:
+        description: '分支'
+        required: true
+        type: string
+        default: main
 
 env:
   ADMIN_GITHUB_TOKEN: ${{ inputs.admin_github_token }}
@@ -38,8 +48,8 @@ jobs:
         uses: actions/checkout@v4
         with:
           token: ${{ env.ADMIN_GITHUB_TOKEN }}
-          repository: "isxcode/spark-yun"
-          ref: 'main'
+          repository: ${{ inputs.repository }}
+          ref: ${{ inputs.branch }}
 
       - uses: pnpm/action-setup@v4
         name: Install pnpm
