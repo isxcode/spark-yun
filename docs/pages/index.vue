@@ -171,8 +171,9 @@ import mediumZoom from "medium-zoom";
 onMounted(async () => {
     await nextTick()
     mediumZoom(document.querySelectorAll('#zoom'),{
-       margin: 150,
-       scrollOffset: 3,
+       margin: 100,
+       scrollOffset: 1,
+       background: '#fffaf8',
     })
 })
 
