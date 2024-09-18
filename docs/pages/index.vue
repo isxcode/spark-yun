@@ -64,6 +64,9 @@
         <div class="left">
           <img id="zoom" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/product-img/p-1.jpg" alt="">
         </div>
+        <div class="left-phone">
+          <img src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/product-img/p-1.jpg" alt="">
+        </div>
         <div class="right">
           <div class="line-1">能写代码？不单单只有Sql</div>
           <div class="line-2">支持超多作业类型，包括SparkSql、SparkJar、可视化数据同步、JdbcSql、Prql、Excel导入、Python脚本、Bash脚本、Curl脚本、接口调用等。</div>
@@ -90,6 +93,9 @@
       <div class="content">
         <div class="left">
           <img id="zoom" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/product-img/p-3.jpg" alt="">
+        </div>
+        <div class="left-phone">
+          <img src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/product-img/p-3.jpg" alt="">
         </div>
         <div class="right">
           <div class="line-1">数据大屏，展示大数据</div>
@@ -135,6 +141,9 @@
       <div class="content">
         <div class="left">
           <img id="zoom" class="feat-img" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/product-img/p-5.jpg" alt="">
+        </div>
+         <div class="left-phone">
+          <img class="feat-img" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/product-img/p-5.jpg" alt="">
         </div>
         <div class="right">
           <div class="line-1">多平台部署，从不娇生惯养</div>
@@ -211,7 +220,7 @@ onMounted(() => {
 })
 
 function handleScroll() {
-  if (window.scrollY > 100) {
+  if (window.scrollY > 50) {
     showVideo.value = false;
   }
 }
@@ -534,6 +543,10 @@ $module-intro-img-width: 600px;
   .content {
     display: flex;
 
+    .left-phone {
+      display: none;
+    }
+
     .left {
       width: 600px;;
 
@@ -848,6 +861,11 @@ $module-intro-img-width: 600px;
       flex-direction: column;
 
       .left {
+        display: none;
+      }
+
+      .left-phone{
+        display: block;
         width: 300px;
 
         img {
