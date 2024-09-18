@@ -18,9 +18,9 @@
           <div class="title">产品</div>
           <div class="link" @click="clickZhiqingyun">至轻云</div>
           <div class="link" @click="clickZhiliuyun">至流云</div>
-          <div class="link" @click="clickZhishuyun">至数云</div>
-          <div class="link" @click="clickZhishiyun">至视云</div>
           <div class="link" @click="clickZhihuiyun">至慧云</div>
+          <div class="link" @click="clickZhishiyun">至视云</div>
+          <div class="link" @click="clickZhishuyun">至数云</div>
         </div>
         <div class="column">
           <div class="title">社区</div>
@@ -83,14 +83,14 @@
 <style lang="scss" scoped>
 
 @font-face {
-  font-family: "阿里妈妈数黑体 Bold";font-weight: 700;src: url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/xsJVuIFqaDN3.woff2") format("woff2"),
-  url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/5fkSoUFx3Gkk.woff") format("woff");
+  font-family: "阿里妈妈数黑体 Bold";font-weight: 700;src: url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/fxITmChMPbzu.woff2") format("woff2"),
+  url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/LJtJgtgpkS9F.woff") format("woff");
   font-display: swap;
 }
 
 @font-face {
-  font-family: "阿里巴巴普惠体 2.0 45 Light";font-weight: 300;src: url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/gNfz1OU32n2u.woff2") format("woff2"),
-  url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/S8FwZRcLPw9r.woff") format("woff");
+  font-family: "阿里巴巴普惠体 2.0 45 Light";font-weight: 300;src: url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/ZDyJM2ttTReK.woff2") format("woff2"),
+  url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/pkAPEWm8dB4R.woff") format("woff");
   font-display: swap;
 }
 
