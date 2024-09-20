@@ -7,7 +7,7 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 
-@Data()
+@Data
 public class UpdateUserInfoReq {
 
     @Schema(title = "名称", example = "ispong")
