@@ -6,7 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
-import java.util.Optional;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -17,13 +16,8 @@ public class WorkExecutorFactory {
 
     public WorkExecutor create(String workType) {
 
-        Optional<WorkExecutor> workExecutorOptional = applicationContext.getBeansOfType(WorkExecutor.class).values()
-            .stream().filter(agent -> agent.getWorkType().equals(workType)).findFirst();
-
-        if (!workExecutorOptional.isPresent()) {
-            throw new IsxAppException("作业类型不支持");
-        }
-
-        return workExecutorOptional.get();
+        return applicationContext.getBeansOfType(WorkExecutor.class).values().stream()
+            .filter(agent -> agent.getWorkType().equals(workType)).findFirst()
+            .orElseThrow(() -> new IsxAppException("作业类型不支持"));
     }
 }
