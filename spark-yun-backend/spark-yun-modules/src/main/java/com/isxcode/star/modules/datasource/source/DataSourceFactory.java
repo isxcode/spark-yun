@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
-import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
@@ -15,13 +14,8 @@ public class DataSourceFactory {
 
     public Datasource getDatasource(String datasourceType) {
 
-        Optional<Datasource> datasourceOptional = applicationContext.getBeansOfType(Datasource.class).values().stream()
-            .filter(agent -> agent.getDataSourceType().equals(datasourceType)).findFirst();
-
-        if (!datasourceOptional.isPresent()) {
-            throw new IsxAppException("数据源类型不支持");
-        }
-
-        return datasourceOptional.get();
+        return applicationContext.getBeansOfType(Datasource.class).values().stream()
+            .filter(agent -> agent.getDataSourceType().equals(datasourceType)).findFirst()
+            .orElseThrow(() -> new IsxAppException("数据源类型不支持"));
     }
 }

@@ -26,7 +26,6 @@ import com.isxcode.star.modules.cluster.service.ClusterService;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Optional;
 
 import com.jcraft.jsch.JSchException;
 import lombok.RequiredArgsConstructor;
@@ -162,13 +161,8 @@ public class ClusterNodeBizService {
 
     public void deleteClusterNode(DeleteClusterNodeReq deleteClusterNodeReq) {
 
-        Optional<ClusterNodeEntity> engineNodeEntityOptional =
-            clusterNodeRepository.findById(deleteClusterNodeReq.getEngineNodeId());
-        if (!engineNodeEntityOptional.isPresent()) {
-            throw new IsxAppException("节点已删除");
-        }
-
-        ClusterNodeEntity clusterNode = engineNodeEntityOptional.get();
+        ClusterNodeEntity clusterNode = clusterNodeRepository.findById(deleteClusterNodeReq.getEngineNodeId())
+            .orElseThrow(() -> new IsxAppException("节点已删除"));
 
         // 如果是安装中等状态，需要等待运行结束
         if (ClusterNodeStatus.CHECKING.equals(clusterNode.getStatus())

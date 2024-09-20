@@ -83,11 +83,8 @@ public class TenantBizService {
         }
 
         // 判断管理员是否存在
-        Optional<UserEntity> userEntityOptional = userRepository.findById(tetAddTenantReq.getAdminUserId());
-        if (!userEntityOptional.isPresent()) {
-            throw new IsxAppException("用户不存在");
-        }
-        UserEntity userEntity = userEntityOptional.get();
+        UserEntity userEntity =
+            userRepository.findById(tetAddTenantReq.getAdminUserId()).orElseThrow(() -> new IsxAppException("用户不存在"));
 
         TenantEntity tenant = tenantMapper.tetAddTenantReqToTenantEntity(tetAddTenantReq);
         if (tetAddTenantReq.getMaxMemberNum() != null) {
