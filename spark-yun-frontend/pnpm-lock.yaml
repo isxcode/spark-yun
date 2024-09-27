@@ -152,7 +152,7 @@ importers:
         version: 5.0.4
       unplugin-vue-components:
         specifier: ^0.25.2
-        version: 0.25.2(@babel/parser@7.24.8)(rollup@3.29.4)(vue@3.4.31(typescript@5.0.4))
+        version: 0.25.2(@babel/parser@7.24.8)(rollup@3.29.5)(vue@3.4.31(typescript@5.0.4))
       vite:
         specifier: ^4.3.5
         version: 4.5.3(@types/node@18.19.39)(sass@1.62.1)
@@ -2221,8 +2221,8 @@ packages:
     deprecated: Rimraf versions prior to v4 are no longer supported
     hasBin: true
 
-  rollup@3.29.4:
-    resolution: {integrity: sha512-oWzmBZwvYrU0iJHtDmhsm662rC15FRXmcjCk1xD771dFDx5jJ02ufAQQTn0etB2emNk4J9EZg/yWKpsn9BWGRw==}
+  rollup@3.29.5:
+    resolution: {integrity: sha512-GVsDdsbJzzy4S/v3dqWPJ7EfvZJfCHiDqe80IyrF59LYuP+e6U1LJoUqeuqRbwAWoMNoXivMNeNAOf5E22VA1w==}
     engines: {node: '>=14.18.0', npm: '>=8.0.0'}
     hasBin: true
 
@@ -2618,6 +2618,17 @@ packages:
   vue-component-type-helpers@2.0.26:
     resolution: {integrity: sha512-sO9qQ8oC520SW6kqlls0iqDak53gsTVSrYylajgjmkt1c0vcgjsGSy1KzlDrbEx8pm02IEYhlUkU5hCYf8rwtg==}
 
+  vue-demi@0.14.10:
+    resolution: {integrity: sha512-nMZBOwuzabUO0nLgIcc6rycZEebF6eeUfaiQx9+WSk8e29IbLvPU9feI6tqW4kTo3hvoYAJkMh8n8D0fuISphg==}
+    engines: {node: '>=12'}
+    hasBin: true
+    peerDependencies:
+      '@vue/composition-api': ^1.0.0-rc.1
+      vue: ^3.0.0-0 || ^2.6.0
+    peerDependenciesMeta:
+      '@vue/composition-api':
+        optional: true
+
   vue-demi@0.14.8:
     resolution: {integrity: sha512-Uuqnk9YE9SsWeReYqK2alDI5YzciATE0r2SkA6iMAtuXvNTMNACJLJEXNXaEy94ECuBe4Sk6RzRU80kjdbIo1Q==}
     engines: {node: '>=12'}
@@ -2833,7 +2844,7 @@ snapshots:
     dependencies:
       '@antv/x6': 1.35.0
       vue: 3.4.31(typescript@5.0.4)
-      vue-demi: 0.14.8(vue@3.4.31(typescript@5.0.4))
+      vue-demi: 0.14.10(vue@3.4.31(typescript@5.0.4))
 
   '@antv/x6@1.35.0':
     dependencies:
@@ -3424,13 +3435,13 @@ snapshots:
     dependencies:
       '@babel/runtime': 7.24.8
 
-  '@rollup/pluginutils@5.1.0(rollup@3.29.4)':
+  '@rollup/pluginutils@5.1.0(rollup@3.29.5)':
     dependencies:
       '@types/estree': 1.0.5
       estree-walker: 2.0.2
       picomatch: 2.3.1
     optionalDependencies:
-      rollup: 3.29.4
+      rollup: 3.29.5
 
   '@rushstack/eslint-patch@1.10.3': {}
 
@@ -3745,7 +3756,7 @@ snapshots:
       '@types/web-bluetooth': 0.0.16
       '@vueuse/metadata': 9.13.0
       '@vueuse/shared': 9.13.0(vue@3.4.31(typescript@5.0.4))
-      vue-demi: 0.14.8(vue@3.4.31(typescript@5.0.4))
+      vue-demi: 0.14.10(vue@3.4.31(typescript@5.0.4))
     transitivePeerDependencies:
       - '@vue/composition-api'
       - vue
@@ -3754,7 +3765,7 @@ snapshots:
 
   '@vueuse/shared@9.13.0(vue@3.4.31(typescript@5.0.4))':
     dependencies:
-      vue-demi: 0.14.8(vue@3.4.31(typescript@5.0.4))
+      vue-demi: 0.14.10(vue@3.4.31(typescript@5.0.4))
     transitivePeerDependencies:
       - '@vue/composition-api'
       - vue
@@ -5138,7 +5149,7 @@ snapshots:
     dependencies:
       glob: 7.2.3
 
-  rollup@3.29.4:
+  rollup@3.29.5:
     optionalDependencies:
       fsevents: 2.3.3
 
@@ -5413,10 +5424,10 @@ snapshots:
 
   universalify@2.0.1: {}
 
-  unplugin-vue-components@0.25.2(@babel/parser@7.24.8)(rollup@3.29.4)(vue@3.4.31(typescript@5.0.4)):
+  unplugin-vue-components@0.25.2(@babel/parser@7.24.8)(rollup@3.29.5)(vue@3.4.31(typescript@5.0.4)):
     dependencies:
       '@antfu/utils': 0.7.10
-      '@rollup/pluginutils': 5.1.0(rollup@3.29.4)
+      '@rollup/pluginutils': 5.1.0(rollup@3.29.5)
       chokidar: 3.6.0
       debug: 4.3.5
       fast-glob: 3.3.2
@@ -5493,7 +5504,7 @@ snapshots:
     dependencies:
       esbuild: 0.18.20
       postcss: 8.4.39
-      rollup: 3.29.4
+      rollup: 3.29.5
     optionalDependencies:
       '@types/node': 18.19.39
       fsevents: 2.3.3
@@ -5542,12 +5553,16 @@ snapshots:
     dependencies:
       codemirror: 6.0.1(@lezer/common@1.2.1)
       vue: 3.4.31(typescript@5.0.4)
-      vue-demi: 0.14.8(vue@3.4.31(typescript@5.0.4))
+      vue-demi: 0.14.10(vue@3.4.31(typescript@5.0.4))
     transitivePeerDependencies:
       - '@lezer/common'
       - '@vue/composition-api'
 
   vue-component-type-helpers@2.0.26: {}
+
+  vue-demi@0.14.10(vue@3.4.31(typescript@5.0.4)):
+    dependencies:
+      vue: 3.4.31(typescript@5.0.4)
 
   vue-demi@0.14.8(vue@3.4.31(typescript@5.0.4)):
     dependencies:
