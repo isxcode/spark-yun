@@ -94,7 +94,7 @@ public class ClusterNodeBizService {
         // 如果是默认安装spark,设置默认路径
         if (addClusterNodeReq.getInstallSparkLocal() || !AgentType.StandAlone.equals(cluster.getClusterType())) {
             clusterNode.setSparkHomePath(clusterNode.getAgentHomePath() + File.separator + PathConstants.AGENT_PATH_NAME
-                + File.separator + PathConstants.SPARK_MIN_HOME);
+                + "/" + PathConstants.SPARK_MIN_HOME);
         } else {
             clusterNode.setSparkHomePath(addClusterNodeReq.getSparkHomePath());
         }

@@ -205,7 +205,7 @@ public class SparkJarExecutor extends WorkExecutor {
         // 开始构造executeReq
         executeReq.setSparkSubmit(sparkSubmit);
         executeReq.setArgs(jarJobConfig.getArgs());
-        executeReq.setAgentHomePath(engineNode.getAgentHomePath() + File.separator + PathConstants.AGENT_PATH_NAME);
+        executeReq.setAgentHomePath(engineNode.getAgentHomePath() + "/" + PathConstants.AGENT_PATH_NAME);
         executeReq.setClusterType(calculateEngineEntityOptional.get().getClusterType());
         executeReq.setLibConfig(workRunContext.getLibConfig());
         executeReq.setSparkHomePath(engineNode.getSparkHomePath());

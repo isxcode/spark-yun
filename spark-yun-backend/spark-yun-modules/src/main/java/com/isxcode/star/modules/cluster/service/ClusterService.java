@@ -27,4 +27,12 @@ public class ClusterService {
         ClusterEntity clusterEntity = clusterRepository.findById(clusterId).orElse(null);
         return clusterEntity == null ? clusterId : clusterEntity.getName();
     }
+
+    public String fixWindowsChar(String path, String command) {
+
+        log.debug("os.name {}", System.getProperty("os.name"));
+
+        return System.getProperty("os.name").contains("Windows") ? "sed -i 's/\\r//g' " + path + " && " + command
+            : command;
+    }
 }

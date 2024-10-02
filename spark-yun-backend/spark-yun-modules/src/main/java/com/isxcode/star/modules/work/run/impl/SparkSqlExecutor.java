@@ -274,7 +274,7 @@ public class SparkSqlExecutor extends WorkExecutor {
         // 开始构造executeReq
         executeReq.setSparkSubmit(sparkSubmit);
         executeReq.setPluginReq(pluginReq);
-        executeReq.setAgentHomePath(engineNode.getAgentHomePath() + File.separator + PathConstants.AGENT_PATH_NAME);
+        executeReq.setAgentHomePath(engineNode.getAgentHomePath() + "/" + PathConstants.AGENT_PATH_NAME);
         executeReq.setSparkHomePath(engineNode.getSparkHomePath());
         executeReq.setClusterType(calculateEngineEntityOptional.get().getClusterType());
 
