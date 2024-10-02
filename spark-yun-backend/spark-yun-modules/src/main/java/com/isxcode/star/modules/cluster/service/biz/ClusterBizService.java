@@ -1,6 +1,5 @@
 package com.isxcode.star.modules.cluster.service.biz;
 
-import com.isxcode.star.api.agent.constants.AgentType;
 import com.isxcode.star.api.cluster.constants.ClusterNodeStatus;
 import com.isxcode.star.api.cluster.constants.ClusterStatus;
 import com.isxcode.star.api.cluster.pojos.dto.ScpFileEngineNodeDto;
@@ -17,7 +16,6 @@ import com.isxcode.star.modules.cluster.repository.ClusterNodeRepository;
 import com.isxcode.star.modules.cluster.repository.ClusterRepository;
 import com.isxcode.star.modules.cluster.run.RunAgentCheckService;
 import com.isxcode.star.modules.cluster.service.ClusterService;
-import com.isxcode.star.modules.license.repository.LicenseStore;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.SftpException;
 
@@ -54,15 +52,7 @@ public class ClusterBizService {
 
     private final ClusterService clusterService;
 
-    private final LicenseStore licenseStore;
-
     public void addCluster(AddClusterReq addClusterReq) {
-
-        // 添加许可证拦截
-        if (licenseStore.getLicense() == null && (AgentType.K8S.equals(addClusterReq.getClusterType())
-            || AgentType.YARN.equals(addClusterReq.getClusterType()))) {
-            throw new IsxAppException("请上传许可证");
-        }
 
         // 集群名字不能重复
         Optional<ClusterEntity> clusterByName = clusterRepository.findByName(addClusterReq.getName());

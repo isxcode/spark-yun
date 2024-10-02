@@ -16,6 +16,7 @@ import com.isxcode.star.modules.cluster.entity.ClusterNodeEntity;
 import com.isxcode.star.modules.cluster.repository.ClusterNodeRepository;
 import com.isxcode.star.modules.cluster.repository.ClusterRepository;
 import com.isxcode.star.modules.cluster.service.ClusterNodeService;
+import com.isxcode.star.modules.cluster.service.ClusterService;
 import com.jcraft.jsch.*;
 
 import java.io.File;
@@ -34,11 +35,14 @@ import org.springframework.stereotype.Service;
 public class RunAgentInstallService {
 
     private final ClusterNodeService clusterNodeService;
+
     private final SparkYunProperties sparkYunProperties;
 
     private final ClusterNodeRepository clusterNodeRepository;
 
     private final ClusterRepository clusterRepository;
+
+    private final ClusterService clusterService;
 
     @Async("sparkYunWorkThreadPool")
     public void run(String clusterNodeId, String clusterType, ScpFileEngineNodeDto scpFileEngineNodeDto,
@@ -68,21 +72,24 @@ public class RunAgentInstallService {
     public void installAgent(ScpFileEngineNodeDto scpFileEngineNodeDto, ClusterNodeEntity engineNode,
         String clusterType) throws JSchException, IOException, InterruptedException, SftpException {
 
+        String installBashFilePath =
+            sparkYunProperties.getTmpDir() + File.separator + String.format("agent-%s.sh", clusterType);
+
         // 先检查节点是否可以安装
         scpFile(scpFileEngineNodeDto, "classpath:bash/" + String.format("agent-%s.sh", clusterType),
-            sparkYunProperties.getTmpDir() + File.separator + String.format("agent-%s.sh", clusterType));
+            installBashFilePath);
 
         // 运行安装脚本
-        String envCommand =
-            "bash " + sparkYunProperties.getTmpDir() + File.separator + String.format("agent-%s.sh", clusterType)
-                + " --home-path=" + engineNode.getAgentHomePath() + " --agent-port=" + engineNode.getAgentPort();
+        String envCommand = "bash " + installBashFilePath + " --home-path=" + engineNode.getAgentHomePath()
+            + " --agent-port=" + engineNode.getAgentPort();
         if (engineNode.getInstallSparkLocal() != null) {
             envCommand = envCommand + " --spark-local=" + engineNode.getInstallSparkLocal();
         }
         log.debug("执行远程命令:{}", envCommand);
 
         // 获取返回结果
-        String executeLog = executeCommand(scpFileEngineNodeDto, envCommand, false);
+        String executeLog =
+            executeCommand(scpFileEngineNodeDto, clusterService.fixWindowsChar(installBashFilePath, envCommand), false);
         log.debug("远程返回值:{}", executeLog);
 
         AgentInfo agentEnvInfo = JSON.parseObject(executeLog, AgentInfo.class);
@@ -98,29 +105,31 @@ public class RunAgentInstallService {
 
         // 异步上传安装包
         clusterNodeService.scpAgentFile(scpFileEngineNodeDto, "classpath:agent/zhiqingyun-agent.tar.gz",
-            sparkYunProperties.getTmpDir() + File.separator + "zhiqingyun-agent.tar.gz");
+            sparkYunProperties.getTmpDir() + "/zhiqingyun-agent.tar.gz");
         log.debug("代理安装包上传中");
 
         // 同步监听进度
         clusterNodeService.checkScpPercent(scpFileEngineNodeDto, "classpath:agent/zhiqingyun-agent.tar.gz",
-            sparkYunProperties.getTmpDir() + File.separator + "zhiqingyun-agent.tar.gz", engineNode);
+            sparkYunProperties.getTmpDir() + "/zhiqingyun-agent.tar.gz", engineNode);
         log.debug("下载安装包成功");
 
+        String bashFilePath = sparkYunProperties.getTmpDir() + "/agent-install.sh";
+
         // 拷贝安装脚本
-        scpFile(scpFileEngineNodeDto, "classpath:bash/agent-install.sh",
-            sparkYunProperties.getTmpDir() + File.separator + "agent-install.sh");
+        scpFile(scpFileEngineNodeDto, "classpath:bash/agent-install.sh", bashFilePath);
         log.debug("下载安装脚本成功");
 
         // 运行安装脚本
-        String installCommand = "bash " + sparkYunProperties.getTmpDir() + File.separator + "agent-install.sh"
-            + " --home-path=" + engineNode.getAgentHomePath() + " --agent-port=" + engineNode.getAgentPort();
+        String installCommand = "bash " + bashFilePath + " --home-path=" + engineNode.getAgentHomePath()
+            + " --agent-port=" + engineNode.getAgentPort();
         if (engineNode.getInstallSparkLocal() != null) {
             installCommand = installCommand + " --spark-local=" + engineNode.getInstallSparkLocal();
         }
 
         log.debug("执行远程安装命令:{}", installCommand);
 
-        executeLog = executeCommand(scpFileEngineNodeDto, installCommand, false);
+        executeLog =
+            executeCommand(scpFileEngineNodeDto, clusterService.fixWindowsChar(bashFilePath, installCommand), false);
         log.debug("远程安装返回值:{}", executeLog);
 
         AgentInfo agentInstallInfo = JSON.parseObject(executeLog, AgentInfo.class);
