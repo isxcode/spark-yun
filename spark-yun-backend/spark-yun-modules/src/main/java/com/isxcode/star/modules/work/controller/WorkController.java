@@ -1,5 +1,7 @@
 package com.isxcode.star.modules.work.controller;
 
+import com.isxcode.star.api.instance.pojos.req.QueryInstanceReq;
+import com.isxcode.star.api.instance.pojos.res.QueryInstanceRes;
 import com.isxcode.star.api.main.constants.ModuleCode;
 import com.isxcode.star.api.user.constants.RoleType;
 import com.isxcode.star.api.work.pojos.req.*;
@@ -214,6 +216,14 @@ public class WorkController {
     public ParseExcelNameRes parseExcelName(@Valid @RequestBody ParseExcelNameReq parseExcelNameReq) {
 
         return excelSyncService.parseExcelName(parseExcelNameReq);
+    }
+
+    @Operation(summary = "查看作业实例接口")
+    @PostMapping("/queryInstance")
+    @SuccessResponse("查询成功")
+    public Page<QueryInstanceRes> queryInstance(@Valid @RequestBody QueryInstanceReq woiQueryInstanceReq) {
+
+        return workBizService.queryInstance(woiQueryInstanceReq);
     }
 
 }

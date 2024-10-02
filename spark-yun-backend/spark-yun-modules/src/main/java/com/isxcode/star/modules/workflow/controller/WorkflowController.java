@@ -1,5 +1,7 @@
 package com.isxcode.star.modules.workflow.controller;
 
+import com.isxcode.star.api.instance.pojos.req.QueryWorkFlowInstancesReq;
+import com.isxcode.star.api.instance.pojos.res.QueryWorkFlowInstancesRes;
 import com.isxcode.star.api.main.constants.ModuleCode;
 import com.isxcode.star.api.user.constants.RoleType;
 import com.isxcode.star.api.work.pojos.req.GetWorkflowDefaultClusterReq;
@@ -192,6 +194,15 @@ public class WorkflowController {
     public void invokeWorkflow(@Valid @RequestBody InvokeWorkflowReq invokeWorkflowReq) {
 
         workflowBizService.invokeWorkflow(invokeWorkflowReq);
+    }
+
+    @Operation(summary = "查询作业流实例列表接口")
+    @PostMapping("/queryWorkFlowInstances")
+    @SuccessResponse("查询成功")
+    public Page<QueryWorkFlowInstancesRes> queryWorkFlowInstances(
+        @Valid @RequestBody QueryWorkFlowInstancesReq queryWorkFlowInstancesReq) {
+
+        return workflowBizService.queryWorkFlowInstances(queryWorkFlowInstancesReq);
     }
 
 }
