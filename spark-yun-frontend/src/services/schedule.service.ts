@@ -26,7 +26,7 @@ interface workflowInstanceId {
 export function GetScheduleList(params: SerchParams): Promise<any> {
   return http.request({
     method: 'post',
-    url: '/vip/work-instance/queryInstance',
+    url: '/work/queryInstance',
     params: params
   })
 }
@@ -35,7 +35,7 @@ export function GetScheduleList(params: SerchParams): Promise<any> {
 export function GetScheduleWorkFlowList(params: SerchParams): Promise<any> {
   return http.request({
     method: 'post',
-    url: '/vip/workflow-instance/queryWorkFlowInstances',
+    url: '/workflow/queryWorkFlowInstances',
     params: params
   })
 }
