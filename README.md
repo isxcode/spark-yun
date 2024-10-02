@@ -9,7 +9,7 @@
 </h1>
 
 <h3 align="center">
-  打造企业级超轻量大数据计算平台
+  超轻量级Spark计算平台
 </h3>
 
 <div align="center">
@@ -25,21 +25,19 @@
 
 ### 产品介绍
   
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [**至轻云**](https://zhiqingyun.isxcode.com)是一款超轻量级、企业级大数据平台，具备一键部署、开箱即用的特点。无需安装额外的大数据组件，即可快速实现企业级的离线ETL、实时计算和作业定时调度等功能，帮助企业高效处理海量数据，挖掘更多商业价值。
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [**至轻云**](https://zhiqingyun.isxcode.com)是一款超轻量级、企业级大数据计算产品，围绕Spark生态打造的数据计算平台。一键部署，开箱即用。可快速实现大数据离线ETL、实时计算、作业定时调度等功能。
 
 ### 功能特点
 
-- **超轻量**: 无需预装任何中间组件，一键部署即可实现大数据计算。
-- **多租户**: 支持创建多租户，实现租户间的数据完全隔离。
-- **高可用**: 兼容云原生架构，支持多节点安装，确保高可用性。
-- **私有化部署**: 支持内网部署与访问，提升系统安全性。
-- **代码开源**: 永久开源且免费，实时公开产品进度，内容持续更新。
+- **超轻量级**: 无需预装任何组件，一键部署，开箱即用。
+- **私有化部署**: 兼容云原生架构，支持多节点安装，高可用集群部署。
+- **可视化操作**: 基于Spark原生打造，快速执行Spark计算。
 
 ### 立即体验
 
-&nbsp;&nbsp;&nbsp;&nbsp; 演示地址：https://zhiqingyun-demo.isxcode.com </br>
-&nbsp;&nbsp;&nbsp;&nbsp; 体验账号：user001 </br>
-&nbsp;&nbsp;&nbsp;&nbsp; 账号密码：welcome1
+> 演示地址：https://zhiqingyun-demo.isxcode.com </br>
+> 体验账号：user001 </br>
+> 账号密码：welcome1
 
 ### 快速部署
 
@@ -51,34 +49,34 @@
 docker run -p 8080:8080 -d isxcode/zhiqingyun
 ```
 
-### 源码构建
-
-##### mac/linux
-
-> 打包结果路径: spark-yun/spark-yun-dist/build/distributions/zhiqingyun.tar.gz
-
-```bash
-git clone https://github.com/isxcode/spark-yun.git
-cd spark-yun
-./gradlew install package
-```
-
-##### windows
-
-> 注意！请使用git bash工具执行命令
-
-```bash
-git clone https://github.com/isxcode/spark-yun.git
-cd spark-yun
-./gradlew.bat install package
-```
-
 ### 相关文档
 
 - [快速入门](https://zhiqingyun.isxcode.com/docs/zh/0/0)
 - [产品手册](https://zhiqingyun.isxcode.com/docs/zh/2/0)
 - [安装文档](https://zhiqingyun.isxcode.com/docs/zh/1/0-docker)
 - [博客](https://ispong.isxcode.com/tags/spark/)
+
+### 源码构建
+
+##### mac/linux
+
+> 打包路径: spark-yun/spark-yun-dist/build/distributions/zhiqingyun.tar.gz
+
+```bash
+git clone https://github.com/isxcode/spark-yun.git
+cd spark-yun
+./gradlew install clean package start
+```
+
+##### windows
+
+> 注意！请使用Git Bash工具执行命令
+
+```bash
+git clone https://github.com/isxcode/spark-yun.git
+cd spark-yun
+./gradlew.bat install clean package start
+```
 
 ### 联系我们
 
