@@ -104,35 +104,6 @@ export const menuListData: Array<Menu> = [
     ]
   },
   {
-    code: 'metadata-page',
-    name: '元数据',
-    icon: 'Coin',
-    authType: ['ROLE_TENANT_MEMBER', 'ROLE_TENANT_ADMIN'],
-    children: [
-      {
-        code: 'metadata-management',
-        name: '数据地图',
-        icon: 'Connection',
-        authType: ['ROLE_TENANT_MEMBER', 'ROLE_TENANT_ADMIN'],
-        childPage: []
-      },
-      {
-        code: 'acquisition-task',
-        name: '数据采集',
-        icon: 'Collection',
-        authType: ['ROLE_TENANT_MEMBER', 'ROLE_TENANT_ADMIN'],
-        childPage: []
-      },
-      {
-        code: 'acquisition-instance',
-        name: '采集实例',
-        icon: 'List',
-        authType: ['ROLE_TENANT_MEMBER', 'ROLE_TENANT_ADMIN'],
-        childPage: []
-      }
-    ]
-  },
-  {
     code: 'message-management',
     name: '基线告警',
     icon: 'ChatDotRound',
@@ -157,6 +128,35 @@ export const menuListData: Array<Menu> = [
         name: '告警实例',
         icon: 'List',
         authType: [ 'ROLE_TENANT_MEMBER', 'ROLE_TENANT_ADMIN' ],
+        childPage: []
+      }
+    ]
+  },
+  {
+    code: 'metadata-page',
+    name: '元数据',
+    icon: 'Coin',
+    authType: ['ROLE_TENANT_MEMBER', 'ROLE_TENANT_ADMIN'],
+    children: [
+      {
+        code: 'metadata-management',
+        name: '数据地图',
+        icon: 'Connection',
+        authType: ['ROLE_TENANT_MEMBER', 'ROLE_TENANT_ADMIN'],
+        childPage: []
+      },
+      {
+        code: 'acquisition-task',
+        name: '数据采集',
+        icon: 'Collection',
+        authType: ['ROLE_TENANT_MEMBER', 'ROLE_TENANT_ADMIN'],
+        childPage: []
+      },
+      {
+        code: 'acquisition-instance',
+        name: '采集实例',
+        icon: 'List',
+        authType: ['ROLE_TENANT_MEMBER', 'ROLE_TENANT_ADMIN'],
         childPage: []
       }
     ]
