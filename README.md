@@ -1,5 +1,5 @@
 <div align="center">
-  <img width="600" alt="image" src="https://img.isxcode.com/picgo/20240914152714.png">
+  <img width="600" alt="image" src="https://img.isxcode.com/picgo/20241002182632.png">
 </div>
 
 ---
