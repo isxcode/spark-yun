@@ -69,7 +69,7 @@
         </div>
         <div class="right">
           <div class="line-1">能写代码？不单单只有Sql</div>
-          <div class="line-2">支持超多作业类型，包括SparkSql、SparkJar、可视化数据同步、JdbcSql、Prql、Excel导入、Python脚本、Bash脚本、Curl脚本、接口调用等。</div>
+          <div class="line-2">支持超多作业类型，包括SparkSql、SparkJar、数据同步、JdbcSql、Prql、Excel导入、Python脚本、Bash脚本、Curl脚本、接口调用等。</div>
           <div class="line-3" @click="handleQuickClick">立即体验</div>
         </div>
       </div>
@@ -99,7 +99,7 @@
         </div>
         <div class="right">
           <div class="line-1">实时计算，让数据更高效</div>
-          <div class="line-2">支持实时计算和数据库实时同步功能，利用Kafka和Debezium高效处理数据流，确保快速传输和更新，保证数据一致性与可靠性。</div>
+          <div class="line-2">支持实时计算和数据库实时同步功能，利用Kafka和Debezium高效处理数据流，确保数据的快速传输和更新。</div>
           <div class="line-3" @click="handleQuickClick">立即体验</div>
         </div>
       </div>

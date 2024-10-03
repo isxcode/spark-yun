@@ -41,7 +41,7 @@
 
 ### 快速部署
 
-> 至轻云地址：http://localhost:8080 <br/>
+> 访问地址：http://localhost:8080 <br/>
 > 管理员账号：admin <br/>
 > 管理员密码：admin123
 
