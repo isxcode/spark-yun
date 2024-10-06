@@ -73,7 +73,7 @@ public class RunAgentInstallService {
         String clusterType) throws JSchException, IOException, InterruptedException, SftpException {
 
         String installBashFilePath =
-            sparkYunProperties.getTmpDir() + File.separator + String.format("agent-%s.sh", clusterType);
+            sparkYunProperties.getTmpDir() + "/" + String.format("agent-%s.sh", clusterType);
 
         // 先检查节点是否可以安装
         scpFile(scpFileEngineNodeDto, "classpath:bash/" + String.format("agent-%s.sh", clusterType),
