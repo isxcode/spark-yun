@@ -19,7 +19,6 @@ import com.isxcode.star.modules.cluster.service.ClusterNodeService;
 import com.isxcode.star.modules.cluster.service.ClusterService;
 import com.jcraft.jsch.*;
 
-import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -72,8 +71,7 @@ public class RunAgentInstallService {
     public void installAgent(ScpFileEngineNodeDto scpFileEngineNodeDto, ClusterNodeEntity engineNode,
         String clusterType) throws JSchException, IOException, InterruptedException, SftpException {
 
-        String installBashFilePath =
-            sparkYunProperties.getTmpDir() + "/" + String.format("agent-%s.sh", clusterType);
+        String installBashFilePath = sparkYunProperties.getTmpDir() + "/" + String.format("agent-%s.sh", clusterType);
 
         // 先检查节点是否可以安装
         scpFile(scpFileEngineNodeDto, "classpath:bash/" + String.format("agent-%s.sh", clusterType),
