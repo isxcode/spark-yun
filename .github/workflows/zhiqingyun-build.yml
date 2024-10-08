@@ -8,10 +8,20 @@ on:
         required: true
         type: string
       version_number:
-        description: '版本号，默认latest'
+        description: 'docker版本号，默认latest'
         required: true
         type: string
         default: latest
+      repository_account:
+        description: '仓库名'
+        required: true
+        type: string
+        default: 'isxcode'
+      branch_number:
+        description: '分支号'
+        required: true
+        type: string
+        default: 'main'
 
 env:
   ADMIN_GITHUB_TOKEN: ${{ inputs.admin_github_token }}
@@ -43,16 +53,16 @@ jobs:
         uses: actions/checkout@v4
         with:
           token: ${{ env.ADMIN_GITHUB_TOKEN }}
-          repository: "isxcode/spark-yun"
-          ref: 'main'
+          repository: ${{ inputs.repository_account }}/spark-yun
+          ref: ${{ inputs.branch_number }}
 
       - name: Checkout spark-yun-vip
         uses: actions/checkout@v4
         with:
           token: ${{ env.ADMIN_GITHUB_TOKEN }}
-          repository: "isxcode/spark-yun-vip"
+          repository: ${{ inputs.repository_account }}/spark-yun-vip
+          ref: ${{ inputs.branch_number }}
           path: "/home/runner/work/spark-yun/spark-yun/spark-yun-vip"
-          ref: 'main'
 
       - name: Cache gradle
         uses: actions/cache@v3
