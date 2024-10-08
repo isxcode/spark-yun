@@ -7,10 +7,6 @@ on:
         description: '管理员github token'
         required: true
         type: string
-      deploy_date:
-        description: '发布日期,例如2023-12-12'
-        required: true
-        type: string
 
 env:
   ADMIN_GITHUB_TOKEN: ${{ inputs.admin_github_token }}
@@ -105,8 +101,7 @@ jobs:
             bash /opt/zhiqingyun/bin/stop.sh
             rm -rf /opt/zhiqingyun/conf/application-local.yml
             cp /root/application-local.yml /opt/zhiqingyun/conf/application-local.yml
-            rm -rf /opt/zhiqingyun/resources_bak/resources_${{ inputs.deploy_date }}_bak
-            cp -r /opt/zhiqingyun/resources /opt/zhiqingyun/resources_bak/resources_${{ inputs.deploy_date }}_bak
+            cp -r /opt/zhiqingyun/resources /opt/zhiqingyun/resources_bak/resources_$(date +'%Y-%m-%d-%H-%M-%S')_bak
             bash /opt/zhiqingyun/bin/start.sh --print-log=false
             sleep 120
             until curl -s https://zhiqingyun-demo.isxcode.com/tools/open/health | grep "UP"; do
