@@ -66,6 +66,13 @@ export const menuListData: Array<Menu> = [
         childPage: ['workflow-page']
       },
       {
+        code: 'custom-func',
+        name: '函数仓库',
+        icon: 'Mouse',
+        authType: [ 'ROLE_TENANT_MEMBER', 'ROLE_TENANT_ADMIN' ],
+        childPage: []
+      },
+      {
         code: 'realtime-computing',
         name: '实时计算',
         icon: 'Iphone',
@@ -76,13 +83,6 @@ export const menuListData: Array<Menu> = [
         code: 'spark-container',
         name: '计算容器',
         icon: 'Box',
-        authType: [ 'ROLE_TENANT_MEMBER', 'ROLE_TENANT_ADMIN' ],
-        childPage: []
-      },
-      {
-        code: 'custom-func',
-        name: '函数仓库',
-        icon: 'Mouse',
         authType: [ 'ROLE_TENANT_MEMBER', 'ROLE_TENANT_ADMIN' ],
         childPage: []
       }
@@ -98,6 +98,35 @@ export const menuListData: Array<Menu> = [
         code: 'schedule',
         name: '调度历史',
         icon: 'DocumentRemove',
+        authType: [ 'ROLE_TENANT_MEMBER', 'ROLE_TENANT_ADMIN' ],
+        childPage: []
+      }
+    ]
+  },
+  {
+    code: 'message-management',
+    name: '基线告警',
+    icon: 'ChatDotRound',
+    authType: [ 'ROLE_TENANT_MEMBER', 'ROLE_TENANT_ADMIN' ],
+    children: [
+      {
+        code: 'message-notifications',
+        name: '消息体',
+        icon: 'Message',
+        authType: [ 'ROLE_TENANT_MEMBER', 'ROLE_TENANT_ADMIN' ],
+        childPage: []
+      },
+      {
+        code: 'warning-config',
+        name: '基线配置',
+        icon: 'TakeawayBox',
+        authType: [ 'ROLE_TENANT_MEMBER', 'ROLE_TENANT_ADMIN' ],
+        childPage: []
+      },
+      {
+        code: 'warning-schedule',
+        name: '告警实例',
+        icon: 'List',
         authType: [ 'ROLE_TENANT_MEMBER', 'ROLE_TENANT_ADMIN' ],
         childPage: []
       }
@@ -128,35 +157,6 @@ export const menuListData: Array<Menu> = [
         name: '采集实例',
         icon: 'List',
         authType: ['ROLE_TENANT_MEMBER', 'ROLE_TENANT_ADMIN'],
-        childPage: []
-      }
-    ]
-  },
-  {
-    code: 'message-management',
-    name: '基线告警',
-    icon: 'ChatDotRound',
-    authType: [ 'ROLE_TENANT_MEMBER', 'ROLE_TENANT_ADMIN' ],
-    children: [
-      {
-        code: 'message-notifications',
-        name: '消息体',
-        icon: 'Message',
-        authType: [ 'ROLE_TENANT_MEMBER', 'ROLE_TENANT_ADMIN' ],
-        childPage: []
-      },
-      {
-        code: 'warning-config',
-        name: '基线配置',
-        icon: 'TakeawayBox',
-        authType: [ 'ROLE_TENANT_MEMBER', 'ROLE_TENANT_ADMIN' ],
-        childPage: []
-      },
-      {
-        code: 'warning-schedule',
-        name: '告警实例',
-        icon: 'List',
-        authType: [ 'ROLE_TENANT_MEMBER', 'ROLE_TENANT_ADMIN' ],
         childPage: []
       }
     ]

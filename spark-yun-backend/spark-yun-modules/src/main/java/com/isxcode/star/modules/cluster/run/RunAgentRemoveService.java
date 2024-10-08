@@ -13,9 +13,9 @@ import com.isxcode.star.api.main.properties.SparkYunProperties;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.star.modules.cluster.entity.ClusterNodeEntity;
 import com.isxcode.star.modules.cluster.repository.ClusterNodeRepository;
+import com.isxcode.star.modules.cluster.service.ClusterService;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.SftpException;
-import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -34,6 +34,8 @@ public class RunAgentRemoveService {
     private final SparkYunProperties sparkYunProperties;
 
     private final ClusterNodeRepository clusterNodeRepository;
+
+    private final ClusterService clusterService;
 
     @Async("sparkYunWorkThreadPool")
     public void run(String clusterNodeId, ScpFileEngineNodeDto scpFileEngineNodeDto, String tenantId, String userId) {
@@ -62,17 +64,18 @@ public class RunAgentRemoveService {
     public void removeAgent(ScpFileEngineNodeDto scpFileEngineNodeDto, ClusterNodeEntity engineNode)
         throws JSchException, IOException, InterruptedException, SftpException {
 
+        String bashFilePath = sparkYunProperties.getTmpDir() + "/agent-uninstall.sh";
+
         // 拷贝检测脚本
-        scpFile(scpFileEngineNodeDto, "classpath:bash/agent-uninstall.sh",
-            sparkYunProperties.getTmpDir() + File.separator + "agent-uninstall.sh");
+        scpFile(scpFileEngineNodeDto, "classpath:bash/agent-uninstall.sh", bashFilePath);
 
         // 运行停止脚本
-        String removeCommand = "bash " + sparkYunProperties.getTmpDir() + File.separator + "agent-uninstall.sh"
-            + " --home-path=" + engineNode.getAgentHomePath();
+        String removeCommand = "bash " + bashFilePath + " --home-path=" + engineNode.getAgentHomePath();
         log.debug("执行远程命令:{}", removeCommand);
 
         // 获取返回结果
-        String executeLog = executeCommand(scpFileEngineNodeDto, removeCommand, false);
+        String executeLog =
+            executeCommand(scpFileEngineNodeDto, clusterService.fixWindowsChar(bashFilePath, removeCommand), false);
         log.debug("远程返回值:{}", executeLog);
 
         AgentInfo agentStartInfo = JSON.parseObject(executeLog, AgentInfo.class);

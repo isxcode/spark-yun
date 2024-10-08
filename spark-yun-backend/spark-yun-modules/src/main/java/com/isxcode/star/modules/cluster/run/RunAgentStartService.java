@@ -16,10 +16,10 @@ import com.isxcode.star.modules.cluster.entity.ClusterEntity;
 import com.isxcode.star.modules.cluster.entity.ClusterNodeEntity;
 import com.isxcode.star.modules.cluster.repository.ClusterNodeRepository;
 import com.isxcode.star.modules.cluster.repository.ClusterRepository;
+import com.isxcode.star.modules.cluster.service.ClusterService;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.SftpException;
 
-import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -41,6 +41,8 @@ public class RunAgentStartService {
     private final ClusterNodeRepository clusterNodeRepository;
 
     private final ClusterRepository clusterRepository;
+
+    private final ClusterService clusterService;
 
     @Async("sparkYunWorkThreadPool")
     public void run(String clusterNodeId, ScpFileEngineNodeDto scpFileEngineNodeDto, String tenantId, String userId) {
@@ -69,13 +71,14 @@ public class RunAgentStartService {
     public void startAgent(ScpFileEngineNodeDto scpFileEngineNodeDto, ClusterNodeEntity engineNode)
         throws JSchException, IOException, InterruptedException, SftpException {
 
+        String bashFilePath = sparkYunProperties.getTmpDir() + "/agent-start.sh";
+
         // 拷贝检测脚本
-        scpFile(scpFileEngineNodeDto, "classpath:bash/agent-start.sh",
-            sparkYunProperties.getTmpDir() + File.separator + "agent-start.sh");
+        scpFile(scpFileEngineNodeDto, "classpath:bash/agent-start.sh", bashFilePath);
 
         // 运行启动脚本
-        String startCommand = "bash " + sparkYunProperties.getTmpDir() + File.separator + "agent-start.sh"
-            + " --home-path=" + engineNode.getAgentHomePath() + " --agent-port=" + engineNode.getAgentPort();
+        String startCommand = "bash " + bashFilePath + " --home-path=" + engineNode.getAgentHomePath()
+            + " --agent-port=" + engineNode.getAgentPort();
 
         if (engineNode.getInstallSparkLocal() != null) {
             startCommand = startCommand + " --spark-local=" + engineNode.getInstallSparkLocal();
@@ -84,7 +87,8 @@ public class RunAgentStartService {
         log.debug("执行远程命令:{}", startCommand);
 
         // 获取返回结果
-        String executeLog = executeCommand(scpFileEngineNodeDto, startCommand, false);
+        String executeLog =
+            executeCommand(scpFileEngineNodeDto, clusterService.fixWindowsChar(bashFilePath, startCommand), false);
         log.debug("远程返回值:{}", executeLog);
 
         AgentInfo agentStartInfo = JSON.parseObject(executeLog, AgentInfo.class);

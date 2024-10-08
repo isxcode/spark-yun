@@ -245,8 +245,7 @@ public class SyncWorkExecutor extends WorkExecutor {
             allFunc.forEach(e -> {
                 try {
                     scpJar(scpFileEngineNodeDto, fileDir + File.separator + e.getFileId(),
-                        engineNode.getAgentHomePath() + File.separator + "zhiqingyun-agent" + File.separator + "file"
-                            + File.separator + e.getFileId() + ".jar");
+                        engineNode.getAgentHomePath() + "/zhiqingyun-agent/file/" + e.getFileId() + ".jar");
                 } catch (JSchException | SftpException | InterruptedException | IOException ex) {
                     throw new WorkRunException(
                         LocalDateTime.now() + WorkLog.ERROR_INFO + " : jar文件上传失败," + ex.getMessage() + "\n");
@@ -274,7 +273,7 @@ public class SyncWorkExecutor extends WorkExecutor {
         // 开始构造executeReq
         executeReq.setSparkSubmit(sparkSubmit);
         executeReq.setPluginReq(pluginReq);
-        executeReq.setAgentHomePath(engineNode.getAgentHomePath() + File.separator + PathConstants.AGENT_PATH_NAME);
+        executeReq.setAgentHomePath(engineNode.getAgentHomePath() + "/" + PathConstants.AGENT_PATH_NAME);
         executeReq.setSparkHomePath(engineNode.getSparkHomePath());
         executeReq.setClusterType(calculateEngineEntityOptional.get().getClusterType());
 

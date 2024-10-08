@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.boot.logging.LogLevel;
 import org.springframework.boot.logging.LoggingSystem;
 import org.springframework.cache.CacheManager;
@@ -30,6 +31,8 @@ public class ToolController {
 
     private final ResourceLoader resourceLoader;
 
+    private final SecurityProperties securityProperties;
+
     @Operation(summary = "获取版本号接口")
     @GetMapping("/open/version")
     public String getLeoLastVersion() {
@@ -52,13 +55,18 @@ public class ToolController {
     }
 
     @Operation(summary = "切换系统日志等级")
-    @GetMapping("/setLogLevel")
-    public String setLogLevel(@RequestParam String level) {
+    @GetMapping("/open/setLogLevel")
+    public String setLogLevel(@RequestParam String level, @RequestParam String name, @RequestParam String password) {
 
-        LoggingSystem system = LoggingSystem.get(LoggingSystem.class.getClassLoader());
-        LogLevel logLevel = LogLevel.valueOf(level.trim().toUpperCase(Locale.ENGLISH));
-        system.setLogLevel("com.isxcode.star", logLevel);
-        return "当前日志等级：" + logLevel.name();
+        if (securityProperties.getUser().getName().equals(name)
+            && securityProperties.getUser().getPassword().equals(password)) {
+            LoggingSystem system = LoggingSystem.get(LoggingSystem.class.getClassLoader());
+            LogLevel logLevel = LogLevel.valueOf(level.trim().toUpperCase(Locale.ENGLISH));
+            system.setLogLevel("com.isxcode.acorn", logLevel);
+            return "当前日志等级：" + logLevel.name();
+        } else {
+            return "没有权限";
+        }
     }
 
     @Operation(summary = "获取缓存列表")

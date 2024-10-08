@@ -16,9 +16,9 @@ import com.isxcode.star.modules.cluster.entity.ClusterEntity;
 import com.isxcode.star.modules.cluster.entity.ClusterNodeEntity;
 import com.isxcode.star.modules.cluster.repository.ClusterNodeRepository;
 import com.isxcode.star.modules.cluster.repository.ClusterRepository;
+import com.isxcode.star.modules.cluster.service.ClusterService;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.SftpException;
-import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -40,6 +40,8 @@ public class RunAgentCheckService {
     private final ClusterNodeRepository clusterNodeRepository;
 
     private final ClusterRepository clusterRepository;
+
+    private final ClusterService clusterService;
 
     @Async("sparkYunWorkThreadPool")
     public void run(String clusterNodeId, ScpFileEngineNodeDto scpFileEngineNodeDto, String tenantId, String userId) {
@@ -68,18 +70,19 @@ public class RunAgentCheckService {
     public void checkAgent(ScpFileEngineNodeDto scpFileEngineNodeDto, ClusterNodeEntity engineNode)
         throws JSchException, IOException, InterruptedException, SftpException {
 
+        String bashFilePath = sparkYunProperties.getTmpDir() + "/agent-check.sh";
+
         // 拷贝检测脚本
-        scpFile(scpFileEngineNodeDto, "classpath:bash/agent-check.sh",
-            sparkYunProperties.getTmpDir() + File.separator + "agent-check.sh");
+        scpFile(scpFileEngineNodeDto, "classpath:bash/agent-check.sh", bashFilePath);
 
         // 运行安装脚本
-        String checkCommand = "bash " + sparkYunProperties.getTmpDir() + File.separator + "agent-check.sh"
-            + " --home-path=" + engineNode.getAgentHomePath();
+        String checkCommand = "bash " + bashFilePath + " --home-path=" + engineNode.getAgentHomePath();
 
         log.debug("执行远程命令:{}", checkCommand);
 
         // 获取返回结果
-        String executeLog = executeCommand(scpFileEngineNodeDto, checkCommand, false);
+        String executeLog =
+            executeCommand(scpFileEngineNodeDto, clusterService.fixWindowsChar(bashFilePath, checkCommand), false);
 
         log.debug("远程返回值:{}", executeLog);
         AgentInfo agentCheckInfo = JSON.parseObject(executeLog, AgentInfo.class);
