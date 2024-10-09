@@ -81,7 +81,7 @@ public class KubernetesAgentService implements AgentService {
         sparkLauncher.setConf("spark.kubernetes.executor.volumes.hostPath.jar.mount.path",
             "/opt/spark/examples/jars/" + submitWorkReq.getSparkSubmit().getAppResource());
         sparkLauncher.setConf("spark.kubernetes.container.image.pullPolicy", AgentKubernetes.PULL_POLICY);
-        sparkLauncher.setConf("spark.kubernetes.appKillPodDeletionGracePeriod", "5s");
+        sparkLauncher.setConf("spark.kubernetes.appKillPodDeletionGracePeriod", "600s");
 
         // 判断是否为自定义任务
         if (WorkType.SPARK_JAR.equals(submitWorkReq.getWorkType())) {
@@ -211,8 +211,8 @@ public class KubernetesAgentService implements AgentService {
         // 拼接podTemplate文件
         AtomicReference<String> podTemplate = new AtomicReference<>(
             "apiVersion: v1 \n" + "kind: Pod \n" + "metadata: \n" + "  name: pod-template \n" + "spec:\n"
-                + "  hostNetwork: true\n" + "  ttlSecondsAfterFinished: 60\n" + "  terminationGracePeriodSeconds: 60\n"
-                + "  activeDeadlineSeconds: 60\n" + "  dnsPolicy: ClusterFirstWithHostNet\n");
+                + "  hostNetwork: true\n" + "  ttlSecondsAfterFinished: 600\n" + "  terminationGracePeriodSeconds: 600\n"
+                + "  activeDeadlineSeconds: 600\n" + "  dnsPolicy: Default\n");
 
         if (!hostMapping.isEmpty()) {
             podTemplate.set(podTemplate + "  hostAliases:\n");
