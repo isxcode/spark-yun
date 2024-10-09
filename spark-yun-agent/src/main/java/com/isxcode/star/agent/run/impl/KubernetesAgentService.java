@@ -209,10 +209,9 @@ public class KubernetesAgentService implements AgentService {
         }
 
         // 拼接podTemplate文件
-        AtomicReference<String> podTemplate = new AtomicReference<>(
-            "apiVersion: v1 \n" + "kind: Pod \n" + "metadata: \n" + "  name: pod-template \n" + "spec:\n"
-                + "  hostNetwork: true\n" + "  ttlSecondsAfterFinished: 600\n" + "  terminationGracePeriodSeconds: 600\n"
-                + "  activeDeadlineSeconds: 600\n" + "  dnsPolicy: ClusterFirstWithHostNet\n");
+        AtomicReference<String> podTemplate = new AtomicReference<>("apiVersion: v1 \n" + "kind: Pod \n"
+            + "metadata: \n" + "  name: pod-template \n" + "spec:\n" + "  ttlSecondsAfterFinished: 600\n"
+            + "  terminationGracePeriodSeconds: 600\n" + "  activeDeadlineSeconds: 600\n");
 
         if (!hostMapping.isEmpty()) {
             podTemplate.set(podTemplate + "  hostAliases:\n");
