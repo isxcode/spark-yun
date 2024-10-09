@@ -1,6 +1,7 @@
 package com.isxcode.star.modules.work.run.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.isxcode.star.api.agent.constants.AgentType;
 import com.isxcode.star.api.agent.constants.AgentUrl;
 import com.isxcode.star.api.agent.pojos.req.*;
 import com.isxcode.star.api.agent.pojos.res.GetWorkStderrLogRes;
@@ -102,12 +103,12 @@ public class SyncWorkExecutor extends WorkExecutor {
     private final SqlFunctionService sqlFunctionService;
 
     public SyncWorkExecutor(WorkInstanceRepository workInstanceRepository, ClusterRepository clusterRepository,
-        ClusterNodeRepository clusterNodeRepository, WorkflowInstanceRepository workflowInstanceRepository,
-        WorkRepository workRepository, WorkConfigRepository workConfigRepository, Locker locker,
-        HttpUrlUtils httpUrlUtils, AesUtils aesUtils, ClusterNodeMapper clusterNodeMapper,
-        DatasourceService datasourceService, IsxAppProperties isxAppProperties, FuncRepository funcRepository,
-        FuncMapper funcMapper, FileRepository fileRepository, SqlCommentService sqlCommentService,
-        SqlValueService sqlValueService, SqlFunctionService sqlFunctionService, AlarmService alarmService) {
+                            ClusterNodeRepository clusterNodeRepository, WorkflowInstanceRepository workflowInstanceRepository,
+                            WorkRepository workRepository, WorkConfigRepository workConfigRepository, Locker locker,
+                            HttpUrlUtils httpUrlUtils, AesUtils aesUtils, ClusterNodeMapper clusterNodeMapper,
+                            DatasourceService datasourceService, IsxAppProperties isxAppProperties, FuncRepository funcRepository,
+                            FuncMapper funcMapper, FileRepository fileRepository, SqlCommentService sqlCommentService,
+                            SqlValueService sqlValueService, SqlFunctionService sqlFunctionService, AlarmService alarmService) {
 
         super(workInstanceRepository, workflowInstanceRepository, alarmService);
         this.workInstanceRepository = workInstanceRepository;
@@ -392,6 +393,15 @@ public class SyncWorkExecutor extends WorkExecutor {
                     workInstance.setYarnLog(yagGetLogRes.getLog());
                 }
                 updateInstance(workInstance, logBuilder);
+
+                // 如果是k8s类型，需要删除k8s容器
+                if (AgentType.K8S.equals(calculateEngineEntityOptional.get().getClusterType())) {
+                    StopWorkReq stopWorkReq = StopWorkReq.builder().appId(submitWorkRes.getAppId())
+                        .clusterType(AgentType.K8S).sparkHomePath(engineNode.getSparkHomePath())
+                        .agentHomePath(engineNode.getAgentHomePath()).build();
+                    HttpUtils.doPost(httpUrlUtils.genHttpUrl(engineNode.getHost(),
+                        engineNode.getAgentPort(), AgentUrl.STOP_WORK_URL), stopWorkReq, BaseResponse.class);
+                }
 
                 // 如果运行成功，则保存返回数据
                 List<String> successStatus = Arrays.asList("FINISHED", "SUCCEEDED", "COMPLETED");
