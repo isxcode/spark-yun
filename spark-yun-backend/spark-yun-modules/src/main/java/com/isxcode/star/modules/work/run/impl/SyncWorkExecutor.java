@@ -103,12 +103,12 @@ public class SyncWorkExecutor extends WorkExecutor {
     private final SqlFunctionService sqlFunctionService;
 
     public SyncWorkExecutor(WorkInstanceRepository workInstanceRepository, ClusterRepository clusterRepository,
-                            ClusterNodeRepository clusterNodeRepository, WorkflowInstanceRepository workflowInstanceRepository,
-                            WorkRepository workRepository, WorkConfigRepository workConfigRepository, Locker locker,
-                            HttpUrlUtils httpUrlUtils, AesUtils aesUtils, ClusterNodeMapper clusterNodeMapper,
-                            DatasourceService datasourceService, IsxAppProperties isxAppProperties, FuncRepository funcRepository,
-                            FuncMapper funcMapper, FileRepository fileRepository, SqlCommentService sqlCommentService,
-                            SqlValueService sqlValueService, SqlFunctionService sqlFunctionService, AlarmService alarmService) {
+        ClusterNodeRepository clusterNodeRepository, WorkflowInstanceRepository workflowInstanceRepository,
+        WorkRepository workRepository, WorkConfigRepository workConfigRepository, Locker locker,
+        HttpUrlUtils httpUrlUtils, AesUtils aesUtils, ClusterNodeMapper clusterNodeMapper,
+        DatasourceService datasourceService, IsxAppProperties isxAppProperties, FuncRepository funcRepository,
+        FuncMapper funcMapper, FileRepository fileRepository, SqlCommentService sqlCommentService,
+        SqlValueService sqlValueService, SqlFunctionService sqlFunctionService, AlarmService alarmService) {
 
         super(workInstanceRepository, workflowInstanceRepository, alarmService);
         this.workInstanceRepository = workInstanceRepository;
@@ -399,8 +399,8 @@ public class SyncWorkExecutor extends WorkExecutor {
                     StopWorkReq stopWorkReq = StopWorkReq.builder().appId(submitWorkRes.getAppId())
                         .clusterType(AgentType.K8S).sparkHomePath(engineNode.getSparkHomePath())
                         .agentHomePath(engineNode.getAgentHomePath()).build();
-                    HttpUtils.doPost(httpUrlUtils.genHttpUrl(engineNode.getHost(),
-                        engineNode.getAgentPort(), AgentUrl.STOP_WORK_URL), stopWorkReq, BaseResponse.class);
+                    HttpUtils.doPost(httpUrlUtils.genHttpUrl(engineNode.getHost(), engineNode.getAgentPort(),
+                        AgentUrl.STOP_WORK_URL), stopWorkReq, BaseResponse.class);
                 }
 
                 // 如果运行成功，则保存返回数据

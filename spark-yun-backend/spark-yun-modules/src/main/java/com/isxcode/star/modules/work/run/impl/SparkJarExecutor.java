@@ -351,8 +351,8 @@ public class SparkJarExecutor extends WorkExecutor {
                         StopWorkReq stopWorkReq = StopWorkReq.builder().appId(submitWorkRes.getAppId())
                             .clusterType(AgentType.K8S).sparkHomePath(engineNode.getSparkHomePath())
                             .agentHomePath(engineNode.getAgentHomePath()).build();
-                        HttpUtils.doPost(httpUrlUtils.genHttpUrl(engineNode.getHost(),
-                            engineNode.getAgentPort(), AgentUrl.STOP_WORK_URL), stopWorkReq, BaseResponse.class);
+                        HttpUtils.doPost(httpUrlUtils.genHttpUrl(engineNode.getHost(), engineNode.getAgentPort(),
+                            AgentUrl.STOP_WORK_URL), stopWorkReq, BaseResponse.class);
                     }
 
                     updateInstance(workInstance, logBuilder);
@@ -362,8 +362,8 @@ public class SparkJarExecutor extends WorkExecutor {
                         StopWorkReq stopWorkReq = StopWorkReq.builder().appId(submitWorkRes.getAppId())
                             .clusterType(AgentType.K8S).sparkHomePath(engineNode.getSparkHomePath())
                             .agentHomePath(engineNode.getAgentHomePath()).build();
-                        HttpUtils.doPost(httpUrlUtils.genHttpUrl(engineNode.getHost(),
-                            engineNode.getAgentPort(), AgentUrl.STOP_WORK_URL), stopWorkReq, BaseResponse.class);
+                        HttpUtils.doPost(httpUrlUtils.genHttpUrl(engineNode.getHost(), engineNode.getAgentPort(),
+                            AgentUrl.STOP_WORK_URL), stopWorkReq, BaseResponse.class);
                     }
 
                     // 任务运行错误

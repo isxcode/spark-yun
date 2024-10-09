@@ -111,13 +111,13 @@ public class SparkSqlExecutor extends WorkExecutor {
     private final DataSourceFactory dataSourceFactory;
 
     public SparkSqlExecutor(WorkInstanceRepository workInstanceRepository, ClusterRepository clusterRepository,
-                            ClusterNodeRepository clusterNodeRepository, WorkflowInstanceRepository workflowInstanceRepository,
-                            WorkRepository workRepository, WorkConfigRepository workConfigRepository, Locker locker,
-                            HttpUrlUtils httpUrlUtils, FuncRepository funcRepository, FuncMapper funcMapper,
-                            ClusterNodeMapper clusterNodeMapper, AesUtils aesUtils, IsxAppProperties isxAppProperties,
-                            FileRepository fileRepository, DatasourceService datasourceService, SqlCommentService sqlCommentService,
-                            SqlValueService sqlValueService, SqlFunctionService sqlFunctionService, AlarmService alarmService,
-                            DatasourceMapper datasourceMapper, DataSourceFactory dataSourceFactory) {
+        ClusterNodeRepository clusterNodeRepository, WorkflowInstanceRepository workflowInstanceRepository,
+        WorkRepository workRepository, WorkConfigRepository workConfigRepository, Locker locker,
+        HttpUrlUtils httpUrlUtils, FuncRepository funcRepository, FuncMapper funcMapper,
+        ClusterNodeMapper clusterNodeMapper, AesUtils aesUtils, IsxAppProperties isxAppProperties,
+        FileRepository fileRepository, DatasourceService datasourceService, SqlCommentService sqlCommentService,
+        SqlValueService sqlValueService, SqlFunctionService sqlFunctionService, AlarmService alarmService,
+        DatasourceMapper datasourceMapper, DataSourceFactory dataSourceFactory) {
 
         super(workInstanceRepository, workflowInstanceRepository, alarmService);
         this.workInstanceRepository = workInstanceRepository;
@@ -423,8 +423,8 @@ public class SparkSqlExecutor extends WorkExecutor {
                         StopWorkReq stopWorkReq = StopWorkReq.builder().appId(submitWorkRes.getAppId())
                             .clusterType(AgentType.K8S).sparkHomePath(engineNode.getSparkHomePath())
                             .agentHomePath(engineNode.getAgentHomePath()).build();
-                        HttpUtils.doPost(httpUrlUtils.genHttpUrl(engineNode.getHost(),
-                            engineNode.getAgentPort(), AgentUrl.STOP_WORK_URL), stopWorkReq, BaseResponse.class);
+                        HttpUtils.doPost(httpUrlUtils.genHttpUrl(engineNode.getHost(), engineNode.getAgentPort(),
+                            AgentUrl.STOP_WORK_URL), stopWorkReq, BaseResponse.class);
                     }
 
                     updateInstance(workInstance, logBuilder);
@@ -433,10 +433,10 @@ public class SparkSqlExecutor extends WorkExecutor {
                         StopWorkReq stopWorkReq = StopWorkReq.builder().appId(submitWorkRes.getAppId())
                             .clusterType(AgentType.K8S).sparkHomePath(engineNode.getSparkHomePath())
                             .agentHomePath(engineNode.getAgentHomePath()).build();
-                        HttpUtils.doPost(httpUrlUtils.genHttpUrl(engineNode.getHost(),
-                            engineNode.getAgentPort(), AgentUrl.STOP_WORK_URL), stopWorkReq, BaseResponse.class);
+                        HttpUtils.doPost(httpUrlUtils.genHttpUrl(engineNode.getHost(), engineNode.getAgentPort(),
+                            AgentUrl.STOP_WORK_URL), stopWorkReq, BaseResponse.class);
                     }
-                    
+
                     // 任务运行错误
                     throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "任务运行异常" + "\n");
                 }
