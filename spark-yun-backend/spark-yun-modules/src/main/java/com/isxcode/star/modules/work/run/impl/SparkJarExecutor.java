@@ -1,6 +1,7 @@
 package com.isxcode.star.modules.work.run.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.isxcode.star.api.agent.constants.AgentType;
 import com.isxcode.star.api.agent.constants.AgentUrl;
 import com.isxcode.star.api.agent.pojos.req.*;
 import com.isxcode.star.api.agent.pojos.res.GetWorkStderrLogRes;
@@ -344,8 +345,27 @@ public class SparkJarExecutor extends WorkExecutor {
                     // 解析数据并保存
                     workInstance.setResultData(JSON.toJSONString(baseResponse.getData()));
                     logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("数据保存成功 \n");
+
+                    // 如果是k8s类型，需要删除k8s容器
+                    if (AgentType.K8S.equals(calculateEngineEntityOptional.get().getClusterType())) {
+                        StopWorkReq stopWorkReq = StopWorkReq.builder().appId(submitWorkRes.getAppId())
+                            .clusterType(AgentType.K8S).sparkHomePath(engineNode.getSparkHomePath())
+                            .agentHomePath(engineNode.getAgentHomePath()).build();
+                        HttpUtils.doPost(httpUrlUtils.genHttpUrl(engineNode.getHost(), engineNode.getAgentPort(),
+                            AgentUrl.STOP_WORK_URL), stopWorkReq, BaseResponse.class);
+                    }
+
                     updateInstance(workInstance, logBuilder);
                 } else {
+                    // 如果是k8s类型，需要删除k8s容器
+                    if (AgentType.K8S.equals(calculateEngineEntityOptional.get().getClusterType())) {
+                        StopWorkReq stopWorkReq = StopWorkReq.builder().appId(submitWorkRes.getAppId())
+                            .clusterType(AgentType.K8S).sparkHomePath(engineNode.getSparkHomePath())
+                            .agentHomePath(engineNode.getAgentHomePath()).build();
+                        HttpUtils.doPost(httpUrlUtils.genHttpUrl(engineNode.getHost(), engineNode.getAgentPort(),
+                            AgentUrl.STOP_WORK_URL), stopWorkReq, BaseResponse.class);
+                    }
+
                     // 任务运行错误
                     throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "任务运行异常" + "\n");
                 }
