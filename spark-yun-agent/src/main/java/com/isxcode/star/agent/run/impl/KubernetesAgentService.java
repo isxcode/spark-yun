@@ -212,7 +212,7 @@ public class KubernetesAgentService implements AgentService {
         AtomicReference<String> podTemplate = new AtomicReference<>(
             "apiVersion: v1 \n" + "kind: Pod \n" + "metadata: \n" + "  name: pod-template \n" + "spec:\n"
                 + "  hostNetwork: true\n" + "  ttlSecondsAfterFinished: 600\n" + "  terminationGracePeriodSeconds: 600\n"
-                + "  activeDeadlineSeconds: 600\n" + "  dnsPolicy: Default\n");
+                + "  activeDeadlineSeconds: 600\n" + "  dnsPolicy: ClusterFirstWithHostNet\n");
 
         if (!hostMapping.isEmpty()) {
             podTemplate.set(podTemplate + "  hostAliases:\n");
