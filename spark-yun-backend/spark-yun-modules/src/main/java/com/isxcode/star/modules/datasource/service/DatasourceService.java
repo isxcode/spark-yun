@@ -13,8 +13,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.calcite.sql.SqlKind;
 import org.apache.calcite.sql.SqlNode;
-import org.apache.calcite.sql.SqlOrderBy;
-import org.apache.calcite.sql.SqlSelect;
 import org.apache.calcite.sql.parser.SqlParseException;
 import org.apache.calcite.sql.parser.SqlParser;
 import org.apache.commons.lang3.StringUtils;
@@ -190,67 +188,6 @@ public class DatasourceService {
         try (AdminClient adminClient = AdminClient.create(properties)) {
             ListTopicsResult listTopicsResult = adminClient.listTopics();
             return listTopicsResult.names().get();
-        }
-    }
-
-    /**
-     * 判断sql是否有limit限制.
-     */
-    public boolean hasLimit(String sql) {
-
-        String sqlUpper = sql.trim().toUpperCase();
-        if (sqlUpper.startsWith("SHOW TABLES") || sqlUpper.startsWith("SHOW DATABASES")) {
-            return true;
-        }
-
-        SqlParser parser = SqlParser.create(sql);
-        try {
-            SqlNode sqlNode = parser.parseStmt();
-            if (sqlNode instanceof SqlSelect) {
-                SqlSelect select = (SqlSelect) sqlNode;
-                return select.getFetch() != null;
-            } else if (sqlNode instanceof SqlOrderBy) {
-                SqlOrderBy orderBy = (SqlOrderBy) sqlNode;
-                return orderBy.fetch != null;
-            } else {
-                return false;
-            }
-        } catch (SqlParseException e) {
-            log.error(e.getMessage(), e);
-            throw new WorkRunException(e.getMessage());
-        }
-    }
-
-    /**
-     * 判断sql是否有where.
-     */
-    public boolean hasWhere(String sql) {
-
-        SqlParser parser = SqlParser.create(sql);
-        try {
-            SqlNode sqlNode = parser.parseStmt();
-            if (sqlNode instanceof SqlSelect) {
-                SqlSelect select = (SqlSelect) sqlNode;
-                return select.getWhere() != null;
-            } else {
-                return false;
-            }
-        } catch (SqlParseException e) {
-            log.error(e.getMessage(), e);
-            throw new WorkRunException(e.getMessage());
-        }
-    }
-
-    /**
-     * 生成sql的limit sql.
-     */
-    public String getSqlLimitSql(String dbType, Boolean hasWhere) {
-
-        switch (dbType) {
-            case DatasourceType.ORACLE:
-                return hasWhere ? " AND ROWNUM <= 200" : " WHERE ROWNUM <= 200";
-            default:
-                return " limit 200";
         }
     }
 }
