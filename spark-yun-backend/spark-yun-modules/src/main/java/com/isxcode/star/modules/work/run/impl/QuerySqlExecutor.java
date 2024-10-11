@@ -161,7 +161,7 @@ public class QuerySqlExecutor extends WorkExecutor {
                 ResultSet countResultSet = statement.executeQuery(countSql);
                 while (countResultSet.next()) {
                     if (countResultSet.getInt(1) > DatasourceConfig.LIMIT_NUMBER) {
-                        throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "条数过长，请添加行数限制sql \n");
+                        throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "条数大于200条，请添加sql行数限制 \n");
                     }
                 }
             }
