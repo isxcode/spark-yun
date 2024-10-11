@@ -1,6 +1,7 @@
 package com.isxcode.star.modules.work.run.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.isxcode.star.api.datasource.constants.DatasourceConfig;
 import com.isxcode.star.api.datasource.pojos.dto.ConnectInfo;
 import com.isxcode.star.api.work.constants.WorkLog;
 import com.isxcode.star.api.work.constants.WorkType;
@@ -148,20 +149,27 @@ public class QuerySqlExecutor extends WorkExecutor {
             // 执行查询sql，给lastSql添加查询条数限制
             String lastSql = sqls.get(sqls.size() - 1);
 
+            // 特殊查询语句直接跳过
+            if (!lastSql.toUpperCase().trim().startsWith("SHOW")
+                && !lastSql.toUpperCase().trim().startsWith("DESCRIBE")) {
+
+                // 判断返回结果的条数，超过200条，则提出警告
+                String countSql = String.format("SELECT COUNT(*) FROM ( %s ) temp", lastSql);
+                logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("执行条数检测SQL: \n")
+                    .append(countSql).append(" \n");
+                workInstance = updateInstance(workInstance, logBuilder);
+                ResultSet countResultSet = statement.executeQuery(countSql);
+                while (countResultSet.next()) {
+                    if (countResultSet.getInt(1) > DatasourceConfig.LIMIT_NUMBER) {
+                        throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "条数过长，请添加行数限制sql \n");
+                    }
+                }
+            }
+
             // 执行最后一句查询语句
             logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("执行查询SQL: \n").append(lastSql)
                 .append(" \n");
             workInstance = updateInstance(workInstance, logBuilder);
-
-            if (!datasourceService.isQueryStatement(lastSql)) {
-                throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "最后sql不是查询语句 \n");
-            }
-
-            if (!datasourceService.hasLimit(lastSql)) {
-                lastSql = lastSql + datasourceService.getSqlLimitSql(datasourceEntityOptional.get().getDbType(),
-                    datasourceService.hasWhere(lastSql));
-            }
-
             ResultSet resultSet = statement.executeQuery(lastSql);
 
             // 记录结束执行时间
