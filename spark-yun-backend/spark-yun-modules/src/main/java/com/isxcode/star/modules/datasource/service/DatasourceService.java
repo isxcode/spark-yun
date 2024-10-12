@@ -102,28 +102,6 @@ public class DatasourceService {
         }
     }
 
-    public String parseDbName(String jdbcUrl) {
-
-        String regex = "jdbc:\\w+://\\S+/(\\w+)";
-
-        // sqlserver databaseName in jdbcUrl is different
-        if (jdbcUrl.contains("jdbc:sqlserver://")) {
-            if (jdbcUrl.toLowerCase().contains(";databasename=")) {
-                regex = "databasename=([^;&]+)";
-            }
-            if (jdbcUrl.toLowerCase().contains(";database=")) {
-                regex = "database=([^;&]+)";
-            }
-        }
-
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(jdbcUrl);
-        if (matcher.find()) {
-            return matcher.group(1);
-        }
-        return "default";
-    }
-
     /**
      * 解析sql select * from table where a = '${value1}' and b = ${value2} 获取sql中的参数顺序 List
      * [value1,value2]

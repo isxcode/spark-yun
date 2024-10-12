@@ -166,7 +166,19 @@ public abstract class Datasource {
 
     public String parseDbName(String jdbcUrl) {
 
-        Pattern pattern = Pattern.compile("jdbc:\\w+://\\S+/(\\w+)");
+        String regex = "jdbc:\\w+://\\S+/(\\w+)";
+
+        // sqlserver databaseName in jdbcUrl is different
+        if (jdbcUrl.contains("jdbc:sqlserver://")) {
+            if (jdbcUrl.toLowerCase().contains(";databasename=")) {
+                regex = "databasename=([^;&]+)";
+            }
+            if (jdbcUrl.toLowerCase().contains(";database=")) {
+                regex = "database=([^;&]+)";
+            }
+        }
+
+        Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(jdbcUrl);
         if (matcher.find()) {
             return matcher.group(1);
@@ -224,8 +236,11 @@ public abstract class Datasource {
             preparedStatement.executeQuery();
             return true;
         } catch (SQLException e) {
+            if (e.getMessage().contains("doesn't exist")) {
+                return false;
+            }
             log.error(e.getMessage(), e);
-            return false;
+            throw new IsxAppException("判断表是否存在异常");
         }
     }
 

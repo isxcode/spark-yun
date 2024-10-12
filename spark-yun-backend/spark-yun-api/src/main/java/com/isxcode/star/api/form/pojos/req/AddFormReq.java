@@ -17,7 +17,6 @@ public class AddFormReq {
     private String datasourceId;
 
     @Schema(title = "表单基于的主表", example = "users")
-    @NotEmpty(message = "mainTable不能为空")
     private String mainTable;
 
     @Schema(title = "该表是自建的表还是已存在的表", example = "EXIST_TABLE 已存在的表 | CREATE_TABLE 新建的表")
