@@ -3,10 +3,27 @@ description: 创建缺陷
 title: '[Bug] '
 labels: ["缺陷"]
 body:
+  - type: checkboxes
+    id: operating-systems
+    attributes:
+      label: Which operating systems have you used (部署的操作系统)
+      options:
+        - label: macOS
+        - label: Windows
+        - label: Linux
+  - type: checkboxes
+    id: download_from
+    attributes:
+      label: Download from (安装来源)
+      options:
+        - label: 源码编译
+        - label: 官网二进制
+        - label: Docker Hub
+        - label: 阿里Docker仓库
   - type: input
     id: branch
     attributes:
-      label: Branch name (分支名)
+      label: Branch name (分支名，从链接中获取 -> http://localhost:8080/tools/open/version)
       placeholder: main
       value: main
     validations:
