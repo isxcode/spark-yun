@@ -187,7 +187,14 @@ export const menuListData: Array<Menu> = [
         icon: 'MessageBox',
         authType: [ 'ROLE_TENANT_MEMBER', 'ROLE_TENANT_ADMIN' ],
         childPage: []
-      }
+      },
+      {
+        code: 'custom-form',
+        name: '分享表单',
+        icon: 'Files',
+        authType: [ 'ROLE_TENANT_MEMBER', 'ROLE_TENANT_ADMIN' ],
+        childPage: ['form-list', 'form-query', 'form-setting']
+      },
     ]
   },
   {

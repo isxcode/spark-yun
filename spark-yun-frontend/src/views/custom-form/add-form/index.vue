@@ -42,9 +42,9 @@
             </el-form-item>
             <el-form-item label="模式" prop="createMode" v-if="!isEdit">
                 <el-radio-group :disabled="isEdit" v-model="formData.createMode" @change="dataSourceChange">
+                    <el-radio label="AUTO_TABLE">自动创建表</el-radio>
                     <el-radio label="EXIST_TABLE">选择已有表</el-radio>
                     <el-radio label="CREATE_TABLE">创建新表</el-radio>
-                    <el-radio label="AUTO_TABLE">自动创建表</el-radio>
                 </el-radio-group>
             </el-form-item>
             <el-form-item v-if="formData.createMode === 'EXIST_TABLE'" prop="mainTable" label="表（选择已有表名）">
@@ -98,13 +98,6 @@ interface formDataParam {
     id?: string
 }
 
-const guid = function() {
-    function S4() {
-        return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
-    }
-    return (S4() + S4() + S4() + S4());
-}
-
 const form = ref<FormInstance>()
 const callback = ref<any>()
 const clusterList = ref([])  // 计算集群
@@ -135,7 +128,7 @@ const formData = reactive<formDataParam>({
     name: '',
     // clusterId: '',
     datasourceId: '',
-    createMode: 'EXIST_TABLE',
+    createMode: 'AUTO_TABLE',
     mainTable: '',
     remark: '',
     id: ''
@@ -193,7 +186,7 @@ function showModal(cb: () => void, data?: formDataParam): void {
         formData.name = ''
         // formData.clusterId = ''
         formData.datasourceId = ''
-        formData.createMode = 'EXIST_TABLE'
+        formData.createMode = 'AUTO_TABLE'
         formData.mainTable = ''
         formData.remark = ''
         formData.id = ''
@@ -234,9 +227,6 @@ function okEvent() {
 function dataSourceChange(e: string) {
     formData.mainTable = ''
     sourceTablesList.value = []
-    if (e === 'AUTO_TABLE') {
-        formData.mainTable = `SY_${guid()}`
-    }
 }
 
 // 查询计算集群
