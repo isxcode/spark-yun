@@ -289,8 +289,8 @@ public class ExcelSyncExecutor extends WorkExecutor {
 
         // 上传csv文件
         try {
-            scpJar(scpFileEngineNodeDto, csvFilePath, engineNode.getAgentHomePath() + File.separator
-                + "zhiqingyun-agent" + File.separator + "file" + File.separator + csvFileName);
+            scpJar(scpFileEngineNodeDto, csvFilePath,
+                engineNode.getAgentHomePath() + "/zhiqingyun-agent/file/" + csvFileName);
             // 删除本地的csv文件
             FileUtil.del(csvFilePath);
             pluginReq.setCsvFilePath(engineNode.getAgentHomePath() + File.separator + "zhiqingyun-agent"
@@ -309,8 +309,7 @@ public class ExcelSyncExecutor extends WorkExecutor {
             allFunc.forEach(e -> {
                 try {
                     scpJar(scpFileEngineNodeDto, fileDir + File.separator + e.getFileId(),
-                        engineNode.getAgentHomePath() + File.separator + "zhiqingyun-agent" + File.separator + "file"
-                            + File.separator + e.getFileId() + ".jar");
+                        engineNode.getAgentHomePath() + "/zhiqingyun-agent/file/" + e.getFileId() + ".jar");
                 } catch (JSchException | SftpException | InterruptedException | IOException ex) {
                     throw new WorkRunException(
                         LocalDateTime.now() + WorkLog.ERROR_INFO + " : jar文件上传失败," + ex.getMessage() + "\n");
@@ -327,8 +326,7 @@ public class ExcelSyncExecutor extends WorkExecutor {
             libFile.forEach(e -> {
                 try {
                     scpJar(scpFileEngineNodeDto, fileDir + File.separator + e.getId(),
-                        engineNode.getAgentHomePath() + File.separator + "zhiqingyun-agent" + File.separator + "file"
-                            + File.separator + e.getId() + ".jar");
+                        engineNode.getAgentHomePath() + "/zhiqingyun-agent/file/" + e.getId() + ".jar");
                 } catch (JSchException | SftpException | InterruptedException | IOException ex) {
                     throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "jar文件上传失败\n");
                 }
