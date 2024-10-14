@@ -269,10 +269,7 @@ public class MonitorBizService {
             workflowInstanceRepository.searchWorkflowMonitor(TENANT_ID.get(), pageInstancesReq.getSearchKeyWord(),
                 PageRequest.of(pageInstancesReq.getPage(), pageInstancesReq.getPageSize()));
 
-        Page<PageInstancesRes> map = workflowMonitorAos.map(workflowMapper::workflowMonitorAoToPageInstancesRes);
-        map.getContent().forEach(e -> e
-            .setStatus(InstanceStatus.SUCCESS.equals(e.getStatus()) ? InstanceStatus.SUCCESS : InstanceStatus.FAIL));
-        return map;
+        return workflowMonitorAos.map(workflowMapper::workflowMonitorAoToPageInstancesRes);
     }
 
     @Scheduled(cron = "0 * * * * ?")
