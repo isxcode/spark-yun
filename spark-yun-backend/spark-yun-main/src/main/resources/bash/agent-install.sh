@@ -46,6 +46,9 @@ source ${agent_path}/conf/agent-env.sh
 # 将文件解压到指定目录
 tar -xf ${BASE_PATH}/zhiqingyun-agent.tar.gz -C ${home_path} > /dev/null
 
+# 将spark-min的文件夹改成755权限
+chmod -R 755 ${agent_path}/spark-min
+
 # 进入代理目录,防止logs文件夹生成错位
 cd ${agent_path}
 
