@@ -24,7 +24,6 @@ import com.isxcode.star.modules.cluster.run.*;
 import com.isxcode.star.modules.cluster.service.ClusterNodeService;
 import com.isxcode.star.modules.cluster.service.ClusterService;
 
-import java.io.File;
 import java.io.IOException;
 
 import com.jcraft.jsch.JSchException;
@@ -93,8 +92,8 @@ public class ClusterNodeBizService {
 
         // 如果是默认安装spark,设置默认路径
         if (addClusterNodeReq.getInstallSparkLocal() || !AgentType.StandAlone.equals(cluster.getClusterType())) {
-            clusterNode.setSparkHomePath(clusterNode.getAgentHomePath() + File.separator + PathConstants.AGENT_PATH_NAME
-                + "/" + PathConstants.SPARK_MIN_HOME);
+            clusterNode.setSparkHomePath(clusterNode.getAgentHomePath() + "/" + PathConstants.AGENT_PATH_NAME + "/"
+                + PathConstants.SPARK_MIN_HOME);
         } else {
             clusterNode.setSparkHomePath(addClusterNodeReq.getSparkHomePath());
         }
@@ -133,8 +132,8 @@ public class ClusterNodeBizService {
 
         // 如果是默认安装spark,设置默认路径
         if (updateClusterNodeReq.getInstallSparkLocal() || !AgentType.StandAlone.equals(cluster.getClusterType())) {
-            clusterNode.setSparkHomePath(clusterNode.getAgentHomePath() + File.separator + PathConstants.AGENT_PATH_NAME
-                + File.separator + PathConstants.SPARK_MIN_HOME);
+            clusterNode.setSparkHomePath(clusterNode.getAgentHomePath() + "/" + PathConstants.AGENT_PATH_NAME + "/"
+                + PathConstants.SPARK_MIN_HOME);
         } else {
             clusterNode.setSparkHomePath(updateClusterNodeReq.getSparkHomePath());
         }
