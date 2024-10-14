@@ -231,6 +231,7 @@ public class SparkSqlExecutor extends WorkExecutor {
                     scpJar(scpFileEngineNodeDto, fileDir + File.separator + e.getFileId(),
                         engineNode.getAgentHomePath() + "/zhiqingyun-agent/file/" + e.getFileId() + ".jar");
                 } catch (JSchException | SftpException | InterruptedException | IOException ex) {
+                    log.error(ex.getMessage(), ex);
                     throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "jar文件上传失败\n");
                 }
             });
@@ -246,6 +247,7 @@ public class SparkSqlExecutor extends WorkExecutor {
                     scpJar(scpFileEngineNodeDto, fileDir + File.separator + e.getId(),
                         engineNode.getAgentHomePath() + "/zhiqingyun-agent/file/" + e.getId() + ".jar");
                 } catch (JSchException | SftpException | InterruptedException | IOException ex) {
+                    log.error(ex.getMessage(), ex);
                     throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "jar文件上传失败\n");
                 }
             });
