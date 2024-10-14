@@ -93,7 +93,7 @@ public class ClusterNodeBizService {
 
         // 如果是默认安装spark,设置默认路径
         if (addClusterNodeReq.getInstallSparkLocal() || !AgentType.StandAlone.equals(cluster.getClusterType())) {
-            clusterNode.setSparkHomePath(clusterNode.getAgentHomePath() + File.separator + PathConstants.AGENT_PATH_NAME
+            clusterNode.setSparkHomePath(clusterNode.getAgentHomePath() + "/" + PathConstants.AGENT_PATH_NAME
                 + "/" + PathConstants.SPARK_MIN_HOME);
         } else {
             clusterNode.setSparkHomePath(addClusterNodeReq.getSparkHomePath());
@@ -133,8 +133,8 @@ public class ClusterNodeBizService {
 
         // 如果是默认安装spark,设置默认路径
         if (updateClusterNodeReq.getInstallSparkLocal() || !AgentType.StandAlone.equals(cluster.getClusterType())) {
-            clusterNode.setSparkHomePath(clusterNode.getAgentHomePath() + File.separator + PathConstants.AGENT_PATH_NAME
-                + File.separator + PathConstants.SPARK_MIN_HOME);
+            clusterNode.setSparkHomePath(clusterNode.getAgentHomePath() + "/" + PathConstants.AGENT_PATH_NAME
+                + "/" + PathConstants.SPARK_MIN_HOME);
         } else {
             clusterNode.setSparkHomePath(updateClusterNodeReq.getSparkHomePath());
         }
