@@ -244,6 +244,7 @@ public class SparkSqlExecutor extends WorkExecutor {
             List<FileEntity> libFile = fileRepository.findAllById(workRunContext.getLibConfig());
             libFile.forEach(e -> {
                 try {
+                    log.debug("src:{},dst:{}", fileDir + File.separator + e.getId(), engineNode.getAgentHomePath() + "/zhiqingyun-agent/file/" + e.getId() + ".jar");
                     scpJar(scpFileEngineNodeDto, fileDir + File.separator + e.getId(),
                         engineNode.getAgentHomePath() + "/zhiqingyun-agent/file/" + e.getId() + ".jar");
                 } catch (JSchException | SftpException | InterruptedException | IOException ex) {
