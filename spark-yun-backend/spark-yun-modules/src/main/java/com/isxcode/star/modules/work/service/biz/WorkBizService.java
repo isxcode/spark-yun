@@ -4,7 +4,9 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.isxcode.star.api.instance.constants.InstanceStatus;
 import com.isxcode.star.api.instance.constants.InstanceType;
+import com.isxcode.star.api.instance.pojos.req.GetWorkflowInstanceReq;
 import com.isxcode.star.api.instance.pojos.req.QueryInstanceReq;
+import com.isxcode.star.api.instance.pojos.res.GetWorkflowInstanceRes;
 import com.isxcode.star.api.instance.pojos.res.QueryInstanceRes;
 import com.isxcode.star.api.work.constants.WorkStatus;
 import com.isxcode.star.api.work.constants.WorkType;
@@ -26,7 +28,8 @@ import com.isxcode.star.modules.work.service.WorkConfigService;
 import com.isxcode.star.modules.work.service.WorkService;
 import com.isxcode.star.modules.workflow.entity.WorkflowConfigEntity;
 import com.isxcode.star.modules.workflow.entity.WorkflowEntity;
-import com.isxcode.star.modules.workflow.run.WorkflowUtils;
+import com.isxcode.star.modules.workflow.entity.WorkflowInstanceEntity;
+import com.isxcode.star.modules.workflow.repository.WorkflowInstanceRepository;
 import com.isxcode.star.modules.workflow.service.WorkflowService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,9 +42,10 @@ import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
-import static com.isxcode.star.common.config.CommonConfig.JPA_TENANT_MODE;
-import static com.isxcode.star.common.config.CommonConfig.TENANT_ID;
+import static com.isxcode.star.common.config.CommonConfig.*;
+import static com.isxcode.star.modules.workflow.run.WorkflowUtils.genWorkRunContext;
 
 @Service
 @RequiredArgsConstructor
@@ -65,6 +69,8 @@ public class WorkBizService {
     private final WorkService workService;
 
     private final WorkConfigService workConfigService;
+
+    private final WorkflowInstanceRepository workflowInstanceRepository;
 
     public GetWorkRes addWork(AddWorkReq addWorkReq) {
 
@@ -256,7 +262,7 @@ public class WorkBizService {
         WorkConfigEntity workConfig = workConfigBizService.getWorkConfigEntity(work.getConfigId());
 
         // 初始化作业运行上下文
-        WorkRunContext workRunContext = WorkflowUtils.genWorkRunContext(workInstance.getId(), work, workConfig);
+        WorkRunContext workRunContext = genWorkRunContext(workInstance.getId(), work, workConfig);
 
         // 异步运行作业
         WorkExecutor workExecutor = workExecutorFactory.create(work.getWorkType());
@@ -492,5 +498,24 @@ public class WorkBizService {
         JPA_TENANT_MODE.set(true);
 
         return instancePage.map(workMapper::mapToWoiQueryInstanceRes);
+    }
+
+    public GetWorkflowInstanceRes getWorkflowInstance(GetWorkflowInstanceReq wfiGetWorkflowInstanceReq) {
+
+        GetWorkflowInstanceRes result = new GetWorkflowInstanceRes();
+
+        // 获取实例中的webConfig
+        WorkflowInstanceEntity workflowInstance =
+            workflowInstanceRepository.findById(wfiGetWorkflowInstanceReq.getWorkflowInstanceId()).get();
+        result.setWebConfig(workflowInstance.getWebConfig());
+
+        // 查看其他实例的状态
+        List<WorkInstanceEntity> workInstances =
+            workInstanceRepository.findAllByWorkflowInstanceId(workflowInstance.getId());
+        result.setWorkInstances(
+            workInstances.stream().map(workMapper::workInstanceEntity2WorkInstanceVo).collect(Collectors.toList()));
+
+        // 返回结果
+        return result;
     }
 }
