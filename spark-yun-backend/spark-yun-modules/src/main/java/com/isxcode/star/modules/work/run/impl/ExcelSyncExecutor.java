@@ -312,7 +312,7 @@ public class ExcelSyncExecutor extends WorkExecutor {
                         engineNode.getAgentHomePath() + "/zhiqingyun-agent/file/" + e.getFileId() + ".jar");
                 } catch (JSchException | SftpException | InterruptedException | IOException ex) {
                     throw new WorkRunException(
-                        LocalDateTime.now() + WorkLog.ERROR_INFO + " : jar文件上传失败," + ex.getMessage() + "\n");
+                        LocalDateTime.now() + WorkLog.ERROR_INFO + " : 自定义函数jar文件上传失败，请检查文件是否上传或者重新上传" + ex.getMessage() + "\n");
                 }
             });
             pluginReq.setFuncInfoList(funcMapper.funcEntityListToFuncInfoList(allFunc));
@@ -328,7 +328,7 @@ public class ExcelSyncExecutor extends WorkExecutor {
                     scpJar(scpFileEngineNodeDto, fileDir + File.separator + e.getId(),
                         engineNode.getAgentHomePath() + "/zhiqingyun-agent/file/" + e.getId() + ".jar");
                 } catch (JSchException | SftpException | InterruptedException | IOException ex) {
-                    throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "jar文件上传失败\n");
+                    throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "自定义依赖jar文件上传失败，请检查文件是否上传或者重新上传\n");
                 }
             });
             executeReq.setLibConfig(workRunContext.getLibConfig());
