@@ -7,7 +7,7 @@
             至轻云
           </div>
           <div class="slogan">
-            企业级大数据计算平台
+            轻量级大数据计算平台
           </div>
           <div class="command">
             <p id="command-shell">docker run -p 8080:8080 isxcode/zhiqingyun</p>
@@ -41,10 +41,10 @@
           选择至轻云
         </div>
         <div class="why-content">
-          至轻云是一款超轻量级、企业级大数据计算产品。一键部署，开箱即用。可快速实现大数据ETL、实时计算、可视化调度、自定义接口、数据大屏、分享表单等场景。助力企业处理海量数据，获得更多商业价值。
+          至轻云是一款超轻量级、企业级大数据计算平台。一键部署，开箱即用。可快速实现大数据ETL、实时计算、可视化调度、自定义接口、数据大屏、分享表单等场景。助力企业处理海量数据，获得更多商业价值。
         </div>
         <div class="why-content-mobile">
-          至轻云是一款超轻量级、企业级大数据计算产品。一键部署，开箱即用。可快速实现大数据ETL、实时计算、可视化调度、自定义接口、数据大屏、分享表单等场景。
+          至轻云是一款超轻量级、企业级大数据计算平台。一键部署，开箱即用。可快速实现大数据ETL、实时计算、可视化调度、自定义接口、数据大屏、分享表单等场景。
         </div>
         <div class="tech-title">
           相关技术
@@ -261,14 +261,14 @@ const copyContent = async (text: string) => {
 <style lang="scss" scoped>
 
 @font-face {
-  font-family: "阿里妈妈数黑体 Bold";font-weight: 700;src: url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/riiNKOyVZ6o8.woff2") format("woff2"),
-  url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/uMY8BRRFRukh.woff") format("woff");
+  font-family: "阿里妈妈数黑体 Bold";font-weight: 700;src: url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/OobtoafRisR7.woff2") format("woff2"),
+  url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/YMgEswp0IFDQ.woff") format("woff");
   font-display: swap;
 }
 
 @font-face {
-  font-family: "阿里巴巴普惠体 2.0 45 Light";font-weight: 300;src: url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/H1q91DmZEWfg.woff2") format("woff2"),
-  url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/h737umBVADWD.woff") format("woff");
+  font-family: "阿里巴巴普惠体 2.0 45 Light";font-weight: 300;src: url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/vUJbcOz3TegZ.woff2") format("woff2"),
+  url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/1nIUJZQwOn60.woff") format("woff");
   font-display: swap;
 }
 
@@ -767,6 +767,7 @@ $module-intro-img-width: 600px;
           width: 300px;
           line-height: 25px;
           font-size: 19px;
+          text-indent: 2em;
         }
 
         .why-content {

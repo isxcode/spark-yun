@@ -176,7 +176,8 @@ public class SparkJarExecutor extends WorkExecutor {
                 engineNode.getAgentHomePath() + "/zhiqingyun-agent/file/" + jarFile.getId() + ".jar");
         } catch (JSchException | SftpException | InterruptedException | IOException e) {
             log.debug(e.getMessage());
-            throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "jar文件上传失败\n" + e.getMessage());
+            throw new WorkRunException(
+                LocalDateTime.now() + WorkLog.ERROR_INFO + "自定义作业jar文件上传失败，请检查文件是否上传或者重新上传\n" + e.getMessage());
         }
 
         // 上传依赖到制定节点路径
@@ -187,7 +188,8 @@ public class SparkJarExecutor extends WorkExecutor {
                     scpJar(scpFileEngineNodeDto, fileDir + File.separator + e.getId(),
                         engineNode.getAgentHomePath() + "/zhiqingyun-agent/file/" + e.getId() + ".jar");
                 } catch (JSchException | SftpException | InterruptedException | IOException ex) {
-                    throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "jar文件上传失败\n");
+                    throw new WorkRunException(
+                        LocalDateTime.now() + WorkLog.ERROR_INFO + "自定义依赖jar文件上传失败，请检查文件是否上传或者重新上传\n");
                 }
             });
         }

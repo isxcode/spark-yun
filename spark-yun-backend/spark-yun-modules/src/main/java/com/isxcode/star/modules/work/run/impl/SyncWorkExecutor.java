@@ -61,7 +61,6 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.*;
 
-import static com.isxcode.star.common.config.CommonConfig.TENANT_ID;
 import static com.isxcode.star.common.utils.ssh.SshUtils.scpJar;
 
 @Service
@@ -240,7 +239,7 @@ public class SyncWorkExecutor extends WorkExecutor {
             clusterNodeMapper.engineNodeEntityToScpFileEngineNodeDto(engineNode);
         scpFileEngineNodeDto.setPasswd(aesUtils.decrypt(scpFileEngineNodeDto.getPasswd()));
         String fileDir = PathUtils.parseProjectPath(isxAppProperties.getResourcesPath()) + File.separator + "file"
-            + File.separator + TENANT_ID.get();
+            + File.separator + engineNode.getTenantId();
         if (workRunContext.getFuncConfig() != null) {
             List<FuncEntity> allFunc = funcRepository.findAllById(workRunContext.getFuncConfig());
             allFunc.forEach(e -> {
@@ -248,8 +247,8 @@ public class SyncWorkExecutor extends WorkExecutor {
                     scpJar(scpFileEngineNodeDto, fileDir + File.separator + e.getFileId(),
                         engineNode.getAgentHomePath() + "/zhiqingyun-agent/file/" + e.getFileId() + ".jar");
                 } catch (JSchException | SftpException | InterruptedException | IOException ex) {
-                    throw new WorkRunException(
-                        LocalDateTime.now() + WorkLog.ERROR_INFO + " : jar文件上传失败," + ex.getMessage() + "\n");
+                    throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO
+                        + " : 自定义函数jar文件上传失败，请检查文件是否上传或者重新上传" + ex.getMessage() + "\n");
                 }
             });
             pluginReq.setFuncInfoList(funcMapper.funcEntityListToFuncInfoList(allFunc));
@@ -264,7 +263,8 @@ public class SyncWorkExecutor extends WorkExecutor {
                     scpJar(scpFileEngineNodeDto, fileDir + File.separator + e.getId(),
                         engineNode.getAgentHomePath() + "/zhiqingyun-agent/file/" + e.getId() + ".jar");
                 } catch (JSchException | SftpException | InterruptedException | IOException ex) {
-                    throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "jar文件上传失败\n");
+                    throw new WorkRunException(
+                        LocalDateTime.now() + WorkLog.ERROR_INFO + "自定义依赖jar文件上传失败，请检查文件是否上传或者重新上传\n");
                 }
             });
             executeReq.setLibConfig(workRunContext.getLibConfig());

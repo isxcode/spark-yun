@@ -147,14 +147,14 @@ function handleMenuClick(menuItem: MenuData) {
 <style lang="scss" scoped>
 
 @font-face {
-  font-family: "阿里妈妈数黑体 Bold";font-weight: 700;src: url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/riiNKOyVZ6o8.woff2") format("woff2"),
-  url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/uMY8BRRFRukh.woff") format("woff");
+  font-family: "阿里妈妈数黑体 Bold";font-weight: 700;src: url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/OobtoafRisR7.woff2") format("woff2"),
+  url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/YMgEswp0IFDQ.woff") format("woff");
   font-display: swap;
 }
 
 @font-face {
-  font-family: "阿里巴巴普惠体 2.0 45 Light";font-weight: 300;src: url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/H1q91DmZEWfg.woff2") format("woff2"),
-  url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/h737umBVADWD.woff") format("woff");
+  font-family: "阿里巴巴普惠体 2.0 45 Light";font-weight: 300;src: url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/vUJbcOz3TegZ.woff2") format("woff2"),
+  url("//at.alicdn.com/wf/webfont/UMV2yX61q8rB/1nIUJZQwOn60.woff") format("woff");
   font-display: swap;
 }
 

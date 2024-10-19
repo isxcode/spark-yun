@@ -45,6 +45,8 @@ public class WorkConfigService {
 
         switch (workType) {
             case WorkType.QUERY_SPARK_SQL:
+                workConfig.setScript("select now()");
+                break;
             case WorkType.QUERY_JDBC_SQL:
             case WorkType.EXECUTE_JDBC_SQL:
             case WorkType.SPARK_CONTAINER_SQL:
