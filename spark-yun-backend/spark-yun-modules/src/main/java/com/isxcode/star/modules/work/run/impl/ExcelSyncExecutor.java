@@ -303,7 +303,7 @@ public class ExcelSyncExecutor extends WorkExecutor {
 
         // 导入自定义函数
         String fileDir = PathUtils.parseProjectPath(isxAppProperties.getResourcesPath()) + File.separator + "file"
-            + File.separator + TENANT_ID.get();
+            + File.separator + file.getTenantId();
         if (workRunContext.getFuncConfig() != null) {
             List<FuncEntity> allFunc = funcRepository.findAllById(workRunContext.getFuncConfig());
             allFunc.forEach(e -> {
