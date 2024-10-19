@@ -1,11 +1,13 @@
 package com.isxcode.star.modules.work.mapper;
 
 import com.alibaba.fastjson.JSON;
+import com.isxcode.star.api.instance.pojos.dto.WorkInstanceDto;
 import com.isxcode.star.api.instance.pojos.res.QueryInstanceRes;
 import com.isxcode.star.api.work.pojos.req.AddWorkReq;
 import com.isxcode.star.api.work.pojos.req.UpdateWorkReq;
 import com.isxcode.star.api.work.pojos.res.PageWorkRes;
 import com.isxcode.star.modules.work.entity.WorkEntity;
+import com.isxcode.star.modules.work.entity.WorkInstanceEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -29,4 +31,9 @@ public interface WorkMapper {
 
         return JSON.parseObject(JSON.toJSONString(map), QueryInstanceRes.class);
     }
+
+    @Mapping(target = "startDateTime", source = "execStartDateTime")
+    @Mapping(target = "endDateTime", source = "execEndDateTime")
+    @Mapping(target = "type", source = "instanceType")
+    WorkInstanceDto workInstanceEntity2WorkInstanceVo(WorkInstanceEntity workInstanceEntity);
 }

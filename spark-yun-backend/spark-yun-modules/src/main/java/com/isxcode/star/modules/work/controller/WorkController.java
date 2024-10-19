@@ -1,6 +1,8 @@
 package com.isxcode.star.modules.work.controller;
 
+import com.isxcode.star.api.instance.pojos.req.GetWorkflowInstanceReq;
 import com.isxcode.star.api.instance.pojos.req.QueryInstanceReq;
+import com.isxcode.star.api.instance.pojos.res.GetWorkflowInstanceRes;
 import com.isxcode.star.api.instance.pojos.res.QueryInstanceRes;
 import com.isxcode.star.api.main.constants.ModuleCode;
 import com.isxcode.star.api.user.constants.RoleType;
@@ -16,10 +18,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
@@ -226,4 +225,12 @@ public class WorkController {
         return workBizService.queryInstance(woiQueryInstanceReq);
     }
 
+    @Operation(summary = "查询单个作业流实例信息接口")
+    @PostMapping("/getWorkflowInstance")
+    @SuccessResponse("查询成功")
+    public GetWorkflowInstanceRes getWorkflowInstance(
+        @Valid @RequestBody GetWorkflowInstanceReq wfiGetWorkflowInstanceReq) {
+
+        return workBizService.getWorkflowInstance(wfiGetWorkflowInstanceReq);
+    }
 }

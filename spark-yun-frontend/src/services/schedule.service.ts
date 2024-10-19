@@ -44,7 +44,7 @@ export function GetScheduleWorkFlowList(params: SerchParams): Promise<any> {
 export function GetScheduleDetail(params: workflowInstanceId): Promise<any> {
   return http.request({
     method: 'post',
-    url: '/vip/workflow-instance/getWorkflowInstance',
+    url: '/work/getWorkflowInstance',
     params: params
   })
 }

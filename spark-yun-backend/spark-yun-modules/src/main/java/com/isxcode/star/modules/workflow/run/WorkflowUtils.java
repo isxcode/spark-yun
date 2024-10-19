@@ -161,6 +161,16 @@ public class WorkflowUtils {
             .workName(event.getWorkName()).workId(workVersion.getId()).build();
     }
 
+    public static WorkRunContext genWorkRunContext(VipWorkVersionEntity workVersion) {
+
+        return WorkRunContext.builder().workId(workVersion.getWorkId())
+            .clusterConfig(JSON.parseObject(workVersion.getClusterConfig(), ClusterConfig.class))
+            .datasourceId(workVersion.getDatasourceId()).userId(USER_ID.get()).tenantId(TENANT_ID.get())
+            .script(workVersion.getScript()).workType(workVersion.getWorkType())
+            .syncRule(JSON.parseObject(workVersion.getSyncRule(), SyncRule.class)).versionId(workVersion.getId())
+            .build();
+    }
+
     /**
      * 获取所有下游的节点id.
      */
