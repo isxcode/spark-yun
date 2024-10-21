@@ -47,7 +47,7 @@ export const colConfigs: colConfig[] = [
   {
     prop: 'id',
     title: '实例ID',
-    minWidth: 158,
+    minWidth: 180,
     showOverflowTooltip: true
   },
   {
@@ -136,7 +136,8 @@ export const colConfigsWorkflow: colConfig[] = [
   {
     prop: 'workflowInstanceId',
     title: '实例ID',
-    minWidth: 158,
+    customSlot: 'nameSlot',
+    minWidth: 180,
     showOverflowTooltip: true
   },
   {
