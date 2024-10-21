@@ -195,6 +195,7 @@ onMounted(() => {
   .vm-list__more {
     transform: rotate(90deg);
     cursor: pointer;
+    margin-top: 4px;
 
     &:hover {
       color: getCssVar('color', 'primary');
