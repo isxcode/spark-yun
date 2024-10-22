@@ -52,7 +52,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { onMounted, onUnmounted, ref } from 'vue'
 import VmStatus from './vm-status.vue';
 import PersonTag from './person-tag.vue';
 import { ComputeInstance, queryComputeInstances } from '../services/computer-group';
@@ -73,6 +73,7 @@ const paginationInfo = ref<{
   pageSize: 5
 })
 const dagDetailRef = ref()
+const timer = ref()
 
 function queryVmlistData() {
   queryComputeInstances({
@@ -124,8 +125,17 @@ function deleteWorkflowSchedule(data: any) {
 
 onMounted(() => {
   queryVmlistData()
+  timer.value = setInterval(() => {
+    queryVmlistData()
+  }, 3000)
 })
 
+onUnmounted(() => {
+  if (timer.value) {
+    clearInterval(timer.value)
+  }
+  timer.value = null
+})
 </script>
 
 <style lang="scss">

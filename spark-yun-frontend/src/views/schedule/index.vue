@@ -152,9 +152,6 @@
                 <span class="click-show-more">更多</span>
                 <template #dropdown>
                   <el-dropdown-menu>
-                    <el-dropdown-item @click="backToWorkflowIns(scopeSlot.row)">
-                      关联作业流实例
-                    </el-dropdown-item>
                     <el-dropdown-item
                       v-if="['SPARK_SQL', 'DATA_SYNC_JDBC', 'BASH', 'PYTHON', 'EXCEL_SYNC_JDBC'].includes(scopeSlot.row.workType)"
                       @click="showDetailModal(scopeSlot.row, 'yarnLog')"
@@ -181,6 +178,9 @@
                     </el-dropdown-item>
                     <el-dropdown-item @click="deleteSchedule(scopeSlot.row)">
                       删除
+                    </el-dropdown-item>
+                    <el-dropdown-item @click="backToWorkflowIns(scopeSlot.row)">
+                      跳转实例
                     </el-dropdown-item>
                   </el-dropdown-menu>
                 </template>
@@ -529,7 +529,7 @@ function redirectWork(e: any) {
 // 跳转回作业流实例
 function backToWorkflowIns(e: any) {
   tableType.value = 'workflow'
-  keyword.value = e.id
+  keyword.value = e.workflowInstanceId
   workflowId.value = ''
 
   tableConfigWorkFlow.pagination.currentPage = 1
