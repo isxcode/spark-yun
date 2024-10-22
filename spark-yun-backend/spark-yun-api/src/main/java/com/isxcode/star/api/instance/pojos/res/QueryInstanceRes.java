@@ -35,4 +35,7 @@ public class QueryInstanceRes {
     private LocalDateTime planStartDateTime;
 
     private Long duration;
+
+    private String workflowInstanceId;
+
 }
