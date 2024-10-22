@@ -99,7 +99,7 @@ EOF
   fi
   # 如果用户没有配置免密,帮他配置
   if ! grep -q "$(cat ~/.ssh/id_rsa.pub)" ~/.ssh/authorized_keys; then
-    sleep 2
+    sleep 5
     cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
     chmod 0600 ~/.ssh/authorized_keys
   fi
