@@ -593,7 +593,7 @@ public class WorkflowBizService {
             workflowService.getWorkflowInstance(reRunFlowReq.getWorkflowInstanceId());
         if (!InstanceType.INVOKE.equals(workflowInstance.getInstanceType())
             && !InstanceType.AUTO.equals(workflowInstance.getInstanceType())) {
-            throw new IsxAppException("只有发布的作业才可以重跑");
+            throw new IsxAppException("只有发布调度的作业，才支持重跑");
         }
 
         // 先中止作业
