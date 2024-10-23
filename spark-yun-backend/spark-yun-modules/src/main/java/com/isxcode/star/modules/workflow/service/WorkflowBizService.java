@@ -591,10 +591,6 @@ public class WorkflowBizService {
         // 只有发布后的作业才能调度
         WorkflowInstanceEntity workflowInstance =
             workflowService.getWorkflowInstance(reRunFlowReq.getWorkflowInstanceId());
-        if (!InstanceType.INVOKE.equals(workflowInstance.getInstanceType())
-            && !InstanceType.AUTO.equals(workflowInstance.getInstanceType())) {
-            throw new IsxAppException("只有发布调度的作业，才支持重跑");
-        }
 
         // 先中止作业
         // 将所有的PENDING作业实例，改为ABORT
@@ -623,6 +619,7 @@ public class WorkflowBizService {
         } else {
             workflowInstance.setStatus(InstanceStatus.ABORTING);
         }
+        workflowInstance.setExecStartDateTime(new Date());
         workflowInstanceRepository.saveAndFlush(workflowInstance);
 
         // 异步调用中止作业的方法
@@ -666,8 +663,19 @@ public class WorkflowBizService {
             workflowInstanceRepository.saveAndFlush(workflowInstance2);
 
             // 获取配置工作流配置信息
-            WorkflowVersionEntity workflowVersion = workflowVersionRepository.findById(workflowInstance.getVersionId())
-                .orElseThrow(() -> new IsxAppException("实例不存在"));
+            WorkflowVersionEntity workflowVersion;
+            if (InstanceType.MANUAL.equals(workflowInstance.getInstanceType())) {
+                WorkflowEntity workflow = workflowRepository.findById(workflowInstance.getFlowId()).get();
+                WorkflowConfigEntity workflowConfig = workflowConfigRepository.findById(workflow.getConfigId()).get();
+                workflowVersion = new WorkflowVersionEntity();
+                workflowVersion.setDagStartList(workflowConfig.getDagStartList());
+                workflowVersion.setDagEndList(workflowConfig.getDagEndList());
+                workflowVersion.setNodeMapping(workflowConfig.getNodeMapping());
+                workflowVersion.setNodeList(workflowConfig.getNodeList());
+            } else {
+                workflowVersion = workflowVersionRepository.findById(workflowInstance.getVersionId())
+                    .orElseThrow(() -> new IsxAppException("实例不存在"));
+            }
 
             // 清理锁
             locker.clearLock(reRunFlowReq.getWorkflowInstanceId());
@@ -680,7 +688,8 @@ public class WorkflowBizService {
                     .dagEndList(JSON.parseArray(workflowVersion.getDagEndList(), String.class)).dagStartList(startNodes)
                     .flowInstanceId(workflowInstance.getId())
                     .nodeMapping(
-                        JSON.parseObject(workflowVersion.getNodeMapping(), new TypeReference<List<List<String>>>() {}))
+                        JSON.parseObject(workflowVersion.getNodeMapping(), new TypeReference<List<List<String>>>() {
+                        }))
                     .nodeList(JSON.parseArray(workflowVersion.getNodeList(), String.class)).tenantId(TENANT_ID.get())
                     .userId(USER_ID.get()).build();
                 eventPublisher.publishEvent(metaEvent);
@@ -703,7 +712,8 @@ public class WorkflowBizService {
 
         // 将下游所有节点，全部状态改为PENDING
         List<List<String>> nodeMapping =
-            JSON.parseObject(workflowConfig.getNodeMapping(), new TypeReference<List<List<String>>>() {});
+            JSON.parseObject(workflowConfig.getNodeMapping(), new TypeReference<List<List<String>>>() {
+            });
 
         WorkEntity work = workRepository.findById(workInstance.getWorkId()).get();
         List<String> afterWorkIds = WorkflowUtils.parseAfterNodes(nodeMapping, work.getId());
