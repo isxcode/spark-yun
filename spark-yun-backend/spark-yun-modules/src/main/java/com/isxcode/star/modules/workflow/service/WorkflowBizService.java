@@ -688,8 +688,7 @@ public class WorkflowBizService {
                     .dagEndList(JSON.parseArray(workflowVersion.getDagEndList(), String.class)).dagStartList(startNodes)
                     .flowInstanceId(workflowInstance.getId())
                     .nodeMapping(
-                        JSON.parseObject(workflowVersion.getNodeMapping(), new TypeReference<List<List<String>>>() {
-                        }))
+                        JSON.parseObject(workflowVersion.getNodeMapping(), new TypeReference<List<List<String>>>() {}))
                     .nodeList(JSON.parseArray(workflowVersion.getNodeList(), String.class)).tenantId(TENANT_ID.get())
                     .userId(USER_ID.get()).build();
                 eventPublisher.publishEvent(metaEvent);
@@ -712,8 +711,7 @@ public class WorkflowBizService {
 
         // 将下游所有节点，全部状态改为PENDING
         List<List<String>> nodeMapping =
-            JSON.parseObject(workflowConfig.getNodeMapping(), new TypeReference<List<List<String>>>() {
-            });
+            JSON.parseObject(workflowConfig.getNodeMapping(), new TypeReference<List<List<String>>>() {});
 
         WorkEntity work = workRepository.findById(workInstance.getWorkId()).get();
         List<String> afterWorkIds = WorkflowUtils.parseAfterNodes(nodeMapping, work.getId());
