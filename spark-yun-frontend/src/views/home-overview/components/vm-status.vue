@@ -6,8 +6,17 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import { VmData } from './component'
+
+const status = ref({
+  SUCCESS: '成功',
+  FAIL: '失败',
+  ABORT: '已中止',
+  ABORTING: '中止中',
+  RUNNING: '运行中',
+  PENDING: '等待中'
+})
 
 const props = withDefaults(defineProps<{
   status: VmData['status']
@@ -25,7 +34,7 @@ const vmStatusClass = computed(() => {
 const vmStatus = computed<{ status: VmData['status'], name: string }>(() => {
   return {
     status: props.status,
-    name: props.status === 'FAIL' ? '失败' : '成功'
+    name: status.value[props.status]
   }
 })
 
@@ -48,6 +57,30 @@ const vmStatus = computed<{ status: VmData['status'], name: string }>(() => {
     color: #FA541C;
     .vm-status__pointer {
       background-color: #FA541C;
+    }
+  }
+  &.is-abort {
+    color: #9f26e1;
+    .vm-status__pointer {
+      background-color: #9f26e1;
+    }
+  }
+  &.is-aborting {
+    color: #b2b2b2;
+    .vm-status__pointer {
+      background-color: #b2b2b2;
+    }
+  }
+  &.is-running {
+    color: #1890ff;
+    .vm-status__pointer {
+      background-color: #1890ff;
+    }
+  }
+  &.is-pending {
+    color: #F5B041;
+    .vm-status__pointer {
+      background-color: #F5B041;
     }
   }
 
