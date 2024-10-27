@@ -69,7 +69,7 @@ function getShareFormUrl() {
         validDay: validDay.value
     }).then((res: any) => {
         // token.value = res.data.token
-        // loading.value = false
+        loading.value = false
         // const params = {
         //     formId: cardInfo.value.id,
         //     formVersion: cardInfo.value.formVersion,
@@ -78,6 +78,7 @@ function getShareFormUrl() {
         // }
         url.value = `${location.origin}/share/${res.data.formLinkId}`
     }).catch(() => {
+        loading.value = false
     })
 }
 
