@@ -31,7 +31,7 @@ export interface TableConfig {
 
 export const BreadCrumbList: Array<BreadCrumb> = [
     {
-        name: '元数据管理',
+        name: '数据地图',
         code: 'metadata-management'
     }
 ]

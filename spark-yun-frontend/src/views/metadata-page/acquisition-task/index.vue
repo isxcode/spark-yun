@@ -3,7 +3,7 @@
     <div class="zqy-seach-table message-notification">
         <div class="zqy-table-top">
             <el-button type="primary" @click="addData">
-                新增采集
+                添加采集
             </el-button>
             <div class="zqy-seach">
                 <el-input v-model="keyword" placeholder="请输入搜索条件 回车进行搜索" :maxlength="200" clearable @input="inputEvent"
