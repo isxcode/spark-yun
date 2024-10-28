@@ -6,6 +6,7 @@ import com.isxcode.star.api.datasource.pojos.dto.ConnectInfo;
 import com.isxcode.star.api.work.constants.WorkLog;
 import com.isxcode.star.api.work.constants.WorkType;
 import com.isxcode.star.api.work.exceptions.WorkRunException;
+import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.star.modules.alarm.service.AlarmService;
 import com.isxcode.star.modules.datasource.entity.DatasourceEntity;
 import com.isxcode.star.modules.datasource.mapper.DatasourceMapper;
@@ -200,7 +201,7 @@ public class QuerySqlExecutor extends WorkExecutor {
             logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("数据保存成功  \n");
             workInstance.setResultData(JSON.toJSONString(result));
             updateInstance(workInstance, logBuilder);
-        } catch (WorkRunException e) {
+        } catch (WorkRunException | IsxAppException e) {
             throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + e.getMsg() + "\n");
         } catch (Exception e) {
             log.error(e.getMessage(), e);
