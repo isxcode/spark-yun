@@ -118,7 +118,7 @@ public class ExecuteSqlExecutor extends WorkExecutor {
 
             // 清除脚本中的脏数据
             List<String> sqls =
-                Arrays.stream(script.split(";")).filter(e -> !Strings.isEmpty(e)).collect(Collectors.toList());
+                Arrays.stream(script.split(";")).filter(Strings::isNotBlank).collect(Collectors.toList());
 
             // 逐条执行sql
             for (String sql : sqls) {
