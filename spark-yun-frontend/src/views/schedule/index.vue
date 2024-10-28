@@ -20,6 +20,21 @@
             :value="item.value"
           />
         </el-select>
+        <el-select
+          v-if="tableType === 'workflow'"
+          class="workflow-search"
+          v-model="workflowId"
+          clearable
+          placeholder="请选择工作流进行搜索"
+          @change="initData(false)"
+        >
+          <el-option
+            v-for="item in workFlowList"
+            :key="item.id"
+            :label="item.name"
+            :value="item.id"
+          />
+        </el-select>
       </div>
       <div class="zqy-seach">
         <el-input
@@ -43,6 +58,12 @@
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
         >
+          <template #nameSlot="scopeSlot">
+            <span
+              class="name-click"
+              @click="redirectWork(scopeSlot.row)"
+            >{{ scopeSlot.row.workflowInstanceId }}</span>
+          </template>
           <template #instanceTypeTag="scopeSlot">
             <div class="btn-group">
               <el-tag
@@ -158,6 +179,9 @@
                     <el-dropdown-item @click="deleteSchedule(scopeSlot.row)">
                       删除
                     </el-dropdown-item>
+                    <el-dropdown-item @click="backToWorkflowIns(scopeSlot.row)">
+                      跳转实例
+                    </el-dropdown-item>
                   </el-dropdown-menu>
                 </template>
               </el-dropdown>
@@ -203,7 +227,7 @@ import DagDetail from './dag-detail/index.vue'
 import { BreadCrumbList, TableConfig, TableConfigWorkFlow } from './schedule.config'
 import { GetScheduleList, DeleteScheduleLog, ReStartRunning, GetScheduleWorkFlowList, DeleteWorkFlowScheduleLog } from '@/services/schedule.service'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { ReRunWorkflow, StopWorkflowData, TerWorkItemConfig } from '@/services/workflow.service'
+import { GetWorkflowList, ReRunWorkflow, StopWorkflowData, TerWorkItemConfig } from '@/services/workflow.service'
 import { TypeList } from '../workflow/workflow.config'
 
 const breadCrumbList = reactive(BreadCrumbList)
@@ -243,6 +267,8 @@ const typeList = ref([
     value: 'PENDING',
   }
 ])
+const workFlowList = ref([])
+const workflowId = ref('')
 
 function initData(tableLoading?: boolean, type?: string) {
   loading.value = tableLoading ? false : true
@@ -252,6 +278,7 @@ function initData(tableLoading?: boolean, type?: string) {
       page: tableConfigWorkFlow.pagination.currentPage - 1,
       pageSize: tableConfigWorkFlow.pagination.pageSize,
       searchKeyWord: keyword.value,
+      workflowId: workflowId.value,
       executeStatus: executeStatus.value
     }).then((res: any) => {
       if (type) {
@@ -321,11 +348,26 @@ function initData(tableLoading?: boolean, type?: string) {
 }
 
 function changeTypeEvent() {
+  keyword.value = ''
+  workflowId.value = ''
+
   tableConfigWorkFlow.pagination.currentPage = 1
   tableConfigWorkFlow.pagination.pageSize = 10
   tableConfig.pagination.currentPage = 1
   tableConfig.pagination.pageSize = 10
   initData()
+}
+
+function getWorkFlows() {
+  GetWorkflowList({
+    page: 0,
+    pageSize: 100000,
+    searchKeyWord: ''
+  }).then((res: any) => {
+    workFlowList.value = res.data.content
+  }).catch(() => {
+    workFlowList.value = []
+  })
 }
 
 function showDetailModal(data: any, type: string) {
@@ -471,10 +513,38 @@ function formatSeconds(value: number) {
   return time;
 }
 
+// 跳转到作业页面
+function redirectWork(e: any) {
+  tableType.value = 'work'
+  keyword.value = e.workflowInstanceId
+  workflowId.value = ''
+
+  tableConfigWorkFlow.pagination.currentPage = 1
+  tableConfigWorkFlow.pagination.pageSize = 10
+  tableConfig.pagination.currentPage = 1
+  tableConfig.pagination.pageSize = 10
+  initData()
+}
+
+// 跳转回作业流实例
+function backToWorkflowIns(e: any) {
+  tableType.value = 'workflow'
+  keyword.value = e.workflowInstanceId
+  workflowId.value = ''
+
+  tableConfigWorkFlow.pagination.currentPage = 1
+  tableConfigWorkFlow.pagination.pageSize = 10
+  tableConfig.pagination.currentPage = 1
+  tableConfig.pagination.pageSize = 10
+  initData()
+}
+
 onMounted(() => {
   if (!tableType.value) {
     tableType.value = 'workflow'
   }
+
+  getWorkFlows()
 
   tableConfigWorkFlow.pagination.currentPage = 1
   tableConfigWorkFlow.pagination.pageSize = 10
@@ -503,6 +573,10 @@ onUnmounted(() => {
         .el-radio-button__inner {
           font-size: getCssVar('font-size', 'extra-small');
         }
+      }
+
+      .workflow-search {
+        margin-left: 12px;
       }
     }
     .zqy-seach {

@@ -7,6 +7,7 @@ import static com.isxcode.star.common.config.CommonConfig.*;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.isxcode.star.api.instance.constants.InstanceStatus;
+import com.isxcode.star.api.instance.constants.InstanceType;
 import com.isxcode.star.api.instance.pojos.ao.WorkflowInstanceAo;
 import com.isxcode.star.api.instance.pojos.req.QueryWorkFlowInstancesReq;
 import com.isxcode.star.api.instance.pojos.res.QueryWorkFlowInstancesRes;
@@ -46,14 +47,12 @@ import com.isxcode.star.modules.work.repository.WorkRepository;
 import com.isxcode.star.modules.work.run.WorkExecutor;
 import com.isxcode.star.modules.work.run.WorkExecutorFactory;
 import com.isxcode.star.modules.work.run.WorkRunContext;
-import com.isxcode.star.modules.workflow.entity.WorkflowConfigEntity;
-import com.isxcode.star.modules.workflow.entity.WorkflowEntity;
-import com.isxcode.star.modules.workflow.entity.WorkflowExportInfo;
-import com.isxcode.star.modules.workflow.entity.WorkflowInstanceEntity;
+import com.isxcode.star.modules.workflow.entity.*;
 import com.isxcode.star.modules.workflow.mapper.WorkflowMapper;
 import com.isxcode.star.modules.workflow.repository.WorkflowConfigRepository;
 import com.isxcode.star.modules.workflow.repository.WorkflowInstanceRepository;
 import com.isxcode.star.modules.workflow.repository.WorkflowRepository;
+import com.isxcode.star.modules.workflow.repository.WorkflowVersionRepository;
 import com.isxcode.star.modules.workflow.run.WorkflowRunEvent;
 import com.isxcode.star.modules.workflow.run.WorkflowUtils;
 
@@ -116,6 +115,7 @@ public class WorkflowBizService {
 
     private final IsxAppProperties isxAppProperties;
     private final UserService userService;
+    private final WorkflowVersionRepository workflowVersionRepository;
 
     public void addWorkflow(AddWorkflowReq wofAddWorkflowReq) {
 
@@ -588,6 +588,10 @@ public class WorkflowBizService {
 
     public void reRunFlow(ReRunFlowReq reRunFlowReq) {
 
+        // 只有发布后的作业才能调度
+        WorkflowInstanceEntity workflowInstance =
+            workflowService.getWorkflowInstance(reRunFlowReq.getWorkflowInstanceId());
+
         // 先中止作业
         // 将所有的PENDING作业实例，改为ABORT
         List<WorkInstanceEntity> pendingWorkInstances = workInstanceRepository
@@ -608,10 +612,6 @@ public class WorkflowBizService {
         });
         workInstanceRepository.saveAll(runningWorkInstances);
 
-        // 初始化工作流实例状态
-        WorkflowInstanceEntity workflowInstance =
-            workflowInstanceRepository.findById(reRunFlowReq.getWorkflowInstanceId()).get();
-
         // 如果作业流状态是成功或者失败，直接改成运行中
         if (InstanceStatus.SUCCESS.equals(workflowInstance.getStatus())
             || InstanceStatus.FAIL.equals(workflowInstance.getStatus())) {
@@ -619,6 +619,7 @@ public class WorkflowBizService {
         } else {
             workflowInstance.setStatus(InstanceStatus.ABORTING);
         }
+        workflowInstance.setExecStartDateTime(new Date());
         workflowInstanceRepository.saveAndFlush(workflowInstance);
 
         // 异步调用中止作业的方法
@@ -662,22 +663,33 @@ public class WorkflowBizService {
             workflowInstanceRepository.saveAndFlush(workflowInstance2);
 
             // 获取配置工作流配置信息
-            WorkflowEntity workflow = workflowRepository.findById(workflowInstance.getFlowId()).get();
-            WorkflowConfigEntity workflowConfig = workflowConfigRepository.findById(workflow.getConfigId()).get();
+            WorkflowVersionEntity workflowVersion;
+            if (InstanceType.MANUAL.equals(workflowInstance.getInstanceType())) {
+                WorkflowEntity workflow = workflowRepository.findById(workflowInstance.getFlowId()).get();
+                WorkflowConfigEntity workflowConfig = workflowConfigRepository.findById(workflow.getConfigId()).get();
+                workflowVersion = new WorkflowVersionEntity();
+                workflowVersion.setDagStartList(workflowConfig.getDagStartList());
+                workflowVersion.setDagEndList(workflowConfig.getDagEndList());
+                workflowVersion.setNodeMapping(workflowConfig.getNodeMapping());
+                workflowVersion.setNodeList(workflowConfig.getNodeList());
+            } else {
+                workflowVersion = workflowVersionRepository.findById(workflowInstance.getVersionId())
+                    .orElseThrow(() -> new IsxAppException("实例不存在"));
+            }
 
             // 清理锁
             locker.clearLock(reRunFlowReq.getWorkflowInstanceId());
 
             // 重新执行
-            List<String> startNodes = JSON.parseArray(workflowConfig.getDagStartList(), String.class);
+            List<String> startNodes = JSON.parseArray(workflowVersion.getDagStartList(), String.class);
             List<WorkEntity> startNodeWorks = workRepository.findAllByWorkIds(startNodes);
             for (WorkEntity work : startNodeWorks) {
                 WorkflowRunEvent metaEvent = WorkflowRunEvent.builder().workId(work.getId()).workName(work.getName())
-                    .dagEndList(JSON.parseArray(workflowConfig.getDagEndList(), String.class)).dagStartList(startNodes)
+                    .dagEndList(JSON.parseArray(workflowVersion.getDagEndList(), String.class)).dagStartList(startNodes)
                     .flowInstanceId(workflowInstance.getId())
                     .nodeMapping(
-                        JSON.parseObject(workflowConfig.getNodeMapping(), new TypeReference<List<List<String>>>() {}))
-                    .nodeList(JSON.parseArray(workflowConfig.getNodeList(), String.class)).tenantId(TENANT_ID.get())
+                        JSON.parseObject(workflowVersion.getNodeMapping(), new TypeReference<List<List<String>>>() {}))
+                    .nodeList(JSON.parseArray(workflowVersion.getNodeList(), String.class)).tenantId(TENANT_ID.get())
                     .userId(USER_ID.get()).build();
                 eventPublisher.publishEvent(metaEvent);
             }
@@ -797,6 +809,7 @@ public class WorkflowBizService {
         JPA_TENANT_MODE.set(false);
         Page<WorkflowInstanceAo> workflowInstanceAoPage = workflowInstanceRepository.pageWorkFlowInstances(
             TENANT_ID.get(), queryWorkFlowInstancesReq.getSearchKeyWord(), queryWorkFlowInstancesReq.getExecuteStatus(),
+            queryWorkFlowInstancesReq.getWorkflowId(),
             PageRequest.of(queryWorkFlowInstancesReq.getPage(), queryWorkFlowInstancesReq.getPageSize()));
 
         return workflowInstanceAoPage.map(workflowMapper::wfiWorkflowInstanceAo2WfiQueryWorkFlowInstancesRes);

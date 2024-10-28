@@ -31,7 +31,7 @@ export interface TableConfig {
 
 export const BreadCrumbList: Array<BreadCrumb> = [
     {
-        name: '采集任务',
+        name: '数据采集',
         code: 'acquisition-task'
     }
 ]

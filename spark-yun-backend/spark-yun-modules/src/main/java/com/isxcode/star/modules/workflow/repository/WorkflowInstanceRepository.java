@@ -41,11 +41,12 @@ public interface WorkflowInstanceRepository extends JpaRepository<WorkflowInstan
         + "   WF.name," + "   W.duration," + "   W.nextPlanDateTime," + "   W.planStartDateTime,"
         + "   W.execStartDateTime," + "   W.execEndDateTime," + "   W.status," + "   W.instanceType) "
         + "from WorkflowInstanceEntity W left join WorkflowEntity WF on W.flowId = WF.id "
-        + " where ( WF.name LIKE %:keyword% OR W.id LIKE %:keyword% ) AND (:executeStatus is null or :executeStatus ='' or W.status=:executeStatus ) AND W.tenantId=:tenantId order by W.lastModifiedDateTime desc")
+        + " where ( WF.name LIKE %:keyword% OR W.id LIKE %:keyword% ) AND (:executeStatus is null or :executeStatus ='' or W.status=:executeStatus ) AND (:workflowId is null or :workflowId ='' or W.flowId=:workflowId ) AND W.tenantId=:tenantId order by W.lastModifiedDateTime desc")
     Page<WorkflowInstanceAo> pageWorkFlowInstances(@Param("tenantId") String tenantId,
-        @Param("keyword") String searchKeyWord, @Param("executeStatus") String executeStatus, Pageable pageable);
+        @Param("keyword") String searchKeyWord, @Param("executeStatus") String executeStatus,
+        @Param("workflowId") String workflowId, Pageable pageable);
 
-    @Query("SELECT new com.isxcode.star.api.monitor.pojos.ao.WorkflowMonitorAo( W.id,W1.name,W.duration,W.execStartDateTime,W.execEndDateTime,W.status,U.username ) from WorkflowInstanceEntity W left join WorkflowEntity W1 on W.flowId = W1.id left join UserEntity U on W.lastModifiedBy = U.id where W1.name like %:keyword% and W.tenantId=:tenantId order by W.status asc,W.lastModifiedDateTime desc")
+    @Query("SELECT new com.isxcode.star.api.monitor.pojos.ao.WorkflowMonitorAo( W.id,W1.name,W.duration,W.execStartDateTime,W.execEndDateTime,W.status,U.username ) from WorkflowInstanceEntity W left join WorkflowEntity W1 on W.flowId = W1.id left join UserEntity U on W.lastModifiedBy = U.id where W1.name like %:keyword% and W.tenantId=:tenantId order by W.lastModifiedDateTime desc")
     Page<WorkflowMonitorAo> searchWorkflowMonitor(@Param("tenantId") String tenantId,
         @Param("keyword") String searchKeyWord, Pageable pageable);
 

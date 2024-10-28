@@ -310,7 +310,7 @@ const weekDateList = ref<Option[]>([
 const dayList = ref()
 
 const modelConfig = reactive({
-  title: '测试',
+  title: '添加',
   visible: false,
   width: '520px',
   okConfig: {
@@ -440,7 +440,7 @@ function showModal(cb: () => void, data: any): void {
       }
       formData.collectType = 'ALL_TABLE'
     })
-    modelConfig.title = '新增'
+    modelConfig.title = '添加'
   }
 
   callback.value = cb
