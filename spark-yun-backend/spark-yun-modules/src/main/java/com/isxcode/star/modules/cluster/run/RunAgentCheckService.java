@@ -87,6 +87,10 @@ public class RunAgentCheckService {
         log.debug("远程返回值:{}", executeLog);
         AgentInfo agentCheckInfo = JSON.parseObject(executeLog, AgentInfo.class);
 
+        if (agentCheckInfo == null) {
+            return;
+        }
+
         // 保存服务器信息
         engineNode.setAllMemory(
             Double.parseDouble(Strings.isEmpty(agentCheckInfo.getAllMemory()) ? "0.0" : agentCheckInfo.getAllMemory()));
