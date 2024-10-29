@@ -22,7 +22,7 @@ tasks.register('build_agent_lib', Copy) {
 
     from rootDir.getAbsolutePath() + '/spark-yun-backend/spark-yun-api/build/libs'
     from rootDir.getAbsolutePath() + '/spark-yun-agent/build/libs'
-    from rootDir.getAbsolutePath() + '/resources/system'
+    from rootDir.getAbsolutePath() + '/resources/jdbc/system'
     into 'build/zhiqingyun-agent/lib'
 }
 
