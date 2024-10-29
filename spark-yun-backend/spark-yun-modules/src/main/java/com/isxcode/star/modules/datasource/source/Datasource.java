@@ -74,9 +74,8 @@ public abstract class Datasource {
 
             // 获取驱动路径
             String driverPath = PathUtils.parseProjectPath(isxAppProperties.getResourcesPath()) + File.separator
-                + "jdbc" + File.separator
                 + ("TENANT_DRIVER".equals(driverEntity.getDriverType())
-                    ? driverEntity.getTenantId() + File.separator + driverEntity.getFileName()
+                    ? "jdbc" + File.separator + driverEntity.getTenantId() + File.separator + driverEntity.getFileName()
                     : "system" + File.separator + driverEntity.getFileName());
 
             // 先加载驱动到ALL_EXIST_DRIVER
