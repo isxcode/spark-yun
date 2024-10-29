@@ -22,7 +22,7 @@ tasks.register('build_agent_lib', Copy) {
 
     from rootDir.getAbsolutePath() + '/spark-yun-backend/spark-yun-api/build/libs'
     from rootDir.getAbsolutePath() + '/spark-yun-agent/build/libs'
-    from rootDir.getAbsolutePath() + '/resources/jdbc/system'
+    from rootDir.getAbsolutePath() + '/resources/system'
     into 'build/zhiqingyun-agent/lib'
 }
 
@@ -100,8 +100,8 @@ tasks.register('build_zhiqingyun', Tar) {
     from(rootDir.getAbsolutePath() + '/spark-yun-backend/spark-yun-main/src/main/resources/application-local.yml') {
         into 'zhiqingyun/conf'
     }
-    from(rootDir.getAbsolutePath() + '/resources/jdbc/system') {
-        into 'zhiqingyun/resources/jdbc/system'
+    from(rootDir.getAbsolutePath() + '/resources/system') {
+        into 'zhiqingyun/resources/system'
     }
     from(rootDir.getAbsolutePath() + '/spark-yun-backend/spark-yun-main/build/libs/zhiqingyun.jar') {
         into 'zhiqingyun/lib'

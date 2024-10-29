@@ -121,7 +121,7 @@ if [ ! -f "${SPARK_JAR_DIR}"/HikariCP-4.0.3.jar ]; then
 fi
 
 # 创建系统驱动目录
-JDBC_DIR="${BASE_PATH}"/resources/jdbc/system
+JDBC_DIR="${BASE_PATH}"/resources/system
 if [ ! -d "${JDBC_DIR}" ]; then
     mkdir -p "${JDBC_DIR}"
 fi
