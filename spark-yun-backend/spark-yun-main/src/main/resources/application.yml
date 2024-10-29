@@ -19,6 +19,14 @@ spring:
   main:
     banner-mode: log
 
+  web:
+    resources:
+      chain:
+        cache: true
+        compressed: true
+      cache:
+        period: 31536000 # 单位秒，默认缓存365天
+
   servlet:
     multipart:
       max-file-size: 100MB
