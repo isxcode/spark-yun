@@ -58,6 +58,10 @@ docker run -p 8080:8080 -d isxcode/zhiqingyun
 
 ### 源码构建
 
+> 注意！编译环境，需提前安装nodejs和java，推荐版本如下: </br>
+> Java: zulu8.78.0.19-ca-jdk8.0.412-x64 </br>
+> Nodejs: node-v18.20.3-x64
+
 ##### mac/linux
 
 > 打包路径: spark-yun/spark-yun-dist/build/distributions/zhiqingyun.tar.gz

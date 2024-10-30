@@ -1,5 +1,5 @@
 ---
-title: "问题"
+title: "Q&A"
 ---
 
 #### 问题1
@@ -277,3 +277,114 @@ Caused by: org.apache.hadoop.ipc.RemoteException(org.apache.hadoop.security.Acce
 
 ![20240824181909](https://img.isxcode.com/picgo/20240824181909.png)
 
+
+#### 问题9
+
+> 麒麟V10系统兼容
+
+```log
+Caused by: java.io.IOException: ObjectIdentifier() -- data isn't an object ID (tag = 48)
+        at sun.security.util.ObjectIdentifier.<init>(ObjectIdentifier.java:285) ~[na:1.8.0_272]
+        at sun.security.util.DerInputStream.getOID(DerInputStream.java:320) ~[na:1.8.0_272]
+        at com.sun.crypto.provider.PBES2Parameters.engineInit(PBES2Parameters.java:267) ~[sunjce_provider.jar:1.8.0_272]
+        at java.security.AlgorithmParameters.init(AlgorithmParameters.java:293) ~[na:1.8.0_272]
+        at global.namespace.truelicense.v4.V4Encryption.param(V4Encryption.java:64) ~[truelicense-v4-4.0.3.jar!/:na]
+        at global.namespace.truelicense.v4.V4Encryption.lambda$input$1(V4Encryption.java:52) ~[truelicense-v4-4.0.3.jar!/:na]
+        at global.namespace.fun.io.api.Socket.lambda$map$0(Socket.java:138) ~[fun-io-api-2.3.0.jar!/:2.3.0]
+        at global.namespace.fun.io.api.Socket.lambda$map$0(Socket.java:136) ~[fun-io-api-2.3.0.jar!/:2.3.0]
+        at global.namespace.fun.io.api.Socket.lambda$map$0(Socket.java:136) ~[fun-io-api-2.3.0.jar!/:2.3.0]
+        at global.namespace.fun.io.api.Socket.lambda$map$0(Socket.java:136) ~[fun-io-api-2.3.0.jar!/:2.3.0]
+        at global.namespace.truelicense.core.Filters$1.lambda$input$1(Filters.java:51) ~[truelicense-core-4.0.3.jar!/:na]
+        at global.namespace.fun.io.api.Socket.apply(Socket.java:123) ~[fun-io-api-2.3.0.jar!/:2.3.0]
+        at global.namespace.fun.io.jackson.JsonCodec$1.decode(JsonCodec.java:44) ~[fun-io-jackson-2.3.0.jar!/:2.3.0]
+        at global.namespace.truelicense.core.TrueLicenseManagementContext$TrueLicenseManagerParameters$TrueLicenseManager.repositoryModel(TrueLicenseManagementContext.java:810) ~[truelicense-core-4.0.3.jar!/:na]
+        at global.namespace.truelicense.core.TrueLicenseManagementContext$TrueLicenseManagerParameters$TrueLicenseManager.repositoryController(TrueLicenseManagementContext.java:804) ~[truelicense-core-4.0.3.jar!/:na]
+        at global.namespace.truelicense.core.TrueLicenseManagementContext$TrueLicenseManagerParameters$TrueLicenseManager.authenticate(TrueLicenseManagementContext.java:800) ~[truelicense-core-4.0.3.jar!/:na]
+        at global.namespace.truelicense.core.TrueLicenseManagementContext$TrueLicenseManagerParameters$CachingLicenseManager.authenticate(TrueLicenseManagementContext.java:673) ~[truelicense-core-4.0.3.jar!/:na]
+        at global.namespace.truelicense.core.TrueLicenseManagementContext$TrueLicenseManagerParameters$TrueLicenseManager.decodeLicense(TrueLicenseManagementContext.java:796) ~[truelicense-core-4.0.3.jar!/:na]
+        at global.namespace.truelicense.core.TrueLicenseManagementContext$TrueLicenseManagerParameters$TrueLicenseManager.lambda$install$1(TrueLicenseManagementContext.java:750) ~[truelicense-core-4.0.3.jar!/:na]
+        at global.namespace.truelicense.core.TrueLicenseManagementContext.callChecked(TrueLicenseManagementContext.java:79) ~[truelicense-core-4.0.3.jar!/:na]
+```
+
+```text
+麒麟系统本地不兼容java版本，本地的java版本不匹配，重新指定一个JAVA_HOME，推荐使用java1.8
+```
+
+```bash
+vim /opt/zhiqingyun/conf/zhiqingyun-env.sh
+```
+
+```bash
+export JAVA_HOME=/zulu/java
+```
+
+#### 问题10
+
+```log
+stop.sh:行2: $'\r'：未找到命令
+stop.sh: 第 5 行：cd: $'/tmp/zhiqingyun/bin\r': 没有那个文件或目录
+stop.sh:行5: $'exit\r'：未找到命令
+stop.sh:行7: $'\r'：未找到命令
+stop.sh:行21: 语法错误: 未预期的文件结尾
+```
+
+```text
+使用windows打的包，无法直接部署到linux系统，需要对bash脚本中的/r做兼容
+```
+
+```bash
+sed -i 's/\r//g' start.sh
+```
+
+#### 问题11
+
+> 界面访问空白，日志报错
+
+```log
+2024-10-22 10:03:24.402  INFO 1776  --- [nio-8080-exec-6] o.apache.coyote.http11.Http11Processor   : Error parsing HTTP request header
+ Note: further occurrences of HTTP request parsing errors will be logged at DEBUG level.
+
+java.lang.IllegalArgumentException: Invalid character found in method name [0x160x030x010x060xa00x010x000x060x9c0x030x030xa80xd80xa7u0xd2(0x8dJ0x1c0xa9P0xe9'"G0x150xc8Jil0x940x860x14[0x100x810xdd^0x90bZ4 ]. HTTP method names must be tokens
+        at org.apache.coyote.http11.Http11InputBuffer.parseRequestLine(Http11InputBuffer.java:419) ~[tomcat-embed-core-9.0.71.jar!/:na]
+        at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:271) ~[tomcat-embed-core-9.0.71.jar!/:na]
+        at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:65) [tomcat-embed-core-9.0.71.jar!/:na]
+        at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:891) [tomcat-embed-core-9.0.71.jar!/:na]
+        at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1784) [tomcat-embed-core-9.0.71.jar!/:na]
+        at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:49) [tomcat-embed-core-9.0.71.jar!/:na]
+        at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1191) [tomcat-embed-core-9.0.71.jar!/:na]
+        at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659) [tomcat-embed-core-9.0.71.jar!/:na]
+        at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61) [tomcat-embed-core-9.0.71.jar!/:na]
+        at java.lang.Thread.run(Thread.java:750) [na:1.8.0_412]
+```
+
+```text
+使用 http://127.0.0.1:8080，检查使用http访问，或者配置ssl证书
+```
+
+#### 问题12
+
+> 接口413
+
+```text
+Request failed with status code 413
+```
+
+```text
+出现这种错误，一般是nginx配置错误导致的，添加一下配置
+```
+
+```nginx
+http {
+  client_max_body_size 50M;
+}
+```
+
+#### 问题13
+
+> 项目启动无法下载gradle
+
+```log
+手动下载gradle安装包，解压到gradle默认路径 <USER_HOME>/.gradle/wrapper/dists
+```
+
+![20241022103809](https://img.isxcode.com/picgo/20241022103809.png)
