@@ -4,76 +4,60 @@ title: "Docker部署"
 
 ### Docker快速部署
 
-##### 1. 创建至轻云存储目录（可选）
+##### 国内用户
+
+> 国内用户选择以下地址，arm64多用于macOS系统用户，普通服务器x86选择latest-amd64版本 <br/>
 
 ```bash
-mkdir -p /Users/ispong/zhiqingyun
+docker run --name zhiqingyun -d registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun:latest-amd64 
+docker run --name zhiqingyun -d registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun:latest-arm64
 ```
 
-##### 2. 启动至轻云（可选）
+##### 启动至轻云
 
-> 国内用户选择以下地址，arm64多用于macOS系统用户，普通服务器选择latest-amd64版本 <br/>
-> docker run --name zhiqingyun -d registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun:latest-amd64 <br/>
-> docker run --name zhiqingyun -d registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun:latest-arm64
-
-```bash
-docker run --name zhiqingyun -d isxcode/zhiqingyun
-```
-
-##### 3. 将docker中的资源文件拷贝出来（可选）
+▪ `ADMIN_PASSWORD`: 启动后，密码会存入数据库中，再次启动容器以数据库为准，配置不生效。若想更改，需要删除数据库中的管理员密码重新登录即可。<br/>
+▪ `LOG_LEVEL`: 设置项目日志级别，例如info、debug。<br/>
+▪ `ACTIVE_ENV`: 设置项目启动环境配置文件，默认值docker。<br/>
+▪ `PARAMS`: spring项目相关配置。<br/>
+▪ `/var/lib/zhiqingyun`: /var/lib/zhiqingyun: 项目资源目录。<br/>
+▪ `/etc/zhiqingyun/conf`: /etc/zhiqingyun/conf: 配置文件目录。 
 
 ```bash
-docker cp zhiqingyun:/var/lib/zhiqingyun /Users/ispong/zhiqingyun
-```
-
-##### 4.将docker中的配置文件拷贝出来（可选）
-
-```bash
-docker cp zhiqingyun:/etc/zhiqingyun/conf /Users/ispong/zhiqingyun
-```
-
-##### 5.删除docker容器（可选）
-
-```bash
-docker stop zhiqingyun
-docker rm zhiqingyun
-```
-
-##### 6.重新启动至轻云
-
-> 参数说明
-
-▪ `ADMIN_PASSWORD`: admin账号密码，仅初次启动项目时生效,默认密码`admin123`<br/>
-▪ `LOG_LEVEL`: 日志级别设置，例如info、debug、error等 <br/>
-▪ `ACTIVE_ENV`: 配置文件，默认配置文件`docker` <br/>
-▪ `/var/lib/zhiqingyun`: 资源目录 <br/>
-▪ `/etc/zhiqingyun/conf`: 配置文件目录 <br/>
-
-```bash
-docker run --restart=always \
+docker run \
+    --restart=always \
     --name zhiqingyun\
     -e ADMIN_PASSWORD=admin123 \
     -v /Users/ispong/zhiqingyun/zhiqingyun:/var/lib/zhiqingyun \
-    -v /Users/ispong/zhiqingyun/conf:/etc/zhiqingyun/conf \
     -p 8080:8080 \
-    -d isxcode/zhiqingyun:latest
+    -d registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun:latest-amd64
 ```
-
-> 快速启动
-
-```bash
-docker run --restart=always \
-    --name zhiqingyun\
-    -p 8080:8080 \
-    -d isxcode/zhiqingyun:latest
-```
-
-##### 7. 访问项目
 
 ▪ 访问地址: http://localhost:8080 <br/>
 ▪ 管理员账号：`admin` <br/>
 ▪ 管理员密码：`admin123`
 
-##### 8. 上传许可证
+##### 修改配置
+
+默认配置文件模版 <br/>
+https://raw.githubusercontent.com/isxcode/spark-yun/refs/heads/main/spark-yun-backend/spark-yun-main/src/main/resources/application-docker.yml
+
+```bash
+vim /Users/ispong/zhiqingyun/conf/application-docker.yml
+```
+
+```bash
+docker run \
+    --restart=always \
+    --name zhiqingyun\
+    -e ADMIN_PASSWORD=admin123 \
+    -e LOG_LEVEL=info \
+    -e ACTIVE_ENV=docker \
+    -v /Users/ispong/zhiqingyun/zhiqingyun:/var/lib/zhiqingyun \
+    -v /Users/ispong/zhiqingyun/conf:/etc/zhiqingyun/conf \
+    -p 8080:8080 \
+    -d isxcode/zhiqingyun
+```
+
+##### 上传许可证
 
 [下载许可证链接](https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/license.lic)
