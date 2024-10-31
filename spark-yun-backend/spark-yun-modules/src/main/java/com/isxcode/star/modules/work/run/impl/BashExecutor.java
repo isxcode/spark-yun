@@ -82,8 +82,11 @@ public class BashExecutor extends WorkExecutor {
             throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "检测脚本失败 : BASH内容为空不能执行  \n");
         }
 
+        // 解析上游参数
+        String jsonPathSql = parseJsonPath(workRunContext.getScript(), workInstance);
+
         // 翻译脚本中的系统变量
-        String parseValueSql = sqlValueService.parseSqlValue(workRunContext.getScript());
+        String parseValueSql = sqlValueService.parseSqlValue(jsonPathSql);
 
         // 翻译脚本中的系统函数
         String script = sqlFunctionService.parseSqlFunction(parseValueSql);
