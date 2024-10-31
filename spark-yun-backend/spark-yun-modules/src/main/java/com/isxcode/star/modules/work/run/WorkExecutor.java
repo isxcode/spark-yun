@@ -11,14 +11,14 @@ import com.isxcode.star.api.work.exceptions.WorkRunException;
 import com.isxcode.star.modules.alarm.service.AlarmService;
 import com.isxcode.star.modules.work.entity.WorkInstanceEntity;
 import com.isxcode.star.modules.work.repository.WorkInstanceRepository;
+import com.isxcode.star.modules.work.sql.SqlFunctionService;
 import com.isxcode.star.modules.workflow.entity.WorkflowInstanceEntity;
 import com.isxcode.star.modules.workflow.repository.WorkflowInstanceRepository;
 
 import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
+import com.isxcode.star.modules.workflow.run.WorkflowUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
@@ -35,6 +35,8 @@ public abstract class WorkExecutor {
     private final WorkflowInstanceRepository workflowInstanceRepository;
 
     private final AlarmService alarmService;
+
+    private final SqlFunctionService sqlFunctionService;
 
     public abstract String getWorkType();
 
@@ -165,5 +167,30 @@ public abstract class WorkExecutor {
     public void syncAbort(WorkInstanceEntity workInstance) {
 
         this.abort(workInstance);
+    }
+
+    /**
+     * 翻译上游的jsonPath.
+     */
+    public String parseJsonPath(String value, WorkInstanceEntity workInstance) {
+
+        if (workInstance.getWorkflowInstanceId() == null) {
+            return value;
+        }
+
+        WorkflowInstanceEntity workflowInstanceEntity =
+            workflowInstanceRepository.findById(workInstance.getWorkflowInstanceId()).get();
+        List<List<String>> nodeMapping = WorkflowUtils.parseNodeMapping(workflowInstanceEntity.getWebConfig());
+        List<String> parentNodes = WorkflowUtils.getParentNodes(nodeMapping, workInstance.getWorkId());
+
+        // 查询父节点的实例列表
+        List<WorkInstanceEntity> parentInstances = workInstanceRepository
+            .findAllByWorkflowInstanceIdAndWorkIds(workInstance.getWorkflowInstanceId(), parentNodes);
+        for (WorkInstanceEntity e : parentInstances) {
+            value = value.replace("${qing." + e.getWorkId() + ".result_data}",
+                Base64.getEncoder().encodeToString(e.getResultData().getBytes()));
+        }
+
+        return sqlFunctionService.parseSqlFunction(value);
     }
 }

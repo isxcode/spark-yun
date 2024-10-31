@@ -118,7 +118,7 @@ public class SparkSqlExecutor extends WorkExecutor {
         SqlValueService sqlValueService, SqlFunctionService sqlFunctionService, AlarmService alarmService,
         DatasourceMapper datasourceMapper, DataSourceFactory dataSourceFactory) {
 
-        super(workInstanceRepository, workflowInstanceRepository, alarmService);
+        super(workInstanceRepository, workflowInstanceRepository, alarmService, sqlFunctionService);
         this.workInstanceRepository = workInstanceRepository;
         this.clusterRepository = clusterRepository;
         this.clusterNodeRepository = clusterNodeRepository;
