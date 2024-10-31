@@ -178,17 +178,13 @@ public abstract class WorkExecutor {
             return value;
         }
 
-        WorkflowInstanceEntity workflowInstanceEntity =
-            workflowInstanceRepository.findById(workInstance.getWorkflowInstanceId()).get();
-        List<List<String>> nodeMapping = WorkflowUtils.parseNodeMapping(workflowInstanceEntity.getWebConfig());
-        List<String> parentNodes = WorkflowUtils.getParentNodes(nodeMapping, workInstance.getWorkId());
+        List<WorkInstanceEntity> allWorkflowInstance = workInstanceRepository.findAllByWorkflowInstanceId(workInstance.getWorkflowInstanceId());
 
-        // 查询父节点的实例列表
-        List<WorkInstanceEntity> parentInstances = workInstanceRepository
-            .findAllByWorkflowInstanceIdAndWorkIds(workInstance.getWorkflowInstanceId(), parentNodes);
-        for (WorkInstanceEntity e : parentInstances) {
-            value = value.replace("${qing." + e.getWorkId() + ".result_data}",
-                Base64.getEncoder().encodeToString(e.getResultData().getBytes()));
+        for (WorkInstanceEntity e : allWorkflowInstance) {
+            if (InstanceStatus.SUCCESS.equals(e.getStatus()) && e.getResultData() != null) {
+                value = value.replace("${qing." + e.getWorkId() + ".result_data}",
+                    Base64.getEncoder().encodeToString(e.getResultData().getBytes()));
+            }
         }
 
         return sqlFunctionService.parseSqlFunction(value);
