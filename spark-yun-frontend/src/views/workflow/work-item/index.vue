@@ -238,20 +238,6 @@ function initData(id?: string, tableLoading?: boolean) {
     })
 }
 
-function tabChangeEvent(e: string) {
-  const lookup = {
-    PublishLog: PublishLog,
-    ReturnData: ReturnData,
-    RunningLog: RunningLog,
-    TotalDetail: TotalDetail
-  }
-  activeName.value = e
-  currentTab.value = markRaw(lookup[e])
-  nextTick(() => {
-    containerInstanceRef.value.initData(instanceId.value)
-  })
-}
-
 // 返回
 function goBack() {
   if (changeStatus.value) {
@@ -422,9 +408,27 @@ function changeCollapseDown() {
   logCollapseRef.value.setActiveNames('0')
   isCollapse.value = false
 }
-function changeCollapseUp() {
-  logCollapseRef.value.setActiveNames('1')
-  isCollapse.value = true
+function changeCollapseUp(e: any) {
+  if (e && e.paneName === activeName.value && isCollapse.value) {
+    changeCollapseDown()
+  } else {
+    logCollapseRef.value.setActiveNames('1')
+    isCollapse.value = true
+  }
+}
+
+function tabChangeEvent(e: string) {
+  const lookup = {
+    PublishLog: PublishLog,
+    ReturnData: ReturnData,
+    RunningLog: RunningLog,
+    TotalDetail: TotalDetail
+  }
+  activeName.value = e
+  currentTab.value = markRaw(lookup[e])
+  nextTick(() => {
+    containerInstanceRef.value.initData(instanceId.value)
+  })
 }
 
 function sqlConfigChange(e: string) {

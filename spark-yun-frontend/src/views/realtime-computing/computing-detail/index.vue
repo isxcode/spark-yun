@@ -597,9 +597,13 @@ function changeCollapseDown() {
     logCollapseRef.value.setActiveNames('0')
     isCollapse.value = false
 }
-function changeCollapseUp() {
-    logCollapseRef.value.setActiveNames('1')
-    isCollapse.value = true
+function changeCollapseUp(e: any) {
+    if (e && e.paneName === activeName.value && isCollapse.value) {
+        changeCollapseDown()
+    } else {
+        logCollapseRef.value.setActiveNames('1')
+        isCollapse.value = true
+    }
 }
 function pageChangeEvent() {
     changeStatus.value = true
