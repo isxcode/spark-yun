@@ -388,3 +388,68 @@ http {
 ```
 
 ![20241022103809](https://img.isxcode.com/picgo/20241022103809.png)
+
+#### 问题14
+
+hive分区键不支持
+
+```log
+24/10/31 11:00:07 INFO ApplicationMaster: Unregistering ApplicationMaster with FAILED (diag message: User class threw exception: org.apache.spark.SparkException: Dynamic partition strict mode requires at least one static partition column. To turn this off set hive.exec.dynamic.partition.mode=nonstrict
+	at org.apache.spark.sql.hive.execution.V1WritesHiveUtils.getDynamicPartitionColumns(V1WritesHiveUtils.scala:82)
+	at org.apache.spark.sql.hive.execution.V1WritesHiveUtils.getDynamicPartitionColumns$(V1WritesHiveUtils.scala:45)
+	at org.apache.spark.sql.hive.execution.InsertIntoHiveTable$.getDynamicPartitionColumns(InsertIntoHiveTable.scala:288)
+	at org.apache.spark.sql.hive.execution.InsertIntoHiveTable$.apply(InsertIntoHiveTable.scala:316)
+	at org
+```
+
+> 需要在spark高级配置中打开动态分区
+
+```json
+{
+  "spark.hive.exec.dynamic.partition.mode": "nonstrict",
+  "spark.hive.exec.dynamic.partition": true,
+  "spark.hive.exec.max.dynamic.partitions.pernode": 1000,
+  "spark.hive.exec.max.dynamic.partitions": 1000
+}
+```
+
+#### 问题15
+
+hive分区键太少
+
+```log
+Caused by: org.apache.hadoop.hive.ql.metadata.HiveException: Number of dynamic partitions created is 20000, which is more than 1000. To solve this try to set hive.exec.max.dynamic.partitions to at least 20000.
+	at org.apache.hadoop.hive.ql.metadata.Hive.getValidPartitionsInPath(Hive.java:1862)
+	at org.apache.hadoop.hive.ql.metadata.Hive.loadDynamicPartitions(Hive.java:1902)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at org.apache.spark.sql.hive.client.Shim_v2_1.loadDynamicPartitions(HiveShim.scala:1605)
+	at org.apache.spark.sql.hive.client.HiveClientImpl.$anonfun$loadDynamicPartitions$1(HiveClientImpl.scala:977)
+	at scala.runtime.java8.JFunction0$mcV$sp.apply(JFunction0$mcV$sp.java:23)
+	at org.apache.spark.sql.hive.client.HiveClientImpl.$anonfun$withHiveState$1(HiveClientImpl.scala:303)
+	at org.apache.spark.sql.hive.client.HiveClientImpl.liftedTree1$1(HiveClientImpl.scala:234)
+	at org.apache.spark.sql.hive.client.HiveClientImpl.retryLocked(HiveClientImpl.scala:233)
+	at org.apache.spark.sql.hive.client.HiveClientImpl.withHiveState(HiveClientImpl.scala:283)
+	at org.apache.spark.sql.hive.client.HiveClientImpl.loadDynamicPartitions(HiveClientImpl.scala:968)
+	at org.apache.spark.sql.hive.HiveExternalCatalog.$anonfun$loadDynamicPartitions$1(HiveExternalCatalog.scala:966)
+	at scala.runtime.java8.JFunction0$mcV$sp.apply(JFunction0$mcV$sp.java:23)
+	at org.apache.spark.sql.hive.HiveExternalCatalog.withClient(HiveExternalCatalog.scala:101)
+	... 41 more
+)
+24/10/31 11:18:32 INFO AMRMClientImpl: Waiting for application to be successfully unregistered.
+24/10/31 11:18:32 INFO ShutdownHookManager: Shutdown hook called
+24/10/31 11:18:32 INFO ShutdownHookManager: Deleting directory /data/yarn/nm/usercache/dehoop/appcache/application_1730110676098_0069/spark-de8b8b7a-41aa-4188-9e12-4e75427419a6
+```
+
+> 需要扩大分区键数量
+
+```json
+{
+  "spark.hive.exec.dynamic.partition.mode": "nonstrict",
+  "spark.hive.exec.dynamic.partition": true,
+  "spark.hive.exec.max.dynamic.partitions.pernode": 20000,
+  "spark.hive.exec.max.dynamic.partitions": 20000
+}
+```
