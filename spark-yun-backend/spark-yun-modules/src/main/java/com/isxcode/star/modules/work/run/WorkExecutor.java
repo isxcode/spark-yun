@@ -18,7 +18,6 @@ import com.isxcode.star.modules.workflow.repository.WorkflowInstanceRepository;
 import java.time.LocalDateTime;
 import java.util.*;
 
-import com.isxcode.star.modules.workflow.run.WorkflowUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
@@ -178,7 +177,8 @@ public abstract class WorkExecutor {
             return value;
         }
 
-        List<WorkInstanceEntity> allWorkflowInstance = workInstanceRepository.findAllByWorkflowInstanceId(workInstance.getWorkflowInstanceId());
+        List<WorkInstanceEntity> allWorkflowInstance =
+            workInstanceRepository.findAllByWorkflowInstanceId(workInstance.getWorkflowInstanceId());
 
         for (WorkInstanceEntity e : allWorkflowInstance) {
             if (InstanceStatus.SUCCESS.equals(e.getStatus()) && e.getResultData() != null) {
