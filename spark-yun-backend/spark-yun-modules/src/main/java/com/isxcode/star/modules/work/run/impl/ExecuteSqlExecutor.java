@@ -108,6 +108,8 @@ public class ExecuteSqlExecutor extends WorkExecutor {
         try (Connection connection = datasource.getConnection(connectInfo);
             Statement statement = connection.createStatement()) {
 
+            statement.setQueryTimeout(1800);
+
             // 去掉sql中的注释
             String sqlNoComment = sqlCommentService.removeSqlComment(workRunContext.getScript());
 
