@@ -524,10 +524,12 @@ public class WorkBizService {
         return result;
     }
 
-    public List<GetWorkInstanceJsonPathRes> getWorkInstanceJsonPath(GetWorkInstanceJsonPathReq getWorkInstanceJsonPathReq) {
+    public List<GetWorkInstanceJsonPathRes> getWorkInstanceJsonPath(
+        GetWorkInstanceJsonPathReq getWorkInstanceJsonPathReq) {
 
         // 获取实例的结果
-        WorkInstanceEntity workInstanceEntity = workInstanceRepository.findById(getWorkInstanceJsonPathReq.getWorkInstanceId()).get();
+        WorkInstanceEntity workInstanceEntity =
+            workInstanceRepository.findById(getWorkInstanceJsonPathReq.getWorkInstanceId()).get();
 
         // 判断作业类型
         WorkEntity workEntity = workService.getWorkEntity(workInstanceEntity.getWorkId());
@@ -541,12 +543,14 @@ public class WorkBizService {
         }
 
         List<GetWorkInstanceJsonPathRes> result = new ArrayList<>();
-        Map<String, Object> allItemPaths = JSONPath.paths(JSON.parseObject(workInstanceEntity.getResultData(), Map.class));
+        Map<String, Object> allItemPaths =
+            JSONPath.paths(JSON.parseObject(workInstanceEntity.getResultData(), Map.class));
         allItemPaths.forEach((k, v) -> {
             GetWorkInstanceJsonPathRes metaWorkInstance = new GetWorkInstanceJsonPathRes();
             metaWorkInstance.setJsonPath(k);
             metaWorkInstance.setValue(String.valueOf(v));
-            metaWorkInstance.setCopyValue("#[[get_json_value('${qing." + workEntity.getId() + ".result_data}','" + k + "')]]");
+            metaWorkInstance
+                .setCopyValue("#[[get_json_value('${qing." + workEntity.getId() + ".result_data}','" + k + "')]]");
             result.add(metaWorkInstance);
         });
         return result;
