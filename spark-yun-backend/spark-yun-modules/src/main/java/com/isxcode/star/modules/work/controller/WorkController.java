@@ -1,7 +1,9 @@
 package com.isxcode.star.modules.work.controller;
 
+import com.isxcode.star.api.instance.pojos.req.GetWorkInstanceJsonPathReq;
 import com.isxcode.star.api.instance.pojos.req.GetWorkflowInstanceReq;
 import com.isxcode.star.api.instance.pojos.req.QueryInstanceReq;
+import com.isxcode.star.api.instance.pojos.res.GetWorkInstanceJsonPathRes;
 import com.isxcode.star.api.instance.pojos.res.GetWorkflowInstanceRes;
 import com.isxcode.star.api.instance.pojos.res.QueryInstanceRes;
 import com.isxcode.star.api.main.constants.ModuleCode;
@@ -21,6 +23,7 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @Tag(name = "作业模块")
 @RequestMapping(ModuleCode.WORK)
@@ -232,5 +235,14 @@ public class WorkController {
         @Valid @RequestBody GetWorkflowInstanceReq wfiGetWorkflowInstanceReq) {
 
         return workBizService.getWorkflowInstance(wfiGetWorkflowInstanceReq);
+    }
+
+    @Operation(summary = "获取作业返回的jsonPath")
+    @PostMapping("/getWorkInstanceJsonPath")
+    @SuccessResponse("查询成功")
+    public List<GetWorkInstanceJsonPathRes> getWorkInstanceJsonPath(
+        @Valid @RequestBody GetWorkInstanceJsonPathReq getWorkInstanceJsonPathReq) {
+
+        return workBizService.getWorkInstanceJsonPath(getWorkInstanceJsonPathReq);
     }
 }
