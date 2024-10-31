@@ -31,5 +31,7 @@ public class ConnectInfo {
     private String username;
 
     private String passwd;
+
+    private Integer loginTimeout;
 }
 

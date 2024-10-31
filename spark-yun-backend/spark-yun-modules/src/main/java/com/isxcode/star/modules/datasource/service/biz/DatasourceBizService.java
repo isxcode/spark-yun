@@ -186,6 +186,7 @@ public class DatasourceBizService {
         } else {
             ConnectInfo connectInfo = datasourceMapper.datasourceEntityToConnectInfo(datasourceEntity);
             Datasource datasource = dataSourceFactory.getDatasource(connectInfo.getDbType());
+            connectInfo.setLoginTimeout(5);
             try (Connection connection = datasource.getConnection(connectInfo)) {
                 if (connection != null) {
                     datasourceEntity.setStatus(DatasourceStatus.ACTIVE);

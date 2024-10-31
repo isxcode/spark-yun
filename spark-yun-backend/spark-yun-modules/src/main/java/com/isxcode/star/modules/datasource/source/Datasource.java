@@ -128,8 +128,8 @@ public abstract class Datasource {
             properties.put("password", aesUtils.decrypt(connectInfo.getPasswd()));
         }
 
-        // 数据源连接超时时间设定，600秒，10分钟
-        DriverManager.setLoginTimeout(600);
+        // 数据源连接超时时间设定，默认600秒，10分钟
+        DriverManager.setLoginTimeout(connectInfo.getLoginTimeout() == null ? 600 : connectInfo.getLoginTimeout());
         try {
             return driver.connect(connectInfo.getJdbcUrl(), properties);
         } catch (SQLException e) {
