@@ -545,7 +545,7 @@ public class WorkBizService {
             GetWorkInstanceJsonPathRes metaWorkInstance = new GetWorkInstanceJsonPathRes();
             metaWorkInstance.setJsonPath(k);
             metaWorkInstance.setValue(String.valueOf(v));
-            metaWorkInstance.setCopyValue("#[get_json_value('${qing." + workEntity.getId() + ".result_data}','" + k + "')]");
+            metaWorkInstance.setCopyValue("#[[get_json_value('${qing." + workEntity.getId() + ".result_data}','" + k + "')]]");
             result.add(metaWorkInstance);
         });
         return result;
