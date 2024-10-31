@@ -12,6 +12,7 @@ import com.isxcode.star.modules.work.entity.WorkInstanceEntity;
 import com.isxcode.star.modules.work.repository.WorkInstanceRepository;
 import com.isxcode.star.modules.work.run.WorkExecutor;
 import com.isxcode.star.modules.work.run.WorkRunContext;
+import com.isxcode.star.modules.work.sql.SqlFunctionService;
 import com.isxcode.star.modules.workflow.repository.WorkflowInstanceRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
@@ -28,9 +29,9 @@ public class CurlExecutor extends WorkExecutor {
 
     public CurlExecutor(WorkInstanceRepository workInstanceRepository,
         WorkflowInstanceRepository workflowInstanceRepository, IsxAppProperties isxAppProperties,
-        AlarmService alarmService) {
+        AlarmService alarmService, SqlFunctionService sqlFunctionService) {
 
-        super(workInstanceRepository, workflowInstanceRepository, alarmService);
+        super(workInstanceRepository, workflowInstanceRepository, alarmService, sqlFunctionService);
         this.isxAppProperties = isxAppProperties;
     }
 
@@ -75,7 +76,9 @@ public class CurlExecutor extends WorkExecutor {
         String result = RuntimeUtil.execForStr(executeBashWorkCommand);
 
         // 保存运行日志
-        workInstance.setYarnLog(result.replace("&& echo 'zhiqingyun_success'", "").replace("zhiqingyun_success", ""));
+        String yarnLog = result.replace("&& echo 'zhiqingyun_success'", "").replace("zhiqingyun_success", "");
+        workInstance.setYarnLog(yarnLog);
+        workInstance.setResultData(yarnLog.substring(0, yarnLog.length() - 4));
         logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("保存结果成功 \n");
         updateInstance(workInstance, logBuilder);
 

@@ -120,9 +120,9 @@ public class ExcelSyncExecutor extends WorkExecutor {
         DatasourceService datasourceService, IsxAppProperties isxAppProperties, FuncRepository funcRepository,
         FuncMapper funcMapper, FileRepository fileRepository, SqlCommentService sqlCommentService,
         SqlValueService sqlValueService, SqlFunctionService sqlFunctionService, AlarmService alarmService,
-        FileService fileService, FileService fileService1) {
+        FileService fileService) {
 
-        super(workInstanceRepository, workflowInstanceRepository, alarmService);
+        super(workInstanceRepository, workflowInstanceRepository, alarmService, sqlFunctionService);
         this.workInstanceRepository = workInstanceRepository;
         this.clusterRepository = clusterRepository;
         this.clusterNodeRepository = clusterNodeRepository;
@@ -140,7 +140,7 @@ public class ExcelSyncExecutor extends WorkExecutor {
         this.sqlCommentService = sqlCommentService;
         this.sqlValueService = sqlValueService;
         this.sqlFunctionService = sqlFunctionService;
-        this.fileService = fileService1;
+        this.fileService = fileService;
     }
 
     @Override
