@@ -113,8 +113,11 @@ public class PythonExecutor extends WorkExecutor {
             throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "检测集群失败 : 指定运行节点不存在  \n");
         }
 
+        // 解析上游参数
+        String jsonPathSql = parseJsonPath(workRunContext.getScript(), workInstance);
+
         // 翻译脚本中的系统变量
-        String parseValueSql = sqlValueService.parseSqlValue(workRunContext.getScript());
+        String parseValueSql = sqlValueService.parseSqlValue(jsonPathSql);
 
         // 翻译脚本中的系统函数
         String script = sqlFunctionService.parseSqlFunction(parseValueSql);

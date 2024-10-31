@@ -6,6 +6,7 @@ import com.isxcode.star.api.work.constants.WorkLog;
 import com.isxcode.star.api.work.constants.WorkType;
 import com.isxcode.star.api.work.exceptions.WorkRunException;
 import com.isxcode.star.api.work.pojos.dto.ApiWorkConfig;
+import com.isxcode.star.api.work.pojos.dto.ApiWorkValueDto;
 import com.isxcode.star.common.utils.http.HttpUtils;
 import com.isxcode.star.modules.alarm.service.AlarmService;
 import com.isxcode.star.modules.work.entity.WorkInstanceEntity;
@@ -79,16 +80,21 @@ public class ApiExecutor extends WorkExecutor {
             // 转换一下结构
             Map<String, String> requestParam = new HashMap<>();
             Map<String, String> requestHeader = new HashMap<>();
-
-            apiWorkConfig.getRequestParam().forEach(e -> requestParam.put(e.getLabel(), e.getValue()));
-            apiWorkConfig.getRequestHeader().forEach(e -> requestHeader.put(e.getLabel(), e.getValue()));
+            for (int i = 0; i < apiWorkConfig.getRequestParam().size(); i++) {
+                ApiWorkValueDto e = apiWorkConfig.getRequestParam().get(i);
+                requestParam.put(e.getLabel(), parseJsonPath(e.getValue(), workInstance));
+            }
+            for (int i = 0; i < apiWorkConfig.getRequestHeader().size(); i++) {
+                ApiWorkValueDto e = apiWorkConfig.getRequestHeader().get(i);
+                requestHeader.put(e.getLabel(), parseJsonPath(e.getValue(), workInstance));
+            }
 
             if (ApiType.GET.equals(apiWorkConfig.getRequestType())) {
                 response = HttpUtils.doGet(apiWorkConfig.getRequestUrl(), requestParam, requestHeader, Object.class);
             }
             if (ApiType.POST.equals(apiWorkConfig.getRequestType())) {
                 response = HttpUtils.doPost(apiWorkConfig.getRequestUrl(), requestHeader,
-                    JSON.parseObject(apiWorkConfig.getRequestBody()), Object.class);
+                    JSON.parseObject(parseJsonPath(apiWorkConfig.getRequestBody(), workInstance), Object.class));
             }
 
             log.debug("获取远程返回数据:{}", response);

@@ -217,8 +217,11 @@ public class SyncWorkExecutor extends WorkExecutor {
             String sqlNoComment =
                 sqlCommentService.removeSqlComment(workRunContext.getSyncWorkConfig().getQueryCondition());
 
+            // 解析上游参数
+            String jsonPathSql = parseJsonPath(sqlNoComment, workInstance);
+
             // 翻译sql中的系统变量
-            String parseValueSql = sqlValueService.parseSqlValue(sqlNoComment);
+            String parseValueSql = sqlValueService.parseSqlValue(jsonPathSql);
 
             // 翻译sql中的系统函数
             String conditionScript = sqlFunctionService.parseSqlFunction(parseValueSql);
