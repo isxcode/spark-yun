@@ -392,8 +392,8 @@ public class WorkBizService {
 
         if (!Strings.isEmpty(workConfig.getClusterConfig())) {
             getWorkRes.setClusterConfig(JSON.parseObject(workConfig.getClusterConfig(), ClusterConfig.class));
-            getWorkRes.getClusterConfig()
-                .setSparkConfigJson(JSON.toJSONString(getWorkRes.getClusterConfig().getSparkConfig(), SerializerFeature.MapSortField));
+            getWorkRes.getClusterConfig().setSparkConfigJson(
+                JSON.toJSONString(getWorkRes.getClusterConfig().getSparkConfig(), SerializerFeature.MapSortField));
         }
 
         if (!Strings.isEmpty(workConfig.getSyncRule())) {
