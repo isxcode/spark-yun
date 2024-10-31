@@ -11,7 +11,6 @@ import com.isxcode.star.modules.alarm.service.AlarmService;
 import com.isxcode.star.modules.datasource.entity.DatasourceEntity;
 import com.isxcode.star.modules.datasource.mapper.DatasourceMapper;
 import com.isxcode.star.modules.datasource.repository.DatasourceRepository;
-import com.isxcode.star.modules.datasource.service.DatasourceService;
 import com.isxcode.star.modules.datasource.source.DataSourceFactory;
 import com.isxcode.star.modules.datasource.source.Datasource;
 import com.isxcode.star.modules.work.entity.WorkInstanceEntity;
@@ -43,8 +42,6 @@ public class QuerySqlExecutor extends WorkExecutor {
 
     private final DatasourceRepository datasourceRepository;
 
-    private final DatasourceService datasourceService;
-
     private final SqlCommentService sqlCommentService;
 
     private final SqlFunctionService sqlFunctionService;
@@ -56,13 +53,12 @@ public class QuerySqlExecutor extends WorkExecutor {
     private final DatasourceMapper datasourceMapper;
 
     public QuerySqlExecutor(DatasourceRepository datasourceRepository, WorkInstanceRepository workInstanceRepository,
-        WorkflowInstanceRepository workflowInstanceRepository, DatasourceService datasourceService,
-        SqlCommentService sqlCommentService, SqlFunctionService sqlFunctionService, SqlValueService sqlValueService,
-        AlarmService alarmService, DataSourceFactory dataSourceFactory, DatasourceMapper datasourceMapper) {
+        WorkflowInstanceRepository workflowInstanceRepository, SqlCommentService sqlCommentService,
+        SqlFunctionService sqlFunctionService, SqlValueService sqlValueService, AlarmService alarmService,
+        DataSourceFactory dataSourceFactory, DatasourceMapper datasourceMapper) {
 
-        super(workInstanceRepository, workflowInstanceRepository, alarmService);
+        super(workInstanceRepository, workflowInstanceRepository, alarmService, sqlFunctionService);
         this.datasourceRepository = datasourceRepository;
-        this.datasourceService = datasourceService;
         this.sqlCommentService = sqlCommentService;
         this.sqlFunctionService = sqlFunctionService;
         this.sqlValueService = sqlValueService;
@@ -121,8 +117,11 @@ public class QuerySqlExecutor extends WorkExecutor {
             // 去掉sql中的注释
             String sqlNoComment = sqlCommentService.removeSqlComment(workRunContext.getScript());
 
+            // 解析上游参数
+            String jsonPathSql = parseJsonPath(sqlNoComment, workInstance);
+
             // 翻译sql中的系统变量
-            String parseValueSql = sqlValueService.parseSqlValue(sqlNoComment);
+            String parseValueSql = sqlValueService.parseSqlValue(jsonPathSql);
 
             // 翻译sql中的系统函数
             String script = sqlFunctionService.parseSqlFunction(parseValueSql);

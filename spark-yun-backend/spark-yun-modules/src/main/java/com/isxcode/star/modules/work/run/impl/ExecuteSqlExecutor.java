@@ -52,7 +52,7 @@ public class ExecuteSqlExecutor extends WorkExecutor {
         SqlValueService sqlValueService, SqlFunctionService sqlFunctionService, AlarmService alarmService,
         DataSourceFactory dataSourceFactory, DatasourceMapper datasourceMapper) {
 
-        super(workInstanceRepository, workflowInstanceRepository, alarmService);
+        super(workInstanceRepository, workflowInstanceRepository, alarmService, sqlFunctionService);
         this.datasourceRepository = datasourceRepository;
         this.sqlCommentService = sqlCommentService;
         this.sqlValueService = sqlValueService;

@@ -12,6 +12,7 @@ import com.isxcode.star.modules.work.entity.WorkInstanceEntity;
 import com.isxcode.star.modules.work.repository.WorkInstanceRepository;
 import com.isxcode.star.modules.work.run.WorkExecutor;
 import com.isxcode.star.modules.work.run.WorkRunContext;
+import com.isxcode.star.modules.work.sql.SqlFunctionService;
 import com.isxcode.star.modules.workflow.repository.WorkflowInstanceRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -26,9 +27,10 @@ import java.util.Map;
 public class ApiExecutor extends WorkExecutor {
 
     public ApiExecutor(WorkInstanceRepository workInstanceRepository,
-        WorkflowInstanceRepository workflowInstanceRepository, AlarmService alarmService) {
+        WorkflowInstanceRepository workflowInstanceRepository, AlarmService alarmService,
+        SqlFunctionService sqlFunctionService) {
 
-        super(workInstanceRepository, workflowInstanceRepository, alarmService);
+        super(workInstanceRepository, workflowInstanceRepository, alarmService, sqlFunctionService);
     }
 
     @Override
