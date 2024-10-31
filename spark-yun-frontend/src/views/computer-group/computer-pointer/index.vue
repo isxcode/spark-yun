@@ -172,6 +172,9 @@ function initData(tableLoading?: boolean, type?: string) {
           tableConfig.tableData.forEach((col: any) => {
             if (item.id === col.id) {
               col.status = item.status
+              col.cpu=item.cpu
+              col.memory=item.memory
+              col.storage=item.storage
             }
           })
         })
