@@ -201,7 +201,7 @@ public class BashExecutor extends WorkExecutor {
                 // 保存运行日志
                 String backStr = logCommand.replace("zhiqingyun_success", "");
                 workInstance.setYarnLog(backStr);
-                workInstance.setResultData(backStr);
+                workInstance.setResultData(backStr.substring(0, backStr.length() - 2));
                 logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("保存日志成功 \n");
                 updateInstance(workInstance, logBuilder);
 
