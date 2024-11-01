@@ -237,7 +237,7 @@ public class WorkController {
         return workBizService.getWorkflowInstance(wfiGetWorkflowInstanceReq);
     }
 
-    @Operation(summary = "获取作业返回的jsonPath")
+    @Operation(summary = "获取作业返回的jsonPath接口")
     @PostMapping("/getWorkInstanceJsonPath")
     @SuccessResponse("查询成功")
     public List<GetWorkInstanceJsonPathRes> getWorkInstanceJsonPath(
@@ -245,4 +245,24 @@ public class WorkController {
 
         return workBizService.getWorkInstanceJsonPath(getWorkInstanceJsonPathReq);
     }
+
+    // @Operation(summary = "获取作业返回的正则解析结果接口")
+    // @PostMapping("/getWorkInstanceJsonPath")
+    // @SuccessResponse("查询成功")
+    // public List<GetWorkInstanceJsonPathRes> getWorkInstanceJsonPath(
+    // @Valid @RequestBody GetWorkInstanceJsonPathReq getWorkInstanceJsonPathReq) {
+    //
+    // return workBizService.getWorkInstanceJsonPath(getWorkInstanceJsonPathReq);
+    // }
+    //
+    // @Operation(summary = "获取作业返回的几行几列结果接口")
+    // @PostMapping("/getWorkInstanceJsonPath")
+    // @SuccessResponse("查询成功")
+    // public List<GetWorkInstanceJsonPathRes> getWorkInstanceJsonPath(
+    // @Valid @RequestBody GetWorkInstanceJsonPathReq getWorkInstanceJsonPathReq) {
+    //
+    // return workBizService.getWorkInstanceJsonPath(getWorkInstanceJsonPathReq);
+    // }
+
+
 }
