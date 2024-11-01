@@ -254,7 +254,12 @@ const tabList = reactive([
         name: '提交日志',
         code: 'PublishLog',
         hide: false
-    }
+    },
+    {
+        name: '运行结果',
+        code: 'RunningLog',
+        hide: true
+    },
 ])
 function initData(id?: string, tableLoading?: boolean) {
     loading.value = tableLoading ? false : true
@@ -811,6 +816,10 @@ onMounted(() => {
 
                 .zqy-download-log {
                     right: 40px;
+                    top: 12px;
+                }
+                .zqy-json-parse {
+                    right: 120px;
                     top: 12px;
                 }
             }

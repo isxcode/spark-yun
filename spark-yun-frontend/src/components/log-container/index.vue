@@ -4,11 +4,12 @@
         ref="preContentRef"
         @mousewheel="mousewheelEvent"
     >{{ logMsg + loadingMsg }}</pre>
+    <span class="zqy-json-parse" @click="getResult">结果表达式</span>
     <span class="zqy-download-log" @click="downloadLog">下载日志</span>
 </template>
 
 <script lang="ts" setup>
-import { ref, defineProps, onMounted, computed, nextTick, onUnmounted, watch } from 'vue'
+import { ref, defineProps, onMounted, computed, nextTick, onUnmounted, watch, defineEmits } from 'vue'
 import dayjs from 'dayjs'
 
 const props = defineProps<{
@@ -20,6 +21,8 @@ const position = ref(true)
 const loadingTimer = ref()
 const loadingPoint = ref('.')
 const preContentRef = ref(null)
+
+const emit = defineEmits(['getJsonParseResult'])
 
 watch(() => props.logMsg, () => {
     if (position.value) {
@@ -35,6 +38,10 @@ const loadingMsg = computed(() => {
   const str = !props.status ? `加载中${loadingPoint.value}` : ''
   return str
 })
+
+function getResult() {
+    emit('getJsonParseResult')
+}
 
 function downloadLog() {
     const logStr = props.logMsg
@@ -104,6 +111,17 @@ defineExpose({
     font-size: getCssVar('font-size', 'extra-small');
     line-height: 21px;
     margin: 0;
+}
+.zqy-json-parse {
+    font-size: 12px;
+    color: getCssVar('color', 'primary');
+    cursor: pointer;
+    position: absolute;
+    top: 0;
+    right: 100px;
+    &:hover {
+        text-decoration: underline;
+    }
 }
 .zqy-download-log {
     font-size: 12px;

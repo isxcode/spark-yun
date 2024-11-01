@@ -11,22 +11,28 @@
     id="content"
     class="running-log"
   >
-    <LogContainer v-if="logMsg" :logMsg="logMsg" :status="true"></LogContainer>
+    <LogContainer v-if="logMsg" :logMsg="logMsg" :status="true" @getJsonParseResult="getJsonParseResult"></LogContainer>
     <EmptyPage v-else />
   </div>
 </template>
 
 <script lang="ts" setup>
-import { ref, defineExpose } from 'vue'
+import { ref, defineExpose, defineEmits } from 'vue'
 import EmptyPage from '@/components/empty-page/index.vue'
 import { GetYarnLogData } from '@/services/schedule.service'
 
 const logMsg = ref('')
 const pubId = ref('')
 
+const emit = defineEmits(['getJsonParseResult'])
+
 function initData(id: string): void {
   pubId.value = id
   getLogData(pubId.value)
+}
+
+function getJsonParseResult() {
+    emit('getJsonParseResult')
 }
 
 // 获取日志
