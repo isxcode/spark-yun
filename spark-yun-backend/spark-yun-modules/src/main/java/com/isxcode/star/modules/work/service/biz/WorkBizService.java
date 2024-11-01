@@ -292,8 +292,14 @@ public class WorkBizService {
             throw new IsxAppException("请等待作业运行完毕或者对应作业无返回结果");
         }
 
+        // 根据作业类型返回结果
+        WorkEntity workEntity = workService.getWorkEntity(workInstanceEntity.getWorkId());
+        if (WorkType.API.equals(workEntity.getWorkType()) || WorkType.CURL.equals(workEntity.getWorkType())) {
+            return new GetDataRes(null, JSON.parseObject(workInstanceEntity.getResultData()), null);
+        }
+
         if (Strings.isEmpty(workInstanceEntity.getYarnLog())) {
-            return new GetDataRes(JSON.parseArray(workInstanceEntity.getResultData()));
+            return new GetDataRes(JSON.parseArray(workInstanceEntity.getResultData()), null, null);
         }
         return JSON.parseObject(workInstanceEntity.getResultData(), GetDataRes.class);
     }
