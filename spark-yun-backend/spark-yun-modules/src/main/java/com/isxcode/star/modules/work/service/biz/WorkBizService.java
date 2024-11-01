@@ -298,6 +298,10 @@ public class WorkBizService {
             return new GetDataRes(null, JSON.parseObject(workInstanceEntity.getResultData()), null);
         }
 
+        if (WorkType.BASH.equals(workEntity.getWorkType()) || WorkType.PYTHON.equals(workEntity.getWorkType())) {
+            return new GetDataRes(null, null, workInstanceEntity.getResultData());
+        }
+
         if (Strings.isEmpty(workInstanceEntity.getYarnLog())) {
             return new GetDataRes(JSON.parseArray(workInstanceEntity.getResultData()), null, null);
         }
