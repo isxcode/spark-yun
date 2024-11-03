@@ -90,20 +90,27 @@
               </span>
             </template>
             <div class="log-show log-show-datasync">
-              <component :is="currentTab" ref="containerInstanceRef" class="show-container" />
+              <component
+                :is="currentTab"
+                ref="containerInstanceRef"
+                class="show-container"
+                :showParse="showParse"
+                @getJsonParseResult="getJsonParseResult"
+              />
             </div>
           </el-collapse-item>
         </el-collapse>
       </div>
     </LoadingPage>
-    <!-- <ConfigModal ref="configModalRef" /> -->
     <!-- 配置 -->
     <config-detail ref="configDetailRef"></config-detail>
+    <!-- 解析弹窗 -->
+    <ParseModal ref="parseModalRef"></ParseModal>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { reactive, ref, onMounted, markRaw, nextTick } from 'vue'
+import { reactive, ref, onMounted, markRaw, nextTick, computed } from 'vue'
 import Breadcrumb from '@/layout/bread-crumb/index.vue'
 import LoadingPage from '@/components/loading/index.vue'
 import ConfigDetail from '../workflow-page/config-detail/index.vue'
@@ -118,6 +125,7 @@ import { DeleteWorkData, GetWorkItemConfig, PublishWorkData, RunWorkItemConfig, 
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useRoute, useRouter } from 'vue-router'
 import { Loading } from '@element-plus/icons-vue'
+import ParseModal from '@/components/log-container/parse-modal/index.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -150,6 +158,7 @@ const containerInstanceRef = ref(null)
 const logCollapseRef = ref()
 const collapseActive = ref('0')
 const isCollapse = ref(false)
+const parseModalRef = ref()
 
 let workConfig = reactive({
   clusterId: '',
@@ -171,7 +180,7 @@ const tabList = reactive([
     hide: false
   },
   {
-    name: '数据返回',
+    name: '运行结果',
     code: 'ReturnData',
     hide: true
   },
@@ -186,6 +195,10 @@ const tabList = reactive([
   //   hide: true
   // }
 ])
+
+const showParse = computed(() => {
+  return ['CURL', 'QUERY_JDBC', 'SPARK_SQL', 'BASH', 'PYTHON'].includes(props.workItemConfig.workType)
+})
 function initData(id?: string, tableLoading?: boolean) {
   loading.value = tableLoading ? false : true
   networkError.value = networkError.value || false
@@ -213,19 +226,20 @@ function initData(id?: string, tableLoading?: boolean) {
                   item.hide = status === 'FAIL' ? true : false
                 }
               })
-            } else if (['QUERY_JDBC', 'SPARK_CONTAINER_SQL', 'PRQL'].includes(workConfig.workType)) {
+            } else if (['QUERY_JDBC', 'SPARK_CONTAINER_SQL', 'PRQL', 'CURL', 'BASH', 'PYTHON'].includes(workConfig.workType)) {
               tabList.forEach((item: any) => {
                 if (['ReturnData'].includes(item.code)) {
                   item.hide = status === 'FAIL' ? true : false
                 }
               })
-            } else if (['BASH', 'PYTHON', 'CURL'].includes(workConfig.workType)) {
-              tabList.forEach((item: any) => {
-                if (!['ReturnData'].includes(item.code)) {
-                  item.hide = false
-                }
-              })
             }
+            // else if (['BASH', 'PYTHON'].includes(workConfig.workType)) {
+            //   tabList.forEach((item: any) => {
+            //     if (!['ReturnData'].includes(item.code)) {
+            //       item.hide = false
+            //     }
+            //   })
+            // }
           }
         })
       })
@@ -433,6 +447,16 @@ function tabChangeEvent(e: string) {
 
 function sqlConfigChange(e: string) {
   changeStatus.value = true
+}
+
+function getJsonParseResult() {
+  if (['CURL'].includes(props.workItemConfig.workType)) {
+    parseModalRef.value.showModal(instanceId.value, 'jsonPath')
+  } else if (['QUERY_JDBC', 'SPARK_SQL'].includes(props.workItemConfig.workType)) {
+    parseModalRef.value.showModal(instanceId.value, 'tablePath')
+  } else if (['BASH', 'PYTHON'].includes(props.workItemConfig.workType)) {
+    parseModalRef.value.showModal(instanceId.value, 'regexPath')
+  }
 }
 
 onMounted(() => {

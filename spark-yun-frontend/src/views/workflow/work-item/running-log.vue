@@ -1,18 +1,21 @@
-<!--
- * @Author: fanciNate
- * @Date: 2023-05-26 16:35:28
- * @LastEditTime: 2023-06-18 15:48:24
- * @LastEditors: fanciNate
- * @Description: In User Settings Edit
- * @FilePath: /spark-yun/spark-yun-website/src/views/workflow/work-item/running-log.vue
--->
 <template>
   <div
     id="content"
     class="running-log"
   >
-    <LogContainer v-if="logMsg" :logMsg="logMsg" :status="true" @getJsonParseResult="getJsonParseResult"></LogContainer>
+    <LogContainer
+      v-if="logMsg"
+      :logMsg="logMsg"
+      :status="true"
+      :showResult="false"
+    ></LogContainer>
     <EmptyPage v-else />
+    <span
+      v-if="showParse"
+      class="zqy-json-parse"
+      :class="{ 'zqy-json-parse__log': !!logMsg }"
+      @click="getJsonParseResult"
+    >结果解析</span>
   </div>
 </template>
 
@@ -26,13 +29,13 @@ const pubId = ref('')
 
 const emit = defineEmits(['getJsonParseResult'])
 
+const props = defineProps<{
+  showParse: boolean
+}>()
+
 function initData(id: string): void {
   pubId.value = id
   getLogData(pubId.value)
-}
-
-function getJsonParseResult() {
-    emit('getJsonParseResult')
 }
 
 // 获取日志
@@ -52,6 +55,10 @@ function getLogData(id: string) {
     })
 }
 
+function getJsonParseResult() {
+    emit('getJsonParseResult')
+}
+
 defineExpose({
   initData
 })
@@ -62,6 +69,20 @@ defineExpose({
   height: 100%;
   .empty-page {
     height: 100%;
+  }
+}
+.zqy-json-parse {
+  font-size: 12px;
+  color: getCssVar('color', 'primary');
+  cursor: pointer;
+  position: absolute;
+  right: 40px;
+  top: 12px;
+  &.zqy-json-parse__log {
+    right: 98px;
+  }
+  &:hover {
+      text-decoration: underline;
   }
 }
 </style>

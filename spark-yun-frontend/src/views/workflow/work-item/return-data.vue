@@ -1,21 +1,27 @@
-<!--
- * @Author: fanciNate
- * @Date: 2023-05-23 07:25:46
- * @LastEditTime: 2023-06-18 16:13:37
- * @LastEditors: fanciNate
- * @Description: In User Settings Edit
- * @FilePath: /spark-yun/spark-yun-website/src/views/workflow/work-item/return-data.vue
--->
+
 <template>
-  <BlockTable
-    :table-config="tableConfig"
-  />
+  <LogContainer
+    v-if="jsonData || strData"
+    :logMsg="JSON.stringify(jsonData)"
+    :showResult="true"
+    :status="true"
+  ></LogContainer>
+  <template v-else>
+    <BlockTable :table-config="tableConfig"/>
+  </template>
+  <span v-if="showParse" class="zqy-json-parse" @click="getJsonParseResult">结果解析</span>
 </template>
 
 <script lang="ts" setup>
-import { reactive } from 'vue'
+import { reactive, ref, defineEmits, defineProps } from 'vue'
 import BlockTable from '@/components/block-table/index.vue'
 import { GetResultData } from '@/services/schedule.service'
+
+const emit = defineEmits(['getJsonParseResult'])
+
+const props = defineProps<{
+  showParse: boolean
+}>()
 
 const tableConfig = reactive({
   tableData: [],
@@ -23,9 +29,15 @@ const tableConfig = reactive({
   seqType: 'seq',
   loading: false
 })
+const jsonData = ref()
+const strData = ref()
 
 function initData(id: string): void {
   getResultDatalist(id)
+}
+
+function getJsonParseResult() {
+    emit('getJsonParseResult')
 }
 
 // 获取结果
@@ -41,6 +53,9 @@ function getResultDatalist(id: string) {
     instanceId: id
   })
     .then((res: any) => {
+      jsonData.value = res.data.jsonData
+      strData.value = res.data.strData
+
       const col = res.data.data.slice(0, 1)[0]
       const tableData = res.data.data.slice(1, res.data.data.length)
       tableConfig.colConfigs = col.map((colunm: any) => {
@@ -78,5 +93,16 @@ defineExpose({
 .vxe-table--body-wrapper {
   max-height: calc(100vh - 466px);
   overflow: auto;
+}
+.zqy-json-parse {
+    font-size: 12px;
+    color: getCssVar('color', 'primary');
+    cursor: pointer;
+    position: absolute;
+    right: 40px;
+    top: 12px;
+    &:hover {
+        text-decoration: underline;
+    }
 }
 </style>

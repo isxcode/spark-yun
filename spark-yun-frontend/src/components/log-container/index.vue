@@ -4,8 +4,7 @@
         ref="preContentRef"
         @mousewheel="mousewheelEvent"
     >{{ logMsg + loadingMsg }}</pre>
-    <span class="zqy-json-parse" @click="getResult">结果表达式</span>
-    <span class="zqy-download-log" @click="downloadLog">下载日志</span>
+    <span v-if="!showResult" class="zqy-download-log" @click="downloadLog">下载日志</span>
 </template>
 
 <script lang="ts" setup>
@@ -14,7 +13,8 @@ import dayjs from 'dayjs'
 
 const props = defineProps<{
     logMsg: string,
-    status: boolean
+    status: boolean,
+    showResult: boolean
 }>()
 
 const position = ref(true)
@@ -68,7 +68,10 @@ function resetPosition() {
 
 function scrollToButtom() {
     if (preContentRef.value) {
-        document.getElementById('content').scrollTop = preContentRef.value?.scrollHeight // 滚动高度
+        const instanceDoc = document.getElementById('content')
+        if (instanceDoc) {
+            instanceDoc.scrollTop = preContentRef.value?.scrollHeight // 滚动高度
+        }
     }
 }
 
@@ -111,17 +114,6 @@ defineExpose({
     font-size: getCssVar('font-size', 'extra-small');
     line-height: 21px;
     margin: 0;
-}
-.zqy-json-parse {
-    font-size: 12px;
-    color: getCssVar('color', 'primary');
-    cursor: pointer;
-    position: absolute;
-    top: 0;
-    right: 100px;
-    &:hover {
-        text-decoration: underline;
-    }
 }
 .zqy-download-log {
     font-size: 12px;
