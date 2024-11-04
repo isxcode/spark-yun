@@ -416,7 +416,7 @@ function clickIcp() {
 }
 
 function callPhoneNumber() {
-  window.location.href = `tel:4008848170`;
+  window.location.href = `tel:18994591261`;
 }
 
 </script>
