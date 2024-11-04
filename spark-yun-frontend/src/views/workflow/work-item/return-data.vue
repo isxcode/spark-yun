@@ -1,8 +1,8 @@
 
 <template>
   <LogContainer
-    v-if="jsonData || strData"
-    :logMsg="JSON.stringify(jsonData)"
+    v-if="strData || jsonData"
+    :logMsg="strData || jsonData"
     :showResult="true"
     :status="true"
   ></LogContainer>

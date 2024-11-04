@@ -124,7 +124,7 @@ function showModal(id: string, type: string): void {
             value: ''
         }
     } else if (type === 'regexPath') {
-        regexStr.value = ''
+        regexStr.value = 'XX(\S+)XX'
         regexValue.value = {
             copyValue: '',
             value: ''
