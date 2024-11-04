@@ -27,12 +27,12 @@
                 />
             </div>
             <div class="search-parser">
-                <span class="result-label">查询结果：</span>
-                <span class="result-text">{{ tableValue.value || '暂无查询结果' }}</span>
+                <span class="result-label">解析结果：</span>
+                <span class="result-text">{{ tableValue.value || '暂无解析结果' }}</span>
             </div>
             <div class="search-parser search-parser-btn">
                 <el-button type="primary" @click="getWorkTablePath">获取结果</el-button>
-                <el-button v-if="tableValue.copyValue" type="text" @click="copyParse(tableValue.copyValue)">复制结果</el-button>
+                <el-button v-if="tableValue.copyValue" type="text" @click="copyParse(tableValue.copyValue)">复制表达式</el-button>
             </div>
         </div>
         <div class="regex-path-container" v-if="modalType === 'regexPath'">
@@ -44,12 +44,12 @@
                 />
             </div>
             <div class="search-parser">
-                <span class="result-label">查询结果：</span>
-                <span class="result-text">{{ regexValue.value || '暂无查询结果' }}</span>
+                <span class="result-label">解析结果：</span>
+                <span class="result-text">{{ regexValue.value || '暂无解析结果' }}</span>
             </div>
             <div class="search-parser search-parser-btn">
                 <el-button type="primary" @click="getWorkRegexPath">获取结果</el-button>
-                <el-button v-if="regexValue.copyValue" type="text" @click="copyParse(regexValue.copyValue)">复制结果</el-button>
+                <el-button v-if="regexValue.copyValue" type="text" @click="copyParse(regexValue.copyValue)">复制表达式</el-button>
             </div>
         </div>
     </BlockModal>
