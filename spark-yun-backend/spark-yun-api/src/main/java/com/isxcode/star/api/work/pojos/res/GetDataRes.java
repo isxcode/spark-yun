@@ -14,7 +14,7 @@ public class GetDataRes {
 
     private List<List<String>> data;
 
-    private Object jsonData;
+    private String jsonData;
 
     private String strData;
 }
