@@ -1,11 +1,3 @@
-<!--
- * @Author: fanciNate
- * @Date: 2023-05-26 16:35:28
- * @LastEditTime: 2023-05-27 15:31:20
- * @LastEditors: fanciNate
- * @Description: In User Settings Edit
- * @FilePath: /zqy-web/src/views/workflow/work-item/total-detail.vue
--->
 <template>
   <div
     id="content"

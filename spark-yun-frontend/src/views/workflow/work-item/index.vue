@@ -602,6 +602,7 @@ onMounted(() => {
       .log-show {
         padding: 0 20px;
         box-sizing: border-box;
+        overflow: auto;
 
         &.log-show-datasync {
           height: calc(100vh - 368px);
