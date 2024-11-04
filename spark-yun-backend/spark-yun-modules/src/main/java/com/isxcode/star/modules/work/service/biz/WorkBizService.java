@@ -293,7 +293,7 @@ public class WorkBizService {
         // 根据作业类型返回结果
         WorkEntity workEntity = workService.getWorkEntity(workInstanceEntity.getWorkId());
         if (WorkType.API.equals(workEntity.getWorkType()) || WorkType.CURL.equals(workEntity.getWorkType())) {
-            return new GetDataRes(null, JSON.parseObject(workInstanceEntity.getResultData()), null);
+            return new GetDataRes(null, JSON.toJSONString(JSON.parse(workInstanceEntity.getResultData()), true), null);
         }
 
         if (WorkType.BASH.equals(workEntity.getWorkType()) || WorkType.PYTHON.equals(workEntity.getWorkType())) {
@@ -589,7 +589,7 @@ public class WorkBizService {
             result.setValue(matcher.group(1));
         }
         result.setCopyValue("#[[get_regex_value('${qing." + workEntity.getId() + ".result_data}','"
-            + getWorkInstanceRegexPathReq.getRegexStr() + "')]]");
+            + Base64.getEncoder().encodeToString(getWorkInstanceRegexPathReq.getRegexStr().getBytes()) + "')]]");
         return result;
     }
 
@@ -616,8 +616,14 @@ public class WorkBizService {
         // 返回结果
         GetWorkInstanceValuePathRes result = new GetWorkInstanceValuePathRes();
 
-        List<List<String>> data =
-            JSON.parseObject(workInstanceEntity.getResultData(), new TypeReference<List<List<String>>>() {});
+        List<List<String>> data;
+        if (WorkType.QUERY_SPARK_SQL.equals(workEntity.getWorkType())) {
+            data = JSON.parseObject(JSON.toJSONString(JSON.parseObject(workInstanceEntity.getResultData()).get("data")),
+                new TypeReference<List<List<String>>>() {});
+        } else {
+            data = JSON.parseObject(workInstanceEntity.getResultData(), new TypeReference<List<List<String>>>() {});
+        }
+
         try {
             result.setValue(
                 data.get(getWorkInstanceTablePathReq.getTableRow()).get(getWorkInstanceTablePathReq.getTableCol() - 1));
