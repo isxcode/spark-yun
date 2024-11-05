@@ -233,13 +233,13 @@ function initData(id?: string, tableLoading?: boolean) {
                 }
               })
             }
-            // else if (['BASH', 'PYTHON'].includes(workConfig.workType)) {
-            //   tabList.forEach((item: any) => {
-            //     if (!['ReturnData'].includes(item.code)) {
-            //       item.hide = false
-            //     }
-            //   })
-            // }
+            if (['CURL'].includes(workConfig.workType)) {
+              tabList.forEach((item: any) => {
+                if (['RunningLog'].includes(item.code)) {
+                  item.hide = false
+                }
+              })
+            }
           }
         })
       })

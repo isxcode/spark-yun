@@ -74,14 +74,14 @@ const tableConfig = reactive({
     tableData: [],
     colConfigs: [
         {
-            prop: 'jsonPath',
-            title: 'jsonPath',
+            prop: 'value',
+            title: '值',
             minWidth: 100,
             showOverflowTooltip: true
         },
         {
-            prop: 'value',
-            title: '值',
+            prop: 'jsonPath',
+            title: 'jsonPath',
             minWidth: 100,
             showOverflowTooltip: true
         },
@@ -124,7 +124,7 @@ function showModal(id: string, type: string): void {
             value: ''
         }
     } else if (type === 'regexPath') {
-        regexStr.value = 'XX(\S+)XX'
+        regexStr.value = 'XX(\\S+)XX'
         regexValue.value = {
             copyValue: '',
             value: ''
