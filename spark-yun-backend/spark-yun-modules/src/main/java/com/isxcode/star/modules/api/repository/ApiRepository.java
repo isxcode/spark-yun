@@ -18,7 +18,7 @@ public interface ApiRepository extends JpaRepository<ApiEntity, String> {
 
     Optional<ApiEntity> findByPathAndApiType(String path, String tenantId);
 
-    @Query("select A from ApiEntity A where A.name LIKE %:keyword% or A.remark LIKE %:keyword% order by A.lastModifiedDateTime desc")
+    @Query("select A from ApiEntity A where A.name LIKE %:keyword% or A.remark LIKE %:keyword% order by A.createDateTime desc")
     Page<ApiEntity> pageApi(@Param("keyword") String searchKeyWord, Pageable pageable);
 
     long countByStatus(String status);

@@ -99,11 +99,11 @@ const typeList = reactive([
     value: 'DATA_SYNC_JDBC'
   },
   {
-    label: 'bash作业',
+    label: 'Bash作业',
     value: 'BASH'
   },
   {
-    label: 'python作业',
+    label: 'Python作业',
     value: 'PYTHON'
   }
 ])
