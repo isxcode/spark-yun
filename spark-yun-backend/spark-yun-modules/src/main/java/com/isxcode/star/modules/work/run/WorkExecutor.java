@@ -174,7 +174,9 @@ public abstract class WorkExecutor {
     public String parseJsonPath(String value, WorkInstanceEntity workInstance) {
 
         if (workInstance.getWorkflowInstanceId() == null) {
-            return value;
+            return value.replace("get_json_value", "get_json_default_value")
+                .replace("get_regex_value", "get_regex_default_value")
+                .replace("get_table_value", "get_table_default_value");
         }
 
         List<WorkInstanceEntity> allWorkflowInstance =
