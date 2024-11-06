@@ -342,6 +342,7 @@ defineExpose({
     updateFlowStatus,
     hideGrid,
     selectNodeEvent,
+    locationCenter,
     locationContentCenter
 })
 </script>
