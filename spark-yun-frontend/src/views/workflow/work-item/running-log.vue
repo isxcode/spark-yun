@@ -10,24 +10,16 @@
       :showResult="false"
     ></LogContainer>
     <EmptyPage v-else />
-    <span
-      v-if="showParse"
-      class="zqy-json-parse"
-      :class="{ 'zqy-json-parse__log': !!logMsg }"
-      @click="getJsonParseResult"
-    >结果解析</span>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { ref, defineExpose, defineEmits } from 'vue'
+import { ref, defineExpose } from 'vue'
 import EmptyPage from '@/components/empty-page/index.vue'
 import { GetYarnLogData } from '@/services/schedule.service'
 
 const logMsg = ref('')
 const pubId = ref('')
-
-const emit = defineEmits(['getJsonParseResult'])
 
 const props = defineProps<{
   showParse: boolean
@@ -53,10 +45,6 @@ function getLogData(id: string) {
     .catch(() => {
       logMsg.value = ''
     })
-}
-
-function getJsonParseResult() {
-    emit('getJsonParseResult')
 }
 
 defineExpose({
