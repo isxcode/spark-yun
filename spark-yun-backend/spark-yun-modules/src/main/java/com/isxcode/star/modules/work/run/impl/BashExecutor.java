@@ -54,7 +54,7 @@ public class BashExecutor extends WorkExecutor {
         ClusterNodeMapper clusterNodeMapper, AesUtils aesUtils, ClusterRepository clusterRepository,
         SqlValueService sqlValueService, SqlFunctionService sqlFunctionService, AlarmService alarmService) {
 
-        super(workInstanceRepository, workflowInstanceRepository, alarmService);
+        super(workInstanceRepository, workflowInstanceRepository, alarmService, sqlFunctionService);
         this.clusterNodeRepository = clusterNodeRepository;
         this.clusterNodeMapper = clusterNodeMapper;
         this.aesUtils = aesUtils;
@@ -82,8 +82,11 @@ public class BashExecutor extends WorkExecutor {
             throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "检测脚本失败 : BASH内容为空不能执行  \n");
         }
 
+        // 解析上游参数
+        String jsonPathSql = parseJsonPath(workRunContext.getScript(), workInstance);
+
         // 翻译脚本中的系统变量
-        String parseValueSql = sqlValueService.parseSqlValue(workRunContext.getScript());
+        String parseValueSql = sqlValueService.parseSqlValue(jsonPathSql);
 
         // 翻译脚本中的系统函数
         String script = sqlFunctionService.parseSqlFunction(parseValueSql);
@@ -196,7 +199,9 @@ public class BashExecutor extends WorkExecutor {
                 }
 
                 // 保存运行日志
-                workInstance.setYarnLog(logCommand.replace("zhiqingyun_success", ""));
+                String backStr = logCommand.replace("zhiqingyun_success", "");
+                workInstance.setYarnLog(backStr);
+                workInstance.setResultData(backStr.substring(0, backStr.length() - 2));
                 logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("保存日志成功 \n");
                 updateInstance(workInstance, logBuilder);
 

@@ -31,7 +31,7 @@ public class SqlFunctionService {
         Binding binding = new Binding();
         GroovyShell shell = new GroovyShell(binding);
 
-        Pattern pattern = compile("(#\\{).+?}");
+        Pattern pattern = compile("(#\\[\\[).+?]]");
         Matcher matcher = pattern.matcher(sql);
 
         // 获取groovy函数脚本
@@ -40,7 +40,7 @@ public class SqlFunctionService {
         // 替换正则
         while (matcher.find()) {
             String group = matcher.group();
-            String functionStr = group.replace("#{", "").replace("}", "");
+            String functionStr = group.replace("#[[", "").replace("]]", "");
             shell.evaluate(groovyFunctions + "result=" + functionStr);
             String result = String.valueOf(binding.getVariable("result"));
             sql = sql.replace(group, result);

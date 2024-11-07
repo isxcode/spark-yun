@@ -13,4 +13,8 @@ import lombok.NoArgsConstructor;
 public class GetDataRes {
 
     private List<List<String>> data;
+
+    private String jsonData;
+
+    private String strData;
 }

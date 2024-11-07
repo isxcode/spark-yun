@@ -57,7 +57,7 @@ public class SparkContainerSqlExecutor extends WorkExecutor {
         ClusterNodeRepository clusterNodeRepository, IsxAppProperties isxAppProperties,
         WorkInstanceRepository workInstanceRepository1, SqlCommentService sqlCommentService,
         SqlValueService sqlValueService, SqlFunctionService sqlFunctionService, AlarmService alarmService) {
-        super(workInstanceRepository, workflowInstanceRepository, alarmService);
+        super(workInstanceRepository, workflowInstanceRepository, alarmService, sqlFunctionService);
         this.containerRepository = containerRepository;
         this.clusterNodeRepository = clusterNodeRepository;
         this.isxAppProperties = isxAppProperties;
@@ -125,8 +125,11 @@ public class SparkContainerSqlExecutor extends WorkExecutor {
             // 去掉sql中的注释
             String sqlNoComment = sqlCommentService.removeSqlComment(workRunContext.getScript());
 
+            // 解析上游参数
+            String jsonPathSql = parseJsonPath(sqlNoComment, workInstance);
+
             // 翻译sql中的系统变量
-            String parseValueSql = sqlValueService.parseSqlValue(sqlNoComment);
+            String parseValueSql = sqlValueService.parseSqlValue(jsonPathSql);
 
             // 翻译sql中的系统函数
             String script = sqlFunctionService.parseSqlFunction(parseValueSql);

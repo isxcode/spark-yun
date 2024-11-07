@@ -120,9 +120,9 @@ public class ExcelSyncExecutor extends WorkExecutor {
         DatasourceService datasourceService, IsxAppProperties isxAppProperties, FuncRepository funcRepository,
         FuncMapper funcMapper, FileRepository fileRepository, SqlCommentService sqlCommentService,
         SqlValueService sqlValueService, SqlFunctionService sqlFunctionService, AlarmService alarmService,
-        FileService fileService, FileService fileService1) {
+        FileService fileService) {
 
-        super(workInstanceRepository, workflowInstanceRepository, alarmService);
+        super(workInstanceRepository, workflowInstanceRepository, alarmService, sqlFunctionService);
         this.workInstanceRepository = workInstanceRepository;
         this.clusterRepository = clusterRepository;
         this.clusterNodeRepository = clusterNodeRepository;
@@ -140,7 +140,7 @@ public class ExcelSyncExecutor extends WorkExecutor {
         this.sqlCommentService = sqlCommentService;
         this.sqlValueService = sqlValueService;
         this.sqlFunctionService = sqlFunctionService;
-        this.fileService = fileService1;
+        this.fileService = fileService;
     }
 
     @Override
@@ -217,8 +217,11 @@ public class ExcelSyncExecutor extends WorkExecutor {
             String sqlNoComment =
                 sqlCommentService.removeSqlComment(workRunContext.getExcelSyncConfig().getQueryCondition());
 
+            // 解析上游参数
+            String jsonPathSql = parseJsonPath(sqlNoComment, workInstance);
+
             // 翻译sql中的系统变量
-            String parseValueSql = sqlValueService.parseSqlValue(sqlNoComment);
+            String parseValueSql = sqlValueService.parseSqlValue(jsonPathSql);
 
             // 翻译sql中的系统函数
             String conditionScript = sqlFunctionService.parseSqlFunction(parseValueSql);

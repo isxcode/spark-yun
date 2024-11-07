@@ -4,22 +4,25 @@
         ref="preContentRef"
         @mousewheel="mousewheelEvent"
     >{{ logMsg + loadingMsg }}</pre>
-    <span class="zqy-download-log" @click="downloadLog">下载日志</span>
+    <span v-if="!showResult" class="zqy-download-log" @click="downloadLog">下载日志</span>
 </template>
 
 <script lang="ts" setup>
-import { ref, defineProps, onMounted, computed, nextTick, onUnmounted, watch } from 'vue'
+import { ref, defineProps, onMounted, computed, nextTick, onUnmounted, watch, defineEmits } from 'vue'
 import dayjs from 'dayjs'
 
 const props = defineProps<{
     logMsg: string,
-    status: boolean
+    status: boolean,
+    showResult: boolean
 }>()
 
 const position = ref(true)
 const loadingTimer = ref()
 const loadingPoint = ref('.')
 const preContentRef = ref(null)
+
+const emit = defineEmits(['getJsonParseResult'])
 
 watch(() => props.logMsg, () => {
     if (position.value) {
@@ -35,6 +38,10 @@ const loadingMsg = computed(() => {
   const str = !props.status ? `加载中${loadingPoint.value}` : ''
   return str
 })
+
+function getResult() {
+    emit('getJsonParseResult')
+}
 
 function downloadLog() {
     const logStr = props.logMsg
@@ -61,7 +68,10 @@ function resetPosition() {
 
 function scrollToButtom() {
     if (preContentRef.value) {
-        document.getElementById('content').scrollTop = preContentRef.value?.scrollHeight // 滚动高度
+        const instanceDoc = document.getElementById('content')
+        if (instanceDoc) {
+            instanceDoc.scrollTop = preContentRef.value?.scrollHeight // 滚动高度
+        }
     }
 }
 

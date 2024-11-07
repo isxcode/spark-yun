@@ -11,13 +11,13 @@
     id="content"
     class="publish-log"
   >
-    <LogContainer v-if="logMsg" :logMsg="logMsg" :status="status"></LogContainer>
+    <LogContainer v-if="logMsg" :logMsg="logMsg" :status="status" :showResult="false"></LogContainer>
     <EmptyPage v-else />
   </div>
 </template>
 
 <script lang="ts" setup>
-import { nextTick, onUnmounted, ref, defineExpose, computed } from 'vue'
+import { nextTick, onUnmounted, ref, defineExpose } from 'vue'
 import { GetSubmitLogData } from '@/services/workflow.service'
 import EmptyPage from '@/components/empty-page/index.vue'
 

@@ -304,3 +304,30 @@ export function GetInvokeUrl(params: any): Promise<any> {
     params: params
   })
 }
+
+// 获取作业返回的jsonPath接口
+export function GetWorkInstanceJsonPath(params: any): Promise<any> {
+  return http.request({
+    method: 'post',
+    url: '/work/getWorkInstanceJsonPath',
+    params: params
+  })
+}
+
+// 获取作业返回的几行几列结果接口
+export function GetWorkInstanceTablePath(params: any): Promise<any> {
+  return http.request({
+    method: 'post',
+    url: '/work/getWorkInstanceTablePath',
+    params: params
+  })
+}
+
+// 获取作业返回的正则解析结果接口
+export function GetWorkInstanceRegexPath(params: any): Promise<any> {
+  return http.request({
+    method: 'post',
+    url: '/work/getWorkInstanceRegexPath',
+    params: params
+  })
+}

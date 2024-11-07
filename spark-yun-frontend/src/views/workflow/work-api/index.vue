@@ -144,13 +144,21 @@
                         </span>
                     </template>
                     <div class="log-show log-show-datasync">
-                        <component :is="currentTab" ref="containerInstanceRef" class="show-container" />
+                        <component
+                            :is="currentTab"
+                            ref="containerInstanceRef"
+                            class="show-container"
+                            :showParse="true"
+                            @getJsonParseResult="getJsonParseResult"
+                        />
                     </div>
                 </el-collapse-item>
             </el-collapse>
         </LoadingPage>
         <!-- 配置 -->
         <config-detail ref="configDetailRef"></config-detail>
+        <!-- 解析弹窗 -->
+        <ParseModal ref="parseModalRef"></ParseModal>
     </div>
 </template>
 
@@ -158,7 +166,6 @@
 import { reactive, ref, onMounted, markRaw, nextTick } from 'vue'
 import Breadcrumb from '@/layout/bread-crumb/index.vue'
 import LoadingPage from '@/components/loading/index.vue'
-// import ConfigModal from './config-modal/index.vue'
 import ConfigDetail from '../workflow-page/config-detail/index.vue'
 import PublishLog from '../work-item/publish-log.vue'
 import ReturnData from '../work-item/return-data.vue'
@@ -172,6 +179,7 @@ import { Loading } from '@element-plus/icons-vue'
 // import CodeMirror from 'vue-codemirror6'
 import { json } from '@codemirror/lang-json'
 import { jsonFormatter } from '@/utils/formatter'
+import ParseModal from '@/components/log-container/parse-modal/index.vue'
 
 interface Option {
     label: string
@@ -210,6 +218,7 @@ const changeStatus = ref(false)
 const jsonLang = ref<any>(json())
 const reqBodyFullStatus = ref(false)
 const form = ref<FormInstance>()
+const parseModalRef = ref()
 
 const containerInstanceRef = ref(null)
 
@@ -254,7 +263,12 @@ const tabList = reactive([
         name: '提交日志',
         code: 'PublishLog',
         hide: false
-    }
+    },
+    {
+        name: '运行结果',
+        code: 'ReturnData',
+        hide: true
+    },
 ])
 function initData(id?: string, tableLoading?: boolean) {
     loading.value = tableLoading ? false : true
@@ -276,7 +290,7 @@ function initData(id?: string, tableLoading?: boolean) {
                     // 运行结束
                     if (workConfig.workType === 'API') {
                         tabList.forEach((item: any) => {
-                            if (['RunningLog'].includes(item.code)) {
+                            if (['ReturnData'].includes(item.code)) {
                                 item.hide = false
                             }
                         })
@@ -470,9 +484,13 @@ function changeCollapseDown() {
     logCollapseRef.value.setActiveNames('0')
     isCollapse.value = false
 }
-function changeCollapseUp() {
-    logCollapseRef.value.setActiveNames('1')
-    isCollapse.value = true
+function changeCollapseUp(e: any) {
+    if (e && e.paneName === activeName.value && isCollapse.value) {
+        changeCollapseDown()
+    } else {
+        logCollapseRef.value.setActiveNames('1')
+        isCollapse.value = true
+    }
 }
 
 function addNewOption(type: string) {
@@ -508,6 +526,10 @@ function fullScreenEvent() {
 }
 function requestTypeChange() {
     apiWorkConfig.requestBody = ''
+}
+
+function getJsonParseResult() {
+    parseModalRef.value.showModal(instanceId.value, 'jsonPath')
 }
 
 onMounted(() => {

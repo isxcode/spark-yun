@@ -24,7 +24,7 @@ module.exports = {
     'vue/no-template-shadow': 'off',
     'no-console': import.meta.env.VITE_NODE_ENV === 'production' ? 'warn' : 'off', // 只在开发环境下使用console
     'no-debugger': import.meta.env.VITE_NODE_ENV === 'production' ? 'warn' : 'off', // 只在开发环境下使用debugger
-    'indent': [ 'warn', 2 ], // 缩进为4个空格
+    'indent': [ 'warn', 4 ], // 缩进为4个空格
     'quotes': [ 'warn', 'single' ], // 单引号
     'semi': [ 'warn', 'never' ], // 添加结尾分号
     'comma-dangle': [ 'warn', 'never' ], // 去掉结尾逗号

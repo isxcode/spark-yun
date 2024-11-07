@@ -77,7 +77,7 @@ function initFlowData() {
             zqyFlowRef.value.initCellList(JSON.parse(res.data.webConfig))
             zqyFlowRef.value.hideGrid(true)
             nextTick(() => {
-                zqyFlowRef.value.locationContentCenter()
+                zqyFlowRef.value.locationCenter()
 
                 // 判断是否开始运行
                 runningStatus.value = true
