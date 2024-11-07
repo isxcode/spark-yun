@@ -1,9 +1,7 @@
 package com.isxcode.star.modules.work.controller;
 
-import com.isxcode.star.api.instance.pojos.req.GetWorkInstanceJsonPathReq;
-import com.isxcode.star.api.instance.pojos.req.GetWorkflowInstanceReq;
-import com.isxcode.star.api.instance.pojos.req.QueryInstanceReq;
-import com.isxcode.star.api.instance.pojos.res.GetWorkInstanceJsonPathRes;
+import com.isxcode.star.api.instance.pojos.req.*;
+import com.isxcode.star.api.instance.pojos.res.GetWorkInstanceValuePathRes;
 import com.isxcode.star.api.instance.pojos.res.GetWorkflowInstanceRes;
 import com.isxcode.star.api.instance.pojos.res.QueryInstanceRes;
 import com.isxcode.star.api.main.constants.ModuleCode;
@@ -240,29 +238,28 @@ public class WorkController {
     @Operation(summary = "获取作业返回的jsonPath接口")
     @PostMapping("/getWorkInstanceJsonPath")
     @SuccessResponse("查询成功")
-    public List<GetWorkInstanceJsonPathRes> getWorkInstanceJsonPath(
+    public List<GetWorkInstanceValuePathRes> getWorkInstanceJsonPath(
         @Valid @RequestBody GetWorkInstanceJsonPathReq getWorkInstanceJsonPathReq) {
 
         return workBizService.getWorkInstanceJsonPath(getWorkInstanceJsonPathReq);
     }
 
-    // @Operation(summary = "获取作业返回的正则解析结果接口")
-    // @PostMapping("/getWorkInstanceJsonPath")
-    // @SuccessResponse("查询成功")
-    // public List<GetWorkInstanceJsonPathRes> getWorkInstanceJsonPath(
-    // @Valid @RequestBody GetWorkInstanceJsonPathReq getWorkInstanceJsonPathReq) {
-    //
-    // return workBizService.getWorkInstanceJsonPath(getWorkInstanceJsonPathReq);
-    // }
-    //
-    // @Operation(summary = "获取作业返回的几行几列结果接口")
-    // @PostMapping("/getWorkInstanceJsonPath")
-    // @SuccessResponse("查询成功")
-    // public List<GetWorkInstanceJsonPathRes> getWorkInstanceJsonPath(
-    // @Valid @RequestBody GetWorkInstanceJsonPathReq getWorkInstanceJsonPathReq) {
-    //
-    // return workBizService.getWorkInstanceJsonPath(getWorkInstanceJsonPathReq);
-    // }
+    @Operation(summary = "获取作业返回的正则解析结果接口")
+    @PostMapping("/getWorkInstanceRegexPath")
+    @SuccessResponse("查询成功")
+    public GetWorkInstanceValuePathRes getWorkInstanceRegexPath(
+        @Valid @RequestBody GetWorkInstanceRegexPathReq getWorkInstanceJsonPathReq) {
 
+        return workBizService.getWorkInstanceRegexPath(getWorkInstanceJsonPathReq);
+    }
+
+    @Operation(summary = "获取作业返回的几行几列结果接口")
+    @PostMapping("/getWorkInstanceTablePath")
+    @SuccessResponse("查询成功")
+    public GetWorkInstanceValuePathRes getWorkInstanceTablePath(
+        @Valid @RequestBody GetWorkInstanceTablePathReq getWorkInstanceTablePathReq) {
+
+        return workBizService.getWorkInstanceTablePath(getWorkInstanceTablePathReq);
+    }
 
 }

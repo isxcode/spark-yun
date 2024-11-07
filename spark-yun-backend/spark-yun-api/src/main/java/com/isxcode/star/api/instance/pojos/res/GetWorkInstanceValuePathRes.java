@@ -4,7 +4,7 @@ import lombok.Data;
 
 
 @Data
-public class GetWorkInstanceJsonPathRes {
+public class GetWorkInstanceValuePathRes {
 
     private String jsonPath;
 
