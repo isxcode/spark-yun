@@ -548,6 +548,8 @@ function initFlowData() {
                 otherConfig.value = res.data
                 if (res.data?.webConfig) {
                     zqyFlowRef.value.initCellList(res.data.webConfig)
+                } else {
+                    zqyFlowRef.value.initCellList([])
                 }
                 loading.value = false
                 resolve()
