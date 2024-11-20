@@ -93,27 +93,27 @@ public class WorkConfigService {
         Map<String, String> sparkConfig = new HashMap<>();
         switch (resourceLevel) {
             case ResourceLevel.HIGH:
-                sparkConfig.put("spark.executor.instances", "10");
-                sparkConfig.put("spark.executor.cores", "4");
-                sparkConfig.put("spark.executor.memory", "4g");
-                sparkConfig.put("spark.driver.memory", "2g");
                 sparkConfig.put("spark.driver.cores", "1");
-                sparkConfig.put("spark.cores.max", "10");
+                sparkConfig.put("spark.driver.memory", "2g");
+                sparkConfig.put("spark.executor.cores", "1");
+                sparkConfig.put("spark.executor.memory", "6g");
+                sparkConfig.put("spark.executor.instances", "3");
+                sparkConfig.put("spark.cores.max", "3");
                 break;
             case ResourceLevel.MEDIUM:
-                sparkConfig.put("spark.executor.instances", "5");
-                sparkConfig.put("spark.executor.cores", "2");
-                sparkConfig.put("spark.executor.memory", "2g");
-                sparkConfig.put("spark.driver.memory", "1g");
                 sparkConfig.put("spark.driver.cores", "1");
-                sparkConfig.put("spark.cores.max", "5");
+                sparkConfig.put("spark.driver.memory", "1g");
+                sparkConfig.put("spark.executor.cores", "1");
+                sparkConfig.put("spark.executor.memory", "4g");
+                sparkConfig.put("spark.executor.instances", "2");
+                sparkConfig.put("spark.cores.max", "2");
                 break;
             case ResourceLevel.LOW:
-                sparkConfig.put("spark.executor.instances", "1");
+                sparkConfig.put("spark.driver.cores", "1");
+                sparkConfig.put("spark.driver.memory", "1g");
                 sparkConfig.put("spark.executor.cores", "1");
                 sparkConfig.put("spark.executor.memory", "2g");
-                sparkConfig.put("spark.driver.memory", "1g");
-                sparkConfig.put("spark.driver.cores", "1");
+                sparkConfig.put("spark.executor.instances", "1");
                 sparkConfig.put("spark.cores.max", "1");
                 break;
         }
