@@ -67,6 +67,8 @@ public class DatasourceService {
         switch (datasource.getDbType()) {
             case DatasourceType.HANA_SAP:
                 return "SELECT TABLE_NAME FROM SYS.TABLES;";
+            case DatasourceType.SQL_SERVER:
+                return "select getdate() as nowtime";
             default:
                 return "show databases";
         }
