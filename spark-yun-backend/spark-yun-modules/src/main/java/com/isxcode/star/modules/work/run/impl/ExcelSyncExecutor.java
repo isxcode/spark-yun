@@ -264,9 +264,9 @@ public class ExcelSyncExecutor extends WorkExecutor {
         // 将excel文件转成csv，并推送到远程
         String csvFileName = sourceFileId + ".csv";
         String filePath = PathUtils.parseProjectPath(isxAppProperties.getResourcesPath()) + File.separator + "file"
-            + File.separator + TENANT_ID.get() + File.separator + file.getId();
+            + File.separator + file.getTenantId() + File.separator + file.getId();
         String csvFilePath = PathUtils.parseProjectPath(isxAppProperties.getResourcesPath()) + File.separator + "file"
-            + File.separator + TENANT_ID.get() + File.separator + csvFileName;
+            + File.separator + file.getTenantId() + File.separator + csvFileName;
         ExcelReader reader = ExcelUtil.getReader(FileUtil.file(filePath));
         List<List<Object>> read = reader.read();
         CsvWriteConfig.defaultConfig().setFieldSeparator(',').setTextDelimiter(';');
