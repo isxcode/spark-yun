@@ -234,8 +234,7 @@ public class ExcelSyncExecutor extends WorkExecutor {
         // 开始构造PluginReq
         PluginReq pluginReq = PluginReq.builder().excelSyncConfig(workRunContext.getExcelSyncConfig())
             .sparkConfig(genSparkConfig(workRunContext.getClusterConfig().getSparkConfig()))
-            .syncRule(workRunContext.getSyncRule())
-            .agentType(calculateEngineEntityOptional.get().getClusterType())
+            .syncRule(workRunContext.getSyncRule()).agentType(calculateEngineEntityOptional.get().getClusterType())
             .build();
 
         // 获取节点信息
