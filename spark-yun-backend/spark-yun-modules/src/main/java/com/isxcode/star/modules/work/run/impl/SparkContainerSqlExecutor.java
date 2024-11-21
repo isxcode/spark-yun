@@ -157,7 +157,8 @@ public class SparkContainerSqlExecutor extends WorkExecutor {
                 if (containerGetDataRes.getMsg().contains("Connection refused (Connection refused)")) {
                     throw new WorkRunException("运行异常: 请检查容器的运行状态");
                 }
-                throw new WorkRunException("运行异常" + containerGetDataRes.getMsg());
+                String errMsg = containerGetDataRes.getMsg();
+                throw new WorkRunException("运行异常" + errMsg.substring(19, errMsg.length() - 1).replace("<EOL>", "\n"));
             }
 
             // 记录结束执行时间
@@ -170,7 +171,6 @@ public class SparkContainerSqlExecutor extends WorkExecutor {
             workInstance.setResultData(JSON.toJSONString(containerGetDataRes.getData()));
             workInstanceRepository.saveAndFlush(workInstance);
         } catch (WorkRunException e) {
-            log.error(e.getMessage(), e);
             throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + e.getMsg() + "\n");
         }
     }
