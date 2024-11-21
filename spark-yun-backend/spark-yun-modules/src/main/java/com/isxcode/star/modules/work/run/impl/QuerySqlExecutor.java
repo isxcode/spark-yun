@@ -151,7 +151,7 @@ public class QuerySqlExecutor extends WorkExecutor {
 
             // 特殊查询语句直接跳过
             if (!lastSql.toUpperCase().trim().startsWith("SHOW") && !lastSql.toUpperCase().trim().startsWith("DESCRIBE")
-                && !lastSql.replace(" ","").toLowerCase().startsWith("selectcount")) {
+                && !lastSql.replace(" ", "").toLowerCase().startsWith("selectcount")) {
 
                 // 判断返回结果的条数，超过200条，则提出警告
                 String countSql = String.format("SELECT COUNT(*) FROM ( %s ) temp", lastSql);
