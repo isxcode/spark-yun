@@ -194,7 +194,7 @@ const isMobile = useMediaQuery('(max-width: 767px)')
 const props = defineProps({
   showVideo: {
     type: Boolean,
-    default: false,
+    default: true,
   },
 })
 
