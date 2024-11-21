@@ -234,7 +234,9 @@ public class ExcelSyncExecutor extends WorkExecutor {
         // 开始构造PluginReq
         PluginReq pluginReq = PluginReq.builder().excelSyncConfig(workRunContext.getExcelSyncConfig())
             .sparkConfig(genSparkConfig(workRunContext.getClusterConfig().getSparkConfig()))
-            .syncRule(workRunContext.getSyncRule()).build();
+            .syncRule(workRunContext.getSyncRule())
+            .agentType(calculateEngineEntityOptional.get().getClusterType())
+            .build();
 
         // 获取节点信息
         ScpFileEngineNodeDto scpFileEngineNodeDto =
@@ -318,7 +320,6 @@ public class ExcelSyncExecutor extends WorkExecutor {
                 }
             });
             pluginReq.setFuncInfoList(funcMapper.funcEntityListToFuncInfoList(allFunc));
-            pluginReq.setAgentType(calculateEngineEntityOptional.get().getClusterType());
             executeReq.setFuncConfig(funcMapper.funcEntityListToFuncInfoList(allFunc));
         }
 
