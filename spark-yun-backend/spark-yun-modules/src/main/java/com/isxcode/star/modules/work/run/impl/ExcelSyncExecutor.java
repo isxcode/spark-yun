@@ -192,7 +192,7 @@ public class ExcelSyncExecutor extends WorkExecutor {
         logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始构建作业  \n");
         SubmitWorkReq executeReq = new SubmitWorkReq();
         executeReq.setWorkId(workRunContext.getWorkId());
-        executeReq.setWorkType(WorkType.DATA_SYNC_JDBC);
+        executeReq.setWorkType(WorkType.EXCEL_SYNC_JDBC);
         executeReq.setWorkInstanceId(workInstance.getId());
 
         // 封装去向Datasource的信息
