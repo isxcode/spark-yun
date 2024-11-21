@@ -96,7 +96,7 @@ public class WorkConfigService {
                 sparkConfig.put("spark.driver.cores", "1");
                 sparkConfig.put("spark.driver.memory", "2g");
                 sparkConfig.put("spark.executor.cores", "1");
-                sparkConfig.put("spark.executor.memory", "6g");
+                sparkConfig.put("spark.executor.memory", "8g");
                 sparkConfig.put("spark.executor.instances", "3");
                 sparkConfig.put("spark.cores.max", "3");
                 break;
