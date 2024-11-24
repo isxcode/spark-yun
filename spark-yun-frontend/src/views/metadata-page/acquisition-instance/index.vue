@@ -13,12 +13,7 @@
                 <BlockTable :table-config="tableConfig" @size-change="handleSizeChange"
                     @current-change="handleCurrentChange">
                     <template #statusTag="scopeSlot">
-                        <div class="btn-group">
-                            <el-tag v-if="scopeSlot.row.status === 'FAIL'" type="danger" class="ml-2">失败</el-tag>
-                            <el-tag v-if="scopeSlot.row.status === 'ABORT'" type="warning" class="ml-2">已中止</el-tag>
-                            <el-tag v-if="scopeSlot.row.status === 'SUCCESS'" type="success" class="ml-2">成功</el-tag>
-                            <el-tag v-if="scopeSlot.row.status === 'COLLECTING'" class="ml-2">采集中</el-tag>
-                        </div>
+                        <ZStatusTag :status="scopeSlot.row.status"></ZStatusTag>
                     </template>
                     <template #options="scopeSlot">
                         <div class="btn-group btn-group-msg">

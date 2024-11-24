@@ -37,40 +37,7 @@
             >{{ scopeSlot.row.name }}</span>
           </template>
           <template #statusTag="scopeSlot">
-            <div class="btn-group">
-              <el-tag
-                v-if="scopeSlot.row.status === 'ACTIVE'"
-                class="ml-2"
-                type="success"
-              >
-                可用
-              </el-tag>
-              <el-tag
-                v-if="scopeSlot.row.status === 'NO_ACTIVE'"
-                class="ml-2"
-                type="danger"
-              >
-                不可用
-              </el-tag>
-              <el-tag
-                v-if="scopeSlot.row.status === 'NEW'"
-                type="info"
-              >
-                待配置
-              </el-tag>
-              <el-tag v-if="scopeSlot.row.status === 'UN_CHECK'">
-                待检测
-              </el-tag>
-              <el-tag v-if="scopeSlot.row.status === 'UN_AUTO'">
-                未运行
-              </el-tag>
-              <el-tag v-if="scopeSlot.row.status === 'STOP'" class="ml-2" type="danger">
-                已下线
-              </el-tag>
-              <el-tag v-if="scopeSlot.row.status === 'PUBLISHED'" class="ml-2" type="success">
-                已发布
-              </el-tag>
-            </div>
+            <ZStatusTag :status="scopeSlot.row.status === 'STOP' ? 'UN_PUBLISHED' : scopeSlot.row.status"></ZStatusTag>
           </template>
           <template #options="scopeSlot">
             <div class="btn-group">

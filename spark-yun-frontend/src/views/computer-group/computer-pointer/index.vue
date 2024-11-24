@@ -14,50 +14,7 @@
       <div class="zqy-table">
         <BlockTable :table-config="tableConfig" @size-change="handleSizeChange" @current-change="handleCurrentChange">
           <template #statusTag="scopeSlot">
-            <div class="btn-group">
-              <el-tag v-if="scopeSlot.row.status === 'RUNNING'" class="ml-2" type="success">
-                启动
-              </el-tag>
-              <el-tag v-if="scopeSlot.row.status === 'NO_ACTIVE'" class="ml-2" type="danger">
-                不可用
-              </el-tag>
-              <el-tag v-if="scopeSlot.row.status === 'STOP'" class="ml-2" type="danger">
-                待激活
-              </el-tag>
-              <el-tag v-if="scopeSlot.row.status === 'UN_INSTALL'">
-                未安装
-              </el-tag>
-              <el-tag v-if="scopeSlot.row.status === 'CHECKING'">
-                检测中
-              </el-tag>
-              <el-tag v-if="scopeSlot.row.status === 'STARTING'">
-                启动中
-              </el-tag>
-              <el-tag v-if="scopeSlot.row.status === 'STOPPING'">
-                停止中
-              </el-tag>
-              <el-tag v-if="scopeSlot.row.status === 'INSTALLING'">
-                安装中
-              </el-tag>
-              <el-tag v-if="scopeSlot.row.status === 'REMOVING'">
-                卸载中
-              </el-tag>
-              <el-tag v-if="scopeSlot.row.status === 'UN_CHECK'">
-                待检测
-              </el-tag>
-              <el-tag v-if="scopeSlot.row.status === 'CHECK_ERROR'" class="ml-2" type="danger">
-                检测失败
-              </el-tag>
-              <el-tag v-if="scopeSlot.row.status === 'CAN_NOT_INSTALL'" class="ml-2" type="danger">
-                不可安装
-              </el-tag>
-              <el-tag v-if="scopeSlot.row.status === 'CAN_INSTALL'" class="ml-2" type="success">
-                可安装
-              </el-tag>
-              <el-tag v-if="scopeSlot.row.status === 'INSTALL_ERROR'" class="ml-2" type="danger">
-                安装失败
-              </el-tag>
-            </div>
+            <ZStatusTag :status="scopeSlot.row.status"></ZStatusTag>
           </template>
           <template #defaultNodeTag="scopeSlot">
             <div class="btn-group">

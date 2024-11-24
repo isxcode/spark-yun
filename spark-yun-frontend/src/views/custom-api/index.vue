@@ -22,10 +22,7 @@
                     @current-change="handleCurrentChange"
                 >
                     <template #statusTag="scopeSlot">
-                        <div class="btn-group">
-                            <el-tag v-if="scopeSlot.row.status === 'UNPUBLISHED'" class="ml-2" type="danger">未发布</el-tag>
-                            <el-tag v-else class="ml-2" type="success">已发布</el-tag>
-                        </div>
+                        <ZStatusTag :status="scopeSlot.row.status"></ZStatusTag>
                     </template>
                     <template #options="scopeSlot">
                         <div class="btn-group">

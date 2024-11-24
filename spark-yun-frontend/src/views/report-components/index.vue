@@ -28,11 +28,7 @@
                         {{ typeName(scopeSlot.row.type) }}
                     </template>
                     <template #statusTag="scopeSlot">
-                        <div class="btn-group">
-                            <el-tag v-if="scopeSlot.row.status === 'NEW'" class="ml-2" type="info">新建</el-tag>
-                            <el-tag v-if="scopeSlot.row.status === 'OFFLINE'" class="ml-2" type="danger">已下线</el-tag>
-                            <el-tag v-if="scopeSlot.row.status === 'PUBLISHED'" class="ml-2" type="success">已发布</el-tag>
-                        </div>
+                        <ZStatusTag :status="scopeSlot.row.status"></ZStatusTag>
                     </template>
                     <template #options="scopeSlot">
                         <div class="btn-group">
