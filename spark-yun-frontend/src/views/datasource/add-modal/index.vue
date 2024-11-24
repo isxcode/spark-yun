@@ -144,6 +144,25 @@ db2: jdbc:db2://${host}:${ip}/${database}
         />
       </el-form-item>
     </el-form>
+    <template #customLeft>
+      <div class="test-button">
+        <el-button :loading="testLoading" type="primary" @click="testFun">连接测试</el-button>
+        <el-popover
+          placement="right"
+          title="测试结果"
+          :width="400"
+          trigger="hover"
+          popper-class="message-error-tooltip"
+          :content="testResult?.connectLog"
+          v-if="testResult?.connectLog"
+        >
+          <template #reference>
+            <el-icon class="hover-tooltip" v-if="!testResult?.canConnect"><WarningFilled /></el-icon>
+            <el-icon class="hover-tooltip success" v-else><SuccessFilled /></el-icon>
+          </template>
+        </el-popover>
+      </div>
+    </template>
   </BlockModal>
 </template>
 
@@ -152,14 +171,18 @@ import { reactive, defineExpose, ref, nextTick } from 'vue'
 import BlockModal from '@/components/block-modal/index.vue'
 import { ElMessage, FormInstance, FormRules } from 'element-plus'
 import { GetDefaultDriverData, GetDriverListData } from '@/services/driver-management.service'
+import { TestDatasourceData } from '@/services/datasource.service'
 
 const form = ref<FormInstance>()
 const callback = ref<any>()
 const driverIdList = ref([])
+const testLoading = ref(false)
+const testResult = ref()
 const modelConfig = reactive({
   title: '添加数据源',
   visible: false,
   width: '520px',
+  customClass: 'datasource-add-modal',
   okConfig: {
     title: '确定',
     ok: okEvent,
@@ -298,6 +321,11 @@ const rules = reactive<FormRules>({
 function showModal(cb: () => void, data: any): void {
   callback.value = cb
   modelConfig.visible = true
+
+  testResult.value = {
+    canConnect: null,
+    connectLog: ''
+  }
   if (data) {
     formData.name = data.name
     formData.dbType = data.dbType
@@ -330,6 +358,25 @@ function showModal(cb: () => void, data: any): void {
   getDriverIdList(true)
   nextTick(() => {
     form.value?.resetFields()
+  })
+}
+
+function testFun() {
+  form.value?.validate((valid: boolean) => {
+    if (valid) {
+      testLoading.value = true
+      TestDatasourceData({
+        ...formData
+      }).then((res: any) => {
+        testLoading.value = false
+        testResult.value = res.data
+        ElMessage.success(res.msg)
+      }).catch(() => {
+        testLoading.value = false
+      })
+    } else {
+      ElMessage.warning('请将表单输入完整')
+    }
   })
 }
 
@@ -366,7 +413,7 @@ function getDefaultDriver(e: string) {
 }
 
 function okEvent() {
-  form.value?.validate((valid) => {
+  form.value?.validate((valid: boolean) => {
     if (valid) {
       modelConfig.okConfig.loading = true
       callback
@@ -409,6 +456,24 @@ defineExpose({
       top: -28px;
       color: getCssVar('color', 'info');
       font-size: 16px;
+  }
+}
+.datasource-add-modal {
+  .test-button {
+    position: absolute;
+    left: 20px;
+    bottom: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .hover-tooltip {
+    margin-left: 8px;
+    font-size: 16px;
+    color: getCssVar('color', 'danger');
+    &.success {
+      color: getCssVar('color', 'success');
+    }
   }
 }
 </style>

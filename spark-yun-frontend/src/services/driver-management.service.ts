@@ -51,5 +51,3 @@ export function SetDefaultDriverData(params: any): Promise<any> {
     params: params
   })
 }
-
-
