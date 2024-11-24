@@ -37,41 +37,7 @@
             >{{ scopeSlot.row.name }}</span>
           </template>
           <template #statusTag="scopeSlot">
-            <div class="btn-group">
-              <el-tag
-                v-if="scopeSlot.row.status === 'DEPLOYING'"
-                class="ml-2"
-              >
-                部署中
-              </el-tag>
-              <el-tag
-                v-if="scopeSlot.row.status === 'FAIL'"
-                class="ml-2"
-                type="danger"
-              >
-                失败
-              </el-tag>
-              <el-tag
-                v-if="scopeSlot.row.status === 'STOP'"
-                class="ml-2"
-              >
-                停止
-              </el-tag>
-              <el-tag
-                v-if="scopeSlot.row.status === 'RUNNING'"
-                class="ml-2"
-                type="success"
-              >
-                运行中
-              </el-tag>
-              <el-tag
-                v-if="scopeSlot.row.status === 'NEW'"
-                class="ml-2"
-                type="info"
-              >
-                新建
-              </el-tag>
-            </div>
+            <ZStatusTag :status="scopeSlot.row.status === 'STOP' ? 'STOP_S' : scopeSlot.row.status"></ZStatusTag>
           </template>
           <template #options="scopeSlot">
             <div class="btn-group">

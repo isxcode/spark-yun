@@ -71,6 +71,7 @@ declare module 'vue' {
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     ZqyLog: typeof import('./src/components/zqy-log/index.vue')['default']
+    ZStatusTag: typeof import('./src/components/z-status-tag/index.vue')['default']
     ZSvgIcon: typeof import('./src/components/z-svg-icon/index.vue')['default']
   }
 }

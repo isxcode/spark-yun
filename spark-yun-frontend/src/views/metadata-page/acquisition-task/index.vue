@@ -15,11 +15,7 @@
                 <BlockTable :table-config="tableConfig" @size-change="handleSizeChange"
                     @current-change="handleCurrentChange">
                     <template #statusTag="scopeSlot">
-                        <div class="btn-group">
-                            <el-tag v-if="scopeSlot.row.status === 'DISABLE'" type="warning" class="ml-2">禁用</el-tag>
-                            <el-tag v-if="scopeSlot.row.status === 'ENABLE'" type="success" class="ml-2">启用</el-tag>
-                            <el-tag v-if="scopeSlot.row.status === 'NEW'" class="ml-2">新建</el-tag>
-                        </div>
+                        <ZStatusTag :status="scopeSlot.row.status"></ZStatusTag>
                     </template>
                     <template #options="scopeSlot">
                       <div class="btn-group btn-group-msg">

@@ -96,54 +96,7 @@
             {{ scopeSlot.row.duration !== undefined && scopeSlot.row.duration !== null ? formatSeconds(scopeSlot.row.duration) : '-' }}
           </template>
           <template #statusTag="scopeSlot">
-            <div class="btn-group">
-              <el-tag
-                v-if="scopeSlot.row.status === 'SUCCESS'"
-                class="ml-2"
-                type="success"
-              >
-                成功
-              </el-tag>
-              <el-tag
-                v-if="scopeSlot.row.status === 'FAIL'"
-                class="ml-2"
-                type="danger"
-              >
-                失败
-              </el-tag>
-              <el-tag
-                v-if="scopeSlot.row.status === 'ABORT'"
-                class="ml-2"
-                type="warning"
-              >
-                已中止
-              </el-tag>
-              <el-tag
-                v-if="scopeSlot.row.status === 'ABORTING'"
-                class="ml-2"
-              >
-                中止中
-              </el-tag>
-              <el-tag
-                v-if="scopeSlot.row.status === 'RUNNING'"
-                class="ml-2"
-              >
-                运行中
-              </el-tag>
-              <el-tag
-                v-if="scopeSlot.row.status === 'PENDING'"
-                class="ml-2"
-              >
-                等待中
-              </el-tag>
-              <el-tag
-                v-if="!scopeSlot.row.status"
-                class="ml-2"
-                type="info"
-              >
-                未运行
-              </el-tag>
-            </div>
+            <ZStatusTag :status="scopeSlot.row.status"></ZStatusTag>
           </template>
           <template #options="scopeSlot">
             <div class="btn-group">

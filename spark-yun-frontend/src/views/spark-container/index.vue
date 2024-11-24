@@ -14,23 +14,10 @@
       <div class="zqy-table">
         <BlockTable :table-config="tableConfig" @size-change="handleSizeChange" @current-change="handleCurrentChange">
           <template #statusTag="scopeSlot">
-            <div class="btn-group">
-              <el-tag v-if="scopeSlot.row.status === 'RUNNING'" class="ml-2" type="success">
-                运行中
-              </el-tag>
-              <el-tag v-if="scopeSlot.row.status === 'FAIL'" class="ml-2" type="danger">
-                失败
-              </el-tag>
-              <el-tag v-if="scopeSlot.row.status === 'STOP'" class="ml-2" type="warning">
-                停止
-              </el-tag>
-              <el-tag v-if="scopeSlot.row.status === 'NEW'" type="info">
-                新建
-              </el-tag>
-              <el-tag v-if="scopeSlot.row.status === 'DEPLOYING'" type="primary">
-                启动中
-              </el-tag>
-            </div>
+            <ZStatusTag :status="
+              scopeSlot.row.status === 'STOP' ?
+               'STOP_S' : scopeSlot.row.status === 'RUNNING' ?
+                'RUNNING_S' : scopeSlot.row.status === 'DEPLOYING' ? 'STARTING' : scopeSlot.row.status"></ZStatusTag>
           </template>
           <template #options="scopeSlot">
             <div class="btn-group">
