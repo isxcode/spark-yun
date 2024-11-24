@@ -49,6 +49,15 @@ export function CheckDatasourceData(params: any): Promise<any> {
   })
 }
 
+// 测试数据源链接
+export function TestDatasourceData(params: any): Promise<any> {
+  return http.request({
+    method: 'post',
+    url: '/datasource/checkConnect',
+    params: params
+  })
+}
+
 // 删除
 export function DeleteDatasourceData(params: any): Promise<any> {
   return http.request({
