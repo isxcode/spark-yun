@@ -16,12 +16,7 @@
                     @current-change="handleCurrentChange">
                     <template #statusTag="scopeSlot">
                         <div class="btn-group">
-                            <el-tag v-if="scopeSlot.row.status === 'DISABLE'" type="warning" class="ml-2">禁用</el-tag>
-                            <el-tag v-if="scopeSlot.row.status === 'CHECK_FAIL'" type="danger" class="ml-2">检测失败</el-tag>
-                            <el-tag v-if="scopeSlot.row.status === 'CHECK_SUCCESS'" type="success" class="ml-2">检测成功</el-tag>
-                            <el-tag v-if="scopeSlot.row.status === 'ACTIVE'" type="success" class="ml-2">启用</el-tag>
-                            <el-tag v-if="scopeSlot.row.status === 'UN_CHECK'" type="info" class="ml-2">未检测</el-tag>
-                            <el-tag v-if="scopeSlot.row.status === 'NEW'" class="ml-2">新建</el-tag>
+                            <ZStatusTag :status="scopeSlot.row.status == 'CHECK_FAIL' ? 'CHECK_ERROR' : scopeSlot.row.status == 'ACTIVE' ? 'ENABLE' : scopeSlot.row.status"></ZStatusTag>
                             <el-popover
                                 placement="right"
                                 title="响应信息"

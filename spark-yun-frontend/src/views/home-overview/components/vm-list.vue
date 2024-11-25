@@ -12,9 +12,10 @@
     <div class="vm-list__body">
       <el-table class="vm-list__table" :data="tableData">
         <el-table-column prop="workflowName" label="作业流" width="120" show-overflow-tooltip />
-        <el-table-column prop="status" label="状态" align="center">
+        <el-table-column prop="status" label="状态">
           <template #default="{ row }">
-            <vm-status :status="row.status"></vm-status>
+            <!-- <vm-status :status="row.status"></vm-status> -->
+            <ZStatusTag :status="row.status"></ZStatusTag>
           </template>
         </el-table-column>
         <el-table-column prop="lastModifiedBy" label="发布人">
