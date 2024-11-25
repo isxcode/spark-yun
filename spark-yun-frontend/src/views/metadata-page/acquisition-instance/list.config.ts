@@ -46,7 +46,8 @@ export const colConfigs: colConfig[] = [
     {
         prop: 'metaWorkName',
         title: '任务',
-        minWidth: 120
+        showOverflowTooltip: true,
+        minWidth: 180
     },
     {
         prop: 'triggerType',
