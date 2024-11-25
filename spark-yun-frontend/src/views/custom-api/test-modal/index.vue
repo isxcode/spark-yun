@@ -99,7 +99,7 @@ const responseBodyRef = ref()
 const reqHeaderFullStatus = ref(false)
 const reqBodyFullStatus = ref(false)
 const respBodyFullStatus = ref(false)
-const httpStatus = ref()
+const httpStatus = ref<number | null>(null)
 
 const modelConfig = reactive({
   title: '测试接口',
@@ -139,6 +139,7 @@ function showModal(data: any): void {
   modelConfig.visible = true
   formData.id = data.id
   getApiDetailData(data.id)
+  httpStatus.value = null
   if (data.path.slice(0,1) !== '/') {
     data.path = '/' + data.path
   }
