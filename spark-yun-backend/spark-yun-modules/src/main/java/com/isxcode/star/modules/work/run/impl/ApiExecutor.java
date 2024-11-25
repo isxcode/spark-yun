@@ -100,7 +100,7 @@ public class ApiExecutor extends WorkExecutor {
             log.debug("获取远程返回数据:{}", response);
         } catch (Exception e) {
             log.debug(e.getMessage(), e);
-            throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "作业执行异常 : " + e.getMessage() + "\n");
+            throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "作业执行异常 : " + e.getMessage().replace("<EOL>", "\n") + "\n");
         }
 
         // 保存运行日志
