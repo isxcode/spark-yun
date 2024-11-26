@@ -2,97 +2,391 @@
 title: "CDH部署"
 ---
 
-> 基于阿里云实现至轻云高可用部署，基于nginx实现负载均衡
+> 离线安装cdh6.2.0
 
-##### 资源购买
-
-> 配置：centos7、4核心、16GB内存
-
-- ▪ 服务器1: nfs共享盘服务
-- ▪ 磁盘: 挂载到服务器1中
-- ▪ 服务器2: nginx负载均衡服务
-- ▪ 服务器3: 安装至轻云1
-- ▪ 服务器4: 安装至轻云2
-- ▪ 服务器5: 安装至轻云3
-
-| 服务器名 | 公网ip          | 内网ip          |
-|------|---------------|---------------|
-| 服务器1 | 47.92.73.226  | 172.16.215.85 |
-| 服务器2 | 39.100.69.110 | 172.16.215.84 |
-| 服务器3 | 47.92.198.55  | 172.16.215.86 |
-| 服务器4 | 47.92.1.129   | 172.16.215.87 |
-| 服务器5 | 47.92.5.96    | 172.16.215.83 |
-
-##### 挂载磁盘
-
-给服务器1挂载磁盘，参考文档：[linux 挂载磁盘](https://ispong.isxcode.com/os/linux/linux%20%E6%8C%82%E8%BD%BD%E7%A3%81%E7%9B%98/)
-
-##### 安装nfs服务
-
-给服务器1安装nfs服务，参考文档：[linux 安装nfs服务](https://ispong.isxcode.com/os/linux/linux%20%E5%AE%89%E8%A3%85nfs%E6%9C%8D%E5%8A%A1/) 
-
-##### 挂载共享盘
-
-给服务器3、服务器4、服务器5挂载服务器的共享盘，参考文档：[linux 挂载共享盘](https://ispong.isxcode.com/os/linux/linux%20%E6%8C%82%E8%BD%BD%E5%85%B1%E4%BA%AB%E7%A3%81%E7%9B%98/)
-
-##### 安装至轻云服务
-
-给服务器3、服务器4、服务器5安装至轻云服务，参考文档：[至轻云 安装包部署](https://zhiqingyun.isxcode.com/docs/zh/1/2)
-
-#### 注意,修改配置文件，将资源文件目录指向共享盘
-
-> 包括： spring.datasource.url和isx-app.resources-path
+#### 关闭防火墙
 
 ```bash
-vim zhiqingyun/conf/application-local.yml
+systemctl disable firewalld
+systemctl stop firewalld
+systemctl status firewalld
 ```
 
-```yaml
-server:
-  port: 8080
+#### 修改hostname
 
-spring:
-
-  security:
-    user:
-      name: admin
-      password: admin123
-
-  datasource:
-    driver-class-name: org.h2.Driver
-    url: jdbc:h2:file:/data/zhiqingyun/h2/data;AUTO_SERVER=TRUE
-    username: root
-    password: root1234
-
-isx-app:
-  resources-path: /data/zhiqingyun
-  admin-passwd: admin123
-  use-ssl: false
-```
-
-#### 注意，复制默认数据库驱动文件到共享盘
-
-> 只需要执行一次,不需要重复执行
+> #172.16.215.83  iZ8vbgxsdbuxmnqr4qd0ykZ iZ8vbgxsdbuxmnqr4qd0ykZ <br/>
+> 172.16.215.83   isxcode <br/>
+> 如果有多台服务器，都需要配置
 
 ```bash
-mkdir -p /data/zhiqingyun
-cp -r zhiqingyun/resources/jdbc /data/zhiqingyun/
+hostnamectl set-hostname isxcode
+vim /etc/hosts
 ```
 
-> 启动项目
-
-三台服务器都要启动至轻云服务
+#### 关闭selinux
 
 ```bash
-bash zhiqingyun/bin/start.sh
+setenforce 0
+getenforce
 ```
 
-##### 安装nginx负载服务
+#### 关闭swap分区
 
-给服务器2安装nginx负载服务 参考文档：[nginx 负载均衡配置](https://ispong.isxcode.com/vue/nginx/nginx%20%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E9%85%8D%E7%BD%AE/)
+```bash
+swapoff -a
+free -m
+```
 
-##### 通过nginx访问至轻云
+#### 优化系统
 
-▪ 网址：http://39.100.69.110 <br/>
-▪ 账号：admin <br/>
-▪ 密码：admin123
+```bash
+echo never > /sys/kernel/mm/transparent_hugepage/defrag
+echo never > /sys/kernel/mm/transparent_hugepage/enabled
+```
+
+#### 挂载磁盘
+
+> 挂载磁盘，绑定/data
+
+```bash
+mkdir -p /data
+```
+
+#### 上传资源
+
+> 需要资源邮箱找我
+
+```bash
+scp -r /Users/ispong/OneDrive/Downloads/cdh root@47.92.80.91:/tmp
+```
+
+#### 创建用户
+
+```bash
+useradd cdh
+passwd cdh
+vim /etc/sudoers
+```
+
+```bas
+#/ Allow root to run any commands anywhere 
+# cdh   ALL =(ALL) NOPASSWD: ALL
+```
+
+#### 安装基础软件
+
+> 最好每台服务器都装一下
+> 如果不行，使用--force
+
+```bash
+sudo yum remove python3 -y
+cd /tmp/cdh/rpm/python3
+sudo rpm -ivh ./* --nosignature
+
+cd /tmp/cdh/rpm/createrepo
+sudo rpm -ivh ./* --nosignature
+
+cd /tmp/cdh/rpm/bind-utils
+sudo rpm -ivh ./* --nosignature
+
+cd /tmp/cdh/rpm/unzip
+sudo rpm -ivh ./* --nosignature
+
+# 这个一定要装
+cd /tmp/cdh/rpm/httpd
+sudo rpm -ivh ./* --nosignature
+
+# 这个一定要装
+cd /tmp/cdh/rpm/postgres
+sudo rpm -ivh ./* --nosignature
+
+# 如果包中有冲突文件，直接删除
+sudo yum remove java-1.8.0-openjdk-headless -y
+cd /tmp/cdh/rpm/openjdk
+sudo rpm -ivh ./* --nosignature
+```
+
+#### 安装时区同步
+
+> 每台都要做
+
+```bash
+cd /tmp/cdh/rpm/ntp
+rpm -ivh ./* --nosignature
+systemctl enable ntpd
+systemctl start ntpd
+vim /etc/ntp.conf
+```
+
+```bash
+# server 0.centos.pool.ntp.org iburst
+# server 1.centos.pool.ntp.org iburst
+# server 2.centos.pool.ntp.org iburst
+# server 3.centos.pool.ntp.org iburst
+server 10.244.18.169 iburst
+```
+
+```bash
+systemctl restart ntpd
+systemctl status ntpd
+ntpq -p
+timedatectl status
+```
+
+#### 安装mysql驱动
+
+```bash
+cp /tmp/cdh/jdbc/mysql-connector-java-8.0.23.jar /usr/share/java/mysql-connector-java.jar
+```
+
+#### 安装scm
+
+> 主节点安装 按顺序运行
+> 卸载: yum remove -y cloudera-manager-daemons
+
+```bash
+cd /tmp/cdh/cdh6.2.0/cloudera-repos-6.2.0
+yum install -y cloudera-manager-daemons-6.2.0-968826.el7.x86_64.rpm 
+yum install -y cloudera-manager-server-6.2.0-968826.el7.x86_64.rpm
+yum install -y cloudera-manager-server-db-2-6.2.0-968826.el7.x86_64.rpm
+```
+
+#### 创建数据库
+
+```bash
+CREATE DATABASE cdh_scm DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;
+CREATE DATABASE cdh_hive DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;
+CREATE DATABASE cdh_monitor DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;
+GRANT ALL PRIVILEGES ON cdh_scm.* TO 'ispong'@'%';
+GRANT ALL PRIVILEGES ON cdh_hive.* TO 'ispong'@'%';
+GRANT ALL PRIVILEGES ON cdh_monitor.* TO 'ispong'@'%';
+Flush Privileges;
+```
+
+#### 初始化数据库
+
+> /opt/cloudera/cm/schema/scm_prepare_database.sh -h ${host} -P ${port} mysql ${dbName} ${username} ${password} 
+> 会生成 /etc/cloudera-scm-server/db.properties文件
+
+```bash
+/opt/cloudera/cm/schema/scm_prepare_database.sh -h isxcode -P 30102 mysql cdh_scm root admin123
+```
+
+#### 安装httpd
+
+> **Note:** 如果报错先不用管,可能因为80端口被占用
+
+```bash
+systemctl start httpd
+vim /etc/httpd/conf/httpd.conf
+```
+
+```bash
+# / Listen
+#Listen 12.34.56.78:80
+Listen 30108
+```
+
+```bash
+systemctl restart httpd
+systemctl status httpd
+```
+
+#### 上传cdh6_parcel文件
+
+```bash
+mkdir -p /var/www/html
+mkdir -p /data/httpd/cdh6_parcel
+ln -s /data/httpd/cdh6_parcel /var/www/html
+cp /tmp/cdh/cdh6.2.0/parcel-6.2.0/* /var/www/html/cdh6_parcel
+
+mkdir -p /data/httpd/cdh6_parcel/cm6/
+cp /tmp/cdh/cdh6.2.0/cloudera-repos-6.2.0/* /var/www/html/cdh6_parcel/cm6/
+```
+
+- parcel镜像地址: http://isxcode:30108/cdh6_parcel (CDH and other software)
+- cm6镜像地址: http://isxcode:30108/cdh6_parcel/cm6 (Cloudera Manager Agent)
+
+#### 创建本地镜像仓库
+
+```bash
+cd /var/www/html/cdh6_parcel/cm6/
+createrepo .
+```
+
+> 如果存在多个服务器，则都要
+
+```bash
+cd /etc/yum.repos.d
+vim cloudera-manager.repo
+```
+
+```bash
+[cloudera-manager]
+name=Cloudera Manager 6.2.0
+baseurl=http://isxcode:30108/cdh6_parcel/cm6
+gpgcheck=0
+enabled=1
+```
+
+> 离线模式需要删除其他的库，否则cdh无法拉取软件库
+
+```bash
+cd /etc
+mkdir yum.repos.d_bak
+mv yum.repos.d/CentOS-* yum.repos.d_bak/
+yum-config-manager --enable cloudera-manager
+yum clean all && yum makecache
+```
+
+#### 启动scm
+
+```bash
+systemctl enable cloudera-scm-server
+systemctl start cloudera-scm-server
+systemctl status cloudera-scm-server
+```
+
+#### 查看scm日志
+
+```bash
+tail -f /var/log/cloudera-scm-server/cloudera-scm-server.log
+```
+
+#### 修改scm访问端口
+
+> INSERT INTO CONFIGS (CONFIG_ID, ATTR, VALUE, CONFIG_CONTAINER_ID) VALUES (4, 'http_port', '${customPort}', 2);
+
+```sql
+INSERT INTO cdh_scm.CONFIGS (CONFIG_ID, ATTR, VALUE, CONFIG_CONTAINER_ID) VALUES (4, 'http_port', '30107', 2);
+```
+
+> sudo systemctl stop cloudera-scm-server
+> sudo systemctl stop cloudera-scm-agent
+> sudo systemctl restart cloudera-scm-agent
+
+```bash
+systemctl restart cloudera-scm-server
+```
+
+#### 测试
+
+默认端口号: 7180
+
+- http://47.99.126.247:30107
+- username: admin
+- password: admin
+
+#### 安装集群
+
+![20240730145812](https://img.isxcode.com/picgo/20240730145812.png)
+
+![20240730145840](https://img.isxcode.com/picgo/20240730145840.png)
+
+![20240730145947](https://img.isxcode.com/picgo/20240730145947.png)
+
+![20240730150015](https://img.isxcode.com/picgo/20240730150015.png)
+
+> Cloudera Manager Agent: http://isxcode:30108/cdh6_parcel/cm6 
+> CDH and other software: http://isxcode:30108/cdh6_parcel
+
+![20240730150250](https://img.isxcode.com/picgo/20240730150250.png)
+
+> 一定要修改路径，不要使用映射的路径，给个新的路径
+
+![20240730150352](https://img.isxcode.com/picgo/20240730150352.png)
+
+![20240730150404](https://img.isxcode.com/picgo/20240730150404.png)
+
+![20240730150424](https://img.isxcode.com/picgo/20240730150424.png)
+
+> 使用之前创建的cdh账号
+
+![20240730150453](https://img.isxcode.com/picgo/20240730150453.png)
+
+![20240730150541](https://img.isxcode.com/picgo/20240730150541.png)
+
+> 有可能存在缺少依赖，去/cdh-rpm包中寻找
+
+![20240730150806](https://img.isxcode.com/picgo/20240730150806.png)
+
+![20240730150855](https://img.isxcode.com/picgo/20240730150855.png)
+
+#### 安装服务
+
+![20240730150927](https://img.isxcode.com/picgo/20240730150927.png)
+
+![20240730151054](https://img.isxcode.com/picgo/20240730151054.png)
+
+> 只需要安装hive、hdfs、yarn。推荐安装zookeeper
+
+![20240730151209](https://img.isxcode.com/picgo/20240730151209.png)
+
+> 使用之前创建的cdh_hive和cdh_monitor
+
+![20240730151802](https://img.isxcode.com/picgo/20240730151802.png)
+
+> 修改安装路径
+> 一定不要提前创建目录！！！ 会有权限问题
+> /data/dfs
+> /data/yarn
+> /data/cloudera-host-monitor
+> /data/cloudera-service-monitor
+
+![20240730152011](https://img.isxcode.com/picgo/20240730152011.png)
+
+![20240730152432](https://img.isxcode.com/picgo/20240730152432.png)
+
+![20240730152523](https://img.isxcode.com/picgo/20240730152523.png)
+
+![20240730154116](https://img.isxcode.com/picgo/20240730154116.png)
+
+
+```bash
+tee -a /etc/profile <<-'EOF'
+export HADOOP_HOME=/opt/cloudera/parcels/CDH/lib/hadoop
+export HADOOP_CONF_DIR=/opt/cloudera/parcels/CDH/lib/hadoop/etc/hadoop
+EOF
+source /etc/profile
+```
+
+- Hive链接信息:
+- url: jdbc:hive2://47.92.37.247:10000/ispong_db
+- hive.metastore.uris: thrift://isxcode:9083
+- username: cdh
+- yarn-web: http://47.92.37.247:8088/cluster
+
+#### 优化配置
+
+1. 根据提示优化配置
+2. 修改hive的连接数
+> hive.server2.thrift.max.worker.threads: 2000
+
+```sql
+SELECT hive_open_connections,hive_open_operations FROM ENTITY_DATA;
+show variables like '%max_connections%';
+```
+
+3. yarn的资源配置
+> yarn.nodemanager.resource.cpu-vcores: 8 <br/>
+> yarn.nodemanager.resource.memory-mb: 16GB <br/>
+> yarn.scheduler.minimum-allocation-vcores: 1 <br/>
+> yarn.scheduler.minimum-allocation-mb: 2GB <br/>
+> yarn.scheduler.maximum-allocation-vcores: 4 <br/>
+> yarn.scheduler.maximum-allocation-mb: 4GB 
+
+1. 赋予用户操作权限
+```bash
+groupadd supergroup
+usermod -a -G supergroup cdh
+newgrp supergroup
+```
+
+1. 创建用户目录
+```bash
+hdfs dfs -mkdir /user/cdh
+hdfs dfs -chown cdh:supergroup /user/cdh
+```
+
+▪ [hadoop docs](https://hadoop.apache.org/docs/stable/index.html) <br/>
+▪ [ali rpm 下载中心](https://mirrors.aliyun.com/centos/7/os/x86_64/Packages/)

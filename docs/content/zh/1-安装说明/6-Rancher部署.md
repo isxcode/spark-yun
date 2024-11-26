@@ -2,97 +2,434 @@
 title: "Rancher部署"
 ---
 
-> 基于阿里云实现至轻云高可用部署，基于nginx实现负载均衡
 
-##### 资源购买
+> 离线使用helm安装rancher2.8.5 <br/>
+> 系统: CentOS Linux release 7.9.2009 (Core) <br/>
+> 注意：全程使用root用户或通过sudo运行
 
-> 配置：centos7、4核心、16GB内存
+#### 创建用户
 
-- ▪ 服务器1: nfs共享盘服务
-- ▪ 磁盘: 挂载到服务器1中
-- ▪ 服务器2: nginx负载均衡服务
-- ▪ 服务器3: 安装至轻云1
-- ▪ 服务器4: 安装至轻云2
-- ▪ 服务器5: 安装至轻云3
-
-| 服务器名 | 公网ip          | 内网ip          |
-|------|---------------|---------------|
-| 服务器1 | 47.92.73.226  | 172.16.215.85 |
-| 服务器2 | 39.100.69.110 | 172.16.215.84 |
-| 服务器3 | 47.92.198.55  | 172.16.215.86 |
-| 服务器4 | 47.92.1.129   | 172.16.215.87 |
-| 服务器5 | 47.92.5.96    | 172.16.215.83 |
-
-##### 挂载磁盘
-
-给服务器1挂载磁盘，参考文档：[linux 挂载磁盘](https://ispong.isxcode.com/os/linux/linux%20%E6%8C%82%E8%BD%BD%E7%A3%81%E7%9B%98/)
-
-##### 安装nfs服务
-
-给服务器1安装nfs服务，参考文档：[linux 安装nfs服务](https://ispong.isxcode.com/os/linux/linux%20%E5%AE%89%E8%A3%85nfs%E6%9C%8D%E5%8A%A1/) 
-
-##### 挂载共享盘
-
-给服务器3、服务器4、服务器5挂载服务器的共享盘，参考文档：[linux 挂载共享盘](https://ispong.isxcode.com/os/linux/linux%20%E6%8C%82%E8%BD%BD%E5%85%B1%E4%BA%AB%E7%A3%81%E7%9B%98/)
-
-##### 安装至轻云服务
-
-给服务器3、服务器4、服务器5安装至轻云服务，参考文档：[至轻云 安装包部署](https://zhiqingyun.isxcode.com/docs/zh/1/2)
-
-#### 注意,修改配置文件，将资源文件目录指向共享盘
-
-> 包括： spring.datasource.url和isx-app.resources-path
+#### 关闭防火墙
 
 ```bash
-vim zhiqingyun/conf/application-local.yml
+sudo systemctl disable firewalld
+sudo systemctl stop firewalld
+sudo systemctl status firewalld
 ```
 
-```yaml
-server:
-  port: 8080
+#### 修改hostname
 
-spring:
-
-  security:
-    user:
-      name: admin
-      password: admin123
-
-  datasource:
-    driver-class-name: org.h2.Driver
-    url: jdbc:h2:file:/data/zhiqingyun/h2/data;AUTO_SERVER=TRUE
-    username: root
-    password: root1234
-
-isx-app:
-  resources-path: /data/zhiqingyun
-  admin-passwd: admin123
-  use-ssl: false
-```
-
-#### 注意，复制默认数据库驱动文件到共享盘
-
-> 只需要执行一次,不需要重复执行
+> #172.16.215.83  iZ8vbgxsdbuxmnqr4qd0ykZ iZ8vbgxsdbuxmnqr4qd0ykZ
+> 172.16.215.83   isxcode
 
 ```bash
-mkdir -p /data/zhiqingyun
-cp -r zhiqingyun/resources/jdbc /data/zhiqingyun/
+sudo hostnamectl set-hostname isxcode
+sudo vim /etc/hosts
 ```
 
-> 启动项目
-
-三台服务器都要启动至轻云服务
+#### 关闭selinux
 
 ```bash
-bash zhiqingyun/bin/start.sh
+sudo setenforce 0
+sudo getenforce
 ```
 
-##### 安装nginx负载服务
+#### 关闭swap分区
 
-给服务器2安装nginx负载服务 参考文档：[nginx 负载均衡配置](https://ispong.isxcode.com/vue/nginx/nginx%20%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E9%85%8D%E7%BD%AE/)
+```bash
+sudo swapoff -a
+sudo free -m
+```
 
-##### 通过nginx访问至轻云
+#### 挂载磁盘
 
-▪ 网址：http://39.100.69.110 <br/>
-▪ 账号：admin <br/>
-▪ 密码：admin123
+> 挂载磁盘，绑定/data
+
+```bash
+sudo mkdir -p /data
+```
+
+#### 上传资源
+
+> 需要资源邮箱找我
+
+```bash
+scp -r /Users/ispong/OneDrive/Downloads/rancher root@47.92.128.32:/tmp
+```
+
+#### 离线安装docker
+
+```bash
+cd /tmp/rancher
+tar -xvf docker-19.03.9.tgz
+sudo cp docker/* /usr/bin
+sudo vim /etc/systemd/system/docker.service
+```
+
+```bash
+[Unit]
+Description=Docker Application Container Engine
+Documentation=https://docs.docker.com
+After=network-online.target firewalld.service
+Wants=network-online.target
+
+[Service]
+Type=notify
+ExecStart=/usr/bin/dockerd
+ExecReload=/bin/kill -s HUP $MAINPID
+TimeoutSec=0
+RestartSec=2
+Restart=always
+StartLimitBurst=3
+StartLimitInterval=60s
+LimitNOFILE=infinity
+LimitNPROC=infinity
+LimitCORE=infinity
+TasksMax=infinity
+Delegate=yes
+KillMode=process
+
+[Install]
+WantedBy=multi-user.target
+```
+
+```bash
+sudo chmod +x /etc/systemd/system/docker.service
+
+sudo mkdir -p /data/docker
+sudo mkdir -p /etc/docker
+sudo tee /etc/docker/daemon.json <<-'EOF'
+{
+  "data-root":"/data/docker"
+}
+EOF
+sudo systemctl daemon-reload
+sudo systemctl enable docker
+sudo systemctl start docker
+sudo systemctl status docker
+
+# 赋予权限
+sudo chown ispong:ispong /usr/bin/docker
+sudo chown ispong:ispong /var/run/docker.sock
+```
+
+#### 离线安装docker-compose
+
+```bash
+cd /tmp/rancher
+sudo cp docker-compose-linux-x86_64 /usr/bin/docker-compose
+sudo chmod +x /usr/bin/docker-compose
+docker-compose --version
+```
+
+#### 生成harbor的ssl证书
+
+> 注意CN修改域名
+> 将命令中的isxcode替换成对应的hostname，再执行
+
+```bash
+sudo mkdir -p /data/harbor/ssl
+cd /data/harbor/ssl
+
+sudo openssl genrsa -out ca.key 4096
+sudo openssl req -x509 -new -nodes -sha512 -days 3650 \
+ -subj "/C=CN/ST=Beijing/L=Beijing/O=example/OU=Personal/CN=isxcode" \
+ -key ca.key \
+ -out ca.crt
+
+sudo openssl genrsa -out isxcode.key 4096
+sudo openssl req -sha512 -new \
+    -subj "/C=CN/ST=Beijing/L=Beijing/O=example/OU=Personal/CN=isxcode" \
+    -key isxcode.key \
+    -out isxcode.csr
+
+sudo touch v3.ext
+sudo chown ispong:ispong v3.ext
+cat > v3.ext <<-EOF
+authorityKeyIdentifier=keyid,issuer
+basicConstraints=CA:FALSE
+keyUsage = digitalSignature, nonRepudiation, keyEncipherment, dataEncipherment
+extendedKeyUsage = serverAuth
+subjectAltName = @alt_names
+
+[alt_names]
+DNS.1=isxcode
+DNS.2=isxcode
+DNS.3=isxcode
+EOF
+
+sudo openssl x509 -req -sha512 -days 3650 \
+    -extfile v3.ext \
+    -CA ca.crt -CAkey ca.key -CAcreateserial \
+    -in isxcode.csr \
+    -out isxcode.crt
+
+sudo openssl x509 -inform PEM -in isxcode.crt -out isxcode.cert
+
+sudo mkdir -p /data/harbor/data/cert
+sudo cp isxcode.crt /data/harbor/data/cert
+sudo cp isxcode.key /data/harbor/data/cert
+
+sudo mkdir -p /etc/docker/certs.d/isxcode:8443/
+sudo cp isxcode.cert /etc/docker/certs.d/isxcode:8443/
+sudo cp isxcode.key /etc/docker/certs.d/isxcode:8443/
+sudo cp ca.crt /etc/docker/certs.d/isxcode:8443/
+sudo systemctl daemon-reload
+sudo systemctl restart docker
+
+sudo cp /etc/docker/certs.d/isxcode:8443/* /etc/pki/ca-trust/source/anchors/
+sudo update-ca-trust
+```
+
+#### 离线安装harbor
+
+```bash
+sudo mkdir -p /data/harbor/data
+
+cd /tmp/rancher
+docker load -i prepare-1.9.3.tar
+sudo tar zxf harbor-offline-installer-v1.9.3.tgz -C /data/harbor/
+cd /data/harbor/harbor
+
+sudo vim harbor.yml 
+```
+
+> 修改hostname
+> 修改https
+> 修改port
+> 修改data
+
+```bash
+hostname: isxcode
+
+http:
+  port: 8800
+
+https:
+  port: 8443
+  certificate: /data/harbor/ssl/isxcode.crt
+  private_key: /data/harbor/ssl/isxcode.key
+
+data_volume: /data/harbor/data
+```
+
+> cd /var/log/harbor 看日志
+> docker-compose down -v
+> docker-compose up -d
+
+```bash
+sudo ./prepare
+sudo chmod +x ./install.sh
+sudo ./install.sh
+docker ps -a
+```
+
+- 访问地址: https://47.92.209.39:8443
+- 账号: admin
+- 密码: Harbor12345
+
+#### 创建rke2目录
+
+```bash
+sudo mkdir -p /data/rancher
+sudo ln -s /data/rancher /var/lib/rancher
+
+sudo mkdir -p /data/containers
+sudo ln -s /data/containers /var/lib/containers
+```
+
+#### 禁用centos原有的源
+
+```bash
+cd /etc
+sudo mkdir yum.repos.d_bak
+sudo mv yum.repos.d/*.repo yum.repos.d_bak/
+sudo yum clean all && yum makecache
+```
+
+#### 安装rke2
+
+```bash
+sudo mkdir -p /data/rke2-artifacts
+sudo cp /tmp/rancher/rke2-images.linux-amd64.tar.zst /data/rke2-artifacts/
+sudo cp /tmp/rancher/rke2.linux-amd64.tar.gz /data/rke2-artifacts/
+sudo cp /tmp/rancher/sha256sum-amd64.txt /data/rke2-artifacts/
+
+# 必须要使用root用户执行
+cd /tmp/rancher
+INSTALL_RKE2_ARTIFACT_PATH=/data/rke2-artifacts sh install.sh
+```
+
+#### 启动rke2
+
+> journalctl -u rke2-server -f  看日志
+
+```bash
+sudo systemctl enable rke2-server.service
+sudo systemctl start rke2-server.service
+sudo systemctl status rke2-server.service
+```
+
+#### 检查服务是否启动
+
+> 此时k8s已经安装好了
+
+```bash
+sudo tee -a /etc/profile <<-'EOF'
+export KUBECONFIG=/etc/rancher/rke2/rke2.yaml 
+export PATH=$PATH:/var/lib/rancher/rke2/bin
+EOF
+source /etc/profile
+sudo chown ispong:ispong /etc/rancher/rke2/rke2.yaml
+kubectl get nodes
+kubectl get pods -n kube-system
+```
+
+#### 离线安装helm
+
+```bash
+cd /tmp/rancher
+tar -zxvf helm-v3.15.3-linux-amd64.tar.gz
+sudo mv /tmp/rancher/linux-amd64/helm /usr/bin/helm
+helm version
+```
+
+#### 导入rancher镜像 v2.8.5
+
+> username: admin
+> password: Harbor12345
+
+```bash
+docker login isxcode:8443
+```
+
+```bash
+cd /tmp/rancher
+chmod +x rancher-load-images.sh
+./rancher-load-images.sh --image-list ./rancher-images.txt --registry isxcode:8443/library
+```
+
+#### 修改tls认证
+
+```bash
+sudo vim /etc/rancher/rke2/config.yaml
+```
+
+```bash
+tls-san:
+  - isxcode
+```
+
+> 将isxcode换成对应的hostname
+
+```bash
+sudo vim /etc/rancher/rke2/registries.yaml
+```
+
+```yml
+mirrors:
+  docker.io:
+    endpoint:
+      - "https://isxcode:8443"
+configs:
+  "https://isxcode:8443":
+    auth:
+      username: admin
+      password: Harbor12345
+    tls:
+      cert_file: /data/harbor/ssl/isxcode.cert
+      key_file: /data/harbor/ssl/isxcode.key
+      ca_file: /data/harbor/ssl/ca.crt
+```
+
+```bash
+sudo systemctl restart rke2-server.service
+```
+
+#### k8s安装自签证书
+
+```bash
+cd /tmp/rancher
+kubectl create namespace cert-manager
+kubectl apply -f ./cert-manager-crd.yaml
+helm install cert-manager /tmp/rancher/cert-manager-v1.15.1.tgz \
+    --namespace cert-manager \
+    --set image.repository=docker.io/library/quay.io/jetstack/cert-manager-controller \
+    --set webhook.image.repository=docker.io/library/quay.io/jetstack/cert-manager-webhook \
+    --set cainjector.image.repository=docker.io/library/quay.io/jetstack/cert-manager-cainjector \
+    --set startupapicheck.image.repository=docker.io/library/quay.io/jetstack/cert-manager-startupapicheck \
+    --debug
+helm list -A
+```
+
+#### k8s安装rancher
+
+> 卸载：helm uninstall rancher -n cattle-system
+> 记得修改hostname
+
+```bash
+cd /tmp/rancher
+kubectl create namespace cattle-system
+helm install rancher /tmp/rancher/rancher-2.8.5.tgz \
+  --namespace cattle-system \
+  --set hostname=isxcode \
+  --set certmanager.version=1.15.1 \
+  --set rancherImage=docker.io/library/rancher/rancher \
+  --set useBundledSystemChart=true \
+  --set systemDefaultRegistry=docker.io/library \
+  --set rancherImageTag=v2.8.5 \
+  --set service.type=NodePort
+kubectl -n cattle-system get deploy rancher
+```
+
+#### 访问
+
+> 获取端口号
+
+```bash
+kubectl get svc -n cattle-system
+# NAME              TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)                      AGE
+# rancher           NodePort    10.43.104.172   <none>        80:32316/TCP,443:31908/TCP   47m
+# rancher-webhook   ClusterIP   10.43.77.134    <none>        443/TCP                      45m
+```
+
+> 获取密码
+
+```bash
+kubectl get secret --namespace cattle-system bootstrap-secret -o go-template='{{.data.bootstrapPassword|base64decode}}{{ "\n" }}'
+```
+
+- 访问地址: https://47.92.128.32:31908
+- 密码: pt2g584d6hrrc9cw7k9vd8bbrrwz5rpmd75tdrg8cwsh6kjk8cg4pv
+
+#### 相关调试命令
+
+```bash
+kubectl logs -l app=rancher -n cattle-system
+kubectl get pods -o wide -n cert-manager
+kubectl get pods -o wide -n cattle-system
+kubectl describe pod rancher-6dd9f75c9d-kxmts -n cattle-system
+kubectl get events -n cattle-system
+kubectl logs helm-operation-54s9f  -n cattle-system
+kubectl rollout status deployment -n cattle-system rancher
+kubectl edit svc rancher -n cattle-system
+kubectl delete ns cert-manager
+kubectl get pods --all-namespaces -o jsonpath='{.items[*].spec.containers[*].image}' | tr -s '[[:space:]]' '\n' | sort | uniq
+tail -f /data/rancher/rke2/agent/logs/kubelet.log
+```
+
+#### 修改rancher端口
+
+```bash
+kubectl edit svc rancher -n cattle-system
+```
+
+▪ [rancher docs](https://rancher.com/docs/) <br/>
+▪ [rke2 安装](https://docs.rke2.io/zh/install/airgap) <br/>
+▪ [helm install](https://helm.sh/docs/intro/install/) <br/>
+▪ [rancher 中文文档](https://docs.rancher.cn/) <br/>
+▪ [helm离线安装rancher](https://ranchermanager.docs.rancher.com/zh/getting-started/installation-and-upgrade/other-installation-methods/air-gapped-helm-cli-install) <br/>
+▪ [docker 下载](https://download.docker.com/linux/static/stable/x86_64/) <br/>
+▪ [harbor 下载](https://github.com/goharbor/harbor/releases) <br/>
+▪ [rke私有仓库配置](https://docs.rke2.io/zh/install/containerd_registry_configuration) <br/>
+▪ [国内rancher配置](https://docs.rancher.cn/docs/rancher2/best-practices/use-in-china/_index/)
