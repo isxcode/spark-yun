@@ -50,7 +50,7 @@ export const colConfigs: colConfig[] = [
   {
     prop: 'name',
     title: '名称',
-    minWidth: 120,
+    minWidth: 180,
     customSlot: 'nameSlot',
     showOverflowTooltip: true
   },
