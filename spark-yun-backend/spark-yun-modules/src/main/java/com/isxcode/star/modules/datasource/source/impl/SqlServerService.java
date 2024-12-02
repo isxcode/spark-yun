@@ -160,6 +160,16 @@ public class SqlServerService extends Datasource {
     }
 
     @Override
+    public String getPageSql(ConnectInfo connectInfo, String sql) throws IsxAppException {
+
+        String[] split = sql.split(",");
+        String firstCol = split[0].toLowerCase().trim().replace("select", "");
+        String firstKey = "ROW_NUMBER() OVER (ORDER BY " + firstCol + " ASC) AS RowNum";
+        return "SELECT * FROM (" + sql.replace(split[0], split[0] + "," + firstKey)
+            + ") AS SubQuery WHERE RowNum BETWEEN '${page}' AND '${pageSize}'";
+    }
+
+    @Override
     public GetDataSourceDataRes getTableData(ConnectInfo connectInfo) throws IsxAppException {
 
         Assert.notNull(connectInfo.getTableName(), "tableName不能为空");

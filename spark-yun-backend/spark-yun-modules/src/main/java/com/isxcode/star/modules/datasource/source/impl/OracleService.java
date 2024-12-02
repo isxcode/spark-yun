@@ -61,6 +61,11 @@ public class OracleService extends Datasource {
     }
 
     @Override
+    public String getPageSql(ConnectInfo connectInfo, String sql) throws IsxAppException {
+        return "OFFSET '${page}' ROWS FETCH NEXT '${pageSize}' ROWS ONLY";
+    }
+
+    @Override
     public GetDataSourceDataRes getTableData(ConnectInfo connectInfo) throws IsxAppException {
         return null;
     }
