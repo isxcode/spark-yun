@@ -61,6 +61,11 @@ public class PostgresService extends Datasource {
     }
 
     @Override
+    public String getPageSql(ConnectInfo connectInfo, String sql) throws IsxAppException {
+        return "";
+    }
+
+    @Override
     public GetDataSourceDataRes getTableData(ConnectInfo connectInfo) throws IsxAppException {
         return null;
     }
