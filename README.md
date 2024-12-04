@@ -53,10 +53,8 @@ docker run -p 8080:8080 -d isxcode/zhiqingyun
 
 - [快速入门](https://zhiqingyun.isxcode.com/docs/zh/1/0)
 - [产品手册](https://zhiqingyun.isxcode.com/docs/zh/2/0)
-- [开发手册](https://zhiqingyun.isxcode.com/docs/zh/6/0)
+- [开发手册](https://zhiqingyun.isxcode.com/docs/zh/6/3)
 - [博客](https://ispong.isxcode.com/tags/spark/)
-- [技术架构图](https://zhiqingyun.isxcode.com/docs/zh/6/1)
-- [部署架构图](https://zhiqingyun.isxcode.com/docs/zh/6/2)
 
 ### 源码构建
 
