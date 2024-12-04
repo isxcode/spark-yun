@@ -156,6 +156,7 @@ public class PythonExecutor extends WorkExecutor {
 
         // 提交作业成功后，开始循环判断状态
         String getPidStatusCommand = "ps -p " + workInstance.getWorkPid();
+        String oldStatus = "";
         while (true) {
 
             String pidStatus;
@@ -170,6 +171,14 @@ public class PythonExecutor extends WorkExecutor {
                 throw new WorkRunException(
                     LocalDateTime.now() + WorkLog.ERROR_INFO + "获取pid状态异常 : " + e.getMessage() + "\n");
             }
+
+            // 状态发生变化，则添加日志状态
+            if (!oldStatus.equals(pidStatus)) {
+                logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("运行状态:").append(pidStatus)
+                    .append("\n");
+            }
+            oldStatus = pidStatus;
+            workInstance = updateInstance(workInstance, logBuilder);
 
             // 保存作业运行状体
             logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("运行状态:").append(pidStatus)
