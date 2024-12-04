@@ -25,11 +25,6 @@ public class Execute {
 
         PluginReq pluginReq = parse(args);
 
-        String sourcePredicateTemplate =
-            DatasourceType.SQL_SERVER.equals(pluginReq.getSyncWorkConfig().getSourceDBType())
-                ? "%s(%s) %% %d in (%d,-%d)"
-                : "%s(`%s`) %% %d in (%d,-%d)";
-
         try (SparkSession sparkSession = initSparkSession(pluginReq.getSparkConfig())) {
 
             // 注册自定义函数
@@ -45,7 +40,7 @@ public class Execute {
             }
 
             // 创建来源表视图
-            String sourceTempView = genSourceTempView(sparkSession, pluginReq, sourcePredicateTemplate);
+            String sourceTempView = genSourceTempView(sparkSession, pluginReq);
 
             // 创建去向表视图
             String targetTempView = genTargetTempView(sparkSession, pluginReq);
@@ -86,7 +81,7 @@ public class Execute {
     /**
      * 构建来源视图.
      */
-    public static String genSourceTempView(SparkSession sparkSession, PluginReq conf, String sourcePredicateTemplate) {
+    public static String genSourceTempView(SparkSession sparkSession, PluginReq conf) {
 
         String sourceTableName = "zhiqingyun_src_" + conf.getSyncWorkConfig().getSourceDatabase().getDbTable();
 
@@ -100,24 +95,26 @@ public class Execute {
             prop.put("user", conf.getSyncWorkConfig().getSourceDatabase().getUser());
             prop.put("password", conf.getSyncWorkConfig().getSourceDatabase().getPassword());
             prop.put("driver", conf.getSyncWorkConfig().getSourceDatabase().getDriver());
-            // 创建一个 ArrayList 存储查询条件字符串
+
+            // 创建一个 ArrayList 存储分区条件
             List<String> predicates = new ArrayList<>();
-            // 根据数据库类型获取合适的hash方法名
-            String hashName = getHash(conf.getSyncWorkConfig().getSourceDBType());
 
             // 生成查询条件并添加到列表中
             for (int i = 0; i < conf.getSyncRule().getNumPartitions(); i++) {
                 // 不同的数据库要使用各自支持hash函数
-                String predicate = String.format(sourcePredicateTemplate, hashName,
-                    conf.getSyncWorkConfig().getPartitionColumn(), conf.getSyncRule().getNumPartitions(), i, i);
-                predicates.add(predicate);
+                predicates.add(getHashPredicate(conf.getSyncWorkConfig().getSourceDBType(),
+                    conf.getSyncWorkConfig().getPartitionColumn(), conf.getSyncRule().getNumPartitions(), i, i));
             }
 
             // 将列表转换为字符串数组
             String[] predicate = predicates.toArray(new String[0]);
 
+            String dbTable = DatasourceType.POSTGRE_SQL.equals(conf.getSyncWorkConfig().getSourceDBType())
+                ? "\"" + conf.getSyncWorkConfig().getSourceDatabase().getDbTable() + "\""
+                : conf.getSyncWorkConfig().getSourceDatabase().getDbTable();
+
             Dataset<Row> source = sparkSession.read().jdbc(conf.getSyncWorkConfig().getSourceDatabase().getUrl(),
-                conf.getSyncWorkConfig().getSourceDatabase().getDbTable(), predicate, prop);
+                dbTable, predicate, prop);
 
             source.createOrReplaceTempView(sourceTableName);
         }
@@ -137,10 +134,14 @@ public class Execute {
             return parseHiveDatabase(conf.getSyncWorkConfig().getTargetDatabase().getUrl())
                 + conf.getSyncWorkConfig().getTargetDatabase().getDbTable();
         } else {
+
+            String dbTable = DatasourceType.POSTGRE_SQL.equals(conf.getSyncWorkConfig().getTargetDBType())
+                ? "\"" + conf.getSyncWorkConfig().getTargetDatabase().getDbTable() + "\""
+                : conf.getSyncWorkConfig().getTargetDatabase().getDbTable();
+
             DataFrameReader frameReader = sparkSession.read().format("jdbc")
                 .option("driver", conf.getSyncWorkConfig().getTargetDatabase().getDriver())
-                .option("url", conf.getSyncWorkConfig().getTargetDatabase().getUrl())
-                .option("dbtable", conf.getSyncWorkConfig().getTargetDatabase().getDbTable())
+                .option("url", conf.getSyncWorkConfig().getTargetDatabase().getUrl()).option("dbtable", dbTable)
                 .option("user", conf.getSyncWorkConfig().getTargetDatabase().getUser())
                 .option("password", conf.getSyncWorkConfig().getTargetDatabase().getPassword())
                 .option("truncate", "true");
@@ -196,30 +197,43 @@ public class Execute {
         }
     }
 
-    public static String getHash(String datasourceType) {
+    public static String getHashPredicate(String datasourceType, String PartitionColumn, Integer NumPartitions,
+        Integer startIndex, Integer endIndex) {
+
         switch (datasourceType) {
             case DatasourceType.MYSQL:
             case DatasourceType.TIDB:
-                return "CRC32";
+                return "CRC32(`" + PartitionColumn + "`) % " + NumPartitions + " in (" + startIndex + ",-" + endIndex
+                    + ")";
             case DatasourceType.ORACLE:
+                return "MOD(ORA_HASH(`" + PartitionColumn + "`)," + NumPartitions + ") in (" + startIndex + ",-"
+                    + endIndex + ")";
             case DatasourceType.OCEANBASE:
             case DatasourceType.DM:
-                return "ORA_HASH";
+                return "ORA_HASH(`" + PartitionColumn + "`) % " + NumPartitions + " in (" + startIndex + ",-" + endIndex
+                    + ")";
             case DatasourceType.SQL_SERVER:
-                return "CHECKSUM";
+                return "CHECKSUM(" + PartitionColumn + ") % " + NumPartitions + " in (" + startIndex + ",-" + endIndex
+                    + ")";
             case DatasourceType.POSTGRE_SQL:
-                return "md5";
+                return "hashtext(\"" + PartitionColumn + "\") % " + NumPartitions + " in (" + startIndex + ",-"
+                    + endIndex + ")";
             case DatasourceType.CLICKHOUSE:
-                return "sipHash64";
+                return "sipHash64(`" + PartitionColumn + "`) % " + NumPartitions + " in (" + startIndex + ",-"
+                    + endIndex + ")";
             case DatasourceType.HIVE:
-                return "hash";
+                return "hash(`" + PartitionColumn + "`) % " + NumPartitions + " in (" + startIndex + ",-" + endIndex
+                    + ")";
             case DatasourceType.HANA_SAP:
-                return "HASH_SHA256";
+                return "MOD(HASH_SHA256(`" + PartitionColumn + "`), " + NumPartitions + ") in (" + startIndex + ",-"
+                    + endIndex + ")";
             case DatasourceType.DORIS:
             case DatasourceType.STAR_ROCKS:
-                return "murmur_hash3_32";
+                return "murmur_hash3_32(`" + PartitionColumn + "`) % " + NumPartitions + " in (" + startIndex + ",-"
+                    + endIndex + ")";
             case DatasourceType.DB2:
-                return "hash8";
+                return "MOD(hash8(`" + PartitionColumn + "`)," + NumPartitions + ") in (" + startIndex + ",-" + endIndex
+                    + ")";
             default:
                 throw new RuntimeException("暂不支持的数据库");
         }
