@@ -394,6 +394,7 @@ public class ExcelSyncExecutor extends WorkExecutor {
         }
 
         // 提交作业成功后，开始循环判断状态
+        String oldStatus = "";
         while (true) {
 
             // 获取作业状态并保存
@@ -414,15 +415,12 @@ public class ExcelSyncExecutor extends WorkExecutor {
             RunWorkRes workStatusRes = JSON.parseObject(JSON.toJSONString(baseResponse.getData()), RunWorkRes.class);
             workInstance.setSparkStarRes(JSON.toJSONString(workStatusRes));
 
-            // 如果上一行是RUNNING，状态也是RUNNING，不更新日志，否则日志太长了
-            String[] split = logBuilder.toString().split("\n");
-            List<String> logList = Arrays.asList(split);
-            if (!(logList.get(logList.size() - 1).toUpperCase().contains("RUNNING")
-                && "RUNNING".equalsIgnoreCase(workStatusRes.getAppStatus()))) {
+            // 状态发生变化，则添加日志状态
+            if (!oldStatus.equals(workStatusRes.getAppStatus())) {
                 logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("运行状态:")
                     .append(workStatusRes.getAppStatus()).append("\n");
             }
-
+            oldStatus = workStatusRes.getAppStatus();
             workInstance = updateInstance(workInstance, logBuilder);
 
             // 如果状态是运行中，更新日志，继续执行
