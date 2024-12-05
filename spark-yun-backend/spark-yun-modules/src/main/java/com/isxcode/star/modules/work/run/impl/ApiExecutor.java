@@ -71,7 +71,7 @@ public class ApiExecutor extends WorkExecutor {
         }
 
         // 检查通过
-        logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始执行作业 \n");
+        logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始执行接口调用 \n");
         workInstance = updateInstance(workInstance, logBuilder);
 
         Object response = null;
@@ -105,9 +105,8 @@ public class ApiExecutor extends WorkExecutor {
         }
 
         // 保存运行日志
-        workInstance.setResultData(JSON.toJSONString(response));
-        logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("请求成功, 返回结果: \n")
-            .append(JSON.toJSONString(response, true)).append(" \n");
+        workInstance.setResultData(String.valueOf(response));
+        logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("请求成功, 查看运行结果 \n");
         updateInstance(workInstance, logBuilder);
     }
 
