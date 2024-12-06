@@ -119,6 +119,10 @@ Caused by: java.net.UnknownHostException: isxcode
 
 > 无法访问本地hive数据库
 
+##### 解决方案
+
+> 手动添加指定hive的metastore地址
+
 ```json
 {
   "hive.metastore.uris": "thrift://isxcode:9083"
