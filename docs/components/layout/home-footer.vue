@@ -408,7 +408,7 @@ function clickBlogs() {
 
 function clickDocs() {
   const router = useRouter();
-  router.push("/docs/zh/0/0");
+  router.push("/docs/zh/2/0");
 }
 
 function clickIcp() {
