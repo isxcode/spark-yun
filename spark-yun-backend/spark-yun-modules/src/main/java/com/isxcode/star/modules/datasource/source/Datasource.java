@@ -56,7 +56,7 @@ public abstract class Datasource {
 
     public abstract Long getTableColumnCount(ConnectInfo connectInfo) throws IsxAppException;
 
-    public abstract String getPageSql(ConnectInfo connectInfo, String sql) throws IsxAppException;
+    public abstract String getPageSql(String sql) throws IsxAppException;
 
     public abstract GetDataSourceDataRes getTableData(ConnectInfo connectInfo) throws IsxAppException;
 

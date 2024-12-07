@@ -135,8 +135,8 @@ public class MysqlService extends Datasource {
     }
 
     @Override
-    public String getPageSql(ConnectInfo connectInfo, String sql) throws IsxAppException {
-        return sql + " LIMIT '${page}' , '${pageSize}' ";
+    public String getPageSql(String sql) throws IsxAppException {
+        return "SELECT * FROM (" + sql + ") AS SY_TMP LIMIT '${page}' , '${pageSize}' ";
     }
 
     @Override
