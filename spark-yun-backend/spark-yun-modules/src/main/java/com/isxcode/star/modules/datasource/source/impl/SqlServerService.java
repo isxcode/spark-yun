@@ -168,9 +168,9 @@ public class SqlServerService extends Datasource {
             throw new IsxAppException("需要首单词为select的查询语句");
         }
         String firstCol = split[0].toLowerCase().trim().substring(7);
-        String firstKey = "ROW_NUMBER() OVER (ORDER BY " + firstCol + " ASC) AS RowNum";
+        String firstKey = "ROW_NUMBER() OVER (ORDER BY " + firstCol + " ASC) AS SY_ROW_NUM";
         return "SELECT * FROM (" + sql.replace(split[0], split[0] + "," + firstKey)
-            + ") AS SubQuery WHERE RowNum BETWEEN '${page}' AND '${pageSize}'";
+            + ") AS SubQuery WHERE SY_ROW_NUM BETWEEN '${page}' AND '${pageSize}'";
     }
 
     @Override
