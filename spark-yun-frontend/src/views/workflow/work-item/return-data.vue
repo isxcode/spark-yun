@@ -102,10 +102,11 @@ defineExpose({
     position: static;
     height: 100% !important;
     padding: 0 !important;
+    margin-top: 0 !important;
   }
 }
 .vxe-table--body-wrapper {
-  max-height: calc(100vh - 416px);
+  max-height: calc(100vh - 428px);
   overflow: auto;
 }
 .zqy-json-parse {
