@@ -1,5 +1,6 @@
 package com.isxcode.star.modules.work.service.biz;
 
+import com.isxcode.star.api.datasource.constants.DatasourceType;
 import com.isxcode.star.api.datasource.pojos.dto.ColumnMetaDto;
 import com.isxcode.star.api.datasource.pojos.dto.ConnectInfo;
 import com.isxcode.star.api.work.pojos.req.*;
@@ -42,6 +43,9 @@ public class SyncWorkBizService {
         Datasource datasource = dataSourceFactory.getDatasource(connectInfo.getDbType());
         Connection connection = datasource.getConnection(connectInfo);
         Map<String, String> transform = getTransform(connection, getDataSourceTablesReq.getTablePattern());
+        if (DatasourceType.ORACLE.equals(datasourceEntity.getDbType())) {
+            transform.put("schema", connectInfo.getUsername().toUpperCase());
+        }
         List<String> tables = syncWorkService.tables(connection.getMetaData(), transform.get("catalog"),
             transform.get("schema"), transform.get("tableName"));
         List<String> views = syncWorkService.views(connection.getMetaData(), transform.get("catalog"),
@@ -114,7 +118,7 @@ public class SyncWorkBizService {
             } else {
                 return connection.getSchema();
             }
-        } catch (SQLException e) {
+        } catch (SQLException | AbstractMethodError e) {
             log.debug(e.getMessage(), e);
             return null;
         }
