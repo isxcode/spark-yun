@@ -20,6 +20,7 @@ interface Param {
 const info = ref<Param>()
 const tableConfig = reactive({
     tableData: [],
+    seqType: 'seq',
     colConfigs: [],
     loading: false
 })

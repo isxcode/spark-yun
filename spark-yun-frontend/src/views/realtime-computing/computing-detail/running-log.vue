@@ -1,18 +1,9 @@
-<!--
- * @Author: fanciNate
- * @Date: 2023-05-26 16:35:28
- * @LastEditTime: 2023-06-18 15:48:24
- * @LastEditors: fanciNate
- * @Description: In User Settings Edit
- * @FilePath: /spark-yun/spark-yun-website/src/views/workflow/work-item/running-log.vue
--->
 <template>
-  <div
-    id="content"
-    class="running-log"
-  >
-    <LogContainer v-if="logMsg" :logMsg="logMsg" :status="status"></LogContainer>
-    <EmptyPage v-else />
+  <div id="content" class="running-log">
+    <LoadingPage :visible="loading">
+      <LogContainer v-if="logMsg" :logMsg="logMsg" :status="status"></LogContainer>
+      <EmptyPage v-else />
+    </LoadingPage>
   </div>
 </template>
 
@@ -20,15 +11,18 @@
 import { nextTick, onUnmounted, computed, ref, defineExpose } from 'vue'
 import EmptyPage from '@/components/empty-page/index.vue'
 import { GetRealSubRunningLog } from '@/services/realtime-computing.service';
+import LoadingPage from '@/components/loading/index.vue'
 
 const logMsg = ref('')
 const timer = ref(null)
 const pubId = ref('')
 const status = ref(false)
 const isRequest = ref(false)
+const loading = ref<boolean>(false)
 
 function initData(id: string): void {
   pubId.value = id
+  loading.value = true
   getLogData(pubId.value)
   if (!timer.value) {
     timer.value = setInterval(() => {
@@ -50,6 +44,7 @@ function getLogData(id: string) {
       status.value = ['FAIL', 'STOP'].includes(res.data.status) ? true : false
       logMsg.value = res.data.runningLog
       isRequest.value = false
+      loading.value = false
     })
     .catch(() => {
       logMsg.value = ''
@@ -58,6 +53,7 @@ function getLogData(id: string) {
       }
       timer.value = null
       isRequest.value = false
+      loading.value = false
     })
 }
 

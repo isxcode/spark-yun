@@ -1,14 +1,16 @@
 
 <template>
-  <LogContainer
-    v-if="strData || jsonData"
-    :logMsg="strData || jsonData"
-    :showResult="true"
-    :status="true"
-  ></LogContainer>
-  <template v-else>
-    <BlockTable :table-config="tableConfig"/>
-  </template>
+  <LoadingPage class="log-loading" :visible="loading">
+    <LogContainer
+      v-if="strData || jsonData"
+      :logMsg="strData || jsonData"
+      :showResult="true"
+      :status="true"
+    ></LogContainer>
+    <template v-else>
+      <BlockTable class="result-table-log" :table-config="tableConfig"/>
+    </template>
+  </LoadingPage>
   <span v-if="showParse" class="zqy-json-parse" @click="getJsonParseResult">结果解析</span>
 </template>
 
@@ -16,6 +18,7 @@
 import { reactive, ref, defineEmits, defineProps } from 'vue'
 import BlockTable from '@/components/block-table/index.vue'
 import { GetResultData } from '@/services/schedule.service'
+import LoadingPage from '@/components/loading/index.vue'
 
 const emit = defineEmits(['getJsonParseResult'])
 
@@ -31,6 +34,7 @@ const tableConfig = reactive({
 })
 const jsonData = ref()
 const strData = ref()
+const loading = ref<boolean>(false)
 
 function initData(id: string): void {
   getResultDatalist(id)
@@ -49,12 +53,15 @@ function getResultDatalist(id: string) {
     return
   }
   tableConfig.loading = true
+  loading.value = true
   GetResultData({
     instanceId: id
   })
     .then((res: any) => {
       jsonData.value = res.data.jsonData
       strData.value = res.data.strData
+
+      loading.value = false
 
       const col = res.data.data.slice(0, 1)[0]
       const tableData = res.data.data.slice(1, res.data.data.length)
@@ -90,8 +97,15 @@ defineExpose({
 </script>
 
 <style lang="scss">
+.log-loading {
+  &.zqy-loading {
+    position: static;
+    height: 100% !important;
+    padding: 0 !important;
+  }
+}
 .vxe-table--body-wrapper {
-  max-height: calc(100vh - 466px);
+  max-height: calc(100vh - 416px);
   overflow: auto;
 }
 .zqy-json-parse {
