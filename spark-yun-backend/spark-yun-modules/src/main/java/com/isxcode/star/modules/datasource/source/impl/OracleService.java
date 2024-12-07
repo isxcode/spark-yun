@@ -13,6 +13,7 @@ import com.isxcode.star.modules.datasource.service.DatabaseDriverService;
 import com.isxcode.star.modules.datasource.source.Datasource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 import java.util.List;
 
@@ -76,7 +77,13 @@ public class OracleService extends Datasource {
 
     @Override
     public GetDataSourceDataRes getTableData(ConnectInfo connectInfo) throws IsxAppException {
-        return null;
+
+        Assert.notNull(connectInfo.getTableName(), "tableName不能为空");
+        Assert.notNull(connectInfo.getRowNumber(), "rowNumber不能为空");
+
+        String getTableDataSql = "SELECT * FROM " + connectInfo.getTableName()
+            + ("ALL".equals(connectInfo.getRowNumber()) ? "" : " WHERE ROWNUM <= " + connectInfo.getRowNumber());
+        return getTableData(connectInfo, getTableDataSql);
     }
 
     @Override
