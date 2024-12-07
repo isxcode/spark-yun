@@ -61,6 +61,11 @@ public class StarRocksService extends Datasource {
     }
 
     @Override
+    public String getPageSql(String sql) throws IsxAppException {
+        return sql + " LIMIT '${page}' OFFSET '${pageSize}'";
+    }
+
+    @Override
     public GetDataSourceDataRes getTableData(ConnectInfo connectInfo) throws IsxAppException {
         return null;
     }

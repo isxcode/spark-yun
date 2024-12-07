@@ -6,6 +6,7 @@ import com.isxcode.star.api.datasource.pojos.dto.ConnectInfo;
 import com.isxcode.star.api.datasource.pojos.dto.QueryColumnDto;
 import com.isxcode.star.api.datasource.pojos.dto.QueryTableDto;
 import com.isxcode.star.api.work.pojos.res.GetDataSourceDataRes;
+import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.star.backend.api.base.properties.IsxAppProperties;
 import com.isxcode.star.common.utils.AesUtils;
 import com.isxcode.star.modules.datasource.service.DatabaseDriverService;
@@ -56,6 +57,11 @@ public class DmService extends Datasource {
     @Override
     public Long getTableColumnCount(ConnectInfo connectInfo) {
         return 0L;
+    }
+
+    @Override
+    public String getPageSql(String sql) throws IsxAppException {
+        return "";
     }
 
     @Override

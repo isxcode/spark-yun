@@ -135,6 +135,11 @@ public class MysqlService extends Datasource {
     }
 
     @Override
+    public String getPageSql(String sql) throws IsxAppException {
+        return "SELECT * FROM (" + sql + ") AS SY_TMP LIMIT '${page}' , '${pageSize}' ";
+    }
+
+    @Override
     public GetDataSourceDataRes getTableData(ConnectInfo connectInfo) throws IsxAppException {
 
         Assert.notNull(connectInfo.getTableName(), "tableName不能为空");
