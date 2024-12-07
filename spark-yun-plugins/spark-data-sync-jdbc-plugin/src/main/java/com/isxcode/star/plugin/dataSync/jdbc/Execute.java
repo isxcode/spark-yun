@@ -93,7 +93,10 @@ public class Execute {
 
             Properties prop = new Properties();
             prop.put("user", conf.getSyncWorkConfig().getSourceDatabase().getUser());
-            prop.put("password", conf.getSyncWorkConfig().getSourceDatabase().getPassword());
+            if (conf.getSyncWorkConfig().getSourceDatabase().getPassword() != null) {
+                prop.put("password", conf.getSyncWorkConfig().getSourceDatabase().getPassword());
+            }
+
             prop.put("driver", conf.getSyncWorkConfig().getSourceDatabase().getDriver());
 
             // 创建一个 ArrayList 存储分区条件
@@ -142,9 +145,11 @@ public class Execute {
             DataFrameReader frameReader = sparkSession.read().format("jdbc")
                 .option("driver", conf.getSyncWorkConfig().getTargetDatabase().getDriver())
                 .option("url", conf.getSyncWorkConfig().getTargetDatabase().getUrl()).option("dbtable", dbTable)
-                .option("user", conf.getSyncWorkConfig().getTargetDatabase().getUser())
-                .option("password", conf.getSyncWorkConfig().getTargetDatabase().getPassword())
-                .option("truncate", "true");
+                .option("user", conf.getSyncWorkConfig().getTargetDatabase().getUser()).option("truncate", "true");
+
+            if (conf.getSyncWorkConfig().getTargetDatabase().getPassword() != null) {
+                frameReader.option("password", conf.getSyncWorkConfig().getTargetDatabase().getPassword());
+            }
 
             if (SetMode.ADVANCE.equals(conf.getSyncRule().getSetMode())) {
                 conf.getSyncRule().getSqlConfig().forEach(frameReader::option);
@@ -206,7 +211,7 @@ public class Execute {
                 return "CRC32(`" + PartitionColumn + "`) % " + NumPartitions + " in (" + startIndex + ",-" + endIndex
                     + ")";
             case DatasourceType.ORACLE:
-                return "MOD(ORA_HASH(`" + PartitionColumn + "`)," + NumPartitions + ") in (" + startIndex + ",-"
+                return "MOD(ORA_HASH(\"" + PartitionColumn + "\")," + NumPartitions + ") in (" + startIndex + ",-"
                     + endIndex + ")";
             case DatasourceType.OCEANBASE:
             case DatasourceType.DM:
