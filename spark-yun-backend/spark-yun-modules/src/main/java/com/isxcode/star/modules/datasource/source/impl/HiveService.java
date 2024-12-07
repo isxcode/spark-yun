@@ -168,7 +168,7 @@ public class HiveService extends Datasource {
     }
 
     @Override
-    public String getPageSql(ConnectInfo connectInfo, String sql) throws IsxAppException {
+    public String getPageSql(String sql) throws IsxAppException {
         return "";
     }
 

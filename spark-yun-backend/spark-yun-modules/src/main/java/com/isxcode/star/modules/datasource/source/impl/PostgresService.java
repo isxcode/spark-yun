@@ -61,8 +61,8 @@ public class PostgresService extends Datasource {
     }
 
     @Override
-    public String getPageSql(ConnectInfo connectInfo, String sql) throws IsxAppException {
-        return "";
+    public String getPageSql(String sql) throws IsxAppException {
+        return "SELECT * FROM (" + sql + ") AS SY_TMP LIMIT '${pageSize}' OFFSET '${page}' ";
     }
 
     @Override

@@ -61,7 +61,9 @@ public class OracleService extends Datasource {
     }
 
     @Override
-    public String getPageSql(ConnectInfo connectInfo, String sql) throws IsxAppException {
+    public String getPageSql(String sql) throws IsxAppException {
+
+        // "select * from(select t.*,ROW_NUMBER() as rn from(%s)t where rownum<%d) where rn>=%d"
         return "OFFSET '${page}' ROWS FETCH NEXT '${pageSize}' ROWS ONLY";
     }
 
