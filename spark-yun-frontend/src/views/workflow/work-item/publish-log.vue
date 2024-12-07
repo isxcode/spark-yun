@@ -7,12 +7,11 @@
  * @FilePath: /spark-yun/spark-yun-website/src/views/workflow/work-item/publish-log.vue
 -->
 <template>
-  <div
-    id="content"
-    class="publish-log"
-  >
-    <LogContainer v-if="logMsg" :logMsg="logMsg" :status="status" :showResult="false"></LogContainer>
-    <EmptyPage v-else />
+  <div id="content" class="publish-log">
+    <LoadingPage :visible="loading">
+      <LogContainer v-if="logMsg" :logMsg="logMsg" :status="status" :showResult="false"></LogContainer>
+      <EmptyPage v-else />
+    </LoadingPage>
   </div>
 </template>
 
@@ -20,6 +19,7 @@
 import { nextTick, onUnmounted, ref, defineExpose } from 'vue'
 import { GetSubmitLogData } from '@/services/workflow.service'
 import EmptyPage from '@/components/empty-page/index.vue'
+import LoadingPage from '@/components/loading/index.vue'
 
 const logMsg = ref('')
 const timer = ref(null)
@@ -93,6 +93,11 @@ defineExpose({
 .publish-log {
   height: 100%;
   position: static;
+  .zqy-loading {
+    position: static;
+    height: 100% !important;
+    padding: 0 !important;
+  }
   .empty-page {
     height: 100%;
   }
