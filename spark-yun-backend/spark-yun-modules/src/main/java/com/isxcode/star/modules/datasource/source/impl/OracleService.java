@@ -69,9 +69,9 @@ public class OracleService extends Datasource {
             throw new IsxAppException("需要首单词为select的查询语句");
         }
         String firstCol = split[0].toLowerCase().trim().substring(7);
-        String firstKey = "ROW_NUMBER() OVER (ORDER BY " + firstCol + " ASC) AS Row_Num";
+        String firstKey = "ROW_NUMBER() OVER (ORDER BY " + firstCol + " ) AS SY_ROW_NUM";
         return "SELECT * FROM ( SELECT SY_TMP.* ," + firstKey + " FROM (" + sql
-            + ") SY_TMP ) WHERE Row_Num BETWEEN '${page}' AND '${pageSize}'";
+            + ") SY_TMP ) WHERE SY_ROW_NUM BETWEEN '${page}' AND '${pageSize}'";
     }
 
     @Override

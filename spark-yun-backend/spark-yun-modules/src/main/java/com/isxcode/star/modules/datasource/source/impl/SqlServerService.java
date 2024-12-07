@@ -162,6 +162,10 @@ public class SqlServerService extends Datasource {
     @Override
     public String getPageSql(String sql) throws IsxAppException {
 
+        if (sql.toLowerCase().contains("order by")) {
+            throw new IsxAppException("sqlserver不支持order by语法，默认select后面第一个字段升序分页");
+        }
+
         // 以第一个字段作为排序字段
         String[] split = sql.split(",");
         if (split.length < 1 || split[0].length() < 6 || !"select".equals(split[0].substring(0, 6))) {
