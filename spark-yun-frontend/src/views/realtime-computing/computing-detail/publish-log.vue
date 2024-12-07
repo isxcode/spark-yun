@@ -1,17 +1,10 @@
-<!--
- * @Author: fanciNate
- * @Date: 2023-05-26 16:35:28
- * @LastEditTime: 2023-06-22 21:29:48
- * @LastEditors: fanciNate
- * @Description: In User Settings Edit
- * @FilePath: /spark-yun/spark-yun-website/src/views/workflow/work-item/publish-log.vue
--->
 <template>
   <div id="content" class="publish-log">
     <LoadingPage :visible="loading">
       <LogContainer v-if="logMsg" :logMsg="logMsg" :status="status"></LogContainer>
       <EmptyPage v-else />
     </LoadingPage>
+    <span v-if="runId" class="zqy-log-refrash" @click="refrashEvent">刷新</span>
   </div>
 </template>
 
@@ -41,6 +34,11 @@ function initData(id: string, flag: boolean): void {
       !isRequest.value && getLogData(runId.value)
     }, 3000)
   }
+}
+
+function refrashEvent() {
+  loading.value = true
+  getLogData(runId.value)
 }
 
 // 获取日志
