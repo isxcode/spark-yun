@@ -141,10 +141,14 @@ public class Execute {
 
             DataFrameReader frameReader = sparkSession.read().format("jdbc")
                 .option("driver", conf.getSyncWorkConfig().getTargetDatabase().getDriver())
-                .option("url", conf.getSyncWorkConfig().getTargetDatabase().getUrl()).option("dbtable", dbTable)
+                .option("url", conf.getSyncWorkConfig().getTargetDatabase().getUrl())
+                .option("dbtable", dbTable)
                 .option("user", conf.getSyncWorkConfig().getTargetDatabase().getUser())
-                .option("password", conf.getSyncWorkConfig().getTargetDatabase().getPassword())
                 .option("truncate", "true");
+
+            if (conf.getSyncWorkConfig().getTargetDatabase().getPassword() != null) {
+                frameReader.option("password", conf.getSyncWorkConfig().getTargetDatabase().getPassword());
+            }
 
             if (SetMode.ADVANCE.equals(conf.getSyncRule().getSetMode())) {
                 conf.getSyncRule().getSqlConfig().forEach(frameReader::option);
