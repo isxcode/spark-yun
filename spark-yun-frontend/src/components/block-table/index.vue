@@ -4,6 +4,7 @@
     :class="{ 'block-table__empty': !tableConfig.tableData?.length }"
     :row-config="{ isHover: true }"
     :data="tableConfig.tableData"
+    :seq-config="{ seqMethod }"
     :loading="tableConfig.loading"
   >
     <vxe-column
@@ -94,7 +95,7 @@ interface TableConfig {
   loading?: boolean; // 表格loading
 }
 
-defineProps<{
+const props = defineProps<{
   tableConfig: TableConfig;
 }>()
 
@@ -105,6 +106,14 @@ const handleSizeChange = (e: number) => {
 }
 const handleCurrentChange = (e: number) => {
   emit('current-change', e)
+}
+
+function seqMethod({ rowIndex }):number {
+  if (props.tableConfig) {
+    return (props.tableConfig?.pagination.currentPage - 1) * props.tableConfig.pagination.pageSize + rowIndex + 1
+  } else {
+    return rowIndex
+  }
 }
 
 function columnSlotAdapter(column: any, colConfig: any) {

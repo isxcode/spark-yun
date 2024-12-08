@@ -79,6 +79,11 @@ function initData(searchKeyWord?: string) {
     })
 }
 
+function initPage() {
+    tableConfig.pagination.currentPage = 1
+    tableConfig.pagination.pageSize = 10
+}
+
 function handleSizeChange(e: number) {
     tableConfig.pagination.pageSize = e
     initData()
@@ -99,6 +104,7 @@ onMounted(() => {
 })
 
 defineExpose({
-    initData
+    initData,
+    initPage
 })
 </script>

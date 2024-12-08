@@ -92,6 +92,11 @@ function initData(searchKeyWord?: string) {
     })
 }
 
+function initPage() {
+    tableConfig.pagination.currentPage = 1
+    tableConfig.pagination.pageSize = 10
+}
+
 function showPreviewModal(data: any) {
     previewModalRef.value.showModal(data)
 }
@@ -112,6 +117,7 @@ onMounted(() => {
 })
 
 defineExpose({
-    initData
+    initData,
+    initPage
 })
 </script>

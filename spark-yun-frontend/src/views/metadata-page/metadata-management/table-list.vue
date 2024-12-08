@@ -17,6 +17,7 @@ import { GetMetadataTableList } from '@/services/metadata-page.service'
 import PreviewModal from './preview-modal/index.vue'
 
 const previewModalRef = ref<any>(null)
+const dId = ref<string>('')
 const tableConfig = reactive({
     tableData: [],
     colConfigs: [
@@ -61,12 +62,15 @@ const tableConfig = reactive({
 })
 
 function initData(searchKeyWord?: string, datasourceId?: string) {
+    if (datasourceId || datasourceId === '') {
+        dId.value = datasourceId
+    }
     return new Promise((resolve, reject) => {
         GetMetadataTableList({
             page: tableConfig.pagination.currentPage - 1,
             pageSize: tableConfig.pagination.pageSize,
             searchKeyWord: searchKeyWord || '',
-            datasourceId: datasourceId
+            datasourceId: dId.value
         }).then((res: any) => {
             tableConfig.tableData = res.data.content
             tableConfig.pagination.total = res.data.totalElements
@@ -80,6 +84,11 @@ function initData(searchKeyWord?: string, datasourceId?: string) {
             reject()
         })
     })
+}
+
+function initPage() {
+    tableConfig.pagination.currentPage = 1
+    tableConfig.pagination.pageSize = 10
 }
 
 function showPreviewModal(data: any) {
@@ -102,6 +111,7 @@ onMounted(() => {
 })
 
 defineExpose({
-    initData
+    initData,
+    initPage
 })
 </script>
