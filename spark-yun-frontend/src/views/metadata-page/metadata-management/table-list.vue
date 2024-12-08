@@ -66,6 +66,7 @@ function initData(searchKeyWord?: string, datasourceId?: string) {
         dId.value = datasourceId
     }
     return new Promise((resolve, reject) => {
+        tableConfig.loading = true
         GetMetadataTableList({
             page: tableConfig.pagination.currentPage - 1,
             pageSize: tableConfig.pagination.pageSize,
