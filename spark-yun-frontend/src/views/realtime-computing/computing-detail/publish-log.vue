@@ -1,18 +1,10 @@
-<!--
- * @Author: fanciNate
- * @Date: 2023-05-26 16:35:28
- * @LastEditTime: 2023-06-22 21:29:48
- * @LastEditors: fanciNate
- * @Description: In User Settings Edit
- * @FilePath: /spark-yun/spark-yun-website/src/views/workflow/work-item/publish-log.vue
--->
 <template>
-  <div
-    id="content"
-    class="publish-log"
-  >
-    <LogContainer v-if="logMsg" :logMsg="logMsg" :status="status"></LogContainer>
-    <EmptyPage v-else />
+  <div id="content" class="publish-log">
+    <LoadingPage :visible="loading">
+      <LogContainer v-if="logMsg" :logMsg="logMsg" :status="status"></LogContainer>
+      <EmptyPage v-else />
+    </LoadingPage>
+    <span v-if="runId" class="zqy-log-refrash" @click="refrashEvent">刷新</span>
   </div>
 </template>
 
@@ -20,12 +12,14 @@
 import { nextTick, onUnmounted, ref, defineExpose, computed } from 'vue'
 import EmptyPage from '@/components/empty-page/index.vue'
 import { GetRealSubLog } from '@/services/realtime-computing.service';
+import LoadingPage from '@/components/loading/index.vue'
 
 const logMsg = ref('')
 const timer = ref(null)
 const runId = ref('')
 const status = ref(false)
 const isRequest = ref(false)
+const loading = ref<boolean>(false)
 
 function initData(id: string, flag: boolean): void {
   if (flag) {
@@ -33,12 +27,18 @@ function initData(id: string, flag: boolean): void {
   }
 
   runId.value = id
+  loading.value = true
   getLogData(runId.value)
   if (!timer.value) {
     timer.value = setInterval(() => {
       !isRequest.value && getLogData(runId.value)
     }, 3000)
   }
+}
+
+function refrashEvent() {
+  loading.value = true
+  getLogData(runId.value)
 }
 
 // 获取日志
@@ -53,6 +53,7 @@ function getLogData(id: string) {
       status.value = ['FAIL', 'STOP'].includes(res.data.status) ? true : false
       logMsg.value = res.data.submitLog
       isRequest.value = false
+      loading.value = false
   }).catch((err: any) => {
       if (timer.value) {
           clearInterval(timer.value)
@@ -60,6 +61,7 @@ function getLogData(id: string) {
       console.log('err', err)
       logMsg.value = ''
       isRequest.value = false
+      loading.value = false
   })
 }
 
@@ -75,10 +77,3 @@ defineExpose({
 })
 </script>
 
-<style lang="scss">
-.publish-log {
-  .empty-page {
-    height: 100%;
-  }
-}
-</style>
