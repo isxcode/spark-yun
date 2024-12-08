@@ -21,6 +21,7 @@
         :width="colConfig.width"
         :field="colConfig.prop"
         :fixed="colConfig.fixed"
+        :resizable="colIndex < tableConfig.colConfigs.length - 1"
         :show-header-overflow="colConfig.showHeaderOverflow || false"
         :show-overflow="colConfig.showOverflowTooltip || false"
         v-bind="colConfig"
@@ -41,6 +42,7 @@
         :show-header-overflow="colConfig.showHeaderOverflow || false"
         :width="colConfig.width"
         :field="colConfig.prop"
+        :resizable="colIndex < tableConfig.colConfigs.length - 1"
         :show-overflow="colConfig.showOverflowTooltip || false"
         v-bind="colConfig"
       />
@@ -109,10 +111,10 @@ const handleCurrentChange = (e: number) => {
 }
 
 function seqMethod({ rowIndex }):number {
-  if (props.tableConfig) {
+  if (props.tableConfig && props.tableConfig.pagination) {
     return (props.tableConfig?.pagination.currentPage - 1) * props.tableConfig.pagination.pageSize + rowIndex + 1
   } else {
-    return rowIndex
+    return rowIndex + 1
   }
 }
 

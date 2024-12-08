@@ -13,6 +13,7 @@ export interface colConfig {
   width?: number;
   minWidth?: number;
   formatter?: any;
+  fixed?: string;
 }
 
 export interface Pagination {
@@ -102,7 +103,8 @@ export const colConfigs: colConfig[] = [
     title: '操作',
     align: 'center',
     customSlot: 'options',
-    width: 80
+    width: 80,
+    fixed: 'right'
   }
 ]
 
