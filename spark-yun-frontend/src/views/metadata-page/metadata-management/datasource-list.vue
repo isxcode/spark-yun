@@ -60,6 +60,7 @@ const tableConfig = reactive({
 
 function initData(searchKeyWord?: string) {
     return new Promise((resolve, reject) => {
+        tableConfig.loading = true
         GetMetadataManagementList({
             page: tableConfig.pagination.currentPage - 1,
             pageSize: tableConfig.pagination.pageSize,
@@ -77,6 +78,11 @@ function initData(searchKeyWord?: string) {
             reject()
         })
     })
+}
+
+function initPage() {
+    tableConfig.pagination.currentPage = 1
+    tableConfig.pagination.pageSize = 10
 }
 
 function handleSizeChange(e: number) {
@@ -99,6 +105,7 @@ onMounted(() => {
 })
 
 defineExpose({
-    initData
+    initData,
+    initPage
 })
 </script>

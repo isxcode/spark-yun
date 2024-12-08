@@ -81,6 +81,7 @@ const dataSourceList = ref([])
 function initData(tableLoading?: boolean) {
     loading.value = tableLoading ? false : true
     networkError.value = networkError.value || false
+    currentTabRef.value?.initPage()
     currentTabRef.value?.initData(keyword.value, datasourceId.value).then(() => {
         loading.value = false
         networkError.value = false
