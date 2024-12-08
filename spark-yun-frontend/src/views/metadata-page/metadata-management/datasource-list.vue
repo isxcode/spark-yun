@@ -60,6 +60,7 @@ const tableConfig = reactive({
 
 function initData(searchKeyWord?: string) {
     return new Promise((resolve, reject) => {
+        tableConfig.loading = true
         GetMetadataManagementList({
             page: tableConfig.pagination.currentPage - 1,
             pageSize: tableConfig.pagination.pageSize,
