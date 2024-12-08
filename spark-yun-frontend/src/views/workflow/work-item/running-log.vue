@@ -63,6 +63,7 @@ defineExpose({
     height: 100% !important;
     padding: 0 !important;
     margin-top: 0 !important;
+    overflow: auto;
   }
 }
 .zqy-json-parse {
