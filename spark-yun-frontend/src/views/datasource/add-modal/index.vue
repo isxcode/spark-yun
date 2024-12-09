@@ -77,7 +77,6 @@ db2: jdbc:db2://${host}:${ip}/${database}
         </el-tooltip>
         <el-input
           v-model="formData.jdbcUrl"
-          maxlength="100"
           placeholder="请输入"
         />
       </el-form-item>
