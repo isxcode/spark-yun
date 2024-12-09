@@ -203,6 +203,9 @@ public class StandaloneAgentService implements AgentService {
         Document doc = Jsoup.connect(getMasterWebUrl(sparkHomePath)).get();
 
         Element completedDriversTable = doc.selectFirst(".aggregated-completedDrivers table");
+        if (completedDriversTable == null) {
+            throw new IsxAppException("检测不到应用信息");
+        }
         Elements completedDriversRows = completedDriversTable.select("tbody tr");
 
         Element runningDriversTable = doc.selectFirst(".aggregated-activeDrivers table");
