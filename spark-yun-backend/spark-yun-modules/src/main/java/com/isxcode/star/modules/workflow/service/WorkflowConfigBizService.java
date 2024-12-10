@@ -98,7 +98,7 @@ public class WorkflowConfigBizService {
 
         workflowConfig.setInvokeStatus(configWorkflowSettingReq.getInvokeStatus());
         if (ON.equals(workflowConfig.getInvokeStatus())) {
-            workflowConfig.setInvokeStatus(configWorkflowSettingReq.getInvokeUrl());
+            workflowConfig.setInvokeUrl(configWorkflowSettingReq.getInvokeUrl());
         }
         workflowConfigRepository.save(workflowConfig);
     }
