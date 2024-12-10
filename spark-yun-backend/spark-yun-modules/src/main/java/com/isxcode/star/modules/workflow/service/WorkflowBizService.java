@@ -267,7 +267,7 @@ public class WorkflowBizService {
         // 启动外部调用处理
         wofGetWorkflowRes.setInvokeStatus(workflowConfig.getInvokeStatus());
         if (ON.equals(workflowConfig.getInvokeStatus())) {
-            wofGetWorkflowRes.setInvokeUrl(workflowService.getInvokeUrl(getWorkflowReq.getWorkflowId()));
+            wofGetWorkflowRes.setInvokeUrl(workflowConfig.getInvokeUrl());
         }
 
         return wofGetWorkflowRes;
@@ -798,7 +798,7 @@ public class WorkflowBizService {
 
         workflowService.getWorkflow(getInvokeUrlReq.getWorkflowId());
 
-        String invokeUrl = workflowService.getInvokeUrl(getInvokeUrlReq.getWorkflowId());
+        String invokeUrl = workflowService.getInvokeUrl(getInvokeUrlReq);
 
         return GetInvokeUrlRes.builder().url(invokeUrl).build();
     }
