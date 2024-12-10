@@ -12,9 +12,16 @@ import com.isxcode.star.common.utils.AesUtils;
 import com.isxcode.star.modules.datasource.service.DatabaseDriverService;
 import com.isxcode.star.modules.datasource.source.Datasource;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.dbutils.QueryRunner;
+import org.apache.commons.dbutils.handlers.BeanListHandler;
+import org.apache.commons.dbutils.handlers.ScalarHandler;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.List;
 
 @Service
@@ -24,6 +31,13 @@ public class OracleService extends Datasource {
     public OracleService(DatabaseDriverService dataDriverService, IsxAppProperties isxAppProperties,
         AesUtils aesUtils) {
         super(dataDriverService, isxAppProperties, aesUtils);
+    }
+
+    // TEMPORARILY RESERVED
+    private void checkDatabase(ConnectInfo connectInfo) {
+        if ("default".equals(connectInfo.getDatabase()) && StringUtils.isNotBlank(connectInfo.getUsername())) {
+            connectInfo.setDatabase(connectInfo.getUsername().toUpperCase());
+        }
     }
 
     @Override
@@ -38,27 +52,94 @@ public class OracleService extends Datasource {
 
     @Override
     public List<QueryTableDto> queryTable(ConnectInfo connectInfo) throws IsxAppException {
-        throw new RuntimeException("该数据源暂不支持");
+
+        QueryRunner qr = new QueryRunner();
+        try (Connection connection = getConnection(connectInfo)) {
+
+            String sql = "SELECT '" + connectInfo.getDatasourceId()
+                + "' AS datasourceId, T.TABLE_NAME AS tableName, C.COMMENTS AS tableComment "
+                + "FROM USER_TABLES T LEFT JOIN USER_TAB_COMMENTS C ON T.TABLE_NAME = C.TABLE_NAME";
+
+            if (Strings.isNotEmpty(connectInfo.getTablePattern())) {
+                sql += " AND REGEXP_LIKE(T.TABLE_NAME ,'" + connectInfo.getTablePattern() + "')";
+                return qr.query(connection, sql, new BeanListHandler<>(QueryTableDto.class));
+            } else {
+                return qr.query(connection, sql, new BeanListHandler<>(QueryTableDto.class));
+            }
+        } catch (SQLException e) {
+            log.error(e.getMessage(), e);
+            throw new IsxAppException(e.getMessage());
+        }
     }
 
     @Override
     public List<QueryColumnDto> queryColumn(ConnectInfo connectInfo) throws IsxAppException {
-        throw new RuntimeException("该数据源暂不支持");
+
+        Assert.notNull(connectInfo.getDatabase(), "datasource不能为空");
+        Assert.notNull(connectInfo.getTableName(), "tableName不能为空");
+
+        QueryRunner qr = new QueryRunner();
+        try (Connection connection = getConnection(connectInfo)) {
+            return qr.query(connection, "SELECT '" + connectInfo.getDatasourceId()
+                + "' AS datasourceId, 0 AS isPartitionColumn, "
+                + "COL.TABLE_NAME AS tableName, COL.COLUMN_NAME AS columnName, COL.DATA_TYPE AS columnType, COMM.COMMENTS AS columnComment "
+                + "FROM USER_TAB_COLUMNS COL LEFT JOIN USER_COL_COMMENTS COMM ON COL.TABLE_NAME = COMM.TABLE_NAME AND COL.COLUMN_NAME = COMM.COLUMN_NAME "
+                + "WHERE COL.TABLE_NAME = '" + connectInfo.getTableName() + "'",
+                new BeanListHandler<>(QueryColumnDto.class));
+        } catch (SQLException e) {
+            log.error(e.getMessage(), e);
+            throw new IsxAppException(e.getMessage());
+        }
     }
 
     @Override
     public Long getTableTotalSize(ConnectInfo connectInfo) throws IsxAppException {
-        return 0L;
+
+        Assert.notNull(connectInfo.getTableName(), "tableName不能为空");
+
+        QueryRunner qr = new QueryRunner();
+        try (Connection connection = getConnection(connectInfo)) {
+            Object result = qr.query(connection,
+                "SELECT bytes FROM user_segments " + "WHERE segment_name = '" + connectInfo.getTableName() + "'",
+                new ScalarHandler<>());
+            return Long.parseLong(String.valueOf(result));
+        } catch (SQLException e) {
+            log.error(e.getMessage(), e);
+            throw new IsxAppException(e.getMessage());
+        }
     }
 
     @Override
     public Long getTableTotalRows(ConnectInfo connectInfo) throws IsxAppException {
-        return 0L;
+
+        Assert.notNull(connectInfo.getTableName(), "tableName不能为空");
+
+        QueryRunner qr = new QueryRunner();
+        try (Connection connection = getConnection(connectInfo)) {
+            Object count =
+                qr.query(connection, "SELECT COUNT(*) FROM " + connectInfo.getTableName(), new ScalarHandler<>());
+            return Long.valueOf(String.valueOf(count));
+        } catch (SQLException e) {
+            log.error(e.getMessage(), e);
+            throw new IsxAppException(e.getMessage());
+        }
     }
 
     @Override
     public Long getTableColumnCount(ConnectInfo connectInfo) throws IsxAppException {
-        return 0L;
+
+        Assert.notNull(connectInfo.getTableName(), "tableName不能为空");
+
+        QueryRunner qr = new QueryRunner();
+        try (Connection connection = getConnection(connectInfo)) {
+            Object count = qr.query(connection,
+                "SELECT COUNT(*) FROM USER_TAB_COLUMNS WHERE TABLE_NAME = '" + connectInfo.getTableName() + "'",
+                new ScalarHandler<>());
+            return Long.valueOf(String.valueOf(count));
+        } catch (SQLException e) {
+            log.error(e.getMessage(), e);
+            throw new IsxAppException(e.getMessage());
+        }
     }
 
     @Override
