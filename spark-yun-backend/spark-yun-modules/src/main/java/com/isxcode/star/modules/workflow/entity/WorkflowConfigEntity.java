@@ -51,6 +51,8 @@ public class WorkflowConfigEntity {
 
     private String invokeStatus;
 
+    private String invokeUrl;
+
     @CreatedDate
     private LocalDateTime createDateTime;
 
