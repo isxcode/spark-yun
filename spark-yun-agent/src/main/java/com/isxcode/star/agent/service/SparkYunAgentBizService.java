@@ -48,6 +48,9 @@ public class SparkYunAgentBizService {
             String appStatus =
                 agentService.getWorkStatus(getWorkStatusReq.getAppId(), getWorkStatusReq.getSparkHomePath());
             return GetWorkStatusRes.builder().appId(getWorkStatusReq.getAppId()).appStatus(appStatus).build();
+        } catch (IsxAppException e) {
+            log.error(e.getMessage(), e);
+            throw new IsxAppException(e.getMsg());
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             throw new IsxAppException(e.getMessage());
@@ -61,6 +64,9 @@ public class SparkYunAgentBizService {
             String appLog =
                 agentService.getStderrLog(getWorkStderrLogReq.getAppId(), getWorkStderrLogReq.getSparkHomePath());
             return GetWorkStderrLogRes.builder().log(appLog).build();
+        } catch (IsxAppException e) {
+            log.error(e.getMessage(), e);
+            throw new IsxAppException(e.getMsg());
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             throw new IsxAppException(e.getMessage());
@@ -73,6 +79,9 @@ public class SparkYunAgentBizService {
         String appLog;
         try {
             appLog = agentService.getStdoutLog(getWorkStdoutLogReq.getAppId(), getWorkStdoutLogReq.getSparkHomePath());
+        } catch (IsxAppException e) {
+            log.error(e.getMessage(), e);
+            throw new IsxAppException(e.getMsg());
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             throw new IsxAppException(e.getMessage());
@@ -96,6 +105,9 @@ public class SparkYunAgentBizService {
         String workDataStr;
         try {
             workDataStr = agentService.getWorkDataStr(getWorkDataReq.getAppId(), getWorkDataReq.getSparkHomePath());
+        } catch (IsxAppException e) {
+            log.error(e.getMessage(), e);
+            throw new IsxAppException(e.getMsg());
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             throw new IsxAppException(e.getMessage());
@@ -110,6 +122,9 @@ public class SparkYunAgentBizService {
         try {
             agentService.stopWork(stopWorkReq.getAppId(), stopWorkReq.getSparkHomePath(),
                 stopWorkReq.getAgentHomePath());
+        } catch (IsxAppException e) {
+            log.error(e.getMessage(), e);
+            throw new IsxAppException(e.getMsg());
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             throw new IsxAppException(e.getMessage());
