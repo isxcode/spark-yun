@@ -75,7 +75,6 @@ public class OracleService extends Datasource {
     @Override
     public List<QueryColumnDto> queryColumn(ConnectInfo connectInfo) throws IsxAppException {
 
-        Assert.notNull(connectInfo.getDatabase(), "datasource不能为空");
         Assert.notNull(connectInfo.getTableName(), "tableName不能为空");
 
         QueryRunner qr = new QueryRunner();
