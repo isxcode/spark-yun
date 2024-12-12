@@ -226,10 +226,10 @@ const typeList = ref<Option[]>([
     label: 'Hive',
     value: 'HIVE',
   },
-  {
-    label: 'Kafka',
-    value: 'KAFKA',
-  },
+  // {
+  //   label: 'Kafka',
+  //   value: 'KAFKA',
+  // },
   {
     label: 'HanaSap',
     value: 'HANA_SAP',
@@ -534,7 +534,7 @@ function getDataSourceList(e: boolean, searchType?: string) {
         pageSize: 10000,
         searchKeyWord: searchType || ''
     }).then((res: any) => {
-      dataSourceList.value = res.data.content.map((item: any) => {
+      dataSourceList.value = res.data.content.filter((item: any) => item.dbType !== 'KAFKA' && formData.dbType == item.dbType).map((item: any) => {
           return {
               label: item.name,
               value: item.id
