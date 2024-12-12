@@ -46,8 +46,6 @@ public class SqlServerService extends Datasource {
     @Override
     public List<QueryTableDto> queryTable(ConnectInfo connectInfo) throws IsxAppException {
 
-        Assert.notNull(connectInfo.getDatabase(), "datasbase不能为空");
-
         QueryRunner qr = new QueryRunner();
         try (Connection connection = getConnection(connectInfo)) {
             List<QueryTableDto> result = qr.query(connection, "SELECT '" + connectInfo.getDatasourceId()
@@ -70,7 +68,6 @@ public class SqlServerService extends Datasource {
     @Override
     public List<QueryColumnDto> queryColumn(ConnectInfo connectInfo) throws IsxAppException {
 
-        Assert.notNull(connectInfo.getDatabase(), "datasource不能为空");
         Assert.notNull(connectInfo.getTableName(), "tableName不能为空");
 
         String[] names = connectInfo.getTableName().split("\\.");
@@ -97,7 +94,6 @@ public class SqlServerService extends Datasource {
     @Override
     public Long getTableTotalSize(ConnectInfo connectInfo) throws IsxAppException {
 
-        Assert.notNull(connectInfo.getDatabase(), "datasource不能为空");
         Assert.notNull(connectInfo.getTableName(), "tableName不能为空");
 
         String[] names = connectInfo.getTableName().split("\\.");
