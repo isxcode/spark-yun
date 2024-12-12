@@ -48,7 +48,7 @@ const props: any = withDefaults(
   }
 )
 
-const displayVisable = ref(false)
+const displayVisable = ref<boolean>(false)
 const timestamp = ref(0)
 const points = ref('.')
 const timeCode = ref(0)
@@ -79,6 +79,9 @@ watch(
         }, props.timer - temp)
       }
     }
+  },
+  {
+    immediate: true
   }
 )
 
