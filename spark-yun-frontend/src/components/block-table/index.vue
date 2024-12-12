@@ -168,6 +168,22 @@ function columnSlotAdapter(column: any, colConfig: any) {
       color: getCssVar('color', 'primary');
     }
   }
+  .vxe-table--fixed-wrapper {
+    .vxe-table--fixed-left-wrapper {
+      .vxe-table--body-wrapper {
+        &.fixed-left--wrapper {
+          bottom: 0;
+        }
+      }
+    }
+    .vxe-table--fixed-right-wrapper {
+      .vxe-table--body-wrapper {
+        &.fixed-right--wrapper {
+          bottom: 0;
+        }
+      }
+    }
+  }
 }
 .vxe-table--tooltip-wrapper {
   &.is--active {
