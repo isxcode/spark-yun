@@ -3,11 +3,7 @@ title: "Rancher部署"
 ---
 
 
-> 离线使用helm安装rancher2.8.5 <br/>
-> 系统: CentOS Linux release 7.9.2009 (Core) <br/>
-> 注意：全程使用root用户或通过sudo运行
-
-#### 创建用户
+### 离线使用helm安装rancher2.8.5
 
 #### 关闭防火墙
 
@@ -19,12 +15,14 @@ sudo systemctl status firewalld
 
 #### 修改hostname
 
-> #172.16.215.83  iZ8vbgxsdbuxmnqr4qd0ykZ iZ8vbgxsdbuxmnqr4qd0ykZ
-> 172.16.215.83   isxcode
-
 ```bash
 sudo hostnamectl set-hostname isxcode
 sudo vim /etc/hosts
+```
+
+```bash
+#172.16.215.83  iZ8vbgxsdbuxmnqr4qd0ykZ iZ8vbgxsdbuxmnqr4qd0ykZ <div/>
+172.16.215.83   isxcode
 ```
 
 #### 关闭selinux
@@ -194,9 +192,9 @@ cd /data/harbor/harbor
 sudo vim harbor.yml 
 ```
 
-> 修改hostname
-> 修改https
-> 修改port
+> 修改hostname <div/>
+> 修改https <div/>
+> 修改port <div/>
 > 修改data
 
 ```bash
@@ -224,9 +222,9 @@ sudo ./install.sh
 docker ps -a
 ```
 
-- 访问地址: https://47.92.209.39:8443
-- 账号: admin
-- 密码: Harbor12345
+访问地址: https://47.92.209.39:8443 <div/>
+账号: admin <div/>
+密码: Harbor12345
 
 #### 创建rke2目录
 
@@ -296,7 +294,7 @@ helm version
 
 #### 导入rancher镜像 v2.8.5
 
-> username: admin
+> username: admin <div/>
 > password: Harbor12345
 
 ```bash
@@ -364,7 +362,7 @@ helm list -A
 
 #### k8s安装rancher
 
-> 卸载：helm uninstall rancher -n cattle-system
+> 卸载：helm uninstall rancher -n cattle-system <div/>
 > 记得修改hostname
 
 ```bash
@@ -399,8 +397,8 @@ kubectl get svc -n cattle-system
 kubectl get secret --namespace cattle-system bootstrap-secret -o go-template='{{.data.bootstrapPassword|base64decode}}{{ "\n" }}'
 ```
 
-- 访问地址: https://47.92.128.32:31908
-- 密码: pt2g584d6hrrc9cw7k9vd8bbrrwz5rpmd75tdrg8cwsh6kjk8cg4pv
+访问地址: https://47.92.128.32:31908 <div/>
+密码: pt2g584d6hrrc9cw7k9vd8bbrrwz5rpmd75tdrg8cwsh6kjk8cg4pv
 
 #### 相关调试命令
 
@@ -423,6 +421,8 @@ tail -f /data/rancher/rke2/agent/logs/kubelet.log
 ```bash
 kubectl edit svc rancher -n cattle-system
 ```
+
+#### 相关文档
 
 ▪ [rancher docs](https://rancher.com/docs/) <br/>
 ▪ [rke2 安装](https://docs.rke2.io/zh/install/airgap) <br/>
