@@ -2,7 +2,7 @@
 title: "Hadoop部署"
 ---
 
-> 安装hadoop(HA)集群模式 `3.3.5`版本
+### 离线安装hadoop(HA)集群模式 `3.3.5`版本
 
 #### 部署环境 `centOS 7.9` `64位`
 
@@ -713,8 +713,8 @@ hdfs haadmin -getServiceState hdfs-main2
 
 > 两个地址都可以访问
 
-- main1-namenode: http://39.98.65.13:9870 
-- main2-namenode: http://39.98.218.189:9870 
+main1-namenode: http://39.98.65.13:9870 <div/>
+main2-namenode: http://39.98.218.189:9870 
   
 #### Yarn
 
@@ -725,18 +725,20 @@ yarn rmadmin -getServiceState rm2
 
 > 注意：只有激活状态的节点才可以访问，另一个节点会自动跳转
 
-- main1-resourceManager: http://39.98.65.13:8088
-- main2-resourceManager: http://39.98.218.189:8088
+main1-resourceManager: http://39.98.65.13:8088 <div/>
+main2-resourceManager: http://39.98.218.189:8088
 
 #### JobHistory
 
 > 所有节点都可以访问
 
-- main1: http://39.98.65.13:19888
-- main2: http://39.98.218.189:19888
-- node1: http://39.98.210.253:19888
-- node2: http://39.98.213.46:19888
-- node3: http://39.98.210.230:19888
+main1: http://39.98.65.13:19888 <div/>
+main2: http://39.98.218.189:19888 <div/>
+node1: http://39.98.210.253:19888 <div/>
+node2: http://39.98.213.46:19888 <div/>
+node3: http://39.98.210.230:19888
+
+#### 相关文档
 
 ▪ [hadoop website](http://hadoop.apache.org/) <br/>
 ▪ [core-site.xml官方说明文档](https://hadoop.apache.org/docs/stable/hadoop-project-dist/hadoop-common/core-default.xml) <br/>
