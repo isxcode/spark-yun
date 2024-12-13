@@ -240,6 +240,8 @@ function initData(tableLoading?: boolean, type?: string) {
           tableConfigWorkFlow.tableData.forEach((col: any) => {
             if (item.workflowInstanceId === col.workflowInstanceId) {
               col.status = item.status
+              col.planStartDateTime = item.planStartDateTime
+              col.nextPlanDateTime = item.nextPlanDateTime
             }
           })
         })
@@ -275,6 +277,8 @@ function initData(tableLoading?: boolean, type?: string) {
             tableConfig.tableData.forEach((col: any) => {
               if (item.id === col.id) {
                 col.status = item.status
+                col.planStartDateTime = item.planStartDateTime
+                col.nextPlanDateTime = item.nextPlanDateTime
               }
             })
           })
