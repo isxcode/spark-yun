@@ -11,7 +11,7 @@
           v-model="executeStatus"
           clearable
           placeholder="请选择状态进行搜索"
-          @change="initData(false)"
+          @change="initPageTable"
         >
           <el-option
             v-for="item in typeList"
@@ -26,7 +26,7 @@
           v-model="workflowId"
           clearable
           placeholder="请选择工作流进行搜索"
-          @change="initData(false)"
+          @change="initPageTable"
         >
           <el-option
             v-for="item in workFlowList"
@@ -43,14 +43,14 @@
           :maxlength="200"
           clearable
           @input="inputEvent"
-          @keyup.enter="initData(false)"
+          @keyup.enter="initPageTable"
         />
       </div>
     </div>
     <LoadingPage
       :visible="loading"
       :network-error="networkError"
-      @loading-refresh="initData(false)"
+      @loading-refresh="initPageTable"
     >
       <div class="zqy-table">
         <BlockTable
@@ -106,7 +106,7 @@
                 <template #dropdown>
                   <el-dropdown-menu>
                     <el-dropdown-item
-                      v-if="['SPARK_SQL', 'DATA_SYNC_JDBC', 'BASH', 'PYTHON', 'EXCEL_SYNC_JDBC'].includes(scopeSlot.row.workType)"
+                      v-if="['SPARK_SQL', 'DATA_SYNC_JDBC', 'BASH', 'PYTHON', 'EXCEL_SYNC_JDBC', 'CURL'].includes(scopeSlot.row.workType)"
                       @click="showDetailModal(scopeSlot.row, 'yarnLog')"
                     >
                       运行日志
@@ -182,6 +182,7 @@ import { GetScheduleList, DeleteScheduleLog, ReStartRunning, GetScheduleWorkFlow
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { GetWorkflowList, ReRunWorkflow, StopWorkflowData, TerWorkItemConfig } from '@/services/workflow.service'
 import { TypeList } from '../workflow/workflow.config'
+import { nextTick } from 'process'
 
 const breadCrumbList = reactive(BreadCrumbList)
 const tableConfig: any = reactive(TableConfig)
@@ -303,7 +304,10 @@ function initData(tableLoading?: boolean, type?: string) {
 function changeTypeEvent() {
   keyword.value = ''
   workflowId.value = ''
+  initPageTable()
+}
 
+function initPageTable() {
   tableConfigWorkFlow.pagination.currentPage = 1
   tableConfigWorkFlow.pagination.pageSize = 10
   tableConfig.pagination.currentPage = 1
