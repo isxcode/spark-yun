@@ -432,7 +432,8 @@ function cronTypeChange(e: string) {
 function getInvokeUrl(e: boolean) {
   if (e) {
     GetInvokeUrl({
-      workflowId: workflowId.value
+      workflowId: workflowId.value,
+      outerAddress: location.host
     }).then((res: any) => {
       otherConfig.invokeUrl = res.data.url
     }).catch((error: any) => {
