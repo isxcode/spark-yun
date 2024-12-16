@@ -72,6 +72,8 @@ function getFormConfigById(tableLoading?: boolean) {
         formId: route.query.id
     }).then((res: any) => {
         formConfigList.value = res.data?.components
+        loading.value = false
+        networkError.value = false
     }).catch(() => {
         loading.value = false
         networkError.value = true
