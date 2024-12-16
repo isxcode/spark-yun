@@ -6,7 +6,7 @@
         type="primary"
         @click="addData"
       >
-        上传文件
+        上传资源
       </el-button>
       <div class="zqy-tenant__select">
         <el-select
@@ -51,12 +51,10 @@
                 v-if="!scopeSlot.row.downloadLoading"
                 @click="downloadFile(scopeSlot.row, true)"
               >下载</span>
-              <el-icon
-                v-else
-                class="is-loading"
-              >
+              <el-icon v-else class="is-loading">
                 <Loading />
               </el-icon>
+              <span @click="editData(scopeSlot.row)">编辑</span>
               <span @click="deleteData(scopeSlot.row)">删除</span>
             </div>
           </template>
@@ -75,7 +73,7 @@ import LoadingPage from '@/components/loading/index.vue'
 import AddModal from './add-modal/index.vue'
 
 import { BreadCrumbList, TableConfig } from './file-center.config'
-import { GetFileCenterList, UploadFileData, DeleteFileData, DownloadFileData } from '@/services/file-center.service'
+import { GetFileCenterList, UploadFileData, DeleteFileData, DownloadFileData, UpdateFileData } from '@/services/file-center.service'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Loading } from '@element-plus/icons-vue'
 
@@ -85,7 +83,7 @@ const keyword = ref('')
 const type = ref('')
 const loading = ref(false)
 const networkError = ref(false)
-const addModalRef = ref(null)
+const addModalRef = ref<any>(null)
 const typeList = ref([
   {
     label: '作业',
@@ -146,6 +144,23 @@ function addData() {
       })
     })
   })
+}
+
+function editData(data: any) {
+  addModalRef.value.showModal((formData: any) => {
+    return new Promise((resolve: any, reject: any) => {
+      UpdateFileData({
+        fileId: formData.id,
+        remark: formData.remark
+      }).then((res: any) => {
+        ElMessage.success(res.msg)
+        initData()
+        resolve()
+      }).catch((error: any) => {
+        reject(error)
+      })
+    })
+  }, data)
 }
 
 // 下载
