@@ -44,3 +44,11 @@ export function DeleteFileData(params: any): Promise<any> {
     params: params
   })
 }
+
+// 更新
+export function UpdateFileData(params: any): Promise<any> {
+  return http.request({
+    method: 'post',
+    url: `/file/updateFile?fileId=${params.fileId}&remark=${params.remark}`
+  })
+}
