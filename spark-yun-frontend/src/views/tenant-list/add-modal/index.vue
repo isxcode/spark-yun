@@ -96,8 +96,8 @@ const modelConfig = reactive({
 })
 const formData = reactive({
   name: '',
-  maxMemberNum: undefined,
-  maxWorkflowNum: undefined,
+  maxMemberNum: 5,
+  maxWorkflowNum: 20,
   adminUserId: '',
   remark: '',
   id: ''
@@ -133,8 +133,8 @@ function showModal(cb: () => void, data: any): void {
     renderSence.value = 'edit'
   } else {
     formData.name = ''
-    formData.maxMemberNum = undefined
-    formData.maxWorkflowNum = undefined
+    formData.maxMemberNum = 5
+    formData.maxWorkflowNum = 20
     formData.adminUserId = ''
     formData.remark = ''
     formData.id = ''
