@@ -2,6 +2,7 @@ package com.isxcode.star.modules.user.service;
 
 import static com.isxcode.star.common.config.CommonConfig.USER_ID;
 
+import com.isxcode.star.api.tenant.constants.TenantStatus;
 import com.isxcode.star.api.user.constants.RoleType;
 import com.isxcode.star.api.user.constants.UserStatus;
 import com.isxcode.star.api.user.pojos.req.*;
@@ -21,6 +22,7 @@ import com.isxcode.star.security.user.UserRepository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 
 import lombok.RequiredArgsConstructor;
@@ -80,25 +82,32 @@ public class UserBizService {
                 .token(jwtToken).role(userEntity.getRoleCode()).build();
         }
 
-        // 获取用户最近一次租户信息
-        if (Strings.isEmpty(userEntity.getCurrentTenantId())) {
+        // 如果用户不在任何一个租户报错
+        List<TenantUserEntity> tenantUserEntities = tenantUserRepository.findAllByUserId(userEntity.getId());
+        if (tenantUserEntities.isEmpty()) {
             throw new IsxAppException("无可用租户，请联系管理员");
         }
-        Optional<TenantEntity> tenantEntityOptional = tenantRepository.findById(userEntity.getCurrentTenantId());
 
-        // 如果租户不存在,则随机选择一个
-        String currentTenantId;
-        if (!tenantEntityOptional.isPresent()) {
-            List<TenantUserEntity> tenantUserEntities = tenantUserRepository.findAllByUserId(userEntity.getId());
-            if (tenantUserEntities.isEmpty()) {
-                throw new IsxAppException("无可用租户，请联系管理员");
-            }
-            currentTenantId = tenantUserEntities.get(0).getTenantId();
-            userEntity.setCurrentTenantId(currentTenantId);
-            userRepository.save(userEntity);
-        } else {
-            currentTenantId = tenantEntityOptional.get().getId();
+        // 如果用户没有任何启动租户报错
+        List<String> tenantId =
+            tenantUserEntities.stream().map(TenantUserEntity::getTenantId).collect(Collectors.toList());
+        List<TenantEntity> enableTenants = tenantRepository.findAllByIdInAndStatus(tenantId, TenantStatus.ENABLE);
+        if (enableTenants.isEmpty()) {
+            throw new IsxAppException("无启用租户，请联系管理员");
         }
+
+        // 如果用户当前租户id启动则返回当前租户，没有则随机挑一个
+        List<String> enableTenantIds = enableTenants.stream().map(TenantEntity::getId).collect(Collectors.toList());
+        String currentTenantId;
+        if (!Strings.isEmpty(userEntity.getCurrentTenantId())
+            && enableTenantIds.contains(userEntity.getCurrentTenantId())) {
+            currentTenantId = userEntity.getCurrentTenantId();
+        } else {
+            currentTenantId = enableTenants.get(0).getId();
+        }
+
+        userEntity.setCurrentTenantId(currentTenantId);
+        userRepository.save(userEntity);
 
         // 返回用户在租户中的角色
         Optional<TenantUserEntity> tenantUserEntityOptional =
