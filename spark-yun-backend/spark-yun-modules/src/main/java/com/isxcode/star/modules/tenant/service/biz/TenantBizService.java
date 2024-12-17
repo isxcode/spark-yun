@@ -271,6 +271,11 @@ public class TenantBizService {
             throw new IsxAppException("用户不存在");
         }
 
+        // 判断租户是否被禁用
+        if (TenantStatus.DISABLE.equals(tenantEntityOptional.get().getStatus())) {
+            throw new IsxAppException("该租户已被禁用，请联系管理员");
+        }
+
         UserEntity userEntity = userEntityOptional.get();
         userEntity.setCurrentTenantId(chooseTenantReq.getTenantId());
         userRepository.save(userEntity);
