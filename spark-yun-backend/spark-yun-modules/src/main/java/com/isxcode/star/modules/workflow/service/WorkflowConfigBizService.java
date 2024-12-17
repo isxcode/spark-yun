@@ -18,6 +18,8 @@ import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
+import static com.isxcode.star.api.workflow.constants.WorkflowExternalCallStatus.ON;
+
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -95,6 +97,9 @@ public class WorkflowConfigBizService {
         }
 
         workflowConfig.setInvokeStatus(configWorkflowSettingReq.getInvokeStatus());
+        if (ON.equals(workflowConfig.getInvokeStatus())) {
+            workflowConfig.setInvokeUrl(configWorkflowSettingReq.getInvokeUrl());
+        }
         workflowConfigRepository.save(workflowConfig);
     }
 }

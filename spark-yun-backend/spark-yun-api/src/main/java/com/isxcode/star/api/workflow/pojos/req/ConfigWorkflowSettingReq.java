@@ -23,4 +23,7 @@ public class ConfigWorkflowSettingReq {
     @Schema(title = "是否启动外部调用", example = "OFF关闭/ON开启")
     @NotEmpty(message = "调用状态invokeStatus不能为空")
     private String invokeStatus;
+
+    @Schema(title = "调用地址", example = "curl xxx")
+    private String invokeUrl;
 }
