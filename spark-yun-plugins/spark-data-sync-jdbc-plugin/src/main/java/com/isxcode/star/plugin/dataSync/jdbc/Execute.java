@@ -67,14 +67,8 @@ public class Execute {
                     : "insert into";
 
             // 执行sql同步语句
-            if (Strings.isNotEmpty(pluginReq.getSyncWorkConfig().getQueryCondition())) {
-                sparkSession.sql(insertSql + " table " + targetTempView + " ( " + Strings.join(targetCols, ',')
-                    + " ) select " + Strings.join(sourceCols, ',') + " from " + sourceTempView + " where "
-                    + pluginReq.getSyncWorkConfig().getQueryCondition());
-            } else {
-                sparkSession.sql(insertSql + " table " + targetTempView + " ( " + Strings.join(targetCols, ',')
-                    + " ) select " + Strings.join(sourceCols, ',') + " from " + sourceTempView);
-            }
+            sparkSession.sql(insertSql + " table " + targetTempView + " ( " + Strings.join(targetCols, ',')
+                + " ) select " + Strings.join(sourceCols, ',') + " from " + sourceTempView);
         }
     }
 
@@ -116,6 +110,11 @@ public class Execute {
                 ? "\"" + conf.getSyncWorkConfig().getSourceDatabase().getDbTable() + "\""
                 : conf.getSyncWorkConfig().getSourceDatabase().getDbTable();
 
+            // 拼接来源的条件
+            if (Strings.isNotEmpty(conf.getSyncWorkConfig().getQueryCondition())) {
+                dbTable = "( select * from " + dbTable + " where " + conf.getSyncWorkConfig().getQueryCondition()
+                    + " ) as " + sourceTableName;
+            }
             Dataset<Row> source = sparkSession.read().jdbc(conf.getSyncWorkConfig().getSourceDatabase().getUrl(),
                 dbTable, predicate, prop);
 
