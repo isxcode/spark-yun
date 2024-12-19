@@ -3,7 +3,7 @@ title: "Rancher部署"
 ---
 
 
-### 离线使用helm安装rancher2.8.5
+## 使用Helm离线安装Rancher2.8.5
 
 #### 关闭防火墙
 
@@ -21,7 +21,6 @@ sudo vim /etc/hosts
 ```
 
 ```bash
-#172.16.215.83  iZ8vbgxsdbuxmnqr4qd0ykZ iZ8vbgxsdbuxmnqr4qd0ykZ <div/>
 172.16.215.83   isxcode
 ```
 
@@ -234,15 +233,6 @@ sudo ln -s /data/rancher /var/lib/rancher
 
 sudo mkdir -p /data/containers
 sudo ln -s /data/containers /var/lib/containers
-```
-
-#### 禁用centos原有的源
-
-```bash
-cd /etc
-sudo mkdir yum.repos.d_bak
-sudo mv yum.repos.d/*.repo yum.repos.d_bak/
-sudo yum clean all && yum makecache
 ```
 
 #### 安装rke2

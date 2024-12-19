@@ -2,11 +2,11 @@
 title: "Docker部署"
 ---
 
-### Docker快速部署至轻云
+## 使用Docker快速部署至轻云
 
-#### 国内用户
+#### 镜像地址
 
-> 国内用户可以选择以下镜像，arm64多用于macOS用户，普通服务器x86架构选择`latest-amd64`版本 <br/>
+> 国内用户可以选择以下镜像，arm64多用于macOS用户，x86服务器架构选择`latest-amd64`版本 <br/>
 
 ```bash
 registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun:latest-amd64 
@@ -20,11 +20,11 @@ docker run \
     --restart=always \
     --name zhiqingyun\
     -e ADMIN_PASSWORD=admin123 \
-    -p 8080:8080 \
+    -p 8088:8080 \
     -d registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun:latest-amd64
 ```
 
-▪ 访问地址: http://localhost:8080 <br/>
+▪ 访问地址: http://localhost:8088 <br/>
 ▪ 管理员账号：`admin` <br/>
 ▪ 管理员密码：`admin123`
 
