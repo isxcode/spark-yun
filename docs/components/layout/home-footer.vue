@@ -358,7 +358,7 @@ function clickZhishuyun() {
 
 function joinUs(){
   const router = useRouter();
-  router.push("/docs/zh/6/0");
+  router.push("/docs/zh/6/13");
 }
 
 function aboutUs(){

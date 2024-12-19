@@ -214,7 +214,7 @@ Exception in thread "main" java.lang.NoSuchMethodError: org.apache.spark.network
 
 ```text
 这是因为spark的standalone集群版本，和spark-yun中spark-min中自带的版本冲突，需要将两边的版本保持一致
-将用户自己的spark安装包复制到spark-min中
+将用户自己的spark-bin安装包复制到spark-min中
 ```
 
 #### 问题5: Caused by: org.apache.hadoop.ipc.RemoteException(org.apache.hadoop.security.AccessControlException)
@@ -273,9 +273,7 @@ k8s容器中默认的用户，没有操作hdfs的权限
 
 ##### 解决方案
 
-```text
-需要在spark高级配置中打开动态分区
-```
+> 需要在`资源配置`中选择`高级定义`中打开动态分区
 
 ```json
 {

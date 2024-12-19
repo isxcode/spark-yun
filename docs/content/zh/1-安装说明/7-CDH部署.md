@@ -2,7 +2,7 @@
 title: "CDH部署"
 ---
 
-### 离线安装cdh6.2.0
+## 离线安装CDH6.2.0
 
 #### 关闭防火墙
 
@@ -274,13 +274,13 @@ systemctl restart cloudera-scm-server
 
 #### 测试
 
-默认端口号: 7180
+> 默认端口号: 7180
 
-http://47.99.126.247:30107 <div/>
-username: admin <div/>
-password: admin
+访问地址: http://47.99.126.247:30107 <div/>
+默认账号: admin <div/>
+默认密码: admin
 
-#### 安装集群
+#### 安装大数据组件集群
 
 ![20240730145812](https://img.isxcode.com/picgo/20240730145812.png)
 
