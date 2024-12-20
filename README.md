@@ -85,13 +85,3 @@ cd spark-yun
 ### 联系我们
 
 邮箱：hello@isxcode.com
-
----
-
-**Thanks for free JetBrains Open Source license**
-
-<a href="https://www.jetbrains.com/?from=spark-yun" target="_blank" style="border-bottom: none !important;">
-    <img src="https://img.isxcode.com/index_img/jetbrains/jetbrains-3.png" height="100" alt="jetbrains"/>
-</a>
-
-
