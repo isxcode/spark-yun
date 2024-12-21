@@ -20,9 +20,9 @@ https://openfly.oss-cn-shanghai.aliyuncs.com/spark-examples_2.12-3.4.1.jar
 
 ##### 新建自定义作业
 
-应用名称：pi <div/>
-资源文件：spark-examples_2.12-3.4.1.jar <div/>
-mainClass： org.apache.spark.examples.SparkPi <div/>
+应用名称：pi 
+资源文件：spark-examples_2.12-3.4.1.jar 
+mainClass： org.apache.spark.examples.SparkPi 
 请求参数: 10
 
 ![20241022101733](https://img.isxcode.com/picgo/20241022101733.png)
@@ -35,7 +35,7 @@ mainClass： org.apache.spark.examples.SparkPi <div/>
 
 参考地址：https://github.com/isxcode/spark-job-template
 
-> 自定义作业，用args接受一句sql并执行 <div/>
+> 自定义作业，用args接受一句sql并执行 
 > 使用exportResult()方法导出数据，在界面显示查询的数据
 
 ```java
