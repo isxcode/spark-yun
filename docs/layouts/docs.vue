@@ -6,6 +6,10 @@
 </template>
 
 <script lang="ts" setup>
-defineComponent("home");
+defineComponent("docs");
 definePageMeta({});
 </script>
+
+<style>
+
+</style>

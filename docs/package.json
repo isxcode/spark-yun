@@ -1,5 +1,5 @@
 {
-  "name": "nuxt-app",
+  "name": "docs-website",
   "private": true,
   "scripts": {
     "build": "nuxt build",
@@ -21,18 +21,23 @@
     "@vueuse/core": "^10.3.0",
     "@vueuse/nuxt": "^10.3.0",
     "artplayer": "^5.1.1",
-    "medium-zoom": "^1.1.0"
+    "medium-zoom": "^1.1.0",
+    "viewerjs": "^1.11.6"
   },
   "devDependencies": {
     "@nuxt/content": "^2.8.5",
     "@nuxt/devtools": "latest",
+    "@nuxtjs/i18n": "9.0.0-alpha.1",
     "@types/node": "^18.17.3",
     "gray-matter": "^4.0.3",
+    "naive-ui": "^2.39.0",
     "nuxt": "^3.6.5",
     "nuxt-lodash": "^2.5.3",
+    "nuxtjs-naive-ui": "^1.0.2",
     "raw-loader": "^4.0.2",
     "sass": "^1.65.1",
     "sass-loader": "^13.3.2",
+    "vfonts": "^0.0.3",
     "vite-plugin-svg-icons": "^2.0.1"
   }
 }
