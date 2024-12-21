@@ -4,7 +4,8 @@
   background-color: #f5f5f5;
   border-radius: 5px;
 
-  &-thumb, &-track {
+  &-thumb,
+  &-track {
     background-color: #c1c1c1;
     border-radius: 5px;
   }
@@ -13,11 +14,33 @@
     background-color: #f5f5f5;
   }
 
-  &-corner, &:hover {
+  &-corner,
+  &:hover {
     background-color: #f5f5f5;
   }
 
   &:hover {
     cursor: pointer;
+  }
+
+  @font-face {
+    font-family: "阿里妈妈数黑体 Bold";
+    src: url("https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/font/AlimamaShuHeiTi-Bold.woff2") format("woff2"),
+    url("https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/font/AlimamaShuHeiTi-Bold.woff") format("woff");
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: "阿里巴巴普惠体 2.0 45 Light";
+    src: url("https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/font/AlibabaPuHuiTi-2-45-Light.woff2") format("woff2"),
+    url("https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/font/AlibabaPuHuiTi-2-45-Light.woff") format("woff");
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: "阿里巴巴普惠体 2.0 65 Light";
+    src: url("https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/font/AlibabaPuHuiTi-2-65-Medium.woff2") format("woff2"),
+    url("https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/font/AlibabaPuHuiTi-2-65-Medium.woff") format("woff");
+    font-display: swap;
   }
 }
