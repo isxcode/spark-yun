@@ -29,7 +29,7 @@ Caused by: org.apache.thrift.TApplicationException: Invalid method name: 'get_ta
 
 ##### 解决方案
 
-```text
+```wikitext
 本地spark和hive版本不兼容问题导致
 在SparkSql作业配置中指定本地的spark地址路径
 ```
@@ -101,7 +101,7 @@ Caused by: java.net.UnknownHostException: isxcode
 
 ##### 解决方案
 
-```text
+```wikitext
 k8s启动作业，无法访问域名
 在SparkSql作业配置中指定域名映射
 ```
@@ -182,7 +182,7 @@ java.io.InvalidClassException: org.apache.spark.rpc.RpcEndpointRef; local class 
 
 ###### 解决方案
 
-```text
+```wikitext
 这是因为spark的standalone集群版本，和spark-yun中spark-min中自带的版本冲突，需要将两边的版本保持一致
 将用户自己的spark安装包复制到spark-min中
 ```
@@ -212,7 +212,7 @@ Exception in thread "main" java.lang.NoSuchMethodError: org.apache.spark.network
 
 ###### 解决方案
 
-```text
+```wikitext
 这是因为spark的standalone集群版本，和spark-yun中spark-min中自带的版本冲突，需要将两边的版本保持一致
 将用户自己的spark-bin安装包复制到spark-min中
 ```
@@ -249,7 +249,7 @@ Caused by: org.apache.hadoop.ipc.RemoteException(org.apache.hadoop.security.Acce
 
 ##### 解决方案
 
-```text
+```wikitext
 k8s容器中默认的用户，没有操作hdfs的权限
 在sparkSql的自定义配置中添加用户
 ```
@@ -314,7 +314,7 @@ Caused by: org.apache.hadoop.hive.ql.metadata.HiveException: Number of dynamic p
 
 ##### 解决方案
 
-```text
+```wikitext
 需要扩大分区键数量
 ```
 

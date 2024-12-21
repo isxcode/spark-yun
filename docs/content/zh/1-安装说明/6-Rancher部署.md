@@ -191,9 +191,9 @@ cd /data/harbor/harbor
 sudo vim harbor.yml 
 ```
 
-> 修改hostname <div/>
-> 修改https <div/>
-> 修改port <div/>
+> 修改hostname 
+> 修改https 
+> 修改port 
 > 修改data
 
 ```bash
@@ -221,8 +221,8 @@ sudo ./install.sh
 docker ps -a
 ```
 
-访问地址: https://47.92.209.39:8443 <div/>
-账号: admin <div/>
+访问地址: https://47.92.209.39:8443 
+账号: admin 
 密码: Harbor12345
 
 #### 创建rke2目录
@@ -284,7 +284,7 @@ helm version
 
 #### 导入rancher镜像 v2.8.5
 
-> username: admin <div/>
+> username: admin 
 > password: Harbor12345
 
 ```bash
@@ -352,7 +352,7 @@ helm list -A
 
 #### k8s安装rancher
 
-> 卸载：helm uninstall rancher -n cattle-system <div/>
+> 卸载：helm uninstall rancher -n cattle-system 
 > 记得修改hostname
 
 ```bash
@@ -387,8 +387,8 @@ kubectl get svc -n cattle-system
 kubectl get secret --namespace cattle-system bootstrap-secret -o go-template='{{.data.bootstrapPassword|base64decode}}{{ "\n" }}'
 ```
 
-访问地址: https://47.92.128.32:31908 <div/>
-密码: pt2g584d6hrrc9cw7k9vd8bbrrwz5rpmd75tdrg8cwsh6kjk8cg4pv
+> 访问地址: https://47.92.128.32:31908   
+> 密码: pt2g584d6hrrc9cw7k9vd8bbrrwz5rpmd75tdrg8cwsh6kjk8cg4pv
 
 #### 相关调试命令
 
@@ -414,12 +414,12 @@ kubectl edit svc rancher -n cattle-system
 
 #### 相关文档
 
-▪ [rancher docs](https://rancher.com/docs/) <br/>
-▪ [rke2 安装](https://docs.rke2.io/zh/install/airgap) <br/>
-▪ [helm install](https://helm.sh/docs/intro/install/) <br/>
-▪ [rancher 中文文档](https://docs.rancher.cn/) <br/>
-▪ [helm离线安装rancher](https://ranchermanager.docs.rancher.com/zh/getting-started/installation-and-upgrade/other-installation-methods/air-gapped-helm-cli-install) <br/>
-▪ [docker 下载](https://download.docker.com/linux/static/stable/x86_64/) <br/>
-▪ [harbor 下载](https://github.com/goharbor/harbor/releases) <br/>
-▪ [rke私有仓库配置](https://docs.rke2.io/zh/install/containerd_registry_configuration) <br/>
-▪ [国内rancher配置](https://docs.rancher.cn/docs/rancher2/best-practices/use-in-china/_index/)
+- [rancher docs](https://rancher.com/docs/) 
+- [rke2 安装](https://docs.rke2.io/zh/install/airgap) 
+- [helm install](https://helm.sh/docs/intro/install/) 
+- [rancher 中文文档](https://docs.rancher.cn/) 
+- [helm离线安装rancher](https://ranchermanager.docs.rancher.com/zh/getting-started/installation-and-upgrade/other-installation-methods/air-gapped-helm-cli-install) 
+- [docker 下载](https://download.docker.com/linux/static/stable/x86_64/) 
+- [harbor 下载](https://github.com/goharbor/harbor/releases) 
+- [rke私有仓库配置](https://docs.rke2.io/zh/install/containerd_registry_configuration) 
+- [国内rancher配置](https://docs.rancher.cn/docs/rancher2/best-practices/use-in-china/_index/)
