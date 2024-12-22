@@ -354,7 +354,7 @@
               label-width="120px"
               :model="containerConfig"
             >
-              <el-form-item label="依赖">
+              <el-form-item label="计算容器">
                 <el-select v-model="containerConfig.containerId" clearable
                     filterable placeholder="请选择">
                     <el-option v-for="item in containerIdList" :key="item.value" :label="item.label"
