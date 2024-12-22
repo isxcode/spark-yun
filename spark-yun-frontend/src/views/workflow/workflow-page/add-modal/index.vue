@@ -328,18 +328,18 @@ function getDataSourceList(e: boolean, searchType?: string) {
             page: 0,
             pageSize: 10000,
             searchKeyWord: searchType || ''
+        }).then((res: any) => {
+            dataSourceList.value = res.data.content
+            .filter((item: any) => !(item.dbType === 'KAFKA' && ['EXE_JDBC', 'QUERY_JDBC'].includes(formData.workType)))
+            .map((item: any) => {
+                return {
+                    label: item.name,
+                    value: item.id
+                }
+            })
+        }).catch(() => {
+            dataSourceList.value = []
         })
-            .then((res: any) => {
-                dataSourceList.value = res.data.content.map((item: any) => {
-                    return {
-                        label: item.name,
-                        value: item.id
-                    }
-                })
-            })
-            .catch(() => {
-                dataSourceList.value = []
-            })
     }
 }
 function getSparkContainerList(e: boolean, searchType?: string) {
