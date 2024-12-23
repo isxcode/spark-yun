@@ -3,6 +3,9 @@ import path from "path";
 
 export default defineNuxtConfig({
   devtools: { enabled: false },
+  build: {
+    transpile: ['vueuc']
+  },
   modules: [
     "@nuxt/content",
     "@pinia/nuxt",
@@ -10,7 +13,8 @@ export default defineNuxtConfig({
     "@element-plus/nuxt",
     "@nuxtjs/tailwindcss",
     "nuxt-lodash",
-    "@nuxtjs/i18n"
+    "@nuxtjs/i18n",
+    "nuxtjs-naive-ui"
   ],
   pinia: {
     autoImports: ["defineStore"],
@@ -27,6 +31,11 @@ export default defineNuxtConfig({
         iconDirs: [path.resolve(process.cwd(), "assets/svg")],
       }),
     ],
+    // resolve: {
+    //   alias: {
+    //     'vueuc': 'vueuc/lib/index.js'
+    //   }
+    // }
   },
   lodash: {
     prefix: "_",
