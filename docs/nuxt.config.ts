@@ -10,8 +10,7 @@ export default defineNuxtConfig({
     "@element-plus/nuxt",
     "@nuxtjs/tailwindcss",
     "nuxt-lodash",
-    "@nuxtjs/i18n",
-    "nuxtjs-naive-ui"
+    "@nuxtjs/i18n"
   ],
   pinia: {
     autoImports: ["defineStore"],
