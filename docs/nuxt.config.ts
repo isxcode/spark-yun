@@ -30,12 +30,7 @@ export default defineNuxtConfig({
       createSvgIconsPlugin({
         iconDirs: [path.resolve(process.cwd(), "assets/svg")],
       }),
-    ],
-    // resolve: {
-    //   alias: {
-    //     'vueuc': 'vueuc/lib/index.js'
-    //   }
-    // }
+    ]
   },
   lodash: {
     prefix: "_",
