@@ -32,7 +32,6 @@
     "gray-matter": "^4.0.3",
     "nuxt": "^3.6.5",
     "nuxt-lodash": "^2.5.3",
-    "nuxtjs-naive-ui": "^1.0.2",
     "raw-loader": "^4.0.2",
     "sass": "^1.65.1",
     "sass-loader": "^13.3.2",
