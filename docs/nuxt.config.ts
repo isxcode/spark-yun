@@ -11,7 +11,7 @@ export default defineNuxtConfig({
     "@nuxtjs/tailwindcss",
     "nuxt-lodash",
     "@nuxtjs/i18n",
-    "nuxtjs-naive-ui",
+    "nuxtjs-naive-ui"
   ],
   pinia: {
     autoImports: ["defineStore"],
@@ -28,9 +28,6 @@ export default defineNuxtConfig({
         iconDirs: [path.resolve(process.cwd(), "assets/svg")],
       }),
     ],
-    optimizeDeps: {
-      include: ['vueuc']
-    }
   },
   lodash: {
     prefix: "_",

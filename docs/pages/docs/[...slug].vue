@@ -1,26 +1,30 @@
 <template>
   <main class="docs">
     <nav class="left-side">
-      <NScrollbar class="scroll-bar" height="100%" :size="4" ref="scrollbarRef">
-        <ContentNavigation
-          :key="docsMenuKey"
-          class="nav"
-          v-slot="{ navigation }"
-        >
+      <el-scrollbar
+        class="scroll-bar"
+        always
+        height="100%"
+        :scroll-bar="{
+          background: 'red',
+        }"
+        ref="scrollbarRef"
+      >
+        <ContentNavigation class="nav" v-slot="{ navigation }">
           <DocsMenuNode
             class="nav-tree"
             :treeData="processMenuData(navigation)"
             @item-click="handleMenuItemClick"
           ></DocsMenuNode>
         </ContentNavigation>
-      </NScrollbar>
+      </el-scrollbar>
     </nav>
     <article class="doc-content">
       <div class="content">
         <ContentRenderer :value="data">
           <ContentRendererMarkdown
             ref="markdownBodyRef"
-            class="markdown-content markdown-body"
+            class="markdown-body github-markdown-light"
             :value="data"
           />
           <template #empty>
@@ -28,208 +32,101 @@
           </template>
         </ContentRenderer>
       </div>
+      <!--      <div class="aside">-->
+      <!--        <div class="aside-wrapper">-->
+      <!--          <div class="aside-content">-->
+      <!--            <DocsToc-->
+      <!--              :contentDirTree="toc"-->
+      <!--              :activeNodeIdList="['1', '2']"-->
+      <!--              @nodeClicked="handleTocItemClick"-->
+      <!--            />-->
+      <!--          </div>-->
+      <!--        </div>-->
+      <!--      </div>-->
     </article>
   </main>
 </template>
 
 <script setup lang="ts">
+import {NavItem} from "@nuxt/content";
 import getContentDirTree from "~/util/getContentDirTree";
-import { useCounterStore, useMenuStore } from "~/store/index";
-import { NScrollbar } from "naive-ui";
-import useViewer from "~/composables/useViewer";
-
-interface NavItem {
-  title: string;
-  _path: string;
-  _id?: string;
-  _draft?: boolean;
-  isCollapsed?: boolean;
-  level?: number;
-  children?: NavItem[];
-  [key: string]: any;
-}
+import {useCounterStore, useMenuStore} from "~/store/index";
 
 definePageMeta({
-  layout: "docs",
+  title: "首页",
+  layout: "home",
 });
-
-const currentDoc = ref<NavItem | null>(null);
-useHead({
-  // title: "至轻云" + currentDoc.value?.title,
-  title: "至轻云",
-});
-
-const { params } = useRoute();
-const { locale } = useI18n();
-const { data, pending, error, refresh } = await useAsyncData("docs", () =>
-  queryContent(`/` + params.slug.join("/")).findOne()
+const {params} = useRoute();
+const {data, pending, error, refresh} = await useAsyncData("docs", () =>
+  queryContent("/" + params.slug.join("/")).findOne()
 );
 
+const markdownBodyRef = ref<HTMLElement | null>(null);
 const toc = ref<NavItem[]>([]);
-const markdownBodyRef = ref<null>(null);
-const docsMenuKey = ref(1);
-
 onMounted(() => {
-  init();
-});
-useViewer(markdownBodyRef, {
-  toolbar: false,
-});
-
-const router = useRouter();
-watch(
-  () => router.currentRoute.value.path,
-  () => {
-    const pathSegments = router.currentRoute.value.path.split("/");
-    const [, firstPath, , thirdPath, ...restPaths] = pathSegments;
-    if (
-      firstPath &&
-      thirdPath &&
-      firstPath === locale.value &&
-      thirdPath !== firstPath
-    ) {
-      const newPath = `/${locale.value}/docs/${locale.value}/${restPaths.join(
-        "/"
-      )}`;
-      router.push(newPath);
-    }
-  }
-);
-
-watch(
-  () => router.currentRoute.value.path,
-  () => {
-    const { from } = router.currentRoute.value.query;
-    if (from === "home") {
-      setTimeout(() => {
-        docsMenuKey.value++;
-      }, 100);
-    }
-  },
-  {
-    immediate: true,
-  }
-);
-
-function init() {
-  const { height } = useCounterStore();
-  if (scrollbarRef.value?.$el?.nextElementSibling) {
-    const scrollElement = scrollbarRef.value.$el.nextElementSibling
-      .firstChild as HTMLElement;
-    if (scrollElement) {
-      scrollElement.scrollTop = height;
-    }
-  }
+  const {height} = useCounterStore();
+  scrollbarRef.value.$el.querySelector(".el-scrollbar__wrap").scrollTop =
+    height;
   const htmlStr = markdownBodyRef.value?.$el.innerHTML || "";
   toc.value = getContentDirTree(htmlStr);
-}
+});
 
-function updatePathDeep(navItems: Array<NavItem>, parentPath = "") {
-  navItems.forEach((item) => {
+function processMenuData(data: Array<NavItem>) {
+  data = data.map((item) => {
     if (item.children) {
-      updatePathDeep(item.children, parentPath);
+      return item.children;
     }
-    if (!item._path.startsWith(parentPath)) {
-      item._path = parentPath + item._path;
-    }
+    return item;
   });
-}
+  data = data.flat();
 
-function processMenuData(menuData: Array<NavItem>) {
-  const { menuList, setMenuList } = useMenuStore();
-  const currentPath = router.currentRoute.value.path;
-  if (menuList.length > 0) {
-    const flag = menuList.some((item) =>
-      item._path.startsWith(`/${locale.value}/`)
-    );
-    if (flag) {
-      expandPath(menuList, currentPath);
-      return menuList;
-    }
-  }
-
-  if (!menuData) {
-    return [];
-  }
-  const currentLang = locale.value;
-  const targetData = menuData.find(
-    (item) => item._path.slice(1) === currentLang
-  );
-
-  if (!targetData || !targetData.children) {
-    return [];
-  }
-
-  menuData = targetData.children.flat();
-  updatePathDeep(menuData, `/${locale.value}/docs`);
-
-  // 合并过滤和添加 level 字段的操作
-  menuData = filterAndAddLevel(menuData);
-
-  expandPath(menuData, currentPath);
-
-  setMenuList(menuData);
-  return menuList;
-}
-
-function expandPath(menuData: Array<NavItem>, currentPath: string) {
-  const path = findPathToCurrent(menuData, currentPath);
-  path.forEach((item) => {
-    item.isCollapsed = false;
-  });
-  // 最后一个节点不折叠，且保存在 currentDoc 中
-  if (path.length > 0) {
-    path[path.length - 1].isCollapsed = false;
-    currentDoc.value = path[path.length - 1];
-  }
-}
-
-function filterAndAddLevel(data: Array<NavItem>, level = 1): Array<NavItem> {
-  return data.map((item) => {
-    const itemTitle = item.title;
-    if (item.children) {
-      item.children = item.children.filter(
-        (child: NavItem) => child.title !== itemTitle
-      );
-      item.children = filterAndAddLevel(item.children, level + 1);
-    }
-    return {
-      ...item,
-      level,
-      isCollapsed: item.isCollapsed === undefined ? false : item.isCollapsed,
-    };
-  });
-}
-
-function findPathToCurrent(
-  nodes: NavItem[],
-  targetPath: string,
-  ancestors: NavItem[] = []
-): NavItem[] {
-  for (const node of nodes) {
-    if (node._path === targetPath) {
-      return [...ancestors, node];
-    }
-    if (node.children && node.children.length > 0) {
-      const result = findPathToCurrent(node.children, targetPath, [
-        ...ancestors,
-        node,
-      ]);
-      if (result.length > 0) {
-        return result;
+  function deep(data: Array<NavItem>) {
+    data.forEach((item) => {
+      if (item._path.startsWith("/docs")) {
+        return;
       }
-    }
+      item._path = "/docs" + item._path;
+      if (item.children) {
+        deep(item.children);
+      }
+    });
   }
-  return [];
+
+  deep(data);
+  const {menuList, setMenuList} = useMenuStore();
+  const flag = isEqual(data, menuList);
+  if (flag) {
+    return menuList;
+  }
+
+  // 过滤掉和父亲节点名字一致的儿子节点
+  function filterIndex(data: Array<NavItem>) {
+    data = data.filter((item) => {
+      const itemTitle = item.title;
+      if (item.children) {
+        item.children = item.children.filter((child) => {
+          return child.title !== itemTitle;
+        });
+        item.children = filterIndex(item.children);
+      }
+      return item;
+    });
+    return data;
+  }
+
+  data = filterIndex(data);
+  setMenuList(data);
+  return menuList;
 }
 
 const scrollbarRef = ref<HTMLElement | null>(null);
 const scrollBarScrollTop = ref(0);
-const { setHeightState } = useCounterStore();
+const {height, setHeightState} = useCounterStore();
 
 function handleMenuItemClick(link: NavItem) {
-  scrollBarScrollTop.value =
-    scrollbarRef.value?.$el.nextElementSibling.firstChild.scrollTop;
+  scrollBarScrollTop.value = scrollbarRef.value?.$el.querySelector(
+    ".el-scrollbar__wrap"
+  )!.scrollTop;
   setHeightState(scrollBarScrollTop.value);
   const router = useRouter();
   router.push(link._path);
@@ -245,6 +142,7 @@ const resetNodeActiveStatus = (node) => {
 };
 
 function handleTocItemClick(node: DirNode) {
+  // 设置活跃节点
   toc.value.forEach((item) => {
     resetNodeActiveStatus(item);
   });
@@ -254,6 +152,7 @@ function handleTocItemClick(node: DirNode) {
   const HList = markdownBody.querySelectorAll(`h${node.hLevel}`);
   const H = Array.from(HList).find((item) => item.innerText === node.title);
   scrollTo(H);
+  // 修改路由，添加锚点
   const router = useRouter();
   router.push({
     path: router.currentRoute.value.path,
@@ -276,11 +175,12 @@ function scrollTo(element, headerOffset = 80) {
 </script>
 
 <style scoped lang="scss">
+// 整个文档
 .docs {
   width: 1200px;
-  height: 100vh;
   padding-top: 80px;
   margin: auto;
+  // 侧边栏,不和文档一起
   .left-side {
     margin-top: 80px;
     background: white;
@@ -304,6 +204,7 @@ function scrollTo(element, headerOffset = 80) {
     }
   }
 
+  // 文档部分
   .doc-content {
     margin-left: 350px;
     box-sizing: border-box;
@@ -329,7 +230,8 @@ function scrollTo(element, headerOffset = 80) {
     .content {
       flex: 1;
 
-      .markdown-content {
+      .markdown-body {
+        // 文档内容
         width: 810px;
         margin-top: 70px;
         height: calc(100% - 80px);
