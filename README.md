@@ -1,5 +1,7 @@
 <div align="center">
-  <img width="600" alt="image" src="https://img.isxcode.com/picgo/20241209155900.png">
+  <a href="https://zhiqingyun.isxcode.com">
+    <img src="https://img.isxcode.com/picgo/20241209155900.png" alt="image" width="600">
+  </a>
 </div>
 
 ---
@@ -15,7 +17,7 @@
 <div align="center">
 
 [![Docker Pulls](https://img.shields.io/docker/pulls/isxcode/zhiqingyun)](https://hub.docker.com/r/isxcode/zhiqingyun)
-[![GitHub release (with filter)](https://img.shields.io/github/v/release/isxcode/spark-yun)](https://github.com/isxcode/spark-yun/releases)
+[![Build](https://github.com/isxcode/spark-yun/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/isxcode/spark-yun/actions/workflows/build.yml)
 [![GitHub Repo stars](https://img.shields.io/github/stars/isxcode/spark-yun)](https://github.com/isxcode/spark-yun)
 [![GitHub forks](https://img.shields.io/github/forks/isxcode/spark-yun)](https://github.com/isxcode/spark-yun/fork)
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fisxcode%2Fspark-yun.svg?type=shield&issueType=license)](https://app.fossa.com/projects/git%2Bgithub.com%2Fisxcode%2Fspark-yun?ref=badge_shield&issueType=license)
@@ -25,19 +27,19 @@
 
 ### 产品介绍
   
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [**至轻云**](https://zhiqingyun.isxcode.com)是一款超轻量级的企业级大数据计算平台，基于Spark生态精心打造。一键部署，开箱即用，轻松满足大数据处理需求。支持快速实现离线ETL、Spark计算、实时计算、可视化调度、自定义接口、数据大屏展示以及分享表单等多种功能，为企业提供高效便捷的大数据解决方案。
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;至轻云是一款超轻量级、企业级大数据计算平台，基于Spark生态打造。一键部署，开箱即用。快速实现大数据离线ETL、Spark计算、实时计算、可视化调度、自定义接口、数据大屏以及自定义表单等多种功能，为企业提供高效便捷的大数据解决方案。
 
 ### 功能特点
 
-- **超轻量级产品**: 无需额外组件支持，一键部署，快速上线，开箱即用。  
-- **云原生私有化**: 完美兼容云原生架构，支持多节点安装与高可用集群部署，保障系统稳定性。
-- **原生Spark支持**: 基于原生Spark架构，快速高效地执行Spark计算任务。
+- **轻量级产品**: 无需额外组件安装，一键部署，开箱即用。
+- **云原生私有化**: 兼容云原生架构，支持多节点安装与高可用集群部署。
+- **复杂数据处理**: 基于原生Spark分布式架构，高效地执行复杂数据计算。
 
 ### 立即体验
 
-> 演示地址：https://zhiqingyun-demo.isxcode.com </br>
-> 体验账号：user001 </br>
-> 账号密码：welcome1
+- 演示地址：https://zhiqingyun-demo.isxcode.com </br>
+- 体验账号：user001 </br>
+- 账号密码：welcome1
 
 ### 快速部署
 
@@ -58,18 +60,18 @@ docker run -p 8080:8080 -d isxcode/zhiqingyun
 
 ### 源码构建
 
-> 注意！！！编译环境，需访问外网，且需提前安装Nodejs和Java，推荐版本如下: </br>
+> 注意！！！编译环境需访问外网，且需提前安装Nodejs和Java，推荐版本如下: </br>
 > Java: zulu8.78.0.19-ca-jdk8.0.412-x64 </br>
 > Nodejs: node-v18.20.3-x64
 
 ##### MacOS/Linux
 
-> 打包路径: spark-yun/spark-yun-dist/build/distributions/zhiqingyun.tar.gz
+> 安装包路径: spark-yun/spark-yun-dist/build/distributions/zhiqingyun.tar.gz
 
 ```bash
 git clone https://github.com/isxcode/spark-yun.git
 cd spark-yun
-./gradlew install clean package start
+./gradlew install clean package
 ```
 
 ##### Windows10/11
@@ -79,7 +81,7 @@ cd spark-yun
 ```bash
 git clone https://github.com/isxcode/spark-yun.git
 cd spark-yun
-./gradlew.bat install clean package start
+./gradlew.bat install clean package
 ```
 
 ### 联系我们
