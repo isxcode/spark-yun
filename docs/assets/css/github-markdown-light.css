@@ -5,7 +5,6 @@
     color: #24292f;
     background-color: #ffffff;
     font-family: "阿里巴巴普惠体 2.0 45 Light", sans-serif;
-    font-weight: bold;
     font-size: 16px;
     line-height: 1.5;
     word-wrap: break-word;
@@ -59,7 +58,7 @@
 
 .markdown-body b,
 .markdown-body strong {
-    font-weight: 200;
+    font-weight: bold;
     font-family: "阿里巴巴普惠体 2.0 65 Light", sans-serif;
 }
 
