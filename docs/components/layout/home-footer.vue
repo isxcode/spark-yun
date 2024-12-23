@@ -54,7 +54,7 @@
 
   <div class="org-info">
     <div class="content">
-      <div class="link">{{ $t("company_name") }}</div>
+      <div class="link">{{ $t("phone_company_name") }}</div>
       <div class="link">{{ $t("phone") }}</div>
       <div class="link">{{ $t("email") }}hello@isxcode.com</div>
       <div class="link">{{ $t("address") }}</div>

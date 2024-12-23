@@ -132,11 +132,11 @@
           <img src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/product-img/p-3.jpg" alt="">
         </div>
         <div class="right">
-          <div class="line-1">实时计算，让数据更高效</div>
+          <div class="line-1">{{ $t("real_work") }}</div>
           <div class="line-2">
-            支持实时计算和数据库实时同步功能，利用Kafka和Debezium高效处理数据流，确保数据的快速传输和更新。
+            {{ $t("real_work_description") }}
           </div>
-          <div class="line-3" @click="handleQuickClick">立即体验</div>
+          <div class="line-3" @click="handleQuickClick"> {{ $t("experience_now") }}</div>
         </div>
       </div>
     </div>
