@@ -1,5 +1,7 @@
-<div align="center" href="https://zhiqingyun.isxcode.com">
-  <img width="600" alt="image" src="https://img.isxcode.com/picgo/20241209155900.png">
+<div align="center">
+  <a href="https://zhiqingyun.isxcode.com">
+    <img src="https://img.isxcode.com/picgo/20241209155900.png" alt="image" width="600">
+  </a>
 </div>
 
 ---
@@ -15,7 +17,7 @@
 <div align="center">
 
 [![Docker Pulls](https://img.shields.io/docker/pulls/isxcode/zhiqingyun)](https://hub.docker.com/r/isxcode/zhiqingyun)
-[![Build](https://github.com/isxcode/spark-yun/actions/workflows/zhiqingyun-build.yml/badge.svg?branch=main)](https://github.com/isxcode/spark-yun/actions/workflows/zhiqingyun-build.yml)
+[![Build](https://github.com/isxcode/spark-yun/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/isxcode/spark-yun/actions/workflows/build.yml)
 [![GitHub Repo stars](https://img.shields.io/github/stars/isxcode/spark-yun)](https://github.com/isxcode/spark-yun)
 [![GitHub forks](https://img.shields.io/github/forks/isxcode/spark-yun)](https://github.com/isxcode/spark-yun/fork)
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fisxcode%2Fspark-yun.svg?type=shield&issueType=license)](https://app.fossa.com/projects/git%2Bgithub.com%2Fisxcode%2Fspark-yun?ref=badge_shield&issueType=license)
@@ -31,7 +33,7 @@
 
 - **轻量级产品**: 无需额外组件安装，一键部署，开箱即用。
 - **云原生私有化**: 兼容云原生架构，支持多节点安装与高可用集群部署。
-- **复杂数据处理**: 基于原生Spark架构，快速高效地执行复杂数据计算任务。
+- **复杂数据处理**: 基于原生Spark分布式架构，高效地执行复杂数据计算。
 
 ### 立即体验
 
@@ -58,7 +60,7 @@ docker run -p 8080:8080 -d isxcode/zhiqingyun
 
 ### 源码构建
 
-> 注意！！！编译环境需外网访问，且需提前安装Nodejs和Java，推荐版本如下: </br>
+> 注意！！！编译环境需访问外网，且需提前安装Nodejs和Java，推荐版本如下: </br>
 > Java: zulu8.78.0.19-ca-jdk8.0.412-x64 </br>
 > Nodejs: node-v18.20.3-x64
 
