@@ -28,6 +28,9 @@ export default defineNuxtConfig({
         iconDirs: [path.resolve(process.cwd(), "assets/svg")],
       }),
     ],
+    optimizeDeps: {
+      include: ['vueuc']
+    }
   },
   lodash: {
     prefix: "_",
