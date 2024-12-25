@@ -24,7 +24,7 @@
             :value="data"
           />
           <template #empty>
-            <p>No content found.</p>
+            <p><a href="https://zhiqingyun.isxcode.com" style="color: #e25a1b">点击跳转官网</a></p>
           </template>
         </ContentRenderer>
       </div>
