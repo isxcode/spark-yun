@@ -42,11 +42,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import static com.isxcode.star.common.config.CommonConfig.TENANT_ID;
-import static java.util.regex.Pattern.compile;
 
 @Service
 @RequiredArgsConstructor
@@ -135,18 +132,9 @@ public class AlarmService {
                     // 获取环境参数
                     Map<String, String> valueMap = getWorkAlarmValueMap(workInstance, workVersionEntity);
 
-                    // 翻译模版
-                    String content = alarm.getAlarmTemplate();
-                    Pattern pattern = compile("(\\$\\{).+?}");
-                    Matcher matcher = pattern.matcher(content);
-
-                    // 替换正则
-                    while (matcher.find()) {
-                        String group = matcher.group();
-                        if (valueMap.get(group.trim()) != null) {
-                            content = content.replace(group, valueMap.get(group.trim()));
-                        }
-                    }
+                    // 拼接消息内容
+                    final String[] content = {alarm.getAlarmTemplate()};
+                    valueMap.forEach((k, v) -> content[0] = content[0].replace(k, v));
 
                     // 获取告警中当消息体
                     if (!Strings.isEmpty(alarm.getMsgId())) {
@@ -159,7 +147,7 @@ public class AlarmService {
                         MessageRunner messageRunner = messageFactory.getMessageAction(message.getMsgType());
                         MessageContext messageContext = MessageContext.builder().alarmType(alarm.getAlarmType())
                             .alarmId(alarmId).alarmEvent(alarmEvent).msgId(alarm.getMsgId())
-                            .messageConfig(messageConfig).tenantId(message.getTenantId()).content(content)
+                            .messageConfig(messageConfig).tenantId(message.getTenantId()).content(content[0])
                             .instanceId(workInstance.getId()).build();
 
                         // 获取需要发送的人
@@ -230,20 +218,9 @@ public class AlarmService {
                 if (alarmEvent.equals(alarm.getAlarmEvent())) {
 
                     // 拼接消息内容
-                    String content = alarm.getAlarmTemplate();
-
-                    // 获取环境参数
                     Map<String, String> valueMap = getWorkflowAlarmValueMap(workflowInstance, workflowVersionEntity);
-                    Pattern pattern = compile("(\\$\\{).+?}");
-                    Matcher matcher = pattern.matcher(content);
-
-                    // 替换正则
-                    while (matcher.find()) {
-                        String group = matcher.group();
-                        if (valueMap.get(group.trim()) != null) {
-                            content = content.replace(group, valueMap.get(group.trim()));
-                        }
-                    }
+                    final String[] content = {alarm.getAlarmTemplate()};
+                    valueMap.forEach((k, v) -> content[0] = content[0].replace(k, v));
 
                     // 获取需要发送的人
                     List<String> receiverList = JSON.parseArray(alarm.getReceiverList(), String.class);
@@ -259,7 +236,7 @@ public class AlarmService {
                         MessageRunner messageRunner = messageFactory.getMessageAction(message.getMsgType());
                         MessageContext messageContext = MessageContext.builder().alarmType(alarm.getAlarmType())
                             .alarmId(alarmId).alarmEvent(alarmEvent).msgId(alarm.getMsgId())
-                            .messageConfig(messageConfig).tenantId(message.getTenantId()).content(content)
+                            .messageConfig(messageConfig).tenantId(message.getTenantId()).content(content[0])
                             .instanceId(workflowInstance.getId()).build();
 
                         // 查询联系人的信息，发送消息
