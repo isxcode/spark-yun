@@ -1,11 +1,8 @@
 package com.isxcode.star.api.monitor.pojos.res;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.isxcode.star.backend.api.base.serializer.LocalDateTimeSerializer;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
-import java.time.LocalDateTime;
 
 @Data
 public class PageInstancesRes {
@@ -20,12 +17,10 @@ public class PageInstancesRes {
     private Long duration;
 
     @Schema(title = "开始时间")
-    @JsonSerialize(using = LocalDateTimeSerializer.class)
-    private LocalDateTime startDateTime;
+    private String startDateTime;
 
     @Schema(title = "结束时间")
-    @JsonSerialize(using = LocalDateTimeSerializer.class)
-    private LocalDateTime endDateTime;
+    private String endDateTime;
 
     @Schema(title = "实例状态")
     private String status;
