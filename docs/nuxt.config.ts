@@ -3,6 +3,7 @@ import path from "path";
 
 export default defineNuxtConfig({
   devtools: { enabled: false },
+
   modules: [
     "@nuxt/content",
     "@pinia/nuxt",
@@ -13,15 +14,19 @@ export default defineNuxtConfig({
     "@nuxtjs/i18n",
     "nuxtjs-naive-ui",
   ],
+
   pinia: {
     autoImports: ["defineStore"],
   },
+
   plugins: [{ src: "~/plugins/svgicon.client.ts" }],
+
   css: [
     "element-plus/dist/index.css",
     "element-plus/theme-chalk/dark/css-vars.css",
     "~/assets/css/index.scss",
   ],
+
   vite: {
     plugins: [
       createSvgIconsPlugin({
@@ -29,9 +34,11 @@ export default defineNuxtConfig({
       }),
     ],
   },
+
   lodash: {
     prefix: "_",
   },
+
   content: {
     highlight: {
       theme: "dark-plus",
@@ -62,10 +69,11 @@ export default defineNuxtConfig({
         "makefile",
         "graphql",
         "log",
-        "wikitext"
+        "wikitext",
       ],
     },
   },
+
   i18n: {
     locales: [
       { name: "中文", code: "zh", iso: "zh-CN", dir: "ltr" },
@@ -76,4 +84,10 @@ export default defineNuxtConfig({
     defaultLocale: "zh",
     strategy: "prefix_and_default",
   },
+
+  server: {
+    https: true,
+  },
+
+  compatibilityDate: "2024-12-28",
 });

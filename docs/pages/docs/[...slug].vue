@@ -33,6 +33,9 @@
 </template>
 
 <script setup lang="ts">
+import { ref, onMounted, watch, nextTick } from "vue";
+import { useRoute, useRouter } from "vue-router";
+import { useI18n } from "vue-i18n";
 import getContentDirTree from "~/util/getContentDirTree";
 import { useCounterStore, useMenuStore } from "~/store/index";
 import { NScrollbar } from "naive-ui";
@@ -55,26 +58,59 @@ definePageMeta({
 
 const currentDoc = ref<NavItem | null>(null);
 useHead({
-  // title: "至轻云" + currentDoc.value?.title,
   title: "至轻云",
 });
 
-const { params } = useRoute();
+const route = useRoute();
+const router = useRouter();
 const { locale } = useI18n();
-const { data, pending, error, refresh } = await useAsyncData("docs", () =>
-  queryContent(`/` + params.slug.join("/")).findOne()
+const { params } = route;
+
+const { data, pending, error, refresh } = await useAsyncData(
+  "docs",
+  async () => {
+    const slugPath = Array.isArray(params.slug)
+      ? params.slug.join("/")
+      : params.slug;
+    const path = slugPath.startsWith("/") ? slugPath : `/${slugPath}`;
+    console.log("path", path);
+    try {
+      const doc = await queryContent(path).findOne();
+      if (!doc) {
+        console.error(`这个路径未找到资源: ${path}`);
+      }
+      return doc;
+    } catch (err) {
+      console.error(`获取资源失败: ${err}`);
+      return null;
+    }
+  },
+  {
+    watch: [() => params.slug],
+    server: true,
+    immediate: true,
+  }
 );
+
+if (!data.value) {
+  handleGuideClick();
+}
 
 const toc = ref<NavItem[]>([]);
 const markdownBodyRef = ref<null>(null);
 const docsMenuKey = ref(1);
+const scrollbarRef = ref<HTMLElement | null>(null);
+const scrollBarScrollTop = ref(0);
+const { setHeightState } = useCounterStore();
 
 onMounted(() => {
   init();
 });
+
 onMounted(async () => {
   await nextTick();
   const images = markdownBodyRef.value?.$el.querySelectorAll("img");
+  if (!images) return;
   images.forEach((img: HTMLImageElement) => {
     img.classList.add("image-zoom");
   });
@@ -85,7 +121,6 @@ onMounted(async () => {
   });
 });
 
-const router = useRouter();
 watch(
   () => router.currentRoute.value.path,
   () => {
@@ -122,31 +157,30 @@ watch(
 
 function init() {
   const { height } = useCounterStore();
-  if (scrollbarRef.value?.$el?.nextElementSibling) {
-    const scrollElement = scrollbarRef.value.$el.nextElementSibling
-      .firstChild as HTMLElement;
-    if (scrollElement) {
-      scrollElement.scrollTop = height;
-    }
+  const scrollElement = scrollbarRef.value?.$el?.nextElementSibling
+    ?.firstChild as HTMLElement;
+  if (scrollElement) {
+    scrollElement.scrollTop = height;
   }
   const htmlStr = markdownBodyRef.value?.$el.innerHTML || "";
   toc.value = getContentDirTree(htmlStr);
 }
 
-function updatePathDeep(navItems: Array<NavItem>, parentPath = "") {
+function updatePathDeep(navItems: NavItem[], parentPath = "") {
   navItems.forEach((item) => {
     if (item.children) {
       updatePathDeep(item.children, parentPath);
     }
     if (!item._path.startsWith(parentPath)) {
-      item._path = parentPath + item._path;
+      item._path = `${parentPath}${item._path}`;
     }
   });
 }
 
-function processMenuData(menuData: Array<NavItem>) {
+function processMenuData(menuData: NavItem[]) {
   const { menuList, setMenuList } = useMenuStore();
   const currentPath = router.currentRoute.value.path;
+
   if (menuList.length > 0) {
     const flag = menuList.some((item) =>
       item._path.startsWith(`/${locale.value}/`)
@@ -157,48 +191,38 @@ function processMenuData(menuData: Array<NavItem>) {
     }
   }
 
-  if (!menuData) {
-    return [];
-  }
-  const currentLang = locale.value;
+  if (!menuData) return [];
+
   const targetData = menuData.find(
-    (item) => item._path.slice(1) === currentLang
+    (item) => item._path.slice(1) === locale.value
   );
+  if (!targetData?.children) return [];
 
-  if (!targetData || !targetData.children) {
-    return [];
-  }
+  let flatMenuData = targetData.children.flat();
+  updatePathDeep(flatMenuData, `/${locale.value}/docs`);
+  flatMenuData = filterAndAddLevel(flatMenuData);
+  expandPath(flatMenuData, currentPath);
+  setMenuList(flatMenuData);
 
-  menuData = targetData.children.flat();
-  updatePathDeep(menuData, `/${locale.value}/docs`);
-
-  // 合并过滤和添加 level 字段的操作
-  menuData = filterAndAddLevel(menuData);
-
-  expandPath(menuData, currentPath);
-
-  setMenuList(menuData);
   return menuList;
 }
 
-function expandPath(menuData: Array<NavItem>, currentPath: string) {
+function expandPath(menuData: NavItem[], currentPath: string) {
   const path = findPathToCurrent(menuData, currentPath);
   path.forEach((item) => {
     item.isCollapsed = false;
   });
-  // 最后一个节点不折叠，且保存在 currentDoc 中
   if (path.length > 0) {
     path[path.length - 1].isCollapsed = false;
     currentDoc.value = path[path.length - 1];
   }
 }
 
-function filterAndAddLevel(data: Array<NavItem>, level = 1): Array<NavItem> {
+function filterAndAddLevel(data: NavItem[], level = 1): NavItem[] {
   return data.map((item) => {
-    const itemTitle = item.title;
     if (item.children) {
       item.children = item.children.filter(
-        (child: NavItem) => child.title !== itemTitle
+        (child) => child.title !== item.title
       );
       item.children = filterAndAddLevel(item.children, level + 1);
     }
@@ -224,63 +248,54 @@ function findPathToCurrent(
         ...ancestors,
         node,
       ]);
-      if (result.length > 0) {
-        return result;
-      }
+      if (result.length > 0) return result;
     }
   }
   return [];
 }
 
-const scrollbarRef = ref<HTMLElement | null>(null);
-const scrollBarScrollTop = ref(0);
-const { setHeightState } = useCounterStore();
-
 function handleMenuItemClick(link: NavItem) {
   scrollBarScrollTop.value =
-    scrollbarRef.value?.$el.nextElementSibling.firstChild.scrollTop;
+    scrollbarRef.value?.$el?.nextElementSibling?.firstChild.scrollTop || 0;
   setHeightState(scrollBarScrollTop.value);
-  const router = useRouter();
   router.push(link._path);
 }
 
-const resetNodeActiveStatus = (node) => {
+const resetNodeActiveStatus = (node: NavItem) => {
   node.isActive = false;
-  if (node.children) {
-    node.children.forEach((child) => {
-      resetNodeActiveStatus(child);
-    });
-  }
+  node.children?.forEach(resetNodeActiveStatus);
 };
 
-function handleTocItemClick(node: DirNode) {
-  toc.value.forEach((item) => {
-    resetNodeActiveStatus(item);
-  });
-  node.isActive = node.isActive ? false : true;
+function handleTocItemClick(node: NavItem) {
+  toc.value.forEach(resetNodeActiveStatus);
+  node.isActive = !node.isActive;
 
-  const markdownBody = markdownBodyRef.value.$el;
-  const HList = markdownBody.querySelectorAll(`h${node.hLevel}`);
-  const H = Array.from(HList).find((item) => item.innerText === node.title);
-  scrollTo(H);
-  const router = useRouter();
+  const markdownBody = markdownBodyRef.value?.$el;
+  const targetHeader = Array.from(
+    markdownBody?.querySelectorAll(`h${node.level}`) || []
+  ).find((item) => item.innerText === node.title);
+
+  if (targetHeader) scrollTo(targetHeader);
+
   router.push({
     path: router.currentRoute.value.path,
-    query: {
-      anchor: node.title,
-    },
+    query: { anchor: node.title },
   });
 }
 
-function scrollTo(element, headerOffset = 80) {
+function scrollTo(element: HTMLElement, headerOffset = 80) {
   const elementPosition = element.getBoundingClientRect().top;
   const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-  console.log(elementPosition, window.pageYOffset, offsetPosition);
 
   window.scrollTo({
     top: offsetPosition,
     behavior: "smooth",
   });
+}
+
+function handleGuideClick() {
+  const langPrefix = locale.value;
+  router.push(`/${langPrefix}/docs/${langPrefix}/0/0`);
 }
 </script>
 
