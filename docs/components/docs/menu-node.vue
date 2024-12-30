@@ -144,7 +144,6 @@ function computeClass(link: MenuItem) {
 
     .menu-item-text {
       font-size: 14px;
-      font-weight: bolder;
       font-family: "阿里巴巴普惠体 2.0 45 Light", sans-serif;
     }
   }

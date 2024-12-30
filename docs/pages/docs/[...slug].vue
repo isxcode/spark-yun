@@ -55,13 +55,12 @@ definePageMeta({
 
 const currentDoc = ref<NavItem | null>(null);
 useHead({
-  // title: "至轻云" + currentDoc.value?.title,
   title: "至轻云",
 });
 
 const { params } = useRoute();
 const { locale } = useI18n();
-const { data, pending, error, refresh } = await useAsyncData("docs", () =>
+const { data, pending, error, refresh } = await useAsyncData("home", () =>
   queryContent(`/` + params.slug.join("/")).findOne()
 );
 
