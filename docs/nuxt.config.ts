@@ -65,7 +65,8 @@ export default defineNuxtConfig({
         "makefile",
         "graphql",
         "log",
-        "wikitext"
+        "wikitext",
+        "groovy"
       ],
     },
   },
