@@ -71,7 +71,7 @@ passwd cdh
 vim /etc/sudoers
 ```
 
-```bas
+```bash
 #/ Allow root to run any commands anywhere 
 # cdh   ALL =(ALL) NOPASSWD: ALL
 ```

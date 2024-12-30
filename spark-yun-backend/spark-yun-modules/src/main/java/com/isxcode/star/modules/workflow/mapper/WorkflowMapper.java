@@ -34,6 +34,8 @@ public interface WorkflowMapper {
 
     List<WorkInstanceInfo> workInstanceEntityListToWorkInstanceInfoList(List<WorkInstanceEntity> workInstances);
 
+    @Mapping(target = "startDateTime", dateFormat = "yyyy-MM-dd HH:mm:ss")
+    @Mapping(target = "endDateTime", dateFormat = "yyyy-MM-dd HH:mm:ss")
     PageInstancesRes workflowMonitorAoToPageInstancesRes(WorkflowMonitorAo workflowMonitorAo);
 
     @Mapping(target = "startDateTime", dateFormat = "yyyy-MM-dd HH:mm:ss")
