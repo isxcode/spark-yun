@@ -107,6 +107,7 @@ jobs:
           timeout: 1800s
           script: |
             pm2 delete all
+            rm -rf /opt/.output
             tar -vzxf /tmp/website.tar.gz -C /opt/
             pm2 start /opt/.output/server/index.mjs
             rm -rf /data/nginx/ssl/zhiqingyun.isxcode.com.pem
