@@ -60,7 +60,7 @@ useHead({
 
 const { params } = useRoute();
 const { locale } = useI18n();
-const { data, pending, error, refresh } = await useAsyncData("home", () =>
+const { data, pending, error, refresh } = await useAsyncData("docs", () =>
   queryContent(`/` + params.slug.join("/")).findOne()
 );
 
