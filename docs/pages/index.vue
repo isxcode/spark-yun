@@ -306,7 +306,7 @@ onMounted(() => {
     pip: true,
     autoplay: false,
     theme: '#e25a1b',
-    muted: false,
+    muted: true,
     autoSize: true
   });
   window.addEventListener("scroll", handleScroll);
