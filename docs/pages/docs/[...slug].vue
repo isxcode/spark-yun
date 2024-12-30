@@ -64,6 +64,12 @@ const { data, pending, error, refresh } = await useAsyncData("docs", () =>
   queryContent(`/` + params.slug.join("/")).findOne()
 );
 
+if (!data.value) {
+  const router = useRouter();
+  const langPrefix = locale.value;
+  router.push(`/${langPrefix}/docs/${langPrefix}/0/0`);
+}
+
 const toc = ref<NavItem[]>([]);
 const markdownBodyRef = ref<null>(null);
 const docsMenuKey = ref(1);
