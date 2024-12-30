@@ -76,7 +76,7 @@ cd spark-yun
 
 ##### Windows10/11
 
-> 注意！！！请使用Git Bash工具执行以下命令
+> 注意！！！请使用Git Bash终端工具执行以下命令
 
 ```bash
 git clone https://github.com/isxcode/spark-yun.git
