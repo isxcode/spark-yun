@@ -109,6 +109,7 @@ jobs:
             pm2 delete all
             rm -rf /opt/.output
             tar -vzxf /tmp/website.tar.gz -C /opt/
+            rm -rf /tmp/website.tar.gz
             pm2 start /opt/.output/server/index.mjs
             rm -rf /data/nginx/ssl/zhiqingyun.isxcode.com.pem
             rm -rf /data/nginx/ssl/zhiqingyun.isxcode.com.key
