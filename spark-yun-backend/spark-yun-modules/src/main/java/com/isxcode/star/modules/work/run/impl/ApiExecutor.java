@@ -82,11 +82,15 @@ public class ApiExecutor extends WorkExecutor {
             Map<String, String> requestHeader = new HashMap<>();
             for (int i = 0; i < apiWorkConfig.getRequestParam().size(); i++) {
                 ApiWorkValueDto e = apiWorkConfig.getRequestParam().get(i);
-                requestParam.put(e.getLabel(), parseJsonPath(e.getValue(), workInstance));
+                if (!e.getLabel().isEmpty()) {
+                    requestParam.put(e.getLabel(), parseJsonPath(e.getValue(), workInstance));
+                }
             }
             for (int i = 0; i < apiWorkConfig.getRequestHeader().size(); i++) {
                 ApiWorkValueDto e = apiWorkConfig.getRequestHeader().get(i);
-                requestHeader.put(e.getLabel(), parseJsonPath(e.getValue(), workInstance));
+                if (!e.getLabel().isEmpty()) {
+                    requestHeader.put(e.getLabel(), parseJsonPath(e.getValue(), workInstance));
+                }
             }
 
             if (ApiType.GET.equals(apiWorkConfig.getRequestType())) {

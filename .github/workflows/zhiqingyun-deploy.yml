@@ -98,6 +98,7 @@ jobs:
           timeout: 1800s
           script: |
             tar -vzxf /tmp/zhiqingyun.tar.gz -C /opt/
+            rm -rf /tmp/zhiliuyun.tar.gz
             bash /opt/zhiqingyun/bin/stop.sh
             rm -rf /opt/zhiqingyun/conf/application-local.yml
             cp /root/application-local.yml /opt/zhiqingyun/conf/application-local.yml
