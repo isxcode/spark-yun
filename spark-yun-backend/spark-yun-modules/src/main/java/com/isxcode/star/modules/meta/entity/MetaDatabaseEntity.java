@@ -39,6 +39,8 @@ public class MetaDatabaseEntity {
 
     private String dbComment;
 
+    private String status;
+
     @CreatedDate
     private LocalDateTime createDateTime;
 
