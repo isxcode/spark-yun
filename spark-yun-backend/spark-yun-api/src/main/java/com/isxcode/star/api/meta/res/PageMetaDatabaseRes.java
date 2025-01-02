@@ -21,6 +21,8 @@ public class PageMetaDatabaseRes {
 
     private String dbComment;
 
+    private String status;
+
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime createDateTime;
 

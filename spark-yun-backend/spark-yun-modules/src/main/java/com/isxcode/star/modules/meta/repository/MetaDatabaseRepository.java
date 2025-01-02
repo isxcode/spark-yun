@@ -14,6 +14,6 @@ import org.springframework.stereotype.Repository;
 @CacheConfig(cacheNames = {ModuleVipCode.VIP_META})
 public interface MetaDatabaseRepository extends JpaRepository<MetaDatabaseEntity, String> {
 
-    @Query("SELECT M FROM MetaDatabaseEntity M WHERE M.dbName LIKE %:keyword% OR M.dbComment LIKE %:keyword% order by M.createDateTime desc")
+    @Query("SELECT M FROM MetaDatabaseEntity M WHERE M.dbName LIKE %:keyword% OR M.dbComment LIKE %:keyword% order by  M.status asc ,M.createDateTime desc")
     Page<MetaDatabaseEntity> searchAll(@Param("keyword") String searchKeyWord, Pageable pageable);
 }
