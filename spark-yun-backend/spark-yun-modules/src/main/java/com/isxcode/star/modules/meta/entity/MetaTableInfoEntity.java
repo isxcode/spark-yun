@@ -39,6 +39,8 @@ public class MetaTableInfoEntity {
 
     private Long totalSize;
 
+    private String customComment;
+
     @CreatedDate
     private LocalDateTime createDateTime;
 
