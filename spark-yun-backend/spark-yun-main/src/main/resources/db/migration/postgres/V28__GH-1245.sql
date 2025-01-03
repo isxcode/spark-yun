@@ -1,0 +1,3 @@
+-- 表元数据添加自定义备注
+ALTER TABLE SY_META_TABLE_INFO
+    ADD COLUMN CUSTOM_COMMENT varchar(500);

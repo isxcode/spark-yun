@@ -19,7 +19,9 @@ public class PageMetaTableRes {
 
     private String tableName;
 
-    private String tableCommend;
+    private String tableComment;
+
+    private String customComment;
 
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime lastModifiedDateTime;
