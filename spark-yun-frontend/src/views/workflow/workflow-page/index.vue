@@ -815,7 +815,7 @@ onMounted(() => {
 function updateDagNodeList(node: any, type: string) {
     if (containerType.value === 'flow') {
         const data = zqyFlowRef.value.getAllCellData()
-        const webConfig = data.map((node: any) => {
+        const webConfig = (data || []).map((node: any) => {
             const item = node.store.data
             if (item.shape === 'dag-node') {
                 return {
