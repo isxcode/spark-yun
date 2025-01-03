@@ -1,6 +1,7 @@
 package com.isxcode.star.modules.meta.mapper;
 
-import com.isxcode.star.api.datasource.pojos.ao.MetaTableAo;
+import com.isxcode.star.api.meta.pojos.ao.MetaColumnAo;
+import com.isxcode.star.api.meta.pojos.ao.MetaTableAo;
 import com.isxcode.star.api.datasource.pojos.dto.QueryColumnDto;
 import com.isxcode.star.api.datasource.pojos.dto.QueryTableDto;
 import com.isxcode.star.api.meta.req.AddMetaWokReq;
@@ -34,7 +35,7 @@ public interface MetaMapper {
 
     List<MetaColumnEntity> queryColumnDtoListToMetaColumnEntityList(List<QueryColumnDto> queryColumnDtos);
 
-    PageMetaColumnRes metaColumnEntityToPageMetaColumnRes(MetaColumnEntity metaColumnEntity);
+    PageMetaColumnRes metaColumnEntityToPageMetaColumnRes(MetaColumnAo metaColumnAo);
 
     PageMetaWorkInstanceRes metaInstanceEntityToPageMetaWorkInstanceRes(MetaInstanceEntity metaInstanceEntity);
 
