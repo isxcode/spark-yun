@@ -678,7 +678,7 @@ function showConfigDetail() {
 function nodeRunningLog(e: any, type: string) {
     zqyLogRef.value.showModal(
         () => {
-            console.log('关闭')
+            // console.log('关闭')
         },
         { id: e.data.workInstanceId, type: type }
     )
@@ -786,7 +786,6 @@ onMounted(() => {
     getWorkFlows()
 
     eventBus.on('nodeMenuEvent', (e: any) => {
-        console.log('eeee', e)
         if (e.type === 'node_log') {
             // 日志
             nodeRunningLog(e, 'log')
