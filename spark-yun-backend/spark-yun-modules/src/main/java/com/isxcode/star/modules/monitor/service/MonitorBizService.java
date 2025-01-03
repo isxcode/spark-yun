@@ -213,8 +213,9 @@ public class MonitorBizService {
         // 查询当天的实例
         DateTime startDateTime = DateUtil.beginOfDay(getInstanceMonitorReq.getLocalDate());
         DateTime endDateTime = DateUtil.endOfDay(getInstanceMonitorReq.getLocalDate());
-        List<WorkflowInstanceEntity> workflowInstances = workflowInstanceRepository
-            .findAllByExecStartDateTimeAfterAndExecEndDateTimeBefore(startDateTime, endDateTime);
+        List<WorkflowInstanceEntity> workflowInstances =
+            workflowInstanceRepository.findAllByExecStartDateTimeAfterAndLastModifiedDateTimeBefore(startDateTime,
+                DateUtil.toLocalDateTime(endDateTime));
 
         // 初始化数组
         List<WorkflowInstanceLineDto> lines = new ArrayList<>();
@@ -235,7 +236,7 @@ public class MonitorBizService {
             // 开始小时和结束小时
             int startHour = DateUtil.hour(e.getExecStartDateTime(), true) == 0 ? 0
                 : DateUtil.hour(e.getExecStartDateTime(), true) - 1;
-            int endHour = e.getExecStartDateTime() == null ? Integer.parseInt(String.valueOf(allNum)) - 1
+            int endHour = e.getExecEndDateTime() == null ? Integer.parseInt(String.valueOf(allNum))
                 : DateUtil.hour(e.getExecEndDateTime(), true) - 1;
 
             // 补充运行中的个数
