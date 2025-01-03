@@ -21,5 +21,7 @@ public class QueryColumnDto {
 
     private String columnComment;
 
+    private String customComment;
+
     private Boolean isPartitionColumn;
 }
