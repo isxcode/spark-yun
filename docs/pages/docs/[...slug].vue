@@ -36,7 +36,7 @@
 import getContentDirTree from "~/util/getContentDirTree";
 import { useCounterStore, useMenuStore } from "~/store/index";
 import { NScrollbar } from "naive-ui";
-import useViewer from "~/composables/useViewer";
+import mediumZoom from "medium-zoom";
 
 interface NavItem {
   title: string;
@@ -72,8 +72,19 @@ const docsMenuKey = ref(1);
 onMounted(() => {
   init();
 });
-useViewer(markdownBodyRef, {
-  toolbar: false,
+
+onMounted(async () => {
+  await nextTick();
+  const images = markdownBodyRef.value?.$el.querySelectorAll("img");
+  if (!images) return;
+  images.forEach((img: HTMLImageElement) => {
+    img.classList.add("image-zoom");
+  });
+  mediumZoom(document.querySelectorAll(".image-zoom"), {
+    margin: 100,
+    scrollOffset: 1,
+    background: "#fffaf8",
+  });
 });
 
 const router = useRouter();
