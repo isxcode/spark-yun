@@ -260,7 +260,7 @@ const route = useRoute()
 
 const searchParam = ref('')
 const workListItem = ref([])
-const zqyFlowRef = ref(null)
+const zqyFlowRef = ref<any>(null)
 const addModalRef = ref(null)
 const workflowConfigRef = ref(null)
 const zqyLogRef = ref(null)
@@ -392,17 +392,17 @@ function deleteData(data: any) {
     }).then(() => {
         DeleteWorkflowDetailList({
             workId: data.id
+        }).then((res: any) => {
+            initData()
+            if (data.id === workConfig.value.id) {
+                backToFlow()
+            }
+            // 删除
+            updateDagNodeList(data, 'edit')
+            ElMessage.success(res.msg)
+        }).catch((error: any) => {
+            console.error(error)
         })
-            .then((res: any) => {
-                initData()
-                if (data.id === workConfig.value.id) {
-                    backToFlow()
-                }
-                ElMessage.success(res.msg)
-            })
-            .catch((error: any) => {
-                console.error(error)
-            })
     })
 }
 
@@ -507,15 +507,16 @@ function addData() {
 function editData(data: any) {
     addModalRef.value.showModal((formData: any) => {
         return new Promise((resolve: any, reject: any) => {
-            UpdateWorkflowDetailList(formData)
-                .then((res: any) => {
-                    ElMessage.success(res.msg)
-                    initData()
-                    resolve()
-                })
-                .catch((error: any) => {
-                    reject(error)
-                })
+            UpdateWorkflowDetailList(formData).then((res: any) => {
+                ElMessage.success(res.msg)
+                initData()
+
+                // 修改
+                updateDagNodeList(formData, 'edit')
+                resolve()
+            }).catch((error: any) => {
+                reject(error)
+            })
         })
     }, data)
 }
@@ -810,6 +811,43 @@ onMounted(() => {
         }
     })
 })
+
+// 修改节点-如果名称修改或者节点删除就同步dag中
+function updateDagNodeList(node: any, type: string) {
+    if (containerType.value === 'flow') {
+        const data = zqyFlowRef.value.getAllCellData()
+        const webConfig = data.map((node: any) => {
+            const item = node.store.data
+            if (item.shape === 'dag-node') {
+                return {
+                    position: item.position,
+                    shape: item.shape,
+                    ports: item.ports,
+                    id: item.id,
+                    data: item.data,
+                    zIndex: item.zIndex
+                }
+            } else {
+                return item
+            }
+        })
+        const currentChangeTask = webConfig.find((nd: any) => nd.id === node.id)
+        // 如果存在，说明修改的节点在dag图中
+        nextTick(() => {
+            if (type === 'edit') {
+                if (currentChangeTask && currentChangeTask.data?.name !== node.name) {
+                    currentChangeTask.data.name = node.name
+                    currentChangeTask.data.nodeConfigData.name = node.name
+
+                    zqyFlowRef.value.initCellList(webConfig)
+                }
+            } else if (type === 'remove') {
+                // console.log('webConfig', webConfig)
+                // 暂不支持删除dag关联的作业节点
+            }
+        })
+    }
+}
 
 onUnmounted(() => {
     clearInterval(timer.value)
