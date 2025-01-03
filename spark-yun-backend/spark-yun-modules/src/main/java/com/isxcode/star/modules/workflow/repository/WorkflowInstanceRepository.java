@@ -15,6 +15,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -50,6 +51,6 @@ public interface WorkflowInstanceRepository extends JpaRepository<WorkflowInstan
     Page<WorkflowMonitorAo> searchWorkflowMonitor(@Param("tenantId") String tenantId,
         @Param("keyword") String searchKeyWord, Pageable pageable);
 
-    List<WorkflowInstanceEntity> findAllByExecStartDateTimeAfterAndExecEndDateTimeBefore(Date execStartDateTime,
-        Date execEndDateTime);
+    List<WorkflowInstanceEntity> findAllByExecStartDateTimeAfterAndLastModifiedDateTimeBefore(Date execStartDateTime,
+        LocalDateTime execEndDateTime);
 }
