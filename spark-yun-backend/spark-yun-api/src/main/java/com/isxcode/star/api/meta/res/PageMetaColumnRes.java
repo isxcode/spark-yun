@@ -25,6 +25,8 @@ public class PageMetaColumnRes {
 
     private String columnComment;
 
+    private String customComment;
+
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime lastModifiedDateTime;
 }

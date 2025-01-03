@@ -1,6 +1,6 @@
 package com.isxcode.star.modules.meta.repository;
 
-import com.isxcode.star.api.datasource.pojos.ao.MetaTableAo;
+import com.isxcode.star.api.meta.pojos.ao.MetaTableAo;
 import com.isxcode.star.api.main.constants.ModuleVipCode;
 import com.isxcode.star.modules.meta.entity.MetaTableEntity;
 import com.isxcode.star.modules.meta.entity.MetaTableId;
@@ -19,7 +19,7 @@ import java.util.Optional;
 @CacheConfig(cacheNames = {ModuleVipCode.VIP_META})
 public interface MetaTableRepository extends JpaRepository<MetaTableEntity, MetaTableId> {
 
-    @Query("SELECT new com.isxcode.star.api.datasource.pojos.ao.MetaTableAo(M.datasourceId,M.tableName,M.tableComment,MT.customComment,M.lastModifiedDateTime) FROM MetaTableEntity M left join MetaTableInfoEntity MT on M.datasourceId=MT.datasourceId and M.tableName = MT.tableName WHERE (:datasourceId is null OR M.datasourceId = :datasourceId OR :datasourceId='') and ( M.tableName LIKE %:keyword% OR M.tableComment LIKE %:keyword% OR MT.customComment LIKE %:keyword% ) and M.tenantId=:tenantId order by  M.createDateTime desc")
+    @Query("SELECT new com.isxcode.star.api.meta.pojos.ao.MetaTableAo(M.datasourceId,M.tableName,M.tableComment,MT.customComment,M.lastModifiedDateTime) FROM MetaTableEntity M left join MetaTableInfoEntity MT on M.datasourceId=MT.datasourceId and M.tableName = MT.tableName WHERE (:datasourceId is null OR M.datasourceId = :datasourceId OR :datasourceId='') and ( M.tableName LIKE %:keyword% OR M.tableComment LIKE %:keyword% OR MT.customComment LIKE %:keyword% ) and M.tenantId=:tenantId order by  M.createDateTime desc")
     Page<MetaTableAo> searchAll(@Param("tenantId") String tenantId, @Param("keyword") String searchKeyWord,
         @Param("datasourceId") String datasourceId, Pageable pageable);
 

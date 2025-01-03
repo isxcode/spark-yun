@@ -1,4 +1,4 @@
-package com.isxcode.star.api.datasource.pojos.ao;
+package com.isxcode.star.api.meta.pojos.ao;
 
 import lombok.Data;
 
