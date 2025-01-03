@@ -24,6 +24,7 @@ const status = ref<any>({
     PENDING: '等待中',
 
     ACTIVE: '可用',
+    DELETED: '已删除',
     NO_ACTIVE: '不可用',
     NEW: '待配置',
     UN_CHECK: '待检测',
@@ -124,6 +125,7 @@ const vmStatus = computed<{ status: ColonyInfo['status'], name: string }>(() => 
     &.is-un_published,
     &.is-offline,
     &.is-unpublished,
+    &.is-deleted,
     &.is-stop {
         color: #FA541C;
 

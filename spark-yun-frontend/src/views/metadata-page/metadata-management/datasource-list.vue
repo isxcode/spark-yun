@@ -7,6 +7,9 @@
               @click="redirectToTable(scopeSlot.row)"
             >{{ scopeSlot.row.name }}</span>
         </template>
+        <template #statusTag="scopeSlot">
+            <ZStatusTag :status="scopeSlot.row.status"></ZStatusTag>
+          </template>
     </BlockTable>
 </template>
 
@@ -37,6 +40,12 @@ const tableConfig = reactive({
             title: '类型',
             minWidth: 125,
             showOverflowTooltip: true
+        },
+        {
+            prop: 'status',
+            title: '状态',
+            minWidth: 100,
+            customSlot: 'statusTag'
         },
         {
             prop: 'dbComment',
