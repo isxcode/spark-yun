@@ -11,7 +11,7 @@
     </div>
     <div class="vm-list__body">
       <el-table class="vm-list__table" :data="tableData">
-        <el-table-column prop="workflowName" label="作业流" width="120" show-overflow-tooltip />
+        <el-table-column prop="workflowName" label="作业流" width="180" show-overflow-tooltip />
         <el-table-column prop="status" label="状态">
           <template #default="{ row }">
             <!-- <vm-status :status="row.status"></vm-status> -->
@@ -23,8 +23,8 @@
             <person-tag :person-name="row.lastModifiedBy"></person-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="startDateTime" label="开始时间" show-overflow-tooltip />
-        <el-table-column prop="endDateTime" label="结束时间" show-overflow-tooltip />
+        <el-table-column prop="startDateTime" label="开始时间" width="170" show-overflow-tooltip />
+        <el-table-column prop="endDateTime" label="结束时间" width="170" show-overflow-tooltip />
         <el-table-column label="操作" align="center">
           <template #default="{ row }">
             <el-dropdown trigger="click">
