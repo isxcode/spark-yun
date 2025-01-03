@@ -20,7 +20,7 @@ public interface MetaColumnRepository extends JpaRepository<MetaColumnEntity, Me
 
     void deleteAllByDatasourceIdAndTableName(String datasourceId, String tableName);
 
-    @Query("SELECT new com.isxcode.star.api.meta.pojos.ao.MetaColumnAo(M.datasourceId,M.tableName,M.columnName,M.columnComment,M.columnType,MI.customComment,M.lastModifiedDateTime) FROM MetaColumnEntity M left join MetaColumnInfoEntity MI on M.datasourceId=MI.datasourceId and M.tableName = MI.tableName and M.columnName=MI.columnName WHERE M.tenantId=:tenantId AND (M.columnName LIKE %:keyword% OR M.columnComment LIKE %:keyword% OR M.tableName LIKE %:keyword%  ) order by M.createDateTime desc")
+    @Query("SELECT new com.isxcode.star.api.meta.pojos.ao.MetaColumnAo(M.datasourceId,M.tableName,M.columnName,M.columnComment,M.columnType,MI.customComment,M.lastModifiedDateTime) FROM MetaColumnEntity M left join MetaColumnInfoEntity MI on M.datasourceId=MI.datasourceId and M.tableName = MI.tableName and M.columnName=MI.columnName WHERE M.tenantId=:tenantId AND (M.columnName LIKE %:keyword% OR M.columnComment LIKE %:keyword% OR M.tableName LIKE %:keyword% OR MI.customComment LIKE %:keyword%  ) order by M.createDateTime desc")
     Page<MetaColumnAo> searchAll(@Param("tenantId") String tenantId, @Param("keyword") String searchKeyWord,
         Pageable pageable);
 
