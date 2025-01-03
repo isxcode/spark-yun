@@ -52,5 +52,5 @@ public interface MetaMapper {
 
     QueryColumnDto metaColumnEntityToQueryColumnDto(MetaColumnEntity metaColumnEntity);
 
-    List<QueryColumnDto> metaColumnEntitiesToQueryColumnDtoList(List<MetaColumnEntity> metaColumnEntities);
+    List<QueryColumnDto> metaColumnEntitiesToQueryColumnDtoList(List<MetaColumnAo> metaColumnEntities);
 }

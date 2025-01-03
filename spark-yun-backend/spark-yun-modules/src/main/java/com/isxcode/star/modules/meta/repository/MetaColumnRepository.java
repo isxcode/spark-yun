@@ -24,5 +24,7 @@ public interface MetaColumnRepository extends JpaRepository<MetaColumnEntity, Me
     Page<MetaColumnAo> searchAll(@Param("tenantId") String tenantId, @Param("keyword") String searchKeyWord,
         Pageable pageable);
 
-    List<MetaColumnEntity> queryAllByDatasourceIdAndTableName(String datasourceId, String tableName);
+    @Query("SELECT new com.isxcode.star.api.meta.pojos.ao.MetaColumnAo(M.datasourceId,M.tableName,M.columnName,M.columnComment,M.columnType,MI.customComment,M.lastModifiedDateTime) FROM MetaColumnEntity M left join MetaColumnInfoEntity MI on M.datasourceId=MI.datasourceId and M.tableName = MI.tableName and M.columnName=MI.columnName WHERE M.tenantId=:tenantId AND M.datasourceId=:datasourceId AND M.tableName = :tableName")
+    List<MetaColumnAo> queryAllByDatasourceIdAndTableName(@Param("tenantId") String tenantId, String datasourceId,
+        String tableName);
 }
