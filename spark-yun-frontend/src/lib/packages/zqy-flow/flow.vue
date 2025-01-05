@@ -8,6 +8,7 @@
                 <el-icon @click="zoomOut"><ZoomOut /></el-icon>
                 <el-icon @click="zoomIn"><ZoomIn /></el-icon>
                 <el-icon @click="locationCenter"><MapLocation /></el-icon>
+                <el-icon @click="refresh"><Refresh /></el-icon>
             </div>
             <!-- 后续动态注入 -->
             <div class="status-container">
@@ -24,7 +25,7 @@
 </template>
 
 <script setup lang='ts'>
-import { nextTick, onMounted, createVNode, ref } from 'vue'
+import { nextTick, onMounted, createVNode, ref, defineEmits } from 'vue'
 import { Graph, Path, Addon } from '@antv/x6'
 import CustomNode from './custom-node.vue'
 
@@ -34,6 +35,8 @@ let container: HTMLElement | undefined;
 
 const runningStatus = ref(false)
 const hideGridStatus = ref(false)
+
+const emit = defineEmits(['refresh'])
 
 function initGraph() {
     Graph.registerNode(
@@ -318,13 +321,16 @@ function hideGrid(status: boolean) {
 }
 
 function zoomIn() {
-  _Graph.zoom(0.2)
+    _Graph.zoom(0.2)
 }
 function zoomOut() {
-  _Graph.zoom(-0.2)
+    _Graph.zoom(-0.2)
 }
 function locationCenter() {
-  _Graph.centerContent()
+    _Graph.centerContent()
+}
+function refresh() {
+    emit('refresh')
 }
 function locationContentCenter() {
   _Graph.center()
