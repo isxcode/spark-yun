@@ -5,6 +5,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jasypt.util.text.AES256TextEncryptor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.boot.logging.LogLevel;
 import org.springframework.boot.logging.LoggingSystem;
@@ -32,6 +34,9 @@ public class ToolController {
     private final ResourceLoader resourceLoader;
 
     private final SecurityProperties securityProperties;
+
+    @Value("${jasypt.encryptor.password}")
+    private String jasyptPassword;
 
     @Operation(summary = "获取版本号接口")
     @GetMapping("/open/version")
@@ -88,5 +93,14 @@ public class ToolController {
     public String health() {
 
         return "UP";
+    }
+
+    @Operation(summary = "jasypt加密工具")
+    @GetMapping("/open/jasyptEncrypt")
+    public String jasypt(@RequestParam String text) {
+
+        AES256TextEncryptor encryptor = new AES256TextEncryptor();
+        encryptor.setPassword(jasyptPassword);
+        return encryptor.encrypt(text);
     }
 }

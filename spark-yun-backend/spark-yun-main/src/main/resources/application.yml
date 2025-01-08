@@ -118,6 +118,12 @@ logging:
       max-history: 30
       max-file-size: 10MB
 
+jasypt:
+  encryptor:
+    property:
+      suffix: )
+      prefix: ENC(
+
 isx-app:
   admin-url:
     - /swagger-ui/** # http://localhost:8080/swagger-ui/index.html

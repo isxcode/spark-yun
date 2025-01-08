@@ -22,6 +22,10 @@ spring:
     username: root
     password: root123
 
+jasypt:
+  encryptor:
+    password: zhiqingyun
+
 logging:
   file:
     name: /var/lib/zhiqingyun/logs/spark-yun.log
