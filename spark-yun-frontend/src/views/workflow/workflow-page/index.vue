@@ -310,18 +310,20 @@ const workTypeName = computed(() => {
 })
 
 function initData() {
-    GetWorkflowDetailList({
-        page: 0,
-        pageSize: 99999,
-        searchKeyWord: searchParam.value,
-        workflowId: workFlowData.value.id
-    })
-        .then((res: any) => {
+    return new Promise((resolve) => {
+        GetWorkflowDetailList({
+            page: 0,
+            pageSize: 99999,
+            searchKeyWord: searchParam.value,
+            workflowId: workFlowData.value.id
+        }).then((res: any) => {
             workListItem.value = res.data.content
-        })
-        .catch(() => {
+            resolve()
+        }).catch(() => {
             workListItem.value = []
+            resolve()
         })
+    })
 }
 
 function getWorkFlows() {
@@ -512,7 +514,7 @@ function editData(data: any) {
                 initData()
 
                 // 修改
-                // updateDagNodeList(formData, 'edit')
+                updateDagNodeListByEdit(formData, 'edit')
                 resolve()
             }).catch((error: any) => {
                 reject(error)
@@ -771,8 +773,9 @@ function changeWorkFlow(workFlow: any) {
         name: workFlow.name,
         id: workFlow.id
     }
-    initData()
-    initFlowData()
+    initData().then(() => {
+        initFlowData()
+    })
 }
 
 onMounted(() => {
@@ -780,9 +783,10 @@ onMounted(() => {
         name: route.query.name,
         id: route.query.id
     }
-    initData()
-    initFlowData()
-    getWorkFlows()
+    initData().then(() => {
+        initFlowData()
+        getWorkFlows()
+    })
 
     eventBus.on('nodeMenuEvent', (e: any) => {
         if (e.type === 'node_log') {
@@ -824,41 +828,41 @@ function updateDagNodeList(nodeList: any[]) {
 }
 
 // 修改节点-如果名称修改或者节点删除就同步dag中
-// function updateDagNodeList(node: any, type: string) {
-//     if (containerType.value === 'flow') {
-//         const data = zqyFlowRef.value.getAllCellData()
-//         const webConfig = (data || []).map((node: any) => {
-//             const item = node.store.data
-//             if (item.shape === 'dag-node') {
-//                 return {
-//                     position: item.position,
-//                     shape: item.shape,
-//                     ports: item.ports,
-//                     id: item.id,
-//                     data: item.data,
-//                     zIndex: item.zIndex
-//                 }
-//             } else {
-//                 return item
-//             }
-//         })
-//         const currentChangeTask = webConfig.find((nd: any) => nd.id === node.id)
-//         // 如果存在，说明修改的节点在dag图中
-//         nextTick(() => {
-//             if (type === 'edit') {
-//                 if (currentChangeTask && currentChangeTask.data?.name !== node.name) {
-//                     currentChangeTask.data.name = node.name
-//                     currentChangeTask.data.nodeConfigData.name = node.name
+function updateDagNodeListByEdit(node: any, type: string) {
+    if (containerType.value === 'flow') {
+        const data = zqyFlowRef.value.getAllCellData()
+        const webConfig = (data || []).map((node: any) => {
+            const item = node.store.data
+            if (item.shape === 'dag-node') {
+                return {
+                    position: item.position,
+                    shape: item.shape,
+                    ports: item.ports,
+                    id: item.id,
+                    data: item.data,
+                    zIndex: item.zIndex
+                }
+            } else {
+                return item
+            }
+        })
+        const currentChangeTask = webConfig.find((nd: any) => nd.id === node.id)
+        // 如果存在，说明修改的节点在dag图中
+        nextTick(() => {
+            if (type === 'edit') {
+                if (currentChangeTask && currentChangeTask.data?.name !== node.name) {
+                    currentChangeTask.data.name = node.name
+                    currentChangeTask.data.nodeConfigData.name = node.name
 
-//                     zqyFlowRef.value.initCellList(webConfig)
-//                 }
-//             } else if (type === 'remove') {
-//                 // console.log('webConfig', webConfig)
-//                 // 暂不支持删除dag关联的作业节点
-//             }
-//         })
-//     }
-// }
+                    zqyFlowRef.value.initCellList(webConfig)
+                }
+            } else if (type === 'remove') {
+                // console.log('webConfig', webConfig)
+                // 暂不支持删除dag关联的作业节点
+            }
+        })
+    }
+}
 
 onUnmounted(() => {
     clearInterval(timer.value)
