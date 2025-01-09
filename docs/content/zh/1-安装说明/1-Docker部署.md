@@ -6,7 +6,9 @@ title: "Docker部署"
 
 #### 镜像地址
 
-> 国内用户可以选择以下镜像，arm64多用于macOS用户，x86服务器架构选择`latest-amd64`版本 
+> 国内用户可选以下镜像  
+> `latest-arm64`多用于macOS用户，arm架构服务器    
+> `latest-amd64`多用于常见服务器，x86架构服务器 
 
 ```bash
 registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun:latest-amd64 
@@ -39,8 +41,8 @@ docker run \
 
 #### 修改配置
 
-默认配置文件模版参考链接:  
-> https://raw.githubusercontent.com/isxcode/spark-yun/refs/heads/main/spark-yun-backend/spark-yun-main/src/main/resources/application-docker.yml
+默认配置文件模版参考链接:   
+https://raw.githubusercontent.com/isxcode/spark-yun/refs/heads/main/spark-yun-backend/spark-yun-main/src/main/resources/application-docker.yml
 
 ```bash
 vim /Users/ispong/zhiqingyun/conf/application-docker.yml
@@ -53,6 +55,7 @@ docker run \
     -e ADMIN_PASSWORD=admin123 \
     -e LOG_LEVEL=info \
     -e ACTIVE_ENV=docker \
+    -e PARAMS=--spring.flyway.enabled=false \
     -v /Users/ispong/zhiqingyun/zhiqingyun:/var/lib/zhiqingyun \
     -v /Users/ispong/zhiqingyun/conf:/etc/zhiqingyun/conf \
     -p 8080:8080 \
