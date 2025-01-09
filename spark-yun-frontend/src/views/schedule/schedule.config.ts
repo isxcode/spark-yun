@@ -89,7 +89,7 @@ export const colConfigs: colConfig[] = [
   {
     prop: 'duration',
     title: '耗时',
-    minWidth: 110,
+    minWidth: 124,
     customSlot: 'duration'
   },
   {
@@ -186,7 +186,7 @@ export const colConfigsWorkflow: colConfig[] = [
   {
     prop: 'duration',
     title: '耗时',
-    minWidth: 80,
+    minWidth: 124,
     customSlot: 'duration'
   },
   {

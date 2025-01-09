@@ -23,7 +23,7 @@
         :fixed="colConfig.fixed"
         :resizable="colIndex < tableConfig.colConfigs.length - 1"
         :show-header-overflow="colConfig.showHeaderOverflow || false"
-        :show-overflow="colConfig.showOverflowTooltip || false"
+        :show-overflow="colConfig.showOverflowTooltip || true"
         v-bind="colConfig"
       >
         <template #default="{ row, rowIndex, column }">
@@ -43,7 +43,7 @@
         :width="colConfig.width"
         :field="colConfig.prop"
         :resizable="colIndex < tableConfig.colConfigs.length - 1"
-        :show-overflow="colConfig.showOverflowTooltip || false"
+        :show-overflow="colConfig.showOverflowTooltip || true"
         v-bind="colConfig"
       />
     </template>

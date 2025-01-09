@@ -40,10 +40,12 @@
                     :is="tabComponent"
                     ref="currentTabRef"
                     @redirectToTable="redirectToTable"
+                    @editEvent="editEvent"
                 ></component>
             </div>
         </LoadingPage>
         <AddModal ref="addModalRef" />
+        <RemarkModal ref="remarkModalRef"></RemarkModal>
     </div>
 </template>
 
@@ -57,12 +59,16 @@ import tableList from './table-list.vue'
 import codeList from './code-list.vue'
 import {
   AddMetadataTaskData,
+  CodeRemarkEdit,
+  DatasourceRemarkEdit,
   FastTriggerMetadataTaskData,
-  RefreshMetadataManagementList
+  RefreshMetadataManagementList,
+TableRemarkEdit
 } from '@/services/metadata-page.service'
 import { GetDatasourceList } from '@/services/datasource.service'
 import { ElMessage } from 'element-plus'
 import AddModal from './add-modal/index.vue'
+import RemarkModal from './remark-modal/index.vue'
 
 const breadCrumbList = reactive(BreadCrumbList)
 const keyword = ref('')
@@ -73,6 +79,7 @@ const tabComponent = ref()
 const currentTabRef = ref()
 const refreshLoading = ref<boolean>(false)
 const addModalRef = ref<any>(null)
+const remarkModalRef = ref<any>(null)
 
 const datasourceId = ref('')
 const dbType = ref('')
@@ -136,6 +143,52 @@ function acquisetionTriggerEvent() {
         datasourceId: datasourceId.value,
         dbType: dbType.value
     })
+}
+
+function editEvent(e: any) {
+    console.log('eee', e)
+    const remark = e.dbComment || e.tableComment || e.columnComment
+    remarkModalRef.value.showModal((data: any) => {
+        return new Promise((resolve, reject) => {
+            if (e.pageType === 'datasource') {
+                DatasourceRemarkEdit({
+                    datasourceId: e.datasourceId,
+                    comment: data.remark
+                }).then((res: any) => {
+                    ElMessage.success(res.msg)
+                    initData()
+                    resolve()
+                }).catch((error: any) => {
+                    reject(error)
+                })
+            } else if (e.pageType === 'table') {
+                TableRemarkEdit({
+                    datasourceId: e.datasourceId,
+                    tableName: e.tableName,
+                    comment: data.remark
+                }).then((res: any) => {
+                    ElMessage.success(res.msg)
+                    initData()
+                    resolve()
+                }).catch((error: any) => {
+                    reject(error)
+                })
+            } else if (e.pageType === 'code') {
+                CodeRemarkEdit({
+                    datasourceId: e.datasourceId,
+                    tableName: e.tableName,
+                    columnName: e.columnName,
+                    comment: data.remark
+                }).then((res: any) => {
+                    ElMessage.success(res.msg)
+                    initData()
+                    resolve()
+                }).catch((error: any) => {
+                    reject(error)
+                })
+            }
+        })
+    }, { remark: remark })
 }
 
 function refreshDataEvent() {
