@@ -7,6 +7,11 @@
               @click="redirectToTable(scopeSlot.row)"
             >{{ scopeSlot.row.name }}</span>
         </template>
+        <template #options="scopeSlot">
+            <div class="btn-group btn-group__center">
+                <span @click="editEvent(scopeSlot.row)">编辑</span>
+            </div>
+        </template>
     </BlockTable>
 </template>
 
@@ -14,7 +19,7 @@
 import { reactive, ref, onMounted, defineEmits} from 'vue'
 import { GetMetadataManagementList } from '@/services/metadata-page.service'
 
-const emit = defineEmits(['redirectToTable'])
+const emit = defineEmits(['redirectToTable', 'editEvent'])
 
 const tableConfig = reactive({
     tableData: [],
@@ -48,6 +53,13 @@ const tableConfig = reactive({
             title: '更新时间',
             minWidth: 140
         },
+        {
+            title: '操作',
+            align: 'center',
+            customSlot: 'options',
+            width: 60,
+            fixed: 'right'
+        }
     ],
     pagination: {
         currentPage: 1,
@@ -97,6 +109,11 @@ function handleCurrentChange(e: number) {
 
 function redirectToTable(data: any) {
     emit('redirectToTable', data)
+}
+
+function editEvent(data: any) {
+    data.pageType = 'datasource'
+    emit('editEvent', data)
 }
 
 onMounted(() => {
