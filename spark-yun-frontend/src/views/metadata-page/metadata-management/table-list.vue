@@ -7,14 +7,21 @@
               @click="showPreviewModal(scopeSlot.row)"
             >{{ scopeSlot.row.tableName }}</span>
         </template>
+        <template #options="scopeSlot">
+            <div class="btn-group btn-group__center">
+                <span @click="editEvent(scopeSlot.row)">编辑</span>
+            </div>
+        </template>
     </BlockTable>
     <PreviewModal ref="previewModalRef"></PreviewModal>
 </template>
 
 <script lang="ts" setup>
-import { reactive, ref, onMounted } from 'vue'
+import { reactive, ref, onMounted, defineEmits } from 'vue'
 import { GetMetadataTableList } from '@/services/metadata-page.service'
 import PreviewModal from './preview-modal/index.vue'
+
+const emit = defineEmits(['editEvent'])
 
 const previewModalRef = ref<any>(null)
 const dId = ref<string>('')
@@ -50,6 +57,13 @@ const tableConfig = reactive({
             prop: 'lastModifiedDateTime',
             title: '更新时间',
             minWidth: 140
+        },
+        {
+            title: '操作',
+            align: 'center',
+            customSlot: 'options',
+            width: 60,
+            fixed: 'right'
         }
     ],
     pagination: {
@@ -104,6 +118,11 @@ function handleSizeChange(e: number) {
 function handleCurrentChange(e: number) {
     tableConfig.pagination.currentPage = e
     initData()
+}
+
+function editEvent(data: any) {
+    data.pageType = 'table'
+    emit('editEvent', data)
 }
 
 onMounted(() => {

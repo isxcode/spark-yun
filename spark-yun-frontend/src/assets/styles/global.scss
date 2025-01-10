@@ -53,6 +53,9 @@ body {
       display: flex;
       justify-content: space-between;
       align-items: center;
+      &.btn-group__center {
+        justify-content: center;
+      }
       span {
         cursor: pointer;
         color: getCssVar('color', 'primary', 'light-5');
