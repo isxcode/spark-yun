@@ -9,7 +9,7 @@
         </template>
         <template #options="scopeSlot">
             <div class="btn-group btn-group__center">
-                <span @click="editEvent(scopeSlot.row)">编辑</span>
+                <span @click="editEvent(scopeSlot.row)">备注</span>
             </div>
         </template>
     </BlockTable>
