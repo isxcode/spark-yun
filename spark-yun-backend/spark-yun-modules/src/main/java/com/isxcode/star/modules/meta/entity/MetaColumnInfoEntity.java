@@ -19,13 +19,13 @@ import static com.isxcode.star.common.config.CommonConfig.TENANT_ID;
 @Data
 @Entity
 @Where(clause = "deleted = 0 ${TENANT_FILTER} ")
-@Table(name = "SY_META_TABLE_INFO")
+@Table(name = "SY_META_COLUMN_INFO")
 @JsonIgnoreProperties({"hibernateLazyInitializer"})
 @EntityListeners(AuditingEntityListener.class)
 @Builder(toBuilder = true)
 @AllArgsConstructor
-@IdClass(MetaTableId.class)
-public class MetaTableInfoEntity {
+@IdClass(MetaColumnId.class)
+public class MetaColumnInfoEntity {
 
     @Id
     private String datasourceId;
@@ -33,11 +33,8 @@ public class MetaTableInfoEntity {
     @Id
     private String tableName;
 
-    private Long columnCount;
-
-    private Long totalRows;
-
-    private Long totalSize;
+    @Id
+    private String columnName;
 
     private String customComment;
 
@@ -61,7 +58,7 @@ public class MetaTableInfoEntity {
 
     private String tenantId;
 
-    public MetaTableInfoEntity() {}
+    public MetaColumnInfoEntity() {}
 
     @PrePersist
     public void prePersist() {

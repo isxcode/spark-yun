@@ -1,5 +1,7 @@
 package com.isxcode.star.modules.meta.mapper;
 
+import com.isxcode.star.api.meta.pojos.ao.MetaColumnAo;
+import com.isxcode.star.api.meta.pojos.ao.MetaTableAo;
 import com.isxcode.star.api.datasource.pojos.dto.QueryColumnDto;
 import com.isxcode.star.api.datasource.pojos.dto.QueryTableDto;
 import com.isxcode.star.api.meta.req.AddMetaWokReq;
@@ -16,7 +18,7 @@ public interface MetaMapper {
 
     PageMetaDatabaseRes metaDatabaseEntityToPageMetaDatabaseRes(MetaDatabaseEntity metaDatabaseEntity);
 
-    PageMetaTableRes metaTableEntityToPageMetaTableRes(MetaTableEntity metaTableEntity);
+    PageMetaTableRes metaTableEntityToPageMetaTableRes(MetaTableAo metaTableAo);
 
     @Mapping(target = "cronConfig", ignore = true)
     MetaWorkEntity addMetaWorkToMetaWorkEntity(AddMetaWokReq addMetaWokReq);
@@ -33,7 +35,7 @@ public interface MetaMapper {
 
     List<MetaColumnEntity> queryColumnDtoListToMetaColumnEntityList(List<QueryColumnDto> queryColumnDtos);
 
-    PageMetaColumnRes metaColumnEntityToPageMetaColumnRes(MetaColumnEntity metaColumnEntity);
+    PageMetaColumnRes metaColumnEntityToPageMetaColumnRes(MetaColumnAo metaColumnAo);
 
     PageMetaWorkInstanceRes metaInstanceEntityToPageMetaWorkInstanceRes(MetaInstanceEntity metaInstanceEntity);
 
@@ -50,5 +52,5 @@ public interface MetaMapper {
 
     QueryColumnDto metaColumnEntityToQueryColumnDto(MetaColumnEntity metaColumnEntity);
 
-    List<QueryColumnDto> metaColumnEntitiesToQueryColumnDtoList(List<MetaColumnEntity> metaColumnEntities);
+    List<QueryColumnDto> metaColumnEntitiesToQueryColumnDtoList(List<MetaColumnAo> metaColumnEntities);
 }

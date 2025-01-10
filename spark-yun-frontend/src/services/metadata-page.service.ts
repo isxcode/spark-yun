@@ -178,3 +178,28 @@ export function RemoveMetadataInstanceList(params: any): Promise<any> {
         params: params
     })
 }
+
+// 元数据 - 数据地图 - 数据源备注编辑
+export function DatasourceRemarkEdit(params: any): Promise<any> {
+    return http.request({
+        method: 'post',
+        url: '/vip/meta/updateDatabaseComment',
+        params: params
+    })
+}
+// 元数据 - 数据地图 - 表备注编辑
+export function TableRemarkEdit(params: any): Promise<any> {
+    return http.request({
+        method: 'post',
+        url: '/vip/meta/updateTableComment',
+        params: params
+    })
+}
+// 元数据 - 数据地图 - 字段备注编辑
+export function CodeRemarkEdit(params: any): Promise<any> {
+    return http.request({
+        method: 'post',
+        url: '/vip/meta/updateColumnComment',
+        params: params
+    })
+}
