@@ -19,7 +19,7 @@ import java.util.Optional;
 @CacheConfig(cacheNames = {ModuleVipCode.VIP_META})
 public interface MetaTableRepository extends JpaRepository<MetaTableEntity, MetaTableId> {
 
-    @Query("SELECT new com.isxcode.star.api.meta.pojos.ao.MetaTableAo(M.datasourceId,M.tableName,M.tableComment,MT.customComment,M.lastModifiedDateTime) FROM MetaTableEntity M left join MetaTableInfoEntity MT on M.datasourceId=MT.datasourceId and M.tableName = MT.tableName WHERE (:datasourceId is null OR M.datasourceId = :datasourceId OR :datasourceId='') and ( M.tableName LIKE %:keyword% OR M.tableComment LIKE %:keyword% OR MT.customComment LIKE %:keyword% ) and M.tenantId=:tenantId order by  M.createDateTime desc")
+    @Query("SELECT new com.isxcode.star.api.meta.pojos.ao.MetaTableAo(M.datasourceId,M.tableName,M.tableComment,MT.customComment,M.lastModifiedDateTime) FROM MetaTableEntity M left join MetaTableInfoEntity MT on M.datasourceId=MT.datasourceId and M.tableName = MT.tableName WHERE (:datasourceId is null OR M.datasourceId = :datasourceId OR :datasourceId='') and ( M.tableName LIKE %:keyword% OR (MT.customComment is null and M.tableComment LIKE %:keyword%) OR MT.customComment LIKE %:keyword% ) and M.tenantId=:tenantId order by M.tableName asc, M.createDateTime desc")
     Page<MetaTableAo> searchAll(@Param("tenantId") String tenantId, @Param("keyword") String searchKeyWord,
         @Param("datasourceId") String datasourceId, Pageable pageable);
 
