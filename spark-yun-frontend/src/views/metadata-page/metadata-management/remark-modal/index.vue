@@ -23,7 +23,7 @@ const callback = ref<any>()
 const dataSourceList = ref<Option[]>([])
 
 const modelConfig = reactive({
-    title: '编辑',
+    title: '备注',
     visible: false,
     width: '520px',
     okConfig: {
