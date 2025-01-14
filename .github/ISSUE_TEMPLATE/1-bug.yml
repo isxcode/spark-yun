@@ -1,31 +1,37 @@
 name: Create bug
-description: 创建缺陷
+description: 提缺陷
 title: '[Bug] '
 labels: ["缺陷"]
 body:
-  - type: checkboxes
+  - type: dropdown
     id: operating-systems
     attributes:
-      label: Which operating systems have you used (部署的操作系统)
+      label: Which operating systems have you used (操作系统)
       options:
-        - label: macOS
-        - label: Windows
-        - label: Linux
-  - type: checkboxes
+        - macOS
+        - Windows
+        - Linux
+      default: 0
+    validations:
+      required: false
+  - type: dropdown
     id: download_from
     attributes:
-      label: Download from (安装来源)
+      label: Download from (安装方式)
       options:
-        - label: 本地源码编译
-        - label: 官网二进制
-        - label: 阿里镜像仓库
-        - label: Docker Hub
+        - 源码编译
+        - 官网安装包
+        - 阿里镜像仓库
+        - Docker Hub
+      default: 0
+    validations:
+      required: false
   - type: input
     id: branch
     attributes:
-      label: Version number (当前版本号，获取方式：http://localhost:8080/tools/open/version)
-      placeholder: latest
-      value: latest
+      label: Version number (版本号，版本号获取方式：http://localhost:8080/tools/open/version)
+      placeholder: main
+      value: main
     validations:
       required: true
   - type: textarea
