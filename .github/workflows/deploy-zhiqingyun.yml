@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       admin_github_token:
-        description: '管理员github token'
+        description: '管理员密钥'
         required: true
         type: string
 
@@ -35,7 +35,7 @@ jobs:
           repository: "isxcode/spark-yun"
           ref: 'main'
 
-      - name: deploy demo
+      - name: Download zhiqingyun
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.HOST }}
@@ -58,7 +58,7 @@ jobs:
 
     steps:
 
-      - name: config ssl
+      - name: Update ssl config
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.HOST }}
@@ -88,7 +88,7 @@ jobs:
           sudo timedatectl set-timezone Asia/Shanghai
           date
 
-      - name: deploy demo
+      - name: Deploy zhiqingyun
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.HOST }}
