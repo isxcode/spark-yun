@@ -4,16 +4,16 @@ on:
   workflow_dispatch:
     inputs:
       admin_github_token:
-        description: '管理员github token'
+        description: '管理员密钥'
         required: true
         type: string
       repository_account:
-        description: '仓库名'
+        description: '仓库'
         required: true
         type: string
         default: 'isxcode'
       branch_number:
-        description: '分支号'
+        description: '分支'
         required: true
         type: string
         default: 'main'
@@ -51,8 +51,8 @@ jobs:
           repository: ${{ inputs.repository_account }}/spark-yun
           ref: ${{ inputs.branch_number }}
 
-      - uses: pnpm/action-setup@v4
-        name: Install pnpm
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
         with:
           version: 9.0.6
           run_install: false
@@ -67,8 +67,8 @@ jobs:
         run: |
           echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
 
-      - uses: actions/cache@v4
-        name: Setup pnpm cache
+      - name: Setup pnpm cache
+        uses: actions/cache@v4
         with:
           path: ${{ env.STORE_PATH }}
           key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
@@ -97,7 +97,7 @@ jobs:
           source: "website.tar.gz"
           target: /tmp/
 
-      - name: deploy website
+      - name: Deploy website
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.HOST }}

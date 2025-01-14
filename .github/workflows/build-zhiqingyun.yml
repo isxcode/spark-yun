@@ -4,21 +4,21 @@ on:
   workflow_dispatch:
     inputs:
       admin_github_token:
-        description: '管理员github token'
+        description: '管理员密钥'
         required: true
         type: string
       version_number:
-        description: 'docker版本号，默认latest'
+        description: '镜像版本号'
         required: true
         type: string
         default: latest
       repository_account:
-        description: '仓库名'
+        description: '仓库'
         required: true
         type: string
         default: 'isxcode'
       branch_number:
-        description: '分支号'
+        description: '分支'
         required: true
         type: string
         default: 'main'
@@ -74,34 +74,24 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
-      - uses: pnpm/action-setup@v4
-        name: Install pnpm
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
         with:
           version: 9.0.6
           run_install: false
-
-      - name: Print pnpm version
-        shell: bash
-        run: |
-          echo pnpm version: `pnpm -v`
 
       - name: Install Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 18
 
-      - name: Print node version
-        shell: bash
-        run: |
-          echo node version: `node -v`
-
       - name: Get pnpm store directory
         shell: bash
         run: |
           echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
 
-      - uses: actions/cache@v4
-        name: Setup pnpm cache
+      - name: Setup pnpm cache
+        uses: actions/cache@v4
         with:
           path: ${{ env.STORE_PATH }}
           key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
@@ -117,11 +107,8 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@417ae3ccd767c252f5661f1ace9f835f9654f2b5
 
-      - name: Install Dependency
-        run: ./gradlew install
-
       - name: Build with Gradle Wrapper
-        run: ./gradlew clean package
+        run: ./gradlew install clean package
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
@@ -149,6 +136,7 @@ jobs:
           name: zhiqingyun
           path: ./spark-yun-dist/build/distributions/zhiqingyun.tar.gz
 
+  # 上传阿里oss使用单独任务，原因：上传失败后，可以使用github重跑任务，不需要重新打包
   upload-oss:
     needs: build
 
@@ -188,6 +176,7 @@ jobs:
           assets: |
             distributions/**:/zhiqingyun/
 
+  # 上传阿里镜像仓库使用单独任务，原因：上传失败后，可以使用github重跑任务，不需要重新打包
   upload-ali:
       needs: build
 
