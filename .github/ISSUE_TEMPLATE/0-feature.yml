@@ -1,5 +1,5 @@
 name: Create feature
-description: 创建新需求
+description: 提需求
 title: '[Feature] '
 labels: ["需求"]
 body:
