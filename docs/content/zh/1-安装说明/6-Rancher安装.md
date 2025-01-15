@@ -1,9 +1,53 @@
 ---
-title: "Rancher部署"
+title: "Rancher安装"
 ---
 
-
 ## 使用Helm离线安装Rancher2.8.5
+
+#### 抢占阿里云服务器
+
+阿里云链接:  https://ecs.console.aliyun.com/
+
+![20250115145156](https://img.isxcode.com/picgo/20250115145156.png)
+
+配置：16核心32GB  
+外网：39.100.75.11  
+内网：172.16.215.83  
+账号：root  
+密码：Isxcode123..
+
+#### 创建用户zhiqingyun
+
+```bash
+ssh root@39.100.75.11
+useradd zhiqingyun
+passwd zhiqingyun
+# 密码：Zhiqingyun123..
+```
+
+#### 优化系统
+
+```bash
+echo never > /sys/kernel/mm/transparent_hugepage/defrag
+echo never > /sys/kernel/mm/transparent_hugepage/enabled
+```
+
+#### 给zhiqingyun用户赋权
+
+```bash
+vim /etc/sudoers
+```
+
+```bash
+# Allow root to run any commands anywhere
+zhiqingyun        ALL=(ALL)       NOPASSWD: ALL
+```
+
+#### 切换zhiqingyun用户
+
+```bash
+sudo su zhiqingyun
+```
 
 #### 关闭防火墙
 
@@ -21,12 +65,16 @@ sudo vim /etc/hosts
 ```
 
 ```bash
+#172.16.215.83  iZ8vbi23pah6ef86ph996cZ iZ8vbi23pah6ef86ph996cZ
 172.16.215.83   isxcode
 ```
 
 #### 关闭selinux
 
 ```bash
+sudo vim /etc/selinux/config
+SELINUX=disabled
+
 sudo setenforce 0
 sudo getenforce
 ```
@@ -35,23 +83,31 @@ sudo getenforce
 
 ```bash
 sudo swapoff -a
+sudo vim /etc/fstab
+# 注释掉
+# /dev/xxx     swap
 sudo free -m
 ```
 
 #### 挂载磁盘
 
-> 挂载磁盘，绑定/data
+> 挂载磁盘，绑定/data目录  
+> 参考文档：[Linux磁盘挂载](https://ispong.isxcode.com/os/linux/linux%20%E6%8C%82%E8%BD%BD%E7%A3%81%E7%9B%98/)
 
 ```bash
 sudo mkdir -p /data
 ```
 
-#### 上传资源
+#### 上传离线安装资源
 
-> 需要资源邮箱找我
+> 需要资源邮箱咨询
 
 ```bash
-scp -r /Users/ispong/OneDrive/Downloads/rancher root@47.92.128.32:/tmp
+scp -r /Users/ispong/OneDrive/Downloads/linux/rancher/rancher.zip zhiqingyun@39.100.75.11:/tmp
+# 解压安装包
+cd /tmp
+sudo yum install unzip -y
+unzip rancher.zip
 ```
 
 #### 离线安装docker
@@ -106,23 +162,23 @@ sudo systemctl start docker
 sudo systemctl status docker
 
 # 赋予权限
-sudo chown ispong:ispong /usr/bin/docker
-sudo chown ispong:ispong /var/run/docker.sock
+sudo chown zhiqingyun:zhiqingyun /usr/bin/docker
+sudo chown zhiqingyun:zhiqingyun /var/run/docker.sock
+docker images
 ```
 
 #### 离线安装docker-compose
 
 ```bash
-cd /tmp/rancher
-sudo cp docker-compose-linux-x86_64 /usr/bin/docker-compose
+sudo cp /tmp/rancher/docker-compose-linux-x86_64 /usr/bin/docker-compose
 sudo chmod +x /usr/bin/docker-compose
 docker-compose --version
 ```
 
 #### 生成harbor的ssl证书
 
-> 注意CN修改域名
-> 将命令中的isxcode替换成对应的hostname，再执行
+> 注意修改CN的域名，和用户权限
+> 将以下命令中的isxcode替换成对应的hostname再执行
 
 ```bash
 sudo mkdir -p /data/harbor/ssl
@@ -141,7 +197,7 @@ sudo openssl req -sha512 -new \
     -out isxcode.csr
 
 sudo touch v3.ext
-sudo chown ispong:ispong v3.ext
+sudo chown zhiqingyun:zhiqingyun v3.ext
 cat > v3.ext <<-EOF
 authorityKeyIdentifier=keyid,issuer
 basicConstraints=CA:FALSE
@@ -186,15 +242,13 @@ sudo mkdir -p /data/harbor/data
 cd /tmp/rancher
 docker load -i prepare-1.9.3.tar
 sudo tar zxf harbor-offline-installer-v1.9.3.tgz -C /data/harbor/
-cd /data/harbor/harbor
-
-sudo vim harbor.yml 
+sudo vim /data/harbor/harbor/harbor.yml 
 ```
 
-> 修改hostname 
-> 修改https 
-> 修改port 
-> 修改data
+> 修改hostname   
+> 修改https   
+> 修改port   
+> 修改data  
 
 ```bash
 hostname: isxcode
@@ -210,20 +264,19 @@ https:
 data_volume: /data/harbor/data
 ```
 
-> cd /var/log/harbor 看日志
-> docker-compose down -v
-> docker-compose up -d
-
 ```bash
+cd /data/harbor/harbor
 sudo ./prepare
 sudo chmod +x ./install.sh
 sudo ./install.sh
 docker ps -a
 ```
 
-访问地址: https://47.92.209.39:8443 
-账号: admin 
-密码: Harbor12345
+访问地址: https://39.100.75.11:8443   
+账号: admin   
+密码: Harbor12345  
+
+![20250115153622](https://img.isxcode.com/picgo/20250115153622.png)
 
 #### 创建rke2目录
 
@@ -244,13 +297,15 @@ sudo cp /tmp/rancher/rke2.linux-amd64.tar.gz /data/rke2-artifacts/
 sudo cp /tmp/rancher/sha256sum-amd64.txt /data/rke2-artifacts/
 
 # 必须要使用root用户执行
+sudo su 
 cd /tmp/rancher
 INSTALL_RKE2_ARTIFACT_PATH=/data/rke2-artifacts sh install.sh
 ```
 
 #### 启动rke2
 
-> journalctl -u rke2-server -f  看日志
+> 使用以下命令查看日志：  
+> journalctl -u rke2-server -f  
 
 ```bash
 sudo systemctl enable rke2-server.service
@@ -268,7 +323,9 @@ export KUBECONFIG=/etc/rancher/rke2/rke2.yaml
 export PATH=$PATH:/var/lib/rancher/rke2/bin
 EOF
 source /etc/profile
-sudo chown ispong:ispong /etc/rancher/rke2/rke2.yaml
+
+# 赋权查看k8s
+sudo chown zhiqingyun:zhiqingyun /etc/rancher/rke2/rke2.yaml
 kubectl get nodes
 kubectl get pods -n kube-system
 ```
@@ -284,7 +341,7 @@ helm version
 
 #### 导入rancher镜像 v2.8.5
 
-> username: admin 
+> username: admin   
 > password: Harbor12345
 
 ```bash
@@ -313,6 +370,8 @@ tls-san:
 ```bash
 sudo vim /etc/rancher/rke2/registries.yaml
 ```
+
+> 注意替换isxcode的值，改成用户的hostname
 
 ```yml
 mirrors:
@@ -352,7 +411,6 @@ helm list -A
 
 #### k8s安装rancher
 
-> 卸载：helm uninstall rancher -n cattle-system 
 > 记得修改hostname
 
 ```bash
@@ -367,19 +425,19 @@ helm install rancher /tmp/rancher/rancher-2.8.5.tgz \
   --set systemDefaultRegistry=docker.io/library \
   --set rancherImageTag=v2.8.5 \
   --set service.type=NodePort
-kubectl -n cattle-system get deploy rancher
 ```
 
-#### 访问
-
-> 获取端口号
+#### 修改rancher端口
 
 ```bash
-kubectl get svc -n cattle-system
-# NAME              TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)                      AGE
-# rancher           NodePort    10.43.104.172   <none>        80:32316/TCP,443:31908/TCP   47m
-# rancher-webhook   ClusterIP   10.43.77.134    <none>        443/TCP                      45m
+# 等待节点状态激活
+kubectl -n cattle-system get deploy rancher
+
+# 修改rancher端口号
+kubectl edit svc rancher -n cattle-system
 ```
+
+![20250115160642](https://img.isxcode.com/picgo/20250115160642.png)
 
 > 获取密码
 
@@ -387,30 +445,8 @@ kubectl get svc -n cattle-system
 kubectl get secret --namespace cattle-system bootstrap-secret -o go-template='{{.data.bootstrapPassword|base64decode}}{{ "\n" }}'
 ```
 
-> 访问地址: https://47.92.128.32:31908   
+> 访问地址: https://39.100.75.11:31255   
 > 密码: pt2g584d6hrrc9cw7k9vd8bbrrwz5rpmd75tdrg8cwsh6kjk8cg4pv
-
-#### 相关调试命令
-
-```bash
-kubectl logs -l app=rancher -n cattle-system
-kubectl get pods -o wide -n cert-manager
-kubectl get pods -o wide -n cattle-system
-kubectl describe pod rancher-6dd9f75c9d-kxmts -n cattle-system
-kubectl get events -n cattle-system
-kubectl logs helm-operation-54s9f  -n cattle-system
-kubectl rollout status deployment -n cattle-system rancher
-kubectl edit svc rancher -n cattle-system
-kubectl delete ns cert-manager
-kubectl get pods --all-namespaces -o jsonpath='{.items[*].spec.containers[*].image}' | tr -s '[[:space:]]' '\n' | sort | uniq
-tail -f /data/rancher/rke2/agent/logs/kubelet.log
-```
-
-#### 修改rancher端口
-
-```bash
-kubectl edit svc rancher -n cattle-system
-```
 
 #### 相关文档
 

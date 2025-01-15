@@ -1,132 +1,53 @@
 ---
-title: "CDH部署"
+title: "CDH安装"
 ---
 
 ## 离线安装CDH6.2.0
 
-#### 关闭防火墙
+#### 前提
 
-```bash
-systemctl disable firewalld
-systemctl stop firewalld
-systemctl status firewalld
-```
-
-#### 修改hostname
-
-> 如果有多台服务器，都需要配置
-
-```bash
-hostnamectl set-hostname isxcode
-vim /etc/hosts
-```
-
-```bash
-#172.16.215.83  iZ8vbgxsdbuxmnqr4qd0ykZ iZ8vbgxsdbuxmnqr4qd0ykZ
-172.16.215.83   isxcode
-```
-
-#### 关闭selinux
-
-```bash
-setenforce 0
-getenforce
-```
-
-#### 关闭swap分区
-
-```bash
-swapoff -a
-free -m
-```
-
-#### 优化系统
-
-```bash
-echo never > /sys/kernel/mm/transparent_hugepage/defrag
-echo never > /sys/kernel/mm/transparent_hugepage/enabled
-```
-
-#### 挂载磁盘
-
-> 挂载磁盘，绑定/data
-
-```bash
-mkdir -p /data
-```
+> 推荐先安装rancher
 
 #### 上传资源
 
-> 需要资源邮箱找我
+> 需要资源邮箱咨询
 
 ```bash
-scp -r /Users/ispong/OneDrive/Downloads/cdh root@47.92.80.91:/tmp
-```
-
-#### 创建用户
-
-```bash
-useradd cdh
-passwd cdh
-vim /etc/sudoers
-```
-
-```bash
-#/ Allow root to run any commands anywhere 
-# cdh   ALL =(ALL) NOPASSWD: ALL
+scp -r /Users/ispong/OneDrive/Downloads/linux/cdh/cdh.zip zhiqingyun@39.100.75.11:/tmp
+scp /Users/ispong/OneDrive/Downloads/docker/cdh-httpd-1.0-amd64.tar zhiqingyun@39.100.75.11:/tmp
 ```
 
 #### 安装基础软件
 
-> 最好每台服务器都装一下
-> 如果不行，使用--force
-
 ```bash
-sudo yum remove python3 -y
-cd /tmp/cdh/rpm/python3
-sudo rpm -ivh ./* --nosignature
-
-cd /tmp/cdh/rpm/createrepo
-sudo rpm -ivh ./* --nosignature
-
-cd /tmp/cdh/rpm/bind-utils
-sudo rpm -ivh ./* --nosignature
-
-cd /tmp/cdh/rpm/unzip
-sudo rpm -ivh ./* --nosignature
-
-# 这个一定要装
-cd /tmp/cdh/rpm/httpd
-sudo rpm -ivh ./* --nosignature
-
 # 这个一定要装
 cd /tmp/cdh/rpm/postgres
-sudo rpm -ivh ./* --nosignature
+sudo rpm -ivh ./* --nosignature --force
 
 # 如果包中有冲突文件，直接删除
 sudo yum remove java-1.8.0-openjdk-headless -y
 cd /tmp/cdh/rpm/openjdk
-sudo rpm -ivh ./* --nosignature
+sudo rpm -ivh ./* --nosignature --force
 ```
 
 #### 安装时区同步
 
-> 每台都要做
-
 ```bash
 cd /tmp/cdh/rpm/ntp
-rpm -ivh ./* --nosignature
+rpm -ivh ./* --nosignature --force
 systemctl enable ntpd
 systemctl start ntpd
 vim /etc/ntp.conf
 ```
+
+> 使用内网ip
 
 ```bash
 # server 0.centos.pool.ntp.org iburst
 # server 1.centos.pool.ntp.org iburst
 # server 2.centos.pool.ntp.org iburst
 # server 3.centos.pool.ntp.org iburst
-server 10.244.18.169 iburst
+server 172.16.215.83 iburst
 ```
 
 ```bash
@@ -144,8 +65,7 @@ cp /tmp/cdh/jdbc/mysql-connector-java-8.0.23.jar /usr/share/java/mysql-connector
 
 #### 安装scm
 
-> 主节点安装 按顺序运行  
-> 卸载: yum remove -y cloudera-manager-daemons
+> 主节点安装 按顺序运行
 
 ```bash
 cd /tmp/cdh/cdh6.2.0/cloudera-repos-6.2.0
