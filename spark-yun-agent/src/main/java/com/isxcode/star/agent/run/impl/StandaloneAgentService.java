@@ -45,12 +45,7 @@ public class StandaloneAgentService implements AgentService {
     @Override
     public String getMaster(String sparkHomePath) {
 
-        String sparkHome;
-        if (!Strings.isEmpty(sparkHomePath)) {
-            sparkHome = sparkHomePath;
-        } else {
-            sparkHome = System.getenv("SPARK_HOME");
-        }
+        String sparkHome = !Strings.isEmpty(sparkHomePath) ? sparkHomePath : System.getenv("SPARK_HOME");
         String defaultSparkConfig = sparkHome + "/conf/spark-defaults.conf";
 
         try (BufferedReader reader = new BufferedReader(new FileReader(defaultSparkConfig))) {
@@ -60,7 +55,7 @@ public class StandaloneAgentService implements AgentService {
                     return line.split("\\s+")[1];
                 }
             }
-            throw new IsxAppException("无法获取master url");
+            throw new IsxAppException("没有配置master url");
         } catch (IOException e) {
             log.error(e.getMessage(), e);
             throw new IsxAppException("无法获取master url");
@@ -69,12 +64,7 @@ public class StandaloneAgentService implements AgentService {
 
     public String getMasterWebUrl(String sparkHomePath) {
 
-        String sparkHome;
-        if (!Strings.isEmpty(sparkHomePath)) {
-            sparkHome = sparkHomePath;
-        } else {
-            sparkHome = System.getenv("SPARK_HOME");
-        }
+        String sparkHome = !Strings.isEmpty(sparkHomePath) ? sparkHomePath : System.getenv("SPARK_HOME");
         String defaultSparkConfig = sparkHome + "/conf/spark-defaults.conf";
 
         try (BufferedReader reader = new BufferedReader(new FileReader(defaultSparkConfig))) {
@@ -84,10 +74,10 @@ public class StandaloneAgentService implements AgentService {
                     return line.split("\\s+")[1];
                 }
             }
-            throw new IsxAppException("无法获取master url");
+            throw new IsxAppException("没有配置master web url");
         } catch (IOException e) {
             log.error(e.getMessage(), e);
-            throw new IsxAppException("无法获取master url");
+            throw new IsxAppException("无法获取master web url");
         }
     }
 
