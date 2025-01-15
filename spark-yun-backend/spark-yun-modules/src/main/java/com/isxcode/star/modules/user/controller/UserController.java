@@ -2,8 +2,8 @@ package com.isxcode.star.modules.user.controller;
 
 import com.isxcode.star.api.main.constants.ModuleCode;
 import com.isxcode.star.api.user.constants.RoleType;
-import com.isxcode.star.api.user.pojos.req.*;
-import com.isxcode.star.api.user.pojos.res.*;
+import com.isxcode.star.api.user.req.*;
+import com.isxcode.star.api.user.res.*;
 import com.isxcode.star.common.annotations.successResponse.SuccessResponse;
 import com.isxcode.star.modules.user.service.UserBizService;
 import io.swagger.v3.oas.annotations.Operation;

@@ -2,7 +2,7 @@ package com.isxcode.star.api.alarm.res;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.isxcode.star.api.user.pojos.dto.UserInfo;
+import com.isxcode.star.api.user.dto.UserInfo;
 import com.isxcode.star.backend.api.base.serializer.LocalDateTimeSerializer;
 import lombok.Data;
 

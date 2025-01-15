@@ -1,6 +1,6 @@
 package com.isxcode.star.agent.run;
 
-import com.isxcode.star.api.agent.pojos.req.SubmitWorkReq;
+import com.isxcode.star.api.agent.req.SubmitWorkReq;
 import org.apache.spark.launcher.SparkLauncher;
 
 public interface AgentService {

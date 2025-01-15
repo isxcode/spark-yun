@@ -2,13 +2,13 @@ package com.isxcode.star.modules.work.run.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.isxcode.star.api.agent.constants.AgentUrl;
-import com.isxcode.star.api.agent.pojos.req.ExecuteContainerSqlReq;
-import com.isxcode.star.api.agent.pojos.res.ExecuteContainerSqlRes;
+import com.isxcode.star.api.agent.req.ExecuteContainerSqlReq;
+import com.isxcode.star.api.agent.res.ExecuteContainerSqlRes;
 import com.isxcode.star.api.cluster.constants.ClusterNodeStatus;
 import com.isxcode.star.api.container.constants.ContainerStatus;
 import com.isxcode.star.api.work.constants.WorkLog;
 import com.isxcode.star.api.work.constants.WorkType;
-import com.isxcode.star.api.work.exceptions.WorkRunException;
+import com.isxcode.star.backend.api.base.exceptions.WorkRunException;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.star.backend.api.base.properties.IsxAppProperties;
 import com.isxcode.star.modules.alarm.service.AlarmService;

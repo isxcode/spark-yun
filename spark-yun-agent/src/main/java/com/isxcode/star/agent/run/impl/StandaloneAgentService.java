@@ -3,7 +3,7 @@ package com.isxcode.star.agent.run.impl;
 import com.alibaba.fastjson2.JSON;
 import com.isxcode.star.agent.run.AgentService;
 import com.isxcode.star.api.agent.constants.AgentType;
-import com.isxcode.star.api.agent.pojos.req.SubmitWorkReq;
+import com.isxcode.star.api.agent.req.SubmitWorkReq;
 import com.isxcode.star.api.work.constants.WorkType;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import lombok.extern.slf4j.Slf4j;

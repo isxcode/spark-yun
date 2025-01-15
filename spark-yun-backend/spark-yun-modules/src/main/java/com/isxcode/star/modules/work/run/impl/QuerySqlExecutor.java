@@ -2,10 +2,10 @@ package com.isxcode.star.modules.work.run.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.isxcode.star.api.datasource.constants.DatasourceConfig;
-import com.isxcode.star.api.datasource.pojos.dto.ConnectInfo;
+import com.isxcode.star.api.datasource.dto.ConnectInfo;
 import com.isxcode.star.api.work.constants.WorkLog;
 import com.isxcode.star.api.work.constants.WorkType;
-import com.isxcode.star.api.work.exceptions.WorkRunException;
+import com.isxcode.star.backend.api.base.exceptions.WorkRunException;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.star.modules.alarm.service.AlarmService;
 import com.isxcode.star.modules.datasource.entity.DatasourceEntity;

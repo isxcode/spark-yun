@@ -2,8 +2,8 @@ package com.isxcode.star.agent.controller;
 
 import com.isxcode.star.agent.service.SparkYunAgentBizService;
 import com.isxcode.star.api.agent.constants.AgentUrl;
-import com.isxcode.star.api.agent.pojos.req.*;
-import com.isxcode.star.api.agent.pojos.res.*;
+import com.isxcode.star.api.agent.req.*;
+import com.isxcode.star.api.agent.res.*;
 import com.isxcode.star.common.annotations.successResponse.SuccessResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

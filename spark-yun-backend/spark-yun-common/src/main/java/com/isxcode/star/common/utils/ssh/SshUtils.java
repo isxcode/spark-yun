@@ -1,6 +1,6 @@
 package com.isxcode.star.common.utils.ssh;
 
-import com.isxcode.star.api.cluster.pojos.dto.ScpFileEngineNodeDto;
+import com.isxcode.star.api.cluster.dto.ScpFileEngineNodeDto;
 import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.JSch;

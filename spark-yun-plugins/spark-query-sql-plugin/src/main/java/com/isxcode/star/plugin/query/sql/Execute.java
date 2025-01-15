@@ -1,7 +1,7 @@
 package com.isxcode.star.plugin.query.sql;
 
 import com.alibaba.fastjson.JSON;
-import com.isxcode.star.api.agent.pojos.req.PluginReq;
+import com.isxcode.star.api.agent.req.PluginReq;
 import com.isxcode.star.api.func.constants.FuncType;
 import org.apache.logging.log4j.util.Strings;
 import org.apache.spark.SparkConf;

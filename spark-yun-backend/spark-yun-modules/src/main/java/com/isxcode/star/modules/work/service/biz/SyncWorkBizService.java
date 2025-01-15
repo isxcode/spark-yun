@@ -1,10 +1,16 @@
 package com.isxcode.star.modules.work.service.biz;
 
 import com.isxcode.star.api.datasource.constants.DatasourceType;
-import com.isxcode.star.api.datasource.pojos.dto.ColumnMetaDto;
-import com.isxcode.star.api.datasource.pojos.dto.ConnectInfo;
-import com.isxcode.star.api.work.pojos.req.*;
-import com.isxcode.star.api.work.pojos.res.*;
+import com.isxcode.star.api.datasource.dto.ColumnMetaDto;
+import com.isxcode.star.api.datasource.dto.ConnectInfo;
+import com.isxcode.star.api.work.req.GetCreateTableSqlReq;
+import com.isxcode.star.api.work.req.GetDataSourceColumnsReq;
+import com.isxcode.star.api.work.req.GetDataSourceDataReq;
+import com.isxcode.star.api.work.req.GetDataSourceTablesReq;
+import com.isxcode.star.api.work.res.GetCreateTableSqlRes;
+import com.isxcode.star.api.work.res.GetDataSourceColumnsRes;
+import com.isxcode.star.api.work.res.GetDataSourceDataRes;
+import com.isxcode.star.api.work.res.GetDataSourceTablesRes;
 import com.isxcode.star.modules.datasource.entity.DatasourceEntity;
 import com.isxcode.star.modules.datasource.mapper.DatasourceMapper;
 import com.isxcode.star.modules.datasource.service.DatasourceService;

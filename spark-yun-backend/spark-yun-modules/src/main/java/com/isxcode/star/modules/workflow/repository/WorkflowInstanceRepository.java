@@ -1,8 +1,8 @@
 package com.isxcode.star.modules.workflow.repository;
 
-import com.isxcode.star.api.instance.pojos.ao.WorkflowInstanceAo;
+import com.isxcode.star.api.instance.ao.WorkflowInstanceAo;
 import com.isxcode.star.api.main.constants.ModuleVipCode;
-import com.isxcode.star.api.monitor.pojos.ao.WorkflowMonitorAo;
+import com.isxcode.star.api.monitor.ao.WorkflowMonitorAo;
 import com.isxcode.star.modules.workflow.entity.WorkflowInstanceEntity;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
@@ -38,7 +38,7 @@ public interface WorkflowInstanceRepository extends JpaRepository<WorkflowInstan
     @CacheEvict(key = "#workflowInstanceId")
     default void deleteWorkflowLog(String workflowInstanceId) {}
 
-    @Query(value = "select " + "   new com.isxcode.star.api.instance.pojos.ao.WorkflowInstanceAo(" + "   W.id,"
+    @Query(value = "select " + "   new com.isxcode.star.api.instance.ao.WorkflowInstanceAo(" + "   W.id,"
         + "   WF.name," + "   W.duration," + "   W.nextPlanDateTime," + "   W.planStartDateTime,"
         + "   W.execStartDateTime," + "   W.execEndDateTime," + "   W.status," + "   W.instanceType) "
         + "from WorkflowInstanceEntity W left join WorkflowEntity WF on W.flowId = WF.id "
@@ -47,7 +47,7 @@ public interface WorkflowInstanceRepository extends JpaRepository<WorkflowInstan
         @Param("keyword") String searchKeyWord, @Param("executeStatus") String executeStatus,
         @Param("workflowId") String workflowId, Pageable pageable);
 
-    @Query("SELECT new com.isxcode.star.api.monitor.pojos.ao.WorkflowMonitorAo( W.id,W1.name,W.duration,W.execStartDateTime,W.execEndDateTime,W.status,U.username ) from WorkflowInstanceEntity W left join WorkflowEntity W1 on W.flowId = W1.id left join UserEntity U on W.lastModifiedBy = U.id where W1.name like %:keyword% and W.tenantId=:tenantId order by W.lastModifiedDateTime desc")
+    @Query("SELECT new com.isxcode.star.api.monitor.ao.WorkflowMonitorAo( W.id,W1.name,W.duration,W.execStartDateTime,W.execEndDateTime,W.status,U.username ) from WorkflowInstanceEntity W left join WorkflowEntity W1 on W.flowId = W1.id left join UserEntity U on W.lastModifiedBy = U.id where W1.name like %:keyword% and W.tenantId=:tenantId order by W.lastModifiedDateTime desc")
     Page<WorkflowMonitorAo> searchWorkflowMonitor(@Param("tenantId") String tenantId,
         @Param("keyword") String searchKeyWord, Pageable pageable);
 
