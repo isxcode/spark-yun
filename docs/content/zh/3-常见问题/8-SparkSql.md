@@ -326,3 +326,26 @@ Caused by: org.apache.hadoop.hive.ql.metadata.HiveException: Number of dynamic p
   "spark.hive.exec.max.dynamic.partitions": 20000
 }
 ```
+
+#### 问题8: spark on k8s无法获取镜像
+
+```log
+ErrImagePull (failed to pull and unpack image "docker.io/library/spark:3.4.1": failed to resolve reference "docker.io/library/spark:3.4.1": failed to do request: Head "https://registry-1.docker.io/v2/library/spark/manifests/3.4.1": dial tcp 31.13.82.169:443: i/o timeout)
+```
+
+```log
+2025-01-15T18:27:01.483 INFO  : 运行状态:ErrImagePull
+2025-01-15T18:27:01.606 ERROR : 获取作业日志异常 : Error from server (BadRequest): container "spark-kubernetes-driver" in pod "zhiqingyun-spark-sql-sy-1879475137556619264-sy-1879475180372074496-30559f94697ff27b-driver" is waiting to start: image can't be pulled
+```
+
+##### 解决方案
+
+```wikitext
+这是用户自己的rancher配置的镜像库指定了docker.io，需要将spark镜像推到用户指定的镜像仓库
+```
+
+```bash
+docker login isxcode:8443
+docker tag spark:3.4.1 isxcode:8443/library/spark:3.4.1
+docker push isxcode:8443/library/spark:3.4.1
+```
