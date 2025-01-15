@@ -10,6 +10,7 @@ title: "Rancher安装"
 
 ![20250115145156](https://img.isxcode.com/picgo/20250115145156.png)
 
+系统：centos7.9
 配置：16核心32GB  
 外网：39.100.75.11  
 内网：172.16.215.83  
@@ -106,7 +107,6 @@ sudo mkdir -p /data
 scp -r /Users/ispong/OneDrive/Downloads/linux/rancher/rancher.zip zhiqingyun@39.100.75.11:/tmp
 # 解压安装包
 cd /tmp
-sudo yum install unzip -y
 unzip rancher.zip
 ```
 
@@ -240,6 +240,7 @@ sudo update-ca-trust
 sudo mkdir -p /data/harbor/data
 
 cd /tmp/rancher
+sudo chown zhiqingyun:zhiqingyun /var/run/docker.sock
 docker load -i prepare-1.9.3.tar
 sudo tar zxf harbor-offline-installer-v1.9.3.tgz -C /data/harbor/
 sudo vim /data/harbor/harbor/harbor.yml 
@@ -300,6 +301,7 @@ sudo cp /tmp/rancher/sha256sum-amd64.txt /data/rke2-artifacts/
 sudo su 
 cd /tmp/rancher
 INSTALL_RKE2_ARTIFACT_PATH=/data/rke2-artifacts sh install.sh
+sudo su zhiqingyun
 ```
 
 #### 启动rke2
@@ -351,6 +353,9 @@ docker login isxcode:8443
 ```bash
 cd /tmp/rancher
 chmod +x rancher-load-images.sh
+
+# 使用root用户导入镜像
+sudo su
 ./rancher-load-images.sh --image-list ./rancher-images.txt --registry isxcode:8443/library
 ```
 
@@ -446,7 +451,9 @@ kubectl get secret --namespace cattle-system bootstrap-secret -o go-template='{{
 ```
 
 > 访问地址: https://39.100.75.11:31255   
-> 密码: pt2g584d6hrrc9cw7k9vd8bbrrwz5rpmd75tdrg8cwsh6kjk8cg4pv
+> 密码: ph2gc4rq6pkb89s7fcb4ll4rnfjpwq4tj9fxfzkpxkpww2mn49m494
+
+![20250115174720](https://img.isxcode.com/picgo/20250115174720.png)
 
 #### 相关文档
 
