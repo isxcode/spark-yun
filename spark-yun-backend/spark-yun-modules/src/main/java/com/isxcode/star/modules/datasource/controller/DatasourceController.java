@@ -1,7 +1,7 @@
 package com.isxcode.star.modules.datasource.controller;
 
-import com.isxcode.star.api.datasource.pojos.req.*;
-import com.isxcode.star.api.datasource.pojos.res.*;
+import com.isxcode.star.api.datasource.req.*;
+import com.isxcode.star.api.datasource.res.*;
 import com.isxcode.star.api.main.constants.ModuleCode;
 import com.isxcode.star.api.user.constants.RoleType;
 import com.isxcode.star.common.annotations.successResponse.SuccessResponse;

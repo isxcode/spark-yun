@@ -5,7 +5,7 @@ import com.alibaba.fastjson2.JSON;
 import com.isxcode.star.agent.run.AgentService;
 import com.isxcode.star.api.agent.constants.AgentKubernetes;
 import com.isxcode.star.api.agent.constants.AgentType;
-import com.isxcode.star.api.agent.pojos.req.SubmitWorkReq;
+import com.isxcode.star.api.agent.req.SubmitWorkReq;
 import com.isxcode.star.api.work.constants.WorkType;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import lombok.extern.slf4j.Slf4j;
@@ -32,31 +32,33 @@ public class KubernetesAgentService implements AgentService {
     @Override
     public String getMaster(String sparkHomePath) throws Exception {
 
-        String getMasterCmd = "kubectl cluster-info | awk -F' ' '/https:\\/\\// {print $NF; exit}'";
+        String clusterInfoCmd = "kubectl cluster-info";
+        Process clusterInfoProcess = Runtime.getRuntime().exec(clusterInfoCmd);
+        InputStream inputStream = clusterInfoProcess.getInputStream();
+        BufferedReader clusterInfoReader =
+            new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
 
-        Process process = Runtime.getRuntime().exec(getMasterCmd);
-        InputStream inputStream = process.getInputStream();
-        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
-
-        StringBuilder errLog = new StringBuilder();
+        StringBuilder clusterInfoOutput = new StringBuilder();
         String line;
-        while ((line = reader.readLine()) != null) {
-            errLog.append(line).append("\n");
+        while ((line = clusterInfoReader.readLine()) != null) {
+            clusterInfoOutput.append(line).append("\n");
         }
 
-        try {
-            int exitCode = process.waitFor();
-            if (exitCode == 1) {
-                throw new IsxAppException(errLog.toString());
-            } else {
-                // k8s命令会返回特殊字符
-                return errLog.toString().replaceAll("https://", "k8s://").replaceAll("0m", "").replaceAll("\u001B", "")
-                    .replaceAll("\\[", "");
+        String[] clusterInfoLines = clusterInfoOutput.toString().split("\n");
+        String result = null;
+        for (String infoLine : clusterInfoLines) {
+            if (infoLine.contains("https://")) {
+                String[] fields = infoLine.split(" ");
+                result = fields[fields.length - 1];
+                break;
             }
-        } catch (InterruptedException e) {
-            log.error(e.getMessage(), e);
-            throw new IsxAppException(e.getMessage());
         }
+
+        if (result == null) {
+            throw new IsxAppException("No https:// URL found in cluster info.");
+        }
+
+        return result.replaceAll("https://", "k8s://").replaceAll("\\u001B\\[[;\\d]*m", "");
     }
 
     @Override

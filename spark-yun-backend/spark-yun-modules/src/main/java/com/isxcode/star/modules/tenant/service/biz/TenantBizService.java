@@ -4,10 +4,10 @@ import static com.isxcode.star.common.config.CommonConfig.JPA_TENANT_MODE;
 import static com.isxcode.star.common.config.CommonConfig.USER_ID;
 
 import com.isxcode.star.api.tenant.constants.TenantStatus;
-import com.isxcode.star.api.tenant.pojos.req.*;
-import com.isxcode.star.api.tenant.pojos.res.GetTenantRes;
-import com.isxcode.star.api.tenant.pojos.res.PageTenantRes;
-import com.isxcode.star.api.tenant.pojos.res.QueryUserTenantRes;
+import com.isxcode.star.api.tenant.req.*;
+import com.isxcode.star.api.tenant.res.GetTenantRes;
+import com.isxcode.star.api.tenant.res.PageTenantRes;
+import com.isxcode.star.api.tenant.res.QueryUserTenantRes;
 import com.isxcode.star.api.user.constants.RoleType;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.star.modules.license.repository.LicenseStore;

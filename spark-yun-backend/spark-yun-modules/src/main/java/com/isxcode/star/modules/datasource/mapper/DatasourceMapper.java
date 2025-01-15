@@ -1,12 +1,12 @@
 package com.isxcode.star.modules.datasource.mapper;
 
-import com.isxcode.star.api.datasource.pojos.dto.ConnectInfo;
-import com.isxcode.star.api.datasource.pojos.req.AddDatasourceReq;
-import com.isxcode.star.api.datasource.pojos.req.CheckConnectReq;
-import com.isxcode.star.api.datasource.pojos.req.UpdateDatasourceReq;
-import com.isxcode.star.api.datasource.pojos.res.GetDefaultDatabaseDriverRes;
-import com.isxcode.star.api.datasource.pojos.res.PageDatabaseDriverRes;
-import com.isxcode.star.api.datasource.pojos.res.PageDatasourceRes;
+import com.isxcode.star.api.datasource.dto.ConnectInfo;
+import com.isxcode.star.api.datasource.req.AddDatasourceReq;
+import com.isxcode.star.api.datasource.req.CheckConnectReq;
+import com.isxcode.star.api.datasource.req.UpdateDatasourceReq;
+import com.isxcode.star.api.datasource.res.GetDefaultDatabaseDriverRes;
+import com.isxcode.star.api.datasource.res.PageDatabaseDriverRes;
+import com.isxcode.star.api.datasource.res.PageDatasourceRes;
 import com.isxcode.star.modules.datasource.entity.DatabaseDriverEntity;
 import com.isxcode.star.modules.datasource.entity.DatasourceEntity;
 import org.mapstruct.Mapper;

@@ -1,9 +1,9 @@
 package com.isxcode.star.modules.api.mapper;
 
-import com.isxcode.star.api.api.pojos.req.AddApiReq;
-import com.isxcode.star.api.api.pojos.req.UpdateApiReq;
-import com.isxcode.star.api.api.pojos.res.GetApiRes;
-import com.isxcode.star.api.api.pojos.res.PageApiRes;
+import com.isxcode.star.api.api.req.AddApiReq;
+import com.isxcode.star.api.api.req.UpdateApiReq;
+import com.isxcode.star.api.api.res.GetApiRes;
+import com.isxcode.star.api.api.res.PageApiRes;
 import com.isxcode.star.modules.api.entity.ApiEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

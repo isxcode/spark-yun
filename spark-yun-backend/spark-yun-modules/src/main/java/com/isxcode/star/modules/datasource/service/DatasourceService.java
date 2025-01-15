@@ -1,9 +1,9 @@
 package com.isxcode.star.modules.datasource.service;
 
 import com.isxcode.star.api.datasource.constants.DatasourceType;
-import com.isxcode.star.api.datasource.pojos.dto.KafkaConfig;
-import com.isxcode.star.api.datasource.pojos.dto.SecurityColumnDto;
-import com.isxcode.star.api.work.exceptions.WorkRunException;
+import com.isxcode.star.api.datasource.dto.KafkaConfig;
+import com.isxcode.star.api.datasource.dto.SecurityColumnDto;
+import com.isxcode.star.backend.api.base.exceptions.WorkRunException;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.star.modules.datasource.entity.DatasourceEntity;
 import com.isxcode.star.modules.datasource.repository.DatasourceRepository;

@@ -1,6 +1,6 @@
 package com.isxcode.star.modules.work.run;
 
-import com.isxcode.star.api.work.pojos.dto.*;
+import com.isxcode.star.api.work.dto.*;
 import lombok.Builder;
 import lombok.Data;
 

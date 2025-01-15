@@ -1,10 +1,10 @@
 package com.isxcode.star.modules.cluster.mapper;
 
-import com.isxcode.star.api.cluster.pojos.dto.ScpFileEngineNodeDto;
-import com.isxcode.star.api.cluster.pojos.req.AddClusterNodeReq;
-import com.isxcode.star.api.cluster.pojos.req.UpdateClusterNodeReq;
-import com.isxcode.star.api.cluster.pojos.res.QueryNodeRes;
-import com.isxcode.star.api.cluster.pojos.res.GetClusterNodeRes;
+import com.isxcode.star.api.cluster.dto.ScpFileEngineNodeDto;
+import com.isxcode.star.api.cluster.req.AddClusterNodeReq;
+import com.isxcode.star.api.cluster.req.UpdateClusterNodeReq;
+import com.isxcode.star.api.cluster.res.QueryNodeRes;
+import com.isxcode.star.api.cluster.res.GetClusterNodeRes;
 import com.isxcode.star.modules.cluster.entity.ClusterNodeEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

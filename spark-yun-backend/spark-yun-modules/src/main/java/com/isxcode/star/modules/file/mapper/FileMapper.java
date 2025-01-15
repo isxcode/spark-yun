@@ -1,6 +1,6 @@
 package com.isxcode.star.modules.file.mapper;
 
-import com.isxcode.star.api.file.pojos.res.PageFileRes;
+import com.isxcode.star.api.file.res.PageFileRes;
 import com.isxcode.star.modules.file.entity.FileEntity;
 import org.mapstruct.Mapper;
 

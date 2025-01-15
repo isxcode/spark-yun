@@ -1,13 +1,13 @@
 package com.isxcode.star.modules.work.controller;
 
-import com.isxcode.star.api.instance.pojos.req.*;
-import com.isxcode.star.api.instance.pojos.res.GetWorkInstanceValuePathRes;
-import com.isxcode.star.api.instance.pojos.res.GetWorkflowInstanceRes;
-import com.isxcode.star.api.instance.pojos.res.QueryInstanceRes;
+import com.isxcode.star.api.instance.req.*;
+import com.isxcode.star.api.instance.res.GetWorkInstanceValuePathRes;
+import com.isxcode.star.api.instance.res.GetWorkflowInstanceRes;
+import com.isxcode.star.api.instance.res.QueryInstanceRes;
 import com.isxcode.star.api.main.constants.ModuleCode;
 import com.isxcode.star.api.user.constants.RoleType;
-import com.isxcode.star.api.work.pojos.req.*;
-import com.isxcode.star.api.work.pojos.res.*;
+import com.isxcode.star.api.work.req.*;
+import com.isxcode.star.api.work.res.*;
 import com.isxcode.star.common.annotations.successResponse.SuccessResponse;
 import com.isxcode.star.modules.work.service.ExcelSyncService;
 import com.isxcode.star.modules.work.service.biz.SyncWorkBizService;

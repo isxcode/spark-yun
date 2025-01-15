@@ -1,8 +1,8 @@
 package com.isxcode.star.modules.cluster.controller;
 
-import com.isxcode.star.api.cluster.pojos.req.*;
-import com.isxcode.star.api.cluster.pojos.res.PageClusterRes;
-import com.isxcode.star.api.cluster.pojos.res.QueryAllClusterRes;
+import com.isxcode.star.api.cluster.req.*;
+import com.isxcode.star.api.cluster.res.PageClusterRes;
+import com.isxcode.star.api.cluster.res.QueryAllClusterRes;
 import com.isxcode.star.api.main.constants.ModuleCode;
 import com.isxcode.star.api.user.constants.RoleType;
 import com.isxcode.star.common.annotations.successResponse.SuccessResponse;

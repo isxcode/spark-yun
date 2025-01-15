@@ -1,9 +1,9 @@
 package com.isxcode.star.modules.file.controller;
 
-import com.isxcode.star.api.file.pojos.req.DeleteFileReq;
-import com.isxcode.star.api.file.pojos.req.DownloadFileReq;
-import com.isxcode.star.api.file.pojos.req.PageFileReq;
-import com.isxcode.star.api.file.pojos.res.PageFileRes;
+import com.isxcode.star.api.file.req.DeleteFileReq;
+import com.isxcode.star.api.file.req.DownloadFileReq;
+import com.isxcode.star.api.file.req.PageFileReq;
+import com.isxcode.star.api.file.res.PageFileRes;
 import com.isxcode.star.api.main.constants.ModuleCode;
 import com.isxcode.star.api.user.constants.RoleType;
 import com.isxcode.star.common.annotations.successResponse.SuccessResponse;

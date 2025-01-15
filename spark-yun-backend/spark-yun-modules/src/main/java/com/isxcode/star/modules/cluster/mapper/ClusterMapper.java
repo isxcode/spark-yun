@@ -1,10 +1,10 @@
 package com.isxcode.star.modules.cluster.mapper;
 
 import com.isxcode.star.api.cluster.constants.ClusterStatus;
-import com.isxcode.star.api.cluster.pojos.req.AddClusterReq;
-import com.isxcode.star.api.cluster.pojos.req.UpdateClusterReq;
-import com.isxcode.star.api.cluster.pojos.res.PageClusterRes;
-import com.isxcode.star.api.cluster.pojos.res.QueryAllClusterRes;
+import com.isxcode.star.api.cluster.req.AddClusterReq;
+import com.isxcode.star.api.cluster.req.UpdateClusterReq;
+import com.isxcode.star.api.cluster.res.PageClusterRes;
+import com.isxcode.star.api.cluster.res.QueryAllClusterRes;
 import com.isxcode.star.modules.cluster.entity.ClusterEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

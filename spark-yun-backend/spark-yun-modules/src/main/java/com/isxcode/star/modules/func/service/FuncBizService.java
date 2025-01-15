@@ -1,10 +1,10 @@
 package com.isxcode.star.modules.func.service;
 
-import com.isxcode.star.api.func.pojos.req.AddFuncReq;
-import com.isxcode.star.api.func.pojos.req.DeleteFuncReq;
-import com.isxcode.star.api.func.pojos.req.PageFuncReq;
-import com.isxcode.star.api.func.pojos.req.UpdateFuncReq;
-import com.isxcode.star.api.func.pojos.res.PageFuncRes;
+import com.isxcode.star.api.func.req.AddFuncReq;
+import com.isxcode.star.api.func.req.DeleteFuncReq;
+import com.isxcode.star.api.func.req.PageFuncReq;
+import com.isxcode.star.api.func.req.UpdateFuncReq;
+import com.isxcode.star.api.func.res.PageFuncRes;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.star.modules.file.service.FileService;
 import com.isxcode.star.modules.func.entity.FuncEntity;

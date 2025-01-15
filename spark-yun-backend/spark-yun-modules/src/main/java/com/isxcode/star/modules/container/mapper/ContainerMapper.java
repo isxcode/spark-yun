@@ -1,9 +1,9 @@
 package com.isxcode.star.modules.container.mapper;
 
-import com.isxcode.star.api.container.pojo.req.AddContainerReq;
-import com.isxcode.star.api.container.pojo.req.UpdateContainerReq;
-import com.isxcode.star.api.container.pojo.res.GetContainerRes;
-import com.isxcode.star.api.container.pojo.res.PageContainerRes;
+import com.isxcode.star.api.container.req.AddContainerReq;
+import com.isxcode.star.api.container.req.UpdateContainerReq;
+import com.isxcode.star.api.container.res.GetContainerRes;
+import com.isxcode.star.api.container.res.PageContainerRes;
 import com.isxcode.star.modules.container.entity.ContainerEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

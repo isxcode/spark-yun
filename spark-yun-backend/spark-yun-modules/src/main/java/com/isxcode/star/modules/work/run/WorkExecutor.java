@@ -7,7 +7,7 @@ import com.isxcode.star.api.alarm.constants.AlarmEventType;
 import com.isxcode.star.api.instance.constants.InstanceStatus;
 import com.isxcode.star.api.instance.constants.InstanceType;
 import com.isxcode.star.api.work.constants.WorkLog;
-import com.isxcode.star.api.work.exceptions.WorkRunException;
+import com.isxcode.star.backend.api.base.exceptions.WorkRunException;
 import com.isxcode.star.modules.alarm.service.AlarmService;
 import com.isxcode.star.modules.work.entity.WorkInstanceEntity;
 import com.isxcode.star.modules.work.repository.WorkInstanceRepository;

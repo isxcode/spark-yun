@@ -1,6 +1,6 @@
 package com.isxcode.star.api.meta.req;
 
-import com.isxcode.star.api.work.pojos.dto.CronConfig;
+import com.isxcode.star.api.work.dto.CronConfig;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 

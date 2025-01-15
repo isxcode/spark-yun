@@ -34,7 +34,7 @@ spring:
       enabled: true
 
   banner:
-    location: classpath:banner/logo.txt
+    location: classpath:logo.txt
 
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
