@@ -1,10 +1,10 @@
 package com.isxcode.star.modules.tenant.mapper;
 
-import com.isxcode.star.api.tenant.pojos.req.AddTenantReq;
-import com.isxcode.star.api.tenant.pojos.req.UpdateTenantForSystemAdminReq;
-import com.isxcode.star.api.tenant.pojos.req.UpdateTenantForTenantAdminReq;
-import com.isxcode.star.api.tenant.pojos.res.PageTenantRes;
-import com.isxcode.star.api.tenant.pojos.res.QueryUserTenantRes;
+import com.isxcode.star.api.tenant.req.AddTenantReq;
+import com.isxcode.star.api.tenant.req.UpdateTenantForSystemAdminReq;
+import com.isxcode.star.api.tenant.req.UpdateTenantForTenantAdminReq;
+import com.isxcode.star.api.tenant.res.PageTenantRes;
+import com.isxcode.star.api.tenant.res.QueryUserTenantRes;
 import com.isxcode.star.api.user.constants.UserStatus;
 import com.isxcode.star.modules.tenant.entity.TenantEntity;
 import java.util.List;

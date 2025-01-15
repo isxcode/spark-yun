@@ -1,7 +1,7 @@
 package com.isxcode.star.modules.license.repository;
 
 import com.alibaba.fastjson.JSON;
-import com.isxcode.star.api.license.pojos.req.LicenseReq;
+import com.isxcode.star.api.license.req.LicenseReq;
 import org.springframework.cache.concurrent.ConcurrentMapCache;
 import org.springframework.stereotype.Component;
 

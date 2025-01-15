@@ -1,11 +1,11 @@
 package com.isxcode.star.modules.view.mapper;
 
-import com.isxcode.star.api.view.pojo.dto.CardInfo;
-import com.isxcode.star.api.view.pojo.req.AddViewCardReq;
-import com.isxcode.star.api.view.pojo.req.AddViewReq;
-import com.isxcode.star.api.view.pojo.res.AddViewRes;
-import com.isxcode.star.api.view.pojo.res.PageViewCardRes;
-import com.isxcode.star.api.view.pojo.res.PageViewRes;
+import com.isxcode.star.api.view.dto.CardInfo;
+import com.isxcode.star.api.view.req.AddViewCardReq;
+import com.isxcode.star.api.view.req.AddViewReq;
+import com.isxcode.star.api.view.res.AddViewRes;
+import com.isxcode.star.api.view.res.PageViewCardRes;
+import com.isxcode.star.api.view.res.PageViewRes;
 import com.isxcode.star.modules.view.entity.ViewCardEntity;
 import com.isxcode.star.modules.view.entity.ViewEntity;
 import org.mapstruct.Mapper;

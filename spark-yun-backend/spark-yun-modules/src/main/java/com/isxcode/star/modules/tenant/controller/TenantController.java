@@ -1,10 +1,10 @@
 package com.isxcode.star.modules.tenant.controller;
 
 import com.isxcode.star.api.main.constants.ModuleCode;
-import com.isxcode.star.api.tenant.pojos.req.*;
-import com.isxcode.star.api.tenant.pojos.res.GetTenantRes;
-import com.isxcode.star.api.tenant.pojos.res.PageTenantRes;
-import com.isxcode.star.api.tenant.pojos.res.QueryUserTenantRes;
+import com.isxcode.star.api.tenant.req.*;
+import com.isxcode.star.api.tenant.res.GetTenantRes;
+import com.isxcode.star.api.tenant.res.PageTenantRes;
+import com.isxcode.star.api.tenant.res.QueryUserTenantRes;
 import com.isxcode.star.api.user.constants.RoleType;
 import com.isxcode.star.common.annotations.successResponse.SuccessResponse;
 import com.isxcode.star.modules.tenant.service.biz.TenantBizService;

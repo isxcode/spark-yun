@@ -1,8 +1,8 @@
 package com.isxcode.star.modules.workflow.service;
 
 import com.alibaba.fastjson.JSON;
-import com.isxcode.star.api.workflow.pojos.req.ConfigWorkflowReq;
-import com.isxcode.star.api.workflow.pojos.req.ConfigWorkflowSettingReq;
+import com.isxcode.star.api.workflow.req.ConfigWorkflowReq;
+import com.isxcode.star.api.workflow.req.ConfigWorkflowSettingReq;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.star.modules.work.entity.WorkEntity;
 import com.isxcode.star.modules.work.repository.WorkRepository;

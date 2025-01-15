@@ -4,7 +4,7 @@ import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.RuntimeUtil;
 import com.isxcode.star.api.work.constants.WorkLog;
 import com.isxcode.star.api.work.constants.WorkType;
-import com.isxcode.star.api.work.exceptions.WorkRunException;
+import com.isxcode.star.backend.api.base.exceptions.WorkRunException;
 import com.isxcode.star.backend.api.base.properties.IsxAppProperties;
 import com.isxcode.star.common.utils.path.PathUtils;
 import com.isxcode.star.modules.alarm.service.AlarmService;

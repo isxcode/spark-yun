@@ -1,5 +1,8 @@
 package com.isxcode.star.api.alarm.constants;
 
+/**
+ * 消息体的状态.
+ */
 public interface MessageStatus {
 
     /**

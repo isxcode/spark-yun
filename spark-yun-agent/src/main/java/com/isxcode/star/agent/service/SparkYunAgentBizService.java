@@ -3,8 +3,8 @@ package com.isxcode.star.agent.service;
 import com.alibaba.fastjson.JSON;
 import com.isxcode.star.agent.run.AgentFactory;
 import com.isxcode.star.agent.run.AgentService;
-import com.isxcode.star.api.agent.pojos.req.*;
-import com.isxcode.star.api.agent.pojos.res.*;
+import com.isxcode.star.api.agent.req.*;
+import com.isxcode.star.api.agent.res.*;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,7 +33,7 @@ public class SparkYunAgentBizService {
             String appId = agentService.submitWork(sparkLauncher);
             return SubmitWorkRes.builder().appId(appId).build();
         } catch (IsxAppException e) {
-            log.error(e.getMessage(), e);
+            log.error(e.getMsg(), e);
             throw new IsxAppException(e.getMsg());
         } catch (Exception e) {
             log.error(e.getMessage(), e);
@@ -49,7 +49,7 @@ public class SparkYunAgentBizService {
                 agentService.getWorkStatus(getWorkStatusReq.getAppId(), getWorkStatusReq.getSparkHomePath());
             return GetWorkStatusRes.builder().appId(getWorkStatusReq.getAppId()).appStatus(appStatus).build();
         } catch (IsxAppException e) {
-            log.error(e.getMessage(), e);
+            log.error(e.getMsg(), e);
             throw new IsxAppException(e.getMsg());
         } catch (Exception e) {
             log.error(e.getMessage(), e);
@@ -65,7 +65,7 @@ public class SparkYunAgentBizService {
                 agentService.getStderrLog(getWorkStderrLogReq.getAppId(), getWorkStderrLogReq.getSparkHomePath());
             return GetWorkStderrLogRes.builder().log(appLog).build();
         } catch (IsxAppException e) {
-            log.error(e.getMessage(), e);
+            log.error(e.getMsg(), e);
             throw new IsxAppException(e.getMsg());
         } catch (Exception e) {
             log.error(e.getMessage(), e);
@@ -80,7 +80,7 @@ public class SparkYunAgentBizService {
         try {
             appLog = agentService.getStdoutLog(getWorkStdoutLogReq.getAppId(), getWorkStdoutLogReq.getSparkHomePath());
         } catch (IsxAppException e) {
-            log.error(e.getMessage(), e);
+            log.error(e.getMsg(), e);
             throw new IsxAppException(e.getMsg());
         } catch (Exception e) {
             log.error(e.getMessage(), e);
@@ -102,18 +102,17 @@ public class SparkYunAgentBizService {
     public GetWorkDataRes getWorkData(GetWorkDataReq getWorkDataReq) {
 
         AgentService agentService = agentFactory.getAgentService(getWorkDataReq.getClusterType());
-        String workDataStr;
         try {
-            workDataStr = agentService.getWorkDataStr(getWorkDataReq.getAppId(), getWorkDataReq.getSparkHomePath());
+            String workDataStr =
+                agentService.getWorkDataStr(getWorkDataReq.getAppId(), getWorkDataReq.getSparkHomePath());
+            return GetWorkDataRes.builder().data(JSON.parseArray(workDataStr, List.class)).build();
         } catch (IsxAppException e) {
-            log.error(e.getMessage(), e);
+            log.error(e.getMsg(), e);
             throw new IsxAppException(e.getMsg());
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             throw new IsxAppException(e.getMessage());
         }
-
-        return GetWorkDataRes.builder().data(JSON.parseArray(workDataStr, List.class)).build();
     }
 
     public void stopWork(StopWorkReq stopWorkReq) {
@@ -123,7 +122,7 @@ public class SparkYunAgentBizService {
             agentService.stopWork(stopWorkReq.getAppId(), stopWorkReq.getSparkHomePath(),
                 stopWorkReq.getAgentHomePath());
         } catch (IsxAppException e) {
-            log.error(e.getMessage(), e);
+            log.error(e.getMsg(), e);
             throw new IsxAppException(e.getMsg());
         } catch (Exception e) {
             log.error(e.getMessage(), e);
@@ -179,7 +178,7 @@ public class SparkYunAgentBizService {
             String appId = agentService.submitWork(sparkLauncher);
             return DeployContainerRes.builder().appId(appId).port(port).build();
         } catch (IsxAppException e) {
-            log.error(e.getMessage(), e);
+            log.error(e.getMsg(), e);
             throw new IsxAppException(e.getMsg());
         } catch (Exception e) {
             log.error(e.getMessage(), e);

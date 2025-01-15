@@ -1,6 +1,6 @@
 package com.isxcode.star.modules.work.service;
 
-import com.isxcode.star.api.datasource.pojos.dto.ColumnMetaDto;
+import com.isxcode.star.api.datasource.dto.ColumnMetaDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;

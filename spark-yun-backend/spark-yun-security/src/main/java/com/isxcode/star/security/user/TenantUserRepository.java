@@ -1,7 +1,7 @@
 package com.isxcode.star.security.user;
 
 import com.isxcode.star.api.main.constants.ModuleCode;
-import com.isxcode.star.api.tenant.pojos.res.PageTenantUserRes;
+import com.isxcode.star.api.tenant.res.PageTenantUserRes;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.cache.annotation.CacheConfig;
@@ -20,8 +20,8 @@ public interface TenantUserRepository extends JpaRepository<TenantUserEntity, St
 
     List<TenantUserEntity> findAllByUserId(String userId);
 
-    @Query(value = "select " + "   new com.isxcode.star.api.tenant.pojos.res.PageTenantUserRes(T.id , "
-        + "   U.account , " + "   U.username , " + "   U.phone , " + "   U.email , " + "   T.roleCode,U.id) "
+    @Query(value = "select " + "   new com.isxcode.star.api.tenant.res.PageTenantUserRes(T.id , " + "   U.account , "
+        + "   U.username , " + "   U.phone , " + "   U.email , " + "   T.roleCode,U.id) "
         + "from TenantUserEntity T left join UserEntity U on T.userId = U.id  "
         + "WHERE U.roleCode != 'ROLE_SYS_ADMIN' " + "   and T.tenantId=:tenantId "
         + "   and (U.username LIKE %:searchKeyWord% " + "OR U.account LIKE %:searchKeyWord% "

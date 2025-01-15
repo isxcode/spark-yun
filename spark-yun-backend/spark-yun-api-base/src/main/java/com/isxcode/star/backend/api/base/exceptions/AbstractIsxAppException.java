@@ -3,15 +3,22 @@ package com.isxcode.star.backend.api.base.exceptions;
 import lombok.Getter;
 
 /** 异常抽象类. */
+@Getter
 public abstract class AbstractIsxAppException extends RuntimeException {
 
-    @Getter
+    /**
+     * 异常编码.
+     */
     private final String code;
 
-    @Getter
+    /**
+     * 异常的中文信息.
+     */
     private final String msg;
 
-    @Getter
+    /**
+     * 异常的英文信息.
+     */
     private final String err;
 
     public AbstractIsxAppException(AbstractIsxAppExceptionEnum abstractSparkYunExceptionEnum) {

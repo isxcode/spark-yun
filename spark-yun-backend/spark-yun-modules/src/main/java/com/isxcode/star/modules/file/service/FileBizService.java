@@ -2,10 +2,10 @@ package com.isxcode.star.modules.file.service;
 
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.io.unit.DataSizeUtil;
-import com.isxcode.star.api.file.pojos.req.DeleteFileReq;
-import com.isxcode.star.api.file.pojos.req.DownloadFileReq;
-import com.isxcode.star.api.file.pojos.req.PageFileReq;
-import com.isxcode.star.api.file.pojos.res.PageFileRes;
+import com.isxcode.star.api.file.req.DeleteFileReq;
+import com.isxcode.star.api.file.req.DownloadFileReq;
+import com.isxcode.star.api.file.req.PageFileReq;
+import com.isxcode.star.api.file.res.PageFileRes;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.star.backend.api.base.properties.IsxAppProperties;
 import com.isxcode.star.common.utils.path.PathUtils;

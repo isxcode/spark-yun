@@ -1,13 +1,13 @@
 package com.isxcode.star.modules.monitor.controller;
 
 import com.isxcode.star.api.main.constants.ModuleCode;
-import com.isxcode.star.api.monitor.pojos.req.GetClusterMonitorReq;
-import com.isxcode.star.api.monitor.pojos.req.GetInstanceMonitorReq;
-import com.isxcode.star.api.monitor.pojos.req.PageInstancesReq;
-import com.isxcode.star.api.monitor.pojos.res.GetClusterMonitorRes;
-import com.isxcode.star.api.monitor.pojos.res.GetInstanceMonitorRes;
-import com.isxcode.star.api.monitor.pojos.res.GetSystemMonitorRes;
-import com.isxcode.star.api.monitor.pojos.res.PageInstancesRes;
+import com.isxcode.star.api.monitor.req.GetClusterMonitorReq;
+import com.isxcode.star.api.monitor.req.GetInstanceMonitorReq;
+import com.isxcode.star.api.monitor.req.PageInstancesReq;
+import com.isxcode.star.api.monitor.res.GetClusterMonitorRes;
+import com.isxcode.star.api.monitor.res.GetInstanceMonitorRes;
+import com.isxcode.star.api.monitor.res.GetSystemMonitorRes;
+import com.isxcode.star.api.monitor.res.PageInstancesRes;
 import com.isxcode.star.api.user.constants.RoleType;
 import com.isxcode.star.common.annotations.successResponse.SuccessResponse;
 import com.isxcode.star.modules.monitor.service.MonitorBizService;

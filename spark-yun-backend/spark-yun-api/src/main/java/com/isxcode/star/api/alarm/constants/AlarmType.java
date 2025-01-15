@@ -1,5 +1,8 @@
 package com.isxcode.star.api.alarm.constants;
 
+/**
+ * 基线告警类型.
+ */
 public interface AlarmType {
 
     /**

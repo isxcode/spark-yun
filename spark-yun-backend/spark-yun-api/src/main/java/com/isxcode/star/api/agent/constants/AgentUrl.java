@@ -2,6 +2,9 @@ package com.isxcode.star.api.agent.constants;
 
 import com.isxcode.star.api.main.constants.ModuleCode;
 
+/**
+ * 代理接口访问地址.
+ */
 public interface AgentUrl {
 
     String SUBMIT_WORK_URL = "/" + ModuleCode.SPARK_YUN_AGENT + "/submitWork";

@@ -3,8 +3,8 @@ package com.isxcode.star.modules.tenant.service.biz;
 import static com.isxcode.star.common.config.CommonConfig.TENANT_ID;
 import static com.isxcode.star.common.config.CommonConfig.USER_ID;
 
-import com.isxcode.star.api.tenant.pojos.req.*;
-import com.isxcode.star.api.tenant.pojos.res.PageTenantUserRes;
+import com.isxcode.star.api.tenant.req.*;
+import com.isxcode.star.api.tenant.res.PageTenantUserRes;
 import com.isxcode.star.api.user.constants.RoleType;
 import com.isxcode.star.api.user.constants.UserStatus;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;

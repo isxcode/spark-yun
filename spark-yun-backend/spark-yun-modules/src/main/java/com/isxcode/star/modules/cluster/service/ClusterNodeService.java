@@ -1,9 +1,9 @@
 package com.isxcode.star.modules.cluster.service;
 
-import com.isxcode.star.api.cluster.pojos.dto.ScpFileEngineNodeDto;
+import com.isxcode.star.api.cluster.dto.ScpFileEngineNodeDto;
 import com.isxcode.star.api.main.properties.SparkYunProperties;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
-import com.isxcode.star.common.utils.AesUtils;
+import com.isxcode.star.common.utils.aes.AesUtils;
 import com.isxcode.star.common.utils.ssh.SshUtils;
 import com.isxcode.star.modules.cluster.entity.ClusterNodeEntity;
 import com.isxcode.star.modules.cluster.mapper.ClusterNodeMapper;

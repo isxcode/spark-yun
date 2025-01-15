@@ -4,7 +4,7 @@ import com.alibaba.fastjson2.JSON;
 import com.isxcode.star.agent.properties.SparkYunAgentProperties;
 import com.isxcode.star.agent.run.AgentService;
 import com.isxcode.star.api.agent.constants.AgentType;
-import com.isxcode.star.api.agent.pojos.req.SubmitWorkReq;
+import com.isxcode.star.api.agent.req.SubmitWorkReq;
 import com.isxcode.star.api.work.constants.WorkType;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import lombok.RequiredArgsConstructor;
@@ -69,10 +69,10 @@ public class YarnAgentService implements AgentService {
             if (jarFiles != null) {
                 for (File jar : jarFiles) {
                     try {
-                        // 使用本地hive驱动
-                        if (!jar.getName().contains("hive") && !jar.getName().contains("zhiqingyun-agent.jar")) {
-                            sparkLauncher.addJar(jar.toURI().toURL().toString());
+                        if (jar.getName().contains("hive") || jar.getName().contains("zhiqingyun-agent.jar")) {
+                            continue;
                         }
+                        sparkLauncher.addJar(jar.toURI().toURL().toString());
                     } catch (MalformedURLException e) {
                         log.error(e.getMessage(), e);
                         throw new IsxAppException("50010", "添加lib中文件异常", e.getMessage());
@@ -81,7 +81,7 @@ public class YarnAgentService implements AgentService {
             }
         }
 
-        // 引入excel/csv文件
+        // 引入excel文件
         if (submitWorkReq.getPluginReq().getCsvFilePath() != null) {
             sparkLauncher.addFile(submitWorkReq.getPluginReq().getCsvFilePath());
         }

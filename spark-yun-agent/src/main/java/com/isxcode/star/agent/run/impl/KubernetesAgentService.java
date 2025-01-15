@@ -5,7 +5,7 @@ import com.alibaba.fastjson2.JSON;
 import com.isxcode.star.agent.run.AgentService;
 import com.isxcode.star.api.agent.constants.AgentKubernetes;
 import com.isxcode.star.api.agent.constants.AgentType;
-import com.isxcode.star.api.agent.pojos.req.SubmitWorkReq;
+import com.isxcode.star.api.agent.req.SubmitWorkReq;
 import com.isxcode.star.api.work.constants.WorkType;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import lombok.extern.slf4j.Slf4j;
@@ -32,33 +32,33 @@ public class KubernetesAgentService implements AgentService {
     @Override
     public String getMaster(String sparkHomePath) throws Exception {
 
-        String getMasterCmd = "kubectl cluster-info";
+        String clusterInfoCmd = "kubectl cluster-info";
+        Process clusterInfoProcess = Runtime.getRuntime().exec(clusterInfoCmd);
+        InputStream inputStream = clusterInfoProcess.getInputStream();
+        BufferedReader clusterInfoReader =
+            new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
 
-        Process process = Runtime.getRuntime().exec(getMasterCmd);
-        InputStream inputStream = process.getInputStream();
-        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
-
-        StringBuilder errLog = new StringBuilder();
+        StringBuilder clusterInfoOutput = new StringBuilder();
         String line;
-        while ((line = reader.readLine()) != null) {
-            errLog.append(line).append("\n");
+        while ((line = clusterInfoReader.readLine()) != null) {
+            clusterInfoOutput.append(line).append("\n");
         }
 
-        try {
-            int exitCode = process.waitFor();
-            if (exitCode == 1) {
-                throw new IsxAppException(errLog.toString());
-            } else {
-                int startIndex = errLog.indexOf("https://") + "https://".length();
-                int endIndex = errLog.indexOf("\n", startIndex);
-                // k8s命令会返回特殊字符
-                return ("k8s://" + errLog.substring(startIndex, endIndex)).replaceAll("0m", "").replaceAll("\u001B", "")
-                    .replaceAll("\\[", "");
+        String[] clusterInfoLines = clusterInfoOutput.toString().split("\n");
+        String result = null;
+        for (String infoLine : clusterInfoLines) {
+            if (infoLine.contains("https://")) {
+                String[] fields = infoLine.split(" ");
+                result = fields[fields.length - 1];
+                break;
             }
-        } catch (InterruptedException e) {
-            log.error(e.getMessage(), e);
-            throw new IsxAppException(e.getMessage());
         }
+
+        if (result == null) {
+            throw new IsxAppException("No https:// URL found in cluster info.");
+        }
+
+        return result.replaceAll("https://", "k8s://").replaceAll("\\u001B\\[[;\\d]*m", "");
     }
 
     @Override
@@ -70,6 +70,8 @@ public class KubernetesAgentService implements AgentService {
             .setMaster(getMaster(submitWorkReq.getSparkHomePath()))
             .setAppResource("local:///opt/spark/examples/jars/" + submitWorkReq.getSparkSubmit().getAppResource())
             .setSparkHome(submitWorkReq.getAgentHomePath() + File.separator + "spark-min");
+
+        // 设置通用配置
         sparkLauncher.setConf("spark.kubernetes.container.image", AgentKubernetes.SPARK_DOCKER_IMAGE);
         sparkLauncher.setConf("spark.kubernetes.namespace", AgentKubernetes.NAMESPACE);
         sparkLauncher.setConf("spark.kubernetes.authenticate.driver.serviceAccountName",
@@ -85,23 +87,21 @@ public class KubernetesAgentService implements AgentService {
 
         // 判断是否为自定义任务
         if (WorkType.SPARK_JAR.equals(submitWorkReq.getWorkType())) {
-            sparkLauncher.setAppName(submitWorkReq.getSparkSubmit().getAppName() + "-" + submitWorkReq.getWorkType()
-                + "-" + submitWorkReq.getWorkId() + "-" + submitWorkReq.getWorkInstanceId());
-            sparkLauncher.setConf("spark.kubernetes.driver.volumes.hostPath.jar.options.path",
-                submitWorkReq.getAgentHomePath() + File.separator + "file" + File.separator
-                    + submitWorkReq.getSparkSubmit().getAppResource());
-            sparkLauncher.setConf("spark.kubernetes.executor.volumes.hostPath.jar.options.path",
-                submitWorkReq.getAgentHomePath() + File.separator + "file" + File.separator
-                    + submitWorkReq.getSparkSubmit().getAppResource());
+            String appName = submitWorkReq.getSparkSubmit().getAppName() + "-" + submitWorkReq.getWorkType() + "-"
+                + submitWorkReq.getWorkId() + "-" + submitWorkReq.getWorkInstanceId();
+            sparkLauncher.setAppName(appName);
+            String sparkJarPath = submitWorkReq.getAgentHomePath() + File.separator + "file" + File.separator
+                + submitWorkReq.getSparkSubmit().getAppResource();
+            sparkLauncher.setConf("spark.kubernetes.driver.volumes.hostPath.jar.options.path", sparkJarPath);
+            sparkLauncher.setConf("spark.kubernetes.executor.volumes.hostPath.jar.options.path", sparkJarPath);
         } else {
-            sparkLauncher.setAppName("zhiqingyun-" + submitWorkReq.getWorkType() + "-" + submitWorkReq.getWorkId() + "-"
-                + submitWorkReq.getWorkInstanceId());
-            sparkLauncher.setConf("spark.kubernetes.driver.volumes.hostPath.jar.options.path",
-                submitWorkReq.getAgentHomePath() + File.separator + "plugins" + File.separator
-                    + submitWorkReq.getSparkSubmit().getAppResource());
-            sparkLauncher.setConf("spark.kubernetes.executor.volumes.hostPath.jar.options.path",
-                submitWorkReq.getAgentHomePath() + File.separator + "plugins" + File.separator
-                    + submitWorkReq.getSparkSubmit().getAppResource());
+            String appName = "zhiqingyun-" + submitWorkReq.getWorkType() + "-" + submitWorkReq.getWorkId() + "-"
+                + submitWorkReq.getWorkInstanceId();
+            sparkLauncher.setAppName(appName);
+            String sparkJarPath = submitWorkReq.getAgentHomePath() + File.separator + "plugins" + File.separator
+                + submitWorkReq.getSparkSubmit().getAppResource();
+            sparkLauncher.setConf("spark.kubernetes.driver.volumes.hostPath.jar.options.path", sparkJarPath);
+            sparkLauncher.setConf("spark.kubernetes.executor.volumes.hostPath.jar.options.path", sparkJarPath);
         }
 
         // 引入至轻云的jar
@@ -109,18 +109,19 @@ public class KubernetesAgentService implements AgentService {
             File[] jarFiles = new File(submitWorkReq.getAgentHomePath() + File.separator + "lib").listFiles();
             if (jarFiles != null) {
                 for (int i = 0; i < jarFiles.length; i++) {
-                    if (!jarFiles[i].getName().contains("hive")
-                        && !jarFiles[i].getName().contains("zhiqingyun-agent.jar")) {
-                        sparkLauncher.addJar("local:///opt/spark/examples/jars/lib/" + jarFiles[i].getName());
-                        sparkLauncher.setConf("spark.kubernetes.driver.volumes.hostPath." + i + ".mount.path",
-                            "/opt/spark/examples/jars/lib/" + jarFiles[i].getName());
-                        sparkLauncher.setConf("spark.kubernetes.driver.volumes.hostPath." + i + ".options.path",
-                            jarFiles[i].getPath());
-                        sparkLauncher.setConf("spark.kubernetes.executor.volumes.hostPath." + i + ".mount.path",
-                            "/opt/spark/examples/jars/lib/" + jarFiles[i].getName());
-                        sparkLauncher.setConf("spark.kubernetes.executor.volumes.hostPath." + i + ".options.path",
-                            jarFiles[i].getPath());
+                    if (jarFiles[i].getName().contains("hive")
+                        || jarFiles[i].getName().contains("zhiqingyun-agent.jar")) {
+                        continue;
                     }
+                    sparkLauncher.addJar("local:///opt/spark/examples/jars/lib/" + jarFiles[i].getName());
+                    sparkLauncher.setConf("spark.kubernetes.driver.volumes.hostPath." + i + ".mount.path",
+                        "/opt/spark/examples/jars/lib/" + jarFiles[i].getName());
+                    sparkLauncher.setConf("spark.kubernetes.driver.volumes.hostPath." + i + ".options.path",
+                        jarFiles[i].getPath());
+                    sparkLauncher.setConf("spark.kubernetes.executor.volumes.hostPath." + i + ".mount.path",
+                        "/opt/spark/examples/jars/lib/" + jarFiles[i].getName());
+                    sparkLauncher.setConf("spark.kubernetes.executor.volumes.hostPath." + i + ".options.path",
+                        jarFiles[i].getPath());
                 }
             }
         }
@@ -164,7 +165,7 @@ public class KubernetesAgentService implements AgentService {
             }
         }
 
-        // 引入excel/csv文件
+        // 引入excel文件
         String csvFilePath = submitWorkReq.getPluginReq().getCsvFilePath();
         if (submitWorkReq.getPluginReq().getCsvFilePath() != null) {
             sparkLauncher.setConf("spark.kubernetes.driver.volumes.hostPath.excel.mount.path", csvFilePath);
@@ -213,6 +214,7 @@ public class KubernetesAgentService implements AgentService {
             + "metadata: \n" + "  name: pod-template \n" + "spec:\n" + "  ttlSecondsAfterFinished: 600\n"
             + "  terminationGracePeriodSeconds: 600\n" + "  activeDeadlineSeconds: 600\n");
 
+        // 拼接host映射
         if (!hostMapping.isEmpty()) {
             podTemplate.set(podTemplate + "  hostAliases:\n");
             hostMapping.forEach((k, v) -> podTemplate

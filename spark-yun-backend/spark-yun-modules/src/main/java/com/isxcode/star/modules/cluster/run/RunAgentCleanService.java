@@ -1,8 +1,8 @@
 package com.isxcode.star.modules.cluster.run;
 
 import com.alibaba.fastjson.JSON;
-import com.isxcode.star.api.cluster.pojos.dto.AgentInfo;
-import com.isxcode.star.api.cluster.pojos.dto.ScpFileEngineNodeDto;
+import com.isxcode.star.api.cluster.dto.AgentInfo;
+import com.isxcode.star.api.cluster.dto.ScpFileEngineNodeDto;
 import com.isxcode.star.api.main.properties.SparkYunProperties;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.star.modules.cluster.entity.ClusterNodeEntity;

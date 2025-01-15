@@ -1,9 +1,9 @@
 package com.isxcode.star.modules.meta.mapper;
 
-import com.isxcode.star.api.meta.pojos.ao.MetaColumnAo;
-import com.isxcode.star.api.meta.pojos.ao.MetaTableAo;
-import com.isxcode.star.api.datasource.pojos.dto.QueryColumnDto;
-import com.isxcode.star.api.datasource.pojos.dto.QueryTableDto;
+import com.isxcode.star.api.meta.ao.MetaColumnAo;
+import com.isxcode.star.api.meta.ao.MetaTableAo;
+import com.isxcode.star.api.datasource.dto.QueryColumnDto;
+import com.isxcode.star.api.datasource.dto.QueryTableDto;
 import com.isxcode.star.api.meta.req.AddMetaWokReq;
 import com.isxcode.star.api.meta.res.*;
 import com.isxcode.star.modules.meta.entity.*;

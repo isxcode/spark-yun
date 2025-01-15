@@ -1,16 +1,16 @@
 package com.isxcode.star.modules.workflow.controller;
 
-import com.isxcode.star.api.instance.pojos.req.QueryWorkFlowInstancesReq;
-import com.isxcode.star.api.instance.pojos.res.QueryWorkFlowInstancesRes;
+import com.isxcode.star.api.instance.req.QueryWorkFlowInstancesReq;
+import com.isxcode.star.api.instance.res.QueryWorkFlowInstancesRes;
 import com.isxcode.star.api.main.constants.ModuleCode;
 import com.isxcode.star.api.user.constants.RoleType;
-import com.isxcode.star.api.work.pojos.req.GetWorkflowDefaultClusterReq;
-import com.isxcode.star.api.work.pojos.res.GetWorkflowDefaultClusterRes;
-import com.isxcode.star.api.workflow.pojos.req.*;
-import com.isxcode.star.api.workflow.pojos.res.GetRunWorkInstancesRes;
-import com.isxcode.star.api.workflow.pojos.res.GetWorkflowRes;
-import com.isxcode.star.api.workflow.pojos.res.GetInvokeUrlRes;
-import com.isxcode.star.api.workflow.pojos.res.PageWorkflowRes;
+import com.isxcode.star.api.work.req.GetWorkflowDefaultClusterReq;
+import com.isxcode.star.api.work.res.GetWorkflowDefaultClusterRes;
+import com.isxcode.star.api.workflow.req.*;
+import com.isxcode.star.api.workflow.res.GetRunWorkInstancesRes;
+import com.isxcode.star.api.workflow.res.GetWorkflowRes;
+import com.isxcode.star.api.workflow.res.GetInvokeUrlRes;
+import com.isxcode.star.api.workflow.res.PageWorkflowRes;
 import com.isxcode.star.common.annotations.successResponse.SuccessResponse;
 import com.isxcode.star.modules.workflow.service.WorkflowBizService;
 import com.isxcode.star.modules.workflow.service.WorkflowConfigBizService;

@@ -1,9 +1,9 @@
 package com.isxcode.star.modules.func.mapper;
 
-import com.isxcode.star.api.func.pojos.dto.FuncInfo;
-import com.isxcode.star.api.func.pojos.req.AddFuncReq;
-import com.isxcode.star.api.func.pojos.req.UpdateFuncReq;
-import com.isxcode.star.api.func.pojos.res.PageFuncRes;
+import com.isxcode.star.api.func.dto.FuncInfo;
+import com.isxcode.star.api.func.req.AddFuncReq;
+import com.isxcode.star.api.func.req.UpdateFuncReq;
+import com.isxcode.star.api.func.res.PageFuncRes;
 import com.isxcode.star.modules.func.entity.FuncEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
