@@ -19,7 +19,7 @@ cd /data/zhiqingyun/conf
 wget https://gitee.com/isxcode/spark-yun/raw/main/spark-yun-backend/spark-yun-main/src/main/resources/application-docker.yml
 ```
 
-#### 编辑配置文件
+#### 编辑配置文件(可选操作)
 
 ```bash
 vim /data/zhiqingyun/conf/application-docker.yml
@@ -68,14 +68,16 @@ isx-app:
 
 #### 配置镜像地址
 
-- name: zhiqingyun
-- image: registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun:latest-amd64
+Name: zhiqingyun  
+Image: registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun:latest-amd64   
+Pull Policy: IfNotPresent  
 
 ![20250115175850](https://img.isxcode.com/picgo/20250115175850.png)
 
 #### 配置端口号
 
-> 将8080端口号映射到30001
+> Name: zhiqingyun-port   
+> 将`8080`端口号映射到`30001`
 
 ![20250115180128](https://img.isxcode.com/picgo/20250115180128.png)
 
@@ -87,8 +89,8 @@ isx-app:
 
 #### 映射容器路径
 
- > `/data/zhiqingyun/zhiqingyun`映射到`/var/lib/zhiqingyun`  
- > `/data/zhiqingyun/conf`映射到`/etc/zhiqingyun/conf`
+ > `/var/lib/zhiqingyun`映射到`zhiqingyun`  
+ > `/etc/zhiqingyun/conf`映射到`conf`
 
 ![20250115180053](https://img.isxcode.com/picgo/20250115180053.png)
 
@@ -96,7 +98,7 @@ isx-app:
 
 访问地址：http://39.100.75.11:30001   
 管理员账号：admin  
-账号密码：admin23  
+账号密码：admin123  
 
 ![20250115181005](https://img.isxcode.com/picgo/20250115181005.png)
 
