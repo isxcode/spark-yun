@@ -6,7 +6,8 @@ title: "CDH安装"
 
 #### 前提
 
-> 推荐先安装rancher
+> 安装Rancher  
+> 安装Mysql
 
 #### 上传资源
 
@@ -14,17 +15,17 @@ title: "CDH安装"
 
 ```bash
 scp -r /Users/ispong/OneDrive/Downloads/linux/cdh/cdh.zip zhiqingyun@39.100.75.11:/tmp
-scp /Users/ispong/OneDrive/Downloads/docker/cdh-httpd-1.0-amd64.tar zhiqingyun@39.100.75.11:/tmp
+scp -r /Users/ispong/OneDrive/Downloads/docker/cdh-httpd-1.0-amd64.tar zhiqingyun@39.100.75.11:/tmp
 ```
 
 #### 安装基础软件
 
 ```bash
-# 这个一定要装
+# 安装postgres
 cd /tmp/cdh/rpm/postgres
 sudo rpm -ivh ./* --nosignature --force
 
-# 如果包中有冲突文件，直接删除
+# 安装openjdk
 sudo yum remove java-1.8.0-openjdk-headless -y
 cd /tmp/cdh/rpm/openjdk
 sudo rpm -ivh ./* --nosignature --force
@@ -88,8 +89,7 @@ Flush Privileges;
 
 #### 初始化数据库
 
-> /opt/cloudera/cm/schema/scm_prepare_database.sh -h ${host} -P ${port} mysql ${dbName} ${username} ${password} 
-> 会生成 /etc/cloudera-scm-server/db.properties文件
+> /opt/cloudera/cm/schema/scm_prepare_database.sh -h ${host} -P ${port} mysql ${dbName} ${username} ${password}
 
 ```bash
 /opt/cloudera/cm/schema/scm_prepare_database.sh -h isxcode -P 30102 mysql cdh_scm root admin123
@@ -97,69 +97,8 @@ Flush Privileges;
 
 #### 安装httpd
 
-> **Note:** 如果报错先不用管,可能因为80端口被占用
-
 ```bash
-systemctl start httpd
-vim /etc/httpd/conf/httpd.conf
-```
-
-```bash
-# / Listen
-#Listen 12.34.56.78:80
-Listen 30108
-```
-
-```bash
-systemctl restart httpd
-systemctl status httpd
-```
-
-#### 上传cdh6_parcel文件
-
-```bash
-mkdir -p /var/www/html
-mkdir -p /data/httpd/cdh6_parcel
-ln -s /data/httpd/cdh6_parcel /var/www/html
-cp /tmp/cdh/cdh6.2.0/parcel-6.2.0/* /var/www/html/cdh6_parcel
-
-mkdir -p /data/httpd/cdh6_parcel/cm6/
-cp /tmp/cdh/cdh6.2.0/cloudera-repos-6.2.0/* /var/www/html/cdh6_parcel/cm6/
-```
-
-- parcel镜像地址: http://isxcode:30108/cdh6_parcel (CDH and other software) 
-- cm6镜像地址: http://isxcode:30108/cdh6_parcel/cm6 (Cloudera Manager Agent)
-
-#### 创建本地镜像仓库
-
-```bash
-cd /var/www/html/cdh6_parcel/cm6/
-createrepo .
-```
-
-> 如果存在多个服务器，则都要
-
-```bash
-cd /etc/yum.repos.d
-vim cloudera-manager.repo
-```
-
-```bash
-[cloudera-manager]
-name=Cloudera Manager 6.2.0
-baseurl=http://isxcode:30108/cdh6_parcel/cm6
-gpgcheck=0
-enabled=1
-```
-
-> 离线模式需要删除其他的库，否则cdh无法拉取软件库
-
-```bash
-cd /etc
-mkdir yum.repos.d_bak
-mv yum.repos.d/CentOS-* yum.repos.d_bak/
-yum-config-manager --enable cloudera-manager
-yum clean all && yum makecache
+docker run xxx
 ```
 
 #### 启动scm
