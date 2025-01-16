@@ -290,7 +290,7 @@ newgrp supergroup
 #### hive连接信息
 
 url: jdbc:hive2://39.100.75.11:10000    
-hive.metastore.uris: thrift://isxcode:9083     
+hive.metastore.uris: thrift://172.16.215.84:9083     
 username: zhiqingyun  
 password: <空>  
 
@@ -298,11 +298,11 @@ password: <空>
 
 #### Hadoop访问地址
 
-hdfs: http://39.100.75.11:8088
+hdfs: http://39.100.75.11:9870
 
 ![20250116143806](https://img.isxcode.com/picgo/20250116143806.png)
 
-yarn: http://39.100.75.11:9870
+yarn: http://39.100.75.11:8088
 
 ![20250116143748](https://img.isxcode.com/picgo/20250116143748.png)
 
