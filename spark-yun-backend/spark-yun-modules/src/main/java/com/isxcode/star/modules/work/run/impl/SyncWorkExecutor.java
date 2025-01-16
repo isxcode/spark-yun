@@ -355,7 +355,8 @@ public class SyncWorkExecutor extends WorkExecutor {
             workInstance = updateInstance(workInstance, logBuilder);
 
             // 如果状态是运行中，更新日志，继续执行
-            List<String> runningStatus = Arrays.asList("RUNNING", "UNDEFINED", "SUBMITTED", "CONTAINERCREATING");
+            List<String> runningStatus =
+                Arrays.asList("RUNNING", "UNDEFINED", "SUBMITTED", "CONTAINERCREATING", "PENDING");
             if (runningStatus.contains(workStatusRes.getAppStatus().toUpperCase())) {
                 try {
                     Thread.sleep(4000);
