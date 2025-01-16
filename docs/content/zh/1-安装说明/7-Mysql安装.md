@@ -2,7 +2,7 @@
 title: "Mysql安装"
 ---
 
-## 使用Rancher2.8.5离线安装Mysql
+## Rancher2.8.5离线安装Mysql
 
 #### 前提
 

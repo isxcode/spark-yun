@@ -2,7 +2,7 @@
 title: "Rancher安装"
 ---
 
-## 使用Helm离线安装Rancher2.8.5
+## Helm离线安装Rancher2.8.5
 
 #### 抢占阿里云服务器
 
