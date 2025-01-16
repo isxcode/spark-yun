@@ -2,7 +2,7 @@
 title: "Rancher安装"
 ---
 
-## 使用Helm离线安装Rancher2.8.5
+## Helm离线安装Rancher2.8.5
 
 #### 抢占阿里云服务器
 
@@ -10,11 +10,12 @@ title: "Rancher安装"
 
 ![20250115145156](https://img.isxcode.com/picgo/20250115145156.png)
 
-系统：centos7.9
-配置：16核心32GB  
-外网：39.100.75.11  
-内网：172.16.215.83  
-账号：root  
+系统：CentOS 7.9 64位  
+配置：8vCPU32GB  
+带宽：2Mbps  
+外网：39.100.75.11   
+内网：172.16.215.84  
+账号：root   
 密码：Isxcode123..
 
 #### 创建用户zhiqingyun
@@ -66,8 +67,8 @@ sudo vim /etc/hosts
 ```
 
 ```bash
-#172.16.215.83  iZ8vbi23pah6ef86ph996cZ iZ8vbi23pah6ef86ph996cZ
-172.16.215.83   isxcode
+#172.16.215.84  iZ8vbi23pah6ef86ph996cZ iZ8vbi23pah6ef86ph996cZ
+172.16.215.84   isxcode
 ```
 
 #### 关闭selinux
@@ -347,16 +348,13 @@ helm version
 > password: Harbor12345
 
 ```bash
-docker login isxcode:8443
-```
-
-```bash
-cd /tmp/rancher
-chmod +x rancher-load-images.sh
-
 # 使用root用户导入镜像
+cd /tmp/rancher
 sudo su
+chmod +x rancher-load-images.sh
+docker login isxcode:8443
 ./rancher-load-images.sh --image-list ./rancher-images.txt --registry isxcode:8443/library
+sudo su zhiqingyun
 ```
 
 #### 修改tls认证
@@ -401,6 +399,7 @@ sudo systemctl restart rke2-server.service
 #### k8s安装自签证书
 
 ```bash
+source /etc/profile
 cd /tmp/rancher
 kubectl create namespace cert-manager
 kubectl apply -f ./cert-manager-crd.yaml
