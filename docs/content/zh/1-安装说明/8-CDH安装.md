@@ -279,6 +279,14 @@ EOF
 source /etc/profile
 ```
 
+#### 设置hive访问权限
+
+```bash
+groupadd supergroup
+usermod -a -G supergroup zhiqingyun
+newgrp supergroup
+```
+
 #### hive连接信息
 
 url: jdbc:hive2://39.100.75.11:10000    
