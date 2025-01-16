@@ -156,3 +156,10 @@ curl -i -X POST -H "Accept:application/json" -H "Content-Type:application/json" 
 > 举例： test-connector-prefix.ispong_db.users
 
 ![20250116162824](https://img.isxcode.com/picgo/20250116162824.png)
+
+#### 新建kafka的topic
+
+```bash
+kafka-topics.sh --create --bootstrap-server debezium-kafka:9092 --topic test-topic --replication-factor 1 --partitions 1 
+kafka-topics.sh --bootstrap-server debezium-kafka:9092 --list
+```
