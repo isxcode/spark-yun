@@ -106,6 +106,8 @@ k8s启动作业，无法访问域名
 在SparkSql作业配置中指定域名映射
 ```
 
+> 注意！！！推荐使用内网ip
+
 ```json
 {
   "qing.host1.name": "host1",
