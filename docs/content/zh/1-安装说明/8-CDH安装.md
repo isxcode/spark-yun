@@ -1,5 +1,5 @@
 ---
-title: "Debezium安装"
+title: "CDH安装"
 ---
 
 ## 离线安装CDH6.2.0
