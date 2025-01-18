@@ -93,7 +93,7 @@ interface codeParam {
     sql: string
 }
 
-defineProps<{
+const props = defineProps<{
     formData: FormData
 }>()
 
@@ -103,6 +103,7 @@ const showDataSync = ref(true)
 let instance: any = null
 const addCodeRef = ref()
 const connectNodeList = ref<connect[]>([])
+const connectNodeInit = ref<connect[]>([])
 const sourceTableColumn = ref([])
 const targetTableColumn = ref([])
 const buttons = ref([
@@ -111,6 +112,7 @@ const buttons = ref([
   //   { type: 'primary', text: '智能映射', code: 'SameLine' },
   {type: 'primary', text: '取消映射', code: 'quitLine'},
   {type: 'primary', text: '重置映射', code: 'resetLine'},
+  {type: 'primary', text: '刷新字段', code: 'refrashCodes'},
 ])
 const connectCopy = ref()
 
@@ -161,7 +163,7 @@ function initPageData(data: any) {
 }
 
 // 根据表名获取映射表字段
-function getTableColumnData(params: TableDetailParam, type: string) {
+function getTableColumnData(params: TableDetailParam, type: string, onlyInit?: boolean) {
     if (params.dataSourceId && params.tableName) {
         GetTableColumnsByTableId(params).then((res: any) => {
             if (type === 'source') {
@@ -180,11 +182,20 @@ function getTableColumnData(params: TableDetailParam, type: string) {
                     }
                 })
             }
-            instance.deleteEveryConnection()
-            connectCopy.value = []
-            nextTick(() => {
-                initJsPlumb()
-            })
+            if (!onlyInit) {
+                instance.deleteEveryConnection()
+                connectCopy.value = []
+                nextTick(() => {
+                    initJsPlumb()
+                })
+            } else {
+                connectNodeInit.value.forEach((data: any) => {
+                    instance.connect({
+                        source: document.querySelector(`.code-source-${data.source}`),
+                        target: document.querySelector(`.code-target-${data.target}`)
+                    })
+                })
+            }
         }).catch(err => {
             console.error(err)
         })
@@ -320,9 +331,18 @@ function clickSelectLinkConnect(type: string) {
                 })
             })
         })
+    } else if (type === 'refrashCodes') {
+        connectNodeInit.value = connectCopy.value
+        getTableColumnData({
+            dataSourceId: props.formData.sourceDBId,
+            tableName: props.formData.sourceTable
+        }, 'source', true)
+        getTableColumnData({
+            dataSourceId: props.formData.targetDBId,
+            tableName: props.formData.targetTable
+        }, 'target', true)
     }
 }
-
 
 // 删除来源编码
 function removeCode(cData: codeParam) {
