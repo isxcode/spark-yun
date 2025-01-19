@@ -1,9 +1,15 @@
 <template>
-    <BlockTable :table-config="tableConfig" />
+    <BlockTable :table-config="tableConfig">
+        <template #options="scopeSlot">
+            <div class="btn-group btn-group__center">
+                <span @click="editEvent(scopeSlot.row)">备注</span>
+            </div>
+        </template>
+    </BlockTable>
 </template>
 
 <script lang="ts" setup>
-import { onMounted, ref, defineProps, reactive } from 'vue'
+import { onMounted, defineEmits, defineProps, reactive } from 'vue'
 import { GetTableCodeInfo } from '@/services/metadata-page.service';
 
 interface colConfig {
@@ -29,6 +35,8 @@ const props = defineProps<{
     tableName: string
 }>()
 
+const emit = defineEmits(['editEvent'])
+
 const normalCol = [
     {
         prop: 'columnName',
@@ -46,6 +54,13 @@ const normalCol = [
         prop: 'columnComment',
         title: '备注',
         minWidth: 100
+    },
+    {
+        title: '操作',
+        align: 'center',
+        customSlot: 'options',
+        width: 60,
+        fixed: 'right'
     }
 ]
 
@@ -76,6 +91,13 @@ const hiveCol = [
         prop: 'columnComment',
         title: '备注',
         minWidth: 100
+    },
+    {
+        title: '操作',
+        align: 'center',
+        customSlot: 'options',
+        width: 60,
+        fixed: 'right'
     }
 ]
 
@@ -97,6 +119,16 @@ function initData() {
     }).catch(() => {
         tableConfig.tableData = []
         tableConfig.loading = false
+    })
+}
+
+function editEvent(data: any) {
+    data.pageType = 'code_pre'
+    emit('editEvent', {
+        ...data,
+        callback: () => {
+            initData()
+        }
     })
 }
 
