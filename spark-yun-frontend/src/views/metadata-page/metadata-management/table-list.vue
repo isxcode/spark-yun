@@ -13,7 +13,7 @@
             </div>
         </template>
     </BlockTable>
-    <PreviewModal ref="previewModalRef"></PreviewModal>
+    <PreviewModal @editEvent="editPreEvent" ref="previewModalRef"></PreviewModal>
 </template>
 
 <script lang="ts" setup>
@@ -122,6 +122,10 @@ function handleCurrentChange(e: number) {
 
 function editEvent(data: any) {
     data.pageType = 'table'
+    emit('editEvent', data)
+}
+
+function editPreEvent(data: any) {
     emit('editEvent', data)
 }
 

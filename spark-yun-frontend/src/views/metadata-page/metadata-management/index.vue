@@ -83,7 +83,7 @@ const remarkModalRef = ref<any>(null)
 
 const datasourceId = ref('')
 const dbType = ref('')
-const dataSourceList = ref([])
+const dataSourceList = ref<any[]>([])
 
 function initData(tableLoading?: boolean) {
     loading.value = tableLoading ? false : true
@@ -146,7 +146,6 @@ function acquisetionTriggerEvent() {
 }
 
 function editEvent(e: any) {
-    console.log('eee', e)
     const remark = e.dbComment || e.tableComment || e.columnComment
     remarkModalRef.value.showModal((data: any) => {
         return new Promise((resolve, reject) => {
@@ -182,6 +181,21 @@ function editEvent(e: any) {
                 }).then((res: any) => {
                     ElMessage.success(res.msg)
                     initData()
+                    resolve()
+                }).catch((error: any) => {
+                    reject(error)
+                })
+            } else if (e.pageType === 'code_pre') {
+                CodeRemarkEdit({
+                    datasourceId: e.datasourceId,
+                    tableName: e.tableName,
+                    columnName: e.columnName,
+                    comment: data.remark
+                }).then((res: any) => {
+                    ElMessage.success(res.msg)
+                    if (e.callback && e.callback instanceof Function) {
+                        e.callback()
+                    }
                     resolve()
                 }).catch((error: any) => {
                     reject(error)

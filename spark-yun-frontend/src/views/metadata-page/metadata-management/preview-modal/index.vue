@@ -11,6 +11,7 @@
                 :is="tabComponent"
                 :datasourceId="infoData.datasourceId"
                 :tableName="infoData.tableName"
+                @editEvent="editEvent"
             ></component>
         </div>
         <template #customLeft>
@@ -22,7 +23,7 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, defineExpose, ref, markRaw } from 'vue'
+import { reactive, defineExpose, ref, markRaw, defineEmits } from 'vue'
 import BlockModal from '@/components/block-modal/index.vue'
 import basicInfo from './basic-info.vue'
 import codeInfo from './code-info.vue'
@@ -30,8 +31,8 @@ import dataPreview from './data-preview.vue'
 import { ExportTableDetailData, RefreshTableDetailData } from '@/services/metadata-page.service'
 import { ElMessage } from 'element-plus'
 
-// const loading = ref<boolean>(false)
-// const networkError = ref<boolean>(false)
+const emit = defineEmits(['editEvent'])
+
 const activeName = ref<string>('basicInfo')
 const exportLoading = ref<boolean>(false)
 const tabComponent = ref<any>()
@@ -111,6 +112,10 @@ function closeEvent() {
     modelConfig.visible = false
 }
 
+function editEvent(data: any) {
+    emit('editEvent', data)
+}
+
 defineExpose({
     showModal
 })
@@ -140,6 +145,21 @@ defineExpose({
             .vxe-table {
                 .vxe-table--body-wrapper {
                     max-height: calc(100vh - 404px);
+                }
+            }
+        }
+        .btn-group {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            &.btn-group__center {
+                justify-content: center;
+            }
+            span {
+                cursor: pointer;
+                color: getCssVar('color', 'primary', 'light-5');
+                &:hover {
+                color: getCssVar('color', 'primary');;
                 }
             }
         }
