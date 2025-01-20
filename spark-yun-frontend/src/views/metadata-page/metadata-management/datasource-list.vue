@@ -91,8 +91,7 @@ function initData(searchKeyWord?: string) {
             tableConfig.pagination.total = res.data.totalElements
             tableConfig.loading = false
             resolve(true)
-        })
-        .catch(() => {
+        }).catch(() => {
             tableConfig.tableData = []
             tableConfig.pagination.total = 0
             tableConfig.loading = false
