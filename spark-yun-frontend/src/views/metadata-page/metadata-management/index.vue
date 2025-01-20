@@ -62,10 +62,10 @@ import {
   CodeRemarkEdit,
   DatasourceRemarkEdit,
   FastTriggerMetadataTaskData,
+  GetMetadataManagementList,
   RefreshMetadataManagementList,
 TableRemarkEdit
 } from '@/services/metadata-page.service'
-import { GetDatasourceList } from '@/services/datasource.service'
 import { ElMessage } from 'element-plus'
 import AddModal from './add-modal/index.vue'
 import RemarkModal from './remark-modal/index.vue'
@@ -217,7 +217,7 @@ function refreshDataEvent() {
 }
 
 function getDataSourceList() {
-    GetDatasourceList({
+    GetMetadataManagementList({
         page: 0,
         pageSize: 10000,
         searchKeyWord: ''
@@ -225,7 +225,7 @@ function getDataSourceList() {
         dataSourceList.value = res.data.content.filter((item: any) => item.dbType !== 'KAFKA').map((item: any) => {
             return {
                 label: item.name,
-                value: item.id
+                value: item.datasourceId
             }
         })
     }).catch(() => {
