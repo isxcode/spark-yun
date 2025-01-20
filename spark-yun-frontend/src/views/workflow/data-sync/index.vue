@@ -306,6 +306,8 @@ function saveData() {
     }).then((res: any) => {
         changeStatus.value = false
         btnLoadingConfig.saveLoading = false
+
+        getDate()
         ElMessage.success('保存成功')
     }).catch(err => {
         btnLoadingConfig.saveLoading = false

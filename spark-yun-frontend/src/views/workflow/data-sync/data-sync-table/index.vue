@@ -148,6 +148,8 @@ function getConnect() {
 
 // 初始化数据
 function initPageData(data: any) {
+    instance.deleteEveryConnection()
+
     sourceTableColumn.value = data.sourceTableColumn
     targetTableColumn.value = data.targetTableColumn
     connectCopy.value = data.columnMap
