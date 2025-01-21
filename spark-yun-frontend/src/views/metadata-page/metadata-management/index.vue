@@ -62,10 +62,10 @@ import {
   CodeRemarkEdit,
   DatasourceRemarkEdit,
   FastTriggerMetadataTaskData,
+  GetMetadataManagementList,
   RefreshMetadataManagementList,
 TableRemarkEdit
 } from '@/services/metadata-page.service'
-import { GetDatasourceList } from '@/services/datasource.service'
 import { ElMessage } from 'element-plus'
 import AddModal from './add-modal/index.vue'
 import RemarkModal from './remark-modal/index.vue'
@@ -83,7 +83,7 @@ const remarkModalRef = ref<any>(null)
 
 const datasourceId = ref('')
 const dbType = ref('')
-const dataSourceList = ref([])
+const dataSourceList = ref<any[]>([])
 
 function initData(tableLoading?: boolean) {
     loading.value = tableLoading ? false : true
@@ -146,7 +146,6 @@ function acquisetionTriggerEvent() {
 }
 
 function editEvent(e: any) {
-    console.log('eee', e)
     const remark = e.dbComment || e.tableComment || e.columnComment
     remarkModalRef.value.showModal((data: any) => {
         return new Promise((resolve, reject) => {
@@ -186,6 +185,21 @@ function editEvent(e: any) {
                 }).catch((error: any) => {
                     reject(error)
                 })
+            } else if (e.pageType === 'code_pre') {
+                CodeRemarkEdit({
+                    datasourceId: e.datasourceId,
+                    tableName: e.tableName,
+                    columnName: e.columnName,
+                    comment: data.remark
+                }).then((res: any) => {
+                    ElMessage.success(res.msg)
+                    if (e.callback && e.callback instanceof Function) {
+                        e.callback()
+                    }
+                    resolve()
+                }).catch((error: any) => {
+                    reject(error)
+                })
             }
         })
     }, { remark: remark })
@@ -203,7 +217,7 @@ function refreshDataEvent() {
 }
 
 function getDataSourceList() {
-    GetDatasourceList({
+    GetMetadataManagementList({
         page: 0,
         pageSize: 10000,
         searchKeyWord: ''
@@ -211,7 +225,7 @@ function getDataSourceList() {
         dataSourceList.value = res.data.content.filter((item: any) => item.dbType !== 'KAFKA').map((item: any) => {
             return {
                 label: item.name,
-                value: item.id
+                value: item.datasourceId
             }
         })
     }).catch(() => {

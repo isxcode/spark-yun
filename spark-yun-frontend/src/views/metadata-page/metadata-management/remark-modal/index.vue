@@ -38,7 +38,7 @@ const modelConfig = reactive({
         disabled: false
     },
     needScale: false,
-    zIndex: 1100,
+    zIndex: 3100,
     closeOnClickModal: false
 })
 const formData = reactive({
