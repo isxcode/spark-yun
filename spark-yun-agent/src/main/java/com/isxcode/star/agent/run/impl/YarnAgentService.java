@@ -106,6 +106,12 @@ public class YarnAgentService implements AgentService {
                     : JSON.toJSONString(submitWorkReq.getPluginReq()).getBytes()));
         }
 
+        String hiveUsername = submitWorkReq.getSparkSubmit().getConf().get("qing.hive.username");
+        if (Strings.isNotEmpty(hiveUsername)) {
+            sparkLauncher.setConf("spark.yarn.appMasterEnv.HADOOP_USER_NAME", hiveUsername);
+            sparkLauncher.setConf("spark.executorEnv.HADOOP_USER_NAME", hiveUsername);
+        }
+
         // 删除自定义属性
         submitWorkReq.getSparkSubmit().getConf().remove("qing.hive.username");
 
