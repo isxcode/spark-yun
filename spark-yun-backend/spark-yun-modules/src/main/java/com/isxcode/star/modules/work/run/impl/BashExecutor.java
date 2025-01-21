@@ -139,7 +139,7 @@ public class BashExecutor extends WorkExecutor {
                 clusterNode.getAgentHomePath() + "/zhiqingyun-agent/works/" + workInstance.getId() + ".sh");
 
             // 执行命令获取pid
-            String executeBashWorkCommand = "nohup sh " + clusterNode.getAgentHomePath() + "/zhiqingyun-agent/works/"
+            String executeBashWorkCommand = "source /etc/profile && nohup sh " + clusterNode.getAgentHomePath() + "/zhiqingyun-agent/works/"
                 + workInstance.getId() + ".sh >> " + clusterNode.getAgentHomePath() + "/zhiqingyun-agent/works/"
                 + workInstance.getId() + ".log 2>&1 & echo $!";
             String pid = executeCommand(scpFileEngineNodeDto, executeBashWorkCommand, false).replace("\n", "");
