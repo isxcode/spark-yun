@@ -340,6 +340,9 @@ public class ExcelSyncExecutor extends WorkExecutor {
         // 当目标数据源是hive的，塞入hive.metastore.uris值
         if (DatasourceType.HIVE.equals(targetDatasource.getDbType())) {
             pluginReq.getSparkConfig().put("hive.metastore.uris", targetDatasource.getMetastoreUris());
+            if (Strings.isNotBlank(targetDatasource.getUsername())) {
+                sparkSubmit.getConf().put("qing.hive.username", targetDatasource.getUsername());
+            }
         }
 
         // 开始构造executeReq
