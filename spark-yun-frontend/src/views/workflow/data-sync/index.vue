@@ -349,6 +349,8 @@ function getDate() {
                 dataSyncTableRef.value.initPageData(res.data.syncWorkConfig)
                 changeStatus.value = false
             })
+        } else {
+            loading.value = false
         }
     }).catch(err => {
         loading.value = false
