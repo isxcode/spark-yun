@@ -11,6 +11,7 @@ import com.isxcode.star.api.cluster.dto.AgentInfo;
 import com.isxcode.star.api.cluster.dto.ScpFileEngineNodeDto;
 import com.isxcode.star.api.main.properties.SparkYunProperties;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
+import com.isxcode.star.common.utils.os.OsUtils;
 import com.isxcode.star.modules.cluster.entity.ClusterNodeEntity;
 import com.isxcode.star.modules.cluster.repository.ClusterNodeRepository;
 import com.isxcode.star.modules.cluster.service.ClusterService;
@@ -75,7 +76,7 @@ public class RunAgentRemoveService {
 
         // 获取返回结果
         String executeLog =
-            executeCommand(scpFileEngineNodeDto, clusterService.fixWindowsChar(bashFilePath, removeCommand), false);
+            executeCommand(scpFileEngineNodeDto, OsUtils.fixWindowsChar(bashFilePath, removeCommand), false);
         log.debug("远程返回值:{}", executeLog);
 
         AgentInfo agentStartInfo = JSON.parseObject(executeLog, AgentInfo.class);
@@ -85,5 +86,8 @@ public class RunAgentRemoveService {
         engineNode.setAgentLog(agentStartInfo.getLog());
         engineNode.setCheckDateTime(LocalDateTime.now());
         clusterNodeRepository.saveAndFlush(engineNode);
+
+        // 刷新集群信息
+        clusterService.checkCluster(engineNode.getClusterId());
     }
 }
