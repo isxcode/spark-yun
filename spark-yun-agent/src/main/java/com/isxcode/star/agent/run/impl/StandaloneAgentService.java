@@ -146,6 +146,9 @@ public class StandaloneAgentService implements AgentService {
                     : JSON.toJSONString(submitWorkReq.getPluginReq()).getBytes()));
         }
 
+        // 删除自定义属性
+        submitWorkReq.getSparkSubmit().getConf().remove("qing.hive.username");
+
         // 将提交的spark配置加入到sparkLauncher
         submitWorkReq.getSparkSubmit().getConf().forEach(sparkLauncher::setConf);
 

@@ -8,6 +8,7 @@ import com.isxcode.star.api.agent.res.GetWorkStderrLogRes;
 import com.isxcode.star.api.api.constants.PathConstants;
 import com.isxcode.star.api.cluster.constants.ClusterNodeStatus;
 import com.isxcode.star.api.cluster.dto.ScpFileEngineNodeDto;
+import com.isxcode.star.api.datasource.constants.DatasourceType;
 import com.isxcode.star.api.work.constants.WorkLog;
 import com.isxcode.star.api.work.constants.WorkType;
 import com.isxcode.star.backend.api.base.exceptions.WorkRunException;
@@ -236,6 +237,13 @@ public class SyncWorkExecutor extends WorkExecutor {
         PluginReq pluginReq = PluginReq.builder().syncWorkConfig(workRunContext.getSyncWorkConfig())
             .sparkConfig(genSparkConfig(workRunContext.getClusterConfig().getSparkConfig()))
             .syncRule(workRunContext.getSyncRule()).build();
+
+        if (DatasourceType.HIVE.equals(targetDatasource.getDbType())) {
+            sparkSubmit.getConf().put("qing.hive.username", targetDatasource.getUsername());
+        }
+        if (DatasourceType.HIVE.equals(sourceDatasource.getDbType())) {
+            sparkSubmit.getConf().put("qing.hive.username", sourceDatasource.getUsername());
+        }
 
         // 导入自定义函数
         ScpFileEngineNodeDto scpFileEngineNodeDto =

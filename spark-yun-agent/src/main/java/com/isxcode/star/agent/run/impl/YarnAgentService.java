@@ -106,6 +106,9 @@ public class YarnAgentService implements AgentService {
                     : JSON.toJSONString(submitWorkReq.getPluginReq()).getBytes()));
         }
 
+        // 删除自定义属性
+        submitWorkReq.getSparkSubmit().getConf().remove("qing.hive.username");
+
         // 调整spark.yarn.submit.waitAppCompletion，减少资源消耗
         sparkLauncher.setConf("spark.yarn.submit.waitAppCompletion", "false");
         submitWorkReq.getSparkSubmit().getConf().forEach(sparkLauncher::setConf);

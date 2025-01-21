@@ -274,6 +274,11 @@ public class SparkSqlExecutor extends WorkExecutor {
             }
             // 如果数据库id不为空,则替换hive的metastore url
             pluginReq.getSparkConfig().put("hive.metastore.uris", datasourceEntity.getMetastoreUris());
+
+            // 添加自定义username
+            if (Strings.isNotBlank(datasourceEntity.getUsername())) {
+                sparkSubmit.getConf().put("qing.hive.username", datasourceEntity.getUsername());
+            }
         }
 
         // 开始构造executeReq
