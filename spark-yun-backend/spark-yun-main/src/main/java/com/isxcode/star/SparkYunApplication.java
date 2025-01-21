@@ -15,7 +15,7 @@ public class SparkYunApplication {
         SpringApplication.run(SparkYunApplication.class, args);
     }
 
-    @RequestMapping(value = {"/*", "/home/**", "/share/**"})
+    @RequestMapping(value = {"/*", "/home/**", "/share/**", "/dashboard/**"})
     public String index() {
 
         return "index";
