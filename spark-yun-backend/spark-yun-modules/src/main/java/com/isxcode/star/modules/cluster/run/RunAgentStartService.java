@@ -7,15 +7,13 @@ import static com.isxcode.star.common.utils.ssh.SshUtils.scpFile;
 
 import com.alibaba.fastjson.JSON;
 import com.isxcode.star.api.cluster.constants.ClusterNodeStatus;
-import com.isxcode.star.api.cluster.constants.ClusterStatus;
 import com.isxcode.star.api.cluster.dto.AgentInfo;
 import com.isxcode.star.api.cluster.dto.ScpFileEngineNodeDto;
 import com.isxcode.star.api.main.properties.SparkYunProperties;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
-import com.isxcode.star.modules.cluster.entity.ClusterEntity;
+import com.isxcode.star.common.utils.os.OsUtils;
 import com.isxcode.star.modules.cluster.entity.ClusterNodeEntity;
 import com.isxcode.star.modules.cluster.repository.ClusterNodeRepository;
-import com.isxcode.star.modules.cluster.repository.ClusterRepository;
 import com.isxcode.star.modules.cluster.service.ClusterService;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.SftpException;
@@ -39,8 +37,6 @@ public class RunAgentStartService {
     private final SparkYunProperties sparkYunProperties;
 
     private final ClusterNodeRepository clusterNodeRepository;
-
-    private final ClusterRepository clusterRepository;
 
     private final ClusterService clusterService;
 
@@ -88,7 +84,7 @@ public class RunAgentStartService {
 
         // 获取返回结果
         String executeLog =
-            executeCommand(scpFileEngineNodeDto, clusterService.fixWindowsChar(bashFilePath, startCommand), false);
+            executeCommand(scpFileEngineNodeDto, OsUtils.fixWindowsChar(bashFilePath, startCommand), false);
         log.debug("远程返回值:{}", executeLog);
 
         AgentInfo agentStartInfo = JSON.parseObject(executeLog, AgentInfo.class);
@@ -99,12 +95,7 @@ public class RunAgentStartService {
         engineNode.setCheckDateTime(LocalDateTime.now());
         clusterNodeRepository.saveAndFlush(engineNode);
 
-        // 如果状态是成功的话,将集群改为启用
-        if (ClusterNodeStatus.RUNNING.equals(agentStartInfo.getStatus())) {
-            Optional<ClusterEntity> byId = clusterRepository.findById(engineNode.getClusterId());
-            ClusterEntity clusterEntity = byId.get();
-            clusterEntity.setStatus(ClusterStatus.ACTIVE);
-            clusterRepository.saveAndFlush(clusterEntity);
-        }
+        // 刷新集群信息
+        clusterService.checkCluster(engineNode.getClusterId());
     }
 }
