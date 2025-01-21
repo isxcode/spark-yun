@@ -140,7 +140,7 @@ public class PythonExecutor extends WorkExecutor {
                 clusterNode.getAgentHomePath() + "/zhiqingyun-agent/works/" + workInstance.getId() + ".py");
 
             // 执行命令获取pid
-            String executeBashWorkCommand = "nohup python3 " + clusterNode.getAgentHomePath()
+            String executeBashWorkCommand = "source /etc/profile && nohup python3 " + clusterNode.getAgentHomePath()
                 + "/zhiqingyun-agent/works/" + workInstance.getId() + ".py >> " + clusterNode.getAgentHomePath()
                 + "/zhiqingyun-agent/works/" + workInstance.getId() + ".log 2>&1 & echo $!";
             String pid = executeCommand(scpFileEngineNodeDto, executeBashWorkCommand, false).replace("\n", "");
@@ -204,6 +204,11 @@ public class PythonExecutor extends WorkExecutor {
                 } catch (JSchException | InterruptedException | IOException e) {
                     throw new WorkRunException(
                         LocalDateTime.now() + WorkLog.ERROR_INFO + "获取日志异常 : " + e.getMessage() + "\n");
+                }
+
+                if (!logCommand.contains("zhiqingyun_success")) {
+                    throw new WorkRunException(
+                        LocalDateTime.now() + WorkLog.ERROR_INFO + "获取日志异常 : " + logCommand + "\n");
                 }
 
                 // 保存运行日志
