@@ -6,8 +6,8 @@
                 <span class="url">
                     <EllipsisTooltip class="url-show" :label="url || '暂无链接'" />
                 </span>
-                <span v-if="url" class="copy-url" id="share-url" :data-clipboard-text="url"
-                    @click="copyUrlEvent('share-url')">复制</span>
+                <span v-if="url" class="copy-url" id="share-report-url" :data-clipboard-text="url"
+                    @click="copyUrlEvent('share-report-url')">复制</span>
             </div>
         </div>
         <div class="share-option-container">
@@ -27,9 +27,9 @@
 <script lang="ts" setup>
 import { reactive, defineExpose, ref, nextTick } from 'vue'
 import EllipsisTooltip from '@/components/ellipsis-tooltip/ellipsis-tooltip.vue'
-// import Clipboard from 'clipboard'
+import Clipboard from 'clipboard'
 import { ElMessage } from 'element-plus'
-import { GetFormLinkConfig, } from '@/services/custom-form.service'
+import { GetChartsLinkConfig } from '@/services/report-echarts.service'
 
 const url = ref('')
 const token = ref('')
@@ -38,7 +38,7 @@ const loading = ref(false)
 const validDay = ref(1)
 
 const modelConfig = reactive({
-    title: '分享表单',
+    title: '分享大屏',
     visible: false,
     width: '520px',
     cancelConfig: {
@@ -59,21 +59,23 @@ function showModal(card: any): void {
 
 function getShareFormUrl() {
     loading.value = true
-    // GetFormLinkConfig({
-    //     formId: cardInfo.value.id,
-    //     validDay: validDay.value
-    // }).then((res: any) => {
-    //     url.value = `${location.origin}/share-report/${res.data.formLinkId}`
-    // }).catch(() => {
-    // })
+    GetChartsLinkConfig({
+        viewId: cardInfo.value.id,
+        validDay: validDay.value
+    }).then((res: any) => {
+        loading.value = false
+        url.value = `${location.origin}/share-report/${res.data.viewLinkId}`
+    }).catch(() => {
+        loading.value = false
+    })
 }
 
 function copyUrlEvent(id: string) {
-    // let clipboard = new Clipboard('#' + id)
-    // clipboard.on('success', () => {
-    //     ElMessage.success('复制成功')
-    //     clipboard.destroy()
-    // })
+    let clipboard = new Clipboard('#' + id)
+    clipboard.on('success', () => {
+        ElMessage.success('复制成功')
+        clipboard.destroy()
+    })
 }
 
 function closeEvent() {
@@ -116,6 +118,7 @@ defineExpose({
                 color: getCssVar('color', 'primary', 'light-5');
                 font-size: 12px;
                 max-width: 400px;
+                margin-right: 24px;
     
                 .url-show {
                     max-width: 100%;
