@@ -4,7 +4,7 @@
                    @click="clickSelectLinkConnect(button.code)">{{ button.text }}
         </el-button>
     </div>
-    <div class="data-sync-body" id="container" v-if="showDataSync">
+    <div class="data-sync-body" id="container" v-if="showDataSync" v-loading="connectNodeLoading">
         <div class="source-table-container">
             <el-table ref="sourceTableRef" :data="sourceTableColumn" row-key="code">
                 <el-table-column prop="code" :show-overflow-tooltip="true" label="字段名" />
@@ -93,7 +93,7 @@ interface codeParam {
     sql: string
 }
 
-defineProps<{
+const props = defineProps<{
     formData: FormData
 }>()
 
@@ -103,6 +103,9 @@ const showDataSync = ref(true)
 let instance: any = null
 const addCodeRef = ref()
 const connectNodeList = ref<connect[]>([])
+const connectNodeInit = ref<connect[]>([])
+const connectNodeLoading = ref<boolean>(false)
+
 const sourceTableColumn = ref([])
 const targetTableColumn = ref([])
 const buttons = ref([
@@ -111,6 +114,7 @@ const buttons = ref([
   //   { type: 'primary', text: '智能映射', code: 'SameLine' },
   {type: 'primary', text: '取消映射', code: 'quitLine'},
   {type: 'primary', text: '重置映射', code: 'resetLine'},
+  {type: 'primary', text: '刷新字段', code: 'refrashCodes'},
 ])
 const connectCopy = ref()
 
@@ -144,6 +148,8 @@ function getConnect() {
 
 // 初始化数据
 function initPageData(data: any) {
+    instance.deleteEveryConnection()
+
     sourceTableColumn.value = data.sourceTableColumn
     targetTableColumn.value = data.targetTableColumn
     connectCopy.value = data.columnMap
@@ -161,40 +167,47 @@ function initPageData(data: any) {
 }
 
 // 根据表名获取映射表字段
-function getTableColumnData(params: TableDetailParam, type: string) {
-    if (params.dataSourceId && params.tableName) {
-        GetTableColumnsByTableId(params).then((res: any) => {
-            if (type === 'source') {
-                sourceTableColumn.value = (res.data.columns || []).map((column: any) => {
-                    return {
-                        code: column.name,
-                        type: column.type,
-                        sql: ''
-                    }
-                })
-            } else {
-                targetTableColumn.value = (res.data.columns || []).map((column: any) => {
-                    return {
-                        code: column.name,
-                        type: column.type
-                    }
-                })
-            }
-            instance.deleteEveryConnection()
-            connectCopy.value = []
-            nextTick(() => {
-                initJsPlumb()
+function getTableColumnData(params: TableDetailParam, type: string, onlyInit?: boolean) {
+    return new Promise((resolve, reject) => {
+        if (params.dataSourceId && params.tableName) {
+            GetTableColumnsByTableId(params).then((res: any) => {
+                if (type === 'source') {
+                    sourceTableColumn.value = (res.data.columns || []).map((column: any) => {
+                        return {
+                            code: column.name,
+                            type: column.type,
+                            sql: ''
+                        }
+                    })
+                } else {
+                    targetTableColumn.value = (res.data.columns || []).map((column: any) => {
+                        return {
+                            code: column.name,
+                            type: column.type
+                        }
+                    })
+                }
+                if (!onlyInit) {
+                    instance.deleteEveryConnection()
+                    connectCopy.value = []
+                    nextTick(() => {
+                        initJsPlumb()
+                    })
+                }
+                resolve(true)
+            }).catch(err => {
+                reject(err)
+                console.error(err)
             })
-        }).catch(err => {
-            console.error(err)
-        })
-    } else {
-        if (type === 'source') {
-            sourceTableColumn.value = []
         } else {
-            targetTableColumn.value = []
+            if (type === 'source') {
+                sourceTableColumn.value = []
+            } else {
+                targetTableColumn.value = []
+            }
+            resolve(true)
         }
-    }
+    })
 }
 
 function tableLinkInit() {
@@ -320,9 +333,30 @@ function clickSelectLinkConnect(type: string) {
                 })
             })
         })
+    } else if (type === 'refrashCodes') {
+        connectNodeInit.value = connectCopy.value
+        connectNodeLoading.value = true
+        Promise.all([getTableColumnData({
+            dataSourceId: props.formData.sourceDBId,
+            tableName: props.formData.sourceTable
+        }, 'source', true),
+        getTableColumnData({
+            dataSourceId: props.formData.targetDBId,
+            tableName: props.formData.targetTable
+        }, 'target', true)]).then(() => {
+            connectNodeLoading.value = false
+            connectNodeInit.value.forEach((data: any) => {
+                instance.connect({
+                    source: document.querySelector(`.code-source-${data.source}`),
+                    target: document.querySelector(`.code-target-${data.target}`)
+                })
+            })
+        }).catch((err: any) => {
+            connectNodeLoading.value = false
+            console.error('请求失败', err)
+        })
     }
 }
-
 
 // 删除来源编码
 function removeCode(cData: codeParam) {
