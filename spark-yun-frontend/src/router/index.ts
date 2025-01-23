@@ -10,6 +10,7 @@ import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
 import Home from '../views/home/home'
 import Login from '../views/login/login'
 import ShareForm from '../views/share-form/index.vue'
+import ShareReport from '../views/report-views/share-report/index.vue'
 
 import HomeChildren from './home-children'
 
@@ -35,6 +36,11 @@ const routes: Array<RouteRecordRaw> = [
     path: '/share/:shareParam',
     name: 'share',
     component: ShareForm
+  },
+  {
+    path: '/dashboard/:shareParam',
+    name: 'share-report',
+    component: ShareReport
   }
   // {
   //   path: '/about',
