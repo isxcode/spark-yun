@@ -38,7 +38,7 @@ const routes: Array<RouteRecordRaw> = [
     component: ShareForm
   },
   {
-    path: '/share-report/:shareParam',
+    path: '/dashboard/:shareParam',
     name: 'share-report',
     component: ShareReport
   }

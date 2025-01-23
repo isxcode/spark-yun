@@ -64,7 +64,7 @@ function getShareFormUrl() {
         validDay: validDay.value
     }).then((res: any) => {
         loading.value = false
-        url.value = `${location.origin}/share-report/${res.data.viewLinkId}`
+        url.value = `${location.origin}/dashboard/${res.data.viewLinkId}`
     }).catch(() => {
         loading.value = false
     })
