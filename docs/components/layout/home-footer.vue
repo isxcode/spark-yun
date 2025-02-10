@@ -18,8 +18,6 @@
           <div class="link" @click="clickZhiqingyun">{{ $t("zhiqingyun") }}</div>
           <div class="link" @click="clickZhiliuyun">{{ $t("zhiliuyun") }}</div>
           <div class="link" @click="clickZhihuiyun">{{ $t("zhihuiyun") }}</div>
-          <div class="link" @click="clickZhishiyun">{{ $t("zhishiyun") }}</div>
-          <div class="link" @click="clickZhishuyun">{{ $t("zhishuyun") }}</div>
         </div>
         <div class="column">
           <div class="title">{{ $t("community") }}</div>
