@@ -237,6 +237,10 @@ const typeList = reactive([
     value: 'HIVE',
   },
   {
+    label: 'H2',
+    value: 'H2',
+  },
+  {
     label: 'Kafka',
     value: 'KAFKA',
   },

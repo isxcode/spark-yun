@@ -202,6 +202,8 @@ public class PrqlExecutor extends WorkExecutor {
                 return "clickhouse";
             case DatasourceType.POSTGRE_SQL:
                 return "postgres";
+            case DatasourceType.H2:
+                return "h2";
             default:
                 throw new IsxAppException("当前数据库类型不支持");
         }
