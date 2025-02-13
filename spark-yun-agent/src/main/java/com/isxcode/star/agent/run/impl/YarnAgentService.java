@@ -56,6 +56,12 @@ public class YarnAgentService implements AgentService {
                     + submitWorkReq.getWorkId() + "-" + submitWorkReq.getWorkInstanceId())
                 .setAppResource(submitWorkReq.getAgentHomePath() + File.separator + "file" + File.separator
                     + submitWorkReq.getSparkSubmit().getAppResource());
+        } else if (WorkType.PY_SPARK.equals(submitWorkReq.getWorkType())) {
+            sparkLauncher
+                .setAppName("zhiqingyun-" + submitWorkReq.getWorkType() + "-" + submitWorkReq.getWorkId() + "-"
+                    + submitWorkReq.getWorkInstanceId())
+                .setAppResource(submitWorkReq.getAgentHomePath() + File.separator + "works" + File.separator
+                    + submitWorkReq.getWorkInstanceId() + ".py");
         } else {
             sparkLauncher
                 .setAppName("zhiqingyun-" + submitWorkReq.getWorkType() + "-" + submitWorkReq.getWorkId() + "-"

@@ -61,6 +61,12 @@ public class WorkConfigService {
             case WorkType.PRQL:
                 workConfig.setScript("from table_name");
                 break;
+            case WorkType.PY_SPARK:
+                workConfig.setScript(
+                    "from pyspark.sql import SparkSession\n" + "\n" + "spark = SparkSession.builder.getOrCreate()\n"
+                        + "da = [('zhangsan', 13), \n" + "      ('lisi', 14),]\n" + "col = ['username', 'age']\n"
+                        + "stu = spark.createDataFrame(data=da, schema=col)\n" + "stu.show()");
+                break;
         }
     }
 
