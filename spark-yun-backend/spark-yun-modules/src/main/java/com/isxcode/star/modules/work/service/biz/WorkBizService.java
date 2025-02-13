@@ -108,7 +108,8 @@ public class WorkBizService {
             || WorkType.DATA_SYNC_JDBC.equals(addWorkReq.getWorkType())
             || WorkType.EXCEL_SYNC_JDBC.equals(addWorkReq.getWorkType())
             || WorkType.BASH.equals(addWorkReq.getWorkType()) || WorkType.PYTHON.equals(addWorkReq.getWorkType())
-            || WorkType.SPARK_JAR.equals(addWorkReq.getWorkType())) {
+            || WorkType.SPARK_JAR.equals(addWorkReq.getWorkType())
+            || WorkType.PY_SPARK.equals(addWorkReq.getWorkType())) {
             if (Strings.isEmpty(addWorkReq.getClusterId())) {
                 throw new IsxAppException("必须选择计算引擎");
             }
@@ -135,7 +136,7 @@ public class WorkBizService {
             || WorkType.QUERY_JDBC_SQL.equals(addWorkReq.getWorkType())
             || WorkType.BASH.equals(addWorkReq.getWorkType()) || WorkType.PYTHON.equals(addWorkReq.getWorkType())
             || WorkType.SPARK_CONTAINER_SQL.equals(addWorkReq.getWorkType())
-            || WorkType.PRQL.equals(addWorkReq.getWorkType())) {
+            || WorkType.PRQL.equals(addWorkReq.getWorkType()) || WorkType.PY_SPARK.equals(addWorkReq.getWorkType())) {
             workConfigService.initWorkScript(workConfig, addWorkReq.getWorkType());
         }
 
@@ -150,7 +151,8 @@ public class WorkBizService {
             || WorkType.DATA_SYNC_JDBC.equals(addWorkReq.getWorkType())
             || WorkType.EXCEL_SYNC_JDBC.equals(addWorkReq.getWorkType())
             || WorkType.BASH.equals(addWorkReq.getWorkType()) || WorkType.PYTHON.equals(addWorkReq.getWorkType())
-            || WorkType.SPARK_JAR.equals(addWorkReq.getWorkType())) {
+            || WorkType.SPARK_JAR.equals(addWorkReq.getWorkType())
+            || WorkType.PY_SPARK.equals(addWorkReq.getWorkType())) {
             workConfigService.initClusterConfig(workConfig, addWorkReq.getClusterId(), addWorkReq.getClusterNodeId(),
                 addWorkReq.getEnableHive(), addWorkReq.getDatasourceId());
         }

@@ -86,8 +86,12 @@ public class StandaloneAgentService implements AgentService {
 
         SparkLauncher sparkLauncher =
             new SparkLauncher().setVerbose(false).setMainClass(submitWorkReq.getSparkSubmit().getMainClass())
-                .setDeployMode("cluster").setMaster(getMaster(submitWorkReq.getSparkHomePath()))
+                .setMaster(getMaster(submitWorkReq.getSparkHomePath()))
                 .setSparkHome(submitWorkReq.getAgentHomePath() + File.separator + "spark-min");
+
+        if (!WorkType.PY_SPARK.equals(submitWorkReq.getWorkType())) {
+            sparkLauncher.setDeployMode("cluster");
+        }
 
         if (WorkType.SPARK_JAR.equals(submitWorkReq.getWorkType())) {
             sparkLauncher
@@ -95,6 +99,12 @@ public class StandaloneAgentService implements AgentService {
                     + submitWorkReq.getWorkId() + "-" + submitWorkReq.getWorkInstanceId())
                 .setAppResource(submitWorkReq.getAgentHomePath() + File.separator + "file" + File.separator
                     + submitWorkReq.getSparkSubmit().getAppResource());
+        } else if (WorkType.PY_SPARK.equals(submitWorkReq.getWorkType())) {
+            sparkLauncher
+                .setAppName("zhiqingyun-" + submitWorkReq.getWorkType() + "-" + submitWorkReq.getWorkId() + "-"
+                    + submitWorkReq.getWorkInstanceId())
+                .setAppResource(submitWorkReq.getAgentHomePath() + File.separator + "works" + File.separator
+                    + submitWorkReq.getWorkInstanceId() + ".py");
         } else {
             sparkLauncher
                 .setAppName("zhiqingyun-" + submitWorkReq.getWorkType() + "-" + submitWorkReq.getWorkId() + "-"
@@ -159,12 +169,15 @@ public class StandaloneAgentService implements AgentService {
     public String submitWork(SparkLauncher sparkLauncher) throws Exception {
 
         Process launch = sparkLauncher.launch();
-        InputStream inputStream = launch.getErrorStream();
-        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
+        InputStream errorStream = launch.getErrorStream();
+        InputStream inputStream = launch.getInputStream();
+        BufferedReader errorReader = new BufferedReader(new InputStreamReader(errorStream, StandardCharsets.UTF_8));
+        BufferedReader inputReader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
 
         StringBuilder errLog = new StringBuilder();
+        StringBuilder inputLog = new StringBuilder();
         String line;
-        while ((line = reader.readLine()) != null) {
+        while ((line = errorReader.readLine()) != null) {
             errLog.append(line).append("\n");
             String pattern = "(driver-\\d+-\\d+)\\s+is\\s+(\\w+)";
             Pattern regex = Pattern.compile(pattern);
@@ -175,10 +188,14 @@ public class StandaloneAgentService implements AgentService {
             }
         }
 
+        while ((line = inputReader.readLine()) != null) {
+            inputLog.append(line).append("\n");
+        }
+
         try {
             int exitCode = launch.waitFor();
             if (exitCode == 1) {
-                throw new IsxAppException(errLog.toString());
+                throw new IsxAppException(errLog + "\n" + inputLog);
             }
         } catch (InterruptedException e) {
             log.error(e.getMessage(), e);

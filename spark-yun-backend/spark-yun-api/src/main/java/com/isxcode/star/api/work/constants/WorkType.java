@@ -60,4 +60,9 @@ public interface WorkType {
      * 实时计算.
      */
     String REAL_WORK = "REAL_WORK";
+
+    /**
+     * pyspark作业.
+     */
+    String PY_SPARK = "PY_SPARK";
 }
