@@ -65,7 +65,6 @@ if [ ! -f "${SPARK_MIN_DIR}"/README.md ]; then
   rm -rf "${SPARK_MIN_DIR}"/data
   rm -rf "${SPARK_MIN_DIR}"/examples
   rm -rf "${SPARK_MIN_DIR}"/licenses
-  rm -rf "${SPARK_MIN_DIR}"/python
   rm -rf "${SPARK_MIN_DIR}"/R
   rm "${SPARK_MIN_DIR}"/LICENSE
   rm "${SPARK_MIN_DIR}"/NOTICE
