@@ -18,7 +18,7 @@
 | 许可证下载:    | https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/license.lic       |
 | docker镜像: | https://hub.docker.com/r/isxcode/zhiqingyun                               |
 | 阿里云镜像:    | https://zhiqingyun.isxcode.com/zh/docs/zh/1/1-docker                      |
-| 关键词:      | 大数据平台, 数据中台,  数据仓库, 数据同步, Spark, Hadoop, Docker                           |
+| 关键词:      | 大数据平台, 数据中台, 数仓, 数据转换, 数据同步, Spark, Hadoop, Docker                        |
 |           |                                                                           |
 
 ### 产品介绍
