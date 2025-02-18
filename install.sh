@@ -186,6 +186,16 @@ if [ ! -f "${JDBC_DIR}"/jcc-11.5.8.0.jar ]; then
   curl -ssL "${OSS_DOWNLOAD_URL}"/jcc-11.5.8.0.jar -o ${JDBC_DIR}/jcc-11.5.8.0.jar
   echo "jcc-11.5.8.0.jar驱动下载成功"
 fi
+if [ ! -f "${JDBC_DIR}"/gbase-connector-java-9.5.0.7-build1-bin.jar ]; then
+  echo "gbase-connector-java-9.5.0.7-build1-bin.jar驱动开始下载"
+  curl -ssL "${OSS_DOWNLOAD_URL}"/gbase-connector-java-9.5.0.7-build1-bin.jar -o ${JDBC_DIR}/gbase-connector-java-9.5.0.7-build1-bin.jar
+  echo "gbase-connector-java-9.5.0.7-build1-bin.jar驱动下载成功"
+fi
+if [ ! -f "${JDBC_DIR}"/jconn4-16.0.jar ]; then
+  echo "jconn4-16.0.jar驱动开始下载"
+  curl -ssL "${OSS_DOWNLOAD_URL}"/jconn4-16.0.jar -o ${JDBC_DIR}/jconn4-16.0.jar
+  echo "jconn4-16.0.jar驱动下载成功"
+fi
 
 # 创建项目依赖文件夹
 LIBS_DIR="${BASE_PATH}"/resources/libs
