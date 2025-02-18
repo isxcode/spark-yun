@@ -94,6 +94,13 @@ public class KubernetesAgentService implements AgentService {
                 + submitWorkReq.getSparkSubmit().getAppResource();
             sparkLauncher.setConf("spark.kubernetes.driver.volumes.hostPath.jar.options.path", sparkJarPath);
             sparkLauncher.setConf("spark.kubernetes.executor.volumes.hostPath.jar.options.path", sparkJarPath);
+        } else if (WorkType.PY_SPARK.equals(submitWorkReq.getWorkType())) {
+            sparkLauncher.setAppName("zhiqingyun-" + submitWorkReq.getWorkType() + "-" + submitWorkReq.getWorkId() + "-"
+                + submitWorkReq.getWorkInstanceId());
+            String sparkJarPath = submitWorkReq.getAgentHomePath() + File.separator + "works" + File.separator
+                + submitWorkReq.getWorkInstanceId() + ".py";
+            sparkLauncher.setConf("spark.kubernetes.driver.volumes.hostPath.jar.options.path", sparkJarPath);
+            sparkLauncher.setConf("spark.kubernetes.executor.volumes.hostPath.jar.options.path", sparkJarPath);
         } else {
             String appName = "zhiqingyun-" + submitWorkReq.getWorkType() + "-" + submitWorkReq.getWorkId() + "-"
                 + submitWorkReq.getWorkInstanceId();
