@@ -5,6 +5,7 @@ import com.isxcode.star.api.agent.constants.AgentType;
 import com.isxcode.star.api.agent.constants.AgentUrl;
 import com.isxcode.star.api.agent.req.*;
 import com.isxcode.star.api.agent.res.GetWorkStderrLogRes;
+import com.isxcode.star.api.agent.res.GetWorkStdoutLogRes;
 import com.isxcode.star.api.api.constants.PathConstants;
 import com.isxcode.star.api.cluster.constants.ClusterNodeStatus;
 import com.isxcode.star.api.cluster.dto.ScpFileEngineNodeDto;
@@ -171,7 +172,7 @@ public class PySparkExecutor extends WorkExecutor {
         scpFileEngineNodeDto.setPasswd(aesUtils.decrypt(scpFileEngineNodeDto.getPasswd()));
         try {
             // 上传脚本
-            scpText(scpFileEngineNodeDto, script + "\nprint('zhiqingyun_success')",
+            scpText(scpFileEngineNodeDto, script,
                 engineNode.getAgentHomePath() + "/zhiqingyun-agent/works/" + workInstance.getId() + ".py");
 
             workInstance = updateInstance(workInstance, logBuilder);
@@ -330,6 +331,20 @@ public class PySparkExecutor extends WorkExecutor {
                             .agentHomePath(engineNode.getAgentHomePath()).build();
                         HttpUtils.doPost(httpUrlUtils.genHttpUrl(engineNode.getHost(), engineNode.getAgentPort(),
                             AgentUrl.STOP_WORK_URL), stopWorkReq, BaseResponse.class);
+                    }
+
+                    // 获取打印日志
+                    GetWorkStdoutLogReq getWorkStdoutLogReq =
+                        GetWorkStdoutLogReq.builder().appId(submitWorkRes.getAppId())
+                            .clusterType(calculateEngineEntityOptional.get().getClusterType())
+                            .sparkHomePath(executeReq.getSparkHomePath()).build();
+                    baseResponse =
+                        HttpUtils.doPost(httpUrlUtils.genHttpUrl(engineNode.getHost(), engineNode.getAgentPort(),
+                            AgentUrl.GET_ALL_WORK_STDOUT_LOG_URL), getWorkStdoutLogReq, BaseResponse.class);
+                    if (String.valueOf(HttpStatus.OK.value()).equals(baseResponse.getCode())) {
+                        GetWorkStdoutLogRes getWorkStderrLogRes =
+                            JSON.parseObject(JSON.toJSONString(baseResponse.getData()), GetWorkStdoutLogRes.class);
+                        workInstance.setResultData(getWorkStderrLogRes.getLog());
                     }
 
                     updateInstance(workInstance, logBuilder);

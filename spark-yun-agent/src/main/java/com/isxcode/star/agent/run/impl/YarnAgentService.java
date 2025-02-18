@@ -232,7 +232,7 @@ public class YarnAgentService implements AgentService {
             if (exitCode == 1) {
                 throw new IsxAppException(errLog.toString());
             } else {
-                Pattern regex = Pattern.compile("LogType:stdout-start\\s*([\\s\\S]*?)\\s*End of LogType:stdout");
+                Pattern regex = Pattern.compile("LogType:stdout\\s*([\\s\\S]*?)\\s*End of LogType:stdout");
                 Matcher matcher = regex.matcher(errLog);
                 String log = "";
                 while (matcher.find()) {
