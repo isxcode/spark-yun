@@ -30,4 +30,10 @@ public interface DatasourceDriver {
     String DB2_DRIVER = "com.ibm.db2.jcc.DB2Driver";
 
     String H2_DRIVER = "org.h2.Driver";
+
+    String GREENPLUM_DRIVER = "org.postgresql.Driver";
+
+    String GBASE_DRIVER = "com.gbase.jdbc.Driver";
+
+    String SYBASE_DRIVER = "com.sybase.jdbc4.jdbc.SybDriver";
 }
