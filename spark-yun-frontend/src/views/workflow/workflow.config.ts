@@ -205,5 +205,9 @@ export const TypeList = [
   {
     label: 'Excel导入作业',
     value: 'EXCEL_SYNC_JDBC'
+  },
+  {
+    label: 'PySpark作业',
+    value: 'PY_SPARK'
   }
 ]

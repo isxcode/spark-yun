@@ -15,6 +15,8 @@ public interface AgentUrl {
 
     String GET_WORK_STDOUT_LOG_URL = "/" + ModuleCode.SPARK_YUN_AGENT + "/getWorkStdoutLog";
 
+    String GET_ALL_WORK_STDOUT_LOG_URL = "/" + ModuleCode.SPARK_YUN_AGENT + "/getAllWorkStdoutLog";
+
     String GET_WORK_STDERR_LOG_URL = "/" + ModuleCode.SPARK_YUN_AGENT + "/getWorkStderrLog";
 
     String STOP_WORK_URL = "/" + ModuleCode.SPARK_YUN_AGENT + "/stopWork";

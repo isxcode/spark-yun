@@ -217,7 +217,7 @@ function initData(id?: string, tableLoading?: boolean) {
 
           if (id) {
             // 运行结束
-            if (workConfig.workType === 'SPARK_SQL') {
+            if (workConfig.workType === 'SPARK_SQL' || workConfig.workType === 'PY_SPARK') {
               tabList.forEach((item: any) => {
                 if (['RunningLog', 'TotalDetail'].includes(item.code)) {
                   item.hide = false

@@ -73,6 +73,22 @@ public class SparkYunAgentBizService {
         }
     }
 
+    public GetWorkStdoutLogRes getAllWorkStdoutLog(GetWorkStdoutLogReq getWorkStdoutLogReq) {
+
+        AgentService agentService = agentFactory.getAgentService(getWorkStdoutLogReq.getClusterType());
+        String appLog;
+        try {
+            appLog = agentService.getStdoutLog(getWorkStdoutLogReq.getAppId(), getWorkStdoutLogReq.getSparkHomePath());
+        } catch (IsxAppException e) {
+            log.error(e.getMsg(), e);
+            throw new IsxAppException(e.getMsg());
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            throw new IsxAppException(e.getMessage());
+        }
+        return GetWorkStdoutLogRes.builder().log(appLog).build();
+    }
+
     public GetWorkStdoutLogRes getWorkStdoutLog(GetWorkStdoutLogReq getWorkStdoutLogReq) {
 
         AgentService agentService = agentFactory.getAgentService(getWorkStdoutLogReq.getClusterType());

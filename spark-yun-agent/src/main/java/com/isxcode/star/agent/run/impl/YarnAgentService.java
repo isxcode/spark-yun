@@ -56,6 +56,12 @@ public class YarnAgentService implements AgentService {
                     + submitWorkReq.getWorkId() + "-" + submitWorkReq.getWorkInstanceId())
                 .setAppResource(submitWorkReq.getAgentHomePath() + File.separator + "file" + File.separator
                     + submitWorkReq.getSparkSubmit().getAppResource());
+        } else if (WorkType.PY_SPARK.equals(submitWorkReq.getWorkType())) {
+            sparkLauncher
+                .setAppName("zhiqingyun-" + submitWorkReq.getWorkType() + "-" + submitWorkReq.getWorkId() + "-"
+                    + submitWorkReq.getWorkInstanceId())
+                .setAppResource(submitWorkReq.getAgentHomePath() + File.separator + "works" + File.separator
+                    + submitWorkReq.getWorkInstanceId() + ".py");
         } else {
             sparkLauncher
                 .setAppName("zhiqingyun-" + submitWorkReq.getWorkType() + "-" + submitWorkReq.getWorkId() + "-"
@@ -226,7 +232,7 @@ public class YarnAgentService implements AgentService {
             if (exitCode == 1) {
                 throw new IsxAppException(errLog.toString());
             } else {
-                Pattern regex = Pattern.compile("LogType:stdout-start\\s*([\\s\\S]*?)\\s*End of LogType:stdout");
+                Pattern regex = Pattern.compile("LogType:stdout\\s*([\\s\\S]*?)\\s*End of LogType:stdout");
                 Matcher matcher = regex.matcher(errLog);
                 String log = "";
                 while (matcher.find()) {
