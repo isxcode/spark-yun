@@ -345,6 +345,9 @@ public class PySparkExecutor extends WorkExecutor {
                         GetWorkStdoutLogRes getWorkStderrLogRes =
                             JSON.parseObject(JSON.toJSONString(baseResponse.getData()), GetWorkStdoutLogRes.class);
                         workInstance.setResultData(getWorkStderrLogRes.getLog());
+                    } else {
+                        workInstance
+                            .setResultData(Strings.isEmpty(baseResponse.getMsg()) ? "请查看运行日志" : baseResponse.getMsg());
                     }
 
                     updateInstance(workInstance, logBuilder);
