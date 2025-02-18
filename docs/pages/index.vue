@@ -299,7 +299,7 @@ const toggleVideo = () => {
 onMounted(() => {
   const art = new Artplayer({
     container: '.artplayer-app',
-    url: 'https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/product-img/product.mp4',
+    // url: 'https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/product-img/product.mp4',
     poster: 'https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/product-img/product.jpg',
     fullscreen: true,
     fullscreenWeb: true,
