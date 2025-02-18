@@ -299,7 +299,8 @@ public class WorkBizService {
             return new GetDataRes(null, JSON.toJSONString(JSON.parse(workInstanceEntity.getResultData()), true), null);
         }
 
-        if (WorkType.BASH.equals(workEntity.getWorkType()) || WorkType.PYTHON.equals(workEntity.getWorkType())) {
+        if (WorkType.BASH.equals(workEntity.getWorkType()) || WorkType.PYTHON.equals(workEntity.getWorkType())
+            || WorkType.PY_SPARK.equals(workEntity.getWorkType())) {
             return new GetDataRes(null, null, workInstanceEntity.getResultData());
         }
 
