@@ -118,7 +118,6 @@ defineExpose({
                 color: getCssVar('color', 'primary', 'light-5');
                 font-size: 12px;
                 max-width: 400px;
-                margin-right: 24px;
     
                 .url-show {
                     max-width: 100%;
