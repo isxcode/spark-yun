@@ -23,7 +23,7 @@
           <el-icon @click="addNewOption(formData.headerConfig)"><CirclePlus /></el-icon>
         </span>
         <div class="form-options__list">
-          <div class="form-options__item" v-for="(element, index) in formData.headerConfig">
+          <div class="form-options__item" v-for="(element, index) in formData.headerConfig" :key="index">
             <div class="input-item">
               <span class="item-label">键</span>
               <el-input v-model="element.label" placeholder="请输入"></el-input>
@@ -33,7 +33,7 @@
               <el-input v-model="element.value" placeholder="请输入"></el-input>
             </div>
             <div class="option-btn">
-              <el-icon v-if="formData.headerConfig.length > 1" class="remove" @click="removeItem(index, formData.headerConfig)"><CircleClose /></el-icon>
+              <el-icon v-if="formData.headerConfig && formData.headerConfig.length > 1" class="remove" @click="removeItem(index, formData.headerConfig)"><CircleClose /></el-icon>
             </div>
           </div>
         </div>
@@ -48,7 +48,7 @@
           <el-icon @click="addNewOption(formData.bodyConfig)"><CirclePlus /></el-icon>
         </span>
         <div class="form-options__list">
-          <div class="form-options__item" v-for="(element, index) in formData.bodyConfig">
+          <div class="form-options__item" v-for="(element, index) in formData.bodyConfig" :key="index">
             <div class="input-item">
               <span class="item-label">键</span>
               <el-input v-model="element.label" placeholder="请输入"></el-input>
@@ -58,7 +58,7 @@
               <el-input v-model="element.value" placeholder="请输入"></el-input>
             </div>
             <div class="option-btn">
-              <el-icon v-if="formData.bodyConfig.length > 1" class="remove" @click="removeItem(index, formData.bodyConfig)"><CircleClose /></el-icon>
+              <el-icon v-if="formData.bodyConfig && formData.bodyConfig.length > 1" class="remove" @click="removeItem(index, formData.bodyConfig)"><CircleClose /></el-icon>
             </div>
           </div>
         </div>
@@ -90,6 +90,11 @@ import { useAuthStore } from '@/store/useAuth'
 import { GetCustomApiDetailData, TestCustomApiData } from '@/services/custom-api.service'
 import Clipboard from 'clipboard'
 
+interface Option {
+    label: string
+    value: string
+}
+
 const authStore = useAuthStore()
 
 const form = ref<FormInstance>()
@@ -120,7 +125,15 @@ const modelConfig = reactive({
   zIndex: 1100,
   closeOnClickModal: false
 })
-const formData = reactive({
+const formData = reactive<{
+  id: string
+  path: string
+  method: string
+  headerConfig: Option[]
+  bodyConfig: Option[]
+  bodyParams: any
+  returnConfig: any
+}>({
   id: '',
   path: '',              // 自定义访问路径
   method: '',
@@ -158,7 +171,6 @@ function getApiDetailData(id: string) {
   GetCustomApiDetailData({
     id: id
   }).then((res: any) => {
-    console.log('res', res)
     if (res.data.reqHeader) {
       formData.headerConfig = res.data.reqHeader.map((item: any) => {
         item.value = ''
@@ -167,21 +179,11 @@ function getApiDetailData(id: string) {
         }
       })
     }
-    // const bodyJsonObj = JSON.parse(res.data.reqBody)
-    // const bodyConfigArr = []
-    // Object.keys(bodyJsonObj).forEach((key: string) => {
-    //   bodyJsonObj[key] = ''
-    //   bodyConfigArr.push({
-    //     label: key,
-    //     value: ''
-    //   })
-    // })
     if (res.data.apiType === 'POST') {
       formData.bodyParams = jsonFormatter(JSON.parse(res.data.reqJsonTemp))
     } else {
       formData.bodyConfig = res.data.reqGetTemp
     }
-    //  JSON.parse(formData.bodyParams)
   }).catch(() => {
   })
 }
