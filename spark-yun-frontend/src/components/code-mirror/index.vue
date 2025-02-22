@@ -19,7 +19,7 @@ const emit = defineEmits(['update:modelValue', 'change'])
 
 const formData = computed({
     get() {
-        return props.modelValue
+        return props.modelValue || ''
     },
     set(value) {
         emit('update:modelValue', value)
