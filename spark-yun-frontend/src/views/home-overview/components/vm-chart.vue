@@ -14,7 +14,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick, onMounted, ref, watch } from 'vue'
+import { computed, nextTick, onMounted, ref, watch, onUnmounted } from 'vue'
 import dayjs from 'dayjs'
 import * as echarts from 'echarts/core';
 import {
@@ -60,7 +60,14 @@ const chartXAxisData = ref<string[]>([])
 const options = computed<EChartsOption>(() => {
   return {
     tooltip: {
-      trigger: 'item'
+      trigger: 'item',
+      axisPointer: {
+        type: 'cross',
+        label: {
+          show: true,
+          backgroundColor: '#6a7985'
+        }
+      }
     },
     legend: {
       top: '6%',
@@ -93,18 +100,21 @@ const options = computed<EChartsOption>(() => {
         name: '成功',
         type: 'line',
         color: '#43CF7C',
+        smooth: true,
         data: chartSuccessData.value
       },
       {
         name: '失败',
         type: 'line',
         color: '#FA541C',
+        smooth: true,
         data: chartFailData.value
       },
       {
         name: '运行中',
         type: 'line',
         color: '#2A82E4',
+        smooth: true,
         data: chartRunningData.value
       }
     ]
@@ -125,16 +135,6 @@ watch(() => options.value, (val) => {
   if (chartVm.value) {
     chartVm.value.setOption(options.value)
   }
-})
-
-onMounted(() => {
-  if (chartContainerRef.value) {
-    chartVm.value = echarts.init(chartContainerRef.value)
-
-    chartVm.value.setOption(options.value)
-  }
-
-  queryVmChartData()
 })
 
 function queryVmChartData() {
@@ -159,6 +159,25 @@ function queryVmChartData() {
     }
   })
 }
+
+onMounted(() => {
+  if (chartContainerRef.value) {
+    chartVm.value = echarts.init(chartContainerRef.value)
+    chartVm.value.setOption(options.value)
+
+    window.addEventListener('resize', resizeChart)
+  }
+
+  queryVmChartData()
+})
+
+function resizeChart() {
+  chartVm.value?.resize()
+}
+
+onUnmounted(() => {
+  window.removeEventListener('resize', resizeChart)
+})
 
 </script>
 
@@ -187,6 +206,7 @@ function queryVmChartData() {
     .vm-chart__container {
       width: 100%;
       height: 100%;
+      position: relative;
     }
   }
 
