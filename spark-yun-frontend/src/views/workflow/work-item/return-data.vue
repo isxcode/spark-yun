@@ -50,6 +50,7 @@ function getResultDatalist(id: string) {
     tableConfig.colConfigs = []
     tableConfig.tableData = []
     tableConfig.loading = false
+    loading.value = false
     return
   }
   tableConfig.loading = true
