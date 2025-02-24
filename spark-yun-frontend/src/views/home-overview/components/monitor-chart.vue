@@ -6,14 +6,14 @@
     </div>
     <div class="monitor-chart__body">
       <div v-if="!isEmpty" ref="chartContainerRef" class="monitor-chart__container"></div>
-      <el-empty v-else="isEmpty"  class="monitor-chart__empty" description="暂无数据"></el-empty>
+      <empty-page v-else></empty-page>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { MonitorInfo } from './hooks/useMonitor'
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, nextTick, onMounted, onUnmounted, ref, watch, defineEmits } from 'vue'
 import * as echarts from 'echarts/core';
 import {
   TooltipComponent,
@@ -24,6 +24,8 @@ import {
 import { LineChart, LineSeriesOption } from 'echarts/charts';
 import { UniversalTransition } from 'echarts/features';
 import { CanvasRenderer } from 'echarts/renderers';
+
+import allScreen from "@/assets/imgs/fullScreen.svg";
 
 echarts.use([
   TooltipComponent,
@@ -40,44 +42,59 @@ type EChartsOption = echarts.ComposeOption<
 >
 
 const props = withDefaults(defineProps<{
-  monitorData: MonitorInfo
-  dateTimeList: Array<string>
+    monitorData: MonitorInfo
+    dateTimeList: Array<string>
+    hideFull: boolean
 }>(), {})
+
+const chartVm = ref<echarts.ECharts>()
+const chartContainerRef = ref<HTMLDivElement>()
+
+const emit = defineEmits([ 'showDetailEvent' ])
 
 const isEmpty = computed(() => {
   return props.monitorData.data.length === 0
 })
 
-watch(() => isEmpty.value, (newVal) => {
-  if (!newVal && chartContainerRef.value) {
-    chartVm.value = echarts.init(chartContainerRef.value)
-    chartVm.value.setOption(options.value)
-  }
-}, {
-  flush: 'post'
-})
-
-const chartVm = ref<echarts.ECharts>()
-
-const chartContainerRef = ref<HTMLDivElement>()
-
 const options = computed<EChartsOption>(() => {
+  const status = !props?.hideFull
+  const gridBottom = props?.hideFull ? '16%' : '0'
   return {
     tooltip: {
-      trigger: 'item'
+      trigger: 'item',
+      axisPointer: {
+        type: 'cross',
+        label: {
+          backgroundColor: '#6a7985'
+        }
+      }
+    },
+    toolbox: {
+      show: status,
+      top: 0,
+      right: 18,
+      feature: {
+        myFullScreen: {
+          title: '',
+          icon: "image://".concat(allScreen),
+          onclick: () => {
+            emit('showDetailEvent')
+          }
+        }
+      }
     },
     grid: {
-      top: '8%',
+      top: '18%',
       left: '4%',
       right: '8%',
-      bottom: '0%',
+      bottom: gridBottom,
       containLabel: true
     },
     xAxis: {
       type: 'category',
       boundaryGap: false,
       offset: 16,
-      data: props.dateTimeList || [],
+      data: props.dateTimeList,
       axisLine: {
         show: false
       },
@@ -89,16 +106,18 @@ const options = computed<EChartsOption>(() => {
       type: 'value',
       axisLabel: {
         formatter (value) {
-          return value + props.monitorData.unit
+          return value + props.monitorData?.unit
         }
       }
     },
     series: [
       {
-        name: props.monitorData.type,
+        name: props.monitorData?.type,
         type: 'line',
-        color: props.monitorData.color,
-        data: props.monitorData.data
+        areaStyle: {},
+        smooth: true,
+        color: props.monitorData?.color,
+        data: props.monitorData?.data
       }
     ]
   }
@@ -110,6 +129,34 @@ watch(() => options.value, (val) => {
   }
 })
 
+watch(() => isEmpty.value, (newVal) => {
+  if (!newVal && chartContainerRef.value) {
+    chartVm.value = echarts.init(chartContainerRef.value)
+    chartVm.value.setOption(options.value)
+  }
+}, {
+  flush: 'post'
+})
+
+function resizeChart() {
+  console.log('初始化')
+  nextTick(() => {
+    chartVm.value?.resize()
+  })
+}
+
+onMounted(() => {
+  if (chartContainerRef.value) {
+    chartVm.value = echarts.init(chartContainerRef.value)
+    chartVm.value.setOption(options.value)
+
+    window.addEventListener('resize', resizeChart)
+  }
+})
+
+onUnmounted(() => {
+  window.removeEventListener('resize', resizeChart)
+})
 </script>
 
 <style scoped lang="scss">
@@ -120,12 +167,14 @@ watch(() => options.value, (val) => {
   background-color: getCssVar('color', 'white');
   box-shadow: getCssVar('box-shadow', 'lighter');
   padding: 12px;
+  transition: all 0.3s linear;
 
   .monitor-chart__body {
     display: flex;
     align-items: center;
     justify-content: center;
     height: calc(100% - 40px);
+    position: relative;
   }
 
   .monitor-chart__title, .monitor-chart__active {

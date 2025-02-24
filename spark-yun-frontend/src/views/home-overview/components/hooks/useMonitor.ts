@@ -32,7 +32,7 @@ export function useMonitor(currentColony: Ref<ColonyInfo | undefined>, currentFr
         name: 'CPU',
         value: currentInfo.value.cpuPercent || 0,
         unit: '%',
-        color: '#2A82E4',
+        color: '#2a82e485',
         data: cpuMonitorDataList.value
       },
       {
@@ -40,7 +40,7 @@ export function useMonitor(currentColony: Ref<ColonyInfo | undefined>, currentFr
         name: '内存',
         value: currentInfo.value.usedMemorySize || 0,
         unit: 'GB',
-        color: '#FF8D1A',
+        color: '#FF8D1A85',
         data: memoryMonitorDataList.value
       },
       {
@@ -48,7 +48,7 @@ export function useMonitor(currentColony: Ref<ColonyInfo | undefined>, currentFr
         name: '存储',
         value: currentInfo.value.usedStorageSize || 0,
         unit: 'GB',
-        color: '#D43030',
+        color: '#D4303085',
         data: storageMonitorDataList.value
       },
       {
@@ -56,7 +56,7 @@ export function useMonitor(currentColony: Ref<ColonyInfo | undefined>, currentFr
         name: 'IO读写',
         value: currentInfo.value.diskIoWriteSpeed || 0,
         unit: 'KB/s',
-        color: '#00BAAD',
+        color: '#D580FF85',
         data: diskIoMonitorList.value
       }
     ]
