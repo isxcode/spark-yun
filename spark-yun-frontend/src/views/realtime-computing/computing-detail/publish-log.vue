@@ -44,6 +44,7 @@ function refrashEvent() {
 // 获取日志
 function getLogData(id: string) {
   if (!id || status.value) {
+    loading.value = false
     return
   }
   isRequest.value = true

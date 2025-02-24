@@ -41,6 +41,7 @@ function refrashEvent() {
 // 获取日志
 function getLogData(id: string) {
   if (!id) {
+    loading.value = false
     return
   }
   GetSubmitLogData({

@@ -35,6 +35,7 @@ function initData(id: string): void {
 function getLogData(id: string) {
   if (!id) {
     logMsg.value = ''
+    loading.value = false
     return
   }
   loading.value = true
