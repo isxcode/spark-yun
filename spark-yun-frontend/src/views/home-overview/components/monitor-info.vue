@@ -38,28 +38,28 @@
     </div>
     <div class="monitor-info__body">
       <template v-for="monitorData in monitorDataList" :key="monitorData.type">
-        <monitor-chart :monitorData="monitorData" :dateTimeList="dateTimeList"></monitor-chart>
+        <monitor-chart :monitorData="monitorData" :dateTimeList="dateTimeList" @showDetailEvent="showDetailEvent(monitorData, dateTimeList)"></monitor-chart>
       </template>
     </div>
+    
+    <PreviewReport ref="previewReportRef"></PreviewReport>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { onMounted } from 'vue';
+import { onMounted, ref } from 'vue';
 import { useColony } from './hooks/useColony'
 import { useFrequency } from './hooks/useFrequency'
 import { useMonitor } from './hooks/useMonitor'
+import { MonitorInfo } from './hooks/useMonitor'
 import MonitorChart from './monitor-chart.vue'
-
+import PreviewReport from './preview-report/index.vue'
 
 const { currentColony, colonyList, onColonyChange, queryColonyData } = useColony()
 const { currentFrequency, frequencyList, onFrequencyChange } = useFrequency()
 const { monitorDataList, dateTimeList, queryMonitorData } = useMonitor(currentColony, currentFrequency)
 
-onMounted(async () => {
-  await queryColonyData()
-  await queryMonitorData()
-})
+const previewReportRef = ref<any>()
 
 function handleColonyChange(colonyId: string) {
   onColonyChange(colonyId)
@@ -71,6 +71,14 @@ function handleFrequencyChange(frequency: string) {
   queryMonitorData()
 }
 
+function showDetailEvent(monitorData: MonitorInfo, dateTimeList: string[]) {
+  previewReportRef.value.showModal(monitorData, dateTimeList)
+}
+
+onMounted(async () => {
+  await queryColonyData()
+  await queryMonitorData()
+})
 </script>
 
 <style lang="scss">

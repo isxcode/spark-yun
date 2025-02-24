@@ -3,7 +3,7 @@
     <span class="sys-chart__title">{{ chartData.title }}</span>
     <div class="sys-chart__body">
       <div v-if="!isEmpty" ref="bodyContainer" class="sys-chart__container"></div>
-      <el-empty v-else class="sys-chart__empty" description="暂无数据"></el-empty>
+      <empty-page v-else></empty-page>
     </div>
     <div class="sys-chart__footer" v-if="!isEmpty">
       <span class="sys-chart__mix">{{ chartData.mix }}/{{ chartData.total }}</span>
@@ -150,6 +150,7 @@ const bodyContainer = ref<HTMLDivElement>()
     display: flex;
     justify-content: center;
     flex: 1;
+    position: relative;
   }
 
   .sys-chart__container {
