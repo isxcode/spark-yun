@@ -3,11 +3,11 @@
 
     <div class="content">
       <div class="left">
-        <img class="logo-img" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/web-img/logo.jpg" alt=""/>
+        <img class="logo-img" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/website/web-img/logo.jpg" alt=""/>
         <div class="logo-name">
           {{ $t("company_name") }}
         </div>
-        <img class="wechat-img" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiyao/qrcode_for_12.jpg" alt=""/>
+        <img class="wechat-img" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/website/web-img/qrcode.jpg" alt=""/>
         <div class="wechat-name">
           {{ $t("wechat_official_account") }}
         </div>
