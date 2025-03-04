@@ -99,14 +99,24 @@ function initData(tableLoading?: boolean) {
 function addData() {
     addModalRef.value.showModal((data: any) => {
         return new Promise((resolve: any, reject: any) => {
-            CreateCustomApiData(data).then((res: any) => {
-                initData()
-                ElMessage.success(res.msg)
-                resolve()
-            }).catch(err => {
-                reject(err)
-            })
+            if (!data.id) {
+                CreateCustomApiData(data).then((res: any) => {
+                    // initData()
+                    // ElMessage.success(res.msg)
+                    resolve(res)
+                }).catch(err => {
+                    reject(err)
+                })
+            } else {
+                UpdateCustomApiData(data).then((res: any) => {
+                    resolve(res)
+                }).catch(err => {
+                    reject(err)
+                })
+            }
         })
+    }, null, () => {
+        initData()
     })
 }
 
@@ -114,14 +124,16 @@ function editData(row: any) {
     addModalRef.value.showModal((data: any) => {
         return new Promise((resolve: any, reject: any) => {
             UpdateCustomApiData(data).then((res: any) => {
-                initData()
-                ElMessage.success(res.msg)
-                resolve()
+                // initData()
+                // ElMessage.success(res.msg)
+                resolve(res)
             }).catch(err => {
                 reject(err)
             })
         })
-    }, row)
+    }, row, () => {
+        initData()
+    })
 }
 
 // 删除
