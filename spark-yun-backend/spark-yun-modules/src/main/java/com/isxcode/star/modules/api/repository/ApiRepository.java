@@ -22,4 +22,6 @@ public interface ApiRepository extends JpaRepository<ApiEntity, String> {
     Page<ApiEntity> pageApi(@Param("keyword") String searchKeyWord, Pageable pageable);
 
     long countByStatus(String status);
+
+    Optional<ApiEntity> findByName(String name);
 }
