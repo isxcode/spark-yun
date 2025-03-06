@@ -33,14 +33,14 @@
 
 ### 立即体验
 
-> [!NOTE]
+> [!TIP]
 > 演示地址：https://zhiqingyun-demo.isxcode.com </br>
 > 体验账号：user001 </br>
 > 账号密码：welcome1
 
 ### 快速部署
 
-> [!TIP]
+> [!NOTE]
 > 访问地址：http://localhost:8080 <br/>
 > 管理员账号：admin <br/>
 > 管理员密码：admin123
