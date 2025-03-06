@@ -39,7 +39,7 @@
 
 ### 快速部署
 
-> [!IMPORTANT]
+> [!TIP]
 > 访问地址：http://localhost:8080 <br/>
 > 管理员账号：admin <br/>
 > 管理员密码：admin123
@@ -57,14 +57,14 @@ docker run -p 8080:8080 -d isxcode/zhiqingyun
 
 ### 源码构建
 
-> [!IMPORTANT]
+> [!CAUTION]
 > 编译环境需访问外网，且需提前安装Nodejs和Java，推荐版本如下: </br>
 > Java: zulu8.78.0.19-ca-jdk8.0.412-x64 </br>
 > Nodejs: node-v18.20.3-x64
 
 ##### MacOS/Linux
 
-> [!TIP]
+> [!WARNING]
 > 安装包路径: spark-yun/spark-yun-dist/build/distributions/zhiqingyun.tar.gz
 
 ```bash
@@ -75,7 +75,7 @@ cd spark-yun
 
 ##### Windows10/11
 
-> [!IMPORTANT]
+> [!CAUTION]
 > 请使用Git Bash终端工具执行以下命令
 
 ```bash
