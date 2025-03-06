@@ -33,9 +33,10 @@
 
 ### 立即体验
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;演示地址：https://zhiqingyun-demo.isxcode.com </br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;体验账号：user001 </br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;账号密码：welcome1
+> [!NOTE]
+> 演示地址：https://zhiqingyun-demo.isxcode.com </br>
+> 体验账号：user001 </br>
+> 账号密码：welcome1
 
 ### 快速部署
 
