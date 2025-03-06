@@ -33,12 +33,14 @@
 
 ### 立即体验
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;演示地址：https://zhiqingyun-demo.isxcode.com </br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;体验账号：user001 </br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;账号密码：welcome1
+> [!TIP]
+> 演示地址：https://zhiqingyun-demo.isxcode.com </br>
+> 体验账号：user001 </br>
+> 账号密码：welcome1
 
 ### 快速部署
 
+> [!NOTE]
 > 访问地址：http://localhost:8080 <br/>
 > 管理员账号：admin <br/>
 > 管理员密码：admin123
@@ -56,12 +58,14 @@ docker run -p 8080:8080 -d isxcode/zhiqingyun
 
 ### 源码构建
 
-> 注意！！！编译环境需访问外网，且需提前安装Nodejs和Java，推荐版本如下: </br>
+> [!WARNING]
+> 编译环境需访问外网，且需提前安装Nodejs和Java，推荐版本如下: </br>
 > Java: zulu8.78.0.19-ca-jdk8.0.412-x64 </br>
 > Nodejs: node-v18.20.3-x64
 
 ##### MacOS/Linux
 
+> [!IMPORTANT]
 > 安装包路径: spark-yun/spark-yun-dist/build/distributions/zhiqingyun.tar.gz
 
 ```bash
@@ -72,7 +76,8 @@ cd spark-yun
 
 ##### Windows10/11
 
-> 注意！！！请使用Git Bash终端工具执行以下命令
+> [!CAUTION]
+> 请使用Git Bash终端工具执行以下命令
 
 ```bash
 git clone https://github.com/isxcode/spark-yun.git
@@ -80,6 +85,6 @@ cd spark-yun
 ./gradlew.bat install clean package
 ```
 
-### 联系我们
+### 收藏历史
 
-邮箱：hello@isxcode.com
+[![Star History Chart](https://api.star-history.com/svg?repos=isxcode/spark-yun&type=Date)](https://star-history.com/#isxcode/spark-yun&Date)
