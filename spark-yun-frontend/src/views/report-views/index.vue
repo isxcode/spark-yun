@@ -35,6 +35,9 @@
                               <span class="click-show-more">更多</span>
                               <template #dropdown>
                                 <el-dropdown-menu>
+                                  <el-dropdown-item @click="editReport(scopeSlot.row)">
+                                    编辑
+                                  </el-dropdown-item>
                                   <el-dropdown-item v-if="['NEW', 'OFFLINE'].includes(scopeSlot.row.status)" @click="publishReport(scopeSlot.row)">
                                     发布
                                   </el-dropdown-item>
@@ -71,7 +74,8 @@ import {
     AddReportView,
     UnderlineReportViewData,
     PublishReportViewData,
-    DeleteReportViewData
+    DeleteReportViewData,
+EditReportView
 } from '@/services/report-echarts.service'
 import ShareReportModal from './share-report-modal/index.vue'
 
@@ -124,6 +128,20 @@ function addData() {
             })
         })
     })
+}
+// 编辑
+function editReport(data: any) {
+    addModalRef.value.showModal((formData: any) => {
+        return new Promise((resolve: any, reject: any) => {
+            EditReportView(formData).then((res: any) => {
+                ElMessage.success(res.msg)
+                initData()
+                resolve()
+            }).catch((error: any) => {
+                reject(error)
+            })
+        })
+    }, data)
 }
 // 删除
 function deleteData(data: any) {

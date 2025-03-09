@@ -91,6 +91,14 @@ export function AddReportView(params: any): Promise<any> {
         params: params
     })
 }
+// 报表大屏展示-编辑视图
+export function EditReportView(params: any): Promise<any> {
+    return http.request({
+        method: 'post',
+        url: '/vip/view/editView',
+        params: params
+    })
+}
 // 报表大屏展示-获取详情视图数据
 export function GetReportViewDetail(params: any, config?: any): Promise<any> {
     return http.request({
