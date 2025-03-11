@@ -9,8 +9,7 @@
 <template>
   <div class="zqy-header">
     <div class="header-name" @click="clickToSPK">
-      <!-- <img src="../../assets/icons/logo.jpg" alt="至轻云"> -->
-      至轻云
+      <img src="../../assets/imgs/logo-a.png" alt="至轻云">
     </div>
     <!-- <div
       v-if="headerConfig.tenantList && headerConfig.tenantList.length > 0 && tenantSelect"
@@ -178,6 +177,9 @@ onUnmounted(() => {
     justify-content: center;
     color: getCssVar('color', 'primary');;
     cursor: pointer;
+    img {
+      height: 35px;
+    }
   }
   .zqy-tenant {
     position: absolute;
