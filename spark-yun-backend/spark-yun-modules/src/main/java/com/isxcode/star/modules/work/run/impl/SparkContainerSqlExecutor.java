@@ -9,7 +9,6 @@ import com.isxcode.star.api.container.constants.ContainerStatus;
 import com.isxcode.star.api.work.constants.WorkLog;
 import com.isxcode.star.api.work.constants.WorkType;
 import com.isxcode.star.backend.api.base.exceptions.WorkRunException;
-import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.star.backend.api.base.properties.IsxAppProperties;
 import com.isxcode.star.modules.alarm.service.AlarmService;
 import com.isxcode.star.modules.cluster.entity.ClusterNodeEntity;
@@ -116,7 +115,7 @@ public class SparkContainerSqlExecutor extends WorkExecutor {
             List<ClusterNodeEntity> allEngineNodes = clusterNodeRepository
                 .findAllByClusterIdAndStatus(containerEntityOptional.get().getClusterId(), ClusterNodeStatus.RUNNING);
             if (allEngineNodes.isEmpty()) {
-                throw new IsxAppException("集群不存在可用节点");
+                throw new WorkRunException("集群不存在可用节点");
             }
 
             // 节点选择随机数
