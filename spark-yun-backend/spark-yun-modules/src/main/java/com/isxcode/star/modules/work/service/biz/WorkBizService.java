@@ -11,6 +11,7 @@ import com.isxcode.star.api.instance.req.*;
 import com.isxcode.star.api.instance.res.GetWorkInstanceValuePathRes;
 import com.isxcode.star.api.instance.res.GetWorkflowInstanceRes;
 import com.isxcode.star.api.instance.res.QueryInstanceRes;
+import com.isxcode.star.api.work.constants.WorkLog;
 import com.isxcode.star.api.work.constants.WorkStatus;
 import com.isxcode.star.api.work.constants.WorkType;
 import com.isxcode.star.api.work.dto.*;
@@ -42,6 +43,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -352,7 +354,32 @@ public class WorkBizService {
         WorkExecutor workExecutor = workExecutorFactory.create(workEntity.getWorkType());
 
         if (InstanceType.MANUAL.equals(workInstanceEntity.getInstanceType())) {
-            workExecutor.syncAbort(workInstanceEntity);
+
+            try {
+                workExecutor.syncAbort(workInstanceEntity);
+                WorkInstanceEntity latestWorkInstance =
+                    workInstanceRepository.findById(stopJobReq.getInstanceId()).get();
+                String submitLog =
+                    latestWorkInstance.getSubmitLog() + LocalDateTime.now() + WorkLog.SUCCESS_INFO + "已中止  \n";
+                latestWorkInstance.setSubmitLog(submitLog);
+                latestWorkInstance.setStatus(InstanceStatus.ABORT);
+                latestWorkInstance.setExecEndDateTime(new Date());
+                latestWorkInstance.setDuration(
+                    (System.currentTimeMillis() - latestWorkInstance.getExecStartDateTime().getTime()) / 1000);
+                workInstanceRepository.save(latestWorkInstance);
+            } catch (Exception e) {
+                log.debug(e.getMessage(), e);
+                WorkInstanceEntity latestWorkInstance =
+                    workInstanceRepository.findById(stopJobReq.getInstanceId()).get();
+                String submitLog =
+                    latestWorkInstance.getSubmitLog() + LocalDateTime.now() + WorkLog.SUCCESS_INFO + "中止失败 \n";
+                latestWorkInstance.setSubmitLog(submitLog);
+                latestWorkInstance.setStatus(InstanceStatus.FAIL);
+                latestWorkInstance.setExecEndDateTime(new Date());
+                latestWorkInstance.setDuration(
+                    (System.currentTimeMillis() - latestWorkInstance.getExecStartDateTime().getTime()) / 1000);
+                workInstanceRepository.save(latestWorkInstance);
+            }
         }
     }
 
