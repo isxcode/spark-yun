@@ -116,7 +116,7 @@ public class SparkContainerSqlExecutor extends WorkExecutor {
             List<ClusterNodeEntity> allEngineNodes = clusterNodeRepository
                 .findAllByClusterIdAndStatus(containerEntityOptional.get().getClusterId(), ClusterNodeStatus.RUNNING);
             if (allEngineNodes.isEmpty()) {
-                throw new IsxAppException("集群不存在可用节点");
+                throw new WorkRunException("集群不存在可用节点");
             }
 
             // 节点选择随机数
