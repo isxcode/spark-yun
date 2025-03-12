@@ -5,6 +5,7 @@ import com.isxcode.star.api.agent.constants.AgentType;
 import com.isxcode.star.api.agent.constants.AgentUrl;
 import com.isxcode.star.api.agent.req.*;
 import com.isxcode.star.api.agent.res.GetWorkStderrLogRes;
+import com.isxcode.star.api.agent.res.GetWorkStdoutLogRes;
 import com.isxcode.star.api.api.constants.PathConstants;
 import com.isxcode.star.api.cluster.constants.ClusterNodeStatus;
 import com.isxcode.star.api.cluster.dto.ScpFileEngineNodeDto;
@@ -332,20 +333,22 @@ public class SparkJarExecutor extends WorkExecutor {
                 if (successStatus.contains(workStatusRes.getAppStatus().toUpperCase())) {
 
                     // 获取数据
-                    GetWorkDataReq getWorkDataReq = GetWorkDataReq.builder().appId(submitWorkRes.getAppId())
-                        .clusterType(calculateEngineEntityOptional.get().getClusterType())
-                        .sparkHomePath(executeReq.getSparkHomePath()).build();
-                    baseResponse = HttpUtils.doPost(httpUrlUtils.genHttpUrl(engineNode.getHost(),
-                        engineNode.getAgentPort(), AgentUrl.GET_WORK_DATA_URL), getWorkDataReq, BaseResponse.class);
+                    GetWorkStdoutLogReq getWorkStdoutLogReq =
+                        GetWorkStdoutLogReq.builder().appId(submitWorkRes.getAppId())
+                            .clusterType(calculateEngineEntityOptional.get().getClusterType())
+                            .sparkHomePath(executeReq.getSparkHomePath()).build();
+                    baseResponse =
+                        HttpUtils.doPost(httpUrlUtils.genHttpUrl(engineNode.getHost(), engineNode.getAgentPort(),
+                            AgentUrl.GET_CUSTOM_WORK_STDOUT_LOG_URL), getWorkStdoutLogReq, BaseResponse.class);
                     log.debug("获取远程返回数据:{}", baseResponse.toString());
-
                     if (!String.valueOf(HttpStatus.OK.value()).equals(baseResponse.getCode())) {
                         throw new WorkRunException(
                             LocalDateTime.now() + WorkLog.ERROR_INFO + "获取作业数据异常 : " + baseResponse.getErr() + "\n");
                     }
 
                     // 解析数据并保存
-                    workInstance.setResultData(JSON.toJSONString(baseResponse.getData()));
+                    workInstance.setResultData(JSON
+                        .parseObject(JSON.toJSONString(baseResponse.getData()), GetWorkStdoutLogRes.class).getLog());
                     logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("数据保存成功 \n");
 
                     // 如果是k8s类型，需要删除k8s容器
