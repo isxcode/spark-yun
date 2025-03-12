@@ -41,6 +41,11 @@ public interface AgentService {
     String getStdoutLog(String appId, String sparkHomePath) throws Exception;
 
     /**
+     * 获取自定义spark作业的Stdout日志
+     */
+    String getCustomWorkStdoutLog(String appId, String sparkHomePath) throws Exception;
+
+    /**
      * 获取spark作业返回的数据的字符串
      */
     String getWorkDataStr(String appId, String sparkHomePath) throws Exception;

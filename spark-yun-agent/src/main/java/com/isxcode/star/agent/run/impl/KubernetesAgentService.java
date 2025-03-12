@@ -431,6 +431,11 @@ public class KubernetesAgentService implements AgentService {
     }
 
     @Override
+    public String getCustomWorkStdoutLog(String appId, String sparkHomePath) throws Exception {
+        return "请看运行日志";
+    }
+
+    @Override
     public String getWorkDataStr(String appId, String sparkHomePath) throws Exception {
 
         String getLogCmdFormat = "kubectl logs -f %s -n zhiqingyun-space";
