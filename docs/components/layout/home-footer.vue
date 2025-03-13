@@ -43,6 +43,7 @@
         <div class="column">
           <div class="title">{{ $t("contact_us") }}</div>
           <div class="link">{{ $t("phone") }}</div>
+          <div class="link">{{ $t("wx_chat") }}</div>
           <div class="link">{{ $t("email") }}hello@isxcode.com</div>
           <div class="link">{{ $t("address") }}</div>
         </div>
@@ -54,6 +55,7 @@
     <div class="content">
       <div class="link">{{ $t("phone_company_name") }}</div>
       <div class="link">{{ $t("phone") }}</div>
+      <div class="link">{{ $t("wx_chat") }}</div>
       <div class="link">{{ $t("email") }}hello@isxcode.com</div>
       <div class="link">{{ $t("address") }}</div>
     </div>
@@ -281,7 +283,7 @@
     font-size: 14px;
 
     .content {
-      height: 120px;
+      height: 130px;
       line-height: 25px;
       width: 300px;
       margin: auto;
