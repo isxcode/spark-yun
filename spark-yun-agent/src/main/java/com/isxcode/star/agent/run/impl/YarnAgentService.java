@@ -255,7 +255,35 @@ public class YarnAgentService implements AgentService {
 
     @Override
     public String getCustomWorkStdoutLog(String appId, String sparkHomePath) throws Exception {
-        return "请看运行日志";
+
+        String getLogCmdFormat = "yarn logs -applicationId %s";
+        Process process = Runtime.getRuntime().exec(String.format(getLogCmdFormat, appId));
+
+        InputStream inputStream = process.getInputStream();
+        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
+
+        StringBuilder errLog = new StringBuilder();
+        String line;
+        while ((line = reader.readLine()) != null) {
+            errLog.append(line).append("\n");
+        }
+
+        try {
+            int exitCode = process.waitFor();
+            if (exitCode == 1) {
+                throw new IsxAppException(errLog.toString());
+            } else {
+                Pattern regex = Pattern.compile("LogType:stdout\\s*([\\s\\S]*?)\\s*End of LogType:stdout");
+                Matcher matcher = regex.matcher(errLog);
+                if (matcher.find()) {
+                    return matcher.group(1).replace("LogType:stdout\n", "").replace("\nEnd of LogType:stdout", "");
+                }
+            }
+        } catch (InterruptedException e) {
+            log.error(e.getMessage(), e);
+            throw new IsxAppException(e.getMessage());
+        }
+        return "日志未生成";
     }
 
     @Override
@@ -359,4 +387,5 @@ public class YarnAgentService implements AgentService {
             throw new IsxAppException(e.getMessage());
         }
     }
+
 }
