@@ -54,6 +54,14 @@ public class SparkYunAgentController {
     }
 
     @Operation(summary = "获取Stdout日志接口")
+    @PostMapping(AgentUrl.GET_CUSTOM_WORK_STDOUT_LOG_URL)
+    @SuccessResponse("获取成功")
+    public GetWorkStdoutLogRes getCustomWorkStdoutLog(@Valid @RequestBody GetWorkStdoutLogReq getWorkStdoutLogReq) {
+
+        return sparkYunAgentBizService.getCustomWorkStdoutLog(getWorkStdoutLogReq);
+    }
+
+    @Operation(summary = "获取Stdout日志接口")
     @PostMapping(AgentUrl.GET_WORK_STDOUT_LOG_URL)
     @SuccessResponse("获取成功")
     public GetWorkStdoutLogRes getWorkStdoutLog(@Valid @RequestBody GetWorkStdoutLogReq getWorkStdoutLogReq) {
