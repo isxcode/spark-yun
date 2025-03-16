@@ -4,12 +4,12 @@
       <el-form-item label="名称" prop="name">
         <el-input v-model="formData.name" maxlength="200" placeholder="请输入" />
       </el-form-item>
-      <el-form-item label="图表类型" prop="type">
+      <el-form-item label="图表类型" prop="type" v-if="renderSence === 'new'">
         <el-select v-model="formData.type" placeholder="请选择">
           <el-option v-for="item in chartTypeList" :key="item.value" :label="item.label" :value="item.value" />
         </el-select>
       </el-form-item>
-      <el-form-item label="数据源" prop="datasourceId">
+      <el-form-item label="数据源" prop="datasourceId" v-if="renderSence === 'new'">
         <el-select v-model="formData.datasourceId" placeholder="请选择" @visible-change="getDataSourceList">
           <el-option v-for="item in dataSourceList" :key="item.value" :label="item.label" :value="item.value" />
         </el-select>
@@ -37,6 +37,7 @@ const form = ref<FormInstance>()
 const callback = ref<any>()
 const dataSourceList = ref([])  // 数据源
 const chartTypeList = ref<Option[]>(ChartTypeList)
+const renderSence = ref<string>('new')
 
 const modelConfig = reactive({
   title: '添加卡片',
@@ -83,11 +84,13 @@ function showModal(cb: () => void, data: any): void {
   modelConfig.visible = true
   getDataSourceList(true)
   if (data) {
+    renderSence.value = 'edit'
     Object.keys(formData).forEach(key => {
       formData[key] = data[key]
     })
     modelConfig.title = '编辑卡片'
   } else {
+    renderSence.value = 'new'
     Object.keys(formData).forEach(key => {
       formData[key] = null
     })
