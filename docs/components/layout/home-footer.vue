@@ -39,6 +39,7 @@
           <div class="link" @click="aboutUs">{{ $t("company_intro") }}</div>
           <div class="link" @click="joinUs">{{ $t("join_us") }}</div>
           <div class="link" @click="clickGithubProject"> {{ $t("development_progress") }}</div>
+          <div class="link" @click="downloadPdf"> {{ $t("download_pdf") }}</div>
         </div>
         <div class="column">
           <div class="title">{{ $t("contact_us") }}</div>
@@ -389,6 +390,10 @@ function clickDockerHub() {
 
 function downloadLicense() {
   window.open("https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/license.lic");
+}
+
+function downloadPdf() {
+  window.open("https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/zhiqingyun.pdf");
 }
 
 function downloadPackage() {

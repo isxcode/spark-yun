@@ -34,7 +34,19 @@
                         <div class="btn-group">
                             <span v-if="['NEW', 'OFFLINE'].includes(scopeSlot.row.status)" @click="publishReport(scopeSlot.row)">发布</span>
                             <span v-else @click="underlineReport(scopeSlot.row)">下线</span>
-                            <span @click="deleteData(scopeSlot.row)">删除</span>
+                            <el-dropdown trigger="click">
+                              <span class="click-show-more">更多</span>
+                              <template #dropdown>
+                                <el-dropdown-menu>
+                                    <el-dropdown-item @click="editReport(scopeSlot.row)">
+                                        编辑
+                                    </el-dropdown-item>
+                                    <el-dropdown-item @click="deleteData(scopeSlot.row)">
+                                        删除
+                                    </el-dropdown-item>
+                                </el-dropdown-menu>
+                              </template>
+                            </el-dropdown>
                         </div>
                     </template>
                 </BlockTable>
@@ -52,7 +64,7 @@ import BlockTable from '@/components/block-table/index.vue'
 import LoadingPage from '@/components/loading/index.vue'
 
 import { BreadCrumbList, TableConfig } from './report-components.config'
-import { QueryReportComponent, CreateReportComponentData, PublishReportComponentData, OfflineReportComponentData, DeleteReportComponentData } from '@/services/report-echarts.service'
+import { QueryReportComponent, CreateReportComponentData, PublishReportComponentData, OfflineReportComponentData, DeleteReportComponentData, EditReportComponent } from '@/services/report-echarts.service'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useRouter } from 'vue-router'
 import { ChartTypeList } from './report-item/report-item.config'
@@ -112,6 +124,25 @@ function addData() {
             })
         })
     })
+}
+
+// 编辑
+function editReport(data: any) {
+    addModalRef.value.showModal((formData: any) => {
+        return new Promise((resolve: any, reject: any) => {
+            EditReportComponent({
+                id: formData.id,
+                name: formData.name,
+                remark: formData.remark
+            }).then((res: any) => {
+                ElMessage.success(res.msg)
+                initData()
+                resolve()
+            }).catch((error: any) => {
+                reject(error)
+            })
+        })
+    }, data)
 }
 
 // 删除

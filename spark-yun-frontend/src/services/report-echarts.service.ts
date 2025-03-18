@@ -17,6 +17,14 @@ export function CreateReportComponentData(params: any): Promise<any> {
         params: params
     })
 }
+// 报表组件-编辑组件
+export function EditReportComponent(params: any): Promise<any> {
+    return http.request({
+        method: 'post',
+        url: '/vip/view/editViewCard',
+        params: params
+    })
+}
 // 报表组件-删除组件
 export function DeleteReportComponentData(params: any): Promise<any> {
     return http.request({
@@ -88,6 +96,14 @@ export function AddReportView(params: any): Promise<any> {
     return http.request({
         method: 'post',
         url: '/vip/view/addView',
+        params: params
+    })
+}
+// 报表大屏展示-编辑视图
+export function EditReportView(params: any): Promise<any> {
+    return http.request({
+        method: 'post',
+        url: '/vip/view/editView',
         params: params
     })
 }
