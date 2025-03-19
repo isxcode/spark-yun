@@ -31,7 +31,7 @@
     "@types/node": "^18.17.3",
     "gray-matter": "^4.0.3",
     "naive-ui": "^2.39.0",
-    "nuxt": "^3.6.5",
+    "nuxt": "^3.16.0",
     "nuxt-lodash": "^2.5.3",
     "nuxtjs-naive-ui": "^1.0.2",
     "raw-loader": "^4.0.2",
