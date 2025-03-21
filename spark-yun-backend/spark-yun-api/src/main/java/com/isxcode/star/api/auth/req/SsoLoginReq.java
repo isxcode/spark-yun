@@ -1,4 +1,4 @@
-package com.isxcode.star.api.user.req;
+package com.isxcode.star.api.auth.req;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;

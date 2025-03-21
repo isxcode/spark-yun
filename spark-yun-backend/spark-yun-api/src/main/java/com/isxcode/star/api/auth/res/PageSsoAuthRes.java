@@ -21,6 +21,8 @@ public class PageSsoAuthRes {
 
     private String remark;
 
+    private String ssoType;
+
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime createDateTime;
 
