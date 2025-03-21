@@ -3,9 +3,6 @@ package com.isxcode.star.modules.user.service;
 import static com.isxcode.star.common.config.CommonConfig.USER_ID;
 
 import cn.hutool.crypto.SecureUtil;
-import com.alibaba.fastjson.JSONPath;
-import com.isxcode.star.api.auth.constants.AuthStatus;
-import com.isxcode.star.api.auth.dto.SsoAccessTokenParams;
 import com.isxcode.star.api.tenant.constants.TenantStatus;
 import com.isxcode.star.api.user.constants.RoleType;
 import com.isxcode.star.api.user.constants.UserStatus;
@@ -13,9 +10,7 @@ import com.isxcode.star.api.user.req.*;
 import com.isxcode.star.api.user.res.*;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.star.backend.api.base.properties.IsxAppProperties;
-import com.isxcode.star.common.utils.http.HttpUtils;
 import com.isxcode.star.common.utils.jwt.JwtUtils;
-import com.isxcode.star.modules.auth.entity.AuthEntity;
 import com.isxcode.star.modules.auth.repository.AuthRepository;
 import com.isxcode.star.modules.tenant.entity.TenantEntity;
 import com.isxcode.star.modules.tenant.repository.TenantRepository;
@@ -25,9 +20,7 @@ import com.isxcode.star.security.user.TenantUserRepository;
 import com.isxcode.star.security.user.UserEntity;
 import com.isxcode.star.security.user.UserRepository;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import javax.transaction.Transactional;
@@ -78,102 +71,6 @@ public class UserBizService {
         // 判断密码是否合法
         if (!SecureUtil.md5(usrLoginReq.getPasswd()).equals(userEntity.getPasswd())) {
             throw new IsxAppException("账号或者密码不正确");
-        }
-
-        // 生成token
-        String jwtToken = JwtUtils.encrypt(isxAppProperties.getAesSlat(), userEntity.getId(),
-            isxAppProperties.getJwtKey(), isxAppProperties.getExpirationMin());
-
-        // 如果是系统管理员直接返回
-        if (RoleType.SYS_ADMIN.equals(userEntity.getRoleCode())) {
-            return LoginRes.builder().tenantId(userEntity.getCurrentTenantId()).username(userEntity.getUsername())
-                .phone(userEntity.getPhone()).email(userEntity.getEmail()).remark(userEntity.getRemark())
-                .token(jwtToken).role(userEntity.getRoleCode()).build();
-        }
-
-        // 如果用户不在任何一个租户报错
-        List<TenantUserEntity> tenantUserEntities = tenantUserRepository.findAllByUserId(userEntity.getId());
-        if (tenantUserEntities.isEmpty()) {
-            throw new IsxAppException("无可用租户，请联系管理员");
-        }
-
-        // 如果用户没有任何启动租户报错
-        List<String> tenantId =
-            tenantUserEntities.stream().map(TenantUserEntity::getTenantId).collect(Collectors.toList());
-        List<TenantEntity> enableTenants = tenantRepository.findAllByIdInAndStatus(tenantId, TenantStatus.ENABLE);
-        if (enableTenants.isEmpty()) {
-            throw new IsxAppException("无启用租户，请联系管理员");
-        }
-
-        // 如果用户当前租户id启动则返回当前租户，没有则随机挑一个
-        List<String> enableTenantIds = enableTenants.stream().map(TenantEntity::getId).collect(Collectors.toList());
-        String currentTenantId;
-        if (!Strings.isEmpty(userEntity.getCurrentTenantId())
-            && enableTenantIds.contains(userEntity.getCurrentTenantId())) {
-            currentTenantId = userEntity.getCurrentTenantId();
-        } else {
-            currentTenantId = enableTenants.get(0).getId();
-        }
-
-        userEntity.setCurrentTenantId(currentTenantId);
-        userRepository.save(userEntity);
-
-        // 返回用户在租户中的角色
-        Optional<TenantUserEntity> tenantUserEntityOptional =
-            tenantUserRepository.findByTenantIdAndUserId(currentTenantId, userEntity.getId());
-        if (!tenantUserEntityOptional.isPresent()) {
-            throw new IsxAppException("无可用租户，请联系管理员");
-        }
-
-        // 生成token并返回
-        return new LoginRes(userEntity.getUsername(), userEntity.getPhone(), userEntity.getEmail(),
-            userEntity.getRemark(), jwtToken, currentTenantId, tenantUserEntityOptional.get().getRoleCode());
-    }
-
-    public LoginRes ssoLogin(SsoLoginReq ssoLoginReq) {
-
-        // 获取oss登录配置
-        Optional<AuthEntity> authEntityOptional = authRepository.findByClientId(ssoLoginReq.getClientId());
-        if (!authEntityOptional.isPresent()) {
-            throw new IsxAppException("单点登录配置不存在");
-        }
-        AuthEntity authEntity = authEntityOptional.get();
-
-        // 检查单点登录是否开启
-        if (AuthStatus.DISABLE.equals(authEntity.getStatus())) {
-            throw new IsxAppException("单点登录配置已被禁用");
-        }
-
-        // 通过code获取token
-        SsoAccessTokenParams ssoAccessTokenParams =
-            SsoAccessTokenParams.builder().clientId(authEntity.getClientId()).clientSecret(authEntity.getClientSecret())
-                .code(ssoLoginReq.getCode()).redirectUri(authEntity.getRedirectUrl()).build();
-        Map<String, String> accessTokenMap =
-            HttpUtils.doPost(authEntity.getAccessTokenUrl(), ssoAccessTokenParams, Map.class);
-
-        // 判断token处理方式
-        if (Strings.isEmpty(accessTokenMap.get("token_type")) || !"bearer".equals(accessTokenMap.get("token_type"))) {
-            throw new IsxAppException("当前只支持bearer认证模式");
-        }
-
-        // 通过token获取用户信息
-        Map<String, String> getUserParams = new HashMap<>();
-        getUserParams.put("Authorization", "Bearer " + accessTokenMap.get("access_token"));
-        String userInfoStr = HttpUtils.doGet(authEntity.getUserUrl(), getUserParams, String.class);
-
-        // 通过jsonPath解析用户的账号
-        String account = String.valueOf(JSONPath.read(userInfoStr, "$.login"));
-
-        // 正常登录
-        Optional<UserEntity> userEntityOptional = userRepository.findByAccount(account);
-        if (!userEntityOptional.isPresent()) {
-            throw new IsxAppException("账号或者密码不正确");
-        }
-        UserEntity userEntity = userEntityOptional.get();
-
-        // 判断用户是否禁用
-        if (UserStatus.DISABLE.equals(userEntity.getStatus())) {
-            throw new IsxAppException("账号已被禁用，请联系管理员");
         }
 
         // 生成token

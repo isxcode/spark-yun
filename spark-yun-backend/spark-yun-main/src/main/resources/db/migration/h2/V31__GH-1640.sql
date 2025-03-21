@@ -1,9 +1,10 @@
 -- 单点登录信息表
 create table SY_SSO_AUTH
 (
-    id                  varchar(200)  not null comment '单点id' primary key,
+    id                      varchar(200)  not null comment '单点id' primary key,
     name                    varchar(200)  not null comment '单点名称',
     status                  varchar(200)  not null comment '单点状态',
+    sso_type                varchar(200)  not null comment '单点类型',
     client_id               varchar(200)  not null comment 'clientId',
     client_secret           varchar(500)  not null comment 'clientSecret',
     scope                   varchar(500)  null comment 'scope',

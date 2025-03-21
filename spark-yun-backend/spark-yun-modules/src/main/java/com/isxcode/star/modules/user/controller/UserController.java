@@ -16,7 +16,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
 
 @Tag(name = "用户模块")
 @RequestMapping(ModuleCode.USER)
@@ -32,21 +31,6 @@ public class UserController {
     public LoginRes login(@Valid @RequestBody LoginReq loginReq) {
 
         return userBizService.login(loginReq);
-    }
-
-    @Operation(summary = "单点认证")
-    @PostMapping("/open/ssoLogin")
-    @SuccessResponse("登录成功")
-    public LoginRes ssoLogin(@Valid @RequestBody SsoLoginReq ssoLoginReq) {
-
-        return userBizService.ssoLogin(ssoLoginReq);
-    }
-
-    @Operation(summary = "单点认证")
-    @GetMapping("/open/getCode")
-    @SuccessResponse("登录成功")
-    public void ssoLoginGetCode(@RequestParam(required = false) Map<String, String> requestBody) {
-        System.out.println(requestBody);
     }
 
     @Operation(summary = "用户退出接口")

@@ -40,6 +40,8 @@ public class AuthEntity {
 
     private String status;
 
+    private String ssoType;
+
     private String clientId;
 
     private String clientSecret;

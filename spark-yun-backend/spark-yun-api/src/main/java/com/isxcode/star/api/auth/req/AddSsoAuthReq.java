@@ -12,6 +12,10 @@ public class AddSsoAuthReq {
     @NotEmpty(message = "name不能为空")
     private String name;
 
+    @Schema(title = "clientId", example = "GITHUB、KEYCLOAK")
+    @NotEmpty(message = "ssoType不能为空")
+    private String ssoType;
+
     @Schema(title = "clientId", example = "123")
     @NotEmpty(message = "clientId不能为空")
     private String clientId;
