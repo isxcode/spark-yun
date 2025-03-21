@@ -54,4 +54,9 @@ public interface ModuleVipCode {
      * 元数据模块
      */
     String VIP_META = "/vip/meta";
+
+    /**
+     * 单点登录
+     */
+    String VIP_SSO_AUTH = "/vip/auth";
 }
