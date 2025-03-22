@@ -138,6 +138,7 @@ isx-app:
     - /static/** # 放行前端资源文件
     - /favicon.ico # 放行网站的logo
     - /login # 放行登录接口
+    - /ssoauth # 单点登录
     - /auth # 放行登录接口
     - /share/** # 分享表单
     - /dashboard/** # 分享大屏
