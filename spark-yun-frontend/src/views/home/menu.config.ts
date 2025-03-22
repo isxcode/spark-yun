@@ -234,6 +234,13 @@ export const menuListData: Array<Menu> = [
     childPage: []
   },
   {
+    code: 'oauth-management',
+    name: '单点管理',
+    icon: 'Position',
+    authType: [ 'ROLE_SYS_ADMIN' ],
+    childPage: []
+  },
+  {
     code: 'license',
     name: '证书安装',
     icon: 'Files',

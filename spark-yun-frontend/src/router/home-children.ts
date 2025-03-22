@@ -14,6 +14,7 @@ import TenantList from '@/views/tenant-list/index.vue'
 import License from '@/views/license/index.vue'
 import TenantUser from '@/views/tenant-user/index.vue'
 import PersonalInfo from '@/views/personal-info/index.vue'
+import OauthManagement from '@/views/oauth-management/index.vue'
 
 import DriverManagement from '@/views/driver-management/index.vue'
 import CustomForm from '@/views/custom-form/index.vue'
@@ -103,6 +104,11 @@ export default [
     path: 'tenant-list',
     name: 'tenant-list',
     component: TenantList
+  },
+  {
+    path: 'oauth-management',
+    name: 'oauth-management',
+    component: OauthManagement
   },
   {
     path: 'license',
