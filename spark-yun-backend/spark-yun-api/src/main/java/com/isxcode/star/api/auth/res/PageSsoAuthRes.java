@@ -13,15 +13,27 @@ public class PageSsoAuthRes {
 
     private String id;
 
-    private String name;
-
-    private String clientId;
+     private String name;
 
     private String status;
 
-    private String remark;
-
     private String ssoType;
+
+    private String clientId;
+
+    private String scope;
+
+    private String authUrl;
+
+    private String accessTokenUrl;
+
+    private String redirectUrl;
+
+    private String userUrl;
+
+    private String authJsonPath;
+
+    private String remark;
 
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime createDateTime;
