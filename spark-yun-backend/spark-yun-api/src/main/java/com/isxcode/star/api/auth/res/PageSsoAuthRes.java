@@ -13,7 +13,7 @@ public class PageSsoAuthRes {
 
     private String id;
 
-     private String name;
+    private String name;
 
     private String status;
 
