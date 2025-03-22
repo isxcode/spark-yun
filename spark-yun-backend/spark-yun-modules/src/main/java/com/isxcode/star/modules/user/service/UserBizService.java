@@ -11,7 +11,6 @@ import com.isxcode.star.api.user.res.*;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.star.backend.api.base.properties.IsxAppProperties;
 import com.isxcode.star.common.utils.jwt.JwtUtils;
-import com.isxcode.star.modules.auth.repository.AuthRepository;
 import com.isxcode.star.modules.tenant.entity.TenantEntity;
 import com.isxcode.star.modules.tenant.repository.TenantRepository;
 import com.isxcode.star.modules.user.mapper.UserMapper;
@@ -45,8 +44,6 @@ public class UserBizService {
     private final TenantRepository tenantRepository;
 
     private final TenantUserRepository tenantUserRepository;
-
-    private final AuthRepository authRepository;
 
     public LoginRes login(LoginReq usrLoginReq) {
 

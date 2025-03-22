@@ -1,5 +1,6 @@
 package com.isxcode.star.modules.auth.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import com.isxcode.star.api.main.constants.ModuleVipCode;
@@ -22,4 +23,6 @@ public interface AuthRepository extends JpaRepository<AuthEntity, String> {
     Optional<AuthEntity> findByName(String name);
 
     Optional<AuthEntity> findByClientId(String clientId);
+
+    List<AuthEntity> findAllByStatus(String status);
 }
