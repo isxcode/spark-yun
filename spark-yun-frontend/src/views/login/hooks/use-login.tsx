@@ -122,7 +122,7 @@ export function useLogin (callback: ((callback: LoginModel) => Promise<void>)) {
                   {
                     !oauthUrlList.value.length ?
                     <div style="margin: auto;">暂无数据</div> :
-                    oauthUrlList.value.map(item => <el-button type="primary" onClick={handleRedirect(item)}>{item.name}</el-button>)
+                    oauthUrlList.value.map(item => <el-button type="primary" onClick={ () => handleRedirect(item)}>{item.name}</el-button>)
                   }
                 </div>
             }}>
