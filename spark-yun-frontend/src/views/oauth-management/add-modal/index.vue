@@ -23,7 +23,7 @@
             <el-form-item label="clientSecret" prop="clientSecret">
                 <el-input v-model="formData.clientSecret" maxlength="2000" placeholder="请输入" />
             </el-form-item>
-            <el-form-item label="scope" prop="scope">
+            <el-form-item label="scope">
                 <el-input v-model="formData.scope" maxlength="2000" placeholder="请输入" />
             </el-form-item>
             <el-form-item label="authUrl" prop="authUrl">
@@ -79,12 +79,12 @@ const callback = ref<any>()
 const renderSence = ref('new')
 const typeList = ref<Option[]>([
     {
-        label: 'GITHUB',
-        value: 'GITHUB'
+        label: 'Github',
+        value: 'Github'
     },
     {
-        label: 'KEYCLOAK',
-        value: 'KEYCLOAK'
+        label: 'Keycloak',
+        value: 'Keycloak'
     }
 ])
 const modelConfig = reactive({
