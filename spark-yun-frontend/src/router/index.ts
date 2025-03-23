@@ -9,6 +9,7 @@
 import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
 import Home from '../views/home/home'
 import Login from '../views/login/login'
+import Ssoauth from '../views/login/ssoauth'
 import ShareForm from '../views/share-form/index.vue'
 import ShareReport from '../views/report-views/share-report/index.vue'
 
@@ -20,6 +21,11 @@ const routes: Array<RouteRecordRaw> = [
     redirect: {
       name: 'home'
     }
+  },
+  {
+    path: '/ssoauth',
+    name: 'ssoauth',
+    component: Ssoauth
   },
   {
     path: '/auth',

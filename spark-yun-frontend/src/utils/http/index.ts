@@ -15,6 +15,8 @@ import { useAuthStore } from '@/store/useAuth'
 
 const message = ElMessage
 
+const whiteList = ['/vip/auth/open/querySsoAuth']
+
 export const httpOption = {
   transform: {
     requestInterceptors: (config: any) => {
@@ -49,7 +51,9 @@ export const httpOption = {
           message.error('许可证无效，请联系管理员')
         } else if (status == 404) {
           if (response.config.url.match('/vip/')) {
-            message.error('请升级到企业版')
+            if (!whiteList.some(url => response.config.url.match(url))) {
+              message.error('请升级到企业版')
+            }
           } else {
             showMsg(msg)
           }
