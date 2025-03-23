@@ -48,6 +48,5 @@ public class AddSsoAuthReq {
     private String authJsonPath;
 
     @Schema(title = "remark", example = "123")
-    @NotEmpty(message = "remark不能为空")
     private String remark;
 }

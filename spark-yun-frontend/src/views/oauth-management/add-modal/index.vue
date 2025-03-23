@@ -80,11 +80,11 @@ const renderSence = ref('new')
 const typeList = ref<Option[]>([
     {
         label: 'Github',
-        value: 'Github'
+        value: 'GITHUB'
     },
     {
         label: 'Keycloak',
-        value: 'Keycloak'
+        value: 'KEYCLOAK'
     }
 ])
 const modelConfig = reactive({
