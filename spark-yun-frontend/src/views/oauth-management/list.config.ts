@@ -31,7 +31,7 @@ export interface TableConfig {
 
 export const BreadCrumbList: Array<BreadCrumb> = [
   {
-    name: '单点管理',
+    name: '免密登录',
     code: 'oauth-management'
   }
 ]
@@ -42,6 +42,16 @@ export const colConfigs: colConfig[] = [
     title: '名称',
     minWidth: 125,
     showOverflowTooltip: true
+  },
+  {
+    prop: 'ssoType',
+    title: '免密类型',
+    minWidth: 100
+  },
+  {
+    prop: 'clientId',
+    title: 'clientId',
+    minWidth: 110
   },
   {
     prop: 'status',

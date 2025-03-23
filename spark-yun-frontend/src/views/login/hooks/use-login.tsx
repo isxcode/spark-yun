@@ -112,11 +112,11 @@ export function useLogin (callback: ((callback: LoginModel) => Promise<void>)) {
         <div class="oauth-login">
           <el-popover
             trigger="click"
-            placement="top"
+            placement="bottom"
             width={300}
             onShow={handleShow}
             v-slots={{
-                reference: () => <span class="oauth-login-text">第三方登录</span>,
+                reference: () => <span class="oauth-login-text">免密登录</span>,
                 default: () =>
                 <div class="oauth-redirect-url">
                   {

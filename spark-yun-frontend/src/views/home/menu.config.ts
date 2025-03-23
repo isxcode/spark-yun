@@ -235,7 +235,7 @@ export const menuListData: Array<Menu> = [
   },
   {
     code: 'oauth-management',
-    name: '单点管理',
+    name: '免密登录',
     icon: 'Position',
     authType: [ 'ROLE_SYS_ADMIN' ],
     childPage: []
