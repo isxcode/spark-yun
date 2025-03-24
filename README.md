@@ -3,7 +3,7 @@
 ### 超轻量级大数据计算平台/数据中台
 
 [![Docker Pulls](https://img.shields.io/docker/pulls/isxcode/zhiqingyun)](https://hub.docker.com/r/isxcode/zhiqingyun)
-[![build](https://github.com/isxcode/spark-yun/actions/workflows/build-zhiqingyun.yml/badge.svg?branch=main)](https://github.com/isxcode/spark-yun/actions/workflows/build-zhiqingyun.yml)
+[![build](https://github.com/isxcode/spark-yun/actions/workflows/build-app.yml/badge.svg?branch=main)](https://github.com/isxcode/spark-yun/actions/workflows/build-app.yml)
 [![GitHub Repo stars](https://img.shields.io/github/stars/isxcode/spark-yun)](https://github.com/isxcode/spark-yun)
 [![GitHub forks](https://img.shields.io/github/forks/isxcode/spark-yun)](https://github.com/isxcode/spark-yun/fork)
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fisxcode%2Fspark-yun.svg?type=shield&issueType=license)](https://app.fossa.com/projects/git%2Bgithub.com%2Fisxcode%2Fspark-yun?ref=badge_shield&issueType=license)
@@ -87,4 +87,4 @@ cd spark-yun
 
 ### 收藏历史
 
-[![Star History Chart](https://api.star-history.com/svg?repos=isxcode/spark-yun&type=Date)](https://star-history.com/#isxcode/spark-yun&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=isxcode/spark-yun&type=Date)](https://www.star-history.com/#isxcode/spark-yun&Date)
