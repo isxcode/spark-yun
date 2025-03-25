@@ -11,6 +11,7 @@ import com.isxcode.star.api.work.res.GetCreateTableSqlRes;
 import com.isxcode.star.api.work.res.GetDataSourceColumnsRes;
 import com.isxcode.star.api.work.res.GetDataSourceDataRes;
 import com.isxcode.star.api.work.res.GetDataSourceTablesRes;
+import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.star.modules.datasource.entity.DatasourceEntity;
 import com.isxcode.star.modules.datasource.mapper.DatasourceMapper;
 import com.isxcode.star.modules.datasource.service.DatasourceService;
@@ -47,7 +48,13 @@ public class SyncWorkBizService {
         DatasourceEntity datasourceEntity = datasourceService.getDatasource(getDataSourceTablesReq.getDataSourceId());
         ConnectInfo connectInfo = datasourceMapper.datasourceEntityToConnectInfo(datasourceEntity);
         Datasource datasource = dataSourceFactory.getDatasource(connectInfo.getDbType());
-        Connection connection = datasource.getConnection(connectInfo);
+        Connection connection;
+        try {
+            connection = datasource.getConnection(connectInfo);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            throw new IsxAppException("【" + datasourceEntity.getName() + "】连接异常，请检查数据源");
+        }
         Map<String, String> transform = getTransform(connection, getDataSourceTablesReq.getTablePattern());
         if (DatasourceType.ORACLE.equals(datasourceEntity.getDbType())) {
             transform.put("schema", connectInfo.getUsername().toUpperCase());
@@ -67,7 +74,13 @@ public class SyncWorkBizService {
         DatasourceEntity datasourceEntity = datasourceService.getDatasource(getDataSourceColumnsReq.getDataSourceId());
         ConnectInfo connectInfo = datasourceMapper.datasourceEntityToConnectInfo(datasourceEntity);
         Datasource datasource = dataSourceFactory.getDatasource(connectInfo.getDbType());
-        Connection connection = datasource.getConnection(connectInfo);
+        Connection connection;
+        try {
+            connection = datasource.getConnection(connectInfo);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            throw new IsxAppException("【" + datasourceEntity.getName() + "】连接异常，请检查数据源");
+        }
         Map<String, String> transform = getTransform(connection, getDataSourceColumnsReq.getTableName());
         List<ColumnMetaDto> columns = syncWorkService.columns(connection.getMetaData(), transform.get("catalog"),
             transform.get("schema"), transform.get("tableName"));
