@@ -23,6 +23,5 @@ public class UpdateTableCommentReq {
     private String tableName;
 
     @Schema(title = "备注", example = "xxx")
-    @NotEmpty(message = "comment不能为空")
     private String comment;
 }
