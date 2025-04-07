@@ -153,6 +153,30 @@ const typeList = reactive([
     label: 'H2',
     value: 'H2',
   },
+  {
+    label: 'Greenplum',
+    value: 'GREENPLUM',
+  },
+  {
+    label: 'Gbase',
+    value: 'GBASE',
+  },
+  {
+    label: 'Sybase',
+    value: 'SYBASE',
+  },
+  {
+    label: 'Db2',
+    value: 'DB2',
+  },
+  {
+    label: 'Gauss',
+    value: 'GAUSS',
+  },
+  {
+    label: 'OpenGauss',
+    value: 'OPEN_GAUSS',
+  }
 ]);
 const rules = reactive<FormRules>({
   name: [
