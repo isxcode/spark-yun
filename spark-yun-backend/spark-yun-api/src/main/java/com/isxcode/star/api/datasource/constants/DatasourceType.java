@@ -38,4 +38,8 @@ public interface DatasourceType {
     String SYBASE = "SYBASE";
 
     String H2 = "H2";
+
+    String GAUSS = "GAUSS";
+
+    String OPEN_GAUSS = "OPEN_GAUSS";
 }

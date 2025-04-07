@@ -202,6 +202,8 @@ public class PrqlExecutor extends WorkExecutor {
             case DatasourceType.CLICKHOUSE:
                 return "clickhouse";
             case DatasourceType.POSTGRE_SQL:
+            case DatasourceType.OPEN_GAUSS:
+            case DatasourceType.GBASE:
                 return "postgres";
             case DatasourceType.H2:
                 return "h2";
