@@ -226,6 +226,7 @@ public class PythonExecutor extends WorkExecutor {
                     SshUtils.executeCommand(scpFileEngineNodeDto, clearWorkRunFile, false);
                 } catch (JSchException | InterruptedException | IOException e) {
                     log.error("删除运行脚本失败");
+                    throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "删除运行脚本失败" + "\n");
                 }
 
                 // 判断脚本运行成功还是失败
