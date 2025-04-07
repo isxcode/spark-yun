@@ -136,18 +136,17 @@ public class H2Service extends Datasource {
 
     @Override
     public String getPageSql(String sql) throws IsxAppException {
-        return "SELECT * FROM (" + sql + ") LIMIT ${page}, ${pageSize}";
+        return "SELECT * FROM (" + sql + ") AS SY_TMP LIMIT '${pageSize}' OFFSET '${page}' ";
     }
 
     @Override
     public GetDataSourceDataRes getTableData(ConnectInfo connectInfo) throws IsxAppException {
 
-        Assert.notNull(connectInfo.getTableName(), "表名不能为空");
-        Assert.notNull(connectInfo.getRowNumber(), "行数不能为空");
+        Assert.notNull(connectInfo.getTableName(), "tableName不能为空");
+        Assert.notNull(connectInfo.getRowNumber(), "rowNumber不能为空");
 
-        String getTableDataSql = "SELECT t.* FROM " + connectInfo.getDatabase() + ".\"" + connectInfo.getTableName()
-            + "\" t " + ("ALL".equals(connectInfo.getRowNumber()) ? ""
-                : " FETCH FIRST " + connectInfo.getRowNumber() + " ROWS ONLY ");
+        String getTableDataSql = "SELECT * FROM " + connectInfo.getTableName()
+            + ("ALL".equals(connectInfo.getRowNumber()) ? "" : " LIMIT " + connectInfo.getRowNumber());
         return getTableData(connectInfo, getTableDataSql);
     }
 
