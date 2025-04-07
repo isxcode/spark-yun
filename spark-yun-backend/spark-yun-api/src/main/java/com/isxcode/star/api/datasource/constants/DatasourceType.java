@@ -36,4 +36,6 @@ public interface DatasourceType {
     String GBASE = "GBASE";
 
     String SYBASE = "SYBASE";
+
+    String H2 = "H2";
 }
