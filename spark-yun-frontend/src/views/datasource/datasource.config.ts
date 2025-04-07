@@ -115,6 +115,10 @@ export const typeList = [
     label: 'Db2',
     value: 'DB2',
   },
+  {
+    label: 'H2',
+    value: 'H2',
+  },
 ]
 export const colConfigs: colConfig[] = [
   {

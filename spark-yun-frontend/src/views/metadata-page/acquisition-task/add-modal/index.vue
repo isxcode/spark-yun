@@ -226,6 +226,10 @@ const typeList = ref<Option[]>([
     label: 'Hive',
     value: 'HIVE',
   },
+  {
+    label: 'H2',
+    value: 'H2',
+  },
   // {
   //   label: 'Kafka',
   //   value: 'KAFKA',
