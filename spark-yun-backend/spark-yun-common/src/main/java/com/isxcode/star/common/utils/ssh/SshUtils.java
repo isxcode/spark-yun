@@ -40,6 +40,7 @@ public class SshUtils {
         }
 
         session.setConfig("StrictHostKeyChecking", "no");
+        session.setTimeout(5000);
         session.connect();
 
         // 上传文件
@@ -87,6 +88,7 @@ public class SshUtils {
         }
 
         session.setConfig("StrictHostKeyChecking", "no");
+        session.setTimeout(5000);
         session.connect();
 
         ChannelExec channel = (ChannelExec) session.openChannel("exec");
@@ -150,6 +152,7 @@ public class SshUtils {
         }
 
         session.setConfig("StrictHostKeyChecking", "no");
+        session.setTimeout(5000);
         session.connect();
 
         // 上传文件
@@ -197,6 +200,7 @@ public class SshUtils {
         }
 
         session.setConfig("StrictHostKeyChecking", "no");
+        session.setTimeout(5000);
         session.connect();
 
         // 上传文件
