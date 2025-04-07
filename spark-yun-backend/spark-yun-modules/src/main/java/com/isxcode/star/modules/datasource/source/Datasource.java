@@ -183,6 +183,8 @@ public abstract class Datasource {
             if (jdbcUrl.toLowerCase().contains(";database=")) {
                 regex = "database=([^;&]+)";
             }
+        } else if (jdbcUrl.contains("jdbc:h2:")) {
+            return "PUBLIC";
         }
 
         Pattern pattern = Pattern.compile(regex);
