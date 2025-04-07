@@ -51,6 +51,30 @@ export const DataSourceType = [
     label: 'H2',
     value: 'H2',
   },
+  {
+    label: 'Greenplum',
+    value: 'GREENPLUM',
+  },
+  {
+    label: 'Gbase',
+    value: 'GBASE',
+  },
+  {
+    label: 'Sybase',
+    value: 'SYBASE',
+  },
+  {
+    label: 'Db2',
+    value: 'DB2',
+  },
+  {
+    label: 'Gauss',
+    value: 'GAUSS',
+  },
+  {
+    label: 'OpenGauss',
+    value: 'OPEN_GAUSS',
+  }
 ]
 export const CurrentSourceType = [
   {
@@ -109,6 +133,30 @@ export const CurrentSourceType = [
     label: 'H2',
     value: 'H2',
   },
+  {
+    label: 'Greenplum',
+    value: 'GREENPLUM',
+  },
+  {
+    label: 'Gbase',
+    value: 'GBASE',
+  },
+  {
+    label: 'Sybase',
+    value: 'SYBASE',
+  },
+  {
+    label: 'Db2',
+    value: 'DB2',
+  },
+  {
+    label: 'Gauss',
+    value: 'GAUSS',
+  },
+  {
+    label: 'OpenGauss',
+    value: 'OPEN_GAUSS',
+  }
 ]
 export const OverModeList = [
   {

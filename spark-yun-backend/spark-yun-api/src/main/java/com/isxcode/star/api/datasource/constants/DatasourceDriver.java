@@ -36,4 +36,8 @@ public interface DatasourceDriver {
     String GBASE_DRIVER = "com.gbase.jdbc.Driver";
 
     String SYBASE_DRIVER = "com.sybase.jdbc4.jdbc.SybDriver";
+
+    String GAUSS_DRIVER = "org.postgresql.Driver";
+
+    String OPEN_GAUSS_DRIVER = "org.postgresql.Driver";
 }

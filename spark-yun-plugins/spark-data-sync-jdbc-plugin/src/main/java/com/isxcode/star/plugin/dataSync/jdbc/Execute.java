@@ -106,9 +106,11 @@ public class Execute {
             // 将列表转换为字符串数组
             String[] predicate = predicates.toArray(new String[0]);
 
-            String dbTable = DatasourceType.POSTGRE_SQL.equals(conf.getSyncWorkConfig().getSourceDBType())
-                ? "\"" + conf.getSyncWorkConfig().getSourceDatabase().getDbTable() + "\""
-                : conf.getSyncWorkConfig().getSourceDatabase().getDbTable();
+            String dbTable = (DatasourceType.POSTGRE_SQL.equals(conf.getSyncWorkConfig().getSourceDBType())
+                || DatasourceType.GAUSS.equals(conf.getSyncWorkConfig().getSourceDBType())
+                || DatasourceType.OPEN_GAUSS.equals(conf.getSyncWorkConfig().getSourceDBType()))
+                    ? "\"" + conf.getSyncWorkConfig().getSourceDatabase().getDbTable() + "\""
+                    : conf.getSyncWorkConfig().getSourceDatabase().getDbTable();
 
             // 拼接来源的条件
             if (Strings.isNotEmpty(conf.getSyncWorkConfig().getQueryCondition())) {
@@ -137,9 +139,11 @@ public class Execute {
                 + conf.getSyncWorkConfig().getTargetDatabase().getDbTable();
         } else {
 
-            String dbTable = DatasourceType.POSTGRE_SQL.equals(conf.getSyncWorkConfig().getTargetDBType())
-                ? "\"" + conf.getSyncWorkConfig().getTargetDatabase().getDbTable() + "\""
-                : conf.getSyncWorkConfig().getTargetDatabase().getDbTable();
+            String dbTable = (DatasourceType.POSTGRE_SQL.equals(conf.getSyncWorkConfig().getTargetDBType())
+                || DatasourceType.OPEN_GAUSS.equals(conf.getSyncWorkConfig().getTargetDBType())
+                || DatasourceType.GAUSS.equals(conf.getSyncWorkConfig().getTargetDBType()))
+                    ? "\"" + conf.getSyncWorkConfig().getTargetDatabase().getDbTable() + "\""
+                    : conf.getSyncWorkConfig().getTargetDatabase().getDbTable();
 
             DataFrameReader frameReader = sparkSession.read().format("jdbc")
                 .option("driver", conf.getSyncWorkConfig().getTargetDatabase().getDriver())
@@ -220,6 +224,8 @@ public class Execute {
                 return "CHECKSUM(" + PartitionColumn + ") % " + NumPartitions + " in (" + startIndex + ",-" + endIndex
                     + ")";
             case DatasourceType.POSTGRE_SQL:
+            case DatasourceType.OPEN_GAUSS:
+            case DatasourceType.GBASE:
                 return "hashtext(\"" + PartitionColumn + "\") % " + NumPartitions + " in (" + startIndex + ",-"
                     + endIndex + ")";
             case DatasourceType.CLICKHOUSE:

@@ -102,6 +102,30 @@ const typeList = ref<Option[]>([
     label: 'StarRocks',
     value: 'STAR_ROCKS',
   },
+  {
+    label: 'Greenplum',
+    value: 'GREENPLUM',
+  },
+  {
+    label: 'Gbase',
+    value: 'GBASE',
+  },
+  {
+    label: 'Sybase',
+    value: 'SYBASE',
+  },
+  {
+    label: 'Db2',
+    value: 'DB2',
+  },
+  {
+    label: 'Gauss',
+    value: 'GAUSS',
+  },
+  {
+    label: 'OpenGauss',
+    value: 'OPEN_GAUSS',
+  }
 ])
 const renderSence = ref('new')
 const modelConfig = reactive({
