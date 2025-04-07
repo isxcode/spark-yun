@@ -99,6 +99,10 @@ export const typeList = [
     label: 'StarRocks',
     value: 'STAR_ROCKS',
   },
+  {
+    label: 'H2',
+    value: 'H2',
+  },
 ]
 export const colConfigs: colConfig[] = [
   {

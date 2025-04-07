@@ -46,6 +46,10 @@ export const DataSourceType = [
   {
     label: 'StarRocks',
     value: 'STAR_ROCKS',
+  },
+  {
+    label: 'H2',
+    value: 'H2',
   }
 ]
 export const OverModeList = [

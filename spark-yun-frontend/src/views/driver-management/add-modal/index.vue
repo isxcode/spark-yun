@@ -149,6 +149,10 @@ const typeList = reactive([
     label: 'StarRocks',
     value: 'STAR_ROCKS',
   },
+  {
+    label: 'H2',
+    value: 'H2',
+  },
 ]);
 const rules = reactive<FormRules>({
   name: [
