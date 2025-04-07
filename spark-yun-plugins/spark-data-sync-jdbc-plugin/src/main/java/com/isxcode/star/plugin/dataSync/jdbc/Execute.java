@@ -238,6 +238,9 @@ public class Execute {
             case DatasourceType.DB2:
                 return "MOD(hash8(`" + PartitionColumn + "`)," + NumPartitions + ") in (" + startIndex + ",-" + endIndex
                     + ")";
+            case DatasourceType.H2:
+                return "MOD(ORA_HASH(`" + PartitionColumn + "`), " + NumPartitions + ") in (" + startIndex + ",-"
+                    + endIndex + ")";
             default:
                 throw new RuntimeException("暂不支持的数据库");
         }
