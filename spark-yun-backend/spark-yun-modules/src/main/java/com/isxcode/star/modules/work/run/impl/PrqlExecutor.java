@@ -107,6 +107,7 @@ public class PrqlExecutor extends WorkExecutor {
         // 开始执行sql
         ConnectInfo connectInfo = datasourceMapper.datasourceEntityToConnectInfo(datasourceEntity);
         Datasource datasource = dataSourceFactory.getDatasource(connectInfo.getDbType());
+        connectInfo.setLoginTimeout(5);
         try (Connection connection = datasource.getConnection(connectInfo);
             Statement statement = connection.createStatement()) {
 
