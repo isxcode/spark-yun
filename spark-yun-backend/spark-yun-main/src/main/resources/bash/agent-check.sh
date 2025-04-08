@@ -49,7 +49,7 @@ ALL_STORAGE=$(lsblk -b | grep disk | awk '{total += $4} END {printf "%.1f", tota
 USED_STORAGE=$(df -B 1 -T | egrep 'ext4|xfs|btrfs' | awk '{total += $4} END {printf "%.1f",total/1024/1024/1024}')
 
 # 获取cpu使用率
-CPU_PERCENT=$(mpstat 1 1 | awk 'END {printf "%.2f", 100 - $NF}')
+CPU_PERCENT=$(top -bn 1 | grep "Cpu(s)" | awk -F',' '{print 100 - $4}' | awk '{print $1}')
 
 # 返回json的日志
 json_output="{ \

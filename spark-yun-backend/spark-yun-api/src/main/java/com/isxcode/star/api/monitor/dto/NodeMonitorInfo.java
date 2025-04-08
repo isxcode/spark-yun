@@ -13,9 +13,9 @@ public class NodeMonitorInfo {
 
     private String log;
 
-    private Long usedStorageSize;
+    private Double usedStorageSize;
 
-    private Long usedMemorySize;
+    private Double usedMemorySize;
 
     private Long networkIoReadSpeed;
 

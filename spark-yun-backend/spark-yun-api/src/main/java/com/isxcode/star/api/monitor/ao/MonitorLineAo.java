@@ -36,14 +36,14 @@ public class MonitorLineAo {
     private Long networkIoWriteSpeed;
 
     @Schema(title = "内存使用")
-    private Long usedMemorySize;
+    private Double usedMemorySize;
 
     @Schema(title = "存储使用")
-    private Long usedStorageSize;
+    private Double usedStorageSize;
 
     public MonitorLineAo(Long activeNodeSize, String tenantId, LocalDateTime dateTime, Double cpuPercent,
         Long diskIoReadSpeed, Long networkIoReadSpeed, Long diskIoWriteSpeed, Long networkIoWriteSpeed,
-        Long usedMemorySize, Long usedStorageSize) {
+        Double usedMemorySize, Double usedStorageSize) {
 
         this.activeNodeSize = activeNodeSize;
         this.tenantId = tenantId;
