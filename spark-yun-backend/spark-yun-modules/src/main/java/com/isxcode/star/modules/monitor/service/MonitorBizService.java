@@ -3,7 +3,6 @@ package com.isxcode.star.modules.monitor.service;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUnit;
 import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.io.unit.DataSizeUtil;
 import com.alibaba.fastjson.JSON;
 import com.isxcode.star.api.api.constants.ApiStatus;
 import com.isxcode.star.api.cluster.constants.ClusterNodeStatus;
@@ -191,8 +190,8 @@ public class MonitorBizService {
             MonitorLineDto date = MonitorLineDto.builder().dateTime(k)
                 .activeNodeSize(v.getActiveNodeSize() == null ? null : v.getActiveNodeSize())
                 .cpuPercent(v.getCpuPercent() == null ? null : v.getCpuPercent() + "%")
-                .usedStorageSize(v.getUsedStorageSize() == null ? null : DataSizeUtil.format(v.getUsedStorageSize()))
-                .usedMemorySize(v.getUsedMemorySize() == null ? null : DataSizeUtil.format(v.getUsedMemorySize()))
+                .usedStorageSize(v.getUsedStorageSize() == null ? null : v.getUsedStorageSize() + "GB")
+                .usedMemorySize(v.getUsedMemorySize() == null ? null : v.getUsedMemorySize() + "GB")
                 .diskIoReadSpeed(v.getDiskIoReadSpeed() == null ? null : v.getDiskIoReadSpeed() + "KB/s")
                 .diskIoWriteSpeed(v.getDiskIoWriteSpeed() == null ? null : v.getDiskIoWriteSpeed() + "KB/s")
                 .networkIoReadSpeed(v.getNetworkIoReadSpeed() == null ? null : v.getNetworkIoReadSpeed() + "KB/s")
