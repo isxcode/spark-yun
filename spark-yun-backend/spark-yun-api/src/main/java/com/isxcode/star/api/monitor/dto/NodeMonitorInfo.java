@@ -17,21 +17,13 @@ public class NodeMonitorInfo {
 
     private Double usedMemorySize;
 
-    private Long networkIoReadSpeed;
+    private Double networkIoReadSpeed;
 
-    private String networkIoReadSpeedStr;
+    private Double networkIoWriteSpeed;
 
-    private Long networkIoWriteSpeed;
+    private Double diskIoReadSpeed;
 
-    private String networkIoWriteSpeedStr;
-
-    private Long diskIoReadSpeed;
-
-    private String diskIoReadSpeedStr;
-
-    private Long diskIoWriteSpeed;
-
-    private String diskIoWriteSpeedStr;
+    private Double diskIoWriteSpeed;
 
     private Double cpuPercent;
 
