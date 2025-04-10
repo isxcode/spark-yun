@@ -42,13 +42,13 @@ public class MonitorEntity {
 
     private Double usedMemorySize;
 
-    private Long networkIoReadSpeed;
+    private Double networkIoReadSpeed;
 
-    private Long networkIoWriteSpeed;
+    private Double networkIoWriteSpeed;
 
-    private Long diskIoReadSpeed;
+    private Double diskIoReadSpeed;
 
-    private Long diskIoWriteSpeed;
+    private Double diskIoWriteSpeed;
 
     private Double cpuPercent;
 

@@ -24,16 +24,16 @@ public class MonitorLineAo {
     private Double cpuPercent;
 
     @Schema(title = "磁盘io读速度")
-    private Long diskIoReadSpeed;
+    private Double diskIoReadSpeed;
 
     @Schema(title = "网络io读速度")
-    private Long networkIoReadSpeed;
+    private Double networkIoReadSpeed;
 
     @Schema(title = "磁盘io写速度")
-    private Long diskIoWriteSpeed;
+    private Double diskIoWriteSpeed;
 
     @Schema(title = "网络io写速度")
-    private Long networkIoWriteSpeed;
+    private Double networkIoWriteSpeed;
 
     @Schema(title = "内存使用")
     private Double usedMemorySize;
@@ -42,7 +42,7 @@ public class MonitorLineAo {
     private Double usedStorageSize;
 
     public MonitorLineAo(Long activeNodeSize, String tenantId, LocalDateTime dateTime, Double cpuPercent,
-        Long diskIoReadSpeed, Long networkIoReadSpeed, Long diskIoWriteSpeed, Long networkIoWriteSpeed,
+        Double diskIoReadSpeed, Double networkIoReadSpeed, Double diskIoWriteSpeed, Double networkIoWriteSpeed,
         Double usedMemorySize, Double usedStorageSize) {
 
         this.activeNodeSize = activeNodeSize;
