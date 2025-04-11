@@ -10,4 +10,6 @@ public class FormOptionValue {
     private String label;
 
     private String value;
+
+    private Boolean booleanValue;
 }
