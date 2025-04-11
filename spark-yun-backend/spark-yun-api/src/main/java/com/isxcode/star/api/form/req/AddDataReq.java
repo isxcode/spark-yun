@@ -18,6 +18,6 @@ public class AddDataReq {
     private String formVersion;
 
     @Schema(title = "请求体", example = "")
-    @NotEmpty(message = "data不能为空")
+    @NotEmpty(message = "数据不推荐为空")
     private Map<String, Object> data;
 }
