@@ -14,7 +14,7 @@ public class UpdateDataReq {
     private String formId;
 
     @Schema(title = "请求体", example = "")
-    @NotEmpty(message = "data不能为空")
+    @NotEmpty(message = "数据不推荐为空")
     private Map<String, Object> oldData;
 
     @Schema(title = "表单版本号", example = "fd34e4a53db640f5943a4352c4d549b9")
@@ -22,6 +22,6 @@ public class UpdateDataReq {
     private String formVersion;
 
     @Schema(title = "请求体", example = "")
-    @NotEmpty(message = "data不能为空")
+    @NotEmpty(message = "数据不推荐为空")
     private Map<String, Object> newData;
 }
