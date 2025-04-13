@@ -111,13 +111,15 @@ function initData(tableLoading?: boolean) {
         formId: route.query.id,
         formVersion: route.query.formVersion
     }).then((res: any) => {
-        tableConfig.tableData = (res.data.data || []).map(item => {
-            let columnData = {}
-            let formDetailData = {}
+        tableConfig.tableData = (res.data.data || []).map((item: any) => {
+            let columnData: any = {}
+            let formDetailData: any = {}
             Object.keys(item).forEach((k: string) => {
                 if (item[k] && item[k] instanceof Array && item[k].length > 0) {
                     columnData[k] = item[k].map(d => d.label).join('，')
                     formDetailData[k] = item[k].map(d => d.value)
+                } else if (item[k] && typeof item[k].booleanValue === 'boolean') {
+                    formDetailData[k] = item[k].booleanValue
                 } else if (item[k] && item[k] instanceof Object && item[k].value) {
                     columnData[k] = item[k].label
                     formDetailData[k] = item[k].value
