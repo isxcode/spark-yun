@@ -4,7 +4,7 @@
             <z-form-engine
                 ref="formEngineRef"
                 v-model="formData"
-                renderSence="new"
+                :renderSence="renderSence"
                 :formConfigList="formConfigList"
             ></z-form-engine>
         </LoadingPage>
@@ -28,6 +28,7 @@ const formConfigList = ref([])
 
 const loading = ref(false)
 const networkError = ref(false)
+const renderSence = ref<string>('new')
 
 const modelConfig = reactive({
     title: '添加',
@@ -58,9 +59,11 @@ function showModal(cb: () => void, data?: any): void {
         formData.value = {
             ...data
         }
-      modelConfig.title = '编辑'
+        renderSence.value = 'edit'
+        modelConfig.title = '编辑'
     } else {
-      modelConfig.title = '添加'
+        renderSence.value = 'new'
+        modelConfig.title = '添加'
     }
     modelConfig.visible = true
 }
