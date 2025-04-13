@@ -16,7 +16,7 @@
                 />
             </div>
         </div>
-        <LoadingPage :visible="loading" :network-error="networkError" @loading-refresh="initData(false)">
+        <LoadingPage :visible="loading" :network-error="networkError" @loading-refresh="handleCurrentChange(1)">
             <div class="zqy-table">
                 <BlockTable
                     :table-config="tableConfig"
@@ -153,7 +153,7 @@ function addData() {
                 data: formData
             }).then((res: any) => {
                 ElMessage.success(res.msg)
-                initData()
+                handleCurrentChange(1)
                 resolve()
             }).catch((error: any) => {
                 reject(error)
@@ -198,7 +198,7 @@ function deleteData(data: any) {
             data: oldData
         }).then((res: any) => {
             ElMessage.success(res.msg)
-            initData()
+            handleCurrentChange(1)
         }).catch((error: any) => {
         })
     })
@@ -206,7 +206,7 @@ function deleteData(data: any) {
 
 function inputEvent(e: string) {
     if (e === '') {
-        initData()
+        handleCurrentChange(1)
     }
 }
 
