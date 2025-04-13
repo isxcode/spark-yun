@@ -231,6 +231,9 @@ function initData(id?: string, tableLoading?: boolean) {
                 if (['ReturnData'].includes(item.code)) {
                   item.hide = status === 'FAIL' ? true : false
                 }
+                if (['PYTHON'].includes(workConfig.workType) && ['RunningLog'].includes(item.code)) {
+                  item.hide = status === 'FAIL' ? true : false
+                }
               })
             }
             if (['CURL'].includes(workConfig.workType)) {
