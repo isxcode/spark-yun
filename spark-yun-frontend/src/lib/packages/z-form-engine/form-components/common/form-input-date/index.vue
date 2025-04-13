@@ -13,7 +13,7 @@
             :disabled="formConfig.disabled"
             :placeholder="formConfig.placeholder"
             :readonly="isDragger"
-            :teleported="false"
+            :teleported="true"
         />
     </form-render-item>
 </template>
@@ -54,12 +54,15 @@ watch(() => props.formConfig.defaultValue, () => {
 .form-input-date {
     width: 100%;
     .el-date-editor {
+        width: 100%;
         &.el-input {
             width: 100%;
             .el-input__wrapper {
+                width: 100%;
+                box-sizing: border-box;
                 .el-input__inner {
                     padding-left: 0;
-                    pointer-events: none;
+                    // pointer-events: none;
                 }
             }
         }
