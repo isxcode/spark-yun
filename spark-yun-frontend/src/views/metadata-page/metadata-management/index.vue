@@ -118,6 +118,9 @@ function changeTypeEvent(e: string, id?: string) {
     keyword.value = ''
     nextTick(() => {
         initData()
+        if (e === 'table') {
+            getDataSourceList()
+        }
     })
 }
 
@@ -206,6 +209,7 @@ function editEvent(e: any) {
 }
 
 function refreshDataEvent() {
+    getDataSourceList()
     refreshLoading.value = true
     RefreshMetadataManagementList().then((res: any) => {
         ElMessage.success(res.msg)
