@@ -8,12 +8,14 @@
 
 <script lang="ts" setup>
 import { reactive, defineExpose, ref, onUnmounted, nextTick, computed } from 'vue'
-import { GetSparkContainerkDetail } from '@/services/spark-container.service.ts'
+import { GetSparkContainerkDetail } from '@/services/spark-container.service'
+import { GetYarnLogData } from '@/services/schedule.service'
 
 const logMsg = ref('')
 const timer = ref(null)
 
 const status = ref(false)
+const loading = ref<boolean>(false)
 
 const modelConfig = reactive({
     title: '日志',
@@ -31,7 +33,7 @@ const modelConfig = reactive({
 })
 
 function showModal(data: string, type?: string): void {
-    getLogData(data)
+    getLogData(data, type)
     if (!timer.value) {
         timer.value = setInterval(() => {
             getLogData(data)
@@ -40,22 +42,33 @@ function showModal(data: string, type?: string): void {
     modelConfig.visible = true
 }
 // 获取日志
-function getLogData(data: string) {
-    GetSparkContainerkDetail({
-        id: data.id
-    }).then((res: any) => {
-        status.value = ['FAIL', 'RUNNING'].includes(res.data.status) ? true : false
-        logMsg.value = res.data.submitLog
-        if (['RUNNING', 'FAIL'].includes(res.data.status)) {
-            if (timer.value) {
-                clearInterval(timer.value)
+function getLogData(data: any, type?: string) {
+    if (type === 'runningLog') {
+        modelConfig.title = '运行日志'
+        GetYarnLogData({ instanceId: data.id}).then((res: any) => {
+            logMsg.value = res.data.yarnLog
+            loading.value = false
+        }).catch(() => {
+            logMsg.value = ''
+            loading.value = false
+        })
+    } else {
+        GetSparkContainerkDetail({
+            id: data.id
+        }).then((res: any) => {
+            status.value = ['FAIL', 'RUNNING'].includes(res.data.status) ? true : false
+            logMsg.value = res.data.submitLog
+            if (['RUNNING', 'FAIL'].includes(res.data.status)) {
+                if (timer.value) {
+                    clearInterval(timer.value)
+                }
+                timer.value = null
             }
-            timer.value = null
-        }
-    }).catch((err: any) => {
-        console.log('err', err)
-        logMsg.value = ''
-    })
+        }).catch((err: any) => {
+            console.log('err', err)
+            logMsg.value = ''
+        })
+    }
 }
 
 function closeEvent() {
