@@ -35,6 +35,9 @@
                     <el-dropdown-item @click="showLog(scopeSlot.row)">
                       日志
                     </el-dropdown-item>
+                    <el-dropdown-item @click="showRunningLog(scopeSlot.row)">
+                      运行日志
+                    </el-dropdown-item>
                     <el-dropdown-item @click="editData(scopeSlot.row)">
                       编辑
                     </el-dropdown-item>
@@ -140,6 +143,10 @@ function addData() {
 // 查看日志
 function showLog(e: any) {
   showLogRef.value.showModal(e)
+}
+
+function showRunningLog(e: any) {
+  showLogRef.value.showModal(e, 'runningLog')
 }
 
 function editData(data: any) {
