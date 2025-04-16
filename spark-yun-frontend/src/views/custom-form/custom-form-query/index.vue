@@ -120,6 +120,7 @@ function initData(tableLoading?: boolean) {
                     formDetailData[k] = item[k].map(d => d.value)
                 } else if (item[k] && typeof item[k].booleanValue === 'boolean') {
                     formDetailData[k] = item[k].booleanValue
+                    columnData[k] = item[k].label
                 } else if (item[k] && item[k] instanceof Object && item[k].value) {
                     columnData[k] = item[k].label
                     formDetailData[k] = item[k].value
