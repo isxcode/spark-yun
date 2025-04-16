@@ -40,6 +40,9 @@ done
 # 初始化agent_path
 agent_path="${home_path}/zhiqingyun-agent"
 
+# 导入用户自己配置的环境变量
+source ${agent_path}/conf/agent-env.sh
+
 if [ -e "${agent_path}/zhiqingyun-agent.pid" ]; then
   pid=$(cat "${agent_path}/zhiqingyun-agent.pid")
   if ps -p $pid >/dev/null 2>&1; then
