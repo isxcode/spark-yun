@@ -44,7 +44,7 @@ fi
 
 # 下载spark二进制文件
 if [ ! -f "${TMP_DIR}"/"${SPARK_MIN_FILE}" ]; then
-    echo "spark-3.4.1开始下载，请耐心等待"
+    echo "spark-3.4.1二进制文件开始下载，请耐心等待"
     curl -ssL "${SPARK_MIN_DOWNLOAD_URL}" -o "${TMP_DIR}"/"${SPARK_MIN_FILE}"
     if [ $? -eq 0 ]; then
         echo "spark-3.4.1下载成功"
@@ -74,49 +74,49 @@ fi
 # 下载spark的jars依赖
 SPARK_JAR_DIR="${SPARK_MIN_DIR}"/jars
 if [ ! -f "${SPARK_JAR_DIR}"/spark-sql-kafka-0-10_2.12-3.4.1.jar ]; then
-  echo "spark-sql-kafka-0-10_2.12-3.4.1.jar开始下载"
+  echo "spark-sql-kafka-0-10_2.12-3.4.1.jar依赖开始下载"
   curl -ssL "${OSS_DOWNLOAD_URL}"/spark-sql-kafka-0-10_2.12-3.4.1.jar -o "${SPARK_JAR_DIR}"/spark-sql-kafka-0-10_2.12-3.4.1.jar
-  echo "spark-sql-kafka-0-10_2.12-3.4.1.jar下载成功"
+  echo "spark-sql-kafka-0-10_2.12-3.4.1.jar依赖下载成功"
 fi
 if [ ! -f "${SPARK_JAR_DIR}"/spark-streaming-kafka-0-10_2.12-3.4.1.jar ]; then
-  echo "spark-streaming-kafka-0-10_2.12-3.4.1.jar开始下载"
+  echo "spark-streaming-kafka-0-10_2.12-3.4.1.jar依赖开始下载"
   curl -ssL "${OSS_DOWNLOAD_URL}"/spark-streaming-kafka-0-10_2.12-3.4.1.jar -o "${SPARK_JAR_DIR}"/spark-streaming-kafka-0-10_2.12-3.4.1.jar
-  echo "spark-streaming-kafka-0-10_2.12-3.4.1.jar下载成功"
+  echo "spark-streaming-kafka-0-10_2.12-3.4.1.jar依赖下载成功"
 fi
 if [ ! -f "${SPARK_JAR_DIR}"/spark-token-provider-kafka-0-10_2.12-3.4.1.jar ]; then
-  echo "spark-token-provider-kafka-0-10_2.12-3.4.1.jar开始下载"
+  echo "spark-token-provider-kafka-0-10_2.12-3.4.1.jar依赖开始下载"
   curl -ssL "${OSS_DOWNLOAD_URL}"/spark-token-provider-kafka-0-10_2.12-3.4.1.jar -o "${SPARK_JAR_DIR}"/spark-token-provider-kafka-0-10_2.12-3.4.1.jar
-  echo "spark-token-provider-kafka-0-10_2.12-3.4.1.jar下载成功"
+  echo "spark-token-provider-kafka-0-10_2.12-3.4.1.jar依赖下载成功"
 fi
 if [ ! -f "${SPARK_JAR_DIR}"/commons-pool2-2.11.1.jar ]; then
-  echo "commons-pool2-2.11.1.jar开始下载"
+  echo "commons-pool2-2.11.1.jar依赖开始下载"
   curl -ssL "${OSS_DOWNLOAD_URL}"/commons-pool2-2.11.1.jar -o "${SPARK_JAR_DIR}"/commons-pool2-2.11.1.jar
-  echo "commons-pool2-2.11.1.jar下载成功"
+  echo "commons-pool2-2.11.1.jar依赖下载成功"
 fi
 if [ ! -f "${SPARK_JAR_DIR}"/kafka-clients-3.1.2.jar ]; then
-  echo "kafka-clients-3.1.2.jar开始下载"
+  echo "kafka-clients-3.1.2.jar依赖开始下载"
   curl -ssL "${OSS_DOWNLOAD_URL}"/kafka-clients-3.1.2.jar -o "${SPARK_JAR_DIR}"/kafka-clients-3.1.2.jar
-  echo "kafka-clients-3.1.2.jar下载成功"
+  echo "kafka-clients-3.1.2.jar依赖下载成功"
 fi
 if [ ! -f "${SPARK_JAR_DIR}"/bcpkix-jdk18on-1.78.1.jar ]; then
-  echo "bcpkix-jdk18on-1.78.1.jar开始下载"
+  echo "bcpkix-jdk18on-1.78.1.jar依赖开始下载"
   curl -ssL "${OSS_DOWNLOAD_URL}"/bcpkix-jdk18on-1.78.1.jar -o "${SPARK_JAR_DIR}"/bcpkix-jdk18on-1.78.1.jar
-  echo "bcpkix-jdk18on-1.78.1.jar下载成功"
+  echo "bcpkix-jdk18on-1.78.1.jar依赖下载成功"
 fi
 if [ ! -f "${SPARK_JAR_DIR}"/bcprov-jdk18on-1.78.1.jar ]; then
-  echo "bcprov-jdk18on-1.78.1.jar开始下载"
+  echo "bcprov-jdk18on-1.78.1.jar依赖开始下载"
   curl -ssL "${OSS_DOWNLOAD_URL}"/bcprov-jdk18on-1.78.1.jar -o "${SPARK_JAR_DIR}"/bcprov-jdk18on-1.78.1.jar
-  echo "bcprov-jdk18on-1.78.1.jar下载成功"
+  echo "bcprov-jdk18on-1.78.1.jar依赖下载成功"
 fi
 if [ ! -f "${SPARK_JAR_DIR}"/commons-dbutils-1.7.jar ]; then
-  echo "commons-dbutils-1.7.jar开始下载"
+  echo "commons-dbutils-1.7.jar依赖开始下载"
   curl -ssL "${OSS_DOWNLOAD_URL}"/commons-dbutils-1.7.jar -o "${SPARK_JAR_DIR}"/commons-dbutils-1.7.jar
-  echo "commons-dbutils-1.7.jar下载成功"
+  echo "commons-dbutils-1.7.jar依赖下载成功"
 fi
 if [ ! -f "${SPARK_JAR_DIR}"/HikariCP-4.0.3.jar ]; then
-  echo "HikariCP-4.0.3.jar开始下载"
+  echo "HikariCP-4.0.3.jar依赖开始下载"
   curl -ssL "${OSS_DOWNLOAD_URL}"/HikariCP-4.0.3.jar -o "${SPARK_JAR_DIR}"/HikariCP-4.0.3.jar
-  echo "HikariCP-4.0.3.jar下载成功"
+  echo "HikariCP-4.0.3.jar依赖下载成功"
 fi
 
 # 创建系统驱动目录
@@ -230,4 +230,4 @@ if [ ! -f "${BASE_PATH}"/spark-yun-backend/spark-yun-main/src/main/resources/lib
 fi
 
 # 返回状态
-echo "【安装结果】：安装成功"
+echo "【安装结果】：项目依赖安装成功"
