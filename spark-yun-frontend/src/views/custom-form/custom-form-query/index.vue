@@ -16,7 +16,7 @@
                 />
             </div>
         </div>
-        <LoadingPage :visible="loading" :network-error="networkError" @loading-refresh="initData(false)">
+        <LoadingPage :visible="loading" :network-error="networkError" @loading-refresh="handleCurrentChange(1)">
             <div class="zqy-table">
                 <BlockTable
                     :table-config="tableConfig"
@@ -111,13 +111,16 @@ function initData(tableLoading?: boolean) {
         formId: route.query.id,
         formVersion: route.query.formVersion
     }).then((res: any) => {
-        tableConfig.tableData = (res.data.data || []).map(item => {
-            let columnData = {}
-            let formDetailData = {}
+        tableConfig.tableData = (res.data.data || []).map((item: any) => {
+            let columnData: any = {}
+            let formDetailData: any = {}
             Object.keys(item).forEach((k: string) => {
                 if (item[k] && item[k] instanceof Array && item[k].length > 0) {
                     columnData[k] = item[k].map(d => d.label).join('，')
                     formDetailData[k] = item[k].map(d => d.value)
+                } else if (item[k] && typeof item[k].booleanValue === 'boolean') {
+                    formDetailData[k] = item[k].booleanValue
+                    columnData[k] = item[k].label
                 } else if (item[k] && item[k] instanceof Object && item[k].value) {
                     columnData[k] = item[k].label
                     formDetailData[k] = item[k].value
@@ -151,7 +154,7 @@ function addData() {
                 data: formData
             }).then((res: any) => {
                 ElMessage.success(res.msg)
-                initData()
+                handleCurrentChange(1)
                 resolve()
             }).catch((error: any) => {
                 reject(error)
@@ -196,7 +199,7 @@ function deleteData(data: any) {
             data: oldData
         }).then((res: any) => {
             ElMessage.success(res.msg)
-            initData()
+            handleCurrentChange(1)
         }).catch((error: any) => {
         })
     })
@@ -204,7 +207,7 @@ function deleteData(data: any) {
 
 function inputEvent(e: string) {
     if (e === '') {
-        initData()
+        handleCurrentChange(1)
     }
 }
 
