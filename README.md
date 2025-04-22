@@ -59,31 +59,23 @@ docker run -p 8080:8080 -d isxcode/zhiqingyun
 
 ### 源码构建
 
-> [!WARNING]
-> 编译环境需访问外网，且需提前安装Nodejs和Java，推荐版本如下: </br>
-> Java: zulu8.78.0.19-ca-jdk8.0.412-x64 </br>
-> Nodejs: node-v18.20.3-x64
-
-##### MacOS/Linux
-
 > [!IMPORTANT]
 > 安装包路径: spark-yun/spark-yun-dist/build/distributions/zhiqingyun.tar.gz
 
+#### Amd芯片架构
+
 ```bash
 git clone https://github.com/isxcode/spark-yun.git
-cd spark-yun
-./gradlew install clean package
+docker run --rm -v ${clone_path}/spark-yun:/spark-yun -w /spark-yun -it registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun-build:amd-latest \
+  /bin/bash -c "source /etc/profile && gradle install clean package"
 ```
 
-##### Windows10/11
-
-> [!CAUTION]
-> 请使用Git Bash终端工具执行以下命令
+#### Arm芯片架构
 
 ```bash
 git clone https://github.com/isxcode/spark-yun.git
-cd spark-yun
-./gradlew.bat install clean package
+docker run --rm -v ${clone_path}/spark-yun:/spark-yun -w /spark-yun -it registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun-build:arm-latest \
+  /bin/bash -c "source /etc/profile && gradle install clean package"
 ```
 
 ### 收藏历史
