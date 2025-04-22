@@ -8,8 +8,7 @@
 
 <script lang="ts" setup>
 import { reactive, defineExpose, ref, onUnmounted, nextTick, computed } from 'vue'
-import { GetSparkContainerkDetail } from '@/services/spark-container.service'
-import { GetYarnLogData } from '@/services/schedule.service'
+import { GetSparkContainerkDetail, GetSparkContainerkRunningLog } from '@/services/spark-container.service'
 
 const logMsg = ref('')
 const timer = ref(null)
@@ -36,7 +35,7 @@ function showModal(data: string, type?: string): void {
     getLogData(data, type)
     if (!timer.value) {
         timer.value = setInterval(() => {
-            getLogData(data)
+            getLogData(data, type)
         }, 3000)
     }
     modelConfig.visible = true
@@ -45,12 +44,16 @@ function showModal(data: string, type?: string): void {
 function getLogData(data: any, type?: string) {
     if (type === 'runningLog') {
         modelConfig.title = '运行日志'
-        GetYarnLogData({ instanceId: data.id}).then((res: any) => {
+        GetSparkContainerkRunningLog({ id: data.id}).then((res: any) => {
             logMsg.value = res.data.yarnLog
             loading.value = false
         }).catch(() => {
             logMsg.value = ''
             loading.value = false
+            if (timer.value) {
+                clearInterval(timer.value)
+            }
+            timer.value = null
         })
     } else {
         GetSparkContainerkDetail({
