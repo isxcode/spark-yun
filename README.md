@@ -62,19 +62,11 @@ docker run -p 8080:8080 -d isxcode/zhiqingyun
 > [!IMPORTANT]
 > 安装包路径: spark-yun/spark-yun-dist/build/distributions/zhiqingyun.tar.gz
 
-#### Amd芯片架构
-
 ```bash
 git clone https://github.com/isxcode/spark-yun.git
-docker run --rm -v ${clone_path}/spark-yun:/spark-yun -w /spark-yun -it registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun-build:amd-latest \
-  /bin/bash -c "source /etc/profile && gradle install clean package"
-```
-
-#### Arm芯片架构
-
-```bash
-git clone https://github.com/isxcode/spark-yun.git
-docker run --rm -v ${clone_path}/spark-yun:/spark-yun -w /spark-yun -it registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun-build:arm-latest \
+docker run --rm \
+  -v ${clone_path}/spark-yun:/spark-yun \
+  -w /spark-yun -it registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun-build:amd-latest \
   /bin/bash -c "source /etc/profile && gradle install clean package"
 ```
 

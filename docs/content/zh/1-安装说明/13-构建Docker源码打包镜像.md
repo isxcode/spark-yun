@@ -4,25 +4,39 @@ title: "构建Docker源码打包镜像"
 
 ## 构建Docker源码打包镜像
 
-#### 问题
+### 问题
 
 由于windows系统中打出的安装包，只能在windows环境中使用，但服务器一般都是linux系统，建议使用linux系统打包。
 
-#### 解决方案1
+### 解决方案1
 
-##### 使用已有的阿里云镜像打包
+#### 使用已有的阿里云镜像打包
 
 > 在windows系统中，使用linux镜像打包，可以打出在linux系统中使用的安装包
 
+#### Amd芯片架构
+
 ```bash
 git clone https://github.com/isxcode/spark-yun.git
-docker run --rm -v ${clone_path}/spark-yun:/spark-yun -w /spark-yun -it registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun-build:amd-latest \
-/bin/bash -c "source /etc/profile && gradle install clean package"
+docker run --rm \
+  -v ${clone_path}/spark-yun:/spark-yun \
+  -w /spark-yun -it registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun-build:amd-latest \
+  /bin/bash -c "source /etc/profile && gradle install clean package"
 ```
 
-#### 解决方案2
+#### Arm芯片架构
 
-##### 构建自己的Docker源码打包镜像
+```bash
+git clone https://github.com/isxcode/spark-yun.git
+docker run --rm \
+  -v ${clone_path}/spark-yun:/spark-yun \
+  -w /spark-yun -it registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun-build:arm-latest \
+  /bin/bash -c "source /etc/profile && gradle install clean package"
+```
+
+### 解决方案2
+
+#### 构建自己的Docker源码打包镜像
 
 > 前提：本地安装docker
 
@@ -62,7 +76,7 @@ cd /spark-yun
 gradle install clean package
 ```
 
-##### 提交自己的打包镜像到阿里云仓库
+#### 提交自己的打包镜像到阿里云仓库
 
 ```bash
 docker commit centos-base your_name/zhiqingyun-build:20250422
@@ -70,11 +84,13 @@ docker login --username=ispong registry.cn-shanghai.aliyuncs.com
 docker push your_name/zhiqingyun-build:20250422
 ```
 
-##### 使用自己构建的镜像打包
+#### 使用自己构建的镜像打包
 
 > 安装包路径: spark-yun/spark-yun-dist/build/distributions/zhiqingyun.tar.gz
 
 ```bash
-docker run --rm -v ${clone_path}/spark-yun:/spark-yun -w /spark-yun -it your_name/zhiqingyun-build:20250422 \
-/bin/bash -c "source /etc/profile && gradle install clean package"
+docker run --rm \
+  -v ${clone_path}/spark-yun:/spark-yun \
+  -w /spark-yun -it your_name/zhiqingyun-build:20250422 \
+  /bin/bash -c "source /etc/profile && gradle install clean package"
 ```
