@@ -76,3 +76,12 @@ export function GetSparkContainerkDetail(params: any): Promise<any> {
     params: params
   })
 }
+
+// spark容器-获取日志信息
+export function GetSparkContainerkRunningLog(params: any): Promise<any> {
+  return http.request({
+    method: 'post',
+    url: '/vip/container/getContainerRunningLog',
+    params: params
+  })
+}
