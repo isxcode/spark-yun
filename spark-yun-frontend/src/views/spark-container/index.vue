@@ -33,7 +33,7 @@
                 <template #dropdown>
                   <el-dropdown-menu>
                     <el-dropdown-item @click="showLog(scopeSlot.row)">
-                      日志
+                      提交日志
                     </el-dropdown-item>
                     <el-dropdown-item @click="showRunningLog(scopeSlot.row)">
                       运行日志
