@@ -32,8 +32,9 @@ const modelConfig = reactive({
 })
 
 function showModal(data: string, type?: string): void {
+    logMsg.value = ''
     getLogData(data, type)
-    if (!timer.value) {
+    if (!timer.value && type !== 'runningLog') {
         timer.value = setInterval(() => {
             getLogData(data, type)
         }, 3000)
@@ -44,38 +45,29 @@ function showModal(data: string, type?: string): void {
 function getLogData(data: any, type?: string) {
     if (type === 'runningLog') {
         modelConfig.title = '运行日志'
-        GetSparkContainerkRunningLog({ id: data.id })
-            .then((res: any) => {
-                logMsg.value = res.data.runningLog
-                loading.value = false
-            })
-            .catch(() => {
-                logMsg.value = ''
-                loading.value = false
-                if (timer.value) {
-                    clearInterval(timer.value)
-                }
-                timer.value = null
-            })
+        GetSparkContainerkRunningLog({ id: data.id }).then((res: any) => {
+            logMsg.value = res.data.runningLog
+            status.value = true
+        }).catch(() => {
+            logMsg.value = ''
+        })
     } else {
         modelConfig.title = '提交日志'
         GetSparkContainerkDetail({
             id: data.id
-        })
-            .then((res: any) => {
-                status.value = ['FAIL', 'RUNNING'].includes(res.data.status) ? true : false
-                logMsg.value = res.data.submitLog
-                if (['RUNNING', 'FAIL'].includes(res.data.status)) {
-                    if (timer.value) {
-                        clearInterval(timer.value)
-                    }
-                    timer.value = null
+        }).then((res: any) => {
+            status.value = ['FAIL', 'RUNNING'].includes(res.data.status) ? true : false
+            logMsg.value = res.data.submitLog
+            if (['RUNNING', 'FAIL'].includes(res.data.status)) {
+                if (timer.value) {
+                    clearInterval(timer.value)
                 }
-            })
-            .catch((err: any) => {
-                console.log('err', err)
-                logMsg.value = ''
-            })
+                timer.value = null
+            }
+        }).catch((err: any) => {
+            console.log('err', err)
+            logMsg.value = ''
+        })
     }
 }
 
