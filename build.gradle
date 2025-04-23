@@ -150,5 +150,12 @@ tasks.register('autotest', GradleBuild) {
 }
 
 tasks.register('install', Exec) {
+    if (!System.properties['os.name'].toString().contains('Mac OS X')) {
+        doFirst {
+            exec {
+                commandLine 'sh', '-c', "sed -i 's/\\r\$//' install.sh"
+            }
+        }
+    }
     commandLine 'sh', '-c', 'bash install.sh'
 }

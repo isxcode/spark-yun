@@ -4,20 +4,13 @@ title: "构建Docker源码打包镜像"
 
 ## 构建Docker源码打包镜像
 
-### 问题
-
-由于windows系统中打出的安装包，只能在windows环境中使用，但服务器一般都是linux系统，建议使用linux系统打包。
-
 ### 解决方案1
 
 #### 使用已有的阿里云镜像打包
 
-> 在windows系统中，使用linux镜像打包，可以打出在linux系统中使用的安装包
-
 #### Amd芯片架构
 
 ```bash
-git clone https://github.com/isxcode/spark-yun.git
 docker run --rm \
   -v ${clone_path}/spark-yun:/spark-yun \
   -w /spark-yun -it registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun-build:amd-latest \
@@ -27,7 +20,6 @@ docker run --rm \
 #### Arm芯片架构
 
 ```bash
-git clone https://github.com/isxcode/spark-yun.git
 docker run --rm \
   -v ${clone_path}/spark-yun:/spark-yun \
   -w /spark-yun -it registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun-build:arm-latest \
