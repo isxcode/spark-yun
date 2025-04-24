@@ -40,7 +40,6 @@ function showModal(data: string, type?: string): void {
     logMsg.value = ''
     loading.value = true
     timer.value = null
-
     getLogData(data, type)
     if (!timer.value && type !== 'runningLog') {
         timer.value = setInterval(() => {
