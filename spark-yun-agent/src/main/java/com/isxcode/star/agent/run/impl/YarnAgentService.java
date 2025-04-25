@@ -27,6 +27,12 @@ public class YarnAgentService implements AgentService {
 
     private final SparkYunAgentProperties sparkYunAgentProperties;
 
+    public static String YARN_LOG_STDOUT_REGEX = "\nLogType:stdout\\s*([\\s\\S]*?)\\s*End of LogType:stdout";
+
+    public static String YARN_LOG_STDERR_REGEX = "\nLogType:stderr\\s*([\\s\\S]*?)\\s*End of LogType:stderr";
+
+    public static String YARN_LOG_RESULT_REGEX = "LogType:spark-yun\\s*([\\s\\S]*?)\\s*End of LogType:spark-yun";
+
     @Override
     public String getAgentType() {
         return AgentType.YARN;
@@ -232,7 +238,7 @@ public class YarnAgentService implements AgentService {
             if (exitCode == 1) {
                 throw new IsxAppException(errLog.toString());
             } else {
-                Pattern regex = Pattern.compile("LogType:stdout\\s*([\\s\\S]*?)\\s*End of LogType:stdout");
+                Pattern regex = Pattern.compile(YARN_LOG_STDOUT_REGEX);
                 Matcher matcher = regex.matcher(errLog);
                 String log = "";
                 while (matcher.find()) {
@@ -273,7 +279,7 @@ public class YarnAgentService implements AgentService {
             if (exitCode == 1) {
                 throw new IsxAppException(errLog.toString());
             } else {
-                Pattern regex = Pattern.compile("LogType:stdout\\s*([\\s\\S]*?)\\s*End of LogType:stdout");
+                Pattern regex = Pattern.compile(YARN_LOG_STDOUT_REGEX);
                 Matcher matcher = regex.matcher(errLog);
                 if (matcher.find()) {
                     return matcher.group(1).replace("LogType:stdout\n", "").replace("\nEnd of LogType:stdout", "");
@@ -306,7 +312,7 @@ public class YarnAgentService implements AgentService {
             if (exitCode == 1) {
                 throw new IsxAppException(errLog.toString());
             } else {
-                Pattern regex = Pattern.compile("LogType:stderr\\s*([\\s\\S]*?)\\s*End of LogType:stderr");
+                Pattern regex = Pattern.compile(YARN_LOG_STDERR_REGEX);
                 Matcher matcher = regex.matcher(errLog);
                 String log = "";
                 while (matcher.find()) {
@@ -348,7 +354,7 @@ public class YarnAgentService implements AgentService {
             if (exitCode == 1) {
                 throw new IsxAppException(errLog.toString());
             } else {
-                Pattern regex = Pattern.compile("LogType:spark-yun\\s*([\\s\\S]*?)\\s*End of LogType:spark-yun");
+                Pattern regex = Pattern.compile(YARN_LOG_RESULT_REGEX);
                 Matcher matcher = regex.matcher(errLog);
                 String log = "";
                 while (matcher.find() && Strings.isEmpty(log)) {
