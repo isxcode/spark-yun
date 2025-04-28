@@ -2,7 +2,7 @@
 title: "Windows源码编译"
 ---
 
-## Windows源码编译
+## Windows系统源码编译
 
 ### 1. 安装Docker
 
@@ -11,6 +11,8 @@ title: "Windows源码编译"
 ### 2. 打开cmd下载代码
 
 ![20250423204034](https://img.isxcode.com/picgo/20250423204034.png)
+
+> 下载源码
 
 ```bash
 cd C:\Users\ispong\Downloads
@@ -23,7 +25,7 @@ git clone https://github.com/isxcode/spark-yun.git
 
 ```bash
 docker run --rm ^
-  -v ${clone_path}:/spark-yun ^
+  -v ${clone_path}\spark-yun:/spark-yun ^
   -w /spark-yun ^
   -it registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun-build:amd-latest ^
   /bin/bash -c "source /etc/profile && gradle install clean package"
