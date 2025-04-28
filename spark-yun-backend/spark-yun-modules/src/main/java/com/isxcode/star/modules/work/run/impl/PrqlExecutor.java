@@ -171,7 +171,11 @@ public class PrqlExecutor extends WorkExecutor {
             while (resultSet.next()) {
                 metaList = new ArrayList<>();
                 for (int i = 1; i <= columnCount; i++) {
-                    metaList.add(String.valueOf(resultSet.getObject(i)));
+                    try {
+                        metaList.add(resultSet.getString(i));
+                    } catch (Exception e) {
+                        metaList.add(String.valueOf(resultSet.getObject(i)));
+                    }
                 }
                 result.add(metaList);
             }
