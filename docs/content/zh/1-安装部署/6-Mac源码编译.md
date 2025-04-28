@@ -2,48 +2,51 @@
 title: "Mac源码编译"
 ---
 
-## 本地源码编译部署
+## Mac系统源码编译
 
-#### Windows10/11 环境编译
-
-推荐版本如下:
-
-- Java: [zulu8.78.0.19-ca-jdk8.0.412-x64 下载](https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/downloads/zulu8.78.0.19-ca-jdk8.0.412-win_x64.msi) 
-- Nodejs: [node-v18.20.3-x64 下载](https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/downloads/node-v22.14.0.pkg)
-- Gradle: [gradle-7.6.1 下载](https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/downloads/gradle-7.6.1-bin.zip)
-
-#### 源码编译
-
-> 请使用Git Bash终端工具执行以下命令
-
-![20250422140510](https://img.isxcode.com/picgo/20250422140510.png)
+### 1. 安装并启动Docker
 
 ```bash
+brew install docker --cask
+```
+
+### 2. 打开终端下载代码
+
+![20250428145831](https://img.isxcode.com/picgo/20250428145831.png)
+
+> 下载源码
+
+```bash
+cd ~/Downloads
 git clone https://github.com/isxcode/spark-yun.git
-cd spark-yun
-gradle install clean package
 ```
 
-![20250422141223](https://img.isxcode.com/picgo/20250422141223.png)
+### 3. 使用镜像打包源码
 
-#### MacOS/Linux 环境编译
+> 将${clone_path}替换成项目路径，例如：/Users/ispong/Downloads/spark-yun  
+> M系列架构，使用Arm镜像 `zhiqingyun-build:arm-latest`
 
 ```bash
-git clone https://github.com/isxcode/spark-yun.git
-cd spark-yun
-gradle install clean package
+docker run --rm \
+  -v ${clone_path}/spark-yun:/spark-yun \
+  -w /spark-yun -it registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun-build:arm-latest \
+  /bin/bash -c "source /etc/profile && gradle install clean package"
 ```
 
-#### 解压安装包
+### 4. 解压安装包运行
 
-> 安装包路径: spark-yun/spark-yun-dist/build/distributions/zhiqingyun.tar.gz  
+> 安装包路径：spark-yun/spark-yun-dist/build/distributions/zhiqingyun.tar.gz
 
 ```bash
-tar -vzxf spark-yun-dist/build/distributions/zhiqingyun.tar.gz
-java -jar zhiqingyun/lib/zhiqingyun.jar
+cd /Users/ispong/Downloads/spark-yun/spark-yun-dist/build/distributions
+tar -vzxf zhiqingyun.tar.gz
+cd zhiqingyun/lib
+java -jar zhiqingyun.jar
 ```
 
-#### 访问项目
+![20250428150308](https://img.isxcode.com/picgo/20250428150308.png)
+
+### 5. 访问系统
 
 - 访问地址: http://localhost:8080 
 - 管理员账号：`admin` 
