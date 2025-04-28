@@ -158,7 +158,12 @@ public abstract class Datasource {
             while (resultSet.next()) {
                 List<String> row = new ArrayList<>();
                 for (int i = 1; i <= columnCount; i++) {
-                    row.add(String.valueOf(resultSet.getObject(i)));
+                    try {
+                        row.add(resultSet.getString(i));
+                    } catch (Exception e) {
+                        row.add(String.valueOf(resultSet.getObject(i)));
+                    }
+
                 }
                 rows.add(row);
             }
