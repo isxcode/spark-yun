@@ -225,9 +225,9 @@ public class Execute {
                     + ")";
             case DatasourceType.POSTGRE_SQL:
             case DatasourceType.OPEN_GAUSS:
-            case DatasourceType.GBASE:
-                return "hashtext(\"" + PartitionColumn + "\") % " + NumPartitions + " in (" + startIndex + ",-"
-                    + endIndex + ")";
+            case DatasourceType.GAUSS:
+                return "hashtext(cast(\"" + PartitionColumn + "\" as TEXT)) % " + NumPartitions + " in (" + startIndex
+                    + ",-" + endIndex + ")";
             case DatasourceType.CLICKHOUSE:
                 return "sipHash64(`" + PartitionColumn + "`) % " + NumPartitions + " in (" + startIndex + ",-"
                     + endIndex + ")";
