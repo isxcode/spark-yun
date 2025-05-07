@@ -8,16 +8,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-@Tag(name = "Token异常模块")
+@Tag(name = "系统内部异常模块")
 @RestController
 @RequestMapping("/exception")
 public class ExceptionController {
 
-    @Operation(summary = "token为null异常")
+    @Operation(summary = "token不存在异常")
     @RequestMapping(path = "/tokenIsNull", method = {RequestMethod.GET, RequestMethod.POST})
     public void tokenIsNull() {
 
-        throw new IsxAppException(String.valueOf(HttpStatus.UNAUTHORIZED.value()), "token为null异常");
+        throw new IsxAppException(String.valueOf(HttpStatus.UNAUTHORIZED.value()), "token异常，请重新登录");
     }
 
     @Operation(summary = "token不合法异常")
@@ -27,14 +27,14 @@ public class ExceptionController {
         throw new IsxAppException(String.valueOf(HttpStatus.UNAUTHORIZED.value()), "token异常，请重新登录");
     }
 
-    @Operation(summary = "权限不足异常")
+    @Operation(summary = "暂无权限异常")
     @RequestMapping(path = "/authError", method = {RequestMethod.GET, RequestMethod.POST})
     public void exceptionAuthError() {
 
-        throw new IsxAppException(String.valueOf(HttpStatus.FORBIDDEN.value()), "权限不足异常");
+        throw new IsxAppException(String.valueOf(HttpStatus.FORBIDDEN.value()), "暂无权限");
     }
 
-    @Operation(summary = "证书无效接口")
+    @Operation(summary = "许可证无效异常")
     @RequestMapping(path = "/licenseError", method = {RequestMethod.GET, RequestMethod.POST})
     public void licenseError() {
 

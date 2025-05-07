@@ -36,8 +36,6 @@ public interface UserRepository extends JpaRepository<UserEntity, String> {
 
     Optional<UserEntity> findByEmail(String email);
 
-    Optional<UserEntity> findById(String id);
-
     @Override
     @Cacheable(key = "'users'")
     List<UserEntity> findAll();
