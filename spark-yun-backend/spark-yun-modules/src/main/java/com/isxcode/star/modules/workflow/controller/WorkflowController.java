@@ -41,7 +41,7 @@ public class WorkflowController {
 
     private final WorkflowConfigBizService workflowConfigBizService;
 
-    @Operation(summary = "创建作业流接口")
+    @Operation(summary = "新建作业流接口")
     @PostMapping("/addWorkflow")
     @SuccessResponse("创建成功")
     public void addWorkflow(@Valid @RequestBody AddWorkflowReq addWorkflowReq) {
@@ -57,7 +57,7 @@ public class WorkflowController {
         workflowBizService.updateWorkflow(updateWorkflowReq);
     }
 
-    @Operation(summary = "查询作业流接口")
+    @Operation(summary = "分页查询作业流接口")
     @PostMapping("/pageWorkflow")
     @SuccessResponse("查询成功")
     public Page<PageWorkflowRes> pageWorkflow(@Valid @RequestBody PageWorkflowReq pageWorkflowReq) {
@@ -82,7 +82,7 @@ public class WorkflowController {
         return workflowBizService.runWorkflow(runWorkflowReq);
     }
 
-    @Operation(summary = "获取作业流信息接口")
+    @Operation(summary = "查询作业流接口")
     @PostMapping("/getWorkflow")
     @SuccessResponse("获取成功")
     public GetWorkflowRes getWorkflow(@Valid @RequestBody GetWorkflowReq getWorkflowReq) {
@@ -111,6 +111,7 @@ public class WorkflowController {
     @PostMapping("/abortFlow")
     @SuccessResponse("中止成功")
     public void abortFlow(@Valid @RequestBody AbortFlowReq abortFlowReq) {
+
         workflowBizService.abortFlow(abortFlowReq);
     }
 
