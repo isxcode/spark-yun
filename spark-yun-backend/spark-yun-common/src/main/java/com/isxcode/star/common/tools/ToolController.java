@@ -1,15 +1,12 @@
 package com.isxcode.star.common.tools;
 
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
-import com.ulisesbocchio.jasyptspringboot.properties.JasyptEncryptorConfigurationProperties;
-import com.ulisesbocchio.jasyptspringbootstarter.JasyptSpringBootAutoConfiguration;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jasypt.util.text.AES256TextEncryptor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.boot.logging.LogLevel;
 import org.springframework.boot.logging.LoggingSystem;
 import org.springframework.cache.CacheManager;
