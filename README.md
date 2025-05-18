@@ -69,7 +69,3 @@ docker run --rm \
   -w /spark-yun -it registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun-build:amd-latest \
   /bin/bash -c "source /etc/profile && gradle install clean package"
 ```
-
-### 收藏历史
-
-[![Star History Chart](https://api.star-history.com/svg?repos=isxcode/spark-yun&type=Date)](https://www.star-history.com/#isxcode/spark-yun&Date)
