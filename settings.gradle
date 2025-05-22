@@ -2,7 +2,6 @@ rootProject.name = 'spark-yun'
 
 include 'spark-yun-agent'
 include 'spark-yun-dist'
-include 'spark-yun-autotest'
 include 'spark-yun-frontend'
 include 'spark-yun-backend'
 include 'spark-yun-backend:spark-yun-main'
