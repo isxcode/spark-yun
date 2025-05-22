@@ -17,7 +17,6 @@
 | 安装包下载:      | https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/zhiqingyun.tar.gz                                                                               |
 | 许可证下载:      | https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/license.lic                                                                                     |
 | Docker Hub: | https://hub.docker.com/r/isxcode/zhiqingyun                                                                                                             |
-| 阿里云镜像:      | https://zhiqingyun.isxcode.com/zh/docs/zh/1/1-docker                                                                                                    |
 | 产品矩阵:       | [至轻云](https://zhiqingyun.isxcode.com), [至流云](https://zhiliuyun.isxcode.com), [至慧云](https://zhihuiyun.isxcode.com), [至数云](https://zhishuyun.isxcode.com) |
 | 关键词:        | 大数据平台, 数据中心, 主数据, 数仓, 数据ETL, 数据同步, Spark, Hadoop, Docker                                                                                                |
 |             |                                                                                                                                                         |
@@ -60,12 +59,13 @@ docker run -p 8080:8080 -d isxcode/zhiqingyun
 ### 源码构建
 
 > [!IMPORTANT]
-> 安装包路径: spark-yun/spark-yun-dist/build/distributions/zhiqingyun.tar.gz
+> 安装包路径: /tmp/spark-yun/spark-yun-dist/build/distributions/zhiqingyun.tar.gz
 
 ```bash
+cd /tmp
 git clone https://github.com/isxcode/spark-yun.git
 docker run --rm \
-  -v ${clone_path}/spark-yun:/spark-yun \
+  -v /tmp/spark-yun:/spark-yun \
   -w /spark-yun -it registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun-build:amd-latest \
   /bin/bash -c "source /etc/profile && gradle install clean package"
 ```
