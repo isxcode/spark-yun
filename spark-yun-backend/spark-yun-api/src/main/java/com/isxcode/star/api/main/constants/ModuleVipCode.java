@@ -64,4 +64,9 @@ public interface ModuleVipCode {
      * 数据分层
      */
     String VIP_LAYER = "/vip/layer";
+
+    /**
+     * 数据建模
+     */
+    String VIP_MODEL = "/vip/model";
 }
