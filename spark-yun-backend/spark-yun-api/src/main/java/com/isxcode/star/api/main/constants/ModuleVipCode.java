@@ -59,4 +59,9 @@ public interface ModuleVipCode {
      * 单点登录
      */
     String VIP_SSO_AUTH = "/vip/auth";
+
+    /**
+     * 数据分层
+     */
+    String VIP_LAYER = "/vip/layer";
 }
