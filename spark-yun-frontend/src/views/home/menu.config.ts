@@ -89,6 +89,35 @@ export const menuListData: Array<Menu> = [
     ]
   },
   {
+    code: 'data-planning',
+    name: '数据规划',
+    icon: 'Odometer',
+    authType: [ 'ROLE_TENANT_MEMBER', 'ROLE_TENANT_ADMIN' ],
+    children: [
+      {
+        code: 'data-layer',
+        name: '数据分层',
+        icon: 'Files',
+        authType: [ 'ROLE_TENANT_MEMBER', 'ROLE_TENANT_ADMIN' ],
+        childPage: []
+      },
+      {
+        code: 'field-format',
+        name: '字段标准',
+        icon: 'Notebook',
+        authType: [ 'ROLE_TENANT_MEMBER', 'ROLE_TENANT_ADMIN' ],
+        childPage: []
+      },
+      {
+        code: 'data-model',
+        name: '数据模型',
+        icon: 'List',
+        authType: [ 'ROLE_TENANT_MEMBER', 'ROLE_TENANT_ADMIN' ],
+        childPage: []
+      },
+    ]
+  },
+  {
     code: 'schedule-management',
     name: '任务调度',
     icon: 'ScaleToOriginal',
