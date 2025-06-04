@@ -18,18 +18,18 @@
 | 许可证下载:      | https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/license.lic                                                                                     |
 | Docker Hub: | https://hub.docker.com/r/isxcode/zhiqingyun                                                                                                             |
 | 产品矩阵:       | [至轻云](https://zhiqingyun.isxcode.com), [至流云](https://zhiliuyun.isxcode.com), [至慧云](https://zhihuiyun.isxcode.com), [至数云](https://zhishuyun.isxcode.com) |
-| 关键词:        | 大数据平台, 数据中心, 主数据, 数仓, 数据ETL, 数据同步, Spark, Hadoop, Docker                                                                                                |
+| 关键词:        | 大数据计算, 数据中心, 主数据, 数仓, 数据清洗, 数据同步, Spark, Hadoop, Hive                                                                                                   |
 |             |                                                                                                                                                         |
 
 ### 产品介绍
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;至轻云是一款超轻量级、企业级大数据计算平台，基于Spark生态打造。一键部署，开箱即用。快速实现大数据离线ETL、Spark计算、SparkStreaming计算、可视化调度、自定义接口、数据大屏以及自定义表单等多种功能，为企业提供高效便捷的大数据解决方案。
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;至轻云是一款超轻量级、企业级大数据计算平台，基于Spark生态打造。一键部署，开箱即用。可快速实现大数据分析、数据采集、数据清洗、数据管理、可视化任务调度、数据接口开放等功能，助力企业构建大数据中心。
 
 ### 功能特点
 
-- **轻量级产品**: 无需额外组件安装，一键部署，开箱即用。
+- **轻量级产品**: 无需安装额外组件，一键部署，开箱即用。
 - **云原生私有化**: 兼容云原生架构，支持多节点安装与高可用集群部署。
-- **分布式数据处理**: 基于原生Spark分布式架构，高效地执行复杂数据计算。
+- **分布式计算**: 基于原生Spark分布式架构，高效执行复杂数据计算。
 
 ### 立即体验
 
