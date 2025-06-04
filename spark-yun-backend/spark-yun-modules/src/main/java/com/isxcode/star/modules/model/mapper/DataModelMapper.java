@@ -24,7 +24,7 @@ public interface DataModelMapper {
     @Mapping(target = "remark", source = "updateDataModelReq.remark")
     @Mapping(target = "id", source = "dataModelEntity.id")
     DataModelEntity updateDataModelReqToDataModelEntity(UpdateDataModelReq updateDataModelReq,
-        DataModelEntity dataModelEntity);
+                                                        DataModelEntity dataModelEntity);
 
     DataModelPageRes dataModelEntityToDataModelPageRes(DataModelEntity dataModelEntity);
 
@@ -39,4 +39,16 @@ public interface DataModelMapper {
         UpdateDataModelColumnReq updateDataModelColumnReq, DataModelColumnEntity dataModelColumnEntity);
 
     DataModelColumnPageRes dataModelColumnAoToDataModelColumnPageRes(DataModelColumnAo dataModelColumnAo);
+
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "versionNumber", ignore = true)
+    @Mapping(target = "remark", source = "copyDataModelReq.remark")
+    @Mapping(target = "name", source = "copyDataModelReq.name")
+    @Mapping(target = "tableName", source = "copyDataModelReq.tableName")
+    @Mapping(target = "layerId", source = "copyDataModelReq.layerId")
+    @Mapping(target = "dbType", source = "dataModelEntity.dbType")
+    @Mapping(target = "datasourceId", source = "dataModelEntity.datasourceId")
+    @Mapping(target = "modelType", source = "dataModelEntity.modelType")
+    @Mapping(target = "tableConfig", source = "dataModelEntity.tableConfig")
+    DataModelEntity copyDataModelReqToDataModelEntity(CopyDataModelReq copyDataModelReq, DataModelEntity dataModelEntity);
 }
