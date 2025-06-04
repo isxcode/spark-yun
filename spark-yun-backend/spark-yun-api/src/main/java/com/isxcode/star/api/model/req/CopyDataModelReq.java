@@ -23,4 +23,7 @@ public class CopyDataModelReq {
     @Schema(title = "表名", example = "sy_fd34e4a53db640f5943a4352c4d549b9")
     @NotEmpty(message = "tableName不能为空")
     private String tableName;
+
+    @Schema(title = "备注", example = "sy_fd34e4a53db640f5943a4352c4d549b9")
+    private String remark;
 }
