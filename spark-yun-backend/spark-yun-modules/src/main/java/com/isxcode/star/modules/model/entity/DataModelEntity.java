@@ -1,12 +1,6 @@
 package com.isxcode.star.modules.model.entity;
 
-import static com.isxcode.star.common.config.CommonConfig.TENANT_ID;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
-import java.time.LocalDateTime;
-import javax.persistence.*;
-
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.SQLDelete;
@@ -17,14 +11,19 @@ import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import javax.persistence.*;
+import java.time.LocalDateTime;
+
+import static com.isxcode.star.common.config.CommonConfig.TENANT_ID;
+
 @Data
 @Entity
-@SQLDelete(sql = "UPDATE SY_COLUMN_FORMAT SET deleted = 1 WHERE id = ? and version_number = ?")
+@SQLDelete(sql = "UPDATE SY_DATA_MODEL SET deleted = 1 WHERE id = ? and version_number = ?")
 @Where(clause = "deleted = 0 ${TENANT_FILTER} ")
-@Table(name = "SY_COLUMN_FORMAT")
+@Table(name = "SY_DATA_MODEL")
 @JsonIgnoreProperties({"hibernateLazyInitializer"})
 @EntityListeners(AuditingEntityListener.class)
-public class ColumnFormatEntity {
+public class DataModelEntity {
 
     @Id
     @GeneratedValue(generator = "sy-id-generator")
@@ -33,25 +32,23 @@ public class ColumnFormatEntity {
 
     private String name;
 
-    private String columnTypeCode;
+    private String layerId;
 
-    private String columnType;
+    private String dbType;
 
-    private String columnRule;
+    private String datasourceId;
+
+    private String tableName;
+
+    private String modelType;
+
+    private String tableConfig;
 
     private String status;
 
+    private String buildLog;
+
     private String remark;
-
-    private String isNull;
-
-    private String isDuplicate;
-
-    private String isPartition;
-
-    private String isPrimary;
-
-    private String defaultValue;
 
     @CreatedDate
     private LocalDateTime createDateTime;

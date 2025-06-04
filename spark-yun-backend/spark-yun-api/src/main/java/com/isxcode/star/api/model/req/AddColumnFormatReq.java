@@ -22,6 +22,9 @@ public class AddColumnFormatReq {
     @Schema(title = "数据标准字段具体类型", example = "12")
     private String columnType;
 
+    @Schema(title = "字段规则", example = "12")
+    private String columnRule;
+
     @Schema(title = "备注", example = "备注123")
     private String remark;
 
