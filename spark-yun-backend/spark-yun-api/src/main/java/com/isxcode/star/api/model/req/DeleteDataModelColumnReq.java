@@ -6,9 +6,9 @@ import lombok.Data;
 import javax.validation.constraints.NotEmpty;
 
 @Data
-public class DeleteColumnFormatReq {
+public class DeleteDataModelColumnReq {
 
-    @Schema(title = "数据字段id", example = "sy_fd34e4a53db640f5943a4352c4d549b9")
+    @Schema(title = "数据分层id", example = "sy_fd34e4a53db640f5943a4352c4d549b9")
     @NotEmpty(message = "id")
     private String id;
 }
