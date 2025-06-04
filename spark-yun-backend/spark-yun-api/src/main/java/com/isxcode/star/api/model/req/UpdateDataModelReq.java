@@ -35,8 +35,7 @@ public class UpdateDataModelReq {
 
     @Schema(title = "数据模型类型", example = "123")
     @NotEmpty(message = "modelType不能为空")
-    @Pattern(regexp = "^(ORIGIN_MODEL|LINK_MODEL)$",
-        message = "只可以输入ORIGIN_MODEL|LINK_MODEL")
+    @Pattern(regexp = "^(ORIGIN_MODEL|LINK_MODEL)$", message = "只可以输入ORIGIN_MODEL|LINK_MODEL")
     private String modelType;
 
     @Schema(title = "表高级配置", example = "123")
