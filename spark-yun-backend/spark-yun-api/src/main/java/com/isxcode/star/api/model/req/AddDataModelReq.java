@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Pattern;
 
 @Data
 public class AddDataModelReq {
@@ -30,6 +31,8 @@ public class AddDataModelReq {
 
     @Schema(title = "数据模型类型", example = "123")
     @NotEmpty(message = "modelType不能为空")
+    @Pattern(regexp = "^(ORIGIN_MODEL|LINK_MODEL)$",
+        message = "只可以输入ORIGIN_MODEL|LINK_MODEL")
     private String modelType;
 
     @Schema(title = "表高级配置", example = "123")

@@ -8,5 +8,4 @@ import lombok.EqualsAndHashCode;
 @Data
 public class PageColumnFormatReq extends BasePageRequest {
 
-    private String parentLayerId;
 }
