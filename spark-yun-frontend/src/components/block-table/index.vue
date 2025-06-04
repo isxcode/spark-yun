@@ -2,7 +2,7 @@
   <vxe-table
     class="block-table"
     :class="{ 'block-table__empty': !tableConfig.tableData?.length }"
-    :row-config="{ isHover: true }"
+    :row-config="{ isHover: true, drag: true }"
     :data="tableConfig.tableData"
     :seq-config="{ seqMethod }"
     :loading="tableConfig.loading"
@@ -24,6 +24,7 @@
         :resizable="colIndex < tableConfig.colConfigs.length - 1"
         :show-header-overflow="colConfig.showHeaderOverflow || false"
         :show-overflow="colConfig.showOverflowTooltip || true"
+        :drag-sort="colConfig.dragSort"
         v-bind="colConfig"
       >
         <template #default="{ row, rowIndex, column }">
@@ -38,12 +39,13 @@
       </vxe-column>
       <vxe-column
         v-else
-        :key="colConfig.prop"
+        :key="colConfig.prop + 's'"
         :show-header-overflow="colConfig.showHeaderOverflow || false"
         :width="colConfig.width"
         :field="colConfig.prop"
         :resizable="colIndex < tableConfig.colConfigs.length - 1"
         :show-overflow="colConfig.showOverflowTooltip || true"
+        :drag-sort="colConfig.dragSort"
         v-bind="colConfig"
       />
     </template>
@@ -71,7 +73,7 @@
 <script lang="ts" setup>
 import { defineProps, defineEmits, reactive } from 'vue'
 import EmptyPage from '@/components/empty-page/index.vue'
-import { VxeTablePropTypes } from 'vxe-table'
+import type { VxeTablePropTypes } from 'vxe-table'
 
 interface Pagination {
   currentPage: number;
@@ -103,6 +105,10 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits([ 'size-change', 'current-change' ])
+
+const rowDragConfig = reactive<VxeTablePropTypes.RowDragConfig<RowVO>>({
+  icon: 'vxe-icon-sort'
+})
 
 const handleSizeChange = (e: number) => {
   emit('size-change', e)
