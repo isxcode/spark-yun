@@ -15,15 +15,29 @@ public class ColumnFormatPageRes {
 
     private String name;
 
-    private String tableRule;
+    private String columnName;
 
-    private String parentLayerId;
+    private String columnTypeCode;
 
-    private String parentIdList;
+    private String columnType;
 
-    private String parentNameList;
+    private String columnRule;
 
     private String remark;
+
+    private String defaultValue;
+
+    private String isNull;
+
+    private String isDuplicate;
+
+    private String isPartition;
+
+    private String isPrimary;
+
+    private String createBy;
+
+    private String createUsername;
 
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime createDateTime;
