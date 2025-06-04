@@ -14,6 +14,7 @@ export interface colConfig {
     minWidth?: number;
     formatter?: any
     fixed?: string;
+    dragSort?: boolean
 }
 
 export interface Pagination {
@@ -42,6 +43,7 @@ export const colConfigs: colConfig[] = [
         prop: 'name',
         title: '名称',
         minWidth: 125,
+        dragSort: true,
         customSlot: 'nameSlot',
         showOverflowTooltip: true
     },
