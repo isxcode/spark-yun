@@ -15,6 +15,7 @@ public interface ColumnFormatMapper {
     @Mapping(target = "name", source = "updateColumnFormatReq.name")
     @Mapping(target = "columnTypeCode", source = "updateColumnFormatReq.columnTypeCode")
     @Mapping(target = "columnType", source = "updateColumnFormatReq.columnType")
+    @Mapping(target = "columnRule", source = "updateColumnFormatReq.columnRule")
     @Mapping(target = "remark", source = "updateColumnFormatReq.remark")
     @Mapping(target = "defaultValue", source = "updateColumnFormatReq.defaultValue")
     @Mapping(target = "isNull", source = "updateColumnFormatReq.isNull")
