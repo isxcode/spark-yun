@@ -7,5 +7,5 @@ import java.util.List;
 @Data
 public class UpdateDataModelColumnIndexReq {
 
-    private List<UpdateDataModelColumnReq> dataModelColumnList;
+    private List<String> dataModelColumnIdList;
 }
