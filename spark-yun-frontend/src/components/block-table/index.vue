@@ -5,7 +5,10 @@
     :row-config="{ isHover: true, drag: true }"
     :data="tableConfig.tableData"
     :seq-config="{ seqMethod }"
+    :header-cell-config="{height: 44}"
+    :cell-config="{height: 40}"
     :loading="tableConfig.loading"
+    :max-height="'100%'"
   >
     <vxe-column
       v-if="tableConfig.seqType"
@@ -13,7 +16,9 @@
       align="center"
       width="44"
       fixed="left"
-    />
+    >
+      <template #header>#</template>
+    </vxe-column>
     <template v-for="(colConfig, colIndex) in tableConfig.colConfigs">
       <vxe-column
         v-if="colConfig.customSlot"
@@ -136,21 +141,38 @@ function columnSlotAdapter(column: any, colConfig: any) {
 
 <style lang="scss">
 .block-table {
+  max-height: 100%;
   &.block-table__empty {
     .vxe-table--render-wrapper {
       min-height: 176px;
     }
   }
+  .vxe-table--render-wrapper {
+    .vxe-table--layout-wrapper {
+      .vxe-table--scroll-y-virtual {
+        height: auto !important;
+        max-width: 10px;
+        .vxe-table--scroll-y-wrapper {
+          // max-height: calc(100% - 44px);
+          // .vxe-table--scroll-y-handle {
+          //   max-width: 10px;
+          // }
+        }
+
+      }
+    }
+  }
   .vxe-table--header tr.vxe-header--row > th {
-    height: getCssVar('menu', 'item-height');
+    // height: getCssVar('menu', 'item-height');
     padding: 0;
     background-color: #fff;
   }
   .vxe-table--body-wrapper {
-    min-height: unset !important;
+    .vxe-table--body-inner-wrapper {
+      min-height: unset !important;
+    }
   }
   .vxe-table--body tr > td.vxe-body--column {
-    height: 40px;
     padding: 0;
     .vxe-cell {
       font-size: getCssVar('font-size', 'extra-small');
@@ -175,20 +197,28 @@ function columnSlotAdapter(column: any, colConfig: any) {
       color: getCssVar('color', 'primary');
     }
   }
+  .vxe-table--scroll-x-virtual {
+    max-height: 10px;
+  }
+  .vxe-table--scroll-x-right-corner {
+    max-width: 10px;
+  }
   .vxe-table--fixed-wrapper {
     .vxe-table--fixed-left-wrapper {
-      .vxe-table--body-wrapper {
-        &.fixed-left--wrapper {
-          bottom: 0;
-        }
-      }
+      height: 100% !important;
+      // .vxe-table--body-wrapper {
+      //   &.fixed-left--wrapper {
+      //     bottom: 0;
+      //   }
+      // }
     }
     .vxe-table--fixed-right-wrapper {
-      .vxe-table--body-wrapper {
-        &.fixed-right--wrapper {
-          bottom: 0;
-        }
-      }
+      height: 100% !important;
+      // .vxe-table--body-wrapper {
+      //   &.fixed-right--wrapper {
+      //     bottom: 0;
+      //   }
+      // }
     }
   }
 }

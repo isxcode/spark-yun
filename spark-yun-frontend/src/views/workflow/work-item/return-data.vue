@@ -108,8 +108,8 @@ defineExpose({
   }
 }
 .vxe-table--body-wrapper {
-  max-height: calc(100vh - 428px);
-  overflow: auto;
+  // max-height: calc(100vh - 428px);
+  // overflow: auto;
 }
 .zqy-json-parse {
     font-size: 12px;
