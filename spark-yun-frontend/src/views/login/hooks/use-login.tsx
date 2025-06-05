@@ -105,7 +105,7 @@ export function useLogin (callback: ((callback: LoginModel) => Promise<void>)) {
         </el-form>
         <el-button
           class="zqy-login__btn"
-          type="text"
+          type="primary"
           loading={btnLoading.value}
           onClick={handleLogin}
         >确认登录</el-button>
