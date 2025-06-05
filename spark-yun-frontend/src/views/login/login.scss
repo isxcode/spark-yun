@@ -143,13 +143,13 @@
   .zqy-login__btn {
     width: 100%;
     background: linear-gradient(45deg,var(--el-color-primary-light-3),var(--el-color-primary));
-    color: var(--vxe-icon-background-color);
+    // color: var(--vxe-icon-background-color);
     font-size: 13px;
     border-radius: 2px;
     height: 40px;
     &:hover {
       background-color: var(--el-color-primary);
-      color: var(--vxe-icon-background-color);
+      // color: var(--vxe-icon-background-color);
     }
   }
 }
