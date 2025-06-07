@@ -7,6 +7,8 @@ import "normalize.css"
 
 import VXETable from 'vxe-table'
 import 'vxe-table/lib/style.css'
+import VxeUIAll from 'vxe-pc-ui'
+import 'vxe-pc-ui/lib/style.css'
 import '@antv/x6-vue-shape'
 import '@/assets/styles/global.scss'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
@@ -18,6 +20,7 @@ for (const [ key, component ] of Object.entries(ElementPlusIconsVue)) {
 }
 
 app
+  .use(VxeUIAll)
   .use(VXETable)
   .use(pinia)
   .use(router)
