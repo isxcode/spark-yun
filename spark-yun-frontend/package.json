@@ -45,6 +45,7 @@
     "vue-grid-layout": "3.0.0-beta1",
     "vue-router": "^4.2.0",
     "vuedraggable": "^4.1.0",
+    "vxe-pc-ui": "4.6.13",
     "vxe-table": "^4.13.32",
     "xe-utils": "^3.5.10"
   },

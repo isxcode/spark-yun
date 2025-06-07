@@ -17,12 +17,21 @@ export function GetDataLayerList(params: SerchParams): Promise<any> {
 
 // 数据分层树形结构查询
 export function GetDataLayerTreeData(params: SerchParams): Promise<any> {
-    return http.request({
-      method: 'post',
-      url: '/vip/layer/pageLayer',
-      params: params
-    })
-  }
+  return http.request({
+    method: 'post',
+    url: '/vip/layer/pageLayer',
+    params: params
+  })
+}
+
+// 查询父级分层
+export function GetParentLayerNode(params: any): Promise<any> {
+  return http.request({
+    method: 'post',
+    url: '/vip/layer/getParentParentLayer',
+    params: params
+  })
+}
 
 export function SaveDataLayerData(params: SerchParams): Promise<any> {
   return http.request({

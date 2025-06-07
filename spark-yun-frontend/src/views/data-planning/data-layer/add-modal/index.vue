@@ -71,18 +71,18 @@ const modelConfig = reactive({
 })
 const formData = reactive<any>({
     name: '',
-    parentLayerId: 'currentLevel',
+    parentLayerId: '',
     tableRule: '',
     remark: '',
     id: ''
 })
 const rules = reactive<FormRules>({
     name: [{ required: true, message: '请输入名称', trigger: ['blur', 'change'] }],
-    parentLayerId: [{ required: true, message: '请选择父级分层', trigger: ['blur', 'change'] }],
+    // parentLayerId: [{ required: true, message: '请选择父级分层', trigger: ['blur', 'change'] }],
     tableRule: [{ required: true, message: '请输入表名规范', trigger: ['blur', 'change'] }]
 })
 
-function showModal(cb: () => void, data: any): void {
+function showModal(cb: () => void, data: any, parentLayerId: string): void {
     getParentLayerIList()
     if (data) {
         Object.keys(formData).forEach((key: string) => {
@@ -92,8 +92,8 @@ function showModal(cb: () => void, data: any): void {
     } else {
         Object.keys(formData).forEach((key: string) => {
             formData[key] = ''
-            if (key === 'parentLayerId') {
-                formData[key] = 'currentLevel'
+            if (parentLayerId && key === 'parentLayerId') {
+                formData[key] = parentLayerId
             }
         })
         modelConfig.title = '添加'
@@ -129,10 +129,7 @@ function getParentLayerIList() {
         pageSize: 10000,
         searchKeyWord: ''
     }).then((res: any) => {
-        parentLayerIdList.value = [{
-            label: '当前分层',
-            value: 'currentLevel'
-        }, ...res.data.content.map((item: any) => {
+        parentLayerIdList.value = [...res.data.content.map((item: any) => {
             return {
                 label: item.name,
                 value: item.id
