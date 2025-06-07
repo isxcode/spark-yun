@@ -35,8 +35,8 @@
 
 > [!TIP]
 > 演示地址：https://zhiqingyun-demo.isxcode.com </br>
-> 体验账号：user001 </br>
-> 账号密码：welcome1
+> 体验账号：zhiyao </br>
+> 账号密码：zhiyao123
 
 ### 快速部署
 
