@@ -83,6 +83,9 @@ dependencies:
   vuedraggable:
     specifier: ^4.1.0
     version: 4.1.0(vue@3.5.16)
+  vxe-pc-ui:
+    specifier: 4.6.13
+    version: 4.6.13(vue@3.5.16)
   vxe-table:
     specifier: ^4.13.32
     version: 4.13.32(vue@3.5.16)

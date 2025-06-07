@@ -6,7 +6,7 @@
                 <el-button type="primary" @click="addData">
                     新建分层
                 </el-button>
-                <el-button type="primary" @click="showParentDetail" v-if="grandParentLayerId !== ''">
+                <el-button type="primary" @click="showParentDetail" v-if="parentLayerId">
                     返回上一分层
                 </el-button>
             </div>
@@ -34,15 +34,19 @@
                 >
                     <template #nameSlot="scopeSlot">
                         <span
+                            v-if="tableType === 'layer'"
                             class="name-click"
                             @click="showDetail(scopeSlot.row)"
                         >{{ scopeSlot.row.name }}</span>
+                        <span v-else>{{ scopeSlot.row.name }}</span>
                     </template>
                     <template #parentNameSlot="scopeSlot">
                         <span
+                            v-if="tableType === 'layer'"
                             class="name-click"
                             @click="showParentDetail(scopeSlot.row)"
                         >{{ scopeSlot.row.parentNameList }}</span>
+                        <span v-else>{{ scopeSlot.row.parentNameList }}</span>
                     </template>
                     <template #options="scopeSlot">
                         <div class="btn-group btn-group-msg">
@@ -72,7 +76,7 @@ import LoadingPage from '@/components/loading/index.vue'
 import AddModal from './add-modal/index.vue'
 
 import { BreadCrumbList, TableConfig } from './list.config'
-import { DeleteDataLayerData, GetDataLayerTreeData, GetDataLayerList, SaveDataLayerData, UpdateDataLayerData } from '@/services/data-layer.service'
+import { DeleteDataLayerData, GetDataLayerTreeData, GetDataLayerList, SaveDataLayerData, UpdateDataLayerData, GetParentLayerNode } from '@/services/data-layer.service'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useRouter } from 'vue-router'
 
@@ -86,7 +90,6 @@ const networkError = ref(false)
 const addModalRef = ref<any>(null)
 const tableType = ref<string>('layer')
 const parentLayerId = ref<string>('')
-const grandParentLayerId = ref<string>('')
 
 function initData(tableLoading?: boolean) {
     loading.value = tableLoading ? false : true
@@ -132,8 +135,12 @@ function initData(tableLoading?: boolean) {
 }
 
 function changeTypeEvent(e: string) {
+    parentLayerId.value = null
     tableConfig.pagination.currentPage = 1
     tableConfig.pagination.pageSize = 10
+
+    tableConfig.tableData = []
+    tableConfig.pagination.total = 0
     initData()
 }
 
@@ -152,7 +159,7 @@ function addData() {
                 reject(error)
             })
         })
-    })
+    }, null, parentLayerId.value)
 }
 function editData(data: any) {
     addModalRef.value.showModal((data: any) => {
@@ -202,7 +209,6 @@ function inputEvent(e: string) {
 
 // 跳转子集分层
 function showDetail(data: any) {
-    grandParentLayerId.value = data.parentLayerId
     parentLayerId.value = data.id
     tableConfig.pagination.currentPage = 1
     tableConfig.pagination.pageSize = 10
@@ -211,10 +217,16 @@ function showDetail(data: any) {
 
 // 跳转父级分层
 function showParentDetail() {
-    // parentLayerId.value = grandParentLayerId.value
-    tableConfig.pagination.currentPage = 1
-    tableConfig.pagination.pageSize = 10
-    initData()
+    GetParentLayerNode({
+        id: parentLayerId.value
+    }).then((res: any) => {
+        parentLayerId.value = res.data.parentLayerId
+        tableConfig.pagination.currentPage = 1
+        tableConfig.pagination.pageSize = 10
+        initData()
+    }).catch((error: any) => {
+        console.error('获取父级节点失败', error)
+    })
 }
 
 function handleSizeChange(e: number) {

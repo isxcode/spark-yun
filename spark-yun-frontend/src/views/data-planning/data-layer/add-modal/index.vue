@@ -82,7 +82,7 @@ const rules = reactive<FormRules>({
     tableRule: [{ required: true, message: '请输入表名规范', trigger: ['blur', 'change'] }]
 })
 
-function showModal(cb: () => void, data: any): void {
+function showModal(cb: () => void, data: any, parentLayerId: string): void {
     getParentLayerIList()
     if (data) {
         Object.keys(formData).forEach((key: string) => {
@@ -92,6 +92,9 @@ function showModal(cb: () => void, data: any): void {
     } else {
         Object.keys(formData).forEach((key: string) => {
             formData[key] = ''
+            if (parentLayerId && key === 'parentLayerId') {
+                formData[key] = parentLayerId
+            }
         })
         modelConfig.title = '添加'
     }
