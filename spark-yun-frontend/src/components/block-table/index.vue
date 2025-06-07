@@ -8,6 +8,7 @@
     :header-cell-config="{height: 44}"
     :cell-config="{height: 40}"
     :loading="tableConfig.loading"
+    :show-overflow="true"
     :max-height="'100%'"
   >
     <vxe-column
@@ -28,7 +29,7 @@
         :fixed="colConfig.fixed"
         :resizable="colIndex < tableConfig.colConfigs.length - 1"
         :show-header-overflow="colConfig.showHeaderOverflow || false"
-        :show-overflow="colConfig.showOverflowTooltip || true"
+        :show-overflow="true"
         :drag-sort="colConfig.dragSort"
         v-bind="colConfig"
       >
@@ -49,7 +50,7 @@
         :width="colConfig.width"
         :field="colConfig.prop"
         :resizable="colIndex < tableConfig.colConfigs.length - 1"
-        :show-overflow="colConfig.showOverflowTooltip || true"
+        :show-overflow="true"
         :drag-sort="colConfig.dragSort"
         v-bind="colConfig"
       />

@@ -43,20 +43,19 @@ export const colConfigs: colConfig[] = [
         prop: 'name',
         title: '名称',
         minWidth: 125,
-        dragSort: true,
-        customSlot: 'nameSlot',
-        showOverflowTooltip: true
+        // dragSort: true,
+        customSlot: 'nameSlot'
     },
     {
         prop: 'tableRule',
         title: '表名规范',
-        minWidth: 125,
-        showOverflowTooltip: true
+        minWidth: 125
     },
     {
         prop: 'parentNameList',
         title: '父级分层',
         minWidth: 140,
+        customSlot: 'parentNameSlot',
         formatter: (data: any) => {
             return data.cellValue ?? '-'
         }
@@ -69,7 +68,8 @@ export const colConfigs: colConfig[] = [
     {
         prop: 'createByUsername',
         title: '创建人',
-        minWidth: 120
+        minWidth: 120,
+        showOverflowTooltip: 'tooltip'
     },
     {
         prop: 'createDateTime',
