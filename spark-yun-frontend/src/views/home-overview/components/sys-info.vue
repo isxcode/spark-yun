@@ -1,7 +1,7 @@
 <template>
   <div class="sys-info">
     <div class="sys-info__header">
-      <span class="sys-info__title">系统信息</span>
+      <span class="sys-info__title">系统监控</span>
       <div class="sys-info__ops">
         <el-icon class="sys-info__icon" @click="querySysInfoData"><RefreshRight /></el-icon>
         <!-- <el-icon class="sys-info__icon"><Setting /></el-icon> -->
