@@ -5,11 +5,13 @@ import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.TypeReference;
 import com.isxcode.star.api.datasource.constants.DatasourceType;
 import com.isxcode.star.api.work.constants.SetMode;
+import com.isxcode.star.api.work.constants.WorkType;
 import com.isxcode.star.api.work.dto.ClusterConfig;
 import com.isxcode.star.api.work.dto.SyncRule;
 import com.isxcode.star.api.work.dto.SyncWorkConfig;
 import com.isxcode.star.api.work.req.ConfigWorkReq;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
+import com.isxcode.star.modules.cluster.repository.ClusterNodeRepository;
 import com.isxcode.star.modules.datasource.entity.DatasourceEntity;
 import com.isxcode.star.modules.datasource.repository.DatasourceRepository;
 import com.isxcode.star.modules.datasource.service.DatasourceService;
@@ -43,6 +45,8 @@ public class WorkConfigBizService {
     private final DatasourceRepository datasourceRepository;
 
     private final DatasourceService datasourceService;
+
+    private final ClusterNodeRepository clusterNodeRepository;
 
     public WorkConfigEntity getWorkConfigEntity(String workConfigId) {
 
@@ -82,6 +86,21 @@ public class WorkConfigBizService {
         WorkEntity work = workService.getWorkEntity(wocConfigWorkReq.getWorkId());
 
         WorkConfigEntity workConfig = workConfigService.getWorkConfigEntity(work.getConfigId());
+
+        // python作业和bash作业，必须选择服务器节点
+        if (WorkType.PYTHON.equals(work.getWorkType()) || WorkType.BASH.equals(work.getWorkType())) {
+
+            if (Strings.isEmpty(wocConfigWorkReq.getClusterConfig().getClusterId())
+                || Strings.isEmpty(wocConfigWorkReq.getClusterConfig().getClusterId())) {
+                throw new IsxAppException("缺少集群节点配置");
+            }
+
+            // 判断集群和节点是否匹配
+            if (!clusterNodeRepository.findByIdAndClusterId(wocConfigWorkReq.getClusterConfig().getClusterNodeId(),
+                wocConfigWorkReq.getClusterConfig().getClusterId()).isPresent()) {
+                throw new IsxAppException("集群和节点关系不一致，请重新保存");
+            }
+        }
 
         // 用户更新脚本
         if (!Strings.isEmpty(wocConfigWorkReq.getScript())) {

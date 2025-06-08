@@ -18,6 +18,7 @@ import com.isxcode.star.api.work.dto.*;
 import com.isxcode.star.api.work.req.*;
 import com.isxcode.star.api.work.res.*;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
+import com.isxcode.star.modules.cluster.repository.ClusterNodeRepository;
 import com.isxcode.star.modules.work.entity.WorkConfigEntity;
 import com.isxcode.star.modules.work.entity.WorkEntity;
 import com.isxcode.star.modules.work.entity.WorkInstanceEntity;
@@ -77,6 +78,8 @@ public class WorkBizService {
 
     private final WorkflowInstanceRepository workflowInstanceRepository;
 
+    private final ClusterNodeRepository clusterNodeRepository;
+
     public GetWorkRes addWork(AddWorkReq addWorkReq) {
 
         // 校验作业名的唯一性
@@ -100,8 +103,15 @@ public class WorkBizService {
 
         // python作业和bash作业，必须选择服务器节点
         if (WorkType.PYTHON.equals(addWorkReq.getWorkType()) || WorkType.BASH.equals(addWorkReq.getWorkType())) {
-            if (Strings.isEmpty(addWorkReq.getClusterNodeId())) {
+
+            if (Strings.isEmpty(addWorkReq.getClusterNodeId()) || Strings.isEmpty(addWorkReq.getClusterId())) {
                 throw new IsxAppException("缺少集群节点配置");
+            }
+
+            // 判断集群和节点是否匹配
+            if (!clusterNodeRepository.findByIdAndClusterId(addWorkReq.getClusterNodeId(), addWorkReq.getClusterId())
+                .isPresent()) {
+                throw new IsxAppException("集群和节点关系不一致，请重新保存");
             }
         }
 
@@ -507,7 +517,7 @@ public class WorkBizService {
         // 初始化作业配置
         workConfig.setId(null);
         workConfig.setVersionNumber(null);
-        workConfig = workConfigRepository.save(workConfigRepository.save(workConfig));
+        workConfig = workConfigRepository.save(workConfig);
 
         // 初始化作业
         work.setTopIndex(null);

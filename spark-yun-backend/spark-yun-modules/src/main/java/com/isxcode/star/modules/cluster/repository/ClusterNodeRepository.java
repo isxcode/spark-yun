@@ -4,6 +4,7 @@ import com.isxcode.star.api.main.constants.ModuleCode;
 import com.isxcode.star.modules.cluster.entity.ClusterNodeEntity;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.data.domain.Page;
@@ -27,4 +28,6 @@ public interface ClusterNodeRepository extends JpaRepository<ClusterNodeEntity, 
         + "OR E.remark LIKE %:keyword% " + "OR E.host LIKE %:keyword%) order by E.createDateTime desc ")
     Page<ClusterNodeEntity> searchAll(@Param("keyword") String searchKeyWord, @Param("engineId") String engineId,
         Pageable pageable);
+
+    Optional<ClusterNodeEntity> findByIdAndClusterId(String id, String clusterId);
 }

@@ -51,3 +51,12 @@ export function SetDefaultDriverData(params: any): Promise<any> {
     params: params
   })
 }
+
+// 更新备注
+export function UpdateDefaultDriverRemark(params: any): Promise<any> {
+  return http.request({
+    method: 'post',
+    url: '/datasource/updateDatabaseDriverRemark',
+    params: params
+  })
+}
