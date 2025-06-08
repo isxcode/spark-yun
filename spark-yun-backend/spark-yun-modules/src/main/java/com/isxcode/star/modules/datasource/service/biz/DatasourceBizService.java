@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.sql.Connection;
@@ -270,6 +271,17 @@ public class DatasourceBizService {
                 log.debug(e.getMessage(), e);
                 throw new IsxAppException("上传驱动，目录创建失败");
             }
+        }
+
+        // 判断名称重复
+        if (databaseDriverRepository.existsDatabaseDriverEntitiesByName(name)) {
+            throw new IsxAppException("驱动名称重复");
+        }
+
+        // 判断文件是否已经存在
+        Path path = Paths.get(driverDirPath + File.separator + driverFile.getOriginalFilename());
+        if (path.toFile().exists()) {
+            throw new IsxAppException("该驱动文件已存在");
         }
 
         // 保存驱动文件
