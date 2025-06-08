@@ -517,7 +517,7 @@ public class WorkBizService {
         // 初始化作业配置
         workConfig.setId(null);
         workConfig.setVersionNumber(null);
-        workConfig = workConfigRepository.save(workConfigRepository.save(workConfig));
+        workConfig = workConfigRepository.save(workConfig);
 
         // 初始化作业
         work.setTopIndex(null);
