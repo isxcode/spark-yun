@@ -208,6 +208,7 @@ const rules = reactive<FormRules>({
 function showModal(cb: () => void, data: any): void {
   callback.value = cb
   modelConfig.visible = true
+  renderSence.value = 'new'
   if (data) {
     formData.name = data.name
     formData.dbType = data.dbType

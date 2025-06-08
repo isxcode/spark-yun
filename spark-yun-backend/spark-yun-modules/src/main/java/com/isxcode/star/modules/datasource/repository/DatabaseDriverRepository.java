@@ -25,4 +25,6 @@ public interface DatabaseDriverRepository extends JpaRepository<DatabaseDriverEn
 
     Optional<DatabaseDriverEntity> findByDriverTypeAndDbTypeAndIsDefaultDriver(String driverType, String dbType,
         boolean defaultDriver);
+
+    boolean existsDatabaseDriverEntitiesByName(String name);
 }
