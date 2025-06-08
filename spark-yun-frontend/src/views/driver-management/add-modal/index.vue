@@ -15,11 +15,13 @@
           v-model="formData.name"
           maxlength="200"
           placeholder="请输入"
+          :disabled="renderSence === 'edit'"
         />
       </el-form-item>
       <el-form-item
         label="类型"
         prop="dbType"
+        v-if="renderSence === 'new'"
       >
         <el-select
           v-model="formData.dbType"
@@ -42,7 +44,7 @@
           placeholder="请输入"
         />
       </el-form-item>
-      <el-form-item label="驱动" prop="driver">
+      <el-form-item label="驱动" prop="driver" v-if="renderSence === 'new'">
         <el-upload
           ref="uploadRef"
           class="license-upload"
@@ -74,6 +76,7 @@ import { ElMessage, FormInstance, FormRules } from 'element-plus'
 const form = ref<FormInstance>()
 const callback = ref<any>()
 const uploadRef = ref()
+const renderSence = ref<string>('new')
 const modelConfig = reactive({
   title: '添加驱动',
   visible: false,
@@ -210,7 +213,8 @@ function showModal(cb: () => void, data: any): void {
     formData.dbType = data.dbType
     formData.remark = data.remark
     formData.id = data.id
-    modelConfig.title = '编辑驱动'
+    modelConfig.title = '编辑备注'
+    renderSence.value ='edit'
   } else {
     formData.name = ''
     formData.dbType = ''
