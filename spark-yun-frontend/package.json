@@ -19,6 +19,7 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "@antv/g6": "^5.0.48",
     "@antv/hierarchy": "^0.6.11",
     "@antv/layout": "^0.3.17",
     "@antv/x6": "^1.29.5",

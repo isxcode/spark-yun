@@ -1,5 +1,6 @@
 <template>
   <vxe-table
+    ref="vxeTableRef"
     class="block-table"
     :class="{ 'block-table__empty': !tableConfig.tableData?.length }"
     :row-config="{ isHover: true, drag: true }"
@@ -9,6 +10,8 @@
     :cell-config="{height: 40}"
     :loading="tableConfig.loading"
     :max-height="'100%'"
+    :row-drag-config="rowDragConfig"
+    @row-dragend="rowDragendEvent"
   >
     <vxe-column
       v-if="tableConfig.seqType"
@@ -76,7 +79,7 @@
 </template>
 
 <script lang="ts" setup>
-import { defineProps, defineEmits, reactive } from 'vue'
+import { defineProps, defineEmits, reactive, ref } from 'vue'
 import EmptyPage from '@/components/empty-page/index.vue'
 import type { VxeTablePropTypes } from 'vxe-table'
 
@@ -109,10 +112,13 @@ const props = defineProps<{
   tableConfig: TableConfig;
 }>()
 
-const emit = defineEmits([ 'size-change', 'current-change' ])
+const emit = defineEmits([ 'size-change', 'current-change', 'rowDragendEvent' ])
+
+const vxeTableRef = ref<any>(null)
 
 const rowDragConfig = reactive<VxeTablePropTypes.RowDragConfig<RowVO>>({
-  icon: 'vxe-icon-sort'
+  icon: 'vxe-icon-sort',
+  trigger: 'cell'
 })
 
 const handleSizeChange = (e: number) => {
@@ -136,6 +142,10 @@ function columnSlotAdapter(column: any, colConfig: any) {
     title: colConfig.title,
     realWidth: column.renderWidth
   }
+}
+
+function rowDragendEvent(e: any) {
+  emit('rowDragendEvent', vxeTableRef.value.getTableData())
 }
 </script>
 
@@ -197,8 +207,25 @@ function columnSlotAdapter(column: any, colConfig: any) {
       color: getCssVar('color', 'primary');
     }
   }
+  .vxe-icon-sort {
+    color: getCssVar('color', 'primary');
+  }
+  .vxe-body--row {
+    &.row--hover {
+      .vxe-body--column {
+        &.is--drag-cell {
+          color: getCssVar('color', 'primary') !important;
+        }
+      }
+    }
+  }
   .vxe-table--scroll-x-virtual {
     max-height: 10px;
+    .vxe-table--scroll-x-wrapper {
+      .vxe-table--scroll-x-handle {
+        max-height: 10px;
+      }
+    }
   }
   .vxe-table--scroll-x-right-corner {
     max-width: 10px;
