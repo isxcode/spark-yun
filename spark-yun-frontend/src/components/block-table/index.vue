@@ -117,7 +117,7 @@ const emit = defineEmits([ 'size-change', 'current-change', 'rowDragendEvent' ])
 const vxeTableRef = ref<any>(null)
 
 const rowDragConfig = reactive<VxeTablePropTypes.RowDragConfig<RowVO>>({
-  icon: 'vxe-icon-sort',
+  // icon: 'vxe-icon-sort',
   trigger: 'cell'
 })
 
