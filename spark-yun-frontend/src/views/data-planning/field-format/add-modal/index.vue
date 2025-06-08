@@ -6,6 +6,7 @@
             label-position="top"
             :model="formData"
             :rules="rules"
+            :disabled="readonly"
         >
             <el-form-item label="名称" prop="name">
                 <el-input v-model="formData.name" maxlength="500" placeholder="请输入" />
@@ -62,6 +63,7 @@ interface Option {
 
 const form = ref<FormInstance>()
 const callback = ref<any>()
+const readonly = ref<boolean>(false)
 const fieldTypeList = ref<Option[]>([
     {
         label: '大文本',
@@ -134,7 +136,13 @@ const rules = reactive<FormRules>({
     columnType: [{ required: true, message: '请输入字段精度', trigger: ['blur', 'change'] }]
 })
 
-function showModal(cb: () => void, data: any): void {
+function showModal(cb: () => void, data: any, type?: string): void {
+    modelConfig.okConfig = {
+        title: '确定',
+        ok: okEvent,
+        disabled: false,
+        loading: false
+    }
     if (data) {
         Object.keys(formData).forEach((key: string) => {
             formData[key] = data[key]
@@ -149,6 +157,12 @@ function showModal(cb: () => void, data: any): void {
             }
         })
         modelConfig.title = '添加'
+    }
+
+    if (type === 'readonly') {
+        readonly.value = true
+        modelConfig.title = '查看'
+        modelConfig.okConfig = null
     }
 
     callback.value = cb

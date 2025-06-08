@@ -41,8 +41,8 @@
                                     <el-dropdown-menu>
                                         <el-dropdown-item @click="editData(scopeSlot.row)">编辑</el-dropdown-item>
                                         <el-dropdown-item @click="deleteData(scopeSlot.row)">删除</el-dropdown-item>
-                                        <el-dropdown-item>重置</el-dropdown-item>
-                                        <el-dropdown-item>复制</el-dropdown-item>
+                                        <el-dropdown-item @click="resetData(scopeSlot.row)">重置</el-dropdown-item>
+                                        <el-dropdown-item @click="copyData(scopeSlot.row)">复制</el-dropdown-item>
                                     </el-dropdown-menu>
                                 </template>
                             </el-dropdown>
@@ -52,6 +52,7 @@
             </div>
         </LoadingPage>
         <AddModal ref="addModalRef" />
+        <CopyModal ref="copyModalRef" />
         <ShowLog ref="showLogRef" />
     </div>
 </template>
@@ -61,6 +62,7 @@ import { reactive, ref, onMounted } from 'vue'
 import Breadcrumb from '@/layout/bread-crumb/index.vue'
 import LoadingPage from '@/components/loading/index.vue'
 import AddModal from './add-modal/index.vue'
+import CopyModal from './copy-modal/index.vue'
 
 import { BreadCrumbList, TableConfig } from './list.config'
 import {
@@ -85,6 +87,7 @@ const keyword = ref('')
 const loading = ref(false)
 const networkError = ref(false)
 const addModalRef = ref<any>(null)
+const copyModalRef = ref<any>(null)
 const showLogRef = ref<any>(null)
 
 function initData(tableLoading?: boolean) {
@@ -156,6 +159,25 @@ function editData(data: any) {
         })
     }, data)
 }
+function copyData(data: any) {
+    copyModalRef.value.showModal((data: any) => {
+        return new Promise((resolve: any, reject: any) => {
+            CopyDataModelData({
+                modelId: data.id,
+                name: data.name,
+                layerId: data.layerId,
+                tableName: data.tableName,
+                remark: data.remark
+            }).then((res: any) => {
+                ElMessage.success(res.msg)
+                initData()
+                resolve()
+            }).catch((error: any) => {
+                reject(error)
+            })
+        })
+    }, data)
+}
 
 // 删除
 function deleteData(data: any) {
@@ -165,6 +187,21 @@ function deleteData(data: any) {
         type: 'warning'
     }).then(() => {
         DeleteDataModelData({
+            id: data.id
+        }).then((res: any) => {
+            ElMessage.success(res.msg)
+            initData()
+        }).catch(() => { })
+    })
+}
+
+function resetData(data: any) {
+    ElMessageBox.confirm('是否确定重置？', '警告', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+    }).then(() => {
+        ResetDataModel({
             id: data.id
         }).then((res: any) => {
             ElMessage.success(res.msg)

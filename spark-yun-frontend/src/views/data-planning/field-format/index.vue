@@ -184,12 +184,17 @@ function inputEvent(e: string) {
 }
 
 function showDetail(data: any) {
-    router.push({
-        name: 'layer-model',
-        query: {
-            id: data.id
-        }
-    })
+    addModalRef.value.showModal((data: any) => {
+        return new Promise((resolve: any, reject: any) => {
+            UpdateFieldFormatData(data).then((res: any) => {
+                ElMessage.success(res.msg)
+                initData()
+                resolve()
+            }).catch((error: any) => {
+                reject(error)
+            })
+        })
+    }, data, 'readonly')
 }
 
 function handleSizeChange(e: number) {
