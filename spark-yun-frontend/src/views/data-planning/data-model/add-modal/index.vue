@@ -7,14 +7,15 @@
             :model="formData"
             :rules="rules"
         >
-            <el-form-item label="分层名称" prop="name">
+            <el-form-item label="名称" prop="name">
                 <el-input v-model="formData.name" maxlength="200" placeholder="请输入" />
             </el-form-item>
-            <el-form-item label="父级分层" prop="parentLayerId">
+            <el-form-item label="数据分层" prop="layerId">
                 <el-select
                     :disabled="!!formData.id"
-                    v-model="formData.parentLayerId"
+                    v-model="formData.layerId"
                     filterable
+                    clearable
                     placeholder="请选择"
                 >
                     <el-option
@@ -25,8 +26,69 @@
                     />
                 </el-select>
             </el-form-item>
-            <el-form-item label="表名规范" prop="tableRule">
-                <el-input v-model="formData.tableRule" maxlength="200" placeholder="请输入" />
+            <el-form-item label="模型类型" prop="modelType">
+                <el-select
+                    v-model="formData.modelType"
+                    filterable
+                    clearable
+                    placeholder="请选择"
+                >
+                    <el-option
+                        v-for="item in modelTypeList"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value"
+                    />
+                </el-select>
+            </el-form-item>
+            <el-form-item label="数据源类型" prop="dbType">
+                <el-select
+                    v-model="formData.dbType"
+                    placeholder="请选择"
+                    filterable
+                    clearable
+                    @change="dbTypeChangeEvent"
+                >
+                    <el-option
+                        v-for="item in dbTypeList"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value"
+                    />
+                </el-select>
+            </el-form-item>
+            <el-form-item label="数据源" prop="datasourceId">
+                <el-select
+                    v-model="formData.datasourceId"
+                    placeholder="请选择"
+                    filterable
+                    clearable
+                    @change="datasouceChangeEvent"
+                    @visible-change="getDataSourceList"
+                >
+                    <el-option
+                        v-for="item in dataSourceList"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value"
+                    />
+                </el-select>
+            </el-form-item>
+            <el-form-item label="表名" prop="tableName">
+                <el-select
+                    v-model="formData.tableName"
+                    placeholder="请选择"
+                    filterable
+                    clearable
+                    @visible-change="getDataSourceTable"
+                >
+                    <el-option
+                        v-for="item in tableNameList"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value"
+                    />
+                </el-select>
             </el-form-item>
             <el-form-item label="备注">
                 <el-input v-model="formData.remark" type="textarea" maxlength="200"
@@ -40,15 +102,110 @@
 import { reactive, defineExpose, ref } from 'vue'
 import { GetDataLayerList } from '@/services/data-layer.service'
 import { ElMessage, FormInstance, FormRules } from 'element-plus'
+import { GetDatasourceList } from '@/services/datasource.service'
+import { GetDataSourceTables } from '@/services/data-sync.service'
+import { useRoute } from 'vue-router'
 
 interface Option {
     label: string
     value: string
 }
 
+const route = useRoute()
+
 const form = ref<FormInstance>()
 const callback = ref<any>()
 const parentLayerIdList = ref<Option[]>([])
+const modelTypeList = ref<Option[]>([
+    {
+        label: '原始模型',
+        value: 'ORIGIN_MODEL'
+    },
+    {
+        label: '关联模型',
+        value: 'LINK_MODEL'
+    }
+])
+const dbTypeList = ref<Option[]>([
+    {
+        label: 'Mysql',
+        value: 'MYSQL',
+    },
+    {
+        label: 'Oracle',
+        value: 'ORACLE',
+    },
+    {
+        label: 'SqlServer',
+        value: 'SQL_SERVER',
+    },
+    {
+        label: 'PostgreSql',
+        value: 'POSTGRE_SQL',
+    },
+    {
+        label: 'Clickhouse',
+        value: 'CLICKHOUSE',
+    },
+    {
+        label: 'Hive',
+        value: 'HIVE',
+    },
+    {
+        label: 'H2',
+        value: 'H2',
+    },
+    {
+        label: 'HanaSap',
+        value: 'HANA_SAP',
+    },
+    {
+        label: '达梦',
+        value: 'DM',
+    },
+    {
+        label: 'Doris',
+        value: 'DORIS',
+    },
+    {
+        label: 'OceanBase',
+        value: 'OCEANBASE',
+    },
+    {
+        label: 'TiDB',
+        value: 'TIDB',
+    },
+    {
+        label: 'StarRocks',
+        value: 'STAR_ROCKS',
+    },
+    {
+        label: 'Greenplum',
+        value: 'GREENPLUM',
+    },
+    {
+        label: 'Gbase',
+        value: 'GBASE',
+    },
+    {
+        label: 'Sybase',
+        value: 'SYBASE',
+    },
+    {
+        label: 'Db2',
+        value: 'DB2',
+    },
+    {
+        label: 'Gauss',
+        value: 'GAUSS',
+    },
+    {
+        label: 'OpenGauss',
+        value: 'OPEN_GAUSS',
+    }
+])
+const dataSourceList = ref<Option[]>([])
+const tableNameList = ref<Option[]>([])
 
 const modelConfig = reactive({
     title: '添加',
@@ -71,19 +228,25 @@ const modelConfig = reactive({
 })
 const formData = reactive<any>({
     name: '',
-    parentLayerId: 'currentLevel',
-    tableRule: '',
+    layerId: '',
+    modelType: '',  // 模型类型 ORIGIN_MODEL | LINK_MODEL
+    dbType: '',     // 数据源类型
+    datasourceId: '',
+    tableName: '',
+    tableConfig: {}, // 高级配置
     remark: '',
     id: ''
 })
 const rules = reactive<FormRules>({
     name: [{ required: true, message: '请输入采集任务名称', trigger: ['blur', 'change'] }],
-    parentLayerId: [{ required: true, message: '请选择父级分层', trigger: ['blur', 'change'] }],
-    tableRule: [{ required: true, message: '请输入表名规范', trigger: ['blur', 'change'] }]
+    layerId: [{ required: true, message: '请选择数据分层', trigger: ['blur', 'change'] }],
+    modelType: [{ required: true, message: '请选择模型类型', trigger: ['blur', 'change'] }],
+    dbType: [{ required: true, message: '请选择数据源类型', trigger: ['blur', 'change'] }],
+    datasourceId: [{ required: true, message: '请选择数据源', trigger: ['blur', 'change'] }],
+    tableName: [{ required: true, message: '请选择表名', trigger: ['blur', 'change'] }]
 })
 
 function showModal(cb: () => void, data: any): void {
-    getParentLayerIList()
     if (data) {
         Object.keys(formData).forEach((key: string) => {
             formData[key] = data[key]
@@ -92,12 +255,16 @@ function showModal(cb: () => void, data: any): void {
     } else {
         Object.keys(formData).forEach((key: string) => {
             formData[key] = ''
-            if (key === 'parentLayerId') {
-                formData[key] = 'currentLevel'
+            if (key === 'layerId' && route.query.id) {
+                formData[key] = route.query.id
             }
         })
         modelConfig.title = '添加'
     }
+
+    getParentLayerIList()
+    getDataSourceList(true)
+    getDataSourceTable(true)
 
     callback.value = cb
     modelConfig.visible = true
@@ -129,10 +296,7 @@ function getParentLayerIList() {
         pageSize: 10000,
         searchKeyWord: ''
     }).then((res: any) => {
-        parentLayerIdList.value = [{
-            label: '当前分层',
-            value: 'currentLevel'
-        }, ...res.data.content.map((item: any) => {
+        parentLayerIdList.value = [...res.data.content.map((item: any) => {
             return {
                 label: item.name,
                 value: item.id
@@ -145,6 +309,57 @@ function getParentLayerIList() {
 
 function closeEvent() {
     modelConfig.visible = false
+}
+
+function dbTypeChangeEvent() {
+    formData.datasourceId = ''
+    datasouceChangeEvent()
+}
+
+function datasouceChangeEvent() {
+    formData.tableName = ''
+}
+
+function getDataSourceList(e: boolean, searchType?: string) {
+    if (e && formData.dbType) {
+        GetDatasourceList({
+            page: 0,
+            pageSize: 10000,
+            searchKeyWord: searchType || '',
+            datasourceType: formData.dbType
+        }).then((res: any) => {
+            dataSourceList.value = res.data.content.map((item: any) => {
+                return {
+                    label: item.name,
+                    value: item.id
+                }
+            })
+        }).catch(() => {
+            dataSourceList.value = []
+        })
+    } else {
+        dataSourceList.value = []
+    }
+}
+
+function getDataSourceTable(e: boolean) {
+    if (e && formData.datasourceId) {
+        GetDataSourceTables({
+            dataSourceId: formData.datasourceId,
+            tablePattern: ""
+        }).then((res: any) => {
+            tableNameList.value = res.data.tables.map((item: any) => {
+                return {
+                    label: item,
+                    value: item
+                }
+            })
+        }).catch(() => {
+            tableNameList.value = []
+        })
+    } else {
+        tableNameList.value = []
+    }
 }
 
 defineExpose({

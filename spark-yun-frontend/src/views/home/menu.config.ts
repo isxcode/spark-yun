@@ -99,7 +99,7 @@ export const menuListData: Array<Menu> = [
         name: '数据分层',
         icon: 'Files',
         authType: [ 'ROLE_TENANT_MEMBER', 'ROLE_TENANT_ADMIN' ],
-        childPage: []
+        childPage: ['layer-area']
       },
       {
         code: 'field-format',
@@ -113,7 +113,7 @@ export const menuListData: Array<Menu> = [
         name: '数据模型',
         icon: 'List',
         authType: [ 'ROLE_TENANT_MEMBER', 'ROLE_TENANT_ADMIN' ],
-        childPage: []
+        childPage: ['model-field']
       },
     ]
   },
