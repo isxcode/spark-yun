@@ -27,7 +27,19 @@
             <div class="btn-group">
               <span v-if="!scopeSlot.row.isDefaultDriver" @click="setDefaultDriver(scopeSlot.row)">默认</span>
               <span v-else @click="setDefaultDriver(scopeSlot.row)">取消</span>
-              <span @click="deleteData(scopeSlot.row)">删除</span>
+              <el-dropdown trigger="click">
+                <span class="click-show-more">更多</span>
+                <template #dropdown>
+                  <el-dropdown-menu>
+                    <el-dropdown-item @click="editData(scopeSlot.row)">
+                      备注
+                    </el-dropdown-item>
+                    <el-dropdown-item @click="deleteData(scopeSlot.row)">
+                      删除
+                    </el-dropdown-item>
+                  </el-dropdown-menu>
+                </template>
+              </el-dropdown>
               <!-- <el-icon v-else class="is-loading"><Loading /></el-icon> -->
             </div>
           </template>
@@ -47,7 +59,14 @@ import BlockTable from '@/components/block-table/index.vue'
 import LoadingPage from '@/components/loading/index.vue'
 
 import { BreadCrumbList, TableConfig } from './driver.config'
-import { GetDefaultDriverData, GetDriverListData, DeleteDefaultDriverData, AddDefaultDriverData, SetDefaultDriverData } from '@/services/driver-management.service'
+import {
+  GetDefaultDriverData,
+  GetDriverListData,
+  DeleteDefaultDriverData,
+  AddDefaultDriverData,
+  SetDefaultDriverData,
+  UpdateDefaultDriverRemark
+} from '@/services/driver-management.service'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/store/useAuth'
@@ -125,6 +144,24 @@ function deleteData(data: any) {
       })
       .catch(() => { })
   })
+}
+
+// 修改备注
+function editData(data: any) {
+  addModalRef.value.showModal((formData: any) => {
+    return new Promise((resolve: any, reject: any) => {
+      UpdateDefaultDriverRemark({
+        id: formData.id,
+        remark: formData.remark
+      }).then((res: any) => {
+        ElMessage.success(res.msg)
+        initData()
+        resolve()
+      }).catch((error: any) => {
+        reject(error)
+      })
+    })
+  }, data)
 }
 
 // 设置默认
