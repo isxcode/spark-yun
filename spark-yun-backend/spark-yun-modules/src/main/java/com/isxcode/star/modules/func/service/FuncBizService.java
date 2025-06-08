@@ -48,6 +48,14 @@ public class FuncBizService {
     public void updateFunc(UpdateFuncReq updateFuncReq) {
 
         FuncEntity func = funcService.getFunc(updateFuncReq.getId());
+
+        // 判断函数名重复
+        funcRepository.findByFuncName(updateFuncReq.getFuncName()).ifPresent(e -> {
+            if (!e.getId().equals(updateFuncReq.getId())) {
+                throw new IsxAppException("函数名称重复");
+            }
+        });
+
         func = funcMapper.updateFuncReqToFuncEntity(updateFuncReq, func);
         funcRepository.save(func);
     }
