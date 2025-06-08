@@ -129,4 +129,12 @@ public class DatasourceController {
 
         return datasourceBizService.getDefaultDatabaseDriver(getDefaultDatabaseDriverReq);
     }
+
+    @PostMapping("/updateDatabaseDriverRemark")
+    @Operation(summary = "修改驱动备注接口")
+    @SuccessResponse("修改成功")
+    public void updateDatabaseDriverRemark(@RequestBody UpdateDatabaseDriverRemarkReq updateDatabaseDriverRemarkReq) {
+
+        datasourceBizService.updateDatabaseDriverRemark(updateDatabaseDriverRemarkReq);
+    }
 }

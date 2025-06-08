@@ -390,4 +390,12 @@ public class DatasourceBizService {
         return datasourceMapper.databaseDriverEntityToGetDefaultDatabaseDriverRes(systemDriver.get());
     }
 
+    public void updateDatabaseDriverRemark(UpdateDatabaseDriverRemarkReq updateDatabaseDriverRemarkReq) {
+
+        DatabaseDriverEntity datasourceDriver =
+            datasourceService.getDatasourceDriver(updateDatabaseDriverRemarkReq.getId());
+
+        datasourceDriver.setRemark(updateDatabaseDriverRemarkReq.getRemark());
+        databaseDriverRepository.save(datasourceDriver);
+    }
 }
