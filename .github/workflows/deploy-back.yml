@@ -35,7 +35,8 @@ jobs:
               rm -rf /opt/zhiqingyun/resources/*
               cp -r /opt/zhiqingyun/resources_back/* /opt/zhiqingyun/resources/
             else
-              cp -r /opt/zhiqingyun/resources /opt/zhiqingyun/resources_back
+              mkdir -p /opt/zhiqingyun/resources_back
+              cp -r /opt/zhiqingyun/resources/* /opt/zhiqingyun/resources_back
             fi
             bash /opt/zhiqingyun/bin/start.sh --print-log=false
             sleep 120
