@@ -46,8 +46,10 @@ import MetadataManagement from '@/views/metadata-page/metadata-management/index.
 
 // 数据分层
 import DataLayer from '@/views/data-planning/data-layer/index.vue'
+import LayerArea from '@/views/data-planning/data-layer/layer-area/index.vue'
 import FieldFormat from '@/views/data-planning/field-format/index.vue'
 import DataModel from '@/views/data-planning/data-model/index.vue'
+import ModelField from '@/views/data-planning/data-model/model-field/index.vue'
 
 export default [
   {
@@ -242,6 +244,11 @@ export default [
     component: DataLayer
   },
   {
+    path: 'layer-area',
+    name: 'layer-area',
+    component: LayerArea
+  },
+  {
     path: 'field-format',
     name: 'field-format',
     component: FieldFormat
@@ -250,5 +257,10 @@ export default [
     path: 'data-model',
     name: 'data-model',
     component: DataModel
+  },
+  {
+    path: 'model-field',
+    name: 'model-field',
+    component: ModelField
   },
 ]

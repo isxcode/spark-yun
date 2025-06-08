@@ -43,7 +43,6 @@ export const colConfigs: colConfig[] = [
         prop: 'name',
         title: '名称',
         minWidth: 125,
-        // dragSort: true,
         customSlot: 'nameSlot'
     },
     {

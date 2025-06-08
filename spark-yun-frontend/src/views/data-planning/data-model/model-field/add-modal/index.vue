@@ -7,14 +7,19 @@
             :model="formData"
             :rules="rules"
         >
-            <el-form-item label="名称" prop="name">
+            <el-form-item label="字段" prop="name">
                 <el-input v-model="formData.name" maxlength="500" placeholder="请输入" />
             </el-form-item>
-            <el-form-item label="字段类型" prop="columnTypeCode">
+            <el-form-item label="字段名" prop="columnName">
+                <el-input v-model="formData.columnName" maxlength="500" placeholder="请输入" />
+            </el-form-item>
+            <el-form-item label="字段标准" prop="columnFormatId">
                 <el-select
-                    v-model="formData.columnTypeCode"
+                    v-model="formData.columnFormatId"
                     filterable
+                    clearable
                     placeholder="请选择"
+                    @visible-change="getFieldFormatList"
                 >
                     <el-option
                         v-for="item in fieldTypeList"
@@ -23,24 +28,6 @@
                         :value="item.value"
                     />
                 </el-select>
-            </el-form-item>
-            <el-form-item label="字段精度" prop="columnType">
-                <el-input v-model="formData.columnType" maxlength="200" placeholder="请输入" />
-            </el-form-item>
-            <el-form-item label="可为空" prop="isNull" class="inline-show">
-                <el-checkbox v-model="formData.isNull" true-label="ENABLE" false-label="DISABLE" />
-            </el-form-item>
-            <el-form-item label="可重复" prop="isDuplicate" class="inline-show">
-                <el-checkbox v-model="formData.isDuplicate" true-label="ENABLE" false-label="DISABLE" />
-            </el-form-item>
-            <el-form-item label="是否主键" prop="isPrimary" class="inline-show">
-                <el-checkbox v-model="formData.isPrimary" true-label="ENABLE" false-label="DISABLE" />
-            </el-form-item>
-            <el-form-item label="是否分区键" prop="isPartition" class="inline-show">
-                <el-checkbox v-model="formData.isPartition" true-label="ENABLE" false-label="DISABLE" />
-            </el-form-item>
-            <el-form-item label="默认值" prop="defaultValue">
-                <el-input v-model="formData.defaultValue" maxlength="500" placeholder="请输入" />
             </el-form-item>
             <el-form-item label="备注">
                 <el-input v-model="formData.remark" type="textarea" maxlength="200"
@@ -53,6 +40,7 @@
 <script lang="ts" setup>
 import { reactive, defineExpose, ref } from 'vue'
 import { GetDataLayerList } from '@/services/data-layer.service'
+import { GetFieldFormatList } from '@/services/field-format.service'
 import { ElMessage, FormInstance, FormRules } from 'element-plus'
 
 interface Option {
@@ -62,40 +50,7 @@ interface Option {
 
 const form = ref<FormInstance>()
 const callback = ref<any>()
-const fieldTypeList = ref<Option[]>([
-    {
-        label: '大文本',
-        value: 'TEXT'
-    },
-    {
-        label: '文本',
-        value: 'STRING'
-    },
-    {
-        label: '日期',
-        value: 'DATE'
-    },
-    {
-        label: '日期时间',
-        value: 'DATETIME'
-    },
-    {
-        label: '整数',
-        value: 'INT'
-    },
-    {
-        label: '双精度浮点数',
-        value: 'DOUBLE'
-    },
-    {
-        label: '双精度浮点数',
-        value: 'DOUBLE'
-    },
-    {
-        label: '自定义',
-        value: 'CUSTOM'
-    }
-])
+const fieldTypeList = ref<Option[]>([])
 
 const modelConfig = reactive({
     title: '添加',
@@ -118,20 +73,15 @@ const modelConfig = reactive({
 })
 const formData = reactive<any>({
     name: '',
-    columnTypeCode: '',
-    columnType: '',
-    isNull: 'DISABLE',
-    isPrimary: 'DISABLE',
-    isDuplicate: 'DISABLE',
-    isPartition: 'DISABLE',
-    defaultValue: '',
+    columnName: '',
+    columnFormatId: '',
     remark: '',
     id: ''
 })
 const rules = reactive<FormRules>({
-    name: [{ required: true, message: '请输入名称', trigger: ['blur', 'change'] }],
-    columnTypeCode: [{ required: true, message: '请选择字段类型', trigger: ['blur', 'change'] }],
-    columnType: [{ required: true, message: '请输入字段精度', trigger: ['blur', 'change'] }]
+    name: [{ required: true, message: '请输入字段', trigger: ['blur', 'change'] }],
+    columnName: [{ required: true, message: '请输入字段名', trigger: ['blur', 'change'] }],
+    columnFormatId: [{ required: true, message: '请选择字段标准', trigger: ['blur', 'change'] }]
 })
 
 function showModal(cb: () => void, data: any): void {
@@ -141,15 +91,12 @@ function showModal(cb: () => void, data: any): void {
         })
         modelConfig.title = '编辑'
     } else {
-        const keys = ['isNull', 'isPrimary', 'isDuplicate', 'isPartition']
         Object.keys(formData).forEach((key: string) => {
             formData[key] = ''
-            if (keys.includes(key)) {
-                formData[key] = 'DISABLE'
-            }
         })
         modelConfig.title = '添加'
     }
+    getFieldFormatList(true)
 
     callback.value = cb
     modelConfig.visible = true
@@ -173,6 +120,27 @@ function okEvent() {
             ElMessage.warning('请将表单输入完整')
         }
     })
+}
+
+function getFieldFormatList(e: boolean, searchType?: string) {
+    if (e) {
+        GetFieldFormatList({
+            page: 0,
+            pageSize: 10000,
+            searchKeyWord: searchType || '',
+        }).then((res: any) => {
+            fieldTypeList.value = res.data.content.map((item: any) => {
+                return {
+                    label: item.name,
+                    value: item.id
+                }
+            })
+        }).catch(() => {
+            fieldTypeList.value = []
+        })
+    } else {
+        fieldTypeList.value = []
+    }
 }
 
 function closeEvent() {

@@ -6,7 +6,10 @@
                 <el-button type="primary" @click="addData">
                     新建分层
                 </el-button>
-                <el-button type="primary" @click="showParentDetail" v-if="parentLayerId">
+                <el-button type="primary" @click="layerAreaView">
+                    分层领域
+                </el-button>
+                <el-button @click="showParentDetail" v-if="parentLayerId">
                     返回上一分层
                 </el-button>
             </div>
@@ -194,10 +197,17 @@ function deleteData(data: any) {
 // 跳转分层数据模型
 function dataModelPage(data: any) {
     router.push({
-        name: 'layer-model',
+        name: 'data-model',
         query: {
             id: data.id
         }
+    })
+}
+
+// 跳转分层领域
+function layerAreaView(data: any) {
+    router.push({
+        name: 'layer-area'
     })
 }
 

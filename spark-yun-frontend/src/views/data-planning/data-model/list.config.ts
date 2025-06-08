@@ -46,18 +46,32 @@ export const colConfigs: colConfig[] = [
         showOverflowTooltip: true
     },
     {
-        prop: 'tableRule',
-        title: '表名规范',
+        prop: 'modelType',
+        title: '模型类型',
         minWidth: 125,
         showOverflowTooltip: true
     },
     {
-        prop: 'parentNameList',
-        title: '父级分层',
-        minWidth: 140,
-        formatter: (data: any) => {
-            return data.cellValue ?? '-'
-        }
+        prop: 'layerName',
+        title: '数据分层',
+        minWidth: 140
+    },
+    {
+        prop: 'datasourceName',
+        title: '数据源',
+        minWidth: 140
+    },
+    {
+        prop: 'tableName',
+        title: '表名',
+        minWidth: 140
+    },
+    {
+        prop: 'status',
+        title: '状态',
+        customSlot: 'statusTag',
+        minWidth: 100,
+        showOverflowTooltip: true
     },
     {
         prop: 'remark',
