@@ -46,13 +46,13 @@ export const colConfigs: colConfig[] = [
         showOverflowTooltip: true
     },
     {
-        prop: 'tableRule',
+        prop: 'columnTypeCode',
         title: '字段类型',
         minWidth: 125,
         showOverflowTooltip: true
     },
     {
-        prop: 'tableRule',
+        prop: 'columnType',
         title: '字段精度',
         minWidth: 100,
         formatter: (data: any) => {
@@ -60,12 +60,12 @@ export const colConfigs: colConfig[] = [
         },
         showOverflowTooltip: true
     },
-    // {
-    //     prop: 'tableRule',
-    //     title: '字段规范',
-    //     minWidth: 100,
-    //     showOverflowTooltip: true
-    // },
+    {
+        prop: 'columnRule',
+        title: '字段名规范',
+        minWidth: 100,
+        showOverflowTooltip: true
+    },
     {
         prop: 'status',
         title: '状态',
@@ -79,7 +79,7 @@ export const colConfigs: colConfig[] = [
         minWidth: 120
     },
     {
-        prop: 'createByUsername',
+        prop: 'createUsername',
         title: '创建人',
         minWidth: 120
     },

@@ -53,12 +53,12 @@
                     </template>
                     <template #options="scopeSlot">
                         <div class="btn-group btn-group-msg">
-                            <span @click="editData(scopeSlot.row)">编辑</span>
+                            <span @click="dataModelPage(scopeSlot.row)">模型</span>
                             <el-dropdown trigger="click">
                                 <span class="click-show-more">更多</span>
                                 <template #dropdown>
                                     <el-dropdown-menu>
-                                        <el-dropdown-item @click="dataModelPage(scopeSlot.row)">数据模型</el-dropdown-item>
+                                        <el-dropdown-item @click="editData(scopeSlot.row)">编辑</el-dropdown-item>
                                         <el-dropdown-item @click="deleteData(scopeSlot.row)">删除</el-dropdown-item>
                                     </el-dropdown-menu>
                                 </template>

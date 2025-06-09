@@ -15,8 +15,6 @@ public class ColumnFormatPageRes {
 
     private String name;
 
-    private String columnName;
-
     private String columnTypeCode;
 
     private String columnType;

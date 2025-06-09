@@ -3,7 +3,7 @@
     <div class="zqy-seach-table message-notification">
         <div class="zqy-table-top">
             <el-button type="primary" @click="addData">
-                新建字段标准
+                新建标准
             </el-button>
             <div class="zqy-seach">
                 <el-input
