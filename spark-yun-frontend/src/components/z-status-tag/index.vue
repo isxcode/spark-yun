@@ -56,7 +56,9 @@ const status = ref<any>({
     CHECK_SUCCESS: '检测成功',
     ENABLE: '启用',
 
-    COLLECTING: '采集中'
+    COLLECTING: '采集中',
+    BUILDING: '构建中',
+    INIT: '未初始化'
 })
 
 const props = withDefaults(defineProps<{
@@ -160,6 +162,7 @@ const vmStatus = computed<{ status: ColonyInfo['status'], name: string }>(() => 
     &.is-stop_s,
     &.is-disable,
     &.is-collecting,
+    &.is-init,
     &.is-starting {
         color: #b2b2b2;
 
@@ -171,7 +174,7 @@ const vmStatus = computed<{ status: ColonyInfo['status'], name: string }>(() => 
         }
     }
 
-    &.is-running,&.is-new {
+    &.is-running,&.is-building,&.is-new {
         color: #1890ff;
 
         .vm-status__pointer {
