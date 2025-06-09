@@ -5,12 +5,15 @@ import com.isxcode.star.api.datasource.constants.DatasourceType;
 import com.isxcode.star.api.datasource.dto.ConnectInfo;
 import com.isxcode.star.api.datasource.dto.QueryColumnDto;
 import com.isxcode.star.api.datasource.dto.QueryTableDto;
+import com.isxcode.star.api.model.ao.DataModelColumnAo;
+import com.isxcode.star.api.model.constant.ColumnFormatType;
 import com.isxcode.star.api.work.res.GetDataSourceDataRes;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.star.backend.api.base.properties.IsxAppProperties;
 import com.isxcode.star.common.utils.aes.AesUtils;
 import com.isxcode.star.modules.datasource.service.DatabaseDriverService;
 import com.isxcode.star.modules.datasource.source.Datasource;
+import com.isxcode.star.modules.model.entity.DataModelEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.BeanListHandler;
@@ -85,6 +88,36 @@ public class MysqlService extends Datasource {
     }
 
     @Override
+    public String generateDataModelSql(ConnectInfo connectInfo, List<DataModelColumnAo> modelColumnList,
+        DataModelEntity dataModel) throws IsxAppException {
+
+        StringBuilder sqlBuilder = new StringBuilder();
+
+        // 开始构建 CREATE TABLE 语句
+        sqlBuilder.append("CREATE TABLE ").append(dataModel.getTableName()).append(" (\n");
+
+        // 构建字段部分
+        for (int i = 0; i < modelColumnList.size(); i++) {
+            DataModelColumnAo column = modelColumnList.get(i);
+            sqlBuilder.append("    ").append(column.getColumnName()).append(" ")
+                .append(mapColumnType(column.getColumnTypeCode(), column.getColumnType())).append(" ")
+                .append("COMMENT '").append(column.getRemark() != null ? column.getRemark() : "").append("'");
+
+            if (i < modelColumnList.size() - 1) {
+                sqlBuilder.append(",");
+            }
+            sqlBuilder.append("\n");
+        }
+
+        // 结束括号
+        sqlBuilder.append(")");
+        sqlBuilder.append("\nENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        sqlBuilder.append(";");
+
+        return sqlBuilder.toString();
+    }
+
+    @Override
     public Long getTableTotalSize(ConnectInfo connectInfo) throws IsxAppException {
 
         Assert.notNull(connectInfo.getDatabase(), "datasource不能为空");
@@ -153,6 +186,28 @@ public class MysqlService extends Datasource {
     @Override
     public void refreshTableInfo(ConnectInfo connectInfo) throws IsxAppException {
 
+    }
+
+
+    private String mapColumnType(String columnTypeCode, String columnType) {
+        switch (columnTypeCode) {
+            case ColumnFormatType.CUSTOM:
+                return columnType;
+            case ColumnFormatType.TEXT:
+                return "text";
+            case ColumnFormatType.DATE:
+                return "date";
+            case ColumnFormatType.DOUBLE:
+                return "double";
+            case ColumnFormatType.INT:
+                return "int";
+            case ColumnFormatType.DATETIME:
+                return "datetime";
+            case ColumnFormatType.STRING:
+                return "varchar(" + (columnType == null ? "200" : columnType) + ")";
+            default:
+                return "暂不支持该类型字段";
+        }
     }
 
 }
