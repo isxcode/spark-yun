@@ -49,6 +49,13 @@ export const colConfigs: colConfig[] = [
         prop: 'modelType',
         title: '模型类型',
         minWidth: 125,
+        formatter: (data: any) => {
+            const obj: any = {
+                ORIGIN_MODEL: '原始模型',
+                LINK_MODEL: '关联模型'
+            }
+            return data.cellValue && obj[data.cellValue] ? obj[data.cellValue] : '-'
+        },
         showOverflowTooltip: true
     },
     {

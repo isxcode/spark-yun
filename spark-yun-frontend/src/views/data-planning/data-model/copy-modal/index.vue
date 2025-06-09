@@ -12,7 +12,6 @@
             </el-form-item>
             <el-form-item label="数据分层" prop="layerId">
                 <el-select
-                    :disabled="!!formData.id"
                     v-model="formData.layerId"
                     filterable
                     clearable
@@ -26,72 +25,7 @@
                     />
                 </el-select>
             </el-form-item>
-            <!-- <el-form-item label="模型类型" prop="modelType">
-                <el-select
-                    v-model="formData.modelType"
-                    filterable
-                    clearable
-                    :disabled="true"
-                    placeholder="请选择"
-                >
-                    <el-option
-                        v-for="item in modelTypeList"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value"
-                    />
-                </el-select>
-            </el-form-item>
-            <el-form-item label="数据源类型" prop="dbType">
-                <el-select
-                    v-model="formData.dbType"
-                    placeholder="请选择"
-                    filterable
-                    clearable
-                    :disabled="true"
-                    @change="dbTypeChangeEvent"
-                >
-                    <el-option
-                        v-for="item in dbTypeList"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value"
-                    />
-                </el-select>
-            </el-form-item>
-            <el-form-item label="数据源" prop="datasourceId">
-                <el-select
-                    v-model="formData.datasourceId"
-                    placeholder="请选择"
-                    filterable
-                    clearable
-                    :disabled="true"
-                    @change="datasouceChangeEvent"
-                    @visible-change="getDataSourceList"
-                >
-                    <el-option
-                        v-for="item in dataSourceList"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value"
-                    />
-                </el-select>
-            </el-form-item> -->
             <el-form-item label="表名" prop="tableName">
-<!--                <el-select-->
-<!--                    v-model="formData.tableName"-->
-<!--                    placeholder="请选择"-->
-<!--                    filterable-->
-<!--                    clearable-->
-<!--                    @visible-change="getDataSourceTable"-->
-<!--                >-->
-<!--                    <el-option-->
-<!--                        v-for="item in tableNameList"-->
-<!--                        :key="item.value"-->
-<!--                        :label="item.label"-->
-<!--                        :value="item.value"-->
-<!--                    />-->
-<!--                </el-select>-->
                 <el-input v-model="formData.tableName" maxlength="200" placeholder="请输入" />
             </el-form-item>
             <el-form-item label="备注">

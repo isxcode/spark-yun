@@ -40,6 +40,9 @@
             <el-form-item label="是否分区键" prop="isPartition" class="inline-show">
                 <el-checkbox v-model="formData.isPartition" true-label="ENABLE" false-label="DISABLE" />
             </el-form-item>
+            <el-form-item label="字段规范" prop="columnRule">
+                <el-input v-model="formData.columnRule" maxlength="500" placeholder="请输入" />
+            </el-form-item>
             <el-form-item label="默认值" prop="defaultValue">
                 <el-input v-model="formData.defaultValue" maxlength="500" placeholder="请输入" />
             </el-form-item>
@@ -123,6 +126,7 @@ const formData = reactive<any>({
     isDuplicate: 'DISABLE',
     isPartition: 'DISABLE',
     defaultValue: '',
+    columnRule: '',
     remark: '',
     id: ''
 })
@@ -140,11 +144,13 @@ function showModal(cb: () => void, data: any, type?: string): void {
         loading: false
     }
     if (data) {
+        readonly.value = false
         Object.keys(formData).forEach((key: string) => {
             formData[key] = data[key]
         })
         modelConfig.title = '编辑'
     } else {
+        readonly.value = false
         const keys = ['isNull', 'isPrimary', 'isDuplicate', 'isPartition']
         Object.keys(formData).forEach((key: string) => {
             formData[key] = ''

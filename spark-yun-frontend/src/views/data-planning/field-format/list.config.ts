@@ -49,6 +49,18 @@ export const colConfigs: colConfig[] = [
         prop: 'columnTypeCode',
         title: '字段类型',
         minWidth: 125,
+        formatter: (data: any) => {
+            const obj: any = {
+                TEXT: '大文本',
+                STRING: '字符串',
+                DATE: '日期',
+                DATETIME: '日期时间',
+                INT: '整数',
+                DOUBLE: '小数',
+                CUSTOM: '自定义'
+            }
+            return data.cellValue && obj[data.cellValue] ? obj[data.cellValue] : '-'
+        },
         showOverflowTooltip: true
     },
     {
