@@ -64,12 +64,6 @@ export const colConfigs: colConfig[] = [
         showOverflowTooltip: true
     },
     {
-        prop: 'columnTypeCode',
-        title: '字段类型',
-        minWidth: 100,
-        showOverflowTooltip: true
-    },
-    {
         prop: 'columnType',
         title: '字段精度',
         minWidth: 100,

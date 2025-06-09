@@ -10,9 +10,6 @@
             <el-form-item label="字段" prop="name">
                 <el-input v-model="formData.name" maxlength="500" placeholder="请输入" />
             </el-form-item>
-            <el-form-item label="字段名" prop="columnName">
-                <el-input v-model="formData.columnName" maxlength="500" placeholder="请输入" />
-            </el-form-item>
             <el-form-item label="字段标准" prop="columnFormatId">
                 <el-select
                     v-model="formData.columnFormatId"
@@ -28,6 +25,9 @@
                         :value="item.value"
                     />
                 </el-select>
+            </el-form-item>
+            <el-form-item label="字段名" prop="columnName">
+                <el-input v-model="formData.columnName" maxlength="500" placeholder="请输入" />
             </el-form-item>
             <el-form-item label="备注">
                 <el-input v-model="formData.remark" type="textarea" maxlength="200"

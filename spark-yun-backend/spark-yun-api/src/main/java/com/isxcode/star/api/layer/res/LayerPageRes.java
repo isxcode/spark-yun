@@ -23,6 +23,8 @@ public class LayerPageRes {
 
     private String parentNameList;
 
+    private String fullPathName;
+
     private String remark;
 
     private String createBy;
