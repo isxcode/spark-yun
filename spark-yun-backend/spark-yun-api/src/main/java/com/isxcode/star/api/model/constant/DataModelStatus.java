@@ -3,9 +3,9 @@ package com.isxcode.star.api.model.constant;
 public interface DataModelStatus {
 
     /**
-     * 新建.
+     * 未初始化.
      */
-    String NEW = "NEW";
+    String INIT = "INIT";
 
     /**
      * 创建成功.
