@@ -25,4 +25,6 @@ public interface DataModelRepository extends JpaRepository<DataModelEntity, Stri
     boolean existsByName(String name);
 
     Optional<DataModelEntity> findByName(String name);
+
+    boolean existsByLayerId(String layerId);
 }
