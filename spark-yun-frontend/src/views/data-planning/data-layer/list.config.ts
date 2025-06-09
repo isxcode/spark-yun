@@ -65,7 +65,7 @@ export const colConfigs: colConfig[] = [
         minWidth: 120
     },
     {
-        prop: 'createByUsername',
+        prop: 'createUsername',
         title: '创建人',
         minWidth: 120
     },

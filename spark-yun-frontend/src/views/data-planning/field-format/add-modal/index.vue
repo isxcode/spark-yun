@@ -25,7 +25,7 @@
                     />
                 </el-select>
             </el-form-item>
-            <el-form-item label="字段精度" prop="columnType">
+            <el-form-item label="字段精度" >
                 <el-input v-model="formData.columnType" maxlength="200" placeholder="请输入" />
             </el-form-item>
             <el-form-item label="可为空" prop="isNull" class="inline-show">
@@ -70,7 +70,7 @@ const fieldTypeList = ref<Option[]>([
         value: 'TEXT'
     },
     {
-        label: '文本',
+        label: '字符串',
         value: 'STRING'
     },
     {
@@ -86,11 +86,7 @@ const fieldTypeList = ref<Option[]>([
         value: 'INT'
     },
     {
-        label: '双精度浮点数',
-        value: 'DOUBLE'
-    },
-    {
-        label: '双精度浮点数',
+        label: '小数',
         value: 'DOUBLE'
     },
     {

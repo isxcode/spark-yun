@@ -25,7 +25,7 @@
                     />
                 </el-select>
             </el-form-item>
-            <el-form-item label="表名规范" prop="tableRule">
+            <el-form-item label="表名规范">
                 <el-input v-model="formData.tableRule" maxlength="200" placeholder="请输入" />
             </el-form-item>
             <el-form-item label="备注">
