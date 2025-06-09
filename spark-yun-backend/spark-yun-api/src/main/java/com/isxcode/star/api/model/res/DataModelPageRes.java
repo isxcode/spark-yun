@@ -19,6 +19,10 @@ public class DataModelPageRes {
 
     private String layerName;
 
+    private String modelType;
+
+    private String dbType;
+
     private String datasourceId;
 
     private String datasourceName;
