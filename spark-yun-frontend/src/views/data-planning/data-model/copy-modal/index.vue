@@ -78,20 +78,21 @@
                 </el-select>
             </el-form-item> -->
             <el-form-item label="表名" prop="tableName">
-                <el-select
-                    v-model="formData.tableName"
-                    placeholder="请选择"
-                    filterable
-                    clearable
-                    @visible-change="getDataSourceTable"
-                >
-                    <el-option
-                        v-for="item in tableNameList"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value"
-                    />
-                </el-select>
+<!--                <el-select-->
+<!--                    v-model="formData.tableName"-->
+<!--                    placeholder="请选择"-->
+<!--                    filterable-->
+<!--                    clearable-->
+<!--                    @visible-change="getDataSourceTable"-->
+<!--                >-->
+<!--                    <el-option-->
+<!--                        v-for="item in tableNameList"-->
+<!--                        :key="item.value"-->
+<!--                        :label="item.label"-->
+<!--                        :value="item.value"-->
+<!--                    />-->
+<!--                </el-select>-->
+                <el-input v-model="formData.tableName" maxlength="200" placeholder="请输入" />
             </el-form-item>
             <el-form-item label="备注">
                 <el-input v-model="formData.remark" type="textarea" maxlength="200"
