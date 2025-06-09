@@ -52,4 +52,12 @@ public interface DataModelMapper {
     @Mapping(target = "tableConfig", source = "dataModelEntity.tableConfig")
     DataModelEntity copyDataModelReqToDataModelEntity(CopyDataModelReq copyDataModelReq,
         DataModelEntity dataModelEntity);
+
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "versionNumber", ignore = true)
+    @Mapping(target = "remark", source = "dataModelColumnEntity.remark")
+    @Mapping(target = "name", source = "dataModelColumnEntity.name")
+    @Mapping(target = "columnFormatId", source = "dataModelColumnEntity.columnFormatId")
+    @Mapping(target = "columnIndex", source = "dataModelColumnEntity.columnIndex")
+    DataModelColumnEntity copyDataModelReqToDataModelColumnEntity(DataModelColumnEntity dataModelColumnEntity);
 }
