@@ -71,7 +71,7 @@ create table SY_DATA_MODEL_COLUMN
     name                    varchar(200)  not null comment '字段名称',
     column_name             varchar(200)  not null comment '表字段名',
     model_id                varchar(200)  not null comment '数据模型id',
-    column_format_id        varchar(200)  not null comment '字段标准id',
+    column_format_id        varchar(200)  comment '字段标准id',
     column_index            int           not null comment '字段顺序',
     remark                  varchar(200) comment '模型字段备注',
     create_by               varchar(200)  not null comment '创建人',
