@@ -6,7 +6,7 @@
                 <EllipsisTooltip class="label-text" :label="params.name" />
             </div>
             <div class="node-desc">
-                <EllipsisTooltip :label="params.remark" />
+                <EllipsisTooltip :label="params.remark ?? '-'" />
             </div>
         </div>
         <div class="node-loading" v-if="loading">

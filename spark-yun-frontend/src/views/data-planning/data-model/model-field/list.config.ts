@@ -47,14 +47,14 @@ export const colConfigs: colConfig[] = [
     {
         prop: 'name',
         title: '字段',
-        minWidth: 125,
+        minWidth: 175,
         dragSort: true,
         showOverflowTooltip: true
     },
     {
         prop: 'columnName',
         title: '字段名',
-        minWidth: 125,
+        minWidth: 170,
         showOverflowTooltip: true
     },
     {
@@ -73,37 +73,33 @@ export const colConfigs: colConfig[] = [
         prop: 'isNull',
         title: '可为空',
         minWidth: 100,
+        customSlot: 'booleanTag',
         showOverflowTooltip: true,
-        formatter: (data: any) => {
-            return data.cellValue === 'DISABLE' ? '否' : '是'
-        }
+        align: 'center'
     },
     {
         prop: 'isDuplicate',
         title: '可重复',
         minWidth: 100,
+        customSlot: 'booleanTag',
         showOverflowTooltip: true,
-        formatter: (data: any) => {
-            return data.cellValue === 'DISABLE' ? '否' : '是'
-        }
+        align: 'center'
     },
     {
         prop: 'isPrimary',
         title: '是否主键',
         minWidth: 100,
+        customSlot: 'booleanTag',
         showOverflowTooltip: true,
-        formatter: (data: any) => {
-            return data.cellValue === 'DISABLE' ? '否' : '是'
-        }
+        align: 'center'
     },
     {
         prop: 'isPartition',
         title: '是否分区键',
         minWidth: 100,
+        customSlot: 'booleanTag',
         showOverflowTooltip: true,
-        formatter: (data: any) => {
-            return data.cellValue === 'DISABLE' ? '否' : '是'
-        }
+        align: 'center'
     },
     {
         prop: 'defaultValue',
@@ -113,7 +109,7 @@ export const colConfigs: colConfig[] = [
     {
         prop: 'remark',
         title: '备注',
-        minWidth: 120
+        minWidth: 170
     },
     {
         title: '操作',

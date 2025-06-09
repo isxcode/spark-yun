@@ -25,6 +25,14 @@
                     <template #statusTag="scopeSlot">
                         <ZStatusTag :status="scopeSlot.row.status"></ZStatusTag>
                     </template>
+                    <template #booleanTag="scopeSlot">
+                        <el-tag :round="true" type="success" v-if="scopeSlot.row[scopeSlot.column.property] === 'ENABLE'">
+                            <el-icon><Check /></el-icon>
+                        </el-tag>
+                        <el-tag :round="true" type="danger" v-else>
+                            <el-icon><Close /></el-icon>
+                        </el-tag>
+                    </template>
                     <template #options="scopeSlot">
                         <div class="btn-group btn-group-msg">
                             <span @click="editData(scopeSlot.row)">编辑</span>
@@ -167,6 +175,7 @@ onMounted(() => {
     &.zqy-seach-table {
         .zqy-table {
             height: calc(100% - 16px);
+            max-height: calc(100% - 12px);
             .btn-group-msg {
                 justify-content: space-around;
             }
