@@ -24,6 +24,15 @@ export function GetDataLayerTreeData(params: SerchParams): Promise<any> {
   })
 }
 
+// 查询全树结构
+export function GetDataLayerTreeNodeAll(params: SerchParams): Promise<any> {
+  return http.request({
+    method: 'post',
+    url: '/vip/layer/recursiveLayer',
+    params: params
+  })
+}
+
 // 查询父级分层
 export function GetParentLayerNode(params: any): Promise<any> {
   return http.request({

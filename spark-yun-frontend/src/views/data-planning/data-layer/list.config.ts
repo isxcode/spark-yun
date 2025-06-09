@@ -54,10 +54,7 @@ export const colConfigs: colConfig[] = [
         prop: 'parentNameList',
         title: '父级分层',
         minWidth: 140,
-        customSlot: 'parentNameSlot',
-        formatter: (data: any) => {
-            return data.cellValue ?? '-'
-        }
+        customSlot: 'parentNameSlot'
     },
     {
         prop: 'remark',

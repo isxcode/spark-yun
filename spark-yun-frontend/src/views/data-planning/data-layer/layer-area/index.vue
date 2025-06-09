@@ -1,7 +1,8 @@
 <template>
     <Breadcrumb :bread-crumb-list="breadCrumbList" />
     <div class="layer-area">
-        <div id="container"></div>
+        <div id="container" class="container-layout"></div>
+        <DataModelDetail ref="dataModelDetailRef"></DataModelDetail>
     </div>
 </template>
 
@@ -11,13 +12,18 @@ import { Graph, treeToGraphData } from '@antv/g6';
 import Breadcrumb from '@/layout/bread-crumb/index.vue'
 import LoadingPage from '@/components/loading/index.vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { useRouter } from 'vue-router'
-import { GetDataLayerTreeData } from '@/services/data-layer.service'
+import { useRoute, useRouter } from 'vue-router'
+import { GetDataLayerTreeNodeAll } from '@/services/data-layer.service'
 import TreeNode from './tree-node/index.vue'
+import DataModelDetail from './data-model-detail/index.vue'
 
+const route = useRoute()
 const router = useRouter()
 
 let graph: any
+
+const treeData = ref<any>({})
+const dataModelDetailRef = ref<any>(null)
 
 const breadCrumbList = reactive([
     {
@@ -30,52 +36,32 @@ const breadCrumbList = reactive([
     }
 ])
 
-function getTreeData(data: any) {
+function getTreeData() {
     return new Promise((resolve: any, reject) => {
-        if (data.loading) {
-            reject('子节点正在加载中，请稍后！')
+        GetDataLayerTreeNodeAll({
+            id: route.query.id
+        }).then((res: any) => {
+            resolve(res.data)
+        }).catch(() => {
             data.loading = false
-        } else {
-            data.loading = true
-            GetDataLayerTreeData({
-                page: 0,
-                pageSize: 10000,
-                searchKeyWord: '',
-                parentLayerId: data.id === 'root' ? null : data.id
-            }).then((res: any) => {
-                data.loading = false
-                data.done = true
-                resolve(res.data.content.map((node: any) => {
-                    return {
-                        id: node.id,
-                        data: {
-                            ...node,
-                        },
-                        loading: false,
-                        children: []
-                    }
-                }))
-            }).catch(() => {
-                data.loading = false
-            })
-        }
+        })
     })
 }
 
-const treeData = {
-    id: 'root',
-    data: {
-        id: 'root',
-        name: '分层领域',
-        remark: '分层领域',
-    },
-    loading: false,
-    done: false,
-    children: []
-}
+// const treeData = {
+//     id: 'root',
+//     data: {
+//         id: 'root',
+//         name: '分层领域',
+//         remark: '分层领域',
+//     },
+//     loading: false,
+//     done: false,
+//     children: []
+// }
 
 function initGraph() {
-    const data = treeToGraphData(treeData)
+    const data = treeToGraphData(treeData.value)
 
     graph = new Graph({
         container: document.getElementById('container'),
@@ -136,23 +122,14 @@ function initGraph() {
     graph.on('node:click', (evt: any) => {
         const nodeId = evt.target.id;
         const nodeData = graph.getNodeData(nodeId)
-        if (nodeData.done) {
-            console.log('数据已经加载完毕', nodeData.done)
-            return
-        }
-        getTreeData(nodeData).then((res: any) => {
-            graph.addChildrenData(nodeId, res)
-            graph.render()
-        }).catch((error: any) => {
-            console.error('节点展开失败', error)
-        })
+        dataModelDetailRef.value.showModal(nodeData)
     });
 
     graph.render()
 }
 
 function getComponentHTMLString(data: any) {
-    const app = createApp(TreeNode, { name: 'TreeNode', params: data.data, loading: data.loading }); // 提供必要的 props。
+    const app = createApp(TreeNode, { name: 'TreeNode', params: data }); // 提供必要的 props。
     const container = document.createElement('div');
     document.body.appendChild(container); // 将容器添加到 DOM 中。
     app.mount(container); // 挂载应用。
@@ -163,12 +140,26 @@ function getComponentHTMLString(data: any) {
 }
 
 onMounted(() => {
-    initGraph()
+    if (!route.query.id) {
+        ElMessage.error('暂无分层信息')
+        router.push({
+            name: 'data-layer',
+        })
+    }
+    getTreeData().then((res: any) => {
+        treeData.value = res
+        initGraph()
+    }).catch((error) => {
+
+    })
 })
 </script>
 
 <style lang="scss">
 .layer-area {
     height: calc(100vh - 56px);
+    .container-layout {
+        height: 100%;
+    }
 }
 </style>

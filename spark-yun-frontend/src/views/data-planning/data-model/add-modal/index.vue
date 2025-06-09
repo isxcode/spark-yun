@@ -76,6 +76,7 @@
             </el-form-item>
             <el-form-item label="表名" prop="tableName">
                 <el-select
+                    v-if="formData.modelType === 'LINK_MODEL'"
                     v-model="formData.tableName"
                     placeholder="请选择"
                     filterable
@@ -89,7 +90,7 @@
                         :value="item.value"
                     />
                 </el-select>
-<!--                <el-input v-model="formData.tableName" maxlength="200" placeholder="请输入" />-->
+                <el-input v-else v-model="formData.tableName" maxlength="500" placeholder="请输入" />
             </el-form-item>
             <el-form-item label="备注">
                 <el-input v-model="formData.remark" type="textarea" maxlength="200"

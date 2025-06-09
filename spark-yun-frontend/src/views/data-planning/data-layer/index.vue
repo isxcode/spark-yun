@@ -6,12 +6,6 @@
                 <el-button type="primary" @click="addData">
                     新建分层
                 </el-button>
-                <el-button type="primary" @click="layerAreaView">
-                    分层领域
-                </el-button>
-                <el-button @click="showParentDetail" v-if="parentLayerId">
-                    返回上一分层
-                </el-button>
             </div>
             <div class="zqy-seach">
                 <el-radio-group v-model="tableType" @change="changeTypeEvent">
@@ -45,11 +39,11 @@
                     </template>
                     <template #parentNameSlot="scopeSlot">
                         <span
-                            v-if="tableType === 'layer'"
+                            v-if="tableType === 'layer' && scopeSlot.row.parentNameList"
                             class="name-click"
                             @click="showParentDetail(scopeSlot.row)"
                         >{{ scopeSlot.row.parentNameList }}</span>
-                        <span v-else>{{ scopeSlot.row.parentNameList }}</span>
+                        <span v-else>{{ scopeSlot.row.parentNameList ?? '-' }}</span>
                     </template>
                     <template #options="scopeSlot">
                         <div class="btn-group btn-group-msg">
@@ -60,12 +54,16 @@
                                     <el-dropdown-menu>
                                         <el-dropdown-item @click="editData(scopeSlot.row)">编辑</el-dropdown-item>
                                         <el-dropdown-item @click="deleteData(scopeSlot.row)">删除</el-dropdown-item>
+                                        <el-dropdown-item @click="layerAreaView(scopeSlot.row)">分层领域</el-dropdown-item>
                                     </el-dropdown-menu>
                                 </template>
                             </el-dropdown>
                         </div>
                     </template>
                 </BlockTable>
+                <el-button class="back-up" @click="showParentDetail" v-if="parentLayerId">
+                    返回上一分层
+                </el-button>
             </div>
         </LoadingPage>
         <AddModal ref="addModalRef" />
@@ -207,7 +205,10 @@ function dataModelPage(data: any) {
 // 跳转分层领域
 function layerAreaView(data: any) {
     router.push({
-        name: 'layer-area'
+        name: 'layer-area',
+        query: {
+            id: data.id
+        }
     })
 }
 
@@ -277,8 +278,14 @@ onMounted(() => {
             }
         }
         .zqy-table {
+            position: relative;
             .btn-group-msg {
                 justify-content: space-around;
+            }
+            .back-up {
+                position: absolute;
+                bottom: 22px;
+                left: 20px;
             }
         }
     }
