@@ -23,6 +23,8 @@ public class ColumnFormatPageRes {
 
     private String remark;
 
+    private String status;
+
     private String defaultValue;
 
     private String isNull;
