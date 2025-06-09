@@ -5,12 +5,14 @@ import com.isxcode.star.api.datasource.constants.DatasourceType;
 import com.isxcode.star.api.datasource.dto.ConnectInfo;
 import com.isxcode.star.api.datasource.dto.QueryColumnDto;
 import com.isxcode.star.api.datasource.dto.QueryTableDto;
+import com.isxcode.star.api.model.ao.DataModelColumnAo;
 import com.isxcode.star.api.work.res.GetDataSourceDataRes;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.star.backend.api.base.properties.IsxAppProperties;
 import com.isxcode.star.common.utils.aes.AesUtils;
 import com.isxcode.star.modules.datasource.service.DatabaseDriverService;
 import com.isxcode.star.modules.datasource.source.Datasource;
+import com.isxcode.star.modules.model.entity.DataModelEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.BeanListHandler;
@@ -82,6 +84,12 @@ public class GbaseService extends Datasource {
             log.error(e.getMessage(), e);
             throw new IsxAppException(e.getMessage());
         }
+    }
+
+    @Override
+    public String generateDataModelSql(ConnectInfo connectInfo, List<DataModelColumnAo> modelColumnList,
+        DataModelEntity dataModelEntity) throws IsxAppException {
+        return "";
     }
 
     @Override

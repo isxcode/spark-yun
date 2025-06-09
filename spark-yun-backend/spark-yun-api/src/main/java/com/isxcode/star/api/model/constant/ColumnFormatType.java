@@ -18,6 +18,11 @@ public interface ColumnFormatType {
     String DATE = "DATE";
 
     /**
+     * 日期时间.
+     */
+    String DATETIME = "DATETIME";
+
+    /**
      * 小数.
      */
     String DOUBLE = "DOUBLE";
