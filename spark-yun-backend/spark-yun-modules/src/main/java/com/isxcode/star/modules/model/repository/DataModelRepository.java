@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collection;
 import java.util.Optional;
 
 @Repository
@@ -27,4 +28,10 @@ public interface DataModelRepository extends JpaRepository<DataModelEntity, Stri
     Optional<DataModelEntity> findByName(String name);
 
     boolean existsByLayerId(String layerId);
+
+    boolean existsByLayerIdIn(Collection<String> layerIds);
+
+    boolean existsByNameAndLayerId(String name, String layerId);
+
+    Optional<DataModelEntity> findByNameAndLayerId(String name, String layerId);
 }
