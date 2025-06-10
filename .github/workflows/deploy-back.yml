@@ -34,9 +34,10 @@ jobs:
             if [ -d "/opt/zhiqingyun/resources_back" ]; then
               rm -rf /opt/zhiqingyun/resources/*
               cp -r /opt/zhiqingyun/resources_back/* /opt/zhiqingyun/resources/
-            else
+            fi
+            if [ ! -d "/opt/zhiqingyun/resources_back" ]; then
               mkdir -p /opt/zhiqingyun/resources_back
-              cp -r /opt/zhiqingyun/resources/* /opt/zhiqingyun/resources_back
+              cp -r /opt/zhiqingyun/resources/* /opt/zhiqingyun/resources_back/
             fi
             bash /opt/zhiqingyun/bin/start.sh --print-log=false
             sleep 120
