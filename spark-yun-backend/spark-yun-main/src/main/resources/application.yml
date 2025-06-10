@@ -95,7 +95,7 @@ spring:
   packages-to-scan: com.isxcode.star
 
   flyway:
-    enabled: true
+    enabled: false
 
 logging:
   level:
