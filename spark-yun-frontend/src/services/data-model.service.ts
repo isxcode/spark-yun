@@ -60,6 +60,15 @@ export function ResetDataModel(params: any): Promise<any> {
   })
 }
 
+// 构建数据模型
+export function BuildDataModel(params: any): Promise<any> {
+  return http.request({
+    method: 'post',
+    url: '/vip/model/buildDataModel',
+    params: params
+  })
+}
+
 // 一键复制数据模型
 export function CopyDataModelData(params: any): Promise<any> {
   return http.request({

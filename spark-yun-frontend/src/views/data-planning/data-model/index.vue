@@ -32,6 +32,12 @@
                             @click="showDetail(scopeSlot.row)"
                         >{{ scopeSlot.row.name }}</span>
                     </template>
+                    <template #layerNameSlot="scopeSlot">
+                        <span
+                            class="name-click"
+                            @click="showDataLayer(scopeSlot.row)"
+                        >{{ scopeSlot.row.layerName }}</span>
+                    </template>
                     <template #options="scopeSlot">
                         <div class="btn-group btn-group-msg">
                             <span @click="showLog(scopeSlot.row)">日志</span>
@@ -42,6 +48,7 @@
                                         <el-dropdown-item @click="editData(scopeSlot.row)">编辑</el-dropdown-item>
                                         <el-dropdown-item @click="deleteData(scopeSlot.row)">删除</el-dropdown-item>
                                         <el-dropdown-item @click="resetData(scopeSlot.row)">重置</el-dropdown-item>
+                                        <el-dropdown-item @click="buildData(scopeSlot.row)">构建</el-dropdown-item>
                                         <el-dropdown-item @click="copyData(scopeSlot.row)">复制</el-dropdown-item>
                                     </el-dropdown-menu>
                                 </template>
@@ -65,6 +72,7 @@ import AddModal from './add-modal/index.vue'
 import CopyModal from './copy-modal/index.vue'
 
 import { BreadCrumbList, TableConfig } from './list.config'
+import { GetParentLayerNode } from '@/services/data-layer.service'
 import {
     GetDataModelList,
     GetDataModelTreeData,
@@ -72,6 +80,7 @@ import {
     UpdateDataModelData,
     DeleteDataModelData,
     ResetDataModel,
+    BuildDataModel,
     CopyDataModelData
  } from '@/services/data-model.service'
 import { ElMessage, ElMessageBox } from 'element-plus'
@@ -210,10 +219,40 @@ function resetData(data: any) {
     })
 }
 
+function buildData(data: any) {
+    ElMessageBox.confirm('是否确定构建？', '警告', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+    }).then(() => {
+        BuildDataModel({
+            modelId: data.id
+        }).then((res: any) => {
+            ElMessage.success(res.msg)
+            initData()
+        }).catch(() => { })
+    })
+}
+
 function inputEvent(e: string) {
     if (e === '') {
         handleCurrentChange(1)
     }
+}
+
+function showDataLayer(data: any) {
+    GetParentLayerNode({
+        id: data.layerId
+    }).then((res: any) => {
+        router.push({
+            name: 'data-layer',
+            query: {
+                parentLayerId: res.data.parentLayerId ?? null
+            }
+        })
+    }).catch((error: any) => {
+        console.error('获取父级节点失败', error)
+    })
 }
 
 function showDetail(data: any) {

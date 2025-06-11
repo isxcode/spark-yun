@@ -15,6 +15,7 @@
                     :disabled="!!formData.id"
                     v-model="formData.parentLayerId"
                     filterable
+                    clearable
                     placeholder="请选择"
                 >
                     <el-option
@@ -131,7 +132,7 @@ function getParentLayerIList() {
     }).then((res: any) => {
         parentLayerIdList.value = [...res.data.content.map((item: any) => {
             return {
-                label: item.name,
+                label: item.fullPathName,
                 value: item.id
             }
         })]

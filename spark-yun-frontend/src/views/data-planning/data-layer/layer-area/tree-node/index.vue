@@ -6,7 +6,7 @@
                 <EllipsisTooltip class="label-text" :label="params.name" />
             </div>
             <div class="node-desc">
-                <EllipsisTooltip :label="params.remark ?? '-'" />
+                <EllipsisTooltip :label="params.remark || '-'" />
             </div>
         </div>
         <div class="node-loading" v-if="loading">
@@ -37,6 +37,7 @@ const props = defineProps(['params', 'loading'])
     justify-content: space-between;
     box-sizing: border-box;
     position: relative;
+    cursor: pointer;
     .node-info {
         height: 100%;
         width: 100%;
