@@ -224,7 +224,7 @@ defineExpose({
                 margin: 0;
             }
             .el-form-item__content {
-                justify-content: flex-end;
+                justify-content: flex-start !important;
                 padding-right: 12px;
                 box-sizing: border-box;
             }

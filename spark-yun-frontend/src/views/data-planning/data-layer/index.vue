@@ -61,12 +61,13 @@
                         </div>
                     </template>
                 </BlockTable>
-                <el-button class="back-up" @click="showParentDetail" v-if="parentLayerId">
+                <el-button class="back-up" @click="showParentDetail" v-if="parentLayerId && tableType === 'layer'">
                     返回上一分层
                 </el-button>
             </div>
         </LoadingPage>
         <AddModal ref="addModalRef" />
+        <DataModelDetail ref="dataModelDetailRef"></DataModelDetail>
     </div>
 </template>
 
@@ -75,12 +76,13 @@ import { reactive, ref, onMounted } from 'vue'
 import Breadcrumb from '@/layout/bread-crumb/index.vue'
 import LoadingPage from '@/components/loading/index.vue'
 import AddModal from './add-modal/index.vue'
-
+import DataModelDetail from './layer-area/data-model-detail/index.vue'
 import { BreadCrumbList, TableConfig } from './list.config'
 import { DeleteDataLayerData, GetDataLayerTreeData, GetDataLayerList, SaveDataLayerData, UpdateDataLayerData, GetParentLayerNode } from '@/services/data-layer.service'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 
+const route = useRoute()
 const router = useRouter()
 
 const breadCrumbList = reactive(BreadCrumbList)
@@ -91,6 +93,7 @@ const networkError = ref(false)
 const addModalRef = ref<any>(null)
 const tableType = ref<string>('layer')
 const parentLayerId = ref<string>('')
+const dataModelDetailRef = ref<any>(null)
 
 function initData(tableLoading?: boolean) {
     loading.value = tableLoading ? false : true
@@ -107,6 +110,12 @@ function initData(tableLoading?: boolean) {
             loading.value = false
             tableConfig.loading = false
             networkError.value = false
+
+            if (route.query && route.query.parentLayerId) {
+                router.replace({
+                    name: 'data-layer'
+                })
+            }
         }).catch(() => {
             tableConfig.tableData = []
             tableConfig.pagination.total = 0
@@ -125,6 +134,11 @@ function initData(tableLoading?: boolean) {
             loading.value = false
             tableConfig.loading = false
             networkError.value = false
+            if (route.query && route.query.parentLayerId) {
+                router.replace({
+                    name: 'data-layer'
+                })
+            }
         }).catch(() => {
             tableConfig.tableData = []
             tableConfig.pagination.total = 0
@@ -194,21 +208,24 @@ function deleteData(data: any) {
 
 // 跳转分层数据模型
 function dataModelPage(data: any) {
-    router.push({
-        name: 'data-model',
-        query: {
-            id: data.id
-        }
-    })
+    dataModelDetailRef.value.showModal(data)
 }
 
 // 跳转分层领域
 function layerAreaView(data: any) {
-    router.push({
-        name: 'layer-area',
-        query: {
-            id: data.id
-        }
+    GetParentLayerNode({
+        id: data.id
+    }).then((res: any) => {
+        router.push({
+            name: 'layer-area',
+            query: {
+                id: data.id,
+                parentLayerId: res.data.parentLayerId,
+                tableType: tableType.value
+            }
+        })
+    }).catch((error: any) => {
+        console.error('获取父级节点失败', error)
     })
 }
 
@@ -251,6 +268,12 @@ function handleCurrentChange(e: number) {
 }
 
 onMounted(() => {
+
+    if (route.query && (route.query.parentLayerId || route.query.tableType)) {
+        tableType.value = route.query.tableType ?? 'layer'
+        parentLayerId.value = route.query.parentLayerId ?? null
+    }
+
     tableConfig.pagination.currentPage = 1
     tableConfig.pagination.pageSize = 10
     initData()

@@ -261,6 +261,7 @@ function showModal(cb: () => void, data: any): void {
                 formData[key] = route.query.id
             }
         })
+        formData.modelType = 'ORIGIN_MODEL'
         modelConfig.title = '添加'
     }
 

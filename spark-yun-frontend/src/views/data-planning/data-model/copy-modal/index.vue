@@ -188,6 +188,7 @@ function showModal(cb: () => void, data: any): void {
     Object.keys(formData).forEach((key: string) => {
         formData[key] = data[key]
     })
+    formData.name = formData.name + '_copy'
     modelConfig.title = '复制'
 
     getParentLayerIList()
@@ -226,7 +227,7 @@ function getParentLayerIList() {
     }).then((res: any) => {
         parentLayerIdList.value = [...res.data.content.map((item: any) => {
             return {
-                label: item.name,
+                label: item.fullPathName,
                 value: item.id
             }
         })]

@@ -61,6 +61,7 @@ export const colConfigs: colConfig[] = [
     {
         prop: 'layerName',
         title: '数据分层',
+        customSlot: 'layerNameSlot',
         minWidth: 140
     },
     {
