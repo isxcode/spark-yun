@@ -1,6 +1,9 @@
 <template>
     <Breadcrumb :bread-crumb-list="breadCrumbList" />
     <div class="layer-area">
+        <div class="layer-btn-container">
+            <el-button @click="backPage">返回</el-button>
+        </div>
         <div id="container" class="container-layout"></div>
         <DataModelDetail ref="dataModelDetailRef"></DataModelDetail>
     </div>
@@ -47,18 +50,6 @@ function getTreeData() {
         })
     })
 }
-
-// const treeData = {
-//     id: 'root',
-//     data: {
-//         id: 'root',
-//         name: '分层领域',
-//         remark: '分层领域',
-//     },
-//     loading: false,
-//     done: false,
-//     children: []
-// }
 
 function initGraph() {
     const data = treeToGraphData(treeData.value)
@@ -115,10 +106,6 @@ function initGraph() {
         behaviors: ['drag-canvas', 'scroll-canvas']
     })
 
-    // graph.once(GraphEvent.AFTER_RENDER, () => {
-    //     graph.fitCenter();
-    // });
-
     graph.on('node:click', (evt: any) => {
         const nodeId = evt.target.id;
         const nodeData = graph.getNodeData(nodeId)
@@ -137,6 +124,17 @@ function getComponentHTMLString(data: any) {
     app.unmount(); // 卸载应用。
     document.body.removeChild(container); // 从 DOM 中移除容器。
     return htmlString; // 返回 HTML 字符串。
+}
+
+function backPage() {
+    console.log('ddd', route.query)
+    router.push({
+        name: 'data-layer',
+        query: {
+            parentLayerId: route.query.parentLayerId ?? undefined,
+            tableType: route.query.tableType
+        }
+    })
 }
 
 onMounted(() => {
@@ -158,6 +156,15 @@ onMounted(() => {
 <style lang="scss">
 .layer-area {
     height: calc(100vh - 56px);
+    position: relative;
+    .layer-btn-container {
+        position: absolute;
+        top: -56px;
+        right: 20px;
+        height: 56px;
+        display: flex;
+        align-items: center
+    }
     .container-layout {
         height: 100%;
     }
