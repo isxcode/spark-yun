@@ -16,11 +16,11 @@ import java.util.Optional;
 @CacheConfig(cacheNames = {"SY_TABLE_LAYER"})
 public interface LayerRepository extends JpaRepository<LayerEntity, String> {
 
-    @Query("SELECT L FROM LayerEntity L WHERE ((:parentLayerId is null AND L.parentLayerId is null) OR  L.parentLayerId = :parentLayerId ) AND (L.name LIKE %:keyword% OR L.remark LIKE %:keyword%)  order by L.createDateTime desc ")
+    @Query("SELECT L FROM LayerEntity L WHERE ((:parentLayerId is null AND L.parentLayerId is null) OR  L.parentLayerId = :parentLayerId ) AND (L.name LIKE %:keyword% OR L.parentNameList LIKE %:keyword% OR L.remark LIKE %:keyword%)  order by L.createDateTime desc ")
     Page<LayerEntity> pageLayer(@Param("keyword") String searchKeyWord, @Param("parentLayerId") String parentLayerId,
         Pageable pageable);
 
-    @Query("SELECT L FROM LayerEntity L WHERE L.id  LIKE %:keyword% OR L.name LIKE %:keyword% OR L.remark LIKE %:keyword% order by L.createDateTime desc ")
+    @Query("SELECT L FROM LayerEntity L WHERE L.id  LIKE %:keyword% OR L.name LIKE %:keyword% OR L.parentNameList LIKE %:keyword% OR L.remark LIKE %:keyword% order by L.createDateTime desc ")
     Page<LayerEntity> searchAll(@Param("keyword") String searchKeyWord, Pageable pageable);
 
     boolean existsByNameAndParentLayerId(String name, String parentLayerId);

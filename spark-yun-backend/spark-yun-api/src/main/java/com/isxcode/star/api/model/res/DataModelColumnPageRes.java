@@ -18,6 +18,8 @@ public class DataModelColumnPageRes {
 
     private String columnFormatName;
 
+    private String columnFormatId;
+
     private String columnTypeCode;
 
     private String columnType;

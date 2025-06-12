@@ -25,26 +25,29 @@
                     />
                 </el-select>
             </el-form-item>
-            <el-form-item label="字段精度" >
-                <el-input v-model="formData.columnType" maxlength="200" placeholder="请输入" />
-            </el-form-item>
-            <el-form-item label="可为空" prop="isNull" class="inline-show">
-                <el-checkbox v-model="formData.isNull" true-label="ENABLE" false-label="DISABLE" />
-            </el-form-item>
-            <el-form-item label="可重复" prop="isDuplicate" class="inline-show">
-                <el-checkbox v-model="formData.isDuplicate" true-label="ENABLE" false-label="DISABLE" />
-            </el-form-item>
-            <el-form-item label="是否主键" prop="isPrimary" class="inline-show">
-                <el-checkbox v-model="formData.isPrimary" true-label="ENABLE" false-label="DISABLE" />
-            </el-form-item>
-            <el-form-item label="是否分区键" prop="isPartition" class="inline-show">
-                <el-checkbox v-model="formData.isPartition" true-label="ENABLE" false-label="DISABLE" />
-            </el-form-item>
             <el-form-item label="字段规范" prop="columnRule">
                 <el-input v-model="formData.columnRule" maxlength="500" placeholder="请输入" />
             </el-form-item>
+            <el-form-item label="字段精度" >
+                <el-input v-model="formData.columnType" maxlength="200" placeholder="请输入" />
+            </el-form-item>
+            <el-form-item label="主键" prop="isPrimary" class="inline-show">
+                <el-checkbox v-model="formData.isPrimary" true-label="ENABLE" false-label="DISABLE" />
+            </el-form-item>
+            <el-form-item label="非空" prop="isNull" class="inline-show">
+                <el-checkbox v-model="formData.isNull" true-label="ENABLE" false-label="DISABLE" />
+            </el-form-item>
+            <el-form-item label="唯一" prop="isDuplicate" class="inline-show">
+                <el-checkbox v-model="formData.isDuplicate" true-label="ENABLE" false-label="DISABLE" />
+            </el-form-item>
+            <el-form-item label="分区键" prop="isPartition" class="inline-show">
+                <el-checkbox v-model="formData.isPartition" true-label="ENABLE" false-label="DISABLE" />
+            </el-form-item>
             <el-form-item label="默认值" prop="defaultValue">
                 <el-input v-model="formData.defaultValue" maxlength="500" placeholder="请输入" />
+            </el-form-item>
+            <el-form-item label="字段规范" prop="columnRule">
+                <el-input v-model="formData.columnRule" maxlength="500" placeholder="请输入" />
             </el-form-item>
             <el-form-item label="备注">
                 <el-input v-model="formData.remark" type="textarea" maxlength="200"
