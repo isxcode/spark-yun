@@ -55,7 +55,7 @@ export function useMonitor(currentColony: Ref<ColonyInfo | undefined>, currentFr
         type: 'diskIoWriteSpeed',
         name: 'IO读写',
         value: currentInfo.value.diskIoWriteSpeed || 0,
-        unit: 'KB/s',
+        unit: 'MB/s',
         color: '#D580FF85',
         data: diskIoMonitorList.value
       }
