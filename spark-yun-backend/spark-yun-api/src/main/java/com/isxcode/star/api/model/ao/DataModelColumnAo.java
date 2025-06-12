@@ -16,6 +16,8 @@ public class DataModelColumnAo {
 
     private String columnFormatName;
 
+    private String columnFormatId;
+
     private String columnTypeCode;
 
     private String columnType;
@@ -30,13 +32,14 @@ public class DataModelColumnAo {
 
     private String defaultValue;
 
-    public DataModelColumnAo(String id, String name, String columnName, String remark, String columnFormatName,
-        String columnTypeCode, String columnType, String isNull, String isDuplicate, String isPartition,
-        String isPrimary, String defaultValue) {
+    public DataModelColumnAo(String id, String name, String columnName, String remark, String columnFormatId,
+        String columnFormatName, String columnTypeCode, String columnType, String isNull, String isDuplicate,
+        String isPartition, String isPrimary, String defaultValue) {
         this.id = id;
         this.name = name;
         this.columnName = columnName;
         this.remark = remark;
+        this.columnFormatId = columnFormatId;
         this.columnFormatName = columnFormatName;
         this.columnTypeCode = columnTypeCode;
         this.columnType = columnType;

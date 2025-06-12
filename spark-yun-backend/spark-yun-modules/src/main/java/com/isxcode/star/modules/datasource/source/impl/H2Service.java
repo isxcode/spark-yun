@@ -112,9 +112,7 @@ public class H2Service extends Datasource {
         }
 
         // 结束括号
-        sqlBuilder.append(")");
-        sqlBuilder.append("\nENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
-        sqlBuilder.append(";");
+        sqlBuilder.append(");");
 
         return sqlBuilder.toString();
     }

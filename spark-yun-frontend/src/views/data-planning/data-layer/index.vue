@@ -54,7 +54,7 @@
                                     <el-dropdown-menu>
                                         <el-dropdown-item @click="editData(scopeSlot.row)">编辑</el-dropdown-item>
                                         <el-dropdown-item @click="deleteData(scopeSlot.row)">删除</el-dropdown-item>
-                                        <el-dropdown-item @click="layerAreaView(scopeSlot.row)">分层领域</el-dropdown-item>
+                                        <el-dropdown-item @click="layerAreaView(scopeSlot.row)">领域</el-dropdown-item>
                                     </el-dropdown-menu>
                                 </template>
                             </el-dropdown>
