@@ -17,7 +17,7 @@ import java.util.Optional;
 @CacheConfig(cacheNames = {"SY_DATA_MODEL_COLUMN"})
 public interface DataModelColumnRepository extends JpaRepository<DataModelColumnEntity, String> {
 
-    @Query("SELECT new com.isxcode.star.api.model.ao.DataModelColumnAo (D.id,D.name,D.columnName,D.remark,C.id,C.name,C.columnTypeCode,C.columnType,C.isNull,C.isDuplicate,C.isPartition,C.isPrimary,C.defaultValue ) FROM DataModelColumnEntity D left join ColumnFormatEntity C on D.columnFormatId = C.id WHERE D.modelId = :modelId AND D.tenantId=:tenantId AND (D.id = :keyword OR D.name LIKE %:keyword% OR D.remark LIKE %:keyword%) order by D.columnIndex asc ")
+    @Query("SELECT new com.isxcode.star.api.model.ao.DataModelColumnAo (D.id,D.name,D.columnName,D.remark,C.id,C.name,C.columnTypeCode,C.columnType,D.linkColumnType,C.isNull,C.isDuplicate,C.isPartition,C.isPrimary,C.defaultValue ) FROM DataModelColumnEntity D left join ColumnFormatEntity C on D.columnFormatId = C.id WHERE D.modelId = :modelId AND D.tenantId=:tenantId AND (D.id = :keyword OR D.name LIKE %:keyword% OR D.remark LIKE %:keyword%) order by D.columnIndex asc ")
     Page<DataModelColumnAo> searchAll(@Param("tenantId") String tenantId, @Param("keyword") String searchKeyWord,
         @Param("modelId") String modelId, Pageable pageable);
 
