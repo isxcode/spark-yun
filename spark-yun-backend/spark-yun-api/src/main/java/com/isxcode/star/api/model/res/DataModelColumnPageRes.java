@@ -24,6 +24,8 @@ public class DataModelColumnPageRes {
 
     private String columnType;
 
+    private String linkColumnType;
+
     private String isNull;
 
     private String isDuplicate;

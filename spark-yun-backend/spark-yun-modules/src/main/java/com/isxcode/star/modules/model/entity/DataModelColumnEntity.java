@@ -40,6 +40,8 @@ public class DataModelColumnEntity {
 
     private Integer columnIndex;
 
+    private String linkColumnType;
+
     private String remark;
 
     @CreatedDate
