@@ -19,9 +19,9 @@ public interface DataModelMapper {
     @Mapping(target = "dbType", source = "updateDataModelReq.dbType")
     @Mapping(target = "datasourceId", source = "updateDataModelReq.datasourceId")
     @Mapping(target = "tableName", source = "updateDataModelReq.tableName")
-    @Mapping(target = "modelType", source = "updateDataModelReq.modelType")
     @Mapping(target = "tableConfig", source = "updateDataModelReq.tableConfig")
     @Mapping(target = "remark", source = "updateDataModelReq.remark")
+    @Mapping(target = "modelType", source = "dataModelEntity.modelType")
     @Mapping(target = "id", source = "dataModelEntity.id")
     DataModelEntity updateDataModelReqToDataModelEntity(UpdateDataModelReq updateDataModelReq,
         DataModelEntity dataModelEntity);
