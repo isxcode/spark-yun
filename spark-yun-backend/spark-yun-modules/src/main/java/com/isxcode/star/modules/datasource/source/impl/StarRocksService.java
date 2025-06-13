@@ -50,7 +50,7 @@ public class StarRocksService extends Datasource {
     @Override
     public String generateDataModelSql(ConnectInfo connectInfo, List<DataModelColumnAo> modelColumnList,
         DataModelEntity dataModelEntity) throws IsxAppException {
-        return "";
+        throw new RuntimeException("暂不支持，请联系开发者");
     }
 
     @Override
