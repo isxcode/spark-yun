@@ -259,7 +259,8 @@ function showDetail(data: any) {
     router.push({
         name: 'model-field',
         query: {
-            id: data.id
+            id: data.id,
+            modelType: data.modelType
         }
     })
 }

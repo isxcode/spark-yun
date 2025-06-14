@@ -2,7 +2,7 @@
     <BlockModal :model-config="modelConfig">
         <el-form
             ref="form"
-            class="add-computer-group acquisition-task-add"
+            class="add-computer-group model-field-container"
             label-position="top"
             :model="formData"
             :rules="rules"
@@ -11,6 +11,12 @@
                 <el-input v-model="formData.name" maxlength="500" placeholder="请输入" />
             </el-form-item>
             <el-form-item label="字段标准" prop="columnFormatId">
+                <el-button
+                    class="add-format-data"
+                    link
+                    type="primary"
+                    @click="addFormatDataEvent"
+                >新建标准</el-button>
                 <el-select
                     v-model="formData.columnFormatId"
                     filterable
@@ -34,6 +40,7 @@
                     :autosize="{ minRows: 4, maxRows: 4 }" placeholder="请输入" />
             </el-form-item>
         </el-form>
+        <AddModal ref="addModalRef" />
     </BlockModal>
 </template>
 
@@ -42,6 +49,8 @@ import { reactive, defineExpose, ref } from 'vue'
 import { GetDataLayerList } from '@/services/data-layer.service'
 import { GetFieldFormatList } from '@/services/field-format.service'
 import { ElMessage, FormInstance, FormRules } from 'element-plus'
+import AddModal from '../../../field-format/add-modal/index.vue'
+import { SaveFieldFormatData } from '@/services/field-format.service'
 
 interface Option {
     label: string
@@ -51,6 +60,7 @@ interface Option {
 const form = ref<FormInstance>()
 const callback = ref<any>()
 const fieldTypeList = ref<Option[]>([])
+const addModalRef = ref<any>(null)
 
 const modelConfig = reactive({
     title: '添加',
@@ -143,6 +153,21 @@ function getFieldFormatList(e: boolean, searchType?: string) {
     }
 }
 
+// 添加字段标准
+function addFormatDataEvent() {
+    addModalRef.value.showModal((data: any) => {
+        return new Promise((resolve: any, reject: any) => {
+            SaveFieldFormatData(data).then((res: any) => {
+                ElMessage.success(res.msg)
+                initData()
+                resolve()
+            }).catch((error: any) => {
+                reject(error)
+            })
+        })
+    })
+}
+
 function closeEvent() {
     modelConfig.visible = false
 }
@@ -153,7 +178,7 @@ defineExpose({
 </script>
 
 <style lang="scss">
-.acquisition-task-add {
+.model-field-container {
     .el-form-item {
         .el-form-item__content {
             position: relative;
@@ -166,6 +191,12 @@ defineExpose({
                 .el-input-number__decrease {
                     top: 16px
                 }
+            }
+
+            .add-format-data {
+                position: absolute;
+                top: -28px;
+                right: 0;
             }
         }
 
