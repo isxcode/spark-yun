@@ -30,12 +30,12 @@
                     </template>
                     <template #options="scopeSlot">
                         <div class="btn-group btn-group-msg">
-                            <template v-if="true">
+                            <template v-if="route.query && route.query.modelType === 'ORIGIN_MODEL'">
                                 <span @click="editData(scopeSlot.row)">编辑</span>
                                 <span @click="deleteData(scopeSlot.row)">删除</span>
                             </template>
                             <template v-else>
-
+                                <span> - </span>
                             </template>
                         </div>
                     </template>
