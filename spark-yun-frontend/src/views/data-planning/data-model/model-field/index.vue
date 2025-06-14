@@ -30,8 +30,13 @@
                     </template>
                     <template #options="scopeSlot">
                         <div class="btn-group btn-group-msg">
-                            <span @click="editData(scopeSlot.row)">编辑</span>
-                            <span @click="deleteData(scopeSlot.row)">删除</span>
+                            <template v-if="true">
+                                <span @click="editData(scopeSlot.row)">编辑</span>
+                                <span @click="deleteData(scopeSlot.row)">删除</span>
+                            </template>
+                            <template v-else>
+
+                            </template>
                         </div>
                     </template>
                 </BlockTable>
@@ -139,7 +144,10 @@ function deleteData(data: any) {
 }
 
 function rowDragendEvent(e) {
-    UpdateModelFieldList({ dataModelColumnIdList: e.tableData.map(d => d.id)}).then((res: any) => {
+    UpdateModelFieldList({ 
+        dataModelColumnIdList: e.tableData.map(d => d.id),
+        modelId: route.query.id
+    }).then((res: any) => {
         ElMessage.success(res.msg)
         initData()
     }).catch(() => {

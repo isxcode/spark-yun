@@ -30,6 +30,7 @@
                 <el-select
                     v-model="formData.modelType"
                     filterable
+                    :disabled="!!formData.id"
                     clearable
                     placeholder="请选择"
                 >
