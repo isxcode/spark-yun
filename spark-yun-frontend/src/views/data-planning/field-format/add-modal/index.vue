@@ -11,6 +11,9 @@
             <el-form-item label="名称" prop="name">
                 <el-input v-model="formData.name" maxlength="500" placeholder="请输入" />
             </el-form-item>
+            <el-form-item label="字段名规范" prop="columnRule">
+                <el-input v-model="formData.columnRule" maxlength="500" placeholder="请输入" />
+            </el-form-item>
             <el-form-item label="字段类型" prop="columnTypeCode">
                 <el-select
                     v-model="formData.columnTypeCode"
@@ -24,9 +27,6 @@
                         :value="item.value"
                     />
                 </el-select>
-            </el-form-item>
-            <el-form-item label="字段规范" prop="columnRule">
-                <el-input v-model="formData.columnRule" maxlength="500" placeholder="请输入" />
             </el-form-item>
             <el-form-item label="字段精度" >
                 <el-input v-model="formData.columnType" maxlength="200" placeholder="请输入" />
@@ -45,9 +45,6 @@
             </el-form-item>
             <el-form-item label="默认值" prop="defaultValue">
                 <el-input v-model="formData.defaultValue" maxlength="500" placeholder="请输入" />
-            </el-form-item>
-            <el-form-item label="字段规范" prop="columnRule">
-                <el-input v-model="formData.columnRule" maxlength="500" placeholder="请输入" />
             </el-form-item>
             <el-form-item label="备注">
                 <el-input v-model="formData.remark" type="textarea" maxlength="200"
