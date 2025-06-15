@@ -159,7 +159,6 @@ function addFormatDataEvent() {
         return new Promise((resolve: any, reject: any) => {
             SaveFieldFormatData(data).then((res: any) => {
                 ElMessage.success(res.msg)
-                initData()
                 resolve()
             }).catch((error: any) => {
                 reject(error)
