@@ -70,8 +70,16 @@ export const colConfigs: colConfig[] = [
         showOverflowTooltip: true
     },
     {
+        prop: 'isPrimary',
+        title: '主键',
+        minWidth: 100,
+        customSlot: 'booleanTag',
+        showOverflowTooltip: true,
+        align: 'center'
+    },
+    {
         prop: 'isNull',
-        title: '可为空',
+        title: '非空',
         minWidth: 100,
         customSlot: 'booleanTag',
         showOverflowTooltip: true,
@@ -79,15 +87,7 @@ export const colConfigs: colConfig[] = [
     },
     {
         prop: 'isDuplicate',
-        title: '可重复',
-        minWidth: 100,
-        customSlot: 'booleanTag',
-        showOverflowTooltip: true,
-        align: 'center'
-    },
-    {
-        prop: 'isPrimary',
-        title: '是否主键',
+        title: '唯一',
         minWidth: 100,
         customSlot: 'booleanTag',
         showOverflowTooltip: true,
@@ -95,7 +95,7 @@ export const colConfigs: colConfig[] = [
     },
     {
         prop: 'isPartition',
-        title: '是否分区键',
+        title: '分区键',
         minWidth: 100,
         customSlot: 'booleanTag',
         showOverflowTooltip: true,
