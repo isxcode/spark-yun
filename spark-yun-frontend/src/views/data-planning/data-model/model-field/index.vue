@@ -2,9 +2,14 @@
     <Breadcrumb :bread-crumb-list="breadCrumbList" />
     <div class="zqy-seach-table model-field">
         <div class="zqy-table-top">
-            <el-button type="primary" @click="addData">
-                新建字段
-            </el-button>
+            <div class="btn-container">
+                <el-button type="primary" @click="addData">
+                    新建字段
+                </el-button>
+                <el-button type="primary" @click="buildData">
+                    构建
+                </el-button>
+            </div>
             <div class="zqy-seach">
                 <el-input
                     v-model="keyword"
@@ -57,6 +62,7 @@ import {
     AddModelFieldData,
     UpdateModelFieldData,
     DeleteModelField,
+    BuildDataModel,
     UpdateModelFieldList
 } from '@/services/data-model.service'
 import { ElMessage, ElMessageBox } from 'element-plus'
@@ -110,6 +116,21 @@ function addData() {
         })
     })
 }
+
+function buildData(data: any) {
+    ElMessageBox.confirm('是否确定构建？', '警告', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+    }).then(() => {
+        BuildDataModel({
+            modelId: route.query.id
+        }).then((res: any) => {
+            ElMessage.success(res.msg)
+        }).catch(() => { })
+    })
+}
+
 function editData(data: any) {
     addModalRef.value.showModal((data: any) => {
         return new Promise((resolve: any, reject: any) => {
@@ -175,6 +196,11 @@ onMounted(() => {
 
 <style lang="scss">
 .model-field {
+    .btn-container {
+        height: 100%;
+        display: flex;
+        align-items: center;
+    }
     &.zqy-seach-table {
         .zqy-table {
             height: calc(100% - 16px);
