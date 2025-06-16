@@ -7,7 +7,7 @@
                     新建字段
                 </el-button>
                 <el-button type="primary" @click="buildData">
-                    构建
+                    构建模型
                 </el-button>
             </div>
             <div class="zqy-seach">
