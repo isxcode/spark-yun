@@ -158,6 +158,8 @@ function addFormatDataEvent() {
     addModalRef.value.showModal((data: any) => {
         return new Promise((resolve: any, reject: any) => {
             SaveFieldFormatData(data).then((res: any) => {
+                formData.columnFormatId = res.data.id
+                getFieldFormatList(true)
                 ElMessage.success(res.msg)
                 resolve()
             }).catch((error: any) => {
