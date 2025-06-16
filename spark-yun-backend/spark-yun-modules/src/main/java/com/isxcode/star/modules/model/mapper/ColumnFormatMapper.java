@@ -2,6 +2,7 @@ package com.isxcode.star.modules.model.mapper;
 
 import com.isxcode.star.api.model.req.AddColumnFormatReq;
 import com.isxcode.star.api.model.req.UpdateColumnFormatReq;
+import com.isxcode.star.api.model.res.AddColumnFormatRes;
 import com.isxcode.star.api.model.res.ColumnFormatPageRes;
 import com.isxcode.star.modules.model.entity.ColumnFormatEntity;
 import org.mapstruct.Mapper;
@@ -27,4 +28,6 @@ public interface ColumnFormatMapper {
         ColumnFormatEntity columnFormatEntity);
 
     ColumnFormatPageRes columnFormatEntityToColumnFormatPageRes(ColumnFormatEntity columnFormatEntity);
+
+    AddColumnFormatRes columnFormatEntityToAddColumnFormatRes(ColumnFormatEntity columnFormatEntity);
 }
