@@ -44,6 +44,13 @@ import AcquisitionTask from '@/views/metadata-page/acquisition-task/index.vue'
 import AcquisitionInstance from '@/views/metadata-page/acquisition-instance/index.vue'
 import MetadataManagement from '@/views/metadata-page/metadata-management/index.vue'
 
+// 数据分层
+import DataLayer from '@/views/data-planning/data-layer/index.vue'
+import LayerArea from '@/views/data-planning/data-layer/layer-area/index.vue'
+import FieldFormat from '@/views/data-planning/field-format/index.vue'
+import DataModel from '@/views/data-planning/data-model/index.vue'
+import ModelField from '@/views/data-planning/data-model/model-field/index.vue'
+
 export default [
   {
     path: 'index',
@@ -229,5 +236,31 @@ export default [
     path: 'metadata-management',
     name: 'metadata-management',
     component: MetadataManagement
+  },
+
+  {
+    path: 'data-layer',
+    name: 'data-layer',
+    component: DataLayer
+  },
+  {
+    path: 'layer-area',
+    name: 'layer-area',
+    component: LayerArea
+  },
+  {
+    path: 'field-format',
+    name: 'field-format',
+    component: FieldFormat
+  },
+  {
+    path: 'data-model',
+    name: 'data-model',
+    component: DataModel
+  },
+  {
+    path: 'model-field',
+    name: 'model-field',
+    component: ModelField
   },
 ]

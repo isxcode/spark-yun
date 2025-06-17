@@ -6,6 +6,7 @@ import com.isxcode.star.api.datasource.dto.ConnectInfo;
 import com.isxcode.star.api.datasource.dto.QueryColumnDto;
 import com.isxcode.star.api.datasource.dto.QueryTableDto;
 import com.isxcode.star.api.datasource.dto.SecurityColumnDto;
+import com.isxcode.star.api.model.ao.DataModelColumnAo;
 import com.isxcode.star.api.work.res.GetDataSourceDataRes;
 import com.isxcode.star.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.star.backend.api.base.properties.IsxAppProperties;
@@ -14,6 +15,7 @@ import com.isxcode.star.common.utils.path.PathUtils;
 import com.isxcode.star.modules.datasource.entity.DatabaseDriverEntity;
 import com.isxcode.star.modules.datasource.service.DatabaseDriverService;
 import com.isxcode.star.modules.datasource.service.DriverShim;
+import com.isxcode.star.modules.model.entity.DataModelEntity;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -49,6 +51,9 @@ public abstract class Datasource {
     public abstract List<QueryTableDto> queryTable(ConnectInfo connectInfo) throws IsxAppException;
 
     public abstract List<QueryColumnDto> queryColumn(ConnectInfo connectInfo) throws IsxAppException;
+
+    public abstract String generateDataModelSql(ConnectInfo connectInfo, List<DataModelColumnAo> modelColumnList,
+        DataModelEntity dataModelEntity) throws IsxAppException;
 
     public abstract Long getTableTotalSize(ConnectInfo connectInfo) throws IsxAppException;
 

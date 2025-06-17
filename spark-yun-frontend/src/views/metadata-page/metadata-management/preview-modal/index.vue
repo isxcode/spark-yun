@@ -144,7 +144,7 @@ defineExpose({
             height: calc(100vh - 342px);
             .vxe-table {
                 .vxe-table--body-wrapper {
-                    max-height: calc(100vh - 404px);
+                    // max-height: calc(100vh - 404px);
                 }
             }
         }

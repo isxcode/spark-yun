@@ -1,11 +1,3 @@
-<!--
- * @Author: fanciNate
- * @Date: 2023-04-17 10:33:04
- * @LastEditTime: 2023-04-27 17:01:21
- * @LastEditors: fanciNate
- * @Description: In User Settings Edit
- * @FilePath: /zqy-web/src/layout/bread-crumb/index.vue
--->
 <template>
   <el-breadcrumb
     class="zqy-breadcrumb"

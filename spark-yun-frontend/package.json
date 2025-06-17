@@ -19,6 +19,7 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "@antv/g6": "^5.0.48",
     "@antv/hierarchy": "^0.6.11",
     "@antv/layout": "^0.3.17",
     "@antv/x6": "^1.29.5",
@@ -45,8 +46,9 @@
     "vue-grid-layout": "3.0.0-beta1",
     "vue-router": "^4.2.0",
     "vuedraggable": "^4.1.0",
-    "vxe-table": "4.4.2-beta.0",
-    "xe-utils": "3.5.10"
+    "vxe-pc-ui": "4.6.13",
+    "vxe-table": "^4.13.32",
+    "xe-utils": "^3.5.10"
   },
   "devDependencies": {
     "@playwright/test": "^1.33.0",

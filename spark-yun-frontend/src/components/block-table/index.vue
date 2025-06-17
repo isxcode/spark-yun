@@ -1,11 +1,17 @@
 <template>
   <vxe-table
+    ref="vxeTableRef"
     class="block-table"
     :class="{ 'block-table__empty': !tableConfig.tableData?.length }"
-    :row-config="{ isHover: true }"
+    :row-config="{ isHover: true, drag: true }"
     :data="tableConfig.tableData"
     :seq-config="{ seqMethod }"
+    :header-cell-config="{height: 44}"
+    :cell-config="{height: 40}"
     :loading="tableConfig.loading"
+    :max-height="'100%'"
+    :row-drag-config="rowDragConfig"
+    @row-dragend="rowDragendEvent"
   >
     <vxe-column
       v-if="tableConfig.seqType"
@@ -13,7 +19,9 @@
       align="center"
       width="44"
       fixed="left"
-    />
+    >
+      <template #header>#</template>
+    </vxe-column>
     <template v-for="(colConfig, colIndex) in tableConfig.colConfigs">
       <vxe-column
         v-if="colConfig.customSlot"
@@ -24,6 +32,7 @@
         :resizable="colIndex < tableConfig.colConfigs.length - 1"
         :show-header-overflow="colConfig.showHeaderOverflow || false"
         :show-overflow="colConfig.showOverflowTooltip || true"
+        :drag-sort="colConfig.dragSort"
         v-bind="colConfig"
       >
         <template #default="{ row, rowIndex, column }">
@@ -38,12 +47,13 @@
       </vxe-column>
       <vxe-column
         v-else
-        :key="colConfig.prop"
+        :key="colConfig.prop + 's'"
         :show-header-overflow="colConfig.showHeaderOverflow || false"
         :width="colConfig.width"
         :field="colConfig.prop"
         :resizable="colIndex < tableConfig.colConfigs.length - 1"
         :show-overflow="colConfig.showOverflowTooltip || true"
+        :drag-sort="colConfig.dragSort"
         v-bind="colConfig"
       />
     </template>
@@ -69,9 +79,9 @@
 </template>
 
 <script lang="ts" setup>
-import { defineProps, defineEmits, reactive } from 'vue'
+import { defineProps, defineEmits, reactive, ref } from 'vue'
 import EmptyPage from '@/components/empty-page/index.vue'
-import { VxeTablePropTypes } from 'vxe-table'
+import type { VxeTablePropTypes } from 'vxe-table'
 
 interface Pagination {
   currentPage: number;
@@ -102,7 +112,14 @@ const props = defineProps<{
   tableConfig: TableConfig;
 }>()
 
-const emit = defineEmits([ 'size-change', 'current-change' ])
+const emit = defineEmits([ 'size-change', 'current-change', 'rowDragendEvent' ])
+
+const vxeTableRef = ref<any>(null)
+
+const rowDragConfig = reactive<VxeTablePropTypes.RowDragConfig<RowVO>>({
+  // icon: 'vxe-icon-sort',
+  trigger: 'cell'
+})
 
 const handleSizeChange = (e: number) => {
   emit('size-change', e)
@@ -126,25 +143,46 @@ function columnSlotAdapter(column: any, colConfig: any) {
     realWidth: column.renderWidth
   }
 }
+
+function rowDragendEvent(e: any) {
+  emit('rowDragendEvent', vxeTableRef.value.getTableData())
+}
 </script>
 
 <style lang="scss">
 .block-table {
+  max-height: 100%;
   &.block-table__empty {
     .vxe-table--render-wrapper {
       min-height: 176px;
     }
   }
+  .vxe-table--render-wrapper {
+    .vxe-table--layout-wrapper {
+      .vxe-table--scroll-y-virtual {
+        height: auto !important;
+        max-width: 10px;
+        .vxe-table--scroll-y-wrapper {
+          // max-height: calc(100% - 44px);
+          // .vxe-table--scroll-y-handle {
+          //   max-width: 10px;
+          // }
+        }
+
+      }
+    }
+  }
   .vxe-table--header tr.vxe-header--row > th {
-    height: getCssVar('menu', 'item-height');
+    // height: getCssVar('menu', 'item-height');
     padding: 0;
     background-color: #fff;
   }
   .vxe-table--body-wrapper {
-    min-height: unset !important;
+    .vxe-table--body-inner-wrapper {
+      min-height: unset !important;
+    }
   }
   .vxe-table--body tr > td.vxe-body--column {
-    height: 40px;
     padding: 0;
     .vxe-cell {
       font-size: getCssVar('font-size', 'extra-small');
@@ -169,20 +207,45 @@ function columnSlotAdapter(column: any, colConfig: any) {
       color: getCssVar('color', 'primary');
     }
   }
-  .vxe-table--fixed-wrapper {
-    .vxe-table--fixed-left-wrapper {
-      .vxe-table--body-wrapper {
-        &.fixed-left--wrapper {
-          bottom: 0;
+  .vxe-icon-sort {
+    color: getCssVar('color', 'primary');
+  }
+  .vxe-body--row {
+    &.row--hover {
+      .vxe-body--column {
+        &.is--drag-cell {
+          color: getCssVar('color', 'primary') !important;
         }
       }
     }
-    .vxe-table--fixed-right-wrapper {
-      .vxe-table--body-wrapper {
-        &.fixed-right--wrapper {
-          bottom: 0;
-        }
+  }
+  .vxe-table--scroll-x-virtual {
+    max-height: 10px;
+    .vxe-table--scroll-x-wrapper {
+      .vxe-table--scroll-x-handle {
+        max-height: 10px;
       }
+    }
+  }
+  .vxe-table--scroll-x-right-corner {
+    max-width: 10px;
+  }
+  .vxe-table--fixed-wrapper {
+    .vxe-table--fixed-left-wrapper {
+      height: 100% !important;
+      // .vxe-table--body-wrapper {
+      //   &.fixed-left--wrapper {
+      //     bottom: 0;
+      //   }
+      // }
+    }
+    .vxe-table--fixed-right-wrapper {
+      height: 100% !important;
+      // .vxe-table--body-wrapper {
+      //   &.fixed-right--wrapper {
+      //     bottom: 0;
+      //   }
+      // }
     }
   }
 }

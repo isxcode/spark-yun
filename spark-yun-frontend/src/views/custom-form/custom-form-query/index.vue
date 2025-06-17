@@ -244,7 +244,7 @@ onMounted(() => {
     .zqy-table {
         padding: 0 20px;
         .vxe-table--body-wrapper {
-            max-height: calc(100vh - 232px);
+            // max-height: calc(100vh - 232px);
         }
     }
     .zqy-table-top {
