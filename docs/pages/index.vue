@@ -769,6 +769,9 @@ $module-intro-img-width: 600px;
           line-height: 25px;
           font-size: 19px;
           text-indent: 2em;
+          text-align: justify;
+          text-justify: distribute-all-lines;
+          word-break: break-all;
         }
 
         .why-content {
@@ -870,6 +873,9 @@ $module-intro-img-width: 600px;
           margin-top: 30px;
           line-height: 25px;
           font-size: 18px;
+          text-align: justify;
+          text-justify: distribute-all-lines;
+          word-break: break-all;
         }
 
         .line-3 {
@@ -921,6 +927,9 @@ $module-intro-img-width: 600px;
           margin-top: 30px;
           line-height: 25px;
           font-size: 18px;
+          text-align: justify;
+          text-justify: distribute-all-lines;
+          word-break: break-all;
         }
 
         .line-3 {
