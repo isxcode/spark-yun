@@ -16,7 +16,7 @@
                     link
                     type="primary"
                     @click="addFormatDataEvent"
-                >新建标准</el-button>
+                >新建字段标准</el-button>
                 <el-select
                     v-model="formData.columnFormatId"
                     filterable
