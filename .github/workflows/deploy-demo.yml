@@ -74,8 +74,9 @@ jobs:
           script: |
             tar -vzxf /tmp/zhiqingyun.tar.gz -C /opt/
             rm -rf /tmp/zhiliuyun.tar.gz
-            rm -rf /opt/zhiqingyun/resources_back
             bash /opt/zhiqingyun/bin/stop.sh
+            rm -rf /opt/zhiqingyun/resources
+            mv /opt/zhiqingyun/resources_back /opt/zhiqingyun/resources
             rm -rf /opt/zhiqingyun/conf/application-local.yml
             cp /root/application-local.yml /opt/zhiqingyun/conf/application-local.yml
             cp -r /opt/zhiqingyun/resources /opt/zhiqingyun/resources_bak/resources_$(date +'%Y-%m-%d-%H-%M-%S')_bak
