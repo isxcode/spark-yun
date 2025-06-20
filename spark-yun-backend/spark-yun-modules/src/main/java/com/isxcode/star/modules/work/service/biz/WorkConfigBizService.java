@@ -90,15 +90,14 @@ public class WorkConfigBizService {
         // python作业和bash作业，必须选择服务器节点
         if (WorkType.PYTHON.equals(work.getWorkType()) || WorkType.BASH.equals(work.getWorkType())) {
 
-            if (Strings.isEmpty(wocConfigWorkReq.getClusterConfig().getClusterId())
-                || Strings.isEmpty(wocConfigWorkReq.getClusterConfig().getClusterId())) {
-                throw new IsxAppException("缺少集群节点配置");
-            }
+            if (!Strings.isEmpty(wocConfigWorkReq.getClusterConfig().getClusterId())
+                && !Strings.isEmpty(wocConfigWorkReq.getClusterConfig().getClusterNodeId())) {
 
-            // 判断集群和节点是否匹配
-            if (!clusterNodeRepository.findByIdAndClusterId(wocConfigWorkReq.getClusterConfig().getClusterNodeId(),
-                wocConfigWorkReq.getClusterConfig().getClusterId()).isPresent()) {
-                throw new IsxAppException("集群和节点关系不一致，请重新保存");
+                // 判断集群和节点是否匹配
+                if (!clusterNodeRepository.findByIdAndClusterId(wocConfigWorkReq.getClusterConfig().getClusterNodeId(),
+                    wocConfigWorkReq.getClusterConfig().getClusterId()).isPresent()) {
+                    throw new IsxAppException("集群和节点关系不一致，请重新保存");
+                }
             }
         }
 
