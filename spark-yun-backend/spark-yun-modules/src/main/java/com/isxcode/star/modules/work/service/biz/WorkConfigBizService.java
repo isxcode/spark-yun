@@ -90,7 +90,8 @@ public class WorkConfigBizService {
         // python作业和bash作业，必须选择服务器节点
         if (WorkType.PYTHON.equals(work.getWorkType()) || WorkType.BASH.equals(work.getWorkType())) {
 
-            if (!Strings.isEmpty(wocConfigWorkReq.getClusterConfig().getClusterId())
+            if (wocConfigWorkReq.getClusterConfig() != null
+                && !Strings.isEmpty(wocConfigWorkReq.getClusterConfig().getClusterId())
                 && !Strings.isEmpty(wocConfigWorkReq.getClusterConfig().getClusterNodeId())) {
 
                 // 判断集群和节点是否匹配
