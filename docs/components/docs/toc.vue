@@ -74,23 +74,25 @@ const isActive = (id) => {
 }
 
 .toc-content-item-title {
-  color: var(--sk-color-font-menu);
-  font-size: 16px;
-  padding: 2px 0 2px 2px;
-  border-top-left-radius: 4px;
-  border-bottom-left-radius: 4px;
-  margin-bottom: 5px;
+  color: #666;
+  font-size: 14px;
+  padding: 6px 8px;
+  border-radius: 4px;
+  margin-bottom: 4px;
   transition: all 0.2s;
+  line-height: 1.4;
+  display: block;
 }
 
 .toc-content-item-title:hover {
-  color: var(--sk-color-font-menu-hover);
-  border-right: 1px solid var(--sk-color-home-primary);
+  color: #333;
+  background-color: #f5f5f5;
 }
 
 .active {
-  color: var(--sk-color-home-primary) !important;
-  border-right: 2px solid var(--sk-color-home-primary);
+  color: #e25a1b !important;
+  background-color: #fff5f0;
+  border-left: 3px solid #e25a1b;
 }
 
 .toc-content-item-children {
@@ -98,22 +100,31 @@ const isActive = (id) => {
 }
 
 .md-h-1 {
-  padding-left: 12px;
+  padding-left: 8px;
+  font-weight: 600;
 }
 
 .md-h-2 {
-  padding-left: 24px;
+  padding-left: 16px;
+  font-weight: 500;
 }
 
 .md-h-3 {
-  padding-left: 36px;
+  padding-left: 24px;
 }
 
 .md-h-4 {
-  padding-left: 48px;
+  padding-left: 32px;
+  font-size: 13px;
 }
 
 .md-h-5 {
-  padding-left: 60px;
+  padding-left: 40px;
+  font-size: 12px;
+}
+
+.md-h-6 {
+  padding-left: 48px;
+  font-size: 12px;
 }
 </style>
