@@ -469,8 +469,8 @@ function handleMenuClick(menuItem: MenuData) {
 
             .lang-text {
               white-space: nowrap;
-              font-size: 12px;
-              color: inherit;
+              font-size: 14px;
+              color: black;
             }
           }
 
