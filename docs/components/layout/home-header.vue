@@ -24,7 +24,7 @@
             <SvgIcon v-if="item.icon" :name="item.icon" class="icon-btn">
             </SvgIcon>
           </div>
-          <!-- <LangSwitcher /> -->
+          <LangSwitcher />
         </div>
       </div>
     </div>
@@ -232,6 +232,8 @@ function handleMenuClick(menuItem: MenuData) {
       flex: 1;
       display: flex;
       justify-content: flex-end;
+      align-items: center;
+      gap: 6px;
 
       .menu-item {
         padding: 0px 8px;
@@ -239,13 +241,13 @@ function handleMenuClick(menuItem: MenuData) {
         line-height: 32px;
         text-align: center;
         border-radius: 20px;
-        margin-left: 6px;
         cursor: pointer;
         transition: all 0.3s;
         color: var(--sk-color-font-gray);
         display: flex;
         align-items: center;
         justify-content: center;
+        flex-shrink: 0;
 
         &:hover {
           color: var(--sk-color-font-gray-hover);
@@ -255,6 +257,55 @@ function handleMenuClick(menuItem: MenuData) {
           color: black;
           width: 30px;
           height: 30px;
+        }
+      }
+
+      // 语言切换器样式
+      :deep(.lang-switcher) {
+        flex-shrink: 0;
+
+        .lang-button {
+          padding: 0px 8px;
+          height: 32px;
+          line-height: 32px;
+          text-align: center;
+          border-radius: 20px;
+          cursor: pointer;
+          transition: all 0.3s;
+          color: black;
+          display: flex;
+          align-items: center;
+          gap: 6px;
+
+          &:hover {
+            color: var(--sk-color-font-gray-hover);
+          }
+
+          .globe-icon {
+            width: 19px;
+            height: 19px;
+            color: black;
+            flex-shrink: 0;
+          }
+
+          .lang-text {
+            white-space: nowrap;
+            font-size: 15px;
+            color: inherit;
+          }
+        }
+
+        .lang-options {
+          right: 0;
+          min-width: 160px;
+
+          .lang-option {
+            &.active {
+              background-color: rgba(226, 90, 27, 0.1);
+              color: #e25a1b;
+              font-weight: 500;
+            }
+          }
         }
       }
     }
@@ -360,6 +411,8 @@ function handleMenuClick(menuItem: MenuData) {
         flex: 1;
         display: flex;
         justify-content: flex-end;
+        align-items: center;
+        gap: 6px;
 
         .menu-item {
           padding: 0px 8px;
@@ -367,13 +420,13 @@ function handleMenuClick(menuItem: MenuData) {
           line-height: 32px;
           text-align: center;
           border-radius: 20px;
-          margin-left: 6px;
           cursor: pointer;
           transition: all 0.3s;
           color: var(--sk-color-font-gray);
           display: flex;
           align-items: center;
           justify-content: center;
+          flex-shrink: 0;
 
           &:hover {
             color: var(--sk-color-font-gray-hover);
@@ -383,6 +436,55 @@ function handleMenuClick(menuItem: MenuData) {
             color: black;
             width: 30px;
             height: 30px;
+          }
+        }
+
+        // 移动端语言切换器样式
+        :deep(.lang-switcher) {
+          flex-shrink: 0;
+
+          .lang-button {
+            padding: 0px 6px;
+            height: 32px;
+            line-height: 32px;
+            text-align: center;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: var(--sk-color-font-gray);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+
+            &:hover {
+              color: var(--sk-color-font-gray-hover);
+            }
+
+            .globe-icon {
+              width: 16px;
+              height: 16px;
+              color: black;
+              flex-shrink: 0;
+            }
+
+            .lang-text {
+              white-space: nowrap;
+              font-size: 14px;
+              color: black;
+            }
+          }
+
+          .lang-options {
+            right: 0;
+            min-width: 140px;
+
+            .lang-option {
+              &.active {
+                background-color: rgba(226, 90, 27, 0.1);
+                color: var(--sk-color-home-primary, #e25a1b);
+                font-weight: 500;
+              }
+            }
           }
         }
       }

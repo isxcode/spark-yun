@@ -74,10 +74,18 @@ export default defineNuxtConfig({
     locales: [
       { name: "中文", code: "zh", iso: "zh-CN", dir: "ltr" },
       { name: "English", code: "en", iso: "en-US", dir: "ltr" },
+      { name: "日本語", code: "ja", iso: "ja-JP", dir: "ltr" },
+      { name: "한국어", code: "ko", iso: "ko-KR", dir: "ltr" },
+      { name: "Français", code: "fr", iso: "fr-FR", dir: "ltr" },
+      { name: "Deutsch", code: "de", iso: "de-DE", dir: "ltr" },
+      { name: "Español", code: "es", iso: "es-ES", dir: "ltr" },
+      { name: "Русский", code: "ru", iso: "ru-RU", dir: "ltr" },
     ],
     detectBrowserLanguage: false,
     vueI18n: "./locales/i18n.config.ts",
     defaultLocale: "zh",
     strategy: "prefix_and_default",
   },
+
+  compatibilityDate: "2025-07-01",
 });
