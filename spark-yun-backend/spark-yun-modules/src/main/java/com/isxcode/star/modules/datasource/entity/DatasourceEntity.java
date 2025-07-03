@@ -60,6 +60,8 @@ public class DatasourceEntity {
 
     private String kafkaConfig;
 
+    private String advancedConfig;
+
     @CreatedDate
     private LocalDateTime createDateTime;
 
