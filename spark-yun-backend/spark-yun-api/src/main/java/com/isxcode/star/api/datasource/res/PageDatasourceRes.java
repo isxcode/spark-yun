@@ -3,6 +3,7 @@ package com.isxcode.star.api.datasource.res;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.isxcode.star.api.datasource.dto.KafkaConfig;
 import lombok.Data;
+import java.util.Map;
 
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -35,4 +36,8 @@ public class PageDatasourceRes {
     private String kafkaConfigStr;
 
     private KafkaConfig kafkaConfig;
+
+    private String advancedConfigStr;
+
+    private Map<String, String> advancedConfig;
 }

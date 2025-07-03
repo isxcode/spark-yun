@@ -29,6 +29,7 @@ import java.nio.file.StandardCopyOption;
 import java.sql.Connection;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import javax.transaction.Transactional;
 
@@ -95,6 +96,11 @@ public class DatasourceBizService {
             datasource.setKafkaConfig(JSON.toJSONString(addDatasourceReq.getKafkaConfig()));
         }
 
+        // 处理高级配置
+        if (addDatasourceReq.getAdvancedConfig() != null && !addDatasourceReq.getAdvancedConfig().isEmpty()) {
+            datasource.setAdvancedConfig(JSON.toJSONString(addDatasourceReq.getAdvancedConfig()));
+        }
+
         datasource.setCheckDateTime(LocalDateTime.now());
         datasource.setStatus(DatasourceStatus.UN_CHECK);
         datasourceRepository.save(datasource);
@@ -127,6 +133,13 @@ public class DatasourceBizService {
             datasource.setMetastoreUris("thrift://localhost:9083");
         }
 
+        // 处理高级配置
+        if (updateDatasourceReq.getAdvancedConfig() != null && !updateDatasourceReq.getAdvancedConfig().isEmpty()) {
+            datasource.setAdvancedConfig(JSON.toJSONString(updateDatasourceReq.getAdvancedConfig()));
+        } else {
+            datasource.setAdvancedConfig(null);
+        }
+
         datasource.setCheckDateTime(LocalDateTime.now());
         datasource.setStatus(DatasourceStatus.UN_CHECK);
         datasourceRepository.save(datasource);
@@ -152,6 +165,10 @@ public class DatasourceBizService {
             }
             if (DatasourceType.KAFKA.equals(e.getDbType())) {
                 e.setKafkaConfig(JSON.parseObject(e.getKafkaConfigStr(), KafkaConfig.class));
+            }
+            // 处理高级配置
+            if (!Strings.isEmpty(e.getAdvancedConfigStr())) {
+                e.setAdvancedConfig(JSON.parseObject(e.getAdvancedConfigStr(), Map.class));
             }
         });
 

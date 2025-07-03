@@ -16,9 +16,11 @@ import org.mapstruct.Mapping;
 public interface DatasourceMapper {
 
     @Mapping(target = "kafkaConfig", ignore = true)
+    @Mapping(target = "advancedConfig", ignore = true)
     DatasourceEntity dasAddDatasourceReqToDatasourceEntity(AddDatasourceReq dasAddDatasourceReq);
 
     @Mapping(target = "kafkaConfig", ignore = true)
+    @Mapping(target = "advancedConfig", ignore = true)
     DatasourceEntity checkConnectReqToDatasourceEntity(CheckConnectReq checkConnectReq);
 
     @Mapping(source = "dasUpdateDatasourceReq.passwd", target = "passwd")
@@ -31,12 +33,15 @@ public interface DatasourceMapper {
     @Mapping(source = "dasUpdateDatasourceReq.name", target = "name")
     @Mapping(target = "id", source = "datasourceEntity.id")
     @Mapping(target = "kafkaConfig", ignore = true)
+    @Mapping(target = "advancedConfig", ignore = true)
     DatasourceEntity dasUpdateDatasourceReqToDatasourceEntity(UpdateDatasourceReq dasUpdateDatasourceReq,
         DatasourceEntity datasourceEntity);
 
     @Mapping(target = "checkDateTime", dateFormat = "yyyy-MM-dd HH:mm:ss")
     @Mapping(target = "kafkaConfigStr", source = "kafkaConfig")
     @Mapping(target = "kafkaConfig", ignore = true)
+    @Mapping(target = "advancedConfigStr", source = "advancedConfig")
+    @Mapping(target = "advancedConfig", ignore = true)
     PageDatasourceRes datasourceEntityToQueryDatasourceRes(DatasourceEntity datasourceEntity);
 
     @Mapping(target = "createDateTime", dateFormat = "yyyy-MM-dd HH:mm:ss")

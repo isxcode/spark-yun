@@ -5,6 +5,7 @@ import com.isxcode.star.api.datasource.dto.KafkaConfig;
 import io.swagger.v3.oas.annotations.media.Schema;
 import javax.validation.constraints.NotEmpty;
 import lombok.Data;
+import java.util.Map;
 
 @Data
 public class AddDatasourceReq {
@@ -33,6 +34,9 @@ public class AddDatasourceReq {
     @Schema(title = "数据源驱动", example = "数据源驱动id")
     @NotEmpty(message = "数据源驱动不能为空")
     private String driverId;
+
+    @Schema(title = "高级配置", example = "{\"key1\":\"value1\",\"key2\":\"value2\"}")
+    private Map<String, String> advancedConfig;
 
     @Schema(title = "hive特殊配置hive.metastore.uris", example = "默认值：thrift://localhost:9083，非必填")
     private String metastoreUris;
