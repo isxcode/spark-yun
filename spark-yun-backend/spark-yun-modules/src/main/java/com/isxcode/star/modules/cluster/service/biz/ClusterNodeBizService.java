@@ -78,7 +78,7 @@ public class ClusterNodeBizService {
         clusterNode.setPasswd(aesUtils.encrypt(addClusterNodeReq.getPasswd().trim()));
 
         // 设置服务器默认端口号
-        clusterNode.setPort(Strings.isEmpty(addClusterNodeReq.getPort()) ? "22" : addClusterNodeReq.getPort().trim());
+        clusterNode.setPort(addClusterNodeReq.getPort());
 
         // 设置默认代理端口号
         clusterNode.setAgentPort(clusterNodeService.getDefaultAgentPort(addClusterNodeReq.getAgentPort().trim()));
