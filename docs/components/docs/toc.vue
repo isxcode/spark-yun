@@ -76,7 +76,7 @@ const isActive = (id) => {
 .toc-content-item-title {
   color: #666;
   font-size: 14px;
-  padding: 6px 8px;
+  padding: 5px 8px;
   border-radius: 4px;
   margin-bottom: 4px;
   transition: all 0.2s;
@@ -92,7 +92,7 @@ const isActive = (id) => {
 .active {
   color: #e25a1b !important;
   background-color: #fff5f0;
-  border-left: 3px solid #e25a1b;
+  //border-left: 3px solid #e25a1b;
 }
 
 .toc-content-item-children {

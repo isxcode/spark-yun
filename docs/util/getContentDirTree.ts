@@ -16,6 +16,12 @@ function getContentDirTree(htmlData: string): DirNode[] {
       const domId = hDom.slice(startIndex + 4, endIndex);
       const re = /<h([1-6]{1})[^>]*>([\s\S]*?)<\/h[1-6]{1}>/;
       let hLevel = Number(hDom.replace(re, "$1"));
+
+      // 跳过一级标题（h1）和二级标题（h2），不在TOC中显示
+      if (hLevel === 1 || hLevel === 2) {
+        return;
+      }
+
       let titleContent = hDom.replace(re, "$2");
       let title = titleContent.replaceAll(/<([\s\S]*?)>|<\/([\s\S]*?)>/g, "");
       const currentDir: DirNode = {

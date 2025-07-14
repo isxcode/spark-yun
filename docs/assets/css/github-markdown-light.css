@@ -305,6 +305,7 @@
 .markdown-body p {
     margin-top: 0;
     margin-bottom: 10px;
+    white-space: pre-line;
 }
 
 .markdown-body blockquote {
@@ -312,14 +313,24 @@
     padding: 0 1em;
     color: #57606a;
     border-left: 0.25em solid #d0d7de;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    word-break: break-word;
 }
 
 .markdown-body ul,
 .markdown-body ol {
-    list-style: unset;
     margin-top: 0;
     margin-bottom: 0;
     padding-left: 2em;
+}
+
+.markdown-body ul {
+    list-style-type: disc;
+}
+
+.markdown-body ol {
+    list-style-type: decimal;
 }
 
 .markdown-body ol ol,
