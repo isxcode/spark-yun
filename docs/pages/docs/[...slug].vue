@@ -376,7 +376,7 @@ function setupScrollListener() {
     }
   );
 
-  // 观察标题元素，排除h2（因为h2不在TOC中显示）
+  // 观察标题元素，排除h1和h2（因为h1和h2不在TOC中显示）
   const headings = markdownContent.querySelectorAll('h3, h4, h5, h6');
   headings.forEach((heading) => {
     observer.observe(heading);

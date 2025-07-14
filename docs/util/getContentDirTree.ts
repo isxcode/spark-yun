@@ -17,8 +17,8 @@ function getContentDirTree(htmlData: string): DirNode[] {
       const re = /<h([1-6]{1})[^>]*>([\s\S]*?)<\/h[1-6]{1}>/;
       let hLevel = Number(hDom.replace(re, "$1"));
 
-      // 跳过二级标题（h2），不在TOC中显示
-      if (hLevel === 2 || hLevel === 1) {
+      // 跳过一级标题（h1）和二级标题（h2），不在TOC中显示
+      if (hLevel === 1 || hLevel === 2) {
         return;
       }
 
