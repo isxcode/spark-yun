@@ -126,6 +126,9 @@ public class ClusterNodeBizService {
         // 密码对成加密
         clusterNode.setPasswd(aesUtils.encrypt(updateClusterNodeReq.getPasswd().trim()));
 
+        // 保存端口号
+        clusterNode.setPort(updateClusterNodeReq.getPort());
+
         // 设置安装地址
         clusterNode.setAgentHomePath(
             clusterNodeService.getDefaultAgentHomePath(updateClusterNodeReq.getUsername(), clusterNode));

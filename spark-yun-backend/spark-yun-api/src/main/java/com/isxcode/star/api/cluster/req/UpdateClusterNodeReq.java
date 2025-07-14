@@ -20,6 +20,7 @@ public class UpdateClusterNodeReq {
     private String host;
 
     @Schema(title = "节点服务器ssh端口号", example = "22")
+    @NotEmpty(message = "port不能为空")
     private String port;
 
     @Schema(title = "节点服务器用户名", example = "ispong")
