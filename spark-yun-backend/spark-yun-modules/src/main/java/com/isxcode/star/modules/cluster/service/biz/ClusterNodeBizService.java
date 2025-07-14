@@ -29,7 +29,6 @@ import java.io.IOException;
 import com.jcraft.jsch.JSchException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.logging.log4j.util.Strings;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -78,7 +77,7 @@ public class ClusterNodeBizService {
         clusterNode.setPasswd(aesUtils.encrypt(addClusterNodeReq.getPasswd().trim()));
 
         // 设置服务器默认端口号
-        clusterNode.setPort(Strings.isEmpty(addClusterNodeReq.getPort()) ? "22" : addClusterNodeReq.getPort().trim());
+        clusterNode.setPort(addClusterNodeReq.getPort());
 
         // 设置默认代理端口号
         clusterNode.setAgentPort(clusterNodeService.getDefaultAgentPort(addClusterNodeReq.getAgentPort().trim()));
@@ -125,6 +124,9 @@ public class ClusterNodeBizService {
 
         // 密码对成加密
         clusterNode.setPasswd(aesUtils.encrypt(updateClusterNodeReq.getPasswd().trim()));
+
+        // 保存端口号
+        clusterNode.setPort(updateClusterNodeReq.getPort());
 
         // 设置安装地址
         clusterNode.setAgentHomePath(

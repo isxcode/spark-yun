@@ -26,6 +26,16 @@
           placeholder="请输入"
         />
       </el-form-item>
+      <el-form-item
+        label="端口号"
+        prop="port"
+      >
+        <el-input
+          v-model="formData.port"
+          maxlength="5"
+          placeholder="请输入端口号"
+        />
+      </el-form-item>
       <el-form-item label="用户名" prop="username">
         <el-input v-model="formData.username" maxlength="100" placeholder="请输入" />
       </el-form-item>
