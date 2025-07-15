@@ -27,7 +27,7 @@ Caused by: org.apache.thrift.TApplicationException: Invalid method name: 'get_ta
 	... 82 more
 ```
 
-##### 解决方案
+**解决方案**
 
 ```wikitext
 本地spark和hive版本不兼容问题导致
@@ -99,7 +99,7 @@ Caused by: java.net.UnknownHostException: isxcode
 	... 50 more
 ```
 
-##### 解决方案
+**解决方案**
 
 ```wikitext
 k8s启动作业，无法访问域名
@@ -182,7 +182,7 @@ java.io.InvalidClassException: org.apache.spark.rpc.RpcEndpointRef; local class 
 	at java.lang.Thread.run(Thread.java:750)
 ```
 
-###### 解决方案
+#**解决方案**
 
 ```wikitext
 这是因为spark的standalone集群版本，和spark-yun中spark-min中自带的版本冲突，需要将两边的版本保持一致
@@ -212,7 +212,7 @@ Exception in thread "main" java.lang.NoSuchMethodError: org.apache.spark.network
 	at org.apache.spark.deploy.SparkSubmit.main(SparkSubmit.scala)
 ```
 
-###### 解决方案
+#**解决方案**
 
 ```wikitext
 这是因为spark的standalone集群版本，和spark-yun中spark-min中自带的版本冲突，需要将两边的版本保持一致
@@ -249,7 +249,7 @@ Caused by: org.apache.hadoop.ipc.RemoteException(org.apache.hadoop.security.Acce
 	at org.apache.hadoop.ipc.Server$Handler.run(Server.java:3026)
 ```
 
-##### 解决方案
+**解决方案**
 
 ```wikitext
 k8s容器中默认的用户，没有操作hdfs的权限
@@ -273,7 +273,7 @@ k8s容器中默认的用户，没有操作hdfs的权限
 	at org
 ```
 
-##### 解决方案
+**解决方案**
 
 > 需要在`资源配置`中选择`高级定义`中打开动态分区
 
@@ -314,7 +314,7 @@ Caused by: org.apache.hadoop.hive.ql.metadata.HiveException: Number of dynamic p
 24/10/31 11:18:32 INFO ShutdownHookManager: Deleting directory /data/yarn/nm/usercache/dehoop/appcache/application_1730110676098_0069/spark-de8b8b7a-41aa-4188-9e12-4e75427419a6
 ```
 
-##### 解决方案
+**解决方案**
 
 ```wikitext
 需要扩大分区键数量
@@ -340,7 +340,7 @@ ErrImagePull (failed to pull and unpack image "docker.io/library/spark:3.4.1": f
 2025-01-15T18:27:01.606 ERROR : 获取作业日志异常 : Error from server (BadRequest): container "spark-kubernetes-driver" in pod "zhiqingyun-spark-sql-sy-1879475137556619264-sy-1879475180372074496-30559f94697ff27b-driver" is waiting to start: image can't be pulled
 ```
 
-##### 解决方案
+**解决方案**
 
 ```wikitext
 这是用户自己的rancher配置的镜像库指定了docker.io，需要将spark镜像推到用户指定的镜像仓库

@@ -16,8 +16,6 @@
         <div class="column">
           <div class="title">{{ $t("product") }}</div>
           <div class="link" @click="clickZhiqingyun">{{ $t("zhiqingyun") }}</div>
-          <div class="link" @click="clickZhiliuyun">{{ $t("zhiliuyun") }}</div>
-          <div class="link" @click="clickZhihuiyun">{{ $t("zhihuiyun") }}</div>
           <div class="link" @click="clickZhishuyun">{{ $t("zhishuyun") }}</div>
         </div>
         <div class="column">
@@ -30,14 +28,12 @@
           <div class="title">{{ $t("resources") }}</div>
           <div class="link" @click="clickDocs">{{ $t("docs") }}</div>
           <div class="link" @click="clickBlogs">{{ $t("blogs") }}</div>
-          <div class="link" @click="clickDockerHub">{{ $t("docker_hub") }}</div>
           <div class="link" @click="downloadPackage">{{ $t("download_package") }}</div>
           <div class="link" @click="downloadLicense"> {{ $t("download_license") }}</div>
         </div>
         <div class="column">
           <div class="title">{{ $t("about_us") }}</div>
           <div class="link" @click="aboutUs">{{ $t("company_intro") }}</div>
-          <div class="link" @click="joinUs">{{ $t("join_us") }}</div>
           <div class="link" @click="clickGithubProject"> {{ $t("development_progress") }}</div>
           <div class="link" @click="downloadPdf"> {{ $t("download_pdf") }}</div>
         </div>
