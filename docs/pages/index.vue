@@ -50,12 +50,12 @@
           {{ $t("related_technologies") }}
         </div>
         <div class="tech-img-div">
-          <img class="tech-img" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/website/it-img/t-k8s.png" alt=""/>
-          <img class="tech-img" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/website/it-img/t-hadoop.png" alt=""/>
-          <img class="tech-img" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/website/it-img/t-spark.png" alt=""/>
-          <img class="tech-img" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/website/it-img/t-hive.png" alt=""/>
-          <img class="tech-img" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/website/it-img/t-doris.png" alt=""/>
-          <img class="tech-img" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/website/it-img/t-clickhouse.png" alt=""/>
+          <img class="tech-img" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/website/it-img/t-1.png" alt=""/>
+          <img class="tech-img" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/website/it-img/t-2.png" alt=""/>
+          <img class="tech-img" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/website/it-img/t-3.png" alt=""/>
+          <img class="tech-img" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/website/it-img/t-4.png" alt=""/>
+          <img class="tech-img" style="height: 41px;margin-top: 6px" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/website/it-img/t-5.png" alt=""/>
+          <img class="tech-img" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/website/it-img/t-6.png" alt=""/>
         </div>
       </div>
     </div>
@@ -435,7 +435,7 @@ $module-intro-img-width: 600px;
       .why-content {
         margin: 25px auto auto;
         text-indent: 2em;
-        width: 900px;
+        width: 860px;
         line-height: 26px;
         font-size: 18px;
       }

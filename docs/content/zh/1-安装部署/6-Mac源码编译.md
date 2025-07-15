@@ -23,7 +23,7 @@ git clone https://github.com/isxcode/spark-yun.git
 
 ### 3. 使用镜像打包源码
 
-> 将${clone_path}替换成项目路径，例如：/Users/ispong/Downloads/spark-yun  
+> 将${clone_path}替换成项目路径，例如：/Users/ispong/Downloads/spark-yun
 > M系列架构，使用Arm镜像 `zhiqingyun-build:arm-latest`
 
 ```bash
