@@ -1,5 +1,5 @@
 ---
-title: "计算mysql中的数据"
+title: "Mysql数据计算"
 ---
 
 ### 案例说明
