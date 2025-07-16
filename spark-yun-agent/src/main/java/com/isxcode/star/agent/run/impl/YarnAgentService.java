@@ -139,43 +139,138 @@ public class YarnAgentService implements AgentService {
     public String submitWork(SparkLauncher sparkLauncher) throws Exception {
 
         Process launch = sparkLauncher.launch();
-        InputStream inputStream = launch.getErrorStream();
-        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
+
+        // 同时读取标准输出和错误输出
+        InputStream errorStream = launch.getErrorStream();
+        InputStream inputStream = launch.getInputStream();
+
+        BufferedReader errorReader = new BufferedReader(new InputStreamReader(errorStream, StandardCharsets.UTF_8));
+        BufferedReader inputReader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
 
         long timeoutExpiredMs = System.currentTimeMillis() + sparkYunAgentProperties.getSubmitTimeout() * 1000;
 
-        StringBuilder errLog = new StringBuilder();
-        String line;
-        while ((line = reader.readLine()) != null) {
-            errLog.append(line).append("\n");
+        StringBuilder allLog = new StringBuilder();
+        String applicationId = null;
 
-            long waitMillis = timeoutExpiredMs - System.currentTimeMillis();
-            if (waitMillis <= 0) {
-                launch.destroy();
-                throw new IsxAppException(errLog.toString());
-            }
-
-            String pattern = "Submitted application application_\\d+_\\d+";
-            Pattern regex = Pattern.compile(pattern);
-            Matcher matcher = regex.matcher(line);
-            if (matcher.find()) {
-                return matcher.group().replace("Submitted application ", "");
-            }
-        }
+        // 改进的正则表达式，支持多种格式
+        Pattern[] patterns = {Pattern.compile("Submitted application (application_\\d+_\\d+)"),
+                Pattern.compile("Application report for (application_\\d+_\\d+)"),
+                Pattern.compile("tracking URL: .*/proxy/(application_\\d+_\\d+)"),
+                Pattern.compile("application_\\d+_\\d+")};
 
         try {
-            int exitCode = launch.waitFor();
-            if (exitCode == 1) {
-                throw new IsxAppException(errLog.toString());
+            boolean processRunning = true;
+            while (processRunning) {
+                // 检查超时
+                long waitMillis = timeoutExpiredMs - System.currentTimeMillis();
+                if (waitMillis <= 0) {
+                    launch.destroy();
+                    log.error("提交超时，日志内容：\n{}", allLog.toString());
+                    throw new IsxAppException("提交超时：" + allLog.toString());
+                }
+
+                // 读取错误流
+                if (errorReader.ready()) {
+                    String line = errorReader.readLine();
+                    if (line != null) {
+                        allLog.append("[ERROR] ").append(line).append("\n");
+                        log.debug("Error stream: {}", line);
+
+                        // 尝试匹配 applicationId
+                        if (applicationId == null) {
+                            applicationId = extractApplicationId(line, patterns);
+                        }
+                    }
+                }
+
+                // 读取标准输出流
+                if (inputReader.ready()) {
+                    String line = inputReader.readLine();
+                    if (line != null) {
+                        allLog.append("[INFO] ").append(line).append("\n");
+                        log.debug("Input stream: {}", line);
+
+                        // 尝试匹配 applicationId
+                        if (applicationId == null) {
+                            applicationId = extractApplicationId(line, patterns);
+                        }
+                    }
+                }
+
+                // 如果找到了 applicationId，返回结果
+                if (applicationId != null) {
+                    log.info("成功获取到 applicationId: {}", applicationId);
+                    return applicationId;
+                }
+
+                // 检查进程是否还在运行
+                try {
+                    int exitCode = launch.exitValue();
+                    processRunning = false;
+
+                    // 读取剩余的输出
+                    String line;
+                    while ((line = errorReader.readLine()) != null) {
+                        allLog.append("[ERROR] ").append(line).append("\n");
+                        if (applicationId == null) {
+                            applicationId = extractApplicationId(line, patterns);
+                        }
+                    }
+                    while ((line = inputReader.readLine()) != null) {
+                        allLog.append("[INFO] ").append(line).append("\n");
+                        if (applicationId == null) {
+                            applicationId = extractApplicationId(line, patterns);
+                        }
+                    }
+
+                    if (exitCode != 0) {
+                        log.error("Spark 提交失败，退出码：{}，日志：\n{}", exitCode, allLog.toString());
+                        throw new IsxAppException("Spark 提交失败，退出码：" + exitCode + "，错误信息：" + allLog.toString());
+                    }
+                } catch (IllegalThreadStateException e) {
+                    // 进程还在运行，继续循环
+                    Thread.sleep(100); // 短暂休眠避免CPU占用过高
+                }
             }
+
+            // 如果进程结束但仍未找到 applicationId
+            if (applicationId != null) {
+                return applicationId;
+            }
+
         } catch (InterruptedException e) {
-            log.error(e.getMessage(), e);
-            throw new IsxAppException(e.getMessage());
+            log.error("等待进程被中断：{}", e.getMessage(), e);
+            throw new IsxAppException("提交过程被中断：" + e.getMessage());
         } finally {
+            try {
+                errorReader.close();
+                inputReader.close();
+            } catch (IOException e) {
+                log.warn("关闭流时出错：{}", e.getMessage());
+            }
             launch.destroy();
         }
 
-        throw new IsxAppException("无法获取applicationId");
+        log.error("无法获取applicationId，完整日志：\n{}", allLog.toString());
+        throw new IsxAppException("无法获取applicationId，请检查Spark配置和日志：" + allLog.toString());
+    }
+
+    /**
+     * 从日志行中提取 applicationId
+     */
+    private String extractApplicationId(String line, Pattern[] patterns) {
+        for (Pattern pattern : patterns) {
+            Matcher matcher = pattern.matcher(line);
+            if (matcher.find()) {
+                String result = matcher.group(matcher.groupCount() > 0 ? 1 : 0);
+                // 确保结果是 application_xxx_xxx 格式
+                if (result.startsWith("application_")) {
+                    log.debug("从日志行中提取到 applicationId: {} (行内容: {})", result, line);
+                    return result;
+                }
+            }
+        }
+        return null;
     }
 
     @Override
