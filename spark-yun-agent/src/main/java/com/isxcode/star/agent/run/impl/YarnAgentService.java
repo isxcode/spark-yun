@@ -138,44 +138,56 @@ public class YarnAgentService implements AgentService {
     @Override
     public String submitWork(SparkLauncher sparkLauncher) throws Exception {
 
+        // 提交作业进程
         Process launch = sparkLauncher.launch();
-        InputStream inputStream = launch.getErrorStream();
-        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
+        InputStream errorStream = launch.getErrorStream();
+        BufferedReader errorReader = new BufferedReader(new InputStreamReader(errorStream, StandardCharsets.UTF_8));
 
+        // 正则获取applicationId表达式
+        Pattern[] patterns = {Pattern.compile("application_\\d+_\\d+")};
+
+        // 配置提交超时时间，防止while死循环
         long timeoutExpiredMs = System.currentTimeMillis() + sparkYunAgentProperties.getSubmitTimeout() * 1000;
 
+        // 记录日志
         StringBuilder errLog = new StringBuilder();
         String line;
-        while ((line = reader.readLine()) != null) {
+        String applicationId = "";
+        while ((line = errorReader.readLine()) != null) {
             errLog.append(line).append("\n");
 
+            // 提交超时退出
             long waitMillis = timeoutExpiredMs - System.currentTimeMillis();
             if (waitMillis <= 0) {
                 launch.destroy();
-                throw new IsxAppException(errLog.toString());
+                throw new IsxAppException("提交超时:" + errLog);
             }
 
-            String pattern = "Submitted application application_\\d+_\\d+";
-            Pattern regex = Pattern.compile(pattern);
-            Matcher matcher = regex.matcher(line);
-            if (matcher.find()) {
-                return matcher.group().replace("Submitted application ", "");
+            // 正则表达式逐个匹配，匹配到立马返回applicationId
+            for (Pattern pattern : patterns) {
+                Matcher matcher = pattern.matcher(line);
+                if (matcher.find()) {
+                    applicationId = matcher.group(matcher.groupCount() > 0 ? 1 : 0);
+                }
             }
         }
 
         try {
             int exitCode = launch.waitFor();
             if (exitCode == 1) {
-                throw new IsxAppException(errLog.toString());
+                throw new IsxAppException("提交作业异常:" + errLog);
+            } else if (Strings.isNotEmpty(applicationId)) {
+                return applicationId;
             }
         } catch (InterruptedException e) {
             log.error(e.getMessage(), e);
-            throw new IsxAppException(e.getMessage());
+            throw new IsxAppException("提交作业中断:" + e.getMessage());
         } finally {
             launch.destroy();
         }
 
-        throw new IsxAppException("无法获取applicationId");
+        // 如果获取不到applicationId，返回完整日志
+        throw new IsxAppException("无法获取applicationId，请检查提交日志:" + errLog);
     }
 
     @Override
@@ -186,12 +198,12 @@ public class YarnAgentService implements AgentService {
         Process process = Runtime.getRuntime().exec(String.format(getStatusCmdFormat, appId));
 
         InputStream inputStream = process.getInputStream();
-        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
+        BufferedReader inputReader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
 
-        StringBuilder errLog = new StringBuilder();
+        StringBuilder inputLog = new StringBuilder();
         String line;
-        while ((line = reader.readLine()) != null) {
-            errLog.append(line).append("\n");
+        while ((line = inputReader.readLine()) != null) {
+            inputLog.append(line).append("\n");
 
             String pattern = "Final-State : (\\w+)";
             Pattern regex = Pattern.compile(pattern);
@@ -208,14 +220,14 @@ public class YarnAgentService implements AgentService {
         try {
             int exitCode = process.waitFor();
             if (exitCode == 1) {
-                throw new IsxAppException(errLog.toString());
+                throw new IsxAppException("获取作业状态异常:" + inputLog);
             }
         } catch (InterruptedException e) {
             log.error(e.getMessage(), e);
-            throw new IsxAppException(e.getMessage());
+            throw new IsxAppException("获取作业状态中断:" + e.getMessage());
         }
 
-        throw new IsxAppException("获取状态异常");
+        throw new IsxAppException("无法获取作业状态，请检查日志:" + inputLog);
     }
 
     @Override
