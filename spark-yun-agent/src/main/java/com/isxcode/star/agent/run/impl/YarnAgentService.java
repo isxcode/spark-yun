@@ -152,6 +152,7 @@ public class YarnAgentService implements AgentService {
         // 记录日志
         StringBuilder errLog = new StringBuilder();
         String line;
+        String applicationId = "";
         while ((line = errorReader.readLine()) != null) {
             errLog.append(line).append("\n");
 
@@ -166,7 +167,7 @@ public class YarnAgentService implements AgentService {
             for (Pattern pattern : patterns) {
                 Matcher matcher = pattern.matcher(line);
                 if (matcher.find()) {
-                    return matcher.group(matcher.groupCount() > 0 ? 1 : 0);
+                    applicationId = matcher.group(matcher.groupCount() > 0 ? 1 : 0);
                 }
             }
         }
@@ -175,6 +176,8 @@ public class YarnAgentService implements AgentService {
             int exitCode = launch.waitFor();
             if (exitCode == 1) {
                 throw new IsxAppException("提交作业异常:" + errLog);
+            } else if (Strings.isNotEmpty(applicationId)) {
+                return applicationId;
             }
         } catch (InterruptedException e) {
             log.error(e.getMessage(), e);
