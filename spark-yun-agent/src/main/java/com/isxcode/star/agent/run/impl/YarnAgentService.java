@@ -195,12 +195,12 @@ public class YarnAgentService implements AgentService {
         Process process = Runtime.getRuntime().exec(String.format(getStatusCmdFormat, appId));
 
         InputStream inputStream = process.getInputStream();
-        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
+        BufferedReader inputReader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
 
-        StringBuilder errLog = new StringBuilder();
+        StringBuilder inputLog = new StringBuilder();
         String line;
-        while ((line = reader.readLine()) != null) {
-            errLog.append(line).append("\n");
+        while ((line = inputReader.readLine()) != null) {
+            inputLog.append(line).append("\n");
 
             String pattern = "Final-State : (\\w+)";
             Pattern regex = Pattern.compile(pattern);
@@ -217,14 +217,14 @@ public class YarnAgentService implements AgentService {
         try {
             int exitCode = process.waitFor();
             if (exitCode == 1) {
-                throw new IsxAppException(errLog.toString());
+                throw new IsxAppException("获取作业状态异常:" + inputLog);
             }
         } catch (InterruptedException e) {
             log.error(e.getMessage(), e);
-            throw new IsxAppException(e.getMessage());
+            throw new IsxAppException("获取作业状态中断:" + e.getMessage());
         }
 
-        throw new IsxAppException("获取状态异常");
+        throw new IsxAppException("无法获取作业状态，请检查日志:" + inputLog);
     }
 
     @Override
