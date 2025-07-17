@@ -32,7 +32,8 @@ cd "${BASE_PATH}" || exit
 
 # 创建tmp目录
 TMP_DIR="${BASE_PATH}"/resources/tmp
-SPARK_MIN_FILE=spark-3.4.1-bin-hadoop3.tgz
+SPARK_VERSION=3.3.3
+SPARK_MIN_FILE=spark-"${SPARK_VERSION}"-bin-hadoop3.tgz
 OSS_DOWNLOAD_URL=https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/install
 SPARK_MIN_DOWNLOAD_URL="${OSS_DOWNLOAD_URL}"/"${SPARK_MIN_FILE}"
 SPARK_MIN_DIR="${BASE_PATH}"/spark-yun-dist/spark-min
@@ -44,12 +45,12 @@ fi
 
 # 下载spark二进制文件
 if [ ! -f "${TMP_DIR}"/"${SPARK_MIN_FILE}" ]; then
-    echo "spark-3.4.1二进制文件开始下载，请耐心等待"
+    echo "spark-"${SPARK_VERSION}"二进制文件开始下载，请耐心等待"
     curl -ssL "${SPARK_MIN_DOWNLOAD_URL}" -o "${TMP_DIR}"/"${SPARK_MIN_FILE}"
     if [ $? -eq 0 ]; then
-        echo "spark-3.4.1下载成功"
+        echo "spark-"${SPARK_VERSION}"下载成功"
     else
-        echo "【安装结果】：spark-3.4.1下载失败"
+        echo "【安装结果】：spark-"${SPARK_VERSION}"下载失败"
         exit 1
     fi
 fi
@@ -73,20 +74,20 @@ fi
 
 # 下载spark的jars依赖
 SPARK_JAR_DIR="${SPARK_MIN_DIR}"/jars
-if [ ! -f "${SPARK_JAR_DIR}"/spark-sql-kafka-0-10_2.12-3.4.1.jar ]; then
-  echo "spark-sql-kafka-0-10_2.12-3.4.1.jar依赖开始下载"
-  curl -ssL "${OSS_DOWNLOAD_URL}"/spark-sql-kafka-0-10_2.12-3.4.1.jar -o "${SPARK_JAR_DIR}"/spark-sql-kafka-0-10_2.12-3.4.1.jar
-  echo "spark-sql-kafka-0-10_2.12-3.4.1.jar依赖下载成功"
+if [ ! -f "${SPARK_JAR_DIR}"/spark-sql-kafka-0-10_2.12-"${SPARK_VERSION}".jar ]; then
+  echo "spark-sql-kafka-0-10_2.12-"${SPARK_VERSION}".jar依赖开始下载"
+  curl -ssL "${OSS_DOWNLOAD_URL}"/spark-sql-kafka-0-10_2.12-"${SPARK_VERSION}".jar -o "${SPARK_JAR_DIR}"/spark-sql-kafka-0-10_2.12-"${SPARK_VERSION}".jar
+  echo "spark-sql-kafka-0-10_2.12-"${SPARK_VERSION}".jar依赖下载成功"
 fi
-if [ ! -f "${SPARK_JAR_DIR}"/spark-streaming-kafka-0-10_2.12-3.4.1.jar ]; then
-  echo "spark-streaming-kafka-0-10_2.12-3.4.1.jar依赖开始下载"
-  curl -ssL "${OSS_DOWNLOAD_URL}"/spark-streaming-kafka-0-10_2.12-3.4.1.jar -o "${SPARK_JAR_DIR}"/spark-streaming-kafka-0-10_2.12-3.4.1.jar
-  echo "spark-streaming-kafka-0-10_2.12-3.4.1.jar依赖下载成功"
+if [ ! -f "${SPARK_JAR_DIR}"/spark-streaming-kafka-0-10_2.12-"${SPARK_VERSION}".jar ]; then
+  echo "spark-streaming-kafka-0-10_2.12-"${SPARK_VERSION}".jar依赖开始下载"
+  curl -ssL "${OSS_DOWNLOAD_URL}"/spark-streaming-kafka-0-10_2.12-"${SPARK_VERSION}".jar -o "${SPARK_JAR_DIR}"/spark-streaming-kafka-0-10_2.12-"${SPARK_VERSION}".jar
+  echo "spark-streaming-kafka-0-10_2.12-"${SPARK_VERSION}".jar依赖下载成功"
 fi
-if [ ! -f "${SPARK_JAR_DIR}"/spark-token-provider-kafka-0-10_2.12-3.4.1.jar ]; then
-  echo "spark-token-provider-kafka-0-10_2.12-3.4.1.jar依赖开始下载"
-  curl -ssL "${OSS_DOWNLOAD_URL}"/spark-token-provider-kafka-0-10_2.12-3.4.1.jar -o "${SPARK_JAR_DIR}"/spark-token-provider-kafka-0-10_2.12-3.4.1.jar
-  echo "spark-token-provider-kafka-0-10_2.12-3.4.1.jar依赖下载成功"
+if [ ! -f "${SPARK_JAR_DIR}"/spark-token-provider-kafka-0-10_2.12-"${SPARK_VERSION}".jar ]; then
+  echo "spark-token-provider-kafka-0-10_2.12-"${SPARK_VERSION}".jar依赖开始下载"
+  curl -ssL "${OSS_DOWNLOAD_URL}"/spark-token-provider-kafka-0-10_2.12-"${SPARK_VERSION}".jar -o "${SPARK_JAR_DIR}"/spark-token-provider-kafka-0-10_2.12-"${SPARK_VERSION}".jar
+  echo "spark-token-provider-kafka-0-10_2.12-"${SPARK_VERSION}".jar依赖下载成功"
 fi
 if [ ! -f "${SPARK_JAR_DIR}"/commons-pool2-2.11.1.jar ]; then
   echo "commons-pool2-2.11.1.jar依赖开始下载"
