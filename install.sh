@@ -57,7 +57,7 @@ readonly PROJECT_JARS=(
 )
 
 # Resources文件列表
-readonly PRQL_BINARIES=(
+readonly RESOURCE_FILE=(
     "libprql_java-osx-arm64.dylib"
     "libprql_java-linux64.so"
 )
@@ -140,7 +140,7 @@ install_spark() {
     # 下载 Spark
     local spark_url="${OSS_DOWNLOAD_URL}/${SPARK_MIN_FILE}"
     local spark_path="${TMP_DIR}/${SPARK_MIN_FILE}"
-    download_file "$spark_url" "$spark_path" "Spark ${SPARK_VERSION} 二进制文件"
+    download_file "$spark_url" "$spark_path" "Spark ${SPARK_VERSION} 二进制文件，请耐心等待"
 
     # 解压 Spark（如果尚未解压）
     if [[ ! -f "${SPARK_MIN_DIR}/README.md" ]]; then
@@ -203,10 +203,10 @@ install_project_dependencies() {
 install_resource_dependencies() {
     echo "安装resource依赖..."
 
-    for binary_info in "${PRQL_BINARIES[@]}"; do
-        local jar_url="${OSS_DOWNLOAD_URL}/${jar}"
-        local jar_path="${LIBS_DIR}/${jar}"
-        download_file "$jar_url" "$jar_path" "项目依赖: $jar"
+    for file in "${RESOURCE_FILE[@]}"; do
+        local file_url="${OSS_DOWNLOAD_URL}/${file}"
+        local file_path="${RESOURCE_DIR}/${file}"
+        download_file "$file_url" "$file_path" "项目依赖: $file"
     done
 }
 
