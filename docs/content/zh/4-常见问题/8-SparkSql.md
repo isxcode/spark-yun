@@ -351,3 +351,46 @@ docker login isxcode:8443
 docker tag spark:3.4.1 isxcode:8443/library/spark:3.4.1
 docker push isxcode:8443/library/spark:3.4.1
 ```
+
+#### 问题9: does not exist
+
+```log
+diagnostics: Application application_1629971239095_1861 failed 2 times due to AM Container for appattempt_1629971239095_1861_000002 exited with  exitCode: -1000
+Failing this attempt.Diagnostics: [2021-09-09 17:06:35.244]File file:/home/ispong/.sparkStaging/application_1629971239095_1861/__spark_conf__.zip does not exist
+java.io.FileNotFoundException: File file:/home/ispong/.sparkStaging/application_1629971239095_1861/__spark_conf__.zip does not exist
+        at org.apache.hadoop.fs.RawLocalFileSystem.deprecatedGetFileStatus(RawLocalFileSystem.java:641)
+        at org.apache.hadoop.fs.RawLocalFileSystem.getFileLinkStatusInternal(RawLocalFileSystem.java:867)
+        at org.apache.hadoop.fs.RawLocalFileSystem.getFileStatus(RawLocalFileSystem.java:631)
+        at org.apache.hadoop.fs.FilterFileSystem.getFileStatus(FilterFileSystem.java:442)
+        at org.apache.hadoop.yarn.util.FSDownload.verifyAndCopy(FSDownload.java:269)
+        at org.apache.hadoop.yarn.util.FSDownload.access$000(FSDownload.java:67)
+        at org.apache.hadoop.yarn.util.FSDownload$2.run(FSDownload.java:414)
+        at org.apache.hadoop.yarn.util.FSDownload$2.run(FSDownload.java:411)
+        at java.security.AccessController.doPrivileged(Native Method)
+        at javax.security.auth.Subject.doAs(Subject.java:422)
+        at org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1875)
+        at org.apache.hadoop.yarn.util.FSDownload.call(FSDownload.java:411)
+        at org.apache.hadoop.yarn.server.nodemanager.containermanager.localizer.ContainerLocalizer$FSDownloadWrapper.doDownloadCall(ContainerLocalizer.java:242)
+        at org.apache.hadoop.yarn.server.nodemanager.containermanager.localizer.ContainerLocalizer$FSDownloadWrapper.call(ContainerLocalizer.java:235)
+        at org.apache.hadoop.yarn.server.nodemanager.containermanager.localizer.ContainerLocalizer$FSDownloadWrapper.call(ContainerLocalizer.java:223)
+        at java.util.concurrent.FutureTask.run(FutureTask.java:266)
+        at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+        at java.util.concurrent.FutureTask.run(FutureTask.java:266)
+        at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+        at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+        at java.lang.Thread.run(Thread.java:748)
+```
+
+**解决方案**
+
+```wikitext
+这是因为spark找不到yarn的环境变量
+```
+
+方法1:
+1. 检查系统中是否配置HADOOP_CONF_DIR环境变量，例如 /opt/hadoop/etc/hadoop/，该路径下检查是否有yarn-site.xml文件。
+2. 重启计算集群中的节点，先停止，再激活。
+
+方法2:
+1. 修改~/zhiqingyun-agent/conf/agent-env.sh文件，添加HADOOP_CONF_DIR环境变量，例如 export HADOOP_CONF_DIR=/opt/hadoop/etc/hadoop/。
+2. 重启计算集群中的节点，先停止，再激活。
