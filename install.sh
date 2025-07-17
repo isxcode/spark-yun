@@ -100,10 +100,14 @@ download_file() {
 
     echo "开始下载 $description..."
     if curl -ssL "$url" -o "$output_path"; then
-        echo "$description 下载成功"
-    else
-        echo "仓库下载失败，请联系管理员:ispong@outlook.com" >&2
-        exit 1
+      if head -n 1 "$output_path" | grep -q "<?xml"; then
+        if grep -q "<Error>" "$output_path" && grep -q "<Code>NoSuchKey</Code>" "$output_path"; then
+            rm -rf "$output_path"
+            echo "下载失败，请联系管理员: ispong@outlook.com" >&2
+            exit 1
+        fi
+      fi
+      echo "$description 下载成功"
     fi
 }
 
