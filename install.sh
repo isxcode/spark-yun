@@ -16,10 +16,10 @@ readonly BASE_PATH=$(cd "$(dirname "$0")" && pwd)
 readonly TMP_DIR="${BASE_PATH}/resources/tmp"
 readonly JDBC_DIR="${BASE_PATH}/resources/jdbc/system"
 readonly LIBS_DIR="${BASE_PATH}/resources/libs"
-readonly RESOURCE_DIR="${BASE_PATH}/resources/libs"
+readonly RESOURCE_DIR="${BASE_PATH}/spark-yun-backend/spark-yun-main/src/main/resources"
 readonly SPARK_MIN_DIR="${BASE_PATH}/spark-yun-dist/spark-min"
 
-# Spark依赖列表
+# spark依赖列表
 readonly SPARK_JARS=(
     "spark-sql-kafka-0-10_2.12-${SPARK_VERSION}.jar"
     "spark-streaming-kafka-0-10_2.12-${SPARK_VERSION}.jar"
@@ -32,7 +32,7 @@ readonly SPARK_JARS=(
     "HikariCP-4.0.3.jar"
 )
 
-# 数据库驱动列表
+# 数据源驱动列表
 readonly JDBC_DRIVERS=(
     "mysql-connector-j-8.1.0.jar"
     "postgresql-42.6.0.jar"
@@ -56,10 +56,10 @@ readonly PROJECT_JARS=(
     "prql-java-0.5.2.jar"
 )
 
-# PRQL 二进制文件列表
+# Resources文件列表
 readonly PRQL_BINARIES=(
-    "libprql_java-osx-arm64.dylib:PRQL macOS ARM64 二进制文件"
-    "libprql_java-linux64.so:PRQL Linux AMD64 二进制文件"
+    "libprql_java-osx-arm64.dylib"
+    "libprql_java-linux64.so"
 )
 
 # =============================================================================
@@ -108,7 +108,7 @@ download_file() {
 }
 
 # =============================================================================
-# 逻辑函数
+# 安装函数
 # =============================================================================
 
 # 检查系统依赖
@@ -129,7 +129,7 @@ check_system_dependencies() {
     fi
 }
 
-# 安装Spark
+# 安装spark
 install_spark() {
     echo "安装 Spark ${SPARK_VERSION}..."
 
@@ -197,18 +197,16 @@ install_project_dependencies() {
         local jar_path="${LIBS_DIR}/${jar}"
         download_file "$jar_url" "$jar_path" "项目依赖: $jar"
     done
+}
 
-    # 下载 PRQL 二进制文件
-    local resources_dir="${BASE_PATH}/spark-yun-backend/spark-yun-main/src/main/resources"
-    create_dir "$resources_dir"
+# 安装resources依赖
+install_resource_dependencies() {
+    echo "安装resource依赖..."
 
-    # 批量下载 PRQL 二进制文件
     for binary_info in "${PRQL_BINARIES[@]}"; do
-        local binary_file="${binary_info%%:*}"
-        local binary_desc="${binary_info##*:}"
-        local binary_url="${OSS_DOWNLOAD_URL}/${binary_file}"
-        local binary_path="${resources_dir}/${binary_file}"
-        download_file "$binary_url" "$binary_path" "$binary_desc"
+        local jar_url="${OSS_DOWNLOAD_URL}/${jar}"
+        local jar_path="${LIBS_DIR}/${jar}"
+        download_file "$jar_url" "$jar_path" "项目依赖: $jar"
     done
 }
 
@@ -233,6 +231,9 @@ main() {
 
     # 5. 安装项目依赖
     install_project_dependencies
+
+    # 6. 安装resource依赖
+    install_resource_dependencies
 
     echo "项目依赖安装完成！"
 }
