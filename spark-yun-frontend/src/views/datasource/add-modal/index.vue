@@ -145,6 +145,13 @@ db2: jdbc:db2://${host}:${ip}/${database}
     </el-form>
     <template #customLeft>
       <div class="test-button">
+        <el-button
+          type="default"
+          @click="openAdvancedConfig"
+          class="advanced-config-button"
+        >
+          高级配置
+        </el-button>
         <el-button :loading="testLoading" type="primary" @click="testFun">连接测试</el-button>
         <el-popover
           placement="right"
@@ -162,6 +169,60 @@ db2: jdbc:db2://${host}:${ip}/${database}
         </el-popover>
       </div>
     </template>
+  </BlockModal>
+
+  <!-- 高级配置弹窗 -->
+  <BlockModal :model-config="advancedConfigModalConfig">
+    <div class="advanced-config-modal">
+      <div class="config-header">
+        <span class="config-title">配置项列表</span>
+        <el-button
+          type="primary"
+          size="small"
+          @click="addConfig"
+          class="add-config-btn"
+        >
+          + 添加配置项
+        </el-button>
+      </div>
+
+      <div class="config-list">
+        <div class="config-labels">
+          <span class="label-key">配置项名称</span>
+          <span class="label-value">配置项值</span>
+          <span class="label-action">操作</span>
+        </div>
+
+        <div
+          v-for="(config, index) in formData.advancedConfig"
+          :key="index"
+          class="config-item"
+        >
+          <el-input
+            v-model="config.key"
+            placeholder="请输入配置项名称"
+            class="config-key"
+            size="small"
+          />
+          <el-input
+            v-model="config.value"
+            placeholder="请输入配置项值"
+            class="config-value"
+            size="small"
+          />
+          <span
+            @click="removeConfig(index)"
+            class="remove-text"
+          >
+            删除
+          </span>
+        </div>
+
+        <div v-if="formData.advancedConfig.length === 0" class="empty-state">
+          <span>暂无配置项，点击上方按钮添加</span>
+        </div>
+      </div>
+    </div>
   </BlockModal>
 </template>
 
@@ -197,6 +258,27 @@ const modelConfig = reactive({
   zIndex: 1100,
   closeOnClickModal: false
 })
+
+const advancedConfigModalConfig = reactive({
+  title: '高级配置',
+  visible: false,
+  width: '600px',
+  customClass: 'advanced-config-modal-wrapper',
+  okConfig: {
+    title: '确定',
+    ok: saveAdvancedConfig,
+    disabled: false,
+    loading: false
+  },
+  cancelConfig: {
+    title: '取消',
+    cancel: closeAdvancedConfig,
+    disabled: false
+  },
+  needScale: false,
+  zIndex: 1200,
+  closeOnClickModal: false
+})
 const formData = reactive({
   name: '',
   dbType: '',
@@ -209,7 +291,8 @@ const formData = reactive({
   username: '',
   passwd: '',
   remark: '',
-  id: ''
+  id: '',
+  advancedConfig: []
 })
 const typeList = reactive([
   {
@@ -366,6 +449,15 @@ function showModal(cb: () => void, data: any): void {
     }
     formData.metastoreUris = data.metastoreUris
     formData.id = data.id
+    // 处理高级配置
+    if (data.advancedConfig && Object.keys(data.advancedConfig).length > 0) {
+      formData.advancedConfig = Object.entries(data.advancedConfig).map(([key, value]) => ({
+        key,
+        value: value as string
+      }))
+    } else {
+      formData.advancedConfig = []
+    }
     modelConfig.title = '编辑数据源'
   } else {
     formData.name = ''
@@ -380,6 +472,7 @@ function showModal(cb: () => void, data: any): void {
     formData.driverId = ''
     formData.metastoreUris = ''
     formData.id = ''
+    formData.advancedConfig = []
     modelConfig.title = '添加数据源'
   }
   getDriverIdList(true)
@@ -443,9 +536,19 @@ function okEvent() {
   form.value?.validate((valid: boolean) => {
     if (valid) {
       modelConfig.okConfig.loading = true
+
+      // 处理高级配置数据，转换为对象格式
+      const advancedConfigObj: Record<string, string> = {}
+      formData.advancedConfig.forEach(config => {
+        if (config.key && config.value) {
+          advancedConfigObj[config.key] = config.value
+        }
+      })
+
       callback
         .value({
           ...formData,
+          advancedConfig: advancedConfigObj,
           id: formData.id ? formData.id : undefined
         })
         .then((res: any) => {
@@ -463,6 +566,62 @@ function okEvent() {
       ElMessage.warning('请将表单输入完整')
     }
   })
+}
+
+// 高级配置相关方法
+function openAdvancedConfig() {
+  advancedConfigModalConfig.visible = true
+}
+
+function saveAdvancedConfig() {
+  // 验证配置项
+  const validationResult = validateAdvancedConfig()
+  if (!validationResult.isValid) {
+    ElMessage.warning(validationResult.message)
+    return
+  }
+
+  advancedConfigModalConfig.visible = false
+}
+
+function validateAdvancedConfig() {
+  // 过滤掉空的配置项
+  const validConfigs = formData.advancedConfig.filter(config => config.key.trim() || config.value.trim())
+
+  // 检查是否有key或value为空的配置项
+  for (let i = 0; i < validConfigs.length; i++) {
+    const config = validConfigs[i]
+    if (!config.key.trim()) {
+      return { isValid: false, message: `第${i + 1}个配置项的名称不能为空` }
+    }
+    if (!config.value.trim()) {
+      return { isValid: false, message: `第${i + 1}个配置项的值不能为空` }
+    }
+  }
+
+  // 检查key是否重复
+  const keys = validConfigs.map(config => config.key.trim())
+  const uniqueKeys = [...new Set(keys)]
+  if (keys.length !== uniqueKeys.length) {
+    return { isValid: false, message: '配置项名称不能重复' }
+  }
+
+  // 更新formData，移除空的配置项
+  formData.advancedConfig = validConfigs
+
+  return { isValid: true, message: '' }
+}
+
+function closeAdvancedConfig() {
+  advancedConfigModalConfig.visible = false
+}
+
+function addConfig() {
+  formData.advancedConfig.push({ key: '', value: '' })
+}
+
+function removeConfig(index: number) {
+  formData.advancedConfig.splice(index, 1)
 }
 
 function closeEvent() {
@@ -493,6 +652,17 @@ defineExpose({
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 8px;
+
+    .advanced-config-button {
+      color: getCssVar('color', 'primary');
+      border-color: getCssVar('color', 'primary');
+
+      &:hover {
+        background-color: getCssVar('color', 'primary');
+        color: getCssVar('color', 'white');
+      }
+    }
   }
   .hover-tooltip {
     margin-left: 8px;
@@ -500,6 +670,94 @@ defineExpose({
     color: getCssVar('color', 'danger');
     &.success {
       color: getCssVar('color', 'success');
+    }
+  }
+}
+
+// 高级配置弹窗样式
+.advanced-config-modal-wrapper {
+  .advanced-config-modal {
+    padding: 20px;
+
+    .config-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid getCssVar('border-color', 'lighter');
+
+      .config-title {
+        font-size: 14px;
+        font-weight: 500;
+        color: getCssVar('text-color', 'primary');
+      }
+
+      .add-config-btn {
+        font-size: 12px;
+        padding: 6px 12px;
+      }
+    }
+
+    .config-list {
+      .config-labels {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 8px;
+        padding: 0 4px;
+
+        .label-key,
+        .label-value {
+          flex: 1;
+          font-size: 12px;
+          color: getCssVar('text-color', 'secondary');
+          font-weight: 500;
+        }
+
+        .label-action {
+          width: 60px;
+          font-size: 12px;
+          color: getCssVar('text-color', 'secondary');
+          font-weight: 500;
+          text-align: center;
+        }
+      }
+
+      .config-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 8px;
+
+        .config-key,
+        .config-value {
+          flex: 1;
+        }
+
+        .remove-text {
+          width: 60px;
+          font-size: 12px;
+          color: getCssVar('color', 'primary');
+          cursor: pointer;
+          text-align: center;
+          user-select: none;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+
+          &:hover {
+            text-decoration: underline;
+          }
+        }
+      }
+
+      .empty-state {
+        text-align: center;
+        padding: 40px 0;
+        color: getCssVar('text-color', 'placeholder');
+        font-size: 14px;
+      }
     }
   }
 }

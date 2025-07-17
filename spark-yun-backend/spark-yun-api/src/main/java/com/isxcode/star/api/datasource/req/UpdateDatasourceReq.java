@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import javax.validation.constraints.NotEmpty;
 
 import lombok.Data;
+import java.util.Map;
 
 @Data
 public class UpdateDatasourceReq {
@@ -43,4 +44,7 @@ public class UpdateDatasourceReq {
 
     @Schema(title = "kafka数据源配置")
     private KafkaConfig kafkaConfig;
+
+    @Schema(title = "高级配置", example = "{\"key1\":\"value1\",\"key2\":\"value2\"}")
+    private Map<String, String> advancedConfig;
 }
