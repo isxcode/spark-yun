@@ -65,4 +65,9 @@ public interface WorkType {
      * pyspark作业.
      */
     String PY_SPARK = "PY_SPARK";
+
+    /**
+     * 整库迁移作业.
+     */
+    String DB_MIGRATE = "DB_MIGRATE";
 }

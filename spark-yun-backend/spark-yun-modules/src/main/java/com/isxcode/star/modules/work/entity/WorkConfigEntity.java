@@ -64,6 +64,8 @@ public class WorkConfigEntity {
 
     private String alarmList;
 
+    private String dbMigrateConfig;
+
     @CreatedDate
     private LocalDateTime createDateTime;
 

@@ -194,6 +194,11 @@ public class WorkConfigBizService {
             workConfig.setAlarmList(JSON.toJSONString(wocConfigWorkReq.getAlarmList()));
         }
 
+        // 设置整库迁移配置
+        if (wocConfigWorkReq.getDbMigrateConfig() != null) {
+            workConfig.setDbMigrateConfig(JSON.toJSONString(wocConfigWorkReq.getDbMigrateConfig()));
+        }
+
         // 保存配置
         workConfigRepository.save(workConfig);
     }
