@@ -216,8 +216,10 @@ public class Execute {
             case DatasourceType.ORACLE:
                 return "MOD(ORA_HASH(\"" + PartitionColumn + "\")," + NumPartitions + ") in (" + startIndex + ",-"
                     + endIndex + ")";
-            case DatasourceType.OCEANBASE:
             case DatasourceType.DM:
+                return "ORA_HASH(\"" + PartitionColumn + "\") % " + NumPartitions + " in (" + startIndex + ",-"
+                    + endIndex + ")";
+            case DatasourceType.OCEANBASE:
                 return "ORA_HASH(`" + PartitionColumn + "`) % " + NumPartitions + " in (" + startIndex + ",-" + endIndex
                     + ")";
             case DatasourceType.SQL_SERVER:

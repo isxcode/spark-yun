@@ -79,6 +79,11 @@ public class DatasourceService {
 
     public boolean isQueryStatement(String sql) {
 
+        // 如果最后是; 则删除
+        if (sql.endsWith(";")) {
+            sql = sql.substring(0, sql.length() - 1);
+        }
+
         SqlParser parser = SqlParser.create(sql);
         try {
 
@@ -176,6 +181,6 @@ public class DatasourceService {
 
     public DatabaseDriverEntity getDatasourceDriver(String datasourceDriverId) {
 
-        return databaseDriverRepository.findById(datasourceDriverId).orElseThrow(() -> new IsxAppException("驱动不存在不存在"));
+        return databaseDriverRepository.findById(datasourceDriverId).orElseThrow(() -> new IsxAppException("驱动不存在"));
     }
 }
