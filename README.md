@@ -7,17 +7,17 @@
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fisxcode%2Fspark-yun.svg?type=shield&issueType=license)](https://app.fossa.com/projects/git%2Bgithub.com%2Fisxcode%2Fspark-yun?ref=badge_shield&issueType=license)
 [![GitHub License](https://img.shields.io/github/license/isxcode/spark-yun)](https://github.com/isxcode/spark-yun/blob/main/LICENSE)
 
-|        |                                                                           |
-|--------|---------------------------------------------------------------------------|
-| 产品官网:  | https://zhiqingyun.isxcode.com                                            |
-| 源码仓库:  | https://github.com/isxcode/spark-yun                                      |
-| 演示环境:  | https://zhiqingyun-demo.isxcode.com                                       |
-| 部署文档:  | https://zhiqingyun.isxcode.com/zh/docs/zh/1/2                             |
+|             |                                                                           |
+| ----------- | ------------------------------------------------------------------------- |
+| 产品官网:   | https://zhiqingyun.isxcode.com                                            |
+| 源码仓库:   | https://github.com/isxcode/spark-yun                                      |
+| 演示环境:   | https://zhiqingyun-demo.isxcode.com                                       |
+| 部署文档:   | https://zhiqingyun.isxcode.com/zh/docs/zh/1/2                             |
 | 安装包下载: | https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/zhiqingyun.tar.gz |
 | 许可证下载: | https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/license.lic       |
-| 友情链接:  | [至数云 - 轻量级一体化应用平台](https://zhishuyun.isxcode.com)                         |
-| 关键词:   | 大数据计算, AI智能, 数仓, 数据清洗, 数据同步, Spark, Flink, Hadoop, Hive                   |
-|        |                                                                           |
+| 友情链接:   | [至数云 - 轻量级一体化应用平台](https://zhishuyun.isxcode.com)            |
+| 关键词:     | 大数据计算, AI智能, 数仓, 数据清洗, 数据同步, Spark, Flink, Hadoop, Hive  |
+|             |                                                                           |
 
 ### 产品介绍
 
@@ -68,3 +68,5 @@ docker run --rm \
   -it registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun-build:amd-latest \
   /bin/bash -c "source /etc/profile && gradle install clean package"
 ```
+
+123
