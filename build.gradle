@@ -111,14 +111,6 @@ tasks.register('start', Exec) {
     '''
 }
 
-tasks.register('docker', Exec) {
-
-    commandLine 'sh', '-c', '''
-      docker buildx uninstall
-      docker build -t isxcode/zhiqingyun:''' + version_number + ''' -f ./Dockerfile .
-     '''
-}
-
 tasks.register('website', Exec) {
 
     commandLine 'sh', '-c', '''
@@ -144,11 +136,6 @@ tasks.register('backend', GradleBuild) {
     tasks = [":spark-yun-backend:spark-yun-main:bootRun"]
 }
 
-tasks.register('autotest', GradleBuild) {
-
-    tasks = [":spark-yun-autotest:autotest"]
-}
-
 tasks.register('install', Exec) {
     if (!System.properties['os.name'].toString().contains('Mac OS X')) {
         doFirst {
@@ -158,4 +145,25 @@ tasks.register('install', Exec) {
         }
     }
     commandLine 'sh', '-c', 'bash install.sh'
+}
+
+tasks.register('docker', Exec) {
+
+    commandLine 'sh', '-c', '''
+      docker buildx uninstall
+      docker build -t isxcode/zhiqingyun:''' + version_number + ''' -f ./Dockerfile .
+     '''
+}
+
+tasks.register('upload', Exec) {
+
+    commandLine 'sh', '-c', '''
+      docker buildx install
+      docker buildx build --platform linux/amd64 -t registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun:latest-amd64 -f ./Dockerfile . --load
+      docker push registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun:latest-amd64
+      docker buildx build --platform linux/arm64/v8 -t registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun:latest-arm64 -f ./Dockerfile . --load
+      docker push registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun:latest-arm64
+      docker buildx build --platform linux/amd64,linux/arm64/v8 -t  isxcode/zhiqingyun:latest -f ./Dockerfile . --push
+      ossutil cp spark-yun-dist/build/distributions/zhiqingyun.tar.gz oss://isxcode/zhiqingyun/
+     '''
 }
