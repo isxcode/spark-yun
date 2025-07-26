@@ -155,15 +155,30 @@ tasks.register('docker', Exec) {
      '''
 }
 
-tasks.register('upload', Exec) {
+tasks.register('upload-ali-oss', Exec) {
+
+    commandLine 'sh', '-c', '''
+      ossutil cp spark-yun-dist/build/distributions/zhiqingyun.tar.gz oss://isxcode/zhiqingyun/
+     '''
+}
+
+tasks.register('upload-docker-hub', Exec) {
 
     commandLine 'sh', '-c', '''
       docker buildx install
+      docker buildx build --platform linux/amd64,linux/arm64/v8 -t isxcode/zhiqingyun:latest -f ./Dockerfile . --push
+     '''
+}
+
+tasks.register('upload-ali-hub', Exec) {
+
+    commandLine 'sh', '-c', '''
+      docker buildx install
+      docker rmi registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun:latest-amd64
       docker buildx build --platform linux/amd64 -t registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun:latest-amd64 -f ./Dockerfile . --load
       docker push registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun:latest-amd64
+      docker rmi registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun:latest-arm64
       docker buildx build --platform linux/arm64/v8 -t registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun:latest-arm64 -f ./Dockerfile . --load
       docker push registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun:latest-arm64      
-      ossutil cp spark-yun-dist/build/distributions/zhiqingyun.tar.gz oss://isxcode/zhiqingyun/
-      docker buildx build --platform linux/amd64,linux/arm64/v8 -t isxcode/zhiqingyun:latest -f ./Dockerfile . --push
      '''
 }
