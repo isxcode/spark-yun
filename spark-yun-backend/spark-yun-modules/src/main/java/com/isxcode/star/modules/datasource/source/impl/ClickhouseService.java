@@ -164,7 +164,7 @@ public class ClickhouseService extends Datasource {
 
     @Override
     public String getPageSql(String sql) throws IsxAppException {
-        return "SELECT * FROM (" + sql + ") LIMIT ${pageSize} OFFSET ${page}";
+        return "SELECT * FROM (" + sql + ") LIMIT '${pageSize}' OFFSET '${page}'";
     }
 
     @Override
