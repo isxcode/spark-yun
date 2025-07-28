@@ -161,7 +161,7 @@ public class DmService extends Datasource {
 
     @Override
     public String getPageSql(String sql) throws IsxAppException {
-        return "SELECT * FROM (" + sql + ") WHERE ROWNUM BETWEEN ${page} AND ${pageSize}";
+        return "SELECT * FROM (" + sql + ") WHERE ROWNUM BETWEEN '${page}' AND '${pageSize}'";
     }
 
     @Override
