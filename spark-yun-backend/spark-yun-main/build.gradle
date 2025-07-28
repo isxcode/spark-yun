@@ -9,8 +9,6 @@ dependencies {
 
     implementation "org.flywaydb:flyway-core:${FLYWAY_VERSION}"
     implementation "org.flywaydb:flyway-mysql:${FLYWAY_VERSION}"
-
-    implementation 'org.apache.httpcomponents.client5:httpclient5:5.2.1'
 }
 
 bootJar {
