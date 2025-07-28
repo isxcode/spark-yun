@@ -152,7 +152,7 @@
                             </el-form-item>
                             <el-form-item prop="overMode" label="写入模式">
                                 <el-select v-model="formData.overMode" clearable filterable placeholder="请选择" @change="pageChangeEvent">
-                                    <el-option v-for="item in overModeList" :key="item.value" :label="item.label"
+                                    <el-option v-for="item in filteredOverModeList" :key="item.value" :label="item.label"
                                         :value="item.value" />
                                 </el-select>
                             </el-form-item>
@@ -279,6 +279,13 @@ const btnLoadingConfig = reactive({
     stopLoading: false
 })
 
+const filteredOverModeList = computed(() => {
+    if (formData.targetDBType === 'CLICKHOUSE') {
+        return overModeList.value.filter(item => item.value === 'INTO')
+    }
+    return overModeList.value
+})
+
 // 日志tab切换
 function tabChangeEvent(e: string) {
   const lookup = {
@@ -332,6 +339,11 @@ function getDate() {
             formData.targetDBId = res.data.syncWorkConfig.targetDBId
             formData.targetTable = res.data.syncWorkConfig.targetTable
             formData.overMode = res.data.syncWorkConfig.overMode
+
+            // 如果目标数据库是Clickhouse，确保写入模式为追加模式
+            if (formData.targetDBType === 'CLICKHOUSE' && formData.overMode !== 'INTO') {
+                formData.overMode = 'INTO'
+            }
 
             nextTick(() => {
                 Promise.all([
@@ -577,6 +589,10 @@ function dbTypeChange(type: string) {
     } else {
         formData.targetDBId = ''
         formData.targetTable = ''
+        // 如果目标数据库类型是Clickhouse，自动设置写入模式为追加模式
+        if (formData.targetDBType === 'CLICKHOUSE') {
+            formData.overMode = 'INTO'
+        }
     }
 }
 // 级联控制
@@ -791,6 +807,12 @@ onMounted(() => {
                             .el-form-item__content {
                                 flex-wrap: nowrap;
                                 justify-content: flex-end;
+                            }
+
+                            .clickhouse-tip {
+                                margin-top: 4px;
+                                font-size: 12px;
+                                color: getCssVar('color', 'info');
                             }
                         }
                     }
