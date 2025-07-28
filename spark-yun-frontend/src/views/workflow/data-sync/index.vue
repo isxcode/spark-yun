@@ -152,7 +152,7 @@
                             </el-form-item>
                             <el-form-item prop="overMode" label="写入模式">
                                 <el-select v-model="formData.overMode" clearable filterable placeholder="请选择" @change="pageChangeEvent">
-                                    <el-option v-for="item in filteredOverModeList" :key="item.value" :label="item.label"
+                                    <el-option v-for="item in overModeList" :key="item.value" :label="item.label"
                                         :value="item.value" />
                                 </el-select>
                             </el-form-item>
@@ -277,13 +277,6 @@ const btnLoadingConfig = reactive({
     importLoading: false,
     exportLoading: false,
     stopLoading: false
-})
-
-const filteredOverModeList = computed(() => {
-    if (formData.targetDBType === 'CLICKHOUSE') {
-        return overModeList.value.filter(item => item.value === 'INTO')
-    }
-    return overModeList.value
 })
 
 // 日志tab切换
