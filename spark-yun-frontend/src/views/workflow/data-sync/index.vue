@@ -333,11 +333,6 @@ function getDate() {
             formData.targetTable = res.data.syncWorkConfig.targetTable
             formData.overMode = res.data.syncWorkConfig.overMode
 
-            // 如果目标数据库是Clickhouse，确保写入模式为追加模式
-            if (formData.targetDBType === 'CLICKHOUSE' && formData.overMode !== 'INTO') {
-                formData.overMode = 'INTO'
-            }
-
             nextTick(() => {
                 Promise.all([
                     getDataSource(true, formData.sourceDBType, 'source'),
@@ -582,10 +577,6 @@ function dbTypeChange(type: string) {
     } else {
         formData.targetDBId = ''
         formData.targetTable = ''
-        // 如果目标数据库类型是Clickhouse，自动设置写入模式为追加模式
-        if (formData.targetDBType === 'CLICKHOUSE') {
-            formData.overMode = 'INTO'
-        }
     }
 }
 // 级联控制
@@ -800,12 +791,6 @@ onMounted(() => {
                             .el-form-item__content {
                                 flex-wrap: nowrap;
                                 justify-content: flex-end;
-                            }
-
-                            .clickhouse-tip {
-                                margin-top: 4px;
-                                font-size: 12px;
-                                color: getCssVar('color', 'info');
                             }
                         }
                     }
