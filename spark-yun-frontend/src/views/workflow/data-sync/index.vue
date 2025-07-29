@@ -115,6 +115,9 @@
                                 </el-select>
                             </el-form-item>
                             <el-form-item prop="queryCondition" label="过滤条件">
+                                 <el-tooltip content="例如：age > 12 and username = 'zhangsan'，不需要填写where" placement="top">
+                                    <el-icon style="left: -20px" class="tooltip-msg"><QuestionFilled /></el-icon>
+                                </el-tooltip>
                                 <code-mirror v-model="formData.queryCondition" basic :lang="lang" @change="pageChangeEvent" />
                             </el-form-item>
                         </el-form>
