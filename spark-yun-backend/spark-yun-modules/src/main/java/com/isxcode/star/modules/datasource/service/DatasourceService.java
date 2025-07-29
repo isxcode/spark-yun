@@ -100,15 +100,13 @@ public class DatasourceService {
         }
     }
 
-    public boolean checkSqlValid(String sql) {
+    public void checkSqlValid(String sql) {
 
         SqlParser parser = SqlParser.create(sql);
         try {
             parser.parseQuery(sql);
-            return true;
         } catch (SqlParseException e) {
-            log.error(e.getMessage(), e);
-            return false;
+            throw new IsxAppException(e.getMessage());
         }
     }
 
