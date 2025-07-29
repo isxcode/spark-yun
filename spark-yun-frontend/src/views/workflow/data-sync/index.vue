@@ -152,7 +152,7 @@
                             </el-form-item>
                             <el-form-item prop="overMode" label="写入模式">
                                 <el-select v-model="formData.overMode" clearable filterable placeholder="请选择" @change="pageChangeEvent">
-                                    <el-option v-for="item in overModeList" :key="item.value" :label="item.label"
+                                    <el-option v-for="item in filteredOverModeList" :key="item.value" :label="item.label"
                                         :value="item.value" />
                                 </el-select>
                             </el-form-item>
@@ -189,7 +189,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, reactive, onMounted, defineProps, nextTick, markRaw } from 'vue'
+import { ref, reactive, onMounted, defineProps, nextTick, markRaw, computed } from 'vue'
 import { ElMessage, ElMessageBox, FormInstance, FormRules } from 'element-plus'
 // import CodeMirror from 'vue-codemirror6'
 import { sql } from '@codemirror/lang-sql'
@@ -314,6 +314,13 @@ function saveData() {
         console.error(err)
     })
 }
+
+const filteredOverModeList = computed(() => {
+    if (formData.targetDBType === 'CLICKHOUSE') {
+        return overModeList.value.filter(item => item.value === 'INTO')
+    }
+    return overModeList.value
+})
 
 function getDate() {
     loading.value = true
