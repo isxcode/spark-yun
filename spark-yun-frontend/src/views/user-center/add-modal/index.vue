@@ -42,19 +42,25 @@
           placeholder="请输入"
         />
       </el-form-item>
-      <el-form-item label="手机号">
+      <el-form-item
+        label="手机号"
+        prop="phone"
+      >
         <el-input
           v-model="formData.phone"
-          maxlength="100"
-          placeholder="请输入"
+          maxlength="11"
+          placeholder="请输入手机号"
           show-word-limit
         />
       </el-form-item>
-      <el-form-item label="邮箱">
+      <el-form-item
+        label="邮箱"
+        prop="email"
+      >
         <el-input
           v-model="formData.email"
           maxlength="100"
-          placeholder="请输入"
+          placeholder="请输入邮箱"
           show-word-limit
         />
       </el-form-item>
@@ -108,6 +114,36 @@ const formData = reactive({
   remark: '',
   id: ''
 })
+// 中国手机号验证函数
+const validatePhone = (rule: any, value: any, callback: any) => {
+  if (!value) {
+    callback()
+    return
+  }
+  // 中国手机号正则：1开头，第二位3-9，总共11位数字
+  const phoneReg = /^1[3-9]\d{9}$/
+  if (!phoneReg.test(value)) {
+    callback(new Error('请输入正确的手机号'))
+  } else {
+    callback()
+  }
+}
+
+// 邮箱验证函数
+const validateEmail = (rule: any, value: any, callback: any) => {
+  if (!value) {
+    callback()
+    return
+  }
+  // 更严格的邮箱正则验证
+  const emailReg = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
+  if (!emailReg.test(value)) {
+    callback(new Error('请输入正确的邮箱格式'))
+  } else {
+    callback()
+  }
+}
+
 const rules = reactive<FormRules>({
   username: [
     {
@@ -128,6 +164,18 @@ const rules = reactive<FormRules>({
       required: true,
       message: '请输入密码',
       trigger: [ 'change' ]
+    }
+  ],
+  phone: [
+    {
+      validator: validatePhone,
+      trigger: ['blur', 'change']
+    }
+  ],
+  email: [
+    {
+      validator: validateEmail,
+      trigger: ['blur', 'change']
     }
   ]
 })
