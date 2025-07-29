@@ -58,19 +58,19 @@
         <el-tooltip placement="top">
             <template #content>
               <pre>
-mysql: jdbc:mysql://${host}:${ip}/${database}
-oracle: jdbc:oracle:thin:@${host}:${ip}/${database}
-sqlserver: jdbc:sqlserver://${host}:${ip};databaseName=${database}
-postgre: jdbc:postgresql://${host}:${ip}/${database}
-clickhouse: jdbc:clickhouse://${host}:${ip}/${database}
-hive: jdbc:hive2://${host}:${ip}/${database}
-sap: jdbc:sap://${host}:${ip}/${database}
-达梦: jdbc:dm://${host}:${ip}/${database}
-doris: jdbc:mysql://${host}:${ip}/${database}
-oceanbase: jdbc:oceanbase://${host}:${ip}/${database}
-tidb: jdbc:mysql://${host}:${ip}/${database}
-starrocks: jdbc:mysql://${host}:${ip}/${database}
-db2: jdbc:db2://${host}:${ip}/${database}
+mysql: jdbc:mysql://${host}:${port}/${database}
+oracle: jdbc:oracle:thin:@${host}:${port}/${database}
+sqlserver: jdbc:sqlserver://${host}:${port};databaseName=${database}
+postgre: jdbc:postgresql://${host}:${port}/${database}
+clickhouse: jdbc:clickhouse://${host}:${port}/${database}
+hive: jdbc:hive2://${host}:${port}/${database}
+sap: jdbc:sap://${host}:${port}/${database}
+达梦: jdbc:dm://${host}:${port}?schema=${database}
+doris: jdbc:mysql://${host}:${port}/${database}
+oceanbase: jdbc:oceanbase://${host}:${port}/${database}
+tidb: jdbc:mysql://${host}:${port}/${database}
+starrocks: jdbc:mysql://${host}:${port}/${database}
+db2: jdbc:db2://${host}:${port}/${database}
               </pre>
             </template>
             <el-icon style="left: 50px" class="tooltip-msg"><QuestionFilled /></el-icon>
