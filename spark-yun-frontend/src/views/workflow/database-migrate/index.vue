@@ -93,16 +93,18 @@
                                         :value="item.value" />
                                 </el-select>
                             </el-form-item>
-                            <el-form-item prop="excludeSourceRule" label="同步规则">
+                            <el-form-item prop="includeTargetRule" label="同步规则">
                                 <el-tooltip content="正则匹配：匹配需要同步的表，例如：^(A表|B表)$ 或者 ^前缀.* " placement="top">
                                     <el-icon style="left: -20px" class="tooltip-msg"><QuestionFilled /></el-icon>
                                 </el-tooltip>
                                 <el-input
-                                    v-model="formData.excludeSourceRule"
+                                    v-model="formData.includeTargetRule"
                                     placeholder="请输入正则"
                                     clearable
+                                    @input="inputEvent"
                                     @blur="dbIdChange('source')"
                                 ></el-input>
+                                <el-button type="primary" link @click="dbIdChange('source')">刷新</el-button>
                             </el-form-item>
                         </el-form>
                     </el-card>
@@ -137,17 +139,7 @@
                                     <el-option v-for="item in targetList" :key="item.value" :label="item.label"
                                         :value="item.value" />
                                 </el-select>
-                            </el-form-item>
-                            <el-form-item prop="includeTargetRule" label="补充规则">
-                                <el-tooltip content="正则匹配：匹配受保护的表" placement="top">
-                                    <el-icon style="left: -20px" class="tooltip-msg"><QuestionFilled /></el-icon>
-                                </el-tooltip>
-                                <el-input
-                                    v-model="formData.includeTargetRule"
-                                    placeholder="请输入正则"
-                                    clearable
-                                    @blur="dbIdChange('target')"
-                                ></el-input>
+                                <el-button type="primary" link @click="dbIdChange('target')">刷新</el-button>
                             </el-form-item>
                         </el-form>
                     </el-card>
@@ -261,10 +253,12 @@ const btnLoadingConfig = reactive({
 // 保存数据
 function saveData() {
     btnLoadingConfig.saveLoading = true
+    const syncTables = tableListRef.value.getSourceTableColumn()
     SaveWorkItemConfig({
         workId: formData.workId,
         dbMigrateConfig: {
-            ...formData
+            ...formData,
+            syncTables: syncTables.map((table: any) => table.code)
         }
     }).then((res: any) => {
         changeStatus.value = false
@@ -295,8 +289,20 @@ function getDate() {
             formData.targetDBId = res.data.dbMigrateConfig.targetDBId
             formData.includeTargetRule = res.data.dbMigrateConfig.includeTargetRule
 
-            dbIdChange('source')
-            dbIdChange('target')
+            if (res.data.dbMigrateConfig.syncTables && res.data.dbMigrateConfig.syncTables.length) {
+                tableListRef.value.setSourceTableColumn(res.data.dbMigrateConfig.syncTables.map((tableName: string) => {
+                    return {
+                        code: tableName
+                    }
+                }))
+            } else {
+                tableListRef.value.setSourceTableColumn([])
+            }
+
+            getDataSource(true, formData.sourceDBType, 'source')
+            getDataSource(true, formData.targetDBType, 'target')
+            // dbIdChange('source')
+            // dbIdChange('target')
         } else {
             loading.value = false
         }
@@ -460,7 +466,7 @@ function dbIdChange(type: string) {
         if (formData.sourceDBId) {
             tableListRef.value.setSourceTableList({
                 dataSourceId: formData.sourceDBId,
-                tablePattern: formData.excludeSourceRule
+                tablePattern: formData.includeTargetRule
             })
         }
     } else {
@@ -468,7 +474,7 @@ function dbIdChange(type: string) {
             // 数据去向获取表
             tableListRef.value.setTargetTableList({
                 dataSourceId: formData.targetDBId,
-                tablePattern: formData.includeTargetRule
+                tablePattern: ''
             })
         }
     }
@@ -503,6 +509,12 @@ function getDataSource(e: boolean, sourceType: string, type: string) {
             resolve()
         }
     })
+}
+
+function inputEvent(e: string) {
+    if (e === '') {
+        dbIdChange('source')
+    }
 }
 
 onMounted(() => {
