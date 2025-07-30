@@ -117,7 +117,7 @@ public class SyncWorkBizService {
 
     private Map<String, String> getTransform(Connection connection, String tableName) {
         String dataBase = null;
-        if (tableName.contains(".")) {
+        if (tableName.contains(".") && !tableName.contains("^") && !tableName.contains("*")) {
             dataBase = tableName.split("\\.")[0];
             tableName = tableName.split("\\.")[1];
         }

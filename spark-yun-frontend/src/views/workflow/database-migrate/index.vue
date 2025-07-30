@@ -93,8 +93,8 @@
                                         :value="item.value" />
                                 </el-select>
                             </el-form-item>
-                            <el-form-item prop="excludeSourceRule" label="补充规则">
-                                <el-tooltip content="正则匹配：匹配不需要同步哪些表" placement="top">
+                            <el-form-item prop="excludeSourceRule" label="同步规则">
+                                <el-tooltip content="正则匹配：匹配需要同步的表，例如：^(A表|B表)$ 或者 ^前缀.* " placement="top">
                                     <el-icon style="left: -20px" class="tooltip-msg"><QuestionFilled /></el-icon>
                                 </el-tooltip>
                                 <el-input
