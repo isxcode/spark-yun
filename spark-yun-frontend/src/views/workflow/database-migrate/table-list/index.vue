@@ -2,11 +2,13 @@
     <div class="table-list-body" id="container" v-loading="connectNodeLoading">
         <div class="source-table-container">
             <el-table ref="sourceTableRef" :data="sourceTableColumn" row-key="code">
+                <el-table-column type="index" width="50" :align="'center'" />
                 <el-table-column prop="code" :show-overflow-tooltip="true" label="表名" />
             </el-table>
         </div>
         <div class="target-table-container">
             <el-table ref="targetTableRef" :data="targetTableColumn" row-key="code">
+                <el-table-column type="index" width="50" :align="'center'" />
                 <el-table-column prop="code" :show-overflow-tooltip="true" label="表名" />
             </el-table>
         </div>
@@ -52,9 +54,19 @@ function setTargetTableList(params) {
     })
 }
 
+function getSourceTableColumn() {
+    return sourceTableColumn.value
+}
+
+function setSourceTableColumn(list: any[]) {
+    sourceTableColumn.value = list
+}
+
 defineExpose({
     setSourceTableList,
-    setTargetTableList
+    setTargetTableList,
+    getSourceTableColumn,
+    setSourceTableColumn
 })
 </script>
 
