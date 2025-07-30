@@ -68,6 +68,8 @@ public class VipWorkVersionEntity {
 
     private String alarmList;
 
+    private String dbMigrateConfig;
+
     @CreatedDate
     private LocalDateTime createDateTime;
 
