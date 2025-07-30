@@ -178,7 +178,9 @@ public class DatabaseMigratorExecutor extends WorkExecutor {
 
         // 计算需要同步的表
         List<String> syncTables = new ArrayList<>();
-        syncTables.add("SY_API");
+        syncTables.add("SY_DATABASE_DRIVER");
+        syncTables.add("SY_USER");
+        workRunContext.getDbMigrateConfig().setSyncTables(syncTables);
 
         // 封装来源Datasource的信息
         DatasourceEntity sourceDatasource =
@@ -204,7 +206,7 @@ public class DatabaseMigratorExecutor extends WorkExecutor {
         // 开始构造PluginReq
         PluginReq pluginReq =
             PluginReq.builder().sparkConfig(genSparkConfig(workRunContext.getClusterConfig().getSparkConfig()))
-                .syncRule(workRunContext.getSyncRule()).build();
+                .dbMigrateConfig(workRunContext.getDbMigrateConfig()).syncRule(workRunContext.getSyncRule()).build();
 
         // 导入自定义函数
         ScpFileEngineNodeDto scpFileEngineNodeDto =
