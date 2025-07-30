@@ -15,8 +15,6 @@ import java.util.List;
 @NoArgsConstructor
 public class DbMigrateConfig {
 
-    private String excludeSourceRule;
-
     private String includeTargetRule;
 
     @Schema(title = "作业唯一id", example = "sy_4f07ab7b1fe54dab9be884e410c53af4")

@@ -176,12 +176,6 @@ public class DatabaseMigratorExecutor extends WorkExecutor {
         executeReq.setWorkType(WorkType.DB_MIGRATE);
         executeReq.setWorkInstanceId(workInstance.getId());
 
-        // 计算需要同步的表
-        List<String> syncTables = new ArrayList<>();
-        syncTables.add("SY_DATABASE_DRIVER");
-        syncTables.add("SY_USER");
-        workRunContext.getDbMigrateConfig().setSyncTables(syncTables);
-
         // 封装来源Datasource的信息
         DatasourceEntity sourceDatasource =
             datasourceService.getDatasource(workRunContext.getDbMigrateConfig().getSourceDBId());
