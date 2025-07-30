@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.isxcode.star.api.datasource.dto.KafkaConfig;
 import com.isxcode.star.api.func.dto.FuncInfo;
+import com.isxcode.star.api.work.dto.DbMigrateConfig;
 import com.isxcode.star.api.work.dto.ExcelSyncConfig;
 import com.isxcode.star.api.work.dto.SyncRule;
 import com.isxcode.star.api.work.dto.SyncWorkConfig;
@@ -46,4 +47,6 @@ public class PluginReq {
     private String csvFileName;
 
     private String agentType;
+
+    private DbMigrateConfig dbMigrateConfig;
 }
