@@ -1,13 +1,7 @@
 <template>
     <div class="table-list-body" id="container" v-loading="connectNodeLoading">
-        <div class="source-table-container">
-            <el-table ref="sourceTableRef" :data="sourceTableColumn" row-key="code">
-                <el-table-column type="index" width="50" :align="'center'" />
-                <el-table-column prop="code" :show-overflow-tooltip="true" label="表名" />
-            </el-table>
-        </div>
-        <div class="target-table-container">
-            <el-table ref="targetTableRef" :data="targetTableColumn" row-key="code">
+        <div class="merged-table-container">
+            <el-table ref="mergedTableRef" :data="mergedTableColumn" row-key="code">
                 <el-table-column type="index" width="50" :align="'center'" />
                 <el-table-column prop="code" :show-overflow-tooltip="true" label="表名" />
             </el-table>
@@ -27,6 +21,20 @@ const connectNodeLoading = ref<boolean>(false)
 
 const sourceTableColumn = ref<column[]>([])
 const targetTableColumn = ref<column[]>([])
+const mergedTableColumn = ref<column[]>([])
+
+// 合并表名列表并去重
+function mergeTableColumns() {
+    const sourceTableNames = sourceTableColumn.value.map(item => item.code)
+    const targetTableNames = targetTableColumn.value.map(item => item.code)
+
+    // 合并并去重
+    const allTableNames = [...new Set([...sourceTableNames, ...targetTableNames])]
+
+    mergedTableColumn.value = allTableNames.map(tableName => ({
+        code: tableName
+    }))
+}
 
 function setSourceTableList(params: any) {
     connectNodeLoading.value = true
@@ -34,9 +42,11 @@ function setSourceTableList(params: any) {
         sourceTableColumn.value = res.data.tables.map((item: any) => {
             return { code: item }
         })
+        mergeTableColumns()
         connectNodeLoading.value = false
     }).catch(err => {
         sourceTableColumn.value = []
+        mergeTableColumns()
         connectNodeLoading.value = false
     })
 }
@@ -47,19 +57,22 @@ function setTargetTableList(params) {
         targetTableColumn.value = res.data.tables.map((item: any) => {
             return { code: item }
         })
+        mergeTableColumns()
         connectNodeLoading.value = false
     }).catch(err => {
         targetTableColumn.value = []
+        mergeTableColumns()
         connectNodeLoading.value = false
     })
 }
 
 function getSourceTableColumn() {
-    return sourceTableColumn.value
+    return mergedTableColumn.value
 }
 
 function setSourceTableColumn(list: any[]) {
     sourceTableColumn.value = list
+    mergeTableColumns()
 }
 
 defineExpose({
@@ -72,7 +85,6 @@ defineExpose({
 
 <style lang="scss">
 .table-list-body {
-    display: flex;
     position: relative;
     width: 100%;
     margin-top: 20px;
@@ -85,44 +97,20 @@ defineExpose({
         width: 100% !important;
     }
 
-    .source-table-container {
+    .merged-table-container {
         width: 100%;
-        margin-right: 100px;
         position: relative;
 
         .el-table {
             border-top: 1px solid #ebeef5;
             border-left: 1px solid #ebeef5;
             border-right: 1px solid #ebeef5;
-            // width: 100%;
             .el-table__row {
                 td.el-table__cell {
                     font-size: getCssVar('font-size', 'extra-small');
                 }
             }
         }
-    }
-    .target-table-container {
-        width: 100%;
-        overflow: auto;
-
-
-        .el-table {
-            border-top: 1px solid #ebeef5;
-            border-left: 1px solid #ebeef5;
-            border-right: 1px solid #ebeef5;
-            .el-table__row {
-                td.el-table__cell {
-                    font-size: getCssVar('font-size', 'extra-small');
-                }
-                &:hover {
-                    td.el-table__cell {
-                        background-color: unset;
-                    }
-                }
-            }
-        }
-
     }
 }
 </style>

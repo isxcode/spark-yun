@@ -139,7 +139,6 @@
                                     <el-option v-for="item in targetList" :key="item.value" :label="item.label"
                                         :value="item.value" />
                                 </el-select>
-                                <el-button type="primary" link @click="dbIdChange('target')">刷新</el-button>
                             </el-form-item>
                         </el-form>
                     </el-card>
