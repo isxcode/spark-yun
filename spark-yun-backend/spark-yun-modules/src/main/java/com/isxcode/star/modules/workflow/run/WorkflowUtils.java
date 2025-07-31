@@ -142,6 +142,7 @@ public class WorkflowUtils {
             .funcConfig(JSON.parseArray(workConfig.getFuncConfig(), String.class))
             .libConfig(JSON.parseArray(workConfig.getLibConfig(), String.class)).workId(work.getId())
             .apiWorkConfig(JSON.parseObject(workConfig.getApiWorkConfig(), ApiWorkConfig.class))
+            .dbMigrateConfig(JSON.parseObject(workConfig.getDbMigrateConfig(), DbMigrateConfig.class))
             .containerId(workConfig.getContainerId()).workName(work.getName()).userId(USER_ID.get()).build();
     }
 
@@ -158,6 +159,7 @@ public class WorkflowUtils {
             .libConfig(JSON.parseArray(workVersion.getLibConfig(), String.class))
             .containerId(workVersion.getContainerId()).workType(workVersion.getWorkType())
             .apiWorkConfig(JSON.parseObject(workVersion.getApiWorkConfig(), ApiWorkConfig.class))
+            .dbMigrateConfig(JSON.parseObject(workVersion.getDbMigrateConfig(), DbMigrateConfig.class))
             .workName(event.getWorkName()).workId(workVersion.getId()).build();
     }
 

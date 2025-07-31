@@ -120,8 +120,8 @@ public class WorkBizService {
             || WorkType.DATA_SYNC_JDBC.equals(addWorkReq.getWorkType())
             || WorkType.EXCEL_SYNC_JDBC.equals(addWorkReq.getWorkType())
             || WorkType.BASH.equals(addWorkReq.getWorkType()) || WorkType.PYTHON.equals(addWorkReq.getWorkType())
-            || WorkType.SPARK_JAR.equals(addWorkReq.getWorkType())
-            || WorkType.PY_SPARK.equals(addWorkReq.getWorkType())) {
+            || WorkType.SPARK_JAR.equals(addWorkReq.getWorkType()) || WorkType.PY_SPARK.equals(addWorkReq.getWorkType())
+            || WorkType.DB_MIGRATE.equals(addWorkReq.getWorkType())) {
             if (Strings.isEmpty(addWorkReq.getClusterId())) {
                 throw new IsxAppException("必须选择计算引擎");
             }
@@ -154,7 +154,8 @@ public class WorkBizService {
 
         // 初始化数据同步分区值
         if (WorkType.DATA_SYNC_JDBC.equals(addWorkReq.getWorkType())
-            || (WorkType.EXCEL_SYNC_JDBC.equals(addWorkReq.getWorkType()))) {
+            || (WorkType.EXCEL_SYNC_JDBC.equals(addWorkReq.getWorkType()))
+            || (WorkType.DB_MIGRATE.equals(addWorkReq.getWorkType()))) {
             workConfigService.initSyncRule(workConfig);
         }
 
@@ -163,8 +164,8 @@ public class WorkBizService {
             || WorkType.DATA_SYNC_JDBC.equals(addWorkReq.getWorkType())
             || WorkType.EXCEL_SYNC_JDBC.equals(addWorkReq.getWorkType())
             || WorkType.BASH.equals(addWorkReq.getWorkType()) || WorkType.PYTHON.equals(addWorkReq.getWorkType())
-            || WorkType.SPARK_JAR.equals(addWorkReq.getWorkType())
-            || WorkType.PY_SPARK.equals(addWorkReq.getWorkType())) {
+            || WorkType.SPARK_JAR.equals(addWorkReq.getWorkType()) || WorkType.PY_SPARK.equals(addWorkReq.getWorkType())
+            || WorkType.DB_MIGRATE.equals(addWorkReq.getWorkType())) {
             workConfigService.initClusterConfig(workConfig, addWorkReq.getClusterId(), addWorkReq.getClusterNodeId(),
                 addWorkReq.getEnableHive(), addWorkReq.getDatasourceId());
         }
@@ -479,6 +480,11 @@ public class WorkBizService {
 
         if (!Strings.isEmpty(workConfig.getAlarmList())) {
             getWorkRes.setAlarmList(JSON.parseArray(workConfig.getAlarmList(), String.class));
+        }
+
+        // 获取整库迁移配置
+        if (!Strings.isEmpty(workConfig.getDbMigrateConfig())) {
+            getWorkRes.setDbMigrateConfig(JSON.parseObject(workConfig.getDbMigrateConfig(), DbMigrateConfig.class));
         }
 
         return getWorkRes;

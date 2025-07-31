@@ -54,4 +54,7 @@ public class ConfigWorkReq {
 
     @Schema(title = "告警")
     private List<String> alarmList;
+
+    @Schema(title = "整库迁移配置")
+    private DbMigrateConfig dbMigrateConfig;
 }

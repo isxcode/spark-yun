@@ -55,4 +55,6 @@ public class GetWorkRes {
     private String containerId;
 
     private List<String> alarmList;
+
+    private DbMigrateConfig dbMigrateConfig;
 }

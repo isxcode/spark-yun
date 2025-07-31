@@ -209,5 +209,9 @@ export const TypeList = [
   {
     label: 'PySpark作业',
     value: 'PY_SPARK'
+  },
+  {
+    label: '整库迁移作业',
+    value: 'DB_MIGRATE'
   }
 ]

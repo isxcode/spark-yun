@@ -3,13 +3,14 @@ package com.isxcode.star.modules.work.service;
 import com.isxcode.star.api.datasource.dto.ColumnMetaDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.stereotype.Service;
 
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.regex.Pattern;
 
 @Service
 @RequiredArgsConstructor
@@ -19,14 +20,13 @@ public class SyncWorkService {
     public List<String> tables(DatabaseMetaData metaData, String catalog, String schema, String tablePattern)
         throws SQLException {
         List<String> list = new ArrayList<>();
-        if (StringUtils.isBlank(tablePattern)) {
-            tablePattern = "%";
-        } else {
-            tablePattern = "%" + tablePattern + "%";
-        }
-        ResultSet tables = metaData.getTables(catalog, schema, tablePattern, new String[] {"TABLE"});
+        ResultSet tables = metaData.getTables(catalog, schema, "%", new String[] {"TABLE"});
+        Pattern pattern = Pattern.compile(tablePattern);
         while (tables.next()) {
-            list.add(tables.getString("TABLE_NAME"));
+            String tableName = tables.getString("TABLE_NAME");
+            if (Strings.isBlank(tablePattern) || pattern.matcher(tableName).matches()) {
+                list.add(tableName);
+            }
         }
         return list;
     }
@@ -34,14 +34,13 @@ public class SyncWorkService {
     public List<String> views(DatabaseMetaData metaData, String catalog, String schema, String tablePattern)
         throws SQLException {
         List<String> list = new ArrayList<>();
-        if (StringUtils.isBlank(tablePattern)) {
-            tablePattern = "%";
-        } else {
-            tablePattern = "%" + tablePattern + "%";
-        }
-        ResultSet views = metaData.getTables(catalog, schema, tablePattern, new String[] {"VIEW"});
+        Pattern pattern = Pattern.compile(tablePattern);
+        ResultSet views = metaData.getTables(catalog, schema, "%", new String[] {"VIEW"});
         while (views.next()) {
-            list.add(views.getString("TABLE_NAME"));
+            String tableName = views.getString("TABLE_NAME");
+            if (Strings.isBlank(tablePattern) || pattern.matcher(tableName).matches()) {
+                list.add(tableName);
+            }
         }
         return list;
     }

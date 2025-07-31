@@ -46,6 +46,11 @@ public class WorkRunContext {
     private SyncRule syncRule;
 
     /**
+     * 整库同步.
+     */
+    private DbMigrateConfig dbMigrateConfig;
+
+    /**
      * 脚本.
      */
     private String script;

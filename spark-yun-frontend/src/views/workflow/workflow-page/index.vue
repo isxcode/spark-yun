@@ -184,7 +184,11 @@
                     <WorkItem
                         v-if="
                             showWorkItem &&
-                            !['SPARK_JAR', 'DATA_SYNC_JDBC', 'EXCEL_SYNC_JDBC'].includes(workConfig.workType)
+                            !['SPARK_JAR',
+                            'DATA_SYNC_JDBC',
+                            'EXCEL_SYNC_JDBC',
+                            'DB_MIGRATE'
+                            ].includes(workConfig.workType)
                         "
                         :workItemConfig="workConfig"
                         :workFlowData="workFlowData"
@@ -203,6 +207,12 @@
                         @back="backToFlow"
                         @locationNode="locationNode"
                     ></ExcelImport>
+                    <DatabaseMigrate
+                        v-if="showWorkItem && workConfig.workType === 'DB_MIGRATE'"
+                        :workItemConfig="workConfig"
+                        @back="backToFlow"
+                        @locationNode="locationNode"
+                    ></DatabaseMigrate>
                 </template>
             </div>
             <AddModal ref="addModalRef" />
@@ -229,6 +239,7 @@ import DataSync from '../data-sync/index.vue'
 import ExcelImport from '../excel-import/index.vue'
 import WorkApi from '../work-api/index.vue'
 import sparkJar from '../spark-jar/index.vue'
+import DatabaseMigrate from '../database-migrate/index.vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Loading, Sort } from '@element-plus/icons-vue'
 import EllipsisTooltip from '@/components/ellipsis-tooltip/ellipsis-tooltip.vue'
