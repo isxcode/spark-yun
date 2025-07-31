@@ -47,7 +47,13 @@
                                             />
                                         </el-select>
                                     </el-form-item>
-                                    <el-form-item class="sqls-container" label="聚合Sql" prop="sqls">
+                                    <el-form-item class="sqls-container" prop="sqls">
+                                        <template #label>
+                                            聚合Sql
+                                            <el-tooltip content="例如：select username as x, count(1) as y from users group by username" placement="top">
+                                                <el-icon class="sql-tip-icon"><QuestionFilled /></el-icon>
+                                            </el-tooltip>
+                                        </template>
                                         <el-icon class="sqls-container-add" @click="addSqlEvent"><CirclePlus /></el-icon>
                                         <div class="sqls-item" v-for="(sql, index) in baseConfig.sqls" :key="index" :class="{ 'show-screen__full': fullScreenArr[index] }">
                                             <div class="sql-option-container">
@@ -111,6 +117,7 @@
 <script lang="ts" setup>
 import { reactive, ref, onMounted, onUnmounted, watch, nextTick } from 'vue'
 import { ElMessage, FormInstance, FormRules } from 'element-plus'
+import { QuestionFilled } from '@element-plus/icons-vue'
 import Breadcrumb from '@/layout/bread-crumb/index.vue'
 import LoadingPage from '@/components/loading/index.vue'
 import * as echarts from 'echarts'
@@ -399,6 +406,15 @@ onUnmounted(() => {
                     &.sqls-container {
                         .el-form-item__label {
                             margin-bottom: 0;
+                            .sql-tip-icon {
+                                margin-left: 4px;
+                                color: #909399;
+                                font-size: 14px;
+                                cursor: pointer;
+                                &:hover {
+                                    color: getCssVar('color', 'primary');
+                                }
+                            }
                         }
                         .el-form-item__content {
                             position: relative;

@@ -111,6 +111,7 @@ docker restart zhiqingyun
 
 # 停止并删除旧容器和镜像
 docker stop zhiqingyun && docker rm zhiqingyun
+docker tag registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun:latest-amd64 registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun:latest-amd64-bak-20250728 
 docker rmi registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun:latest-amd64
 
 # 拉取最新镜像

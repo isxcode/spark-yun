@@ -87,7 +87,7 @@ public abstract class Datasource {
                     : "system" + File.separator + driverEntity.getFileName());
 
             // 如果docker部署，使用指定目录获取系统驱动
-            if (isxAppProperties.isDockerMode()) {
+            if (isxAppProperties.isDockerMode() && "SYSTEM_DRIVER".equals(driverEntity.getDriverType())) {
                 driverPath = "/var/lib/zhiqingyun-system/" + driverEntity.getFileName();
             }
 
