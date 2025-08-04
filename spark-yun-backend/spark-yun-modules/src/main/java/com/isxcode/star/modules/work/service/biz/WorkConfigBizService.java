@@ -125,13 +125,22 @@ public class WorkConfigBizService {
         // 用户更新集群配置
         if (wocConfigWorkReq.getClusterConfig() != null) {
 
+            Map<String, String> sparkConfig = wocConfigWorkReq.getClusterConfig().getSparkConfig();
+
             // 如果是等级的模式，需要帮用户默认填充sparkConfig
             if (SetMode.SIMPLE.equals(wocConfigWorkReq.getClusterConfig().getSetMode())) {
-                Map<String, String> sparkConfig =
-                    workConfigService.initSparkConfig(wocConfigWorkReq.getClusterConfig().getResourceLevel());
-                wocConfigWorkReq.getClusterConfig().setSparkConfig(sparkConfig);
+                sparkConfig = workConfigService.initSparkConfig(wocConfigWorkReq.getClusterConfig().getResourceLevel());
             }
 
+            // 如果用户指定并发数，需要重新修改配置文件
+            if (wocConfigWorkReq.getSyncRule() != null
+                && SetMode.SIMPLE.equals(wocConfigWorkReq.getSyncRule().getSetMode())) {
+                sparkConfig.put("spark.executor.instances",
+                    String.valueOf(wocConfigWorkReq.getSyncRule().getNumConcurrency()));
+                sparkConfig.put("spark.cores.max", String.valueOf(wocConfigWorkReq.getSyncRule().getNumConcurrency()));
+            }
+
+            wocConfigWorkReq.getClusterConfig().setSparkConfig(sparkConfig);
             workConfig.setClusterConfig(JSON.toJSONString(wocConfigWorkReq.getClusterConfig()));
         }
 
