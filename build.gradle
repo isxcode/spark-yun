@@ -158,7 +158,7 @@ tasks.register('docker', Exec) {
 tasks.register('upload-ali-oss', Exec) {
 
     commandLine 'sh', '-c', '''
-      ossutil cp spark-yun-dist/build/distributions/zhiqingyun.tar.gz oss://isxcode/zhiqingyun/
+      ossutil cp spark-yun-dist/build/distributions/zhiqingyun.tar.gz oss://isxcode/zhiqingyun/ -f
      '''
 }
 
