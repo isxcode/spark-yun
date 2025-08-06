@@ -160,6 +160,10 @@ jobs:
           name: zhiqingyun
           path: ./
 
+      - name: Set timezone to Asia/Shanghai
+        run: |
+          ls -lha
+
       - name: Upload Package to Ali oss
         uses: appleboy/scp-action@v1
         with:
@@ -167,7 +171,8 @@ jobs:
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
           port: 22
-          source: "./zhiqingyun.tar.gz"
+          timeout: 3600s
+          source: "zhiqingyun.tar.gz"
           target: /data/file/
 
   # 上传阿里镜像仓库使用单独任务，原因：上传失败后，可以使用github重跑任务，不需要重新打包
