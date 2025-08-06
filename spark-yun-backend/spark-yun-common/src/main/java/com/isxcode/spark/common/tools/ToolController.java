@@ -28,6 +28,8 @@ import java.nio.file.Paths;
 import java.util.Locale;
 import java.util.Objects;
 
+import static java.net.URLConnection.guessContentTypeFromName;
+
 
 @Tag(name = "系统内部工具模块")
 @RestController
@@ -90,8 +92,15 @@ public class ToolController {
             InputStreamResource resource = new InputStreamResource(Files.newInputStream(
                 Paths.get(PathUtils.parseProjectPath(isxAppProperties.getOpenFilePath()) + File.separator + fileName)));
             HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+            String contentTypeFromName = guessContentTypeFromName(fileName.toLowerCase());
+            if (contentTypeFromName == null) {
+                headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+            } else {
+                headers.setContentType(MediaType.parseMediaType(contentTypeFromName));
+            }
+
             headers.setContentDispositionFormData("attachment", URLEncoder.encode(fileName, "UTF-8"));
+            headers.setCacheControl("public, max-age=" + 31536000);
 
             // 返回文件
             return ResponseEntity.ok().headers(headers).body(resource);
