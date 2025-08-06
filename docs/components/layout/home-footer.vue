@@ -3,11 +3,11 @@
 
     <div class="content">
       <div class="left">
-        <img class="logo-img" src="http://localhost:8080/tools/open/file/logo.jpg" alt=""/>
+        <img class="logo-img" src="https://zhiqingyun-demo.isxcode.com/tools/open/file/logo.jpg" alt=""/>
         <div class="logo-name">
           {{ $t("company_name") }}
         </div>
-        <img class="wechat-img" src="http://localhost:8080/tools/open/file/qrcode.jpg" alt=""/>
+        <img class="wechat-img" src="https://zhiqingyun-demo.isxcode.com/tools/open/file/qrcode.jpg" alt=""/>
         <div class="wechat-name">
           {{ $t("wechat_official_account") }}
         </div>
@@ -385,15 +385,15 @@ function clickDockerHub() {
 }
 
 function downloadLicense() {
-  window.open("http://localhost:8080/tools/open/file/license.lic");
+  window.open("https://zhiqingyun-demo.isxcode.com/tools/open/file/license.lic");
 }
 
 function downloadPdf() {
-  window.open("http://localhost:8080/tools/open/file/zhiqingyun.pdf");
+  window.open("https://zhiqingyun-demo.isxcode.com/tools/open/file/zhiqingyun.pdf");
 }
 
 function downloadPackage() {
-  window.open("http://localhost:8080/tools/open/file/zhiqingyun.tar.gz");
+  window.open("https://zhiqingyun-demo.isxcode.com/tools/open/file/zhiqingyun.tar.gz");
 }
 
 function clickBlogs() {
