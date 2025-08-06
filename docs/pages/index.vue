@@ -50,22 +50,22 @@
           {{ $t("related_technologies") }}
         </div>
         <div class="tech-img-div">
-          <img class="tech-img" src="http://localhost:8080/tools/open/file/t-0.png" alt=""/>
-          <img class="tech-img" src="http://localhost:8080/tools/open/file/t-1.png" alt=""/>
-          <img class="tech-img" src="http://localhost:8080/tools/open/file/t-2.png" alt=""/>
-          <img class="tech-img" src="http://localhost:8080/tools/open/file/t-3.png" alt=""/>
-          <img class="tech-img" style="height: 41px;margin-top: 6px" src="http://localhost:8080/tools/open/file/t-4.png" alt=""/>
-          <img class="tech-img" src="http://localhost:8080/tools/open/file/t-5.png" alt=""/>
+          <img class="tech-img" src="https://zhiqingyun-demo.isxcode.com/tools/open/file/t-0.png" alt=""/>
+          <img class="tech-img" src="https://zhiqingyun-demo.isxcode.com/tools/open/file/t-1.png" alt=""/>
+          <img class="tech-img" src="https://zhiqingyun-demo.isxcode.com/tools/open/file/t-2.png" alt=""/>
+          <img class="tech-img" src="https://zhiqingyun-demo.isxcode.com/tools/open/file/t-3.png" alt=""/>
+          <img class="tech-img" style="height: 41px;margin-top: 6px" src="https://zhiqingyun-demo.isxcode.com/tools/open/file/t-4.png" alt=""/>
+          <img class="tech-img" src="https://zhiqingyun-demo.isxcode.com/tools/open/file/t-5.png" alt=""/>
         </div>
       </div>
     </div>
     <div class="module-feat-left">
       <div class="content">
         <div class="left">
-          <img id="zoom" src="http://localhost:8080/tools/open/file/p-0.jpg" alt="">
+          <img id="zoom" src="https://zhiqingyun-demo.isxcode.com/tools/open/file/p-0.jpg" alt="">
         </div>
         <div class="left-phone">
-          <img src="http://localhost:8080/tools/open/file/p-0.jpg" alt="">
+          <img src="https://zhiqingyun-demo.isxcode.com/tools/open/file/p-0.jpg" alt="">
         </div>
         <div class="right">
           <div class="line-1">{{ $t("coding_capability") }}</div>
@@ -79,7 +79,7 @@
     <div class="module-feat-right">
       <div class="content">
         <div class="right-phone">
-          <img src="http://localhost:8080/tools/open/file/p-1.jpg" alt="">
+          <img src="https://zhiqingyun-demo.isxcode.com/tools/open/file/p-1.jpg" alt="">
         </div>
         <div class="left">
           <div class="line-1">{{ $t("job_orchestration") }}</div>
@@ -89,17 +89,17 @@
           </div>
         </div>
         <div class="right">
-          <img id="zoom" src="http://localhost:8080/tools/open/file/p-1.jpg" alt="">
+          <img id="zoom" src="https://zhiqingyun-demo.isxcode.com/tools/open/file/p-1.jpg" alt="">
         </div>
       </div>
     </div>
     <div class="module-feat-left">
       <div class="content">
         <div class="left">
-          <img id="zoom" src="http://localhost:8080/tools/open/file/p-2.jpg" alt="">
+          <img id="zoom" src="https://zhiqingyun-demo.isxcode.com/tools/open/file/p-2.jpg" alt="">
         </div>
         <div class="left-phone">
-          <img src="http://localhost:8080/tools/open/file/p-2.jpg" alt="">
+          <img src="https://zhiqingyun-demo.isxcode.com/tools/open/file/p-2.jpg" alt="">
         </div>
         <div class="right">
           <div class="line-1">{{ $t("real_work") }}</div>
@@ -115,23 +115,23 @@
         <div class="line-1">{{ $t("data_drives_value") }}</div>
         <div class="line-2">{{ $t("data_drives_value_description") }}</div>
         <div class="business-img">
-          <img src="http://localhost:8080/tools/open/file/b-0.png" alt=""/>
-          <img class="bus-img" src="http://localhost:8080/tools/open/file/b-1.png" alt=""/>
-          <img class="bus-img" src="http://localhost:8080/tools/open/file/b-2.png" alt=""/>
-          <img class="bus-img" src="http://localhost:8080/tools/open/file/b-3.png" alt=""/>
-          <img class="bus-img" src="http://localhost:8080/tools/open/file/b-4.png" alt=""/>
-          <img class="bus-img" src="http://localhost:8080/tools/open/file/b-5.png" alt=""/>
-          <img class="bus-img" src="http://localhost:8080/tools/open/file/b-6.png" alt=""/>
-          <img class="bus-img" src="http://localhost:8080/tools/open/file/b-7.png" alt=""/>
-          <img class="bus-img" src="http://localhost:8080/tools/open/file/b-8.png" alt=""/>
-          <img class="bus-img" src="http://localhost:8080/tools/open/file/b-9.png" alt=""/>
+          <img src="https://zhiqingyun-demo.isxcode.com/tools/open/file/b-0.png" alt=""/>
+          <img class="bus-img" src="https://zhiqingyun-demo.isxcode.com/tools/open/file/b-1.png" alt=""/>
+          <img class="bus-img" src="https://zhiqingyun-demo.isxcode.com/tools/open/file/b-2.png" alt=""/>
+          <img class="bus-img" src="https://zhiqingyun-demo.isxcode.com/tools/open/file/b-3.png" alt=""/>
+          <img class="bus-img" src="https://zhiqingyun-demo.isxcode.com/tools/open/file/b-4.png" alt=""/>
+          <img class="bus-img" src="https://zhiqingyun-demo.isxcode.com/tools/open/file/b-5.png" alt=""/>
+          <img class="bus-img" src="https://zhiqingyun-demo.isxcode.com/tools/open/file/b-6.png" alt=""/>
+          <img class="bus-img" src="https://zhiqingyun-demo.isxcode.com/tools/open/file/b-7.png" alt=""/>
+          <img class="bus-img" src="https://zhiqingyun-demo.isxcode.com/tools/open/file/b-8.png" alt=""/>
+          <img class="bus-img" src="https://zhiqingyun-demo.isxcode.com/tools/open/file/b-9.png" alt=""/>
         </div>
       </div>
     </div>
     <div class="module-feat-right">
       <div class="content">
         <div class="right-phone">
-          <img class="feat-img" src="http://localhost:8080/tools/open/file/p-3.jpg" alt=""/>
+          <img class="feat-img" src="https://zhiqingyun-demo.isxcode.com/tools/open/file/p-3.jpg" alt=""/>
         </div>
         <div class="left">
           <div class="line-1">{{ $t("multi_platform_deployment") }}</div>
@@ -141,17 +141,17 @@
           </div>
         </div>
         <div class="right">
-          <img id="zoom" class="feat-img" src="http://localhost:8080/tools/open/file/p-3.jpg" alt="">
+          <img id="zoom" class="feat-img" src="https://zhiqingyun-demo.isxcode.com/tools/open/file/p-3.jpg" alt="">
         </div>
       </div>
     </div>
     <div class="module-feat-left">
       <div class="content">
         <div class="left">
-          <img id="zoom" class="feat-img" src="http://localhost:8080/tools/open/file/p-4.jpg" alt="">
+          <img id="zoom" class="feat-img" src="https://zhiqingyun-demo.isxcode.com/tools/open/file/p-4.jpg" alt="">
         </div>
         <div class="left-phone">
-          <img class="feat-img" src="http://localhost:8080/tools/open/file/p-4.jpg" alt="">
+          <img class="feat-img" src="https://zhiqingyun-demo.isxcode.com/tools/open/file/p-4.jpg" alt="">
         </div>
         <div class="right">
           <div class="line-1">{{ $t("data_view") }}</div>
@@ -223,8 +223,8 @@ const toggleVideo = () => {
 onMounted(() => {
   const art = new Artplayer({
     container: '.artplayer-app',
-    url: 'http://localhost:8080/tools/open/file/product.mp4',
-    poster: 'http://localhost:8080/tools/open/file/product.jpg',
+    url: 'https://zhiqingyun-demo.isxcode.com/tools/open/file/product.mp4',
+    poster: 'https://zhiqingyun-demo.isxcode.com/tools/open/file/product.jpg',
     fullscreen: true,
     fullscreenWeb: true,
     pip: true,
@@ -310,7 +310,7 @@ $module-intro-img-width: 600px;
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    background-image: url("http://localhost:8080/tools/open/file/bg-0.jpg");
+    background-image: url("https://zhiqingyun-demo.isxcode.com/tools/open/file/bg-0.jpg");
     padding-top: 200px;
     position: relative;
     overflow: hidden;
@@ -476,7 +476,7 @@ $module-intro-img-width: 600px;
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    background-image: url("http://localhost:8080/tools/open/file/bg-2.jpg");
+    background-image: url("https://zhiqingyun-demo.isxcode.com/tools/open/file/bg-2.jpg");
     display: flex;
     align-items: center;
     justify-content: center;
@@ -622,7 +622,7 @@ $module-intro-img-width: 600px;
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  background-image: url("http://localhost:8080/tools/open/file/bg-1.jpg");
+  background-image: url("https://zhiqingyun-demo.isxcode.com/tools/open/file/bg-1.jpg");
   display: flex;
   align-items: center;
   justify-content: center;
@@ -794,7 +794,7 @@ $module-intro-img-width: 600px;
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
-      background-image: url("http://localhost:8080/tools/open/file/bg-2.jpg");
+      background-image: url("https://zhiqingyun-demo.isxcode.com/tools/open/file/bg-2.jpg");
       align-items: center;
 
       .content {
@@ -944,7 +944,7 @@ $module-intro-img-width: 600px;
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    background-image: url("http://localhost:8080/tools/open/file/bg-1.jpg");
+    background-image: url("https://zhiqingyun-demo.isxcode.com/tools/open/file/bg-1.jpg");
     display: flex;
     align-items: center;
     justify-content: center;

@@ -6,7 +6,7 @@
         <div @click="handleLogoClick" class="home-header-logo">
           <div class="logo">
             <img
-              src="http://localhost:8080/tools/open/file/logo.jpg"
+              src="https://zhiqingyun-demo.isxcode.com/tools/open/file/logo.jpg"
               alt=""
             />
             <h1>至爻数据</h1>

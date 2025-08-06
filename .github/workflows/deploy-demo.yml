@@ -45,7 +45,7 @@ jobs:
           timeout: 1800s
           script: |
             rm -rf /tmp/zhiqingyun.tar.gz
-            curl -ssL http://localhost:8080/tools/open/file/zhiqingyun.tar.gz -o /tmp/zhiqingyun.tar.gz
+            curl -ssL https://zhiqingyun-demo.isxcode.com/tools/open/file/zhiqingyun.tar.gz -o /tmp/zhiqingyun.tar.gz
 
   deploy:
     needs: download
