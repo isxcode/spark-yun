@@ -13,8 +13,8 @@
 | 源码仓库:  | https://github.com/isxcode/spark-yun                                      |
 | 演示环境:  | https://zhiqingyun-demo.isxcode.com                                       |
 | 部署文档:  | https://zhiqingyun.isxcode.com/zh/docs/zh/1/2                             |
-| 安装包下载: | https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/zhiqingyun.tar.gz |
-| 许可证下载: | https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/license.lic       |
+| 安装包下载: | http://localhost:8080/tools/open/file/zhiqingyun.tar.gz |
+| 许可证下载: | http://localhost:8080/tools/open/file/license.lic       |
 | 友情链接:  | [至数云 - 轻量级一体化应用平台](https://zhishuyun.isxcode.com)                         |
 | 关键词:   | 大数据计算, AI智能, 数仓, 数据清洗, 数据同步, Spark, Flink, Hadoop, Hive                   |
 |        |                                                                           |
