@@ -32,4 +32,3 @@ isx-app:
   resources-path: classpath:resources # 资源文件，例如许可证、驱动、头像等资源路径
   admin-passwd: admin123 # 配置至轻云平台admin管理员的密码，仅第一次执行生效
   use-ssl: false # 是否开启ssl
-  open-file-path: /Users/ispong/Downloads/zhiqingyun-resources
