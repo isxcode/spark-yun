@@ -5,14 +5,14 @@
       "type": "java",
       "name": "SparkYunAgentApplication",
       "request": "launch",
-      "mainClass": "com.isxcode.star.agent.SparkYunAgentApplication",
+      "mainClass": "com.isxcode.spark.agent.SparkYunAgentApplication",
       "projectName": "spark-yun-agent"
     },
     {
       "type": "java",
       "name": "SparkYunApplication",
       "request": "launch",
-      "mainClass": "com.isxcode.star.SparkYunApplication",
+      "mainClass": "com.isxcode.spark.SparkYunApplication",
       "projectName": "spark-yun-main",
       "cwd": "/workspace/spark-yun/spark-yun-backend"
     }

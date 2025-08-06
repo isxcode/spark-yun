@@ -9,7 +9,7 @@ set -e  # 遇到错误立即退出
 # 配置项
 readonly SPARK_VERSION="3.4.1"
 readonly SPARK_MIN_FILE="spark-${SPARK_VERSION}-bin-hadoop3.tgz"
-readonly OSS_DOWNLOAD_URL="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/install"
+readonly OSS_DOWNLOAD_URL="https://zhiqingyun-demo.isxcode.com/tools/open/file"
 
 # 路径配置
 readonly BASE_PATH=$(cd "$(dirname "$0")" && pwd)
