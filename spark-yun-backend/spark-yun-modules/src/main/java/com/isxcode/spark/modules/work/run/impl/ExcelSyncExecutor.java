@@ -205,9 +205,10 @@ public class ExcelSyncExecutor extends WorkExecutor {
         workRunContext.getExcelSyncConfig().setTargetDatabase(targetConfig);
 
         // 开始构造SparkSubmit
-        SparkSubmit sparkSubmit = SparkSubmit.builder().verbose(true)
-            .mainClass("com.isxcode.spark.plugin.excelSync.jdbc.Execute").appResource("spark-excel-sync-jdbc-plugin.jar")
-            .conf(genSparkSubmitConfig(workRunContext.getClusterConfig().getSparkConfig())).build();
+        SparkSubmit sparkSubmit =
+            SparkSubmit.builder().verbose(true).mainClass("com.isxcode.spark.plugin.excelSync.jdbc.Execute")
+                .appResource("spark-excel-sync-jdbc-plugin.jar")
+                .conf(genSparkSubmitConfig(workRunContext.getClusterConfig().getSparkConfig())).build();
 
         // 过滤条件支持系统参数和函数解析
         if (!Strings.isEmpty(workRunContext.getExcelSyncConfig().getQueryCondition())) {

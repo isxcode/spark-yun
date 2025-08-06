@@ -77,4 +77,9 @@ public class IsxAppProperties {
      * 简单配置模式 simple. 高级配置模式 advance.
      */
     private String configMode = "simple";
+
+    /**
+     * 开发文件下载地址.
+     */
+    private String openFilePath = "";
 }
