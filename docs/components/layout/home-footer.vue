@@ -3,11 +3,11 @@
 
     <div class="content">
       <div class="left">
-        <img class="logo-img" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/website/web-img/logo.jpg" alt=""/>
+        <img class="logo-img" src="http://localhost:8080/tools/open/file/logo.jpg" alt=""/>
         <div class="logo-name">
           {{ $t("company_name") }}
         </div>
-        <img class="wechat-img" src="https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/website/web-img/qrcode.jpg" alt=""/>
+        <img class="wechat-img" src="http://localhost:8080/tools/open/file/qrcode.jpg" alt=""/>
         <div class="wechat-name">
           {{ $t("wechat_official_account") }}
         </div>
@@ -385,15 +385,15 @@ function clickDockerHub() {
 }
 
 function downloadLicense() {
-  window.open("https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/license.lic");
+  window.open("http://localhost:8080/tools/open/file/license.lic");
 }
 
 function downloadPdf() {
-  window.open("https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/zhiqingyun.pdf");
+  window.open("http://localhost:8080/tools/open/file/zhiqingyun.pdf");
 }
 
 function downloadPackage() {
-  window.open("https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiqingyun/zhiqingyun.tar.gz");
+  window.open("http://localhost:8080/tools/open/file/zhiqingyun.tar.gz");
 }
 
 function clickBlogs() {
