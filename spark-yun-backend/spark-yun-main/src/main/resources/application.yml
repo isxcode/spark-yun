@@ -56,11 +56,11 @@ spring:
     hibernate:
       ddl-auto: none
       naming:
-        physical-strategy: com.isxcode.star.config.JpaTableUpperCaseStrategy
+        physical-strategy: com.isxcode.spark.config.JpaTableUpperCaseStrategy
     properties:
       hibernate:
         session_factory:
-          statement_inspector: com.isxcode.star.config.JpaTenantInterceptor
+          statement_inspector: com.isxcode.spark.config.JpaTenantInterceptor
 
   mvc:
     view:
@@ -92,7 +92,7 @@ spring:
     path: /swagger-ui/api-docs
   swagger-ui:
     path: /swagger-ui.html
-  packages-to-scan: com.isxcode.star
+  packages-to-scan: com.isxcode.spark
 
   flyway:
     enabled: true
@@ -100,7 +100,7 @@ spring:
 logging:
   level:
     root: info
-    com.isxcode.star: info
+    com.isxcode.spark: info
   exception-conversion-word: '%wEx'
   file:
     name: ./logs/spark-yun.log

@@ -18,7 +18,7 @@ allprojects {
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
 
-    group = 'com.isxcode.star'
+    group = 'com.isxcode.spark'
     version = version_number
 
     repositories {
