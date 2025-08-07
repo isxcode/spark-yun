@@ -51,8 +51,7 @@ export default defineNuxtConfig({
           // 确保关键组件优先加载
           manualChunks: {
             'loading': ['~/components/loading/TopLoadingBar.vue'],
-            'critical': ['~/pages/index.vue', '~/layouts/home.vue'],
-            'vendor': ['vue', '@vueuse/core']
+            'critical': ['~/pages/index.vue', '~/layouts/home.vue']
           }
         }
       }

@@ -29,9 +29,21 @@ export default defineNuxtPlugin(() => {
 
   // 更新进度条
   const updateProgress = (progress: number) => {
-    currentProgress = Math.min(progress, 100);
-    if (setProgress) {
-      setProgress(currentProgress);
+    const newProgress = Math.min(Math.max(progress, currentProgress), 100);
+
+    // 只有进度真正增加时才更新
+    if (newProgress > currentProgress) {
+      currentProgress = newProgress;
+      if (setProgress) {
+        setProgress(currentProgress);
+      }
+
+      // 如果进度达到100%，自动完成
+      if (currentProgress >= 100 && isLoading) {
+        setTimeout(() => {
+          completeLoading();
+        }, 100);
+      }
     }
   };
 
@@ -43,7 +55,7 @@ export default defineNuxtPlugin(() => {
       updateProgress(100);
       setTimeout(() => {
         finish();
-      }, 300);
+      }, 200); // 减少延迟时间，让完成更快
     }
   };
 
@@ -66,8 +78,9 @@ export default defineNuxtPlugin(() => {
 
       // 设置超时保护，防止loading卡住
       loadingTimeout = setTimeout(() => {
+        console.warn('Loading超时，强制完成');
         completeLoading();
-      }, 8000); // 8秒后强制完成
+      }, 6000); // 6秒后强制完成，减少等待时间
     }
   });
 
@@ -80,11 +93,40 @@ export default defineNuxtPlugin(() => {
   const startProgressTracking = () => {
     if (!isLoading) return;
 
+    // 启动智能进度模拟
+    startSmartProgressSimulation();
+
     // 预加载关键视频资源
     preloadCriticalVideo();
 
     // 阶段1: DOM准备 (立即检查)
     checkDOMReady();
+  };
+
+  // 智能进度模拟，确保进度条不会卡住
+  const startSmartProgressSimulation = () => {
+    let simulationProgress = 5; // 从5%开始
+
+    const progressSimulation = setInterval(() => {
+      if (!isLoading || currentProgress >= 95) {
+        clearInterval(progressSimulation);
+        return;
+      }
+
+      // 如果真实进度落后于模拟进度，使用模拟进度
+      if (currentProgress < simulationProgress) {
+        updateProgress(simulationProgress);
+      }
+
+      // 模拟进度递增，但不超过95%
+      simulationProgress = Math.min(simulationProgress + Math.random() * 3 + 1, 95);
+    }, 200); // 每200ms更新一次
+
+    // 将清理函数添加到现有的清理逻辑中
+    if (progressUpdateTimer) {
+      clearTimeout(progressUpdateTimer);
+    }
+    progressUpdateTimer = progressSimulation;
   };
 
   // 预加载关键视频资源
@@ -147,7 +189,7 @@ export default defineNuxtPlugin(() => {
       updateProgress(PROGRESS_WEIGHTS.DOM_READY + stylesheetProgress);
 
       if (loadedStylesheets >= totalStylesheets) {
-        checkScripts();
+        setTimeout(() => checkScripts(), 50); // 小延迟确保状态更新
       }
     };
 
@@ -309,10 +351,19 @@ export default defineNuxtPlugin(() => {
 
     // 检查字体是否加载完成
     if (document.fonts && document.fonts.ready) {
+      // 设置字体检查超时，防止卡住
+      const fontTimeout = setTimeout(() => {
+        console.warn('字体加载超时，强制完成');
+        updateProgress(baseProgress + PROGRESS_WEIGHTS.FONTS);
+        completeLoading();
+      }, 2000); // 2秒超时
+
       document.fonts.ready.then(() => {
+        clearTimeout(fontTimeout);
         updateProgress(baseProgress + PROGRESS_WEIGHTS.FONTS);
         completeLoading();
       }).catch(() => {
+        clearTimeout(fontTimeout);
         updateProgress(baseProgress + PROGRESS_WEIGHTS.FONTS);
         completeLoading();
       });
@@ -381,6 +432,78 @@ export default defineNuxtPlugin(() => {
         }, 500);
       }
     });
+
+    // 添加额外的完成检测机制
+    const checkLoadingComplete = () => {
+      if (!isLoading) return;
+
+      // 检查文档状态
+      const isDocumentComplete = document.readyState === 'complete';
+
+      // 检查是否所有关键资源都已加载
+      const images = document.querySelectorAll('img');
+      const scripts = document.querySelectorAll('script[src]');
+      const stylesheets = document.querySelectorAll('link[rel="stylesheet"]');
+
+      let allResourcesLoaded = true;
+      let loadedCount = 0;
+      let totalCount = 0;
+
+      // 检查图片
+      images.forEach(img => {
+        totalCount++;
+        if (img.complete && (img.naturalHeight !== 0 || img.src === '')) {
+          loadedCount++;
+        } else if (img.src) {
+          allResourcesLoaded = false;
+        }
+      });
+
+      // 检查脚本
+      scripts.forEach(script => {
+        totalCount++;
+        if (script.readyState === 'complete' || script.readyState === 'loaded') {
+          loadedCount++;
+        } else {
+          allResourcesLoaded = false;
+        }
+      });
+
+      // 检查样式表
+      stylesheets.forEach(link => {
+        totalCount++;
+        if (link.sheet || link.readyState === 'complete') {
+          loadedCount++;
+        } else {
+          allResourcesLoaded = false;
+        }
+      });
+
+      // 计算资源加载百分比
+      const resourceProgress = totalCount > 0 ? (loadedCount / totalCount) * 100 : 100;
+
+      // 如果满足完成条件，完成loading
+      if ((isDocumentComplete && allResourcesLoaded) ||
+          currentProgress >= 98 ||
+          resourceProgress >= 95) {
+        console.log('资源检查完成，完成loading', {
+          isDocumentComplete,
+          allResourcesLoaded,
+          currentProgress,
+          resourceProgress
+        });
+        completeLoading();
+      }
+    };
+
+    // 定期检查loading是否应该完成
+    const loadingCheckInterval = setInterval(() => {
+      if (!isLoading) {
+        clearInterval(loadingCheckInterval);
+        return;
+      }
+      checkLoadingComplete();
+    }, 500); // 每500ms检查一次，更频繁的检查
 
     // 开始监听新资源
     const observer = observeNewResources();
