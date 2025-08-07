@@ -20,6 +20,7 @@ export default defineNuxtConfig({
     autoImports: ["defineStore"],
   },
   plugins: [
+    { src: "~/plugins/preload-loading.client.ts", mode: "client" },
     { src: "~/plugins/svgicon.client.ts" },
     { src: "~/plugins/loading.client.ts" }
   ],
@@ -33,7 +34,17 @@ export default defineNuxtConfig({
       createSvgIconsPlugin({
         iconDirs: [path.resolve(process.cwd(), "assets/svg")],
       }),
-    ]
+    ],
+    build: {
+      rollupOptions: {
+        output: {
+          // 确保TopLoadingBar组件优先加载
+          manualChunks: {
+            'loading': ['~/components/loading/TopLoadingBar.vue']
+          }
+        }
+      }
+    }
   },
   lodash: {
     prefix: "_",

@@ -38,34 +38,52 @@ const { isVisible, isLoading, isComplete, isError, progress } = toRefs(state);
 
 let progressTimer: NodeJS.Timeout | null = null;
 let hideTimer: NodeJS.Timeout | null = null;
+let forceFinishTimer: NodeJS.Timeout | null = null;
 
 // 开始loading
 const start = () => {
   reset();
+
+  // 隐藏预加载loading条
+  if (process.client && (window as any).__preloadLoading) {
+    (window as any).__preloadLoading.hide();
+  }
+
   state.isVisible = true;
   state.isLoading = true;
   state.progress = 0;
 
-  // 模拟进度增长，但不循环
-  progressTimer = setInterval(() => {
-    if (state.progress < 85) {
-      const increment = Math.random() * 8 + 2; // 2-10的随机增量
-      state.progress = Math.min(state.progress + increment, 85);
-    } else {
-      // 到达85%后停止自动增长，等待手动完成
-      if (progressTimer) {
-        clearInterval(progressTimer);
-        progressTimer = null;
-      }
+  // 不再使用模拟进度，等待真实进度更新
+  // 设置强制完成定时器，防止loading卡住
+  forceFinishTimer = setTimeout(() => {
+    if (state.isLoading && !state.isComplete) {
+      finish();
     }
-  }, 300);
+  }, 10000); // 10秒后强制完成
+};
+
+// 设置进度
+const setProgress = (progress: number) => {
+  if (state.isLoading && !state.isComplete) {
+    state.progress = Math.min(Math.max(progress, 0), 100);
+  }
 };
 
 // 完成loading
 const finish = () => {
+  // 清理所有定时器
   if (progressTimer) {
     clearInterval(progressTimer);
     progressTimer = null;
+  }
+  if (forceFinishTimer) {
+    clearTimeout(forceFinishTimer);
+    forceFinishTimer = null;
+  }
+
+  // 如果已经完成，避免重复执行
+  if (state.isComplete) {
+    return;
   }
 
   state.progress = 100;
@@ -80,9 +98,14 @@ const finish = () => {
 
 // 错误状态
 const error = () => {
+  // 清理所有定时器
   if (progressTimer) {
     clearInterval(progressTimer);
     progressTimer = null;
+  }
+  if (forceFinishTimer) {
+    clearTimeout(forceFinishTimer);
+    forceFinishTimer = null;
   }
 
   state.isLoading = false;
@@ -104,6 +127,7 @@ const hide = () => {
 
 // 重置状态
 const reset = () => {
+  // 清理所有定时器
   if (progressTimer) {
     clearInterval(progressTimer);
     progressTimer = null;
@@ -111,6 +135,10 @@ const reset = () => {
   if (hideTimer) {
     clearTimeout(hideTimer);
     hideTimer = null;
+  }
+  if (forceFinishTimer) {
+    clearTimeout(forceFinishTimer);
+    forceFinishTimer = null;
   }
 
   state.isLoading = false;
@@ -125,7 +153,8 @@ defineExpose({
   finish,
   error,
   hide,
-  reset
+  reset,
+  setProgress
 });
 
 // 组件卸载时清理定时器
@@ -141,7 +170,7 @@ onBeforeUnmount(() => {
   left: 0;
   right: 0;
   z-index: 9999;
-  height: 5px;
+  height: 4px;
   background-color: transparent;
   transition: opacity 0.3s ease;
 
