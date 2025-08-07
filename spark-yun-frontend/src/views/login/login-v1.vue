@@ -50,7 +50,7 @@
           </el-button>
         </el-form-item>
         <el-form-item class="registered-content">
-          <span class="registered">企业级大数据计算平台
+          <span class="registered">超轻量级智能化大数据中心
             <!-- <a class="do-registered" @click="clickRegistered"
                             >免费注册</a -->
           </span>
