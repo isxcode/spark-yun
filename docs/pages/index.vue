@@ -739,6 +739,7 @@ $module-intro-img-width: 600px;
               display: block;
               border-radius: 3px;
             }
+
           }
         }
       }

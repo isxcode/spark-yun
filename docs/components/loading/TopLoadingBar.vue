@@ -46,13 +46,19 @@ const start = () => {
   state.isLoading = true;
   state.progress = 0;
 
-  // 模拟进度增长
+  // 模拟进度增长，但不循环
   progressTimer = setInterval(() => {
-    if (state.progress < 90) {
-      const increment = Math.random() * 15;
-      state.progress = Math.min(state.progress + increment, 90);
+    if (state.progress < 85) {
+      const increment = Math.random() * 8 + 2; // 2-10的随机增量
+      state.progress = Math.min(state.progress + increment, 85);
+    } else {
+      // 到达85%后停止自动增长，等待手动完成
+      if (progressTimer) {
+        clearInterval(progressTimer);
+        progressTimer = null;
+      }
     }
-  }, 200);
+  }, 300);
 };
 
 // 完成loading
@@ -127,3 +133,78 @@ onBeforeUnmount(() => {
   reset();
 });
 </script>
+
+<style lang="scss" scoped>
+.top-loading-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 9999;
+  height: 5px;
+  background-color: transparent;
+  transition: opacity 0.3s ease;
+
+  &__progress {
+    height: 100%;
+    background: linear-gradient(90deg, #e25a1b 0%, #d4461a 50%, #c73e1d 100%);
+    transition: width 0.3s ease;
+    border-radius: 0 3px 3px 0;
+    box-shadow: 0 0 12px rgba(226, 90, 27, 0.6);
+  }
+
+  &--loading {
+    .top-loading-bar__progress {
+      background: linear-gradient(90deg, #e25a1b 0%, #d4461a 100%);
+      animation: loading-shimmer 2s infinite;
+    }
+  }
+
+  &--complete {
+    .top-loading-bar__progress {
+      background: #d4461a;
+      transition: width 0.1s ease;
+    }
+  }
+
+  &--error {
+    .top-loading-bar__progress {
+      background: #f56c6c;
+    }
+  }
+}
+
+@keyframes loading-shimmer {
+  0% {
+    background-position: -200px 0;
+  }
+  100% {
+    background-position: calc(200px + 100%) 0;
+  }
+}
+
+/* 深橙色主题色 */
+.top-loading-bar {
+  &__progress {
+    background: linear-gradient(90deg, rgba(226, 90, 27, 0.95) 0%, rgba(212, 70, 26, 0.95) 50%, rgba(199, 62, 29, 0.95) 100%);
+  }
+
+  &--loading {
+    .top-loading-bar__progress {
+      background: linear-gradient(90deg, rgba(226, 90, 27, 0.95) 0%, rgba(212, 70, 26, 0.95) 100%);
+    }
+  }
+
+  &--complete {
+    .top-loading-bar__progress {
+      background: rgba(212, 70, 26, 0.95);
+    }
+  }
+
+  &--error {
+    .top-loading-bar__progress {
+      background: rgba(245, 108, 108, 0.9);
+    }
+  }
+}
+</style>
