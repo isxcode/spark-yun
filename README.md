@@ -1,4 +1,4 @@
-# 至轻云-超轻量级智能化数据中心
+# 至轻云-超轻量级智能化大数据中心
 
 [![Docker Pulls](https://img.shields.io/docker/pulls/isxcode/zhiqingyun)](https://hub.docker.com/r/isxcode/zhiqingyun)
 [![build](https://github.com/isxcode/spark-yun/actions/workflows/build-app.yml/badge.svg?branch=main)](https://github.com/isxcode/spark-yun/actions/workflows/build-app.yml)
@@ -15,7 +15,7 @@
 | 部署文档:  | https://zhiqingyun.isxcode.com/zh/docs/zh/1/2                         |
 | 安装包下载: | https://zhiqingyun-demo.isxcode.com/tools/open/file/zhiqingyun.tar.gz |
 | 许可证下载: | https://zhiqingyun-demo.isxcode.com/tools/open/file/license.lic       |
-| 友情链接:  | [至数云 - 人工智能一体化应用平台](https://zhishuyun.isxcode.com)                    |
+| 友情链接:  | [至数云 - 超轻量级人工智能应用平台](https://zhishuyun.isxcode.com)                    |
 | 关键词:   | 大数据计算, AI智能, 数仓, 数据清洗, 数据同步, Spark, Flink, Hadoop, Hive               |
 |        |                                                                       |
 
