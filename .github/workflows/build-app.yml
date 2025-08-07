@@ -154,27 +154,15 @@ jobs:
           sudo timedatectl set-timezone Asia/Shanghai
           date
 
-      - name: Mkdir distributions
-        shell: bash
-        run: |
-          mkdir distributions
-
       - name: Download zhiqingyun tar
         uses: actions/download-artifact@v4
         with:
           name: zhiqingyun
-          path: ./distributions
+          path: ./
 
-      - name: Upload Package to Ali oss
-        uses: tvrcgo/oss-action@master
-        with:
-          key-id: ${{ secrets.ALI_OSS_KEY_ID }}
-          key-secret: ${{ secrets.ALI_OSS_KEY_SECRET }}
-          region: oss-cn-shanghai
-          bucket: isxcode
-          timeout: 1200
-          assets: |
-            distributions/**:/zhiqingyun/
+      - name: Set timezone to Asia/Shanghai
+        run: |
+          ls -lha
 
       - name: Upload Package to Ali oss
         uses: appleboy/scp-action@v1
@@ -183,8 +171,9 @@ jobs:
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
           port: 22
+          timeout: 3600s
           source: "zhiqingyun.tar.gz"
-          target: /data/file
+          target: /data/file/
 
   # 上传阿里镜像仓库使用单独任务，原因：上传失败后，可以使用github重跑任务，不需要重新打包
   upload-ali:
