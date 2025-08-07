@@ -4,6 +4,7 @@ interface TopLoadingInstance {
   error: () => void;
   hide: () => void;
   reset: () => void;
+  setProgress: (progress: number) => void;
 }
 
 let loadingInstance: TopLoadingInstance | null = null;
@@ -49,12 +50,20 @@ export const useTopLoading = () => {
     }
   };
 
+  // 设置进度
+  const setProgress = (progress: number) => {
+    if (loadingInstance) {
+      loadingInstance.setProgress(progress);
+    }
+  };
+
   return {
     setInstance,
     start,
     finish,
     error,
     hide,
-    reset
+    reset,
+    setProgress
   };
 };
