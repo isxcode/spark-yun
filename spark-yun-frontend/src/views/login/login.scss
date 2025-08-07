@@ -8,12 +8,12 @@
   background-color: #ffffff;
 
   .zqy-logo-icon {
-    width: 100px;
+    width: 170px;
     height: auto;
     position: absolute;
     left: 44px;
     top: 36px;
-    width: 170px;
+    z-index: 10;
   }
 
   .zqy-login__body {
@@ -21,6 +21,9 @@
     display: flex;
     padding: 0 20px;
     align-items: center;
+    max-width: 1920px;
+    margin: 0 auto;
+    width: 100%;
   }
 
   .zqy-login__playground {
@@ -33,6 +36,8 @@
 
     img {
       width: 76%;
+      max-width: 800px;
+      height: auto;
     }
   }
 
@@ -42,6 +47,8 @@
     flex-direction: column;
     justify-content: center;
     height: 100%;
+    min-width: 400px;
+
     .zqy-login__text {
       width: 65%;
       min-width: 400px;
@@ -52,16 +59,17 @@
         height: 100%;
       }
     }
+
     .zqy-login__form-wrap {
       width: 340px;
-      // width: 49%;
-      // padding: 50px 8%;
-      padding: 46px 30px 20px;
-      border-radius: 3%;
+      padding: 46px 30px;
+      border-radius: 8px;
       box-shadow: 0 0 10px var(--el-border-color);
       display: flex;
       flex-direction: column;
       align-items: center;
+      background-color: #ffffff;
+
       img {
         width: 90px;
         height: auto;
@@ -85,14 +93,89 @@
     }
   }
 
+  // 2K屏幕优化 (2560x1440及以上)
+  @media screen and (min-width: 2560px) {
+    .zqy-logo-icon {
+      width: 220px;
+      left: 60px;
+      top: 50px;
+    }
+
+    .zqy-login__body {
+      padding: 0 40px;
+      max-width: 2400px;
+    }
+
+    .zqy-login__playground {
+      margin-right: 120px;
+
+      img {
+        width: 70%;
+        max-width: 1000px;
+      }
+    }
+
+    .zqy-login__main {
+      min-width: 500px;
+
+      .zqy-login__form-wrap {
+        width: 420px;
+        padding: 60px 40px;
+        border-radius: 12px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+
+        img {
+          width: 110px;
+        }
+      }
+    }
+  }
+
+  // 超大屏幕优化 (3840x2160及以上，4K)
+  @media screen and (min-width: 3840px) {
+    .zqy-logo-icon {
+      width: 280px;
+      left: 80px;
+      top: 70px;
+    }
+
+    .zqy-login__body {
+      padding: 0 60px;
+      max-width: 3200px;
+    }
+
+    .zqy-login__playground {
+      margin-right: 160px;
+
+      img {
+        width: 65%;
+        max-width: 1200px;
+      }
+    }
+
+    .zqy-login__main {
+      min-width: 600px;
+
+      .zqy-login__form-wrap {
+        width: 500px;
+        padding: 80px 50px;
+        border-radius: 16px;
+
+        img {
+          width: 130px;
+        }
+      }
+    }
+  }
+
 
   .zqy-login__main__title {
     margin: 0;
-    // margin: 30px 0 40px;
     line-height: 80px;
     font-weight: 600;
     color: var(--el-color-black);
     font-size: 24px;
+    text-align: center;
   }
 
   .zqy-login__form {
@@ -101,14 +184,11 @@
       margin-bottom: 36px;
 
       &.is-error {
-        .el-input__wrapper {
-          padding: 0 8px;
-          box-shadow: none;
-        }
-
         .zqy-login__input {
-          border-color: getCssVar('color', 'danger');
-          line-height: 40px;
+          .el-input__wrapper {
+            border-color: getCssVar('color', 'danger');
+            box-shadow: none;
+          }
         }
       }
 
@@ -121,43 +201,207 @@
 
       .el-form-item__error {
         padding: 6px 0;
+        font-size: 12px;
       }
     }
   }
 
   .zqy-login__input {
-    border: 1px solid var(--el-border-color);
-    border-radius: 3px;
     transition: all .4s linear;
 
     &:hover {
-      border-color: getCssVar('color', 'primary');
+      .el-input__wrapper {
+        border-color: getCssVar('color', 'primary');
+      }
+    }
+
+    &:focus-within {
+      .el-input__wrapper {
+        border-color: getCssVar('color', 'primary');
+        box-shadow: 0 0 0 2px rgba(80, 107, 254, 0.1);
+      }
     }
 
     .el-input__wrapper {
-      padding: 0 8px;
+      padding: 0 12px;
       box-shadow: none;
+      border: 1px solid var(--el-border-color);
+      border-radius: 6px;
+      background-color: #ffffff;
+      transition: all .4s linear;
+      overflow: hidden; // 确保圆角正确显示
+    }
+
+    .el-input__inner {
+      border: none;
+      box-shadow: none;
+      background: transparent;
+    }
+
+    // 移除Element Plus默认的边框样式
+    &.el-input {
+      border: none;
+      box-shadow: none;
+      background: transparent;
     }
   }
 
   .zqy-login__btn {
     width: 100%;
     background: linear-gradient(45deg,var(--el-color-primary-light-3),var(--el-color-primary));
-    // color: var(--vxe-icon-background-color);
-    font-size: 13px;
-    border-radius: 2px;
-    height: 40px;
+    font-size: 14px;
+    border-radius: 6px;
+    height: 44px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+
     &:hover {
+      background: linear-gradient(45deg,var(--el-color-primary),var(--el-color-primary-dark-2));
       background-color: var(--el-color-primary);
-      // color: var(--vxe-icon-background-color);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(80, 107, 254, 0.3);
+    }
+  }
+
+  // 2K屏幕优化
+  @media screen and (min-width: 2560px) {
+    .zqy-login__main__title {
+      font-size: 28px;
+      line-height: 90px;
+    }
+
+    .zqy-login__form {
+      .el-form-item {
+        margin-bottom: 42px;
+
+        .zqy-login__input {
+          height: 48px;
+          .el-input__inner {
+            font-size: 14px;
+          }
+        }
+
+        .el-form-item__error {
+          font-size: 13px;
+        }
+      }
+    }
+
+    .zqy-login__input {
+      .el-input__wrapper {
+        padding: 0 16px;
+        border-radius: 8px;
+      }
+    }
+
+    .zqy-login__btn {
+      height: 52px;
+      font-size: 16px;
+      border-radius: 8px;
+    }
+  }
+
+  // 4K屏幕优化
+  @media screen and (min-width: 3840px) {
+    .zqy-login__main__title {
+      font-size: 32px;
+      line-height: 100px;
+    }
+
+    .zqy-login__form {
+      .el-form-item {
+        margin-bottom: 48px;
+
+        .zqy-login__input {
+          height: 56px;
+          .el-input__inner {
+            font-size: 16px;
+          }
+        }
+
+        .el-form-item__error {
+          font-size: 14px;
+        }
+      }
+    }
+
+    .zqy-login__input {
+      .el-input__wrapper {
+        padding: 0 20px;
+        border-radius: 10px;
+      }
+    }
+
+    .zqy-login__btn {
+      height: 60px;
+      font-size: 18px;
+      border-radius: 10px;
+    }
+
+  // 通用优化：添加平滑过渡和更好的视觉效果
+  .zqy-login__form-wrap {
+    transition: all 0.3s ease;
+
+    &:hover {
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    }
+  }
+
+  .zqy-login__playground img {
+    transition: all 0.3s ease;
+  }
+
+  // 针对高分辨率屏幕的通用优化
+  @media screen and (min-width: 1920px) {
+    .zqy-login__body {
+      justify-content: center;
+      gap: 60px;
+    }
+
+    .zqy-login__playground {
+      flex: 5;
+      margin-right: 60px;
+    }
+
+    .zqy-login__main {
+      flex: 3;
+      align-items: flex-start;
+    }
+  }
+
+  // 超宽屏幕优化 (21:9 比例)
+  @media screen and (min-aspect-ratio: 21/9) {
+    .zqy-login__body {
+      max-width: 2800px;
+      gap: 100px;
+    }
+
+    .zqy-login__playground {
+      flex: 7;
+      img {
+        width: 60%;
+      }
+    }
+
+    .zqy-login__main {
+      flex: 3;
+    }
+  }
+
+  // 确保在所有屏幕尺寸下的可访问性
+  @media screen and (max-height: 800px) {
+    .zqy-login__form-wrap {
+      padding: 30px 25px;
+    }
+
+    .zqy-login__main__title {
+      line-height: 60px;
+      font-size: 22px;
+    }
+
+    .zqy-login__form .el-form-item {
+      margin-bottom: 24px;
     }
   }
 }
-
-.oauth-redirect-url {
-  display: flex;
-  flex-wrap: wrap;
-  .el-button {
-    margin: 6px;
-  }
 }
