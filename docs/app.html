@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html {{ HTML_ATTRS }}>
+  <head {{ HEAD_ATTRS }}>
+    {{ HEAD }}
+
+    <!-- 预加载关键资源 - 优先下载首屏需要的图片和视频 -->
+    <link rel="preload" href="https://zhiqingyun-demo.isxcode.com/tools/open/file/bg-0.jpg" as="image" type="image/jpeg">
+    <link rel="preload" href="https://zhiqingyun-demo.isxcode.com/tools/open/file/product.jpg" as="image" type="image/jpeg">
+    <link rel="preload" href="https://zhiqingyun-demo.isxcode.com/tools/open/file/bg-2.jpg" as="image" type="image/jpeg">
+    <link rel="preload" href="https://zhiqingyun-demo.isxcode.com/tools/open/file/logo.jpg" as="image" type="image/jpeg">
+
+    <!-- 预加载关键字体 -->
+    <link rel="preload" href="https://zhiqingyun-demo.isxcode.com/tools/open/file/AlimamaShuHeiTi-Bold.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="https://zhiqingyun-demo.isxcode.com/tools/open/file/AlibabaPuHuiTi-2-45-Light.woff2" as="font" type="font/woff2" crossorigin>
+
+    <!-- DNS预解析 -->
+    <link rel="dns-prefetch" href="//zhiqingyun-demo.isxcode.com">
+
+    <!-- 内联关键CSS - 确保loading条立即可见，不等待JavaScript加载 -->
+    <style>
+      /* 预加载loading条样式 - 立即可用 */
+      .preload-loading-bar {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        z-index: 9999 !important;
+        height: 4px !important;
+        background-color: transparent !important;
+        opacity: 1 !important;
+        transition: opacity 0.3s ease !important;
+      }
+
+      .preload-loading-bar__progress {
+        height: 100% !important;
+        background: linear-gradient(90deg, #e25a1b 0%, #d4461a 50%, #c73e1d 100%) !important;
+        transition: width 0.4s ease !important;
+        border-radius: 0 3px 3px 0 !important;
+        box-shadow: 0 0 12px rgba(226, 90, 27, 0.6) !important;
+        width: 0% !important;
+      }
+
+      /* 预加载动画 */
+      @keyframes preload-shimmer {
+        0% {
+          background-position: -200px 0;
+        }
+        100% {
+          background-position: calc(200px + 100%) 0;
+        }
+      }
+
+      .preload-loading-bar--loading .preload-loading-bar__progress {
+        background: linear-gradient(
+          90deg,
+          #e25a1b 0%,
+          #f5f5f5 50%,
+          #e25a1b 100%
+        ) !important;
+        background-size: 200px 100% !important;
+        animation: preload-shimmer 2s infinite linear !important;
+      }
+
+      /* 隐藏状态 */
+      .preload-loading-bar--hidden {
+        opacity: 0 !important;
+        pointer-events: none !important;
+      }
+
+      /* 完成状态 */
+      .preload-loading-bar--complete .preload-loading-bar__progress {
+        width: 100% !important;
+        background: linear-gradient(90deg, #e25a1b 0%, #d4461a 50%, #c73e1d 100%) !important;
+        animation: none !important;
+      }
+
+      /* 错误状态 */
+      .preload-loading-bar--error .preload-loading-bar__progress {
+        background: linear-gradient(90deg, #ff4757 0%, #ff3838 50%, #ff2f2f 100%) !important;
+        animation: none !important;
+      }
+
+      /* 确保body没有margin，避免影响loading条位置 */
+      body {
+        margin: 0 !important;
+        padding: 0 !important;
+      }
+
+      /* 页面加载时的基础样式 */
+      #__nuxt {
+        min-height: 100vh;
+      }
+    </style>
+
+    <!-- 立即执行的JavaScript - 在页面开始加载时就显示loading -->
+    <script>
+      (function() {
+        // 关键资源列表
+        var criticalResources = [
+          'https://zhiqingyun-demo.isxcode.com/tools/open/file/bg-0.jpg',
+          'https://zhiqingyun-demo.isxcode.com/tools/open/file/product.jpg',
+          'https://zhiqingyun-demo.isxcode.com/tools/open/file/logo.jpg',
+          'https://zhiqingyun-demo.isxcode.com/tools/open/file/AlimamaShuHeiTi-Bold.woff2',
+          'https://zhiqingyun-demo.isxcode.com/tools/open/file/AlibabaPuHuiTi-2-45-Light.woff2'
+        ];
+
+        var loadedResources = 0;
+        var totalResources = criticalResources.length;
+
+        // 创建预加载loading条
+        function createPreloadLoading() {
+          // 检查是否已经存在
+          if (document.getElementById('preload-loading-bar')) {
+            return;
+          }
+
+          // 创建loading条元素
+          var loadingBar = document.createElement('div');
+          loadingBar.id = 'preload-loading-bar';
+          loadingBar.className = 'preload-loading-bar preload-loading-bar--loading';
+
+          var progressBar = document.createElement('div');
+          progressBar.className = 'preload-loading-bar__progress';
+          loadingBar.appendChild(progressBar);
+
+          // 立即插入到页面中
+          document.documentElement.appendChild(loadingBar);
+
+          // 初始进度
+          var progress = 5;
+          progressBar.style.width = progress + '%';
+
+          // 监控关键资源加载
+          function updateProgress() {
+            // 基础进度：5% + 资源加载进度：60% + DOM加载：25% + 其他：10%
+            var resourceProgress = (loadedResources / totalResources) * 60;
+            var domProgress = document.readyState === 'complete' ? 25 :
+                             document.readyState === 'interactive' ? 15 : 0;
+
+            progress = Math.min(5 + resourceProgress + domProgress, 95);
+            progressBar.style.width = progress + '%';
+          }
+
+          // 监控预加载资源
+          criticalResources.forEach(function(url) {
+            var link = document.querySelector('link[href="' + url + '"]');
+            if (link) {
+              link.addEventListener('load', function() {
+                loadedResources++;
+                updateProgress();
+              });
+              link.addEventListener('error', function() {
+                loadedResources++;
+                updateProgress();
+              });
+            }
+          });
+
+          // 监控DOM状态变化
+          var domCheckInterval = setInterval(function() {
+            updateProgress();
+            if (document.readyState === 'complete' && loadedResources >= totalResources) {
+              clearInterval(domCheckInterval);
+            }
+          }, 100);
+
+          // 存储到全局对象
+          window.__preloadLoading = {
+            element: loadingBar,
+            progressBar: progressBar,
+            currentProgress: progress,
+
+            show: function() {
+              loadingBar.classList.remove('preload-loading-bar--hidden');
+              loadingBar.classList.add('preload-loading-bar--loading');
+            },
+
+            hide: function() {
+              loadingBar.classList.add('preload-loading-bar--hidden');
+              loadingBar.classList.remove('preload-loading-bar--loading');
+            },
+
+            complete: function() {
+              clearInterval(domCheckInterval);
+              progressBar.style.width = '100%';
+              loadingBar.classList.remove('preload-loading-bar--loading');
+              loadingBar.classList.add('preload-loading-bar--complete');
+
+              setTimeout(function() {
+                loadingBar.classList.add('preload-loading-bar--hidden');
+              }, 300);
+            },
+
+            error: function() {
+              clearInterval(domCheckInterval);
+              loadingBar.classList.remove('preload-loading-bar--loading');
+              loadingBar.classList.add('preload-loading-bar--error');
+            },
+
+            setProgress: function(percent) {
+              progress = Math.max(progress, percent);
+              progressBar.style.width = progress + '%';
+              updateProgress();
+            },
+
+            remove: function() {
+              clearInterval(domCheckInterval);
+              if (loadingBar && loadingBar.parentNode) {
+                loadingBar.parentNode.removeChild(loadingBar);
+              }
+            }
+          };
+
+          return window.__preloadLoading;
+        }
+
+        // 立即创建并显示loading条
+        if (document.readyState === 'loading') {
+          createPreloadLoading();
+        } else {
+          // 如果DOM已经加载完成，延迟一点创建
+          setTimeout(createPreloadLoading, 0);
+        }
+
+        // 监听页面加载完成
+        window.addEventListener('load', function() {
+          setTimeout(function() {
+            if (window.__preloadLoading) {
+              window.__preloadLoading.complete();
+            }
+          }, 500);
+        });
+
+        // 监听页面错误
+        window.addEventListener('error', function() {
+          if (window.__preloadLoading) {
+            window.__preloadLoading.error();
+          }
+        });
+      })();
+    </script>
+  </head>
+  <body {{ BODY_ATTRS }}>
+    {{ APP }}
+  </body>
+</html>

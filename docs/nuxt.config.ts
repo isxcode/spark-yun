@@ -6,6 +6,15 @@ export default defineNuxtConfig({
   build: {
     transpile: ['vueuc']
   },
+  // 性能优化配置
+  experimental: {
+    payloadExtraction: false, // 禁用payload提取以提高首屏加载速度
+    inlineSSRStyles: false, // 禁用内联SSR样式以减少HTML大小
+  },
+  // 渲染配置
+  nitro: {
+    compressPublicAssets: true, // 启用静态资源压缩
+  },
   modules: [
     "@nuxt/content",
     "@pinia/nuxt",
@@ -21,6 +30,7 @@ export default defineNuxtConfig({
   },
   plugins: [
     { src: "~/plugins/preload-loading.client.ts", mode: "client" },
+    { src: "~/plugins/resource-preloader.client.ts", mode: "client" },
     { src: "~/plugins/svgicon.client.ts" },
     { src: "~/plugins/loading.client.ts" }
   ],
@@ -38,11 +48,19 @@ export default defineNuxtConfig({
     build: {
       rollupOptions: {
         output: {
-          // 确保TopLoadingBar组件优先加载
+          // 确保关键组件优先加载
           manualChunks: {
-            'loading': ['~/components/loading/TopLoadingBar.vue']
+            'loading': ['~/components/loading/TopLoadingBar.vue'],
+            'critical': ['~/pages/index.vue', '~/layouts/home.vue'],
+            'vendor': ['vue', '@vueuse/core']
           }
         }
+      }
+    },
+    // 开发服务器配置
+    server: {
+      hmr: {
+        overlay: false // 禁用错误覆盖层以提高开发体验
       }
     }
   },
