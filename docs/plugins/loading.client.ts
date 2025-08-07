@@ -80,8 +80,40 @@ export default defineNuxtPlugin(() => {
   const startProgressTracking = () => {
     if (!isLoading) return;
 
+    // 预加载关键视频资源
+    preloadCriticalVideo();
+
     // 阶段1: DOM准备 (立即检查)
     checkDOMReady();
+  };
+
+  // 预加载关键视频资源
+  const preloadCriticalVideo = () => {
+    const videoUrl = 'https://zhiqingyun-demo.isxcode.com/tools/open/file/product.mp4';
+
+    // 创建视频元素进行预加载
+    const video = document.createElement('video');
+    video.preload = 'metadata'; // 只预加载元数据，不预加载整个视频
+    video.src = videoUrl;
+    video.style.display = 'none';
+
+    video.addEventListener('loadedmetadata', () => {
+      updateProgress(currentProgress + 5); // 视频元数据加载完成，增加5%进度
+    });
+
+    video.addEventListener('canplaythrough', () => {
+      updateProgress(currentProgress + 10); // 视频可以播放，增加10%进度
+      document.body.removeChild(video); // 清理预加载的视频元素
+    });
+
+    video.addEventListener('error', () => {
+      updateProgress(currentProgress + 5); // 即使出错也增加一些进度
+      if (video.parentNode) {
+        document.body.removeChild(video);
+      }
+    });
+
+    document.body.appendChild(video);
   };
 
   // 检查DOM准备状态
