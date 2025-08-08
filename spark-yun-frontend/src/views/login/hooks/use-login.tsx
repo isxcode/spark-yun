@@ -113,7 +113,7 @@ export function useLogin (callback: ((callback: LoginModel) => Promise<void>)) {
           <el-popover
             trigger="click"
             placement="bottom"
-            width={300}
+            width={180}
             onShow={handleShow}
             v-slots={{
                 reference: () => <span class="oauth-login-text">免密登录</span>,
