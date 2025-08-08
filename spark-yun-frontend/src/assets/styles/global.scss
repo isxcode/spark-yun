@@ -187,3 +187,18 @@ body {
 .el-menu {
   border-right: none;
 }
+
+// 免密登录弹窗样式 - 竖直排列
+.oauth-redirect-url {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 4px 0;
+
+  .el-button {
+    width: 100%;
+    margin: 0;
+    font-size: 12px;
+    height: 32px;
+  }
+}
