@@ -52,3 +52,7 @@ spark-yun-backend/spark-yun-main/src/main/resources/libprql_java-linux64.so
 
 # derby.log不提交
 derby.log
+
+# docker构建的缓存文件夹不提交
+gradle-repo
+.pnpm-store
