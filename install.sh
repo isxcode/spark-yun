@@ -203,6 +203,10 @@ install_flink() {
         echo "解压 Flink 并清理不需要的文件..."
         tar zxf "$flink_path" --strip-components=1 -C "$FLINK_MIN_DIR"
 
+        sed -i '' 's/rest.bind-address: localhost/rest.bind-address: 0.0.0.0/' "${FLINK_MIN_DIR}/conf/flink-conf.yaml"
+        sed -i '' 's/taskmanager.numberOfTaskSlots: 1/taskmanager.numberOfTaskSlots: 10/' "${FLINK_MIN_DIR}/conf/flink-conf.yaml"
+        echo "rest.port: 8083" >> "${FLINK_MIN_DIR}/conf/flink-conf.yaml"
+
         # 删除不需要的文件和目录
         rm -rf "${FLINK_MIN_DIR}"/{NOTICE,LICENSE,licenses,examples}
         echo "Flink 解压和清理完成"
