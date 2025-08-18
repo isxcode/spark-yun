@@ -46,9 +46,14 @@ public interface ModuleCode {
     String TENANT_USER = "tenant-user";
 
     /**
-     * 至轻云代理模块
+     * Spark代理模块
      */
     String SPARK_YUN_AGENT = "spark-yun-agent";
+
+    /**
+     * Flink代理模块
+     */
+    String FLINK_YUN_AGENT = "flink-yun-agent";
 
     /**
      * 资源文件模块

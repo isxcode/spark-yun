@@ -2,9 +2,9 @@ package com.isxcode.spark.modules.work.run.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.isxcode.spark.api.agent.constants.AgentType;
-import com.isxcode.spark.api.agent.constants.AgentUrl;
-import com.isxcode.spark.api.agent.req.*;
-import com.isxcode.spark.api.agent.res.GetWorkStderrLogRes;
+import com.isxcode.spark.api.agent.constants.SparkAgentUrl;
+import com.isxcode.spark.api.agent.req.spark.*;
+import com.isxcode.spark.api.agent.res.spark.GetWorkStderrLogRes;
 import com.isxcode.spark.api.api.constants.PathConstants;
 import com.isxcode.spark.api.cluster.constants.ClusterNodeStatus;
 import com.isxcode.spark.api.cluster.dto.ScpFileEngineNodeDto;
@@ -303,7 +303,7 @@ public class SparkSqlExecutor extends WorkExecutor {
         RunWorkRes submitWorkRes;
         try {
             baseResponse = HttpUtils.doPost(
-                httpUrlUtils.genHttpUrl(engineNode.getHost(), engineNode.getAgentPort(), AgentUrl.SUBMIT_WORK_URL),
+                httpUrlUtils.genHttpUrl(engineNode.getHost(), engineNode.getAgentPort(), SparkAgentUrl.SUBMIT_WORK_URL),
                 executeReq, BaseResponse.class);
             log.debug("获取远程提交作业日志:{}", baseResponse.toString());
             if (!String.valueOf(HttpStatus.OK.value()).equals(baseResponse.getCode())) {
@@ -342,9 +342,8 @@ public class SparkSqlExecutor extends WorkExecutor {
             GetWorkStatusReq getWorkStatusReq = GetWorkStatusReq.builder().appId(submitWorkRes.getAppId())
                 .clusterType(calculateEngineEntityOptional.get().getClusterType())
                 .sparkHomePath(executeReq.getSparkHomePath()).build();
-            baseResponse = HttpUtils.doPost(
-                httpUrlUtils.genHttpUrl(engineNode.getHost(), engineNode.getAgentPort(), AgentUrl.GET_WORK_STATUS_URL),
-                getWorkStatusReq, BaseResponse.class);
+            baseResponse = HttpUtils.doPost(httpUrlUtils.genHttpUrl(engineNode.getHost(), engineNode.getAgentPort(),
+                SparkAgentUrl.GET_WORK_STATUS_URL), getWorkStatusReq, BaseResponse.class);
             log.debug("获取远程获取状态日志:{}", baseResponse.toString());
 
             if (!String.valueOf(HttpStatus.OK.value()).equals(baseResponse.getCode())) {
@@ -388,7 +387,7 @@ public class SparkSqlExecutor extends WorkExecutor {
                     .clusterType(calculateEngineEntityOptional.get().getClusterType())
                     .sparkHomePath(executeReq.getSparkHomePath()).build();
                 baseResponse = HttpUtils.doPost(httpUrlUtils.genHttpUrl(engineNode.getHost(), engineNode.getAgentPort(),
-                    AgentUrl.GET_WORK_STDERR_LOG_URL), getWorkStderrLogReq, BaseResponse.class);
+                    SparkAgentUrl.GET_WORK_STDERR_LOG_URL), getWorkStderrLogReq, BaseResponse.class);
                 log.debug("获取远程返回日志:{}", baseResponse.toString());
 
                 if (!String.valueOf(HttpStatus.OK.value()).equals(baseResponse.getCode())) {
@@ -414,8 +413,9 @@ public class SparkSqlExecutor extends WorkExecutor {
                     GetWorkDataReq getWorkDataReq = GetWorkDataReq.builder().appId(submitWorkRes.getAppId())
                         .clusterType(calculateEngineEntityOptional.get().getClusterType())
                         .sparkHomePath(executeReq.getSparkHomePath()).build();
-                    baseResponse = HttpUtils.doPost(httpUrlUtils.genHttpUrl(engineNode.getHost(),
-                        engineNode.getAgentPort(), AgentUrl.GET_WORK_DATA_URL), getWorkDataReq, BaseResponse.class);
+                    baseResponse =
+                        HttpUtils.doPost(httpUrlUtils.genHttpUrl(engineNode.getHost(), engineNode.getAgentPort(),
+                            SparkAgentUrl.GET_WORK_DATA_URL), getWorkDataReq, BaseResponse.class);
                     log.debug("获取远程返回数据:{}", baseResponse.toString());
 
                     if (!String.valueOf(HttpStatus.OK.value()).equals(baseResponse.getCode())) {
@@ -433,7 +433,7 @@ public class SparkSqlExecutor extends WorkExecutor {
                             .clusterType(AgentType.K8S).sparkHomePath(engineNode.getSparkHomePath())
                             .agentHomePath(engineNode.getAgentHomePath()).build();
                         HttpUtils.doPost(httpUrlUtils.genHttpUrl(engineNode.getHost(), engineNode.getAgentPort(),
-                            AgentUrl.STOP_WORK_URL), stopWorkReq, BaseResponse.class);
+                            SparkAgentUrl.STOP_WORK_URL), stopWorkReq, BaseResponse.class);
                     }
 
                     updateInstance(workInstance, logBuilder);
@@ -443,7 +443,7 @@ public class SparkSqlExecutor extends WorkExecutor {
                             .clusterType(AgentType.K8S).sparkHomePath(engineNode.getSparkHomePath())
                             .agentHomePath(engineNode.getAgentHomePath()).build();
                         HttpUtils.doPost(httpUrlUtils.genHttpUrl(engineNode.getHost(), engineNode.getAgentPort(),
-                            AgentUrl.STOP_WORK_URL), stopWorkReq, BaseResponse.class);
+                            SparkAgentUrl.STOP_WORK_URL), stopWorkReq, BaseResponse.class);
                     }
 
                     // 任务运行错误
@@ -484,7 +484,7 @@ public class SparkSqlExecutor extends WorkExecutor {
                         .clusterType(cluster.getClusterType()).sparkHomePath(engineNode.getSparkHomePath())
                         .agentHomePath(engineNode.getAgentHomePath()).build();
                     BaseResponse<?> baseResponse = HttpUtils.doPost(httpUrlUtils.genHttpUrl(engineNode.getHost(),
-                        engineNode.getAgentPort(), AgentUrl.STOP_WORK_URL), stopWorkReq, BaseResponse.class);
+                        engineNode.getAgentPort(), SparkAgentUrl.STOP_WORK_URL), stopWorkReq, BaseResponse.class);
 
                     if (!String.valueOf(HttpStatus.OK.value()).equals(baseResponse.getCode())) {
                         throw new IsxAppException(baseResponse.getCode(), baseResponse.getMsg(), baseResponse.getErr());
