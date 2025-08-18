@@ -59,6 +59,9 @@ tasks.register('build_agent', Tar) {
     from(rootDir.getAbsolutePath() + "/spark-yun-dist/spark-min") {
         into 'zhiqingyun-agent/spark-min'
     }
+    from(rootDir.getAbsolutePath() + "/spark-yun-dist/flink-min") {
+        into 'zhiqingyun-agent/flink-min'
+    }
     from('zhiqingyun-agent/bin') {
         into 'zhiqingyun-agent/bin'
     }

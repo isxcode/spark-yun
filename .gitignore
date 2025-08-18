@@ -31,6 +31,9 @@ resources/**
 # spark-min不提交
 spark-yun-dist/spark-min
 
+# flink-min不提交
+spark-yun-dist/flink-min
+
 # 临时目录不提交
 spark-warehouse
 
