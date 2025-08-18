@@ -4,6 +4,9 @@
 # 检测代理器
 ######################
 
+# 获取脚本文件当前路径
+BASE_PATH=$(cd "$(dirname "$0")" || exit ; pwd)
+
 # 获取外部参数
 home_path=""
 for arg in "$@"; do
@@ -49,3 +52,6 @@ CPU_PERCENT=$(top -bn 1 | grep "Cpu(s)" | awk -F',' '{print 100 - $4}' | awk '{p
 
 # 返回json的日志
 echo "{\"status\": \"$CHECK_STATUS\",\"log\": \"检测完成\",\"allMemory\": \"$ALL_MEMORY\",\"usedMemory\": \"$USED_MEMORY\",\"allStorage\": \"$ALL_STORAGE\",\"usedStorage\": \"$USED_STORAGE\", \"cpuPercent\": \"$CPU_PERCENT\"}"
+
+# 删除脚本
+rm "${BASE_PATH}"/agent-check.sh

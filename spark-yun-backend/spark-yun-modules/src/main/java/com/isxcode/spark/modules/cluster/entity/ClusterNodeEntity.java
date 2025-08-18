@@ -72,6 +72,8 @@ public class ClusterNodeEntity {
 
     private Boolean installSparkLocal;
 
+    private Boolean installFlinkLocal;
+
     private String agentHomePath;
 
     private String agentPort;
@@ -79,6 +81,8 @@ public class ClusterNodeEntity {
     private String hadoopHomePath;
 
     private String sparkHomePath;
+
+    private String flinkHomePath;
 
     private String agentLog;
 

@@ -100,7 +100,7 @@ spring:
 logging:
   level:
     root: info
-    com.isxcode.spark: info
+    com.isxcode.spark: debug
   exception-conversion-word: '%wEx'
   file:
     name: ./logs/spark-yun.log

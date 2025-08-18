@@ -63,7 +63,9 @@ echo $! >"${agent_path}"/zhiqingyun-agent.pid
 
 # 默认安装spark
 if [ "${spark_local}" = "true" ]; then
-  nohup bash "${agent_path}"/spark-min/sbin/start-all.sh > /dev/null 2>&1 &
+  nohup bash "${agent_path}"/spark-min/sbin/start-master.sh --host 0.0.0.0 --port 7077 --webui-port 8081 > /dev/null 2>&1 &
+  sleep 5
+  nohup bash "${agent_path}"/spark-min/sbin/start-worker.sh --host 0.0.0.0 --webui-port 8082 spark://0.0.0.0:7077 > /dev/null 2>&1 &
 fi
 
 # 默认安装flink

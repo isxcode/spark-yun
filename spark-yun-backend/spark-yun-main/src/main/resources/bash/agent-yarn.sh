@@ -36,15 +36,19 @@ done
 # 初始化agent_path
 agent_path="${home_path}/zhiqingyun-agent"
 
-# 判断tar解压命令
-if ! command -v tar &>/dev/null; then
-  echo "{\"status\": \"INSTALL_ERROR\", \"log\": \"未检测到tar命令\"}"
-  rm "${BASE_PATH}"/agent-standalone.sh
-  exit 0
+# 创建zhiqingyun-agent目录
+if [ ! -d "${agent_path}" ]; then
+  mkdir -p "${agent_path}"
 fi
 
-# 将文件解压到指定目录
-tar -xf "${BASE_PATH}"/zhiqingyun-agent.tar.gz -C "${home_path}" > /dev/null
+# 帮助用户初始化agent-env.sh文件
+if [ ! -f "${agent_path}/conf/agent-env.sh" ]; then
+  mkdir "${agent_path}/conf"
+  touch "${agent_path}/conf/agent-env.sh"
+  echo '#export JAVA_HOME=' >> "${agent_path}/conf/agent-env.sh"
+  echo '#export HADOOP_HOME=' >> "${agent_path}/conf/agent-env.sh"
+  echo '#export HADOOP_CONF_DIR=' >> "${agent_path}/conf/agent-env.sh"
+fi
 
 # 导入用户自己配置的环境变量
 source "${agent_path}/conf/agent-env.sh"
@@ -99,7 +103,6 @@ if ! timeout 60s yarn node -list &>/dev/null; then
   rm "${BASE_PATH}"/agent-yarn.sh
   exit 0
 fi
-
 
 # 返回可以安装
 echo "{ \"status\": \"CAN_INSTALL\", \"hadoopHome\": \"$HADOOP_HOME\", \"log\": \"允许安装\" }"

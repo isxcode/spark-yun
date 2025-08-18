@@ -72,6 +72,12 @@ public class RunAgentStopService {
 
         // 运行停止脚本
         String stopCommand = "bash " + bashFilePath + " --home-path=" + engineNode.getAgentHomePath();
+        if (engineNode.getInstallSparkLocal() != null) {
+            stopCommand = stopCommand + " --spark-local=" + engineNode.getInstallSparkLocal();
+        }
+        if (engineNode.getInstallFlinkLocal() != null) {
+            stopCommand = stopCommand + " --flink-local=" + engineNode.getInstallFlinkLocal();
+        }
         log.debug("执行远程命令:{}", stopCommand);
 
         // 获取返回结果

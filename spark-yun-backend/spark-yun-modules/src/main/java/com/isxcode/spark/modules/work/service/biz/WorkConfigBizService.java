@@ -134,7 +134,7 @@ public class WorkConfigBizService {
 
             // 如果用户指定并发数，需要重新修改配置文件
             if (wocConfigWorkReq.getSyncRule() != null
-                && SetMode.SIMPLE.equals(wocConfigWorkReq.getSyncRule().getSetMode())) {
+                && SetMode.SIMPLE.equals(wocConfigWorkReq.getSyncRule().getSetMode()) && wocConfigWorkReq.getSyncRule().getNumConcurrency() != null) {
                 sparkConfig.put("spark.executor.instances",
                     String.valueOf(wocConfigWorkReq.getSyncRule().getNumConcurrency()));
                 sparkConfig.put("spark.cores.max", String.valueOf(wocConfigWorkReq.getSyncRule().getNumConcurrency()));
