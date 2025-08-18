@@ -1,9 +1,9 @@
 package com.isxcode.spark.modules.work.run.impl;
 
 import com.alibaba.fastjson.JSON;
-import com.isxcode.spark.api.agent.constants.AgentUrl;
-import com.isxcode.spark.api.agent.req.ExecuteContainerSqlReq;
-import com.isxcode.spark.api.agent.res.ExecuteContainerSqlRes;
+import com.isxcode.spark.api.agent.constants.SparkAgentUrl;
+import com.isxcode.spark.api.agent.req.spark.ExecuteContainerSqlReq;
+import com.isxcode.spark.api.agent.res.spark.ExecuteContainerSqlRes;
 import com.isxcode.spark.api.cluster.constants.ClusterNodeStatus;
 import com.isxcode.spark.api.container.constants.ContainerStatus;
 import com.isxcode.spark.api.work.constants.WorkLog;
@@ -144,9 +144,11 @@ public class SparkContainerSqlExecutor extends WorkExecutor {
 
             ExecuteContainerSqlRes containerGetDataRes;
             try {
-                containerGetDataRes = new RestTemplate().postForEntity(
-                    genHttpUrl(engineNode.getHost(), engineNode.getAgentPort(), AgentUrl.EXECUTE_CONTAINER_SQL_URL),
-                    executeContainerSqlReq, ExecuteContainerSqlRes.class).getBody();
+                containerGetDataRes =
+                    new RestTemplate().postForEntity(
+                        genHttpUrl(engineNode.getHost(), engineNode.getAgentPort(),
+                            SparkAgentUrl.EXECUTE_CONTAINER_SQL_URL),
+                        executeContainerSqlReq, ExecuteContainerSqlRes.class).getBody();
             } catch (Exception e) {
                 log.error(e.getMessage());
                 throw new WorkRunException(e.getMessage());

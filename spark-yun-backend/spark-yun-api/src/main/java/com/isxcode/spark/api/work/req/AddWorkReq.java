@@ -19,7 +19,7 @@ public class AddWorkReq {
             + "CURL： CURL作业" + "PY_SPARK: PySpark作业")
     @NotEmpty(message = "作业类型不能为空")
     @Pattern(
-        regexp = "^(SPARK_SQL|EXE_JDBC|QUERY_JDBC|DATA_SYNC_JDBC|BASH|PYTHON|SPARK_JAR|SPARK_CONTAINER_SQL|API|PRQL|CURL|EXCEL_SYNC_JDBC|PY_SPARK|DB_MIGRATE)$",
+        regexp = "^(SPARK_SQL|EXE_JDBC|QUERY_JDBC|DATA_SYNC_JDBC|BASH|PYTHON|SPARK_JAR|SPARK_CONTAINER_SQL|API|PRQL|CURL|EXCEL_SYNC_JDBC|PY_SPARK|DB_MIGRATE|FLINK_SQL|FLINK_JAR)$",
         message = "作业类型不支持")
     private String workType;
 
