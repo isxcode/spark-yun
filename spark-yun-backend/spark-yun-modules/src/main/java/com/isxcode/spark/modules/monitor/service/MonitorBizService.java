@@ -324,11 +324,11 @@ public class MonitorBizService {
         throws JSchException, IOException, InterruptedException, SftpException {
 
         // 拷贝检测脚本
-        scpFile(scpFileEngineNodeDto, "classpath:bash/zhiqingyun-monitor.sh",
-            sparkYunProperties.getTmpDir() + File.separator + "zhiqingyun-monitor.sh");
+        scpFile(scpFileEngineNodeDto, "classpath:bash/agent-monitor.sh",
+            sparkYunProperties.getTmpDir() + File.separator + "agent-monitor.sh");
 
         // 运行安装脚本
-        String getMonitorCommand = "bash " + sparkYunProperties.getTmpDir() + File.separator + "zhiqingyun-monitor.sh";
+        String getMonitorCommand = "bash " + sparkYunProperties.getTmpDir() + File.separator + "agent-monitor.sh";
 
         // 获取返回结果
         String executeLog = executeCommand(scpFileEngineNodeDto, getMonitorCommand, false);
