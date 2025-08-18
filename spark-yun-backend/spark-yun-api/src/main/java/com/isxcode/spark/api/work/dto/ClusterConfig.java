@@ -23,6 +23,10 @@ public class ClusterConfig {
 
     private Map<String, String> sparkConfig;
 
+    private Map<String, Object> flinkConfig;
+
+    private String flinkConfigJson;
+
     private String sparkConfigJson;
 
     private Boolean enableHive;
