@@ -17,11 +17,12 @@ for arg in "$@"; do
 done
 
 # 删除hdfs用户缓存文件
-rm -rf /tmp/hadoop-*/nm-local-dir/usercache/${user}/filecache
+# shellcheck disable=SC2086
+rm -rf /tmp/hadoop-*/nm-local-dir/usercache/"${user}"/filecache
 
 # 删除hdfs中失败的spark作业缓存
 if command -v hadoop &>/dev/null; then
-  hadoop fs -rm -r /user/${user}/.sparkStaging
+  hadoop fs -rm -r /user/"${user}"/.sparkStaging
 fi
 
 # 清理k8s中容器
@@ -35,11 +36,7 @@ if command -v docker &>/dev/null; then
 fi
 
 # 返回结果
-json_output="{ \
-          \"status\": \"CLEAN_SUCCESS\",
-          \"log\": \"清理成功\"
-        }"
-echo $json_output
+echo "{\"status\": \"CLEAN_SUCCESS\",\"log\": \"清理成功\"}"
 
 # 删除脚本
-rm ${BASE_PATH}/agent-clean.sh
+rm "${BASE_PATH}"/agent-clean.sh

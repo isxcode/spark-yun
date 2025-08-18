@@ -4,8 +4,6 @@
 # 获取节点信息
 ######################
 
-BASE_PATH=$(cd "$(dirname "$0")" || exit ; pwd)
-
 # 获取已用内存
 USED_MEMORY=$(free | grep Mem: | awk '{printf "%.1f", $3/1024/1024}')
 
@@ -24,7 +22,7 @@ DISK_IO_READ=$(sar -d 1 2 | tail -n 1 | awk '{print $4}')
 DISK_IO_WRITE=$(sar -d 1 2 | tail -n 1 | awk '{print $5}')
 
 # 返回json的日志
-json_output="{ \
+echo "{ \
   \"status\": \"SUCCESS\", \
   \"log\": \"检测完成\", \
   \"usedMemorySize\": \"$USED_MEMORY\", \
@@ -35,5 +33,3 @@ json_output="{ \
   \"diskIoReadSpeed\": \"$DISK_IO_READ\", \
   \"diskIoWriteSpeed\": \"$DISK_IO_WRITE\" \
 }"
-
-echo $json_output
