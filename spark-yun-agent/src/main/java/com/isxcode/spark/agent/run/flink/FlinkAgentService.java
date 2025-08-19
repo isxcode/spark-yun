@@ -10,7 +10,7 @@ import com.isxcode.spark.api.agent.res.flink.GetWorkLogRes;
 import com.isxcode.spark.api.agent.res.flink.StopWorkRes;
 import com.isxcode.spark.api.agent.res.flink.SubmitWorkRes;
 
-public interface AgentService {
+public interface FlinkAgentService {
 
     /**
      * 获取当前代理的类型

@@ -1,8 +1,8 @@
 package com.isxcode.spark.agent.service;
 
 import com.alibaba.fastjson.JSON;
-import com.isxcode.spark.agent.run.spark.AgentFactory;
-import com.isxcode.spark.agent.run.spark.AgentService;
+import com.isxcode.spark.agent.run.spark.SparkAgentFactory;
+import com.isxcode.spark.agent.run.spark.SparkAgentService;
 import com.isxcode.spark.api.agent.req.spark.*;
 import com.isxcode.spark.api.agent.res.spark.*;
 import com.isxcode.spark.backend.api.base.exceptions.IsxAppException;
@@ -23,11 +23,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SparkAgentBizService {
 
-    private final AgentFactory agentFactory;
+    private final SparkAgentFactory agentFactory;
 
     public SubmitWorkRes submitWork(SubmitWorkReq submitWorkReq) {
 
-        AgentService agentService = agentFactory.getAgentService(submitWorkReq.getClusterType());
+        SparkAgentService agentService = agentFactory.getAgentService(submitWorkReq.getClusterType());
         try {
             SparkLauncher sparkLauncher = agentService.getSparkLauncher(submitWorkReq);
             String appId = agentService.submitWork(sparkLauncher);
@@ -43,7 +43,7 @@ public class SparkAgentBizService {
 
     public GetWorkStatusRes getWorkStatus(GetWorkStatusReq getWorkStatusReq) {
 
-        AgentService agentService = agentFactory.getAgentService(getWorkStatusReq.getClusterType());
+        SparkAgentService agentService = agentFactory.getAgentService(getWorkStatusReq.getClusterType());
         try {
             String appStatus =
                 agentService.getWorkStatus(getWorkStatusReq.getAppId(), getWorkStatusReq.getSparkHomePath());
@@ -59,7 +59,7 @@ public class SparkAgentBizService {
 
     public GetWorkStderrLogRes getWorkStderrLog(GetWorkStderrLogReq getWorkStderrLogReq) {
 
-        AgentService agentService = agentFactory.getAgentService(getWorkStderrLogReq.getClusterType());
+        SparkAgentService agentService = agentFactory.getAgentService(getWorkStderrLogReq.getClusterType());
         try {
             String appLog =
                 agentService.getStderrLog(getWorkStderrLogReq.getAppId(), getWorkStderrLogReq.getSparkHomePath());
@@ -75,7 +75,7 @@ public class SparkAgentBizService {
 
     public GetWorkStdoutLogRes getAllWorkStdoutLog(GetWorkStdoutLogReq getWorkStdoutLogReq) {
 
-        AgentService agentService = agentFactory.getAgentService(getWorkStdoutLogReq.getClusterType());
+        SparkAgentService agentService = agentFactory.getAgentService(getWorkStdoutLogReq.getClusterType());
         String appLog;
         try {
             appLog = agentService.getStdoutLog(getWorkStdoutLogReq.getAppId(), getWorkStdoutLogReq.getSparkHomePath());
@@ -91,7 +91,7 @@ public class SparkAgentBizService {
 
     public GetWorkStdoutLogRes getCustomWorkStdoutLog(GetWorkStdoutLogReq getWorkStdoutLogReq) {
 
-        AgentService agentService = agentFactory.getAgentService(getWorkStdoutLogReq.getClusterType());
+        SparkAgentService agentService = agentFactory.getAgentService(getWorkStdoutLogReq.getClusterType());
         String appLog;
         try {
             appLog = agentService.getCustomWorkStdoutLog(getWorkStdoutLogReq.getAppId(),
@@ -108,7 +108,7 @@ public class SparkAgentBizService {
 
     public GetWorkStdoutLogRes getWorkStdoutLog(GetWorkStdoutLogReq getWorkStdoutLogReq) {
 
-        AgentService agentService = agentFactory.getAgentService(getWorkStdoutLogReq.getClusterType());
+        SparkAgentService agentService = agentFactory.getAgentService(getWorkStdoutLogReq.getClusterType());
         String appLog;
         try {
             appLog = agentService.getStdoutLog(getWorkStdoutLogReq.getAppId(), getWorkStdoutLogReq.getSparkHomePath());
@@ -134,7 +134,7 @@ public class SparkAgentBizService {
 
     public GetWorkDataRes getWorkData(GetWorkDataReq getWorkDataReq) {
 
-        AgentService agentService = agentFactory.getAgentService(getWorkDataReq.getClusterType());
+        SparkAgentService agentService = agentFactory.getAgentService(getWorkDataReq.getClusterType());
         try {
             String workDataStr =
                 agentService.getWorkDataStr(getWorkDataReq.getAppId(), getWorkDataReq.getSparkHomePath());
@@ -150,7 +150,7 @@ public class SparkAgentBizService {
 
     public void stopWork(StopWorkReq stopWorkReq) {
 
-        AgentService agentService = agentFactory.getAgentService(stopWorkReq.getClusterType());
+        SparkAgentService agentService = agentFactory.getAgentService(stopWorkReq.getClusterType());
         try {
             agentService.stopWork(stopWorkReq.getAppId(), stopWorkReq.getSparkHomePath(),
                 stopWorkReq.getAgentHomePath());
@@ -203,7 +203,7 @@ public class SparkAgentBizService {
 
     public DeployContainerRes deployContainer(SubmitWorkReq submitWorkReq) {
 
-        AgentService agentService = agentFactory.getAgentService(submitWorkReq.getClusterType());
+        SparkAgentService agentService = agentFactory.getAgentService(submitWorkReq.getClusterType());
         try {
             int port = findUnusedPort();
             submitWorkReq.getPluginReq().setContainerPort(port);

@@ -1,7 +1,7 @@
 package com.isxcode.spark.agent.run.flink.impl;
 
 import com.alibaba.fastjson2.JSON;
-import com.isxcode.spark.agent.run.flink.AgentService;
+import com.isxcode.spark.agent.run.flink.FlinkAgentService;
 import com.isxcode.spark.api.agent.constants.AgentType;
 import com.isxcode.spark.api.agent.req.flink.GetWorkInfoReq;
 import com.isxcode.spark.api.agent.req.flink.GetWorkLogReq;
@@ -42,7 +42,7 @@ import java.util.regex.Pattern;
 
 @Slf4j
 @Service
-public class StandaloneAgentService implements AgentService {
+public class FlinkStandaloneAgentService implements FlinkAgentService {
 
     public Configuration genConfiguration(String flinkHome) {
 

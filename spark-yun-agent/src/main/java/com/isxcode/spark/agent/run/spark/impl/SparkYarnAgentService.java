@@ -2,7 +2,7 @@ package com.isxcode.spark.agent.run.spark.impl;
 
 import com.alibaba.fastjson2.JSON;
 import com.isxcode.spark.agent.properties.SparkYunAgentProperties;
-import com.isxcode.spark.agent.run.spark.AgentService;
+import com.isxcode.spark.agent.run.spark.SparkAgentService;
 import com.isxcode.spark.api.agent.constants.AgentType;
 import com.isxcode.spark.api.agent.req.spark.SubmitWorkReq;
 import com.isxcode.spark.api.work.constants.WorkType;
@@ -23,7 +23,7 @@ import java.util.regex.Pattern;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class YarnAgentService implements AgentService {
+public class SparkYarnAgentService implements SparkAgentService {
 
     private final SparkYunAgentProperties sparkYunAgentProperties;
 
