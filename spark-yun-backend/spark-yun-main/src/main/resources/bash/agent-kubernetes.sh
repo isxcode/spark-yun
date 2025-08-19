@@ -83,7 +83,7 @@ fi
 
 # 判断kubectl命令，是否可以访问k8s集群
 if ! kubectl cluster-info &>/dev/null; then
-  echo "{  \"status\": \"INSTALL_ERROR\", \"log\": \"kubectl无法访问k8s集群\" }"
+  echo "{  \"status\": \"INSTALL_ERROR\", \"log\": \"kubectl无法访问k8s集群，请检查k8s服务是否正常\" }"
   rm "${BASE_PATH}"/agent-kubernetes.sh
   exit 0
 fi
