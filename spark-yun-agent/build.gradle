@@ -11,6 +11,8 @@ dependencies {
 
     implementation "org.apache.hadoop:hadoop-yarn-client:${HADOOP_VERSION}"
 
+    implementation "org.apache.hadoop:hadoop-common:${HADOOP_VERSION}"
+
     implementation "org.jsoup:jsoup:${JSOUP_VERSION}"
 
     implementation "org.apache.httpcomponents.client5:httpclient5:${HTTPCLIENT_VERSION}"
