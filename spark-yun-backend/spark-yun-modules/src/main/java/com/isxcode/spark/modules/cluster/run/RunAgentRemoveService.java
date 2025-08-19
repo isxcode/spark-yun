@@ -72,6 +72,13 @@ public class RunAgentRemoveService {
 
         // 运行停止脚本
         String removeCommand = "bash " + bashFilePath + " --home-path=" + engineNode.getAgentHomePath();
+        if (engineNode.getInstallSparkLocal() != null) {
+            removeCommand = removeCommand + " --spark-local=" + engineNode.getInstallSparkLocal();
+        }
+        if (engineNode.getInstallFlinkLocal() != null) {
+            removeCommand = removeCommand + " --flink-local=" + engineNode.getInstallFlinkLocal();
+        }
+
         log.debug("执行远程命令:{}", removeCommand);
 
         // 获取返回结果

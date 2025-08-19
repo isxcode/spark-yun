@@ -9,6 +9,8 @@ set -e  # 遇到错误立即退出
 # 配置项
 readonly SPARK_VERSION="3.4.1"
 readonly SPARK_MIN_FILE="spark-${SPARK_VERSION}-bin-hadoop3.tgz"
+readonly FLINK_VERSION="1.18.1"
+readonly FLINK_MIN_FILE="flink-${FLINK_VERSION}-bin-scala_2.12.tgz"
 readonly OSS_DOWNLOAD_URL="https://zhiqingyun-demo.isxcode.com/tools/open/file"
 
 # 路径配置
@@ -18,6 +20,7 @@ readonly JDBC_DIR="${BASE_PATH}/resources/jdbc/system"
 readonly LIBS_DIR="${BASE_PATH}/resources/libs"
 readonly RESOURCE_DIR="${BASE_PATH}/spark-yun-backend/spark-yun-main/src/main/resources"
 readonly SPARK_MIN_DIR="${BASE_PATH}/spark-yun-dist/spark-min"
+readonly FLINK_MIN_DIR="${BASE_PATH}/spark-yun-dist/flink-min"
 
 # spark依赖列表
 readonly SPARK_JARS=(
@@ -30,6 +33,15 @@ readonly SPARK_JARS=(
     "bcprov-jdk18on-1.78.1.jar"
     "commons-dbutils-1.7.jar"
     "HikariCP-4.0.3.jar"
+)
+
+# flink依赖列表
+readonly FLINK_JARS=(
+    "flink-connector-base-${FLINK_VERSION}.jar"
+    "flink-connector-jdbc-3.1.2-1.18.jar"
+    "bcpkix-jdk18on-1.78.1.jar"
+    "bcprov-jdk18on-1.78.1.jar"
+    "bson-5.2.1.jar"
 )
 
 # 数据源驱动列表
@@ -153,9 +165,53 @@ install_spark() {
 
         # 删除不需要的文件和目录
         rm -rf "${SPARK_MIN_DIR}"/{data,examples,licenses,R,LICENSE,NOTICE,RELEASE}
+
+        # 修改spark的默认配置文件
+        cp "${SPARK_MIN_DIR}/conf/spark-env.sh.template" "${SPARK_MIN_DIR}/conf/spark-env.sh"
+        echo "export SPARK_MASTER_PORT=7077" >> "${SPARK_MIN_DIR}/conf/spark-env.sh"
+        echo "export SPARK_MASTER_HOST=0.0.0.0" >> "${SPARK_MIN_DIR}/conf/spark-env.sh"
+        echo "export SPARK_MASTER_WEBUI_PORT=8081" >> "${SPARK_MIN_DIR}/conf/spark-env.sh"
+        echo "export SPARK_WORKER_HOST=0.0.0.0" >> "${SPARK_MIN_DIR}/conf/spark-env.sh"
+        echo "export SPARK_WORKER_WEBUI_PORT=8082" >> "${SPARK_MIN_DIR}/conf/spark-env.sh"
+        echo "export SPARK_WORKER_OPTS=\"-Dspark.worker.cleanup.enabled=true -Dspark.worker.cleanup.appDataTtl=1800 -Dspark.worker.cleanup.interval=60\"" >> "${SPARK_MIN_DIR}/conf/spark-defaults.conf"
+
+        cp "${SPARK_MIN_DIR}/conf/spark-defaults.conf.template" "${SPARK_MIN_DIR}/conf/spark-defaults.conf"
+        echo "spark.master          spark://0.0.0.0:7077" >> "${SPARK_MIN_DIR}/conf/spark-defaults.conf"
+        echo "spark.master.web.url  http://0.0.0.0:8081" >> "${SPARK_MIN_DIR}/conf/spark-defaults.conf"
+
         echo "Spark 解压和清理完成"
     else
         echo "Spark 已解压，跳过"
+    fi
+}
+
+# 安装flink
+install_flink() {
+    echo "安装 Flink ${FLINK_VERSION}..."
+
+    # 创建必要目录
+    create_dir "$TMP_DIR"
+    create_dir "$FLINK_MIN_DIR"
+
+    # 下载 Flink
+    local flink_url="${OSS_DOWNLOAD_URL}/${FLINK_MIN_FILE}"
+    local flink_path="${TMP_DIR}/${FLINK_MIN_FILE}"
+    download_file "$flink_url" "$flink_path" "Flink ${FLINK_VERSION} 二进制文件，请耐心等待"
+
+    # 解压 Flink（如果尚未解压）
+    if [[ ! -f "${FLINK_MIN_DIR}/README.md" ]]; then
+        echo "解压 Flink 并清理不需要的文件..."
+        tar zxf "$flink_path" --strip-components=1 -C "$FLINK_MIN_DIR"
+
+        sed -i '' 's/rest.bind-address: localhost/rest.bind-address: 0.0.0.0/' "${FLINK_MIN_DIR}/conf/flink-conf.yaml"
+        sed -i '' 's/taskmanager.numberOfTaskSlots: 1/taskmanager.numberOfTaskSlots: 10/' "${FLINK_MIN_DIR}/conf/flink-conf.yaml"
+        echo "rest.port: 8083" >> "${FLINK_MIN_DIR}/conf/flink-conf.yaml"
+
+        # 删除不需要的文件和目录
+        rm -rf "${FLINK_MIN_DIR}"/{NOTICE,LICENSE,licenses,examples}
+        echo "Flink 解压和清理完成"
+    else
+        echo "Flink 已解压，跳过"
     fi
 }
 
@@ -170,6 +226,20 @@ install_spark_jars() {
         local jar_url="${OSS_DOWNLOAD_URL}/${jar}"
         local jar_path="${spark_jar_dir}/${jar}"
         download_file "$jar_url" "$jar_path" "Spark JAR: $jar"
+    done
+}
+
+# 安装 Flink JAR 依赖
+install_flink_jars() {
+    echo "安装 Flink JAR 依赖..."
+
+    local flink_jar_dir="${FLINK_MIN_DIR}/lib"
+
+    # 批量下载 JAR 文件
+    for jar in "${FLINK_JARS[@]}"; do
+        local jar_url="${OSS_DOWNLOAD_URL}/${jar}"
+        local jar_path="${flink_jar_dir}/${jar}"
+        download_file "$jar_url" "$jar_path" "Flink JAR: $jar"
     done
 }
 
@@ -230,13 +300,19 @@ main() {
     # 3. 安装Spark第三方依赖
     install_spark_jars
 
-    # 4. 安装数据库驱动
+    # 4. 安装Fink
+    install_flink
+
+    # 5. 安装Flink第三方依赖
+    install_flink_jars
+
+    # 6. 安装数据库驱动
     install_jdbc_drivers
 
-    # 5. 安装项目依赖
+    # 7. 安装项目依赖
     install_project_dependencies
 
-    # 6. 安装resource依赖
+    # 8. 安装resource依赖
     install_resource_dependencies
 
     echo "项目依赖安装完成！"

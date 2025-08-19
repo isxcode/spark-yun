@@ -76,9 +76,6 @@ public class RunAgentInstallService {
         // 运行安装脚本
         String envCommand = "bash " + installBashFilePath + " --home-path=" + engineNode.getAgentHomePath()
             + " --agent-port=" + engineNode.getAgentPort();
-        if (engineNode.getInstallSparkLocal() != null) {
-            envCommand = envCommand + " --spark-local=" + engineNode.getInstallSparkLocal();
-        }
         log.debug("执行远程命令:{}", envCommand);
 
         // 获取返回结果
@@ -118,6 +115,9 @@ public class RunAgentInstallService {
             + " --agent-port=" + engineNode.getAgentPort();
         if (engineNode.getInstallSparkLocal() != null) {
             installCommand = installCommand + " --spark-local=" + engineNode.getInstallSparkLocal();
+        }
+        if (engineNode.getInstallFlinkLocal() != null) {
+            installCommand = installCommand + " --flink-local=" + engineNode.getInstallFlinkLocal();
         }
 
         log.debug("执行远程安装命令:{}", installCommand);

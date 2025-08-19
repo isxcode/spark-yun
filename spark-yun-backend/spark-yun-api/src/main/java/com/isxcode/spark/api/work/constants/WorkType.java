@@ -70,4 +70,14 @@ public interface WorkType {
      * 整库迁移作业.
      */
     String DB_MIGRATE = "DB_MIGRATE";
+
+    /**
+     * FlinkSql.
+     */
+    String FLINK_SQL = "FLINK_SQL";
+
+    /**
+     * FlinkJar.
+     */
+    String FLINK_JAR = "FLINK_JAR";
 }

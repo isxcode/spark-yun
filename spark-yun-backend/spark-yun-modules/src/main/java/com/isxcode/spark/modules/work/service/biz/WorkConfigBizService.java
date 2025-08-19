@@ -71,6 +71,17 @@ public class WorkConfigBizService {
             log.debug(e.getMessage(), e);
             throw new IsxAppException("集群spark配置json格式不合法");
         }
+        try {
+            if (wocConfigWorkReq.getClusterConfig() != null
+                && !Strings.isEmpty(wocConfigWorkReq.getClusterConfig().getFlinkConfigJson())) {
+                wocConfigWorkReq.getClusterConfig()
+                    .setFlinkConfig(JSON.parseObject(wocConfigWorkReq.getClusterConfig().getFlinkConfigJson(),
+                        new TypeReference<Map<String, String>>() {}));
+            }
+        } catch (Exception e) {
+            log.debug(e.getMessage(), e);
+            throw new IsxAppException("集群Flink配置json格式不合法");
+        }
 
         try {
             if (wocConfigWorkReq.getSyncRule() != null
@@ -125,22 +136,37 @@ public class WorkConfigBizService {
         // 用户更新集群配置
         if (wocConfigWorkReq.getClusterConfig() != null) {
 
-            Map<String, String> sparkConfig = wocConfigWorkReq.getClusterConfig().getSparkConfig();
+            if (WorkType.FLINK_SQL.equals(work.getWorkType()) || WorkType.FLINK_JAR.equals(work.getWorkType())) {
 
-            // 如果是等级的模式，需要帮用户默认填充sparkConfig
-            if (SetMode.SIMPLE.equals(wocConfigWorkReq.getClusterConfig().getSetMode())) {
-                sparkConfig = workConfigService.initSparkConfig(wocConfigWorkReq.getClusterConfig().getResourceLevel());
+                Map<String, Object> flinkConfig = wocConfigWorkReq.getClusterConfig().getFlinkConfig();
+                // 如果是等级的模式，需要帮用户默认填充sparkConfig
+                if (SetMode.SIMPLE.equals(wocConfigWorkReq.getClusterConfig().getSetMode())) {
+                    flinkConfig =
+                        workConfigService.initFlinkConfig(wocConfigWorkReq.getClusterConfig().getResourceLevel());
+                }
+                wocConfigWorkReq.getClusterConfig().setFlinkConfig(flinkConfig);
+            } else {
+                Map<String, String> sparkConfig = wocConfigWorkReq.getClusterConfig().getSparkConfig();
+
+                // 如果是等级的模式，需要帮用户默认填充sparkConfig
+                if (SetMode.SIMPLE.equals(wocConfigWorkReq.getClusterConfig().getSetMode())) {
+                    sparkConfig =
+                        workConfigService.initSparkConfig(wocConfigWorkReq.getClusterConfig().getResourceLevel());
+                }
+
+                // 如果用户指定并发数，需要重新修改配置文件
+                if (wocConfigWorkReq.getSyncRule() != null
+                    && SetMode.SIMPLE.equals(wocConfigWorkReq.getSyncRule().getSetMode())
+                    && wocConfigWorkReq.getSyncRule().getNumConcurrency() != null) {
+                    sparkConfig.put("spark.executor.instances",
+                        String.valueOf(wocConfigWorkReq.getSyncRule().getNumConcurrency()));
+                    sparkConfig.put("spark.cores.max",
+                        String.valueOf(wocConfigWorkReq.getSyncRule().getNumConcurrency()));
+                }
+
+                wocConfigWorkReq.getClusterConfig().setSparkConfig(sparkConfig);
             }
 
-            // 如果用户指定并发数，需要重新修改配置文件
-            if (wocConfigWorkReq.getSyncRule() != null
-                && SetMode.SIMPLE.equals(wocConfigWorkReq.getSyncRule().getSetMode())) {
-                sparkConfig.put("spark.executor.instances",
-                    String.valueOf(wocConfigWorkReq.getSyncRule().getNumConcurrency()));
-                sparkConfig.put("spark.cores.max", String.valueOf(wocConfigWorkReq.getSyncRule().getNumConcurrency()));
-            }
-
-            wocConfigWorkReq.getClusterConfig().setSparkConfig(sparkConfig);
             workConfig.setClusterConfig(JSON.toJSONString(wocConfigWorkReq.getClusterConfig()));
         }
 

@@ -168,7 +168,7 @@
                 </template>
                 <template v-else>
                     <spark-jar
-                        v-if="showWorkItem && workConfig.workType === 'SPARK_JAR'"
+                        v-if="showWorkItem && (workConfig.workType === 'SPARK_JAR' || workConfig.workType === 'FLINK_JAR')"
                         :workItemConfig="workConfig"
                         :workFlowData="workFlowData"
                         @back="backToFlow"

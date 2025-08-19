@@ -79,6 +79,9 @@ public class RunAgentStartService {
         if (engineNode.getInstallSparkLocal() != null) {
             startCommand = startCommand + " --spark-local=" + engineNode.getInstallSparkLocal();
         }
+        if (engineNode.getInstallFlinkLocal() != null) {
+            startCommand = startCommand + " --flink-local=" + engineNode.getInstallFlinkLocal();
+        }
 
         log.debug("执行远程命令:{}", startCommand);
 

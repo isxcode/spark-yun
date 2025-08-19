@@ -46,6 +46,9 @@ public class AddClusterNodeReq {
     @Schema(title = "是否安装spark-local组件", example = "true")
     private Boolean installSparkLocal;
 
+    @Schema(title = "是否安装flink-local组件", example = "true")
+    private Boolean installFlinkLocal;
+
     @Schema(title = "spark安装路径", example = "/xxx")
     private String sparkHomePath;
 }

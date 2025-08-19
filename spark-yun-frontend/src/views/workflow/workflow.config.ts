@@ -195,7 +195,7 @@ export const TypeList = [
     value: 'PYTHON'
   },
   {
-    label: '自定义作业',
+    label: 'Spark自定义作业',
     value: 'SPARK_JAR'
   },
   {
@@ -213,5 +213,13 @@ export const TypeList = [
   {
     label: '整库迁移作业',
     value: 'DB_MIGRATE'
+  },
+  {
+    label: 'FlinkSql作业',
+    value: 'FLINK_SQL'
+  },
+  {
+    label: 'Flink自定义作业',
+    value: 'FLINK_JAR'
   }
 ]

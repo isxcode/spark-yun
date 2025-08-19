@@ -15,24 +15,22 @@ elif [[ "$OSTYPE" == "darwin"* ]]; then
     source /etc/profile
     source ~/.zshrc
 else
-    json_output="{ \
-                      \"status\": \"INSTALL_ERROR\", \
-                      \"log\": \"该系统不支持安装\" \
-                    }"
-      echo $json_output
-      rm ${BASE_PATH}/agent-start.sh
-      exit 0
+    echo "{ \"status\": \"INSTALL_ERROR\",\"log\": \"该系统不支持安装\" }"
+    rm "${BASE_PATH}"/agent-start.sh
+    exit 0
 fi
 
 # 获取外部参数
 home_path=""
 agent_port=""
 spark_local="false"
+flink_local="false"
 for arg in "$@"; do
   case "$arg" in
   --home-path=*) home_path="${arg#*=}" ;;
   --agent-port=*) agent_port="${arg#*=}" ;;
   --spark-local=*) spark_local="${arg#*=}" ;;
+  --flink-local=*) flink_local="${arg#*=}" ;;
   *) echo "未知参数: $arg" && exit 1 ;;
   esac
 done
@@ -41,62 +39,42 @@ done
 agent_path="${home_path}/zhiqingyun-agent"
 
 # 导入用户自己配置的环境变量
-source ${agent_path}/conf/agent-env.sh
+source "${agent_path}"/conf/agent-env.sh
 
 if [ -e "${agent_path}/zhiqingyun-agent.pid" ]; then
   pid=$(cat "${agent_path}/zhiqingyun-agent.pid")
-  if ps -p $pid >/dev/null 2>&1; then
-    json_output="{ \
-                \"status\": \"STOP\", \
-                \"log\": \"请停止后，再启动代理\"
-              }"
-    rm ${BASE_PATH}/agent-start.sh
+  if ps -p "$pid" >/dev/null 2>&1; then
+    echo "{ \"status\": \"STOP\", \"log\": \"请停止后，再启动代理\"}"
+    rm "${BASE_PATH}"/agent-start.sh
     exit 0
   fi
 fi
 
 # 进入代理目录,防止logs文件夹生成错位
-cd ${agent_path}
-
-# 判断zhiqingyun-agent.log是否存在,不存在则新建
-if [ ! -f "${agent_path}/logs/zhiqingyun-agent.log" ]; then
-  mkdir "${agent_path}/logs"
-  touch "${agent_path}/logs/zhiqingyun-agent.log"
-fi
+cd "${agent_path}" || exit
 
 # 运行代理程序
 if ! command -v java &>/dev/null; then
-  nohup $JAVA_HOME/bin/java -jar -Xmx2048m ${agent_path}/lib/zhiqingyun-agent.jar --server.port=${agent_port} --spring.config.additional-location=${agent_path}/conf/ > /dev/null 2>&1 &
+  nohup "$JAVA_HOME"/bin/java -jar -Xmx2048m "${agent_path}"/lib/zhiqingyun-agent.jar --server.port="${agent_port}" --spring.config.additional-location="${agent_path}"/conf/ > /dev/null 2>&1 &
 else
-  nohup java -jar -Xmx2048m ${agent_path}/lib/zhiqingyun-agent.jar --server.port=${agent_port} --spring.config.additional-location=${agent_path}/conf/ > /dev/null 2>&1 &
+  nohup java -jar -Xmx2048m "${agent_path}"/lib/zhiqingyun-agent.jar --server.port="${agent_port}" --spring.config.additional-location="${agent_path}"/conf/ > /dev/null 2>&1 &
 fi
-echo $! >${agent_path}/zhiqingyun-agent.pid
+echo $! >"${agent_path}"/zhiqingyun-agent.pid
 
-# 如果用户指定spark安装,默认帮他启动spark
-if [ ${spark_local} = "true" ]; then
-  if [[ "$OSTYPE" == "linux-gnu" ]]; then
-    nohup bash ${agent_path}/spark-min/sbin/start-all.sh > /dev/null 2>&1 &
-  elif [[ "$OSTYPE" == "darwin"* ]]; then
-    nohup bash ${agent_path}/spark-min/sbin/start-master.sh  > /dev/null 2>&1 &
-    sleep 5
-    nohup bash ${agent_path}/spark-min/sbin/start-worker.sh --webui-port 8081 spark://localhost:7077 > /dev/null 2>&1 &
-  else
-    json_output="{ \
-                      \"status\": \"INSTALL_ERROR\", \
-                      \"log\": \"该系统不支持安装\" \
-                    }"
-    echo $json_output
-    rm ${BASE_PATH}/agent-start.sh
-    exit 0
-  fi
+# 默认安装spark
+if [ "${spark_local}" = "true" ]; then
+  nohup bash "${agent_path}"/spark-min/sbin/start-master.sh --host 0.0.0.0 --port 7077 --webui-port 8081 > /dev/null 2>&1 &
+  sleep 5
+  nohup bash "${agent_path}"/spark-min/sbin/start-worker.sh --host 0.0.0.0 --webui-port 8082 spark://0.0.0.0:7077 > /dev/null 2>&1 &
+fi
+
+# 默认安装flink
+if [ "${flink_local}" = "true" ]; then
+  nohup bash "${agent_path}"/flink-min/bin/start-cluster.sh > /dev/null 2>&1 &
 fi
 
 # 返回结果
-json_output="{ \
-          \"status\": \"RUNNING\"
-          \"log\": \"激活成功\",
-        }"
-echo $json_output
+echo "{\"status\": \"RUNNING\",\"log\": \"激活成功\"}"
 
 # 删除启动脚本
-rm ${BASE_PATH}/agent-start.sh
+rm "${BASE_PATH}"/agent-start.sh

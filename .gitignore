@@ -31,6 +31,9 @@ resources/**
 # spark-min不提交
 spark-yun-dist/spark-min
 
+# flink-min不提交
+spark-yun-dist/flink-min
+
 # 临时目录不提交
 spark-warehouse
 
@@ -52,3 +55,10 @@ spark-yun-backend/spark-yun-main/src/main/resources/libprql_java-linux64.so
 
 # derby.log不提交
 derby.log
+
+# docker构建的缓存文件夹不提交
+gradle-repo
+.pnpm-store
+
+# 打包异常日志不提交
+*.hprof

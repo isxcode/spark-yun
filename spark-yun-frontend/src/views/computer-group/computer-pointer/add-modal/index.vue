@@ -60,6 +60,9 @@
       <el-form-item v-if="clusterType === 'standalone'" label="默认安装Spark">
         <el-switch v-model="formData.installSparkLocal" />
       </el-form-item>
+      <el-form-item v-if="clusterType === 'standalone'" label="默认安装Flink">
+        <el-switch v-model="formData.installFlinkLocal" />
+      </el-form-item>
       <el-form-item label="备注">
         <el-input
           v-model="formData.remark"
@@ -138,6 +141,7 @@ const formData = reactive({
   agentPort: '',
   hadoopHomePath: '',
   installSparkLocal: false,
+  installFlinkLocal: false,
   remark: '',
   id: ''
 })
@@ -192,6 +196,7 @@ function showModal(cb: () => void, data: any): void {
     formData.agentPort = data.agentPort
     formData.hadoopHomePath = data.hadoopHomePath
     formData.installSparkLocal = data.installSparkLocal
+    formData.installFlinkLocal = data.installFlinkLocal
     formData.remark = data.remark
     formData.id = data.id
     modelConfig.title = '编辑节点'
@@ -204,7 +209,8 @@ function showModal(cb: () => void, data: any): void {
     formData.agentHomePath = ''
     formData.agentPort = ''
     formData.hadoopHomePath = ''
-    formData.installSparkLocal = false
+    formData.installSparkLocal = true
+    formData.installFlinkLocal = true
     formData.remark = ''
     formData.id = ''
     modelConfig.title = '添加节点'

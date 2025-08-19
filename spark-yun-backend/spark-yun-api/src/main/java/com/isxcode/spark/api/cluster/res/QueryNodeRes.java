@@ -40,4 +40,6 @@ public class QueryNodeRes {
     private Boolean defaultClusterNode;
 
     private Boolean installSparkLocal;
+
+    private Boolean installFlinkLocal;
 }

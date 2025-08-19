@@ -82,9 +82,13 @@
                     />
                   </el-select>
                 </el-form-item>
-                <el-form-item label="sparkConfig" v-if="clusterConfig.setMode === 'ADVANCE'" :class="{ 'show-screen__full': sparkJsonFullStatus }">
+                <el-form-item label="sparkConfig" v-if="clusterConfig.setMode === 'ADVANCE' && ['SPARK_SQL'].includes(workItemConfig.workType)  " :class="{ 'show-screen__full': sparkJsonFullStatus }">
                   <el-icon class="modal-full-screen" @click="fullScreenEvent('sparkJsonFullStatus')"><FullScreen v-if="!sparkJsonFullStatus" /><Close v-else /></el-icon>
                   <code-mirror v-model="clusterConfig.sparkConfigJson" basic :lang="lang"/>
+                </el-form-item>
+                <el-form-item label="flinkConfig" v-if="clusterConfig.setMode === 'ADVANCE' && ['FLINK_SQL'].includes(workItemConfig.workType) " :class="{ 'show-screen__full': sparkJsonFullStatus }">
+                  <el-icon class="modal-full-screen" @click="fullScreenEvent('sparkJsonFullStatus')"><FullScreen v-if="!sparkJsonFullStatus" /><Close v-else /></el-icon>
+                  <code-mirror v-model="clusterConfig.flinkConfigJson" basic :lang="lang"/>
                 </el-form-item>
                 <el-form-item label="资源等级" v-else>
                   <el-select v-model="clusterConfig.resourceLevel" placeholder="请选择">
@@ -310,7 +314,7 @@
             </el-form>
           </div>
           <!-- 函数配置 -->
-          <div class="config-item" v-if="['SPARK_SQL', 'DATA_SYNC_JDBC', 'EXCEL_SYNC_JDBC', 'DB_MIGRATE'].includes(workItemConfig.workType)">
+          <div class="config-item" v-if="['SPARK_SQL', 'FLINK_SQL', 'DATA_SYNC_JDBC', 'EXCEL_SYNC_JDBC', 'DB_MIGRATE'].includes(workItemConfig.workType)">
             <div class="item-title">函数配置</div>
             <el-form
               ref="syncRuleForm"
@@ -328,7 +332,7 @@
             </el-form>
           </div>
           <!-- 依赖配置 -->
-          <div class="config-item" v-if="['SPARK_SQL', 'SPARK_JAR', 'DATA_SYNC_JDBC', 'EXCEL_SYNC_JDBC', 'DB_MIGRATE'].includes(workItemConfig.workType)">
+          <div class="config-item" v-if="['SPARK_SQL','FLINK_SQL', 'SPARK_JAR','FLINK_JAR', 'DATA_SYNC_JDBC', 'EXCEL_SYNC_JDBC', 'DB_MIGRATE'].includes(workItemConfig.workType)">
             <div class="item-title">依赖配置</div>
             <el-form
               ref="syncRuleForm"
@@ -457,7 +461,8 @@ let clusterConfig = reactive({
   enableHive: false,
   datasourceId: '',   // hive数据源
   // sparkConfig: '',
-  sparkConfigJson: ''
+  sparkConfigJson: '',
+  flinkConfigJson: ''
 })
 // 定时配置
 let cronConfig = reactive({
@@ -608,6 +613,7 @@ function getConfigDetailData() {
         }
       })
       clusterConfig.sparkConfigJson = jsonFormatter(clusterConfig.sparkConfigJson)
+      clusterConfig.flinkConfigJson = jsonFormatter(clusterConfig.flinkConfigJson)
     }
     if (['SPARK_SQL'].includes(workItemConfig.value.workType)) {
       clusterConfig.datasourceId = res.data.datasourceId

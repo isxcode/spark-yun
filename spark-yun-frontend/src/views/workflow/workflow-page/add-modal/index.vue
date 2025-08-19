@@ -24,6 +24,8 @@
                         'DATA_SYNC_JDBC',
                         'SPARK_SQL',
                         'SPARK_JAR',
+                        'FLINK_SQL',
+                        'FLINK_JAR',
                         'EXCEL_SYNC_JDBC',
                         'PY_SPARK',
                         'DB_MIGRATE'

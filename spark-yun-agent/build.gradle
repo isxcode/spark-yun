@@ -11,9 +11,39 @@ dependencies {
 
     implementation "org.apache.hadoop:hadoop-yarn-client:${HADOOP_VERSION}"
 
+    implementation "org.apache.hadoop:hadoop-common:${HADOOP_VERSION}"
+
     implementation "org.jsoup:jsoup:${JSOUP_VERSION}"
 
     implementation "org.apache.httpcomponents.client5:httpclient5:${HTTPCLIENT_VERSION}"
+
+    implementation "org.apache.flink:flink-java:${FLINK_VERSION}"
+
+    implementation "org.apache.flink:flink-clients:${FLINK_VERSION}"
+
+    implementation "org.apache.flink:flink-yarn:${FLINK_VERSION}"
+
+    implementation "org.apache.flink:flink-connector-jdbc:3.1.2-1.18"
+
+    implementation "org.apache.flink:flink-connector-base:1.18.1"
+
+    implementation "org.mongodb:bson:5.2.1"
+
+    implementation "org.apache.flink:flink-kubernetes:${FLINK_VERSION}"
+
+    implementation "org.apache.flink:flink-streaming-java:${FLINK_VERSION}"
+
+    implementation "org.apache.flink:flink-table-planner_${FLINK_SCALA_VERSION}:${FLINK_VERSION}"
+
+    implementation "org.apache.flink:flink-table-api-java-bridge:${FLINK_VERSION}"
+
+    implementation 'org.codehaus.woodstox:stax2-api:3.1.1'
+
+    implementation 'log4j:log4j:1.2.17'
+
+    implementation 'org.bouncycastle:bcpkix-jdk18on:1.78.1'
+
+    implementation 'org.bouncycastle:bcprov-jdk18on:1.78.1'
 }
 
 bootJar {

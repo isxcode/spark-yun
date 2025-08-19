@@ -15,20 +15,20 @@ elif [[ "$OSTYPE" == "darwin"* ]]; then
     source /etc/profile
     source ~/.zshrc
 else
-    json_output="{ \
-                      \"status\": \"INSTALL_ERROR\", \
-                      \"log\": \"该系统不支持安装\" \
-                    }"
-      echo $json_output
-      rm ${BASE_PATH}/agent-stop.sh
-      exit 0
+    echo "{ \"status\": \"INSTALL_ERROR\",\"log\": \"该系统不支持安装\" }"
+    rm "${BASE_PATH}"/agent-stop.sh
+    exit 0
 fi
 
 # 获取外部参数
 home_path=""
+spark_local="false"
+flink_local="false"
 for arg in "$@"; do
   case "$arg" in
   --home-path=*) home_path="${arg#*=}" ;;
+  --spark-local=*) spark_local="${arg#*=}" ;;
+  --flink-local=*) flink_local="${arg#*=}" ;;
   *) echo "未知参数: $arg" && exit 1 ;;
   esac
 done
@@ -39,20 +39,24 @@ agent_path="${home_path}/zhiqingyun-agent"
 # 如果进程存在,杀死进程
 if [ -e "${agent_path}/zhiqingyun-agent.pid" ]; then
   pid=$(cat "${agent_path}/zhiqingyun-agent.pid")
-  if ps -p $pid >/dev/null 2>&1; then
-   kill -9 ${pid}
+  if ps -p "$pid" >/dev/null 2>&1; then
+   kill -9 "${pid}"
   fi
 fi
 
-# 停止spark-local
-nohup bash ${agent_path}/spark-min/sbin/stop-all.sh > /dev/null 2>&1 &
+# 停止spark
+if [ "${spark_local}" = "true" ]; then
+  nohup bash "${agent_path}"/spark-min/sbin/stop-master.sh > /dev/null 2>&1 &
+  nohup bash "${agent_path}"/spark-min/sbin/stop-worker.sh > /dev/null 2>&1 &
+fi
+
+# 停止flink
+if [ "${flink_local}" = "true" ]; then
+  nohup bash "${agent_path}"/flink-min/bin/stop-cluster.sh > /dev/null 2>&1 &
+fi
 
 # 返回结果
-json_output="{ \
-          \"status\": \"STOP\"
-          \"log\": \"停止成功\",
-        }"
-echo $json_output
+echo "{\"status\": \"STOP\",\"log\": \"停止成功\"}"
 
 # 删除检测脚本
-rm ${BASE_PATH}/agent-stop.sh
+rm "${BASE_PATH}"/agent-stop.sh

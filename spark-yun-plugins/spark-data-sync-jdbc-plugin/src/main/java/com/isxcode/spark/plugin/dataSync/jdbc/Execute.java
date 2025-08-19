@@ -1,7 +1,7 @@
 package com.isxcode.spark.plugin.dataSync.jdbc;
 
 import com.alibaba.fastjson.JSON;
-import com.isxcode.spark.api.agent.req.PluginReq;
+import com.isxcode.spark.api.agent.req.spark.PluginReq;
 import com.isxcode.spark.api.datasource.constants.DatasourceType;
 import com.isxcode.spark.api.func.constants.FuncType;
 import com.isxcode.spark.api.plugin.constants.OverModeType;
