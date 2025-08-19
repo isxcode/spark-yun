@@ -1,7 +1,7 @@
 package com.isxcode.spark.agent.run.flink.impl;
 
 import com.alibaba.fastjson2.JSON;
-import com.isxcode.spark.agent.run.flink.AgentService;
+import com.isxcode.spark.agent.run.flink.FlinkAgentService;
 import com.isxcode.spark.api.agent.constants.AgentType;
 import com.isxcode.spark.api.agent.req.flink.GetWorkInfoReq;
 import com.isxcode.spark.api.agent.req.flink.GetWorkLogReq;
@@ -41,7 +41,7 @@ import static java.util.Collections.singletonList;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class YarnAgentService implements AgentService {
+public class FlinkYarnAgentService implements FlinkAgentService {
 
     @Override
     public String getAgentType() {

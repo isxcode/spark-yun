@@ -3,7 +3,7 @@ package com.isxcode.spark.agent.run.spark;
 import com.isxcode.spark.api.agent.req.spark.SubmitWorkReq;
 import org.apache.spark.launcher.SparkLauncher;
 
-public interface AgentService {
+public interface SparkAgentService {
 
     /**
      * 获取当前代理的类型

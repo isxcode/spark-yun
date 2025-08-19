@@ -1,7 +1,7 @@
 package com.isxcode.spark.agent.run.flink.impl;
 
 import com.alibaba.fastjson2.JSON;
-import com.isxcode.spark.agent.run.flink.AgentService;
+import com.isxcode.spark.agent.run.flink.FlinkAgentService;
 import com.isxcode.spark.api.agent.constants.AgentType;
 import com.isxcode.spark.api.agent.req.flink.GetWorkInfoReq;
 import com.isxcode.spark.api.agent.req.flink.GetWorkLogReq;
@@ -38,7 +38,7 @@ import java.util.regex.Pattern;
 
 @Slf4j
 @Service
-public class KubernetesAgentService implements AgentService {
+public class FlinkKubernetesAgentService implements FlinkAgentService {
 
     public void generatePodTemplate(List<String> volumeMounts, List<String> volumes, String agentHomePath,
         String workInstanceId) throws IOException {

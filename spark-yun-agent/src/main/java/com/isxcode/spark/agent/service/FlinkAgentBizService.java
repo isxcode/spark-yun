@@ -1,7 +1,7 @@
 package com.isxcode.spark.agent.service;
 
-import com.isxcode.spark.agent.run.flink.AgentFactory;
-import com.isxcode.spark.agent.run.flink.AgentService;
+import com.isxcode.spark.agent.run.flink.FlinkAgentFactory;
+import com.isxcode.spark.agent.run.flink.FlinkAgentService;
 import com.isxcode.spark.api.agent.req.flink.GetWorkInfoReq;
 import com.isxcode.spark.api.agent.req.flink.GetWorkLogReq;
 import com.isxcode.spark.api.agent.req.flink.StopWorkReq;
@@ -22,11 +22,11 @@ import org.springframework.web.client.HttpClientErrorException;
 @RequiredArgsConstructor
 public class FlinkAgentBizService {
 
-    private final AgentFactory agentFactory;
+    private final FlinkAgentFactory agentFactory;
 
     public SubmitWorkRes submitWork(SubmitWorkReq submitWorkReq) {
 
-        AgentService agentService = agentFactory.getAgentService(submitWorkReq.getClusterType());
+        FlinkAgentService agentService = agentFactory.getAgentService(submitWorkReq.getClusterType());
         try {
             return agentService.submitWork(submitWorkReq);
         } catch (HttpClientErrorException httpClientErrorException) {
@@ -51,7 +51,7 @@ public class FlinkAgentBizService {
 
     public GetWorkInfoRes getWorkInfo(GetWorkInfoReq getWorkInfoReq) {
 
-        AgentService agentService = agentFactory.getAgentService(getWorkInfoReq.getClusterType());
+        FlinkAgentService agentService = agentFactory.getAgentService(getWorkInfoReq.getClusterType());
         try {
             return agentService.getWorkInfo(getWorkInfoReq);
         } catch (Exception e) {
@@ -62,7 +62,7 @@ public class FlinkAgentBizService {
 
     public GetWorkLogRes getWorkLog(GetWorkLogReq getWorkLogReq) {
 
-        AgentService agentService = agentFactory.getAgentService(getWorkLogReq.getClusterType());
+        FlinkAgentService agentService = agentFactory.getAgentService(getWorkLogReq.getClusterType());
         try {
             return agentService.getWorkLog(getWorkLogReq);
         } catch (Exception e) {
@@ -73,7 +73,7 @@ public class FlinkAgentBizService {
 
     public StopWorkRes stopWork(StopWorkReq stopWorkReq) {
 
-        AgentService agentService = agentFactory.getAgentService(stopWorkReq.getClusterType());
+        FlinkAgentService agentService = agentFactory.getAgentService(stopWorkReq.getClusterType());
         try {
             return agentService.stopWork(stopWorkReq);
         } catch (Exception e) {

@@ -2,7 +2,7 @@ package com.isxcode.spark.agent.run.spark.impl;
 
 import cn.hutool.core.io.FileUtil;
 import com.alibaba.fastjson2.JSON;
-import com.isxcode.spark.agent.run.spark.AgentService;
+import com.isxcode.spark.agent.run.spark.SparkAgentService;
 import com.isxcode.spark.api.agent.constants.AgentKubernetes;
 import com.isxcode.spark.api.agent.constants.AgentType;
 import com.isxcode.spark.api.agent.req.spark.SubmitWorkReq;
@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
 
 @Slf4j
 @Service
-public class KubernetesAgentService implements AgentService {
+public class SparkKubernetesAgentService implements SparkAgentService {
 
     @Override
     public String getAgentType() {
