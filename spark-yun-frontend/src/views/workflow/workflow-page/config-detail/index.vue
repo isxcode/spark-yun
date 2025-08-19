@@ -332,7 +332,7 @@
             </el-form>
           </div>
           <!-- 依赖配置 -->
-          <div class="config-item" v-if="['SPARK_SQL','FLINK_SQL', 'SPARK_JAR', 'DATA_SYNC_JDBC', 'EXCEL_SYNC_JDBC', 'DB_MIGRATE'].includes(workItemConfig.workType)">
+          <div class="config-item" v-if="['SPARK_SQL','FLINK_SQL', 'SPARK_JAR','FLINK_JAR', 'DATA_SYNC_JDBC', 'EXCEL_SYNC_JDBC', 'DB_MIGRATE'].includes(workItemConfig.workType)">
             <div class="item-title">依赖配置</div>
             <el-form
               ref="syncRuleForm"
