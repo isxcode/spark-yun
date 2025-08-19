@@ -186,8 +186,8 @@ public class FlinkSqlExecutor extends WorkExecutor {
         PluginReq pluginReq = PluginReq.builder().sql(flinkSql).build();
         submitJobReq.setPluginReq(pluginReq);
 
-        FlinkSubmit flinkSubmit = FlinkSubmit.builder().appName("zhiliuyun")
-            .entryClass("com.isxcode.acorn.plugin.sql.execute.Job").appResource("flink-sql-execute-plugin.jar")
+        FlinkSubmit flinkSubmit = FlinkSubmit.builder().appName("zhiqingyun")
+            .entryClass("com.isxcode.spark.plugin.flink.sql.execute.Job").appResource("flink-sql-execute-plugin.jar")
             .conf(workRunContext.getClusterConfig().getFlinkConfig()).build();
         submitJobReq.setFlinkSubmit(flinkSubmit);
         submitJobReq.setWorkId(workInstance.getWorkId());
@@ -204,7 +204,7 @@ public class FlinkSqlExecutor extends WorkExecutor {
             libFile.forEach(e -> {
                 try {
                     scpJar(scpFileEngineNodeDto, fileDir + File.separator + e.getId(),
-                        engineNode.getAgentHomePath() + "/zhiliuyun-agent/file/" + e.getId() + ".jar");
+                        engineNode.getAgentHomePath() + "/zhiqingyun-agent/file/" + e.getId() + ".jar");
                 } catch (JSchException | SftpException | InterruptedException | IOException ex) {
                     throw new WorkRunException(
                         LocalDateTime.now() + WorkLog.ERROR_INFO + "自定义依赖jar文件上传失败，请检查文件是否上传或者重新上传\n");
@@ -219,7 +219,7 @@ public class FlinkSqlExecutor extends WorkExecutor {
             allFunc.forEach(e -> {
                 try {
                     scpJar(scpFileEngineNodeDto, fileDir + File.separator + e.getFileId(),
-                        engineNode.getAgentHomePath() + "/zhiliuyun-agent/file/" + e.getFileId() + ".jar");
+                        engineNode.getAgentHomePath() + "/zhiqingyun-agent/file/" + e.getFileId() + ".jar");
                 } catch (JSchException | SftpException | InterruptedException | IOException ex) {
                     log.error(ex.getMessage(), ex);
                     throw new WorkRunException(
@@ -243,7 +243,6 @@ public class FlinkSqlExecutor extends WorkExecutor {
         // 加锁，必须等待作业提交成功后才能中止
         Integer lock = locker.lock("REQUEST_" + workInstance.getId());
         SubmitWorkRes submitJobRes;
-        Object AgentUrl = null;
         try {
             baseResponse = HttpUtils.doPost(
                 httpUrlUtils.genHttpUrl(engineNode.getHost(), engineNode.getAgentPort(), FlinkAgentUrl.SUBMIT_WORK_URL),

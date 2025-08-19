@@ -170,7 +170,8 @@ let workConfig = reactive({
   workType: '',
   workflowId: '',
   applicationId: '',
-  sparkConfig: ''
+  sparkConfig: '',
+  flinkConfig: ''
 })
 
 const tabList = reactive([
@@ -217,7 +218,7 @@ function initData(id?: string, tableLoading?: boolean) {
 
           if (id) {
             // 运行结束
-            if (workConfig.workType === 'SPARK_SQL' || workConfig.workType === 'PY_SPARK') {
+            if (workConfig.workType === 'SPARK_SQL') {
               tabList.forEach((item: any) => {
                 if (['RunningLog', 'TotalDetail'].includes(item.code)) {
                   item.hide = false
@@ -236,7 +237,7 @@ function initData(id?: string, tableLoading?: boolean) {
                 }
               })
             }
-            if (['CURL'].includes(workConfig.workType)) {
+            if (['CURL','FLINK_SQL'].includes(workConfig.workType)) {
               tabList.forEach((item: any) => {
                 if (['RunningLog'].includes(item.code)) {
                   item.hide = false

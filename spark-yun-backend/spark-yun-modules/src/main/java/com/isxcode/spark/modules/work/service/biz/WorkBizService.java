@@ -121,6 +121,8 @@ public class WorkBizService {
             || WorkType.EXCEL_SYNC_JDBC.equals(addWorkReq.getWorkType())
             || WorkType.BASH.equals(addWorkReq.getWorkType()) || WorkType.PYTHON.equals(addWorkReq.getWorkType())
             || WorkType.SPARK_JAR.equals(addWorkReq.getWorkType()) || WorkType.PY_SPARK.equals(addWorkReq.getWorkType())
+            || WorkType.FLINK_JAR.equals(addWorkReq.getWorkType())
+            || WorkType.FLINK_SQL.equals(addWorkReq.getWorkType())
             || WorkType.DB_MIGRATE.equals(addWorkReq.getWorkType())) {
             if (Strings.isEmpty(addWorkReq.getClusterId())) {
                 throw new IsxAppException("必须选择计算引擎");
@@ -148,7 +150,8 @@ public class WorkBizService {
             || WorkType.QUERY_JDBC_SQL.equals(addWorkReq.getWorkType())
             || WorkType.BASH.equals(addWorkReq.getWorkType()) || WorkType.PYTHON.equals(addWorkReq.getWorkType())
             || WorkType.SPARK_CONTAINER_SQL.equals(addWorkReq.getWorkType())
-            || WorkType.PRQL.equals(addWorkReq.getWorkType()) || WorkType.PY_SPARK.equals(addWorkReq.getWorkType())) {
+            || WorkType.PRQL.equals(addWorkReq.getWorkType()) || WorkType.PY_SPARK.equals(addWorkReq.getWorkType())
+            || WorkType.FLINK_SQL.equals(addWorkReq.getWorkType())) {
             workConfigService.initWorkScript(workConfig, addWorkReq.getWorkType());
         }
 
@@ -168,6 +171,13 @@ public class WorkBizService {
             || WorkType.DB_MIGRATE.equals(addWorkReq.getWorkType())) {
             workConfigService.initClusterConfig(workConfig, addWorkReq.getClusterId(), addWorkReq.getClusterNodeId(),
                 addWorkReq.getEnableHive(), addWorkReq.getDatasourceId());
+        }
+
+        // 初始化Flink计算引擎
+        if (WorkType.FLINK_SQL.equals(addWorkReq.getWorkType())
+            || WorkType.FLINK_JAR.equals(addWorkReq.getWorkType())) {
+            workConfigService.initFlinkClusterConfig(workConfig, addWorkReq.getClusterId(),
+                addWorkReq.getClusterNodeId(), addWorkReq.getEnableHive(), addWorkReq.getDatasourceId());
         }
 
         // 如果jdbc执行和jdbc查询，必填数据源
@@ -447,6 +457,8 @@ public class WorkBizService {
             getWorkRes.setClusterConfig(JSON.parseObject(workConfig.getClusterConfig(), ClusterConfig.class));
             getWorkRes.getClusterConfig().setSparkConfigJson(
                 JSON.toJSONString(getWorkRes.getClusterConfig().getSparkConfig(), SerializerFeature.MapSortField));
+            getWorkRes.getClusterConfig().setFlinkConfigJson(
+                JSON.toJSONString(getWorkRes.getClusterConfig().getFlinkConfig(), SerializerFeature.MapSortField));
         }
 
         if (!Strings.isEmpty(workConfig.getSyncRule())) {

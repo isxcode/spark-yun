@@ -97,6 +97,14 @@ public class ClusterNodeBizService {
             clusterNode.setSparkHomePath(addClusterNodeReq.getSparkHomePath());
         }
 
+        // 如果是默认安装flink,设置默认路径
+        if (addClusterNodeReq.getInstallFlinkLocal() || !AgentType.StandAlone.equals(cluster.getClusterType())) {
+            clusterNode.setFlinkHomePath(clusterNode.getAgentHomePath() + "/" + PathConstants.AGENT_PATH_NAME + "/"
+                + PathConstants.FLINK_MIN_HOME);
+        } else {
+            clusterNode.setSparkHomePath(addClusterNodeReq.getSparkHomePath());
+        }
+
         // 持久化数据
         clusterNodeRepository.save(clusterNode);
     }
