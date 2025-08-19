@@ -47,6 +47,10 @@ public class WorkConfigService {
             case WorkType.QUERY_SPARK_SQL:
                 workConfig.setScript("select now()");
                 break;
+            case WorkType.FLINK_SQL:
+                workConfig.setScript("CREATE TABLE print_sink ( \n" + "    print_date timestamp \n" + ") WITH ( \n"
+                    + "    'connector' = 'print' \n" + ");\n" + "\n" + "INSERT INTO print_sink SELECT now();");
+                break;
             case WorkType.QUERY_JDBC_SQL:
             case WorkType.EXECUTE_JDBC_SQL:
             case WorkType.SPARK_CONTAINER_SQL:
@@ -82,6 +86,15 @@ public class WorkConfigService {
         workConfig.setClusterConfig(JSON.toJSONString(
             ClusterConfig.builder().setMode(SetMode.SIMPLE).clusterId(clusterId).clusterNodeId(clusterNodeId)
                 .enableHive(enableHive).sparkConfig(sparkConfig).resourceLevel(ResourceLevel.LOW).build()));
+    }
+
+    public void initFlinkClusterConfig(WorkConfigEntity workConfig, String clusterId, String clusterNodeId,
+        Boolean enableHive, String datasourceId) {
+
+        Map<String, Object> flinkConfig = initFlinkConfig(ResourceLevel.LOW);
+        workConfig.setClusterConfig(JSON.toJSONString(
+            ClusterConfig.builder().setMode(SetMode.SIMPLE).clusterId(clusterId).clusterNodeId(clusterNodeId)
+                .enableHive(enableHive).flinkConfig(flinkConfig).resourceLevel(ResourceLevel.LOW).build()));
     }
 
     public void initSyncRule(WorkConfigEntity workConfig) {
@@ -136,5 +149,32 @@ public class WorkConfigService {
         sparkConfig.put("spark.sql.parquet.datetimeRebaseModeInRead", "LEGACY");
         sparkConfig.put("spark.sql.parquet.datetimeRebaseModeInWrite", "LEGACY");
         return sparkConfig;
+    }
+
+    public Map<String, Object> initFlinkConfig(String resourceLevel) {
+
+        Map<String, Object> flinkConfig = new HashMap<>();
+        switch (resourceLevel) {
+            case ResourceLevel.HIGH:
+                flinkConfig.put("jobmanager.memory.process.size", "2g");
+                flinkConfig.put("taskmanager.memory.process.size", "8g");
+                flinkConfig.put("taskmanager.numberOfTaskSlots", 3);
+                flinkConfig.put("parallelism.default", 3);
+                break;
+            case ResourceLevel.MEDIUM:
+                flinkConfig.put("jobmanager.memory.process.size", "1g");
+                flinkConfig.put("taskmanager.memory.process.size", "4g");
+                flinkConfig.put("taskmanager.numberOfTaskSlots", 2);
+                flinkConfig.put("parallelism.default", 2);
+                break;
+            case ResourceLevel.LOW:
+                flinkConfig.put("jobmanager.memory.process.size", "1g");
+                flinkConfig.put("taskmanager.memory.process.size", "2g");
+                flinkConfig.put("taskmanager.numberOfTaskSlots", 1);
+                flinkConfig.put("parallelism.default", 1);
+                break;
+        }
+
+        return flinkConfig;
     }
 }
