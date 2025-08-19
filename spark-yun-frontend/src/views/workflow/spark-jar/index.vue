@@ -231,6 +231,13 @@ function initData(id?: string, tableLoading?: boolean) {
                             }
                         })
                     }
+                    if (workConfig.workType === 'FLINK_JAR' && id) {
+                        tabList.forEach((item: any) => {
+                            if (['RunningLog', 'TotalDetail'].includes(item.code)) {
+                                item.hide = false
+                            }
+                        })
+                    }
                 })
             })
             loading.value = false

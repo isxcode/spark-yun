@@ -203,7 +203,7 @@ public class FlinkJarExecutor extends WorkExecutor {
             + File.separator + engineNode.getTenantId();
         try {
             scpJar(scpFileEngineNodeDto, fileDir + File.separator + jarFile.getId(),
-                engineNode.getAgentHomePath() + "/zhiliuyun-agent/file/" + jarFile.getId() + ".jar");
+                engineNode.getAgentHomePath() + "/zhiqingyun-agent/file/" + jarFile.getId() + ".jar");
         } catch (JSchException | SftpException | InterruptedException | IOException e) {
             log.debug(e.getMessage());
             throw new WorkRunException(
@@ -216,7 +216,7 @@ public class FlinkJarExecutor extends WorkExecutor {
             libFile.forEach(e -> {
                 try {
                     scpJar(scpFileEngineNodeDto, fileDir + File.separator + e.getId(),
-                        engineNode.getAgentHomePath() + "/zhiliuyun-agent/file/" + e.getId() + ".jar");
+                        engineNode.getAgentHomePath() + "/zhiqingyun-agent/file/" + e.getId() + ".jar");
                 } catch (JSchException | SftpException | InterruptedException | IOException ex) {
                     throw new WorkRunException(
                         LocalDateTime.now() + WorkLog.ERROR_INFO + "自定义依赖jar文件上传失败，请检查文件是否上传或者重新上传\n");
