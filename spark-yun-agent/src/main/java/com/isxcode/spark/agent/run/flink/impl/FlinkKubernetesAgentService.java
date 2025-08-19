@@ -111,13 +111,13 @@ public class FlinkKubernetesAgentService implements FlinkAgentService {
         flinkConfig.set(DeploymentOptions.TARGET, KubernetesDeploymentTarget.APPLICATION.getName());
         flinkConfig.set(DeploymentOptionsInternal.CONF_DIR, submitWorkReq.getFlinkHome() + "/conf");
         flinkConfig.set(PipelineOptions.JARS, Collections.singletonList("local:///opt/flink/examples/app.jar"));
-        flinkConfig.set(KubernetesConfigOptions.CLUSTER_ID, "zhiliuyun-cluster-" + System.currentTimeMillis());
+        flinkConfig.set(KubernetesConfigOptions.CLUSTER_ID, "zhiqingyun-cluster-" + System.currentTimeMillis());
         flinkConfig.set(KubernetesConfigOptions.REST_SERVICE_EXPOSED_TYPE,
             KubernetesConfigOptions.ServiceExposedType.NodePort);
         flinkConfig.set(KubernetesConfigOptions.CONTAINER_IMAGE_PULL_POLICY,
             KubernetesConfigOptions.ImagePullPolicy.IfNotPresent);
-        flinkConfig.set(KubernetesConfigOptions.NAMESPACE, "zhiliuyun-space");
-        flinkConfig.set(KubernetesConfigOptions.KUBERNETES_SERVICE_ACCOUNT, "zhiliuyun");
+        flinkConfig.set(KubernetesConfigOptions.NAMESPACE, "zhiqingyun-space");
+        flinkConfig.set(KubernetesConfigOptions.KUBERNETES_SERVICE_ACCOUNT, "zhiqingyun");
         flinkConfig.set(KubernetesConfigOptions.CONTAINER_IMAGE, "flink:1.18.1-scala_2.12");
         flinkConfig.set(KubernetesConfigOptions.TASK_MANAGER_CPU, 2.0);
         flinkConfig.set(KubernetesConfigOptions.KUBERNETES_POD_TEMPLATE, submitWorkReq.getAgentHomePath()
@@ -170,9 +170,9 @@ public class FlinkKubernetesAgentService implements FlinkAgentService {
         File[] jarFiles = new File(submitWorkReq.getAgentHomePath() + File.separator + "lib").listFiles();
         if (jarFiles != null) {
             for (int i = 0; i < jarFiles.length; i++) {
-                volumeMounts.add(String.format(volumeMountsTemplate, "zhiliuyun-lib-" + i,
+                volumeMounts.add(String.format(volumeMountsTemplate, "zhiqingyun-lib-" + i,
                     "/opt/flink/lib/" + jarFiles[i].getName()));
-                volumes.add(String.format(volumeTemplate, "zhiliuyun-lib-" + i, submitWorkReq.getAgentHomePath()
+                volumes.add(String.format(volumeTemplate, "zhiqingyun-lib-" + i, submitWorkReq.getAgentHomePath()
                     + File.separator + "lib" + File.separator + jarFiles[i].getName()));
             }
         }
@@ -222,7 +222,7 @@ public class FlinkKubernetesAgentService implements FlinkAgentService {
     @Override
     public GetWorkInfoRes getWorkInfo(GetWorkInfoReq getWorkInfoReq) throws Exception {
 
-        String getStatusJobManagerFormat = "kubectl get pods -l app=%s -n zhiliuyun-space";
+        String getStatusJobManagerFormat = "kubectl get pods -l app=%s -n zhiqingyun-space";
         String line;
         StringBuilder errLog = new StringBuilder();
 
@@ -247,7 +247,7 @@ public class FlinkKubernetesAgentService implements FlinkAgentService {
                 while ((line = errReader.readLine()) != null) {
                     errLog.append(line).append("\n");
                 }
-                if (errLog.toString().contains("No resources found in zhiliuyun-space namespace")) {
+                if (errLog.toString().contains("No resources found in zhiqingyun-space namespace")) {
                     return GetWorkInfoRes.builder().status("Over").appId(getWorkInfoReq.getAppId()).build();
                 }
             }
@@ -307,8 +307,8 @@ public class FlinkKubernetesAgentService implements FlinkAgentService {
 
         Configuration flinkConfig = GlobalConfiguration.loadConfiguration();
         flinkConfig.set(DeploymentOptions.TARGET, KubernetesDeploymentTarget.APPLICATION.getName());
-        flinkConfig.set(KubernetesConfigOptions.NAMESPACE, "zhiliuyun-space");
-        flinkConfig.set(KubernetesConfigOptions.KUBERNETES_SERVICE_ACCOUNT, "zhiliuyun");
+        flinkConfig.set(KubernetesConfigOptions.NAMESPACE, "zhiqingyun-space");
+        flinkConfig.set(KubernetesConfigOptions.KUBERNETES_SERVICE_ACCOUNT, "zhiqingyun");
 
         KubernetesClusterClientFactory kubernetesClusterClientFactory = new KubernetesClusterClientFactory();
         try (KubernetesClusterDescriptor clusterDescriptor =
