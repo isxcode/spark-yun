@@ -46,7 +46,8 @@ fi
 
 # 停止spark
 if [ "${spark_local}" = "true" ]; then
-  nohup bash "${agent_path}"/spark-min/sbin/stop-all.sh > /dev/null 2>&1 &
+  nohup bash "${agent_path}"/spark-min/sbin/stop-master.sh > /dev/null 2>&1 &
+  nohup bash "${agent_path}"/spark-min/sbin/stop-worker.sh > /dev/null 2>&1 &
 fi
 
 # 停止flink
