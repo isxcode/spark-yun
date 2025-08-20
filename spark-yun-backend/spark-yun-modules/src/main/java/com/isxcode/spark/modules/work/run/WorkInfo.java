@@ -9,5 +9,7 @@ public class WorkInfo {
 
     private String flinkSql;
 
+    private String sparkSql;
+
     private String printSql;
 }

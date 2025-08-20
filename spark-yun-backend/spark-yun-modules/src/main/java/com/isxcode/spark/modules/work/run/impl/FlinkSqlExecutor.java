@@ -103,12 +103,13 @@ public class FlinkSqlExecutor extends WorkExecutor {
     private final SqlValueService sqlValueService;
 
     public FlinkSqlExecutor(WorkInstanceRepository workInstanceRepository, ClusterRepository clusterRepository,
-                            ClusterNodeRepository clusterNodeRepository, WorkflowInstanceRepository workflowInstanceRepository,
-                            WorkRepository workRepository, WorkConfigRepository workConfigRepository, Locker locker,
-                            HttpUrlUtils httpUrlUtils, FuncRepository funcRepository, FuncMapper funcMapper,
-                            ClusterNodeMapper clusterNodeMapper, AesUtils aesUtils, IsxAppProperties isxAppProperties,
-                            FileRepository fileRepository, DatasourceService datasourceService, AlarmService alarmService,
-                            SqlFunctionService sqlFunctionService, SecretKeyRepository secretKeyRepository, SqlValueService sqlValueService) {
+        ClusterNodeRepository clusterNodeRepository, WorkflowInstanceRepository workflowInstanceRepository,
+        WorkRepository workRepository, WorkConfigRepository workConfigRepository, Locker locker,
+        HttpUrlUtils httpUrlUtils, FuncRepository funcRepository, FuncMapper funcMapper,
+        ClusterNodeMapper clusterNodeMapper, AesUtils aesUtils, IsxAppProperties isxAppProperties,
+        FileRepository fileRepository, DatasourceService datasourceService, AlarmService alarmService,
+        SqlFunctionService sqlFunctionService, SecretKeyRepository secretKeyRepository,
+        SqlValueService sqlValueService) {
 
         super(workInstanceRepository, workflowInstanceRepository, alarmService, sqlFunctionService);
         this.workInstanceRepository = workInstanceRepository;
@@ -413,7 +414,7 @@ public class FlinkSqlExecutor extends WorkExecutor {
                                 .appId(submitJobRes.getAppId())
                                 .clusterType(calculateEngineEntityOptional.get().getClusterType()).build();
                             new RestTemplate().postForObject(httpUrlUtils.genHttpUrl(engineNode.getHost(),
-                                    engineNode.getAgentPort(), FlinkAgentUrl.STOP_WORK_URL), stopWorkReq,
+                                engineNode.getAgentPort(), FlinkAgentUrl.STOP_WORK_URL), stopWorkReq,
                                 BaseResponse.class);
                         }
                     } else {
