@@ -13,3 +13,7 @@ create table SY_SECRET_KEY
     DELETED                 INTEGER default 0      not null comment '逻辑删除',
     TENANT_ID               CHARACTER VARYING(200) not null comment '租户id'
 );
+
+-- 记录作业当前运行脚本
+alter table SY_WORK_INSTANCE
+    add work_info text null comment '存储作业信息';
