@@ -102,6 +102,13 @@ export const menuListData: Array<Menu> = [
         childPage: []
       },
       {
+        code: 'global-variables',
+        name: '全局变量',
+        icon: 'Memo',
+        authType: [ 'ROLE_TENANT_MEMBER', 'ROLE_TENANT_ADMIN' ],
+        childPage: []
+      },
+      {
         code: 'realtime-computing',
         name: '实时计算',
         icon: 'Iphone',
