@@ -35,6 +35,8 @@ import com.isxcode.spark.modules.file.repository.FileRepository;
 import com.isxcode.spark.modules.func.entity.FuncEntity;
 import com.isxcode.spark.modules.func.mapper.FuncMapper;
 import com.isxcode.spark.modules.func.repository.FuncRepository;
+import com.isxcode.spark.modules.secret.entity.SecretKeyEntity;
+import com.isxcode.spark.modules.secret.repository.SecretKeyRepository;
 import com.isxcode.spark.modules.work.entity.WorkConfigEntity;
 import com.isxcode.spark.modules.work.entity.WorkEntity;
 import com.isxcode.spark.modules.work.entity.WorkInstanceEntity;
@@ -94,13 +96,15 @@ public class FlinkSqlExecutor extends WorkExecutor {
 
     private final SqlFunctionService sqlFunctionService;
 
+    private final SecretKeyRepository secretKeyRepository;
+
     public FlinkSqlExecutor(WorkInstanceRepository workInstanceRepository, ClusterRepository clusterRepository,
-        ClusterNodeRepository clusterNodeRepository, WorkflowInstanceRepository workflowInstanceRepository,
-        WorkRepository workRepository, WorkConfigRepository workConfigRepository, Locker locker,
-        HttpUrlUtils httpUrlUtils, FuncRepository funcRepository, FuncMapper funcMapper,
-        ClusterNodeMapper clusterNodeMapper, AesUtils aesUtils, IsxAppProperties isxAppProperties,
-        FileRepository fileRepository, DatasourceService datasourceService, AlarmService alarmService,
-        SqlFunctionService sqlFunctionService) {
+                            ClusterNodeRepository clusterNodeRepository, WorkflowInstanceRepository workflowInstanceRepository,
+                            WorkRepository workRepository, WorkConfigRepository workConfigRepository, Locker locker,
+                            HttpUrlUtils httpUrlUtils, FuncRepository funcRepository, FuncMapper funcMapper,
+                            ClusterNodeMapper clusterNodeMapper, AesUtils aesUtils, IsxAppProperties isxAppProperties,
+                            FileRepository fileRepository, DatasourceService datasourceService, AlarmService alarmService,
+                            SqlFunctionService sqlFunctionService, SecretKeyRepository secretKeyRepository) {
 
         super(workInstanceRepository, workflowInstanceRepository, alarmService, sqlFunctionService);
         this.workInstanceRepository = workInstanceRepository;
@@ -118,6 +122,7 @@ public class FlinkSqlExecutor extends WorkExecutor {
         this.fileRepository = fileRepository;
         this.datasourceService = datasourceService;
         this.sqlFunctionService = sqlFunctionService;
+        this.secretKeyRepository = secretKeyRepository;
     }
 
     @Override
@@ -178,8 +183,19 @@ public class FlinkSqlExecutor extends WorkExecutor {
         String jsonPathSql = parseJsonPath(workRunContext.getScript(), workInstance);
 
         String flinkSql = sqlFunctionService.parseSqlFunction(jsonPathSql);
+        String printSql = flinkSql;
+
+        // 翻译全局变量
+        List<SecretKeyEntity> allKey = secretKeyRepository.findAll();
+        for (SecretKeyEntity secretKeyEntity : allKey) {
+            flinkSql = flinkSql.replace("${{ secret." + secretKeyEntity.getKeyName() + " }}",
+                secretKeyEntity.getSecretValue());
+            printSql = printSql.replace("${{ secret." + secretKeyEntity.getKeyName() + " }}", "******");
+        }
 
         // 打印sql日志
+        logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("FlinkSql:  \n").append(printSql)
+            .append("\n");
         workInstance = updateInstance(workInstance, logBuilder);
 
         // 执行flinksql
