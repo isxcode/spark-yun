@@ -198,7 +198,12 @@ public class FlinkSqlExecutor extends WorkExecutor {
             String parseValueSql = sqlValueService.parseSqlValue(jsonPathSql);
 
             // 翻译sql中的系统函数
-            script = sqlFunctionService.parseSqlFunction(parseValueSql);
+            try {
+                script = sqlFunctionService.parseSqlFunction(parseValueSql);
+            } catch (Exception e) {
+                throw new WorkRunException(
+                    LocalDateTime.now() + WorkLog.ERROR_INFO + "系统函数异常\n" + e.getMessage() + "\n");
+            }
             printSql = script;
 
             // 翻译全局变量

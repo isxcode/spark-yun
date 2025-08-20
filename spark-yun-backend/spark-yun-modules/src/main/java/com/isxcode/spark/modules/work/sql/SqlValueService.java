@@ -15,7 +15,7 @@ import static java.util.regex.Pattern.compile;
 public class SqlValueService {
 
     /**
-     * 变量值为 ${qing.currentDate}.
+     * 变量值为 ${qing.current_date}.
      */
     public String parseSqlValue(String sql) {
 
