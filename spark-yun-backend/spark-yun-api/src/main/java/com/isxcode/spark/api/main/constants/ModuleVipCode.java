@@ -69,4 +69,9 @@ public interface ModuleVipCode {
      * 数据建模
      */
     String VIP_MODEL = "/vip/model";
+
+    /**
+     * 全局变量
+     */
+    String VIP_SECRET = "/vip/secret";
 }

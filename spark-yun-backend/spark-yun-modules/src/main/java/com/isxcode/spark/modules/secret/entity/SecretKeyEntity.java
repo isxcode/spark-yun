@@ -1,10 +1,8 @@
-package com.isxcode.spark.modules.work.entity;
-
-import static com.isxcode.spark.common.config.CommonConfig.TENANT_ID;
+package com.isxcode.spark.modules.secret.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.time.LocalDateTime;
-import java.util.Date;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
@@ -12,10 +10,9 @@ import javax.persistence.Id;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
+import javax.persistence.Version;
+
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
@@ -25,56 +22,27 @@ import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import static com.isxcode.spark.common.config.CommonConfig.TENANT_ID;
+
 @Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
 @Entity
-@SQLDelete(sql = "UPDATE SY_WORK_INSTANCE SET deleted = 1 WHERE id = ?")
+@SQLDelete(sql = "UPDATE SY_SECRET_KEY SET deleted = 1 WHERE id = ? and version_number = ?")
 @Where(clause = "deleted = 0 ${TENANT_FILTER} ")
-@Table(name = "SY_WORK_INSTANCE")
+@Table(name = "SY_SECRET_KEY")
 @JsonIgnoreProperties({"hibernateLazyInitializer"})
 @EntityListeners(AuditingEntityListener.class)
-public class WorkInstanceEntity {
+public class SecretKeyEntity {
 
     @Id
     @GeneratedValue(generator = "sy-id-generator")
     @GenericGenerator(name = "sy-id-generator", strategy = "com.isxcode.spark.config.GeneratedValueConfig")
     private String id;
 
-    private String versionId;
+    private String keyName;
 
-    private String workId;
+    private String secretValue;
 
-    private String instanceType;
-
-    private String status;
-
-    private Date planStartDateTime;
-
-    private Date nextPlanDateTime;
-
-    private Date execStartDateTime;
-
-    private Date execEndDateTime;
-
-    private String submitLog;
-
-    private String yarnLog;
-
-    private String sparkStarRes;
-
-    private String resultData;
-
-    private String workflowInstanceId;
-
-    private Boolean quartzHasRun;
-
-    private String workPid;
-
-    private Long duration;
-
-    private String workInfo;
+    private String remark;
 
     @CreatedDate
     private LocalDateTime createDateTime;
@@ -87,6 +55,9 @@ public class WorkInstanceEntity {
 
     @LastModifiedBy
     private String lastModifiedBy;
+
+    @Version
+    private Long versionNumber;
 
     @Transient
     private Integer deleted;

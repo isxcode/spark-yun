@@ -35,6 +35,8 @@ import com.isxcode.spark.modules.file.repository.FileRepository;
 import com.isxcode.spark.modules.func.entity.FuncEntity;
 import com.isxcode.spark.modules.func.mapper.FuncMapper;
 import com.isxcode.spark.modules.func.repository.FuncRepository;
+import com.isxcode.spark.modules.secret.entity.SecretKeyEntity;
+import com.isxcode.spark.modules.secret.repository.SecretKeyRepository;
 import com.isxcode.spark.modules.work.entity.WorkConfigEntity;
 import com.isxcode.spark.modules.work.entity.WorkEntity;
 import com.isxcode.spark.modules.work.entity.WorkInstanceEntity;
@@ -42,8 +44,10 @@ import com.isxcode.spark.modules.work.repository.WorkConfigRepository;
 import com.isxcode.spark.modules.work.repository.WorkInstanceRepository;
 import com.isxcode.spark.modules.work.repository.WorkRepository;
 import com.isxcode.spark.modules.work.run.WorkExecutor;
+import com.isxcode.spark.modules.work.run.WorkInfo;
 import com.isxcode.spark.modules.work.run.WorkRunContext;
 import com.isxcode.spark.modules.work.sql.SqlFunctionService;
+import com.isxcode.spark.modules.work.sql.SqlValueService;
 import com.isxcode.spark.modules.workflow.repository.WorkflowInstanceRepository;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.SftpException;
@@ -94,13 +98,18 @@ public class FlinkSqlExecutor extends WorkExecutor {
 
     private final SqlFunctionService sqlFunctionService;
 
+    private final SecretKeyRepository secretKeyRepository;
+
+    private final SqlValueService sqlValueService;
+
     public FlinkSqlExecutor(WorkInstanceRepository workInstanceRepository, ClusterRepository clusterRepository,
         ClusterNodeRepository clusterNodeRepository, WorkflowInstanceRepository workflowInstanceRepository,
         WorkRepository workRepository, WorkConfigRepository workConfigRepository, Locker locker,
         HttpUrlUtils httpUrlUtils, FuncRepository funcRepository, FuncMapper funcMapper,
         ClusterNodeMapper clusterNodeMapper, AesUtils aesUtils, IsxAppProperties isxAppProperties,
         FileRepository fileRepository, DatasourceService datasourceService, AlarmService alarmService,
-        SqlFunctionService sqlFunctionService) {
+        SqlFunctionService sqlFunctionService, SecretKeyRepository secretKeyRepository,
+        SqlValueService sqlValueService) {
 
         super(workInstanceRepository, workflowInstanceRepository, alarmService, sqlFunctionService);
         this.workInstanceRepository = workInstanceRepository;
@@ -118,6 +127,8 @@ public class FlinkSqlExecutor extends WorkExecutor {
         this.fileRepository = fileRepository;
         this.datasourceService = datasourceService;
         this.sqlFunctionService = sqlFunctionService;
+        this.secretKeyRepository = secretKeyRepository;
+        this.sqlValueService = sqlValueService;
     }
 
     @Override
@@ -175,15 +186,49 @@ public class FlinkSqlExecutor extends WorkExecutor {
         submitJobReq.setWorkInstanceId(workInstance.getId());
         submitJobReq.setWorkType(workRunContext.getWorkType());
 
-        String jsonPathSql = parseJsonPath(workRunContext.getScript(), workInstance);
+        // 判断实例中是否有脚本
+        String script;
+        String printSql;
+        if (workInstance.getWorkInfo() == null) {
 
-        String flinkSql = sqlFunctionService.parseSqlFunction(jsonPathSql);
+            // 解析上游参数
+            String jsonPathSql = parseJsonPath(workRunContext.getScript(), workInstance);
+
+            // 翻译sql中的系统变量
+            String parseValueSql = sqlValueService.parseSqlValue(jsonPathSql);
+
+            // 翻译sql中的系统函数
+            try {
+                script = sqlFunctionService.parseSqlFunction(parseValueSql);
+            } catch (Exception e) {
+                throw new WorkRunException(
+                    LocalDateTime.now() + WorkLog.ERROR_INFO + "系统函数异常\n" + e.getMessage() + "\n");
+            }
+            printSql = script;
+
+            // 翻译全局变量
+            List<SecretKeyEntity> allKey = secretKeyRepository.findAll();
+            for (SecretKeyEntity secretKeyEntity : allKey) {
+                script = script.replace("${{ secret." + secretKeyEntity.getKeyName() + " }}",
+                    secretKeyEntity.getSecretValue());
+                printSql = printSql.replace("${{ secret." + secretKeyEntity.getKeyName() + " }}", "******");
+            }
+
+            workInstance
+                .setWorkInfo(JSON.toJSONString(WorkInfo.builder().script(script).printScript(printSql).build()));
+        } else {
+            WorkInfo workInfo = JSON.parseObject(workInstance.getWorkInfo(), WorkInfo.class);
+            script = workInfo.getScript();
+            printSql = workInfo.getPrintScript();
+        }
 
         // 打印sql日志
+        logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("FlinkSql:  \n").append(printSql)
+            .append("\n");
         workInstance = updateInstance(workInstance, logBuilder);
 
         // 执行flinksql
-        PluginReq pluginReq = PluginReq.builder().sql(flinkSql).build();
+        PluginReq pluginReq = PluginReq.builder().sql(script).build();
         submitJobReq.setPluginReq(pluginReq);
 
         FlinkSubmit flinkSubmit = FlinkSubmit.builder().appName("zhiqingyun")

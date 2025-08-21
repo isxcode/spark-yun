@@ -38,6 +38,8 @@ import com.isxcode.spark.modules.file.repository.FileRepository;
 import com.isxcode.spark.modules.func.entity.FuncEntity;
 import com.isxcode.spark.modules.func.mapper.FuncMapper;
 import com.isxcode.spark.modules.func.repository.FuncRepository;
+import com.isxcode.spark.modules.secret.entity.SecretKeyEntity;
+import com.isxcode.spark.modules.secret.repository.SecretKeyRepository;
 import com.isxcode.spark.modules.work.entity.WorkConfigEntity;
 import com.isxcode.spark.modules.work.entity.WorkEntity;
 import com.isxcode.spark.modules.work.entity.WorkInstanceEntity;
@@ -45,6 +47,7 @@ import com.isxcode.spark.modules.work.repository.WorkConfigRepository;
 import com.isxcode.spark.modules.work.repository.WorkInstanceRepository;
 import com.isxcode.spark.modules.work.repository.WorkRepository;
 import com.isxcode.spark.modules.work.run.WorkExecutor;
+import com.isxcode.spark.modules.work.run.WorkInfo;
 import com.isxcode.spark.modules.work.run.WorkRunContext;
 import com.isxcode.spark.modules.work.sql.SqlCommentService;
 import com.isxcode.spark.modules.work.sql.SqlFunctionService;
@@ -109,6 +112,8 @@ public class SparkSqlExecutor extends WorkExecutor {
 
     private final DataSourceFactory dataSourceFactory;
 
+    private final SecretKeyRepository secretKeyRepository;
+
     public SparkSqlExecutor(WorkInstanceRepository workInstanceRepository, ClusterRepository clusterRepository,
         ClusterNodeRepository clusterNodeRepository, WorkflowInstanceRepository workflowInstanceRepository,
         WorkRepository workRepository, WorkConfigRepository workConfigRepository, Locker locker,
@@ -116,7 +121,8 @@ public class SparkSqlExecutor extends WorkExecutor {
         ClusterNodeMapper clusterNodeMapper, AesUtils aesUtils, IsxAppProperties isxAppProperties,
         FileRepository fileRepository, DatasourceService datasourceService, SqlCommentService sqlCommentService,
         SqlValueService sqlValueService, SqlFunctionService sqlFunctionService, AlarmService alarmService,
-        DatasourceMapper datasourceMapper, DataSourceFactory dataSourceFactory) {
+        DatasourceMapper datasourceMapper, DataSourceFactory dataSourceFactory,
+        SecretKeyRepository secretKeyRepository) {
 
         super(workInstanceRepository, workflowInstanceRepository, alarmService, sqlFunctionService);
         this.workInstanceRepository = workInstanceRepository;
@@ -138,6 +144,7 @@ public class SparkSqlExecutor extends WorkExecutor {
         this.sqlFunctionService = sqlFunctionService;
         this.datasourceMapper = datasourceMapper;
         this.dataSourceFactory = dataSourceFactory;
+        this.secretKeyRepository = secretKeyRepository;
     }
 
     @Override
@@ -199,20 +206,46 @@ public class SparkSqlExecutor extends WorkExecutor {
             .mainClass("com.isxcode.spark.plugin.query.sql.Execute").appResource("spark-query-sql-plugin.jar")
             .conf(genSparkSubmitConfig(workRunContext.getClusterConfig().getSparkConfig())).build();
 
-        // 去掉sql中的注释
-        String sqlNoComment = sqlCommentService.removeSqlComment(workRunContext.getScript());
+        // 判断实例中是否有脚本
+        String script;
+        String printSql;
+        if (workInstance.getWorkInfo() == null) {
+            // 去掉sql中的注释
+            String sqlNoComment = sqlCommentService.removeSqlComment(workRunContext.getScript());
 
-        // 解析上游参数
-        String jsonPathSql = parseJsonPath(sqlNoComment, workInstance);
+            // 解析上游参数
+            String jsonPathSql = parseJsonPath(sqlNoComment, workInstance);
 
-        // 翻译sql中的系统变量
-        String parseValueSql = sqlValueService.parseSqlValue(jsonPathSql);
+            // 翻译sql中的系统变量
+            String parseValueSql = sqlValueService.parseSqlValue(jsonPathSql);
 
-        // 翻译sql中的系统函数
-        String script = sqlFunctionService.parseSqlFunction(parseValueSql);
+            // 翻译sql中的系统函数
+            try {
+                script = sqlFunctionService.parseSqlFunction(parseValueSql);
+            } catch (Exception e) {
+                throw new WorkRunException(
+                    LocalDateTime.now() + WorkLog.ERROR_INFO + "系统函数异常\n" + e.getMessage() + "\n");
+            }
+            printSql = script;
+
+            // 翻译全局变量
+            List<SecretKeyEntity> allKey = secretKeyRepository.findAll();
+            for (SecretKeyEntity secretKeyEntity : allKey) {
+                script = script.replace("${{ secret." + secretKeyEntity.getKeyName() + " }}",
+                    secretKeyEntity.getSecretValue());
+                printSql = printSql.replace("${{ secret." + secretKeyEntity.getKeyName() + " }}", "******");
+            }
+
+            workInstance
+                .setWorkInfo(JSON.toJSONString(WorkInfo.builder().script(script).printScript(printSql).build()));
+        } else {
+            WorkInfo workInfo = JSON.parseObject(workInstance.getWorkInfo(), WorkInfo.class);
+            script = workInfo.getScript();
+            printSql = workInfo.getPrintScript();
+        }
 
         // 打印sql日志
-        logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("SparkSql:  \n").append(script)
+        logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("SparkSql:  \n").append(printSql)
             .append("\n");
         workInstance = updateInstance(workInstance, logBuilder);
 
