@@ -237,7 +237,7 @@ function initData(id?: string, tableLoading?: boolean) {
                 }
               })
             }
-            if (['CURL','FLINK_SQL'].includes(workConfig.workType)) {
+            if (['CURL','FLINK_SQL','PY_SPARK'].includes(workConfig.workType)) {
               tabList.forEach((item: any) => {
                 if (['RunningLog'].includes(item.code)) {
                   item.hide = false
