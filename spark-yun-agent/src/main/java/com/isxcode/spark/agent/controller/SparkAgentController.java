@@ -90,4 +90,26 @@ public class SparkAgentController {
     @SuccessResponse("正常心跳")
     public void heartCheck() {}
 
+
+    @Operation(summary = "计算容器心跳检测接口")
+    @PostMapping(SparkAgentUrl.CONTAINER_CHECK_URL)
+    public ContainerCheckRes containerCheck(@RequestBody ContainerCheckReq containerCheckReq) {
+
+        return sparkYunAgentBizService.containerCheck(containerCheckReq);
+    }
+
+    @Operation(summary = "计算容器执行sql接口")
+    @PostMapping(SparkAgentUrl.EXECUTE_CONTAINER_SQL_URL)
+    public ExecuteContainerSqlRes executeContainerSql(@RequestBody ExecuteContainerSqlReq executeContainerSqlReq) {
+
+        return sparkYunAgentBizService.executeContainerSql(executeContainerSqlReq);
+    }
+
+    @Operation(summary = "提交计算容器接口")
+    @PostMapping(SparkAgentUrl.DEPLOY_CONTAINER_URL)
+    @SuccessResponse("提交成功")
+    public DeployContainerRes deployContainer(@Valid @RequestBody SubmitWorkReq submitWorkReq) {
+
+        return sparkYunAgentBizService.deployContainer(submitWorkReq);
+    }
 }
