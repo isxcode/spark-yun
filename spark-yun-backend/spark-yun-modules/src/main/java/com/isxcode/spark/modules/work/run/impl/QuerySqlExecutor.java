@@ -16,6 +16,7 @@ import com.isxcode.spark.modules.datasource.source.Datasource;
 import com.isxcode.spark.modules.work.entity.WorkInstanceEntity;
 import com.isxcode.spark.modules.work.repository.WorkInstanceRepository;
 import com.isxcode.spark.modules.work.run.WorkExecutor;
+import com.isxcode.spark.modules.work.run.WorkInfo;
 import com.isxcode.spark.modules.work.run.WorkRunContext;
 import com.isxcode.spark.modules.work.sql.SqlCommentService;
 import com.isxcode.spark.modules.work.sql.SqlFunctionService;
@@ -115,17 +116,31 @@ public class QuerySqlExecutor extends WorkExecutor {
 
             statement.setQueryTimeout(1800);
 
-            // 去掉sql中的注释
-            String sqlNoComment = sqlCommentService.removeSqlComment(workRunContext.getScript());
+            // 判断实例中是否有脚本
+            String script;
+            if (workInstance.getWorkInfo() == null) {
+                // 去掉sql中的注释
+                String sqlNoComment = sqlCommentService.removeSqlComment(workRunContext.getScript());
 
-            // 解析上游参数
-            String jsonPathSql = parseJsonPath(sqlNoComment, workInstance);
+                // 解析上游参数
+                String jsonPathSql = parseJsonPath(sqlNoComment, workInstance);
 
-            // 翻译sql中的系统变量
-            String parseValueSql = sqlValueService.parseSqlValue(jsonPathSql);
+                // 翻译sql中的系统变量
+                String parseValueSql = sqlValueService.parseSqlValue(jsonPathSql);
 
-            // 翻译sql中的系统函数
-            String script = sqlFunctionService.parseSqlFunction(parseValueSql);
+                // 翻译sql中的系统函数
+                try {
+                    script = sqlFunctionService.parseSqlFunction(parseValueSql);
+                } catch (Exception e) {
+                    throw new WorkRunException(
+                        LocalDateTime.now() + WorkLog.ERROR_INFO + "系统函数异常\n" + e.getMessage() + "\n");
+                }
+
+                workInstance.setWorkInfo(JSON.toJSONString(WorkInfo.builder().script(script).build()));
+            } else {
+                WorkInfo workInfo = JSON.parseObject(workInstance.getWorkInfo(), WorkInfo.class);
+                script = workInfo.getScript();
+            }
 
             // 清除脚本中的脏数据
             List<String> sqls =

@@ -236,11 +236,12 @@ public class SparkSqlExecutor extends WorkExecutor {
                 printSql = printSql.replace("${{ secret." + secretKeyEntity.getKeyName() + " }}", "******");
             }
 
-            workInstance.setWorkInfo(JSON.toJSONString(WorkInfo.builder().sparkSql(script).printSql(printSql).build()));
+            workInstance
+                .setWorkInfo(JSON.toJSONString(WorkInfo.builder().script(script).printScript(printSql).build()));
         } else {
             WorkInfo workInfo = JSON.parseObject(workInstance.getWorkInfo(), WorkInfo.class);
-            script = workInfo.getSparkSql();
-            printSql = workInfo.getPrintSql();
+            script = workInfo.getScript();
+            printSql = workInfo.getPrintScript();
         }
 
         // 打印sql日志
