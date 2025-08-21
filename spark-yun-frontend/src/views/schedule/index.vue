@@ -112,7 +112,7 @@
                       运行日志
                     </el-dropdown-item>
                     <el-dropdown-item
-                        v-if="scopeSlot.row.status === 'SUCCESS' && scopeSlot.row.workType !== 'EXE_JDBC'"
+                        v-if="scopeSlot.row.status === 'SUCCESS' && scopeSlot.row.workType !== 'EXE_JDBC' && scopeSlot.row.workType !== 'FLINK_SQL' && scopeSlot.row.workType !== 'FLINK_JAR'"
                         @click="showDetailModal(scopeSlot.row, 'result')"
                     >
                       运行结果

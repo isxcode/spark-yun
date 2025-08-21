@@ -214,11 +214,12 @@ public class FlinkSqlExecutor extends WorkExecutor {
                 printSql = printSql.replace("${{ secret." + secretKeyEntity.getKeyName() + " }}", "******");
             }
 
-            workInstance.setWorkInfo(JSON.toJSONString(WorkInfo.builder().flinkSql(script).printSql(printSql).build()));
+            workInstance
+                .setWorkInfo(JSON.toJSONString(WorkInfo.builder().script(script).printScript(printSql).build()));
         } else {
             WorkInfo workInfo = JSON.parseObject(workInstance.getWorkInfo(), WorkInfo.class);
-            script = workInfo.getFlinkSql();
-            printSql = workInfo.getPrintSql();
+            script = workInfo.getScript();
+            printSql = workInfo.getPrintScript();
         }
 
         // 打印sql日志
