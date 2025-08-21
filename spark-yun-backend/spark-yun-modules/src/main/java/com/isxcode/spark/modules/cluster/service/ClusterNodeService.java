@@ -119,8 +119,10 @@ public class ClusterNodeService {
             }
 
             clusterNode = clusterNodeRepository.findById(clusterNode.getId()).get();
-            clusterNode.setAgentLog(clusterNode.getAgentLog() + "\n进度:" + scpPercent + "%");
-            clusterNodeRepository.saveAndFlush(clusterNode);
+            if (!clusterNode.getAgentLog().contains("进度:" + scpPercent + "%")) {
+                clusterNode.setAgentLog(clusterNode.getAgentLog() + "\n进度:" + scpPercent + "%");
+                clusterNodeRepository.saveAndFlush(clusterNode);
+            }
 
             Thread.sleep(10000);
         }
