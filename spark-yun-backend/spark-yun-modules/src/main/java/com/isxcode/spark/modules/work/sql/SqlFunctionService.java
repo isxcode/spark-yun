@@ -24,7 +24,7 @@ public class SqlFunctionService {
     private final ResourceLoader resourceLoader;
 
     /**
-     * 解析函数 #[[ date_to_str(add_day(now(),1),'YYYY-MM-dd hh:mm:ss') ]] #[[ add_day(now(),1) ]].
+     * 解析函数 #[[ date_to_str(add_day(now(),1),'YYYY-MM-dd hh:mm:ss') ]].
      */
     public String parseSqlFunction(String sql) {
 
