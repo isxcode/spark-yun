@@ -310,10 +310,13 @@ $module-intro-img-width: 600px;
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    background-image: url("https://zhiqingyun-demo.isxcode.com/tools/open/file/bg-0.jpg");
+    /* 移除默认背景图，由 JavaScript 控制加载和显示 */
+    background-color: rgba(255, 156, 110, 5%); /* 添加默认背景色 */
     padding-top: 200px;
     position: relative;
     overflow: hidden;
+    opacity: 0; /* 初始隐藏，等待背景图加载完成 */
+    transition: opacity 0.5s ease-in-out;
 
     .bg-video {
       position: absolute;
