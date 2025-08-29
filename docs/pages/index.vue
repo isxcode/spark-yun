@@ -183,6 +183,25 @@ import mediumZoom from "medium-zoom";
 
 onMounted(async () => {
   await nextTick()
+
+  // 检查是否从其他页面返回，如果是则立即显示背景图
+  const moduleIntro = document.querySelector('.module-intro') as HTMLElement;
+  if (moduleIntro && document.referrer) {
+    // 检查背景图是否已在缓存中
+    const img = new Image();
+    img.src = 'https://zhiqingyun-demo.isxcode.com/tools/open/file/bg-0.jpg';
+
+    if (img.complete && img.naturalWidth > 0) {
+      // 如果图片已缓存，立即显示
+      moduleIntro.style.backgroundImage = `url("https://zhiqingyun-demo.isxcode.com/tools/open/file/bg-0.jpg")`;
+      moduleIntro.style.backgroundSize = 'cover';
+      moduleIntro.style.backgroundPosition = 'center';
+      moduleIntro.style.backgroundRepeat = 'no-repeat';
+      moduleIntro.style.opacity = '1';
+      moduleIntro.style.transition = 'opacity 0.3s ease-in-out';
+    }
+  }
+
   mediumZoom(document.querySelectorAll('#zoom'), {
     margin: 100,
     scrollOffset: 1,
@@ -195,6 +214,8 @@ const $t = useI18n().t;
 definePageMeta({
   title: $t("home"),
   layout: "home",
+  // 启用页面缓存，提高返回首页的速度
+  keepalive: true,
 });
 
 useSeoMeta({
@@ -202,6 +223,18 @@ useSeoMeta({
   ogTitle: $t("zhi_yao_shu_ju"),
   description: $t("enterprise_data_platform"),
   ogDescription: $t("build_enterprise_open_source_software"),
+});
+
+// 优先预加载关键背景图片
+useHead({
+  link: [
+    {
+      rel: 'preload',
+      href: 'https://zhiqingyun-demo.isxcode.com/tools/open/file/bg-0.jpg',
+      as: 'image',
+      type: 'image/jpeg'
+    }
+  ]
 });
 
 const isMobile = useMediaQuery("(max-width: 767px)");
@@ -310,10 +343,19 @@ $module-intro-img-width: 600px;
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    background-image: url("https://zhiqingyun-demo.isxcode.com/tools/open/file/bg-0.jpg");
+    /* 移除默认背景图，由 JavaScript 控制加载和显示 */
+    background-color: rgba(255, 156, 110, 5%); /* 添加默认背景色 */
     padding-top: 200px;
     position: relative;
     overflow: hidden;
+    opacity: 0; /* 初始隐藏，等待背景图加载完成 */
+    transition: opacity 0.5s ease-in-out;
+
+    /* 支持缓存快速恢复的样式 */
+    &.cache-restored {
+      opacity: 1;
+      transition: none;
+    }
 
     .bg-video {
       position: absolute;

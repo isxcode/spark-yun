@@ -6,6 +6,31 @@ export default defineNuxtConfig({
   build: {
     transpile: ['vueuc']
   },
+  // 添加关键资源预加载
+  app: {
+    head: {
+      link: [
+        {
+          rel: 'preload',
+          href: 'https://zhiqingyun-demo.isxcode.com/tools/open/file/bg-0.jpg',
+          as: 'image',
+          type: 'image/jpeg'
+        },
+        {
+          rel: 'preload',
+          href: 'https://zhiqingyun-demo.isxcode.com/tools/open/file/logo.jpg',
+          as: 'image',
+          type: 'image/jpeg'
+        },
+        {
+          rel: 'preload',
+          href: 'https://zhiqingyun-demo.isxcode.com/tools/open/file/product.jpg',
+          as: 'image',
+          type: 'image/jpeg'
+        }
+      ]
+    }
+  },
   // 性能优化配置
   experimental: {
     payloadExtraction: false, // 禁用payload提取以提高首屏加载速度
@@ -14,6 +39,18 @@ export default defineNuxtConfig({
   // 渲染配置
   nitro: {
     compressPublicAssets: true, // 启用静态资源压缩
+    routeRules: {
+      // 首页启用强缓存
+      '/': {
+        headers: {
+          'Cache-Control': 'public, max-age=3600, s-maxage=3600',
+          'Vary': 'Accept-Language'
+        }
+      },
+      // 静态资源长期缓存
+      '/assets/**': { headers: { 'Cache-Control': 'public, max-age=31536000, immutable' } },
+      '/images/**': { headers: { 'Cache-Control': 'public, max-age=31536000, immutable' } }
+    }
   },
   modules: [
     "@nuxt/content",
@@ -30,6 +67,7 @@ export default defineNuxtConfig({
   },
   plugins: [
     { src: "~/plugins/preload-loading.client.ts", mode: "client" },
+    { src: "~/plugins/page-cache.client.ts", mode: "client" },
     { src: "~/plugins/resource-preloader.client.ts", mode: "client" },
     { src: "~/plugins/svgicon.client.ts" },
     { src: "~/plugins/loading.client.ts" }
