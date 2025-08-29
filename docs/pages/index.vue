@@ -183,6 +183,25 @@ import mediumZoom from "medium-zoom";
 
 onMounted(async () => {
   await nextTick()
+
+  // 检查是否从其他页面返回，如果是则立即显示背景图
+  const moduleIntro = document.querySelector('.module-intro') as HTMLElement;
+  if (moduleIntro && document.referrer) {
+    // 检查背景图是否已在缓存中
+    const img = new Image();
+    img.src = 'https://zhiqingyun-demo.isxcode.com/tools/open/file/bg-0.jpg';
+
+    if (img.complete && img.naturalWidth > 0) {
+      // 如果图片已缓存，立即显示
+      moduleIntro.style.backgroundImage = `url("https://zhiqingyun-demo.isxcode.com/tools/open/file/bg-0.jpg")`;
+      moduleIntro.style.backgroundSize = 'cover';
+      moduleIntro.style.backgroundPosition = 'center';
+      moduleIntro.style.backgroundRepeat = 'no-repeat';
+      moduleIntro.style.opacity = '1';
+      moduleIntro.style.transition = 'opacity 0.3s ease-in-out';
+    }
+  }
+
   mediumZoom(document.querySelectorAll('#zoom'), {
     margin: 100,
     scrollOffset: 1,
@@ -195,6 +214,8 @@ const $t = useI18n().t;
 definePageMeta({
   title: $t("home"),
   layout: "home",
+  // 启用页面缓存，提高返回首页的速度
+  keepalive: true,
 });
 
 useSeoMeta({
@@ -329,6 +350,12 @@ $module-intro-img-width: 600px;
     overflow: hidden;
     opacity: 0; /* 初始隐藏，等待背景图加载完成 */
     transition: opacity 0.5s ease-in-out;
+
+    /* 支持缓存快速恢复的样式 */
+    &.cache-restored {
+      opacity: 1;
+      transition: none;
+    }
 
     .bg-video {
       position: absolute;
