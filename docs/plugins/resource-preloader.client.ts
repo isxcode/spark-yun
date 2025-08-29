@@ -128,9 +128,41 @@ export default defineNuxtPlugin({
           // 先隐藏背景图区域，避免渐进式显示
           const moduleIntro = document.querySelector('.module-intro') as HTMLElement;
           if (moduleIntro) {
+            moduleIntro.style.transition = 'opacity 0.5s ease-in-out';
+          }
+
+          // 检查浏览器缓存中是否已有该图片
+          const checkImageInCache = () => {
+            const img = new Image();
+            img.src = criticalBackgroundUrl;
+
+            // 如果图片已在缓存中，complete会立即为true
+            if (img.complete && img.naturalWidth > 0) {
+              console.log('✓ 背景图已在缓存中，立即显示');
+              if (moduleIntro) {
+                moduleIntro.style.backgroundImage = `url("${criticalBackgroundUrl}")`;
+                moduleIntro.style.backgroundSize = 'cover';
+                moduleIntro.style.backgroundPosition = 'center';
+                moduleIntro.style.backgroundRepeat = 'no-repeat';
+                moduleIntro.style.opacity = '1';
+              }
+              onResourceLoaded();
+              backgroundLoaded = true;
+              resolve();
+              return true;
+            }
+            return false;
+          };
+
+          // 首先检查缓存
+          if (checkImageInCache()) {
+            return;
+          }
+
+          // 如果不在缓存中，则正常加载
+          if (moduleIntro) {
             moduleIntro.style.backgroundImage = 'none';
             moduleIntro.style.opacity = '0';
-            moduleIntro.style.transition = 'opacity 0.5s ease-in-out';
           }
 
           const img = new Image();
