@@ -204,6 +204,18 @@ useSeoMeta({
   ogDescription: $t("build_enterprise_open_source_software"),
 });
 
+// 优先预加载关键背景图片
+useHead({
+  link: [
+    {
+      rel: 'preload',
+      href: 'https://zhiqingyun-demo.isxcode.com/tools/open/file/bg-0.jpg',
+      as: 'image',
+      type: 'image/jpeg'
+    }
+  ]
+});
+
 const isMobile = useMediaQuery("(max-width: 767px)");
 const {locale} = useI18n();
 

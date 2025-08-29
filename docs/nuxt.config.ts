@@ -6,6 +6,25 @@ export default defineNuxtConfig({
   build: {
     transpile: ['vueuc']
   },
+  // 添加关键资源预加载
+  app: {
+    head: {
+      link: [
+        {
+          rel: 'preload',
+          href: 'https://zhiqingyun-demo.isxcode.com/tools/open/file/bg-0.jpg',
+          as: 'image',
+          type: 'image/jpeg'
+        },
+        {
+          rel: 'preload',
+          href: 'https://zhiqingyun-demo.isxcode.com/tools/open/file/logo.jpg',
+          as: 'image',
+          type: 'image/jpeg'
+        }
+      ]
+    }
+  },
   // 性能优化配置
   experimental: {
     payloadExtraction: false, // 禁用payload提取以提高首屏加载速度
