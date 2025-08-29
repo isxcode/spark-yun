@@ -21,6 +21,12 @@ export default defineNuxtConfig({
           href: 'https://zhiqingyun-demo.isxcode.com/tools/open/file/logo.jpg',
           as: 'image',
           type: 'image/jpeg'
+        },
+        {
+          rel: 'preload',
+          href: 'https://zhiqingyun-demo.isxcode.com/tools/open/file/product.jpg',
+          as: 'image',
+          type: 'image/jpeg'
         }
       ]
     }
