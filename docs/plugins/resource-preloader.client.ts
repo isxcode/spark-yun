@@ -8,6 +8,7 @@ export default defineNuxtPlugin({
 
       // 其他资源配置（bg-0.jpg 加载完成后再加载）
       const orderedResources = [
+        { url: 'https://zhiqingyun-demo.isxcode.com/tools/open/file/bg-0.jpg', type: 'image' },
         { url: 'https://zhiqingyun-demo.isxcode.com/tools/open/file/logo.jpg', type: 'image' },
         { url: 'https://zhiqingyun-demo.isxcode.com/tools/open/file/product.jpg', type: 'image' },
         { url: 'https://zhiqingyun-demo.isxcode.com/tools/open/file/t-0.png', type: 'image' },
