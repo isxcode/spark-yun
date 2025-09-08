@@ -389,7 +389,7 @@ function downloadLicense() {
 }
 
 function downloadPdf() {
-  window.open("http://localhost:8080/tools/open/file/zhiqingyun.pdf");
+  window.open("https://zhiqingyun-demo.isxcode.com/tools/open/file/zhiqingyun.pdf");
 }
 
 function downloadPackage() {
