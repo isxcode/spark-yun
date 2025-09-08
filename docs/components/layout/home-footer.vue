@@ -373,7 +373,7 @@ function clickSlack() {
 }
 
 function clickDiscord() {
-  window.open("https://discord.gg/uWHWkGph2t");
+  window.open("https://discord.gg/2AkVmn86");
 }
 
 function clickLinked() {

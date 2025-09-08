@@ -99,8 +99,24 @@ public class ToolController {
                 headers.setContentType(MediaType.parseMediaType(contentTypeFromName));
             }
 
-            headers.setContentDispositionFormData("attachment", URLEncoder.encode(fileName, "UTF-8"));
-            headers.setCacheControl("public, max-age=" + 31536000);
+            // 检查文件类型并设置相应的处理方式
+            String lowerFileName = fileName.toLowerCase();
+
+            // 设置Content-Disposition
+            if (lowerFileName.endsWith(".pdf")) {
+                headers.add("Content-Disposition", "inline; filename=\"" + URLEncoder.encode(fileName, "UTF-8") + "\"");
+            } else {
+                headers.setContentDispositionFormData("attachment", URLEncoder.encode(fileName, "UTF-8"));
+            }
+
+            // 设置缓存控制：对于PDF、tar.gz、lic文件禁用缓存，确保每次都获取最新版本
+            if (lowerFileName.endsWith(".pdf") || lowerFileName.endsWith(".tar.gz") || lowerFileName.endsWith(".lic")) {
+                headers.setCacheControl("no-cache, no-store, must-revalidate");
+                headers.add("Expires", "0");
+            } else {
+                // 其他文件保持长期缓存
+                headers.setCacheControl("public, max-age=" + 31536000);
+            }
 
             // 返回文件
             return ResponseEntity.ok().headers(headers).body(resource);
