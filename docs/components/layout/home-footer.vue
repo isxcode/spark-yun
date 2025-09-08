@@ -373,7 +373,7 @@ function clickSlack() {
 }
 
 function clickDiscord() {
-  window.open("https://discord.gg/uWHWkGph2t");
+  window.open("https://discord.gg/2AkVmn86");
 }
 
 function clickLinked() {
@@ -389,7 +389,7 @@ function downloadLicense() {
 }
 
 function downloadPdf() {
-  window.open("https://zhiqingyun-demo.isxcode.com/tools/open/file/zhiqingyun.pdf");
+  window.open("http://localhost:8080/tools/open/file/zhiqingyun.pdf");
 }
 
 function downloadPackage() {
