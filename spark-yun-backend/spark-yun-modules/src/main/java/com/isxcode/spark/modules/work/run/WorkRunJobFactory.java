@@ -1,6 +1,7 @@
 package com.isxcode.spark.modules.work.run;
 
 import com.alibaba.fastjson2.JSON;
+import com.isxcode.spark.api.work.constants.QuartzPrefix;
 import com.isxcode.spark.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.spark.modules.work.entity.WorkEventEntity;
 import com.isxcode.spark.modules.work.repository.WorkEventRepository;
@@ -26,29 +27,25 @@ public class WorkRunJobFactory {
 
     public void execute(WorkRunContext workRunContext) {
 
-        // 设置租户和用户
+        // 异步赋值环境变量
         USER_ID.set(workRunContext.getUserId());
         TENANT_ID.set(workRunContext.getTenantId());
 
-        // 初始化作业事件
-        WorkEventEntity workEvent =
-            WorkEventEntity.builder().eventProcess(0).eventContext(JSON.toJSONString(workRunContext)).build();
+        // 初始化作业进度事件
+        WorkEventEntity workEvent = WorkEventEntity.builder().eventProcess(0).eventContext(JSON.toJSONString(workRunContext)).build();
+        workEvent = workEventRepository.saveAndFlush(workEvent);
+
+        // 保存eventId
+        workRunContext.setEventId(workEvent.getId());
 
         try {
-            // 保存工作事件到数据库并确保提交成功
-            workEvent = workEventRepository.saveAndFlush(workEvent);
-
             // 封装调度器的运行参数
             JobDataMap jobDataMap = new JobDataMap();
-            workRunContext.setEventId(workEvent.getId());
-            jobDataMap.put("workRunContext", JSON.toJSONString(workRunContext));
+            jobDataMap.put(QuartzPrefix.WORK_RUN_CONTEXT, JSON.toJSONString(workRunContext));
 
-            // 初始化调度器，每2秒执行一次
+            // 初始化调度器，每1秒执行一次
             JobDetail jobDetail = JobBuilder.newJob(WorkRunJob.class).setJobData(jobDataMap).build();
-            Trigger trigger = TriggerBuilder.newTrigger()
-                .withSchedule(
-                    CronScheduleBuilder.cronSchedule("*/1 * * * * ? ").withMisfireHandlingInstructionIgnoreMisfires())
-                .withIdentity("event_" + workRunContext.getEventId()).build();
+            Trigger trigger = TriggerBuilder.newTrigger().withSchedule(CronScheduleBuilder.cronSchedule("*/1 * * * * ? ").withMisfireHandlingInstructionIgnoreMisfires()).withIdentity(QuartzPrefix.WORK_RUN_PROCESS_EVENT + workRunContext.getEventId()).build();
 
             // 创建并触发调度器
             scheduler.scheduleJob(jobDetail, trigger);
