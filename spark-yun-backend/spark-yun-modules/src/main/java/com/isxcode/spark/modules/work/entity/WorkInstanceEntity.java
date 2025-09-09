@@ -76,6 +76,8 @@ public class WorkInstanceEntity {
 
     private String workInfo;
 
+    private String eventId;
+
     @CreatedDate
     private LocalDateTime createDateTime;
 
