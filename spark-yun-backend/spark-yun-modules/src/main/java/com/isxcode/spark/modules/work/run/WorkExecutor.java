@@ -211,17 +211,22 @@ public abstract class WorkExecutor {
         // 获取事件
         WorkEventEntity workEvent = workEventRepository.findById(workRunContext.getEventId()).get();
 
+        // 修改节点状态只能一个一个改，防止并发压力大，导致作业执行两次
+        Integer workChangeStatus = locker.lock("work_change_status_" + workRunContext.getFlowInstanceId());
+
         // 获取最新作业实例
         WorkInstanceEntity workInstance = workInstanceRepository.findById(workRunContext.getInstanceId()).get();
 
         // 如果不是当前实例的eventId，直接杀掉
         if (workInstance.getEventId() != null && !workInstance.getEventId().equals(workRunContext.getEventId())) {
+            locker.unlock(workChangeStatus);
             return InstanceStatus.FINISHED;
         }
 
         // 中止、中止中，不可以再运行
         if (InstanceStatus.ABORT.equals(workInstance.getStatus())
             || InstanceStatus.ABORTING.equals(workInstance.getStatus())) {
+            locker.unlock(workChangeStatus);
             return InstanceStatus.FINISHED;
         }
 
@@ -235,6 +240,7 @@ public abstract class WorkExecutor {
 
             // 在调度中的作业，如果自身定时器没有被触发，不可以再运行
             if (!Strings.isEmpty(workRunContext.getVersionId()) && !workInstance.getQuartzHasRun()) {
+                locker.unlock(workChangeStatus);
                 return InstanceStatus.FINISHED;
             }
 
@@ -251,6 +257,7 @@ public abstract class WorkExecutor {
             // 判断当前作业实例的状态
             if (parentIsRunning) {
                 // 如果父级在运行中，不可以再运行
+                locker.unlock(workChangeStatus);
                 return InstanceStatus.FINISHED;
             } else if (parentIsError) {
                 // 如果父级有错，则状态直接变更为失败
@@ -273,11 +280,13 @@ public abstract class WorkExecutor {
                 workInstance.setExecStartDateTime(new Date());
             }
 
-            // 保存作业实例状态
+            // 修改作业实例状态，只能一个一个节点修改
             workInstanceRepository.saveAndFlush(workInstance);
             log.debug("作业流实例id:{} 作业实例id:{} 事件id:{} 事件:【{}】修改状态为运行中", workRunContext.getFlowInstanceId(),
                 workRunContext.getInstanceId(), workRunContext.getEventId(), workRunContext.getWorkName());
         }
+
+        locker.unlock(workChangeStatus);
 
         // 实例只有运行中，才能执行作业
         if (InstanceStatus.RUNNING.equals(workInstance.getStatus())) {
