@@ -2,6 +2,7 @@ package com.isxcode.spark.modules.work.run;
 
 import com.alibaba.fastjson2.JSON;
 import com.isxcode.spark.api.instance.constants.InstanceStatus;
+import com.isxcode.spark.api.work.constants.QuartzPrefix;
 import com.isxcode.spark.common.locker.Locker;
 import com.isxcode.spark.modules.work.repository.WorkEventRepository;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +14,9 @@ import org.springframework.stereotype.Component;
 import static com.isxcode.spark.common.config.CommonConfig.TENANT_ID;
 import static com.isxcode.spark.common.config.CommonConfig.USER_ID;
 
+/**
+ * 作业运行定时器.
+ */
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -31,18 +35,11 @@ public class WorkRunJob implements Job {
 
         // 获取调度器中的参数
         WorkRunContext workRunContext = JSON.parseObject(
-            String.valueOf(context.getJobDetail().getJobDataMap().get("workRunContext")), WorkRunContext.class);
+            String.valueOf(context.getJobDetail().getJobDataMap().get(QuartzPrefix.WORK_RUN_CONTEXT)), WorkRunContext.class);
 
-        // 设置租户和用户
+        // 异步刷新环境变量
         USER_ID.set(workRunContext.getUserId());
         TENANT_ID.set(workRunContext.getTenantId());
-
-        // 作业调度的事件，每个作业实例只能一个一个执行，只有id最小的可以走
-        Integer lockId = locker.lockOnly("scheduler_" + workRunContext.getInstanceId());
-        if (locker.isLocked("scheduler_" + workRunContext.getInstanceId(), lockId)) {
-            locker.unlock(lockId);
-            return;
-        }
 
         // 触发作业运行
         String runStatus;
@@ -64,8 +61,5 @@ public class WorkRunJob implements Job {
                 // 异常不处理
             }
         }
-
-        // 解锁，让下一个调度可以执行
-        locker.unlock(lockId);
     }
 }
