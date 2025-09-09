@@ -11,6 +11,7 @@ import com.isxcode.spark.api.instance.req.*;
 import com.isxcode.spark.api.instance.res.GetWorkInstanceValuePathRes;
 import com.isxcode.spark.api.instance.res.GetWorkflowInstanceRes;
 import com.isxcode.spark.api.instance.res.QueryInstanceRes;
+import com.isxcode.spark.api.work.constants.EventType;
 import com.isxcode.spark.api.work.constants.WorkLog;
 import com.isxcode.spark.api.work.constants.WorkStatus;
 import com.isxcode.spark.api.work.constants.WorkType;
@@ -29,6 +30,7 @@ import com.isxcode.spark.modules.work.repository.WorkRepository;
 import com.isxcode.spark.modules.work.run.WorkExecutor;
 import com.isxcode.spark.modules.work.run.WorkExecutorFactory;
 import com.isxcode.spark.modules.work.run.WorkRunContext;
+import com.isxcode.spark.modules.work.run.WorkRunJobFactory;
 import com.isxcode.spark.modules.work.service.WorkConfigService;
 import com.isxcode.spark.modules.work.service.WorkService;
 import com.isxcode.spark.modules.workflow.entity.WorkflowConfigEntity;
@@ -79,6 +81,8 @@ public class WorkBizService {
     private final WorkflowInstanceRepository workflowInstanceRepository;
 
     private final ClusterNodeRepository clusterNodeRepository;
+
+    private final WorkRunJobFactory workRunFactory;
 
     public GetWorkRes addWork(AddWorkReq addWorkReq) {
 
@@ -275,26 +279,28 @@ public class WorkBizService {
         return workInstanceRepository.saveAndFlush(workInstanceEntity);
     }
 
+
     /**
-     * 提交作业.
+     * 运行作业.
      */
     public RunWorkRes runWork(RunWorkReq runWorkReq) {
 
-        // 获取作业信息
+        // 获取作业
         WorkEntity work = workService.getWorkEntity(runWorkReq.getWorkId());
-
-        // 初始化作业实例
-        WorkInstanceEntity workInstance = genWorkInstance(work.getId());
 
         // 获取作业配置
         WorkConfigEntity workConfig = workConfigBizService.getWorkConfigEntity(work.getConfigId());
 
-        // 初始化作业运行上下文
-        WorkRunContext workRunContext = genWorkRunContext(workInstance.getId(), work, workConfig);
+        // 初始化作业实例
+        WorkInstanceEntity workInstance = WorkInstanceEntity.builder().workId(work.getId())
+            .status(InstanceStatus.PENDING).instanceType(InstanceType.MANUAL).build();
+        workInstance = workInstanceRepository.saveAndFlush(workInstance);
 
-        // 异步运行作业
-        WorkExecutor workExecutor = workExecutorFactory.create(work.getWorkType());
-        workExecutor.asyncExecute(workRunContext);
+        // 封装作业运行上下文
+        WorkRunContext workRunContext = genWorkRunContext(workInstance.getId(), EventType.WORK, work, workConfig);
+
+        // 提交作业
+        workRunFactory.execute(workRunContext);
 
         // 返回作业的实例id
         return RunWorkRes.builder().instanceId(workInstance.getId()).build();

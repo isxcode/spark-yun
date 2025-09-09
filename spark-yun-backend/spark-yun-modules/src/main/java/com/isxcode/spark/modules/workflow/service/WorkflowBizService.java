@@ -46,7 +46,6 @@ import com.isxcode.spark.modules.work.repository.WorkInstanceRepository;
 import com.isxcode.spark.modules.work.repository.WorkRepository;
 import com.isxcode.spark.modules.work.run.WorkExecutor;
 import com.isxcode.spark.modules.work.run.WorkExecutorFactory;
-import com.isxcode.spark.modules.work.run.WorkRunContext;
 import com.isxcode.spark.modules.workflow.entity.*;
 import com.isxcode.spark.modules.workflow.mapper.WorkflowMapper;
 import com.isxcode.spark.modules.workflow.repository.WorkflowConfigRepository;
@@ -549,43 +548,46 @@ public class WorkflowBizService {
 
     public void runCurrentNode(RunCurrentNodeReq runCurrentNodeReq) {
 
-        WorkInstanceEntity workInstance = workInstanceRepository.findById(runCurrentNodeReq.getWorkInstanceId()).get();
-        WorkflowInstanceEntity workflowInstance =
-            workflowInstanceRepository.findById(workInstance.getWorkflowInstanceId()).get();
-        WorkEntity work = workRepository.findById(workInstance.getWorkId()).get();
-        WorkConfigEntity workConfig = workConfigRepository.findById(work.getConfigId()).get();
-
-        CompletableFuture.supplyAsync(() -> {
-            workflowInstance.setStatus(InstanceStatus.RUNNING);
-            workflowInstanceRepository.save(workflowInstance);
-
-            // 同步执行作业
-            WorkExecutor workExecutor = workExecutorFactory.create(work.getWorkType());
-            WorkRunContext workRunContext =
-                WorkflowUtils.genWorkRunContext(runCurrentNodeReq.getWorkInstanceId(), work, workConfig);
-            workExecutor.syncExecute(workRunContext);
-
-            return "OVER";
-        }).whenComplete((exception, result) -> {
-            List<WorkInstanceEntity> workInstances =
-                workInstanceRepository.findAllByWorkflowInstanceId(workflowInstance.getId());
-            boolean flowIsRunning = workInstances.stream().anyMatch(
-                e -> InstanceStatus.RUNNING.equals(e.getStatus()) || InstanceStatus.PENDING.equals(e.getStatus()));
-            if (!flowIsRunning) {
-
-                boolean flowError = workInstances.stream().anyMatch(e -> InstanceStatus.FAIL.equals(e.getStatus()));
-
-                if (flowError) {
-                    workflowInstance.setStatus(InstanceStatus.FAIL);
-                } else {
-                    workflowInstance.setStatus(InstanceStatus.SUCCESS);
-                }
-                workflowInstance.setExecEndDateTime(new Date());
-                workflowInstance.setDuration(
-                    (System.currentTimeMillis() - workflowInstance.getExecStartDateTime().getTime()) / 1000);
-                workflowInstanceRepository.saveAndFlush(workflowInstance);
-            }
-        });
+        // WorkInstanceEntity workInstance =
+        // workInstanceRepository.findById(runCurrentNodeReq.getWorkInstanceId()).get();
+        // WorkflowInstanceEntity workflowInstance =
+        // workflowInstanceRepository.findById(workInstance.getWorkflowInstanceId()).get();
+        // WorkEntity work = workRepository.findById(workInstance.getWorkId()).get();
+        // WorkConfigEntity workConfig = workConfigRepository.findById(work.getConfigId()).get();
+        //
+        // CompletableFuture.supplyAsync(() -> {
+        // workflowInstance.setStatus(InstanceStatus.RUNNING);
+        // workflowInstanceRepository.save(workflowInstance);
+        //
+        // // 同步执行作业
+        // WorkExecutor workExecutor = workExecutorFactory.create(work.getWorkType());
+        // WorkRunContext workRunContext =
+        // WorkflowUtils.genWorkRunContext(runCurrentNodeReq.getWorkInstanceId(), work, workConfig);
+        // workExecutor.syncExecute(workRunContext);
+        //
+        // return "OVER";
+        // }).whenComplete((exception, result) -> {
+        // List<WorkInstanceEntity> workInstances =
+        // workInstanceRepository.findAllByWorkflowInstanceId(workflowInstance.getId());
+        // boolean flowIsRunning = workInstances.stream().anyMatch(
+        // e -> InstanceStatus.RUNNING.equals(e.getStatus()) ||
+        // InstanceStatus.PENDING.equals(e.getStatus()));
+        // if (!flowIsRunning) {
+        //
+        // boolean flowError = workInstances.stream().anyMatch(e ->
+        // InstanceStatus.FAIL.equals(e.getStatus()));
+        //
+        // if (flowError) {
+        // workflowInstance.setStatus(InstanceStatus.FAIL);
+        // } else {
+        // workflowInstance.setStatus(InstanceStatus.SUCCESS);
+        // }
+        // workflowInstance.setExecEndDateTime(new Date());
+        // workflowInstance.setDuration(
+        // (System.currentTimeMillis() - workflowInstance.getExecStartDateTime().getTime()) / 1000);
+        // workflowInstanceRepository.saveAndFlush(workflowInstance);
+        // }
+        // });
     }
 
     public void reRunFlow(ReRunFlowReq reRunFlowReq) {
