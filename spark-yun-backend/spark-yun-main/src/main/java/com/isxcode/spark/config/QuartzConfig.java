@@ -40,6 +40,14 @@ public class QuartzConfig {
                     "org.quartz.impl.jdbcjobstore.PostgreSQLDelegate");
             }
         }
+
+        // 配置 Quartz 线程池，控制并发执行
+        quartzProperties.getProperties().put("org.quartz.threadPool.threadCount", "10");
+        quartzProperties.getProperties().put("org.quartz.threadPool.threadPriority", "5");
+        quartzProperties.getProperties().put("org.quartz.threadPool.class", "org.quartz.simpl.SimpleThreadPool");
+
+        // 配置 JobStore 的 misfire 阈值
+        quartzProperties.getProperties().put("org.quartz.jobStore.misfireThreshold", "60000");
     }
 
     @Bean

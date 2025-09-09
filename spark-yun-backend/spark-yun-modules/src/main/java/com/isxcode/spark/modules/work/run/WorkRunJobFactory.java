@@ -32,7 +32,8 @@ public class WorkRunJobFactory {
         TENANT_ID.set(workRunContext.getTenantId());
 
         // 初始化作业进度事件
-        WorkEventEntity workEvent = WorkEventEntity.builder().eventProcess(0).eventContext(JSON.toJSONString(workRunContext)).build();
+        WorkEventEntity workEvent =
+            WorkEventEntity.builder().eventProcess(0).eventContext(JSON.toJSONString(workRunContext)).build();
         workEvent = workEventRepository.saveAndFlush(workEvent);
 
         // 保存eventId
@@ -44,8 +45,12 @@ public class WorkRunJobFactory {
             jobDataMap.put(QuartzPrefix.WORK_RUN_CONTEXT, JSON.toJSONString(workRunContext));
 
             // 初始化调度器，每1秒执行一次
+            // 使用 withMisfireHandlingInstructionDoNothing() 策略：如果上一个任务还在执行，跳过当前触发
             JobDetail jobDetail = JobBuilder.newJob(WorkRunJob.class).setJobData(jobDataMap).build();
-            Trigger trigger = TriggerBuilder.newTrigger().withSchedule(CronScheduleBuilder.cronSchedule("*/1 * * * * ? ").withMisfireHandlingInstructionIgnoreMisfires()).withIdentity(QuartzPrefix.WORK_RUN_PROCESS_EVENT + workRunContext.getEventId()).build();
+            Trigger trigger = TriggerBuilder.newTrigger()
+                .withSchedule(
+                    CronScheduleBuilder.cronSchedule("*/1 * * * * ? ").withMisfireHandlingInstructionDoNothing())
+                .withIdentity(QuartzPrefix.WORK_RUN_PROCESS_EVENT + workRunContext.getEventId()).build();
 
             // 创建并触发调度器
             scheduler.scheduleJob(jobDetail, trigger);
