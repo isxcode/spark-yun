@@ -33,27 +33,29 @@ public class WorkRunJobFactory {
         // 初始化作业事件
         WorkEventEntity workEvent =
             WorkEventEntity.builder().eventProcess(0).eventContext(JSON.toJSONString(workRunContext)).build();
-        workEvent = workEventRepository.saveAndFlush(workEvent);
 
-        // 封装调度器的运行参数
-        JobDataMap jobDataMap = new JobDataMap();
-        workRunContext.setEventId(workEvent.getId());
-        jobDataMap.put("workRunContext", JSON.toJSONString(workRunContext));
-
-        // 初始化调度器，每2秒执行一次
-        JobDetail jobDetail = JobBuilder.newJob(WorkRunJob.class).setJobData(jobDataMap).build();
-        Trigger trigger = TriggerBuilder.newTrigger()
-            .withSchedule(CronScheduleBuilder.cronSchedule("*/1 * * * * ? ").withMisfireHandlingInstructionDoNothing())
-            .withIdentity("event_" + workRunContext.getEventId()).build();
-
-        // 创建并触发调度器
         try {
+            // 保存工作事件到数据库并确保提交成功
+            workEvent = workEventRepository.saveAndFlush(workEvent);
+
+            // 封装调度器的运行参数
+            JobDataMap jobDataMap = new JobDataMap();
+            workRunContext.setEventId(workEvent.getId());
+            jobDataMap.put("workRunContext", JSON.toJSONString(workRunContext));
+
+            // 初始化调度器，每2秒执行一次
+            JobDetail jobDetail = JobBuilder.newJob(WorkRunJob.class).setJobData(jobDataMap).build();
+            Trigger trigger = TriggerBuilder.newTrigger()
+                .withSchedule(
+                    CronScheduleBuilder.cronSchedule("*/1 * * * * ? ").withMisfireHandlingInstructionIgnoreMisfires())
+                .withIdentity("event_" + workRunContext.getEventId()).build();
+
+            // 创建并触发调度器
             scheduler.scheduleJob(jobDetail, trigger);
             scheduler.getListenerManager().addJobListener(new QuartzJobErrorListener());
             scheduler.start();
-        } catch (SchedulerException e) {
-            log.error(e.getMessage(), e);
-            throw new IsxAppException("刷新作业运行的调度器创建失败");
+        } catch (Exception e) {
+            throw new IsxAppException("刷新作业运行的调度器创建失败: " + e.getMessage());
         }
     }
 }

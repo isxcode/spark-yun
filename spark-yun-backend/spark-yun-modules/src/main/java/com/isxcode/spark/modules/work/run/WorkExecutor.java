@@ -129,7 +129,11 @@ public abstract class WorkExecutor {
     public String runSingleWork(WorkRunContext workRunContext) {
 
         // 获取事件
-        WorkEventEntity workEvent = workEventRepository.findById(workRunContext.getEventId()).get();
+        Optional<WorkEventEntity> workEventEntityOptional = workEventRepository.findById(workRunContext.getEventId());
+        if (!workEventEntityOptional.isPresent()) {
+            return InstanceStatus.FINISHED;
+        }
+        WorkEventEntity workEvent = workEventEntityOptional.get();
 
         // 获取作业实例
         WorkInstanceEntity workInstance = workInstanceRepository.findById(workRunContext.getInstanceId()).get();
