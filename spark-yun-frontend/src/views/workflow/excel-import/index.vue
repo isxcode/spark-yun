@@ -305,42 +305,48 @@ function runWorkData() {
         type: 'warning'
         }).then(() => {
             btnLoadingConfig.runningLoading = true
-            // 运行自动切换到提交日志
+            // 运行自动切换到提交日志并立即显示加载状态
             tabChangeEvent('PublishLog')
+            nextTick(() => {
+                changeCollapseUp()
+                // 立即初始化日志组件为加载状态
+                containerInstanceRef.value?.initData('')
+            })
 
             RunWorkItemConfig({
                 workId: props.workItemConfig.id
             }).then((res: any) => {
                 instanceId.value = res.data.instanceId
                 ElMessage.success(res.msg)
+                // 获取到 instanceId 后重新初始化日志组件
                 nextTick(() => {
                     containerInstanceRef.value.initData(instanceId.value)
                 })
                 btnLoadingConfig.runningLoading = false
-                nextTick(() => {
-                    changeCollapseUp()
-                })
             }).catch(() => {
                 btnLoadingConfig.runningLoading = false
             })
         })
     } else {
         btnLoadingConfig.runningLoading = true
-        // 运行自动切换到提交日志
+        // 运行自动切换到提交日志并立即显示加载状态
         tabChangeEvent('PublishLog')
+        nextTick(() => {
+            changeCollapseUp()
+            // 立即初始化日志组件为加载状态
+            containerInstanceRef.value?.initData('')
+        })
 
         RunWorkItemConfig({
             workId: props.workItemConfig.id
         }).then((res: any) => {
             instanceId.value = res.data.instanceId
             ElMessage.success(res.msg)
+            // 获取到 instanceId 后重新初始化日志组件
             nextTick(() => {
                 containerInstanceRef.value.initData(instanceId.value)
             })
             btnLoadingConfig.runningLoading = false
-            nextTick(() => {
-                changeCollapseUp()
-            })
         }).catch(() => {
             btnLoadingConfig.runningLoading = false
         })

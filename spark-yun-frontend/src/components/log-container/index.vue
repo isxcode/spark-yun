@@ -3,7 +3,7 @@
         class="zqy-log-container"
         ref="preContentRef"
         @mousewheel="mousewheelEvent"
-    >{{ logMsg + loadingMsg }}</pre>
+    >{{ (logMsg || '') + loadingMsg }}</pre>
     <span v-if="!showResult" class="zqy-download-log" @click="downloadLog">下载日志</span>
 </template>
 
