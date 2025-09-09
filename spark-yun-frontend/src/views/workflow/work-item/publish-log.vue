@@ -1,9 +1,7 @@
 <template>
   <div id="content" class="publish-log">
-    <LoadingPage :visible="loading">
-      <LogContainer v-if="logMsg" :logMsg="logMsg" :status="status" :showResult="false"></LogContainer>
-      <EmptyPage v-else />
-    </LoadingPage>
+    <LogContainer v-if="logMsg || loading" :logMsg="logMsg || ''" :status="status" :showResult="false"></LogContainer>
+    <EmptyPage v-else />
     <span v-if="runId" class="zqy-log-refrash" @click="refrashEvent">刷新</span>
   </div>
 </template>
@@ -25,11 +23,20 @@ function initData(id: string, cb: any): void {
   runId.value = id
   callback.value = cb
   loading.value = true
-  getLogData(runId.value)
-  if (!timer.value) {
-    timer.value = setInterval(() => {
-      getLogData(runId.value)
-    }, 3000)
+
+  // 立即显示加载状态，不等待日志返回
+  if (id) {
+    // 如果有 instanceId，立即开始轮询获取日志
+    getLogData(runId.value)
+    if (!timer.value) {
+      timer.value = setInterval(() => {
+        getLogData(runId.value)
+      }, 3000)
+    }
+  } else {
+    // 如果没有 instanceId，显示加载中状态
+    logMsg.value = ''
+    status.value = false
   }
 }
 
@@ -41,7 +48,7 @@ function refrashEvent() {
 // 获取日志
 function getLogData(id: string) {
   if (!id) {
-    loading.value = false
+    // 没有 instanceId 时保持加载状态，不关闭 loading
     return
   }
   GetSubmitLogData({
@@ -63,13 +70,16 @@ function getLogData(id: string) {
           }
           timer.value = null
       }
-      setTimeout(() => {
-        loading.value = false
-      }, 300)
+      // 只有在有日志数据或任务完成时才关闭 loading
+      if (res.data.log || status.value) {
+        setTimeout(() => {
+          loading.value = false
+        }, 300)
+      }
     })
     .catch((err: any) => {
       console.log('err', err)
-      logMsg.value = ''
+      // 出错时不清空日志，保持加载状态继续重试
       setTimeout(() => {
         loading.value = false
       }, 300)

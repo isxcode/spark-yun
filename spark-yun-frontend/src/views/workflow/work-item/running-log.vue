@@ -1,14 +1,12 @@
 <template>
   <div id="content" class="running-log">
-    <LoadingPage :visible="loading">
-      <LogContainer
-        v-if="logMsg"
-        :logMsg="logMsg"
-        :status="true"
-        :showResult="false"
-      ></LogContainer>
-      <EmptyPage v-else />
-    </LoadingPage>
+    <LogContainer
+      v-if="logMsg || loading"
+      :logMsg="logMsg || ''"
+      :status="true"
+      :showResult="false"
+    ></LogContainer>
+    <EmptyPage v-else />
   </div>
 </template>
 
@@ -28,22 +26,32 @@ const props = defineProps<{
 
 function initData(id: string): void {
   pubId.value = id
-  getLogData(pubId.value)
+  loading.value = true
+
+  // 立即显示加载状态，不等待日志返回
+  if (id) {
+    // 如果有 id，立即获取日志
+    getLogData(pubId.value)
+  } else {
+    // 如果没有 id，显示加载中状态
+    logMsg.value = ''
+  }
 }
 
 // 获取日志
 function getLogData(id: string) {
   if (!id) {
-    logMsg.value = ''
-    loading.value = false
+    // 没有 id 时保持加载状态，不关闭 loading
     return
   }
-  loading.value = true
   GetYarnLogData({ instanceId: id}).then((res: any) => {
     logMsg.value = res.data.yarnLog
-    loading.value = false
+    // 只有在有日志数据时才关闭 loading
+    if (res.data.yarnLog) {
+      loading.value = false
+    }
   }).catch(() => {
-    logMsg.value = ''
+    // 出错时不清空日志，保持加载状态
     loading.value = false
   })
 }
