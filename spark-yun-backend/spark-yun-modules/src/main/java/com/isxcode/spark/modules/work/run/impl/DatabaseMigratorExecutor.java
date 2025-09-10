@@ -236,7 +236,8 @@ public class DatabaseMigratorExecutor extends WorkExecutor {
 
         // step2: submit and save appId
         if (processNeverRun(workEvent, 2)) {
-            Optional<ClusterEntity> engineOpt = clusterRepository.findById(workRunContext.getClusterConfig().getClusterId());
+            Optional<ClusterEntity> engineOpt =
+                clusterRepository.findById(workRunContext.getClusterConfig().getClusterId());
             Optional<ClusterNodeEntity> engineNodeOpt = clusterNodeRepository.findById(workEventBody.getNodeId());
             if (!engineNodeOpt.isPresent()) {
                 throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "固定节点不存在或已下线\n");
@@ -250,15 +251,27 @@ public class DatabaseMigratorExecutor extends WorkExecutor {
             executeReq.setWorkInstanceId(workInstance.getId());
 
             // 数据库配置
-            DatasourceEntity sourceDatasource = datasourceService.getDatasource(workRunContext.getDbMigrateConfig().getSourceDBId());
-            DatasourceConfig sourceConfig = DatasourceConfig.builder().driver(datasourceService.getDriverClass(sourceDatasource.getDbType())).url(sourceDatasource.getJdbcUrl()).user(sourceDatasource.getUsername()).password(aesUtils.decrypt(sourceDatasource.getPasswd())).build();
+            DatasourceEntity sourceDatasource =
+                datasourceService.getDatasource(workRunContext.getDbMigrateConfig().getSourceDBId());
+            DatasourceConfig sourceConfig =
+                DatasourceConfig.builder().driver(datasourceService.getDriverClass(sourceDatasource.getDbType()))
+                    .url(sourceDatasource.getJdbcUrl()).user(sourceDatasource.getUsername())
+                    .password(aesUtils.decrypt(sourceDatasource.getPasswd())).build();
             workRunContext.getDbMigrateConfig().setSourceDatabase(sourceConfig);
-            DatasourceEntity targetDatasource = datasourceService.getDatasource(workRunContext.getDbMigrateConfig().getTargetDBId());
-            DatasourceConfig targetConfig = DatasourceConfig.builder().driver(datasourceService.getDriverClass(targetDatasource.getDbType())).url(targetDatasource.getJdbcUrl()).user(targetDatasource.getUsername()).password(aesUtils.decrypt(targetDatasource.getPasswd())).build();
+            DatasourceEntity targetDatasource =
+                datasourceService.getDatasource(workRunContext.getDbMigrateConfig().getTargetDBId());
+            DatasourceConfig targetConfig =
+                DatasourceConfig.builder().driver(datasourceService.getDriverClass(targetDatasource.getDbType()))
+                    .url(targetDatasource.getJdbcUrl()).user(targetDatasource.getUsername())
+                    .password(aesUtils.decrypt(targetDatasource.getPasswd())).build();
             workRunContext.getDbMigrateConfig().setTargetDatabase(targetConfig);
 
-            SparkSubmit sparkSubmit = SparkSubmit.builder().verbose(true).mainClass("com.isxcode.spark.plugin.db.migrator.Execute").appResource("spark-db-migrator-plugin.jar").conf(genSparkSubmitConfig(workRunContext.getClusterConfig().getSparkConfig())).build();
-            PluginReq pluginReq = PluginReq.builder().sparkConfig(genSparkConfig(workRunContext.getClusterConfig().getSparkConfig())).dbMigrateConfig(workRunContext.getDbMigrateConfig()).syncRule(workRunContext.getSyncRule()).build();
+            SparkSubmit sparkSubmit = SparkSubmit.builder().verbose(true)
+                .mainClass("com.isxcode.spark.plugin.db.migrator.Execute").appResource("spark-db-migrator-plugin.jar")
+                .conf(genSparkSubmitConfig(workRunContext.getClusterConfig().getSparkConfig())).build();
+            PluginReq pluginReq = PluginReq.builder()
+                .sparkConfig(genSparkConfig(workRunContext.getClusterConfig().getSparkConfig()))
+                .dbMigrateConfig(workRunContext.getDbMigrateConfig()).syncRule(workRunContext.getSyncRule()).build();
 
             if (workRunContext.getLibConfig() != null) {
                 executeReq.setLibConfig(workRunContext.getLibConfig());
@@ -272,12 +285,17 @@ public class DatabaseMigratorExecutor extends WorkExecutor {
 
             Integer lock = locker.lock("REQUEST_" + workInstance.getId());
             try {
-                BaseResponse<?> baseResponse = HttpUtils.doPost(httpUrlUtils.genHttpUrl(engineNode.getHost(), engineNode.getAgentPort(), SparkAgentUrl.SUBMIT_WORK_URL), executeReq, BaseResponse.class);
-                if (!String.valueOf(HttpStatus.OK.value()).equals(baseResponse.getCode()) || baseResponse.getData() == null) {
-                    throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "提交作业失败 : " + baseResponse.getMsg() + "\n");
+                BaseResponse<?> baseResponse = HttpUtils.doPost(httpUrlUtils.genHttpUrl(engineNode.getHost(),
+                    engineNode.getAgentPort(), SparkAgentUrl.SUBMIT_WORK_URL), executeReq, BaseResponse.class);
+                if (!String.valueOf(HttpStatus.OK.value()).equals(baseResponse.getCode())
+                    || baseResponse.getData() == null) {
+                    throw new WorkRunException(
+                        LocalDateTime.now() + WorkLog.ERROR_INFO + "提交作业失败 : " + baseResponse.getMsg() + "\n");
                 }
-                RunWorkRes submitWorkRes = JSON.parseObject(JSON.toJSONString(baseResponse.getData()), RunWorkRes.class);
-                logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("提交作业成功 : ").append(submitWorkRes.getAppId()).append("\n");
+                RunWorkRes submitWorkRes =
+                    JSON.parseObject(JSON.toJSONString(baseResponse.getData()), RunWorkRes.class);
+                logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("提交作业成功 : ")
+                    .append(submitWorkRes.getAppId()).append("\n");
                 workInstance.setSparkStarRes(JSON.toJSONString(submitWorkRes));
                 workInstance = updateInstance(workInstance, logBuilder);
                 workEventBody.setContainerId(submitWorkRes.getAppId());
@@ -295,7 +313,8 @@ public class DatabaseMigratorExecutor extends WorkExecutor {
             clusterRepository.findById(workRunContext.getClusterConfig().getClusterId());
         Optional<ClusterNodeEntity> engineNodeOpt = clusterNodeRepository.findById(workEventBody.getNodeId());
         if (!engineNodeOpt.isPresent()) {
-            throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "\u56fa\u0010\u5b9a\u8282\u70b9\u4e0d\u5b58\u5728\u6216\u5df2\u4e0b\u7ebf\n");
+            throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO
+                + "\u56fa\u0010\u5b9a\u8282\u70b9\u4e0d\u5b58\u5728\u6216\u5df2\u4e0b\u7ebf\n");
         }
         ClusterNodeEntity engineNode = engineNodeOpt.get();
         GetWorkStatusReq getWorkStatusReq = GetWorkStatusReq.builder().appId(workEventBody.getContainerId())
