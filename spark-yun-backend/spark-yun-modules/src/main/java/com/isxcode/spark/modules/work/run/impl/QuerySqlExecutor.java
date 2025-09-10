@@ -26,7 +26,6 @@ import com.isxcode.spark.modules.work.entity.WorkEventEntity;
 import com.isxcode.spark.modules.work.repository.WorkEventRepository;
 import com.isxcode.spark.api.instance.constants.InstanceStatus;
 import com.isxcode.spark.modules.work.run.WorkRunJobFactory;
-import com.isxcode.spark.modules.work.entity.VipWorkVersionEntity;
 import com.isxcode.spark.modules.work.repository.VipWorkVersionRepository;
 import com.isxcode.spark.modules.work.repository.WorkConfigRepository;
 import com.isxcode.spark.modules.work.repository.WorkRepository;
@@ -81,17 +80,15 @@ public class QuerySqlExecutor extends WorkExecutor {
 
     private final Locker locker;
 
-    public QuerySqlExecutor(DatasourceRepository datasourceRepository, WorkInstanceRepository
-                                workInstanceRepository,
-                            WorkflowInstanceRepository workflowInstanceRepository, SqlCommentService sqlCommentService,
-                            SqlFunctionService sqlFunctionService, SqlValueService sqlValueService, AlarmService
-                                alarmService,
-                            DataSourceFactory dataSourceFactory, DatasourceMapper datasourceMapper,
-                            WorkEventRepository workEventRepository, Scheduler scheduler, WorkRunJobFactory workRunJobFactory,
-                            VipWorkVersionRepository vipWorkVersionRepository, WorkConfigRepository workConfigRepository,
-                            WorkRepository workRepository, Locker locker) {
+    public QuerySqlExecutor(DatasourceRepository datasourceRepository, WorkInstanceRepository workInstanceRepository,
+        WorkflowInstanceRepository workflowInstanceRepository, SqlCommentService sqlCommentService,
+        SqlFunctionService sqlFunctionService, SqlValueService sqlValueService, AlarmService alarmService,
+        DataSourceFactory dataSourceFactory, DatasourceMapper datasourceMapper, WorkEventRepository workEventRepository,
+        Scheduler scheduler, WorkRunJobFactory workRunJobFactory, VipWorkVersionRepository vipWorkVersionRepository,
+        WorkConfigRepository workConfigRepository, WorkRepository workRepository, Locker locker) {
 
-        super(alarmService, scheduler, locker, workRepository, workInstanceRepository, workflowInstanceRepository, workEventRepository, workRunJobFactory, sqlFunctionService, workConfigRepository, vipWorkVersionRepository);
+        super(alarmService, scheduler, locker, workRepository, workInstanceRepository, workflowInstanceRepository,
+            workEventRepository, workRunJobFactory, sqlFunctionService, workConfigRepository, vipWorkVersionRepository);
         this.datasourceRepository = datasourceRepository;
         this.sqlCommentService = sqlCommentService;
         this.sqlFunctionService = sqlFunctionService;
@@ -113,10 +110,12 @@ public class QuerySqlExecutor extends WorkExecutor {
     }
 
     @Override
-    protected String execute(WorkRunContext workRunContext, WorkInstanceEntity workInstance, WorkEventEntity workEvent) {
+    protected String execute(WorkRunContext workRunContext, WorkInstanceEntity workInstance,
+        WorkEventEntity workEvent) {
 
         // 获取作业运行上下文
-        QuerySqlExecutorContext workEventBody = JSON.parseObject(workEvent.getEventContext(), QuerySqlExecutorContext.class);
+        QuerySqlExecutorContext workEventBody =
+            JSON.parseObject(workEvent.getEventContext(), QuerySqlExecutorContext.class);
         if (workEventBody == null) {
             workEventBody = new QuerySqlExecutorContext();
             workEventBody.setWorkRunContext(workRunContext);
@@ -211,7 +210,7 @@ public class QuerySqlExecutor extends WorkExecutor {
             Datasource datasource = dataSourceFactory.getDatasource(connectInfo.getDbType());
             connectInfo.setLoginTimeout(5);
             try (Connection connection = datasource.getConnection(connectInfo);
-                 Statement statement = connection.createStatement();) {
+                Statement statement = connection.createStatement();) {
 
                 statement.setQueryTimeout(1800);
 
@@ -235,8 +234,8 @@ public class QuerySqlExecutor extends WorkExecutor {
                 String lastSql = sqls.get(sqls.size() - 1);
 
                 // 特殊查询语句直接跳过
-                if (!lastSql.toUpperCase().trim().startsWith("SHOW") &&
-                    !lastSql.toUpperCase().trim().startsWith("DESCRIBE")
+                if (!lastSql.toUpperCase().trim().startsWith("SHOW")
+                    && !lastSql.toUpperCase().trim().startsWith("DESCRIBE")
                     && !lastSql.replace(" ", "").toLowerCase().startsWith("selectcount")) {
 
                     // 判断返回结果的条数，超过200条，则提出警告
@@ -247,13 +246,15 @@ public class QuerySqlExecutor extends WorkExecutor {
                     ResultSet countResultSet = statement.executeQuery(countSql);
                     while (countResultSet.next()) {
                         if (countResultSet.getInt(1) > DatasourceConfig.LIMIT_NUMBER) {
-                            throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "条数大于200条，请添加sql行数限制 \n");
+                            throw new WorkRunException(
+                                LocalDateTime.now() + WorkLog.ERROR_INFO + "条数大于200条，请添加sql行数限制 \n");
                         }
                     }
                 }
 
                 // 执行最后一句查询语句
-                logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("执行查询SQL: \n").append(lastSql).append(" \n");
+                logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("执行查询SQL: \n")
+                    .append(lastSql).append(" \n");
                 workInstance = updateInstance(workInstance, logBuilder);
                 ResultSet resultSet = statement.executeQuery(lastSql);
 

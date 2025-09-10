@@ -17,7 +17,6 @@ import com.isxcode.spark.modules.work.repository.WorkEventRepository;
 import com.isxcode.spark.modules.work.run.WorkExecutor;
 import com.isxcode.spark.modules.work.run.WorkRunContext;
 import com.isxcode.spark.modules.work.run.WorkRunJobFactory;
-import com.isxcode.spark.modules.work.entity.VipWorkVersionEntity;
 import com.isxcode.spark.modules.work.repository.VipWorkVersionRepository;
 import com.isxcode.spark.modules.work.repository.WorkConfigRepository;
 import com.isxcode.spark.modules.work.repository.WorkRepository;
@@ -36,6 +35,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
+
 @Service
 @Slf4j
 public class ApiExecutor extends WorkExecutor {
@@ -55,13 +55,13 @@ public class ApiExecutor extends WorkExecutor {
     private final Locker locker;
 
     public ApiExecutor(WorkInstanceRepository workInstanceRepository,
-                       WorkflowInstanceRepository workflowInstanceRepository, AlarmService alarmService,
-                       SqlFunctionService sqlFunctionService, WorkEventRepository workEventRepository,
-                       Scheduler scheduler, WorkRunJobFactory workRunJobFactory,
-                       VipWorkVersionRepository vipWorkVersionRepository, WorkConfigRepository workConfigRepository,
-                       WorkRepository workRepository, Locker locker) {
+        WorkflowInstanceRepository workflowInstanceRepository, AlarmService alarmService,
+        SqlFunctionService sqlFunctionService, WorkEventRepository workEventRepository, Scheduler scheduler,
+        WorkRunJobFactory workRunJobFactory, VipWorkVersionRepository vipWorkVersionRepository,
+        WorkConfigRepository workConfigRepository, WorkRepository workRepository, Locker locker) {
 
-        super(alarmService, scheduler, locker, workRepository, workInstanceRepository, workflowInstanceRepository, workEventRepository, workRunJobFactory, sqlFunctionService, workConfigRepository, vipWorkVersionRepository);
+        super(alarmService, scheduler, locker, workRepository, workInstanceRepository, workflowInstanceRepository,
+            workEventRepository, workRunJobFactory, sqlFunctionService, workConfigRepository, vipWorkVersionRepository);
         this.workEventRepository = workEventRepository;
         this.scheduler = scheduler;
         this.workRunJobFactory = workRunJobFactory;
@@ -70,13 +70,15 @@ public class ApiExecutor extends WorkExecutor {
         this.workRepository = workRepository;
         this.locker = locker;
     }
+
     @Override
     public String getWorkType() {
         return WorkType.API;
     }
 
     @Override
-    protected String execute(WorkRunContext workRunContext, WorkInstanceEntity workInstance, WorkEventEntity workEvent) {
+    protected String execute(WorkRunContext workRunContext, WorkInstanceEntity workInstance,
+        WorkEventEntity workEvent) {
 
         // 获取作业运行上下文
         ApiExecutorContext workEventBody = JSON.parseObject(workEvent.getEventContext(), ApiExecutorContext.class);
@@ -102,7 +104,8 @@ public class ApiExecutor extends WorkExecutor {
 
             if (!ApiType.GET.equals(apiWorkConfig.getRequestType())
                 && !ApiType.POST.equals(apiWorkConfig.getRequestType())) {
-                throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "检测作业失败 : 接口调用作业请求方式仅支持POST/GET \n");
+                throw new WorkRunException(
+                    LocalDateTime.now() + WorkLog.ERROR_INFO + "检测作业失败 : 接口调用作业请求方式仅支持POST/GET \n");
             }
 
             // 检测接口url是否为空
@@ -145,7 +148,8 @@ public class ApiExecutor extends WorkExecutor {
                 }
 
                 if (ApiType.GET.equals(apiWorkConfig.getRequestType())) {
-                    response = HttpUtils.doGet(apiWorkConfig.getRequestUrl(), requestParam, requestHeader, Object.class);
+                    response =
+                        HttpUtils.doGet(apiWorkConfig.getRequestUrl(), requestParam, requestHeader, Object.class);
                 }
                 if (ApiType.POST.equals(apiWorkConfig.getRequestType())) {
                     response = HttpUtils.doPost(apiWorkConfig.getRequestUrl(), requestHeader,
@@ -155,8 +159,8 @@ public class ApiExecutor extends WorkExecutor {
                 log.debug("获取远程返回数据:{}", response);
             } catch (Exception e) {
                 log.debug(e.getMessage(), e);
-                throw new WorkRunException(
-                    LocalDateTime.now() + WorkLog.ERROR_INFO + "作业执行异常 : " + e.getMessage().replace("<EOL>", "\n") + "\n");
+                throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "作业执行异常 : "
+                    + e.getMessage().replace("<EOL>", "\n") + "\n");
             }
 
             // 保存运行日志
@@ -172,6 +176,7 @@ public class ApiExecutor extends WorkExecutor {
 
         return InstanceStatus.SUCCESS;
     }
+
     @Override
     protected void abort(WorkInstanceEntity workInstance) {
 

@@ -16,7 +16,6 @@ import com.isxcode.spark.modules.secret.repository.SecretKeyRepository;
 import com.isxcode.spark.modules.work.entity.WorkInstanceEntity;
 import com.isxcode.spark.modules.work.repository.WorkInstanceRepository;
 import com.isxcode.spark.modules.work.run.WorkExecutor;
-import com.isxcode.spark.modules.work.run.WorkInfo;
 import com.isxcode.spark.modules.work.run.WorkRunContext;
 import com.isxcode.spark.modules.work.sql.SqlCommentService;
 import com.isxcode.spark.modules.work.sql.SqlFunctionService;
@@ -25,6 +24,16 @@ import com.isxcode.spark.modules.workflow.repository.WorkflowInstanceRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.stereotype.Service;
+import com.isxcode.spark.api.instance.constants.InstanceStatus;
+import com.isxcode.spark.modules.work.entity.WorkEventEntity;
+import com.isxcode.spark.modules.work.repository.WorkEventRepository;
+import com.isxcode.spark.modules.work.repository.WorkRepository;
+import com.isxcode.spark.modules.work.repository.WorkConfigRepository;
+import com.isxcode.spark.modules.work.repository.VipWorkVersionRepository;
+import com.isxcode.spark.modules.work.run.WorkRunJobFactory;
+import org.quartz.Scheduler;
+import com.isxcode.spark.common.locker.Locker;
+
 
 import java.sql.Connection;
 import java.sql.Statement;
@@ -42,6 +51,8 @@ public class ExecuteSqlExecutor extends WorkExecutor {
 
     private final SqlCommentService sqlCommentService;
 
+    private final WorkEventRepository workEventRepository;
+
     private final SqlValueService sqlValueService;
 
     private final SqlFunctionService sqlFunctionService;
@@ -52,15 +63,16 @@ public class ExecuteSqlExecutor extends WorkExecutor {
 
     private final SecretKeyRepository secretKeyRepository;
 
-    public ExecuteSqlExecutor(WorkInstanceRepository workInstanceRepository, DatasourceRepository
-                                  datasourceRepository,
-                              WorkflowInstanceRepository workflowInstanceRepository, SqlCommentService sqlCommentService,
-                              SqlValueService sqlValueService, SqlFunctionService sqlFunctionService, AlarmService
-                                  alarmService,
-                              DataSourceFactory dataSourceFactory, DatasourceMapper datasourceMapper,
-                              SecretKeyRepository secretKeyRepository) {
+    public ExecuteSqlExecutor(WorkInstanceRepository workInstanceRepository,
+        WorkflowInstanceRepository workflowInstanceRepository, DatasourceRepository datasourceRepository,
+        SqlCommentService sqlCommentService, SqlValueService sqlValueService, SqlFunctionService sqlFunctionService,
+        AlarmService alarmService, DataSourceFactory dataSourceFactory, DatasourceMapper datasourceMapper,
+        SecretKeyRepository secretKeyRepository, WorkEventRepository workEventRepository, Scheduler scheduler,
+        Locker locker, WorkRepository workRepository, WorkRunJobFactory workRunJobFactory,
+        WorkConfigRepository workConfigRepository, VipWorkVersionRepository vipWorkVersionRepository) {
 
-        super(workInstanceRepository, workflowInstanceRepository, alarmService, sqlFunctionService);
+        super(alarmService, scheduler, locker, workRepository, workInstanceRepository, workflowInstanceRepository,
+            workEventRepository, workRunJobFactory, sqlFunctionService, workConfigRepository, vipWorkVersionRepository);
         this.datasourceRepository = datasourceRepository;
         this.sqlCommentService = sqlCommentService;
         this.sqlValueService = sqlValueService;
@@ -68,6 +80,7 @@ public class ExecuteSqlExecutor extends WorkExecutor {
         this.dataSourceFactory = dataSourceFactory;
         this.datasourceMapper = datasourceMapper;
         this.secretKeyRepository = secretKeyRepository;
+        this.workEventRepository = workEventRepository;
     }
 
     @Override
@@ -76,108 +89,98 @@ public class ExecuteSqlExecutor extends WorkExecutor {
     }
 
     @Override
-    public void execute(WorkRunContext workRunContext, WorkInstanceEntity workInstance) {
+    protected String execute(WorkRunContext workRunContext, WorkInstanceEntity workInstance, WorkEventEntity workEvent)
+        throws Exception {
 
-        // 将线程存到Map
-        WORK_THREAD.put(workInstance.getId(), Thread.currentThread());
+        // 获取事件上下文与日志
+        WorkRunContext workEventBody = JSON.parseObject(workEvent.getEventContext(), WorkRunContext.class);
+        StringBuilder logBuilder = new StringBuilder(workInstance.getSubmitLog());
 
-        // 获取日志构造器
-        StringBuilder logBuilder = workRunContext.getLogBuilder();
+        // 步骤1：校验环境、解析脚本并保存
+        if (processNeverRun(workEvent, 1)) {
 
-        // 检测数据源是否配置
-        logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始检测运行环境 \n");
-        if (Strings.isEmpty(workRunContext.getDatasourceId())) {
-            throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "检测运行环境失败: 未配置有效数据源 \n");
-        }
+            logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始检测运行环境 \n");
+            if (Strings.isEmpty(workRunContext.getDatasourceId())) {
+                throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "检测运行环境失败: 未配置有效数据源 \n");
+            }
+            Optional<DatasourceEntity> datasourceEntityOptional =
+                datasourceRepository.findById(workRunContext.getDatasourceId());
+            if (!datasourceEntityOptional.isPresent()) {
+                throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "检测运行环境失败: 未配置有效数据源 \n");
+            }
+            if (Strings.isEmpty(workRunContext.getScript())) {
+                throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "Sql内容为空 \n");
+            }
+            logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("检测运行环境完成 \n");
+            workInstance = updateInstance(workInstance, logBuilder);
 
-        // 检查数据源是否存在
-        Optional<DatasourceEntity> datasourceEntityOptional =
-            datasourceRepository.findById(workRunContext.getDatasourceId());
-        if (!datasourceEntityOptional.isPresent()) {
-            throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "检测运行环境失败: 未配置有效数据源 \n");
-        }
-        DatasourceEntity datasourceEntity = datasourceEntityOptional.get();
-
-        // 数据源检查通过
-        logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("检测运行环境完成 \n");
-        workInstance = updateInstance(workInstance, logBuilder);
-
-        // 检查脚本是否为空
-        if (Strings.isEmpty(workRunContext.getScript())) {
-            throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "Sql内容为空 \n");
-        }
-
-        // 脚本检查通过
-        logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始执行作业 \n");
-        workInstance = updateInstance(workInstance, logBuilder);
-
-        // 开始执行作业
-        ConnectInfo connectInfo = datasourceMapper.datasourceEntityToConnectInfo(datasourceEntity);
-        Datasource datasource = dataSourceFactory.getDatasource(connectInfo.getDbType());
-        connectInfo.setLoginTimeout(5);
-        try (Connection connection = datasource.getConnection(connectInfo);
-             Statement statement = connection.createStatement()) {
-
-            statement.setQueryTimeout(1800);
-
-            // 判断实例中是否有脚本
+            // 去掉sql中的注释 -> 解析上游参数 -> 系统变量 -> 系统函数
+            String sqlNoComment = sqlCommentService.removeSqlComment(workRunContext.getScript());
+            String jsonPathSql = parseJsonPath(sqlNoComment, workInstance);
+            String parseValueSql = sqlValueService.parseSqlValue(jsonPathSql);
             String script;
-            if (workInstance.getWorkInfo() == null) {
-                // 去掉sql中的注释
-                String sqlNoComment = sqlCommentService.removeSqlComment(workRunContext.getScript());
+            try {
+                script = sqlFunctionService.parseSqlFunction(parseValueSql);
+            } catch (Exception e) {
+                throw new WorkRunException(
+                    LocalDateTime.now() + WorkLog.ERROR_INFO + "系统函数异常\n" + e.getMessage() + "\n");
+            }
 
-                // 解析上游参数
-                String jsonPathSql = parseJsonPath(sqlNoComment, workInstance);
+            // 保存脚本到事件上下文
+            workEventBody.setScript(script);
+            workEvent.setEventContext(JSON.toJSONString(workEventBody));
+            workEventRepository.saveAndFlush(workEvent);
 
-                // 翻译sql中的系统变量
-                String parseValueSql = sqlValueService.parseSqlValue(jsonPathSql);
+            // 打印执行开始
+            logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始执行作业 \n");
+            workInstance = updateInstance(workInstance, logBuilder);
+        }
 
-                // 翻译sql中的系统函数
-                try {
-                    script = sqlFunctionService.parseSqlFunction(parseValueSql);
-                } catch (Exception e) {
-                    throw new WorkRunException(
-                        LocalDateTime.now() + WorkLog.ERROR_INFO + "系统函数异常\n" + e.getMessage() + "\n");
+        // 步骤2：执行SQL语句
+        if (processNeverRun(workEvent, 2)) {
+
+            // 读取脚本
+            String script = workEventBody.getScript();
+
+            Optional<DatasourceEntity> datasourceEntityOptional =
+                datasourceRepository.findById(workRunContext.getDatasourceId());
+            DatasourceEntity datasourceEntity = datasourceEntityOptional.get();
+            ConnectInfo connectInfo = datasourceMapper.datasourceEntityToConnectInfo(datasourceEntity);
+            Datasource datasource = dataSourceFactory.getDatasource(connectInfo.getDbType());
+            connectInfo.setLoginTimeout(5);
+            try (Connection connection = datasource.getConnection(connectInfo);
+                Statement statement = connection.createStatement()) {
+
+                statement.setQueryTimeout(1800);
+
+                List<String> sqls =
+                    Arrays.stream(script.split(";")).filter(Strings::isNotBlank).collect(Collectors.toList());
+                for (String sql : sqls) {
+                    logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始执行SQL:\n").append(sql)
+                        .append(" \n");
+                    workInstance = updateInstance(workInstance, logBuilder);
+                    statement.execute(sql);
+                    logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("SQL执行成功 \n");
+                    workInstance = updateInstance(workInstance, logBuilder);
                 }
 
-                workInstance.setWorkInfo(JSON.toJSONString(WorkInfo.builder().script(script).build()));
-            } else {
-                WorkInfo workInfo = JSON.parseObject(workInstance.getWorkInfo(), WorkInfo.class);
-                script = workInfo.getScript();
+            } catch (WorkRunException | IsxAppException e) {
+                throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + e.getMsg() + "\n");
+            } catch (Exception e) {
+                log.error(e.getMessage(), e);
+                throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + e.getMessage() + "\n");
             }
-
-            // 清除脚本中的脏数据
-            List<String> sqls =
-                Arrays.stream(script.split(";")).filter(Strings::isNotBlank).collect(Collectors.toList());
-
-            // 逐条执行sql
-            for (String sql : sqls) {
-
-                // 记录开始执行时间
-                logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始执行SQL:
-                    \n").append(sql)
-                        .append(" \n");
-                workInstance = updateInstance(workInstance, logBuilder);
-
-                // 执行sql
-                statement.execute(sql);
-
-                // 记录结束执行时间
-                logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("SQL执行成功 \n");
-                workInstance = updateInstance(workInstance, logBuilder);
-            }
-        } catch (WorkRunException | IsxAppException e) {
-            throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + e.getMsg() + "\n");
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
-            throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + e.getMessage() + "\n");
         }
+
+        return InstanceStatus.SUCCESS;
     }
 
     @Override
-    protected void abort(WorkInstanceEntity workInstance) {
+    protected void abort(WorkInstanceEntity workInstance) throws Exception {
 
         Thread thread = WORK_THREAD.get(workInstance.getId());
-        thread.interrupt();
+        if (thread != null) {
+            thread.interrupt();
+        }
     }
 }
