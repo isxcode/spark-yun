@@ -354,10 +354,8 @@ public class ExcelSyncExecutor extends WorkExecutor {
                 datasourceService.getDatasource(workRunContext.getExcelSyncConfig().getTargetDBId());
             DatasourceConfig targetConfig = DatasourceConfig.builder()
                 .driver(datasourceService.getDriverClass(targetDatasource.getDbType()))
-                .url(targetDatasource.getJdbcUrl())
-                .dbTable(workRunContext.getExcelSyncConfig().getTargetTable())
-                .user(targetDatasource.getUsername())
-                .password(aesUtils.decrypt(targetDatasource.getPasswd())).build();
+                .url(targetDatasource.getJdbcUrl()).dbTable(workRunContext.getExcelSyncConfig().getTargetTable())
+                .user(targetDatasource.getUsername()).password(aesUtils.decrypt(targetDatasource.getPasswd())).build();
             workRunContext.getExcelSyncConfig().setTargetDatabase(targetConfig);
 
             SparkSubmit sparkSubmit =
@@ -368,7 +366,8 @@ public class ExcelSyncExecutor extends WorkExecutor {
             // 计算csv文件名（与step1一致）
             String sourceFileId;
             if (workRunContext.getExcelSyncConfig().isFileReplace()) {
-                String fileName = sqlFunctionService.parseSqlFunction(workRunContext.getExcelSyncConfig().getFilePattern());
+                String fileName =
+                    sqlFunctionService.parseSqlFunction(workRunContext.getExcelSyncConfig().getFilePattern());
                 Optional<FileEntity> fileEntityOptional = fileRepository.findByFileName(fileName);
                 if (!fileEntityOptional.isPresent()) {
                     throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + fileName + "不存在 \n");
@@ -382,7 +381,8 @@ public class ExcelSyncExecutor extends WorkExecutor {
             PluginReq pluginReq = PluginReq.builder().excelSyncConfig(workRunContext.getExcelSyncConfig())
                 .sparkConfig(genSparkConfig(workRunContext.getClusterConfig().getSparkConfig()))
                 .syncRule(workRunContext.getSyncRule()).agentType(engineOpt.get().getClusterType()).build();
-            pluginReq.setCsvFilePath(engineNode.getAgentHomePath() + File.separator + "zhiqingyun-agent" + File.separator + "file" + File.separator + csvFileName);
+            pluginReq.setCsvFilePath(engineNode.getAgentHomePath() + File.separator + "zhiqingyun-agent"
+                + File.separator + "file" + File.separator + csvFileName);
             pluginReq.setCsvFileName(csvFileName);
 
             if (workRunContext.getFuncConfig() != null) {
@@ -404,10 +404,13 @@ public class ExcelSyncExecutor extends WorkExecutor {
             try {
                 BaseResponse<?> baseResponse = HttpUtils.doPost(httpUrlUtils.genHttpUrl(engineNode.getHost(),
                     engineNode.getAgentPort(), SparkAgentUrl.SUBMIT_WORK_URL), executeReq, BaseResponse.class);
-                if (!String.valueOf(HttpStatus.OK.value()).equals(baseResponse.getCode()) || baseResponse.getData() == null) {
-                    throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "提交作业失败 : " + baseResponse.getMsg() + "\n");
+                if (!String.valueOf(HttpStatus.OK.value()).equals(baseResponse.getCode())
+                    || baseResponse.getData() == null) {
+                    throw new WorkRunException(
+                        LocalDateTime.now() + WorkLog.ERROR_INFO + "提交作业失败 : " + baseResponse.getMsg() + "\n");
                 }
-                RunWorkRes submitWorkRes = JSON.parseObject(JSON.toJSONString(baseResponse.getData()), RunWorkRes.class);
+                RunWorkRes submitWorkRes =
+                    JSON.parseObject(JSON.toJSONString(baseResponse.getData()), RunWorkRes.class);
                 logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("提交作业成功 : ")
                     .append(submitWorkRes.getAppId()).append("\n");
                 workInstance.setSparkStarRes(JSON.toJSONString(submitWorkRes));
