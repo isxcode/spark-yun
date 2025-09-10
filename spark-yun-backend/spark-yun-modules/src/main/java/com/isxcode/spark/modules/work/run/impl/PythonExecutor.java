@@ -23,7 +23,6 @@ import com.isxcode.spark.modules.workflow.repository.WorkflowInstanceRepository;
 import com.isxcode.spark.modules.work.entity.WorkEventEntity;
 import com.isxcode.spark.modules.work.repository.WorkEventRepository;
 import com.isxcode.spark.modules.work.run.WorkRunJobFactory;
-import com.isxcode.spark.modules.work.entity.VipWorkVersionEntity;
 import com.isxcode.spark.modules.work.repository.VipWorkVersionRepository;
 import com.isxcode.spark.modules.work.repository.WorkConfigRepository;
 import com.isxcode.spark.modules.work.repository.WorkRepository;
@@ -79,15 +78,15 @@ public class PythonExecutor extends WorkExecutor {
     private final Locker locker;
 
     public PythonExecutor(WorkInstanceRepository workInstanceRepository,
-                          WorkflowInstanceRepository workflowInstanceRepository, ClusterNodeRepository
-                              clusterNodeRepository,
-                          ClusterNodeMapper clusterNodeMapper, AesUtils aesUtils, ClusterRepository clusterRepository,
-                          SqlValueService sqlValueService, SqlFunctionService sqlFunctionService, AlarmService
-                              alarmService, WorkEventRepository workEventRepository, Scheduler scheduler,
-                          WorkRunJobFactory workRunJobFactory, VipWorkVersionRepository vipWorkVersionRepository,
-                          WorkConfigRepository workConfigRepository, WorkRepository workRepository, Locker locker) {
+        WorkflowInstanceRepository workflowInstanceRepository, ClusterNodeRepository clusterNodeRepository,
+        ClusterNodeMapper clusterNodeMapper, AesUtils aesUtils, ClusterRepository clusterRepository,
+        SqlValueService sqlValueService, SqlFunctionService sqlFunctionService, AlarmService alarmService,
+        WorkEventRepository workEventRepository, Scheduler scheduler, WorkRunJobFactory workRunJobFactory,
+        VipWorkVersionRepository vipWorkVersionRepository, WorkConfigRepository workConfigRepository,
+        WorkRepository workRepository, Locker locker) {
 
-        super(alarmService, scheduler, locker, workRepository, workInstanceRepository, workflowInstanceRepository, workEventRepository, workRunJobFactory, sqlFunctionService, workConfigRepository, vipWorkVersionRepository);
+        super(alarmService, scheduler, locker, workRepository, workInstanceRepository, workflowInstanceRepository,
+            workEventRepository, workRunJobFactory, sqlFunctionService, workConfigRepository, vipWorkVersionRepository);
         this.clusterNodeRepository = clusterNodeRepository;
         this.clusterNodeMapper = clusterNodeMapper;
         this.aesUtils = aesUtils;
@@ -109,10 +108,12 @@ public class PythonExecutor extends WorkExecutor {
     }
 
     @Override
-    protected String execute(WorkRunContext workRunContext, WorkInstanceEntity workInstance, WorkEventEntity workEvent) {
+    protected String execute(WorkRunContext workRunContext, WorkInstanceEntity workInstance,
+        WorkEventEntity workEvent) {
 
         // 获取作业运行上下文
-        PythonExecutorContext workEventBody = JSON.parseObject(workEvent.getEventContext(), PythonExecutorContext.class);
+        PythonExecutorContext workEventBody =
+            JSON.parseObject(workEvent.getEventContext(), PythonExecutorContext.class);
         if (workEventBody == null) {
             workEventBody = new PythonExecutorContext();
             workEventBody.setWorkRunContext(workRunContext);
@@ -129,8 +130,7 @@ public class PythonExecutor extends WorkExecutor {
             }
 
             // 禁用rm指令
-            if (Pattern.compile("\\brm\\b",
-                Pattern.CASE_INSENSITIVE).matcher(workRunContext.getScript()).find()) {
+            if (Pattern.compile("\\brm\\b", Pattern.CASE_INSENSITIVE).matcher(workRunContext.getScript()).find()) {
                 throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "检测语句失败 : PYTHON内容包含rm指令不能执行 \n");
             }
 
@@ -195,7 +195,8 @@ public class PythonExecutor extends WorkExecutor {
 
             // 翻译脚本中的系统函数
             String script = sqlFunctionService.parseSqlFunction(parseValueSql);
-            logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("Python脚本: \n").append(script).append("\n");
+            logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("Python脚本: \n").append(script)
+                .append("\n");
             workInstance = updateInstance(workInstance, logBuilder);
 
             // 脚本检查通过
@@ -225,15 +226,15 @@ public class PythonExecutor extends WorkExecutor {
                     clusterNode.getAgentHomePath() + "/zhiqingyun-agent/works/" + workInstance.getId() + ".py");
 
                 // 执行命令获取pid
-                String executeBashWorkCommand = "source /etc/profile && nohup python3 " +
-                    clusterNode.getAgentHomePath()
+                String executeBashWorkCommand = "source /etc/profile && nohup python3 " + clusterNode.getAgentHomePath()
                     + "/zhiqingyun-agent/works/" + workInstance.getId() + ".py >> " + clusterNode.getAgentHomePath()
                     + "/zhiqingyun-agent/works/" + workInstance.getId() + ".log 2>&1 & echo $!";
                 String pid = executeCommand(scpFileEngineNodeDto, executeBashWorkCommand, false).replace("\n", "");
 
                 // 保存pid
                 workInstance.setWorkPid(pid);
-                logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("Python作业提交成功，pid:【").append(pid).append("】\n");
+                logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("Python作业提交成功，pid:【")
+                    .append(pid).append("】\n");
                 workInstance = updateInstance(workInstance, logBuilder);
 
                 // 保存执行信息
@@ -243,7 +244,8 @@ public class PythonExecutor extends WorkExecutor {
                 workEventRepository.saveAndFlush(workEvent);
 
             } catch (JSchException | SftpException | InterruptedException | IOException e) {
-                throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "提交作业异常 : " + e.getMessage() + "\n");
+                throw new WorkRunException(
+                    LocalDateTime.now() + WorkLog.ERROR_INFO + "提交作业异常 : " + e.getMessage() + "\n");
             }
         }
 
@@ -274,7 +276,8 @@ public class PythonExecutor extends WorkExecutor {
 
                 // 状态发生变化，则添加日志状态
                 if (!oldStatus.equals(pidStatus)) {
-                    logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("运行状态:").append(pidStatus).append("\n");
+                    logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("运行状态:")
+                        .append(pidStatus).append("\n");
                     workInstance = updateInstance(workInstance, logBuilder);
                 }
                 oldStatus = pidStatus;

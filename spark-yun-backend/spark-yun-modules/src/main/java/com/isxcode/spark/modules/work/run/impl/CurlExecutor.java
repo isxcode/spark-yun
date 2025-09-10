@@ -17,7 +17,6 @@ import com.isxcode.spark.modules.work.repository.WorkEventRepository;
 import com.isxcode.spark.modules.work.run.WorkExecutor;
 import com.isxcode.spark.modules.work.run.WorkRunContext;
 import com.isxcode.spark.modules.work.run.WorkRunJobFactory;
-import com.isxcode.spark.modules.work.entity.VipWorkVersionEntity;
 import com.isxcode.spark.modules.work.repository.VipWorkVersionRepository;
 import com.isxcode.spark.modules.work.repository.WorkConfigRepository;
 import com.isxcode.spark.modules.work.repository.WorkRepository;
@@ -35,6 +34,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.time.LocalDateTime;
+
 @Service
 @Slf4j
 public class CurlExecutor extends WorkExecutor {
@@ -56,13 +56,13 @@ public class CurlExecutor extends WorkExecutor {
     private final Locker locker;
 
     public CurlExecutor(WorkInstanceRepository workInstanceRepository,
-                        WorkflowInstanceRepository workflowInstanceRepository, IsxAppProperties isxAppProperties,
-                        AlarmService alarmService, SqlFunctionService sqlFunctionService,
-                        WorkEventRepository workEventRepository, Scheduler scheduler,
-                        WorkRunJobFactory workRunJobFactory, VipWorkVersionRepository vipWorkVersionRepository,
-                        WorkConfigRepository workConfigRepository, WorkRepository workRepository, Locker locker) {
+        WorkflowInstanceRepository workflowInstanceRepository, IsxAppProperties isxAppProperties,
+        AlarmService alarmService, SqlFunctionService sqlFunctionService, WorkEventRepository workEventRepository,
+        Scheduler scheduler, WorkRunJobFactory workRunJobFactory, VipWorkVersionRepository vipWorkVersionRepository,
+        WorkConfigRepository workConfigRepository, WorkRepository workRepository, Locker locker) {
 
-        super(alarmService, scheduler, locker, workRepository, workInstanceRepository, workflowInstanceRepository, workEventRepository, workRunJobFactory, sqlFunctionService, workConfigRepository, vipWorkVersionRepository);
+        super(alarmService, scheduler, locker, workRepository, workInstanceRepository, workflowInstanceRepository,
+            workEventRepository, workRunJobFactory, sqlFunctionService, workConfigRepository, vipWorkVersionRepository);
         this.isxAppProperties = isxAppProperties;
         this.workEventRepository = workEventRepository;
         this.scheduler = scheduler;
@@ -72,13 +72,15 @@ public class CurlExecutor extends WorkExecutor {
         this.workRepository = workRepository;
         this.locker = locker;
     }
+
     @Override
     public String getWorkType() {
         return WorkType.CURL;
     }
 
     @Override
-    protected String execute(WorkRunContext workRunContext, WorkInstanceEntity workInstance, WorkEventEntity workEvent) {
+    protected String execute(WorkRunContext workRunContext, WorkInstanceEntity workInstance,
+        WorkEventEntity workEvent) {
 
         // 获取作业运行上下文
         CurlExecutorContext workEventBody = JSON.parseObject(workEvent.getEventContext(), CurlExecutorContext.class);
@@ -106,7 +108,8 @@ public class CurlExecutor extends WorkExecutor {
             processedScript = processedScript.replace("curl", "curl -w \"%{http_code}\" ");
 
             logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始执行作业 \n");
-            logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("执行作业内容: \n").append(processedScript).append("\n");
+            logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("执行作业内容: \n")
+                .append(processedScript).append("\n");
             workInstance = updateInstance(workInstance, logBuilder);
 
             // 保存处理后的脚本
@@ -139,8 +142,9 @@ public class CurlExecutor extends WorkExecutor {
 
             // 删除脚本和日志
             try {
-                String clearWorkRunFile = "rm -f " + PathUtils.parseProjectPath(isxAppProperties.getResourcesPath()) + File.separator + "work"
-                    + File.separator + workRunContext.getTenantId() + File.separator + workInstance.getId() + ".sh";
+                String clearWorkRunFile =
+                    "rm -f " + PathUtils.parseProjectPath(isxAppProperties.getResourcesPath()) + File.separator + "work"
+                        + File.separator + workRunContext.getTenantId() + File.separator + workInstance.getId() + ".sh";
                 RuntimeUtil.execForStr(clearWorkRunFile);
             } catch (Exception e) {
                 log.error("删除运行脚本失败");
@@ -159,6 +163,7 @@ public class CurlExecutor extends WorkExecutor {
 
         return InstanceStatus.SUCCESS;
     }
+
     @Override
     protected void abort(WorkInstanceEntity workInstance) {
 

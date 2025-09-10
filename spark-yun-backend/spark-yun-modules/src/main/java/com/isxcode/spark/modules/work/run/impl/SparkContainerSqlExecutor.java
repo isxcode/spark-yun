@@ -27,7 +27,6 @@ import com.isxcode.spark.modules.work.entity.WorkEventEntity;
 import com.isxcode.spark.modules.work.repository.WorkEventRepository;
 import com.isxcode.spark.api.instance.constants.InstanceStatus;
 import com.isxcode.spark.modules.work.run.WorkRunJobFactory;
-import com.isxcode.spark.modules.work.entity.VipWorkVersionEntity;
 import com.isxcode.spark.modules.work.repository.VipWorkVersionRepository;
 import com.isxcode.spark.modules.work.repository.WorkConfigRepository;
 import com.isxcode.spark.modules.work.repository.WorkRepository;
@@ -80,14 +79,15 @@ public class SparkContainerSqlExecutor extends WorkExecutor {
     private final Locker locker;
 
     public SparkContainerSqlExecutor(WorkInstanceRepository workInstanceRepository,
-                                     WorkflowInstanceRepository workflowInstanceRepository, ContainerRepository containerRepository,
-                                     ClusterNodeRepository clusterNodeRepository, IsxAppProperties isxAppProperties,
-                                     WorkInstanceRepository workInstanceRepository1, SqlCommentService sqlCommentService,
-                                     SqlValueService sqlValueService, SqlFunctionService sqlFunctionService, AlarmService
-                                         alarmService, WorkEventRepository workEventRepository, Scheduler scheduler,
-                                     WorkRunJobFactory workRunJobFactory, VipWorkVersionRepository vipWorkVersionRepository,
-                                     WorkConfigRepository workConfigRepository, WorkRepository workRepository, Locker locker) {
-        super(alarmService, scheduler, locker, workRepository, workInstanceRepository, workflowInstanceRepository, workEventRepository, workRunJobFactory, sqlFunctionService, workConfigRepository, vipWorkVersionRepository);
+        WorkflowInstanceRepository workflowInstanceRepository, ContainerRepository containerRepository,
+        ClusterNodeRepository clusterNodeRepository, IsxAppProperties isxAppProperties,
+        WorkInstanceRepository workInstanceRepository1, SqlCommentService sqlCommentService,
+        SqlValueService sqlValueService, SqlFunctionService sqlFunctionService, AlarmService alarmService,
+        WorkEventRepository workEventRepository, Scheduler scheduler, WorkRunJobFactory workRunJobFactory,
+        VipWorkVersionRepository vipWorkVersionRepository, WorkConfigRepository workConfigRepository,
+        WorkRepository workRepository, Locker locker) {
+        super(alarmService, scheduler, locker, workRepository, workInstanceRepository, workflowInstanceRepository,
+            workEventRepository, workRunJobFactory, sqlFunctionService, workConfigRepository, vipWorkVersionRepository);
         this.containerRepository = containerRepository;
         this.clusterNodeRepository = clusterNodeRepository;
         this.isxAppProperties = isxAppProperties;
@@ -110,10 +110,12 @@ public class SparkContainerSqlExecutor extends WorkExecutor {
     }
 
     @Override
-    protected String execute(WorkRunContext workRunContext, WorkInstanceEntity workInstance, WorkEventEntity workEvent) {
+    protected String execute(WorkRunContext workRunContext, WorkInstanceEntity workInstance,
+        WorkEventEntity workEvent) {
 
         // 获取作业运行上下文
-        SparkContainerSqlExecutorContext workEventBody = JSON.parseObject(workEvent.getEventContext(), SparkContainerSqlExecutorContext.class);
+        SparkContainerSqlExecutorContext workEventBody =
+            JSON.parseObject(workEvent.getEventContext(), SparkContainerSqlExecutorContext.class);
         if (workEventBody == null) {
             workEventBody = new SparkContainerSqlExecutorContext();
             workEventBody.setWorkRunContext(workRunContext);
@@ -194,7 +196,8 @@ public class SparkContainerSqlExecutor extends WorkExecutor {
             String script = sqlFunctionService.parseSqlFunction(parseValueSql);
 
             // 打印sql
-            logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始执行SQL: \n").append(script).append("\n");
+            logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始执行SQL: \n").append(script)
+                .append("\n");
             workInstance = updateInstance(workInstance, logBuilder);
 
             // 保存处理后的脚本
@@ -212,8 +215,8 @@ public class SparkContainerSqlExecutor extends WorkExecutor {
             ClusterNodeEntity engineNode = workEventBody.getEngineNode();
 
             // 调用容器的接口，执行SQL
-            ExecuteContainerSqlReq executeContainerSqlReq = ExecuteContainerSqlReq.builder()
-                .port(String.valueOf(containerEntity.getPort())).sql(script).build();
+            ExecuteContainerSqlReq executeContainerSqlReq =
+                ExecuteContainerSqlReq.builder().port(String.valueOf(containerEntity.getPort())).sql(script).build();
 
             ExecuteContainerSqlRes containerGetDataRes;
             try {
@@ -232,7 +235,8 @@ public class SparkContainerSqlExecutor extends WorkExecutor {
                     throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "运行异常: 请检查容器的运行状态 \n");
                 }
                 String errMsg = containerGetDataRes.getMsg();
-                throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "运行异常" + errMsg.substring(19, errMsg.length() - 1).replace("<EOL>", "\n") + "\n");
+                throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "运行异常"
+                    + errMsg.substring(19, errMsg.length() - 1).replace("<EOL>", "\n") + "\n");
             }
 
             // 记录结束执行时间

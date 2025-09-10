@@ -133,6 +133,11 @@ public class WorkRunContext {
      * 事件id.
      */
     private String eventId;
+    /**
+     * 固定执行节点ID（需要复用上传文件所在节点）.
+     */
+    private String nodeId;
+
 
     private String log;
 

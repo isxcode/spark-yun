@@ -45,7 +45,6 @@ import com.isxcode.spark.modules.work.entity.WorkEventEntity;
 import com.isxcode.spark.modules.work.repository.WorkEventRepository;
 import com.isxcode.spark.api.instance.constants.InstanceStatus;
 import com.isxcode.spark.modules.work.run.WorkRunJobFactory;
-import com.isxcode.spark.modules.work.entity.VipWorkVersionEntity;
 import com.isxcode.spark.modules.work.repository.VipWorkVersionRepository;
 import org.quartz.Scheduler;
 import lombok.Data;
@@ -102,18 +101,16 @@ public class SparkJarExecutor extends WorkExecutor {
 
     private final VipWorkVersionRepository vipWorkVersionRepository;
 
-    public SparkJarExecutor(WorkInstanceRepository workInstanceRepository, ClusterRepository
-                                clusterRepository,
-                            ClusterNodeRepository clusterNodeRepository, WorkflowInstanceRepository
-                                workflowInstanceRepository,
-                            WorkRepository workRepository, WorkConfigRepository workConfigRepository, IsxAppProperties
-                                isxAppProperties,
-                            Locker locker, HttpUrlUtils httpUrlUtils, ClusterNodeMapper clusterNodeMapper, AesUtils aesUtils,
-                            FileRepository fileRepository, AlarmService alarmService, SqlFunctionService sqlFunctionService,
-                            WorkEventRepository workEventRepository, Scheduler scheduler, WorkRunJobFactory workRunJobFactory,
-                            VipWorkVersionRepository vipWorkVersionRepository) {
+    public SparkJarExecutor(WorkInstanceRepository workInstanceRepository, ClusterRepository clusterRepository,
+        ClusterNodeRepository clusterNodeRepository, WorkflowInstanceRepository workflowInstanceRepository,
+        WorkRepository workRepository, WorkConfigRepository workConfigRepository, IsxAppProperties isxAppProperties,
+        Locker locker, HttpUrlUtils httpUrlUtils, ClusterNodeMapper clusterNodeMapper, AesUtils aesUtils,
+        FileRepository fileRepository, AlarmService alarmService, SqlFunctionService sqlFunctionService,
+        WorkEventRepository workEventRepository, Scheduler scheduler, WorkRunJobFactory workRunJobFactory,
+        VipWorkVersionRepository vipWorkVersionRepository) {
 
-        super(alarmService, scheduler, locker, workRepository, workInstanceRepository, workflowInstanceRepository, workEventRepository, workRunJobFactory, sqlFunctionService, workConfigRepository, vipWorkVersionRepository);
+        super(alarmService, scheduler, locker, workRepository, workInstanceRepository, workflowInstanceRepository,
+            workEventRepository, workRunJobFactory, sqlFunctionService, workConfigRepository, vipWorkVersionRepository);
         this.workInstanceRepository = workInstanceRepository;
         this.clusterRepository = clusterRepository;
         this.clusterNodeRepository = clusterNodeRepository;
@@ -137,10 +134,12 @@ public class SparkJarExecutor extends WorkExecutor {
     }
 
     @Override
-    protected String execute(WorkRunContext workRunContext, WorkInstanceEntity workInstance, WorkEventEntity workEvent) {
+    protected String execute(WorkRunContext workRunContext, WorkInstanceEntity workInstance,
+        WorkEventEntity workEvent) {
 
         // 获取作业运行上下文
-        SparkJarExecutorContext workEventBody = JSON.parseObject(workEvent.getEventContext(), SparkJarExecutorContext.class);
+        SparkJarExecutorContext workEventBody =
+            JSON.parseObject(workEvent.getEventContext(), SparkJarExecutorContext.class);
         if (workEventBody == null) {
             workEventBody = new SparkJarExecutorContext();
             workEventBody.setWorkRunContext(workRunContext);
@@ -191,8 +190,7 @@ public class SparkJarExecutor extends WorkExecutor {
 
             // 检测集群中是否有合法节点
             List<ClusterNodeEntity> allEngineNodes = clusterNodeRepository
-                .findAllByClusterIdAndStatus(calculateEngineEntityOptional.get().getId(),
-                    ClusterNodeStatus.RUNNING);
+                .findAllByClusterIdAndStatus(calculateEngineEntityOptional.get().getId(), ClusterNodeStatus.RUNNING);
             if (allEngineNodes.isEmpty()) {
                 throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "申请资源失败 : 集群不存在可用节点，请切换一个集群 \n");
             }
@@ -233,8 +231,7 @@ public class SparkJarExecutor extends WorkExecutor {
             ScpFileEngineNodeDto scpFileEngineNodeDto =
                 clusterNodeMapper.engineNodeEntityToScpFileEngineNodeDto(engineNode);
             scpFileEngineNodeDto.setPasswd(aesUtils.decrypt(scpFileEngineNodeDto.getPasswd()));
-            String fileDir = PathUtils.parseProjectPath(isxAppProperties.getResourcesPath()) + File.separator
-                + "file"
+            String fileDir = PathUtils.parseProjectPath(isxAppProperties.getResourcesPath()) + File.separator + "file"
                 + File.separator + jarFile.getTenantId();
             try {
                 scpJar(scpFileEngineNodeDto, fileDir + File.separator + jarFile.getId(),
@@ -260,14 +257,13 @@ public class SparkJarExecutor extends WorkExecutor {
             }
 
             // 开始构造SparkSubmit
-            SparkSubmit sparkSubmit =
-                SparkSubmit.builder().verbose(true).mainClass(jarJobConfig.getMainClass())
-                    .appResource(jarFile.getId() + ".jar").appName(jarJobConfig.getAppName())
-                    .conf(genSparkSubmitConfig(workRunContext.getClusterConfig().getSparkConfig())).build();
+            SparkSubmit sparkSubmit = SparkSubmit.builder().verbose(true).mainClass(jarJobConfig.getMainClass())
+                .appResource(jarFile.getId() + ".jar").appName(jarJobConfig.getAppName())
+                .conf(genSparkSubmitConfig(workRunContext.getClusterConfig().getSparkConfig())).build();
 
             // 传递自定义参数
-            executeReq
-                .setPluginReq(PluginReq.builder().sparkConfig(workRunContext.getClusterConfig().getSparkConfig()).build());
+            executeReq.setPluginReq(
+                PluginReq.builder().sparkConfig(workRunContext.getClusterConfig().getSparkConfig()).build());
 
             // 开始构造executeReq
             executeReq.setSparkSubmit(sparkSubmit);
@@ -279,9 +275,8 @@ public class SparkJarExecutor extends WorkExecutor {
 
             // 构建作业完成，并打印作业配置信息
             logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("构建作业完成 \n");
-            workRunContext.getClusterConfig().getSparkConfig().forEach((k, v) ->
-                logBuilder.append(LocalDateTime.now())
-                    .append(WorkLog.SUCCESS_INFO).append(k).append(":").append(v).append(" \n"));
+            workRunContext.getClusterConfig().getSparkConfig().forEach((k, v) -> logBuilder.append(LocalDateTime.now())
+                .append(WorkLog.SUCCESS_INFO).append(k).append(":").append(v).append(" \n"));
             logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始提交作业 \n");
             workInstance = updateInstance(workInstance, logBuilder);
 
@@ -305,10 +300,8 @@ public class SparkJarExecutor extends WorkExecutor {
             Integer lock = locker.lock("REQUEST_" + workInstance.getId());
             RunWorkRes submitWorkRes;
             try {
-                baseResponse = HttpUtils.doPost(
-                    httpUrlUtils.genHttpUrl(engineNode.getHost(), engineNode.getAgentPort(),
-                        SparkAgentUrl.SUBMIT_WORK_URL),
-                    executeReq, BaseResponse.class);
+                baseResponse = HttpUtils.doPost(httpUrlUtils.genHttpUrl(engineNode.getHost(), engineNode.getAgentPort(),
+                    SparkAgentUrl.SUBMIT_WORK_URL), executeReq, BaseResponse.class);
                 log.debug("获取远程提交作业日志:{}", baseResponse.toString());
                 if (!String.valueOf(HttpStatus.OK.value()).equals(baseResponse.getCode())) {
                     throw new WorkRunException(
@@ -325,15 +318,15 @@ public class SparkJarExecutor extends WorkExecutor {
                 workInstance.setSparkStarRes(JSON.toJSONString(submitWorkRes));
                 workInstance = updateInstance(workInstance, logBuilder);
             } catch (ResourceAccessException e) {
-                throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "提交作业失败 : " +
-                    e.getMessage() + "\n");
+                throw new WorkRunException(
+                    LocalDateTime.now() + WorkLog.ERROR_INFO + "提交作业失败 : " + e.getMessage() + "\n");
             } catch (HttpServerErrorException e1) {
                 if (HttpStatus.BAD_GATEWAY.value() == e1.getRawStatusCode()) {
                     throw new WorkRunException(
                         LocalDateTime.now() + WorkLog.ERROR_INFO + "提交作业失败 : 无法访问节点服务器,请检查服务器防火墙或者计算集群\n");
                 }
-                throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "提交作业失败 : " +
-                    e1.getMessage() + "\n");
+                throw new WorkRunException(
+                    LocalDateTime.now() + WorkLog.ERROR_INFO + "提交作业失败 : " + e1.getMessage() + "\n");
             } finally {
                 locker.unlock(lock);
             }
@@ -359,11 +352,10 @@ public class SparkJarExecutor extends WorkExecutor {
 
                 // 获取作业状态并保存
                 GetWorkStatusReq getWorkStatusReq = GetWorkStatusReq.builder().appId(submitWorkRes.getAppId())
-                    .clusterType(clusterEntity.getClusterType())
-                    .sparkHomePath(executeReq.getSparkHomePath()).build();
-                BaseResponse<?> baseResponse = HttpUtils.doPost(httpUrlUtils.genHttpUrl(engineNode.getHost(),
-                    engineNode.getAgentPort(),
-                    SparkAgentUrl.GET_WORK_STATUS_URL), getWorkStatusReq, BaseResponse.class);
+                    .clusterType(clusterEntity.getClusterType()).sparkHomePath(executeReq.getSparkHomePath()).build();
+                BaseResponse<?> baseResponse =
+                    HttpUtils.doPost(httpUrlUtils.genHttpUrl(engineNode.getHost(), engineNode.getAgentPort(),
+                        SparkAgentUrl.GET_WORK_STATUS_URL), getWorkStatusReq, BaseResponse.class);
                 log.debug("获取远程获取状态日志:{}", baseResponse.toString());
 
                 if (!String.valueOf(HttpStatus.OK.value()).equals(baseResponse.getCode())) {
@@ -372,8 +364,8 @@ public class SparkJarExecutor extends WorkExecutor {
                 }
 
                 // 解析返回状态，并保存
-                RunWorkRes workStatusRes = JSON.parseObject(JSON.toJSONString(baseResponse.getData()),
-                    RunWorkRes.class);
+                RunWorkRes workStatusRes =
+                    JSON.parseObject(JSON.toJSONString(baseResponse.getData()), RunWorkRes.class);
                 workInstance.setSparkStarRes(JSON.toJSONString(workStatusRes));
 
                 // 状态发生变化，则添加日志状态
@@ -404,8 +396,8 @@ public class SparkJarExecutor extends WorkExecutor {
                     // 运行结束逻辑
 
                     // 如果是中止，直接退出
-                    if ("KILLED" .equalsIgnoreCase(workStatusRes.getAppStatus())
-                        || "TERMINATING" .equalsIgnoreCase(workStatusRes.getAppStatus())) {
+                    if ("KILLED".equalsIgnoreCase(workStatusRes.getAppStatus())
+                        || "TERMINATING".equalsIgnoreCase(workStatusRes.getAppStatus())) {
                         throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "作业运行中止" + "\n");
                     }
 
@@ -430,13 +422,11 @@ public class SparkJarExecutor extends WorkExecutor {
             ClusterNodeEntity engineNode = workEventBody.getEngineNode();
 
             // 获取日志并保存
-            GetWorkStderrLogReq getWorkStderrLogReq =
-                GetWorkStderrLogReq.builder().appId(submitWorkRes.getAppId())
-                    .clusterType(clusterEntity.getClusterType())
-                    .sparkHomePath(executeReq.getSparkHomePath()).build();
-            BaseResponse<?> baseResponse = HttpUtils.doPost(httpUrlUtils.genHttpUrl(engineNode.getHost(),
-                engineNode.getAgentPort(),
-                SparkAgentUrl.GET_WORK_STDERR_LOG_URL), getWorkStderrLogReq, BaseResponse.class);
+            GetWorkStderrLogReq getWorkStderrLogReq = GetWorkStderrLogReq.builder().appId(submitWorkRes.getAppId())
+                .clusterType(clusterEntity.getClusterType()).sparkHomePath(executeReq.getSparkHomePath()).build();
+            BaseResponse<?> baseResponse =
+                HttpUtils.doPost(httpUrlUtils.genHttpUrl(engineNode.getHost(), engineNode.getAgentPort(),
+                    SparkAgentUrl.GET_WORK_STDERR_LOG_URL), getWorkStderrLogReq, BaseResponse.class);
             log.debug("获取远程返回日志:{}", baseResponse.toString());
 
             if (!String.valueOf(HttpStatus.OK.value()).equals(baseResponse.getCode())) {
@@ -458,13 +448,10 @@ public class SparkJarExecutor extends WorkExecutor {
             if (successStatus.contains(workStatusRes.getAppStatus().toUpperCase())) {
 
                 // 获取数据
-                GetWorkStdoutLogReq getWorkStdoutLogReq =
-                    GetWorkStdoutLogReq.builder().appId(submitWorkRes.getAppId())
-                        .clusterType(clusterEntity.getClusterType())
-                        .sparkHomePath(executeReq.getSparkHomePath()).build();
-                baseResponse =
-                    HttpUtils.doPost(httpUrlUtils.genHttpUrl(engineNode.getHost(), engineNode.getAgentPort(),
-                        SparkAgentUrl.GET_CUSTOM_WORK_STDOUT_LOG_URL), getWorkStdoutLogReq, BaseResponse.class);
+                GetWorkStdoutLogReq getWorkStdoutLogReq = GetWorkStdoutLogReq.builder().appId(submitWorkRes.getAppId())
+                    .clusterType(clusterEntity.getClusterType()).sparkHomePath(executeReq.getSparkHomePath()).build();
+                baseResponse = HttpUtils.doPost(httpUrlUtils.genHttpUrl(engineNode.getHost(), engineNode.getAgentPort(),
+                    SparkAgentUrl.GET_CUSTOM_WORK_STDOUT_LOG_URL), getWorkStdoutLogReq, BaseResponse.class);
                 log.debug("获取远程返回数据:{}", baseResponse.toString());
                 if (!String.valueOf(HttpStatus.OK.value()).equals(baseResponse.getCode())) {
                     throw new WorkRunException(
@@ -472,8 +459,8 @@ public class SparkJarExecutor extends WorkExecutor {
                 }
 
                 // 解析数据并保存
-                workInstance.setResultData(JSON
-                    .parseObject(JSON.toJSONString(baseResponse.getData()), GetWorkStdoutLogRes.class).getLog());
+                workInstance.setResultData(
+                    JSON.parseObject(JSON.toJSONString(baseResponse.getData()), GetWorkStdoutLogRes.class).getLog());
                 logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("数据保存成功 \n");
 
                 // 如果是k8s类型，需要删除k8s容器
@@ -517,8 +504,7 @@ public class SparkJarExecutor extends WorkExecutor {
                     // 关闭远程线程
                     WorkEntity work = workRepository.findById(workInstance.getWorkId()).get();
                     WorkConfigEntity workConfig = workConfigRepository.findById(work.getConfigId()).get();
-                    ClusterConfig clusterConfig = JSON.parseObject(workConfig.getClusterConfig(),
-                        ClusterConfig.class);
+                    ClusterConfig clusterConfig = JSON.parseObject(workConfig.getClusterConfig(), ClusterConfig.class);
                     List<ClusterNodeEntity> allEngineNodes = clusterNodeRepository
                         .findAllByClusterIdAndStatus(clusterConfig.getClusterId(), ClusterNodeStatus.RUNNING);
                     if (allEngineNodes.isEmpty()) {
