@@ -423,10 +423,8 @@ public abstract class WorkExecutor {
                             work, workConfig);
                     } else {
                         VipWorkVersionEntity workVersion = vipWorkVersionRepository.findById(work.getVersionId()).get();
-                        sonWorkRunContext = null;
-                        // sonWorkRunContext =
-                        // WorkflowUtils.genWorkRunContext(sonWorkInstance.getId(), EventType.WORKFLOW, work,
-                        // workVersion);
+                        sonWorkRunContext = WorkflowUtils.genWorkRunContext(sonWorkInstance.getId(), EventType.WORKFLOW,
+                            work, workVersion);
                         sonWorkRunContext.setVersionId(sonWorkInstance.getVersionId());
                     }
                     sonWorkRunContext.setDagEndList(workRunContext.getDagEndList());
