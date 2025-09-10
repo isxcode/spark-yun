@@ -130,6 +130,9 @@ public class WorkflowUtils {
         return nodeMapping;
     }
 
+    /**
+     * 当前作业封装genWorkRunContext
+     */
     public static WorkRunContext genWorkRunContext(String instanceId, String eventType, WorkEntity work,
         WorkConfigEntity workConfig) {
 
@@ -144,12 +147,16 @@ public class WorkflowUtils {
             .libConfig(JSON.parseArray(workConfig.getLibConfig(), String.class)).workId(work.getId())
             .apiWorkConfig(JSON.parseObject(workConfig.getApiWorkConfig(), ApiWorkConfig.class))
             .dbMigrateConfig(JSON.parseObject(workConfig.getDbMigrateConfig(), DbMigrateConfig.class))
-            .eventType(eventType).containerId(workConfig.getContainerId()).workName(work.getName())
+            .containerId(workConfig.getContainerId()).eventType(eventType).workName(work.getName())
             .userId(USER_ID.get()).build();
     }
 
-    public static WorkRunContext genWorkRunContext(String instanceId, String eventType,
-        VipWorkVersionEntity workVersion, WorkflowRunEvent event) {
+    /**
+     * 发布中作业初始化WorkRunContext.
+     */
+    public static WorkRunContext genWorkRunContext(String instanceId, String eventType, WorkEntity work,
+        VipWorkVersionEntity workVersion) {
+
         return WorkRunContext.builder().datasourceId(workVersion.getDatasourceId()).script(workVersion.getScript())
             .instanceId(instanceId).tenantId(TENANT_ID.get()).userId(USER_ID.get())
             .syncWorkConfig(JSON.parseObject(workVersion.getSyncWorkConfig(), SyncWorkConfig.class))
@@ -162,17 +169,7 @@ public class WorkflowUtils {
             .containerId(workVersion.getContainerId()).workType(workVersion.getWorkType())
             .apiWorkConfig(JSON.parseObject(workVersion.getApiWorkConfig(), ApiWorkConfig.class))
             .dbMigrateConfig(JSON.parseObject(workVersion.getDbMigrateConfig(), DbMigrateConfig.class))
-            .eventType(eventType).workName(event.getWorkName()).workId(workVersion.getId()).build();
-    }
-
-    public static WorkRunContext genWorkRunContext(VipWorkVersionEntity workVersion) {
-
-        return WorkRunContext.builder().workId(workVersion.getWorkId())
-            .clusterConfig(JSON.parseObject(workVersion.getClusterConfig(), ClusterConfig.class))
-            .datasourceId(workVersion.getDatasourceId()).userId(USER_ID.get()).tenantId(TENANT_ID.get())
-            .script(workVersion.getScript()).workType(workVersion.getWorkType())
-            .syncRule(JSON.parseObject(workVersion.getSyncRule(), SyncRule.class)).versionId(workVersion.getId())
-            .build();
+            .workName(work.getName()).eventType(eventType).workId(work.getId()).build();
     }
 
     /**
