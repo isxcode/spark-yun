@@ -101,7 +101,9 @@ public class BashExecutor extends WorkExecutor {
         return WorkType.BASH;
     }
 
-    public String execute(WorkRunContext workRunContext, WorkInstanceEntity workInstance, WorkEventEntity workEvent) {
+    @Override
+    protected String execute(WorkRunContext workRunContext, WorkInstanceEntity workInstance,
+        WorkEventEntity workEvent) {
 
         // 获取日志
         StringBuilder logBuilder = new StringBuilder(workInstance.getSubmitLog());
@@ -134,6 +136,7 @@ public class BashExecutor extends WorkExecutor {
                 throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "检测集群失败 : 指定运行节点不存在  \n");
             }
             logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("集群检测正常 \n");
+
             // 解析节点请求体
             ScpFileEngineNodeDto scpFileEngineNodeDto =
                 clusterNodeMapper.engineNodeEntityToScpFileEngineNodeDto(nodeRepositoryOptional.get());
