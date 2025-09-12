@@ -495,6 +495,7 @@ public class SparkSqlExecutor extends WorkExecutor {
             String appId = workRunContext.getAppId();
             String clusterType = workRunContext.getClusterType();
             String agentHomePath = workRunContext.getAgentHomePath();
+            String sparkHomePath = workRunContext.getSparkHomePath();
             String agentHost = workRunContext.getAgentHost();
             String agentPort = workRunContext.getAgentPort();
             String preStatus = workRunContext.getPreStatus();
@@ -503,7 +504,7 @@ public class SparkSqlExecutor extends WorkExecutor {
 
             // 获取日志并保存
             GetWorkStderrLogReq getWorkStderrLogReq = GetWorkStderrLogReq.builder().appId(appId)
-                .clusterType(clusterType).sparkHomePath(agentHomePath).build();
+                .clusterType(clusterType).sparkHomePath(sparkHomePath).build();
             baseResponse =
                 HttpUtils.doPost(httpUrlUtils.genHttpUrl(agentHost, agentPort, SparkAgentUrl.GET_WORK_STDERR_LOG_URL),
                     getWorkStderrLogReq, BaseResponse.class);
@@ -526,7 +527,7 @@ public class SparkSqlExecutor extends WorkExecutor {
 
                 // 获取数据
                 GetWorkDataReq getWorkDataReq =
-                    GetWorkDataReq.builder().appId(appId).clusterType(clusterType).sparkHomePath(agentHomePath).build();
+                    GetWorkDataReq.builder().appId(appId).clusterType(clusterType).sparkHomePath(sparkHomePath).build();
                 baseResponse =
                     HttpUtils.doPost(httpUrlUtils.genHttpUrl(agentHost, agentPort, SparkAgentUrl.GET_WORK_DATA_URL),
                         getWorkDataReq, BaseResponse.class);
