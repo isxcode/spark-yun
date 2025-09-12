@@ -94,7 +94,7 @@ public class ExecuteSqlExecutor extends WorkExecutor {
         // 获取日志
         StringBuilder logBuilder = new StringBuilder(workInstance.getSubmitLog());
 
-        // 步骤1：校验环境、解析脚本并保存
+        // 校验环境、解析脚本并保存
         if (workEvent.getEventProcess() == 0) {
 
             logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始检测运行环境 \n");
@@ -115,7 +115,7 @@ public class ExecuteSqlExecutor extends WorkExecutor {
             return updateWorkEventAndInstance(workInstance, logBuilder, workEvent, workRunContext);
         }
 
-        // 步骤2：解析SQL脚本
+        // 解析SQL脚本
         if (workEvent.getEventProcess() == 1) {
 
             // 去掉sql中的注释 -> 解析上游参数 -> 系统变量 -> 系统函数
@@ -138,7 +138,7 @@ public class ExecuteSqlExecutor extends WorkExecutor {
             return updateWorkEventAndInstance(workInstance, logBuilder, workEvent, workRunContext);
         }
 
-        // 步骤3：执行SQL语句
+        // 执行SQL语句
         if (workEvent.getEventProcess() == 2) {
 
             // 读取脚本

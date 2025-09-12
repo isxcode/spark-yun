@@ -40,7 +40,7 @@ public class WorkRunContext {
 
     private String agentHomePath;
 
-    private String currentStatus;
+    private String preStatus;
 
     private String pid;
 
