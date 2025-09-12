@@ -62,6 +62,16 @@ public abstract class WorkExecutor {
 
     protected abstract void abort(WorkInstanceEntity workInstance) throws Exception;
 
+    public String infoLog(String log) {
+
+        return LocalDateTime.now() + WorkLog.SUCCESS_INFO + log + "\n";
+    }
+
+    public String errorLog(String log) {
+
+        return LocalDateTime.now() + WorkLog.ERROR_INFO + log + "\n";
+    }
+
     /**
      * 翻译上游的jsonPath.
      */
@@ -151,7 +161,7 @@ public abstract class WorkExecutor {
 
         // 将作业状态改成运行中
         if (InstanceStatus.PENDING.equals(workInstance.getStatus())) {
-            workInstance.setSubmitLog(LocalDateTime.now() + WorkLog.SUCCESS_INFO + "开始提交作业 \n");
+            workInstance.setSubmitLog(infoLog("🔥 开始提交作业"));
             workInstance.setStatus(InstanceStatus.RUNNING);
             workInstance.setExecStartDateTime(new Date());
             workInstanceRepository.saveAndFlush(workInstance);
@@ -178,7 +188,7 @@ public abstract class WorkExecutor {
                     workInstance.setDuration(
                         (System.currentTimeMillis() - workInstance.getExecStartDateTime().getTime()) / 1000);
                     workInstance.setSubmitLog(
-                        workInstance.getSubmitLog() + LocalDateTime.now() + WorkLog.SUCCESS_INFO + "执行成功 \n");
+                        workInstance.getSubmitLog() + LocalDateTime.now() + WorkLog.SUCCESS_INFO + "✅ 执行成功 \n");
                     workInstanceRepository.saveAndFlush(workInstance);
                 }
             }
@@ -193,8 +203,8 @@ public abstract class WorkExecutor {
                 workInstance
                     .setDuration((System.currentTimeMillis() - workInstance.getExecStartDateTime().getTime()) / 1000);
                 workInstance.setSubmitLog(workInstance.getSubmitLog()
-                    + (e instanceof WorkRunException ? ((WorkRunException) e).getMsg() : e.getMessage())
-                    + LocalDateTime.now() + WorkLog.ERROR_INFO + "执行失败 \n");
+                    + (e instanceof WorkRunException ? ((WorkRunException) e).getMsg() : e.getMessage()) + "\n"
+                    + LocalDateTime.now() + WorkLog.ERROR_INFO + "❌ 执行失败");
                 workInstanceRepository.saveAndFlush(workInstance);
             }
         }
