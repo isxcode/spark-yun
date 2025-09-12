@@ -1,5 +1,6 @@
 package com.isxcode.spark.modules.work.run;
 
+import com.isxcode.spark.api.agent.req.spark.SubmitWorkReq;
 import com.isxcode.spark.api.cluster.dto.ScpFileEngineNodeDto;
 import com.isxcode.spark.api.work.dto.*;
 import lombok.AllArgsConstructor;
@@ -40,7 +41,11 @@ public class WorkRunContext {
 
     private String agentHomePath;
 
+    private String sparkHomePath;
+
     private String preStatus;
+
+    private String clusterType;
 
     private String pid;
 
@@ -141,4 +146,11 @@ public class WorkRunContext {
 
     private String log;
 
+    private SubmitWorkReq executeReq;
+
+    private String agentHost;
+
+    private String agentPort;
+
+    private String appId;
 }
