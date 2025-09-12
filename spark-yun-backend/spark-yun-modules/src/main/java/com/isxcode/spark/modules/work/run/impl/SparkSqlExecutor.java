@@ -161,54 +161,49 @@ public class SparkSqlExecutor extends WorkExecutor {
     protected String execute(WorkRunContext workRunContext, WorkInstanceEntity workInstance,
         WorkEventEntity workEvent) {
 
-        // 获取日志
+        // 获取实例日志
         StringBuilder logBuilder = new StringBuilder(workInstance.getSubmitLog());
 
-        // 首行日志
+        // 打印首行日志
         if (workEvent.getEventProcess() == 0) {
-            logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始申请资源 \n");
+            logBuilder.append(infoLog("⌛️ 开始申请集群资源"));
             return updateWorkEventAndInstance(workInstance, logBuilder, workEvent, workRunContext);
         }
 
         // 检查集群
         if (workEvent.getEventProcess() == 1) {
 
-            // 检测计算集群是否存在
+            // 检测集群是否配置
             if (Strings.isEmpty(workRunContext.getClusterConfig().getClusterId())) {
-                throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "申请资源失败 : 计算引擎未配置  \n");
+                throw new WorkRunException(errorLog("⚠️ 申请资源失败 : 计算引擎未配置"));
             }
-            Optional<ClusterEntity> calculateEngineEntityOptional =
-                clusterRepository.findById(workRunContext.getClusterConfig().getClusterId());
-            if (!calculateEngineEntityOptional.isPresent()) {
-                throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "申请资源失败 : 计算引擎不存在  \n");
-            }
-            // 检测集群中是否有合法节点
-            List<ClusterNodeEntity> allEngineNodes = clusterNodeRepository
-                .findAllByClusterIdAndStatus(calculateEngineEntityOptional.get().getId(), ClusterNodeStatus.RUNNING);
-            if (allEngineNodes.isEmpty()) {
-                throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "申请资源失败 : 集群不存在可用节点，请切换一个集群  \n");
-            }
-            // 节点选择随机数
-            ClusterNodeEntity engineNode = allEngineNodes.get(new Random().nextInt(allEngineNodes.size()));
-            logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("申请资源完成，激活节点:【")
-                .append(engineNode.getName()).append("】\n");
 
-            // 解析节点请求体
-            ScpFileEngineNodeDto scpFileEngineNodeDto =
-                clusterNodeMapper.engineNodeEntityToScpFileEngineNodeDto(engineNode);
-            scpFileEngineNodeDto.setPasswd(aesUtils.decrypt(scpFileEngineNodeDto.getPasswd()));
+            // 检查集群是否存在
+            ClusterEntity cluster = clusterRepository.findById(workRunContext.getClusterConfig().getClusterId())
+                .orElseThrow(() -> new WorkRunException(errorLog("⚠️ 申请资源失败 : 计算引擎不存在")));
+
+            // 检测集群中是否为空
+            List<ClusterNodeEntity> clusterNodes =
+                clusterNodeRepository.findAllByClusterIdAndStatus(cluster.getId(), ClusterNodeStatus.RUNNING);
+            if (clusterNodes.isEmpty()) {
+                throw new WorkRunException(errorLog("⚠️ 申请资源失败 : 集群不存在可用节点，请切换一个集群"));
+            }
+
+            // 随机选择一个节点
+            ClusterNodeEntity agentNode = clusterNodes.get(new Random().nextInt(clusterNodes.size()));
+            logBuilder.append(infoLog("👌 申请资源完成，激活节点:【" + agentNode.getName() + "】"));
+
+            // 解析请求节点信息
+            ScpFileEngineNodeDto scpNode = clusterNodeMapper.engineNodeEntityToScpFileEngineNodeDto(agentNode);
+            scpNode.setPasswd(aesUtils.decrypt(scpNode.getPasswd()));
 
             // 保存事件
-            workRunContext.setScpNodeInfo(scpFileEngineNodeDto);
-            workRunContext.setAgentHomePath(engineNode.getAgentHomePath());
-            workRunContext.setClusterType(calculateEngineEntityOptional.get().getClusterType());
-            workRunContext.setAgentHost(engineNode.getHost());
-            workRunContext.setAgentPort(engineNode.getAgentPort());
-            workRunContext.setSparkHomePath(engineNode.getSparkHomePath());
+            workRunContext.setClusterType(cluster.getClusterType());
+            workRunContext.setScpNodeInfo(scpNode);
+            workRunContext.setAgentNode(agentNode);
 
             // 保存日志
-            logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("检测运行环境完成  \n");
-            logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始检测脚本 \n");
+            logBuilder.append(infoLog("⌛️ 开始检测脚本"));
             return updateWorkEventAndInstance(workInstance, logBuilder, workEvent, workRunContext);
         }
 
@@ -217,145 +212,144 @@ public class SparkSqlExecutor extends WorkExecutor {
 
             // 检查脚本是否为空
             if (Strings.isEmpty(workRunContext.getScript())) {
-                throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "检测脚本失败 : SQL内容为空不能执行  \n");
+                throw new WorkRunException(errorLog("⚠️ 检测脚本失败 : SQL内容为空不能执行"));
             }
 
             // 去掉sql中的注释
             String sqlNoComment = sqlCommentService.removeSqlComment(workRunContext.getScript());
 
-            // 解析上游参数
+            // 解析上游结果
             String jsonPathSql = parseJsonPath(sqlNoComment, workInstance);
 
-            // 翻译sql中的系统变量
+            // 解析系统变量
             String parseValueSql = sqlValueService.parseSqlValue(jsonPathSql);
 
-            String script;
+            // 解析系统函数
+            String script = sqlFunctionService.parseSqlFunction(parseValueSql);
 
-            // 翻译sql中的系统函数
-            try {
-                script = sqlFunctionService.parseSqlFunction(parseValueSql);
-            } catch (Exception e) {
-                throw new WorkRunException(
-                    LocalDateTime.now() + WorkLog.ERROR_INFO + "系统函数异常\n" + e.getMessage() + "\n");
-            }
-
-            // 翻译全局变量
+            // 解析全局变量
             List<SecretKeyEntity> allKey = secretKeyRepository.findAll();
             for (SecretKeyEntity secretKeyEntity : allKey) {
                 script = script.replace("${{ secret." + secretKeyEntity.getKeyName() + " }}",
                     secretKeyEntity.getSecretValue());
-                script = script.replace("${{ secret." + secretKeyEntity.getKeyName() + " }}", "******");
             }
 
             // 保存事件
             workRunContext.setScript(script);
 
             // 保存日志
-            logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("检测脚本完成 \n");
-            logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("SparkSql:  \n").append(script)
-                .append("\n");
-            logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始上传自定义函数 \n");
+            logBuilder.append(infoLog("👌 解析SparkSql完成:"));
+            logBuilder.append(script).append("\n");
+            logBuilder.append(infoLog("⌛️ 开始上传自定义函数"));
             return updateWorkEventAndInstance(workInstance, logBuilder, workEvent, workRunContext);
         }
 
-        // 导入自定义函数
+        // 上传自定义函数
         if (workEvent.getEventProcess() == 3) {
 
-            ScpFileEngineNodeDto scpFileEngineNodeDto = workRunContext.getScpNodeInfo();
-            String agentHomePath = workRunContext.getAgentHomePath();
-
-            String fileDir = PathUtils.parseProjectPath(isxAppProperties.getResourcesPath()) + File.separator + "file"
-                + File.separator + workInstance.getTenantId();
+            // 上传自定义函数
             if (workRunContext.getFuncConfig() != null) {
+
+                // 上下文中获取参数
+                ScpFileEngineNodeDto scpNode = workRunContext.getScpNodeInfo();
+                ClusterNodeEntity agentNode = workRunContext.getAgentNode();
+
+                // 函数文件目录
+                String funcDir = PathUtils.parseProjectPath(isxAppProperties.getResourcesPath()) + File.separator
+                    + "file" + File.separator + workInstance.getTenantId();
                 List<FuncEntity> allFunc = funcRepository.findAllById(workRunContext.getFuncConfig());
                 allFunc.forEach(e -> {
                     try {
-                        scpJar(scpFileEngineNodeDto, fileDir + File.separator + e.getFileId(),
-                            agentHomePath + "/zhiqingyun-agent/file/" + e.getFileId() + ".jar");
+                        scpJar(scpNode, funcDir + File.separator + e.getFileId(),
+                            agentNode.getAgentHomePath() + "/zhiqingyun-agent/file/" + e.getFileId() + ".jar");
                     } catch (JSchException | SftpException | InterruptedException | IOException ex) {
-                        log.error(ex.getMessage(), ex);
-                        throw new WorkRunException(
-                            LocalDateTime.now() + WorkLog.ERROR_INFO + "自定义函数jar文件上传失败，请检查文件是否上传或者重新上传\n");
+                        throw new WorkRunException(errorLog("⚠️  自定义函数jar文件上传失败，请检查文件是否上传或者重新上传"));
                     }
                 });
             }
 
-            logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("上传自定义函数完成 \n");
-            logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始上传自定义依赖 \n");
+            // 保存日志
+            logBuilder.append(infoLog("👌 上传自定义函数完成"));
+            logBuilder.append(infoLog("⌛️ 开始上传自定义依赖"));
             return updateWorkEventAndInstance(workInstance, logBuilder, workEvent, workRunContext);
         }
 
         // 上传自定义依赖
         if (workEvent.getEventProcess() == 4) {
 
-            ScpFileEngineNodeDto scpFileEngineNodeDto = workRunContext.getScpNodeInfo();
-            String agentHomePath = workRunContext.getAgentHomePath();
-            String fileDir = PathUtils.parseProjectPath(isxAppProperties.getResourcesPath()) + File.separator + "file"
-                + File.separator + workInstance.getTenantId();
-
+            // 上传自定义依赖
             if (workRunContext.getLibConfig() != null) {
+
+                // 上下文中获取参数
+                ScpFileEngineNodeDto scpNode = workRunContext.getScpNodeInfo();
+                ClusterNodeEntity agentNode = workRunContext.getAgentNode();
+
+                // 依赖文件目录
+                String libDir = PathUtils.parseProjectPath(isxAppProperties.getResourcesPath()) + File.separator
+                    + "file" + File.separator + workInstance.getTenantId();
                 List<FileEntity> libFile = fileRepository.findAllById(workRunContext.getLibConfig());
                 libFile.forEach(e -> {
                     try {
-                        scpJar(scpFileEngineNodeDto, fileDir + File.separator + e.getId(),
-                            agentHomePath + "/zhiqingyun-agent/file/" + e.getId() + ".jar");
+                        scpJar(scpNode, libDir + File.separator + e.getId(),
+                            agentNode.getAgentHomePath() + "/zhiqingyun-agent/file/" + e.getId() + ".jar");
                     } catch (JSchException | SftpException | InterruptedException | IOException ex) {
-                        log.error(ex.getMessage(), ex);
-                        throw new WorkRunException(
-                            LocalDateTime.now() + WorkLog.ERROR_INFO + "自定义依赖jar文件上传失败，请检查文件是否上传或者重新上传\n");
+                        throw new WorkRunException(errorLog("⚠️  自定义依赖jar文件上传失败，请检查文件是否上传或者重新上传"));
                     }
                 });
             }
 
-            logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("上传自定义依赖完成 \n");
-            logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始构建请求体 \n");
+            // 保存日志
+            logBuilder.append(infoLog("👌 上传自定义依赖完成"));
+            logBuilder.append(infoLog("⌛️ 开始构建作业请求体"));
             return updateWorkEventAndInstance(workInstance, logBuilder, workEvent, workRunContext);
         }
 
-        // 构建请求体
+        // 构建作业请求体
         if (workEvent.getEventProcess() == 5) {
 
+            // 上下文中获取参数
             String script = workRunContext.getScript();
-            String agentHomePath = workRunContext.getAgentHomePath();
             String clusterType = workRunContext.getClusterType();
-            String sparkHomePath = workRunContext.getSparkHomePath();
+            ClusterNodeEntity agentNode = workRunContext.getAgentNode();
 
-            SubmitWorkReq executeReq = new SubmitWorkReq();
-            executeReq.setWorkId(workRunContext.getWorkId());
-            executeReq.setWorkType(WorkType.QUERY_SPARK_SQL);
-            executeReq.setWorkInstanceId(workInstance.getId());
-            executeReq.setLibConfig(workRunContext.getLibConfig());
+            // 构建请求体
+            SubmitWorkReq submitWorkReq = new SubmitWorkReq();
+            submitWorkReq.setWorkId(workRunContext.getWorkId());
+            submitWorkReq.setWorkType(WorkType.QUERY_SPARK_SQL);
+            submitWorkReq.setWorkInstanceId(workInstance.getId());
+            submitWorkReq.setAgentHomePath(agentNode.getAgentHomePath() + "/" + PathConstants.AGENT_PATH_NAME);
+            submitWorkReq.setSparkHomePath(agentNode.getSparkHomePath());
+            submitWorkReq.setClusterType(clusterType);
 
-            // 开始构造SparkSubmit
+            // 构造spark提交请求体
             SparkSubmit sparkSubmit = SparkSubmit.builder().verbose(true)
                 .mainClass("com.isxcode.spark.plugin.query.sql.Execute").appResource("spark-query-sql-plugin.jar")
                 .conf(genSparkSubmitConfig(workRunContext.getClusterConfig().getSparkConfig())).build();
 
-            // 开始构造PluginReq
+            // 构建插件请求体
             PluginReq pluginReq = PluginReq.builder().sql(script).limit(200)
                 .sparkConfig(genSparkConfig(workRunContext.getClusterConfig().getSparkConfig())).build();
 
+            // 自定义函数
             if (workRunContext.getFuncConfig() != null) {
                 List<FuncEntity> allFunc = funcRepository.findAllById(workRunContext.getFuncConfig());
                 pluginReq.setFuncInfoList(funcMapper.funcEntityListToFuncInfoList(allFunc));
-                executeReq.setFuncConfig(funcMapper.funcEntityListToFuncInfoList(allFunc));
+                submitWorkReq.setFuncConfig(funcMapper.funcEntityListToFuncInfoList(allFunc));
             }
 
-            // 解析db
+            // 自定义依赖
+            if (workRunContext.getLibConfig() != null) {
+                submitWorkReq.setLibConfig(workRunContext.getLibConfig());
+            }
+
+            // 配置hive数据源
             if (StringUtils.isNotBlank(workRunContext.getDatasourceId())
                 && workRunContext.getClusterConfig().getEnableHive()) {
+
                 DatasourceEntity datasourceEntity = datasourceService.getDatasource(workRunContext.getDatasourceId());
                 ConnectInfo connectInfo = datasourceMapper.datasourceEntityToConnectInfo(datasourceEntity);
                 Datasource datasource = dataSourceFactory.getDatasource(connectInfo.getDbType());
-                try {
-                    String database = datasource.parseDbName(datasourceEntity.getJdbcUrl());
-                    if (!Strings.isEmpty(database)) {
-                        pluginReq.setDatabase(database);
-                    }
-                } catch (IsxAppException e) {
-                    throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + e.getMsg() + "\n");
-                }
-                // 如果数据库id不为空,则替换hive的metastore url
+                pluginReq.setDatabase(datasource.parseDbName(datasourceEntity.getJdbcUrl()));
                 pluginReq.getSparkConfig().put("hive.metastore.uris", datasourceEntity.getMetastoreUris());
 
                 // 添加自定义username
@@ -364,114 +358,96 @@ public class SparkSqlExecutor extends WorkExecutor {
                 }
             }
 
-            // 开始构造executeReq
-            executeReq.setSparkSubmit(sparkSubmit);
-            executeReq.setPluginReq(pluginReq);
-            executeReq.setAgentHomePath(agentHomePath + "/" + PathConstants.AGENT_PATH_NAME);
-            executeReq.setSparkHomePath(sparkHomePath);
-            executeReq.setClusterType(clusterType);
-
             // 保存请求体
-            workRunContext.setExecuteReq(executeReq);
+            submitWorkReq.setSparkSubmit(sparkSubmit);
+            submitWorkReq.setPluginReq(pluginReq);
+            workRunContext.setSubmitWorkReq(submitWorkReq);
 
             // 保存日志
-            logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("构建作业完成 \n");
-            workRunContext.getClusterConfig().getSparkConfig().forEach((k, v) -> logBuilder.append(LocalDateTime.now())
-                .append(WorkLog.SUCCESS_INFO).append(k).append(":").append(v).append(" \n"));
-            logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始提交作业  \n");
+            logBuilder.append(infoLog("👌 构建作业完成"));
+            workRunContext.getClusterConfig().getSparkConfig()
+                .forEach((k, v) -> logBuilder.append(k).append(":").append(v).append(" \n"));
+            logBuilder.append(infoLog("⌛️ 开始提交作业"));
             return updateWorkEventAndInstance(workInstance, logBuilder, workEvent, workRunContext);
         }
 
         // 提交作业
         if (workEvent.getEventProcess() == 6) {
 
-            SubmitWorkReq executeReq = workRunContext.getExecuteReq();
-            String agentHost = workRunContext.getAgentHost();
-            String agentPort = workRunContext.getAgentPort();
+            // 上下文中获取参数
+            SubmitWorkReq submitWorkReq = workRunContext.getSubmitWorkReq();
+            ClusterNodeEntity agentNode = workRunContext.getAgentNode();
 
             // 开始提交作业
-            BaseResponse<?> baseResponse;
-
-            RunWorkRes submitWorkRes;
             try {
-                baseResponse =
-                    HttpUtils.doPost(httpUrlUtils.genHttpUrl(agentHost, agentPort, SparkAgentUrl.SUBMIT_WORK_URL),
-                        executeReq, BaseResponse.class);
-                if (!String.valueOf(HttpStatus.OK.value()).equals(baseResponse.getCode())) {
-                    throw new WorkRunException(
-                        LocalDateTime.now() + WorkLog.ERROR_INFO + "提交作业失败 : " + baseResponse.getMsg() + "\n");
+                BaseResponse<?> baseResponse = HttpUtils.doPost(httpUrlUtils.genHttpUrl(agentNode.getHost(),
+                    agentNode.getAgentPort(), SparkAgentUrl.SUBMIT_WORK_URL), submitWorkReq, BaseResponse.class);
+                if (!String.valueOf(HttpStatus.OK.value()).equals(baseResponse.getCode())
+                    || baseResponse.getData() == null) {
+                    throw new WorkRunException(errorLog("⚠️ 提交作业失败 : " + baseResponse.getMsg()));
                 }
-                // 解析返回对象,获取appId
-                if (baseResponse.getData() == null) {
-                    throw new WorkRunException(
-                        LocalDateTime.now() + WorkLog.ERROR_INFO + "提交作业失败 : " + baseResponse.getMsg() + "\n");
-                }
-                submitWorkRes = JSON.parseObject(JSON.toJSONString(baseResponse.getData()), RunWorkRes.class);
-                logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("提交作业成功 : ")
-                    .append(submitWorkRes.getAppId()).append("\n");
+                RunWorkRes submitWorkRes =
+                    JSON.parseObject(JSON.toJSONString(baseResponse.getData()), RunWorkRes.class);
+                logBuilder.append(infoLog("👌 提交作业成功 : " + submitWorkRes.getAppId()));
+
+                // 保存实例
                 workInstance.setSparkStarRes(JSON.toJSONString(submitWorkRes));
+
+                // 保存上下文
+                workRunContext.setAppId(submitWorkRes.getAppId());
             } catch (ResourceAccessException e) {
                 log.error(e.getMessage(), e);
-                throw new WorkRunException(
-                    LocalDateTime.now() + WorkLog.ERROR_INFO + "提交作业失败 : " + e.getMessage() + "\n");
+                throw new WorkRunException(errorLog("⚠️ 提交作业失败 : " + e.getMessage()));
             } catch (HttpServerErrorException e1) {
                 log.error(e1.getMessage(), e1);
                 if (HttpStatus.BAD_GATEWAY.value() == e1.getRawStatusCode()) {
-                    throw new WorkRunException(
-                        LocalDateTime.now() + WorkLog.ERROR_INFO + "提交作业失败 : 无法访问节点服务器,请检查服务器防火墙或者计算集群\n");
+                    throw new WorkRunException(errorLog("⚠️ 提交作业失败 : 无法访问节点服务器,请检查服务器防火墙或者计算集群"));
                 }
-                throw new WorkRunException(
-                    LocalDateTime.now() + WorkLog.ERROR_INFO + "提交作业失败 : " + e1.getMessage() + "\n");
+                throw new WorkRunException(errorLog("⚠️ 提交作业失败 : " + e1.getMessage()));
             }
 
-            // 保存appId
-            workRunContext.setAppId(submitWorkRes.getAppId());
-
-            // 构建作业完成，并打印作业配置信息
-            logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("提交成功 \n");
-            logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始监听状态  \n");
+            // 保存日志
+            logBuilder.append(infoLog("⌛️ 开始监听状态"));
             return updateWorkEventAndInstance(workInstance, logBuilder, workEvent, workRunContext);
         }
 
-        // 获取状态
+        // 监听作业状态
         if (workEvent.getEventProcess() == 7) {
 
+            // 获取上一次作业状态
             String preStatus = workRunContext.getPreStatus() == null ? "" : workRunContext.getPreStatus();
 
             // 提交作业成功后，开始循环判断状态
             String appId = workRunContext.getAppId();
             String clusterType = workRunContext.getClusterType();
-            String sparkHomePath = workRunContext.getSparkHomePath();
-            String agentHost = workRunContext.getAgentHost();
-            String agentPort = workRunContext.getAgentPort();
-
-            BaseResponse<?> baseResponse;
+            ClusterNodeEntity agentNode = workRunContext.getAgentNode();
 
             // 获取作业状态并保存
-            GetWorkStatusReq getWorkStatusReq =
-                GetWorkStatusReq.builder().appId(appId).clusterType(clusterType).sparkHomePath(sparkHomePath).build();
-            baseResponse =
-                HttpUtils.doPost(httpUrlUtils.genHttpUrl(agentHost, agentPort, SparkAgentUrl.GET_WORK_STATUS_URL),
-                    getWorkStatusReq, BaseResponse.class);
+            GetWorkStatusReq getWorkStatusReq = GetWorkStatusReq.builder().appId(appId).clusterType(clusterType)
+                .sparkHomePath(agentNode.getSparkHomePath()).build();
+            BaseResponse<?> baseResponse = HttpUtils.doPost(httpUrlUtils.genHttpUrl(agentNode.getHost(),
+                agentNode.getAgentPort(), SparkAgentUrl.GET_WORK_STATUS_URL), getWorkStatusReq, BaseResponse.class);
             if (!String.valueOf(HttpStatus.OK.value()).equals(baseResponse.getCode())) {
-                throw new WorkRunException(
-                    LocalDateTime.now() + WorkLog.ERROR_INFO + "获取作业状态异常 : " + baseResponse.getMsg() + "\n");
+                throw new WorkRunException(errorLog("⚠️ 获取作业状态异常 : " + baseResponse.getMsg()));
             }
 
-            // 解析返回状态，并保存
+            // 解析返回状态
             RunWorkRes workStatusRes = JSON.parseObject(JSON.toJSONString(baseResponse.getData()), RunWorkRes.class);
-            workInstance.setSparkStarRes(JSON.toJSONString(workStatusRes));
 
-            // 状态发生变化，则添加日志状态
+            // 如果作业状态发生变化，则保存状态
             if (!preStatus.equals(workStatusRes.getAppStatus())) {
-                logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("运行状态:")
-                    .append(workStatusRes.getAppStatus()).append("\n");
+                logBuilder.append(infoLog("⏩ 运行状态: " + workStatusRes.getAppStatus()));
+
+                // 更新实例
+                workInstance.setSparkStarRes(JSON.toJSONString(workStatusRes));
+                updateInstance(workInstance, logBuilder);
+
+                // 更新上下文
                 workRunContext.setPreStatus(workStatusRes.getAppStatus());
                 updateWorkEvent(workEvent, workRunContext);
-                updateInstance(workInstance, logBuilder);
             }
 
-            // 如果状态是运行中，更新日志，继续执行
+            // 如果是运行中状态，直接返回
             List<String> runningStatus =
                 Arrays.asList("RUNNING", "UNDEFINED", "SUBMITTED", "CONTAINERCREATING", "PENDING");
             if (runningStatus.contains(workStatusRes.getAppStatus().toUpperCase())) {
@@ -479,90 +455,97 @@ public class SparkSqlExecutor extends WorkExecutor {
             }
 
             // 如果是中止，直接退出
-            if ("KILLED".equals(workStatusRes.getAppStatus().toUpperCase())
-                || "TERMINATING".equals(workStatusRes.getAppStatus().toUpperCase())) {
-                throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "作业运行中止" + "\n");
+            List<String> abortStatus = Arrays.asList("KILLED", "TERMINATING");
+            if (abortStatus.contains(workStatusRes.getAppStatus().toUpperCase())) {
+                throw new WorkRunException(errorLog("⚠️ 作业运行中止"));
             }
 
-            // 状态发生变化，则添加日志状态
-            logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始保存日志和数据 \n");
+            // 其他状态则为运行结束
+            logBuilder.append(infoLog("⌛️ 开始保存作业日志和数据"));
             return updateWorkEventAndInstance(workInstance, logBuilder, workEvent, workRunContext);
         }
 
-        // 保存日志
+        // 保存作业日志和数据
         if (workEvent.getEventProcess() == 8) {
 
+            // 获取上下文
             String appId = workRunContext.getAppId();
             String clusterType = workRunContext.getClusterType();
-            String agentHomePath = workRunContext.getAgentHomePath();
-            String sparkHomePath = workRunContext.getSparkHomePath();
-            String agentHost = workRunContext.getAgentHost();
-            String agentPort = workRunContext.getAgentPort();
             String preStatus = workRunContext.getPreStatus();
-
-            BaseResponse<?> baseResponse;
+            ClusterNodeEntity agentNode = workRunContext.getAgentNode();
 
             // 获取日志并保存
             GetWorkStderrLogReq getWorkStderrLogReq = GetWorkStderrLogReq.builder().appId(appId)
-                .clusterType(clusterType).sparkHomePath(sparkHomePath).build();
-            baseResponse =
-                HttpUtils.doPost(httpUrlUtils.genHttpUrl(agentHost, agentPort, SparkAgentUrl.GET_WORK_STDERR_LOG_URL),
-                    getWorkStderrLogReq, BaseResponse.class);
+                .clusterType(clusterType).sparkHomePath(agentNode.getSparkHomePath()).build();
+            BaseResponse<?> baseResponse =
+                HttpUtils.doPost(httpUrlUtils.genHttpUrl(agentNode.getHost(), agentNode.getAgentPort(),
+                    SparkAgentUrl.GET_WORK_STDERR_LOG_URL), getWorkStderrLogReq, BaseResponse.class);
+
             if (!String.valueOf(HttpStatus.OK.value()).equals(baseResponse.getCode())) {
-                throw new WorkRunException(
-                    LocalDateTime.now() + WorkLog.ERROR_INFO + "获取作业日志异常 : " + baseResponse.getMsg() + "\n");
+                throw new WorkRunException(errorLog("⚠️ 获取作业日志异常 : " + baseResponse.getMsg()));
             }
 
             // 解析日志并保存
             GetWorkStderrLogRes yagGetLogRes =
                 JSON.parseObject(JSON.toJSONString(baseResponse.getData()), GetWorkStderrLogRes.class);
-            logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("日志保存成功 \n");
-            if (yagGetLogRes != null) {
-                workInstance.setYarnLog(yagGetLogRes.getLog());
-            }
+            workInstance.setYarnLog(yagGetLogRes.getLog());
+            logBuilder.append(infoLog("👌 日志保存成功"));
 
             // 如果运行成功，还要继续保存数据
             List<String> successStatus = Arrays.asList("FINISHED", "SUCCEEDED", "COMPLETED");
             if (successStatus.contains(preStatus.toUpperCase())) {
 
                 // 获取数据
-                GetWorkDataReq getWorkDataReq =
-                    GetWorkDataReq.builder().appId(appId).clusterType(clusterType).sparkHomePath(sparkHomePath).build();
-                baseResponse =
-                    HttpUtils.doPost(httpUrlUtils.genHttpUrl(agentHost, agentPort, SparkAgentUrl.GET_WORK_DATA_URL),
-                        getWorkDataReq, BaseResponse.class);
-
+                GetWorkDataReq getWorkDataReq = GetWorkDataReq.builder().appId(appId).clusterType(clusterType)
+                    .sparkHomePath(agentNode.getSparkHomePath()).build();
+                baseResponse = HttpUtils.doPost(httpUrlUtils.genHttpUrl(agentNode.getHost(), agentNode.getAgentPort(),
+                    SparkAgentUrl.GET_WORK_DATA_URL), getWorkDataReq, BaseResponse.class);
                 if (!String.valueOf(HttpStatus.OK.value()).equals(baseResponse.getCode())) {
-                    throw new WorkRunException(
-                        LocalDateTime.now() + WorkLog.ERROR_INFO + "获取作业数据异常 : " + baseResponse.getErr() + "\n");
+                    throw new WorkRunException(errorLog("⚠️ 获取作业数据异常 : " + baseResponse.getErr()));
                 }
 
                 // 解析数据并保存
                 workInstance.setResultData(JSON.toJSONString(baseResponse.getData()));
-                logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("数据保存成功 \n");
-                logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始清理执行文件 \n");
-                return updateWorkEventAndInstance(workInstance, logBuilder, workEvent, workRunContext);
+
+                // 保存日志
+                logBuilder.append(infoLog("👌 数据保存成功"));
+            } else {
+
+                // 其他状态为失败
+                workRunContext.setPreStatus(InstanceStatus.FAIL);
             }
+
+            // 保存日志
+            logBuilder.append(infoLog("⌛️ 开始清理执行文件"));
+            return updateWorkEventAndInstance(workInstance, logBuilder, workEvent, workRunContext);
         }
 
-        // 清楚执行文件
+        // 清理作业执行文件
         if (workEvent.getEventProcess() == 9) {
 
+            // 获取上下文
             String appId = workRunContext.getAppId();
             String clusterType = workRunContext.getClusterType();
-            String agentHomePath = workRunContext.getAgentHomePath();
-            String agentHost = workRunContext.getAgentHost();
-            String agentPort = workRunContext.getAgentPort();
-            String sparkHomePath = workRunContext.getSparkHomePath();
+            ClusterNodeEntity agentNode = workRunContext.getAgentNode();
 
+            // k8s作业要关闭作业
             if (AgentType.K8S.equals(clusterType)) {
                 StopWorkReq stopWorkReq = StopWorkReq.builder().appId(appId).clusterType(AgentType.K8S)
-                    .sparkHomePath(sparkHomePath).agentHomePath(agentHomePath).build();
-                HttpUtils.doPost(httpUrlUtils.genHttpUrl(agentHost, agentPort, SparkAgentUrl.STOP_WORK_URL),
+                    .sparkHomePath(agentNode.getAgentHomePath()).agentHomePath(agentNode.getAgentHomePath()).build();
+                HttpUtils.doPost(
+                    httpUrlUtils.genHttpUrl(agentNode.getHost(), agentNode.getPort(), SparkAgentUrl.STOP_WORK_URL),
                     stopWorkReq, BaseResponse.class);
+
             }
 
+            // 保存日志
+            logBuilder.append(infoLog("👌 清理执行文件完成"));
             updateWorkEventAndInstance(workInstance, logBuilder, workEvent, workRunContext);
+        }
+
+        // 如果最终状态为失败，抛出空异常
+        if (InstanceStatus.FAIL.equals(workRunContext.getPreStatus())) {
+            throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "⚠️ 作业最终状态为失败");
         }
 
         return InstanceStatus.SUCCESS;

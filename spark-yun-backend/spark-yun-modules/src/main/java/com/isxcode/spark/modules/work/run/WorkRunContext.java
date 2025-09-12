@@ -3,6 +3,7 @@ package com.isxcode.spark.modules.work.run;
 import com.isxcode.spark.api.agent.req.spark.SubmitWorkReq;
 import com.isxcode.spark.api.cluster.dto.ScpFileEngineNodeDto;
 import com.isxcode.spark.api.work.dto.*;
+import com.isxcode.spark.modules.cluster.entity.ClusterNodeEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -39,9 +40,7 @@ public class WorkRunContext {
 
     private ScpFileEngineNodeDto scpNodeInfo;
 
-    private String agentHomePath;
-
-    private String sparkHomePath;
+    private ClusterNodeEntity agentNode;
 
     private String preStatus;
 
@@ -146,11 +145,7 @@ public class WorkRunContext {
 
     private String log;
 
-    private SubmitWorkReq executeReq;
-
-    private String agentHost;
-
-    private String agentPort;
+    private SubmitWorkReq submitWorkReq;
 
     private String appId;
 }
