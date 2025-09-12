@@ -31,8 +31,14 @@ public class WorkEventEntity {
     @GenericGenerator(name = "sy-id-generator", strategy = "com.isxcode.spark.config.GeneratedValueConfig")
     private String id;
 
+    /**
+     * 作业运行到哪里了.
+     */
     private Integer eventProcess;
 
+    /**
+     * 事件中的上下文.
+     */
     private String eventContext;
 
     @CreatedDate

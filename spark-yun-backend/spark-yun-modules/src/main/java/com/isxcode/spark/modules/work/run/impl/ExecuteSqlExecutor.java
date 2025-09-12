@@ -92,12 +92,11 @@ public class ExecuteSqlExecutor extends WorkExecutor {
     protected String execute(WorkRunContext workRunContext, WorkInstanceEntity workInstance, WorkEventEntity workEvent)
         throws Exception {
 
-        // 获取事件上下文与日志
-        WorkRunContext workEventBody = JSON.parseObject(workEvent.getEventContext(), WorkRunContext.class);
+        // 获取日志
         StringBuilder logBuilder = new StringBuilder(workInstance.getSubmitLog());
 
         // 步骤1：校验环境、解析脚本并保存
-        if (processNeverRun(workEvent, 1)) {
+        if (workEvent.getEventProcess() == 0) {
 
             logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始检测运行环境 \n");
             if (Strings.isEmpty(workRunContext.getDatasourceId())) {
@@ -112,7 +111,13 @@ public class ExecuteSqlExecutor extends WorkExecutor {
                 throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "Sql内容为空 \n");
             }
             logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("检测运行环境完成 \n");
-            workInstance = updateInstance(workInstance, logBuilder);
+
+            // 保存事件
+            return updateWorkEventAndInstance(workInstance, logBuilder, workEvent, workRunContext);
+        }
+
+        // 步骤2：解析SQL脚本
+        if (workEvent.getEventProcess() == 1) {
 
             // 去掉sql中的注释 -> 解析上游参数 -> 系统变量 -> 系统函数
             String sqlNoComment = sqlCommentService.removeSqlComment(workRunContext.getScript());
@@ -127,29 +132,26 @@ public class ExecuteSqlExecutor extends WorkExecutor {
             }
 
             // 保存脚本到事件上下文
-            workEventBody.setScript(script);
-            workEvent.setEventContext(JSON.toJSONString(workEventBody));
-            workEventRepository.saveAndFlush(workEvent);
-
-            // 打印执行开始
+            workRunContext.setScript(script);
             logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始执行作业 \n");
-            workInstance = updateInstance(workInstance, logBuilder);
+
+            // 保存事件
+            return updateWorkEventAndInstance(workInstance, logBuilder, workEvent, workRunContext);
         }
 
-        // 步骤2：执行SQL语句
-        if (processNeverRun(workEvent, 2)) {
+        // 步骤3：执行SQL语句
+        if (workEvent.getEventProcess() == 2) {
 
             // 读取脚本
-            String script = workEventBody.getScript();
+            String script = workRunContext.getScript();
 
-            Optional<DatasourceEntity> datasourceEntityOptional =
-                datasourceRepository.findById(workRunContext.getDatasourceId());
+            Optional<DatasourceEntity> datasourceEntityOptional = datasourceRepository.findById(workRunContext.getDatasourceId());
             DatasourceEntity datasourceEntity = datasourceEntityOptional.get();
             ConnectInfo connectInfo = datasourceMapper.datasourceEntityToConnectInfo(datasourceEntity);
             Datasource datasource = dataSourceFactory.getDatasource(connectInfo.getDbType());
             connectInfo.setLoginTimeout(5);
             try (Connection connection = datasource.getConnection(connectInfo);
-                Statement statement = connection.createStatement()) {
+                 Statement statement = connection.createStatement()) {
 
                 statement.setQueryTimeout(1800);
 
@@ -170,6 +172,9 @@ public class ExecuteSqlExecutor extends WorkExecutor {
                 log.error(e.getMessage(), e);
                 throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + e.getMessage() + "\n");
             }
+
+            // 保存事件
+            updateWorkEventAndInstance(workInstance, logBuilder, workEvent, workRunContext);
         }
 
         return InstanceStatus.SUCCESS;
