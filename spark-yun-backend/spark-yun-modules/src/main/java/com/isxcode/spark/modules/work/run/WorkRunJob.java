@@ -1,9 +1,7 @@
 package com.isxcode.spark.modules.work.run;
 
-import com.alibaba.fastjson2.JSON;
 import com.isxcode.spark.api.instance.constants.InstanceStatus;
 import com.isxcode.spark.api.work.constants.QuartzPrefix;
-import com.isxcode.spark.modules.work.entity.WorkEventEntity;
 import com.isxcode.spark.modules.work.repository.WorkEventRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -42,8 +40,10 @@ public class WorkRunJob implements Job {
         // 触发作业运行
         String runStatus;
         try {
-            WorkExecutor workExecutor = workExecutorFactory.create(String.valueOf(context.getJobDetail().getJobDataMap().get(QuartzPrefix.WORK_TYPE)));
-            runStatus = workExecutor.runWork(workEventId, String.valueOf(context.getJobDetail().getJobDataMap().get(QuartzPrefix.WORK_EVENT_TYPE)));
+            WorkExecutor workExecutor = workExecutorFactory
+                .create(String.valueOf(context.getJobDetail().getJobDataMap().get(QuartzPrefix.WORK_TYPE)));
+            runStatus = workExecutor.runWork(workEventId,
+                String.valueOf(context.getJobDetail().getJobDataMap().get(QuartzPrefix.WORK_EVENT_TYPE)));
         } catch (Exception e) {
             // 作业运行漏捕获的异常，直接事件结束，防止一直调度
             log.error("WorkRunJob 执行异常: {}", e.getMessage(), e);
