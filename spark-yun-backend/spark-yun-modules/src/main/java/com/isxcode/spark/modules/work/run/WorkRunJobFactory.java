@@ -32,7 +32,8 @@ public class WorkRunJobFactory {
         TENANT_ID.set(workRunContext.getTenantId());
 
         // 初始化作业运行事件
-        WorkEventEntity workEvent = WorkEventEntity.builder().eventProcess(0).eventContext(JSON.toJSONString(workRunContext)).build();
+        WorkEventEntity workEvent =
+            WorkEventEntity.builder().eventProcess(0).eventContext(JSON.toJSONString(workRunContext)).build();
         workEvent = workEventRepository.saveAndFlush(workEvent);
 
         try {

@@ -1,6 +1,5 @@
 package com.isxcode.spark.modules.work.run.impl;
 
-import com.alibaba.fastjson.JSON;
 import com.isxcode.spark.api.datasource.dto.ConnectInfo;
 import com.isxcode.spark.api.work.constants.WorkLog;
 import com.isxcode.spark.api.work.constants.WorkType;
@@ -145,23 +144,33 @@ public class ExecuteSqlExecutor extends WorkExecutor {
             // 读取脚本
             String script = workRunContext.getScript();
 
-            Optional<DatasourceEntity> datasourceEntityOptional = datasourceRepository.findById(workRunContext.getDatasourceId());
+            Optional<DatasourceEntity> datasourceEntityOptional =
+                datasourceRepository.findById(workRunContext.getDatasourceId());
             DatasourceEntity datasourceEntity = datasourceEntityOptional.get();
             ConnectInfo connectInfo = datasourceMapper.datasourceEntityToConnectInfo(datasourceEntity);
             Datasource datasource = dataSourceFactory.getDatasource(connectInfo.getDbType());
             connectInfo.setLoginTimeout(5);
             try (Connection connection = datasource.getConnection(connectInfo);
-                 Statement statement = connection.createStatement()) {
+                Statement statement = connection.createStatement()) {
 
                 statement.setQueryTimeout(1800);
 
+                // 清除脚本中的脏数据
                 List<String> sqls =
                     Arrays.stream(script.split(";")).filter(Strings::isNotBlank).collect(Collectors.toList());
+
+                // 逐条执行sql
                 for (String sql : sqls) {
                     logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始执行SQL:\n").append(sql)
                         .append(" \n");
+
+                    // 记录开始执行时间
                     workInstance = updateInstance(workInstance, logBuilder);
+
+                    // 执行sql
                     statement.execute(sql);
+
+                    // 记录结束执行时间
                     logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("SQL执行成功 \n");
                     workInstance = updateInstance(workInstance, logBuilder);
                 }
