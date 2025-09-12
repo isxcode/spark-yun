@@ -81,11 +81,11 @@ public class QuerySqlExecutor extends WorkExecutor {
     private final Locker locker;
 
     public QuerySqlExecutor(DatasourceRepository datasourceRepository, WorkInstanceRepository workInstanceRepository,
-        WorkflowInstanceRepository workflowInstanceRepository, SqlCommentService sqlCommentService,
-        SqlFunctionService sqlFunctionService, SqlValueService sqlValueService, AlarmService alarmService,
-        DataSourceFactory dataSourceFactory, DatasourceMapper datasourceMapper, WorkEventRepository workEventRepository,
-        Scheduler scheduler, WorkRunJobFactory workRunJobFactory, VipWorkVersionRepository vipWorkVersionRepository,
-        WorkConfigRepository workConfigRepository, WorkRepository workRepository, Locker locker) {
+                            WorkflowInstanceRepository workflowInstanceRepository, SqlCommentService sqlCommentService,
+                            SqlFunctionService sqlFunctionService, SqlValueService sqlValueService, AlarmService alarmService,
+                            DataSourceFactory dataSourceFactory, DatasourceMapper datasourceMapper, WorkEventRepository workEventRepository,
+                            Scheduler scheduler, WorkRunJobFactory workRunJobFactory, VipWorkVersionRepository vipWorkVersionRepository,
+                            WorkConfigRepository workConfigRepository, WorkRepository workRepository, Locker locker) {
 
         super(alarmService, scheduler, locker, workRepository, workInstanceRepository, workflowInstanceRepository,
             workEventRepository, workRunJobFactory, sqlFunctionService, workConfigRepository, vipWorkVersionRepository);
@@ -110,56 +110,35 @@ public class QuerySqlExecutor extends WorkExecutor {
     }
 
     @Override
-    protected String execute(WorkRunContext workRunContext, WorkInstanceEntity workInstance,
-        WorkEventEntity workEvent) {
+    protected String execute(WorkRunContext workRunContext, WorkInstanceEntity workInstance, WorkEventEntity workEvent) {
 
-        // 获取作业运行上下文
-        QuerySqlExecutorContext workEventBody =
-            JSON.parseObject(workEvent.getEventContext(), QuerySqlExecutorContext.class);
-        if (workEventBody == null) {
-            workEventBody = new QuerySqlExecutorContext();
-            workEventBody.setWorkRunContext(workRunContext);
-        }
+        // 获取日志
         StringBuilder logBuilder = new StringBuilder(workInstance.getSubmitLog());
 
-        // 检查数据源配置是否合法，并保存数据源信息
-        if (processNeverRun(workEvent, 1)) {
+        // 步骤1：校验环境、解析脚本并保存
+        if (workEvent.getEventProcess() == 0) {
 
-            // 检测数据源是否配置
             logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始检测运行环境 \n");
             if (Strings.isEmpty(workRunContext.getDatasourceId())) {
                 throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "检测运行环境失败: 未配置有效数据源 \n");
             }
-
-            // 检查数据源是否存在
             Optional<DatasourceEntity> datasourceEntityOptional =
                 datasourceRepository.findById(workRunContext.getDatasourceId());
             if (!datasourceEntityOptional.isPresent()) {
                 throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "检测运行环境失败: 未配置有效数据源 \n");
             }
-            DatasourceEntity datasourceEntity = datasourceEntityOptional.get();
-
-            // 数据源检查通过
-            logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("检测运行环境完成 \n");
-            workInstance = updateInstance(workInstance, logBuilder);
-
-            // 保存数据源信息
-            workEventBody.setDatasourceEntity(datasourceEntity);
-            workEvent.setEventContext(JSON.toJSONString(workEventBody));
-            workEventRepository.saveAndFlush(workEvent);
-        }
-
-        // 检查脚本和SQL处理，保存处理后的脚本
-        if (processNeverRun(workEvent, 2)) {
-
-            // 检查脚本是否为空
             if (Strings.isEmpty(workRunContext.getScript())) {
                 throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "Sql内容为空 \n");
             }
+            logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("检测运行环境完成 \n");
 
-            // 脚本检查通过
-            logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始执行作业 \n");
-            workInstance = updateInstance(workInstance, logBuilder);
+            // 保存事件
+            return updateWorkEventAndInstance(workInstance, logBuilder, workEvent, workRunContext);
+        }
+
+        // 步骤2：解析SQL脚本
+        if (workEvent.getEventProcess() == 1) {
+
 
             // 判断实例中是否有脚本
             String script;
@@ -198,6 +177,10 @@ public class QuerySqlExecutor extends WorkExecutor {
             workEventRepository.saveAndFlush(workEvent);
         }
 
+
+        // 脚本检查通过
+            logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始执行作业 \n");
+            workInstance = updateInstance(workInstance, logBuilder);
         // 执行SQL语句，保存执行结果
         if (processNeverRun(workEvent, 3)) {
 
@@ -210,7 +193,7 @@ public class QuerySqlExecutor extends WorkExecutor {
             Datasource datasource = dataSourceFactory.getDatasource(connectInfo.getDbType());
             connectInfo.setLoginTimeout(5);
             try (Connection connection = datasource.getConnection(connectInfo);
-                Statement statement = connection.createStatement();) {
+                 Statement statement = connection.createStatement();) {
 
                 statement.setQueryTimeout(1800);
 
@@ -312,22 +295,5 @@ public class QuerySqlExecutor extends WorkExecutor {
 
         Thread thread = WORK_THREAD.get(workInstance.getId());
         thread.interrupt();
-    }
-
-    @Data
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class QuerySqlExecutorContext {
-
-        private WorkRunContext workRunContext;
-
-        private DatasourceEntity datasourceEntity;
-
-        private String script;
-
-        private List<String> sqls;
-
-        private List<List<String>> result;
     }
 }

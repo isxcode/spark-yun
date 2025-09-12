@@ -279,9 +279,6 @@ public class WorkBizService {
         return workInstanceRepository.saveAndFlush(workInstanceEntity);
     }
 
-    /**
-     * 运行作业.
-     */
     public RunWorkRes runWork(RunWorkReq runWorkReq) {
 
         // 获取作业
@@ -298,7 +295,7 @@ public class WorkBizService {
         // 封装作业运行上下文
         WorkRunContext workRunContext = genWorkRunContext(workInstance.getId(), EventType.WORK, work, workConfig);
 
-        // 异步提交作业
+        // 提交每秒定时器
         workRunFactory.execute(workRunContext);
 
         // 返回作业的实例id
