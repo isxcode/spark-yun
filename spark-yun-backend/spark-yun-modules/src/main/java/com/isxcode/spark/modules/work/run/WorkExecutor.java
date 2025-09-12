@@ -92,6 +92,12 @@ public abstract class WorkExecutor {
         return workInstanceRepository.saveAndFlush(workInstance);
     }
 
+    public void updateWorkEvent(WorkEventEntity workEvent, WorkRunContext workRunContext) {
+
+        workEvent.setEventContext(JSON.toJSONString(workRunContext));
+        workEventRepository.save(workEvent);
+    }
+
     public String updateWorkEventAndInstance(WorkInstanceEntity workInstance, StringBuilder logBuilder,
         WorkEventEntity workEvent, WorkRunContext workRunContext) {
 
