@@ -132,17 +132,11 @@ public abstract class WorkExecutor {
 
     public String runSingleWork(String workEventId) {
 
-        // 获取事件
-        Optional<WorkEventEntity> workEventEntityOptional = workEventRepository.findById(workEventId);
-        if (!workEventEntityOptional.isPresent()) {
-            return InstanceStatus.FINISHED;
-        }
-        WorkEventEntity workEvent = workEventEntityOptional.get();
-
-        // 从事件中获取上下文
+        // 获取事件和上下文
+        WorkEventEntity workEvent = workEventRepository.findById(workEventId).get();
         WorkRunContext workRunContext = JSON.parseObject(workEvent.getEventContext(), WorkRunContext.class);
 
-        // 获取作业实例
+        // 获取作业最新实例
         WorkInstanceEntity workInstance = workInstanceRepository.findById(workRunContext.getInstanceId()).get();
 
         // 中止、中止中、成功、失败，不可以再运行
