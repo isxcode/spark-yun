@@ -39,7 +39,6 @@ import java.sql.Statement;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -50,8 +49,6 @@ public class ExecuteSqlExecutor extends WorkExecutor {
 
     private final SqlCommentService sqlCommentService;
 
-    private final WorkEventRepository workEventRepository;
-
     private final SqlValueService sqlValueService;
 
     private final SqlFunctionService sqlFunctionService;
@@ -59,8 +56,6 @@ public class ExecuteSqlExecutor extends WorkExecutor {
     private final DataSourceFactory dataSourceFactory;
 
     private final DatasourceMapper datasourceMapper;
-
-    private final SecretKeyRepository secretKeyRepository;
 
     public ExecuteSqlExecutor(WorkInstanceRepository workInstanceRepository,
         WorkflowInstanceRepository workflowInstanceRepository, DatasourceRepository datasourceRepository,
@@ -78,8 +73,6 @@ public class ExecuteSqlExecutor extends WorkExecutor {
         this.sqlFunctionService = sqlFunctionService;
         this.dataSourceFactory = dataSourceFactory;
         this.datasourceMapper = datasourceMapper;
-        this.secretKeyRepository = secretKeyRepository;
-        this.workEventRepository = workEventRepository;
     }
 
     @Override
@@ -91,65 +84,74 @@ public class ExecuteSqlExecutor extends WorkExecutor {
     protected String execute(WorkRunContext workRunContext, WorkInstanceEntity workInstance, WorkEventEntity workEvent)
         throws Exception {
 
-        // 获取日志
+        // 获取实例日志
         StringBuilder logBuilder = new StringBuilder(workInstance.getSubmitLog());
 
-        // 校验环境、解析脚本并保存
+        // 打印首行日志
         if (workEvent.getEventProcess() == 0) {
+            logBuilder.append(infoLog("⌛️ 开始检测数据源"));
+            return updateWorkEventAndInstance(workInstance, logBuilder, workEvent, workRunContext);
+        }
 
-            logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始检测运行环境 \n");
+        // 检查数据源
+        if (workEvent.getEventProcess() == 1) {
+
+            // 检测数据源是否配置
             if (Strings.isEmpty(workRunContext.getDatasourceId())) {
-                throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "检测运行环境失败: 未配置有效数据源 \n");
+                throw new WorkRunException(errorLog("⚠️ 检测数据源失败: 未配置有效数据源"));
             }
-            Optional<DatasourceEntity> datasourceEntityOptional =
-                datasourceRepository.findById(workRunContext.getDatasourceId());
-            if (!datasourceEntityOptional.isPresent()) {
-                throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "检测运行环境失败: 未配置有效数据源 \n");
-            }
-            if (Strings.isEmpty(workRunContext.getScript())) {
-                throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "Sql内容为空 \n");
-            }
-            logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("检测运行环境完成 \n");
+
+            // 检查数据源是否存在
+            datasourceRepository.findById(workRunContext.getDatasourceId())
+                .orElseThrow(() -> new WorkRunException(errorLog("⚠️ 检测数据源失败: 数据源不存在")));
 
             // 保存事件
+            logBuilder.append(infoLog("👌 数据源检测正常"));
+            logBuilder.append(infoLog("⌛️ 开始检测Sql脚本"));
             return updateWorkEventAndInstance(workInstance, logBuilder, workEvent, workRunContext);
         }
 
         // 解析SQL脚本
-        if (workEvent.getEventProcess() == 1) {
+        if (workEvent.getEventProcess() == 2) {
 
-            // 去掉sql中的注释 -> 解析上游参数 -> 系统变量 -> 系统函数
-            String sqlNoComment = sqlCommentService.removeSqlComment(workRunContext.getScript());
-            String jsonPathSql = parseJsonPath(sqlNoComment, workInstance);
-            String parseValueSql = sqlValueService.parseSqlValue(jsonPathSql);
-            String script;
-            try {
-                script = sqlFunctionService.parseSqlFunction(parseValueSql);
-            } catch (Exception e) {
-                throw new WorkRunException(
-                    LocalDateTime.now() + WorkLog.ERROR_INFO + "系统函数异常\n" + e.getMessage() + "\n");
+            // 检查脚本是否为空
+            if (Strings.isEmpty(workRunContext.getScript())) {
+                throw new WorkRunException(errorLog("⚠️ 检测脚本失败 : Sql内容为空不能执行"));
             }
 
-            // 保存脚本到事件上下文
-            workRunContext.setScript(script);
-            logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始执行作业 \n");
+            // 去掉sql中的注释
+            String sqlNoComment = sqlCommentService.removeSqlComment(workRunContext.getScript());
+
+            // 解析上游参数
+            String jsonPathSql = parseJsonPath(sqlNoComment, workInstance);
+
+            // 翻译sql中的系统变量
+            String parseValueSql = sqlValueService.parseSqlValue(jsonPathSql);
+
+            // 翻译sql中的系统函数
+            String script = sqlFunctionService.parseSqlFunction(parseValueSql);
 
             // 保存事件
+            workRunContext.setScript(script);
+
+            // 保存日志
+            logBuilder.append(infoLog("👌 脚本检测正常"));
             return updateWorkEventAndInstance(workInstance, logBuilder, workEvent, workRunContext);
         }
 
-        // 执行SQL语句
-        if (workEvent.getEventProcess() == 2) {
+        // 执行脚本
+        if (workEvent.getEventProcess() == 3) {
 
-            // 读取脚本
+            // 上下文获取参数
             String script = workRunContext.getScript();
+            String datasourceId = workRunContext.getDatasourceId();
 
-            Optional<DatasourceEntity> datasourceEntityOptional =
-                datasourceRepository.findById(workRunContext.getDatasourceId());
-            DatasourceEntity datasourceEntity = datasourceEntityOptional.get();
+            // 获取数据源
+            DatasourceEntity datasourceEntity = datasourceRepository.findById(datasourceId).get();
             ConnectInfo connectInfo = datasourceMapper.datasourceEntityToConnectInfo(datasourceEntity);
             Datasource datasource = dataSourceFactory.getDatasource(connectInfo.getDbType());
             connectInfo.setLoginTimeout(5);
+
             try (Connection connection = datasource.getConnection(connectInfo);
                 Statement statement = connection.createStatement()) {
 
@@ -161,25 +163,25 @@ public class ExecuteSqlExecutor extends WorkExecutor {
 
                 // 逐条执行sql
                 for (String sql : sqls) {
-                    logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始执行SQL:\n").append(sql)
-                        .append(" \n");
 
                     // 记录开始执行时间
+                    logBuilder.append(infoLog("⌛️ 开始执行SQL"));
+                    logBuilder.append("> ").append(sql).append(" \n");
                     workInstance = updateInstance(workInstance, logBuilder);
 
                     // 执行sql
                     statement.execute(sql);
 
                     // 记录结束执行时间
-                    logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("SQL执行成功 \n");
+                    logBuilder.append(infoLog("👌 SQL执行成功"));
                     workInstance = updateInstance(workInstance, logBuilder);
                 }
 
             } catch (WorkRunException | IsxAppException e) {
-                throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + e.getMsg() + "\n");
+                throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + log + "\n" + e.getMsg());
             } catch (Exception e) {
                 log.error(e.getMessage(), e);
-                throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + e.getMessage() + "\n");
+                throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + log + "\n" + e.getMessage());
             }
 
             // 保存事件
