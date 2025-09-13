@@ -218,7 +218,7 @@ function initData(id?: string, tableLoading?: boolean) {
 
           if (id) {
             // 运行结束
-            if (workConfig.workType === 'SPARK_SQL') {
+            if (['SPARK_SQL','BASH','PYTHON'].includes(workConfig.workType)) {
               tabList.forEach((item: any) => {
                 if (['RunningLog', 'TotalDetail'].includes(item.code)) {
                   item.hide = false
@@ -227,7 +227,7 @@ function initData(id?: string, tableLoading?: boolean) {
                   item.hide = status === 'FAIL' ? true : false
                 }
               })
-            } else if (['QUERY_JDBC', 'SPARK_CONTAINER_SQL', 'PRQL', 'CURL', 'BASH', 'PYTHON'].includes(workConfig.workType)) {
+            } else if (['QUERY_JDBC', 'SPARK_CONTAINER_SQL', 'PRQL', 'CURL'].includes(workConfig.workType)) {
               tabList.forEach((item: any) => {
                 if (['ReturnData'].includes(item.code)) {
                   item.hide = status === 'FAIL' ? true : false
