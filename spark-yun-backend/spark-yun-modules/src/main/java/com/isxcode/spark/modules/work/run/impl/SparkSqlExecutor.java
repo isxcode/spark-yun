@@ -415,10 +415,10 @@ public class SparkSqlExecutor extends WorkExecutor {
         if (workEvent.getEventProcess() == 7) {
 
             // 提交作业成功后，开始循环判断状态
+            String preStatus = workRunContext.getPreStatus() == null ? "" : workRunContext.getPreStatus();
             String appId = workRunContext.getAppId();
             String clusterType = workRunContext.getClusterType();
             ClusterNodeEntity agentNode = workRunContext.getAgentNode();
-            String preStatus = workRunContext.getPreStatus() == null ? "" : workRunContext.getPreStatus();
 
             // 获取作业状态并保存
             GetWorkStatusReq getWorkStatusReq = GetWorkStatusReq.builder().appId(appId).clusterType(clusterType)
