@@ -191,7 +191,7 @@ public class SparkSqlExecutor extends WorkExecutor {
 
             // 随机选择一个节点
             ClusterNodeEntity agentNode = clusterNodes.get(new Random().nextInt(clusterNodes.size()));
-            logBuilder.append(infoLog("👌 申请资源完成，激活节点:【" + agentNode.getName() + "】"));
+            logBuilder.append(infoLog("👌 申请资源完成，激活节点: " + agentNode.getName()));
 
             // 解析请求节点信息
             ScpFileEngineNodeDto scpNode = clusterNodeMapper.engineNodeEntityToScpFileEngineNodeDto(agentNode);
@@ -414,13 +414,11 @@ public class SparkSqlExecutor extends WorkExecutor {
         // 监听作业状态
         if (workEvent.getEventProcess() == 7) {
 
-            // 获取上一次作业状态
-            String preStatus = workRunContext.getPreStatus() == null ? "" : workRunContext.getPreStatus();
-
             // 提交作业成功后，开始循环判断状态
             String appId = workRunContext.getAppId();
             String clusterType = workRunContext.getClusterType();
             ClusterNodeEntity agentNode = workRunContext.getAgentNode();
+            String preStatus = workRunContext.getPreStatus() == null ? "" : workRunContext.getPreStatus();
 
             // 获取作业状态并保存
             GetWorkStatusReq getWorkStatusReq = GetWorkStatusReq.builder().appId(appId).clusterType(clusterType)
