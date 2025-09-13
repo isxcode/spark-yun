@@ -80,7 +80,9 @@ public class QuerySqlExecutor extends WorkExecutor {
         return WorkType.QUERY_JDBC_SQL;
     }
 
-    public String execute(WorkRunContext workRunContext, WorkInstanceEntity workInstance, WorkEventEntity workEvent) {
+    @Override
+    protected String execute(WorkRunContext workRunContext, WorkInstanceEntity workInstance,
+        WorkEventEntity workEvent) {
 
         // 获取实例日志
         StringBuilder logBuilder = new StringBuilder(workInstance.getSubmitLog());
