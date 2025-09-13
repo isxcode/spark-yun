@@ -281,10 +281,7 @@ public class WorkBizService {
 
     public RunWorkRes runWork(RunWorkReq runWorkReq) {
 
-        // 获取作业
         WorkEntity work = workService.getWorkEntity(runWorkReq.getWorkId());
-
-        // 获取作业配置
         WorkConfigEntity workConfig = workConfigBizService.getWorkConfigEntity(work.getConfigId());
 
         // 初始化作业实例
