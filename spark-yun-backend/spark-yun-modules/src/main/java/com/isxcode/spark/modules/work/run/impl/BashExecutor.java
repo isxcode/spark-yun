@@ -9,7 +9,6 @@ import com.isxcode.spark.common.locker.Locker;
 import com.isxcode.spark.common.utils.aes.AesUtils;
 import com.isxcode.spark.common.utils.ssh.SshUtils;
 import com.isxcode.spark.modules.alarm.service.AlarmService;
-import com.isxcode.spark.modules.cluster.entity.ClusterEntity;
 import com.isxcode.spark.modules.cluster.entity.ClusterNodeEntity;
 import com.isxcode.spark.modules.cluster.mapper.ClusterNodeMapper;
 import com.isxcode.spark.modules.cluster.repository.ClusterNodeRepository;
@@ -104,7 +103,7 @@ public class BashExecutor extends WorkExecutor {
             }
 
             // 检测集群是否存在
-            ClusterEntity cluster = clusterRepository.findById(workRunContext.getClusterConfig().getClusterId())
+            clusterRepository.findById(workRunContext.getClusterConfig().getClusterId())
                 .orElseThrow(() -> new WorkRunException(errorLog("⚠️ 检测集群失败 : 计算引擎不存在")));
 
             // 检查计算节点是否配置
@@ -214,8 +213,7 @@ public class BashExecutor extends WorkExecutor {
                 String pidCommandResult = executeCommand(scpNodeInfo, getPidStatusCommand, false);
                 pidStatus = pidCommandResult.contains(pid) ? InstanceStatus.RUNNING : InstanceStatus.FINISHED;
             } catch (JSchException | InterruptedException | IOException e) {
-                throw new WorkRunException(
-                    LocalDateTime.now() + WorkLog.ERROR_INFO + "获取pid状态异常 : " + e.getMessage() + "\n");
+                throw new WorkRunException(errorLog("获取pid状态异常 : " + e.getMessage()));
             }
 
             // 如果状态发生变化，则保存日志
