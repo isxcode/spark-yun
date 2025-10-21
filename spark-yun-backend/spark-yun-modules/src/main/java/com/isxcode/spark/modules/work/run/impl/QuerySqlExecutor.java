@@ -191,7 +191,7 @@ public class QuerySqlExecutor extends WorkExecutor {
                     // 判断返回结果的条数，超过200条，则提出警告
                     String countSql = String.format("SELECT COUNT(*) FROM ( %s ) temp", lastSql);
 
-                    logBuilder.append(infoLog("⌛️ 执行条数检测SQL"));
+                    logBuilder.append(startLog("执行条数检测SQL"));
                     logBuilder.append("> ").append(countSql).append(" \n");
 
                     workInstance = updateInstance(workInstance, logBuilder);
