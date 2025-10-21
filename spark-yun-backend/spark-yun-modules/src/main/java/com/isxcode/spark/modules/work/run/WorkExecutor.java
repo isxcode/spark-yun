@@ -80,16 +80,12 @@ public abstract class WorkExecutor {
         return LocalDateTime.now() + WorkLog.SUCCESS_INFO + "👌 " + log + "\n";
     }
 
-    public String stausLog(String log) {
+    public String statusLog(String log) {
 
         return LocalDateTime.now() + WorkLog.SUCCESS_INFO + "⏩ " + log + "\n";
     }
 
     public WorkRunException errorLogException(String log) {
-        throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "⚠️ " + log + "\n");
-    }
-
-    public void errorLog(String log) {
         throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "⚠️ " + log + "\n");
     }
 

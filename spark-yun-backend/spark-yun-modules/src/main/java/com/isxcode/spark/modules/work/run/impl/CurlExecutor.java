@@ -133,7 +133,7 @@ public class CurlExecutor extends WorkExecutor {
                         + File.separator + workRunContext.getTenantId() + File.separator + workInstance.getId() + ".sh";
                 RuntimeUtil.execForStr(clearWorkRunFile);
             } catch (Exception e) {
-                errorLog("删除运行脚本失败 : " + e.getMessage());
+                throw errorLogException("删除运行脚本失败 : " + e.getMessage());
             }
 
             // 保存日志
@@ -143,7 +143,7 @@ public class CurlExecutor extends WorkExecutor {
 
         // 如果最终状态为失败，抛出空异常
         if (InstanceStatus.FAIL.equals(workRunContext.getPreStatus())) {
-            errorLog("作业最终状态为失败");
+            throw errorLogException("作业最终状态为失败");
         }
 
         // 最终执行成功

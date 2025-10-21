@@ -132,7 +132,7 @@ public class ApiExecutor extends WorkExecutor {
                 }
             } catch (Exception e) {
                 log.error(e.getMessage(), e);
-                errorLog("作业执行异常 : " + e.getMessage().replace("<EOL>", "\n"));
+                throw errorLogException("作业执行异常 : " + e.getMessage().replace("<EOL>", "\n"));
             }
 
             // 保存结果
