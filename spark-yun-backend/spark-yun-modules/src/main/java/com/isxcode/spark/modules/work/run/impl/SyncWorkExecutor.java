@@ -110,15 +110,15 @@ public class SyncWorkExecutor extends WorkExecutor {
     private final SecretKeyRepository secretKeyRepository;
 
     public SyncWorkExecutor(WorkInstanceRepository workInstanceRepository, ClusterRepository clusterRepository,
-        ClusterNodeRepository clusterNodeRepository, WorkflowInstanceRepository workflowInstanceRepository,
-        WorkRepository workRepository, WorkConfigRepository workConfigRepository, Locker locker,
-        HttpUrlUtils httpUrlUtils, AesUtils aesUtils, ClusterNodeMapper clusterNodeMapper,
-        DatasourceService datasourceService, IsxAppProperties isxAppProperties, FuncRepository funcRepository,
-        FuncMapper funcMapper, FileRepository fileRepository, SqlCommentService sqlCommentService,
-        SqlValueService sqlValueService, SqlFunctionService sqlFunctionService, AlarmService alarmService,
-        Scheduler scheduler, WorkEventRepository workEventRepository, WorkRunJobFactory workRunJobFactory,
-        VipWorkVersionRepository vipWorkVersionRepository, WorkService workService,
-        SecretKeyRepository secretKeyRepository) {
+                            ClusterNodeRepository clusterNodeRepository, WorkflowInstanceRepository workflowInstanceRepository,
+                            WorkRepository workRepository, WorkConfigRepository workConfigRepository, Locker locker,
+                            HttpUrlUtils httpUrlUtils, AesUtils aesUtils, ClusterNodeMapper clusterNodeMapper,
+                            DatasourceService datasourceService, IsxAppProperties isxAppProperties, FuncRepository funcRepository,
+                            FuncMapper funcMapper, FileRepository fileRepository, SqlCommentService sqlCommentService,
+                            SqlValueService sqlValueService, SqlFunctionService sqlFunctionService, AlarmService alarmService,
+                            Scheduler scheduler, WorkEventRepository workEventRepository, WorkRunJobFactory workRunJobFactory,
+                            VipWorkVersionRepository vipWorkVersionRepository, WorkService workService,
+                            SecretKeyRepository secretKeyRepository) {
 
         super(alarmService, scheduler, locker, workRepository, workInstanceRepository, workflowInstanceRepository,
             workEventRepository, workRunJobFactory, sqlFunctionService, workConfigRepository, vipWorkVersionRepository,
@@ -150,7 +150,7 @@ public class SyncWorkExecutor extends WorkExecutor {
 
     @Override
     protected String execute(WorkRunContext workRunContext, WorkInstanceEntity workInstance,
-        WorkEventEntity workEvent) {
+                             WorkEventEntity workEvent) {
 
         // 获取实例日志
         StringBuilder logBuilder = new StringBuilder(workInstance.getSubmitLog());
@@ -202,6 +202,16 @@ public class SyncWorkExecutor extends WorkExecutor {
 
         // 解析条件脚本
         if (workEvent.getEventProcess() == 2) {
+
+            // 检查分区键是否为空
+            if (Strings.isEmpty(workRunContext.getSyncWorkConfig().getPartitionColumn())) {
+                throw errorLogException("检查作业失败 : 分区键为空");
+            }
+
+            // 检测用户是否配置映射关系
+            if (workRunContext.getSyncWorkConfig().getColumnMap().isEmpty()) {
+                throw errorLogException("检查作业失败 : 请配置字段映射关系");
+            }
 
             // 过滤条件支持系统参数和函数解析
             if (!Strings.isEmpty(workRunContext.getSyncWorkConfig().getQueryCondition())) {
