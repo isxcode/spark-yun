@@ -281,6 +281,7 @@ public class WorkBizService {
 
     public RunWorkRes runWork(RunWorkReq runWorkReq) {
 
+        // 获取作业配置
         WorkEntity work = workService.getWorkEntity(runWorkReq.getWorkId());
         WorkConfigEntity workConfig = workConfigBizService.getWorkConfigEntity(work.getConfigId());
 
@@ -289,11 +290,11 @@ public class WorkBizService {
             .status(InstanceStatus.PENDING).instanceType(InstanceType.MANUAL).build();
         workInstance = workInstanceRepository.saveAndFlush(workInstance);
 
-        // 封装作业运行上下文
+        // 将作业配置封装成上下文
         WorkRunContext workRunContext = genWorkRunContext(workInstance.getId(), EventType.WORK, work, workConfig);
 
-        // 提交每秒定时器
-        workRunFactory.execute(workRunContext);
+        // 定时器出发作业运行
+        workRunFactory.run(workRunContext);
 
         // 返回作业的实例id
         return RunWorkRes.builder().instanceId(workInstance.getId()).build();

@@ -10,6 +10,7 @@ import com.isxcode.spark.common.locker.Locker;
 import com.isxcode.spark.modules.alarm.service.AlarmService;
 import com.isxcode.spark.modules.work.entity.*;
 import com.isxcode.spark.modules.work.repository.*;
+import com.isxcode.spark.modules.work.service.WorkService;
 import com.isxcode.spark.modules.work.sql.SqlFunctionService;
 import com.isxcode.spark.modules.workflow.repository.WorkflowInstanceRepository;
 
@@ -48,6 +49,8 @@ public abstract class WorkExecutor {
 
     private final VipWorkVersionRepository vipWorkVersionRepository;
 
+    private final WorkService workService;
+
     public abstract String getWorkType();
 
     /**
@@ -67,9 +70,27 @@ public abstract class WorkExecutor {
         return LocalDateTime.now() + WorkLog.SUCCESS_INFO + log + "\n";
     }
 
-    public String errorLog(String log) {
+    public String startLog(String log) {
 
-        return LocalDateTime.now() + WorkLog.ERROR_INFO + log + "\n";
+        return LocalDateTime.now() + WorkLog.SUCCESS_INFO + "⌛ " + log + "\n";
+    }
+
+    public String endLog(String log) {
+
+        return LocalDateTime.now() + WorkLog.SUCCESS_INFO + "👌 " + log + "\n";
+    }
+
+    public String stausLog(String log) {
+
+        return LocalDateTime.now() + WorkLog.SUCCESS_INFO + "⏩ " + log + "\n";
+    }
+
+    public WorkRunException errorLogException(String log) {
+        throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "⚠️ " + log + "\n");
+    }
+
+    public void errorLog(String log) {
+        throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "⚠️ " + log + "\n");
     }
 
     /**
@@ -124,11 +145,9 @@ public abstract class WorkExecutor {
         return InstanceStatus.RUNNING;
     }
 
-    /**
-     * 执行作业.
-     */
     public String runWork(String workEventId, String workEventType) {
 
+        // 执行单个作业
         if (EventType.WORK.equals(workEventType)) {
             return runSingleWork(workEventId);
         } else {
@@ -144,12 +163,12 @@ public abstract class WorkExecutor {
 
     public String runSingleWork(String workEventId) {
 
-        // 获取事件和上下文
-        WorkEventEntity workEvent = workEventRepository.findById(workEventId).get();
+        // 获取作业事件和运行上下文
+        WorkEventEntity workEvent = workService.getWorkEvent(workEventId);
         WorkRunContext workRunContext = JSON.parseObject(workEvent.getEventContext(), WorkRunContext.class);
 
-        // 获取作业最新实例
-        WorkInstanceEntity workInstance = workInstanceRepository.findById(workRunContext.getInstanceId()).get();
+        // 获取作业当前实例
+        WorkInstanceEntity workInstance = workService.getWorkInstance(workRunContext.getInstanceId());
 
         // 中止、中止中、成功、失败，不可以再运行
         if (InstanceStatus.ABORT.equals(workInstance.getStatus())
@@ -164,12 +183,12 @@ public abstract class WorkExecutor {
             workInstance.setSubmitLog(infoLog("🔥 开始提交作业"));
             workInstance.setStatus(InstanceStatus.RUNNING);
             workInstance.setExecStartDateTime(new Date());
-            workInstanceRepository.saveAndFlush(workInstance);
+            workInstanceRepository.save(workInstance);
         }
 
         try {
 
-            // 执行作业，每次都会执行
+            // 执行单个作业
             String executeStatus = execute(workRunContext, workInstance, workEvent);
 
             // 如果是运行中，直接跳过，等待下一个调度
@@ -177,11 +196,11 @@ public abstract class WorkExecutor {
                 return InstanceStatus.RUNNING;
             }
 
-            // 作业运行成功
+            // 作业运行成功，修改实例状态
             if (InstanceStatus.SUCCESS.equals(executeStatus)) {
 
                 // 只有运行中的作业，才能改成成功
-                workInstance = workInstanceRepository.findById(workRunContext.getInstanceId()).get();
+                workInstance = workService.getWorkInstance(workRunContext.getInstanceId());
                 if (InstanceStatus.RUNNING.equals(workInstance.getStatus())) {
                     workInstance.setStatus(InstanceStatus.SUCCESS);
                     workInstance.setExecEndDateTime(new Date());
@@ -189,14 +208,14 @@ public abstract class WorkExecutor {
                         (System.currentTimeMillis() - workInstance.getExecStartDateTime().getTime()) / 1000);
                     workInstance.setSubmitLog(
                         workInstance.getSubmitLog() + LocalDateTime.now() + WorkLog.SUCCESS_INFO + "✅ 执行成功 \n");
-                    workInstanceRepository.saveAndFlush(workInstance);
+                    workInstanceRepository.save(workInstance);
                 }
             }
         } catch (Exception e) {
             log.error(e.getMessage(), e);
 
             // 只有运行中的作业，才能改成失败
-            workInstance = workInstanceRepository.findById(workRunContext.getInstanceId()).get();
+            workInstance = workService.getWorkInstance(workRunContext.getInstanceId());
             if (InstanceStatus.RUNNING.equals(workInstance.getStatus())) {
                 workInstance.setStatus(InstanceStatus.FAIL);
                 workInstance.setExecEndDateTime(new Date());
@@ -209,7 +228,7 @@ public abstract class WorkExecutor {
             }
         }
 
-        // 单个作业运行结束
+        // 执行完成
         return InstanceStatus.FINISHED;
     }
 

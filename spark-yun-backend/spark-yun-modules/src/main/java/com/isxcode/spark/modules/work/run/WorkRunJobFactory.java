@@ -10,12 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.quartz.*;
 import org.springframework.stereotype.Component;
 
-import static com.isxcode.spark.common.config.CommonConfig.TENANT_ID;
-import static com.isxcode.spark.common.config.CommonConfig.USER_ID;
 
-/**
- * 作业运行，触发定时器.
- */
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -25,16 +20,12 @@ public class WorkRunJobFactory {
 
     private final WorkEventRepository workEventRepository;
 
-    public void execute(WorkRunContext workRunContext) {
-
-        // 异步赋值环境变量
-        USER_ID.set(workRunContext.getUserId());
-        TENANT_ID.set(workRunContext.getTenantId());
+    public void run(WorkRunContext workRunContext) {
 
         // 初始化作业运行事件
         WorkEventEntity workEvent =
             WorkEventEntity.builder().eventProcess(0).eventContext(JSON.toJSONString(workRunContext)).build();
-        workEvent = workEventRepository.saveAndFlush(workEvent);
+        workEvent = workEventRepository.save(workEvent);
 
         try {
             // 封装调度器的运行参数
@@ -57,7 +48,8 @@ public class WorkRunJobFactory {
             scheduler.getListenerManager().addJobListener(new QuartzJobErrorListener());
             scheduler.start();
         } catch (Exception e) {
-            throw new IsxAppException("刷新作业运行的调度器创建失败: " + e.getMessage());
+            log.error(e.getMessage(), e);
+            throw new IsxAppException("作业运行异常: " + e.getMessage());
         }
     }
 }
