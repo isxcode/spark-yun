@@ -12,9 +12,6 @@ import org.springframework.stereotype.Component;
 import static com.isxcode.spark.common.config.CommonConfig.TENANT_ID;
 import static com.isxcode.spark.common.config.CommonConfig.USER_ID;
 
-/**
- * 定时器，每秒执行作业
- */
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -30,23 +27,28 @@ public class WorkRunJob implements Job {
     @Override
     public void execute(JobExecutionContext context) {
 
-        // 获取调度器中的作业运行所需要的上下文
+        // 定时器中获取事件id
         String workEventId = String.valueOf(context.getJobDetail().getJobDataMap().get(QuartzPrefix.WORK_EVENT_ID));
 
-        // 异步刷新环境变量
+        // 刷新异步环境变量
         USER_ID.set(String.valueOf(context.getJobDetail().getJobDataMap().get(QuartzPrefix.USER_ID)));
         TENANT_ID.set(String.valueOf(context.getJobDetail().getJobDataMap().get(QuartzPrefix.TENANT_ID)));
 
-        // 触发作业运行
+        // 获取当前作业运行状态
         String runStatus;
         try {
-            WorkExecutor workExecutor = workExecutorFactory
-                .create(String.valueOf(context.getJobDetail().getJobDataMap().get(QuartzPrefix.WORK_TYPE)));
-            runStatus = workExecutor.runWork(workEventId,
-                String.valueOf(context.getJobDetail().getJobDataMap().get(QuartzPrefix.WORK_EVENT_TYPE)));
+            // 通过作业类型，获取作业执行器
+            String workType = String.valueOf(context.getJobDetail().getJobDataMap().get(QuartzPrefix.WORK_TYPE));
+            WorkExecutor workExecutor = workExecutorFactory.create(workType);
+
+            // 运行作业获取作业运行状态
+            String eventType = String.valueOf(context.getJobDetail().getJobDataMap().get(QuartzPrefix.WORK_EVENT_TYPE));
+            runStatus = workExecutor.runWork(workEventId, eventType);
+
         } catch (Exception e) {
-            // 作业运行漏捕获的异常，直接事件结束，防止一直调度
-            log.error("WorkRunJob 执行异常: {}", e.getMessage(), e);
+
+            // 捕获的作业运行可能漏掉的异常，直接完成，防止死循环
+            log.error(e.getMessage(), e);
             runStatus = InstanceStatus.FINISHED;
         }
 

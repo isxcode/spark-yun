@@ -2,12 +2,9 @@ package com.isxcode.spark.modules.work.run.impl;
 
 import com.isxcode.spark.api.cluster.dto.ScpFileEngineNodeDto;
 import com.isxcode.spark.api.instance.constants.InstanceStatus;
-import com.isxcode.spark.api.work.constants.WorkLog;
 import com.isxcode.spark.api.work.constants.WorkType;
-import com.isxcode.spark.backend.api.base.exceptions.WorkRunException;
 import com.isxcode.spark.common.locker.Locker;
 import com.isxcode.spark.common.utils.aes.AesUtils;
-import com.isxcode.spark.common.utils.ssh.SshUtils;
 import com.isxcode.spark.modules.alarm.service.AlarmService;
 import com.isxcode.spark.modules.cluster.entity.ClusterNodeEntity;
 import com.isxcode.spark.modules.cluster.mapper.ClusterNodeMapper;
@@ -23,6 +20,7 @@ import com.isxcode.spark.modules.work.repository.*;
 import com.isxcode.spark.modules.work.run.WorkExecutor;
 import com.isxcode.spark.modules.work.run.WorkRunContext;
 import com.isxcode.spark.modules.work.run.WorkRunJobFactory;
+import com.isxcode.spark.modules.work.service.WorkService;
 import com.isxcode.spark.modules.work.sql.SqlCommentService;
 import com.isxcode.spark.modules.work.sql.SqlFunctionService;
 import com.isxcode.spark.modules.work.sql.SqlValueService;
@@ -35,7 +33,6 @@ import org.quartz.Scheduler;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.regex.Pattern;
 
 import static com.isxcode.spark.common.utils.ssh.SshUtils.*;
@@ -64,10 +61,11 @@ public class BashExecutor extends WorkExecutor {
         Locker locker, WorkRepository workRepository, WorkRunJobFactory workRunJobFactory,
         WorkConfigRepository workConfigRepository, VipWorkVersionRepository vipWorkVersionRepository,
         ClusterNodeMapper clusterNodeMapper, AesUtils aesUtils, ClusterNodeRepository clusterNodeRepository,
-        ClusterRepository clusterRepository) {
+        ClusterRepository clusterRepository, WorkService workService) {
 
         super(alarmService, scheduler, locker, workRepository, workInstanceRepository, workflowInstanceRepository,
-            workEventRepository, workRunJobFactory, sqlFunctionService, workConfigRepository, vipWorkVersionRepository);
+            workEventRepository, workRunJobFactory, sqlFunctionService, workConfigRepository, vipWorkVersionRepository,
+            workService);
         this.sqlValueService = sqlValueService;
         this.sqlFunctionService = sqlFunctionService;
         this.clusterNodeMapper = clusterNodeMapper;
@@ -90,7 +88,7 @@ public class BashExecutor extends WorkExecutor {
 
         // 打印首行日志
         if (workEvent.getEventProcess() == 0) {
-            logBuilder.append(infoLog("⌛️ 开始检测集群"));
+            logBuilder.append(startLog("开始检测集群"));
             return updateWorkEventAndInstance(workInstance, logBuilder, workEvent, workRunContext);
         }
 
@@ -99,22 +97,22 @@ public class BashExecutor extends WorkExecutor {
 
             // 检查计算是否配置
             if (Strings.isEmpty(workRunContext.getClusterConfig().getClusterId())) {
-                throw new WorkRunException(errorLog("⚠️ 检测集群失败 : 计算引擎未配置"));
+                errorLog("检测集群失败 : 计算引擎未配置");
             }
 
             // 检测集群是否存在
             clusterRepository.findById(workRunContext.getClusterConfig().getClusterId())
-                .orElseThrow(() -> new WorkRunException(errorLog("⚠️ 检测集群失败 : 计算引擎不存在")));
+                .orElseThrow(() -> errorLogException("检测集群失败 : 计算引擎不存在"));
 
             // 检查计算节点是否配置
             if (Strings.isEmpty(workRunContext.getClusterConfig().getClusterNodeId())) {
-                throw new WorkRunException(errorLog("⚠️ 检测集群失败 : 指定运行节点未配置"));
+                errorLog("检测集群失败 : 指定运行节点未配置");
             }
 
             // 检测集群中节点是否存在
             ClusterNodeEntity agentNode =
                 clusterNodeRepository.findById(workRunContext.getClusterConfig().getClusterNodeId())
-                    .orElseThrow(() -> new WorkRunException(errorLog("⚠️ 检测集群失败 : 指定运行节点不存在")));
+                    .orElseThrow(() -> errorLogException("检测集群失败 : 指定运行节点不存在"));
 
             // 解析请求节点信息
             ScpFileEngineNodeDto scpNode = clusterNodeMapper.engineNodeEntityToScpFileEngineNodeDto(agentNode);
@@ -125,8 +123,8 @@ public class BashExecutor extends WorkExecutor {
             workRunContext.setAgentNode(agentNode);
 
             // 保存事件
-            logBuilder.append(infoLog("👌 集群检测正常"));
-            logBuilder.append(infoLog("⌛️ 开始检测脚本"));
+            logBuilder.append(endLog("集群检测正常"));
+            logBuilder.append(startLog("开始检测脚本"));
             return updateWorkEventAndInstance(workInstance, logBuilder, workEvent, workRunContext);
         }
 
@@ -135,7 +133,7 @@ public class BashExecutor extends WorkExecutor {
 
             // 判断执行脚本是否为空
             if (Strings.isEmpty(workRunContext.getScript())) {
-                throw new WorkRunException(errorLog("⚠️ 检测脚本失败 : Bash内容为空不能执行"));
+                errorLog("检测脚本失败 : Bash内容为空不能执行");
             }
 
             // 解析上游参数
@@ -149,16 +147,16 @@ public class BashExecutor extends WorkExecutor {
 
             // 禁用rm指令
             if (Pattern.compile("\\brm\\b", Pattern.CASE_INSENSITIVE).matcher(script).find()) {
-                throw new WorkRunException(errorLog("⚠️ 检测脚本失败 : Bash脚本包含rm指令不能执行"));
+                errorLog("检测脚本失败 : Bash脚本包含rm指令不能执行");
             }
 
             // 保存事件
             workRunContext.setScript(script);
 
             // 保存日志
-            logBuilder.append(infoLog("👌 脚本检测正常"));
+            logBuilder.append(endLog("脚本检测正常"));
             logBuilder.append(script).append("\n");
-            logBuilder.append(infoLog("⌛️ 开始执行作业"));
+            logBuilder.append(startLog("开始执行作业"));
             return updateWorkEventAndInstance(workInstance, logBuilder, workEvent, workRunContext);
         }
 
@@ -181,7 +179,7 @@ public class BashExecutor extends WorkExecutor {
                     + "/zhiqingyun-agent/works/" + workInstance.getId() + ".sh >> " + agentNode.getAgentHomePath()
                     + "/zhiqingyun-agent/works/" + workInstance.getId() + ".log 2>&1 & echo $!";
                 pid = executeCommand(scpNode, executeBashWorkCommand, false).replace("\n", "");
-                logBuilder.append(infoLog("👌 提交作业成功 pid : " + pid));
+                logBuilder.append(endLog("提交作业成功 pid : " + pid));
 
                 // 保存实例
                 workInstance.setWorkPid(pid);
@@ -190,11 +188,11 @@ public class BashExecutor extends WorkExecutor {
                 workRunContext.setPid(pid);
             } catch (JSchException | SftpException | InterruptedException | IOException e) {
                 log.debug(e.getMessage(), e);
-                throw new WorkRunException(errorLog("⚠️ 提交作业失败 : " + e.getMessage()));
+                errorLog("提交作业失败 : " + e.getMessage());
             }
 
             // 保存日志
-            logBuilder.append(infoLog("⌛️ 开始监听状态"));
+            logBuilder.append(startLog("开始监听状态"));
             return updateWorkEventAndInstance(workInstance, logBuilder, workEvent, workRunContext);
         }
 
@@ -213,12 +211,12 @@ public class BashExecutor extends WorkExecutor {
                 String pidCommandResult = executeCommand(scpNodeInfo, getPidStatusCommand, false);
                 pidStatus = pidCommandResult.contains(pid) ? InstanceStatus.RUNNING : InstanceStatus.FINISHED;
             } catch (JSchException | InterruptedException | IOException e) {
-                throw new WorkRunException(errorLog("获取pid状态异常 : " + e.getMessage()));
+                throw errorLogException("获取pid状态异常 : " + e.getMessage());
             }
 
             // 如果状态发生变化，则保存日志
             if (!preStatus.equals(pidStatus)) {
-                logBuilder.append(infoLog("⏩ 运行状态: " + pidStatus));
+                logBuilder.append(stausLog("运行状态: " + pidStatus));
 
                 // 更新实例
                 updateInstance(workInstance, logBuilder);
@@ -234,7 +232,7 @@ public class BashExecutor extends WorkExecutor {
             }
 
             // 其他状态则为运行结束
-            logBuilder.append(infoLog("⌛️ 开始保存作业日志和数据"));
+            logBuilder.append(startLog("开始保存作业日志和数据"));
             return updateWorkEventAndInstance(workInstance, logBuilder, workEvent, workRunContext);
         }
 
@@ -252,14 +250,14 @@ public class BashExecutor extends WorkExecutor {
             try {
                 logCommand = executeCommand(scpNodeInfo, getLogCommand, false);
             } catch (JSchException | InterruptedException | IOException e) {
-                throw new WorkRunException(errorLog("⚠️ 获取作业日志异常 : " + e.getMessage()));
+                throw errorLogException("获取作业日志异常 : " + e.getMessage());
             }
 
             // 解析日志并保存
             String backStr = logCommand.replace("zhiqingyun_success", "");
             workInstance.setYarnLog(backStr);
             workInstance.setResultData(backStr.substring(0, backStr.length() - 2));
-            logBuilder.append(infoLog("👌 日志保存成功"));
+            logBuilder.append(endLog("日志保存成功"));
 
             // 如果日志不包含关键字则为失败
             if (!logCommand.contains("zhiqingyun_success")) {
@@ -267,7 +265,7 @@ public class BashExecutor extends WorkExecutor {
             }
 
             // 保存日志
-            logBuilder.append(infoLog("⌛️ 开始清理执行文件"));
+            logBuilder.append(startLog("开始清理执行文件"));
             return updateWorkEventAndInstance(workInstance, logBuilder, workEvent, workRunContext);
         }
 
@@ -283,24 +281,24 @@ public class BashExecutor extends WorkExecutor {
                 String clearWorkRunFile = "rm -f " + agentNode.getAgentHomePath() + "/zhiqingyun-agent/works/"
                     + workInstance.getId() + ".log && " + "rm -f " + agentNode.getAgentHomePath()
                     + "/zhiqingyun-agent/works/" + workInstance.getId() + ".sh";
-                SshUtils.executeCommand(scpNode, clearWorkRunFile, false);
+                executeCommand(scpNode, clearWorkRunFile, false);
             } catch (JSchException | InterruptedException | IOException e) {
-                throw new WorkRunException(errorLog("⚠️ 删除运行脚本失败 : " + e.getMessage()));
+                errorLog("删除运行脚本失败 : " + e.getMessage());
             }
 
             // 保存日志
-            logBuilder.append(infoLog("👌 清理执行脚本完成"));
+            logBuilder.append(endLog("清理执行脚本完成"));
             updateWorkEventAndInstance(workInstance, logBuilder, workEvent, workRunContext);
         }
 
         // 如果最终状态为失败，抛出空异常
         if (InstanceStatus.FAIL.equals(workRunContext.getPreStatus())) {
-            throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "⚠️ 作业最终状态为失败");
+            errorLog("作业最终状态为失败");
         }
 
+        // 最终执行成功
         return InstanceStatus.SUCCESS;
     }
-
 
     @Override
     protected void abort(WorkInstanceEntity workInstance) {

@@ -167,7 +167,7 @@ public class WorkflowService {
             workRunContext.setNodeList(nodeList);
 
             // 提交定时器
-            workRunJobFactory.execute(workRunContext);
+            workRunJobFactory.run(workRunContext);
         }
 
         return workflowInstance.getId();
