@@ -227,7 +227,7 @@ function initData(id?: string, tableLoading?: boolean) {
                   item.hide = status === 'FAIL' ? true : false
                 }
               })
-            } else if (['QUERY_JDBC', 'SPARK_CONTAINER_SQL', 'PRQL', 'CURL'].includes(workConfig.workType)) {
+            } else if (['QUERY_JDBC', 'SPARK_CONTAINER_SQL', 'PRQL', 'CURL', 'PY_SPARK'].includes(workConfig.workType)) {
               tabList.forEach((item: any) => {
                 if (['ReturnData'].includes(item.code)) {
                   item.hide = status === 'FAIL' ? true : false

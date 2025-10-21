@@ -312,6 +312,11 @@ public class SparkKubernetesAgentService implements SparkAgentService {
     }
 
     @Override
+    public Map<String, String> submitWorkForPySpark(SparkLauncher sparkLauncher) throws Exception {
+        return Collections.emptyMap();
+    }
+
+    @Override
     public String getWorkStatus(String podName, String sparkHomePath) throws Exception {
 
         String getStatusCmdFormat = "kubectl get pod %s -n zhiqingyun-space";

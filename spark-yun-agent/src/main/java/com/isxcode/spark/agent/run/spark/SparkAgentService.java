@@ -3,6 +3,8 @@ package com.isxcode.spark.agent.run.spark;
 import com.isxcode.spark.api.agent.req.spark.SubmitWorkReq;
 import org.apache.spark.launcher.SparkLauncher;
 
+import java.util.Map;
+
 public interface SparkAgentService {
 
     /**
@@ -24,6 +26,11 @@ public interface SparkAgentService {
      * 执行spark作业
      */
     String submitWork(SparkLauncher sparkLauncher) throws Exception;
+
+    /**
+     * 执行spark作业
+     */
+    Map<String, String> submitWorkForPySpark(SparkLauncher sparkLauncher) throws Exception;
 
     /**
      * 获取spark作业的状态

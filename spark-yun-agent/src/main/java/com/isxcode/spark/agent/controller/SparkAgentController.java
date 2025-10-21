@@ -29,6 +29,14 @@ public class SparkAgentController {
         return sparkYunAgentBizService.submitWork(submitWorkReq);
     }
 
+    @Operation(summary = "提交作业接口")
+    @PostMapping(SparkAgentUrl.SUBMIT_WORK_FOR_PY_SPARK)
+    @SuccessResponse("提交成功")
+    public SubmitWorkRes submitWorkForPySpark(@Valid @RequestBody SubmitWorkReq submitWorkReq) {
+
+        return sparkYunAgentBizService.submitWorkForPySpark(submitWorkReq);
+    }
+
     @Operation(summary = "获取作业状态接口")
     @PostMapping(SparkAgentUrl.GET_WORK_STATUS_URL)
     @SuccessResponse("获取成功")

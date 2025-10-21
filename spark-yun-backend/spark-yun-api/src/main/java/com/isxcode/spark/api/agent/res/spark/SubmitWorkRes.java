@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Map;
+
 @Builder
 @Data
 @AllArgsConstructor
@@ -14,4 +16,6 @@ import lombok.NoArgsConstructor;
 public class SubmitWorkRes {
 
     private String appId;
+
+    private Map<String, String> result;
 }
