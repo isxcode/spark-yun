@@ -122,7 +122,7 @@ public class BashExecutor extends WorkExecutor {
             workRunContext.setScpNodeInfo(scpNode);
             workRunContext.setAgentNode(agentNode);
 
-            // 保存事件
+            // 保存日志
             logBuilder.append(endLog("集群检测正常"));
             logBuilder.append(startLog("开始检测脚本"));
             return updateWorkEventAndInstance(workInstance, logBuilder, workEvent, workRunContext);
