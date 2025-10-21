@@ -358,7 +358,7 @@ public class DatabaseMigratorExecutor extends WorkExecutor {
             workInstance.setYarnLog(yagGetLogRes.getLog());
             logBuilder.append(endLog("日志保存成功"));
 
-             // 如果运行成功，还要继续保存数据
+            // 如果运行成功，还要继续保存数据
             List<String> successStatus = Arrays.asList("FINISHED", "SUCCEEDED", "COMPLETED");
             if (!successStatus.contains(preStatus.toUpperCase())) {
                 workRunContext.setPreStatus(InstanceStatus.FAIL);
