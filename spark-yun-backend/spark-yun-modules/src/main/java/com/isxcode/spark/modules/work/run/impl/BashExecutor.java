@@ -97,7 +97,7 @@ public class BashExecutor extends WorkExecutor {
 
             // 检查计算是否配置
             if (Strings.isEmpty(workRunContext.getClusterConfig().getClusterId())) {
-                errorLog("检测集群失败 : 计算引擎未配置");
+                throw errorLogException("检测集群失败 : 计算引擎未配置");
             }
 
             // 检测集群是否存在
@@ -106,7 +106,7 @@ public class BashExecutor extends WorkExecutor {
 
             // 检查计算节点是否配置
             if (Strings.isEmpty(workRunContext.getClusterConfig().getClusterNodeId())) {
-                errorLog("检测集群失败 : 指定运行节点未配置");
+                throw errorLogException("检测集群失败 : 指定运行节点未配置");
             }
 
             // 检测集群中节点是否存在
@@ -133,7 +133,7 @@ public class BashExecutor extends WorkExecutor {
 
             // 判断执行脚本是否为空
             if (Strings.isEmpty(workRunContext.getScript())) {
-                errorLog("检测脚本失败 : Bash内容为空不能执行");
+                throw errorLogException("检测脚本失败 : Bash内容为空不能执行");
             }
 
             // 解析上游参数
@@ -147,7 +147,7 @@ public class BashExecutor extends WorkExecutor {
 
             // 禁用rm指令
             if (Pattern.compile("\\brm\\b", Pattern.CASE_INSENSITIVE).matcher(script).find()) {
-                errorLog("检测脚本失败 : Bash脚本包含rm指令不能执行");
+                throw errorLogException("检测脚本失败 : Bash脚本包含rm指令不能执行");
             }
 
             // 保存事件
@@ -188,7 +188,7 @@ public class BashExecutor extends WorkExecutor {
                 workRunContext.setPid(pid);
             } catch (JSchException | SftpException | InterruptedException | IOException e) {
                 log.debug(e.getMessage(), e);
-                errorLog("提交作业失败 : " + e.getMessage());
+                throw errorLogException("提交作业失败 : " + e.getMessage());
             }
 
             // 保存日志
@@ -216,7 +216,7 @@ public class BashExecutor extends WorkExecutor {
 
             // 如果状态发生变化，则保存日志
             if (!preStatus.equals(pidStatus)) {
-                logBuilder.append(stausLog("运行状态: " + pidStatus));
+                logBuilder.append(statusLog("运行状态: " + pidStatus));
 
                 // 更新实例
                 updateInstance(workInstance, logBuilder);
@@ -283,7 +283,7 @@ public class BashExecutor extends WorkExecutor {
                     + "/zhiqingyun-agent/works/" + workInstance.getId() + ".sh";
                 executeCommand(scpNode, clearWorkRunFile, false);
             } catch (JSchException | InterruptedException | IOException e) {
-                errorLog("删除运行脚本失败 : " + e.getMessage());
+                throw errorLogException("删除运行脚本失败 : " + e.getMessage());
             }
 
             // 保存日志
@@ -293,7 +293,7 @@ public class BashExecutor extends WorkExecutor {
 
         // 如果最终状态为失败，抛出空异常
         if (InstanceStatus.FAIL.equals(workRunContext.getPreStatus())) {
-            errorLog("作业最终状态为失败");
+            throw errorLogException("作业最终状态为失败");
         }
 
         // 最终执行成功
