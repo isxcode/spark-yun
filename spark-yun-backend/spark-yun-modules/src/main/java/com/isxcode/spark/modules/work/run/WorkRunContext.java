@@ -148,4 +148,6 @@ public class WorkRunContext {
     private SubmitWorkReq submitWorkReq;
 
     private String appId;
+
+    private String csvFileName;
 }
