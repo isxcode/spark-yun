@@ -9,6 +9,8 @@ public interface SparkAgentUrl {
 
     String SUBMIT_WORK_URL = "/" + ModuleCode.SPARK_YUN_AGENT + "/submitWork";
 
+    String SUBMIT_WORK_FOR_PY_SPARK = "/" + ModuleCode.SPARK_YUN_AGENT + "/submitWorkForPySpark";
+
     String GET_WORK_STATUS_URL = "/" + ModuleCode.SPARK_YUN_AGENT + "/getWorkStatus";
 
     String GET_WORK_DATA_URL = "/" + ModuleCode.SPARK_YUN_AGENT + "/getWorkData";

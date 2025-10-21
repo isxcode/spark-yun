@@ -17,6 +17,8 @@ import java.io.*;
 import java.net.MalformedURLException;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
+import java.util.Collections;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -188,6 +190,11 @@ public class SparkYarnAgentService implements SparkAgentService {
 
         // 如果获取不到applicationId，返回完整日志
         throw new IsxAppException("无法获取applicationId，请检查提交日志:" + errLog);
+    }
+
+    @Override
+    public Map<String, String> submitWorkForPySpark(SparkLauncher sparkLauncher) throws Exception {
+        return Collections.emptyMap();
     }
 
     @Override
