@@ -358,6 +358,12 @@ public class DatabaseMigratorExecutor extends WorkExecutor {
             workInstance.setYarnLog(yagGetLogRes.getLog());
             logBuilder.append(endLog("日志保存成功"));
 
+             // 如果运行成功，还要继续保存数据
+            List<String> successStatus = Arrays.asList("FINISHED", "SUCCEEDED", "COMPLETED");
+            if (!successStatus.contains(preStatus.toUpperCase())) {
+                workRunContext.setPreStatus(InstanceStatus.FAIL);
+            }
+
             // 保存日志
             logBuilder.append(startLog("开始清理执行文件"));
             return updateWorkEventAndInstance(workInstance, logBuilder, workEvent, workRunContext);
@@ -388,7 +394,7 @@ public class DatabaseMigratorExecutor extends WorkExecutor {
 
         // 如果最终状态为失败，抛出空异常
         if (InstanceStatus.FAIL.equals(workRunContext.getPreStatus())) {
-            throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "⚠️ 作业最终状态为失败");
+            throw errorLogException("作业最终状态为失败");
         }
 
         return InstanceStatus.SUCCESS;

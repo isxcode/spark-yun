@@ -545,7 +545,7 @@ public class SparkSqlExecutor extends WorkExecutor {
 
         // 如果最终状态为失败，抛出空异常
         if (InstanceStatus.FAIL.equals(workRunContext.getPreStatus())) {
-            throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "⚠️ 作业最终状态为失败");
+            throw errorLogException("作业最终状态为失败");
         }
 
         return InstanceStatus.SUCCESS;
