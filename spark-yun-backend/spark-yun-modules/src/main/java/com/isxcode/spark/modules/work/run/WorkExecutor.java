@@ -176,7 +176,7 @@ public abstract class WorkExecutor {
 
         // 将作业状态改成运行中
         if (InstanceStatus.PENDING.equals(workInstance.getStatus())) {
-            workInstance.setSubmitLog(infoLog("🔥 开始提交作业"));
+            workInstance.setSubmitLog(infoLog("🔥 开始运行作业"));
             workInstance.setStatus(InstanceStatus.RUNNING);
             workInstance.setExecStartDateTime(new Date());
             workInstanceRepository.save(workInstance);
@@ -203,7 +203,7 @@ public abstract class WorkExecutor {
                     workInstance.setDuration(
                         (System.currentTimeMillis() - workInstance.getExecStartDateTime().getTime()) / 1000);
                     workInstance.setSubmitLog(
-                        workInstance.getSubmitLog() + LocalDateTime.now() + WorkLog.SUCCESS_INFO + "✅ 执行成功 \n");
+                        workInstance.getSubmitLog() + LocalDateTime.now() + WorkLog.SUCCESS_INFO + "✅ 运行作业成功 \n");
                     workInstanceRepository.save(workInstance);
                 }
             }
@@ -219,7 +219,7 @@ public abstract class WorkExecutor {
                     .setDuration((System.currentTimeMillis() - workInstance.getExecStartDateTime().getTime()) / 1000);
                 workInstance.setSubmitLog(workInstance.getSubmitLog()
                     + (e instanceof WorkRunException ? ((WorkRunException) e).getMsg() : e.getMessage())
-                    + LocalDateTime.now() + WorkLog.ERROR_INFO + "❌ 执行失败");
+                    + LocalDateTime.now() + WorkLog.ERROR_INFO + "❌ 运行作业失败");
                 workInstanceRepository.saveAndFlush(workInstance);
             }
         }

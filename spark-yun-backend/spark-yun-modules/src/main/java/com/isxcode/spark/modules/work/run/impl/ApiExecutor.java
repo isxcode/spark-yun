@@ -60,7 +60,7 @@ public class ApiExecutor extends WorkExecutor {
 
         // 打印首行日志，防止前端卡顿
         if (workEvent.getEventProcess() == 0) {
-            logBuilder.append(startLog("开始检测API配置"));
+            logBuilder.append(startLog("检测API配置开始"));
             return updateWorkEventAndInstance(workInstance, logBuilder, workEvent, workRunContext);
         }
 
@@ -94,7 +94,7 @@ public class ApiExecutor extends WorkExecutor {
 
             // 保存日志
             logBuilder.append(endLog("检测API配置完成"));
-            logBuilder.append(startLog("开始执行调用"));
+            logBuilder.append(startLog("执行调用开始"));
             return updateWorkEventAndInstance(workInstance, logBuilder, workEvent, workRunContext);
         }
 
@@ -143,7 +143,7 @@ public class ApiExecutor extends WorkExecutor {
             }
 
             // 保存日志
-            logBuilder.append(endLog("执行调用成功"));
+            logBuilder.append(endLog("执行调用完成"));
             return updateWorkEventAndInstance(workInstance, logBuilder, workEvent, workRunContext);
         }
 
