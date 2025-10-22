@@ -55,56 +55,55 @@ public class ApiExecutor extends WorkExecutor {
     protected String execute(WorkRunContext workRunContext, WorkInstanceEntity workInstance,
         WorkEventEntity workEvent) {
 
-        // 获取实例日志
+        // 获取日志
         StringBuilder logBuilder = new StringBuilder(workInstance.getSubmitLog());
 
-        // 打印首行日志
+        // 打印首行日志，防止前端卡顿
         if (workEvent.getEventProcess() == 0) {
-            logBuilder.append(startLog("开始检测作业配置"));
+            logBuilder.append(startLog("开始检测API配置"));
             return updateWorkEventAndInstance(workInstance, logBuilder, workEvent, workRunContext);
         }
 
-        // 检查API配置
+        // 检测API配置
         if (workEvent.getEventProcess() == 1) {
 
             // 检查配置是否为空
             ApiWorkConfig apiWorkConfig = workRunContext.getApiWorkConfig();
             if (apiWorkConfig == null) {
-                throw errorLogException("检测作业失败 : 接口调用作业配置为空不能执行");
+                throw errorLogException("检测API配置失败 : 作业配置不能为空");
             }
 
-            // 检测作业请求方式是否符合规范
+            // 检测作业请求方式是否为空
             if (StringUtils.isBlank(apiWorkConfig.getRequestType())) {
-                throw errorLogException("检测作业失败 : 接口调用作业请求方式为空不能执行");
+                throw errorLogException("检测API配置失败 : 请求方式不能为空");
             }
 
-            // 检查请求方式
+            // 检查请求方式是否符合规范
             if (!ApiType.GET.equals(apiWorkConfig.getRequestType())
                 && !ApiType.POST.equals(apiWorkConfig.getRequestType())) {
-                throw errorLogException("检测作业失败 : 接口调用作业请求方式仅支持POST/GET");
+                throw errorLogException("检测API配置失败 : 请求方式仅支持POST/GET");
             }
 
-            // 检测接口url是否为空
+            // 检测请求接口是否为空
             if (StringUtils.isBlank(apiWorkConfig.getRequestUrl())) {
-                throw errorLogException("检测作业失败 : 接口调用作业请求url为空不能执行");
+                throw errorLogException("检测API配置失败 : 请求URL不能为空");
             }
 
-            // 保存事件
+            // 保存上下文
             workRunContext.setApiWorkConfig(apiWorkConfig);
 
             // 保存日志
-            logBuilder.append(endLog("作业检测正常"));
-            logBuilder.append(startLog("开始执行接口调用"));
+            logBuilder.append(endLog("检测API配置完成"));
+            logBuilder.append(startLog("开始执行调用"));
             return updateWorkEventAndInstance(workInstance, logBuilder, workEvent, workRunContext);
         }
 
-        // 开始执行作业
+        // 执行调用
         if (workEvent.getEventProcess() == 2) {
 
-            // 上下文获取参数
+            // 获取上下文参数
             ApiWorkConfig apiWorkConfig = workRunContext.getApiWorkConfig();
 
-            Object response = null;
             try {
 
                 // 转换一下结构
@@ -123,26 +122,35 @@ public class ApiExecutor extends WorkExecutor {
                     }
                 }
                 if (ApiType.GET.equals(apiWorkConfig.getRequestType())) {
-                    response =
+                    Object response =
                         HttpUtils.doGet(apiWorkConfig.getRequestUrl(), requestParam, requestHeader, Object.class);
+
+                    // 保存结果
+                    workInstance.setResultData(String.valueOf(response));
                 }
                 if (ApiType.POST.equals(apiWorkConfig.getRequestType())) {
-                    response = HttpUtils.doPost(apiWorkConfig.getRequestUrl(), requestHeader,
+                    Object response = HttpUtils.doPost(apiWorkConfig.getRequestUrl(), requestHeader,
                         JSON.parseObject(parseJsonPath(apiWorkConfig.getRequestBody(), workInstance), Object.class));
+
+                    // 保存结果
+                    workInstance.setResultData(String.valueOf(response));
                 }
             } catch (Exception e) {
                 log.error(e.getMessage(), e);
-                throw errorLogException("作业执行异常 : " + e.getMessage().replace("<EOL>", "\n"));
+
+                // 优化日志
+                throw errorLogException("执行调用异常 : " + e.getMessage().replace("<EOL>", "\n"));
             }
 
-            // 保存结果
-            workInstance.setResultData(String.valueOf(response));
-
             // 保存日志
-            logBuilder.append(endLog("请求成功, 查看运行结果"));
-            updateWorkEventAndInstance(workInstance, logBuilder, workEvent, workRunContext);
+            logBuilder.append(endLog("执行调用成功"));
+            return updateWorkEventAndInstance(workInstance, logBuilder, workEvent, workRunContext);
         }
 
+        // 判断状态
+        if (InstanceStatus.FAIL.equals(workRunContext.getPreStatus())) {
+            throw errorLogException("最终状态为失败");
+        }
         return InstanceStatus.SUCCESS;
     }
 
