@@ -486,7 +486,7 @@ public class SyncWorkExecutor extends WorkExecutor {
                     SparkAgentUrl.GET_WORK_STDERR_LOG_URL), getWorkStderrLogReq, BaseResponse.class);
 
             if (!String.valueOf(HttpStatus.OK.value()).equals(baseResponse.getCode())) {
-                throw errorLogException("获取作业日志异常 : " + baseResponse.getMsg());
+                throw errorLogException("保存日志异常 : " + baseResponse.getMsg());
             }
 
             // 解析日志并保存
