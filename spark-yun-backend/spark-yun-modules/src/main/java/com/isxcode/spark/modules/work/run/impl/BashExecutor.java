@@ -213,9 +213,9 @@ public class BashExecutor extends WorkExecutor {
 
             // 如果状态发生变化，则更新实例
             if (!preStatus.equals(pidStatus)) {
-                logBuilder.append(statusLog("作业当前状态: " + pidStatus));
 
                 // 更新实例
+                logBuilder.append(statusLog("作业当前状态: " + pidStatus));
                 updateInstance(workInstance, logBuilder);
 
                 // 更新上下文
