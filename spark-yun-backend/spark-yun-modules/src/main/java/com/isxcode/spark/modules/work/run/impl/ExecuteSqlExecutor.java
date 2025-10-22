@@ -1,7 +1,6 @@
 package com.isxcode.spark.modules.work.run.impl;
 
 import com.isxcode.spark.api.datasource.dto.ConnectInfo;
-import com.isxcode.spark.api.work.constants.WorkLog;
 import com.isxcode.spark.api.work.constants.WorkType;
 import com.isxcode.spark.backend.api.base.exceptions.WorkRunException;
 import com.isxcode.spark.backend.api.base.exceptions.IsxAppException;
@@ -37,7 +36,6 @@ import com.isxcode.spark.common.locker.Locker;
 
 import java.sql.Connection;
 import java.sql.Statement;
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -181,10 +179,10 @@ public class ExecuteSqlExecutor extends WorkExecutor {
                 }
 
             } catch (WorkRunException | IsxAppException e) {
-                throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + log + "\n" + e.getMsg());
+                throw errorLogException(log + "\n" + e.getMsg());
             } catch (Exception e) {
                 log.error(e.getMessage(), e);
-                throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + log + "\n" + e.getMessage());
+                throw errorLogException(log + "\n" + e.getMessage());
             }
 
             // 保存事件

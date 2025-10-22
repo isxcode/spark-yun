@@ -11,12 +11,10 @@ import com.isxcode.spark.api.api.constants.PathConstants;
 import com.isxcode.spark.api.cluster.constants.ClusterNodeStatus;
 import com.isxcode.spark.api.cluster.dto.ScpFileEngineNodeDto;
 import com.isxcode.spark.api.instance.constants.InstanceStatus;
-import com.isxcode.spark.api.work.constants.WorkLog;
 import com.isxcode.spark.api.work.constants.WorkType;
 import com.isxcode.spark.api.work.dto.ClusterConfig;
 import com.isxcode.spark.api.work.res.RunWorkRes;
 import com.isxcode.spark.backend.api.base.exceptions.IsxAppException;
-import com.isxcode.spark.backend.api.base.exceptions.WorkRunException;
 import com.isxcode.spark.backend.api.base.pojos.BaseResponse;
 import com.isxcode.spark.backend.api.base.properties.IsxAppProperties;
 import com.isxcode.spark.common.locker.Locker;
@@ -56,7 +54,6 @@ import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.*;
 
 import static com.isxcode.spark.common.utils.ssh.SshUtils.scpJar;
@@ -476,8 +473,7 @@ public class FlinkJarExecutor extends WorkExecutor {
                     List<ClusterNodeEntity> allEngineNodes = clusterNodeRepository
                         .findAllByClusterIdAndStatus(clusterConfig.getClusterId(), ClusterNodeStatus.RUNNING);
                     if (allEngineNodes.isEmpty()) {
-                        throw new WorkRunException(
-                            LocalDateTime.now() + WorkLog.ERROR_INFO + "申请资源失败 : 集群不存在可用节点，请切换一个集群  \n");
+                        throw errorLogException("申请资源失败 : 集群不存在可用节点，请切换一个集群");
                     }
                     ClusterEntity cluster = clusterRepository.findById(clusterConfig.getClusterId()).get();
 

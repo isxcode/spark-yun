@@ -152,4 +152,6 @@ public class WorkRunContext {
     private String appId;
 
     private String csvFileName;
+
+    private Integer containerPort;
 }

@@ -4,10 +4,9 @@ import com.alibaba.fastjson.JSON;
 import com.isxcode.spark.api.datasource.constants.DatasourceConfig;
 import com.isxcode.spark.api.datasource.dto.ConnectInfo;
 import com.isxcode.spark.api.instance.constants.InstanceStatus;
-import com.isxcode.spark.api.work.constants.WorkLog;
 import com.isxcode.spark.api.work.constants.WorkType;
-import com.isxcode.spark.backend.api.base.exceptions.WorkRunException;
 import com.isxcode.spark.backend.api.base.exceptions.IsxAppException;
+import com.isxcode.spark.backend.api.base.exceptions.WorkRunException;
 import com.isxcode.spark.common.locker.Locker;
 import com.isxcode.spark.modules.alarm.service.AlarmService;
 import com.isxcode.spark.modules.datasource.entity.DatasourceEntity;
@@ -31,7 +30,6 @@ import com.isxcode.spark.modules.workflow.repository.WorkflowInstanceRepository;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -244,10 +242,10 @@ public class QuerySqlExecutor extends WorkExecutor {
                 workInstance.setResultData(JSON.toJSONString(result));
                 updateInstance(workInstance, logBuilder);
             } catch (WorkRunException | IsxAppException e) {
-                throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + log + "\n" + e.getMsg());
+                throw errorLogException(log + "\n" + e.getMsg());
             } catch (Exception e) {
                 log.error(e.getMessage(), e);
-                throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + log + "\n" + e.getMessage());
+                throw errorLogException(log + "\n" + e.getMessage());
             }
 
             // 保存日志
