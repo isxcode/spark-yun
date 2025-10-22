@@ -201,7 +201,7 @@ public class SyncWorkExecutor extends WorkExecutor {
                 throw errorLogException("检测过滤条件异常 : 分区键为空");
             }
 
-            // 检测用户是否配置映射关系
+            // 检测是否配置映射关系
             if (workRunContext.getSyncWorkConfig().getColumnMap().isEmpty()) {
                 throw errorLogException("检测过滤条件异常 : 请配置字段映射关系");
             }
@@ -236,7 +236,7 @@ public class SyncWorkExecutor extends WorkExecutor {
                 logBuilder.append(script).append("\n");
             }
 
-            logBuilder.append(endLog("解析过滤条件完成"));
+            logBuilder.append(endLog("检测过滤条件完成"));
             logBuilder.append(startLog("上传函数开始"));
             return updateWorkEventAndInstance(workInstance, logBuilder, workEvent, workRunContext);
         }
@@ -469,7 +469,7 @@ public class SyncWorkExecutor extends WorkExecutor {
             return updateWorkEventAndInstance(workInstance, logBuilder, workEvent, workRunContext);
         }
 
-        // 保存日志和数据
+        // 保存日志
         if (workEvent.getEventProcess() == 8) {
 
             // 获取上下文参数
