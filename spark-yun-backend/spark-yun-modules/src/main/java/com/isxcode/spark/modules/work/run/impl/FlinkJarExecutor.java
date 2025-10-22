@@ -334,11 +334,13 @@ public class FlinkJarExecutor extends WorkExecutor {
             if (!preStatus.equals(getJobInfoRes.getStatus())) {
                 logBuilder.append(statusLog("作业当前状态: " + getJobInfoRes.getStatus()));
 
-                // 保存实例
+                // 立即保存实例
                 workInstance.setSparkStarRes(JSON.toJSONString(getJobInfoRes));
+                updateInstance(workInstance, logBuilder);
 
-                // 保存上下文
+                // 立即保存上下文
                 workRunContext.setPreStatus(getJobInfoRes.getStatus());
+                updateWorkEvent(workEvent, workRunContext);
             }
 
             // 如果是运行中状态，直接返回
