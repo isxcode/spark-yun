@@ -147,6 +147,8 @@ public class WorkRunContext {
 
     private SubmitWorkReq submitWorkReq;
 
+    private com.isxcode.spark.api.agent.req.flink.SubmitWorkReq flinkSubmitWorkReq;
+
     private String appId;
 
     private String csvFileName;
