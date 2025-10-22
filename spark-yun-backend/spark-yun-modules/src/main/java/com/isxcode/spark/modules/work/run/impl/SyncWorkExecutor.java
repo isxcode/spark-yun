@@ -94,8 +94,6 @@ public class SyncWorkExecutor extends WorkExecutor {
 
     private final FuncRepository funcRepository;
 
-    private final FuncMapper funcMapper;
-
     private final FileRepository fileRepository;
 
     private final SqlCommentService sqlCommentService;
@@ -106,16 +104,18 @@ public class SyncWorkExecutor extends WorkExecutor {
 
     private final SecretKeyRepository secretKeyRepository;
 
+    private final FuncMapper funcMapper;
+
     public SyncWorkExecutor(WorkInstanceRepository workInstanceRepository, ClusterRepository clusterRepository,
         ClusterNodeRepository clusterNodeRepository, WorkflowInstanceRepository workflowInstanceRepository,
         WorkRepository workRepository, WorkConfigRepository workConfigRepository, Locker locker,
         HttpUrlUtils httpUrlUtils, AesUtils aesUtils, ClusterNodeMapper clusterNodeMapper,
         DatasourceService datasourceService, IsxAppProperties isxAppProperties, FuncRepository funcRepository,
-        FuncMapper funcMapper, FileRepository fileRepository, SqlCommentService sqlCommentService,
-        SqlValueService sqlValueService, SqlFunctionService sqlFunctionService, AlarmService alarmService,
-        Scheduler scheduler, WorkEventRepository workEventRepository, WorkRunJobFactory workRunJobFactory,
+        FileRepository fileRepository, SqlCommentService sqlCommentService, SqlValueService sqlValueService,
+        SqlFunctionService sqlFunctionService, AlarmService alarmService, Scheduler scheduler,
+        WorkEventRepository workEventRepository, WorkRunJobFactory workRunJobFactory,
         VipWorkVersionRepository vipWorkVersionRepository, WorkService workService,
-        SecretKeyRepository secretKeyRepository) {
+        SecretKeyRepository secretKeyRepository, FuncMapper funcMapper) {
 
         super(alarmService, scheduler, locker, workRepository, workInstanceRepository, workflowInstanceRepository,
             workEventRepository, workRunJobFactory, sqlFunctionService, workConfigRepository, vipWorkVersionRepository,
@@ -132,12 +132,12 @@ public class SyncWorkExecutor extends WorkExecutor {
         this.datasourceService = datasourceService;
         this.isxAppProperties = isxAppProperties;
         this.funcRepository = funcRepository;
-        this.funcMapper = funcMapper;
         this.fileRepository = fileRepository;
         this.sqlCommentService = sqlCommentService;
         this.sqlValueService = sqlValueService;
         this.sqlFunctionService = sqlFunctionService;
         this.secretKeyRepository = secretKeyRepository;
+        this.funcMapper = funcMapper;
     }
 
     @Override
@@ -149,65 +149,61 @@ public class SyncWorkExecutor extends WorkExecutor {
     protected String execute(WorkRunContext workRunContext, WorkInstanceEntity workInstance,
         WorkEventEntity workEvent) {
 
-        // 获取实例日志
+        // 获取日志
         StringBuilder logBuilder = new StringBuilder(workInstance.getSubmitLog());
 
-        // 打印首行日志
+        // 打印首行日志，防止前端卡顿
         if (workEvent.getEventProcess() == 0) {
-            logBuilder.append(startLog("开始申请集群资源"));
+            logBuilder.append(startLog("申请计算集群资源开始"));
             return updateWorkEventAndInstance(workInstance, logBuilder, workEvent, workRunContext);
         }
 
-        // 检查集群
+        // 申请计算集群资源
         if (workEvent.getEventProcess() == 1) {
 
             // 检测集群是否配置
             if (Strings.isEmpty(workRunContext.getClusterConfig().getClusterId())) {
-                throw errorLogException("申请资源失败 : 计算引擎未配置");
+                throw errorLogException("申请计算集群资源异常 : 计算引擎未配置");
             }
 
             // 检查集群是否存在
             ClusterEntity cluster = clusterRepository.findById(workRunContext.getClusterConfig().getClusterId())
-                .orElseThrow(() -> errorLogException("申请资源失败 : 计算引擎不存在"));
+                .orElseThrow(() -> errorLogException("申请计算集群资源异常 : 计算引擎不存在"));
 
             // 检测集群中是否为空
             List<ClusterNodeEntity> clusterNodes =
                 clusterNodeRepository.findAllByClusterIdAndStatus(cluster.getId(), ClusterNodeStatus.RUNNING);
             if (clusterNodes.isEmpty()) {
-                throw errorLogException("申请资源失败 : 集群不存在可用节点，请切换一个集群");
+                throw errorLogException("申请计算集群资源异常 : 集群不存在可用节点，请切换一个集群");
             }
 
-            // 随机选择一个节点
+            // 随机选择一个节点，解析请求节点信息
             ClusterNodeEntity agentNode = clusterNodes.get(new Random().nextInt(clusterNodes.size()));
-            logBuilder.append(endLog("申请资源完成，激活节点: " + agentNode.getName()));
-
-            // 解析请求节点信息
             ScpFileEngineNodeDto scpNode = clusterNodeMapper.engineNodeEntityToScpFileEngineNodeDto(agentNode);
             scpNode.setPasswd(aesUtils.decrypt(scpNode.getPasswd()));
 
-            // 保存事件
+            // 保存上下文
             workRunContext.setClusterType(cluster.getClusterType());
             workRunContext.setScpNodeInfo(scpNode);
             workRunContext.setAgentNode(agentNode);
 
             // 保存日志
-            if (!Strings.isEmpty(workRunContext.getSyncWorkConfig().getQueryCondition())) {
-                logBuilder.append(startLog("开始检测过滤条件"));
-            }
+            logBuilder.append(endLog("申请计算集群资源完成，激活节点: " + agentNode.getName()));
+            logBuilder.append(startLog("检测过滤条件开始"));
             return updateWorkEventAndInstance(workInstance, logBuilder, workEvent, workRunContext);
         }
 
-        // 解析条件脚本
+        // 检测过滤条件
         if (workEvent.getEventProcess() == 2) {
 
-            // 检查分区键是否为空
+            // 检测分区键是否为空
             if (Strings.isEmpty(workRunContext.getSyncWorkConfig().getPartitionColumn())) {
-                throw errorLogException("检查作业失败 : 分区键为空");
+                throw errorLogException("检测过滤条件异常 : 分区键为空");
             }
 
             // 检测用户是否配置映射关系
             if (workRunContext.getSyncWorkConfig().getColumnMap().isEmpty()) {
-                throw errorLogException("检查作业失败 : 请配置字段映射关系");
+                throw errorLogException("检测过滤条件异常 : 请配置字段映射关系");
             }
 
             // 过滤条件支持系统参数和函数解析
@@ -237,21 +233,20 @@ public class SyncWorkExecutor extends WorkExecutor {
                 workRunContext.getSyncWorkConfig().setQueryCondition(script);
 
                 // 保存日志
-                logBuilder.append(endLog("解析过滤条件完成:"));
                 logBuilder.append(script).append("\n");
             }
 
-            logBuilder.append(startLog("开始上传自定义函数"));
+            logBuilder.append(endLog("解析过滤条件完成"));
+            logBuilder.append(startLog("上传函数开始"));
             return updateWorkEventAndInstance(workInstance, logBuilder, workEvent, workRunContext);
         }
 
-        // 上传自定义函数
+        // 上传函数
         if (workEvent.getEventProcess() == 3) {
 
-            // 上传自定义函数
             if (workRunContext.getFuncConfig() != null) {
 
-                // 上下文中获取参数
+                // 获取上下文参数
                 ScpFileEngineNodeDto scpNode = workRunContext.getScpNodeInfo();
                 ClusterNodeEntity agentNode = workRunContext.getAgentNode();
 
@@ -264,24 +259,23 @@ public class SyncWorkExecutor extends WorkExecutor {
                         scpJar(scpNode, funcDir + File.separator + e.getFileId(),
                             agentNode.getAgentHomePath() + "/zhiqingyun-agent/file/" + e.getFileId() + ".jar");
                     } catch (JSchException | SftpException | InterruptedException | IOException ex) {
-                        throw errorLogException("自定义函数jar文件上传失败，请检查文件是否上传或者重新上传");
+                        throw errorLogException("上传函数异常 : " + ex.getMessage());
                     }
                 });
             }
 
             // 保存日志
-            logBuilder.append(endLog("上传自定义函数完成"));
-            logBuilder.append(startLog("开始上传自定义依赖"));
+            logBuilder.append(endLog("上传函数完成"));
+            logBuilder.append(startLog("上传依赖包开始"));
             return updateWorkEventAndInstance(workInstance, logBuilder, workEvent, workRunContext);
         }
 
-        // 上传自定义依赖
+        // 上传依赖包
         if (workEvent.getEventProcess() == 4) {
 
-            // 上传自定义依赖
             if (workRunContext.getLibConfig() != null) {
 
-                // 上下文中获取参数
+                // 获取上下文参数
                 ScpFileEngineNodeDto scpNode = workRunContext.getScpNodeInfo();
                 ClusterNodeEntity agentNode = workRunContext.getAgentNode();
 
@@ -294,25 +288,25 @@ public class SyncWorkExecutor extends WorkExecutor {
                         scpJar(scpNode, libDir + File.separator + e.getId(),
                             agentNode.getAgentHomePath() + "/zhiqingyun-agent/file/" + e.getId() + ".jar");
                     } catch (JSchException | SftpException | InterruptedException | IOException ex) {
-                        throw errorLogException("自定义依赖jar文件上传失败，请检查文件是否上传或者重新上传");
+                        throw errorLogException("上传依赖包异常 : " + ex.getMessage());
                     }
                 });
             }
 
             // 保存日志
-            logBuilder.append(endLog("上传自定义依赖完成"));
-            logBuilder.append(startLog("开始上传同步文件"));
+            logBuilder.append(endLog("上传依赖包完成"));
+            logBuilder.append(startLog("构建请求体开始"));
             return updateWorkEventAndInstance(workInstance, logBuilder, workEvent, workRunContext);
         }
 
-        // 构建作业请求体
+        // 构建请求体
         if (workEvent.getEventProcess() == 5) {
 
-            // 上下文中获取参数
+            // 获取上下文参数
             String clusterType = workRunContext.getClusterType();
             ClusterNodeEntity agentNode = workRunContext.getAgentNode();
 
-            // 构建请求体
+            // 构造代理请求体
             SubmitWorkReq submitWorkReq = new SubmitWorkReq();
             submitWorkReq.setWorkId(workRunContext.getWorkId());
             submitWorkReq.setWorkType(WorkType.DATA_SYNC_JDBC);
@@ -339,7 +333,7 @@ public class SyncWorkExecutor extends WorkExecutor {
                 .user(targetDatasource.getUsername()).password(aesUtils.decrypt(targetDatasource.getPasswd())).build();
             workRunContext.getSyncWorkConfig().setTargetDatabase(targetConfig);
 
-            // 开始构造SparkSubmit
+            // 构建Spark提交请求体
             SparkSubmit sparkSubmit =
                 SparkSubmit.builder().verbose(true).mainClass("com.isxcode.spark.plugin.dataSync.jdbc.Execute")
                     .appResource("spark-data-sync-jdbc-plugin.jar")
@@ -351,39 +345,53 @@ public class SyncWorkExecutor extends WorkExecutor {
                 sparkSubmit.getConf().put("qing.hive.username", sourceDatasource.getUsername());
             }
 
-            // 构建插件请求体
+            // 构建Spark插件运行请求体
             PluginReq pluginReq = PluginReq.builder().syncWorkConfig(workRunContext.getSyncWorkConfig())
                 .sparkConfig(genSparkConfig(workRunContext.getClusterConfig().getSparkConfig()))
                 .syncRule(workRunContext.getSyncRule()).build();
 
-            // 保存请求体
+            // 配置函数
+            if (workRunContext.getFuncConfig() != null) {
+                List<FuncEntity> allFunc = funcRepository.findAllById(workRunContext.getFuncConfig());
+                pluginReq.setFuncInfoList(funcMapper.funcEntityListToFuncInfoList(allFunc));
+                submitWorkReq.setFuncConfig(funcMapper.funcEntityListToFuncInfoList(allFunc));
+            }
+
+            // 配置依赖包
+            if (workRunContext.getLibConfig() != null) {
+                submitWorkReq.setLibConfig(workRunContext.getLibConfig());
+            }
+
+            // 保存上下文
             submitWorkReq.setSparkSubmit(sparkSubmit);
             submitWorkReq.setPluginReq(pluginReq);
             workRunContext.setSubmitWorkReq(submitWorkReq);
 
             // 保存日志
-            logBuilder.append(endLog("构建作业完成"));
+            logBuilder.append(endLog("构建请求体完成"));
             workRunContext.getClusterConfig().getSparkConfig()
                 .forEach((k, v) -> logBuilder.append(k).append(":").append(v).append(" \n"));
-            logBuilder.append(startLog("开始提交作业"));
+            logBuilder.append(startLog("提交作业开始"));
             return updateWorkEventAndInstance(workInstance, logBuilder, workEvent, workRunContext);
         }
 
         // 提交作业
         if (workEvent.getEventProcess() == 6) {
 
-            // 上下文中获取参数
+            // 获取上下文参数
             SubmitWorkReq submitWorkReq = workRunContext.getSubmitWorkReq();
             ClusterNodeEntity agentNode = workRunContext.getAgentNode();
 
-            // 开始提交作业
             try {
+                // 提交作业
                 BaseResponse<?> baseResponse = HttpUtils.doPost(httpUrlUtils.genHttpUrl(agentNode.getHost(),
                     agentNode.getAgentPort(), SparkAgentUrl.SUBMIT_WORK_URL), submitWorkReq, BaseResponse.class);
                 if (!String.valueOf(HttpStatus.OK.value()).equals(baseResponse.getCode())
                     || baseResponse.getData() == null) {
-                    throw errorLogException("提交作业失败 : " + baseResponse.getMsg());
+                    throw errorLogException("提交作业异常 : " + baseResponse.getMsg());
                 }
+
+                // 获取appId
                 RunWorkRes submitWorkRes =
                     JSON.parseObject(JSON.toJSONString(baseResponse.getData()), RunWorkRes.class);
                 logBuilder.append(endLog("提交作业成功 : " + submitWorkRes.getAppId()));
@@ -395,24 +403,24 @@ public class SyncWorkExecutor extends WorkExecutor {
                 workRunContext.setAppId(submitWorkRes.getAppId());
             } catch (ResourceAccessException e) {
                 log.error(e.getMessage(), e);
-                throw errorLogException("提交作业失败 : " + e.getMessage());
+                throw errorLogException("提交作业异常 : " + e.getMessage());
             } catch (HttpServerErrorException e1) {
                 log.error(e1.getMessage(), e1);
                 if (HttpStatus.BAD_GATEWAY.value() == e1.getRawStatusCode()) {
-                    throw errorLogException("提交作业失败 : 无法访问节点服务器,请检查服务器防火墙或者计算集群");
+                    throw errorLogException("提交作业异常 : 无法访问节点服务器,请检查服务器防火墙或者计算集群");
                 }
-                throw errorLogException("提交作业失败 : " + e1.getMessage());
+                throw errorLogException("提交作业异常 : " + e1.getMessage());
             }
 
             // 保存日志
-            logBuilder.append(startLog("开始监听状态"));
+            logBuilder.append(startLog("监听作业状态"));
             return updateWorkEventAndInstance(workInstance, logBuilder, workEvent, workRunContext);
         }
 
         // 监听作业状态
         if (workEvent.getEventProcess() == 7) {
 
-            // 提交作业成功后，开始循环判断状态
+            // 获取上下文参数
             String preStatus = workRunContext.getPreStatus() == null ? "" : workRunContext.getPreStatus();
             String appId = workRunContext.getAppId();
             String clusterType = workRunContext.getClusterType();
@@ -427,18 +435,18 @@ public class SyncWorkExecutor extends WorkExecutor {
                 throw errorLogException("获取作业状态异常 : " + baseResponse.getMsg());
             }
 
-            // 解析返回状态
+            // 解析作业运行状态
             RunWorkRes workStatusRes = JSON.parseObject(JSON.toJSONString(baseResponse.getData()), RunWorkRes.class);
 
-            // 如果作业状态发生变化，则保存状态
+            // 只有作业状态发生了变化，才能更新状态
             if (!preStatus.equals(workStatusRes.getAppStatus())) {
                 logBuilder.append(statusLog("运行状态: " + workStatusRes.getAppStatus()));
 
-                // 更新实例
+                // 立即保存实例
                 workInstance.setSparkStarRes(JSON.toJSONString(workStatusRes));
                 updateInstance(workInstance, logBuilder);
 
-                // 更新上下文
+                // 立即保存上下文
                 workRunContext.setPreStatus(workStatusRes.getAppStatus());
                 updateWorkEvent(workEvent, workRunContext);
             }
@@ -457,14 +465,14 @@ public class SyncWorkExecutor extends WorkExecutor {
             }
 
             // 其他状态则为运行结束
-            logBuilder.append(startLog("开始保存作业日志和数据"));
+            logBuilder.append(startLog("保存日志开始"));
             return updateWorkEventAndInstance(workInstance, logBuilder, workEvent, workRunContext);
         }
 
-        // 保存作业日志和数据
+        // 保存日志和数据
         if (workEvent.getEventProcess() == 8) {
 
-            // 获取上下文
+            // 获取上下文参数
             String appId = workRunContext.getAppId();
             String clusterType = workRunContext.getClusterType();
             String preStatus = workRunContext.getPreStatus();
@@ -484,8 +492,10 @@ public class SyncWorkExecutor extends WorkExecutor {
             // 解析日志并保存
             GetWorkStderrLogRes yagGetLogRes =
                 JSON.parseObject(JSON.toJSONString(baseResponse.getData()), GetWorkStderrLogRes.class);
-            workInstance.setYarnLog(yagGetLogRes.getLog());
-            logBuilder.append(endLog("日志保存成功"));
+            if (yagGetLogRes != null) {
+                workInstance.setYarnLog(yagGetLogRes.getLog());
+            }
+            logBuilder.append(endLog("保存日志完成"));
 
             // 如果运行成功，还要继续保存数据
             List<String> successStatus = Arrays.asList("FINISHED", "SUCCEEDED", "COMPLETED");
@@ -494,14 +504,14 @@ public class SyncWorkExecutor extends WorkExecutor {
             }
 
             // 保存日志
-            logBuilder.append(startLog("开始清理执行文件"));
+            logBuilder.append(startLog("清理缓存文件开始"));
             return updateWorkEventAndInstance(workInstance, logBuilder, workEvent, workRunContext);
         }
 
-        // 清理作业执行文件
+        // 清理缓存文件
         if (workEvent.getEventProcess() == 9) {
 
-            // 获取上下文
+            // 获取上下文参数
             String appId = workRunContext.getAppId();
             String clusterType = workRunContext.getClusterType();
             ClusterNodeEntity agentNode = workRunContext.getAgentNode();
@@ -517,15 +527,14 @@ public class SyncWorkExecutor extends WorkExecutor {
             }
 
             // 保存日志
-            logBuilder.append(endLog("清理执行文件完成"));
-            updateWorkEventAndInstance(workInstance, logBuilder, workEvent, workRunContext);
+            logBuilder.append(endLog("清理缓存文件完成"));
+            return updateWorkEventAndInstance(workInstance, logBuilder, workEvent, workRunContext);
         }
 
-        // 如果最终状态为失败，抛出空异常
+        // 判断状态
         if (InstanceStatus.FAIL.equals(workRunContext.getPreStatus())) {
-            throw errorLogException("作业最终状态为失败");
+            throw errorLogException("最终状态为失败");
         }
-
         return InstanceStatus.SUCCESS;
     }
 

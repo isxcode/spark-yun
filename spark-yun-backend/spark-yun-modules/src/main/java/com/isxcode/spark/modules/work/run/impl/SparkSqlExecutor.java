@@ -233,8 +233,8 @@ public class SparkSqlExecutor extends WorkExecutor {
             workRunContext.setScript(script);
 
             // 保存日志
-            logBuilder.append(endLog("检测SparkSQL完成"));
             logBuilder.append(script).append("\n");
+            logBuilder.append(endLog("检测SparkSQL完成"));
             logBuilder.append(startLog("上传函数开始"));
             return updateWorkEventAndInstance(workInstance, logBuilder, workEvent, workRunContext);
         }
@@ -377,7 +377,7 @@ public class SparkSqlExecutor extends WorkExecutor {
                     agentNode.getAgentPort(), SparkAgentUrl.SUBMIT_WORK_URL), submitWorkReq, BaseResponse.class);
                 if (!String.valueOf(HttpStatus.OK.value()).equals(baseResponse.getCode())
                     || baseResponse.getData() == null) {
-                    throw errorLogException("提交作业异常vs : " + baseResponse.getMsg());
+                    throw errorLogException("提交作业异常 : " + baseResponse.getMsg());
                 }
 
                 // 获取appId
@@ -534,12 +534,12 @@ public class SparkSqlExecutor extends WorkExecutor {
 
             // 保存日志
             logBuilder.append(endLog("清理缓存文件完成"));
-            updateWorkEventAndInstance(workInstance, logBuilder, workEvent, workRunContext);
+            return updateWorkEventAndInstance(workInstance, logBuilder, workEvent, workRunContext);
         }
 
         // 判断状态
         if (InstanceStatus.FAIL.equals(workRunContext.getPreStatus())) {
-            throw errorLogException("最终状态为异常");
+            throw errorLogException("最终状态为失败");
         }
         return InstanceStatus.SUCCESS;
     }
