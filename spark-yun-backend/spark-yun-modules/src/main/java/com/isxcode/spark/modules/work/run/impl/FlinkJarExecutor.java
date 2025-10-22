@@ -400,12 +400,12 @@ public class FlinkJarExecutor extends WorkExecutor {
                     || workInstance.getYarnLog().contains("Caused by:"))) {
                     throw errorLogException("任务运行异常");
                 }
-                // 如果是yarn容器部署需要注意,状态是finish但是实际可能失败
+                // 如果是yarn容器部署需要注意,状态是finish但是实际可能异常
                 if (AgentType.YARN.equals(clusterType) && workInstance.getYarnLog().contains("Caused by:")) {
                     throw errorLogException("任务运行异常");
                 }
             } else {
-                // 其他状态为失败
+                // 其他状态为异常
                 workRunContext.setPreStatus(InstanceStatus.FAIL);
             }
 
@@ -425,7 +425,7 @@ public class FlinkJarExecutor extends WorkExecutor {
             // k8s作业要关闭作业
             if (AgentType.K8S.equals(clusterType)) {
 
-                // k8s失败主动停止，否则一直重试
+                // k8s异常主动停止，否则一直重试
                 StopWorkReq stopWorkReq = StopWorkReq.builder().flinkHome(agentNode.getFlinkHomePath()).appId(appId)
                     .clusterType(clusterType).build();
                 new RestTemplate().postForObject(

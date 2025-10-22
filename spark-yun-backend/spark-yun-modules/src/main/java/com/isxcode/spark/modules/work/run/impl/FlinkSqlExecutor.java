@@ -347,7 +347,7 @@ public class FlinkSqlExecutor extends WorkExecutor {
                     agentNode.getAgentPort(), FlinkAgentUrl.SUBMIT_WORK_URL), submitWorkReq, BaseResponse.class);
                 if (!String.valueOf(HttpStatus.OK.value()).equals(baseResponse.getCode())
                     || baseResponse.getData() == null) {
-                    throw errorLogException("提交作业失败 : " + baseResponse.getMsg());
+                    throw errorLogException("提交作业异常 : " + baseResponse.getMsg());
                 }
 
                 // 获取appId
@@ -469,12 +469,12 @@ public class FlinkSqlExecutor extends WorkExecutor {
                     || workInstance.getYarnLog().contains("Caused by:"))) {
                     throw errorLogException("任务运行异常");
                 }
-                // 如果是yarn容器部署需要注意,状态是finish但是实际可能失败
+                // 如果是yarn容器部署需要注意,状态是finish但是实际可能异常
                 if (AgentType.YARN.equals(clusterType) && workInstance.getYarnLog().contains("Caused by:")) {
                     throw errorLogException("任务运行异常");
                 }
             } else {
-                // 其他状态为失败
+                // 其他状态为异常
                 workRunContext.setPreStatus(InstanceStatus.FAIL);
             }
 
@@ -494,7 +494,7 @@ public class FlinkSqlExecutor extends WorkExecutor {
             // k8s作业要关闭作业
             if (AgentType.K8S.equals(clusterType)) {
 
-                // k8s失败主动停止，否则一直重试
+                // k8s异常主动停止，否则一直重试
                 StopWorkReq stopWorkReq = StopWorkReq.builder().flinkHome(agentNode.getFlinkHomePath()).appId(appId)
                     .clusterType(clusterType).build();
                 new RestTemplate().postForObject(
@@ -532,7 +532,7 @@ public class FlinkSqlExecutor extends WorkExecutor {
                     List<ClusterNodeEntity> allEngineNodes = clusterNodeRepository
                         .findAllByClusterIdAndStatus(clusterConfig.getClusterId(), ClusterNodeStatus.RUNNING);
                     if (allEngineNodes.isEmpty()) {
-                        throw errorLogException("申请资源失败 : 集群不存在可用节点，请切换一个集群");
+                        throw errorLogException("申请资源异常 : 集群不存在可用节点，请切换一个集群");
                     }
                     ClusterEntity cluster = clusterRepository.findById(clusterConfig.getClusterId()).get();
 
