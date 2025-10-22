@@ -90,22 +90,22 @@ public class BashExecutor extends WorkExecutor {
 
             // 检查计算是否配置
             if (Strings.isEmpty(workRunContext.getClusterConfig().getClusterId())) {
-                throw errorLogException("检测服务器节点失败 : 计算引擎未配置");
+                throw errorLogException("检测服务器节点异常 : 计算引擎未配置");
             }
 
             // 检测集群是否存在
             clusterRepository.findById(workRunContext.getClusterConfig().getClusterId())
-                .orElseThrow(() -> errorLogException("检测服务器节点失败 : 计算引擎不存在"));
+                .orElseThrow(() -> errorLogException("检测服务器节点异常 : 计算引擎不存在"));
 
             // 检查计算节点是否配置
             if (Strings.isEmpty(workRunContext.getClusterConfig().getClusterNodeId())) {
-                throw errorLogException("检测服务器节点失败 : 指定运行节点未配置");
+                throw errorLogException("检测服务器节点异常 : 指定运行节点未配置");
             }
 
             // 检测集群中节点是否存在
             ClusterNodeEntity agentNode =
                 clusterNodeRepository.findById(workRunContext.getClusterConfig().getClusterNodeId())
-                    .orElseThrow(() -> errorLogException("检测服务器节点失败 : 指定运行节点不存在"));
+                    .orElseThrow(() -> errorLogException("检测服务器节点异常 : 指定运行节点不存在"));
 
             // 解析请求节点信息
             ScpFileEngineNodeDto scpNode = clusterNodeMapper.engineNodeEntityToScpFileEngineNodeDto(agentNode);
@@ -126,7 +126,7 @@ public class BashExecutor extends WorkExecutor {
 
             // 检测脚本是否为空
             if (Strings.isEmpty(workRunContext.getScript())) {
-                throw errorLogException("检测Bash脚本失败 : Bash脚本不能为空");
+                throw errorLogException("检测Bash脚本异常 : Bash脚本不能为空");
             }
 
             // 解析上游参数
@@ -140,7 +140,7 @@ public class BashExecutor extends WorkExecutor {
 
             // 禁用rm指令
             if (Pattern.compile("\\brm\\b", Pattern.CASE_INSENSITIVE).matcher(script).find()) {
-                throw errorLogException("检测Bash脚本失败 : Bash脚本中禁止包含rm命令");
+                throw errorLogException("检测Bash脚本异常 : Bash脚本中禁止包含rm命令");
             }
 
             // 保存事件
@@ -182,7 +182,7 @@ public class BashExecutor extends WorkExecutor {
                 log.error(e.getMessage(), e);
 
                 // 优化日志
-                throw errorLogException("提交作业失败 : " + e.getMessage());
+                throw errorLogException("提交作业异常 : " + e.getMessage());
             }
 
             // 保存日志
@@ -255,7 +255,7 @@ public class BashExecutor extends WorkExecutor {
             workInstance.setYarnLog(backStr);
             workInstance.setResultData(backStr.substring(0, backStr.length() - 2));
 
-            // 如果日志不包含关键字则为失败
+            // 如果日志不包含关键字则为异常
             if (!logCommand.contains("zhiqingyun_success")) {
                 workRunContext.setPreStatus(InstanceStatus.FAIL);
             }
@@ -280,7 +280,7 @@ public class BashExecutor extends WorkExecutor {
                     + "/zhiqingyun-agent/works/" + workInstance.getId() + ".sh";
                 executeCommand(scpNode, clearWorkRunFile, false);
             } catch (JSchException | InterruptedException | IOException e) {
-                throw errorLogException("清理缓存文件失败 : " + e.getMessage());
+                throw errorLogException("清理缓存文件异常 : " + e.getMessage());
             }
 
             // 保存日志
@@ -290,7 +290,7 @@ public class BashExecutor extends WorkExecutor {
 
         // 判断状态
         if (InstanceStatus.FAIL.equals(workRunContext.getPreStatus())) {
-            throw errorLogException("最终状态为失败");
+            throw errorLogException("最终状态为异常");
         }
         return InstanceStatus.SUCCESS;
     }
