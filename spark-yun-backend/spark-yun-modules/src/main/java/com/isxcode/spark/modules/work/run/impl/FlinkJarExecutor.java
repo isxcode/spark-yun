@@ -181,9 +181,9 @@ public class FlinkJarExecutor extends WorkExecutor {
                 scpJar(scpNode, jarDir + File.separator + workRunContext.getJarJobConfig().getJarFileId(),
                     agentNode.getAgentHomePath() + "/zhiqingyun-agent/file/"
                         + workRunContext.getJarJobConfig().getJarFileId() + ".jar");
-            } catch (JSchException | SftpException | InterruptedException | IOException ex) {
-                log.debug(ex.getMessage());
-                throw errorLogException("上传Jar包异常 : " + ex.getMessage());
+            } catch (JSchException | SftpException | InterruptedException | IOException e) {
+                log.error(e.getMessage());
+                throw errorLogException("上传Jar包异常 : " + e.getMessage());
             }
 
             // 保存日志
@@ -290,7 +290,6 @@ public class FlinkJarExecutor extends WorkExecutor {
 
                 // 保存上下文
                 workRunContext.setAppId(submitJobRes.getAppId());
-
             } catch (ResourceAccessException e) {
                 log.error(e.getMessage(), e);
                 throw errorLogException("提交作业异常 : " + e.getMessage());
