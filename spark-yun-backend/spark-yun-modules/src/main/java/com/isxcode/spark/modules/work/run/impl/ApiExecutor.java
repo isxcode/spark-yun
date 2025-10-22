@@ -70,23 +70,23 @@ public class ApiExecutor extends WorkExecutor {
             // 检查配置是否为空
             ApiWorkConfig apiWorkConfig = workRunContext.getApiWorkConfig();
             if (apiWorkConfig == null) {
-                throw errorLogException("检测API配置失败 : 作业配置不能为空");
+                throw errorLogException("检测API配置异常 : 作业配置不能为空");
             }
 
             // 检测作业请求方式是否为空
             if (StringUtils.isBlank(apiWorkConfig.getRequestType())) {
-                throw errorLogException("检测API配置失败 : 请求方式不能为空");
+                throw errorLogException("检测API配置异常 : 请求方式不能为空");
             }
 
             // 检查请求方式是否符合规范
             if (!ApiType.GET.equals(apiWorkConfig.getRequestType())
                 && !ApiType.POST.equals(apiWorkConfig.getRequestType())) {
-                throw errorLogException("检测API配置失败 : 请求方式仅支持POST/GET");
+                throw errorLogException("检测API配置异常 : 请求方式仅支持POST/GET");
             }
 
             // 检测请求接口是否为空
             if (StringUtils.isBlank(apiWorkConfig.getRequestUrl())) {
-                throw errorLogException("检测API配置失败 : 请求URL不能为空");
+                throw errorLogException("检测API配置异常 : 请求URL不能为空");
             }
 
             // 保存上下文
@@ -149,7 +149,7 @@ public class ApiExecutor extends WorkExecutor {
 
         // 判断状态
         if (InstanceStatus.FAIL.equals(workRunContext.getPreStatus())) {
-            throw errorLogException("最终状态为失败");
+            throw errorLogException("最终状态为异常");
         }
         return InstanceStatus.SUCCESS;
     }
