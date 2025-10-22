@@ -188,7 +188,7 @@ public class ExecuteSqlExecutor extends WorkExecutor {
 
             // 保存日志
             logBuilder.append(startLog("执行SQL脚本完成"));
-            updateWorkEventAndInstance(workInstance, logBuilder, workEvent, workRunContext);
+            return updateWorkEventAndInstance(workInstance, logBuilder, workEvent, workRunContext);
         }
 
         // 判断状态
