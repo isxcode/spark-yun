@@ -219,8 +219,8 @@ public class FlinkSqlExecutor extends WorkExecutor {
             workRunContext.setScript(script);
 
             // 保存日志
-            logBuilder.append(endLog("检测FlinkSQL完成:"));
             logBuilder.append(script).append("\n");
+            logBuilder.append(endLog("检测FlinkSQL完成"));
             logBuilder.append(startLog("上传函数开始"));
             return updateWorkEventAndInstance(workInstance, logBuilder, workEvent, workRunContext);
         }
@@ -509,7 +509,7 @@ public class FlinkSqlExecutor extends WorkExecutor {
 
         // 判断状态
         if (InstanceStatus.FAIL.equals(workRunContext.getPreStatus())) {
-            throw errorLogException("最终状态为异常");
+            throw errorLogException("最终状态为失败");
         }
         return InstanceStatus.SUCCESS;
     }

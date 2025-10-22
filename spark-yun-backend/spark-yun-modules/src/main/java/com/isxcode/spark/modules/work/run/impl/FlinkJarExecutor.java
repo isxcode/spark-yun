@@ -440,7 +440,7 @@ public class FlinkJarExecutor extends WorkExecutor {
 
         // 判断状态
         if (InstanceStatus.FAIL.equals(workRunContext.getPreStatus())) {
-            throw errorLogException("最终状态为异常");
+            throw errorLogException("最终状态为失败");
         }
         return InstanceStatus.SUCCESS;
     }
