@@ -246,14 +246,14 @@ public class SparkJarExecutor extends WorkExecutor {
                     .appResource(workRunContext.getJarJobConfig().getJarFileId() + ".jar")
                     .appName(workRunContext.getJarJobConfig().getAppName())
                     .conf(genSparkSubmitConfig(workRunContext.getClusterConfig().getSparkConfig())).build();
-            submitWorkReq.setSparkSubmit(sparkSubmit);
 
             // 构建Spark插件运行请求体
             PluginReq pluginReq =
                 PluginReq.builder().sparkConfig(workRunContext.getClusterConfig().getSparkConfig()).build();
-            submitWorkReq.setPluginReq(pluginReq);
 
             // 保存上下文
+            submitWorkReq.setPluginReq(pluginReq);
+            submitWorkReq.setSparkSubmit(sparkSubmit);
             workRunContext.setSubmitWorkReq(submitWorkReq);
 
             // 保存日志
@@ -432,7 +432,7 @@ public class SparkJarExecutor extends WorkExecutor {
 
             // 保存日志
             logBuilder.append(endLog("清理缓存文件完成"));
-            updateWorkEventAndInstance(workInstance, logBuilder, workEvent, workRunContext);
+            return updateWorkEventAndInstance(workInstance, logBuilder, workEvent, workRunContext);
         }
 
         // 判断状态
