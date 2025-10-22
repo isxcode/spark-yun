@@ -109,7 +109,7 @@ public class ExecuteSqlExecutor extends WorkExecutor {
             datasourceRepository.findById(workRunContext.getDatasourceId())
                 .orElseThrow(() -> errorLogException("检测数据源异常: 数据源不存在"));
 
-            // 保存事件
+            // 保存日志
             logBuilder.append(endLog("检测数据源完成"));
             logBuilder.append(startLog("检测SQL脚本开始"));
             return updateWorkEventAndInstance(workInstance, logBuilder, workEvent, workRunContext);
