@@ -529,7 +529,6 @@ public class SparkSqlExecutor extends WorkExecutor {
                 HttpUtils.doPost(
                     httpUrlUtils.genHttpUrl(agentNode.getHost(), agentNode.getPort(), SparkAgentUrl.STOP_WORK_URL),
                     stopWorkReq, BaseResponse.class);
-
             }
 
             // 保存日志
