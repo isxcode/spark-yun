@@ -218,7 +218,7 @@ public abstract class WorkExecutor {
                 workInstance
                     .setDuration((System.currentTimeMillis() - workInstance.getExecStartDateTime().getTime()) / 1000);
                 workInstance.setSubmitLog(workInstance.getSubmitLog()
-                    + (e instanceof WorkRunException ? ((WorkRunException) e).getMsg() : e.getMessage())
+                    + (e instanceof WorkRunException ? ((WorkRunException) e).getMsg() : e.getMessage() + "\n")
                     + LocalDateTime.now() + WorkLog.ERROR_INFO + "❌ 运行作业失败");
                 workInstanceRepository.saveAndFlush(workInstance);
             }

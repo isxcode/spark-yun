@@ -143,7 +143,7 @@ public class BashExecutor extends WorkExecutor {
                 throw errorLogException("检测Bash脚本异常 : Bash脚本中禁止包含rm命令");
             }
 
-            // 保存事件
+            // 保存上下文
             workRunContext.setScript(script);
 
             // 保存日志
