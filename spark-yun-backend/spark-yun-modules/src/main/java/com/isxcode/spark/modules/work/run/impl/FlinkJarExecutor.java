@@ -247,13 +247,14 @@ public class FlinkJarExecutor extends WorkExecutor {
                 .entryClass(workRunContext.getJarJobConfig().getMainClass())
                 .appResource(workRunContext.getJarJobConfig().getJarFileId() + ".jar")
                 .conf(workRunContext.getClusterConfig().getFlinkConfig()).build();
-            submitWorkReq.setFlinkSubmit(flinkSubmit);
+
 
             // 构建Flink插件运行请求体
             PluginReq pluginReq = PluginReq.builder().args(workRunContext.getJarJobConfig().getArgs()).build();
-            submitWorkReq.setPluginReq(pluginReq);
 
             // 保存上下文
+            submitWorkReq.setFlinkSubmit(flinkSubmit);
+            submitWorkReq.setPluginReq(pluginReq);
             workRunContext.setFlinkSubmitWorkReq(submitWorkReq);
 
             // 保存日志

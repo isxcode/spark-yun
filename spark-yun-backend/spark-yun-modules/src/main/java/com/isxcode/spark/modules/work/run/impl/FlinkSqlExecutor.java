@@ -305,11 +305,9 @@ public class FlinkSqlExecutor extends WorkExecutor {
                 FlinkSubmit.builder().appName("zhiqingyun").entryClass("com.isxcode.spark.plugin.flink.sql.execute.Job")
                     .appResource("flink-sql-execute-plugin.jar")
                     .conf(workRunContext.getClusterConfig().getFlinkConfig()).build();
-            submitWorkReq.setFlinkSubmit(flinkSubmit);
 
             // 构建Flink插件运行请求体
             PluginReq pluginReq = PluginReq.builder().sql(script).build();
-            submitWorkReq.setPluginReq(pluginReq);
 
             // 配置函数
             if (workRunContext.getFuncConfig() != null) {
@@ -324,6 +322,8 @@ public class FlinkSqlExecutor extends WorkExecutor {
             }
 
             // 保存上下文
+            submitWorkReq.setFlinkSubmit(flinkSubmit);
+            submitWorkReq.setPluginReq(pluginReq);
             workRunContext.setFlinkSubmitWorkReq(submitWorkReq);
 
             // 保存日志
