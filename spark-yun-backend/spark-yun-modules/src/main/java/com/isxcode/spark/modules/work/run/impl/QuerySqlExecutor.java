@@ -12,9 +12,9 @@ import com.isxcode.spark.modules.alarm.service.AlarmService;
 import com.isxcode.spark.modules.datasource.entity.DatasourceEntity;
 import com.isxcode.spark.modules.datasource.mapper.DatasourceMapper;
 import com.isxcode.spark.modules.datasource.repository.DatasourceRepository;
+import com.isxcode.spark.modules.datasource.service.DatasourceService;
 import com.isxcode.spark.modules.datasource.source.DataSourceFactory;
 import com.isxcode.spark.modules.datasource.source.Datasource;
-import com.isxcode.spark.modules.secret.repository.SecretKeyRepository;
 import com.isxcode.spark.modules.work.entity.WorkEventEntity;
 import com.isxcode.spark.modules.work.entity.WorkInstanceEntity;
 import com.isxcode.spark.modules.work.repository.*;
@@ -56,14 +56,16 @@ public class QuerySqlExecutor extends WorkExecutor {
 
     private final DatasourceMapper datasourceMapper;
 
+    private final DatasourceService datasourceService;
+
     public QuerySqlExecutor(WorkInstanceRepository workInstanceRepository,
         WorkflowInstanceRepository workflowInstanceRepository, DatasourceRepository datasourceRepository,
         SqlCommentService sqlCommentService, SqlValueService sqlValueService, SqlFunctionService sqlFunctionService,
         AlarmService alarmService, DataSourceFactory dataSourceFactory, DatasourceMapper datasourceMapper,
-        SecretKeyRepository secretKeyRepository, WorkEventRepository workEventRepository, Scheduler scheduler,
-        Locker locker, WorkRepository workRepository, WorkRunJobFactory workRunJobFactory,
-        WorkConfigRepository workConfigRepository, VipWorkVersionRepository vipWorkVersionRepository,
-        WorkService workService) {
+        WorkEventRepository workEventRepository, Scheduler scheduler, Locker locker, WorkRepository workRepository,
+        WorkRunJobFactory workRunJobFactory, WorkConfigRepository workConfigRepository,
+        VipWorkVersionRepository vipWorkVersionRepository, WorkService workService,
+        DatasourceService datasourceService) {
 
         super(alarmService, scheduler, locker, workRepository, workInstanceRepository, workflowInstanceRepository,
             workEventRepository, workRunJobFactory, sqlFunctionService, workConfigRepository, vipWorkVersionRepository,
@@ -74,6 +76,7 @@ public class QuerySqlExecutor extends WorkExecutor {
         this.sqlFunctionService = sqlFunctionService;
         this.dataSourceFactory = dataSourceFactory;
         this.datasourceMapper = datasourceMapper;
+        this.datasourceService = datasourceService;
     }
 
     @Override
@@ -85,39 +88,39 @@ public class QuerySqlExecutor extends WorkExecutor {
     protected String execute(WorkRunContext workRunContext, WorkInstanceEntity workInstance,
         WorkEventEntity workEvent) {
 
-        // 获取实例日志
+        // 获取日志
         StringBuilder logBuilder = new StringBuilder(workInstance.getSubmitLog());
 
-        // 打印首行日志
+        // 打印首行日志，防止前端卡顿
         if (workEvent.getEventProcess() == 0) {
-            logBuilder.append(startLog("开始检测数据源"));
+            logBuilder.append(startLog("检测数据源开始"));
             return updateWorkEventAndInstance(workInstance, logBuilder, workEvent, workRunContext);
         }
 
-        // 检查数据源
+        // 检测数据源
         if (workEvent.getEventProcess() == 1) {
 
             // 检测数据源是否配置
             if (Strings.isEmpty(workRunContext.getDatasourceId())) {
-                throw errorLogException("检测数据源失败: 未配置有效数据源");
+                throw errorLogException("检测数据源异常: 未配置有效数据源");
             }
 
             // 检查数据源是否存在
             datasourceRepository.findById(workRunContext.getDatasourceId())
-                .orElseThrow(() -> errorLogException("检测数据源失败: 数据源不存在"));
+                .orElseThrow(() -> errorLogException("检测数据源异常: 数据源不存在"));
 
-            // 保存事件
-            logBuilder.append(endLog("数据源检测正常"));
-            logBuilder.append(startLog("开始检测Sql脚本"));
+            // 保存日志
+            logBuilder.append(endLog("检测数据源完成"));
+            logBuilder.append(startLog("检测SQL脚本开始"));
             return updateWorkEventAndInstance(workInstance, logBuilder, workEvent, workRunContext);
         }
 
-        // 解析SQL脚本
+        // 检测SQL脚本
         if (workEvent.getEventProcess() == 2) {
 
             // 检查脚本是否为空
             if (Strings.isEmpty(workRunContext.getScript())) {
-                throw errorLogException("检测脚本失败 : Sql内容为空不能执行");
+                throw errorLogException("检测SQL脚本异常 : SQL内容不能为空");
             }
 
             // 去掉sql中的注释
@@ -132,23 +135,24 @@ public class QuerySqlExecutor extends WorkExecutor {
             // 翻译sql中的系统函数
             String script = sqlFunctionService.parseSqlFunction(parseValueSql);
 
-            // 保存事件
+            // 保存上下文
             workRunContext.setScript(script);
 
             // 保存日志
-            logBuilder.append(endLog("脚本检测正常"));
+            logBuilder.append(endLog("检测SQL脚本完成"));
+            logBuilder.append(startLog("执行SQL脚本开始"));
             return updateWorkEventAndInstance(workInstance, logBuilder, workEvent, workRunContext);
         }
 
-        // 执行脚本
+        // 执行SQL脚本
         if (workEvent.getEventProcess() == 3) {
 
-            // 上下文获取参数
+            // 获取上下文参数
             String script = workRunContext.getScript();
             String datasourceId = workRunContext.getDatasourceId();
 
             // 获取数据源
-            DatasourceEntity datasourceEntity = datasourceRepository.findById(datasourceId).get();
+            DatasourceEntity datasourceEntity = datasourceService.getDatasource(datasourceId);
             ConnectInfo connectInfo = datasourceMapper.datasourceEntityToConnectInfo(datasourceEntity);
             Datasource datasource = dataSourceFactory.getDatasource(connectInfo.getDbType());
             connectInfo.setLoginTimeout(5);
@@ -166,7 +170,7 @@ public class QuerySqlExecutor extends WorkExecutor {
                 for (int i = 0; i < sqls.size() - 1; i++) {
 
                     // 记录开始执行时间
-                    logBuilder.append(startLog("开始执行SQL"));
+                    logBuilder.append(startLog("执行开始"));
                     logBuilder.append("> ").append(sqls.get(i)).append(" \n");
                     workInstance = updateInstance(workInstance, logBuilder);
 
@@ -174,7 +178,7 @@ public class QuerySqlExecutor extends WorkExecutor {
                     statement.execute(sqls.get(i));
 
                     // 记录结束执行时间
-                    logBuilder.append(endLog("SQL执行成功"));
+                    logBuilder.append(endLog("执行完成"));
                     workInstance = updateInstance(workInstance, logBuilder);
                 }
 
@@ -189,29 +193,31 @@ public class QuerySqlExecutor extends WorkExecutor {
                     // 判断返回结果的条数，超过200条，则提出警告
                     String countSql = String.format("SELECT COUNT(*) FROM ( %s ) temp", lastSql);
 
-                    logBuilder.append(startLog("执行条数检测SQL"));
+                    logBuilder.append(startLog("检测SQL返回条数开始"));
                     logBuilder.append("> ").append(countSql).append(" \n");
 
                     workInstance = updateInstance(workInstance, logBuilder);
                     ResultSet countResultSet = statement.executeQuery(countSql);
                     while (countResultSet.next()) {
                         if (countResultSet.getInt(1) > DatasourceConfig.LIMIT_NUMBER) {
-                            throw errorLogException("条数大于" + DatasourceConfig.LIMIT_NUMBER + "条，请添加sql行数限制");
+                            throw errorLogException(
+                                "检测SQL返回条数异常 : 条数大于" + DatasourceConfig.LIMIT_NUMBER + "条，请添加条数查询限制");
                         }
                     }
                 }
 
                 // 执行最后一句查询语句
-                logBuilder.append(endLog("检测完成，总条数不超过" + DatasourceConfig.LIMIT_NUMBER + "条"));
-                logBuilder.append(startLog("执行最后的查询SQL"));
+                logBuilder.append(endLog("检测SQL返回条数完成，总条数不超过" + DatasourceConfig.LIMIT_NUMBER + "条"));
+                logBuilder.append(startLog("执行开始"));
                 logBuilder.append("> ").append(lastSql).append(" \n");
                 workInstance = updateInstance(workInstance, logBuilder);
+
+                // 开始执行
                 ResultSet resultSet = statement.executeQuery(lastSql);
 
                 // 记录结束执行时间
-                logBuilder.append(endLog("查询SQL执行成功"));
-                logBuilder.append(startLog("开始保存数据"));
-                workInstance = updateInstance(workInstance, logBuilder);
+                logBuilder.append(endLog("执行完成"));
+                logBuilder.append(startLog("保存数据开始"));
 
                 // 记录返回结果
                 List<List<String>> result = new ArrayList<>();
@@ -238,8 +244,10 @@ public class QuerySqlExecutor extends WorkExecutor {
                 }
 
                 // 保存数据
-                logBuilder.append(endLog("数据保存成功"));
                 workInstance.setResultData(JSON.toJSONString(result));
+
+                // 保存日志
+                logBuilder.append(endLog("保存数据完成"));
                 updateInstance(workInstance, logBuilder);
             } catch (WorkRunException | IsxAppException e) {
                 throw errorLogException(log + "\n" + e.getMsg());
@@ -249,7 +257,7 @@ public class QuerySqlExecutor extends WorkExecutor {
             }
 
             // 保存日志
-            updateWorkEventAndInstance(workInstance, logBuilder, workEvent, workRunContext);
+            return updateWorkEventAndInstance(workInstance, logBuilder, workEvent, workRunContext);
         }
 
         return InstanceStatus.SUCCESS;
