@@ -2,6 +2,7 @@ package com.isxcode.spark.modules.work.run;
 
 import com.isxcode.spark.api.instance.constants.InstanceStatus;
 import com.isxcode.spark.api.work.constants.QuartzPrefix;
+import com.isxcode.spark.common.locker.Locker;
 import com.isxcode.spark.modules.work.repository.WorkEventRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,12 +24,16 @@ public class WorkRunJob implements Job {
     private final Scheduler scheduler;
 
     private final WorkEventRepository workEventRepository;
+    private final Locker locker;
 
     @Override
     public void execute(JobExecutionContext context) {
 
         // 定时器中获取事件id
         String workEventId = String.valueOf(context.getJobDetail().getJobDataMap().get(QuartzPrefix.WORK_EVENT_ID));
+
+        // 加锁
+        Integer lockerKey = locker.lockOnly(workEventId);
 
         // 刷新异步环境变量
         USER_ID.set(String.valueOf(context.getJobDetail().getJobDataMap().get(QuartzPrefix.USER_ID)));
@@ -62,5 +67,8 @@ public class WorkRunJob implements Job {
                 log.warn("清理调度器和事件时发生异常，EventId: {}", workEventId);
             }
         }
+
+        // 解锁
+        locker.unlock(lockerKey);
     }
 }
