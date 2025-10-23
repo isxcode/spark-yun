@@ -11,10 +11,7 @@ import com.isxcode.spark.api.instance.req.*;
 import com.isxcode.spark.api.instance.res.GetWorkInstanceValuePathRes;
 import com.isxcode.spark.api.instance.res.GetWorkflowInstanceRes;
 import com.isxcode.spark.api.instance.res.QueryInstanceRes;
-import com.isxcode.spark.api.work.constants.EventType;
-import com.isxcode.spark.api.work.constants.WorkLog;
-import com.isxcode.spark.api.work.constants.WorkStatus;
-import com.isxcode.spark.api.work.constants.WorkType;
+import com.isxcode.spark.api.work.constants.*;
 import com.isxcode.spark.api.work.dto.*;
 import com.isxcode.spark.api.work.req.*;
 import com.isxcode.spark.api.work.res.*;
@@ -22,6 +19,7 @@ import com.isxcode.spark.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.spark.modules.cluster.repository.ClusterNodeRepository;
 import com.isxcode.spark.modules.work.entity.WorkConfigEntity;
 import com.isxcode.spark.modules.work.entity.WorkEntity;
+import com.isxcode.spark.modules.work.entity.WorkEventEntity;
 import com.isxcode.spark.modules.work.entity.WorkInstanceEntity;
 import com.isxcode.spark.modules.work.mapper.WorkMapper;
 import com.isxcode.spark.modules.work.repository.WorkConfigRepository;
@@ -41,6 +39,8 @@ import com.isxcode.spark.modules.workflow.service.WorkflowService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
+import org.quartz.Scheduler;
+import org.quartz.TriggerKey;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -83,6 +83,8 @@ public class WorkBizService {
     private final ClusterNodeRepository clusterNodeRepository;
 
     private final WorkRunJobFactory workRunFactory;
+
+    private final Scheduler scheduler;
 
     public GetWorkRes addWork(AddWorkReq addWorkReq) {
 
@@ -349,59 +351,58 @@ public class WorkBizService {
         return JSON.parseObject(workInstanceEntity.getSparkStarRes(), GetStatusRes.class);
     }
 
-    /**
-     * 中止作业.
-     */
     @Transactional
     public void stopJob(StopJobReq stopJobReq) {
 
-        // 通过实例 获取workId
-        Optional<WorkInstanceEntity> workInstanceEntityOptional =
-            workInstanceRepository.findById(stopJobReq.getInstanceId());
-        if (!workInstanceEntityOptional.isPresent()) {
-            throw new IsxAppException("实例不存在");
-        }
-        WorkInstanceEntity workInstanceEntity = workInstanceEntityOptional.get();
+        // 获取当前实例
+        WorkInstanceEntity workInstance = workService.getWorkInstance(stopJobReq.getInstanceId());
 
-        if (InstanceStatus.SUCCESS.equals(workInstanceEntity.getStatus())) {
+        // 成功无法中止
+        if (InstanceStatus.SUCCESS.equals(workInstance.getStatus())) {
             throw new IsxAppException("已经成功，无法中止");
         }
 
-        if (InstanceStatus.ABORT.equals(workInstanceEntity.getStatus())) {
+        // 已中止无法中止
+        if (InstanceStatus.ABORT.equals(workInstance.getStatus())) {
             throw new IsxAppException("已中止");
         }
 
-        WorkEntity workEntity = workRepository.findById(workInstanceEntity.getWorkId()).get();
-        WorkExecutor workExecutor = workExecutorFactory.create(workEntity.getWorkType());
+        // 获取作业运行事件体
+        WorkEventEntity workEvent = workService.getWorkEvent(workInstance.getEventId());
 
-        if (InstanceType.MANUAL.equals(workInstanceEntity.getInstanceType())) {
+        try {
+            // 暂停每秒定时调度
+            scheduler.pauseTrigger(TriggerKey.triggerKey(QuartzPrefix.WORK_RUN_PROCESS + workEvent.getId()));
 
-            try {
-                workExecutor.syncAbort(workInstanceEntity);
-                WorkInstanceEntity latestWorkInstance =
-                    workInstanceRepository.findById(stopJobReq.getInstanceId()).get();
-                String submitLog =
-                    latestWorkInstance.getSubmitLog() + LocalDateTime.now() + WorkLog.SUCCESS_INFO + "已中止  \n";
-                latestWorkInstance.setSubmitLog(submitLog);
-                latestWorkInstance.setStatus(InstanceStatus.ABORT);
-                latestWorkInstance.setExecEndDateTime(new Date());
-                latestWorkInstance.setDuration(
-                    (System.currentTimeMillis() - latestWorkInstance.getExecStartDateTime().getTime()) / 1000);
-                workInstanceRepository.save(latestWorkInstance);
-            } catch (Exception e) {
-                log.debug(e.getMessage(), e);
-                WorkInstanceEntity latestWorkInstance =
-                    workInstanceRepository.findById(stopJobReq.getInstanceId()).get();
-                String submitLog =
-                    latestWorkInstance.getSubmitLog() + LocalDateTime.now() + WorkLog.SUCCESS_INFO + "中止失败 \n";
-                latestWorkInstance.setSubmitLog(submitLog);
-                latestWorkInstance.setStatus(InstanceStatus.FAIL);
-                latestWorkInstance.setExecEndDateTime(new Date());
-                latestWorkInstance.setDuration(
-                    (System.currentTimeMillis() - latestWorkInstance.getExecStartDateTime().getTime()) / 1000);
-                workInstanceRepository.save(latestWorkInstance);
-            }
+            // 进入每个作业单独的中止逻辑
+            WorkEntity workEntity = workService.getWorkEntity(workInstance.getWorkId());
+            WorkExecutor workExecutor = workExecutorFactory.create(workEntity.getWorkType());
+            workExecutor.syncAbort(workInstance);
+
+            // 中止成功
+            WorkInstanceEntity latestWorkInstance = workInstanceRepository.findById(stopJobReq.getInstanceId()).get();
+            String submitLog =
+                latestWorkInstance.getSubmitLog() + LocalDateTime.now() + WorkLog.SUCCESS_INFO + "已中止  \n";
+            latestWorkInstance.setSubmitLog(submitLog);
+            latestWorkInstance.setStatus(InstanceStatus.ABORT);
+            latestWorkInstance.setExecEndDateTime(new Date());
+            latestWorkInstance
+                .setDuration((System.currentTimeMillis() - latestWorkInstance.getExecStartDateTime().getTime()) / 1000);
+            workInstanceRepository.save(latestWorkInstance);
+        } catch (Exception e) {
+
+            // 中止失败
+            WorkInstanceEntity latestWorkInstance = workInstanceRepository.findById(stopJobReq.getInstanceId()).get();
+            String submitLog =
+                latestWorkInstance.getSubmitLog() + LocalDateTime.now() + WorkLog.SUCCESS_INFO + "中止失败 \n";
+            latestWorkInstance.setSubmitLog(submitLog);
+            latestWorkInstance.setStatus(InstanceStatus.FAIL);
+            latestWorkInstance.setExecEndDateTime(new Date());
+            latestWorkInstance
+                .setDuration((System.currentTimeMillis() - latestWorkInstance.getExecStartDateTime().getTime()) / 1000);
+            workInstanceRepository.save(latestWorkInstance);
         }
+
     }
 
     public GetWorkLogRes getWorkLog(GetYarnLogReq getYarnLogReq) {
