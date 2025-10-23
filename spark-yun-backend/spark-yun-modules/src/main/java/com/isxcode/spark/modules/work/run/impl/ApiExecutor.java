@@ -2,10 +2,13 @@ package com.isxcode.spark.modules.work.run.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.isxcode.spark.api.api.constants.ApiType;
+import com.isxcode.spark.api.work.constants.QuartzPrefix;
 import com.isxcode.spark.api.work.constants.WorkType;
 import com.isxcode.spark.api.instance.constants.InstanceStatus;
 import com.isxcode.spark.api.work.dto.ApiWorkConfig;
 import com.isxcode.spark.api.work.dto.ApiWorkValueDto;
+import com.isxcode.spark.backend.api.base.exceptions.IsxAppException;
+import com.isxcode.spark.backend.api.base.properties.IsxAppProperties;
 import com.isxcode.spark.common.utils.http.HttpUtils;
 import com.isxcode.spark.modules.alarm.service.AlarmService;
 import com.isxcode.spark.modules.work.entity.WorkInstanceEntity;
@@ -22,11 +25,19 @@ import com.isxcode.spark.common.locker.Locker;
 import com.isxcode.spark.modules.work.service.WorkService;
 import com.isxcode.spark.modules.work.sql.SqlFunctionService;
 import com.isxcode.spark.modules.workflow.repository.WorkflowInstanceRepository;
+import org.apache.logging.log4j.util.Strings;
 import org.quartz.Scheduler;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.quartz.SchedulerException;
+import org.quartz.TriggerKey;
+import org.springframework.boot.autoconfigure.web.ServerProperties;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
+import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,16 +45,28 @@ import java.util.Map;
 @Slf4j
 public class ApiExecutor extends WorkExecutor {
 
+    private final IsxAppProperties isxAppProperties;
+
+    private final Scheduler scheduler;
+
+    private final WorkService workService;
+
+    private final ServerProperties serverProperties;
+
     public ApiExecutor(WorkInstanceRepository workInstanceRepository,
         WorkflowInstanceRepository workflowInstanceRepository, AlarmService alarmService,
         SqlFunctionService sqlFunctionService, WorkEventRepository workEventRepository, Scheduler scheduler,
         WorkRunJobFactory workRunJobFactory, VipWorkVersionRepository vipWorkVersionRepository,
         WorkConfigRepository workConfigRepository, WorkRepository workRepository, Locker locker,
-        WorkService workService) {
+        WorkService workService, IsxAppProperties isxAppProperties, ServerProperties serverProperties) {
 
         super(alarmService, scheduler, locker, workRepository, workInstanceRepository, workflowInstanceRepository,
             workEventRepository, workRunJobFactory, sqlFunctionService, workConfigRepository, vipWorkVersionRepository,
             workService);
+        this.isxAppProperties = isxAppProperties;
+        this.scheduler = scheduler;
+        this.workService = workService;
+        this.serverProperties = serverProperties;
     }
 
     @Override
@@ -101,6 +124,11 @@ public class ApiExecutor extends WorkExecutor {
         // 执行调用
         if (workEvent.getEventProcess() == 2) {
 
+            // 记录当前线程
+            WORK_THREAD.put(workEvent.getId(), Thread.currentThread());
+            workRunContext.setIsxAppName(isxAppProperties.getAppName());
+            updateWorkEvent(workEvent, workRunContext);
+
             // 获取上下文参数
             ApiWorkConfig apiWorkConfig = workRunContext.getApiWorkConfig();
 
@@ -126,20 +154,24 @@ public class ApiExecutor extends WorkExecutor {
                         HttpUtils.doGet(apiWorkConfig.getRequestUrl(), requestParam, requestHeader, Object.class);
 
                     // 保存结果
-                    workInstance.setResultData(String.valueOf(response));
+                    workInstance.setResultData(JSON.toJSONString(response));
                 }
                 if (ApiType.POST.equals(apiWorkConfig.getRequestType())) {
                     Object response = HttpUtils.doPost(apiWorkConfig.getRequestUrl(), requestHeader,
                         JSON.parseObject(parseJsonPath(apiWorkConfig.getRequestBody(), workInstance), Object.class));
 
                     // 保存结果
-                    workInstance.setResultData(String.valueOf(response));
+                    workInstance.setResultData(JSON.toJSONString(response));
                 }
             } catch (Exception e) {
                 log.error(e.getMessage(), e);
 
                 // 优化日志
                 throw errorLogException("执行调用异常 : " + e.getMessage().replace("<EOL>", "\n"));
+            } finally {
+
+                // 运行完删除多余线程池
+                WORK_THREAD.remove(workEvent.getId());
             }
 
             // 保存日志
@@ -157,7 +189,37 @@ public class ApiExecutor extends WorkExecutor {
     @Override
     protected void abort(WorkInstanceEntity workInstance) {
 
-        Thread thread = WORK_THREAD.get(workInstance.getId());
-        thread.interrupt();
+        // 重新获取最新的实例
+        workInstance = workService.getWorkInstance(workInstance.getId());
+
+        // 获取最新的作业运行事件，判断作业运行到哪里了
+        WorkEventEntity workEvent = workService.getWorkEvent(workInstance.getEventId());
+
+        try {
+
+            // 如果刚开始提交，则直接中断定时器
+            if (workEvent.getEventProcess() == 1) {
+                scheduler.unscheduleJob(TriggerKey.triggerKey(QuartzPrefix.WORK_RUN_PROCESS + workEvent.getId()));
+                return;
+            }
+
+            // 如果有IsxAppName,直接去节点上杀死进程
+            WorkRunContext workRunContext = JSON.parseObject(workEvent.getEventContext(), WorkRunContext.class);
+            if (!Strings.isEmpty(workRunContext.getIsxAppName())) {
+
+                // 关闭定时器
+                scheduler.unscheduleJob(TriggerKey.triggerKey(QuartzPrefix.WORK_RUN_PROCESS + workEvent.getId()));
+
+                // 杀死程序
+                String killUrl = "http://" + isxAppProperties.getNodes().get(isxAppProperties.getAppName()) + ":"
+                    + serverProperties.getPort() + "/ha/open/kill";
+                URI uri = UriComponentsBuilder.fromHttpUrl(killUrl).queryParam("workEventId", workEvent.getId()).build()
+                    .toUri();
+                new RestTemplate().exchange(uri, HttpMethod.GET, null, String.class);
+            }
+        } catch (SchedulerException e) {
+            throw new IsxAppException(e.getMessage());
+        }
+
     }
 }
