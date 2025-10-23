@@ -1,5 +1,6 @@
 package com.isxcode.spark.modules.work.run.impl;
 
+import com.isxcode.spark.api.cluster.constants.ClusterNodeStatus;
 import com.isxcode.spark.api.cluster.dto.ScpFileEngineNodeDto;
 import com.isxcode.spark.api.instance.constants.InstanceStatus;
 import com.isxcode.spark.api.work.constants.WorkType;
@@ -106,6 +107,11 @@ public class BashExecutor extends WorkExecutor {
             ClusterNodeEntity agentNode =
                 clusterNodeRepository.findById(workRunContext.getClusterConfig().getClusterNodeId())
                     .orElseThrow(() -> errorLogException("检测服务器节点异常 : 指定运行节点不存在"));
+
+            // 检查节点状态
+            if (!ClusterNodeStatus.RUNNING.equals(agentNode.getStatus())) {
+                throw errorLogException("检测服务器节点异常 : 节点状态不可用");
+            }
 
             // 解析请求节点信息
             ScpFileEngineNodeDto scpNode = clusterNodeMapper.engineNodeEntityToScpFileEngineNodeDto(agentNode);
