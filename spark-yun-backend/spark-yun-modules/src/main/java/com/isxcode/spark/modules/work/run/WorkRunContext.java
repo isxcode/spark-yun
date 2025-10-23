@@ -154,4 +154,6 @@ public class WorkRunContext {
     private String csvFileName;
 
     private Integer containerPort;
+
+    private String isxAppName;
 }

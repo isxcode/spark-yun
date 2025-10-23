@@ -1,6 +1,7 @@
 package com.isxcode.spark.backend.api.base.properties;
 
 import java.util.List;
+import java.util.Map;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -82,4 +83,14 @@ public class IsxAppProperties {
      * 开发文件下载地址.
      */
     private String openFilePath = "";
+
+    /**
+     * 当前应用名称.
+     */
+    private String appName;
+
+    /**
+     * 节点信息.
+     */
+    private Map<String, String> nodes;
 }
