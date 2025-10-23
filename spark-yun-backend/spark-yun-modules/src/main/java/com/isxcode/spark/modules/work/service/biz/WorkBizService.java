@@ -382,7 +382,7 @@ public class WorkBizService {
             // 中止成功
             WorkInstanceEntity latestWorkInstance = workInstanceRepository.findById(stopJobReq.getInstanceId()).get();
             String submitLog =
-                latestWorkInstance.getSubmitLog() + LocalDateTime.now() + WorkLog.SUCCESS_INFO + "已中止  \n";
+                latestWorkInstance.getSubmitLog() + LocalDateTime.now() + WorkLog.SUCCESS_INFO + "⚠️ 已中止  \n";
             latestWorkInstance.setSubmitLog(submitLog);
             latestWorkInstance.setStatus(InstanceStatus.ABORT);
             latestWorkInstance.setExecEndDateTime(new Date());
@@ -394,7 +394,7 @@ public class WorkBizService {
             // 中止失败
             WorkInstanceEntity latestWorkInstance = workInstanceRepository.findById(stopJobReq.getInstanceId()).get();
             String submitLog =
-                latestWorkInstance.getSubmitLog() + LocalDateTime.now() + WorkLog.SUCCESS_INFO + "中止失败 \n";
+                latestWorkInstance.getSubmitLog() + LocalDateTime.now() + WorkLog.SUCCESS_INFO + "⚠️ 中止失败 \n";
             latestWorkInstance.setSubmitLog(submitLog);
             latestWorkInstance.setStatus(InstanceStatus.FAIL);
             latestWorkInstance.setExecEndDateTime(new Date());
