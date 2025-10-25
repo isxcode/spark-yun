@@ -24,12 +24,12 @@ git clone https://github.com/isxcode/spark-yun.git
 ### 3. 使用镜像打包源码
 
 > 将${clone_path}替换成项目路径，例如：/Users/ispong/Downloads/spark-yun
-> M系列架构，使用Arm镜像 `zhiqingyun-build:arm-latest`
+> M系列架构，使用Arm镜像 `zhiqingyun-build:latest-arm`
 
 ```bash
 docker run --rm \
   -v ${clone_path}/spark-yun:/spark-yun \
-  -w /spark-yun -it registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun-build:arm-latest \
+  -w /spark-yun -it registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun-build:latest-arm \
   /bin/bash -c "source /etc/profile && gradle install clean package"
 ```
 
