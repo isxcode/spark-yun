@@ -102,7 +102,7 @@ public class ClusterNodeBizService {
             clusterNode.setFlinkHomePath(clusterNode.getAgentHomePath() + "/" + PathConstants.AGENT_PATH_NAME + "/"
                 + PathConstants.FLINK_MIN_HOME);
         } else {
-            clusterNode.setSparkHomePath(addClusterNodeReq.getSparkHomePath());
+            clusterNode.setFlinkHomePath(addClusterNodeReq.getSparkHomePath());
         }
 
         // 持久化数据
