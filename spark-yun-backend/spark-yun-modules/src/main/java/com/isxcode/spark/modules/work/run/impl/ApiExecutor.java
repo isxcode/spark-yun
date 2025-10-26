@@ -187,22 +187,14 @@ public class ApiExecutor extends WorkExecutor {
     }
 
     @Override
-    protected void abort(WorkInstanceEntity workInstance) {
+    protected boolean abort(WorkInstanceEntity workInstance, WorkEventEntity workEvent) {
 
-        // 重新获取最新的实例
-        workInstance = workService.getWorkInstance(workInstance.getId());
-
-        // 获取最新的作业运行事件，判断作业运行到哪里了
-        WorkEventEntity workEvent = workService.getWorkEvent(workInstance.getEventId());
+        // 如果刚开始提交，则直接中断定时器
+        if (workEvent.getEventProcess() == 1) {
+            return true;
+        }
 
         try {
-
-            // 如果刚开始提交，则直接中断定时器
-            if (workEvent.getEventProcess() == 1) {
-                scheduler.unscheduleJob(TriggerKey.triggerKey(QuartzPrefix.WORK_RUN_PROCESS + workEvent.getId()));
-                return;
-            }
-
             // 如果有IsxAppName,直接去节点上杀死进程
             WorkRunContext workRunContext = JSON.parseObject(workEvent.getEventContext(), WorkRunContext.class);
             if (!Strings.isEmpty(workRunContext.getIsxAppName())) {
@@ -217,9 +209,10 @@ public class ApiExecutor extends WorkExecutor {
                     .toUri();
                 new RestTemplate().exchange(uri, HttpMethod.GET, null, String.class);
             }
+
+            return true;
         } catch (SchedulerException e) {
             throw new IsxAppException(e.getMessage());
         }
-
     }
 }

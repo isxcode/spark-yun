@@ -63,7 +63,7 @@ public abstract class WorkExecutor {
     protected abstract String execute(WorkRunContext workRunContext, WorkInstanceEntity workInstance,
         WorkEventEntity workEvent) throws Exception;
 
-    protected abstract void abort(WorkInstanceEntity workInstance) throws Exception;
+    protected abstract boolean abort(WorkInstanceEntity workInstance, WorkEventEntity workEvent) throws Exception;
 
     public String infoLog(String log) {
 
@@ -152,9 +152,9 @@ public abstract class WorkExecutor {
         }
     }
 
-    public void syncAbort(WorkInstanceEntity workInstance) throws Exception {
+    public boolean syncAbort(WorkInstanceEntity workInstance, WorkEventEntity workEvent) throws Exception {
 
-        this.abort(workInstance);
+        return this.abort(workInstance, workEvent);
     }
 
     public String runSingleWork(String workEventId) {

@@ -146,9 +146,10 @@ public class CurlExecutor extends WorkExecutor {
     }
 
     @Override
-    protected void abort(WorkInstanceEntity workInstance) {
+    protected boolean abort(WorkInstanceEntity workInstance, WorkEventEntity workEvent) {
 
-        Thread thread = WORK_THREAD.get(workInstance.getId());
-        thread.interrupt();
+        // Thread thread = WORK_THREAD.get(workInstance.getId());
+        // thread.interrupt();
+        return true;
     }
 }
