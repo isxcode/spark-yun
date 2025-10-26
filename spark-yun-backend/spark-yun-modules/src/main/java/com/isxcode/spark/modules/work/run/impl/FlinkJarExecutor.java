@@ -443,47 +443,54 @@ public class FlinkJarExecutor extends WorkExecutor {
     @Override
     protected boolean abort(WorkInstanceEntity workInstance, WorkEventEntity workEvent) {
 
-        // // 判断作业有没有提交成功
-        // locker.lock("REQUEST_" + workInstance.getId());
-        // try {
-        // workInstance = workInstanceRepository.findById(workInstance.getId()).get();
-        // if (!Strings.isEmpty(workInstance.getSparkStarRes())) {
-        // RunWorkRes wokRunWorkRes = JSON.parseObject(workInstance.getSparkStarRes(), RunWorkRes.class);
-        // if (!Strings.isEmpty(wokRunWorkRes.getAppId())) {
-        //
-        // // 关闭远程线程
-        // WorkEntity work = workRepository.findById(workInstance.getWorkId()).get();
-        // WorkConfigEntity workConfig = workConfigRepository.findById(work.getConfigId()).get();
-        // ClusterConfig clusterConfig = JSON.parseObject(workConfig.getClusterConfig(),
-        // ClusterConfig.class);
-        // List<ClusterNodeEntity> allEngineNodes = clusterNodeRepository
-        // .findAllByClusterIdAndStatus(clusterConfig.getClusterId(), ClusterNodeStatus.RUNNING);
-        // if (allEngineNodes.isEmpty()) {
-        // throw errorLogException("申请资源异常 : 集群不存在可用节点，请切换一个集群");
-        // }
-        // ClusterEntity cluster = clusterRepository.findById(clusterConfig.getClusterId()).get();
-        //
-        // // 节点选择随机数
-        // ClusterNodeEntity engineNode = allEngineNodes.get(new Random().nextInt(allEngineNodes.size()));
-        //
-        // StopWorkReq stopWorkReq = StopWorkReq.builder().flinkHome(engineNode.getFlinkHomePath())
-        // .appId(wokRunWorkRes.getAppId()).clusterType(cluster.getClusterType()).build();
-        //
-        // BaseResponse<?> baseResponse =
-        // new RestTemplate().postForObject(httpUrlUtils.genHttpUrl(engineNode.getHost(),
-        // engineNode.getAgentPort(), FlinkAgentUrl.STOP_WORK_URL), stopWorkReq, BaseResponse.class);
-        //
-        // if (!String.valueOf(HttpStatus.OK.value()).equals(baseResponse.getCode())) {
-        // throw new IsxAppException(baseResponse.getCode(), baseResponse.getMsg(), baseResponse.getErr());
-        // }
-        // } else {
-        // // 先杀死进程
-        // WORK_THREAD.get(workInstance.getId()).interrupt();
-        // }
-        // }
-        // } finally {
-        // locker.clearLock("REQUEST_" + workInstance.getId());
-        // }
-        return true;
+        // 还未提交
+        if (workEvent.getEventProcess() < 5) {
+            return true;
+        }
+
+        // 运行完毕
+        if (workEvent.getEventProcess() > 6) {
+            return false;
+        }
+
+        try {
+            workInstance = workInstanceRepository.findById(workInstance.getId()).get();
+            if (!Strings.isEmpty(workInstance.getSparkStarRes())) {
+                RunWorkRes wokRunWorkRes = JSON.parseObject(workInstance.getSparkStarRes(), RunWorkRes.class);
+                if (!Strings.isEmpty(wokRunWorkRes.getAppId())) {
+
+                    // 关闭远程线程
+                    WorkEntity work = workRepository.findById(workInstance.getWorkId()).get();
+                    WorkConfigEntity workConfig = workConfigRepository.findById(work.getConfigId()).get();
+                    ClusterConfig clusterConfig = JSON.parseObject(workConfig.getClusterConfig(), ClusterConfig.class);
+                    List<ClusterNodeEntity> allEngineNodes = clusterNodeRepository
+                        .findAllByClusterIdAndStatus(clusterConfig.getClusterId(), ClusterNodeStatus.RUNNING);
+                    if (allEngineNodes.isEmpty()) {
+                        throw errorLogException("申请资源异常 : 集群不存在可用节点，请切换一个集群");
+                    }
+                    ClusterEntity cluster = clusterRepository.findById(clusterConfig.getClusterId()).get();
+
+                    // 节点选择随机数
+                    ClusterNodeEntity engineNode = allEngineNodes.get(new Random().nextInt(allEngineNodes.size()));
+
+                    StopWorkReq stopWorkReq = StopWorkReq.builder().flinkHome(engineNode.getFlinkHomePath())
+                        .appId(wokRunWorkRes.getAppId()).clusterType(cluster.getClusterType()).build();
+
+                    BaseResponse<?> baseResponse =
+                        new RestTemplate().postForObject(httpUrlUtils.genHttpUrl(engineNode.getHost(),
+                            engineNode.getAgentPort(), FlinkAgentUrl.STOP_WORK_URL), stopWorkReq, BaseResponse.class);
+
+                    if (!String.valueOf(HttpStatus.OK.value()).equals(baseResponse.getCode())) {
+                        throw new IsxAppException(baseResponse.getCode(), baseResponse.getMsg(), baseResponse.getErr());
+                    }
+                } else {
+                    // 先杀死进程
+                    WORK_THREAD.get(workInstance.getId()).interrupt();
+                }
+            }
+        } finally {
+            locker.clearLock("REQUEST_" + workInstance.getId());
+        }
+
     }
 }

@@ -2,6 +2,7 @@ package com.isxcode.spark.modules.work.run.impl;
 
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.RuntimeUtil;
+import com.alibaba.fastjson.JSON;
 import com.isxcode.spark.api.instance.constants.InstanceStatus;
 import com.isxcode.spark.api.work.constants.WorkType;
 import com.isxcode.spark.backend.api.base.properties.IsxAppProperties;
@@ -20,9 +21,13 @@ import com.isxcode.spark.modules.workflow.repository.WorkflowInstanceRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
 import org.quartz.Scheduler;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.File;
+import java.net.URI;
 
 @Service
 @Slf4j
@@ -148,8 +153,28 @@ public class CurlExecutor extends WorkExecutor {
     @Override
     protected boolean abort(WorkInstanceEntity workInstance, WorkEventEntity workEvent) {
 
-        // Thread thread = WORK_THREAD.get(workInstance.getId());
-        // thread.interrupt();
+        // 还未提交
+        if (workEvent.getEventProcess() < 2) {
+            return true;
+        }
+
+        // 运行完毕
+        if (workEvent.getEventProcess() > 2) {
+            return false;
+        }
+
+        // 运行中，中止作业
+        WorkRunContext workRunContext = JSON.parseObject(workEvent.getEventContext(), WorkRunContext.class);
+        if (!Strings.isEmpty(workRunContext.getIsxAppName())) {
+
+            // 杀死程序
+            String killUrl = "http://" + isxAppProperties.getNodes().get(isxAppProperties.getAppName()) + ":"
+                + serverProperties.getPort() + "/ha/open/kill";
+            URI uri =
+                UriComponentsBuilder.fromHttpUrl(killUrl).queryParam("workEventId", workEvent.getId()).build().toUri();
+            new RestTemplate().exchange(uri, HttpMethod.GET, null, String.class);
+        }
+
         return true;
     }
 }

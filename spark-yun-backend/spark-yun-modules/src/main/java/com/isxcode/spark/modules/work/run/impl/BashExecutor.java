@@ -318,13 +318,17 @@ public class BashExecutor extends WorkExecutor {
     @Override
     protected boolean abort(WorkInstanceEntity workInstance, WorkEventEntity workEvent) {
 
+        // 还未提交
+        if (workEvent.getEventProcess() < 3) {
+            return true;
+        }
+
+        // 运行完毕
+        if (workEvent.getEventProcess() > 4) {
+            return false;
+        }
+
         try {
-
-            // 如果是监听状态之后，则重启定时器，已经拦不住了
-            if (workEvent.getEventProcess() > 4) {
-                return false;
-            }
-
             // 如果能获取pid则尝试直接杀死
             WorkRunContext workRunContext = JSON.parseObject(workEvent.getEventContext(), WorkRunContext.class);
             if (!Strings.isEmpty(workRunContext.getPid())) {
