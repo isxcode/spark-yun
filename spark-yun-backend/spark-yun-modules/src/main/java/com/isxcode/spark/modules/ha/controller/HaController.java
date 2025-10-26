@@ -21,7 +21,6 @@ public class HaController {
     @GetMapping("/open/kill")
     public void kill(@RequestParam String workEventId) {
 
-        System.out.println("杀死进程");
         Thread thread = WORK_THREAD.get(workEventId);
         if (thread != null) {
             thread.interrupt();
