@@ -68,7 +68,12 @@ public class WorkRunJob implements Job {
             log.warn("清理调度器和事件时发生异常，EventId: {}", workEventId);
         } finally {
             // 最终都要解锁
-            locker.unlock(lockerKey);
+            try {
+                locker.unlock(lockerKey);
+            } catch (Exception ignored) {
+
+            }
+
         }
 
     }
