@@ -2,12 +2,10 @@ package com.isxcode.spark.modules.work.run.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.isxcode.spark.api.api.constants.ApiType;
-import com.isxcode.spark.api.work.constants.QuartzPrefix;
 import com.isxcode.spark.api.work.constants.WorkType;
 import com.isxcode.spark.api.instance.constants.InstanceStatus;
 import com.isxcode.spark.api.work.dto.ApiWorkConfig;
 import com.isxcode.spark.api.work.dto.ApiWorkValueDto;
-import com.isxcode.spark.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.spark.backend.api.base.properties.IsxAppProperties;
 import com.isxcode.spark.common.utils.http.HttpUtils;
 import com.isxcode.spark.modules.alarm.service.AlarmService;
@@ -29,8 +27,6 @@ import org.apache.logging.log4j.util.Strings;
 import org.quartz.Scheduler;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.quartz.SchedulerException;
-import org.quartz.TriggerKey;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
@@ -189,30 +185,28 @@ public class ApiExecutor extends WorkExecutor {
     @Override
     protected boolean abort(WorkInstanceEntity workInstance, WorkEventEntity workEvent) {
 
-        // 如果刚开始提交，则直接中断定时器
-        if (workEvent.getEventProcess() == 1) {
+        // 还未提交
+        if (workEvent.getEventProcess() < 2) {
             return true;
         }
 
-        try {
-            // 如果有IsxAppName,直接去节点上杀死进程
-            WorkRunContext workRunContext = JSON.parseObject(workEvent.getEventContext(), WorkRunContext.class);
-            if (!Strings.isEmpty(workRunContext.getIsxAppName())) {
-
-                // 关闭定时器
-                scheduler.unscheduleJob(TriggerKey.triggerKey(QuartzPrefix.WORK_RUN_PROCESS + workEvent.getId()));
-
-                // 杀死程序
-                String killUrl = "http://" + isxAppProperties.getNodes().get(isxAppProperties.getAppName()) + ":"
-                    + serverProperties.getPort() + "/ha/open/kill";
-                URI uri = UriComponentsBuilder.fromHttpUrl(killUrl).queryParam("workEventId", workEvent.getId()).build()
-                    .toUri();
-                new RestTemplate().exchange(uri, HttpMethod.GET, null, String.class);
-            }
-
-            return true;
-        } catch (SchedulerException e) {
-            throw new IsxAppException(e.getMessage());
+        // 运行完毕
+        if (workEvent.getEventProcess() > 2) {
+            return false;
         }
+
+        // 运行中，中止作业
+        WorkRunContext workRunContext = JSON.parseObject(workEvent.getEventContext(), WorkRunContext.class);
+        if (!Strings.isEmpty(workRunContext.getIsxAppName())) {
+
+            // 杀死程序
+            String killUrl = "http://" + isxAppProperties.getNodes().get(isxAppProperties.getAppName()) + ":"
+                + serverProperties.getPort() + "/ha/open/kill";
+            URI uri =
+                UriComponentsBuilder.fromHttpUrl(killUrl).queryParam("workEventId", workEvent.getId()).build().toUri();
+            new RestTemplate().exchange(uri, HttpMethod.GET, null, String.class);
+        }
+
+        return true;
     }
 }
