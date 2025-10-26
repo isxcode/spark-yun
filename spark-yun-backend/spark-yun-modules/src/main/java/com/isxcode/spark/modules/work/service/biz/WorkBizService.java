@@ -16,6 +16,7 @@ import com.isxcode.spark.api.work.dto.*;
 import com.isxcode.spark.api.work.req.*;
 import com.isxcode.spark.api.work.res.*;
 import com.isxcode.spark.backend.api.base.exceptions.IsxAppException;
+import com.isxcode.spark.common.locker.Locker;
 import com.isxcode.spark.modules.cluster.repository.ClusterNodeRepository;
 import com.isxcode.spark.modules.work.entity.WorkConfigEntity;
 import com.isxcode.spark.modules.work.entity.WorkEntity;
@@ -23,6 +24,7 @@ import com.isxcode.spark.modules.work.entity.WorkEventEntity;
 import com.isxcode.spark.modules.work.entity.WorkInstanceEntity;
 import com.isxcode.spark.modules.work.mapper.WorkMapper;
 import com.isxcode.spark.modules.work.repository.WorkConfigRepository;
+import com.isxcode.spark.modules.work.repository.WorkEventRepository;
 import com.isxcode.spark.modules.work.repository.WorkInstanceRepository;
 import com.isxcode.spark.modules.work.repository.WorkRepository;
 import com.isxcode.spark.modules.work.run.WorkExecutor;
@@ -85,6 +87,10 @@ public class WorkBizService {
     private final WorkRunJobFactory workRunFactory;
 
     private final Scheduler scheduler;
+
+    private final Locker locker;
+
+    private final WorkEventRepository workEventRepository;
 
     public GetWorkRes addWork(AddWorkReq addWorkReq) {
 
@@ -354,21 +360,29 @@ public class WorkBizService {
     @Transactional
     public void stopJob(StopJobReq stopJobReq) {
 
-        // 获取当前实例
+        // 通过作业实例查询作业类型
         WorkInstanceEntity workInstance = workService.getWorkInstance(stopJobReq.getInstanceId());
+        WorkEntity work = workService.getWorkEntity(workInstance.getWorkId());
 
-        // 成功无法中止
-        if (InstanceStatus.SUCCESS.equals(workInstance.getStatus())) {
-            throw new IsxAppException("已经成功，无法中止");
+        // 第一时间等待锁，等待定时器中加的锁释放，保证定时器是运行完的
+        Integer lockKey;
+        if (work.getWorkType().equals(WorkType.API)) {
+            lockKey = locker.lockOnly(workInstance.getEventId());
+        } else {
+            lockKey = locker.lock(workInstance.getEventId());
         }
 
-        // 已中止无法中止
-        if (InstanceStatus.ABORT.equals(workInstance.getStatus())) {
-            throw new IsxAppException("已中止");
+        // 重新获取当前最新实例
+        workInstance = workService.getWorkInstance(stopJobReq.getInstanceId());
+
+        // 只有运行中的作业才能中止
+        if (!InstanceStatus.RUNNING.equals(workInstance.getStatus())) {
+            throw new IsxAppException("只有运行中的作业，才能中止");
         }
 
         // 获取作业运行事件体
         WorkEventEntity workEvent = workService.getWorkEvent(workInstance.getEventId());
+        String submitLog;
 
         try {
             // 暂停每秒定时调度
@@ -377,32 +391,42 @@ public class WorkBizService {
             // 进入每个作业单独的中止逻辑
             WorkEntity workEntity = workService.getWorkEntity(workInstance.getWorkId());
             WorkExecutor workExecutor = workExecutorFactory.create(workEntity.getWorkType());
-            workExecutor.syncAbort(workInstance);
+            boolean canStop = workExecutor.syncAbort(workInstance, workEvent);
 
-            // 中止成功
-            WorkInstanceEntity latestWorkInstance = workInstanceRepository.findById(stopJobReq.getInstanceId()).get();
-            String submitLog =
-                latestWorkInstance.getSubmitLog() + LocalDateTime.now() + WorkLog.SUCCESS_INFO + "⚠️ 已中止  \n";
-            latestWorkInstance.setSubmitLog(submitLog);
-            latestWorkInstance.setStatus(InstanceStatus.ABORT);
-            latestWorkInstance.setExecEndDateTime(new Date());
-            latestWorkInstance
-                .setDuration((System.currentTimeMillis() - latestWorkInstance.getExecStartDateTime().getTime()) / 1000);
-            workInstanceRepository.save(latestWorkInstance);
+            // 无法中止
+            if (!canStop) {
+                locker.unlock(lockKey);
+                scheduler.resumeTrigger(TriggerKey.triggerKey(QuartzPrefix.WORK_RUN_PROCESS + workEvent.getId()));
+                return;
+            }
+
+            // 重新获取实例状态
+            workInstance = workService.getWorkInstance(stopJobReq.getInstanceId());
+            submitLog = workInstance.getSubmitLog() + LocalDateTime.now() + WorkLog.SUCCESS_INFO + "⚠️ 已中止  \n";
+            workInstance.setStatus(InstanceStatus.ABORT);
+
         } catch (Exception e) {
 
-            // 中止失败
-            WorkInstanceEntity latestWorkInstance = workInstanceRepository.findById(stopJobReq.getInstanceId()).get();
-            String submitLog =
-                latestWorkInstance.getSubmitLog() + LocalDateTime.now() + WorkLog.SUCCESS_INFO + "⚠️ 中止失败 \n";
-            latestWorkInstance.setSubmitLog(submitLog);
-            latestWorkInstance.setStatus(InstanceStatus.FAIL);
-            latestWorkInstance.setExecEndDateTime(new Date());
-            latestWorkInstance
-                .setDuration((System.currentTimeMillis() - latestWorkInstance.getExecStartDateTime().getTime()) / 1000);
-            workInstanceRepository.save(latestWorkInstance);
+            workInstance = workService.getWorkInstance(stopJobReq.getInstanceId());
+            submitLog = workInstance.getSubmitLog() + LocalDateTime.now() + WorkLog.SUCCESS_INFO + "⚠️ 中止失败 \n";
+            workInstance.setStatus(InstanceStatus.FAIL);
         }
 
+        // 实例状态
+        workInstance.setExecEndDateTime(new Date());
+        workInstance.setSubmitLog(submitLog);
+        workInstance.setDuration((System.currentTimeMillis() - workInstance.getExecStartDateTime().getTime()) / 1000);
+        workInstanceRepository.save(workInstance);
+
+        // 关闭定时器和事件，清理锁
+        try {
+            scheduler.unscheduleJob(TriggerKey.triggerKey(QuartzPrefix.WORK_RUN_PROCESS + workEvent.getId()));
+            workEventRepository.deleteById(workEvent.getId());
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        } finally {
+            locker.clearLock(workInstance.getEventId());
+        }
     }
 
     public GetWorkLogRes getWorkLog(GetYarnLogReq getYarnLogReq) {

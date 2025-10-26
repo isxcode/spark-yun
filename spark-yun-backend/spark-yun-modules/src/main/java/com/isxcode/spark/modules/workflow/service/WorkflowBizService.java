@@ -516,7 +516,7 @@ public class WorkflowBizService {
         workInstance = workInstanceRepository.findById(workInstance.getId()).get();
 
         try {
-            workExecutor.syncAbort(workInstance);
+            // workExecutor.syncAbort(workInstance);
             String submitLog = workInstance.getSubmitLog() + LocalDateTime.now() + WorkLog.SUCCESS_INFO + "已中止  \n";
             workInstance.setSubmitLog(submitLog);
             workInstance.setStatus(InstanceStatus.ABORT);

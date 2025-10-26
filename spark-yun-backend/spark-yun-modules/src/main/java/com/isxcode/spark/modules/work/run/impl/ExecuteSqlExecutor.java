@@ -199,11 +199,12 @@ public class ExecuteSqlExecutor extends WorkExecutor {
     }
 
     @Override
-    protected void abort(WorkInstanceEntity workInstance) throws Exception {
+    protected boolean abort(WorkInstanceEntity workInstance, WorkEventEntity workEvent) {
 
-        Thread thread = WORK_THREAD.get(workInstance.getId());
-        if (thread != null) {
-            thread.interrupt();
-        }
+        // Thread thread = WORK_THREAD.get(workInstance.getId());
+        // if (thread != null) {
+        // thread.interrupt();
+        // }
+        return true;
     }
 }

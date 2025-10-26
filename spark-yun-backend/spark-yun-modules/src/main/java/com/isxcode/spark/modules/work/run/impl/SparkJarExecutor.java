@@ -11,9 +11,7 @@ import com.isxcode.spark.api.cluster.constants.ClusterNodeStatus;
 import com.isxcode.spark.api.cluster.dto.ScpFileEngineNodeDto;
 import com.isxcode.spark.api.instance.constants.InstanceStatus;
 import com.isxcode.spark.api.work.constants.WorkType;
-import com.isxcode.spark.api.work.dto.ClusterConfig;
 import com.isxcode.spark.api.work.res.RunWorkRes;
-import com.isxcode.spark.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.spark.backend.api.base.pojos.BaseResponse;
 import com.isxcode.spark.backend.api.base.properties.IsxAppProperties;
 import com.isxcode.spark.common.locker.Locker;
@@ -29,8 +27,6 @@ import com.isxcode.spark.modules.cluster.repository.ClusterNodeRepository;
 import com.isxcode.spark.modules.cluster.repository.ClusterRepository;
 import com.isxcode.spark.modules.file.entity.FileEntity;
 import com.isxcode.spark.modules.file.repository.FileRepository;
-import com.isxcode.spark.modules.work.entity.WorkConfigEntity;
-import com.isxcode.spark.modules.work.entity.WorkEntity;
 import com.isxcode.spark.modules.work.entity.WorkEventEntity;
 import com.isxcode.spark.modules.work.entity.WorkInstanceEntity;
 import com.isxcode.spark.modules.work.repository.*;
@@ -443,46 +439,48 @@ public class SparkJarExecutor extends WorkExecutor {
     }
 
     @Override
-    protected void abort(WorkInstanceEntity workInstance) {
+    protected boolean abort(WorkInstanceEntity workInstance, WorkEventEntity workEvent) {
 
-        // 判断作业有没有提交成功
-        locker.lock("REQUEST_" + workInstance.getId());
-        try {
-            workInstance = workInstanceRepository.findById(workInstance.getId()).get();
-            if (!Strings.isEmpty(workInstance.getSparkStarRes())) {
-                RunWorkRes wokRunWorkRes = JSON.parseObject(workInstance.getSparkStarRes(), RunWorkRes.class);
-                if (!Strings.isEmpty(wokRunWorkRes.getAppId())) {
-                    // 关闭远程线程
-                    WorkEntity work = workRepository.findById(workInstance.getWorkId()).get();
-                    WorkConfigEntity workConfig = workConfigRepository.findById(work.getConfigId()).get();
-                    ClusterConfig clusterConfig = JSON.parseObject(workConfig.getClusterConfig(), ClusterConfig.class);
-                    List<ClusterNodeEntity> allEngineNodes = clusterNodeRepository
-                        .findAllByClusterIdAndStatus(clusterConfig.getClusterId(), ClusterNodeStatus.RUNNING);
-                    if (allEngineNodes.isEmpty()) {
-                        throw errorLogException("申请资源失败 : 集群不存在可用节点，请切换一个集群");
-                    }
-                    ClusterEntity cluster = clusterRepository.findById(clusterConfig.getClusterId()).get();
-
-                    // 节点选择随机数
-                    ClusterNodeEntity engineNode = allEngineNodes.get(new Random().nextInt(allEngineNodes.size()));
-
-                    StopWorkReq stopWorkReq = StopWorkReq.builder().appId(wokRunWorkRes.getAppId())
-                        .clusterType(cluster.getClusterType()).sparkHomePath(engineNode.getSparkHomePath())
-                        .agentHomePath(engineNode.getAgentHomePath()).build();
-                    BaseResponse<?> baseResponse = HttpUtils.doPost(httpUrlUtils.genHttpUrl(engineNode.getHost(),
-                        engineNode.getAgentPort(), SparkAgentUrl.STOP_WORK_URL), stopWorkReq, BaseResponse.class);
-
-                    if (!String.valueOf(HttpStatus.OK.value()).equals(baseResponse.getCode())) {
-                        throw new IsxAppException(baseResponse.getCode(), baseResponse.getMsg(), baseResponse.getErr());
-                    }
-                } else {
-                    // 先杀死进程
-                    WORK_THREAD.get(workInstance.getId()).interrupt();
-                }
-            }
-        } finally {
-            locker.clearLock("REQUEST_" + workInstance.getId());
-        }
+        // // 判断作业有没有提交成功
+        // locker.lock("REQUEST_" + workInstance.getId());
+        // try {
+        // workInstance = workInstanceRepository.findById(workInstance.getId()).get();
+        // if (!Strings.isEmpty(workInstance.getSparkStarRes())) {
+        // RunWorkRes wokRunWorkRes = JSON.parseObject(workInstance.getSparkStarRes(), RunWorkRes.class);
+        // if (!Strings.isEmpty(wokRunWorkRes.getAppId())) {
+        // // 关闭远程线程
+        // WorkEntity work = workRepository.findById(workInstance.getWorkId()).get();
+        // WorkConfigEntity workConfig = workConfigRepository.findById(work.getConfigId()).get();
+        // ClusterConfig clusterConfig = JSON.parseObject(workConfig.getClusterConfig(),
+        // ClusterConfig.class);
+        // List<ClusterNodeEntity> allEngineNodes = clusterNodeRepository
+        // .findAllByClusterIdAndStatus(clusterConfig.getClusterId(), ClusterNodeStatus.RUNNING);
+        // if (allEngineNodes.isEmpty()) {
+        // throw errorLogException("申请资源失败 : 集群不存在可用节点，请切换一个集群");
+        // }
+        // ClusterEntity cluster = clusterRepository.findById(clusterConfig.getClusterId()).get();
+        //
+        // // 节点选择随机数
+        // ClusterNodeEntity engineNode = allEngineNodes.get(new Random().nextInt(allEngineNodes.size()));
+        //
+        // StopWorkReq stopWorkReq = StopWorkReq.builder().appId(wokRunWorkRes.getAppId())
+        // .clusterType(cluster.getClusterType()).sparkHomePath(engineNode.getSparkHomePath())
+        // .agentHomePath(engineNode.getAgentHomePath()).build();
+        // BaseResponse<?> baseResponse = HttpUtils.doPost(httpUrlUtils.genHttpUrl(engineNode.getHost(),
+        // engineNode.getAgentPort(), SparkAgentUrl.STOP_WORK_URL), stopWorkReq, BaseResponse.class);
+        //
+        // if (!String.valueOf(HttpStatus.OK.value()).equals(baseResponse.getCode())) {
+        // throw new IsxAppException(baseResponse.getCode(), baseResponse.getMsg(), baseResponse.getErr());
+        // }
+        // } else {
+        // // 先杀死进程
+        // WORK_THREAD.get(workInstance.getId()).interrupt();
+        // }
+        // }
+        // } finally {
+        // locker.clearLock("REQUEST_" + workInstance.getId());
+        // }
+        return true;
     }
 
     public Map<String, String> genSparkSubmitConfig(Map<String, String> sparkConfig) {

@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSON;
 import com.isxcode.spark.api.cluster.constants.ClusterNodeStatus;
 import com.isxcode.spark.api.cluster.dto.ScpFileEngineNodeDto;
 import com.isxcode.spark.api.instance.constants.InstanceStatus;
-import com.isxcode.spark.api.work.constants.QuartzPrefix;
 import com.isxcode.spark.api.work.constants.WorkType;
 import com.isxcode.spark.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.spark.common.locker.Locker;
@@ -29,8 +28,6 @@ import com.jcraft.jsch.SftpException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
 import org.quartz.Scheduler;
-import org.quartz.SchedulerException;
-import org.quartz.TriggerKey;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -60,6 +57,8 @@ public class BashExecutor extends WorkExecutor {
 
     private final Scheduler scheduler;
 
+    private final WorkEventRepository workEventRepository;
+
     public BashExecutor(WorkInstanceRepository workInstanceRepository,
         WorkflowInstanceRepository workflowInstanceRepository, SqlValueService sqlValueService,
         SqlFunctionService sqlFunctionService, AlarmService alarmService, WorkEventRepository workEventRepository,
@@ -80,6 +79,7 @@ public class BashExecutor extends WorkExecutor {
         this.locker = locker;
         this.workService = workService;
         this.scheduler = scheduler;
+        this.workEventRepository = workEventRepository;
     }
 
     @Override
@@ -316,41 +316,30 @@ public class BashExecutor extends WorkExecutor {
     }
 
     @Override
-    protected void abort(WorkInstanceEntity workInstance) {
-
-        // 等待定时器中加的锁释放，保证定时器是运行完的
-        Integer lockKey = locker.lock(workInstance.getEventId());
-
-        // 重新获取最新的实例
-        workInstance = workService.getWorkInstance(workInstance.getId());
-
-        // 获取最新的作业运行事件，判断作业运行到哪里了
-        WorkEventEntity workEvent = workService.getWorkEvent(workInstance.getEventId());
+    protected boolean abort(WorkInstanceEntity workInstance, WorkEventEntity workEvent) {
 
         try {
+
             // 如果是监听状态之后，则重启定时器，已经拦不住了
             if (workEvent.getEventProcess() > 4) {
-                scheduler.resumeTrigger(TriggerKey.triggerKey(QuartzPrefix.WORK_RUN_PROCESS + workEvent.getId()));
-                return;
+                return false;
             }
 
             // 如果能获取pid则尝试直接杀死
             WorkRunContext workRunContext = JSON.parseObject(workEvent.getEventContext(), WorkRunContext.class);
             if (!Strings.isEmpty(workRunContext.getPid())) {
 
-                // 关闭定时器
-                scheduler.unscheduleJob(TriggerKey.triggerKey(QuartzPrefix.WORK_RUN_PROCESS + workEvent.getId()));
-
                 // 杀死程序
                 String killCommand = "kill -9 " + workRunContext.getPid();
                 executeCommand(workRunContext.getScpNodeInfo(), killCommand, false);
             }
-        } catch (JSchException | InterruptedException | IOException | SchedulerException e) {
+
+            // 可以中止
+            return true;
+        } catch (JSchException | InterruptedException | IOException e) {
             throw new IsxAppException(e.getMessage());
-        } finally {
-            // 解锁
-            locker.unlock(lockKey);
         }
+
     }
 
 }
