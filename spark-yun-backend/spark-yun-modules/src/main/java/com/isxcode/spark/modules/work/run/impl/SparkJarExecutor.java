@@ -41,7 +41,6 @@ import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.SftpException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
-import org.quartz.Scheduler;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpServerErrorException;
@@ -58,19 +57,11 @@ import static com.isxcode.spark.common.utils.ssh.SshUtils.scpJar;
 @Slf4j
 public class SparkJarExecutor extends WorkExecutor {
 
-    private final WorkInstanceRepository workInstanceRepository;
-
     private final ClusterRepository clusterRepository;
 
     private final ClusterNodeRepository clusterNodeRepository;
 
-    private final WorkRepository workRepository;
-
-    private final WorkConfigRepository workConfigRepository;
-
     private final IsxAppProperties isxAppProperties;
-
-    private final Locker locker;
 
     private final HttpUrlUtils httpUrlUtils;
 
@@ -85,19 +76,15 @@ public class SparkJarExecutor extends WorkExecutor {
         WorkRepository workRepository, WorkConfigRepository workConfigRepository, IsxAppProperties isxAppProperties,
         Locker locker, HttpUrlUtils httpUrlUtils, ClusterNodeMapper clusterNodeMapper, AesUtils aesUtils,
         FileRepository fileRepository, AlarmService alarmService, SqlFunctionService sqlFunctionService,
-        Scheduler scheduler, WorkEventRepository workEventRepository, WorkRunJobFactory workRunJobFactory,
+        WorkEventRepository workEventRepository, WorkRunJobFactory workRunJobFactory,
         VipWorkVersionRepository vipWorkVersionRepository, WorkService workService) {
 
-        super(alarmService, scheduler, locker, workRepository, workInstanceRepository, workflowInstanceRepository,
+        super(alarmService, locker, workRepository, workInstanceRepository, workflowInstanceRepository,
             workEventRepository, workRunJobFactory, sqlFunctionService, workConfigRepository, vipWorkVersionRepository,
             workService);
-        this.workInstanceRepository = workInstanceRepository;
         this.clusterRepository = clusterRepository;
         this.clusterNodeRepository = clusterNodeRepository;
-        this.workRepository = workRepository;
-        this.workConfigRepository = workConfigRepository;
         this.isxAppProperties = isxAppProperties;
-        this.locker = locker;
         this.httpUrlUtils = httpUrlUtils;
         this.clusterNodeMapper = clusterNodeMapper;
         this.aesUtils = aesUtils;

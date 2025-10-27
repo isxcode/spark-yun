@@ -51,7 +51,6 @@ import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.SftpException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
-import org.quartz.Scheduler;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpServerErrorException;
@@ -110,12 +109,11 @@ public class SyncWorkExecutor extends WorkExecutor {
         HttpUrlUtils httpUrlUtils, AesUtils aesUtils, ClusterNodeMapper clusterNodeMapper,
         DatasourceService datasourceService, IsxAppProperties isxAppProperties, FuncRepository funcRepository,
         FileRepository fileRepository, SqlCommentService sqlCommentService, SqlValueService sqlValueService,
-        SqlFunctionService sqlFunctionService, AlarmService alarmService, Scheduler scheduler,
-        WorkEventRepository workEventRepository, WorkRunJobFactory workRunJobFactory,
-        VipWorkVersionRepository vipWorkVersionRepository, WorkService workService,
+        SqlFunctionService sqlFunctionService, AlarmService alarmService, WorkEventRepository workEventRepository,
+        WorkRunJobFactory workRunJobFactory, VipWorkVersionRepository vipWorkVersionRepository, WorkService workService,
         SecretKeyRepository secretKeyRepository, FuncMapper funcMapper) {
 
-        super(alarmService, scheduler, locker, workRepository, workInstanceRepository, workflowInstanceRepository,
+        super(alarmService, locker, workRepository, workInstanceRepository, workflowInstanceRepository,
             workEventRepository, workRunJobFactory, sqlFunctionService, workConfigRepository, vipWorkVersionRepository,
             workService);
         this.workInstanceRepository = workInstanceRepository;

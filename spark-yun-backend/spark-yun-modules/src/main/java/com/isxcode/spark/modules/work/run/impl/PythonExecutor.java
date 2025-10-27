@@ -28,7 +28,6 @@ import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.SftpException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
-import org.quartz.Scheduler;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -56,12 +55,12 @@ public class PythonExecutor extends WorkExecutor {
     public PythonExecutor(WorkInstanceRepository workInstanceRepository,
         WorkflowInstanceRepository workflowInstanceRepository, SqlValueService sqlValueService,
         SqlFunctionService sqlFunctionService, AlarmService alarmService, WorkEventRepository workEventRepository,
-        Scheduler scheduler, Locker locker, WorkRepository workRepository, WorkRunJobFactory workRunJobFactory,
+        Locker locker, WorkRepository workRepository, WorkRunJobFactory workRunJobFactory,
         WorkConfigRepository workConfigRepository, VipWorkVersionRepository vipWorkVersionRepository,
         ClusterNodeMapper clusterNodeMapper, AesUtils aesUtils, ClusterNodeRepository clusterNodeRepository,
         ClusterRepository clusterRepository, WorkService workService) {
 
-        super(alarmService, scheduler, locker, workRepository, workInstanceRepository, workflowInstanceRepository,
+        super(alarmService, locker, workRepository, workInstanceRepository, workflowInstanceRepository,
             workEventRepository, workRunJobFactory, sqlFunctionService, workConfigRepository, vipWorkVersionRepository,
             workService);
         this.clusterRepository = clusterRepository;

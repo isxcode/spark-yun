@@ -39,7 +39,6 @@ import java.util.stream.Collectors;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
-import org.quartz.Scheduler;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
@@ -72,12 +71,12 @@ public class QuerySqlExecutor extends WorkExecutor {
         WorkflowInstanceRepository workflowInstanceRepository, DatasourceRepository datasourceRepository,
         SqlCommentService sqlCommentService, SqlValueService sqlValueService, SqlFunctionService sqlFunctionService,
         AlarmService alarmService, DataSourceFactory dataSourceFactory, DatasourceMapper datasourceMapper,
-        WorkEventRepository workEventRepository, Scheduler scheduler, Locker locker, WorkRepository workRepository,
+        WorkEventRepository workEventRepository, Locker locker, WorkRepository workRepository,
         WorkRunJobFactory workRunJobFactory, WorkConfigRepository workConfigRepository,
         VipWorkVersionRepository vipWorkVersionRepository, WorkService workService, DatasourceService datasourceService,
         IsxAppProperties isxAppProperties, ServerProperties serverProperties) {
 
-        super(alarmService, scheduler, locker, workRepository, workInstanceRepository, workflowInstanceRepository,
+        super(alarmService, locker, workRepository, workInstanceRepository, workflowInstanceRepository,
             workEventRepository, workRunJobFactory, sqlFunctionService, workConfigRepository, vipWorkVersionRepository,
             workService);
         this.datasourceRepository = datasourceRepository;

@@ -62,7 +62,6 @@ public class WorkRunJob implements Job {
             if (InstanceStatus.FINISHED.equals(runStatus)) {
                 scheduler.unscheduleJob(TriggerKey.triggerKey(QuartzPrefix.WORK_RUN_PROCESS + workEventId));
                 workEventRepository.deleteById(workEventId);
-                log.debug("WorkRunJob 执行完成，已清理调度器和事件，EventId: {}", workEventId);
             }
         } catch (Exception ignore) {
             log.warn("清理调度器和事件时发生异常，EventId: {}", workEventId);
