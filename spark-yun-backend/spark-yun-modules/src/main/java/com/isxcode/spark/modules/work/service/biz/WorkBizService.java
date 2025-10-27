@@ -366,7 +366,9 @@ public class WorkBizService {
 
         // 第一时间等待锁，等待定时器中加的锁释放，保证定时器是运行完的
         Integer lockKey;
-        if (work.getWorkType().equals(WorkType.API)) {
+        List<String> onlyLockWork = Arrays.asList(WorkType.API, WorkType.EXECUTE_JDBC_SQL, WorkType.QUERY_JDBC_SQL,
+            WorkType.PRQL, WorkType.SPARK_CONTAINER_SQL);
+        if (onlyLockWork.contains(work.getWorkType())) {
             lockKey = locker.lockOnly(workInstance.getEventId());
         } else {
             lockKey = locker.lock(workInstance.getEventId());
@@ -381,7 +383,12 @@ public class WorkBizService {
         }
 
         // 获取作业运行事件体
-        WorkEventEntity workEvent = workService.getWorkEvent(workInstance.getEventId());
+        Optional<WorkEventEntity> optionalWorkEvent = workEventRepository.findById(workInstance.getEventId());
+        if (!optionalWorkEvent.isPresent()) {
+            locker.unlock(lockKey);
+            return;
+        }
+        WorkEventEntity workEvent = optionalWorkEvent.get();
         String submitLog;
 
         try {

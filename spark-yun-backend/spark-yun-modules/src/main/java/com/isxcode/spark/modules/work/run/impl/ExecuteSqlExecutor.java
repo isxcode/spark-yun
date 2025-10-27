@@ -5,6 +5,7 @@ import com.isxcode.spark.api.datasource.dto.ConnectInfo;
 import com.isxcode.spark.api.work.constants.WorkType;
 import com.isxcode.spark.backend.api.base.exceptions.WorkRunException;
 import com.isxcode.spark.backend.api.base.exceptions.IsxAppException;
+import com.isxcode.spark.backend.api.base.properties.IsxAppProperties;
 import com.isxcode.spark.modules.alarm.service.AlarmService;
 import com.isxcode.spark.modules.datasource.entity.DatasourceEntity;
 import com.isxcode.spark.modules.datasource.mapper.DatasourceMapper;
@@ -23,6 +24,7 @@ import com.isxcode.spark.modules.work.sql.SqlValueService;
 import com.isxcode.spark.modules.workflow.repository.WorkflowInstanceRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
+import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import com.isxcode.spark.api.instance.constants.InstanceStatus;
@@ -63,14 +65,18 @@ public class ExecuteSqlExecutor extends WorkExecutor {
 
     private final DatasourceService datasourceService;
 
+    private final IsxAppProperties isxAppProperties;
+
+    private final ServerProperties serverProperties;
+
     public ExecuteSqlExecutor(WorkInstanceRepository workInstanceRepository,
         WorkflowInstanceRepository workflowInstanceRepository, DatasourceRepository datasourceRepository,
         SqlCommentService sqlCommentService, SqlValueService sqlValueService, SqlFunctionService sqlFunctionService,
         AlarmService alarmService, DataSourceFactory dataSourceFactory, DatasourceMapper datasourceMapper,
         WorkEventRepository workEventRepository, Scheduler scheduler, Locker locker, WorkRepository workRepository,
         WorkRunJobFactory workRunJobFactory, WorkConfigRepository workConfigRepository,
-        VipWorkVersionRepository vipWorkVersionRepository, WorkService workService,
-        DatasourceService datasourceService) {
+        VipWorkVersionRepository vipWorkVersionRepository, WorkService workService, DatasourceService datasourceService,
+        IsxAppProperties isxAppProperties, ServerProperties serverProperties) {
 
         super(alarmService, scheduler, locker, workRepository, workInstanceRepository, workflowInstanceRepository,
             workEventRepository, workRunJobFactory, sqlFunctionService, workConfigRepository, vipWorkVersionRepository,
@@ -82,6 +88,8 @@ public class ExecuteSqlExecutor extends WorkExecutor {
         this.dataSourceFactory = dataSourceFactory;
         this.datasourceMapper = datasourceMapper;
         this.datasourceService = datasourceService;
+        this.isxAppProperties = isxAppProperties;
+        this.serverProperties = serverProperties;
     }
 
     @Override

@@ -21,6 +21,7 @@ import com.isxcode.spark.modules.workflow.repository.WorkflowInstanceRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
 import org.quartz.Scheduler;
+import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -35,16 +36,20 @@ public class CurlExecutor extends WorkExecutor {
 
     private final IsxAppProperties isxAppProperties;
 
+    private final ServerProperties serverProperties;
+
     public CurlExecutor(WorkInstanceRepository workInstanceRepository,
         WorkflowInstanceRepository workflowInstanceRepository, SqlFunctionService sqlFunctionService,
         AlarmService alarmService, WorkEventRepository workEventRepository, Scheduler scheduler, Locker locker,
         WorkRepository workRepository, WorkRunJobFactory workRunJobFactory, WorkConfigRepository workConfigRepository,
-        VipWorkVersionRepository vipWorkVersionRepository, IsxAppProperties isxAppProperties, WorkService workService) {
+        VipWorkVersionRepository vipWorkVersionRepository, IsxAppProperties isxAppProperties, WorkService workService,
+        ServerProperties serverProperties) {
 
         super(alarmService, scheduler, locker, workRepository, workInstanceRepository, workflowInstanceRepository,
             workEventRepository, workRunJobFactory, sqlFunctionService, workConfigRepository, vipWorkVersionRepository,
             workService);
         this.isxAppProperties = isxAppProperties;
+        this.serverProperties = serverProperties;
     }
 
     @Override
