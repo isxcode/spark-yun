@@ -1,9 +1,11 @@
 package com.isxcode.spark.modules.work.run.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.isxcode.spark.api.cluster.constants.ClusterNodeStatus;
 import com.isxcode.spark.api.cluster.dto.ScpFileEngineNodeDto;
 import com.isxcode.spark.api.instance.constants.InstanceStatus;
 import com.isxcode.spark.api.work.constants.WorkType;
+import com.isxcode.spark.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.spark.common.locker.Locker;
 import com.isxcode.spark.common.utils.aes.AesUtils;
 import com.isxcode.spark.common.utils.ssh.SshUtils;
@@ -306,8 +308,30 @@ public class PythonExecutor extends WorkExecutor {
     @Override
     protected boolean abort(WorkInstanceEntity workInstance, WorkEventEntity workEvent) {
 
-        // Thread thread = WORK_THREAD.get(workInstance.getId());
-        // thread.interrupt();
-        return true;
+        // 还未提交
+        if (workEvent.getEventProcess() < 3) {
+            return true;
+        }
+
+        // 运行完毕
+        if (workEvent.getEventProcess() > 4) {
+            return false;
+        }
+
+        try {
+            // 如果能获取pid则尝试直接杀死
+            WorkRunContext workRunContext = JSON.parseObject(workEvent.getEventContext(), WorkRunContext.class);
+            if (!Strings.isEmpty(workRunContext.getPid())) {
+
+                // 杀死程序
+                String killCommand = "kill -9 " + workRunContext.getPid();
+                executeCommand(workRunContext.getScpNodeInfo(), killCommand, false);
+            }
+
+            // 可以中止
+            return true;
+        } catch (JSchException | InterruptedException | IOException e) {
+            throw new IsxAppException(e.getMessage());
+        }
     }
 }

@@ -12,6 +12,7 @@ import com.isxcode.spark.api.cluster.dto.ScpFileEngineNodeDto;
 import com.isxcode.spark.api.instance.constants.InstanceStatus;
 import com.isxcode.spark.api.work.constants.WorkType;
 import com.isxcode.spark.api.work.res.RunWorkRes;
+import com.isxcode.spark.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.spark.backend.api.base.pojos.BaseResponse;
 import com.isxcode.spark.backend.api.base.properties.IsxAppProperties;
 import com.isxcode.spark.common.locker.Locker;
@@ -45,6 +46,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.ResourceAccessException;
+import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
 import java.io.IOException;
@@ -441,45 +443,37 @@ public class SparkJarExecutor extends WorkExecutor {
     @Override
     protected boolean abort(WorkInstanceEntity workInstance, WorkEventEntity workEvent) {
 
-        // // 判断作业有没有提交成功
-        // locker.lock("REQUEST_" + workInstance.getId());
-        // try {
-        // workInstance = workInstanceRepository.findById(workInstance.getId()).get();
-        // if (!Strings.isEmpty(workInstance.getSparkStarRes())) {
-        // RunWorkRes wokRunWorkRes = JSON.parseObject(workInstance.getSparkStarRes(), RunWorkRes.class);
-        // if (!Strings.isEmpty(wokRunWorkRes.getAppId())) {
-        // // 关闭远程线程
-        // WorkEntity work = workRepository.findById(workInstance.getWorkId()).get();
-        // WorkConfigEntity workConfig = workConfigRepository.findById(work.getConfigId()).get();
-        // ClusterConfig clusterConfig = JSON.parseObject(workConfig.getClusterConfig(),
-        // ClusterConfig.class);
-        // List<ClusterNodeEntity> allEngineNodes = clusterNodeRepository
-        // .findAllByClusterIdAndStatus(clusterConfig.getClusterId(), ClusterNodeStatus.RUNNING);
-        // if (allEngineNodes.isEmpty()) {
-        // throw errorLogException("申请资源失败 : 集群不存在可用节点，请切换一个集群");
-        // }
-        // ClusterEntity cluster = clusterRepository.findById(clusterConfig.getClusterId()).get();
-        //
-        // // 节点选择随机数
-        // ClusterNodeEntity engineNode = allEngineNodes.get(new Random().nextInt(allEngineNodes.size()));
-        //
-        // StopWorkReq stopWorkReq = StopWorkReq.builder().appId(wokRunWorkRes.getAppId())
-        // .clusterType(cluster.getClusterType()).sparkHomePath(engineNode.getSparkHomePath())
-        // .agentHomePath(engineNode.getAgentHomePath()).build();
-        // BaseResponse<?> baseResponse = HttpUtils.doPost(httpUrlUtils.genHttpUrl(engineNode.getHost(),
-        // engineNode.getAgentPort(), SparkAgentUrl.STOP_WORK_URL), stopWorkReq, BaseResponse.class);
-        //
-        // if (!String.valueOf(HttpStatus.OK.value()).equals(baseResponse.getCode())) {
-        // throw new IsxAppException(baseResponse.getCode(), baseResponse.getMsg(), baseResponse.getErr());
-        // }
-        // } else {
-        // // 先杀死进程
-        // WORK_THREAD.get(workInstance.getId()).interrupt();
-        // }
-        // }
-        // } finally {
-        // locker.clearLock("REQUEST_" + workInstance.getId());
-        // }
+        // 还未提交
+        if (workEvent.getEventProcess() < 5) {
+            return true;
+        }
+
+        // 运行完毕
+        if (workEvent.getEventProcess() > 6) {
+            return false;
+        }
+
+        // 如果能获取appId则尝试直接杀死
+        WorkRunContext workRunContext = JSON.parseObject(workEvent.getEventContext(), WorkRunContext.class);
+        if (!Strings.isEmpty(workRunContext.getAppId())) {
+
+            StopWorkReq stopWorkReq =
+                StopWorkReq.builder().appId(workRunContext.getAppId()).clusterType(workRunContext.getClusterType())
+                    .sparkHomePath(workRunContext.getAgentNode().getSparkHomePath())
+                    .agentHomePath(workRunContext.getAgentNode().getAgentHomePath()).build();
+
+            BaseResponse<?> baseResponse = new RestTemplate().postForObject(
+                httpUrlUtils.genHttpUrl(workRunContext.getAgentNode().getHost(),
+                    workRunContext.getAgentNode().getAgentPort(), SparkAgentUrl.STOP_WORK_URL),
+                stopWorkReq, BaseResponse.class);
+
+            if (baseResponse != null && baseResponse.getCode() != null
+                && !String.valueOf(HttpStatus.OK.value()).equals(baseResponse.getCode())) {
+                throw new IsxAppException(baseResponse.getCode(), baseResponse.getMsg(), baseResponse.getErr());
+            }
+        }
+
+        // 可以中止
         return true;
     }
 

@@ -7,6 +7,7 @@ import com.isxcode.spark.api.instance.constants.InstanceStatus;
 import com.isxcode.spark.api.work.constants.WorkType;
 import com.isxcode.spark.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.spark.backend.api.base.exceptions.WorkRunException;
+import com.isxcode.spark.backend.api.base.properties.IsxAppProperties;
 import com.isxcode.spark.common.locker.Locker;
 import com.isxcode.spark.modules.alarm.service.AlarmService;
 import com.isxcode.spark.modules.datasource.entity.DatasourceEntity;
@@ -27,6 +28,7 @@ import com.isxcode.spark.modules.work.sql.SqlFunctionService;
 import com.isxcode.spark.modules.work.sql.SqlValueService;
 import com.isxcode.spark.modules.workflow.repository.WorkflowInstanceRepository;
 
+import java.net.URI;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
@@ -38,7 +40,11 @@ import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
 import org.quartz.Scheduler;
+import org.springframework.boot.autoconfigure.web.ServerProperties;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 @Service
 @Slf4j
@@ -58,14 +64,18 @@ public class QuerySqlExecutor extends WorkExecutor {
 
     private final DatasourceService datasourceService;
 
+    private final IsxAppProperties isxAppProperties;
+
+    private final ServerProperties serverProperties;
+
     public QuerySqlExecutor(WorkInstanceRepository workInstanceRepository,
         WorkflowInstanceRepository workflowInstanceRepository, DatasourceRepository datasourceRepository,
         SqlCommentService sqlCommentService, SqlValueService sqlValueService, SqlFunctionService sqlFunctionService,
         AlarmService alarmService, DataSourceFactory dataSourceFactory, DatasourceMapper datasourceMapper,
         WorkEventRepository workEventRepository, Scheduler scheduler, Locker locker, WorkRepository workRepository,
         WorkRunJobFactory workRunJobFactory, WorkConfigRepository workConfigRepository,
-        VipWorkVersionRepository vipWorkVersionRepository, WorkService workService,
-        DatasourceService datasourceService) {
+        VipWorkVersionRepository vipWorkVersionRepository, WorkService workService, DatasourceService datasourceService,
+        IsxAppProperties isxAppProperties, ServerProperties serverProperties) {
 
         super(alarmService, scheduler, locker, workRepository, workInstanceRepository, workflowInstanceRepository,
             workEventRepository, workRunJobFactory, sqlFunctionService, workConfigRepository, vipWorkVersionRepository,
@@ -77,6 +87,8 @@ public class QuerySqlExecutor extends WorkExecutor {
         this.dataSourceFactory = dataSourceFactory;
         this.datasourceMapper = datasourceMapper;
         this.datasourceService = datasourceService;
+        this.isxAppProperties = isxAppProperties;
+        this.serverProperties = serverProperties;
     }
 
     @Override
@@ -266,10 +278,28 @@ public class QuerySqlExecutor extends WorkExecutor {
     @Override
     protected boolean abort(WorkInstanceEntity workInstance, WorkEventEntity workEvent) {
 
-        // Thread thread = WORK_THREAD.get(workInstance.getId());
-        // if (thread != null) {
-        // thread.interrupt();
-        // }
+        // 还未提交
+        if (workEvent.getEventProcess() < 3) {
+            return true;
+        }
+
+        // 运行完毕
+        if (workEvent.getEventProcess() > 3) {
+            return false;
+        }
+
+        // 运行中，中止作业
+        WorkRunContext workRunContext = JSON.parseObject(workEvent.getEventContext(), WorkRunContext.class);
+        if (!Strings.isEmpty(workRunContext.getIsxAppName())) {
+
+            // 杀死程序
+            String killUrl = "http://" + isxAppProperties.getNodes().get(isxAppProperties.getAppName()) + ":"
+                + serverProperties.getPort() + "/ha/open/kill";
+            URI uri =
+                UriComponentsBuilder.fromHttpUrl(killUrl).queryParam("workEventId", workEvent.getId()).build().toUri();
+            new RestTemplate().exchange(uri, HttpMethod.GET, null, String.class);
+        }
+
         return true;
     }
 }
