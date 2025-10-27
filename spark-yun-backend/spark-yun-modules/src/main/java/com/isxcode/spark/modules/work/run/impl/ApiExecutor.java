@@ -23,16 +23,11 @@ import com.isxcode.spark.common.locker.Locker;
 import com.isxcode.spark.modules.work.service.WorkService;
 import com.isxcode.spark.modules.work.sql.SqlFunctionService;
 import com.isxcode.spark.modules.workflow.repository.WorkflowInstanceRepository;
-import org.apache.logging.log4j.util.Strings;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
-import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
 
-import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -45,11 +40,11 @@ public class ApiExecutor extends WorkExecutor {
     private final ServerProperties serverProperties;
 
     public ApiExecutor(WorkInstanceRepository workInstanceRepository,
-                       WorkflowInstanceRepository workflowInstanceRepository, AlarmService alarmService,
-                       SqlFunctionService sqlFunctionService, WorkEventRepository workEventRepository,
-                       WorkRunJobFactory workRunJobFactory, VipWorkVersionRepository vipWorkVersionRepository,
-                       WorkConfigRepository workConfigRepository, WorkRepository workRepository, Locker locker,
-                       WorkService workService, IsxAppProperties isxAppProperties, ServerProperties serverProperties) {
+        WorkflowInstanceRepository workflowInstanceRepository, AlarmService alarmService,
+        SqlFunctionService sqlFunctionService, WorkEventRepository workEventRepository,
+        WorkRunJobFactory workRunJobFactory, VipWorkVersionRepository vipWorkVersionRepository,
+        WorkConfigRepository workConfigRepository, WorkRepository workRepository, Locker locker,
+        WorkService workService, IsxAppProperties isxAppProperties, ServerProperties serverProperties) {
 
         super(alarmService, locker, workRepository, workInstanceRepository, workflowInstanceRepository,
             workEventRepository, workRunJobFactory, sqlFunctionService, workConfigRepository, vipWorkVersionRepository,
@@ -65,7 +60,7 @@ public class ApiExecutor extends WorkExecutor {
 
     @Override
     protected String execute(WorkRunContext workRunContext, WorkInstanceEntity workInstance,
-                             WorkEventEntity workEvent) {
+        WorkEventEntity workEvent) {
 
         // 获取日志
         StringBuilder logBuilder = new StringBuilder(workInstance.getSubmitLog());
@@ -189,16 +184,18 @@ public class ApiExecutor extends WorkExecutor {
         }
 
         // 运行中，中止作业
-//        WorkRunContext workRunContext = JSON.parseObject(workEvent.getEventContext(), WorkRunContext.class);
-//        if (!Strings.isEmpty(workRunContext.getIsxAppName())) {
-//
-//            // 杀死程序
-//            String killUrl = "http://" + isxAppProperties.getNodes().get(isxAppProperties.getAppName()) + ":"
-//                + serverProperties.getPort() + "/ha/open/kill";
-//            URI uri =
-//                UriComponentsBuilder.fromHttpUrl(killUrl).queryParam("workEventId", workEvent.getId()).build().toUri();
-//            new RestTemplate().exchange(uri, HttpMethod.GET, null, String.class);
-//        }
+        // WorkRunContext workRunContext = JSON.parseObject(workEvent.getEventContext(),
+        // WorkRunContext.class);
+        // if (!Strings.isEmpty(workRunContext.getIsxAppName())) {
+        //
+        // // 杀死程序
+        // String killUrl = "http://" + isxAppProperties.getNodes().get(isxAppProperties.getAppName()) + ":"
+        // + serverProperties.getPort() + "/ha/open/kill";
+        // URI uri =
+        // UriComponentsBuilder.fromHttpUrl(killUrl).queryParam("workEventId",
+        // workEvent.getId()).build().toUri();
+        // new RestTemplate().exchange(uri, HttpMethod.GET, null, String.class);
+        // }
         Thread thread = WORK_THREAD.get(workEvent.getId());
         if (thread != null) {
             thread.interrupt();

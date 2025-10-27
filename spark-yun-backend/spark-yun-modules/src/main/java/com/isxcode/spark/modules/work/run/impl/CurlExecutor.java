@@ -2,7 +2,6 @@ package com.isxcode.spark.modules.work.run.impl;
 
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.RuntimeUtil;
-import com.alibaba.fastjson.JSON;
 import com.isxcode.spark.api.instance.constants.InstanceStatus;
 import com.isxcode.spark.api.work.constants.WorkType;
 import com.isxcode.spark.backend.api.base.properties.IsxAppProperties;
@@ -21,13 +20,9 @@ import com.isxcode.spark.modules.workflow.repository.WorkflowInstanceRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
-import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.File;
-import java.net.URI;
 
 @Service
 @Slf4j
@@ -38,11 +33,11 @@ public class CurlExecutor extends WorkExecutor {
     private final ServerProperties serverProperties;
 
     public CurlExecutor(WorkInstanceRepository workInstanceRepository,
-                        WorkflowInstanceRepository workflowInstanceRepository, SqlFunctionService sqlFunctionService,
-                        AlarmService alarmService, WorkEventRepository workEventRepository, Locker locker,
-                        WorkRepository workRepository, WorkRunJobFactory workRunJobFactory, WorkConfigRepository workConfigRepository,
-                        VipWorkVersionRepository vipWorkVersionRepository, IsxAppProperties isxAppProperties, WorkService workService,
-                        ServerProperties serverProperties) {
+        WorkflowInstanceRepository workflowInstanceRepository, SqlFunctionService sqlFunctionService,
+        AlarmService alarmService, WorkEventRepository workEventRepository, Locker locker,
+        WorkRepository workRepository, WorkRunJobFactory workRunJobFactory, WorkConfigRepository workConfigRepository,
+        VipWorkVersionRepository vipWorkVersionRepository, IsxAppProperties isxAppProperties, WorkService workService,
+        ServerProperties serverProperties) {
 
         super(alarmService, locker, workRepository, workInstanceRepository, workflowInstanceRepository,
             workEventRepository, workRunJobFactory, sqlFunctionService, workConfigRepository, vipWorkVersionRepository,
@@ -58,7 +53,7 @@ public class CurlExecutor extends WorkExecutor {
 
     @Override
     protected String execute(WorkRunContext workRunContext, WorkInstanceEntity workInstance,
-                             WorkEventEntity workEvent) {
+        WorkEventEntity workEvent) {
 
         // 获取日志
         StringBuilder logBuilder = new StringBuilder(workInstance.getSubmitLog());
@@ -173,16 +168,18 @@ public class CurlExecutor extends WorkExecutor {
         }
 
         // 运行中，中止作业
-//        WorkRunContext workRunContext = JSON.parseObject(workEvent.getEventContext(), WorkRunContext.class);
-//        if (!Strings.isEmpty(workRunContext.getIsxAppName())) {
-//
-//            // 杀死程序
-//            String killUrl = "http://" + isxAppProperties.getNodes().get(isxAppProperties.getAppName()) + ":"
-//                + serverProperties.getPort() + "/ha/open/kill";
-//            URI uri =
-//                UriComponentsBuilder.fromHttpUrl(killUrl).queryParam("workEventId", workEvent.getId()).build().toUri();
-//            new RestTemplate().exchange(uri, HttpMethod.GET, null, String.class);
-//        }
+        // WorkRunContext workRunContext = JSON.parseObject(workEvent.getEventContext(),
+        // WorkRunContext.class);
+        // if (!Strings.isEmpty(workRunContext.getIsxAppName())) {
+        //
+        // // 杀死程序
+        // String killUrl = "http://" + isxAppProperties.getNodes().get(isxAppProperties.getAppName()) + ":"
+        // + serverProperties.getPort() + "/ha/open/kill";
+        // URI uri =
+        // UriComponentsBuilder.fromHttpUrl(killUrl).queryParam("workEventId",
+        // workEvent.getId()).build().toUri();
+        // new RestTemplate().exchange(uri, HttpMethod.GET, null, String.class);
+        // }
         Thread thread = WORK_THREAD.get(workEvent.getId());
         if (thread != null) {
             thread.interrupt();
