@@ -159,6 +159,11 @@ public class QuerySqlExecutor extends WorkExecutor {
         // 执行SQL脚本
         if (workEvent.getEventProcess() == 3) {
 
+            // 记录当前线程
+            WORK_THREAD.put(workEvent.getId(), Thread.currentThread());
+            workRunContext.setIsxAppName(isxAppProperties.getAppName());
+            updateWorkEvent(workEvent, workRunContext);
+
             // 获取上下文参数
             String script = workRunContext.getScript();
             String datasourceId = workRunContext.getDatasourceId();
