@@ -8,7 +8,9 @@ import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfigurat
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-
+/**
+ * 每次重启项目，需要清空锁表
+ */
 @Slf4j
 @Configuration
 @AutoConfigureAfter(HibernateJpaAutoConfiguration.class)
