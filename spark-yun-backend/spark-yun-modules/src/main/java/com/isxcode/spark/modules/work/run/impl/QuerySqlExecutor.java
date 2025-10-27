@@ -68,13 +68,13 @@ public class QuerySqlExecutor extends WorkExecutor {
     private final ServerProperties serverProperties;
 
     public QuerySqlExecutor(WorkInstanceRepository workInstanceRepository,
-        WorkflowInstanceRepository workflowInstanceRepository, DatasourceRepository datasourceRepository,
-        SqlCommentService sqlCommentService, SqlValueService sqlValueService, SqlFunctionService sqlFunctionService,
-        AlarmService alarmService, DataSourceFactory dataSourceFactory, DatasourceMapper datasourceMapper,
-        WorkEventRepository workEventRepository, Locker locker, WorkRepository workRepository,
-        WorkRunJobFactory workRunJobFactory, WorkConfigRepository workConfigRepository,
-        VipWorkVersionRepository vipWorkVersionRepository, WorkService workService, DatasourceService datasourceService,
-        IsxAppProperties isxAppProperties, ServerProperties serverProperties) {
+                            WorkflowInstanceRepository workflowInstanceRepository, DatasourceRepository datasourceRepository,
+                            SqlCommentService sqlCommentService, SqlValueService sqlValueService, SqlFunctionService sqlFunctionService,
+                            AlarmService alarmService, DataSourceFactory dataSourceFactory, DatasourceMapper datasourceMapper,
+                            WorkEventRepository workEventRepository, Locker locker, WorkRepository workRepository,
+                            WorkRunJobFactory workRunJobFactory, WorkConfigRepository workConfigRepository,
+                            VipWorkVersionRepository vipWorkVersionRepository, WorkService workService, DatasourceService datasourceService,
+                            IsxAppProperties isxAppProperties, ServerProperties serverProperties) {
 
         super(alarmService, locker, workRepository, workInstanceRepository, workflowInstanceRepository,
             workEventRepository, workRunJobFactory, sqlFunctionService, workConfigRepository, vipWorkVersionRepository,
@@ -97,7 +97,7 @@ public class QuerySqlExecutor extends WorkExecutor {
 
     @Override
     protected String execute(WorkRunContext workRunContext, WorkInstanceEntity workInstance,
-        WorkEventEntity workEvent) {
+                             WorkEventEntity workEvent) {
 
         // 获取日志
         StringBuilder logBuilder = new StringBuilder(workInstance.getSubmitLog());
@@ -174,7 +174,7 @@ public class QuerySqlExecutor extends WorkExecutor {
             connectInfo.setLoginTimeout(5);
 
             try (Connection connection = datasource.getConnection(connectInfo);
-                Statement statement = connection.createStatement()) {
+                 Statement statement = connection.createStatement()) {
 
                 statement.setQueryTimeout(1800);
 
@@ -293,15 +293,19 @@ public class QuerySqlExecutor extends WorkExecutor {
         }
 
         // 运行中，中止作业
-        WorkRunContext workRunContext = JSON.parseObject(workEvent.getEventContext(), WorkRunContext.class);
-        if (!Strings.isEmpty(workRunContext.getIsxAppName())) {
-
-            // 杀死程序
-            String killUrl = "http://" + isxAppProperties.getNodes().get(isxAppProperties.getAppName()) + ":"
-                + serverProperties.getPort() + "/ha/open/kill";
-            URI uri =
-                UriComponentsBuilder.fromHttpUrl(killUrl).queryParam("workEventId", workEvent.getId()).build().toUri();
-            new RestTemplate().exchange(uri, HttpMethod.GET, null, String.class);
+//        WorkRunContext workRunContext = JSON.parseObject(workEvent.getEventContext(), WorkRunContext.class);
+//        if (!Strings.isEmpty(workRunContext.getIsxAppName())) {
+//
+//            // 杀死程序
+//            String killUrl = "http://" + isxAppProperties.getNodes().get(isxAppProperties.getAppName()) + ":"
+//                + serverProperties.getPort() + "/ha/open/kill";
+//            URI uri =
+//                UriComponentsBuilder.fromHttpUrl(killUrl).queryParam("workEventId", workEvent.getId()).build().toUri();
+//            new RestTemplate().exchange(uri, HttpMethod.GET, null, String.class);
+//        }
+        Thread thread = WORK_THREAD.get(workEvent.getId());
+        if (thread != null) {
+            thread.interrupt();
         }
 
         return true;
