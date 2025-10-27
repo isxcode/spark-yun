@@ -43,10 +43,6 @@ public class ApiExecutor extends WorkExecutor {
 
     private final IsxAppProperties isxAppProperties;
 
-    private final Scheduler scheduler;
-
-    private final WorkService workService;
-
     private final ServerProperties serverProperties;
 
     public ApiExecutor(WorkInstanceRepository workInstanceRepository,
@@ -60,8 +56,6 @@ public class ApiExecutor extends WorkExecutor {
             workEventRepository, workRunJobFactory, sqlFunctionService, workConfigRepository, vipWorkVersionRepository,
             workService);
         this.isxAppProperties = isxAppProperties;
-        this.scheduler = scheduler;
-        this.workService = workService;
         this.serverProperties = serverProperties;
     }
 
@@ -150,14 +144,14 @@ public class ApiExecutor extends WorkExecutor {
                         HttpUtils.doGet(apiWorkConfig.getRequestUrl(), requestParam, requestHeader, Object.class);
 
                     // 保存结果
-                    workInstance.setResultData(JSON.toJSONString(response));
+                    workInstance.setResultData(String.valueOf(response));
                 }
                 if (ApiType.POST.equals(apiWorkConfig.getRequestType())) {
                     Object response = HttpUtils.doPost(apiWorkConfig.getRequestUrl(), requestHeader,
                         JSON.parseObject(parseJsonPath(apiWorkConfig.getRequestBody(), workInstance), Object.class));
 
                     // 保存结果
-                    workInstance.setResultData(JSON.toJSONString(response));
+                    workInstance.setResultData(String.valueOf(response));
                 }
             } catch (Exception e) {
                 log.error(e.getMessage(), e);
