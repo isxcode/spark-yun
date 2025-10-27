@@ -379,7 +379,7 @@ public class WorkBizService {
 
         // 只有运行中的作业才能中止
         if (!InstanceStatus.RUNNING.equals(workInstance.getStatus())) {
-            throw new IsxAppException("只有运行中的作业，才能中止");
+            throw new IsxAppException("当前状态无法中止:" + workInstance.getStatus());
         }
 
         // 获取作业运行事件体
