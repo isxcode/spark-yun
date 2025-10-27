@@ -369,9 +369,9 @@ public class WorkBizService {
         List<String> onlyLockWork = Arrays.asList(WorkType.API, WorkType.EXECUTE_JDBC_SQL, WorkType.QUERY_JDBC_SQL,
             WorkType.PRQL, WorkType.SPARK_CONTAINER_SQL);
         if (onlyLockWork.contains(work.getWorkType())) {
-            lockKey = locker.lockOnly(workInstance.getEventId());
+            lockKey = locker.lockOnly(LockerPrefix.WORK_EVENT_THREAD + workInstance.getEventId());
         } else {
-            lockKey = locker.lock(workInstance.getEventId());
+            lockKey = locker.lock(LockerPrefix.WORK_EVENT_THREAD + workInstance.getEventId());
         }
 
         // 重新获取当前最新实例
