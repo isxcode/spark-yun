@@ -34,7 +34,6 @@ import com.isxcode.spark.modules.work.repository.WorkRepository;
 import com.isxcode.spark.modules.work.repository.WorkConfigRepository;
 import com.isxcode.spark.modules.work.repository.VipWorkVersionRepository;
 import com.isxcode.spark.modules.work.run.WorkRunJobFactory;
-import org.quartz.Scheduler;
 import com.isxcode.spark.common.locker.Locker;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -73,12 +72,12 @@ public class ExecuteSqlExecutor extends WorkExecutor {
         WorkflowInstanceRepository workflowInstanceRepository, DatasourceRepository datasourceRepository,
         SqlCommentService sqlCommentService, SqlValueService sqlValueService, SqlFunctionService sqlFunctionService,
         AlarmService alarmService, DataSourceFactory dataSourceFactory, DatasourceMapper datasourceMapper,
-        WorkEventRepository workEventRepository, Scheduler scheduler, Locker locker, WorkRepository workRepository,
+        WorkEventRepository workEventRepository, Locker locker, WorkRepository workRepository,
         WorkRunJobFactory workRunJobFactory, WorkConfigRepository workConfigRepository,
         VipWorkVersionRepository vipWorkVersionRepository, WorkService workService, DatasourceService datasourceService,
         IsxAppProperties isxAppProperties, ServerProperties serverProperties) {
 
-        super(alarmService, scheduler, locker, workRepository, workInstanceRepository, workflowInstanceRepository,
+        super(alarmService, locker, workRepository, workInstanceRepository, workflowInstanceRepository,
             workEventRepository, workRunJobFactory, sqlFunctionService, workConfigRepository, vipWorkVersionRepository,
             workService);
         this.datasourceRepository = datasourceRepository;

@@ -7,6 +7,8 @@ import com.isxcode.spark.modules.work.entity.WorkInstanceEntity;
 import com.isxcode.spark.modules.work.repository.WorkEventRepository;
 import com.isxcode.spark.modules.work.repository.WorkInstanceRepository;
 import com.isxcode.spark.modules.work.repository.WorkRepository;
+import com.isxcode.spark.modules.workflow.entity.WorkflowInstanceEntity;
+import com.isxcode.spark.modules.workflow.repository.WorkflowInstanceRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -20,6 +22,8 @@ public class WorkService {
 
     private final WorkInstanceRepository workInstanceRepository;
 
+    private final WorkflowInstanceRepository workflowInstanceRepository;
+
     private final WorkEventRepository workEventRepository;
 
     public WorkEntity getWorkEntity(String workId) {
@@ -30,6 +34,12 @@ public class WorkService {
     public WorkInstanceEntity getWorkInstance(String workInstanceId) {
 
         return workInstanceRepository.findById(workInstanceId).orElseThrow(() -> new IsxAppException("作业实例不存在"));
+    }
+
+    public WorkflowInstanceEntity getWorkFlowInstance(String workflowInstanceId) {
+
+        return workflowInstanceRepository.findById(workflowInstanceId)
+            .orElseThrow(() -> new IsxAppException("作业流实例不存在"));
     }
 
     public WorkEventEntity getWorkEvent(String workEventId) {

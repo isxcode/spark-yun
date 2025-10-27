@@ -54,7 +54,6 @@ import com.jcraft.jsch.SftpException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.util.Strings;
-import org.quartz.Scheduler;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpServerErrorException;
@@ -71,17 +70,9 @@ import static com.isxcode.spark.common.utils.ssh.SshUtils.scpJar;
 @Slf4j
 public class SparkSqlExecutor extends WorkExecutor {
 
-    private final WorkInstanceRepository workInstanceRepository;
-
     private final ClusterRepository clusterRepository;
 
     private final ClusterNodeRepository clusterNodeRepository;
-
-    private final WorkRepository workRepository;
-
-    private final WorkConfigRepository workConfigRepository;
-
-    private final Locker locker;
 
     private final HttpUrlUtils httpUrlUtils;
 
@@ -115,22 +106,18 @@ public class SparkSqlExecutor extends WorkExecutor {
         WorkflowInstanceRepository workflowInstanceRepository, SqlCommentService sqlCommentService,
         SqlValueService sqlValueService, SqlFunctionService sqlFunctionService, AlarmService alarmService,
         DataSourceFactory dataSourceFactory, DatasourceMapper datasourceMapper, SecretKeyRepository secretKeyRepository,
-        WorkEventRepository workEventRepository, Scheduler scheduler, Locker locker, WorkRepository workRepository,
+        WorkEventRepository workEventRepository, Locker locker, WorkRepository workRepository,
         WorkRunJobFactory workRunJobFactory, WorkConfigRepository workConfigRepository,
         VipWorkVersionRepository vipWorkVersionRepository, ClusterNodeMapper clusterNodeMapper, AesUtils aesUtils,
         ClusterNodeRepository clusterNodeRepository, ClusterRepository clusterRepository, HttpUrlUtils httpUrlUtils,
         FuncRepository funcRepository, FuncMapper funcMapper, IsxAppProperties isxAppProperties,
         FileRepository fileRepository, DatasourceService datasourceService, WorkService workService) {
 
-        super(alarmService, scheduler, locker, workRepository, workInstanceRepository, workflowInstanceRepository,
+        super(alarmService, locker, workRepository, workInstanceRepository, workflowInstanceRepository,
             workEventRepository, workRunJobFactory, sqlFunctionService, workConfigRepository, vipWorkVersionRepository,
             workService);
-        this.workInstanceRepository = workInstanceRepository;
         this.clusterRepository = clusterRepository;
         this.clusterNodeRepository = clusterNodeRepository;
-        this.workRepository = workRepository;
-        this.workConfigRepository = workConfigRepository;
-        this.locker = locker;
         this.httpUrlUtils = httpUrlUtils;
         this.funcRepository = funcRepository;
         this.funcMapper = funcMapper;

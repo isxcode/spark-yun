@@ -48,7 +48,6 @@ import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.SftpException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
-import org.quartz.Scheduler;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpServerErrorException;
@@ -65,17 +64,9 @@ import static com.isxcode.spark.common.utils.ssh.SshUtils.scpJar;
 @Slf4j
 public class FlinkSqlExecutor extends WorkExecutor {
 
-    private final WorkInstanceRepository workInstanceRepository;
-
     private final ClusterRepository clusterRepository;
 
     private final ClusterNodeRepository clusterNodeRepository;
-
-    private final WorkRepository workRepository;
-
-    private final WorkConfigRepository workConfigRepository;
-
-    private final Locker locker;
 
     private final HttpUrlUtils httpUrlUtils;
 
@@ -106,18 +97,14 @@ public class FlinkSqlExecutor extends WorkExecutor {
         ClusterNodeMapper clusterNodeMapper, AesUtils aesUtils, IsxAppProperties isxAppProperties,
         FileRepository fileRepository, AlarmService alarmService, SqlFunctionService sqlFunctionService,
         SecretKeyRepository secretKeyRepository, SqlValueService sqlValueService, SqlCommentService sqlCommentService,
-        Scheduler scheduler, WorkEventRepository workEventRepository, WorkRunJobFactory workRunJobFactory,
+        WorkEventRepository workEventRepository, WorkRunJobFactory workRunJobFactory,
         VipWorkVersionRepository vipWorkVersionRepository, WorkService workService) {
 
-        super(alarmService, scheduler, locker, workRepository, workInstanceRepository, workflowInstanceRepository,
+        super(alarmService, locker, workRepository, workInstanceRepository, workflowInstanceRepository,
             workEventRepository, workRunJobFactory, sqlFunctionService, workConfigRepository, vipWorkVersionRepository,
             workService);
-        this.workInstanceRepository = workInstanceRepository;
         this.clusterRepository = clusterRepository;
         this.clusterNodeRepository = clusterNodeRepository;
-        this.workRepository = workRepository;
-        this.workConfigRepository = workConfigRepository;
-        this.locker = locker;
         this.httpUrlUtils = httpUrlUtils;
         this.funcRepository = funcRepository;
         this.funcMapper = funcMapper;

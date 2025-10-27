@@ -146,6 +146,9 @@ public class WorkflowService {
         List<List<String>> nodeMapping =
             JSON.parseObject(workflowConfig.getNodeMapping(), new TypeReference<List<List<String>>>() {});
 
+        // 作业流日志:手动启动作业流
+        log.debug("【手动触发作业流】: {},【作业流实例id】: {}", workflow.getName(), workflowInstance.getId());
+
         // 封装定时器调度
         List<WorkEntity> startNodeWorks = workRepository.findAllByWorkIds(startNodes);
         for (WorkEntity work : startNodeWorks) {
