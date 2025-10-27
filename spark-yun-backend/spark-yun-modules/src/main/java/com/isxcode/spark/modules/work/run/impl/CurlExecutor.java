@@ -100,6 +100,11 @@ public class CurlExecutor extends WorkExecutor {
         // 执行Curl脚本
         if (workEvent.getEventProcess() == 2) {
 
+            // 记录当前线程
+            WORK_THREAD.put(workEvent.getId(), Thread.currentThread());
+            workRunContext.setIsxAppName(isxAppProperties.getAppName());
+            updateWorkEvent(workEvent, workRunContext);
+
             // 获取上下文参数
             String script = workRunContext.getScript();
 
