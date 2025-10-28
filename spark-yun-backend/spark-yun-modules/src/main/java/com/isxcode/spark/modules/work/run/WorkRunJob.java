@@ -25,6 +25,7 @@ public class WorkRunJob implements Job {
     private final Scheduler scheduler;
 
     private final WorkEventRepository workEventRepository;
+
     private final Locker locker;
 
     @Override
