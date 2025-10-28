@@ -271,7 +271,11 @@ public class SparkKubernetesAgentService implements SparkAgentService {
         }
 
         // 把提交的spark配置，塞到sparkLauncher中
-        submitWorkReq.getSparkSubmit().getConf().forEach(sparkLauncher::setConf);
+        submitWorkReq.getSparkSubmit().getConf().forEach((k, v) -> {
+            if (k.startsWith("spark.")) {
+                sparkLauncher.setConf(k, v);
+            }
+        });
 
         return sparkLauncher;
     }

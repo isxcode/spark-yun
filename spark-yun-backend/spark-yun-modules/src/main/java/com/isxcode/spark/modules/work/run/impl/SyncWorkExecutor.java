@@ -517,7 +517,7 @@ public class SyncWorkExecutor extends WorkExecutor {
                 StopWorkReq stopWorkReq = StopWorkReq.builder().appId(appId).clusterType(AgentType.K8S)
                     .sparkHomePath(agentNode.getAgentHomePath()).agentHomePath(agentNode.getAgentHomePath()).build();
                 HttpUtils.doPost(
-                    httpUrlUtils.genHttpUrl(agentNode.getHost(), agentNode.getPort(), SparkAgentUrl.STOP_WORK_URL),
+                    httpUrlUtils.genHttpUrl(agentNode.getHost(), agentNode.getAgentPort(), SparkAgentUrl.STOP_WORK_URL),
                     stopWorkReq, BaseResponse.class);
 
             }

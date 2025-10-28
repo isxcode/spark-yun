@@ -1,3 +1,8 @@
+dependencies {
+    // dbutils
+    implementation 'commons-dbutils:commons-dbutils:1.7'
+}
+
 // 构建lib文件夹
 tasks.register('build_agent_lib', Copy) {
 
@@ -13,7 +18,8 @@ tasks.register('build_agent_lib', Copy) {
                 it.name.contains('jetty-server') ||
                 it.name.contains('jetty-util') ||
                 it.name.contains('jetty-http') ||
-                it.name.contains('jetty-io')
+                it.name.contains('jetty-io') ||
+                it.name.contains('commons-dbutils')
     }
     dependencies.each { dependency ->
         from dependency
