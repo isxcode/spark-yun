@@ -44,8 +44,13 @@ public class SshUtils {
             session.setPassword(engineNode.getPasswd());
         }
 
-        session.setConfig("StrictHostKeyChecking", "no");
-        session.setTimeout(10000);
+        java.util.Properties config = new java.util.Properties();
+        config.put("StrictHostKeyChecking", "no");
+        config.put("ConnectTimeout", "30000");
+        config.put("ServerAliveInterval", "30000");
+        config.put("ServerAliveCountMax", "3");
+        session.setConfig(config);
+        session.setTimeout(30000);
         session.connect();
 
         // 上传文件
@@ -100,7 +105,7 @@ public class SshUtils {
         config.put("ServerAliveInterval", "30000");
         config.put("ServerAliveCountMax", "3");
         session.setConfig(config);
-        session.setTimeout(10000);
+        session.setTimeout(30000);
         session.connect();
 
         ChannelExec channel = (ChannelExec) session.openChannel("exec");
@@ -164,8 +169,13 @@ public class SshUtils {
             session.setPassword(engineNode.getPasswd());
         }
 
-        session.setConfig("StrictHostKeyChecking", "no");
-        session.setTimeout(10000);
+        java.util.Properties config = new java.util.Properties();
+        config.put("StrictHostKeyChecking", "no");
+        config.put("ConnectTimeout", "30000");
+        config.put("ServerAliveInterval", "30000");
+        config.put("ServerAliveCountMax", "3");
+        session.setConfig(config);
+        session.setTimeout(30000);
         session.connect();
 
         // 上传文件
@@ -214,8 +224,13 @@ public class SshUtils {
             session.setPassword(engineNode.getPasswd());
         }
 
-        session.setConfig("StrictHostKeyChecking", "no");
-        session.setTimeout(10000);
+        java.util.Properties config = new java.util.Properties();
+        config.put("StrictHostKeyChecking", "no");
+        config.put("ConnectTimeout", "30000");
+        config.put("ServerAliveInterval", "30000");
+        config.put("ServerAliveCountMax", "3");
+        session.setConfig(config);
+        session.setTimeout(30000);
         session.connect();
 
         // 上传文件
