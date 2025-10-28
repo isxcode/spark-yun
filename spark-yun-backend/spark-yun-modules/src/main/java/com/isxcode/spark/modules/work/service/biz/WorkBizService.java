@@ -382,6 +382,10 @@ public class WorkBizService {
             throw new IsxAppException("当前状态无法中止:" + workInstance.getStatus());
         }
 
+        // 修改状态为中止中
+        workInstance.setStatus(InstanceStatus.ABORTING);
+        workInstance = workInstanceRepository.save(workInstance);
+
         // 获取作业运行事件体
         Optional<WorkEventEntity> optionalWorkEvent = workEventRepository.findById(workInstance.getEventId());
         if (!optionalWorkEvent.isPresent()) {

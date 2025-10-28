@@ -8,6 +8,7 @@ import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 import com.jcraft.jsch.SftpATTRS;
 import com.jcraft.jsch.SftpException;
+
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -16,11 +17,15 @@ import java.nio.file.Paths;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.FileSystemResourceLoader;
 
-/** ssh连接工具类. */
+/**
+ * ssh连接工具类.
+ */
 @Slf4j
 public class SshUtils {
 
-    /** scp传递文件. */
+    /**
+     * scp传递文件.
+     */
     public static void scpFile(ScpFileEngineNodeDto engineNode, String srcPath, String dstPath)
         throws JSchException, SftpException, InterruptedException, IOException {
 
@@ -68,7 +73,9 @@ public class SshUtils {
         session.disconnect();
     }
 
-    /** 执行远程命令. */
+    /**
+     * 执行远程命令.
+     */
     public static String executeCommand(ScpFileEngineNodeDto engineNode, String command, boolean pty)
         throws JSchException, InterruptedException, IOException {
 
@@ -87,7 +94,12 @@ public class SshUtils {
             session.setPassword(engineNode.getPasswd());
         }
 
-        session.setConfig("StrictHostKeyChecking", "no");
+        java.util.Properties config = new java.util.Properties();
+        config.put("StrictHostKeyChecking", "no");
+        config.put("ConnectTimeout", "30000");
+        config.put("ServerAliveInterval", "30000");
+        config.put("ServerAliveCountMax", "3");
+        session.setConfig(config);
         session.setTimeout(10000);
         session.connect();
 
@@ -131,7 +143,9 @@ public class SshUtils {
         }
     }
 
-    /** scp传递文本. */
+    /**
+     * scp传递文本.
+     */
     public static void scpText(ScpFileEngineNodeDto engineNode, String content, String dstPath)
         throws JSchException, SftpException, InterruptedException {
 
@@ -179,7 +193,9 @@ public class SshUtils {
         session.disconnect();
     }
 
-    /** scp传递Jar. */
+    /**
+     * scp传递Jar.
+     */
     public static void scpJar(ScpFileEngineNodeDto engineNode, String srcPath, String dstPath)
         throws JSchException, SftpException, InterruptedException, IOException {
 
