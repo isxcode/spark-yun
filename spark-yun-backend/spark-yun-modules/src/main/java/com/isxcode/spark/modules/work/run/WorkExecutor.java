@@ -246,8 +246,9 @@ public abstract class WorkExecutor {
         WorkInstanceEntity workInstance = workService.getWorkInstance(workRunContext.getInstanceId());
 
         // 当实例状态是运行中，并且绑定了指定的作业事件，才能直接运行，中止中可能无法正常中止，需要继续运行
-        if ((InstanceStatus.RUNNING.equals(workInstance.getStatus()) || InstanceStatus.ABORTING.equals(workInstance.getStatus()) && workInstance.getEventId() != null
-            && workInstance.getEventId().equals(workEventId))) {
+        if ((InstanceStatus.RUNNING.equals(workInstance.getStatus())
+            || InstanceStatus.ABORTING.equals(workInstance.getStatus()) && workInstance.getEventId() != null
+                && workInstance.getEventId().equals(workEventId))) {
 
             try {
 
@@ -347,7 +348,12 @@ public abstract class WorkExecutor {
                 return InstanceStatus.FINISHED;
             }
 
-            // 开始修改对PENDING状态的作业
+            // 如果是中断状态赋值workEventId
+            if (InstanceStatus.BREAK.equals(workInstance.getStatus())) {
+                workInstance.setEventId(workEventId);
+            }
+
+            // 开始修改对PENDING状态的作业，中断状态需要传递
             if (InstanceStatus.PENDING.equals(workInstance.getStatus())) {
 
                 // 获取父级的作业实例状态
@@ -375,14 +381,13 @@ public abstract class WorkExecutor {
                     workInstance.setSubmitLog("父级执行失败");
                     workInstance.setExecEndDateTime(new Date());
                     workInstance.setDuration(0L);
-                } else if (parentIsBreak || InstanceStatus.BREAK.equals(workInstance.getStatus())) {
+                } else if (parentIsBreak) {
 
                     // 如果父级有中断，则状态直接变更为中断
                     workInstance.setStatus(InstanceStatus.BREAK);
                     workInstance.setSubmitLog("当前作业中断");
                     workInstance.setExecEndDateTime(new Date());
-                    workInstance.setDuration(
-                        (System.currentTimeMillis() - workInstance.getExecStartDateTime().getTime()) / 1000);
+                    workInstance.setDuration(0L);
                 } else {
                     // 修改作业状态为RUNNING
                     log.debug("【作业流实例id】:{},【作业实例id】:{},【运行事件id】:{},修改状态:RUNNING,【作业名】:{}",
