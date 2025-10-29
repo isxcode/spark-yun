@@ -174,7 +174,6 @@ public abstract class WorkExecutor {
 
         // 中止、中止中、成功、失败，不可以再运行
         if (InstanceStatus.ABORT.equals(workInstance.getStatus())
-            || InstanceStatus.ABORTING.equals(workInstance.getStatus())
             || InstanceStatus.SUCCESS.equals(workInstance.getStatus())
             || InstanceStatus.FAIL.equals(workInstance.getStatus())) {
             return InstanceStatus.FINISHED;
@@ -246,9 +245,9 @@ public abstract class WorkExecutor {
         // 获取最新作业实例
         WorkInstanceEntity workInstance = workService.getWorkInstance(workRunContext.getInstanceId());
 
-        // 当实例状态是运行中，并且绑定了指定的作业事件，才能直接运行
-        if (InstanceStatus.RUNNING.equals(workInstance.getStatus()) && workInstance.getEventId() != null
-            && workInstance.getEventId().equals(workEventId)) {
+        // 当实例状态是运行中，并且绑定了指定的作业事件，才能直接运行，中止中可能无法正常中止，需要继续运行
+        if ((InstanceStatus.RUNNING.equals(workInstance.getStatus()) || InstanceStatus.ABORTING.equals(workInstance.getStatus()) && workInstance.getEventId() != null
+            && workInstance.getEventId().equals(workEventId))) {
 
             try {
 
