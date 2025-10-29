@@ -442,11 +442,11 @@ public abstract class WorkExecutor {
                 boolean flowIsSuccess =
                     endNodeInstance.stream().allMatch(e -> InstanceStatus.SUCCESS.equals(e.getStatus()));
                 if (flowIsError) {
-                    workInstance.setStatus(InstanceStatus.FAIL);
+                    workflowInstance.setStatus(InstanceStatus.FAIL);
                 } else if (flowIsSuccess) {
-                    workInstance.setStatus(InstanceStatus.SUCCESS);
+                    workflowInstance.setStatus(InstanceStatus.SUCCESS);
                 } else {
-                    workInstance.setStatus(InstanceStatus.ABORT);
+                    workflowInstance.setStatus(InstanceStatus.ABORT);
                 }
                 workflowInstance.setExecEndDateTime(new Date());
                 workflowInstance.setDuration(
