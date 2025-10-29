@@ -336,11 +336,11 @@ public abstract class WorkExecutor {
             }
 
             // 中止、中止中，不可以再运行
-            // if (InstanceStatus.ABORT.equals(workInstance.getStatus())
-            // || InstanceStatus.ABORTING.equals(workInstance.getStatus())) {
-            // locker.unlock(lockerKey);
-            // return InstanceStatus.FINISHED;
-            // }
+            if (InstanceStatus.ABORT.equals(workInstance.getStatus())
+                || InstanceStatus.ABORTING.equals(workInstance.getStatus())) {
+                locker.unlock(lockerKey);
+                return InstanceStatus.FINISHED;
+            }
 
             // 在调度中的作业，如果自身定时器没有被触发，不可以再运行，上游推过来，但是定时器还没到时间
             if (!Strings.isEmpty(workRunContext.getVersionId()) && !workInstance.getQuartzHasRun()) {

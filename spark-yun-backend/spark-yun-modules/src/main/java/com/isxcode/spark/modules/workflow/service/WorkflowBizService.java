@@ -12,7 +12,6 @@ import com.isxcode.spark.api.instance.ao.WorkflowInstanceAo;
 import com.isxcode.spark.api.instance.req.QueryWorkFlowInstancesReq;
 import com.isxcode.spark.api.instance.res.QueryWorkFlowInstancesRes;
 import com.isxcode.spark.api.work.constants.SetMode;
-import com.isxcode.spark.api.work.constants.WorkLog;
 import com.isxcode.spark.api.work.constants.WorkStatus;
 import com.isxcode.spark.api.work.dto.CronConfig;
 import com.isxcode.spark.api.work.req.GetWorkflowDefaultClusterReq;
@@ -44,8 +43,8 @@ import com.isxcode.spark.modules.work.entity.WorkInstanceEntity;
 import com.isxcode.spark.modules.work.repository.WorkConfigRepository;
 import com.isxcode.spark.modules.work.repository.WorkInstanceRepository;
 import com.isxcode.spark.modules.work.repository.WorkRepository;
-import com.isxcode.spark.modules.work.run.WorkExecutor;
 import com.isxcode.spark.modules.work.run.WorkExecutorFactory;
+import com.isxcode.spark.modules.work.service.WorkService;
 import com.isxcode.spark.modules.workflow.entity.*;
 import com.isxcode.spark.modules.workflow.mapper.WorkflowMapper;
 import com.isxcode.spark.modules.workflow.repository.WorkflowConfigRepository;
@@ -60,7 +59,6 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
@@ -117,6 +115,7 @@ public class WorkflowBizService {
     private final UserService userService;
 
     private final WorkflowVersionRepository workflowVersionRepository;
+    private final WorkService workService;
 
     public void addWorkflow(AddWorkflowReq wofAddWorkflowReq) {
 
@@ -449,13 +448,18 @@ public class WorkflowBizService {
         }
     }
 
+    /**
+     * 作业流中止.
+     */
     public void abortFlow(AbortFlowReq abortFlowReq) {
 
-        // 检查状态
+        // 获取作业流实例
         WorkflowInstanceEntity workflowInstanceNew =
             workflowService.getWorkflowInstance(abortFlowReq.getWorkflowInstanceId());
+
+        // 检测不是运行中的作业流无法中止
         if (!InstanceStatus.RUNNING.equals(workflowInstanceNew.getStatus())) {
-            throw new IsxAppException("该实例不是运行中状态");
+            throw new IsxAppException("不是运行中状态，无法中止");
         }
 
         // 将所有的PENDING作业实例，改为ABORT
@@ -483,57 +487,21 @@ public class WorkflowBizService {
         // 异步调用中止作业的方法
         CompletableFuture.supplyAsync(() -> {
             runningWorkInstances.forEach(e -> {
-                Integer locked = locker.lockOnly("ABORT_" + e.getWorkflowInstanceId());
                 sparkYunWorkThreadPool.execute(() -> {
-                    try {
-                        abortWorkInstance(e);
-                    } finally {
-                        locker.unlock(locked);
-                    }
+                    workService.abortWork(e.getId());
                 });
             });
             return "SUCCESS";
         }).whenComplete((exeStatus, exception) -> {
-            Integer lock = locker.lock("ABORT_" + abortFlowReq.getWorkflowInstanceId());
-            try {
-                WorkflowInstanceEntity workflowInstance =
-                    workflowInstanceRepository.findById(abortFlowReq.getWorkflowInstanceId()).get();
-                workflowInstance.setStatus(InstanceStatus.ABORT);
-                workflowInstance.setExecEndDateTime(new Date());
-                workflowInstance.setDuration(
-                    (System.currentTimeMillis() - workflowInstance.getExecStartDateTime().getTime()) / 1000);
-                workflowInstanceRepository.saveAndFlush(workflowInstance);
-            } finally {
-                locker.unlock(lock);
-            }
+
+            WorkflowInstanceEntity workflowInstance =
+                workflowInstanceRepository.findById(abortFlowReq.getWorkflowInstanceId()).get();
+            workflowInstance.setStatus(InstanceStatus.ABORT);
+            workflowInstance.setExecEndDateTime(new Date());
+            workflowInstance
+                .setDuration((System.currentTimeMillis() - workflowInstance.getExecStartDateTime().getTime()) / 1000);
+            workflowInstanceRepository.saveAndFlush(workflowInstance);
         });
-    }
-
-    public void abortWorkInstance(WorkInstanceEntity workInstance) {
-
-        WorkEntity workEntity = workRepository.findById(workInstance.getWorkId()).get();
-        WorkExecutor workExecutor = workExecutorFactory.create(workEntity.getWorkType());
-        workInstance = workInstanceRepository.findById(workInstance.getId()).get();
-
-        try {
-            // workExecutor.syncAbort(workInstance);
-            String submitLog = workInstance.getSubmitLog() + LocalDateTime.now() + WorkLog.SUCCESS_INFO + "已中止  \n";
-            workInstance.setSubmitLog(submitLog);
-            workInstance.setStatus(InstanceStatus.ABORT);
-            workInstance.setExecEndDateTime(new Date());
-            workInstance
-                .setDuration((System.currentTimeMillis() - workInstance.getExecStartDateTime().getTime()) / 1000);
-            workInstanceRepository.save(workInstance);
-        } catch (Exception e) {
-            log.debug(e.getMessage(), e);
-            String submitLog = workInstance.getSubmitLog() + LocalDateTime.now() + WorkLog.SUCCESS_INFO + "中止失败 \n";
-            workInstance.setSubmitLog(submitLog);
-            workInstance.setStatus(InstanceStatus.FAIL);
-            workInstance.setExecEndDateTime(new Date());
-            workInstance
-                .setDuration((System.currentTimeMillis() - workInstance.getExecStartDateTime().getTime()) / 1000);
-            workInstanceRepository.save(workInstance);
-        }
     }
 
     public void breakFlow(BreakFlowReq breakFlowReq) {
@@ -632,7 +600,7 @@ public class WorkflowBizService {
                 Integer locked = locker.lockOnly("RERUN_" + e.getWorkflowInstanceId());
                 sparkYunWorkThreadPool.execute(() -> {
                     try {
-                        abortWorkInstance(e);
+                        // abortWorkInstance(e);
                     } finally {
                         locker.unlock(locked);
                     }
