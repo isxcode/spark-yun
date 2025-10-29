@@ -425,11 +425,6 @@ public abstract class WorkExecutor {
             WorkflowInstanceEntity workflowInstance =
                 workService.getWorkFlowInstance(workRunContext.getFlowInstanceId());
 
-            // 中止中的作业流，不可以再推送
-            if (InstanceStatus.ABORTING.equals(workflowInstance.getStatus())) {
-                return InstanceStatus.FINISHED;
-            }
-
             // 获取所有节点实例状态，判断作业流是否执行完毕
             List<WorkInstanceEntity> endNodeInstance = workInstanceRepository
                 .findAllByWorkIdAndWorkflowInstanceId(workRunContext.getNodeList(), workRunContext.getFlowInstanceId());
@@ -440,17 +435,25 @@ public abstract class WorkExecutor {
 
                 // 作业流节点都跑完了，判断成功失败
                 boolean flowIsError = endNodeInstance.stream().anyMatch(e -> InstanceStatus.FAIL.equals(e.getStatus()));
+                boolean flowIsSuccess =
+                    endNodeInstance.stream().allMatch(e -> InstanceStatus.SUCCESS.equals(e.getStatus()));
+                if (flowIsError) {
+                    workInstance.setStatus(InstanceStatus.FAIL);
+                } else if (flowIsSuccess) {
+                    workInstance.setStatus(InstanceStatus.SUCCESS);
+                } else {
+                    workInstance.setStatus(InstanceStatus.ABORT);
+                }
                 workflowInstance.setExecEndDateTime(new Date());
                 workflowInstance.setDuration(
                     (System.currentTimeMillis() - workflowInstance.getExecStartDateTime().getTime()) / 1000);
-                workflowInstance.setStatus(flowIsError ? InstanceStatus.FAIL : InstanceStatus.SUCCESS);
                 workflowInstanceRepository.saveAndFlush(workflowInstance);
 
                 // 基线告警，作业流成功、失败、运行结束发送消息
                 if (InstanceType.AUTO.equals(workflowInstance.getInstanceType())) {
                     if (flowIsError) {
                         alarmService.sendWorkflowMessage(workflowInstance, AlarmEventType.RUN_FAIL);
-                    } else {
+                    } else if (flowIsSuccess) {
                         alarmService.sendWorkflowMessage(workflowInstance, AlarmEventType.RUN_SUCCESS);
                     }
                     alarmService.sendWorkflowMessage(workflowInstance, AlarmEventType.RUN_END);
