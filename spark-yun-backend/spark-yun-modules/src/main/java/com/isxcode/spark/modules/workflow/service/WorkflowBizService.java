@@ -11,6 +11,7 @@ import com.isxcode.spark.api.instance.constants.InstanceType;
 import com.isxcode.spark.api.instance.ao.WorkflowInstanceAo;
 import com.isxcode.spark.api.instance.req.QueryWorkFlowInstancesReq;
 import com.isxcode.spark.api.instance.res.QueryWorkFlowInstancesRes;
+import com.isxcode.spark.api.work.constants.LockerPrefix;
 import com.isxcode.spark.api.work.constants.SetMode;
 import com.isxcode.spark.api.work.constants.WorkStatus;
 import com.isxcode.spark.api.work.dto.CronConfig;
@@ -462,21 +463,8 @@ public class WorkflowBizService {
             throw new IsxAppException("不是运行中状态，无法中止");
         }
 
-        // 将所有的PENDING作业实例，改为ABORT
-        List<WorkInstanceEntity> pendingWorkInstances = workInstanceRepository
-            .findAllByWorkflowInstanceIdAndStatus(abortFlowReq.getWorkflowInstanceId(), InstanceStatus.PENDING);
-        pendingWorkInstances.forEach(workInstance -> {
-            workInstance.setStatus(InstanceStatus.ABORT);
-        });
-        workInstanceRepository.saveAllAndFlush(pendingWorkInstances);
-
-        // 将所有的RUNNING作业实例，改为ABORTING
-        List<WorkInstanceEntity> runningWorkInstances = workInstanceRepository
-            .findAllByWorkflowInstanceIdAndStatus(abortFlowReq.getWorkflowInstanceId(), InstanceStatus.RUNNING);
-        runningWorkInstances.forEach(workInstance -> {
-            workInstance.setStatus(InstanceStatus.ABORTING);
-        });
-        workInstanceRepository.saveAllAndFlush(runningWorkInstances);
+        // 获取作业流状态锁，防止异步更新状态异常
+        Integer lockerKey = locker.lock(LockerPrefix.WORK_CHANGE_STATUS + abortFlowReq.getWorkflowInstanceId());
 
         // 将工作流改为ABORTING
         WorkflowInstanceEntity lastWorkflowInstance =
@@ -484,12 +472,23 @@ public class WorkflowBizService {
         lastWorkflowInstance.setStatus(InstanceStatus.ABORTING);
         workflowInstanceRepository.saveAndFlush(lastWorkflowInstance);
 
+        // 将所有的PENDING作业实例，改为ABORT
+        List<WorkInstanceEntity> pendingWorkInstances = workInstanceRepository
+            .findAllByWorkflowInstanceIdAndStatus(abortFlowReq.getWorkflowInstanceId(), InstanceStatus.PENDING);
+        pendingWorkInstances.forEach(workInstance -> workInstance.setStatus(InstanceStatus.ABORT));
+        workInstanceRepository.saveAllAndFlush(pendingWorkInstances);
+
+        // 解锁
+        locker.unlock(lockerKey);
+
+        // 将所有的RUNNING作业实例，调用中止方法
+        List<WorkInstanceEntity> runningWorkInstances = workInstanceRepository
+            .findAllByWorkflowInstanceIdAndStatus(abortFlowReq.getWorkflowInstanceId(), InstanceStatus.RUNNING);
+
         // 异步调用中止作业的方法
         CompletableFuture.supplyAsync(() -> {
             runningWorkInstances.forEach(e -> {
-                sparkYunWorkThreadPool.execute(() -> {
-                    workService.abortWork(e.getId());
-                });
+                sparkYunWorkThreadPool.execute(() -> workService.abortWork(e.getId()));
             });
             return "SUCCESS";
         }).whenComplete((exeStatus, exception) -> {

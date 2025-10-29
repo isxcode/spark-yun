@@ -52,7 +52,6 @@ public class WorkService {
     @Transactional
     public void abortWork(String workInstanceId) {
 
-
         // 通过作业实例查询作业类型
         WorkInstanceEntity workInstance = getWorkInstance(workInstanceId);
         WorkEntity work = getWorkEntity(workInstance.getWorkId());
@@ -69,6 +68,13 @@ public class WorkService {
 
         // 重新获取当前最新实例
         workInstance = getWorkInstance(workInstanceId);
+
+        // 如果成功或者失败直接结束
+        if (InstanceStatus.SUCCESS.equals(workInstance.getStatus())
+            || InstanceStatus.FAIL.equals(workInstance.getStatus())) {
+            locker.unlock(lockKey);
+            return;
+        }
 
         // 只有运行中的作业才能中止
         if (!InstanceStatus.RUNNING.equals(workInstance.getStatus())) {
