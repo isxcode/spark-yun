@@ -56,7 +56,6 @@ import com.isxcode.spark.modules.workflow.repository.WorkflowConfigRepository;
 import com.isxcode.spark.modules.workflow.repository.WorkflowInstanceRepository;
 import com.isxcode.spark.modules.workflow.repository.WorkflowRepository;
 import com.isxcode.spark.modules.workflow.repository.WorkflowVersionRepository;
-import com.isxcode.spark.modules.workflow.run.WorkflowRunEvent;
 import com.isxcode.spark.modules.workflow.run.WorkflowUtils;
 
 import java.io.IOException;
@@ -651,46 +650,77 @@ public class WorkflowBizService {
 
     public void runAfterFlow(RunAfterFlowReq runAfterFlowReq) {
 
+        // 获取作业流实例
         WorkInstanceEntity workInstance = workInstanceRepository.findById(runAfterFlowReq.getWorkInstanceId()).get();
         WorkflowInstanceEntity workflowInstance =
             workflowInstanceRepository.findById(workInstance.getWorkflowInstanceId()).get();
 
-        // 作业流状态改为RUNNING
+        // 运行中作业，需要先中止
+        if (InstanceStatus.RUNNING.equals(workflowInstance.getStatus())) {
+            throw new IsxAppException("运行中的作业流，无法重跑下游");
+        }
+
+        // 修改作业流实例状态
         workflowInstance.setStatus(InstanceStatus.RUNNING);
         workflowInstanceRepository.save(workflowInstance);
 
-        WorkflowEntity workflow = workflowRepository.findById(workflowInstance.getFlowId()).get();
-        WorkflowConfigEntity workflowConfig = workflowConfigRepository.findById(workflow.getConfigId()).get();
+        // 获取作业
+        WorkEntity work = workService.getWorkEntity(workInstance.getWorkId());
 
-        // 将下游所有节点，全部状态改为PENDING
+        // 获取作业的配置
+        WorkConfigEntity workConfig = workConfigRepository.findById(work.getConfigId()).get();
+
+        // 获取配置工作流配置信息
+        WorkflowVersionEntity workflowVersion;
+        if (InstanceType.MANUAL.equals(workflowInstance.getInstanceType())) {
+            WorkflowEntity workflow = workflowRepository.findById(workflowInstance.getFlowId()).get();
+            WorkflowConfigEntity workflowConfig = workflowConfigRepository.findById(workflow.getConfigId()).get();
+            workflowVersion = new WorkflowVersionEntity();
+            workflowVersion.setDagStartList(workflowConfig.getDagStartList());
+            workflowVersion.setDagEndList(workflowConfig.getDagEndList());
+            workflowVersion.setNodeMapping(workflowConfig.getNodeMapping());
+            workflowVersion.setNodeList(workflowConfig.getNodeList());
+        } else {
+            workflowVersion = workflowVersionRepository.findById(workflowInstance.getVersionId())
+                .orElseThrow(() -> new IsxAppException("实例不存在"));
+        }
+
+        // 重新执行开始节点
+        List<String> nodeList = JSON.parseArray(workflowVersion.getNodeList(), String.class);
+        List<String> endNodes = JSON.parseArray(workflowVersion.getDagEndList(), String.class);
         List<List<String>> nodeMapping =
-            JSON.parseObject(workflowConfig.getNodeMapping(), new TypeReference<List<List<String>>>() {});
-
-        WorkEntity work = workRepository.findById(workInstance.getWorkId()).get();
+            JSON.parseObject(workflowVersion.getNodeMapping(), new TypeReference<List<List<String>>>() {});
         List<String> afterWorkIds = WorkflowUtils.parseAfterNodes(nodeMapping, work.getId());
 
         // 将下游所有节点实例，全部状态改为PENDING
         List<WorkInstanceEntity> afterWorkInstances = workInstanceRepository
             .findAllByWorkflowInstanceIdAndWorkIds(workInstance.getWorkflowInstanceId(), afterWorkIds);
+
+        // 初始化一下实例
         afterWorkInstances.forEach(e -> {
             e.setStatus(InstanceStatus.PENDING);
-            e.setSparkStarRes(null);
-            e.setSubmitLog(null);
+            e.setEventId(null);
+            e.setResultData(null);
             e.setYarnLog(null);
+            e.setSubmitLog(null);
+            e.setDuration(null);
+            e.setExecStartDateTime(null);
+            e.setExecEndDateTime(null);
+            e.setQuartzHasRun(true);
         });
         workInstanceRepository.saveAllAndFlush(afterWorkInstances);
 
-        // 清空锁
-        locker.clearLock(workflowInstance.getId());
+        // 封装作业执行上下文
+        WorkRunContext workRunContext =
+            WorkflowUtils.genWorkRunContext(workInstance.getId(), EventType.WORKFLOW, work, workConfig);
+        workRunContext.setDagEndList(endNodes);
+        workRunContext.setDagStartList(endNodes);
+        workRunContext.setFlowInstanceId(workflowInstance.getId());
+        workRunContext.setNodeMapping(nodeMapping);
+        workRunContext.setNodeList(nodeList);
 
-        // 推送一次
-        WorkflowRunEvent metaEvent = WorkflowRunEvent.builder().workId(work.getId()).workName(work.getName())
-            .dagEndList(JSON.parseArray(workflowConfig.getDagEndList(), String.class))
-            .dagStartList(JSON.parseArray(workflowConfig.getDagStartList(), String.class))
-            .flowInstanceId(workflowInstance.getId()).nodeMapping(nodeMapping)
-            .nodeList(JSON.parseArray(workflowConfig.getNodeList(), String.class)).tenantId(TENANT_ID.get())
-            .userId(USER_ID.get()).build();
-        eventPublisher.publishEvent(metaEvent);
+        // 提交定时器
+        workRunJobFactory.run(workRunContext);
     }
 
     public GetWorkflowDefaultClusterRes getWorkflowDefaultCluster(
