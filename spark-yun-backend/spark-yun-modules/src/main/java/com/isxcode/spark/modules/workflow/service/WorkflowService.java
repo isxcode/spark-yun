@@ -164,7 +164,7 @@ public class WorkflowService {
             WorkRunContext workRunContext =
                 WorkflowUtils.genWorkRunContext(workInstance.getId(), EventType.WORKFLOW, work, workConfig);
             workRunContext.setDagEndList(endNodes);
-            workRunContext.setDagStartList(endNodes);
+            workRunContext.setDagStartList(startNodes);
             workRunContext.setFlowInstanceId(workflowInstance.getId());
             workRunContext.setNodeMapping(nodeMapping);
             workRunContext.setNodeList(nodeList);
