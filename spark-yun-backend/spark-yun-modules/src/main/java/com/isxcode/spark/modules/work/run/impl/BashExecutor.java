@@ -180,9 +180,6 @@ public class BashExecutor extends WorkExecutor {
                 String pid = executeCommand(scpNode, executeBashWorkCommand, false).replace("\n", "");
                 logBuilder.append(endLog("执行Bash脚本完成 pid : " + pid));
 
-                // 保存PID
-                workInstance.setWorkPid(pid);
-
                 // 保存上下文
                 workRunContext.setPid(pid);
             } catch (JSchException | SftpException | InterruptedException | IOException e) {
