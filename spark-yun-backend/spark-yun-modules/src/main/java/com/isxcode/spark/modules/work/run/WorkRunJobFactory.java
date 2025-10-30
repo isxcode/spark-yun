@@ -10,6 +10,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.quartz.*;
 import org.springframework.stereotype.Component;
 
+import static com.isxcode.spark.common.config.CommonConfig.TENANT_ID;
+import static com.isxcode.spark.common.config.CommonConfig.USER_ID;
+
 
 @Slf4j
 @Component
@@ -21,6 +24,9 @@ public class WorkRunJobFactory {
     private final WorkEventRepository workEventRepository;
 
     public void run(WorkRunContext workRunContext) {
+
+        USER_ID.set(workRunContext.getUserId());
+        TENANT_ID.set(workRunContext.getTenantId());
 
         // 初始化作业运行事件
         WorkEventEntity workEvent =
