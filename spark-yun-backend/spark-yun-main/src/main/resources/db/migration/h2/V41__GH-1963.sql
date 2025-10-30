@@ -17,3 +17,7 @@ alter table SY_WORKFLOW_CONFIG
 -- 作业实例绑定eventId
 alter table SY_WORK_INSTANCE
     add event_id varchar(100);
+
+-- 删除多余字段
+alter table SY_WORK_INSTANCE
+    drop column WORK_PID;

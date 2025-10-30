@@ -70,8 +70,6 @@ public class WorkInstanceEntity {
 
     private Boolean quartzHasRun;
 
-    private String workPid;
-
     private Long duration;
 
     private String workInfo;
