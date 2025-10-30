@@ -83,6 +83,7 @@ public class WorkService {
         }
 
         // 修改状态为中止中
+        String oldInstanceStatus = workInstance.getStatus();
         workInstance.setStatus(InstanceStatus.ABORTING);
         workInstance = workInstanceRepository.save(workInstance);
 
@@ -106,8 +107,14 @@ public class WorkService {
 
             // 无法中止
             if (!canStop) {
-                scheduler.resumeTrigger(TriggerKey.triggerKey(QuartzPrefix.WORK_RUN_PROCESS + workEvent.getId()));
+
+                // 改回旧状态
+                workInstance.setStatus(oldInstanceStatus);
+                workInstanceRepository.saveAndFlush(workInstance);
+
+                // 解锁，重启定时器
                 locker.unlock(lockKey);
+                scheduler.resumeTrigger(TriggerKey.triggerKey(QuartzPrefix.WORK_RUN_PROCESS + workEvent.getId()));
                 return;
             }
 
