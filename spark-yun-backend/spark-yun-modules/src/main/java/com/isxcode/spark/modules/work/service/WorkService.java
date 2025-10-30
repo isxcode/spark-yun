@@ -82,11 +82,6 @@ public class WorkService {
             throw new IsxAppException("当前状态无法中止:" + workInstance.getStatus());
         }
 
-        // 修改状态为中止中
-        String oldInstanceStatus = workInstance.getStatus();
-        workInstance.setStatus(InstanceStatus.ABORTING);
-        workInstance = workInstanceRepository.save(workInstance);
-
         // 获取作业运行事件体
         Optional<WorkEventEntity> optionalWorkEvent = workEventRepository.findById(workInstance.getEventId());
         if (!optionalWorkEvent.isPresent()) {
@@ -97,6 +92,11 @@ public class WorkService {
         String submitLog;
 
         try {
+            // 修改状态为中止中
+            String oldInstanceStatus = workInstance.getStatus();
+            workInstance.setStatus(InstanceStatus.ABORTING);
+            workInstance = workInstanceRepository.save(workInstance);
+
             // 暂停每秒定时调度
             scheduler.pauseTrigger(TriggerKey.triggerKey(QuartzPrefix.WORK_RUN_PROCESS + workEvent.getId()));
 
