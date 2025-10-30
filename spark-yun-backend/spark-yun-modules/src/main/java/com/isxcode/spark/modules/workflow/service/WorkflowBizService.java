@@ -493,7 +493,7 @@ public class WorkflowBizService {
         // 异步调用中止作业的方法
         CompletableFuture.supplyAsync(() -> {
             runningWorkInstances.forEach(e -> {
-                sparkYunWorkThreadPool.execute(() -> workService.abortWork(e.getId()));
+                workService.abortWork(e.getId());
             });
             return "SUCCESS";
         }).whenComplete((exeStatus, exception) -> {
