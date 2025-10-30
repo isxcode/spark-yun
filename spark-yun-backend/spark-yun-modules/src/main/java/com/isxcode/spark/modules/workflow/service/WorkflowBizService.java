@@ -490,13 +490,22 @@ public class WorkflowBizService {
         List<WorkInstanceEntity> runningWorkInstances = workInstanceRepository
             .findAllByWorkflowInstanceIdAndStatus(abortFlowReq.getWorkflowInstanceId(), InstanceStatus.RUNNING);
 
+        // 异步参数
+        Map<String, String> result = new HashMap<>();
+        result.put("tenantId", TENANT_ID.get());
+        result.put("userId", USER_ID.get());
+
         // 异步调用中止作业的方法
         CompletableFuture.supplyAsync(() -> {
             runningWorkInstances.forEach(e -> {
                 workService.abortWork(e.getId());
             });
+
             return "SUCCESS";
         }).whenComplete((exeStatus, exception) -> {
+
+            TENANT_ID.set(result.get("tenantId"));
+            USER_ID.set(result.get("userId"));
 
             // 中止成功，修改作业流状态
             WorkflowInstanceEntity workflowInstanceNew =
@@ -507,6 +516,7 @@ public class WorkflowBizService {
                 (System.currentTimeMillis() - workflowInstanceNew.getExecStartDateTime().getTime()) / 1000);
             workflowInstanceRepository.saveAndFlush(workflowInstanceNew);
         });
+
     }
 
     /**
@@ -552,11 +562,11 @@ public class WorkflowBizService {
                 workService.abortWork(e.getId());
             });
 
-            return result;
+            return "SUCCESS";
         }).whenComplete((exeStatus, exception) -> {
 
-            TENANT_ID.set(exeStatus.get("tenantId"));
-            USER_ID.set(exeStatus.get("userId"));
+            TENANT_ID.set(result.get("tenantId"));
+            USER_ID.set(result.get("userId"));
 
             // 初始化工作流实例状态
             workflowInstance.setStatus(InstanceStatus.RUNNING);
@@ -641,13 +651,23 @@ public class WorkflowBizService {
 
         // 修改作业流实例状态
         workflowInstance.setStatus(InstanceStatus.RUNNING);
+        workflowInstance.setExecEndDateTime(null);
         workflowInstanceRepository.save(workflowInstance);
+
+        // 异步参数
+        Map<String, String> result = new HashMap<>();
+        result.put("tenantId", TENANT_ID.get());
+        result.put("userId", USER_ID.get());
 
         // 异步调用中止作业的方法
         CompletableFuture.supplyAsync(() -> {
-            sparkYunWorkThreadPool.execute(() -> workService.abortWork(workInstance.getId()));
+            workService.abortWork(workInstance.getId());
             return "SUCCESS";
         }).whenComplete((exeStatus, exception) -> {
+
+            TENANT_ID.set(result.get("tenantId"));
+            USER_ID.set(result.get("userId"));
+
             // 获取作业
             WorkEntity work = workService.getWorkEntity(workInstance.getWorkId());
 
@@ -721,11 +741,19 @@ public class WorkflowBizService {
         WorkEntity work = workRepository.findById(workInstance.getWorkId()).get();
         WorkConfigEntity workConfig = workConfigRepository.findById(work.getConfigId()).get();
 
+        // 异步参数
+        Map<String, String> result = new HashMap<>();
+        result.put("tenantId", TENANT_ID.get());
+        result.put("userId", USER_ID.get());
+
         // 异步调用中止作业的方法
         CompletableFuture.supplyAsync(() -> {
             sparkYunWorkThreadPool.execute(() -> workService.abortWork(workInstance.getId()));
             return "SUCCESS";
         }).whenComplete((exeStatus, exception) -> {
+
+            TENANT_ID.set(result.get("tenantId"));
+            USER_ID.set(result.get("userId"));
 
             // 修改作业流状态
             workflowInstance.setStatus(InstanceStatus.RUNNING);
