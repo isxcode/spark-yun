@@ -78,6 +78,7 @@ public class WorkService {
 
         // 只有运行中的作业才能中止
         if (!InstanceStatus.RUNNING.equals(workInstance.getStatus())) {
+            locker.unlock(lockKey);
             throw new IsxAppException("当前状态无法中止:" + workInstance.getStatus());
         }
 
@@ -105,8 +106,8 @@ public class WorkService {
 
             // 无法中止
             if (!canStop) {
-                locker.unlock(lockKey);
                 scheduler.resumeTrigger(TriggerKey.triggerKey(QuartzPrefix.WORK_RUN_PROCESS + workEvent.getId()));
+                locker.unlock(lockKey);
                 return;
             }
 
@@ -135,7 +136,7 @@ public class WorkService {
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         } finally {
-            locker.clearLock(workInstance.getEventId());
+            locker.clearLock(LockerPrefix.WORK_EVENT_THREAD + workInstance.getEventId());
         }
     }
 
