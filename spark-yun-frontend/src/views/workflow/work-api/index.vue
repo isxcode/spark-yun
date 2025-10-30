@@ -357,6 +357,15 @@ function runWorkData() {
             type: 'warning'
         }).then(() => {
             runningLoading.value = true
+            // 点击运行，立即跳转到提交日志tab并显示加载状态
+            activeName.value = 'PublishLog'
+            currentTab.value = markRaw(PublishLog)
+            nextTick(() => {
+                changeCollapseUp()
+                // 立即初始化日志组件为加载状态
+                containerInstanceRef.value?.initData('', true)
+            })
+
             RunWorkItemConfig({
                 workId: props.workItemConfig.id
             })
@@ -364,14 +373,8 @@ function runWorkData() {
                     runningLoading.value = false
                     instanceId.value = res.data.instanceId
                     ElMessage.success(res.msg)
+                    // 获取到 instanceId 后重新初始化日志组件
                     initData(res.data.instanceId, true)
-
-                    // 点击运行，默认跳转到提交日志tab
-                    activeName.value = 'PublishLog'
-                    currentTab.value = markRaw(PublishLog)
-                    nextTick(() => {
-                        changeCollapseUp()
-                    })
                 })
                 .catch(() => {
                     runningLoading.value = false
@@ -384,6 +387,16 @@ function runWorkData() {
             }
         })
         runningLoading.value = true
+
+        // 点击运行，立即跳转到提交日志tab并显示加载状态
+        activeName.value = 'PublishLog'
+        currentTab.value = markRaw(PublishLog)
+        nextTick(() => {
+            changeCollapseUp()
+            // 立即初始化日志组件为加载状态
+            containerInstanceRef.value?.initData('', true)
+        })
+
         RunWorkItemConfig({
             workId: props.workItemConfig.id
         })
@@ -391,14 +404,8 @@ function runWorkData() {
                 runningLoading.value = false
                 instanceId.value = res.data.instanceId
                 ElMessage.success(res.msg)
+                // 获取到 instanceId 后重新初始化日志组件
                 initData(res.data.instanceId, true)
-
-                // 点击运行，默认跳转到提交日志tab
-                activeName.value = 'PublishLog'
-                currentTab.value = markRaw(PublishLog)
-                nextTick(() => {
-                    changeCollapseUp()
-                })
             })
             .catch(() => {
                 runningLoading.value = false

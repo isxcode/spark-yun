@@ -271,7 +271,11 @@ public class SparkKubernetesAgentService implements SparkAgentService {
         }
 
         // 把提交的spark配置，塞到sparkLauncher中
-        submitWorkReq.getSparkSubmit().getConf().forEach(sparkLauncher::setConf);
+        submitWorkReq.getSparkSubmit().getConf().forEach((k, v) -> {
+            if (k.startsWith("spark.")) {
+                sparkLauncher.setConf(k, v);
+            }
+        });
 
         return sparkLauncher;
     }
@@ -309,6 +313,11 @@ public class SparkKubernetesAgentService implements SparkAgentService {
         }
 
         throw new IsxAppException("无法获取podName");
+    }
+
+    @Override
+    public Map<String, String> submitWorkForPySpark(SparkLauncher sparkLauncher) throws Exception {
+        return Collections.emptyMap();
     }
 
     @Override

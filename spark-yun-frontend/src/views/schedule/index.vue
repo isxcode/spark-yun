@@ -343,8 +343,8 @@ function showDetailModal(data: any, type: string) {
 
 function retry(data: any) {
   ReStartRunning({
-    instanceId: data.id
-  })
+        workInstanceId: data.id
+    })
     .then((res: any) => {
       ElMessage.success(res.msg)
       initData()

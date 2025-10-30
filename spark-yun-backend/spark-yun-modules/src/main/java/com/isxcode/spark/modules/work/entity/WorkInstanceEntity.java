@@ -70,11 +70,11 @@ public class WorkInstanceEntity {
 
     private Boolean quartzHasRun;
 
-    private String workPid;
-
     private Long duration;
 
     private String workInfo;
+
+    private String eventId;
 
     @CreatedDate
     private LocalDateTime createDateTime;

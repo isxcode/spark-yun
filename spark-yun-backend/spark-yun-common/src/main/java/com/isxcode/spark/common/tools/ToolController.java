@@ -41,6 +41,7 @@ public class ToolController {
     private final CacheManager cacheManager;
 
     private final ResourceLoader resourceLoader;
+
     private final IsxAppProperties isxAppProperties;
 
     @Value("${jasypt.encryptor.password}")

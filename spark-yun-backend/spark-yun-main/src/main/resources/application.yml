@@ -81,6 +81,11 @@ spring:
     job-store-type: jdbc
     jdbc:
       initialize-schema: never
+    properties:
+      org.quartz.threadPool.threadCount: 100
+      org.quartz.threadPool.threadPriority: 5
+      org.quartz.threadPool.class: org.quartz.simpl.SimpleThreadPool
+      org.quartz.jobStore.misfireThreshold: 60000
 
   cache:
     type: simple
@@ -148,3 +153,6 @@ isx-app:
     - /home/** # 放行全部前端的刷新访问路径
   anonymous-role-url:
     - /vip/form/getFormConfigForAnonymous # 匿名者获取表单配置
+  app-name: app1
+  nodes:
+    app1 : localhost

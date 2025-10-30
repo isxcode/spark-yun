@@ -8,6 +8,7 @@ import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 import com.jcraft.jsch.SftpATTRS;
 import com.jcraft.jsch.SftpException;
+
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -16,11 +17,15 @@ import java.nio.file.Paths;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.FileSystemResourceLoader;
 
-/** ssh连接工具类. */
+/**
+ * ssh连接工具类.
+ */
 @Slf4j
 public class SshUtils {
 
-    /** scp传递文件. */
+    /**
+     * scp传递文件.
+     */
     public static void scpFile(ScpFileEngineNodeDto engineNode, String srcPath, String dstPath)
         throws JSchException, SftpException, InterruptedException, IOException {
 
@@ -39,8 +44,13 @@ public class SshUtils {
             session.setPassword(engineNode.getPasswd());
         }
 
-        session.setConfig("StrictHostKeyChecking", "no");
-        session.setTimeout(10000);
+        java.util.Properties config = new java.util.Properties();
+        config.put("StrictHostKeyChecking", "no");
+        config.put("ConnectTimeout", "30000");
+        config.put("ServerAliveInterval", "30000");
+        config.put("ServerAliveCountMax", "3");
+        session.setConfig(config);
+        session.setTimeout(30000);
         session.connect();
 
         // 上传文件
@@ -68,7 +78,9 @@ public class SshUtils {
         session.disconnect();
     }
 
-    /** 执行远程命令. */
+    /**
+     * 执行远程命令.
+     */
     public static String executeCommand(ScpFileEngineNodeDto engineNode, String command, boolean pty)
         throws JSchException, InterruptedException, IOException {
 
@@ -87,8 +99,13 @@ public class SshUtils {
             session.setPassword(engineNode.getPasswd());
         }
 
-        session.setConfig("StrictHostKeyChecking", "no");
-        session.setTimeout(10000);
+        java.util.Properties config = new java.util.Properties();
+        config.put("StrictHostKeyChecking", "no");
+        config.put("ConnectTimeout", "30000");
+        config.put("ServerAliveInterval", "30000");
+        config.put("ServerAliveCountMax", "3");
+        session.setConfig(config);
+        session.setTimeout(30000);
         session.connect();
 
         ChannelExec channel = (ChannelExec) session.openChannel("exec");
@@ -120,7 +137,6 @@ public class SshUtils {
 
         // 判断命令是否执行完成
         int exitStatus = channel.getExitStatus();
-        log.debug("SSH执行返回状态:{}", exitStatus);
         channel.disconnect();
         session.disconnect();
 
@@ -132,7 +148,9 @@ public class SshUtils {
         }
     }
 
-    /** scp传递文本. */
+    /**
+     * scp传递文本.
+     */
     public static void scpText(ScpFileEngineNodeDto engineNode, String content, String dstPath)
         throws JSchException, SftpException, InterruptedException {
 
@@ -151,8 +169,13 @@ public class SshUtils {
             session.setPassword(engineNode.getPasswd());
         }
 
-        session.setConfig("StrictHostKeyChecking", "no");
-        session.setTimeout(10000);
+        java.util.Properties config = new java.util.Properties();
+        config.put("StrictHostKeyChecking", "no");
+        config.put("ConnectTimeout", "30000");
+        config.put("ServerAliveInterval", "30000");
+        config.put("ServerAliveCountMax", "3");
+        session.setConfig(config);
+        session.setTimeout(30000);
         session.connect();
 
         // 上传文件
@@ -180,7 +203,9 @@ public class SshUtils {
         session.disconnect();
     }
 
-    /** scp传递Jar. */
+    /**
+     * scp传递Jar.
+     */
     public static void scpJar(ScpFileEngineNodeDto engineNode, String srcPath, String dstPath)
         throws JSchException, SftpException, InterruptedException, IOException {
 
@@ -199,8 +224,13 @@ public class SshUtils {
             session.setPassword(engineNode.getPasswd());
         }
 
-        session.setConfig("StrictHostKeyChecking", "no");
-        session.setTimeout(10000);
+        java.util.Properties config = new java.util.Properties();
+        config.put("StrictHostKeyChecking", "no");
+        config.put("ConnectTimeout", "30000");
+        config.put("ServerAliveInterval", "30000");
+        config.put("ServerAliveCountMax", "3");
+        session.setConfig(config);
+        session.setTimeout(30000);
         session.connect();
 
         // 上传文件

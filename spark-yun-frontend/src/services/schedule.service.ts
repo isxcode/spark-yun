@@ -69,10 +69,10 @@ export function GetYarnLogData(params: LogParam): Promise<any> {
 }
 
 // 重新运行
-export function ReStartRunning(params: LogParam): Promise<any> {
+export function ReStartRunning(params: any): Promise<any> {
   return http.request({
-    method: 'get',
-    url: '/vip/work-instance/restartInstance',
+    method: 'post',
+    url: '/workflow/runCurrentNode',
     params: params
   })
 }

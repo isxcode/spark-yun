@@ -17,7 +17,6 @@ import com.isxcode.spark.modules.work.repository.VipWorkVersionRepository;
 import com.isxcode.spark.modules.work.repository.WorkConfigRepository;
 import com.isxcode.spark.modules.work.repository.WorkInstanceRepository;
 import com.isxcode.spark.modules.work.repository.WorkRepository;
-import com.isxcode.spark.modules.work.run.WorkExecutor;
 import com.isxcode.spark.modules.work.run.WorkExecutorFactory;
 import com.isxcode.spark.modules.work.run.WorkRunContext;
 import com.isxcode.spark.modules.workflow.entity.WorkflowInstanceEntity;
@@ -154,16 +153,16 @@ public class WorkflowRunEventListener {
                 // 通过workId封装workRunContext
                 WorkEntity work = workRepository.findById(event.getWorkId()).get();
                 WorkConfigEntity workConfig = workConfigRepository.findById(work.getConfigId()).get();
-                workRunContext = WorkflowUtils.genWorkRunContext(workInstance.getId(), work, workConfig);
+                // workRunContext = WorkflowUtils.genWorkRunContext(workInstance.getId(), work, workConfig);
             } else {
                 // 通过versionId封装workRunContext
                 VipWorkVersionEntity workVersion = vipWorkVersionRepository.findById(event.getVersionId()).get();
-                workRunContext = WorkflowUtils.genWorkRunContext(workInstance.getId(), workVersion, event);
+                // workRunContext = WorkflowUtils.genWorkRunContext(workInstance.getId(), workVersion, event);
             }
 
             // 同步执行作业
-            WorkExecutor workExecutor = workExecutorFactory.create(workRunContext.getWorkType());
-            workExecutor.syncExecute(workRunContext);
+            // WorkExecutor workExecutor = workExecutorFactory.create(workRunContext.getWorkType());
+            // workExecutor.syncExecute(workRunContext);
         }
 
         // 判断工作流是否执行完毕，检查结束节点是否都运行完

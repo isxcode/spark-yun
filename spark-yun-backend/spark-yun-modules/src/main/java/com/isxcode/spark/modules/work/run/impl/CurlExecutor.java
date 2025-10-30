@@ -2,24 +2,27 @@ package com.isxcode.spark.modules.work.run.impl;
 
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.RuntimeUtil;
-import com.isxcode.spark.api.work.constants.WorkLog;
+import com.isxcode.spark.api.instance.constants.InstanceStatus;
 import com.isxcode.spark.api.work.constants.WorkType;
-import com.isxcode.spark.backend.api.base.exceptions.WorkRunException;
 import com.isxcode.spark.backend.api.base.properties.IsxAppProperties;
+import com.isxcode.spark.common.locker.Locker;
 import com.isxcode.spark.common.utils.path.PathUtils;
 import com.isxcode.spark.modules.alarm.service.AlarmService;
+import com.isxcode.spark.modules.work.entity.WorkEventEntity;
 import com.isxcode.spark.modules.work.entity.WorkInstanceEntity;
-import com.isxcode.spark.modules.work.repository.WorkInstanceRepository;
+import com.isxcode.spark.modules.work.repository.*;
 import com.isxcode.spark.modules.work.run.WorkExecutor;
 import com.isxcode.spark.modules.work.run.WorkRunContext;
+import com.isxcode.spark.modules.work.run.WorkRunJobFactory;
+import com.isxcode.spark.modules.work.service.WorkService;
 import com.isxcode.spark.modules.work.sql.SqlFunctionService;
 import com.isxcode.spark.modules.workflow.repository.WorkflowInstanceRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
+import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
-import java.time.LocalDateTime;
 
 @Service
 @Slf4j
@@ -27,12 +30,20 @@ public class CurlExecutor extends WorkExecutor {
 
     private final IsxAppProperties isxAppProperties;
 
-    public CurlExecutor(WorkInstanceRepository workInstanceRepository,
-        WorkflowInstanceRepository workflowInstanceRepository, IsxAppProperties isxAppProperties,
-        AlarmService alarmService, SqlFunctionService sqlFunctionService) {
+    private final ServerProperties serverProperties;
 
-        super(workInstanceRepository, workflowInstanceRepository, alarmService, sqlFunctionService);
+    public CurlExecutor(WorkInstanceRepository workInstanceRepository,
+        WorkflowInstanceRepository workflowInstanceRepository, SqlFunctionService sqlFunctionService,
+        AlarmService alarmService, WorkEventRepository workEventRepository, Locker locker,
+        WorkRepository workRepository, WorkRunJobFactory workRunJobFactory, WorkConfigRepository workConfigRepository,
+        VipWorkVersionRepository vipWorkVersionRepository, IsxAppProperties isxAppProperties, WorkService workService,
+        ServerProperties serverProperties) {
+
+        super(alarmService, locker, workRepository, workInstanceRepository, workflowInstanceRepository,
+            workEventRepository, workRunJobFactory, sqlFunctionService, workConfigRepository, vipWorkVersionRepository,
+            workService);
         this.isxAppProperties = isxAppProperties;
+        this.serverProperties = serverProperties;
     }
 
     @Override
@@ -40,68 +51,140 @@ public class CurlExecutor extends WorkExecutor {
         return WorkType.CURL;
     }
 
-    public void execute(WorkRunContext workRunContext, WorkInstanceEntity workInstance) {
+    @Override
+    protected String execute(WorkRunContext workRunContext, WorkInstanceEntity workInstance,
+        WorkEventEntity workEvent) {
 
-        // 获取日志构造器
-        StringBuilder logBuilder = workRunContext.getLogBuilder();
+        // 获取日志
+        StringBuilder logBuilder = new StringBuilder(workInstance.getSubmitLog());
 
-        // 判断执行脚本是否为空
-        logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("检测脚本内容 \n");
-        if (Strings.isEmpty(workRunContext.getScript())) {
-            throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "检测脚本失败 : Curl内容为空不能执行  \n");
+        // 打印首行日志，防止前端卡顿
+        if (workEvent.getEventProcess() == 0) {
+            logBuilder.append(startLog("检测Curl脚本开始"));
+            return updateWorkEventAndInstance(workInstance, logBuilder, workEvent, workRunContext);
         }
 
-        // 脚本检查通过
-        if (!workRunContext.getScript().contains("curl -s ")
-            && !workRunContext.getScript().contains("curl --silent ")) {
-            workRunContext.setScript(workRunContext.getScript().replace("curl ", "curl -s "));
+        // 检测Curl脚本
+        if (workEvent.getEventProcess() == 1) {
+
+            // 检测脚本是否为空
+            String script = workRunContext.getScript();
+            if (Strings.isEmpty(script)) {
+                throw errorLogException("检测Curl脚本异常 : Curl脚本不能为空");
+            }
+
+            // 兼容老版写法
+            if (!script.contains("curl -s ") && !script.contains("curl --silent ")) {
+                script = script.replace("curl ", "curl -s ");
+            }
+
+            // 脚本需要返回网络状态
+            script = script.replace("curl", "curl -w \"%{http_code}\" ");
+
+            // 保存上下文
+            workRunContext.setScript(script);
+
+            // 保存日志
+            logBuilder.append(script).append("\n");
+            logBuilder.append(endLog("检测Curl脚本完成"));
+            logBuilder.append(startLog("执行Curl脚本开始"));
+            return updateWorkEventAndInstance(workInstance, logBuilder, workEvent, workRunContext);
         }
 
-        // 添加网络状态字段
-        workRunContext.setScript(workRunContext.getScript().replace("curl", "curl -w \"%{http_code}\" "));
+        // 执行Curl脚本
+        if (workEvent.getEventProcess() == 2) {
 
-        logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始执行作业 \n");
-        logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("执行作业内容: \n")
-            .append(workRunContext.getScript()).append("\n");
-        workInstance = updateInstance(workInstance, logBuilder);
+            // 记录当前线程
+            WORK_THREAD.put(workEvent.getId(), Thread.currentThread());
+            workRunContext.setIsxAppName(isxAppProperties.getAppName());
+            updateWorkEvent(workEvent, workRunContext);
 
-        // 将脚本推送到本地
-        String bashFile = PathUtils.parseProjectPath(isxAppProperties.getResourcesPath()) + "/work/"
-            + workRunContext.getTenantId() + "/" + workInstance.getId() + ".sh";
-        FileUtil.writeUtf8String(workRunContext.getScript() + " \\\n && echo 'zhiqingyun_success'", bashFile);
+            // 获取上下文参数
+            String script = workRunContext.getScript();
 
-        // 执行命令
-        String executeBashWorkCommand = "bash " + PathUtils.parseProjectPath(isxAppProperties.getResourcesPath())
-            + "/work/" + workRunContext.getTenantId() + "/" + workInstance.getId() + ".sh";
-        String result = RuntimeUtil.execForStr(executeBashWorkCommand);
+            // 将脚本推送到本地
+            String bashFile = PathUtils.parseProjectPath(isxAppProperties.getResourcesPath()) + "/work/"
+                + workRunContext.getTenantId() + "/" + workInstance.getId() + ".sh";
+            FileUtil.writeUtf8String(script + " \\\n && echo 'zhiqingyun_success'", bashFile);
 
-        // 保存运行日志
-        String yarnLog = result.replace("&& echo 'zhiqingyun_success'", "").replace("zhiqingyun_success", "");
-        workInstance.setYarnLog(yarnLog);
-        workInstance.setResultData(yarnLog.substring(0, yarnLog.length() - 4));
-        logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("保存结果成功 \n");
-        updateInstance(workInstance, logBuilder);
+            // 执行本地命令
+            String executeBashWorkCommand = "bash " + PathUtils.parseProjectPath(isxAppProperties.getResourcesPath())
+                + "/work/" + workRunContext.getTenantId() + "/" + workInstance.getId() + ".sh";
+            String result = RuntimeUtil.execForStr(executeBashWorkCommand);
+            String yarnLog = result.replace("&& echo 'zhiqingyun_success'", "").replace("zhiqingyun_success", "");
 
-        // 删除脚本和日志
-        try {
-            String clearWorkRunFile =
-                "rm -f " + PathUtils.parseProjectPath(isxAppProperties.getResourcesPath()) + File.separator + "work"
-                    + File.separator + workRunContext.getTenantId() + File.separator + workInstance.getId() + ".sh";
-            RuntimeUtil.execForStr(clearWorkRunFile);
-        } catch (Exception e) {
-            log.error("删除运行脚本失败");
+            // 保存日志和数据
+            workInstance.setYarnLog(yarnLog);
+            workInstance.setResultData(yarnLog.substring(0, yarnLog.length() - 4));
+
+            // 如果日志不包含关键字则为异常
+            if (!result.contains("200zhiqingyun_success")) {
+                workRunContext.setPreStatus(InstanceStatus.FAIL);
+            }
+
+            // 保存日志
+            logBuilder.append(endLog("执行Curl脚本完成"));
+            logBuilder.append(startLog("清理缓存文件开始"));
+            return updateWorkEventAndInstance(workInstance, logBuilder, workEvent, workRunContext);
         }
 
-        // 判断脚本运行成功还是失败
-        if (!result.contains("200zhiqingyun_success")) {
-            throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "任务运行异常" + "\n");
+        // 清理缓存文件
+        if (workEvent.getEventProcess() == 3) {
+            try {
+                String clearWorkRunFile =
+                    "rm -f " + PathUtils.parseProjectPath(isxAppProperties.getResourcesPath()) + File.separator + "work"
+                        + File.separator + workRunContext.getTenantId() + File.separator + workInstance.getId() + ".sh";
+                RuntimeUtil.execForStr(clearWorkRunFile);
+            } catch (Exception e) {
+                log.error(e.getMessage(), e);
+
+                // 优化日志
+                throw errorLogException("清理缓存文件异常 : " + e.getMessage());
+            }
+
+            // 保存日志
+            logBuilder.append(endLog("清理缓存文件完成"));
+            return updateWorkEventAndInstance(workInstance, logBuilder, workEvent, workRunContext);
         }
+
+        // 判断状态
+        if (InstanceStatus.FAIL.equals(workRunContext.getPreStatus())) {
+            throw errorLogException("最终状态为失败");
+        }
+        return InstanceStatus.SUCCESS;
     }
 
     @Override
-    protected void abort(WorkInstanceEntity workInstance) {
+    protected boolean abort(WorkInstanceEntity workInstance, WorkEventEntity workEvent) {
 
-        Thread thread = WORK_THREAD.get(workInstance.getId());
-        thread.interrupt();
+        // 还未提交
+        if (workEvent.getEventProcess() < 2) {
+            return true;
+        }
+
+        // 运行完毕
+        if (workEvent.getEventProcess() > 2) {
+            return false;
+        }
+
+        // 运行中，中止作业
+        // WorkRunContext workRunContext = JSON.parseObject(workEvent.getEventContext(),
+        // WorkRunContext.class);
+        // if (!Strings.isEmpty(workRunContext.getIsxAppName())) {
+        //
+        // // 杀死程序
+        // String killUrl = "http://" + isxAppProperties.getNodes().get(isxAppProperties.getAppName()) + ":"
+        // + serverProperties.getPort() + "/ha/open/kill";
+        // URI uri =
+        // UriComponentsBuilder.fromHttpUrl(killUrl).queryParam("workEventId",
+        // workEvent.getId()).build().toUri();
+        // new RestTemplate().exchange(uri, HttpMethod.GET, null, String.class);
+        // }
+        Thread thread = WORK_THREAD.get(workEvent.getId());
+        if (thread != null) {
+            thread.interrupt();
+        }
+
+        return true;
     }
 }

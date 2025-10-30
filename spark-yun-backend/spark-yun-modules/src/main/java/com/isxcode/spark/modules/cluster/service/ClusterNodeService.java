@@ -90,7 +90,12 @@ public class ClusterNodeService {
             session.setPassword(engineNode.getPasswd());
         }
 
-        session.setConfig("StrictHostKeyChecking", "no");
+        java.util.Properties config = new java.util.Properties();
+        config.put("StrictHostKeyChecking", "no");
+        config.put("ConnectTimeout", "30000");
+        config.put("ServerAliveInterval", "30000");
+        config.put("ServerAliveCountMax", "3");
+        session.setConfig(config);
         session.connect();
 
         // 初始化sftp功能

@@ -2,24 +2,32 @@ package com.isxcode.spark.modules.work.run.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.isxcode.spark.api.api.constants.ApiType;
-import com.isxcode.spark.api.work.constants.WorkLog;
 import com.isxcode.spark.api.work.constants.WorkType;
-import com.isxcode.spark.backend.api.base.exceptions.WorkRunException;
+import com.isxcode.spark.api.instance.constants.InstanceStatus;
 import com.isxcode.spark.api.work.dto.ApiWorkConfig;
 import com.isxcode.spark.api.work.dto.ApiWorkValueDto;
+import com.isxcode.spark.backend.api.base.properties.IsxAppProperties;
 import com.isxcode.spark.common.utils.http.HttpUtils;
 import com.isxcode.spark.modules.alarm.service.AlarmService;
 import com.isxcode.spark.modules.work.entity.WorkInstanceEntity;
+import com.isxcode.spark.modules.work.entity.WorkEventEntity;
 import com.isxcode.spark.modules.work.repository.WorkInstanceRepository;
+import com.isxcode.spark.modules.work.repository.WorkEventRepository;
 import com.isxcode.spark.modules.work.run.WorkExecutor;
 import com.isxcode.spark.modules.work.run.WorkRunContext;
+import com.isxcode.spark.modules.work.run.WorkRunJobFactory;
+import com.isxcode.spark.modules.work.repository.VipWorkVersionRepository;
+import com.isxcode.spark.modules.work.repository.WorkConfigRepository;
+import com.isxcode.spark.modules.work.repository.WorkRepository;
+import com.isxcode.spark.common.locker.Locker;
+import com.isxcode.spark.modules.work.service.WorkService;
 import com.isxcode.spark.modules.work.sql.SqlFunctionService;
 import com.isxcode.spark.modules.workflow.repository.WorkflowInstanceRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,11 +35,22 @@ import java.util.Map;
 @Slf4j
 public class ApiExecutor extends WorkExecutor {
 
+    private final IsxAppProperties isxAppProperties;
+
+    private final ServerProperties serverProperties;
+
     public ApiExecutor(WorkInstanceRepository workInstanceRepository,
         WorkflowInstanceRepository workflowInstanceRepository, AlarmService alarmService,
-        SqlFunctionService sqlFunctionService) {
+        SqlFunctionService sqlFunctionService, WorkEventRepository workEventRepository,
+        WorkRunJobFactory workRunJobFactory, VipWorkVersionRepository vipWorkVersionRepository,
+        WorkConfigRepository workConfigRepository, WorkRepository workRepository, Locker locker,
+        WorkService workService, IsxAppProperties isxAppProperties, ServerProperties serverProperties) {
 
-        super(workInstanceRepository, workflowInstanceRepository, alarmService, sqlFunctionService);
+        super(alarmService, locker, workRepository, workInstanceRepository, workflowInstanceRepository,
+            workEventRepository, workRunJobFactory, sqlFunctionService, workConfigRepository, vipWorkVersionRepository,
+            workService);
+        this.isxAppProperties = isxAppProperties;
+        this.serverProperties = serverProperties;
     }
 
     @Override
@@ -40,84 +59,148 @@ public class ApiExecutor extends WorkExecutor {
     }
 
     @Override
-    protected void execute(WorkRunContext workRunContext, WorkInstanceEntity workInstance) {
+    protected String execute(WorkRunContext workRunContext, WorkInstanceEntity workInstance,
+        WorkEventEntity workEvent) {
 
-        // 将线程存到Map
-        WORK_THREAD.put(workInstance.getId(), Thread.currentThread());
+        // 获取日志
+        StringBuilder logBuilder = new StringBuilder(workInstance.getSubmitLog());
 
-        // 获取日志构造器
-        StringBuilder logBuilder = workRunContext.getLogBuilder();
-
-        // 判断作业配置是否为空
-        logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("检测作业配置 \n");
-        ApiWorkConfig apiWorkConfig = workRunContext.getApiWorkConfig();
-        if (apiWorkConfig == null) {
-            throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "检测作业失败 : 接口调用作业配置为空不能执行  \n");
+        // 打印首行日志，防止前端卡顿
+        if (workEvent.getEventProcess() == 0) {
+            logBuilder.append(startLog("检测API配置开始"));
+            return updateWorkEventAndInstance(workInstance, logBuilder, workEvent, workRunContext);
         }
 
-        // 检测作业请求方式是否符合规范
-        if (StringUtils.isBlank(apiWorkConfig.getRequestType())) {
-            throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "检测作业失败 : 接口调用作业请求方式为空不能执行  \n");
+        // 检测API配置
+        if (workEvent.getEventProcess() == 1) {
+
+            // 检查配置是否为空
+            ApiWorkConfig apiWorkConfig = workRunContext.getApiWorkConfig();
+            if (apiWorkConfig == null) {
+                throw errorLogException("检测API配置异常 : 作业配置不能为空");
+            }
+
+            // 检测作业请求方式是否为空
+            if (StringUtils.isBlank(apiWorkConfig.getRequestType())) {
+                throw errorLogException("检测API配置异常 : 请求方式不能为空");
+            }
+
+            // 检查请求方式是否符合规范
+            if (!ApiType.GET.equals(apiWorkConfig.getRequestType())
+                && !ApiType.POST.equals(apiWorkConfig.getRequestType())) {
+                throw errorLogException("检测API配置异常 : 请求方式仅支持POST/GET");
+            }
+
+            // 检测请求接口是否为空
+            if (StringUtils.isBlank(apiWorkConfig.getRequestUrl())) {
+                throw errorLogException("检测API配置异常 : 请求URL不能为空");
+            }
+
+            // 保存上下文
+            workRunContext.setApiWorkConfig(apiWorkConfig);
+
+            // 保存日志
+            logBuilder.append(endLog("检测API配置完成"));
+            logBuilder.append(startLog("执行调用开始"));
+            return updateWorkEventAndInstance(workInstance, logBuilder, workEvent, workRunContext);
         }
 
-        if (!ApiType.GET.equals(apiWorkConfig.getRequestType())
-            && !ApiType.POST.equals(apiWorkConfig.getRequestType())) {
-            throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "检测作业失败 : 接口调用作业请求方式仅支持POST/GET  \n");
-        }
+        // 执行调用
+        if (workEvent.getEventProcess() == 2) {
 
-        // 检测接口url是否为空
-        if (StringUtils.isBlank(apiWorkConfig.getRequestUrl())) {
-            throw new WorkRunException(LocalDateTime.now() + WorkLog.ERROR_INFO + "检测作业失败 : 接口调用作业请求url为空不能执行  \n");
-        }
+            // 记录当前线程
+            WORK_THREAD.put(workEvent.getId(), Thread.currentThread());
+            workRunContext.setIsxAppName(isxAppProperties.getAppName());
+            updateWorkEvent(workEvent, workRunContext);
 
-        // 检查通过
-        logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("开始执行接口调用 \n");
-        workInstance = updateInstance(workInstance, logBuilder);
+            // 获取上下文参数
+            ApiWorkConfig apiWorkConfig = workRunContext.getApiWorkConfig();
 
-        Object response = null;
-        try {
+            try {
 
-            // 转换一下结构
-            Map<String, String> requestParam = new HashMap<>();
-            Map<String, String> requestHeader = new HashMap<>();
-            for (int i = 0; i < apiWorkConfig.getRequestParam().size(); i++) {
-                ApiWorkValueDto e = apiWorkConfig.getRequestParam().get(i);
-                if (!e.getLabel().isEmpty()) {
-                    requestParam.put(e.getLabel(), parseJsonPath(e.getValue(), workInstance));
+                // 转换一下结构
+                Map<String, String> requestParam = new HashMap<>();
+                Map<String, String> requestHeader = new HashMap<>();
+                for (int i = 0; i < apiWorkConfig.getRequestParam().size(); i++) {
+                    ApiWorkValueDto e = apiWorkConfig.getRequestParam().get(i);
+                    if (!e.getLabel().isEmpty()) {
+                        requestParam.put(e.getLabel(), parseJsonPath(e.getValue(), workInstance));
+                    }
                 }
-            }
-            for (int i = 0; i < apiWorkConfig.getRequestHeader().size(); i++) {
-                ApiWorkValueDto e = apiWorkConfig.getRequestHeader().get(i);
-                if (!e.getLabel().isEmpty()) {
-                    requestHeader.put(e.getLabel(), parseJsonPath(e.getValue(), workInstance));
+                for (int i = 0; i < apiWorkConfig.getRequestHeader().size(); i++) {
+                    ApiWorkValueDto e = apiWorkConfig.getRequestHeader().get(i);
+                    if (!e.getLabel().isEmpty()) {
+                        requestHeader.put(e.getLabel(), parseJsonPath(e.getValue(), workInstance));
+                    }
                 }
+                if (ApiType.GET.equals(apiWorkConfig.getRequestType())) {
+                    Object response =
+                        HttpUtils.doGet(apiWorkConfig.getRequestUrl(), requestParam, requestHeader, Object.class);
+
+                    // 保存结果
+                    workInstance.setResultData(String.valueOf(response));
+                }
+                if (ApiType.POST.equals(apiWorkConfig.getRequestType())) {
+                    Object response = HttpUtils.doPost(apiWorkConfig.getRequestUrl(), requestHeader,
+                        JSON.parseObject(parseJsonPath(apiWorkConfig.getRequestBody(), workInstance), Object.class));
+
+                    // 保存结果
+                    workInstance.setResultData(String.valueOf(response));
+                }
+            } catch (Exception e) {
+                log.error(e.getMessage(), e);
+
+                // 优化日志
+                throw errorLogException("执行调用异常 : " + e.getMessage().replace("<EOL>", "\n"));
+            } finally {
+
+                // 运行完删除多余线程池
+                WORK_THREAD.remove(workEvent.getId());
             }
 
-            if (ApiType.GET.equals(apiWorkConfig.getRequestType())) {
-                response = HttpUtils.doGet(apiWorkConfig.getRequestUrl(), requestParam, requestHeader, Object.class);
-            }
-            if (ApiType.POST.equals(apiWorkConfig.getRequestType())) {
-                response = HttpUtils.doPost(apiWorkConfig.getRequestUrl(), requestHeader,
-                    JSON.parseObject(parseJsonPath(apiWorkConfig.getRequestBody(), workInstance), Object.class));
-            }
-
-            log.debug("获取远程返回数据:{}", response);
-        } catch (Exception e) {
-            log.debug(e.getMessage(), e);
-            throw new WorkRunException(
-                LocalDateTime.now() + WorkLog.ERROR_INFO + "作业执行异常 : " + e.getMessage().replace("<EOL>", "\n") + "\n");
+            // 保存日志
+            logBuilder.append(endLog("执行调用完成"));
+            return updateWorkEventAndInstance(workInstance, logBuilder, workEvent, workRunContext);
         }
 
-        // 保存运行日志
-        workInstance.setResultData(String.valueOf(response));
-        logBuilder.append(LocalDateTime.now()).append(WorkLog.SUCCESS_INFO).append("请求成功, 查看运行结果 \n");
-        updateInstance(workInstance, logBuilder);
+        // 判断状态
+        if (InstanceStatus.FAIL.equals(workRunContext.getPreStatus())) {
+            throw errorLogException("最终状态为失败");
+        }
+        return InstanceStatus.SUCCESS;
     }
 
     @Override
-    protected void abort(WorkInstanceEntity workInstance) {
+    protected boolean abort(WorkInstanceEntity workInstance, WorkEventEntity workEvent) {
 
-        Thread thread = WORK_THREAD.get(workInstance.getId());
-        thread.interrupt();
+        // 还未提交
+        if (workEvent.getEventProcess() < 2) {
+            return true;
+        }
+
+        // 运行完毕
+        if (workEvent.getEventProcess() > 2) {
+            return false;
+        }
+
+        // 运行中，中止作业
+        // WorkRunContext workRunContext = JSON.parseObject(workEvent.getEventContext(),
+        // WorkRunContext.class);
+        // if (!Strings.isEmpty(workRunContext.getIsxAppName())) {
+        //
+        // // 杀死程序
+        // String killUrl = "http://" + isxAppProperties.getNodes().get(isxAppProperties.getAppName()) + ":"
+        // + serverProperties.getPort() + "/ha/open/kill";
+        // URI uri =
+        // UriComponentsBuilder.fromHttpUrl(killUrl).queryParam("workEventId",
+        // workEvent.getId()).build().toUri();
+        // new RestTemplate().exchange(uri, HttpMethod.GET, null, String.class);
+        // }
+        Thread thread = WORK_THREAD.get(workEvent.getId());
+        if (thread != null) {
+            thread.interrupt();
+        }
+
+        return true;
     }
 }

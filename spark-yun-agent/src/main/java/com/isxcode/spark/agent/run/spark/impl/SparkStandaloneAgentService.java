@@ -4,6 +4,7 @@ import com.alibaba.fastjson2.JSON;
 import com.isxcode.spark.agent.run.spark.SparkAgentService;
 import com.isxcode.spark.api.agent.constants.AgentType;
 import com.isxcode.spark.api.agent.req.spark.SubmitWorkReq;
+import com.isxcode.spark.api.instance.constants.InstanceStatus;
 import com.isxcode.spark.api.work.constants.WorkType;
 import com.isxcode.spark.backend.api.base.exceptions.IsxAppException;
 import lombok.extern.slf4j.Slf4j;
@@ -27,9 +28,7 @@ import org.springframework.stereotype.Service;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.nio.charset.StandardCharsets;
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -205,6 +204,49 @@ public class SparkStandaloneAgentService implements SparkAgentService {
         }
 
         throw new IsxAppException("无法获取submissionId \n" + errLog);
+    }
+
+    @Override
+    public Map<String, String> submitWorkForPySpark(SparkLauncher sparkLauncher) throws Exception {
+
+        Map<String, String> result = new HashMap<>();
+
+        Process launch = sparkLauncher.launch();
+        InputStream errorStream = launch.getErrorStream();
+        InputStream inputStream = launch.getInputStream();
+        BufferedReader errorReader = new BufferedReader(new InputStreamReader(errorStream, StandardCharsets.UTF_8));
+        BufferedReader inputReader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
+
+        StringBuilder errLog = new StringBuilder();
+        StringBuilder inputLog = new StringBuilder();
+        String line;
+        while ((line = errorReader.readLine()) != null) {
+            errLog.append(line).append("\n");
+        }
+
+        while ((line = inputReader.readLine()) != null) {
+            inputLog.append(line).append("\n");
+        }
+
+        try {
+
+            result.put("log", errLog.toString());
+            result.put("data", inputLog.toString());
+
+            int exitCode = launch.waitFor();
+            if (exitCode == 1) {
+                result.put("status", InstanceStatus.FAIL);
+            } else {
+                result.put("status", InstanceStatus.SUCCESS);
+            }
+        } catch (InterruptedException e) {
+            log.error(e.getMessage(), e);
+            throw new IsxAppException(e.getMessage());
+        } finally {
+            launch.destroy();
+        }
+
+        return result;
     }
 
     @Override

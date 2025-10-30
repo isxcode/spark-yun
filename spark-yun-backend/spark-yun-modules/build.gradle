@@ -17,8 +17,6 @@ dependencies {
 
     implementation "org.apache.kafka:kafka-clients:${KAFKA_VERSION}"
 
-    implementation fileTree(dir: rootDir.getAbsolutePath() + '/resources/libs', include: ['prql-java-0.5.2.jar'])
-
     implementation "org.apache.groovy:groovy-all:${GROOVY_VERSION}"
 
     implementation "com.aliyun:dysmsapi20170525:${ALI_SMS_VERSION}"
@@ -31,4 +29,8 @@ dependencies {
 
     implementation 'org.apache.httpcomponents.client5:httpclient5:5.2.1'
     implementation 'org.apache.httpcomponents.core5:httpcore5:5.2.1'
+
+    // quartz
+    implementation 'org.springframework.boot:spring-boot-starter-quartz'
+    implementation 'com.mchange:c3p0:0.9.5.5'
 }

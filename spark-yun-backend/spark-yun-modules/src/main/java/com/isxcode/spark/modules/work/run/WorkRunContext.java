@@ -1,14 +1,52 @@
 package com.isxcode.spark.modules.work.run;
 
+import com.isxcode.spark.api.agent.req.spark.SubmitWorkReq;
+import com.isxcode.spark.api.cluster.dto.ScpFileEngineNodeDto;
 import com.isxcode.spark.api.work.dto.*;
+import com.isxcode.spark.modules.cluster.entity.ClusterNodeEntity;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
+/**
+ * 作业运行上下文.
+ */
 @Data
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class WorkRunContext {
+
+    private String eventType;
+
+    private List<List<String>> nodeMapping;
+
+    private List<String> nodeList;
+
+    private List<String> dagEndList;
+
+    private List<String> dagStartList;
+
+    private String flowInstanceId;
+
+    private String workId;
+
+    private String versionId;
+
+    private String script;
+
+    private ScpFileEngineNodeDto scpNodeInfo;
+
+    private ClusterNodeEntity agentNode;
+
+    private String preStatus;
+
+    private String clusterType;
+
+    private String pid;
 
     /**
      * 作业实例id.
@@ -51,11 +89,6 @@ public class WorkRunContext {
     private DbMigrateConfig dbMigrateConfig;
 
     /**
-     * 脚本.
-     */
-    private String script;
-
-    /**
      * 租户id.
      */
     private String tenantId;
@@ -66,11 +99,6 @@ public class WorkRunContext {
     private String userId;
 
     /**
-     * 作业id.
-     */
-    private String workId;
-
-    /**
      * 作业名称.
      */
     private String workName;
@@ -79,16 +107,6 @@ public class WorkRunContext {
      * 作业类型.
      */
     private String workType;
-
-    /**
-     * 版本id.
-     */
-    private String versionId;
-
-    /**
-     * 日志构造器.
-     */
-    private StringBuilder logBuilder;
 
     /**
      * 用户自定义jar的配置
@@ -110,4 +128,32 @@ public class WorkRunContext {
      */
     private String containerId;
 
+    /**
+     * 日志构造器.
+     */
+    private StringBuilder logBuilder;
+
+    /**
+     * 事件id.
+     */
+    private String eventId;
+    /**
+     * 固定执行节点ID（需要复用上传文件所在节点）.
+     */
+    private String nodeId;
+
+
+    private String log;
+
+    private SubmitWorkReq submitWorkReq;
+
+    private com.isxcode.spark.api.agent.req.flink.SubmitWorkReq flinkSubmitWorkReq;
+
+    private String appId;
+
+    private String csvFileName;
+
+    private Integer containerPort;
+
+    private String isxAppName;
 }
