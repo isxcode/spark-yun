@@ -150,7 +150,7 @@ download_spark() {
     echo "下载 Spark ${SPARK_VERSION}..."
 
     # 创建必要目录
-    create_dir "$TMP_SPARK_MIN_JARS"
+    create_dir "$TMP_DIR"
 
     # 下载 Spark
     local spark_url="${OSS_DOWNLOAD_URL}/${SPARK_MIN_FILE}"
@@ -163,7 +163,7 @@ download_flink() {
     echo "下载 Flink ${FLINK_VERSION}..."
 
     # 创建必要目录
-    create_dir "$TMP_FLINK_MIN_LIB"
+    create_dir "$TMP_DIR"
 
     # 下载 Flink
     local flink_url="${OSS_DOWNLOAD_URL}/${FLINK_MIN_FILE}"
@@ -175,7 +175,8 @@ download_flink() {
 download_spark_jars() {
     echo "下载 Spark JAR 依赖..."
 
-    create_dir "$TMP_DIR"
+    # 创建必要目录
+    create_dir "$TMP_SPARK_MIN_JARS"
 
     local spark_jar_dir="${TMP_SPARK_MIN_JARS}"
 
@@ -191,7 +192,8 @@ download_spark_jars() {
 download_flink_jars() {
     echo "下载 Flink JAR 依赖..."
 
-    create_dir "$TMP_DIR"
+    # 创建必要目录
+    create_dir "$TMP_FLINK_MIN_LIB"
 
     local flink_jar_dir="${TMP_FLINK_MIN_LIB}"
 
