@@ -110,7 +110,7 @@ copy_spark_jars() {
 }
 
 # 拷贝 Flink Lib 依赖
-copy_flink_jars() {
+copy_flink_libs() {
     echo "拷贝 Flink JAR 依赖..."
 
     cp "${TMP_FLINK_MIN_LIB}"/*.jar "${FLINK_MIN_DIR}"/lib/
@@ -133,7 +133,7 @@ main() {
     install_flink
 
     # 4. 拷贝Flink第三方依赖
-    copy_flink_jars
+    copy_flink_libs
 
     echo "项目依赖安装完成！"
 }
