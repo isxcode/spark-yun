@@ -132,12 +132,28 @@ jobs:
         id: download-cache
         with:
           path: |
-            /home/runner/work/spark-yun/spark-yun/resources/tmp/spark-3.4.1-bin-hadoop3.tgz
+            /home/runner/work/spark-yun/spark-yun/resources
+            /home/runner/work/spark-yun/spark-yun/spark-yun-backend/spark-yun-main/src/main/resources
           key: ${{ runner.os }}-file-${{ hashFiles('/home/runner/work/spark-yun/spark-yun/download.sh') }}
 
       - name: Download file
         if: steps.download-cache.outputs.cache-hit != 'true'
         run: sudo bash /home/runner/work/spark-yun/spark-yun/download.sh
+
+      - name: Check download file
+        run: |
+          echo "/home/runner/work/spark-yun/spark-yun/resources/jdbc/system"
+          ls -lha /home/runner/work/spark-yun/spark-yun/resources/jdbc/system
+          echo "/home/runner/work/spark-yun/spark-yun/resources/libs"
+          ls -lha /home/runner/work/spark-yun/spark-yun/resources/libs
+          echo "/home/runner/work/spark-yun/spark-yun/resources/tmp"
+          ls -lha /home/runner/work/spark-yun/spark-yun/resources/tmp
+          echo "/home/runner/work/spark-yun/spark-yun/resources/tmp/flink-min"
+          ls -lha /home/runner/work/spark-yun/spark-yun/resources/tmp/flink-min
+          echo "/home/runner/work/spark-yun/spark-yun/resources/tmp/spark-min"
+          ls -lha /home/runner/work/spark-yun/spark-yun/resources/tmp/spark-min
+          echo "/home/runner/work/spark-yun/spark-yun/spark-yun-backend/spark-yun-main/src/main/resources"
+          ls -lha /home/runner/work/spark-yun/spark-yun/spark-yun-backend/spark-yun-main/src/main/resources
 
 #      - name: Build with Gradle Wrapper
 #        run: gradle install package
