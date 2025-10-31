@@ -112,8 +112,6 @@ jobs:
         uses: gradle/actions/setup-gradle@v5
         with:
           gradle-version: '7.6.1'
-        env:
-          GRADLE_OPTS: "-Xmx4096m -Xms1024m -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8"
 
       - name: Print gradle version
         run: gradle -version
