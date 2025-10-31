@@ -47,7 +47,13 @@ jobs:
       - name: Set timezone to Asia/Shanghai
         run: |
           sudo timedatectl set-timezone Asia/Shanghai
+
+      - name: Print Datetime
+        run: |
           date
+          
+      - name: Print home path
+        run: |
           pwd
 
       - name: Checkout spark-yun
