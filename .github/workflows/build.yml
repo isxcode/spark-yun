@@ -4,21 +4,21 @@ on:
   workflow_dispatch:
     inputs:
       admin_github_token:
-        description: '管理员密钥'
+        description: 'github access token'
         required: true
         type: string
       version_number:
-        description: '镜像版本号'
+        description: 'docker hub image version'
         required: true
         type: string
         default: latest
       repository_account:
-        description: '仓库'
+        description: 'repository'
         required: true
         type: string
         default: 'isxcode'
       branch_number:
-        description: '分支'
+        description: 'branch'
         required: true
         type: string
         default: 'main'
@@ -47,7 +47,13 @@ jobs:
       - name: Set timezone to Asia/Shanghai
         run: |
           sudo timedatectl set-timezone Asia/Shanghai
-          date
+
+      - name: Print system info
+        run: |
+          echo "Now Date: $(date)"
+          echo "Home: $(pwd)"
+          echo "CPU: $(grep -m 1 'model name' /proc/cpuinfo | cut -d: -f2 | xargs)"
+          echo "Memory: $(free -h | awk '/^Mem:/ {print $2}')"
 
       - name: Checkout spark-yun
         uses: actions/checkout@v4
@@ -64,6 +70,54 @@ jobs:
           ref: ${{ inputs.branch_number }}
           path: "/home/runner/work/spark-yun/spark-yun/spark-yun-vip"
 
+      - name: Setup nodejs
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Print node version
+        run: node -v
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9.0.6
+
+      - name: Print pnpm version
+        run: pnpm -v
+
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - name: Cache pnpm
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('/home/runner/work/spark-yun/spark-yun/spark-yun-frontend/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Setup jdk
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '8'
+
+      - name: Print java version
+        run: java -version
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v5
+        with:
+          gradle-version: '7.6.1'
+        env:
+          GRADLE_OPTS: "-Xmx4096m -Xms1024m -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8"
+
+      - name: Print gradle version
+        run: gradle -version
+
       - name: Cache gradle
         uses: actions/cache@v3
         with:
@@ -74,41 +128,22 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
-      - name: Install pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 9.0.6
-          run_install: false
-
-      - name: Install Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 18
-
-      - name: Get pnpm store directory
-        shell: bash
-        run: |
-          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
-
-      - name: Setup pnpm cache
+      - name: Cache dependencies
         uses: actions/cache@v4
+        id: download-cache
         with:
-          path: ${{ env.STORE_PATH }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-
+          path: |
+            /home/runner/work/spark-yun/spark-yun/resources
+            /home/runner/work/spark-yun/spark-yun/spark-yun-backend/spark-yun-main/src/main/resources/libprql_java-linux64.so
+            /home/runner/work/spark-yun/spark-yun/spark-yun-backend/spark-yun-main/src/main/resources/libprql_java-osx-arm64.dylib
+          key: ${{ runner.os }}-file-${{ hashFiles('/home/runner/work/spark-yun/spark-yun/download.sh') }}
 
-      - name: Setup jdk
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'zulu'
-          java-version: '8'
+      - name: Download dependencies
+        if: steps.download-cache.outputs.cache-hit != 'true'
+        run: sudo bash /home/runner/work/spark-yun/spark-yun/download.sh
 
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@417ae3ccd767c252f5661f1ace9f835f9654f2b5
-
-      - name: Build with Gradle Wrapper
-        run: ./gradlew install clean package
+      - name: Build with gradle
+        run: gradle install package
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
@@ -136,7 +171,7 @@ jobs:
           name: zhiqingyun
           path: ./spark-yun-dist/build/distributions/zhiqingyun.tar.gz
 
-  # 上传阿里oss使用单独任务，原因：上传失败后，可以使用github重跑任务，不需要重新打包
+  # 上传阿里服务器使用单独任务，原因：上传失败后，可以使用github重跑任务，不需要重新打包
   upload-oss:
     needs: build
 
@@ -152,7 +187,6 @@ jobs:
       - name: Set timezone to Asia/Shanghai
         run: |
           sudo timedatectl set-timezone Asia/Shanghai
-          date
 
       - name: Download zhiqingyun tar
         uses: actions/download-artifact@v4
@@ -160,11 +194,7 @@ jobs:
           name: zhiqingyun
           path: ./
 
-      - name: Set timezone to Asia/Shanghai
-        run: |
-          ls -lha
-
-      - name: Upload Package to Ali oss
+      - name: Upload package to Ali server
         uses: appleboy/scp-action@v1
         with:
           host: ${{ secrets.HOST }}
@@ -177,16 +207,20 @@ jobs:
 
   # 上传阿里镜像仓库使用单独任务，原因：上传失败后，可以使用github重跑任务，不需要重新打包
   upload-ali:
-      needs: build
+    needs: build
 
-      runs-on: ubuntu-latest
+    runs-on: ubuntu-latest
 
-      permissions:
-        contents: read
-        packages: write
-        id-token: write
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
 
-      steps:
+    steps:
+
+      - name: Set timezone to Asia/Shanghai
+        run: |
+          sudo timedatectl set-timezone Asia/Shanghai
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
