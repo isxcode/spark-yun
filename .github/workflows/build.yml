@@ -129,130 +129,116 @@ jobs:
 
       - name: Cache dependencies
         uses: actions/cache@v4
-        id: spark-cache
+        id: download-cache
         with:
           path: |
             /home/runner/work/spark-yun/spark-yun/resources/tmp/spark-3.4.1-bin-hadoop3.tgz
-          key: ${{ runner.os }}-file-${{ hashFiles('/home/runner/work/spark-yun/spark-yun/install.sh') }}
+          key: ${{ runner.os }}-file-${{ hashFiles('/home/runner/work/spark-yun/spark-yun/download.sh') }}
 
-      - name: Download spark
-        if: steps.spark-cache.outputs.cache-hit != 'true'
-        run: | 
-          mkdir -p /home/runner/work/spark-yun/spark-yun/resources/tmp/
-          cd /home/runner/work/spark-yun/spark-yun/resources/tmp/
-          wget https://archive.apache.org/dist/spark/spark-3.4.1/spark-3.4.1-bin-hadoop3.tgz
+      - name: Download file
+        if: steps.download-cache.outputs.cache-hit != 'true'
+        run: sudo bash /home/runner/work/spark-yun/spark-yun/download.sh
 
-      - name: Print Spark
-        run: ls -lh /home/runner/work/spark-yun/spark-yun/resources/tmp/
+      - name: Build with Gradle Wrapper
+        run: gradle install package
 
-#      - name: Download flink
-#        if: steps.cache.outputs.cache-hit != 'true'
-#        run: curl -L -o large-model.gguf https://huggingface.co/xxx/resolve/main/large-model.gguf
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
 
-#      - name: Download dependencies
-#        if: steps.cache.outputs.cache-hit != 'true'
-#        run: sudo bash /home/runner/work/spark-yun/spark-yun/install.sh
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
-#      - name: Build with Gradle Wrapper
-#        run: gradle package
-#
-#      - name: Set up QEMU
-#        uses: docker/setup-qemu-action@v3
-#
-#      - name: Set up Docker Buildx
-#        uses: docker/setup-buildx-action@v3
-#
-#      - name: Login to Docker Hub
-#        uses: docker/login-action@v3
-#        with:
-#          username: ispong
-#          password: ${{ secrets.DOCKERHUB_TOKEN }}
-#
-#      - name: Build and Push
-#        uses: docker/build-push-action@v5
-#        with:
-#          context: .
-#          platforms: linux/amd64,linux/arm64
-#          tags: isxcode/zhiqingyun:${{ inputs.version_number }}
-#          push: true
-#
-#      - name: Upload zhiqingyun tar
-#        uses: actions/upload-artifact@v4
-#        with:
-#          name: zhiqingyun
-#          path: ./spark-yun-dist/build/distributions/zhiqingyun.tar.gz
-#
-#  # 上传阿里oss使用单独任务，原因：上传失败后，可以使用github重跑任务，不需要重新打包
-#  upload-oss:
-#    needs: build
-#
-#    runs-on: ubuntu-latest
-#
-#    permissions:
-#      contents: read
-#      packages: write
-#      id-token: write
-#
-#    steps:
-#
-#      - name: Set timezone to Asia/Shanghai
-#        run: |
-#          sudo timedatectl set-timezone Asia/Shanghai
-#          date
-#
-#      - name: Download zhiqingyun tar
-#        uses: actions/download-artifact@v4
-#        with:
-#          name: zhiqingyun
-#          path: ./
-#
-#      - name: Set timezone to Asia/Shanghai
-#        run: |
-#          ls -lha
-#
-#      - name: Upload Package to Ali oss
-#        uses: appleboy/scp-action@v1
-#        with:
-#          host: ${{ secrets.HOST }}
-#          username: ${{ secrets.USERNAME }}
-#          password: ${{ secrets.PASSWORD }}
-#          port: 22
-#          timeout: 3600s
-#          source: "zhiqingyun.tar.gz"
-#          target: /data/file/
-#
-#  # 上传阿里镜像仓库使用单独任务，原因：上传失败后，可以使用github重跑任务，不需要重新打包
-#  upload-ali:
-#      needs: build
-#
-#      runs-on: ubuntu-latest
-#
-#      permissions:
-#        contents: read
-#        packages: write
-#        id-token: write
-#
-#      steps:
-#
-#      - name: Set up QEMU
-#        uses: docker/setup-qemu-action@v3
-#
-#      - name: Set up Docker Buildx
-#        uses: docker/setup-buildx-action@v3
-#
-#      - name: Login to Docker Hub
-#        uses: docker/login-action@v3
-#        with:
-#          registry: registry.cn-shanghai.aliyuncs.com
-#          username: ispong
-#          password: ${{ secrets.ALI_DOCKERHUB_TOKEN }}
-#
-#      - name: Pull docker images
-#        run: |
-#          docker pull --platform=linux/amd64 isxcode/zhiqingyun
-#          docker tag isxcode/zhiqingyun registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun:latest-amd64
-#          docker push registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun:latest-amd64
-#          docker rmi isxcode/zhiqingyun
-#          docker pull --platform=linux/arm64 isxcode/zhiqingyun
-#          docker tag isxcode/zhiqingyun registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun:latest-arm64
-#          docker push registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun:latest-arm64
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ispong
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and Push
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          platforms: linux/amd64,linux/arm64
+          tags: isxcode/zhiqingyun:${{ inputs.version_number }}
+          push: true
+
+      - name: Upload zhiqingyun tar
+        uses: actions/upload-artifact@v4
+        with:
+          name: zhiqingyun
+          path: ./spark-yun-dist/build/distributions/zhiqingyun.tar.gz
+
+  # 上传阿里oss使用单独任务，原因：上传失败后，可以使用github重跑任务，不需要重新打包
+  upload-oss:
+    needs: build
+
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+
+    steps:
+
+      - name: Set timezone to Asia/Shanghai
+        run: |
+          sudo timedatectl set-timezone Asia/Shanghai
+          date
+
+      - name: Download zhiqingyun tar
+        uses: actions/download-artifact@v4
+        with:
+          name: zhiqingyun
+          path: ./
+
+      - name: Set timezone to Asia/Shanghai
+        run: |
+          ls -lha
+
+      - name: Upload Package to Ali oss
+        uses: appleboy/scp-action@v1
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          port: 22
+          timeout: 3600s
+          source: "zhiqingyun.tar.gz"
+          target: /data/file/
+
+  # 上传阿里镜像仓库使用单独任务，原因：上传失败后，可以使用github重跑任务，不需要重新打包
+  upload-ali:
+    needs: build
+
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+
+    steps:
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          registry: registry.cn-shanghai.aliyuncs.com
+          username: ispong
+          password: ${{ secrets.ALI_DOCKERHUB_TOKEN }}
+
+      - name: Pull docker images
+        run: |
+          docker pull --platform=linux/amd64 isxcode/zhiqingyun
+          docker tag isxcode/zhiqingyun registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun:latest-amd64
+          docker push registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun:latest-amd64
+          docker rmi isxcode/zhiqingyun
+          docker pull --platform=linux/arm64 isxcode/zhiqingyun
+          docker tag isxcode/zhiqingyun registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun:latest-arm64
+          docker push registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun:latest-arm64
