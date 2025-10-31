@@ -64,16 +64,6 @@ jobs:
           ref: ${{ inputs.branch_number }}
           path: "/home/runner/work/spark-yun/spark-yun/spark-yun-vip"
 
-      - name: Cache gradle
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-
       - name: Install pnpm
         uses: pnpm/action-setup@v4
         with:
@@ -105,10 +95,38 @@ jobs:
           java-version: '8'
 
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@417ae3ccd767c252f5661f1ace9f835f9654f2b5
+        uses: gradle/actions/setup-gradle@v5
+        with:
+          gradle-version: '7.6.1'
+
+      - name: Cache gradle
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Cache Download File
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/resources/tmp
+            ~/resources/jdbc/system
+            ~/resources/libs
+            ~/spark-yun-backend/spark-yun-main/src/main/resources
+            ~/spark-yun-dist/spark-min
+            ~/spark-yun-dist/flink-min
+          key: ${{ runner.os }}-${{ hashFiles('**/install.sh') }}
+
+      - name: Install Dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: /install.sh
 
       - name: Build with Gradle Wrapper
-        run: ./gradlew install clean package
+        run: gradle clean package
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
