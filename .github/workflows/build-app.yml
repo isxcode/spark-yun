@@ -123,7 +123,7 @@ jobs:
 
       - name: Install Dependencies
         if: steps.cache.outputs.cache-hit != 'true'
-        run: /install.sh
+        run: /home/runner/work/spark-yun/spark-yun/install.sh
 
       - name: Build with Gradle Wrapper
         run: gradle clean package
