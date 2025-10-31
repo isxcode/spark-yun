@@ -138,7 +138,7 @@ jobs:
 
       - name: Download spark
         if: steps.spark-cache.outputs.cache-hit != 'true'
-        run: curl -L -o /home/runner/work/spark-yun/spark-yun/resources/tmp/spark-3.4.1-bin-hadoop3.tgz https://archive.apache.org/dist/spark/spark-3.4.1/spark-3.4.1-bin-hadoop3.tgz
+        run: curl -L https://archive.apache.org/dist/spark/spark-3.4.1/spark-3.4.1-bin-hadoop3.tgz -o /home/runner/work/spark-yun/spark-yun/resources/tmp/spark-3.4.1-bin-hadoop3.tgz
 
       - name: Print Spark
         run: ls /home/runner/work/spark-yun/spark-yun/resources/tmp/
