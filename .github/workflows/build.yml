@@ -46,7 +46,7 @@ jobs:
 
       - name: Set timezone to Asia/Shanghai
         run: |
-          timedatectl set-timezone Asia/Shanghai
+          sudo timedatectl set-timezone Asia/Shanghai
           date
           pwd
 
