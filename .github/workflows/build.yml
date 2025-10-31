@@ -133,11 +133,6 @@ jobs:
         with:
           path: |
             ~/resources/tmp
-            ~/resources/jdbc/system
-            ~/resources/libs
-            ~/spark-yun-backend/spark-yun-main/src/main/resources
-            ~/spark-yun-dist/spark-min
-            ~/spark-yun-dist/flink-min
           key: ${{ runner.os }}-file-${{ hashFiles('**/install.sh') }}
 
       - name: Download spark
