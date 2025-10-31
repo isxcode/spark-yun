@@ -142,8 +142,6 @@ jobs:
 
       - name: Build with gradle
         run: gradle install package
-        env:
-          GRADLE_OPTS: "-Xmx4096m -Xms1024m -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8"
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
