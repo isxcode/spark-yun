@@ -139,6 +139,7 @@ jobs:
       - name: Download spark
         if: steps.spark-cache.outputs.cache-hit != 'true'
         run: | 
+          mkdir -p /home/runner/work/spark-yun/spark-yun/resources/tmp/
           cd /home/runner/work/spark-yun/spark-yun/resources/tmp/
           wget https://archive.apache.org/dist/spark/spark-3.4.1/spark-3.4.1-bin-hadoop3.tgz
 
