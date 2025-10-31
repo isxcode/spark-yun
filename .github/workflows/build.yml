@@ -4,11 +4,11 @@ on:
   workflow_dispatch:
     inputs:
       admin_github_token:
-        description: 'github auth token'
+        description: 'github access token'
         required: true
         type: string
       version_number:
-        description: 'docker image version number'
+        description: 'docker hub image version'
         required: true
         type: string
         default: latest
@@ -70,7 +70,7 @@ jobs:
           ref: ${{ inputs.branch_number }}
           path: "/home/runner/work/spark-yun/spark-yun/spark-yun-vip"
 
-      - name: Setup node
+      - name: Setup nodejs
         uses: actions/setup-node@v4
         with:
           node-version: 18
@@ -134,14 +134,15 @@ jobs:
         with:
           path: |
             /home/runner/work/spark-yun/spark-yun/resources
-            /home/runner/work/spark-yun/spark-yun/spark-yun-backend/spark-yun-main/src/main/resources
+            /home/runner/work/spark-yun/spark-yun/spark-yun-backend/spark-yun-main/src/main/resources/libprql_java-linux64.so
+            /home/runner/work/spark-yun/spark-yun/spark-yun-backend/spark-yun-main/src/main/resources/libprql_java-osx-arm64.dylib
           key: ${{ runner.os }}-file-${{ hashFiles('/home/runner/work/spark-yun/spark-yun/download.sh') }}
 
-      - name: Download file
+      - name: Download dependencies
         if: steps.download-cache.outputs.cache-hit != 'true'
         run: sudo bash /home/runner/work/spark-yun/spark-yun/download.sh
 
-      - name: Build with Gradle Wrapper
+      - name: Build with gradle
         run: gradle install package
 
       - name: Set up QEMU
@@ -170,7 +171,7 @@ jobs:
           name: zhiqingyun
           path: ./spark-yun-dist/build/distributions/zhiqingyun.tar.gz
 
-  # 上传阿里oss使用单独任务，原因：上传失败后，可以使用github重跑任务，不需要重新打包
+  # 上传阿里服务器使用单独任务，原因：上传失败后，可以使用github重跑任务，不需要重新打包
   upload-oss:
     needs: build
 
@@ -186,7 +187,6 @@ jobs:
       - name: Set timezone to Asia/Shanghai
         run: |
           sudo timedatectl set-timezone Asia/Shanghai
-          date
 
       - name: Download zhiqingyun tar
         uses: actions/download-artifact@v4
@@ -194,11 +194,7 @@ jobs:
           name: zhiqingyun
           path: ./
 
-      - name: Set timezone to Asia/Shanghai
-        run: |
-          ls -lha
-
-      - name: Upload Package to Ali oss
+      - name: Upload package to Ali server
         uses: appleboy/scp-action@v1
         with:
           host: ${{ secrets.HOST }}
@@ -221,6 +217,10 @@ jobs:
       id-token: write
 
     steps:
+
+      - name: Set timezone to Asia/Shanghai
+        run: |
+          sudo timedatectl set-timezone Asia/Shanghai
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
