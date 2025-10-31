@@ -65,19 +65,25 @@ jobs:
           ref: ${{ inputs.branch_number }}
           path: "/home/runner/work/spark-yun/spark-yun/spark-yun-vip"
 
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Print node version
+        run: node -v
+
       - name: Install pnpm
         uses: pnpm/action-setup@v4
         with:
           version: 9.0.6
           run_install: false
 
-      - name: Install Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 18
+      - name: Print pnpm version
+        run: pnpm -v
 
       - name: Get pnpm store directory
-        shell: bash
+        shell: bashs
         run: |
           echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
 
@@ -95,10 +101,16 @@ jobs:
           distribution: 'zulu'
           java-version: '8'
 
+      - name: Print java version
+        run: java -version
+
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v5
         with:
           gradle-version: '7.6.1'
+
+      - name: Print gradle version
+        run: gradle -version
 
       - name: Cache gradle
         uses: actions/cache@v3
@@ -110,7 +122,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
-      - name: Cache download file
+      - name: Cache dependencies
         uses: actions/cache@v4
         with:
           path: |
@@ -122,12 +134,12 @@ jobs:
             ~/spark-yun-dist/flink-min
           key: ${{ runner.os }}-${{ hashFiles('**/install.sh') }}
 
-      - name: Install Dependencies
+      - name: Download dependencies
         if: steps.cache.outputs.cache-hit != 'true'
         run: sudo bash /home/runner/work/spark-yun/spark-yun/install.sh
 
       - name: Build with Gradle Wrapper
-        run: gradle clean package
+        run: gradle package
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
