@@ -50,7 +50,6 @@ jobs:
 
       - name: Print system info
         run: |
-          echo "System overview:"
           echo "Now Date: $(date)"
           echo "Home: $(pwd)"
           echo "CPU: $(grep -m 1 'model name' /proc/cpuinfo | cut -d: -f2 | xargs)"
@@ -71,7 +70,7 @@ jobs:
           ref: ${{ inputs.branch_number }}
           path: "/home/runner/work/spark-yun/spark-yun/spark-yun-vip"
 
-      - name: Install Node.js
+      - name: Install node
         uses: actions/setup-node@v4
         with:
           node-version: 18
