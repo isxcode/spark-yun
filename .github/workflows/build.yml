@@ -82,7 +82,9 @@ jobs:
         uses: pnpm/action-setup@v4
         with:
           version: 9.0.6
-          run_install: false
+
+      - name: Install pnpm globally
+        run: npm install -g pnpm@9.0.6
 
       - name: Print pnpm version
         run: pnpm -v
@@ -149,9 +151,9 @@ jobs:
           echo "/home/runner/work/spark-yun/spark-yun/resources/tmp"
           ls -lha /home/runner/work/spark-yun/spark-yun/resources/tmp
           echo "/home/runner/work/spark-yun/spark-yun/resources/tmp/flink-min"
-          ls -lha /home/runner/work/spark-yun/spark-yun/resources/tmp/flink-min
+          ls -lha /home/runner/work/spark-yun/spark-yun/resources/tmp/flink-min/lib
           echo "/home/runner/work/spark-yun/spark-yun/resources/tmp/spark-min"
-          ls -lha /home/runner/work/spark-yun/spark-yun/resources/tmp/spark-min
+          ls -lha /home/runner/work/spark-yun/spark-yun/resources/tmp/spark-min/jars
           echo "/home/runner/work/spark-yun/spark-yun/spark-yun-backend/spark-yun-main/src/main/resources"
           ls -lha /home/runner/work/spark-yun/spark-yun/spark-yun-backend/spark-yun-main/src/main/resources
 
