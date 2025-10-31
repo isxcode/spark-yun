@@ -70,7 +70,7 @@ jobs:
           ref: ${{ inputs.branch_number }}
           path: "/home/runner/work/spark-yun/spark-yun/spark-yun-vip"
 
-      - name: Install node
+      - name: Setup node
         uses: actions/setup-node@v4
         with:
           node-version: 18
@@ -78,7 +78,7 @@ jobs:
       - name: Print node version
         run: node -v
 
-      - name: Install pnpm
+      - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
           version: 9.0.6
@@ -155,8 +155,8 @@ jobs:
           echo "/home/runner/work/spark-yun/spark-yun/spark-yun-backend/spark-yun-main/src/main/resources"
           ls -lha /home/runner/work/spark-yun/spark-yun/spark-yun-backend/spark-yun-main/src/main/resources
 
-#      - name: Build with Gradle Wrapper
-#        run: gradle install package
+      - name: Build with Gradle Wrapper
+        run: gradle install package
 #
 #      - name: Set up QEMU
 #        uses: docker/setup-qemu-action@v3
