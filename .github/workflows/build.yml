@@ -130,13 +130,14 @@ jobs:
 
       - name: Cache dependencies
         uses: actions/cache@v4
+        id: spark-cache
         with:
           path: |
             ~/resources/tmp
           key: ${{ runner.os }}-file-${{ hashFiles('**/install.sh') }}
 
       - name: Download spark
-        if: steps.cache.outputs.cache-hit != 'true'
+        if: steps.spark-cache.outputs.cache-hit != 'true'
         run: curl -L -o ~/resources/tmp/spark-3.4.1-bin-hadoop3.tgz https://archive.apache.org/dist/spark/spark-3.4.1/spark-3.4.1-bin-hadoop3.tgz
 
       - name: Print Spark
