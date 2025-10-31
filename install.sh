@@ -136,7 +136,7 @@ check_system_dependencies() {
     check_command "node" "请安装 Node.js"
 
     # 检查并安装 pnpm
-    if ! command -v pnpm &>/dev/null; then
+    if ! command -v "pnpm" &>/dev/null; then
         echo "未检测到 pnpm，正在安装..."
         npm install pnpm@9.0.6 -g
         echo "pnpm 安装完成"
