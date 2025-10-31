@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       admin_github_token:
-        description: '管理员密钥'
+        description: 'github auth'
         required: true
         type: string
       version_number:
@@ -46,7 +46,7 @@ jobs:
 
       - name: Set timezone to Asia/Shanghai
         run: |
-          sudo timedatectl set-timezone Asia/Shanghai
+          timedatectl set-timezone Asia/Shanghai
           date
           pwd
 
@@ -124,7 +124,7 @@ jobs:
 
       - name: Install Dependencies
         if: steps.cache.outputs.cache-hit != 'true'
-        run: /home/runner/work/spark-yun/spark-yun/install.sh
+        run: sudo /home/runner/work/spark-yun/spark-yun/install.sh
 
       - name: Build with Gradle Wrapper
         run: gradle clean package
