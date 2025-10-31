@@ -19,6 +19,8 @@ readonly TMP_DIR="${BASE_PATH}/resources/tmp"
 readonly JDBC_DIR="${BASE_PATH}/resources/jdbc/system"
 readonly LIBS_DIR="${BASE_PATH}/resources/libs"
 readonly RESOURCE_DIR="${BASE_PATH}/spark-yun-backend/spark-yun-main/src/main/resources"
+readonly TMP_SPARK_MIN_JARS="${TMP_DIR}/spark-min/jars"
+readonly TMP_FLINK_MIN_LIB="${TMP_DIR}/flink-min/lib"
 
 # spark依赖列表
 readonly SPARK_JARS=(
@@ -76,6 +78,18 @@ readonly RESOURCE_FILE=(
 # 工具函数
 # =============================================================================
 
+# 检查命令是否存在
+check_command() {
+    local cmd=$1
+    local install_msg=$2
+
+    if ! command -v "$cmd" &>/dev/null; then
+        echo "未检测到 $cmd 命令，$install_msg" >&2
+        exit 1
+    fi
+    echo "$cmd 命令检查通过"
+}
+
 # 创建目录
 create_dir() {
     local dir=$1
@@ -113,35 +127,59 @@ download_file() {
 # 下载函数
 # =============================================================================
 
-# 下载Spark
+# 检查系统依赖
+check_system_dependencies() {
+    echo "检查系统依赖..."
+
+    check_command "tar" "请下载 tar"
+    check_command "java" "请下载 Java"
+    check_command "node" "请下载 Node.js"
+
+    # 检查并下载 pnpm
+    if ! command -v "pnpm" &>/dev/null; then
+        echo "未检测到 pnpm，正在下载..."
+        npm install pnpm@9.0.6 -g
+        echo "pnpm 下载完成"
+    else
+        echo "pnpm 命令检查通过"
+    fi
+}
+
+# 下载spark
 download_spark() {
     echo "下载 Spark ${SPARK_VERSION}..."
 
-    create_dir "$TMP_DIR"
+    # 创建必要目录
+    create_dir "$TMP_SPARK_MIN_JARS"
 
+    # 下载 Spark
     local spark_url="${OSS_DOWNLOAD_URL}/${SPARK_MIN_FILE}"
     local spark_path="${TMP_DIR}/${SPARK_MIN_FILE}"
     download_file "$spark_url" "$spark_path" "Spark ${SPARK_VERSION} 二进制文件，请耐心等待"
 }
 
-# 下载Flink
+# 下载flink
 download_flink() {
     echo "下载 Flink ${FLINK_VERSION}..."
 
-    create_dir "$TMP_DIR"
+    # 创建必要目录
+    create_dir "$TMP_FLINK_MIN_LIB"
 
+    # 下载 Flink
     local flink_url="${OSS_DOWNLOAD_URL}/${FLINK_MIN_FILE}"
     local flink_path="${TMP_DIR}/${FLINK_MIN_FILE}"
-    download_file "$flink_url" "$flink_path" "Flink ${FLINK_VERSION} 二进制文件，请耐心等待"
+    download_file "$flink_url" "$flink_path" "Flink ${TMP_DIR} 二进制文件，请耐心等待"
 }
 
 # 下载 Spark JAR 依赖
 download_spark_jars() {
     echo "下载 Spark JAR 依赖..."
 
-    local spark_jar_dir="${TMP_DIR}/spark-jars"
-    create_dir "$spark_jar_dir"
+    create_dir "$TMP_DIR"
 
+    local spark_jar_dir="${TMP_SPARK_MIN_JARS}"
+
+    # 批量下载 JAR 文件
     for jar in "${SPARK_JARS[@]}"; do
         local jar_url="${OSS_DOWNLOAD_URL}/${jar}"
         local jar_path="${spark_jar_dir}/${jar}"
@@ -153,9 +191,11 @@ download_spark_jars() {
 download_flink_jars() {
     echo "下载 Flink JAR 依赖..."
 
-    local flink_jar_dir="${TMP_DIR}/flink-jars"
-    create_dir "$flink_jar_dir"
+    create_dir "$TMP_DIR"
 
+    local flink_jar_dir="${TMP_FLINK_MIN_LIB}"
+
+    # 批量下载 JAR 文件
     for jar in "${FLINK_JARS[@]}"; do
         local jar_url="${OSS_DOWNLOAD_URL}/${jar}"
         local jar_path="${flink_jar_dir}/${jar}"
@@ -167,8 +207,10 @@ download_flink_jars() {
 download_jdbc_drivers() {
     echo "下载数据库驱动..."
 
+    # 创建 JDBC 驱动目录
     create_dir "$JDBC_DIR"
 
+    # 批量下载驱动文件
     for driver in "${JDBC_DRIVERS[@]}"; do
         local driver_url="${OSS_DOWNLOAD_URL}/${driver}"
         local driver_path="${JDBC_DIR}/${driver}"
@@ -180,8 +222,10 @@ download_jdbc_drivers() {
 download_project_dependencies() {
     echo "下载项目依赖..."
 
+    # 创建项目依赖目录
     create_dir "$LIBS_DIR"
 
+    # 下载项目 JAR 依赖
     for jar in "${PROJECT_JARS[@]}"; do
         local jar_url="${OSS_DOWNLOAD_URL}/${jar}"
         local jar_path="${LIBS_DIR}/${jar}"
@@ -192,8 +236,6 @@ download_project_dependencies() {
 # 下载resources依赖
 download_resource_dependencies() {
     echo "下载resource依赖..."
-
-    create_dir "$RESOURCE_DIR"
 
     for file in "${RESOURCE_FILE[@]}"; do
         local file_url="${OSS_DOWNLOAD_URL}/${file}"
@@ -209,41 +251,42 @@ download_resource_dependencies() {
 main() {
     echo "开始下载至轻云项目依赖..."
 
-    # 1. 下载Spark
+    # 1. 检查系统依赖
+    check_system_dependencies
+
+    # 2. 下载Spark
     download_spark
 
-    # 2. 下载Spark第三方依赖
+    # 3. 下载Spark第三方依赖
     download_spark_jars
 
-    # 3. 下载Flink
+    # 4. 下载Fink
     download_flink
 
-    # 4. 下载Flink第三方依赖
+    # 5. 下载Flink第三方依赖
     download_flink_jars
 
-    # 5. 下载数据库驱动
+    # 6. 下载数据库驱动
     download_jdbc_drivers
 
-    # 6. 下载项目依赖
+    # 7. 下载项目依赖
     download_project_dependencies
 
-    # 7. 下载resource依赖
+    # 8. 下载resource依赖
     download_resource_dependencies
 
-    echo "所有依赖下载完成！文件保存在以下目录："
-    echo "- 压缩包: $TMP_DIR"
-    echo "- 数据库驱动: $JDBC_DIR"
-    echo "- 项目依赖: $LIBS_DIR"
-    echo "- 资源文件: $RESOURCE_DIR"
+    echo "项目依赖下载完成！"
 }
 
 # =============================================================================
 # 脚本入口
 # =============================================================================
 
+# 切换到脚本所在目录
 cd "$BASE_PATH" || {
     echo "无法切换到项目目录: $BASE_PATH" >&2
     exit 1
 }
 
+# 执行主函数
 main
