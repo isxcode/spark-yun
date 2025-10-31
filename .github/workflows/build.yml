@@ -48,7 +48,7 @@ jobs:
         run: |
           sudo timedatectl set-timezone Asia/Shanghai
 
-      - name: Print Datetime
+      - name: Print datetime
         run: |
           date
           
@@ -89,7 +89,7 @@ jobs:
         run: pnpm -v
 
       - name: Get pnpm store directory
-        shell: bashs
+        shell: bash
         run: |
           echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
 
