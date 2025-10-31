@@ -124,7 +124,7 @@ jobs:
 
       - name: Install Dependencies
         if: steps.cache.outputs.cache-hit != 'true'
-        run: sudo /home/runner/work/spark-yun/spark-yun/install.sh
+        run: sudo bash /home/runner/work/spark-yun/spark-yun/install.sh
 
       - name: Build with Gradle Wrapper
         run: gradle clean package
