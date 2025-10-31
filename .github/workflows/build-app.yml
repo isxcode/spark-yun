@@ -48,6 +48,7 @@ jobs:
         run: |
           sudo timedatectl set-timezone Asia/Shanghai
           date
+          pwd
 
       - name: Checkout spark-yun
         uses: actions/checkout@v4
