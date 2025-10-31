@@ -133,16 +133,15 @@ jobs:
         id: spark-cache
         with:
           path: |
-            ~/resources/tmp
+            /home/runner/work/spark-yun/spark-yun/resources/tmp
           key: ${{ runner.os }}-file-${{ hashFiles('**/install.sh') }}
 
       - name: Download spark
         if: steps.spark-cache.outputs.cache-hit != 'true'
-        run: curl -L -o ~/resources/tmp/spark-3.4.1-bin-hadoop3.tgz https://archive.apache.org/dist/spark/spark-3.4.1/spark-3.4.1-bin-hadoop3.tgz
+        run: curl -L -o /home/runner/work/spark-yun/spark-yun/resources/tmp/spark-3.4.1-bin-hadoop3.tgz https://archive.apache.org/dist/spark/spark-3.4.1/spark-3.4.1-bin-hadoop3.tgz
 
       - name: Print Spark
-        run: ls ~/resources/tmp/
-
+        run: ls /home/runner/work/spark-yun/spark-yun/resources/tmp/
 
 #      - name: Download flink
 #        if: steps.cache.outputs.cache-hit != 'true'
