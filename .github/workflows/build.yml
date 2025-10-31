@@ -4,21 +4,21 @@ on:
   workflow_dispatch:
     inputs:
       admin_github_token:
-        description: 'github auth'
+        description: 'github auth token'
         required: true
         type: string
       version_number:
-        description: '镜像版本号'
+        description: 'docker image version number'
         required: true
         type: string
         default: latest
       repository_account:
-        description: '仓库'
+        description: 'repository'
         required: true
         type: string
         default: 'isxcode'
       branch_number:
-        description: '分支'
+        description: 'branch'
         required: true
         type: string
         default: 'main'
@@ -48,13 +48,13 @@ jobs:
         run: |
           sudo timedatectl set-timezone Asia/Shanghai
 
-      - name: Print datetime
+      - name: Print system info
         run: |
-          date
-          
-      - name: Print home path
-        run: |
-          pwd
+          echo "System overview:"
+          echo "Now Date: $(date)"
+          echo "Home: $(pwd)"
+          echo "CPU: $(grep -m 1 'model name' /proc/cpuinfo | cut -d: -f2 | xargs)"
+          echo "Memory: $(free -h | awk '/^Mem:/ {print $2}')"
 
       - name: Checkout spark-yun
         uses: actions/checkout@v4
