@@ -81,7 +81,7 @@ jobs:
         run: |
           echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
 
-      - name: Setup pnpm cache
+      - name: Cache pnpm
         uses: actions/cache@v4
         with:
           path: ${{ env.STORE_PATH }}
@@ -110,7 +110,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
-      - name: Cache Download File
+      - name: Cache download file
         uses: actions/cache@v4
         with:
           path: |
