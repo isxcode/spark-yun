@@ -51,3 +51,25 @@ java -jar zhiqingyun.jar
 - 访问地址: http://localhost:8080 
 - 管理员账号：`admin` 
 - 管理员密码：`admin123`
+
+#### 编译加速
+
+> 至轻云使用gradle构建，可以开启gradle的多并发调试配置
+
+```bash
+vim gradle.properties
+```
+
+```properties
+# 打包进程参数
+org.gradle.jvmargs=-Xmx4096m -Xms1024m -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8
+
+# 改成true，默认关闭并发
+org.gradle.parallel=true
+
+# 开启2并发
+org.gradle.parallel.threads=2
+
+# 最大可用8个并发
+org.gradle.workers.max=8
+```
