@@ -147,6 +147,7 @@ jobs:
         run: |
           rm -rf /home/runner/work/spark-yun/spark-yun/spark-yun-dist/flink-min
           rm -rf /home/runner/work/spark-yun/spark-yun/spark-yun-dist/spark-min
+          rm -rf /home/runner/work/spark-yun/spark-yun/resources/tmp/*.tgz
           rm -rf /home/runner/work/spark-yun/spark-yun/spark-yun-dist/build/distributions/zhiqingyun-agent.tar.gz
           rm -rf /home/runner/work/spark-yun/spark-yun/spark-yun-dist/build/zhiqingyun-agent
 
