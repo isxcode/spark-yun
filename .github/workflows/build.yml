@@ -132,7 +132,9 @@ jobs:
         id: download-cache
         with:
           path: |
-            /home/runner/work/spark-yun/spark-yun/resources
+            /home/runner/work/spark-yun/spark-yun/resources/jdbc
+            /home/runner/work/spark-yun/spark-yun/resources/libs
+            /home/runner/work/spark-yun/spark-yun/resources/tmp
             /home/runner/work/spark-yun/spark-yun/spark-yun-backend/spark-yun-main/src/main/resources/libprql_java-linux64.so
             /home/runner/work/spark-yun/spark-yun/spark-yun-backend/spark-yun-main/src/main/resources/libprql_java-osx-arm64.dylib
           key: ${{ runner.os }}-file-${{ hashFiles('/home/runner/work/spark-yun/spark-yun/download.sh') }}
@@ -146,11 +148,11 @@ jobs:
 
       - name: Clear file
         run: |
-          rm -rf /home/runner/work/spark-yun/spark-yun/spark-yun-dist/flink-min
-          rm -rf /home/runner/work/spark-yun/spark-yun/spark-yun-dist/spark-min
-          rm -rf /home/runner/work/spark-yun/spark-yun/resources/tmp/*.tgz
-          rm -rf /home/runner/work/spark-yun/spark-yun/spark-yun-dist/build/distributions/zhiqingyun-agent.tar.gz
-          rm -rf /home/runner/work/spark-yun/spark-yun/spark-yun-dist/build/zhiqingyun-agent
+          sudo rm -rf /home/runner/work/spark-yun/spark-yun/spark-yun-dist/flink-min
+          sudo rm -rf /home/runner/work/spark-yun/spark-yun/spark-yun-dist/spark-min
+          sudo rm -rf /home/runner/work/spark-yun/spark-yun/spark-yun-dist/build/distributions/zhiqingyun-agent.tar.gz
+          sudo rm -rf /home/runner/work/spark-yun/spark-yun/spark-yun-dist/build/zhiqingyun-agent
+          sudo rm -rf /home/runner/work/spark-yun/spark-yun/spark-yun-agent/build/libs/zhiqingyun-agent.jar
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
