@@ -112,6 +112,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v5
         with:
           gradle-version: '7.6.1'
+          cache-disabled: true
 
       - name: Print gradle version
         run: gradle -version
