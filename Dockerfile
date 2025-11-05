@@ -1,4 +1,4 @@
-FROM openjdk:8
+FROM azul/zulu-openjdk-centos:8u412-8.78
 
 RUN rm -rf /etc/localtime && echo 'Asia/Shanghai' >/etc/timezone
 
