@@ -11,4 +11,11 @@ public class SqlCommentService {
         String noCommentSql = sql.replaceAll(regex, "");
         return noCommentSql.replaceAll("--.*", "").replace("\n", " ");
     }
+
+    public String removeFlinkSqlComment(String sql) {
+
+        String regex = "/\\*(?:.|[\\n\\r])*?\\*/|--.*";
+        String noCommentSql = sql.replaceAll(regex, "");
+        return noCommentSql.replaceAll("--.*", "");
+    }
 }
