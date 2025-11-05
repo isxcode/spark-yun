@@ -180,7 +180,7 @@ public class FlinkSqlExecutor extends WorkExecutor {
             }
 
             // 去掉sql中的注释
-            String sqlNoComment = sqlCommentService.removeFlinkSqlComment(workRunContext.getScript());
+            String sqlNoComment = sqlCommentService.removeSqlComment(workRunContext.getScript());
 
             // 解析上游结果
             String jsonPathSql = parseJsonPath(sqlNoComment, workInstance);
