@@ -184,7 +184,7 @@ public class FlinkYarnAgentService implements FlinkAgentService {
             ApplicationReport applicationReport = clusterDescriptor.getYarnClient()
                 .getApplicationReport(ApplicationId.fromString(getWorkInfoReq.getAppId()));
             return GetWorkInfoRes.builder().appId(getWorkInfoReq.getAppId())
-                .status(applicationReport.getYarnApplicationState().toString()).build();
+                .status(applicationReport.getFinalApplicationStatus().name()).build();
         }
     }
 
@@ -254,9 +254,7 @@ public class FlinkYarnAgentService implements FlinkAgentService {
         org.apache.hadoop.conf.Configuration conf = new org.apache.hadoop.conf.Configuration();
         conf.addResource(path);
         Map<String, String> yarn = conf.getPropsWithPrefix("yarn");
-        yarn.forEach((k, v) -> {
-            flinkConfig.setString("flink.yarn" + k, v);
-        });
+        yarn.forEach((k, v) -> flinkConfig.setString("flink.yarn" + k, v));
 
         YarnClusterClientFactory yarnClusterClientFactory = new YarnClusterClientFactory();
         try (YarnClusterDescriptor clusterDescriptor = yarnClusterClientFactory.createClusterDescriptor(flinkConfig)) {
