@@ -14,6 +14,23 @@ title: "Postgresql实时同步"
 
 - 启动Postgresql的logical
 
+```sql
+-- logical 为开启，重启服务生效
+ALTER SYSTEM SET wal_level = 'logical';
+SHOW wal_level;
+```
+
+```sql
+-- 来源表一定要设置为FULL，否则更新删除会报错，不需要重启服务
+ALTER TABLE public.cdc_source REPLICA IDENTITY FULL;
+```
+
+> 部分postgresql环境需要安装decoderbufs
+
+```bash
+apt-get install -y postgresql-14-decoderbufs
+```
+
 #### 解决方案
 
 > 创建FlinkSql作业类型，添加以下依赖
@@ -38,6 +55,8 @@ title: "Postgresql实时同步"
 - [protobuf-java-3.21.9.jar下载](https://repo1.maven.org/maven2/com/google/protobuf/protobuf-java/3.21.9/protobuf-java-3.21.9.jar)
 
 ![20250120182130](https://img.isxcode.com/picgo/20250120182130.png)
+
+> 来源表和目标表都需要指定主键
 
 ```sql
 CREATE TABLE from_table
