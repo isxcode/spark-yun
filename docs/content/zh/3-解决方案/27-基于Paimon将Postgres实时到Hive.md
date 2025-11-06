@@ -12,7 +12,7 @@ title: "基于Paimon将Postgres实时到Hive"
 
 #### 注意
 
-> hive client访问paimon数据需要下载paimon-hive-connector包，不需要重启hive服务
+> hive client访问paimon数据需要下载paimon-hive-connector包，不需要重启hive服务，重启hive会话即可。
 
 - [paimon-hive-connector-3.1-0.9.0.jar下载](https://repo1.maven.org/maven2/org/apache/paimon/paimon-hive-connector-3.1/0.9.0/paimon-hive-connector-3.1-0.9.0.jar)
 
