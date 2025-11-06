@@ -184,7 +184,8 @@ public class FlinkYarnAgentService implements FlinkAgentService {
             ApplicationReport applicationReport = clusterDescriptor.getYarnClient()
                 .getApplicationReport(ApplicationId.fromString(getWorkInfoReq.getAppId()));
             return GetWorkInfoRes.builder().appId(getWorkInfoReq.getAppId())
-                .status(applicationReport.getFinalApplicationStatus().name()).build();
+                .status(applicationReport.getYarnApplicationState().name())
+                .finalStatus(applicationReport.getFinalApplicationStatus().name()).build();
         }
     }
 
