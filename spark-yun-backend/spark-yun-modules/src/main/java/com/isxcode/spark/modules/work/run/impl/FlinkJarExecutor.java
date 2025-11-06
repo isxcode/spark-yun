@@ -313,29 +313,35 @@ public class FlinkJarExecutor extends WorkExecutor {
             GetWorkInfoRes getJobInfoRes =
                 JSON.parseObject(JSON.toJSONString(baseResponse.getData()), GetWorkInfoRes.class);
 
+            // 如果是yarn的话，FinishStatus是undefine的话，使用status状态
+            if (AgentType.YARN.equals(clusterType) && "UNDEFINED".equalsIgnoreCase(getJobInfoRes.getFinalStatus())
+                && !getJobInfoRes.getStatus().isEmpty()) {
+                getJobInfoRes.setFinalStatus(getJobInfoRes.getStatus());
+            }
+
             // 只有作业状态发生了变化，才能更新状态
-            if (!preStatus.equals(getJobInfoRes.getStatus())) {
-                logBuilder.append(statusLog("作业当前状态: " + getJobInfoRes.getStatus()));
+            if (!preStatus.equals(getJobInfoRes.getFinalStatus())) {
+                logBuilder.append(statusLog("作业当前状态: " + getJobInfoRes.getFinalStatus()));
 
                 // 立即保存实例
                 workInstance.setSparkStarRes(JSON.toJSONString(getJobInfoRes));
                 updateInstance(workInstance, logBuilder);
 
                 // 立即保存上下文
-                workRunContext.setPreStatus(getJobInfoRes.getStatus());
+                workRunContext.setPreStatus(getJobInfoRes.getFinalStatus());
                 updateWorkEvent(workEvent, workRunContext);
             }
 
             // 如果是运行中状态，直接返回
             List<String> runningStatus = Arrays.asList("RUNNING", "UNDEFINED", "SUBMITTED", "CONTAINERCREATING",
                 "PENDING", "TERMINATING", "INITIALIZING", "RESTARTING");
-            if (runningStatus.contains(getJobInfoRes.getStatus().toUpperCase())) {
+            if (runningStatus.contains(getJobInfoRes.getFinalStatus().toUpperCase())) {
                 return InstanceStatus.RUNNING;
             }
 
             // 如果是中止，直接退出
             List<String> abortStatus = Arrays.asList("KILLED", "TERMINATED");
-            if (abortStatus.contains(getJobInfoRes.getStatus().toUpperCase())) {
+            if (abortStatus.contains(getJobInfoRes.getFinalStatus().toUpperCase())) {
                 throw errorLogException("作业运行中止");
             }
 
@@ -450,7 +456,7 @@ public class FlinkJarExecutor extends WorkExecutor {
 
             BaseResponse<?> baseResponse = new RestTemplate().postForObject(
                 httpUrlUtils.genHttpUrl(workRunContext.getAgentNode().getHost(),
-                    workRunContext.getAgentNode().getPort(), FlinkAgentUrl.STOP_WORK_URL),
+                    workRunContext.getAgentNode().getAgentPort(), FlinkAgentUrl.STOP_WORK_URL),
                 stopWorkReq, BaseResponse.class);
 
             if (baseResponse != null && baseResponse.getCode() != null
