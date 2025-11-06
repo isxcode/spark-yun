@@ -1,16 +1,18 @@
 ---
-title: "Postgresql实时同步到Paimon"
+title: "基于Paimon将Postgres实时到Hive"
 ---
 
 #### 案例
 
-> 实现将Postgresql中数据实时同步到hive中
+> 基于Paimon将Postgres实时到Hive，支持数据实时增删改查。
 
 #### 前提
 
-参考Postgresql实时同步文档
+1. 参考Postgresql实时同步文档，下载依赖并上传。
 
-> hive访问paimon数据需要下载链接包，不需要重启hive服务
+#### 注意
+
+> hive client访问paimon数据需要下载paimon-hive-connector包，不需要重启hive服务
 
 - [paimon-hive-connector-3.1-0.9.0.jar下载](https://repo1.maven.org/maven2/org/apache/paimon/paimon-hive-connector-3.1/0.9.0/paimon-hive-connector-3.1-0.9.0.jar)
 
@@ -18,10 +20,11 @@ title: "Postgresql实时同步到Paimon"
 mv paimon-hive-connector-3.1-0.9.0.jar /opt/hive/lib/
 ```
 
-#### 解决方案
+#### 方案
 
-> 创建FlinkSql作业类型，postgresql包额外还要添加以下依赖
+> 创建`FlinkSql作业`类型，下载Postgresql相关额外依赖包和以下依赖
 
+- [paimon-flink-1.18-1.4-20251105.003055-51.jar下载](https://repository.apache.org/content/groups/snapshots/org/apache/paimon/paimon-flink-1.18/1.4-SNAPSHOT/paimon-flink-1.18-1.4-20251105.003055-51.jar)
 - [hive-standalone-metastore-3.1.3.jar下载](https://repo1.maven.org/maven2/org/apache/hive/hive-standalone-metastore/3.1.3/hive-standalone-metastore-3.1.3.jar)
 - [hive-common-3.1.3.jar下载](https://repo1.maven.org/maven2/org/apache/hive/hive-common/3.1.3/hive-common-3.1.3.jar)
 - [hadoop-mapreduce-client-core-3.3.5.jar下载](https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-mapreduce-client-core/3.3.5/hadoop-mapreduce-client-core-3.3.5.jar)
@@ -36,7 +39,7 @@ mv paimon-hive-connector-3.1-0.9.0.jar /opt/hive/lib/
 #### 手动插入数据
 
 ```sql
--- 重新创建 Catalog 确保配置正确
+-- 创建Catalog
 CREATE CATALOG hive_catalog WITH (
     'type' = 'paimon',
     'warehouse' = 'hdfs://106.15.56.126:9000/user/hive/warehouse',
@@ -45,10 +48,13 @@ CREATE CATALOG hive_catalog WITH (
     'hive-conf-dir' = '/opt/hive/conf' 
 );
 
+-- 选择Catalog
 USE CATALOG hive_catalog;
+
+-- 选择数据源
 USE ispong_db;
 
--- 重新创建 Paimon 表
+-- 创建Paimon表
 CREATE TABLE IF NOT EXISTS users_paimon (
     username STRING,
     age INT,
@@ -59,14 +65,16 @@ CREATE TABLE IF NOT EXISTS users_paimon (
     'changelog-producer' = 'lookup'
 );
 
+-- 插入数据
 INSERT INTO users_paimon VALUES 
 ('user1', 25),
 ('user2', 30);
 ```
 
-#### postgresql实时同步
+#### postgresql实时同步数据到hive
 
-> 注意，需要修改flinkConfig高级配置，一定要开启checkpointing
+> 注意：一定要开启checkpoint，否则可能无法写入数据
+> 需要修改flinkConfig高级配置如下
 
 ```json
 {
@@ -81,7 +89,7 @@ INSERT INTO users_paimon VALUES
 ```
 
 ```sql
--- 1. 创建 Hive Catalog
+-- 创建 Hive Catalog
 CREATE CATALOG hive_catalog WITH (
     'type' = 'paimon',
     'warehouse' = 'hdfs://106.15.56.126:9000/user/hive/warehouse',
@@ -90,12 +98,13 @@ CREATE CATALOG hive_catalog WITH (
     'hive-conf-dir' = '/opt/hive/conf'
 );
 
+-- 选择 Hive Catalog
 USE CATALOG hive_catalog;
 
--- 2. 选择数据库
+-- 选择数据库
 USE ispong_db;
 
--- 3. 创建 PostgreSQL CDC 源表
+-- 创建 PostgreSQL CDC 源表
 CREATE TEMPORARY TABLE postgres_source (
     username STRING,
     age INT,
@@ -113,8 +122,7 @@ CREATE TEMPORARY TABLE postgres_source (
     'scan.incremental.snapshot.enabled' = 'true'
 );
 
-
--- 4. 创建 Paimon 表（自动注册到 Hive）
+-- 创建 Paimon 表
 CREATE TABLE IF NOT EXISTS users_paimon (
     username STRING,
     age INT,
@@ -126,8 +134,7 @@ CREATE TABLE IF NOT EXISTS users_paimon (
     'changelog-producer.compaction-interval' = '10s'
 );
 
-
--- 5. 执行数据同步
+-- 执行数据同步
 INSERT INTO users_paimon 
 SELECT username, age FROM postgres_source
 ```
