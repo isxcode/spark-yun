@@ -6,6 +6,16 @@ title: "Spark集成Hudi"
 
 > 使用spark对Hudi数据进行增删改查
 
+#### 注意
+
+> hive client访问hudi数据需要下载hudi-hadoop-mr-bundle-1.0.2.jar包，不需要重启hive服务，重启hive会话即可。
+
+- [hudi-hadoop-mr-bundle-1.0.2.jar下载](https://repo1.maven.org/maven2/org/apache/hudi/hudi-hadoop-mr-bundle/1.0.2/hudi-hadoop-mr-bundle-1.0.2.jar)
+
+```bash
+mv hudi-hadoop-mr-bundle-1.0.2.jar /opt/hive/lib/
+```
+
 #### 解决方案
 
 > 创建`SparkSql查询作业`，下载依赖
