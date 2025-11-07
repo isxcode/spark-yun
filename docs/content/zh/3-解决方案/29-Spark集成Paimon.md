@@ -50,15 +50,15 @@ title: "Spark集成Paimon"
 USE paimon.ispong_db;
 
 -- 增
-insert into users_paimon values ('zhangsan',13);
-insert into users_paimon values ('lisi',14);
+insert into paimon_table values ('zhangsan',13);
+insert into paimon_table values ('lisi',14);
 
 -- 删
-delete from users_paimon where username = 'zhangsan';
+delete from paimon_table where username = 'zhangsan';
     
 -- 改
-update users_paimon set username='lisi' where age = 12;
+update paimon_table set age = 122 where username='lisi';
 
 -- 查
-select * from users_paimon;
+select * from paimon_table;
 ```
