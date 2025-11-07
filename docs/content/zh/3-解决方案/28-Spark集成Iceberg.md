@@ -10,7 +10,7 @@ title: "Spark集成Iceberg"
 
 > 创建`SparkSql查询作业`，下载依赖
 
-- [iceberg-spark-runtime-3.4_2.13-1.7.0.jar下载](https://repo1.maven.org/maven2/org/apache/iceberg/iceberg-spark-runtime-3.4_2.13/1.7.0/iceberg-spark-runtime-3.4_2.13-1.7.0.jar)
+- [iceberg-spark-runtime-3.4_2.13-1.6.1.jar下载](https://repo1.maven.org/maven2/org/apache/iceberg/iceberg-spark-runtime-3.4_2.13/1.6.1/iceberg-spark-runtime-3.4_2.13-1.6.1.jar)
 
 ![20250120182130](https://img.isxcode.com/picgo/20250120182130.png)
 
@@ -49,21 +49,21 @@ title: "Spark集成Iceberg"
 
 ```sql
 -- 建iceberg表
-CREATE TABLE hive_catalog.ispong_db.users2 (
+CREATE TABLE IF NOT EXISTS  hive_catalog.ispong_db.iceberg_table (
      username string,
      age bigint
 ) USING iceberg;
 
 -- 增
-insert into hive_catalog.ispong_db.users2 values ('zhangsan',13);
-insert into hive_catalog.ispong_db.users2 values ('lisi',14);
+insert into hive_catalog.ispong_db.iceberg_table values ('zhangsan',13);
+insert into hive_catalog.ispong_db.iceberg_table values ('lisi',14);
 
 -- 删
-delete from hive_catalog.ispong_db.users2 where username = 'zhangsan';
+delete from hive_catalog.ispong_db.iceberg_table where username = 'lisi';
     
 -- 改
-update hive_catalog.ispong_db.users2 set username='lisi' where age = 12;
+update hive_catalog.ispong_db.iceberg_table set age = 133 where username ='zhangsan'; 
 
 -- 查
-select * from hive_catalog.ispong_db.users2;
+select * from hive_catalog.ispong_db.iceberg_table;
 ```
