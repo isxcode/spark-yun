@@ -285,3 +285,309 @@ Caused by: org.apache.flink.client.deployment.application.ApplicationExecutionEx
 ```text
 FlinkSql内容异常
 ```
+
+#### 问题13  
+
+```log
+ Caused by: java.lang.ClassNotFoundException: com.facebook.fb303.FacebookService$Iface
+	at java.net.URLClassLoader.findClass(URLClassLoader.java:387) ~[?:1.8.0_412]
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:418) ~[?:1.8.0_412]
+	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:352) ~[?:1.8.0_412]
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:351) ~[?:1.8.0_412]
+	at java.lang.ClassLoader.defineClass1(Native Method) ~[?:1.8.0_412]
+	at java.lang.ClassLoader.defineClass(ClassLoader.java:756) ~[?:1.8.0_412]
+	at java.security.SecureClassLoader.defineClass(SecureClassLoader.java:142) ~[?:1.8.0_412]
+	at java.net.URLClassLoader.defineClass(URLClassLoader.java:473) ~[?:1.8.0_412]
+	at java.net.URLClassLoader.access$100(URLClassLoader.java:74) ~[?:1.8.0_412]
+	at java.net.URLClassLoader$1.run(URLClassLoader.java:369) ~[?:1.8.0_412]
+	at java.net.URLClassLoader$1.run(URLClassLoader.java:363) ~[?:1.8.0_412]
+	at java.security.AccessController.doPrivileged(Native Method) ~[?:1.8.0_412]
+	at java.net.URLClassLoader.findClass(URLClassLoader.java:362) ~[?:1.8.0_412]
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:418) ~[?:1.8.0_412]
+	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:352) ~[?:1.8.0_412]
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:351) ~[?:1.8.0_412]
+	at java.lang.Class.forName0(Native Method) ~[?:1.8.0_412]
+	at java.lang.Class.forName(Class.java:348) ~[?:1.8.0_412]
+	at org.apache.hadoop.hive.metastore.utils.JavaUtils.getClass(JavaUtils.java:52) ~[sy_1986612053931524096.jar:3.1.3]
+	at org.apache.hadoop.hive.metastore.RetryingMetaStoreClient.getProxy(RetryingMetaStoreClient.java:146) ~[sy_1986612053931524096.jar:3.1.3]
+	at org.apache.hadoop.hive.metastore.RetryingMetaStoreClient.getProxy(RetryingMetaStoreClient.java:119) ~[sy_1986612053931524096.jar:3.1.3]
+	at org.apache.hadoop.hive.metastore.RetryingMetaStoreClient.getProxy(RetryingMetaStoreClient.java:112) ~[sy_1986612053931524096.jar:3.1.3]
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[?:1.8.0_412]
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) ~[?:1.8.0_412]
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[?:1.8.0_412]
+	at java.lang.reflect.Method.invoke(Method.java:498) ~[?:1.8.0_412]
+	at org.apache.iceberg.common.DynMethods$UnboundMethod.invokeChecked(DynMethods.java:62) ~[sy_1986723935774375936.jar:?]
+	at org.apache.iceberg.common.DynMethods$UnboundMethod.invoke(DynMethods.java:74) ~[sy_1986723935774375936.jar:?]
+	at org.apache.iceberg.common.DynMethods$StaticMethod.invoke(DynMethods.java:187) ~[sy_1986723935774375936.jar:?]
+	at org.apache.iceberg.hive.HiveClientPool.newClient(HiveClientPool.java:63) ~[sy_1986723935774375936.jar:?]
+	at org.apache.iceberg.hive.HiveClientPool.newClient(HiveClientPool.java:34) ~[sy_1986723935774375936.jar:?]
+	at org.apache.iceberg.ClientPoolImpl.get(ClientPoolImpl.java:143) ~[sy_1986723935774375936.jar:?]
+	at org.apache.iceberg.ClientPoolImpl.run(ClientPoolImpl.java:70) ~[sy_1986723935774375936.jar:?]
+	at org.apache.iceberg.ClientPoolImpl.run(ClientPoolImpl.java:65) ~[sy_1986723935774375936.jar:?]
+	at org.apache.iceberg.hive.CachedClientPool.run(CachedClientPool.java:122) ~[sy_1986723935774375936.jar:?]
+	at org.apache.iceberg.hive.HiveTableOperations.doRefresh(HiveTableOperations.java:147) ~[sy_1986723935774375936.jar:?]
+	at org.apache.iceberg.BaseMetastoreTableOperations.refresh(BaseMetastoreTableOperations.java:90) ~[sy_1986723935774375936.jar:?]
+	at org.apache.iceberg.BaseMetastoreTableOperations.current(BaseMetastoreTableOperations.java:73) ~[sy_1986723935774375936.jar:?]
+	at org.apache.iceberg.BaseMetastoreCatalog$BaseMetastoreCatalogTableBuilder.create(BaseMetastoreCatalog.java:191) ~[sy_1986723935774375936.jar:?]
+	at org.apache.iceberg.CachingCatalog$CachingTableBuilder.lambda$create$0(CachingCatalog.java:262) ~[sy_1986723935774375936.jar:?]
+	at org.apache.iceberg.shaded.com.github.benmanes.caffeine.cache.BoundedLocalCache.lambda$doComputeIfAbsent$14(BoundedLocalCache.java:2406) ~[sy_1986723935774375936.jar:?]
+	at java.util.concurrent.ConcurrentHashMap.compute(ConcurrentHashMap.java:1853) ~[?:1.8.0_412]
+	at org.apache.iceberg.shaded.com.github.benmanes.caffeine.cache.BoundedLocalCache.doComputeIfAbsent(BoundedLocalCache.java:2404) ~[sy_1986723935774375936.jar:?]
+	at org.apache.iceberg.shaded.com.github.benmanes.caffeine.cache.BoundedLocalCache.computeIfAbsent(BoundedLocalCache.java:2387) ~[sy_1986723935774375936.jar:?]
+	at org.apache.iceberg.shaded.com.github.benmanes.caffeine.cache.LocalCache.computeIfAbsent(LocalCache.java:108) ~[sy_1986723935774375936.jar:?]
+	at org.apache.iceberg.shaded.com.github.benmanes.caffeine.cache.LocalManualCache.get(LocalManualCache.java:62) ~[sy_1986723935774375936.jar:?]
+	at org.apache.iceberg.CachingCatalog$CachingTableBuilder.create(CachingCatalog.java:258) ~[sy_1986723935774375936.jar:?]
+	at org.apache.iceberg.catalog.Catalog.createTable(Catalog.java:75) ~[sy_1986723935774375936.jar:?]
+	at org.apache.iceberg.flink.FlinkCatalog.createIcebergTable(FlinkCatalog.java:415) ~[sy_1986723935774375936.jar:?]
+	at org.apache.iceberg.flink.FlinkCatalog.createTable(FlinkCatalog.java:395) ~[sy_1986723935774375936.jar:?]
+	at org.apache.flink.table.catalog.CatalogManager.lambda$createTable$18(CatalogManager.java:957) ~[flink-table-api-java-uber-1.18.1.jar:1.18.1]
+	at org.apache.flink.table.catalog.CatalogManager.execute(CatalogManager.java:1290) ~[flink-table-api-java-uber-1.18.1.jar:1.18.1]
+	at org.apache.flink.table.catalog.CatalogManager.createTable(CatalogManager.java:946) ~[flink-table-api-java-uber-1.18.1.jar:1.18.1]
+	at org.apache.flink.table.operations.ddl.CreateTableOperation.execute(CreateTableOperation.java:84) ~[flink-table-api-java-uber-1.18.1.jar:1.18.1]
+	at org.apache.flink.table.api.internal.TableEnvironmentImpl.executeInternal(TableEnvironmentImpl.java:1092) ~[flink-table-api-java-uber-1.18.1.jar:1.18.1]
+	at org.apache.flink.table.api.internal.TableEnvironmentImpl.executeSql(TableEnvironmentImpl.java:735) ~[flink-table-api-java-uber-1.18.1.jar:1.18.1]
+	at com.isxcode.spark.plugin.flink.sql.execute.Job.main(Job.java:51) ~[flink-sql-execute-plugin.jar:?]
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[?:1.8.0_412]
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) ~[?:1.8.0_412]
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[?:1.8.0_412]
+	at java.lang.reflect.Method.invoke(Method.java:498) ~[?:1.8.0_412]
+	at org.apache.flink.client.program.PackagedProgram.callMainMethod(PackagedProgram.java:355) ~[flink-dist-1.18.1.jar:1.18.1]
+	at org.apache.flink.client.program.PackagedProgram.invokeInteractiveModeForExecution(PackagedProgram.java:222) ~[flink-dist-1.18.1.jar:1.18.1]
+	at org.apache.flink.client.ClientUtils.executeProgram(ClientUtils.java:105) ~[flink-dist-1.18.1.jar:1.18.1]
+	at org.apache.flink.client.deployment.application.ApplicationDispatcherBootstrap.runApplicationEntryPoint(ApplicationDispatcherBootstrap.java:301) ~[flink-dist-1.18.1.jar:1.18.1]
+	... 12 more
+```
+
+缺少依赖[libfb303-0.9.3.jar下载](https://repo1.maven.org/maven2/org/apache/thrift/libfb303/0.9.3/libfb303-0.9.3.jar)
+
+#### 问题14  
+
+```log
+Caused by: java.lang.ClassNotFoundException: org.apache.thrift.TException
+		at java.net.URLClassLoader.findClass(URLClassLoader.java:387) ~[?:1.8.0_412]
+		at java.lang.ClassLoader.loadClass(ClassLoader.java:418) ~[?:1.8.0_412]
+		at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:352) ~[?:1.8.0_412]
+		at java.lang.ClassLoader.loadClass(ClassLoader.java:351) ~[?:1.8.0_412]
+		... 35 more
+```
+
+缺少依赖[libthrift-0.9.3.jar下载](https://repo1.maven.org/maven2/org/apache/thrift/libthrift/0.9.3/libthrift-0.9.3.jar)
+
+#### 问题15
+
+```log
+Caused by: java.lang.ClassNotFoundException: org.apache.hadoop.hive.metastore.api.NoSuchObjectException
+    at java.net.URLClassLoader.findClass(URLClassLoader.java:387) ~[?:1.8.0_412]
+    at java.lang.ClassLoader.loadClass(ClassLoader.java:418) ~[?:1.8.0_412]
+    at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:352) ~[?:1.8.0_412]
+    at java.lang.ClassLoader.loadClass(ClassLoader.java:351) ~[?:1.8.0_412]
+    ... 35 more
+```
+
+缺少依赖[hive-standalone-metastore-3.1.3.jar下载](https://repo1.maven.org/maven2/org/apache/hive/hive-standalone-metastore/3.1.3/hive-standalone-metastore-3.1.3.jar)
+
+#### 问题16
+
+```log
+Caused by: java.lang.ClassNotFoundException: org.apache.hadoop.hive.conf.HiveConf$ConfVars
+	at java.net.URLClassLoader.findClass(URLClassLoader.java:387) ~[?:1.8.0_412]
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:418) ~[?:1.8.0_412]
+	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:352) ~[?:1.8.0_412]
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:351) ~[?:1.8.0_412]
+	at org.apache.iceberg.hive.HiveCatalog.initialize(HiveCatalog.java:95) ~[sy_1986723935774375936.jar:?]
+	at org.apache.iceberg.CatalogUtil.loadCatalog(CatalogUtil.java:256) ~[sy_1986723935774375936.jar:?]
+	at org.apache.iceberg.flink.CatalogLoader$HiveCatalogLoader.loadCatalog(CatalogLoader.java:128) ~[sy_1986723935774375936.jar:?]
+	at org.apache.iceberg.flink.FlinkCatalog.<init>(FlinkCatalog.java:114) ~[sy_1986723935774375936.jar:?]
+	at org.apache.iceberg.flink.FlinkCatalogFactory.createCatalog(FlinkCatalogFactory.java:166) ~[sy_1986723935774375936.jar:?]
+	at org.apache.iceberg.flink.FlinkCatalogFactory.createCatalog(FlinkCatalogFactory.java:139) ~[sy_1986723935774375936.jar:?]
+	at org.apache.flink.table.factories.FactoryUtil.createCatalog(FactoryUtil.java:476) ~[flink-table-api-java-uber-1.18.1.jar:1.18.1]
+	at org.apache.flink.table.catalog.CatalogManager.initCatalog(CatalogManager.java:316) ~[flink-table-api-java-uber-1.18.1.jar:1.18.1]
+	at org.apache.flink.table.catalog.CatalogManager.createCatalog(CatalogManager.java:308) ~[flink-table-api-java-uber-1.18.1.jar:1.18.1]
+	at org.apache.flink.table.operations.ddl.CreateCatalogOperation.execute(CreateCatalogOperation.java:68) ~[flink-table-api-java-uber-1.18.1.jar:1.18.1]
+	at org.apache.flink.table.api.internal.TableEnvironmentImpl.executeInternal(TableEnvironmentImpl.java:1092) ~[flink-table-api-java-uber-1.18.1.jar:1.18.1]
+	at org.apache.flink.table.api.internal.TableEnvironmentImpl.executeSql(TableEnvironmentImpl.java:735) ~[flink-table-api-java-uber-1.18.1.jar:1.18.1]
+	at com.isxcode.spark.plugin.flink.sql.execute.Job.main(Job.java:51) ~[flink-sql-execute-plugin.jar:?]
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[?:1.8.0_412]
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) ~[?:1.8.0_412]
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[?:1.8.0_412]
+	at java.lang.reflect.Method.invoke(Method.java:498) ~[?:1.8.0_412]
+	at org.apache.flink.client.program.PackagedProgram.callMainMethod(PackagedProgram.java:355) ~[flink-dist-1.18.1.jar:1.18.1]
+	at org.apache.flink.client.program.PackagedProgram.invokeInteractiveModeForExecution(PackagedProgram.java:222) ~[flink-dist-1.18.1.jar:1.18.1]
+	at org.apache.flink.client.ClientUtils.executeProgram(ClientUtils.java:105) ~[flink-dist-1.18.1.jar:1.18.1]
+	at org.apache.flink.client.deployment.application.ApplicationDispatcherBootstrap.runApplicationEntryPoint(ApplicationDispatcherBootstrap.java:301) ~[flink-dist-1.18.1.jar:1.18.1]
+	... 12 more
+```
+
+缺少依赖[hive-common-3.1.3.jar下载](https://repo1.maven.org/maven2/org/apache/hive/hive-common/3.1.3/hive-common-3.1.3.jar)
+
+#### 问题17
+
+```log
+Caused by: java.lang.ClassNotFoundException: org.apache.hadoop.mapred.JobConf
+	at java.net.URLClassLoader.findClass(URLClassLoader.java:387) ~[?:1.8.0_412]
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:418) ~[?:1.8.0_412]
+	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:352) ~[?:1.8.0_412]
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:351) ~[?:1.8.0_412]
+	at org.apache.hadoop.hive.conf.HiveConf.initialize(HiveConf.java:5144) ~[sy_1986612332714328064.jar:3.1.3]
+	at org.apache.hadoop.hive.conf.HiveConf.<init>(HiveConf.java:5112) ~[sy_1986612332714328064.jar:3.1.3]
+	at org.apache.iceberg.hive.HiveClientPool.<init>(HiveClientPool.java:55) ~[sy_1986723935774375936.jar:?]
+	at org.apache.iceberg.hive.CachedClientPool.lambda$clientPool$0(CachedClientPool.java:96) ~[sy_1986723935774375936.jar:?]
+	at org.apache.iceberg.shaded.com.github.benmanes.caffeine.cache.BoundedLocalCache.lambda$doComputeIfAbsent$14(BoundedLocalCache.java:2406) ~[sy_1986723935774375936.jar:?]
+	at java.util.concurrent.ConcurrentHashMap.compute(ConcurrentHashMap.java:1853) ~[?:1.8.0_412]
+	at org.apache.iceberg.shaded.com.github.benmanes.caffeine.cache.BoundedLocalCache.doComputeIfAbsent(BoundedLocalCache.java:2404) ~[sy_1986723935774375936.jar:?]
+	at org.apache.iceberg.shaded.com.github.benmanes.caffeine.cache.BoundedLocalCache.computeIfAbsent(BoundedLocalCache.java:2387) ~[sy_1986723935774375936.jar:?]
+	at org.apache.iceberg.shaded.com.github.benmanes.caffeine.cache.LocalCache.computeIfAbsent(LocalCache.java:108) ~[sy_1986723935774375936.jar:?]
+	at org.apache.iceberg.shaded.com.github.benmanes.caffeine.cache.LocalManualCache.get(LocalManualCache.java:62) ~[sy_1986723935774375936.jar:?]
+	at org.apache.iceberg.hive.CachedClientPool.clientPool(CachedClientPool.java:96) ~[sy_1986723935774375936.jar:?]
+	at org.apache.iceberg.hive.CachedClientPool.run(CachedClientPool.java:122) ~[sy_1986723935774375936.jar:?]
+	at org.apache.iceberg.hive.HiveTableOperations.doRefresh(HiveTableOperations.java:147) ~[sy_1986723935774375936.jar:?]
+	at org.apache.iceberg.BaseMetastoreTableOperations.refresh(BaseMetastoreTableOperations.java:90) ~[sy_1986723935774375936.jar:?]
+	at org.apache.iceberg.BaseMetastoreTableOperations.current(BaseMetastoreTableOperations.java:73) ~[sy_1986723935774375936.jar:?]
+	at org.apache.iceberg.BaseMetastoreCatalog$BaseMetastoreCatalogTableBuilder.create(BaseMetastoreCatalog.java:191) ~[sy_1986723935774375936.jar:?]
+	at org.apache.iceberg.CachingCatalog$CachingTableBuilder.lambda$create$0(CachingCatalog.java:262) ~[sy_1986723935774375936.jar:?]
+	at org.apache.iceberg.shaded.com.github.benmanes.caffeine.cache.BoundedLocalCache.lambda$doComputeIfAbsent$14(BoundedLocalCache.java:2406) ~[sy_1986723935774375936.jar:?]
+	at java.util.concurrent.ConcurrentHashMap.compute(ConcurrentHashMap.java:1853) ~[?:1.8.0_412]
+	at org.apache.iceberg.shaded.com.github.benmanes.caffeine.cache.BoundedLocalCache.doComputeIfAbsent(BoundedLocalCache.java:2404) ~[sy_1986723935774375936.jar:?]
+	at org.apache.iceberg.shaded.com.github.benmanes.caffeine.cache.BoundedLocalCache.computeIfAbsent(BoundedLocalCache.java:2387) ~[sy_1986723935774375936.jar:?]
+	at org.apache.iceberg.shaded.com.github.benmanes.caffeine.cache.LocalCache.computeIfAbsent(LocalCache.java:108) ~[sy_1986723935774375936.jar:?]
+	at org.apache.iceberg.shaded.com.github.benmanes.caffeine.cache.LocalManualCache.get(LocalManualCache.java:62) ~[sy_1986723935774375936.jar:?]
+	at org.apache.iceberg.CachingCatalog$CachingTableBuilder.create(CachingCatalog.java:258) ~[sy_1986723935774375936.jar:?]
+	at org.apache.iceberg.catalog.Catalog.createTable(Catalog.java:75) ~[sy_1986723935774375936.jar:?]
+	at org.apache.iceberg.flink.FlinkCatalog.createIcebergTable(FlinkCatalog.java:415) ~[sy_1986723935774375936.jar:?]
+	at org.apache.iceberg.flink.FlinkCatalog.createTable(FlinkCatalog.java:395) ~[sy_1986723935774375936.jar:?]
+	at org.apache.flink.table.catalog.CatalogManager.lambda$createTable$18(CatalogManager.java:957) ~[flink-table-api-java-uber-1.18.1.jar:1.18.1]
+	at org.apache.flink.table.catalog.CatalogManager.execute(CatalogManager.java:1290) ~[flink-table-api-java-uber-1.18.1.jar:1.18.1]
+	at org.apache.flink.table.catalog.CatalogManager.createTable(CatalogManager.java:946) ~[flink-table-api-java-uber-1.18.1.jar:1.18.1]
+	at org.apache.flink.table.operations.ddl.CreateTableOperation.execute(CreateTableOperation.java:84) ~[flink-table-api-java-uber-1.18.1.jar:1.18.1]
+	at org.apache.flink.table.api.internal.TableEnvironmentImpl.executeInternal(TableEnvironmentImpl.java:1092) ~[flink-table-api-java-uber-1.18.1.jar:1.18.1]
+	at org.apache.flink.table.api.internal.TableEnvironmentImpl.executeSql(TableEnvironmentImpl.java:735) ~[flink-table-api-java-uber-1.18.1.jar:1.18.1]
+	at com.isxcode.spark.plugin.flink.sql.execute.Job.main(Job.java:51) ~[flink-sql-execute-plugin.jar:?]
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[?:1.8.0_412]
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) ~[?:1.8.0_412]
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[?:1.8.0_412]
+	at java.lang.reflect.Method.invoke(Method.java:498) ~[?:1.8.0_412]
+	at org.apache.flink.client.program.PackagedProgram.callMainMethod(PackagedProgram.java:355) ~[flink-dist-1.18.1.jar:1.18.1]
+	at org.apache.flink.client.program.PackagedProgram.invokeInteractiveModeForExecution(PackagedProgram.java:222) ~[flink-dist-1.18.1.jar:1.18.1]
+	at org.apache.flink.client.ClientUtils.executeProgram(ClientUtils.java:105) ~[flink-dist-1.18.1.jar:1.18.1]
+	at org.apache.flink.client.deployment.application.ApplicationDispatcherBootstrap.runApplicationEntryPoint(ApplicationDispatcherBootstrap.java:301) ~[flink-dist-1.18.1.jar:1.18.1]
+	... 12 more
+```
+
+缺少依赖[hive-standalone-metastore-3.1.3.jar下载](https://repo1.maven.org/maven2/org/apache/hive/hive-standalone-metastore/3.1.3/hive-standalone-metastore-3.1.3.jar)
+
+#### 问题18
+
+```log
+Caused by: java.lang.ClassNotFoundException: org.apache.commons.lang.StringUtils
+	at java.net.URLClassLoader.findClass(URLClassLoader.java:387) ~[?:1.8.0_412]
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:418) ~[?:1.8.0_412]
+	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:352) ~[?:1.8.0_412]
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:351) ~[?:1.8.0_412]
+	at org.apache.hadoop.hive.conf.HiveConf.initialize(HiveConf.java:5201) ~[sy_1986612332714328064.jar:3.1.3]
+	at org.apache.hadoop.hive.conf.HiveConf.<init>(HiveConf.java:5112) ~[sy_1986612332714328064.jar:3.1.3]
+	at org.apache.iceberg.hive.HiveClientPool.<init>(HiveClientPool.java:55) ~[sy_1986723935774375936.jar:?]
+	at org.apache.iceberg.hive.CachedClientPool.lambda$clientPool$0(CachedClientPool.java:96) ~[sy_1986723935774375936.jar:?]
+	at org.apache.iceberg.shaded.com.github.benmanes.caffeine.cache.BoundedLocalCache.lambda$doComputeIfAbsent$14(BoundedLocalCache.java:2406) ~[sy_1986723935774375936.jar:?]
+	at java.util.concurrent.ConcurrentHashMap.compute(ConcurrentHashMap.java:1853) ~[?:1.8.0_412]
+	at org.apache.iceberg.shaded.com.github.benmanes.caffeine.cache.BoundedLocalCache.doComputeIfAbsent(BoundedLocalCache.java:2404) ~[sy_1986723935774375936.jar:?]
+	at org.apache.iceberg.shaded.com.github.benmanes.caffeine.cache.BoundedLocalCache.computeIfAbsent(BoundedLocalCache.java:2387) ~[sy_1986723935774375936.jar:?]
+	at org.apache.iceberg.shaded.com.github.benmanes.caffeine.cache.LocalCache.computeIfAbsent(LocalCache.java:108) ~[sy_1986723935774375936.jar:?]
+	at org.apache.iceberg.shaded.com.github.benmanes.caffeine.cache.LocalManualCache.get(LocalManualCache.java:62) ~[sy_1986723935774375936.jar:?]
+	at org.apache.iceberg.hive.CachedClientPool.clientPool(CachedClientPool.java:96) ~[sy_1986723935774375936.jar:?]
+	at org.apache.iceberg.hive.CachedClientPool.run(CachedClientPool.java:122) ~[sy_1986723935774375936.jar:?]
+	at org.apache.iceberg.hive.HiveTableOperations.doRefresh(HiveTableOperations.java:147) ~[sy_1986723935774375936.jar:?]
+	at org.apache.iceberg.BaseMetastoreTableOperations.refresh(BaseMetastoreTableOperations.java:90) ~[sy_1986723935774375936.jar:?]
+	at org.apache.iceberg.BaseMetastoreTableOperations.current(BaseMetastoreTableOperations.java:73) ~[sy_1986723935774375936.jar:?]
+	at org.apache.iceberg.BaseMetastoreCatalog$BaseMetastoreCatalogTableBuilder.create(BaseMetastoreCatalog.java:191) ~[sy_1986723935774375936.jar:?]
+	at org.apache.iceberg.CachingCatalog$CachingTableBuilder.lambda$create$0(CachingCatalog.java:262) ~[sy_1986723935774375936.jar:?]
+	at org.apache.iceberg.shaded.com.github.benmanes.caffeine.cache.BoundedLocalCache.lambda$doComputeIfAbsent$14(BoundedLocalCache.java:2406) ~[sy_1986723935774375936.jar:?]
+	at java.util.concurrent.ConcurrentHashMap.compute(ConcurrentHashMap.java:1853) ~[?:1.8.0_412]
+	at org.apache.iceberg.shaded.com.github.benmanes.caffeine.cache.BoundedLocalCache.doComputeIfAbsent(BoundedLocalCache.java:2404) ~[sy_1986723935774375936.jar:?]
+	at org.apache.iceberg.shaded.com.github.benmanes.caffeine.cache.BoundedLocalCache.computeIfAbsent(BoundedLocalCache.java:2387) ~[sy_1986723935774375936.jar:?]
+	at org.apache.iceberg.shaded.com.github.benmanes.caffeine.cache.LocalCache.computeIfAbsent(LocalCache.java:108) ~[sy_1986723935774375936.jar:?]
+	at org.apache.iceberg.shaded.com.github.benmanes.caffeine.cache.LocalManualCache.get(LocalManualCache.java:62) ~[sy_1986723935774375936.jar:?]
+	at org.apache.iceberg.CachingCatalog$CachingTableBuilder.create(CachingCatalog.java:258) ~[sy_1986723935774375936.jar:?]
+	at org.apache.iceberg.catalog.Catalog.createTable(Catalog.java:75) ~[sy_1986723935774375936.jar:?]
+	at org.apache.iceberg.flink.FlinkCatalog.createIcebergTable(FlinkCatalog.java:415) ~[sy_1986723935774375936.jar:?]
+	at org.apache.iceberg.flink.FlinkCatalog.createTable(FlinkCatalog.java:395) ~[sy_1986723935774375936.jar:?]
+	at org.apache.flink.table.catalog.CatalogManager.lambda$createTable$18(CatalogManager.java:957) ~[flink-table-api-java-uber-1.18.1.jar:1.18.1]
+	at org.apache.flink.table.catalog.CatalogManager.execute(CatalogManager.java:1290) ~[flink-table-api-java-uber-1.18.1.jar:1.18.1]
+	at org.apache.flink.table.catalog.CatalogManager.createTable(CatalogManager.java:946) ~[flink-table-api-java-uber-1.18.1.jar:1.18.1]
+	at org.apache.flink.table.operations.ddl.CreateTableOperation.execute(CreateTableOperation.java:84) ~[flink-table-api-java-uber-1.18.1.jar:1.18.1]
+	at org.apache.flink.table.api.internal.TableEnvironmentImpl.executeInternal(TableEnvironmentImpl.java:1092) ~[flink-table-api-java-uber-1.18.1.jar:1.18.1]
+	at org.apache.flink.table.api.internal.TableEnvironmentImpl.executeSql(TableEnvironmentImpl.java:735) ~[flink-table-api-java-uber-1.18.1.jar:1.18.1]
+	at com.isxcode.spark.plugin.flink.sql.execute.Job.main(Job.java:51) ~[flink-sql-execute-plugin.jar:?]
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[?:1.8.0_412]
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) ~[?:1.8.0_412]
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[?:1.8.0_412]
+	at java.lang.reflect.Method.invoke(Method.java:498) ~[?:1.8.0_412]
+	at org.apache.flink.client.program.PackagedProgram.callMainMethod(PackagedProgram.java:355) ~[flink-dist-1.18.1.jar:1.18.1]
+	at org.apache.flink.client.program.PackagedProgram.invokeInteractiveModeForExecution(PackagedProgram.java:222) ~[flink-dist-1.18.1.jar:1.18.1]
+	at org.apache.flink.client.ClientUtils.executeProgram(ClientUtils.java:105) ~[flink-dist-1.18.1.jar:1.18.1]
+	at org.apache.flink.client.deployment.application.ApplicationDispatcherBootstrap.runApplicationEntryPoint(ApplicationDispatcherBootstrap.java:301) ~[flink-dist-1.18.1.jar:1.18.1]
+	... 12 more
+```
+
+缺少依赖[commons-lang-2.6.jar下载](https://repo1.maven.org/maven2/commons-lang/commons-lang/2.6/commons-lang-2.6.jar)
+
+#### 问题19
+
+```log
+Caused by: java.lang.ClassNotFoundException: org.apache.hadoop.hive.common.ValidWriteIdList
+	at java.net.URLClassLoader.findClass(URLClassLoader.java:387) ~[?:1.8.0_412]
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:418) ~[?:1.8.0_412]
+	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:352) ~[?:1.8.0_412]
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:351) ~[?:1.8.0_412]
+	at java.lang.Class.forName0(Native Method) ~[?:1.8.0_412]
+	at java.lang.Class.forName(Class.java:348) ~[?:1.8.0_412]
+	at org.apache.hadoop.hive.metastore.utils.JavaUtils.getClass(JavaUtils.java:52) ~[sy_1986612371608109056.jar:3.1.3]
+	at org.apache.hadoop.hive.metastore.RetryingMetaStoreClient.getProxy(RetryingMetaStoreClient.java:146) ~[sy_1986612371608109056.jar:3.1.3]
+	at org.apache.hadoop.hive.metastore.RetryingMetaStoreClient.getProxy(RetryingMetaStoreClient.java:119) ~[sy_1986612371608109056.jar:3.1.3]
+	at org.apache.hadoop.hive.metastore.RetryingMetaStoreClient.getProxy(RetryingMetaStoreClient.java:112) ~[sy_1986612371608109056.jar:3.1.3]
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[?:1.8.0_412]
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) ~[?:1.8.0_412]
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[?:1.8.0_412]
+	at java.lang.reflect.Method.invoke(Method.java:498) ~[?:1.8.0_412]
+	at org.apache.iceberg.common.DynMethods$UnboundMethod.invokeChecked(DynMethods.java:62) ~[sy_1986723935774375936.jar:?]
+	at org.apache.iceberg.common.DynMethods$UnboundMethod.invoke(DynMethods.java:74) ~[sy_1986723935774375936.jar:?]
+	at org.apache.iceberg.common.DynMethods$StaticMethod.invoke(DynMethods.java:187) ~[sy_1986723935774375936.jar:?]
+	at org.apache.iceberg.hive.HiveClientPool.newClient(HiveClientPool.java:63) ~[sy_1986723935774375936.jar:?]
+	at org.apache.iceberg.hive.HiveClientPool.newClient(HiveClientPool.java:34) ~[sy_1986723935774375936.jar:?]
+	at org.apache.iceberg.ClientPoolImpl.get(ClientPoolImpl.java:143) ~[sy_1986723935774375936.jar:?]
+	at org.apache.iceberg.ClientPoolImpl.run(ClientPoolImpl.java:70) ~[sy_1986723935774375936.jar:?]
+	at org.apache.iceberg.ClientPoolImpl.run(ClientPoolImpl.java:65) ~[sy_1986723935774375936.jar:?]
+	at org.apache.iceberg.hive.CachedClientPool.run(CachedClientPool.java:122) ~[sy_1986723935774375936.jar:?]
+	at org.apache.iceberg.hive.HiveTableOperations.doRefresh(HiveTableOperations.java:147) ~[sy_1986723935774375936.jar:?]
+	at org.apache.iceberg.BaseMetastoreTableOperations.refresh(BaseMetastoreTableOperations.java:90) ~[sy_1986723935774375936.jar:?]
+	at org.apache.iceberg.BaseMetastoreTableOperations.current(BaseMetastoreTableOperations.java:73) ~[sy_1986723935774375936.jar:?]
+	at org.apache.iceberg.BaseMetastoreCatalog$BaseMetastoreCatalogTableBuilder.create(BaseMetastoreCatalog.java:191) ~[sy_1986723935774375936.jar:?]
+	at org.apache.iceberg.CachingCatalog$CachingTableBuilder.lambda$create$0(CachingCatalog.java:262) ~[sy_1986723935774375936.jar:?]
+	at org.apache.iceberg.shaded.com.github.benmanes.caffeine.cache.BoundedLocalCache.lambda$doComputeIfAbsent$14(BoundedLocalCache.java:2406) ~[sy_1986723935774375936.jar:?]
+	at java.util.concurrent.ConcurrentHashMap.compute(ConcurrentHashMap.java:1853) ~[?:1.8.0_412]
+	at org.apache.iceberg.shaded.com.github.benmanes.caffeine.cache.BoundedLocalCache.doComputeIfAbsent(BoundedLocalCache.java:2404) ~[sy_1986723935774375936.jar:?]
+	at org.apache.iceberg.shaded.com.github.benmanes.caffeine.cache.BoundedLocalCache.computeIfAbsent(BoundedLocalCache.java:2387) ~[sy_1986723935774375936.jar:?]
+	at org.apache.iceberg.shaded.com.github.benmanes.caffeine.cache.LocalCache.computeIfAbsent(LocalCache.java:108) ~[sy_1986723935774375936.jar:?]
+	at org.apache.iceberg.shaded.com.github.benmanes.caffeine.cache.LocalManualCache.get(LocalManualCache.java:62) ~[sy_1986723935774375936.jar:?]
+	at org.apache.iceberg.CachingCatalog$CachingTableBuilder.create(CachingCatalog.java:258) ~[sy_1986723935774375936.jar:?]
+	at org.apache.iceberg.catalog.Catalog.createTable(Catalog.java:75) ~[sy_1986723935774375936.jar:?]
+	at org.apache.iceberg.flink.FlinkCatalog.createIcebergTable(FlinkCatalog.java:415) ~[sy_1986723935774375936.jar:?]
+	at org.apache.iceberg.flink.FlinkCatalog.createTable(FlinkCatalog.java:395) ~[sy_1986723935774375936.jar:?]
+	at org.apache.flink.table.catalog.CatalogManager.lambda$createTable$18(CatalogManager.java:957) ~[flink-table-api-java-uber-1.18.1.jar:1.18.1]
+	at org.apache.flink.table.catalog.CatalogManager.execute(CatalogManager.java:1290) ~[flink-table-api-java-uber-1.18.1.jar:1.18.1]
+	at org.apache.flink.table.catalog.CatalogManager.createTable(CatalogManager.java:946) ~[flink-table-api-java-uber-1.18.1.jar:1.18.1]
+	at org.apache.flink.table.operations.ddl.CreateTableOperation.execute(CreateTableOperation.java:84) ~[flink-table-api-java-uber-1.18.1.jar:1.18.1]
+	at org.apache.flink.table.api.internal.TableEnvironmentImpl.executeInternal(TableEnvironmentImpl.java:1092) ~[flink-table-api-java-uber-1.18.1.jar:1.18.1]
+	at org.apache.flink.table.api.internal.TableEnvironmentImpl.executeSql(TableEnvironmentImpl.java:735) ~[flink-table-api-java-uber-1.18.1.jar:1.18.1]
+	at com.isxcode.spark.plugin.flink.sql.execute.Job.main(Job.java:51) ~[flink-sql-execute-plugin.jar:?]
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[?:1.8.0_412]
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) ~[?:1.8.0_412]
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[?:1.8.0_412]
+	at java.lang.reflect.Method.invoke(Method.java:498) ~[?:1.8.0_412]
+	at org.apache.flink.client.program.PackagedProgram.callMainMethod(PackagedProgram.java:355) ~[flink-dist-1.18.1.jar:1.18.1]
+	at org.apache.flink.client.program.PackagedProgram.invokeInteractiveModeForExecution(PackagedProgram.java:222) ~[flink-dist-1.18.1.jar:1.18.1]
+	at org.apache.flink.client.ClientUtils.executeProgram(ClientUtils.java:105) ~[flink-dist-1.18.1.jar:1.18.1]
+	at org.apache.flink.client.deployment.application.ApplicationDispatcherBootstrap.runApplicationEntryPoint(ApplicationDispatcherBootstrap.java:301) ~[flink-dist-1.18.1.jar:1.18.1]
+	... 12 more
+```
+
+缺少依赖[hive-exec-3.1.3.jar下载](https://repo1.maven.org/maven2/org/apache/hive/hive-exec/3.1.3/hive-exec-3.1.3.jar)
