@@ -10,7 +10,7 @@ title: "Spark集成Paimon"
 
 > 创建`SparkSql查询作业`，下载依赖
 
-- [paimon-spark-3.4_2.12-1.4-20251105.003055-50.jar下载](https://repository.apache.org/content/groups/snapshots/org/apache/paimon/paimon-spark-3.4_2.12/1.4-SNAPSHOT/paimon-spark-3.4_2.12-1.4-20251105.003055-50.jar)
+- [paimon-spark-3.4_2.12-1.4-20251105.003055-50.jar下载](https://repository.apache.org/content/groups/snapshots/org/apache/paimon/paimon-spark-3.4_2.12/1.4-SNAPSHOT/paimon-spark-3.4_2.12-1.4-20251108.002925-52.jar)
 
 ![20250120182130](https://img.isxcode.com/picgo/20250120182130.png)
 
@@ -48,6 +48,19 @@ title: "Spark集成Paimon"
 ```sql
 -- 选择数据库
 USE paimon.ispong_db;
+
+-- 建表
+CREATE TABLE IF NOT EXISTS paimon_table (
+    username STRING,
+    age INT
+)
+USING paimon
+OPTIONS (
+    'bucket' = '4',
+    'bucket-key' = 'username',
+    'file.format' = 'parquet'
+)
+COMMENT '用户信息表';
 
 -- 增
 insert into paimon_table values ('zhangsan',13);

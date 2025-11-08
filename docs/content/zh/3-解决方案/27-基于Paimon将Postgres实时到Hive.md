@@ -24,7 +24,7 @@ mv paimon-hive-connector-3.1-0.9.0.jar /opt/hive/lib/
 
 > 创建`FlinkSql作业`类型，下载Postgresql相关额外依赖包和以下依赖
 
-- [paimon-flink-1.18-1.4-20251105.003055-51.jar下载](https://repository.apache.org/content/groups/snapshots/org/apache/paimon/paimon-flink-1.18/1.4-SNAPSHOT/paimon-flink-1.18-1.4-20251105.003055-51.jar)
+- [paimon-flink-1.18-1.4-20251105.003055-51.jar下载](https://repository.apache.org/content/groups/snapshots/org/apache/paimon/paimon-flink-1.18/1.4-SNAPSHOT/paimon-flink-1.18-1.4-20251108.002925-53.jar)
 - [hive-standalone-metastore-3.1.3.jar下载](https://repo1.maven.org/maven2/org/apache/hive/hive-standalone-metastore/3.1.3/hive-standalone-metastore-3.1.3.jar)
 - [hive-common-3.1.3.jar下载](https://repo1.maven.org/maven2/org/apache/hive/hive-common/3.1.3/hive-common-3.1.3.jar)
 - [hadoop-mapreduce-client-core-3.3.5.jar下载](https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-mapreduce-client-core/3.3.5/hadoop-mapreduce-client-core-3.3.5.jar)
