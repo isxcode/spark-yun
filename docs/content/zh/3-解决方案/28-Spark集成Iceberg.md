@@ -10,7 +10,7 @@ title: "Spark集成Iceberg"
 
 > 创建`SparkSql查询作业`，下载依赖
 
-- [iceberg-spark-runtime-3.4_2.13-1.6.1.jar下载](https://repo1.maven.org/maven2/org/apache/iceberg/iceberg-spark-runtime-3.4_2.13/1.6.1/iceberg-spark-runtime-3.4_2.13-1.6.1.jar)
+- [iceberg-spark-runtime-3.4_2.12-1.6.1.jar下载](https://repo1.maven.org/maven2/org/apache/iceberg/iceberg-spark-runtime-3.4_2.12/1.6.1/iceberg-spark-runtime-3.4_2.12-1.6.1.jar)
 
 ![20250120182130](https://img.isxcode.com/picgo/20250120182130.png)
 
