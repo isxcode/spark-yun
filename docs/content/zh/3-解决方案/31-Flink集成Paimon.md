@@ -10,7 +10,7 @@ title: "Flink集成Paimon"
 
 > 创建`FlinkSql查询作业`，下载依赖
 
-- [paimon-flink-1.18-1.4-20251105.003055-51.jar下载](https://repository.apache.org/content/groups/snapshots/org/apache/paimon/paimon-flink-1.18/1.4-SNAPSHOT/paimon-flink-1.18-1.4-20251105.003055-51.jar)
+- [paimon-flink-1.18-1.4-20251105.003055-51.jar下载](https://repository.apache.org/content/groups/snapshots/org/apache/paimon/paimon-flink-1.18/1.4-SNAPSHOT/paimon-flink-1.18-1.4-20251108.002925-53.jar)
 - [hive-standalone-metastore-3.1.3.jar下载](https://repo1.maven.org/maven2/org/apache/hive/hive-standalone-metastore/3.1.3/hive-standalone-metastore-3.1.3.jar)
 - [hive-common-3.1.3.jar下载](https://repo1.maven.org/maven2/org/apache/hive/hive-common/3.1.3/hive-common-3.1.3.jar)
 - [hadoop-mapreduce-client-core-3.3.5.jar下载](https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-mapreduce-client-core/3.3.5/hadoop-mapreduce-client-core-3.3.5.jar)
@@ -28,9 +28,9 @@ title: "Flink集成Paimon"
 -- 创建Catalog
 CREATE CATALOG hive_catalog WITH (
     'type' = 'paimon',
-    'warehouse' = 'hdfs://106.15.56.126:9000/user/hive/warehouse',
+    'warehouse' = 'hdfs://172.19.189.246:9000/user/hive/warehouse',
     'metastore' = 'hive',
-    'uri' = 'thrift://106.15.56.126:9083',
+    'uri' = 'thrift://172.19.189.246:9083',
     'hive-conf-dir' = '/opt/hive/conf' 
 );
 
@@ -41,7 +41,7 @@ USE CATALOG hive_catalog;
 USE ispong_db;
 
 -- 创建Paimon表
-CREATE TABLE IF NOT EXISTS users_paimon (
+CREATE TABLE IF NOT EXISTS users_paimon2 (
     username STRING,
     age INT,
     PRIMARY KEY (username) NOT ENFORCED
@@ -52,7 +52,7 @@ CREATE TABLE IF NOT EXISTS users_paimon (
 );
 
 -- 插入数据
-INSERT INTO users_paimon VALUES 
-('user1', 25),
-('user2', 30);
+INSERT INTO users_paimon2 VALUES 
+('zhangsan', 13),
+('lisi', 14);
 ```

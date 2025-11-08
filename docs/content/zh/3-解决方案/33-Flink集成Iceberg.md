@@ -40,5 +40,7 @@ CREATE TABLE IF NOT EXISTS  `hive_catalog`.`ispong_db`.`iceberg_table2` (
 
 -- 删除。更新 需要走批处理模式
 INSERT INTO `hive_catalog`.`ispong_db`.`iceberg_table2` VALUES (1, 'a');
+
+
 INSERT INTO `hive_catalog`.`ispong_db`.`iceberg_table2` VALUES (2, 'b');
 ```

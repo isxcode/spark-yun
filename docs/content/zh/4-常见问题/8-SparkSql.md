@@ -394,3 +394,29 @@ java.io.FileNotFoundException: File file:/home/ispong/.sparkStaging/application_
 方法2:
 1. 修改~/zhiqingyun-agent/conf/agent-env.sh文件，添加HADOOP_CONF_DIR环境变量，例如 export HADOOP_CONF_DIR=/opt/hadoop/etc/hadoop/。
 2. 重启计算集群中的节点，先停止，再激活。
+
+#### 问题10
+
+```log
+Caused by: java.lang.ClassNotFoundException: org.apache.iceberg.spark.SparkCatalog
+	at java.net.URLClassLoader.findClass(URLClassLoader.java:387)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:418)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:351)
+	at org.apache.spark.sql.connector.catalog.Catalogs$.load(Catalogs.scala:60)
+	... 72 more
+```
+
+> 缺少依赖[iceberg-spark-runtime-3.4_2.12-1.6.1.jar下载](https://repo1.maven.org/maven2/org/apache/iceberg/iceberg-spark-runtime-3.4_2.12/1.6.1/iceberg-spark-runtime-3.4_2.12-1.6.1.jar)
+
+#### 问题11
+
+```log
+Caused by: java.lang.ClassNotFoundException: org.apache.paimon.spark.SparkCatalog
+	at java.net.URLClassLoader.findClass(URLClassLoader.java:387)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:418)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:351)
+	at org.apache.spark.sql.connector.catalog.Catalogs$.load(Catalogs.scala:60)
+	... 72 more
+```
+
+> 缺少依赖[paimon-spark-3.4_2.12-1.4-20251105.003055-50.jar下载](https://repository.apache.org/content/groups/snapshots/org/apache/paimon/paimon-spark-3.4_2.12/1.4-SNAPSHOT/paimon-spark-3.4_2.12-1.4-20251108.002925-52.jar)
