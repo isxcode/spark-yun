@@ -33,4 +33,7 @@ dependencies {
     // quartz
     implementation 'org.springframework.boot:spring-boot-starter-quartz'
     implementation 'com.mchange:c3p0:0.9.5.5'
+
+    // jsqlparser
+    implementation("com.github.jsqlparser:jsqlparser:4.8")
 }

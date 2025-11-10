@@ -18,6 +18,12 @@ import com.isxcode.spark.modules.datasource.service.DriverShim;
 import com.isxcode.spark.modules.model.entity.DataModelEntity;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.sf.jsqlparser.JSQLParserException;
+import net.sf.jsqlparser.expression.LongValue;
+import net.sf.jsqlparser.parser.CCJSqlParserUtil;
+import net.sf.jsqlparser.statement.select.Limit;
+import net.sf.jsqlparser.statement.select.PlainSelect;
+import net.sf.jsqlparser.statement.select.Select;
 
 import java.io.File;
 import java.math.BigDecimal;
@@ -66,6 +72,21 @@ public abstract class Datasource {
     public abstract GetDataSourceDataRes getTableData(ConnectInfo connectInfo) throws IsxAppException;
 
     public abstract void refreshTableInfo(ConnectInfo connectInfo) throws IsxAppException;
+
+    public String generateLimitSql(String sql, Integer limit) throws JSQLParserException {
+
+        net.sf.jsqlparser.statement.Statement statement = CCJSqlParserUtil.parse(sql);
+        if (!(statement instanceof Select)) {
+            throw new IllegalArgumentException("该Sql不是查询语句");
+        }
+
+        Select select = (Select) statement;
+        PlainSelect plainSelect = select.getPlainSelect();
+        Limit newLimit = new Limit();
+        newLimit.setRowCount(new LongValue(limit));
+        plainSelect.setLimit(newLimit);
+        return statement.toString();
+    }
 
     public Connection getConnection(ConnectInfo connectInfo) throws IsxAppException {
 
