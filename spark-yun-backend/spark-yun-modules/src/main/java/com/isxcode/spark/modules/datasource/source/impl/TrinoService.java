@@ -28,21 +28,20 @@ import java.util.stream.Collectors;
 
 @Service
 @Slf4j
-public class ImpalaService extends Datasource {
+public class TrinoService extends Datasource {
 
-    public ImpalaService(DatabaseDriverService dataDriverService, IsxAppProperties isxAppProperties,
-        AesUtils aesUtils) {
+    public TrinoService(DatabaseDriverService dataDriverService, IsxAppProperties isxAppProperties, AesUtils aesUtils) {
         super(dataDriverService, isxAppProperties, aesUtils);
     }
 
     @Override
     public String getDataSourceType() {
-        return DatasourceType.IMPALA;
+        return DatasourceType.TRINO;
     }
 
     @Override
     public String getDriverName() {
-        return DatasourceDriver.IMPALA_DRIVER;
+        return DatasourceDriver.TRINO_DRIVER;
     }
 
     @Override

@@ -17,6 +17,10 @@ public interface DatasourceType {
 
     String IMPALA = "IMPALA";
 
+    String TRINO = "TRINO";
+
+    String PRESTO = "PRESTO";
+
     String HANA_SAP = "HANA_SAP";
 
     String DM = "DM";

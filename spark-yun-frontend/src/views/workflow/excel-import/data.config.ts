@@ -20,6 +20,14 @@ export const DataSourceType = [
     value: 'IMPALA',
   },
   {
+    label: 'Trino',
+    value: 'TRINO',
+  },
+  {
+    label: 'Presto',
+    value: 'PRESTO',
+  },
+  {
     label: 'Clickhouse',
     value: 'CLICKHOUSE',
   },

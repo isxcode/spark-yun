@@ -234,6 +234,14 @@ const typeList = reactive([
     value: 'IMPALA',
   },
   {
+    label: 'Trino',
+    value: 'TRINO',
+  },
+  {
+    label: 'Presto',
+    value: 'PRESTO',
+  },
+  {
     label: 'Clickhouse',
     value: 'CLICKHOUSE',
   },
