@@ -114,6 +114,11 @@ public class WorkRunContext {
     private JarJobConfig jarJobConfig;
 
     /**
+     * 用户自定义查询配置
+     */
+    private QueryConfig queryConfig;
+
+    /**
      * 自定义函数配置.
      */
     private List<String> funcConfig;

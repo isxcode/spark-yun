@@ -184,6 +184,11 @@ public class WorkBizService {
             workConfig.setContainerId(addWorkReq.getContainerId());
         }
 
+        // SQL查询条件默认200条
+        if (WorkType.QUERY_JDBC_SQL.equals(addWorkReq.getWorkType())) {
+            workConfig.setQueryConfig(JSON.toJSONString(QueryConfig.builder().lineLimit(200).build()));
+        }
+
         // 初始化调度默认值
         workConfigService.initCronConfig(workConfig);
 

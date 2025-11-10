@@ -43,6 +43,9 @@ public class ConfigWorkReq {
     @Schema(title = "自定义jar作业的配置文件")
     private JarJobConfig jarJobConfig;
 
+    @Schema(title = "查询作业配置")
+    private QueryConfig queryConfig;
+
     @Schema(title = "自定义函数选择")
     private List<String> funcList;
 
