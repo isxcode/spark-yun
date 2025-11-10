@@ -15,6 +15,8 @@ public interface DatasourceDriver {
 
     String HIVE_DRIVER = "org.apache.hive.jdbc.HiveDriver";
 
+    String IMPALA_DRIVER = "org.apache.hive.jdbc.HiveDriver";
+
     String HANA_SAP_DRIVER = "com.sap.db.jdbc.Driver";
 
     String DM_DRIVER = "dm.jdbc.driver.DmDriver";

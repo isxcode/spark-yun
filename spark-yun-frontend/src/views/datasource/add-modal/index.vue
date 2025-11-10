@@ -229,6 +229,10 @@ const typeList = reactive([
     value: 'POSTGRE_SQL',
   },
   {
+    label: 'Impala',
+    value: 'IMPALA',
+  },
+  {
     label: 'Clickhouse',
     value: 'CLICKHOUSE',
   },

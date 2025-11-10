@@ -147,6 +147,10 @@ const dbTypeList = ref<Option[]>([
         value: 'POSTGRE_SQL',
     },
     {
+    label: 'Impala',
+    value: 'IMPALA',
+    },
+    {
         label: 'Clickhouse',
         value: 'CLICKHOUSE',
     },

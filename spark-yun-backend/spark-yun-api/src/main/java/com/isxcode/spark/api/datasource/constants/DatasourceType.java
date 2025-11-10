@@ -15,6 +15,8 @@ public interface DatasourceType {
 
     String HIVE = "HIVE";
 
+    String IMPALA = "IMPALA";
+
     String HANA_SAP = "HANA_SAP";
 
     String DM = "DM";
