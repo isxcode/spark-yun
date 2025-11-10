@@ -63,6 +63,18 @@ const typeList = ref<Option[]>([
     value: 'POSTGRE_SQL',
   },
   {
+    label: 'Impala',
+    value: 'IMPALA',
+  },
+  {
+    label: 'Trino',
+    value: 'TRINO',
+  },
+  {
+    label: 'Presto',
+    value: 'PRESTO',
+  },
+  {
     label: 'Clickhouse',
     value: 'CLICKHOUSE',
   },

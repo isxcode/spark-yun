@@ -15,6 +15,12 @@ public interface DatasourceDriver {
 
     String HIVE_DRIVER = "org.apache.hive.jdbc.HiveDriver";
 
+    String IMPALA_DRIVER = "org.apache.hive.jdbc.HiveDriver";
+
+    String TRINO_DRIVER = "io.trino.jdbc.TrinoDriver";
+
+    String PRESTO_DRIVER = "com.facebook.presto.jdbc.PrestoDriver";
+
     String HANA_SAP_DRIVER = "com.sap.db.jdbc.Driver";
 
     String DM_DRIVER = "dm.jdbc.driver.DmDriver";

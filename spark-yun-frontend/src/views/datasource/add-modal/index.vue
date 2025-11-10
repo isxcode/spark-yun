@@ -64,6 +64,9 @@ sqlserver: jdbc:sqlserver://${host}:${port};databaseName=${database}
 postgre: jdbc:postgresql://${host}:${port}/${database}
 clickhouse: jdbc:clickhouse://${host}:${port}/${database}
 hive: jdbc:hive2://${host}:${port}/${database}
+impala: jdbc:hive2://${host}:${port}/${database};auth=noSasl
+trino: jdbc:trino://${host}:${port}/${configName}/${database}
+presto: jdbc:presto://${host}:${port}/${configName}/${database}
 sap: jdbc:sap://${host}:${port}/${database}
 达梦: jdbc:dm://${host}:${port}?schema=${database}
 doris: jdbc:mysql://${host}:${port}/${database}
@@ -227,6 +230,18 @@ const typeList = reactive([
   {
     label: 'PostgreSql',
     value: 'POSTGRE_SQL',
+  },
+  {
+    label: 'Impala',
+    value: 'IMPALA',
+  },
+  {
+    label: 'Trino',
+    value: 'TRINO',
+  },
+  {
+    label: 'Presto',
+    value: 'PRESTO',
   },
   {
     label: 'Clickhouse',

@@ -1,7 +1,6 @@
 package com.isxcode.spark.modules.work.run.impl;
 
 import com.alibaba.fastjson.JSON;
-import com.isxcode.spark.api.datasource.constants.DatasourceConfig;
 import com.isxcode.spark.api.datasource.dto.ConnectInfo;
 import com.isxcode.spark.api.instance.constants.InstanceStatus;
 import com.isxcode.spark.api.work.constants.WorkType;
@@ -38,7 +37,6 @@ import java.util.stream.Collectors;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
-import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -61,8 +59,6 @@ public class QuerySqlExecutor extends WorkExecutor {
 
     private final IsxAppProperties isxAppProperties;
 
-    private final ServerProperties serverProperties;
-
     public QuerySqlExecutor(WorkInstanceRepository workInstanceRepository,
         WorkflowInstanceRepository workflowInstanceRepository, DatasourceRepository datasourceRepository,
         SqlCommentService sqlCommentService, SqlValueService sqlValueService, SqlFunctionService sqlFunctionService,
@@ -70,7 +66,7 @@ public class QuerySqlExecutor extends WorkExecutor {
         WorkEventRepository workEventRepository, Locker locker, WorkRepository workRepository,
         WorkRunJobFactory workRunJobFactory, WorkConfigRepository workConfigRepository,
         VipWorkVersionRepository vipWorkVersionRepository, WorkService workService, DatasourceService datasourceService,
-        IsxAppProperties isxAppProperties, ServerProperties serverProperties) {
+        IsxAppProperties isxAppProperties) {
 
         super(alarmService, locker, workRepository, workInstanceRepository, workflowInstanceRepository,
             workEventRepository, workRunJobFactory, sqlFunctionService, workConfigRepository, vipWorkVersionRepository,
@@ -83,7 +79,6 @@ public class QuerySqlExecutor extends WorkExecutor {
         this.datasourceMapper = datasourceMapper;
         this.datasourceService = datasourceService;
         this.isxAppProperties = isxAppProperties;
-        this.serverProperties = serverProperties;
     }
 
     @Override
@@ -197,29 +192,6 @@ public class QuerySqlExecutor extends WorkExecutor {
                 // 执行查询sql，给lastSql添加查询条数限制
                 String lastSql = sqls.get(sqls.size() - 1);
 
-                // 特殊查询语句直接跳过
-                if (!lastSql.toUpperCase().trim().startsWith("SHOW")
-                    && !lastSql.toUpperCase().trim().startsWith("DESCRIBE")
-                    && !lastSql.replace(" ", "").toLowerCase().startsWith("selectcount")) {
-
-                    // 判断返回结果的条数，超过200条，则提出警告
-                    String countSql = String.format("SELECT COUNT(*) FROM ( %s ) temp", lastSql);
-
-                    logBuilder.append(startLog("检测SQL返回条数开始"));
-                    logBuilder.append("> ").append(countSql).append(" \n");
-
-                    workInstance = updateInstance(workInstance, logBuilder);
-                    ResultSet countResultSet = statement.executeQuery(countSql);
-                    while (countResultSet.next()) {
-                        if (countResultSet.getInt(1) > DatasourceConfig.LIMIT_NUMBER) {
-                            throw errorLogException(
-                                "检测SQL返回条数异常 : 条数大于" + DatasourceConfig.LIMIT_NUMBER + "条，请添加条数查询限制");
-                        }
-                    }
-                }
-
-                // 执行最后一句查询语句
-                logBuilder.append(endLog("检测SQL返回条数完成，总条数不超过" + DatasourceConfig.LIMIT_NUMBER + "条"));
                 logBuilder.append(startLog("执行开始"));
                 logBuilder.append("> ").append(lastSql).append(" \n");
                 workInstance = updateInstance(workInstance, logBuilder);
