@@ -133,6 +133,11 @@ public class WorkConfigBizService {
             workConfig.setApiWorkConfig(JSON.toJSONString(wocConfigWorkReq.getApiWorkConfig()));
         }
 
+        // 用户更新查询配置
+        if (wocConfigWorkReq.getQueryConfig() != null) {
+            workConfig.setQueryConfig(JSON.toJSONString(wocConfigWorkReq.getQueryConfig()));
+        }
+
         // 用户更新集群配置
         if (wocConfigWorkReq.getClusterConfig() != null) {
 
