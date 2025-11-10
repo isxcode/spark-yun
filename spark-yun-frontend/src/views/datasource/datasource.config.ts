@@ -64,6 +64,10 @@ export const typeList = [
     value: 'POSTGRE_SQL',
   },
   {
+    label: 'Impala',
+    value: 'IMPALA',
+  },
+  {
     label: 'Clickhouse',
     value: 'CLICKHOUSE',
   },

@@ -16,6 +16,10 @@ export const DataSourceType = [
     value: 'POSTGRE_SQL',
   },
   {
+    label: 'Impala',
+    value: 'IMPALA',
+  },
+  {
     label: 'Clickhouse',
     value: 'CLICKHOUSE',
   },

@@ -16,6 +16,10 @@ export const DataSourceType = [
     value: 'POSTGRE_SQL',
   },
   {
+    label: 'Impala',
+    value: 'IMPALA',
+  },
+  {
     label: 'Clickhouse',
     value: 'CLICKHOUSE',
   },
@@ -92,6 +96,10 @@ export const CurrentSourceType = [
   {
     label: 'PostgreSql',
     value: 'POSTGRE_SQL',
+  },
+  {
+    label: 'Impala',
+    value: 'IMPALA',
   },
   {
     label: 'Clickhouse',
