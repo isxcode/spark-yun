@@ -61,6 +61,8 @@ readonly JDBC_DRIVERS=(
     "gbase-connector-java-9.5.0.7-build1-bin.jar"
     "jconn4-16.0.jar"
     "h2-2.2.224.jar"
+    "presto-jdbc-0.295.jar"
+    "trino-jdbc-418.jar"
 )
 
 # 项目依赖列表
