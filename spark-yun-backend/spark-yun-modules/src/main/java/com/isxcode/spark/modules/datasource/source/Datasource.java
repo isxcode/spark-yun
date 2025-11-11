@@ -9,6 +9,7 @@ import com.isxcode.spark.api.datasource.dto.SecurityColumnDto;
 import com.isxcode.spark.api.model.ao.DataModelColumnAo;
 import com.isxcode.spark.api.work.res.GetDataSourceDataRes;
 import com.isxcode.spark.backend.api.base.exceptions.IsxAppException;
+import com.isxcode.spark.backend.api.base.exceptions.WorkRunException;
 import com.isxcode.spark.backend.api.base.properties.IsxAppProperties;
 import com.isxcode.spark.common.utils.aes.AesUtils;
 import com.isxcode.spark.common.utils.path.PathUtils;
@@ -18,6 +19,12 @@ import com.isxcode.spark.modules.datasource.service.DriverShim;
 import com.isxcode.spark.modules.model.entity.DataModelEntity;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.sf.jsqlparser.JSQLParserException;
+import net.sf.jsqlparser.expression.LongValue;
+import net.sf.jsqlparser.parser.CCJSqlParserUtil;
+import net.sf.jsqlparser.statement.select.Limit;
+import net.sf.jsqlparser.statement.select.PlainSelect;
+import net.sf.jsqlparser.statement.select.Select;
 
 import java.io.File;
 import java.math.BigDecimal;
@@ -143,6 +150,49 @@ public abstract class Datasource {
             log.error(e.getMessage(), e);
             throw new IsxAppException(e.getMessage());
         }
+    }
+
+    public boolean isShowQueryStatement(String sql) {
+
+        return sql.trim().toUpperCase().startsWith("SHOW ") || sql.trim().toUpperCase().startsWith("DESC ");
+    }
+
+    public boolean isQueryStatement(String sql) {
+
+        if (isShowQueryStatement(sql)) {
+            return false;
+        }
+
+        try {
+            net.sf.jsqlparser.statement.Statement statement = CCJSqlParserUtil.parse(sql);
+            return !(statement instanceof Select);
+        } catch (JSQLParserException e) {
+
+            log.error(e.getMessage(), e);
+            throw new WorkRunException(e.getMessage());
+        }
+    }
+
+    public String generateLimitSql(String sql, Integer limit) throws JSQLParserException {
+
+        if (isShowQueryStatement(sql)) {
+            return sql;
+        }
+
+        net.sf.jsqlparser.statement.Statement statement = CCJSqlParserUtil.parse(sql);
+        if (!(statement instanceof Select)) {
+            throw new IllegalArgumentException("该Sql不是查询语句");
+        }
+
+        Select select = (Select) statement;
+        PlainSelect plainSelect = select.getPlainSelect();
+        if (plainSelect.getLimit() != null) {
+            return sql;
+        }
+        Limit newLimit = new Limit();
+        newLimit.setRowCount(new LongValue(limit));
+        plainSelect.setLimit(newLimit);
+        return statement.toString();
     }
 
     public GetDataSourceDataRes getTableData(ConnectInfo connectInfo, String getTableDataSql) throws IsxAppException {
@@ -338,4 +388,5 @@ public abstract class Datasource {
         }
         throw new IsxAppException("查询总条数异常");
     }
+
 }

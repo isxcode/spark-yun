@@ -25,7 +25,6 @@ import com.isxcode.spark.modules.work.sql.SqlFunctionService;
 import com.isxcode.spark.modules.workflow.repository.WorkflowInstanceRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -37,20 +36,17 @@ public class ApiExecutor extends WorkExecutor {
 
     private final IsxAppProperties isxAppProperties;
 
-    private final ServerProperties serverProperties;
-
     public ApiExecutor(WorkInstanceRepository workInstanceRepository,
         WorkflowInstanceRepository workflowInstanceRepository, AlarmService alarmService,
         SqlFunctionService sqlFunctionService, WorkEventRepository workEventRepository,
         WorkRunJobFactory workRunJobFactory, VipWorkVersionRepository vipWorkVersionRepository,
         WorkConfigRepository workConfigRepository, WorkRepository workRepository, Locker locker,
-        WorkService workService, IsxAppProperties isxAppProperties, ServerProperties serverProperties) {
+        WorkService workService, IsxAppProperties isxAppProperties) {
 
         super(alarmService, locker, workRepository, workInstanceRepository, workflowInstanceRepository,
             workEventRepository, workRunJobFactory, sqlFunctionService, workConfigRepository, vipWorkVersionRepository,
             workService);
         this.isxAppProperties = isxAppProperties;
-        this.serverProperties = serverProperties;
     }
 
     @Override

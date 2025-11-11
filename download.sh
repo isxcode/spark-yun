@@ -63,6 +63,7 @@ readonly JDBC_DRIVERS=(
     "h2-2.2.224.jar"
     "presto-jdbc-0.295.jar"
     "trino-jdbc-418.jar"
+    "ojdbc6.jar"
 )
 
 # 项目依赖列表

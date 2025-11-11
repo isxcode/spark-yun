@@ -14,6 +14,12 @@ import com.isxcode.spark.modules.datasource.service.DatabaseDriverService;
 import com.isxcode.spark.modules.datasource.source.Datasource;
 import com.isxcode.spark.modules.model.entity.DataModelEntity;
 import lombok.extern.slf4j.Slf4j;
+import net.sf.jsqlparser.JSQLParserException;
+import net.sf.jsqlparser.expression.LongValue;
+import net.sf.jsqlparser.parser.CCJSqlParserUtil;
+import net.sf.jsqlparser.statement.select.PlainSelect;
+import net.sf.jsqlparser.statement.select.Select;
+import net.sf.jsqlparser.statement.select.Top;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.BeanListHandler;
 import org.apache.commons.dbutils.handlers.ScalarHandler;
@@ -33,6 +39,28 @@ public class SybaseService extends Datasource {
     public SybaseService(DatabaseDriverService dataDriverService, IsxAppProperties isxAppProperties,
         AesUtils aesUtils) {
         super(dataDriverService, isxAppProperties, aesUtils);
+    }
+
+    @Override
+    public String generateLimitSql(String sql, Integer limit) throws JSQLParserException {
+
+        if (isShowQueryStatement(sql)) {
+            return sql;
+        }
+
+        net.sf.jsqlparser.statement.Statement statement = CCJSqlParserUtil.parse(sql);
+        if (!(statement instanceof Select)) {
+            throw new IllegalArgumentException("该Sql不是查询语句");
+        }
+
+        Select select = (Select) statement;
+        PlainSelect plainSelect = select.getPlainSelect();
+
+        Top top = new Top();
+        top.setExpression(new LongValue(limit));
+        plainSelect.setTop(top);
+
+        return statement.toString();
     }
 
     @Override

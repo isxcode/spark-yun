@@ -14,6 +14,10 @@ import com.isxcode.spark.modules.datasource.service.DatabaseDriverService;
 import com.isxcode.spark.modules.datasource.source.Datasource;
 import com.isxcode.spark.modules.model.entity.DataModelEntity;
 import lombok.extern.slf4j.Slf4j;
+import net.sf.jsqlparser.JSQLParserException;
+import net.sf.jsqlparser.expression.LongValue;
+import net.sf.jsqlparser.parser.CCJSqlParserUtil;
+import net.sf.jsqlparser.statement.select.*;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.BeanListHandler;
 import org.apache.commons.dbutils.handlers.ScalarHandler;
@@ -33,6 +37,39 @@ public class SqlServerService extends Datasource {
     public SqlServerService(DatabaseDriverService dataDriverService, IsxAppProperties isxAppProperties,
         AesUtils aesUtils) {
         super(dataDriverService, isxAppProperties, aesUtils);
+    }
+
+    @Override
+    public String generateLimitSql(String sql, Integer limit) throws JSQLParserException {
+
+        if (isShowQueryStatement(sql)) {
+            return sql;
+        }
+
+        net.sf.jsqlparser.statement.Statement statement = CCJSqlParserUtil.parse(sql);
+        if (!(statement instanceof Select)) {
+            throw new IllegalArgumentException("该Sql不是查询语句");
+        }
+
+        Select select = (Select) statement;
+        PlainSelect plainSelect = select.getPlainSelect();
+
+        if (plainSelect.getOrderByElements() == null || plainSelect.getOrderByElements().isEmpty()) {
+            plainSelect.addOrderByElements(new OrderByElement().withExpression(new LongValue(1)).withAsc(true));
+        }
+
+        Offset offset = new Offset();
+        offset.setOffset(new LongValue(0));
+        plainSelect.setOffset(offset);
+
+        Fetch fetch = new Fetch();
+        fetch.setExpression(new LongValue(limit));
+        fetch.setFetchParamFirst(false);
+        fetch.addFetchParameter("ROWS");
+        fetch.addFetchParameter("ONLY");
+        plainSelect.setFetch(fetch);
+
+        return statement.toString();
     }
 
     @Override

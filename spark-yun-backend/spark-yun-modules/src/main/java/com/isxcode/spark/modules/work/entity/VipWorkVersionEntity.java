@@ -70,6 +70,8 @@ public class VipWorkVersionEntity {
 
     private String dbMigrateConfig;
 
+    private String queryConfig;
+
     @CreatedDate
     private LocalDateTime createDateTime;
 

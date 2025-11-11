@@ -184,6 +184,13 @@ public class WorkBizService {
             workConfig.setContainerId(addWorkReq.getContainerId());
         }
 
+        // SQL查询条件默认200条
+        if (WorkType.QUERY_JDBC_SQL.equals(addWorkReq.getWorkType())
+            || WorkType.PRQL.equals(addWorkReq.getWorkType())) {
+            workConfig
+                .setQueryConfig(JSON.toJSONString(QueryConfig.builder().enableLimit(false).lineLimit(200).build()));
+        }
+
         // 初始化调度默认值
         workConfigService.initCronConfig(workConfig);
 
@@ -439,6 +446,10 @@ public class WorkBizService {
         // 获取整库迁移配置
         if (!Strings.isEmpty(workConfig.getDbMigrateConfig())) {
             getWorkRes.setDbMigrateConfig(JSON.parseObject(workConfig.getDbMigrateConfig(), DbMigrateConfig.class));
+        }
+
+        if (!Strings.isEmpty(workConfig.getQueryConfig())) {
+            getWorkRes.setQueryConfig(JSON.parseObject(workConfig.getQueryConfig(), QueryConfig.class));
         }
 
         return getWorkRes;

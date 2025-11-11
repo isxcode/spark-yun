@@ -66,6 +66,8 @@ public class WorkConfigEntity {
 
     private String dbMigrateConfig;
 
+    private String queryConfig;
+
     @CreatedDate
     private LocalDateTime createDateTime;
 
