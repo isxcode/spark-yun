@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.Optional;
 
 import static com.isxcode.spark.common.config.CommonConfig.TENANT_ID;
@@ -55,7 +56,7 @@ public class FileBizService {
         // 判断文件是否重复
         Optional<FileEntity> fileByNameOptional = fileRepository.findByFileName(file.getOriginalFilename());
         if (fileByNameOptional.isPresent()) {
-            throw new IsxAppException("文件已重复存在");
+            throw new IsxAppException(fileByNameOptional.get().getFileName() + "文件已重复存在");
         }
 
         // 判断文件夹是否存在，不存在则创建
@@ -85,6 +86,20 @@ public class FileBizService {
             log.debug(e.getMessage(), e);
             throw new IsxAppException("上传资源文件失败");
         }
+    }
+
+    public void uploadDuplicateFile(List<MultipartFile> fileList, String type, String remark) {
+
+        // 先便利一下文件是否重复
+        fileList.forEach(file -> {
+            Optional<FileEntity> fileByNameOptional = fileRepository.findByFileName(file.getOriginalFilename());
+            if (fileByNameOptional.isPresent()) {
+                throw new IsxAppException(fileByNameOptional.get().getFileName() + "文件已重复存在");
+            }
+        });
+
+        // 然后再上传
+        fileList.forEach(file -> uploadFile(file, type, remark));
     }
 
     public void updateFile(String fileId, MultipartFile file, String remark) {

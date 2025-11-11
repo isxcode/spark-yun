@@ -21,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Pattern;
+import java.util.List;
 
 @Tag(name = "资源文件中心模块")
 @RequestMapping(ModuleCode.FILE)
@@ -39,6 +40,17 @@ public class FileController {
         @RequestParam(value = "remark", required = false) @Schema(title = "备注") String remark) {
 
         fileBizService.uploadFile(file, type, remark);
+    }
+
+    @Operation(summary = "资源文件批量上传接口")
+    @PostMapping("/uploadDuplicateFile")
+    @SuccessResponse("上传成功")
+    public void uploadDuplicateFile(@RequestParam("fileList") @Schema(title = "文件") List<MultipartFile> fileList,
+        @RequestParam("type") @Schema(title = "文件类型")
+        @Pattern(regexp = "^(JOB|FUNC|LIB|EXCEL)$", message = "只能是JOB/FUNC/LIB/EXCEL其中一个") String type,
+        @RequestParam(value = "remark", required = false) @Schema(title = "备注") String remark) {
+
+        fileBizService.uploadDuplicateFile(fileList, type, remark);
     }
 
     @Operation(summary = "资源文件更新接口")
