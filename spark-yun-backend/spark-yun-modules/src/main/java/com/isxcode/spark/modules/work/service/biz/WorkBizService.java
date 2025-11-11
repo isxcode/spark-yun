@@ -187,7 +187,8 @@ public class WorkBizService {
         // SQL查询条件默认200条
         if (WorkType.QUERY_JDBC_SQL.equals(addWorkReq.getWorkType())
             || WorkType.PRQL.equals(addWorkReq.getWorkType())) {
-            workConfig.setQueryConfig(JSON.toJSONString(QueryConfig.builder().lineLimit(200).build()));
+            workConfig
+                .setQueryConfig(JSON.toJSONString(QueryConfig.builder().enableLimit(false).lineLimit(200).build()));
         }
 
         // 初始化调度默认值

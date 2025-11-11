@@ -13,4 +13,6 @@ import lombok.NoArgsConstructor;
 public class QueryConfig {
 
     private Integer lineLimit;
+
+    private Boolean enableLimit;
 }

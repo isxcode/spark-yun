@@ -26,7 +26,11 @@
                 </el-select>
               </el-form-item>
 
-              <el-form-item label="查询条数" v-if="['QUERY_JDBC', 'PRQL'].includes(workItemConfig.workType)">
+              <el-form-item label="是否限制条数" v-if="['QUERY_JDBC', 'PRQL'].includes(workItemConfig.workType)">
+                  <el-switch v-model="queryConfig.enableLimit" />
+              </el-form-item>
+
+              <el-form-item label="查询条数" v-if="queryConfig.enableLimit && ['QUERY_JDBC', 'PRQL'].includes(workItemConfig.workType)">
                 <el-input-number
                     v-model="queryConfig.lineLimit"
                     :min="1"
@@ -476,7 +480,8 @@ let clusterConfig = reactive({
 })
 // 查询设置
 let queryConfig = reactive({
-  lineLimit: undefined
+  lineLimit: undefined,
+  enableLimit: false
 })
 // 定时配置
 let cronConfig = reactive({
@@ -620,6 +625,7 @@ function getConfigDetailData() {
     if (['QUERY_JDBC', 'PRQL', 'EXE_JDBC'].includes(workItemConfig.value.workType)) {
       dataSourceForm.datasourceId = res.data.datasourceId
       queryConfig.lineLimit = res.data.queryConfig.lineLimit
+      queryConfig.enableLimit = res.data.queryConfig.enableLimit
     }
     if (res.data.clusterConfig) {
       Object.keys(clusterConfig).forEach((key: string) => {
