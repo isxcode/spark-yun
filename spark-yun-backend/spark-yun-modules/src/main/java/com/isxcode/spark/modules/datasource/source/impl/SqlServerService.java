@@ -35,12 +35,16 @@ import java.util.stream.Collectors;
 public class SqlServerService extends Datasource {
 
     public SqlServerService(DatabaseDriverService dataDriverService, IsxAppProperties isxAppProperties,
-                            AesUtils aesUtils) {
+        AesUtils aesUtils) {
         super(dataDriverService, isxAppProperties, aesUtils);
     }
 
     @Override
     public String generateLimitSql(String sql, Integer limit) throws JSQLParserException {
+
+        if (isShowQueryStatement(sql)) {
+            return sql;
+        }
 
         net.sf.jsqlparser.statement.Statement statement = CCJSqlParserUtil.parse(sql);
         if (!(statement instanceof Select)) {
@@ -51,9 +55,7 @@ public class SqlServerService extends Datasource {
         PlainSelect plainSelect = select.getPlainSelect();
 
         if (plainSelect.getOrderByElements() == null || plainSelect.getOrderByElements().isEmpty()) {
-            plainSelect.addOrderByElements(new OrderByElement()
-                .withExpression(new LongValue(1))
-                .withAsc(true));
+            plainSelect.addOrderByElements(new OrderByElement().withExpression(new LongValue(1)).withAsc(true));
         }
 
         Offset offset = new Offset();
@@ -63,6 +65,8 @@ public class SqlServerService extends Datasource {
         Fetch fetch = new Fetch();
         fetch.setExpression(new LongValue(limit));
         fetch.setFetchParamFirst(false);
+        fetch.addFetchParameter("ROWS");
+        fetch.addFetchParameter("ONLY");
         plainSelect.setFetch(fetch);
 
         return statement.toString();
@@ -84,9 +88,9 @@ public class SqlServerService extends Datasource {
         QueryRunner qr = new QueryRunner();
         try (Connection connection = getConnection(connectInfo)) {
             List<QueryTableDto> result = qr.query(connection, "SELECT '" + connectInfo.getDatasourceId()
-                    + "' as datasourceId, sch.name + '.' + tbl.name AS tableName, ep.value AS tableComment "
-                    + "FROM sys.tables AS tbl JOIN sys.schemas AS sch ON tbl.schema_id = sch.schema_id "
-                    + "LEFT JOIN sys.extended_properties AS ep ON ep.major_id = tbl.object_id AND ep.minor_id = 0 AND ep.name = 'MS_Description'",
+                + "' as datasourceId, sch.name + '.' + tbl.name AS tableName, ep.value AS tableComment "
+                + "FROM sys.tables AS tbl JOIN sys.schemas AS sch ON tbl.schema_id = sch.schema_id "
+                + "LEFT JOIN sys.extended_properties AS ep ON ep.major_id = tbl.object_id AND ep.minor_id = 0 AND ep.name = 'MS_Description'",
                 new BeanListHandler<>(QueryTableDto.class));
             if (Strings.isNotEmpty(connectInfo.getTablePattern())) {
                 return result.stream().filter(e -> e.getTableName().matches(connectInfo.getTablePattern()))
@@ -128,7 +132,7 @@ public class SqlServerService extends Datasource {
 
     @Override
     public String generateDataModelSql(ConnectInfo connectInfo, List<DataModelColumnAo> modelColumnList,
-                                       DataModelEntity dataModelEntity) throws IsxAppException {
+        DataModelEntity dataModelEntity) throws IsxAppException {
         throw new RuntimeException("暂不支持，请联系开发者");
     }
 

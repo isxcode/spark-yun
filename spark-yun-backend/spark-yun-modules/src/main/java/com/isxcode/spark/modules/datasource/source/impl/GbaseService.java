@@ -41,6 +41,10 @@ public class GbaseService extends Datasource {
     @Override
     public String generateLimitSql(String sql, Integer limit) throws JSQLParserException {
 
+        if (isShowQueryStatement(sql)) {
+            return sql;
+        }
+
         net.sf.jsqlparser.statement.Statement statement = CCJSqlParserUtil.parse(sql);
         if (!(statement instanceof Select)) {
             throw new IllegalArgumentException("该Sql不是查询语句");
@@ -98,9 +102,9 @@ public class GbaseService extends Datasource {
         QueryRunner qr = new QueryRunner();
         try (Connection connection = getConnection(connectInfo)) {
             return qr.query(connection, "SELECT '" + connectInfo.getDatasourceId() + "' as datasourceId,'"
-                    + connectInfo.getTableName()
-                    + "' as tableName, COLUMN_NAME as columnName,COLUMN_TYPE as columnType,COLUMN_COMMENT as columnComment,false as isPartitionColumn FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = '"
-                    + connectInfo.getDatabase() + "' AND TABLE_NAME = '" + connectInfo.getTableName() + "'",
+                + connectInfo.getTableName()
+                + "' as tableName, COLUMN_NAME as columnName,COLUMN_TYPE as columnType,COLUMN_COMMENT as columnComment,false as isPartitionColumn FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = '"
+                + connectInfo.getDatabase() + "' AND TABLE_NAME = '" + connectInfo.getTableName() + "'",
                 new BeanListHandler<>(QueryColumnDto.class));
         } catch (SQLException e) {
             log.error(e.getMessage(), e);
@@ -110,7 +114,7 @@ public class GbaseService extends Datasource {
 
     @Override
     public String generateDataModelSql(ConnectInfo connectInfo, List<DataModelColumnAo> modelColumnList,
-                                       DataModelEntity dataModelEntity) throws IsxAppException {
+        DataModelEntity dataModelEntity) throws IsxAppException {
         throw new RuntimeException("暂不支持，请联系开发者");
     }
 

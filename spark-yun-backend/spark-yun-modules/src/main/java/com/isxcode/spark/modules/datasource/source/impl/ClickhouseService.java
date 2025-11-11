@@ -12,7 +12,6 @@ import com.isxcode.spark.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.spark.backend.api.base.properties.IsxAppProperties;
 import com.isxcode.spark.common.utils.aes.AesUtils;
 import com.isxcode.spark.modules.datasource.service.DatabaseDriverService;
-import com.isxcode.spark.modules.datasource.service.DatasourceService;
 import com.isxcode.spark.modules.datasource.source.Datasource;
 import com.isxcode.spark.modules.model.entity.DataModelEntity;
 import lombok.extern.slf4j.Slf4j;
@@ -31,12 +30,9 @@ import java.util.List;
 @Slf4j
 public class ClickhouseService extends Datasource {
 
-    private final DatasourceService datasourceService;
-
     public ClickhouseService(DatabaseDriverService dataDriverService, IsxAppProperties isxAppProperties,
-        AesUtils aesUtils, DatasourceService datasourceService) {
+        AesUtils aesUtils) {
         super(dataDriverService, isxAppProperties, aesUtils);
-        this.datasourceService = datasourceService;
     }
 
     @Override

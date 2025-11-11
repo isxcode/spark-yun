@@ -3,7 +3,6 @@ package com.isxcode.spark.modules.datasource.service;
 import com.isxcode.spark.api.datasource.constants.DatasourceType;
 import com.isxcode.spark.api.datasource.dto.KafkaConfig;
 import com.isxcode.spark.api.datasource.dto.SecurityColumnDto;
-import com.isxcode.spark.backend.api.base.exceptions.WorkRunException;
 import com.isxcode.spark.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.spark.modules.datasource.entity.DatabaseDriverEntity;
 import com.isxcode.spark.modules.datasource.entity.DatasourceEntity;
@@ -13,8 +12,6 @@ import com.isxcode.spark.modules.datasource.source.DataSourceFactory;
 import com.isxcode.spark.modules.datasource.source.Datasource;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.calcite.sql.SqlKind;
-import org.apache.calcite.sql.SqlNode;
 import org.apache.calcite.sql.parser.SqlParseException;
 import org.apache.calcite.sql.parser.SqlParser;
 import org.apache.commons.lang3.StringUtils;
@@ -74,29 +71,6 @@ public class DatasourceService {
                 return "select getdate() as nowtime";
             default:
                 return "show databases";
-        }
-    }
-
-    public boolean isQueryStatement(String sql) {
-
-        // 如果最后是; 则删除
-        if (sql.endsWith(";")) {
-            sql = sql.substring(0, sql.length() - 1);
-        }
-
-        SqlParser parser = SqlParser.create(sql);
-        try {
-
-            String sqlUpper = sql.trim().toUpperCase();
-            if (sqlUpper.startsWith("SHOW TABLES") || sqlUpper.startsWith("SHOW DATABASES")) {
-                return true;
-            }
-
-            SqlNode sqlNode = parser.parseQuery();
-            return sqlNode.getKind() == SqlKind.SELECT || sqlNode.getKind() == SqlKind.ORDER_BY;
-        } catch (SqlParseException e) {
-            log.error(e.getMessage(), e);
-            throw new WorkRunException(e.getMessage());
         }
     }
 

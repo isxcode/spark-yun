@@ -36,6 +36,10 @@ public class Db2Service extends Datasource {
     @Override
     public String generateLimitSql(String sql, Integer limit) throws JSQLParserException {
 
+        if (isShowQueryStatement(sql)) {
+            return sql;
+        }
+
         net.sf.jsqlparser.statement.Statement statement = CCJSqlParserUtil.parse(sql);
         if (!(statement instanceof Select)) {
             throw new IllegalArgumentException("该Sql不是查询语句");
@@ -45,13 +49,13 @@ public class Db2Service extends Datasource {
         PlainSelect plainSelect = select.getPlainSelect();
 
         if (plainSelect.getOrderByElements() == null || plainSelect.getOrderByElements().isEmpty()) {
-            plainSelect.addOrderByElements(new OrderByElement()
-                .withExpression(new LongValue(1))
-                .withAsc(true));
+            plainSelect.addOrderByElements(new OrderByElement().withExpression(new LongValue(1)).withAsc(true));
         }
 
         Fetch fetch = new Fetch();
         fetch.setFetchParamFirst(true);
+        fetch.addFetchParameter("ROWS");
+        fetch.addFetchParameter("ONLY");
         fetch.setExpression(new LongValue(limit));
         plainSelect.setFetch(fetch);
 
@@ -80,7 +84,7 @@ public class Db2Service extends Datasource {
 
     @Override
     public String generateDataModelSql(ConnectInfo connectInfo, List<DataModelColumnAo> modelColumnList,
-                                       DataModelEntity dataModelEntity) throws IsxAppException {
+        DataModelEntity dataModelEntity) throws IsxAppException {
         throw new RuntimeException("暂不支持，请联系开发者");
     }
 
