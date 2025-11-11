@@ -73,21 +73,6 @@ public abstract class Datasource {
 
     public abstract void refreshTableInfo(ConnectInfo connectInfo) throws IsxAppException;
 
-    public String generateLimitSql(String sql, Integer limit) throws JSQLParserException {
-
-        net.sf.jsqlparser.statement.Statement statement = CCJSqlParserUtil.parse(sql);
-        if (!(statement instanceof Select)) {
-            throw new IllegalArgumentException("该Sql不是查询语句");
-        }
-
-        Select select = (Select) statement;
-        PlainSelect plainSelect = select.getPlainSelect();
-        Limit newLimit = new Limit();
-        newLimit.setRowCount(new LongValue(limit));
-        plainSelect.setLimit(newLimit);
-        return statement.toString();
-    }
-
     public Connection getConnection(ConnectInfo connectInfo) throws IsxAppException {
 
         // 判断驱动是否已经加载
@@ -164,6 +149,21 @@ public abstract class Datasource {
             log.error(e.getMessage(), e);
             throw new IsxAppException(e.getMessage());
         }
+    }
+
+    public String generateLimitSql(String sql, Integer limit) throws JSQLParserException {
+
+        net.sf.jsqlparser.statement.Statement statement = CCJSqlParserUtil.parse(sql);
+        if (!(statement instanceof Select)) {
+            throw new IllegalArgumentException("该Sql不是查询语句");
+        }
+
+        Select select = (Select) statement;
+        PlainSelect plainSelect = select.getPlainSelect();
+        Limit newLimit = new Limit();
+        newLimit.setRowCount(new LongValue(limit));
+        plainSelect.setLimit(newLimit);
+        return statement.toString();
     }
 
     public GetDataSourceDataRes getTableData(ConnectInfo connectInfo, String getTableDataSql) throws IsxAppException {
