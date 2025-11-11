@@ -17,6 +17,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 
+import java.util.Objects;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -26,33 +28,19 @@ public class FlinkAgentBizService {
 
     public SubmitWorkRes submitWork(SubmitWorkReq submitWorkReq) {
 
-        FlinkAgentService agentService = agentFactory.getAgentService(submitWorkReq.getClusterType());
         try {
+            FlinkAgentService agentService = agentFactory.getAgentService(submitWorkReq.getClusterType());
             return agentService.submitWork(submitWorkReq);
-        } catch (HttpClientErrorException httpClientErrorException) {
-            log.error(httpClientErrorException.getMessage(), httpClientErrorException);
-            if (HttpStatus.BAD_REQUEST.equals(httpClientErrorException.getStatusCode())) {
-                String errStr = httpClientErrorException.getMessage().replace("400 Bad Request: \"{\"errors\":[\"", "");
-                String substring = errStr.substring(0, errStr.length() - 4);
-                throw new IsxAppException(substring);
-            }
-            if (HttpStatus.METHOD_NOT_ALLOWED.equals(httpClientErrorException.getStatusCode())) {
-                String errStr =
-                    httpClientErrorException.getMessage().replace("405 Method Not Allowed: \"{\"errors\":[\"", "");
-                String substring = errStr.substring(0, errStr.length() - 4);
-                throw new IsxAppException(substring);
-            }
-            throw new IsxAppException(httpClientErrorException.getMessage());
         } catch (Exception e) {
             log.error(e.getMessage(), e);
-            throw new IsxAppException(e.getMessage());
+            throw new IsxAppException(translateExceptionMsg(e));
         }
     }
 
     public GetWorkInfoRes getWorkInfo(GetWorkInfoReq getWorkInfoReq) {
 
-        FlinkAgentService agentService = agentFactory.getAgentService(getWorkInfoReq.getClusterType());
         try {
+            FlinkAgentService agentService = agentFactory.getAgentService(getWorkInfoReq.getClusterType());
             return agentService.getWorkInfo(getWorkInfoReq);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
@@ -62,8 +50,8 @@ public class FlinkAgentBizService {
 
     public GetWorkLogRes getWorkLog(GetWorkLogReq getWorkLogReq) {
 
-        FlinkAgentService agentService = agentFactory.getAgentService(getWorkLogReq.getClusterType());
         try {
+            FlinkAgentService agentService = agentFactory.getAgentService(getWorkLogReq.getClusterType());
             return agentService.getWorkLog(getWorkLogReq);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
@@ -73,12 +61,31 @@ public class FlinkAgentBizService {
 
     public StopWorkRes stopWork(StopWorkReq stopWorkReq) {
 
-        FlinkAgentService agentService = agentFactory.getAgentService(stopWorkReq.getClusterType());
         try {
+            FlinkAgentService agentService = agentFactory.getAgentService(stopWorkReq.getClusterType());
             return agentService.stopWork(stopWorkReq);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             throw new IsxAppException(e.getMessage());
         }
+    }
+
+    public static String translateExceptionMsg(Exception e) {
+
+        if (e instanceof HttpClientErrorException) {
+            HttpClientErrorException httpClientErrorException = (HttpClientErrorException) e;
+            if (HttpStatus.BAD_REQUEST.equals(httpClientErrorException.getStatusCode())) {
+                String errStr = Objects.requireNonNull(httpClientErrorException.getMessage())
+                    .replace("400 Bad Request: \"{\"errors\":[\"", "");
+                return errStr.substring(0, errStr.length() - 4);
+            }
+            if (HttpStatus.METHOD_NOT_ALLOWED.equals(httpClientErrorException.getStatusCode())) {
+                String errStr = Objects.requireNonNull(httpClientErrorException.getMessage())
+                    .replace("405 Method Not Allowed: \"{\"errors\":[\"", "");
+                return errStr.substring(0, errStr.length() - 4);
+            }
+        }
+
+        return e.getMessage();
     }
 }

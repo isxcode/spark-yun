@@ -4,9 +4,8 @@ import com.alibaba.fastjson2.JSON;
 import com.isxcode.spark.agent.run.spark.SparkAgentService;
 import com.isxcode.spark.api.agent.constants.AgentType;
 import com.isxcode.spark.api.agent.req.spark.SubmitWorkReq;
-import com.isxcode.spark.api.instance.constants.InstanceStatus;
+import com.isxcode.spark.api.agent.res.spark.GetWorkInfoRes;
 import com.isxcode.spark.api.work.constants.WorkType;
-import com.isxcode.spark.backend.api.base.exceptions.IsxAppException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
@@ -28,7 +27,9 @@ import org.springframework.stereotype.Service;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.Base64;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -42,7 +43,7 @@ public class SparkStandaloneAgentService implements SparkAgentService {
     }
 
     @Override
-    public String getMaster(String sparkHomePath) {
+    public String getMaster(String sparkHomePath) throws Exception {
 
         String sparkHome = !Strings.isEmpty(sparkHomePath) ? sparkHomePath : System.getenv("SPARK_HOME");
         String defaultSparkConfig = sparkHome + "/conf/spark-defaults.conf";
@@ -54,14 +55,14 @@ public class SparkStandaloneAgentService implements SparkAgentService {
                     return line.split("\\s+")[1];
                 }
             }
-            throw new IsxAppException("没有配置master url");
+            throw new Exception("没有配置master url");
         } catch (IOException e) {
             log.error(e.getMessage(), e);
-            throw new IsxAppException("无法获取master url");
+            throw new Exception("无法获取master url");
         }
     }
 
-    public String getMasterWebUrl(String sparkHomePath) {
+    public String getMasterWebUrl(String sparkHomePath) throws Exception {
 
         String sparkHome = !Strings.isEmpty(sparkHomePath) ? sparkHomePath : System.getenv("SPARK_HOME");
         String defaultSparkConfig = sparkHome + "/conf/spark-defaults.conf";
@@ -73,15 +74,15 @@ public class SparkStandaloneAgentService implements SparkAgentService {
                     return line.split("\\s+")[1];
                 }
             }
-            throw new IsxAppException("没有配置master web url");
+            throw new Exception("没有配置master web url");
         } catch (IOException e) {
             log.error(e.getMessage(), e);
-            throw new IsxAppException("无法获取master web url");
+            throw new Exception("无法获取master web url");
         }
     }
 
     @Override
-    public SparkLauncher getSparkLauncher(SubmitWorkReq submitWorkReq) {
+    public SparkLauncher getSparkLauncher(SubmitWorkReq submitWorkReq) throws Exception {
 
         SparkLauncher sparkLauncher =
             new SparkLauncher().setVerbose(false).setMainClass(submitWorkReq.getSparkSubmit().getMainClass())
@@ -140,7 +141,7 @@ public class SparkStandaloneAgentService implements SparkAgentService {
                         }
                     } catch (MalformedURLException e) {
                         log.error(e.getMessage(), e);
-                        throw new IsxAppException("50010", "添加lib中文件异常", e.getMessage());
+                        throw new Exception("添加lib中文件异常");
                     }
                 }
             }
@@ -194,69 +195,26 @@ public class SparkStandaloneAgentService implements SparkAgentService {
         try {
             int exitCode = launch.waitFor();
             if (exitCode == 1) {
-                throw new IsxAppException(errLog + "\n" + inputLog);
+                throw new Exception(errLog + "\n" + inputLog);
             }
         } catch (InterruptedException e) {
             log.error(e.getMessage(), e);
-            throw new IsxAppException(e.getMessage());
+            throw new Exception(e.getMessage());
         } finally {
             launch.destroy();
         }
 
-        throw new IsxAppException("无法获取submissionId \n" + errLog);
+        throw new Exception("无法获取submissionId \n" + errLog);
     }
 
     @Override
-    public Map<String, String> submitWorkForPySpark(SparkLauncher sparkLauncher) throws Exception {
-
-        Map<String, String> result = new HashMap<>();
-
-        Process launch = sparkLauncher.launch();
-        InputStream errorStream = launch.getErrorStream();
-        InputStream inputStream = launch.getInputStream();
-        BufferedReader errorReader = new BufferedReader(new InputStreamReader(errorStream, StandardCharsets.UTF_8));
-        BufferedReader inputReader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
-
-        StringBuilder errLog = new StringBuilder();
-        StringBuilder inputLog = new StringBuilder();
-        String line;
-        while ((line = errorReader.readLine()) != null) {
-            errLog.append(line).append("\n");
-        }
-
-        while ((line = inputReader.readLine()) != null) {
-            inputLog.append(line).append("\n");
-        }
-
-        try {
-
-            result.put("log", errLog.toString());
-            result.put("data", inputLog.toString());
-
-            int exitCode = launch.waitFor();
-            if (exitCode == 1) {
-                result.put("status", InstanceStatus.FAIL);
-            } else {
-                result.put("status", InstanceStatus.SUCCESS);
-            }
-        } catch (InterruptedException e) {
-            log.error(e.getMessage(), e);
-            throw new IsxAppException(e.getMessage());
-        } finally {
-            launch.destroy();
-        }
-
-        return result;
-    }
-
-    @Override
-    public String getWorkStatus(String submissionId, String sparkHomePath) throws Exception {
+    public GetWorkInfoRes getWorkInfo(String submissionId, String sparkHomePath) throws Exception {
 
         Document doc = Jsoup.connect(getMasterWebUrl(sparkHomePath)).get();
 
         Element completedDriversTable = doc.selectFirst(".aggregated-completedDrivers table");
         if (completedDriversTable == null) {
-            throw new IsxAppException("检测不到应用信息");
+            throw new Exception("检测不到应用信息");
         }
         Elements completedDriversRows = completedDriversTable.select("tbody tr");
 
@@ -273,7 +231,7 @@ public class SparkStandaloneAgentService implements SparkAgentService {
             apps.put(row.selectFirst("td:nth-child(1)").text().replace(" (kill)", ""), row.select("td").get(3).text());
         }
 
-        return apps.get(submissionId);
+        return GetWorkInfoRes.builder().appId(submissionId).finalState(apps.get(submissionId)).build();
     }
 
     @Override
@@ -345,37 +303,8 @@ public class SparkStandaloneAgentService implements SparkAgentService {
     }
 
     @Override
-    public String getCustomWorkStdoutLog(String appId, String sparkHomePath) throws Exception {
-
-        Document doc = Jsoup.connect(getMasterWebUrl(sparkHomePath)).get();
-
-        Element completedDriversTable = doc.selectFirst(".aggregated-completedDrivers table");
-        Elements completedDriversRows = completedDriversTable.select("tbody tr");
-
-        Map<String, String> apps = new HashMap<>();
-
-        for (Element row : completedDriversRows) {
-            if (row.select("td:nth-child(3) a").first() != null) {
-                String metaSubmissionId = row.selectFirst("td:nth-child(1)").text().replace("(kill)", "").trim();
-                apps.put(metaSubmissionId, row.select("td:nth-child(3) a").first().attr("href"));
-            }
-        }
-        String workUrl = apps.get(appId);
-
-        doc = Jsoup.connect(workUrl).get();
-        Elements rows = doc.select(".aggregated-finishedDrivers table tbody tr");
-        Map<String, String> driversMap = new HashMap<>();
-        for (Element row : rows) {
-            String driverId = row.select("td:nth-child(1)").text().trim();
-            String stderrUrl = row.select("td:nth-child(7) a[href$=stdout]").attr("href");
-            driversMap.put(driverId, stderrUrl);
-        }
-
-        String errlogUrl = driversMap.get(appId);
-        doc = Jsoup.connect(errlogUrl).get();
-        Element preElement = doc.selectFirst("pre");
-
-        return preElement.text();
+    public String getCustomJarStdoutLog(String appId, String sparkHomePath) throws Exception {
+        return getStdoutLog(appId, sparkHomePath);
     }
 
     @Override
@@ -437,7 +366,7 @@ public class SparkStandaloneAgentService implements SparkAgentService {
             }
         } catch (ParseException e) {
             log.error(e.getMessage(), e);
-            throw new IsxAppException("中止失败");
+            throw new Exception("中止失败");
         }
     }
 }

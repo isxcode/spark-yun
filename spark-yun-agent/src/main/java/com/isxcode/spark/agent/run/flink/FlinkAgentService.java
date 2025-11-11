@@ -12,28 +12,13 @@ import com.isxcode.spark.api.agent.res.flink.SubmitWorkRes;
 
 public interface FlinkAgentService {
 
-    /**
-     * 获取当前代理的类型
-     */
     String getAgentType();
 
-    /**
-     * 提交flink作业
-     */
     SubmitWorkRes submitWork(SubmitWorkReq submitWorkReq) throws Exception;
 
-    /**
-     * 获取作业信息
-     */
     GetWorkInfoRes getWorkInfo(GetWorkInfoReq getWorkInfoReq) throws Exception;
 
-    /**
-     * 获取作业日志
-     */
     GetWorkLogRes getWorkLog(GetWorkLogReq getWorkLogReq) throws Exception;
 
-    /**
-     * 中止作业
-     */
     StopWorkRes stopWork(StopWorkReq stopWorkReq) throws Exception;
 }

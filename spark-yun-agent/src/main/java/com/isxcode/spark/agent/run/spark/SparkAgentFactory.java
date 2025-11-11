@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
-
 @Service
 @RequiredArgsConstructor
 public class SparkAgentFactory {
@@ -16,6 +15,6 @@ public class SparkAgentFactory {
 
         return applicationContext.getBeansOfType(SparkAgentService.class).values().stream()
             .filter(agent -> agent.getAgentType().equals(clusterType)).findFirst()
-            .orElseThrow(() -> new IsxAppException("agent类型不支持"));
+            .orElseThrow(() -> new IsxAppException("集群类型不支持"));
     }
 }

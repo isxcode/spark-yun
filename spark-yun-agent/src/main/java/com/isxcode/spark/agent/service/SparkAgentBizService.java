@@ -17,7 +17,6 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @Service
@@ -28,47 +27,22 @@ public class SparkAgentBizService {
 
     public SubmitWorkRes submitWork(SubmitWorkReq submitWorkReq) {
 
-        SparkAgentService agentService = agentFactory.getAgentService(submitWorkReq.getClusterType());
         try {
+            SparkAgentService agentService = agentFactory.getAgentService(submitWorkReq.getClusterType());
             SparkLauncher sparkLauncher = agentService.getSparkLauncher(submitWorkReq);
             String appId = agentService.submitWork(sparkLauncher);
             return SubmitWorkRes.builder().appId(appId).build();
-        } catch (IsxAppException e) {
-            log.error(e.getMsg(), e);
-            throw new IsxAppException(e.getMsg());
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             throw new IsxAppException(e.getMessage());
         }
     }
 
-    public SubmitWorkRes submitWorkForPySpark(SubmitWorkReq submitWorkReq) {
+    public GetWorkInfoRes getWorkInfo(GetWorkStatusReq getWorkStatusReq) {
 
-        SparkAgentService agentService = agentFactory.getAgentService(submitWorkReq.getClusterType());
         try {
-            SparkLauncher sparkLauncher = agentService.getSparkLauncher(submitWorkReq);
-            Map<String, String> result = agentService.submitWorkForPySpark(sparkLauncher);
-            return SubmitWorkRes.builder().result(result).build();
-        } catch (IsxAppException e) {
-            log.error(e.getMsg(), e);
-            throw new IsxAppException(e.getMsg());
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
-            throw new IsxAppException(e.getMessage());
-        }
-
-    }
-
-    public GetWorkStatusRes getWorkStatus(GetWorkStatusReq getWorkStatusReq) {
-
-        SparkAgentService agentService = agentFactory.getAgentService(getWorkStatusReq.getClusterType());
-        try {
-            String appStatus =
-                agentService.getWorkStatus(getWorkStatusReq.getAppId(), getWorkStatusReq.getSparkHomePath());
-            return GetWorkStatusRes.builder().appId(getWorkStatusReq.getAppId()).appStatus(appStatus).build();
-        } catch (IsxAppException e) {
-            log.error(e.getMsg(), e);
-            throw new IsxAppException(e.getMsg());
+            SparkAgentService agentService = agentFactory.getAgentService(getWorkStatusReq.getClusterType());
+            return agentService.getWorkInfo(getWorkStatusReq.getAppId(), getWorkStatusReq.getSparkHomePath());
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             throw new IsxAppException(e.getMessage());
@@ -77,89 +51,74 @@ public class SparkAgentBizService {
 
     public GetWorkStderrLogRes getWorkStderrLog(GetWorkStderrLogReq getWorkStderrLogReq) {
 
-        SparkAgentService agentService = agentFactory.getAgentService(getWorkStderrLogReq.getClusterType());
         try {
+            SparkAgentService agentService = agentFactory.getAgentService(getWorkStderrLogReq.getClusterType());
             String appLog =
                 agentService.getStderrLog(getWorkStderrLogReq.getAppId(), getWorkStderrLogReq.getSparkHomePath());
             return GetWorkStderrLogRes.builder().log(appLog).build();
-        } catch (IsxAppException e) {
-            log.error(e.getMsg(), e);
-            throw new IsxAppException(e.getMsg());
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             throw new IsxAppException(e.getMessage());
         }
-    }
-
-    public GetWorkStdoutLogRes getAllWorkStdoutLog(GetWorkStdoutLogReq getWorkStdoutLogReq) {
-
-        SparkAgentService agentService = agentFactory.getAgentService(getWorkStdoutLogReq.getClusterType());
-        String appLog;
-        try {
-            appLog = agentService.getStdoutLog(getWorkStdoutLogReq.getAppId(), getWorkStdoutLogReq.getSparkHomePath());
-        } catch (IsxAppException e) {
-            log.error(e.getMsg(), e);
-            throw new IsxAppException(e.getMsg());
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
-            throw new IsxAppException(e.getMessage());
-        }
-        return GetWorkStdoutLogRes.builder().log(appLog).build();
-    }
-
-    public GetWorkStdoutLogRes getCustomWorkStdoutLog(GetWorkStdoutLogReq getWorkStdoutLogReq) {
-
-        SparkAgentService agentService = agentFactory.getAgentService(getWorkStdoutLogReq.getClusterType());
-        String appLog;
-        try {
-            appLog = agentService.getCustomWorkStdoutLog(getWorkStdoutLogReq.getAppId(),
-                getWorkStdoutLogReq.getSparkHomePath());
-        } catch (IsxAppException e) {
-            log.error(e.getMsg(), e);
-            throw new IsxAppException(e.getMsg());
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
-            throw new IsxAppException(e.getMessage());
-        }
-        return GetWorkStdoutLogRes.builder().log(appLog).build();
     }
 
     public GetWorkStdoutLogRes getWorkStdoutLog(GetWorkStdoutLogReq getWorkStdoutLogReq) {
 
-        SparkAgentService agentService = agentFactory.getAgentService(getWorkStdoutLogReq.getClusterType());
-        String appLog;
         try {
-            appLog = agentService.getStdoutLog(getWorkStdoutLogReq.getAppId(), getWorkStdoutLogReq.getSparkHomePath());
-        } catch (IsxAppException e) {
-            log.error(e.getMsg(), e);
-            throw new IsxAppException(e.getMsg());
+            SparkAgentService agentService = agentFactory.getAgentService(getWorkStdoutLogReq.getClusterType());
+            String appLog =
+                agentService.getStdoutLog(getWorkStdoutLogReq.getAppId(), getWorkStdoutLogReq.getSparkHomePath());
+            return GetWorkStdoutLogRes.builder().log(appLog).build();
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            throw new IsxAppException(e.getMessage());
+        }
+    }
+
+    public GetWorkStdoutLogRes getCustomJarWorkStdoutLog(GetWorkStdoutLogReq getWorkStdoutLogReq) {
+
+        try {
+            SparkAgentService agentService = agentFactory.getAgentService(getWorkStdoutLogReq.getClusterType());
+            String appLog = agentService.getCustomJarStdoutLog(getWorkStdoutLogReq.getAppId(),
+                getWorkStdoutLogReq.getSparkHomePath());
+            return GetWorkStdoutLogRes.builder().log(appLog).build();
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             throw new IsxAppException(e.getMessage());
         }
 
-        // 只截取后1行的日志,用于打印
-        appLog = appLog.replace("End of LogType:stdout", "").replace("LogType:stdout-start", "");
-        String[] split = appLog.split("\n");
-        List<String> list = Arrays.asList(split);
-        list = list.subList(list.size() > 1 ? list.size() - 1 : 0, list.size());
-        StringBuilder stringBuilder = new StringBuilder();
-        for (String str : list) {
-            stringBuilder.append(str).append("\n");
+    }
+
+    public GetWorkStdoutLogRes getLastLineWorkStdoutLog(GetWorkStdoutLogReq getWorkStdoutLogReq) {
+
+        try {
+            SparkAgentService agentService = agentFactory.getAgentService(getWorkStdoutLogReq.getClusterType());
+            String appLog =
+                agentService.getStdoutLog(getWorkStdoutLogReq.getAppId(), getWorkStdoutLogReq.getSparkHomePath());
+
+            // 只截取后1行的日志,用于打印
+            appLog = appLog.replace("End of LogType:stdout", "").replace("LogType:stdout-start", "");
+            String[] split = appLog.split("\n");
+            List<String> list = Arrays.asList(split);
+            list = list.subList(list.size() > 1 ? list.size() - 1 : 0, list.size());
+            StringBuilder stringBuilder = new StringBuilder();
+            for (String str : list) {
+                stringBuilder.append(str).append("\n");
+            }
+            return GetWorkStdoutLogRes.builder().log(stringBuilder.toString()).build();
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            throw new IsxAppException(e.getMessage());
         }
-        return GetWorkStdoutLogRes.builder().log(stringBuilder.toString()).build();
     }
 
     public GetWorkDataRes getWorkData(GetWorkDataReq getWorkDataReq) {
 
-        SparkAgentService agentService = agentFactory.getAgentService(getWorkDataReq.getClusterType());
         try {
+            SparkAgentService agentService = agentFactory.getAgentService(getWorkDataReq.getClusterType());
             String workDataStr =
                 agentService.getWorkDataStr(getWorkDataReq.getAppId(), getWorkDataReq.getSparkHomePath());
             return GetWorkDataRes.builder().data(JSON.parseArray(workDataStr, List.class)).build();
-        } catch (IsxAppException e) {
-            log.error(e.getMsg(), e);
-            throw new IsxAppException(e.getMsg());
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             throw new IsxAppException(e.getMessage());
@@ -168,13 +127,10 @@ public class SparkAgentBizService {
 
     public void stopWork(StopWorkReq stopWorkReq) {
 
-        SparkAgentService agentService = agentFactory.getAgentService(stopWorkReq.getClusterType());
         try {
+            SparkAgentService agentService = agentFactory.getAgentService(stopWorkReq.getClusterType());
             agentService.stopWork(stopWorkReq.getAppId(), stopWorkReq.getSparkHomePath(),
                 stopWorkReq.getAgentHomePath());
-        } catch (IsxAppException e) {
-            log.error(e.getMsg(), e);
-            throw new IsxAppException(e.getMsg());
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             throw new IsxAppException(e.getMessage());
@@ -205,10 +161,9 @@ public class SparkAgentBizService {
 
     public ExecuteContainerSqlRes executeContainerSql(ExecuteContainerSqlReq executeContainerSqlReq) {
 
-        ContainerGetDataReq containerGetDataReq =
-            ContainerGetDataReq.builder().sql(executeContainerSqlReq.getSql()).build();
-
         try {
+            ContainerGetDataReq containerGetDataReq =
+                ContainerGetDataReq.builder().sql(executeContainerSqlReq.getSql()).build();
             ResponseEntity<ExecuteContainerSqlRes> forEntity =
                 new RestTemplate().postForEntity("http://127.0.0.1:" + executeContainerSqlReq.getPort() + "/getData",
                     containerGetDataReq, ExecuteContainerSqlRes.class);
@@ -221,16 +176,13 @@ public class SparkAgentBizService {
 
     public DeployContainerRes deployContainer(SubmitWorkReq submitWorkReq) {
 
-        SparkAgentService agentService = agentFactory.getAgentService(submitWorkReq.getClusterType());
         try {
+            SparkAgentService agentService = agentFactory.getAgentService(submitWorkReq.getClusterType());
             int port = findUnusedPort();
             submitWorkReq.getPluginReq().setContainerPort(port);
             SparkLauncher sparkLauncher = agentService.getSparkLauncher(submitWorkReq);
             String appId = agentService.submitWork(sparkLauncher);
             return DeployContainerRes.builder().appId(appId).port(port).build();
-        } catch (IsxAppException e) {
-            log.error(e.getMsg(), e);
-            throw new IsxAppException(e.getMsg());
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             throw new IsxAppException(e.getMessage());
