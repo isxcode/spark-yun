@@ -12,7 +12,7 @@ import com.isxcode.spark.api.cluster.dto.ScpFileEngineNodeDto;
 import com.isxcode.spark.api.datasource.dto.ConnectInfo;
 import com.isxcode.spark.api.instance.constants.InstanceStatus;
 import com.isxcode.spark.api.work.constants.WorkType;
-import com.isxcode.spark.api.work.res.RunWorkRes;
+import com.isxcode.spark.api.work.res.AgentResponse;
 import com.isxcode.spark.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.spark.backend.api.base.pojos.BaseResponse;
 import com.isxcode.spark.backend.api.base.properties.IsxAppProperties;
@@ -367,8 +367,8 @@ public class SparkSqlExecutor extends WorkExecutor {
                 }
 
                 // 获取appId
-                RunWorkRes submitWorkRes =
-                    JSON.parseObject(JSON.toJSONString(baseResponse.getData()), RunWorkRes.class);
+                AgentResponse submitWorkRes =
+                    JSON.parseObject(JSON.toJSONString(baseResponse.getData()), AgentResponse.class);
                 logBuilder.append(endLog("提交作业成功 : " + submitWorkRes.getAppId()));
 
                 // 保存实例
