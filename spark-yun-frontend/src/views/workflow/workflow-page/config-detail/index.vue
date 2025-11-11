@@ -25,8 +25,18 @@
                   />
                 </el-select>
               </el-form-item>
+
+              <el-form-item label="查询条数" v-if="['QUERY_JDBC', 'PRQL'].includes(workItemConfig.workType)">
+                <el-input-number
+                    v-model="queryConfig.lineLimit"
+                    :min="1"
+                    :max="1000"
+                    placeholder="请输入查询条数"
+                    controls-position="right"
+                />
+              </el-form-item>
+
             </el-form>
-            <el-divider />
           </div>
           <template v-else-if="!['SPARK_CONTAINER_SQL', 'CURL'].includes(workItemConfig.workType)">
             <!-- 资源配置 -->
@@ -464,6 +474,10 @@ let clusterConfig = reactive({
   sparkConfigJson: '',
   flinkConfigJson: ''
 })
+// 查询设置
+let queryConfig = reactive({
+  lineLimit: undefined
+})
 // 定时配置
 let cronConfig = reactive({
   setMode: '',       // 模式
@@ -605,6 +619,7 @@ function getConfigDetailData() {
   }).then((res: any) => {
     if (['QUERY_JDBC', 'PRQL', 'EXE_JDBC'].includes(workItemConfig.value.workType)) {
       dataSourceForm.datasourceId = res.data.datasourceId
+      queryConfig.lineLimit = res.data.queryConfig.lineLimit
     }
     if (res.data.clusterConfig) {
       Object.keys(clusterConfig).forEach((key: string) => {
@@ -674,6 +689,7 @@ function okEvent() {
           ...cronConfig,
           cron: cronConfig.setMode === 'SIMPLE' ? cron : cronConfig.cron
         },
+        queryConfig: queryConfig,
         syncRule: syncRule,
         ...fileConfig,
         ...containerConfig,

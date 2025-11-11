@@ -447,6 +447,10 @@ public class WorkBizService {
             getWorkRes.setDbMigrateConfig(JSON.parseObject(workConfig.getDbMigrateConfig(), DbMigrateConfig.class));
         }
 
+        if (!Strings.isEmpty(workConfig.getQueryConfig())) {
+            getWorkRes.setQueryConfig(JSON.parseObject(workConfig.getQueryConfig(), QueryConfig.class));
+        }
+
         return getWorkRes;
     }
 
