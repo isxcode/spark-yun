@@ -14,6 +14,10 @@ import com.isxcode.spark.modules.datasource.service.DatabaseDriverService;
 import com.isxcode.spark.modules.datasource.source.Datasource;
 import com.isxcode.spark.modules.model.entity.DataModelEntity;
 import lombok.extern.slf4j.Slf4j;
+import net.sf.jsqlparser.JSQLParserException;
+import net.sf.jsqlparser.expression.LongValue;
+import net.sf.jsqlparser.parser.CCJSqlParserUtil;
+import net.sf.jsqlparser.statement.select.*;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.BeanListHandler;
 import org.apache.commons.dbutils.handlers.ScalarHandler;
@@ -31,8 +35,33 @@ import java.util.List;
 public class OracleService extends Datasource {
 
     public OracleService(DatabaseDriverService dataDriverService, IsxAppProperties isxAppProperties,
-        AesUtils aesUtils) {
+                         AesUtils aesUtils) {
         super(dataDriverService, isxAppProperties, aesUtils);
+    }
+
+    @Override
+    public String generateLimitSql(String sql, Integer limit) throws JSQLParserException {
+
+        net.sf.jsqlparser.statement.Statement statement = CCJSqlParserUtil.parse(sql);
+        if (!(statement instanceof Select)) {
+            throw new IllegalArgumentException("该Sql不是查询语句");
+        }
+
+        Select select = (Select) statement;
+        PlainSelect plainSelect = select.getPlainSelect();
+
+        if (plainSelect.getOrderByElements() == null || plainSelect.getOrderByElements().isEmpty()) {
+            plainSelect.addOrderByElements(new OrderByElement()
+                .withExpression(new LongValue(1))
+                .withAsc(true));
+        }
+
+        Fetch fetch = new Fetch();
+        fetch.setFetchParamFirst(true);
+        fetch.setExpression(new LongValue(limit));
+        plainSelect.setFetch(fetch);
+
+        return statement.toString();
     }
 
     // TEMPORARILY RESERVED
@@ -82,10 +111,10 @@ public class OracleService extends Datasource {
         QueryRunner qr = new QueryRunner();
         try (Connection connection = getConnection(connectInfo)) {
             return qr.query(connection, "SELECT '" + connectInfo.getDatasourceId()
-                + "' AS datasourceId, 0 AS isPartitionColumn, "
-                + "COL.TABLE_NAME AS tableName, COL.COLUMN_NAME AS columnName, COL.DATA_TYPE AS columnType, COMM.COMMENTS AS columnComment "
-                + "FROM USER_TAB_COLUMNS COL LEFT JOIN USER_COL_COMMENTS COMM ON COL.TABLE_NAME = COMM.TABLE_NAME AND COL.COLUMN_NAME = COMM.COLUMN_NAME "
-                + "WHERE COL.TABLE_NAME = '" + connectInfo.getTableName() + "'",
+                    + "' AS datasourceId, 0 AS isPartitionColumn, "
+                    + "COL.TABLE_NAME AS tableName, COL.COLUMN_NAME AS columnName, COL.DATA_TYPE AS columnType, COMM.COMMENTS AS columnComment "
+                    + "FROM USER_TAB_COLUMNS COL LEFT JOIN USER_COL_COMMENTS COMM ON COL.TABLE_NAME = COMM.TABLE_NAME AND COL.COLUMN_NAME = COMM.COLUMN_NAME "
+                    + "WHERE COL.TABLE_NAME = '" + connectInfo.getTableName() + "'",
                 new BeanListHandler<>(QueryColumnDto.class));
         } catch (SQLException e) {
             log.error(e.getMessage(), e);
@@ -95,7 +124,7 @@ public class OracleService extends Datasource {
 
     @Override
     public String generateDataModelSql(ConnectInfo connectInfo, List<DataModelColumnAo> modelColumnList,
-        DataModelEntity dataModelEntity) throws IsxAppException {
+                                       DataModelEntity dataModelEntity) throws IsxAppException {
         throw new RuntimeException("暂不支持，请联系开发者");
     }
 
