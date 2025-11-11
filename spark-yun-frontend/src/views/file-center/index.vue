@@ -145,7 +145,9 @@ function addData() {
       const formData = new FormData()
       formData.append('type', data.type)
       formData.append('remark', data.remark)
-      formData.append('file', data.fileData)
+      data.fileData.forEach((file: File) => {
+          formData.append('fileList', file)
+      })
       UploadFileData(formData).then((res: any) => {
         ElMessage.success(res.data.msg)
         initData()
