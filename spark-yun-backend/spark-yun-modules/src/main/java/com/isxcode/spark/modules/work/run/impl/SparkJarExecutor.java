@@ -377,7 +377,7 @@ public class SparkJarExecutor extends WorkExecutor {
                 GetWorkStdoutLogReq getWorkStdoutLogReq = GetWorkStdoutLogReq.builder().appId(appId)
                     .clusterType(clusterType).sparkHomePath(agentNode.getSparkHomePath()).build();
                 baseResponse = HttpUtils.doPost(httpUrlUtils.genHttpUrl(agentNode.getHost(), agentNode.getAgentPort(),
-                    SparkAgentUrl.GET_CUSTOM_WORK_STDOUT_LOG_URL), getWorkStdoutLogReq, BaseResponse.class);
+                    SparkAgentUrl.GET_CUSTOM_JAR_WORK_STDOUT_LOG_URL), getWorkStdoutLogReq, BaseResponse.class);
                 if (!String.valueOf(HttpStatus.OK.value()).equals(baseResponse.getCode())) {
                     throw errorLogException("保存数据异常 : " + baseResponse.getErr());
                 }

@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class GetWorkStatusRes {
+public class GetWorkInfoRes {
 
     private String yarnApplicationState;
 
@@ -19,7 +19,9 @@ public class GetWorkStatusRes {
 
     private String trackingUrl;
 
-    private String appStatus;
+    private String finalState;
+
+    private String appState;
 
     private String appId;
 }

@@ -19,14 +19,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-@Tag(name = "至轻云代理模块")
+@Tag(name = "Flink相关代理模块")
 @RestController
 @RequiredArgsConstructor
 public class FlinkAgentController {
 
     private final FlinkAgentBizService flinkAgentBizService;
 
-    @Operation(summary = "提交作业接口")
+    @Operation(summary = "提交作业")
     @PostMapping(FlinkAgentUrl.SUBMIT_WORK_URL)
     @SuccessResponse("提交成功")
     public SubmitWorkRes submitWork(@Value @RequestBody SubmitWorkReq submitWorkReq) {
@@ -34,7 +34,7 @@ public class FlinkAgentController {
         return flinkAgentBizService.submitWork(submitWorkReq);
     }
 
-    @Operation(summary = "获取作业信息接口")
+    @Operation(summary = "获取作业信息")
     @PostMapping(FlinkAgentUrl.GET_WORK_INFO_URL)
     @SuccessResponse("获取成功")
     public GetWorkInfoRes getWorkInfo(@Value @RequestBody GetWorkInfoReq getWorkInfoReq) {
@@ -42,7 +42,7 @@ public class FlinkAgentController {
         return flinkAgentBizService.getWorkInfo(getWorkInfoReq);
     }
 
-    @Operation(summary = "获取日志接口")
+    @Operation(summary = "获取日志")
     @PostMapping(FlinkAgentUrl.GET_WORK_LOG_URL)
     @SuccessResponse("获取成功")
     public GetWorkLogRes getWorkLog(@Value @RequestBody GetWorkLogReq getWorkLogReq) {
@@ -50,7 +50,7 @@ public class FlinkAgentController {
         return flinkAgentBizService.getWorkLog(getWorkLogReq);
     }
 
-    @Operation(summary = "中止作业接口")
+    @Operation(summary = "中止作业")
     @PostMapping(FlinkAgentUrl.STOP_WORK_URL)
     @SuccessResponse("中止成功")
     public StopWorkRes stopWork(@Value @RequestBody StopWorkReq stopWorkReq) {

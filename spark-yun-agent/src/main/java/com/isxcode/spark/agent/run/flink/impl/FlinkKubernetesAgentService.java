@@ -13,7 +13,6 @@ import com.isxcode.spark.api.agent.res.flink.StopWorkRes;
 import com.isxcode.spark.api.agent.res.flink.SubmitWorkRes;
 import com.isxcode.spark.api.work.constants.WorkType;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.flink.client.deployment.ClusterDeploymentException;
 import org.apache.flink.client.deployment.ClusterSpecification;
 import org.apache.flink.client.deployment.application.ApplicationConfiguration;
 import org.apache.flink.client.program.ClusterClientProvider;
@@ -39,6 +38,11 @@ import java.util.regex.Pattern;
 @Slf4j
 @Service
 public class FlinkKubernetesAgentService implements FlinkAgentService {
+
+    @Override
+    public String getAgentType() {
+        return AgentType.K8S;
+    }
 
     public void generatePodTemplate(List<String> volumeMounts, List<String> volumes, String agentHomePath,
         String workInstanceId) throws IOException {
@@ -80,11 +84,6 @@ public class FlinkKubernetesAgentService implements FlinkAgentService {
             Files.copy(inputStream, Paths.get(agentHomePath + File.separator + "pod").resolve(workInstanceId + ".yaml"),
                 StandardCopyOption.REPLACE_EXISTING);
         }
-    }
-
-    @Override
-    public String getAgentType() {
-        return AgentType.K8S;
     }
 
     @Override
@@ -214,8 +213,6 @@ public class FlinkKubernetesAgentService implements FlinkAgentService {
                 clusterDescriptor.deployApplicationCluster(clusterSpecification, applicationConfiguration);
             return SubmitWorkRes.builder().webUrl(clusterClientProvider.getClusterClient().getWebInterfaceURL())
                 .appId(String.valueOf(clusterClientProvider.getClusterClient().getClusterId())).build();
-        } catch (ClusterDeploymentException clusterDeploymentException) {
-            throw new Exception(clusterDeploymentException.getCause().getMessage());
         }
     }
 

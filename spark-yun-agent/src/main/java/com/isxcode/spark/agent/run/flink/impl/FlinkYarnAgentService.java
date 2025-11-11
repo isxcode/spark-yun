@@ -45,7 +45,6 @@ public class FlinkYarnAgentService implements FlinkAgentService {
 
     @Override
     public String getAgentType() {
-
         return AgentType.YARN;
     }
 
