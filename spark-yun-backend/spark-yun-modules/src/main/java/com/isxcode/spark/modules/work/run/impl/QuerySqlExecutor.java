@@ -190,9 +190,11 @@ public class QuerySqlExecutor extends WorkExecutor {
                 }
 
                 // 执行查询sql，给lastSql添加查询条数限制
-                int lineLimit =
-                    workRunContext.getQueryConfig() == null ? 200 : workRunContext.getQueryConfig().getLineLimit();
-                String lastSql = datasource.generateLimitSql(sqls.get(sqls.size() - 1), lineLimit);
+                String lastSql = sqls.get(sqls.size() - 1);
+                if (workRunContext.getQueryConfig() != null && workRunContext.getQueryConfig().getEnableLimit()) {
+                    int lineLimit = workRunContext.getQueryConfig().getLineLimit();
+                    lastSql = datasource.generateLimitSql(sqls.get(sqls.size() - 1), lineLimit);
+                }
 
                 // 打印日志
                 logBuilder.append(startLog("执行开始"));
