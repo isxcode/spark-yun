@@ -30,7 +30,7 @@ public class SparkAgentController {
     }
 
     @Operation(summary = "获取作业状态")
-    @PostMapping(SparkAgentUrl.GET_WORK_STATUS_URL)
+    @PostMapping(SparkAgentUrl.GET_WORK_INFO_URL)
     @SuccessResponse("获取成功")
     public GetWorkInfoRes getWorkStatus(@Valid @RequestBody GetWorkStatusReq getWorkStatusReq) {
 

@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.isxcode.spark.api.agent.constants.AgentType;
 import com.isxcode.spark.api.agent.constants.SparkAgentUrl;
 import com.isxcode.spark.api.agent.req.spark.*;
+import com.isxcode.spark.api.agent.res.spark.GetWorkInfoRes;
 import com.isxcode.spark.api.agent.res.spark.GetWorkStderrLogRes;
 import com.isxcode.spark.api.api.constants.PathConstants;
 import com.isxcode.spark.api.cluster.constants.ClusterNodeStatus;
@@ -403,38 +404,45 @@ public class SparkSqlExecutor extends WorkExecutor {
             // 获取作业状态并保存
             GetWorkStatusReq getWorkStatusReq = GetWorkStatusReq.builder().appId(appId).clusterType(clusterType)
                 .sparkHomePath(agentNode.getSparkHomePath()).build();
-            BaseResponse<?> baseResponse = HttpUtils.doPost(httpUrlUtils.genHttpUrl(agentNode.getHost(),
-                agentNode.getAgentPort(), SparkAgentUrl.GET_WORK_STATUS_URL), getWorkStatusReq, BaseResponse.class);
+            BaseResponse<?> baseResponse = HttpUtils.doPost(
+                httpUrlUtils.genHttpUrl(agentNode.getHost(), agentNode.getAgentPort(), SparkAgentUrl.GET_WORK_INFO_URL),
+                getWorkStatusReq, BaseResponse.class);
             if (!String.valueOf(HttpStatus.OK.value()).equals(baseResponse.getCode())) {
                 throw errorLogException("获取作业状态异常 : " + baseResponse.getMsg());
             }
 
             // 解析作业运行状态
-            RunWorkRes workStatusRes = JSON.parseObject(JSON.toJSONString(baseResponse.getData()), RunWorkRes.class);
+            GetWorkInfoRes getWorkInfoRes =
+                JSON.parseObject(JSON.toJSONString(baseResponse.getData()), GetWorkInfoRes.class);
+
+            // 如果是yarn的话，FinalStatus是undefine的话，使用status状态
+            if (AgentType.YARN.equals(clusterType) && "UNDEFINED".equalsIgnoreCase(getWorkInfoRes.getFinalState())) {
+                getWorkInfoRes.setFinalState(getWorkInfoRes.getAppState());
+            }
 
             // 只有作业状态发生了变化，才能更新状态
-            if (!preStatus.equals(workStatusRes.getAppStatus())) {
-                logBuilder.append(statusLog("运行状态: " + workStatusRes.getAppStatus()));
+            if (!preStatus.equals(getWorkInfoRes.getFinalState())) {
+                logBuilder.append(statusLog("作业当前状态: " + getWorkInfoRes.getFinalState()));
 
                 // 立即保存实例
-                workInstance.setSparkStarRes(JSON.toJSONString(workStatusRes));
+                workInstance.setSparkStarRes(JSON.toJSONString(getWorkInfoRes));
                 updateInstance(workInstance, logBuilder);
 
                 // 立即保存上下文
-                workRunContext.setPreStatus(workStatusRes.getAppStatus());
+                workRunContext.setPreStatus(getWorkInfoRes.getFinalState());
                 updateWorkEvent(workEvent, workRunContext);
             }
 
             // 如果是运行中状态，直接返回
             List<String> runningStatus =
                 Arrays.asList("RUNNING", "UNDEFINED", "SUBMITTED", "CONTAINERCREATING", "PENDING");
-            if (runningStatus.contains(workStatusRes.getAppStatus().toUpperCase())) {
+            if (runningStatus.contains(getWorkInfoRes.getFinalState().toUpperCase())) {
                 return InstanceStatus.RUNNING;
             }
 
             // 如果是中止，直接退出
             List<String> abortStatus = Arrays.asList("KILLED", "TERMINATING");
-            if (abortStatus.contains(workStatusRes.getAppStatus().toUpperCase())) {
+            if (abortStatus.contains(getWorkInfoRes.getFinalState().toUpperCase())) {
                 throw errorLogException("作业运行中止");
             }
 

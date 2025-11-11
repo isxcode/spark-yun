@@ -313,7 +313,7 @@ public class FlinkJarExecutor extends WorkExecutor {
             GetWorkInfoRes getJobInfoRes =
                 JSON.parseObject(JSON.toJSONString(baseResponse.getData()), GetWorkInfoRes.class);
 
-            // 如果是yarn的话，FinishStatus是undefine的话，使用status状态
+            // 如果是yarn的话，FinalStatus是undefine的话，使用status状态
             if (AgentType.YARN.equals(clusterType) && "UNDEFINED".equalsIgnoreCase(getJobInfoRes.getFinalStatus())
                 && !getJobInfoRes.getStatus().isEmpty()) {
                 getJobInfoRes.setFinalStatus(getJobInfoRes.getStatus());

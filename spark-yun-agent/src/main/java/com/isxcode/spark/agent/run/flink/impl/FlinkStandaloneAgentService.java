@@ -177,7 +177,8 @@ public class FlinkStandaloneAgentService implements FlinkAgentService {
             CompletableFuture<JobStatus> jobStatus =
                 clusterClient.getJobStatus(JobID.fromHexString(getWorkInfoReq.getAppId()));
 
-            return GetWorkInfoRes.builder().appId(getWorkInfoReq.getAppId()).status(jobStatus.get().name()).build();
+            return GetWorkInfoRes.builder().appId(getWorkInfoReq.getAppId()).finalStatus(jobStatus.get().name())
+                .build();
         }
     }
 
