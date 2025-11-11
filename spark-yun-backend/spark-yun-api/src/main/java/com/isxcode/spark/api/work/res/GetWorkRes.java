@@ -40,6 +40,9 @@ public class GetWorkRes {
     @Schema(title = "数据同步规则")
     private SyncRule syncRule;
 
+    @Schema(title = "查询配置")
+    private QueryConfig queryConfig;
+
     private String workType;
 
     private String workflowId;
