@@ -1,10 +1,10 @@
 -- 添加query作业配置
 alter table SY_WORK_CONFIG
-    add QUERY_CONFIG longtext;
+    add QUERY_CONFIG text comment '查询配置';
 
 -- 实例表中添加QUERY_CONFIG字段
 alter table SY_WORK_VERSION
-    add QUERY_CONFIG longtext;
+    add QUERY_CONFIG text comment '查询配置';
 
 -- 添加oracle 11c驱动
 INSERT INTO SY_DATABASE_DRIVER (id, name, db_type, file_name, driver_type, create_by, create_date_time,
