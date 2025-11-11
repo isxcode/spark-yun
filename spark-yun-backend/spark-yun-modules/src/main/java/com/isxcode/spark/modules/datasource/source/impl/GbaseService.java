@@ -14,6 +14,10 @@ import com.isxcode.spark.modules.datasource.service.DatabaseDriverService;
 import com.isxcode.spark.modules.datasource.source.Datasource;
 import com.isxcode.spark.modules.model.entity.DataModelEntity;
 import lombok.extern.slf4j.Slf4j;
+import net.sf.jsqlparser.JSQLParserException;
+import net.sf.jsqlparser.expression.LongValue;
+import net.sf.jsqlparser.parser.CCJSqlParserUtil;
+import net.sf.jsqlparser.statement.select.*;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.BeanListHandler;
 import org.apache.commons.dbutils.handlers.ScalarHandler;
@@ -32,6 +36,24 @@ public class GbaseService extends Datasource {
 
     public GbaseService(DatabaseDriverService dataDriverService, IsxAppProperties isxAppProperties, AesUtils aesUtils) {
         super(dataDriverService, isxAppProperties, aesUtils);
+    }
+
+    @Override
+    public String generateLimitSql(String sql, Integer limit) throws JSQLParserException {
+
+        net.sf.jsqlparser.statement.Statement statement = CCJSqlParserUtil.parse(sql);
+        if (!(statement instanceof Select)) {
+            throw new IllegalArgumentException("该Sql不是查询语句");
+        }
+
+        Select select = (Select) statement;
+        PlainSelect plainSelect = select.getPlainSelect();
+
+        Top top = new Top();
+        top.setExpression(new LongValue(limit));
+        plainSelect.setTop(top);
+
+        return statement.toString();
     }
 
     @Override
@@ -76,9 +98,9 @@ public class GbaseService extends Datasource {
         QueryRunner qr = new QueryRunner();
         try (Connection connection = getConnection(connectInfo)) {
             return qr.query(connection, "SELECT '" + connectInfo.getDatasourceId() + "' as datasourceId,'"
-                + connectInfo.getTableName()
-                + "' as tableName, COLUMN_NAME as columnName,COLUMN_TYPE as columnType,COLUMN_COMMENT as columnComment,false as isPartitionColumn FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = '"
-                + connectInfo.getDatabase() + "' AND TABLE_NAME = '" + connectInfo.getTableName() + "'",
+                    + connectInfo.getTableName()
+                    + "' as tableName, COLUMN_NAME as columnName,COLUMN_TYPE as columnType,COLUMN_COMMENT as columnComment,false as isPartitionColumn FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = '"
+                    + connectInfo.getDatabase() + "' AND TABLE_NAME = '" + connectInfo.getTableName() + "'",
                 new BeanListHandler<>(QueryColumnDto.class));
         } catch (SQLException e) {
             log.error(e.getMessage(), e);
@@ -88,7 +110,7 @@ public class GbaseService extends Datasource {
 
     @Override
     public String generateDataModelSql(ConnectInfo connectInfo, List<DataModelColumnAo> modelColumnList,
-        DataModelEntity dataModelEntity) throws IsxAppException {
+                                       DataModelEntity dataModelEntity) throws IsxAppException {
         throw new RuntimeException("暂不支持，请联系开发者");
     }
 
