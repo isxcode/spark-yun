@@ -22,8 +22,8 @@ export function GetFileCenterList(params: SerchParams): Promise<any> {
 export function UploadFileData(params: any): Promise<any> {
   return http.uploadFile({
     method: 'post',
-    timeout: 1000 * 60 * 30 , // 30分钟
-    url: '/file/uploadFile',
+    timeout: 1000 * 60 * 60 , // 60分钟
+    url: '/file/uploadDuplicateFile',
     params
   })
 }
