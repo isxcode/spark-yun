@@ -26,7 +26,7 @@
                 </el-select>
               </el-form-item>
 
-              <el-form-item label="是否限制条数" v-if="['QUERY_JDBC', 'PRQL'].includes(workItemConfig.workType)">
+              <el-form-item label="限制条数" v-if="['QUERY_JDBC', 'PRQL'].includes(workItemConfig.workType)">
                   <el-switch v-model="queryConfig.enableLimit" />
               </el-form-item>
 
@@ -699,10 +699,10 @@ function okEvent() {
           cron: cronConfig.setMode === 'SIMPLE' ? cron : cronConfig.cron
         },
         syncRule: syncRule,
+        queryConfig: queryConfig,
         ...fileConfig,
         ...containerConfig,
-        ...messageConfig,
-        ...queryConfig
+        ...messageConfig
       }).then((res: any) => {
         if (callback.value && callback.value instanceof Function) {
           callback.value()
