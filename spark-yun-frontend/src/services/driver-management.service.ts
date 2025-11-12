@@ -38,6 +38,7 @@ export function DeleteDefaultDriverData(params: any): Promise<any> {
 export function AddDefaultDriverData(params: any): Promise<any> {
     return http.uploadFile({
       method: 'post',
+      timeout: 1000 * 60 * 10 , // 10分钟
       url: '/datasource/uploadDatabaseDriver',
       params: params
     })
