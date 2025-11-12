@@ -4,6 +4,8 @@ import com.isxcode.spark.api.agent.req.spark.SubmitWorkReq;
 import com.isxcode.spark.api.agent.res.spark.GetWorkInfoRes;
 import org.apache.spark.launcher.SparkLauncher;
 
+import java.util.Map;
+
 public interface SparkAgentService {
 
     String getAgentType();
@@ -13,6 +15,8 @@ public interface SparkAgentService {
     SparkLauncher getSparkLauncher(SubmitWorkReq submitWorkReq) throws Exception;
 
     String submitWork(SparkLauncher sparkLauncher) throws Exception;
+
+    Map<String, String> submitWorkForPySpark(SparkLauncher sparkLauncher) throws Exception;
 
     GetWorkInfoRes getWorkInfo(String appId, String sparkHomePath) throws Exception;
 

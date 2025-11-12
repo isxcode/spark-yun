@@ -4,6 +4,7 @@ import com.isxcode.spark.agent.service.SparkAgentBizService;
 import com.isxcode.spark.api.agent.constants.SparkAgentUrl;
 import com.isxcode.spark.api.agent.req.spark.*;
 import com.isxcode.spark.api.agent.res.spark.*;
+import com.isxcode.spark.api.work.res.AgentLinkResponse;
 import com.isxcode.spark.common.annotations.successResponse.SuccessResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -27,6 +28,14 @@ public class SparkAgentController {
     public SubmitWorkRes submitWork(@Valid @RequestBody SubmitWorkReq submitWorkReq) {
 
         return sparkYunAgentBizService.submitWork(submitWorkReq);
+    }
+
+    @Operation(summary = "提交作业接口")
+    @PostMapping(SparkAgentUrl.SUBMIT_WORK_FOR_PY_SPARK)
+    @SuccessResponse("提交成功")
+    public SubmitWorkRes submitWorkForPySpark(@Valid @RequestBody SubmitWorkReq submitWorkReq) {
+
+        return sparkYunAgentBizService.submitWorkForPySpark(submitWorkReq);
     }
 
     @Operation(summary = "获取作业状态")
@@ -80,15 +89,19 @@ public class SparkAgentController {
     @Operation(summary = "中止作业")
     @PostMapping(SparkAgentUrl.STOP_WORK_URL)
     @SuccessResponse("中止成功")
-    public void stopWork(@Valid @RequestBody StopWorkReq stopWorkReq) {
+    public AgentLinkResponse stopWork(@Valid @RequestBody StopWorkReq stopWorkReq) {
 
         sparkYunAgentBizService.stopWork(stopWorkReq);
+        return AgentLinkResponse.builder().msg("中止成功").build();
     }
 
     @Operation(summary = "代理服务心跳检测")
     @PostMapping(SparkAgentUrl.HEART_CHECK_URL)
     @SuccessResponse("正常心跳")
-    public void heartCheck() {}
+    public AgentLinkResponse heartCheck() {
+
+        return AgentLinkResponse.builder().msg("心跳正常").build();
+    }
 
     @Operation(summary = "计算容器心跳检测")
     @PostMapping(SparkAgentUrl.CONTAINER_CHECK_URL)

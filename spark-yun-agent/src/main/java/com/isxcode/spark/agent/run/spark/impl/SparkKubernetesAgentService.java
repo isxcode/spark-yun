@@ -494,4 +494,9 @@ public class SparkKubernetesAgentService implements SparkAgentService {
             throw new Exception(e.getMessage());
         }
     }
+
+    @Override
+    public Map<String, String> submitWorkForPySpark(SparkLauncher sparkLauncher) throws Exception {
+        return Collections.emptyMap();
+    }
 }
