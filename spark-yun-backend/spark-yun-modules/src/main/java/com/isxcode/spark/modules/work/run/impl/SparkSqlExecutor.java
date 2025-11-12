@@ -4,21 +4,16 @@ import com.alibaba.fastjson.JSON;
 import com.isxcode.spark.api.agent.constants.AgentType;
 import com.isxcode.spark.api.agent.constants.SparkAgentUrl;
 import com.isxcode.spark.api.agent.req.spark.*;
-import com.isxcode.spark.api.agent.res.spark.GetWorkStderrLogRes;
 import com.isxcode.spark.api.api.constants.PathConstants;
 import com.isxcode.spark.api.cluster.constants.ClusterNodeStatus;
 import com.isxcode.spark.api.cluster.dto.ScpFileEngineNodeDto;
 import com.isxcode.spark.api.datasource.dto.ConnectInfo;
 import com.isxcode.spark.api.instance.constants.InstanceStatus;
 import com.isxcode.spark.api.work.constants.WorkType;
-import com.isxcode.spark.api.work.res.RunWorkRes;
-import com.isxcode.spark.backend.api.base.exceptions.IsxAppException;
-import com.isxcode.spark.backend.api.base.pojos.BaseResponse;
+import com.isxcode.spark.api.work.res.AgentLinkResponse;
 import com.isxcode.spark.backend.api.base.properties.IsxAppProperties;
 import com.isxcode.spark.common.locker.Locker;
 import com.isxcode.spark.common.utils.aes.AesUtils;
-import com.isxcode.spark.common.utils.http.HttpUrlUtils;
-import com.isxcode.spark.common.utils.http.HttpUtils;
 import com.isxcode.spark.common.utils.path.PathUtils;
 import com.isxcode.spark.modules.alarm.service.AlarmService;
 import com.isxcode.spark.modules.cluster.entity.ClusterEntity;
@@ -41,6 +36,7 @@ import com.isxcode.spark.modules.secret.repository.SecretKeyRepository;
 import com.isxcode.spark.modules.work.entity.WorkEventEntity;
 import com.isxcode.spark.modules.work.entity.WorkInstanceEntity;
 import com.isxcode.spark.modules.work.repository.*;
+import com.isxcode.spark.modules.work.run.AgentLinkUtils;
 import com.isxcode.spark.modules.work.run.WorkExecutor;
 import com.isxcode.spark.modules.work.run.WorkRunContext;
 import com.isxcode.spark.modules.work.run.WorkRunJobFactory;
@@ -54,11 +50,7 @@ import com.jcraft.jsch.SftpException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.util.Strings;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpServerErrorException;
-import org.springframework.web.client.ResourceAccessException;
-import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
 import java.io.IOException;
@@ -73,8 +65,6 @@ public class SparkSqlExecutor extends WorkExecutor {
     private final ClusterRepository clusterRepository;
 
     private final ClusterNodeRepository clusterNodeRepository;
-
-    private final HttpUrlUtils httpUrlUtils;
 
     private final FuncRepository funcRepository;
 
@@ -102,6 +92,8 @@ public class SparkSqlExecutor extends WorkExecutor {
 
     private final SecretKeyRepository secretKeyRepository;
 
+    private final AgentLinkUtils agentLinkUtils;
+
     public SparkSqlExecutor(WorkInstanceRepository workInstanceRepository,
         WorkflowInstanceRepository workflowInstanceRepository, SqlCommentService sqlCommentService,
         SqlValueService sqlValueService, SqlFunctionService sqlFunctionService, AlarmService alarmService,
@@ -109,16 +101,15 @@ public class SparkSqlExecutor extends WorkExecutor {
         WorkEventRepository workEventRepository, Locker locker, WorkRepository workRepository,
         WorkRunJobFactory workRunJobFactory, WorkConfigRepository workConfigRepository,
         VipWorkVersionRepository vipWorkVersionRepository, ClusterNodeMapper clusterNodeMapper, AesUtils aesUtils,
-        ClusterNodeRepository clusterNodeRepository, ClusterRepository clusterRepository, HttpUrlUtils httpUrlUtils,
-        FuncRepository funcRepository, FuncMapper funcMapper, IsxAppProperties isxAppProperties,
-        FileRepository fileRepository, DatasourceService datasourceService, WorkService workService) {
+        ClusterNodeRepository clusterNodeRepository, ClusterRepository clusterRepository, FuncRepository funcRepository,
+        FuncMapper funcMapper, IsxAppProperties isxAppProperties, FileRepository fileRepository,
+        DatasourceService datasourceService, WorkService workService, AgentLinkUtils agentLinkUtils) {
 
         super(alarmService, locker, workRepository, workInstanceRepository, workflowInstanceRepository,
             workEventRepository, workRunJobFactory, sqlFunctionService, workConfigRepository, vipWorkVersionRepository,
             workService);
         this.clusterRepository = clusterRepository;
         this.clusterNodeRepository = clusterNodeRepository;
-        this.httpUrlUtils = httpUrlUtils;
         this.funcRepository = funcRepository;
         this.funcMapper = funcMapper;
         this.clusterNodeMapper = clusterNodeMapper;
@@ -132,6 +123,7 @@ public class SparkSqlExecutor extends WorkExecutor {
         this.datasourceMapper = datasourceMapper;
         this.dataSourceFactory = dataSourceFactory;
         this.secretKeyRepository = secretKeyRepository;
+        this.agentLinkUtils = agentLinkUtils;
     }
 
     @Override
@@ -356,35 +348,18 @@ public class SparkSqlExecutor extends WorkExecutor {
             SubmitWorkReq submitWorkReq = workRunContext.getSubmitWorkReq();
             ClusterNodeEntity agentNode = workRunContext.getAgentNode();
 
-            try {
-                // 提交作业
-                BaseResponse<?> baseResponse = HttpUtils.doPost(httpUrlUtils.genHttpUrl(agentNode.getHost(),
-                    agentNode.getAgentPort(), SparkAgentUrl.SUBMIT_WORK_URL), submitWorkReq, BaseResponse.class);
-                if (!String.valueOf(HttpStatus.OK.value()).equals(baseResponse.getCode())
-                    || baseResponse.getData() == null) {
-                    throw errorLogException("提交作业异常 : " + baseResponse.getMsg());
-                }
+            // 请求代理
+            AgentLinkResponse agentLinkResponse =
+                agentLinkUtils.getAgentLinkResponse(agentNode, SparkAgentUrl.SUBMIT_WORK_URL, submitWorkReq);
 
-                // 获取appId
-                RunWorkRes submitWorkRes =
-                    JSON.parseObject(JSON.toJSONString(baseResponse.getData()), RunWorkRes.class);
-                logBuilder.append(endLog("提交作业成功 : " + submitWorkRes.getAppId()));
+            // 获取appId
+            logBuilder.append(endLog("提交作业成功 : " + agentLinkResponse.getAppId()));
 
-                // 保存实例
-                workInstance.setSparkStarRes(JSON.toJSONString(submitWorkRes));
+            // 保存实例
+            workInstance.setSparkStarRes(JSON.toJSONString(agentLinkResponse));
 
-                // 保存上下文
-                workRunContext.setAppId(submitWorkRes.getAppId());
-            } catch (ResourceAccessException e) {
-                log.error(e.getMessage(), e);
-                throw errorLogException("提交作业异常 : " + e.getMessage());
-            } catch (HttpServerErrorException e1) {
-                log.error(e1.getMessage(), e1);
-                if (HttpStatus.BAD_GATEWAY.value() == e1.getRawStatusCode()) {
-                    throw errorLogException("提交作业异常 : 无法访问节点服务器,请检查服务器防火墙或者计算集群");
-                }
-                throw errorLogException("提交作业异常 : " + e1.getMessage());
-            }
+            // 保存上下文
+            workRunContext.setAppId(agentLinkResponse.getAppId());
 
             // 保存日志
             logBuilder.append(startLog("监听作业状态"));
@@ -403,38 +378,39 @@ public class SparkSqlExecutor extends WorkExecutor {
             // 获取作业状态并保存
             GetWorkStatusReq getWorkStatusReq = GetWorkStatusReq.builder().appId(appId).clusterType(clusterType)
                 .sparkHomePath(agentNode.getSparkHomePath()).build();
-            BaseResponse<?> baseResponse = HttpUtils.doPost(httpUrlUtils.genHttpUrl(agentNode.getHost(),
-                agentNode.getAgentPort(), SparkAgentUrl.GET_WORK_STATUS_URL), getWorkStatusReq, BaseResponse.class);
-            if (!String.valueOf(HttpStatus.OK.value()).equals(baseResponse.getCode())) {
-                throw errorLogException("获取作业状态异常 : " + baseResponse.getMsg());
+
+            // 请求代理
+            AgentLinkResponse agentLinkResponse =
+                agentLinkUtils.getAgentLinkResponse(agentNode, SparkAgentUrl.GET_WORK_INFO_URL, getWorkStatusReq);
+
+            // 如果是yarn的话，FinalStatus是undefine的话，使用status状态
+            if (AgentType.YARN.equals(clusterType) && "UNDEFINED".equalsIgnoreCase(agentLinkResponse.getFinalState())) {
+                agentLinkResponse.setFinalState(agentLinkResponse.getAppState());
             }
 
-            // 解析作业运行状态
-            RunWorkRes workStatusRes = JSON.parseObject(JSON.toJSONString(baseResponse.getData()), RunWorkRes.class);
-
             // 只有作业状态发生了变化，才能更新状态
-            if (!preStatus.equals(workStatusRes.getAppStatus())) {
-                logBuilder.append(statusLog("运行状态: " + workStatusRes.getAppStatus()));
+            if (!preStatus.equals(agentLinkResponse.getFinalState())) {
+                logBuilder.append(statusLog("作业当前状态: " + agentLinkResponse.getFinalState()));
 
                 // 立即保存实例
-                workInstance.setSparkStarRes(JSON.toJSONString(workStatusRes));
+                workInstance.setSparkStarRes(JSON.toJSONString(agentLinkResponse));
                 updateInstance(workInstance, logBuilder);
 
                 // 立即保存上下文
-                workRunContext.setPreStatus(workStatusRes.getAppStatus());
+                workRunContext.setPreStatus(agentLinkResponse.getFinalState());
                 updateWorkEvent(workEvent, workRunContext);
             }
 
             // 如果是运行中状态，直接返回
             List<String> runningStatus =
                 Arrays.asList("RUNNING", "UNDEFINED", "SUBMITTED", "CONTAINERCREATING", "PENDING");
-            if (runningStatus.contains(workStatusRes.getAppStatus().toUpperCase())) {
+            if (runningStatus.contains(agentLinkResponse.getFinalState().toUpperCase())) {
                 return InstanceStatus.RUNNING;
             }
 
             // 如果是中止，直接退出
             List<String> abortStatus = Arrays.asList("KILLED", "TERMINATING");
-            if (abortStatus.contains(workStatusRes.getAppStatus().toUpperCase())) {
+            if (abortStatus.contains(agentLinkResponse.getFinalState().toUpperCase())) {
                 throw errorLogException("作业运行中止");
             }
 
@@ -455,20 +431,13 @@ public class SparkSqlExecutor extends WorkExecutor {
             // 获取日志并保存
             GetWorkStderrLogReq getWorkStderrLogReq = GetWorkStderrLogReq.builder().appId(appId)
                 .clusterType(clusterType).sparkHomePath(agentNode.getSparkHomePath()).build();
-            BaseResponse<?> baseResponse =
-                HttpUtils.doPost(httpUrlUtils.genHttpUrl(agentNode.getHost(), agentNode.getAgentPort(),
-                    SparkAgentUrl.GET_WORK_STDERR_LOG_URL), getWorkStderrLogReq, BaseResponse.class);
 
-            if (!String.valueOf(HttpStatus.OK.value()).equals(baseResponse.getCode())) {
-                throw errorLogException("保存日志异常 : " + baseResponse.getMsg());
-            }
+            // 请求代理
+            AgentLinkResponse agentLinkResponse = agentLinkUtils.getAgentLinkResponse(agentNode,
+                SparkAgentUrl.GET_WORK_STDERR_LOG_URL, getWorkStderrLogReq);
 
-            // 解析日志并保存
-            GetWorkStderrLogRes yagGetLogRes =
-                JSON.parseObject(JSON.toJSONString(baseResponse.getData()), GetWorkStderrLogRes.class);
-            if (yagGetLogRes != null) {
-                workInstance.setYarnLog(yagGetLogRes.getLog());
-            }
+            // 保存运行日志
+            workInstance.setYarnLog(agentLinkResponse.getLog());
             logBuilder.append(endLog("保存日志完成"));
 
             // 如果运行成功，还要继续保存数据
@@ -478,14 +447,13 @@ public class SparkSqlExecutor extends WorkExecutor {
                 // 获取数据
                 GetWorkDataReq getWorkDataReq = GetWorkDataReq.builder().appId(appId).clusterType(clusterType)
                     .sparkHomePath(agentNode.getSparkHomePath()).build();
-                baseResponse = HttpUtils.doPost(httpUrlUtils.genHttpUrl(agentNode.getHost(), agentNode.getAgentPort(),
-                    SparkAgentUrl.GET_WORK_DATA_URL), getWorkDataReq, BaseResponse.class);
-                if (!String.valueOf(HttpStatus.OK.value()).equals(baseResponse.getCode())) {
-                    throw errorLogException("保存数据异常 : " + baseResponse.getErr());
-                }
+
+                // 请求代理
+                agentLinkResponse =
+                    agentLinkUtils.getAgentLinkResponse(agentNode, SparkAgentUrl.GET_WORK_DATA_URL, getWorkDataReq);
 
                 // 保存数据
-                workInstance.setResultData(JSON.toJSONString(baseResponse.getData()));
+                workInstance.setResultData(JSON.toJSONString(agentLinkResponse));
 
                 // 保存日志
                 logBuilder.append(endLog("保存数据成功"));
@@ -511,9 +479,9 @@ public class SparkSqlExecutor extends WorkExecutor {
             if (AgentType.K8S.equals(clusterType)) {
                 StopWorkReq stopWorkReq = StopWorkReq.builder().appId(appId).clusterType(AgentType.K8S)
                     .sparkHomePath(agentNode.getAgentHomePath()).agentHomePath(agentNode.getAgentHomePath()).build();
-                HttpUtils.doPost(
-                    httpUrlUtils.genHttpUrl(agentNode.getHost(), agentNode.getAgentPort(), SparkAgentUrl.STOP_WORK_URL),
-                    stopWorkReq, BaseResponse.class);
+
+                // 请求代理
+                agentLinkUtils.getAgentLinkResponse(agentNode, SparkAgentUrl.STOP_WORK_URL, stopWorkReq);
             }
 
             // 保存日志
@@ -550,15 +518,9 @@ public class SparkSqlExecutor extends WorkExecutor {
                     .sparkHomePath(workRunContext.getAgentNode().getSparkHomePath())
                     .agentHomePath(workRunContext.getAgentNode().getAgentHomePath()).build();
 
-            BaseResponse<?> baseResponse = new RestTemplate().postForObject(
-                httpUrlUtils.genHttpUrl(workRunContext.getAgentNode().getHost(),
-                    workRunContext.getAgentNode().getAgentPort(), SparkAgentUrl.STOP_WORK_URL),
-                stopWorkReq, BaseResponse.class);
-
-            if (baseResponse != null && baseResponse.getCode() != null
-                && !String.valueOf(HttpStatus.OK.value()).equals(baseResponse.getCode())) {
-                throw new IsxAppException(baseResponse.getCode(), baseResponse.getMsg(), baseResponse.getErr());
-            }
+            // 请求代理
+            agentLinkUtils.getAgentLinkResponse(workRunContext.getAgentNode(), SparkAgentUrl.STOP_WORK_URL,
+                stopWorkReq);
         }
 
         // 可以中止

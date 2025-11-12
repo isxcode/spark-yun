@@ -278,7 +278,7 @@ public class WorkBizService {
         return workInstanceRepository.saveAndFlush(workInstanceEntity);
     }
 
-    public RunWorkRes runWork(RunWorkReq runWorkReq) {
+    public AgentLinkResponse runWork(RunWorkReq runWorkReq) {
 
         // 获取作业配置
         WorkEntity work = workService.getWorkEntity(runWorkReq.getWorkId());
@@ -296,7 +296,7 @@ public class WorkBizService {
         workRunFactory.run(workRunContext);
 
         // 返回作业的实例id
-        return RunWorkRes.builder().instanceId(workInstance.getId()).build();
+        return AgentLinkResponse.builder().instanceId(workInstance.getId()).build();
     }
 
     public GetDataRes getData(GetDataReq getDataReq) {

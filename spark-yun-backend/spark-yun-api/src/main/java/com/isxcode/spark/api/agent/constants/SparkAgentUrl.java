@@ -2,24 +2,21 @@ package com.isxcode.spark.api.agent.constants;
 
 import com.isxcode.spark.api.main.constants.ModuleCode;
 
-/**
- * 代理接口访问地址.
- */
 public interface SparkAgentUrl {
 
     String SUBMIT_WORK_URL = "/" + ModuleCode.SPARK_YUN_AGENT + "/submitWork";
 
     String SUBMIT_WORK_FOR_PY_SPARK = "/" + ModuleCode.SPARK_YUN_AGENT + "/submitWorkForPySpark";
 
-    String GET_WORK_STATUS_URL = "/" + ModuleCode.SPARK_YUN_AGENT + "/getWorkStatus";
+    String GET_WORK_INFO_URL = "/" + ModuleCode.SPARK_YUN_AGENT + "/getWorkInfo";
 
     String GET_WORK_DATA_URL = "/" + ModuleCode.SPARK_YUN_AGENT + "/getWorkData";
 
+    String GET_LAST_LINE_WORK_STDOUT_LOG_URL = "/" + ModuleCode.SPARK_YUN_AGENT + "/getLastLineWorkStdoutLog";
+
+    String GET_CUSTOM_JAR_WORK_STDOUT_LOG_URL = "/" + ModuleCode.SPARK_YUN_AGENT + "/getCustomJarWorkStdoutLog";
+
     String GET_WORK_STDOUT_LOG_URL = "/" + ModuleCode.SPARK_YUN_AGENT + "/getWorkStdoutLog";
-
-    String GET_ALL_WORK_STDOUT_LOG_URL = "/" + ModuleCode.SPARK_YUN_AGENT + "/getAllWorkStdoutLog";
-
-    String GET_CUSTOM_WORK_STDOUT_LOG_URL = "/" + ModuleCode.SPARK_YUN_AGENT + "/getCustomWorkStdoutLog";
 
     String GET_WORK_STDERR_LOG_URL = "/" + ModuleCode.SPARK_YUN_AGENT + "/getWorkStderrLog";
 

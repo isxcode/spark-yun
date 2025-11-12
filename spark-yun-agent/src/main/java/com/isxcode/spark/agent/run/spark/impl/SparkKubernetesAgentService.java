@@ -6,8 +6,8 @@ import com.isxcode.spark.agent.run.spark.SparkAgentService;
 import com.isxcode.spark.api.agent.constants.AgentKubernetes;
 import com.isxcode.spark.api.agent.constants.AgentType;
 import com.isxcode.spark.api.agent.req.spark.SubmitWorkReq;
+import com.isxcode.spark.api.agent.res.spark.GetWorkInfoRes;
 import com.isxcode.spark.api.work.constants.WorkType;
-import com.isxcode.spark.backend.api.base.exceptions.IsxAppException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
 import org.apache.spark.launcher.SparkLauncher;
@@ -55,7 +55,7 @@ public class SparkKubernetesAgentService implements SparkAgentService {
         }
 
         if (result == null) {
-            throw new IsxAppException("No https:// URL found in cluster info.");
+            throw new Exception("No https:// URL found in cluster info.");
         }
 
         return result.replaceAll("https://", "k8s://").replaceAll("\\u001B\\[[;\\d]*m", "");
@@ -271,11 +271,7 @@ public class SparkKubernetesAgentService implements SparkAgentService {
         }
 
         // 把提交的spark配置，塞到sparkLauncher中
-        submitWorkReq.getSparkSubmit().getConf().forEach((k, v) -> {
-            if (k.startsWith("spark.")) {
-                sparkLauncher.setConf(k, v);
-            }
-        });
+        submitWorkReq.getSparkSubmit().getConf().forEach(sparkLauncher::setConf);
 
         return sparkLauncher;
     }
@@ -303,25 +299,20 @@ public class SparkKubernetesAgentService implements SparkAgentService {
         try {
             int exitCode = launch.waitFor();
             if (exitCode == 1) {
-                throw new IsxAppException(errLog.toString());
+                throw new Exception(errLog.toString());
             }
         } catch (InterruptedException e) {
             log.error(e.getMessage(), e);
-            throw new IsxAppException(e.getMessage());
+            throw new Exception(e.getMessage());
         } finally {
             launch.destroy();
         }
 
-        throw new IsxAppException("无法获取podName");
+        throw new Exception("无法获取podName");
     }
 
     @Override
-    public Map<String, String> submitWorkForPySpark(SparkLauncher sparkLauncher) throws Exception {
-        return Collections.emptyMap();
-    }
-
-    @Override
-    public String getWorkStatus(String podName, String sparkHomePath) throws Exception {
+    public GetWorkInfoRes getWorkInfo(String podName, String sparkHomePath) throws Exception {
 
         String getStatusCmdFormat = "kubectl get pod %s -n zhiqingyun-space";
 
@@ -338,7 +329,7 @@ public class SparkKubernetesAgentService implements SparkAgentService {
             Pattern regex = Pattern.compile(pattern);
             Matcher matcher = regex.matcher(line);
             if (matcher.find()) {
-                return matcher.group(1);
+                return GetWorkInfoRes.builder().appId(podName).finalState(matcher.group(1)).build();
             }
         }
 
@@ -346,7 +337,7 @@ public class SparkKubernetesAgentService implements SparkAgentService {
             while ((line = errReader.readLine()) != null) {
                 errLog.append(line).append("\n");
                 if (errLog.toString().contains("not found")) {
-                    return "KILLED";
+                    return GetWorkInfoRes.builder().appId(podName).finalState("KILLED").build();
                 }
             }
         }
@@ -354,14 +345,14 @@ public class SparkKubernetesAgentService implements SparkAgentService {
         try {
             int exitCode = process.waitFor();
             if (exitCode == 1) {
-                throw new IsxAppException(errLog.toString());
+                throw new Exception(errLog.toString());
             }
         } catch (InterruptedException e) {
             log.error(e.getMessage(), e);
-            throw new IsxAppException(e.getMessage());
+            throw new Exception(e.getMessage());
         }
 
-        throw new IsxAppException("获取状态异常");
+        throw new Exception("获取状态异常");
     }
 
     @Override
@@ -390,7 +381,7 @@ public class SparkKubernetesAgentService implements SparkAgentService {
         try {
             int exitCode = process.waitFor();
             if (exitCode == 1) {
-                throw new IsxAppException(errLog.toString());
+                throw new Exception(errLog.toString());
             } else {
                 if (errLog.toString().contains("Error")) {
                     return errLog.toString();
@@ -405,7 +396,7 @@ public class SparkKubernetesAgentService implements SparkAgentService {
             }
         } catch (InterruptedException e) {
             log.error(e.getMessage(), e);
-            throw new IsxAppException(e.getMessage());
+            throw new Exception(e.getMessage());
         }
     }
 
@@ -429,18 +420,18 @@ public class SparkKubernetesAgentService implements SparkAgentService {
         try {
             int exitCode = process.waitFor();
             if (exitCode == 1) {
-                throw new IsxAppException(errLog.toString());
+                throw new Exception(errLog.toString());
             } else {
                 return errLog.toString();
             }
         } catch (InterruptedException e) {
             log.error(e.getMessage(), e);
-            throw new IsxAppException(e.getMessage());
+            throw new Exception(e.getMessage());
         }
     }
 
     @Override
-    public String getCustomWorkStdoutLog(String appId, String sparkHomePath) throws Exception {
+    public String getCustomJarStdoutLog(String appId, String sparkHomePath) throws Exception {
         return "请看运行日志";
     }
 
@@ -462,7 +453,7 @@ public class SparkKubernetesAgentService implements SparkAgentService {
         try {
             int exitCode = process.waitFor();
             if (exitCode == 1) {
-                throw new IsxAppException(errLog.toString());
+                throw new Exception(errLog.toString());
             } else {
                 Pattern regex = Pattern.compile("LogType:spark-yun\\s*([\\s\\S]*?)\\s*End of LogType:spark-yun");
                 Matcher matcher = regex.matcher(errLog);
@@ -474,7 +465,7 @@ public class SparkKubernetesAgentService implements SparkAgentService {
             }
         } catch (InterruptedException e) {
             log.error(e.getMessage(), e);
-            throw new IsxAppException(e.getMessage());
+            throw new Exception(e.getMessage());
         }
     }
 
@@ -496,11 +487,16 @@ public class SparkKubernetesAgentService implements SparkAgentService {
         try {
             int exitCode = process.waitFor();
             if (exitCode == 1) {
-                throw new IsxAppException(errLog.toString());
+                throw new Exception(errLog.toString());
             }
         } catch (InterruptedException e) {
             log.error(e.getMessage(), e);
-            throw new IsxAppException(e.getMessage());
+            throw new Exception(e.getMessage());
         }
+    }
+
+    @Override
+    public Map<String, String> submitWorkForPySpark(SparkLauncher sparkLauncher) throws Exception {
+        return Collections.emptyMap();
     }
 }

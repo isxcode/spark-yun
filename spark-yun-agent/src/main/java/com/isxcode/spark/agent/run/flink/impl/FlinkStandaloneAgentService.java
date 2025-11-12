@@ -44,6 +44,11 @@ import java.util.regex.Pattern;
 @Service
 public class FlinkStandaloneAgentService implements FlinkAgentService {
 
+    @Override
+    public String getAgentType() {
+        return AgentType.StandAlone;
+    }
+
     public Configuration genConfiguration(String flinkHome) {
 
         // 获取本地flink的配置，并从中获取rest.port、rest.address，如果获取不到默认8081、localhost
@@ -65,12 +70,6 @@ public class FlinkStandaloneAgentService implements FlinkAgentService {
             log.error(e.getMessage(), e);
             throw new RuntimeException("获取flink配置文件异常", e);
         }
-    }
-
-    @Override
-    public String getAgentType() {
-
-        return AgentType.StandAlone;
     }
 
     @Override
@@ -171,19 +170,14 @@ public class FlinkStandaloneAgentService implements FlinkAgentService {
 
         Configuration configuration = genConfiguration(getWorkInfoReq.getFlinkHome());
 
-        try (
-            StandaloneClusterDescriptor standaloneClusterDescriptor = new StandaloneClusterDescriptor(configuration);) {
+        try (StandaloneClusterDescriptor standaloneClusterDescriptor = new StandaloneClusterDescriptor(configuration)) {
             ClusterClient<StandaloneClusterId> clusterClient =
                 standaloneClusterDescriptor.retrieve(StandaloneClusterId.getInstance()).getClusterClient();
 
             CompletableFuture<JobStatus> jobStatus =
                 clusterClient.getJobStatus(JobID.fromHexString(getWorkInfoReq.getAppId()));
 
-            return GetWorkInfoRes.builder().appId(getWorkInfoReq.getAppId()).finalStatus(jobStatus.get().name())
-                .build();
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
-            throw new Exception(e.getMessage());
+            return GetWorkInfoRes.builder().appId(getWorkInfoReq.getAppId()).finalState(jobStatus.get().name()).build();
         }
     }
 
@@ -196,17 +190,13 @@ public class FlinkStandaloneAgentService implements FlinkAgentService {
 
         // 判断作业是否成功
         String status;
-        try (
-            StandaloneClusterDescriptor standaloneClusterDescriptor = new StandaloneClusterDescriptor(configuration);) {
+        try (StandaloneClusterDescriptor standaloneClusterDescriptor = new StandaloneClusterDescriptor(configuration)) {
             ClusterClient<StandaloneClusterId> clusterClient =
                 standaloneClusterDescriptor.retrieve(StandaloneClusterId.getInstance()).getClusterClient();
 
             CompletableFuture<JobStatus> jobStatus =
                 clusterClient.getJobStatus(JobID.fromHexString(getWorkLogReq.getAppId()));
             status = jobStatus.get().name();
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
-            throw new Exception(e.getMessage());
         }
 
         if ("FAILED".equals(status)) {
@@ -249,16 +239,12 @@ public class FlinkStandaloneAgentService implements FlinkAgentService {
 
         Configuration configuration = genConfiguration(stopWorkReq.getFlinkHome());
 
-        try (
-            StandaloneClusterDescriptor standaloneClusterDescriptor = new StandaloneClusterDescriptor(configuration);) {
+        try (StandaloneClusterDescriptor standaloneClusterDescriptor = new StandaloneClusterDescriptor(configuration)) {
             ClusterClient<StandaloneClusterId> clusterClient =
                 standaloneClusterDescriptor.retrieve(StandaloneClusterId.getInstance()).getClusterClient();
 
             CompletableFuture<Acknowledge> cancel = clusterClient.cancel(JobID.fromHexString(stopWorkReq.getAppId()));
             return StopWorkRes.builder().requestId(cancel.toString()).build();
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
-            throw new Exception(e.getMessage());
         }
     }
 }

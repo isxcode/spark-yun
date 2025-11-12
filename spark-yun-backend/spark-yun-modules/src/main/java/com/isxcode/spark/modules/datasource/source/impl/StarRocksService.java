@@ -39,18 +39,18 @@ public class StarRocksService extends Datasource {
 
     @Override
     public List<QueryTableDto> queryTable(ConnectInfo connectInfo) throws IsxAppException {
-        throw new RuntimeException("该数据源暂不支持");
+        throw new RuntimeException("数据源暂不支持，请联系管理员");
     }
 
     @Override
     public List<QueryColumnDto> queryColumn(ConnectInfo connectInfo) throws IsxAppException {
-        throw new RuntimeException("该数据源暂不支持");
+        throw new RuntimeException("数据源暂不支持，请联系管理员");
     }
 
     @Override
     public String generateDataModelSql(ConnectInfo connectInfo, List<DataModelColumnAo> modelColumnList,
         DataModelEntity dataModelEntity) throws IsxAppException {
-        throw new RuntimeException("暂不支持，请联系开发者");
+        throw new RuntimeException("数据源暂不支持，请联系管理员");
     }
 
     @Override

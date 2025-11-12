@@ -5,8 +5,8 @@ import com.isxcode.spark.agent.properties.SparkYunAgentProperties;
 import com.isxcode.spark.agent.run.spark.SparkAgentService;
 import com.isxcode.spark.api.agent.constants.AgentType;
 import com.isxcode.spark.api.agent.req.spark.SubmitWorkReq;
+import com.isxcode.spark.api.agent.res.spark.GetWorkInfoRes;
 import com.isxcode.spark.api.work.constants.WorkType;
-import com.isxcode.spark.backend.api.base.exceptions.IsxAppException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
@@ -46,7 +46,7 @@ public class SparkYarnAgentService implements SparkAgentService {
     }
 
     @Override
-    public SparkLauncher getSparkLauncher(SubmitWorkReq submitWorkReq) {
+    public SparkLauncher getSparkLauncher(SubmitWorkReq submitWorkReq) throws Exception {
 
 
         SparkLauncher sparkLauncher = new SparkLauncher().setVerbose(false)
@@ -89,7 +89,7 @@ public class SparkYarnAgentService implements SparkAgentService {
                         sparkLauncher.addJar(jar.toURI().toURL().toString());
                     } catch (MalformedURLException e) {
                         log.error(e.getMessage(), e);
-                        throw new IsxAppException("50010", "添加lib中文件异常", e.getMessage());
+                        throw new Exception("添加lib中文件异常");
                     }
                 }
             }
@@ -162,7 +162,7 @@ public class SparkYarnAgentService implements SparkAgentService {
             long waitMillis = timeoutExpiredMs - System.currentTimeMillis();
             if (waitMillis <= 0) {
                 launch.destroy();
-                throw new IsxAppException("提交超时:" + errLog);
+                throw new Exception("提交超时:" + errLog);
             }
 
             // 正则表达式逐个匹配，匹配到立马返回applicationId
@@ -177,28 +177,23 @@ public class SparkYarnAgentService implements SparkAgentService {
         try {
             int exitCode = launch.waitFor();
             if (exitCode == 1) {
-                throw new IsxAppException("提交作业异常:" + errLog);
+                throw new Exception("提交作业异常:" + errLog);
             } else if (Strings.isNotEmpty(applicationId)) {
                 return applicationId;
             }
         } catch (InterruptedException e) {
             log.error(e.getMessage(), e);
-            throw new IsxAppException("提交作业中断:" + e.getMessage());
+            throw new Exception("提交作业中断:" + e.getMessage());
         } finally {
             launch.destroy();
         }
 
         // 如果获取不到applicationId，返回完整日志
-        throw new IsxAppException("无法获取applicationId，请检查提交日志:" + errLog);
+        throw new Exception("无法获取applicationId，请检查提交日志:" + errLog);
     }
 
     @Override
-    public Map<String, String> submitWorkForPySpark(SparkLauncher sparkLauncher) throws Exception {
-        return Collections.emptyMap();
-    }
-
-    @Override
-    public String getWorkStatus(String appId, String sparkHomePath) throws Exception {
+    public GetWorkInfoRes getWorkInfo(String appId, String sparkHomePath) throws Exception {
 
         String getStatusCmdFormat = "yarn application -status %s";
 
@@ -209,32 +204,46 @@ public class SparkYarnAgentService implements SparkAgentService {
 
         StringBuilder inputLog = new StringBuilder();
         String line;
+        String finalState = "";
+        String appState = "";
         while ((line = inputReader.readLine()) != null) {
             inputLog.append(line).append("\n");
 
-            String pattern = "Final-State : (\\w+)";
-            Pattern regex = Pattern.compile(pattern);
-            Matcher matcher = regex.matcher(line);
-            if (matcher.find()) {
-                String status = matcher.group(1);
-                if ("UNDEFINED".equals(status)) {
-                    status = "RUNNING";
+            if (finalState.isEmpty()) {
+                String finalStatePattern = "Final-State : (\\w+)";
+                Pattern finalStateRegex = Pattern.compile(finalStatePattern);
+                Matcher finalStateMatcher = finalStateRegex.matcher(line);
+                if (finalStateMatcher.find()) {
+                    finalState = finalStateMatcher.group(1);
                 }
-                return status;
+            }
+
+            if (appState.isEmpty()) {
+                String appStatePattern = "State : (\\w+)";
+                Pattern appStateRegex = Pattern.compile(appStatePattern);
+                Matcher appStateMatcher = appStateRegex.matcher(line);
+                if (appStateMatcher.find()) {
+                    appState = appStateMatcher.group(1);
+                }
+            }
+
+            if (!finalState.isEmpty() && !appState.isEmpty()) {
+                return GetWorkInfoRes.builder().appId(appId).finalState(finalState).appState(appState).build();
             }
         }
+
 
         try {
             int exitCode = process.waitFor();
             if (exitCode == 1) {
-                throw new IsxAppException("获取作业状态异常:" + inputLog);
+                throw new Exception("获取作业状态异常:" + inputLog);
             }
         } catch (InterruptedException e) {
             log.error(e.getMessage(), e);
-            throw new IsxAppException("获取作业状态中断:" + e.getMessage());
+            throw new Exception("获取作业状态中断:" + e.getMessage());
         }
 
-        throw new IsxAppException("无法获取作业状态，请检查日志:" + inputLog);
+        throw new Exception("无法获取作业状态，请检查日志:" + inputLog);
     }
 
     @Override
@@ -255,7 +264,7 @@ public class SparkYarnAgentService implements SparkAgentService {
         try {
             int exitCode = process.waitFor();
             if (exitCode == 1) {
-                throw new IsxAppException(errLog.toString());
+                throw new Exception(errLog.toString());
             } else {
                 Pattern regex = Pattern.compile(YARN_LOG_STDOUT_REGEX);
                 Matcher matcher = regex.matcher(errLog);
@@ -274,12 +283,12 @@ public class SparkYarnAgentService implements SparkAgentService {
             }
         } catch (InterruptedException e) {
             log.error(e.getMessage(), e);
-            throw new IsxAppException(e.getMessage());
+            throw new Exception(e.getMessage());
         }
     }
 
     @Override
-    public String getCustomWorkStdoutLog(String appId, String sparkHomePath) throws Exception {
+    public String getCustomJarStdoutLog(String appId, String sparkHomePath) throws Exception {
 
         String getLogCmdFormat = "yarn logs -applicationId %s";
         Process process = Runtime.getRuntime().exec(String.format(getLogCmdFormat, appId));
@@ -296,7 +305,7 @@ public class SparkYarnAgentService implements SparkAgentService {
         try {
             int exitCode = process.waitFor();
             if (exitCode == 1) {
-                throw new IsxAppException(errLog.toString());
+                throw new Exception(errLog.toString());
             } else {
                 Pattern regex = Pattern.compile(YARN_LOG_STDOUT_REGEX);
                 Matcher matcher = regex.matcher(errLog);
@@ -306,7 +315,7 @@ public class SparkYarnAgentService implements SparkAgentService {
             }
         } catch (InterruptedException e) {
             log.error(e.getMessage(), e);
-            throw new IsxAppException(e.getMessage());
+            throw new Exception(e.getMessage());
         }
         return "日志未生成";
     }
@@ -329,7 +338,7 @@ public class SparkYarnAgentService implements SparkAgentService {
         try {
             int exitCode = process.waitFor();
             if (exitCode == 1) {
-                throw new IsxAppException(errLog.toString());
+                throw new Exception(errLog.toString());
             } else {
                 Pattern regex = Pattern.compile(YARN_LOG_STDERR_REGEX);
                 Matcher matcher = regex.matcher(errLog);
@@ -348,7 +357,7 @@ public class SparkYarnAgentService implements SparkAgentService {
             }
         } catch (InterruptedException e) {
             log.error(e.getMessage(), e);
-            throw new IsxAppException(e.getMessage());
+            throw new Exception(e.getMessage());
         }
     }
 
@@ -371,7 +380,7 @@ public class SparkYarnAgentService implements SparkAgentService {
         try {
             int exitCode = process.waitFor();
             if (exitCode == 1) {
-                throw new IsxAppException(errLog.toString());
+                throw new Exception(errLog.toString());
             } else {
                 Pattern regex = Pattern.compile(YARN_LOG_RESULT_REGEX);
                 Matcher matcher = regex.matcher(errLog);
@@ -383,7 +392,7 @@ public class SparkYarnAgentService implements SparkAgentService {
             }
         } catch (InterruptedException e) {
             log.error(e.getMessage(), e);
-            throw new IsxAppException(e.getMessage());
+            throw new Exception(e.getMessage());
         }
     }
 
@@ -405,12 +414,16 @@ public class SparkYarnAgentService implements SparkAgentService {
         try {
             int exitCode = process.waitFor();
             if (exitCode == 1) {
-                throw new IsxAppException(errLog.toString());
+                throw new Exception(errLog.toString());
             }
         } catch (InterruptedException e) {
             log.error(e.getMessage(), e);
-            throw new IsxAppException(e.getMessage());
+            throw new Exception(e.getMessage());
         }
     }
 
+    @Override
+    public Map<String, String> submitWorkForPySpark(SparkLauncher sparkLauncher) throws Exception {
+        return Collections.emptyMap();
+    }
 }

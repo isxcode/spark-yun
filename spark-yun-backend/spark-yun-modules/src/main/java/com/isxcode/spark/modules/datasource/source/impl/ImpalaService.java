@@ -126,7 +126,7 @@ public class ImpalaService extends Datasource {
     @Override
     public String generateDataModelSql(ConnectInfo connectInfo, List<DataModelColumnAo> modelColumnList,
         DataModelEntity dataModelEntity) throws IsxAppException {
-        throw new RuntimeException("暂不支持，请联系开发者");
+        throw new RuntimeException("数据源暂不支持，请联系管理员");
     }
 
     @Override

@@ -26,7 +26,7 @@
                 </el-select>
               </el-form-item>
 
-              <el-form-item label="是否限制条数" v-if="['QUERY_JDBC', 'PRQL'].includes(workItemConfig.workType)">
+              <el-form-item label="限制条数" v-if="['QUERY_JDBC', 'PRQL'].includes(workItemConfig.workType)">
                   <el-switch v-model="queryConfig.enableLimit" />
               </el-form-item>
 
@@ -96,11 +96,11 @@
                     />
                   </el-select>
                 </el-form-item>
-                <el-form-item label="sparkConfig" v-if="clusterConfig.setMode === 'ADVANCE' && ['SPARK_SQL'].includes(workItemConfig.workType)  " :class="{ 'show-screen__full': sparkJsonFullStatus }">
+                <el-form-item label="sparkConfig" v-if="clusterConfig.setMode === 'ADVANCE' && ['SPARK_SQL','DATA_SYNC_JDBC','SPARK_JAR','EXCEL_SYNC_JDBC','PY_SPARK','DB_MIGRATE'].includes(workItemConfig.workType)  " :class="{ 'show-screen__full': sparkJsonFullStatus }">
                   <el-icon class="modal-full-screen" @click="fullScreenEvent('sparkJsonFullStatus')"><FullScreen v-if="!sparkJsonFullStatus" /><Close v-else /></el-icon>
                   <code-mirror v-model="clusterConfig.sparkConfigJson" basic :lang="lang"/>
                 </el-form-item>
-                <el-form-item label="flinkConfig" v-if="clusterConfig.setMode === 'ADVANCE' && ['FLINK_SQL'].includes(workItemConfig.workType) " :class="{ 'show-screen__full': sparkJsonFullStatus }">
+                <el-form-item label="flinkConfig" v-if="clusterConfig.setMode === 'ADVANCE' && ['FLINK_SQL','FLINK_JAR'].includes(workItemConfig.workType) " :class="{ 'show-screen__full': sparkJsonFullStatus }">
                   <el-icon class="modal-full-screen" @click="fullScreenEvent('sparkJsonFullStatus')"><FullScreen v-if="!sparkJsonFullStatus" /><Close v-else /></el-icon>
                   <code-mirror v-model="clusterConfig.flinkConfigJson" basic :lang="lang"/>
                 </el-form-item>
@@ -622,7 +622,10 @@ function getConfigDetailData() {
   GetWorkItemConfig({
       workId: workItemConfig.value.id
   }).then((res: any) => {
-    if (['QUERY_JDBC', 'PRQL', 'EXE_JDBC'].includes(workItemConfig.value.workType)) {
+    if (['EXE_JDBC'].includes(workItemConfig.value.workType)) {
+      dataSourceForm.datasourceId = res.data.datasourceId
+    }
+    if (['QUERY_JDBC', 'PRQL'].includes(workItemConfig.value.workType)) {
       dataSourceForm.datasourceId = res.data.datasourceId
       queryConfig.lineLimit = res.data.queryConfig.lineLimit
       queryConfig.enableLimit = res.data.queryConfig.enableLimit
@@ -695,8 +698,8 @@ function okEvent() {
           ...cronConfig,
           cron: cronConfig.setMode === 'SIMPLE' ? cron : cronConfig.cron
         },
-        queryConfig: queryConfig,
         syncRule: syncRule,
+        queryConfig: queryConfig,
         ...fileConfig,
         ...containerConfig,
         ...messageConfig

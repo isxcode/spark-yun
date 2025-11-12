@@ -15,6 +15,7 @@ public class FlinkAgentFactory {
 
         return applicationContext.getBeansOfType(FlinkAgentService.class).values().stream()
             .filter(agent -> agent.getAgentType().equals(clusterType)).findFirst()
-            .orElseThrow(() -> new IsxAppException("agent类型不支持"));
+            .orElseThrow(() -> new IsxAppException("集群类型不支持"));
     }
+
 }

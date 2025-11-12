@@ -1,7 +1,6 @@
-package com.isxcode.spark.api.work.res;
+package com.isxcode.spark.api.agent.res.spark;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,19 +11,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class RunWorkRes {
+public class GetWorkInfoRes {
 
-    private String appStatus;
+    private String finalState;
 
-    private String message;
-
-    private String log;
-
-    private List<List<String>> data;
+    private String appState;
 
     private String appId;
-
-    private String trackingUrl;
-
-    private String instanceId;
 }

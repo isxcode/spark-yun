@@ -18,12 +18,12 @@ public class GetWorkInfoRes {
     /**
      * yarn状态的备用状态.
      */
-    private String status;
+    private String appState;
 
     /**
-     * 以finalStatus为Flink作业的成功失败判断.
+     * 以finalState为Flink作业的成功失败判断.
      */
-    private String finalStatus;
+    private String finalState;
 
     private List<String> vertices;
 }

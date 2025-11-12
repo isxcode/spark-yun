@@ -96,7 +96,16 @@ public class DatasourceBizService {
         }
 
         datasource.setCheckDateTime(LocalDateTime.now());
-        datasource.setStatus(DatasourceStatus.UN_CHECK);
+
+        // 再检测一遍，成功就改为可用，否则待检测
+        CheckConnectReq checkConnectReq = datasourceMapper.addDatasourceReqToCheckConnectReq(addDatasourceReq);
+        CheckConnectRes checkConnectRes = checkConnect(checkConnectReq);
+        if (checkConnectRes.getCanConnect()) {
+            datasource.setStatus(DatasourceStatus.ACTIVE);
+        } else {
+            datasource.setStatus(DatasourceStatus.FAIL);
+        }
+
         datasourceRepository.save(datasource);
     }
 

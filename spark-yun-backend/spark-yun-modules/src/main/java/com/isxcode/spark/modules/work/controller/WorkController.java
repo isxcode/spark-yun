@@ -56,7 +56,7 @@ public class WorkController {
     @Operation(summary = "运行作业接口")
     @PostMapping("/runWork")
     @SuccessResponse("提交成功")
-    public RunWorkRes runWork(@Valid @RequestBody RunWorkReq runWorkReq) {
+    public AgentLinkResponse runWork(@Valid @RequestBody RunWorkReq runWorkReq) {
 
         return workBizService.runWork(runWorkReq);
     }

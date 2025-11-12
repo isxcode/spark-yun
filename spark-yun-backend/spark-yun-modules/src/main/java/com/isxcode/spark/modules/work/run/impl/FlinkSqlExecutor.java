@@ -4,21 +4,15 @@ import com.alibaba.fastjson.JSON;
 import com.isxcode.spark.api.agent.constants.AgentType;
 import com.isxcode.spark.api.agent.constants.FlinkAgentUrl;
 import com.isxcode.spark.api.agent.req.flink.*;
-import com.isxcode.spark.api.agent.res.flink.GetWorkInfoRes;
-import com.isxcode.spark.api.agent.res.flink.GetWorkLogRes;
-import com.isxcode.spark.api.agent.res.flink.SubmitWorkRes;
 import com.isxcode.spark.api.api.constants.PathConstants;
 import com.isxcode.spark.api.cluster.constants.ClusterNodeStatus;
 import com.isxcode.spark.api.cluster.dto.ScpFileEngineNodeDto;
 import com.isxcode.spark.api.instance.constants.InstanceStatus;
 import com.isxcode.spark.api.work.constants.WorkType;
-import com.isxcode.spark.backend.api.base.exceptions.IsxAppException;
-import com.isxcode.spark.backend.api.base.pojos.BaseResponse;
+import com.isxcode.spark.api.work.res.AgentLinkResponse;
 import com.isxcode.spark.backend.api.base.properties.IsxAppProperties;
 import com.isxcode.spark.common.locker.Locker;
 import com.isxcode.spark.common.utils.aes.AesUtils;
-import com.isxcode.spark.common.utils.http.HttpUrlUtils;
-import com.isxcode.spark.common.utils.http.HttpUtils;
 import com.isxcode.spark.common.utils.path.PathUtils;
 import com.isxcode.spark.modules.alarm.service.AlarmService;
 import com.isxcode.spark.modules.cluster.entity.ClusterEntity;
@@ -36,6 +30,7 @@ import com.isxcode.spark.modules.secret.repository.SecretKeyRepository;
 import com.isxcode.spark.modules.work.entity.WorkEventEntity;
 import com.isxcode.spark.modules.work.entity.WorkInstanceEntity;
 import com.isxcode.spark.modules.work.repository.*;
+import com.isxcode.spark.modules.work.run.AgentLinkUtils;
 import com.isxcode.spark.modules.work.run.WorkExecutor;
 import com.isxcode.spark.modules.work.run.WorkRunContext;
 import com.isxcode.spark.modules.work.run.WorkRunJobFactory;
@@ -48,11 +43,7 @@ import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.SftpException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpServerErrorException;
-import org.springframework.web.client.ResourceAccessException;
-import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
 import java.io.IOException;
@@ -67,8 +58,6 @@ public class FlinkSqlExecutor extends WorkExecutor {
     private final ClusterRepository clusterRepository;
 
     private final ClusterNodeRepository clusterNodeRepository;
-
-    private final HttpUrlUtils httpUrlUtils;
 
     private final FuncRepository funcRepository;
 
@@ -90,22 +79,23 @@ public class FlinkSqlExecutor extends WorkExecutor {
 
     private final SqlCommentService sqlCommentService;
 
+    private final AgentLinkUtils agentLinkUtils;
+
     public FlinkSqlExecutor(WorkInstanceRepository workInstanceRepository, ClusterRepository clusterRepository,
         ClusterNodeRepository clusterNodeRepository, WorkflowInstanceRepository workflowInstanceRepository,
         WorkRepository workRepository, WorkConfigRepository workConfigRepository, Locker locker,
-        HttpUrlUtils httpUrlUtils, FuncRepository funcRepository, FuncMapper funcMapper,
-        ClusterNodeMapper clusterNodeMapper, AesUtils aesUtils, IsxAppProperties isxAppProperties,
-        FileRepository fileRepository, AlarmService alarmService, SqlFunctionService sqlFunctionService,
-        SecretKeyRepository secretKeyRepository, SqlValueService sqlValueService, SqlCommentService sqlCommentService,
-        WorkEventRepository workEventRepository, WorkRunJobFactory workRunJobFactory,
-        VipWorkVersionRepository vipWorkVersionRepository, WorkService workService) {
+        FuncRepository funcRepository, FuncMapper funcMapper, ClusterNodeMapper clusterNodeMapper, AesUtils aesUtils,
+        IsxAppProperties isxAppProperties, FileRepository fileRepository, AlarmService alarmService,
+        SqlFunctionService sqlFunctionService, SecretKeyRepository secretKeyRepository, SqlValueService sqlValueService,
+        SqlCommentService sqlCommentService, WorkEventRepository workEventRepository,
+        WorkRunJobFactory workRunJobFactory, VipWorkVersionRepository vipWorkVersionRepository, WorkService workService,
+        AgentLinkUtils agentLinkUtils) {
 
         super(alarmService, locker, workRepository, workInstanceRepository, workflowInstanceRepository,
             workEventRepository, workRunJobFactory, sqlFunctionService, workConfigRepository, vipWorkVersionRepository,
             workService);
         this.clusterRepository = clusterRepository;
         this.clusterNodeRepository = clusterNodeRepository;
-        this.httpUrlUtils = httpUrlUtils;
         this.funcRepository = funcRepository;
         this.funcMapper = funcMapper;
         this.clusterNodeMapper = clusterNodeMapper;
@@ -116,6 +106,7 @@ public class FlinkSqlExecutor extends WorkExecutor {
         this.secretKeyRepository = secretKeyRepository;
         this.sqlValueService = sqlValueService;
         this.sqlCommentService = sqlCommentService;
+        this.agentLinkUtils = agentLinkUtils;
     }
 
     @Override
@@ -324,35 +315,18 @@ public class FlinkSqlExecutor extends WorkExecutor {
             SubmitWorkReq submitWorkReq = workRunContext.getFlinkSubmitWorkReq();
             ClusterNodeEntity agentNode = workRunContext.getAgentNode();
 
-            try {
-                // 提交作业
-                BaseResponse<?> baseResponse = HttpUtils.doPost(httpUrlUtils.genHttpUrl(agentNode.getHost(),
-                    agentNode.getAgentPort(), FlinkAgentUrl.SUBMIT_WORK_URL), submitWorkReq, BaseResponse.class);
-                if (!String.valueOf(HttpStatus.OK.value()).equals(baseResponse.getCode())
-                    || baseResponse.getData() == null) {
-                    throw errorLogException("提交作业异常 : " + baseResponse.getMsg());
-                }
+            // 提交作业
+            AgentLinkResponse agentLinkResponse =
+                agentLinkUtils.getAgentLinkResponse(agentNode, FlinkAgentUrl.SUBMIT_WORK_URL, submitWorkReq);
 
-                // 获取appId
-                SubmitWorkRes submitJobRes =
-                    JSON.parseObject(JSON.toJSONString(baseResponse.getData()), SubmitWorkRes.class);
-                logBuilder.append(endLog("提交作业成功 : " + submitJobRes.getAppId()));
+            // 获取appId
+            logBuilder.append(endLog("提交作业成功 : " + agentLinkResponse.getAppId()));
 
-                // 保存实例
-                workInstance.setSparkStarRes(JSON.toJSONString(submitJobRes));
+            // 保存实例
+            workInstance.setSparkStarRes(JSON.toJSONString(agentLinkResponse));
 
-                // 保存上下文
-                workRunContext.setAppId(submitJobRes.getAppId());
-            } catch (ResourceAccessException e) {
-                log.error(e.getMessage(), e);
-                throw errorLogException("提交作业异常 : " + e.getMessage());
-            } catch (HttpServerErrorException e1) {
-                log.error(e1.getMessage(), e1);
-                if (HttpStatus.BAD_GATEWAY.value() == e1.getRawStatusCode()) {
-                    throw errorLogException("提交作业异常 : 无法访问节点服务器,请检查服务器防火墙或者计算集群");
-                }
-                throw errorLogException("提交作业异常 : " + e1.getMessage());
-            }
+            // 保存上下文
+            workRunContext.setAppId(agentLinkResponse.getAppId());
 
             // 保存日志
             logBuilder.append(startLog("监听作业状态"));
@@ -371,45 +345,38 @@ public class FlinkSqlExecutor extends WorkExecutor {
             // 获取作业状态并保存
             GetWorkInfoReq jobInfoReq = GetWorkInfoReq.builder().agentHome(agentNode.getAgentHomePath())
                 .flinkHome(agentNode.getFlinkHomePath()).appId(appId).clusterType(clusterType).build();
-            BaseResponse<?> baseResponse = HttpUtils.doPost(
-                httpUrlUtils.genHttpUrl(agentNode.getHost(), agentNode.getAgentPort(), FlinkAgentUrl.GET_WORK_INFO_URL),
-                jobInfoReq, BaseResponse.class);
-            if (!String.valueOf(HttpStatus.OK.value()).equals(baseResponse.getCode())) {
-                throw errorLogException("获取作业状态异常 : " + baseResponse.getMsg());
-            }
 
-            // 解析作业运行状态
-            GetWorkInfoRes getJobInfoRes =
-                JSON.parseObject(JSON.toJSONString(baseResponse.getData()), GetWorkInfoRes.class);
+            AgentLinkResponse agentLinkResponse =
+                agentLinkUtils.getAgentLinkResponse(agentNode, FlinkAgentUrl.GET_WORK_INFO_URL, jobInfoReq);
 
-            // 如果是yarn的话，FinishStatus是undefine的话，使用status状态
-            if (AgentType.YARN.equals(clusterType) && "UNDEFINED".equalsIgnoreCase(getJobInfoRes.getFinalStatus())) {
-                getJobInfoRes.setFinalStatus(getJobInfoRes.getStatus());
+            // 如果是yarn的话，FinalStatus是undefine的话，使用status状态
+            if (AgentType.YARN.equals(clusterType) && "UNDEFINED".equalsIgnoreCase(agentLinkResponse.getFinalState())) {
+                agentLinkResponse.setFinalState(agentLinkResponse.getAppState());
             }
 
             // 只有作业状态发生了变化，才能更新状态
-            if (!preStatus.equals(getJobInfoRes.getFinalStatus())) {
-                logBuilder.append(statusLog("运行状态: " + getJobInfoRes.getFinalStatus()));
+            if (!preStatus.equals(agentLinkResponse.getFinalState())) {
+                logBuilder.append(statusLog("运行状态: " + agentLinkResponse.getFinalState()));
 
                 // 立即保存实例
-                workInstance.setSparkStarRes(JSON.toJSONString(getJobInfoRes));
+                workInstance.setSparkStarRes(JSON.toJSONString(agentLinkResponse));
                 updateInstance(workInstance, logBuilder);
 
                 // 立即保存上下文
-                workRunContext.setPreStatus(getJobInfoRes.getFinalStatus());
+                workRunContext.setPreStatus(agentLinkResponse.getFinalState());
                 updateWorkEvent(workEvent, workRunContext);
             }
 
             // 如果是运行中状态，直接返回
             List<String> runningStatus = Arrays.asList("RUNNING", "UNDEFINED", "SUBMITTED", "CONTAINERCREATING",
                 "PENDING", "TERMINATING", "INITIALIZING", "RESTARTING");
-            if (runningStatus.contains(getJobInfoRes.getFinalStatus().toUpperCase())) {
+            if (runningStatus.contains(agentLinkResponse.getFinalState().toUpperCase())) {
                 return InstanceStatus.RUNNING;
             }
 
             // 如果是中止，直接退出
             List<String> abortStatus = Arrays.asList("KILLED", "TERMINATED");
-            if (abortStatus.contains(getJobInfoRes.getFinalStatus().toUpperCase())) {
+            if (abortStatus.contains(agentLinkResponse.getFinalState().toUpperCase())) {
                 throw errorLogException("作业运行中止");
             }
 
@@ -432,20 +399,12 @@ public class FlinkSqlExecutor extends WorkExecutor {
                 .agentHomePath(agentNode.getAgentHomePath() + "/" + PathConstants.AGENT_PATH_NAME).appId(appId)
                 .workInstanceId(workInstance.getId()).flinkHome(agentNode.getFlinkHomePath()).workStatus(preStatus)
                 .clusterType(clusterType).build();
-            BaseResponse<?> baseResponse = HttpUtils.doPost(
-                httpUrlUtils.genHttpUrl(agentNode.getHost(), agentNode.getAgentPort(), FlinkAgentUrl.GET_WORK_LOG_URL),
-                getJobLogReq, BaseResponse.class);
 
-            if (!String.valueOf(HttpStatus.OK.value()).equals(baseResponse.getCode())) {
-                throw errorLogException("保存日志异常 : " + baseResponse.getMsg());
-            }
+            AgentLinkResponse agentLinkResponse =
+                agentLinkUtils.getAgentLinkResponse(agentNode, FlinkAgentUrl.GET_WORK_LOG_URL, getJobLogReq);
 
             // 解析日志并保存
-            GetWorkLogRes getWorkLogRes =
-                JSON.parseObject(JSON.toJSONString(baseResponse.getData()), GetWorkLogRes.class);
-            if (getWorkLogRes != null) {
-                workInstance.setYarnLog(getWorkLogRes.getLog());
-            }
+            workInstance.setYarnLog(agentLinkResponse.getLog());
             logBuilder.append(endLog("保存日志完成"));
 
             // 作业状态为成功的特殊处理情况
@@ -485,9 +444,8 @@ public class FlinkSqlExecutor extends WorkExecutor {
                 // k8s异常主动停止，否则一直重试
                 StopWorkReq stopWorkReq = StopWorkReq.builder().flinkHome(agentNode.getFlinkHomePath()).appId(appId)
                     .clusterType(clusterType).build();
-                new RestTemplate().postForObject(
-                    httpUrlUtils.genHttpUrl(agentNode.getHost(), agentNode.getAgentPort(), FlinkAgentUrl.STOP_WORK_URL),
-                    stopWorkReq, BaseResponse.class);
+
+                agentLinkUtils.getAgentLinkResponse(agentNode, FlinkAgentUrl.STOP_WORK_URL, stopWorkReq);
             }
 
             // 保存日志
@@ -522,15 +480,8 @@ public class FlinkSqlExecutor extends WorkExecutor {
             StopWorkReq stopWorkReq = StopWorkReq.builder().flinkHome(workRunContext.getAgentNode().getFlinkHomePath())
                 .appId(workRunContext.getAppId()).clusterType(workRunContext.getClusterType()).build();
 
-            BaseResponse<?> baseResponse = new RestTemplate().postForObject(
-                httpUrlUtils.genHttpUrl(workRunContext.getAgentNode().getHost(),
-                    workRunContext.getAgentNode().getAgentPort(), FlinkAgentUrl.STOP_WORK_URL),
-                stopWorkReq, BaseResponse.class);
-
-            if (baseResponse != null && baseResponse.getCode() != null
-                && !String.valueOf(HttpStatus.OK.value()).equals(baseResponse.getCode())) {
-                throw new IsxAppException(baseResponse.getCode(), baseResponse.getMsg(), baseResponse.getErr());
-            }
+            agentLinkUtils.getAgentLinkResponse(workRunContext.getAgentNode(), FlinkAgentUrl.STOP_WORK_URL,
+                stopWorkReq);
         }
 
         // 可以中止
