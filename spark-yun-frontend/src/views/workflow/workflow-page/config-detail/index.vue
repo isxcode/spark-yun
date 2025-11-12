@@ -96,11 +96,11 @@
                     />
                   </el-select>
                 </el-form-item>
-                <el-form-item label="sparkConfig" v-if="clusterConfig.setMode === 'ADVANCE' && ['SPARK_SQL'].includes(workItemConfig.workType)  " :class="{ 'show-screen__full': sparkJsonFullStatus }">
+                <el-form-item label="sparkConfig" v-if="clusterConfig.setMode === 'ADVANCE' && ['SPARK_SQL','DATA_SYNC_JDBC','SPARK_JAR','EXCEL_SYNC_JDBC','PY_SPARK','DB_MIGRATE'].includes(workItemConfig.workType)  " :class="{ 'show-screen__full': sparkJsonFullStatus }">
                   <el-icon class="modal-full-screen" @click="fullScreenEvent('sparkJsonFullStatus')"><FullScreen v-if="!sparkJsonFullStatus" /><Close v-else /></el-icon>
                   <code-mirror v-model="clusterConfig.sparkConfigJson" basic :lang="lang"/>
                 </el-form-item>
-                <el-form-item label="flinkConfig" v-if="clusterConfig.setMode === 'ADVANCE' && ['FLINK_SQL'].includes(workItemConfig.workType) " :class="{ 'show-screen__full': sparkJsonFullStatus }">
+                <el-form-item label="flinkConfig" v-if="clusterConfig.setMode === 'ADVANCE' && ['FLINK_SQL','FLINK_JAR'].includes(workItemConfig.workType) " :class="{ 'show-screen__full': sparkJsonFullStatus }">
                   <el-icon class="modal-full-screen" @click="fullScreenEvent('sparkJsonFullStatus')"><FullScreen v-if="!sparkJsonFullStatus" /><Close v-else /></el-icon>
                   <code-mirror v-model="clusterConfig.flinkConfigJson" basic :lang="lang"/>
                 </el-form-item>
@@ -698,11 +698,11 @@ function okEvent() {
           ...cronConfig,
           cron: cronConfig.setMode === 'SIMPLE' ? cron : cronConfig.cron
         },
-        queryConfig: queryConfig,
         syncRule: syncRule,
         ...fileConfig,
         ...containerConfig,
-        ...messageConfig
+        ...messageConfig,
+        ...queryConfig
       }).then((res: any) => {
         if (callback.value && callback.value instanceof Function) {
           callback.value()
