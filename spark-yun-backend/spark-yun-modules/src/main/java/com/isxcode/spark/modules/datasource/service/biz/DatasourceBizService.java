@@ -96,7 +96,11 @@ public class DatasourceBizService {
         }
 
         datasource.setCheckDateTime(LocalDateTime.now());
+
+        // 再检测一遍，成功就改为可用，否则待检测
+
         datasource.setStatus(DatasourceStatus.UN_CHECK);
+
         datasourceRepository.save(datasource);
     }
 
