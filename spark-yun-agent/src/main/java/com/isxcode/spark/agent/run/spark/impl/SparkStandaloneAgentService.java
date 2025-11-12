@@ -305,7 +305,36 @@ public class SparkStandaloneAgentService implements SparkAgentService {
 
     @Override
     public String getCustomJarStdoutLog(String appId, String sparkHomePath) throws Exception {
-        return getStdoutLog(appId, sparkHomePath);
+
+        Document doc = Jsoup.connect(getMasterWebUrl(sparkHomePath)).get();
+
+        Element completedDriversTable = doc.selectFirst(".aggregated-completedDrivers table");
+        Elements completedDriversRows = completedDriversTable.select("tbody tr");
+
+        Map<String, String> apps = new HashMap<>();
+
+        for (Element row : completedDriversRows) {
+            if (row.select("td:nth-child(3) a").first() != null) {
+                String metaSubmissionId = row.selectFirst("td:nth-child(1)").text().replace("(kill)", "").trim();
+                apps.put(metaSubmissionId, row.select("td:nth-child(3) a").first().attr("href"));
+            }
+        }
+        String workUrl = apps.get(appId);
+
+        doc = Jsoup.connect(workUrl).get();
+        Elements rows = doc.select(".aggregated-finishedDrivers table tbody tr");
+        Map<String, String> driversMap = new HashMap<>();
+        for (Element row : rows) {
+            String driverId = row.select("td:nth-child(1)").text().trim();
+            String stderrUrl = row.select("td:nth-child(7) a[href$=stdout]").attr("href");
+            driversMap.put(driverId, stderrUrl);
+        }
+
+        String errlogUrl = driversMap.get(appId);
+        doc = Jsoup.connect(errlogUrl).get();
+        Element preElement = doc.selectFirst("pre");
+
+        return preElement.text();
     }
 
     @Override

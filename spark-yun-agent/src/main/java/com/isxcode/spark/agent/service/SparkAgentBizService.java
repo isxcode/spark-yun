@@ -164,9 +164,9 @@ public class SparkAgentBizService {
     public ContainerCheckRes containerCheck(ContainerCheckReq containerCheckReq) {
 
         try {
-            ResponseEntity<ContainerCheckRes> forEntity = new RestTemplate()
-                .getForEntity("http://127.0.0.1:" + containerCheckReq.getPort() + "/check", ContainerCheckRes.class);
-            return forEntity.getBody();
+            return new RestTemplate()
+                .getForEntity("http://127.0.0.1:" + containerCheckReq.getPort() + "/check", ContainerCheckRes.class)
+                .getBody();
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             return ContainerCheckRes.builder().code("500").msg(e.getMessage()).build();

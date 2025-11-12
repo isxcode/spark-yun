@@ -27,6 +27,10 @@ public class AgentLinkUtils {
             BaseResponse<?> baseResponse = HttpUtils.doPost(
                 httpUrlUtils.genHttpUrl(agentNode.getHost(), agentNode.getAgentPort(), url), body, BaseResponse.class);
 
+            if (baseResponse != null) {
+                log.debug("请求代理成功 : {}", JSON.toJSONString(baseResponse));
+            }
+
             if (!String.valueOf(HttpStatus.OK.value()).equals(baseResponse.getCode())
                 || baseResponse.getData() == null) {
                 throw new WorkRunException("请求代理异常 : " + baseResponse.getMsg());
