@@ -133,8 +133,8 @@ function showModal(cb: () => void, data: any): void {
     renderSence.value = 'edit'
   } else {
     formData.name = ''
-    formData.maxMemberNum = 5
-    formData.maxWorkflowNum = 20
+    formData.maxMemberNum = 2
+    formData.maxWorkflowNum = 5
     formData.adminUserId = ''
     formData.remark = ''
     formData.id = ''
