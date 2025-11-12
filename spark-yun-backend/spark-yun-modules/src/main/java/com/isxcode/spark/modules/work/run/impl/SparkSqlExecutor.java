@@ -453,7 +453,7 @@ public class SparkSqlExecutor extends WorkExecutor {
                     agentLinkUtils.getAgentLinkResponse(agentNode, SparkAgentUrl.GET_WORK_DATA_URL, getWorkDataReq);
 
                 // 保存数据
-                workInstance.setResultData(JSON.toJSONString(agentLinkResponse.getData()));
+                workInstance.setResultData(JSON.toJSONString(agentLinkResponse));
 
                 // 保存日志
                 logBuilder.append(endLog("保存数据成功"));
