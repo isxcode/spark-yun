@@ -46,4 +46,6 @@ public interface DatasourceMapper {
         DatabaseDriverEntity databaseDriverEntity);
 
     ConnectInfo datasourceEntityToConnectInfo(DatasourceEntity datasourceEntity);
+
+    CheckConnectReq addDatasourceReqToCheckConnectReq(AddDatasourceReq addDatasourceReq);
 }
