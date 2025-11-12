@@ -622,7 +622,10 @@ function getConfigDetailData() {
   GetWorkItemConfig({
       workId: workItemConfig.value.id
   }).then((res: any) => {
-    if (['QUERY_JDBC', 'PRQL', 'EXE_JDBC'].includes(workItemConfig.value.workType)) {
+    if (['EXE_JDBC'].includes(workItemConfig.value.workType)) {
+      dataSourceForm.datasourceId = res.data.datasourceId
+    }
+    if (['QUERY_JDBC', 'PRQL'].includes(workItemConfig.value.workType)) {
       dataSourceForm.datasourceId = res.data.datasourceId
       queryConfig.lineLimit = res.data.queryConfig.lineLimit
       queryConfig.enableLimit = res.data.queryConfig.enableLimit
