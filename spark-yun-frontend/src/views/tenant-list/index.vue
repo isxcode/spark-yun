@@ -50,17 +50,6 @@
           </template>
           <template #options="scopeSlot">
             <div class="btn-group">
-              <span @click="editData(scopeSlot.row)">编辑</span>
-              <span
-                v-if="!scopeSlot.row.checkLoding"
-                @click="checkTenant(scopeSlot.row)"
-              >检测</span>
-              <el-icon
-                v-else
-                class="is-loading"
-              >
-                <Loading />
-              </el-icon>
               <template v-if="scopeSlot.row.status === 'ENABLE'">
                 <span
                   v-if="!scopeSlot.row.statusLoading"
@@ -85,7 +74,22 @@
                   <Loading />
                 </el-icon>
               </template>
-              <span @click="deleteData(scopeSlot.row)">删除</span>
+                   <el-dropdown trigger="click">
+                    <span class="click-show-more">更多</span>
+                    <template #dropdown>
+                      <el-dropdown-menu>
+                        <el-dropdown-item @click="editData(scopeSlot.row)">
+                          编辑
+                        </el-dropdown-item>
+                        <el-dropdown-item v-if="!scopeSlot.row.checkLoding" @click="checkTenant(scopeSlot.row)">
+                          检测
+                        </el-dropdown-item>
+                        <el-dropdown-item @click="deleteData(scopeSlot.row)">
+                          删除
+                        </el-dropdown-item>
+                      </el-dropdown-menu>
+                    </template>
+                </el-dropdown>
             </div>
           </template>
         </BlockTable>
