@@ -236,7 +236,7 @@ public class FlinkKubernetesAgentService implements FlinkAgentService {
                 Pattern regex = Pattern.compile(pattern);
                 Matcher matcher = regex.matcher(line);
                 if (matcher.find()) {
-                    return GetWorkInfoRes.builder().finalStatus(matcher.group(1)).appId(getWorkInfoReq.getAppId())
+                    return GetWorkInfoRes.builder().finalState(matcher.group(1)).appId(getWorkInfoReq.getAppId())
                         .build();
                 }
             }
@@ -246,7 +246,7 @@ public class FlinkKubernetesAgentService implements FlinkAgentService {
                     errLog.append(line).append("\n");
                 }
                 if (errLog.toString().contains("No resources found in zhiqingyun-space namespace")) {
-                    return GetWorkInfoRes.builder().finalStatus("Over").appId(getWorkInfoReq.getAppId()).build();
+                    return GetWorkInfoRes.builder().finalState("Over").appId(getWorkInfoReq.getAppId()).build();
                 }
             }
             int exitCode = process.waitFor();

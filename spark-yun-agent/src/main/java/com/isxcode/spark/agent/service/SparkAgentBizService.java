@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -32,6 +33,19 @@ public class SparkAgentBizService {
             SparkLauncher sparkLauncher = agentService.getSparkLauncher(submitWorkReq);
             String appId = agentService.submitWork(sparkLauncher);
             return SubmitWorkRes.builder().appId(appId).build();
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            throw new IsxAppException(e.getMessage());
+        }
+    }
+
+    public SubmitWorkRes submitWorkForPySpark(SubmitWorkReq submitWorkReq) {
+
+        try {
+            SparkAgentService agentService = agentFactory.getAgentService(submitWorkReq.getClusterType());
+            SparkLauncher sparkLauncher = agentService.getSparkLauncher(submitWorkReq);
+            Map<String, String> result = agentService.submitWorkForPySpark(sparkLauncher);
+            return SubmitWorkRes.builder().result(result).build();
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             throw new IsxAppException(e.getMessage());

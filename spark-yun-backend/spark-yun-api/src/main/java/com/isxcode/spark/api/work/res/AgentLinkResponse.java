@@ -1,7 +1,10 @@
 package com.isxcode.spark.api.work.res;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+
 import java.util.List;
+import java.util.Map;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,9 +18,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class AgentResponse {
+public class AgentLinkResponse {
 
-    private String appStatus;
+    private String finalState;
+
+    private String appState;
 
     private String message;
 
@@ -30,4 +35,12 @@ public class AgentResponse {
     private String trackingUrl;
 
     private String instanceId;
+
+    private String msg;
+
+    private Map<String, String> result;
+
+    private int port;
+
+    private String code;
 }
