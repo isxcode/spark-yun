@@ -326,9 +326,6 @@ public class WorkBizService {
             return new GetDataRes(null, null, workInstanceEntity.getResultData());
         }
 
-        if (Strings.isEmpty(workInstanceEntity.getYarnLog())) {
-            return new GetDataRes(JSON.parseArray(workInstanceEntity.getResultData()), null, null);
-        }
         return JSON.parseObject(workInstanceEntity.getResultData(), GetDataRes.class);
     }
 
