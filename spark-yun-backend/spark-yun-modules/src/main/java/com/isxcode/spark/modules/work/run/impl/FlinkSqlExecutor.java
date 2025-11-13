@@ -181,12 +181,14 @@ public class FlinkSqlExecutor extends WorkExecutor {
 
             // 解析系统函数
             String script = sqlFunctionService.parseSqlFunction(parseValueSql);
+            String printSql = script;
 
             // 解析全局变量
             List<SecretKeyEntity> allKey = secretKeyRepository.findAll();
             for (SecretKeyEntity secretKeyEntity : allKey) {
                 script = script.replace("${{ secret." + secretKeyEntity.getKeyName() + " }}",
-                    secretKeyEntity.getSecretValue());
+                    aesUtils.decrypt(secretKeyEntity.getSecretValue()));
+                printSql = printSql.replace("${{ secret." + secretKeyEntity.getKeyName() + " }}", "******");
             }
 
             // 保存上下文

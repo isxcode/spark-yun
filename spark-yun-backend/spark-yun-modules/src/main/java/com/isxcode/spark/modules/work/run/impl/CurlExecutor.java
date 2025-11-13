@@ -6,8 +6,11 @@ import com.isxcode.spark.api.instance.constants.InstanceStatus;
 import com.isxcode.spark.api.work.constants.WorkType;
 import com.isxcode.spark.backend.api.base.properties.IsxAppProperties;
 import com.isxcode.spark.common.locker.Locker;
+import com.isxcode.spark.common.utils.aes.AesUtils;
 import com.isxcode.spark.common.utils.path.PathUtils;
 import com.isxcode.spark.modules.alarm.service.AlarmService;
+import com.isxcode.spark.modules.secret.entity.SecretKeyEntity;
+import com.isxcode.spark.modules.secret.repository.SecretKeyRepository;
 import com.isxcode.spark.modules.work.entity.WorkEventEntity;
 import com.isxcode.spark.modules.work.entity.WorkInstanceEntity;
 import com.isxcode.spark.modules.work.repository.*;
@@ -19,10 +22,10 @@ import com.isxcode.spark.modules.work.sql.SqlFunctionService;
 import com.isxcode.spark.modules.workflow.repository.WorkflowInstanceRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
-import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -30,20 +33,22 @@ public class CurlExecutor extends WorkExecutor {
 
     private final IsxAppProperties isxAppProperties;
 
-    private final ServerProperties serverProperties;
+    private final SecretKeyRepository secretKeyRepository;
+    private final AesUtils aesUtils;
 
     public CurlExecutor(WorkInstanceRepository workInstanceRepository,
         WorkflowInstanceRepository workflowInstanceRepository, SqlFunctionService sqlFunctionService,
         AlarmService alarmService, WorkEventRepository workEventRepository, Locker locker,
         WorkRepository workRepository, WorkRunJobFactory workRunJobFactory, WorkConfigRepository workConfigRepository,
         VipWorkVersionRepository vipWorkVersionRepository, IsxAppProperties isxAppProperties, WorkService workService,
-        ServerProperties serverProperties) {
+        SecretKeyRepository secretKeyRepository, AesUtils aesUtils) {
 
         super(alarmService, locker, workRepository, workInstanceRepository, workflowInstanceRepository,
             workEventRepository, workRunJobFactory, sqlFunctionService, workConfigRepository, vipWorkVersionRepository,
             workService);
         this.isxAppProperties = isxAppProperties;
-        this.serverProperties = serverProperties;
+        this.secretKeyRepository = secretKeyRepository;
+        this.aesUtils = aesUtils;
     }
 
     @Override
@@ -80,12 +85,21 @@ public class CurlExecutor extends WorkExecutor {
 
             // 脚本需要返回网络状态
             script = script.replace("curl", "curl -w \"%{http_code}\" ");
+            String printScript = script;
+
+            // 解析全局变量
+            List<SecretKeyEntity> allKey = secretKeyRepository.findAll();
+            for (SecretKeyEntity secretKeyEntity : allKey) {
+                script = script.replace("${{ secret." + secretKeyEntity.getKeyName() + " }}",
+                    aesUtils.decrypt(secretKeyEntity.getSecretValue()));
+                printScript = printScript.replace("${{ secret." + secretKeyEntity.getKeyName() + " }}", "******");
+            }
 
             // 保存上下文
             workRunContext.setScript(script);
 
             // 保存日志
-            logBuilder.append(script).append("\n");
+            logBuilder.append(printScript).append("\n");
             logBuilder.append(endLog("检测Curl脚本完成"));
             logBuilder.append(startLog("执行Curl脚本开始"));
             return updateWorkEventAndInstance(workInstance, logBuilder, workEvent, workRunContext);

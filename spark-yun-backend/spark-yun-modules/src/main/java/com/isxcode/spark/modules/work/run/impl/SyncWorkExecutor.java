@@ -178,6 +178,11 @@ public class SyncWorkExecutor extends WorkExecutor {
                 throw errorLogException("检测过滤条件异常 : 分区键为空");
             }
 
+            // 检测写入模式是否为空
+            if (Strings.isEmpty(workRunContext.getSyncWorkConfig().getOverMode())) {
+                throw errorLogException("检测过滤条件异常 : 写入模式为空");
+            }
+
             // 检测是否配置映射关系
             if (workRunContext.getSyncWorkConfig().getColumnMap().isEmpty()) {
                 throw errorLogException("检测过滤条件异常 : 请配置字段映射关系");
@@ -198,19 +203,21 @@ public class SyncWorkExecutor extends WorkExecutor {
 
                 // 翻译sql中的系统函数
                 String script = sqlFunctionService.parseSqlFunction(parseValueSql);
+                String printSql = script;
 
                 // 解析全局变量
                 List<SecretKeyEntity> allKey = secretKeyRepository.findAll();
                 for (SecretKeyEntity secretKeyEntity : allKey) {
                     script = script.replace("${{ secret." + secretKeyEntity.getKeyName() + " }}",
-                        secretKeyEntity.getSecretValue());
+                        aesUtils.decrypt(secretKeyEntity.getSecretValue()));
+                    printSql = printSql.replace("${{ secret." + secretKeyEntity.getKeyName() + " }}", "******");
                 }
 
                 // 保存事件
                 workRunContext.getSyncWorkConfig().setQueryCondition(script);
 
                 // 保存日志
-                logBuilder.append(script).append("\n");
+                logBuilder.append(printSql).append("\n");
             }
 
             logBuilder.append(endLog("检测过滤条件完成"));

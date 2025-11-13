@@ -1,6 +1,5 @@
 package com.isxcode.spark.modules.datasource.service;
 
-import com.isxcode.spark.api.datasource.constants.DatasourceType;
 import com.isxcode.spark.api.datasource.dto.KafkaConfig;
 import com.isxcode.spark.api.datasource.dto.SecurityColumnDto;
 import com.isxcode.spark.backend.api.base.exceptions.IsxAppException;
@@ -14,7 +13,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.calcite.sql.parser.SqlParseException;
 import org.apache.calcite.sql.parser.SqlParser;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.AdminClientConfig;
 import org.apache.kafka.clients.admin.ListTopicsResult;
@@ -53,25 +51,6 @@ public class DatasourceService {
 
         DatasourceEntity datasource = datasourceRepository.findById(datasourceId).orElse(null);
         return datasource == null ? datasourceId : datasource.getName();
-    }
-
-
-    public String genDefaultSql(String datasourceId) {
-
-        if (StringUtils.isEmpty(datasourceId)) {
-            return "show databases";
-        }
-
-        DatasourceEntity datasource = getDatasource(datasourceId);
-
-        switch (datasource.getDbType()) {
-            case DatasourceType.HANA_SAP:
-                return "SELECT TABLE_NAME FROM SYS.TABLES;";
-            case DatasourceType.SQL_SERVER:
-                return "select getdate() as nowtime";
-            default:
-                return "show databases";
-        }
     }
 
     public void checkSqlValid(String sql) {

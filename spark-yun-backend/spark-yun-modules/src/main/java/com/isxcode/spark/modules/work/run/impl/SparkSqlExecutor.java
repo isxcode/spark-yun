@@ -198,19 +198,21 @@ public class SparkSqlExecutor extends WorkExecutor {
 
             // 解析系统函数
             String script = sqlFunctionService.parseSqlFunction(parseValueSql);
+            String printSql = script;
 
             // 解析全局变量
             List<SecretKeyEntity> allKey = secretKeyRepository.findAll();
             for (SecretKeyEntity secretKeyEntity : allKey) {
                 script = script.replace("${{ secret." + secretKeyEntity.getKeyName() + " }}",
-                    secretKeyEntity.getSecretValue());
+                    aesUtils.decrypt(secretKeyEntity.getSecretValue()));
+                printSql = printSql.replace("${{ secret." + secretKeyEntity.getKeyName() + " }}", "******");
             }
 
             // 保存上下文
             workRunContext.setScript(script);
 
             // 保存日志
-            logBuilder.append(script).append("\n");
+            logBuilder.append(printSql).append("\n");
             logBuilder.append(endLog("检测SparkSQL完成"));
             logBuilder.append(startLog("上传函数开始"));
             return updateWorkEventAndInstance(workInstance, logBuilder, workEvent, workRunContext);

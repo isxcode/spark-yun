@@ -15,6 +15,7 @@ readonly FLINK_MIN_FILE="flink-${FLINK_VERSION}-bin-scala_2.12.tgz"
 # 路径配置
 readonly BASE_PATH=$(cd "$(dirname "$0")" && pwd)
 readonly TMP_DIR="${BASE_PATH}/resources/tmp"
+readonly JDBC_DIR="${BASE_PATH}/resources/jdbc/system"
 readonly SPARK_MIN_DIR="${BASE_PATH}/spark-yun-dist/spark-min"
 readonly FLINK_MIN_DIR="${BASE_PATH}/spark-yun-dist/flink-min"
 readonly TMP_SPARK_MIN_JARS="${TMP_DIR}/spark-min/jars"
@@ -93,6 +94,9 @@ install_flink() {
         ' "${FLINK_MIN_DIR}/conf/flink-conf.yaml" > "${FLINK_MIN_DIR}/conf/flink-conf.yaml.tmp"
         mv "${FLINK_MIN_DIR}/conf/flink-conf.yaml.tmp" "${FLINK_MIN_DIR}/conf/flink-conf.yaml"
         echo "rest.port: 8083" >> "${FLINK_MIN_DIR}/conf/flink-conf.yaml"
+
+        # 将数据库的驱动拷贝到flink的lib中
+        cp "${JDBC_DIR}"/*.jar "${FLINK_MIN_DIR}/lib"
 
         # 删除不需要的文件和目录
         rm -rf "${FLINK_MIN_DIR}"/{NOTICE,LICENSE,licenses,examples}
