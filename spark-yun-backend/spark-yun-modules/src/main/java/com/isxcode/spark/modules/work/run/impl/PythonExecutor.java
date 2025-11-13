@@ -14,6 +14,8 @@ import com.isxcode.spark.modules.cluster.entity.ClusterNodeEntity;
 import com.isxcode.spark.modules.cluster.mapper.ClusterNodeMapper;
 import com.isxcode.spark.modules.cluster.repository.ClusterNodeRepository;
 import com.isxcode.spark.modules.cluster.repository.ClusterRepository;
+import com.isxcode.spark.modules.secret.entity.SecretKeyEntity;
+import com.isxcode.spark.modules.secret.repository.SecretKeyRepository;
 import com.isxcode.spark.modules.work.entity.WorkEventEntity;
 import com.isxcode.spark.modules.work.entity.WorkInstanceEntity;
 import com.isxcode.spark.modules.work.repository.*;
@@ -31,6 +33,7 @@ import org.apache.logging.log4j.util.Strings;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import static com.isxcode.spark.common.utils.ssh.SshUtils.executeCommand;
@@ -52,13 +55,15 @@ public class PythonExecutor extends WorkExecutor {
 
     private final SqlFunctionService sqlFunctionService;
 
+    private final SecretKeyRepository secretKeyRepository;
+
     public PythonExecutor(WorkInstanceRepository workInstanceRepository,
         WorkflowInstanceRepository workflowInstanceRepository, SqlValueService sqlValueService,
         SqlFunctionService sqlFunctionService, AlarmService alarmService, WorkEventRepository workEventRepository,
         Locker locker, WorkRepository workRepository, WorkRunJobFactory workRunJobFactory,
         WorkConfigRepository workConfigRepository, VipWorkVersionRepository vipWorkVersionRepository,
         ClusterNodeMapper clusterNodeMapper, AesUtils aesUtils, ClusterNodeRepository clusterNodeRepository,
-        ClusterRepository clusterRepository, WorkService workService) {
+        ClusterRepository clusterRepository, WorkService workService, SecretKeyRepository secretKeyRepository) {
 
         super(alarmService, locker, workRepository, workInstanceRepository, workflowInstanceRepository,
             workEventRepository, workRunJobFactory, sqlFunctionService, workConfigRepository, vipWorkVersionRepository,
@@ -69,6 +74,7 @@ public class PythonExecutor extends WorkExecutor {
         this.aesUtils = aesUtils;
         this.sqlValueService = sqlValueService;
         this.sqlFunctionService = sqlFunctionService;
+        this.secretKeyRepository = secretKeyRepository;
     }
 
     @Override
@@ -146,6 +152,15 @@ public class PythonExecutor extends WorkExecutor {
 
             // 翻译脚本中的系统函数
             String script = sqlFunctionService.parseSqlFunction(parseValueSql);
+            String printScript = script;
+
+            // 解析全局变量
+            List<SecretKeyEntity> allKey = secretKeyRepository.findAll();
+            for (SecretKeyEntity secretKeyEntity : allKey) {
+                script = script.replace("${{ secret." + secretKeyEntity.getKeyName() + " }}",
+                    secretKeyEntity.getSecretValue());
+                printScript = printScript.replace("${{ secret." + secretKeyEntity.getKeyName() + " }}", "******");
+            }
 
             // 禁用rm指令
             if (Pattern.compile("\\brm\\b", Pattern.CASE_INSENSITIVE).matcher(script).find()) {
@@ -156,7 +171,7 @@ public class PythonExecutor extends WorkExecutor {
             workRunContext.setScript(script);
 
             // 保存日志
-            logBuilder.append(script).append("\n");
+            logBuilder.append(printScript).append("\n");
             logBuilder.append(endLog("检测Python脚本完成"));
             logBuilder.append(startLog("执行Python脚本开始"));
             return updateWorkEventAndInstance(workInstance, logBuilder, workEvent, workRunContext);
