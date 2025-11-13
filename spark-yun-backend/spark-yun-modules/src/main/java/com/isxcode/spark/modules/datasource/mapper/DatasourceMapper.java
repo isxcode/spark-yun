@@ -48,4 +48,6 @@ public interface DatasourceMapper {
     ConnectInfo datasourceEntityToConnectInfo(DatasourceEntity datasourceEntity);
 
     CheckConnectReq addDatasourceReqToCheckConnectReq(AddDatasourceReq addDatasourceReq);
+
+    CheckConnectReq updateDatasourceReqToCheckConnectReq(UpdateDatasourceReq updateDatasourceReq);
 }
