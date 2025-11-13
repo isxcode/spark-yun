@@ -55,25 +55,6 @@ public class DatasourceService {
         return datasource == null ? datasourceId : datasource.getName();
     }
 
-
-    public String genDefaultSql(String datasourceId) {
-
-        if (StringUtils.isEmpty(datasourceId)) {
-            return "show databases";
-        }
-
-        DatasourceEntity datasource = getDatasource(datasourceId);
-
-        switch (datasource.getDbType()) {
-            case DatasourceType.HANA_SAP:
-                return "SELECT TABLE_NAME FROM SYS.TABLES;";
-            case DatasourceType.SQL_SERVER:
-                return "select getdate() as nowtime";
-            default:
-                return "show databases";
-        }
-    }
-
     public void checkSqlValid(String sql) {
 
         SqlParser parser = SqlParser.create(sql);

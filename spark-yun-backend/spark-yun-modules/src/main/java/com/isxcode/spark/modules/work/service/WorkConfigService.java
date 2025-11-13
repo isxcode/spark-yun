@@ -45,16 +45,14 @@ public class WorkConfigService {
 
         switch (workType) {
             case WorkType.QUERY_SPARK_SQL:
-                workConfig.setScript("select now()");
+            case WorkType.QUERY_JDBC_SQL:
+            case WorkType.EXECUTE_JDBC_SQL:
+            case WorkType.SPARK_CONTAINER_SQL:
+                workConfig.setScript("show tables");
                 break;
             case WorkType.FLINK_SQL:
                 workConfig.setScript("CREATE TABLE print_sink ( \n" + "    print_date timestamp \n" + ") WITH ( \n"
                     + "    'connector' = 'print' \n" + ");\n" + "\n" + "INSERT INTO print_sink SELECT now();");
-                break;
-            case WorkType.QUERY_JDBC_SQL:
-            case WorkType.EXECUTE_JDBC_SQL:
-            case WorkType.SPARK_CONTAINER_SQL:
-                workConfig.setScript(datasourceService.genDefaultSql(workConfig.getDatasourceId()));
                 break;
             case WorkType.BASH:
                 workConfig.setScript("#!/bin/bash \n" + "\n" + "pwd");
