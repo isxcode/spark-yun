@@ -158,7 +158,7 @@ public class PythonExecutor extends WorkExecutor {
             List<SecretKeyEntity> allKey = secretKeyRepository.findAll();
             for (SecretKeyEntity secretKeyEntity : allKey) {
                 script = script.replace("${{ secret." + secretKeyEntity.getKeyName() + " }}",
-                    secretKeyEntity.getSecretValue());
+                    aesUtils.decrypt(secretKeyEntity.getSecretValue()));
                 printScript = printScript.replace("${{ secret." + secretKeyEntity.getKeyName() + " }}", "******");
             }
 

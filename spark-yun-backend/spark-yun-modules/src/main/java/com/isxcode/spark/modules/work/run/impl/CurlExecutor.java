@@ -6,6 +6,7 @@ import com.isxcode.spark.api.instance.constants.InstanceStatus;
 import com.isxcode.spark.api.work.constants.WorkType;
 import com.isxcode.spark.backend.api.base.properties.IsxAppProperties;
 import com.isxcode.spark.common.locker.Locker;
+import com.isxcode.spark.common.utils.aes.AesUtils;
 import com.isxcode.spark.common.utils.path.PathUtils;
 import com.isxcode.spark.modules.alarm.service.AlarmService;
 import com.isxcode.spark.modules.secret.entity.SecretKeyEntity;
@@ -33,19 +34,21 @@ public class CurlExecutor extends WorkExecutor {
     private final IsxAppProperties isxAppProperties;
 
     private final SecretKeyRepository secretKeyRepository;
+    private final AesUtils aesUtils;
 
     public CurlExecutor(WorkInstanceRepository workInstanceRepository,
         WorkflowInstanceRepository workflowInstanceRepository, SqlFunctionService sqlFunctionService,
         AlarmService alarmService, WorkEventRepository workEventRepository, Locker locker,
         WorkRepository workRepository, WorkRunJobFactory workRunJobFactory, WorkConfigRepository workConfigRepository,
         VipWorkVersionRepository vipWorkVersionRepository, IsxAppProperties isxAppProperties, WorkService workService,
-        SecretKeyRepository secretKeyRepository) {
+        SecretKeyRepository secretKeyRepository, AesUtils aesUtils) {
 
         super(alarmService, locker, workRepository, workInstanceRepository, workflowInstanceRepository,
             workEventRepository, workRunJobFactory, sqlFunctionService, workConfigRepository, vipWorkVersionRepository,
             workService);
         this.isxAppProperties = isxAppProperties;
         this.secretKeyRepository = secretKeyRepository;
+        this.aesUtils = aesUtils;
     }
 
     @Override
@@ -88,7 +91,7 @@ public class CurlExecutor extends WorkExecutor {
             List<SecretKeyEntity> allKey = secretKeyRepository.findAll();
             for (SecretKeyEntity secretKeyEntity : allKey) {
                 script = script.replace("${{ secret." + secretKeyEntity.getKeyName() + " }}",
-                    secretKeyEntity.getSecretValue());
+                    aesUtils.decrypt(secretKeyEntity.getSecretValue()));
                 printScript = printScript.replace("${{ secret." + secretKeyEntity.getKeyName() + " }}", "******");
             }
 
