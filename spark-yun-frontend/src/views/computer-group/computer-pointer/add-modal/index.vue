@@ -57,10 +57,10 @@
           placeholder="请输入"
         />
       </el-form-item>
-      <el-form-item v-if="clusterType === 'standalone'" label="默认安装Spark">
+      <el-form-item v-if="clusterType === 'standalone'" label="安装Spark">
         <el-switch v-model="formData.installSparkLocal" />
       </el-form-item>
-      <el-form-item v-if="clusterType === 'standalone'" label="默认安装Flink">
+      <el-form-item v-if="clusterType === 'standalone'" label="安装Flink">
         <el-switch v-model="formData.installFlinkLocal" />
       </el-form-item>
       <el-form-item label="备注">
