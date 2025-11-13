@@ -74,6 +74,7 @@ oceanbase: jdbc:oceanbase://${host}:${port}/${database}
 tidb: jdbc:mysql://${host}:${port}/${database}
 starrocks: jdbc:mysql://${host}:${port}/${database}
 db2: jdbc:db2://${host}:${port}/${database}
+kafka: ${host}:${port} 默认端口号：9092
               </pre>
             </template>
             <el-icon style="left: 50px" class="tooltip-msg"><QuestionFilled /></el-icon>
