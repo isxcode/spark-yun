@@ -309,8 +309,12 @@ public class SparkYarnAgentService implements SparkAgentService {
             } else {
                 Pattern regex = Pattern.compile(YARN_LOG_STDOUT_REGEX);
                 Matcher matcher = regex.matcher(errLog);
-                if (matcher.find()) {
-                    return matcher.group(1).replace("LogType:stdout\n", "").replace("\nEnd of LogType:stdout", "");
+                while (matcher.find()) {
+                    String matchedContent = matcher.group(1);
+                    if (matchedContent.contains("LogLength:0")) {
+                        continue;
+                    }
+                    return matchedContent.replace("LogType:stdout\n", "").replace("\nEnd of LogType:stdout", "");
                 }
             }
         } catch (InterruptedException e) {
