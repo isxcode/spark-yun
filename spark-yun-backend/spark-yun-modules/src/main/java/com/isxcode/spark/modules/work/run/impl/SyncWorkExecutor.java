@@ -178,6 +178,11 @@ public class SyncWorkExecutor extends WorkExecutor {
                 throw errorLogException("检测过滤条件异常 : 分区键为空");
             }
 
+            // 检测写入模式是否为空
+            if (Strings.isEmpty(workRunContext.getSyncWorkConfig().getOverMode())) {
+                throw errorLogException("检测过滤条件异常 : 写入模式为空");
+            }
+
             // 检测是否配置映射关系
             if (workRunContext.getSyncWorkConfig().getColumnMap().isEmpty()) {
                 throw errorLogException("检测过滤条件异常 : 请配置字段映射关系");
