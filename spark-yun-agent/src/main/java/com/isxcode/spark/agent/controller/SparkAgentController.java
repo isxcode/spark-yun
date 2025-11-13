@@ -105,6 +105,7 @@ public class SparkAgentController {
 
     @Operation(summary = "计算容器心跳检测")
     @PostMapping(SparkAgentUrl.CONTAINER_CHECK_URL)
+    @SuccessResponse("检测成功")
     public ContainerCheckRes containerCheck(@RequestBody ContainerCheckReq containerCheckReq) {
 
         return sparkYunAgentBizService.containerCheck(containerCheckReq);
@@ -112,6 +113,7 @@ public class SparkAgentController {
 
     @Operation(summary = "执行计算容器SQL")
     @PostMapping(SparkAgentUrl.EXECUTE_CONTAINER_SQL_URL)
+    @SuccessResponse("提交成功")
     public ExecuteContainerSqlRes executeContainerSql(@RequestBody ExecuteContainerSqlReq executeContainerSqlReq) {
 
         return sparkYunAgentBizService.executeContainerSql(executeContainerSqlReq);

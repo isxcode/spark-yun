@@ -27,8 +27,11 @@ public class AgentLinkUtils {
             BaseResponse<?> baseResponse = HttpUtils.doPost(
                 httpUrlUtils.genHttpUrl(agentNode.getHost(), agentNode.getAgentPort(), url), body, BaseResponse.class);
 
+            // 打印调试日志
             if (baseResponse != null) {
                 log.debug("请求代理成功 : {}", JSON.toJSONString(baseResponse));
+            } else {
+                throw new WorkRunException("代理请求中断");
             }
 
             if (!String.valueOf(HttpStatus.OK.value()).equals(baseResponse.getCode())
@@ -36,6 +39,7 @@ public class AgentLinkUtils {
                 throw new WorkRunException("请求代理异常 : " + baseResponse.getMsg());
             }
 
+            // 翻译成统一返回
             return JSON.parseObject(JSON.toJSONString(baseResponse.getData()), AgentLinkResponse.class);
         } catch (HttpServerErrorException e) {
             log.error(e.getMessage(), e);
