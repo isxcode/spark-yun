@@ -403,7 +403,7 @@ public class SparkSqlExecutor extends WorkExecutor {
 
             // 如果是运行中状态，直接返回
             List<String> runningStatus =
-                Arrays.asList("RUNNING", "UNDEFINED", "SUBMITTED", "CONTAINERCREATING", "PENDING");
+                Arrays.asList("ACCEPTED", "RUNNING", "UNDEFINED", "SUBMITTED", "CONTAINERCREATING", "PENDING");
             if (runningStatus.contains(agentLinkResponse.getFinalState().toUpperCase())) {
                 return InstanceStatus.RUNNING;
             }
