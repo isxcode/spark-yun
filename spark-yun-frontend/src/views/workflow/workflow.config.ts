@@ -159,67 +159,67 @@ export const DetailTableConfig: TableConfig = {
 
 export const TypeList = [
   {
-    label: 'Jdbc执行作业',
-    value: 'EXE_JDBC'
+    "label": "Bash作业",
+    "value": "BASH"
   },
   {
-    label: 'Jdbc查询作业',
-    value: 'QUERY_JDBC'
+    "label": "Curl作业",
+    "value": "CURL"
   },
   {
-    label: 'Prql查询作业',
-    value: 'PRQL'
+    "label": "Excel导入作业",
+    "value": "EXCEL_SYNC_JDBC"
   },
   {
-    label: 'Curl作业',
-    value: 'CURL'
+    "label": "FlinkSql作业",
+    "value": "FLINK_SQL"
   },
   {
-    label: 'SparkSql查询作业',
-    value: 'SPARK_SQL'
+    "label": "Flink自定义作业",
+    "value": "FLINK_JAR"
   },
   {
-    label: 'SparkSql容器作业',
-    value: 'SPARK_CONTAINER_SQL'
+    "label": "Jdbc执行作业",
+    "value": "EXE_JDBC"
   },
   {
-    label: '数据同步作业',
-    value: 'DATA_SYNC_JDBC'
+    "label": "Jdbc查询作业",
+    "value": "QUERY_JDBC"
   },
   {
-    label: 'Bash作业',
-    value: 'BASH'
+    "label": "Prql查询作业",
+    "value": "PRQL"
   },
   {
-    label: 'Python作业',
-    value: 'PYTHON'
+    "label": "PySpark作业",
+    "value": "PY_SPARK"
   },
   {
-    label: 'Spark自定义作业',
-    value: 'SPARK_JAR'
+    "label": "Python作业",
+    "value": "PYTHON"
   },
   {
-    label: '接口调用作业',
-    value: 'API'
+    "label": "SparkSql查询作业",
+    "value": "SPARK_SQL"
   },
   {
-    label: 'Excel导入作业',
-    value: 'EXCEL_SYNC_JDBC'
+    "label": "SparkSql容器作业",
+    "value": "SPARK_CONTAINER_SQL"
   },
   {
-    label: 'PySpark作业',
-    value: 'PY_SPARK'
+    "label": "Spark自定义作业",
+    "value": "SPARK_JAR"
   },
   {
-    label: '整库迁移作业',
-    value: 'DB_MIGRATE'
+    "label": "接口调用作业",
+    "value": "API"
   },
   {
-    label: 'FlinkSql作业',
-    value: 'FLINK_SQL'
+    "label": "数据同步作业",
+    "value": "DATA_SYNC_JDBC"
   },
   {
-    label: 'Flink自定义作业',
-    value: 'FLINK_JAR'
+    "label": "整库迁移作业",
+    "value": "DB_MIGRATE"
   }
 ]
