@@ -326,6 +326,10 @@ public class WorkBizService {
             return new GetDataRes(null, null, workInstanceEntity.getResultData());
         }
 
+        if (WorkType.QUERY_JDBC_SQL.equals(workEntity.getWorkType())) {
+            return new GetDataRes(JSON.parseArray(workInstanceEntity.getResultData()), null, null);
+        }
+
         return JSON.parseObject(workInstanceEntity.getResultData(), GetDataRes.class);
     }
 
