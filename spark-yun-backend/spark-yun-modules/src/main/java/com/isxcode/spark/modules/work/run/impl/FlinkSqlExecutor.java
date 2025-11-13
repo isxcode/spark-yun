@@ -368,8 +368,8 @@ public class FlinkSqlExecutor extends WorkExecutor {
             }
 
             // 如果是运行中状态，直接返回
-            List<String> runningStatus = Arrays.asList("RUNNING", "UNDEFINED", "SUBMITTED", "CONTAINERCREATING",
-                "PENDING", "TERMINATING", "INITIALIZING", "RESTARTING");
+            List<String> runningStatus = Arrays.asList("ACCEPTED", "RUNNING", "UNDEFINED", "SUBMITTED",
+                "CONTAINERCREATING", "PENDING", "TERMINATING", "INITIALIZING", "RESTARTING");
             if (runningStatus.contains(agentLinkResponse.getFinalState().toUpperCase())) {
                 return InstanceStatus.RUNNING;
             }
