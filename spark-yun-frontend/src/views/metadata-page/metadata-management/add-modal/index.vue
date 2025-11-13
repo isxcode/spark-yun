@@ -47,96 +47,92 @@ const callback = ref<any>()
 const dataSourceList = ref<Option[]>([])
 const typeList = ref<Option[]>([
   {
-    label: 'Mysql',
-    value: 'MYSQL',
-  },
-  {
-    label: 'Oracle',
-    value: 'ORACLE',
-  },
-  {
-    label: 'SqlServer',
-    value: 'SQL_SERVER',
-  },
-  {
-    label: 'PostgreSql',
-    value: 'POSTGRE_SQL',
-  },
-  {
-    label: 'Impala',
-    value: 'IMPALA',
-  },
-  {
-    label: 'Trino',
-    value: 'TRINO',
-  },
-  {
-    label: 'Presto',
-    value: 'PRESTO',
-  },
-  {
     label: 'Clickhouse',
-    value: 'CLICKHOUSE',
-  },
-  {
-    label: 'Hive',
-    value: 'HIVE',
-  },
-  {
-    label: 'H2',
-    value: 'H2',
-  },
-  // {
-  //   label: 'Kafka',
-  //   value: 'KAFKA',
-  // },
-  {
-    label: 'HanaSap',
-    value: 'HANA_SAP',
-  },
-  {
-    label: '达梦',
-    value: 'DM',
-  },
-  {
-    label: 'Doris',
-    value: 'DORIS',
-  },
-  {
-    label: 'OceanBase',
-    value: 'OCEANBASE',
-  },
-  {
-    label: 'TiDB',
-    value: 'TIDB',
-  },
-  {
-    label: 'StarRocks',
-    value: 'STAR_ROCKS',
-  },
-  {
-    label: 'Greenplum',
-    value: 'GREENPLUM',
-  },
-  {
-    label: 'Gbase',
-    value: 'GBASE',
-  },
-  {
-    label: 'Sybase',
-    value: 'SYBASE',
+    value: 'CLICKHOUSE'
   },
   {
     label: 'Db2',
-    value: 'DB2',
+    value: 'DB2'
+  },
+  {
+    label: 'Doris',
+    value: 'DORIS'
+  },
+  {
+    label: '达梦',
+    value: 'DM'
   },
   {
     label: 'Gauss',
-    value: 'GAUSS',
+    value: 'GAUSS'
+  },
+  {
+    label: 'Gbase',
+    value: 'GBASE'
+  },
+  {
+    label: 'Greenplum',
+    value: 'GREENPLUM'
+  },
+  {
+    label: 'H2',
+    value: 'H2'
+  },
+  {
+    label: 'HanaSap',
+    value: 'HANA_SAP'
+  },
+  {
+    label: 'Hive',
+    value: 'HIVE'
+  },
+  {
+    label: 'Impala',
+    value: 'IMPALA'
+  },
+  {
+    label: 'Mysql',
+    value: 'MYSQL'
+  },
+  {
+    label: 'OceanBase',
+    value: 'OCEANBASE'
   },
   {
     label: 'OpenGauss',
-    value: 'OPEN_GAUSS',
+    value: 'OPEN_GAUSS'
+  },
+  {
+    label: 'Oracle',
+    value: 'ORACLE'
+  },
+  {
+    label: 'PostgreSql',
+    value: 'POSTGRE_SQL'
+  },
+  {
+    label: 'Presto',
+    value: 'PRESTO'
+  },
+  {
+    label: 'SqlServer',
+    value: 'SQL_SERVER'
+  },
+  {
+    label: 'StarRocks',
+    value: 'STAR_ROCKS'
+  },
+  {
+    label: 'Sybase',
+    value: 'SYBASE'
+  },
+  {
+    label: 'TiDB',
+    value: 'TIDB'
+  },
+  {
+    label: 'Trino',
+    value: 'TRINO'
   }
 ])
 const renderSence = ref('new')
