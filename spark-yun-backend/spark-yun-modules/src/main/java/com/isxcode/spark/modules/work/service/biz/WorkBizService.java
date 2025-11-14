@@ -364,10 +364,11 @@ public class WorkBizService {
         }
 
         WorkInstanceEntity workInstanceEntity = workInstanceEntityOptional.get();
-        if (Strings.isEmpty(workInstanceEntity.getYarnLog())) {
-            throw new IsxAppException("日志尚未生成,请等待作业运行完毕");
+        if (workInstanceEntity.getYarnLog() == null) {
+            return GetWorkLogRes.builder().yarnLog("").build();
+        } else {
+            return GetWorkLogRes.builder().yarnLog(workInstanceEntity.getYarnLog()).build();
         }
-        return GetWorkLogRes.builder().yarnLog(workInstanceEntity.getYarnLog()).build();
     }
 
     public GetWorkRes getWork(GetWorkReq getWorkReq) {
