@@ -44,15 +44,22 @@ public class FlinkKubernetesAgentService implements FlinkAgentService {
         return AgentType.K8S;
     }
 
-    public void generatePodTemplate(List<String> volumeMounts, List<String> volumes, String agentHomePath,
-        String workInstanceId) throws IOException {
+    public void generatePodTemplate(List<String> hostList, List<String> volumeMounts, List<String> volumes,
+        String agentHomePath, String workInstanceId) throws IOException {
 
         String podTemplate = "apiVersion: v1 \n" + "kind: Pod \n" + "metadata: \n" + "  name: pod-template \n"
-            + "spec:\n" + "  terminationGracePeriodSeconds: 600\n" + "  containers:\n"
-            + "    - name: flink-main-container\n" + "      volumeMounts:\n" + " %s" + "  volumes:\n" + " %s";
+            + "spec:\n" + "  terminationGracePeriodSeconds: 600\n" + "  activeDeadlineSeconds: 600\n" + " %s"
+            + "  containers:\n" + "    - name: flink-main-container\n" + "      volumeMounts:\n" + " %s"
+            + "  volumes:\n" + " %s";
 
-        String podTemplateContent =
-            String.format(podTemplate, Strings.join(volumeMounts, ' '), Strings.join(volumes, ' '));
+        String podTemplateContent;
+        if (hostList.isEmpty()) {
+            podTemplateContent =
+                String.format(podTemplate, "", Strings.join(volumeMounts, ' '), Strings.join(volumes, ' '));
+        } else {
+            podTemplateContent = String.format(podTemplate, "  hostAliases:\n" + Strings.join(hostList, ' '),
+                Strings.join(volumeMounts, ' '), Strings.join(volumes, ' '));
+        }
 
         // 判断pod文件夹是否存在
         if (!new File(agentHomePath + File.separator + "pod").exists()) {
@@ -196,8 +203,32 @@ public class FlinkKubernetesAgentService implements FlinkAgentService {
             }
         }
 
+        // 从flinkConfig中解析出域名映射
+        Map<String, String> hostMapping = new HashMap<>();
+        Map<String, String> pluginFlinkConfig = submitWorkReq.getPluginReq().getFlinkConfig();
+        if (Strings.isNotEmpty(pluginFlinkConfig.get("qing.host1.name"))
+            && Strings.isNotEmpty(pluginFlinkConfig.get("qing.host1.value"))) {
+            hostMapping.put(pluginFlinkConfig.get("qing.host1.name"), pluginFlinkConfig.get("qing.host1.value"));
+        }
+        if (Strings.isNotEmpty(pluginFlinkConfig.get("qing.host2.name"))
+            && Strings.isNotEmpty(pluginFlinkConfig.get("qing.host2.value"))) {
+            hostMapping.put(pluginFlinkConfig.get("qing.host2.name"), pluginFlinkConfig.get("qing.host2.value"));
+        }
+        if (Strings.isNotEmpty(pluginFlinkConfig.get("qing.host3.name"))
+            && Strings.isNotEmpty(pluginFlinkConfig.get("qing.host3.value"))) {
+            hostMapping.put(pluginFlinkConfig.get("qing.host3.name"), pluginFlinkConfig.get("qing.host3.value"));
+        }
+
+        // 拼接host映射
+        List<String> hostList = new ArrayList<>();
+        if (!hostMapping.isEmpty()) {
+            hostMapping.forEach(
+                (k, v) -> hostList.add("    - ip: \"" + v + "\"\n      hostnames:\n" + "        - \"" + k + "\"\n"));
+        }
+
         // 生成pod文件
-        generatePodTemplate(volumeMounts, volumes, submitWorkReq.getAgentHomePath(), submitWorkReq.getWorkInstanceId());
+        generatePodTemplate(hostList, volumeMounts, volumes, submitWorkReq.getAgentHomePath(),
+            submitWorkReq.getWorkInstanceId());
 
         // 提交flink作业
         ClusterSpecification clusterSpecification =
