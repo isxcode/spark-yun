@@ -143,7 +143,7 @@ public class AlarmBizService {
         try {
             MessageRunner messageAction = messageFactory.getMessageAction(message.getMsgType());
             messageAction.sendMessage(messageContext);
-            message.setStatus(MessageStatus.CHECK_SUCCESS);
+            message.setStatus(MessageStatus.ACTIVE);
             message.setResponse(null);
             messageRepository.save(message);
             return CheckMessageRes.builder().checkStatus(AlarmSendStatus.SUCCESS).log("检测成功").build();
