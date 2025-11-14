@@ -146,13 +146,16 @@ jobs:
       - name: Build with gradle
         run: gradle install package
 
+      - name: Upload zhiqingyun tar
+        uses: actions/upload-artifact@v4
+        with:
+          name: zhiqingyun
+          path: ./spark-yun-dist/build/distributions/
+
       - name: Clear file
         run: |
-          sudo rm -rf /home/runner/work/spark-yun/spark-yun/spark-yun-dist/flink-min
-          sudo rm -rf /home/runner/work/spark-yun/spark-yun/spark-yun-dist/spark-min
-          sudo rm -rf /home/runner/work/spark-yun/spark-yun/spark-yun-dist/build/distributions/zhiqingyun-agent.tar.gz
-          sudo rm -rf /home/runner/work/spark-yun/spark-yun/spark-yun-dist/build/zhiqingyun-agent
-          sudo rm -rf /home/runner/work/spark-yun/spark-yun/spark-yun-agent/build/libs/zhiqingyun-agent.jar
+          sudo rm -rf /home/runner/work/spark-yun/spark-yun/spark-yun-dist
+          sudo rm -rf /home/runner/work/spark-yun/spark-yun/spark-yun-agent
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
@@ -173,12 +176,6 @@ jobs:
           platforms: linux/amd64,linux/arm64
           tags: isxcode/zhiqingyun:${{ inputs.version_number }}
           push: true
-
-      - name: Upload zhiqingyun tar
-        uses: actions/upload-artifact@v4
-        with:
-          name: zhiqingyun
-          path: ./spark-yun-dist/build/distributions/zhiqingyun.tar.gz
 
   # 上传阿里服务器使用单独任务，原因：上传失败后，可以使用github重跑任务，不需要重新打包
   upload-oss:
