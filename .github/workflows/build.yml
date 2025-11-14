@@ -150,7 +150,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: zhiqingyun
-          path: ./spark-yun-dist/build/distributions/
+          path: ./spark-yun-dist/build/distributions/zhiqingyun.tar.gz
 
       - name: Clear file
         run: |
@@ -208,7 +208,7 @@ jobs:
           password: ${{ secrets.PASSWORD }}
           port: 22
           timeout: 3600s
-          source: "zhiqingyun.tar.gz"
+          source: "./artifacts/zhiqingyun.tar.gz"
           target: /data/file/
 
   # 上传阿里镜像仓库使用单独任务，原因：上传失败后，可以使用github重跑任务，不需要重新打包
