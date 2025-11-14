@@ -51,13 +51,13 @@ export const colConfigs: colConfig[] = [
         minWidth: 125,
         formatter: (data: any) => {
             const obj: any = {
-                TEXT: '大文本',
+                CUSTOM: '自定义',
                 STRING: '字符串',
-                DATE: '日期',
-                DATETIME: '日期时间',
                 INT: '整数',
                 DOUBLE: '小数',
-                CUSTOM: '自定义'
+                TEXT: '大文本',
+                DATE: '日期',
+                DATETIME: '日期时间'
             }
             return data.cellValue && obj[data.cellValue] ? obj[data.cellValue] : '-'
         },
