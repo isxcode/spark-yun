@@ -416,10 +416,12 @@ public class FlinkSqlExecutor extends WorkExecutor {
                 // 如果是k8s容器部署需要注意，成功状态需要通过日志中内容判断
                 if (AgentType.K8S.equals(clusterType) && (Strings.isEmpty(workInstance.getYarnLog())
                     || workInstance.getYarnLog().contains("Caused by:"))) {
+                    updateInstance(workInstance, logBuilder);
                     throw errorLogException("任务运行异常");
                 }
                 // 如果是yarn容器部署需要注意,状态是finish但是实际可能异常
                 if (AgentType.YARN.equals(clusterType) && workInstance.getYarnLog().contains("Caused by:")) {
+                    updateInstance(workInstance, logBuilder);
                     throw errorLogException("任务运行异常");
                 }
             } else {
