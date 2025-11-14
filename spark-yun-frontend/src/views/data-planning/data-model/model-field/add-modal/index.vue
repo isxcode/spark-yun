@@ -7,7 +7,7 @@
             :model="formData"
             :rules="rules"
         >
-            <el-form-item label="字段" prop="name">
+            <el-form-item label="名称" prop="name">
                 <el-input v-model="formData.name" maxlength="500" placeholder="请输入" />
             </el-form-item>
             <el-form-item label="字段标准" prop="columnFormatId">
