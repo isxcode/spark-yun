@@ -281,12 +281,27 @@ public class UserBizService {
 
     public void updateUserInfo(UpdateUserInfoReq updateUserInfoReq) {
 
+        // 获取当前信息
         Optional<UserEntity> userEntityOptional = userRepository.findById(USER_ID.get());
-
         if (!userEntityOptional.isPresent()) {
             throw new IsxAppException("用户不存在");
         }
 
+        // 邮箱不能重复
+        Optional<UserEntity> emailOptional = userRepository.findByEmail(updateUserInfoReq.getEmail());
+        if (emailOptional.isPresent()
+            && !emailOptional.get().getAccount().equals(userEntityOptional.get().getAccount())) {
+            throw new IsxAppException("邮箱已被占用");
+        }
+
+        // 手机号不能重复
+        Optional<UserEntity> phoneOptional = userRepository.findByPhone(updateUserInfoReq.getPhone());
+        if (phoneOptional.isPresent()
+            && !phoneOptional.get().getAccount().equals(userEntityOptional.get().getAccount())) {
+            throw new IsxAppException("手机已被占用");
+        }
+
+        // 更新信息
         UserEntity userEntity = userMapper.updateUserInfoToUserEntity(updateUserInfoReq, userEntityOptional.get());
 
         userRepository.save(userEntity);
