@@ -68,11 +68,11 @@ public class UserController {
         userBizService.updateUser(updateUserReq);
     }
 
-    @Secured({RoleType.SYS_ADMIN})
     @Operation(summary = "更新用户信息接口")
     @PostMapping("/updateUserInfo")
-    @SuccessResponse("信息更新成功")
+    @SuccessResponse("更新成功")
     public void updateUserInfo(@Valid @RequestBody UpdateUserInfoReq updateUserInfoReq) {
+
         userBizService.updateUserInfo(updateUserInfoReq);
     }
 

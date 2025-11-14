@@ -326,7 +326,8 @@ public class WorkBizService {
             return new GetDataRes(null, null, workInstanceEntity.getResultData());
         }
 
-        if (WorkType.QUERY_JDBC_SQL.equals(workEntity.getWorkType())) {
+        if (WorkType.QUERY_JDBC_SQL.equals(workEntity.getWorkType())
+            || WorkType.PRQL.equals(workEntity.getWorkType())) {
             return new GetDataRes(JSON.parseArray(workInstanceEntity.getResultData()), null, null);
         }
 
@@ -363,10 +364,11 @@ public class WorkBizService {
         }
 
         WorkInstanceEntity workInstanceEntity = workInstanceEntityOptional.get();
-        if (Strings.isEmpty(workInstanceEntity.getYarnLog())) {
-            throw new IsxAppException("日志尚未生成,请等待作业运行完毕");
+        if (workInstanceEntity.getYarnLog() == null) {
+            return GetWorkLogRes.builder().yarnLog("").build();
+        } else {
+            return GetWorkLogRes.builder().yarnLog(workInstanceEntity.getYarnLog()).build();
         }
-        return GetWorkLogRes.builder().yarnLog(workInstanceEntity.getYarnLog()).build();
     }
 
     public GetWorkRes getWork(GetWorkReq getWorkReq) {

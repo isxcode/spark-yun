@@ -11,9 +11,11 @@ import com.isxcode.spark.api.workflow.req.GetInvokeUrlReq;
 import com.isxcode.spark.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.spark.backend.api.base.properties.IsxAppProperties;
 import com.isxcode.spark.common.utils.jwt.JwtUtils;
+import com.isxcode.spark.modules.work.entity.VipWorkVersionEntity;
 import com.isxcode.spark.modules.work.entity.WorkConfigEntity;
 import com.isxcode.spark.modules.work.entity.WorkEntity;
 import com.isxcode.spark.modules.work.entity.WorkInstanceEntity;
+import com.isxcode.spark.modules.work.repository.VipWorkVersionRepository;
 import com.isxcode.spark.modules.work.repository.WorkConfigRepository;
 import com.isxcode.spark.modules.work.repository.WorkInstanceRepository;
 import com.isxcode.spark.modules.work.repository.WorkRepository;
@@ -27,12 +29,9 @@ import com.isxcode.spark.modules.workflow.repository.WorkflowConfigRepository;
 import com.isxcode.spark.modules.workflow.repository.WorkflowInstanceRepository;
 import com.isxcode.spark.modules.workflow.repository.WorkflowRepository;
 import com.isxcode.spark.modules.workflow.repository.WorkflowVersionRepository;
-import com.isxcode.spark.modules.workflow.run.WorkflowRunEvent;
 import com.isxcode.spark.modules.workflow.run.WorkflowUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.autoconfigure.web.ServerProperties;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -57,17 +56,15 @@ public class WorkflowService {
 
     private final WorkflowConfigRepository workflowConfigRepository;
 
-    private final ApplicationEventPublisher eventPublisher;
-
     private final IsxAppProperties isxAppProperties;
-
-    private final ServerProperties serverProperties;
 
     private final WorkConfigRepository workConfigRepository;
 
     private final WorkRunJobFactory workRunJobFactory;
 
     private final WorkflowVersionRepository workflowVersionRepository;
+
+    private final VipWorkVersionRepository vipWorkVersionRepository;
 
     public WorkInstanceEntity getWorkInstance(String workInstanceId) {
 
@@ -103,7 +100,7 @@ public class WorkflowService {
             JwtUtils.encrypt(isxAppProperties.getAesSlat(), workflowToken, isxAppProperties.getJwtKey(), 365 * 24 * 60);
 
         return "curl -s '" + httpUrlBuilder + "' \\\n" + "   -H 'Content-Type: application/json;charset=UTF-8' \\\n"
-            + "   -H 'Accept: application/json, text/plain, */*' \\\n" + "   --data-raw '{\"workflowId\":\""
+            + "   -H 'Accept: application/json, text/plain, */*' \\\n" + "   --data '{\"workflowId\":\""
             + getInvokeUrlReq.getWorkflowId() + "\",\"token\":\"" + token + "\"}'";
     }
 
@@ -176,7 +173,7 @@ public class WorkflowService {
         return workflowInstance.getId();
     }
 
-    public String runInvokeWorkflow(String workflowId) {
+    public void runInvokeWorkflow(String workflowId) {
 
         // 获取工作流配置id
         WorkflowEntity workflow = getWorkflow(workflowId);
@@ -192,7 +189,7 @@ public class WorkflowService {
         workflowInstance = workflowInstanceRepository.saveAndFlush(workflowInstance);
 
         // 初始化作业实例
-        List<String> nodeList = com.alibaba.fastjson.JSON.parseArray(workflowVersion.getNodeList(), String.class);
+        List<String> nodeList = JSON.parseArray(workflowVersion.getNodeList(), String.class);
         List<WorkInstanceEntity> workInstances = new ArrayList<>();
         List<WorkEntity> allWorks = workRepository.findAllById(nodeList);
         for (WorkEntity metaWork : allWorks) {
@@ -201,26 +198,36 @@ public class WorkflowService {
                 .quartzHasRun(true).workflowInstanceId(workflowInstance.getId()).build();
             workInstances.add(metaInstance);
         }
-
         workInstanceRepository.saveAllAndFlush(workInstances);
 
         // 直接执行一次作业流的点击
-        List<String> startNodes = com.alibaba.fastjson.JSON.parseArray(workflowVersion.getDagStartList(), String.class);
-        List<String> endNodes = com.alibaba.fastjson.JSON.parseArray(workflowVersion.getDagEndList(), String.class);
-        List<List<String>> nodeMapping = com.alibaba.fastjson.JSON.parseObject(workflowVersion.getNodeMapping(),
-            new TypeReference<List<List<String>>>() {});
+        List<String> startNodes = JSON.parseArray(workflowVersion.getDagStartList(), String.class);
+        List<String> endNodes = JSON.parseArray(workflowVersion.getDagEndList(), String.class);
+        List<List<String>> nodeMapping =
+            JSON.parseObject(workflowVersion.getNodeMapping(), new TypeReference<List<List<String>>>() {});
 
         // 封装event推送时间，开始执行任务
-        // 异步触发工作流
         List<WorkEntity> startNodeWorks = workRepository.findAllByWorkIds(startNodes);
         for (WorkEntity work : startNodeWorks) {
-            WorkflowRunEvent metaEvent = WorkflowRunEvent.builder().workId(work.getId()).workName(work.getName())
-                .dagEndList(endNodes).dagStartList(startNodes).flowInstanceId(workflowInstance.getId())
-                .versionId(work.getVersionId()).nodeMapping(nodeMapping).nodeList(nodeList).tenantId(TENANT_ID.get())
-                .userId(USER_ID.get()).build();
-            eventPublisher.publishEvent(metaEvent);
-        }
 
-        return workflowInstance.getId();
+            // 获取作业实例
+            WorkInstanceEntity workInstance =
+                workInstanceRepository.findByWorkIdAndWorkflowInstanceId(work.getId(), workflowInstance.getId());
+
+            // 获取作业版本配置
+            VipWorkVersionEntity workVersion = vipWorkVersionRepository.findById(work.getVersionId())
+                .orElseThrow(() -> new IsxAppException("调度中，获取作业版本信息异常"));
+
+            // 初始化workRunContext
+            WorkRunContext workRunContext =
+                WorkflowUtils.genWorkRunContext(workInstance.getId(), EventType.WORKFLOW, work, workVersion);
+            workRunContext.setDagEndList(endNodes);
+            workRunContext.setDagStartList(startNodes);
+            workRunContext.setFlowInstanceId(workflowInstance.getId());
+            workRunContext.setNodeMapping(nodeMapping);
+            workRunContext.setNodeList(nodeList);
+            workRunContext.setVersionId(work.getVersionId());
+            workRunJobFactory.run(workRunContext);
+        }
     }
 }

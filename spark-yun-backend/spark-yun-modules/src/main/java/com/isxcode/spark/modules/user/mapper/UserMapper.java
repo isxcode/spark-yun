@@ -29,6 +29,7 @@ public interface UserMapper {
 
     @Mapping(target = "passwd", source = "userEntity.passwd")
     @Mapping(target = "id", source = "userEntity.id")
+    @Mapping(target = "account", source = "userEntity.account")
     @Mapping(target = "username", source = "updateUserInfoReq.username")
     @Mapping(target = "phone", source = "updateUserInfoReq.phone")
     @Mapping(target = "email", source = "updateUserInfoReq.email")
