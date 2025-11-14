@@ -245,6 +245,7 @@ public class DatasourceBizService {
 
         if (DatasourceType.KAFKA.equals(datasourceEntity.getDbType())) {
             try {
+                checkConnectReq.getKafkaConfig().setBootstrapServers(checkConnectReq.getJdbcUrl());
                 datasourceService.checkKafka(checkConnectReq.getKafkaConfig());
                 return new CheckConnectRes(true, "连接成功");
             } catch (Exception e) {
