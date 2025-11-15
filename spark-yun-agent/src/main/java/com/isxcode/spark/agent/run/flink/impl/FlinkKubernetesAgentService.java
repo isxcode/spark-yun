@@ -262,7 +262,7 @@ public class FlinkKubernetesAgentService implements FlinkAgentService {
             BufferedReader errReader = new BufferedReader(new InputStreamReader(errStream, StandardCharsets.UTF_8))) {
 
             while ((line = reader.readLine()) != null) {
-                System.out.println(line);
+                errLog.append(line).append("\n");
                 String pattern = "\\s+\\d/\\d\\s+(\\w+)";
                 Pattern regex = Pattern.compile(pattern);
                 Matcher matcher = regex.matcher(line);
