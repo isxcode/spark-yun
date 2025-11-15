@@ -48,7 +48,7 @@ public class FlinkKubernetesAgentService implements FlinkAgentService {
         String agentHomePath, String workInstanceId) throws IOException {
 
         String podTemplate = "apiVersion: v1 \n" + "kind: Pod \n" + "metadata: \n" + "  name: pod-template \n"
-            + "spec:\n" + "  terminationGracePeriodSeconds: 600\n" + "  activeDeadlineSeconds: 600\n" + " %s"
+            + "spec:\n" + "  terminationGracePeriodSeconds: 600\n" + "%s"
             + "  containers:\n" + "    - name: flink-main-container\n" + "      volumeMounts:\n" + " %s"
             + "  volumes:\n" + " %s";
 
@@ -184,14 +184,14 @@ public class FlinkKubernetesAgentService implements FlinkAgentService {
         }
 
         // 自定义依赖
-        if (submitWorkReq.getLibConfig() != null) {
-            for (int i = 0; i < submitWorkReq.getLibConfig().size(); i++) {
-                volumeMounts.add(String.format(volumeMountsTemplate, "lib-" + i,
-                    "/opt/flink/lib/" + submitWorkReq.getLibConfig().get(i) + ".jar"));
-                volumes.add(String.format(volumeTemplate, "lib-" + i, submitWorkReq.getAgentHomePath() + File.separator
-                    + "file" + File.separator + submitWorkReq.getLibConfig().get(i) + ".jar"));
-            }
-        }
+//        if (submitWorkReq.getLibConfig() != null) {
+//            for (int i = 0; i < submitWorkReq.getLibConfig().size(); i++) {
+//                volumeMounts.add(String.format(volumeMountsTemplate, "lib-" + i,
+//                    "/opt/flink/lib/" + submitWorkReq.getLibConfig().get(i) + ".jar"));
+//                volumes.add(String.format(volumeTemplate, "lib-" + i, submitWorkReq.getAgentHomePath() + File.separator
+//                    + "file" + File.separator + submitWorkReq.getLibConfig().get(i) + ".jar"));
+//            }
+//        }
 
         // 自定义函数
         if (submitWorkReq.getFuncConfig() != null) {
@@ -205,18 +205,15 @@ public class FlinkKubernetesAgentService implements FlinkAgentService {
 
         // 从flinkConfig中解析出域名映射
         Map<String, String> hostMapping = new HashMap<>();
-        Map<String, String> pluginFlinkConfig = submitWorkReq.getPluginReq().getFlinkConfig();
-        if (Strings.isNotEmpty(pluginFlinkConfig.get("qing.host1.name"))
-            && Strings.isNotEmpty(pluginFlinkConfig.get("qing.host1.value"))) {
-            hostMapping.put(pluginFlinkConfig.get("qing.host1.name"), pluginFlinkConfig.get("qing.host1.value"));
+        Map<String, Object> pluginFlinkConfig = submitWorkReq.getFlinkSubmit().getConf();
+        if ((pluginFlinkConfig.get("qing.host1.name") != null) && pluginFlinkConfig.get("qing.host1.value") != null) {
+            hostMapping.put(String.valueOf(pluginFlinkConfig.get("qing.host1.name")), String.valueOf(pluginFlinkConfig.get("qing.host1.value")));
         }
-        if (Strings.isNotEmpty(pluginFlinkConfig.get("qing.host2.name"))
-            && Strings.isNotEmpty(pluginFlinkConfig.get("qing.host2.value"))) {
-            hostMapping.put(pluginFlinkConfig.get("qing.host2.name"), pluginFlinkConfig.get("qing.host2.value"));
+        if ((pluginFlinkConfig.get("qing.host2.name") != null) && pluginFlinkConfig.get("qing.host2.value") != null) {
+            hostMapping.put(String.valueOf(pluginFlinkConfig.get("qing.host2.name")), String.valueOf(pluginFlinkConfig.get("qing.host2.value")));
         }
-        if (Strings.isNotEmpty(pluginFlinkConfig.get("qing.host3.name"))
-            && Strings.isNotEmpty(pluginFlinkConfig.get("qing.host3.value"))) {
-            hostMapping.put(pluginFlinkConfig.get("qing.host3.name"), pluginFlinkConfig.get("qing.host3.value"));
+        if ((pluginFlinkConfig.get("qing.host3.name") != null) && pluginFlinkConfig.get("qing.host3.value") != null) {
+            hostMapping.put(String.valueOf(pluginFlinkConfig.get("qing.host3.name")), String.valueOf(pluginFlinkConfig.get("qing.host3.value")));
         }
 
         // 拼接host映射
