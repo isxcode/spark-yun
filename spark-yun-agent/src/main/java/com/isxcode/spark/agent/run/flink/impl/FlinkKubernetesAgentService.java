@@ -48,9 +48,8 @@ public class FlinkKubernetesAgentService implements FlinkAgentService {
         String agentHomePath, String workInstanceId) throws IOException {
 
         String podTemplate = "apiVersion: v1 \n" + "kind: Pod \n" + "metadata: \n" + "  name: pod-template \n"
-            + "spec:\n" + "  terminationGracePeriodSeconds: 600\n" + "%s"
-            + "  containers:\n" + "    - name: flink-main-container\n" + "      volumeMounts:\n" + " %s"
-            + "  volumes:\n" + " %s";
+            + "spec:\n" + "  terminationGracePeriodSeconds: 600\n" + "%s" + "  containers:\n"
+            + "    - name: flink-main-container\n" + "      volumeMounts:\n" + " %s" + "  volumes:\n" + " %s";
 
         String podTemplateContent;
         if (hostList.isEmpty()) {
@@ -134,6 +133,7 @@ public class FlinkKubernetesAgentService implements FlinkAgentService {
         flinkConfig.set(TaskManagerOptions.TOTAL_PROCESS_MEMORY, MemorySize.parse("1g"));
         flinkConfig.set(TaskManagerOptions.NUM_TASK_SLOTS, 1);
         flinkConfig.set(RestartStrategyOptions.RESTART_STRATEGY, "disable");
+        flinkConfig.setLong("kubernetes.client.shutdown-timeout", 30000);
 
         submitWorkReq.getFlinkSubmit().getConf().forEach((k, v) -> {
             if (v instanceof String) {
@@ -184,14 +184,14 @@ public class FlinkKubernetesAgentService implements FlinkAgentService {
         }
 
         // 自定义依赖
-//        if (submitWorkReq.getLibConfig() != null) {
-//            for (int i = 0; i < submitWorkReq.getLibConfig().size(); i++) {
-//                volumeMounts.add(String.format(volumeMountsTemplate, "lib-" + i,
-//                    "/opt/flink/lib/" + submitWorkReq.getLibConfig().get(i) + ".jar"));
-//                volumes.add(String.format(volumeTemplate, "lib-" + i, submitWorkReq.getAgentHomePath() + File.separator
-//                    + "file" + File.separator + submitWorkReq.getLibConfig().get(i) + ".jar"));
-//            }
-//        }
+        if (submitWorkReq.getLibConfig() != null) {
+            for (int i = 0; i < submitWorkReq.getLibConfig().size(); i++) {
+                volumeMounts.add(String.format(volumeMountsTemplate, "lib-" + i,
+                    "/opt/flink/lib/" + submitWorkReq.getLibConfig().get(i) + ".jar"));
+                volumes.add(String.format(volumeTemplate, "lib-" + i, submitWorkReq.getAgentHomePath() + File.separator
+                    + "file" + File.separator + submitWorkReq.getLibConfig().get(i) + ".jar"));
+            }
+        }
 
         // 自定义函数
         if (submitWorkReq.getFuncConfig() != null) {
@@ -207,13 +207,16 @@ public class FlinkKubernetesAgentService implements FlinkAgentService {
         Map<String, String> hostMapping = new HashMap<>();
         Map<String, Object> pluginFlinkConfig = submitWorkReq.getFlinkSubmit().getConf();
         if ((pluginFlinkConfig.get("qing.host1.name") != null) && pluginFlinkConfig.get("qing.host1.value") != null) {
-            hostMapping.put(String.valueOf(pluginFlinkConfig.get("qing.host1.name")), String.valueOf(pluginFlinkConfig.get("qing.host1.value")));
+            hostMapping.put(String.valueOf(pluginFlinkConfig.get("qing.host1.name")),
+                String.valueOf(pluginFlinkConfig.get("qing.host1.value")));
         }
         if ((pluginFlinkConfig.get("qing.host2.name") != null) && pluginFlinkConfig.get("qing.host2.value") != null) {
-            hostMapping.put(String.valueOf(pluginFlinkConfig.get("qing.host2.name")), String.valueOf(pluginFlinkConfig.get("qing.host2.value")));
+            hostMapping.put(String.valueOf(pluginFlinkConfig.get("qing.host2.name")),
+                String.valueOf(pluginFlinkConfig.get("qing.host2.value")));
         }
         if ((pluginFlinkConfig.get("qing.host3.name") != null) && pluginFlinkConfig.get("qing.host3.value") != null) {
-            hostMapping.put(String.valueOf(pluginFlinkConfig.get("qing.host3.name")), String.valueOf(pluginFlinkConfig.get("qing.host3.value")));
+            hostMapping.put(String.valueOf(pluginFlinkConfig.get("qing.host3.name")),
+                String.valueOf(pluginFlinkConfig.get("qing.host3.value")));
         }
 
         // 拼接host映射
@@ -259,7 +262,7 @@ public class FlinkKubernetesAgentService implements FlinkAgentService {
             BufferedReader errReader = new BufferedReader(new InputStreamReader(errStream, StandardCharsets.UTF_8))) {
 
             while ((line = reader.readLine()) != null) {
-                errLog.append(line).append("\n");
+                System.out.println(line);
                 String pattern = "\\s+\\d/\\d\\s+(\\w+)";
                 Pattern regex = Pattern.compile(pattern);
                 Matcher matcher = regex.matcher(line);
@@ -294,23 +297,7 @@ public class FlinkKubernetesAgentService implements FlinkAgentService {
 
         StringBuilder logBuilder = new StringBuilder();
         if (logFiles != null) {
-            if (!"ERROR".equalsIgnoreCase(getWorkLogReq.getWorkStatus())) {
-                if (Arrays.stream(logFiles).allMatch(file -> file.getName().contains("application"))) {
-                    return GetWorkLogRes.builder().log("").build();
-                }
-            }
             for (File logFile : logFiles) {
-                if (logFile.getName().contains("taskmanager")) {
-                    FileReader fileReader = new FileReader(logFile);
-                    BufferedReader bufferedReader = new BufferedReader(fileReader);
-                    String line;
-                    while ((line = bufferedReader.readLine()) != null) {
-                        logBuilder.append(line).append("\n");
-                    }
-                    bufferedReader.close();
-                    fileReader.close();
-                    break;
-                }
                 if (logFile.getName().contains("application")) {
                     FileReader fileReader = new FileReader(logFile);
                     BufferedReader bufferedReader = new BufferedReader(fileReader);
@@ -320,7 +307,16 @@ public class FlinkKubernetesAgentService implements FlinkAgentService {
                     }
                     bufferedReader.close();
                     fileReader.close();
-                    break;
+                }
+                if (logFile.getName().contains("taskmanager")) {
+                    FileReader fileReader = new FileReader(logFile);
+                    BufferedReader bufferedReader = new BufferedReader(fileReader);
+                    String line;
+                    while ((line = bufferedReader.readLine()) != null) {
+                        logBuilder.append(line).append("\n");
+                    }
+                    bufferedReader.close();
+                    fileReader.close();
                 }
             }
         }

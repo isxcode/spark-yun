@@ -399,8 +399,8 @@ public class FlinkSqlExecutor extends WorkExecutor {
             // 获取日志并保存
             GetWorkLogReq getJobLogReq = GetWorkLogReq.builder()
                 .agentHomePath(agentNode.getAgentHomePath() + "/" + PathConstants.AGENT_PATH_NAME).appId(appId)
-                .workInstanceId(workInstance.getId()).flinkHome(agentNode.getFlinkHomePath()).workStatus(preStatus)
-                .clusterType(clusterType).build();
+                .workInstanceId(workInstance.getId()).flinkHome(agentNode.getFlinkHomePath()).clusterType(clusterType)
+                .build();
 
             AgentLinkResponse agentLinkResponse =
                 agentLinkUtils.getAgentLinkResponse(agentNode, FlinkAgentUrl.GET_WORK_LOG_URL, getJobLogReq);
@@ -414,8 +414,9 @@ public class FlinkSqlExecutor extends WorkExecutor {
             if (successStatus.contains(preStatus.toUpperCase())) {
 
                 // 如果是k8s容器部署需要注意，成功状态需要通过日志中内容判断
-                if (AgentType.K8S.equals(clusterType) && (Strings.isEmpty(workInstance.getYarnLog())
-                    || workInstance.getYarnLog().contains("Caused by:"))) {
+                if (AgentType.K8S.equals(clusterType)
+                    && (Strings.isEmpty(workInstance.getYarnLog()) || workInstance.getYarnLog().contains("Caused by:"))
+                    && !workInstance.getYarnLog().contains("Application completed SUCCESSFULLY")) {
                     updateInstance(workInstance, logBuilder);
                     throw errorLogException("任务运行异常");
                 }
