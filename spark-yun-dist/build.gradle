@@ -1,6 +1,11 @@
 dependencies {
     // dbutils
     implementation 'commons-dbutils:commons-dbutils:1.7'
+
+    // hadoop-hdfs-client
+    implementation("org.apache.hadoop:hadoop-hdfs-client:${HADOOP_VERSION}") {
+        isForce()
+    }
 }
 
 // 构建lib文件夹
@@ -19,7 +24,8 @@ tasks.register('build_agent_lib', Copy) {
                 it.name.contains('jetty-util') ||
                 it.name.contains('jetty-http') ||
                 it.name.contains('jetty-io') ||
-                it.name.contains('commons-dbutils')
+                it.name.contains('commons-dbutils') ||
+                it.name.contains('hadoop-hdfs-client')
     }
     dependencies.each { dependency ->
         from dependency
@@ -29,6 +35,7 @@ tasks.register('build_agent_lib', Copy) {
     from rootDir.getAbsolutePath() + '/spark-yun-backend/spark-yun-api/build/libs'
     from rootDir.getAbsolutePath() + '/spark-yun-agent/build/libs'
     from rootDir.getAbsolutePath() + '/resources/jdbc/system'
+    from rootDir.getAbsolutePath() + '/resources/libs'
     into 'build/zhiqingyun-agent/lib'
 }
 

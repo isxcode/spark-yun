@@ -69,6 +69,7 @@ readonly JDBC_DRIVERS=(
 # 项目依赖列表
 readonly PROJECT_JARS=(
     "prql-java-0.5.2.jar"
+    "slf4j-reload4j-2.0.0.jar"
 )
 
 # Resources文件列表

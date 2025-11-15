@@ -208,7 +208,7 @@ jobs:
           password: ${{ secrets.PASSWORD }}
           port: 22
           timeout: 3600s
-          source: "./artifacts/zhiqingyun.tar.gz"
+          source: "zhiqingyun.tar.gz"
           target: /data/file/
 
   # 上传阿里镜像仓库使用单独任务，原因：上传失败后，可以使用github重跑任务，不需要重新打包
