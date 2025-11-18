@@ -1,4 +1,4 @@
-name: deploy back
+name: rollback
 
 on:
   schedule:
