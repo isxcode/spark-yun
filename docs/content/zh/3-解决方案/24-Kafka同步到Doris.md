@@ -10,10 +10,10 @@ title: "Kafka同步到Doris"
 
 #### 解决方案
 
-- [kafka-clients-3.1.2.jar下载](https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiliuyun/jars/kafka-clients-3.1.2.jar)
-- [flink-doris-connector-1.18-25.0.0.jar下载](https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiliuyun/jars/flink-doris-connector-1.18-25.0.0.jar)
-- [flink-json-1.18.1.jar下载](https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiliuyun/jars/flink-json-1.18.1.jar)
-- [flink-connector-kafka-3.2.0-1.18.jar下载](https://isxcode.oss-cn-shanghai.aliyuncs.com/zhiliuyun/jars/flink-connector-kafka-3.2.0-1.18.jar)
+- [kafka-clients-3.1.2.jar下载](https://zhiqingyun-demo.isxcode.com/tools/open/file/kafka-clients-3.1.2.jar)
+- [flink-doris-connector-1.18-25.0.0.jar下载](https://zhiqingyun-demo.isxcode.com/tools/open/file/flink-doris-connector-1.18-25.0.0.jar)
+- [flink-json-1.18.1.jar下载](https://zhiqingyun-demo.isxcode.com/tools/open/file/flink-json-1.18.1.jar)
+- [flink-connector-kafka-3.2.0-1.18.jar下载](https://zhiqingyun-demo.isxcode.com/tools/open/file/flink-connector-kafka-3.2.0-1.18.jar)
 
 ![20250415180208](https://img.isxcode.com/picgo/20250415180208.png)
 
