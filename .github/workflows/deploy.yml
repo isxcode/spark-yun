@@ -84,7 +84,7 @@ jobs:
             cp -r /opt/zhiqingyun/resources /opt/zhiqingyun/resources_bak/resources_$(date +'%Y-%m-%d-%H-%M-%S')_bak
             rm -rf libprql_*
             rm -rf tomcat.8080.*
-            rm -rf tomcat-docbase.
+            rm -rf tomcat-docbase.8080.*
             bash /opt/zhiqingyun/bin/start.sh --print-log=false
             sleep 120
             until curl -s https://zhiqingyun-demo.isxcode.com/tools/open/health | grep "UP"; do
