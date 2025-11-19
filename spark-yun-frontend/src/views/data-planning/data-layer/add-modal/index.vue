@@ -27,6 +27,12 @@
                 </el-select>
             </el-form-item>
             <el-form-item label="表名规范">
+                <el-tooltip
+                    content="正则表达式：^user_.* [user_info、user_account]"
+                    placement="top"
+                >
+                    <el-icon style="left: 50px" class="tooltip-msg"><QuestionFilled /></el-icon>
+                </el-tooltip>
                 <el-input v-model="formData.tableRule" maxlength="200" placeholder="请输入" />
             </el-form-item>
             <el-form-item label="备注">
