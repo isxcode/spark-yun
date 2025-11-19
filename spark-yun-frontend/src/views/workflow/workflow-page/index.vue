@@ -809,6 +809,9 @@ onMounted(() => {
         } else if (e.type === 'node_result') {
             // 查看结果
             nodeRunningLog(e, 'result')
+        } else if (e.type === 'json_result') {
+            // 查看结果
+            nodeRunningLog(e, 'result_log')
         } else if (e.type === 'node_yarnLog') {
             // 运行日志
             nodeRunningLog(e, 'yarnLog')
