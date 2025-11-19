@@ -73,7 +73,7 @@ jobs:
           timeout: 1800s
           script: |
             tar -vzxf /tmp/zhiqingyun.tar.gz -C /opt/
-            rm -rf /tmp/zhiliuyun.tar.gz
+            rm -rf /tmp/zhiqingyun.tar.gz
             bash /opt/zhiqingyun/bin/stop.sh
             if [ -d "/opt/zhiqingyun/resources_back" ]; then
               rm -rf /opt/zhiqingyun/resources
@@ -82,6 +82,9 @@ jobs:
             rm -rf /opt/zhiqingyun/conf/application-local.yml
             cp /root/application-local.yml /opt/zhiqingyun/conf/application-local.yml
             cp -r /opt/zhiqingyun/resources /opt/zhiqingyun/resources_bak/resources_$(date +'%Y-%m-%d-%H-%M-%S')_bak
+            rm -rf libprql_*
+            rm -rf tomcat.8080.*
+            rm -rf tomcat-docbase.8080.*
             bash /opt/zhiqingyun/bin/start.sh --print-log=false
             sleep 120
             until curl -s https://zhiqingyun-demo.isxcode.com/tools/open/health | grep "UP"; do
