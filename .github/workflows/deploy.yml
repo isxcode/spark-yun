@@ -73,7 +73,7 @@ jobs:
           timeout: 1800s
           script: |
             tar -vzxf /tmp/zhiqingyun.tar.gz -C /opt/
-            rm -rf /tmp/zhiliuyun.tar.gz
+            rm -rf /tmp/zhiqingyun.tar.gz
             bash /opt/zhiqingyun/bin/stop.sh
             if [ -d "/opt/zhiqingyun/resources_back" ]; then
               rm -rf /opt/zhiqingyun/resources
