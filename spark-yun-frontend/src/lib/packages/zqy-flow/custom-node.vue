@@ -15,7 +15,8 @@
                 <template #dropdown>
                     <el-dropdown-menu>
                         <el-dropdown-item command="node_log">日志</el-dropdown-item>
-                        <el-dropdown-item v-if="status === 'SUCCESS' && ['SPARK_SQL', 'QUERY_JDBC', 'SPARK_JAR','SPARK_CONTAINER_SQL','PRQL'].includes(node.data.nodeConfigData.workType)" command="node_result">运行结果</el-dropdown-item>
+                        <el-dropdown-item v-if="status === 'SUCCESS' && ['SPARK_SQL', 'QUERY_JDBC','SPARK_CONTAINER_SQL','PRQL'].includes(node.data.nodeConfigData.workType)" command="node_result">运行结果</el-dropdown-item>
+                        <el-dropdown-item v-if="status === 'SUCCESS' && ['API', 'SPARK_JAR'].includes(node.data.nodeConfigData.workType)" command="json_result">运行结果</el-dropdown-item>
                         <el-dropdown-item v-if="['SPARK_SQL', 'FLINK_SQL','FLINK_JAR','SPARK_JAR', 'PY_SPARK', 'BASH', 'PYTHON', 'DATA_SYNC_JDBC', 'CURL'].includes(node.data.nodeConfigData.workType)" command="node_yarnLog">运行日志</el-dropdown-item>
                         <el-dropdown-item command="node_runAfter">重跑下游</el-dropdown-item>
                         <el-dropdown-item command="node_break">中断</el-dropdown-item>
