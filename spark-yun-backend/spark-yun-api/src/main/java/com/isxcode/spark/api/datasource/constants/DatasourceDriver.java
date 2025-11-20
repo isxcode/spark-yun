@@ -31,6 +31,12 @@ public interface DatasourceDriver {
 
     String TIDB_DRIVER = "com.mysql.cj.jdbc.Driver";
 
+    String T_DENGINE_DRIVER = "com.taosdata.jdbc.ws.WebSocketDriver";
+
+    String DUCK_DB_DRIVER = "org.duckdb.DuckDBDriver";
+
+    String SELECT_DB_DRIVER = "com.mysql.jdbc.Driver";
+
     String STAR_ROCKS_DRIVER = "com.mysql.jdbc.Driver";
 
     String DB2_DRIVER = "com.ibm.db2.jcc.DB2Driver";
