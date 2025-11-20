@@ -12,4 +12,6 @@ import lombok.NoArgsConstructor;
 public class ContainerGetDataReq {
 
     private String sql;
+
+    private Integer limit;
 }
