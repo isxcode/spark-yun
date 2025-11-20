@@ -35,7 +35,7 @@ jobs:
           repository: "isxcode/spark-yun-vip"
           ref: 'main'
 
-      - name: deploy zhiqingyun
+      - name: Deploy zhiqingyun
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.HOST }}
