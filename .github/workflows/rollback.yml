@@ -39,6 +39,9 @@ jobs:
               mkdir -p /opt/zhiqingyun/resources_back
               cp -r /opt/zhiqingyun/resources/* /opt/zhiqingyun/resources_back/
             fi
+            rm -rf /tmp/libprql_*
+            rm -rf /tmp/tomcat.8080.*
+            rm -rf /tmp/tomcat-docbase.8080.*
             bash /opt/zhiqingyun/bin/start.sh --print-log=false
             sleep 120
             until curl -s https://zhiqingyun-demo.isxcode.com/tools/open/health | grep "UP"; do
