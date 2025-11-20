@@ -21,7 +21,7 @@ jobs:
           sudo timedatectl set-timezone Asia/Shanghai
           date
 
-      - name: Deploy zhiqingyun back
+      - name: Deploy zhiqingyun rollback
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.HOST }}
