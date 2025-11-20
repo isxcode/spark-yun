@@ -191,6 +191,13 @@ public class WorkBizService {
                 .setQueryConfig(JSON.toJSONString(QueryConfig.builder().enableLimit(false).lineLimit(200).build()));
         }
 
+        // SparkSQL查询条件默认200条
+        if (WorkType.QUERY_SPARK_SQL.equals(addWorkReq.getWorkType())
+            || WorkType.SPARK_CONTAINER_SQL.equals(addWorkReq.getWorkType())) {
+            workConfig
+                .setQueryConfig(JSON.toJSONString(QueryConfig.builder().enableLimit(true).lineLimit(200).build()));
+        }
+
         // 初始化调度默认值
         workConfigService.initCronConfig(workConfig);
 
