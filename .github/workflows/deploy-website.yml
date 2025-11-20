@@ -3,23 +3,23 @@ name: deploy website
 on:
   workflow_dispatch:
     inputs:
-      admin_github_token:
-        description: '管理员密钥'
+      github_access_token:
+        description: 'github_access_token'
         required: true
         type: string
       repository_account:
-        description: '仓库'
+        description: 'repository'
         required: true
         type: string
         default: 'isxcode'
       branch_number:
-        description: '分支'
+        description: 'branch'
         required: true
         type: string
         default: 'main'
 
 env:
-  ADMIN_GITHUB_TOKEN: ${{ inputs.admin_github_token }}
+  ADMIN_GITHUB_TOKEN: ${{ inputs.github_access_token }}
 
 jobs:
 
@@ -50,6 +50,14 @@ jobs:
           token: ${{ env.ADMIN_GITHUB_TOKEN }}
           repository: ${{ inputs.repository_account }}/spark-yun
           ref: ${{ inputs.branch_number }}
+
+      - name: Checkout spark-yun-vip
+        uses: actions/checkout@v4
+        with:
+          token: ${{ env.ADMIN_GITHUB_TOKEN }}
+          repository: ${{ inputs.repository_account }}/spark-yun-vip
+          ref: ${{ inputs.branch_number }}
+          path: "/home/runner/work/spark-yun/spark-yun/spark-yun-vip"
 
       - name: Install pnpm
         uses: pnpm/action-setup@v4
