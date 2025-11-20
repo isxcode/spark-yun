@@ -114,6 +114,17 @@
                     />
                   </el-select>
                 </el-form-item>
+                <el-form-item label="限制条数" v-if="['SPARK_SQL'].includes(workItemConfig.workType)">
+                  <el-switch v-model="queryConfig.enableLimit" />
+                </el-form-item>
+                <el-form-item label="查询条数" v-if="queryConfig.enableLimit && ['SPARK_SQL'].includes(workItemConfig.workType)">
+                    <el-input-number
+                        v-model="queryConfig.lineLimit"
+                        :min="1"
+                        :max="1000"
+                        placeholder="请输入查询条数"
+                        controls-position="right"
+                    /> </el-form-item>
               </el-form>
             </div>
           </template>
@@ -625,7 +636,7 @@ function getConfigDetailData() {
     if (['EXE_JDBC'].includes(workItemConfig.value.workType)) {
       dataSourceForm.datasourceId = res.data.datasourceId
     }
-    if (['QUERY_JDBC', 'PRQL'].includes(workItemConfig.value.workType)) {
+    if (['QUERY_JDBC', 'PRQL', 'SPARK_SQL'].includes(workItemConfig.value.workType)) {
       dataSourceForm.datasourceId = res.data.datasourceId
       queryConfig.lineLimit = res.data.queryConfig.lineLimit
       queryConfig.enableLimit = res.data.queryConfig.enableLimit

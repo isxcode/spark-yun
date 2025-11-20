@@ -299,8 +299,13 @@ public class SparkSqlExecutor extends WorkExecutor {
                 .conf(genSparkSubmitConfig(workRunContext.getClusterConfig().getSparkConfig())).build();
 
             // 构建Spark插件运行请求体
-            PluginReq pluginReq = PluginReq.builder().sql(script).limit(200)
+            PluginReq pluginReq = PluginReq.builder().sql(script)
                 .sparkConfig(genSparkConfig(workRunContext.getClusterConfig().getSparkConfig())).build();
+
+            // 添加条数限制
+            if (workRunContext.getQueryConfig().getEnableLimit()) {
+                pluginReq.setLimit(workRunContext.getQueryConfig().getLineLimit());
+            }
 
             // 配置函数
             if (workRunContext.getFuncConfig() != null) {
