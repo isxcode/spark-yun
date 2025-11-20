@@ -469,13 +469,13 @@ function dbIdChange(type: string) {
             })
         }
     } else {
-        if (formData.targetDBId) {
-            // 数据去向获取表
-            tableListRef.value.setTargetTableList({
-                dataSourceId: formData.targetDBId,
-                tablePattern: ''
-            })
-        }
+        // if (formData.targetDBId) {
+        //     // 数据去向获取表
+        //     tableListRef.value.setTargetTableList({
+        //         dataSourceId: formData.targetDBId,
+        //         tablePattern: formData.includeTargetRule
+        //     })
+        // }
     }
 }
 

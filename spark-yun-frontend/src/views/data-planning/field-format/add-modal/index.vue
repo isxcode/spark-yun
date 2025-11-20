@@ -12,6 +12,12 @@
                 <el-input v-model="formData.name" maxlength="500" placeholder="请输入" />
             </el-form-item>
             <el-form-item label="字段名规范" prop="columnRule">
+                <el-tooltip
+                    content="正则表达式：^user_.* [user_name、user_age]"
+                    placement="top"
+                >
+                    <el-icon style="left: 60px" class="tooltip-msg"><QuestionFilled /></el-icon>
+                </el-tooltip>
                 <el-input v-model="formData.columnRule" maxlength="500" placeholder="请输入" />
             </el-form-item>
             <el-form-item label="字段类型" prop="columnTypeCode">

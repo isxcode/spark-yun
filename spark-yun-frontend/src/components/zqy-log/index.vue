@@ -2,8 +2,8 @@
     <BlockModal :model-config="modelConfig" @close="closeEvent">
         <div id="content" class="content-box">
             <!-- 日志展示 -->
-            <template v-if="['log', 'yarnLog'].includes(modalType)">
-                <LogContainer v-if="logMsg" :logMsg="logMsg" :status="true"></LogContainer>
+            <template v-if="['log', 'yarnLog', 'result_log'].includes(modalType)">
+                <LogContainer v-if="logMsg" :logMsg="logMsg" :showResult="false" :status="true"></LogContainer>
             </template>
             <!-- 结果展示 -->
             <template v-else-if="modalType === 'result'">
@@ -66,6 +66,9 @@ function showModal(cb: () => void, data: any): void {
     } else if (modalType.value === 'yarnLog') {
         modelConfig.title = '运行日志'
         getYarnLogData()
+    } else if (modalType.value === 'result_log') {
+        getResultDatalist()
+        modelConfig.title = '结果'
     }
     modelConfig.visible = true
 }
@@ -74,19 +77,17 @@ function showModal(cb: () => void, data: any): void {
 function getLogData() {
     GetLogData({
         instanceId: info.value
-    })
-        .then((res: any) => {
-            logMsg.value = res.data.log
-            if (['SUCCESS', 'FAIL'].includes(res.data.status)) {
-                if (timer.value) {
-                    clearInterval(timer.value)
-                }
-                timer.value = null
+    }).then((res: any) => {
+        logMsg.value = res.data.log
+        if (['SUCCESS', 'FAIL'].includes(res.data.status)) {
+            if (timer.value) {
+                clearInterval(timer.value)
             }
-        })
-        .catch(() => {
-            logMsg.value = ''
-        })
+            timer.value = null
+        }
+    }).catch(() => {
+        logMsg.value = ''
+    })
 }
 
 // 获取yarn日志
@@ -110,36 +111,38 @@ function getYarnLogData() {
 
 // 获取结果
 function getResultDatalist() {
-  tableConfig.loading = true
-  GetResultData({
-    instanceId: info.value
-  })
-    .then((res: any) => {
-      const col = res.data.data.slice(0, 1)[0]
-      const tableData = res.data.data.slice(1, res.data.data.length)
-      tableConfig.colConfigs = col.map((colunm: any) => {
-        return {
-          prop: colunm,
-          title: colunm,
-          minWidth: 100,
-          showHeaderOverflow: true,
-          showOverflowTooltip: true
+    tableConfig.loading = true
+    GetResultData({
+        instanceId: info.value
+    }).then((res: any) => {
+        if (modalType.value === 'result_log') {
+            logMsg.value = res.data.jsonData || res.data.strData
+        } else {
+            const col = res.data.data.slice(0, 1)[0]
+            const tableData = res.data.data.slice(1, res.data.data.length)
+            tableConfig.colConfigs = col.map((colunm: any) => {
+                return {
+                    prop: colunm,
+                    title: colunm,
+                    minWidth: 100,
+                    showHeaderOverflow: true,
+                    showOverflowTooltip: true
+                }
+            })
+            tableConfig.tableData = tableData.map((columnData: any) => {
+                const dataObj: any = {
+                }
+                col.forEach((c: any, index: number) => {
+                    dataObj[c] = columnData[index]
+                })
+                return dataObj
+            })
         }
-      })
-      tableConfig.tableData = tableData.map((columnData: any) => {
-        const dataObj: any = {
-        }
-        col.forEach((c: any, index: number) => {
-          dataObj[c] = columnData[index]
-        })
-        return dataObj
-      })
-      tableConfig.loading = false
-    })
-    .catch(() => {
-      tableConfig.colConfigs = []
-      tableConfig.tableData = []
-      tableConfig.loading = false
+        tableConfig.loading = false
+    }).catch(() => {
+        tableConfig.colConfigs = []
+        tableConfig.tableData = []
+        tableConfig.loading = false
     })
 }
 
