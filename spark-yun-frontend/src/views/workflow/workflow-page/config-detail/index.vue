@@ -2,6 +2,28 @@
   <BlockDrawer :drawer-config="drawerConfig">
     <el-scrollbar>
         <div class="work-flow-config">
+          <!-- 计算容器配置 -->
+          <div class="config-item" v-if="['SPARK_CONTAINER_SQL'].includes(workItemConfig.workType)">
+            <div class="item-title">查询配置</div>
+            <el-form
+              label-position="left"
+              label-width="120px"
+            >
+              <el-form-item label="限制条数" v-if="['SPARK_CONTAINER_SQL'].includes(workItemConfig.workType)">
+                  <el-switch v-model="queryConfig.enableLimit" />
+              </el-form-item>
+
+              <el-form-item label="查询条数" v-if="queryConfig.enableLimit && ['SPARK_CONTAINER_SQL'].includes(workItemConfig.workType)">
+                <el-input-number
+                    v-model="queryConfig.lineLimit"
+                    :min="1"
+                    :max="1000"
+                    placeholder="请输入查询条数"
+                    controls-position="right"
+                />
+              </el-form-item>
+            </el-form>
+          </div>
           <!-- 数据源配置 -->
           <div class="config-item" v-if="['QUERY_JDBC', 'PRQL', 'EXE_JDBC'].includes(workItemConfig.workType)">
             <div class="item-title">数据源配置</div>
@@ -39,33 +61,6 @@
                     controls-position="right"
                 />
               </el-form-item>
-
-            </el-form>
-          </div>
-          <!-- 计算容器配置 -->
-          <div class="config-item" v-if="['SPARK_CONTAINER_SQL'].includes(workItemConfig.workType)">
-            <div class="item-title">查询配置</div>
-            <el-form
-              ref="dataSourceConfig"
-              label-position="left"
-              label-width="120px"
-              :model="dataSourceForm"
-              :rules="dataSourceRules"
-            >
-              <el-form-item label="限制条数" v-if="['SPARK_CONTAINER_SQL'].includes(workItemConfig.workType)">
-                  <el-switch v-model="queryConfig.enableLimit" />
-              </el-form-item>
-
-              <el-form-item label="查询条数" v-if="queryConfig.enableLimit && ['SPARK_CONTAINER_SQL'].includes(workItemConfig.workType)">
-                <el-input-number
-                    v-model="queryConfig.lineLimit"
-                    :min="1"
-                    :max="1000"
-                    placeholder="请输入查询条数"
-                    controls-position="right"
-                />
-              </el-form-item>
-
             </el-form>
           </div>
           <template v-else-if="!['SPARK_CONTAINER_SQL', 'CURL'].includes(workItemConfig.workType)">

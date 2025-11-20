@@ -78,6 +78,10 @@ const dbTypeList = ref<Option[]>([
     value: 'DORIS'
   },
   {
+    label: 'DuckDB',
+    value: 'DUCK_DB'
+  },
+  {
     label: '达梦',
     value: 'DM'
   },
@@ -134,6 +138,10 @@ const dbTypeList = ref<Option[]>([
     value: 'PRESTO'
   },
   {
+    label: 'SelectDB',
+    value: 'SELECT_DB'
+  },
+  {
     label: 'SqlServer',
     value: 'SQL_SERVER'
   },
@@ -144,6 +152,10 @@ const dbTypeList = ref<Option[]>([
   {
     label: 'Sybase',
     value: 'SYBASE'
+  },
+  {
+    label: 'TDengine',
+    value: 'T_DENGINE'
   },
   {
     label: 'TiDB',

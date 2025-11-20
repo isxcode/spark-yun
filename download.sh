@@ -64,6 +64,8 @@ readonly JDBC_DRIVERS=(
     "presto-jdbc-0.295.jar"
     "trino-jdbc-418.jar"
     "ojdbc6.jar"
+    "duckdb_jdbc-1.4.2.0.jar"
+    "taos-jdbcdriver-3.7.7-dist.jar"
 )
 
 # 项目依赖列表
