@@ -57,7 +57,8 @@ public class Execute {
                 exportResult(null);
             } else {
                 Dataset<Row> rowDataset =
-                    sparkSession.sql(executeSql.get(executeSql.size() - 1)).limit(pluginReq.getLimit());
+                    pluginReq.getLimit() == null ? sparkSession.sql(executeSql.get(executeSql.size() - 1))
+                        : sparkSession.sql(executeSql.get(executeSql.size() - 1)).limit(pluginReq.getLimit());
                 exportResult(rowDataset);
             }
         }
