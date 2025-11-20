@@ -1,5 +1,6 @@
 package com.isxcode.spark.modules.tenant.controller;
 
+import com.isxcode.spark.annotation.vip.LicenseApi;
 import com.isxcode.spark.api.main.constants.ModuleCode;
 import com.isxcode.spark.api.tenant.req.*;
 import com.isxcode.spark.api.tenant.res.PageTenantUserRes;
@@ -25,6 +26,7 @@ public class TenantUserController {
 
     private final TenantUserBizService tenantUserBizService;
 
+    @LicenseApi
     @Secured({RoleType.SYS_ADMIN, RoleType.TENANT_ADMIN})
     @Operation(summary = "添加用户接口")
     @PostMapping("/addTenantUser")
