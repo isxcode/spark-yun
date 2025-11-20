@@ -3,7 +3,7 @@ name: build
 on:
   workflow_dispatch:
     inputs:
-      admin_github_token:
+      github_access_token:
         description: 'github access token'
         required: true
         type: string
@@ -24,7 +24,7 @@ on:
         default: 'main'
 
 env:
-  ADMIN_GITHUB_TOKEN: ${{ inputs.admin_github_token }}
+  ADMIN_GITHUB_TOKEN: ${{ inputs.github_access_token }}
 
 jobs:
 
@@ -132,9 +132,7 @@ jobs:
         id: download-cache
         with:
           path: |
-            /home/runner/work/spark-yun/spark-yun/resources/jdbc
-            /home/runner/work/spark-yun/spark-yun/resources/libs
-            /home/runner/work/spark-yun/spark-yun/resources/tmp
+            /home/runner/work/spark-yun/spark-yun/resources
             /home/runner/work/spark-yun/spark-yun/spark-yun-backend/spark-yun-main/src/main/resources/libprql_java-linux64.so
             /home/runner/work/spark-yun/spark-yun/spark-yun-backend/spark-yun-main/src/main/resources/libprql_java-osx-arm64.dylib
           key: ${{ runner.os }}-file-${{ hashFiles('/home/runner/work/spark-yun/spark-yun/download.sh') }}
@@ -152,10 +150,43 @@ jobs:
           name: zhiqingyun
           path: ./spark-yun-dist/build/distributions/zhiqingyun.tar.gz
 
-      - name: Clear file
+  # 上传到docker hub
+  upload-docker-hub:
+    needs: build
+
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+
+    steps:
+
+      - name: Set timezone to Asia/Shanghai
         run: |
-          sudo rm -rf /home/runner/work/spark-yun/spark-yun/spark-yun-dist
-          sudo rm -rf /home/runner/work/spark-yun/spark-yun/spark-yun-agent
+          sudo timedatectl set-timezone Asia/Shanghai
+
+      - name: Checkout spark-yun
+        uses: actions/checkout@v4
+        with:
+          token: ${{ env.ADMIN_GITHUB_TOKEN }}
+          repository: ${{ inputs.repository_account }}/spark-yun
+          ref: ${{ inputs.branch_number }}
+
+      - name: Download zhiqingyun tar
+        uses: actions/download-artifact@v4
+        with:
+          name: zhiqingyun
+          path: ./
+
+      - name: unzip zhiqingyun tar
+        run: |
+          tar -vzxf zhiqingyun.tar.gz -C /tmp
+          mkdir -p /home/runner/work/spark-yun/spark-yun/resources
+          mv /tmp/zhiqingyun/resources/jdbc /home/runner/work/spark-yun/spark-yun/resources/ 
+          mkdir -p /home/runner/work/spark-yun/spark-yun/spark-yun-backend/spark-yun-main/build/libs
+          mv /tmp/zhiqingyun/lib/zhiqingyun.jar /home/runner/work/spark-yun/spark-yun/spark-yun-backend/spark-yun-main/build/libs 
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
@@ -177,8 +208,8 @@ jobs:
           tags: isxcode/zhiqingyun:${{ inputs.version_number }}
           push: true
 
-  # 上传阿里服务器使用单独任务，原因：上传失败后，可以使用github重跑任务，不需要重新打包
-  upload-oss:
+  # 上传到服务器
+  upload-server:
     needs: build
 
     runs-on: ubuntu-latest
@@ -211,9 +242,9 @@ jobs:
           source: "zhiqingyun.tar.gz"
           target: /data/file/
 
-  # 上传阿里镜像仓库使用单独任务，原因：上传失败后，可以使用github重跑任务，不需要重新打包
-  upload-ali:
-    needs: build
+  # 上传阿里镜像仓库
+  upload-ali-hub:
+    needs: upload-docker-hub
 
     runs-on: ubuntu-latest
 
