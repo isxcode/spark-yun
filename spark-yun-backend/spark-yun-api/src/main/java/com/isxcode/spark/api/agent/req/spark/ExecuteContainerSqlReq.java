@@ -14,4 +14,6 @@ public class ExecuteContainerSqlReq {
     private String sql;
 
     private String port;
+
+    private Integer limit;
 }

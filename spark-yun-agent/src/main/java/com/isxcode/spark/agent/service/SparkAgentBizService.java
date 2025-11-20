@@ -176,8 +176,9 @@ public class SparkAgentBizService {
     public ExecuteContainerSqlRes executeContainerSql(ExecuteContainerSqlReq executeContainerSqlReq) {
 
         try {
-            ContainerGetDataReq containerGetDataReq =
-                ContainerGetDataReq.builder().sql(executeContainerSqlReq.getSql()).build();
+            ContainerGetDataReq containerGetDataReq = ContainerGetDataReq.builder().sql(executeContainerSqlReq.getSql())
+                .limit(executeContainerSqlReq.getLimit()).build();
+
             ResponseEntity<ExecuteContainerSqlRes> forEntity =
                 new RestTemplate().postForEntity("http://127.0.0.1:" + executeContainerSqlReq.getPort() + "/getData",
                     containerGetDataReq, ExecuteContainerSqlRes.class);
