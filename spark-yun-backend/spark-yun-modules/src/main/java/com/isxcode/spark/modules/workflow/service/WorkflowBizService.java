@@ -45,7 +45,6 @@ import com.isxcode.spark.modules.work.entity.WorkInstanceEntity;
 import com.isxcode.spark.modules.work.repository.WorkConfigRepository;
 import com.isxcode.spark.modules.work.repository.WorkInstanceRepository;
 import com.isxcode.spark.modules.work.repository.WorkRepository;
-import com.isxcode.spark.modules.work.run.WorkExecutorFactory;
 import com.isxcode.spark.modules.work.run.WorkRunContext;
 import com.isxcode.spark.modules.work.run.WorkRunJobFactory;
 import com.isxcode.spark.modules.work.service.WorkService;
@@ -71,7 +70,6 @@ import javax.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpHeaders;
@@ -89,8 +87,6 @@ public class WorkflowBizService {
 
     private final WorkflowConfigRepository workflowConfigRepository;
 
-    private final ApplicationEventPublisher eventPublisher;
-
     private final WorkflowInstanceRepository workflowInstanceRepository;
 
     private final WorkInstanceRepository workInstanceRepository;
@@ -99,8 +95,6 @@ public class WorkflowBizService {
 
     private final WorkConfigRepository workConfigRepository;
 
-    private final WorkExecutorFactory workExecutorFactory;
-
     private final WorkflowService workflowService;
 
     private final Locker locker;
@@ -108,10 +102,6 @@ public class WorkflowBizService {
     private final Executor sparkYunWorkThreadPool;
 
     private final ClusterService clusterService;
-
-    private final TenantService tenantService;
-
-    private final LicenseStore licenseStore;
 
     private final IsxAppProperties isxAppProperties;
 
@@ -122,6 +112,10 @@ public class WorkflowBizService {
     private final WorkService workService;
 
     private final WorkRunJobFactory workRunJobFactory;
+
+    private final TenantService tenantService;
+
+    private final LicenseStore licenseStore;
 
     public void addWorkflow(AddWorkflowReq wofAddWorkflowReq) {
 

@@ -1,5 +1,6 @@
 package com.isxcode.spark.modules.work.controller;
 
+import com.isxcode.spark.annotation.vip.LicenseApi;
 import com.isxcode.spark.api.instance.req.*;
 import com.isxcode.spark.api.instance.res.GetWorkInstanceValuePathRes;
 import com.isxcode.spark.api.instance.res.GetWorkflowInstanceRes;
@@ -37,6 +38,7 @@ public class WorkController {
 
     private final ExcelSyncService excelSyncService;
 
+    @LicenseApi
     @Operation(summary = "添加作业接口")
     @PostMapping("/addWork")
     @SuccessResponse("创建成功")
@@ -53,6 +55,7 @@ public class WorkController {
         workBizService.updateWork(updateWorkReq);
     }
 
+    @LicenseApi
     @Operation(summary = "运行作业接口")
     @PostMapping("/runWork")
     @SuccessResponse("提交成功")

@@ -21,4 +21,10 @@ public class TenantService {
 
         return tenantRepository.findById(tenantId).orElseThrow(() -> new IsxAppException("404", "租户不存在"));
     }
+
+    public String getTenantName(String tenantId) {
+
+        TenantEntity tenant = tenantRepository.findById(tenantId).orElse(null);
+        return tenant == null ? tenantId : tenant.getName();
+    }
 }

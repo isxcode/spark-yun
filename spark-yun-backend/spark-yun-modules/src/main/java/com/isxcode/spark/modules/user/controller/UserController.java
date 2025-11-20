@@ -1,5 +1,6 @@
 package com.isxcode.spark.modules.user.controller;
 
+import com.isxcode.spark.annotation.vip.LicenseApi;
 import com.isxcode.spark.api.main.constants.ModuleCode;
 import com.isxcode.spark.api.user.constants.RoleType;
 import com.isxcode.spark.api.user.req.*;
@@ -50,6 +51,7 @@ public class UserController {
         return userBizService.getUser();
     }
 
+    @LicenseApi
     @Secured({RoleType.SYS_ADMIN})
     @Operation(summary = "创建用户接口")
     @PostMapping("/addUser")
