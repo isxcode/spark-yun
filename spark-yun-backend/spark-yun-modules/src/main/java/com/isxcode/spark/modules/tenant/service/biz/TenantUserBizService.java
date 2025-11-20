@@ -52,6 +52,7 @@ public class TenantUserBizService {
         if (memberCount + 1 > tenant.getMaxMemberNum()) {
             throw new IsxAppException("超出租户的最大成员限制");
         }
+
         // 判断是否超过许可证成员最大值
         if (licenseStore.getLicense() != null) {
             if (memberCount + 1 > licenseStore.getLicense().getMaxMemberNum()) {

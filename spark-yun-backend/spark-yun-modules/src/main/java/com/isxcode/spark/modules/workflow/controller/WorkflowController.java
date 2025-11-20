@@ -1,5 +1,6 @@
 package com.isxcode.spark.modules.workflow.controller;
 
+import com.isxcode.spark.annotation.vip.LicenseApi;
 import com.isxcode.spark.api.instance.req.QueryWorkFlowInstancesReq;
 import com.isxcode.spark.api.instance.res.QueryWorkFlowInstancesRes;
 import com.isxcode.spark.api.main.constants.ModuleCode;
@@ -41,6 +42,7 @@ public class WorkflowController {
 
     private final WorkflowConfigBizService workflowConfigBizService;
 
+    @LicenseApi
     @Operation(summary = "新建作业流接口")
     @PostMapping("/addWorkflow")
     @SuccessResponse("创建成功")
@@ -74,6 +76,7 @@ public class WorkflowController {
         workflowBizService.deleteWorkflow(deleteWorkflowReq);
     }
 
+    @LicenseApi
     @Operation(summary = "运行工作流接口")
     @PostMapping("/runWorkflow")
     @SuccessResponse("提交成功")
