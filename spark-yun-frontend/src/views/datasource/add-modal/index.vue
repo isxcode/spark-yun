@@ -74,6 +74,9 @@ oceanbase: jdbc:oceanbase://${host}:${port}/${database}
 tidb: jdbc:mysql://${host}:${port}/${database}
 starrocks: jdbc:mysql://${host}:${port}/${database}
 db2: jdbc:db2://${host}:${port}/${database}
+tdengine: jdbc:TAOS-WS://${host}:${port}/${database}
+duckDB: jdbc:duckdb:/path
+selectDB: jdbc:mysql://${host}:${port}/${database}
 kafka: ${host}:${port} 默认端口号：9092
               </pre>
             </template>
@@ -106,7 +109,7 @@ kafka: ${host}:${port} 默认端口号：9092
         />
       </el-form-item>
       <el-form-item
-        v-if="formData.dbType !== 'KAFKA'"
+        v-if="formData.dbType !== 'KAFKA'&& formData.dbType !== 'DUCK_DB'"
         label="用户名"
         prop="username"
       >
@@ -117,7 +120,7 @@ kafka: ${host}:${port} 默认端口号：9092
         />
       </el-form-item>
       <el-form-item
-        v-if="formData.dbType === 'KAFKA'"
+        v-if="formData.dbType === 'KAFKA' || formData.dbType === 'DUCK_DB'"
         label="用户名"
       >
         <el-input
@@ -229,6 +232,10 @@ const typeList = reactive([
     value: 'DORIS'
   },
   {
+    label: 'DuckDB',
+    value: 'DUCK_DB'
+  },
+  {
     label: '达梦',
     value: 'DM'
   },
@@ -289,6 +296,10 @@ const typeList = reactive([
     value: 'PRESTO'
   },
   {
+    label: 'SelectDB',
+    value: 'SELECT_DB'
+  },
+  {
     label: 'SqlServer',
     value: 'SQL_SERVER'
   },
@@ -299,6 +310,10 @@ const typeList = reactive([
   {
     label: 'Sybase',
     value: 'SYBASE'
+  },
+  {
+    label: 'TDengine',
+    value: 'T_DENGINE'
   },
   {
     label: 'TiDB',

@@ -31,6 +31,12 @@ public interface DatasourceType {
 
     String TIDB = "TIDB";
 
+    String T_DENGINE = "T_DENGINE";
+
+    String DUCK_DB = "DUCK_DB";
+
+    String SELECT_DB = "SELECT_DB";
+
     String STAR_ROCKS = "STAR_ROCKS";
 
     String DB2 = "DB2";
