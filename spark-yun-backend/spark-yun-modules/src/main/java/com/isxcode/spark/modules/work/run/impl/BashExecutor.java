@@ -13,6 +13,7 @@ import com.isxcode.spark.modules.cluster.entity.ClusterNodeEntity;
 import com.isxcode.spark.modules.cluster.mapper.ClusterNodeMapper;
 import com.isxcode.spark.modules.cluster.repository.ClusterNodeRepository;
 import com.isxcode.spark.modules.cluster.repository.ClusterRepository;
+import com.isxcode.spark.modules.meta.service.MetaColumnLineageService;
 import com.isxcode.spark.modules.secret.entity.SecretKeyEntity;
 import com.isxcode.spark.modules.secret.repository.SecretKeyRepository;
 import com.isxcode.spark.modules.work.entity.WorkEventEntity;
@@ -61,11 +62,12 @@ public class BashExecutor extends WorkExecutor {
         Locker locker, WorkRepository workRepository, WorkRunJobFactory workRunJobFactory,
         WorkConfigRepository workConfigRepository, VipWorkVersionRepository vipWorkVersionRepository,
         ClusterNodeMapper clusterNodeMapper, AesUtils aesUtils, ClusterNodeRepository clusterNodeRepository,
-        ClusterRepository clusterRepository, WorkService workService, SecretKeyRepository secretKeyRepository) {
+        ClusterRepository clusterRepository, WorkService workService, SecretKeyRepository secretKeyRepository,
+        MetaColumnLineageService metaColumnLineageService) {
 
         super(alarmService, locker, workRepository, workInstanceRepository, workflowInstanceRepository,
             workEventRepository, workRunJobFactory, sqlFunctionService, workConfigRepository, vipWorkVersionRepository,
-            workService);
+            workService, metaColumnLineageService);
         this.sqlValueService = sqlValueService;
         this.sqlFunctionService = sqlFunctionService;
         this.clusterNodeMapper = clusterNodeMapper;
