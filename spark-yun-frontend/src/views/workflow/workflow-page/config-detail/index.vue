@@ -2,28 +2,6 @@
   <BlockDrawer :drawer-config="drawerConfig">
     <el-scrollbar>
         <div class="work-flow-config">
-          <!-- 计算容器配置 -->
-          <div class="config-item" v-if="['SPARK_CONTAINER_SQL'].includes(workItemConfig.workType)">
-            <div class="item-title">查询配置</div>
-            <el-form
-              label-position="left"
-              label-width="120px"
-            >
-              <el-form-item label="限制条数" v-if="['SPARK_CONTAINER_SQL'].includes(workItemConfig.workType)">
-                  <el-switch v-model="queryConfig.enableLimit" />
-              </el-form-item>
-
-              <el-form-item label="查询条数" v-if="queryConfig.enableLimit && ['SPARK_CONTAINER_SQL'].includes(workItemConfig.workType)">
-                <el-input-number
-                    v-model="queryConfig.lineLimit"
-                    :min="1"
-                    :max="1000"
-                    placeholder="请输入查询条数"
-                    controls-position="right"
-                />
-              </el-form-item>
-            </el-form>
-          </div>
           <!-- 数据源配置 -->
           <div class="config-item" v-if="['QUERY_JDBC', 'PRQL', 'EXE_JDBC'].includes(workItemConfig.workType)">
             <div class="item-title">数据源配置</div>
@@ -46,20 +24,6 @@
                     :value="item.value"
                   />
                 </el-select>
-              </el-form-item>
-
-              <el-form-item label="限制条数" v-if="['QUERY_JDBC', 'PRQL'].includes(workItemConfig.workType)">
-                  <el-switch v-model="queryConfig.enableLimit" />
-              </el-form-item>
-
-              <el-form-item label="查询条数" v-if="queryConfig.enableLimit && ['QUERY_JDBC', 'PRQL'].includes(workItemConfig.workType)">
-                <el-input-number
-                    v-model="queryConfig.lineLimit"
-                    :min="1"
-                    :max="1000"
-                    placeholder="请输入查询条数"
-                    controls-position="right"
-                />
               </el-form-item>
             </el-form>
           </div>
@@ -135,20 +99,34 @@
                     />
                   </el-select>
                 </el-form-item>
-                <el-form-item label="限制条数" v-if="['SPARK_SQL'].includes(workItemConfig.workType)">
-                  <el-switch v-model="queryConfig.enableLimit" />
-                </el-form-item>
-                <el-form-item label="查询条数" v-if="queryConfig.enableLimit && ['SPARK_SQL'].includes(workItemConfig.workType)">
-                    <el-input-number
-                        v-model="queryConfig.lineLimit"
-                        :min="1"
-                        :max="1000"
-                        placeholder="请输入查询条数"
-                        controls-position="right"
-                    /> </el-form-item>
               </el-form>
             </div>
           </template>
+          <!-- 查询配置 -->
+          <div class="config-item" v-if="['SPARK_CONTAINER_SQL','QUERY_JDBC', 'PRQL', 'SPARK_SQL'].includes(workItemConfig.workType)">
+            <div class="item-title">查询配置</div>
+            <el-form
+              label-position="left"
+              label-width="120px"
+              :model="queryConfig"
+              :rules="queryConfigRules"
+              ref="queryConfigForm"
+            >
+              <el-form-item label="限制条数">
+                  <el-switch v-model="queryConfig.enableLimit" />
+              </el-form-item>
+
+              <el-form-item label="查询条数"  v-if="queryConfig.enableLimit" prop="lineLimit">
+                <el-input-number
+                    v-model="queryConfig.lineLimit"
+                    :min="1"
+                    :max="1000"
+                    placeholder="请输入查询条数"
+                    controls-position="right"
+                />
+              </el-form-item>
+            </el-form>
+          </div>
           <el-divider />
           <!-- 定时调度 -->
           <div class="config-item">
@@ -440,7 +418,7 @@
 import { computed, nextTick, reactive, ref } from 'vue'
 import { ElMessage, FormInstance, FormRules } from 'element-plus'
 import BlockDrawer from '@/components/block-drawer/index.vue'
-import {ScheduleRange, WeekDateList, ResourceLevelOptions, DataSourceRules, ClusterConfigRules, SyncRuleConfigRules, CronConfigRules} from './config-detail'
+import {ScheduleRange, WeekDateList, ResourceLevelOptions, DataSourceRules, ClusterConfigRules,QueryConfigRules, SyncRuleConfigRules, CronConfigRules} from './config-detail'
 import {json} from '@codemirror/lang-json'
 import {sql} from '@codemirror/lang-sql'
 // import CodeMirror from 'vue-codemirror6'
@@ -470,6 +448,7 @@ const dataSourceConfig = ref<FormInstance>()
 const clusterConfigForm = ref<FormInstance>()
 const cronConfigForm = ref<FormInstance>()
 const syncRuleForm = ref<FormInstance>()
+const queryConfigForm = ref<FormInstance>()
 const containerIdList = ref([]) // 容器列表
 const callback = ref(null)
 const alarmConfigList = ref([])
@@ -554,6 +533,7 @@ const fileConfig = reactive({
   libList: []
 })
 const dataSourceRules = reactive<FormRules>(DataSourceRules)
+const queryConfigRules = reactive<FormRules>(QueryConfigRules)
 const clusterConfigRules = reactive<FormRules>(ClusterConfigRules)
 const cronConfigRules = reactive<FormRules>(CronConfigRules)
 const syncRuleConfigRules = reactive<FormRules>(SyncRuleConfigRules)
@@ -659,12 +639,12 @@ function getConfigDetailData() {
     }
     if (['QUERY_JDBC', 'PRQL', 'SPARK_SQL'].includes(workItemConfig.value.workType)) {
       dataSourceForm.datasourceId = res.data.datasourceId
-      queryConfig.lineLimit = res.data.queryConfig.lineLimit
-      queryConfig.enableLimit = res.data.queryConfig.enableLimit
     }
-    if (['SPARK_CONTAINER_SQL'].includes(workItemConfig.value.workType)) {
-      queryConfig.lineLimit = res.data.queryConfig.lineLimit
-      queryConfig.enableLimit = res.data.queryConfig.enableLimit
+    if (['SPARK_CONTAINER_SQL','QUERY_JDBC', 'PRQL', 'SPARK_SQL'].includes(workItemConfig.value.workType)) {
+      if(res.data.queryConfig){
+        queryConfig.lineLimit = res.data.queryConfig.lineLimit
+        queryConfig.enableLimit = res.data.queryConfig.enableLimit
+      }
     }
     if (res.data.clusterConfig) {
       Object.keys(clusterConfig).forEach((key: string) => {
@@ -707,7 +687,7 @@ function getConfigDetailData() {
 function okEvent() {
   // 获取cron表达式
   let status = true
-  const formArr = [dataSourceConfig, clusterConfigForm, cronConfigForm, syncRuleForm]
+  const formArr = [dataSourceConfig, clusterConfigForm, cronConfigForm, syncRuleForm, queryConfigForm]
   formArr.forEach(f => {
     f.value?.validate((valid: boolean) => {
       if (!valid) {
