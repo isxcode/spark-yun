@@ -4,14 +4,17 @@ import static com.isxcode.spark.common.config.CommonConfig.TENANT_ID;
 import static com.isxcode.spark.common.config.CommonConfig.USER_ID;
 
 import com.isxcode.spark.backend.api.base.constants.SecurityConstants;
+import com.isxcode.spark.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.spark.backend.api.base.properties.IsxAppProperties;
 import com.isxcode.spark.common.utils.jwt.JwtUtils;
+
 import java.io.IOException;
 import java.util.List;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +22,9 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-/** jwt拦截接口. */
+/**
+ * jwt拦截接口.
+ */
 @Slf4j
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -62,6 +67,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         // 通过用户id，给用户授权
         try {
             authenticationManager.authenticate(new AuthenticationToken(userUuid, tenantId));
+        } catch (IsxAppException isxAppException) {
+            log.debug(isxAppException.getMessage(), isxAppException);
+            request.getRequestDispatcher(SecurityConstants.TOKEN_IS_INVALID_PATH).forward(request, response);
+            return;
         } catch (Exception e) {
             log.debug(e.getMessage(), e);
             request.getRequestDispatcher(SecurityConstants.AUTH_ERROR_PATH).forward(request, response);
