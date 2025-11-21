@@ -73,6 +73,15 @@ export const DataSourceRules = {
         }
     ]
 }
+export const QueryConfigRules = {
+    lineLimit: [
+        {
+            required: true,
+            message: '请输入查询条数',
+            trigger: ['blur', 'change']
+        }
+    ]
+}
 export const ClusterConfigRules = {
     clusterId: [
         {
