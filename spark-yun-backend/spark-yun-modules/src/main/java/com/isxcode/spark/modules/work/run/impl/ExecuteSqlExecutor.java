@@ -12,6 +12,7 @@ import com.isxcode.spark.modules.datasource.repository.DatasourceRepository;
 import com.isxcode.spark.modules.datasource.service.DatasourceService;
 import com.isxcode.spark.modules.datasource.source.DataSourceFactory;
 import com.isxcode.spark.modules.datasource.source.Datasource;
+import com.isxcode.spark.modules.meta.service.MetaColumnLineageService;
 import com.isxcode.spark.modules.work.entity.WorkInstanceEntity;
 import com.isxcode.spark.modules.work.repository.WorkInstanceRepository;
 import com.isxcode.spark.modules.work.run.WorkExecutor;
@@ -70,11 +71,12 @@ public class ExecuteSqlExecutor extends WorkExecutor {
         WorkEventRepository workEventRepository, Locker locker, WorkRepository workRepository,
         WorkRunJobFactory workRunJobFactory, WorkConfigRepository workConfigRepository,
         VipWorkVersionRepository vipWorkVersionRepository, WorkService workService, DatasourceService datasourceService,
-        IsxAppProperties isxAppProperties, ServerProperties serverProperties) {
+        IsxAppProperties isxAppProperties, ServerProperties serverProperties,
+        MetaColumnLineageService metaColumnLineageService) {
 
         super(alarmService, locker, workRepository, workInstanceRepository, workflowInstanceRepository,
             workEventRepository, workRunJobFactory, sqlFunctionService, workConfigRepository, vipWorkVersionRepository,
-            workService);
+            workService, metaColumnLineageService);
         this.datasourceRepository = datasourceRepository;
         this.sqlCommentService = sqlCommentService;
         this.sqlValueService = sqlValueService;

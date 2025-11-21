@@ -31,6 +31,7 @@ import com.isxcode.spark.modules.file.repository.FileRepository;
 import com.isxcode.spark.modules.func.entity.FuncEntity;
 import com.isxcode.spark.modules.func.mapper.FuncMapper;
 import com.isxcode.spark.modules.func.repository.FuncRepository;
+import com.isxcode.spark.modules.meta.service.MetaColumnLineageService;
 import com.isxcode.spark.modules.secret.entity.SecretKeyEntity;
 import com.isxcode.spark.modules.secret.repository.SecretKeyRepository;
 import com.isxcode.spark.modules.work.entity.WorkEventEntity;
@@ -103,11 +104,12 @@ public class SparkSqlExecutor extends WorkExecutor {
         VipWorkVersionRepository vipWorkVersionRepository, ClusterNodeMapper clusterNodeMapper, AesUtils aesUtils,
         ClusterNodeRepository clusterNodeRepository, ClusterRepository clusterRepository, FuncRepository funcRepository,
         FuncMapper funcMapper, IsxAppProperties isxAppProperties, FileRepository fileRepository,
-        DatasourceService datasourceService, WorkService workService, AgentLinkUtils agentLinkUtils) {
+        DatasourceService datasourceService, WorkService workService, AgentLinkUtils agentLinkUtils,
+        MetaColumnLineageService metaColumnLineageService) {
 
         super(alarmService, locker, workRepository, workInstanceRepository, workflowInstanceRepository,
             workEventRepository, workRunJobFactory, sqlFunctionService, workConfigRepository, vipWorkVersionRepository,
-            workService);
+            workService, metaColumnLineageService);
         this.clusterRepository = clusterRepository;
         this.clusterNodeRepository = clusterNodeRepository;
         this.funcRepository = funcRepository;
