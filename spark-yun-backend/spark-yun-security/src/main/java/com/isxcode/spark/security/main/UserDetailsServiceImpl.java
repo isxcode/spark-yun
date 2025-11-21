@@ -4,6 +4,7 @@ import static com.isxcode.spark.common.config.CommonConfig.TENANT_ID;
 
 import com.isxcode.spark.api.tenant.constants.TenantStatus;
 import com.isxcode.spark.api.user.constants.RoleType;
+import com.isxcode.spark.api.user.constants.UserStatus;
 import com.isxcode.spark.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.spark.security.user.TenantUserEntity;
 import com.isxcode.spark.security.user.TenantUserRepository;
@@ -39,6 +40,11 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
         // 判断用户是否存在
         UserEntity userInfo = userRepository.findById(userId).orElseThrow(() -> new IsxAppException("用户不存在"));
+
+        // 用户被禁用了，直接退出
+        if (UserStatus.DISABLE.equals(userInfo.getStatus())) {
+            throw new IsxAppException("用户被禁用，请联系管理员!");
+        }
 
         // 获取用户系统权限
         String authority = userInfo.getRoleCode();
