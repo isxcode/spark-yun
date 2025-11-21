@@ -22,6 +22,7 @@ import com.isxcode.spark.modules.cluster.repository.ClusterNodeRepository;
 import com.isxcode.spark.modules.cluster.repository.ClusterRepository;
 import com.isxcode.spark.modules.file.entity.FileEntity;
 import com.isxcode.spark.modules.file.repository.FileRepository;
+import com.isxcode.spark.modules.meta.service.MetaColumnLineageService;
 import com.isxcode.spark.modules.work.entity.WorkEventEntity;
 import com.isxcode.spark.modules.work.entity.WorkInstanceEntity;
 import com.isxcode.spark.modules.work.repository.*;
@@ -68,11 +69,12 @@ public class FlinkJarExecutor extends WorkExecutor {
         ClusterNodeMapper clusterNodeMapper, AesUtils aesUtils, IsxAppProperties isxAppProperties,
         FileRepository fileRepository, AlarmService alarmService, SqlFunctionService sqlFunctionService,
         WorkEventRepository workEventRepository, WorkRunJobFactory workRunJobFactory,
-        VipWorkVersionRepository vipWorkVersionRepository, WorkService workService, AgentLinkUtils agentLinkUtils) {
+        VipWorkVersionRepository vipWorkVersionRepository, WorkService workService, AgentLinkUtils agentLinkUtils,
+        MetaColumnLineageService metaColumnLineageService) {
 
         super(alarmService, locker, workRepository, workInstanceRepository, workflowInstanceRepository,
             workEventRepository, workRunJobFactory, sqlFunctionService, workConfigRepository, vipWorkVersionRepository,
-            workService);
+            workService, metaColumnLineageService);
         this.clusterRepository = clusterRepository;
         this.clusterNodeRepository = clusterNodeRepository;
         this.clusterNodeMapper = clusterNodeMapper;

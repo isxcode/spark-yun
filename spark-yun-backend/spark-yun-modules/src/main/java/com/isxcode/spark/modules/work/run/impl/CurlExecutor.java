@@ -9,6 +9,7 @@ import com.isxcode.spark.common.locker.Locker;
 import com.isxcode.spark.common.utils.aes.AesUtils;
 import com.isxcode.spark.common.utils.path.PathUtils;
 import com.isxcode.spark.modules.alarm.service.AlarmService;
+import com.isxcode.spark.modules.meta.service.MetaColumnLineageService;
 import com.isxcode.spark.modules.secret.entity.SecretKeyEntity;
 import com.isxcode.spark.modules.secret.repository.SecretKeyRepository;
 import com.isxcode.spark.modules.work.entity.WorkEventEntity;
@@ -41,11 +42,11 @@ public class CurlExecutor extends WorkExecutor {
         AlarmService alarmService, WorkEventRepository workEventRepository, Locker locker,
         WorkRepository workRepository, WorkRunJobFactory workRunJobFactory, WorkConfigRepository workConfigRepository,
         VipWorkVersionRepository vipWorkVersionRepository, IsxAppProperties isxAppProperties, WorkService workService,
-        SecretKeyRepository secretKeyRepository, AesUtils aesUtils) {
+        SecretKeyRepository secretKeyRepository, AesUtils aesUtils, MetaColumnLineageService metaColumnLineageService) {
 
         super(alarmService, locker, workRepository, workInstanceRepository, workflowInstanceRepository,
             workEventRepository, workRunJobFactory, sqlFunctionService, workConfigRepository, vipWorkVersionRepository,
-            workService);
+            workService, metaColumnLineageService);
         this.isxAppProperties = isxAppProperties;
         this.secretKeyRepository = secretKeyRepository;
         this.aesUtils = aesUtils;

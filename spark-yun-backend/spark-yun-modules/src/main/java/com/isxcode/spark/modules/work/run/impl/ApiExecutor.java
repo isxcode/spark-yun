@@ -9,6 +9,7 @@ import com.isxcode.spark.api.work.dto.ApiWorkValueDto;
 import com.isxcode.spark.backend.api.base.properties.IsxAppProperties;
 import com.isxcode.spark.common.utils.http.HttpUtils;
 import com.isxcode.spark.modules.alarm.service.AlarmService;
+import com.isxcode.spark.modules.meta.service.MetaColumnLineageService;
 import com.isxcode.spark.modules.work.entity.WorkInstanceEntity;
 import com.isxcode.spark.modules.work.entity.WorkEventEntity;
 import com.isxcode.spark.modules.work.repository.WorkInstanceRepository;
@@ -41,11 +42,11 @@ public class ApiExecutor extends WorkExecutor {
         SqlFunctionService sqlFunctionService, WorkEventRepository workEventRepository,
         WorkRunJobFactory workRunJobFactory, VipWorkVersionRepository vipWorkVersionRepository,
         WorkConfigRepository workConfigRepository, WorkRepository workRepository, Locker locker,
-        WorkService workService, IsxAppProperties isxAppProperties) {
+        WorkService workService, IsxAppProperties isxAppProperties, MetaColumnLineageService metaColumnLineageService) {
 
         super(alarmService, locker, workRepository, workInstanceRepository, workflowInstanceRepository,
             workEventRepository, workRunJobFactory, sqlFunctionService, workConfigRepository, vipWorkVersionRepository,
-            workService);
+            workService, metaColumnLineageService);
         this.isxAppProperties = isxAppProperties;
     }
 
