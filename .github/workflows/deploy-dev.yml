@@ -19,15 +19,12 @@ on:
         default: 'GH-xxx'
       dev_server_ip:
         description: 'dev server ip'
-        required: true
         type: string
       dev_server_username:
         description: 'dev server username'
-        required: true
         type: string
       dev_server_password:
         description: 'dev server password'
-        required: true
         type: string
 
 env:
