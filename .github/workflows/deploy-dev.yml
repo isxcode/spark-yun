@@ -249,10 +249,10 @@ jobs:
           script_stop: true
           timeout: 1800s
           script: |
-            bash /opt/zhiqingyun/bin/stop.sh
             rm -rf /opt/zhiqingyun
             tar -vzxf /tmp/zhiqingyun.tar.gz -C /opt/
             rm -rf /tmp/zhiqingyun.tar.gz
+            bash /opt/zhiqingyun/bin/stop.sh
             mkdir -p /data/zhiqingyun/${{ inputs.branch_number }}
             cp -r /opt/zhiqingyun/resources/jdbc /data/zhiqingyun/${{ inputs.branch_number }}/
             rm -rf /opt/zhiqingyun/resources
