@@ -258,6 +258,7 @@ jobs:
             mkdir -p /data/zhiqingyun/
             mkdir -p /data/zhiqingyun/${{ inputs.branch_number }}
             mv /opt/zhiqingyun/resources/* /data/zhiqingyun/${{ inputs.branch_number }}/
+            cd /data/zhiqingyun/${{ inputs.branch_number }}
             nohup java -jar -Xmx2048m /opt/zhiqingyun/lib/zhiqingyun.jar --spring.profiles.active=local --spring.config.additional-location=/opt/zhiqingyun/conf/ --spring.datasource.url=jdbc:h2:file:/data/zhiqingyun/${{ inputs.branch_number }}/h2/data;AUTO_SERVER=TRUE --isx-app.resources-path=/data/zhiqingyun/${{ inputs.branch_number }} > /dev/null 2>&1 &
             sleep 120
             until curl -s http://${{ env.DEV_SERVER_IP }}:8080/tools/open/health | grep "UP"; do
