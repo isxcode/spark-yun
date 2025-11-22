@@ -45,7 +45,7 @@ jobs:
           timeout: 1800s
           script: |
             rm -rf /tmp/zhiqingyun.tar.gz
-            pkill -9 -f zhiqingyun.jar
+            jps | grep zhiqingyun.jar | awk '{print $1}' | xargs -r kill -9
             cp /data/file/zhiqingyun.tar.gz /tmp/zhiqingyun.tar.gz
             tar -vzxf /tmp/zhiqingyun.tar.gz -C /opt/
             rm -rf /tmp/zhiqingyun.tar.gz
