@@ -44,11 +44,11 @@ jobs:
           script_stop: true
           timeout: 1800s
           script: |
+            bash /opt/zhiqingyun/bin/stop.sh
             rm -rf /tmp/zhiqingyun.tar.gz
             cp /data/file/zhiqingyun.tar.gz /tmp/zhiqingyun.tar.gz
             tar -vzxf /tmp/zhiqingyun.tar.gz -C /opt/
             rm -rf /tmp/zhiqingyun.tar.gz
-            bash /opt/zhiqingyun/bin/stop.sh
             if [ -d "/opt/zhiqingyun/resources_back" ]; then
               rm -rf /opt/zhiqingyun/resources
               mv /opt/zhiqingyun/resources_back /opt/zhiqingyun/resources

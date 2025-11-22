@@ -249,16 +249,16 @@ jobs:
           script_stop: true
           timeout: 1800s
           script: |
+            bash /opt/zhiqingyun/bin/stop.sh
+            rm -rf /opt/zhiqingyun
             tar -vzxf /tmp/zhiqingyun.tar.gz -C /opt/
             rm -rf /tmp/zhiqingyun.tar.gz
-            bash /opt/zhiqingyun/bin/stop.sh
+            mkdir -p /data/zhiqingyun/${{ inputs.branch_number }}
+            cp -r /opt/zhiqingyun/resources/jdbc /data/zhiqingyun/${{ inputs.branch_number }}/
+            rm -rf /opt/zhiqingyun/resources
             rm -rf /tmp/libprql_*
             rm -rf /tmp/tomcat.8080.*
             rm -rf /tmp/tomcat-docbase.8080.*
-            mkdir -p /data/zhiqingyun/
-            mkdir -p /data/zhiqingyun/${{ inputs.branch_number }}
-            mv /opt/zhiqingyun/resources/* /data/zhiqingyun/${{ inputs.branch_number }}/
-            rm -rf /opt/zhiqingyun/resources
             cd /data/zhiqingyun/${{ inputs.branch_number }}
             nohup java -jar -Xmx2048m /opt/zhiqingyun/lib/zhiqingyun.jar --spring.profiles.active=local --spring.config.additional-location=/opt/zhiqingyun/conf/ --spring.datasource.url=jdbc:h2:file:/data/zhiqingyun/${{ inputs.branch_number }}/h2/data;AUTO_SERVER=TRUE --isx-app.resources-path=/data/zhiqingyun/${{ inputs.branch_number }} > /dev/null 2>&1 &
             sleep 120
