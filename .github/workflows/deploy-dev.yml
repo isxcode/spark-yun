@@ -198,9 +198,9 @@ jobs:
       - name: Upload package to dev server
         uses: appleboy/scp-action@v1
         with:
-          host: $DEV_SERVER_IP
-          username: $DEV_SERVER_USERNAME
-          password: $DEV_SERVER_PASSWORD
+          host: ${{ env.DEV_SERVER_IP }}
+          username: ${{ env.DEV_SERVER_USERNAME }}
+          password: ${{ env.DEV_SERVER_PASSWORD }}
           port: 22
           timeout: 3600s
           source: "zhiqingyun.tar.gz"
@@ -243,9 +243,9 @@ jobs:
       - name: Deploy dev zhiqingyun
         uses: appleboy/ssh-action@v1.0.3
         with:
-          host: $DEV_SERVER_IP
-          username: $DEV_SERVER_USERNAME
-          password: $DEV_SERVER_PASSWORD
+          host: ${{ env.DEV_SERVER_IP }}
+          username: ${{ env.DEV_SERVER_USERNAME }}
+          password: ${{ env.DEV_SERVER_PASSWORD }}
           script_stop: true
           timeout: 1800s
           script: |
