@@ -1,0 +1,268 @@
+name: deploy dev
+
+on:
+  workflow_dispatch:
+    inputs:
+      github_access_token:
+        description: 'github access token'
+        required: true
+        type: string
+      repository_account:
+        description: 'repository'
+        required: true
+        type: string
+        default: 'isxcode'
+      branch_number:
+        description: 'branch'
+        required: true
+        type: string
+        default: 'GH-xxx'
+      dev_server_ip:
+        description: 'dev server ip'
+        type: string
+      dev_server_username:
+        description: 'dev server username'
+        type: string
+      dev_server_password:
+        description: 'dev server password'
+        type: string
+
+env:
+  ADMIN_GITHUB_TOKEN: ${{ inputs.github_access_token }}
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+
+    strategy:
+      fail-fast: false
+      matrix:
+        node:
+          - '18'
+
+    steps:
+
+      - name: Set timezone to Asia/Shanghai
+        run: |
+          sudo timedatectl set-timezone Asia/Shanghai
+
+      - name: Print system info
+        run: |
+          echo "Now Date: $(date)"
+          echo "Home: $(pwd)"
+          echo "CPU: $(grep -m 1 'model name' /proc/cpuinfo | cut -d: -f2 | xargs)"
+          echo "Memory: $(free -h | awk '/^Mem:/ {print $2}')"
+
+      - name: Checkout spark-yun
+        uses: actions/checkout@v4
+        with:
+          token: ${{ env.ADMIN_GITHUB_TOKEN }}
+          repository: ${{ inputs.repository_account }}/spark-yun
+          ref: ${{ inputs.branch_number }}
+
+      - name: Checkout spark-yun-vip
+        uses: actions/checkout@v4
+        with:
+          token: ${{ env.ADMIN_GITHUB_TOKEN }}
+          repository: ${{ inputs.repository_account }}/spark-yun-vip
+          ref: ${{ inputs.branch_number }}
+          path: "/home/runner/work/spark-yun/spark-yun/spark-yun-vip"
+
+      - name: Setup nodejs
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Print node version
+        run: node -v
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9.0.6
+
+      - name: Print pnpm version
+        run: pnpm -v
+
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - name: Cache pnpm
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('/home/runner/work/spark-yun/spark-yun/spark-yun-frontend/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Setup jdk
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '8'
+
+      - name: Print java version
+        run: java -version
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v5
+        with:
+          gradle-version: '7.6.1'
+          cache-disabled: true
+
+      - name: Print gradle version
+        run: gradle -version
+
+      - name: Cache gradle
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Cache dependencies
+        uses: actions/cache@v4
+        id: download-cache
+        with:
+          path: |
+            /home/runner/work/spark-yun/spark-yun/resources
+            /home/runner/work/spark-yun/spark-yun/spark-yun-backend/spark-yun-main/src/main/resources/libprql_java-linux64.so
+            /home/runner/work/spark-yun/spark-yun/spark-yun-backend/spark-yun-main/src/main/resources/libprql_java-osx-arm64.dylib
+          key: ${{ runner.os }}-file-${{ hashFiles('/home/runner/work/spark-yun/spark-yun/download.sh') }}
+
+      - name: Download dependencies
+        if: steps.download-cache.outputs.cache-hit != 'true'
+        run: sudo bash /home/runner/work/spark-yun/spark-yun/download.sh
+
+      - name: Build with gradle
+        run: gradle install package
+
+      - name: Upload zhiqingyun tar
+        uses: actions/upload-artifact@v4
+        with:
+          name: zhiqingyun
+          path: ./spark-yun-dist/build/distributions/zhiqingyun.tar.gz
+
+  # 上传到开发环境服务器
+  upload-server:
+    needs: build
+
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+
+    steps:
+
+      - name: Set timezone to Asia/Shanghai
+        run: |
+          sudo timedatectl set-timezone Asia/Shanghai
+
+      - name: Download zhiqingyun tar
+        uses: actions/download-artifact@v4
+        with:
+          name: zhiqingyun
+          path: ./
+
+      - name: Get dev server info
+        run: |
+          if [ -z "${{ inputs.dev_server_ip }}" ]; then
+            echo "DEV_SERVER_IP=${{ secrets.DEV_HOST }}" >> $GITHUB_ENV
+          else
+            echo "DEV_SERVER_IP=${{ inputs.dev_server_ip }}" >> $GITHUB_ENV
+          fi
+          if [ -z "${{ inputs.dev_server_username }}" ]; then
+            echo "DEV_SERVER_USERNAME=${{ secrets.DEV_USERNAME }}" >> $GITHUB_ENV
+          else
+            echo "DEV_SERVER_USERNAME=${{ inputs.dev_server_username }}" >> $GITHUB_ENV
+          fi
+          if [ -z "${{ inputs.dev_server_password }}" ]; then
+            echo "DEV_SERVER_PASSWORD=${{ secrets.DEV_PASSWORD }}" >> $GITHUB_ENV
+          else
+            echo "DEV_SERVER_PASSWORD=${{ inputs.dev_server_password }}" >> $GITHUB_ENV
+          fi
+
+      - name: Upload package to dev server
+        uses: appleboy/scp-action@v1
+        with:
+          host: ${{ env.DEV_SERVER_IP }}
+          username: ${{ env.DEV_SERVER_USERNAME }}
+          password: ${{ env.DEV_SERVER_PASSWORD }}
+          port: 22
+          timeout: 3600s
+          source: "zhiqingyun.tar.gz"
+          target: /tmp/
+
+  deploy-server:
+    needs: upload-server
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+
+    steps:
+
+      - name: Set timezone to Asia/Shanghai
+        run: |
+          sudo timedatectl set-timezone Asia/Shanghai
+          date
+
+      - name: Get dev server info
+        run: |
+          if [ -z "${{ inputs.dev_server_ip }}" ]; then
+            echo "DEV_SERVER_IP=${{ secrets.DEV_HOST }}" >> $GITHUB_ENV
+          else
+            echo "DEV_SERVER_IP=${{ inputs.dev_server_ip }}" >> $GITHUB_ENV
+          fi
+          if [ -z "${{ inputs.dev_server_username }}" ]; then
+            echo "DEV_SERVER_USERNAME=${{ secrets.DEV_USERNAME }}" >> $GITHUB_ENV
+          else
+            echo "DEV_SERVER_USERNAME=${{ inputs.dev_server_username }}" >> $GITHUB_ENV
+          fi
+          if [ -z "${{ inputs.dev_server_password }}" ]; then
+            echo "DEV_SERVER_PASSWORD=${{ secrets.DEV_PASSWORD }}" >> $GITHUB_ENV
+          else
+            echo "DEV_SERVER_PASSWORD=${{ inputs.dev_server_password }}" >> $GITHUB_ENV
+          fi
+
+      - name: Deploy dev zhiqingyun
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ env.DEV_SERVER_IP }}
+          username: ${{ env.DEV_SERVER_USERNAME }}
+          password: ${{ env.DEV_SERVER_PASSWORD }}
+          script_stop: true
+          timeout: 1800s
+          script: |
+            kill -9 $(pgrep -f zhiqingyun.jar)
+            rm -rf /opt/zhiqingyun
+            tar -vzxf /tmp/zhiqingyun.tar.gz -C /opt/
+            rm -rf /tmp/zhiqingyun.tar.gz
+            mkdir -p /data/zhiqingyun/${{ inputs.branch_number }}
+            cp -r /opt/zhiqingyun/resources/jdbc /data/zhiqingyun/${{ inputs.branch_number }}/
+            rm -rf /opt/zhiqingyun/resources
+            rm -rf /tmp/libprql_*
+            rm -rf /tmp/tomcat.8080.*
+            rm -rf /tmp/tomcat-docbase.8080.*
+            cd /data/zhiqingyun/${{ inputs.branch_number }}
+            nohup java -jar -Xmx2048m /opt/zhiqingyun/lib/zhiqingyun.jar --spring.profiles.active=local --spring.config.additional-location=/opt/zhiqingyun/conf/ --spring.datasource.url='jdbc:h2:file:/data/zhiqingyun/${{ inputs.branch_number }}/h2/data;AUTO_SERVER=TRUE' --isx-app.resources-path=/data/zhiqingyun/${{ inputs.branch_number }} > /dev/null 2>&1 &
+            sleep 120
+            until curl -s http://${{ env.DEV_SERVER_IP }}:8080/tools/open/health | grep "UP"; do
+              echo "Waiting for service to be available..."
+              sleep 1
+            done
