@@ -249,7 +249,7 @@ jobs:
           script_stop: true
           timeout: 1800s
           script: |
-            kill -9 $(pgrep -f zhiqingyun.jar)
+            pkill -9 -f zhiqingyun.jar
             rm -rf /opt/zhiqingyun
             tar -vzxf /tmp/zhiqingyun.tar.gz -C /opt/
             rm -rf /tmp/zhiqingyun.tar.gz
