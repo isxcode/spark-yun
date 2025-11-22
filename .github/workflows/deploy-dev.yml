@@ -206,7 +206,7 @@ jobs:
           source: "zhiqingyun.tar.gz"
           target: /tmp/
 
-  download:
+  deploy-server:
     needs: upload-server
     runs-on: ubuntu-latest
 
