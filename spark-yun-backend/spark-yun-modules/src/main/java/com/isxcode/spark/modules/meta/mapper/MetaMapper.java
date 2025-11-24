@@ -1,6 +1,7 @@
 package com.isxcode.spark.modules.meta.mapper;
 
 import com.isxcode.spark.api.meta.ao.MetaColumnAo;
+import com.isxcode.spark.api.meta.ao.MetaColumnLinageAo;
 import com.isxcode.spark.api.meta.ao.MetaTableAo;
 import com.isxcode.spark.api.datasource.dto.QueryColumnDto;
 import com.isxcode.spark.api.datasource.dto.QueryTableDto;
@@ -62,4 +63,18 @@ public interface MetaMapper {
     @Mapping(target = "dbId", source = "datasourceEntity.id")
     @Mapping(target = "dbName", source = "datasourceEntity.name")
     GetTableLinageRes datasourceEntityToGetTableLinageRes(DatasourceEntity datasourceEntity);
+
+    @Mapping(target = "dbId", source = "datasourceEntity.id")
+    @Mapping(target = "dbName", source = "datasourceEntity.name")
+    GetColumnLinageRes datasourceEntityToGetColumnLinageRes(DatasourceEntity datasourceEntity);
+
+    @Mapping(target = "tableName", source = "metaColumnLinageAo.fromTableName")
+    @Mapping(target = "columnName", source = "metaColumnLinageAo.fromColumnName")
+    @Mapping(target = "dbId", source = "metaColumnLinageAo.fromDbId")
+    GetColumnLinageRes metaColumnLinageAoToGetColumnLinageResParent(MetaColumnLinageAo metaColumnLinageAo);
+
+    @Mapping(target = "tableName", source = "metaColumnLinageAo.toTableName")
+    @Mapping(target = "columnName", source = "metaColumnLinageAo.toColumnName")
+    @Mapping(target = "dbId", source = "metaColumnLinageAo.toDbId")
+    GetColumnLinageRes metaColumnLinageAoToGetColumnLinageResSon(MetaColumnLinageAo metaColumnLinageAo);
 }
