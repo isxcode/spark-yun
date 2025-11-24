@@ -9,7 +9,7 @@ import com.isxcode.spark.api.user.constants.RoleType;
 import com.isxcode.spark.api.user.constants.UserStatus;
 import com.isxcode.spark.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.spark.modules.license.repository.LicenseStore;
-import com.isxcode.spark.modules.tenant.entity.TenantEntity;
+import com.isxcode.spark.security.user.TenantEntity;
 import com.isxcode.spark.modules.tenant.service.TenantService;
 import com.isxcode.spark.security.user.TenantUserEntity;
 import com.isxcode.spark.security.user.TenantUserRepository;

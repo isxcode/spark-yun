@@ -1,8 +1,11 @@
 package com.isxcode.spark.api.tenant.req;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import javax.validation.constraints.NotEmpty;
 import lombok.Data;
+
+import java.time.LocalDateTime;
 
 @Data
 public class UpdateTenantForSystemAdminReq {
@@ -23,4 +26,12 @@ public class UpdateTenantForSystemAdminReq {
 
     @Schema(title = "最大成员数", example = "10")
     private Integer maxMemberNum;
+
+    @Schema(title = "有效期开始时间", example = "2025-12-12 12:12:12")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime validStartDateTime;
+
+    @Schema(title = "有效期结束时间", example = "2025-12-12 12:12:12")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime validEndDateTime;
 }
