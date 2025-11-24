@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
@@ -19,6 +20,7 @@ import static com.isxcode.spark.common.config.CommonConfig.TENANT_ID;
 
 @Data
 @Entity
+@SQLDelete(sql = "UPDATE SY_META_COLUMN_LINEAGE SET deleted = 1 WHERE id = ? and version_number = ?")
 @Where(clause = "deleted = 0 ${TENANT_FILTER} ")
 @Table(name = "SY_META_COLUMN_LINEAGE")
 @JsonIgnoreProperties({"hibernateLazyInitializer"})
