@@ -6,6 +6,7 @@ import com.isxcode.spark.api.datasource.dto.QueryColumnDto;
 import com.isxcode.spark.api.datasource.dto.QueryTableDto;
 import com.isxcode.spark.api.meta.req.AddMetaWokReq;
 import com.isxcode.spark.api.meta.res.*;
+import com.isxcode.spark.modules.datasource.entity.DatasourceEntity;
 import com.isxcode.spark.modules.meta.entity.*;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -53,4 +54,8 @@ public interface MetaMapper {
     QueryColumnDto metaColumnEntityToQueryColumnDto(MetaColumnEntity metaColumnEntity);
 
     List<QueryColumnDto> metaColumnEntitiesToQueryColumnDtoList(List<MetaColumnAo> metaColumnEntities);
+
+    @Mapping(target = "dbId", source = "datasourceEntity.id")
+    @Mapping(target = "dbName", source = "datasourceEntity.name")
+    GetDbLinageRes datasourceEntityToGetDbLinageRes(DatasourceEntity datasourceEntity);
 }
