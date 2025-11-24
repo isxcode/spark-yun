@@ -240,6 +240,19 @@ jobs:
             echo "DEV_SERVER_PASSWORD=${{ inputs.dev_server_password }}" >> $GITHUB_ENV
           fi
 
+      - name: Install java
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ env.DEV_SERVER_IP }}
+          username: ${{ env.DEV_SERVER_USERNAME }}
+          password: ${{ env.DEV_SERVER_PASSWORD }}
+          script_stop: true
+          timeout: 1800s
+          script: |
+            if ! yum install java-1.8.0-openjdk-devel java-1.8.0-openjdk -y; then
+              echo "java安装失败，请检查服务器本地是否有java1.8"
+            fi
+
       - name: Deploy dev zhiqingyun
         uses: appleboy/ssh-action@v1.0.3
         with:
