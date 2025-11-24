@@ -2,6 +2,7 @@ package com.isxcode.spark.modules.meta.repository;
 
 import com.isxcode.spark.api.main.constants.ModuleVipCode;
 import com.isxcode.spark.api.meta.ao.MetaDbLinageAo;
+import com.isxcode.spark.api.meta.ao.MetaTableLinageAo;
 import com.isxcode.spark.modules.meta.entity.MetaColumnLineageEntity;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -22,5 +23,13 @@ public interface MetaColumnLineageRepository extends JpaRepository<MetaColumnLin
 
     @Query("select new com.isxcode.spark.api.meta.ao.MetaDbLinageAo(M.fromDbId, M.toDbId) from MetaColumnLineageEntity M where M.fromDbId = :fromDbId and M.tenantId = :tenantId group by M.fromDbId, M.toDbId")
     List<MetaDbLinageAo> getDbSonLineage(@Param("tenantId") String tenantId, String fromDbId);
+
+    @Query("select new com.isxcode.spark.api.meta.ao.MetaTableLinageAo(M.fromDbId, M.fromTableName, M.toDbId, M.toTableName) from MetaColumnLineageEntity M where M.toDbId = :toDbId and M.toTableName = :toTableName and M.tenantId = :tenantId group by M.fromDbId, M.toDbId, M.fromTableName,M.toTableName")
+    List<MetaTableLinageAo> getTableParentLineage(@Param("tenantId") String tenantId, String toDbId,
+        String toTableName);
+
+    @Query("select new com.isxcode.spark.api.meta.ao.MetaTableLinageAo(M.fromDbId, M.fromTableName, M.toDbId,M.toTableName) from MetaColumnLineageEntity M where M.fromDbId = :fromDbId and M.fromTableName = :fromTableName and M.tenantId = :tenantId group by M.fromDbId, M.toDbId, M.fromTableName,M.toTableName")
+    List<MetaTableLinageAo> getTableSonLineage(@Param("tenantId") String tenantId, String fromDbId,
+        String fromTableName);
 
 }
