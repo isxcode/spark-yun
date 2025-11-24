@@ -1,6 +1,10 @@
 package com.isxcode.spark.api.user.dto;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.isxcode.spark.backend.api.base.serializer.LocalDateTimeSerializer;
 import lombok.Data;
+
+import java.time.LocalDateTime;
 
 @Data
 public class UserDto {
@@ -20,4 +24,10 @@ public class UserDto {
     private String email;
 
     private String remark;
+
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    private LocalDateTime validStartDateTime;
+
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    private LocalDateTime validEndDateTime;
 }

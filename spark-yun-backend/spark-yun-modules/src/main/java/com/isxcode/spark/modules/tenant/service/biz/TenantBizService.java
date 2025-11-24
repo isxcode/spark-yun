@@ -11,14 +11,10 @@ import com.isxcode.spark.api.tenant.res.QueryUserTenantRes;
 import com.isxcode.spark.api.user.constants.RoleType;
 import com.isxcode.spark.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.spark.modules.license.repository.LicenseStore;
-import com.isxcode.spark.modules.tenant.entity.TenantEntity;
+import com.isxcode.spark.security.user.*;
 import com.isxcode.spark.modules.tenant.mapper.TenantMapper;
-import com.isxcode.spark.modules.tenant.repository.TenantRepository;
 import com.isxcode.spark.modules.workflow.repository.WorkflowRepository;
-import com.isxcode.spark.security.user.TenantUserEntity;
-import com.isxcode.spark.security.user.TenantUserRepository;
-import com.isxcode.spark.security.user.UserEntity;
-import com.isxcode.spark.security.user.UserRepository;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -264,6 +260,15 @@ public class TenantBizService {
         Optional<TenantEntity> tenantEntityOptional = tenantRepository.findById(chooseTenantReq.getTenantId());
         if (!tenantEntityOptional.isPresent()) {
             throw new IsxAppException("租户不存在");
+        }
+
+        // 判断租户是否在有效期内
+        TenantEntity tenant = tenantEntityOptional.get();
+        if (tenant.getValidStartDateTime() != null && tenant.getValidEndDateTime() != null) {
+            if (LocalDateTime.now().isBefore(tenant.getValidStartDateTime())
+                || LocalDateTime.now().isAfter(tenant.getValidEndDateTime())) {
+                throw new IsxAppException("当前租户不在有效期内");
+            }
         }
 
         Optional<UserEntity> userEntityOptional = userRepository.findById(USER_ID.get());

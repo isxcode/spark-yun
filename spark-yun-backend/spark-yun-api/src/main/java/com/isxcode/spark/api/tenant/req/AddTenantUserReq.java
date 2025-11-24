@@ -18,5 +18,6 @@ public class AddTenantUserReq {
     private String remark;
 
     @Schema(title = "租户id", example = "sy_123")
+    @NotEmpty(message = "tenantId不能为空")
     private String tenantId;
 }

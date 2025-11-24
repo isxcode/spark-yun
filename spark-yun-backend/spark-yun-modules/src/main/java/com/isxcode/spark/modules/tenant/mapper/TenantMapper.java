@@ -6,7 +6,7 @@ import com.isxcode.spark.api.tenant.req.UpdateTenantForTenantAdminReq;
 import com.isxcode.spark.api.tenant.res.PageTenantRes;
 import com.isxcode.spark.api.tenant.res.QueryUserTenantRes;
 import com.isxcode.spark.api.user.constants.UserStatus;
-import com.isxcode.spark.modules.tenant.entity.TenantEntity;
+import com.isxcode.spark.security.user.TenantEntity;
 import java.util.List;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -29,6 +29,8 @@ public interface TenantMapper {
     @Mapping(target = "maxMemberNum", source = "tetUpdateTenantBySystemAdminReq.maxMemberNum")
     @Mapping(target = "name", source = "tetUpdateTenantBySystemAdminReq.name")
     @Mapping(target = "id", source = "tenantEntity.id")
+    @Mapping(target = "validStartDateTime", source = "tetUpdateTenantBySystemAdminReq.validStartDateTime")
+    @Mapping(target = "validEndDateTime", source = "tetUpdateTenantBySystemAdminReq.validEndDateTime")
     TenantEntity tetUpdateTenantBySystemAdminReqToTenantEntity(
         UpdateTenantForSystemAdminReq tetUpdateTenantBySystemAdminReq, TenantEntity tenantEntity);
 
