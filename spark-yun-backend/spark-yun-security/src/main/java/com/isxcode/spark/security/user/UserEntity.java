@@ -53,6 +53,10 @@ public class UserEntity {
 
     private String currentTenantId;
 
+    private LocalDateTime validStartDateTime;
+
+    private LocalDateTime validEndDateTime;
+
     @CreatedDate
     private LocalDateTime createDateTime;
 

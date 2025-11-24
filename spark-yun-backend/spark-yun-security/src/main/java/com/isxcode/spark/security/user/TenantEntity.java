@@ -1,6 +1,7 @@
-package com.isxcode.spark.modules.tenant.entity;
+package com.isxcode.spark.security.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.time.LocalDateTime;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
@@ -9,6 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.Version;
+
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.SQLDelete;
@@ -50,6 +52,10 @@ public class TenantEntity {
     private String remark;
 
     private LocalDateTime checkDateTime;
+
+    private LocalDateTime validStartDateTime;
+
+    private LocalDateTime validEndDateTime;
 
     @CreatedDate
     private LocalDateTime createDateTime;

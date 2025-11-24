@@ -11,14 +11,11 @@ import com.isxcode.spark.api.user.res.*;
 import com.isxcode.spark.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.spark.backend.api.base.properties.IsxAppProperties;
 import com.isxcode.spark.common.utils.jwt.JwtUtils;
-import com.isxcode.spark.modules.tenant.entity.TenantEntity;
-import com.isxcode.spark.modules.tenant.repository.TenantRepository;
+import com.isxcode.spark.modules.tenant.service.TenantService;
+import com.isxcode.spark.security.user.*;
 import com.isxcode.spark.modules.user.mapper.UserMapper;
-import com.isxcode.spark.security.user.TenantUserEntity;
-import com.isxcode.spark.security.user.TenantUserRepository;
-import com.isxcode.spark.security.user.UserEntity;
-import com.isxcode.spark.security.user.UserRepository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -45,6 +42,8 @@ public class UserBizService {
 
     private final TenantUserRepository tenantUserRepository;
 
+    private final TenantService tenantService;
+
     public LoginRes login(LoginReq usrLoginReq) {
 
         // 判断用户是否存在
@@ -53,6 +52,14 @@ public class UserBizService {
             throw new IsxAppException("账号或者密码不正确");
         }
         UserEntity userEntity = userEntityOptional.get();
+
+        // 判断用户是否在有效期内
+        if (userEntity.getValidStartDateTime() != null && userEntity.getValidEndDateTime() != null) {
+            if (LocalDateTime.now().isBefore(userEntity.getValidStartDateTime())
+                || LocalDateTime.now().isAfter(userEntity.getValidEndDateTime())) {
+                throw new IsxAppException("用户账号不在有效期内，请联系管理员");
+            }
+        }
 
         // 判断用户是否禁用
         if (UserStatus.DISABLE.equals(userEntity.getStatus())) {
@@ -90,9 +97,11 @@ public class UserBizService {
         // 如果用户没有任何启动租户报错
         List<String> tenantId =
             tenantUserEntities.stream().map(TenantUserEntity::getTenantId).collect(Collectors.toList());
-        List<TenantEntity> enableTenants = tenantRepository.findAllByIdInAndStatus(tenantId, TenantStatus.ENABLE);
+        List<TenantEntity> enableTenants =
+            tenantRepository.findAllByIdInAndStatusAndValidEndDateTimeAfterAndValidStartDateTimeBefore(tenantId,
+                TenantStatus.ENABLE, LocalDateTime.now(), LocalDateTime.now());
         if (enableTenants.isEmpty()) {
-            throw new IsxAppException("无启用租户，请联系管理员");
+            throw new IsxAppException("无合法租户，请联系管理员");
         }
 
         // 如果用户当前租户id启动则返回当前租户，没有则随机挑一个

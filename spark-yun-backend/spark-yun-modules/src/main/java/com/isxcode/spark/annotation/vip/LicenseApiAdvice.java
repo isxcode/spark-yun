@@ -2,10 +2,10 @@ package com.isxcode.spark.annotation.vip;
 
 import com.isxcode.spark.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.spark.modules.license.repository.LicenseStore;
-import com.isxcode.spark.modules.tenant.entity.TenantEntity;
-import com.isxcode.spark.modules.tenant.repository.TenantRepository;
+import com.isxcode.spark.security.user.TenantEntity;
 import com.isxcode.spark.modules.tenant.service.TenantService;
 import com.isxcode.spark.modules.workflow.repository.WorkflowRepository;
+import com.isxcode.spark.security.user.TenantRepository;
 import com.isxcode.spark.security.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

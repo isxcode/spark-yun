@@ -35,7 +35,7 @@ import com.isxcode.spark.common.utils.jwt.JwtUtils;
 import com.isxcode.spark.modules.cluster.entity.ClusterEntity;
 import com.isxcode.spark.modules.cluster.service.ClusterService;
 import com.isxcode.spark.modules.license.repository.LicenseStore;
-import com.isxcode.spark.modules.tenant.entity.TenantEntity;
+import com.isxcode.spark.security.user.TenantEntity;
 import com.isxcode.spark.modules.tenant.service.TenantService;
 import com.isxcode.spark.modules.user.service.UserService;
 import com.isxcode.spark.modules.work.entity.WorkConfigEntity;
