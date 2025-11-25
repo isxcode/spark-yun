@@ -239,6 +239,15 @@ public class WorkConfigBizService {
             workConfig.setDbMigrateConfig(JSON.toJSONString(wocConfigWorkReq.getDbMigrateConfig()));
         }
 
+        // 设置依赖包配置
+        if (wocConfigWorkReq.getLibPakcageList() != null) {
+            if (!wocConfigWorkReq.getLibPakcageList().isEmpty()) {
+                workConfig.setLibConfig(JSONArray.toJSONString(wocConfigWorkReq.getLibPakcageList()));
+            } else {
+                workConfig.setLibConfig("[]");
+            }
+        }
+
         // 保存配置
         workConfigRepository.save(workConfig);
     }
