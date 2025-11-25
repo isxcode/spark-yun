@@ -34,13 +34,11 @@ public class LibPackageEntity {
     @GenericGenerator(name = "sy-id-generator", strategy = "com.isxcode.spark.config.GeneratedValueConfig")
     private String id;
 
-    private String fileName;
+    private String name;
 
-    private String fileSize;
+    private String fileIdList;
 
     private String remark;
-
-    private String fileType;
 
     @CreatedDate
     private LocalDateTime createDateTime;
