@@ -1,7 +1,6 @@
 package com.isxcode.spark.modules.file.repository;
 
 import com.isxcode.spark.api.main.constants.ModuleCode;
-import com.isxcode.spark.modules.file.entity.FileEntity;
 import com.isxcode.spark.modules.file.entity.LibPackageEntity;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.data.domain.Page;
@@ -17,8 +16,8 @@ import java.util.Optional;
 @CacheConfig(cacheNames = {ModuleCode.FILE})
 public interface LibPackageRepository extends JpaRepository<LibPackageEntity, String> {
 
-    Optional<FileEntity> findByFileName(String fileName);
+    Optional<LibPackageEntity> findByName(String libPackageName);
 
     @Query("SELECT F FROM FileEntity F WHERE (:type is null OR F.fileType = :type OR :type='') and ( F.fileName LIKE %:keyword% OR F.remark LIKE %:keyword% ) order by F.createDateTime desc ")
-    Page<FileEntity> searchAll(@Param("keyword") String searchKeyWord, @Param("type") String type, Pageable pageable);
+    Page<LibPackageEntity> searchAll(@Param("keyword") String searchKeyWord, Pageable pageable);
 }

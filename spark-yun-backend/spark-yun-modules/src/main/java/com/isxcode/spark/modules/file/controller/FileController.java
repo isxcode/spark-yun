@@ -1,9 +1,7 @@
 package com.isxcode.spark.modules.file.controller;
 
-import com.isxcode.spark.api.file.req.DeleteFileReq;
-import com.isxcode.spark.api.file.req.DownloadFileReq;
-import com.isxcode.spark.api.file.req.PageFileReq;
-import com.isxcode.spark.api.file.res.PageFileRes;
+import com.isxcode.spark.api.file.req.*;
+import com.isxcode.spark.api.file.res.*;
 import com.isxcode.spark.api.main.constants.ModuleCode;
 import com.isxcode.spark.api.user.constants.RoleType;
 import com.isxcode.spark.common.annotations.successResponse.SuccessResponse;
@@ -86,4 +84,53 @@ public class FileController {
 
         return fileBizService.pageFile(pageFileReq);
     }
+
+    @Operation(summary = "添加依赖包")
+    @PostMapping("/addLibPackage")
+    @SuccessResponse("添加成功")
+    public AddLibPackageRes addLibPackage(@Valid @RequestBody AddLibPackageReq addLibPackageReq) {
+
+        return fileBizService.addLibPackage(addLibPackageReq);
+    }
+
+    @Operation(summary = "编辑依赖包")
+    @PostMapping("/updateLibPackage")
+    @SuccessResponse("编辑成功")
+    public UpdateLibPackageRes updateLibPackage(@Valid @RequestBody UpdateLibPackageReq updateLibPackageReq) {
+
+        return fileBizService.updateLibPackage(updateLibPackageReq);
+    }
+
+    @Operation(summary = "配置依赖包")
+    @PostMapping("/configLibPackage")
+    @SuccessResponse("配置成功")
+    public void configLibPackage(@Valid @RequestBody ConfigLibPackageReq configLibPackageReq) {
+
+        fileBizService.configLibPackage(configLibPackageReq);
+    }
+
+    @Operation(summary = "获取依赖包信息")
+    @PostMapping("/getLibPackage")
+    @SuccessResponse("查询成功")
+    public GetLibPackageRes getLibPackage(@Valid @RequestBody GetLibPackageReq getLibPackageReq) {
+
+        return fileBizService.getLibPackage(getLibPackageReq);
+    }
+
+    @Operation(summary = "删除依赖包")
+    @PostMapping("/deleteLibPackage")
+    @SuccessResponse("删除成功")
+    public void deleteLibPackage(@Valid @RequestBody DeleteLibPackageReq deleteLibPackageReq) {
+
+        fileBizService.deleteLibPackage(deleteLibPackageReq);
+    }
+
+    @Operation(summary = "分页查询依赖包")
+    @PostMapping("/pageLibPackage")
+    @SuccessResponse("查询成功")
+    public Page<PageLibPackageRes> pageLibPackage(@Valid @RequestBody PageLibPackageReq pageLibPackageReq) {
+
+        return fileBizService.pageLibPackage(pageLibPackageReq);
+    }
 }
+
