@@ -18,6 +18,6 @@ public interface LibPackageRepository extends JpaRepository<LibPackageEntity, St
 
     Optional<LibPackageEntity> findByName(String libPackageName);
 
-    @Query("SELECT F FROM FileEntity F WHERE (:type is null OR F.fileType = :type OR :type='') and ( F.fileName LIKE %:keyword% OR F.remark LIKE %:keyword% ) order by F.createDateTime desc ")
+    @Query("SELECT L FROM LibPackageEntity L WHERE ( L.name LIKE %:keyword% OR L.remark LIKE %:keyword% ) order by L.createDateTime desc ")
     Page<LibPackageEntity> searchAll(@Param("keyword") String searchKeyWord, Pageable pageable);
 }
