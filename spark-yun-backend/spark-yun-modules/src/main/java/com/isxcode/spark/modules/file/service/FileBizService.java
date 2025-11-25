@@ -2,16 +2,18 @@ package com.isxcode.spark.modules.file.service;
 
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.io.unit.DataSizeUtil;
-import com.isxcode.spark.api.file.req.DeleteFileReq;
-import com.isxcode.spark.api.file.req.DownloadFileReq;
-import com.isxcode.spark.api.file.req.PageFileReq;
-import com.isxcode.spark.api.file.res.PageFileRes;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.isxcode.spark.api.file.req.*;
+import com.isxcode.spark.api.file.res.*;
 import com.isxcode.spark.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.spark.backend.api.base.properties.IsxAppProperties;
 import com.isxcode.spark.common.utils.path.PathUtils;
 import com.isxcode.spark.modules.file.entity.FileEntity;
+import com.isxcode.spark.modules.file.entity.LibPackageEntity;
 import com.isxcode.spark.modules.file.mapper.FileMapper;
 import com.isxcode.spark.modules.file.repository.FileRepository;
+import com.isxcode.spark.modules.file.repository.LibPackageRepository;
 import com.isxcode.spark.modules.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -49,7 +51,10 @@ public class FileBizService {
     private final IsxAppProperties isxAppProperties;
 
     private final FileMapper fileMapper;
+
     private final UserService userService;
+
+    private final LibPackageRepository libPackageRepository;
 
     public void uploadFile(MultipartFile file, String type, String remark) {
 
@@ -197,6 +202,89 @@ public class FileBizService {
             pageFileReq.getType(), PageRequest.of(pageFileReq.getPage(), pageFileReq.getPageSize()));
 
         Page<PageFileRes> map = fileEntitiePage.map(fileMapper::fileEntityToPageFileRes);
+
+        map.getContent().forEach(e -> e.setCreateUsername(userService.getUserName(e.getCreateBy())));
+
+        return map;
+    }
+
+    public AddLibPackageRes addLibPackage(AddLibPackageReq addLibPackageReq) {
+
+        // 判断依赖包名称重复
+        Optional<LibPackageEntity> LibPackageOptional = libPackageRepository.findByName(addLibPackageReq.getName());
+        if (LibPackageOptional.isPresent()) {
+            throw new IsxAppException("名称重复");
+        }
+
+        // 转化对象
+        LibPackageEntity libPackageEntity = fileMapper.addLibPackageReqToLibPackageEntity(addLibPackageReq);
+
+        // 数据持久化
+        libPackageEntity = libPackageRepository.save(libPackageEntity);
+
+        // 返回对象
+        return fileMapper.libPackageEntityToAddLibPackageRes(libPackageEntity);
+    }
+
+    public UpdateLibPackageRes updateLibPackage(UpdateLibPackageReq updateLibPackageReq) {
+
+        // 判断依赖包是否存在
+        LibPackageEntity libPackage = fileService.getLibPackage(updateLibPackageReq.getId());
+
+        // 判断依赖包名称重复
+        libPackageRepository.findByName(updateLibPackageReq.getName()).ifPresent(libPackageEntity -> {
+            if (!libPackageEntity.getId().equals(updateLibPackageReq.getId())) {
+                throw new IsxAppException("依赖包名称重复");
+            }
+        });
+
+        // 转化对象
+        libPackage = fileMapper.updateLibPackageReqToLibPackageEntity(libPackage, updateLibPackageReq);
+
+        // 数据持久化
+        libPackage = libPackageRepository.save(libPackage);
+
+        // 返回对象
+        return fileMapper.libPackageEntityToUpdateLibPackageRes(libPackage);
+    }
+
+    public void configLibPackage(ConfigLibPackageReq configLibPackageReq) {
+
+        // 判断依赖包是否存在
+        LibPackageEntity libPackage = fileService.getLibPackage(configLibPackageReq.getId());
+
+        // 持久化数据
+        libPackage.setFileIdList(JSON.toJSONString(configLibPackageReq.getFileIdList()));
+        libPackageRepository.save(libPackage);
+    }
+
+    public GetLibPackageRes getLibPackage(GetLibPackageReq getLibPackageReq) {
+
+        // 判断依赖包是否存在
+        LibPackageEntity libPackage = fileService.getLibPackage(getLibPackageReq.getId());
+
+        // 映射
+        GetLibPackageRes getLibPackageRes = fileMapper.libPackageEntityToGetLibPackageRes(libPackage);
+        getLibPackageRes.setFileIdList(JSONArray.parseArray(libPackage.getFileIdList(), String.class));
+        return getLibPackageRes;
+    }
+
+    public void deleteLibPackage(DeleteLibPackageReq deleteLibPackageReq) {
+
+        // 判断依赖包是否存在
+        LibPackageEntity libPackage = fileService.getLibPackage(deleteLibPackageReq.getId());
+
+        // 持久化
+        libPackageRepository.delete(libPackage);
+    }
+
+    public Page<PageLibPackageRes> pageLibPackage(PageLibPackageReq pageLibPackageReq) {
+
+        Page<LibPackageEntity> libPackageEntitiePage =
+            libPackageRepository.searchAll(pageLibPackageReq.getSearchKeyWord(),
+                PageRequest.of(pageLibPackageReq.getPage(), pageLibPackageReq.getPageSize()));
+
+        Page<PageLibPackageRes> map = libPackageEntitiePage.map(fileMapper::libPackageEntityToPageLibPackageRes);
 
         map.getContent().forEach(e -> e.setCreateUsername(userService.getUserName(e.getCreateBy())));
 
