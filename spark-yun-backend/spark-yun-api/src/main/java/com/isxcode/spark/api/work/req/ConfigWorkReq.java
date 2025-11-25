@@ -53,7 +53,7 @@ public class ConfigWorkReq {
     private List<String> LibList;
 
     @Schema(title = "依赖包配置")
-    private List<String> LibPakcageList;
+    private List<String> LibPackageList;
 
     @Schema(title = "容器id", example = "sy_fd34e4a53db640f5943a4352c4d549b9")
     private String containerId;
