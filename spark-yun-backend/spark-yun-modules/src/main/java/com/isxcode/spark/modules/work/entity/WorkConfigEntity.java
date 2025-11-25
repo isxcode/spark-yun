@@ -60,6 +60,8 @@ public class WorkConfigEntity {
 
     private String libConfig;
 
+    private String libPackageConfig;
+
     private String containerId;
 
     private String alarmList;
