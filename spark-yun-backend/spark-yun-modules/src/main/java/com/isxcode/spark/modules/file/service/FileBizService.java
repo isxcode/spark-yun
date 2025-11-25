@@ -253,6 +253,14 @@ public class FileBizService {
         // 判断依赖包是否存在
         LibPackageEntity libPackage = fileService.getLibPackage(configLibPackageReq.getId());
 
+        // 判断文件是否为依赖
+        configLibPackageReq.getFileIdList().forEach(fileId -> {
+            FileEntity file = fileService.getFile(fileId);
+            if (!"LIB".equals(file.getFileType())) {
+                throw new IsxAppException(file.getFileName() + " 不是依赖资源");
+            }
+        });
+
         // 持久化数据
         libPackage.setFileIdList(JSON.toJSONString(configLibPackageReq.getFileIdList()));
         libPackageRepository.save(libPackage);

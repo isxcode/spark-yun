@@ -25,6 +25,7 @@ public interface FileMapper {
 
     UpdateLibPackageRes libPackageEntityToUpdateLibPackageRes(LibPackageEntity libPackageEntity);
 
+    @Mapping(target = "fileIdList", ignore = true)
     GetLibPackageRes libPackageEntityToGetLibPackageRes(LibPackageEntity libPackageEntity);
 
     PageLibPackageRes libPackageEntityToPageLibPackageRes(LibPackageEntity libPackageEntity);
