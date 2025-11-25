@@ -225,6 +225,11 @@ public class FlinkStandaloneAgentService implements FlinkAgentService {
                 + " from resource manager with leader id.*?Close JobManager connection for job "
                 + getWorkLogReq.getAppId();
             Pattern pattern = Pattern.compile(logRegex, Pattern.DOTALL);
+
+            // 由于log4j配置可能有问题body可能为空
+            if (log.getBody() == null) {
+                return GetWorkLogRes.builder().log("Log日志为空，请检查Flink配置").build();
+            }
             Matcher matcher = pattern.matcher(Objects.requireNonNull(log.getBody()));
             if (matcher.find()) {
                 String matchedLog = matcher.group();
