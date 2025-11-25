@@ -21,7 +21,9 @@ import com.isxcode.spark.modules.cluster.mapper.ClusterNodeMapper;
 import com.isxcode.spark.modules.cluster.repository.ClusterNodeRepository;
 import com.isxcode.spark.modules.cluster.repository.ClusterRepository;
 import com.isxcode.spark.modules.file.entity.FileEntity;
+import com.isxcode.spark.modules.file.entity.LibPackageEntity;
 import com.isxcode.spark.modules.file.repository.FileRepository;
+import com.isxcode.spark.modules.file.service.FileService;
 import com.isxcode.spark.modules.func.entity.FuncEntity;
 import com.isxcode.spark.modules.func.mapper.FuncMapper;
 import com.isxcode.spark.modules.func.repository.FuncRepository;
@@ -81,6 +83,8 @@ public class FlinkSqlExecutor extends WorkExecutor {
 
     private final AgentLinkUtils agentLinkUtils;
 
+    private final FileService fileService;
+
     public FlinkSqlExecutor(WorkInstanceRepository workInstanceRepository, ClusterRepository clusterRepository,
         ClusterNodeRepository clusterNodeRepository, WorkflowInstanceRepository workflowInstanceRepository,
         WorkRepository workRepository, WorkConfigRepository workConfigRepository, Locker locker,
@@ -89,7 +93,7 @@ public class FlinkSqlExecutor extends WorkExecutor {
         SqlFunctionService sqlFunctionService, SecretKeyRepository secretKeyRepository, SqlValueService sqlValueService,
         SqlCommentService sqlCommentService, WorkEventRepository workEventRepository,
         WorkRunJobFactory workRunJobFactory, VipWorkVersionRepository vipWorkVersionRepository, WorkService workService,
-        AgentLinkUtils agentLinkUtils) {
+        AgentLinkUtils agentLinkUtils, FileService fileService) {
 
         super(alarmService, locker, workRepository, workInstanceRepository, workflowInstanceRepository,
             workEventRepository, workRunJobFactory, sqlFunctionService, workConfigRepository, vipWorkVersionRepository,
@@ -107,6 +111,7 @@ public class FlinkSqlExecutor extends WorkExecutor {
         this.sqlValueService = sqlValueService;
         this.sqlCommentService = sqlCommentService;
         this.agentLinkUtils = agentLinkUtils;
+        this.fileService = fileService;
     }
 
     @Override
@@ -233,16 +238,33 @@ public class FlinkSqlExecutor extends WorkExecutor {
         // 上传依赖包
         if (workEvent.getEventProcess() == 4) {
 
+            Set<String> uploadFileSet = new HashSet<>();
+
+            // 合并依赖包依赖
+            if (workRunContext.getLibPackageConfig() != null) {
+                workRunContext.getLibPackageConfig().forEach(libPackageId -> {
+                    LibPackageEntity metaLibPackage = fileService.getLibPackage(libPackageId);
+                    if (metaLibPackage.getFileIdList() != null) {
+                        uploadFileSet.addAll(JSON.parseArray(metaLibPackage.getFileIdList(), String.class));
+                    }
+                });
+            }
+
+            // 合并依赖包
             if (workRunContext.getLibConfig() != null) {
+                uploadFileSet.addAll(workRunContext.getLibConfig());
+            }
+
+            if (!uploadFileSet.isEmpty()) {
 
                 // 获取上下文参数
                 ScpFileEngineNodeDto scpNode = workRunContext.getScpNodeInfo();
                 ClusterNodeEntity agentNode = workRunContext.getAgentNode();
 
-                // 依赖文件目录
+                // 遍历上传到集群节点
                 String libDir = PathUtils.parseProjectPath(isxAppProperties.getResourcesPath()) + File.separator
                     + "file" + File.separator + workInstance.getTenantId();
-                List<FileEntity> libFile = fileRepository.findAllById(workRunContext.getLibConfig());
+                List<FileEntity> libFile = fileRepository.findAllById(uploadFileSet);
                 libFile.forEach(e -> {
                     try {
                         scpJar(scpNode, libDir + File.separator + e.getId(),
