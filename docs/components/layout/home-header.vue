@@ -9,7 +9,7 @@
               src="https://zhiqingyun-demo.isxcode.com/tools/open/file/logo.jpg"
               alt=""
             />
-            <h1>至爻数据</h1>
+            <h1>{{ $t("zhi_yao_shu_ju") }}</h1>
           </div>
         </div>
       </div>
@@ -32,8 +32,11 @@
 </template>
 
 <script setup lang="ts">
+import {useI18n} from "vue-i18n";
+
 defineComponent("LayoutHomeHeader");
 
+const $t = useI18n().t;
 const headerRef = ref<HTMLElement | null>(null);
 const headerFilterRef = ref<HTMLElement | null>(null);
 const router = useRouter();
