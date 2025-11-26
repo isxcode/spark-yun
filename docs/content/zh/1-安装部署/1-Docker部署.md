@@ -35,7 +35,7 @@ docker run \
     -d registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun:latest-amd64
 ```
 
-### 启动成后访问
+### 启动后访问
 
 **访问地址**: http://localhost:8088  
 **管理员账号**: `admin`  
