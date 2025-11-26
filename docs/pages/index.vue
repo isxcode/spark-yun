@@ -175,7 +175,7 @@
 </template>
 
 <script lang="ts" setup>
-import {ElMessage} from "element-plus";
+import  {ElMessage} from "element-plus";
 import Artplayer from "artplayer";
 import {defineProps} from "vue";
 import {useI18n} from "vue-i18n";
