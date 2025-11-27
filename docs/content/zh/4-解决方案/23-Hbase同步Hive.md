@@ -1,5 +1,5 @@
 ---
-title: "Hbase同步到Hive"
+title: "Hbase同步Hive"
 ---
 
 ## Hbase同步到Hive
