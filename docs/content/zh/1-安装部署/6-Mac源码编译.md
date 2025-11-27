@@ -52,7 +52,7 @@ java -jar zhiqingyun.jar
 - 管理员账号：`admin` 
 - 管理员密码：`admin123`
 
-#### 编译加速
+### 6. 编译加速
 
 > 至轻云使用gradle构建，可以开启gradle的多并发调试配置
 

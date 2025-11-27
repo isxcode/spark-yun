@@ -1,5 +1,5 @@
 ---
-title: "Kafka同步到Doris"
+title: "Kafka同步Doris"
 ---
 
 ## Kafka同步到Doris

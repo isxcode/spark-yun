@@ -1,5 +1,5 @@
 ---
-title: "读取Hbase数据"
+title: "Hbase数据读取"
 ---
 
 ## 读取Hbase数据

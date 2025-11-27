@@ -1,5 +1,5 @@
 ---
-title: "基于Paimon将Postgres实时到Hive"
+title: "Postgres实时Hive"
 ---
 
 #### 案例
