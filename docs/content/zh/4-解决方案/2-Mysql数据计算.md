@@ -13,7 +13,7 @@ CREATE TABLE table1
 USING JDBC
 OPTIONS (
     driver 'com.mysql.cj.jdbc.Driver',
-    url 'jdbc:mysql://47.92.168.116:30102/ispong_db',
+    url 'jdbc:mysql://147.192.168.116:30102/ispong_db',
     user 'ispong',
     password 'ispong123',
     dbtable 'zqy_users_jdbc'

@@ -31,7 +31,7 @@ CREATE TABLE from_table
     PRIMARY KEY (username) NOT ENFORCED
 ) WITH (
       'connector' = 'sqlserver-cdc',
-      'hostname' = '47.92.168.116',
+      'hostname' = '147.192.168.116',
       'port' = '30103',
       'username' = 'sa',
       'password' = 'ispong123',
@@ -47,7 +47,7 @@ CREATE TABLE target_table
     PRIMARY KEY (username) NOT ENFORCED
 ) WITH (
       'connector' = 'jdbc',
-      'url' = 'jdbc:sqlserver://47.92.168.116:30103;database=ispong_db;trustServerCertificate=true',
+      'url' = 'jdbc:sqlserver://147.192.168.116:30103;database=ispong_db;trustServerCertificate=true',
       'driver' = 'com.microsoft.sqlserver.jdbc.SQLServerDriver',
       'table-name' = 'cdc_sink',
       'username' = 'SA',

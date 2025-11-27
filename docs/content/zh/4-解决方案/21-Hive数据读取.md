@@ -1,5 +1,5 @@
 ---
-title: "读取Hive数据"
+title: "Hive数据读取"
 ---
 
 ## 读取Hive数据
