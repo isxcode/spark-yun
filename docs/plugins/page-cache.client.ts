@@ -58,7 +58,7 @@ export default defineNuxtPlugin({
       
       // 路由守卫：离开页面时保存状态
       router.beforeEach((to, from) => {
-        if (from.path === '/') {
+        if (from.path === '/'||from.path === '/en') {
           // 离开首页时，保存页面状态
           const moduleIntro = document.querySelector('.module-intro') as HTMLElement;
           if (moduleIntro) {
@@ -73,7 +73,7 @@ export default defineNuxtPlugin({
       
       // 路由守卫：进入页面时恢复状态
       router.afterEach((to, from) => {
-        if (to.path === '/' && from.path !== '/') {
+        if ((to.path === '/'||to.path === '/en') && (from.path !== '/'|| from.path !== '/en')) {
           // 返回首页时，尝试快速恢复
           nextTick(() => {
             const cachedState = pageCache.get('home-background-loaded');
@@ -97,7 +97,7 @@ export default defineNuxtPlugin({
       
       // 监听页面可见性变化，当页面重新可见时检查缓存
       document.addEventListener('visibilitychange', () => {
-        if (!document.hidden && router.currentRoute.value.path === '/') {
+        if (!document.hidden && (router.currentRoute.value.path === '/'||router.currentRoute.value.path === '/en')) {
           setTimeout(() => {
             restoreHomePage();
           }, 100);
@@ -106,7 +106,7 @@ export default defineNuxtPlugin({
       
       // 监听浏览器前进后退
       window.addEventListener('popstate', () => {
-        if (router.currentRoute.value.path === '/') {
+        if (router.currentRoute.value.path === '/'||router.currentRoute.value.path === '/en') {
           setTimeout(() => {
             restoreHomePage();
           }, 50);
