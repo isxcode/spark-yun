@@ -46,11 +46,6 @@ export default defineNuxtPlugin({
         // 所有关键资源加载完成
         if (loadedCount >= totalResources) {
           console.log('所有关键资源加载完成');
-          setTimeout(() => {
-            if ((window as any).__preloadLoading) {
-              (window as any).__preloadLoading.complete();
-            }
-          }, 200);
         }
       };
 
@@ -65,7 +60,7 @@ export default defineNuxtPlugin({
             console.warn(`资源加载超时: ${url}`);
             onResourceLoaded();
             resolve();
-          }, 5000);
+          }, 20000);
 
           const handleSuccess = () => {
             clearTimeout(timeout);
@@ -304,7 +299,7 @@ export default defineNuxtPlugin({
           loadedCount = totalResources;
           onResourceLoaded();
         }
-      }, 8000); // 8秒超时
+      }, 18000); // 8秒超时
     }
   }
 });
