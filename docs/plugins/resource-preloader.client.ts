@@ -299,7 +299,7 @@ export default defineNuxtPlugin({
           loadedCount = totalResources;
           onResourceLoaded();
         }
-      }, 18000); // 8秒超时
+      }, 30000); // 30秒超时
     }
   }
 });
