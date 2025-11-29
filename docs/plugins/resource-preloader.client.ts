@@ -26,8 +26,7 @@ export default defineNuxtPlugin({
         { url: 'https://zhiqingyun-demo.isxcode.com/tools/open/file/bg-2.jpg', type: 'image' },
         { url: 'https://zhiqingyun-demo.isxcode.com/tools/open/file/qrcode.jpg', type: 'image' },
         { url: 'https://zhiqingyun-demo.isxcode.com/tools/open/file/AlimamaShuHeiTi-Bold.woff2', type: 'font' },
-        { url: 'https://zhiqingyun-demo.isxcode.com/tools/open/file/AlibabaPuHuiTi-2-45-Light.woff2', type: 'font' },
-        { url: 'https://zhiqingyun-demo.isxcode.com/tools/open/file/product.mp4', type: 'video' }
+        { url: 'https://zhiqingyun-demo.isxcode.com/tools/open/file/AlibabaPuHuiTi-2-45-Light.woff2', type: 'font' }
       ];
 
       let loadedCount = 0;
@@ -47,11 +46,6 @@ export default defineNuxtPlugin({
         // 所有关键资源加载完成
         if (loadedCount >= totalResources) {
           console.log('所有关键资源加载完成');
-          setTimeout(() => {
-            if ((window as any).__preloadLoading) {
-              (window as any).__preloadLoading.complete();
-            }
-          }, 200);
         }
       };
 
@@ -66,7 +60,7 @@ export default defineNuxtPlugin({
             console.warn(`资源加载超时: ${url}`);
             onResourceLoaded();
             resolve();
-          }, 5000);
+          }, 20000);
 
           const handleSuccess = () => {
             clearTimeout(timeout);
@@ -305,7 +299,7 @@ export default defineNuxtPlugin({
           loadedCount = totalResources;
           onResourceLoaded();
         }
-      }, 8000); // 8秒超时
+      }, 30000); // 30秒超时
     }
   }
 });
