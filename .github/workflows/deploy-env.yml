@@ -15,10 +15,12 @@ on:
         description: 'dev server username'
         required: true
         type: string
+        default: rootß
       dev_server_password:
         description: 'dev server password'
         required: true
         type: string
+        default: Isxcode123..
 
 env:
   ADMIN_GITHUB_TOKEN: ${{ inputs.github_access_token }}
@@ -252,6 +254,6 @@ jobs:
             docker stop zhiqingyun-agent-download
             docker rm zhiqingyun-agent-download
             docker rmi registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun-agent:latest
-            tar -vzxf /tmp/zhiqingyun-agent.tar.gz -C /root
+            tar -zxf /tmp/zhiqingyun-agent.tar.gz -C /root
             cd /root/zhiqingyun-agent
             nohup java -jar -Xmx2048m lib/zhiqingyun-agent.jar --spring.config.additional-location=conf/ > /dev/null 2>&1 &
