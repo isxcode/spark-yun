@@ -257,3 +257,4 @@ jobs:
             tar -zxf /tmp/zhiqingyun-agent.tar.gz -C /root
             cd /root/zhiqingyun-agent
             nohup java -jar -Xmx2048m lib/zhiqingyun-agent.jar --spring.config.additional-location=conf/ > /dev/null 2>&1 &
+            echo $! >zhiqingyun-agent.pid
