@@ -131,10 +131,7 @@ jobs:
         uses: actions/cache@v4
         id: download-cache
         with:
-          path: |
-            /home/runner/work/spark-yun/spark-yun/resources
-            /home/runner/work/spark-yun/spark-yun/spark-yun-backend/spark-yun-main/src/main/resources/libprql_java-linux64.so
-            /home/runner/work/spark-yun/spark-yun/spark-yun-backend/spark-yun-main/src/main/resources/libprql_java-osx-arm64.dylib
+          path: /home/runner/work/spark-yun/spark-yun/resources
           key: ${{ runner.os }}-file-${{ hashFiles('/home/runner/work/spark-yun/spark-yun/download.sh') }}
 
       - name: Download dependencies

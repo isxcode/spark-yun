@@ -18,7 +18,6 @@ readonly BASE_PATH=$(cd "$(dirname "$0")" && pwd)
 readonly TMP_DIR="${BASE_PATH}/resources/tmp"
 readonly JDBC_DIR="${BASE_PATH}/resources/jdbc/system"
 readonly LIBS_DIR="${BASE_PATH}/resources/libs"
-readonly RESOURCE_DIR="${BASE_PATH}/spark-yun-backend/spark-yun-main/src/main/resources"
 readonly TMP_SPARK_MIN_JARS="${TMP_DIR}/spark-min/jars"
 readonly TMP_FLINK_MIN_LIB="${TMP_DIR}/flink-min/lib"
 
@@ -72,10 +71,6 @@ readonly JDBC_DRIVERS=(
 readonly PROJECT_JARS=(
     "prql-java-0.5.2.jar"
     "slf4j-reload4j-2.0.0.jar"
-)
-
-# Resources文件列表
-readonly RESOURCE_FILE=(
     "libprql_java-osx-arm64.dylib"
     "libprql_java-linux64.so"
 )
@@ -241,17 +236,6 @@ download_project_dependencies() {
     done
 }
 
-# 下载resources依赖
-download_resource_dependencies() {
-    echo "下载resource依赖..."
-
-    for file in "${RESOURCE_FILE[@]}"; do
-        local file_url="${OSS_DOWNLOAD_URL}/${file}"
-        local file_path="${RESOURCE_DIR}/${file}"
-        download_file "$file_url" "$file_path" "项目依赖: $file"
-    done
-}
-
 # =============================================================================
 # 主要下载流程
 # =============================================================================
@@ -279,9 +263,6 @@ main() {
 
     # 7. 下载项目依赖
     download_project_dependencies
-
-    # 8. 下载resource依赖
-    download_resource_dependencies
 
     echo "项目依赖下载完成！"
 }
