@@ -57,8 +57,8 @@ jobs:
           script: |
             sed -i '$d' /etc/hosts
             sed -i '$d' /etc/hosts
-            echo "${{ inputs.dev_internal_server_ip }}  isxcode" | tee -a /etc/hosts
-            hostnamectl set-hostname isxcode
+            echo "${{ inputs.dev_internal_server_ip }}  zhiyao-server" | tee -a /etc/hosts
+            hostnamectl set-hostname zhiyao-server
             yum install java-1.8.0-openjdk-devel java-1.8.0-openjdk -y
             yum install -y yum-utils
             yum-config-manager --add-repo https://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
@@ -107,7 +107,7 @@ jobs:
             echo "<configuration>" >> /opt/hadoop/etc/hadoop/core-site.xml
             echo "    <property>" >> /opt/hadoop/etc/hadoop/core-site.xml
             echo "        <name>fs.defaultFS</name>" >> /opt/hadoop/etc/hadoop/core-site.xml
-            echo "        <value>hdfs://isxcode:9000</value>" >> /opt/hadoop/etc/hadoop/core-site.xml
+            echo "        <value>hdfs://zhiyao-server:9000</value>" >> /opt/hadoop/etc/hadoop/core-site.xml
             echo "    </property>" >> /opt/hadoop/etc/hadoop/core-site.xml
             echo "    <property>" >> /opt/hadoop/etc/hadoop/core-site.xml
             echo "        <name>hadoop.proxyuser.root.hosts</name>" >> /opt/hadoop/etc/hadoop/core-site.xml
@@ -137,11 +137,11 @@ jobs:
             echo "    </property>" >> /opt/hadoop/etc/hadoop/hdfs-site.xml
             echo "    <property>" >> /opt/hadoop/etc/hadoop/hdfs-site.xml
             echo "        <name>dfs.namenode.http-address</name>" >> /opt/hadoop/etc/hadoop/hdfs-site.xml
-            echo "        <value>isxcode:40000</value>" >> /opt/hadoop/etc/hadoop/hdfs-site.xml
+            echo "        <value>zhiyao-server:40000</value>" >> /opt/hadoop/etc/hadoop/hdfs-site.xml
             echo "    </property>" >> /opt/hadoop/etc/hadoop/hdfs-site.xml
             echo "    <property>" >> /opt/hadoop/etc/hadoop/hdfs-site.xml
             echo "        <name>dfs.datanode.address</name>" >> /opt/hadoop/etc/hadoop/hdfs-site.xml
-            echo "        <value>isxcode:9866</value>" >> /opt/hadoop/etc/hadoop/hdfs-site.xml
+            echo "        <value>zhiyao-server:9866</value>" >> /opt/hadoop/etc/hadoop/hdfs-site.xml
             echo "    </property>" >> /opt/hadoop/etc/hadoop/hdfs-site.xml
             echo "</configuration>" >> /opt/hadoop/etc/hadoop/hdfs-site.xml
             hdfs namenode -format
@@ -160,11 +160,11 @@ jobs:
             echo "    </property>" >> /opt/hadoop/etc/hadoop/mapred-site.xml
             echo "    <property>" >> /opt/hadoop/etc/hadoop/mapred-site.xml
             echo "        <name>mapreduce.jobhistory.webapp.address</name>" >> /opt/hadoop/etc/hadoop/mapred-site.xml
-            echo "        <value>isxcode:40001</value>" >> /opt/hadoop/etc/hadoop/mapred-site.xml
+            echo "        <value>zhiyao-server:40001</value>" >> /opt/hadoop/etc/hadoop/mapred-site.xml
             echo "    </property>" >> /opt/hadoop/etc/hadoop/mapred-site.xml
             echo "    <property>" >> /opt/hadoop/etc/hadoop/mapred-site.xml
             echo "        <name>mapreduce.jobhistory.address</name>" >> /opt/hadoop/etc/hadoop/mapred-site.xml
-            echo "        <value>isxcode:10020</value>" >> /opt/hadoop/etc/hadoop/mapred-site.xml
+            echo "        <value>zhiyao-server:10020</value>" >> /opt/hadoop/etc/hadoop/mapred-site.xml
             echo "    </property>" >> /opt/hadoop/etc/hadoop/mapred-site.xml
             echo "</configuration>" >> /opt/hadoop/etc/hadoop/mapred-site.xml
             echo '============== yarn-site.xml'
@@ -173,7 +173,7 @@ jobs:
             echo "<configuration>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
             echo "     <property>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
             echo "        <name>yarn.resourcemanager.webapp.address</name>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
-            echo "        <value>isxcode:40002</value>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
+            echo "        <value>zhiyao-server:40002</value>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
             echo "    </property>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
             echo "    <property>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
             echo "        <name>yarn.nodemanager.aux-services</name>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
@@ -213,11 +213,11 @@ jobs:
             echo "    </property>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
             echo "    <property>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
             echo "        <name>yarn.nodemanager.webapp.address</name>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
-            echo "        <value>isxcode:40003</value>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
+            echo "        <value>zhiyao-server:40003</value>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
             echo "    </property>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
             echo "    <property>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
             echo "        <name>yarn.resourcemanager.address</name>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
-            echo "        <value>isxcode:8032</value>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
+            echo "        <value>zhiyao-server:8032</value>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
             echo "    </property>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
             echo "</configuration>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
             start-yarn.sh
@@ -234,7 +234,7 @@ jobs:
             source /etc/profile
             cp /opt/hive/conf/hive-default.xml.template /opt/hive/conf/hive-site.xml
             sed -i '3215d' /opt/hive/conf/hive-site.xml
-            sed -i 's/<value>jdbc:derby:;databaseName=metastore_db;create=true<\/value>/<value>jdbc:mysql:\/\/isxcode:30306\/hive_db<\/value>/g' /opt/hive/conf/hive-site.xml
+            sed -i 's/<value>jdbc:derby:;databaseName=metastore_db;create=true<\/value>/<value>jdbc:mysql:\/\/zhiyao-server:30306\/hive_db<\/value>/g' /opt/hive/conf/hive-site.xml
             sed -i 's/<value>org.apache.derby.jdbc.EmbeddedDriver<\/value>/<value>com.mysql.cj.jdbc.Driver<\/value>/g' /opt/hive/conf/hive-site.xml
             sed -i 's/<value>APP<\/value>/<value>root<\/value>/g' /opt/hive/conf/hive-site.xml
             sed -i 's/<value>mine<\/value>/<value>root123<\/value>/g' /opt/hive/conf/hive-site.xml
