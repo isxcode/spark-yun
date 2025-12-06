@@ -193,7 +193,7 @@ jobs:
             echo "    </property>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
             echo "    <property>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
             echo "        <name>yarn.nodemanager.resource.cpu-vcores</name>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
-            echo "        <value>8</value>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
+            echo "        <value>4</value>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
             echo "    </property>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
             echo "    <property>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
             echo "        <name>yarn.scheduler.minimum-allocation-vcores</name>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
@@ -253,6 +253,22 @@ jobs:
             nohup hive --service metastore >> /opt/hive/logs/metastore.log 2>&1 &
             sleep 5s
             nohup hive --service hiveserver2 >> /opt/hive/logs/hiveserver2.log 2>&1 &
+            cd /tmp
+            curl -s -O https://mirrors.tuna.tsinghua.edu.cn/apache/kafka/3.7.2/kafka_2.12-3.7.2.tgz
+            mkdir -p /data/kafka
+            tar -zxf /tmp/kafka_2.12-3.7.2.tgz -C /data/kafka
+            ln -s /data/kafka/kafka_2.12-3.7.2 /opt/kafka
+            echo "export KAFKA_HOME=/opt/kafka" >> /etc/profile
+            echo "export PATH=\$PATH:\$KAFKA_HOME/bin" >> /etc/profile
+            source /etc/profile
+            cd /opt/kafka/bin
+            ./zookeeper-server-start.sh -daemon /opt/kafka/config/zookeeper.properties
+            sleep 2s      
+            echo "listeners=PLAINTEXT://${{ inputs.dev_internal_server_ip }}:9092" >> /opt/kafka/config/server.properties
+            echo "advertised.listeners=PLAINTEXT://${{ inputs.dev_server_ip }}:9092" >> /opt/kafka/config/server.properties
+            echo "delete.topic.enable=true" >> /opt/kafka/config/server.properties
+            cd /opt/kafka/bin
+            ./kafka-server-start.sh -daemon /opt/kafka/config/server.properties
 
       - name: Start agent
         uses: appleboy/ssh-action@v1.0.3
@@ -311,3 +327,4 @@ jobs:
             rm -rf /tmp/hadoop-3.3.5.tar.gz 
             rm -rf /tmp/mysql-connector-java-8.0.22.tar.gz
             rm -rf /tmp/zhiqingyun-agent.tar.gz
+            rm -rf /tmp/kafka_2.12-3.7.2.tgz
