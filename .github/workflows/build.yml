@@ -301,7 +301,7 @@ jobs:
         with:
           context: .
           platforms: linux/amd64
-          tags: isxcode/zhiqingyun:${{ inputs.version_number }}-amd64
+          tags: registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun:${{ inputs.version_number }}-amd64
           push: true
 
       - name: Build and Push Arm64
@@ -309,7 +309,7 @@ jobs:
         with:
           context: .
           platforms: linux/arm64
-          tags: isxcode/zhiqingyun:${{ inputs.version_number }}-arm64
+          tags: registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun:${{ inputs.version_number }}-arm64
           push: true
 
   # 上传到代理镜像到阿里云
@@ -361,5 +361,5 @@ jobs:
         with:
           context: .
           platforms: linux/amd64
-          tags: isxcode/zhiqingyun-agent:${{ inputs.version_number }}
+          tags: registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun-agent:${{ inputs.version_number }}
           push: true
