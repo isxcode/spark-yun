@@ -74,22 +74,22 @@ jobs:
             wget https://repo1.maven.org/maven2/org/apache/logging/log4j/log4j-slf4j-impl/2.17.2/log4j-slf4j-impl-2.17.2.jar
             wget https://repo1.maven.org/maven2/org/slf4j/slf4j-api/2.0.0/slf4j-api-2.0.0.jar
             wget https://repo1.maven.org/maven2/org/slf4j/slf4j-reload4j/2.0.0/slf4j-reload4j-2.0.0.jar
-            echo '
+            cat >> /etc/profile <<'EOF'
             export HADOOP_HOME=/opt/hadoop
             export HADOOP_CLASSPATH=$HADOOP_HOME/etc/hadoop:$HADOOP_HOME/share/hadoop/common/lib/*:$HADOOP_HOME/share/hadoop/common/*:$HADOOP_HOME/share/hadoop/hdfs:$HADOOP_HOME/share/hadoop/hdfs/lib/*:$HADOOP_HOME/share/hadoop/hdfs/*:$HADOOP_HOME/share/hadoop/mapreduce/lib/*:$HADOOP_HOME/share/hadoop/mapreduce/*:$HADOOP_HOME/share/hadoop/yarn:$HADOOP_HOME/share/hadoop/yarn/lib/*:$HADOOP_HOME/share/hadoop/yarn/*
             export HADOOP_CONF_DIR=$HADOOP_HOME/etc/hadoop
-            export PATH=$PATH:$HADOOP_HOME/bin
-            export PATH=$PATH:$HADOOP_HOME/sbin
-            ' >> /etc/profile
+            export PATH=$PATH:$HADOOP_HOME/bin:$HADOOP_HOME/sbin
+            EOF
             source /etc/profile
-            echo 'export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk
+            cat >> /opt/hadoop/etc/hadoop/hadoop-env.sh <<'EOF'
+            export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk
             export HDFS_NAMENODE_USER=root
             export HDFS_DATANODE_USER=root
             export HDFS_SECONDARYNAMENODE_USER=root
             export YARN_RESOURCEMANAGER_USER=root
             export YARN_NODEMANAGER_USER=root
             export HDFS_ZKFC_USER=root
-            export HDFS_JOURNALNODE_USER=root' >> /opt/hadoop/etc/hadoop/hadoop-env.sh
+            export HDFS_JOURNALNODE_USER=root 
             hadoop version
             ssh-keygen -t rsa -P '' -f ~/.ssh/id_rsa
             cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
