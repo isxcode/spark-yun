@@ -59,12 +59,7 @@ jobs:
             yum install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
             mkdir -p /data/docker
             mkdir -p /etc/docker
-            tee /etc/docker/daemon.json <<-'EOF'
-            {
-              "registry-mirrors": ["https://3fe1zqfu.mirror.aliyuncs.com"],
-              "data-root":"/data/docker"
-            }
-            EOF
+            echo '{"registry-mirrors":["https://3fe1zqfu.mirror.aliyuncs.com"],"data-root":"/data/docker"}' | tee /etc/docker/daemon.json
             systemctl enable docker
             systemctl start docker
             cd /tmp
@@ -79,30 +74,27 @@ jobs:
             wget https://repo1.maven.org/maven2/org/apache/logging/log4j/log4j-slf4j-impl/2.17.2/log4j-slf4j-impl-2.17.2.jar
             wget https://repo1.maven.org/maven2/org/slf4j/slf4j-api/2.0.0/slf4j-api-2.0.0.jar
             wget https://repo1.maven.org/maven2/org/slf4j/slf4j-reload4j/2.0.0/slf4j-reload4j-2.0.0.jar
-            tee -a /etc/profile <<-'EOF'
+            echo '
             export HADOOP_HOME=/opt/hadoop
             export HADOOP_CLASSPATH=$HADOOP_HOME/etc/hadoop:$HADOOP_HOME/share/hadoop/common/lib/*:$HADOOP_HOME/share/hadoop/common/*:$HADOOP_HOME/share/hadoop/hdfs:$HADOOP_HOME/share/hadoop/hdfs/lib/*:$HADOOP_HOME/share/hadoop/hdfs/*:$HADOOP_HOME/share/hadoop/mapreduce/lib/*:$HADOOP_HOME/share/hadoop/mapreduce/*:$HADOOP_HOME/share/hadoop/yarn:$HADOOP_HOME/share/hadoop/yarn/lib/*:$HADOOP_HOME/share/hadoop/yarn/*
             export HADOOP_CONF_DIR=$HADOOP_HOME/etc/hadoop
             export PATH=$PATH:$HADOOP_HOME/bin
             export PATH=$PATH:$HADOOP_HOME/sbin
-            EOF
+            ' >> /etc/profile
             source /etc/profile
-            tee -a /opt/hadoop/etc/hadoop/hadoop-env.sh <<-'EOF'
-            export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk
+            echo 'export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk
             export HDFS_NAMENODE_USER=root
             export HDFS_DATANODE_USER=root
             export HDFS_SECONDARYNAMENODE_USER=root
             export YARN_RESOURCEMANAGER_USER=root
             export YARN_NODEMANAGER_USER=root
             export HDFS_ZKFC_USER=root
-            export HDFS_JOURNALNODE_USER=root
-            EOF
+            export HDFS_JOURNALNODE_USER=root' >> /opt/hadoop/etc/hadoop/hadoop-env.sh
             hadoop version
             ssh-keygen -t rsa -P '' -f ~/.ssh/id_rsa
             cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
             chmod 0600 ~/.ssh/authorized_keys
-            tee /opt/hadoop/etc/hadoop/core-site.xml <<-'EOF'
-            <?xml version="1.0" encoding="UTF-8"?>
+            echo '<?xml version="1.0" encoding="UTF-8"?>
             <?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
             <configuration>
                 <property>
@@ -117,11 +109,9 @@ jobs:
                     <name>hadoop.proxyuser.root.groups</name>
                     <value>*</value>
                 </property>
-            </configuration>
-            EOF
+            </configuration>' > /opt/hadoop/etc/hadoop/core-site.xml
             mkdir -p /data/hadoop
-            tee /opt/hadoop/etc/hadoop/hdfs-site.xml <<-'EOF'
-            <?xml version="1.0" encoding="UTF-8"?>
+            echo '<?xml version="1.0" encoding="UTF-8"?>
             <?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
             <configuration>
                 <property>
@@ -144,12 +134,10 @@ jobs:
                     <name>dfs.datanode.address</name>
                     <value>isxcode:9866</value>
                 </property>
-            </configuration>
-            EOF
+            </configuration>' > /opt/hadoop/etc/hadoop/hdfs-site.xml
             hdfs namenode -format
             start-dfs.sh
-            tee /opt/hadoop/etc/hadoop/mapred-site.xml <<-'EOF'
-            <?xml version="1.0" encoding="UTF-8"?>
+            echo '<?xml version="1.0" encoding="UTF-8"?>
             <?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
             <configuration>
                 <property>
@@ -168,9 +156,9 @@ jobs:
                     <name>mapreduce.jobhistory.address</name>
                     <value>isxcode:10020</value>
                 </property>
-            </configuration>
-            EOF
-            tee /opt/hadoop/etc/hadoop/yarn-site.xml <<-'EOF'
+            </configuration>' > /opt/hadoop/etc/hadoop/mapred-site.xml
+            echo '<?xml version="1.0" encoding="UTF-8"?>
+            <?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
             <configuration>
                  <property>
                     <name>yarn.resourcemanager.webapp.address</name>
@@ -220,8 +208,7 @@ jobs:
                     <name>yarn.resourcemanager.address</name>
                     <value>isxcode:8032</value>
                 </property>
-            </configuration>
-            EOF
+            </configuration>' > /opt/hadoop/etc/hadoop/yarn-site.xml
             start-yarn.sh
             mapred --daemon start historyserver
             mkdir -p /data/mysql/data
@@ -241,10 +228,8 @@ jobs:
             curl -O https://mirrors.huaweicloud.com/apache/hive/hive-3.1.3/apache-hive-3.1.3-bin.tar.gz
             mkdir -p /opt/hive
             tar -vzxf /tmp/apache-hive-3.1.3-bin.tar.gz -C /opt/hive --strip-components=1
-            tee -a /etc/profile <<-'EOF'
-            export HIVE_HOME=/opt/hive
-            export PATH=$PATH:$HIVE_HOME/bin
-            EOF
+            echo 'export HIVE_HOME=/opt/hive
+            export PATH=$PATH:$HIVE_HOME/bin' >> /etc/profile
             source /etc/profile
             hive --version
             cp /opt/hive/conf/hive-default.xml.template /opt/hive/conf/hive-site.xml
