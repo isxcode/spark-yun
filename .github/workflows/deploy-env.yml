@@ -21,6 +21,9 @@ on:
         required: true
         type: string
         default: Isxcode123..
+      ali:
+        description: https://ecs-buy.aliyun.com/ecs
+        type: string
 
 env:
   ADMIN_GITHUB_TOKEN: ${{ inputs.github_access_token }}
