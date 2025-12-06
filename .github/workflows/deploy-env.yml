@@ -253,6 +253,18 @@ jobs:
             nohup hive --service metastore >> /opt/hive/logs/metastore.log 2>&1 &
             sleep 5s
             nohup hive --service hiveserver2 >> /opt/hive/logs/hiveserver2.log 2>&1 &
+            
+
+      - name: Start agent
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ inputs.dev_server_ip }}
+          username: ${{ inputs.dev_server_username }}
+          password: ${{ inputs.dev_server_password }}
+          script_stop: true
+          timeout: 3600s
+          script: |
+            docker pull zhiqingyun-agent-download registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun-agent:latest
             docker run -itd --name=zhiqingyun-agent-download registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun-agent:latest
             docker cp zhiqingyun-agent-download:/tmp/zhiqingyun-agent.tar.gz /tmp
             docker stop zhiqingyun-agent-download
@@ -262,7 +274,6 @@ jobs:
             cd /root/zhiqingyun-agent
             nohup java -jar -Xmx2048m lib/zhiqingyun-agent.jar --spring.config.additional-location=conf/ > /dev/null 2>&1 &
             echo $! >zhiqingyun-agent.pid
-            hive -e "create database if not exists isxcode_db;" >/dev/null 2>&1
 
       - name: Update demo hosts
         uses: appleboy/ssh-action@v1.0.3
