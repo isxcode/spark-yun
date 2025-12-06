@@ -19,6 +19,8 @@ readonly SPARK_MIN_DIR="${BASE_PATH}/spark-yun-dist/spark-min"
 readonly FLINK_MIN_DIR="${BASE_PATH}/spark-yun-dist/flink-min"
 readonly TMP_SPARK_MIN_JARS="${TMP_DIR}/spark-min/jars"
 readonly TMP_FLINK_MIN_LIB="${TMP_DIR}/flink-min/lib"
+readonly LIBS_DIR="${BASE_PATH}/resources/libs"
+readonly RESOURCE_DIR="${BASE_PATH}/spark-yun-backend/spark-yun-main/src/main/resources"
 
 # =============================================================================
 # 工具函数
@@ -116,6 +118,14 @@ copy_flink_libs() {
     cp "${TMP_FLINK_MIN_LIB}"/*.jar "${FLINK_MIN_DIR}"/lib/
 }
 
+# 拷贝项目依赖
+copy_resources_libs() {
+    echo "拷贝项目依赖..."
+
+    cp "${LIBS_DIR}"/libprql_java-osx-arm64.dylib "${RESOURCE_DIR}"/
+    cp "${LIBS_DIR}"/libprql_java-linux64.so "${RESOURCE_DIR}"/
+}
+
 # =============================================================================
 # 主要安装流程
 # =============================================================================
@@ -134,6 +144,9 @@ main() {
 
     # 4. 拷贝Flink第三方依赖
     copy_flink_libs
+
+    # 5. 拷贝项目依赖
+    copy_resources_libs
 
     echo "项目依赖安装完成！"
 }
