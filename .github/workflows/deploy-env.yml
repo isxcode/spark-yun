@@ -25,7 +25,7 @@ env:
 
 jobs:
 
-  reset-server:
+  install-env:
     runs-on: ubuntu-latest
 
     permissions:
