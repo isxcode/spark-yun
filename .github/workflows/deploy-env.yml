@@ -65,7 +65,7 @@ jobs:
             cd /tmp
             curl -O https://mirrors.tuna.tsinghua.edu.cn/apache/hadoop/core/hadoop-3.3.5/hadoop-3.3.5.tar.gz
             mkdir -p /opt/hadoop
-            tar -vzxf /tmp/hadoop-3.3.5.tar.gz -C /opt/hadoop --strip-components=1
+            tar -zxf /tmp/hadoop-3.3.5.tar.gz -C /opt/hadoop --strip-components=1
             cd /opt/hadoop/share/hadoop/common/lib/
             rm -rf /opt/hadoop/share/hadoop/common/lib/slf4j-reload4j-1.7.36.jar
             wget https://repo1.maven.org/maven2/org/apache/logging/log4j/log4j-1.2-api/2.17.2/log4j-1.2-api-2.17.2.jar
@@ -227,7 +227,7 @@ jobs:
             cd /tmp
             curl -O https://mirrors.huaweicloud.com/apache/hive/hive-3.1.3/apache-hive-3.1.3-bin.tar.gz
             mkdir -p /opt/hive
-            tar -vzxf /tmp/apache-hive-3.1.3-bin.tar.gz -C /opt/hive --strip-components=1
+            tar -zxf /tmp/apache-hive-3.1.3-bin.tar.gz -C /opt/hive --strip-components=1
             echo 'export HIVE_HOME=/opt/hive
             export PATH=$PATH:$HIVE_HOME/bin' >> /etc/profile
             source /etc/profile
