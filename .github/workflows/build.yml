@@ -150,6 +150,12 @@ jobs:
           name: zhiqingyun
           path: ./spark-yun-dist/build/distributions/zhiqingyun.tar.gz
 
+      - name: Upload zhiqingyun agent tar
+        uses: actions/upload-artifact@v4
+        with:
+          name: zhiqingyun-agent
+          path: ./spark-yun-dist/build/distributions/zhiqingyun-agent.tar.gz
+
   # 上传到docker hub
   upload-docker-hub:
     needs: build
@@ -206,6 +212,58 @@ jobs:
           context: .
           platforms: linux/amd64,linux/arm64
           tags: isxcode/zhiqingyun:${{ inputs.version_number }}
+          push: true
+
+  # 上传到代理镜像到阿里云
+  upload-zhiqingyun-agent:
+    needs: build
+
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+
+    steps:
+
+      - name: Set timezone to Asia/Shanghai
+        run: |
+          sudo timedatectl set-timezone Asia/Shanghai
+
+      - name: Download zhiqingyun agent tar
+        uses: actions/download-artifact@v4
+        with:
+          name: zhiqingyun-agent
+          path: ./
+
+      - name: Create dockerfile
+        run: |
+          echo "FROM alpine:latest" > Dockerfile
+          echo "" >> Dockerfile
+          echo "COPY /Volumes/Data/Code/spark-yun/spark-yun-dist/build/distributions/zhiqingyun-agent.tar.gz /tmp/zhiqingyun-agent.tar.gz" >> Dockerfile
+          echo "" >> Dockerfile
+          echo 'ENTRYPOINT ["tail", "-f", "/dev/null"]' >> Dockerfile
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Ali Docker Hub
+        uses: docker/login-action@v3
+        with:
+          registry: registry.cn-shanghai.aliyuncs.com
+          username: ispong
+          password: ${{ secrets.ALI_DOCKERHUB_TOKEN }}
+
+      - name: Build and Push
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          platforms: linux/amd64
+          tags: isxcode/zhiqingyun-agent:${{ inputs.version_number }}
           push: true
 
   # 上传到服务器
