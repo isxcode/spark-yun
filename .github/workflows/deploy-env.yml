@@ -15,7 +15,7 @@ on:
         description: 'dev server username'
         required: true
         type: string
-        default: rootß
+        default: root
       dev_server_password:
         description: 'dev server password'
         required: true
