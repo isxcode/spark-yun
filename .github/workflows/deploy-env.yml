@@ -193,7 +193,7 @@ jobs:
             echo "    </property>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
             echo "    <property>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
             echo "        <name>yarn.nodemanager.resource.cpu-vcores</name>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
-            echo "        <value>4</value>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
+            echo "        <value>8</value>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
             echo "    </property>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
             echo "    <property>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
             echo "        <name>yarn.scheduler.minimum-allocation-vcores</name>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
@@ -205,7 +205,7 @@ jobs:
             echo "    </property>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
             echo "    <property>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
             echo "        <name>yarn.scheduler.maximum-allocation-mb</name>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
-            echo "        <value>4096</value>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
+            echo "        <value>2048</value>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
             echo "    </property>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
             echo "    <property>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
             echo "        <name>yarn.scheduler.minimum-allocation-mb</name>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
@@ -326,5 +326,4 @@ jobs:
             rm -rf /tmp/apache-hive-3.1.3-bin.tar.gz
             rm -rf /tmp/hadoop-3.3.5.tar.gz 
             rm -rf /tmp/mysql-connector-java-8.0.22.tar.gz
-            rm -rf /tmp/zhiqingyun-agent.tar.gz
             rm -rf /tmp/kafka_2.12-3.7.2.tgz
