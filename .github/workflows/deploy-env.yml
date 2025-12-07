@@ -305,7 +305,7 @@ jobs:
           timeout: 3600s
           script: |
             cd /opt/kafka/bin
-            kafka-topics.sh --create --bootstrap-server zhiyao-server:9092 --replication-factor 1 --partitions 1 --topic isxcode-topic
+            ./kafka-topics.sh --create --bootstrap-server zhiyao-server:9092 --replication-factor 1 --partitions 1 --topic isxcode-topic
 
       - name: Gen Mysql
         uses: appleboy/ssh-action@v1.0.3
