@@ -1,0 +1,373 @@
+name: deploy env
+
+on:
+  workflow_dispatch:
+    inputs:
+      dev_server_ip:
+        description: 'dev server ip'
+        required: true
+        type: string
+      dev_internal_server_ip:
+        description: 'dev internal server ip'
+        required: true
+        type: string
+      dev_server_username:
+        description: 'dev server username'
+        required: true
+        type: string
+        default: root
+      dev_server_password:
+        description: 'dev server password'
+        required: true
+        type: string
+        default: Isxcode123..
+      ali:
+        description: buy address
+        default: https://ecs-buy.aliyun.com/ecs
+        type: string
+
+env:
+  ADMIN_GITHUB_TOKEN: ${{ inputs.github_access_token }}
+
+jobs:
+
+  install-env:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+
+    steps:
+
+      - name: Set timezone to Asia/Shanghai
+        run: |
+          sudo timedatectl set-timezone Asia/Shanghai
+          date    
+
+      - name: Install env
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ inputs.dev_server_ip }}
+          username: ${{ inputs.dev_server_username }}
+          password: ${{ inputs.dev_server_password }}
+          script_stop: true
+          timeout: 3600s
+          script: |
+            sed -i '$d' /etc/hosts
+            sed -i '$d' /etc/hosts
+            echo "${{ inputs.dev_internal_server_ip }}  zhiyao-server" | tee -a /etc/hosts
+            hostnamectl set-hostname zhiyao-server
+            yum install java-1.8.0-openjdk-devel java-1.8.0-openjdk -y
+            yum install -y yum-utils
+            yum-config-manager --add-repo https://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
+            yum install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+            mkdir -p /data/docker
+            mkdir -p /etc/docker
+            echo "{" > /etc/docker/daemon.json
+            echo "  \"registry-mirrors\":[" >> /etc/docker/daemon.json
+            echo "    \"https://3fe1zqfu.mirror.aliyuncs.com\"" >> /etc/docker/daemon.json
+            echo "  ]," >> /etc/docker/daemon.json
+            echo "  \"data-root\":\"/data/docker\"" >> /etc/docker/daemon.json
+            echo "}" >> /etc/docker/daemon.json
+            systemctl enable docker
+            systemctl start docker
+            cd /tmp
+            curl -s -O https://mirrors.tuna.tsinghua.edu.cn/apache/hadoop/core/hadoop-3.3.5/hadoop-3.3.5.tar.gz
+            mkdir -p /opt/hadoop
+            tar -zxf /tmp/hadoop-3.3.5.tar.gz -C /opt/hadoop --strip-components=1
+            cd /opt/hadoop/share/hadoop/common/lib/
+            rm -rf /opt/hadoop/share/hadoop/common/lib/slf4j-reload4j-1.7.36.jar
+            wget -q https://repo1.maven.org/maven2/org/apache/logging/log4j/log4j-1.2-api/2.17.2/log4j-1.2-api-2.17.2.jar
+            wget -q https://repo1.maven.org/maven2/org/apache/logging/log4j/log4j-api/2.17.2/log4j-api-2.17.2.jar
+            wget -q https://repo1.maven.org/maven2/org/apache/logging/log4j/log4j-core/2.17.2/log4j-core-2.17.2.jar
+            wget -q https://repo1.maven.org/maven2/org/apache/logging/log4j/log4j-slf4j-impl/2.17.2/log4j-slf4j-impl-2.17.2.jar
+            wget -q https://repo1.maven.org/maven2/org/slf4j/slf4j-api/2.0.0/slf4j-api-2.0.0.jar
+            wget -q https://repo1.maven.org/maven2/org/slf4j/slf4j-reload4j/2.0.0/slf4j-reload4j-2.0.0.jar
+            echo "export HADOOP_HOME=/opt/hadoop" >> /etc/profile
+            echo "export HADOOP_CLASSPATH=\$HADOOP_HOME/etc/hadoop:\$HADOOP_HOME/share/hadoop/common/lib/*:\$HADOOP_HOME/share/hadoop/common/*:\$HADOOP_HOME/share/hadoop/hdfs:\$HADOOP_HOME/share/hadoop/hdfs/lib/*:\$HADOOP_HOME/share/hadoop/hdfs/*:\$HADOOP_HOME/share/hadoop/mapreduce/lib/*:\$HADOOP_HOME/share/hadoop/mapreduce/*:\$HADOOP_HOME/share/hadoop/yarn:\$HADOOP_HOME/share/hadoop/yarn/lib/*:\$HADOOP_HOME/share/hadoop/yarn/*" >> /etc/profile
+            echo "export HADOOP_CONF_DIR=\$HADOOP_HOME/etc/hadoop" >> /etc/profile
+            echo "export PATH=\$PATH:\$HADOOP_HOME/bin:\$HADOOP_HOME/sbin" >> /etc/profile
+            source /etc/profile
+            echo "export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk" >> /opt/hadoop/etc/hadoop/hadoop-env.sh
+            echo "export HDFS_NAMENODE_USER=root" >> /opt/hadoop/etc/hadoop/hadoop-env.sh
+            echo "export HDFS_DATANODE_USER=root" >> /opt/hadoop/etc/hadoop/hadoop-env.sh
+            echo "export HDFS_SECONDARYNAMENODE_USER=root" >> /opt/hadoop/etc/hadoop/hadoop-env.sh
+            echo "export YARN_RESOURCEMANAGER_USER=root" >> /opt/hadoop/etc/hadoop/hadoop-env.sh
+            echo "export YARN_NODEMANAGER_USER=root" >> /opt/hadoop/etc/hadoop/hadoop-env.sh
+            echo "export HDFS_ZKFC_USER=root" >> /opt/hadoop/etc/hadoop/hadoop-env.sh
+            echo "export HDFS_JOURNALNODE_USER=root" >> /opt/hadoop/etc/hadoop/hadoop-env.sh
+            ssh-keygen -t rsa -P '' -f ~/.ssh/id_rsa
+            cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
+            chmod 0600 ~/.ssh/authorized_keys
+            echo '============== core-site.xml'
+            echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" > /opt/hadoop/etc/hadoop/core-site.xml
+            echo "<?xml-stylesheet type=\"text/xsl\" href=\"configuration.xsl\"?>" >> /opt/hadoop/etc/hadoop/core-site.xml
+            echo "<configuration>" >> /opt/hadoop/etc/hadoop/core-site.xml
+            echo "    <property>" >> /opt/hadoop/etc/hadoop/core-site.xml
+            echo "        <name>fs.defaultFS</name>" >> /opt/hadoop/etc/hadoop/core-site.xml
+            echo "        <value>hdfs://zhiyao-server:9000</value>" >> /opt/hadoop/etc/hadoop/core-site.xml
+            echo "    </property>" >> /opt/hadoop/etc/hadoop/core-site.xml
+            echo "    <property>" >> /opt/hadoop/etc/hadoop/core-site.xml
+            echo "        <name>hadoop.proxyuser.root.hosts</name>" >> /opt/hadoop/etc/hadoop/core-site.xml
+            echo "        <value>*</value>" >> /opt/hadoop/etc/hadoop/core-site.xml
+            echo "    </property>" >> /opt/hadoop/etc/hadoop/core-site.xml
+            echo "    <property>" >> /opt/hadoop/etc/hadoop/core-site.xml
+            echo "        <name>hadoop.proxyuser.root.groups</name>" >> /opt/hadoop/etc/hadoop/core-site.xml
+            echo "        <value>*</value>" >> /opt/hadoop/etc/hadoop/core-site.xml
+            echo "    </property>" >> /opt/hadoop/etc/hadoop/core-site.xml
+            echo "</configuration>" >> /opt/hadoop/etc/hadoop/core-site.xml
+            mkdir -p /data/hadoop
+            echo '============== hdfs-site.xml'
+            echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" > /opt/hadoop/etc/hadoop/hdfs-site.xml
+            echo "<?xml-stylesheet type=\"text/xsl\" href=\"configuration.xsl\"?>" >> /opt/hadoop/etc/hadoop/hdfs-site.xml
+            echo "<configuration>" >> /opt/hadoop/etc/hadoop/hdfs-site.xml
+            echo "    <property>" >> /opt/hadoop/etc/hadoop/hdfs-site.xml
+            echo "        <name>dfs.namenode.name.dir</name>" >> /opt/hadoop/etc/hadoop/hdfs-site.xml
+            echo "        <value>/data/hadoop/name</value>" >> /opt/hadoop/etc/hadoop/hdfs-site.xml
+            echo "    </property>" >> /opt/hadoop/etc/hadoop/hdfs-site.xml
+            echo "    <property>" >> /opt/hadoop/etc/hadoop/hdfs-site.xml
+            echo "        <name>dfs.datanode.data.dir</name>" >> /opt/hadoop/etc/hadoop/hdfs-site.xml
+            echo "        <value>/data/hadoop/data</value>" >> /opt/hadoop/etc/hadoop/hdfs-site.xml
+            echo "    </property>" >> /opt/hadoop/etc/hadoop/hdfs-site.xml
+            echo "    <property>" >> /opt/hadoop/etc/hadoop/hdfs-site.xml
+            echo "        <name>dfs.replication</name>" >> /opt/hadoop/etc/hadoop/hdfs-site.xml
+            echo "        <value>1</value>" >> /opt/hadoop/etc/hadoop/hdfs-site.xml
+            echo "    </property>" >> /opt/hadoop/etc/hadoop/hdfs-site.xml
+            echo "    <property>" >> /opt/hadoop/etc/hadoop/hdfs-site.xml
+            echo "        <name>dfs.namenode.http-address</name>" >> /opt/hadoop/etc/hadoop/hdfs-site.xml
+            echo "        <value>zhiyao-server:40000</value>" >> /opt/hadoop/etc/hadoop/hdfs-site.xml
+            echo "    </property>" >> /opt/hadoop/etc/hadoop/hdfs-site.xml
+            echo "    <property>" >> /opt/hadoop/etc/hadoop/hdfs-site.xml
+            echo "        <name>dfs.datanode.address</name>" >> /opt/hadoop/etc/hadoop/hdfs-site.xml
+            echo "        <value>zhiyao-server:9866</value>" >> /opt/hadoop/etc/hadoop/hdfs-site.xml
+            echo "    </property>" >> /opt/hadoop/etc/hadoop/hdfs-site.xml
+            echo "</configuration>" >> /opt/hadoop/etc/hadoop/hdfs-site.xml
+            hdfs namenode -format
+            start-dfs.sh
+            echo '============== mapred-site.xml'
+            echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" > /opt/hadoop/etc/hadoop/mapred-site.xml
+            echo "<?xml-stylesheet type=\"text/xsl\" href=\"configuration.xsl\"?>" >> /opt/hadoop/etc/hadoop/mapred-site.xml
+            echo "<configuration>" >> /opt/hadoop/etc/hadoop/mapred-site.xml
+            echo "    <property>" >> /opt/hadoop/etc/hadoop/mapred-site.xml
+            echo "        <name>mapreduce.framework.name</name>" >> /opt/hadoop/etc/hadoop/mapred-site.xml
+            echo "        <value>yarn</value>" >> /opt/hadoop/etc/hadoop/mapred-site.xml
+            echo "    </property>" >> /opt/hadoop/etc/hadoop/mapred-site.xml
+            echo "    <property>" >> /opt/hadoop/etc/hadoop/mapred-site.xml
+            echo "        <name>mapreduce.application.classpath</name>" >> /opt/hadoop/etc/hadoop/mapred-site.xml
+            echo "        <value>\$HADOOP_MAPRED_HOME/share/hadoop/mapreduce/*:\$HADOOP_MAPRED_HOME/share/hadoop/mapreduce/lib/*</value>" >> /opt/hadoop/etc/hadoop/mapred-site.xml
+            echo "    </property>" >> /opt/hadoop/etc/hadoop/mapred-site.xml
+            echo "    <property>" >> /opt/hadoop/etc/hadoop/mapred-site.xml
+            echo "        <name>mapreduce.jobhistory.webapp.address</name>" >> /opt/hadoop/etc/hadoop/mapred-site.xml
+            echo "        <value>zhiyao-server:40001</value>" >> /opt/hadoop/etc/hadoop/mapred-site.xml
+            echo "    </property>" >> /opt/hadoop/etc/hadoop/mapred-site.xml
+            echo "    <property>" >> /opt/hadoop/etc/hadoop/mapred-site.xml
+            echo "        <name>mapreduce.jobhistory.address</name>" >> /opt/hadoop/etc/hadoop/mapred-site.xml
+            echo "        <value>zhiyao-server:10020</value>" >> /opt/hadoop/etc/hadoop/mapred-site.xml
+            echo "    </property>" >> /opt/hadoop/etc/hadoop/mapred-site.xml
+            echo "</configuration>" >> /opt/hadoop/etc/hadoop/mapred-site.xml
+            echo '============== yarn-site.xml'
+            echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" > /opt/hadoop/etc/hadoop/yarn-site.xml
+            echo "<?xml-stylesheet type=\"text/xsl\" href=\"configuration.xsl\"?>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
+            echo "<configuration>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
+            echo "     <property>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
+            echo "        <name>yarn.resourcemanager.webapp.address</name>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
+            echo "        <value>zhiyao-server:40002</value>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
+            echo "    </property>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
+            echo "    <property>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
+            echo "        <name>yarn.nodemanager.aux-services</name>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
+            echo "        <value>mapreduce_shuffle</value>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
+            echo "    </property>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
+            echo "    <property>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
+            echo "        <name>yarn.nodemanager.env-whitelist</name>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
+            echo "        <value>JAVA_HOME,HADOOP_COMMON_HOME,HADOOP_HDFS_HOME,HADOOP_CONF_DIR,YARN_CONF_DIR,CLASSPATH_PREPEND_DISTCACHE,HADOOP_YARN_HOME,HADOOP_HOME,PATH,LANG,TZ,HADOOP_MAPRED_HOME</value>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
+            echo "    </property>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
+            echo "    <property>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
+            echo "        <name>yarn.log-aggregation-enable</name>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
+            echo "        <value>true</value>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
+            echo "    </property>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
+            echo "    <property>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
+            echo "        <name>yarn.nodemanager.resource.memory-mb</name>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
+            echo "        <value>16384</value>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
+            echo "    </property>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
+            echo "    <property>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
+            echo "        <name>yarn.nodemanager.resource.cpu-vcores</name>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
+            echo "        <value>8</value>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
+            echo "    </property>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
+            echo "    <property>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
+            echo "        <name>yarn.resourcemanager.scheduler.class</name>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
+            echo "        <value>org.apache.hadoop.yarn.server.resourcemanager.scheduler.fifo.FifoScheduler</value>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
+            echo "    </property>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
+            echo "    <property>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
+            echo "        <name>yarn.scheduler.minimum-allocation-vcores</name>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
+            echo "        <value>1</value>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
+            echo "    </property>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
+            echo "    <property>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
+            echo "        <name>yarn.scheduler.maximum-allocation-vcores</name>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
+            echo "        <value>2</value>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
+            echo "    </property>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
+            echo "    <property>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
+            echo "        <name>yarn.scheduler.maximum-allocation-mb</name>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
+            echo "        <value>4096</value>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
+            echo "    </property>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
+            echo "    <property>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
+            echo "        <name>yarn.scheduler.minimum-allocation-mb</name>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
+            echo "        <value>1024</value>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
+            echo "    </property>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
+            echo "    <property>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
+            echo "        <name>yarn.nodemanager.webapp.address</name>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
+            echo "        <value>zhiyao-server:40003</value>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
+            echo "    </property>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
+            echo "    <property>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
+            echo "        <name>yarn.resourcemanager.address</name>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
+            echo "        <value>zhiyao-server:8032</value>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
+            echo "    </property>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
+            echo "</configuration>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
+            start-yarn.sh
+            mapred --daemon start historyserver
+            mkdir -p /data/mysql/data
+            mkdir -p /data/mysql/conf.d
+            docker run --name isxcode-mysql --privileged=true --restart=always -d -p 30306:3306 -e MYSQL_ROOT_PASSWORD=root123 -e MYSQL_DATABASE=hive_db -v /data/mysql/data:/var/lib/mysql -v /data/mysql/conf.d:/etc/mysql/conf.d mysql:8.0
+            cd /tmp
+            curl -s -O https://mirrors.huaweicloud.com/apache/hive/hive-3.1.3/apache-hive-3.1.3-bin.tar.gz
+            mkdir -p /opt/hive
+            tar -zxf /tmp/apache-hive-3.1.3-bin.tar.gz -C /opt/hive --strip-components=1
+            echo "export HIVE_HOME=/opt/hive" >> /etc/profile
+            echo "export PATH=\$PATH:\$HIVE_HOME/bin" >> /etc/profile
+            source /etc/profile
+            cp /opt/hive/conf/hive-default.xml.template /opt/hive/conf/hive-site.xml
+            sed -i '3215d' /opt/hive/conf/hive-site.xml
+            sed -i 's/<value>jdbc:derby:;databaseName=metastore_db;create=true<\/value>/<value>jdbc:mysql:\/\/zhiyao-server:30306\/hive_db<\/value>/g' /opt/hive/conf/hive-site.xml
+            sed -i 's/<value>org.apache.derby.jdbc.EmbeddedDriver<\/value>/<value>com.mysql.cj.jdbc.Driver<\/value>/g' /opt/hive/conf/hive-site.xml
+            sed -i 's/<value>APP<\/value>/<value>root<\/value>/g' /opt/hive/conf/hive-site.xml
+            sed -i 's/<value>mine<\/value>/<value>root123<\/value>/g' /opt/hive/conf/hive-site.xml
+            mkdir -p /data/hive/tmp
+            sed -i '$i\  <property>\n    <name>system:java.io.tmpdir</name>\n    <value>/data/hive/tmp</value>\n  </property>' /opt/hive/conf/hive-site.xml
+            sed -i '$i\  <property>\n    <name>system:user.name</name>\n    <value>root</value>\n  </property>' /opt/hive/conf/hive-site.xml
+            rm -rf /opt/hive/lib/guava-*.jar
+            cp /opt/hadoop/share/hadoop/hdfs/lib/guava-*.jar /opt/hive/lib/
+            cd /tmp
+            wget -q https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-8.0.22.tar.gz
+            tar -zxf mysql-connector-java-8.0.22.tar.gz
+            cp mysql-connector-java-8.0.22/mysql-connector-java-8.0.22.jar /opt/hive/lib/
+            mkdir -p /opt/hive/logs
+            nohup schematool -dbType mysql -initSchema >> /opt/hive/initSchema.log 2>&1 &
+            sleep 5s
+            nohup hive --service metastore >> /opt/hive/logs/metastore.log 2>&1 &
+            sleep 5s
+            nohup hive --service hiveserver2 >> /opt/hive/logs/hiveserver2.log 2>&1 &
+            cd /tmp
+            curl -s -O https://mirrors.tuna.tsinghua.edu.cn/apache/kafka/3.7.2/kafka_2.12-3.7.2.tgz
+            mkdir -p /data/kafka
+            tar -zxf /tmp/kafka_2.12-3.7.2.tgz -C /data/kafka
+            ln -s /data/kafka/kafka_2.12-3.7.2 /opt/kafka
+            echo "export KAFKA_HOME=/opt/kafka" >> /etc/profile
+            echo "export PATH=\$PATH:\$KAFKA_HOME/bin" >> /etc/profile
+            source /etc/profile
+            cd /opt/kafka/bin
+            ./zookeeper-server-start.sh -daemon /opt/kafka/config/zookeeper.properties
+            sleep 2s
+            echo "listeners=PLAINTEXT://${{ inputs.dev_internal_server_ip }}:9092" >> /opt/kafka/config/server.properties
+            echo "advertised.listeners=PLAINTEXT://${{ inputs.dev_server_ip }}:9092" >> /opt/kafka/config/server.properties
+            echo "delete.topic.enable=true" >> /opt/kafka/config/server.properties
+            cd /opt/kafka/bin
+            ./kafka-server-start.sh -daemon /opt/kafka/config/server.properties
+
+      - name: Start agent
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ inputs.dev_server_ip }}
+          username: ${{ inputs.dev_server_username }}
+          password: ${{ inputs.dev_server_password }}
+          script_stop: true
+          timeout: 3600s
+          script: |
+            docker pull registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun-agent:latest
+            docker run -itd --name=zhiqingyun-agent-download registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun-agent:latest
+            docker cp zhiqingyun-agent-download:/tmp/zhiqingyun-agent.tar.gz /tmp
+            docker stop zhiqingyun-agent-download
+            docker rm zhiqingyun-agent-download
+            docker rmi registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun-agent:latest
+            tar -zxf /tmp/zhiqingyun-agent.tar.gz -C /root
+            cd /root/zhiqingyun-agent
+            source /etc/profile
+            nohup java -jar -Xmx2048m lib/zhiqingyun-agent.jar --spring.config.additional-location=conf/ > /dev/null 2>&1 &
+            echo $! >zhiqingyun-agent.pid
+
+      - name: Gen kafka
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ inputs.dev_server_ip }}
+          username: ${{ inputs.dev_server_username }}
+          password: ${{ inputs.dev_server_password }}
+          script_stop: true
+          timeout: 3600s
+          script: |
+            cd /opt/kafka/bin
+            ./kafka-topics.sh --create --bootstrap-server zhiyao-server:9092 --replication-factor 1 --partitions 1 --topic isxcode-topic
+
+      - name: Gen Mysql
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ inputs.dev_server_ip }}
+          username: ${{ inputs.dev_server_username }}
+          password: ${{ inputs.dev_server_password }}
+          script_stop: true
+          timeout: 3600s
+          script: |
+            docker exec -i isxcode-mysql mysql -uroot -proot123 -e "create database isxcode_db"
+            docker exec -i isxcode-mysql mysql -uroot -proot123 -e "create database isxcode_db2"
+            docker exec -i isxcode-mysql mysql -uroot -proot123 -e "create table isxcode_db.zqy_users_jdbc (username varchar(200), age int)"
+            docker exec -i isxcode-mysql mysql -uroot -proot123 -e "insert into isxcode_db.zqy_users_jdbc values ('zhangsan',13),('lisi',14),('wangwu',15)"
+            docker exec -i isxcode-mysql mysql -uroot -proot123 -e "create table isxcode_db.zqy_users_sync (username varchar(200), age int)"
+
+      - name: Gen Hive
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ inputs.dev_server_ip }}
+          username: ${{ inputs.dev_server_username }}
+          password: ${{ inputs.dev_server_password }}
+          script_stop: true
+          timeout: 3600s
+          script: |
+            source /etc/profile
+            hive -e "create database isxcode_db;"
+            hive -e "create table isxcode_db.kafka_users( username string, age int);"
+
+      - name: Update demo hosts
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          script_stop: true
+          timeout: 3600s
+          script: |
+            sed -i '$d' /etc/hosts
+            echo "${{ inputs.dev_server_ip }}    zhiyao-server" | tee -a /etc/hosts
+
+      - name: Delete downloads
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ inputs.dev_server_ip }}
+          username: ${{ inputs.dev_server_username }}
+          password: ${{ inputs.dev_server_password }}
+          script_stop: true
+          timeout: 3600s
+          script: |
+            rm -rf /tmp/apache-hive-3.1.3-bin.tar.gz
+            rm -rf /tmp/hadoop-3.3.5.tar.gz
+            rm -rf /tmp/mysql-connector-java-8.0.22.tar.gz
+            rm -rf /tmp/kafka_2.12-3.7.2.tgz
+
+      - name: Print env
+        run: |
+          echo "Yarn http://${{ inputs.dev_server_ip }}:40002"
+          echo "Hdfs http://${{ inputs.dev_server_ip }}:40000"
+          echo "Kafka: ${{ inputs.dev_server_ip }}:9092"
+          echo "Hive jdbc: jdbc:hive2://${{ inputs.dev_server_ip }}:10000/isxcode_db"
+          echo "Hive username: root"
+          echo "Mysql jdbc: jdbc:mysql://${{ inputs.dev_server_ip }}:30306/isxcode_db"
+          echo "Mysql username: root"
+          echo "Mysql password: root123"
