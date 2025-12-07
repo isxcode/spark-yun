@@ -317,6 +317,9 @@ jobs:
           script: |
             docker exec -i isxcode-mysql mysql -uroot -proot123 -e "create database isxcode_db"
             docker exec -i isxcode-mysql mysql -uroot -proot123 -e "create database isxcode_db2"
+            docker exec -i isxcode-mysql mysql -uroot -proot123 -e "create table isxcode_db.zqy_users_jdbc (username varchar(200), age int)"
+            docker exec -i isxcode-mysql mysql -uroot -proot123 -e "insert into isxcode_db.zqy_users_jdbc values ('zhangsan',13),('lisi',14),('wangwu',15)"
+            docker exec -i isxcode-mysql mysql -uroot -proot123 -e "create table isxcode_db.zqy_users_sync (username varchar(200), age int)"
 
       - name: Gen Hive
         uses: appleboy/ssh-action@v1.0.3
