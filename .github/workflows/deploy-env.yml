@@ -245,7 +245,7 @@ jobs:
 #            cp /opt/hadoop/share/hadoop/hdfs/lib/guava-*.jar /opt/hive/lib/
 #            cd /tmp
 #            wget -q https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-8.0.22.tar.gz
-#            tar vzxf mysql-connector-java-8.0.22.tar.gz
+#            tar -zxf mysql-connector-java-8.0.22.tar.gz
 #            cp mysql-connector-java-8.0.22/mysql-connector-java-8.0.22.jar /opt/hive/lib/
 #            mkdir -p /opt/hive/logs
 #            nohup schematool -dbType mysql -initSchema >> /opt/hive/initSchema.log 2>&1 &
