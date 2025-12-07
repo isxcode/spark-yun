@@ -331,6 +331,7 @@ jobs:
           script_stop: true
           timeout: 3600s
           script: |
+            source /etc/profile
             hive -e "create database isxcode_db;"
             hive -e "create table isxcode_db.kafka_users( username string, age int);"
 
