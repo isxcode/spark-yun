@@ -205,7 +205,7 @@ jobs:
 #            echo "    </property>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
 #            echo "    <property>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
 #            echo "        <name>yarn.scheduler.maximum-allocation-mb</name>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
-#            echo "        <value>2048</value>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
+#            echo "        <value>4096</value>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
 #            echo "    </property>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
 #            echo "    <property>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
 #            echo "        <name>yarn.scheduler.minimum-allocation-mb</name>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
@@ -270,7 +270,28 @@ jobs:
 #            cd /opt/kafka/bin
 #            ./kafka-server-start.sh -daemon /opt/kafka/config/server.properties
 
-      - name: Start agent
+#      - name: Start agent
+#        uses: appleboy/ssh-action@v1.0.3
+#        with:
+#          host: ${{ inputs.dev_server_ip }}
+#          username: ${{ inputs.dev_server_username }}
+#          password: ${{ inputs.dev_server_password }}
+#          script_stop: true
+#          timeout: 3600s
+#          script: |
+#            docker pull registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun-agent:latest
+#            docker run -itd --name=zhiqingyun-agent-download registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun-agent:latest
+#            docker cp zhiqingyun-agent-download:/tmp/zhiqingyun-agent.tar.gz /tmp
+#            docker stop zhiqingyun-agent-download
+#            docker rm zhiqingyun-agent-download
+#            docker rmi registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun-agent:latest
+#            tar -zxf /tmp/zhiqingyun-agent.tar.gz -C /root
+#            cd /root/zhiqingyun-agent
+#            source /etc/profile
+#            nohup java -jar -Xmx2048m lib/zhiqingyun-agent.jar --spring.config.additional-location=conf/ > /dev/null 2>&1 &
+#            echo $! >zhiqingyun-agent.pid
+
+      - name: Gen kafka
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ inputs.dev_server_ip }}
@@ -279,18 +300,9 @@ jobs:
           script_stop: true
           timeout: 3600s
           script: |
-            docker pull registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun-agent:latest
-            docker run -itd --name=zhiqingyun-agent-download registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun-agent:latest
-            docker cp zhiqingyun-agent-download:/tmp/zhiqingyun-agent.tar.gz /tmp
-            docker stop zhiqingyun-agent-download
-            docker rm zhiqingyun-agent-download
-            docker rmi registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun-agent:latest
-            tar -zxf /tmp/zhiqingyun-agent.tar.gz -C /root
-            cd /root/zhiqingyun-agent
-            nohup java -jar -Xmx2048m lib/zhiqingyun-agent.jar --spring.config.additional-location=conf/ > /dev/null 2>&1 &
-            echo $! >zhiqingyun-agent.pid
+            kafka-topics.sh --create --bootstrap-server zhiyao-server:9092 --replication-factor 1 --partitions 1 --topic isxcode-topic
 
-      - name: Gen Sql
+      - name: Gen Mysql
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ inputs.dev_server_ip }}
@@ -299,22 +311,10 @@ jobs:
           script_stop: true
           timeout: 3600s
           script: |
-            echo "hive 初始化"
-            echo "mysql 初始化"
+            docker exec -i isxcode-mysql mysql -uroot -proot123 -e "create database isxcode_db"
+            docker exec -i isxcode-mysql mysql -uroot -proot123 -e "create database isxcode_db2"
 
-      - name: Update demo hosts
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USERNAME }}
-          password: ${{ secrets.PASSWORD }}
-          script_stop: true
-          timeout: 3600s
-          script: |
-            sed -i '$d' /etc/hosts
-            echo "${{ inputs.dev_server_ip }}    zhiyao-server" | tee -a /etc/hosts
-
-      - name: Delete downloads
+      - name: Gen Hive
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ inputs.dev_server_ip }}
@@ -323,7 +323,39 @@ jobs:
           script_stop: true
           timeout: 3600s
           script: |
-            rm -rf /tmp/apache-hive-3.1.3-bin.tar.gz
-            rm -rf /tmp/hadoop-3.3.5.tar.gz 
-            rm -rf /tmp/mysql-connector-java-8.0.22.tar.gz
-            rm -rf /tmp/kafka_2.12-3.7.2.tgz
+            hive -e "create database isxcode_db;"
+            hive -e "create table isxcode_db.kafka_users( username string, age int);"
+
+#      - name: Update demo hosts
+#        uses: appleboy/ssh-action@v1.0.3
+#        with:
+#          host: ${{ secrets.HOST }}
+#          username: ${{ secrets.USERNAME }}
+#          password: ${{ secrets.PASSWORD }}
+#          script_stop: true
+#          timeout: 3600s
+#          script: |
+#            sed -i '$d' /etc/hosts
+#            echo "${{ inputs.dev_server_ip }}    zhiyao-server" | tee -a /etc/hosts
+
+#      - name: Delete downloads
+#        uses: appleboy/ssh-action@v1.0.3
+#        with:
+#          host: ${{ inputs.dev_server_ip }}
+#          username: ${{ inputs.dev_server_username }}
+#          password: ${{ inputs.dev_server_password }}
+#          script_stop: true
+#          timeout: 3600s
+#          script: |
+#            rm -rf /tmp/apache-hive-3.1.3-bin.tar.gz
+#            rm -rf /tmp/hadoop-3.3.5.tar.gz
+#            rm -rf /tmp/mysql-connector-java-8.0.22.tar.gz
+#            rm -rf /tmp/kafka_2.12-3.7.2.tgz
+
+      - name: Print env
+        run: |
+          echo "Hive "
+          echo ""
+          echo ""
+          echo ""
+          echo ""
