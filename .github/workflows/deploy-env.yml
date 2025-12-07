@@ -354,8 +354,11 @@ jobs:
 
       - name: Print env
         run: |
-          echo "Hive "
-          echo ""
-          echo ""
-          echo ""
-          echo ""
+          echo "Yarn http://${{ inputs.dev_server_ip }}:40002"
+          echo "Hdfs http://${{ inputs.dev_server_ip }}:40000"
+          echo "Kafka: ${{ inputs.dev_server_ip }}:9092"
+          echo "Hive jdbc: jdbc:hive2://${{ inputs.dev_server_ip }}:10000/isxcode_db"
+          echo "Hive username: root"
+          echo "Mysql jdbc: jdbc:mysql://${{ inputs.dev_server_ip }}:30306/isxcode_db"
+          echo "Mysql username: root"
+          echo "Mysql password: root123"
