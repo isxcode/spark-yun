@@ -196,6 +196,10 @@ jobs:
 #            echo "        <value>8</value>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
 #            echo "    </property>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
 #            echo "    <property>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
+#            echo "        <name>yarn.resourcemanager.scheduler.class</name>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
+#            echo "        <value>org.apache.hadoop.yarn.server.resourcemanager.scheduler.fifo.FifoScheduler</value>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
+#            echo "    </property>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
+#            echo "    <property>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
 #            echo "        <name>yarn.scheduler.minimum-allocation-vcores</name>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
 #            echo "        <value>1</value>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
 #            echo "    </property>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
