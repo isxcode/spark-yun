@@ -318,19 +318,21 @@ public class WorkBizService {
         if (!InstanceStatus.SUCCESS.equals(workInstanceEntity.getStatus())) {
             throw new IsxAppException("只有成功实例，才可查看数据");
         }
+
+        // 根据作业类型返回结果
+        WorkEntity workEntity = workService.getWorkEntity(workInstanceEntity.getWorkId());
+        if (WorkType.SPARK_JAR.equals(workEntity.getWorkType()) || WorkType.BASH.equals(workEntity.getWorkType())
+            || WorkType.PYTHON.equals(workEntity.getWorkType()) || WorkType.PY_SPARK.equals(workEntity.getWorkType())) {
+            return new GetDataRes(null, null, workInstanceEntity.getResultData());
+        }
+
+        // 以下作业需要解析workInstanceEntity.getResultData()
         if (Strings.isEmpty(workInstanceEntity.getResultData())) {
             throw new IsxAppException("请等待作业运行完毕或者对应作业无返回结果");
         }
 
-        // 根据作业类型返回结果
-        WorkEntity workEntity = workService.getWorkEntity(workInstanceEntity.getWorkId());
         if (WorkType.API.equals(workEntity.getWorkType()) || WorkType.CURL.equals(workEntity.getWorkType())) {
             return new GetDataRes(null, JSON.toJSONString(JSON.parse(workInstanceEntity.getResultData()), true), null);
-        }
-
-        if (WorkType.SPARK_JAR.equals(workEntity.getWorkType()) || WorkType.BASH.equals(workEntity.getWorkType())
-            || WorkType.PYTHON.equals(workEntity.getWorkType()) || WorkType.PY_SPARK.equals(workEntity.getWorkType())) {
-            return new GetDataRes(null, null, workInstanceEntity.getResultData());
         }
 
         if (WorkType.QUERY_JDBC_SQL.equals(workEntity.getWorkType())
