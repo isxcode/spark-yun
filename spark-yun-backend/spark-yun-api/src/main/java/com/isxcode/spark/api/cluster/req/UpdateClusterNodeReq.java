@@ -55,4 +55,7 @@ public class UpdateClusterNodeReq {
 
     @Schema(title = "sparkHome", example = "/xxx")
     private String sparkHomePath;
+
+    @Schema(title = "flinkHome", example = "/xxx")
+    private String flinkHomePath;
 }

@@ -102,7 +102,7 @@ public class ClusterNodeBizService {
             clusterNode.setFlinkHomePath(clusterNode.getAgentHomePath() + "/" + PathConstants.AGENT_PATH_NAME + "/"
                 + PathConstants.FLINK_MIN_HOME);
         } else {
-            clusterNode.setFlinkHomePath(addClusterNodeReq.getSparkHomePath());
+            clusterNode.setFlinkHomePath(addClusterNodeReq.getFlinkHomePath());
         }
 
         // 持久化数据
@@ -146,6 +146,14 @@ public class ClusterNodeBizService {
                 + PathConstants.SPARK_MIN_HOME);
         } else {
             clusterNode.setSparkHomePath(updateClusterNodeReq.getSparkHomePath());
+        }
+
+        // 如果是默认安装flink,设置默认路径
+        if (updateClusterNodeReq.getInstallFlinkLocal() || !AgentType.StandAlone.equals(cluster.getClusterType())) {
+            clusterNode.setFlinkHomePath(clusterNode.getAgentHomePath() + "/" + PathConstants.AGENT_PATH_NAME + "/"
+                + PathConstants.FLINK_MIN_HOME);
+        } else {
+            clusterNode.setFlinkHomePath(updateClusterNodeReq.getFlinkHomePath());
         }
 
         // 设置代理端口号
