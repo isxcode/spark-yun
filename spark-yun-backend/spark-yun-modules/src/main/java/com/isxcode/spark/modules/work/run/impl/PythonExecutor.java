@@ -58,12 +58,12 @@ public class PythonExecutor extends WorkExecutor {
     private final SecretKeyRepository secretKeyRepository;
 
     public PythonExecutor(WorkInstanceRepository workInstanceRepository,
-                          WorkflowInstanceRepository workflowInstanceRepository, SqlValueService sqlValueService,
-                          SqlFunctionService sqlFunctionService, AlarmService alarmService, WorkEventRepository workEventRepository,
-                          Locker locker, WorkRepository workRepository, WorkRunJobFactory workRunJobFactory,
-                          WorkConfigRepository workConfigRepository, VipWorkVersionRepository vipWorkVersionRepository,
-                          ClusterNodeMapper clusterNodeMapper, AesUtils aesUtils, ClusterNodeRepository clusterNodeRepository,
-                          ClusterRepository clusterRepository, WorkService workService, SecretKeyRepository secretKeyRepository) {
+        WorkflowInstanceRepository workflowInstanceRepository, SqlValueService sqlValueService,
+        SqlFunctionService sqlFunctionService, AlarmService alarmService, WorkEventRepository workEventRepository,
+        Locker locker, WorkRepository workRepository, WorkRunJobFactory workRunJobFactory,
+        WorkConfigRepository workConfigRepository, VipWorkVersionRepository vipWorkVersionRepository,
+        ClusterNodeMapper clusterNodeMapper, AesUtils aesUtils, ClusterNodeRepository clusterNodeRepository,
+        ClusterRepository clusterRepository, WorkService workService, SecretKeyRepository secretKeyRepository) {
 
         super(alarmService, locker, workRepository, workInstanceRepository, workflowInstanceRepository,
             workEventRepository, workRunJobFactory, sqlFunctionService, workConfigRepository, vipWorkVersionRepository,
@@ -84,7 +84,7 @@ public class PythonExecutor extends WorkExecutor {
 
     @Override
     protected String execute(WorkRunContext workRunContext, WorkInstanceEntity workInstance,
-                             WorkEventEntity workEvent) {
+        WorkEventEntity workEvent) {
 
         // 获取日志
         StringBuilder logBuilder = new StringBuilder(workInstance.getSubmitLog());
