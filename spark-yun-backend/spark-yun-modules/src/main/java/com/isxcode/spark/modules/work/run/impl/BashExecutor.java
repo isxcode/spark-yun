@@ -272,7 +272,11 @@ public class BashExecutor extends WorkExecutor {
             // 解析日志和结果并保存
             String backStr = logCommand.replace("zhiqingyun_success", "");
             workInstance.setYarnLog(backStr);
-            workInstance.setResultData(backStr.substring(0, backStr.length() - 2));
+            if (backStr.endsWith("\n\n")) {
+                workInstance.setResultData(backStr.substring(0, backStr.length() - 2));
+            } else {
+                workInstance.setResultData(backStr);
+            }
 
             // 如果日志不包含关键字则为异常
             if (!logCommand.contains("zhiqingyun_success")) {
