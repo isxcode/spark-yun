@@ -51,4 +51,7 @@ public class AddClusterNodeReq {
 
     @Schema(title = "spark安装路径", example = "/xxx")
     private String sparkHomePath;
+
+    @Schema(title = "flink安装路径", example = "/xxx")
+    private String flinkHomePath;
 }
