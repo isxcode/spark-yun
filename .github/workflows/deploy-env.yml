@@ -22,7 +22,7 @@ on:
         type: string
         default: Isxcode123..
       ali:
-        description: buy server [CentOs-7.5]
+        description: buy server [CentOs-7.9]
         default: https://ecs-buy.aliyun.com/ecs
         type: string
 
