@@ -71,7 +71,6 @@ jobs:
             echo "  ]," >> /etc/docker/daemon.json
             echo "  \"data-root\":\"/data/docker\"" >> /etc/docker/daemon.json
             echo "}" >> /etc/docker/daemon.json
-            systemctl enable docker
             systemctl start docker
             cd /tmp
             curl -s -O https://mirrors.tuna.tsinghua.edu.cn/apache/hadoop/core/hadoop-3.3.5/hadoop-3.3.5.tar.gz
