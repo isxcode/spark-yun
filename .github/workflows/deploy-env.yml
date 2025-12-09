@@ -226,6 +226,16 @@ jobs:
             echo "</configuration>" >> /opt/hadoop/etc/hadoop/yarn-site.xml
             start-yarn.sh
             mapred --daemon start historyserver
+
+      - name: Install env2
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ inputs.dev_server_ip }}
+          username: ${{ inputs.dev_server_username }}
+          password: ${{ inputs.dev_server_password }}
+          script_stop: true
+          timeout: 3600s
+          script: |  
             mkdir -p /data/mysql/data
             mkdir -p /data/mysql/conf.d
             docker run --name isxcode-mysql --privileged=true --restart=always -d -p 30306:3306 -e MYSQL_ROOT_PASSWORD=root123 -e MYSQL_DATABASE=hive_db -v /data/mysql/data:/var/lib/mysql -v /data/mysql/conf.d:/etc/mysql/conf.d mysql:8.0
