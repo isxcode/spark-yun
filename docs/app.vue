@@ -26,6 +26,10 @@ nextTick(() => {
 });
 
 onMounted(() => {
+
+  // 打印当前版本号
+  console.log( '当前版本号: GH-2139' )
+
   // 确保实例已设置
   if (topLoadingBarRef.value) {
     setInstance(topLoadingBarRef.value);
