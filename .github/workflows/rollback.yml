@@ -30,7 +30,7 @@ jobs:
           script_stop: true
           timeout: 1800s
           script: |
-            bash /opt/zhiqingyun/bin/stop.sh
+            jps | grep zhiqingyun.jar | awk '{print $1}' | xargs -r kill -9
             if [ -d "/opt/zhiqingyun/resources_back" ]; then
               rm -rf /opt/zhiqingyun/resources/*
               cp -r /opt/zhiqingyun/resources_back/* /opt/zhiqingyun/resources/
