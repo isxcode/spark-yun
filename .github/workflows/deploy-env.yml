@@ -62,7 +62,7 @@ jobs:
             yum install java-1.8.0-openjdk-devel java-1.8.0-openjdk -y
             yum install -y yum-utils
             yum-config-manager --add-repo https://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
-            yum install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+            yum install -y docker-ce docker-ce-cli containerd.io
             mkdir -p /data/docker
             mkdir -p /etc/docker
             echo "{" > /etc/docker/daemon.json
