@@ -33,7 +33,7 @@ mainClass： org.apache.spark.examples.SparkPi
 
 ##### 自定义作业java实例
 
-参考地址：https://github.com/isxcode/spark-job-template
+参考地址：https://github.com/ispong/spark-job-template
 
 > 自定义作业，用args接受一句sql并执行 
 > 使用exportResult()方法导出数据，在界面显示查询的数据
