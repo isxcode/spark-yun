@@ -21,6 +21,16 @@ on:
         required: true
         type: string
         default: Isxcode123..
+      update_demo_host:
+          description: 'update demo env host'
+          required: true
+          type: boolean
+          default: true
+      install_latest_agent:
+        description: 'install latest agent'
+        required: true
+        type: boolean
+        default: true
       ali:
         description: buy server [CentOs-7.9]
         default: https://ecs-buy.aliyun.com/ecs
@@ -286,6 +296,7 @@ jobs:
 
       - name: Start agent
         uses: appleboy/ssh-action@v1.0.3
+        if: ${{ inputs.install_latest_agent == true }}
         with:
           host: ${{ inputs.dev_server_ip }}
           username: ${{ inputs.dev_server_username }}
@@ -347,6 +358,7 @@ jobs:
 
       - name: Update demo hosts
         uses: appleboy/ssh-action@v1.0.3
+        if: ${{ inputs.update_demo_host == true }}
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
