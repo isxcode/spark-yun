@@ -203,3 +203,30 @@ export function CodeRemarkEdit(params: any): Promise<any> {
         params: params
     })
 }
+
+// 元数据 - 数据源的血缘关系
+export function GetDataLineageByDatasource(params: any): Promise<any> {
+    return http.request({
+        method: 'post',
+        url: '/vip/meta/getDbLinage',
+        params: params
+    })
+}
+
+// 元数据 - 表的血缘关系
+export function GetDataLineageByTable(params: any): Promise<any> {
+    return http.request({
+        method: 'post',
+        url: '/vip/meta/getTableLinage',
+        params: params
+    })
+}
+
+// 元数据 - 字段的血缘关系
+export function GetDataLineageByCode(params: any): Promise<any> {
+    return http.request({
+        method: 'post',
+        url: '/vip/meta/getColumnLinage',
+        params: params
+    })
+}
