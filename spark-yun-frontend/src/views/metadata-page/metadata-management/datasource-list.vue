@@ -11,7 +11,8 @@
             <ZStatusTag :status="scopeSlot.row.status"></ZStatusTag>
         </template>
         <template #options="scopeSlot">
-            <div class="btn-group btn-group__center">
+            <div class="btn-group">
+                <span @click="dataLineageEvent(scopeSlot.row)">血缘</span>
                 <span @click="editEvent(scopeSlot.row)">备注</span>
             </div>
         </template>
@@ -19,10 +20,13 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, ref, onMounted, defineEmits} from 'vue'
+import { reactive, ref, onMounted, defineEmits, defineProps } from 'vue'
 import { GetMetadataManagementList } from '@/services/metadata-page.service'
 
-const emit = defineEmits(['redirectToTable', 'editEvent'])
+const emit = defineEmits(['redirectToTable', 'editEvent', 'dataLineageEvent'])
+const props = defineProps<{
+    keyword: string
+}>()
 
 const tableConfig = reactive({
     tableData: [],
@@ -66,7 +70,7 @@ const tableConfig = reactive({
             title: '操作',
             align: 'center',
             customSlot: 'options',
-            width: 60,
+            width: 80,
             fixed: 'right'
         }
     ],
@@ -85,7 +89,7 @@ function initData(searchKeyWord?: string) {
         GetMetadataManagementList({
             page: tableConfig.pagination.currentPage - 1,
             pageSize: tableConfig.pagination.pageSize,
-            searchKeyWord: searchKeyWord
+            searchKeyWord: searchKeyWord || props.keyword || ''
         }).then((res: any) => {
             tableConfig.tableData = res.data.content
             tableConfig.pagination.total = res.data.totalElements
@@ -122,6 +126,12 @@ function redirectToTable(data: any) {
 function editEvent(data: any) {
     data.pageType = 'datasource'
     emit('editEvent', data)
+}
+
+// 查看血缘
+function dataLineageEvent(data: any) {
+    data.pageType = 'datasource'
+    emit('dataLineageEvent', data)
 }
 
 onMounted(() => {

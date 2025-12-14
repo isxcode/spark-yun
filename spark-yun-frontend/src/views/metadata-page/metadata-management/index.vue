@@ -38,14 +38,17 @@
             <div class="zqy-table">
                 <component
                     :is="tabComponent"
+                    :keyword="keyword"
                     ref="currentTabRef"
                     @redirectToTable="redirectToTable"
                     @editEvent="editEvent"
+                    @dataLineageEvent="dataLineageEvent"
                 ></component>
             </div>
         </LoadingPage>
         <AddModal ref="addModalRef" />
         <RemarkModal ref="remarkModalRef"></RemarkModal>
+        <DataLineage @showDetail="showDetail" ref="dataLineageRef"></DataLineage>
     </div>
 </template>
 
@@ -58,17 +61,28 @@ import datasourceList from './datasource-list.vue'
 import tableList from './table-list.vue'
 import codeList from './code-list.vue'
 import {
-  AddMetadataTaskData,
-  CodeRemarkEdit,
-  DatasourceRemarkEdit,
-  FastTriggerMetadataTaskData,
-  GetMetadataManagementList,
-  RefreshMetadataManagementList,
-TableRemarkEdit
+    AddMetadataTaskData,
+    CodeRemarkEdit,
+    DatasourceRemarkEdit,
+    FastTriggerMetadataTaskData,
+    GetMetadataManagementList,
+    RefreshMetadataManagementList,
+    TableRemarkEdit,
+    GetDataLineageByDatasource,
+    GetDataLineageByTable,
+    GetDataLineageByCode
 } from '@/services/metadata-page.service'
 import { ElMessage } from 'element-plus'
 import AddModal from './add-modal/index.vue'
 import RemarkModal from './remark-modal/index.vue'
+import DataLineage from './data-lineage/index.vue'
+
+const guid = function () {
+    function S4() {
+        return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1)
+    }
+    return S4() + S4() + '-' + S4() + '-' + S4() + '-' + S4() + '-' + S4() + S4() + S4()
+}
 
 const breadCrumbList = reactive(BreadCrumbList)
 const keyword = ref('')
@@ -80,6 +94,7 @@ const currentTabRef = ref()
 const refreshLoading = ref<boolean>(false)
 const addModalRef = ref<any>(null)
 const remarkModalRef = ref<any>(null)
+const dataLineageRef = ref<any>(null)
 
 const datasourceId = ref('')
 const dbType = ref('')
@@ -247,6 +262,106 @@ function redirectToTable(data: any) {
     dbType.value = data.dbType
     changeTypeEvent('table', datasourceId.value)
     tableType.value = 'table'
+}
+
+function dataLineageEvent(data: any) {
+    dataLineageRef.value.showModal(data, (params?: any) => {
+        return new Promise((resolve: any, reject: any) => {
+            let requestParams = {
+                dbId: data.datasourceId,
+                tableName: data.tableName,
+                columnName: data.columnName,
+                lineageType: 'DOWN'
+            }
+            if (data.pageType === 'datasource') {
+                if (params) {
+                    requestParams.dbId = params.id
+                    requestParams.lineageType = params.lineageType
+                }
+                GetDataLineageByDatasource(requestParams).then((res: any) => {
+                    resolve(getFinalData(res.data, data.pageType))
+                }).catch((error: any) => {
+                    reject(error)
+                })
+            } else if (data.pageType === 'table') {
+                if (params) {
+                    requestParams.dbId = params.data.dbId
+                    requestParams.tableName = params.data.tableName,
+                    requestParams.lineageType = params.lineageType
+                }
+                GetDataLineageByTable(requestParams).then((res: any) => {
+                    resolve(getFinalData(res.data, data.pageType))
+                }).catch((error: any) => {
+                    reject(error)
+                })
+            } else if (data.pageType === 'code') {
+                if (params) {
+                    requestParams.dbId = params.data.dbId
+                    requestParams.tableName = params.data.tableName,
+                    requestParams.columnName = params.data.columnName,
+                    requestParams.lineageType = params.lineageType
+                }
+                GetDataLineageByCode(requestParams).then((res: any) => {
+                    resolve(getFinalData(res.data, data.pageType))
+                }).catch((error: any) => {
+                    reject(error)
+                })
+            }
+        })
+    })
+}
+
+// 递归格式化树节点数据
+function getFinalData(node: any, pageType: string) {
+    node.pageType = pageType
+    if (node && node.sonDbLineageList) {
+        // node.id = node.dbId
+        node.id = guid()
+        node.name = node.dbName
+        node.parent = node.parentDbLineageList
+        node.children = node.sonDbLineageList.map((child: any) => {
+            // child.id = child.dbId
+            child.id = guid()
+            child.name = child.dbName
+            child.pageType = pageType
+            return child
+        })
+    }
+    if (node && node.sonTableLineageList) {
+        // node.id = node.tableName
+        node.id = guid()
+        node.name = node.tableName
+        node.parent = node.parentTableLineageList
+        node.children = node.sonTableLineageList.map((child: any) => {
+            // child.id = child.tableName
+            child.id = guid()
+            child.name = child.tableName
+            child.pageType = pageType
+            return child
+        })
+    }
+    if (node && node.sonColumnLineageList) {
+        // node.id = node.columnName
+        node.id = guid()
+        node.name = node.columnName
+        node.parent = node.parentColumnLineageList
+        node.children = node.sonColumnLineageList.map((child: any) => {
+            // child.id = child.columnName
+            child.id = guid()
+            child.name = child.columnName
+            child.pageType = pageType
+            return child
+        })
+    }
+    return node
+}
+
+function showDetail(e: any) {
+    currentTabRef.value?.showPreviewModal({
+        datasourceId: '',
+        dbName: '',
+
+    })
 }
 
 onMounted(() => {
