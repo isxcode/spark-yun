@@ -38,12 +38,10 @@
 
 ### 快速部署
 
-> [!NOTE]
-> 访问地址：http://localhost:8080 <br/>
-> 管理员账号：admin <br/>
-> 管理员密码：admin123
-
 ```bash
+# 访问地址：http://localhost:8080
+# 管理员账号：admin 
+# 管理员密码：admin123
 docker run -p 8080:8080 -d isxcode/zhiqingyun
 ```
 
@@ -56,10 +54,8 @@ docker run -p 8080:8080 -d isxcode/zhiqingyun
 
 ### 源码构建
 
-> [!IMPORTANT]
-> 安装包路径: /tmp/spark-yun/spark-yun-dist/build/distributions/zhiqingyun.tar.gz
-
 ```bash
+# 安装包路径: /tmp/spark-yun/spark-yun-dist/build/distributions/zhiqingyun.tar.gz
 cd /tmp
 git clone https://github.com/isxcode/spark-yun.git
 docker run --rm \
@@ -89,15 +85,15 @@ docker run --rm \
         <td><img src="https://img.isxcode.com/picgo/10.png" alt="任务调度" width="400"/></td>
     </tr>
     <tr>
-        <td><img src="https://img.isxcode.com/picgo/9.png" alt="数据分析" width="400"/></td>
+       <td><img src="https://img.isxcode.com/picgo/1.png" alt="数据分层" width="400"/></td>
         <td><img src="https://img.isxcode.com/picgo/8.png" alt="自定义接口" width="400"/></td>
     </tr>
     <tr>
-        <td><img src="https://img.isxcode.com/picgo/1.png" alt="数据分层" width="400"/></td>
         <td><img src="https://img.isxcode.com/picgo/2.png" alt="数据地图" width="400"/></td>
+        <td><img src="https://img.isxcode.com/picgo/7.png" alt="分享表单" width="400"/></td>
     </tr>
     <tr>
+        <td><img src="https://img.isxcode.com/picgo/9.png" alt="数据分析" width="400"/></td>
         <td><img src="https://img.isxcode.com/picgo/6.png" alt="数据大屏" width="400"/></td>
-        <td><img src="https://img.isxcode.com/picgo/7.png" alt="分享表单" width="400"/></td>
     </tr>
 </table>
