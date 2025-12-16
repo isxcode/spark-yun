@@ -15,8 +15,8 @@
 | 部署文档:  | https://zhiqingyun.isxcode.com/zh/docs/zh/1/2                         |
 | 安装包下载: | https://zhiqingyun-demo.isxcode.com/tools/open/file/zhiqingyun.tar.gz |
 | 许可证下载: | https://zhiqingyun-demo.isxcode.com/tools/open/file/license.lic       |
-| 友情链接:  | [至数云 - 超轻量级人工智能应用平台](https://zhishuyun.isxcode.com)                    |
-| 关键词:   | 大数据计算, AI智能, 数仓, 数据清洗, 数据同步, Spark, Flink, Hadoop, Hive               |
+| 友情链接:  | [至数云 - 超轻量级人工智能应用平台](https://zhishuyun.isxcode.com)                   |
+| 关键词:   | 大数据计算, 智数, 湖仓, 数据清洗, 数据同步, Spark, Flink, Hadoop, Doris, Hive          |
 |        |                                                                       |
 
 ### 产品介绍
@@ -36,6 +36,13 @@
 > 体验账号：zhiyao </br>
 > 账号密码：zhiyao123
 
+### 相关文档
+
+- [快速入门](https://zhiqingyun.isxcode.com/zh/docs/zh/1/0)
+- [产品手册](https://zhiqingyun.isxcode.com/zh/docs/zh/2/0)
+- [开发手册](https://zhiqingyun.isxcode.com/zh/docs/zh/5/1)
+- [博客](https://ispong.isxcode.com/tags/spark/)
+
 ### 快速部署
 
 ```bash
@@ -44,13 +51,6 @@
 # 管理员密码：admin123
 docker run -p 8080:8080 -d isxcode/zhiqingyun
 ```
-
-### 相关文档
-
-- [快速入门](https://zhiqingyun.isxcode.com/zh/docs/zh/1/0)
-- [产品手册](https://zhiqingyun.isxcode.com/zh/docs/zh/2/0)
-- [开发手册](https://zhiqingyun.isxcode.com/zh/docs/zh/5/1)
-- [博客](https://ispong.isxcode.com/tags/spark/)
 
 ### 源码构建
 
@@ -86,10 +86,10 @@ docker run --rm \
     </tr>
     <tr>
        <td><img src="https://img.isxcode.com/picgo/1.png" alt="数据分层" width="400"/></td>
-        <td><img src="https://img.isxcode.com/picgo/8.png" alt="自定义接口" width="400"/></td>
+       <td><img src="https://img.isxcode.com/picgo/2.png" alt="数据地图" width="400"/></td>
     </tr>
     <tr>
-        <td><img src="https://img.isxcode.com/picgo/2.png" alt="数据地图" width="400"/></td>
+        <td><img src="https://img.isxcode.com/picgo/8.png" alt="自定义接口" width="400"/></td>
         <td><img src="https://img.isxcode.com/picgo/7.png" alt="分享表单" width="400"/></td>
     </tr>
     <tr>
