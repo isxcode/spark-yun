@@ -31,9 +31,11 @@ public class GetColumnLinageRes {
 
     private String workName;
 
+    private String workType;
+
     private String remark;
 
-    private List<GetColumnLinageRes> sonColumnLineageList;
+    private List<GetColumnLinageRes> children;
 
-    private List<GetColumnLinageRes> parentColumnLineageList;
+    private List<GetColumnLinageRes> parent;
 }
