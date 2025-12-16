@@ -114,7 +114,7 @@ jobs:
           timeout: 3600s
           script: |
             cd /tmp
-            curl -s -O https://mirrors.tuna.tsinghua.edu.cn/apache/hadoop/core/hadoop-3.3.5/hadoop-3.3.5.tar.gz
+            curl -s -O https://mirrors.aliyun.com/apache/hadoop/core/hadoop-3.3.5/hadoop-3.3.5.tar.gz
 
       - name: Install hadoop
         uses: appleboy/ssh-action@v1.0.3
@@ -348,7 +348,7 @@ jobs:
           timeout: 3600s
           script: |
             cd /tmp
-            curl -s -O https://mirrors.tuna.tsinghua.edu.cn/apache/kafka/3.7.2/kafka_2.12-3.7.2.tgz
+            curl -s -O https://mirrors.aliyun.com/apache/kafka/3.7.2/kafka_2.12-3.7.2.tgz
 
       - name: Install kafka
         uses: appleboy/ssh-action@v1.0.3
