@@ -16,7 +16,7 @@
 | 安装包下载: | https://zhiqingyun-demo.isxcode.com/tools/open/file/zhiqingyun.tar.gz |
 | 许可证下载: | https://zhiqingyun-demo.isxcode.com/tools/open/file/license.lic       |
 | 友情链接:  | [至数云 - 超轻量级人工智能应用平台](https://zhishuyun.isxcode.com)                   |
-| 关键词:   | 大数据计算, 智数, 湖仓, 数据清洗, 数据同步, Spark, Flink, Hadoop, Doris, Hive          |
+| 关键词:   | 大数据计算, 智数, 湖仓, 数据中台, 数据同步, Spark, Flink, Hadoop, Doris, Hive          |
 |        |                                                                       |
 
 ### 产品介绍
