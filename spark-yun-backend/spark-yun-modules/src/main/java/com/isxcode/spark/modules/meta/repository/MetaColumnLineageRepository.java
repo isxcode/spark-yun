@@ -33,11 +33,11 @@ public interface MetaColumnLineageRepository extends JpaRepository<MetaColumnLin
     List<MetaTableLinageAo> getTableSonLineage(@Param("tenantId") String tenantId, String fromDbId,
         String fromTableName);
 
-    @Query("select new com.isxcode.spark.api.meta.ao.MetaColumnLinageAo(M.id, M.fromDbId, M.fromTableName,M.fromColumnName, M.toDbId, M.toTableName,M.fromColumnName,D.dbType,D.name,M.remark,M.workVersionId,M.workId,W.name) from MetaColumnLineageEntity M left join DatasourceEntity D on M.fromDbId = D.id left join WorkEntity W on M.workId = W.id where M.toDbId = :toDbId and M.toTableName = :toTableName and M.toColumnName = :toColumnName and M.tenantId = :tenantId ")
+    @Query("select new com.isxcode.spark.api.meta.ao.MetaColumnLinageAo(M.id, M.fromDbId, M.fromTableName,M.fromColumnName, M.toDbId, M.toTableName,M.fromColumnName,D.dbType,D.name,M.remark,M.workVersionId,M.workId,W.name,W.workType) from MetaColumnLineageEntity M left join DatasourceEntity D on M.fromDbId = D.id left join WorkEntity W on M.workId = W.id where M.toDbId = :toDbId and M.toTableName = :toTableName and M.toColumnName = :toColumnName and M.tenantId = :tenantId ")
     List<MetaColumnLinageAo> getColumnParentLineage(@Param("tenantId") String tenantId, String toDbId,
         String toTableName, String toColumnName);
 
-    @Query("select new com.isxcode.spark.api.meta.ao.MetaColumnLinageAo(M.id, M.fromDbId, M.fromTableName,M.fromColumnName, M.toDbId, M.toTableName,M.fromColumnName,D.dbType,D.name,M.remark,M.workVersionId,M.workId,W.name) from MetaColumnLineageEntity M left join DatasourceEntity D on M.toDbId = D.id left join WorkEntity W on M.workId = W.id where M.fromDbId = :fromDbId and M.fromTableName = :fromTableName and M.fromColumnName = :fromColumnName and M.tenantId = :tenantId ")
+    @Query("select new com.isxcode.spark.api.meta.ao.MetaColumnLinageAo(M.id, M.fromDbId, M.fromTableName,M.fromColumnName, M.toDbId, M.toTableName,M.fromColumnName,D.dbType,D.name,M.remark,M.workVersionId,M.workId,W.name,W.workType) from MetaColumnLineageEntity M left join DatasourceEntity D on M.toDbId = D.id left join WorkEntity W on M.workId = W.id where M.fromDbId = :fromDbId and M.fromTableName = :fromTableName and M.fromColumnName = :fromColumnName and M.tenantId = :tenantId ")
     List<MetaColumnLinageAo> getColumnSonLineage(@Param("tenantId") String tenantId, String fromDbId,
         String fromTableName, String fromColumnName);
 }

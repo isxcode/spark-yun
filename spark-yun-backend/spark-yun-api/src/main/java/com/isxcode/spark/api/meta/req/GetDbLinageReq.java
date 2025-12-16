@@ -12,7 +12,7 @@ public class GetDbLinageReq {
     @NotEmpty(message = "dbId不能为空")
     private String dbId;
 
-    @Schema(title = "上游UP/下游DOWN", example = "")
+    @Schema(title = "上游PARENT/下游SON", example = "")
     @NotEmpty(message = "lineageType不能为空")
     private String lineageType;
 }

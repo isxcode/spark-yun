@@ -21,7 +21,7 @@ public class GetTableLinageRes {
 
     private String tableName;
 
-    private List<GetTableLinageRes> sonTableLineageList;
+    private List<GetTableLinageRes> children;
 
-    private List<GetTableLinageRes> parentTableLineageList;
+    private List<GetTableLinageRes> parent;
 }

@@ -19,7 +19,7 @@ public class GetDbLinageRes {
 
     private String dbType;
 
-    private List<GetDbLinageRes> sonDbLineageList;
+    private List<GetDbLinageRes> children;
 
-    private List<GetDbLinageRes> parentDbLineageList;
+    private List<GetDbLinageRes> parent;
 }
