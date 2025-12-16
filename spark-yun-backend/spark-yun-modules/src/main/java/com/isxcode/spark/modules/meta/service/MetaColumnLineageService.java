@@ -54,7 +54,7 @@ public class MetaColumnLineageService {
                             + entity.getToDbId() + entity.getToTableName() + entity.getToColumnName(),
                         entity -> entity));
 
-        // 只继续新的血缘
+        // 只记录新的血缘
         List<MetaColumnLineageEntity> newLineageList = new ArrayList<>();
         syncWorkConfig.getColumnMap().forEach(column -> {
             String fromColumnName = column.getSource();
