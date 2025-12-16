@@ -15,8 +15,8 @@
 | 部署文档:  | https://zhiqingyun.isxcode.com/zh/docs/zh/1/2                         |
 | 安装包下载: | https://zhiqingyun-demo.isxcode.com/tools/open/file/zhiqingyun.tar.gz |
 | 许可证下载: | https://zhiqingyun-demo.isxcode.com/tools/open/file/license.lic       |
-| 友情链接:  | [至数云 - 超轻量级人工智能应用平台](https://zhishuyun.isxcode.com)                    |
-| 关键词:   | 大数据计算, AI智能, 数仓, 数据清洗, 数据同步, Spark, Flink, Hadoop, Hive               |
+| 友情链接:  | [至数云 - 超轻量级人工智能应用平台](https://zhishuyun.isxcode.com)                   |
+| 关键词:   | 大数据计算, 智数, 湖仓, 数据中台, 数据同步, Spark, Flink, Hadoop, Doris, Hive          |
 |        |                                                                       |
 
 ### 产品介绍
@@ -36,17 +36,6 @@
 > 体验账号：zhiyao </br>
 > 账号密码：zhiyao123
 
-### 快速部署
-
-> [!NOTE]
-> 访问地址：http://localhost:8080 <br/>
-> 管理员账号：admin <br/>
-> 管理员密码：admin123
-
-```bash
-docker run -p 8080:8080 -d isxcode/zhiqingyun
-```
-
 ### 相关文档
 
 - [快速入门](https://zhiqingyun.isxcode.com/zh/docs/zh/1/0)
@@ -54,12 +43,19 @@ docker run -p 8080:8080 -d isxcode/zhiqingyun
 - [开发手册](https://zhiqingyun.isxcode.com/zh/docs/zh/5/1)
 - [博客](https://ispong.isxcode.com/tags/spark/)
 
-### 源码构建
-
-> [!IMPORTANT]
-> 安装包路径: /tmp/spark-yun/spark-yun-dist/build/distributions/zhiqingyun.tar.gz
+### 快速部署
 
 ```bash
+# 访问地址：http://localhost:8080
+# 管理员账号：admin 
+# 管理员密码：admin123
+docker run -p 8080:8080 -d isxcode/zhiqingyun
+```
+
+### 源码构建
+
+```bash
+# 安装包路径: /tmp/spark-yun/spark-yun-dist/build/distributions/zhiqingyun.tar.gz
 cd /tmp
 git clone https://github.com/isxcode/spark-yun.git
 docker run --rm \
@@ -68,3 +64,36 @@ docker run --rm \
   -it registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun-build:latest-amd \
   /bin/bash -c "source /etc/profile && gradle install clean package"
 ```
+
+### 产品展示
+
+<table>
+    <tr>
+        <td><img src="https://img.isxcode.com/picgo/4.png" alt="登录页" width="400"/></td>
+        <td><img src="https://img.isxcode.com/picgo/3.png" alt="首页" width="400"/></td>
+    </tr>
+    <tr>
+        <td><img src="https://img.isxcode.com/picgo/13.png" alt="数据源" width="400"/></td>
+        <td><img src="https://img.isxcode.com/picgo/5.png" alt="作业流" width="400"/></td>
+    </tr>
+    <tr>
+        <td><img src="https://img.isxcode.com/picgo/11.png" alt="pySpark" width="400"/></td>
+        <td><img src="https://img.isxcode.com/picgo/12.png" alt="运行结果" width="400"/></td>
+    </tr>
+    <tr>
+        <td><img src="https://img.isxcode.com/picgo/14.png" alt="作业配置" width="400"/></td>
+        <td><img src="https://img.isxcode.com/picgo/10.png" alt="任务调度" width="400"/></td>
+    </tr>
+    <tr>
+       <td><img src="https://img.isxcode.com/picgo/1.png" alt="数据分层" width="400"/></td>
+       <td><img src="https://img.isxcode.com/picgo/2.png" alt="数据地图" width="400"/></td>
+    </tr>
+    <tr>
+        <td><img src="https://img.isxcode.com/picgo/8.png" alt="自定义接口" width="400"/></td>
+        <td><img src="https://img.isxcode.com/picgo/7.png" alt="分享表单" width="400"/></td>
+    </tr>
+    <tr>
+        <td><img src="https://img.isxcode.com/picgo/9.png" alt="数据分析" width="400"/></td>
+        <td><img src="https://img.isxcode.com/picgo/6.png" alt="数据大屏" width="400"/></td>
+    </tr>
+</table>
