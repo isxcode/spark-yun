@@ -1,16 +1,19 @@
 <template>
     <BlockTable :table-config="tableConfig">
         <template #options="scopeSlot">
-            <div class="btn-group btn-group__center">
+            <div class="btn-group">
+                <span @click="dataLineageEvent(scopeSlot.row)">血缘</span>
                 <span @click="editEvent(scopeSlot.row)">备注</span>
             </div>
         </template>
     </BlockTable>
+    <DataLineage :isCode="true" ref="dataLineageRef"></DataLineage>
 </template>
 
 <script lang="ts" setup>
-import { onMounted, defineEmits, defineProps, reactive } from 'vue'
-import { GetTableCodeInfo } from '@/services/metadata-page.service';
+import { ref, onMounted, defineEmits, defineProps, reactive } from 'vue'
+import { GetTableCodeInfo, GetDataLineageByCode  } from '@/services/metadata-page.service';
+import DataLineage from '../data-lineage/index.vue'
 
 interface colConfig {
     prop?: string;
@@ -28,6 +31,13 @@ interface TableConfig {
     colConfigs: Array<colConfig>;
     seqType: string;
     loading?: boolean; // 表格loading
+}
+
+const guid = function () {
+    function S4() {
+        return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1)
+    }
+    return S4() + S4() + '-' + S4() + '-' + S4() + '-' + S4() + '-' + S4() + S4() + S4()
 }
 
 const props = defineProps<{
@@ -59,7 +69,7 @@ const normalCol = [
         title: '操作',
         align: 'center',
         customSlot: 'options',
-        width: 60,
+        width: 80,
         fixed: 'right'
     }
 ]
@@ -96,11 +106,12 @@ const hiveCol = [
         title: '操作',
         align: 'center',
         customSlot: 'options',
-        width: 60,
+        width: 80,
         fixed: 'right'
     }
 ]
 
+const dataLineageRef = ref<any>(null)
 const tableConfig = reactive<TableConfig>({
     tableData: [],
     colConfigs: [],
@@ -130,6 +141,52 @@ function editEvent(data: any) {
             initData()
         }
     })
+}
+
+function dataLineageEvent(data: any) {
+    dataLineageRef.value.showModal(data, (params?: any) => {
+        return new Promise((resolve: any, reject: any) => {
+            let requestParams = {
+                dbId: data.datasourceId,
+                tableName: data.tableName,
+                columnName: data.columnName,
+                lineageType: 'SON'
+            }
+            if (params) {
+                requestParams.dbId = params.data.dbId
+                requestParams.tableName = params.data.tableName,
+                requestParams.columnName = params.data.columnName,
+                requestParams.lineageType = params.lineageType
+            }
+            GetDataLineageByCode(requestParams).then((res: any) => {
+                resolve(getFinalData(res.data, 'code'))
+            }).catch((error: any) => {
+                reject(error)
+            })
+        })
+    })
+}
+
+// 递归格式化树节点数据
+function getFinalData(node: any, pageType: string) {
+    node.pageType = pageType
+    if (node && node.children && pageType === 'code') {
+        node.id = guid()
+        node.name = node.columnName
+        node.children = (node.children || []).map((item: any) => {
+            item.id = guid()
+            item.name = item.columnName
+            item.pageType = pageType
+            return item
+        })
+        node.parent = (node.parent || []).map((item: any) => {
+            item.id = guid()
+            item.name = item.columnName
+            item.pageType = pageType
+            return item
+        })
+    }
+    return node
 }
 
 onMounted(() => {

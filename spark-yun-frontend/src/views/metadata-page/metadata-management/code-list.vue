@@ -117,7 +117,6 @@ function initPage() {
 }
 
 function showPreviewModal(data: any) {
-    debugger
     previewModalRef.value.showModal(data)
 }
 
