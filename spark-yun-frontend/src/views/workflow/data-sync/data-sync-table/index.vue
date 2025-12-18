@@ -1,16 +1,16 @@
 <template>
-    <div class="select-link-type">
+    <div class="select-link-type" v-if="!disabled">
         <el-button v-for="button in buttons" :key="button.text" :type="button.type" link
                    @click="clickSelectLinkConnect(button.code)">{{ button.text }}
         </el-button>
     </div>
-    <div class="data-sync-body" id="container" v-if="showDataSync" v-loading="connectNodeLoading">
+    <div class="data-sync-body" :class="{ 'data-sync-body__disabled': disabled }" id="container" v-if="showDataSync" v-loading="connectNodeLoading">
         <div class="source-table-container">
             <el-table ref="sourceTableRef" :data="sourceTableColumn" row-key="code">
                 <el-table-column prop="code" :show-overflow-tooltip="true" label="字段名" />
                 <el-table-column prop="type" :show-overflow-tooltip="true" label="类型" />
                 <el-table-column prop="sql" :show-overflow-tooltip="true" label="转换" />
-                <el-table-column label="" width="8px">
+                <el-table-column label="" width="8px" v-if="!disabled">
                     <template #default="scope">
                         <el-dropdown trigger="click">
                             <el-icon class="option-more" @click.stop>
@@ -94,7 +94,8 @@ interface codeParam {
 }
 
 const props = defineProps<{
-    formData: FormData
+    formData: FormData,
+    disabled: boolean
 }>()
 
 const authStore = useAuthStore()
@@ -211,13 +212,7 @@ function getTableColumnData(params: TableDetailParam, type: string, onlyInit?: b
 }
 
 function tableLinkInit() {
-    instance = jsPlumb.getInstance({
-        Connector: 'Straight', //连接线形状 Bezier: 贝塞尔曲线 Flowchart: 具有90度转折点的流程线 StateMachine: 状态机 Straight: 直线
-        PaintStyle: { strokeWidth: 2, stroke: '#ff7c06' }, //连接线样式
-        Endpoint: ['Blank', { radius: 1 }], //端点
-        Anchor: 'Right',
-        // 绘制箭头
-        ConnectionOverlays: [['Arrow', { width: 6, length: 6, location: 1 }],
+    const arrow = [['Arrow', { width: 6, length: 6, location: 1 }],
         ['Label', {
             label: '<span class="delete-node-btn"><svg t="1695102875148" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="5710" width="64" height="64"><path d="M512.42496 512.28672m-336.20992 0a336.20992 336.20992 0 1 0 672.41984 0 336.20992 336.20992 0 1 0-672.41984 0Z" fill="#FFFFFF" p-id="5711"></path><path d="M512.667 1012.954c-276.425 0-500.513-224.090-500.513-500.513s224.090-500.513 500.513-500.513 500.513 224.090 500.513 500.513-224.090 500.513-500.513 500.513zM751.919 326.369c6.81-6.8 11.022-16.197 11.022-26.58s-4.212-19.781-11.022-26.58c-6.8-6.81-16.198-11.022-26.58-11.022-10.383 0-19.781 4.212-26.58 11.022l-186.081 186.081-186.089-186.081c-6.8-6.81-16.197-11.022-26.58-11.022s-19.781 4.212-26.58 11.022c-6.81 6.8-11.022 16.198-11.022 26.58 0 10.383 4.212 19.781 11.022 26.58l186.081 186.081-186.081 186.081c-6.996 6.834-11.334 16.365-11.334 26.908 0 20.769 16.837 37.607 37.607 37.607 10.535 0 20.057-4.332 26.885-11.31l186.087-186.122 186.081 186.123c6.833 6.986 16.355 11.317 26.891 11.317 20.769 0 37.607-16.837 37.607-37.607 0-10.542-4.336-20.074-11.327-26.9l-186.089-186.098 186.089-186.081z" fill="#eb5463" p-id="5712"></path></svg></span>',
             location: 0.8,
@@ -226,7 +221,14 @@ function tableLinkInit() {
             },
             cssClass: 'endpointLabel'
         }]
-        ],
+    ]
+    instance = jsPlumb.getInstance({
+        Connector: 'Straight', //连接线形状 Bezier: 贝塞尔曲线 Flowchart: 具有90度转折点的流程线 StateMachine: 状态机 Straight: 直线
+        PaintStyle: { strokeWidth: 2, stroke: '#ff7c06' }, //连接线样式
+        Endpoint: ['Blank', { radius: 1 }], //端点
+        Anchor: 'Right',
+        // 绘制箭头
+        ConnectionOverlays: props.disabled ? [] : arrow,
         EndpointStyle: { fill: '#000000' }, //端点样式
         Container: 'container' //目标容器id
     })
@@ -265,7 +267,9 @@ const initJsPlumb = () => {
         // 初始化jsPlumb 创建jsPlumb实例
         tableLinkInit()
         // 设置可以为连线起点和连线终点的元素
-        setContainer()
+        if (!props.disabled) {
+            setContainer()
+        }
 
         instance.bind('click', (conn: unknown, originalEvent: any) => {
             if (originalEvent.target.className === 'delete-node-btn') {
@@ -429,6 +433,10 @@ defineExpose({
     display: flex;
     position: relative;
     width: 100%;
+
+    &.data-sync-body__disabled {
+        margin-top: 20px;
+    }
 
     .el-table__empty-block {
         width: 100% !important;
