@@ -6,19 +6,23 @@
                 <EllipsisTooltip :label="config.name" />
             </p >
 
-            <el-icon @click="handleCommand('checkDown')" class="check-children"><CirclePlus /></el-icon>
+            <!-- <el-icon @click="handleCommand('checkDown')" class="check-children"><CirclePlus /></el-icon> -->
             <el-dropdown
                 trigger="click"
                 @command="handleCommand"
-                v-if="true || config.data.children && config.data.children.length || config.data.parent && config.data.parent.length">
+                v-if="config.data.children &&
+                    config.data.children.length ||
+                    config.data.parent && config.data.parent.length ||
+                    config.data.pageType === 'code' && !isCode
+                ">
                 <el-icon class="node-option-more">
                     <MoreFilled />
                 </el-icon>
                 <template #dropdown>
                     <el-dropdown-menu>
-                        <el-dropdown-item command="checkUp">查看上游</el-dropdown-item>
-                        <el-dropdown-item v-if="config.data.pageType === 'code'" command="showDetail">详情</el-dropdown-item>
-                        <!-- <el-dropdown-item v-if="config.data.children" command="checkDown">查看下游</el-dropdown-item> -->
+                        <el-dropdown-item v-if="config.data.parent && config.data.parent.length" command="checkUp">查看上游{{ config.data.parent }}</el-dropdown-item>
+                        <el-dropdown-item v-if="config.data.children && config.data.children.length" command="checkDown">查看下游</el-dropdown-item>
+                        <el-dropdown-item v-if="config.data.pageType === 'code' && !isCode" command="showDetail">详情</el-dropdown-item>
                     </el-dropdown-menu>
                 </template>
             </el-dropdown>
@@ -34,7 +38,8 @@ import EllipsisTooltip from '@/components/ellipsis-tooltip/ellipsis-tooltip.vue'
 import eventBus from '@/utils/eventBus'
 
 const props = defineProps<{
-    config: any
+    config: any,
+    isCode: boolean
 }>()
 
 function handleCommand(command: string) {
@@ -45,7 +50,7 @@ function handleCommand(command: string) {
 }
 
 onMounted(() => {
-    console.log('props参数', props)
+    // console.log('props参数', props)
 })
 </script>
 

@@ -2,18 +2,19 @@
  * @Author: fancinate 1585546519@qq.com
  * @Date: 2025-12-09 21:26:39
  * @LastEditors: fancinate 1585546519@qq.com
- * @LastEditTime: 2025-12-14 21:32:16
+ * @LastEditTime: 2025-12-18 22:35:50
  * @FilePath: /spark-yun/spark-yun-frontend/src/views/metadata-page/metadata-management/data-lineage/index.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
 <template>
     <BlockModal :model-config="modelConfig">
         <div id="containerDataLineage" class="containerDataLineage"></div>
+        <WorkDetail ref="workDetailRef"></WorkDetail>
     </BlockModal>
 </template>
 
 <script lang="ts" setup>
-import { reactive, defineExpose, ref, createVNode, onMounted, nextTick, defineEmits } from 'vue'
+import { reactive, defineExpose, defineProps, ref, createVNode, onMounted, nextTick, defineEmits } from 'vue'
 import { VueNode } from 'g6-extension-vue';
 import {
     Graph,
@@ -21,10 +22,12 @@ import {
     ExtensionCategory,
     treeToGraphData,
     GraphEvent,
-    TreeData
+    TreeData,
+    EdgeEvent
 } from '@antv/g6';
 import eventBus from '@/utils/eventBus'
 import CustomNode from './custom-node.vue';
+import WorkDetail from './work-detail.vue'
 
 let graph: any
 
@@ -36,9 +39,13 @@ const guid = function () {
 }
 
 const emit = defineEmits(['showDetail'])
+const props = defineProps<{
+    isCode: boolean
+}>()
 
 const callback = ref<any>()
 const lineageData = ref<any[]>([])
+const workDetailRef = ref<any>()
 
 const modelConfig = reactive({
     title: '数据血缘',
@@ -95,8 +102,8 @@ function initGraph(data: any) {
             type: 'center', // 自适应类型：'view' 或 'center'
             animation: {
                 // 自适应动画效果
-                duration: 300, // 动画持续时间(毫秒)
-                easing: 'ease-in-out', // 动画缓动函数
+                duration: 30, // 动画持续时间(毫秒)
+                // easing: 'ease-in-out', // 动画缓动函数
             }
         },
         node: {
@@ -104,7 +111,8 @@ function initGraph(data: any) {
             style: {
                 component: (data: any) => {
                     return createVNode(CustomNode, {
-                        config: data
+                        config: data,
+                        isCode: props.isCode
                     })
                 },
                 ports: [
@@ -148,9 +156,10 @@ function initGraph(data: any) {
             },
             getEdgeData: (source: TreeData, target: TreeData) => {
                 return {
-                    id: `${guid()}-${target.workId}`,
+                    id: `${guid()}&&sparkYun&&${target.workId || ''}&&sparkYun&&${target.workName || ''}&&sparkYun&&${target.workType || ''}`,
                     source: source.id,
                     target: target.id,
+                    name: target.workName,
                     data: target
                 }
             }
@@ -161,34 +170,65 @@ function initGraph(data: any) {
 }
 
 function renderGraph() {
-    // graph.once(GraphEvent.AFTER_RENDER, () => {
-    //     graph.fitView();
-    // });
+    graph.on(EdgeEvent.CLICK, (e, d) => {
+        const argumentsParams = e.target.id.split('&&sparkYun&&')
+        const workId = argumentsParams[1] ? argumentsParams[1] : ''
+        const name = argumentsParams[2] ? argumentsParams[2] : ''
+        const workType = argumentsParams[3] ? argumentsParams[3] : ''
+        workDetailRef.value.showModal({
+            workId: workId,
+            name: name,
+            workType: workType
+        })
+    });
     graph.render();
 }
 
 // 查看上游
 function getParentNode(data: any) {
-    data.lineageType = 'UP'
+    data.lineageType = 'PARENT'
     initData(data).then((res: any) => {
-        graph.setData(treeToGraphData(data, {
-            getEdgeData: (source: TreeData, target: TreeData) => {
-                return {
-                    id: `${source.id}-${target.id}-${target.data?.name}`,
-                    source: source.id,
-                    target: target.id,
-                    data: target.data,
-                    linkId: target.data?.name
-                }
+        const parentData = res.parent || []
+        if (parentData && parentData.length) {
+            const allData = graph.getData()
+            const parentNodeConfig = {
+                nodes: [],
+                edges: []
             }
-        }))
+            parentNodeConfig.nodes = parentData.map((pNode: any) => {
+                return {
+                    id: pNode.id,
+                    name: pNode.name,
+                    data: {
+                        ...pNode
+                    }
+                }
+            })
+            parentNodeConfig.nodes.forEach((node: any) => {
+                const target = allData.nodes.find(dd => {
+                    dd.data.parent = []
+                    return `${dd.data.dbId}${dd.data.tableName}${dd.data.columnName}` === `${res.dbId}${res.tableName}${res.columnName}`
+                })
+                parentNodeConfig.edges.push({
+                    data: res,
+                    id: `${guid()}&&sparkYun&&${res.workId || ''}&&sparkYun&&${res.workName || ''}&&sparkYun&&${res.workType || ''}`,
+                    source: node.id,
+                    target: target.id,
+                    name: target.workName
+                })
+            })
+            allData.edges = [...allData.edges, ...parentNodeConfig.edges]
+            allData.nodes = [...allData.nodes, ...parentNodeConfig.nodes]
+            graph.setData(allData)
+            renderGraph()
+        }
     }).catch((error) => {
         console.error('请求失败', error)
     })
 }
 // 查看下游
 function getChildNode(data: any) {
-    data.lineageType = 'DOWN'
+    data.lineageType = 'SON'
     initData(data).then((res: any) => {
         if (res.sonDbLineageList && res.sonDbLineageList.length) {
             graph.addChildrenData(data.id, res.sonDbLineageList.map((node: any) => {
