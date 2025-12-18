@@ -271,11 +271,11 @@ function dataLineageEvent(data: any) {
                 dbId: data.datasourceId,
                 tableName: data.tableName,
                 columnName: data.columnName,
-                lineageType: 'DOWN'
+                lineageType: 'SON'
             }
             if (data.pageType === 'datasource') {
                 if (params) {
-                    requestParams.dbId = params.id
+                    requestParams.dbId = params.data.dbId
                     requestParams.lineageType = params.lineageType
                 }
                 GetDataLineageByDatasource(requestParams).then((res: any) => {
@@ -314,43 +314,52 @@ function dataLineageEvent(data: any) {
 // 递归格式化树节点数据
 function getFinalData(node: any, pageType: string) {
     node.pageType = pageType
-    if (node && node.sonDbLineageList) {
-        // node.id = node.dbId
+    if (node && pageType === 'datasource') {
         node.id = guid()
         node.name = node.dbName
-        node.parent = node.parentDbLineageList
-        node.children = node.sonDbLineageList.map((child: any) => {
-            // child.id = child.dbId
-            child.id = guid()
-            child.name = child.dbName
-            child.pageType = pageType
-            return child
+        node.children = (node.children || []).map((item: any) => {
+            item.id = guid()
+            item.name = item.dbName
+            item.pageType = pageType
+            return item
+        })
+        node.parent = (node.parent || []).map((item: any) => {
+            item.id = guid()
+            item.name = item.dbName
+            item.pageType = pageType
+            return item
         })
     }
-    if (node && node.sonTableLineageList) {
-        // node.id = node.tableName
+    if (node && pageType === 'table') {
         node.id = guid()
         node.name = node.tableName
-        node.parent = node.parentTableLineageList
-        node.children = node.sonTableLineageList.map((child: any) => {
-            // child.id = child.tableName
-            child.id = guid()
-            child.name = child.tableName
-            child.pageType = pageType
-            return child
+        node.children = (node.children || []).map((item: any) => {
+            item.id = guid()
+            item.name = item.tableName
+            item.pageType = pageType
+            return item
+        })
+        node.parent = (node.parent || []).map((item: any) => {
+            item.id = guid()
+            item.name = item.tableName
+            item.pageType = pageType
+            return item
         })
     }
-    if (node && node.sonColumnLineageList) {
-        // node.id = node.columnName
+    if (node && node.children && pageType === 'code') {
         node.id = guid()
         node.name = node.columnName
-        node.parent = node.parentColumnLineageList
-        node.children = node.sonColumnLineageList.map((child: any) => {
-            // child.id = child.columnName
-            child.id = guid()
-            child.name = child.columnName
-            child.pageType = pageType
-            return child
+        node.children = (node.children || []).map((item: any) => {
+            item.id = guid()
+            item.name = item.columnName
+            item.pageType = pageType
+            return item
+        })
+        node.parent = (node.parent || []).map((item: any) => {
+            item.id = guid()
+            item.name = item.columnName
+            item.pageType = pageType
+            return item
         })
     }
     return node
@@ -358,9 +367,9 @@ function getFinalData(node: any, pageType: string) {
 
 function showDetail(e: any) {
     currentTabRef.value?.showPreviewModal({
-        datasourceId: '',
-        dbName: '',
-
+        datasourceId: e.data.dbId,
+        dbName: e.data.dbName,
+        tableName: e.data.tableName,
     })
 }
 

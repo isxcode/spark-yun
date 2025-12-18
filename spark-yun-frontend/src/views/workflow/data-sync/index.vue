@@ -1,6 +1,6 @@
 <template>
-    <div class="data-sync-page">
-        <div class="data-sync__option-container">
+    <div class="data-sync-page" :class="{ 'work-detail__disabled': disabled }">
+        <div class="data-sync__option-container" v-if="!disabled">
             <div class="btn-box" @click="goBack">
                 <el-icon>
                     <RefreshLeft />
@@ -78,7 +78,7 @@
                                 <span>数据来源</span>
                             </div>
                         </template>
-                        <el-form ref="form" label-position="left" label-width="70px" :model="formData" :rules="rules">
+                        <el-form ref="form" label-position="left" label-width="70px" :model="formData" :rules="rules" :disabled="disabled">
                             <el-form-item prop="sourceDBType" label="类型">
                                 <el-select v-model="formData.sourceDBType" clearable filterable placeholder="请选择"
                                     @change="dbTypeChange('source')">
@@ -87,7 +87,7 @@
                                 </el-select>
                             </el-form-item>
                             <el-form-item prop="sourceDBId" label="数据源">
-                                <el-tooltip content="数据源网速直接影响同步速度,推荐使用内网ip" placement="top">
+                                <el-tooltip v-if="!disabled" content="数据源网速直接影响同步速度,推荐使用内网ip" placement="top">
                                     <el-icon style="left: -30px" class="tooltip-msg"><QuestionFilled /></el-icon>
                                 </el-tooltip>
                                 <el-select v-model="formData.sourceDBId" clearable filterable placeholder="请选择"
@@ -104,7 +104,7 @@
                                     <el-option v-for="item in sourceTablesList" :key="item.value" :label="item.label"
                                         :value="item.value" />
                                 </el-select>
-                                <el-button type="primary" link @click="showTableDetail">数据预览</el-button>
+                                <el-button v-if="!disabled" type="primary" link @click="showTableDetail">数据预览</el-button>
                             </el-form-item>
                             <el-form-item label="分区键">
                                 <el-select v-model="formData.partitionColumn" clearable filterable placeholder="请选择"
@@ -115,10 +115,10 @@
                                 </el-select>
                             </el-form-item>
                             <el-form-item prop="queryCondition" label="过滤条件">
-                                 <el-tooltip content="例如：age > 12 and username = 'zhangsan'，不需要填写where" placement="top">
+                                 <el-tooltip v-if="!disabled" content="例如：age > 12 and username = 'zhangsan'，不需要填写where" placement="top">
                                     <el-icon style="left: -20px" class="tooltip-msg"><QuestionFilled /></el-icon>
                                 </el-tooltip>
-                                <code-mirror v-model="formData.queryCondition" basic :lang="lang" @change="pageChangeEvent" />
+                                <code-mirror v-model="formData.queryCondition" basic :lang="lang" @change="pageChangeEvent" :disabled="disabled" />
                             </el-form-item>
                         </el-form>
                     </el-card>
@@ -128,7 +128,7 @@
                                 <span>数据去向</span>
                             </div>
                         </template>
-                        <el-form ref="form" label-position="left" label-width="70px" :model="formData" :rules="rules">
+                        <el-form ref="form" label-position="left" label-width="70px" :model="formData" :rules="rules" :disabled="disabled">
                             <el-form-item prop="targetDBType" label="类型">
                                 <el-select v-model="formData.targetDBType" clearable filterable placeholder="请选择"
                                     @change="dbTypeChange('target')">
@@ -162,7 +162,7 @@
                         </el-form>
                     </el-card>
                 </div>
-                <data-sync-table ref="dataSyncTableRef" :formData="formData"></data-sync-table>
+                <data-sync-table ref="dataSyncTableRef" :disabled="disabled" :formData="formData"></data-sync-table>
             </div>
         </LoadingPage>
         <!-- 数据同步日志部分  v-if="instanceId" -->
@@ -214,7 +214,8 @@ interface Option {
 }
 
 const props = defineProps<{
-    workItemConfig: any
+    workItemConfig: any,
+    disabled?: boolean
 }>()
 
 const emit = defineEmits(['back', 'locationNode'])
@@ -668,6 +669,9 @@ onMounted(() => {
     background-color: #ffffff;
     width: 100%;
     // border-left: 1px solid var(--el-border-color);
+    &.work-detail__disabled {
+        padding-top: 0;
+    }
 
     .data-sync__option-container {
         height: 50px;
