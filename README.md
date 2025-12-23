@@ -7,34 +7,63 @@
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fisxcode%2Fspark-yun.svg?type=shield&issueType=license)](https://app.fossa.com/projects/git%2Bgithub.com%2Fisxcode%2Fspark-yun?ref=badge_shield&issueType=license)
 [![GitHub License](https://img.shields.io/github/license/isxcode/spark-yun)](https://github.com/isxcode/spark-yun/blob/main/LICENSE)
 
-|        |                                                                       |
-|--------|-----------------------------------------------------------------------|
-| 产品官网:  | https://zhiqingyun.isxcode.com                                        |
-| 源码仓库:  | https://github.com/isxcode/spark-yun                                  |
-| 演示环境:  | https://zhiqingyun-demo.isxcode.com                                   |
-| 部署文档:  | https://zhiqingyun.isxcode.com/zh/docs/zh/1/2                         |
-| 安装包下载: | https://zhiqingyun-demo.isxcode.com/tools/open/file/zhiqingyun.tar.gz |
-| 许可证下载: | https://zhiqingyun-demo.isxcode.com/tools/open/file/license.lic       |
-| 友情链接:  | [至数云 - 超轻量级人工智能应用平台](https://zhishuyun.isxcode.com)                   |
-| 关键词:   | 大数据计算, 智数, 湖仓, 数据中台, 数据同步, Spark, Flink, Hadoop, Doris, Hive          |
-|        |                                                                       |
+<table>
+    <tr>
+        <td>产品官网</td>
+        <td>https://zhiqingyun.isxcode.com</td>
+    </tr>
+    <tr>
+        <td>源码仓库</td>
+        <td>https://github.com/isxcode/spark-yun</td>
+    </tr>
+    <tr>
+        <td>演示环境</td>
+        <td>https://zhiqingyun-demo.isxcode.com</td>
+    </tr>
+    <tr>
+        <td>部署文档</td>
+        <td>https://zhiqingyun.isxcode.com/zh/docs/zh/1/2</td></tr>
+    <tr>
+        <td>安装包下载</td>
+        <td>https://zhiqingyun-demo.isxcode.com/tools/open/file/zhiqingyun.tar.gz</td>
+    </tr>
+    <tr>
+        <td>许可证下载</td>
+        <td>https://zhiqingyun-demo.isxcode.com/tools/open/file/license.lic</td>
+    </tr>
+    <tr>
+        <td>友情链接</td>
+        <td><a href="https://zhishuyun.isxcode.com">[至数云] - 超轻量级人工智能应用平台</a></td>
+    </tr>
+    <tr>
+        <td>关键词</td>
+        <td>大数据计算, 智数, 湖仓, 数据中台, 数据同步, Spark, Flink, Hadoop, Doris, Hive</td>
+    </tr>
+</table>
 
 ### 产品介绍
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;至轻云是一款企业级、智能化大数据中心。一键部署，开箱即用。可快速实现大数据计算、数据采集、数据清洗、数据安全、数据质量、数据管理、数据接口开放等功能，助力企业构建新一代智慧数据中心。
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;至轻云是一款企业级、智能化大数据中心。一键部署，开箱即用。可快速实现大数据计算、数据采集、数据清洗、数据安全、数据质量、数据管理、数据接口开放等功能，助力企业构建新一代智慧数据中心。
 
-### 功能特点
+### 功能列表
 
-- **轻量级产品**: 无需安装额外组件，一键部署，开箱即用。
-- **云原生私有化**: 兼容云原生架构，支持多节点安装与高可用集群部署。
-- **分布式计算**: 基于分布式架构，高效执行复杂数据计算。
+| 模块   | 功能                       |
+|:-----|:-------------------------|
+| 首页   | 系统监控、集群监控、实例监控           |
+| 资源管理 | 计算集群、数据源、驱动管理、资源中心       |
+| 数据规划 | 数据分层、数据标准、数据建模           |
+| 数据开发 | 作业流、函数仓库、全局变量、实时计算、计算容器  |
+| 任务调度 | 调度历史                     |
+| 基线告警 | 消息体、基线配置、告警实例            |
+| 元数据  | 数据地图、数据采集、采集实例           |
+| 数据服务 | 数据卡片、数据大屏、接口服务、分享表单      |
+| 后台管理 | 用户中心、租户列表、租户成员、免密登录、证书安装 |
 
 ### 立即体验
 
-> [!TIP]
-> 演示地址：https://zhiqingyun-demo.isxcode.com </br>
-> 体验账号：zhiyao </br>
-> 账号密码：zhiyao123
+演示地址：https://zhiqingyun-demo.isxcode.com </br>
+体验账号：zhiyao </br>
+账号密码：zhiyao123
 
 ### 相关文档
 
