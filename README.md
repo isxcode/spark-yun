@@ -10,26 +10,26 @@
 <table>
     <tr>
         <td>产品官网</td>
-        <td>https://zhiqingyun.isxcode.com</td>
+        <td><a href="https://zhiqingyun.isxcode.com">https://zhiqingyun.isxcode.com</a></td>
     </tr>
     <tr>
         <td>源码仓库</td>
-        <td>https://github.com/isxcode/spark-yun</td>
+        <td><a href="https://github.com/isxcode/spark-yun">https://github.com/isxcode/spark-yun</a></td>
     </tr>
     <tr>
         <td>演示环境</td>
-        <td>https://zhiqingyun-demo.isxcode.com</td>
+        <td><a href="https://zhiqingyun-demo.isxcode.com">https://zhiqingyun-demo.isxcode.com</a></td>
     </tr>
     <tr>
         <td>部署文档</td>
-        <td>https://zhiqingyun.isxcode.com/zh/docs/zh/1/2</td></tr>
+        <td><a href="https://zhiqingyun.isxcode.com/zh/docs/zh/1/2">https://zhiqingyun.isxcode.com/zh/docs/zh/1/2</a></td></tr>
     <tr>
         <td>安装包下载</td>
-        <td>https://zhiqingyun-demo.isxcode.com/tools/open/file/zhiqingyun.tar.gz</td>
+        <td><a href="https://zhiqingyun-demo.isxcode.com/tools/open/file/zhiqingyun.tar.gz">https://zhiqingyun-demo.isxcode.com/tools/open/file/zhiqingyun.tar.gz</a></td>
     </tr>
     <tr>
         <td>许可证下载</td>
-        <td>https://zhiqingyun-demo.isxcode.com/tools/open/file/license.lic</td>
+        <td><a href="https://zhiqingyun-demo.isxcode.com/tools/open/file/license.lic">https://zhiqingyun-demo.isxcode.com/tools/open/file/license.lic</a></td>
     </tr>
     <tr>
         <td>友情链接</td>
