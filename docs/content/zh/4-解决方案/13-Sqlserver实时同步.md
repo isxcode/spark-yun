@@ -14,6 +14,32 @@ title: "Sqlserver实时同步"
 
 - 启动Sqlserver的表cdc
 
+> 指定cdc_source表开启cdc
+
+```sql
+create database ispong_db;
+
+-- 启用数据库的CDC功能
+USE ispong_db;
+EXEC sys.sp_cdc_enable_db;
+
+-- 查看数据库CDC是否已经启用，ispong_db库
+SELECT name, is_cdc_enabled
+FROM sys.databases
+WHERE name = 'ispong_db';
+
+-- 启用表的CDC功能
+USE ispong_db;
+EXEC sys.sp_cdc_enable_table
+     @source_schema = N'dbo',           
+     @source_name = N'cdc_source',        
+     @role_name = NULL;                   
+
+-- 查看表CDC是否已经启用
+use ispong_db;
+SELECT * FROM cdc.change_tables;
+```
+
 #### 解决方案
 
 > 创建FlinkSql作业类型，添加以下依赖
