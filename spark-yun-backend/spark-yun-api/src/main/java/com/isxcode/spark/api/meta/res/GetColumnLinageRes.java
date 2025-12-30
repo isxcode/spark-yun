@@ -37,6 +37,12 @@ public class GetColumnLinageRes {
 
     private String remark;
 
+    private String workRemark;
+
+    private String workflowName;
+
+    private String workflowRemark;
+
     private List<GetColumnLinageRes> children;
 
     private List<GetColumnLinageRes> parent;
