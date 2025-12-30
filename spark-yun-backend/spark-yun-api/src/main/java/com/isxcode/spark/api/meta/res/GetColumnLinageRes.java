@@ -21,6 +21,8 @@ public class GetColumnLinageRes {
 
     private String dbType;
 
+    private String dbRemark;
+
     private String tableName;
 
     private String columnName;
