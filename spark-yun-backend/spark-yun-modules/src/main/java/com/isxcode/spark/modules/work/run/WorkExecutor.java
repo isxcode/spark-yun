@@ -289,8 +289,10 @@ public abstract class WorkExecutor {
                             alarmService.sendWorkMessage(workInstance, AlarmEventType.RUN_SUCCESS);
                         }
 
-                        // 任务运行成功，异步同步血缘
-                        metaColumnLineageService.addMetaColumnLineage(workRunContext);
+                        // 只有发布的作业，任务运行成功，才能异步同步血缘
+                        if (workRunContext.getVersionId() != null) {
+                            metaColumnLineageService.addMetaColumnLineage(workRunContext);
+                        }
                     }
                 }
             } catch (Exception e) {
