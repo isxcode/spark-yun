@@ -176,7 +176,6 @@
 
 <script lang="ts" setup>
 import  {ElMessage} from "element-plus";
-import Artplayer from "artplayer";
 import {defineProps} from "vue";
 import {useI18n} from "vue-i18n";
 import mediumZoom from "medium-zoom";
@@ -254,18 +253,80 @@ const toggleVideo = () => {
 };
 
 onMounted(() => {
-  const art = new Artplayer({
-    container: '.artplayer-app',
-    url: 'https://zhiqingyun-demo.isxcode.com/tools/open/file/product.mp4',
-    poster: 'https://zhiqingyun-demo.isxcode.com/tools/open/file/product.jpg',
-    fullscreen: true,
-    fullscreenWeb: true,
-    pip: true,
-    autoplay: false,
-    theme: '#e25a1b',
-    muted: true,
-    autoSize: true
-  });
+  // 使用 Artplayer 容器嵌入 Bilibili 播放器
+  const container = document.querySelector('.artplayer-app');
+  if (container) {
+    // 创建封面容器
+    const posterWrapper = document.createElement('div');
+    posterWrapper.style.width = '100%';
+    posterWrapper.style.height = '100%';
+    posterWrapper.style.position = 'absolute';
+    posterWrapper.style.top = '0';
+    posterWrapper.style.left = '0';
+    posterWrapper.style.cursor = 'pointer';
+    posterWrapper.style.zIndex = '1';
+
+    // 创建封面图片
+    const poster = document.createElement('img');
+    poster.src = 'https://zhiqingyun-demo.isxcode.com/tools/open/file/product.jpg';
+    poster.style.width = '100%';
+    poster.style.height = '100%';
+    poster.style.objectFit = 'cover';
+
+    // 创建播放按钮
+    const playBtn = document.createElement('div');
+    playBtn.style.position = 'absolute';
+    playBtn.style.top = '50%';
+    playBtn.style.left = '50%';
+    playBtn.style.transform = 'translate(-50%, -50%)';
+    playBtn.style.width = '60px';
+    playBtn.style.height = '60px';
+    playBtn.style.backgroundColor = '#e25a1b';
+    playBtn.style.borderRadius = '50%';
+    playBtn.style.display = 'flex';
+    playBtn.style.alignItems = 'center';
+    playBtn.style.justifyContent = 'center';
+    playBtn.style.transition = 'transform 0.2s ease';
+
+    // 创建播放三角形图标
+    const playIcon = document.createElement('div');
+    playIcon.style.width = '0';
+    playIcon.style.height = '0';
+    playIcon.style.borderTop = '12px solid transparent';
+    playIcon.style.borderBottom = '12px solid transparent';
+    playIcon.style.borderLeft = '18px solid white';
+    playIcon.style.marginLeft = '4px';
+
+    playBtn.appendChild(playIcon);
+    posterWrapper.appendChild(poster);
+    posterWrapper.appendChild(playBtn);
+
+    // 鼠标悬停效果
+    posterWrapper.addEventListener('mouseenter', () => {
+      playBtn.style.transform = 'translate(-50%, -50%) scale(1.1)';
+    });
+    posterWrapper.addEventListener('mouseleave', () => {
+      playBtn.style.transform = 'translate(-50%, -50%) scale(1)';
+    });
+
+    // 点击封面后才创建 iframe，这样可以绕过浏览器的自动播放静音限制
+    posterWrapper.addEventListener('click', () => {
+      const iframe = document.createElement('iframe');
+      iframe.src = '//player.bilibili.com/player.html?isOutside=true&aid=115802065869006&bvid=BV1E5vsBXEzx&cid=35055272687&p=1&autoplay=1&muted=0&high_quality=1&danmaku=0';
+      iframe.allowFullscreen = true;
+      iframe.style.width = '100%';
+      iframe.style.height = '100%';
+      iframe.style.position = 'absolute';
+      iframe.style.top = '0';
+      iframe.style.left = '0';
+      iframe.style.border = 'none';
+      container.appendChild(iframe);
+      posterWrapper.style.display = 'none';
+    });
+
+    // 只将封面添加到容器中，iframe 在点击后才创建
+    container.appendChild(posterWrapper);
+  }
   window.addEventListener("scroll", handleScroll);
   definePageMeta({
     title: "home_title",
@@ -451,6 +512,7 @@ $module-intro-img-width: 600px;
           height: 341px;
           margin-top: 70px;
           width: 630px;
+          position: relative;
         }
       }
     }
@@ -721,6 +783,7 @@ $module-intro-img-width: 600px;
             height: 195px;
             margin-top: 70px;
             width: 360px;
+            position: relative;
           }
         }
 
