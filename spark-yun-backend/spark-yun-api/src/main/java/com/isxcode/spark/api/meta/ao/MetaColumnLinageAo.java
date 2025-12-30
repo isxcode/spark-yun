@@ -35,9 +35,16 @@ public class MetaColumnLinageAo {
 
     private String workType;
 
+    private String workRemark;
+
+    private String workflowName;
+
+    private String workflowRemark;
+
     public MetaColumnLinageAo(String lineageId, String fromDbId, String fromTableName, String fromColumnName,
         String toDbId, String toTableName, String toColumnName, String dbType, String dbName, String dbRemark,
-        String remark, String workVersionId, String workId, String workName, String workType) {
+        String remark, String workVersionId, String workId, String workName, String workType, String workRemark,
+        String workflowName, String workflowRemark) {
 
         this.lineageId = lineageId;
         this.fromDbId = fromDbId;
@@ -54,5 +61,8 @@ public class MetaColumnLinageAo {
         this.workId = workId;
         this.workName = workName;
         this.workType = workType;
+        this.workRemark = workRemark;
+        this.workflowName = workflowName;
+        this.workflowRemark = workflowRemark;
     }
 }
