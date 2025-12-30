@@ -19,6 +19,8 @@ public class GetTableLinageRes {
 
     private String dbType;
 
+    private String dbRemark;
+
     private String tableName;
 
     private List<GetTableLinageRes> children;

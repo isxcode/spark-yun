@@ -62,6 +62,7 @@ public interface MetaMapper {
 
     @Mapping(target = "dbId", source = "datasourceEntity.id")
     @Mapping(target = "dbName", source = "datasourceEntity.name")
+    @Mapping(target = "dbRemark", source = "datasourceEntity.remark")
     GetTableLinageRes datasourceEntityToGetTableLinageRes(DatasourceEntity datasourceEntity);
 
     @Mapping(target = "dbId", source = "datasourceEntity.id")
