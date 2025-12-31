@@ -115,8 +115,8 @@ CREATE TABLE from_table
     PRIMARY KEY (username) NOT ENFORCED
 ) WITH (
       'connector' = 'sqlserver-cdc',
-      'hostname' = '47.92.168.116',
-      'port' = '30103',
+      'hostname' = '127.0.0.1',
+      'port' = '1433',
       'username' = 'SA',
       'password' = 'ispong123',
       'database-name' = 'ispong_db',
@@ -130,7 +130,7 @@ CREATE TABLE target_table
     age      INT
 ) WITH (
       'connector' = 'doris',
-      'fenodes' = '47.92.168.116:30129',
+      'fenodes' = '127.0.0.1:8030',
       'table.identifier' = 'ispong_db.users',
       'username' = 'root',
       'password' = '',
