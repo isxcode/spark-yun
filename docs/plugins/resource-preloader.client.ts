@@ -24,9 +24,7 @@ export default defineNuxtPlugin({
         { url: 'https://zhiqingyun-demo.isxcode.com/tools/open/file/p-4.jpg', type: 'image' },
         { url: 'https://zhiqingyun-demo.isxcode.com/tools/open/file/bg-1.jpg', type: 'image' },
         { url: 'https://zhiqingyun-demo.isxcode.com/tools/open/file/bg-2.jpg', type: 'image' },
-        { url: 'https://zhiqingyun-demo.isxcode.com/tools/open/file/qrcode.jpg', type: 'image' },
-        { url: 'https://zhiqingyun-demo.isxcode.com/tools/open/file/AlimamaShuHeiTi-Bold.woff2', type: 'font' },
-        { url: 'https://zhiqingyun-demo.isxcode.com/tools/open/file/AlibabaPuHuiTi-2-45-Light.woff2', type: 'font' }
+        { url: 'https://zhiqingyun-demo.isxcode.com/tools/open/file/qrcode.jpg', type: 'image' }
       ];
 
       let loadedCount = 0;
@@ -299,7 +297,7 @@ export default defineNuxtPlugin({
           loadedCount = totalResources;
           onResourceLoaded();
         }
-      }, 30000); // 30秒超时
+      }, 15000); // 15秒超时
     }
   }
 });
