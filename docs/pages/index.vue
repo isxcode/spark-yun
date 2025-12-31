@@ -312,7 +312,7 @@ onMounted(() => {
     // 点击封面后才创建 iframe，这样可以绕过浏览器的自动播放静音限制
     posterWrapper.addEventListener('click', () => {
       const iframe = document.createElement('iframe');
-      iframe.src = '//player.bilibili.com/player.html?isOutside=true&aid=115802065869006&bvid=BV1E5vsBXEzx&cid=35055272687&p=1&autoplay=1&muted=0&high_quality=1&danmaku=0';
+      iframe.src = '//player.bilibili.com/player.html?isOutside=true&aid=115813424109548&bvid=BV1LniMBBEU2&cid=35098134728&p=1&autoplay=1&muted=0&high_quality=1&danmaku=0';
       iframe.allowFullscreen = true;
       iframe.style.width = '100%';
       iframe.style.height = '100%';
