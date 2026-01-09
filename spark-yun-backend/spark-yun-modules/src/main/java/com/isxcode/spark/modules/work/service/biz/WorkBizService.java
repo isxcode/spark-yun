@@ -467,6 +467,10 @@ public class WorkBizService {
             getWorkRes.setQueryConfig(JSON.parseObject(workConfig.getQueryConfig(), QueryConfig.class));
         }
 
+        if (!Strings.isEmpty(workConfig.getSparkEtlConfig())) {
+            getWorkRes.setSparkEtlConfig(JSON.parseObject(workConfig.getSparkEtlConfig(), SparkEtlConfig.class));
+        }
+
         return getWorkRes;
     }
 

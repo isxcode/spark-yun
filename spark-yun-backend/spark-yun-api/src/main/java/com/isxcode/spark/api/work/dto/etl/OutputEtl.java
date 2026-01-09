@@ -6,7 +6,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
-import java.util.Map;
 
 
 @Data
@@ -23,7 +22,7 @@ public class OutputEtl {
 
     private String writeMode;
 
-    private List<Map<String, String>> colMapping;
+    private List<List<String>> colMapping;
 
     private List<EtlColumn> fromColumnList;
 

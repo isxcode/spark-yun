@@ -68,6 +68,8 @@ public class WorkConfigEntity {
 
     private String queryConfig;
 
+    private String sparkEtlConfig;
+
     @CreatedDate
     private LocalDateTime createDateTime;
 

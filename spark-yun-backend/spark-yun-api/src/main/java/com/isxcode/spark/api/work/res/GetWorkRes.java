@@ -60,4 +60,6 @@ public class GetWorkRes {
     private List<String> alarmList;
 
     private DbMigrateConfig dbMigrateConfig;
+
+    private SparkEtlConfig sparkEtlConfig;
 }
