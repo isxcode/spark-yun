@@ -80,4 +80,9 @@ public interface WorkType {
      * FlinkJar.
      */
     String FLINK_JAR = "FLINK_JAR";
+
+    /**
+     * Spark可视化ETL.
+     */
+    String SPARK_ETL = "SPARK_ETL";
 }
