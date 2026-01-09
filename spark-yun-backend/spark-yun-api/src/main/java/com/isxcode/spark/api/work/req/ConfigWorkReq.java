@@ -60,4 +60,7 @@ public class ConfigWorkReq {
 
     @Schema(title = "整库迁移配置")
     private DbMigrateConfig dbMigrateConfig;
+
+    @Schema(title = "整库迁移配置")
+    private SparkEtlConfig sparkEtlConfig;
 }
