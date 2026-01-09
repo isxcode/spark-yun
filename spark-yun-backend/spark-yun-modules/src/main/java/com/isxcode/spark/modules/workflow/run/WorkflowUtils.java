@@ -147,6 +147,7 @@ public class WorkflowUtils {
             .libConfig(JSON.parseArray(workConfig.getLibConfig(), String.class)).workId(work.getId())
             .apiWorkConfig(JSON.parseObject(workConfig.getApiWorkConfig(), ApiWorkConfig.class))
             .dbMigrateConfig(JSON.parseObject(workConfig.getDbMigrateConfig(), DbMigrateConfig.class))
+            .sparkEtlConfig(JSON.parseObject(workConfig.getSparkEtlConfig(), SparkEtlConfig.class))
             .queryConfig(JSON.parseObject(workConfig.getQueryConfig(), QueryConfig.class))
             .containerId(workConfig.getContainerId()).eventType(eventType).workName(work.getName())
             .userId(USER_ID.get()).build();
@@ -171,6 +172,7 @@ public class WorkflowUtils {
             .apiWorkConfig(JSON.parseObject(workVersion.getApiWorkConfig(), ApiWorkConfig.class))
             .queryConfig(JSON.parseObject(workVersion.getQueryConfig(), QueryConfig.class))
             .dbMigrateConfig(JSON.parseObject(workVersion.getDbMigrateConfig(), DbMigrateConfig.class))
+            .sparkEtlConfig(JSON.parseObject(workVersion.getSparkEtlConfig(), SparkEtlConfig.class))
             .workName(work.getName()).eventType(eventType).workId(work.getId()).build();
     }
 

@@ -239,6 +239,11 @@ public class WorkConfigBizService {
             workConfig.setDbMigrateConfig(JSON.toJSONString(wocConfigWorkReq.getDbMigrateConfig()));
         }
 
+        // 设置整库迁移配置
+        if (wocConfigWorkReq.getSparkEtlConfig() != null) {
+            workConfig.setSparkEtlConfig(JSON.toJSONString(wocConfigWorkReq.getSparkEtlConfig()));
+        }
+
         // 保存配置
         workConfigRepository.save(workConfig);
     }
