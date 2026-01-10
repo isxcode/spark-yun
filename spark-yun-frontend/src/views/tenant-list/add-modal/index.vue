@@ -51,6 +51,16 @@
           />
         </el-select>
       </el-form-item>
+      <el-form-item label="有效期" prop="validEndDateTime">
+        <el-date-picker
+          v-model="formData.validEndDateTime"
+          type="datetime"
+          placeholder="请选择"
+          format="YYYY-MM-DD HH:mm:ss"
+          value-format="YYYY-MM-DD HH:mm:ss"
+          :editable="false"
+        />
+      </el-form-item>
       <el-form-item label="备注">
         <el-input
           v-model="formData.remark"
@@ -70,6 +80,7 @@ import { reactive, defineExpose, ref, nextTick } from 'vue'
 import BlockModal from '@/components/block-modal/index.vue'
 import { ElMessage, FormInstance, FormRules } from 'element-plus'
 import { GetUserInfoList } from '@/services/tenant-user.service'
+import dayjs from 'dayjs'
 
 const form = ref<FormInstance>()
 const callback = ref<any>()
@@ -99,6 +110,8 @@ const formData = reactive({
   maxMemberNum: 5,
   maxWorkflowNum: 20,
   adminUserId: '',
+  validStartDateTime: '',
+  validEndDateTime: '',
   remark: '',
   id: ''
 })
@@ -116,6 +129,13 @@ const rules = reactive<FormRules>({
       message: '请选择管理员',
       trigger: [ 'change', 'blur' ]
     }
+  ],
+  validEndDateTime: [
+    {
+      required: true,
+      message: '请选择有效期',
+      trigger: [ 'change', 'blur' ]
+    }
   ]
 })
 
@@ -128,6 +148,8 @@ function showModal(cb: () => void, data: any): void {
     formData.maxMemberNum = data.maxMemberNum
     formData.maxWorkflowNum = data.maxWorkflowNum
     formData.remark = data.remark
+    formData.validStartDateTime = data.validStartDateTime
+    formData.validEndDateTime = data.validEndDateTime
     formData.id = data.id
     modelConfig.title = '编辑租户'
     renderSence.value = 'edit'
@@ -137,9 +159,14 @@ function showModal(cb: () => void, data: any): void {
     formData.maxWorkflowNum = 5
     formData.adminUserId = ''
     formData.remark = ''
+    formData.validStartDateTime = ''
+    formData.validEndDateTime = ''
     formData.id = ''
     modelConfig.title = '添加租户'
     renderSence.value = 'new'
+  }
+  if (!formData.validStartDateTime) {
+    formData.validStartDateTime = dayjs(new Date()).format('YYYY-MM-DD HH:mm:ss')
   }
   nextTick(() => {
     form.value?.resetFields()
@@ -199,5 +226,17 @@ defineExpose({
 .add-computer-group {
   padding: 12px 20px 0 20px;
   box-sizing: border-box;
+  .el-date-editor {
+    .el-input__wrapper {
+      width: 156px;
+      height: 30px;
+    }
+  }
+}
+.el-date-picker {
+  .el-picker-panel__footer {
+    display: flex;
+    justify-content: space-between;
+  }
 }
 </style>
