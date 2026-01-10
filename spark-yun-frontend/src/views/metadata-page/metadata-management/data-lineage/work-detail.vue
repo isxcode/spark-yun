@@ -111,7 +111,7 @@ function initData() {
     GetWorkItemConfig({
         workId: props.workItemConfig.id
     }).then((res: any) => {
-        workConfig = res.data
+        workConfig.value = res.data
 
         loading.value = false
         networkError.value = false
