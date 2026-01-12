@@ -49,6 +49,7 @@ tasks.register('build_agent_plugins', Copy) {
     dependsOn(':spark-yun-vip:spark-yun-plugins:spark-real-sync-plugin:jar')
     dependsOn(':spark-yun-vip:spark-yun-plugins:spark-db-migrator-plugin:jar')
     dependsOn(':spark-yun-vip:spark-yun-plugins:flink-sql-execute-plugin:jar')
+    dependsOn(':spark-yun-vip:spark-yun-plugins:spark-etl-plugin:jar')
 
     from rootDir.getAbsolutePath() + '/spark-yun-plugins/spark-query-sql-plugin/build/libs'
     from rootDir.getAbsolutePath() + '/spark-yun-plugins/spark-data-sync-jdbc-plugin/build/libs'
@@ -57,6 +58,7 @@ tasks.register('build_agent_plugins', Copy) {
     from rootDir.getAbsolutePath() + '/spark-yun-vip/spark-yun-plugins/spark-real-sync-plugin/build/libs'
     from rootDir.getAbsolutePath() + '/spark-yun-vip/spark-yun-plugins/spark-db-migrator-plugin/build/libs'
     from rootDir.getAbsolutePath() + '/spark-yun-vip/spark-yun-plugins/flink-sql-execute-plugin/build/libs'
+    from rootDir.getAbsolutePath() + '/spark-yun-vip/spark-yun-plugins/spark-etl-plugin/build/libs'
     into 'build/zhiqingyun-agent/plugins'
 }
 
