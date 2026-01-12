@@ -9,6 +9,7 @@ import com.isxcode.spark.api.work.dto.DbMigrateConfig;
 import com.isxcode.spark.api.work.dto.ExcelSyncConfig;
 import com.isxcode.spark.api.work.dto.SyncRule;
 import com.isxcode.spark.api.work.dto.SyncWorkConfig;
+import com.isxcode.spark.api.work.dto.etl.EtlDataSource;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -49,4 +50,8 @@ public class PluginReq {
     private String agentType;
 
     private DbMigrateConfig dbMigrateConfig;
+
+    private List<EtlDataSource> etlOutputDataSources;
+
+    private List<EtlDataSource> etlInputDataSources;
 }
