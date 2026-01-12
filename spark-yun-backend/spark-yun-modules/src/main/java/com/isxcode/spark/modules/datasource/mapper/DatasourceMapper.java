@@ -7,6 +7,7 @@ import com.isxcode.spark.api.datasource.req.UpdateDatasourceReq;
 import com.isxcode.spark.api.datasource.res.GetDefaultDatabaseDriverRes;
 import com.isxcode.spark.api.datasource.res.PageDatabaseDriverRes;
 import com.isxcode.spark.api.datasource.res.PageDatasourceRes;
+import com.isxcode.spark.api.work.dto.etl.EtlDataSource;
 import com.isxcode.spark.modules.datasource.entity.DatabaseDriverEntity;
 import com.isxcode.spark.modules.datasource.entity.DatasourceEntity;
 import org.mapstruct.Mapper;
@@ -50,4 +51,6 @@ public interface DatasourceMapper {
     CheckConnectReq addDatasourceReqToCheckConnectReq(AddDatasourceReq addDatasourceReq);
 
     CheckConnectReq updateDatasourceReqToCheckConnectReq(UpdateDatasourceReq updateDatasourceReq);
+
+    EtlDataSource datasourceEntityToEtlDataSource(DatasourceEntity datasourceEntity);
 }
