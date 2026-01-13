@@ -16,5 +16,15 @@ public class InputEtl {
     private String datasourceId;
 
     private String tableName;
+
+    /**
+     * 分区数.
+     */
+    private Integer numPartitions;
+
+    /**
+     * 分区键.
+     */
+    private String partitionColumn;
 }
 
