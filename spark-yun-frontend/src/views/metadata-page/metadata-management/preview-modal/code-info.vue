@@ -164,28 +164,27 @@ function dataLineageEvent(data: any) {
                 reject(error)
             })
         })
-    })
+    }, 'code')
 }
 
 // 递归格式化树节点数据
 function getFinalData(node: any, pageType: string) {
     node.pageType = pageType
-    if (node && node.children && pageType === 'code') {
-        node.id = guid()
-        node.name = node.columnName
-        node.children = (node.children || []).map((item: any) => {
-            item.id = guid()
-            item.name = item.columnName
-            item.pageType = pageType
-            return item
-        })
-        node.parent = (node.parent || []).map((item: any) => {
-            item.id = guid()
-            item.name = item.columnName
-            item.pageType = pageType
-            return item
-        })
-    }
+
+    node.id = guid()
+    node.name = node.columnName
+    node.children = (node.children || []).map((item: any) => {
+        item.id = guid()
+        item.name = item.columnName
+        item.pageType = pageType
+        return item
+    })
+    node.parent = (node.parent || []).map((item: any) => {
+        item.id = guid()
+        item.name = item.columnName
+        item.pageType = pageType
+        return item
+    })
     return node
 }
 

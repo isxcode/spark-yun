@@ -2,7 +2,7 @@
     <BlockDrawer :drawer-config="drawerConfig">
         <!-- <LoadingPage :visible="loading"> -->
         <div class="workflow-page">
-            <div class="flow-container">
+            <div class="flow-container flow-container__lineage">
                 <spark-jar
                     v-if="(workConfig.workType === 'SPARK_JAR' || workConfig.workType === 'FLINK_JAR')"
                     :workItemConfig="workConfig"
@@ -139,6 +139,9 @@ defineExpose({
     .workflow-page {
         height: calc(100% - 0px);
         overflow: auto;
+        .flow-container__lineage {
+            width: 100%;
+        }
     }
 }
 </style>
