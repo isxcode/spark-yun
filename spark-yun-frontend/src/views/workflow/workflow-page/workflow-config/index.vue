@@ -210,7 +210,9 @@
                 <el-input v-model="otherConfig.invokeUrl" :disabled="true" />
                 <span
                   class="invoke-url-copy__text"
-                  @click="copyUrlEvent(otherConfig.invokeUrl)"
+                  id="invokeUrl"
+                  :data-clipboard-text="url"
+                  @click="copyUrlEvent('invokeUrl')"
                 >复制</span>
               </el-form-item>
             </el-form>
@@ -227,6 +229,7 @@ import BlockDrawer from '@/components/block-drawer/index.vue'
 import {ScheduleRange, WeekDateList, CronConfigRules} from './config-detail'
 import { GetAlarmPagesList } from '@/services/message-center.service';
 import { GetInvokeUrl } from '@/services/workflow.service';
+import Clipboard from 'clipboard'
 
 const scheduleRange = ref(ScheduleRange);
 const weekDateList = ref(WeekDateList)
@@ -443,18 +446,25 @@ function getInvokeUrl(e: boolean) {
   }
 }
 
-async function copyUrlEvent(text: string) {
-  try {
-    await navigator.clipboard.writeText(text);
-    ElMessage({
-      duration: 800,
-      message: '复制成功',
-      type: 'success',
-    });
-  } catch (err) {
-    console.error("Failed to copy: ", err);
-  }
+function copyUrlEvent(id: string) {
+    let clipboard = new Clipboard('#' + id)
+    clipboard.on('success', () => {
+        ElMessage.success('复制成功')
+        clipboard.destroy()
+    })
 }
+// async function copyUrlEvent(text: string) {
+//   try {
+//     await navigator.clipboard.writeText(text);
+//     ElMessage({
+//       duration: 800,
+//       message: '复制成功',
+//       type: 'success',
+//     });
+//   } catch (err) {
+//     console.error("Failed to copy: ", err);
+//   }
+// }
 
 defineExpose({
   showModal,

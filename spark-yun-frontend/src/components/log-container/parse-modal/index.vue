@@ -4,7 +4,11 @@
             <BlockTable :table-config="tableConfig">
                 <template #options="scopeSlot">
                     <div class="btn-group">
-                        <span @click="copyParse(scopeSlot.row?.copyValue)">复制</span>
+                        <span
+                            id="copyValue"
+                            :data-clipboard-text="scopeSlot.row?.copyValue"
+                            @click="copyParse('copyValue')"
+                        >复制</span>
                     </div>
                 </template>
             </BlockTable>
@@ -59,6 +63,7 @@
 import { reactive, defineExpose, ref, nextTick } from 'vue'
 import { GetWorkInstanceJsonPath, GetWorkInstanceRegexPath, GetWorkInstanceTablePath } from '@/services/workflow.service'
 import { ElMessage } from 'element-plus'
+import Clipboard from 'clipboard'
 
 const instanceId = ref<string>('')
 const modalType = ref<string>('jsonPath') // jsonPath | tablePath | regexPath
@@ -185,18 +190,25 @@ function getWorkRegexPath() {
     }
 }
 
-async function copyParse(text: string) {
-  try {
-    await navigator.clipboard.writeText(text);
-    ElMessage({
-      duration: 800,
-      message: '复制成功',
-      type: 'success',
-    });
-  } catch (err) {
-    console.error("Failed to copy: ", err);
-  }
+function copyParse(id: string) {
+    let clipboard = new Clipboard('#' + id)
+    clipboard.on('success', () => {
+        ElMessage.success('复制成功')
+        clipboard.destroy()
+    })
 }
+// async function copyParse(text: string) {
+//   try {
+//     await navigator.clipboard.writeText(text);
+//     ElMessage({
+//       duration: 800,
+//       message: '复制成功',
+//       type: 'success',
+//     });
+//   } catch (err) {
+//     console.error("Failed to copy: ", err);
+//   }
+// }
 
 function closeEvent() {
     modelConfig.visible = false
