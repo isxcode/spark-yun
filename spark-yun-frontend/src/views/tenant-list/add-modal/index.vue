@@ -51,16 +51,6 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="有效期" prop="validEndDateTime">
-        <el-date-picker
-          v-model="formData.validEndDateTime"
-          type="datetime"
-          placeholder="请选择"
-          format="YYYY-MM-DD HH:mm:ss"
-          value-format="YYYY-MM-DD HH:mm:ss"
-          :editable="false"
-        />
-      </el-form-item>
       <el-form-item label="备注">
         <el-input
           v-model="formData.remark"
@@ -72,6 +62,18 @@
         />
       </el-form-item>
     </el-form>
+    <template #customLeft>
+      <div class="valid-time">
+        <el-date-picker
+          v-model="formData.validEndDateTime"
+          type="datetime"
+          placeholder="有效期"
+          format="YYYY-MM-DD HH:mm:ss"
+          value-format="YYYY-MM-DD HH:mm:ss"
+          :editable="false"
+        />
+      </div>
+    </template>
   </BlockModal>
 </template>
 
@@ -127,13 +129,6 @@ const rules = reactive<FormRules>({
     {
       required: true,
       message: '请选择管理员',
-      trigger: [ 'change', 'blur' ]
-    }
-  ],
-  validEndDateTime: [
-    {
-      required: true,
-      message: '请选择有效期',
       trigger: [ 'change', 'blur' ]
     }
   ]
@@ -226,17 +221,21 @@ defineExpose({
 .add-computer-group {
   padding: 12px 20px 0 20px;
   box-sizing: border-box;
-  .el-date-editor {
-    .el-input__wrapper {
-      width: 156px;
-      height: 30px;
-    }
-  }
 }
 .el-date-picker {
   .el-picker-panel__footer {
     display: flex;
     justify-content: space-between;
+  }
+}
+.valid-time {
+  position: absolute;
+  left: 20px;
+  .el-date-editor {
+    .el-input__wrapper {
+      width: 156px;
+      height: 26px;
+    }
   }
 }
 </style>
