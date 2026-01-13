@@ -52,5 +52,8 @@ public interface DatasourceMapper {
 
     CheckConnectReq updateDatasourceReqToCheckConnectReq(UpdateDatasourceReq updateDatasourceReq);
 
+    @Mapping(target = "url", source = "jdbcUrl")
+    @Mapping(target = "password", source = "passwd")
+    @Mapping(target = "user", source = "username")
     EtlDataSource datasourceEntityToEtlDataSource(DatasourceEntity datasourceEntity);
 }
