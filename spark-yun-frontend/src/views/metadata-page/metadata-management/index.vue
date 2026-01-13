@@ -48,7 +48,7 @@
         </LoadingPage>
         <AddModal ref="addModalRef" />
         <RemarkModal ref="remarkModalRef"></RemarkModal>
-        <DataLineage @showDetail="showDetail" ref="dataLineageRef"></DataLineage>
+        <DataLineage @showDetail="showDetail" :isCode="false" ref="dataLineageRef"></DataLineage>
     </div>
 </template>
 
@@ -308,7 +308,7 @@ function dataLineageEvent(data: any) {
                 })
             }
         })
-    })
+    }, data.pageType)
 }
 
 // 递归格式化树节点数据

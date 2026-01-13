@@ -2,12 +2,12 @@
  * @Author: fancinate 1585546519@qq.com
  * @Date: 2025-12-09 21:26:39
  * @LastEditors: fancinate 1585546519@qq.com
- * @LastEditTime: 2025-12-18 22:35:50
+ * @LastEditTime: 2026-01-13 22:31:34
  * @FilePath: /spark-yun/spark-yun-frontend/src/views/metadata-page/metadata-management/data-lineage/index.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
 <template>
-    <BlockModal :model-config="modelConfig">
+    <BlockModal :model-config="modelConfig" top="4vh">
         <div id="containerDataLineage" class="containerDataLineage"></div>
         <WorkDetail ref="workDetailRef"></WorkDetail>
     </BlockModal>
@@ -46,11 +46,12 @@ const props = defineProps<{
 const callback = ref<any>()
 const lineageData = ref<any[]>([])
 const workDetailRef = ref<any>()
+const pageType = ref<string>('')
 
 const modelConfig = reactive({
     title: '数据血缘',
     visible: false,
-    width: '80%',
+    width: '90%',
     customClass: 'data-lineage',
     cancelConfig: {
         title: '取消',
@@ -62,9 +63,9 @@ const modelConfig = reactive({
     closeOnClickModal: false
 })
 
-function showModal(data: any, cb: any): void {
+function showModal(data: any, cb: any, pt?: string): void {
     modelConfig.visible = true
-
+    pageType.value = pt
     eventBus.on('lineageEvent', (e: any) => {
         if (e.type === 'checkUp') {
             getParentNode(e.data)
@@ -77,6 +78,12 @@ function showModal(data: any, cb: any): void {
     callback.value = cb
     nextTick(() => {
         initData().then((res: any) => {
+            res.childrenStatus = true
+            if (res.children && res.children.length) {
+                res.children.forEach(dd => {
+                    dd.parentStatus = true
+                })
+            }
             initGraph(res)
         })
     })
@@ -96,6 +103,11 @@ function initData(params?: any) {
 }
 
 function initGraph(data: any) {
+    const obj = {
+        datasource: 50,
+        table: 74,
+        code: 98
+    }
     graph = new Graph({
         container: document.getElementById('containerDataLineage'),
         autoFit: {
@@ -123,7 +135,7 @@ function initGraph(data: any) {
                         placement: 'right'
                     }
                 ],
-                size: [150, 40]
+                size: [150, obj[pageType.value]]
             }
         },
         edge: {
@@ -131,7 +143,7 @@ function initGraph(data: any) {
             style: {
                 endArrow: true,
                 labelText: (d) => {
-                    return d.data.workName
+                    return d.name
                 },
                 labelBackground: true
             }
@@ -169,7 +181,7 @@ function initGraph(data: any) {
     renderGraph()
 }
 
-function renderGraph() {
+async function renderGraph() {
     graph.on(EdgeEvent.CLICK, (e, d) => {
         const argumentsParams = e.target.id.split('&&sparkYun&&')
         const workId = argumentsParams[1] ? argumentsParams[1] : ''
@@ -181,13 +193,13 @@ function renderGraph() {
             workType: workType
         })
     });
-    graph.render();
+    await graph.render();
 }
 
 // 查看上游
 function getParentNode(data: any) {
     data.lineageType = 'PARENT'
-    initData(data).then((res: any) => {
+    initData(data).then(async (res: any) => {
         const parentData = res.parent || []
         if (parentData && parentData.length) {
             const allData = graph.getData()
@@ -195,32 +207,41 @@ function getParentNode(data: any) {
                 nodes: [],
                 edges: []
             }
-            parentNodeConfig.nodes = parentData.map((pNode: any) => {
+            parentNodeConfig.nodes = parentData.map((pNode: any, index: number) => {
                 return {
                     id: pNode.id,
                     name: pNode.name,
                     data: {
-                        ...pNode
+                        ...pNode,
+                        childrenStatus: true
+                    },
+                    style: {
+                        x: data.style.x - 250,
+                        y: (data.style.y / 2) * (index + 1),
                     }
                 }
             })
             parentNodeConfig.nodes.forEach((node: any) => {
-                const target = allData.nodes.find(dd => {
-                    dd.data.parent = []
-                    return `${dd.data.dbId}${dd.data.tableName}${dd.data.columnName}` === `${res.dbId}${res.tableName}${res.columnName}`
-                })
+                // const target = allData.nodes.find(dd => {
+                //     dd.data.parent = []
+                //     return `${dd.data.dbId}${dd.data.tableName}${dd.data.columnName}` === `${res.dbId}${res.tableName}${res.columnName}`
+                // })
                 parentNodeConfig.edges.push({
                     data: res,
                     id: `${guid()}&&sparkYun&&${res.workId || ''}&&sparkYun&&${res.workName || ''}&&sparkYun&&${res.workType || ''}`,
                     source: node.id,
-                    target: target.id,
-                    name: target.workName
+                    target: data.id,
+                    name: node.data.workName,
+                    label: node.data.workName
                 })
             })
-            allData.edges = [...allData.edges, ...parentNodeConfig.edges]
-            allData.nodes = [...allData.nodes, ...parentNodeConfig.nodes]
-            graph.setData(allData)
-            renderGraph()
+            graph.addNodeData(parentNodeConfig.nodes)
+            graph.addEdgeData(parentNodeConfig.edges)
+            // allData.edges = [...allData.edges, ...parentNodeConfig.edges]
+            // allData.nodes = [...allData.nodes, ...parentNodeConfig.nodes]
+            // graph.setData(allData)
+            // renderGraph()
+            await graph.draw();
         }
     }).catch((error) => {
         console.error('请求失败', error)
@@ -229,17 +250,33 @@ function getParentNode(data: any) {
 // 查看下游
 function getChildNode(data: any) {
     data.lineageType = 'SON'
-    initData(data).then((res: any) => {
-        if (res.sonDbLineageList && res.sonDbLineageList.length) {
-            graph.addChildrenData(data.id, res.sonDbLineageList.map((node: any) => {
+    initData(data).then(async (res: any) => {
+        if (res.children && res.children.length) {
+            graph.addNodeData(res.children.map((node: any, index: number) => {
                 return {
-                    id: node.dbId,
-                    name: node.dbName,
-                    data: node
+                    id: node.id,
+                    data: {
+                        ...node,
+                        parentStatus: true
+                    },
+                    style: {
+                        x: data.style.x + 250,
+                        y: (data.style.y) * (index + 1),
+                    }
+                }
+            }))
+            graph.addEdgeData(res.children.map((node: any) => {
+                return {
+                    data: node,
+                    id: `${guid()}&&sparkYun&&${node.workId || ''}&&sparkYun&&${node.workName || ''}&&sparkYun&&${node.workType || ''}`,
+                    source: data.id,
+                    target: node.id,
+                    name: node.workName
                 }
             }))
         }
-        renderGraph()
+        // renderGraph()
+        await graph.draw();
     }).catch((error) => {
         console.error('请求失败', error)
     })
@@ -261,8 +298,13 @@ defineExpose({
 
 <style lang="scss">
 .data-lineage {
+    height: calc(100vh - 80px);
+    .el-dialog__body {
+        max-height: calc(100vh - 182px);
+    }
     .modal-content {
-        height: 440px;
+        // height: 440px;
+        height: calc(97vh - 100px);
         .containerDataLineage {
             height: 100%;
         }
