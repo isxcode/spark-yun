@@ -42,16 +42,6 @@
           placeholder="请输入"
         />
       </el-form-item>
-      <el-form-item label="有效期" prop="validEndDateTime">
-        <el-date-picker
-          v-model="formData.validEndDateTime"
-          type="datetime"
-          placeholder="请选择"
-          format="YYYY-MM-DD HH:mm:ss"
-          value-format="YYYY-MM-DD HH:mm:ss"
-          :editable="false"
-        />
-      </el-form-item>
       <el-form-item
         label="手机号"
         prop="phone"
@@ -85,6 +75,18 @@
         />
       </el-form-item>
     </el-form>
+    <template #customLeft>
+      <div class="valid-time">
+        <el-date-picker
+          v-model="formData.validEndDateTime"
+          type="datetime"
+          placeholder="有效期"
+          format="YYYY-MM-DD HH:mm:ss"
+          value-format="YYYY-MM-DD HH:mm:ss"
+          :editable="false"
+        />
+      </div>
+    </template>
   </BlockModal>
 </template>
 
@@ -177,13 +179,6 @@ const rules = reactive<FormRules>({
       required: true,
       message: '请输入密码',
       trigger: [ 'change' ]
-    }
-  ],
-  validEndDateTime: [
-    {
-      required: true,
-      message: '请选择有效期',
-      trigger: [ 'change', 'blur' ]
     }
   ],
   phone: [
