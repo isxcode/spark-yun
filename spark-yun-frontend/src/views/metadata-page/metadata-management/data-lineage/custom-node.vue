@@ -21,7 +21,7 @@
                     <span class="label-3">数据源：</span>
                     <EllipsisTooltip class="ellipsis-3" :label="config.data.dbName" />
                 </p >
-                <p class="text" v-if="config.data.dbName">
+                <p class="text" v-if="config.data.tableName">
                     <span class="label-2">表名：</span>
                     <EllipsisTooltip class="ellipsis-2" :label="config.data.tableName" />
                 </p >
@@ -35,13 +35,13 @@
                     <span class="label-3">数据源：</span>
                     <EllipsisTooltip class="ellipsis-3" :label="config.data.dbName" />
                 </p >
-                <p class="text" v-if="config.data.dbName">
+                <p class="text" v-if="config.data.tableName">
                     <span class="label-2">表名：</span>
                     <EllipsisTooltip class="ellipsis-2" :label="config.data.tableName" />
                 </p >
-                <p class="text" v-if="config.data.dbName">
+                <p class="text" v-if="config.data.columnName">
                     <span class="label-2">字段：</span>
-                    <EllipsisTooltip class="ellipsis-2" :label="config.data.dbName" />
+                    <EllipsisTooltip class="ellipsis-2" :label="config.data.columnName" />
                 </p >
             </div>
 
@@ -143,7 +143,7 @@ onMounted(() => {
             max-width: 114px;
             display: flex;
             .label-2 {
-                min-width: 42px;
+                min-width: 38px;
             }
             .label-3 {
                 min-width: 42px;

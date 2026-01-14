@@ -1,8 +1,8 @@
 /*
  * @Author: fanciNate
  * @Date: 2023-04-26 17:01:16
- * @LastEditTime: 2023-06-18 14:56:21
- * @LastEditors: fanciNate
+ * @LastEditTime: 2026-01-14 21:57:35
+ * @LastEditors: fancinate 1585546519@qq.com
  * @Description: In User Settings Edit
  * @FilePath: /spark-yun/spark-yun-website/src/services/workflow.service.ts
  */
@@ -125,6 +125,15 @@ export function GetWorkItemConfig(params: any): Promise<any> {
   return http.request({
     method: 'post',
     url: '/work/getWork',
+    params: params
+  })
+}
+
+// 血缘节点-获取数据
+export function GetLineageWorkItemConfig(params: any): Promise<any> {
+  return http.request({
+    method: 'post',
+    url: '/vip/work/getWorkVersionInfo',
     params: params
   })
 }
