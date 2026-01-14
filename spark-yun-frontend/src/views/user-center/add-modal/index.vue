@@ -78,11 +78,13 @@
     <template #customLeft>
       <div class="valid-time">
         <el-date-picker
-          v-model="formData.validEndDateTime"
-          type="datetime"
-          placeholder="有效期"
+          v-model="formData.validDateTime"
+          type="datetimerange"
           format="YYYY-MM-DD HH:mm:ss"
           value-format="YYYY-MM-DD HH:mm:ss"
+          range-separator="~"
+          start-placeholder="有效期开始时间"
+          end-placeholder="有效期结束时间"
           :editable="false"
         />
       </div>
@@ -122,8 +124,7 @@ const formData = reactive({
   username: '',
   account: '',
   passwd: '',
-  validStartDateTime: '',
-  validEndDateTime: '',
+  validDateTime: '',
   phone: '',
   email: '',
   remark: '',
@@ -199,12 +200,16 @@ function showModal(cb: () => void, data: any): void {
   callback.value = cb
   modelConfig.visible = true
   if (data) {
-    (formData.username = data.username), (formData.account = data.account)
+    formData.username = data.username
+    formData.account = data.account
     formData.phone = data.phone
     formData.email = data.email
     formData.remark = data.remark
-    formData.validStartDateTime = data.validStartDateTime
-    formData.validEndDateTime = data.validEndDateTime
+    if (data.validStartDateTime && data.validEndDateTime) {
+      formData.validDateTime = [data.validStartDateTime, data.validEndDateTime]
+    } else {
+      formData.validDateTime = []
+    }
     formData.id = data.id
     modelConfig.title = '编辑用户'
     renderSence.value = 'edit'
@@ -212,17 +217,13 @@ function showModal(cb: () => void, data: any): void {
     formData.username = ''
     formData.account = ''
     formData.passwd = ''
-    formData.validStartDateTime = ''
-    formData.validEndDateTime = ''
+    formData.validDateTime = []
     formData.phone = ''
     formData.email = ''
     formData.remark = ''
     formData.id = ''
     modelConfig.title = '添加用户'
     renderSence.value = 'new'
-  }
-  if (!formData.validStartDateTime) {
-    formData.validStartDateTime = dayjs(new Date()).format('YYYY-MM-DD HH:mm:ss')
   }
   nextTick(() => {
     form.value?.resetFields()
