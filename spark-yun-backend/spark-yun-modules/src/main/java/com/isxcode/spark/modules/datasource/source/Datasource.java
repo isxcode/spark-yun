@@ -74,6 +74,8 @@ public abstract class Datasource {
 
     public abstract void refreshTableInfo(ConnectInfo connectInfo) throws IsxAppException;
 
+    public String getDriverName();
+
     public Connection getConnection(ConnectInfo connectInfo) throws IsxAppException {
 
         // 判断驱动是否已经加载
