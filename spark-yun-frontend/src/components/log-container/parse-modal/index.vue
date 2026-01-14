@@ -185,17 +185,49 @@ function getWorkRegexPath() {
     }
 }
 
-async function copyParse(text: string) {
-  try {
-    await navigator.clipboard.writeText(text);
-    ElMessage({
-      duration: 800,
-      message: '复制成功',
-      type: 'success',
-    });
-  } catch (err) {
-    console.error("Failed to copy: ", err);
-  }
+// 兼容多种浏览器的复制功能
+function copyParse(text: string) {
+    // 方法1: 尝试使用现代 Clipboard API (需要 HTTPS 或 localhost)
+    if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(text).then(() => {
+            ElMessage.success('复制成功')
+        }).catch(() => {
+            // 如果失败，降级到方法2
+            fallbackCopy(text)
+        })
+    } else {
+        // 方法2: 使用传统的 document.execCommand 方法
+        fallbackCopy(text)
+    }
+}
+
+// 降级复制方案：使用 textarea + execCommand
+function fallbackCopy(text: string) {
+    const textarea = document.createElement('textarea')
+    textarea.value = text
+    textarea.style.position = 'fixed'
+    textarea.style.top = '0'
+    textarea.style.left = '0'
+    textarea.style.opacity = '0'
+    textarea.style.pointerEvents = 'none'
+    document.body.appendChild(textarea)
+
+    try {
+        textarea.select()
+        // 兼容 iOS
+        textarea.setSelectionRange(0, textarea.value.length)
+        const successful = document.execCommand('copy')
+        if (successful) {
+            ElMessage.success('复制成功')
+        } else {
+            ElMessage.error('复制失败，请手动复制')
+        }
+    } catch (err) {
+        console.error('复制失败:', err)
+        ElMessage.error('复制失败，请手动复制')
+    } finally {
+        document.body.removeChild(textarea)
+    }
 }
 
 function closeEvent() {
