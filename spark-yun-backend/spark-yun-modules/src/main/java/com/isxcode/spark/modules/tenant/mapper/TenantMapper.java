@@ -29,8 +29,6 @@ public interface TenantMapper {
     @Mapping(target = "maxMemberNum", source = "tetUpdateTenantBySystemAdminReq.maxMemberNum")
     @Mapping(target = "name", source = "tetUpdateTenantBySystemAdminReq.name")
     @Mapping(target = "id", source = "tenantEntity.id")
-    @Mapping(target = "validStartDateTime", source = "tetUpdateTenantBySystemAdminReq.validStartDateTime")
-    @Mapping(target = "validEndDateTime", source = "tetUpdateTenantBySystemAdminReq.validEndDateTime")
     TenantEntity tetUpdateTenantBySystemAdminReqToTenantEntity(
         UpdateTenantForSystemAdminReq tetUpdateTenantBySystemAdminReq, TenantEntity tenantEntity);
 
