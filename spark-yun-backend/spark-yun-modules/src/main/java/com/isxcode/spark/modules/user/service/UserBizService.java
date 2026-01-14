@@ -220,6 +220,12 @@ public class UserBizService {
         userEntity.setRoleCode(RoleType.NORMAL_MEMBER);
         userEntity.setPasswd(SecureUtil.md5(userEntity.getPasswd()));
 
+        // 特殊处理时间
+        if (usrAddUserReq.getValidDateTime() != null && usrAddUserReq.getValidDateTime().size() == 2) {
+            userEntity.setValidStartDateTime(usrAddUserReq.getValidDateTime().get(0));
+            userEntity.setValidEndDateTime(usrAddUserReq.getValidDateTime().get(1));
+        }
+
         // 数据持久化
         userRepository.save(userEntity);
     }
@@ -233,6 +239,12 @@ public class UserBizService {
         }
 
         UserEntity userEntity = userMapper.updateUserReqToUserEntity(usrUpdateUserReq, userEntityOptional.get());
+
+        // 特殊处理时间
+        if (usrUpdateUserReq.getValidDateTime() != null && usrUpdateUserReq.getValidDateTime().size() == 2) {
+            userEntity.setValidStartDateTime(usrUpdateUserReq.getValidDateTime().get(0));
+            userEntity.setValidEndDateTime(usrUpdateUserReq.getValidDateTime().get(1));
+        }
 
         userRepository.save(userEntity);
     }
