@@ -202,7 +202,7 @@ import { CreateTableWork, GetDataSourceTables, GetTableColumnsByTableId, SaveDat
 import TableDetail from './table-detail/index.vue'
 import DataSyncTable from './data-sync-table/index.vue'
 import ConfigDetail from '../workflow-page/config-detail/index.vue'
-import { DeleteWorkData, GetWorkItemConfig, PublishWorkData, RunWorkItemConfig, SaveWorkItemConfig, TerWorkItemConfig } from '@/services/workflow.service'
+import { DeleteWorkData, GetWorkItemConfig, GetLineageWorkItemConfig, PublishWorkData, RunWorkItemConfig, SaveWorkItemConfig, TerWorkItemConfig } from '@/services/workflow.service'
 import PublishLog from '../work-item/publish-log.vue'
 import RunningLog from '../work-item/running-log.vue'
 import { Loading } from '@element-plus/icons-vue'
@@ -329,9 +329,17 @@ const filteredOverModeList = computed(() => {
 function getDate() {
     loading.value = true
     networkError.value = networkError.value || false
-    GetWorkItemConfig({
+    let requestMethod = GetWorkItemConfig
+    let reqPar = {
         workId: props.workItemConfig.id
-    }).then((res: any) => {
+    }
+    if (props.disabled) {
+        requestMethod = GetLineageWorkItemConfig
+        reqPar = {
+            workVersionId: props.workItemConfig.id
+        }
+    }
+    requestMethod(reqPar).then((res: any) => {
         networkError.value = false
         if (res.data.syncWorkConfig) {
             formData.sourceDBType = res.data.syncWorkConfig.sourceDBType

@@ -105,22 +105,6 @@ function showModal(data: any) {
     drawerConfig.visible = true;
 }
 
-function initData() {
-    loading.value = tableLoading ? false : true
-    networkError.value = networkError.value || false
-    GetWorkItemConfig({
-        workId: props.workItemConfig.id
-    }).then((res: any) => {
-        workConfig.value = res.data
-
-        loading.value = false
-        networkError.value = false
-    }).catch(() => {
-        loading.value = false
-        networkError.value = false
-    })
-}
-
 function okEvent() {
 
 }

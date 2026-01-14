@@ -2,7 +2,7 @@
  * @Author: fancinate 1585546519@qq.com
  * @Date: 2025-12-09 21:26:39
  * @LastEditors: fancinate 1585546519@qq.com
- * @LastEditTime: 2026-01-13 22:31:34
+ * @LastEditTime: 2026-01-14 22:08:13
  * @FilePath: /spark-yun/spark-yun-frontend/src/views/metadata-page/metadata-management/data-lineage/index.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -152,7 +152,7 @@ function initGraph(data: any) {
             type: 'compact-box',
             direction: 'LR',
             getHeight: () => 10,
-            getWidth: () => 120,
+            getWidth: () => 180,
             getVGap: () => 30,
             getHGap: () => 70
         },
@@ -168,10 +168,10 @@ function initGraph(data: any) {
             },
             getEdgeData: (source: TreeData, target: TreeData) => {
                 return {
-                    id: `${guid()}&&sparkYun&&${target.workId || ''}&&sparkYun&&${target.workName || ''}&&sparkYun&&${target.workType || ''}`,
+                    id: `${guid()}&&sparkYun&&${target.workVersionId || ''}&&sparkYun&&${target.workName || ''}&&sparkYun&&${target.workType || ''}`,
                     source: source.id,
                     target: target.id,
-                    name: target.workName,
+                    name: `${target.workflowName}（${target.workName}）`,
                     data: target
                 }
             }
@@ -216,31 +216,22 @@ function getParentNode(data: any) {
                         childrenStatus: true
                     },
                     style: {
-                        x: data.style.x - 250,
+                        x: data.style.x - 320,
                         y: (data.style.y / 2) * (index + 1),
                     }
                 }
             })
             parentNodeConfig.nodes.forEach((node: any) => {
-                // const target = allData.nodes.find(dd => {
-                //     dd.data.parent = []
-                //     return `${dd.data.dbId}${dd.data.tableName}${dd.data.columnName}` === `${res.dbId}${res.tableName}${res.columnName}`
-                // })
                 parentNodeConfig.edges.push({
                     data: res,
-                    id: `${guid()}&&sparkYun&&${res.workId || ''}&&sparkYun&&${res.workName || ''}&&sparkYun&&${res.workType || ''}`,
+                    id: `${guid()}&&sparkYun&&${node.data.workVersionId || ''}&&sparkYun&&${node.data.workName || ''}&&sparkYun&&${node.data.workType || ''}`,
                     source: node.id,
                     target: data.id,
-                    name: node.data.workName,
-                    label: node.data.workName
+                    name: `${node.data.workflowName}（${node.data.workName}）`
                 })
             })
             graph.addNodeData(parentNodeConfig.nodes)
             graph.addEdgeData(parentNodeConfig.edges)
-            // allData.edges = [...allData.edges, ...parentNodeConfig.edges]
-            // allData.nodes = [...allData.nodes, ...parentNodeConfig.nodes]
-            // graph.setData(allData)
-            // renderGraph()
             await graph.draw();
         }
     }).catch((error) => {
@@ -260,7 +251,7 @@ function getChildNode(data: any) {
                         parentStatus: true
                     },
                     style: {
-                        x: data.style.x + 250,
+                        x: data.style.x + 320,
                         y: (data.style.y) * (index + 1),
                     }
                 }
@@ -268,10 +259,10 @@ function getChildNode(data: any) {
             graph.addEdgeData(res.children.map((node: any) => {
                 return {
                     data: node,
-                    id: `${guid()}&&sparkYun&&${node.workId || ''}&&sparkYun&&${node.workName || ''}&&sparkYun&&${node.workType || ''}`,
+                    id: `${guid()}&&sparkYun&&${node.workVersionId || ''}&&sparkYun&&${node.workName || ''}&&sparkYun&&${node.workType || ''}`,
                     source: data.id,
                     target: node.id,
-                    name: node.workName
+                    name: `${node.workflowName}（${node.workName}）`
                 }
             }))
         }
