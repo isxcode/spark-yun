@@ -138,11 +138,11 @@ public class DatasourceController {
         datasourceBizService.updateDatabaseDriverRemark(updateDatabaseDriverRemarkReq);
     }
 
-    @PostMapping("/generateCreateTableSql")
-    @Operation(summary = "一键生成目标表")
-    @SuccessResponse("修改成功")
-    public void generateCreateTableSql(@RequestBody @Valid UpdateDatabaseDriverRemarkReq updateDatabaseDriverRemarkReq) {
-
-        datasourceBizService.updateDatabaseDriverRemark(updateDatabaseDriverRemarkReq);
-    }
+//    @PostMapping("/generateCreateTableSql")
+//    @Operation(summary = "一键生成目标表")
+//    @SuccessResponse("修改成功")
+//    public void generateCreateTableSql(@RequestBody @Valid UpdateDatabaseDriverRemarkReq updateDatabaseDriverRemarkReq) {
+//
+//        datasourceBizService.updateDatabaseDriverRemark(updateDatabaseDriverRemarkReq);
+//    }
 }

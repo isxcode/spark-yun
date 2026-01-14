@@ -430,22 +430,22 @@ public class DatasourceBizService {
         databaseDriverRepository.save(datasourceDriver);
     }
 
-    public String generateCreateTableSql() {
-
-        Datasource datasource = dataSourceFactory.getDatasource("");
-
-        String createTableFormat = datasource.getCreateTableFormat();
-
-        String createTableSuffix = datasource.getCreateTableSuffix();
-
-        String createTableOptional = datasource.getCreateTableOptional();
-
-        String colList = "";
-        for (){
-            String colString = datasource.convertType();
-        }
-        Strings.join(colList, ',');
-
-        return String.format(createTableFormat, tableName, colList, createTableSuffix, createTableOptional);
-    }
+//    public String generateCreateTableSql() {
+//
+//        Datasource datasource = dataSourceFactory.getDatasource("");
+//
+//        String createTableFormat = datasource.getCreateTableFormat();
+//
+//        String createTableSuffix = datasource.getCreateTableSuffix();
+//
+//        String createTableOptional = datasource.getCreateTableOptional();
+//
+//        String colList = "";
+//        for (){
+//            String colString = datasource.convertType();
+//        }
+//        Strings.join(colList, ',');
+//
+//        return String.format(createTableFormat, tableName, colList, createTableSuffix, createTableOptional);
+//    }
 }
