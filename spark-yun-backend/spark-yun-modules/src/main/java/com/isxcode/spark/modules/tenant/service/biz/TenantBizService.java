@@ -90,6 +90,12 @@ public class TenantBizService {
             tenant.setMaxWorkflowNum(Long.parseLong(String.valueOf(tetAddTenantReq.getMaxWorkflowNum())));
         }
 
+        // 有效期保存
+        if (tetAddTenantReq.getValidDateTime() != null && tetAddTenantReq.getValidDateTime().size() == 2) {
+            tenant.setValidStartDateTime(tetAddTenantReq.getValidDateTime().get(0));
+            tenant.setValidEndDateTime(tetAddTenantReq.getValidDateTime().get(1));
+        }
+
         // 持久化租户
         TenantEntity tenantEntity = tenantRepository.save(tenant);
 
@@ -172,6 +178,14 @@ public class TenantBizService {
         // TetUpdateTenantBySystemAdminReq To TenantEntity
         TenantEntity tenantEntity = tenantMapper
             .tetUpdateTenantBySystemAdminReqToTenantEntity(tetUpdateTenantBySystemAdminReq, tenantEntityOptional.get());
+
+
+        // 有效期保存
+        if (tetUpdateTenantBySystemAdminReq.getValidDateTime() != null
+            && tetUpdateTenantBySystemAdminReq.getValidDateTime().size() == 2) {
+            tenantEntity.setValidStartDateTime(tetUpdateTenantBySystemAdminReq.getValidDateTime().get(0));
+            tenantEntity.setValidEndDateTime(tetUpdateTenantBySystemAdminReq.getValidDateTime().get(1));
+        }
 
         // 持久化对象
         tenantRepository.save(tenantEntity);
