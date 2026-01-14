@@ -6,6 +6,7 @@ import javax.validation.constraints.NotEmpty;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 public class AddTenantReq {
@@ -29,9 +30,5 @@ public class AddTenantReq {
 
     @Schema(title = "有效期开始时间", example = "2025-12-12 12:12:12")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime validStartDateTime;
-
-    @Schema(title = "有效期结束时间", example = "2025-12-12 12:12:12")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime validEndDateTime;
+    private List<LocalDateTime> validDateTime;
 }
