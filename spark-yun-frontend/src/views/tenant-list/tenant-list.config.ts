@@ -1,7 +1,7 @@
 /*
  * @Author: fanciNate
  * @Date: 2023-05-18 10:52:00
- * @LastEditTime: 2026-01-10 20:45:57
+ * @LastEditTime: 2026-01-14 22:33:07
  * @LastEditors: fancinate 1585546519@qq.com
  * @Description: In User Settings Edit
  * @FilePath: /zqy-web/src/views/tenant-list/tenant-list.config.ts
@@ -75,8 +75,14 @@ export const colConfigs: colConfig[] = [
     customSlot: 'statusTag'
   },
   {
+    prop: 'validStartDateTime',
+    title: '有效期开始时间',
+    minWidth: 140,
+    showOverflowTooltip: true
+  },
+  {
     prop: 'validEndDateTime',
-    title: '有效期',
+    title: '有效期结束时间',
     minWidth: 140,
     showOverflowTooltip: true
   },

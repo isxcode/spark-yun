@@ -65,11 +65,13 @@
     <template #customLeft>
       <div class="valid-time">
         <el-date-picker
-          v-model="formData.validEndDateTime"
-          type="datetime"
-          placeholder="有效期"
+          v-model="formData.validDateTime"
+          type="datetimerange"
           format="YYYY-MM-DD HH:mm:ss"
           value-format="YYYY-MM-DD HH:mm:ss"
+          range-separator="~"
+          start-placeholder="有效期开始时间"
+          end-placeholder="有效期结束时间"
           :editable="false"
         />
       </div>
@@ -112,8 +114,7 @@ const formData = reactive({
   maxMemberNum: 5,
   maxWorkflowNum: 20,
   adminUserId: '',
-  validStartDateTime: '',
-  validEndDateTime: '',
+  validDateTime: [],
   remark: '',
   id: ''
 })
@@ -143,8 +144,11 @@ function showModal(cb: () => void, data: any): void {
     formData.maxMemberNum = data.maxMemberNum
     formData.maxWorkflowNum = data.maxWorkflowNum
     formData.remark = data.remark
-    formData.validStartDateTime = data.validStartDateTime
-    formData.validEndDateTime = data.validEndDateTime
+    if (data.validStartDateTime && data.validEndDateTime) {
+      formData.validDateTime = [data.validStartDateTime, data.validEndDateTime]
+    } else {
+      formData.validDateTime = []
+    }
     formData.id = data.id
     modelConfig.title = '编辑租户'
     renderSence.value = 'edit'
@@ -154,14 +158,10 @@ function showModal(cb: () => void, data: any): void {
     formData.maxWorkflowNum = 5
     formData.adminUserId = ''
     formData.remark = ''
-    formData.validStartDateTime = ''
-    formData.validEndDateTime = ''
+    formData.validDateTime = []
     formData.id = ''
     modelConfig.title = '添加租户'
     renderSence.value = 'new'
-  }
-  if (!formData.validStartDateTime) {
-    formData.validStartDateTime = dayjs(new Date()).format('YYYY-MM-DD HH:mm:ss')
   }
   nextTick(() => {
     form.value?.resetFields()
@@ -222,7 +222,7 @@ defineExpose({
   padding: 12px 20px 0 20px;
   box-sizing: border-box;
 }
-.el-date-picker {
+.el-date-range-picker {
   .el-picker-panel__footer {
     display: flex;
     justify-content: space-between;
@@ -231,10 +231,15 @@ defineExpose({
 .valid-time {
   position: absolute;
   left: 20px;
-  .el-date-editor {
-    .el-input__wrapper {
-      width: 156px;
-      height: 26px;
+  .el-date-editor--datetimerange {
+    width: 300px;
+    height: 28px;
+    padding: 0;
+    .el-range-input {
+      font-size: 12px;
+    }
+    .el-range-separator {
+      max-width: 8px;
     }
   }
 }
