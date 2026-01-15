@@ -1,6 +1,7 @@
 package com.isxcode.spark.modules.datasource.source.impl;
 
 import com.isxcode.spark.api.datasource.constants.DatasourceDriver;
+import com.isxcode.spark.api.datasource.constants.ColumnCode;
 import com.isxcode.spark.api.datasource.dto.ColumnMetaDto;
 import com.isxcode.spark.api.datasource.constants.DatasourceType;
 import com.isxcode.spark.api.datasource.dto.ConnectInfo;
@@ -240,7 +241,7 @@ public class SqlServerService extends Datasource {
 
     @Override
     public String getCreateTableFormat() {
-        return "";
+        return "CREATE TABLE %s (%s) %s %s";
     }
 
     @Override
@@ -255,12 +256,111 @@ public class SqlServerService extends Datasource {
 
     @Override
     public String convertColumnCode(ColumnMetaDto columnMeta) {
-        return "";
+        String type = columnMeta.getType().toLowerCase();
+        if (type.contains("(")) {
+            type = type.substring(0, type.indexOf("("));
+        }
+        switch (type) {
+            case "tinyint":
+            case "smallint":
+            case "int":
+                return ColumnCode.INT;
+            case "bigint":
+                return ColumnCode.BIGINT;
+            case "real":
+                return ColumnCode.FLOAT;
+            case "float":
+            case "double":
+                return ColumnCode.DOUBLE;
+            case "decimal":
+            case "numeric":
+            case "money":
+            case "smallmoney":
+                return ColumnCode.DECIMAL;
+            case "char":
+            case "nchar":
+                return ColumnCode.CHAR;
+            case "varchar":
+            case "nvarchar":
+                return ColumnCode.STRING;
+            case "text":
+            case "ntext":
+                return ColumnCode.TEXT;
+            case "date":
+                return ColumnCode.DATE;
+            case "datetime":
+            case "datetime2":
+            case "smalldatetime":
+                return ColumnCode.DATETIME;
+            case "bit":
+                return ColumnCode.BOOLEAN;
+            default:
+                return ColumnCode.STRING;
+        }
     }
 
     @Override
     public String convertColumnType(ColumnMetaDto columnMeta, String columnCode) {
-        return "";
+        StringBuilder columnDef = new StringBuilder();
+        columnDef.append(columnMeta.getName()).append(" ");
+        switch (columnCode) {
+            case ColumnCode.BOOLEAN:
+                columnDef.append("BIT");
+                break;
+            case ColumnCode.INT:
+                columnDef.append("INT");
+                break;
+            case ColumnCode.BIGINT:
+                columnDef.append("BIGINT");
+                break;
+            case ColumnCode.FLOAT:
+                columnDef.append("REAL");
+                break;
+            case ColumnCode.DOUBLE:
+                columnDef.append("FLOAT");
+                break;
+            case ColumnCode.DECIMAL:
+                if (columnMeta.getColumnLength() != null && columnMeta.getColumnLength() > 0) {
+                    columnDef.append("DECIMAL(").append(columnMeta.getColumnLength()).append(",2)");
+                } else {
+                    columnDef.append("DECIMAL(10,2)");
+                }
+                break;
+            case ColumnCode.CHAR:
+                if (columnMeta.getColumnLength() != null && columnMeta.getColumnLength() > 0) {
+                    columnDef.append("NCHAR(").append(columnMeta.getColumnLength()).append(")");
+                } else {
+                    columnDef.append("NCHAR(50)");
+                }
+                break;
+            case ColumnCode.STRING:
+                if (columnMeta.getColumnLength() != null && columnMeta.getColumnLength() > 0) {
+                    columnDef.append("NVARCHAR(").append(columnMeta.getColumnLength()).append(")");
+                } else {
+                    columnDef.append("NVARCHAR(255)");
+                }
+                break;
+            case ColumnCode.TEXT:
+                columnDef.append("NTEXT");
+                break;
+            case ColumnCode.DATE:
+                columnDef.append("DATE");
+                break;
+            case ColumnCode.DATETIME:
+            case ColumnCode.TIMESTAMP:
+                columnDef.append("DATETIME2");
+                break;
+            default:
+                columnDef.append("NVARCHAR(255)");
+                break;
+        }
+        if (columnMeta.getIsNoNullColumn() != null && columnMeta.getIsNoNullColumn()) {
+            columnDef.append(" NOT NULL");
+        }
+        if (columnMeta.getIsPrimaryColumn() != null && columnMeta.getIsPrimaryColumn()) {
+            columnDef.append(" PRIMARY KEY");
+        }
+        return columnDef.toString();
     }
 
 }
