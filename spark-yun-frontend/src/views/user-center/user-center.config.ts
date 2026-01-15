@@ -1,8 +1,8 @@
 /*
  * @Author: fanciNate
  * @Date: 2023-06-04 22:27:08
- * @LastEditTime: 2023-06-16 22:20:14
- * @LastEditors: fanciNate
+ * @LastEditTime: 2026-01-14 22:32:55
+ * @LastEditors: fancinate 1585546519@qq.com
  * @Description: In User Settings Edit
  * @FilePath: /spark-yun/spark-yun-website/src/views/user-center/user-center.config.ts
  */
@@ -67,6 +67,18 @@ export const colConfigs: colConfig[] = [
     prop: 'email',
     title: '邮箱',
     minWidth: 160,
+    showOverflowTooltip: true
+  },
+  {
+    prop: 'validStartDateTime',
+    title: '有效期开始时间',
+    minWidth: 140,
+    showOverflowTooltip: true
+  },
+  {
+    prop: 'validEndDateTime',
+    title: '有效期结束时间',
+    minWidth: 140,
     showOverflowTooltip: true
   },
   {

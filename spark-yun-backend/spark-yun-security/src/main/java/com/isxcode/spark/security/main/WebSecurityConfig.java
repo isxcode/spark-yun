@@ -1,6 +1,7 @@
 package com.isxcode.spark.security.main;
 
 import com.isxcode.spark.backend.api.base.properties.IsxAppProperties;
+import com.isxcode.spark.security.user.TenantRepository;
 import com.isxcode.spark.security.user.TenantUserRepository;
 import com.isxcode.spark.security.user.UserRepository;
 import java.util.ArrayList;
@@ -38,9 +39,11 @@ public class WebSecurityConfig {
 
     private final TenantUserRepository tenantUserRepository;
 
+    private final TenantRepository tenantRepository;
+
     public UserDetailsService userDetailsServiceBean() {
 
-        return new UserDetailsServiceImpl(userRepository, tenantUserRepository);
+        return new UserDetailsServiceImpl(userRepository, tenantUserRepository, tenantRepository);
     }
 
     public AuthenticationManager authenticationManagerBean() {

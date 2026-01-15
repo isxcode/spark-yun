@@ -75,6 +75,20 @@
         />
       </el-form-item>
     </el-form>
+    <template #customLeft>
+      <div class="valid-time">
+        <el-date-picker
+          v-model="formData.validDateTime"
+          type="datetimerange"
+          format="YYYY-MM-DD HH:mm:ss"
+          value-format="YYYY-MM-DD HH:mm:ss"
+          range-separator="~"
+          start-placeholder="有效期开始时间"
+          end-placeholder="有效期结束时间"
+          :editable="false"
+        />
+      </div>
+    </template>
   </BlockModal>
 </template>
 
@@ -82,6 +96,7 @@
 import { reactive, defineExpose, ref, nextTick } from 'vue'
 import BlockModal from '@/components/block-modal/index.vue'
 import { ElMessage, FormInstance, FormRules } from 'element-plus'
+import dayjs from 'dayjs'
 
 const form = ref<FormInstance>()
 const callback = ref<any>()
@@ -109,6 +124,7 @@ const formData = reactive({
   username: '',
   account: '',
   passwd: '',
+  validDateTime: '',
   phone: '',
   email: '',
   remark: '',
@@ -184,10 +200,16 @@ function showModal(cb: () => void, data: any): void {
   callback.value = cb
   modelConfig.visible = true
   if (data) {
-    (formData.username = data.username), (formData.account = data.account)
+    formData.username = data.username
+    formData.account = data.account
     formData.phone = data.phone
     formData.email = data.email
     formData.remark = data.remark
+    if (data.validStartDateTime && data.validEndDateTime) {
+      formData.validDateTime = [data.validStartDateTime, data.validEndDateTime]
+    } else {
+      formData.validDateTime = []
+    }
     formData.id = data.id
     modelConfig.title = '编辑用户'
     renderSence.value = 'edit'
@@ -195,6 +217,7 @@ function showModal(cb: () => void, data: any): void {
     formData.username = ''
     formData.account = ''
     formData.passwd = ''
+    formData.validDateTime = []
     formData.phone = ''
     formData.email = ''
     formData.remark = ''

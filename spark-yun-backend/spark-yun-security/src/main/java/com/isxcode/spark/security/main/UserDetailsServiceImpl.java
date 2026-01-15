@@ -6,10 +6,7 @@ import com.isxcode.spark.api.tenant.constants.TenantStatus;
 import com.isxcode.spark.api.user.constants.RoleType;
 import com.isxcode.spark.api.user.constants.UserStatus;
 import com.isxcode.spark.backend.api.base.exceptions.IsxAppException;
-import com.isxcode.spark.security.user.TenantUserEntity;
-import com.isxcode.spark.security.user.TenantUserRepository;
-import com.isxcode.spark.security.user.UserEntity;
-import com.isxcode.spark.security.user.UserRepository;
+import com.isxcode.spark.security.user.*;
 
 
 import lombok.RequiredArgsConstructor;
@@ -21,6 +18,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
+import java.time.LocalDateTime;
+import java.util.Optional;
+
 @Slf4j
 @RequiredArgsConstructor
 public class UserDetailsServiceImpl implements UserDetailsService {
@@ -28,6 +28,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     private final UserRepository userRepository;
 
     private final TenantUserRepository tenantUserRepository;
+
+    private final TenantRepository tenantRepository;
 
     @Override
     public UserDetails loadUserByUsername(String userId) throws UsernameNotFoundException {
@@ -44,6 +46,14 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         // 用户被禁用了，直接退出
         if (UserStatus.DISABLE.equals(userInfo.getStatus())) {
             throw new IsxAppException("用户被禁用，请联系管理员!");
+        }
+
+        // 不在有效期异常
+        if (userInfo.getValidStartDateTime() != null && userInfo.getValidEndDateTime() != null) {
+            if (LocalDateTime.now().isBefore(userInfo.getValidStartDateTime())
+                || LocalDateTime.now().isAfter(userInfo.getValidEndDateTime())) {
+                throw new IsxAppException("用户账号不在有效期内");
+            }
         }
 
         // 获取用户系统权限
@@ -67,8 +77,30 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                     throw new IsxAppException("用户被租户禁用，请联系管理员!");
                 }
 
+                // 判断租户是否存在
+                Optional<TenantEntity> tenantEntityOptional = tenantRepository.findById(memberInfo.getTenantId());
+                if (!tenantEntityOptional.isPresent()) {
+                    throw new IsxAppException("当前租户不可用");
+                }
+
+                // 判断租户是否禁用
+                TenantEntity tenant = tenantEntityOptional.get();
+                if (TenantStatus.DISABLE.equals(tenant.getStatus())) {
+                    throw new IsxAppException("当前租户已被禁用");
+                }
+
+                // 判断租户是否在有效期内
+                if (tenant.getValidStartDateTime() != null && tenant.getValidEndDateTime() != null) {
+                    if (LocalDateTime.now().isBefore(tenant.getValidStartDateTime())
+                        || LocalDateTime.now().isAfter(tenant.getValidEndDateTime())) {
+                        throw new IsxAppException("当前租户不在有效期内");
+                    }
+                }
+
                 // 封装成员权限
                 authority = authority + "," + memberInfo.getRoleCode();
+            } else {
+                throw new IsxAppException("tenantId 为空异常");
             }
         }
 

@@ -62,6 +62,20 @@
         />
       </el-form-item>
     </el-form>
+    <template #customLeft>
+      <div class="valid-time">
+        <el-date-picker
+          v-model="formData.validDateTime"
+          type="datetimerange"
+          format="YYYY-MM-DD HH:mm:ss"
+          value-format="YYYY-MM-DD HH:mm:ss"
+          range-separator="~"
+          start-placeholder="有效期开始时间"
+          end-placeholder="有效期结束时间"
+          :editable="false"
+        />
+      </div>
+    </template>
   </BlockModal>
 </template>
 
@@ -70,6 +84,7 @@ import { reactive, defineExpose, ref, nextTick } from 'vue'
 import BlockModal from '@/components/block-modal/index.vue'
 import { ElMessage, FormInstance, FormRules } from 'element-plus'
 import { GetUserInfoList } from '@/services/tenant-user.service'
+import dayjs from 'dayjs'
 
 const form = ref<FormInstance>()
 const callback = ref<any>()
@@ -99,6 +114,7 @@ const formData = reactive({
   maxMemberNum: 5,
   maxWorkflowNum: 20,
   adminUserId: '',
+  validDateTime: [],
   remark: '',
   id: ''
 })
@@ -128,6 +144,11 @@ function showModal(cb: () => void, data: any): void {
     formData.maxMemberNum = data.maxMemberNum
     formData.maxWorkflowNum = data.maxWorkflowNum
     formData.remark = data.remark
+    if (data.validStartDateTime && data.validEndDateTime) {
+      formData.validDateTime = [data.validStartDateTime, data.validEndDateTime]
+    } else {
+      formData.validDateTime = []
+    }
     formData.id = data.id
     modelConfig.title = '编辑租户'
     renderSence.value = 'edit'
@@ -137,6 +158,7 @@ function showModal(cb: () => void, data: any): void {
     formData.maxWorkflowNum = 5
     formData.adminUserId = ''
     formData.remark = ''
+    formData.validDateTime = []
     formData.id = ''
     modelConfig.title = '添加租户'
     renderSence.value = 'new'
@@ -199,5 +221,26 @@ defineExpose({
 .add-computer-group {
   padding: 12px 20px 0 20px;
   box-sizing: border-box;
+}
+.el-date-range-picker {
+  .el-picker-panel__footer {
+    display: flex;
+    justify-content: space-between;
+  }
+}
+.valid-time {
+  position: absolute;
+  left: 20px;
+  .el-date-editor--datetimerange {
+    width: 300px;
+    height: 28px;
+    padding: 0;
+    .el-range-input {
+      font-size: 12px;
+    }
+    .el-range-separator {
+      max-width: 8px;
+    }
+  }
 }
 </style>

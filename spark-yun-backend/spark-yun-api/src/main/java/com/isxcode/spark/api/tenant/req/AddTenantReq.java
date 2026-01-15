@@ -1,8 +1,12 @@
 package com.isxcode.spark.api.tenant.req;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import javax.validation.constraints.NotEmpty;
 import lombok.Data;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 public class AddTenantReq {
@@ -23,4 +27,8 @@ public class AddTenantReq {
     @Schema(title = "管理员用户id", example = "sy_1234567890")
     @NotEmpty(message = "租户管理员不能为空")
     private String adminUserId;
+
+    @Schema(title = "有效期开始时间", example = "2025-12-12 12:12:12")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private List<LocalDateTime> validDateTime;
 }

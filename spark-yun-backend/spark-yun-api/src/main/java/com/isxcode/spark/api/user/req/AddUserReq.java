@@ -1,10 +1,14 @@
 package com.isxcode.spark.api.user.req;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 import lombok.Data;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 public class AddUserReq {
@@ -33,4 +37,8 @@ public class AddUserReq {
 
     @Schema(title = "备注", example = "这个人不能删除")
     private String remark;
+
+    @Schema(title = "有效期开始时间", example = "2025-12-12 12:12:12")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private List<LocalDateTime> validDateTime;
 }
