@@ -1,7 +1,9 @@
 package com.isxcode.spark.modules.datasource.source.impl;
 
+import com.isxcode.spark.api.datasource.constants.ColumnCode;
 import com.isxcode.spark.api.datasource.constants.DatasourceDriver;
 import com.isxcode.spark.api.datasource.constants.DatasourceType;
+import com.isxcode.spark.api.datasource.dto.ColumnMetaDto;
 import com.isxcode.spark.api.datasource.dto.ConnectInfo;
 import com.isxcode.spark.api.datasource.dto.QueryColumnDto;
 import com.isxcode.spark.api.datasource.dto.QueryTableDto;
@@ -186,6 +188,148 @@ public class MysqlService extends Datasource {
     @Override
     public void refreshTableInfo(ConnectInfo connectInfo) throws IsxAppException {
 
+    }
+
+    @Override
+    public String getCreateTableFormat() {
+        // CREATE TABLE 表名 (字段列表) 后缀 可选后缀
+        return "CREATE TABLE %s (%s) %s %s";
+    }
+
+    @Override
+    public String getCreateTableSuffix(List<ColumnMetaDto> fromColumnList) {
+        // MySQL 必需的表后缀
+        return "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4";
+    }
+
+    @Override
+    public String getCreateTableOptionalSuffix(List<ColumnMetaDto> fromColumnList) {
+        // MySQL 可选的表后缀，暂时不需要
+        return "";
+    }
+
+    @Override
+    public String convertColumnCode(ColumnMetaDto columnMeta) {
+        // 将 MySQL 字段类型转换为标准的 ColumnCode
+        String type = columnMeta.getType().toLowerCase();
+
+        // 处理带括号的类型，如 varchar(255)
+        if (type.contains("(")) {
+            type = type.substring(0, type.indexOf("("));
+        }
+
+        switch (type) {
+            case "tinyint":
+            case "smallint":
+            case "mediumint":
+            case "int":
+            case "integer":
+                return ColumnCode.INT;
+            case "bigint":
+                return ColumnCode.BIGINT;
+            case "float":
+                return ColumnCode.FLOAT;
+            case "double":
+            case "real":
+                return ColumnCode.DOUBLE;
+            case "decimal":
+            case "numeric":
+                return ColumnCode.DECIMAL;
+            case "char":
+                return ColumnCode.CHAR;
+            case "varchar":
+            case "tinytext":
+                return ColumnCode.STRING;
+            case "text":
+            case "mediumtext":
+            case "longtext":
+                return ColumnCode.TEXT;
+            case "date":
+                return ColumnCode.DATE;
+            case "datetime":
+                return ColumnCode.DATETIME;
+            case "timestamp":
+                return ColumnCode.TIMESTAMP;
+            case "boolean":
+            case "bool":
+            case "bit":
+                return ColumnCode.BOOLEAN;
+            default:
+                return ColumnCode.STRING;
+        }
+    }
+
+    @Override
+    public String convertColumnType(ColumnMetaDto columnMeta, String columnCode) {
+        // 将 ColumnCode 转换为 MySQL 字段类型定义
+        StringBuilder columnDef = new StringBuilder();
+        columnDef.append(columnMeta.getName()).append(" ");
+
+        switch (columnCode) {
+            case ColumnCode.BOOLEAN:
+                columnDef.append("TINYINT(1)");
+                break;
+            case ColumnCode.INT:
+                columnDef.append("INT");
+                break;
+            case ColumnCode.BIGINT:
+                columnDef.append("BIGINT");
+                break;
+            case ColumnCode.FLOAT:
+                columnDef.append("FLOAT");
+                break;
+            case ColumnCode.DOUBLE:
+                columnDef.append("DOUBLE");
+                break;
+            case ColumnCode.DECIMAL:
+                if (columnMeta.getColumnLength() != null && columnMeta.getColumnLength() > 0) {
+                    columnDef.append("DECIMAL(").append(columnMeta.getColumnLength()).append(",2)");
+                } else {
+                    columnDef.append("DECIMAL(10,2)");
+                }
+                break;
+            case ColumnCode.CHAR:
+                if (columnMeta.getColumnLength() != null && columnMeta.getColumnLength() > 0) {
+                    columnDef.append("CHAR(").append(columnMeta.getColumnLength()).append(")");
+                } else {
+                    columnDef.append("CHAR(50)");
+                }
+                break;
+            case ColumnCode.STRING:
+                if (columnMeta.getColumnLength() != null && columnMeta.getColumnLength() > 0) {
+                    columnDef.append("VARCHAR(").append(columnMeta.getColumnLength()).append(")");
+                } else {
+                    columnDef.append("VARCHAR(255)");
+                }
+                break;
+            case ColumnCode.TEXT:
+                columnDef.append("TEXT");
+                break;
+            case ColumnCode.DATE:
+                columnDef.append("DATE");
+                break;
+            case ColumnCode.DATETIME:
+                columnDef.append("DATETIME");
+                break;
+            case ColumnCode.TIMESTAMP:
+                columnDef.append("TIMESTAMP");
+                break;
+            default:
+                columnDef.append("VARCHAR(255)");
+                break;
+        }
+
+        // 添加 NOT NULL 约束
+        if (columnMeta.getIsNoNullColumn() != null && columnMeta.getIsNoNullColumn()) {
+            columnDef.append(" NOT NULL");
+        }
+
+        // 添加主键约束
+        if (columnMeta.getIsPrimaryColumn() != null && columnMeta.getIsPrimaryColumn()) {
+            columnDef.append(" PRIMARY KEY");
+        }
+
+        return columnDef.toString();
     }
 
 
