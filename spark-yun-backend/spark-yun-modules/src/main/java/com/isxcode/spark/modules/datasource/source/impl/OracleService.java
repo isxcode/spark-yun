@@ -1,6 +1,7 @@
 package com.isxcode.spark.modules.datasource.source.impl;
 
 import com.isxcode.spark.api.datasource.constants.DatasourceDriver;
+import com.isxcode.spark.api.datasource.constants.ColumnCode;
 import com.isxcode.spark.api.datasource.dto.ColumnMetaDto;
 import com.isxcode.spark.api.datasource.constants.DatasourceType;
 import com.isxcode.spark.api.datasource.dto.ConnectInfo;
@@ -216,7 +217,7 @@ public class OracleService extends Datasource {
 
     @Override
     public String getCreateTableFormat() {
-        return "";
+        return "CREATE TABLE %s (%s) %s %s";
     }
 
     @Override
@@ -231,12 +232,108 @@ public class OracleService extends Datasource {
 
     @Override
     public String convertColumnCode(ColumnMetaDto columnMeta) {
-        return "";
+        String type = columnMeta.getType().toLowerCase();
+
+        if (type.contains("(")) {
+            type = type.substring(0, type.indexOf("("));
+        }
+
+        switch (type) {
+            case "number":
+                return ColumnCode.DECIMAL;
+            case "integer":
+            case "int":
+                return ColumnCode.INT;
+            case "float":
+            case "binary_float":
+                return ColumnCode.FLOAT;
+            case "binary_double":
+                return ColumnCode.DOUBLE;
+            case "char":
+                return ColumnCode.CHAR;
+            case "varchar2":
+            case "varchar":
+            case "nvarchar2":
+                return ColumnCode.STRING;
+            case "clob":
+            case "nclob":
+            case "long":
+                return ColumnCode.TEXT;
+            case "date":
+                return ColumnCode.DATE;
+            case "timestamp":
+                return ColumnCode.DATETIME;
+            default:
+                return ColumnCode.STRING;
+        }
     }
 
     @Override
     public String convertColumnType(ColumnMetaDto columnMeta, String columnCode) {
-        return "";
+        StringBuilder columnDef = new StringBuilder();
+        columnDef.append(columnMeta.getName()).append(" ");
+
+        switch (columnCode) {
+            case ColumnCode.BOOLEAN:
+                columnDef.append("NUMBER(1)");
+                break;
+            case ColumnCode.INT:
+                columnDef.append("INTEGER");
+                break;
+            case ColumnCode.BIGINT:
+                columnDef.append("NUMBER(19)");
+                break;
+            case ColumnCode.FLOAT:
+                columnDef.append("BINARY_FLOAT");
+                break;
+            case ColumnCode.DOUBLE:
+                columnDef.append("BINARY_DOUBLE");
+                break;
+            case ColumnCode.DECIMAL:
+                if (columnMeta.getColumnLength() != null && columnMeta.getColumnLength() > 0) {
+                    columnDef.append("NUMBER(").append(columnMeta.getColumnLength()).append(",2)");
+                } else {
+                    columnDef.append("NUMBER(10,2)");
+                }
+                break;
+            case ColumnCode.CHAR:
+                if (columnMeta.getColumnLength() != null && columnMeta.getColumnLength() > 0) {
+                    columnDef.append("CHAR(").append(columnMeta.getColumnLength()).append(")");
+                } else {
+                    columnDef.append("CHAR(50)");
+                }
+                break;
+            case ColumnCode.STRING:
+                if (columnMeta.getColumnLength() != null && columnMeta.getColumnLength() > 0) {
+                    columnDef.append("VARCHAR2(").append(columnMeta.getColumnLength()).append(")");
+                } else {
+                    columnDef.append("VARCHAR2(255)");
+                }
+                break;
+            case ColumnCode.TEXT:
+                columnDef.append("CLOB");
+                break;
+            case ColumnCode.DATE:
+                columnDef.append("DATE");
+                break;
+            case ColumnCode.DATETIME:
+            case ColumnCode.TIMESTAMP:
+                columnDef.append("TIMESTAMP");
+                break;
+            default:
+                columnDef.append("VARCHAR2(255)");
+                break;
+        }
+
+        if (columnMeta.getIsNoNullColumn() != null && columnMeta.getIsNoNullColumn()) {
+            columnDef.append(" NOT NULL");
+        }
+
+        if (columnMeta.getIsPrimaryColumn() != null && columnMeta.getIsPrimaryColumn()) {
+            columnDef.append(" PRIMARY KEY");
+        }
+
+        return columnDef.toString();
     }
 
 }
