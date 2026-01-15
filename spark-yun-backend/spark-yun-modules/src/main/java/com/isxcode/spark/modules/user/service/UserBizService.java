@@ -97,11 +97,16 @@ public class UserBizService {
         // 如果用户没有任何启动租户报错
         List<String> tenantId =
             tenantUserEntities.stream().map(TenantUserEntity::getTenantId).collect(Collectors.toList());
-        List<TenantEntity> enableTenants =
-            tenantRepository.findAllByIdInAndStatusAndValidEndDateTimeAfterAndValidStartDateTimeBefore(tenantId,
-                TenantStatus.ENABLE, LocalDateTime.now(), LocalDateTime.now());
+        List<TenantEntity> enableTenants = tenantRepository.findAllByIdInAndStatus(tenantId, TenantStatus.ENABLE);
+        enableTenants = enableTenants.stream().filter(e -> {
+            if (e.getValidStartDateTime() == null || e.getValidEndDateTime() == null) {
+                return true;
+            }
+            return LocalDateTime.now().isBefore(e.getValidStartDateTime())
+                && LocalDateTime.now().isAfter(e.getValidEndDateTime());
+        }).collect(Collectors.toList());
         if (enableTenants.isEmpty()) {
-            throw new IsxAppException("无合法租户，请联系管理员");
+            throw new IsxAppException("暂无租户，请联系管理员");
         }
 
         // 如果用户当前租户id启动则返回当前租户，没有则随机挑一个
@@ -244,6 +249,9 @@ public class UserBizService {
         if (usrUpdateUserReq.getValidDateTime() != null && usrUpdateUserReq.getValidDateTime().size() == 2) {
             userEntity.setValidStartDateTime(usrUpdateUserReq.getValidDateTime().get(0));
             userEntity.setValidEndDateTime(usrUpdateUserReq.getValidDateTime().get(1));
+        } else {
+            userEntity.setValidStartDateTime(null);
+            userEntity.setValidEndDateTime(null);
         }
 
         userRepository.save(userEntity);

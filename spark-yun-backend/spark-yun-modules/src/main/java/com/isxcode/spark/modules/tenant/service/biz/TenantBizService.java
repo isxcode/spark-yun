@@ -185,6 +185,9 @@ public class TenantBizService {
             && tetUpdateTenantBySystemAdminReq.getValidDateTime().size() == 2) {
             tenantEntity.setValidStartDateTime(tetUpdateTenantBySystemAdminReq.getValidDateTime().get(0));
             tenantEntity.setValidEndDateTime(tetUpdateTenantBySystemAdminReq.getValidDateTime().get(1));
+        } else {
+            tenantEntity.setValidStartDateTime(null);
+            tenantEntity.setValidEndDateTime(null);
         }
 
         // 持久化对象
