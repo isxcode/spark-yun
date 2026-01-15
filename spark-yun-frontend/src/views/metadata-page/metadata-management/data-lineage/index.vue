@@ -2,7 +2,7 @@
  * @Author: fancinate 1585546519@qq.com
  * @Date: 2025-12-09 21:26:39
  * @LastEditors: fancinate 1585546519@qq.com
- * @LastEditTime: 2026-01-14 22:08:13
+ * @LastEditTime: 2026-01-15 20:24:52
  * @FilePath: /spark-yun/spark-yun-frontend/src/views/metadata-page/metadata-management/data-lineage/index.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -171,7 +171,7 @@ function initGraph(data: any) {
                     id: `${guid()}&&sparkYun&&${target.workVersionId || ''}&&sparkYun&&${target.workName || ''}&&sparkYun&&${target.workType || ''}`,
                     source: source.id,
                     target: target.id,
-                    name: `${target.workflowName}（${target.workName}）`,
+                    name: target.workflowName ? `${target.workflowName}（${target.workName}）` : '',
                     data: target
                 }
             }
@@ -187,11 +187,13 @@ async function renderGraph() {
         const workId = argumentsParams[1] ? argumentsParams[1] : ''
         const name = argumentsParams[2] ? argumentsParams[2] : ''
         const workType = argumentsParams[3] ? argumentsParams[3] : ''
-        workDetailRef.value.showModal({
-            workId: workId,
-            name: name,
-            workType: workType
-        })
+        if (workId) {
+            workDetailRef.value.showModal({
+                workId: workId,
+                name: name,
+                workType: workType
+            })
+        }
     });
     await graph.render();
 }
@@ -227,7 +229,7 @@ function getParentNode(data: any) {
                     id: `${guid()}&&sparkYun&&${node.data.workVersionId || ''}&&sparkYun&&${node.data.workName || ''}&&sparkYun&&${node.data.workType || ''}`,
                     source: node.id,
                     target: data.id,
-                    name: `${node.data.workflowName}（${node.data.workName}）`
+                    name: node.data.workflowName ? `${node.data.workflowName}（${node.data.workName}）` : ''
                 })
             })
             graph.addNodeData(parentNodeConfig.nodes)
@@ -262,7 +264,7 @@ function getChildNode(data: any) {
                     id: `${guid()}&&sparkYun&&${node.workVersionId || ''}&&sparkYun&&${node.workName || ''}&&sparkYun&&${node.workType || ''}`,
                     source: data.id,
                     target: node.id,
-                    name: `${node.workflowName}（${node.workName}）`
+                    name: node.workflowName ? `${node.workflowName}（${node.workName}）` : ''
                 }
             }))
         }
