@@ -1,6 +1,7 @@
 package com.isxcode.spark.modules.datasource.source.impl;
 
 import com.isxcode.spark.api.datasource.constants.DatasourceDriver;
+import com.isxcode.spark.api.datasource.dto.ColumnMetaDto;
 import com.isxcode.spark.api.datasource.constants.DatasourceType;
 import com.isxcode.spark.api.datasource.dto.ConnectInfo;
 import com.isxcode.spark.api.datasource.dto.QueryColumnDto;
@@ -199,4 +200,30 @@ public class ClickhouseService extends Datasource {
                 return "String"; // 默认使用 String 作为兜底类型
         }
     }
+
+    @Override
+    public String getCreateTableFormat() {
+        return "";
+    }
+
+    @Override
+    public String getCreateTableSuffix(List<ColumnMetaDto> fromColumnList) {
+        return "";
+    }
+
+    @Override
+    public String getCreateTableOptionalSuffix(List<ColumnMetaDto> fromColumnList) {
+        return "";
+    }
+
+    @Override
+    public String convertColumnCode(ColumnMetaDto columnMeta) {
+        return "";
+    }
+
+    @Override
+    public String convertColumnType(ColumnMetaDto columnMeta, String columnCode) {
+        return "";
+    }
+
 }
