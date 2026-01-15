@@ -459,9 +459,12 @@ public class DatasourceBizService {
             columnTypeList.add(columnType);
         }
 
+        // 拼接字段列表，每个字段一行，带缩进
+        String columnListStr = "\n\t" + String.join(",\n\t", columnTypeList) + "\n";
+
         // 翻译成建表语句
         String createTableSql = String.format(createTableFormat, generateCreateTableSqlReq.getFromTableName(),
-            Strings.join(columnTypeList, ','), createTableSuffix, createTableOptionalSuffix);
+            columnListStr, createTableSuffix, createTableOptionalSuffix);
 
         return GenerateCreateTableSqlRes.builder().createTableSql(createTableSql).build();
     }
