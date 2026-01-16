@@ -132,6 +132,8 @@ install_resources_libs() {
 install_jdbc() {
     echo "拷贝驱动..."
 
+    create_dir "$JDBC_DIR"
+
     cp "${TMP_JDBC_DIR}"/* "${JDBC_DIR}"/
 }
 
@@ -158,7 +160,7 @@ main() {
     install_resources_libs
 
     # 6. 拷贝数据库驱动
-    install_resources_libs
+    install_jdbc
 
     echo "项目依赖安装完成！"
 }
