@@ -114,6 +114,20 @@ export function GetExcelReplaceName(params: any): Promise<any> {
     })
 }
 
+// 生成建表语句
+export function GenerateCreateTableSql(params: {
+    fromDbType: string
+    fromTableName: string
+    fromColumnList: any[]
+    toDbType: string
+}): Promise<any> {
+    return http.request({
+        method: 'post',
+        url: '/datasource/generateCreateTableSql',
+        params: params
+    })
+}
+
 // 作业流-Excel导入-获取Excel字段信息
 export function GetExcelTableColumnsCodes(params: any): Promise<any> {
     return http.request({
