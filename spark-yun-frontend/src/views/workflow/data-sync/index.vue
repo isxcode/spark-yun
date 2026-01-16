@@ -581,6 +581,10 @@ function showCreateTableSql(): void {
         ElMessage.warning('请选择数据去向数据源')
         return
     }
+    if (!formData.targetTable) {
+        ElMessage.warning('请选择数据去向表')
+        return
+    }
 
     // 调用接口获取源表字段列表
     GetTableColumnsByTableId({
