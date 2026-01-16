@@ -73,3 +73,26 @@ org.gradle.parallel.threads=2
 # 最大可用8个并发
 org.gradle.workers.max=8
 ```
+
+### 7. 本地完全体代码编译
+
+> 邮箱中检查压缩包
+
+- spark-yun-main.zip
+- spark-yun-vip-main.zip
+- resources.zip
+- license.lic
+
+```bash
+cd ~/Downloads/
+unzip spark-yun-main.zip
+mv spark-yun-main spark-yun
+unzip spark-yun-vip-main.zip
+mv spark-yun-vip-main ./spark-yun/spark-yun-vip
+unzip resources.zip
+mv resources ./spark-yun
+cd spark-yun
+gradle install package
+# 启动项目
+gradle start
+```

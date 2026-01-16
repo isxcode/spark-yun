@@ -16,10 +16,10 @@ readonly OSS_DOWNLOAD_URL="https://zhiqingyun-demo.isxcode.com/tools/open/file"
 # 路径配置
 readonly BASE_PATH=$(cd "$(dirname "$0")" && pwd)
 readonly TMP_DIR="${BASE_PATH}/resources/tmp"
-readonly JDBC_DIR="${BASE_PATH}/resources/jdbc/system"
-readonly LIBS_DIR="${BASE_PATH}/resources/libs"
 readonly TMP_SPARK_MIN_JARS="${TMP_DIR}/spark-min/jars"
 readonly TMP_FLINK_MIN_LIB="${TMP_DIR}/flink-min/lib"
+readonly TMP_JDBC_DIR="${TMP_DIR}/jdbc/system"
+readonly TMP_LIBS_DIR="${TMP_DIR}/libs"
 
 # spark依赖列表
 readonly SPARK_JARS=(
@@ -68,7 +68,7 @@ readonly JDBC_DRIVERS=(
 )
 
 # 项目依赖列表
-readonly PROJECT_JARS=(
+readonly PROJECT_LIBS=(
     "prql-java-0.5.2.jar"
     "slf4j-reload4j-2.0.0.jar"
     "libprql_java-osx-arm64.dylib"
@@ -211,27 +211,27 @@ download_jdbc_drivers() {
     echo "下载数据库驱动..."
 
     # 创建 JDBC 驱动目录
-    create_dir "$JDBC_DIR"
+    create_dir "$TMP_JDBC_DIR"
 
     # 批量下载驱动文件
     for driver in "${JDBC_DRIVERS[@]}"; do
         local driver_url="${OSS_DOWNLOAD_URL}/${driver}"
-        local driver_path="${JDBC_DIR}/${driver}"
+        local driver_path="${TMP_JDBC_DIR}/${driver}"
         download_file "$driver_url" "$driver_path" "数据库驱动: $driver"
     done
 }
 
 # 下载项目依赖
-download_project_dependencies() {
+download_project_libs() {
     echo "下载项目依赖..."
 
     # 创建项目依赖目录
-    create_dir "$LIBS_DIR"
+    create_dir "$TMP_LIBS_DIR"
 
     # 下载项目 JAR 依赖
-    for jar in "${PROJECT_JARS[@]}"; do
+    for jar in "${PROJECT_LIBS[@]}"; do
         local jar_url="${OSS_DOWNLOAD_URL}/${jar}"
-        local jar_path="${LIBS_DIR}/${jar}"
+        local jar_path="${TMP_LIBS_DIR}/${jar}"
         download_file "$jar_url" "$jar_path" "项目依赖: $jar"
     done
 }
@@ -262,7 +262,7 @@ main() {
     download_jdbc_drivers
 
     # 7. 下载项目依赖
-    download_project_dependencies
+    download_project_libs
 
     echo "项目依赖下载完成！"
 }

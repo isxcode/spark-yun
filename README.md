@@ -17,6 +17,10 @@
         <td><a href="https://github.com/isxcode/spark-yun">https://github.com/isxcode/spark-yun</a></td>
     </tr>
     <tr>
+        <td>Gitee仓库</td>
+        <td><a href="https://gitee.com/isxcode/spark-yun">https://gitee.com/isxcode/spark-yun</a></td>
+    </tr>
+    <tr>
         <td>演示环境</td>
         <td><a href="https://zhiqingyun-demo.isxcode.com">https://zhiqingyun-demo.isxcode.com</a></td>
     </tr>
