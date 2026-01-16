@@ -22,7 +22,7 @@
           <div class="title">{{ $t("community") }}</div>
           <div class="link" @click="clickGithub">{{ $t("github") }}</div>
           <div class="link" @click="clickGitee">{{ $t("gitee") }}</div>
-          <div class="link" @click="clickDiscord">{{ $t("discord") }}</div>
+          <div class="link" @click="clickDiscussions">{{ $t("discord") }}</div>
         </div>
         <div class="column">
           <div class="title">{{ $t("resources") }}</div>
@@ -365,7 +365,7 @@ function clickGitee() {
 }
 
 function clickGithub() {
-  window.open("https://github.com/isxcode/spark-yun/discussions");
+  window.open("https://github.com/isxcode/spark-yun/issues");
 }
 
 function clickSlack() {
@@ -374,6 +374,10 @@ function clickSlack() {
 
 function clickDiscord() {
   window.open("https://discord.gg/2AkVmn86");
+}
+
+function clickDiscussions() {
+  window.open("https://github.com/isxcode/spark-yun/discussions");
 }
 
 function clickLinked() {
