@@ -8,7 +8,7 @@ export default defineNuxtPlugin({
       const existingPreloadLoading = (window as any).__preloadLoading;
 
       if (existingPreloadLoading) {
-        console.log('发现内联预加载loading条，使用现有的loading条');
+        // console.log('发现内联预加载loading条，使用现有的loading条');
 
         // 如果已经有内联loading条，确保它正在显示
         existingPreloadLoading.show();
@@ -42,7 +42,7 @@ export default defineNuxtPlugin({
           }, 1000);
         });
       } else {
-        console.warn('预加载loading条未找到，创建备用loading条');
+        // console.warn('预加载loading条未找到，创建备用loading条');
 
         // 如果没有内联loading条，创建备用的loading条
         // 创建内联样式，确保loading条样式立即可用

@@ -1,5 +1,9 @@
 import { createSvgIconsPlugin } from "vite-plugin-svg-icons";
 import path from "path";
+import { readFileSync } from "fs";
+
+// 读取VERSION文件
+const version = readFileSync("./VERSION", "utf-8").trim();
 
 export default defineNuxtConfig({
   devtools: { enabled: false },
@@ -78,6 +82,9 @@ export default defineNuxtConfig({
     "~/assets/css/index.scss",
   ],
   vite: {
+    define: {
+      __APP_VERSION__: JSON.stringify(version),
+    },
     plugins: [
       createSvgIconsPlugin({
         iconDirs: [path.resolve(process.cwd(), "assets/svg")],
