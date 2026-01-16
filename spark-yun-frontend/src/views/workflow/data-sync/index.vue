@@ -214,6 +214,7 @@ import PublishLog from '../work-item/publish-log.vue'
 import RunningLog from '../work-item/running-log.vue'
 import { Loading } from '@element-plus/icons-vue'
 import LoadingPage from '@/components/loading/index.vue'
+import CreateTableSqlDialog from './create-table-sql-dialog/index.vue'
 
 interface Option {
     label: string
