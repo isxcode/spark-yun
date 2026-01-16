@@ -171,7 +171,7 @@ function initGraph(data: any) {
                     id: `${guid()}&&sparkYun&&${target.workVersionId || ''}&&sparkYun&&${target.workName || ''}&&sparkYun&&${target.workType || ''}`,
                     source: source.id,
                     target: target.id,
-                    name: `${target.workflowName}（${target.workName}）`,
+                    name: target.workflowName ? `${target.workflowName}（${target.workName}）` : '',
                     data: target
                 }
             }
@@ -187,11 +187,13 @@ async function renderGraph() {
         const workId = argumentsParams[1] ? argumentsParams[1] : ''
         const name = argumentsParams[2] ? argumentsParams[2] : ''
         const workType = argumentsParams[3] ? argumentsParams[3] : ''
-        workDetailRef.value.showModal({
-            workId: workId,
-            name: name,
-            workType: workType
-        })
+        if (workId) {
+            workDetailRef.value.showModal({
+               workId: workId,
+               name: name,
+               workType: workType
+          })
+        }
     });
     await graph.render();
 }
@@ -227,7 +229,7 @@ function getParentNode(data: any) {
                     id: `${guid()}&&sparkYun&&${node.data.workVersionId || ''}&&sparkYun&&${node.data.workName || ''}&&sparkYun&&${node.data.workType || ''}`,
                     source: node.id,
                     target: data.id,
-                    name: `${node.data.workflowName}（${node.data.workName}）`
+                    name: node.data.workflowName ? `${node.data.workflowName}（${node.data.workName}）` : ''
                 })
             })
             graph.addNodeData(parentNodeConfig.nodes)
@@ -262,7 +264,7 @@ function getChildNode(data: any) {
                     id: `${guid()}&&sparkYun&&${node.workVersionId || ''}&&sparkYun&&${node.workName || ''}&&sparkYun&&${node.workType || ''}`,
                     source: data.id,
                     target: node.id,
-                    name: `${node.workflowName}（${node.workName}）`
+                    name: node.workflowName ? `${node.workflowName}（${node.workName}）` : ''
                 }
             }))
         }
