@@ -27,8 +27,8 @@ nextTick(() => {
 
 onMounted(() => {
 
-  // 打印当前版本号
-  console.log( '当前版本号: GH-2139' )
+  // 打印版本号
+  console.log(`%c 至轻云 %c ${__APP_VERSION__} `, 'background:#35495e; padding: 1px; border-radius: 3px 0 0 3px; color: #fff', 'background:#41b883; padding: 1px; border-radius: 0 3px 3px 0; color: #fff')
 
   // 确保实例已设置
   if (topLoadingBarRef.value) {

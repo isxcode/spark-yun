@@ -486,12 +486,12 @@ export default defineNuxtPlugin(() => {
       if ((isDocumentComplete && allResourcesLoaded) ||
           currentProgress >= 98 ||
           resourceProgress >= 95) {
-        console.log('资源检查完成，完成loading', {
-          isDocumentComplete,
-          allResourcesLoaded,
-          currentProgress,
-          resourceProgress
-        });
+        // console.log('资源检查完成，完成loading', {
+        //   isDocumentComplete,
+        //   allResourcesLoaded,
+        //   currentProgress,
+        //   resourceProgress
+        // });
         completeLoading();
       }
     };
