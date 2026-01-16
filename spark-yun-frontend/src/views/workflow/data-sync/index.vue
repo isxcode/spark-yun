@@ -151,7 +151,12 @@
                                     <el-option v-for="item in targetTablesList" :key="item.value" :label="item.label"
                                         :value="item.value" />
                                 </el-select>
-                                <!-- <el-button type="primary" link @click="createTableWork">生成建表作业</el-button> -->
+                                <el-button
+                                    type="primary"
+                                    link
+                                    @click="showCreateTableSql">
+                                    建表语句
+                                </el-button>
                             </el-form-item>
                             <el-form-item prop="overMode" label="写入模式">
                                 <el-select v-model="formData.overMode" clearable filterable placeholder="请选择" @change="pageChangeEvent">
@@ -188,6 +193,8 @@
         <table-detail ref="tableDetailRef"></table-detail>
         <!-- 配置 -->
         <config-detail ref="configDetailRef"></config-detail>
+        <!-- 建表语句 -->
+        <create-table-sql-dialog ref="createTableSqlDialogRef"></create-table-sql-dialog>
     </div>
 </template>
 
@@ -202,7 +209,7 @@ import { CreateTableWork, GetDataSourceTables, GetTableColumnsByTableId, SaveDat
 import TableDetail from './table-detail/index.vue'
 import DataSyncTable from './data-sync-table/index.vue'
 import ConfigDetail from '../workflow-page/config-detail/index.vue'
-import { DeleteWorkData, GetWorkItemConfig, GetLineageWorkItemConfig, PublishWorkData, RunWorkItemConfig, SaveWorkItemConfig, TerWorkItemConfig } from '@/services/workflow.service'
+import { DeleteWorkData, GetWorkItemConfig, PublishWorkData, RunWorkItemConfig, SaveWorkItemConfig, TerWorkItemConfig } from '@/services/workflow.service'
 import PublishLog from '../work-item/publish-log.vue'
 import RunningLog from '../work-item/running-log.vue'
 import { Loading } from '@element-plus/icons-vue'
@@ -225,6 +232,7 @@ const configDetailRef = ref()
 const form = ref<FormInstance>()
 const tableDetailRef = ref()
 const dataSyncTableRef = ref()
+const createTableSqlDialogRef = ref()
 const lang = ref<any>(sql())
 const sourceList = ref<Option[]>([])
 const targetList = ref<Option[]>([])
@@ -548,6 +556,46 @@ function showTableDetail(): void {
     } else {
         ElMessage.warning('请选择数据源和表')
     }
+}
+
+// 生成建表语句
+function showCreateTableSql(): void {
+    // 验证必填字段
+    if (!formData.sourceDBType) {
+        ElMessage.warning('请选择数据来源类型')
+        return
+    }
+    if (!formData.sourceDBId) {
+        ElMessage.warning('请选择数据来源数据源')
+        return
+    }
+    if (!formData.sourceTable) {
+        ElMessage.warning('请选择数据来源表')
+        return
+    }
+    if (!formData.targetDBType) {
+        ElMessage.warning('请选择数据去向类型')
+        return
+    }
+    if (!formData.targetDBId) {
+        ElMessage.warning('请选择数据去向数据源')
+        return
+    }
+
+    // 获取源表字段列表
+    const sourceColumns = dataSyncTableRef.value.getSourceTableColumn()
+    if (!sourceColumns || sourceColumns.length === 0) {
+        ElMessage.warning('源表字段为空，请先选择源表并加载字段')
+        return
+    }
+
+    // 调用建表语句对话框
+    createTableSqlDialogRef.value.showModal({
+        fromDbType: formData.sourceDBType,
+        fromTableName: formData.sourceTable,
+        fromColumnList: sourceColumns,
+        toDbType: formData.targetDBType
+    })
 }
 
 // 生成建表作业
