@@ -2,10 +2,7 @@ package com.isxcode.spark.modules.datasource.source;
 
 import com.isxcode.spark.api.datasource.constants.ColumnType;
 import com.isxcode.spark.api.datasource.constants.DatasourceType;
-import com.isxcode.spark.api.datasource.dto.ConnectInfo;
-import com.isxcode.spark.api.datasource.dto.QueryColumnDto;
-import com.isxcode.spark.api.datasource.dto.QueryTableDto;
-import com.isxcode.spark.api.datasource.dto.SecurityColumnDto;
+import com.isxcode.spark.api.datasource.dto.*;
 import com.isxcode.spark.api.model.ao.DataModelColumnAo;
 import com.isxcode.spark.api.work.res.GetDataSourceDataRes;
 import com.isxcode.spark.backend.api.base.exceptions.IsxAppException;
@@ -73,6 +70,16 @@ public abstract class Datasource {
     public abstract GetDataSourceDataRes getTableData(ConnectInfo connectInfo) throws IsxAppException;
 
     public abstract void refreshTableInfo(ConnectInfo connectInfo) throws IsxAppException;
+
+    public abstract String getCreateTableFormat();
+
+    public abstract String getCreateTableSuffix(List<ColumnMetaDto> fromColumnList);
+
+    public abstract String getCreateTableOptionalSuffix(List<ColumnMetaDto> fromColumnList);
+
+    public abstract String convertColumnCode(ColumnMetaDto columnMeta);
+
+    public abstract String convertColumnType(ColumnMetaDto columnMeta, String columnCode);
 
     public Connection getConnection(ConnectInfo connectInfo) throws IsxAppException {
 

@@ -1,6 +1,8 @@
 package com.isxcode.spark.modules.datasource.source.impl;
 
 import com.isxcode.spark.api.datasource.constants.DatasourceDriver;
+import com.isxcode.spark.api.datasource.constants.ColumnCode;
+import com.isxcode.spark.api.datasource.dto.ColumnMetaDto;
 import com.isxcode.spark.api.datasource.constants.DatasourceType;
 import com.isxcode.spark.api.datasource.dto.ConnectInfo;
 import com.isxcode.spark.api.datasource.dto.QueryColumnDto;
@@ -161,6 +163,131 @@ public class GreenplumService extends Datasource {
     @Override
     public void refreshTableInfo(ConnectInfo connectInfo) throws IsxAppException {
 
+    }
+
+
+    @Override
+    public String getCreateTableFormat() {
+        return "CREATE TABLE %s (%s) %s %s";
+    }
+
+    @Override
+    public String getCreateTableSuffix(List<ColumnMetaDto> fromColumnList) {
+        return "";
+    }
+
+    @Override
+    public String getCreateTableOptionalSuffix(List<ColumnMetaDto> fromColumnList) {
+        return "";
+    }
+
+    @Override
+    public String convertColumnCode(ColumnMetaDto columnMeta) {
+        String type = columnMeta.getType().toLowerCase();
+        if (type.contains("(")) {
+            type = type.substring(0, type.indexOf("("));
+        }
+        switch (type) {
+            case "smallint":
+            case "int2":
+            case "integer":
+            case "int":
+            case "int4":
+                return ColumnCode.INT;
+            case "bigint":
+            case "int8":
+                return ColumnCode.BIGINT;
+            case "real":
+            case "float4":
+                return ColumnCode.FLOAT;
+            case "double precision":
+            case "float8":
+                return ColumnCode.DOUBLE;
+            case "numeric":
+            case "decimal":
+                return ColumnCode.DECIMAL;
+            case "character":
+            case "char":
+                return ColumnCode.CHAR;
+            case "character varying":
+            case "varchar":
+            case "text":
+                return ColumnCode.STRING;
+            case "date":
+                return ColumnCode.DATE;
+            case "timestamp":
+            case "timestamptz":
+                return ColumnCode.DATETIME;
+            case "boolean":
+            case "bool":
+                return ColumnCode.BOOLEAN;
+            default:
+                return ColumnCode.STRING;
+        }
+    }
+
+    @Override
+    public String convertColumnType(ColumnMetaDto columnMeta, String columnCode) {
+        StringBuilder columnDef = new StringBuilder();
+        columnDef.append(columnMeta.getName()).append(" ");
+        switch (columnCode) {
+            case ColumnCode.BOOLEAN:
+                columnDef.append("BOOLEAN");
+                break;
+            case ColumnCode.INT:
+                columnDef.append("INTEGER");
+                break;
+            case ColumnCode.BIGINT:
+                columnDef.append("BIGINT");
+                break;
+            case ColumnCode.FLOAT:
+                columnDef.append("REAL");
+                break;
+            case ColumnCode.DOUBLE:
+                columnDef.append("DOUBLE PRECISION");
+                break;
+            case ColumnCode.DECIMAL:
+                if (columnMeta.getColumnLength() != null && columnMeta.getColumnLength() > 0) {
+                    columnDef.append("NUMERIC(").append(columnMeta.getColumnLength()).append(",2)");
+                } else {
+                    columnDef.append("NUMERIC(10,2)");
+                }
+                break;
+            case ColumnCode.CHAR:
+                if (columnMeta.getColumnLength() != null && columnMeta.getColumnLength() > 0) {
+                    columnDef.append("CHAR(").append(columnMeta.getColumnLength()).append(")");
+                } else {
+                    columnDef.append("CHAR(50)");
+                }
+                break;
+            case ColumnCode.STRING:
+                if (columnMeta.getColumnLength() != null && columnMeta.getColumnLength() > 0) {
+                    columnDef.append("VARCHAR(").append(columnMeta.getColumnLength()).append(")");
+                } else {
+                    columnDef.append("VARCHAR(255)");
+                }
+                break;
+            case ColumnCode.TEXT:
+                columnDef.append("TEXT");
+                break;
+            case ColumnCode.DATE:
+                columnDef.append("DATE");
+                break;
+            case ColumnCode.DATETIME:
+            case ColumnCode.TIMESTAMP:
+                columnDef.append("TIMESTAMP");
+                break;
+            default:
+                columnDef.append("VARCHAR(255)");
+                break;
+        }
+        if (columnMeta.getIsNoNullColumn() != null && columnMeta.getIsNoNullColumn()) {
+            columnDef.append(" NOT NULL");
+        }
+        if (columnMeta.getIsPrimaryColumn() != null && columnMeta.getIsPrimaryColumn()) {
+            columnDef.append(" PRIMARY KEY");
+        }
+        return columnDef.toString();
     }
 
 }

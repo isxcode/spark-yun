@@ -1,6 +1,8 @@
 package com.isxcode.spark.modules.datasource.source.impl;
 
+import com.isxcode.spark.api.datasource.constants.ColumnCode;
 import com.isxcode.spark.api.datasource.constants.DatasourceDriver;
+import com.isxcode.spark.api.datasource.dto.ColumnMetaDto;
 import com.isxcode.spark.api.datasource.constants.DatasourceType;
 import com.isxcode.spark.api.datasource.dto.ConnectInfo;
 import com.isxcode.spark.api.datasource.dto.QueryColumnDto;
@@ -199,4 +201,137 @@ public class ClickhouseService extends Datasource {
                 return "String"; // 默认使用 String 作为兜底类型
         }
     }
+
+    @Override
+    public String getCreateTableFormat() {
+        // CREATE TABLE 表名 (字段列表) 后缀 可选后缀
+        return "CREATE TABLE %s (%s) %s %s";
+    }
+
+    @Override
+    public String getCreateTableSuffix(List<ColumnMetaDto> fromColumnList) {
+        // ClickHouse 必需的表引擎，使用 MergeTree
+        return "ENGINE = MergeTree()";
+    }
+
+    @Override
+    public String getCreateTableOptionalSuffix(List<ColumnMetaDto> fromColumnList) {
+        // ClickHouse 的排序键，默认使用 tuple() 表示无排序
+        return "ORDER BY tuple()";
+    }
+
+    @Override
+    public String convertColumnCode(ColumnMetaDto columnMeta) {
+        // 将 ClickHouse 字段类型转换为标准的 ColumnCode
+        String type = columnMeta.getType().toLowerCase();
+
+        // 处理带括号的类型，如 FixedString(255)
+        if (type.contains("(")) {
+            type = type.substring(0, type.indexOf("("));
+        }
+
+        // 处理 Nullable 类型
+        if (type.startsWith("nullable")) {
+            type = type.replace("nullable", "").trim();
+            if (type.startsWith("(") && type.endsWith(")")) {
+                type = type.substring(1, type.length() - 1).trim();
+            }
+        }
+
+        switch (type) {
+            case "int8":
+            case "int16":
+            case "int32":
+            case "uint8":
+            case "uint16":
+                return ColumnCode.INT;
+            case "int64":
+            case "uint32":
+            case "uint64":
+                return ColumnCode.BIGINT;
+            case "float32":
+                return ColumnCode.FLOAT;
+            case "float64":
+                return ColumnCode.DOUBLE;
+            case "decimal":
+            case "decimal32":
+            case "decimal64":
+            case "decimal128":
+            case "decimal256":
+                return ColumnCode.DECIMAL;
+            case "fixedstring":
+                return ColumnCode.CHAR;
+            case "string":
+                return ColumnCode.STRING;
+            case "date":
+            case "date32":
+                return ColumnCode.DATE;
+            case "datetime":
+            case "datetime64":
+                return ColumnCode.DATETIME;
+            case "bool":
+                return ColumnCode.BOOLEAN;
+            default:
+                return ColumnCode.STRING;
+        }
+    }
+
+    @Override
+    public String convertColumnType(ColumnMetaDto columnMeta, String columnCode) {
+        // 将 ColumnCode 转换为 ClickHouse 字段类型定义
+        StringBuilder columnDef = new StringBuilder();
+        columnDef.append(columnMeta.getName()).append(" ");
+
+        switch (columnCode) {
+            case ColumnCode.BOOLEAN:
+                columnDef.append("UInt8");
+                break;
+            case ColumnCode.INT:
+                columnDef.append("Int32");
+                break;
+            case ColumnCode.BIGINT:
+                columnDef.append("Int64");
+                break;
+            case ColumnCode.FLOAT:
+                columnDef.append("Float32");
+                break;
+            case ColumnCode.DOUBLE:
+                columnDef.append("Float64");
+                break;
+            case ColumnCode.DECIMAL:
+                if (columnMeta.getColumnLength() != null && columnMeta.getColumnLength() > 0) {
+                    columnDef.append("Decimal(").append(columnMeta.getColumnLength()).append(",2)");
+                } else {
+                    columnDef.append("Decimal(10,2)");
+                }
+                break;
+            case ColumnCode.CHAR:
+                if (columnMeta.getColumnLength() != null && columnMeta.getColumnLength() > 0) {
+                    columnDef.append("FixedString(").append(columnMeta.getColumnLength()).append(")");
+                } else {
+                    columnDef.append("FixedString(50)");
+                }
+                break;
+            case ColumnCode.STRING:
+            case ColumnCode.TEXT:
+                columnDef.append("String");
+                break;
+            case ColumnCode.DATE:
+                columnDef.append("Date");
+                break;
+            case ColumnCode.DATETIME:
+            case ColumnCode.TIMESTAMP:
+                columnDef.append("DateTime");
+                break;
+            default:
+                columnDef.append("String");
+                break;
+        }
+
+        // ClickHouse 不支持在字段定义中直接使用 NOT NULL 和 PRIMARY KEY
+        // 这些约束需要在表级别定义，这里暂不处理
+
+        return columnDef.toString();
+    }
+
 }

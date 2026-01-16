@@ -3,6 +3,7 @@ package com.isxcode.spark.modules.datasource.service.biz;
 import com.alibaba.fastjson2.JSON;
 import com.isxcode.spark.api.datasource.constants.DatasourceStatus;
 import com.isxcode.spark.api.datasource.constants.DatasourceType;
+import com.isxcode.spark.api.datasource.dto.ColumnMetaDto;
 import com.isxcode.spark.api.datasource.dto.ConnectInfo;
 import com.isxcode.spark.api.datasource.dto.KafkaConfig;
 import com.isxcode.spark.api.datasource.req.*;
@@ -28,6 +29,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.sql.Connection;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import javax.transaction.Transactional;
@@ -429,4 +431,42 @@ public class DatasourceBizService {
         datasourceDriver.setRemark(updateDatabaseDriverRemarkReq.getRemark());
         databaseDriverRepository.save(datasourceDriver);
     }
+
+    public GenerateCreateTableSqlRes generateCreateTableSql(GenerateCreateTableSqlReq generateCreateTableSqlReq) {
+
+        Datasource toDatasource = dataSourceFactory.getDatasource(generateCreateTableSqlReq.getToDbType());
+        Datasource fromDatasource = dataSourceFactory.getDatasource(generateCreateTableSqlReq.getFromDbType());
+
+        // 获取数据源的模版sql
+        String createTableFormat = toDatasource.getCreateTableFormat();
+
+        // 获取表后缀sql
+        String createTableSuffix = toDatasource.getCreateTableSuffix(generateCreateTableSqlReq.getFromColumnList());
+
+        // 获取表可选后缀sql
+        String createTableOptionalSuffix =
+            toDatasource.getCreateTableOptionalSuffix(generateCreateTableSqlReq.getFromColumnList());
+
+        // 遍历字段类型并且翻译
+        List<String> columnTypeList = new ArrayList<>();
+        for (ColumnMetaDto columnMeta : generateCreateTableSqlReq.getFromColumnList()) {
+
+            // 将字段类型翻译成Code
+            String columnCode = fromDatasource.convertColumnCode(columnMeta);
+
+            // 将Code翻译成指定数据源的字段类型
+            String columnType = toDatasource.convertColumnType(columnMeta, columnCode);
+            columnTypeList.add(columnType);
+        }
+
+        // 拼接字段列表，每个字段一行，带缩进
+        String columnListStr = "\n\t" + String.join(",\n\t", columnTypeList) + "\n";
+
+        // 翻译成建表语句
+        String createTableSql = String.format(createTableFormat, generateCreateTableSqlReq.getFromTableName(),
+            columnListStr, createTableSuffix, createTableOptionalSuffix);
+
+        return GenerateCreateTableSqlRes.builder().createTableSql(createTableSql).build();
+    }
+
 }
