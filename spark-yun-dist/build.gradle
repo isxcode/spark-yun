@@ -131,6 +131,34 @@ tasks.register('build_zhiqingyun', Tar) {
     }
 }
 
+// 打包前先替换版本号文件
+tasks.register('copy_version') {
+
+    doLast {
+        // 获取当前版本号
+        def process = ['git', 'branch', '--show-current'].execute(null, rootDir)
+        process.waitFor()
+        file("${rootDir}/VERSION").text = process.text.trim()
+
+        // 写入到版本文件中
+        delete '../spark-yun-backend/spark-yun-main/src/main/resources/VERSION'
+        delete '../spark-yun-frontend/VERSION'
+        delete '../docs/VERSION'
+        copy {
+            from '../VERSION'
+            into '../spark-yun-backend/spark-yun-main/src/main/resources/'
+        }
+        copy {
+            from '../VERSION'
+            into '../spark-yun-frontend/'
+        }
+        copy {
+            from '../VERSION'
+            into '../docs/'
+        }
+    }
+}
+
 // 打包
 tasks.register('make', GradleBuild) {
 

@@ -91,9 +91,9 @@ spotless {
     }
 }
 
-tasks.register('format', GradleBuild) {
+tasks.register("format") {
 
-    tasks = [":spotlessApply", ":checkstyleMain"]
+    dependsOn(":spark-yun-dist:copy_version", ":spotlessApply", ":checkstyleMain")
 }
 
 tasks.register('package', GradleBuild) {

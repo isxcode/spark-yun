@@ -7,9 +7,16 @@ import { viteStaticCopy } from 'vite-plugin-static-copy'
 
 import Components from 'unplugin-vue-components/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
+import { readFileSync } from 'node:fs'
+
+// 读取VERSION文件
+const version = readFileSync('./VERSION', 'utf-8').trim()
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  define: {
+    __APP_VERSION__: JSON.stringify(version)
+  },
   server: {
     host: '0.0.0.0'
   },
