@@ -17,7 +17,7 @@ readonly BASE_PATH=$(cd "$(dirname "$0")" && pwd)
 readonly TMP_DIR="${BASE_PATH}/resources/tmp"
 readonly SPARK_MIN_DIR="${BASE_PATH}/spark-yun-dist/spark-min"
 readonly FLINK_MIN_DIR="${BASE_PATH}/spark-yun-dist/flink-min"
-readonly JDBC_DIR="${BASE_PATH}/resources/jdbc/system"
+readonly JDBC_DIR="${BASE_PATH}/resources/jdbc"
 readonly RESOURCE_DIR="${BASE_PATH}/spark-yun-backend/spark-yun-main/src/main/resources"
 readonly TMP_SPARK_MIN_JARS="${TMP_DIR}/spark-min/jars"
 readonly TMP_FLINK_MIN_LIB="${TMP_DIR}/flink-min/lib"
@@ -134,7 +134,7 @@ install_jdbc() {
 
     create_dir "$JDBC_DIR"
 
-    cp "${TMP_JDBC_DIR}"/* "${JDBC_DIR}"/
+    cp -r "${TMP_JDBC_DIR}" "${JDBC_DIR}"/
 }
 
 # =============================================================================
