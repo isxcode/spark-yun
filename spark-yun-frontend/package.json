@@ -19,7 +19,7 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
-    "@antv/g6": "^5.0.48",
+    "@antv/g6": "^5.0.50",
     "@antv/hierarchy": "^0.6.11",
     "@antv/layout": "^0.3.17",
     "@antv/x6": "^1.29.5",
@@ -34,6 +34,7 @@
     "dayjs": "^1.11.10",
     "echarts": "^5.4.3",
     "element-plus": "2.3.5",
+    "g6-extension-vue": "^0.1.0",
     "jsplumb": "^2.15.6",
     "lodash-es": "^4.17.21",
     "mitt": "^3.0.0",

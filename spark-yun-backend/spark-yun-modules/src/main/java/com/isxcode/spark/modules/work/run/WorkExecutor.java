@@ -11,6 +11,7 @@ import com.isxcode.spark.api.work.constants.WorkLog;
 import com.isxcode.spark.backend.api.base.exceptions.WorkRunException;
 import com.isxcode.spark.common.locker.Locker;
 import com.isxcode.spark.modules.alarm.service.AlarmService;
+import com.isxcode.spark.modules.meta.service.MetaColumnLineageService;
 import com.isxcode.spark.modules.work.entity.*;
 import com.isxcode.spark.modules.work.repository.*;
 import com.isxcode.spark.modules.work.service.WorkService;
@@ -53,6 +54,8 @@ public abstract class WorkExecutor {
     private final VipWorkVersionRepository vipWorkVersionRepository;
 
     private final WorkService workService;
+
+    private final MetaColumnLineageService metaColumnLineageService;
 
     public abstract String getWorkType();
 
@@ -284,6 +287,11 @@ public abstract class WorkExecutor {
                         // 基线管理，任务运行成功发送消息
                         if (InstanceType.AUTO.equals(workInstance.getInstanceType())) {
                             alarmService.sendWorkMessage(workInstance, AlarmEventType.RUN_SUCCESS);
+                        }
+
+                        // 只有发布的作业，任务运行成功，才能异步同步血缘
+                        if (workRunContext.getVersionId() != null) {
+                            metaColumnLineageService.addMetaColumnLineage(workRunContext);
                         }
                     }
                 }

@@ -5,7 +5,8 @@
         basic
         :lang="lang"
         v-bind="$attrs"
-        :placeholder="placeholder || '请输入'"
+        :disabled="disabled"
+        :placeholder="disabled ? '' : placeholder || '请输入'"
         @change="changEvent"
     />
 </template>
@@ -14,7 +15,7 @@
 import CodeMirror from 'vue-codemirror6'
 import { defineProps, defineEmits, computed, ref, onMounted, nextTick } from 'vue'
 
-const props = defineProps(['modelValue', 'lang', 'placeholder'])
+const props = defineProps(['modelValue', 'lang', 'placeholder', 'disabled'])
 const emit = defineEmits(['update:modelValue', 'change'])
 
 const formData = computed({

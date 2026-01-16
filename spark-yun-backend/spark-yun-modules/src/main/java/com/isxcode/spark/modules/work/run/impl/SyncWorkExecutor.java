@@ -29,6 +29,7 @@ import com.isxcode.spark.modules.file.repository.FileRepository;
 import com.isxcode.spark.modules.func.entity.FuncEntity;
 import com.isxcode.spark.modules.func.mapper.FuncMapper;
 import com.isxcode.spark.modules.func.repository.FuncRepository;
+import com.isxcode.spark.modules.meta.service.MetaColumnLineageService;
 import com.isxcode.spark.modules.secret.entity.SecretKeyEntity;
 import com.isxcode.spark.modules.secret.repository.SecretKeyRepository;
 import com.isxcode.spark.modules.work.entity.WorkEventEntity;
@@ -95,11 +96,12 @@ public class SyncWorkExecutor extends WorkExecutor {
         SqlValueService sqlValueService, SqlFunctionService sqlFunctionService, AlarmService alarmService,
         WorkEventRepository workEventRepository, WorkRunJobFactory workRunJobFactory,
         VipWorkVersionRepository vipWorkVersionRepository, WorkService workService,
-        SecretKeyRepository secretKeyRepository, FuncMapper funcMapper, AgentLinkUtils agentLinkUtils) {
+        SecretKeyRepository secretKeyRepository, FuncMapper funcMapper, AgentLinkUtils agentLinkUtils,
+        MetaColumnLineageService metaColumnLineageService) {
 
         super(alarmService, locker, workRepository, workInstanceRepository, workflowInstanceRepository,
             workEventRepository, workRunJobFactory, sqlFunctionService, workConfigRepository, vipWorkVersionRepository,
-            workService);
+            workService, metaColumnLineageService);
 
         this.clusterRepository = clusterRepository;
         this.clusterNodeRepository = clusterNodeRepository;

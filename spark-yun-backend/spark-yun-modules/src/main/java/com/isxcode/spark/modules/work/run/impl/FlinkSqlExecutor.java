@@ -25,6 +25,7 @@ import com.isxcode.spark.modules.file.repository.FileRepository;
 import com.isxcode.spark.modules.func.entity.FuncEntity;
 import com.isxcode.spark.modules.func.mapper.FuncMapper;
 import com.isxcode.spark.modules.func.repository.FuncRepository;
+import com.isxcode.spark.modules.meta.service.MetaColumnLineageService;
 import com.isxcode.spark.modules.secret.entity.SecretKeyEntity;
 import com.isxcode.spark.modules.secret.repository.SecretKeyRepository;
 import com.isxcode.spark.modules.work.entity.WorkEventEntity;
@@ -89,11 +90,11 @@ public class FlinkSqlExecutor extends WorkExecutor {
         SqlFunctionService sqlFunctionService, SecretKeyRepository secretKeyRepository, SqlValueService sqlValueService,
         SqlCommentService sqlCommentService, WorkEventRepository workEventRepository,
         WorkRunJobFactory workRunJobFactory, VipWorkVersionRepository vipWorkVersionRepository, WorkService workService,
-        AgentLinkUtils agentLinkUtils) {
+        AgentLinkUtils agentLinkUtils, MetaColumnLineageService metaColumnLineageService) {
 
         super(alarmService, locker, workRepository, workInstanceRepository, workflowInstanceRepository,
             workEventRepository, workRunJobFactory, sqlFunctionService, workConfigRepository, vipWorkVersionRepository,
-            workService);
+            workService, metaColumnLineageService);
         this.clusterRepository = clusterRepository;
         this.clusterNodeRepository = clusterNodeRepository;
         this.funcRepository = funcRepository;

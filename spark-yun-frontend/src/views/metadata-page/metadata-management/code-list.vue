@@ -8,7 +8,8 @@
             >{{ scopeSlot.row.tableName }}</span>
         </template>
         <template #options="scopeSlot">
-            <div class="btn-group btn-group__center">
+            <div class="btn-group">
+                <span @click="dataLineageEvent(scopeSlot.row)">血缘</span>
                 <span @click="editEvent(scopeSlot.row)">备注</span>
             </div>
         </template>
@@ -17,11 +18,14 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, ref, onMounted, defineEmits } from 'vue'
+import { reactive, ref, onMounted, defineEmits, defineProps } from 'vue'
 import { GetMetadataCodesList } from '@/services/metadata-page.service'
 import PreviewModal from './preview-modal/index.vue'
 
-const emit = defineEmits(['editEvent'])
+const emit = defineEmits(['editEvent', 'dataLineageEvent'])
+const props = defineProps<{
+    keyword: string
+}>()
 
 const previewModalRef = ref<any>(null)
 const tableConfig = reactive({
@@ -72,7 +76,7 @@ const tableConfig = reactive({
             title: '操作',
             align: 'center',
             customSlot: 'options',
-            width: 60,
+            width: 80,
             fixed: 'right'
         }
     ],
@@ -91,7 +95,7 @@ function initData(searchKeyWord?: string) {
         GetMetadataCodesList({
             page: tableConfig.pagination.currentPage - 1,
             pageSize: tableConfig.pagination.pageSize,
-            searchKeyWord: searchKeyWord || ''
+            searchKeyWord: searchKeyWord || props.keyword || ''
         }).then((res: any) => {
             tableConfig.tableData = res.data.content
             tableConfig.pagination.total = res.data.totalElements
@@ -135,6 +139,12 @@ function editPreEvent(data: any) {
     emit('editEvent', data)
 }
 
+// 查看血缘
+function dataLineageEvent(data: any) {
+    data.pageType = 'code'
+    emit('dataLineageEvent', data)
+}
+
 onMounted(() => {
     tableConfig.pagination.currentPage = 1
     tableConfig.pagination.pageSize = 10
@@ -142,6 +152,7 @@ onMounted(() => {
 
 defineExpose({
     initData,
-    initPage
+    initPage,
+    showPreviewModal
 })
 </script>

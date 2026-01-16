@@ -38,14 +38,17 @@
             <div class="zqy-table">
                 <component
                     :is="tabComponent"
+                    :keyword="keyword"
                     ref="currentTabRef"
                     @redirectToTable="redirectToTable"
                     @editEvent="editEvent"
+                    @dataLineageEvent="dataLineageEvent"
                 ></component>
             </div>
         </LoadingPage>
         <AddModal ref="addModalRef" />
         <RemarkModal ref="remarkModalRef"></RemarkModal>
+        <DataLineage @showDetail="showDetail" :isCode="false" ref="dataLineageRef"></DataLineage>
     </div>
 </template>
 
@@ -58,17 +61,28 @@ import datasourceList from './datasource-list.vue'
 import tableList from './table-list.vue'
 import codeList from './code-list.vue'
 import {
-  AddMetadataTaskData,
-  CodeRemarkEdit,
-  DatasourceRemarkEdit,
-  FastTriggerMetadataTaskData,
-  GetMetadataManagementList,
-  RefreshMetadataManagementList,
-TableRemarkEdit
+    AddMetadataTaskData,
+    CodeRemarkEdit,
+    DatasourceRemarkEdit,
+    FastTriggerMetadataTaskData,
+    GetMetadataManagementList,
+    RefreshMetadataManagementList,
+    TableRemarkEdit,
+    GetDataLineageByDatasource,
+    GetDataLineageByTable,
+    GetDataLineageByCode
 } from '@/services/metadata-page.service'
 import { ElMessage } from 'element-plus'
 import AddModal from './add-modal/index.vue'
 import RemarkModal from './remark-modal/index.vue'
+import DataLineage from './data-lineage/index.vue'
+
+const guid = function () {
+    function S4() {
+        return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1)
+    }
+    return S4() + S4() + '-' + S4() + '-' + S4() + '-' + S4() + '-' + S4() + S4() + S4()
+}
 
 const breadCrumbList = reactive(BreadCrumbList)
 const keyword = ref('')
@@ -80,6 +94,7 @@ const currentTabRef = ref()
 const refreshLoading = ref<boolean>(false)
 const addModalRef = ref<any>(null)
 const remarkModalRef = ref<any>(null)
+const dataLineageRef = ref<any>(null)
 
 const datasourceId = ref('')
 const dbType = ref('')
@@ -247,6 +262,115 @@ function redirectToTable(data: any) {
     dbType.value = data.dbType
     changeTypeEvent('table', datasourceId.value)
     tableType.value = 'table'
+}
+
+function dataLineageEvent(data: any) {
+    dataLineageRef.value.showModal(data, (params?: any) => {
+        return new Promise((resolve: any, reject: any) => {
+            let requestParams = {
+                dbId: data.datasourceId,
+                tableName: data.tableName,
+                columnName: data.columnName,
+                lineageType: 'SON'
+            }
+            if (data.pageType === 'datasource') {
+                if (params) {
+                    requestParams.dbId = params.data.dbId
+                    requestParams.lineageType = params.lineageType
+                }
+                GetDataLineageByDatasource(requestParams).then((res: any) => {
+                    resolve(getFinalData(res.data, data.pageType))
+                }).catch((error: any) => {
+                    reject(error)
+                })
+            } else if (data.pageType === 'table') {
+                if (params) {
+                    requestParams.dbId = params.data.dbId
+                    requestParams.tableName = params.data.tableName,
+                    requestParams.lineageType = params.lineageType
+                }
+                GetDataLineageByTable(requestParams).then((res: any) => {
+                    resolve(getFinalData(res.data, data.pageType))
+                }).catch((error: any) => {
+                    reject(error)
+                })
+            } else if (data.pageType === 'code') {
+                if (params) {
+                    requestParams.dbId = params.data.dbId
+                    requestParams.tableName = params.data.tableName,
+                    requestParams.columnName = params.data.columnName,
+                    requestParams.lineageType = params.lineageType
+                }
+                GetDataLineageByCode(requestParams).then((res: any) => {
+                    resolve(getFinalData(res.data, data.pageType))
+                }).catch((error: any) => {
+                    reject(error)
+                })
+            }
+        })
+    }, data.pageType)
+}
+
+// 递归格式化树节点数据
+function getFinalData(node: any, pageType: string) {
+    node.pageType = pageType
+    if (node && pageType === 'datasource') {
+        node.id = guid()
+        node.name = node.dbName
+        node.children = (node.children || []).map((item: any) => {
+            item.id = guid()
+            item.name = item.dbName
+            item.pageType = pageType
+            return item
+        })
+        node.parent = (node.parent || []).map((item: any) => {
+            item.id = guid()
+            item.name = item.dbName
+            item.pageType = pageType
+            return item
+        })
+    }
+    if (node && pageType === 'table') {
+        node.id = guid()
+        node.name = node.tableName
+        node.children = (node.children || []).map((item: any) => {
+            item.id = guid()
+            item.name = item.tableName
+            item.pageType = pageType
+            return item
+        })
+        node.parent = (node.parent || []).map((item: any) => {
+            item.id = guid()
+            item.name = item.tableName
+            item.pageType = pageType
+            return item
+        })
+    }
+    if (node && node.children && pageType === 'code') {
+        node.id = guid()
+        node.name = node.columnName
+        node.children = (node.children || []).map((item: any) => {
+            item.id = guid()
+            item.name = item.columnName
+            item.pageType = pageType
+            return item
+        })
+        node.parent = (node.parent || []).map((item: any) => {
+            item.id = guid()
+            item.name = item.columnName
+            item.pageType = pageType
+            return item
+        })
+    }
+    return node
+}
+
+function showDetail(e: any) {
+    currentTabRef.value?.showPreviewModal({
+        datasourceId: e.data.dbId,
+        dbName: e.data.dbName,
+        tableName: e.data.tableName,
+    })
 }
 
 onMounted(() => {
