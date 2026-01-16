@@ -582,19 +582,27 @@ function showCreateTableSql(): void {
         return
     }
 
-    // 获取源表字段列表
-    const sourceColumns = dataSyncTableRef.value.getSourceTableColumn()
-    if (!sourceColumns || sourceColumns.length === 0) {
-        ElMessage.warning('源表字段为空，请先选择源表并加载字段')
-        return
-    }
+    // 调用接口获取源表字段列表
+    GetTableColumnsByTableId({
+        dataSourceId: formData.sourceDBId,
+        tableName: formData.sourceTable
+    }).then((res: any) => {
+        const sourceColumns = res.data.columns || []
+        if (!sourceColumns || sourceColumns.length === 0) {
+            ElMessage.warning('源表字段为空')
+            return
+        }
 
-    // 调用建表语句对话框
-    createTableSqlDialogRef.value.showModal({
-        fromDbType: formData.sourceDBType,
-        fromTableName: formData.sourceTable,
-        fromColumnList: sourceColumns,
-        toDbType: formData.targetDBType
+        // 调用建表语句对话框
+        createTableSqlDialogRef.value.showModal({
+            fromDbType: formData.sourceDBType,
+            fromTableName: formData.sourceTable,
+            fromColumnList: sourceColumns,
+            toDbType: formData.targetDBType
+        })
+    }).catch(err => {
+        console.error(err)
+        ElMessage.error('获取源表字段失败')
     })
 }
 
