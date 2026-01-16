@@ -1,12 +1,6 @@
 <template>
     <BlockModal :model-config="modelConfig" @close="closeEvent">
         <div class="create-table-sql-content">
-            <div class="sql-header">
-                <el-button type="primary" size="small" @click="copySql">
-                    <el-icon><DocumentCopy /></el-icon>
-                    <span style="margin-left: 4px;">一键复制</span>
-                </el-button>
-            </div>
             <div class="sql-body">
                 <el-scrollbar v-if="!loading && sqlContent" height="400px">
                     <pre class="sql-pre">{{ sqlContent }}</pre>
@@ -26,7 +20,7 @@
 <script lang="ts" setup>
 import { reactive, ref, defineExpose } from 'vue'
 import { ElMessage } from 'element-plus'
-import { DocumentCopy, Loading } from '@element-plus/icons-vue'
+import { Loading } from '@element-plus/icons-vue'
 import BlockModal from '@/components/block-modal/index.vue'
 import { GenerateCreateTableSql } from '@/services/data-sync.service'
 
@@ -37,10 +31,17 @@ const modelConfig = reactive({
     title: '建表语句',
     visible: false,
     width: '800px',
+    okConfig: {
+        title: '一键复制',
+        ok: copySql,
+        disabled: false,
+        loading: false
+    },
     cancelConfig: {
         title: '关闭',
         cancel: closeEvent,
-        disabled: false
+        disabled: false,
+        hide: true
     },
     needScale: false,
     zIndex: 1000,
@@ -111,17 +112,10 @@ defineExpose({
     .modal-content {
         .create-table-sql-content {
             padding: 0;
-            
-            .sql-header {
-                padding: 12px 20px;
-                border-bottom: 1px solid getCssVar('border-color');
-                display: flex;
-                justify-content: flex-end;
-            }
-            
+
             .sql-body {
                 padding: 20px;
-                
+
                 .loading-container {
                     display: flex;
                     flex-direction: column;
@@ -129,13 +123,13 @@ defineExpose({
                     justify-content: center;
                     height: 400px;
                     color: getCssVar('color', 'info');
-                    
+
                     p {
                         margin-top: 16px;
                         font-size: 14px;
                     }
                 }
-                
+
                 .sql-pre {
                     margin: 0;
                     padding: 16px;
