@@ -17,12 +17,12 @@ readonly BASE_PATH=$(cd "$(dirname "$0")" && pwd)
 readonly TMP_DIR="${BASE_PATH}/resources/tmp"
 readonly SPARK_MIN_DIR="${BASE_PATH}/spark-yun-dist/spark-min"
 readonly FLINK_MIN_DIR="${BASE_PATH}/spark-yun-dist/flink-min"
+readonly JDBC_DIR="${BASE_PATH}/resources/jdbc/system"
+readonly RESOURCE_DIR="${BASE_PATH}/spark-yun-backend/spark-yun-main/src/main/resources"
 readonly TMP_SPARK_MIN_JARS="${TMP_DIR}/spark-min/jars"
 readonly TMP_FLINK_MIN_LIB="${TMP_DIR}/flink-min/lib"
-readonly LIBS_DIR="${BASE_PATH}/resources/libs"
-readonly RESOURCE_DIR="${BASE_PATH}/spark-yun-backend/spark-yun-main/src/main/resources"
-readonly JDBC_DIR="${BASE_PATH}/resources/jdbc/system"
-readonly LIBS_DIR="${BASE_PATH}/resources/libs"
+readonly TMP_JDBC_DIR="${TMP_DIR}/jdbc/system"
+readonly TMP_LIBS_DIR="${TMP_DIR}/libs"
 
 # =============================================================================
 # 工具函数
@@ -107,25 +107,32 @@ install_flink() {
 }
 
 # 拷贝 Spark JAR 依赖
-copy_spark_jars() {
+install_spark_jars() {
     echo "拷贝 Spark JAR 依赖..."
 
     cp "${TMP_SPARK_MIN_JARS}"/*.jar "${SPARK_MIN_DIR}"/jars/
 }
 
 # 拷贝 Flink Lib 依赖
-copy_flink_libs() {
+install_flink_libs() {
     echo "拷贝 Flink JAR 依赖..."
 
     cp "${TMP_FLINK_MIN_LIB}"/*.jar "${FLINK_MIN_DIR}"/lib/
 }
 
 # 拷贝项目依赖
-copy_resources_libs() {
+install_resources_libs() {
     echo "拷贝项目依赖..."
 
-    cp "${LIBS_DIR}"/libprql_java-osx-arm64.dylib "${RESOURCE_DIR}"/
-    cp "${LIBS_DIR}"/libprql_java-linux64.so "${RESOURCE_DIR}"/
+    cp "${TMP_LIBS_DIR}"/libprql_java-osx-arm64.dylib "${RESOURCE_DIR}"/
+    cp "${TMP_LIBS_DIR}"/libprql_java-linux64.so "${RESOURCE_DIR}"/
+}
+
+# 拷贝驱动
+install_jdbc() {
+    echo "拷贝驱动..."
+
+    cp "${TMP_JDBC_DIR}"/* "${JDBC_DIR}"/
 }
 
 # =============================================================================
@@ -139,16 +146,19 @@ main() {
     install_spark
 
     # 2. 拷贝Spark第三方依赖
-    copy_spark_jars
+    install_spark_jars
 
     # 3. 安装Fink
     install_flink
 
     # 4. 拷贝Flink第三方依赖
-    copy_flink_libs
+    install_flink_libs
 
     # 5. 拷贝项目依赖
-    copy_resources_libs
+    install_resources_libs
+
+    # 6. 拷贝数据库驱动
+    install_resources_libs
 
     echo "项目依赖安装完成！"
 }
