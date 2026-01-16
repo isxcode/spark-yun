@@ -102,8 +102,8 @@ public class UserBizService {
             if (e.getValidStartDateTime() == null || e.getValidEndDateTime() == null) {
                 return true;
             }
-            return LocalDateTime.now().isBefore(e.getValidStartDateTime())
-                && LocalDateTime.now().isAfter(e.getValidEndDateTime());
+            return LocalDateTime.now().isAfter(e.getValidStartDateTime())
+                && LocalDateTime.now().isBefore(e.getValidEndDateTime());
         }).collect(Collectors.toList());
         if (enableTenants.isEmpty()) {
             throw new IsxAppException("暂无租户，请联系管理员");
