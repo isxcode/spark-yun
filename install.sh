@@ -21,6 +21,8 @@ readonly TMP_SPARK_MIN_JARS="${TMP_DIR}/spark-min/jars"
 readonly TMP_FLINK_MIN_LIB="${TMP_DIR}/flink-min/lib"
 readonly LIBS_DIR="${BASE_PATH}/resources/libs"
 readonly RESOURCE_DIR="${BASE_PATH}/spark-yun-backend/spark-yun-main/src/main/resources"
+readonly JDBC_DIR="${BASE_PATH}/resources/jdbc/system"
+readonly LIBS_DIR="${BASE_PATH}/resources/libs"
 
 # =============================================================================
 # 工具函数
