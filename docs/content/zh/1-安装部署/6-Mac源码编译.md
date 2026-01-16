@@ -76,12 +76,23 @@ org.gradle.workers.max=8
 
 ### 7. 本地完全体代码编译
 
-> 邮箱中检查资源文件
+> 邮箱中检查压缩包
 
-- resources.zip
 - spark-yun-main.zip
-- spark-yun-vip.zip
+- spark-yun-vip-main.zip
+- resources.zip
+- license.lic
 
 ```bash
-
+cd ~/Downloads/
+unzip spark-yun-main.zip
+mv spark-yun-main spark-yun
+unzip spark-yun-vip-main.zip
+mv spark-yun-vip-main ./spark-yun/spark-yun-vip
+unzip resources.zip
+mv resources ./spark-yun
+cd spark-yun
+gradle install package
+# 启动项目
+gradle start
 ```
