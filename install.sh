@@ -145,16 +145,16 @@ main() {
     echo "开始安装至轻云项目依赖..."
 
     # 1. 安装Spark
-    install_spark
+#    install_spark
 
     # 2. 拷贝Spark第三方依赖
-    install_spark_jars
+#    install_spark_jars
 
     # 3. 安装Fink
-    install_flink
+#    install_flink
 
     # 4. 拷贝Flink第三方依赖
-    install_flink_libs
+#    install_flink_libs
 
     # 5. 拷贝项目依赖
     install_resources_libs

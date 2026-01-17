@@ -247,16 +247,16 @@ main() {
     check_system_dependencies
 
     # 2. 下载Spark
-    download_spark
+#    download_spark
 
     # 3. 下载Spark第三方依赖
-    download_spark_jars
+#    download_spark_jars
 
     # 4. 下载Fink
-    download_flink
+#    download_flink
 
     # 5. 下载Flink第三方依赖
-    download_flink_jars
+#    download_flink_jars
 
     # 6. 下载数据库驱动
     download_jdbc_drivers
