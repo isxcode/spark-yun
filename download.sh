@@ -70,9 +70,9 @@ readonly JDBC_DRIVERS=(
 # 项目依赖列表
 readonly PROJECT_LIBS=(
     "prql-java-0.5.2.jar"
-    "slf4j-reload4j-2.0.0.jar"
-    "libprql_java-osx-arm64.dylib"
-    "libprql_java-linux64.so"
+#    "slf4j-reload4j-2.0.0.jar"
+#    "libprql_java-osx-arm64.dylib"
+#    "libprql_java-linux64.so"
 )
 
 # =============================================================================
