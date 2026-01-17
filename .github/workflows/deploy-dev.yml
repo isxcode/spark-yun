@@ -144,7 +144,7 @@ jobs:
 
       - name: Download dependencies
         if: steps.download-cache.outputs.cache-hit != 'true'
-        run: sudo bash /home/runner/work/spark-yun/spark-yun/download.sh
+        run: bash /home/runner/work/spark-yun/spark-yun/download.sh
 
       - name: Build with gradle
         run: gradle install package
