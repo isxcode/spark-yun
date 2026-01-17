@@ -136,10 +136,10 @@ jobs:
 
       - name: Download dependencies
         if: steps.download-cache.outputs.cache-hit != 'true'
-        run: sudo bash /home/runner/work/spark-yun/spark-yun/download.sh
+        run: bash /home/runner/work/spark-yun/spark-yun/download.sh
 
       - name: Build with gradle
-        run: sudo gradle install package
+        run: gradle install package
 
       - name: Upload zhiqingyun tar
         uses: actions/upload-artifact@v4
