@@ -131,7 +131,7 @@ jobs:
         uses: actions/cache@v4
         id: download-cache
         with:
-          path: /home/runner/work/spark-yun/spark-yun/resources
+          path: /home/runner/work/spark-yun/spark-yun/resources/tmp
           key: ${{ runner.os }}-file-${{ hashFiles('/home/runner/work/spark-yun/spark-yun/download.sh') }}
 
       - name: Download dependencies
