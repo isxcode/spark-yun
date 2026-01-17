@@ -169,7 +169,7 @@ download_flink() {
     # 下载 Flink
     local flink_url="${OSS_DOWNLOAD_URL}/${FLINK_MIN_FILE}"
     local flink_path="${TMP_DIR}/${FLINK_MIN_FILE}"
-    download_file "$flink_url" "$flink_path" "Flink ${TMP_DIR} 二进制文件，请耐心等待"
+    download_file "$flink_url" "$flink_path" "Flink ${FLINK_VERSION} 二进制文件，请耐心等待"
 }
 
 # 下载 Spark JAR 依赖
