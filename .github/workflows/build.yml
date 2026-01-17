@@ -139,7 +139,7 @@ jobs:
         run: sudo bash /home/runner/work/spark-yun/spark-yun/download.sh
 
       - name: Build with gradle
-        run: gradle install package
+        run: sudo gradle install package
 
       - name: Upload zhiqingyun tar
         uses: actions/upload-artifact@v4
