@@ -72,6 +72,7 @@ readonly PROJECT_LIBS=(
     "prql-java-0.5.2.jar"
     "slf4j-reload4j-2.0.0.jar"
     "libprql_java-osx-arm64.dylib"
+    "libprql_java-linux-aarch64.so"
     "libprql_java-linux64.so"
 )
 
