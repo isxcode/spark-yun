@@ -55,7 +55,7 @@ public class WorkConfigService {
                     + "    'connector' = 'print' \n" + ");\n" + "\n" + "INSERT INTO print_sink SELECT now();");
                 break;
             case WorkType.BASH:
-                workConfig.setScript("#!/bin/bash \n" + "\n" + "pwd");
+                workConfig.setScript("#!/bin/bash \n" + "\n set -euo pipefail \n pwd");
                 break;
             case WorkType.PYTHON:
                 workConfig.setScript("print('hello world')");
