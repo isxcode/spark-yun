@@ -18,6 +18,7 @@ readonly TMP_DIR="${BASE_PATH}/resources/tmp"
 readonly SPARK_MIN_DIR="${BASE_PATH}/spark-yun-dist/spark-min"
 readonly FLINK_MIN_DIR="${BASE_PATH}/spark-yun-dist/flink-min"
 readonly JDBC_DIR="${BASE_PATH}/resources/jdbc/system"
+readonly LIBS_DIR="${BASE_PATH}/resources/libs"
 readonly RESOURCE_DIR="${BASE_PATH}/spark-yun-backend/spark-yun-main/src/main/resources"
 readonly TMP_SPARK_MIN_JARS="${TMP_DIR}/spark-min/jars"
 readonly TMP_FLINK_MIN_LIB="${TMP_DIR}/flink-min/lib"
@@ -124,8 +125,10 @@ install_flink_libs() {
 install_resources_libs() {
     echo "拷贝项目依赖..."
 
-    cp "${TMP_LIBS_DIR}"/libprql_java-osx-arm64.dylib "${RESOURCE_DIR}"/
-    cp "${TMP_LIBS_DIR}"/libprql_java-linux64.so "${RESOURCE_DIR}"/
+    create_dir "$LIBS_DIR"
+
+    cp "${TMP_LIBS_DIR}"/* "${LIBS_DIR}"/
+    cp "${LIBS_DIR}"/libprql_* "${RESOURCE_DIR}"/
 }
 
 # 拷贝驱动
