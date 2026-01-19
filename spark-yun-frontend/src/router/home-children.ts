@@ -29,6 +29,7 @@ import ComputingDetail from '@/views/realtime-computing/computing-detail/index.v
 
 import fileCenter from '@/views/file-center/index.vue'
 import CustomFunc from '@/views/custom-func/index.vue'
+import LibPackage from '@/views/lib-package/index.vue'
 
 import ReportComponents from '@/views/report-components/index.vue'
 import ReportItem from '@/views/report-components/report-item/index.vue'
@@ -177,6 +178,11 @@ export default [
     path: 'custom-func',
     name: 'custom-func',
     component: CustomFunc
+  },
+  {
+    path: 'lib-package',
+    name: 'lib-package',
+    component: LibPackage
   },
   {
     path: 'realtime-computing',
