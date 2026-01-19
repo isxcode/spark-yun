@@ -56,6 +56,11 @@ export const colConfigs: colConfig[] = [
     minWidth: 140
   },
   {
+    prop: 'lastModifiedDateTime',
+    title: '更新时间',
+    minWidth: 140
+  },
+  {
     prop: 'remark',
     title: '备注',
     minWidth: 100,
