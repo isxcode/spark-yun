@@ -99,7 +99,8 @@ const modelConfig = reactive({
   },
   needScale: false,
   zIndex: 1100,
-  closeOnClickModal: false
+  closeOnClickModal: false,
+  customClass: 'config-lib-package-modal'
 })
 
 // 表格配置
@@ -342,6 +343,14 @@ defineExpose({
         }
       }
     }
+  }
+}
+
+// 全局样式，禁用弹窗滚动
+:deep(.config-lib-package-modal) {
+  .el-dialog__body {
+    overflow: hidden !important;
+    padding: 0 !important;
   }
 }
 </style>
