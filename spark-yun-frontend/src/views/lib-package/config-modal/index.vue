@@ -11,34 +11,28 @@
         />
       </div>
 
-      <div class="file-table" @scroll="handleScroll" ref="tableScrollRef">
-        <el-table
-          :data="tableConfig.tableData"
-          v-loading="tableConfig.loading"
-          style="width: 100%"
-          height="100%"
+      <div class="file-table" @scroll="handleScroll" ref="tableScrollRef" v-loading="tableConfig.loading">
+        <div
+          v-for="file in tableConfig.tableData"
+          :key="file.id"
+          class="file-item"
+          @click="toggleFile(file)"
         >
-          <el-table-column width="50" align="center">
-            <template #default="scope">
-              <el-checkbox
-                :model-value="isSelected(scope.row.id)"
-                @change="handleCheckboxChange(scope.row, $event)"
-              />
-            </template>
-          </el-table-column>
-          <el-table-column
-            prop="fileName"
-            label="文件名"
-            min-width="200"
-            show-overflow-tooltip
+          <el-checkbox
+            :model-value="isSelected(file.id)"
+            @change="handleCheckboxChange(file, $event)"
+            @click.stop
           />
-          <el-table-column
-            prop="remark"
-            label="备注"
-            min-width="120"
-            show-overflow-tooltip
-          />
-        </el-table>
+          <div class="file-info">
+            <div class="file-name">{{ file.fileName }}</div>
+            <div class="file-remark">{{ file.remark || '暂无备注' }}</div>
+          </div>
+        </div>
+
+        <div v-if="tableConfig.tableData.length === 0 && !tableConfig.loading" class="empty-list">
+          暂无数据
+        </div>
+
         <div v-if="loadingMore" class="loading-more">
           加载中...
         </div>
@@ -154,7 +148,7 @@ function loadFileList(isLoadMore = false) {
 
   GetFileCenterList({
     page: currentPage.value,
-    pageSize: 20,
+    pageSize: 6,
     searchKeyWord: keyword.value,
     type: 'LIB'
   }).then((res: any) => {
@@ -167,7 +161,7 @@ function loadFileList(isLoadMore = false) {
     }
 
     // 判断是否还有更多数据
-    hasMore.value = newData.length >= 20
+    hasMore.value = newData.length >= 6
 
     tableConfig.loading = false
     loadingMore.value = false
@@ -228,6 +222,12 @@ function removeFromSelected(fileId: string) {
   selectedFiles.value = selectedFiles.value.filter((file: any) => file.id !== fileId)
 }
 
+// 切换文件选择状态
+function toggleFile(file: any) {
+  const selected = isSelected(file.id)
+  handleCheckboxChange(file, !selected)
+}
+
 function okEvent() {
   modelConfig.okConfig.loading = true
 
@@ -270,6 +270,58 @@ defineExpose({
     overflow-y: auto;
     margin-bottom: 16px;
     position: relative;
+    border: 1px solid #e4e7ed;
+    border-radius: 4px;
+
+    .file-item {
+      display: flex;
+      align-items: center;
+      padding: 10px 12px;
+      border-bottom: 1px solid #f0f0f0;
+      cursor: pointer;
+      transition: background-color 0.2s;
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      &:hover {
+        background-color: #f5f7fa;
+      }
+
+      .el-checkbox {
+        margin-right: 12px;
+      }
+
+      .file-info {
+        flex: 1;
+        min-width: 0;
+
+        .file-name {
+          font-size: 14px;
+          color: #303133;
+          margin-bottom: 4px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+
+        .file-remark {
+          font-size: 12px;
+          color: #909399;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+      }
+    }
+
+    .empty-list {
+      text-align: center;
+      padding: 60px 0;
+      color: #909399;
+      font-size: 14px;
+    }
 
     .loading-more {
       text-align: center;
