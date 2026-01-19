@@ -259,14 +259,14 @@ defineExpose({
   padding: 20px;
   display: flex;
   flex-direction: column;
-  height: 600px;
+  height: 500px;
 
   .search-box {
     margin-bottom: 12px;
   }
 
   .file-table {
-    height: 300px;
+    height: 240px;
     overflow-y: auto;
     margin-bottom: 16px;
     position: relative;
@@ -338,12 +338,14 @@ defineExpose({
     display: flex;
     flex-direction: column;
     min-height: 0;
+    max-height: 180px;
 
     .section-title {
       font-size: 14px;
       font-weight: 600;
       color: #303133;
       margin-bottom: 10px;
+      flex-shrink: 0;
 
       .count {
         color: #909399;
@@ -356,6 +358,7 @@ defineExpose({
       flex: 1;
       overflow-y: auto;
       min-height: 0;
+      max-height: 140px;
 
       .empty-text {
         text-align: center;
