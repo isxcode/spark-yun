@@ -258,38 +258,39 @@ defineExpose({
   padding: 20px;
   display: flex;
   flex-direction: column;
-  height: 700px;
+  height: 600px;
 
   .search-box {
-    margin-bottom: 15px;
+    margin-bottom: 12px;
   }
 
   .file-table {
-    flex: 1;
+    height: 300px;
     overflow-y: auto;
-    margin-bottom: 20px;
+    margin-bottom: 16px;
     position: relative;
 
     .loading-more {
       text-align: center;
-      padding: 10px;
+      padding: 8px;
       color: #909399;
       font-size: 13px;
     }
   }
 
   .selected-section {
-    height: 180px;
+    flex: 1;
     border-top: 1px solid #e4e7ed;
-    padding-top: 15px;
+    padding-top: 12px;
     display: flex;
     flex-direction: column;
+    min-height: 0;
 
     .section-title {
       font-size: 14px;
       font-weight: 600;
       color: #303133;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
 
       .count {
         color: #909399;
@@ -301,23 +302,24 @@ defineExpose({
     .selected-list {
       flex: 1;
       overflow-y: auto;
+      min-height: 0;
 
       .empty-text {
         text-align: center;
         color: #909399;
-        padding: 30px 0;
+        padding: 20px 0;
         font-size: 13px;
       }
 
       .selected-items {
         display: flex;
         flex-wrap: wrap;
-        gap: 10px;
+        gap: 8px;
 
         .selected-item {
           display: inline-flex;
           align-items: center;
-          padding: 6px 12px;
+          padding: 4px 10px;
           background-color: #f4f4f5;
           border: 1px solid #e4e7ed;
           border-radius: 4px;
@@ -328,7 +330,7 @@ defineExpose({
           }
 
           .remove-icon {
-            margin-left: 8px;
+            margin-left: 6px;
             cursor: pointer;
             color: #909399;
             font-size: 14px;
