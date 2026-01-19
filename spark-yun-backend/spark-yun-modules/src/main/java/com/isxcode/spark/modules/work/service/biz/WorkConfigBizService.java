@@ -240,11 +240,11 @@ public class WorkConfigBizService {
         }
 
         // 设置依赖包配置
-        if (wocConfigWorkReq.getLibPakcageList() != null) {
-            if (!wocConfigWorkReq.getLibPakcageList().isEmpty()) {
-                workConfig.setLibConfig(JSONArray.toJSONString(wocConfigWorkReq.getLibPakcageList()));
+        if (wocConfigWorkReq.getLibPackageList() != null) {
+            if (!wocConfigWorkReq.getLibPackageList().isEmpty()) {
+                workConfig.setLibPackageConfig(JSONArray.toJSONString(wocConfigWorkReq.getLibPackageList()));
             } else {
-                workConfig.setLibConfig("[]");
+                workConfig.setLibPackageConfig("[]");
             }
         }
 
