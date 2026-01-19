@@ -325,10 +325,6 @@ defineExpose({
 
           .file-name {
             color: #606266;
-            max-width: 200px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
           }
 
           .remove-icon {
