@@ -21,7 +21,9 @@ import com.isxcode.spark.modules.cluster.mapper.ClusterNodeMapper;
 import com.isxcode.spark.modules.cluster.repository.ClusterNodeRepository;
 import com.isxcode.spark.modules.cluster.repository.ClusterRepository;
 import com.isxcode.spark.modules.file.entity.FileEntity;
+import com.isxcode.spark.modules.file.entity.LibPackageEntity;
 import com.isxcode.spark.modules.file.repository.FileRepository;
+import com.isxcode.spark.modules.file.service.FileService;
 import com.isxcode.spark.modules.meta.service.MetaColumnLineageService;
 import com.isxcode.spark.modules.work.entity.WorkEventEntity;
 import com.isxcode.spark.modules.work.entity.WorkInstanceEntity;
@@ -63,14 +65,15 @@ public class FlinkJarExecutor extends WorkExecutor {
 
     private final AgentLinkUtils agentLinkUtils;
 
+    private final FileService fileService;
+
     public FlinkJarExecutor(WorkInstanceRepository workInstanceRepository, ClusterRepository clusterRepository,
-        ClusterNodeRepository clusterNodeRepository, WorkflowInstanceRepository workflowInstanceRepository,
-        WorkRepository workRepository, WorkConfigRepository workConfigRepository, Locker locker,
-        ClusterNodeMapper clusterNodeMapper, AesUtils aesUtils, IsxAppProperties isxAppProperties,
-        FileRepository fileRepository, AlarmService alarmService, SqlFunctionService sqlFunctionService,
-        WorkEventRepository workEventRepository, WorkRunJobFactory workRunJobFactory,
-        VipWorkVersionRepository vipWorkVersionRepository, WorkService workService, AgentLinkUtils agentLinkUtils,
-        MetaColumnLineageService metaColumnLineageService) {
+                            ClusterNodeRepository clusterNodeRepository, WorkflowInstanceRepository workflowInstanceRepository,
+                            WorkRepository workRepository, WorkConfigRepository workConfigRepository, Locker locker,
+                            ClusterNodeMapper clusterNodeMapper, AesUtils aesUtils, IsxAppProperties isxAppProperties,
+                            FileRepository fileRepository, AlarmService alarmService, SqlFunctionService sqlFunctionService,
+                            WorkEventRepository workEventRepository, WorkRunJobFactory workRunJobFactory,
+                            VipWorkVersionRepository vipWorkVersionRepository, WorkService workService, AgentLinkUtils agentLinkUtils, MetaColumnLineageService metaColumnLineageService, FileService fileService) {
 
         super(alarmService, locker, workRepository, workInstanceRepository, workflowInstanceRepository,
             workEventRepository, workRunJobFactory, sqlFunctionService, workConfigRepository, vipWorkVersionRepository,
@@ -82,6 +85,7 @@ public class FlinkJarExecutor extends WorkExecutor {
         this.isxAppProperties = isxAppProperties;
         this.fileRepository = fileRepository;
         this.agentLinkUtils = agentLinkUtils;
+        this.fileService = fileService;
     }
 
     @Override
@@ -91,7 +95,7 @@ public class FlinkJarExecutor extends WorkExecutor {
 
     @Override
     protected String execute(WorkRunContext workRunContext, WorkInstanceEntity workInstance,
-        WorkEventEntity workEvent) {
+                             WorkEventEntity workEvent) {
 
         // 获取日志
         StringBuilder logBuilder = new StringBuilder(workInstance.getSubmitLog());
@@ -170,7 +174,24 @@ public class FlinkJarExecutor extends WorkExecutor {
         // 上传依赖包
         if (workEvent.getEventProcess() == 3) {
 
+            Set<String> uploadFileSet = new HashSet<>();
+
+            // 合并依赖包依赖
+            if (workRunContext.getLibPackageConfig() != null) {
+                workRunContext.getLibPackageConfig().forEach(libPackageId -> {
+                    LibPackageEntity metaLibPackage = fileService.getLibPackage(libPackageId);
+                    if (metaLibPackage.getFileIdList() != null) {
+                        uploadFileSet.addAll(JSON.parseArray(metaLibPackage.getFileIdList(), String.class));
+                    }
+                });
+            }
+
+            // 合并依赖包
             if (workRunContext.getLibConfig() != null) {
+                uploadFileSet.addAll(workRunContext.getLibConfig());
+            }
+
+            if (!uploadFileSet.isEmpty()) {
 
                 // 获取上下文参数
                 ScpFileEngineNodeDto scpNode = workRunContext.getScpNodeInfo();
@@ -179,7 +200,7 @@ public class FlinkJarExecutor extends WorkExecutor {
                 // 遍历上传到集群节点
                 String libDir = PathUtils.parseProjectPath(isxAppProperties.getResourcesPath()) + File.separator
                     + "file" + File.separator + workInstance.getTenantId();
-                List<FileEntity> libFile = fileRepository.findAllById(workRunContext.getLibConfig());
+                List<FileEntity> libFile = fileRepository.findAllById(uploadFileSet);
                 libFile.forEach(e -> {
                     try {
                         scpJar(scpNode, libDir + File.separator + e.getId(),
