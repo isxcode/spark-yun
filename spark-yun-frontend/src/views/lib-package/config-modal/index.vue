@@ -398,11 +398,18 @@ defineExpose({
   }
 }
 
+</style>
+
+<style lang="scss">
 // 全局样式，禁用弹窗滚动
-:deep(.config-lib-package-modal) {
+.config-lib-package-modal {
   .el-dialog__body {
     overflow: hidden !important;
     padding: 0 !important;
+  }
+
+  .modal-content {
+    overflow: hidden !important;
   }
 }
 </style>
