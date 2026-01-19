@@ -20,7 +20,7 @@ const form = ref<FormInstance>()
 const callback = ref<any>()
 
 const modelConfig = reactive({
-  title: '添加依赖包',
+  title: '添加依赖合集',
   visible: false,
   width: '520px',
   okConfig: {
@@ -60,12 +60,12 @@ function showModal(cb: () => void, data: any): void {
     formData.name = data.name
     formData.remark = data.remark
     formData.id = data.id
-    modelConfig.title = '编辑依赖包'
+    modelConfig.title = '编辑依赖合集'
   } else {
     formData.name = ''
     formData.remark = ''
     formData.id = ''
-    modelConfig.title = '添加依赖包'
+    modelConfig.title = '新建依赖合集'
   }
 
   callback.value = cb

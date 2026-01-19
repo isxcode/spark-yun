@@ -4,7 +4,7 @@
       <div class="search-box">
         <el-input
           v-model="keyword"
-          placeholder="请输入文件名 回车进行搜索"
+          placeholder="请输入依赖文件名或者备注 回车进行搜索"
           clearable
           @input="inputEvent"
           @keyup.enter="resetAndLoad"
@@ -77,7 +77,7 @@ const hasMore = ref(true)
 const currentPage = ref(0)
 
 const modelConfig = reactive({
-  title: '配置依赖包',
+  title: '配置依赖合集',
   visible: false,
   width: '900px',
   okConfig: {
