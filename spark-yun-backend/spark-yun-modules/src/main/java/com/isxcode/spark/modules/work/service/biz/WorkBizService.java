@@ -464,6 +464,10 @@ public class WorkBizService {
             getWorkRes.setQueryConfig(JSON.parseObject(workConfig.getQueryConfig(), QueryConfig.class));
         }
 
+        if (!Strings.isEmpty(workConfig.getLibPackageConfig())) {
+            getWorkRes.setLibPackageList(JSON.parseArray(workConfig.getLibPackageConfig(), String.class));
+        }
+
         return getWorkRes;
     }
 
