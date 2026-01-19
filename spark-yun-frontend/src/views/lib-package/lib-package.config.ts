@@ -42,12 +42,13 @@ export const colConfigs: colConfig[] = [
     prop: 'name',
     title: '名称',
     minWidth: 125,
-    showOverflowTooltip: true
+    showOverflowTooltip: true,
+    customSlot: 'name'
   },
   {
     prop: 'createUsername',
     title: '创建人',
-    minWidth: 100,
+    minWidth: 80,
     showOverflowTooltip: true
   },
   {
@@ -63,14 +64,14 @@ export const colConfigs: colConfig[] = [
   {
     prop: 'remark',
     title: '备注',
-    minWidth: 100,
+    minWidth: 150,
     showOverflowTooltip: true
   },
   {
     title: '操作',
     align: 'center',
     customSlot: 'options',
-    width: 120,
+    width: 80,
     fixed: 'right'
   }
 ]
