@@ -13,9 +13,13 @@
     <LoadingPage :visible="loading" :network-error="networkError" @loading-refresh="initData(false)">
       <div class="zqy-table">
         <BlockTable :table-config="tableConfig" @size-change="handleSizeChange" @current-change="handleCurrentChange">
+          <template #name="scopeSlot">
+            <span class="name-click" @click="configData(scopeSlot.row)">
+              {{ scopeSlot.row.name }}
+            </span>
+          </template>
           <template #options="scopeSlot">
             <div class="btn-group">
-              <span @click="configData(scopeSlot.row)">配置</span>
               <span @click="editData(scopeSlot.row)">编辑</span>
               <span @click="deleteData(scopeSlot.row)">删除</span>
             </div>
@@ -142,4 +146,17 @@ onMounted(() => {
   initData()
 })
 </script>
+
+<style lang="scss" scoped>
+.name-click {
+  cursor: pointer;
+  font-weight: bold;
+  color: getCssVar('color', 'primary', 'light-3');
+
+  &:hover {
+    color: getCssVar('color', 'primary');
+    text-decoration: underline;
+  }
+}
+</style>
 
