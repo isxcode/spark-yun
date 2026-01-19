@@ -55,6 +55,8 @@ public class GetWorkRes {
 
     private List<String> libList;
 
+    private List<String> libPackageList;
+
     private String containerId;
 
     private List<String> alarmList;

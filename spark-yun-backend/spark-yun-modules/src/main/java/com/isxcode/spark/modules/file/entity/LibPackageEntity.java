@@ -1,19 +1,8 @@
-package com.isxcode.spark.modules.work.entity;
-
-import static com.isxcode.spark.common.config.CommonConfig.TENANT_ID;
+package com.isxcode.spark.modules.file.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
-import java.time.LocalDateTime;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.PrePersist;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-import javax.persistence.Version;
-
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.SQLDelete;
@@ -24,51 +13,32 @@ import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import javax.persistence.*;
+import java.time.LocalDateTime;
+
+import static com.isxcode.spark.common.config.CommonConfig.TENANT_ID;
+
 @Data
 @Entity
-@SQLDelete(sql = "UPDATE SY_WORK_CONFIG SET deleted = 1 WHERE id = ? and version_number = ?")
+@SQLDelete(sql = "UPDATE SY_LIB_PACKAGE SET deleted = 1 WHERE id = ? and version_number = ?")
 @Where(clause = "deleted = 0 ${TENANT_FILTER} ")
-@Table(name = "SY_WORK_CONFIG")
+@Table(name = "SY_LIB_PACKAGE")
 @JsonIgnoreProperties({"hibernateLazyInitializer"})
 @EntityListeners(AuditingEntityListener.class)
-public class WorkConfigEntity {
+@Builder(toBuilder = true)
+@AllArgsConstructor
+public class LibPackageEntity {
 
     @Id
     @GeneratedValue(generator = "sy-id-generator")
     @GenericGenerator(name = "sy-id-generator", strategy = "com.isxcode.spark.config.GeneratedValueConfig")
     private String id;
 
-    private String datasourceId;
+    private String name;
 
-    private String script;
+    private String fileIdList;
 
-    private String cronConfig;
-
-    private String syncWorkConfig;
-
-    private String excelSyncConfig;
-
-    private String apiWorkConfig;
-
-    private String syncRule;
-
-    private String clusterConfig;
-
-    private String jarJobConfig;
-
-    private String funcConfig;
-
-    private String libConfig;
-
-    private String libPackageConfig;
-
-    private String containerId;
-
-    private String alarmList;
-
-    private String dbMigrateConfig;
-
-    private String queryConfig;
+    private String remark;
 
     @CreatedDate
     private LocalDateTime createDateTime;
@@ -89,6 +59,8 @@ public class WorkConfigEntity {
     private Integer deleted;
 
     private String tenantId;
+
+    public LibPackageEntity() {}
 
     @PrePersist
     public void prePersist() {

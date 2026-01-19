@@ -371,6 +371,13 @@
                         :value="item.value" />
                 </el-select>
               </el-form-item>
+              <el-form-item label="依赖集合">
+                <el-select v-model="fileConfig.libPackageList" collapse-tags multiple clearable
+                    filterable placeholder="请选择">
+                    <el-option v-for="item in libPackageIdList" :key="item.value" :label="item.label"
+                        :value="item.value" />
+                </el-select>
+              </el-form-item>
             </el-form>
           </div>
           <!-- 容器配置 -->
@@ -430,6 +437,7 @@ import { GetFileCenterList } from '@/services/file-center.service'
 import { GetCustomFuncList } from '@/services/custom-func.service'
 import { GetSparkContainerList } from '@/services/spark-container.service'
 import { GetAlarmPagesList } from '@/services/message-center.service'
+import { PageLibPackage } from '@/services/lib-package.service'
 
 const scheduleRange = ref(ScheduleRange);
 const weekDateList = ref(WeekDateList)
@@ -442,6 +450,7 @@ const sqllang = ref<any>(sql())
 const workItemConfig = ref()
 const fileIdList = ref([]) // 资源文件
 const libIdList = ref([])  // 依赖
+const libPackageIdList = ref([])  // 依赖集合
 
 const resourceLevelOptions = ref(ResourceLevelOptions) // 资源等级
 const dataSourceConfig = ref<FormInstance>()
@@ -530,7 +539,8 @@ let messageConfig = reactive({
 })
 const fileConfig = reactive({
   funcList: [],
-  libList: []
+  libList: [],
+  libPackageList: []
 })
 const dataSourceRules = reactive<FormRules>(DataSourceRules)
 const queryConfigRules = reactive<FormRules>(QueryConfigRules)
@@ -578,6 +588,7 @@ function showModal(data?: any, cb?: any) {
     // 获取函数配置和依赖配置
     getFuncList()
     getFileCenterList()
+    getLibPackageList()
 
     getDataSourceList(true)
     workItemConfig.value = data
@@ -606,6 +617,24 @@ function getFileCenterList() {
         libIdList.value = []
     })
 }
+
+function getLibPackageList() {
+    PageLibPackage({
+        page: 0,
+        pageSize: 10000,
+        searchKeyWord: ''
+    }).then((res: any) => {
+        libPackageIdList.value = res.data.content.map(item => {
+            return {
+                label: item.name,
+                value: item.id
+            }
+        })
+    }).catch(() => {
+        libPackageIdList.value = []
+    })
+}
+
 function getFuncList() {
     GetCustomFuncList({
         page: 0,
@@ -671,6 +700,7 @@ function getConfigDetailData() {
     }
     fileConfig.funcList = res.data.funcList || []
     fileConfig.libList = res.data.libList || []
+    fileConfig.libPackageList = res.data.libPackageList || []
     clusterConfig.setMode = clusterConfig.setMode || 'SIMPLE'
     cronConfig.setMode = cronConfig.setMode || 'SIMPLE'
     syncRule.setMode = syncRule.setMode || 'SIMPLE'

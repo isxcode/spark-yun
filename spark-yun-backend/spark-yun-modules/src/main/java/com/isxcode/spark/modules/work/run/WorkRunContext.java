@@ -129,6 +129,11 @@ public class WorkRunContext {
     private List<String> libConfig;
 
     /**
+     * 依赖包配置.
+     */
+    private List<String> libPackageConfig;
+
+    /**
      * 容器id.
      */
     private String containerId;

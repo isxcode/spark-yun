@@ -64,6 +64,8 @@ public class VipWorkVersionEntity {
 
     private String libConfig;
 
+    private String libPackageConfig;
+
     private String funcConfig;
 
     private String alarmList;
