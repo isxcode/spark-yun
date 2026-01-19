@@ -27,7 +27,9 @@ import com.isxcode.spark.modules.datasource.service.DatasourceService;
 import com.isxcode.spark.modules.datasource.source.DataSourceFactory;
 import com.isxcode.spark.modules.datasource.source.Datasource;
 import com.isxcode.spark.modules.file.entity.FileEntity;
+import com.isxcode.spark.modules.file.entity.LibPackageEntity;
 import com.isxcode.spark.modules.file.repository.FileRepository;
+import com.isxcode.spark.modules.file.service.FileService;
 import com.isxcode.spark.modules.func.entity.FuncEntity;
 import com.isxcode.spark.modules.func.mapper.FuncMapper;
 import com.isxcode.spark.modules.func.repository.FuncRepository;
@@ -94,6 +96,8 @@ public class SparkSqlExecutor extends WorkExecutor {
 
     private final AgentLinkUtils agentLinkUtils;
 
+    private final FileService fileService;
+
     public SparkSqlExecutor(WorkInstanceRepository workInstanceRepository,
         WorkflowInstanceRepository workflowInstanceRepository, SqlCommentService sqlCommentService,
         SqlValueService sqlValueService, SqlFunctionService sqlFunctionService, AlarmService alarmService,
@@ -103,7 +107,8 @@ public class SparkSqlExecutor extends WorkExecutor {
         VipWorkVersionRepository vipWorkVersionRepository, ClusterNodeMapper clusterNodeMapper, AesUtils aesUtils,
         ClusterNodeRepository clusterNodeRepository, ClusterRepository clusterRepository, FuncRepository funcRepository,
         FuncMapper funcMapper, IsxAppProperties isxAppProperties, FileRepository fileRepository,
-        DatasourceService datasourceService, WorkService workService, AgentLinkUtils agentLinkUtils) {
+        DatasourceService datasourceService, WorkService workService, AgentLinkUtils agentLinkUtils,
+        FileService fileService) {
 
         super(alarmService, locker, workRepository, workInstanceRepository, workflowInstanceRepository,
             workEventRepository, workRunJobFactory, sqlFunctionService, workConfigRepository, vipWorkVersionRepository,
@@ -124,6 +129,7 @@ public class SparkSqlExecutor extends WorkExecutor {
         this.dataSourceFactory = dataSourceFactory;
         this.secretKeyRepository = secretKeyRepository;
         this.agentLinkUtils = agentLinkUtils;
+        this.fileService = fileService;
     }
 
     @Override
@@ -250,16 +256,33 @@ public class SparkSqlExecutor extends WorkExecutor {
         // 上传依赖包
         if (workEvent.getEventProcess() == 4) {
 
+            Set<String> uploadFileSet = new HashSet<>();
+
+            // 合并依赖包依赖
+            if (workRunContext.getLibPackageConfig() != null) {
+                workRunContext.getLibPackageConfig().forEach(libPackageId -> {
+                    LibPackageEntity metaLibPackage = fileService.getLibPackage(libPackageId);
+                    if (metaLibPackage.getFileIdList() != null) {
+                        uploadFileSet.addAll(JSON.parseArray(metaLibPackage.getFileIdList(), String.class));
+                    }
+                });
+            }
+
+            // 合并依赖包
             if (workRunContext.getLibConfig() != null) {
+                uploadFileSet.addAll(workRunContext.getLibConfig());
+            }
+
+            if (!uploadFileSet.isEmpty()) {
 
                 // 获取上下文参数
                 ScpFileEngineNodeDto scpNode = workRunContext.getScpNodeInfo();
                 ClusterNodeEntity agentNode = workRunContext.getAgentNode();
 
-                // 依赖文件目录
+                // 遍历上传到集群节点
                 String libDir = PathUtils.parseProjectPath(isxAppProperties.getResourcesPath()) + File.separator
                     + "file" + File.separator + workInstance.getTenantId();
-                List<FileEntity> libFile = fileRepository.findAllById(workRunContext.getLibConfig());
+                List<FileEntity> libFile = fileRepository.findAllById(uploadFileSet);
                 libFile.forEach(e -> {
                     try {
                         scpJar(scpNode, libDir + File.separator + e.getId(),
