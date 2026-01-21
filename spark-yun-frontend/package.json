@@ -36,7 +36,7 @@
     "element-plus": "2.3.5",
     "g6-extension-vue": "^0.1.0",
     "jsplumb": "^2.15.6",
-    "lodash-es": "^4.17.21",
+    "lodash-es": "^4.17.23",
     "mitt": "^3.0.0",
     "normalize.css": "8.0.1",
     "pinia": "^2.1.6",
