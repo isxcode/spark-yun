@@ -108,7 +108,8 @@ public class SparkSqlExecutor extends WorkExecutor {
         VipWorkVersionRepository vipWorkVersionRepository, ClusterNodeMapper clusterNodeMapper, AesUtils aesUtils,
         ClusterNodeRepository clusterNodeRepository, ClusterRepository clusterRepository, FuncRepository funcRepository,
         FuncMapper funcMapper, IsxAppProperties isxAppProperties, FileRepository fileRepository,
-        DatasourceService datasourceService, WorkService workService, AgentLinkUtils agentLinkUtils, MetaColumnLineageService metaColumnLineageService, FileService fileService) {
+        DatasourceService datasourceService, WorkService workService, AgentLinkUtils agentLinkUtils,
+        MetaColumnLineageService metaColumnLineageService, FileService fileService) {
 
         super(alarmService, locker, workRepository, workInstanceRepository, workflowInstanceRepository,
             workEventRepository, workRunJobFactory, sqlFunctionService, workConfigRepository, vipWorkVersionRepository,

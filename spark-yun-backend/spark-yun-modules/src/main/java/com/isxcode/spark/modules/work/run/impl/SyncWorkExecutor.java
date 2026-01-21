@@ -100,7 +100,8 @@ public class SyncWorkExecutor extends WorkExecutor {
         SqlValueService sqlValueService, SqlFunctionService sqlFunctionService, AlarmService alarmService,
         WorkEventRepository workEventRepository, WorkRunJobFactory workRunJobFactory,
         VipWorkVersionRepository vipWorkVersionRepository, WorkService workService,
-        SecretKeyRepository secretKeyRepository, FuncMapper funcMapper, AgentLinkUtils agentLinkUtils, MetaColumnLineageService metaColumnLineageService, FileService fileService) {
+        SecretKeyRepository secretKeyRepository, FuncMapper funcMapper, AgentLinkUtils agentLinkUtils,
+        MetaColumnLineageService metaColumnLineageService, FileService fileService) {
 
         super(alarmService, locker, workRepository, workInstanceRepository, workflowInstanceRepository,
             workEventRepository, workRunJobFactory, sqlFunctionService, workConfigRepository, vipWorkVersionRepository,

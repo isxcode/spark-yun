@@ -68,12 +68,13 @@ public class FlinkJarExecutor extends WorkExecutor {
     private final FileService fileService;
 
     public FlinkJarExecutor(WorkInstanceRepository workInstanceRepository, ClusterRepository clusterRepository,
-                            ClusterNodeRepository clusterNodeRepository, WorkflowInstanceRepository workflowInstanceRepository,
-                            WorkRepository workRepository, WorkConfigRepository workConfigRepository, Locker locker,
-                            ClusterNodeMapper clusterNodeMapper, AesUtils aesUtils, IsxAppProperties isxAppProperties,
-                            FileRepository fileRepository, AlarmService alarmService, SqlFunctionService sqlFunctionService,
-                            WorkEventRepository workEventRepository, WorkRunJobFactory workRunJobFactory,
-                            VipWorkVersionRepository vipWorkVersionRepository, WorkService workService, AgentLinkUtils agentLinkUtils, MetaColumnLineageService metaColumnLineageService, FileService fileService) {
+        ClusterNodeRepository clusterNodeRepository, WorkflowInstanceRepository workflowInstanceRepository,
+        WorkRepository workRepository, WorkConfigRepository workConfigRepository, Locker locker,
+        ClusterNodeMapper clusterNodeMapper, AesUtils aesUtils, IsxAppProperties isxAppProperties,
+        FileRepository fileRepository, AlarmService alarmService, SqlFunctionService sqlFunctionService,
+        WorkEventRepository workEventRepository, WorkRunJobFactory workRunJobFactory,
+        VipWorkVersionRepository vipWorkVersionRepository, WorkService workService, AgentLinkUtils agentLinkUtils,
+        MetaColumnLineageService metaColumnLineageService, FileService fileService) {
 
         super(alarmService, locker, workRepository, workInstanceRepository, workflowInstanceRepository,
             workEventRepository, workRunJobFactory, sqlFunctionService, workConfigRepository, vipWorkVersionRepository,
@@ -95,7 +96,7 @@ public class FlinkJarExecutor extends WorkExecutor {
 
     @Override
     protected String execute(WorkRunContext workRunContext, WorkInstanceEntity workInstance,
-                             WorkEventEntity workEvent) {
+        WorkEventEntity workEvent) {
 
         // 获取日志
         StringBuilder logBuilder = new StringBuilder(workInstance.getSubmitLog());
