@@ -16,7 +16,7 @@ public class FilterEtl {
 
     private List<FilterEtl> groupFilter;
 
-    private String filterAndOr;
+    private String filterWay;
 
     private String filterType;
 
