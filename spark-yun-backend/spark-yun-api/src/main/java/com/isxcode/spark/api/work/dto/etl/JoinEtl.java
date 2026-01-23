@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
 
 
 @Data
@@ -17,16 +18,6 @@ public class JoinEtl {
 
     private String joinAliaCode;
 
-    private String joinType;
-
-    private String joinLeftColumn;
-
-    private String joinCondition;
-
-    private String joinRightColumn;
-
-    private String joinValue;
-
-    private String joinSql;
+    private List<JoinCondition> joinConditions;
 }
 
