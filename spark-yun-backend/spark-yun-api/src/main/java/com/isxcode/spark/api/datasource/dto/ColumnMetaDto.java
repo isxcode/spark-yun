@@ -27,4 +27,7 @@ public class ColumnMetaDto {
 
     @Schema(title = "字段长度")
     private Integer columnLength;
+
+    @Schema(title = "字段备注")
+    private String columnComment;
 }
