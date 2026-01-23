@@ -17,6 +17,8 @@ import com.isxcode.spark.modules.datasource.mapper.DatasourceMapper;
 import com.isxcode.spark.modules.datasource.service.DatasourceService;
 import com.isxcode.spark.modules.datasource.source.DataSourceFactory;
 import com.isxcode.spark.modules.datasource.source.Datasource;
+import com.isxcode.spark.modules.meta.entity.MetaColumnEntity;
+import com.isxcode.spark.modules.meta.repository.MetaColumnRepository;
 import com.isxcode.spark.modules.work.service.SyncWorkService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +30,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -42,6 +45,8 @@ public class SyncWorkBizService {
     private final DataSourceFactory dataSourceFactory;
 
     private final DatasourceMapper datasourceMapper;
+
+    private final MetaColumnRepository metaColumnRepository;
 
     public GetDataSourceTablesRes getDataSourceTables(GetDataSourceTablesReq getDataSourceTablesReq) throws Exception {
 
@@ -85,6 +90,15 @@ public class SyncWorkBizService {
         List<ColumnMetaDto> columns = syncWorkService.columns(connection.getMetaData(), transform.get("catalog"),
             transform.get("schema"), transform.get("tableName"));
         connection.close();
+
+        // 给字段加注释
+        columns.forEach(column -> {
+            Optional<MetaColumnEntity> columnEntityOptional =
+                metaColumnRepository.findByDatasourceIdAndTableNameAndColumnName(datasourceEntity.getId(),
+                    getDataSourceColumnsReq.getTableName(), column.getName());
+            columnEntityOptional
+                .ifPresent(metaColumnEntity -> column.setColumnComment(metaColumnEntity.getColumnComment()));
+        });
         return GetDataSourceColumnsRes.builder().columns(columns).build();
     }
 
