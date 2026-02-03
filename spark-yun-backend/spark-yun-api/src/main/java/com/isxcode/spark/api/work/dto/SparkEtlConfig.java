@@ -17,7 +17,7 @@ public class SparkEtlConfig {
     /**
      * 留给前端保存样式.
      */
-    private String webConfig;
+    private Object webConfig;
 
     /**
      * 保存所有的节点信息.
