@@ -72,7 +72,7 @@
                     <!-- <el-icon class="modal-full-screen" @click="fullScreenEvent('reqHeaderFullStatus')"><FullScreen v-if="!reqHeaderFullStatus" /><Close v-else /></el-icon>
           <code-mirror v-model="formData.headerToken" basic :lang="jsonLang"/> -->
                     <span class="add-btn">
-                        <el-icon @click="addNewOption"><CirclePlus /></el-icon>
+                        <el-icon @click="addNewOption()"><CirclePlus /></el-icon>
                     </span>
                     <div class="form-options__list">
                         <div class="form-options__item" v-for="(element, index) in formData.reqHeader" :key="index">
