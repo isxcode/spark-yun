@@ -211,6 +211,10 @@ export const TypeList = [
     "value": "SPARK_JAR"
   },
   {
+    "label": "Spark可视化ETL",
+    "value": "SPARK_ETL"
+  },
+  {
     "label": "接口调用作业",
     "value": "API"
   },

@@ -187,7 +187,8 @@
                             !['SPARK_JAR',
                             'DATA_SYNC_JDBC',
                             'EXCEL_SYNC_JDBC',
-                            'DB_MIGRATE'
+                            'DB_MIGRATE',
+                            'SPARK_ETL'
                             ].includes(workConfig.workType)
                         "
                         :workItemConfig="workConfig"
@@ -213,6 +214,13 @@
                         @back="backToFlow"
                         @locationNode="locationNode"
                     ></DatabaseMigrate>
+                    <!-- etl可视化作业 -->
+                    <WorkEtl
+                        v-if="showWorkItem && workConfig.workType === 'SPARK_ETL'"
+                        :workItemConfig="workConfig"
+                        @back="backToFlow"
+                        @locationNode="locationNode"
+                    ></WorkEtl>
                 </template>
             </div>
             <AddModal ref="addModalRef" />
@@ -235,6 +243,7 @@ import WorkflowConfig from './workflow-config/index.vue'
 import eventBus from '@/utils/eventBus'
 import zqyLog from '@/components/zqy-log/index.vue'
 import WorkItem from '../work-item/index.vue'
+import WorkEtl from '../work-etl/index.vue'
 import DataSync from '../data-sync/index.vue'
 import ExcelImport from '../excel-import/index.vue'
 import WorkApi from '../work-api/index.vue'
