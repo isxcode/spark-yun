@@ -28,7 +28,8 @@
                         'FLINK_JAR',
                         'EXCEL_SYNC_JDBC',
                         'PY_SPARK',
-                        'DB_MIGRATE'
+                        'DB_MIGRATE',
+                        'SPARK_ETL'
                     ].includes(formData.workType)"
                 >
                     <el-select
