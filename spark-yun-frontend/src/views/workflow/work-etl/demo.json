@@ -1,0 +1,560 @@
+{
+    "workId": "sy_2009574379721322496",
+    "sparkEtlConfig": {
+      "nodeList": [
+        {
+          "id": "id_input1",
+          "name": "数据输入1",
+          "type": "DATA_INPUT",
+          "aliaCode": "users1",
+          "remark": "数据输入1",
+          "outColumnList": [
+            {
+              "colName": "username",
+              "colType": "varchar(200)",
+              "remark": "username备注"
+            },
+            {
+              "colName": "age",
+              "colType": "int",
+              "remark": "age备注"
+            }
+          ],
+          "inputEtl": {
+            "datasourceId": "sy_2005925377968685056",
+            "dbType": "MYSQL",
+            "tableName": "users1",
+            "numPartitions": 1,
+            "partitionColumn": "username"
+          }
+        },
+        {
+          "id": "id_input7",
+          "name": "数据输入7",
+          "type": "DATA_INPUT",
+          "aliaCode": "users7",
+          "remark": "数据输入7",
+          "outColumnList": [
+            {
+              "colName": "username",
+              "colType": "varchar(200)",
+              "remark": "username备注"
+            },
+            {
+              "colName": "age",
+              "colType": "int",
+              "remark": "age备注"
+            }
+          ],
+          "inputEtl": {
+            "datasourceId": "sy_2005925377968685056",
+            "dbType": "MYSQL",
+            "tableName": "users7",
+            "numPartitions": 1,
+            "partitionColumn": "username"
+          }
+        },
+        {
+          "id": "id_input8",
+          "name": "数据输入8",
+          "type": "DATA_INPUT",
+          "aliaCode": "users8",
+          "remark": "数据输入8",
+          "outColumnList": [
+            {
+              "colName": "username",
+              "colType": "varchar(200)",
+              "remark": "username备注"
+            },
+            {
+              "colName": "age",
+              "colType": "int",
+              "remark": "age备注"
+            }
+          ],
+          "inputEtl": {
+            "datasourceId": "sy_2005925377968685056",
+            "dbType": "MYSQL",
+            "tableName": "users8",
+            "numPartitions": 1,
+            "partitionColumn": "username"
+          }
+        },
+        {
+          "id": "id_transformer1",
+          "name": "数据转换1",
+          "type": "DATA_TRANSFORM",
+          "aliaCode": "id_transformer1",
+          "remark": "数据转换1",
+          "outColumnList": [
+            {
+              "colName": "username",
+              "colType": "varchar(200)",
+              "remark": "username备注"
+            },
+            {
+              "colName": "age",
+              "colType": "int",
+              "remark": "age备注"
+            }
+          ],
+          "transformEtl": [
+            {
+              "colName": "username",
+              "transformWay": "FUNCTION_TRANSFORM",
+              "transformFunc": "lower",
+              "inputValue": [
+              ]
+            },
+            {
+              "colName": "age",
+              "transformWay": "CUSTOM_TRANSFORM",
+              "transformSql": "age+1"
+            }
+          ]
+        },
+        {
+          "id": "id_transformer2",
+          "name": "数据转换2",
+          "type": "DATA_TRANSFORM",
+          "aliaCode": "id_transformer2",
+          "remark": "数据转换2",
+          "outColumnList": [
+            {
+              "colName": "username",
+              "colType": "varchar(200)",
+              "remark": "username备注"
+            },
+            {
+              "colName": "age",
+              "colType": "int",
+              "remark": "age备注"
+            }
+          ],
+          "transformEtl": [
+            {
+              "colName": "username",
+              "transformWay": "FUNCTION_TRANSFORM",
+              "transformFunc": "lower",
+              "inputValue": [
+              ]
+            },
+            {
+              "colName": "age",
+              "transformWay": "CUSTOM_TRANSFORM",
+              "transformSql": "age+1"
+            }
+          ]
+        },
+        {
+          "id": "id_filter1",
+          "name": "数据过滤1",
+          "type": "DATA_FILTER",
+          "aliaCode": "id_filter1",
+          "remark": "数据过滤1",
+          "outColumnList": [
+            {
+              "colName": "username",
+              "colType": "varchar(200)",
+              "remark": "username备注"
+            },
+            {
+              "colName": "age",
+              "colType": "int",
+              "remark": "age备注"
+            }
+          ],
+          "filterEtl": [
+            {
+              "filterType": "CONDITION_FILTER",
+              "filterColumn": "username",
+              "filterCondition": "=",
+              "filterValue": "'zhangsan'"
+            },
+            {
+              "filterWay": "AND",
+              "groupFilter": [
+                {
+                  "filterType": "CONDITION_FILTER",
+                  "filterColumn": "age",
+                  "filterCondition": "=",
+                  "filterValue": "10"
+                },
+                {
+                  "filterWay": "OR",
+                  "filterType": "CUSTOM_FILTER",
+                  "customFilter": "age > 10"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "id_input2",
+          "name": "数据输入2",
+          "type": "DATA_INPUT",
+          "aliaCode": "users2",
+          "remark": "数据输入2",
+          "outColumnList": [
+            {
+              "colName": "username",
+              "colType": "varchar(200)",
+              "remark": "username备注"
+            },
+            {
+              "colName": "age",
+              "colType": "int",
+              "remark": "age备注"
+            }
+          ],
+          "inputEtl": {
+            "datasourceId": "sy_2005925377968685056",
+            "dbType": "MYSQL",
+            "tableName": "users2",
+            "numPartitions": 1,
+            "partitionColumn": "username"
+          }
+        },
+        {
+          "id": "id_input3",
+          "name": "数据输入3",
+          "type": "DATA_INPUT",
+          "aliaCode": "users3",
+          "remark": "数据输入3",
+          "outColumnList": [
+            {
+              "colName": "username",
+              "colType": "varchar(200)",
+              "remark": "username备注"
+            },
+            {
+              "colName": "age",
+              "colType": "int",
+              "remark": "age备注"
+            }
+          ],
+          "inputEtl": {
+            "datasourceId": "sy_2005925377968685056",
+            "dbType": "MYSQL",
+            "tableName": "users3",
+            "numPartitions": 1,
+            "partitionColumn": "username"
+          }
+        },
+        {
+          "id": "id_input4",
+          "name": "数据输入4",
+          "type": "DATA_INPUT",
+          "aliaCode": "users4",
+          "remark": "数据输入4",
+          "outColumnList": [
+            {
+              "colName": "username",
+              "colType": "varchar(200)",
+              "remark": "username备注"
+            },
+            {
+              "colName": "age",
+              "colType": "int",
+              "remark": "age备注"
+            }
+          ],
+          "inputEtl": {
+            "datasourceId": "sy_2005925377968685056",
+            "dbType": "MYSQL",
+            "tableName": "users4",
+            "numPartitions": 1,
+            "partitionColumn": "username"
+          }
+        },
+        {
+          "id": "id_input5",
+          "name": "数据输入5",
+          "type": "DATA_INPUT",
+          "aliaCode": "users5",
+          "remark": "数据输入5",
+          "outColumnList": [
+            {
+              "colName": "username",
+              "colType": "varchar(200)",
+              "remark": "username备注"
+            },
+            {
+              "colName": "age",
+              "colType": "int",
+              "remark": "age备注"
+            }
+          ],
+          "inputEtl": {
+            "datasourceId": "sy_2005925377968685056",
+            "dbType": "MYSQL",
+            "tableName": "users5",
+            "numPartitions": 1,
+            "partitionColumn": "username"
+          }
+        },
+        {
+          "id": "id_union1",
+          "name": "数据合并1",
+          "type": "DATA_UNION",
+          "aliaCode": "code_union1",
+          "remark": "数据合并1",
+          "outColumnList": [
+            {
+              "colName": "username",
+              "colType": "varchar(200)",
+              "remark": "username备注"
+            },
+            {
+              "colName": "age",
+              "colType": "int",
+              "remark": "age备注"
+            }
+          ],
+          "mainAliaCode": "id_transformer1",
+          "unionEtl": [
+            {
+              "aliaCode": "users2",
+              "unionWay": "UNION"
+            },
+            {
+              "aliaCode": "users3",
+              "unionWay": "UNION ALL"
+            }
+          ]
+        },
+        {
+          "id": "id_union2",
+          "name": "数据合并2",
+          "type": "DATA_UNION",
+          "aliaCode": "code_union2",
+          "remark": "数据合并2",
+          "outColumnList": [
+            {
+              "colName": "username",
+              "colType": "varchar(200)",
+              "remark": "username备注"
+            },
+            {
+              "colName": "age",
+              "colType": "int",
+              "remark": "age备注"
+            }
+          ],
+          "mainAliaCode": "users4",
+          "unionEtl": [
+            {
+              "aliaCode": "users5",
+              "unionWay": "UNION"
+            }
+          ]
+        },
+        {
+          "id": "id_union3",
+          "name": "数据合并3",
+          "type": "DATA_UNION",
+          "aliaCode": "code_union3",
+          "remark": "数据合并3",
+          "outColumnList": [
+            {
+              "colName": "username",
+              "colType": "varchar(200)",
+              "remark": "username备注"
+            },
+            {
+              "colName": "age",
+              "colType": "int",
+              "remark": "age备注"
+            }
+          ],
+          "mainAliaCode": "code_union1",
+          "unionEtl": [
+            {
+              "aliaCode": "code_union2",
+              "unionWay": "UNION"
+            }
+          ]
+        },
+        {
+          "id": "id_join1",
+          "name": "数据关联1",
+          "type": "DATA_JOIN",
+          "aliaCode": "code_join1",
+          "remark": "数据关联1",
+          "outColumnList": [
+            {
+              "colName": "username",
+              "fromAliaCode": "code_union1",
+              "fromColName": "username",
+              "colType": "varchar(200)",
+              "remark": "username备注"
+            },
+            {
+              "colName": "age",
+              "fromAliaCode": "code_union1",
+              "fromColName": "age",
+              "colType": "int",
+              "remark": "age备注"
+            }
+          ],
+          "mainAliaCode": "code_union1",
+          "joinEtl": [
+            {
+              "joinWay": "LEFT_JOIN",
+              "joinAliaCode": "code_union2",
+              "joinConditions": [
+                {
+                  "joinType": "COLUMN_JOIN",
+                  "joinLeftColumn": "username",
+                  "joinCondition": "=",
+                  "joinRightColumn": "username"
+                },
+                {
+                  "joinType": "COLUMN_JOIN",
+                  "joinLeftColumn": "age",
+                  "joinCondition": "=",
+                  "joinRightColumn": "age"
+                }
+              ]
+            },
+            {
+              "joinWay": "RIGHT_JOIN",
+              "joinAliaCode": "users7",
+              "joinConditions": [
+                {
+                  "joinType": "CONDITION_JOIN",
+                  "joinAliaCode": "users7",
+                  "joinColumn": "username",
+                  "joinCondition": "=",
+                  "joinValue": "'zhangsan'"
+                },
+                {
+                  "joinType": "CONDITION_JOIN",
+                  "joinAliaCode": "users7",
+                  "joinColumn": "age",
+                  "joinCondition": "=",
+                  "joinValue": "11"
+                }
+              ]
+            },
+            {
+              "joinWay": "INNER_JOIN",
+              "joinAliaCode": "users8",
+              "joinType": "CUSTOM_JOIN",
+              "joinConditions": [
+                {
+                  "joinType": "CUSTOM_JOIN",
+                  "joinSql": "users8.username = 'zhangsan'"
+                },
+                {
+                  "joinType": "CUSTOM_JOIN",
+                  "joinSql": "users8.age = 1"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "id_output6",
+          "name": "数据输出1",
+          "type": "DATA_OUTPUT",
+          "aliaCode": "code_output6",
+          "remark": "数据输出6",
+          "outputEtl": {
+            "datasourceId": "sy_2005925377968685056",
+            "dbType": "MYSQL",
+            "tableName": "users6",
+            "writeMode": "OVERWRITE",
+            "fromColumnList": [
+              {
+                "colName": "username",
+                "colType": "varchar(200)",
+                "remark": "username备注"
+              },
+              {
+                "colName": "age",
+                "colType": "int",
+                "remark": "age备注"
+              }
+            ],
+            "toColumnList": [
+              {
+                "colName": "username",
+                "colType": "varchar(200)",
+                "remark": "username备注"
+              },
+              {
+                "colName": "age",
+                "colType": "int",
+                "remark": "age备注"
+              }
+            ],
+            "colMapping": [
+              [
+                "username",
+                "username"
+              ],
+              [
+                "age",
+                "age"
+              ]
+            ]
+          }
+        }
+      ],
+      "nodeMapping": [
+        [
+          "id_input1",
+          "id_transformer2"
+        ],
+        [
+          "id_transformer2",
+          "id_filter1"
+        ],
+        [
+          "id_filter1",
+          "id_transformer1"
+        ],
+        [
+          "id_transformer1",
+          "id_union1"
+        ],
+        [
+          "id_input2",
+          "id_union1"
+        ],
+        [
+          "id_input3",
+          "id_union1"
+        ],
+        [
+          "id_input4",
+          "id_union2"
+        ],
+        [
+          "id_input5",
+          "id_union2"
+        ],
+        [
+          "id_union1",
+          "id_join1"
+        ],
+        [
+          "id_union2",
+          "id_join1"
+        ],
+        [
+          "id_input7",
+          "id_join1"
+        ],
+        [
+          "id_input8",
+          "id_join1"
+        ],
+        [
+          "id_join1",
+          "id_output6"
+        ]
+      ]
+    }
+}
