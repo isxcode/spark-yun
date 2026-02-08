@@ -94,6 +94,7 @@ function handleDragEnd(e: any, item: any) {
     if (!runningStatus.value) {
         nextTick(() => {
             item.id = guid()
+            // 数据输入
             if (item.type === 'DATA_INPUT') {
                 item.inputEtl = {
                     datasourceId: '',
@@ -104,6 +105,7 @@ function handleDragEnd(e: any, item: any) {
                 }
                 item.outColumnList = []
             }
+            // 数据输出
             if (item.type === 'DATA_OUTPUT') {
                 item.outputEtl = {
                     datasourceId: '',
@@ -115,6 +117,17 @@ function handleDragEnd(e: any, item: any) {
                 item.fromColumnList = []
                 item.toColumnList = []
                 item.colMapping = []
+            }
+            // 数据转换
+            if (item.type === 'DATA_TRANSFORM') {
+                item.transformEtl = [{
+                    colName: '',
+                    transformWay: 'FUNCTION_TRANSFORM',
+                    transformFunc: '',
+                    transformSql: '',
+                    inputValue: []
+                }]
+                item.outColumnList = []
             }
             zEtlFlowRef.value.addNodeFn(item, e)
         })
@@ -195,8 +208,12 @@ onMounted(() => {
         } else if (e.type === 'task_config') {
             nextTick(() => {
                 const incomeNodes = zEtlFlowRef.value?.getIncomeNodes(e.data.nodeConfigData)
-                taskConfigRef.value?.showModal(incomeNodes, () => {
+                taskConfigRef.value?.showModal(incomeNodes, (formData: any) => {
                     return new Promise((resolve: any) => {
+                        zEtlFlowRef.value?.updateNodeFn({
+                            ...e.data.nodeConfigData,
+                            ...formData
+                        })
                         resolve()
                     })
                 }, e.data.nodeConfigData)
