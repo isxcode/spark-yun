@@ -15,6 +15,10 @@
                 <template v-if="formData.type === 'DATA_OUTPUT'">
                     <DataOutput ref="instanceRef" v-model="formData" :incomeNodes="incomeNodes"></DataOutput>
                 </template>
+                <!-- 数据转换 -->
+                <template v-if="formData.type === 'DATA_TRANSFORM'">
+                    <DataTransfrom ref="instanceRef" v-model="formData" :incomeNodes="incomeNodes"></DataTransfrom>
+                </template>
             </el-form>
         </el-scrollbar>
     </BlockDrawer>
@@ -24,9 +28,11 @@
 import { computed, nextTick, reactive, ref } from 'vue'
 import { ElMessage, FormInstance, FormRules } from 'element-plus'
 import BlockDrawer from '@/components/block-drawer/index.vue'
+import { cloneDeep, clone } from 'lodash-es'
 
 import DataInput from './data-input/index.vue'
 import DataOutput from './data-output/index.vue'
+import DataTransfrom from './data-transform/index.vue'
 
 const formRef = ref<FormInstance>()
 const callback = ref<any>()
@@ -58,7 +64,7 @@ function showModal(prevNode: any, cb: () => void, data: any) {
     incomeNodes.value = prevNode
     drawerConfig.title = data.typeName
 
-    formData.value = data
+    formData.value = cloneDeep(data)
     drawerConfig.visible = true;
 }
 
