@@ -31,7 +31,8 @@ public class SqlFunctionService {
         Binding binding = new Binding();
         GroovyShell shell = new GroovyShell(binding);
 
-        Pattern pattern = compile("(#\\[\\[).+?]]");
+        // 使用 DOTALL 模式使 . 匹配包括换行符在内的所有字符
+        Pattern pattern = compile("(#\\[\\[).+?]]", Pattern.DOTALL);
         Matcher matcher = pattern.matcher(sql);
 
         // 获取groovy函数脚本
@@ -40,7 +41,10 @@ public class SqlFunctionService {
         // 替换正则
         while (matcher.find()) {
             String group = matcher.group();
-            String functionStr = group.replace("#[[", "").replace("]]", "");
+            // 移除 #[[ 和 ]] 标记，并去除多余的空白字符和换行
+            String functionStr = group.replace("#[[", "").replace("]]", "").trim();
+            // 将多个空白字符（包括换行）替换为单个空格
+            functionStr = functionStr.replaceAll("\\s+", " ");
             shell.evaluate(groovyFunctions + "result=" + functionStr);
             String result = String.valueOf(binding.getVariable("result"));
             sql = sql.replace(group, result);
