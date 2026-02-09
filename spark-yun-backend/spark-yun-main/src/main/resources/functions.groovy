@@ -83,3 +83,26 @@ def String get_table_default_value(String dataStr, Integer row, Integer col, Str
 
     return new String(Base64.getDecoder().decode(value))
 }
+
+def String if_then(Boolean iSTure, String sql1, String sql2) {
+
+    return iSTure ? sql1 : sql2
+}
+
+def Boolean date_before(Date date1, Date date2) {
+
+    return date1.before(date2)
+}
+
+def Boolean date_after(Date date1, Date date2) {
+
+    return date1.after(date2)
+}
+
+def String concat(Object... args) {
+
+    if (args == null || args.length == 0) {
+        return ""
+    }
+    return args.collect { it == null ? "" : it.toString() }.join("")
+}
