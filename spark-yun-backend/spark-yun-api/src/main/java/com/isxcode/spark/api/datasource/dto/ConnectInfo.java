@@ -33,7 +33,5 @@ public class ConnectInfo {
     private String passwd;
 
     private Integer loginTimeout;
-
-    private String schema;
 }
 

@@ -148,9 +148,6 @@ public abstract class Datasource {
         if (connectInfo.getPasswd() != null) {
             properties.put("password", aesUtils.decrypt(connectInfo.getPasswd()));
         }
-        if (connectInfo.getSchema() != null) {
-            properties.put("currentSchema", connectInfo.getSchema());
-        }
 
         // 数据源连接超时时间设定，默认600秒，10分钟
         DriverManager.setLoginTimeout(connectInfo.getLoginTimeout() == null ? 600 : connectInfo.getLoginTimeout());
