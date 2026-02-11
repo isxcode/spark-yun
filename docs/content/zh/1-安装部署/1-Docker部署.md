@@ -51,6 +51,7 @@ docker run \
 | LOG_LEVEL      | 日志级别         | info     | info, debug, warn            |
 | ACTIVE_ENV     | 环境配置文件       | docker   | dev, prod                    |
 | PARAMS         | SpringBoot参数 | -        | --spring.flyway.enabled=true |
+| JVMOPTIONS     | Jvm参数        | -        | -Xmx4g                       |
 
 > 📝 **注意**: `ADMIN_PASSWORD` 仅在首次启动时生效，密码会保存到数据库中。如需修改密码，请在系统中操作或清空数据库重新初始化。
 
@@ -116,4 +117,26 @@ docker rmi registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun:latest-amd64
 
 # 拉取最新镜像
 docker pull registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun:latest-amd64
+```
+
+### jvm配置
+
+> -Xmx4g 最大堆内存上限为4GB
+> -Xms2g 初始堆内存为2GB
+> -XX:+HeapDumpOnOutOfMemoryError 发生内存溢出时自动生成堆转储文件
+> -XX:HeapDumpPath=/var/lib/zhiqingyun/ 堆转储文件的保存路径
+> -XX:+UseG1GC 使用G1（Garbage-First）垃圾回收器
+> -XX:MaxMetaspaceSize=256m 元空间最大容量为256MB
+
+```bash
+-Xms2g -Xmx4g -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/var/lib/zhiqingyun/ -XX:+UseG1GC -XX:MaxMetaspaceSize=256m 
+```
+
+```bash
+docker run \
+    --restart=always \
+    --name zhiqingyun \
+    -e JVMOPTIONS="-Xms2g -Xmx4g -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/var/lib/zhiqingyun/ -XX:+UseG1GC -XX:MaxMetaspaceSize=256m" \
+    -p 8088:8080 \
+    -d registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun:latest-amd64
 ```
