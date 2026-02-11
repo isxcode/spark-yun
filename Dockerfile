@@ -13,6 +13,11 @@ COPY ./spark-yun-backend/spark-yun-main/build/libs/zhiqingyun.jar /opt/zhiqingyu
 COPY ./spark-yun-backend/spark-yun-main/src/main/resources/application-docker.yml /etc/zhiqingyun/conf/
 COPY ./resources/jdbc/system /var/lib/zhiqingyun-system
 
+# 可选：默认打包自带arthas
+RUN yum install unzip -y
+RUN curl -L -o /tmp/arthas-bin.zip https://github.com/alibaba/arthas/releases/download/arthas-all-4.1.5/arthas-bin.zip
+RUN unzip -d /opt/arthas /tmp/arthas-bin.zip
+
 EXPOSE 8080
 
 ENV ADMIN_PASSWORD=${ADMIN_PASSWORD}
