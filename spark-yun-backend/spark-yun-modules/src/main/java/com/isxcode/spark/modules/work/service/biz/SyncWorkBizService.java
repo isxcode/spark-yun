@@ -92,8 +92,17 @@ public class SyncWorkBizService {
 
         DatasourceEntity datasourceEntity = datasourceService.getDatasource(getDataSourceDataReq.getDataSourceId());
         ConnectInfo connectInfo = datasourceMapper.datasourceEntityToConnectInfo(datasourceEntity);
-        Datasource datasource = dataSourceFactory.getDatasource(datasourceEntity.getDbType());
-        connectInfo.setTableName(getDataSourceDataReq.getTableName());
+        Datasource datasource = dataSourceFactory.getDatasource(connectInfo.getDbType());
+        Connection connection;
+        try {
+            connection = datasource.getConnection(connectInfo);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            throw new IsxAppException("【" + datasourceEntity.getName() + "】连接异常，请检查数据源");
+        }
+        Map<String, String> transform = getTransform(connection, getDataSourceDataReq.getTableName());
+        connectInfo.setSchema(transform.get("schema"));
+        connectInfo.setTableName(transform.get("tableName"));
         connectInfo.setRowNumber("200");
         return datasource.getTableData(connectInfo);
     }
