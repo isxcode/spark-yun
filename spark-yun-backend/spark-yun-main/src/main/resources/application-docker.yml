@@ -35,3 +35,10 @@ isx-app:
   resources-path: /var/lib/zhiqingyun # 资源文件，例如许可证、驱动、头像等资源路径
   use-ssl: false # 是否开启ssl
   docker-mode: true # 是否采用docker部署模式
+
+# 至轻云代理配置
+spark-yun:
+  agent-retry-count: 3 # 重试次数
+  agent-retry-interval: 2000 # 间隔时间
+  default-agent-port: 30177 # 代理端口号
+  tmp-dir: /tmp # 临时目录
