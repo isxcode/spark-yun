@@ -33,8 +33,9 @@ public class AgentLinkUtils {
 
         for (int attempt = 1; attempt <= retryCount; attempt++) {
             try {
-                BaseResponse<?> baseResponse = HttpUtils.doPost(
-                    httpUrlUtils.genHttpUrl(agentNode.getHost(), agentNode.getAgentPort(), url), body, BaseResponse.class);
+                BaseResponse<?> baseResponse =
+                    HttpUtils.doPost(httpUrlUtils.genHttpUrl(agentNode.getHost(), agentNode.getAgentPort(), url), body,
+                        BaseResponse.class);
 
                 // 打印调试日志
                 if (baseResponse != null) {
@@ -107,8 +108,7 @@ public class AgentLinkUtils {
 
         // 检查是否包含需要重试的关键字
         return errorMessage.contains("Couldn't retrieve standalone cluster")
-            || errorMessage.contains("Connection refused")
-            || errorMessage.contains("Connection timeout")
+            || errorMessage.contains("Connection refused") || errorMessage.contains("Connection timeout")
             || errorMessage.contains("Read timed out");
     }
 }
