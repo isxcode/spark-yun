@@ -29,9 +29,9 @@ fi
 
 # 运行代理程序
 if [ -n "$JAVA_HOME" ]; then
-  nohup $JAVA_HOME/bin/java -jar -Xmx2048m lib/zhiqingyun-agent.jar --spring.config.additional-location=conf/ > /dev/null 2>&1 &
+  nohup $JAVA_HOME/bin/java -jar -Xms1g -Xmx2g -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=logs/ -XX:+UseG1GC -XX:MaxMetaspaceSize=256m lib/zhiqingyun-agent.jar --spring.config.additional-location=conf/ > /dev/null 2>&1 &
 else
-  nohup java -jar -Xmx2048m lib/zhiqingyun-agent.jar --spring.config.additional-location=conf/ > /dev/null 2>&1 &
+  nohup java -jar -Xms1g -Xmx2g -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=logs/ -XX:+UseG1GC -XX:MaxMetaspaceSize=256m lib/zhiqingyun-agent.jar --spring.config.additional-location=conf/ > /dev/null 2>&1 &
 fi
 echo $! >zhiqingyun-agent.pid
 
