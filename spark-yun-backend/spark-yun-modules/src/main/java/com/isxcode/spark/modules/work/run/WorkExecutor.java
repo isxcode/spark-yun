@@ -21,6 +21,7 @@ import com.isxcode.spark.modules.workflow.repository.WorkflowInstanceRepository;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.isxcode.spark.modules.workflow.run.WorkflowUtils;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +32,7 @@ import org.apache.logging.log4j.util.Strings;
 @RequiredArgsConstructor
 public abstract class WorkExecutor {
 
-    public static final Map<String, Thread> WORK_THREAD = new HashMap<>();
+    public static final Map<String, Thread> WORK_THREAD = new ConcurrentHashMap<>();
 
     private final AlarmService alarmService;
 
