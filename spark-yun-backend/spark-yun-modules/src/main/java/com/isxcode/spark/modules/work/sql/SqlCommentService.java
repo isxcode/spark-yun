@@ -39,8 +39,8 @@ public class SqlCommentService {
                 inSingleQuote = !inSingleQuote;
             } else if (c == '"' && !inSingleQuote) {
                 inDoubleQuote = !inDoubleQuote;
-            } else if (c == '-' && !inSingleQuote && !inDoubleQuote
-                && i + 1 < line.length() && line.charAt(i + 1) == '-') {
+            } else if (c == '-' && !inSingleQuote && !inDoubleQuote && i + 1 < line.length()
+                && line.charAt(i + 1) == '-') {
                 return line.substring(0, i).replaceAll("\\s+$", "");
             }
         }
