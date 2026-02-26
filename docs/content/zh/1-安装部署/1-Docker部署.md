@@ -95,7 +95,7 @@ docker run \
     -d registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun:latest-amd64
 ```
 
-### 查看容器状态
+### 镜像相关命令
 
 ```bash
 # 查看容器运行状态
@@ -109,7 +109,11 @@ docker stop zhiqingyun
 
 # 重启容器
 docker restart zhiqingyun
+```
 
+### 镜像版本升级
+
+```bash
 # 停止并删除旧容器和镜像
 docker stop zhiqingyun && docker rm zhiqingyun
 docker tag registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun:latest-amd64 registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun:latest-amd64-bak-20250728 
@@ -119,7 +123,7 @@ docker rmi registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun:latest-amd64
 docker pull registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun:latest-amd64
 ```
 
-### jvm配置
+### jvm优化配置
 
 > -Xmx4g 最大堆内存上限为4GB
 > -Xms2g 初始堆内存为2GB
