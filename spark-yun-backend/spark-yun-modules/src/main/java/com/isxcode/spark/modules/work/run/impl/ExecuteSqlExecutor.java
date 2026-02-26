@@ -197,11 +197,16 @@ public class ExecuteSqlExecutor extends WorkExecutor {
                 }
 
             } catch (WorkRunException | IsxAppException e) {
-                throw errorLogException(log + "\n" + e.getMsg());
+                throw errorLogException(logBuilder + "\n" + e.getMsg());
+            } catch (Exception e) {
+                log.error(e.getMessage(), e);
+                throw errorLogException(logBuilder + "\n" + e.getMessage());
+            } finally {
+                WORK_THREAD.remove(workEvent.getId());
             }
 
             // 保存日志
-            logBuilder.append(startLog("执行SQL脚本完成"));
+            logBuilder.append(endLog("执行SQL脚本完成"));
             return updateWorkEventAndInstance(workInstance, logBuilder, workEvent, workRunContext);
         }
 

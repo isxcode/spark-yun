@@ -282,7 +282,7 @@ Caused by: org.apache.flink.client.deployment.application.ApplicationExecutionEx
 	... 13 more
 ```
 
-```text
+```wikitext
 FlinkSql内容异常
 ```
 
@@ -591,3 +591,56 @@ Caused by: java.lang.ClassNotFoundException: org.apache.hadoop.hive.common.Valid
 ```
 
 缺少依赖[hive-exec-3.1.3.jar下载](https://repo1.maven.org/maven2/org/apache/hive/hive-exec/3.1.3/hive-exec-3.1.3.jar)
+
+#### 问题20
+
+```log
+Caused by: java.lang.SecurityException: sealing violation: package oracle.jdbc.driver is sealed
+    at java.net.URLClassLoader.getAndVerifyPackage(URLClassLoader.java:405)
+    at java.net.URLClassLoader.definePackageInternal(URLClassLoader.java:425)
+    at java.net.URLClassLoader.defineClass(URLClassLoader.java:457)
+    at java.net.URLClassLoader.access$100(URLClassLoader.java:74)
+    at java.net.URLClassLoader$1.run(URLClassLoader.java:369)
+    at java.net.URLClassLoader$1.run(URLClassLoader.java:363)
+    at java.security.AccessController.doPrivileged(Native Method)
+    at java.net.URLClassLoader.findClass(URLClassLoader.java:362)
+    at org.apache.flink.util.ChildFirstClassLoader.loadClassWithoutExceptionHandling(ChildFirstClassLoader.java:71)
+    at org.apache.flink.util.FlinkUserCodeClassLoader.loadClass(FlinkUserCodeClassLoader.java:51)
+    at java.lang.ClassLoader.loadClass(ClassLoader.java:351)
+    at org.apache.flink.util.FlinkUserCodeClassLoaders$SafetyNetWrapperClassLoader.loadClass(FlinkUserCodeClassLoaders.java:192)
+    at java.lang.Class.forName0(Native Method)
+    at java.lang.Class.forName(Class.java:348)
+    at org.apache.flink.connector.jdbc.internal.connection.SimpleJdbcConnectionProvider.loadDriver(SimpleJdbcConnectionProvider.java:90)
+    at org.apache.flink.connector.jdbc.internal.connection.SimpleJdbcConnectionProvider.getLoadedDriver(SimpleJdbcConnectionProvider.java:100)
+    at org.apache.flink.connector.jdbc.internal.connection.SimpleJdbcConnectionProvider.getOrEstablishConnection(SimpleJdbcConnectionProvider.java:117)
+    at org.apache.flink.connector.jdbc.table.JdbcRowDataInputFormat.openInputFormat(JdbcRowDataInputFormat.java:107)
+    at org.apache.flink.streaming.api.functions.source.InputFormatSourceFunction.run(InputFormatSourceFunction.java:86)
+    at org.apache.flink.streaming.api.operators.StreamSource.run(StreamSource.java:114)
+    at org.apache.flink.streaming.api.operators.StreamSource.run(StreamSource.java:71)
+    at org.apache.flink.streaming.runtime.tasks.SourceStreamTask$LegacySourceFunctionThread.run(SourceStreamTask.java:338)
+```
+
+```wikitext
+驱动重复，需要将作业配置中的依赖中删除多余的驱动文件
+```
+
+#### 问题21
+
+```log
+Caused by: java.lang.NoClassDefFoundError: oracle/sql/CHAR
+	at org.apache.flink.connector.jdbc.databases.oracle.dialect.OracleRowConverter.lambda$createInternalConverter$224afae6$9(OracleRowConverter.java:117)
+	at org.apache.flink.connector.jdbc.converter.AbstractJdbcRowConverter.lambda$wrapIntoNullableInternalConverter$ea5b8348$1(AbstractJdbcRowConverter.java:127)
+	at org.apache.flink.connector.jdbc.converter.AbstractJdbcRowConverter.toInternal(AbstractJdbcRowConverter.java:78)
+	at org.apache.flink.connector.jdbc.table.JdbcRowDataInputFormat.nextRecord(JdbcRowDataInputFormat.java:257)
+	at org.apache.flink.connector.jdbc.table.JdbcRowDataInputFormat.nextRecord(JdbcRowDataInputFormat.java:56)
+	at org.apache.flink.streaming.api.functions.source.InputFormatSourceFunction.run(InputFormatSourceFunction.java:97)
+	at org.apache.flink.streaming.api.operators.StreamSource.run(StreamSource.java:114)
+	at org.apache.flink.streaming.api.operators.StreamSource.run(StreamSource.java:71)
+	at org.apache.flink.streaming.runtime.tasks.SourceStreamTask$LegacySourceFunctionThread.run(SourceStreamTask.java:338)
+```
+
+```wikitext
+先判断，是否是standalone模式
+如果是，则将oracle驱动拷贝到zhqingyun-agent代理的flink-min/lib目录下
+并重新停止计算引擎，停止节点后，再重启节点
+```

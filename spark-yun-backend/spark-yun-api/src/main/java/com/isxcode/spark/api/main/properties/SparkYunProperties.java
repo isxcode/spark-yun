@@ -16,4 +16,10 @@ public class SparkYunProperties {
 
     /** 代理默认端口号. */
     private String defaultAgentPort = "30177";
+
+    /** 代理请求重试次数. */
+    private Integer agentRetryCount = 3;
+
+    /** 代理请求重试间隔时间(毫秒). */
+    private Long agentRetryInterval = 2000L;
 }

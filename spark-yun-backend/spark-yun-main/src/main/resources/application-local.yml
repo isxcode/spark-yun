@@ -32,3 +32,10 @@ isx-app:
   resources-path: classpath:resources # 资源文件，例如许可证、驱动、头像等资源路径
   admin-passwd: admin123 # 配置至轻云平台admin管理员的密码，仅第一次执行生效
   use-ssl: false # 是否开启ssl
+
+# 至轻云代理配置
+spark-yun:
+  agent-retry-count: 3 # 重试次数
+  agent-retry-interval: 2000 # 间隔时间
+  default-agent-port: 30177 # 代理端口号
+  tmp-dir: /tmp # 临时目录
