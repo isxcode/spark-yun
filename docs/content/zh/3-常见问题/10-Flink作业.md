@@ -623,3 +623,24 @@ Caused by: java.lang.SecurityException: sealing violation: package oracle.jdbc.d
 ```wikitext
 驱动重复，需要将作业配置中的依赖中删除多余的驱动文件
 ```
+
+#### 问题21
+
+```log
+Caused by: java.lang.NoClassDefFoundError: oracle/sql/CHAR
+	at org.apache.flink.connector.jdbc.databases.oracle.dialect.OracleRowConverter.lambda$createInternalConverter$224afae6$9(OracleRowConverter.java:117)
+	at org.apache.flink.connector.jdbc.converter.AbstractJdbcRowConverter.lambda$wrapIntoNullableInternalConverter$ea5b8348$1(AbstractJdbcRowConverter.java:127)
+	at org.apache.flink.connector.jdbc.converter.AbstractJdbcRowConverter.toInternal(AbstractJdbcRowConverter.java:78)
+	at org.apache.flink.connector.jdbc.table.JdbcRowDataInputFormat.nextRecord(JdbcRowDataInputFormat.java:257)
+	at org.apache.flink.connector.jdbc.table.JdbcRowDataInputFormat.nextRecord(JdbcRowDataInputFormat.java:56)
+	at org.apache.flink.streaming.api.functions.source.InputFormatSourceFunction.run(InputFormatSourceFunction.java:97)
+	at org.apache.flink.streaming.api.operators.StreamSource.run(StreamSource.java:114)
+	at org.apache.flink.streaming.api.operators.StreamSource.run(StreamSource.java:71)
+	at org.apache.flink.streaming.runtime.tasks.SourceStreamTask$LegacySourceFunctionThread.run(SourceStreamTask.java:338)
+```
+
+```wikitext
+先判断，是否是standalone模式
+如果是，则将oracle驱动拷贝到zhqingyun-agent代理的flink-min/lib目录下
+并重新停止计算引擎，停止节点后，再重启节点
+```
