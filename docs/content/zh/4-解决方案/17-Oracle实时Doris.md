@@ -59,6 +59,52 @@ select USERNAME, AGE
 from from_table;
 ```
 
+#### 注意
+
+> doris数据有多种格式同步数据
+
+
+> csv格式，可能会有换行符问题
+
+```sql
+CREATE TABLE target_table
+(
+    USERNAME STRING,
+    AGE      INT,
+    PRIMARY KEY (USERNAME) NOT ENFORCED
+) WITH (
+      'connector' = 'doris',
+      'fenodes' = 'localhost:8030',
+      'table.identifier' = 'ispong_db.cdc_target',
+      'username' = 'root',
+      'password' = 'root123',
+      'sink.properties.format' = 'csv',
+      'sink.properties.column_separator' = '\t',
+      'sink.properties.row_delimiter' = '\n', 
+      'sink.properties.quote' = '"',        
+      'sink.max-retries' = '3'
+    );
+```
+
+> json格式，推荐使用json格式同步doris数据
+
+```sql
+CREATE TABLE target_table
+(
+    USERNAME STRING,
+    AGE      INT,
+    PRIMARY KEY (USERNAME) NOT ENFORCED
+) WITH (
+      'connector' = 'doris',
+      'fenodes' = 'localhost:8030',
+      'table.identifier' = 'ispong_db.cdc_target',
+      'username' = 'root',
+      'password' = 'root123',
+      'sink.properties.format' = 'json',
+      'sink.properties.read_json_by_line' = 'true'
+    );
+```
+
 | 配置项           | 说明       |
 |---------------|----------|
 | connector     | 连接方式     |
