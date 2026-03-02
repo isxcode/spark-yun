@@ -34,14 +34,15 @@ public class SparkKubernetesAgentService implements SparkAgentService {
 
         String clusterInfoCmd = "kubectl cluster-info";
         Process clusterInfoProcess = Runtime.getRuntime().exec(clusterInfoCmd);
-        InputStream inputStream = clusterInfoProcess.getInputStream();
-        BufferedReader clusterInfoReader =
-            new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
-
         StringBuilder clusterInfoOutput = new StringBuilder();
-        String line;
-        while ((line = clusterInfoReader.readLine()) != null) {
-            clusterInfoOutput.append(line).append("\n");
+        try (BufferedReader clusterInfoReader =
+            new BufferedReader(new InputStreamReader(clusterInfoProcess.getInputStream(), StandardCharsets.UTF_8))) {
+            String line;
+            while ((line = clusterInfoReader.readLine()) != null) {
+                clusterInfoOutput.append(line).append("\n");
+            }
+        } finally {
+            clusterInfoProcess.destroy();
         }
 
         String[] clusterInfoLines = clusterInfoOutput.toString().split("\n");
@@ -284,20 +285,19 @@ public class SparkKubernetesAgentService implements SparkAgentService {
     public String submitWork(SparkLauncher sparkLauncher) throws Exception {
 
         Process launch = sparkLauncher.launch();
-        InputStream inputStream = launch.getErrorStream();
-        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
-
         StringBuilder errLog = new StringBuilder();
-        String line;
-        while ((line = reader.readLine()) != null) {
-            errLog.append(line).append("\n");
-
-            String pattern = "pod name: (\\S+)";
-            Pattern regex = Pattern.compile(pattern);
-            Matcher matcher = regex.matcher(line);
-            if (matcher.find()) {
-                return matcher.group().replace("pod name: ", "");
+        try (BufferedReader reader =
+            new BufferedReader(new InputStreamReader(launch.getErrorStream(), StandardCharsets.UTF_8))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                errLog.append(line).append("\n");
+                Matcher matcher = Pattern.compile("pod name: (\\S+)").matcher(line);
+                if (matcher.find()) {
+                    return matcher.group().replace("pod name: ", "");
+                }
             }
+        } finally {
+            launch.destroy();
         }
 
         try {
@@ -308,8 +308,6 @@ public class SparkKubernetesAgentService implements SparkAgentService {
         } catch (InterruptedException e) {
             log.error(e.getMessage(), e);
             throw new Exception(e.getMessage());
-        } finally {
-            launch.destroy();
         }
 
         throw new Exception("无法获取podName");
@@ -321,29 +319,30 @@ public class SparkKubernetesAgentService implements SparkAgentService {
         String getStatusCmdFormat = "kubectl get pod %s -n zhiqingyun-space";
 
         Process process = Runtime.getRuntime().exec(String.format(getStatusCmdFormat, podName));
-        InputStream inputStream = process.getInputStream();
-        InputStream errStream = process.getErrorStream();
-        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
-        BufferedReader errReader = new BufferedReader(new InputStreamReader(errStream, StandardCharsets.UTF_8));
         StringBuilder errLog = new StringBuilder();
-        String line;
-        while ((line = reader.readLine()) != null) {
-            errLog.append(line).append("\n");
-            String pattern = "\\s+\\d/\\d\\s+(\\w+)";
-            Pattern regex = Pattern.compile(pattern);
-            Matcher matcher = regex.matcher(line);
-            if (matcher.find()) {
-                return GetWorkInfoRes.builder().appId(podName).finalState(matcher.group(1)).build();
-            }
-        }
-
-        if (errLog.toString().isEmpty()) {
-            while ((line = errReader.readLine()) != null) {
+        try (
+            BufferedReader reader =
+                new BufferedReader(new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8));
+            BufferedReader errReader =
+                new BufferedReader(new InputStreamReader(process.getErrorStream(), StandardCharsets.UTF_8))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
                 errLog.append(line).append("\n");
-                if (errLog.toString().contains("not found")) {
-                    return GetWorkInfoRes.builder().appId(podName).finalState("KILLED").build();
+                Matcher matcher = Pattern.compile("\\s+\\d/\\d\\s+(\\w+)").matcher(line);
+                if (matcher.find()) {
+                    return GetWorkInfoRes.builder().appId(podName).finalState(matcher.group(1)).build();
                 }
             }
+            if (errLog.toString().isEmpty()) {
+                while ((line = errReader.readLine()) != null) {
+                    errLog.append(line).append("\n");
+                    if (errLog.toString().contains("not found")) {
+                        return GetWorkInfoRes.builder().appId(podName).finalState("KILLED").build();
+                    }
+                }
+            }
+        } finally {
+            process.destroy();
         }
 
         try {
@@ -365,23 +364,24 @@ public class SparkKubernetesAgentService implements SparkAgentService {
         String getLogCmdFormat = "kubectl logs %s -n zhiqingyun-space";
 
         Process process = Runtime.getRuntime().exec(String.format(getLogCmdFormat, appId));
-        InputStream inputStream = process.getInputStream();
-        InputStream errStream = process.getErrorStream();
-        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
-        BufferedReader errReader = new BufferedReader(new InputStreamReader(errStream, StandardCharsets.UTF_8));
-
         StringBuilder errLog = new StringBuilder();
-        String line;
-        while ((line = reader.readLine()) != null) {
-            errLog.append(line).append("\n");
-        }
-
-        if (Strings.isEmpty(errLog)) {
-            while ((line = errReader.readLine()) != null) {
+        try (
+            BufferedReader reader =
+                new BufferedReader(new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8));
+            BufferedReader errReader =
+                new BufferedReader(new InputStreamReader(process.getErrorStream(), StandardCharsets.UTF_8))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
                 errLog.append(line).append("\n");
             }
+            if (Strings.isEmpty(errLog)) {
+                while ((line = errReader.readLine()) != null) {
+                    errLog.append(line).append("\n");
+                }
+            }
+        } finally {
+            process.destroy();
         }
-
         try {
             int exitCode = process.waitFor();
             if (exitCode == 1) {
@@ -392,11 +392,11 @@ public class SparkKubernetesAgentService implements SparkAgentService {
                 }
                 Pattern regex = Pattern.compile("LogType:spark-yun\\s*([\\s\\S]*?)\\s*End of LogType:spark-yun");
                 Matcher matcher = regex.matcher(errLog);
-                String log = errLog.toString();
+                String logStr = errLog.toString();
                 if (matcher.find()) {
-                    log = log.replace(matcher.group(), "");
+                    logStr = logStr.replace(matcher.group(), "");
                 }
-                return log;
+                return logStr;
             }
         } catch (InterruptedException e) {
             log.error(e.getMessage(), e);
@@ -410,17 +410,18 @@ public class SparkKubernetesAgentService implements SparkAgentService {
         String getLogCmdFormat = "kubectl logs %s -n zhiqingyun-space";
 
         Process process = Runtime.getRuntime().exec(String.format(getLogCmdFormat, appId));
-        InputStream inputStream = process.getInputStream();
-        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
-
         StringBuilder errLog = new StringBuilder();
-        String line;
-        while ((line = reader.readLine()) != null) {
-            if (line.contains("累计处理条数")) {
-                errLog.append(line).append("\n");
+        try (BufferedReader reader =
+            new BufferedReader(new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                if (line.contains("累计处理条数")) {
+                    errLog.append(line).append("\n");
+                }
             }
+        } finally {
+            process.destroy();
         }
-
         try {
             int exitCode = process.waitFor();
             if (exitCode == 1) {
@@ -445,15 +446,16 @@ public class SparkKubernetesAgentService implements SparkAgentService {
         String getLogCmdFormat = "kubectl logs -f %s -n zhiqingyun-space";
 
         Process process = Runtime.getRuntime().exec(String.format(getLogCmdFormat, appId));
-        InputStream inputStream = process.getInputStream();
-        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
-
         StringBuilder errLog = new StringBuilder();
-        String line;
-        while ((line = reader.readLine()) != null) {
-            errLog.append(line).append("\n");
+        try (BufferedReader reader =
+            new BufferedReader(new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                errLog.append(line).append("\n");
+            }
+        } finally {
+            process.destroy();
         }
-
         try {
             int exitCode = process.waitFor();
             if (exitCode == 1) {
@@ -461,11 +463,12 @@ public class SparkKubernetesAgentService implements SparkAgentService {
             } else {
                 Pattern regex = Pattern.compile("LogType:spark-yun\\s*([\\s\\S]*?)\\s*End of LogType:spark-yun");
                 Matcher matcher = regex.matcher(errLog);
-                String log = "";
-                while (matcher.find() && Strings.isEmpty(log)) {
-                    log = matcher.group().replace("LogType:spark-yun\n", "").replace("\nEnd of LogType:spark-yun", "");
+                String logStr = "";
+                while (matcher.find() && Strings.isEmpty(logStr)) {
+                    logStr =
+                        matcher.group().replace("LogType:spark-yun\n", "").replace("\nEnd of LogType:spark-yun", "");
                 }
-                return log;
+                return logStr;
             }
         } catch (InterruptedException e) {
             log.error(e.getMessage(), e);
@@ -478,16 +481,16 @@ public class SparkKubernetesAgentService implements SparkAgentService {
 
         String killAppCmdFormat = "kubectl delete pod %s -n zhiqingyun-space";
         Process process = Runtime.getRuntime().exec(String.format(killAppCmdFormat, appId));
-
-        InputStream inputStream = process.getInputStream();
-        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
-
         StringBuilder errLog = new StringBuilder();
-        String line;
-        while ((line = reader.readLine()) != null) {
-            errLog.append(line).append("\n");
+        try (BufferedReader reader =
+            new BufferedReader(new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                errLog.append(line).append("\n");
+            }
+        } finally {
+            process.destroy();
         }
-
         try {
             int exitCode = process.waitFor();
             if (exitCode == 1) {

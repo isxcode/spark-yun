@@ -15,6 +15,7 @@ import com.isxcode.spark.api.work.constants.WorkType;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.flink.client.deployment.ClusterSpecification;
 import org.apache.flink.client.deployment.application.ApplicationConfiguration;
+import org.apache.flink.client.program.ClusterClient;
 import org.apache.flink.client.program.ClusterClientProvider;
 import org.apache.flink.configuration.*;
 import org.apache.flink.kubernetes.KubernetesClusterClientFactory;
@@ -242,8 +243,10 @@ public class FlinkKubernetesAgentService implements FlinkAgentService {
             kubernetesClusterClientFactory.createClusterDescriptor(flinkConfig)) {
             ClusterClientProvider<String> clusterClientProvider =
                 clusterDescriptor.deployApplicationCluster(clusterSpecification, applicationConfiguration);
-            return SubmitWorkRes.builder().webUrl(clusterClientProvider.getClusterClient().getWebInterfaceURL())
-                .appId(String.valueOf(clusterClientProvider.getClusterClient().getClusterId())).build();
+            try (ClusterClient<String> clusterClient = clusterClientProvider.getClusterClient()) {
+                return SubmitWorkRes.builder().webUrl(clusterClient.getWebInterfaceURL())
+                    .appId(String.valueOf(clusterClient.getClusterId())).build();
+            }
         }
     }
 
@@ -298,25 +301,13 @@ public class FlinkKubernetesAgentService implements FlinkAgentService {
         StringBuilder logBuilder = new StringBuilder();
         if (logFiles != null) {
             for (File logFile : logFiles) {
-                if (logFile.getName().contains("application")) {
-                    FileReader fileReader = new FileReader(logFile);
-                    BufferedReader bufferedReader = new BufferedReader(fileReader);
-                    String line;
-                    while ((line = bufferedReader.readLine()) != null) {
-                        logBuilder.append(line).append("\n");
+                if (logFile.getName().contains("application") || logFile.getName().contains("taskmanager")) {
+                    try (BufferedReader bufferedReader = new BufferedReader(new FileReader(logFile))) {
+                        String line;
+                        while ((line = bufferedReader.readLine()) != null) {
+                            logBuilder.append(line).append("\n");
+                        }
                     }
-                    bufferedReader.close();
-                    fileReader.close();
-                }
-                if (logFile.getName().contains("taskmanager")) {
-                    FileReader fileReader = new FileReader(logFile);
-                    BufferedReader bufferedReader = new BufferedReader(fileReader);
-                    String line;
-                    while ((line = bufferedReader.readLine()) != null) {
-                        logBuilder.append(line).append("\n");
-                    }
-                    bufferedReader.close();
-                    fileReader.close();
                 }
             }
         }

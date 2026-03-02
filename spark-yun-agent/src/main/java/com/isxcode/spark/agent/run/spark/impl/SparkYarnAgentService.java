@@ -198,40 +198,33 @@ public class SparkYarnAgentService implements SparkAgentService {
         String getStatusCmdFormat = "yarn application -status %s";
 
         Process process = Runtime.getRuntime().exec(String.format(getStatusCmdFormat, appId));
-
-        InputStream inputStream = process.getInputStream();
-        BufferedReader inputReader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
-
         StringBuilder inputLog = new StringBuilder();
-        String line;
         String finalState = "";
         String appState = "";
-        while ((line = inputReader.readLine()) != null) {
-            inputLog.append(line).append("\n");
-
-            if (finalState.isEmpty()) {
-                String finalStatePattern = "Final-State : (\\w+)";
-                Pattern finalStateRegex = Pattern.compile(finalStatePattern);
-                Matcher finalStateMatcher = finalStateRegex.matcher(line);
-                if (finalStateMatcher.find()) {
-                    finalState = finalStateMatcher.group(1);
+        try (BufferedReader inputReader =
+            new BufferedReader(new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8))) {
+            String line;
+            while ((line = inputReader.readLine()) != null) {
+                inputLog.append(line).append("\n");
+                if (finalState.isEmpty()) {
+                    Matcher m = Pattern.compile("Final-State : (\\w+)").matcher(line);
+                    if (m.find()) {
+                        finalState = m.group(1);
+                    }
+                }
+                if (appState.isEmpty()) {
+                    Matcher m = Pattern.compile("State : (\\w+)").matcher(line);
+                    if (m.find()) {
+                        appState = m.group(1);
+                    }
+                }
+                if (!finalState.isEmpty() && !appState.isEmpty()) {
+                    return GetWorkInfoRes.builder().appId(appId).finalState(finalState).appState(appState).build();
                 }
             }
-
-            if (appState.isEmpty()) {
-                String appStatePattern = "State : (\\w+)";
-                Pattern appStateRegex = Pattern.compile(appStatePattern);
-                Matcher appStateMatcher = appStateRegex.matcher(line);
-                if (appStateMatcher.find()) {
-                    appState = appStateMatcher.group(1);
-                }
-            }
-
-            if (!finalState.isEmpty() && !appState.isEmpty()) {
-                return GetWorkInfoRes.builder().appId(appId).finalState(finalState).appState(appState).build();
-            }
+        } finally {
+            process.destroy();
         }
-
 
         try {
             int exitCode = process.waitFor();
@@ -251,16 +244,16 @@ public class SparkYarnAgentService implements SparkAgentService {
 
         String getLogCmdFormat = "yarn logs -applicationId %s";
         Process process = Runtime.getRuntime().exec(String.format(getLogCmdFormat, appId));
-
-        InputStream inputStream = process.getInputStream();
-        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
-
         StringBuilder errLog = new StringBuilder();
-        String line;
-        while ((line = reader.readLine()) != null) {
-            errLog.append(line).append("\n");
+        try (BufferedReader reader =
+            new BufferedReader(new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                errLog.append(line).append("\n");
+            }
+        } finally {
+            process.destroy();
         }
-
         try {
             int exitCode = process.waitFor();
             if (exitCode == 1) {
@@ -292,16 +285,16 @@ public class SparkYarnAgentService implements SparkAgentService {
 
         String getLogCmdFormat = "yarn logs -applicationId %s";
         Process process = Runtime.getRuntime().exec(String.format(getLogCmdFormat, appId));
-
-        InputStream inputStream = process.getInputStream();
-        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
-
         StringBuilder errLog = new StringBuilder();
-        String line;
-        while ((line = reader.readLine()) != null) {
-            errLog.append(line).append("\n");
+        try (BufferedReader reader =
+            new BufferedReader(new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                errLog.append(line).append("\n");
+            }
+        } finally {
+            process.destroy();
         }
-
         try {
             int exitCode = process.waitFor();
             if (exitCode == 1) {
@@ -329,16 +322,16 @@ public class SparkYarnAgentService implements SparkAgentService {
 
         String getLogCmdFormat = "yarn logs -applicationId %s";
         Process process = Runtime.getRuntime().exec(String.format(getLogCmdFormat, appId));
-
-        InputStream inputStream = process.getInputStream();
-        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
-
         StringBuilder errLog = new StringBuilder();
-        String line;
-        while ((line = reader.readLine()) != null) {
-            errLog.append(line).append("\n");
+        try (BufferedReader reader =
+            new BufferedReader(new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                errLog.append(line).append("\n");
+            }
+        } finally {
+            process.destroy();
         }
-
         try {
             int exitCode = process.waitFor();
             if (exitCode == 1) {
@@ -369,18 +362,17 @@ public class SparkYarnAgentService implements SparkAgentService {
     public String getWorkDataStr(String appId, String sparkHomePath) throws Exception {
 
         String getLogCmdFormat = "yarn logs -applicationId %s";
-
         Process process = Runtime.getRuntime().exec(String.format(getLogCmdFormat, appId));
-
-        InputStream inputStream = process.getInputStream();
-        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
-
         StringBuilder errLog = new StringBuilder();
-        String line;
-        while ((line = reader.readLine()) != null) {
-            errLog.append(line).append("\n");
+        try (BufferedReader reader =
+            new BufferedReader(new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                errLog.append(line).append("\n");
+            }
+        } finally {
+            process.destroy();
         }
-
         try {
             int exitCode = process.waitFor();
             if (exitCode == 1) {
@@ -405,16 +397,16 @@ public class SparkYarnAgentService implements SparkAgentService {
 
         String killAppCmdFormat = "yarn application -kill %s";
         Process process = Runtime.getRuntime().exec(String.format(killAppCmdFormat, appId));
-
-        InputStream inputStream = process.getInputStream();
-        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
-
         StringBuilder errLog = new StringBuilder();
-        String line;
-        while ((line = reader.readLine()) != null) {
-            errLog.append(line).append("\n");
+        try (BufferedReader reader =
+            new BufferedReader(new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                errLog.append(line).append("\n");
+            }
+        } finally {
+            process.destroy();
         }
-
         try {
             int exitCode = process.waitFor();
             if (exitCode == 1) {
