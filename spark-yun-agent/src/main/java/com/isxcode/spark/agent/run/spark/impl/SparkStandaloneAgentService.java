@@ -170,27 +170,29 @@ public class SparkStandaloneAgentService implements SparkAgentService {
     public String submitWork(SparkLauncher sparkLauncher) throws Exception {
 
         Process launch = sparkLauncher.launch();
-        InputStream errorStream = launch.getErrorStream();
-        InputStream inputStream = launch.getInputStream();
-        BufferedReader errorReader = new BufferedReader(new InputStreamReader(errorStream, StandardCharsets.UTF_8));
-        BufferedReader inputReader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
-
         StringBuilder errLog = new StringBuilder();
         StringBuilder inputLog = new StringBuilder();
-        String line;
-        while ((line = errorReader.readLine()) != null) {
-            errLog.append(line).append("\n");
-            String pattern = "(driver-\\d+-\\d+)\\s+is\\s+(\\w+)";
-            Pattern regex = Pattern.compile(pattern);
-            Matcher matcher = regex.matcher(line);
-            if (matcher.find()) {
-                return matcher.group().replace(" is RUNNING", "").replace(" is FINISHED", "")
-                    .replace(" is SUBMITTED", "").replace(" is FAILED", "");
+        try (
+            BufferedReader errorReader =
+                new BufferedReader(new InputStreamReader(launch.getErrorStream(), StandardCharsets.UTF_8));
+            BufferedReader inputReader =
+                new BufferedReader(new InputStreamReader(launch.getInputStream(), StandardCharsets.UTF_8))) {
+            String line;
+            while ((line = errorReader.readLine()) != null) {
+                errLog.append(line).append("\n");
+                String pattern = "(driver-\\d+-\\d+)\\s+is\\s+(\\w+)";
+                Pattern regex = Pattern.compile(pattern);
+                Matcher matcher = regex.matcher(line);
+                if (matcher.find()) {
+                    return matcher.group().replace(" is RUNNING", "").replace(" is FINISHED", "")
+                        .replace(" is SUBMITTED", "").replace(" is FAILED", "");
+                }
             }
-        }
-
-        while ((line = inputReader.readLine()) != null) {
-            inputLog.append(line).append("\n");
+            while ((line = inputReader.readLine()) != null) {
+                inputLog.append(line).append("\n");
+            }
+        } finally {
+            launch.destroy();
         }
 
         try {
@@ -201,8 +203,6 @@ public class SparkStandaloneAgentService implements SparkAgentService {
         } catch (InterruptedException e) {
             log.error(e.getMessage(), e);
             throw new Exception(e.getMessage());
-        } finally {
-            launch.destroy();
         }
 
         throw new Exception("无法获取submissionId \n" + errLog);
@@ -381,7 +381,6 @@ public class SparkStandaloneAgentService implements SparkAgentService {
 
         String url = getMasterWebUrl(sparkHomePath) + "/driver/kill/";
 
-        CloseableHttpClient httpClient = HttpClients.createDefault();
         HttpPost httpPost = new HttpPost(url);
 
         String payload = "id=" + submissionId + "&terminate=true";
@@ -389,7 +388,8 @@ public class SparkStandaloneAgentService implements SparkAgentService {
 
         httpPost.setEntity(stringEntity);
 
-        try (CloseableHttpResponse response = httpClient.execute(httpPost)) {
+        try (CloseableHttpClient httpClient = HttpClients.createDefault();
+            CloseableHttpResponse response = httpClient.execute(httpPost)) {
             HttpEntity responseEntity = response.getEntity();
             if (responseEntity != null) {
                 EntityUtils.toString(responseEntity);
@@ -406,24 +406,25 @@ public class SparkStandaloneAgentService implements SparkAgentService {
         Map<String, String> result = new HashMap<>();
 
         Process launch = sparkLauncher.launch();
-        InputStream errorStream = launch.getErrorStream();
-        InputStream inputStream = launch.getInputStream();
-        BufferedReader errorReader = new BufferedReader(new InputStreamReader(errorStream, StandardCharsets.UTF_8));
-        BufferedReader inputReader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
-
         StringBuilder errLog = new StringBuilder();
         StringBuilder inputLog = new StringBuilder();
-        String line;
-        while ((line = errorReader.readLine()) != null) {
-            errLog.append(line).append("\n");
-        }
-
-        while ((line = inputReader.readLine()) != null) {
-            inputLog.append(line).append("\n");
+        try (
+            BufferedReader errorReader =
+                new BufferedReader(new InputStreamReader(launch.getErrorStream(), StandardCharsets.UTF_8));
+            BufferedReader inputReader =
+                new BufferedReader(new InputStreamReader(launch.getInputStream(), StandardCharsets.UTF_8))) {
+            String line;
+            while ((line = errorReader.readLine()) != null) {
+                errLog.append(line).append("\n");
+            }
+            while ((line = inputReader.readLine()) != null) {
+                inputLog.append(line).append("\n");
+            }
+        } finally {
+            launch.destroy();
         }
 
         try {
-
             result.put("log", errLog.toString());
             result.put("data", inputLog.toString());
 
@@ -433,8 +434,9 @@ public class SparkStandaloneAgentService implements SparkAgentService {
             } else {
                 result.put("status", InstanceStatus.SUCCESS);
             }
-        } finally {
-            launch.destroy();
+        } catch (InterruptedException e) {
+            log.error(e.getMessage(), e);
+            result.put("status", InstanceStatus.FAIL);
         }
 
         return result;

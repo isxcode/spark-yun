@@ -147,10 +147,9 @@ public class FlinkStandaloneAgentService implements FlinkAgentService {
             }
         }
 
-        try (
-            StandaloneClusterDescriptor standaloneClusterDescriptor = new StandaloneClusterDescriptor(configuration);) {
+        try (StandaloneClusterDescriptor standaloneClusterDescriptor = new StandaloneClusterDescriptor(configuration);
             ClusterClient<StandaloneClusterId> clusterClient =
-                standaloneClusterDescriptor.retrieve(StandaloneClusterId.getInstance()).getClusterClient();
+                standaloneClusterDescriptor.retrieve(StandaloneClusterId.getInstance()).getClusterClient()) {
 
             JobGraph jobGraph = PackagedProgramUtils.createJobGraph(program, configuration, 1, false);
             JobID jobID = clusterClient.submitJob(jobGraph).get();
@@ -170,9 +169,9 @@ public class FlinkStandaloneAgentService implements FlinkAgentService {
 
         Configuration configuration = genConfiguration(getWorkInfoReq.getFlinkHome());
 
-        try (StandaloneClusterDescriptor standaloneClusterDescriptor = new StandaloneClusterDescriptor(configuration)) {
+        try (StandaloneClusterDescriptor standaloneClusterDescriptor = new StandaloneClusterDescriptor(configuration);
             ClusterClient<StandaloneClusterId> clusterClient =
-                standaloneClusterDescriptor.retrieve(StandaloneClusterId.getInstance()).getClusterClient();
+                standaloneClusterDescriptor.retrieve(StandaloneClusterId.getInstance()).getClusterClient()) {
 
             CompletableFuture<JobStatus> jobStatus =
                 clusterClient.getJobStatus(JobID.fromHexString(getWorkInfoReq.getAppId()));
@@ -190,9 +189,9 @@ public class FlinkStandaloneAgentService implements FlinkAgentService {
 
         // 判断作业是否成功
         String status;
-        try (StandaloneClusterDescriptor standaloneClusterDescriptor = new StandaloneClusterDescriptor(configuration)) {
+        try (StandaloneClusterDescriptor standaloneClusterDescriptor = new StandaloneClusterDescriptor(configuration);
             ClusterClient<StandaloneClusterId> clusterClient =
-                standaloneClusterDescriptor.retrieve(StandaloneClusterId.getInstance()).getClusterClient();
+                standaloneClusterDescriptor.retrieve(StandaloneClusterId.getInstance()).getClusterClient()) {
 
             CompletableFuture<JobStatus> jobStatus =
                 clusterClient.getJobStatus(JobID.fromHexString(getWorkLogReq.getAppId()));
@@ -244,9 +243,9 @@ public class FlinkStandaloneAgentService implements FlinkAgentService {
 
         Configuration configuration = genConfiguration(stopWorkReq.getFlinkHome());
 
-        try (StandaloneClusterDescriptor standaloneClusterDescriptor = new StandaloneClusterDescriptor(configuration)) {
+        try (StandaloneClusterDescriptor standaloneClusterDescriptor = new StandaloneClusterDescriptor(configuration);
             ClusterClient<StandaloneClusterId> clusterClient =
-                standaloneClusterDescriptor.retrieve(StandaloneClusterId.getInstance()).getClusterClient();
+                standaloneClusterDescriptor.retrieve(StandaloneClusterId.getInstance()).getClusterClient()) {
 
             CompletableFuture<Acknowledge> cancel = clusterClient.cancel(JobID.fromHexString(stopWorkReq.getAppId()));
             return StopWorkRes.builder().requestId(cancel.toString()).build();

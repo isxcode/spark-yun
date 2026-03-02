@@ -18,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.flink.client.deployment.ClusterDeploymentException;
 import org.apache.flink.client.deployment.ClusterSpecification;
 import org.apache.flink.client.deployment.application.ApplicationConfiguration;
+import org.apache.flink.client.program.ClusterClient;
 import org.apache.flink.client.program.ClusterClientProvider;
 import org.apache.flink.configuration.*;
 import org.apache.flink.yarn.YarnClusterClientFactory;
@@ -152,8 +153,9 @@ public class FlinkYarnAgentService implements FlinkAgentService {
         try (YarnClusterDescriptor clusterDescriptor = yarnClusterClientFactory.createClusterDescriptor(flinkConfig)) {
             ClusterClientProvider<ApplicationId> applicationIdClusterClientProvider =
                 clusterDescriptor.deployApplicationCluster(clusterSpecification, applicationConfiguration);
-            return SubmitWorkRes.builder()
-                .appId(String.valueOf(applicationIdClusterClientProvider.getClusterClient().getClusterId())).build();
+            try (ClusterClient<ApplicationId> clusterClient = applicationIdClusterClientProvider.getClusterClient()) {
+                return SubmitWorkRes.builder().appId(String.valueOf(clusterClient.getClusterId())).build();
+            }
         } catch (ClusterDeploymentException clusterDeploymentException) {
             log.error(clusterDeploymentException.getMessage(), clusterDeploymentException);
             Pattern pattern = Pattern.compile("application_\\d+_\\d+");
@@ -194,19 +196,15 @@ public class FlinkYarnAgentService implements FlinkAgentService {
         String getLogCmdFormat = "yarn logs -applicationId %s";
         Process process = Runtime.getRuntime().exec(String.format(getLogCmdFormat, getWorkLogReq.getAppId()));
 
-        InputStream inputStream = process.getInputStream();
-        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
-
         StringBuilder errLog = new StringBuilder();
-        String line;
-        while (true) {
-            try {
-                if ((line = reader.readLine()) == null)
-                    break;
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+        try (BufferedReader reader =
+            new BufferedReader(new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                errLog.append(line).append("\n");
             }
-            errLog.append(line).append("\n");
+        } finally {
+            process.destroy();
         }
 
         int exitCode = process.waitFor();

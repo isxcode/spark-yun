@@ -644,3 +644,50 @@ Caused by: java.lang.NoClassDefFoundError: oracle/sql/CHAR
 如果是，则将oracle驱动拷贝到zhqingyun-agent代理的flink-min/lib目录下
 并重新停止计算引擎，停止节点后，再重启节点
 ```
+
+#### 问题22
+
+```log
+failed to open a new selector
+```
+
+```log
+Caused by: java.lang.IllegalStateException: failed to create a child event loop
+	at org.apache.flink.shaded.netty4.io.netty.util.concurrent.MultithreadEventExecutorGroup.<init>(MultithreadEventExecutorGroup.java:88) ~[flink-shaded-netty-4.1.91.Final-17.0.jar!/:na]
+	at org.apache.flink.shaded.netty4.io.netty.util.concurrent.MultithreadEventExecutorGroup.<init>(MultithreadEventExecutorGroup.java:60) ~[flink-shaded-netty-4.1.91.Final-17.0.jar!/:na]
+	at org.apache.flink.shaded.netty4.io.netty.util.concurrent.MultithreadEventExecutorGroup.<init>(MultithreadEventExecutorGroup.java:49) ~[flink-shaded-netty-4.1.91.Final-17.0.jar!/:na]
+	at org.apache.flink.shaded.netty4.io.netty.channel.MultithreadEventLoopGroup.<init>(MultithreadEventLoopGroup.java:59) ~[flink-shaded-netty-4.1.91.Final-17.0.jar!/:na]
+	at org.apache.flink.shaded.netty4.io.netty.channel.nio.NioEventLoopGroup.<init>(NioEventLoopGroup.java:87) ~[flink-shaded-netty-4.1.91.Final-17.0.jar!/:na]
+	at org.apache.flink.runtime.rest.RestClient.<init>(RestClient.java:272) ~[flink-runtime-1.18.1.jar!/:1.18.1]
+	at org.apache.flink.runtime.rest.RestClient.<init>(RestClient.java:167) ~[flink-runtime-1.18.1.jar!/:1.18.1]
+	at org.apache.flink.runtime.rest.RestClient.<init>(RestClient.java:162) ~[flink-runtime-1.18.1.jar!/:1.18.1]
+	at org.apache.flink.client.program.rest.RestClusterClient.<init>(RestClusterClient.java:235) ~[flink-clients-1.18.1.jar!/:1.18.1]
+	at org.apache.flink.client.program.rest.RestClusterClient.<init>(RestClusterClient.java:202) ~[flink-clients-1.18.1.jar!/:1.18.1]
+	at org.apache.flink.client.program.rest.RestClusterClient.<init>(RestClusterClient.java:196) ~[flink-clients-1.18.1.jar!/:1.18.1]
+	at org.apache.flink.client.deployment.StandaloneClusterDescriptor.lambda$retrieve$0(StandaloneClusterDescriptor.java:51) ~[flink-clients-1.18.1.jar!/:1.18.1]
+	... 66 common frames omitted
+Caused by: org.apache.flink.shaded.netty4.io.netty.channel.ChannelException: failed to open a new selector
+	at org.apache.flink.shaded.netty4.io.netty.channel.nio.NioEventLoop.openSelector(NioEventLoop.java:179) ~[flink-shaded-netty-4.1.91.Final-17.0.jar!/:na]
+	at org.apache.flink.shaded.netty4.io.netty.channel.nio.NioEventLoop.<init>(NioEventLoop.java:146) ~[flink-shaded-netty-4.1.91.Final-17.0.jar!/:na]
+	at org.apache.flink.shaded.netty4.io.netty.channel.nio.NioEventLoopGroup.newChild(NioEventLoopGroup.java:183) ~[flink-shaded-netty-4.1.91.Final-17.0.jar!/:na]
+	at org.apache.flink.shaded.netty4.io.netty.channel.nio.NioEventLoopGroup.newChild(NioEventLoopGroup.java:38) ~[flink-shaded-netty-4.1.91.Final-17.0.jar!/:na]
+	at org.apache.flink.shaded.netty4.io.netty.util.concurrent.MultithreadEventExecutorGroup.<init>(MultithreadEventExecutorGroup.java:84) ~[flink-shaded-netty-4.1.91.Final-17.0.jar!/:na]
+	... 77 common frames omitted
+Caused by: java.io.IOException: Too many open files
+	at sun.nio.ch.EPollArrayWrapper.epollCreate(Native Method) ~[na:1.8.0_412]
+	at sun.nio.ch.EPollArrayWrapper.<init>(EPollArrayWrapper.java:130) ~[na:1.8.0_412]
+	at sun.nio.ch.EPollSelectorImpl.<init>(EPollSelectorImpl.java:69) ~[na:1.8.0_412]
+	at sun.nio.ch.EPollSelectorProvider.openSelector(EPollSelectorProvider.java:36) ~[na:1.8.0_412]
+	at org.apache.flink.shaded.netty4.io.netty.channel.nio.NioEventLoop.openSelector(NioEventLoop.java:177) ~[flink-shaded-netty-4.1.91.Final-17.0.jar!/:na]
+	... 81 common frames omitted
+```
+
+```wikitext
+检查打开文件数限制
+```
+
+```bash
+ulimit -n
+# 如果是默认的1024，则需要重新设置大一点
+# 比如临时配置： ulimit -n 65536
+```
