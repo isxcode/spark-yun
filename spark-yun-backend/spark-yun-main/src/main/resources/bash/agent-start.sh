@@ -55,9 +55,9 @@ cd "${agent_path}" || exit
 
 # 运行代理程序
 if ! command -v java &>/dev/null; then
-  nohup "$JAVA_HOME"/bin/java -jar -Xmx2048m "${agent_path}"/lib/zhiqingyun-agent.jar --server.port="${agent_port}" --spring.config.additional-location="${agent_path}"/conf/ > /dev/null 2>&1 &
+  nohup "$JAVA_HOME"/bin/java -jar -Xms1g -Xmx2g -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath="${agent_path}"/logs/ -XX:+UseG1GC -XX:MaxMetaspaceSize=256m "${agent_path}"/lib/zhiqingyun-agent.jar --server.port="${agent_port}" --spring.config.additional-location="${agent_path}"/conf/ > /dev/null 2>&1 &
 else
-  nohup java -jar -Xmx2048m "${agent_path}"/lib/zhiqingyun-agent.jar --server.port="${agent_port}" --spring.config.additional-location="${agent_path}"/conf/ > /dev/null 2>&1 &
+  nohup java -jar -Xms1g -Xmx2g -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath="${agent_path}"/logs/ -XX:+UseG1GC -XX:MaxMetaspaceSize=256m "${agent_path}"/lib/zhiqingyun-agent.jar --server.port="${agent_port}" --spring.config.additional-location="${agent_path}"/conf/ > /dev/null 2>&1 &
 fi
 echo $! >"${agent_path}"/zhiqingyun-agent.pid
 
