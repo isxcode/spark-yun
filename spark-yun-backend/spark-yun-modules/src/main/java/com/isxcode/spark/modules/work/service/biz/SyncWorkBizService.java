@@ -61,9 +61,13 @@ public class SyncWorkBizService {
         }
         List<String> tables = syncWorkService.tables(connection.getMetaData(), transform.get("catalog"),
             transform.get("schema"), transform.get("tableName"));
-        List<String> views = syncWorkService.views(connection.getMetaData(), transform.get("catalog"),
-            transform.get("schema"), transform.get("tableName"));
-        tables.addAll(views);
+
+        // 开启视图开关再查询
+        if (getDataSourceTablesReq.getIsListViews() == null || getDataSourceTablesReq.getIsListViews()) {
+            List<String> views = syncWorkService.views(connection.getMetaData(), transform.get("catalog"),
+                transform.get("schema"), transform.get("tableName"));
+            tables.addAll(views);
+        }
         connection.close();
         return GetDataSourceTablesRes.builder().tables(tables).build();
     }

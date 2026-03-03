@@ -465,7 +465,8 @@ function dbIdChange(type: string) {
         if (formData.sourceDBId) {
             tableListRef.value.setSourceTableList({
                 dataSourceId: formData.sourceDBId,
-                tablePattern: formData.includeTargetRule
+                tablePattern: formData.includeTargetRule,
+                isListViews: false
             })
         }
     } else {

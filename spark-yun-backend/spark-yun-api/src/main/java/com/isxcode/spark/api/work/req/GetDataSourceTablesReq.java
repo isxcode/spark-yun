@@ -16,4 +16,7 @@ public class GetDataSourceTablesReq {
     @Schema(title = "数据库表名", example = "SY")
     @NotNull(message = "表名搜索不能为空")
     private String tablePattern;
+
+    @Schema(title = "是否查看视图", example = "default is ture")
+    private Boolean isListViews;
 }
