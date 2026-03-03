@@ -63,7 +63,7 @@ public class SyncWorkBizService {
             transform.get("schema"), transform.get("tableName"));
 
         // 开启视图开关再查询
-        if (getDataSourceTablesReq.getIsListViews() != null && getDataSourceTablesReq.getIsListViews()) {
+        if (getDataSourceTablesReq.getIsListViews() == null || getDataSourceTablesReq.getIsListViews()) {
             List<String> views = syncWorkService.views(connection.getMetaData(), transform.get("catalog"),
                 transform.get("schema"), transform.get("tableName"));
             tables.addAll(views);
