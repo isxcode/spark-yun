@@ -105,10 +105,14 @@ public class Execute {
             List<String> predicates = new ArrayList<>();
 
             // 生成查询条件并添加到列表中
-            for (int i = 0; i < conf.getSyncRule().getNumPartitions(); i++) {
-                // 不同的数据库要使用各自支持hash函数
-                predicates.add(getHashPredicate(conf.getSyncWorkConfig().getSourceDBType(),
-                    conf.getSyncWorkConfig().getPartitionColumn(), conf.getSyncRule().getNumPartitions(), i, i));
+            for (int j = 0; j < conf.getSyncRule().getNumPartitions(); j++) {
+                String predicate = getHashPredicate(conf.getSyncWorkConfig().getSourceDBType(),
+                    conf.getSyncWorkConfig().getPartitionColumn(), conf.getSyncRule().getNumPartitions(), j, j);
+                // 将null值的行归入第0个分区，避免第一个字段为null时数据丢失
+                if (j == 0) {
+                    predicate = "(" + predicate + " OR " + conf.getSyncWorkConfig().getPartitionColumn() + " IS NULL)";
+                }
+                predicates.add(predicate);
             }
 
             // 将列表转换为字符串数组
