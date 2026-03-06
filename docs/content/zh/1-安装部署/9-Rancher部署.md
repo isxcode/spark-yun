@@ -24,6 +24,15 @@ docker tag registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun:latest-amd64 172
 docker push 172.19.189.246:30003/library/isxcode/zhiqingyun:20251204
 ```
 
+#### ⚠️注意 
+
+> 服务器的最大打开文件数限制数，默认为1024，太小会导致作业执行速度变慢，建议修改为65535。
+
+```bash
+# 临时配置方式
+ulimit -n 65535
+```
+
 #### 创建Namespace
 
 ```bash
