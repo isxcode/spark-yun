@@ -191,10 +191,11 @@ public class BashExecutor extends WorkExecutor {
                     agentNode.getAgentHomePath() + "/zhiqingyun-agent/works/" + workInstance.getId() + ".sh");
 
                 // 执行命令获取pid
-                String executeBashWorkCommand = "source /etc/profile && nohup sh " + agentNode.getAgentHomePath()
-                    + "/zhiqingyun-agent/works/" + workInstance.getId() + ".sh >> " + agentNode.getAgentHomePath()
-                    + "/zhiqingyun-agent/works/" + workInstance.getId() + ".log 2>&1 & echo $!";
-                String pid = executeCommand(scpNode, executeBashWorkCommand, false).replace("\n", "");
+                String executeBashWorkCommand =
+                    "bash -lc \"source /etc/profile >/dev/null 2>&1; nohup sh " + agentNode.getAgentHomePath()
+                        + "/zhiqingyun-agent/works/" + workInstance.getId() + ".sh >> " + agentNode.getAgentHomePath()
+                        + "/zhiqingyun-agent/works/" + workInstance.getId() + ".log 2>&1 < /dev/null & echo \\$!\"";
+                String pid = executeBackgroundCommand(scpNode, executeBashWorkCommand, false);
                 logBuilder.append(endLog("执行Bash脚本完成 pid : " + pid));
 
                 // 保存上下文
