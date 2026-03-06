@@ -37,6 +37,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import static com.isxcode.spark.common.utils.ssh.SshUtils.executeBackgroundCommand;
 import static com.isxcode.spark.common.utils.ssh.SshUtils.executeCommand;
 import static com.isxcode.spark.common.utils.ssh.SshUtils.scpText;
 
@@ -193,10 +194,11 @@ public class PythonExecutor extends WorkExecutor {
                     agentNode.getAgentHomePath() + "/zhiqingyun-agent/works/" + workInstance.getId() + ".py");
 
                 // 执行命令获取pid
-                String executeBashWorkCommand = "source /etc/profile && nohup python3 " + agentNode.getAgentHomePath()
-                    + "/zhiqingyun-agent/works/" + workInstance.getId() + ".py >> " + agentNode.getAgentHomePath()
-                    + "/zhiqingyun-agent/works/" + workInstance.getId() + ".log 2>&1 & echo $!";
-                String pid = executeCommand(scpNode, executeBashWorkCommand, false).replace("\n", "");
+                String executeBashWorkCommand =
+                    "bash -lc \"source /etc/profile >/dev/null 2>&1; nohup python3 " + agentNode.getAgentHomePath()
+                        + "/zhiqingyun-agent/works/" + workInstance.getId() + ".py >> " + agentNode.getAgentHomePath()
+                        + "/zhiqingyun-agent/works/" + workInstance.getId() + ".log 2>&1 < /dev/null & echo \\$!\"";
+                String pid = executeBackgroundCommand(scpNode, executeBashWorkCommand, false);
                 logBuilder.append(endLog("执行Python脚本完成 pid : " + pid));
 
                 // 保存上下文
