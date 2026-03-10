@@ -348,7 +348,7 @@ jobs:
           timeout: 3600s
           script: |
             cd /tmp
-            curl -s -O https://mirrors.aliyun.com/apache/kafka/3.7.2/kafka_2.12-3.7.2.tgz
+            curl -s -O https://mirrors.huaweicloud.com/apache/kafka/3.7.2/kafka_2.12-3.7.2.tgz
 
       - name: Install kafka
         uses: appleboy/ssh-action@v1.0.3
