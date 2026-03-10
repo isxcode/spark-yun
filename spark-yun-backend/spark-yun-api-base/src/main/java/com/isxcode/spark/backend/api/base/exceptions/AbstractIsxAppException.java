@@ -23,6 +23,7 @@ public abstract class AbstractIsxAppException extends RuntimeException {
 
     public AbstractIsxAppException(AbstractIsxAppExceptionEnum abstractSparkYunExceptionEnum) {
 
+        super(abstractSparkYunExceptionEnum.getMsg());
         this.code = abstractSparkYunExceptionEnum.getCode();
         this.msg = abstractSparkYunExceptionEnum.getMsg();
         this.err = null;
@@ -30,6 +31,7 @@ public abstract class AbstractIsxAppException extends RuntimeException {
 
     public AbstractIsxAppException(String code, String msg, String err) {
 
+        super(msg);
         this.code = code;
         this.msg = msg;
         this.err = err;
@@ -37,6 +39,7 @@ public abstract class AbstractIsxAppException extends RuntimeException {
 
     public AbstractIsxAppException(String code, String msg) {
 
+        super(msg);
         this.code = code;
         this.msg = msg;
         this.err = null;
@@ -44,6 +47,7 @@ public abstract class AbstractIsxAppException extends RuntimeException {
 
     public AbstractIsxAppException(String msg) {
 
+        super(msg);
         this.code = null;
         this.msg = msg;
         this.err = null;
