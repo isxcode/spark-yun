@@ -22,6 +22,7 @@ import CustomForm from '@/views/custom-form/index.vue'
 import CustomFormList from '@/views/custom-form/custom-form-list.vue'
 import CustomFormQuery from '@/views/custom-form/custom-form-query/index.vue'
 import CustomFormSetting from '@/views/custom-form/form-setting/index.vue'
+import AccessRule from '@/views/access-rule/index.vue'
 import CustomApi from '@/views/custom-api/index.vue'
 import SparkContainer from '@/views/spark-container/index.vue'
 import RealtimeComputing from '@/views/realtime-computing/index.vue'
@@ -163,6 +164,11 @@ export default [
         component: CustomFormSetting
       }
     ]
+  },
+  {
+    path: 'access-rule',
+    name: 'access-rule',
+    component: AccessRule
   },
   {
     path: 'custom-api',
