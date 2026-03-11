@@ -38,6 +38,8 @@ public class ApiAccessRuleEntity {
     @GenericGenerator(name = "sy-id-generator", strategy = "com.isxcode.spark.config.GeneratedValueConfig")
     private String id;
 
+    private String name;
+
     private String ruleType;
 
     private String ipAddress;

@@ -12,6 +12,7 @@ public interface ApiAccessRuleMapper {
 
     ApiAccessRuleEntity addAccessRuleReqToApiAccessRuleEntity(AddAccessRuleReq addAccessRuleReq);
 
+    @Mapping(target = "name", source = "updateAccessRuleReq.name")
     @Mapping(target = "ruleType", source = "updateAccessRuleReq.ruleType")
     @Mapping(target = "ipAddress", source = "updateAccessRuleReq.ipAddress")
     @Mapping(target = "remark", source = "updateAccessRuleReq.remark")
