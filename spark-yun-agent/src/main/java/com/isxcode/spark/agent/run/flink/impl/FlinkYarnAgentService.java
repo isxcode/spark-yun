@@ -193,7 +193,7 @@ public class FlinkYarnAgentService implements FlinkAgentService {
     @Override
     public GetWorkLogRes getWorkLog(GetWorkLogReq getWorkLogReq) throws Exception {
 
-        String getLogCmdFormat = "yarn logs -applicationId %s";
+        String getLogCmdFormat = "yarn logs -applicationId %s -log_files taskmanager.log,jobmanager.log";
         Process process = Runtime.getRuntime().exec(String.format(getLogCmdFormat, getWorkLogReq.getAppId()));
 
         StringBuilder errLog = new StringBuilder();
