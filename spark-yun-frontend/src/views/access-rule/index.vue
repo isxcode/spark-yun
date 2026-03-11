@@ -6,7 +6,7 @@
             <div class="zqy-seach">
                 <el-input
                     v-model="keyword"
-                    placeholder="请输入IP地址/备注 回车进行搜索"
+                    placeholder="请输入名称/IP地址/备注 回车进行搜索"
                     :maxlength="200"
                     clearable
                     @input="inputEvent"

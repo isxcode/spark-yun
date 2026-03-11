@@ -45,6 +45,12 @@ export const BreadCrumbList: Array<BreadCrumb> = [
 
 export const colConfigs: colConfig[] = [
     {
+        prop: 'name',
+        title: '名称',
+        minWidth: 120,
+        showOverflowTooltip: true
+    },
+    {
         prop: 'ruleType',
         title: '规则类型',
         minWidth: 100,

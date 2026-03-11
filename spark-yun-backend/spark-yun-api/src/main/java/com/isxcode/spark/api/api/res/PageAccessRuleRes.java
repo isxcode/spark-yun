@@ -13,6 +13,8 @@ public class PageAccessRuleRes {
 
     private String id;
 
+    private String name;
+
     private String ruleType;
 
     private String ipAddress;

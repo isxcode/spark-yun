@@ -14,6 +14,6 @@ import org.springframework.stereotype.Repository;
 @CacheConfig(cacheNames = {ModuleVipCode.VIP_API})
 public interface ApiAccessRuleRepository extends JpaRepository<ApiAccessRuleEntity, String> {
 
-    @Query("select A from ApiAccessRuleEntity A where A.ruleType LIKE %:keyword% or A.ipAddress LIKE %:keyword% or A.remark LIKE %:keyword% order by A.createDateTime desc")
+    @Query("select A from ApiAccessRuleEntity A where A.name LIKE %:keyword% or A.ruleType LIKE %:keyword% or A.ipAddress LIKE %:keyword% or A.remark LIKE %:keyword% order by A.createDateTime desc")
     Page<ApiAccessRuleEntity> pageAccessRule(@Param("keyword") String searchKeyWord, Pageable pageable);
 }

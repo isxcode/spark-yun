@@ -2,8 +2,9 @@
 create table SY_API_ACCESS_RULE
 (
     ID                      CHARACTER VARYING(200)  not null primary key unique comment '黑白名单id',
+    NAME                    CHARACTER VARYING(200)  not null comment '规则名称',
     RULE_TYPE               CHARACTER VARYING(200)  not null comment '规则类型: WHITELIST/BLACKLIST',
-    IP_ADDRESS              CHARACTER VARYING(500)  not null comment 'IP地址',
+    IP_ADDRESS              CHARACTER VARYING(2000) not null comment 'IP地址，多个用换行分隔，支持正则',
     REMARK                  CHARACTER VARYING(500)  comment '备注',
     VERSION_NUMBER          int                     not null comment '版本号',
     CREATE_BY               CHARACTER VARYING(200)  not null comment '创建人',
