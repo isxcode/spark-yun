@@ -528,6 +528,8 @@ function showModal(cb: () => void, data: any, cb2?: () => void): void {
     initCb.value = cb2
     stepIndex.value = 0
     modelConfig.visible = true
+    // 预加载黑白名单列表，确保编辑时能正确显示名称
+    fetchAccessRuleList()
     if (data) {
         getApiDetailData(data.id)
         isEdit.value = true
@@ -633,22 +635,26 @@ function getDataSourceList(e: boolean, searchType?: string) {
 }
 
 // 查询黑白名单
+function fetchAccessRuleList() {
+    QueryAccessRuleList({
+        page: 0,
+        pageSize: 10000,
+        searchKeyWord: ''
+    }).then((res: any) => {
+        accessRuleList.value = res.data.content.map((item: any) => {
+            return {
+                label: item.name + '（' + (item.ruleType === 'WHITELIST' ? '白名单' : '黑名单') + '）',
+                value: item.id
+            }
+        })
+    }).catch(() => {
+        accessRuleList.value = []
+    })
+}
+
 function getAccessRuleList(e: boolean) {
     if (e) {
-        QueryAccessRuleList({
-            page: 0,
-            pageSize: 10000,
-            searchKeyWord: ''
-        }).then((res: any) => {
-            accessRuleList.value = res.data.content.map((item: any) => {
-                return {
-                    label: item.name + '（' + (item.ruleType === 'WHITELIST' ? '白名单' : '黑名单') + '）',
-                    value: item.id
-                }
-            })
-        }).catch(() => {
-            accessRuleList.value = []
-        })
+        fetchAccessRuleList()
     }
 }
 
