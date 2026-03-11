@@ -242,7 +242,7 @@ public class SparkYarnAgentService implements SparkAgentService {
     @Override
     public String getStdoutLog(String appId, String sparkHomePath) throws Exception {
 
-        String getLogCmdFormat = "yarn logs -applicationId %s";
+        String getLogCmdFormat = "yarn logs -applicationId %s -log_files stdout";
         Process process = Runtime.getRuntime().exec(String.format(getLogCmdFormat, appId));
         StringBuilder errLog = new StringBuilder();
         try (BufferedReader reader =
@@ -283,7 +283,7 @@ public class SparkYarnAgentService implements SparkAgentService {
     @Override
     public String getCustomJarStdoutLog(String appId, String sparkHomePath) throws Exception {
 
-        String getLogCmdFormat = "yarn logs -applicationId %s";
+        String getLogCmdFormat = "yarn logs -applicationId %s -log_files stdout";
         Process process = Runtime.getRuntime().exec(String.format(getLogCmdFormat, appId));
         StringBuilder errLog = new StringBuilder();
         try (BufferedReader reader =
@@ -320,7 +320,7 @@ public class SparkYarnAgentService implements SparkAgentService {
     @Override
     public String getStderrLog(String appId, String sparkHomePath) throws Exception {
 
-        String getLogCmdFormat = "yarn logs -applicationId %s";
+        String getLogCmdFormat = "yarn logs -applicationId %s -log_files stderr";
         Process process = Runtime.getRuntime().exec(String.format(getLogCmdFormat, appId));
         StringBuilder errLog = new StringBuilder();
         try (BufferedReader reader =
@@ -361,7 +361,7 @@ public class SparkYarnAgentService implements SparkAgentService {
     @Override
     public String getWorkDataStr(String appId, String sparkHomePath) throws Exception {
 
-        String getLogCmdFormat = "yarn logs -applicationId %s";
+        String getLogCmdFormat = "yarn logs -applicationId %s -log_files stdout";
         Process process = Runtime.getRuntime().exec(String.format(getLogCmdFormat, appId));
         StringBuilder errLog = new StringBuilder();
         try (BufferedReader reader =
