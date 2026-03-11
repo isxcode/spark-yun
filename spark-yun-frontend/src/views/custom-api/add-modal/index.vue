@@ -3,6 +3,7 @@
         <el-steps class="custom-api-form__step" :active="stepIndex" finish-status="success">
             <el-step title="基础配置" />
             <el-step title="接口配置" />
+            <el-step title="高级配置" />
             <el-step title="接口检测" />
         </el-steps>
         <el-form ref="form" class="custom-api-form" label-position="top" :model="formData" :rules="rules">
@@ -217,10 +218,28 @@ and col3= '${c}' and col4= '${d}' and col5= '${e}' and col6= '${f}' and col7= '$
                     <code-mirror v-model="formData.resBody" basic :lang="jsonLang" />
                 </el-form-item>
             </div>
+            <div class="api-item" v-if="stepIndex === 2">
+                <!-- 高级配置 -->
+                <el-form-item label="黑白名单">
+                    <el-select
+                        v-model="formData.accessRuleId"
+                        placeholder="请选择黑白名单规则"
+                        clearable
+                        @visible-change="getAccessRuleList"
+                    >
+                        <el-option
+                            v-for="item in accessRuleList"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value"
+                        />
+                    </el-select>
+                </el-form-item>
+            </div>
         </el-form>
-        <!-- 第三步-接口检测---------------- ++ -->
+        <!-- 第四步-接口检测---------------- ++ -->
         <el-form
-            v-if="stepIndex === 2"
+            v-if="stepIndex === 3"
             ref="formTest"
             class="custom-api-form"
             label-position="top"
@@ -326,7 +345,7 @@ and col3= '${c}' and col4= '${d}' and col5= '${e}' and col6= '${f}' and col7= '$
                 />
             </el-form-item>
         </el-form>
-        <!-- 第三步-接口检测---------------- ++ -->
+        <!-- 第四步-接口检测---------------- ++ -->
         <template #customLeft>
             <template v-if="stepIndex === 0">
                 <el-button @click="closeEvent">取消</el-button>
@@ -340,6 +359,11 @@ and col3= '${c}' and col4= '${d}' and col5= '${e}' and col6= '${f}' and col7= '$
             <template v-if="stepIndex === 2">
                 <el-button @click="closeEvent">取消</el-button>
                 <el-button type="primary" @click="stepIndex = 1">上一步</el-button>
+                <el-button :loading="okLoading" type="primary" @click="nextStepEvent">下一步</el-button>
+            </template>
+            <template v-if="stepIndex === 3">
+                <el-button @click="closeEvent">取消</el-button>
+                <el-button type="primary" @click="stepIndex = 2">上一步</el-button>
                 <el-button :loading="testLoading" @click="testApiEvent" type="primary">检测</el-button>
                 <el-button :loading="okLoading" type="primary" @click="okToCloseEvent">确定</el-button>
             </template>
@@ -358,6 +382,7 @@ import { json } from '@codemirror/lang-json'
 import { jsonFormatter } from '@/utils/formatter'
 import { sql } from '@codemirror/lang-sql'
 import { GetCustomApiDetailData, TestCustomApiData } from '@/services/custom-api.service'
+import { QueryAccessRuleList } from '@/services/access-rule.service'
 import Clipboard from 'clipboard'
 
 interface Option {
@@ -399,6 +424,7 @@ const callback = ref<any>()
 const initCb = ref<any>()
 const clusterList = ref<any[]>([]) // 计算集群
 const dataSourceList = ref<any[]>([]) // 数据源
+const accessRuleList = ref<any[]>([]) // 黑白名单
 
 const jsonLang = ref<any>(json())
 const sqlLang = ref<any>(sql())
@@ -459,7 +485,9 @@ const formData = reactive<
     reqBody: null, // 请求体设置
     apiSql: null, // SQL设置
     pageType: false, // 是否分页
-    resBody: null // 返回体设置（成功/失败）
+    resBody: null, // 返回体设置（成功/失败）
+    // 高级配置
+    accessRuleId: null // 黑白名单配置id
 })
 const rules = reactive<FormRules>({
     name: [{ required: true, message: '请输入名称', trigger: ['blur', 'change'] }],
@@ -604,11 +632,31 @@ function getDataSourceList(e: boolean, searchType?: string) {
     }
 }
 
+// 查询黑白名单
+function getAccessRuleList(e: boolean) {
+    if (e) {
+        QueryAccessRuleList({
+            page: 0,
+            pageSize: 10000,
+            searchKeyWord: ''
+        }).then((res: any) => {
+            accessRuleList.value = res.data.content.map((item: any) => {
+                return {
+                    label: item.name + '（' + (item.ruleType === 'WHITELIST' ? '白名单' : '黑名单') + '）',
+                    value: item.id
+                }
+            })
+        }).catch(() => {
+            accessRuleList.value = []
+        })
+    }
+}
+
 function nextStepEvent() {
     form.value?.validate((valid) => {
         if (valid) {
-            if (stepIndex.value === 1) {
-                // 第二步中点击下一步时，暂存入库一下数据
+            if (stepIndex.value === 2) {
+                // 第三步（高级配置）中点击下一步时，暂存入库一下数据
                 okLoading.value = true
                 callback.value({
                     ...formData,
@@ -778,8 +826,8 @@ defineExpose({
     top: 0;
     background: #ffffff;
     z-index: 10;
-    padding-left: 25%;
-    padding-right: 25%;
+    padding-left: 15%;
+    padding-right: 15%;
     box-sizing: border-box;
     border-bottom: 1px solid getCssVar('border-color');
     .el-step__head {
