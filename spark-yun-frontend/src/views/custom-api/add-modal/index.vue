@@ -6,7 +6,7 @@
             <el-step title="高级配置" />
             <el-step title="接口检测" />
         </el-steps>
-        <el-form ref="form" class="custom-api-form" label-position="top" :model="formData" :rules="rules">
+        <el-form v-if="stepIndex <= 2" ref="form" class="custom-api-form custom-api-form__config" label-position="top" :model="formData" :rules="rules">
             <div class="api-item" v-if="stepIndex === 0">
                 <!-- 基础配置 -->
                 <!-- <div class="item-title">基础配置</div> -->
@@ -241,7 +241,7 @@ and col3= '${c}' and col4= '${d}' and col5= '${e}' and col6= '${f}' and col7= '$
         <el-form
             v-if="stepIndex === 3"
             ref="formTest"
-            class="custom-api-form"
+            class="custom-api-form custom-api-form__test"
             label-position="top"
             :model="formDataTest"
         >
@@ -856,6 +856,11 @@ defineExpose({
             }
         }
     }
+}
+.custom-api-form__config,
+.custom-api-form__test {
+    height: calc(74vh - 162px);
+    overflow: auto;
 }
 .custom-api-form {
     box-sizing: border-box;
