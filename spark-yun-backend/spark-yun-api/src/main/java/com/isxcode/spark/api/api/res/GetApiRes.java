@@ -36,4 +36,6 @@ public class GetApiRes {
     private String reqJsonTemp;
 
     private List<GetReqParamDto> reqGetTemp;
+
+    private String accessRuleId;
 }

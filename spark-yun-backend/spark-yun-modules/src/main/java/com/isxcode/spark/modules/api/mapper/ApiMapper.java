@@ -24,6 +24,7 @@ public interface ApiMapper {
     @Mapping(target = "datasourceId", source = "updateApiReq.datasourceId")
     @Mapping(target = "tokenType", source = "updateApiReq.tokenType")
     @Mapping(target = "pageType", source = "updateApiReq.pageType")
+    @Mapping(target = "accessRuleId", source = "updateApiReq.accessRuleId")
     @Mapping(target = "id", source = "apiEntity.id")
     @Mapping(target = "reqHeader", ignore = true)
     ApiEntity updateApiReqToApiEntity(UpdateApiReq updateApiReq, ApiEntity apiEntity);
