@@ -225,6 +225,13 @@ export const menuListData: Array<Menu> = [
         childPage: ['report-views-detail']
       },
       {
+        code: 'access-rule',
+        name: '黑白名单',
+        icon: 'Lock',
+        authType: [ 'ROLE_TENANT_MEMBER', 'ROLE_TENANT_ADMIN' ],
+        childPage: []
+      },
+      {
         code: 'custom-api',
         name: '接口服务',
         icon: 'MessageBox',
