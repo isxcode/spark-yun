@@ -26,43 +26,23 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Data
 @Entity
-@SQLDelete(sql = "UPDATE SY_API SET deleted = 1 WHERE id = ? and version_number = ?")
+@SQLDelete(sql = "UPDATE SY_API_ACCESS_RULE SET deleted = 1 WHERE id = ? and version_number = ?")
 @Where(clause = "deleted = 0 ${TENANT_FILTER} ")
-@Table(name = "SY_API")
+@Table(name = "SY_API_ACCESS_RULE")
 @JsonIgnoreProperties({"hibernateLazyInitializer"})
 @EntityListeners(AuditingEntityListener.class)
-public class ApiEntity {
+public class ApiAccessRuleEntity {
 
     @Id
     @GeneratedValue(generator = "sy-id-generator")
     @GenericGenerator(name = "sy-id-generator", strategy = "com.isxcode.spark.config.GeneratedValueConfig")
     private String id;
 
-    private String name;
+    private String ruleType;
+
+    private String ipAddress;
 
     private String remark;
-
-    private String path;
-
-    private String apiType;
-
-    private String tokenType;
-
-    private String reqHeader;
-
-    private String reqBody;
-
-    private String apiSql;
-
-    private String resBody;
-
-    private String datasourceId;
-
-    private String status;
-
-    private Boolean pageType;
-
-    private String accessRuleId;
 
     @CreatedDate
     private LocalDateTime createDateTime;

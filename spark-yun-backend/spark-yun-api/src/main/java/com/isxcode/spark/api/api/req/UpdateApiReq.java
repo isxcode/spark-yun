@@ -57,4 +57,7 @@ public class UpdateApiReq {
 
     @Schema(title = "备注", example = "备注123")
     private String remark;
+
+    @Schema(title = "黑白名单配置id", example = "sy_123")
+    private String accessRuleId;
 }
