@@ -456,6 +456,7 @@ function dbTypeChange(e: string) {
   formData.metastoreUris = ''
   formData.driverId = ''
 
+  getDriverIdList(true)
   getDefaultDriver(e)
 }
 
