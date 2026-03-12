@@ -321,7 +321,7 @@ public class SshUtils {
         try {
             String remoteMd5 = getRemoteFileMd5(session, dstPath);
             if (remoteMd5 != null && remoteMd5.equals(localMd5)) {
-                log.info("远程文件已存在且MD5一致，跳过上传: {}", dstPath);
+                log.debug("远程文件已存在且MD5一致，跳过上传: {}", dstPath);
                 needUpload = false;
             }
         } catch (Exception e) {
