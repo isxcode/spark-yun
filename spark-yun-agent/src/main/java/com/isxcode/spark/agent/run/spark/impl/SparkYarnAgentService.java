@@ -263,7 +263,7 @@ public class SparkYarnAgentService implements SparkAgentService {
                 Matcher matcher = regex.matcher(errLog);
                 StringBuilder logBuilder = new StringBuilder();
                 while (matcher.find()) {
-                    logBuilder.append("Node running log: ===================== \n");
+                    logBuilder.append("\n Node Running Log: ===================== \n\n");
                     logBuilder.append(matcher.group());
                 }
                 return logBuilder.toString();
@@ -335,7 +335,7 @@ public class SparkYarnAgentService implements SparkAgentService {
                 Matcher matcher = regex.matcher(errLog);
                 StringBuilder logBuilder = new StringBuilder();
                 while (matcher.find()) {
-                    logBuilder.append("Node running log: ===================== \n");
+                    logBuilder.append("\n Node Running Log: ===================== \n\n");
                     logBuilder.append(matcher.group());
                 }
                 return logBuilder.toString();

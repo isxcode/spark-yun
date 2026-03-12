@@ -192,7 +192,8 @@ public class FlinkYarnAgentService implements FlinkAgentService {
     @Override
     public GetWorkLogRes getWorkLog(GetWorkLogReq getWorkLogReq) throws Exception {
 
-        String getLogCmdFormat = "yarn logs -applicationId %s -log_files taskmanager.log,jobmanager.log";
+        String getLogCmdFormat =
+            "yarn logs -applicationId %s -log_files taskmanager.log,taskmanager.out,jobmanager.log";
         Process process = Runtime.getRuntime().exec(String.format(getLogCmdFormat, getWorkLogReq.getAppId()));
 
         StringBuilder errLog = new StringBuilder();
@@ -219,7 +220,15 @@ public class FlinkYarnAgentService implements FlinkAgentService {
                 Pattern.compile("LogType:taskmanager.log\\s*([\\s\\S]*?)\\s*End of LogType:taskmanager.log");
             Matcher matcher = regex.matcher(errLog);
             while (matcher.find()) {
-                logBuilder.append("Node running log: ===================== \n");
+                logBuilder.append("\n Node Running Log: ===================== \n\n");
+                logBuilder.append(matcher.group());
+            }
+
+            // 解析taskmanager日志，并保存
+            regex = Pattern.compile("LogType:taskmanager.out\\s*([\\s\\S]*?)\\s*End of LogType:taskmanager.out");
+            matcher = regex.matcher(errLog);
+            while (matcher.find()) {
+                logBuilder.append("\n Node Running Log: ===================== \n\n");
                 logBuilder.append(matcher.group());
             }
 
@@ -227,7 +236,7 @@ public class FlinkYarnAgentService implements FlinkAgentService {
             regex = Pattern.compile("LogType:jobmanager.log\\s*([\\s\\S]*?)\\s*End of LogType:jobmanager.log");
             matcher = regex.matcher(errLog);
             while (matcher.find()) {
-                logBuilder.append("Node running log: ===================== \n");
+                logBuilder.append("\n Node Running Log: ===================== \n\n");
                 logBuilder.append(matcher.group());
             }
 
