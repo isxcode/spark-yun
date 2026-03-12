@@ -124,7 +124,7 @@ export const menuListData: Array<Menu> = [
       },
       {
         code: 'lib-package',
-        name: '依赖集合',
+        name: '依赖合集',
         icon: 'FolderOpened',
         authType: [ 'ROLE_TENANT_MEMBER', 'ROLE_TENANT_ADMIN' ],
         childPage: []

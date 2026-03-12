@@ -32,7 +32,7 @@ export interface TableConfig {
 
 export const BreadCrumbList: Array<BreadCrumb> = [
   {
-    name: '依赖集合',
+    name: '依赖合集',
     code: 'lib-package'
   }
 ]
