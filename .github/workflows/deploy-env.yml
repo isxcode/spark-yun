@@ -32,7 +32,7 @@ on:
         type: boolean
         default: true
       ali:
-        description: buy server [CentOs-7.9]
+        description: buy server [CentOs-7.9/4C/16G]
         default: https://ecs-buy.aliyun.com/ecs
         type: string
 
