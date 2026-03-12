@@ -371,7 +371,7 @@
                         :value="item.value" />
                 </el-select>
               </el-form-item>
-              <el-form-item label="依赖集合">
+              <el-form-item label="依赖合集">
                 <el-select v-model="fileConfig.libPackageList" collapse-tags multiple clearable
                     filterable placeholder="请选择">
                     <el-option v-for="item in libPackageIdList" :key="item.value" :label="item.label"
@@ -450,7 +450,7 @@ const sqllang = ref<any>(sql())
 const workItemConfig = ref()
 const fileIdList = ref([]) // 资源文件
 const libIdList = ref([])  // 依赖
-const libPackageIdList = ref([])  // 依赖集合
+const libPackageIdList = ref([])  // 依赖合集
 
 const resourceLevelOptions = ref(ResourceLevelOptions) // 资源等级
 const dataSourceConfig = ref<FormInstance>()
