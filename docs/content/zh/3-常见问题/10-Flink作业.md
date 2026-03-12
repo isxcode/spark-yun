@@ -691,3 +691,60 @@ ulimit -n
 # 如果是默认的1024，则需要重新设置大一点
 # 比如临时配置： ulimit -n 65536
 ```
+
+#### 问题23
+
+```log
+Caused by: java.lang.IllegalArgumentException: Embedded metastore is not allowed. Make sure you have set a valid value for hive.metastore.uris
+	at org.apache.flink.util.Preconditions.checkArgument(Preconditions.java:138) ~[flink-dist-1.18.1.jar:1.18.1]
+	at org.apache.flink.table.catalog.hive.HiveCatalog.<init>(HiveCatalog.java:213) ~[sy_1991758871096602624.jar:1.18.1]
+	at org.apache.flink.table.catalog.hive.HiveCatalog.<init>(HiveCatalog.java:195) ~[sy_1991758871096602624.jar:1.18.1]
+	at org.apache.flink.table.catalog.hive.HiveCatalog.<init>(HiveCatalog.java:187) ~[sy_1991758871096602624.jar:1.18.1]
+	at org.apache.flink.table.catalog.hive.factories.HiveCatalogFactory.createCatalog(HiveCatalogFactory.java:76) ~[sy_1991758871096602624.jar:1.18.1]
+	at org.apache.flink.table.factories.FactoryUtil.createCatalog(FactoryUtil.java:498) ~[flink-table-api-java-uber-1.18.1.jar:1.18.1]
+	at org.apache.flink.table.catalog.CatalogManager.initCatalog(CatalogManager.java:316) ~[flink-table-api-java-uber-1.18.1.jar:1.18.1]
+	at org.apache.flink.table.catalog.CatalogManager.createCatalog(CatalogManager.java:308) ~[flink-table-api-java-uber-1.18.1.jar:1.18.1]
+	at org.apache.flink.table.operations.ddl.CreateCatalogOperation.execute(CreateCatalogOperation.java:68) ~[flink-table-api-java-uber-1.18.1.jar:1.18.1]
+	at org.apache.flink.table.api.internal.TableEnvironmentImpl.executeInternal(TableEnvironmentImpl.java:1092) ~[flink-table-api-java-uber-1.18.1.jar:1.18.1]
+	at org.apache.flink.table.api.internal.TableEnvironmentImpl.executeSql(TableEnvironmentImpl.java:735) ~[flink-table-api-java-uber-1.18.1.jar:1.18.1]
+	at com.isxcode.spark.plugin.flink.sql.execute.Job.main(Job.java:73) ~[flink-sql-execute-plugin.jar:?]
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[?:1.8.0_412]
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) ~[?:1.8.0_412]
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[?:1.8.0_412]
+	at java.lang.reflect.Method.invoke(Method.java:498) ~[?:1.8.0_412]
+	at org.apache.flink.client.program.PackagedProgram.callMainMethod(PackagedProgram.java:355) ~[flink-dist-1.18.1.jar:1.18.1]
+	at org.apache.flink.client.program.PackagedProgram.invokeInteractiveModeForExecution(PackagedProgram.java:222) ~[flink-dist-1.18.1.jar:1.18.1]
+	at org.apache.flink.client.ClientUtils.executeProgram(ClientUtils.java:105) ~[flink-dist-1.18.1.jar:1.18.1]
+	at org.apache.flink.client.deployment.application.ApplicationDispatcherBootstrap.runApplicationEntryPoint(ApplicationDispatcherBootstrap.java:301) ~[flink-dist-1.18.1.jar:1.18.1]
+	... 12 more
+```
+
+##### 解决方案
+
+```wikitext
+原因是：Flink通过hive的配置文件找不到hive.metastore.uris的配置，导致报错
+```
+
+```bash
+vim /opt/hive/conf/hive-site.xml
+```
+
+```xml
+<property>
+    <name>hive.metastore.uris</name>
+    <value>thrift://139.224.195.82:9083</value>
+    <description>Thrift URI for the remote metastore. Used by metastore client to connect to remote metastore.</description>
+</property>
+```
+
+#### 问题24
+
+```log
+请求代理异常 : The number of requested virtual cores for application master 1 exceeds the maximum number of virtual cores 0 available in the Yarn Cluster.2026-03-12T17:32:08.709 ERROR : ❌ 运行作业失败
+```
+
+##### 解决方案
+
+```wikitext
+这是yarn服务异常，检查NodeManager服务是否正常，检查服务器存储是否到90%，内存使用是否过高，导致无法申请yarn资源
+```
