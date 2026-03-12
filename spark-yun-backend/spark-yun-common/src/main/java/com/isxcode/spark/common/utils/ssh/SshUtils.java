@@ -315,21 +315,36 @@ public class SshUtils {
         ChannelSftp channel;
         channel = (ChannelSftp) session.openChannel("sftp");
         channel.connect(120000);
-        FileSystemResourceLoader resourceLoader = new FileSystemResourceLoader();
-        channel.put(Files.newInputStream(Paths.get(srcPath)), dstPath);
 
-        // 文件校验
-        SftpATTRS attrs;
-        while (true) {
-            attrs = channel.stat(dstPath);
-            if (attrs != null) {
-                long remoteFileSize = attrs.getSize();
-                long localFileSize = Files.size(Paths.get(srcPath));
-                if (remoteFileSize == localFileSize) {
-                    break;
-                }
+        // 检查远程文件是否已存在且大小一致，如果一致则跳过上传
+        long localFileSize = Files.size(Paths.get(srcPath));
+        boolean needUpload = true;
+        try {
+            SftpATTRS existingAttrs = channel.stat(dstPath);
+            if (existingAttrs != null && existingAttrs.getSize() == localFileSize) {
+                log.info("远程文件已存在且大小一致，跳过上传: {}", dstPath);
+                needUpload = false;
             }
-            Thread.sleep(2000);
+        } catch (SftpException e) {
+            // 文件不存在，需要上传
+            log.debug("远程文件不存在，需要上传: {}", dstPath);
+        }
+
+        if (needUpload) {
+            channel.put(Files.newInputStream(Paths.get(srcPath)), dstPath);
+
+            // 文件校验
+            SftpATTRS attrs;
+            while (true) {
+                attrs = channel.stat(dstPath);
+                if (attrs != null) {
+                    long remoteFileSize = attrs.getSize();
+                    if (remoteFileSize == localFileSize) {
+                        break;
+                    }
+                }
+                Thread.sleep(2000);
+            }
         }
 
         channel.disconnect();
