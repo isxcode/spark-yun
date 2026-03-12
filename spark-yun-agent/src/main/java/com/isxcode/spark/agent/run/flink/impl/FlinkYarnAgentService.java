@@ -220,7 +220,7 @@ public class FlinkYarnAgentService implements FlinkAgentService {
                 Pattern.compile("LogType:taskmanager.log\\s*([\\s\\S]*?)\\s*End of LogType:taskmanager.log");
             Matcher matcher = regex.matcher(errLog);
             while (matcher.find()) {
-                logBuilder.append("\n Node Running Log: ===================== \n\n");
+                logBuilder.append("\nNode Running Log: ===================== \n\n");
                 logBuilder.append(matcher.group());
             }
 
@@ -228,7 +228,7 @@ public class FlinkYarnAgentService implements FlinkAgentService {
             regex = Pattern.compile("LogType:taskmanager.out\\s*([\\s\\S]*?)\\s*End of LogType:taskmanager.out");
             matcher = regex.matcher(errLog);
             while (matcher.find()) {
-                logBuilder.append("\n Node Running Log: ===================== \n\n");
+                logBuilder.append("\nNode Running Log: ===================== \n\n");
                 logBuilder.append(matcher.group());
             }
 
@@ -236,7 +236,7 @@ public class FlinkYarnAgentService implements FlinkAgentService {
             regex = Pattern.compile("LogType:jobmanager.log\\s*([\\s\\S]*?)\\s*End of LogType:jobmanager.log");
             matcher = regex.matcher(errLog);
             while (matcher.find()) {
-                logBuilder.append("\n Node Running Log: ===================== \n\n");
+                logBuilder.append("\nNode Running Log: ===================== \n\n");
                 logBuilder.append(matcher.group());
             }
 
