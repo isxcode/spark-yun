@@ -363,8 +363,20 @@ public class SyncWorkExecutor extends WorkExecutor {
             }
 
             // 配置依赖包
+            List<String> allLibConfig = new ArrayList<>();
+            if (workRunContext.getLibPackageConfig() != null) {
+                workRunContext.getLibPackageConfig().forEach(libPackageId -> {
+                    LibPackageEntity metaLibPackage = fileService.getLibPackage(libPackageId);
+                    if (metaLibPackage.getFileIdList() != null) {
+                        allLibConfig.addAll(JSON.parseArray(metaLibPackage.getFileIdList(), String.class));
+                    }
+                });
+            }
             if (workRunContext.getLibConfig() != null) {
-                submitWorkReq.setLibConfig(workRunContext.getLibConfig());
+                allLibConfig.addAll(workRunContext.getLibConfig());
+            }
+            if (!allLibConfig.isEmpty()) {
+                submitWorkReq.setLibConfig(allLibConfig);
             }
 
             // 保存上下文
