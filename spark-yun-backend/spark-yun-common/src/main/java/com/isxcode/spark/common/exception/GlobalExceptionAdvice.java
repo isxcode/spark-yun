@@ -12,6 +12,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.validation.ObjectError;
@@ -28,6 +29,12 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class GlobalExceptionAdvice extends ResponseEntityExceptionHandler {
 
+    private HttpHeaders jsonHeaders() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        return headers;
+    }
+
     @ExceptionHandler(AbstractIsxAppException.class)
     public ResponseEntity<BaseResponse<?>> customException(AbstractIsxAppException abstractSparkYunException) {
 
@@ -39,14 +46,14 @@ public class GlobalExceptionAdvice extends ResponseEntityExceptionHandler {
         errorResponse.setErr(abstractSparkYunException.getErr() == null ? null : abstractSparkYunException.getErr());
 
         if ("401".equals(abstractSparkYunException.getCode())) {
-            return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>(errorResponse, jsonHeaders(), HttpStatus.UNAUTHORIZED);
         }
 
         if ("403".equals(abstractSparkYunException.getCode())) {
-            return new ResponseEntity<>(errorResponse, HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>(errorResponse, jsonHeaders(), HttpStatus.FORBIDDEN);
         }
 
-        return new ResponseEntity<>(errorResponse, HttpStatus.OK);
+        return new ResponseEntity<>(errorResponse, jsonHeaders(), HttpStatus.OK);
     }
 
     @ExceptionHandler(IsxErrorException.class)
@@ -55,24 +62,24 @@ public class GlobalExceptionAdvice extends ResponseEntityExceptionHandler {
         BaseResponse<?> errorResponse = new BaseResponse<>();
         errorResponse.setMsg(isxErrorException.getMsg());
         errorResponse.setCode("500");
-        return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(errorResponse, jsonHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(SuccessResponseException.class)
     public ResponseEntity<BaseResponse<Object>> successException(SuccessResponseException successException) {
 
-        return new ResponseEntity<>(successException.getBaseResponse(), HttpStatus.OK);
+        return new ResponseEntity<>(successException.getBaseResponse(), jsonHeaders(), HttpStatus.OK);
     }
 
     @ExceptionHandler(AccessDeniedException.class)
-    public ResponseEntity<BaseResponse<Object>> accessDeniedException(AccessDeniedException accessDeniedException) {
+    public ResponseEntity accessDeniedException(AccessDeniedException accessDeniedException) {
 
         BaseResponse baseResponse = new BaseResponse();
         baseResponse.setCode("401");
         baseResponse.setMsg("当前用户没有权限");
         baseResponse.setErr(accessDeniedException.getMessage());
 
-        return new ResponseEntity<>(baseResponse, HttpStatus.OK);
+        return new ResponseEntity<>(baseResponse, jsonHeaders(), HttpStatus.OK);
     }
 
     @ExceptionHandler(org.springframework.security.access.AccessDeniedException.class)
@@ -84,7 +91,7 @@ public class GlobalExceptionAdvice extends ResponseEntityExceptionHandler {
         baseResponse.setMsg("当前用户没有权限");
         baseResponse.setErr(accessDeniedException.getMessage());
 
-        return new ResponseEntity<>(baseResponse, HttpStatus.OK);
+        return new ResponseEntity<>(baseResponse, jsonHeaders(), HttpStatus.OK);
     }
 
     @ExceptionHandler(EmptyResultDataAccessException.class)
@@ -96,7 +103,7 @@ public class GlobalExceptionAdvice extends ResponseEntityExceptionHandler {
         baseResponse.setMsg("请稍后再试");
         baseResponse.setErr(emptyResultDataAccessException.getMessage());
 
-        return new ResponseEntity<>(baseResponse, HttpStatus.OK);
+        return new ResponseEntity<>(baseResponse, jsonHeaders(), HttpStatus.OK);
     }
 
     @ExceptionHandler(ObjectOptimisticLockingFailureException.class)
@@ -108,7 +115,7 @@ public class GlobalExceptionAdvice extends ResponseEntityExceptionHandler {
         baseResponse.setMsg("请稍后再试");
         baseResponse.setErr(objectOptimisticLockingFailureException.getMessage());
 
-        return new ResponseEntity<>(baseResponse, HttpStatus.OK);
+        return new ResponseEntity<>(baseResponse, jsonHeaders(), HttpStatus.OK);
     }
 
     @ExceptionHandler(Exception.class)
@@ -118,7 +125,7 @@ public class GlobalExceptionAdvice extends ResponseEntityExceptionHandler {
         baseResponse.setCode(String.valueOf(HttpStatus.OK.value()));
         baseResponse.setMsg(exception.getMessage() == null ? exception.getClass().getName() : exception.getMessage());
         exception.printStackTrace();
-        return new ResponseEntity<>(baseResponse, HttpStatus.OK);
+        return new ResponseEntity<>(baseResponse, jsonHeaders(), HttpStatus.OK);
     }
 
     @Override
