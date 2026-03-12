@@ -72,7 +72,7 @@ public class GlobalExceptionAdvice extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(AccessDeniedException.class)
-    public ResponseEntity accessDeniedException(AccessDeniedException accessDeniedException) {
+    public ResponseEntity<BaseResponse<Object>> accessDeniedException(AccessDeniedException accessDeniedException) {
 
         BaseResponse baseResponse = new BaseResponse();
         baseResponse.setCode("401");
