@@ -261,18 +261,12 @@ public class SparkYarnAgentService implements SparkAgentService {
             } else {
                 Pattern regex = Pattern.compile(YARN_LOG_STDOUT_REGEX);
                 Matcher matcher = regex.matcher(errLog);
-                String log = "";
+                StringBuilder logBuilder = new StringBuilder();
                 while (matcher.find()) {
-                    String tmpLog = matcher.group();
-                    if (tmpLog.contains("ERROR")) {
-                        log = tmpLog;
-                        break;
-                    }
-                    if (tmpLog.length() > log.length()) {
-                        log = tmpLog;
-                    }
+                    logBuilder.append("Node running log: ===================== \n");
+                    logBuilder.append(matcher.group());
                 }
-                return log;
+                return logBuilder.toString();
             }
         } catch (InterruptedException e) {
             log.error(e.getMessage(), e);
@@ -339,18 +333,12 @@ public class SparkYarnAgentService implements SparkAgentService {
             } else {
                 Pattern regex = Pattern.compile(YARN_LOG_STDERR_REGEX);
                 Matcher matcher = regex.matcher(errLog);
-                String log = "";
+                StringBuilder logBuilder = new StringBuilder();
                 while (matcher.find()) {
-                    String tmpLog = matcher.group();
-                    if (tmpLog.contains("ERROR")) {
-                        log = tmpLog;
-                        break;
-                    }
-                    if (tmpLog.length() > log.length()) {
-                        log = tmpLog;
-                    }
+                    logBuilder.append("Node running log: ===================== \n");
+                    logBuilder.append(matcher.group());
                 }
-                return log;
+                return logBuilder.toString();
             }
         } catch (InterruptedException e) {
             log.error(e.getMessage(), e);

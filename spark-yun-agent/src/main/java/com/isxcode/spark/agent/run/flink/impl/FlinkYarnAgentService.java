@@ -28,7 +28,6 @@ import org.apache.flink.yarn.configuration.YarnDeploymentTarget;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.yarn.api.records.ApplicationId;
 import org.apache.hadoop.yarn.api.records.ApplicationReport;
-import org.apache.logging.log4j.util.Strings;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
@@ -211,35 +210,28 @@ public class FlinkYarnAgentService implements FlinkAgentService {
         if (exitCode == 1) {
             throw new IsxAppException(errLog.toString());
         } else {
+
+            // 保存日志
+            StringBuilder logBuilder = new StringBuilder();
+
+            // 解析taskmanager日志，并保存
             Pattern regex =
                 Pattern.compile("LogType:taskmanager.log\\s*([\\s\\S]*?)\\s*End of LogType:taskmanager.log");
             Matcher matcher = regex.matcher(errLog);
-            String log = "";
             while (matcher.find()) {
-                String tmpLog = matcher.group();
-                if (tmpLog.contains("ERROR")) {
-                    log = tmpLog;
-                    break;
-                }
-                if (tmpLog.length() > log.length()) {
-                    log = tmpLog;
-                }
+                logBuilder.append("Node running log: ===================== \n");
+                logBuilder.append(matcher.group());
             }
-            if (Strings.isEmpty(log)) {
-                regex = Pattern.compile("LogType:jobmanager.log\\s*([\\s\\S]*?)\\s*End of LogType:jobmanager.log");
-                matcher = regex.matcher(errLog);
-                while (matcher.find()) {
-                    String tmpLog = matcher.group();
-                    if (tmpLog.contains("ERROR")) {
-                        log = tmpLog;
-                        break;
-                    }
-                    if (tmpLog.length() > log.length()) {
-                        log = tmpLog;
-                    }
-                }
+
+            // 解析jobmanager日志，并保存
+            regex = Pattern.compile("LogType:jobmanager.log\\s*([\\s\\S]*?)\\s*End of LogType:jobmanager.log");
+            matcher = regex.matcher(errLog);
+            while (matcher.find()) {
+                logBuilder.append("Node running log: ===================== \n");
+                logBuilder.append(matcher.group());
             }
-            return GetWorkLogRes.builder().log(log).build();
+
+            return GetWorkLogRes.builder().log(logBuilder.toString()).build();
         }
     }
 
