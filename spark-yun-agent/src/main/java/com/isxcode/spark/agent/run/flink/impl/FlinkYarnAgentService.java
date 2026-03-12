@@ -113,7 +113,7 @@ public class FlinkYarnAgentService implements FlinkAgentService {
         // 加载flink的lib
         libFile.add(submitWorkReq.getFlinkHome() + "/lib");
 
-        // 加载至流云的依赖
+        // 加载至轻云的依赖
         File[] jarFiles = new File(submitWorkReq.getAgentHomePath() + File.separator + "lib").listFiles();
         if (jarFiles != null) {
             for (File jarFile : jarFiles) {

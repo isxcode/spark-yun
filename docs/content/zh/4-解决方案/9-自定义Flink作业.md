@@ -87,6 +87,6 @@ mainClass: com.isxcode.acorn.job.Job
 
 #### 查看结果
 
-> 由于'connector' = 'print'是flink官方连接器，至流云无法获取数据，需要在ui界面查看数据
+> 由于'connector' = 'print'是flink官方连接器，至轻云无法获取数据，需要在ui界面查看数据
 
 ![20250113114825](https://img.isxcode.com/picgo/20250113114825.png)

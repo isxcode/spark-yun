@@ -173,7 +173,7 @@ public class FlinkKubernetesAgentService implements FlinkAgentService {
         volumes.add(String.format(volumeTemplate, "flink-log", submitWorkReq.getAgentHomePath() + File.separator
             + "k8s-logs" + File.separator + submitWorkReq.getWorkInstanceId()));
 
-        // 至流云lib映射
+        // 至轻云lib映射
         File[] jarFiles = new File(submitWorkReq.getAgentHomePath() + File.separator + "lib").listFiles();
         if (jarFiles != null) {
             for (int i = 0; i < jarFiles.length; i++) {
