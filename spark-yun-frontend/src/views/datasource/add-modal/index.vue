@@ -191,8 +191,10 @@
       </el-button>
     </div>
     <template #footer>
-      <el-button @click="advancedConfigVisible = false">取消</el-button>
-      <el-button type="primary" @click="saveAdvancedConfig">确定</el-button>
+      <div style="display: flex; justify-content: flex-end;">
+        <el-button @click="advancedConfigVisible = false">取消</el-button>
+        <el-button type="primary" @click="saveAdvancedConfig">确定</el-button>
+      </div>
     </template>
   </el-dialog>
 </template>
