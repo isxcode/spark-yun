@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Map;
+
 /**
  * 调度配置信息.
  */
@@ -23,4 +25,6 @@ public class DatasourceConfig {
     private String user;
 
     private String password;
+
+    private Map<String, String> connectConfig;
 }
