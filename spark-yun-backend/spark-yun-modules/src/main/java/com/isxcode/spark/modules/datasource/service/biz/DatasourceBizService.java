@@ -259,6 +259,11 @@ public class DatasourceBizService {
             datasourceEntity.setPasswd(aesUtils.encrypt(checkConnectReq.getPasswd()));
         }
 
+        // 高级配置
+        if (checkConnectReq.getConnectConfig() != null && !checkConnectReq.getConnectConfig().isEmpty()) {
+            datasourceEntity.setConnectConfig(JSON.toJSONString(checkConnectReq.getConnectConfig()));
+        }
+
         if (DatasourceType.KAFKA.equals(datasourceEntity.getDbType())) {
             try {
                 checkConnectReq.getKafkaConfig().setBootstrapServers(checkConnectReq.getJdbcUrl());
