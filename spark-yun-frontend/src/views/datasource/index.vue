@@ -29,6 +29,9 @@
     <LoadingPage :visible="loading" :network-error="networkError" @loading-refresh="initData(false)">
       <div class="zqy-table">
         <BlockTable :table-config="tableConfig" @size-change="handleSizeChange" @current-change="handleCurrentChange">
+          <template #nameSlot="scopeSlot">
+            <span class="name-click" @click="editData(scopeSlot.row)">{{ scopeSlot.row.name }}</span>
+          </template>
           <template #statusTag="scopeSlot">
             <ZStatusTag :status="scopeSlot.row.status"></ZStatusTag>
           </template>
