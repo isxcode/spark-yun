@@ -34,23 +34,7 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item
-        label="驱动"
-        prop="driverId"
-      >
-        <el-select
-          v-model="formData.driverId"
-          placeholder="请选择"
-          @visible-change="getDriverIdList"
-        >
-          <el-option
-            v-for="item in driverIdList"
-            :key="item.id"
-            :label="item.name"
-            :value="item.id"
-          />
-        </el-select>
-      </el-form-item>
+
       <el-form-item
         label="连接信息"
         prop="jdbcUrl"
@@ -167,6 +151,29 @@ kafka: ${host}:${port} 默认端口号：9092
             <el-icon class="hover-tooltip success" v-else><SuccessFilled /></el-icon>
           </template>
         </el-popover>
+        <el-popover
+          placement="top"
+          :width="240"
+          trigger="click"
+          :visible="driverPopoverVisible"
+        >
+          <template #reference>
+            <el-button type="primary" link @click="openDriverPopover">更换驱动</el-button>
+          </template>
+          <el-select
+            v-model="formData.driverId"
+            placeholder="请选择驱动"
+            style="width: 100%"
+            @visible-change="onDriverSelectVisibleChange"
+          >
+            <el-option
+              v-for="item in driverIdList"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id"
+            />
+          </el-select>
+        </el-popover>
       </div>
     </template>
   </BlockModal>
@@ -184,6 +191,7 @@ const callback = ref<any>()
 const driverIdList = ref([])
 const testLoading = ref(false)
 const testResult = ref()
+const driverPopoverVisible = ref(false)
 const modelConfig = reactive({
   title: '添加数据源',
   visible: false,
@@ -339,13 +347,6 @@ const rules = reactive<FormRules>({
       trigger: [ 'blur', 'change' ]
     }
   ],
-  driverId: [
-    {
-      required: true,
-      message: '请选择数据源驱动',
-      trigger: [ 'blur', 'change' ]
-    }
-  ],
   jdbcUrl: [
     {
       required: true,
@@ -436,6 +437,23 @@ function testFun() {
       ElMessage.warning('请将表单输入完整')
     }
   })
+}
+
+function openDriverPopover() {
+  if (!formData.dbType) {
+    ElMessage.warning('请先选择数据库类型')
+    return
+  }
+  getDriverIdList(true)
+  driverPopoverVisible.value = !driverPopoverVisible.value
+}
+
+function onDriverSelectVisibleChange(visible: boolean) {
+  if (visible) {
+    getDriverIdList(true)
+  } else {
+    driverPopoverVisible.value = false
+  }
 }
 
 function getDriverIdList(e: boolean) {
