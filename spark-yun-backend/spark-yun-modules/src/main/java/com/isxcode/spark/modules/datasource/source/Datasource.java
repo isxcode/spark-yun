@@ -145,12 +145,6 @@ public abstract class Datasource {
 
         // 配置账号密码
         Properties properties = new Properties();
-        if (connectInfo.getUsername() != null) {
-            properties.put("user", connectInfo.getUsername());
-        }
-        if (connectInfo.getPasswd() != null) {
-            properties.put("password", aesUtils.decrypt(connectInfo.getPasswd()));
-        }
 
         // 高级配置
         if (connectInfo.getConnectConfig() != null && !connectInfo.getConnectConfig().isEmpty()) {
@@ -159,6 +153,16 @@ public abstract class Datasource {
             if (configMap != null) {
                 properties.putAll(configMap);
             }
+        }
+
+        // 账号填写
+        if (connectInfo.getUsername() != null) {
+            properties.put("user", connectInfo.getUsername());
+        }
+
+        // 密码填写
+        if (connectInfo.getPasswd() != null) {
+            properties.put("password", aesUtils.decrypt(connectInfo.getPasswd()));
         }
 
         // 数据源连接超时时间设定，默认600秒，10分钟
