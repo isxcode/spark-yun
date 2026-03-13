@@ -128,6 +128,10 @@ public class Execute {
                 .option("password", conf.getExcelSyncConfig().getTargetDatabase().getPassword())
                 .option("truncate", "true");
 
+            if (conf.getExcelSyncConfig().getTargetDatabase().getConnectConfig() != null) {
+                conf.getExcelSyncConfig().getTargetDatabase().getConnectConfig().forEach(frameReader::option);
+            }
+
             if (SetMode.ADVANCE.equals(conf.getSyncRule().getSetMode())) {
                 conf.getSyncRule().getSqlConfig().forEach(frameReader::option);
             }

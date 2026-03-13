@@ -1,6 +1,7 @@
 package com.isxcode.spark.modules.work.run.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 import com.isxcode.spark.api.agent.constants.AgentType;
 import com.isxcode.spark.api.agent.constants.SparkAgentUrl;
 import com.isxcode.spark.api.agent.req.spark.*;
@@ -323,19 +324,25 @@ public class SyncWorkExecutor extends WorkExecutor {
             // 封装来源Datasource的信息
             DatasourceEntity sourceDatasource =
                 datasourceService.getDatasource(workRunContext.getSyncWorkConfig().getSourceDBId());
-            DatasourceConfig sourceConfig = DatasourceConfig.builder()
-                .driver(datasourceService.getDriverClass(sourceDatasource.getDbType()))
-                .url(sourceDatasource.getJdbcUrl()).dbTable(workRunContext.getSyncWorkConfig().getSourceTable())
-                .user(sourceDatasource.getUsername()).password(aesUtils.decrypt(sourceDatasource.getPasswd())).build();
+            DatasourceConfig sourceConfig =
+                DatasourceConfig.builder().driver(datasourceService.getDriverClass(sourceDatasource.getDbType()))
+                    .url(sourceDatasource.getJdbcUrl()).dbTable(workRunContext.getSyncWorkConfig().getSourceTable())
+                    .user(sourceDatasource.getUsername()).password(aesUtils.decrypt(sourceDatasource.getPasswd()))
+                    .connectConfig(Strings.isNotEmpty(sourceDatasource.getConnectConfig()) ? JSON.parseObject(
+                        sourceDatasource.getConnectConfig(), new TypeReference<Map<String, String>>() {}) : null)
+                    .build();
             workRunContext.getSyncWorkConfig().setSourceDatabase(sourceConfig);
 
             // 封装去向Datasource的信息
             DatasourceEntity targetDatasource =
                 datasourceService.getDatasource(workRunContext.getSyncWorkConfig().getTargetDBId());
-            DatasourceConfig targetConfig = DatasourceConfig.builder()
-                .driver(datasourceService.getDriverClass(targetDatasource.getDbType()))
-                .url(targetDatasource.getJdbcUrl()).dbTable(workRunContext.getSyncWorkConfig().getTargetTable())
-                .user(targetDatasource.getUsername()).password(aesUtils.decrypt(targetDatasource.getPasswd())).build();
+            DatasourceConfig targetConfig =
+                DatasourceConfig.builder().driver(datasourceService.getDriverClass(targetDatasource.getDbType()))
+                    .url(targetDatasource.getJdbcUrl()).dbTable(workRunContext.getSyncWorkConfig().getTargetTable())
+                    .user(targetDatasource.getUsername()).password(aesUtils.decrypt(targetDatasource.getPasswd()))
+                    .connectConfig(Strings.isNotEmpty(targetDatasource.getConnectConfig()) ? JSON.parseObject(
+                        targetDatasource.getConnectConfig(), new TypeReference<Map<String, String>>() {}) : null)
+                    .build();
             workRunContext.getSyncWorkConfig().setTargetDatabase(targetConfig);
 
             // 构建Spark提交请求体

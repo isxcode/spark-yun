@@ -94,6 +94,9 @@ public class Execute {
         } else {
 
             Properties prop = new Properties();
+            if (conf.getSyncWorkConfig().getSourceDatabase().getConnectConfig() != null) {
+                prop.putAll(conf.getSyncWorkConfig().getSourceDatabase().getConnectConfig());
+            }
             prop.put("user", conf.getSyncWorkConfig().getSourceDatabase().getUser());
             if (conf.getSyncWorkConfig().getSourceDatabase().getPassword() != null) {
                 prop.put("password", conf.getSyncWorkConfig().getSourceDatabase().getPassword());
@@ -164,6 +167,10 @@ public class Execute {
 
             if (conf.getSyncWorkConfig().getTargetDatabase().getPassword() != null) {
                 frameReader.option("password", conf.getSyncWorkConfig().getTargetDatabase().getPassword());
+            }
+
+            if (conf.getSyncWorkConfig().getTargetDatabase().getConnectConfig() != null) {
+                conf.getSyncWorkConfig().getTargetDatabase().getConnectConfig().forEach(frameReader::option);
             }
 
             if (SetMode.ADVANCE.equals(conf.getSyncRule().getSetMode())) {
