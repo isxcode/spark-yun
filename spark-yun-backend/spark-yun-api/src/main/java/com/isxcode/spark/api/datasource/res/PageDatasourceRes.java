@@ -2,6 +2,7 @@ package com.isxcode.spark.api.datasource.res;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.isxcode.spark.api.datasource.dto.KafkaConfig;
+import java.util.Map;
 import lombok.Data;
 
 @Data
@@ -35,4 +36,8 @@ public class PageDatasourceRes {
     private String kafkaConfigStr;
 
     private KafkaConfig kafkaConfig;
+
+    private Map<String, String> connectConfig;
+
+    private String connectConfigStr;
 }

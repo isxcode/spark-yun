@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import javax.validation.constraints.NotEmpty;
+import java.util.Map;
 
 @Data
 public class CheckConnectReq {
@@ -30,4 +31,7 @@ public class CheckConnectReq {
 
     @Schema(title = "kafka数据源配置")
     private KafkaConfig kafkaConfig;
+
+    @Schema(title = "高级配置")
+    private Map<String, String> connectConfig;
 }
