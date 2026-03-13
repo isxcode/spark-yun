@@ -87,7 +87,7 @@
         />
       </el-form-item>
       <el-form-item v-if="formData.dbType === 'HIVE'" label="hive.metastore.uris">
-        <el-tooltip content="thrift://${host}:${port}，默认端口号9083" placement="top">
+        <el-tooltip content="thrift://127.0.0.1:${port}，默认端口号9083" placement="top">
             <el-icon style="left: 104px" class="tooltip-msg"><QuestionFilled /></el-icon>
         </el-tooltip>
         <el-input
@@ -315,32 +315,32 @@ const typeList = reactive([
   }
 ]);
 const jdbcTipsMap: Record<string, string> = {
-  MYSQL: 'jdbc:mysql://${host}:${port}/${database}',
-  ORACLE: 'jdbc:oracle:thin:@${host}:${port}/${database}',
-  SQL_SERVER: 'jdbc:sqlserver://${host}:${port};databaseName=${database}',
-  POSTGRE_SQL: 'jdbc:postgresql://${host}:${port}/${database}',
-  CLICKHOUSE: 'jdbc:clickhouse://${host}:${port}/${database}',
-  HIVE: 'jdbc:hive2://${host}:${port}/${database}',
-  IMPALA: 'jdbc:hive2://${host}:${port}/${database};auth=noSasl',
-  TRINO: 'jdbc:trino://${host}:${port}/${configName}/${database}',
-  PRESTO: 'jdbc:presto://${host}:${port}/${configName}/${database}',
-  HANA_SAP: 'jdbc:sap://${host}:${port}/${database}',
-  DM: 'jdbc:dm://${host}:${port}?schema=${database}',
-  DORIS: 'jdbc:mysql://${host}:${port}/${database}',
-  OCEANBASE: 'jdbc:oceanbase://${host}:${port}/${database}',
-  TIDB: 'jdbc:mysql://${host}:${port}/${database}',
-  STAR_ROCKS: 'jdbc:mysql://${host}:${port}/${database}',
-  DB2: 'jdbc:db2://${host}:${port}/${database}',
-  T_DENGINE: 'jdbc:TAOS-WS://${host}:${port}/${database}',
+  MYSQL: 'jdbc:mysql://127.0.0.1:${port}/db_name',
+  ORACLE: 'jdbc:oracle:thin:@127.0.0.1:${port}/db_name',
+  SQL_SERVER: 'jdbc:sqlserver://127.0.0.1:${port};databaseName=db_name',
+  POSTGRE_SQL: 'jdbc:postgresql://127.0.0.1:${port}/db_name',
+  CLICKHOUSE: 'jdbc:clickhouse://127.0.0.1:${port}/db_name',
+  HIVE: 'jdbc:hive2://127.0.0.1:${port}/db_name',
+  IMPALA: 'jdbc:hive2://127.0.0.1:${port}/db_name;auth=noSasl',
+  TRINO: 'jdbc:trino://127.0.0.1:${port}/${configName}/db_name',
+  PRESTO: 'jdbc:presto://127.0.0.1:${port}/${configName}/db_name',
+  HANA_SAP: 'jdbc:sap://127.0.0.1:${port}/db_name',
+  DM: 'jdbc:dm://127.0.0.1:${port}?schema=db_name',
+  DORIS: 'jdbc:mysql://127.0.0.1:${port}/db_name',
+  OCEANBASE: 'jdbc:oceanbase://127.0.0.1:${port}/db_name',
+  TIDB: 'jdbc:mysql://127.0.0.1:${port}/db_name',
+  STAR_ROCKS: 'jdbc:mysql://127.0.0.1:${port}/db_name',
+  DB2: 'jdbc:db2://127.0.0.1:${port}/db_name',
+  T_DENGINE: 'jdbc:TAOS-WS://127.0.0.1:${port}/db_name',
   DUCK_DB: 'jdbc:duckdb:/path',
-  SELECT_DB: 'jdbc:mysql://${host}:${port}/${database}',
-  KAFKA: '${host}:${port} 默认端口号：9092',
-  GAUSS: 'jdbc:gaussdb://${host}:${port}/${database}',
-  GBASE: 'jdbc:gbase://${host}:${port}/${database}',
-  GREENPLUM: 'jdbc:pivotal:greenplum://${host}:${port};DatabaseName=${database}',
-  H2: 'jdbc:h2:tcp://${host}:${port}/${database}',
-  OPEN_GAUSS: 'jdbc:opengauss://${host}:${port}/${database}',
-  SYBASE: 'jdbc:sybase:Tds:${host}:${port}/${database}',
+  SELECT_DB: 'jdbc:mysql://127.0.0.1:${port}/db_name',
+  KAFKA: '127.0.0.1:${port} 默认端口号：9092',
+  GAUSS: 'jdbc:gaussdb://127.0.0.1:${port}/db_name',
+  GBASE: 'jdbc:gbase://127.0.0.1:${port}/db_name',
+  GREENPLUM: 'jdbc:pivotal:greenplum://127.0.0.1:${port};DatabaseName=db_name',
+  H2: 'jdbc:h2:tcp://127.0.0.1:${port}/db_name',
+  OPEN_GAUSS: 'jdbc:opengauss://127.0.0.1:${port}/db_name',
+  SYBASE: 'jdbc:sybase:Tds:127.0.0.1:${port}/db_name',
 }
 const jdbcTip = computed(() => {
   return jdbcTipsMap[formData.dbType] || '请先选择数据源类型'
