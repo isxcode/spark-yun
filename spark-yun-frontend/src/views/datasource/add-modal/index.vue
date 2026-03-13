@@ -665,5 +665,10 @@ defineExpose({
   justify-content: space-between;
   align-items: center;
   width: 100%;
+
+  > div {
+    display: flex;
+    align-items: center;
+  }
 }
 </style>
