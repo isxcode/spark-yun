@@ -98,7 +98,7 @@ tasks.register("format") {
 
 tasks.register('package', GradleBuild) {
 
-    tasks = ["clean", ":spark-yun-dist:make"]
+    tasks = ["install", "clean", ":spark-yun-dist:make"]
 }
 
 tasks.register('start', Exec) {
