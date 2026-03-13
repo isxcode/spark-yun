@@ -75,7 +75,7 @@
                 <el-icon style="margin-left: 4px; color: var(--el-color-info); font-size: 16px; cursor: pointer;"><QuestionFilled /></el-icon>
               </el-tooltip>
             </div>
-            <el-button type="primary" link size="small" @click="advancedConfigVisible = true">高级配置</el-button>
+            <el-button type="primary" link size="small" @click="openAdvancedConfig">高级配置</el-button>
           </div>
         </template>
         <el-input
@@ -173,6 +173,7 @@
     width="520px"
     :close-on-click-modal="false"
     append-to-body
+    class="advanced-config-dialog"
   >
     <div class="advanced-config-content">
       <div
@@ -188,7 +189,7 @@
       </div>
     </div>
     <template #footer>
-      <div style="display: flex; justify-content: space-between; align-items: center;">
+      <div class="advanced-config-footer">
         <el-button type="primary" link @click="addConfigItem">添加配置</el-button>
         <div>
           <el-button @click="advancedConfigVisible = false">取消</el-button>
@@ -577,6 +578,13 @@ function okEvent() {
   })
 }
 
+function openAdvancedConfig() {
+  if (connectConfigList.value.length === 0) {
+    connectConfigList.value.push({ key: '', value: '' })
+  }
+  advancedConfigVisible.value = true
+}
+
 function addConfigItem() {
   connectConfigList.value.push({ key: '', value: '' })
 }
@@ -651,5 +659,11 @@ defineExpose({
     align-items: center;
     margin-bottom: 8px;
   }
+}
+.advanced-config-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
 }
 </style>
