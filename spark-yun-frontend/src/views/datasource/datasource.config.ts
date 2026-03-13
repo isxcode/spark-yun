@@ -157,7 +157,8 @@ export const colConfigs: colConfig[] = [
     prop: 'name',
     title: '名称',
     minWidth: 100,
-    showOverflowTooltip: true
+    showOverflowTooltip: true,
+    customSlot: 'nameSlot'
   },
   {
     prop: 'dbType',
