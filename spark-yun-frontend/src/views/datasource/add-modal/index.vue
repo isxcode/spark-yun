@@ -39,31 +39,7 @@
         label="连接信息"
         prop="jdbcUrl"
       >
-        <el-tooltip placement="top">
-            <template #content>
-              <pre>
-mysql: jdbc:mysql://${host}:${port}/${database}
-oracle: jdbc:oracle:thin:@${host}:${port}/${database}
-sqlserver: jdbc:sqlserver://${host}:${port};databaseName=${database}
-postgre: jdbc:postgresql://${host}:${port}/${database}
-clickhouse: jdbc:clickhouse://${host}:${port}/${database}
-hive: jdbc:hive2://${host}:${port}/${database}
-impala: jdbc:hive2://${host}:${port}/${database};auth=noSasl
-trino: jdbc:trino://${host}:${port}/${configName}/${database}
-presto: jdbc:presto://${host}:${port}/${configName}/${database}
-sap: jdbc:sap://${host}:${port}/${database}
-达梦: jdbc:dm://${host}:${port}?schema=${database}
-doris: jdbc:mysql://${host}:${port}/${database}
-oceanbase: jdbc:oceanbase://${host}:${port}/${database}
-tidb: jdbc:mysql://${host}:${port}/${database}
-starrocks: jdbc:mysql://${host}:${port}/${database}
-db2: jdbc:db2://${host}:${port}/${database}
-tdengine: jdbc:TAOS-WS://${host}:${port}/${database}
-duckDB: jdbc:duckdb:/path
-selectDB: jdbc:mysql://${host}:${port}/${database}
-kafka: ${host}:${port} 默认端口号：9092
-              </pre>
-            </template>
+        <el-tooltip :content="jdbcTip" placement="top">
             <el-icon style="left: 50px" class="tooltip-msg"><QuestionFilled /></el-icon>
         </el-tooltip>
         <el-input
@@ -180,7 +156,7 @@ kafka: ${host}:${port} 默认端口号：9092
 </template>
 
 <script lang="ts" setup>
-import { reactive, defineExpose, ref, nextTick } from 'vue'
+import { reactive, defineExpose, ref, nextTick, computed } from 'vue'
 import BlockModal from '@/components/block-modal/index.vue'
 import { ElMessage, FormInstance, FormRules } from 'element-plus'
 import { GetDefaultDriverData, GetDriverListData } from '@/services/driver-management.service'
@@ -332,6 +308,37 @@ const typeList = reactive([
     value: 'TRINO'
   }
 ]);
+const jdbcTipsMap: Record<string, string> = {
+  MYSQL: 'jdbc:mysql://${host}:${port}/${database}',
+  ORACLE: 'jdbc:oracle:thin:@${host}:${port}/${database}',
+  SQL_SERVER: 'jdbc:sqlserver://${host}:${port};databaseName=${database}',
+  POSTGRE_SQL: 'jdbc:postgresql://${host}:${port}/${database}',
+  CLICKHOUSE: 'jdbc:clickhouse://${host}:${port}/${database}',
+  HIVE: 'jdbc:hive2://${host}:${port}/${database}',
+  IMPALA: 'jdbc:hive2://${host}:${port}/${database};auth=noSasl',
+  TRINO: 'jdbc:trino://${host}:${port}/${configName}/${database}',
+  PRESTO: 'jdbc:presto://${host}:${port}/${configName}/${database}',
+  HANA_SAP: 'jdbc:sap://${host}:${port}/${database}',
+  DM: 'jdbc:dm://${host}:${port}?schema=${database}',
+  DORIS: 'jdbc:mysql://${host}:${port}/${database}',
+  OCEANBASE: 'jdbc:oceanbase://${host}:${port}/${database}',
+  TIDB: 'jdbc:mysql://${host}:${port}/${database}',
+  STAR_ROCKS: 'jdbc:mysql://${host}:${port}/${database}',
+  DB2: 'jdbc:db2://${host}:${port}/${database}',
+  T_DENGINE: 'jdbc:TAOS-WS://${host}:${port}/${database}',
+  DUCK_DB: 'jdbc:duckdb:/path',
+  SELECT_DB: 'jdbc:mysql://${host}:${port}/${database}',
+  KAFKA: '${host}:${port} 默认端口号：9092',
+  GAUSS: 'jdbc:gaussdb://${host}:${port}/${database}',
+  GBASE: 'jdbc:gbase://${host}:${port}/${database}',
+  GREENPLUM: 'jdbc:pivotal:greenplum://${host}:${port};DatabaseName=${database}',
+  H2: 'jdbc:h2:tcp://${host}:${port}/${database}',
+  OPEN_GAUSS: 'jdbc:opengauss://${host}:${port}/${database}',
+  SYBASE: 'jdbc:sybase:Tds:${host}:${port}/${database}',
+}
+const jdbcTip = computed(() => {
+  return jdbcTipsMap[formData.dbType] || '请先选择数据源类型'
+})
 const rules = reactive<FormRules>({
   name: [
     {
