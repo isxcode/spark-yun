@@ -4,6 +4,7 @@ import com.isxcode.spark.api.datasource.dto.KafkaConfig;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import javax.validation.constraints.NotEmpty;
+import java.util.Map;
 
 import lombok.Data;
 
@@ -43,4 +44,7 @@ public class UpdateDatasourceReq {
 
     @Schema(title = "kafka数据源配置")
     private KafkaConfig kafkaConfig;
+
+    @Schema(title = "高级配置")
+    private Map<String, String> connectConfig;
 }

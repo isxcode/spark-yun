@@ -31,6 +31,7 @@ import java.sql.Connection;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import javax.transaction.Transactional;
 
@@ -97,6 +98,11 @@ public class DatasourceBizService {
             datasource.setKafkaConfig(JSON.toJSONString(addDatasourceReq.getKafkaConfig()));
         }
 
+        // 高级配置
+        if (addDatasourceReq.getConnectConfig() != null && !addDatasourceReq.getConnectConfig().isEmpty()) {
+            datasource.setConnectConfig(JSON.toJSONString(addDatasourceReq.getConnectConfig()));
+        }
+
         datasource.setCheckDateTime(LocalDateTime.now());
 
         // 再检测一遍，成功就改为可用，否则待检测
@@ -130,6 +136,12 @@ public class DatasourceBizService {
         if (DatasourceType.KAFKA.equals(datasource.getDbType())) {
             updateDatasourceReq.getKafkaConfig().setBootstrapServers(updateDatasourceReq.getJdbcUrl());
             datasource.setKafkaConfig(JSON.toJSONString(updateDatasourceReq.getKafkaConfig()));
+        }
+
+        // 高级配置
+        if (updateDatasourceReq.getConnectConfig() != null) {
+            datasource.setConnectConfig(updateDatasourceReq.getConnectConfig().isEmpty() ? null
+                : JSON.toJSONString(updateDatasourceReq.getConnectConfig()));
         }
 
         // 判断如果是hive数据源，metastore_uris没有填写，附加默认值，thrift://localhost:9083
@@ -166,12 +178,14 @@ public class DatasourceBizService {
             datasourceEntityPage.map(datasourceMapper::datasourceEntityToQueryDatasourceRes);
         pageDatasourceRes.getContent().forEach(e -> {
             if (!Strings.isEmpty(e.getDriverId())) {
-                if (!Strings.isEmpty(e.getDriverId())) {
-                    e.setDriverName(databaseDriverService.getDriverName(e.getDriverId()));
-                }
+                e.setDriverName(databaseDriverService.getDriverName(e.getDriverId()));
             }
             if (DatasourceType.KAFKA.equals(e.getDbType())) {
                 e.setKafkaConfig(JSON.parseObject(e.getKafkaConfigStr(), KafkaConfig.class));
+            }
+            if (!Strings.isEmpty(e.getConnectConfigStr())) {
+                e.setConnectConfig(JSON.parseObject(e.getConnectConfigStr(),
+                    new com.alibaba.fastjson2.TypeReference<Map<String, String>>() {}));
             }
         });
 

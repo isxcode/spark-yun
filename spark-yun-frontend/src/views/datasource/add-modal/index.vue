@@ -67,9 +67,17 @@
         label="连接信息"
         prop="jdbcUrl"
       >
-        <el-tooltip :content="jdbcTip" placement="top">
-            <el-icon style="left: 50px" class="tooltip-msg"><QuestionFilled /></el-icon>
-        </el-tooltip>
+        <template #label>
+          <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+            <div style="display: flex; align-items: center;">
+              <span>连接信息</span>
+              <el-tooltip :content="jdbcTip" placement="top">
+                <el-icon style="margin-left: 4px; color: var(--el-color-info); font-size: 16px; cursor: pointer;"><QuestionFilled /></el-icon>
+              </el-tooltip>
+            </div>
+            <el-button type="primary" link size="small" @click="advancedConfigVisible = true">高级配置</el-button>
+          </div>
+        </template>
         <el-input
           v-model="formData.jdbcUrl"
           placeholder="请输入"
@@ -159,12 +167,41 @@
       </div>
     </template>
   </BlockModal>
+  <el-dialog
+    v-model="advancedConfigVisible"
+    title="高级配置"
+    width="520px"
+    :close-on-click-modal="false"
+    append-to-body
+  >
+    <div class="advanced-config-content">
+      <div
+        v-for="(item, index) in connectConfigList"
+        :key="index"
+        class="advanced-config-row"
+      >
+        <el-input v-model="item.key" placeholder="Key" style="flex: 1;" />
+        <el-input v-model="item.value" placeholder="Value" style="flex: 1; margin-left: 8px;" />
+        <el-button type="danger" link @click="removeConfigItem(index)" style="margin-left: 8px;">
+          <el-icon><Delete /></el-icon>
+        </el-button>
+      </div>
+      <el-button type="primary" link @click="addConfigItem" style="margin-top: 8px;">
+        <el-icon><Plus /></el-icon> 添加配置
+      </el-button>
+    </div>
+    <template #footer>
+      <el-button @click="advancedConfigVisible = false">取消</el-button>
+      <el-button type="primary" @click="saveAdvancedConfig">确定</el-button>
+    </template>
+  </el-dialog>
 </template>
 
 <script lang="ts" setup>
 import { reactive, defineExpose, ref, nextTick, computed } from 'vue'
 import BlockModal from '@/components/block-modal/index.vue'
 import { ElMessage, FormInstance, FormRules } from 'element-plus'
+import { Delete, Plus } from '@element-plus/icons-vue'
 import { GetDefaultDriverData, GetDriverListData } from '@/services/driver-management.service'
 import { TestDatasourceData } from '@/services/datasource.service'
 
@@ -174,6 +211,8 @@ const driverIdList = ref([])
 const testLoading = ref(false)
 const testResult = ref()
 const driverPopoverVisible = ref(false)
+const advancedConfigVisible = ref(false)
+const connectConfigList = ref<Array<{ key: string; value: string }>>([])
 const modelConfig = reactive({
   title: '添加数据源',
   visible: false,
@@ -206,6 +245,7 @@ const formData = reactive({
   username: '',
   passwd: '',
   remark: '',
+  connectConfig: {} as Record<string, string>,
   id: ''
 })
 const typeList = reactive([
@@ -410,8 +450,11 @@ function showModal(cb: () => void, data: any): void {
       topic: data?.kafkaConfig?.topic
     }
     formData.metastoreUris = data.metastoreUris
+    formData.connectConfig = data.connectConfig || {}
     formData.id = data.id
     modelConfig.title = '编辑数据源'
+    // 回显高级配置
+    connectConfigList.value = Object.entries(formData.connectConfig).map(([key, value]) => ({ key, value: value as string }))
   } else {
     formData.name = ''
     formData.dbType = ''
@@ -424,8 +467,10 @@ function showModal(cb: () => void, data: any): void {
     }
     formData.driverId = ''
     formData.metastoreUris = ''
+    formData.connectConfig = {}
     formData.id = ''
     modelConfig.title = '添加数据源'
+    connectConfigList.value = []
   }
   getDriverIdList(true)
   nextTick(() => {
@@ -530,8 +575,37 @@ function okEvent() {
   })
 }
 
+function addConfigItem() {
+  connectConfigList.value.push({ key: '', value: '' })
+}
+
+function removeConfigItem(index: number) {
+  connectConfigList.value.splice(index, 1)
+}
+
+function saveAdvancedConfig() {
+  // 过滤空行
+  const validItems = connectConfigList.value.filter(item => item.key.trim() !== '')
+  // 校验key唯一性
+  const keys = validItems.map(item => item.key.trim())
+  const uniqueKeys = new Set(keys)
+  if (keys.length !== uniqueKeys.size) {
+    ElMessage.warning('配置项Key不能重复')
+    return
+  }
+  // 转为对象
+  const config: Record<string, string> = {}
+  validItems.forEach(item => {
+    config[item.key.trim()] = item.value.trim()
+  })
+  formData.connectConfig = config
+  connectConfigList.value = validItems
+  advancedConfigVisible.value = false
+}
+
 function closeEvent() {
   driverPopoverVisible.value = false
+  advancedConfigVisible.value = false
   modelConfig.visible = false
 }
 
@@ -567,6 +641,13 @@ defineExpose({
     &.success {
       color: getCssVar('color', 'success');
     }
+  }
+}
+.advanced-config-content {
+  .advanced-config-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
   }
 }
 </style>
