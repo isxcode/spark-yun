@@ -186,14 +186,14 @@
           <el-icon><Delete /></el-icon>
         </el-button>
       </div>
-      <el-button type="primary" link @click="addConfigItem" style="margin-top: 8px;">
-        <el-icon><Plus /></el-icon> 添加配置
-      </el-button>
     </div>
     <template #footer>
-      <div style="display: flex; justify-content: flex-end;">
-        <el-button @click="advancedConfigVisible = false">取消</el-button>
-        <el-button type="primary" @click="saveAdvancedConfig">确定</el-button>
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <el-button type="primary" link @click="addConfigItem">添加配置</el-button>
+        <div>
+          <el-button @click="advancedConfigVisible = false">取消</el-button>
+          <el-button type="primary" @click="saveAdvancedConfig">确定</el-button>
+        </div>
       </div>
     </template>
   </el-dialog>
