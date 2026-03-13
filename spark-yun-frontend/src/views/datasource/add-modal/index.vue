@@ -515,6 +515,7 @@ function okEvent() {
         .then((res: any) => {
           modelConfig.okConfig.loading = false
           if (res === undefined) {
+            driverPopoverVisible.value = false
             modelConfig.visible = false
           } else {
             modelConfig.visible = true
@@ -530,6 +531,7 @@ function okEvent() {
 }
 
 function closeEvent() {
+  driverPopoverVisible.value = false
   modelConfig.visible = false
 }
 
