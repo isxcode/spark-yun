@@ -21,6 +21,34 @@
         label="类型"
         prop="dbType"
       >
+        <template #label>
+          <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+            <span>类型</span>
+            <el-popover
+              placement="top"
+              :width="240"
+              trigger="click"
+              :visible="driverPopoverVisible"
+            >
+              <template #reference>
+                <el-button type="primary" link size="small" @click="openDriverPopover">更换驱动</el-button>
+              </template>
+              <el-select
+                v-model="formData.driverId"
+                placeholder="请选择驱动"
+                style="width: 100%"
+                @visible-change="onDriverSelectVisibleChange"
+              >
+                <el-option
+                  v-for="item in driverIdList"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id"
+                />
+              </el-select>
+            </el-popover>
+          </div>
+        </template>
         <el-select
           v-model="formData.dbType"
           placeholder="请选择"
@@ -127,29 +155,7 @@
             <el-icon class="hover-tooltip success" v-else><SuccessFilled /></el-icon>
           </template>
         </el-popover>
-        <el-popover
-          placement="top"
-          :width="240"
-          trigger="click"
-          :visible="driverPopoverVisible"
-        >
-          <template #reference>
-            <el-button type="primary" link @click="openDriverPopover">更换驱动</el-button>
-          </template>
-          <el-select
-            v-model="formData.driverId"
-            placeholder="请选择驱动"
-            style="width: 100%"
-            @visible-change="onDriverSelectVisibleChange"
-          >
-            <el-option
-              v-for="item in driverIdList"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id"
-            />
-          </el-select>
-        </el-popover>
+
       </div>
     </template>
   </BlockModal>
@@ -480,6 +486,7 @@ function getDriverIdList(e: boolean) {
 function dbTypeChange(e: string) {
   formData.metastoreUris = ''
   formData.driverId = ''
+  formData.jdbcUrl = jdbcTipsMap[e] || ''
 
   getDriverIdList(true)
   getDefaultDriver(e)
