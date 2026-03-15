@@ -1,24 +1,46 @@
 <template>
     <div class="work-etl">
-        <OptionsContainer
-            ref="optionsContainerRef"
-            @optionsEvent="optionsEvent"
-        ></OptionsContainer>
-        <div class="work-etl-main">
-            <TaskList @handleDragEnd="handleDragEnd"></TaskList>
-            <ZEtlFlow
-                ref="zEtlFlowRef"
-                @refresh="initFlowData"
-            ></ZEtlFlow>
-        </div>
+        <LoadingPage :visible="loading">
+            <OptionsContainer
+                ref="optionsContainerRef"
+                @optionsEvent="optionsEvent"
+            ></OptionsContainer>
+            <div class="work-etl-main">
+                <TaskList @handleDragEnd="handleDragEnd"></TaskList>
+                <ZEtlFlow
+                    ref="zEtlFlowRef"
+                    @refresh="initFlowData"
+                ></ZEtlFlow>
+            </div>
+        </LoadingPage>
+         <!-- 数据同步日志部分  v-if="instanceId" -->
+         <el-collapse v-if="!!instanceId" v-model="collapseActive" class="data-sync-log__collapse" ref="logCollapseRef">
+            <el-collapse-item title="查看日志" :disabled="true" name="1">
+                <template #title>
+                    <el-tabs v-model="activeName" @tab-click="changeCollapseUp" @tab-change="tabChangeEvent">
+                        <template v-for="tab in tabList" :key="tab.code">
+                        <el-tab-pane v-if="!tab.hide" :label="tab.name" :name="tab.code" />
+                        </template>
+                    </el-tabs>
+                    <span class="log__collapse">
+                        <el-icon v-if="isCollapse" @click="changeCollapseDown"><ArrowDown /></el-icon>
+                        <el-icon v-else @click="changeCollapseUp"><ArrowUp /></el-icon>
+                    </span>
+                </template>
+                <div class="log-show log-show-datasync">
+                    <component :is="currentTab" ref="containerInstanceRef" class="show-container" />
+                </div>
+            </el-collapse-item>
+        </el-collapse>
         <AddTaskModal ref="addTaskModalRef"></AddTaskModal>
         <TaskConfig ref="taskConfigRef"></TaskConfig>
     </div>
 </template>
 
 <script lang="ts" setup>
-import { ref, defineEmits, defineProps, onMounted, nextTick, onUnmounted } from 'vue'
+import { ref, reactive, defineEmits, defineProps, onMounted, nextTick, onUnmounted, markRaw } from 'vue'
 import OptionsContainer from './options-container/index.vue'
+import LoadingPage from '@/components/loading/index.vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import TaskList from './task-list/index.vue'
 import ZEtlFlow from './z-etl-flow/flow.vue'
@@ -26,6 +48,10 @@ import AddTaskModal from './add-task-modal/index.vue'
 import TaskConfig from './task-config/index.vue'
 import eventBus from '@/utils/eventBus'
 import { GetWorkItemConfig, PublishWorkData, RunWorkItemConfig, SaveWorkItemConfig, TerWorkItemConfig } from '@/services/workflow.service'
+import { TaskParams } from './task-params.ts'
+import { cloneDeep } from 'lodash-es'
+import PublishLog from '../work-item/publish-log.vue'
+import RunningLog from '../work-item/running-log.vue'
 
 const guid = function() {
     function S4() {
@@ -44,8 +70,28 @@ const optionsContainerRef = ref<any>()
 const zEtlFlowRef = ref<any>()
 const addTaskModalRef = ref<any>()
 const taskConfigRef = ref<any>()
-
+const loading = ref<boolean>(false)
 const runningStatus = ref<boolean>(false)
+
+const instanceId = ref('')
+const containerInstanceRef = ref(null)
+const logCollapseRef = ref()
+const currentTab = ref()
+const activeName = ref()
+const collapseActive = ref('0')
+const isCollapse = ref(false)
+const tabList = reactive([
+    {
+        name: '提交日志',
+        code: 'PublishLog',
+        hide: false
+    },
+    {
+        name: '运行日志',
+        code: 'RunningLog',
+        hide: false
+    }
+])
 
 function optionsEvent(e: string) {
     if (e === 'goBack') {
@@ -54,6 +100,10 @@ function optionsEvent(e: string) {
         locationNode()
     } else if (e === 'saveData') {
         saveData()
+    } else if (e === 'runWorkData') {
+        runWorkData()
+    } else if (e === 'terWorkData') {
+        terWorkData()
     }
 }
 
@@ -94,50 +144,24 @@ function handleDragEnd(e: any, item: any) {
     if (!runningStatus.value) {
         nextTick(() => {
             item.id = guid()
-            // 数据输入
-            if (item.type === 'DATA_INPUT') {
-                item.inputEtl = {
-                    datasourceId: '',
-                    dbType: '',
-                    tableName: '',
-                    numPartitions: null,
-                    partitionColumn: ''
-                }
-                item.outColumnList = []
+            item.aliaCode = item.id
+            const newItem = {
+                name: item.typeName,
+                inputEtl: null,
+                ...item,
+                ...cloneDeep(TaskParams[item.type]),
             }
-            // 数据输出
-            if (item.type === 'DATA_OUTPUT') {
-                item.outputEtl = {
-                    datasourceId: '',
-                    dbType: '',
-                    tableName: '',
-                    writeMode: '',
-                    partitionColumn: ''
-                }
-                item.fromColumnList = []
-                item.toColumnList = []
-                item.colMapping = []
-            }
-            // 数据转换
-            if (item.type === 'DATA_TRANSFORM') {
-                item.transformEtl = [{
-                    colName: '',
-                    transformWay: 'FUNCTION_TRANSFORM',
-                    transformFunc: '',
-                    transformSql: '',
-                    inputValue: []
-                }]
-                item.outColumnList = []
-            }
-            zEtlFlowRef.value.addNodeFn(item, e)
+            zEtlFlowRef.value.addNodeFn(newItem, e)
         })
     }
 }
 
 function initFlowData() {
+    loading.value = true
     GetWorkItemConfig({
         workId: props.workItemConfig.id
     }).then((res: any) => {
+        loading.value = false
         if (res.data && res.data.sparkEtlConfig && res.data.sparkEtlConfig.webConfig) {
             zEtlFlowRef.value.initCellList(res.data.sparkEtlConfig.webConfig)
         }
@@ -177,7 +201,7 @@ function saveData() {
             })
         }
     }
-    optionsContainerRef.value.saveLoading = true
+    optionsContainerRef.value.btnLoadingConfig.saveLoading = true
     SaveWorkItemConfig(requestParasm).then((res: any) => {
         changeStatus.value = false
         ElMessage.success(res.msg)
@@ -187,36 +211,96 @@ function saveData() {
     })
 }
 
+// 运行
+function runWorkData() {
+    optionsContainerRef.value.btnLoadingConfig.runningLoading = true
+    RunWorkItemConfig({
+      workId: props.workItemConfig.id
+    }).then((res: any) => {
+        optionsContainerRef.value.closeLoading()
+        instanceId.value = res.data.instanceId
+        ElMessage.success(res.msg)
+        // 获取到 instanceId 后重新初始化日志组件
+        // initFlowData()
+        tabChangeEvent('PublishLog')
+        nextTick(() => {
+            changeCollapseUp()
+            // 立即初始化日志组件为加载状态
+            containerInstanceRef.value?.initData(instanceId.value)
+        })
+    }).catch(() => {
+        optionsContainerRef.value.closeLoading()
+    })
+}
+
+// 终止
+function terWorkData() {
+    if (!instanceId.value) {
+        ElMessage.warning('暂无可中止的作业')
+        return
+    }
+    terLoading.value = true
+    TerWorkItemConfig({
+        workId: props.workItemConfig.id,
+        instanceId: instanceId.value
+    }).then((res: any) => {
+        optionsContainerRef.value.closeLoading()
+        ElMessage.success(res.msg)
+        initFlowData()
+    }).catch(() => {
+        optionsContainerRef.value.closeLoading()
+    })
+}
+
+// 日志tab切换
+function tabChangeEvent(e: string) {
+    const lookup = {
+        PublishLog: PublishLog,
+        RunningLog: RunningLog
+    }
+    activeName.value = e
+    currentTab.value = markRaw(lookup[e])
+    nextTick(() => {
+        containerInstanceRef.value?.initData(instanceId.value)
+    })
+}
+function changeCollapseDown() {
+    logCollapseRef.value.setActiveNames('0')
+    isCollapse.value = false
+}
+function changeCollapseUp(e: any) {
+    if (e && e.paneName === activeName.value && isCollapse.value) {
+        changeCollapseDown()
+    } else {
+        logCollapseRef.value.setActiveNames('1')
+        isCollapse.value = true
+    }
+}
+
 onMounted(() => {
+    activeName.value = 'PublishLog'
+    currentTab.value = markRaw(PublishLog)
     initFlowData()
     eventBus.on('taskFlowEvent', (e: any) => {
-        if (e.type === 'task_edit') {
-            addTaskModalRef.value.showModal((formData) => {
-                return new Promise((resolve: any, reject: any) => {
-                    zEtlFlowRef.value?.updateNodeFn({
-                        ...e.data.nodeConfigData,
-                        ...formData
-                    })
-                    resolve()
-                })
-            }, {
-                name: e.data.name,
-                remark: e.data.nodeConfigData.remark,
-                aliaCode: e.data.nodeConfigData.aliaCode,
-                id: e.data.nodeConfigData.id
-            })
-        } else if (e.type === 'task_config') {
+        if (e.type === 'task_config') {
             nextTick(() => {
+                // 点开编辑的时候，直接获取上级流转的参数
                 const incomeNodes = zEtlFlowRef.value?.getIncomeNodes(e.data.nodeConfigData)
-                taskConfigRef.value?.showModal(incomeNodes, (formData: any) => {
-                    return new Promise((resolve: any) => {
-                        zEtlFlowRef.value?.updateNodeFn({
-                            ...e.data.nodeConfigData,
-                            ...formData
-                        })
-                        resolve()
-                    })
-                }, e.data.nodeConfigData)
+                if (incomeNodes) {
+                    if (incomeNodes && incomeNodes.length || ['DATA_INPUT'].includes(e.data.nodeConfigData.type)) {
+                        taskConfigRef.value?.showModal(incomeNodes, (formData: any) => {
+                            return new Promise((resolve: any) => {
+                                zEtlFlowRef.value?.updateNodeFn({
+                                    ...e.data.nodeConfigData,
+                                    ...formData
+                                })
+                                resolve()
+                            })
+                        }, e.data.nodeConfigData)
+                    } else {
+                        ElMessage.error('无前置任务，请先设置上游')
+                    }
+                }
             })
         }
     })
@@ -240,6 +324,76 @@ onUnmounted(() => {
             left: 102px;
             top: 50px;
             right: 0;
+        }
+    }
+    .data-sync-log__collapse {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 100;
+
+        .el-collapse-item__header {
+            // padding-left: 20px;
+            cursor: default;
+        }
+        .el-collapse-item__arrow {
+            display: none;
+        }
+        .el-collapse-item__content {
+            padding-bottom: 14px;
+        }
+
+        .log__collapse {
+            position: absolute;
+            right: 20px;
+            cursor: pointer;
+        }
+
+        .el-tabs {
+            width: 100%;
+            // padding: 0 20px;
+            height: 40px;
+            box-sizing: border-box;
+            .el-tabs__item {
+                font-size: getCssVar('font-size', 'extra-small');
+            }
+
+            .el-tabs__nav-scroll {
+                padding-left: 20px;
+                box-sizing: border-box;
+            }
+
+            .el-tabs__content {
+                height: 0;
+            }
+
+            .el-tabs__nav-scroll {
+                border-bottom: 1px solid getCssVar('border-color');
+            }
+        }
+        .log-show {
+            padding: 0 20px;
+            box-sizing: border-box;
+            &.log-show-datasync {
+                .zqy-download-log {
+                    right: 40px;
+                    top: 12px;
+                }
+            }
+
+            pre {
+                width: 100px;
+            }
+
+            .show-container {
+                height: calc(100vh - 368px);
+                overflow: auto;
+            }
+
+            .empty-page {
+                height: 80%;
+            }
         }
     }
 }

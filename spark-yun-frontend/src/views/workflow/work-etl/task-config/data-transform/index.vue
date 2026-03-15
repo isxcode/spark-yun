@@ -24,7 +24,7 @@
                         </el-select>
                     </el-form-item>
                     <el-form-item :prop="`transformEtl[${index}].transformWay`" :rules="rules.transformWay">
-                        <el-select v-model="element.transformWay" @change="transformChangeEvent($Events, element)">
+                        <el-select v-model="element.transformWay" @change="transformChangeEvent($event, element)">
                             <el-option label="函数转换" value="FUNCTION_TRANSFORM"/>
                             <el-option label="自定义转换" value="CUSTOM_TRANSFORM"/>
                         </el-select>
@@ -173,6 +173,7 @@ onMounted(() => {
                 remark: column.remark
             }
         })
+        formData.value.inputEtl = props.incomeNodes[0].data.nodeConfigData.inputEtl
     }
 
     getFunctionList()

@@ -7,3 +7,12 @@ export function GetTransformFunction(): Promise<any> {
         url: '/vip/work/listEtlTransformFunction',
     })
 }
+
+// etl自定义节点解析
+export function ParseCustomSqlFunction(params: any): Promise<any> {
+    return http.request({
+        method: 'post',
+        url: '/vip/work/parseEtlCustomDataSql',
+        params: params
+    })
+}

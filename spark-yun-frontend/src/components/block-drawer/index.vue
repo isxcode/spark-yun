@@ -8,6 +8,7 @@
     :title="drawerConfig.title"
     :size="drawerConfig.width || '40%'"
     :class="drawerConfig.customClass + ' zqy-block-drawer'"
+    :z-index="drawerConfig.zIndex"
     @close="close"
   >
     <template #default>
