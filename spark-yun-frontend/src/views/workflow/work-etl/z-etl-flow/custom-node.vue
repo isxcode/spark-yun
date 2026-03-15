@@ -12,7 +12,12 @@
                 <el-icon v-if="status === 'PENDING'" class="custom-icon"><Clock /></el-icon>
                 <el-icon v-if="status === 'ABORT'" class="custom-icon"><VideoPause /></el-icon>
             </template> -->
-            <el-dropdown trigger="click" @command="handleCommand">
+
+            <el-icon class="node-option-more" @click="handleCommand('task_config')">
+                <Setting />
+            </el-icon>
+
+            <!-- <el-dropdown trigger="click" @command="handleCommand">
                 <el-icon class="node-option-more">
                     <MoreFilled />
                 </el-icon>
@@ -22,7 +27,7 @@
                         <el-dropdown-item command="task_config">配置节点</el-dropdown-item>
                     </el-dropdown-menu>
                 </template>
-            </el-dropdown>
+            </el-dropdown> -->
         </div>
     </div>
 </template>
@@ -30,7 +35,7 @@
 <script lang="ts" setup>
 import { inject, onMounted, ref, computed } from 'vue'
 import { ElIcon, ElDropdown, ElDropdownMenu, ElDropdownItem } from 'element-plus'
-import { MoreFilled, Loading, Clock, VideoPause } from '@element-plus/icons-vue'
+import { MoreFilled, Loading, Clock, VideoPause, Setting } from '@element-plus/icons-vue'
 import { RunAfterFlowData } from '@/services/workflow.service';
 import eventBus from '@/utils/eventBus'
 

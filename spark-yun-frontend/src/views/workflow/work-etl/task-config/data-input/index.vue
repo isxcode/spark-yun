@@ -2,7 +2,7 @@
     <div class="config-components">
         <el-form-item label="数据源类型" prop="inputEtl.dbType" :rules="rules.dbType">
             <el-select
-                v-model="formData.dbType"
+                v-model="formData.inputEtl.dbType"
                 filterable
                 clearable
                 placeholder="请选择"
@@ -18,12 +18,12 @@
         </el-form-item>
         <el-form-item label="数据源" prop="inputEtl.datasourceId" :rules="rules.datasourceId">
             <el-select
-                v-model="formData.datasourceId"
+                v-model="formData.inputEtl.datasourceId"
                 filterable
                 clearable
                 placeholder="请选择"
                 @change="changeEvent($event, 'datasourceId')"
-                @visible-change="getDataSource($event, formData.dbType)"
+                @visible-change="getDataSource($event, formData.inputEtl.dbType)"
             >
                 <el-option
                     v-for="item in dataSourceList"
@@ -35,12 +35,12 @@
         </el-form-item>
         <el-form-item label="表" prop="inputEtl.tableName" :rules="rules.tableName">
             <el-select
-                v-model="formData.tableName"
+                v-model="formData.inputEtl.tableName"
                 filterable
                 clearable
                 placeholder="请选择"
                 @change="changeEvent($event, 'tableName')"
-                @visible-change="getDataSourceTable($event, formData.datasourceId)"
+                @visible-change="getDataSourceTable($event, formData.inputEtl.datasourceId)"
             >
                 <el-option
                     v-for="item in sourceTablesList"
@@ -52,11 +52,11 @@
         </el-form-item>
         <el-form-item label="分区键" prop="inputEtl.partitionColumn" :rules="rules.partitionColumn">
             <el-select
-                v-model="formData.partitionColumn"
+                v-model="formData.inputEtl.partitionColumn"
                 filterable
                 clearable
                 placeholder="请选择"
-                @visible-change="getTableColumnData($event, formData.datasourceId, formData.tableName)"
+                @visible-change="getTableColumnData($event, formData.inputEtl.datasourceId, formData.inputEtl.tableName)"
             >
                 <el-option
                     v-for="item in partKeyList"
@@ -68,7 +68,7 @@
         </el-form-item>
         <el-form-item label="分区数" prop="inputEtl.numPartitions">
             <el-input-number
-                v-model="formData.numPartitions"
+                v-model="formData.inputEtl.numPartitions"
                 placeholder="请输入"
                 :min="0"
                 controls-position="right"
@@ -80,16 +80,17 @@
         </el-form-item>
         <!-- 数据预览 -->
         <table-detail ref="tableDetailRef"></table-detail>
-        <div style="height: 444px;">
+        <div style="max-height: 444px;">
             <BlockTable
               :table-config="tableConfig"
             >
                 <template #options="scopeSlot">
                     <div class="btn-group">
-                        <span>备注</span>
+                        <span @click="editEvent(scopeSlot.row)">备注</span>
                     </div>
                 </template>
             </BlockTable>
+            <RemarkModal ref="remarkModalRef"></RemarkModal>
         </div>
     </div>
 </template>
@@ -101,6 +102,8 @@ import { TypeList, ConfigRules, TableConfig } from './config.ts'
 import { GetDatasourceList } from '@/services/datasource.service'
 import { GetDataSourceTables, GetTableColumnsByTableId } from '@/services/data-sync.service'
 import TableDetail from './table-detail/index.vue'
+import RemarkModal from '@/views/metadata-page/metadata-management/remark-modal/index.vue'
+import { CodeRemarkEdit } from '@/services/metadata-page.service'
 
 interface Option {
     label: string
@@ -117,10 +120,11 @@ const dataSourceList = ref<Option[]>([])
 const sourceTablesList = ref<Option[]>([])
 const partKeyList = ref<Option[]>([])
 const tableDetailRef = ref<any>()
+const remarkModalRef = ref<any>(null)
 const tableConfig = reactive(TableConfig)
 const rules = reactive<FormRules>(ConfigRules)
 
-const formDataAll = computed({
+const formData = computed({
     get() {
         return props.modelValue
     },
@@ -129,29 +133,29 @@ const formDataAll = computed({
     }
 })
 
-const formData = computed({
-    get() {
-        return formDataAll.value.inputEtl
-    },
-    set(value) {
-        emit('update:modelValue', value)
-    }
-})
+// const formData = computed({
+//     get() {
+//         return formDataAll.value.inputEtl
+//     },
+//     set(value) {
+//         emit('update:modelValue', value)
+//     }
+// })
 
 function changeEvent(e: string, type: string) {
     if (type === 'dbType') {
-        formData.value.datasourceId = ''
+        formData.value.inputEtl.datasourceId = ''
         formData.value.tableName = ''
     }
     if (type === 'datasourceId') {
-        formData.value.tableName = ''
+        formData.value.inputEtl.tableName = ''
     }
     if (type === 'tableName' && e) {
         nextTick(() => {
             getTableColumn()
         })
     }
-    formData.value.partitionColumn = ''
+    formData.value.inputEtl.partitionColumn = ''
 }
 
 function getDataSource(e: boolean, searchType?: string) {
@@ -214,10 +218,10 @@ function getTableColumnData(e: boolean, dataSourceId: string, tableName: string)
 
 // 数据预览
 function showTableDetail(): void {
-    if (formData.value.datasourceId && formData.value.tableName) {
+    if (formData.value.inputEtl.datasourceId && formData.value.inputEtl.tableName) {
         tableDetailRef.value.showModal({
-            dataSourceId: formData.value.datasourceId,
-            tableName: formData.value.tableName
+            dataSourceId: formData.value.inputEtl.datasourceId,
+            tableName: formData.value.inputEtl.tableName
         })
     } else {
         ElMessage.warning('请选择数据源和表')
@@ -227,8 +231,8 @@ function showTableDetail(): void {
 // 刷新数据
 function getTableColumn() {
     GetTableColumnsByTableId({
-        dataSourceId: formData.value.datasourceId,
-        tableName: formData.value.tableName
+        dataSourceId: formData.value.inputEtl.datasourceId,
+        tableName: formData.value.inputEtl.tableName
     }).then((res: any) => {
         tableConfig.tableData = (res.data.columns || []).map((column: any) => {
             return {
@@ -237,22 +241,45 @@ function getTableColumn() {
                 remark: column.columnComment
             }
         })
-        formDataAll.value.outColumnList = [...tableConfig.tableData]
+        formData.value.outColumnList = [...tableConfig.tableData]
     }).catch(err => {
         console.error(err)
     })
 }
+
+function editEvent(e: any) {
+    const remark = e.remark
+    remarkModalRef.value.showModal((data: any) => {
+        return new Promise((resolve, reject) => {
+            CodeRemarkEdit({
+                datasourceId: formData.value.inputEtl.datasourceId,
+                tableName: formData.value.inputEtl.tableName,
+                columnName: e.colName,
+                comment: data.remark
+            }).then((res: any) => {
+                ElMessage.success(res.msg)
+                getTableColumn()
+                resolve()
+            }).catch((error: any) => {
+                reject(error)
+            })
+        })
+    }, {
+        remark: remark
+    })
+}
+
 onMounted(() => {
-    if (formData.value.dbType) {
-        getDataSource(true, formData.value.dbType)
-        if (formData.value.datasourceId) {
-            getDataSourceTable(true, formData.value.datasourceId)
-            if (formData.value.tableName) {
-                getTableColumnData(true, formData.value.datasourceId, formData.value.tableName)
+    if (formData.value.inputEtl.dbType) {
+        getDataSource(true, formData.value.inputEtl.dbType)
+        if (formData.value.inputEtl.datasourceId) {
+            getDataSourceTable(true, formData.value.inputEtl.datasourceId)
+            if (formData.value.inputEtl.tableName) {
+                getTableColumnData(true, formData.value.inputEtl.datasourceId, formData.value.inputEtl.tableName)
             }
         }
     }
-    tableConfig.tableData = formDataAll.value.outColumnList
+    tableConfig.tableData = formData.value.outColumnList
 })
 </script>
 
@@ -263,6 +290,18 @@ onMounted(() => {
     .el-form-item {
         .el-form-item__content {
             justify-content: flex-end;
+        }
+    }
+    .btn-group {
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        span {
+            cursor: pointer;
+            color: getCssVar('color', 'primary', 'light-5');
+            &:hover {
+                color: getCssVar('color', 'primary');;
+            }
         }
     }
 }

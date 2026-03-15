@@ -33,12 +33,12 @@
             </el-icon>
             <span class="btn-text">中止</span>
         </div>
-        <div class="btn-box" @click="optionsEvent('setConfigData')">
+        <!-- <div class="btn-box" @click="optionsEvent('setConfigData')">
             <el-icon>
                 <Setting />
             </el-icon>
             <span class="btn-text">配置</span>
-        </div>
+        </div> -->
         <div class="btn-box" @click="optionsEvent('locationNode')">
             <el-icon>
                 <Position />
@@ -50,6 +50,7 @@
 
 <script lang="ts" setup>
 import { defineEmits, reactive } from 'vue'
+import { Loading } from '@element-plus/icons-vue'
 
 // const emit = defineEmits(['saveData', 'runWorkData', 'terWorkData', 'setConfigData', 'locationNode'])
 const emit = defineEmits(['optionsEvent'])

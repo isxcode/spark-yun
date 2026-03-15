@@ -173,13 +173,13 @@ export const TableConfig: TableConfig = {
             minWidth: 100,
             showOverflowTooltip: true
         },
-        {
-            title: '操作',
-            align: 'center',
-            customSlot: 'options',
-            width: 80,
-            fixed: 'right'
-        }
+        // {
+        //     title: '操作',
+        //     align: 'center',
+        //     customSlot: 'options',
+        //     width: 80,
+        //     fixed: 'right'
+        // }
     ],
     seqType: 'seq',
     loading: false

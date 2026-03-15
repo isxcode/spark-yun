@@ -137,10 +137,25 @@ function changeEvent(e: string, type: string) {
     if (type === 'datasourceId') {
         formData.value.tableName = ''
     }
-    if (type === 'tableName' && e) {
-
-    }
     formData.value.partitionColumn = ''
+
+    if (formData.value.datasourceId && formData.value.tableName) {
+        GetTableColumnsByTableId({
+            dataSourceId: formData.value.datasourceId,
+            tableName: formData.value.tableName
+        }).then((res: any) => {
+            const tableData = (res.data.columns || []).map((column: any) => {
+                return {
+                    colName: column.name,
+                    colType: column.type,
+                    remark: column.columnComment
+                }
+            })
+            dataSyncTableRef.value.updateTargetTableColumn(tableData)
+        }).catch(err => {
+            console.error(err)
+        })
+    }
 }
 
 function getDataSource(e: boolean, searchType?: string) {
@@ -220,7 +235,7 @@ onMounted(() => {
             }
         }
     }
-    if (formDataAll.value.outputEtl.colMapping.length) {
+    if (formDataAll.value.outputEtl.colMapping && formDataAll.value.outputEtl.colMapping.length) {
         dataSyncTableRef.value.initPageData({
             sourceTableColumn: formDataAll.value.outputEtl.fromColumnList,
             targetTableColumn: formDataAll.value.outputEtl.toColumnList,

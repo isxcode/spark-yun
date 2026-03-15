@@ -114,6 +114,26 @@ function setTargetTableColumn(tableData: Column[]) {
         })
     })
 }
+function updateTargetTableColumn(tableData: Column[]) {
+    targetTableColumn.value = tableData
+
+    instance.deleteEveryConnection()
+    connectCopy.value = []
+
+    connectNodeList.value = []
+    // setContainer()
+    nextTick(() => {
+        const rightElList = document.querySelectorAll('.rightRowOutput')
+        instance.batch(function () {
+            rightElList.forEach((tr) => {
+                instance.makeTarget(tr, {
+                    anchor: ['Left'],
+                    maxConnections: 1
+                })
+            })
+        })
+    })
+}
 
 // 初始化数据
 function initPageData(data: any) {
@@ -275,7 +295,8 @@ defineExpose({
     getConnect,
     initPageData,
     setSourceTableColumn,
-    setTargetTableColumn
+    setTargetTableColumn,
+    updateTargetTableColumn
 })
 </script>
 
