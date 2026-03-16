@@ -95,7 +95,7 @@ docker run --rm \
   -v /tmp/spark-yun:/spark-yun \
   -w /spark-yun \
   -it registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun-build:latest-amd \
-  /bin/bash -c "source /etc/profile && gradle package"
+  gradle package
 ```
 
 ### 产品展示
