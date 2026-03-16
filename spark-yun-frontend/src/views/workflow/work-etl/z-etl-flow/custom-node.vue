@@ -7,8 +7,8 @@
                 :show-after="300"
             >
                 <div class="info-container">
-                    <p class="text name">名称：{{ nodeConfigData?.name || '-' }}</p>
-                    <p class="text type">类型：{{ nodeConfigData.typeName  }}</p>
+                    <el-icon class="node-icon"><component :is="nodeIcon" /></el-icon>
+                    <span class="node-name">{{ nodeConfigData?.name || '-' }}</span>
                 </div>
             </el-tooltip>
         </div>
@@ -16,8 +16,9 @@
 </template>
 
 <script lang="ts" setup>
-import { inject, onMounted, ref, computed } from 'vue'
+import { inject, onMounted, ref, computed, markRaw, type Component } from 'vue'
 import { ElIcon } from 'element-plus'
+import { Download, Upload, Link, CopyDocument, Filter, Switch, CirclePlus, SetUp, Document } from '@element-plus/icons-vue'
 import { RunAfterFlowData } from '@/services/workflow.service';
 import eventBus from '@/utils/eventBus'
 
@@ -30,6 +31,21 @@ const status = ref('')
 const isRunning = ref(false)
 const showMenu = ref(false)
 const nodeConfigData = ref({})
+
+const nodeIconMap: Record<string, Component> = {
+    DATA_INPUT: markRaw(Download),
+    DATA_OUTPUT: markRaw(Upload),
+    DATA_JOIN: markRaw(Link),
+    DATA_UNION: markRaw(CopyDocument),
+    DATA_FILTER: markRaw(Filter),
+    DATA_TRANSFORM: markRaw(Switch),
+    DATA_ADD_COL: markRaw(CirclePlus),
+    DATA_CUSTOM: markRaw(SetUp),
+}
+
+const nodeIcon = computed(() => {
+    return nodeIconMap[nodeConfigData.value?.type] || markRaw(Document)
+})
 
 let Node
 const mouseDownPos = ref({ x: 0, y: 0 })
@@ -90,11 +106,24 @@ onMounted(() => {
 
         .info-container {
             display: flex;
-            flex-direction: column;
-            justify-content: space-around;
+            align-items: center;
+            gap: 6px;
             height: 100%;
-            padding: 4px 0;
+            padding: 0 8px;
             box-sizing: border-box;
+
+            .node-icon {
+                font-size: 16px;
+                flex-shrink: 0;
+                color: getCssVar('color', 'primary');
+            }
+
+            .node-name {
+                font-size: 12px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
         }
     }
 }
