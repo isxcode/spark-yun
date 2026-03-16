@@ -8,11 +8,13 @@
                         :draggable="true"
                         @dragstart="handleDragEnd($event, task)"
                     >
+                        <el-icon class="item-icon">
+                            <component :is="task.icon" />
+                        </el-icon>
                         <div class="item-right">
                             <span class="label-type">
                                 <EllipsisTooltip class="label-name-text" :label="task.typeName" />
                             </span>
-                            <!-- <span class="label-name">{{ workTypeName(work.workType) }}</span> -->
                         </div>
                     </div>
                 </template>
@@ -28,19 +30,19 @@ import EllipsisTooltip from '@/components/ellipsis-tooltip/ellipsis-tooltip.vue'
 interface Task {
     type: string
     typeName: string
-    color?: string
+    icon: string
 }
 
 const emit = defineEmits(['handleDragEnd'])
 const taskList = ref<Task[]>([
-    { type: 'DATA_INPUT', typeName: '数据输入' },
-    { type: 'DATA_OUTPUT', typeName: '数据输出' },
-    { type: 'DATA_JOIN', typeName: '数据关联' },
-    { type: 'DATA_UNION', typeName: '数据合并' },
-    { type: 'DATA_FILTER', typeName: '数据过滤' },
-    { type: 'DATA_TRANSFORM', typeName: '数据转换' },
-    { type: 'DATA_ADD_COL', typeName: '新增字段' },
-    { type: 'DATA_CUSTOM', typeName: '自定义' },
+    { type: 'DATA_INPUT', typeName: '数据输入', icon: 'Download' },
+    { type: 'DATA_OUTPUT', typeName: '数据输出', icon: 'Upload' },
+    { type: 'DATA_JOIN', typeName: '数据关联', icon: 'Link' },
+    { type: 'DATA_UNION', typeName: '数据合并', icon: 'CopyDocument' },
+    { type: 'DATA_FILTER', typeName: '数据过滤', icon: 'Filter' },
+    { type: 'DATA_TRANSFORM', typeName: '数据转换', icon: 'Switch' },
+    { type: 'DATA_ADD_COL', typeName: '新增字段', icon: 'CirclePlus' },
+    { type: 'DATA_CUSTOM', typeName: '自定义', icon: 'SetUp' },
 ])
 
 function handleDragEnd(e: any, data: any) {
@@ -69,7 +71,7 @@ function handleDragEnd(e: any, data: any) {
 
                 .list-item {
                     height: 40px;
-                    // padding-right: 12px;
+                    padding: 0 8px;
                     box-sizing: border-box;
                     border: 1px solid getCssVar('border-color');
                     border-radius: 6px;
@@ -78,12 +80,17 @@ function handleDragEnd(e: any, data: any) {
                     position: relative;
                     display: flex;
                     align-items: center;
-                    justify-content: center;
+                    gap: 4px;
                     margin-bottom: 8px;
                     box-shadow: getCssVar('box-shadow', 'lighter');
 
+                    .item-icon {
+                        font-size: 14px;
+                        flex-shrink: 0;
+                        color: getCssVar('color', 'primary');
+                    }
+
                     .item-right {
-                        // margin-left: 8px;
                         display: flex;
                         flex-direction: column;
                         justify-content: space-between;
