@@ -18,22 +18,38 @@
         />
       </el-form-item>
       <el-form-item
-        label="Host"
         prop="host"
       >
+        <template #label>
+          <div class="host-label">
+            <span>Host</span>
+            <el-popover
+              :visible="showPortEdit"
+              placement="top"
+              :width="200"
+              :teleported="false"
+            >
+              <div class="port-popover">
+                <el-input
+                  v-model="formData.port"
+                  maxlength="5"
+                  size="small"
+                  placeholder="请输入端口号"
+                />
+                <div class="port-popover__footer">
+                  <el-button size="small" @click="showPortEdit = false">取消</el-button>
+                  <el-button size="small" type="primary" @click="showPortEdit = false">确定</el-button>
+                </div>
+              </div>
+              <template #reference>
+                <span class="port-btn" @click="showPortEdit = !showPortEdit">端口号</span>
+              </template>
+            </el-popover>
+          </div>
+        </template>
         <el-input
           v-model="formData.host"
           placeholder="请输入"
-        />
-      </el-form-item>
-      <el-form-item
-        label="端口号"
-        prop="port"
-      >
-        <el-input
-          v-model="formData.port"
-          maxlength="5"
-          placeholder="请输入端口号"
         />
       </el-form-item>
       <el-form-item label="用户名" prop="username">
@@ -109,6 +125,7 @@ const form = ref<FormInstance>()
 const callback = ref<any>()
 const pwdType = ref('pwd')
 const clusterType = ref('')
+const showPortEdit = ref(false)
 const testLoading = ref(false)
 const testResult = ref()
 const modelConfig = reactive({
@@ -180,6 +197,7 @@ const rules = reactive<FormRules>({
 function showModal(cb: () => void, data: any): void {
   callback.value = cb
   pwdType.value = 'pwd'
+  showPortEdit.value = false
   clusterType.value = route.query.type
 
   testResult.value = {
@@ -259,6 +277,7 @@ function okEvent() {
         .then((res: any) => {
           modelConfig.okConfig.loading = false
           if (res === undefined) {
+            showPortEdit.value = false
             modelConfig.visible = false
           } else {
             modelConfig.visible = true
@@ -274,6 +293,7 @@ function okEvent() {
 }
 
 function closeEvent() {
+  showPortEdit.value = false
   modelConfig.visible = false
 }
 
@@ -286,6 +306,30 @@ defineExpose({
 .add-computer-group {
   padding: 12px 20px 0 20px;
   box-sizing: border-box;
+  .el-form-item__label {
+    width: 100%;
+  }
+  .host-label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    .port-btn {
+      color: getCssVar('color', 'primary');
+      cursor: pointer;
+      font-size: 12px;
+      &:hover {
+        opacity: 0.8;
+      }
+    }
+  }
+  .port-popover {
+    .port-popover__footer {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 8px;
+    }
+  }
 }
 .compute-add-modal {
   .test-button {
