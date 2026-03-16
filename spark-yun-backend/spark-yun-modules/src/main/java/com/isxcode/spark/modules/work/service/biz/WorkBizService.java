@@ -471,6 +471,10 @@ public class WorkBizService {
             getWorkRes.setLibPackageList(JSON.parseArray(workConfig.getLibPackageConfig(), String.class));
         }
 
+        if (!Strings.isEmpty(workConfig.getSparkEtlConfig())) {
+            getWorkRes.setSparkEtlConfig(JSON.parseObject(workConfig.getSparkEtlConfig(), SparkEtlConfig.class));
+        }
+
         return getWorkRes;
     }
 

@@ -89,6 +89,11 @@ public class WorkRunContext {
     private DbMigrateConfig dbMigrateConfig;
 
     /**
+     * spark etl可视化.
+     */
+    private SparkEtlConfig sparkEtlConfig;
+
+    /**
      * 租户id.
      */
     private String tenantId;

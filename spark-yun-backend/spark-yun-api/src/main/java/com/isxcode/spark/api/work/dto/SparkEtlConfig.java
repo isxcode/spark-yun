@@ -7,7 +7,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
-import java.util.Map;
 
 @Data
 @Builder
@@ -28,6 +27,6 @@ public class SparkEtlConfig {
     /**
      * 保存所有的节点映射关系.
      */
-    private List<Map<String, String>> nodeMapping;
+    private List<List<String>> nodeMapping;
 }
 
