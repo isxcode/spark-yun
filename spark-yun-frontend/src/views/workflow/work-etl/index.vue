@@ -10,6 +10,7 @@
                 <ZEtlFlow
                     ref="zEtlFlowRef"
                     @refresh="initFlowData"
+                    @nodeDropped="handleNodeDropped"
                 ></ZEtlFlow>
             </div>
         </LoadingPage>
@@ -144,16 +145,39 @@ function handleDragEnd(e: any, item: any) {
     if (!runningStatus.value) {
         nextTick(() => {
             item.id = guid()
-            item.aliaCode = item.id
+            item.aliaCode = 'node_' + String(Math.floor(Math.random() * 1000000)).padStart(6, '0')
             const newItem = {
                 name: item.typeName,
                 inputEtl: null,
                 ...item,
                 ...cloneDeep(TaskParams[item.type]),
             }
+            // 执行拖拽动画，节点落到画布上后由 nodeDropped 事件触发弹窗
             zEtlFlowRef.value.addNodeFn(newItem, e)
         })
     }
+}
+
+// 节点真正放到画布后弹出编辑弹窗
+function handleNodeDropped(nodeData: any) {
+    addTaskModalRef.value?.showModal((formResult: any) => {
+        return new Promise((resolve: any) => {
+            zEtlFlowRef.value.updateNodeFn({
+                ...nodeData,
+                name: formResult.name,
+                aliaCode: formResult.aliaCode || nodeData.aliaCode,
+                remark: formResult.remark || '',
+            })
+            resolve()
+        })
+    }, {
+        name: nodeData.name,
+        aliaCode: nodeData.aliaCode,
+        remark: nodeData.remark || ''
+    }, () => {
+        // 取消时删除已放置的节点
+        zEtlFlowRef.value.removeNodeById(nodeData.id)
+    })
 }
 
 function initFlowData() {

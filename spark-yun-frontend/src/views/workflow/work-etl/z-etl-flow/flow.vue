@@ -36,7 +36,7 @@ let container: HTMLElement | undefined;
 const runningStatus = ref(false)
 const hideGridStatus = ref(false)
 
-const emit = defineEmits(['refresh'])
+const emit = defineEmits(['refresh', 'nodeDropped'])
 
 function initGraph() {
     Graph.registerNode(
@@ -209,7 +209,12 @@ function initGraph() {
         target: _Graph,
         getDragNode: (node: any) => node.clone({ keepId: true }),
         getDropNode: (node: any) => node.clone({ keepId: true }),
-        validateNode() {
+        validateNode(droppingNode: any) {
+            // 节点真正放到画布后，通知父组件
+            nextTick(() => {
+                const data = droppingNode.getData()
+                emit('nodeDropped', data.nodeConfigData)
+            })
             return true
         }
     })
@@ -371,9 +376,18 @@ onMounted(() => {
     initGraph()
 })
 
+// 删除指定节点
+function removeNodeById(nodeId: string) {
+    const node = _Graph.getCellById(nodeId)
+    if (node) {
+        _Graph.removeCell(node)
+    }
+}
+
 defineExpose({
     addNodeFn,
     updateNodeFn,
+    removeNodeById,
     getAllCellData,
     initCellList,
     updateFlowStatus,
