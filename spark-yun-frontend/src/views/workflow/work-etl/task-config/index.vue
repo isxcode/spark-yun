@@ -1,5 +1,5 @@
 <template>
-    <BlockDrawer :drawer-config="drawerConfig">
+    <BlockModal :model-config="modelConfig">
         <el-scrollbar>
             <el-form
               ref="formRef"
@@ -38,13 +38,13 @@
                 </div>
             </el-form>
         </el-scrollbar>
-    </BlockDrawer>
+    </BlockModal>
 </template>
 
 <script lang="ts" setup>
 import { computed, nextTick, reactive, ref, shallowRef, markRaw } from 'vue'
 import { ElMessage, FormInstance, FormRules } from 'element-plus'
-import BlockDrawer from '@/components/block-drawer/index.vue'
+import BlockModal from '@/components/block-modal/index.vue'
 import { cloneDeep, clone } from 'lodash-es'
 
 import DataInput from './data-input/index.vue'
@@ -73,10 +73,10 @@ const incomeNodes = ref<any>()
 const formData = ref<any>({})
 const instanceRef = ref<any>()
 const formInstance = shallowRef<any>(Components)
-const drawerConfig = reactive({
+const modelConfig = reactive({
     title: '配置详情',
     visible: false,
-    width: '800',
+    width: '60%',
     customClass: 'etl-task-config',
     okConfig: {
         title: '确定',
@@ -116,10 +116,10 @@ const currentComponent = computed(() => {
 function showModal(prevNode: any, cb: () => void, data: any) {
     callback.value = cb
     incomeNodes.value = prevNode
-    drawerConfig.title = data.typeName
+    modelConfig.title = data.typeName
 
     formData.value = cloneDeep(data)
-    drawerConfig.visible = true;
+    modelConfig.visible = true;
 }
 
 function okEvent() {
@@ -127,14 +127,14 @@ function okEvent() {
     formRef.value?.validate((valid: boolean) => {
         if (valid) {
             callback.value(formData.value).then((res: any) => {
-                drawerConfig.okConfig.loading = false
+                modelConfig.okConfig.loading = false
                 if (res === undefined) {
-                    drawerConfig.visible = false
+                    modelConfig.visible = false
                 } else {
-                    drawerConfig.visible = true
+                    modelConfig.visible = true
                 }
             }).catch((err: any) => {
-                drawerConfig.okConfig.loading = false
+                modelConfig.okConfig.loading = false
             })
         } else {
             ElMessage.warning('请将表单输入完整')
@@ -143,7 +143,7 @@ function okEvent() {
 }
 
 function closeEvent() {
-    drawerConfig.visible = false;
+    modelConfig.visible = false;
 }
 
 defineExpose({
