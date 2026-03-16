@@ -326,6 +326,25 @@ onMounted(() => {
                     }
                 }
             })
+        } else if (e.type === 'task_edit') {
+            nextTick(() => {
+                const nodeData = e.data.nodeConfigData
+                addTaskModalRef.value?.showModal((formResult: any) => {
+                    return new Promise((resolve: any) => {
+                        zEtlFlowRef.value?.updateNodeFn({
+                            ...nodeData,
+                            name: formResult.name,
+                            aliaCode: formResult.aliaCode || nodeData.aliaCode,
+                            remark: formResult.remark || '',
+                        })
+                        resolve()
+                    })
+                }, {
+                    name: nodeData.name,
+                    aliaCode: nodeData.aliaCode,
+                    remark: nodeData.remark || ''
+                })
+            })
         }
     })
 })

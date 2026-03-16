@@ -11,6 +11,9 @@
                     <span class="node-name">{{ nodeConfigData?.name || '-' }}</span>
                 </div>
             </el-tooltip>
+            <el-icon class="node-edit-icon" @click.stop="handleCommand('task_edit')">
+                <component :is="EditIcon" />
+            </el-icon>
         </div>
     </div>
 </template>
@@ -18,7 +21,9 @@
 <script lang="ts" setup>
 import { inject, onMounted, ref, computed, markRaw, type Component } from 'vue'
 import { ElIcon } from 'element-plus'
-import { Download, Upload, Link, CopyDocument, Filter, Switch, CirclePlus, SetUp, Document } from '@element-plus/icons-vue'
+import { Download, Upload, Link, CopyDocument, Filter, Switch, CirclePlus, SetUp, Document, Edit } from '@element-plus/icons-vue'
+
+const EditIcon = markRaw(Edit)
 import { RunAfterFlowData } from '@/services/workflow.service';
 import eventBus from '@/utils/eventBus'
 
@@ -123,6 +128,17 @@ onMounted(() => {
                 overflow: hidden;
                 text-overflow: ellipsis;
                 white-space: nowrap;
+            }
+        }
+
+        .node-edit-icon {
+            font-size: 12px;
+            flex-shrink: 0;
+            color: getCssVar('color', 'info');
+            cursor: pointer;
+
+            &:hover {
+                color: getCssVar('color', 'primary');
             }
         }
     }
