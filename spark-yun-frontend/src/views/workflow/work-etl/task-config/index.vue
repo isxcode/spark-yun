@@ -7,28 +7,7 @@
               label-width="120px"
               :model="formData"
             >
-                <div class="base-container">
-                    <div class="base-title">基础信息</div>
-                    <el-form-item label="名称" prop="name" :rules="rules.name">
-                        <el-input v-model="formData.name" maxlength="100" placeholder="请输入" />
-                    </el-form-item>
-                    <el-form-item label="编码" prop="aliaCode" :rules="rules.aliaCode">
-                        <el-input disabled v-model="formData.aliaCode" />
-                    </el-form-item>
-                    <el-form-item label="备注">
-                        <el-input
-                            v-model="formData.remark"
-                            show-word-limit
-                            type="textarea"
-                            maxlength="200"
-                            :resize="'none'"
-                            :autosize="{ minRows: 4, maxRows: 4 }"
-                            placeholder="请输入"
-                        />
-                    </el-form-item>
-                </div>
                 <div class="main-config-container">
-                    <div class="base-title">节点信息</div>
                     <component
                         ref="instanceRef"
                         :is="currentComponent(formData.type)"
