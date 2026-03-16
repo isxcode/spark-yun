@@ -168,7 +168,7 @@
                 </div>
             </el-form-item>
         </div>
-        <div class="table-container" style="height: 314px;">
+        <div v-show="false" class="table-container" style="height: 314px;">
             <el-form-item>
                 <el-button type="primary" @click="addNewCode">添加</el-button>
             </el-form-item>

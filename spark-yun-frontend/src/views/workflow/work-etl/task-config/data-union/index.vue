@@ -48,7 +48,7 @@
                 </el-form-item>
             </div>
         </div>
-        <div class="table-container" style="height: 314px;">
+        <div v-show="false" class="table-container" style="height: 314px;">
             <BlockTable
               :table-config="tableConfig"
             >

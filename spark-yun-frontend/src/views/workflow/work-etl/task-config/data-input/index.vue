@@ -80,7 +80,7 @@
         </el-form-item>
         <!-- 数据预览 -->
         <table-detail ref="tableDetailRef"></table-detail>
-        <div style="max-height: 444px;">
+        <div v-show="false" style="max-height: 444px;">
             <BlockTable
               :table-config="tableConfig"
             >

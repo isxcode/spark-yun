@@ -53,7 +53,7 @@
                 </div>
             </div>
         </el-form-item>
-        <el-form-item label="输出字段">
+        <el-form-item v-show="false" label="输出字段">
             <div style="max-height: 444px; width: 100%;">
                 <BlockTable :table-config="tableConfig" />
             </div>
