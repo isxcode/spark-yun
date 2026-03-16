@@ -35,6 +35,7 @@ interface FormData {
 
 const form = ref<FormInstance>()
 const callback = ref<any>()
+const cancelCallback = ref<any>()
 const taskConfigRef = ref<any>()
 const modelConfig = reactive({
     title: '添加',
@@ -66,21 +67,22 @@ const rules = reactive<FormRules>({
     aliaCode: [{ required: true, message: '请输入编码', trigger: ['blur', 'change'] }],
 })
 
-function showModal(cb: () => void, data?: any): void {
+function showModal(cb: () => void, data?: any, onCancel?: () => void): void {
     callback.value = cb
+    cancelCallback.value = onCancel || null
     modelConfig.visible = true
     if (data) {
         formData.name = data.name
         formData.aliaCode = data.aliaCode
         formData.remark = data.remark
         formData.id = data.id
-        modelConfig.title = '编辑'
+        modelConfig.title = '添加节点'
     } else {
         formData.name = ''
         formData.aliaCode = ''
         formData.remark = ''
         formData.id = ''
-        modelConfig.title = '编辑任务'
+        modelConfig.title = '编辑节点'
     }
 
     nextTick(() => {
@@ -98,6 +100,8 @@ function okEvent() {
             }).then((res: any) => {
                 modelConfig.okConfig.loading = false
                 if (res === undefined) {
+                    // 确定成功，清除取消回调，防止关闭弹窗时误删节点
+                    cancelCallback.value = null
                     modelConfig.visible = false
                 } else {
                     modelConfig.visible = true
@@ -113,6 +117,10 @@ function okEvent() {
 
 function closeEvent() {
     modelConfig.visible = false
+    if (cancelCallback.value) {
+        cancelCallback.value()
+        cancelCallback.value = null
+    }
 }
 
 function showConfigEvent() {
