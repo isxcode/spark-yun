@@ -55,17 +55,16 @@
       <el-form-item label="用户名" prop="username">
         <el-input v-model="formData.username" maxlength="100" placeholder="请输入" />
       </el-form-item>
-      <el-form-item label="验证类型">
-        <el-radio-group v-model="pwdType" @change="pwdTypeChangeEvent">
-          <el-radio :label="'pwd'">密码</el-radio>
-          <el-radio :label="'ssh'">令牌</el-radio>
-        </el-radio-group>
-      </el-form-item>
-      <el-form-item v-if="pwdType === 'pwd'" label="密码">
-        <el-input v-model="formData.passwd" type="password" show-password placeholder="请输入" />
-      </el-form-item>
-      <el-form-item v-else label="令牌">
+      <el-form-item>
+        <template #label>
+          <div class="host-label">
+            <span>{{ pwdType === 'pwd' ? '密码' : '令牌' }}</span>
+            <span class="port-btn" @click="togglePwdType">切换认证</span>
+          </div>
+        </template>
+        <el-input v-if="pwdType === 'pwd'" v-model="formData.passwd" type="password" show-password placeholder="请输入" />
         <el-input
+          v-else
           v-model="formData.passwd"
           show-word-limit
           type="textarea"
@@ -260,7 +259,8 @@ function testFun() {
   }
 }
 
-function pwdTypeChangeEvent() {
+function togglePwdType() {
+  pwdType.value = pwdType.value === 'pwd' ? 'ssh' : 'pwd'
   formData.passwd = ''
 }
 
