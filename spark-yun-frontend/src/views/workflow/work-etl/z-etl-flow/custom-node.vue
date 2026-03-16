@@ -1,41 +1,18 @@
 <template>
-    <div class="etl-flow-node" :class="status" @dblclick="dbclickToDetain">
+    <div class="etl-flow-node" :class="status" @mousedown="onMouseDown" @click="onClick">
         <div class="flow-node-container" ref="content">
             <div class="info-container">
                 <p class="text name">名称：{{ nodeConfigData?.name || '-' }}</p>
                 <p class="text type">类型：{{ nodeConfigData.typeName  }}</p>
                 <p class="text">备注：{{ nodeConfigData.remark || '-' }}</p>
             </div>
-            <!-- <template v-if="isRunning">
-                <el-icon v-if="status === 'RUNNING'" class="custom-icon is-loading"><Loading /></el-icon>
-                <el-icon v-if="status === 'ABORTING'" class="custom-icon is-loading"><Loading /></el-icon>
-                <el-icon v-if="status === 'PENDING'" class="custom-icon"><Clock /></el-icon>
-                <el-icon v-if="status === 'ABORT'" class="custom-icon"><VideoPause /></el-icon>
-            </template> -->
-
-            <el-icon class="node-option-more" @click="handleCommand('task_config')">
-                <Setting />
-            </el-icon>
-
-            <!-- <el-dropdown trigger="click" @command="handleCommand">
-                <el-icon class="node-option-more">
-                    <MoreFilled />
-                </el-icon>
-                <template #dropdown>
-                    <el-dropdown-menu>
-                        <el-dropdown-item command="task_edit">编辑</el-dropdown-item>
-                        <el-dropdown-item command="task_config">配置节点</el-dropdown-item>
-                    </el-dropdown-menu>
-                </template>
-            </el-dropdown> -->
         </div>
     </div>
 </template>
 
 <script lang="ts" setup>
 import { inject, onMounted, ref, computed } from 'vue'
-import { ElIcon, ElDropdown, ElDropdownMenu, ElDropdownItem } from 'element-plus'
-import { MoreFilled, Loading, Clock, VideoPause, Setting } from '@element-plus/icons-vue'
+import { ElIcon } from 'element-plus'
 import { RunAfterFlowData } from '@/services/workflow.service';
 import eventBus from '@/utils/eventBus'
 
@@ -50,6 +27,20 @@ const showMenu = ref(false)
 const nodeConfigData = ref({})
 
 let Node
+const mouseDownPos = ref({ x: 0, y: 0 })
+
+function onMouseDown(e: MouseEvent) {
+    mouseDownPos.value = { x: e.clientX, y: e.clientY }
+}
+
+function onClick(e: MouseEvent) {
+    const dx = Math.abs(e.clientX - mouseDownPos.value.x)
+    const dy = Math.abs(e.clientY - mouseDownPos.value.y)
+    // 移动距离小于5px视为点击，否则视为拖拽
+    if (dx < 5 && dy < 5) {
+        handleCommand('task_config')
+    }
+}
 
 function handleCommand(command: string) {
     eventBus.emit('taskFlowEvent', {
@@ -82,6 +73,7 @@ onMounted(() => {
     border-left: 4px solid #5F95FF;
     border-radius: 4px;
     box-shadow: 0 2px 5px 1px rgba(0, 0, 0, 0.06);
+    cursor: pointer;
 
     .flow-node-container {
         display: flex;
@@ -90,16 +82,6 @@ onMounted(() => {
         padding-right: 8px;
         height: 100%;
         align-items: center;
-
-        .node-option-more {
-            font-size: 14px;
-            transform: rotate(90deg);
-            cursor: pointer;
-            color: getCssVar('color', 'info');
-        }
-        .custom-icon {
-            color: #9599a2;
-        }
 
         .info-container {
             display: flex;
