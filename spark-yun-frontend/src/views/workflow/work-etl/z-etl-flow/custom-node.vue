@@ -1,11 +1,16 @@
 <template>
     <div class="etl-flow-node" :class="status" @mousedown="onMouseDown" @click="onClick">
         <div class="flow-node-container" ref="content">
-            <div class="info-container">
-                <p class="text name">名称：{{ nodeConfigData?.name || '-' }}</p>
-                <p class="text type">类型：{{ nodeConfigData.typeName  }}</p>
-                <p class="text">备注：{{ nodeConfigData.remark || '-' }}</p>
-            </div>
+            <el-tooltip
+                :content="nodeConfigData.remark || '暂无备注'"
+                placement="top"
+                :show-after="300"
+            >
+                <div class="info-container">
+                    <p class="text name">名称：{{ nodeConfigData?.name || '-' }}</p>
+                    <p class="text type">类型：{{ nodeConfigData.typeName  }}</p>
+                </div>
+            </el-tooltip>
         </div>
     </div>
 </template>
@@ -70,7 +75,7 @@ onMounted(() => {
     height: 100%;
     background-color: #fff;
     border: 1px solid #c2c8d5;
-    border-left: 4px solid #5F95FF;
+    border-left: 4px solid getCssVar('color', 'primary');
     border-radius: 4px;
     box-shadow: 0 2px 5px 1px rgba(0, 0, 0, 0.06);
     cursor: pointer;
