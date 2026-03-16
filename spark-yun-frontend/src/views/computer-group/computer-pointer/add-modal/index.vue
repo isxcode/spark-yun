@@ -72,11 +72,17 @@
           placeholder="请输入"
         />
       </el-form-item>
-      <el-form-item v-if="clusterType === 'standalone'" label="安装Spark">
-        <el-switch v-model="formData.installSparkLocal" />
-      </el-form-item>
-      <el-form-item v-if="clusterType === 'standalone'" label="安装Flink">
-        <el-switch v-model="formData.installFlinkLocal" />
+      <el-form-item v-if="clusterType === 'standalone'" label="安装服务">
+        <div class="install-service-row">
+          <div class="install-service-item">
+            <span>Spark</span>
+            <el-switch v-model="formData.installSparkLocal" />
+          </div>
+          <div class="install-service-item">
+            <span>Flink</span>
+            <el-switch v-model="formData.installFlinkLocal" />
+          </div>
+        </div>
       </el-form-item>
       <el-form-item label="备注">
         <el-input
@@ -328,6 +334,21 @@ defineExpose({
       display: flex;
       justify-content: flex-end;
       margin-top: 8px;
+    }
+  }
+  .install-service-row {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    width: 100%;
+    .install-service-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      span {
+        font-size: 13px;
+        color: var(--el-text-color-regular);
+      }
     }
   }
 }
