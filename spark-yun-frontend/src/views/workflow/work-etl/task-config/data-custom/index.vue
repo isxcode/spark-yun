@@ -23,32 +23,34 @@
             </el-popover>
             <el-button :loading="parseLoading" type="primary" @click="parseEvent">解析</el-button>
         </el-form-item>
-        <el-form-item>
-            <el-button type="primary" @click="addNewCode">添加</el-button>
-        </el-form-item>
-        <div style="max-height: 444px;">
-            <BlockTable
-              :table-config="tableConfig"
-            >
-                <template #options="scopeSlot">
-                    <div class="btn-group">
-                        <el-dropdown trigger="click">
-                            <el-icon class="option-more" @click.stop>
-                                <MoreFilled />
-                            </el-icon>
-                            <template #dropdown>
-                                <el-dropdown-menu>
-                                    <el-dropdown-item @click="editCode(scopeSlot.row)">编辑</el-dropdown-item>
-                                    <el-dropdown-item @click="removeCode(scopeSlot.row)">删除</el-dropdown-item>
-                                </el-dropdown-menu>
-                            </template>
-                        </el-dropdown>
-                    </div>
-                </template>
-            </BlockTable>
+        <div v-show="false">
+            <el-form-item>
+                <el-button type="primary" @click="addNewCode">添加</el-button>
+            </el-form-item>
+            <div style="max-height: 444px;">
+                <BlockTable
+                  :table-config="tableConfig"
+                >
+                    <template #options="scopeSlot">
+                        <div class="btn-group">
+                            <el-dropdown trigger="click">
+                                <el-icon class="option-more" @click.stop>
+                                    <MoreFilled />
+                                </el-icon>
+                                <template #dropdown>
+                                    <el-dropdown-menu>
+                                        <el-dropdown-item @click="editCode(scopeSlot.row)">编辑</el-dropdown-item>
+                                        <el-dropdown-item @click="removeCode(scopeSlot.row)">删除</el-dropdown-item>
+                                    </el-dropdown-menu>
+                                </template>
+                            </el-dropdown>
+                        </div>
+                    </template>
+                </BlockTable>
+            </div>
+            <!-- 添加字段 -->
+            <add-code ref="addCodeRef"></add-code>
         </div>
-        <!-- 添加字段 -->
-        <add-code ref="addCodeRef"></add-code>
     </div>
 </template>
 

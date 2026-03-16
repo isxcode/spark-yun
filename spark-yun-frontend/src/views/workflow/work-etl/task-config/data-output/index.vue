@@ -84,7 +84,7 @@ interface Option {
 }
 
 const props = defineProps<{
-    modelValue: any
+    modelValue: any,
     incomeNodes: any
 }>()
 const emit = defineEmits(['update:modelValue'])
