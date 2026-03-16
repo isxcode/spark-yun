@@ -51,6 +51,15 @@ export const TaskParams = {
         outColumnList: [],
         mainAliaCode: ''
     },
+    // 数据过滤
+    'DATA_FILTER': {
+        filterEtl: [{
+            colName: '',
+            filterCondition: '',
+            filterValue: ''
+        }],
+        outColumnList: []
+    },
     // 数据合并
     'DATA_UNION': {
         unionEtl: [{

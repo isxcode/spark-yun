@@ -52,6 +52,7 @@ import DataOutput from './data-output/index.vue'
 import DataTransfrom from './data-transform/index.vue'
 import DataJoin from './data-join/index.vue'
 import DataUnion from './data-union/index.vue'
+import DataFilter from './data-filter/index.vue'
 import DataAddCol from './data-add-col/index.vue'
 import DataCustom from './data-custom/index.vue'
 
@@ -61,6 +62,7 @@ const Components = {
     DataTransfrom,
     DataJoin,
     DataUnion,
+    DataFilter,
     DataAddCol,
     DataCustom
 }
@@ -102,6 +104,7 @@ const currentComponent = computed(() => {
             DATA_OUTPUT: 'DataOutput',
             DATA_JOIN: 'DataJoin',
             DATA_UNION: 'DataUnion',
+            DATA_FILTER: 'DataFilter',
             DATA_TRANSFORM: 'DataTransfrom',
             DATA_ADD_COL: 'DataAddCol',
             DATA_CUSTOM: 'DataCustom'

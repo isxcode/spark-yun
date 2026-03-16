@@ -36,12 +36,11 @@ const taskList = ref<Task[]>([
     { type: 'DATA_INPUT', typeName: '数据输入' },
     { type: 'DATA_OUTPUT', typeName: '数据输出' },
     { type: 'DATA_JOIN', typeName: '数据关联' },
-    // { type: 'DATA_FILTER', typeName: '数据过滤' },
     { type: 'DATA_UNION', typeName: '数据合并' },
+    { type: 'DATA_FILTER', typeName: '数据过滤' },
     { type: 'DATA_TRANSFORM', typeName: '数据转换' },
     { type: 'DATA_ADD_COL', typeName: '新增字段' },
-    { type: 'DATA_CUSTOM', typeName: '数据自定义' },
-    // { type: 'DATA_TRANSFORM', name: '数据转换' },
+    { type: 'DATA_CUSTOM', typeName: '自定义' },
 ])
 
 function handleDragEnd(e: any, data: any) {
