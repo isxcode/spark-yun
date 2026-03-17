@@ -24,8 +24,8 @@
                 </el-icon>
             </span>
         </div>
-        <div class="form-options__list" v-for="(item, i) in formData.unionEtl">
-            <el-icon v-if="formData.unionEtl.length > 1" class="remove-btn" @click="removeItem(index)">
+        <div class="form-options__list" v-for="(unionItem, i) in formData.unionEtl">
+            <el-icon v-if="formData.unionEtl.length > 1" class="remove-btn" @click="removeItem(i)">
                 <CircleClose />
             </el-icon>
             <div class="list-item-row">
