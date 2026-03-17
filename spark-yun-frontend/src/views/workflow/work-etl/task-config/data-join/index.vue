@@ -238,7 +238,7 @@ const tableNameList = computed(() => {
         return props.incomeNodes.map((node: any) => {
             const currentNodeData = node.data.nodeConfigData
             return {
-                label: `${currentNodeData.name}-${currentNodeData.inputEtl.tableName}`,
+                label: `【${currentNodeData.aliaCode}】${currentNodeData.name}`,
                 value: currentNodeData.inputEtl.tableName,
                 data: currentNodeData
             }
