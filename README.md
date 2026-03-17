@@ -67,11 +67,11 @@
 
 演示地址：https://zhiqingyun-demo.isxcode.com </br>
 体验账号：zhiyao </br>
-账号密码：zhiyao123
+账号密码：zhiyao123 [已禁用，联系管理员]
 
 ### 相关文档
 
-- [快速入门](https://zhiqingyun.isxcode.com/zh/docs/zh/1/0)
+- [快速安装](https://zhiqingyun.isxcode.com/zh/docs/zh/1/0)
 - [产品手册](https://zhiqingyun.isxcode.com/zh/docs/zh/2/0)
 - [开发手册](https://zhiqingyun.isxcode.com/zh/docs/zh/5/1)
 - [博客](https://ispong.isxcode.com/tags/spark/)
