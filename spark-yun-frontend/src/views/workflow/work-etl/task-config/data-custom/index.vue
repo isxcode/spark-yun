@@ -1,5 +1,5 @@
 <template>
-    <div class="config-components">
+    <div class="config-components data-custom">
         <el-form-item label="SQL输入" prop="sql" :class="{ 'show-screen__full': fullStatus }">
             <!-- <el-icon class="modal-full-screen" @click="fullScreenEvent">
                 <FullScreen v-if="!fullStatus" />
@@ -23,7 +23,7 @@
             </el-popover>
             <el-button :loading="parseLoading" type="primary" @click="parseEvent">解析</el-button>
         </el-form-item>
-        <div v-show="false">
+        <!-- <div v-show="false">
             <el-form-item>
                 <el-button type="primary" @click="addNewCode">添加</el-button>
             </el-form-item>
@@ -48,9 +48,8 @@
                     </template>
                 </BlockTable>
             </div>
-            <!-- 添加字段 -->
             <add-code ref="addCodeRef"></add-code>
-        </div>
+        </div> -->
     </div>
 </template>
 
@@ -74,7 +73,7 @@ const props = defineProps<{
 }>()
 const emit = defineEmits(['update:modelValue'])
 
-const addCodeRef = ref()
+// const addCodeRef = ref()
 const sqlLang = ref<any>(sql())
 const errorResult = ref<string>('')
 const fullStatus = ref<boolean>(false)
@@ -102,19 +101,19 @@ function removeCode(cData: codeParam) {
     })
 }
 
-function addNewCode() {
-    addCodeRef.value.showModal((params: codeParam) => {
-        formData.value.outColumnList.push({ ...params })
-        tableConfig.tableData = formData.value.outColumnList
-    })
-}
-function editCode(row: codeParam) {
-    addCodeRef.value.showModal((formData: codeParam) => {
-        row.colName = formData.colName
-        row.colType = formData.colType
-        row.remark = formData.remark
-    }, row)
-}
+// function addNewCode() {
+//     addCodeRef.value.showModal((params: codeParam) => {
+//         formData.value.outColumnList.push({ ...params })
+//         tableConfig.tableData = formData.value.outColumnList
+//     })
+// }
+// function editCode(row: codeParam) {
+//     addCodeRef.value.showModal((formData: codeParam) => {
+//         row.colName = formData.colName
+//         row.colType = formData.colType
+//         row.remark = formData.remark
+//     }, row)
+// }
 
 // function fullScreenEvent(type: string) {
 //     fullStatus.value = !fullStatus.value
@@ -149,9 +148,9 @@ function parseEvent() {
 
 onMounted(() => {
     // tableConfig.tableData = formData.value.outColumnList
-    tableConfig.tableData = []
+    // tableConfig.tableData = []
     if (formData.value.outColumnList && formData.value.outColumnList.length) {
-        tableConfig.tableData = formData.value.outColumnList
+        // tableConfig.tableData = formData.value.outColumnList
     } else {
         if (props.incomeNodes && props.incomeNodes[0]) {
             formData.value.outColumnList = props.incomeNodes[0].data.nodeConfigData.outColumnList
@@ -166,6 +165,11 @@ onMounted(() => {
 .config-components {
     padding:  12px 20px;
     box-sizing: border-box;
+    &.data-custom {
+        .el-form-item {
+            flex-direction: column;
+        }
+    }
     .btn-group {
         display: flex;
         justify-content: space-around;

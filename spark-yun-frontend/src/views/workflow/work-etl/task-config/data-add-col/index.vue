@@ -1,6 +1,9 @@
 <template>
     <div class="config-components">
-        <div v-show="false">
+        <div class="add-col-tooltip">
+            <el-icon><Warning /></el-icon>请点击<strong>输出字段</strong>按钮进行字段新增操作！
+        </div>
+        <!-- <div v-show="false">
             <el-form-item>
                 <el-button type="primary" @click="addNewCode">添加</el-button>
             </el-form-item>
@@ -25,9 +28,8 @@
                     </template>
                 </BlockTable>
             </div>
-            <!-- 添加字段 -->
             <add-code ref="addCodeRef"></add-code>
-        </div>
+        </div> -->
     </div>
 </template>
 
@@ -103,6 +105,19 @@ onMounted(() => {
 .config-components {
     padding:  12px 20px;
     box-sizing: border-box;
+    .add-col-tooltip {
+        display: flex;
+        align-items: center;
+        font-size: 12px;
+        height: 32px;
+        line-height: 32px;
+        margin-top: 12px;
+        .el-icon {
+            color: #E6A23C;
+            margin-right: 4px;
+            font-size: 16px;
+        }
+    }
     .btn-group {
         display: flex;
         justify-content: space-around;

@@ -25,7 +25,7 @@
             </span>
         </div>
         <div class="form-options__list" v-for="(joinItem, i) in formData.joinEtl">
-            <el-icon v-if="formData.joinEtl.length > 1" class="remove-btn" @click="removeItem(i)">
+            <el-icon v-if="formData.joinEtl.length > 1" class="remove-block-btn" @click="removeItem(i)">
                 <CircleClose />
             </el-icon>
             <div class="join-header-row">
@@ -44,7 +44,7 @@
                         placeholder="输入表"
                     >
                         <el-option
-                            v-for="opt in inputTableOptions"
+                            v-for="opt in tableNameList"
                             :key="opt.value"
                             :label="opt.label"
                             :value="opt.value"
@@ -168,7 +168,7 @@
                 </div>
             </el-form-item>
         </div>
-        <div v-show="false" class="table-container" style="height: 314px;">
+        <!-- <div v-show="false" class="table-container" style="height: 314px;">
             <el-form-item>
                 <el-button type="primary" @click="addNewCode">添加</el-button>
             </el-form-item>
@@ -181,9 +181,9 @@
                     </div>
                 </template>
             </BlockTable>
-        </div>
+        </div> -->
         <!-- 添加字段 -->
-        <add-code ref="addCodeRef"></add-code>
+        <!-- <add-code ref="addCodeRef"></add-code> -->
     </div>
 </template>
 
@@ -248,9 +248,9 @@ const tableNameList = computed(() => {
     }
 })
 
-const inputTableOptions = computed(() => {
-    return tableNameList.value.filter(opt => opt.value !== formData.value.mainAliaCode)
-})
+// const inputTableOptions = computed(() => {
+//     return tableNameList.value.filter(opt => opt.value !== formData.value.mainAliaCode)
+// })
 
 function addNewOption() {
     formData.value.joinEtl.push({
@@ -339,37 +339,23 @@ function functionSelectEvent(e: string, element: any) {
 
 function getMainTableFields(e: boolean) {
     const currentItem = tableNameList.value.find(dd => dd.value === formData.value.mainAliaCode)
-    if (e && currentItem.data.inputEtl && currentItem.data.inputEtl.datasourceId && currentItem.data.inputEtl.tableName) {
-        GetTableColumnsByTableId({
-            dataSourceId: currentItem.data.inputEtl.datasourceId,
-            tableName: currentItem.data.inputEtl.tableName
-        }).then((res: any) => {
-            mainTableFields.value = (res.data.columns || []).map((column: any) => {
-                return {
-                    label: column.name,
-                    value: column.name
-                }
-            })
-        }).catch(err => {
-            console.error(err)
+    if (e && currentItem.data.outColumnList) {
+        mainTableFields.value = (currentItem.data.outColumnList || []).map((column: any) => {
+            return {
+                label: column.colName,
+                value: column.colName
+            }
         })
     }
 }
 function getTableFields(e: boolean, config: any) {
-    const currentItem = tableNameList.value.find(dd => dd.value === config.joinAliaCode)
-    if (e && currentItem.data.inputEtl && currentItem.data.inputEtl.datasourceId && currentItem.data.inputEtl.tableName) {
-        GetTableColumnsByTableId({
-            dataSourceId: currentItem.data.inputEtl.datasourceId,
-            tableName: currentItem.data.inputEtl.tableName
-        }).then((res: any) => {
-            tableFields.value = (res.data.columns || []).map((column: any) => {
-                return {
-                    label: column.name,
-                    value: column.name
-                }
-            })
-        }).catch(err => {
-            console.error(err)
+    const currentItem = tableNameList.value.find(dd => dd.value === formData.value.mainAliaCode)
+    if (e && currentItem.data.outColumnList) {
+        tableFields.value = (currentItem.data.outColumnList || []).map((column: any) => {
+            return {
+                label: column.colName,
+                value: column.colName
+            }
         })
     }
 }
@@ -448,10 +434,13 @@ onMounted(() => {
                 gap: 8px;
                 margin-bottom: 0;
                 margin-top: 12px;
-                overflow: visible;
+                padding-right: 20px;
                 .join-way-item {
                     flex-shrink: 0;
                     margin-bottom: 0;
+                    .el-form-item__label {
+                        width: 64px !important;
+                    }
                     .el-select {
                         width: 110px;
                     }
@@ -460,13 +449,16 @@ onMounted(() => {
                     flex: 1;
                     margin-bottom: 0;
                     min-width: 0;
+                    .el-form-item__content {
+                        margin-left: -4px !important;
+                    }
                 }
             }
 
-            .remove-btn {
+            .remove-block-btn {
                 position: absolute;
-                right: -4px;
-                top: -4px;
+                right: -7px;
+                top: -8px;
                 color: getCssVar('color', 'primary');
                 cursor: pointer;
                 z-index: 1;
