@@ -25,7 +25,7 @@
             </span>
         </div>
         <div class="form-options__list" v-for="(unionItem, i) in formData.unionEtl">
-            <el-icon v-if="formData.unionEtl.length > 1" class="remove-btn" @click="removeItem(i)">
+            <el-icon v-if="formData.unionEtl.length > 1" class="remove-btn-union" @click="removeItem(i)">
                 <CircleClose />
             </el-icon>
             <div class="list-item-row">
@@ -39,7 +39,6 @@
                     <el-select v-model="formData.unionEtl[i].aliaCode" placeholder="请选择">
                         <el-option
                             v-for="item in tableNameList"
-                            :disabled="formData.mainAliaCode === item.value"
                             :key="item.value"
                             :label="item.label"
                             :value="item.value"
@@ -48,7 +47,7 @@
                 </el-form-item>
             </div>
         </div>
-        <div v-show="false" class="table-container" style="height: 314px;">
+        <!-- <div v-show="false" class="table-container" style="height: 314px;">
             <BlockTable
               :table-config="tableConfig"
             >
@@ -58,7 +57,7 @@
                     </div>
                 </template>
             </BlockTable>
-        </div>
+        </div> -->
     </div>
 </template>
 
@@ -100,8 +99,9 @@ const tableNameList = computed(() => {
         return props.incomeNodes.map((node: any) => {
             const currentNodeData = node.data.nodeConfigData
             return {
-                label: `${currentNodeData.name}-${currentNodeData.inputEtl.tableName}`,
-                value: currentNodeData.inputEtl.tableName
+                label: `【${currentNodeData.aliaCode}】${currentNodeData.name}`,
+                value: currentNodeData.aliaCode,
+                data: currentNodeData
             }
         })
     } else {
@@ -182,7 +182,7 @@ onMounted(() => {
                 }
             }
 
-            .remove-btn {
+            .remove-btn-union {
                 position: absolute;
                 right: 8px;
                 top: 32px;

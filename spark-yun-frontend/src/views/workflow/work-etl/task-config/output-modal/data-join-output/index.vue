@@ -1,0 +1,123 @@
+<template>
+    <div class="data-join-output">
+        <el-form-item>
+            <el-button type="primary" @click="addNewCode">添加</el-button>
+        </el-form-item>
+        <div style="max-height: 444px;">
+            <BlockTable
+              :table-config="tableConfig"
+            >
+                <template #options="scopeSlot">
+                    <div class="btn-group">
+                        <span @click="removeCode(scopeSlot)">删除</span>
+                    </div>
+                </template>
+            </BlockTable>
+        </div>
+        <!-- 添加字段 -->
+        <add-code ref="addCodeRef"></add-code>
+    </div>
+</template>
+
+<script lang="ts" setup>
+import { ref, defineEmits, computed, onMounted, reactive, nextTick } from 'vue'
+import { ElMessage, ElMessageBox, FormInstance, FormRules } from 'element-plus'
+import { TypeList, ConfigRules, TableConfig } from './config.ts'
+import AddCode from './add-code/index.vue'
+
+interface Option {
+    label: string
+    value: string
+    inputSize?: number
+}
+
+const props = defineProps<{
+    modelValue: any,
+    preNodes: any
+}>()
+const emit = defineEmits(['update:modelValue'])
+
+const mainTableFields = ref<Option[]>()
+const tableFields = ref<Option[]>()
+const addCodeRef = ref()
+
+const rules = reactive<FormRules>({
+    mainAliaCode: [{ required: true, message: '请选择主表', trigger: ['blur', 'change'] }],
+    joinWay: [{ required: true, message: '请选择关联', trigger: ['blur', 'change'] }],
+    joinAliaCode: [{ required: true, message: '请选择输入表', trigger: ['blur', 'change'] }],
+    joinType: [{ required: true, message: '请选择关联关系', trigger: ['blur', 'change'] }],
+    joinLeftColumn: [{ required: true, message: '请选择主表字段', trigger: ['blur', 'change'] }],
+    joinCondition: [{ required: true, message: '请选择条件', trigger: ['blur', 'change'] }],
+    joinRightColumn: [{ required: true, message: '请选择字段', trigger: ['blur', 'change'] }],
+    joinColumn: [{ required: true, message: '请选择字段', trigger: ['blur', 'change'] }],
+    joinValue: [{ required: true, message: '请输入字段值', trigger: ['blur', 'change'] }],
+    joinSql: [{ required: true, message: '请输入sql', trigger: ['blur', 'change'] }],
+})
+const tableConfig = reactive(TableConfig)
+
+const formData = computed({
+    get() {
+        return props.modelValue
+    },
+    set(value) {
+        emit('update:modelValue', value)
+    }
+})
+
+function addNewCode() {
+    addCodeRef.value.showModal((params: any) => {
+        tableConfig.tableData.push({ ...params })
+    }, null, props.preNodes)
+    // }, null, [])
+}
+
+// 删除来源编码
+function removeCode(scopeSlot: any) {
+    ElMessageBox.confirm('确定删除该字段吗？', '警告', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+    }).then(() => {
+        tableConfig.tableData.splice(scopeSlot.index, 1)
+    })
+}
+
+onMounted(() => {
+    tableConfig.tableData = formData.value
+})
+</script>
+
+<style lang="scss">
+.data-join-output {
+    padding:  12px 20px;
+    box-sizing: border-box;
+    .el-form-item {
+        .el-form-item__content {
+            justify-content: flex-end;
+            .el-select {
+                width: 100%;
+            }
+        }
+    }
+    .btn-group {
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        span {
+            cursor: pointer;
+            color: getCssVar('color', 'primary', 'light-5');
+            &:hover {
+                color: getCssVar('color', 'primary');;
+            }
+        }
+        .el-dropdown {
+            .option-more {
+                font-size: 14px;
+                transform: rotate(90deg);
+                cursor: pointer;
+                color: getCssVar('color', 'info');
+            }
+        }
+    }
+}
+</style>

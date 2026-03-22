@@ -18,24 +18,12 @@
             </el-form>
         </el-scrollbar>
         <template #customLeft>
-            <el-button type="primary" @click="showFieldsModal" style="margin-right: auto;">输出字段</el-button>
+            <el-button v-if="formData.type !== 'DATA_OUTPUT'" type="primary" @click="showFieldsModal" style="margin-right: auto;">输出字段</el-button>
+            <!-- <el-button v-else type="primary" @click="showLinkModal" style="margin-right: auto;">字段映射</el-button> -->
         </template>
     </BlockModal>
-    <el-dialog
-        v-model="fieldsDialogVisible"
-        title="输出字段"
-        width="50%"
-        :z-index="1200"
-        :append-to-body="true"
-        :destroy-on-close="true"
-    >
-        <div style="max-height: 500px;">
-            <BlockTable :table-config="fieldsTableConfig" />
-        </div>
-        <template #footer>
-            <el-button type="primary" @click="fieldsDialogVisible = false">关闭</el-button>
-        </template>
-    </el-dialog>
+    <OutputModal ref="outputModalRef"></OutputModal>
+    <!-- <LinkModal ref="linkModalRef"></LinkModal> -->
 </template>
 
 <script lang="ts" setup>
@@ -44,6 +32,8 @@ import { ElMessage, FormInstance, FormRules } from 'element-plus'
 import BlockModal from '@/components/block-modal/index.vue'
 import BlockTable from '@/components/block-table/index.vue'
 import { cloneDeep, clone } from 'lodash-es'
+import OutputModal from './output-modal/index.vue'
+import LinkModal from './link-modal/index.vue'
 
 import DataInput from './data-input/index.vue'
 import DataOutput from './data-output/index.vue'
@@ -68,34 +58,13 @@ const Components = {
 const formRef = ref<FormInstance>()
 const callback = ref<any>()
 const incomeNodes = ref<any>()
-const fieldsDialogVisible = ref(false)
-const fieldsTableConfig = reactive({
-    tableData: [],
-    colConfigs: [
-        {
-            prop: 'colName',
-            title: '字段名',
-            minWidth: 120,
-            showOverflowTooltip: true
-        },
-        {
-            prop: 'colType',
-            title: '类型',
-            minWidth: 80,
-            showOverflowTooltip: true
-        },
-        {
-            prop: 'remark',
-            title: '备注',
-            minWidth: 100,
-            showOverflowTooltip: true
-        }
-    ],
-    seqType: 'seq',
-    loading: false
-})
+
 const formData = ref<any>({})
 const instanceRef = ref<any>()
+
+// 字段映射
+const linkModalRef = ref<any>()
+const outputModalRef = ref<any>()
 const formInstance = shallowRef<any>(Components)
 const modelConfig = reactive({
     title: '配置详情',
@@ -138,8 +107,12 @@ const currentComponent = computed(() => {
 })
 
 function showFieldsModal() {
-    fieldsTableConfig.tableData = formData.value.outColumnList || []
-    fieldsDialogVisible.value = true
+    const tableData = formData.value.outColumnList || []
+    outputModalRef.value.showModal(tableData, formData.value.type, incomeNodes.value)
+}
+// 字段映射
+function showLinkModal() {
+    linkModalRef.value.showModal(formData.value)
 }
 
 function showModal(prevNode: any, cb: () => void, data: any) {
@@ -182,6 +155,10 @@ defineExpose({
 
 <style lang="scss">
 .etl-task-config {
+    .modal-content {
+        padding: 12px 0;
+        box-sizing: border-box;
+    }
     .el-form {
         .base-container {
             padding: 0 20px;
