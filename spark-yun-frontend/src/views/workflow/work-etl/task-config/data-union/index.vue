@@ -177,8 +177,14 @@ onMounted(() => {
             .list-item-row {
                 display: flex;
                 .el-form-item {
-                    width: 100%;
                     margin-right: 16px;
+                    &:first-child {
+                        flex: 0 0 30%;
+                    }
+                    &:last-child {
+                        flex: 1;
+                        margin-right: 0;
+                    }
                 }
             }
 
@@ -240,6 +246,13 @@ onMounted(() => {
             justify-content: flex-end;
             .el-select {
                 width: 100%;
+            }
+        }
+        &.form-item-top {
+            display: flex;
+            flex-direction: column;
+            .el-form-item__label {
+                margin-bottom: 1px;
             }
         }
     }
