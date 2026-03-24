@@ -19,11 +19,11 @@
         </el-scrollbar>
         <template #customLeft>
             <el-button v-if="formData.type !== 'DATA_OUTPUT'" type="primary" @click="showFieldsModal" style="margin-right: auto;">输出字段</el-button>
-            <!-- <el-button v-else type="primary" @click="showLinkModal" style="margin-right: auto;">字段映射</el-button> -->
+            <el-button v-else type="primary" @click="showLinkModal" style="margin-right: auto;">字段映射</el-button>
         </template>
     </BlockModal>
     <OutputModal ref="outputModalRef"></OutputModal>
-    <!-- <LinkModal ref="linkModalRef"></LinkModal> -->
+    <LinkModal ref="linkModalRef"></LinkModal>
 </template>
 
 <script lang="ts" setup>
@@ -69,7 +69,7 @@ const formInstance = shallowRef<any>(Components)
 const modelConfig = reactive({
     title: '配置详情',
     visible: false,
-    width: '30%',
+    width: '40%',
     customClass: 'etl-task-config',
     okConfig: {
         title: '确定',
@@ -112,7 +112,7 @@ function showFieldsModal() {
 }
 // 字段映射
 function showLinkModal() {
-    linkModalRef.value.showModal(formData.value)
+    linkModalRef.value.showModal(formData.value, incomeNodes.value)
 }
 
 function showModal(prevNode: any, cb: () => void, data: any) {

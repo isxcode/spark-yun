@@ -65,8 +65,6 @@
                 />
             </el-select>
         </el-form-item>
-        <!-- 表格连线 -->
-        <data-sync-table ref="dataSyncTableRef"></data-sync-table>
     </div>
 </template>
 
@@ -75,8 +73,7 @@ import { ref, defineProps, defineEmits, computed, onMounted, reactive, nextTick,
 import { ElMessage, ElMessageBox, FormInstance, FormRules } from 'element-plus'
 import { TypeList, ConfigRules, TableConfig, OverModeList } from './config.ts'
 import { GetDatasourceList } from '@/services/datasource.service'
-import { GetDataSourceTables, GetTableColumnsByTableId } from '@/services/data-sync.service'
-import DataSyncTable from './data-sync-table/index.vue'
+import { GetDataSourceTables } from '@/services/data-sync.service'
 
 interface Option {
     label: string
@@ -94,7 +91,6 @@ const dataSourceList = ref<Option[]>([])
 const sourceTablesList = ref<Option[]>([])
 const overModeList = ref<Option[]>(OverModeList)
 
-const dataSyncTableRef = ref()
 const preNodeConfig = ref<any>()
 
 const rules = reactive<FormRules>(ConfigRules)
@@ -139,23 +135,10 @@ function changeEvent(e: string, type: string) {
     }
     formData.value.partitionColumn = ''
 
-    if (formData.value.datasourceId && formData.value.tableName) {
-        GetTableColumnsByTableId({
-            dataSourceId: formData.value.datasourceId,
-            tableName: formData.value.tableName
-        }).then((res: any) => {
-            const tableData = (res.data.columns || []).map((column: any) => {
-                return {
-                    colName: column.name,
-                    colType: column.type,
-                    remark: column.columnComment
-                }
-            })
-            dataSyncTableRef.value.updateTargetTableColumn(tableData)
-        }).catch(err => {
-            console.error(err)
-        })
-    }
+    // 清空字段映射，下次打开字段映射弹窗时重新获取目标表字段
+    formDataAll.value.outputEtl.fromColumnList = []
+    formDataAll.value.outputEtl.toColumnList = []
+    formDataAll.value.outputEtl.colMapping = []
 }
 
 function getDataSource(e: boolean, searchType?: string) {
@@ -197,70 +180,13 @@ function getDataSourceTable(e: boolean, dataSourceId: string) {
         })
     }
 }
-// 获取目标源
-function getTableColumnData(e: boolean, dataSourceId: string, tableName: string) {
-    if (e && dataSourceId && tableName) {
-        GetTableColumnsByTableId({
-            dataSourceId: dataSourceId,
-            tableName: tableName
-        }).then((res: any) => {
-            const tableData = (res.data.columns || []).map((column: any) => {
-                return {
-                    colName: column.name,
-                    colType: column.type,
-                    remark: column.columnComment
-                }
-            })
-            dataSyncTableRef.value.setTargetTableColumn(tableData)
-        }).catch(err => {
-            console.error(err)
-        })
-    }
-}
-
-function setData() {
-    const data = dataSyncTableRef.value.getConnect()
-    formDataAll.value.outputEtl.fromColumnList = data.fromColumnList
-    formDataAll.value.outputEtl.toColumnList = data.toColumnList
-    formDataAll.value.outputEtl.colMapping = data.columnMap.map(item => [item.source, item.target])
-}
-
 onMounted(() => {
     if (formData.value.dbType) {
         getDataSource(true, formData.value.dbType)
         if (formData.value.datasourceId) {
             getDataSourceTable(true, formData.value.datasourceId)
-            if (formData.value.tableName) {
-                getTableColumnData(true, formData.value.datasourceId, formData.value.tableName)
-            }
         }
     }
-    if (formDataAll.value.outputEtl.colMapping && formDataAll.value.outputEtl.colMapping.length) {
-        dataSyncTableRef.value.initPageData({
-            sourceTableColumn: formDataAll.value.outputEtl.fromColumnList,
-            targetTableColumn: formDataAll.value.outputEtl.toColumnList,
-            columnMap: formDataAll.value.outputEtl.colMapping.map(item => {
-                return {
-                    source: item[0],
-                    target: item[1]
-                }
-            })
-        })
-    } else {
-        if (props.incomeNodes && props.incomeNodes[0]) {
-            dataSyncTableRef.value.setSourceTableColumn(props.incomeNodes[0].data.nodeConfigData.outColumnList.map((column) => {
-                return {
-                    colName: column.colName,
-                    colType: column.colType,
-                    remark: column.remark
-                }
-            }))
-        }
-    }
-})
-
-defineExpose({
-    setData
 })
 </script>
 
