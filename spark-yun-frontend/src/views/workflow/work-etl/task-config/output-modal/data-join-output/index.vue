@@ -4,6 +4,12 @@
             <BlockTable
               :table-config="tableConfig"
             >
+                <template #checkboxHeaderSlot>
+                    <el-checkbox :model-value="isAllChecked" @change="toggleSelectAll" />
+                </template>
+                <template #checkboxSlot="scopeSlot">
+                    <el-checkbox v-model="scopeSlot.row.checked" @change="updateAllChecked" />
+                </template>
                 <template #fromSource="scopeSlot">
                     <span>【{{ scopeSlot.row.fromAliaCode }}】{{ getNodeName(scopeSlot.row.fromAliaCode) }}【{{ scopeSlot.row.fromColName }}】</span>
                 </template>
@@ -44,7 +50,8 @@ interface Option {
 
 const props = defineProps<{
     modelValue: any,
-    preNodes: any
+    preNodes: any,
+    nodeFormData?: any
 }>()
 const emit = defineEmits(['update:modelValue'])
 
@@ -75,6 +82,19 @@ const formData = computed({
     }
 })
 
+const isAllChecked = ref(true)
+
+function updateAllChecked() {
+    isAllChecked.value = tableConfig.tableData.length > 0 && tableConfig.tableData.every((item: any) => item.checked)
+}
+
+function toggleSelectAll(val: boolean) {
+    tableConfig.tableData.forEach((item: any) => {
+        item.checked = val
+    })
+    isAllChecked.value = val
+}
+
 function getNodeName(aliaCode: string): string {
     if (!props.preNodes) return ''
     const node = props.preNodes.find((n: any) => n.data.nodeConfigData.aliaCode === aliaCode)
@@ -83,9 +103,8 @@ function getNodeName(aliaCode: string): string {
 
 function addNewCode() {
     addCodeRef.value.showModal((params: any) => {
-        tableConfig.tableData.push({ ...params })
+        tableConfig.tableData.push({ ...params, checked: true })
     }, null, props.preNodes)
-    // }, null, [])
 }
 
 function editCode(row: any, index: number) {
@@ -109,8 +128,39 @@ function removeCode(scopeSlot: any) {
     })
 }
 
+function refreshFields() {
+    if (!props.preNodes || !props.preNodes.length) return
+    const mainAliaCode = props.nodeFormData?.mainAliaCode
+    if (!mainAliaCode) return
+    const mainNode = props.preNodes.find((n: any) => n.data.nodeConfigData.aliaCode === mainAliaCode)
+    if (!mainNode) return
+    const nodeData = mainNode.data.nodeConfigData
+    const newFields: any[] = []
+    if (nodeData.outColumnList) {
+        nodeData.outColumnList.forEach((col: any) => {
+            newFields.push({
+                colName: col.colName,
+                colType: col.colType,
+                fromAliaCode: nodeData.aliaCode,
+                fromColName: col.colName,
+                remark: col.remark || '',
+                checked: true
+            })
+        })
+    }
+    tableConfig.tableData = newFields
+    isAllChecked.value = true
+}
+
 onMounted(() => {
-    tableConfig.tableData = formData.value
+    tableConfig.tableData = formData.value.map((item: any) => ({
+        ...item,
+        checked: item.checked !== false
+    }))
+})
+
+defineExpose({
+    refreshFields
 })
 </script>
 

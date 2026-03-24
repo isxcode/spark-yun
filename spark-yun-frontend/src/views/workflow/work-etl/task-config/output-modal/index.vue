@@ -4,8 +4,12 @@
             ref="instanceRef"
             :is="currentComponent(componentType)"
             :preNodes="preNodes"
+            :nodeFormData="nodeFormData"
             v-model="tableData"
         ></component>
+        <template #customLeft>
+            <el-button v-if="componentType === 'DATA_JOIN'" type="primary" @click="refreshFields" style="margin-right: auto;">刷新</el-button>
+        </template>
     </BlockModal>
 </template>
 
@@ -24,15 +28,23 @@ const Components = {
     DataJoinOutput
 }
 
+const instanceRef = ref<any>()
 const tableData = ref<any[]>([])
 const componentType = ref<string>('DEFAULT')
 const preNodes = ref<any[]>([])
+const nodeFormData = ref<any>({})
 const formInstance = shallowRef<any>(Components)
 const modelConfig = reactive({
     title: '输出字段',
     visible: false,
     width: '60%',
     customClass: 'output-modal',
+    okConfig: {
+        title: '保存',
+        ok: okEvent,
+        disabled: false,
+        loading: false,
+    },
     cancelConfig: {
         title: '关闭',
         cancel: closeEvent,
@@ -54,13 +66,24 @@ const currentComponent = computed(() => {
     }
 })
 
-function showModal(data: any[], type: string, incomeNodes: any[]) {
+function showModal(data: any[], type: string, incomeNodes: any[], formData?: any) {
     tableData.value = data
     componentType.value = type
     preNodes.value = incomeNodes
+    nodeFormData.value = formData || {}
 
     modelConfig.visible = true;
 }
+function refreshFields() {
+    if (instanceRef.value && instanceRef.value.refreshFields) {
+        instanceRef.value.refreshFields()
+    }
+}
+
+function okEvent() {
+    modelConfig.visible = false;
+}
+
 function closeEvent() {
     modelConfig.visible = false;
 }
