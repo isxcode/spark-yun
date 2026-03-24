@@ -54,9 +54,11 @@ export const TaskParams = {
     // 数据过滤
     'DATA_FILTER': {
         filterEtl: [{
-            colName: '',
+            filterType: 'CONDITION_FILTER',
+            filterColumn: '',
             filterCondition: '',
-            filterValue: ''
+            filterValue: '',
+            customFilter: ''
         }],
         outColumnList: []
     },

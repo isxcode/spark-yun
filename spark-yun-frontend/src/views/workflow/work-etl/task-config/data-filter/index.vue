@@ -1,58 +1,20 @@
 <template>
-    <div class="config-components">
-        <el-form-item class="form-item-top" label="过滤条件">
-            <span class="add-btn">
-                <el-icon @click="addNewOption">
-                    <CirclePlus />
-                </el-icon>
-            </span>
-            <div class="form-options__list">
-                <div class="form-options__item" v-for="(element, index) in formData.filterEtl">
-                    <el-form-item :prop="`filterEtl[${index}].colName`" :rules="rules.colName">
-                        <el-select
-                            v-model="element.colName"
-                            filterable
-                            clearable
-                            placeholder="请选择字段"
-                        >
-                            <el-option
-                                v-for="item in colNameOptions"
-                                :key="item.value"
-                                :label="item.label"
-                                :value="item.value"
-                            />
-                        </el-select>
-                    </el-form-item>
-                    <el-form-item :prop="`filterEtl[${index}].filterCondition`" :rules="rules.filterCondition">
-                        <el-select v-model="element.filterCondition" placeholder="请选择条件">
-                            <el-option
-                                v-for="item in filterConditionOptions"
-                                :key="item.value"
-                                :label="item.label"
-                                :value="item.value"
-                            />
-                        </el-select>
-                    </el-form-item>
-                    <el-form-item
-                        v-if="!['IS NULL', 'IS NOT NULL'].includes(element.filterCondition)"
-                        :prop="`filterEtl[${index}].filterValue`"
-                        :rules="rules.filterValue"
-                    >
-                        <el-input
-                            v-model="element.filterValue"
-                            clearable
-                            placeholder="请输入值"
-                        ></el-input>
-                    </el-form-item>
-                    <div class="option-btn">
-                        <el-icon v-if="formData.filterEtl.length > 1" class="remove"
-                            @click="removeItem(index)">
-                            <CircleClose />
-                        </el-icon>
-                    </div>
-                </div>
-            </div>
-        </el-form-item>
+    <div class="config-components data-join data-filter">
+        <div class="config-label">
+            <span>过滤条件</span>
+        </div>
+        <!-- 递归渲染过滤条件 -->
+        <filter-group
+            :items="formData.filterEtl"
+            :col-name-options="colNameOptions"
+            prop-prefix="filterEtl"
+            :depth="0"
+        />
+        <!-- 操作按钮 -->
+        <div class="filter-actions">
+            <el-button size="small" @click="addCondition">添加条件</el-button>
+            <el-button size="small" @click="addGroup">添加分组</el-button>
+        </div>
         <el-form-item v-show="false" label="输出字段">
             <div style="max-height: 444px; width: 100%;">
                 <BlockTable :table-config="tableConfig" />
@@ -63,8 +25,8 @@
 
 <script lang="ts" setup>
 import { ref, defineEmits, computed, onMounted, reactive } from 'vue'
-import { FormRules } from 'element-plus'
-import { FilterConditionOptions, TableConfig } from './config.ts'
+import { TableConfig } from './config.ts'
+import FilterGroup from './filter-group.vue'
 
 interface Option {
     label: string
@@ -78,14 +40,7 @@ const props = defineProps<{
 const emit = defineEmits(['update:modelValue'])
 
 const colNameOptions = ref<Option[]>([])
-const filterConditionOptions = ref(FilterConditionOptions)
 const tableConfig = reactive(TableConfig)
-
-const rules = reactive<FormRules>({
-    colName: [{ required: true, message: '字段不能为空', trigger: ['blur', 'change'] }],
-    filterCondition: [{ required: true, message: '条件不能为空', trigger: ['blur', 'change'] }],
-    filterValue: [{ required: true, message: '值不能为空', trigger: ['blur', 'change'] }]
-})
 
 const formData = computed({
     get() {
@@ -96,27 +51,44 @@ const formData = computed({
     }
 })
 
-function addNewOption() {
-    formData.value.filterEtl.push({
-        colName: '',
+function addCondition() {
+    const item: any = {
+        filterType: 'CONDITION_FILTER',
+        filterColumn: '',
         filterCondition: '',
-        filterValue: ''
-    })
+        filterValue: '',
+        customFilter: ''
+    }
+    if (formData.value.filterEtl.length > 0) {
+        item.filterWay = 'AND'
+    }
+    formData.value.filterEtl.push(item)
 }
 
-function removeItem(index: number) {
-    formData.value.filterEtl.splice(index, 1)
+function addGroup() {
+    const item: any = {
+        groupFilter: [{
+            filterType: 'CONDITION_FILTER',
+            filterColumn: '',
+            filterCondition: '',
+            filterValue: ''
+        }]
+    }
+    if (formData.value.filterEtl.length > 0) {
+        item.filterWay = 'AND'
+    }
+    formData.value.filterEtl.push(item)
 }
 
 onMounted(() => {
     if (props.incomeNodes && props.incomeNodes[0]) {
-        colNameOptions.value = props.incomeNodes[0].data.nodeConfigData.outColumnList.map((column) => {
+        colNameOptions.value = props.incomeNodes[0].data.nodeConfigData.outColumnList.map((column: any) => {
             return {
                 label: column.colName,
                 value: column.colName
             }
         })
-        formData.value.outColumnList = props.incomeNodes[0].data.nodeConfigData.outColumnList.map((column) => {
+        formData.value.outColumnList = props.incomeNodes[0].data.nodeConfigData.outColumnList.map((column: any) => {
             return {
                 colName: column.colName,
                 colType: column.colType,
@@ -128,4 +100,136 @@ onMounted(() => {
     }
 })
 </script>
+
+<style lang="scss">
+.data-filter {
+    .filter-actions {
+        margin-top: 12px;
+        display: flex;
+        gap: 4px;
+    }
+
+    .filter-group-container {
+        // AND/OR 徽章
+        .filter-way-badge {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2px 0;
+
+            .way-tag {
+                display: inline-block;
+                padding: 0 10px;
+                height: 20px;
+                line-height: 20px;
+                font-size: 11px;
+                font-weight: 600;
+                border-radius: 10px;
+                cursor: pointer;
+                user-select: none;
+                background: #e8f4ff;
+                color: #409eff;
+                border: 1px solid #b3d8ff;
+                transition: all 0.2s;
+
+                &:hover {
+                    background: #d9ecff;
+                }
+
+                &.way-or {
+                    background: #fef0e6;
+                    color: #e6a23c;
+                    border-color: #f5dab1;
+
+                    &:hover {
+                        background: #fde5d0;
+                    }
+                }
+            }
+        }
+
+        // 条件行
+        .filter-row {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 6px 10px;
+            border: 1px solid #e9eaec;
+            border-radius: 4px;
+            background: #fff;
+
+            .filter-type-select {
+                flex-shrink: 0;
+                width: 90px;
+            }
+
+            .el-form-item {
+                flex: 1;
+                margin-bottom: 0;
+                min-width: 0;
+            }
+
+            .custom-form-item {
+                flex: 1;
+            }
+
+            .filter-remove-btn {
+                flex-shrink: 0;
+                font-size: 14px;
+                color: #c0c4cc;
+                cursor: pointer;
+                margin-left: 4px;
+                transition: color 0.2s;
+
+                &:hover {
+                    color: #f56c6c;
+                }
+            }
+        }
+
+        // 分组块
+        .filter-group-block {
+            border: 1px solid #d9ecff;
+            border-left: 3px solid #409eff;
+            border-radius: 4px;
+            padding: 10px;
+            position: relative;
+            background: #f9fbff;
+
+            > .filter-remove-btn {
+                position: absolute;
+                right: 4px;
+                top: 4px;
+                font-size: 14px;
+                color: #c0c4cc;
+                cursor: pointer;
+                z-index: 1;
+                transition: color 0.2s;
+
+                &:hover {
+                    color: #f56c6c;
+                }
+            }
+
+            .filter-group-actions {
+                margin-top: 6px;
+                display: flex;
+                gap: 0;
+                padding-left: 2px;
+            }
+
+            // 嵌套分组样式递进
+            .filter-group-block {
+                border-left-color: #e6a23c;
+                background: #fffcf5;
+
+                .filter-group-block {
+                    border-left-color: #67c23a;
+                    background: #f9fff5;
+                }
+            }
+        }
+    }
+}
+</style>
 
