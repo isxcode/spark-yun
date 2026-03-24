@@ -162,22 +162,16 @@ export const TableConfig: TableConfig = {
             showOverflowTooltip: true
         },
         {
-            prop: 'fromAliaCode',
-            title: '来源节点',
-            minWidth: 120,
-            showOverflowTooltip: true
-        },
-        {
-            prop: 'fromColName',
-            title: '来源字段名',
-            minWidth: 120,
-            showOverflowTooltip: true
-        },
-        {
             prop: 'colType',
             title: '类型',
             minWidth: 80,
             showOverflowTooltip: true
+        },
+        {
+            title: '来源',
+            minWidth: 200,
+            showOverflowTooltip: true,
+            customSlot: 'fromSource'
         },
         {
             prop: 'remark',

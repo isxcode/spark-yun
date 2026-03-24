@@ -27,6 +27,7 @@
                     clearable
                     placeholder="请选择"
                     @visible-change="getTableFields($event)"
+                    @change="onFromColNameChange"
                 >
                     <el-option
                         v-for="item in tableFields"
@@ -182,14 +183,27 @@ function getTableFields(e: boolean, config: any) {
         tableFields.value = (currentItem.data.outColumnList || []).map((column: any) => {
             return {
                 label: column.colName,
-                value: column.colName
+                value: column.colName,
+                colType: column.colType
             }
         })
     }
 }
 
+function onFromColNameChange(val: string) {
+    if (val) {
+        const field = tableFields.value.find((f: any) => f.value === val)
+        if (field) {
+            formData.colName = val
+            formData.colType = field.colType || ''
+        }
+    }
+}
+
 function changeEvent() {
     formData.fromColName = ''
+    formData.colName = ''
+    formData.colType = ''
 }
 
 function closeEvent() {

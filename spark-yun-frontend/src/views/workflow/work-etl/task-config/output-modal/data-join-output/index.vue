@@ -1,15 +1,26 @@
 <template>
     <div class="data-join-output">
-        <el-form-item>
-            <el-button type="primary" @click="addNewCode">添加</el-button>
-        </el-form-item>
         <div style="max-height: 444px;">
             <BlockTable
               :table-config="tableConfig"
             >
+                <template #fromSource="scopeSlot">
+                    <span>【{{ scopeSlot.row.fromAliaCode }}】{{ getNodeName(scopeSlot.row.fromAliaCode) }}【{{ scopeSlot.row.fromColName }}】</span>
+                </template>
                 <template #options="scopeSlot">
                     <div class="btn-group">
-                        <span @click="removeCode(scopeSlot)">删除</span>
+                        <el-dropdown trigger="click">
+                            <el-icon class="option-more" @click.stop>
+                                <MoreFilled />
+                            </el-icon>
+                            <template #dropdown>
+                                <el-dropdown-menu>
+                                    <el-dropdown-item @click="addNewCode">添加</el-dropdown-item>
+                                    <el-dropdown-item @click="editCode(scopeSlot.row, scopeSlot.index)">编辑</el-dropdown-item>
+                                    <el-dropdown-item @click="removeCode(scopeSlot)">删除</el-dropdown-item>
+                                </el-dropdown-menu>
+                            </template>
+                        </el-dropdown>
                     </div>
                 </template>
             </BlockTable>
@@ -64,11 +75,27 @@ const formData = computed({
     }
 })
 
+function getNodeName(aliaCode: string): string {
+    if (!props.preNodes) return ''
+    const node = props.preNodes.find((n: any) => n.data.nodeConfigData.aliaCode === aliaCode)
+    return node ? node.data.nodeConfigData.name : ''
+}
+
 function addNewCode() {
     addCodeRef.value.showModal((params: any) => {
         tableConfig.tableData.push({ ...params })
     }, null, props.preNodes)
     // }, null, [])
+}
+
+function editCode(row: any, index: number) {
+    addCodeRef.value.showModal((params: any) => {
+        row.colName = params.colName
+        row.fromAliaCode = params.fromAliaCode
+        row.fromColName = params.fromColName
+        row.colType = params.colType
+        row.remark = params.remark
+    }, row, props.preNodes)
 }
 
 // 删除来源编码
