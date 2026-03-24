@@ -1,12 +1,18 @@
 <template>
     <div class="data-add-col-output">
-        <el-form-item>
-            <el-button type="primary" @click="addNewCode">添加</el-button>
-        </el-form-item>
         <div style="max-height: 444px;">
             <BlockTable
                 :table-config="tableConfig"
             >
+                <template #checkboxHeaderSlot>
+                    <el-checkbox :model-value="isAllChecked" @change="toggleSelectAll" />
+                </template>
+                <template #checkboxSlot="scopeSlot">
+                    <el-checkbox v-model="scopeSlot.row.checked" @change="updateAllChecked" />
+                </template>
+                <template #fromSource="scopeSlot">
+                    <span>【{{ scopeSlot.row.fromAliaCode }}】{{ getNodeName(scopeSlot.row.fromAliaCode) }}【{{ scopeSlot.row.fromColName }}】</span>
+                </template>
                 <template #options="scopeSlot">
                     <div class="btn-group">
                         <el-dropdown trigger="click">
@@ -15,7 +21,8 @@
                             </el-icon>
                             <template #dropdown>
                                 <el-dropdown-menu>
-                                    <el-dropdown-item @click="editCode(scopeSlot.row)">编辑</el-dropdown-item>
+                                    <el-dropdown-item @click="addNewCode">添加</el-dropdown-item>
+                                    <el-dropdown-item @click="editCode(scopeSlot.row, scopeSlot.index)">编辑</el-dropdown-item>
                                     <el-dropdown-item @click="removeCode(scopeSlot)">删除</el-dropdown-item>
                                 </el-dropdown-menu>
                             </template>
@@ -29,23 +36,63 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, defineProps, defineEmits, computed, onMounted, reactive, nextTick } from 'vue'
-import { TypeList, ConfigRules, TableConfig } from './config.ts'
+import { ref, defineEmits, computed, onMounted, reactive } from 'vue'
 import { ElMessage, ElMessageBox, FormInstance, FormRules } from 'element-plus'
 import AddCode from './add-code/index.vue'
 
-interface codeParam {
-    colName: string
-    colType: string
-    remark: string
-}
-
 const props = defineProps<{
-    modelValue: any
+    modelValue: any,
+    preNodes: any,
+    nodeFormData?: any
 }>()
+const emit = defineEmits(['update:modelValue'])
 
 const addCodeRef = ref()
-const tableConfig = reactive(TableConfig)
+const tableConfig = reactive({
+    tableData: [],
+    colConfigs: [
+        {
+            title: '',
+            customSlot: 'checkboxSlot',
+            customHeaderSlot: 'checkboxHeaderSlot',
+            width: 44,
+            align: 'center',
+        },
+        {
+            prop: 'colName',
+            title: '字段名',
+            minWidth: 120,
+            showOverflowTooltip: true
+        },
+        {
+            prop: 'colType',
+            title: '类型',
+            minWidth: 80,
+            showOverflowTooltip: true
+        },
+        {
+            title: '来源',
+            minWidth: 200,
+            showOverflowTooltip: true,
+            customSlot: 'fromSource'
+        },
+        {
+            prop: 'remark',
+            title: '备注',
+            minWidth: 100,
+            showOverflowTooltip: true
+        },
+        {
+            title: '操作',
+            align: 'center',
+            customSlot: 'options',
+            width: 80,
+            fixed: 'right'
+        }
+    ],
+    seqType: '',
+    loading: false
+})
 
 const formData = computed({
     get() {
@@ -55,6 +102,25 @@ const formData = computed({
         emit('update:modelValue', value)
     }
 })
+
+const isAllChecked = ref(true)
+
+function updateAllChecked() {
+    isAllChecked.value = tableConfig.tableData.length > 0 && tableConfig.tableData.every((item: any) => item.checked)
+}
+
+function toggleSelectAll(val: boolean) {
+    tableConfig.tableData.forEach((item: any) => {
+        item.checked = val
+    })
+    isAllChecked.value = val
+}
+
+function getNodeName(aliaCode: string): string {
+    if (!props.preNodes) return ''
+    const node = props.preNodes.find((n: any) => n.data.nodeConfigData.aliaCode === aliaCode)
+    return node ? node.data.nodeConfigData.name : ''
+}
 
 // 删除来源编码
 function removeCode(scopeSlot: any) {
@@ -69,19 +135,25 @@ function removeCode(scopeSlot: any) {
 
 function addNewCode() {
     addCodeRef.value.showModal((params: any) => {
-        tableConfig.tableData.push({ ...params })
-    })
+        tableConfig.tableData.push({ ...params, checked: true })
+    }, null, props.preNodes)
 }
-function editCode(row: codeParam) {
-    addCodeRef.value.showModal((formData: codeParam) => {
-        row.colName = formData.colName
-        row.colType = formData.colType
-        row.remark = formData.remark
-    }, row)
+
+function editCode(row: any, index: number) {
+    addCodeRef.value.showModal((params: any) => {
+        row.colName = params.colName
+        row.fromAliaCode = params.fromAliaCode
+        row.fromColName = params.fromColName
+        row.colType = params.colType
+        row.remark = params.remark
+    }, row, props.preNodes)
 }
 
 onMounted(() => {
-    tableConfig.tableData = formData.value
+    tableConfig.tableData = formData.value.map((item: any) => ({
+        ...item,
+        checked: item.checked !== false
+    }))
 })
 </script>
 
@@ -89,6 +161,14 @@ onMounted(() => {
 .data-add-col-output {
     padding:  12px 20px;
     box-sizing: border-box;
+    .el-form-item {
+        .el-form-item__content {
+            justify-content: flex-end;
+            .el-select {
+                width: 100%;
+            }
+        }
+    }
     .btn-group {
         display: flex;
         justify-content: space-around;
@@ -101,10 +181,6 @@ onMounted(() => {
             }
         }
         .el-dropdown {
-            // position: absolute;
-            // right: 4px;
-            // top: 13px;
-
             .option-more {
                 font-size: 14px;
                 transform: rotate(90deg);

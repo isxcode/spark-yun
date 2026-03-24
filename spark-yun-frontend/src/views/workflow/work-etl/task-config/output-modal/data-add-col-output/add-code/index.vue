@@ -4,15 +4,45 @@
             <el-form-item label="字段名" prop="colName">
                 <el-input v-model="formData.colName" maxlength="20" placeholder="请输入"/>
             </el-form-item>
+            <el-form-item label="来源表" prop="fromAliaCode">
+                <el-select
+                    v-model="formData.fromAliaCode"
+                    filterable
+                    clearable
+                    placeholder="请选择"
+                    @change="changeEvent"
+                >
+                    <el-option
+                        v-for="item in sourceTablesList"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value"
+                    />
+                </el-select>
+            </el-form-item>
+            <el-form-item label="关联字段名" prop="fromColName">
+                <el-select
+                    v-model="formData.fromColName"
+                    filterable
+                    clearable
+                    placeholder="请选择"
+                    @visible-change="getTableFields($event)"
+                    @change="onFromColNameChange"
+                >
+                    <el-option
+                        v-for="item in tableFields"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value"
+                    />
+                </el-select>
+            </el-form-item>
             <el-form-item label="类型" prop="colType">
                 <el-input v-model="formData.colType" maxlength="20" placeholder="请输入"/>
             </el-form-item>
             <el-form-item label="备注">
                 <el-input v-model="formData.remark" maxlength="20" placeholder="请输入"/>
             </el-form-item>
-            <!-- <el-form-item label="转换">
-                <code-mirror v-model="formData.sql" basic :lang="lang"/>
-            </el-form-item> -->
         </el-form>
     </BlockModal>
 </template>
@@ -20,18 +50,22 @@
 <script lang="ts" setup>
 import { reactive, defineExpose, ref, nextTick } from 'vue'
 import { ElMessage, FormInstance, FormRules } from 'element-plus'
-// import CodeMirror from 'vue-codemirror6'
-// import {sql} from '@codemirror/lang-sql'
 
 interface codeParam {
     colName: string
     colType: string
+    fromAliaCode: string
+    fromColName: string
     remark: string
 }
-// const lang = ref<any>(sql())
+
 const form = ref<FormInstance>()
 const callback = ref<any>()
 const renderSence = ref('new')
+const sourceTablesList = ref([])
+const tableFields = ref([])
+const pageInfo = ref({})
+
 const modelConfig = reactive({
     title: '添加字段',
     visible: false,
@@ -48,11 +82,13 @@ const modelConfig = reactive({
         disabled: false
     },
     needScale: false,
-    zIndex: 3100,
+    zIndex: 1400,
     closeOnClickModal: false
 })
 const formData = reactive({
     colName: '',
+    fromAliaCode: '',
+    fromColName: '',
     colType: '',
     remark: ''
 })
@@ -70,25 +106,45 @@ const rules = reactive<FormRules>({
             message: '请输入类型',
             trigger: ['blur', 'change']
         }
+    ],
+    fromAliaCode: [
+        {
+            required: true,
+            message: '请选择来源表',
+            trigger: ['blur', 'change']
+        }
+    ],
+    fromColName: [
+        {
+            required: true,
+            message: '请选择来源字段名',
+            trigger: ['blur', 'change']
+        }
     ]
 })
 
-function showModal(cb: () => void, data: codeParam): void {
+function showModal(cb: () => void, data: codeParam, info: any): void {
     callback.value = cb
     modelConfig.visible = true
     if (data) {
         formData.colName = data.colName
         formData.colType = data.colType
+        formData.fromColName = data.fromColName
+        formData.fromAliaCode = data.fromAliaCode
         formData.remark = data.remark
         modelConfig.title = '编辑'
         renderSence.value = 'edit'
     } else {
         formData.colName = ''
         formData.colType = ''
+        formData.fromColName = ''
+        formData.fromAliaCode = ''
         formData.remark = ''
         modelConfig.title = '添加'
         renderSence.value = 'new'
     }
+    pageInfo.value = info
+    getTableList()
     nextTick(() => {
         form.value?.resetFields()
     })
@@ -107,6 +163,46 @@ function okEvent() {
     })
 }
 
+function getTableList() {
+    sourceTablesList.value = pageInfo.value.map((node: any) => {
+        const currentNodeData = node.data.nodeConfigData
+        return {
+            label: `【${currentNodeData.aliaCode}】${currentNodeData.name}`,
+            value: currentNodeData.aliaCode,
+            data: currentNodeData
+        }
+    })
+}
+
+function getTableFields(e: boolean) {
+    const currentItem = sourceTablesList.value.find(dd => dd.value === formData.fromAliaCode)
+    if (e && currentItem && currentItem.data.outColumnList) {
+        tableFields.value = (currentItem.data.outColumnList || []).map((column: any) => {
+            return {
+                label: column.colName,
+                value: column.colName,
+                colType: column.colType
+            }
+        })
+    }
+}
+
+function onFromColNameChange(val: string) {
+    if (val) {
+        const field = tableFields.value.find((f: any) => f.value === val)
+        if (field) {
+            formData.colName = val
+            formData.colType = field.colType || ''
+        }
+    }
+}
+
+function changeEvent() {
+    formData.fromColName = ''
+    formData.colName = ''
+    formData.colType = ''
+}
+
 function closeEvent() {
     modelConfig.visible = false
 }
@@ -120,48 +216,5 @@ defineExpose({
 .add-computer-group {
     padding: 12px 20px 0 20px;
     box-sizing: border-box;
-
-    .vue-codemirror {
-        height: 100px;
-        width: 100%;
-        .cm-editor {
-          height: 100%;
-          outline: none;
-          border: 1px solid #dcdfe6;
-        }
-
-        .cm-gutters {
-          font-size: 12px;
-          font-family: v-sans, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-        }
-
-        .cm-content {
-          font-size: 12px;
-          font-family: v-sans, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-        }
-        .cm-tooltip-autocomplete {
-
-          // display: none !important;
-            ul {
-                li {
-                    height: 40px;
-                    display: flex;
-                    align-items: center;
-                    font-size: 12px;
-                    background-color: #ffffff;
-                    font-family: v-sans, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-                }
-
-                li[aria-selected] {
-                    background: #409EFF;
-                }
-
-                .cm-completionIcon {
-                    margin-right: -4px;
-                    opacity: 0;
-                }
-            }
-        }
-    }
 }
 </style>
