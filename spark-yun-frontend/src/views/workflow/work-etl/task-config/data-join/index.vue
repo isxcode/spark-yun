@@ -349,8 +349,8 @@ function getMainTableFields(e: boolean) {
     }
 }
 function getTableFields(e: boolean, config: any) {
-    const currentItem = tableNameList.value.find(dd => dd.value === formData.value.mainAliaCode)
-    if (e && currentItem.data.outColumnList) {
+    const currentItem = tableNameList.value.find(dd => dd.value === config.joinAliaCode)
+    if (e && currentItem && currentItem.data.outColumnList) {
         tableFields.value = (currentItem.data.outColumnList || []).map((column: any) => {
             return {
                 label: column.colName,
