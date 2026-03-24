@@ -4,7 +4,7 @@
             <el-form
               ref="formRef"
               label-position="left"
-              label-width="120px"
+              label-width="80px"
               :model="formData"
             >
                 <div class="main-config-container">
