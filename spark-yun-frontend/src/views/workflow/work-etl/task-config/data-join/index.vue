@@ -303,7 +303,7 @@ function tableChangeEvent(e: string, list: any[], optionsList?: any[]) {
             formData.value.outColumnList = currentItem.data.outColumnList.map(item => {
                 return {
                     colName: item.colName,
-                    fromAliaCode: currentItem.data.name,
+                    fromAliaCode: currentItem.data.aliaCode,
                     fromColName: item.colName,
                     colType: item.colType,
                     remark: item.remark
