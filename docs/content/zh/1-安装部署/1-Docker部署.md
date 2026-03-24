@@ -136,6 +136,7 @@ docker pull registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun:latest-amd64
 
 > -Xmx4g 最大堆内存上限为4GB
 > -Xms2g 初始堆内存为2GB
+> -XX:+ExitOnOutOfMemoryError 首次发生oom就立即退出进程
 > -XX:+HeapDumpOnOutOfMemoryError 发生内存溢出时自动生成堆转储文件
 > -XX:HeapDumpPath=/var/lib/zhiqingyun/ 堆转储文件的保存路径
 > -XX:+UseG1GC 使用G1（Garbage-First）垃圾回收器
