@@ -35,6 +35,9 @@
         :drag-sort="colConfig.dragSort"
         v-bind="colConfig"
       >
+        <template v-if="colConfig.customHeaderSlot" #header>
+          <slot :name="colConfig.customHeaderSlot" />
+        </template>
         <template #default="{ row, rowIndex, column }">
           <slot
             :name="colConfig.customSlot"

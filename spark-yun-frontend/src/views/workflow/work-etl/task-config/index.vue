@@ -108,7 +108,7 @@ const currentComponent = computed(() => {
 
 function showFieldsModal() {
     const tableData = formData.value.outColumnList || []
-    outputModalRef.value.showModal(tableData, formData.value.type, incomeNodes.value)
+    outputModalRef.value.showModal(tableData, formData.value.type, incomeNodes.value, formData.value)
 }
 // 字段映射
 function showLinkModal() {

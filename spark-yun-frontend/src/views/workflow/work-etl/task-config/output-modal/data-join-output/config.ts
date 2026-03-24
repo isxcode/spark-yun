@@ -156,6 +156,13 @@ export const TableConfig: TableConfig = {
     tableData: [],
     colConfigs: [
         {
+            title: '',
+            customSlot: 'checkboxSlot',
+            customHeaderSlot: 'checkboxHeaderSlot',
+            width: 44,
+            align: 'center',
+        },
+        {
             prop: 'colName',
             title: '字段名',
             minWidth: 120,
@@ -187,6 +194,6 @@ export const TableConfig: TableConfig = {
             fixed: 'right'
         }
     ],
-    seqType: 'seq',
+    seqType: '',
     loading: false
 }
