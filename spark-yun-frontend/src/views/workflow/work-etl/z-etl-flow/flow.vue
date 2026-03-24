@@ -171,14 +171,25 @@ function initGraph() {
             targetAnchor: 'top',
             allowNode: false,
             allowEdge: false,
-            validateMagnet({ magnet }) {
-                // if (!hideGridStatus.value) {
-                //     return false
-                // } else {
-                //     return magnet.getAttribute('port-group') !== 'top'
-                // }
-                return magnet.getAttribute('port-group') !== 'top'
-
+            validateMagnet({ magnet, cell }) {
+                // 只能从底部端口开始连线
+                if (magnet.getAttribute('port-group') !== 'bottom') {
+                    return false
+                }
+                // 数据输出节点不能连线指向其他节点
+                const sourceData = cell.getData()
+                if (sourceData?.nodeConfigData?.type === 'DATA_OUTPUT') {
+                    return false
+                }
+                return true
+            },
+            validateConnection({ targetCell }) {
+                // 数据输入节点不能被其他节点连线指向
+                const targetData = targetCell?.getData()
+                if (targetData?.nodeConfigData?.type === 'DATA_INPUT') {
+                    return false
+                }
+                return true
             },
             createEdge() {
                 return _Graph.createEdge({
