@@ -1,25 +1,26 @@
-<!--
- * @Author: fancinate 1585546519@qq.com
- * @Date: 2026-03-22 19:32:23
- * @LastEditors: fancinate 1585546519@qq.com
- * @LastEditTime: 2026-03-22 19:35:31
- * @FilePath: /spark-yun/spark-yun-frontend/src/views/workflow/work-etl/task-config/link-modal/index.vue
- * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
--->
 <template>
     <BlockModal :model-config="modelConfig">
-        
+        <div style="padding: 12px 20px;">
+            <data-sync-table ref="dataSyncTableRef"></data-sync-table>
+        </div>
     </BlockModal>
 </template>
 
 <script lang="ts" setup>
-import { computed, nextTick, reactive, ref, shallowRef, markRaw } from 'vue'
+import { nextTick, reactive, ref } from 'vue'
+import BlockModal from '@/components/block-modal/index.vue'
+import DataSyncTable from '../data-output/data-sync-table/index.vue'
+import { GetTableColumnsByTableId } from '@/services/data-sync.service'
+
+const dataSyncTableRef = ref<any>()
+const formDataRef = ref<any>()
+const incomeNodesRef = ref<any>()
 
 const modelConfig = reactive({
     title: '字段映射',
     visible: false,
     width: '60%',
-    customClass: 'output-modal',
+    customClass: 'link-modal',
     okConfig: {
         title: '确定',
         ok: okEvent,
@@ -35,17 +36,68 @@ const modelConfig = reactive({
     closeOnClickModal: false,
 })
 
-function showModal(data: any[]) {
+function showModal(formData: any, incomeNodes: any) {
+    formDataRef.value = formData
+    incomeNodesRef.value = incomeNodes
+    modelConfig.visible = true
 
-    modelConfig.visible = true;
+    nextTick(() => {
+        initMappingData()
+    })
+}
+
+function initMappingData() {
+    const outputEtl = formDataRef.value.outputEtl
+    // If existing mapping data, restore it
+    if (outputEtl.colMapping && outputEtl.colMapping.length) {
+        dataSyncTableRef.value.initPageData({
+            sourceTableColumn: outputEtl.fromColumnList,
+            targetTableColumn: outputEtl.toColumnList,
+            columnMap: outputEtl.colMapping.map((item: any) => ({
+                source: item[0],
+                target: item[1]
+            }))
+        })
+    } else {
+        // Set source columns from income nodes
+        if (incomeNodesRef.value && incomeNodesRef.value[0]) {
+            dataSyncTableRef.value.setSourceTableColumn(
+                incomeNodesRef.value[0].data.nodeConfigData.outColumnList.map((column: any) => ({
+                    colName: column.colName,
+                    colType: column.colType,
+                    remark: column.remark
+                }))
+            )
+        }
+        // Set target columns from selected table
+        if (outputEtl.datasourceId && outputEtl.tableName) {
+            GetTableColumnsByTableId({
+                dataSourceId: outputEtl.datasourceId,
+                tableName: outputEtl.tableName
+            }).then((res: any) => {
+                const tableData = (res.data.columns || []).map((column: any) => ({
+                    colName: column.name,
+                    colType: column.type,
+                    remark: column.columnComment
+                }))
+                dataSyncTableRef.value.setTargetTableColumn(tableData)
+            }).catch((err: any) => {
+                console.error(err)
+            })
+        }
+    }
 }
 
 function okEvent() {
-    console.log('确定保存')
+    const data = dataSyncTableRef.value.getConnect()
+    formDataRef.value.outputEtl.fromColumnList = data.fromColumnList
+    formDataRef.value.outputEtl.toColumnList = data.toColumnList
+    formDataRef.value.outputEtl.colMapping = data.columnMap.map((item: any) => [item.source, item.target])
+    modelConfig.visible = false
 }
 
 function closeEvent() {
-    modelConfig.visible = false;
+    modelConfig.visible = false
 }
 
 defineExpose({
@@ -54,10 +106,10 @@ defineExpose({
 </script>
 
 <style lang="scss">
-.output-modal {
-    // .modal-content {
-    //     padding: 12px;
-    //     box-sizing: border-box;
-    // }
+.link-modal {
+    .modal-content {
+        padding: 12px 0;
+        box-sizing: border-box;
+    }
 }
 </style>
