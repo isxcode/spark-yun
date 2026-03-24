@@ -1,6 +1,6 @@
 <template>
     <div class="config-components">
-        <el-form-item label="数据源类型" prop="inputEtl.dbType" :rules="rules.dbType">
+        <el-form-item label="类型" prop="inputEtl.dbType" :rules="rules.dbType">
             <el-select
                 v-model="formData.inputEtl.dbType"
                 filterable
@@ -50,7 +50,6 @@
                 />
             </el-select>
             <el-button type="primary" link @click="showTableDetail">数据预览</el-button>
-            <el-button type="primary" link @click="getTableColumn">刷新</el-button>
         </el-form-item>
         <el-form-item label="分区键" prop="inputEtl.partitionColumn" :rules="rules.partitionColumn">
             <el-select

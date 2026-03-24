@@ -5,7 +5,7 @@ export const TaskParams = {
             datasourceId: '',
             dbType: '',
             tableName: '',
-            numPartitions: null,
+            numPartitions: 1,
             partitionColumn: ''
         },
         outColumnList: []
