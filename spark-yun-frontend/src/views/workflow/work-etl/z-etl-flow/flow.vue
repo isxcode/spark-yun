@@ -189,6 +189,14 @@ function initGraph() {
                 if (targetData?.nodeConfigData?.type === 'DATA_INPUT') {
                     return false
                 }
+                // 数据过滤/数据转换/新增字段节点只能被一个节点指向
+                const singleInputTypes = ['DATA_FILTER', 'DATA_TRANSFORM', 'DATA_ADD_COL', 'DATA_OUTPUT']
+                if (singleInputTypes.includes(targetData?.nodeConfigData?.type)) {
+                    const incomingEdges = _Graph.getIncomingEdges(targetCell)
+                    if (incomingEdges && incomingEdges.length >= 1) {
+                        return false
+                    }
+                }
                 return true
             },
             createEdge() {
