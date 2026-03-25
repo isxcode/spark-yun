@@ -171,7 +171,7 @@ function getTableList() {
     sourceTablesList.value = pageInfo.value.map((node: any) => {
         const currentNodeData = node.data.nodeConfigData
         return {
-            label: `【${currentNodeData.aliaCode}】${currentNodeData.name}`,
+            label: `【${currentNodeData.name}】`,
             value: currentNodeData.aliaCode,
             data: currentNodeData
         }
