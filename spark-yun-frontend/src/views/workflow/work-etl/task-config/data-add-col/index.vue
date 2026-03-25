@@ -1,49 +1,37 @@
 <template>
-    <div class="config-components">
-        <div class="add-col-tooltip">
-            <el-icon><Warning /></el-icon>请点击<strong>输出字段</strong>按钮进行字段新增操作！
-        </div>
-        <!-- <div v-show="false">
-            <el-form-item>
-                <el-button type="primary" @click="addNewCode">添加</el-button>
-            </el-form-item>
-            <div style="max-height: 444px;">
-                <BlockTable
-                  :table-config="tableConfig"
-                >
-                    <template #options="scopeSlot">
-                        <div class="btn-group">
-                            <el-dropdown trigger="click">
-                                <el-icon class="option-more" @click.stop>
-                                    <MoreFilled />
-                                </el-icon>
-                                <template #dropdown>
-                                    <el-dropdown-menu>
-                                        <el-dropdown-item @click="editCode(scopeSlot.row)">编辑</el-dropdown-item>
-                                        <el-dropdown-item @click="removeCode(scopeSlot.row)">删除</el-dropdown-item>
-                                    </el-dropdown-menu>
-                                </template>
-                            </el-dropdown>
-                        </div>
-                    </template>
-                </BlockTable>
+    <div class="config-components data-add-col">
+        <el-form-item class="form-item-top" label-width="0">
+            <div class="form-options__list">
+                <div class="form-options__item" v-for="(element, index) in formData.addColEtl" :key="index">
+                    <el-form-item :prop="`addColEtl[${index}].colName`" :rules="rules.colName">
+                        <el-input v-model="element.colName" clearable placeholder="字段名"></el-input>
+                    </el-form-item>
+                    <el-form-item :prop="`addColEtl[${index}].colType`" :rules="rules.colType">
+                        <el-input v-model="element.colType" clearable placeholder="类型"></el-input>
+                    </el-form-item>
+                    <el-form-item>
+                        <el-input v-model="element.remark" clearable placeholder="备注"></el-input>
+                    </el-form-item>
+                    <div class="option-btn">
+                        <el-icon v-if="formData.addColEtl.length > 1" class="remove" @click="removeItem(index)">
+                            <CircleClose />
+                        </el-icon>
+                    </div>
+                </div>
             </div>
-            <add-code ref="addCodeRef"></add-code>
-        </div> -->
+            <div class="transform-condition-actions">
+                <el-button link type="primary" size="small" @click="addNewField">
+                    <el-icon><Plus /></el-icon>
+                    字段
+                </el-button>
+            </div>
+        </el-form-item>
     </div>
 </template>
 
 <script lang="ts" setup>
-import { ref, defineProps, defineEmits, computed, onMounted, reactive, nextTick } from 'vue'
-import { ElMessage, ElMessageBox, FormInstance, FormRules } from 'element-plus'
-import { TypeList, ConfigRules, TableConfig } from './config.ts'
-import AddCode from './add-code/index.vue'
-
-interface codeParam {
-    colName: string
-    colType: string
-    remark: string
-}
+import { ref, defineEmits, computed, onMounted, reactive } from 'vue'
+import { FormRules } from 'element-plus'
 
 const props = defineProps<{
     modelValue: any,
@@ -51,8 +39,10 @@ const props = defineProps<{
 }>()
 const emit = defineEmits(['update:modelValue'])
 
-const addCodeRef = ref()
-const tableConfig = reactive(TableConfig)
+const rules = reactive<FormRules>({
+    colName: [{ required: true, message: '字段名不能为空', trigger: ['blur', 'change'] }],
+    colType: [{ required: true, message: '类型不能为空', trigger: ['blur', 'change'] }]
+})
 
 const formData = computed({
     get() {
@@ -63,84 +53,47 @@ const formData = computed({
     }
 })
 
-
-// 删除来源编码
-function removeCode(row: codeParam) {
-    ElMessageBox.confirm('确定删除该字段吗？', '警告', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-    }).then(() => {
-        formData.value.outColumnList = formData.value.outColumnList.filter(item => item.colName !== row.colName)
-        tableConfig.tableData = formData.value.outColumnList
+function addNewField() {
+    if (!formData.value.addColEtl) {
+        formData.value.addColEtl = []
+    }
+    formData.value.addColEtl.push({
+        colName: '',
+        colType: '',
+        remark: ''
     })
 }
 
-function addNewCode() {
-    addCodeRef.value.showModal((params: any) => {
-        formData.value.outColumnList.push({ ...params })
-        tableConfig.tableData = formData.value.outColumnList
-    })
-}
-function editCode(row: codeParam) {
-    addCodeRef.value.showModal((formData: codeParam) => {
-        row.colName = formData.colName
-        row.colType = formData.colType
-        row.remark = formData.remark
-    }, row)
+function removeItem(index: number) {
+    formData.value.addColEtl.splice(index, 1)
 }
 
 onMounted(() => {
-    // tableConfig.tableData = formData.value.outColumnList
-    tableConfig.tableData = []
     if (props.incomeNodes && props.incomeNodes[0]) {
-        formData.value.outColumnList = props.incomeNodes[0].data.nodeConfigData.outColumnList.filter((item: any) => item.checked !== false)
-        tableConfig.tableData = formData.value.outColumnList
+        const fromAliaCode = props.incomeNodes[0].data.nodeConfigData.aliaCode || ''
+        formData.value.outColumnList = props.incomeNodes[0].data.nodeConfigData.outColumnList.filter((item: any) => item.checked !== false).map((column: any) => {
+            return {
+                colName: column.colName,
+                colType: column.colType,
+                fromAliaCode: fromAliaCode,
+                fromColName: column.colName,
+                remark: column.remark
+            }
+        })
         formData.value.inputEtl = props.incomeNodes[0].data.nodeConfigData.inputEtl
+    }
+    if (!formData.value.addColEtl || !formData.value.addColEtl.length) {
+        formData.value.addColEtl = [{ colName: '', colType: '', remark: '' }]
     }
 })
 </script>
 
 <style lang="scss">
-.config-components {
-    padding:  12px 20px;
-    box-sizing: border-box;
-    .add-col-tooltip {
+.data-add-col {
+    .transform-condition-actions {
+        margin-top: 6px;
         display: flex;
-        align-items: center;
-        font-size: 12px;
-        height: 32px;
-        line-height: 32px;
-        margin-top: 12px;
-        .el-icon {
-            color: #E6A23C;
-            margin-right: 4px;
-            font-size: 16px;
-        }
-    }
-    .btn-group {
-        display: flex;
-        justify-content: space-around;
-        align-items: center;
-        span {
-            cursor: pointer;
-            color: getCssVar('color', 'primary', 'light-5');
-            &:hover {
-                color: getCssVar('color', 'primary');;
-            }
-        }
-        .el-dropdown {
-            // position: absolute;
-            // right: 4px;
-            // top: 13px;
-
-            .option-more {
-                font-size: 14px;
-                transform: rotate(90deg);
-                cursor: pointer;
-                color: getCssVar('color', 'info');
-            }
-        }
+        padding-left: 2px;
     }
 }
 </style>
