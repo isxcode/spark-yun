@@ -145,9 +145,10 @@ function handleDragEnd(e: any, item: any) {
     if (!runningStatus.value) {
         nextTick(() => {
             item.id = guid()
-            item.aliaCode = 'node_' + String(Math.floor(Math.random() * 1000000)).padStart(6, '0')
+            const nodeId = String(Math.floor(Math.random() * 1000000)).padStart(6, '0')
+            item.aliaCode = 'node_' + nodeId
             const newItem = {
-                name: item.typeName,
+                name: item.typeName + '_' + nodeId,
                 inputEtl: null,
                 ...item,
                 ...cloneDeep(TaskParams[item.type]),
