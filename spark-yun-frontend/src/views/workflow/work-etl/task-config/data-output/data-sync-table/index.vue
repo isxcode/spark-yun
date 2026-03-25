@@ -289,6 +289,12 @@ onMounted(() => {
     // });
 })
 
+function clearConnections() {
+    instance.deleteEveryConnection()
+    connectNodeList.value = []
+    connectCopy.value = []
+}
+
 defineExpose({
     getSourceTableColumn,
     getTargetTableColumn,
@@ -296,7 +302,8 @@ defineExpose({
     initPageData,
     setSourceTableColumn,
     setTargetTableColumn,
-    updateTargetTableColumn
+    updateTargetTableColumn,
+    clearConnections
 })
 </script>
 

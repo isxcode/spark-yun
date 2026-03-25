@@ -3,6 +3,9 @@
         <div style="padding: 12px 20px;">
             <data-sync-table ref="dataSyncTableRef"></data-sync-table>
         </div>
+        <template #customLeft>
+            <el-button type="primary" @click="refreshSourceFields" style="margin-right: auto;">刷新</el-button>
+        </template>
     </BlockModal>
 </template>
 
@@ -94,6 +97,19 @@ function okEvent() {
     formDataRef.value.outputEtl.toColumnList = data.toColumnList
     formDataRef.value.outputEtl.colMapping = data.columnMap.map((item: any) => [item.source, item.target])
     modelConfig.visible = false
+}
+
+function refreshSourceFields() {
+    dataSyncTableRef.value.clearConnections()
+    if (incomeNodesRef.value && incomeNodesRef.value[0]) {
+        dataSyncTableRef.value.setSourceTableColumn(
+            incomeNodesRef.value[0].data.nodeConfigData.outColumnList.filter((item: any) => item.checked !== false).map((column: any) => ({
+                colName: column.colName,
+                colType: column.colType,
+                remark: column.remark
+            }))
+        )
+    }
 }
 
 function closeEvent() {
