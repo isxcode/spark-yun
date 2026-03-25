@@ -208,13 +208,15 @@ onMounted(() => {
 
             > .filter-remove-btn {
                 position: absolute;
-                right: 4px;
-                top: 4px;
-                font-size: 14px;
+                right: -8px;
+                top: -8px;
+                font-size: 16px;
                 color: #c0c4cc;
                 cursor: pointer;
                 z-index: 1;
                 transition: color 0.2s;
+                background: #fff;
+                border-radius: 50%;
 
                 &:hover {
                     color: #f56c6c;
