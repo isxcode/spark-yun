@@ -150,24 +150,58 @@ function editCode(row: any, index: number) {
 }
 
 onMounted(() => {
+    // 上游节点的输出字段
+    const preFields: any[] = []
+    if (props.preNodes && props.preNodes[0]) {
+        const fromAliaCode = props.preNodes[0].data.nodeConfigData.aliaCode || ''
+        ;(props.preNodes[0].data.nodeConfigData.outColumnList || [])
+            .filter((item: any) => item.checked !== false)
+            .forEach((column: any) => {
+                preFields.push({
+                    colName: column.colName,
+                    colType: column.colType,
+                    fromAliaCode: fromAliaCode,
+                    fromColName: column.colName,
+                    remark: column.remark,
+                    checked: true
+                })
+            })
+    }
+
+    // addColEtl 中新增的字段
+    const addColFields: any[] = []
+    const addColEtl = props.nodeFormData?.addColEtl || []
+    addColEtl.forEach((item: any) => {
+        if (item.colName) {
+            addColFields.push({
+                colName: item.colName,
+                colType: item.colType || '',
+                fromAliaCode: item.fromAliaCode || '',
+                fromColName: item.fromColName || item.colName,
+                remark: item.remark || '',
+                checked: true
+            })
+        }
+    })
+
     if (formData.value && formData.value.length) {
-        tableConfig.tableData = formData.value.map((item: any) => ({
+        // 已有保存数据，合并新增的 addColEtl 字段（去重）
+        const existingNames = new Set(formData.value.map((item: any) => item.colName))
+        const merged = formData.value.map((item: any) => ({
             ...item,
             checked: item.checked !== false
         }))
-    } else if (props.preNodes && props.preNodes[0]) {
-        const fromAliaCode = props.preNodes[0].data.nodeConfigData.aliaCode || ''
-        tableConfig.tableData = (props.preNodes[0].data.nodeConfigData.outColumnList || [])
-            .filter((item: any) => item.checked !== false)
-            .map((column: any) => ({
-                colName: column.colName,
-                colType: column.colType,
-                fromAliaCode: fromAliaCode,
-                fromColName: column.colName,
-                remark: column.remark,
-                checked: true
-            }))
+        addColFields.forEach((field: any) => {
+            if (!existingNames.has(field.colName)) {
+                merged.push(field)
+            }
+        })
+        tableConfig.tableData = merged
+    } else {
+        // 无保存数据，使用上游字段 + 新增字段
+        tableConfig.tableData = [...preFields, ...addColFields]
     }
+    updateAllChecked()
 })
 
 function getTableData() {

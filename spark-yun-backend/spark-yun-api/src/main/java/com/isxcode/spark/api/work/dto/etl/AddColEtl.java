@@ -16,4 +16,8 @@ public class AddColEtl {
     private String colType;
 
     private String remark;
+
+    private String fromAliaCode;
+
+    private String fromColName;
 }

@@ -51,7 +51,7 @@ public class EtlNode {
     /**
      * 新增字段节点.
      */
-    private AddColEtl addColEtl;
+    private List<AddColEtl> addColEtl;
 
     /**
      * 自定义Sql节点.
