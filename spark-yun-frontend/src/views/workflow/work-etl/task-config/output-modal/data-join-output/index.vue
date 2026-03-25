@@ -161,8 +161,15 @@ function refreshFields() {
 }
 
 onMounted(() => {
-    // 始终从主表的选中字段初始化
-    refreshFields()
+    if (formData.value && formData.value.length) {
+        tableConfig.tableData = formData.value.map((item: any) => ({
+            ...item,
+            checked: item.checked !== false
+        }))
+        updateAllChecked()
+    } else {
+        refreshFields()
+    }
 })
 
 function getTableData() {
