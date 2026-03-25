@@ -82,7 +82,9 @@ export const TaskParams = {
     },
     // 数据自定义
     'DATA_CUSTOM': {
-        sql: '',
+        customSqlEtl: {
+            sql: ''
+        },
         outColumnList: []
     }
 }
