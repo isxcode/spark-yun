@@ -72,6 +72,12 @@
                     </div>
                 </div>
             </div>
+            <div class="transform-condition-actions">
+                <el-button link type="primary" size="small" @click="addNewOption">
+                    <el-icon><Plus /></el-icon>
+                    转换
+                </el-button>
+            </div>
         </el-form-item>
     </div>
 </template>
@@ -191,14 +197,9 @@ onMounted(() => {
         &.form-item-top {
             display: flex;
             flex-direction: column;
-            .el-form-item__content {
-                .add-btn {
-                    position: absolute;
-                    top: -22px;
-                    right: 0;
-                    color: getCssVar('color', 'primary');
-                    cursor: pointer;
-                }
+            .transform-condition-actions {
+                width: 100%;
+                padding: 4px 0 8px;
             }
             .form-options__list {
                 width: 100%;
