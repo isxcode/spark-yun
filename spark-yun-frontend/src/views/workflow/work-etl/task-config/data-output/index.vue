@@ -1,6 +1,6 @@
 <template>
     <div class="config-components">
-        <el-form-item label="数据源类型" prop="outputEtl.dbType" :rules="rules.dbType">
+        <el-form-item label="类型" prop="outputEtl.dbType" :rules="rules.dbType">
             <el-select
                 v-model="formData.dbType"
                 filterable
