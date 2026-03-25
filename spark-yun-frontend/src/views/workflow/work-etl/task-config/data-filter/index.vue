@@ -199,12 +199,12 @@ onMounted(() => {
 
         // 分组块（背景色和左边框色由动态内联样式控制）
         .filter-group-block {
-            border: 1px solid #ffd699;
-            border-left: 3px solid #ff9800;
+            border: 1px solid #d9ecff;
+            border-left: 3px solid #409eff;
             border-radius: 4px;
             padding: 10px;
             position: relative;
-            background: #fffaf2;
+            background: #f9fbff;
 
             > .filter-remove-btn {
                 position: absolute;
