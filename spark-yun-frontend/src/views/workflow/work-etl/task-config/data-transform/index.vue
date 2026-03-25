@@ -167,10 +167,13 @@ onMounted(() => {
                 value: column.colName
             }
         })
+        const fromAliaCode = props.incomeNodes[0].data.nodeConfigData.aliaCode || ''
         formData.value.outColumnList = props.incomeNodes[0].data.nodeConfigData.outColumnList.filter((item: any) => item.checked !== false).map((column) => {
             return {
                 colName: column.colName,
                 colType: column.colType,
+                fromAliaCode: fromAliaCode,
+                fromColName: column.colName,
                 remark: column.remark
             }
         })
