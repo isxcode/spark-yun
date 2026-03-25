@@ -251,7 +251,7 @@ const tableNameList = computed(() => {
         return props.incomeNodes.map((node: any) => {
             const currentNodeData = node.data.nodeConfigData
             return {
-                label: `【${currentNodeData.name}】`,
+                label: currentNodeData.name,
                 value: currentNodeData.aliaCode,
                 data: currentNodeData
             }
