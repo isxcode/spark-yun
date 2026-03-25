@@ -75,7 +75,7 @@ function addGroup() {
 
 onMounted(() => {
     if (props.incomeNodes && props.incomeNodes[0]) {
-        colNameOptions.value = props.incomeNodes[0].data.nodeConfigData.outColumnList.map((column: any) => {
+        colNameOptions.value = props.incomeNodes[0].data.nodeConfigData.outColumnList.filter((item: any) => item.checked !== false).map((column: any) => {
             return {
                 label: column.colName,
                 value: column.colName

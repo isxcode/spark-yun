@@ -62,7 +62,7 @@ function initMappingData() {
         // Set source columns from income nodes
         if (incomeNodesRef.value && incomeNodesRef.value[0]) {
             dataSyncTableRef.value.setSourceTableColumn(
-                incomeNodesRef.value[0].data.nodeConfigData.outColumnList.map((column: any) => ({
+                incomeNodesRef.value[0].data.nodeConfigData.outColumnList.filter((item: any) => item.checked !== false).map((column: any) => ({
                     colName: column.colName,
                     colType: column.colType,
                     remark: column.remark

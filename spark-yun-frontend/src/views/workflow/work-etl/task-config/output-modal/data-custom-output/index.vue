@@ -155,6 +155,14 @@ onMounted(() => {
         checked: item.checked !== false
     }))
 })
+
+function getTableData() {
+    return tableConfig.tableData
+}
+
+defineExpose({
+    getTableData
+})
 </script>
 
 <style lang="scss">

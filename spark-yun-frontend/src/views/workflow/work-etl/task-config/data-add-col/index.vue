@@ -94,7 +94,7 @@ onMounted(() => {
     // tableConfig.tableData = formData.value.outColumnList
     tableConfig.tableData = []
     if (props.incomeNodes && props.incomeNodes[0]) {
-        formData.value.outColumnList = props.incomeNodes[0].data.nodeConfigData.outColumnList
+        formData.value.outColumnList = props.incomeNodes[0].data.nodeConfigData.outColumnList.filter((item: any) => item.checked !== false)
         tableConfig.tableData = formData.value.outColumnList
         formData.value.inputEtl = props.incomeNodes[0].data.nodeConfigData.inputEtl
     }

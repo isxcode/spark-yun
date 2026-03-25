@@ -137,7 +137,7 @@ function refreshFields() {
     const nodeData = mainNode.data.nodeConfigData
     const newFields: any[] = []
     if (nodeData.outColumnList) {
-        nodeData.outColumnList.forEach((col: any) => {
+        nodeData.outColumnList.filter((item: any) => item.checked !== false).forEach((col: any) => {
             newFields.push({
                 colName: col.colName,
                 colType: col.colType,
@@ -159,8 +159,13 @@ onMounted(() => {
     }))
 })
 
+function getTableData() {
+    return tableConfig.tableData
+}
+
 defineExpose({
-    refreshFields
+    refreshFields,
+    getTableData
 })
 </script>
 
