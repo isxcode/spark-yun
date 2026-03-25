@@ -10,9 +10,7 @@
                 <template #checkboxSlot="scopeSlot">
                     <el-checkbox v-model="scopeSlot.row.checked" @change="updateAllChecked" />
                 </template>
-                <template #fromSource="scopeSlot">
-                    <span>【{{ getNodeName(scopeSlot.row.fromAliaCode) }}】{{ scopeSlot.row.fromColName }}</span>
-                </template>
+
                 <template #options="scopeSlot">
                     <div class="btn-group">
                         <el-dropdown trigger="click">
@@ -39,6 +37,7 @@
 import { ref, defineEmits, computed, onMounted, reactive } from 'vue'
 import AddCode from './add-code/index.vue'
 import { ElMessage, ElMessageBox, FormInstance, FormRules } from 'element-plus'
+import { ParseCustomSqlFunction } from '@/services/etl-config.service'
 
 const props = defineProps<{
     modelValue: any,
@@ -70,12 +69,7 @@ const tableConfig = reactive({
             minWidth: 80,
             showOverflowTooltip: true
         },
-        {
-            title: '来源',
-            minWidth: 200,
-            showOverflowTooltip: true,
-            customSlot: 'fromSource'
-        },
+
         {
             prop: 'remark',
             title: '备注',
@@ -156,12 +150,38 @@ onMounted(() => {
     }))
 })
 
+const refreshLoading = ref(false)
+
+function refreshFields() {
+    const sql = props.nodeFormData?.sql
+    if (!sql) {
+        ElMessage.error('请先输入SQL')
+        return
+    }
+    refreshLoading.value = true
+    ParseCustomSqlFunction({ sql }).then((res: any) => {
+        const newColumns = (res.data.columns || []).map((column: any) => ({
+            colName: column.name,
+            colType: column.type,
+            remark: column.columnComment,
+            checked: true
+        }))
+        tableConfig.tableData = newColumns
+        refreshLoading.value = false
+    }).catch((err: any) => {
+        console.error(err)
+        ElMessage.error(err || '解析失败')
+        refreshLoading.value = false
+    })
+}
+
 function getTableData() {
     return tableConfig.tableData
 }
 
 defineExpose({
-    getTableData
+    getTableData,
+    refreshFields
 })
 </script>
 
