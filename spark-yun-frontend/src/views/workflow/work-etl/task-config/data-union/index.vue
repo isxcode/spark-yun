@@ -222,7 +222,6 @@ onMounted(() => {
 
             .form-options__item {
                 display: flex;
-                margin-bottom: 8px;
 
                 .el-form-item {
                     width: 100%;
