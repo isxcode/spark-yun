@@ -135,27 +135,36 @@ function tableChangeEvent(e: string, list: any[]) {
     list.forEach((data: any) => {
         data.aliaCode = ''
     })
+    updateOutColumnList()
+}
+
+function updateOutColumnList() {
+    const mainAliaCode = formData.value.mainAliaCode
+    if (!mainAliaCode || !props.incomeNodes || !props.incomeNodes.length) {
+        tableConfig.tableData = []
+        formData.value.outColumnList = []
+        return
+    }
+    const mainItem = tableNameList.value.find((item: any) => item.value === mainAliaCode)
+    if (mainItem && mainItem.data.outColumnList) {
+        const fields = (mainItem.data.outColumnList || []).filter((item: any) => item.checked !== false).map((column: any) => {
+            return {
+                colName: column.colName,
+                colType: column.colType,
+                remark: column.remark
+            }
+        })
+        tableConfig.tableData = fields
+        formData.value.outColumnList = [...fields]
+        formData.value.inputEtl = mainItem.data.inputEtl
+    } else {
+        tableConfig.tableData = []
+        formData.value.outColumnList = []
+    }
 }
 
 onMounted(() => {
-    tableConfig.tableData = []
-    if (props.incomeNodes && props.incomeNodes[0]) {
-        tableConfig.tableData = props.incomeNodes[0].data.nodeConfigData.outColumnList.filter((item: any) => item.checked !== false).map((column) => {
-            return {
-                colName: column.colName,
-                colType: column.colType,
-                remark: column.remark
-            }
-        })
-        formData.value.outColumnList = props.incomeNodes[0].data.nodeConfigData.outColumnList.filter((item: any) => item.checked !== false).map((column) => {
-            return {
-                colName: column.colName,
-                colType: column.colType,
-                remark: column.remark
-            }
-        })
-        formData.value.inputEtl = props.incomeNodes[0].data.nodeConfigData.inputEtl
-    }
+    updateOutColumnList()
 })
 </script>
 

@@ -50,7 +50,7 @@ const props = defineProps<{
 const emit = defineEmits(['update:modelValue'])
 
 const addCodeRef = ref()
-const isDataInput = computed(() => props.nodeFormData?.type === 'DATA_INPUT')
+const hideOperations = computed(() => ['DATA_INPUT', 'DATA_UNION'].includes(props.nodeFormData?.type))
 
 const baseColConfigs = [
     {
@@ -95,7 +95,7 @@ const baseColConfigs = [
 
 const tableConfig = reactive({
     tableData: [],
-    colConfigs: isDataInput.value ? baseColConfigs.slice(0, -1) : baseColConfigs,
+    colConfigs: hideOperations.value ? baseColConfigs.slice(0, -1) : baseColConfigs,
     seqType: '',
     loading: false
 })
