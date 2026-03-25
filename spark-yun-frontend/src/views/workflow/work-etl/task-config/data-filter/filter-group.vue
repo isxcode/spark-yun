@@ -10,7 +10,7 @@
                 >{{ items[index].filterWay || 'AND' }}</span>
             </div>
             <!-- 分组条件 -->
-            <div v-if="item.groupFilter" class="filter-group-block" :style="getGroupStyle(item)">
+            <div v-if="item.groupFilter" class="filter-group-block" :style="getGroupStyle()">
                 <el-icon v-if="items.length > 1" class="filter-remove-btn" @click="removeItem(index)">
                     <CircleClose />
                 </el-icon>
@@ -68,13 +68,11 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, inject } from 'vue'
+import { reactive } from 'vue'
 import { FormRules } from 'element-plus'
 import { FilterConditionOptions, groupColorPalette } from './config.ts'
 
 defineOptions({ name: 'FilterGroup' })
-
-const groupColorCounter = inject<{ value: number }>('groupColorCounter', { value: 0 })
 
 const props = defineProps<{
     items: any[]
@@ -83,12 +81,9 @@ const props = defineProps<{
     depth: number
 }>()
 
-// 为每个分组分配唯一颜色索引，挂载到 item 上避免重复分配
-function getGroupStyle(item: any) {
-    if (item._colorIndex === undefined) {
-        item._colorIndex = groupColorCounter.value++
-    }
-    const palette = groupColorPalette[item._colorIndex % groupColorPalette.length]
+// 根据嵌套深度分配颜色，确保相邻父子层级颜色不同
+function getGroupStyle() {
+    const palette = groupColorPalette[props.depth % groupColorPalette.length]
     return {
         borderLeftColor: palette.border,
         backgroundColor: palette.background,
