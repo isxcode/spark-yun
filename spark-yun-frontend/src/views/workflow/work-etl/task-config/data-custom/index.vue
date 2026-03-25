@@ -1,7 +1,7 @@
 <template>
     <div class="config-components data-custom">
-        <el-form-item prop="sql" label-width="0" :class="{ 'show-screen__full': fullStatus }">
-            <code-mirror v-model="formData.sql" basic :lang="sqlLang" />
+        <el-form-item prop="customSqlEtl.sql" label-width="0" :class="{ 'show-screen__full': fullStatus }">
+            <code-mirror v-model="formData.customSqlEtl.sql" basic :lang="sqlLang" />
         </el-form-item>
     </div>
 </template>
@@ -29,6 +29,9 @@ const formData = computed({
 })
 
 onMounted(() => {
+    if (!formData.value.customSqlEtl) {
+        formData.value.customSqlEtl = { sql: '' }
+    }
     if (!formData.value.outColumnList) {
         formData.value.outColumnList = []
     }
