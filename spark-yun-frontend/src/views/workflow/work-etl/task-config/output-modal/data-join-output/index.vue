@@ -129,11 +129,19 @@ function removeCode(scopeSlot: any) {
 }
 
 function refreshFields() {
-    if (!props.preNodes || !props.preNodes.length) return
     const mainAliaCode = props.nodeFormData?.mainAliaCode
-    if (!mainAliaCode) return
+    if (!mainAliaCode || !props.preNodes || !props.preNodes.length) {
+        // 没有选择主表，清空字段
+        tableConfig.tableData = []
+        isAllChecked.value = false
+        return
+    }
     const mainNode = props.preNodes.find((n: any) => n.data.nodeConfigData.aliaCode === mainAliaCode)
-    if (!mainNode) return
+    if (!mainNode) {
+        tableConfig.tableData = []
+        isAllChecked.value = false
+        return
+    }
     const nodeData = mainNode.data.nodeConfigData
     const newFields: any[] = []
     if (nodeData.outColumnList) {
@@ -149,14 +157,12 @@ function refreshFields() {
         })
     }
     tableConfig.tableData = newFields
-    isAllChecked.value = true
+    isAllChecked.value = newFields.length > 0
 }
 
 onMounted(() => {
-    tableConfig.tableData = formData.value.map((item: any) => ({
-        ...item,
-        checked: item.checked !== false
-    }))
+    // 始终从主表的选中字段初始化
+    refreshFields()
 })
 
 function getTableData() {
