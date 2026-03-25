@@ -55,15 +55,12 @@ export const FilterConditionOptions = [
     { label: '不在范围内(NOT IN)', value: 'not_in' }
 ]
 
-// 分组背景色调色板，从橙黄开始
+// 分组背景色调色板
 export const groupColorPalette = [
-    { border: '#ff9800', background: '#fffaf2', borderOuter: '#ffd699' },
-    { border: '#409eff', background: '#f9fbff', borderOuter: '#d9ecff' },
     { border: '#67c23a', background: '#f9fff5', borderOuter: '#c2e7b0' },
     { border: '#9b59b6', background: '#faf5ff', borderOuter: '#d9b3e8' },
     { border: '#e91e63', background: '#fff5f8', borderOuter: '#f4a0bd' },
     { border: '#00bcd4', background: '#f5fdfe', borderOuter: '#a0e5ed' },
-    { border: '#e6a23c', background: '#fffcf5', borderOuter: '#f5dab1' },
     { border: '#607d8b', background: '#f7f9fa', borderOuter: '#b0bec5' },
 ]
 
