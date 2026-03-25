@@ -150,10 +150,24 @@ function editCode(row: any, index: number) {
 }
 
 onMounted(() => {
-    tableConfig.tableData = formData.value.map((item: any) => ({
-        ...item,
-        checked: item.checked !== false
-    }))
+    if (formData.value && formData.value.length) {
+        tableConfig.tableData = formData.value.map((item: any) => ({
+            ...item,
+            checked: item.checked !== false
+        }))
+    } else if (props.preNodes && props.preNodes[0]) {
+        const fromAliaCode = props.preNodes[0].data.nodeConfigData.aliaCode || ''
+        tableConfig.tableData = (props.preNodes[0].data.nodeConfigData.outColumnList || [])
+            .filter((item: any) => item.checked !== false)
+            .map((column: any) => ({
+                colName: column.colName,
+                colType: column.colType,
+                fromAliaCode: fromAliaCode,
+                fromColName: column.colName,
+                remark: column.remark,
+                checked: true
+            }))
+    }
 })
 
 function getTableData() {
