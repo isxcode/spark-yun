@@ -8,7 +8,7 @@
             v-model="tableData"
         ></component>
         <template #customLeft>
-            <el-button v-if="componentType === 'DATA_JOIN'" type="primary" @click="refreshFields" style="margin-right: auto;">刷新</el-button>
+            <el-button v-if="componentType === 'DATA_JOIN' || componentType === 'DATA_INPUT'" type="primary" @click="refreshFields" style="margin-right: auto;">刷新</el-button>
         </template>
     </BlockModal>
 </template>

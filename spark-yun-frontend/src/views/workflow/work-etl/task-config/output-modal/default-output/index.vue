@@ -40,6 +40,7 @@
 import { ref, defineEmits, computed, onMounted, reactive } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import AddCode from '../data-join-output/add-code/index.vue'
+import { GetTableColumnsByTableId } from '@/services/data-sync.service'
 
 const props = defineProps<{
     modelValue: any,
@@ -165,6 +166,35 @@ function removeCode(scopeSlot: any) {
     })
 }
 
+// 刷新字段列表（数据输入节点）
+function refreshFields() {
+    const inputEtl = props.nodeFormData?.inputEtl
+    if (!inputEtl || !inputEtl.datasourceId || !inputEtl.tableName) {
+        ElMessage.warning('请先配置数据源和表')
+        return
+    }
+    tableConfig.loading = true
+    GetTableColumnsByTableId({
+        dataSourceId: inputEtl.datasourceId,
+        tableName: inputEtl.tableName
+    }).then((res: any) => {
+        const defaultFromAliaCode = getDefaultFromAliaCode()
+        tableConfig.tableData = (res.data.columns || []).map((column: any) => ({
+            colName: column.name,
+            colType: column.type,
+            remark: column.columnComment,
+            fromAliaCode: defaultFromAliaCode,
+            fromColName: column.name,
+            checked: true
+        }))
+        isAllChecked.value = true
+        tableConfig.loading = false
+    }).catch((err: any) => {
+        console.error(err)
+        tableConfig.loading = false
+    })
+}
+
 // 获取默认来源aliaCode
 function getDefaultFromAliaCode(): string {
     // 数据合并节点：来源使用主表节点的aliaCode
@@ -189,6 +219,10 @@ onMounted(() => {
         fromColName: item.fromColName || item.colName,
         checked: item.checked !== false
     }))
+})
+
+defineExpose({
+    refreshFields
 })
 </script>
 

@@ -234,8 +234,8 @@ function initGraph() {
             node.addTools({
                 name: 'button-remove',
                 args: {
-                    x: 190,
-                    y: 0,
+                    x: 175,
+                    y: -5,
                     offset: { x: 10, y: 10 },
                 }
             })
