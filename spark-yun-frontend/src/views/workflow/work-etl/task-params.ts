@@ -73,6 +73,11 @@ export const TaskParams = {
     },
     // 新增字段
     'DATA_ADD_COL': {
+        addColEtl: [{
+            colName: '',
+            colType: '',
+            remark: ''
+        }],
         outColumnList: []
     },
     // 数据自定义
