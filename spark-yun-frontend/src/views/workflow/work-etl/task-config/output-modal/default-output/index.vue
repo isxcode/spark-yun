@@ -50,48 +50,52 @@ const props = defineProps<{
 const emit = defineEmits(['update:modelValue'])
 
 const addCodeRef = ref()
+const isDataInput = computed(() => props.nodeFormData?.type === 'DATA_INPUT')
+
+const baseColConfigs = [
+    {
+        title: '',
+        customSlot: 'checkboxSlot',
+        customHeaderSlot: 'checkboxHeaderSlot',
+        width: 44,
+        align: 'center',
+    },
+    {
+        prop: 'colName',
+        title: '字段名',
+        minWidth: 120,
+        showOverflowTooltip: true
+    },
+    {
+        prop: 'colType',
+        title: '类型',
+        minWidth: 80,
+        showOverflowTooltip: true
+    },
+    {
+        title: '来源',
+        minWidth: 200,
+        showOverflowTooltip: true,
+        customSlot: 'fromSource'
+    },
+    {
+        prop: 'remark',
+        title: '备注',
+        minWidth: 100,
+        showOverflowTooltip: true
+    },
+    {
+        title: '操作',
+        align: 'center',
+        customSlot: 'options',
+        width: 80,
+        fixed: 'right'
+    }
+]
+
 const tableConfig = reactive({
     tableData: [],
-    colConfigs: [
-        {
-            title: '',
-            customSlot: 'checkboxSlot',
-            customHeaderSlot: 'checkboxHeaderSlot',
-            width: 44,
-            align: 'center',
-        },
-        {
-            prop: 'colName',
-            title: '字段名',
-            minWidth: 120,
-            showOverflowTooltip: true
-        },
-        {
-            prop: 'colType',
-            title: '类型',
-            minWidth: 80,
-            showOverflowTooltip: true
-        },
-        {
-            title: '来源',
-            minWidth: 200,
-            showOverflowTooltip: true,
-            customSlot: 'fromSource'
-        },
-        {
-            prop: 'remark',
-            title: '备注',
-            minWidth: 100,
-            showOverflowTooltip: true
-        },
-        {
-            title: '操作',
-            align: 'center',
-            customSlot: 'options',
-            width: 80,
-            fixed: 'right'
-        }
-    ],
+    colConfigs: isDataInput.value ? baseColConfigs.slice(0, -1) : baseColConfigs,
     seqType: '',
     loading: false
 })
