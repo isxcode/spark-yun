@@ -3,17 +3,18 @@
         <div class="config-label">
             <span>过滤条件</span>
         </div>
-        <!-- 递归渲染过滤条件 -->
-        <filter-group
-            :items="formData.filterEtl"
-            :col-name-options="colNameOptions"
-            prop-prefix="filterEtl"
-            :depth="0"
-        />
-        <!-- 操作按钮 -->
-        <div class="filter-actions">
-            <el-button size="small" @click="addCondition">添加条件</el-button>
-            <el-button size="small" @click="addGroup">添加分组</el-button>
+        <!-- 根分组 -->
+        <div class="filter-root-group">
+            <filter-group
+                :items="formData.filterEtl"
+                :col-name-options="colNameOptions"
+                prop-prefix="filterEtl"
+                :depth="0"
+            />
+            <div class="filter-group-actions">
+                <el-button link type="primary" size="small" @click="addCondition">+ 条件</el-button>
+                <el-button link type="primary" size="small" @click="addGroup">+ 分组</el-button>
+            </div>
         </div>
         <el-form-item v-show="false" label="输出字段">
             <div style="max-height: 444px; width: 100%;">
@@ -52,32 +53,27 @@ const formData = computed({
 })
 
 function addCondition() {
-    const item: any = {
+    formData.value.filterEtl.push({
+        filterWay: 'AND',
         filterType: 'CONDITION_FILTER',
         filterColumn: '',
         filterCondition: '',
         filterValue: '',
         customFilter: ''
-    }
-    if (formData.value.filterEtl.length > 0) {
-        item.filterWay = 'AND'
-    }
-    formData.value.filterEtl.push(item)
+    })
 }
 
 function addGroup() {
-    const item: any = {
+    formData.value.filterEtl.push({
+        filterWay: 'AND',
         groupFilter: [{
             filterType: 'CONDITION_FILTER',
             filterColumn: '',
             filterCondition: '',
-            filterValue: ''
+            filterValue: '',
+            customFilter: ''
         }]
-    }
-    if (formData.value.filterEtl.length > 0) {
-        item.filterWay = 'AND'
-    }
-    formData.value.filterEtl.push(item)
+    })
 }
 
 onMounted(() => {
@@ -103,10 +99,20 @@ onMounted(() => {
 
 <style lang="scss">
 .data-filter {
-    .filter-actions {
-        margin-top: 12px;
-        display: flex;
-        gap: 4px;
+    .filter-root-group {
+        border: 1px solid #d9ecff;
+        border-left: 3px solid #409eff;
+        border-radius: 4px;
+        padding: 10px;
+        background: #f9fbff;
+        margin-top: 8px;
+
+        .filter-group-actions {
+            margin-top: 6px;
+            display: flex;
+            gap: 0;
+            padding-left: 2px;
+        }
     }
 
     .filter-group-container {
