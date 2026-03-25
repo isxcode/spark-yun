@@ -145,13 +145,19 @@ function updateOutColumnList() {
         formData.value.outColumnList = []
         return
     }
+    // 如果已有保存的outColumnList，直接使用
+    if (formData.value.outColumnList && formData.value.outColumnList.length) {
+        tableConfig.tableData = formData.value.outColumnList
+        return
+    }
     const mainItem = tableNameList.value.find((item: any) => item.value === mainAliaCode)
     if (mainItem && mainItem.data.outColumnList) {
         const fields = (mainItem.data.outColumnList || []).filter((item: any) => item.checked !== false).map((column: any) => {
             return {
                 colName: column.colName,
                 colType: column.colType,
-                remark: column.remark
+                remark: column.remark,
+                checked: true
             }
         })
         tableConfig.tableData = fields

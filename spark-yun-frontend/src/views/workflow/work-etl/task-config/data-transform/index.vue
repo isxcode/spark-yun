@@ -167,16 +167,19 @@ onMounted(() => {
                 value: column.colName
             }
         })
-        const fromAliaCode = props.incomeNodes[0].data.nodeConfigData.aliaCode || ''
-        formData.value.outColumnList = props.incomeNodes[0].data.nodeConfigData.outColumnList.filter((item: any) => item.checked !== false).map((column) => {
-            return {
-                colName: column.colName,
-                colType: column.colType,
-                fromAliaCode: fromAliaCode,
-                fromColName: column.colName,
-                remark: column.remark
-            }
-        })
+        if (!formData.value.outColumnList || !formData.value.outColumnList.length) {
+            const fromAliaCode = props.incomeNodes[0].data.nodeConfigData.aliaCode || ''
+            formData.value.outColumnList = props.incomeNodes[0].data.nodeConfigData.outColumnList.filter((item: any) => item.checked !== false).map((column) => {
+                return {
+                    colName: column.colName,
+                    colType: column.colType,
+                    fromAliaCode: fromAliaCode,
+                    fromColName: column.colName,
+                    remark: column.remark,
+                    checked: true
+                }
+            })
+        }
         formData.value.inputEtl = props.incomeNodes[0].data.nodeConfigData.inputEtl
     }
 
