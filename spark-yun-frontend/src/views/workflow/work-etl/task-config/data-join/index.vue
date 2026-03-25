@@ -24,7 +24,7 @@
                 </el-icon>
             </span>
         </div>
-        <div class="form-options__list" v-for="(joinItem, i) in formData.joinEtl">
+        <div class="form-options__list" v-for="(joinItem, i) in formData.joinEtl" :style="getGroupStyle(i)">
             <el-icon v-if="formData.joinEtl.length > 1" class="remove-block-btn" @click="removeItem(i)">
                 <CircleClose />
             </el-icon>
@@ -191,6 +191,7 @@
 import { ref, defineEmits, computed, onMounted, reactive, nextTick } from 'vue'
 import { ElMessage, ElMessageBox, FormInstance, FormRules } from 'element-plus'
 import { TypeList, ConfigRules, TableConfig } from './config.ts'
+import { groupColorPalette } from '../data-filter/config.ts'
 import { GetTableColumnsByTableId } from '@/services/data-sync.service'
 import AddCode from './add-code/index.vue'
 
@@ -232,6 +233,17 @@ const formData = computed({
         emit('update:modelValue', value)
     }
 })
+
+function getGroupStyle(index: number) {
+    const palette = groupColorPalette[index % groupColorPalette.length]
+    return {
+        borderColor: palette.borderOuter,
+        borderLeftColor: palette.border,
+        borderLeftWidth: '3px',
+        borderLeftStyle: 'solid',
+        backgroundColor: palette.background
+    }
+}
 
 const tableNameList = computed(() => {
     if (props.incomeNodes && props.incomeNodes.length) {
@@ -457,11 +469,19 @@ onMounted(() => {
 
             .remove-block-btn {
                 position: absolute;
-                right: -7px;
+                right: -8px;
                 top: -8px;
-                color: getCssVar('color', 'primary');
+                font-size: 16px;
+                color: #c0c4cc;
                 cursor: pointer;
                 z-index: 1;
+                background: #fff;
+                border-radius: 50%;
+                transition: color 0.2s;
+
+                &:hover {
+                    color: #f56c6c;
+                }
             }
             .form-options-ul__list {
                 width: 100%;
