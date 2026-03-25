@@ -153,7 +153,7 @@ onMounted(() => {
 const refreshLoading = ref(false)
 
 function refreshFields() {
-    const sql = props.nodeFormData?.sql
+    const sql = props.nodeFormData?.customSqlEtl?.sql
     if (!sql) {
         ElMessage.error('请先输入SQL')
         return
