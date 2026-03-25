@@ -53,11 +53,6 @@
                 </el-form-item>
             </div>
             <el-form-item class="form-item-top" label="条件">
-                <span class="add-btn">
-                    <el-icon @click="addNewCondition(formData.joinEtl[i].joinConditions)">
-                        <CirclePlus />
-                    </el-icon>
-                </span>
                 <div class="form-options-ul__list" v-if="formData.joinEtl[i].joinConditions && formData.joinEtl[i].joinConditions.length">
                     <div class="form-options__item" v-for="(element, index) in formData.joinEtl[i].joinConditions">
                         <el-form-item :prop="`joinEtl[${i}].joinConditions[${index}].joinType`" :rules="rules.joinType">
@@ -165,6 +160,12 @@
                             </el-icon>
                         </div>
                     </div>
+                </div>
+                <div class="join-condition-actions">
+                    <el-button link type="primary" size="small" @click="addNewCondition(formData.joinEtl[i].joinConditions)">
+                        <el-icon><Plus /></el-icon>
+                        条件
+                    </el-button>
                 </div>
             </el-form-item>
         </div>
@@ -485,6 +486,11 @@ onMounted(() => {
             }
             .form-options-ul__list {
                 width: 100%;
+            }
+
+            .join-condition-actions {
+                width: 100%;
+                padding: 4px 0 8px;
             }
 
             .form-options__item {
