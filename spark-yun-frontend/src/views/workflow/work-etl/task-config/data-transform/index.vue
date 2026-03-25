@@ -1,11 +1,6 @@
 <template>
     <div class="config-components">
-        <el-form-item class="form-item-top" label="字段配置">
-            <span class="add-btn">
-                <el-icon @click="addNewOption">
-                    <CirclePlus />
-                </el-icon>
-            </span>
+        <el-form-item class="form-item-top" label-width="0">
             <div class="form-options__list">
                 <div class="form-options__item" v-for="(element, index) in formData.transformEtl">
                     <el-form-item :prop="`transformEtl[${index}].colName`" :rules="rules.colName">
