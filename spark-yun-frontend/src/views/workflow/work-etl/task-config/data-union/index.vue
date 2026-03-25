@@ -140,14 +140,14 @@ function tableChangeEvent(e: string, list: any[]) {
 onMounted(() => {
     tableConfig.tableData = []
     if (props.incomeNodes && props.incomeNodes[0]) {
-        tableConfig.tableData = props.incomeNodes[0].data.nodeConfigData.outColumnList.map((column) => {
+        tableConfig.tableData = props.incomeNodes[0].data.nodeConfigData.outColumnList.filter((item: any) => item.checked !== false).map((column) => {
             return {
                 colName: column.colName,
                 colType: column.colType,
                 remark: column.remark
             }
         })
-        formData.value.outColumnList = props.incomeNodes[0].data.nodeConfigData.outColumnList.map((column) => {
+        formData.value.outColumnList = props.incomeNodes[0].data.nodeConfigData.outColumnList.filter((item: any) => item.checked !== false).map((column) => {
             return {
                 colName: column.colName,
                 colType: column.colType,

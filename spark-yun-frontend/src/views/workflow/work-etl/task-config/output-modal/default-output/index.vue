@@ -221,8 +221,13 @@ onMounted(() => {
     }))
 })
 
+function getTableData() {
+    return tableConfig.tableData
+}
+
 defineExpose({
-    refreshFields
+    refreshFields,
+    getTableData
 })
 </script>
 

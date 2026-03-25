@@ -33,6 +33,7 @@ const tableData = ref<any[]>([])
 const componentType = ref<string>('DEFAULT')
 const preNodes = ref<any[]>([])
 const nodeFormData = ref<any>({})
+const saveCallback = ref<((data: any[]) => void) | null>(null)
 const formInstance = shallowRef<any>(Components)
 const modelConfig = reactive({
     title: '输出字段',
@@ -71,6 +72,11 @@ function showModal(data: any[], type: string, incomeNodes: any[], formData?: any
     componentType.value = type
     preNodes.value = incomeNodes
     nodeFormData.value = formData || {}
+    saveCallback.value = (newData: any[]) => {
+        // 直接修改原数组引用，确保数据回写到formData.outColumnList
+        data.length = 0
+        newData.forEach(item => data.push(item))
+    }
 
     modelConfig.visible = true;
 }
@@ -81,6 +87,10 @@ function refreshFields() {
 }
 
 function okEvent() {
+    // 将子组件中的tableData（含checked状态）写回
+    if (instanceRef.value && instanceRef.value.getTableData && saveCallback.value) {
+        saveCallback.value(instanceRef.value.getTableData())
+    }
     modelConfig.visible = false;
 }
 

@@ -177,7 +177,7 @@ function getTableList() {
 function getTableFields(e: boolean) {
     const currentItem = sourceTablesList.value.find(dd => dd.value === formData.fromAliaCode)
     if (e && currentItem && currentItem.data.outColumnList) {
-        tableFields.value = (currentItem.data.outColumnList || []).map((column: any) => {
+        tableFields.value = (currentItem.data.outColumnList || []).filter((item: any) => item.checked !== false).map((column: any) => {
             return {
                 label: column.colName,
                 value: column.colName,

@@ -166,13 +166,13 @@ function getFunctionList() {
 
 onMounted(() => {
     if (props.incomeNodes && props.incomeNodes[0]) {
-        colNameOptions.value = props.incomeNodes[0].data.nodeConfigData.outColumnList.map((column) => {
+        colNameOptions.value = props.incomeNodes[0].data.nodeConfigData.outColumnList.filter((item: any) => item.checked !== false).map((column) => {
             return {
                 label: column.colName,
                 value: column.colName
             }
         })
-        formData.value.outColumnList = props.incomeNodes[0].data.nodeConfigData.outColumnList.map((column) => {
+        formData.value.outColumnList = props.incomeNodes[0].data.nodeConfigData.outColumnList.filter((item: any) => item.checked !== false).map((column) => {
             return {
                 colName: column.colName,
                 colType: column.colType,
