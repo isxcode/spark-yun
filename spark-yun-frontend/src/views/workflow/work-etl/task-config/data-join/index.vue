@@ -490,16 +490,13 @@ onMounted(() => {
 
             .join-condition-actions {
                 width: 100%;
-                padding: 4px 0 8px;
             }
 
             .form-options__item {
                 display: flex;
-                margin-bottom: 8px;
 
                 .el-form-item {
                     width: 100%;
-                    margin-bottom: 12px;
                 }
                 .el-form-item+.el-form-item {
                     margin-left: 4px;
