@@ -41,18 +41,18 @@ export const TableConfig: TableConfig = {
 }
 
 export const FilterConditionOptions = [
-    { label: '等于(=)', value: '=' },
-    { label: '不等于(!=)', value: '!=' },
-    { label: '大于(>)', value: '>' },
-    { label: '大于等于(>=)', value: '>=' },
-    { label: '小于(<)', value: '<' },
-    { label: '小于等于(<=)', value: '<=' },
-    { label: '包含(LIKE)', value: 'LIKE' },
-    { label: '不包含(NOT LIKE)', value: 'NOT LIKE' },
-    { label: '为空(IS NULL)', value: 'IS NULL' },
-    { label: '不为空(IS NOT NULL)', value: 'IS NOT NULL' },
-    { label: '在范围内(IN)', value: 'IN' },
-    { label: '不在范围内(NOT IN)', value: 'NOT IN' }
+    { label: '等于(=)', value: 'equal' },
+    { label: '不等于(!=)', value: 'not_equal' },
+    { label: '大于(>)', value: 'greater' },
+    { label: '大于等于(>=)', value: 'greater_equal' },
+    { label: '小于(<)', value: 'less' },
+    { label: '小于等于(<=)', value: 'less_equal' },
+    { label: '包含(LIKE)', value: 'like' },
+    { label: '不包含(NOT LIKE)', value: 'not_like' },
+    { label: '为空(IS NULL)', value: 'is_null' },
+    { label: '不为空(IS NOT NULL)', value: 'is_not_null' },
+    { label: '在范围内(IN)', value: 'in' },
+    { label: '不在范围内(NOT IN)', value: 'not_in' }
 ]
 
 // 分组背景色调色板，从橙黄开始
