@@ -10,7 +10,7 @@
                 >{{ items[index].filterWay || 'AND' }}</span>
             </div>
             <!-- 分组条件 -->
-            <div v-if="item.groupFilter" class="filter-group-block">
+            <div v-if="item.groupFilter" class="filter-group-block" :style="getGroupStyle(item)">
                 <el-icon v-if="items.length > 1" class="filter-remove-btn" @click="removeItem(index)">
                     <CircleClose />
                 </el-icon>
@@ -68,11 +68,13 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive } from 'vue'
+import { reactive, inject } from 'vue'
 import { FormRules } from 'element-plus'
-import { FilterConditionOptions } from './config.ts'
+import { FilterConditionOptions, groupColorPalette } from './config.ts'
 
 defineOptions({ name: 'FilterGroup' })
+
+const groupColorCounter = inject<{ value: number }>('groupColorCounter', { value: 0 })
 
 const props = defineProps<{
     items: any[]
@@ -80,6 +82,21 @@ const props = defineProps<{
     propPrefix: string
     depth: number
 }>()
+
+// 为每个分组分配唯一颜色索引，挂载到 item 上避免重复分配
+function getGroupStyle(item: any) {
+    if (item._colorIndex === undefined) {
+        item._colorIndex = groupColorCounter.value++
+    }
+    const palette = groupColorPalette[item._colorIndex % groupColorPalette.length]
+    return {
+        borderLeftColor: palette.border,
+        backgroundColor: palette.background,
+        borderColor: palette.borderOuter,
+        borderLeftWidth: '3px',
+        borderLeftStyle: 'solid'
+    }
+}
 
 const rules = reactive<FormRules>({
     filterColumn: [{ required: true, message: '字段不能为空', trigger: ['blur', 'change'] }],

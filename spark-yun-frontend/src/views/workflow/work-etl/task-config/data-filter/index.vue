@@ -25,9 +25,13 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, defineEmits, computed, onMounted, reactive } from 'vue'
+import { ref, defineEmits, computed, onMounted, reactive, provide } from 'vue'
 import { TableConfig } from './config.ts'
 import FilterGroup from './filter-group.vue'
+
+// 全局分组颜色计数器，确保每个分组都分配不同的颜色
+const groupColorCounter = reactive({ value: 0 })
+provide('groupColorCounter', groupColorCounter)
 
 interface Option {
     label: string
@@ -100,11 +104,11 @@ onMounted(() => {
 <style lang="scss">
 .data-filter {
     .filter-root-group {
-        border: 1px solid #d9ecff;
-        border-left: 3px solid #409eff;
+        border: 1px solid #ffd699;
+        border-left: 3px solid #ff9800;
         border-radius: 4px;
         padding: 10px;
-        background: #f9fbff;
+        background: #fffaf2;
         margin-top: 8px;
 
         .filter-group-actions {
@@ -193,14 +197,14 @@ onMounted(() => {
             }
         }
 
-        // 分组块
+        // 分组块（背景色和左边框色由动态内联样式控制）
         .filter-group-block {
-            border: 1px solid #d9ecff;
-            border-left: 3px solid #409eff;
+            border: 1px solid #ffd699;
+            border-left: 3px solid #ff9800;
             border-radius: 4px;
             padding: 10px;
             position: relative;
-            background: #f9fbff;
+            background: #fffaf2;
 
             > .filter-remove-btn {
                 position: absolute;
@@ -222,17 +226,6 @@ onMounted(() => {
                 display: flex;
                 gap: 0;
                 padding-left: 2px;
-            }
-
-            // 嵌套分组样式递进
-            .filter-group-block {
-                border-left-color: #e6a23c;
-                background: #fffcf5;
-
-                .filter-group-block {
-                    border-left-color: #67c23a;
-                    background: #f9fff5;
-                }
             }
         }
     }
