@@ -43,7 +43,7 @@ function initGraph() {
         'dag-node',
         {
             inherit: 'vue-shape',
-            width: 160,
+            width: 180,
             height: 36,
             component: {
                 render: ()=>{
@@ -234,7 +234,7 @@ function initGraph() {
             node.addTools({
                 name: 'button-remove',
                 args: {
-                    x: 150,
+                    x: 190,
                     y: 0,
                     offset: { x: 10, y: 10 },
                 }

@@ -2,10 +2,13 @@
     <div class="etl-flow-node" :class="status" @mousedown="onMouseDown" @click="onClick">
         <div class="flow-node-container" ref="content">
             <el-tooltip
-                :content="nodeConfigData.remark || '暂无备注'"
                 placement="top"
                 :show-after="300"
             >
+                <template #content>
+                    <div>名称：{{ nodeConfigData?.name || '-' }}</div>
+                    <div>备注：{{ nodeConfigData?.remark || '暂无备注' }}</div>
+                </template>
                 <div class="info-container">
                     <el-icon class="node-icon"><component :is="nodeIcon" /></el-icon>
                     <span class="node-name">{{ nodeConfigData?.name || '-' }}</span>
@@ -116,6 +119,7 @@ onMounted(() => {
             height: 100%;
             padding: 0 8px;
             box-sizing: border-box;
+            overflow: hidden;
 
             .node-icon {
                 font-size: 16px;
@@ -125,6 +129,7 @@ onMounted(() => {
 
             .node-name {
                 font-size: 12px;
+                max-width: 110px;
                 overflow: hidden;
                 text-overflow: ellipsis;
                 white-space: nowrap;
