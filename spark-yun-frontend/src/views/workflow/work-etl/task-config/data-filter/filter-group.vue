@@ -47,7 +47,7 @@
                         </el-select>
                     </el-form-item>
                     <el-form-item
-                        v-if="!['IS NULL', 'IS NOT NULL'].includes(item.filterCondition)"
+                        v-if="!['is_null', 'is_not_null'].includes(item.filterCondition)"
                         :prop="`${propPrefix}[${index}].filterValue`"
                         :rules="rules.filterValue"
                     >
