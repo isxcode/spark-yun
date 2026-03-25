@@ -158,7 +158,7 @@ onMounted(() => {
         .filter-row {
             display: flex;
             align-items: center;
-            gap: 4px;
+            gap: 0;
             padding: 6px 10px;
             border: 1px solid #e9eaec;
             border-radius: 4px;
@@ -173,6 +173,11 @@ onMounted(() => {
                 flex: 1;
                 margin-bottom: 0;
                 min-width: 0;
+
+                .el-form-item__content {
+                    margin-left: 10px !important;
+                    padding-left: 0;
+                }
             }
 
             .custom-form-item {
