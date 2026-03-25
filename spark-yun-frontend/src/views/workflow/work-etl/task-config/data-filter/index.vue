@@ -1,8 +1,5 @@
 <template>
     <div class="config-components data-join data-filter">
-        <div class="config-label">
-            <span>过滤条件</span>
-        </div>
         <!-- 根分组 -->
         <div class="filter-root-group">
             <filter-group
@@ -25,13 +22,9 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, defineEmits, computed, onMounted, reactive, provide } from 'vue'
+import { ref, defineEmits, computed, onMounted, reactive } from 'vue'
 import { TableConfig } from './config.ts'
 import FilterGroup from './filter-group.vue'
-
-// 全局分组颜色计数器，确保每个分组都分配不同的颜色
-const groupColorCounter = reactive({ value: 0 })
-provide('groupColorCounter', groupColorCounter)
 
 interface Option {
     label: string
