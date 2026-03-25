@@ -23,5 +23,6 @@ public class EtlColumn {
 
     private String transformSql;
 
+    private Boolean checked;
 }
 
