@@ -24,8 +24,8 @@
                 </el-icon>
             </span>
         </div>
-        <div class="form-options__list" v-for="(unionItem, i) in formData.unionEtl">
-            <el-icon v-if="formData.unionEtl.length > 1" class="remove-btn-union" @click="removeItem(i)">
+        <div class="form-options__list" v-for="(unionItem, i) in formData.unionEtl" :style="getGroupStyle(i)">
+            <el-icon v-if="formData.unionEtl.length > 1" class="remove-block-btn" @click="removeItem(i)">
                 <CircleClose />
             </el-icon>
             <div class="list-item-row">
@@ -65,6 +65,7 @@
 import { ref, defineEmits, computed, onMounted, reactive, nextTick } from 'vue'
 import { ElMessage, ElMessageBox, FormInstance, FormRules } from 'element-plus'
 import { TypeList, ConfigRules, TableConfig } from './config.ts'
+import { groupColorPalette } from '../data-filter/config.ts'
 
 interface Option {
     label: string
@@ -108,6 +109,17 @@ const tableNameList = computed(() => {
         return []
     }
 })
+
+function getGroupStyle(index: number) {
+    const palette = groupColorPalette[index % groupColorPalette.length]
+    return {
+        borderColor: palette.borderOuter,
+        borderLeftColor: palette.border,
+        borderLeftWidth: '3px',
+        borderLeftStyle: 'solid',
+        backgroundColor: palette.background
+    }
+}
 
 function addNewOption() {
     formData.value.unionEtl.push({
@@ -188,12 +200,21 @@ onMounted(() => {
                 }
             }
 
-            .remove-btn-union {
+            .remove-block-btn {
                 position: absolute;
-                right: 8px;
-                top: 32px;
-                color: getCssVar('color', 'primary');
+                right: -8px;
+                top: -8px;
+                font-size: 16px;
+                color: #c0c4cc;
                 cursor: pointer;
+                z-index: 1;
+                background: #fff;
+                border-radius: 50%;
+                transition: color 0.2s;
+
+                &:hover {
+                    color: #f56c6c;
+                }
             }
             .form-options-ul__list {
                 width: 100%;
