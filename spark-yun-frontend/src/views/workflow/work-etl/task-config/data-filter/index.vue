@@ -82,7 +82,7 @@ onMounted(() => {
             }
         })
         const fromAliaCode = props.incomeNodes[0].data.nodeConfigData.aliaCode || ''
-        formData.value.outColumnList = props.incomeNodes[0].data.nodeConfigData.outColumnList.map((column: any) => {
+        formData.value.outColumnList = props.incomeNodes[0].data.nodeConfigData.outColumnList.filter((item: any) => item.checked !== false).map((column: any) => {
             return {
                 colName: column.colName,
                 fromAliaCode: fromAliaCode,
