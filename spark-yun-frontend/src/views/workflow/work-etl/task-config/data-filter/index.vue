@@ -81,9 +81,12 @@ onMounted(() => {
                 value: column.colName
             }
         })
+        const fromAliaCode = props.incomeNodes[0].data.nodeConfigData.aliaCode || ''
         formData.value.outColumnList = props.incomeNodes[0].data.nodeConfigData.outColumnList.map((column: any) => {
             return {
                 colName: column.colName,
+                fromAliaCode: fromAliaCode,
+                fromColName: column.colName,
                 colType: column.colType,
                 remark: column.remark
             }
