@@ -109,16 +109,32 @@
                             </el-form-item>
                         </template>
                         <template v-if="element.joinType === 'CONDITION_JOIN'">
+                            <el-form-item :prop="`joinEtl[${i}].joinConditions[${index}].joinAliaCode`" :rules="rules.joinAliaCode">
+                                <el-select
+                                    v-model="element.joinAliaCode"
+                                    filterable
+                                    clearable
+                                    placeholder="请选择表"
+                                    @change="conditionTableChangeEvent(element)"
+                                >
+                                    <el-option
+                                        v-for="opt in tableNameList"
+                                        :key="opt.value"
+                                        :label="opt.label"
+                                        :value="opt.value"
+                                    />
+                                </el-select>
+                            </el-form-item>
                             <el-form-item :prop="`joinEtl[${i}].joinConditions[${index}].joinColumn`" :rules="rules.joinColumn">
                                 <el-select
                                     v-model="element.joinColumn"
                                     filterable
                                     clearable
                                     placeholder="请选择字段"
-                                    @visible-change="getTableFields($event, formData.joinEtl[i])"
+                                    @visible-change="getConditionTableFields($event, element)"
                                 >
                                     <el-option
-                                        v-for="item in tableFields"
+                                        v-for="item in conditionTableFields"
                                         :key="item.value"
                                         :label="item.label"
                                         :value="item.value"
@@ -210,6 +226,7 @@ const emit = defineEmits(['update:modelValue'])
 
 const mainTableFields = ref<Option[]>()
 const tableFields = ref<Option[]>()
+const conditionTableFields = ref<Option[]>()
 const addCodeRef = ref()
 
 const rules = reactive<FormRules>({
@@ -371,6 +388,22 @@ function getTableFields(e: boolean, config: any) {
             }
         })
     }
+}
+
+function getConditionTableFields(e: boolean, element: any) {
+    const currentItem = tableNameList.value.find(dd => dd.value === element.joinAliaCode)
+    if (e && currentItem && currentItem.data.outColumnList) {
+        conditionTableFields.value = (currentItem.data.outColumnList || []).filter((item: any) => item.checked !== false).map((column: any) => {
+            return {
+                label: column.colName,
+                value: column.colName
+            }
+        })
+    }
+}
+
+function conditionTableChangeEvent(element: any) {
+    element.joinColumn = ''
 }
 
 function addNewCode() {
