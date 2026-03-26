@@ -124,7 +124,7 @@ defineExpose({
 <style lang="scss">
 .link-modal {
     .modal-content {
-        padding: 12px 0;
+        padding: 0;
         box-sizing: border-box;
     }
 }
