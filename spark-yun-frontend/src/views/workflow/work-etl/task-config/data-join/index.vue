@@ -455,7 +455,7 @@ onMounted(() => {
 
 <style lang="scss">
 .config-components {
-    padding:  12px 20px;
+    padding:  0 20px;
     box-sizing: border-box;
     &.data-join {
         .config-label {
@@ -536,6 +536,7 @@ onMounted(() => {
 
                 .el-form-item {
                     width: 100%;
+                    margin-bottom: 15px;
                 }
                 .el-form-item:first-child {
                     flex-shrink: 0;

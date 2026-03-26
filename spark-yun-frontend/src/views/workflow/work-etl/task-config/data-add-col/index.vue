@@ -74,6 +74,7 @@
 <script lang="ts" setup>
 import { ref, defineEmits, computed, onMounted, reactive } from 'vue'
 import { FormRules } from 'element-plus'
+import { groupColorPalette } from '../data-filter/config.ts'
 
 const sparkTypeList = [
     { label: 'string(字符串)', value: 'string' },
@@ -84,7 +85,6 @@ const sparkTypeList = [
     { label: 'date(日期)', value: 'date' },
     { label: 'timestamp(时间戳)', value: 'timestamp' }
 ]
-import { groupColorPalette } from '../data-filter/config.ts'
 
 const props = defineProps<{
     modelValue: any,

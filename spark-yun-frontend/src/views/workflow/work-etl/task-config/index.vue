@@ -69,7 +69,7 @@ const formInstance = shallowRef<any>(Components)
 const modelConfig = reactive({
     title: '配置详情',
     visible: false,
-    width: '40%',
+    width: '60%',
     customClass: 'etl-task-config',
     okConfig: {
         title: '确定',
