@@ -205,11 +205,51 @@ onMounted(() => {
     updateAllChecked()
 })
 
+function refreshFields() {
+    // 上游节点的输出字段
+    const preFields: any[] = []
+    if (props.preNodes && props.preNodes[0]) {
+        const fromAliaCode = props.preNodes[0].data.nodeConfigData.aliaCode || ''
+        ;(props.preNodes[0].data.nodeConfigData.outColumnList || [])
+            .filter((item: any) => item.checked !== false)
+            .forEach((column: any) => {
+                preFields.push({
+                    colName: column.colName,
+                    colType: column.colType,
+                    fromAliaCode: fromAliaCode,
+                    fromColName: column.colName,
+                    remark: column.remark,
+                    checked: true
+                })
+            })
+    }
+
+    // addColEtl 中新增的字段
+    const addColFields: any[] = []
+    const addColEtl = props.nodeFormData?.addColEtl || []
+    addColEtl.forEach((item: any) => {
+        if (item.colName) {
+            addColFields.push({
+                colName: item.colName,
+                colType: item.colType || '',
+                fromAliaCode: item.fromAliaCode || '',
+                fromColName: item.fromColName || item.colName,
+                remark: item.remark || '',
+                checked: true
+            })
+        }
+    })
+
+    tableConfig.tableData = [...preFields, ...addColFields]
+    updateAllChecked()
+}
+
 function getTableData() {
     return tableConfig.tableData
 }
 
 defineExpose({
+    refreshFields,
     getTableData
 })
 </script>
