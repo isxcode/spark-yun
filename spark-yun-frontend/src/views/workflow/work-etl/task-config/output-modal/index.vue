@@ -8,7 +8,7 @@
             v-model="tableData"
         ></component>
         <template #customLeft>
-            <el-button v-if="componentType === 'DATA_JOIN' || componentType === 'DATA_INPUT' || componentType === 'DATA_CUSTOM'" type="primary" @click="refreshFields" style="margin-right: auto;">刷新</el-button>
+            <el-button v-if="showRefreshBtn" type="primary" @click="refreshFields" style="margin-right: auto;">刷新</el-button>
         </template>
     </BlockModal>
 </template>
@@ -54,6 +54,9 @@ const modelConfig = reactive({
     zIndex: 1200,
     closeOnClickModal: false,
 })
+
+const refreshBtnTypes = ['DATA_JOIN', 'DATA_UNION', 'DATA_FILTER', 'DATA_TRANSFORM', 'DATA_ADD_COL', 'DATA_INPUT', 'DATA_CUSTOM']
+const showRefreshBtn = computed(() => refreshBtnTypes.includes(componentType.value))
 
 const currentComponent = computed(() => {
     return (type: string) => {

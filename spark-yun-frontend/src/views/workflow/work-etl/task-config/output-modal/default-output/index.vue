@@ -170,33 +170,87 @@ function removeCode(scopeSlot: any) {
     })
 }
 
-// 刷新字段列表（数据输入节点）
+// 刷新字段列表
 function refreshFields() {
+    const nodeType = props.nodeFormData?.type
     const inputEtl = props.nodeFormData?.inputEtl
-    if (!inputEtl || !inputEtl.datasourceId || !inputEtl.tableName) {
-        ElMessage.warning('请先配置数据源和表')
+
+    // 数据输入节点：通过接口获取字段
+    if (nodeType === 'DATA_INPUT') {
+        if (!inputEtl || !inputEtl.datasourceId || !inputEtl.tableName) {
+            ElMessage.warning('请先配置数据源和表')
+            return
+        }
+        tableConfig.loading = true
+        GetTableColumnsByTableId({
+            dataSourceId: inputEtl.datasourceId,
+            tableName: inputEtl.tableName
+        }).then((res: any) => {
+            const defaultFromAliaCode = getDefaultFromAliaCode()
+            tableConfig.tableData = (res.data.columns || []).map((column: any) => ({
+                colName: column.name,
+                colType: column.type,
+                remark: column.columnComment,
+                fromAliaCode: defaultFromAliaCode,
+                fromColName: column.name,
+                checked: true
+            }))
+            isAllChecked.value = true
+            tableConfig.loading = false
+        }).catch((err: any) => {
+            console.error(err)
+            tableConfig.loading = false
+        })
         return
     }
-    tableConfig.loading = true
-    GetTableColumnsByTableId({
-        dataSourceId: inputEtl.datasourceId,
-        tableName: inputEtl.tableName
-    }).then((res: any) => {
-        const defaultFromAliaCode = getDefaultFromAliaCode()
-        tableConfig.tableData = (res.data.columns || []).map((column: any) => ({
-            colName: column.name,
-            colType: column.type,
-            remark: column.columnComment,
-            fromAliaCode: defaultFromAliaCode,
-            fromColName: column.name,
-            checked: true
-        }))
-        isAllChecked.value = true
-        tableConfig.loading = false
-    }).catch((err: any) => {
-        console.error(err)
-        tableConfig.loading = false
-    })
+
+    // 数据合并节点：以选中的主表为主
+    if (nodeType === 'DATA_UNION') {
+        const mainAliaCode = props.nodeFormData?.mainAliaCode
+        if (!mainAliaCode || !props.preNodes || !props.preNodes.length) {
+            ElMessage.warning('请先选择主表')
+            return
+        }
+        const mainNode = props.preNodes.find((n: any) => n.data.nodeConfigData.aliaCode === mainAliaCode)
+        if (!mainNode) {
+            ElMessage.warning('未找到主表节点')
+            return
+        }
+        const nodeData = mainNode.data.nodeConfigData
+        const newFields = (nodeData.outColumnList || [])
+            .filter((item: any) => item.checked !== false)
+            .map((col: any) => ({
+                colName: col.colName,
+                colType: col.colType,
+                fromAliaCode: nodeData.aliaCode,
+                fromColName: col.colName,
+                remark: col.remark || '',
+                checked: true
+            }))
+        tableConfig.tableData = newFields
+        isAllChecked.value = newFields.length > 0
+        return
+    }
+
+    // 其他节点（数据过滤、数据转换等）：从上游节点获取字段
+    if (props.preNodes && props.preNodes.length) {
+        const sourceNode = props.preNodes[0]
+        const nodeData = sourceNode.data.nodeConfigData
+        const newFields = (nodeData.outColumnList || [])
+            .filter((item: any) => item.checked !== false)
+            .map((col: any) => ({
+                colName: col.colName,
+                colType: col.colType,
+                fromAliaCode: nodeData.aliaCode,
+                fromColName: col.colName,
+                remark: col.remark || '',
+                checked: true
+            }))
+        tableConfig.tableData = newFields
+        isAllChecked.value = newFields.length > 0
+    } else {
+        ElMessage.warning('无上游节点')
+    }
 }
 
 // 获取默认来源aliaCode
