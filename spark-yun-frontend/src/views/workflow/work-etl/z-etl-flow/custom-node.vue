@@ -7,6 +7,7 @@
             >
                 <template #content>
                     <div>名称：{{ nodeConfigData?.name || '-' }}</div>
+                    <div>编码：{{ nodeConfigData?.aliaCode || '-' }}</div>
                     <div>备注：{{ nodeConfigData?.remark || '暂无备注' }}</div>
                 </template>
                 <div class="info-container">
