@@ -219,7 +219,13 @@ function saveData() {
         sparkEtlConfig: {
             webConfig: allCellData,
             nodeList: allCellData.filter((node: any) => node.shape === 'dag-node').map((node: any) => {
-                return node.data.nodeConfigData
+                const nodeConfigData = node.data.nodeConfigData
+                const noInputEtlTypes = ['DATA_UNION', 'DATA_FILTER', 'DATA_TRANSFORM', 'DATA_CUSTOM', 'DATA_ADD_COL']
+                if (noInputEtlTypes.includes(nodeConfigData.type)) {
+                    const { inputEtl, ...rest } = nodeConfigData
+                    return rest
+                }
+                return nodeConfigData
             }),
             nodeMapping: allCellData.filter((node: any) => node.shape === 'dag-edge').map((edge: any) => {
                 return [edge.source.cell, edge.target.cell]
