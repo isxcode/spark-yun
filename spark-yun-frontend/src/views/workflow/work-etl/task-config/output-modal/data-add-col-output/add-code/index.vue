@@ -1,9 +1,6 @@
 <template>
     <BlockModal :model-config="modelConfig">
         <el-form ref="form" class="add-computer-group" label-position="top" :model="formData" :rules="rules">
-            <el-form-item label="字段名" prop="colName">
-                <el-input v-model="formData.colName" maxlength="20" placeholder="请输入"/>
-            </el-form-item>
             <el-form-item label="来源表" prop="fromAliaCode">
                 <el-select
                     v-model="formData.fromAliaCode"
@@ -36,6 +33,9 @@
                         :value="item.value"
                     />
                 </el-select>
+            </el-form-item>
+            <el-form-item label="字段名" prop="colName">
+                <el-input v-model="formData.colName" maxlength="20" placeholder="请输入"/>
             </el-form-item>
             <el-form-item label="类型" prop="colType">
                 <el-input v-model="formData.colType" maxlength="20" placeholder="请输入"/>
