@@ -498,6 +498,10 @@ onMounted(() => {
                 .el-form-item {
                     width: 100%;
                 }
+                .el-form-item:first-child {
+                    flex-shrink: 0;
+                    width: 120px;
+                }
                 .el-form-item+.el-form-item {
                     margin-left: 4px;
                 }
