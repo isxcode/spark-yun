@@ -52,8 +52,8 @@
                 <el-form-item :prop="`addColEtl[${index}].colType`" :rules="rules.colType" label="类型">
                     <el-input v-model="element.colType" clearable placeholder="请输入类型"></el-input>
                 </el-form-item>
-                <el-form-item v-if="element.addType === 'MANUAL'" label="默认值">
-                    <el-input v-model="element.defaultValue" clearable placeholder="请输入默认值"></el-input>
+                <el-form-item v-if="element.addType === 'MANUAL'" label="返回值">
+                    <el-input v-model="element.defaultValue" clearable placeholder="返回值"></el-input>
                 </el-form-item>
                 <el-form-item label="备注">
                     <el-input v-model="element.remark" clearable placeholder="请输入备注"></el-input>
