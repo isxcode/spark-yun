@@ -11,7 +11,8 @@
                     <el-checkbox v-model="scopeSlot.row.checked" @change="updateAllChecked" />
                 </template>
                 <template #fromSource="scopeSlot">
-                    <span>【{{ getNodeName(scopeSlot.row.fromAliaCode) }}】{{ scopeSlot.row.fromColName }}</span>
+                    <span v-if="scopeSlot.row.fromAliaCode">【{{ getNodeName(scopeSlot.row.fromAliaCode) }}】{{ scopeSlot.row.fromColName }}</span>
+                    <span v-else>【手动添加】{{ scopeSlot.row.colName }}</span>
                 </template>
                 <template #options="scopeSlot">
                     <div class="btn-group">
