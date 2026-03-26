@@ -11,9 +11,16 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class AddColEtl {
 
+    /**
+     * SOURCE_TABLE、MANUAL .
+     */
+    private String addType;
+
     private String colName;
 
     private String colType;
+
+    private String defaultValue;
 
     private String remark;
 
