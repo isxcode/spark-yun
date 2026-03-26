@@ -3,6 +3,7 @@
         <div style="max-height: 444px;">
             <BlockTable
                 :table-config="tableConfig"
+                @rowDragendEvent="onRowDragend"
             >
                 <template #checkboxHeaderSlot>
                     <el-checkbox :model-value="isAllChecked" @change="toggleSelectAll" />
@@ -61,7 +62,8 @@ const tableConfig = reactive({
             prop: 'colName',
             title: '字段名',
             minWidth: 120,
-            showOverflowTooltip: true
+            showOverflowTooltip: true,
+            dragSort: true
         },
         {
             prop: 'colType',
@@ -133,6 +135,11 @@ function editCode(row: any, index: number) {
 }
 
 // 删除来源编码
+function onRowDragend(e: any) {
+    tableConfig.tableData = e.tableData
+    updateAllChecked()
+}
+
 function removeCode(scopeSlot: any) {
     ElMessageBox.confirm('确定删除该字段吗？', '警告', {
         confirmButtonText: '确定',

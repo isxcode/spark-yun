@@ -166,7 +166,8 @@ export const TableConfig: TableConfig = {
             prop: 'colName',
             title: '字段名',
             minWidth: 120,
-            showOverflowTooltip: true
+            showOverflowTooltip: true,
+            dragSort: true
         },
         {
             prop: 'colType',
