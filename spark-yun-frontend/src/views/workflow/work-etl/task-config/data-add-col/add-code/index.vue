@@ -5,7 +5,9 @@
                 <el-input v-model="formData.colName" maxlength="20" placeholder="请输入"/>
             </el-form-item>
             <el-form-item label="类型" prop="colType">
-                <el-input v-model="formData.colType" maxlength="20" placeholder="请输入"/>
+                <el-select v-model="formData.colType" clearable filterable placeholder="请选择">
+                    <el-option v-for="item in sparkTypeList" :key="item.value" :label="item.label" :value="item.value" />
+                </el-select>
             </el-form-item>
             <el-form-item label="备注">
                 <el-input v-model="formData.remark" maxlength="20" placeholder="请输入"/>
@@ -20,6 +22,16 @@
 <script lang="ts" setup>
 import { reactive, defineExpose, ref, nextTick } from 'vue'
 import { ElMessage, FormInstance, FormRules } from 'element-plus'
+
+const sparkTypeList = [
+    { label: 'string(字符串)', value: 'string' },
+    { label: 'int(整数)', value: 'int' },
+    { label: 'long(长整数)', value: 'long' },
+    { label: 'double(双精度浮点)', value: 'double' },
+    { label: 'boolean(布尔)', value: 'boolean' },
+    { label: 'date(日期)', value: 'date' },
+    { label: 'timestamp(时间戳)', value: 'timestamp' }
+]
 // import CodeMirror from 'vue-codemirror6'
 // import {sql} from '@codemirror/lang-sql'
 

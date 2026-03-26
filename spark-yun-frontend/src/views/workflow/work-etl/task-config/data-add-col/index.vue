@@ -50,7 +50,9 @@
                     <el-input v-model="element.colName" clearable placeholder="请输入字段名"></el-input>
                 </el-form-item>
                 <el-form-item :prop="`addColEtl[${index}].colType`" :rules="rules.colType" label="类型">
-                    <el-input v-model="element.colType" clearable placeholder="请输入类型"></el-input>
+                    <el-select v-model="element.colType" clearable filterable placeholder="请选择类型">
+                        <el-option v-for="item in sparkTypeList" :key="item.value" :label="item.label" :value="item.value" />
+                    </el-select>
                 </el-form-item>
                 <el-form-item v-if="element.addType === 'MANUAL'" label="返回值">
                     <el-input v-model="element.defaultValue" clearable placeholder="返回值"></el-input>
@@ -72,6 +74,16 @@
 <script lang="ts" setup>
 import { ref, defineEmits, computed, onMounted, reactive } from 'vue'
 import { FormRules } from 'element-plus'
+
+const sparkTypeList = [
+    { label: 'string(字符串)', value: 'string' },
+    { label: 'int(整数)', value: 'int' },
+    { label: 'long(长整数)', value: 'long' },
+    { label: 'double(双精度浮点)', value: 'double' },
+    { label: 'boolean(布尔)', value: 'boolean' },
+    { label: 'date(日期)', value: 'date' },
+    { label: 'timestamp(时间戳)', value: 'timestamp' }
+]
 import { groupColorPalette } from '../data-filter/config.ts'
 
 const props = defineProps<{
