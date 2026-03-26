@@ -8,6 +8,14 @@ export function GetTransformFunction(): Promise<any> {
     })
 }
 
+// etl获取过滤条件
+export function GetEtlFilterCondition(): Promise<any> {
+    return http.request({
+        method: 'post',
+        url: '/vip/work/listEtlFilterCondition',
+    })
+}
+
 // etl自定义节点解析
 export function ParseCustomSqlFunction(params: any): Promise<any> {
     return http.request({
