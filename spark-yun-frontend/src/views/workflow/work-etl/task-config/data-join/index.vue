@@ -86,9 +86,7 @@
                                     clearable
                                     placeholder="条件"
                                 >
-                                    <el-option label="=" value="=" />
-                                    <el-option label="<" value="<" />
-                                    <el-option label=">" value=">" />
+                                    <el-option v-for="opt in joinConditionOptions" :key="opt.value" :label="opt.label" :value="opt.value" />
                                 </el-select>
                             </el-form-item>
                             <el-form-item :prop="`joinEtl[${i}].joinConditions[${index}].joinRightColumn`" :rules="rules.joinRightColumn">
@@ -148,9 +146,7 @@
                                     clearable
                                     placeholder="条件"
                                 >
-                                    <el-option label="=" value="=" />
-                                    <el-option label="<" value="<" />
-                                    <el-option label=">" value=">" />
+                                    <el-option v-for="opt in joinConditionOptions" :key="opt.value" :label="opt.label" :value="opt.value" />
                                 </el-select>
                             </el-form-item>
                             <el-form-item :prop="`joinEtl[${i}].joinConditions[${index}].joinValue`" :rules="rules.joinValue">
@@ -210,6 +206,7 @@ import { ElMessage, ElMessageBox, FormInstance, FormRules } from 'element-plus'
 import { TypeList, ConfigRules, TableConfig } from './config.ts'
 import { groupColorPalette } from '../data-filter/config.ts'
 import { GetTableColumnsByTableId } from '@/services/data-sync.service'
+import { GetEtlFilterCondition } from '@/services/etl-config.service'
 import AddCode from './add-code/index.vue'
 
 interface Option {
@@ -227,6 +224,7 @@ const emit = defineEmits(['update:modelValue'])
 const mainTableFields = ref<Option[]>()
 const tableFields = ref<Option[]>()
 const conditionTableFields = ref<Option[]>()
+const joinConditionOptions = ref<Option[]>()
 const addCodeRef = ref()
 
 const rules = reactive<FormRules>({
@@ -427,6 +425,14 @@ function removeCode(row: any) {
 
 onMounted(() => {
     tableConfig.tableData = formData.value.outColumnList
+    GetEtlFilterCondition().then((res: any) => {
+        joinConditionOptions.value = Object.keys(res.data).map((key: string) => ({
+            label: res.data[key].conditionName,
+            value: key
+        }))
+    }).catch(() => {
+        joinConditionOptions.value = []
+    })
     // if (props.incomeNodes && props.incomeNodes[0]) {
     //     tableConfig.tableData = props.incomeNodes[0].data.nodeConfigData.outColumnList.map((column) => {
     //         return {
