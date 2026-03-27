@@ -235,7 +235,8 @@ function getTableColumn() {
             return {
                 colName: column.name,
                 colType: column.type,
-                remark: column.columnComment
+                remark: column.columnComment,
+                checked: true
             }
         })
         formData.value.outColumnList = [...tableConfig.tableData]
