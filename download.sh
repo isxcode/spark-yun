@@ -122,6 +122,10 @@ download_file() {
         fi
       fi
       echo "$description 下载成功"
+    else
+      rm -rf "$output_path"
+      echo "$description 下载失败" >&2
+      exit 1
     fi
 }
 
