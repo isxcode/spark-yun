@@ -356,7 +356,7 @@ onMounted(() => {
     })
 })
 onUnmounted(() => {
-    eventBus.off('nodeMenuEvent')
+    eventBus.off('taskFlowEvent')
 })
 </script>
 

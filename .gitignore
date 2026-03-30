@@ -61,3 +61,6 @@ gradle-repo
 
 # 打包异常日志不提交
 *.hprof
+
+# claude相关缓存不提交
+.claude
