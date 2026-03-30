@@ -300,10 +300,11 @@ function clickSelectLinkConnect(type: string) {
                     target: targetTableColumn.value[index].code
                 })
             }
-            if (type === 'SameName' && targetTableColumn.value.find(c => c.code === column.code)) {
+            const currentCode = targetTableColumn.value.find(c => c.code.toUpperCase() === column.code.toUpperCase())
+            if (type === 'SameName' && currentCode) {
                 connectNodeList.value.push({
                     source: column.code,
-                    target: column.code
+                    target: currentCode.code
                 })
             }
         })
