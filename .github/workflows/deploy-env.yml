@@ -114,7 +114,7 @@ jobs:
           timeout: 3600s
           script: |
             cd /tmp
-            curl -fsL --retry 5 --retry-delay 5 -o hadoop-3.3.5.tar.gz https://mirrors.aliyun.com/apache/hadoop/core/hadoop-3.3.5/hadoop-3.3.5.tar.gz
+            curl -fsL --retry 5 --retry-delay 5 -o hadoop-3.3.5.tar.gz https://mirrors.huaweicloud.com/apache/hadoop/common/hadoop-3.3.5/hadoop-3.3.5.tar.gz
 
       - name: Install hadoop
         uses: appleboy/ssh-action@v1.0.3
