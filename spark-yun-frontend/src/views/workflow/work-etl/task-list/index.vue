@@ -36,13 +36,13 @@ interface Task {
 const emit = defineEmits(['handleDragEnd'])
 const taskList = ref<Task[]>([
     { type: 'DATA_INPUT', typeName: '数据输入', icon: 'Download' },
-    { type: 'DATA_OUTPUT', typeName: '数据输出', icon: 'Upload' },
     { type: 'DATA_JOIN', typeName: '数据关联', icon: 'Link' },
     { type: 'DATA_UNION', typeName: '数据合并', icon: 'CopyDocument' },
     { type: 'DATA_FILTER', typeName: '数据过滤', icon: 'Filter' },
     { type: 'DATA_TRANSFORM', typeName: '数据转换', icon: 'Switch' },
     { type: 'DATA_ADD_COL', typeName: '新增字段', icon: 'CirclePlus' },
     { type: 'DATA_CUSTOM', typeName: '自定义', icon: 'SetUp' },
+    { type: 'DATA_OUTPUT', typeName: '数据输出', icon: 'Upload' },
 ])
 
 function handleDragEnd(e: any, data: any) {
