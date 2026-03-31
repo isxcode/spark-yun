@@ -114,7 +114,7 @@ jobs:
           timeout: 3600s
           script: |
             cd /tmp
-            curl -s -O https://mirrors.aliyun.com/apache/hadoop/core/hadoop-3.3.5/hadoop-3.3.5.tar.gz
+            curl -fsL --retry 5 --retry-delay 5 --retry-max-time 60 -o hadoop-3.3.5.tar.gz https://mirrors.aliyun.com/apache/hadoop/core/hadoop-3.3.5/hadoop-3.3.5.tar.gz
 
       - name: Install hadoop
         uses: appleboy/ssh-action@v1.0.3
@@ -300,7 +300,20 @@ jobs:
           timeout: 3600s
           script: |
             cd /tmp
-            curl -s -O https://mirrors.huaweicloud.com/apache/hive/hive-3.1.3/apache-hive-3.1.3-bin.tar.gz
+            curl -fsL --retry 5 --retry-delay 5 --retry-max-time 60 -o apache-hive-3.1.3-bin.tar.gz https://mirrors.huaweicloud.com/apache/hive/hive-3.1.3/apache-hive-3.1.3-bin.tar.gz
+
+      - name: Download jdbc
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ inputs.dev_server_ip }}
+          username: ${{ inputs.dev_server_username }}
+          password: ${{ inputs.dev_server_password }}
+          script_stop: true
+          timeout: 3600s
+          script: |
+            cd /tmp
+            curl -fsL --retry 5 --retry-delay 5 --retry-max-time 60 -o mysql-connector-java-8.0.22.tar.gz https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-8.0.22.tar.gz
+            tar -zxf mysql-connector-java-8.0.22.tar.gz
 
       - name: Install hive
         uses: appleboy/ssh-action@v1.0.3
@@ -327,15 +340,12 @@ jobs:
             sed -i '$i\  <property>\n    <name>system:user.name</name>\n    <value>root</value>\n  </property>' /opt/hive/conf/hive-site.xml
             rm -rf /opt/hive/lib/guava-*.jar
             cp /opt/hadoop/share/hadoop/hdfs/lib/guava-*.jar /opt/hive/lib/
-            cd /tmp
-            wget -q https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-8.0.22.tar.gz
-            tar -zxf mysql-connector-java-8.0.22.tar.gz
-            cp mysql-connector-java-8.0.22/mysql-connector-java-8.0.22.jar /opt/hive/lib/
+            cp /tmp/mysql-connector-java-8.0.22/mysql-connector-java-8.0.22.jar /opt/hive/lib/
             mkdir -p /opt/hive/logs
             nohup schematool -dbType mysql -initSchema >> /opt/hive/initSchema.log 2>&1 &
-            sleep 5s
+            sleep 10s
             nohup hive --service metastore >> /opt/hive/logs/metastore.log 2>&1 &
-            sleep 5s
+            sleep 10s
             nohup hive --service hiveserver2 >> /opt/hive/logs/hiveserver2.log 2>&1 &
 
       - name: Download kafka
@@ -348,7 +358,7 @@ jobs:
           timeout: 3600s
           script: |
             cd /tmp
-            curl -s -O https://mirrors.huaweicloud.com/apache/kafka/3.7.2/kafka_2.12-3.7.2.tgz
+            curl -fsL --retry 5 --retry-delay 5 --retry-max-time 60 -o kafka_2.12-3.7.2.tgz https://mirrors.huaweicloud.com/apache/kafka/3.7.2/kafka_2.12-3.7.2.tgz
 
       - name: Install kafka
         uses: appleboy/ssh-action@v1.0.3
