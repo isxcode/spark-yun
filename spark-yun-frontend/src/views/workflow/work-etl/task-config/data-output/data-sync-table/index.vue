@@ -250,11 +250,12 @@ function clickSelectLinkConnect(type: string) {
                     target: targetTableColumn.value[index].colName
                 })
             }
-            const currentCode = targetTableColumn.value.find(c => c.code.toUpperCase() === column.code.toUpperCase())
-            if (type === 'SameName' && currentCode) {
+            const currentCode = targetTableColumn.value.find((c: any) =>
+                (c.colName || '').toUpperCase() === (column.colName || '').toUpperCase())
+            if (type === 'SameName' && currentCode?.colName && column?.colName) {
                 connectNodeList.value.push({
-                    source: column.code,
-                    target: currentCode.code
+                    source: column.colName,
+                    target: currentCode.colName
                 })
             }
         })
