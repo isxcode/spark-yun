@@ -116,7 +116,10 @@ jobs:
           script: |
             docker pull registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun-env-download:latest
             docker run -itd --name=zhiqingyun-env-download registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun-env-download:latest
-            docker cp zhiqingyun-env-download:/downloads/* /tmp
+            docker cp zhiqingyun-env-download:/downloads/hadoop-3.3.5.tar.gz /tmp
+            docker cp zhiqingyun-env-download:/downloads/apache-hive-3.1.3-bin.tar.gz /tmp
+            docker cp zhiqingyun-env-download:/downloads/mysql-connector-java-8.0.22.tar.gz /tmp
+            docker cp zhiqingyun-env-download:/downloads/kafka_2.12-3.7.2.tgz /tmp
             docker stop zhiqingyun-env-download
             docker rm zhiqingyun-env-download
             docker rmi registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun-env-download:latest
