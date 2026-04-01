@@ -334,7 +334,7 @@ jobs:
             sed -i '$i\  <property>\n    <name>system:user.name</name>\n    <value>root</value>\n  </property>' /opt/hive/conf/hive-site.xml
             rm -rf /opt/hive/lib/guava-*.jar
             cp /opt/hadoop/share/hadoop/hdfs/lib/guava-*.jar /opt/hive/lib/
-            tar -zxf /tmp/mysql-connector-java-8.0.22.tar.gz
+            tar -zxf /tmp/mysql-connector-java-8.0.22.tar.gz -C /tmp
             cp /tmp/mysql-connector-java-8.0.22/mysql-connector-java-8.0.22.jar /opt/hive/lib/
             mkdir -p /opt/hive/logs
             nohup schematool -dbType mysql -initSchema >> /opt/hive/initSchema.log 2>&1 &
