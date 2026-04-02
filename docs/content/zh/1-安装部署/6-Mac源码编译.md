@@ -92,7 +92,7 @@ mv spark-yun-vip-main ./spark-yun/spark-yun-vip
 unzip resources.zip
 mv resources ./spark-yun
 cd spark-yun
-gradle install package
+gradle package
 # 启动项目
 gradle start
 ```
