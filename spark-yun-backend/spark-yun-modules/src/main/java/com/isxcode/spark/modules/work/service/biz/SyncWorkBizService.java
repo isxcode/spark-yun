@@ -1,6 +1,5 @@
 package com.isxcode.spark.modules.work.service.biz;
 
-import com.isxcode.spark.api.datasource.constants.DatasourceType;
 import com.isxcode.spark.api.datasource.dto.ColumnMetaDto;
 import com.isxcode.spark.api.datasource.dto.ConnectInfo;
 import com.isxcode.spark.api.datasource.dto.TableMetaInfo;
@@ -29,9 +28,8 @@ import javax.transaction.Transactional;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Locale;
 import java.util.Optional;
 
 @Service
@@ -133,35 +131,75 @@ public class SyncWorkBizService {
     }
 
     private TableMetaInfo getTableMetaInfo(Connection connection, String tableName) {
+        String catalog = null;
+        String schema = null;
+        String productName = null;
+        String userName = null;
+        String finalTableName = tableName == null ? null : tableName.trim();
 
-        String dataBase = null;
-        if (tableName.contains(".") && !tableName.contains("^") && !tableName.contains("*")) {
-            dataBase = tableName.split("\\.")[0];
-            tableName = tableName.split("\\.")[1];
+        try {
+            catalog = connection.getCatalog();
+        } catch (SQLException | AbstractMethodError e) {
+            log.debug(e.getMessage(), e);
+        }
+        try {
+            schema = connection.getSchema();
+        } catch (SQLException | AbstractMethodError e) {
+            log.debug(e.getMessage(), e);
+        }
+        try {
+            productName = connection.getMetaData().getDatabaseProductName();
+        } catch (SQLException e) {
+            log.debug(e.getMessage(), e);
+        }
+        try {
+            userName = connection.getMetaData().getUserName();
+        } catch (SQLException e) {
+            log.debug(e.getMessage(), e);
         }
 
-        String catalog = connection.getCatalog();
-        String schema = connection.getSchema();
+        boolean canSplit = finalTableName != null && !finalTableName.trim().isEmpty() && !finalTableName.contains("^")
+            && !finalTableName.contains("*") && !finalTableName.contains("%") && !finalTableName.contains("(")
+            && !finalTableName.contains(")") && !finalTableName.contains("|") && !finalTableName.contains("[")
+            && !finalTableName.contains("]") && finalTableName.contains(".");
 
-        if (dataBase != null) {
-            if (catalog == null && schema == null) {
-                // 未支持的数据库，全量查询
-                return result;
-            } else if (schema != null) {
-                schema = dataBase;
-            } else {
-                catalog = dataBase;
+        if (canSplit) {
+            String[] split = finalTableName.split("\\.");
+            if (split.length == 2) {
+                // schema.table 或 catalog.table：优先填 schema，若 schema 为空且有 catalog 则填 catalog
+                if ((schema == null || schema.trim().isEmpty()) && !(catalog == null || catalog.trim().isEmpty())) {
+                    catalog = split[0];
+                } else {
+                    schema = split[0];
+                }
+                finalTableName = split[1];
+            } else if (split.length == 3) {
+                // catalog.schema.table
+                catalog = split[0];
+                schema = split[1];
+                finalTableName = split[2];
             }
         }
 
-        transform.put("tableName", tableName);
-        result.put("catalog", catalog);
-
-        if (DatasourceType.ORACLE.equals(datasourceEntity.getDbType())) {
-            transform.put("schema", connectInfo.getUsername().toUpperCase());
+        boolean isOracle = productName != null && productName.toLowerCase(Locale.ROOT).contains("oracle");
+        if (isOracle) {
+            // Oracle 使用 schema，不使用 catalog
+            catalog = null;
+            if (schema == null || schema.trim().isEmpty()) {
+                if (userName != null && !userName.trim().isEmpty()) {
+                    schema = userName.contains("@") ? userName.substring(0, userName.indexOf("@")) : userName;
+                }
+            }
+            if (schema != null && !schema.trim().isEmpty()) {
+                schema = schema.toUpperCase(Locale.ROOT);
+            }
+            boolean canFormat = finalTableName != null && !finalTableName.trim().isEmpty()
+                && !finalTableName.contains("^") && !finalTableName.contains("*") && !finalTableName.contains("%");
+            if (canFormat) {
+                finalTableName = finalTableName.toUpperCase(Locale.ROOT);
+            }
         }
-        result.put("schema", schema);
-        return transform;
-        return null;
+
+        return TableMetaInfo.builder().catalog(catalog).schema(schema).tableName(finalTableName).build();
     }
 }
