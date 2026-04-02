@@ -142,6 +142,18 @@ jobs:
           path: /home/runner/work/spark-yun/spark-yun/resources/tmp
           key: ${{ runner.os }}-file-${{ hashFiles('/home/runner/work/spark-yun/spark-yun/download.sh') }}
 
+      - name: Download tmp dependencies
+        if: steps.download-cache.outputs.cache-hit != 'true'
+        run: |
+          docker pull registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun-tmp-download:latest
+          docker run -itd --name=zhiqingyun-tmp-download registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun-tmp-download:latest
+          docker cp zhiqingyun-tmp-download:/downloads/resources.zip /tmp/resources.zip
+          unzip /tmp/resources.zip -d /home/runner/work/spark-yun/spark-yun/
+          rm -rf /tmp/resources.zip
+          docker stop zhiqingyun-tmp-download
+          docker rm zhiqingyun-tmp-download
+          docker rmi registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun-tmp-download:latest
+
       - name: Download dependencies
         if: steps.download-cache.outputs.cache-hit != 'true'
         run: bash /home/runner/work/spark-yun/spark-yun/download.sh
