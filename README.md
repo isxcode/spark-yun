@@ -125,7 +125,7 @@ docker run --rm \
         <td><img src="https://img.isxcode.com/picgo/7.png" alt="分享表单" width="400"/></td>
     </tr>
     <tr>
-        <td><img src="https://img.isxcode.com/picgo/9.png" alt="数据分析" width="400"/></td>
+        <td><img src="https://img.isxcode.com/picgo/9.png" alt="可视化ETL" width="400"/></td>
         <td><img src="https://img.isxcode.com/picgo/6.png" alt="数据大屏" width="400"/></td>
     </tr>
 </table>
