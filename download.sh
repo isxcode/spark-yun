@@ -86,10 +86,10 @@ check_command() {
     local install_msg=$2
 
     if ! command -v "$cmd" &>/dev/null; then
-        echo "未检测到 $cmd 命令，$install_msg" >&2
+        echo "$cmd command not found, $install_msg" >&2
         exit 1
     fi
-    echo "$cmd 命令检查通过"
+    echo "$cmd command check passed"
 }
 
 # 创建目录
@@ -97,7 +97,7 @@ create_dir() {
     local dir=$1
     if [[ ! -d "$dir" ]]; then
         mkdir -p "$dir"
-        echo "创建目录: $dir"
+        echo "Creating directory: $dir"
     fi
 }
 
@@ -108,23 +108,23 @@ download_file() {
     local description=$3
 
     if [[ -f "$output_path" ]]; then
-        echo "$description 已存在，跳过下载"
+        echo "$description already exists, skipping download"
         return 0
     fi
 
-    echo "开始下载 $description..."
+    echo "Starting download of $description..."
     if curl -ssL --retry 3 --retry-delay 2 "$url" -o "$output_path"; then
       if head -n 1 "$output_path" | grep -q "<?xml"; then
         if grep -q "<Error>" "$output_path" && grep -q "<Code>NoSuchKey</Code>" "$output_path"; then
             rm -rf "$output_path"
-            echo "下载失败，请联系管理员: ispong@outlook.com" >&2
+            echo "Download failed, please contact administrator: ispong@outlook.com" >&2
             exit 1
         fi
       fi
-      echo "$description 下载成功"
+      echo "$description downloaded successfully"
     else
       rm -rf "$output_path"
-      echo "$description 下载失败" >&2
+      echo "$description download failed" >&2
       exit 1
     fi
 }
@@ -135,25 +135,25 @@ download_file() {
 
 # 检查系统依赖
 check_system_dependencies() {
-    echo "检查系统依赖..."
+    echo "Checking system dependencies..."
 
-    check_command "tar" "请下载 tar"
-    check_command "java" "请下载 Java"
-    check_command "node" "请下载 Node.js"
+    check_command "tar" "Please install tar"
+    check_command "java" "Please install Java"
+    check_command "node" "Please install Node.js"
 
     # 检查并下载 pnpm
     if ! command -v "pnpm" &>/dev/null; then
-        echo "未检测到 pnpm，正在下载..."
+        echo "pnpm not detected, downloading..."
         npm install pnpm@9.0.6 -g
-        echo "pnpm 下载完成"
+        echo "pnpm download completed"
     else
-        echo "pnpm 命令检查通过"
+        echo "pnpm command check passed"
     fi
 }
 
 # 下载spark
 download_spark() {
-    echo "下载 Spark ${SPARK_VERSION}..."
+    echo "Downloading Spark ${SPARK_VERSION}..."
 
     # 创建必要目录
     create_dir "$TMP_DIR"
@@ -161,12 +161,12 @@ download_spark() {
     # 下载 Spark
     local spark_url="${OSS_DOWNLOAD_URL}/${SPARK_MIN_FILE}"
     local spark_path="${TMP_DIR}/${SPARK_MIN_FILE}"
-    download_file "$spark_url" "$spark_path" "Spark ${SPARK_VERSION} 二进制文件，请耐心等待"
+    download_file "$spark_url" "$spark_path" "Spark ${SPARK_VERSION} binary file, please be patient"
 }
 
 # 下载flink
 download_flink() {
-    echo "下载 Flink ${FLINK_VERSION}..."
+    echo "Downloading Flink ${FLINK_VERSION}..."
 
     # 创建必要目录
     create_dir "$TMP_DIR"
@@ -174,12 +174,12 @@ download_flink() {
     # 下载 Flink
     local flink_url="${OSS_DOWNLOAD_URL}/${FLINK_MIN_FILE}"
     local flink_path="${TMP_DIR}/${FLINK_MIN_FILE}"
-    download_file "$flink_url" "$flink_path" "Flink ${FLINK_VERSION} 二进制文件，请耐心等待"
+    download_file "$flink_url" "$flink_path" "Flink ${FLINK_VERSION} binary file, please be patient"
 }
 
 # 下载 Spark JAR 依赖
 download_spark_jars() {
-    echo "下载 Spark JAR 依赖..."
+    echo "Downloading Spark JAR dependencies..."
 
     # 创建必要目录
     create_dir "$TMP_SPARK_MIN_JARS"
@@ -196,7 +196,7 @@ download_spark_jars() {
 
 # 下载 Flink JAR 依赖
 download_flink_jars() {
-    echo "下载 Flink JAR 依赖..."
+    echo "Downloading Flink JAR dependencies..."
 
     # 创建必要目录
     create_dir "$TMP_FLINK_MIN_LIB"
@@ -213,7 +213,7 @@ download_flink_jars() {
 
 # 下载数据库驱动
 download_jdbc_drivers() {
-    echo "下载数据库驱动..."
+    echo "Downloading JDBC drivers..."
 
     # 创建 JDBC 驱动目录
     create_dir "$TMP_JDBC_DIR"
@@ -222,13 +222,13 @@ download_jdbc_drivers() {
     for driver in "${JDBC_DRIVERS[@]}"; do
         local driver_url="${OSS_DOWNLOAD_URL}/${driver}"
         local driver_path="${TMP_JDBC_DIR}/${driver}"
-        download_file "$driver_url" "$driver_path" "数据库驱动: $driver"
+        download_file "$driver_url" "$driver_path" "JDBC driver: $driver"
     done
 }
 
 # 下载项目依赖
 download_project_libs() {
-    echo "下载项目依赖..."
+    echo "Downloading project dependencies..."
 
     # 创建项目依赖目录
     create_dir "$TMP_LIBS_DIR"
@@ -237,7 +237,7 @@ download_project_libs() {
     for jar in "${PROJECT_LIBS[@]}"; do
         local jar_url="${OSS_DOWNLOAD_URL}/${jar}"
         local jar_path="${TMP_LIBS_DIR}/${jar}"
-        download_file "$jar_url" "$jar_path" "项目依赖: $jar"
+        download_file "$jar_url" "$jar_path" "Project dependency: $jar"
     done
 }
 
@@ -246,7 +246,7 @@ download_project_libs() {
 # =============================================================================
 
 main() {
-    echo "开始下载至轻云项目依赖..."
+    echo "Starting Lightweight Cloud project dependency download..."
 
     # 1. 检查系统依赖
     check_system_dependencies
@@ -269,7 +269,7 @@ main() {
     # 7. 下载项目依赖
     download_project_libs
 
-    echo "项目依赖下载完成！"
+    echo "Project dependency download completed!"
 }
 
 # =============================================================================
@@ -278,7 +278,7 @@ main() {
 
 # 切换到脚本所在目录
 cd "$BASE_PATH" || {
-    echo "无法切换到项目目录: $BASE_PATH" >&2
+    echo "Cannot switch to project directory: $BASE_PATH" >&2
     exit 1
 }
 
