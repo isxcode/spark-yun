@@ -91,24 +91,4 @@ public class SyncWorkService {
         }
         return primaryKeys;
     }
-
-    public Map<String, String> transform(String dataBase, String catalog, String schema) {
-        Map<String, String> result = new HashMap<>();
-
-        if (dataBase != null) {
-            if (catalog == null && schema == null) {
-                // 未支持的数据库，全量查询
-                return result;
-            } else if (schema != null) {
-                schema = dataBase;
-            } else {
-                catalog = dataBase;
-            }
-        }
-
-        result.put("catalog", catalog);
-        result.put("schema", schema);
-
-        return result;
-    }
 }
