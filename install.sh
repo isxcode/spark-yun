@@ -34,7 +34,7 @@ create_dir() {
     local dir=$1
     if [[ ! -d "$dir" ]]; then
         mkdir -p "$dir"
-        echo "创建目录: $dir"
+        echo "Creating directory: $dir"
     fi
 }
 
@@ -44,14 +44,14 @@ create_dir() {
 
 # 安装spark
 install_spark() {
-    echo "安装 Spark ${SPARK_VERSION}..."
+    echo "Installing Spark ${SPARK_VERSION}..."
 
     # 创建必要目录
     create_dir "$SPARK_MIN_DIR"
 
     # 解压 Spark（如果尚未解压）
     if [[ ! -f "${SPARK_MIN_DIR}/README.md" ]]; then
-        echo "解压 Spark 并清理不需要的文件..."
+        echo "Extracting Spark and cleaning unnecessary files..."
         local spark_path="${TMP_DIR}/${SPARK_MIN_FILE}"
         tar zxf "$spark_path" --strip-components=1 -C "$SPARK_MIN_DIR"
 
@@ -71,22 +71,22 @@ install_spark() {
         echo "spark.master          spark://0.0.0.0:7077" >> "${SPARK_MIN_DIR}/conf/spark-defaults.conf"
         echo "spark.master.web.url  http://0.0.0.0:8081" >> "${SPARK_MIN_DIR}/conf/spark-defaults.conf"
 
-        echo "Spark 解压和清理完成"
+        echo "Spark extraction and cleanup completed"
     else
-        echo "Spark 已解压，跳过"
+        echo "Spark already extracted, skipping"
     fi
 }
 
 # 安装flink
 install_flink() {
-    echo "安装 Flink ${FLINK_VERSION}..."
+    echo "Installing Flink ${FLINK_VERSION}..."
 
     # 创建必要目录
     create_dir "$FLINK_MIN_DIR"
 
     # 解压 Flink（如果尚未解压）
     if [[ ! -f "${FLINK_MIN_DIR}/README.md" ]]; then
-        echo "解压 Flink 并清理不需要的文件..."
+        echo "Extracting Flink and cleaning unnecessary files..."
         local flink_path="${TMP_DIR}/${FLINK_MIN_FILE}"
         tar zxf "$flink_path" --strip-components=1 -C "$FLINK_MIN_DIR"
 
@@ -101,29 +101,29 @@ install_flink() {
 
         # 删除不需要的文件和目录
         rm -rf "${FLINK_MIN_DIR}"/{NOTICE,LICENSE,licenses,examples}
-        echo "Flink 解压和清理完成"
+        echo "Flink extraction and cleanup completed"
     else
-        echo "Flink 已解压，跳过"
+        echo "Flink already extracted, skipping"
     fi
 }
 
 # 拷贝 Spark JAR 依赖
 install_spark_jars() {
-    echo "拷贝 Spark JAR 依赖..."
+    echo "Copying Spark JAR dependencies..."
 
     cp "${TMP_SPARK_MIN_JARS}"/*.jar "${SPARK_MIN_DIR}"/jars/
 }
 
 # 拷贝 Flink Lib 依赖
 install_flink_libs() {
-    echo "拷贝 Flink JAR 依赖..."
+    echo "Copying Flink JAR dependencies..."
 
     cp "${TMP_FLINK_MIN_LIB}"/*.jar "${FLINK_MIN_DIR}"/lib/
 }
 
 # 拷贝项目依赖
 install_resources_libs() {
-    echo "拷贝项目依赖..."
+    echo "Copying project dependencies..."
 
     create_dir "$LIBS_DIR"
 
@@ -133,7 +133,7 @@ install_resources_libs() {
 
 # 拷贝驱动
 install_jdbc() {
-    echo "拷贝驱动..."
+    echo "Copying JDBC drivers..."
 
     create_dir "$JDBC_DIR"
 
@@ -145,7 +145,7 @@ install_jdbc() {
 # =============================================================================
 
 main() {
-    echo "开始安装至轻云项目依赖..."
+    echo "Starting project dependency installation..."
 
     # 1. 安装Spark
     install_spark
@@ -165,7 +165,7 @@ main() {
     # 6. 拷贝数据库驱动
     install_jdbc
 
-    echo "项目依赖安装完成！"
+    echo "Project dependency installation completed!"
 }
 
 # =============================================================================
@@ -174,7 +174,7 @@ main() {
 
 # 切换到脚本所在目录
 cd "$BASE_PATH" || {
-    echo "无法切换到项目目录: $BASE_PATH" >&2
+    echo "Cannot switch to project directory: $BASE_PATH" >&2
     exit 1
 }
 
