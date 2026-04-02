@@ -98,7 +98,7 @@
                                 </el-select>
                             </el-form-item>
                             <el-form-item prop="sourceTable" label="表">
-                                <el-select v-model="formData.sourceTable" clearable filterable placeholder="请选择"
+                                <el-select v-model="formData.sourceTable" clearable filterable allow-create default-first-option placeholder="请选择或输入表名"
                                     @visible-change="getDataSourceTable($event, formData.sourceDBId, 'source')"
                                     @change="tableChangeEvent($event, formData.sourceDBId, 'source')">
                                     <el-option v-for="item in sourceTablesList" :key="item.value" :label="item.label"
@@ -145,7 +145,7 @@
                                 </el-select>
                             </el-form-item>
                             <el-form-item prop="targetTable" label="表">
-                                <el-select v-model="formData.targetTable" clearable filterable placeholder="请选择"
+                                <el-select v-model="formData.targetTable" clearable filterable allow-create default-first-option placeholder="请选择或输入表名"
                                     @visible-change="getDataSourceTable($event, formData.targetDBId, 'target')"
                                     @change="tableChangeEvent($event, formData.targetDBId, 'target')">
                                     <el-option v-for="item in targetTablesList" :key="item.value" :label="item.label"
