@@ -85,7 +85,8 @@ public class Execute {
      */
     public static String genSourceTempView(SparkSession sparkSession, PluginReq conf) {
 
-        String sourceTableName = "zhiqingyun_src_" + conf.getSyncWorkConfig().getSourceDatabase().getDbTable();
+        String sourceTableName =
+            "zhiqingyun_src_" + conf.getSyncWorkConfig().getSourceDatabase().getDbTable().replace(".", "_");
 
         if (DatasourceType.HIVE.equals(conf.getSyncWorkConfig().getSourceDBType())) {
 
@@ -129,8 +130,13 @@ public class Execute {
 
             // 拼接来源的条件
             if (Strings.isNotEmpty(conf.getSyncWorkConfig().getQueryCondition())) {
-                dbTable = "( select * from " + dbTable + " where " + conf.getSyncWorkConfig().getQueryCondition()
-                    + " ) as " + sourceTableName;
+                dbTable =
+                    "( select * from " + dbTable + " where " + conf.getSyncWorkConfig().getQueryCondition() + " ) ";
+                if (DatasourceType.ORACLE.equals(conf.getSyncWorkConfig().getSourceDBType())) {
+                    dbTable = dbTable + sourceTableName;
+                } else {
+                    dbTable = dbTable + " as " + sourceTableName;
+                }
             }
             Dataset<Row> source = sparkSession.read().jdbc(conf.getSyncWorkConfig().getSourceDatabase().getUrl(),
                 dbTable, predicate, prop);
@@ -146,7 +152,8 @@ public class Execute {
      */
     public static String genTargetTempView(SparkSession sparkSession, PluginReq conf) {
 
-        String targetTableName = "zhiqingyun_dist_" + conf.getSyncWorkConfig().getTargetDatabase().getDbTable();
+        String targetTableName =
+            "zhiqingyun_dist_" + conf.getSyncWorkConfig().getTargetDatabase().getDbTable().replace(".", "_");
 
         if (DatasourceType.HIVE.equals(conf.getSyncWorkConfig().getTargetDBType())) {
 
