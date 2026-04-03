@@ -214,4 +214,70 @@ public class OceanbaseService extends Datasource {
         return columnDef.toString();
     }
 
+    
+    @Override
+    public String convertToFlinkColumnType(String columnType) {
+
+        if (columnType == null) {
+            return "STRING";
+        }
+
+        String normalizedType = columnType.trim().toLowerCase();
+        if (normalizedType.isEmpty()) {
+            return "STRING";
+        }
+
+        normalizedType = normalizedType.replace("unsigned", "").replace("zerofill", "").trim();
+
+        if (normalizedType.contains("array") || normalizedType.endsWith("[]")) {
+            return "ARRAY<STRING>";
+        }
+        if (normalizedType.contains("map")) {
+            return "MAP<STRING, STRING>";
+        }
+
+        if (normalizedType.contains("boolean") || normalizedType.contains("bool")
+            || normalizedType.matches("bit\\s*\\(\\s*1\\s*\\)")) {
+            return "BOOLEAN";
+        }
+
+        if (normalizedType.contains("tinyint") || normalizedType.contains("smallint")
+            || normalizedType.contains("mediumint") || normalizedType.matches("(^|\\W)int(\\W|$)")
+            || normalizedType.contains("integer") || normalizedType.contains("serial")) {
+            return "INT";
+        }
+        if (normalizedType.contains("bigint") || normalizedType.contains("int8")
+            || normalizedType.contains("bigserial")) {
+            return "BIGINT";
+        }
+
+        if (normalizedType.contains("float") || normalizedType.contains("real")
+            || normalizedType.contains("binary_float")) {
+            return "FLOAT";
+        }
+        if (normalizedType.contains("double") || normalizedType.contains("binary_double")) {
+            return "DOUBLE";
+        }
+        if (normalizedType.contains("decimal") || normalizedType.contains("numeric")
+            || normalizedType.contains("number") || normalizedType.contains("money")) {
+            return "DECIMAL(38, 18)";
+        }
+
+        if (normalizedType.matches("(^|\\W)date(\\W|$)")) {
+            return "DATE";
+        }
+        if (normalizedType.contains("timestamp") || normalizedType.contains("datetime")
+            || normalizedType.contains("smalldatetime") || normalizedType.matches("(^|\\W)time(\\W|$)")) {
+            return "TIMESTAMP";
+        }
+
+        if (normalizedType.contains("blob") || normalizedType.contains("binary")
+            || normalizedType.contains("varbinary") || normalizedType.contains("bytea")
+            || normalizedType.contains("raw") || normalizedType.contains("image")) {
+            return "BYTES";
+        }
+
+        return "STRING";
+    }
+
 }
