@@ -219,7 +219,7 @@ export const TypeList = [
     "value": "API"
   },
   {
-    "label": "数据同步作业",
+    "label": "数据同步Spark版本",
     "value": "DATA_SYNC_JDBC"
   },
   {
