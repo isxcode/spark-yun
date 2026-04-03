@@ -15,7 +15,7 @@ public class AddWorkReq {
 
     @Schema(title = "作业类型",
         example = "类型编码：" + "SPARK_SQL： spark sql执行作业" + "EXE_JDBC： jdbc执行作业" + "QUERY_JDBC： jdbc查询作业"
-            + "DATA_SYNC_JDBC： 数据同步作业" + "DATA_SYNC_FLINK： 数据同步Flink版本作业" + "BASH： bash脚本作业"
+            + "DATA_SYNC_JDBC： 数据同步作业" + "DATA_SYNC_FLINK： 数据同步Flink作业" + "BASH： bash脚本作业"
             + "PYTHON： python脚本作业" + "API： 接口调用作业" + "PRQL： PRQL查询作业"
             + "CURL： CURL作业" + "PY_SPARK: PySpark作业")
     @NotEmpty(message = "作业类型不能为空")

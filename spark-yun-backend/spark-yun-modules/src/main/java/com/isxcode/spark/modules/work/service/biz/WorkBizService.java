@@ -162,10 +162,9 @@ public class WorkBizService {
             workConfigService.initSyncRule(workConfig);
         }
 
-        // 初始化计算引擎
+        // 初始化计算引擎【spark】
         if (WorkType.QUERY_SPARK_SQL.equals(addWorkReq.getWorkType())
             || WorkType.DATA_SYNC_JDBC.equals(addWorkReq.getWorkType())
-            || WorkType.DATA_SYNC_FLINK.equals(addWorkReq.getWorkType())
             || WorkType.EXCEL_SYNC_JDBC.equals(addWorkReq.getWorkType())
             || WorkType.BASH.equals(addWorkReq.getWorkType()) || WorkType.PYTHON.equals(addWorkReq.getWorkType())
             || WorkType.SPARK_JAR.equals(addWorkReq.getWorkType()) || WorkType.PY_SPARK.equals(addWorkReq.getWorkType())
@@ -175,9 +174,10 @@ public class WorkBizService {
                 addWorkReq.getEnableHive(), addWorkReq.getDatasourceId());
         }
 
-        // 初始化Flink计算引擎
+        // 初始化Flink计算引擎【flink】
         if (WorkType.FLINK_SQL.equals(addWorkReq.getWorkType())
-            || WorkType.FLINK_JAR.equals(addWorkReq.getWorkType())) {
+            || WorkType.FLINK_JAR.equals(addWorkReq.getWorkType())
+            || WorkType.DATA_SYNC_FLINK.equals(addWorkReq.getWorkType())) {
             workConfigService.initFlinkClusterConfig(workConfig, addWorkReq.getClusterId(),
                 addWorkReq.getClusterNodeId(), addWorkReq.getEnableHive(), addWorkReq.getDatasourceId());
         }
