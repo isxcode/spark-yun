@@ -252,7 +252,7 @@ import { CreateTableWork, GetDataSourceTables, GetTableColumnsByTableId, SaveDat
 import TableDetail from './table-detail/index.vue'
 import DataSyncTable from './data-sync-table/index.vue'
 import ConfigDetail from '../workflow-page/config-detail/index.vue'
-import { DeleteWorkData, GetWorkItemConfig, PublishWorkData, RunWorkItemConfig, SaveWorkItemConfig, TerWorkItemConfig } from '@/services/workflow.service'
+import { DeleteWorkData, GetLineageWorkItemConfig, GetWorkItemConfig, PublishWorkData, RunWorkItemConfig, SaveWorkItemConfig, TerWorkItemConfig } from '@/services/workflow.service'
 import PublishLog from '../work-item/publish-log.vue'
 import RunningLog from '../work-item/running-log.vue'
 import { Delete, Loading } from '@element-plus/icons-vue'
@@ -357,7 +357,7 @@ function saveData() {
     btnLoadingConfig.saveLoading = true
     SaveWorkItemConfig({
         workId: formData.workId,
-        syncWorkConfig: {
+        syncFlinkConfig: {
             ...formData,
             sourceTableColumn: dataSyncTableRef.value.getSourceTableColumn(),
             targetTableColumn: dataSyncTableRef.value.getTargetTableColumn(),
@@ -405,18 +405,19 @@ function getDate() {
     }
     requestMethod(reqPar).then((res: any) => {
         networkError.value = false
-        if (res.data.syncWorkConfig) {
-            formData.sourceDBType = res.data.syncWorkConfig.sourceDBType
-            formData.sourceDBId = res.data.syncWorkConfig.sourceDBId
-            formData.sourceTable = res.data.syncWorkConfig.sourceTable
-            formData.queryCondition = res.data.syncWorkConfig.queryCondition
-            formData.partitionColumn = res.data.syncWorkConfig.partitionColumn
-            formData.sourceConnectConfig = res.data.syncWorkConfig.sourceConnectConfig || {}
-            formData.targetConnectConfig = res.data.syncWorkConfig.targetConnectConfig || {}
-            formData.targetDBType = res.data.syncWorkConfig.targetDBType
-            formData.targetDBId = res.data.syncWorkConfig.targetDBId
-            formData.targetTable = res.data.syncWorkConfig.targetTable
-            formData.overMode = res.data.syncWorkConfig.overMode
+        const syncConfig = res.data.syncFlinkConfig || res.data.syncWorkConfig
+        if (syncConfig) {
+            formData.sourceDBType = syncConfig.sourceDBType
+            formData.sourceDBId = syncConfig.sourceDBId
+            formData.sourceTable = syncConfig.sourceTable
+            formData.queryCondition = syncConfig.queryCondition
+            formData.partitionColumn = syncConfig.partitionColumn
+            formData.sourceConnectConfig = syncConfig.sourceConnectConfig || {}
+            formData.targetConnectConfig = syncConfig.targetConnectConfig || {}
+            formData.targetDBType = syncConfig.targetDBType
+            formData.targetDBId = syncConfig.targetDBId
+            formData.targetTable = syncConfig.targetTable
+            formData.overMode = syncConfig.overMode
 
             nextTick(() => {
                 Promise.all([
@@ -431,7 +432,7 @@ function getDate() {
                     console.error('请求失败', err)
                 })
 
-                dataSyncTableRef.value.initPageData(res.data.syncWorkConfig)
+                dataSyncTableRef.value.initPageData(syncConfig)
                 changeStatus.value = false
             })
         } else {

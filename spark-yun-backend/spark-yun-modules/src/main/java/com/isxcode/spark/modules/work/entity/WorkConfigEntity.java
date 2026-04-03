@@ -46,6 +46,8 @@ public class WorkConfigEntity {
 
     private String syncWorkConfig;
 
+    private String syncFlinkConfig;
+
     private String excelSyncConfig;
 
     private String apiWorkConfig;
