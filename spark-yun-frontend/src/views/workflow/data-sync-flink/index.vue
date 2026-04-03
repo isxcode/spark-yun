@@ -171,7 +171,7 @@
                                 </el-button>
                             </el-form-item>
                             <el-form-item prop="overMode" label="写入模式">
-                                <el-select v-model="formData.overMode" clearable filterable placeholder="请选择" @change="pageChangeEvent">
+                                <el-select v-model="formData.overMode" filterable placeholder="请选择" @change="pageChangeEvent">
                                     <el-option v-for="item in filteredOverModeList" :key="item.value" :label="item.label"
                                         :value="item.value" />
                                 </el-select>
@@ -282,7 +282,7 @@ const sourceList = ref<Option[]>([])
 const targetList = ref<Option[]>([])
 const sourceTablesList = ref<Option[]>([])
 const targetTablesList = ref<Option[]>([])
-const overModeList = ref<Option[]>(OverModeList)
+const overModeList = ref<Option[]>(OverModeList.filter(item => item.value === 'INTO'))
 const typeList = ref(DataSourceType);
 const loading = ref<boolean>(false)
 const networkError = ref<boolean>(false)
@@ -323,7 +323,7 @@ const formData = reactive({
     targetDBType: '',     // 目标数据库类型
     targetDBId: '',       // 目标数据源
     targetTable: '',      // 目标数据库表名
-    overMode: '',         // 写入模式
+    overMode: 'INTO',     // 写入模式
     targetTableAdvanceConfig: {} as Record<string, string>,
 })
 const rules = reactive<FormRules>({
@@ -359,6 +359,7 @@ function saveData() {
         workId: formData.workId,
         syncFlinkConfig: {
             ...formData,
+            overMode: 'INTO',
             sourceTableColumn: dataSyncTableRef.value.getSourceTableColumn(),
             targetTableColumn: dataSyncTableRef.value.getTargetTableColumn(),
             columnMap: dataSyncTableRef.value.getConnect()
@@ -376,9 +377,6 @@ function saveData() {
 }
 
 const filteredOverModeList = computed(() => {
-    if (formData.targetDBType === 'CLICKHOUSE') {
-        return overModeList.value.filter(item => item.value === 'INTO')
-    }
     return overModeList.value
 })
 
@@ -419,7 +417,7 @@ function getDate() {
             formData.targetDBType = syncConfig.targetDBType
             formData.targetDBId = syncConfig.targetDBId
             formData.targetTable = syncConfig.targetTable
-            formData.overMode = syncConfig.overMode
+            formData.overMode = 'INTO'
 
             nextTick(() => {
                 Promise.all([
@@ -438,6 +436,7 @@ function getDate() {
                 changeStatus.value = false
             })
         } else {
+            formData.overMode = 'INTO'
             loading.value = false
         }
     }).catch(err => {
