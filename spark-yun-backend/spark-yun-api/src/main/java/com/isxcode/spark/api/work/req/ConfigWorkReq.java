@@ -66,4 +66,7 @@ public class ConfigWorkReq {
 
     @Schema(title = "整库迁移配置")
     private SparkEtlConfig sparkEtlConfig;
+
+    @Schema(title = "数据同步作业配置")
+    private SyncFlinkConfig syncFlinkConfig;
 }

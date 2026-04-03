@@ -123,6 +123,11 @@ public class WorkConfigBizService {
             workConfig.setSyncWorkConfig(JSON.toJSONString(wocConfigWorkReq.getSyncWorkConfig()));
         }
 
+        // 用户更新数据同步Flink
+        if (wocConfigWorkReq.getSyncFlinkConfig() != null) {
+            workConfig.setSyncWorkConfig(JSON.toJSONString(wocConfigWorkReq.getSyncFlinkConfig()));
+        }
+
         // 用户更新Excel数据同步
         if (wocConfigWorkReq.getExcelSyncConfig() != null) {
             workConfig.setExcelSyncConfig(JSON.toJSONString(wocConfigWorkReq.getExcelSyncConfig()));

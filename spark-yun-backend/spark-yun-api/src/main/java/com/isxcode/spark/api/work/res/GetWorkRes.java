@@ -28,6 +28,9 @@ public class GetWorkRes {
     @Schema(title = "同步作业配置")
     private SyncWorkConfig syncWorkConfig;
 
+    @Schema(title = "同步Flink作业配置")
+    private SyncFlinkConfig syncFlinkConfig;
+
     @Schema(title = "Excel作业配置")
     private ExcelSyncConfig excelSyncConfig;
 
