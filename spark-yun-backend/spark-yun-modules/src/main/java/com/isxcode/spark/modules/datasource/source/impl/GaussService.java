@@ -323,7 +323,7 @@ public class GaussService extends Datasource {
         return columnDef.toString();
     }
 
-    
+
     @Override
     public String convertToFlinkColumnType(String columnType) {
 
@@ -380,9 +380,8 @@ public class GaussService extends Datasource {
             return "TIMESTAMP";
         }
 
-        if (normalizedType.contains("blob") || normalizedType.contains("binary")
-            || normalizedType.contains("varbinary") || normalizedType.contains("bytea")
-            || normalizedType.contains("raw") || normalizedType.contains("image")) {
+        if (normalizedType.contains("blob") || normalizedType.contains("binary") || normalizedType.contains("varbinary")
+            || normalizedType.contains("bytea") || normalizedType.contains("raw") || normalizedType.contains("image")) {
             return "BYTES";
         }
 
