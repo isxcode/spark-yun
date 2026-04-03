@@ -5,7 +5,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.util.List;
-import java.util.Map;
 
 @Data
 public class SyncWorkConfig {
@@ -28,12 +27,6 @@ public class SyncWorkConfig {
     @Schema(title = "来源数据库查询条件", example = "WHERE id = 1")
     private String queryCondition;
 
-    @Schema(title = "来源表高级配置")
-    private Map<String, String> sourceTableAdvanceConfig;
-
-    @Schema(title = "来源表高级配置(兼容字段)")
-    private Map<String, String> sourceConnectConfig;
-
     @Schema(title = "目标数据库类型", example = "mysql")
     private String targetDBType;
 
@@ -45,12 +38,6 @@ public class SyncWorkConfig {
 
     @Schema(title = "写入模式", example = "OVERWRITE or INTO")
     private String overMode;
-
-    @Schema(title = "目标表高级配置")
-    private Map<String, String> targetTableAdvanceConfig;
-
-    @Schema(title = "目标表高级配置(兼容字段)")
-    private Map<String, String> targetConnectConfig;
 
     @Schema(title = "来源表信息", example = "[{\"code\":\"installed_rank\",\"type\":\"String\",\"sql\":\"\"}]")
     private List<SyncColumnInfo> sourceTableColumn;
