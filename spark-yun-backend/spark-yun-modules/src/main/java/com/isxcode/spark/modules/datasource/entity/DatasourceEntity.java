@@ -56,6 +56,8 @@ public class DatasourceEntity {
 
     private String metastoreUris;
 
+    private String feNodes;
+
     private String driverId;
 
     private String kafkaConfig;

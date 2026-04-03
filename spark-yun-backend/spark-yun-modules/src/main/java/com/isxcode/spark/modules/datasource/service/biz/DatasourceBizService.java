@@ -92,6 +92,14 @@ public class DatasourceBizService {
             datasource.setMetastoreUris("thrift://localhost:9083");
         }
 
+        // 判断如果是doris数据源，一定要填写feNodes
+        if (DatasourceType.DORIS.equals(addDatasourceReq.getDbType())) {
+            if (Strings.isEmpty(addDatasourceReq.getFeNodes())) {
+                throw new IsxAppException("Doris数据源需要填写feNodes");
+            }
+            datasource.setFeNodes(datasource.getFeNodes());
+        }
+
         // 如果是kafka数据源，添加kafka配置
         if (DatasourceType.KAFKA.equals(addDatasourceReq.getDbType())) {
             addDatasourceReq.getKafkaConfig().setBootstrapServers(addDatasourceReq.getJdbcUrl());
@@ -148,6 +156,14 @@ public class DatasourceBizService {
         if (DatasourceType.HIVE.equals(updateDatasourceReq.getDbType())
             && Strings.isEmpty(updateDatasourceReq.getMetastoreUris())) {
             datasource.setMetastoreUris("thrift://localhost:9083");
+        }
+
+        // 判断如果是doris数据源，一定要填写feNodes
+        if (DatasourceType.DORIS.equals(updateDatasourceReq.getDbType())) {
+            if (Strings.isEmpty(updateDatasourceReq.getFeNodes())) {
+                throw new IsxAppException("Doris数据源需要填写feNodes");
+            }
+            datasource.setFeNodes(datasource.getFeNodes());
         }
 
         datasource.setCheckDateTime(LocalDateTime.now());
