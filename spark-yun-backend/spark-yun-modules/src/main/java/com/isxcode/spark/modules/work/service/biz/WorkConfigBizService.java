@@ -125,7 +125,7 @@ public class WorkConfigBizService {
 
         // 用户更新数据同步Flink
         if (wocConfigWorkReq.getSyncFlinkConfig() != null) {
-            workConfig.setSyncWorkConfig(JSON.toJSONString(wocConfigWorkReq.getSyncFlinkConfig()));
+            workConfig.setSyncFlinkConfig(JSON.toJSONString(wocConfigWorkReq.getSyncFlinkConfig()));
         }
 
         // 用户更新Excel数据同步
