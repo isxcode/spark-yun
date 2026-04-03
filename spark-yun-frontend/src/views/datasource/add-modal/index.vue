@@ -84,6 +84,16 @@
         />
       </el-form-item>
       <el-form-item
+        v-if="formData.dbType === 'DORIS'"
+        label="FeNodes"
+        prop="feNodes"
+      >
+        <el-input
+          v-model="formData.feNodes"
+          placeholder="请输入，如 127.0.0.1:8030"
+        />
+      </el-form-item>
+      <el-form-item
         v-if="formData.dbType === 'KAFKA'"
         label="topic"
         prop="kafkaConfig.topic"
@@ -241,6 +251,7 @@ const formData = reactive({
   dbType: '',
   driverId: '',
   metastoreUris: '',
+  feNodes: '',
   jdbcUrl: '',
   kafkaConfig: {
     topic: '',
@@ -410,6 +421,18 @@ const rules = reactive<FormRules>({
       trigger: [ 'blur', 'change' ]
     }
   ],
+  feNodes: [
+    {
+      validator: (_rule: any, value: string, callback: (error?: Error) => void) => {
+        if (formData.dbType === 'DORIS' && !value) {
+          callback(new Error('请输入FeNodes'))
+          return
+        }
+        callback()
+      },
+      trigger: [ 'blur', 'change' ]
+    }
+  ],
   'kafkaConfig.topic': [
     {
       required: true,
@@ -445,6 +468,7 @@ function showModal(cb: () => void, data: any): void {
     formData.name = data.name
     formData.dbType = data.dbType
     formData.jdbcUrl = data.jdbcUrl
+    formData.feNodes = data.feNodes || ''
     formData.username = data.username
     formData.passwd = data.passwd
     formData.remark = data.remark
@@ -462,6 +486,7 @@ function showModal(cb: () => void, data: any): void {
     formData.name = ''
     formData.dbType = ''
     formData.jdbcUrl = ''
+    formData.feNodes = ''
     formData.username = ''
     formData.passwd = ''
     formData.remark = ''
@@ -535,6 +560,9 @@ function dbTypeChange(e: string) {
   formData.metastoreUris = ''
   formData.driverId = ''
   formData.jdbcUrl = jdbcTipsMap[e] || ''
+  if (e !== 'DORIS') {
+    formData.feNodes = ''
+  }
 
   getDriverIdList(true)
   getDefaultDriver(e)

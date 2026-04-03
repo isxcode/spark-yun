@@ -33,6 +33,8 @@ public class PageDatasourceRes {
 
     private String metastoreUris;
 
+    private String feNodes;
+
     private String kafkaConfigStr;
 
     private KafkaConfig kafkaConfig;
