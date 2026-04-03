@@ -7,7 +7,7 @@
             <el-form-item label="类型" prop="type">
                 <el-input v-model="formData.type" maxlength="20" placeholder="请输入"/>
             </el-form-item>
-            <el-form-item label="转换">
+            <el-form-item label="转换" v-if="showSql">
                 <code-mirror v-model="formData.sql" basic :lang="lang"/>
             </el-form-item>
         </el-form>
@@ -29,6 +29,7 @@ const lang = ref<any>(sql())
 const form = ref<FormInstance>()
 const callback = ref<any>()
 const renderSence = ref('new')
+const showSql = ref(true)
 const modelConfig = reactive({
     title: '添加字段',
     visible: false,
@@ -70,9 +71,10 @@ const rules = reactive<FormRules>({
     ]
 })
 
-function showModal(cb: () => void, data: codeParam): void {
+function showModal(cb: () => void, data: codeParam, options?: { showSql?: boolean }): void {
     callback.value = cb
     modelConfig.visible = true
+    showSql.value = options?.showSql ?? true
     if (data) {
         formData.code = data.code
         formData.type = data.type

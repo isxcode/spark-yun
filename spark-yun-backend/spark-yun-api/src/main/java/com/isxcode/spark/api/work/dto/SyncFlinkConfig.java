@@ -22,7 +22,7 @@ public class SyncFlinkConfig {
     private String sourceTable;
 
     @Schema(title = "来源数据库表高级配置", example = "part_table")
-    private Map<String,String> sourceTableAdvanceConfig;
+    private Map<String, String> sourceTableAdvanceConfig;
 
     @Schema(title = "来源数据库查询条件", example = "WHERE id = 1")
     private String queryCondition;
@@ -37,7 +37,7 @@ public class SyncFlinkConfig {
     private String targetTable;
 
     @Schema(title = "目标数据库表高级配置", example = "part_table")
-    private Map<String,String> targetTableAdvanceConfig;
+    private Map<String, String> targetTableAdvanceConfig;
 
     @Schema(title = "写入模式", example = "OVERWRITE or INTO")
     private String overMode;

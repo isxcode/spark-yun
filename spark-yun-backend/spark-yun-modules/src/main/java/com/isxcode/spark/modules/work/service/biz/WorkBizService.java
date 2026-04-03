@@ -175,8 +175,7 @@ public class WorkBizService {
         }
 
         // 初始化Flink计算引擎【flink】
-        if (WorkType.FLINK_SQL.equals(addWorkReq.getWorkType())
-            || WorkType.FLINK_JAR.equals(addWorkReq.getWorkType())
+        if (WorkType.FLINK_SQL.equals(addWorkReq.getWorkType()) || WorkType.FLINK_JAR.equals(addWorkReq.getWorkType())
             || WorkType.DATA_SYNC_FLINK.equals(addWorkReq.getWorkType())) {
             workConfigService.initFlinkClusterConfig(workConfig, addWorkReq.getClusterId(),
                 addWorkReq.getClusterNodeId(), addWorkReq.getEnableHive(), addWorkReq.getDatasourceId());
