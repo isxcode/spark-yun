@@ -50,28 +50,6 @@
             <el-table ref="targetTableRef" :data="targetTableColumn" row-key="code">
                 <el-table-column prop="code" :show-overflow-tooltip="true" label="字段名" />
                 <el-table-column prop="type" :show-overflow-tooltip="true" label="类型" />
-                <el-table-column label="" width="8px" v-if="!disabled">
-                    <template #default="scope">
-                        <el-dropdown trigger="click">
-                            <el-icon class="option-more" @click.stop>
-                                <MoreFilled />
-                            </el-icon>
-                            <template #dropdown>
-                                <el-dropdown-menu>
-                                    <el-dropdown-item @click="addNewTargetCode">
-                                        添加
-                                    </el-dropdown-item>
-                                    <el-dropdown-item @click="removeTargetCode(scope)">
-                                        删除
-                                    </el-dropdown-item>
-                                    <el-dropdown-item @click="editTargetCode(scope)">
-                                        编辑
-                                    </el-dropdown-item>
-                                </el-dropdown-menu>
-                            </template>
-                        </el-dropdown>
-                    </template>
-                </el-table-column>
             </el-table>
         </div>
     </div>
@@ -418,142 +396,12 @@ function addNewCode() {
     })
 }
 
-function addNewTargetCode() {
-    addCodeRef.value.showModal((formData: codeParam) => {
-        const duplicatedCode = targetTableColumn.value.some((item: any) => item.code === formData.code)
-        if (duplicatedCode) {
-            ElMessage.warning('字段名已存在，请修改后重试')
-            return
-        }
-        targetTableColumn.value.push({
-            code: formData.code,
-            type: formData.type
-        } as any)
-        nextTick(() => {
-            initJsPlumb()
-        })
-    }, undefined as any, { showSql: false })
-}
-
 function editCode(scope: any) {
     const row = scope.row
     addCodeRef.value.showModal((formData: codeParam) => {
-        const oldCode = row.code
-
-        const duplicatedCode = sourceTableColumn.value.some((item: any, index: number) => {
-            return index !== scope.$index && item.code === formData.code
-        })
-        if (duplicatedCode) {
-            ElMessage.warning('字段名已存在，请修改后重试')
-            return
-        }
-
-        row.code = formData.code
-        row.type = formData.type
+        // 来源编辑仅允许修改转换值，字段名和类型不允许修改
         row.sql = formData.sql
-
-        // 字段名变更后，同步更新映射关系里的来源字段编码
-        connectNodeList.value = connectNodeList.value.map((item: any) => {
-            if (item.source === oldCode) {
-                return {
-                    ...item,
-                    source: formData.code
-                }
-            }
-            return item
-        })
-        connectCopy.value = (connectCopy.value || []).map((item: any) => {
-            if (item.source === oldCode) {
-                return {
-                    ...item,
-                    source: formData.code
-                }
-            }
-            return item
-        })
-
-        instance.deleteEveryConnection()
-        nextTick(() => {
-            initJsPlumb()
-            connectNodeList.value.forEach((data: any) => {
-                instance.connect({
-                    source: document.querySelector(`.code-source-${data.source}`),
-                    target: document.querySelector(`.code-target-${data.target}`)
-                })
-            })
-        })
-    }, row)
-}
-
-function removeTargetCode(cData: codeParam) {
-    ElMessageBox.confirm('确定删除该字段吗？', '警告', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-    }).then(() => {
-        targetTableColumn.value.splice(cData.$index, 1)
-        instance.deleteEveryConnection()
-        nextTick(() => {
-            connectNodeList.value = connectNodeList.value.filter((item: any) => cData.row.code !== item.target)
-            setTimeout(() => {
-                initJsPlumb()
-                connectNodeList.value.forEach((data: any) => {
-                    instance.connect({
-                        source: document.querySelector(`.code-source-${data.source}`),
-                        target: document.querySelector(`.code-target-${data.target}`)
-                    })
-                })
-            })
-        })
-    })
-}
-
-function editTargetCode(scope: any) {
-    const row = scope.row
-    addCodeRef.value.showModal((formData: codeParam) => {
-        const oldCode = row.code
-
-        const duplicatedCode = targetTableColumn.value.some((item: any, index: number) => {
-            return index !== scope.$index && item.code === formData.code
-        })
-        if (duplicatedCode) {
-            ElMessage.warning('字段名已存在，请修改后重试')
-            return
-        }
-
-        row.code = formData.code
-        row.type = formData.type
-
-        connectNodeList.value = connectNodeList.value.map((item: any) => {
-            if (item.target === oldCode) {
-                return {
-                    ...item,
-                    target: formData.code
-                }
-            }
-            return item
-        })
-        connectCopy.value = (connectCopy.value || []).map((item: any) => {
-            if (item.target === oldCode) {
-                return {
-                    ...item,
-                    target: formData.code
-                }
-            }
-            return item
-        })
-
-        instance.deleteEveryConnection()
-        nextTick(() => {
-            initJsPlumb()
-            connectNodeList.value.forEach((data: any) => {
-                instance.connect({
-                    source: document.querySelector(`.code-source-${data.source}`),
-                    target: document.querySelector(`.code-target-${data.target}`)
-                })
-            })
-        })
-    }, row, { showSql: false })
+    }, row, { disableCode: true, disableType: true })
 }
 
 onMounted(() => {
