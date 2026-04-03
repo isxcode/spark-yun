@@ -106,14 +106,6 @@
                                 </el-select>
                                 <el-button v-if="!disabled" type="primary" link @click="showTableDetail">数据预览</el-button>
                             </el-form-item>
-                            <el-form-item label="分区键">
-                                <el-select v-model="formData.partitionColumn" clearable filterable placeholder="请选择"
-                                    @visible-change="getTableColumnData($event, formData.sourceDBId, formData.sourceTable)"
-                                    @change="pageChangeEvent">
-                                    <el-option v-for="item in partKeyList" :key="item.value" :label="item.label"
-                                        :value="item.value" />
-                                </el-select>
-                            </el-form-item>
                             <el-form-item prop="queryCondition" label="过滤条件">
                                  <el-tooltip v-if="!disabled" content="例如：age > 12 and username = 'zhangsan'，不需要填写where" placement="top">
                                     <el-icon style="left: -20px" class="tooltip-msg"><QuestionFilled /></el-icon>
@@ -240,7 +232,6 @@ const targetList = ref<Option[]>([])
 const sourceTablesList = ref<Option[]>([])
 const targetTablesList = ref<Option[]>([])
 const overModeList = ref<Option[]>(OverModeList)
-const partKeyList = ref<Option[]>([])       // 分区键
 const typeList = ref(DataSourceType);
 const loading = ref<boolean>(false)
 const networkError = ref<boolean>(false)
@@ -619,30 +610,8 @@ function createTableWork() {
     })
 }
 
-// 分区键
-function getTableColumnData(e: boolean, dataSourceId: string, tableName: string) {
-    if (e && dataSourceId && tableName) {
-        GetTableColumnsByTableId({
-            dataSourceId: dataSourceId,
-            tableName: tableName
-        }).then((res: any) => {
-            partKeyList.value = (res.data.columns || []).map((column: any) => {
-                return {
-                    label: column.name,
-                    value: column.name
-                }
-            })
-        }).catch(err => {
-            console.error(err)
-        })
-    }
-}
-
 function tableChangeEvent(e: string, dataSourceId: string, type: string) {
     changeStatus.value = true
-    if (type === 'source') {
-        formData.partitionColumn = ''
-    }
     dataSyncTableRef.value.getTableColumnData({
         dataSourceId: dataSourceId,
         tableName: e
