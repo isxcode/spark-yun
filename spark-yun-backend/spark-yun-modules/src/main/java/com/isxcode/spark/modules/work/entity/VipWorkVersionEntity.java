@@ -76,6 +76,8 @@ public class VipWorkVersionEntity {
 
     private String sparkEtlConfig;
 
+    private String syncFlinkConfig;
+
     @CreatedDate
     private LocalDateTime createDateTime;
 
