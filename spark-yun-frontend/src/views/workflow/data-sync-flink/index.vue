@@ -105,6 +105,16 @@
                                         :value="item.value" />
                                 </el-select>
                                 <el-button v-if="!disabled" type="primary" link @click="showTableDetail">数据预览</el-button>
+                                <el-button
+                                    v-if="!disabled"
+                                    type="primary"
+                                    link
+                                    size="small"
+                                    :class="{ 'advanced-config-btn--active': hasSourceConnectConfig }"
+                                    @click="openAdvancedConfig('source')"
+                                >
+                                    高级配置
+                                </el-button>
                             </el-form-item>
                             <el-form-item prop="queryCondition" label="过滤条件">
                                  <el-tooltip v-if="!disabled" content="例如：age > 12 and username = 'zhangsan'，不需要填写where" placement="top">
@@ -149,6 +159,16 @@
                                     @click="showCreateTableSql">
                                     建表语句
                                 </el-button>
+                                <el-button
+                                    v-if="!disabled"
+                                    type="primary"
+                                    link
+                                    size="small"
+                                    :class="{ 'advanced-config-btn--active': hasTargetConnectConfig }"
+                                    @click="openAdvancedConfig('target')"
+                                >
+                                    高级配置
+                                </el-button>
                             </el-form-item>
                             <el-form-item prop="overMode" label="写入模式">
                                 <el-select v-model="formData.overMode" clearable filterable placeholder="请选择" @change="pageChangeEvent">
@@ -187,6 +207,37 @@
         <config-detail ref="configDetailRef"></config-detail>
         <!-- 建表语句 -->
         <create-table-sql-dialog ref="createTableSqlDialogRef"></create-table-sql-dialog>
+        <el-dialog
+            v-model="advancedConfigVisible"
+            title="高级配置"
+            width="520px"
+            :close-on-click-modal="false"
+            append-to-body
+            class="advanced-config-dialog"
+        >
+            <div class="advanced-config-content">
+                <div
+                    v-for="(item, index) in connectConfigList"
+                    :key="index"
+                    class="advanced-config-row"
+                >
+                    <el-input v-model="item.key" placeholder="Key" style="flex: 1;" />
+                    <el-input v-model="item.value" placeholder="Value" style="flex: 1; margin-left: 8px;" />
+                    <el-button type="danger" link @click="removeConfigItem(index)" style="margin-left: 8px;">
+                        <el-icon><Delete /></el-icon>
+                    </el-button>
+                </div>
+            </div>
+            <template #footer>
+                <div class="advanced-config-footer">
+                    <el-button type="primary" link @click="addConfigItem">添加配置</el-button>
+                    <div>
+                        <el-button @click="advancedConfigVisible = false">取消</el-button>
+                        <el-button type="primary" @click="saveAdvancedConfig">确定</el-button>
+                    </div>
+                </div>
+            </template>
+        </el-dialog>
     </div>
 </template>
 
@@ -204,7 +255,7 @@ import ConfigDetail from '../workflow-page/config-detail/index.vue'
 import { DeleteWorkData, GetWorkItemConfig, PublishWorkData, RunWorkItemConfig, SaveWorkItemConfig, TerWorkItemConfig } from '@/services/workflow.service'
 import PublishLog from '../work-item/publish-log.vue'
 import RunningLog from '../work-item/running-log.vue'
-import { Loading } from '@element-plus/icons-vue'
+import { Delete, Loading } from '@element-plus/icons-vue'
 import LoadingPage from '@/components/loading/index.vue'
 import CreateTableSqlDialog from './create-table-sql-dialog/index.vue'
 
@@ -235,6 +286,9 @@ const overModeList = ref<Option[]>(OverModeList)
 const typeList = ref(DataSourceType);
 const loading = ref<boolean>(false)
 const networkError = ref<boolean>(false)
+const advancedConfigVisible = ref(false)
+const advancedConfigType = ref<'source' | 'target'>('source')
+const connectConfigList = ref<Array<{ key: string; value: string }>>([])
 
 // 日志展示相关
 const containerInstanceRef = ref(null)
@@ -264,11 +318,13 @@ const formData = reactive({
     sourceTable: '',      // 来源数据库表名
     queryCondition: '',   // 来源数据库查询条件
     partitionColumn: '',  // 分区键
+    sourceConnectConfig: {} as Record<string, string>,
 
     targetDBType: '',     // 目标数据库类型
     targetDBId: '',       // 目标数据源
     targetTable: '',      // 目标数据库表名
     overMode: '',         // 写入模式
+    targetConnectConfig: {} as Record<string, string>,
 })
 const rules = reactive<FormRules>({
 })
@@ -326,6 +382,14 @@ const filteredOverModeList = computed(() => {
     return overModeList.value
 })
 
+const hasSourceConnectConfig = computed(() => {
+    return Object.keys(formData.sourceConnectConfig || {}).length > 0
+})
+
+const hasTargetConnectConfig = computed(() => {
+    return Object.keys(formData.targetConnectConfig || {}).length > 0
+})
+
 function getDate() {
     loading.value = true
     networkError.value = networkError.value || false
@@ -347,6 +411,8 @@ function getDate() {
             formData.sourceTable = res.data.syncWorkConfig.sourceTable
             formData.queryCondition = res.data.syncWorkConfig.queryCondition
             formData.partitionColumn = res.data.syncWorkConfig.partitionColumn
+            formData.sourceConnectConfig = res.data.syncWorkConfig.sourceConnectConfig || {}
+            formData.targetConnectConfig = res.data.syncWorkConfig.targetConnectConfig || {}
             formData.targetDBType = res.data.syncWorkConfig.targetDBType
             formData.targetDBId = res.data.syncWorkConfig.targetDBId
             formData.targetTable = res.data.syncWorkConfig.targetTable
@@ -672,6 +738,49 @@ function setConfigData() {
     configDetailRef.value.showModal(props.workItemConfig)
 }
 
+function openAdvancedConfig(type: 'source' | 'target') {
+    advancedConfigType.value = type
+    const currentConfig = type === 'source' ? formData.sourceConnectConfig : formData.targetConnectConfig
+    connectConfigList.value = Object.entries(currentConfig || {}).map(([key, value]) => ({
+        key,
+        value: value as string
+    }))
+    if (connectConfigList.value.length === 0) {
+        connectConfigList.value.push({ key: '', value: '' })
+    }
+    advancedConfigVisible.value = true
+}
+
+function addConfigItem() {
+    connectConfigList.value.push({ key: '', value: '' })
+}
+
+function removeConfigItem(index: number) {
+    connectConfigList.value.splice(index, 1)
+}
+
+function saveAdvancedConfig() {
+    const validItems = connectConfigList.value.filter(item => item.key.trim() !== '')
+    const keys = validItems.map(item => item.key.trim())
+    const uniqueKeys = new Set(keys)
+    if (keys.length !== uniqueKeys.size) {
+        ElMessage.warning('配置项Key不能重复')
+        return
+    }
+    const config: Record<string, string> = {}
+    validItems.forEach(item => {
+        config[item.key.trim()] = item.value.trim()
+    })
+    if (advancedConfigType.value === 'source') {
+        formData.sourceConnectConfig = config
+    } else {
+        formData.targetConnectConfig = config
+    }
+    connectConfigList.value = validItems
+    advancedConfigVisible.value = false
+    pageChangeEvent()
+}
+
 function changeCollapseDown() {
     logCollapseRef.value.setActiveNames('0')
     isCollapse.value = false
@@ -934,5 +1043,28 @@ onMounted(() => {
             }
         }
     }
+}
+.advanced-config-content {
+    .advanced-config-row {
+        display: flex;
+        align-items: center;
+        margin-bottom: 8px;
+    }
+}
+.advanced-config-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+
+    > div {
+        display: flex;
+        align-items: center;
+    }
+}
+.advanced-config-btn--active {
+    color: getCssVar('color', 'primary') !important;
+    opacity: 1;
+    font-weight: 600;
 }
 </style>
