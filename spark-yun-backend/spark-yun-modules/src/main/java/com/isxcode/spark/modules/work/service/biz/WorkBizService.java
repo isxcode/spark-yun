@@ -156,7 +156,6 @@ public class WorkBizService {
 
         // 初始化数据同步分区值
         if (WorkType.DATA_SYNC_JDBC.equals(addWorkReq.getWorkType())
-            || (WorkType.DATA_SYNC_FLINK.equals(addWorkReq.getWorkType()))
             || (WorkType.EXCEL_SYNC_JDBC.equals(addWorkReq.getWorkType()))
             || (WorkType.DB_MIGRATE.equals(addWorkReq.getWorkType()))) {
             workConfigService.initSyncRule(workConfig);
