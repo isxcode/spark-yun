@@ -84,6 +84,8 @@ public abstract class Datasource {
 
     public abstract String convertColumnType(ColumnMetaDto columnMeta, String columnCode);
 
+    public abstract String convertToFlinkColumnType(String columnType);
+
     public Connection getConnection(ConnectInfo connectInfo) throws IsxAppException {
 
         // 判断驱动是否已经加载
