@@ -94,6 +94,11 @@ public class WorkRunContext {
     private SparkEtlConfig sparkEtlConfig;
 
     /**
+     * 数据同步flink.
+     */
+    private SyncFlinkConfig syncFlinkConfig;
+
+    /**
      * 租户id.
      */
     private String tenantId;
