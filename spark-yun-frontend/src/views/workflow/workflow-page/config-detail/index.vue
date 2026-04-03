@@ -85,7 +85,7 @@
                   <el-icon class="modal-full-screen" @click="fullScreenEvent('sparkJsonFullStatus')"><FullScreen v-if="!sparkJsonFullStatus" /><Close v-else /></el-icon>
                   <code-mirror v-model="clusterConfig.sparkConfigJson" basic :lang="lang"/>
                 </el-form-item>
-                <el-form-item label="flinkConfig" v-if="clusterConfig.setMode === 'ADVANCE' && ['FLINK_SQL','FLINK_JAR'].includes(workItemConfig.workType) " :class="{ 'show-screen__full': sparkJsonFullStatus }">
+                <el-form-item label="flinkConfig" v-if="clusterConfig.setMode === 'ADVANCE' && ['FLINK_SQL','FLINK_JAR','DATA_SYNC_FLINK'].includes(workItemConfig.workType) " :class="{ 'show-screen__full': sparkJsonFullStatus }">
                   <el-icon class="modal-full-screen" @click="fullScreenEvent('sparkJsonFullStatus')"><FullScreen v-if="!sparkJsonFullStatus" /><Close v-else /></el-icon>
                   <code-mirror v-model="clusterConfig.flinkConfigJson" basic :lang="lang"/>
                 </el-form-item>
@@ -338,7 +338,7 @@
             </el-form>
           </div>
           <!-- 函数配置 -->
-          <div class="config-item" v-if="['SPARK_SQL', 'FLINK_SQL', 'DATA_SYNC_JDBC', 'EXCEL_SYNC_JDBC', 'DB_MIGRATE'].includes(workItemConfig.workType)">
+          <div class="config-item" v-if="['SPARK_SQL', 'FLINK_SQL', 'DATA_SYNC_JDBC', 'DATA_SYNC_FLINK', 'EXCEL_SYNC_JDBC', 'DB_MIGRATE'].includes(workItemConfig.workType)">
             <div class="item-title">函数配置</div>
             <el-form
               ref="syncRuleForm"
@@ -356,7 +356,7 @@
             </el-form>
           </div>
           <!-- 依赖配置 -->
-          <div class="config-item" v-if="['SPARK_SQL','FLINK_SQL', 'SPARK_JAR','FLINK_JAR', 'DATA_SYNC_JDBC', 'EXCEL_SYNC_JDBC', 'DB_MIGRATE'].includes(workItemConfig.workType)">
+          <div class="config-item" v-if="['SPARK_SQL','FLINK_SQL', 'SPARK_JAR','FLINK_JAR', 'DATA_SYNC_JDBC', 'DATA_SYNC_FLINK', 'EXCEL_SYNC_JDBC', 'DB_MIGRATE'].includes(workItemConfig.workType)">
             <div class="item-title">依赖配置</div>
             <el-form
               ref="syncRuleForm"

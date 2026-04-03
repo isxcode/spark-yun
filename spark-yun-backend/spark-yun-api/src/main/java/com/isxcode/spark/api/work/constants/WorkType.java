@@ -26,6 +26,11 @@ public interface WorkType {
     String DATA_SYNC_JDBC = "DATA_SYNC_JDBC";
 
     /**
+     * 数据同步Flink版本作业.
+     */
+    String DATA_SYNC_FLINK = "DATA_SYNC_FLINK";
+
+    /**
      * bash脚本作业.
      */
     String BASH = "BASH";

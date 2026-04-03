@@ -114,6 +114,7 @@ public class WorkBizService {
         // sparkSql，数据同步，bash，python，必须配置集群
         if (WorkType.QUERY_SPARK_SQL.equals(addWorkReq.getWorkType())
             || WorkType.DATA_SYNC_JDBC.equals(addWorkReq.getWorkType())
+            || WorkType.DATA_SYNC_FLINK.equals(addWorkReq.getWorkType())
             || WorkType.EXCEL_SYNC_JDBC.equals(addWorkReq.getWorkType())
             || WorkType.BASH.equals(addWorkReq.getWorkType()) || WorkType.PYTHON.equals(addWorkReq.getWorkType())
             || WorkType.SPARK_JAR.equals(addWorkReq.getWorkType()) || WorkType.PY_SPARK.equals(addWorkReq.getWorkType())
@@ -155,6 +156,7 @@ public class WorkBizService {
 
         // 初始化数据同步分区值
         if (WorkType.DATA_SYNC_JDBC.equals(addWorkReq.getWorkType())
+            || (WorkType.DATA_SYNC_FLINK.equals(addWorkReq.getWorkType()))
             || (WorkType.EXCEL_SYNC_JDBC.equals(addWorkReq.getWorkType()))
             || (WorkType.DB_MIGRATE.equals(addWorkReq.getWorkType()))) {
             workConfigService.initSyncRule(workConfig);
@@ -163,6 +165,7 @@ public class WorkBizService {
         // 初始化计算引擎
         if (WorkType.QUERY_SPARK_SQL.equals(addWorkReq.getWorkType())
             || WorkType.DATA_SYNC_JDBC.equals(addWorkReq.getWorkType())
+            || WorkType.DATA_SYNC_FLINK.equals(addWorkReq.getWorkType())
             || WorkType.EXCEL_SYNC_JDBC.equals(addWorkReq.getWorkType())
             || WorkType.BASH.equals(addWorkReq.getWorkType()) || WorkType.PYTHON.equals(addWorkReq.getWorkType())
             || WorkType.SPARK_JAR.equals(addWorkReq.getWorkType()) || WorkType.PY_SPARK.equals(addWorkReq.getWorkType())

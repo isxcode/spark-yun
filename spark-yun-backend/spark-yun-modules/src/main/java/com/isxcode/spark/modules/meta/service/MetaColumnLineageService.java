@@ -27,7 +27,8 @@ public class MetaColumnLineageService {
     public void addMetaColumnLineage(WorkRunContext workRunContext) {
 
         // 目前只支持数据库同步
-        if (!WorkType.DATA_SYNC_JDBC.equals(workRunContext.getWorkType())) {
+        if (!WorkType.DATA_SYNC_JDBC.equals(workRunContext.getWorkType())
+            && !WorkType.DATA_SYNC_FLINK.equals(workRunContext.getWorkType())) {
             return;
         }
 
