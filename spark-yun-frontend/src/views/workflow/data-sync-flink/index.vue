@@ -318,13 +318,13 @@ const formData = reactive({
     sourceTable: '',      // 来源数据库表名
     queryCondition: '',   // 来源数据库查询条件
     partitionColumn: '',  // 分区键
-    sourceConnectConfig: {} as Record<string, string>,
+    sourceTableAdvanceConfig: {} as Record<string, string>,
 
     targetDBType: '',     // 目标数据库类型
     targetDBId: '',       // 目标数据源
     targetTable: '',      // 目标数据库表名
     overMode: '',         // 写入模式
-    targetConnectConfig: {} as Record<string, string>,
+    targetTableAdvanceConfig: {} as Record<string, string>,
 })
 const rules = reactive<FormRules>({
 })
@@ -383,11 +383,11 @@ const filteredOverModeList = computed(() => {
 })
 
 const hasSourceConnectConfig = computed(() => {
-    return Object.keys(formData.sourceConnectConfig || {}).length > 0
+    return Object.keys(formData.sourceTableAdvanceConfig || {}).length > 0
 })
 
 const hasTargetConnectConfig = computed(() => {
-    return Object.keys(formData.targetConnectConfig || {}).length > 0
+    return Object.keys(formData.targetTableAdvanceConfig || {}).length > 0
 })
 
 function getDate() {
@@ -412,8 +412,10 @@ function getDate() {
             formData.sourceTable = syncConfig.sourceTable
             formData.queryCondition = syncConfig.queryCondition
             formData.partitionColumn = syncConfig.partitionColumn
-            formData.sourceConnectConfig = syncConfig.sourceConnectConfig || {}
-            formData.targetConnectConfig = syncConfig.targetConnectConfig || {}
+            formData.sourceTableAdvanceConfig =
+                syncConfig.sourceTableAdvanceConfig || syncConfig.sourceConnectConfig || {}
+            formData.targetTableAdvanceConfig =
+                syncConfig.targetTableAdvanceConfig || syncConfig.targetConnectConfig || {}
             formData.targetDBType = syncConfig.targetDBType
             formData.targetDBId = syncConfig.targetDBId
             formData.targetTable = syncConfig.targetTable
@@ -741,7 +743,8 @@ function setConfigData() {
 
 function openAdvancedConfig(type: 'source' | 'target') {
     advancedConfigType.value = type
-    const currentConfig = type === 'source' ? formData.sourceConnectConfig : formData.targetConnectConfig
+    const currentConfig =
+        type === 'source' ? formData.sourceTableAdvanceConfig : formData.targetTableAdvanceConfig
     connectConfigList.value = Object.entries(currentConfig || {}).map(([key, value]) => ({
         key,
         value: value as string
@@ -773,9 +776,9 @@ function saveAdvancedConfig() {
         config[item.key.trim()] = item.value.trim()
     })
     if (advancedConfigType.value === 'source') {
-        formData.sourceConnectConfig = config
+        formData.sourceTableAdvanceConfig = config
     } else {
-        formData.targetConnectConfig = config
+        formData.targetTableAdvanceConfig = config
     }
     connectConfigList.value = validItems
     advancedConfigVisible.value = false
