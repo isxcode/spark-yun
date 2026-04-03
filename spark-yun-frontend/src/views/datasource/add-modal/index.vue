@@ -87,6 +87,7 @@
         v-if="formData.dbType === 'DORIS'"
         label="FeNodes"
         prop="feNodes"
+        :required="formData.dbType === 'DORIS'"
       >
         <el-input
           v-model="formData.feNodes"
