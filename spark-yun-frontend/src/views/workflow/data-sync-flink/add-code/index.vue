@@ -2,10 +2,10 @@
     <BlockModal :model-config="modelConfig">
         <el-form ref="form" class="add-computer-group" label-position="top" :model="formData" :rules="rules">
             <el-form-item label="字段名" prop="code">
-                <el-input v-model="formData.code" maxlength="20" placeholder="请输入"/>
+                <el-input v-model="formData.code" maxlength="20" placeholder="请输入" :disabled="disableCode"/>
             </el-form-item>
             <el-form-item label="类型" prop="type">
-                <el-input v-model="formData.type" maxlength="20" placeholder="请输入"/>
+                <el-input v-model="formData.type" maxlength="20" placeholder="请输入" :disabled="disableType"/>
             </el-form-item>
             <el-form-item label="转换" v-if="showSql">
                 <code-mirror v-model="formData.sql" basic :lang="lang"/>
@@ -30,6 +30,8 @@ const form = ref<FormInstance>()
 const callback = ref<any>()
 const renderSence = ref('new')
 const showSql = ref(true)
+const disableCode = ref(false)
+const disableType = ref(false)
 const modelConfig = reactive({
     title: '添加字段',
     visible: false,
@@ -71,10 +73,16 @@ const rules = reactive<FormRules>({
     ]
 })
 
-function showModal(cb: () => void, data: codeParam, options?: { showSql?: boolean }): void {
+function showModal(
+    cb: () => void,
+    data: codeParam,
+    options?: { showSql?: boolean, disableCode?: boolean, disableType?: boolean }
+): void {
     callback.value = cb
     modelConfig.visible = true
     showSql.value = options?.showSql ?? true
+    disableCode.value = options?.disableCode ?? false
+    disableType.value = options?.disableType ?? false
     if (data) {
         formData.code = data.code
         formData.type = data.type
