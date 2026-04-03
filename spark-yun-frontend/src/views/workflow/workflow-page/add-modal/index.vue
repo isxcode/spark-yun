@@ -22,6 +22,7 @@
                         'BASH',
                         'PYTHON',
                         'DATA_SYNC_JDBC',
+                        'DATA_SYNC_FLINK',
                         'SPARK_SQL',
                         'SPARK_JAR',
                         'FLINK_SQL',

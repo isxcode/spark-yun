@@ -186,6 +186,7 @@
                             showWorkItem &&
                             !['SPARK_JAR',
                             'DATA_SYNC_JDBC',
+                            'DATA_SYNC_FLINK',
                             'EXCEL_SYNC_JDBC',
                             'DB_MIGRATE',
                             'SPARK_ETL'
@@ -202,6 +203,12 @@
                         @back="backToFlow"
                         @locationNode="locationNode"
                     ></data-sync>
+                    <DataSyncFlink
+                        v-if="showWorkItem && workConfig.workType === 'DATA_SYNC_FLINK'"
+                        :workItemConfig="workConfig"
+                        @back="backToFlow"
+                        @locationNode="locationNode"
+                    ></DataSyncFlink>
                     <ExcelImport
                         v-if="showWorkItem && workConfig.workType === 'EXCEL_SYNC_JDBC'"
                         :workItemConfig="workConfig"
@@ -245,6 +252,7 @@ import zqyLog from '@/components/zqy-log/index.vue'
 import WorkItem from '../work-item/index.vue'
 import WorkEtl from '../work-etl/index.vue'
 import DataSync from '../data-sync/index.vue'
+import DataSyncFlink from '../data-sync-flink/index.vue'
 import ExcelImport from '../excel-import/index.vue'
 import WorkApi from '../work-api/index.vue'
 import sparkJar from '../spark-jar/index.vue'
