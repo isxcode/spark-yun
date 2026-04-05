@@ -14,7 +14,7 @@
                     <el-input v-model="formData.name" maxlength="200" placeholder="请输入" />
                 </el-form-item>
                 <el-form-item label="请求方式" prop="apiType">
-                    <el-select v-model="formData.apiType" placeholder="请选择">
+                    <el-select v-model="formData.apiType" placeholder="请选择" :filterable="true">
                         <el-option label="GET" value="GET" />
                         <el-option label="POST" value="POST" />
                     </el-select>
@@ -29,7 +29,7 @@
                     <el-input v-model="formData.path" maxlength="1000" placeholder="请输入" />
                 </el-form-item>
                 <el-form-item label="数据源" prop="datasourceId" v-if="!isEdit">
-                    <el-select v-model="formData.datasourceId" placeholder="请选择" @visible-change="getDataSourceList">
+                    <el-select v-model="formData.datasourceId" :filterable="true" placeholder="请选择" @visible-change="getDataSourceList">
                         <el-option
                             v-for="item in dataSourceList"
                             :key="item.value"

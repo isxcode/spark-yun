@@ -15,6 +15,7 @@
           <el-select
             v-model="formData.clusterId"
             placeholder="请选择"
+            :filterable="true"
           >
             <el-option
               v-for="item in typeList"
@@ -33,6 +34,7 @@
           <el-select
             v-model="formData.datasourceId"
             placeholder="请选择"
+            :filterable="true"
           >
             <el-option
               v-for="item in typeList"

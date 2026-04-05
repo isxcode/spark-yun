@@ -41,6 +41,7 @@
                     <el-select
                         v-model="formData.joinEtl[i].joinAliaCode"
                         clearable
+                        :filterable="true"
                         placeholder="输入表"
                     >
                         <el-option

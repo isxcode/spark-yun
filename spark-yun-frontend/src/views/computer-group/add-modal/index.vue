@@ -19,7 +19,7 @@
         />
       </el-form-item>
       <el-form-item label="类型" prop="type">
-        <el-select v-model="formData.clusterType" placeholder="请选择">
+        <el-select v-model="formData.clusterType" placeholder="请选择" :filterable="true">
           <el-option v-for="item in typeList" :key="item.value" :label="item.label" :value="item.value" />
         </el-select>
       </el-form-item>

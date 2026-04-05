@@ -17,7 +17,7 @@
               </el-form-item>
               <template v-if="cronConfig.enable">
                 <el-form-item label="类型" prop="type">
-                  <el-select v-model="cronConfig.type" placeholder="请选择">
+                  <el-select v-model="cronConfig.type" placeholder="请选择" :filterable="true">
                     <el-option
                       v-for="item in typeList"
                       :key="item.value"
@@ -51,7 +51,7 @@
                 </el-form-item>
                 <template v-else>
                   <el-form-item label="调度周期" prop="range">
-                    <el-select v-model="cronConfig.range" placeholder="请选择" :disabled="!cronConfig.enable" @change="changeScheduleRangeEvent">
+                    <el-select v-model="cronConfig.range" placeholder="请选择" :filterable="true" :disabled="!cronConfig.enable" @change="changeScheduleRangeEvent">
                       <el-option
                         v-for="item in scheduleRange"
                         :key="item.value"
@@ -142,7 +142,7 @@
                       />
                     </el-form-item>
                     <el-form-item label="指定时间" prop="monthDay">
-                      <el-select v-model="cronConfig.monthDay" :disabled="!cronConfig.enable" placeholder="请选择">
+                      <el-select v-model="cronConfig.monthDay" :disabled="!cronConfig.enable" :filterable="true" placeholder="请选择">
                         <el-option
                           v-for="item in dayList"
                           :key="item.value"
@@ -164,7 +164,7 @@
                       />
                     </el-form-item>
                     <el-form-item label="指定时间" prop="weekDate">
-                      <el-select v-model="cronConfig.weekDate" placeholder="请选择" :disabled="!cronConfig.enable">
+                      <el-select v-model="cronConfig.weekDate" placeholder="请选择" :filterable="true" :disabled="!cronConfig.enable">
                         <el-option
                           v-for="item in weekDateList"
                           :key="item.value"
