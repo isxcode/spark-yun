@@ -30,13 +30,13 @@
             </el-icon>
             <div class="list-item-row">
                 <el-form-item :prop="`unionEtl[${i}].unionWay`" :rules="rules.unionWay" class="form-item-top" label="连接方式">
-                    <el-select v-model="formData.unionEtl[i].unionWay" placeholder="请选择">
+                    <el-select v-model="formData.unionEtl[i].unionWay" placeholder="请选择" :filterable="true">
                         <el-option label="去重合并" value="UNION"/>
                         <el-option label="并集合并" value="UNION_ALL"/>
                     </el-select>
                 </el-form-item>
                 <el-form-item :prop="`unionEtl[${i}].aliaCode`" :rules="rules.aliaCode" class="form-item-top" label="表名">
-                    <el-select v-model="formData.unionEtl[i].aliaCode" placeholder="请选择">
+                    <el-select v-model="formData.unionEtl[i].aliaCode" :filterable="true" placeholder="请选择">
                         <el-option
                             v-for="item in tableNameList"
                             :key="item.value"

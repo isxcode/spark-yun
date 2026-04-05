@@ -5,7 +5,7 @@
                 <el-input v-model="formData.name" maxlength="200" placeholder="请输入规则名称" />
             </el-form-item>
             <el-form-item label="规则类型" prop="ruleType">
-                <el-select v-model="formData.ruleType" placeholder="请选择">
+                <el-select v-model="formData.ruleType" placeholder="请选择" :filterable="true">
                     <el-option label="白名单" value="WHITELIST" />
                     <el-option label="黑名单" value="BLACKLIST" />
                 </el-select>

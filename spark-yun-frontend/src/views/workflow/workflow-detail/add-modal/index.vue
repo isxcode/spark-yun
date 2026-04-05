@@ -25,6 +25,7 @@
         <el-select
           v-model="formData.workType"
           placeholder="请选择"
+          :filterable="true"
           :disabled="formData.id ? true : false"
         >
           <el-option

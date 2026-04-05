@@ -9,6 +9,7 @@
                     v-model="formData.workType"
                     placeholder="请选择"
                     :disabled="formData.id ? true : false"
+                    :filterable="true"
                     @change="workTypeChange"
                 >
                     <el-option v-for="item in typeList" :key="item.value" :label="item.label" :value="item.value" />
@@ -36,6 +37,7 @@
                     <el-select
                         v-model="formData.clusterId"
                         placeholder="请选择"
+                        :filterable="true"
                         @change="clusterIdChangeEvent"
                         @visible-change="getClusterList"
                     >
@@ -55,6 +57,7 @@
                     <el-select
                         v-model="formData.clusterNodeId"
                         placeholder="请选择"
+                        :filterable="true"
                         @visible-change="getClusterNodeList"
                     >
                         <el-option
@@ -76,6 +79,7 @@
                     <el-select
                         v-model="formData.datasourceId"
                         placeholder="请选择"
+                        :filterable="true"
                         @visible-change="getDataSourceList($event, 'HIVE')"
                     >
                         <el-option
@@ -91,7 +95,7 @@
                     prop="datasourceId"
                     v-if="['EXE_JDBC', 'QUERY_JDBC', 'PRQL'].includes(formData.workType)"
                 >
-                    <el-select v-model="formData.datasourceId" placeholder="请选择" @visible-change="getDataSourceList">
+                    <el-select v-model="formData.datasourceId" :filterable="true" placeholder="请选择" @visible-change="getDataSourceList">
                         <el-option
                             v-for="item in dataSourceList"
                             :key="item.value"
@@ -108,6 +112,7 @@
                     <el-select
                         v-model="formData.containerId"
                         placeholder="请选择"
+                        :filterable="true"
                         @visible-change="getSparkContainerList"
                     >
                         <el-option
