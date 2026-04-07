@@ -121,6 +121,7 @@
         </div>
         <!-- 数据同步日志部分  v-if="instanceId" -->
         <el-collapse v-if="!!instanceId" v-model="collapseActive" class="data-sync-log__collapse" ref="logCollapseRef">
+            <div class="log-resize-handle" @mousedown="startResizeLogPanel"></div>
             <el-collapse-item title="查看日志" :disabled="true" name="1">
                 <template #title>
                     <el-tabs v-model="activeName" @tab-click="changeCollapseUp" @tab-change="tabChangeEvent">
@@ -133,8 +134,8 @@
                         <el-icon v-else @click="changeCollapseUp"><ArrowUp /></el-icon>
                     </span>
                 </template>
-                <div class="log-show log-show-datasync">
-                    <component :is="currentTab" ref="containerInstanceRef" class="show-container" />
+                <div class="log-show log-show-datasync" :style="{ height: `${logPanelHeight}px` }">
+                    <component :is="currentTab" ref="containerInstanceRef" class="show-container" :style="{ height: `${logPanelHeight}px` }" />
                 </div>
             </el-collapse-item>
         </el-collapse>
@@ -146,7 +147,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, reactive, onMounted, defineProps, nextTick, markRaw } from 'vue'
+import { ref, reactive, onMounted, onUnmounted, defineProps, nextTick, markRaw } from 'vue'
 import { ElMessage, ElMessageBox, FormInstance, FormRules } from 'element-plus'
 // import CodeMirror from 'vue-codemirror6'
 import { sql } from '@codemirror/lang-sql'
@@ -196,6 +197,12 @@ const instanceId = ref('')
 const logCollapseRef = ref()
 const collapseActive = ref('0')
 const isCollapse = ref(false)
+const logPanelHeight = ref(320)
+const resizeState = reactive({
+    resizing: false,
+    startY: 0,
+    startHeight: 320
+})
 const tabList = reactive([
   {
     name: '提交日志',
@@ -236,6 +243,30 @@ const btnLoadingConfig = reactive({
 })
 
 // 日志tab切换
+function startResizeLogPanel(event: MouseEvent) {
+    resizeState.resizing = true
+    resizeState.startY = event.clientY
+    resizeState.startHeight = logPanelHeight.value
+    document.addEventListener('mousemove', onResizeLogPanel)
+    document.addEventListener('mouseup', stopResizeLogPanel)
+    event.preventDefault()
+}
+
+function onResizeLogPanel(event: MouseEvent) {
+    if (!resizeState.resizing) {
+        return
+    }
+    const maxHeight = Math.max(220, window.innerHeight - 220)
+    const nextHeight = resizeState.startHeight + (resizeState.startY - event.clientY)
+    logPanelHeight.value = Math.min(maxHeight, Math.max(180, nextHeight))
+}
+
+function stopResizeLogPanel() {
+    resizeState.resizing = false
+    document.removeEventListener('mousemove', onResizeLogPanel)
+    document.removeEventListener('mouseup', stopResizeLogPanel)
+}
+
 function tabChangeEvent(e: string) {
   const lookup = {
     PublishLog: PublishLog,
@@ -556,12 +587,37 @@ onMounted(() => {
     activeName.value = 'PublishLog'
     currentTab.value = markRaw(PublishLog)
 })
+
+onUnmounted(() => {
+    stopResizeLogPanel()
+})
+
 </script>
 
 <style lang="scss">
 .data-sync-page {
     &.excel-import {
 
+    }
+}
+
+.data-sync-log__collapse {
+    .log-resize-handle {
+        height: 10px;
+        cursor: ns-resize;
+        position: relative;
+
+        &::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 3px;
+            transform: translateX(-50%);
+            width: 52px;
+            height: 3px;
+            border-radius: 4px;
+            background: getCssVar('border-color');
+        }
     }
 }
 </style>

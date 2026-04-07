@@ -16,6 +16,7 @@
         </LoadingPage>
          <!-- 数据同步日志部分  v-if="instanceId" -->
          <el-collapse v-if="!!instanceId" v-model="collapseActive" class="data-sync-log__collapse" ref="logCollapseRef">
+            <div class="log-resize-handle" @mousedown="startResizeLogPanel"></div>
             <el-collapse-item title="查看日志" :disabled="true" name="1">
                 <template #title>
                     <el-tabs v-model="activeName" @tab-click="changeCollapseUp" @tab-change="tabChangeEvent">
@@ -28,8 +29,8 @@
                         <el-icon v-else @click="changeCollapseUp"><ArrowUp /></el-icon>
                     </span>
                 </template>
-                <div class="log-show log-show-datasync">
-                    <component :is="currentTab" ref="containerInstanceRef" class="show-container" />
+                <div class="log-show log-show-datasync" :style="{ height: `${logPanelHeight}px` }">
+                    <component :is="currentTab" ref="containerInstanceRef" class="show-container" :style="{ height: `${logPanelHeight}px` }" />
                 </div>
             </el-collapse-item>
         </el-collapse>
@@ -39,7 +40,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, reactive, defineEmits, defineProps, onMounted, nextTick, onUnmounted, markRaw } from 'vue'
+import { ref, reactive, defineEmits, defineProps, onMounted, onUnmounted, nextTick, markRaw } from 'vue'
 import OptionsContainer from './options-container/index.vue'
 import LoadingPage from '@/components/loading/index.vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
@@ -81,6 +82,12 @@ const currentTab = ref()
 const activeName = ref()
 const collapseActive = ref('0')
 const isCollapse = ref(false)
+const logPanelHeight = ref(320)
+const resizeState = reactive({
+    resizing: false,
+    startY: 0,
+    startHeight: 320
+})
 const tabList = reactive([
     {
         name: '提交日志',
@@ -284,6 +291,30 @@ function terWorkData() {
 }
 
 // 日志tab切换
+function startResizeLogPanel(event: MouseEvent) {
+    resizeState.resizing = true
+    resizeState.startY = event.clientY
+    resizeState.startHeight = logPanelHeight.value
+    document.addEventListener('mousemove', onResizeLogPanel)
+    document.addEventListener('mouseup', stopResizeLogPanel)
+    event.preventDefault()
+}
+
+function onResizeLogPanel(event: MouseEvent) {
+    if (!resizeState.resizing) {
+        return
+    }
+    const maxHeight = Math.max(220, window.innerHeight - 220)
+    const nextHeight = resizeState.startHeight + (resizeState.startY - event.clientY)
+    logPanelHeight.value = Math.min(maxHeight, Math.max(180, nextHeight))
+}
+
+function stopResizeLogPanel() {
+    resizeState.resizing = false
+    document.removeEventListener('mousemove', onResizeLogPanel)
+    document.removeEventListener('mouseup', stopResizeLogPanel)
+}
+
 function tabChangeEvent(e: string) {
     const lookup = {
         PublishLog: PublishLog,
@@ -358,6 +389,11 @@ onMounted(() => {
 onUnmounted(() => {
     eventBus.off('taskFlowEvent')
 })
+
+onUnmounted(() => {
+    stopResizeLogPanel()
+})
+
 </script>
 
 <style lang="scss">
@@ -377,6 +413,24 @@ onUnmounted(() => {
         }
     }
     .data-sync-log__collapse {
+
+        .log-resize-handle {
+            height: 10px;
+            cursor: ns-resize;
+            position: relative;
+
+            &::after {
+                content: "";
+                position: absolute;
+                left: 50%;
+                top: 3px;
+                transform: translateX(-50%);
+                width: 52px;
+                height: 3px;
+                border-radius: 4px;
+                background: getCssVar("border-color");
+            }
+        }
         position: absolute;
         left: 0;
         right: 0;
@@ -425,6 +479,7 @@ onUnmounted(() => {
         .log-show {
             padding: 0 20px;
             box-sizing: border-box;
+            overflow: auto;
             &.log-show-datasync {
                 .zqy-download-log {
                     right: 40px;
@@ -437,7 +492,7 @@ onUnmounted(() => {
             }
 
             .show-container {
-                height: calc(100vh - 368px);
+                min-height: 180px;
                 overflow: auto;
             }
 
