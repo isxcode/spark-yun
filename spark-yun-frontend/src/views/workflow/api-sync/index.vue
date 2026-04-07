@@ -929,6 +929,10 @@ onMounted(() => {
                                 align-items: center;
                                 gap: 8px;
                                 flex-wrap: nowrap;
+                                font-size: 14px;
+                                font-weight: 400;
+                                font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+                                color: var(--el-text-color-regular);
                             }
 
                             .paging-line :deep(.el-input-number) {
@@ -936,17 +940,17 @@ onMounted(() => {
                             }
 
                             .paging-line__text {
-                                font-size: 14px;
-                                color: var(--el-text-color-regular);
+                                font-size: inherit;
+                                color: inherit;
                                 line-height: 32px;
                             }
 
                             .paging-line :deep(.el-checkbox__label) {
-                                font-size: 14px;
-                                color: var(--el-text-color-regular);
+                                font-size: inherit;
+                                color: inherit;
                                 line-height: 32px;
-                                font-weight: 400;
-                                font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+                                font-weight: inherit;
+                                font-family: inherit;
                             }
 
                             .paging-line :deep(.el-checkbox.is-checked .el-checkbox__label) {
@@ -954,9 +958,17 @@ onMounted(() => {
                             }
 
                             .paging-line__checkbox-text {
-                                font-size: 14px;
-                                color: var(--el-text-color-regular);
+                                font-size: inherit;
+                                color: inherit;
                                 line-height: 32px;
+                                font-weight: inherit;
+                                font-family: inherit;
+                            }
+
+                            .paging-line :deep(.el-input__inner),
+                            .paging-line :deep(.el-input-number__decrease),
+                            .paging-line :deep(.el-input-number__increase) {
+                                font-size: 14px;
                                 font-weight: 400;
                                 font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
                             }
