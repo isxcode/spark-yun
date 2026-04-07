@@ -152,6 +152,30 @@
                             </el-icon>
                             <span class="btn-text">下线</span>
                         </div>
+                        <div class="btn-box" @click="zoomOutFlowCanvas">
+                            <el-icon>
+                                <ZoomOut />
+                            </el-icon>
+                            <span class="btn-text">缩小</span>
+                        </div>
+                        <div class="btn-box" @click="zoomInFlowCanvas">
+                            <el-icon>
+                                <ZoomIn />
+                            </el-icon>
+                            <span class="btn-text">放大</span>
+                        </div>
+                        <div class="btn-box" @click="centerFlowCanvas">
+                            <el-icon>
+                                <MapLocation />
+                            </el-icon>
+                            <span class="btn-text">定位</span>
+                        </div>
+                        <div class="btn-box" @click="refreshFlowCanvas">
+                            <el-icon>
+                                <Refresh />
+                            </el-icon>
+                            <span class="btn-text">刷新</span>
+                        </div>
                         <div class="btn-box" @click="queryRunWorkInstancesEvent" v-if="workflowInstanceId">
                             <el-icon>
                                 <Refresh />
@@ -266,7 +290,7 @@ import ApiSync from '../api-sync/index.vue'
 import sparkJar from '../spark-jar/index.vue'
 import DatabaseMigrate from '../database-migrate/index.vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { Loading, Sort } from '@element-plus/icons-vue'
+import { Loading, MapLocation, Refresh, Sort, ZoomIn, ZoomOut } from '@element-plus/icons-vue'
 import EllipsisTooltip from '@/components/ellipsis-tooltip/ellipsis-tooltip.vue'
 import {
     AddWorkflowDetailList,
@@ -800,6 +824,22 @@ function locationNode(nodeId: string) {
         queryRunWorkInstancesEvent()
         zqyFlowRef.value.selectNodeEvent(nodeId)
     })
+}
+
+function zoomInFlowCanvas() {
+    zqyFlowRef.value?.zoomIn()
+}
+
+function zoomOutFlowCanvas() {
+    zqyFlowRef.value?.zoomOut()
+}
+
+function centerFlowCanvas() {
+    zqyFlowRef.value?.locationCenter()
+}
+
+function refreshFlowCanvas() {
+    zqyFlowRef.value?.refresh()
 }
 
 function changeWorkFlow(workFlow: any) {

@@ -4,12 +4,6 @@
             <div id="container">
                 <div id="draw-cot" />
             </div>
-            <div class="btn-container">
-                <el-icon @click="zoomOut"><ZoomOut /></el-icon>
-                <el-icon @click="zoomIn"><ZoomIn /></el-icon>
-                <el-icon @click="locationCenter"><MapLocation /></el-icon>
-                <el-icon @click="refresh"><Refresh /></el-icon>
-            </div>
             <!-- 后续动态注入 -->
             <div class="status-container">
                 <span class="status-tag status-SUCCESS">成功</span>
@@ -348,6 +342,9 @@ defineExpose({
     updateFlowStatus,
     hideGrid,
     selectNodeEvent,
+    zoomIn,
+    zoomOut,
+    refresh,
     locationCenter,
     locationContentCenter
 })
@@ -469,28 +466,6 @@ $--status-RUNNING: #1890ff;
                     }
                 }
             }
-        }
-    }
-
-    .section-cot .btn-container {
-        position: absolute;
-        // top: 8px;
-        // right: 8px;
-        bottom: 8px;
-        left: 8px;
-        height: 28px;
-        padding-left: 8px;
-        background-color: #f3f3f3;
-        display: flex;
-        align-items: center;
-    }
-    .section-cot .btn-container .el-icon {
-        font-size: 18px;
-        color: #b2b2b2;
-        margin-right: 8px;
-        cursor: pointer;
-        &:hover {
-            color: getCssVar('color', 'primary');;
         }
     }
 
