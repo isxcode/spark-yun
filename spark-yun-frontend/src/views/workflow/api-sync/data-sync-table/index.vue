@@ -110,14 +110,17 @@ const showDataSync = ref(true)
 let instance: any = null
 const addCodeRef = ref()
 const connectNodeList = ref<connect[]>([])
+const connectNodeInit = ref<connect[]>([])
+const connectNodeLoading = ref<boolean>(false)
 const sourceTableColumn = ref([])
 const targetTableColumn = ref([])
 const buttons = ref([
   {type: 'primary', text: '同行映射', code: 'SameLine'},
-//   {type: 'primary', text: '同名映射', code: 'SameName'},
+  {type: 'primary', text: '同名映射', code: 'SameName'},
   //   { type: 'primary', text: '智能映射', code: 'SameLine' },
   {type: 'primary', text: '取消映射', code: 'quitLine'},
   {type: 'primary', text: '重置映射', code: 'resetLine'},
+  {type: 'primary', text: '刷新字段', code: 'refrashCodes'},
 ])
 const connectCopy = ref()
 
@@ -168,59 +171,73 @@ function initPageData(data: any) {
 }
 
 // 根据表名获取映射表字段
-function getCurrentTableColumn(params: any, type: string) {
-    GetJsonParamNodeList(params).then((res: any) => {
-        sourceTableColumn.value = (res.data || []).map((column: any) => {
-            return {
-                code: column.name,
-                type: column.type,
-                jsonPath: column.jsonPath,
-                sql: ''
+function getCurrentTableColumn(params: any, type: string, onlyInit?: boolean) {
+    return new Promise((resolve, reject) => {
+        GetJsonParamNodeList(params).then((res: any) => {
+            sourceTableColumn.value = (res.data || []).map((column: any) => {
+                return {
+                    code: column.name,
+                    type: column.type,
+                    jsonPath: column.jsonPath,
+                    sql: ''
+                }
+            })
+            if (!onlyInit) {
+                instance.deleteEveryConnection()
+                connectCopy.value = []
+                nextTick(() => {
+                    initJsPlumb()
+                })
             }
+            resolve(true)
+        }).catch(err => {
+            reject(err)
+            console.error(err)
         })
-        instance.deleteEveryConnection()
-        connectCopy.value = []
-        nextTick(() => {
-            initJsPlumb()
-        })
-    }).catch(err => {
-        console.error(err)
     })
 }
 
 // 根据表名获取映射表字段
-function getTableColumnData(params: TableDetailParam, type: string) {
-    if (!params.dataSourceId) {
-        if (type === 'source') {
-            sourceTableColumn.value = []
-            instance.deleteEveryConnection()
-        }
-        return
-    }
-    GetTableColumnsByTableId(params).then((res: any) => {
-        if (type === 'source') {
-            sourceTableColumn.value = (res.data.columns || []).map((column: any) => {
-                return {
-                    code: column.name,
-                    type: column.type,
-                    sql: ''
+function getTableColumnData(params: TableDetailParam, type: string, onlyInit?: boolean) {
+    return new Promise((resolve, reject) => {
+        if (params.dataSourceId && params.tableName) {
+            GetTableColumnsByTableId(params).then((res: any) => {
+                if (type === 'source') {
+                    sourceTableColumn.value = (res.data.columns || []).map((column: any) => {
+                        return {
+                            code: column.name,
+                            type: column.type,
+                            sql: ''
+                        }
+                    })
+                } else {
+                    targetTableColumn.value = (res.data.columns || []).map((column: any) => {
+                        return {
+                            code: column.name,
+                            type: column.type
+                        }
+                    })
                 }
+                if (!onlyInit) {
+                    instance.deleteEveryConnection()
+                    connectCopy.value = []
+                    nextTick(() => {
+                        initJsPlumb()
+                    })
+                }
+                resolve(true)
+            }).catch(err => {
+                reject(err)
+                console.error(err)
             })
         } else {
-            targetTableColumn.value = (res.data.columns || []).map((column: any) => {
-                return {
-                    code: column.name,
-                    type: column.type
-                }
-            })
+            if (type === 'source') {
+                sourceTableColumn.value = []
+            } else {
+                targetTableColumn.value = []
+            }
+            resolve(true)
         }
-        instance.deleteEveryConnection()
-        connectCopy.value = []
-        nextTick(() => {
-            initJsPlumb()
-        })
-    }).catch(err => {
-        console.error(err)
     })
 }
 
@@ -349,6 +366,37 @@ function clickSelectLinkConnect(type: string) {
                     target: document.querySelector(`.code-target-${data.target}`)
                 })
             })
+        })
+    } else if (type === 'refrashCodes') {
+        connectNodeInit.value = connectCopy.value
+        connectNodeLoading.value = true
+        const sourceRefreshPromise = props.formData.sourceDBType === 'API'
+            ? getCurrentTableColumn({
+                jsonStr: (props.formData as any).jsonTemplate,
+                rootPath: (props.formData as any).rootJsonPath
+            }, 'source', true)
+            : getTableColumnData({
+                dataSourceId: props.formData.sourceDBId,
+                tableName: props.formData.sourceTable
+            }, 'source', true)
+
+        Promise.all([
+            sourceRefreshPromise,
+            getTableColumnData({
+                dataSourceId: props.formData.targetDBId,
+                tableName: props.formData.targetTable
+            }, 'target', true)
+        ]).then(() => {
+            connectNodeLoading.value = false
+            connectNodeInit.value.forEach((data: any) => {
+                instance.connect({
+                    source: document.querySelector(`.code-source-${data.source}`),
+                    target: document.querySelector(`.code-target-${data.target}`)
+                })
+            })
+        }).catch((err: any) => {
+            connectNodeLoading.value = false
+            console.error(err)
         })
     }
 }

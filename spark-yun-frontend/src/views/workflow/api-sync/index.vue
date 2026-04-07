@@ -148,9 +148,6 @@
                         </template>
                         <template v-else>
                             <el-form-item prop="sourceDBId" label="数据源">
-                                <!-- <el-tooltip content="数据源网速直接影响同步速度,推荐使用内网ip" placement="top">
-                                    <el-icon style="left: -30px" class="tooltip-msg"><QuestionFilled /></el-icon>
-                                </el-tooltip> -->
                                 <el-select v-model="formData.sourceDBId" clearable filterable placeholder="请选择"
                                     @visible-change="getDataSource($event, formData.sourceDBType, 'source')"
                                     @change="dbIdChange('source')">
@@ -159,35 +156,35 @@
                                 </el-select>
                             </el-form-item>
                             <el-form-item prop="sourceTable" label="表">
-                                <el-select v-model="formData.sourceTable" clearable filterable placeholder="请选择"
+                                <el-select
+                                    v-model="formData.sourceTable"
+                                    clearable
+                                    filterable
+                                    allow-create
+                                    default-first-option
+                                    placeholder="请选择或输入表名"
                                     @visible-change="getDataSourceTable($event, formData.sourceDBId, 'source')"
-                                    @change="tableChangeEvent($event, formData.sourceDBId, 'source')">
+                                    @change="tableChangeEvent($event, formData.sourceDBId, 'source')"
+                                >
                                     <el-option v-for="item in sourceTablesList" :key="item.value" :label="item.label"
                                         :value="item.value" />
                                 </el-select>
+                                <el-button v-if="!props.disabled" type="primary" link @click="showSourceTableDetail">数据预览</el-button>
                             </el-form-item>
-                            <el-form-item prop="kafkaSourceId" label="Kafka数据源">
+                            <el-form-item label="分区键">
                                 <el-select
-                                    v-model="formData.kafkaSourceId"
+                                    v-model="formData.partitionColumn"
                                     clearable
                                     filterable
                                     placeholder="请选择"
-                                    @visible-change="getKafkaSourceTable($event, 'KAFKA')"
+                                    @visible-change="getTableColumnData($event, formData.sourceDBId, formData.sourceTable)"
+                                    @change="pageChangeEvent"
                                 >
-                                    <el-option
-                                        v-for="item in kafkaSourceList"
-                                        :key="item.value"
-                                        :label="item.label"
-                                        :value="item.value"
-                                    />
+                                    <el-option v-for="item in partKeyList" :key="item.value" :label="item.label" :value="item.value" />
                                 </el-select>
                             </el-form-item>
-                            <el-form-item prop="cat" label="Cat">
-                                <el-checkbox-group v-model="formData.cat">
-                                    <el-checkbox label="u">更新</el-checkbox>
-                                    <el-checkbox label="c">插入</el-checkbox>
-                                    <el-checkbox label="d">删除</el-checkbox>
-                                </el-checkbox-group>
+                            <el-form-item prop="queryCondition" label="过滤条件">
+                                <code-mirror v-model="formData.queryCondition" basic :lang="lang" @change="pageChangeEvent" />
                             </el-form-item>
                         </template>
                     </el-form>
@@ -388,6 +385,7 @@ const targetList = ref<Option[]>([])
 const topList = ref<Option[]>([])
 const sourceTablesList = ref<Option[]>([])
 const targetTablesList = ref<Option[]>([])
+const partKeyList = ref<Option[]>([])
 const kafkaSourceList = ref<Option[]>([])
 // const overModeList = ref<Option[]>(OverModeList)
 const sourceTypeList = ref<Option[]>(CurrentSourceType)
@@ -437,6 +435,7 @@ const formData = reactive({
     jsonDataType: '',     // 数据解析类型
     rootJsonPath: '',     // 节点
     queryCondition: '',   // 来源数据库查询条件
+    partitionColumn: '',
     pageSize: 10,
     pageStart: 1,
     pageEnd: 2,
@@ -539,9 +538,6 @@ function getData() {
                 getDataSource(true, formData.targetDBType, 'target')
                 if (formData.sourceDBType === 'DATASOURCE') {
                     getDataSourceTable(true, formData.sourceDBId, 'source')
-                    getKafkaSourceTable(true, 'KAFKA')
-                } else {
-                    getTopicList(true, formData.sourceDBId)
                 }
                 getDataSourceTable(true, formData.targetDBId, 'target')
 
@@ -748,6 +744,9 @@ function getCurrentTableColumn(e: string) {
 
 function tableChangeEvent(e: string, dataSourceId: string, type: string) {
     changeStatus.value = true
+    if (type === 'source') {
+        formData.partitionColumn = ''
+    }
     dataSyncTableRef.value.getTableColumnData({
         dataSourceId: dataSourceId,
         tableName: e
@@ -766,6 +765,8 @@ function dbIdChange(type: string) {
     changeStatus.value = true
     if (type === 'source') {
         formData.sourceTable = ''
+        formData.partitionColumn = ''
+        partKeyList.value = []
     } else {
         formData.targetTable = ''
     }
@@ -786,6 +787,27 @@ function goBack() {
     }
 }
 
+function getTableColumnData(e: boolean, dataSourceId: string, tableName: string) {
+    if (e && dataSourceId && tableName) {
+        GetTableColumnsByTableId({
+            dataSourceId: dataSourceId,
+            tableName: tableName
+        }).then((res: any) => {
+            partKeyList.value = (res.data.columns || []).map((item: any) => {
+                return {
+                    label: item.name,
+                    value: item.name
+                }
+            })
+        }).catch(err => {
+            console.error(err)
+            partKeyList.value = []
+        })
+    } else {
+        partKeyList.value = []
+    }
+}
+
 function previewDataEvent() {
     if (!formData.targetDBId || !formData.targetTable) {
         ElMessage.warning('请先选择数据去向中的数据源和表')
@@ -795,6 +817,17 @@ function previewDataEvent() {
         dataSourceId: formData.targetDBId,
         tableName: formData.targetTable
     })
+}
+
+function showSourceTableDetail() {
+    if (formData.sourceDBId && formData.sourceTable) {
+        tableDetailRef.value.showModal({
+            dataSourceId: formData.sourceDBId,
+            tableName: formData.sourceTable
+        })
+    } else {
+        ElMessage.warning('请选择数据源和表')
+    }
 }
 
 function rootJsonPathBlur() {
@@ -906,6 +939,8 @@ function sourceDBTypeChangeEvent() {
     changeStatus.value = true
     formData.sourceDBId = ''
     formData.sourceTable = ''
+    formData.partitionColumn = ''
+    partKeyList.value = []
     dataSyncTableRef.value.getTableColumnData({
         dataSourceId: '',
         tableName: ''
