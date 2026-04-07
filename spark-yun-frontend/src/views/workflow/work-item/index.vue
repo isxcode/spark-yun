@@ -10,6 +10,15 @@
               </el-icon>
               <span class="btn-text">返回</span>
             </div>
+            <div class="btn-box" @click="saveData">
+              <el-icon v-if="!saveLoading">
+                <Finished />
+              </el-icon>
+              <el-icon v-else class="is-loading">
+                <Loading />
+              </el-icon>
+              <span class="btn-text">保存</span>
+            </div>
             <div class="btn-box" @click="runWorkData">
               <el-icon v-if="!runningLoading">
                 <VideoPlay />
@@ -27,15 +36,6 @@
                 <Loading />
               </el-icon>
               <span class="btn-text">中止</span>
-            </div>
-            <div class="btn-box" @click="saveData">
-              <el-icon v-if="!saveLoading">
-                <Finished />
-              </el-icon>
-              <el-icon v-else class="is-loading">
-                <Loading />
-              </el-icon>
-              <span class="btn-text">保存</span>
             </div>
             <div class="btn-box" @click="setConfigData">
               <el-icon>
@@ -550,6 +550,8 @@ onMounted(() => {
 
           .btn-text {
             margin-left: 4px;
+            font-size: inherit;
+            line-height: 1;
           }
 
           &:hover {
