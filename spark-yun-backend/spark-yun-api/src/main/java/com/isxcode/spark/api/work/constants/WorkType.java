@@ -64,7 +64,7 @@ public interface WorkType {
     /**
      * 实时计算.
      */
-    String REAL_WORK = "REAL_WORK";
+    String API_SYNC_JDBC = "API_SYNC_JDBC";
 
     /**
      * pyspark作业.

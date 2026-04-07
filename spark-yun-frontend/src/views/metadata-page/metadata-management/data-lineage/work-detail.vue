@@ -15,9 +15,15 @@
                     :workFlowData="workFlowData"
                     :disabled="true"
                 ></WorkApi>
+                <ApiSync
+                    v-if="workConfig.workType === 'API_SYNC_JDBC'"
+                    :workItemConfig="workConfig"
+                    :disabled="true"
+                ></ApiSync>
                 <WorkItem
                     v-if="
                         !['SPARK_JAR',
+                        'API_SYNC_JDBC',
                         'DATA_SYNC_JDBC',
                         'EXCEL_SYNC_JDBC',
                         'DB_MIGRATE'
@@ -54,6 +60,7 @@ import BlockDrawer from '@/components/block-drawer/index.vue'
 
 import sparkJar from '@/views/workflow/spark-jar/index.vue'
 import WorkApi from '@/views/workflow/work-api/index.vue'
+import ApiSync from '@/views/workflow/api-sync/index.vue'
 import DataSync from '@/views/workflow/data-sync/index.vue'
 import WorkItem from '@/views/workflow/work-item/index.vue'
 import DatabaseMigrate from '@/views/workflow/database-migrate/index.vue'

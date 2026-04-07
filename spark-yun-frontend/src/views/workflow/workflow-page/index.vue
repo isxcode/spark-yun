@@ -181,10 +181,17 @@
                         @back="backToFlow"
                         @locationNode="locationNode"
                     ></WorkApi>
+                    <ApiSync
+                        v-if="showWorkItem && workConfig.workType === 'API_SYNC_JDBC'"
+                        :workItemConfig="workConfig"
+                        @back="backToFlow"
+                        @locationNode="locationNode"
+                    ></ApiSync>
                     <WorkItem
                         v-if="
                             showWorkItem &&
                             !['SPARK_JAR',
+                            'API_SYNC_JDBC',
                             'DATA_SYNC_JDBC',
                             'DATA_SYNC_FLINK',
                             'EXCEL_SYNC_JDBC',
@@ -255,6 +262,7 @@ import DataSync from '../data-sync/index.vue'
 import DataSyncFlink from '../data-sync-flink/index.vue'
 import ExcelImport from '../excel-import/index.vue'
 import WorkApi from '../work-api/index.vue'
+import ApiSync from '../api-sync/index.vue'
 import sparkJar from '../spark-jar/index.vue'
 import DatabaseMigrate from '../database-migrate/index.vue'
 import { ElMessage, ElMessageBox } from 'element-plus'

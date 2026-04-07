@@ -121,7 +121,8 @@ public class WorkBizService {
             || WorkType.FLINK_JAR.equals(addWorkReq.getWorkType())
             || WorkType.FLINK_SQL.equals(addWorkReq.getWorkType())
             || WorkType.DB_MIGRATE.equals(addWorkReq.getWorkType())
-            || WorkType.SPARK_ETL.equals(addWorkReq.getWorkType())) {
+            || WorkType.SPARK_ETL.equals(addWorkReq.getWorkType())
+            || WorkType.API_SYNC_JDBC.equals(addWorkReq.getWorkType())) {
             if (Strings.isEmpty(addWorkReq.getClusterId())) {
                 throw new IsxAppException("必须选择计算引擎");
             }
@@ -157,7 +158,8 @@ public class WorkBizService {
         // 初始化数据同步分区值
         if (WorkType.DATA_SYNC_JDBC.equals(addWorkReq.getWorkType())
             || (WorkType.EXCEL_SYNC_JDBC.equals(addWorkReq.getWorkType()))
-            || (WorkType.DB_MIGRATE.equals(addWorkReq.getWorkType()))) {
+            || (WorkType.DB_MIGRATE.equals(addWorkReq.getWorkType()))
+            || (WorkType.API_SYNC_JDBC.equals(addWorkReq.getWorkType()))) {
             workConfigService.initSyncRule(workConfig);
         }
 
@@ -168,7 +170,8 @@ public class WorkBizService {
             || WorkType.BASH.equals(addWorkReq.getWorkType()) || WorkType.PYTHON.equals(addWorkReq.getWorkType())
             || WorkType.SPARK_JAR.equals(addWorkReq.getWorkType()) || WorkType.PY_SPARK.equals(addWorkReq.getWorkType())
             || WorkType.DB_MIGRATE.equals(addWorkReq.getWorkType())
-            || WorkType.SPARK_ETL.equals(addWorkReq.getWorkType())) {
+            || WorkType.SPARK_ETL.equals(addWorkReq.getWorkType())
+            || WorkType.API_SYNC_JDBC.equals(addWorkReq.getWorkType())) {
             workConfigService.initClusterConfig(workConfig, addWorkReq.getClusterId(), addWorkReq.getClusterNodeId(),
                 addWorkReq.getEnableHive(), addWorkReq.getDatasourceId());
         }

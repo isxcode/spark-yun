@@ -219,6 +219,10 @@ export const TypeList = [
     "value": "API"
   },
   {
+    "label": "接口采集作业",
+    "value": "API_SYNC_JDBC"
+  },
+  {
     "label": "数据同步Spark版本",
     "value": "DATA_SYNC_JDBC"
   },
