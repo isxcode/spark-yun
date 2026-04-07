@@ -283,7 +283,7 @@
         <config-detail ref="configDetailRef"></config-detail>
         <el-dialog
             v-model="requestHeaderVisible"
-            title="高级配置"
+            title="请求头配置"
             width="520px"
             :close-on-click-modal="false"
             append-to-body
@@ -298,13 +298,13 @@
                     <el-input v-model="item.label" placeholder="Key" style="flex: 1;" />
                     <el-input v-model="item.value" placeholder="Value" style="flex: 1; margin-left: 8px;" />
                     <el-button type="danger" link @click="removeRequestHeader(index)" style="margin-left: 8px;">
-                        删除
+                        <el-icon><Delete /></el-icon>
                     </el-button>
                 </div>
             </div>
             <template #footer>
                 <div class="advanced-config-footer">
-                    <el-button type="primary" link @click="addRequestHeader">添加配置</el-button>
+                    <el-button type="primary" link @click="addRequestHeader">添加请求头</el-button>
                     <div>
                         <el-button @click="requestHeaderVisible = false">取消</el-button>
                         <el-button type="primary" @click="saveRequestHeaderConfig">确定</el-button>
@@ -361,7 +361,7 @@ import { GetJsonArrayNodeList, GetTopicDataList } from '@/services/realtime-comp
 import { GetLineageWorkItemConfig, GetWorkItemConfig, RunWorkItemConfig, SaveWorkItemConfig, TerWorkItemConfig } from '@/services/workflow.service'
 import PublishLog from '../work-item/publish-log.vue'
 import RunningLog from '../work-item/running-log.vue'
-import { Loading } from '@element-plus/icons-vue'
+import { Delete, Loading } from '@element-plus/icons-vue'
 
 interface Option {
     label: string
