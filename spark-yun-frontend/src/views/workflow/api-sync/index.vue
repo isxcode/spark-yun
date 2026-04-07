@@ -77,16 +77,15 @@
                                     ></el-input>
                                 </div>
                             </el-form-item>
+                            <el-form-item label="配置">
+                                <div class="api-request-line__actions">
+                                    <el-button type="primary" link size="small" @click="openRequestHeaderConfig">请求头</el-button>
+                                    <el-button type="primary" link size="small" @click="openRequestBodyTemplateConfig">请求体模版</el-button>
+                                    <el-button type="primary" link size="small" @click="openResponseBodyTemplateConfig">响应体模版</el-button>
+                                </div>
+                            </el-form-item>
                             <el-form-item label="请求体" v-if="formData.requestType === 'POST'">
                                 <code-mirror v-model="formData.requestBody" basic :lang="jsonLang" @change="pageChangeEvent" />
-                            </el-form-item>
-                            <el-form-item prop="sourceDBId" label="数据源">
-                                <el-select v-model="formData.sourceDBId" clearable filterable placeholder="请选择"
-                                    @visible-change="getDataSource($event, formData.sourceDBType, 'source')"
-                                    @change="dbIdChange('source')">
-                                    <el-option v-for="item in sourceList" :key="item.value" :label="item.label"
-                                        :value="item.value" />
-                                </el-select>
                             </el-form-item>
                             <!-- <el-form-item prop="kafkaConfig.topic" label="topic">
                                 <el-select v-model="formData.kafkaConfig.topic" clearable filterable placeholder="请选择" @change="pageChangeEvent"
@@ -96,14 +95,14 @@
                                         :value="item.value" />
                                 </el-select>
                             </el-form-item> -->
-                            <el-form-item prop="jsonTemplate" label="Json模板">
-                                <code-mirror v-model="formData.jsonTemplate" basic :lang="jsonLang" @change="pageChangeEvent" />
-                            </el-form-item>
                             <el-form-item prop="jsonDataType" label="解析类型">
-                                <el-select v-model="formData.jsonDataType" clearable filterable placeholder="请选择" @change="getCurrentTableColumn">
-                                    <el-option label="数组节点" value="LIST" />
-                                    <el-option label="对象节点" value="OBJECT" />
-                                </el-select>
+                                <div class="parse-type-line">
+                                    <el-select v-model="formData.jsonDataType" clearable filterable placeholder="请选择" @change="getCurrentTableColumn">
+                                        <el-option label="数组节点" value="LIST" />
+                                        <el-option label="对象节点" value="OBJECT" />
+                                    </el-select>
+                                    <el-button type="primary" link size="small" @click="previewDataEvent">数据预览</el-button>
+                                </div>
                             </el-form-item>
                             <el-form-item prop="rootJsonPath" label="节点" v-if="formData.jsonDataType === 'LIST'">
                                 <el-select v-model="formData.rootJsonPath" clearable filterable placeholder="请选择" @change="rootJsonPathBlur" @visible-change="getJsonNodeArray">
@@ -224,6 +223,67 @@
         <table-detail ref="tableDetailRef"></table-detail>
         <!-- 配置 -->
         <config-detail ref="configDetailRef"></config-detail>
+        <el-dialog
+            v-model="requestHeaderVisible"
+            title="高级配置"
+            width="520px"
+            :close-on-click-modal="false"
+            append-to-body
+            class="advanced-config-dialog"
+        >
+            <div class="advanced-config-content">
+                <div
+                    v-for="(item, index) in requestHeaderConfigList"
+                    :key="index"
+                    class="advanced-config-row"
+                >
+                    <el-input v-model="item.label" placeholder="Key" style="flex: 1;" />
+                    <el-input v-model="item.value" placeholder="Value" style="flex: 1; margin-left: 8px;" />
+                    <el-button type="danger" link @click="removeRequestHeader(index)" style="margin-left: 8px;">
+                        删除
+                    </el-button>
+                </div>
+            </div>
+            <template #footer>
+                <div class="advanced-config-footer">
+                    <el-button type="primary" link @click="addRequestHeader">添加配置</el-button>
+                    <div>
+                        <el-button @click="requestHeaderVisible = false">取消</el-button>
+                        <el-button type="primary" @click="saveRequestHeaderConfig">确定</el-button>
+                    </div>
+                </div>
+            </template>
+        </el-dialog>
+        <el-dialog
+            v-model="requestBodyTemplateVisible"
+            title="请求体模版"
+            width="720px"
+            :close-on-click-modal="false"
+            append-to-body
+        >
+            <code-mirror v-model="requestBodyTemplateText" basic :lang="jsonLang" />
+            <template #footer>
+                <div>
+                    <el-button @click="requestBodyTemplateVisible = false">取消</el-button>
+                    <el-button type="primary" @click="saveRequestBodyTemplateConfig">确定</el-button>
+                </div>
+            </template>
+        </el-dialog>
+        <el-dialog
+            v-model="responseBodyTemplateVisible"
+            title="响应体模版"
+            width="720px"
+            :close-on-click-modal="false"
+            append-to-body
+        >
+            <code-mirror v-model="responseBodyTemplateText" basic :lang="jsonLang" />
+            <template #footer>
+                <div>
+                    <el-button @click="responseBodyTemplateVisible = false">取消</el-button>
+                    <el-button type="primary" @click="saveResponseBodyTemplateConfig">确定</el-button>
+                </div>
+            </template>
+        </el-dialog>
     </div>
 </template>
 
@@ -272,6 +332,12 @@ const kafkaSourceList = ref<Option[]>([])
 const sourceTypeList = ref<Option[]>(CurrentSourceType)
 const typeList = ref(DataSourceType);
 const nodeArrayList = ref([])
+const requestHeaderVisible = ref(false)
+const requestHeaderConfigList = ref<Array<{ label: string; value: string }>>([])
+const requestBodyTemplateVisible = ref(false)
+const requestBodyTemplateText = ref('')
+const responseBodyTemplateVisible = ref(false)
+const responseBodyTemplateText = ref('')
 
 // 日志展示相关
 const containerInstanceRef = ref(null)
@@ -312,6 +378,12 @@ const formData = reactive({
     requestUrl: '',
     requestType: '',
     requestBody: '',
+    requestHeader: [
+        {
+            label: '',
+            value: ''
+        }
+    ],
 
     targetDBType: 'DATASOURCE', // 目标数据库类型
     targetDBId: '',       // 目标数据源
@@ -350,7 +422,7 @@ function saveData() {
             requestType: formData.requestType,
             requestBody: formData.requestBody,
             requestParam: [],
-            requestHeader: []
+            requestHeader: formData.requestHeader
         },
         syncWorkConfig: {
             ...formData,
@@ -401,6 +473,9 @@ function getData() {
             formData.requestUrl = res.data.apiWorkConfig.requestUrl || ''
             formData.requestType = res.data.apiWorkConfig.requestType || ''
             formData.requestBody = res.data.apiWorkConfig.requestBody || ''
+            formData.requestHeader = res.data.apiWorkConfig.requestHeader?.length
+                ? res.data.apiWorkConfig.requestHeader
+                : [{ label: '', value: '' }]
         }
     }).catch(err => {
         console.error(err)
@@ -631,6 +706,17 @@ function goBack() {
     }
 }
 
+function previewDataEvent() {
+    if (!formData.targetDBId || !formData.targetTable) {
+        ElMessage.warning('请先选择数据去向中的数据源和表')
+        return
+    }
+    tableDetailRef.value.showModal({
+        dataSourceId: formData.targetDBId,
+        tableName: formData.targetTable
+    })
+}
+
 function rootJsonPathBlur() {
     dataSyncTableRef.value.getCurrentTableColumn({
         jsonStr: formData.jsonTemplate,
@@ -657,6 +743,66 @@ function changeCollapseUp(e: any) {
 }
 function pageChangeEvent() {
     changeStatus.value = true
+}
+
+function openRequestHeaderConfig() {
+    requestHeaderConfigList.value = formData.requestHeader?.length
+        ? formData.requestHeader.map((item: any) => ({ label: item.label || '', value: item.value || '' }))
+        : [{ label: '', value: '' }]
+    requestHeaderVisible.value = true
+}
+
+function addRequestHeader() {
+    requestHeaderConfigList.value.push({
+        label: '',
+        value: ''
+    })
+}
+
+function removeRequestHeader(index: number) {
+    requestHeaderConfigList.value.splice(index, 1)
+}
+
+function saveRequestHeaderConfig() {
+    const validItems = requestHeaderConfigList.value.filter((item: any) => item.label?.trim() !== '')
+    const keys = validItems.map((item: any) => item.label.trim())
+    const uniqueKeys = new Set(keys)
+    if (keys.length !== uniqueKeys.size) {
+        ElMessage.warning('配置项Key不能重复')
+        return
+    }
+
+    formData.requestHeader = validItems.map((item: any) => ({
+        label: item.label.trim(),
+        value: item.value?.trim?.() || ''
+    }))
+    requestHeaderConfigList.value = formData.requestHeader.length
+        ? formData.requestHeader.map((item: any) => ({ ...item }))
+        : [{ label: '', value: '' }]
+    requestHeaderVisible.value = false
+    pageChangeEvent()
+}
+
+function openRequestBodyTemplateConfig() {
+    requestBodyTemplateText.value = formData.requestBody || ''
+    requestBodyTemplateVisible.value = true
+}
+
+function saveRequestBodyTemplateConfig() {
+    formData.requestBody = requestBodyTemplateText.value
+    requestBodyTemplateVisible.value = false
+    pageChangeEvent()
+}
+
+function openResponseBodyTemplateConfig() {
+    responseBodyTemplateText.value = formData.jsonTemplate || ''
+    responseBodyTemplateVisible.value = true
+}
+
+function saveResponseBodyTemplateConfig() {
+    formData.jsonTemplate = responseBodyTemplateText.value
+    responseBodyTemplateVisible.value = false
+    pageChangeEvent()
 }
 
 function sourceDBTypeChangeEvent() {
@@ -719,6 +865,23 @@ onMounted(() => {
                                 flex: 1;
                             }
 
+                            .api-request-line__actions {
+                                display: flex;
+                                align-items: center;
+                                justify-content: flex-start;
+                                gap: 6px;
+                                width: 100%;
+                                flex-shrink: 0;
+                            }
+
+                            .parse-type-line {
+                                width: 100%;
+                                display: flex;
+                                align-items: center;
+                                justify-content: space-between;
+                                gap: 8px;
+                            }
+
                             .el-checkbox-group {
                                 .el-checkbox {
                                     .el-checkbox__label {
@@ -739,6 +902,26 @@ onMounted(() => {
             right: 40px;
             top: 12px;
         }
+    }
+}
+
+.advanced-config-content {
+    .advanced-config-row {
+        display: flex;
+        align-items: center;
+        margin-bottom: 8px;
+    }
+}
+
+.advanced-config-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+
+    > div {
+        display: flex;
+        align-items: center;
     }
 }
 </style>
