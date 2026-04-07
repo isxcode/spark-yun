@@ -64,7 +64,7 @@ public interface WorkType {
     /**
      * 实时计算.
      */
-    String API_SYNC_JDBC = "API_SYNC_JDBC";
+    String REAL_WORK = "REAL_WORK";
 
     /**
      * pyspark作业.
@@ -90,4 +90,9 @@ public interface WorkType {
      * Spark可视化ETL.
      */
     String SPARK_ETL = "SPARK_ETL";
+
+    /**
+     * 接口采集作业.
+     */
+    String API_SYNC_JDBC = "API_SYNC_JDBC";
 }
