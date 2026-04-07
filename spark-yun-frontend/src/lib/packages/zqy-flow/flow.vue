@@ -404,7 +404,7 @@ $--status-RUNNING: #1890ff;
 
         .status-container {
             position: absolute;
-            bottom: 42px;
+            bottom: 8px;
             left: 20px;
             display: flex;
             flex-direction: column;
