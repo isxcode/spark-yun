@@ -62,7 +62,7 @@
                             </el-select>
                         </el-form-item>
                         <template v-if="formData.sourceDBType === 'API'">
-                            <el-form-item prop="requestUrl" label="接口地址">
+                            <el-form-item prop="requestUrl" label="接口">
                                 <el-input v-model="formData.requestUrl" clearable placeholder="请输入" maxlength="1000"></el-input>
                             </el-form-item>
                             <el-form-item label="请求方式" prop="requestType">
@@ -290,7 +290,7 @@ const tabList = reactive([
 
 const formData = reactive({
     workId: '',           // 作业id
-    sourceDBType: '',     // 来源数据源类型
+    sourceDBType: 'API',  // 来源数据源类型
     sourceDBId: '',       // 来源数据源
     sourceTable: '',      // 来源数据库表名
     kafkaConfig: {        // topic
@@ -307,7 +307,7 @@ const formData = reactive({
     requestType: '',
     requestBody: '',
 
-    targetDBType: '',     // 目标数据库类型
+    targetDBType: 'DATASOURCE', // 目标数据库类型
     targetDBId: '',       // 目标数据源
     targetTable: '',      // 目标数据库表名
     overMode: '',         // 写入模式
@@ -379,7 +379,7 @@ function getData() {
             nextTick(() => {
                 getDataSource(true, formData.sourceDBType, 'source')
                 getDataSource(true, formData.targetDBType, 'target')
-                if (formData.sourceDBType !== 'API') {
+                if (formData.sourceDBType === 'DATASOURCE') {
                     getDataSourceTable(true, formData.sourceDBId, 'source')
                     getKafkaSourceTable(true, 'KAFKA')
                 } else {
@@ -459,10 +459,14 @@ function runTimeFunc() {
 function getDataSource(e: boolean, sourceType: string, type: string) {
     if (e && sourceType) {
         let options = []
+        let searchKeyWord = sourceType || ''
+        if (['API', 'DATASOURCE'].includes(sourceType)) {
+            searchKeyWord = ''
+        }
         GetDatasourceList({
             page: 0,
             pageSize: 10000,
-            searchKeyWord: sourceType || ''
+            searchKeyWord: searchKeyWord
         }).then((res: any) => {
             options = res.data.content.map((item: any) => {
                 return {
