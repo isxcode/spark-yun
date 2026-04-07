@@ -73,6 +73,7 @@
         </div>
 
         <el-collapse v-model="collapseActive" class="work-item-log__collapse" ref="logCollapseRef">
+          <div class="log-resize-handle" @mousedown="startResizeLogPanel"></div>
           <el-collapse-item title="查看日志" :disabled="true" name="1">
             <template #title>
               <el-tabs v-model="activeName" @tab-click="changeCollapseUp" @tab-change="tabChangeEvent">
@@ -89,11 +90,12 @@
                 </el-icon>
               </span>
             </template>
-            <div class="log-show log-show-datasync">
+            <div class="log-show log-show-datasync" :style="{ height: `${logPanelHeight}px` }">
               <component
                 :is="currentTab"
                 ref="containerInstanceRef"
                 class="show-container"
+                :style="{ height: `${logPanelHeight}px` }"
                 :showParse="showParse"
                 @getJsonParseResult="getJsonParseResult"
               />
@@ -110,7 +112,7 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, ref, onMounted, markRaw, nextTick, computed } from 'vue'
+import { reactive, ref, onMounted, onUnmounted, markRaw, nextTick, computed } from 'vue'
 import Breadcrumb from '@/layout/bread-crumb/index.vue'
 import LoadingPage from '@/components/loading/index.vue'
 import ConfigDetail from '../workflow-page/config-detail/index.vue'
@@ -159,6 +161,12 @@ const logCollapseRef = ref()
 const collapseActive = ref('0')
 const isCollapse = ref(false)
 const parseModalRef = ref()
+const logPanelHeight = ref(320)
+const resizeState = reactive({
+  resizing: false,
+  startY: 0,
+  startHeight: 320
+})
 
 let workConfig = reactive({
   clusterId: '',
@@ -443,6 +451,30 @@ function changeCollapseUp(e: any) {
   }
 }
 
+function startResizeLogPanel(event: MouseEvent) {
+  resizeState.resizing = true
+  resizeState.startY = event.clientY
+  resizeState.startHeight = logPanelHeight.value
+  document.addEventListener('mousemove', onResizeLogPanel)
+  document.addEventListener('mouseup', stopResizeLogPanel)
+  event.preventDefault()
+}
+
+function onResizeLogPanel(event: MouseEvent) {
+  if (!resizeState.resizing) {
+    return
+  }
+  const maxHeight = Math.max(220, window.innerHeight - 220)
+  const nextHeight = resizeState.startHeight + (resizeState.startY - event.clientY)
+  logPanelHeight.value = Math.min(maxHeight, Math.max(180, nextHeight))
+}
+
+function stopResizeLogPanel() {
+  resizeState.resizing = false
+  document.removeEventListener('mousemove', onResizeLogPanel)
+  document.removeEventListener('mouseup', stopResizeLogPanel)
+}
+
 function tabChangeEvent(e: string) {
   const lookup = {
     PublishLog: PublishLog,
@@ -475,6 +507,10 @@ onMounted(() => {
   initData()
   activeName.value = 'PublishLog'
   currentTab.value = markRaw(PublishLog)
+})
+
+onUnmounted(() => {
+  stopResizeLogPanel()
 })
 </script>
 
@@ -570,6 +606,24 @@ onMounted(() => {
       bottom: -2px;
       z-index: 100;
 
+      .log-resize-handle {
+        height: 10px;
+        cursor: ns-resize;
+        position: relative;
+
+        &::after {
+          content: '';
+          position: absolute;
+          left: 50%;
+          top: 3px;
+          transform: translateX(-50%);
+          width: 52px;
+          height: 3px;
+          border-radius: 4px;
+          background: getCssVar('border-color');
+        }
+      }
+
       .el-collapse-item__header {
         // padding-left: 20px;
         cursor: default;
@@ -619,7 +673,7 @@ onMounted(() => {
         overflow: auto;
 
         &.log-show-datasync {
-          height: calc(100vh - 368px);
+          min-height: 180px;
           .zqy-download-log {
             right: 40px;
             top: 12px;
@@ -631,7 +685,7 @@ onMounted(() => {
         }
 
         .show-container {
-          height: calc(100vh - 368px);
+          min-height: 180px;
           overflow: auto;
         }
 
