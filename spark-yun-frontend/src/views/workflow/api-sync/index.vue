@@ -319,11 +319,16 @@
             :close-on-click-modal="false"
             append-to-body
         >
-            <code-mirror v-model="requestBodyTemplateText" basic :lang="jsonLang" />
+            <div class="template-json-body">
+                <code-mirror v-model="requestBodyTemplateText" class="template-json-editor" basic :lang="jsonLang" />
+            </div>
             <template #footer>
-                <div>
-                    <el-button @click="requestBodyTemplateVisible = false">取消</el-button>
-                    <el-button type="primary" @click="saveRequestBodyTemplateConfig">确定</el-button>
+                <div class="template-config-footer template-config-footer--between">
+                    <el-button type="primary" @click="formatTemplateJson('request')">格式化JSON</el-button>
+                    <div class="template-config-footer__right">
+                        <el-button @click="requestBodyTemplateVisible = false">取消</el-button>
+                        <el-button type="primary" @click="saveRequestBodyTemplateConfig">确定</el-button>
+                    </div>
                 </div>
             </template>
         </el-dialog>
@@ -336,9 +341,12 @@
         >
             <code-mirror v-model="responseBodyTemplateText" basic :lang="jsonLang" />
             <template #footer>
-                <div>
-                    <el-button @click="responseBodyTemplateVisible = false">取消</el-button>
-                    <el-button type="primary" @click="saveResponseBodyTemplateConfig">确定</el-button>
+                <div class="template-config-footer template-config-footer--between">
+                    <el-button type="primary" @click="formatTemplateJson('response')">格式化JSON</el-button>
+                    <div class="template-config-footer__right">
+                        <el-button @click="responseBodyTemplateVisible = false">取消</el-button>
+                        <el-button type="primary" @click="saveResponseBodyTemplateConfig">确定</el-button>
+                    </div>
                 </div>
             </template>
         </el-dialog>
@@ -362,6 +370,7 @@ import { GetLineageWorkItemConfig, GetWorkItemConfig, RunWorkItemConfig, SaveWor
 import PublishLog from '../work-item/publish-log.vue'
 import RunningLog from '../work-item/running-log.vue'
 import { Delete, Loading } from '@element-plus/icons-vue'
+import { jsonFormatter } from '@/utils/formatter'
 
 interface Option {
     label: string
@@ -919,6 +928,19 @@ function saveRequestBodyTemplateConfig() {
     pageChangeEvent()
 }
 
+function formatTemplateJson(type: 'request' | 'response') {
+    try {
+        if (type === 'request') {
+            requestBodyTemplateText.value = jsonFormatter(requestBodyTemplateText.value || '')
+        } else {
+            responseBodyTemplateText.value = jsonFormatter(responseBodyTemplateText.value || '')
+        }
+    } catch (error) {
+        console.error('请检查输入的JSON格式是否正确', error)
+        ElMessage.error('请检查输入的JSON格式是否正确')
+    }
+}
+
 function openResponseBodyTemplateConfig(scope: 'source' | 'target' = 'source') {
     requestConfigScope.value = scope
     responseBodyTemplateText.value = scope === 'source' ? (formData.jsonTemplate || '') : (formData.targetJsonTemplate || '')
@@ -1116,5 +1138,35 @@ onMounted(() => {
         display: flex;
         align-items: center;
     }
+}
+
+.template-config-footer {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+}
+
+.template-config-footer--between {
+    justify-content: space-between;
+}
+
+.template-config-footer__right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.template-json-body {
+    position: relative;
+}
+
+.template-json-editor {
+    padding-top: 4px;
+}
+
+.template-json-editor :deep(.cm-editor) {
+    min-height: 360px;
 }
 </style>
