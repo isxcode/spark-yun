@@ -92,6 +92,15 @@
                 <template v-if="containerType === 'flow'">
                     <div class="option-btns">
                         <!-- 非运行状态 -->
+                        <div class="btn-box" @click="saveData">
+                            <el-icon v-if="!btnLoadingConfig.saveLoading">
+                                <Finished />
+                            </el-icon>
+                            <el-icon v-else class="is-loading">
+                                <Loading />
+                            </el-icon>
+                            <span class="btn-text">保存</span>
+                        </div>
                         <div class="btn-box" @click="runWorkFlowDataEvent">
                             <el-icon v-if="!btnLoadingConfig.runningLoading">
                                 <VideoPlay />
@@ -118,15 +127,6 @@
                                 <Loading />
                             </el-icon>
                             <span class="btn-text">重跑</span>
-                        </div>
-                        <div class="btn-box" @click="saveData">
-                            <el-icon v-if="!btnLoadingConfig.saveLoading">
-                                <Finished />
-                            </el-icon>
-                            <el-icon v-else class="is-loading">
-                                <Loading />
-                            </el-icon>
-                            <span class="btn-text">保存</span>
                         </div>
                         <div class="btn-box" @click="showConfigDetail">
                             <el-icon>

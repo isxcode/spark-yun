@@ -32,7 +32,7 @@
                 <el-icon v-else class="is-loading">
                     <Loading />
                 </el-icon>
-                <span class="btn-text">停止</span>
+                <span class="btn-text">中止</span>
             </div>
             <div class="btn-box" @click="setConfigData">
                 <el-icon>
