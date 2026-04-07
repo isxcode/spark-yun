@@ -63,13 +63,19 @@
                         </el-form-item>
                         <template v-if="formData.sourceDBType === 'API'">
                             <el-form-item prop="requestUrl" label="接口">
-                                <el-input v-model="formData.requestUrl" clearable placeholder="请输入" maxlength="1000"></el-input>
-                            </el-form-item>
-                            <el-form-item label="请求方式" prop="requestType">
-                                <el-select v-model="formData.requestType" placeholder="请选择">
-                                    <el-option label="GET" value="GET" />
-                                    <el-option label="POST" value="POST" />
-                                </el-select>
+                                <div class="api-request-line">
+                                    <el-select v-model="formData.requestType" class="api-request-line__method" placeholder="请求方式">
+                                        <el-option label="GET" value="GET" />
+                                        <el-option label="POST" value="POST" />
+                                    </el-select>
+                                    <el-input
+                                        v-model="formData.requestUrl"
+                                        class="api-request-line__url"
+                                        clearable
+                                        placeholder="请输入接口"
+                                        maxlength="1000"
+                                    ></el-input>
+                                </div>
                             </el-form-item>
                             <el-form-item label="请求体" v-if="formData.requestType === 'POST'">
                                 <code-mirror v-model="formData.requestBody" basic :lang="jsonLang" @change="pageChangeEvent" />
@@ -698,6 +704,21 @@ onMounted(() => {
                 .el-form {
                     .el-form-item {
                         .el-form-item__content {
+                            .api-request-line {
+                                display: flex;
+                                gap: 10px;
+                                width: 100%;
+                            }
+
+                            .api-request-line__method {
+                                width: 140px;
+                                min-width: 140px;
+                            }
+
+                            .api-request-line__url {
+                                flex: 1;
+                            }
+
                             .el-checkbox-group {
                                 .el-checkbox {
                                     .el-checkbox__label {
