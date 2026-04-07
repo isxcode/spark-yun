@@ -109,6 +109,39 @@
                                     <el-option v-for="item in nodeArrayList" :key="item.value" :label="item.label" :value="item.value" />
                                 </el-select>
                             </el-form-item>
+                            <el-form-item label="每页">
+                                <div class="paging-line">
+                                    <el-input-number
+                                        v-model="formData.pageSize"
+                                        :min="1"
+                                        :max="100000"
+                                        controls-position="right"
+                                        @change="pageChangeEvent"
+                                    />
+                                    <span class="paging-line__text">第</span>
+                                    <el-input-number
+                                        v-model="formData.pageStart"
+                                        :min="1"
+                                        :max="100000"
+                                        controls-position="right"
+                                        :disabled="formData.pageAll"
+                                        @change="pageChangeEvent"
+                                    />
+                                    <span class="paging-line__text">到</span>
+                                    <el-input-number
+                                        v-model="formData.pageEnd"
+                                        :min="1"
+                                        :max="100000"
+                                        controls-position="right"
+                                        :disabled="formData.pageAll"
+                                        @change="pageChangeEvent"
+                                    />
+                                    <span class="paging-line__text">页</span>
+                                    <el-checkbox v-model="formData.pageAll" @change="pageChangeEvent">
+                                        <span class="paging-line__checkbox-text">全部</span>
+                                    </el-checkbox>
+                                </div>
+                            </el-form-item>
                             <el-form-item prop="queryCondition" label="过滤条件">
                                 <code-mirror v-model="formData.queryCondition" basic :lang="lang" @change="pageChangeEvent" />
                             </el-form-item>
@@ -375,6 +408,10 @@ const formData = reactive({
     jsonDataType: '',     // 数据解析类型
     rootJsonPath: '',     // 节点
     queryCondition: '',   // 来源数据库查询条件
+    pageSize: 10,
+    pageStart: 1,
+    pageEnd: 2,
+    pageAll: false,
     requestUrl: '',
     requestType: '',
     requestBody: '',
@@ -453,6 +490,10 @@ function getData() {
             Object.keys(formData).forEach((key: string) => {
                 formData[key] = res.data.syncWorkConfig[key]
             })
+            formData.pageSize = Number(formData.pageSize) || 10
+            formData.pageStart = Number(formData.pageStart) || 1
+            formData.pageEnd = Number(formData.pageEnd) || 2
+            formData.pageAll = !!formData.pageAll
 
             nextTick(() => {
                 getDataSource(true, formData.sourceDBType, 'source')
@@ -880,6 +921,44 @@ onMounted(() => {
                                 align-items: center;
                                 justify-content: space-between;
                                 gap: 8px;
+                            }
+
+                            .paging-line {
+                                width: 100%;
+                                display: flex;
+                                align-items: center;
+                                gap: 8px;
+                                flex-wrap: nowrap;
+                            }
+
+                            .paging-line :deep(.el-input-number) {
+                                width: 120px;
+                            }
+
+                            .paging-line__text {
+                                font-size: 14px;
+                                color: var(--el-text-color-regular);
+                                line-height: 32px;
+                            }
+
+                            .paging-line :deep(.el-checkbox__label) {
+                                font-size: 14px;
+                                color: var(--el-text-color-regular);
+                                line-height: 32px;
+                                font-weight: 400;
+                                font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+                            }
+
+                            .paging-line :deep(.el-checkbox.is-checked .el-checkbox__label) {
+                                color: var(--el-text-color-regular);
+                            }
+
+                            .paging-line__checkbox-text {
+                                font-size: 14px;
+                                color: var(--el-text-color-regular);
+                                line-height: 32px;
+                                font-weight: 400;
+                                font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
                             }
 
                             .el-checkbox-group {
