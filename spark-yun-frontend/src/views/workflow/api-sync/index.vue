@@ -77,11 +77,11 @@
                                     ></el-input>
                                 </div>
                             </el-form-item>
-                            <el-form-item label="配置">
+                            <el-form-item label="配置" class="api-config-row">
                                 <div class="api-request-line__actions">
-                                    <el-button type="primary" link size="small" @click="openRequestHeaderConfig">请求头</el-button>
-                                    <el-button type="primary" link size="small" @click="openRequestBodyTemplateConfig">请求体模版</el-button>
-                                    <el-button type="primary" link size="small" @click="openResponseBodyTemplateConfig">响应体模版</el-button>
+                                    <el-button type="primary" link size="small" @click="openRequestHeaderConfig('source')">请求头</el-button>
+                                    <el-button type="primary" link size="small" @click="openRequestBodyTemplateConfig('source')">请求体模版</el-button>
+                                    <el-button type="primary" link size="small" @click="openResponseBodyTemplateConfig('source')">响应体模版</el-button>
                                 </div>
                             </el-form-item>
                             <el-form-item label="请求体" v-if="formData.requestType === 'POST'">
@@ -206,22 +206,50 @@
                                     :value="item.value" />
                             </el-select>
                         </el-form-item>
-                        <el-form-item prop="targetDBId" label="数据源">
-                            <el-select v-model="formData.targetDBId" clearable filterable placeholder="请选择"
-                                @visible-change="getDataSource($event, formData.targetDBType, 'target')"
-                                @change="dbIdChange('target')">
-                                <el-option v-for="item in targetList" :key="item.value" :label="item.label"
-                                    :value="item.value" />
-                            </el-select>
-                        </el-form-item>
-                        <el-form-item prop="targetTable" label="表">
-                            <el-select v-model="formData.targetTable" clearable filterable placeholder="请选择"
-                                @visible-change="getDataSourceTable($event, formData.targetDBId, 'target')"
-                                @change="tableChangeEvent($event, formData.targetDBId, 'target')">
-                                <el-option v-for="item in targetTablesList" :key="item.value" :label="item.label"
-                                    :value="item.value" />
-                            </el-select>
-                        </el-form-item>
+                        <template v-if="formData.targetDBType === 'API'">
+                            <el-form-item label="接口">
+                                <div class="api-request-line">
+                                    <el-select v-model="formData.targetRequestType" class="api-request-line__method" placeholder="请求方式">
+                                        <el-option label="GET" value="GET" />
+                                        <el-option label="POST" value="POST" />
+                                    </el-select>
+                                    <el-input
+                                        v-model="formData.targetRequestUrl"
+                                        class="api-request-line__url"
+                                        clearable
+                                        placeholder="请输入接口"
+                                        maxlength="1000"
+                                    ></el-input>
+                                </div>
+                            </el-form-item>
+                            <el-form-item label="配置" class="api-config-row">
+                                <div class="api-request-line__actions">
+                                    <el-button type="primary" link size="small" @click="openRequestHeaderConfig('target')">请求头</el-button>
+                                    <el-button type="primary" link size="small" @click="openRequestBodyTemplateConfig('target')">请求体模版</el-button>
+                                </div>
+                            </el-form-item>
+                            <el-form-item label="请求体" v-if="formData.targetRequestType === 'POST'">
+                                <code-mirror v-model="formData.targetRequestBody" basic :lang="jsonLang" @change="pageChangeEvent" />
+                            </el-form-item>
+                        </template>
+                        <template v-else>
+                            <el-form-item prop="targetDBId" label="数据源">
+                                <el-select v-model="formData.targetDBId" clearable filterable placeholder="请选择"
+                                    @visible-change="getDataSource($event, formData.targetDBType, 'target')"
+                                    @change="dbIdChange('target')">
+                                    <el-option v-for="item in targetList" :key="item.value" :label="item.label"
+                                        :value="item.value" />
+                                </el-select>
+                            </el-form-item>
+                            <el-form-item prop="targetTable" label="表">
+                                <el-select v-model="formData.targetTable" clearable filterable placeholder="请选择"
+                                    @visible-change="getDataSourceTable($event, formData.targetDBId, 'target')"
+                                    @change="tableChangeEvent($event, formData.targetDBId, 'target')">
+                                    <el-option v-for="item in targetTablesList" :key="item.value" :label="item.label"
+                                        :value="item.value" />
+                                </el-select>
+                            </el-form-item>
+                        </template>
                         <!-- <el-form-item prop="overMode" label="写入模式">
                             <el-select v-model="formData.overMode" clearable filterable placeholder="请选择" @change="pageChangeEvent">
                                 <el-option v-for="item in overModeList" :key="item.value" :label="item.label"
@@ -371,6 +399,7 @@ const requestBodyTemplateVisible = ref(false)
 const requestBodyTemplateText = ref('')
 const responseBodyTemplateVisible = ref(false)
 const responseBodyTemplateText = ref('')
+const requestConfigScope = ref<'source' | 'target'>('source')
 
 // 日志展示相关
 const containerInstanceRef = ref(null)
@@ -425,6 +454,16 @@ const formData = reactive({
     targetDBType: 'DATASOURCE', // 目标数据库类型
     targetDBId: '',       // 目标数据源
     targetTable: '',      // 目标数据库表名
+    targetRequestUrl: '',
+    targetRequestType: '',
+    targetRequestBody: '',
+    targetRequestHeader: [
+        {
+            label: '',
+            value: ''
+        }
+    ],
+    targetJsonTemplate: '',
     overMode: '',         // 写入模式
 })
 const rules = reactive<FormRules>({})
@@ -786,9 +825,11 @@ function pageChangeEvent() {
     changeStatus.value = true
 }
 
-function openRequestHeaderConfig() {
-    requestHeaderConfigList.value = formData.requestHeader?.length
-        ? formData.requestHeader.map((item: any) => ({ label: item.label || '', value: item.value || '' }))
+function openRequestHeaderConfig(scope: 'source' | 'target' = 'source') {
+    requestConfigScope.value = scope
+    const currentHeader = scope === 'source' ? formData.requestHeader : formData.targetRequestHeader
+    requestHeaderConfigList.value = currentHeader?.length
+        ? currentHeader.map((item: any) => ({ label: item.label || '', value: item.value || '' }))
         : [{ label: '', value: '' }]
     requestHeaderVisible.value = true
 }
@@ -813,35 +854,50 @@ function saveRequestHeaderConfig() {
         return
     }
 
-    formData.requestHeader = validItems.map((item: any) => ({
+    const saveData = validItems.map((item: any) => ({
         label: item.label.trim(),
         value: item.value?.trim?.() || ''
     }))
-    requestHeaderConfigList.value = formData.requestHeader.length
-        ? formData.requestHeader.map((item: any) => ({ ...item }))
+    if (requestConfigScope.value === 'source') {
+        formData.requestHeader = saveData
+    } else {
+        formData.targetRequestHeader = saveData
+    }
+    requestHeaderConfigList.value = saveData.length
+        ? saveData.map((item: any) => ({ ...item }))
         : [{ label: '', value: '' }]
     requestHeaderVisible.value = false
     pageChangeEvent()
 }
 
-function openRequestBodyTemplateConfig() {
-    requestBodyTemplateText.value = formData.requestBody || ''
+function openRequestBodyTemplateConfig(scope: 'source' | 'target' = 'source') {
+    requestConfigScope.value = scope
+    requestBodyTemplateText.value = scope === 'source' ? (formData.requestBody || '') : (formData.targetRequestBody || '')
     requestBodyTemplateVisible.value = true
 }
 
 function saveRequestBodyTemplateConfig() {
-    formData.requestBody = requestBodyTemplateText.value
+    if (requestConfigScope.value === 'source') {
+        formData.requestBody = requestBodyTemplateText.value
+    } else {
+        formData.targetRequestBody = requestBodyTemplateText.value
+    }
     requestBodyTemplateVisible.value = false
     pageChangeEvent()
 }
 
-function openResponseBodyTemplateConfig() {
-    responseBodyTemplateText.value = formData.jsonTemplate || ''
+function openResponseBodyTemplateConfig(scope: 'source' | 'target' = 'source') {
+    requestConfigScope.value = scope
+    responseBodyTemplateText.value = scope === 'source' ? (formData.jsonTemplate || '') : (formData.targetJsonTemplate || '')
     responseBodyTemplateVisible.value = true
 }
 
 function saveResponseBodyTemplateConfig() {
-    formData.jsonTemplate = responseBodyTemplateText.value
+    if (requestConfigScope.value === 'source') {
+        formData.jsonTemplate = responseBodyTemplateText.value
+    } else {
+        formData.targetJsonTemplate = responseBodyTemplateText.value
+    }
     responseBodyTemplateVisible.value = false
     pageChangeEvent()
 }
@@ -912,7 +968,18 @@ onMounted(() => {
                                 justify-content: flex-start;
                                 gap: 6px;
                                 width: 100%;
+                                min-height: 32px;
                                 flex-shrink: 0;
+                            }
+
+                            .api-config-row :deep(.el-form-item__content) {
+                                min-height: 32px;
+                                display: flex;
+                                align-items: center;
+                            }
+
+                            .api-config-row :deep(.el-button) {
+                                line-height: 32px;
                             }
 
                             .parse-type-line {
