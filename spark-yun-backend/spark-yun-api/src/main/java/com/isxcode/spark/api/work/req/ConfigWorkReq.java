@@ -69,4 +69,7 @@ public class ConfigWorkReq {
 
     @Schema(title = "数据同步作业配置")
     private SyncFlinkConfig syncFlinkConfig;
+
+    @Schema(title = "接口采集作业配置")
+    private ApiSyncConfig apiSyncConfig;
 }
