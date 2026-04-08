@@ -62,7 +62,26 @@
                             </el-select>
                         </el-form-item>
                         <template v-if="formData.sourceDBType === 'API'">
-                            <el-form-item prop="requestUrl" label="接口">
+                            <el-form-item prop="requestUrl">
+                                <template #label>
+                                    <span class="request-body-label">
+                                        <span>接口</span>
+                                        <el-tooltip placement="right" effect="dark">
+                                            <template #content>
+                                                <div class="request-body-tip__content">
+                                                    <div>POST分页请求案例：</div>
+                                                    <div>{</div>
+                                                    <div>&nbsp;&nbsp;"custom_page": "${page}",</div>
+                                                    <div>&nbsp;&nbsp;"custom_pageSize": "${pageSize}"</div>
+                                                    <div>}</div>
+                                                    <div>GET分页请求案例：</div>
+                                                    <div>?custom_page=${page}&custom_pageSize=${pageSize}</div>
+                                                </div>
+                                            </template>
+                                            <el-icon class="tooltip-msg"><QuestionFilled /></el-icon>
+                                        </el-tooltip>
+                                    </span>
+                                </template>
                                 <div class="api-request-line">
                                     <el-select v-model="formData.requestType" class="api-request-line__method" placeholder="请求方式" @change="sourceRequestTypeChangeEvent">
                                         <el-option label="GET" value="GET" />
@@ -368,7 +387,7 @@ import { GetJsonArrayNodeList, GetTopicDataList } from '@/services/realtime-comp
 import { GetApiDataPreview, GetLineageWorkItemConfig, GetWorkItemConfig, RunWorkItemConfig, SaveWorkItemConfig, TerWorkItemConfig } from '@/services/workflow.service'
 import PublishLog from '../work-item/publish-log.vue'
 import RunningLog from '../work-item/running-log.vue'
-import { Delete, Loading } from '@element-plus/icons-vue'
+import { Delete, Loading, QuestionFilled } from '@element-plus/icons-vue'
 import { jsonFormatter } from '@/utils/formatter'
 
 interface Option {
@@ -1253,6 +1272,22 @@ onUnmounted(() => {
 
                             .api-config-row :deep(.el-button) {
                                 line-height: 32px;
+                            }
+
+                            .tooltip-msg {
+                                font-size: 16px;
+                                color: #c0c4cc;
+                            }
+
+                            .request-body-label {
+                                display: inline-flex;
+                                align-items: center;
+                                gap: 4px;
+                            }
+
+                            .request-body-tip__content {
+                                line-height: 1.6;
+                                white-space: nowrap;
                             }
 
                             .parse-type-line {

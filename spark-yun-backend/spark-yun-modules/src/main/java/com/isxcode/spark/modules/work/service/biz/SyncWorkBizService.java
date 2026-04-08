@@ -240,7 +240,7 @@ public class SyncWorkBizService {
                     .replace("${pageSize}", String.valueOf(pageSize));
 
                 // get请求返回
-                responseObj = HttpUtils.doPost(requestUrl, null, requestHeader, String.class);
+                responseObj = HttpUtils.doGet(requestUrl, null, String.class);
             } else if (ApiType.POST.equalsIgnoreCase(getApiDataReq.getRequestType())) {
 
                 // 替换分页信息
