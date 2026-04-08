@@ -527,20 +527,69 @@ function tabChangeEvent(e: string) {
   })
 }
 
+function convertHeaderListToMap(headerList: Array<{ label: string; value: string }> = []) {
+    const headerMap: Record<string, string> = {}
+    headerList.forEach((item: any) => {
+        const key = item?.label?.trim?.()
+        if (key) {
+            headerMap[key] = item?.value ?? ''
+        }
+    })
+    return headerMap
+}
+
+function normalizeHeaderToList(headerData: any) {
+    if (Array.isArray(headerData)) {
+        const validData = headerData
+            .filter((item: any) => item?.label?.trim?.())
+            .map((item: any) => ({
+                label: item.label.trim(),
+                value: item?.value ?? ''
+            }))
+        return validData.length ? validData : [{ label: '', value: '' }]
+    }
+
+    if (headerData && typeof headerData === 'object') {
+        const data = Object.keys(headerData).map((key: string) => ({
+            label: key,
+            value: headerData[key] ?? ''
+        }))
+        return data.length ? data : [{ label: '', value: '' }]
+    }
+
+    return [{ label: '', value: '' }]
+}
+
 // 保存数据
 function saveData() {
     btnLoadingConfig.saveLoading = true
     SaveWorkItemConfig({
         workId: props.workItemConfig.id,
-        apiWorkConfig: {
-            requestUrl: formData.requestUrl,
-            requestType: formData.requestType,
-            requestBody: formData.requestBody,
-            requestParam: [],
-            requestHeader: formData.requestHeader
-        },
-        syncWorkConfig: {
-            ...formData,
+        apiSyncConfig: {
+            workId: props.workItemConfig.id,
+            sourceType: formData.sourceDBType,
+            targetType: formData.targetDBType,
+            sourceDBId: formData.sourceDBId,
+            sourceTable: formData.sourceTable,
+            jsonDataType: formData.jsonDataType,
+            nodeRootJsonPath: formData.rootJsonPath,
+            partitionColumn: formData.partitionColumn,
+            queryCondition: formData.queryCondition,
+            sourceRequestType: formData.requestType,
+            sourceRequestHttp: formData.requestUrl,
+            sourceRequestHeader: convertHeaderListToMap(formData.requestHeader),
+            sourceRequestBody: formData.requestBody,
+            sourceResponseBody: formData.jsonTemplate,
+            sourcePageSize: Number(formData.pageSize) || 10,
+            sourceStartPage: Number(formData.pageStart) || 1,
+            sourceEndPage: Number(formData.pageEnd) || 2,
+            syncAll: !!formData.pageAll,
+            targetDBId: formData.targetDBId,
+            targetTable: formData.targetTable,
+            targetRequestType: formData.targetRequestType,
+            targetRequestHttp: formData.targetRequestUrl,
+            targetRequestHeader: convertHeaderListToMap(formData.targetRequestHeader),
+            targetRequestBody: formData.targetRequestBody,
             sourceTableColumn: dataSyncTableRef.value.getSourceTableColumn(),
             targetTableColumn: dataSyncTableRef.value.getTargetTableColumn(),
             columnMap: dataSyncTableRef.value.getConnect()
@@ -564,6 +613,57 @@ function getData() {
     }
 
     requestMethod(requestParams).then((res: any) => {
+        if (res.data.apiSyncConfig) {
+            const apiSyncConfig = res.data.apiSyncConfig
+            const tableInitData = {
+                ...apiSyncConfig,
+                sourceTableColumn: apiSyncConfig.sourceTableColumn || [],
+                targetTableColumn: apiSyncConfig.targetTableColumn || [],
+                columnMap: apiSyncConfig.columnMap || []
+            }
+            Object.keys(formData).forEach((key: string) => {
+                formData[key] = apiSyncConfig[key] ?? formData[key]
+            })
+            formData.sourceDBType = apiSyncConfig.sourceType || formData.sourceDBType || 'API'
+            formData.targetDBType = apiSyncConfig.targetType || formData.targetDBType || 'DATASOURCE'
+            formData.requestType = apiSyncConfig.sourceRequestType || formData.requestType || 'GET'
+            formData.requestUrl = apiSyncConfig.sourceRequestHttp || formData.requestUrl || ''
+            formData.requestBody = apiSyncConfig.sourceRequestBody || formData.requestBody || ''
+            formData.requestHeader = normalizeHeaderToList(apiSyncConfig.sourceRequestHeader)
+            formData.jsonTemplate = apiSyncConfig.sourceResponseBody || formData.jsonTemplate || ''
+            formData.jsonDataType = apiSyncConfig.jsonDataType || formData.jsonDataType || ''
+            formData.rootJsonPath = apiSyncConfig.nodeRootJsonPath || formData.rootJsonPath || ''
+            formData.pageSize = Number(apiSyncConfig.sourcePageSize) || 10
+            formData.pageStart = Number(apiSyncConfig.sourceStartPage) || 1
+            formData.pageEnd = Number(apiSyncConfig.sourceEndPage) || 2
+            formData.pageAll = !!apiSyncConfig.syncAll
+            formData.targetRequestType = apiSyncConfig.targetRequestType || formData.targetRequestType || 'POST'
+            formData.targetRequestUrl = apiSyncConfig.targetRequestHttp || formData.targetRequestUrl || ''
+            formData.targetRequestBody = apiSyncConfig.targetRequestBody || formData.targetRequestBody || ''
+            formData.targetRequestHeader = normalizeHeaderToList(apiSyncConfig.targetRequestHeader)
+
+            formData.sourceDBId = apiSyncConfig.sourceDBId || formData.sourceDBId || ''
+            formData.sourceTable = apiSyncConfig.sourceTable || formData.sourceTable || ''
+            formData.partitionColumn = apiSyncConfig.partitionColumn || formData.partitionColumn || ''
+            formData.queryCondition = apiSyncConfig.queryCondition || formData.queryCondition || ''
+            formData.targetDBId = apiSyncConfig.targetDBId || formData.targetDBId || ''
+            formData.targetTable = apiSyncConfig.targetTable || formData.targetTable || ''
+
+            nextTick(() => {
+                getDataSource(true, formData.sourceDBType, 'source')
+                getDataSource(true, formData.targetDBType, 'target')
+                if (formData.sourceDBType === 'DATASOURCE') {
+                    getDataSourceTable(true, formData.sourceDBId, 'source')
+                }
+                getDataSourceTable(true, formData.targetDBId, 'target')
+
+                dataSyncTableRef.value.initPageData(tableInitData)
+                changeStatus.value = false
+            })
+            return
+        }
+
+        // 兼容历史配置字段，避免旧数据无法回显
         if (res.data.syncWorkConfig) {
             Object.keys(formData).forEach((key: string) => {
                 formData[key] = res.data.syncWorkConfig[key]
@@ -589,9 +689,7 @@ function getData() {
             formData.requestUrl = res.data.apiWorkConfig.requestUrl || ''
             formData.requestType = res.data.apiWorkConfig.requestType || ''
             formData.requestBody = res.data.apiWorkConfig.requestBody || ''
-            formData.requestHeader = res.data.apiWorkConfig.requestHeader?.length
-                ? res.data.apiWorkConfig.requestHeader
-                : [{ label: '', value: '' }]
+            formData.requestHeader = normalizeHeaderToList(res.data.apiWorkConfig.requestHeader)
         }
     }).catch(err => {
         console.error(err)
