@@ -83,4 +83,10 @@ public class ApiSyncConfig {
 
     @Schema(title = "字段映射关系", example = "[{\"source\": \"installed_rank\",\"target\": \"installed_rank\"}]")
     private List<SyncColumnMap> columnMap;
+
+    @Schema(title = "解析类型", example = "LIST/OBJECT")
+    private String jsonDataType;
+
+    @Schema(title = "节点根目录jsonPath", example = "$..")
+    private String nodeRootJsonPath;
 }
