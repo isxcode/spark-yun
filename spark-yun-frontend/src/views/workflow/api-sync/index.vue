@@ -1246,8 +1246,8 @@ onUnmounted(() => {
                             }
 
                             .api-request-line__method {
-                                width: 140px;
-                                min-width: 140px;
+                                width: 80px;
+                                min-width: 80px;
                             }
 
                             .api-request-line__url {
