@@ -64,7 +64,7 @@
                         <template v-if="formData.sourceDBType === 'API'">
                             <el-form-item prop="requestUrl" label="接口">
                                 <div class="api-request-line">
-                                    <el-select v-model="formData.requestType" class="api-request-line__method" placeholder="请求方式">
+                                    <el-select v-model="formData.requestType" class="api-request-line__method" placeholder="请求方式" @change="sourceRequestTypeChangeEvent">
                                         <el-option label="GET" value="GET" />
                                         <el-option label="POST" value="POST" />
                                     </el-select>
@@ -80,7 +80,6 @@
                             <el-form-item label="配置" class="api-config-row">
                                 <div class="api-request-line__actions">
                                     <el-button type="primary" link size="small" @click="openRequestHeaderConfig('source')">请求头</el-button>
-                                    <el-button type="primary" link size="small" @click="openRequestBodyTemplateConfig('source')">请求体模版</el-button>
                                     <el-button type="primary" link size="small" @click="openResponseBodyTemplateConfig('source')">响应体模版</el-button>
                                 </div>
                             </el-form-item>
@@ -121,7 +120,7 @@
                                     <span class="paging-line__text">第</span>
                                     <el-input-number
                                         v-model="formData.pageStart"
-                                        :min="1"
+                                        :min="0"
                                         :max="100000"
                                         controls-position="right"
                                         :disabled="formData.pageAll"
@@ -130,7 +129,7 @@
                                     <span class="paging-line__text">到</span>
                                     <el-input-number
                                         v-model="formData.pageEnd"
-                                        :min="1"
+                                        :min="0"
                                         :max="100000"
                                         controls-position="right"
                                         :disabled="formData.pageAll"
@@ -206,7 +205,7 @@
                         <template v-if="formData.targetDBType === 'API'">
                             <el-form-item label="接口">
                                 <div class="api-request-line">
-                                    <el-select v-model="formData.targetRequestType" class="api-request-line__method" placeholder="请求方式">
+                                    <el-select v-model="formData.targetRequestType" class="api-request-line__method" placeholder="请求方式" @change="targetRequestTypeChangeEvent">
                                         <el-option label="GET" value="GET" />
                                         <el-option label="POST" value="POST" />
                                     </el-select>
@@ -222,7 +221,6 @@
                             <el-form-item label="配置" class="api-config-row">
                                 <div class="api-request-line__actions">
                                     <el-button type="primary" link size="small" @click="openRequestHeaderConfig('target')">请求头</el-button>
-                                    <el-button type="primary" link size="small" @click="openRequestBodyTemplateConfig('target')">请求体模版</el-button>
                                 </div>
                             </el-form-item>
                             <el-form-item label="请求体" v-if="formData.targetRequestType === 'POST'">
@@ -367,7 +365,7 @@ import TableDetail from './table-detail/index.vue'
 import DataSyncTable from './data-sync-table/index.vue'
 import ConfigDetail from '../workflow-page/config-detail/index.vue'
 import { GetJsonArrayNodeList, GetTopicDataList } from '@/services/realtime-computing.service.ts'
-import { GetLineageWorkItemConfig, GetWorkItemConfig, RunWorkItemConfig, SaveWorkItemConfig, TerWorkItemConfig } from '@/services/workflow.service'
+import { GetApiDataPreview, GetLineageWorkItemConfig, GetWorkItemConfig, RunWorkItemConfig, SaveWorkItemConfig, TerWorkItemConfig } from '@/services/workflow.service'
 import PublishLog from '../work-item/publish-log.vue'
 import RunningLog from '../work-item/running-log.vue'
 import { Delete, Loading } from '@element-plus/icons-vue'
@@ -489,6 +487,11 @@ const btnLoadingConfig = reactive({
     stopLoading: false
 })
 
+function toNumberOrDefault(value: any, defaultValue: number) {
+    const numberValue = Number(value)
+    return Number.isNaN(numberValue) ? defaultValue : numberValue
+}
+
 // 日志tab切换
 function startResizeLogPanel(event: MouseEvent) {
     resizeState.resizing = true
@@ -581,8 +584,8 @@ function saveData() {
             sourceRequestBody: formData.requestBody,
             sourceResponseBody: formData.jsonTemplate,
             sourcePageSize: Number(formData.pageSize) || 10,
-            sourceStartPage: Number(formData.pageStart) || 1,
-            sourceEndPage: Number(formData.pageEnd) || 2,
+            sourceStartPage: toNumberOrDefault(formData.pageStart, 0),
+            sourceEndPage: toNumberOrDefault(formData.pageEnd, 1),
             syncAll: !!formData.pageAll,
             targetDBId: formData.targetDBId,
             targetTable: formData.targetTable,
@@ -634,8 +637,8 @@ function getData() {
             formData.jsonDataType = apiSyncConfig.jsonDataType || formData.jsonDataType || ''
             formData.rootJsonPath = apiSyncConfig.nodeRootJsonPath || formData.rootJsonPath || ''
             formData.pageSize = Number(apiSyncConfig.sourcePageSize) || 10
-            formData.pageStart = Number(apiSyncConfig.sourceStartPage) || 1
-            formData.pageEnd = Number(apiSyncConfig.sourceEndPage) || 2
+            formData.pageStart = toNumberOrDefault(apiSyncConfig.sourceStartPage, 0)
+            formData.pageEnd = toNumberOrDefault(apiSyncConfig.sourceEndPage, 1)
             formData.pageAll = !!apiSyncConfig.syncAll
             formData.targetRequestType = apiSyncConfig.targetRequestType || formData.targetRequestType || 'POST'
             formData.targetRequestUrl = apiSyncConfig.targetRequestHttp || formData.targetRequestUrl || ''
@@ -669,8 +672,8 @@ function getData() {
                 formData[key] = res.data.syncWorkConfig[key]
             })
             formData.pageSize = Number(formData.pageSize) || 10
-            formData.pageStart = Number(formData.pageStart) || 1
-            formData.pageEnd = Number(formData.pageEnd) || 2
+            formData.pageStart = toNumberOrDefault(formData.pageStart, 0)
+            formData.pageEnd = toNumberOrDefault(formData.pageEnd, 1)
             formData.pageAll = !!formData.pageAll
 
             nextTick(() => {
@@ -831,6 +834,10 @@ function parseSourceTemplateByJsonType(jsonDataType?: string, showEmptyTemplateE
     const currentJsonTemplate = (formData.jsonTemplate || '').trim()
     if (!currentJsonTemplate) {
         nodeArrayList.value = []
+        dataSyncTableRef.value.getTableColumnData({
+            dataSourceId: '',
+            tableName: ''
+        }, 'source')
         if (showEmptyTemplateError) {
             ElMessage.error('响应体模版为空')
         }
@@ -844,6 +851,17 @@ function parseSourceTemplateByJsonType(jsonDataType?: string, showEmptyTemplateE
     }
     if (parseType === 'LIST') {
         getJsonNodeArray(true, currentJsonTemplate)
+        if (formData.rootJsonPath) {
+            dataSyncTableRef.value.getCurrentTableColumn({
+                jsonStr: currentJsonTemplate,
+                rootPath: formData.rootJsonPath
+            })
+        } else {
+            dataSyncTableRef.value.getTableColumnData({
+                dataSourceId: '',
+                tableName: ''
+            }, 'source')
+        }
     }
 }
 
@@ -966,13 +984,44 @@ function getTableColumnData(e: boolean, dataSourceId: string, tableName: string)
 }
 
 function previewDataEvent() {
-    if (!formData.targetDBId || !formData.targetTable) {
-        ElMessage.warning('请先选择数据去向中的数据源和表')
+    if (formData.sourceDBType !== 'API') {
+        ElMessage.warning('当前数据来源不是接口类型')
         return
     }
-    tableDetailRef.value.showModal({
-        dataSourceId: formData.targetDBId,
-        tableName: formData.targetTable
+    if (!formData.requestType || !formData.requestUrl) {
+        ElMessage.warning('请先填写接口和请求方式')
+        return
+    }
+    if (!formData.jsonDataType) {
+        ElMessage.warning('请先选择解析类型')
+        return
+    }
+    const tableColumn = dataSyncTableRef.value?.getSourceTableColumn?.() || []
+    if (!tableColumn.length) {
+        ElMessage.warning('请先解析来源字段')
+        return
+    }
+
+    GetApiDataPreview({
+        requestType: formData.requestType,
+        requestHttp: formData.requestUrl,
+        requestHeader: convertHeaderListToMap(formData.requestHeader),
+        requestBody: formData.requestBody,
+        responseBody: formData.jsonTemplate,
+        pageSize: Number(formData.pageSize) || 10,
+        startPage: toNumberOrDefault(formData.pageStart, 0),
+        endPage: toNumberOrDefault(formData.pageEnd, 1),
+        syncAll: !!formData.pageAll,
+        jsonDataType: formData.jsonDataType,
+        nodeRootJsonPath: formData.rootJsonPath,
+        tableColumn: tableColumn
+    }).then((res: any) => {
+        tableDetailRef.value.showApiModal({
+            columns: res.data?.columns || [],
+            rows: res.data?.rows || []
+        })
+    }).catch((err: any) => {
+        console.error(err)
     })
 }
 
@@ -1013,6 +1062,20 @@ function changeCollapseUp(e: any) {
 }
 function pageChangeEvent() {
     changeStatus.value = true
+}
+
+function sourceRequestTypeChangeEvent() {
+    if (formData.requestType === 'GET') {
+        formData.requestBody = ''
+    }
+    pageChangeEvent()
+}
+
+function targetRequestTypeChangeEvent() {
+    if (formData.targetRequestType === 'GET') {
+        formData.targetRequestBody = ''
+    }
+    pageChangeEvent()
 }
 
 function openRequestHeaderConfig(scope: 'source' | 'target' = 'source') {

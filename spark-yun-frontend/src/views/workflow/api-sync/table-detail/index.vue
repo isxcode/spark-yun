@@ -17,6 +17,11 @@ interface Param {
     tableName: string
 }
 
+interface ApiPreviewData {
+    columns: string[]
+    rows: Array<Array<string | null>>
+}
+
 const info = ref<Param>()
 const tableConfig = reactive({
     tableData: [],
@@ -46,29 +51,18 @@ function showModal(data: Param): void {
     modelConfig.visible = true
 }
 
+function showApiModal(data: ApiPreviewData): void {
+    renderTable(data.columns || [], data.rows || [])
+    modelConfig.width = '64%'
+    modelConfig.title = '数据预览'
+    modelConfig.visible = true
+}
+
 // 获取结果
 function getResultDatalist() {
     tableConfig.loading = true
     GetSourceTablesDetail(info.value).then((res: any) => {
-        const col = res.data.columns
-        const tableData = res.data.rows
-        tableConfig.colConfigs = col.map((colunm: any) => {
-            return {
-                prop: colunm,
-                title: colunm,
-                minWidth: 100,
-                showHeaderOverflow: true,
-                showOverflowTooltip: true
-            }
-        })
-        tableConfig.tableData = []
-        res.data.rows.forEach(rowData => {
-            const columnData = {}
-            col.forEach((cl, index) => {
-                columnData[cl] = rowData[index]
-            })
-            tableConfig.tableData.push(columnData)
-        })
+        renderTable(res.data.columns || [], res.data.rows || [])
         tableConfig.loading = false
     })
     .catch(() => {
@@ -78,12 +72,33 @@ function getResultDatalist() {
     })
 }
 
+function renderTable(columns: string[], rows: Array<Array<string | null>>) {
+    tableConfig.colConfigs = columns.map((column: any) => {
+        return {
+            prop: column,
+            title: column,
+            minWidth: 100,
+            showHeaderOverflow: true,
+            showOverflowTooltip: true
+        }
+    })
+    tableConfig.tableData = []
+    rows.forEach((rowData: any) => {
+        const columnData = {}
+        columns.forEach((column: any, index: number) => {
+            columnData[column] = rowData?.[index]
+        })
+        tableConfig.tableData.push(columnData)
+    })
+}
+
 function closeEvent() {
     modelConfig.visible = false
 }
 
 defineExpose({
-    showModal
+    showModal,
+    showApiModal
 })
 </script>
 

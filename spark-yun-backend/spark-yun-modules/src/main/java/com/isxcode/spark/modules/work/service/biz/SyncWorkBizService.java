@@ -2,7 +2,6 @@ package com.isxcode.spark.modules.work.service.biz;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.JSONPath;
 import com.isxcode.spark.api.api.constants.ApiType;
 import com.isxcode.spark.api.datasource.dto.ColumnMetaDto;
@@ -232,7 +231,7 @@ public class SyncWorkBizService {
             : new HashMap<>(getApiDataReq.getRequestHeader());
 
         // 返回体
-        Object responseObj;
+        String responseObj;
         try {
             if (ApiType.GET.equalsIgnoreCase(getApiDataReq.getRequestType())) {
 
@@ -241,26 +240,18 @@ public class SyncWorkBizService {
                     .replace("${pageSize}", String.valueOf(pageSize));
 
                 // get请求返回
-                responseObj = HttpUtils.doGet(requestUrl, null, requestHeader, Object.class);
+                responseObj = HttpUtils.doPost(requestUrl, null, requestHeader, String.class);
             } else if (ApiType.POST.equalsIgnoreCase(getApiDataReq.getRequestType())) {
 
                 // 替换分页信息
                 String requestBody = getApiDataReq.getRequestBody();
                 if (requestBody != null) {
-                    requestBody = requestBody.replace("${page}", String.valueOf(startPage)).replace("${pageSize}",
-                        String.valueOf(pageSize));
+                    requestBody = requestBody.replace("\"${page}\"", String.valueOf(startPage))
+                        .replace("\"${pageSize}\"", String.valueOf(pageSize));
                 }
 
-                // 封装请求体
-                Object postBody;
-                if (Strings.isEmpty(requestBody)) {
-                    postBody = new JSONObject();
-                } else if (JSON.isValid(requestBody)) {
-                    postBody = JSON.parse(requestBody);
-                } else {
-                    throw new IsxAppException("请求体必须是合法JSON");
-                }
-                responseObj = HttpUtils.doPost(getApiDataReq.getRequestHttp(), requestHeader, postBody, Object.class);
+                responseObj = HttpUtils.doPost(getApiDataReq.getRequestHttp(), requestHeader,
+                    JSON.parseObject(requestBody), String.class);
             } else {
                 throw new IsxAppException("请求方式仅支持POST/GET");
             }
@@ -281,7 +272,7 @@ public class SyncWorkBizService {
             rows.add(singleRow);
         } else if ("LIST".equalsIgnoreCase(getApiDataReq.getJsonDataType())) {
             // 解析数组数据
-            Object extract = JSONPath.extract(JSON.toJSONString(responseObj), getApiDataReq.getNodeRootJsonPath());
+            Object extract = JSONPath.extract(responseObj, getApiDataReq.getNodeRootJsonPath());
             JSONArray resultJsonArray = JSON.parseArray(JSON.toJSONString(extract));
             for (Object metaData : resultJsonArray) {
                 List<String> singleRow = new ArrayList<>();
@@ -296,7 +287,7 @@ public class SyncWorkBizService {
         }
 
         List<String> columns = new ArrayList<>();
-        getApiDataReq.getTableColumn().forEach(column -> columns.add(column.toString()));
+        getApiDataReq.getTableColumn().forEach(column -> columns.add(column.getCode()));
 
         return GetApiDataRes.builder().columns(columns).rows(rows).build();
     }

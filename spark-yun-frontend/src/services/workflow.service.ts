@@ -165,6 +165,15 @@ export function SaveWorkItemConfig(params: any): Promise<any> {
   })
 }
 
+// 作业-接口采集-API数据预览
+export function GetApiDataPreview(params: any): Promise<any> {
+  return http.request({
+    method: 'post',
+    url: '/work/getApiData',
+    params: params
+  })
+}
+
 // 作业-详情-提交日志
 export function GetSubmitLogData(params: any): Promise<any> {
   return http.request({
