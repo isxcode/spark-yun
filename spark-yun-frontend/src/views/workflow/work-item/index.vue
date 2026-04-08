@@ -607,21 +607,8 @@ onUnmounted(() => {
       z-index: 100;
 
       .log-resize-handle {
-        height: 10px;
+        height: 6px;
         cursor: ns-resize;
-        position: relative;
-
-        &::after {
-          content: '';
-          position: absolute;
-          left: 50%;
-          top: 3px;
-          transform: translateX(-50%);
-          width: 52px;
-          height: 3px;
-          border-radius: 4px;
-          background: getCssVar('border-color');
-        }
       }
 
       .el-collapse-item__header {
