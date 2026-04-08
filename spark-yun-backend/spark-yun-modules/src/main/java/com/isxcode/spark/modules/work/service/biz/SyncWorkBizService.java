@@ -199,7 +199,43 @@ public class SyncWorkBizService {
 
     public GetApiDataRes getApiDataRes(GetApiDataReq getApiDataReq) {
 
+        //
 
-        return GetApiDataRes.builder().build();
+        // 请求体模版 如下
+        // {
+        //  "req": {
+        //    "name": "zhangsan"
+        //  },
+        //  "custom_page": "${page}",
+        //  "custom_pageSize": "${pageSize}"
+        //}
+
+        // 响应体模版如下
+        // {
+        //  "data": [
+        //    {
+        //      "username": "zhangsan",
+        //      "age": 12
+        //    }
+        //  ],
+        //  "count": "${count.long}"
+        //}
+
+        // jsonDataType： 数组
+
+        // nodeRootJsonPath： $.data
+
+        // 接口预览数据逻辑
+        // 1. 将请求体模版中的${page}替换成开始页数 和 ${pageSize}替换每页大小
+        // 2. 封装请求对象，请求接口
+        // 3. 接口返回json字符串，开始使用，配置tableColumn中的字段列表
+        // 如果是解析采用对象， json字符串使用jsonPath一个个解析，然后返回
+        // 如果是解析采用数组， json字符串先用jsonPath先获取数组字符串，再便利使用tableColumn中的jsonPath解析数据
+        // 返回列表
+
+
+
+
+        return null;
     }
 }
