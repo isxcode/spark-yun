@@ -1,8 +1,10 @@
 package com.isxcode.spark.api.work.req;
 
+import com.isxcode.spark.api.work.dto.SyncColumnInfo;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
+import java.util.List;
 import java.util.Map;
 
 @Data
@@ -40,4 +42,7 @@ public class GetApiDataReq {
 
     @Schema(title = "节点根目录jsonPath", example = "$..")
     private String nodeRootJsonPath;
+
+    @Schema(title = "来源表信息", example = "[{\"code\":\"installed_rank\",\"type\":\"String\",\"sql\":\"\"}]")
+    private List<SyncColumnInfo> tableColumn;
 }
