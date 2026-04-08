@@ -259,6 +259,11 @@ public class WorkConfigBizService {
             workConfig.setSparkEtlConfig(JSON.toJSONString(wocConfigWorkReq.getSparkEtlConfig()));
         }
 
+        // 设置接口采集配置
+        if (wocConfigWorkReq.getApiSyncConfig() != null) {
+            workConfig.setApiSyncConfig(JSON.toJSONString(wocConfigWorkReq.getApiSyncConfig()));
+        }
+
         // 保存配置
         workConfigRepository.save(workConfig);
     }
