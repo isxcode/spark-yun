@@ -477,6 +477,10 @@ public class WorkBizService {
             getWorkRes.setSyncFlinkConfig(JSON.parseObject(workConfig.getSyncFlinkConfig(), SyncFlinkConfig.class));
         }
 
+        if (!Strings.isEmpty(workConfig.getApiSyncConfig())) {
+            getWorkRes.setApiSyncConfig(JSON.parseObject(workConfig.getApiSyncConfig(), ApiSyncConfig.class));
+        }
+
         return getWorkRes;
     }
 
