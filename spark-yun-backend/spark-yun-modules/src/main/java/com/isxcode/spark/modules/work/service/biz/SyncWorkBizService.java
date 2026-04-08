@@ -1,7 +1,9 @@
 package com.isxcode.spark.modules.work.service.biz;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.JSONPath;
 import com.isxcode.spark.api.api.constants.ApiType;
 import com.isxcode.spark.api.datasource.dto.ColumnMetaDto;
 import com.isxcode.spark.api.datasource.dto.ConnectInfo;
@@ -270,13 +272,25 @@ public class SyncWorkBizService {
         // 解析数据
         List<List<String>> rows = new ArrayList<>();
         if ("OBJECT".equalsIgnoreCase(getApiDataReq.getJsonDataType())) {
+            List<String> singleRow = new ArrayList<>();
             // 解析对象数据
-
-
+            getApiDataReq.getTableColumn().forEach(column -> {
+                Object value = JSONPath.extract(JSON.toJSONString(responseObj), column.getJsonPath());
+                singleRow.add(String.valueOf(value));
+            });
+            rows.add(singleRow);
         } else if ("LIST".equalsIgnoreCase(getApiDataReq.getJsonDataType())) {
             // 解析数组数据
-
-
+            Object extract = JSONPath.extract(JSON.toJSONString(responseObj), getApiDataReq.getNodeRootJsonPath());
+            JSONArray resultJsonArray = JSON.parseArray(JSON.toJSONString(extract));
+            for (Object metaData : resultJsonArray) {
+                List<String> singleRow = new ArrayList<>();
+                getApiDataReq.getTableColumn().forEach(column -> {
+                    Object value = JSONPath.extract(JSON.toJSONString(metaData), column.getJsonPath());
+                    singleRow.add(String.valueOf(value));
+                });
+                rows.add(singleRow);
+            }
         } else {
             throw new IsxAppException("解析类型仅支持对象和数组");
         }
