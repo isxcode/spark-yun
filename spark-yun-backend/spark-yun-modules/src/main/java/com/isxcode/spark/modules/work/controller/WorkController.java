@@ -265,4 +265,11 @@ public class WorkController {
         return workBizService.getWorkInstanceTablePath(getWorkInstanceTablePathReq);
     }
 
+    @Operation(summary = "api数据预览接口")
+    @PostMapping("/getApiData")
+    @SuccessResponse("查询成功")
+    public GetApiDataRes getApiData(@Valid @RequestBody GetApiDataReq getApiDataReq) {
+
+        return excelSyncService.getApiDataRes(getApiDataReq);
+    }
 }

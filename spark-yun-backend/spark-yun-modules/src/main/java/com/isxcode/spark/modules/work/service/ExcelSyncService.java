@@ -5,9 +5,11 @@ import cn.hutool.core.io.FileUtil;
 import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelUtil;
 import com.isxcode.spark.api.datasource.dto.ColumnMetaDto;
+import com.isxcode.spark.api.work.req.GetApiDataReq;
 import com.isxcode.spark.api.work.req.GetExcelColumnsReq;
 import com.isxcode.spark.api.work.req.GetExcelDataReq;
 import com.isxcode.spark.api.work.req.ParseExcelNameReq;
+import com.isxcode.spark.api.work.res.GetApiDataRes;
 import com.isxcode.spark.api.work.res.GetExcelColumnsRes;
 import com.isxcode.spark.api.work.res.GetExcelDataRes;
 import com.isxcode.spark.api.work.res.ParseExcelNameRes;
@@ -135,5 +137,12 @@ public class ExcelSyncService {
 
         String fileName = sqlFunctionService.parseSqlFunction(parseExcelNameReq.getFilePattern());
         return ParseExcelNameRes.builder().fileName(fileName).build();
+    }
+
+    public GetApiDataRes getApiDataRes(GetApiDataReq getApiDataReq) {
+
+
+
+        return GetApiDataRes.builder().build();
     }
 }
