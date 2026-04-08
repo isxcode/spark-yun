@@ -67,4 +67,6 @@ public class GetWorkRes {
     private DbMigrateConfig dbMigrateConfig;
 
     private SparkEtlConfig sparkEtlConfig;
+
+    private ApiSyncConfig apiSyncConfig;
 }
