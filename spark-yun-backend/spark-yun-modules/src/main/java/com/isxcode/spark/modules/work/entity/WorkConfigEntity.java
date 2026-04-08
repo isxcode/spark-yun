@@ -74,6 +74,8 @@ public class WorkConfigEntity {
 
     private String sparkEtlConfig;
 
+    private String apiSyncConfig;
+
     @CreatedDate
     private LocalDateTime createDateTime;
 
