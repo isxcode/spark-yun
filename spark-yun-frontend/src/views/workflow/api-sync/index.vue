@@ -215,8 +215,7 @@
                     </template>
                     <el-form ref="form" label-position="left" label-width="70px" :model="formData" :rules="rules" :disabled="props.disabled">
                         <el-form-item prop="targetDBType" label="类型">
-                            <el-select v-model="formData.targetDBType" clearable filterable placeholder="请选择"
-                                @change="dbTypeChange">
+                            <el-select v-model="formData.targetDBType" placeholder="请选择" @change="dbTypeChange">
                                 <el-option v-for="item in typeList" :key="item.value" :label="item.label"
                                     :value="item.value" />
                             </el-select>
@@ -377,7 +376,6 @@ import { ElMessage, ElMessageBox, FormInstance, FormRules } from 'element-plus'
 // import CodeMirror from 'vue-codemirror6'
 import { sql } from '@codemirror/lang-sql'
 import {json} from '@codemirror/lang-json'
-import { DataSourceType, CurrentSourceType } from './data.config.ts'
 import { GetDatasourceList } from '@/services/datasource.service'
 import { GetDataSourceTables, GetTableColumnsByTableId } from '@/services/data-sync.service'
 import TableDetail from './table-detail/index.vue'
@@ -415,8 +413,18 @@ const targetTablesList = ref<Option[]>([])
 const partKeyList = ref<Option[]>([])
 const kafkaSourceList = ref<Option[]>([])
 // const overModeList = ref<Option[]>(OverModeList)
-const sourceTypeList = ref<Option[]>(CurrentSourceType)
-const typeList = ref(DataSourceType);
+const sourceTypeList = ref<Option[]>([
+    {
+        label: '接口',
+        value: 'API'
+    }
+])
+const typeList = ref<Option[]>([
+    {
+        label: '数据源',
+        value: 'DATASOURCE'
+    }
+]);
 const nodeArrayList = ref([])
 const requestHeaderVisible = ref(false)
 const requestHeaderConfigList = ref<Array<{ label: string; value: string }>>([])
@@ -646,8 +654,8 @@ function getData() {
             Object.keys(formData).forEach((key: string) => {
                 formData[key] = apiSyncConfig[key] ?? formData[key]
             })
-            formData.sourceDBType = apiSyncConfig.sourceType || formData.sourceDBType || 'API'
-            formData.targetDBType = apiSyncConfig.targetType || formData.targetDBType || 'DATASOURCE'
+            formData.sourceDBType = 'API'
+            formData.targetDBType = 'DATASOURCE'
             formData.requestType = apiSyncConfig.sourceRequestType || formData.requestType || 'GET'
             formData.requestUrl = apiSyncConfig.sourceRequestHttp || formData.requestUrl || ''
             formData.requestBody = apiSyncConfig.sourceRequestBody || formData.requestBody || ''
@@ -690,6 +698,8 @@ function getData() {
             Object.keys(formData).forEach((key: string) => {
                 formData[key] = res.data.syncWorkConfig[key]
             })
+            formData.sourceDBType = 'API'
+            formData.targetDBType = 'DATASOURCE'
             formData.pageSize = Number(formData.pageSize) || 10
             formData.pageStart = toNumberOrDefault(formData.pageStart, 0)
             formData.pageEnd = toNumberOrDefault(formData.pageEnd, 1)
