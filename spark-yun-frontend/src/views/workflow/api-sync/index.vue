@@ -800,13 +800,14 @@ function getTopicList(e: boolean, dataSourceId: string) {
     }
 }
 // 获取节点
-function getJsonNodeArray(e: boolean) {
+function getJsonNodeArray(e: boolean, jsonTemplate?: string) {
     if (!e) {
         return
     }
-    if (formData.jsonTemplate) {
+    const currentJsonTemplate = jsonTemplate ?? formData.jsonTemplate
+    if (currentJsonTemplate) {
         GetJsonArrayNodeList({
-            jsonStr: formData.jsonTemplate
+            jsonStr: currentJsonTemplate
         }).then((res: any) => {
             nodeArrayList.value = res.data.map((item: any) => {
                 return {
@@ -819,6 +820,30 @@ function getJsonNodeArray(e: boolean) {
         })
     } else {
         nodeArrayList.value = []
+    }
+}
+
+function parseSourceTemplateByJsonType(jsonDataType?: string, showEmptyTemplateError?: boolean) {
+    const parseType = jsonDataType || formData.jsonDataType
+    if (!parseType) {
+        return
+    }
+    const currentJsonTemplate = (formData.jsonTemplate || '').trim()
+    if (!currentJsonTemplate) {
+        nodeArrayList.value = []
+        if (showEmptyTemplateError) {
+            ElMessage.error('响应体模版为空')
+        }
+        return
+    }
+    if (parseType === 'OBJECT') {
+        dataSyncTableRef.value.getCurrentTableColumn({
+            jsonStr: currentJsonTemplate
+        })
+        return
+    }
+    if (parseType === 'LIST') {
+        getJsonNodeArray(true, currentJsonTemplate)
     }
 }
 
@@ -871,13 +896,7 @@ function getKafkaSourceTable(e: boolean, sourceType: string) {
 
 function getCurrentTableColumn(e: string) {
     changeStatus.value = true
-    if (e === 'OBJECT') {
-        dataSyncTableRef.value.getCurrentTableColumn({
-            jsonStr: formData.jsonTemplate
-        })
-    } else {
-        getJsonNodeArray(true)
-    }
+    parseSourceTemplateByJsonType(e, true)
 }
 
 function tableChangeEvent(e: string, dataSourceId: string, type: string) {
@@ -1079,6 +1098,7 @@ function openResponseBodyTemplateConfig(scope: 'source' | 'target' = 'source') {
 function saveResponseBodyTemplateConfig() {
     if (requestConfigScope.value === 'source') {
         formData.jsonTemplate = responseBodyTemplateText.value
+        parseSourceTemplateByJsonType()
     } else {
         formData.targetJsonTemplate = responseBodyTemplateText.value
     }
