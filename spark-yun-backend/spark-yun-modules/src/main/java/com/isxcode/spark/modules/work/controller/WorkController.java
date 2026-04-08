@@ -270,6 +270,6 @@ public class WorkController {
     @SuccessResponse("查询成功")
     public GetApiDataRes getApiData(@Valid @RequestBody GetApiDataReq getApiDataReq) {
 
-        return excelSyncService.getApiDataRes(getApiDataReq);
+        return syncWorkBizService.getApiDataRes(getApiDataReq);
     }
 }

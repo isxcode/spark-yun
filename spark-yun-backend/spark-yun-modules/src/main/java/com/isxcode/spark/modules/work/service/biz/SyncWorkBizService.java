@@ -3,14 +3,8 @@ package com.isxcode.spark.modules.work.service.biz;
 import com.isxcode.spark.api.datasource.dto.ColumnMetaDto;
 import com.isxcode.spark.api.datasource.dto.ConnectInfo;
 import com.isxcode.spark.api.datasource.dto.TableMetaInfo;
-import com.isxcode.spark.api.work.req.GetCreateTableSqlReq;
-import com.isxcode.spark.api.work.req.GetDataSourceColumnsReq;
-import com.isxcode.spark.api.work.req.GetDataSourceDataReq;
-import com.isxcode.spark.api.work.req.GetDataSourceTablesReq;
-import com.isxcode.spark.api.work.res.GetCreateTableSqlRes;
-import com.isxcode.spark.api.work.res.GetDataSourceColumnsRes;
-import com.isxcode.spark.api.work.res.GetDataSourceDataRes;
-import com.isxcode.spark.api.work.res.GetDataSourceTablesRes;
+import com.isxcode.spark.api.work.req.*;
+import com.isxcode.spark.api.work.res.*;
 import com.isxcode.spark.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.spark.modules.datasource.entity.DatasourceEntity;
 import com.isxcode.spark.modules.datasource.mapper.DatasourceMapper;
@@ -201,5 +195,11 @@ public class SyncWorkBizService {
         }
 
         return TableMetaInfo.builder().catalog(catalog).schema(schema).tableName(finalTableName).build();
+    }
+
+    public GetApiDataRes getApiDataRes(GetApiDataReq getApiDataReq) {
+
+
+        return GetApiDataRes.builder().build();
     }
 }
