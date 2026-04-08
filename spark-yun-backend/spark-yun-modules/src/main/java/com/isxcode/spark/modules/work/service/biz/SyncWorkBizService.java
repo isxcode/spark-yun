@@ -1,11 +1,15 @@
 package com.isxcode.spark.modules.work.service.biz;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.isxcode.spark.api.api.constants.ApiType;
 import com.isxcode.spark.api.datasource.dto.ColumnMetaDto;
 import com.isxcode.spark.api.datasource.dto.ConnectInfo;
 import com.isxcode.spark.api.datasource.dto.TableMetaInfo;
 import com.isxcode.spark.api.work.req.*;
 import com.isxcode.spark.api.work.res.*;
 import com.isxcode.spark.backend.api.base.exceptions.IsxAppException;
+import com.isxcode.spark.common.utils.http.HttpUtils;
 import com.isxcode.spark.modules.datasource.entity.DatasourceEntity;
 import com.isxcode.spark.modules.datasource.mapper.DatasourceMapper;
 import com.isxcode.spark.modules.datasource.service.DatasourceService;
@@ -16,14 +20,18 @@ import com.isxcode.spark.modules.meta.repository.MetaColumnRepository;
 import com.isxcode.spark.modules.work.service.SyncWorkService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -199,43 +207,84 @@ public class SyncWorkBizService {
 
     public GetApiDataRes getApiDataRes(GetApiDataReq getApiDataReq) {
 
-        //
+        // 判断合法行
+        if (Strings.isEmpty(getApiDataReq.getRequestType())) {
+            throw new IsxAppException("请求方式不能为空");
+        }
+        if (Strings.isEmpty(getApiDataReq.getRequestHttp())) {
+            throw new IsxAppException("请求地址不能为空");
+        }
+        if (Strings.isEmpty(getApiDataReq.getJsonDataType())) {
+            throw new IsxAppException("解析类型不能为空");
+        }
+        if (getApiDataReq.getTableColumn().isEmpty()) {
+            throw new IsxAppException("解析字段不能为空");
+        }
 
-        // 请求体模版 如下
-        // {
-        //  "req": {
-        //    "name": "zhangsan"
-        //  },
-        //  "custom_page": "${page}",
-        //  "custom_pageSize": "${pageSize}"
-        //}
+        // 获取分页信息
+        int pageSize = getApiDataReq.getPageSize();
+        int startPage = getApiDataReq.getStartPage();
 
-        // 响应体模版如下
-        // {
-        //  "data": [
-        //    {
-        //      "username": "zhangsan",
-        //      "age": 12
-        //    }
-        //  ],
-        //  "count": "${count.long}"
-        //}
+        // 封装请求头
+        Map<String, String> requestHeader = getApiDataReq.getRequestHeader() == null ? new HashMap<>()
+            : new HashMap<>(getApiDataReq.getRequestHeader());
 
-        // jsonDataType： 数组
+        // 返回体
+        Object responseObj;
+        try {
+            if (ApiType.GET.equalsIgnoreCase(getApiDataReq.getRequestType())) {
 
-        // nodeRootJsonPath： $.data
+                // 替换分页信息
+                String requestUrl = getApiDataReq.getRequestHttp().replace("${page}", String.valueOf(startPage))
+                    .replace("${pageSize}", String.valueOf(pageSize));
 
-        // 接口预览数据逻辑
-        // 1. 将请求体模版中的${page}替换成开始页数 和 ${pageSize}替换每页大小
-        // 2. 封装请求对象，请求接口
-        // 3. 接口返回json字符串，开始使用，配置tableColumn中的字段列表
-        // 如果是解析采用对象， json字符串使用jsonPath一个个解析，然后返回
-        // 如果是解析采用数组， json字符串先用jsonPath先获取数组字符串，再便利使用tableColumn中的jsonPath解析数据
-        // 返回列表
+                // get请求返回
+                responseObj = HttpUtils.doGet(requestUrl, null, requestHeader, Object.class);
+            } else if (ApiType.POST.equalsIgnoreCase(getApiDataReq.getRequestType())) {
+
+                // 替换分页信息
+                String requestBody = getApiDataReq.getRequestBody();
+                if (requestBody != null) {
+                    requestBody = requestBody.replace("${page}", String.valueOf(startPage)).replace("${pageSize}",
+                        String.valueOf(pageSize));
+                }
+
+                // 封装请求体
+                Object postBody;
+                if (Strings.isEmpty(requestBody)) {
+                    postBody = new JSONObject();
+                } else if (JSON.isValid(requestBody)) {
+                    postBody = JSON.parse(requestBody);
+                } else {
+                    throw new IsxAppException("请求体必须是合法JSON");
+                }
+                responseObj = HttpUtils.doPost(getApiDataReq.getRequestHttp(), requestHeader, postBody, Object.class);
+            } else {
+                throw new IsxAppException("请求方式仅支持POST/GET");
+            }
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            throw new IsxAppException("请求接口异常: " + e.getMessage());
+        }
+
+        // 解析数据
+        List<List<String>> rows = new ArrayList<>();
+        if ("OBJECT".equalsIgnoreCase(getApiDataReq.getJsonDataType())) {
+            // 解析对象数据
 
 
+        } else if ("LIST".equalsIgnoreCase(getApiDataReq.getJsonDataType())) {
+            // 解析数组数据
 
 
-        return null;
+        } else {
+            throw new IsxAppException("解析类型仅支持对象和数组");
+        }
+
+        List<String> columns = new ArrayList<>();
+        getApiDataReq.getTableColumn().forEach(column -> columns.add(column.toString()));
+
+        return GetApiDataRes.builder().columns(columns).rows(rows).build();
     }
+
 }
