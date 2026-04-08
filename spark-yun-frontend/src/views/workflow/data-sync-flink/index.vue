@@ -1021,6 +1021,11 @@ onUnmounted(() => {
         .log-resize-handle {
             height: 6px;
             cursor: ns-resize;
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: -3px;
+            z-index: 2;
         }
 
         .el-collapse-item__header {
