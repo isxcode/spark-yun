@@ -263,7 +263,15 @@
                                 </el-select>
                             </el-form-item>
                         </template>
-                        <el-form-item prop="overMode" label="写入模式">
+                        <el-form-item prop="overMode">
+                            <template #label>
+                                <span class="request-body-label">
+                                    <span>写入模式</span>
+                                    <el-tooltip placement="right" effect="dark" content="覆写模式会修改目标表的字段结构">
+                                        <el-icon class="tooltip-msg"><QuestionFilled /></el-icon>
+                                    </el-tooltip>
+                                </span>
+                            </template>
                             <el-select v-model="formData.overMode" clearable filterable placeholder="请选择" @change="pageChangeEvent">
                                 <el-option v-for="item in filteredOverModeList" :key="item.value" :label="item.label"
                                     :value="item.value" />
