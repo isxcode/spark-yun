@@ -192,15 +192,16 @@ public class QuerySqlExecutor extends WorkExecutor {
 
                 // 执行查询sql，给lastSql添加查询条数限制
                 String lastSql = sqls.get(sqls.size() - 1);
-                if (workRunContext.getQueryConfig() != null && workRunContext.getQueryConfig().getEnableLimit()) {
-                    int lineLimit = workRunContext.getQueryConfig().getLineLimit();
-                    lastSql = datasource.generateLimitSql(sqls.get(sqls.size() - 1), lineLimit);
-                }
 
                 // 打印日志
                 logBuilder.append(startLog("执行开始"));
                 logBuilder.append("> ").append(lastSql).append(" \n");
                 workInstance = updateInstance(workInstance, logBuilder);
+
+                // 设置查询最大条数
+                if (workRunContext.getQueryConfig() != null && workRunContext.getQueryConfig().getEnableLimit()) {
+                    statement.setMaxRows(workRunContext.getQueryConfig().getLineLimit());
+                }
 
                 // 开始执行
                 ResultSet resultSet = statement.executeQuery(lastSql);
