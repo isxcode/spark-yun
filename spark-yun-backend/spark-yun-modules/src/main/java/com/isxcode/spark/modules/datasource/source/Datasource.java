@@ -19,10 +19,7 @@ import com.isxcode.spark.modules.model.entity.DataModelEntity;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.jsqlparser.JSQLParserException;
-import net.sf.jsqlparser.expression.LongValue;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
-import net.sf.jsqlparser.statement.select.Limit;
-import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.Select;
 
 import java.io.File;
@@ -196,28 +193,6 @@ public abstract class Datasource {
             log.error(e.getMessage(), e);
             throw new WorkRunException(e.getMessage());
         }
-    }
-
-    public String generateLimitSql(String sql, Integer limit) throws JSQLParserException {
-
-        if (isShowQueryStatement(sql)) {
-            return sql;
-        }
-
-        net.sf.jsqlparser.statement.Statement statement = CCJSqlParserUtil.parse(sql);
-        if (!(statement instanceof Select)) {
-            throw new IllegalArgumentException("该Sql不是查询语句");
-        }
-
-        Select select = (Select) statement;
-        PlainSelect plainSelect = select.getPlainSelect();
-        if (plainSelect.getLimit() != null) {
-            return sql;
-        }
-        Limit newLimit = new Limit();
-        newLimit.setRowCount(new LongValue(limit));
-        plainSelect.setLimit(newLimit);
-        return statement.toString();
     }
 
     public GetDataSourceDataRes getTableData(ConnectInfo connectInfo, String getTableDataSql) throws IsxAppException {
