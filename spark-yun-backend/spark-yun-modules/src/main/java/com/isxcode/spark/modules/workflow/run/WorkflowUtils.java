@@ -148,6 +148,7 @@ public class WorkflowUtils {
             .apiWorkConfig(JSON.parseObject(workConfig.getApiWorkConfig(), ApiWorkConfig.class))
             .dbMigrateConfig(JSON.parseObject(workConfig.getDbMigrateConfig(), DbMigrateConfig.class))
             .sparkEtlConfig(JSON.parseObject(workConfig.getSparkEtlConfig(), SparkEtlConfig.class))
+            .apiSyncConfig(JSON.parseObject(workConfig.getApiSyncConfig(), ApiSyncConfig.class))
             .syncFlinkConfig(JSON.parseObject(workConfig.getSyncFlinkConfig(), SyncFlinkConfig.class))
             .queryConfig(JSON.parseObject(workConfig.getQueryConfig(), QueryConfig.class))
             .containerId(workConfig.getContainerId()).eventType(eventType).workName(work.getName())
@@ -176,6 +177,7 @@ public class WorkflowUtils {
             .dbMigrateConfig(JSON.parseObject(workVersion.getDbMigrateConfig(), DbMigrateConfig.class))
             .workName(work.getName()).eventType(eventType).workId(work.getId())
             .sparkEtlConfig(JSON.parseObject(workVersion.getSparkEtlConfig(), SparkEtlConfig.class))
+            .apiSyncConfig(JSON.parseObject(workVersion.getApiSyncConfig(), ApiSyncConfig.class))
             .syncFlinkConfig(JSON.parseObject(workVersion.getSyncFlinkConfig(), SyncFlinkConfig.class))
             .libPackageConfig(JSON.parseArray(workVersion.getLibPackageConfig(), String.class)).build();
     }

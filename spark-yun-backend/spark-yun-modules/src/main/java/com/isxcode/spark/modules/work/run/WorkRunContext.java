@@ -99,6 +99,11 @@ public class WorkRunContext {
     private SyncFlinkConfig syncFlinkConfig;
 
     /**
+     * 接口采集.
+     */
+    private ApiSyncConfig apiSyncConfig;
+
+    /**
      * 租户id.
      */
     private String tenantId;

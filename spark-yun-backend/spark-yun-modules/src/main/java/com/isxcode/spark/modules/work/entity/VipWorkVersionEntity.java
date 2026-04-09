@@ -78,6 +78,8 @@ public class VipWorkVersionEntity {
 
     private String syncFlinkConfig;
 
+    private String apiSyncConfig;
+
     @CreatedDate
     private LocalDateTime createDateTime;
 

@@ -89,4 +89,6 @@ public class ApiSyncConfig {
 
     @Schema(title = "节点根目录jsonPath", example = "$..")
     private String nodeRootJsonPath;
+
+    private DatasourceConfig targetDatabase;
 }
