@@ -33,6 +33,9 @@ public class ApiSyncConfig {
     @Schema(title = "请求类型", example = "GET/POST")
     private String sourceRequestType;
 
+    @Schema(title = "写入模式", example = "OVERWRITE or INTO")
+    private String overMode;
+
     @Schema(title = "请求地址", example = "http://")
     private String sourceRequestHttp;
 
