@@ -165,87 +165,95 @@ public class QuerySqlExecutor extends WorkExecutor {
             Datasource datasource = dataSourceFactory.getDatasource(connectInfo.getDbType());
             connectInfo.setLoginTimeout(5);
 
-            try (Connection connection = datasource.getConnection(connectInfo);
-                Statement statement = connection.createStatement()) {
+            Connection connection = null;
+            try {
+                connection = datasource.getConnection(connectInfo);
+                try (Statement statement = connection.createStatement()) {
 
-                statement.setQueryTimeout(1800);
+                    connection.setAutoCommit(false);
+                    statement.setQueryTimeout(1800);
 
-                // 清除脚本中的脏数据
-                List<String> sqls =
-                    Arrays.stream(script.split(";")).filter(Strings::isNotBlank).collect(Collectors.toList());
+                    // 清除脚本中的脏数据
+                    List<String> sqls =
+                        Arrays.stream(script.split(";")).filter(Strings::isNotBlank).collect(Collectors.toList());
 
-                // 执行每条sql，除了最后一条
-                for (int i = 0; i < sqls.size() - 1; i++) {
+                    // 执行每条sql，除了最后一条
+                    for (int i = 0; i < sqls.size() - 1; i++) {
 
-                    // 记录开始执行时间
+                        // 记录开始执行时间
+                        logBuilder.append(startLog("执行开始"));
+                        logBuilder.append("> ").append(sqls.get(i)).append(" \n");
+                        workInstance = updateInstance(workInstance, logBuilder);
+
+                        // 执行sql
+                        statement.execute(sqls.get(i));
+
+                        // 记录结束执行时间
+                        logBuilder.append(endLog("执行完成"));
+                        workInstance = updateInstance(workInstance, logBuilder);
+                    }
+
+                    // 执行查询sql，给lastSql添加查询条数限制
+                    String lastSql = sqls.get(sqls.size() - 1);
+
+                    // 打印日志
                     logBuilder.append(startLog("执行开始"));
-                    logBuilder.append("> ").append(sqls.get(i)).append(" \n");
+                    logBuilder.append("> ").append(lastSql).append(" \n");
                     workInstance = updateInstance(workInstance, logBuilder);
 
-                    // 执行sql
-                    statement.execute(sqls.get(i));
+                    // 设置查询最大条数
+                    if (workRunContext.getQueryConfig() != null && workRunContext.getQueryConfig().getEnableLimit()) {
+                        statement.setMaxRows(workRunContext.getQueryConfig().getLineLimit());
+                    }
+
+                    // 开始执行
+                    ResultSet resultSet = statement.executeQuery(lastSql);
 
                     // 记录结束执行时间
                     logBuilder.append(endLog("执行完成"));
-                    workInstance = updateInstance(workInstance, logBuilder);
-                }
+                    logBuilder.append(startLog("保存数据开始"));
 
-                // 执行查询sql，给lastSql添加查询条数限制
-                String lastSql = sqls.get(sqls.size() - 1);
+                    // 记录返回结果
+                    List<List<String>> result = new ArrayList<>();
 
-                // 打印日志
-                logBuilder.append(startLog("执行开始"));
-                logBuilder.append("> ").append(lastSql).append(" \n");
-                workInstance = updateInstance(workInstance, logBuilder);
-
-                // 设置查询最大条数
-                if (workRunContext.getQueryConfig() != null && workRunContext.getQueryConfig().getEnableLimit()) {
-                    statement.setMaxRows(workRunContext.getQueryConfig().getLineLimit());
-                }
-
-                // 开始执行
-                ResultSet resultSet = statement.executeQuery(lastSql);
-
-                // 记录结束执行时间
-                logBuilder.append(endLog("执行完成"));
-                logBuilder.append(startLog("保存数据开始"));
-
-                // 记录返回结果
-                List<List<String>> result = new ArrayList<>();
-
-                // 封装表头
-                int columnCount = resultSet.getMetaData().getColumnCount();
-                List<String> metaList = new ArrayList<>();
-                for (int i = 1; i <= columnCount; i++) {
-                    metaList.add(resultSet.getMetaData().getColumnName(i));
-                }
-                result.add(metaList);
-
-                // 封装数据
-                while (resultSet.next()) {
-                    metaList = new ArrayList<>();
+                    // 封装表头
+                    int columnCount = resultSet.getMetaData().getColumnCount();
+                    List<String> metaList = new ArrayList<>();
                     for (int i = 1; i <= columnCount; i++) {
-                        try {
-                            metaList.add(resultSet.getString(i));
-                        } catch (Exception e) {
-                            metaList.add(String.valueOf(resultSet.getObject(i)));
-                        }
+                        metaList.add(resultSet.getMetaData().getColumnName(i));
                     }
                     result.add(metaList);
+
+                    // 封装数据
+                    while (resultSet.next()) {
+                        metaList = new ArrayList<>();
+                        for (int i = 1; i <= columnCount; i++) {
+                            try {
+                                metaList.add(resultSet.getString(i));
+                            } catch (Exception e) {
+                                metaList.add(String.valueOf(resultSet.getObject(i)));
+                            }
+                        }
+                        result.add(metaList);
+                    }
+
+                    // 保存数据
+                    workInstance.setResultData(JSON.toJSONString(result));
+
+                    // 保存日志
+                    logBuilder.append(endLog("保存数据完成"));
+                    updateInstance(workInstance, logBuilder);
+                    connection.commit();
                 }
-
-                // 保存数据
-                workInstance.setResultData(JSON.toJSONString(result));
-
-                // 保存日志
-                logBuilder.append(endLog("保存数据完成"));
-                updateInstance(workInstance, logBuilder);
             } catch (WorkRunException | IsxAppException e) {
+                rollbackQuietly(connection);
                 throw errorLogException(logBuilder + "\n" + e.getMsg());
             } catch (Exception e) {
+                rollbackQuietly(connection);
                 log.error(e.getMessage(), e);
                 throw errorLogException(logBuilder + "\n" + e.getMessage());
             } finally {
+                closeQuietly(connection);
                 WORK_THREAD.remove(workEvent.getId());
             }
 
@@ -288,5 +296,27 @@ public class QuerySqlExecutor extends WorkExecutor {
         }
 
         return true;
+    }
+
+    private void rollbackQuietly(Connection connection) {
+        if (connection == null) {
+            return;
+        }
+        try {
+            connection.rollback();
+        } catch (Exception rollbackException) {
+            log.error("rollback jdbc transaction error", rollbackException);
+        }
+    }
+
+    private void closeQuietly(Connection connection) {
+        if (connection == null) {
+            return;
+        }
+        try {
+            connection.close();
+        } catch (Exception closeException) {
+            log.error("close jdbc connection error", closeException);
+        }
     }
 }
