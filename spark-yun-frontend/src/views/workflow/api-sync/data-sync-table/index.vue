@@ -101,6 +101,7 @@ interface FormData {
 interface codeParam {
     code: string
     type: string
+    jsonPath?: string
     sql: string
 }
 
@@ -442,7 +443,7 @@ function addNewCode() {
 function editCode(row: codeParam) {
     addCodeRef.value.showModal((formData: codeParam) => {
         row.sql = formData.sql
-    }, row)
+    }, row, 'edit')
 }
 
 onMounted(() => {
