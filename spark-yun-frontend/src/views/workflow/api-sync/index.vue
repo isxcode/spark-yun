@@ -440,6 +440,7 @@ const containerInstanceRef = ref(null)
 const activeName = ref()
 const currentTab = ref()
 const instanceId = ref('')
+const suppressTabLogInitOnce = ref(false)
 const logCollapseRef = ref()
 const collapseActive = ref('0')
 const isCollapse = ref(false)
@@ -552,6 +553,13 @@ function tabChangeEvent(e: string) {
   }
   activeName.value = e
   currentTab.value = markRaw(lookup[e])
+  if (suppressTabLogInitOnce.value) {
+    suppressTabLogInitOnce.value = false
+    nextTick(() => {
+      changeCollapseUp()
+    })
+    return
+  }
   nextTick(() => {
     changeCollapseUp()
     containerInstanceRef.value.initData(instanceId.value)
@@ -763,11 +771,9 @@ function startComputing() {
         cancelButtonText: '取消',
         type: 'warning'
         }).then(() => {
-            tabChangeEvent('PublishLog')
             runTimeFunc()
         })
     } else {
-        tabChangeEvent('PublishLog')
         runTimeFunc()
     }
 }
@@ -778,13 +784,15 @@ function runTimeFunc() {
     }).then((res: any) => {
         ElMessage.success(res.msg)
         instanceId.value = res.data.instanceId
+        suppressTabLogInitOnce.value = true
+        activeName.value = 'PublishLog'
+        currentTab.value = markRaw(PublishLog)
         nextTick(() => {
+            suppressTabLogInitOnce.value = false
+            changeCollapseUp()
             containerInstanceRef.value.initData(instanceId.value)
         })
         btnLoadingConfig.runningLoading = false
-        nextTick(() => {
-            changeCollapseUp()
-        })
     }).catch(() => {
         btnLoadingConfig.runningLoading = false
     })
