@@ -263,12 +263,12 @@
                                 </el-select>
                             </el-form-item>
                         </template>
-                        <!-- <el-form-item prop="overMode" label="写入模式">
+                        <el-form-item prop="overMode" label="写入模式">
                             <el-select v-model="formData.overMode" clearable filterable placeholder="请选择" @change="pageChangeEvent">
-                                <el-option v-for="item in overModeList" :key="item.value" :label="item.label"
+                                <el-option v-for="item in filteredOverModeList" :key="item.value" :label="item.label"
                                     :value="item.value" />
                             </el-select>
-                        </el-form-item> -->
+                        </el-form-item>
                     </el-form>
                 </el-card>
             </div>
@@ -371,11 +371,12 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, reactive, onMounted, onUnmounted, defineProps, nextTick, markRaw } from 'vue'
+import { ref, reactive, onMounted, onUnmounted, defineProps, nextTick, markRaw, computed } from 'vue'
 import { ElMessage, ElMessageBox, FormInstance, FormRules } from 'element-plus'
 // import CodeMirror from 'vue-codemirror6'
 import { sql } from '@codemirror/lang-sql'
 import {json} from '@codemirror/lang-json'
+import { OverModeList } from './data.config.ts'
 import { GetDatasourceList } from '@/services/datasource.service'
 import { GetDataSourceTables, GetTableColumnsByTableId } from '@/services/data-sync.service'
 import TableDetail from './table-detail/index.vue'
@@ -412,7 +413,7 @@ const sourceTablesList = ref<Option[]>([])
 const targetTablesList = ref<Option[]>([])
 const partKeyList = ref<Option[]>([])
 const kafkaSourceList = ref<Option[]>([])
-// const overModeList = ref<Option[]>(OverModeList)
+const overModeList = ref<Option[]>(OverModeList)
 const sourceTypeList = ref<Option[]>([
     {
         label: '接口',
@@ -504,7 +505,7 @@ const formData = reactive({
         }
     ],
     targetJsonTemplate: '',
-    overMode: '',         // 写入模式
+    overMode: 'INTO',     // 写入模式
 })
 const rules = reactive<FormRules>({})
 const btnLoadingConfig = reactive({
@@ -620,6 +621,7 @@ function saveData() {
             targetRequestHttp: formData.targetRequestUrl,
             targetRequestHeader: convertHeaderListToMap(formData.targetRequestHeader),
             targetRequestBody: formData.targetRequestBody,
+            overMode: formData.overMode,
             sourceTableColumn: dataSyncTableRef.value.getSourceTableColumn(),
             targetTableColumn: dataSyncTableRef.value.getTargetTableColumn(),
             columnMap: dataSyncTableRef.value.getConnect()
@@ -678,6 +680,7 @@ function getData() {
             formData.queryCondition = apiSyncConfig.queryCondition || formData.queryCondition || ''
             formData.targetDBId = apiSyncConfig.targetDBId || formData.targetDBId || ''
             formData.targetTable = apiSyncConfig.targetTable || formData.targetTable || ''
+            formData.overMode = apiSyncConfig.overMode || formData.overMode || 'INTO'
 
             nextTick(() => {
                 getDataSource(true, formData.sourceDBType, 'source')
@@ -704,6 +707,7 @@ function getData() {
             formData.pageStart = toNumberOrDefault(formData.pageStart, 0)
             formData.pageEnd = toNumberOrDefault(formData.pageEnd, 1)
             formData.pageAll = !!formData.pageAll
+            formData.overMode = formData.overMode || 'INTO'
 
             nextTick(() => {
                 getDataSource(true, formData.sourceDBType, 'source')
@@ -727,6 +731,10 @@ function getData() {
         console.error(err)
     })
 }
+
+const filteredOverModeList = computed(() => {
+    return overModeList.value
+})
 
 // 停止接口采集作业
 function stopData() {
