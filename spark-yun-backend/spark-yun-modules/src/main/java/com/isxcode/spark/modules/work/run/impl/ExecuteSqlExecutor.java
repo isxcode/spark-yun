@@ -171,37 +171,45 @@ public class ExecuteSqlExecutor extends WorkExecutor {
             Datasource datasource = dataSourceFactory.getDatasource(connectInfo.getDbType());
             connectInfo.setLoginTimeout(5);
 
-            try (Connection connection = datasource.getConnection(connectInfo);
-                Statement statement = connection.createStatement()) {
+            Connection connection = null;
+            try {
+                connection = datasource.getConnection(connectInfo);
+                try (Statement statement = connection.createStatement()) {
 
-                statement.setQueryTimeout(1800);
+                    connection.setAutoCommit(false);
+                    statement.setQueryTimeout(1800);
 
-                // 清除脚本中的脏数据
-                List<String> sqls =
-                    Arrays.stream(script.split(";")).filter(Strings::isNotBlank).collect(Collectors.toList());
+                    // 清除脚本中的脏数据
+                    List<String> sqls =
+                        Arrays.stream(script.split(";")).filter(Strings::isNotBlank).collect(Collectors.toList());
 
-                // 逐条执行sql
-                for (String sql : sqls) {
+                    // 逐条执行sql
+                    for (String sql : sqls) {
 
-                    // 记录开始执行时间
-                    logBuilder.append(startLog("执行开始"));
-                    logBuilder.append("> ").append(sql).append(" \n");
-                    workInstance = updateInstance(workInstance, logBuilder);
+                        // 记录开始执行时间
+                        logBuilder.append(startLog("执行开始"));
+                        logBuilder.append("> ").append(sql).append(" \n");
+                        workInstance = updateInstance(workInstance, logBuilder);
 
-                    // 执行sql
-                    statement.execute(sql);
+                        // 执行sql
+                        statement.execute(sql);
 
-                    // 记录结束执行时间
-                    logBuilder.append(endLog("执行完成"));
-                    workInstance = updateInstance(workInstance, logBuilder);
+                        // 记录结束执行时间
+                        logBuilder.append(endLog("执行完成"));
+                        workInstance = updateInstance(workInstance, logBuilder);
+                    }
+
+                    connection.commit();
                 }
-
             } catch (WorkRunException | IsxAppException e) {
+                rollbackQuietly(connection);
                 throw errorLogException(logBuilder + "\n" + e.getMsg());
             } catch (Exception e) {
+                rollbackQuietly(connection);
                 log.error(e.getMessage(), e);
                 throw errorLogException(logBuilder + "\n" + e.getMessage());
             } finally {
+                closeQuietly(connection);
                 WORK_THREAD.remove(workEvent.getId());
             }
 
@@ -249,5 +257,27 @@ public class ExecuteSqlExecutor extends WorkExecutor {
         }
 
         return true;
+    }
+
+    private void rollbackQuietly(Connection connection) {
+        if (connection == null) {
+            return;
+        }
+        try {
+            connection.rollback();
+        } catch (Exception rollbackException) {
+            log.error("rollback jdbc transaction error", rollbackException);
+        }
+    }
+
+    private void closeQuietly(Connection connection) {
+        if (connection == null) {
+            return;
+        }
+        try {
+            connection.close();
+        } catch (Exception closeException) {
+            log.error("close jdbc connection error", closeException);
+        }
     }
 }
