@@ -18,7 +18,7 @@
 </template>
 
 <script lang="ts" setup>
-import { defineProps, onMounted } from 'vue'
+import { defineProps } from 'vue'
 import { CollectionTag } from '@element-plus/icons-vue'
 import EllipsisTooltip from '@/components/ellipsis-tooltip/ellipsis-tooltip.vue'
 import { ElIcon } from 'element-plus'
@@ -33,6 +33,7 @@ const props = defineProps(['params', 'loading'])
     width: 140px;
     border: 1px solid getCssVar('color', 'primary', 'light-5');
     border-radius: 5px;
+    overflow: hidden;
     display: flex;
     justify-content: space-between;
     box-sizing: border-box;
@@ -47,13 +48,13 @@ const props = defineProps(['params', 'loading'])
 
         .node-label {
             font-size: 12px;
-            height: 24px;
+            height: 30px;
             background-color: getCssVar('color', 'primary');
             color: #ffffff;
             display: flex;
             align-items: center;
             padding-left: 4px;
-            border-radius: 4px 4px 0 0;
+            border-radius: 5px 5px 0 0;
             .label-text {
                 margin-left: 2px;
                 max-width: calc(100% - 20px);
@@ -62,8 +63,10 @@ const props = defineProps(['params', 'loading'])
         .node-desc {
             font-size: 12px;
             color: #3c3c3c;
-            height: 48px;
-            padding: 4px;
+            height: 43px;
+            padding: 2px 4px;
+            background-color: #ffffff;
+            border-radius: 0 0 5px 5px;
             box-sizing: border-box;
             display: flex;
             align-items: center;
