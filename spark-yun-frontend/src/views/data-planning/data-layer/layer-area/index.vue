@@ -151,8 +151,10 @@ function backPage() {
 }
 
 function resetView() {
-    graph?.fitView?.()
-    graph?.fitCenter?.()
+    if (!treeData.value || !Object.keys(treeData.value).length) {
+        return
+    }
+    initGraph()
 }
 
 onMounted(() => {
