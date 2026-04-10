@@ -96,7 +96,7 @@ const keyword = ref('')
 const loading = ref(false)
 const networkError = ref(false)
 const addModalRef = ref<any>(null)
-const tableType = ref<string>('layer')
+const tableType = ref<string>('all')
 const parentLayerId = ref<string>('')
 const dataModelDetailRef = ref<any>(null)
 
@@ -283,7 +283,7 @@ function handleCurrentChange(e: number) {
 onMounted(() => {
 
     if (route.query && (route.query.parentLayerId || route.query.tableType)) {
-        tableType.value = route.query.tableType ?? 'layer'
+        tableType.value = route.query.tableType ?? 'all'
         parentLayerId.value = route.query.parentLayerId ?? null
     }
 
