@@ -83,7 +83,7 @@
                     />
                   </el-select>
                 </el-form-item>
-                <el-form-item label="sparkConfig" v-if="clusterConfig.setMode === 'ADVANCE' && ['SPARK_SQL','DATA_SYNC_JDBC','SPARK_JAR','EXCEL_SYNC_JDBC','PY_SPARK','DB_MIGRATE'].includes(workItemConfig.workType)  " :class="{ 'show-screen__full': sparkJsonFullStatus }">
+                <el-form-item label="sparkConfig" v-if="clusterConfig.setMode === 'ADVANCE' && ['SPARK_SQL','DATA_SYNC_JDBC','SPARK_JAR','EXCEL_SYNC_JDBC','PY_SPARK','DB_MIGRATE','API_SYNC_JDBC'].includes(workItemConfig.workType)  " :class="{ 'show-screen__full': sparkJsonFullStatus }">
                   <el-icon class="modal-full-screen" @click="fullScreenEvent('sparkJsonFullStatus')"><FullScreen v-if="!sparkJsonFullStatus" /><Close v-else /></el-icon>
                   <code-mirror v-model="clusterConfig.sparkConfigJson" basic :lang="lang"/>
                 </el-form-item>

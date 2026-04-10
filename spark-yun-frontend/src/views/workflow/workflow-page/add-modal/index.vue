@@ -31,7 +31,8 @@
                         'EXCEL_SYNC_JDBC',
                         'PY_SPARK',
                         'DB_MIGRATE',
-                        'SPARK_ETL'
+                        'SPARK_ETL',
+                        'API_SYNC_JDBC'
                     ].includes(formData.workType)"
                 >
                     <el-select
