@@ -16,6 +16,7 @@
                     v-model="formData.layerId"
                     filterable
                     clearable
+                    @change="layerChangeEvent"
                     placeholder="请选择"
                 >
                     <el-option
@@ -32,6 +33,7 @@
                     filterable
                     :disabled="!!formData.id"
                     clearable
+                    @change="modelTypeChangeEvent"
                     placeholder="请选择"
                 >
                     <el-option
@@ -112,6 +114,7 @@ import { useRoute } from 'vue-router'
 interface Option {
     label: string
     value: string
+    tableRule?: string
 }
 
 const route = useRoute()
@@ -327,9 +330,11 @@ function getParentLayerIList() {
         parentLayerIdList.value = [...res.data.content.map((item: any) => {
             return {
                 label: item.fullPathName,
-                value: item.id
+                value: item.id,
+                tableRule: item.tableRule
             }
         })]
+        fillDefaultTableNameByLayerRule(false)
     }).catch(() => {
         parentLayerIdList.value = []
     })
@@ -345,7 +350,36 @@ function dbTypeChangeEvent() {
 }
 
 function datasouceChangeEvent() {
-    formData.tableName = ''
+    if (formData.modelType === 'LINK_MODEL') {
+        formData.tableName = ''
+    }
+}
+
+function modelTypeChangeEvent(value: string) {
+    if (value !== 'ORIGIN_MODEL') {
+        return
+    }
+    fillDefaultTableNameByLayerRule(true)
+}
+
+function layerChangeEvent() {
+    fillDefaultTableNameByLayerRule(true)
+}
+
+function fillDefaultTableNameByLayerRule(force: boolean) {
+    if (formData.id || formData.modelType !== 'ORIGIN_MODEL') {
+        return
+    }
+
+    const currentLayer = parentLayerIdList.value.find((item: Option) => item.value === formData.layerId)
+    const tableRule = currentLayer?.tableRule?.trim()
+    if (!tableRule) {
+        return
+    }
+
+    if (force || !formData.tableName) {
+        formData.tableName = tableRule
+    }
 }
 
 function getDataSourceList(e: boolean, searchType?: string) {
