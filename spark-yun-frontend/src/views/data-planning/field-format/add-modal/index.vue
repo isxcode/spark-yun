@@ -37,17 +37,11 @@
             <el-form-item label="字段精度" >
                 <el-input v-model="formData.columnType" maxlength="200" placeholder="请输入" />
             </el-form-item>
-            <el-form-item label="主键" prop="isPrimary" class="inline-show">
-                <el-checkbox v-model="formData.isPrimary" true-label="ENABLE" false-label="DISABLE" />
-            </el-form-item>
-            <el-form-item label="非空" prop="isNull" class="inline-show">
-                <el-checkbox v-model="formData.isNull" true-label="ENABLE" false-label="DISABLE" />
-            </el-form-item>
-            <el-form-item label="唯一" prop="isDuplicate" class="inline-show">
-                <el-checkbox v-model="formData.isDuplicate" true-label="ENABLE" false-label="DISABLE" />
-            </el-form-item>
-            <el-form-item label="分区键" prop="isPartition" class="inline-show">
-                <el-checkbox v-model="formData.isPartition" true-label="ENABLE" false-label="DISABLE" />
+            <el-form-item label="属性" class="field-attr-row">
+                <el-checkbox v-model="formData.isPrimary" true-label="ENABLE" false-label="DISABLE">主键</el-checkbox>
+                <el-checkbox v-model="formData.isNull" true-label="ENABLE" false-label="DISABLE">非空</el-checkbox>
+                <el-checkbox v-model="formData.isDuplicate" true-label="ENABLE" false-label="DISABLE">唯一</el-checkbox>
+                <el-checkbox v-model="formData.isPartition" true-label="ENABLE" false-label="DISABLE">分区键</el-checkbox>
             </el-form-item>
             <el-form-item label="默认值" prop="defaultValue">
                 <el-input v-model="formData.defaultValue" maxlength="500" placeholder="请输入" />
@@ -226,13 +220,40 @@ defineExpose({
         &.inline-show {
             display: flex;
             align-items: center;
+            justify-content: flex-start;
             .el-form-item__label {
                 margin: 0;
             }
             .el-form-item__content {
                 justify-content: flex-start !important;
-                padding-right: 12px;
+                flex: 0 0 auto;
+                margin-left: 8px;
+                padding-right: 0;
                 box-sizing: border-box;
+            }
+        }
+
+        &.field-attr-row {
+            .el-form-item__content {
+                justify-content: flex-start;
+                gap: 18px;
+            }
+            .el-checkbox {
+                display: inline-flex;
+                flex-direction: row-reverse;
+                align-items: center;
+                gap: 6px;
+                margin-right: 0;
+            }
+            .el-checkbox__label {
+                font-size: 12px;
+                font-weight: 400;
+                color: getCssVar('text-color', 'regular');
+                padding-left: 0;
+                padding-right: 6px;
+            }
+            .el-checkbox.is-checked .el-checkbox__label {
+                color: getCssVar('color', 'primary');
             }
         }
     }
