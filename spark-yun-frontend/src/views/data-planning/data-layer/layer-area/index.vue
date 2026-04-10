@@ -2,6 +2,7 @@
     <Breadcrumb :bread-crumb-list="breadCrumbList" />
     <div class="layer-area">
         <div class="layer-btn-container">
+            <el-button class="reset-btn" @click="resetView">重置视图</el-button>
             <el-button @click="backPage">返回</el-button>
         </div>
         <div id="container" class="container-layout"></div>
@@ -10,11 +11,10 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, ref, onMounted, createApp, h } from 'vue'
+import { reactive, ref, onMounted, onBeforeUnmount, createApp } from 'vue'
 import { Graph, treeToGraphData } from '@antv/g6';
 import Breadcrumb from '@/layout/bread-crumb/index.vue'
-import LoadingPage from '@/components/loading/index.vue'
-import { ElMessage, ElMessageBox } from 'element-plus'
+import { ElMessage } from 'element-plus'
 import { useRoute, useRouter } from 'vue-router'
 import { GetDataLayerTreeNodeAll } from '@/services/data-layer.service'
 import TreeNode from './tree-node/index.vue'
@@ -45,8 +45,8 @@ function getTreeData() {
             id: route.query.id
         }).then((res: any) => {
             resolve(res.data)
-        }).catch(() => {
-            data.loading = false
+        }).catch((error: any) => {
+            reject(error)
         })
     })
 }
@@ -54,6 +54,7 @@ function getTreeData() {
 function initGraph() {
     const data = treeToGraphData(treeData.value)
 
+    graph?.destroy?.()
     graph = new Graph({
         container: document.getElementById('container'),
         data: data,
@@ -103,13 +104,26 @@ function initGraph() {
             nodesep: 20,
             ranksep: 60,
         },
-        behaviors: ['drag-canvas', 'scroll-canvas']
+        behaviors: ['drag-canvas', 'zoom-canvas', 'drag-element']
     })
 
-    graph.on('node:click', (evt: any) => {
-        const nodeId = evt.target.id;
-        const nodeData = graph.getNodeData(nodeId)
-        dataModelDetailRef.value.showModal(nodeData)
+    graph.on('node:click', (evt: any, nodeData: any) => {
+        let currentNodeData = nodeData
+
+        if (!currentNodeData && evt?.target?.id) {
+            currentNodeData = graph.getNodeData(evt.target.id)
+        }
+        if (!currentNodeData && evt?.target?.config?.id) {
+            currentNodeData = graph.getNodeData(evt.target.config.id)
+        }
+        if (!currentNodeData && evt?.target?.id && graph.getElementData) {
+            currentNodeData = graph.getElementData(evt.target.id)
+        }
+
+        if (!currentNodeData) {
+            return
+        }
+        dataModelDetailRef.value.showModal(currentNodeData)
     });
 
     graph.render()
@@ -127,7 +141,6 @@ function getComponentHTMLString(data: any) {
 }
 
 function backPage() {
-    console.log('ddd', route.query)
     router.push({
         name: 'data-layer',
         query: {
@@ -135,6 +148,11 @@ function backPage() {
             tableType: route.query.tableType
         }
     })
+}
+
+function resetView() {
+    graph?.fitView?.()
+    graph?.fitCenter?.()
 }
 
 onMounted(() => {
@@ -147,9 +165,14 @@ onMounted(() => {
     getTreeData().then((res: any) => {
         treeData.value = res
         initGraph()
-    }).catch((error) => {
+    }).catch(() => {
 
     })
+})
+
+onBeforeUnmount(() => {
+    graph?.destroy?.()
+    graph = null
 })
 </script>
 
@@ -163,10 +186,16 @@ onMounted(() => {
         right: 20px;
         height: 56px;
         display: flex;
-        align-items: center
+        align-items: center;
+        .reset-btn {
+            margin-right: 10px;
+        }
     }
     .container-layout {
         height: 100%;
+        background-image: linear-gradient(to right, #f4f6fa 1px, transparent 1px),
+            linear-gradient(to bottom, #f4f6fa 1px, transparent 1px);
+        background-size: 20px 20px;
     }
 }
 </style>
