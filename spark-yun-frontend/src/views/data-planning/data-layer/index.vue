@@ -9,8 +9,8 @@
             </div>
             <div class="zqy-seach">
                 <el-radio-group v-model="tableType" @change="changeTypeEvent">
-                    <el-radio-button label="layer">分层搜索</el-radio-button>
                     <el-radio-button label="all">全局搜索</el-radio-button>
+                    <el-radio-button label="layer">分层搜索</el-radio-button>
                 </el-radio-group>
                 <el-input
                     v-model="keyword"
@@ -51,14 +51,21 @@
                     </template>
                     <template #options="scopeSlot">
                         <div class="btn-group btn-group-msg">
-                            <span @click="dataModelPage(scopeSlot.row)">模型</span>
+                            <span
+                                v-if="tableType === 'layer'"
+                                @click="dataModelPage(scopeSlot.row)"
+                            >模型</span>
+                            <span
+                                v-else
+                                @click="layerAreaView(scopeSlot.row)"
+                            >领域</span>
                             <el-dropdown trigger="click">
                                 <span class="click-show-more">更多</span>
                                 <template #dropdown>
                                     <el-dropdown-menu>
                                         <el-dropdown-item @click="editData(scopeSlot.row)">编辑</el-dropdown-item>
                                         <el-dropdown-item @click="deleteData(scopeSlot.row)">删除</el-dropdown-item>
-                                        <el-dropdown-item @click="layerAreaView(scopeSlot.row)">领域</el-dropdown-item>
+                                        <el-dropdown-item v-if="tableType === 'layer'" @click="layerAreaView(scopeSlot.row)">领域</el-dropdown-item>
                                     </el-dropdown-menu>
                                 </template>
                             </el-dropdown>
