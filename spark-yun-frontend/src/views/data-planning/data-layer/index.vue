@@ -61,9 +61,10 @@
                         </div>
                     </template>
                 </BlockTable>
-                <el-button class="back-up" @click="showParentDetail" v-if="parentLayerId && tableType === 'layer'">
-                    返回上一分层
-                </el-button>
+                <div class="back-btn-group" v-if="parentLayerId && tableType === 'layer'">
+                    <el-button @click="backHomeLayer">返回首页分层</el-button>
+                    <el-button class="back-up" @click="showParentDetail">返回上一分层</el-button>
+                </div>
             </div>
         </LoadingPage>
         <AddModal ref="addModalRef" />
@@ -257,6 +258,14 @@ function showParentDetail() {
     })
 }
 
+// 返回首页分层
+function backHomeLayer() {
+    parentLayerId.value = null
+    tableConfig.pagination.currentPage = 1
+    tableConfig.pagination.pageSize = 10
+    initData()
+}
+
 function handleSizeChange(e: number) {
     tableConfig.pagination.pageSize = e
     initData()
@@ -305,10 +314,15 @@ onMounted(() => {
             .btn-group-msg {
                 justify-content: space-around;
             }
-            .back-up {
+            .back-btn-group {
                 position: absolute;
                 bottom: 22px;
                 left: 20px;
+                display: flex;
+                align-items: center;
+            }
+            .back-up {
+                margin-left: 10px;
             }
         }
     }
