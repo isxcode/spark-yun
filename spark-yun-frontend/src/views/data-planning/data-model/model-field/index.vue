@@ -45,6 +45,9 @@
                         </div>
                     </template>
                 </BlockTable>
+                <div class="back-btn-group">
+                    <el-button @click="backDataModel">返回数据模型</el-button>
+                </div>
             </div>
         </LoadingPage>
         <AddModal ref="addModalRef" />
@@ -182,6 +185,16 @@ function inputEvent(e: string) {
     }
 }
 
+function backDataModel() {
+    if (window.history.length > 1) {
+        router.back()
+        return
+    }
+    router.push({
+        name: 'data-model'
+    })
+}
+
 onMounted(() => {
     if (!route.query.id) {
         ElMessage.error('暂无模型信息')
@@ -207,6 +220,11 @@ onMounted(() => {
             max-height: calc(100% - 12px);
             .btn-group-msg {
                 justify-content: space-around;
+            }
+            .back-btn-group {
+                margin-top: 8px;
+                display: flex;
+                align-items: center;
             }
             .el-checkbox {
                 &.is-disabled {
