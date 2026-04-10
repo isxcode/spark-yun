@@ -35,7 +35,11 @@
                             class="name-click"
                             @click="showDetail(scopeSlot.row)"
                         >{{ scopeSlot.row.name }}</span>
-                        <span v-else>{{ scopeSlot.row.name }}</span>
+                        <span
+                            v-else
+                            class="name-click"
+                            @click="dataModelPage(scopeSlot.row)"
+                        >{{ scopeSlot.row.name }}</span>
                     </template>
                     <template #parentNameSlot="scopeSlot">
                         <span
