@@ -221,6 +221,13 @@ defineExpose({
                     top: 16px
                 }
             }
+            .tooltip-msg {
+                position: absolute;
+                top: -28px;
+                // left: 20px;
+                color: getCssVar('color', 'info');
+                font-size: 16px;
+            }
         }
 
         &.inline-show {
@@ -230,7 +237,7 @@ defineExpose({
                 margin: 0;
             }
             .el-form-item__content {
-                justify-content: flex-start !important;
+                justify-content: flex-end !important;
                 padding-right: 12px;
                 box-sizing: border-box;
             }

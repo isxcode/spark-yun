@@ -116,6 +116,27 @@ esac
 
 CLASSPATH=$APP_HOME/gradle/wrapper/gradle-wrapper.jar
 
+# On macOS, some environments resolve JAVA_HOME to JavaAppletPlugin (JRE-only).
+# Gradle Java compilation for JDK 8 requires tools.jar, so prefer a real JDK.
+if "$darwin" ; then
+    needs_jdk_home=false
+    if [ -z "$JAVA_HOME" ] ; then
+        needs_jdk_home=true
+    elif [ ! -f "$JAVA_HOME/lib/tools.jar" ] ; then
+        needs_jdk_home=true
+    fi
+
+    if "$needs_jdk_home" ; then
+        for candidate_home in /Library/Java/JavaVirtualMachines/*/Contents/Home ; do
+            if [ -d "$candidate_home" ] && [ -f "$candidate_home/lib/tools.jar" ] ; then
+                JAVA_HOME=$candidate_home
+                export JAVA_HOME
+                break
+            fi
+        done
+    fi
+fi
+
 
 # Determine the Java command to use to start the JVM.
 if [ -n "$JAVA_HOME" ] ; then

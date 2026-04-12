@@ -2,7 +2,7 @@
   <BlockModal :model-config="modelConfig">
     <el-form
       ref="form"
-      class="add-computer-group"
+      class="add-computer-group datasource-add-form"
       label-position="top"
       :model="formData"
       :rules="rules"
@@ -654,9 +654,7 @@ defineExpose({
 </script>
 
 <style lang="scss">
-.add-computer-group {
-  padding: 12px 20px 0 20px;
-  box-sizing: border-box;
+.datasource-add-form {
   .tooltip-msg {
       position: absolute;
       top: -28px;

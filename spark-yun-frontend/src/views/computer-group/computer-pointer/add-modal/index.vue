@@ -2,7 +2,7 @@
   <BlockModal :model-config="modelConfig">
     <el-form
       ref="form"
-      class="add-computer-group"
+      class="add-computer-group computer-pointer-add-form"
       label-position="top"
       :model="formData"
       :rules="rules"
@@ -309,9 +309,7 @@ defineExpose({
 </script>
 
 <style lang="scss">
-.add-computer-group {
-  padding: 12px 20px 0 20px;
-  box-sizing: border-box;
+.computer-pointer-add-form {
   .el-form-item__label {
     width: 100%;
   }

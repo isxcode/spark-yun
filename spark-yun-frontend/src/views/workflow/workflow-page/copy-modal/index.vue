@@ -89,9 +89,3 @@ defineExpose({
 })
 </script>
 
-<style lang="scss">
-.add-computer-group {
-    padding: 12px 20px 0 20px;
-    box-sizing: border-box;
-}
-</style>

@@ -1,6 +1,6 @@
 <template>
     <BlockModal :model-config="modelConfig">
-        <el-form ref="form" class="add-computer-group" label-position="top" :model="formData" :rules="rules">
+        <el-form ref="form" class="add-computer-group add-computer-group--code-editor" label-position="top" :model="formData" :rules="rules">
             <el-form-item label="字段名" prop="code">
                 <el-input v-model="formData.code" maxlength="20" placeholder="请输入"/>
             </el-form-item>
@@ -113,52 +113,3 @@ defineExpose({
 })
 </script>
 
-<style lang="scss">
-.add-computer-group {
-    padding: 12px 20px 0 20px;
-    box-sizing: border-box;
-
-    .vue-codemirror {
-        height: 100px;
-        width: 100%;
-        .cm-editor {
-          height: 100%;
-          outline: none;
-          border: 1px solid #dcdfe6;
-        }
-
-        .cm-gutters {
-          font-size: 12px;
-          font-family: v-sans, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-        }
-
-        .cm-content {
-          font-size: 12px;
-          font-family: v-sans, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-        }
-        .cm-tooltip-autocomplete {
-
-          // display: none !important;
-            ul {
-                li {
-                    height: 40px;
-                    display: flex;
-                    align-items: center;
-                    font-size: 12px;
-                    background-color: #ffffff;
-                    font-family: v-sans, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-                }
-
-                li[aria-selected] {
-                    background: #409EFF;
-                }
-
-                .cm-completionIcon {
-                    margin-right: -4px;
-                    opacity: 0;
-                }
-            }
-        }
-    }
-}
-</style>
