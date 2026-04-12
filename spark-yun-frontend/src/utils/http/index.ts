@@ -1,7 +1,7 @@
 /*
  * @Author: fanciNate
  * @Date: 2023-05-23 17:00:06
- * @LastEditTime: 2026-04-12 17:22:47
+ * @LastEditTime: 2026-04-12 22:14:28
  * @LastEditors: fancinate 1585546519@qq.com
  * @Description: In User Settings Edit
  * @FilePath: /spark-yun/spark-yun-website/src/utils/http/index.ts
@@ -33,8 +33,8 @@ export const httpOption = {
     }
   },
   requestOptions: {
-    urlPrefix: 'https://zhiqingyun-demo.isxcode.com',
-    // urlPrefix: import.meta.env.VITE_VUE_APP_BASE_DOMAIN,
+    // urlPrefix: 'http://isxcode.com:30211',
+    urlPrefix: import.meta.env.VITE_VUE_APP_BASE_DOMAIN,
     showSuccessMessage: (msg: string): void => {
       message.success(msg)
     },
