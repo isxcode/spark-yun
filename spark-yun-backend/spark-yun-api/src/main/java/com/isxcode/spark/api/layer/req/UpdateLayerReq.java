@@ -21,4 +21,7 @@ public class UpdateLayerReq {
 
     @Schema(title = "备注", example = "备注123")
     private String remark;
+
+    @Schema(title = "父级分层id", example = "123")
+    private String parentLayerId;
 }

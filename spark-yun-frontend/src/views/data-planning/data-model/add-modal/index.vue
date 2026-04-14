@@ -12,7 +12,6 @@
             </el-form-item>
             <el-form-item label="数据分层" prop="layerId">
                 <el-select
-                    :disabled="!!formData.id"
                     v-model="formData.layerId"
                     filterable
                     clearable
