@@ -42,12 +42,7 @@
                         >{{ scopeSlot.row.name }}</span>
                     </template>
                     <template #parentNameSlot="scopeSlot">
-                        <span
-                            v-if="tableType === 'layer' && scopeSlot.row.parentNameList"
-                            class="name-click"
-                            @click="showParentDetail(scopeSlot.row)"
-                        >{{ scopeSlot.row.parentNameList }}</span>
-                        <span v-else>{{ scopeSlot.row.parentNameList ?? '-' }}</span>
+                        <span>{{ scopeSlot.row.parentNameList ?? '-' }}</span>
                     </template>
                     <template #options="scopeSlot">
                         <div class="btn-group btn-group-msg">

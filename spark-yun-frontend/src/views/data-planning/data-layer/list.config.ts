@@ -52,7 +52,7 @@ export const colConfigs: colConfig[] = [
     },
     {
         prop: 'parentNameList',
-        title: '父级分层',
+        title: '分层路径',
         minWidth: 140,
         customSlot: 'parentNameSlot'
     },
