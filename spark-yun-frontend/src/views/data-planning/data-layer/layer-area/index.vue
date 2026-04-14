@@ -2,7 +2,7 @@
     <Breadcrumb :bread-crumb-list="breadCrumbList" />
     <div class="layer-area">
         <div class="layer-btn-container">
-            <el-button class="reset-btn" @click="resetView">重置视图</el-button>
+            <el-button class="reset-btn" @click="resetView">刷新领域</el-button>
             <el-button @click="backPage">返回</el-button>
         </div>
         <div id="container" class="container-layout"></div>
@@ -151,10 +151,12 @@ function backPage() {
 }
 
 function resetView() {
-    if (!treeData.value || !Object.keys(treeData.value).length) {
-        return
-    }
-    initGraph()
+    getTreeData().then((res: any) => {
+        treeData.value = res
+        initGraph()
+    }).catch(() => {
+        ElMessage.error('刷新领域失败')
+    })
 }
 
 onMounted(() => {
