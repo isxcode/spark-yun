@@ -25,14 +25,30 @@
                     />
                 </el-select>
             </el-form-item>
-            <el-form-item label="表名规范">
+            <el-form-item label="表名规范" prop="tableRuleInput">
                 <el-tooltip
-                    content="正则表达式：^user_.* [user_info、user_account]"
+                    content="支持前缀/后缀/包含/精确匹配，系统会自动转为正则保存"
                     placement="top"
                 >
                     <el-icon style="left: 50px" class="tooltip-msg"><QuestionFilled /></el-icon>
                 </el-tooltip>
-                <el-input v-model="formData.tableRule" maxlength="200" placeholder="请输入" />
+                <div class="table-rule-config">
+                    <el-select
+                        v-model="tableRuleMode"
+                    >
+                        <el-option
+                            v-for="item in tableRuleModeList"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value"
+                        />
+                    </el-select>
+                    <el-input
+                        v-model="formData.tableRuleInput"
+                        maxlength="200"
+                        :placeholder="tableRulePlaceholder"
+                    />
+                </div>
             </el-form-item>
             <el-form-item label="备注">
                 <el-input v-model="formData.remark" type="textarea" maxlength="200"
@@ -43,7 +59,7 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, defineExpose, ref } from 'vue'
+import { reactive, defineExpose, ref, computed } from 'vue'
 import { GetDataLayerList } from '@/services/data-layer.service'
 import { ElMessage, FormInstance, FormRules } from 'element-plus'
 
@@ -52,10 +68,20 @@ interface Option {
     value: string
 }
 
+type TableRuleMode = 'prefix' | 'suffix' | 'contains' | 'exact' | 'regex'
+
 const form = ref<FormInstance>()
 const callback = ref<any>()
 const parentLayerIdList = ref<Option[]>([])
 const currentLayerId = ref<string>('')
+const tableRuleMode = ref<TableRuleMode>('prefix')
+const tableRuleModeList: Option[] = [
+    { label: '前缀匹配', value: 'prefix' },
+    { label: '后缀匹配', value: 'suffix' },
+    { label: '包含匹配', value: 'contains' },
+    { label: '精确匹配', value: 'exact' },
+    { label: '自定义正则', value: 'regex' }
+]
 
 const modelConfig = reactive({
     title: '添加',
@@ -79,6 +105,7 @@ const modelConfig = reactive({
 const formData = reactive<any>({
     name: '',
     parentLayerId: '',
+    tableRuleInput: '',
     tableRule: '',
     remark: '',
     id: ''
@@ -86,7 +113,31 @@ const formData = reactive<any>({
 const rules = reactive<FormRules>({
     name: [{ required: true, message: '请输入名称', trigger: ['blur', 'change'] }],
     // parentLayerId: [{ required: true, message: '请选择父级分层', trigger: ['blur', 'change'] }],
-    tableRule: [{ required: true, message: '请输入表名规范', trigger: ['blur', 'change'] }]
+    tableRuleInput: [
+        {
+            validator: (_rule, value, callback) => {
+                if (value?.trim() && tableRuleMode.value === 'regex') {
+                    try {
+                        // 仅校验正则合法性，不在这里实际使用
+                        // eslint-disable-next-line no-new
+                        new RegExp(value)
+                    } catch (error) {
+                        callback(new Error('请输入合法的正则表达式'))
+                        return
+                    }
+                }
+                callback()
+            },
+            trigger: ['blur', 'change']
+        }
+    ]
+})
+
+const tableRulePlaceholder = computed(() => {
+    if (tableRuleMode.value === 'regex') {
+        return '请输入正则表达式，例如：^user_.*'
+    }
+    return '请输入关键字，例如：user_'
 })
 
 function showModal(cb: () => void, data: any, parentLayerId: string): void {
@@ -96,6 +147,9 @@ function showModal(cb: () => void, data: any, parentLayerId: string): void {
         Object.keys(formData).forEach((key: string) => {
             formData[key] = data[key]
         })
+        const tableRuleInfo = parseTableRule(formData.tableRule)
+        tableRuleMode.value = tableRuleInfo.mode
+        formData.tableRuleInput = tableRuleInfo.input
         modelConfig.title = '编辑'
     } else {
         Object.keys(formData).forEach((key: string) => {
@@ -104,6 +158,7 @@ function showModal(cb: () => void, data: any, parentLayerId: string): void {
                 formData[key] = parentLayerId
             }
         })
+        tableRuleMode.value = 'prefix'
         modelConfig.title = '添加'
     }
 
@@ -115,7 +170,14 @@ function okEvent() {
     form.value?.validate((valid: boolean) => {
         if (valid) {
             modelConfig.okConfig.loading = true
-            callback.value(formData).then((res: any) => {
+            const submitData = {
+                id: formData.id,
+                name: formData.name,
+                parentLayerId: formData.parentLayerId,
+                tableRule: buildTableRule(tableRuleMode.value, formData.tableRuleInput),
+                remark: formData.remark
+            }
+            callback.value(submitData).then((res: any) => {
                 modelConfig.okConfig.loading = false
                 if (res === undefined) {
                     modelConfig.visible = false
@@ -154,6 +216,64 @@ function closeEvent() {
     modelConfig.visible = false
 }
 
+function escapeRegexChar(value: string) {
+    return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+}
+
+function unEscapeRegexChar(value: string) {
+    return value.replace(/\\([.*+?^${}()|[\]\\])/g, '$1')
+}
+
+function buildTableRule(mode: TableRuleMode, inputValue: string) {
+    const trimmedValue = (inputValue || '').trim()
+    if (!trimmedValue) {
+        return ''
+    }
+    if (mode === 'regex') {
+        return trimmedValue
+    }
+
+    const safeValue = escapeRegexChar(trimmedValue)
+    if (mode === 'prefix') {
+        return `^${safeValue}.*`
+    }
+    if (mode === 'suffix') {
+        return `.*${safeValue}$`
+    }
+    if (mode === 'contains') {
+        return `.*${safeValue}.*`
+    }
+    return `^${safeValue}$`
+}
+
+function parseTableRule(value: string): { mode: TableRuleMode; input: string } {
+    if (!value) {
+        return { mode: 'prefix', input: '' }
+    }
+
+    const prefixMatch = value.match(/^\^(.+)\.\*$/)
+    if (prefixMatch?.[1]) {
+        return { mode: 'prefix', input: unEscapeRegexChar(prefixMatch[1]) }
+    }
+
+    const suffixMatch = value.match(/^\.\*(.+)\$$/)
+    if (suffixMatch?.[1]) {
+        return { mode: 'suffix', input: unEscapeRegexChar(suffixMatch[1]) }
+    }
+
+    const containsMatch = value.match(/^\.\*(.+)\.\*$/)
+    if (containsMatch?.[1]) {
+        return { mode: 'contains', input: unEscapeRegexChar(containsMatch[1]) }
+    }
+
+    const exactMatch = value.match(/^\^(.+)\$$/)
+    if (exactMatch?.[1]) {
+        return { mode: 'exact', input: unEscapeRegexChar(exactMatch[1]) }
+    }
+
+    return { mode: 'regex', input: value }
+}
+
 defineExpose({
     showModal
 })
@@ -182,6 +302,13 @@ defineExpose({
         padding: 8px 12px;
         margin-bottom: 12px;
         border-radius: 5px;
+    }
+
+    .table-rule-config {
+        width: 100%;
+        display: grid;
+        grid-template-columns: 1fr 3fr;
+        gap: 8px;
     }
 }
 </style>
