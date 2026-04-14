@@ -186,7 +186,11 @@ function addData() {
 function editData(data: any) {
     addModalRef.value.showModal((data: any) => {
         return new Promise((resolve: any, reject: any) => {
-            UpdateDataLayerData(data).then((res: any) => {
+            const params = {
+                ...data,
+                parentLayerId: !data.parentLayerId ? null : data.parentLayerId
+            }
+            UpdateDataLayerData(params).then((res: any) => {
                 ElMessage.success(res.msg)
                 initData()
                 resolve()

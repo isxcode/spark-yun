@@ -12,7 +12,6 @@
             </el-form-item>
             <el-form-item label="父级分层" prop="parentLayerId">
                 <el-select
-                    :disabled="!!formData.id"
                     v-model="formData.parentLayerId"
                     filterable
                     clearable
@@ -56,6 +55,7 @@ interface Option {
 const form = ref<FormInstance>()
 const callback = ref<any>()
 const parentLayerIdList = ref<Option[]>([])
+const currentLayerId = ref<string>('')
 
 const modelConfig = reactive({
     title: '添加',
@@ -90,7 +90,8 @@ const rules = reactive<FormRules>({
 })
 
 function showModal(cb: () => void, data: any, parentLayerId: string): void {
-    getParentLayerIList()
+    currentLayerId.value = data?.id ?? ''
+    getParentLayerIList(currentLayerId.value)
     if (data) {
         Object.keys(formData).forEach((key: string) => {
             formData[key] = data[key]
@@ -130,18 +131,20 @@ function okEvent() {
     })
 }
 
-function getParentLayerIList() {
+function getParentLayerIList(excludeLayerId?: string) {
     GetDataLayerList({
         page: 0,
         pageSize: 10000,
         searchKeyWord: ''
     }).then((res: any) => {
-        parentLayerIdList.value = [...res.data.content.map((item: any) => {
-            return {
-                label: item.fullPathName,
-                value: item.id
-            }
-        })]
+        parentLayerIdList.value = [...res.data.content
+            .filter((item: any) => item.id !== excludeLayerId)
+            .map((item: any) => {
+                return {
+                    label: item.fullPathName,
+                    value: item.id
+                }
+            })]
     }).catch(() => {
         parentLayerIdList.value = []
     })
