@@ -748,3 +748,15 @@ vim /opt/hive/conf/hive-site.xml
 ```wikitext
 这是yarn服务异常，检查NodeManager服务是否正常，检查服务器存储是否到90%，内存使用是否过高，导致无法申请yarn资源
 ```
+
+#### 问题25
+
+```log
+Cannot discover a connector using option: 'connector'='doris'
+```
+
+##### 解决方案
+
+```wikitext
+下载依赖文件 - flink-doris-connector-1.18-25.0.0.jar
+```
