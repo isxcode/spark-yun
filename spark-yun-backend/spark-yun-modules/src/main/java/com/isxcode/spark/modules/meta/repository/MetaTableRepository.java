@@ -23,6 +23,10 @@ public interface MetaTableRepository extends JpaRepository<MetaTableEntity, Meta
     Page<MetaTableAo> searchAll(@Param("tenantId") String tenantId, @Param("keyword") String searchKeyWord,
         @Param("datasourceId") String datasourceId, Pageable pageable);
 
+    @Query("SELECT new com.isxcode.spark.api.meta.ao.MetaTableAo(M.datasourceId,M.tableName,M.tableComment,MT.customComment,M.lastModifiedDateTime) FROM MetaTableEntity M left join MetaTableInfoEntity MT on M.datasourceId=MT.datasourceId and M.tableName = MT.tableName WHERE (:datasourceId is null OR M.datasourceId = :datasourceId OR :datasourceId='') and ( M.tableName = :keyword OR (MT.customComment is null and M.tableComment = :keyword) OR MT.customComment = :keyword ) and M.tenantId=:tenantId order by M.tableName asc, M.createDateTime desc")
+    Page<MetaTableAo> searchAllExact(@Param("tenantId") String tenantId, @Param("keyword") String searchKeyWord,
+        @Param("datasourceId") String datasourceId, Pageable pageable);
+
     void deleteAllByDatasourceIdAndTableNameIn(String datasourceId, List<String> tableName);
 
     void deleteAllByDatasourceId(String datasourceId);

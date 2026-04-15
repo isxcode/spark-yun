@@ -33,10 +33,7 @@
                         >{{ scopeSlot.row.name }}</span>
                     </template>
                     <template #layerNameSlot="scopeSlot">
-                        <span
-                            class="name-click"
-                            @click="showDataLayer(scopeSlot.row)"
-                        >{{ scopeSlot.row.layerName }}</span>
+                        <span>{{ scopeSlot.row.layerName }}</span>
                     </template>
                     <template #options="scopeSlot">
                         <div class="btn-group btn-group-msg">
@@ -72,7 +69,6 @@ import AddModal from './add-modal/index.vue'
 import CopyModal from './copy-modal/index.vue'
 
 import { BreadCrumbList, TableConfig } from './list.config'
-import { GetParentLayerNode } from '@/services/data-layer.service'
 import {
     GetDataModelList,
     GetDataModelTreeData,
@@ -238,21 +234,6 @@ function inputEvent(e: string) {
     if (e === '') {
         handleCurrentChange(1)
     }
-}
-
-function showDataLayer(data: any) {
-    GetParentLayerNode({
-        id: data.layerId
-    }).then((res: any) => {
-        router.push({
-            name: 'data-layer',
-            query: {
-                parentLayerId: res.data.parentLayerId ?? null
-            }
-        })
-    }).catch((error: any) => {
-        console.error('获取父级节点失败', error)
-    })
 }
 
 function showDetail(data: any) {
