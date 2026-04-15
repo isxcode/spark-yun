@@ -8,6 +8,7 @@ import com.isxcode.spark.api.datasource.dto.ConnectInfo;
 import com.isxcode.spark.api.datasource.dto.KafkaConfig;
 import com.isxcode.spark.api.datasource.req.*;
 import com.isxcode.spark.api.datasource.res.*;
+import com.isxcode.spark.api.meta.constant.MetaDatabaseStatus;
 import com.isxcode.spark.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.spark.backend.api.base.properties.IsxAppProperties;
 import com.isxcode.spark.common.utils.aes.AesUtils;
@@ -33,10 +34,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 
 import com.isxcode.spark.modules.datasource.source.DataSourceFactory;
 import com.isxcode.spark.modules.datasource.source.Datasource;
+import com.isxcode.spark.modules.meta.entity.MetaDatabaseEntity;
+import com.isxcode.spark.modules.meta.repository.MetaDatabaseRepository;
 import com.isxcode.spark.modules.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -71,7 +75,10 @@ public class DatasourceBizService {
     private final DatabaseDriverService databaseDriverService;
 
     private final DataSourceFactory dataSourceFactory;
+
     private final UserService userService;
+
+    private final MetaDatabaseRepository metaDatabaseRepository;
 
     public void addDatasource(AddDatasourceReq addDatasourceReq) {
 
@@ -123,6 +130,9 @@ public class DatasourceBizService {
         }
 
         datasourceRepository.save(datasource);
+
+        // 刷新一下元数据
+        refreshMetaDatabase();
     }
 
     public void updateDatasource(UpdateDatasourceReq updateDatasourceReq) {
@@ -178,6 +188,9 @@ public class DatasourceBizService {
         }
 
         datasourceRepository.save(datasource);
+
+        // 刷新一下元数据
+        refreshMetaDatabase();
     }
 
     public Page<PageDatasourceRes> pageDatasource(PageDatasourceReq dasQueryDatasourceReq) {
@@ -504,4 +517,48 @@ public class DatasourceBizService {
         return GenerateCreateTableSqlRes.builder().createTableSql(createTableSql).build();
     }
 
+    public void refreshMetaDatabase() {
+
+        // 查询现存的数据源
+        List<DatasourceEntity> allDatasource = datasourceRepository.findAll().stream()
+            .filter(e -> DatasourceStatus.ACTIVE.equals(e.getStatus())).collect(Collectors.toList());
+        Map<String, DatasourceEntity> datasourceMap = allDatasource.stream()
+            .collect(Collectors.toMap(DatasourceEntity::getId, entity -> entity, (existing, replacement) -> existing));
+
+        // 查询现存的元数据
+        List<MetaDatabaseEntity> allMetaDatasource = metaDatabaseRepository.findAll();
+        Map<String, MetaDatabaseEntity> metaDatasourceMap = allMetaDatasource.stream().collect(Collectors
+            .toMap(MetaDatabaseEntity::getDatasourceId, entity -> entity, (existing, replacement) -> existing));
+
+        // 遍历获取需要新增的数据源元数据
+        List<MetaDatabaseEntity> saveAllMetaDatasource = new ArrayList<>();
+        allDatasource.stream().filter(e -> !DatasourceType.KAFKA.equals(e.getDbType())).forEach(datasource -> {
+            MetaDatabaseEntity metaDatabaseEntity = metaDatasourceMap.get(datasource.getId());
+            if (metaDatabaseEntity == null) {
+                metaDatabaseEntity = new MetaDatabaseEntity();
+                metaDatabaseEntity.setDatasourceId(datasource.getId());
+            }
+            Datasource datasourceTmp = dataSourceFactory.getDatasource(datasource.getDbType());
+            metaDatabaseEntity.setDbName(datasourceTmp.parseDbName(datasource.getJdbcUrl()));
+            metaDatabaseEntity.setName(datasource.getName());
+            if (Strings.isEmpty(metaDatabaseEntity.getDbComment())) {
+                metaDatabaseEntity.setDbComment(datasource.getRemark());
+            }
+            metaDatabaseEntity.setDbType(datasource.getDbType());
+            metaDatabaseEntity.setStatus(MetaDatabaseStatus.ACTIVE);
+            saveAllMetaDatasource.add(metaDatabaseEntity);
+        });
+
+        metaDatabaseRepository.saveAll(saveAllMetaDatasource);
+
+        // 遍历需要删除的数据源元数据
+        List<MetaDatabaseEntity> deleteAllMetaDatasource = new ArrayList<>();
+        allMetaDatasource.forEach(metaDatabase -> {
+            if (datasourceMap.get(metaDatabase.getDatasourceId()) == null) {
+                metaDatabase.setStatus(MetaDatabaseStatus.DELETED);
+                deleteAllMetaDatasource.add(metaDatabase);
+            } ;
+        });
+        metaDatabaseRepository.saveAll(deleteAllMetaDatasource);
+    }
 }
