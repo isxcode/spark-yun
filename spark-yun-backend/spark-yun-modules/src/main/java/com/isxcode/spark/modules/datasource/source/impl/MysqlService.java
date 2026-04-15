@@ -194,6 +194,7 @@ public class MysqlService extends Datasource {
     public String getCreateTableDefaultSuffix() {
         return "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4";
     }
+
     @Override
     public String getCreateTableFormat() {
         // CREATE TABLE 表名 (字段列表) 后缀 可选后缀
