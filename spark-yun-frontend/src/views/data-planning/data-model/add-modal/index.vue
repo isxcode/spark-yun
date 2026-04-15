@@ -76,7 +76,7 @@
                     />
                 </el-select>
             </el-form-item>
-            <el-form-item label="表名" prop="tableName">
+            <el-form-item label="表名" prop="tableName" :show-message="false">
                 <el-select
                     v-if="formData.modelType === 'LINK_MODEL'"
                     v-model="formData.tableName"
@@ -92,7 +92,29 @@
                         :value="item.value"
                     />
                 </el-select>
-                <el-input v-else v-model="formData.tableName" maxlength="500" placeholder="请输入" />
+                <el-input
+                    v-else-if="showPrefixRuleInput"
+                    v-model="formData.tableNameInput"
+                    maxlength="500"
+                    :placeholder="tableNamePlaceholder"
+                >
+                    <template #prepend>{{ currentLayerRule.input }}</template>
+                </el-input>
+                <el-input
+                    v-else-if="showSuffixRuleInput"
+                    v-model="formData.tableNameInput"
+                    maxlength="500"
+                    :placeholder="tableNamePlaceholder"
+                >
+                    <template #append>{{ currentLayerRule.input }}</template>
+                </el-input>
+                <el-input
+                    v-else
+                    v-model="formData.tableName"
+                    :disabled="showExactRuleTip"
+                    maxlength="500"
+                    :placeholder="tableNamePlaceholder"
+                />
             </el-form-item>
             <el-form-item label="备注">
                 <el-input v-model="formData.remark" type="textarea" maxlength="200"
@@ -103,7 +125,7 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, defineExpose, ref } from 'vue'
+import { reactive, defineExpose, ref, computed, watch } from 'vue'
 import { GetDataLayerList } from '@/services/data-layer.service'
 import { ElMessage, FormInstance, FormRules } from 'element-plus'
 import { GetDatasourceList } from '@/services/datasource.service'
@@ -115,6 +137,8 @@ interface Option {
     value: string
     tableRule?: string
 }
+
+type TableRuleMode = 'none' | 'prefix' | 'suffix' | 'contains' | 'exact' | 'regex'
 
 const route = useRoute()
 
@@ -262,9 +286,15 @@ const formData = reactive<any>({
     dbType: '',     // 数据源类型
     datasourceId: '',
     tableName: '',
+    tableNameInput: '',
     tableConfig: {}, // 高级配置
     remark: '',
     id: ''
+})
+const currentLayerRule = reactive<{ mode: TableRuleMode; input: string; raw: string }>({
+    mode: 'none',
+    input: '',
+    raw: ''
 })
 const rules = reactive<FormRules>({
     name: [{ required: true, message: '请输入采集任务名称', trigger: ['blur', 'change'] }],
@@ -272,7 +302,83 @@ const rules = reactive<FormRules>({
     modelType: [{ required: true, message: '请选择模型类型', trigger: ['blur', 'change'] }],
     dbType: [{ required: true, message: '请选择数据源类型', trigger: ['blur', 'change'] }],
     datasourceId: [{ required: true, message: '请选择数据源', trigger: ['blur', 'change'] }],
-    tableName: [{ required: true, message: '请选择表名', trigger: ['blur', 'change'] }]
+    tableName: [
+        { required: true, message: '请选择表名', trigger: ['blur', 'change'] },
+        {
+            validator: (_rule, value, callback) => {
+                if (formData.modelType !== 'ORIGIN_MODEL') {
+                    callback()
+                    return
+                }
+                if ((currentLayerRule.mode === 'prefix' || currentLayerRule.mode === 'suffix') && !formData.tableNameInput?.trim()) {
+                    callback(new Error('请输入表名可变部分'))
+                    return
+                }
+                if (!value?.trim()) {
+                    callback()
+                    return
+                }
+
+                if (currentLayerRule.mode === 'contains' && currentLayerRule.input && !value.includes(currentLayerRule.input)) {
+                    callback(new Error(`表名需包含：${currentLayerRule.input}`))
+                    return
+                }
+                if (currentLayerRule.mode === 'exact' && currentLayerRule.input && value !== currentLayerRule.input) {
+                    callback(new Error(`表名需为：${currentLayerRule.input}`))
+                    return
+                }
+                if (currentLayerRule.mode === 'regex' && currentLayerRule.raw) {
+                    try {
+                        const regex = new RegExp(currentLayerRule.raw)
+                        if (!regex.test(value)) {
+                            callback(new Error('表名不符合分层规范'))
+                            return
+                        }
+                    } catch (error) {
+                        // 分层规则非法时不阻塞模型创建
+                    }
+                }
+                callback()
+            },
+            trigger: ['blur', 'change']
+        }
+    ]
+})
+
+const showPrefixRuleInput = computed(() => {
+    return formData.modelType === 'ORIGIN_MODEL' && !formData.id && currentLayerRule.mode === 'prefix'
+})
+
+const showSuffixRuleInput = computed(() => {
+    return formData.modelType === 'ORIGIN_MODEL' && !formData.id && currentLayerRule.mode === 'suffix'
+})
+
+const showContainsRuleTip = computed(() => {
+    return formData.modelType === 'ORIGIN_MODEL' && !formData.id && currentLayerRule.mode === 'contains'
+})
+
+const showExactRuleTip = computed(() => {
+    return formData.modelType === 'ORIGIN_MODEL' && !formData.id && currentLayerRule.mode === 'exact'
+})
+
+const tableNamePlaceholder = computed(() => {
+    if (showPrefixRuleInput.value || showSuffixRuleInput.value) {
+        return '请输入表名可变部分'
+    }
+    if (showContainsRuleTip.value) {
+        return `请输入完整表名（需包含 ${currentLayerRule.input}）`
+    }
+    if (showExactRuleTip.value) {
+        return '表名已按分层规范自动填写'
+    }
+    if (currentLayerRule.mode === 'regex' && currentLayerRule.input) {
+        return `请按表达式填写：${currentLayerRule.input}`
+    }
+    return '请输入'
+})
+
+watch(() => formData.tableNameInput, () => {
+    tableNameInputChange()
 })
 
 function showModal(cb: () => void, data: any): void {
@@ -355,30 +461,131 @@ function datasouceChangeEvent() {
 }
 
 function modelTypeChangeEvent(value: string) {
+    formData.tableNameInput = ''
     if (value !== 'ORIGIN_MODEL') {
+        formData.tableName = ''
+        currentLayerRule.mode = 'none'
+        currentLayerRule.input = ''
+        currentLayerRule.raw = ''
         return
     }
-    fillDefaultTableNameByLayerRule(true)
+    fillDefaultTableNameByLayerRule(true, true)
 }
 
 function layerChangeEvent() {
-    fillDefaultTableNameByLayerRule(true)
+    fillDefaultTableNameByLayerRule(true, true)
 }
 
-function fillDefaultTableNameByLayerRule(force: boolean) {
+function fillDefaultTableNameByLayerRule(force: boolean, resetInput?: boolean) {
     if (formData.id || formData.modelType !== 'ORIGIN_MODEL') {
         return
     }
 
     const currentLayer = parentLayerIdList.value.find((item: Option) => item.value === formData.layerId)
     const tableRule = currentLayer?.tableRule?.trim()
+    const tableRuleInfo = parseTableRule(tableRule || '')
+    currentLayerRule.mode = tableRuleInfo.mode
+    currentLayerRule.input = tableRuleInfo.input
+    currentLayerRule.raw = tableRule || ''
+
     if (!tableRule) {
+        if (resetInput) {
+            formData.tableNameInput = ''
+            formData.tableName = ''
+        }
         return
     }
 
-    if (force || !formData.tableName) {
-        formData.tableName = tableRule
+    if (resetInput) {
+        formData.tableNameInput = ''
+    } else if (force || !formData.tableNameInput) {
+        formData.tableNameInput = parseTableNameInputByRule(formData.tableName, tableRuleInfo)
     }
+
+    if (force || !formData.tableName) {
+        formData.tableName = buildTableNameByRule(formData.tableNameInput, tableRuleInfo)
+    }
+    if (tableRuleInfo.mode === 'prefix' || tableRuleInfo.mode === 'suffix') {
+        formData.tableName = buildTableNameByRule(formData.tableNameInput, tableRuleInfo)
+    }
+    if (tableRuleInfo.mode === 'exact') {
+        formData.tableName = tableRuleInfo.input
+    }
+    form.value?.validateField('tableName')
+}
+
+function parseTableRule(value: string): { mode: TableRuleMode; input: string } {
+    if (!value) {
+        return { mode: 'none', input: '' }
+    }
+
+    const prefixMatch = value.match(/^\^(.+)\.\*$/)
+    if (prefixMatch?.[1]) {
+        return { mode: 'prefix', input: unEscapeRegexChar(prefixMatch[1]) }
+    }
+
+    const suffixMatch = value.match(/^\.\*(.+)\$$/)
+    if (suffixMatch?.[1]) {
+        return { mode: 'suffix', input: unEscapeRegexChar(suffixMatch[1]) }
+    }
+
+    const containsMatch = value.match(/^\.\*(.+)\.\*$/)
+    if (containsMatch?.[1]) {
+        return { mode: 'contains', input: unEscapeRegexChar(containsMatch[1]) }
+    }
+
+    const exactMatch = value.match(/^\^(.+)\$$/)
+    if (exactMatch?.[1]) {
+        return { mode: 'exact', input: unEscapeRegexChar(exactMatch[1]) }
+    }
+
+    return { mode: 'regex', input: value }
+}
+
+function unEscapeRegexChar(value: string) {
+    return value.replace(/\\([.*+?^${}()|[\]\\])/g, '$1')
+}
+
+function buildTableNameByRule(inputValue: string, ruleInfo: { mode: TableRuleMode; input: string }) {
+    const safeInput = (inputValue || '').trim()
+    if (ruleInfo.mode === 'prefix') {
+        return `${ruleInfo.input}${safeInput}`
+    }
+    if (ruleInfo.mode === 'suffix') {
+        return `${safeInput}${ruleInfo.input}`
+    }
+    if (ruleInfo.mode === 'exact') {
+        return ruleInfo.input
+    }
+    return safeInput
+}
+
+function parseTableNameInputByRule(tableName: string, ruleInfo: { mode: TableRuleMode; input: string }) {
+    const currentTableName = (tableName || '').trim()
+    if (!currentTableName) {
+        return ''
+    }
+    if (ruleInfo.mode === 'prefix' && currentTableName.startsWith(ruleInfo.input)) {
+        return currentTableName.slice(ruleInfo.input.length)
+    }
+    if (ruleInfo.mode === 'suffix' && currentTableName.endsWith(ruleInfo.input)) {
+        return currentTableName.slice(0, currentTableName.length - ruleInfo.input.length)
+    }
+    return currentTableName
+}
+
+function tableNameInputChange() {
+    if (formData.modelType !== 'ORIGIN_MODEL' || formData.id) {
+        return
+    }
+    if (currentLayerRule.mode === 'prefix' || currentLayerRule.mode === 'suffix') {
+        formData.tableName = buildTableNameByRule(formData.tableNameInput, currentLayerRule)
+    } else if (currentLayerRule.mode === 'exact') {
+        formData.tableName = currentLayerRule.input
+    } else {
+        formData.tableName = formData.tableNameInput
+    }
+    form.value?.validateField('tableName')
 }
 
 function getDataSourceList(e: boolean, searchType?: string) {
@@ -451,6 +658,14 @@ defineExpose({
         padding: 8px 12px;
         margin-bottom: 12px;
         border-radius: 5px;
+    }
+
+    .table-rule-tip {
+        width: 100%;
+        font-size: 12px;
+        line-height: 1.4;
+        color: getCssVar('text-color', 'secondary');
+        margin-top: 6px;
     }
 }
 </style>
