@@ -6,9 +6,6 @@
                 <el-button type="primary" @click="addData">
                     新建字段
                 </el-button>
-                <el-button type="primary" @click="buildData">
-                    构建模型
-                </el-button>
             </div>
             <div class="zqy-seach">
                 <el-input
@@ -47,6 +44,7 @@
                 </BlockTable>
                 <div class="back-btn-group">
                     <el-button @click="backDataModel">返回数据模型</el-button>
+                    <el-button type="primary" @click="buildData">构建</el-button>
                 </div>
             </div>
         </LoadingPage>
@@ -120,7 +118,7 @@ function addData() {
     })
 }
 
-function buildData(data: any) {
+function buildData() {
     ElMessageBox.confirm('是否确定构建？', '警告', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -225,6 +223,7 @@ onMounted(() => {
                 margin-top: 8px;
                 display: flex;
                 align-items: center;
+                justify-content: space-between;
             }
             .el-checkbox {
                 &.is-disabled {
