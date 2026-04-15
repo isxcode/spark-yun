@@ -37,7 +37,14 @@
                     </template>
                     <template #options="scopeSlot">
                         <div class="btn-group btn-group-msg">
-                            <span @click="showLog(scopeSlot.row)">日志</span>
+                            <span
+                                v-if="['INIT', 'FAIL', 'ERROR'].includes(scopeSlot.row.status)"
+                                @click="buildData(scopeSlot.row)"
+                            >构建</span>
+                            <span
+                                v-if="scopeSlot.row.status === 'SUCCESS'"
+                                @click="showDetail(scopeSlot.row)"
+                            >详情</span>
                             <el-dropdown trigger="click">
                                 <span class="click-show-more">更多</span>
                                 <template #dropdown>
@@ -45,8 +52,9 @@
                                         <el-dropdown-item @click="editData(scopeSlot.row)">编辑</el-dropdown-item>
                                         <el-dropdown-item @click="deleteData(scopeSlot.row)">删除</el-dropdown-item>
                                         <el-dropdown-item @click="resetData(scopeSlot.row)">重置</el-dropdown-item>
-                                        <el-dropdown-item @click="buildData(scopeSlot.row)">构建</el-dropdown-item>
+                                        <el-dropdown-item v-if="scopeSlot.row.status !== 'INIT'" @click="buildData(scopeSlot.row)">构建</el-dropdown-item>
                                         <el-dropdown-item @click="copyData(scopeSlot.row)">复制</el-dropdown-item>
+                                        <el-dropdown-item @click="showLog(scopeSlot.row)">日志</el-dropdown-item>
                                     </el-dropdown-menu>
                                 </template>
                             </el-dropdown>
