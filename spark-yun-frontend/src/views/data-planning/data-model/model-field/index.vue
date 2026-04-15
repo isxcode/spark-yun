@@ -308,7 +308,7 @@ onMounted(() => {
             .action-btn-group {
                 display: flex;
                 align-items: center;
-                gap: 8px;
+                gap: 0;
             }
             .el-checkbox {
                 &.is-disabled {
