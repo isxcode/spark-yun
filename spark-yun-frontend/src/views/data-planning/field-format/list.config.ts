@@ -73,12 +73,6 @@ export const colConfigs: colConfig[] = [
         showOverflowTooltip: true
     },
     {
-        prop: 'columnRule',
-        title: '字段名规范',
-        minWidth: 100,
-        showOverflowTooltip: true
-    },
-    {
         prop: 'status',
         title: '状态',
         customSlot: 'statusTag',
