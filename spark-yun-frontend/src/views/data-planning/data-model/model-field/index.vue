@@ -44,7 +44,10 @@
                 </BlockTable>
                 <div class="back-btn-group">
                     <el-button @click="backDataModel">返回数据模型</el-button>
-                    <el-button type="primary" @click="buildData">构建</el-button>
+                    <div class="action-btn-group">
+                        <el-button @click="configData">属性配置</el-button>
+                        <el-button type="primary" @click="buildData">构建</el-button>
+                    </div>
                 </div>
             </div>
         </LoadingPage>
@@ -64,7 +67,9 @@ import {
     UpdateModelFieldData,
     DeleteModelField,
     BuildDataModel,
-    UpdateModelFieldList
+    UpdateModelFieldList,
+    GetDataModelList,
+    UpdateDataModelData
 } from '@/services/data-model.service'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useRoute, useRouter } from 'vue-router'
@@ -78,6 +83,7 @@ const keyword = ref('')
 const loading = ref(false)
 const networkError = ref(false)
 const addModalRef = ref<any>(null)
+const currentModelInfo = ref<any>(null)
 
 function initData(tableLoading?: boolean) {
     loading.value = tableLoading ? false : true
@@ -130,6 +136,80 @@ function buildData() {
             ElMessage.success(res.msg)
         }).catch(() => { })
     })
+}
+
+async function loadCurrentModelInfo() {
+    const modelId = String(route.query.id || '')
+    if (!modelId) {
+        return null
+    }
+
+    let page = 0
+    const pageSize = 200
+    let total = 0
+
+    do {
+        const res = await GetDataModelList({
+            page,
+            pageSize,
+            searchKeyWord: ''
+        })
+        const content = res?.data?.content || []
+        const target = content.find((item: any) => item.id === modelId)
+        if (target) {
+            currentModelInfo.value = target
+            return target
+        }
+        total = res?.data?.totalElements || 0
+        page += 1
+    } while (page * pageSize < total)
+
+    return null
+}
+
+async function getCurrentModelInfo() {
+    const modelId = String(route.query.id || '')
+    if (currentModelInfo.value?.id === modelId) {
+        return currentModelInfo.value
+    }
+    return loadCurrentModelInfo()
+}
+
+async function configData() {
+    const modelInfo = await getCurrentModelInfo()
+    if (!modelInfo) {
+        ElMessage.warning('未找到当前数据模型信息')
+        return
+    }
+
+    ElMessageBox.prompt('', '属性配置', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        inputType: 'textarea',
+        customClass: 'model-config-prompt',
+        inputAttributes: {
+            rows: '18'
+        },
+        inputValue: modelInfo.tableConfig || '',
+        inputPlaceholder: '请输入'
+    }).then(({ value }) => {
+        UpdateDataModelData({
+            id: modelInfo.id,
+            name: modelInfo.name,
+            layerId: modelInfo.layerId,
+            dbType: modelInfo.dbType,
+            datasourceId: modelInfo.datasourceId,
+            tableName: modelInfo.tableName,
+            tableConfig: value,
+            remark: modelInfo.remark || ''
+        }).then((res: any) => {
+            currentModelInfo.value = {
+                ...modelInfo,
+                tableConfig: value
+            }
+            ElMessage.success(res.msg)
+        }).catch(() => { })
+    }).catch(() => { })
 }
 
 function editData(data: any) {
@@ -225,6 +305,11 @@ onMounted(() => {
                 align-items: center;
                 justify-content: space-between;
             }
+            .action-btn-group {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
             .el-checkbox {
                 &.is-disabled {
                     .el-checkbox__inner {
@@ -242,6 +327,21 @@ onMounted(() => {
                     }
                 }
             }
+        }
+    }
+}
+
+.model-config-prompt {
+    width: 760px;
+
+    .el-message-box__content {
+        padding-bottom: 8px;
+    }
+
+    .el-message-box__input {
+        .el-textarea__inner {
+            min-height: 420px !important;
+            height: 420px !important;
         }
     }
 }

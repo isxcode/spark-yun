@@ -29,6 +29,8 @@ public class DataModelPageRes {
 
     private String tableName;
 
+    private String tableConfig;
+
     private String status;
 
     private String remark;
