@@ -78,6 +78,22 @@ public abstract class Datasource {
 
     public abstract String convertToFlinkColumnType(String columnType);
 
+    public Integer parseColumnLength(String columnType) {
+        if (columnType == null || columnType.trim().isEmpty()) {
+            return null;
+        }
+        Pattern lengthPattern = Pattern.compile("(\\d+)");
+        Matcher matcher = lengthPattern.matcher(columnType);
+        if (matcher.find()) {
+            try {
+                return Integer.parseInt(matcher.group(1));
+            } catch (NumberFormatException e) {
+                return null;
+            }
+        }
+        return null;
+    }
+
     public Connection getConnection(ConnectInfo connectInfo) throws IsxAppException {
 
         // 判断驱动是否已经加载
