@@ -171,9 +171,8 @@ public class DorisService extends Datasource {
     public String getCreateTableOptionalSuffix(List<ColumnMetaDto> fromColumnList) {
         // 查找第一个字段作为分布键
         String firstColumn = fromColumnList.isEmpty() ? "id" : fromColumnList.get(0).getName();
-        return "DISTRIBUTED BY HASH(" + firstColumn + ") BUCKETS 1 PROPERTIES (\n" +
-            "    \"replication_num\" = \"1\"\n" +
-            ")";
+        return "DISTRIBUTED BY HASH(" + firstColumn + ") BUCKETS 1 PROPERTIES (\n" + "    \"replication_num\" = \"1\"\n"
+            + ")";
     }
 
     @Override
