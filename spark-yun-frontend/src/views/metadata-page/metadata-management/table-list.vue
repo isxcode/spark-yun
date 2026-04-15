@@ -25,6 +25,7 @@ import PreviewModal from './preview-modal/index.vue'
 const emit = defineEmits(['editEvent', 'dataLineageEvent'])
 const props = defineProps<{
     keyword: string
+    exactTableName?: string
 }>()
 
 const previewModalRef = ref<any>(null)
@@ -79,20 +80,28 @@ const tableConfig = reactive({
     loading: false
 })
 
-function initData(searchKeyWord?: string, datasourceId?: string) {
+function initData(searchKeyWord?: string, datasourceId?: string, exactTableName?: string) {
     if (datasourceId || datasourceId === '') {
         dId.value = datasourceId
     }
+    const exactKeyword = exactTableName || props.exactTableName || ''
     return new Promise((resolve, reject) => {
         tableConfig.loading = true
         GetMetadataTableList({
             page: tableConfig.pagination.currentPage - 1,
-            pageSize: tableConfig.pagination.pageSize,
-            searchKeyWord: searchKeyWord || props.keyword || '',
-            datasourceId: dId.value
+            pageSize: exactKeyword ? 10000 : tableConfig.pagination.pageSize,
+            searchKeyWord: exactKeyword || searchKeyWord || props.keyword || '',
+            datasourceId: dId.value,
+            exactSearch: !!exactKeyword
         }).then((res: any) => {
-            tableConfig.tableData = res.data.content
-            tableConfig.pagination.total = res.data.totalElements
+            const list = res.data.content || []
+            if (exactKeyword) {
+                tableConfig.tableData = list.filter((item: any) => item.tableName === exactKeyword)
+                tableConfig.pagination.total = tableConfig.tableData.length
+            } else {
+                tableConfig.tableData = list
+                tableConfig.pagination.total = res.data.totalElements
+            }
             tableConfig.loading = false
             resolve(true)
         })
