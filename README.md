@@ -84,6 +84,7 @@ docker run -p 8080:8080 -d isxcode/zhiqingyun
 ### 源码构建
 
 ```bash
+# 系统环境: Mac或Linux
 # 安装包路径: /tmp/spark-yun/spark-yun-dist/build/distributions/zhiqingyun.tar.gz
 cd /tmp
 git clone https://github.com/isxcode/spark-yun.git
