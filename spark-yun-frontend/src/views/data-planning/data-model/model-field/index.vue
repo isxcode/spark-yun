@@ -134,6 +134,8 @@ function buildData() {
             modelId: route.query.id
         }).then((res: any) => {
             ElMessage.success(res.msg)
+            initData()
+            loadCurrentModelInfo()
         }).catch(() => { })
     })
 }
