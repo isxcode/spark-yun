@@ -43,7 +43,7 @@
                             >构建</span>
                             <span
                                 v-if="scopeSlot.row.status === 'SUCCESS'"
-                                @click="showDetail(scopeSlot.row)"
+                                @click="showMetadataDetail(scopeSlot.row)"
                             >详情</span>
                             <el-dropdown trigger="click">
                                 <span class="click-show-more">更多</span>
@@ -250,6 +250,17 @@ function showDetail(data: any) {
         query: {
             id: data.id,
             modelType: data.modelType
+        }
+    })
+}
+
+function showMetadataDetail(data: any) {
+    router.push({
+        name: 'metadata-management',
+        query: {
+            tableType: 'table',
+            datasourceId: data.datasourceId || '',
+            tableName: data.tableName || ''
         }
     })
 }

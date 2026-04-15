@@ -39,6 +39,7 @@
                 <component
                     :is="tabComponent"
                     :keyword="keyword"
+                    :exact-table-name="exactTableName"
                     ref="currentTabRef"
                     @redirectToTable="redirectToTable"
                     @editEvent="editEvent"
@@ -76,6 +77,7 @@ import { ElMessage } from 'element-plus'
 import AddModal from './add-modal/index.vue'
 import RemarkModal from './remark-modal/index.vue'
 import DataLineage from './data-lineage/index.vue'
+import { useRoute } from 'vue-router'
 
 const guid = function () {
     function S4() {
@@ -95,16 +97,18 @@ const refreshLoading = ref<boolean>(false)
 const addModalRef = ref<any>(null)
 const remarkModalRef = ref<any>(null)
 const dataLineageRef = ref<any>(null)
+const route = useRoute()
 
 const datasourceId = ref('')
 const dbType = ref('')
 const dataSourceList = ref<any[]>([])
+const exactTableName = ref('')
 
 function initData(tableLoading?: boolean) {
     loading.value = tableLoading ? false : true
     networkError.value = networkError.value || false
     currentTabRef.value?.initPage()
-    currentTabRef.value?.initData(keyword.value, datasourceId.value).then(() => {
+    currentTabRef.value?.initData(keyword.value, datasourceId.value, exactTableName.value).then(() => {
         loading.value = false
         networkError.value = false
     }).catch(() => {
@@ -114,6 +118,7 @@ function initData(tableLoading?: boolean) {
 }
 
 function inputEvent(e: string) {
+    exactTableName.value = ''
     if (e === '') {
         initData()
     }
@@ -130,6 +135,7 @@ function changeTypeEvent(e: string, id?: string) {
         datasourceId.value = ''
         dbType.value = ''
     }
+    exactTableName.value = ''
     keyword.value = ''
     nextTick(() => {
         initData()
@@ -253,10 +259,12 @@ function getDataSourceList() {
 }
 
 function datasourceIdChangeEvent() {
+    exactTableName.value = ''
     initData()
 }
 
 function redirectToTable(data: any) {
+    exactTableName.value = ''
     keyword.value = ''
     datasourceId.value = data.datasourceId
     dbType.value = data.dbType
@@ -375,6 +383,17 @@ function showDetail(e: any) {
 
 onMounted(() => {
     getDataSourceList()
+    const routeTableType = String(route.query.tableType || '')
+    const routeDatasourceId = String(route.query.datasourceId || '')
+    const routeTableName = String(route.query.tableName || '')
+    if (routeTableType === 'table') {
+        tableType.value = 'table'
+        datasourceId.value = routeDatasourceId
+        changeTypeEvent('table', routeDatasourceId)
+        keyword.value = routeTableName
+        exactTableName.value = routeTableName
+        return
+    }
     changeTypeEvent('db')
 })
 </script>

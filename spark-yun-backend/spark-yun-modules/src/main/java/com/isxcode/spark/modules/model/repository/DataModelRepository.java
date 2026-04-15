@@ -16,7 +16,7 @@ import java.util.Optional;
 @CacheConfig(cacheNames = {"SY_DATA_MODEL"})
 public interface DataModelRepository extends JpaRepository<DataModelEntity, String> {
 
-    @Query("SELECT D FROM DataModelEntity D WHERE D.id = :keyword OR D.name LIKE %:keyword% OR D.remark LIKE %:keyword% order by D.createDateTime desc ")
+    @Query("SELECT D FROM DataModelEntity D WHERE D.id LIKE %:keyword% OR D.name LIKE %:keyword% OR D.remark LIKE %:keyword% order by D.createDateTime desc ")
     Page<DataModelEntity> searchAll(@Param("keyword") String searchKeyWord, Pageable pageable);
 
     @Query("SELECT D FROM DataModelEntity D WHERE D.layerId = :layerId AND (D.id = :keyword OR D.name LIKE %:keyword% OR D.remark LIKE %:keyword%) order by D.createDateTime desc ")
