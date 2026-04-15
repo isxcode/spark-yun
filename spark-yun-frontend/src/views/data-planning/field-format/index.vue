@@ -29,22 +29,17 @@
                     <template #nameSlot="scopeSlot">
                         <span
                             class="name-click"
-                            @click="showDetail(scopeSlot.row)"
+                            @click="editData(scopeSlot.row)"
                         >{{ scopeSlot.row.name }}</span>
                     </template>
                     <template #options="scopeSlot">
                         <div class="btn-group btn-group-msg">
-                            <span @click="editData(scopeSlot.row)">编辑</span>
+                            <span v-if="['DISABLE'].includes(scopeSlot.row.status)" @click="enableData(scopeSlot.row)">启用</span>
+                            <span v-if="['ENABLE'].includes(scopeSlot.row.status)" @click="disableData(scopeSlot.row)">禁用</span>
                             <el-dropdown trigger="click">
                                 <span class="click-show-more">更多</span>
                                 <template #dropdown>
                                     <el-dropdown-menu>
-                                    <el-dropdown-item v-if="['DISABLE'].includes(scopeSlot.row.status)" @click="enableData(scopeSlot.row)">
-                                        启用
-                                    </el-dropdown-item>
-                                    <el-dropdown-item v-if="['ENABLE'].includes(scopeSlot.row.status)" @click="disableData(scopeSlot.row)">
-                                        禁用
-                                    </el-dropdown-item>
                                     <el-dropdown-item @click="deleteData(scopeSlot.row)">
                                         删除
                                     </el-dropdown-item>
@@ -181,20 +176,6 @@ function inputEvent(e: string) {
     if (e === '') {
         handleCurrentChange(1)
     }
-}
-
-function showDetail(data: any) {
-    addModalRef.value.showModal((data: any) => {
-        return new Promise((resolve: any, reject: any) => {
-            UpdateFieldFormatData(data).then((res: any) => {
-                ElMessage.success(res.msg)
-                initData()
-                resolve()
-            }).catch((error: any) => {
-                reject(error)
-            })
-        })
-    }, data, 'readonly')
 }
 
 function handleSizeChange(e: number) {
