@@ -29,7 +29,6 @@
           <div class="link" @click="clickDocs">{{ $t("docs") }}</div>
           <div class="link" @click="clickBlogs">{{ $t("blogs") }}</div>
           <div class="link" @click="downloadPackage">{{ $t("download_package") }}</div>
-          <div class="link" @click="downloadLicense"> {{ $t("download_license") }}</div>
         </div>
         <div class="column">
           <div class="title">{{ $t("about_us") }}</div>
