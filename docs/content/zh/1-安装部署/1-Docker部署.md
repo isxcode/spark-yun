@@ -12,18 +12,6 @@ title: "Docker部署"
 docker run -p 8080:8080 isxcode/zhiqingyun
 ```
 
-##### 阿里云镜像仓库(国内用户推荐）
-
-```bash
-registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun:latest-amd64
-registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun:latest-arm64
-```
-
-**架构说明：**
-
-- `latest-amd64`: 适用于 x86_64 架构服务器（常见的 Intel/AMD 处理器）
-- `latest-arm64`: 适用于 ARM64 架构服务器（如 Apple M1/M2 芯片的 macOS）
-
 ### 快速启动
 
 ⚠️ **注意** 
@@ -41,7 +29,7 @@ docker run \
     --name zhiqingyun \
     -e ADMIN_PASSWORD=admin1234 \
     -p 8088:8080 \
-    -d registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun:latest-amd64
+    -d isxcode/zhiqingyun
 ```
 
 ### 启动后访问
@@ -101,7 +89,7 @@ docker run \
     -v /data/zhiqingyun/data:/var/lib/zhiqingyun \
     -v /data/zhiqingyun/conf:/etc/zhiqingyun/conf \
     -p 8088:8080 \
-    -d registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun:latest-amd64
+    -d isxcode/zhiqingyun
 ```
 
 ### 镜像相关命令
@@ -125,11 +113,11 @@ docker restart zhiqingyun
 ```bash
 # 停止并删除旧容器和镜像
 docker stop zhiqingyun && docker rm zhiqingyun
-docker tag registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun:latest-amd64 registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun:latest-amd64-bak-20250728 
-docker rmi registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun:latest-amd64
+docker tag isxcode/zhiqingyun isxcode/zhiqingyun:bak-20250728 
+docker rmi isxcode/zhiqingyun
 
 # 拉取最新镜像
-docker pull registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun:latest-amd64
+docker pull isxcode/zhiqingyun
 ```
 
 ### jvm优化配置
@@ -152,5 +140,5 @@ docker run \
     --name zhiqingyun \
     -e JVMOPTIONS="-Xms2g -Xmx4g -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/var/lib/zhiqingyun/ -XX:+UseG1GC -XX:MaxMetaspaceSize=256m" \
     -p 8088:8080 \
-    -d registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun:latest-amd64
+    -d isxcode/zhiqingyun
 ```
