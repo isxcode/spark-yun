@@ -11,14 +11,28 @@
             <el-form-item label="名称" prop="name">
                 <el-input v-model="formData.name" maxlength="500" placeholder="请输入" />
             </el-form-item>
-            <el-form-item label="字段名规范" prop="columnRule">
+            <el-form-item label="字段名规范" prop="columnRuleInput">
                 <el-tooltip
-                    content="正则表达式：^user_.* [user_name、user_age]"
+                    content="支持前缀/后缀/包含/精确匹配，系统会自动转为正则保存"
                     placement="top"
                 >
                     <el-icon style="left: 60px" class="tooltip-msg"><QuestionFilled /></el-icon>
                 </el-tooltip>
-                <el-input v-model="formData.columnRule" maxlength="500" placeholder="请输入" />
+                <div class="table-rule-config">
+                    <el-select v-model="columnRuleMode">
+                        <el-option
+                            v-for="item in columnRuleModeList"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value"
+                        />
+                    </el-select>
+                    <el-input
+                        v-model="formData.columnRuleInput"
+                        maxlength="500"
+                        :placeholder="columnRulePlaceholder"
+                    />
+                </div>
             </el-form-item>
             <el-form-item label="字段类型" prop="columnTypeCode">
                 <el-select
@@ -59,8 +73,7 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, defineExpose, ref, watch } from 'vue'
-import { GetDataLayerList } from '@/services/data-layer.service'
+import { reactive, defineExpose, ref, watch, computed } from 'vue'
 import { ElMessage, FormInstance, FormRules } from 'element-plus'
 
 interface Option {
@@ -68,9 +81,19 @@ interface Option {
     value: string
 }
 
+type ColumnRuleMode = 'prefix' | 'suffix' | 'contains' | 'exact' | 'regex'
+
 const form = ref<FormInstance>()
 const callback = ref<any>()
 const readonly = ref<boolean>(false)
+const columnRuleMode = ref<ColumnRuleMode>('prefix')
+const columnRuleModeList: Option[] = [
+    { label: '前缀匹配', value: 'prefix' },
+    { label: '后缀匹配', value: 'suffix' },
+    { label: '包含匹配', value: 'contains' },
+    { label: '精确匹配', value: 'exact' },
+    { label: '自定义正则', value: 'regex' }
+]
 const fieldTypeList = ref<Option[]>([
     {
         label: '大文本',
@@ -130,6 +153,7 @@ const formData = reactive<any>({
     isDuplicate: 'DISABLE',
     isPartition: 'DISABLE',
     defaultValue: '',
+    columnRuleInput: '',
     columnRule: '',
     remark: '',
     id: ''
@@ -138,6 +162,23 @@ const rules = reactive<FormRules>({
     name: [{ required: true, message: '请输入名称', trigger: ['blur', 'change'] }],
     columnTypeCode: [{ required: true, message: '请选择字段类型', trigger: ['blur', 'change'] }],
     columnType: [{ required: true, message: '请输入字段精度', trigger: ['blur', 'change'] }],
+    columnRuleInput: [
+        {
+            validator: (_rule, value, callback) => {
+                if (value?.trim() && columnRuleMode.value === 'regex') {
+                    try {
+                        // eslint-disable-next-line no-new
+                        new RegExp(value)
+                    } catch (error) {
+                        callback(new Error('请输入合法的正则表达式'))
+                        return
+                    }
+                }
+                callback()
+            },
+            trigger: ['blur', 'change']
+        }
+    ],
     defaultValue: [{
         trigger: ['blur', 'change'],
         validator: (_rule: any, value: string, callback: (error?: Error) => void) => {
@@ -148,6 +189,13 @@ const rules = reactive<FormRules>({
             callback()
         }
     }]
+})
+
+const columnRulePlaceholder = computed(() => {
+    if (columnRuleMode.value === 'regex') {
+        return '请输入正则表达式，例如：^user_.*'
+    }
+    return '请输入关键字，例如：user_'
 })
 
 watch(() => formData.isNull, () => {
@@ -166,6 +214,9 @@ function showModal(cb: () => void, data: any, type?: string): void {
         Object.keys(formData).forEach((key: string) => {
             formData[key] = data[key]
         })
+        const columnRuleInfo = parseColumnRule(formData.columnRule)
+        columnRuleMode.value = columnRuleInfo.mode
+        formData.columnRuleInput = columnRuleInfo.input
         modelConfig.title = '编辑'
     } else {
         readonly.value = false
@@ -176,6 +227,7 @@ function showModal(cb: () => void, data: any, type?: string): void {
                 formData[key] = 'DISABLE'
             }
         })
+        columnRuleMode.value = 'prefix'
         modelConfig.title = '添加'
     }
 
@@ -193,7 +245,11 @@ function okEvent() {
     form.value?.validate((valid: boolean) => {
         if (valid) {
             modelConfig.okConfig.loading = true
-            callback.value(formData).then((res: any) => {
+            const submitData = {
+                ...formData,
+                columnRule: buildColumnRule(columnRuleMode.value, formData.columnRuleInput)
+            }
+            callback.value(submitData).then((res: any) => {
                 modelConfig.okConfig.loading = false
                 if (res === undefined) {
                     modelConfig.visible = false
@@ -211,6 +267,64 @@ function okEvent() {
 
 function closeEvent() {
     modelConfig.visible = false
+}
+
+function escapeRegexChar(value: string) {
+    return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+}
+
+function unEscapeRegexChar(value: string) {
+    return value.replace(/\\([.*+?^${}()|[\]\\])/g, '$1')
+}
+
+function buildColumnRule(mode: ColumnRuleMode, inputValue: string) {
+    const trimmedValue = (inputValue || '').trim()
+    if (!trimmedValue) {
+        return ''
+    }
+    if (mode === 'regex') {
+        return trimmedValue
+    }
+
+    const safeValue = escapeRegexChar(trimmedValue)
+    if (mode === 'prefix') {
+        return `^${safeValue}.*`
+    }
+    if (mode === 'suffix') {
+        return `.*${safeValue}$`
+    }
+    if (mode === 'contains') {
+        return `.*${safeValue}.*`
+    }
+    return `^${safeValue}$`
+}
+
+function parseColumnRule(value: string): { mode: ColumnRuleMode; input: string } {
+    if (!value) {
+        return { mode: 'prefix', input: '' }
+    }
+
+    const prefixMatch = value.match(/^\^(.+)\.\*$/)
+    if (prefixMatch?.[1]) {
+        return { mode: 'prefix', input: unEscapeRegexChar(prefixMatch[1]) }
+    }
+
+    const suffixMatch = value.match(/^\.\*(.+)\$$/)
+    if (suffixMatch?.[1]) {
+        return { mode: 'suffix', input: unEscapeRegexChar(suffixMatch[1]) }
+    }
+
+    const containsMatch = value.match(/^\.\*(.+)\.\*$/)
+    if (containsMatch?.[1]) {
+        return { mode: 'contains', input: unEscapeRegexChar(containsMatch[1]) }
+    }
+
+    const exactMatch = value.match(/^\^(.+)\$$/)
+    if (exactMatch?.[1]) {
+        return { mode: 'exact', input: unEscapeRegexChar(exactMatch[1]) }
+    }
+
+    return { mode: 'regex', input: value }
 }
 
 defineExpose({
@@ -281,6 +395,13 @@ defineExpose({
         padding: 8px 12px;
         margin-bottom: 12px;
         border-radius: 5px;
+    }
+
+    .table-rule-config {
+        width: 100%;
+        display: grid;
+        grid-template-columns: 1fr 3fr;
+        gap: 8px;
     }
 }
 </style>
