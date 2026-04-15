@@ -28,6 +28,7 @@
           <div class="title">{{ $t("resources") }}</div>
           <div class="link" @click="clickDocs">{{ $t("docs") }}</div>
           <div class="link" @click="clickBlogs">{{ $t("blogs") }}</div>
+          <div class="link" @click="clickInstallDocs">{{ $t("click_install_docs") }}</div>
           <div class="link" @click="downloadPackage">{{ $t("download_package") }}</div>
         </div>
         <div class="column">
@@ -76,13 +77,14 @@
 
   <!-- License Dialog -->
   <el-dialog
-    v-model="licenseDialogVisible"
-    width="500px"
-    align-center
-    :show-close="true"
+      v-model="licenseDialogVisible"
+      width="500px"
+      align-center
+      :show-close="true"
   >
     <div class="license-dialog-content">
-      <img class="license-qrcode" src="https://zhiqingyun-demo.isxcode.com/tools/open/file/qrcode.jpg" alt="微信公众号二维码"/>
+      <img class="license-qrcode" src="https://zhiqingyun-demo.isxcode.com/tools/open/file/qrcode.jpg"
+           alt="微信公众号二维码"/>
       <p class="license-tip">添加微信服务号，获取体验许可证</p>
     </div>
   </el-dialog>
@@ -432,6 +434,11 @@ function downloadPdf() {
 
 function downloadPackage() {
   window.open("https://zhiqingyun-demo.isxcode.com/tools/open/file/zhiqingyun.tar.gz");
+}
+
+function clickInstallDocs() {
+  const router = useRouter();
+  router.push("/zh/docs/zh/1/2");
 }
 
 function clickBlogs() {
