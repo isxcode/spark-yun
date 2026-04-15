@@ -7,14 +7,12 @@ import com.isxcode.spark.api.datasource.constants.DatasourceType;
 import com.isxcode.spark.api.datasource.dto.ConnectInfo;
 import com.isxcode.spark.api.datasource.dto.QueryColumnDto;
 import com.isxcode.spark.api.datasource.dto.QueryTableDto;
-import com.isxcode.spark.api.model.ao.DataModelColumnAo;
 import com.isxcode.spark.api.work.res.GetDataSourceDataRes;
 import com.isxcode.spark.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.spark.backend.api.base.properties.IsxAppProperties;
 import com.isxcode.spark.common.utils.aes.AesUtils;
 import com.isxcode.spark.modules.datasource.service.DatabaseDriverService;
 import com.isxcode.spark.modules.datasource.source.Datasource;
-import com.isxcode.spark.modules.model.entity.DataModelEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.BeanListHandler;
@@ -93,12 +91,6 @@ public class SybaseService extends Datasource {
             log.error(e.getMessage(), e);
             throw new IsxAppException(e.getMessage());
         }
-    }
-
-    @Override
-    public String generateDataModelSql(ConnectInfo connectInfo, List<DataModelColumnAo> modelColumnList,
-        DataModelEntity dataModelEntity) throws IsxAppException {
-        throw new RuntimeException("数据源暂不支持，请联系管理员");
     }
 
     @Override
@@ -199,12 +191,6 @@ public class SybaseService extends Datasource {
     @Override
     public void refreshTableInfo(ConnectInfo connectInfo) throws IsxAppException {
 
-    }
-
-
-    @Override
-    public String getCreateTableDefaultSuffix() {
-        return "";
     }
 
     @Override

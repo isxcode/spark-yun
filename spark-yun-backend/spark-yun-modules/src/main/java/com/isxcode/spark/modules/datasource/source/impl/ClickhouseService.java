@@ -7,7 +7,6 @@ import com.isxcode.spark.api.datasource.constants.DatasourceType;
 import com.isxcode.spark.api.datasource.dto.ConnectInfo;
 import com.isxcode.spark.api.datasource.dto.QueryColumnDto;
 import com.isxcode.spark.api.datasource.dto.QueryTableDto;
-import com.isxcode.spark.api.model.ao.DataModelColumnAo;
 import com.isxcode.spark.api.model.constant.ColumnFormatType;
 import com.isxcode.spark.api.work.res.GetDataSourceDataRes;
 import com.isxcode.spark.backend.api.base.exceptions.IsxAppException;
@@ -15,7 +14,6 @@ import com.isxcode.spark.backend.api.base.properties.IsxAppProperties;
 import com.isxcode.spark.common.utils.aes.AesUtils;
 import com.isxcode.spark.modules.datasource.service.DatabaseDriverService;
 import com.isxcode.spark.modules.datasource.source.Datasource;
-import com.isxcode.spark.modules.model.entity.DataModelEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.BeanListHandler;
@@ -85,35 +83,6 @@ public class ClickhouseService extends Datasource {
             log.error(e.getMessage(), e);
             throw new IsxAppException(e.getMessage());
         }
-    }
-
-    @Override
-    public String generateDataModelSql(ConnectInfo connectInfo, List<DataModelColumnAo> modelColumnList,
-        DataModelEntity dataModel) throws IsxAppException {
-        StringBuilder sqlBuilder = new StringBuilder();
-
-        // 开始构建 CREATE TABLE 语句
-        sqlBuilder.append("CREATE TABLE ").append(connectInfo.getDatabase()).append(".")
-            .append(dataModel.getTableName()).append(" (\n");
-
-        // 构建字段部分
-        for (int i = 0; i < modelColumnList.size(); i++) {
-            DataModelColumnAo column = modelColumnList.get(i);
-            sqlBuilder.append("    ").append(column.getColumnName()).append(" ")
-                .append(mapColumnType(column.getColumnTypeCode(), column.getColumnType()));
-            if (Strings.isNotEmpty(column.getRemark())) {
-                sqlBuilder.append(" COMMENT '").append(column.getRemark()).append("'");
-            }
-            if (i < modelColumnList.size() - 1) {
-                sqlBuilder.append(",");
-            }
-            sqlBuilder.append("\n");
-        }
-
-        // 结束括号并指定引擎
-        sqlBuilder.append(") ENGINE = MergeTree()\n");
-        sqlBuilder.append("ORDER BY tuple()");
-        return sqlBuilder.toString();
     }
 
     @Override
@@ -200,11 +169,6 @@ public class ClickhouseService extends Datasource {
             default:
                 return "String"; // 默认使用 String 作为兜底类型
         }
-    }
-
-    @Override
-    public String getCreateTableDefaultSuffix() {
-        return "ENGINE = MergeTree()";
     }
 
     @Override
