@@ -27,8 +27,8 @@
         <div class="column">
           <div class="title">{{ $t("resources") }}</div>
           <div class="link" @click="clickDocs">{{ $t("docs") }}</div>
-          <div class="link" @click="clickBlogs">{{ $t("blogs") }}</div>
           <div class="link" @click="clickInstallDocs">{{ $t("click_install_docs") }}</div>
+          <div class="link" @click="clickBlogs">{{ $t("blogs") }}</div>
           <div class="link" @click="downloadPackage">{{ $t("download_package") }}</div>
         </div>
         <div class="column">
