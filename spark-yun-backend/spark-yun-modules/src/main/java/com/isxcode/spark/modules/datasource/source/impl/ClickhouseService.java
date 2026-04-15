@@ -203,6 +203,10 @@ public class ClickhouseService extends Datasource {
     }
 
     @Override
+    public String getCreateTableDefaultSuffix() {
+        return "ENGINE = MergeTree()";
+    }
+    @Override
     public String getCreateTableFormat() {
         // CREATE TABLE 表名 (字段列表) 后缀 可选后缀
         return "CREATE TABLE %s (%s) %s %s";
