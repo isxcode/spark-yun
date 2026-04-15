@@ -228,14 +228,15 @@ onMounted(() => {
             .el-checkbox {
                 &.is-disabled {
                     .el-checkbox__inner {
-                        background-color: #FFFFFF;
+                        background-color: #F5F7FA;
+                        border-color: #DCDFE6;
                     }
                     &.is-checked {
                         .el-checkbox__inner {
-                            background-color: getCssVar('color', 'primary');
-                            border-color: getCssVar('color', 'primary');
+                            background-color: #E5E7EB;
+                            border-color: #C0C4CC;
                             &::after {
-                                border-color: #FFFFFF;
+                                border-color: #909399;
                             }
                         }
                     }
