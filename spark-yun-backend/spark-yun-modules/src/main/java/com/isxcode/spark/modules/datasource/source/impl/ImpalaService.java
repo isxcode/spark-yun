@@ -230,6 +230,7 @@ public class ImpalaService extends Datasource {
     public String getCreateTableDefaultSuffix() {
         return "STORED AS PARQUET";
     }
+
     @Override
     public String getCreateTableFormat() {
         return "CREATE TABLE %s (%s) %s %s";

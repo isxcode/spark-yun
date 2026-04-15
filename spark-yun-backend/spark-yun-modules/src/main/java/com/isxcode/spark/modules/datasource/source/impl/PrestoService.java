@@ -230,6 +230,7 @@ public class PrestoService extends Datasource {
     public String getCreateTableDefaultSuffix() {
         return "WITH (format = 'PARQUET')";
     }
+
     @Override
     public String getCreateTableFormat() {
         return "CREATE TABLE %s (%s) %s %s";

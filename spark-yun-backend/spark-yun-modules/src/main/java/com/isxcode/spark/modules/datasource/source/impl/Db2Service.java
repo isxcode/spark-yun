@@ -89,6 +89,7 @@ public class Db2Service extends Datasource {
     public String getCreateTableDefaultSuffix() {
         return "";
     }
+
     @Override
     public String getCreateTableFormat() {
         return "CREATE TABLE %s (%s) %s %s";
