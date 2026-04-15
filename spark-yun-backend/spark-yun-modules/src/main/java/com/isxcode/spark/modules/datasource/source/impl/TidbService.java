@@ -86,6 +86,10 @@ public class TidbService extends Datasource {
 
 
     @Override
+    public String getCreateTableDefaultSuffix() {
+        return "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4";
+    }
+    @Override
     public String getCreateTableFormat() {
         return "CREATE TABLE %s (%s) %s %s";
     }

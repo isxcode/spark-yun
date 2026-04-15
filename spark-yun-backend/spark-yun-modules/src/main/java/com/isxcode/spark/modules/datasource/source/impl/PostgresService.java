@@ -167,6 +167,10 @@ public class PostgresService extends Datasource {
 
 
     @Override
+    public String getCreateTableDefaultSuffix() {
+        return "";
+    }
+    @Override
     public String getCreateTableFormat() {
         return "CREATE TABLE %s (%s) %s %s";
     }

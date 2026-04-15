@@ -87,6 +87,10 @@ public class StarRocksService extends Datasource {
 
 
     @Override
+    public String getCreateTableDefaultSuffix() {
+        return "ENGINE=OLAP";
+    }
+    @Override
     public String getCreateTableFormat() {
         return "CREATE TABLE %s (%s) %s %s";
     }
