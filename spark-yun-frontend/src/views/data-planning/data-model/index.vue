@@ -283,6 +283,10 @@ function handleCurrentChange(e: number) {
 onMounted(() => {
     tableConfig.pagination.currentPage = 1
     tableConfig.pagination.pageSize = 10
+    const routeSearchModelId = String(route.query.searchModelId || '')
+    if (routeSearchModelId) {
+        keyword.value = routeSearchModelId
+    }
     initData()
 })
 </script>

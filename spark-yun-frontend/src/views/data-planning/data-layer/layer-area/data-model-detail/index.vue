@@ -32,7 +32,6 @@
                 </BlockTable>
             </div>
         </LoadingPage>
-        <DataFieldDetail ref="dataFieldDetailRef"></DataFieldDetail>
     </BlockModal>
 </template>
 
@@ -41,7 +40,7 @@ import { reactive, defineExpose, ref, defineEmits } from 'vue'
 import BlockModal from '@/components/block-modal/index.vue'
 import { GetDataModelTreeData } from '@/services/data-model.service'
 import LoadingPage from '@/components/loading/index.vue'
-import DataFieldDetail from '../data-field-detail/index.vue'
+import { useRouter } from 'vue-router'
 
 interface colConfig {
     prop?: string;
@@ -146,8 +145,8 @@ const modelConfig = reactive<any>({
 const loading = ref(false)
 const networkError = ref(false)
 const info = ref(null)
-const dataFieldDetailRef = ref<any>()
 const keyword = ref<string>('')
+const router = useRouter()
 const tableConfig: TableConfig = reactive({
     tableData: [],
     colConfigs: colConfigs,
@@ -168,7 +167,13 @@ function showModal(data: any): void {
 }
 
 function showDetail(data: any) {
-    dataFieldDetailRef.value.showModal(data)
+    closeEvent()
+    router.push({
+        name: 'data-model',
+        query: {
+            searchModelId: data.id
+        }
+    })
 }
 
 function initData(tableLoading?: boolean) {
