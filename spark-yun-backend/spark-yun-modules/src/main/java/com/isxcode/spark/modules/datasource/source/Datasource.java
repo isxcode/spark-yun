@@ -71,6 +71,8 @@ public abstract class Datasource {
 
     public abstract void refreshTableInfo(ConnectInfo connectInfo) throws IsxAppException;
 
+    public abstract String getCreateTableDefaultSuffix();
+
     public abstract String getCreateTableFormat();
 
     public abstract String getCreateTableSuffix(List<ColumnMetaDto> fromColumnList);
