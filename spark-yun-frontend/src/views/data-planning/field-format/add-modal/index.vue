@@ -43,8 +43,12 @@
                 <el-checkbox v-model="formData.isDuplicate" true-label="ENABLE" false-label="DISABLE">唯一</el-checkbox>
                 <el-checkbox v-model="formData.isPartition" true-label="ENABLE" false-label="DISABLE">分区键</el-checkbox>
             </el-form-item>
-            <el-form-item label="默认值" prop="defaultValue">
-                <el-input v-model="formData.defaultValue" maxlength="500" placeholder="请输入" />
+            <el-form-item label="默认值" prop="defaultValue" :show-message="false">
+                <el-input
+                    v-model="formData.defaultValue"
+                    maxlength="500"
+                    :placeholder="formData.isNull === 'ENABLE' ? '勾选非空时，请输入默认值' : '请输入'"
+                />
             </el-form-item>
             <el-form-item label="备注">
                 <el-input v-model="formData.remark" type="textarea" maxlength="200"
@@ -55,7 +59,7 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, defineExpose, ref } from 'vue'
+import { reactive, defineExpose, ref, watch } from 'vue'
 import { GetDataLayerList } from '@/services/data-layer.service'
 import { ElMessage, FormInstance, FormRules } from 'element-plus'
 
@@ -133,7 +137,21 @@ const formData = reactive<any>({
 const rules = reactive<FormRules>({
     name: [{ required: true, message: '请输入名称', trigger: ['blur', 'change'] }],
     columnTypeCode: [{ required: true, message: '请选择字段类型', trigger: ['blur', 'change'] }],
-    columnType: [{ required: true, message: '请输入字段精度', trigger: ['blur', 'change'] }]
+    columnType: [{ required: true, message: '请输入字段精度', trigger: ['blur', 'change'] }],
+    defaultValue: [{
+        trigger: ['blur', 'change'],
+        validator: (_rule: any, value: string, callback: (error?: Error) => void) => {
+            if (formData.isNull === 'ENABLE' && !value?.trim()) {
+                callback(new Error('勾选非空时，请输入默认值'))
+                return
+            }
+            callback()
+        }
+    }]
+})
+
+watch(() => formData.isNull, () => {
+    form.value?.validateField('defaultValue')
 })
 
 function showModal(cb: () => void, data: any, type?: string): void {
