@@ -7,8 +7,8 @@ title: "Rancher部署"
 #### 本地下载镜像
 
 ```bash
-docker pull registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun:latest-amd64
-docker save registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun:latest-amd64 -o /Users/ispong/Downloads/zhiqingyun-image-20251204.tar.gz
+docker pull isxcode/zhiqingyun
+docker save isxcode/zhiqingyun -o /Users/ispong/Downloads/zhiqingyun-image-20251204.tar.gz
 ```
 
 #### 推送到镜像仓库
@@ -18,7 +18,7 @@ scp /Users/ispong/Downloads/zhiqingyun-image-20251204.tar.gz root@120.55.168.57:
 docker load -i /tmp/zhiqingyun-image-20251204.tar.gz
 
 # 设置日期版本号
-docker tag registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun:latest-amd64 172.19.189.246:30003/library/isxcode/zhiqingyun:20251204
+docker tag isxcode/zhiqingyun 172.19.189.246:30003/library/isxcode/zhiqingyun:20251204
 
 # 推送到镜像仓库
 docker push 172.19.189.246:30003/library/isxcode/zhiqingyun:20251204

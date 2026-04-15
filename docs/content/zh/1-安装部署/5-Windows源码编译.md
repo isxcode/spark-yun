@@ -26,7 +26,7 @@ git clone https://github.com/isxcode/spark-yun.git
 ```bash
 docker run --rm ^
   -v ${clone_path}\spark-yun:/spark-yun ^
-  -it registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun-build:latest-amd64 ^
+  -it isxcode/zhiqingyun-build ^
   gradle package
 ```
 
