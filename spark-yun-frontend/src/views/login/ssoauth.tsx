@@ -3,6 +3,7 @@ import { OauthLogin } from "@/services/login.service";
 import { useRouter } from "vue-router";
 import { ElMessage } from "element-plus";
 import { useAuthStore } from "@/store/useAuth";
+import { getVipLicenseEnabled } from "@/utils/vip-license";
 
 export default defineComponent({
     setup() {
@@ -18,10 +19,12 @@ export default defineComponent({
                 authStore.setToken(res.data.token)
                 authStore.setTenantId(res.data?.tenantId)
                 authStore.setRole(res.data?.role)
-                ElMessage.success(res.msg)
-                nextTick(() => {
-                    router.push({
-                        name: 'home'
+                getVipLicenseEnabled(true).finally(() => {
+                    ElMessage.success(res.msg)
+                    nextTick(() => {
+                        router.push({
+                            name: 'home'
+                        })
                     })
                 })
             }).catch((error: any) => {

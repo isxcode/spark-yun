@@ -15,7 +15,35 @@ import { useAuthStore } from '@/store/useAuth'
 
 const message = ElMessage
 
-const whiteList = ['/vip/auth/open/querySsoAuth']
+const whiteList = ['/vip/auth/open/querySsoAuth', '/vip/license/open/checkLicense']
+let isRefreshingLicense = false
+
+function isLicenseMissingError(msg: string): boolean {
+  return typeof msg === 'string' && msg.includes('请上传许可证')
+}
+
+async function refreshLicenseAndReload(): Promise<void> {
+  if (isRefreshingLicense || typeof window === 'undefined') {
+    return
+  }
+  isRefreshingLicense = true
+
+  try {
+    const authStore = useAuthStore()
+    const urlPrefix = import.meta.env.VITE_VUE_APP_BASE_DOMAIN || ''
+    await fetch(`${urlPrefix}/vip/license/open/checkLicense`, {
+      method: 'GET',
+      headers: {
+        authorization: authStore.token || '',
+        tenant: authStore.tenantId || ''
+      }
+    })
+  } catch (error) {
+    console.error('refresh license error', error)
+  } finally {
+    window.location.reload()
+  }
+}
 
 export const httpOption = {
   transform: {
@@ -40,6 +68,9 @@ export const httpOption = {
     },
     showErrorMessage: (msg: string): void => {
       message.error(msg)
+      if (isLicenseMissingError(msg)) {
+        refreshLicenseAndReload()
+      }
     },
     checkStatus: (status: number, msg: string, showMsg: any, response: any): void => {
       try {

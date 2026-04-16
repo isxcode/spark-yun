@@ -6,6 +6,8 @@ import { useSwitchTenant, type TenantInfo } from '@/hooks/switch-tenant'
 import EllipsisTooltip from '@/components/ellipsis-tooltip/ellipsis-tooltip.vue'
 import { ChangeTenantData } from "@/services/login.service"
 import { ElMessage } from "element-plus"
+import { CheckLicenseStatus } from "@/services/license.service"
+import { getVipLicenseEnabled, resetVipLicenseCache } from "@/utils/vip-license"
 
 export type AvatarMenuCommand = 'logout' | 'personal-info'
 
@@ -36,13 +38,24 @@ export function useMenuAvatar() {
     initSwitchTenant()
   }
 
+  const doLogout = function() {
+    resetVipLicenseCache()
+    setTimeout(() => {
+      authStore.$reset()
+    })
+    ElMessage.success('退出成功')
+    router.push({ name: 'login' })
+  }
+
   const handleCommand = function(command: AvatarMenuCommand) {
     if (command === 'logout') {
-      setTimeout(() => {
-        authStore.$reset()
-      });
-      ElMessage.success('退出成功')
-      router.push({ name: 'login' })
+      CheckLicenseStatus()
+        .catch(() => {
+          // 退出时仅做许可证状态刷新，失败不影响退出流程
+        })
+        .finally(() => {
+          doLogout()
+        })
     } else if (command === 'personal-info') {
       router.push({ name: 'personalInfo' })
     }
@@ -63,6 +76,11 @@ export function useMenuAvatar() {
       ElMessage.success('租户切换成功')
 
       authStore.setTenantId(tenant.id)
+      getVipLicenseEnabled(true).catch(() => {
+        // 切换租户后刷新许可证状态，失败时不影响租户切换
+      }).finally(() => {
+        window.location.reload()
+      })
     })
   }
 

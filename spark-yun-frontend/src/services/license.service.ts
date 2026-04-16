@@ -60,3 +60,14 @@ export function DeleteLicense(params: LicenseIdParam): Promise<any> {
     params: params
   })
 }
+
+// 检查license状态
+export function CheckLicenseStatus(): Promise<any> {
+  return http.request({
+    method: 'get',
+    url: '/vip/license/open/checkLicense'
+  }, {
+    // 404 场景由上层按“许可证未生效”处理，不弹全局错误提示
+    isShowErrorMessage: false
+  })
+}

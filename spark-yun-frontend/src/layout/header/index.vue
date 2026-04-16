@@ -52,6 +52,8 @@ import { useRouter } from 'vue-router'
 // import { useState, useMutations } from '@/hooks/useStore'
 import { nextTick, onMounted, onUnmounted, reactive, ref } from 'vue'
 import { ChangeTenantData, QueryTenantList } from '@/services/login.service'
+import { CheckLicenseStatus } from '@/services/license.service'
+import { resetVipLicenseCache } from '@/utils/vip-license'
 import eventBus from '@/utils/eventBus'
 import { useAuthStore } from '@/store/useAuth'
 // import { GetTenantList } from '@/services/tenant-list.service'
@@ -70,14 +72,21 @@ let headerConfig = reactive({
 
 function handleCommand(command: string): void {
   if (command === 'logout') {
-    clearStore()
-    router.push({
-      name: 'login'
-    })
+    CheckLicenseStatus()
+      .catch(() => {
+        // 退出时仅做许可证状态刷新，失败不影响退出流程
+      })
+      .finally(() => {
+        clearStore()
+        router.push({
+          name: 'login'
+        })
+      })
   }
 }
 
 function clearStore() {
+  resetVipLicenseCache()
   authStore.setUserInfo({
   })
   authStore.setToken('')
