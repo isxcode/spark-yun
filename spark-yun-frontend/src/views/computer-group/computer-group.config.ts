@@ -64,20 +64,20 @@ export const colConfigs: colConfig[] = [
   {
     prop: 'node',
     title: '节点',
-    minWidth: 60,
+    minWidth: 80,
     showOverflowTooltip: true
   },
   {
     prop: 'memory',
     title: '内存',
-    minWidth: 100,
-    showOverflowTooltip: true
+    minWidth: 160,
+    customSlot: 'memorySlot'
   },
   {
     prop: 'storage',
     title: '存储',
-    minWidth: 100,
-    showOverflowTooltip: true
+    minWidth: 160,
+    customSlot: 'storageSlot'
   },
   {
     prop: 'status',
@@ -140,20 +140,20 @@ export const PointColConfigs: colConfig[] = [
   {
     prop: 'cpu',
     title: 'CPU',
-    minWidth: 60,
-    showOverflowTooltip: true
+    minWidth: 140,
+    customSlot: 'cpuSlot'
   },
   {
     prop: 'memory',
     title: '内存',
-    minWidth: 60,
-    showOverflowTooltip: true
+    minWidth: 140,
+    customSlot: 'memorySlot'
   },
   {
     prop: 'storage',
     title: '存储',
-    minWidth: 60,
-    showOverflowTooltip: true
+    minWidth: 140,
+    customSlot: 'storageSlot'
   },
   {
     prop: 'status',
