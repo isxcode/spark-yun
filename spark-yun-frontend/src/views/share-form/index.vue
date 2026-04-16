@@ -18,7 +18,7 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, ref, watch, reactive } from 'vue'
+import { onMounted, ref } from 'vue'
 import Breadcrumb from '@/layout/bread-crumb/index.vue'
 import LoadingPage from '@/components/loading/index.vue'
 import { useRoute } from 'vue-router'
@@ -58,7 +58,7 @@ const shareFormConfig = ref<baseParam>({
 })
 const token = ref('')
 
-const formData = reactive({})
+const formData = ref<Record<string, any>>({})
 
 // watch(() => route.params, (e) => {
 //     console.log('路由', e)
@@ -104,7 +104,7 @@ function saveData() {
       AddFormData({
         formId: shareFormConfig.value.formId,
         formVersion: shareFormConfig.value.formVersion,
-        data: formData
+        data: formData.value
       }, {
         authorization: shareFormConfig.value.formToken,
         tenant: shareFormConfig.value.tenantId

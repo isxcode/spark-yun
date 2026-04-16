@@ -26,7 +26,7 @@
 <script lang="ts" setup>
 import { ref, defineEmits, nextTick, defineProps } from 'vue'
 import EmptyPage from '../empty-page/index.vue'
-import EllipsisTooltip from '../ellipsis-tooltip/ellipsis-tooltip.vue'
+import EllipsisTooltip from '../ellipsis-tooltip/charts-ellipsis-tooltip.vue'
 
 const props = defineProps(['chartsList'])
 const emit = defineEmits([ 'endMoveEvent', 'startMoveEvent', 'getChartListEvent', 'previewChatEvent'])
