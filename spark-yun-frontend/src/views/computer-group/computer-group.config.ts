@@ -128,6 +128,7 @@ export const PointColConfigs: colConfig[] = [
     prop: 'name',
     title: '名称',
     minWidth: 120,
+    customSlot: 'nameSlot',
     showOverflowTooltip: true
   },
   {
