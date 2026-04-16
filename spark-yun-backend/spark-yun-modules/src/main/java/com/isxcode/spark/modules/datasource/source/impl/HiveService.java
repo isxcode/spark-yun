@@ -93,7 +93,7 @@ public class HiveService extends Datasource {
             Boolean isPartitionColumn = false;
             while (resultSet.next()) {
                 // 跳过
-                if (resultSet.getString(1).isEmpty() || "# col_name            ".equals(resultSet.getString(1))) {
+                if (resultSet.getString(1).isEmpty() || "# col_name".trim().equals(resultSet.getString(1).trim())) {
                     continue;
                 }
                 if ("# Partition Information".equals(resultSet.getString(1))) {
