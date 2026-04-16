@@ -218,18 +218,8 @@ public class PrestoService extends Datasource {
     }
 
     @Override
-    public String getCreateTableFormat() {
-        return "CREATE TABLE %s (%s) %s %s";
-    }
-
-    @Override
-    public String getCreateTableSuffix(List<ColumnMetaDto> fromColumnList) {
+    public String generateCreateTableSuffix(List<ColumnMetaDto> fromColumnList) {
         return "WITH (format = 'PARQUET')";
-    }
-
-    @Override
-    public String getCreateTableOptionalSuffix(List<ColumnMetaDto> fromColumnList) {
-        return "";
     }
 
     @Override

@@ -78,20 +78,11 @@ public class StarRocksService extends Datasource {
     }
 
     @Override
-    public String getCreateTableFormat() {
-        return "CREATE TABLE %s (%s) %s %s";
-    }
+    public String generateCreateTableSuffix(List<ColumnMetaDto> fromColumnList) {
 
-    @Override
-    public String getCreateTableSuffix(List<ColumnMetaDto> fromColumnList) {
-        return "ENGINE=OLAP";
-    }
-
-    @Override
-    public String getCreateTableOptionalSuffix(List<ColumnMetaDto> fromColumnList) {
         // StarRocks 需要指定分布键
         String firstColumn = fromColumnList.isEmpty() ? "id" : fromColumnList.get(0).getName();
-        return "DISTRIBUTED BY HASH(" + firstColumn + ") BUCKETS 1";
+        return "ENGINE=OLAP DISTRIBUTED BY HASH(" + firstColumn + ") BUCKETS 1";
     }
 
     @Override
