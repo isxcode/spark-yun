@@ -22,6 +22,12 @@ public class ColumnMetaDto {
     @Schema(title = "是否为主键")
     private Boolean isPrimaryColumn;
 
+    @Schema(title = "是否为分区键")
+    private Boolean isPartitionColumn;
+
+    @Schema(title = "是否为唯一键")
+    private Boolean isDuplicateColumn;
+
     @Schema(title = "是否为非空键")
     private Boolean isNoNullColumn;
 
