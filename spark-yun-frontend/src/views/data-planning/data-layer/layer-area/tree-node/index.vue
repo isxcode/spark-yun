@@ -1,12 +1,12 @@
 <template>
-    <div class="z-tree-node">
+    <div class="z-tree-node" :title="nodeTip">
         <div class="node-info">
             <div class="node-label">
                 <el-icon><CollectionTag /></el-icon>
                 <EllipsisTooltip class="label-text" :label="params.name" />
             </div>
             <div class="node-desc">
-                <EllipsisTooltip :label="params.remark || '-'" />
+                <EllipsisTooltip :label="ownerText" />
             </div>
         </div>
         <div class="node-loading" v-if="loading">
@@ -18,13 +18,24 @@
 </template>
 
 <script lang="ts" setup>
-import { defineProps } from 'vue'
+import { computed, defineProps } from 'vue'
 import { CollectionTag } from '@element-plus/icons-vue'
 import EllipsisTooltip from '@/components/ellipsis-tooltip/ellipsis-tooltip.vue'
 import { ElIcon } from 'element-plus'
 import { Loading } from '@element-plus/icons-vue'
 
 const props = defineProps(['params', 'loading'])
+
+const ownerText = computed(() => {
+    const owner = props.params?.createUsername || '-'
+    return `负责人：${owner}`
+})
+
+const nodeTip = computed(() => {
+    const name = props.params?.name || '-'
+    const remark = props.params?.remark || '-'
+    return `名称：${name}\n备注：${remark}`
+})
 </script>
 
 <style lang="scss">
