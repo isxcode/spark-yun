@@ -32,7 +32,7 @@ export default defineConfig({
       ]
     }),
     Components({
-      extensions: ['js', 'jsx', 'ts', 'tsx', 'vue'],
+      extensions: ['vue'],
       include: [/\.vue$/, /\.vue\?vue/, /\.md$/, /\.tsx$/, /\.jsx$/],
       resolvers: [ElementPlusResolver({
         importStyle: 'sass'
