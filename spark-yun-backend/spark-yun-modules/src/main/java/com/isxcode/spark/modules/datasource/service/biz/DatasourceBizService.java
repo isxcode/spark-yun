@@ -489,11 +489,8 @@ public class DatasourceBizService {
         String createTableFormat = toDatasource.getCreateTableFormat();
 
         // 获取表后缀sql
-        String createTableSuffix = toDatasource.getCreateTableSuffix(generateCreateTableSqlReq.getFromColumnList());
-
-        // 获取表可选后缀sql
-        String createTableOptionalSuffix =
-            toDatasource.getCreateTableOptionalSuffix(generateCreateTableSqlReq.getFromColumnList());
+        String createTableSuffix =
+            toDatasource.generateCreateTableSuffix(generateCreateTableSqlReq.getFromColumnList());
 
         // 遍历字段类型并且翻译
         List<String> columnTypeList = new ArrayList<>();
@@ -512,7 +509,7 @@ public class DatasourceBizService {
 
         // 翻译成建表语句
         String createTableSql = String.format(createTableFormat, generateCreateTableSqlReq.getFromTableName(),
-            columnListStr, createTableSuffix, createTableOptionalSuffix);
+            columnListStr, createTableSuffix);
 
         return GenerateCreateTableSqlRes.builder().createTableSql(createTableSql).build();
     }

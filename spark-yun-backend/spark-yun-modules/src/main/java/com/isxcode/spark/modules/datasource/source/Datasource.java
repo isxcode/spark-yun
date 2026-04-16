@@ -66,11 +66,11 @@ public abstract class Datasource {
 
     public abstract void refreshTableInfo(ConnectInfo connectInfo) throws IsxAppException;
 
-    public abstract String getCreateTableFormat();
+    public abstract String generateCreateTableSuffix(List<ColumnMetaDto> fromColumnList);
 
-    public abstract String getCreateTableSuffix(List<ColumnMetaDto> fromColumnList);
-
-    public abstract String getCreateTableOptionalSuffix(List<ColumnMetaDto> fromColumnList);
+    public String getCreateTableFormat() {
+        return "CREATE TABLE %s (%s) %s";
+    }
 
     public abstract String convertColumnCode(ColumnMetaDto columnMeta);
 
