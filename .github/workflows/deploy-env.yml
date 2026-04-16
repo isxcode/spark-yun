@@ -461,6 +461,7 @@ jobs:
           echo "Yarn http://${{ inputs.dev_server_ip }}:40002"
           echo "Hdfs http://${{ inputs.dev_server_ip }}:40000"
           echo "Kafka: ${{ inputs.dev_server_ip }}:9092"
+          echo "Kafka topic: isxcode-topic"
           echo "Hive jdbc: jdbc:hive2://${{ inputs.dev_server_ip }}:10000/isxcode_db"
           echo "Hive metastore.uris: thrift://${{ inputs.dev_internal_server_ip }}:9083"
           echo "Hive username: root"
