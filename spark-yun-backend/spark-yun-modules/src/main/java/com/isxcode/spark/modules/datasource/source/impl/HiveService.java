@@ -215,14 +215,29 @@ public class HiveService extends Datasource {
 
     @Override
     public String generateCreateTableSuffix(List<ColumnMetaDto> fromColumnList) {
-
-        String partitionSql = "";
-        for (ColumnMetaDto columnMetaDto : fromColumnList) {
-            if (columnMetaDto.getIsPartitionColumn()) {
-                // PARTITIONED BY (    dt STRING COMMENT '分区日期yyyy-MM-dd' )
-            }
+        if (fromColumnList == null || fromColumnList.isEmpty()) {
+            return "STORED AS PARQUET";
         }
-        return partitionSql + " STORED AS PARQUET";
+
+        List<String> partitionColumns =
+            fromColumnList.stream().filter(column -> Boolean.TRUE.equals(column.getIsPartitionColumn())).map(column -> {
+                String type = Strings.isBlank(column.getType()) ? "STRING" : column.getType().trim();
+                StringBuilder definition = new StringBuilder(column.getName()).append(" ").append(type);
+                if (Strings.isNotBlank(column.getColumnComment())) {
+                    definition.append(" COMMENT '").append(escapeHiveString(column.getColumnComment())).append("'");
+                }
+                return definition.toString();
+            }).collect(Collectors.toList());
+
+        if (partitionColumns.isEmpty()) {
+            return "STORED AS PARQUET";
+        }
+
+        return "PARTITIONED BY (\n\t" + String.join(",\n\t", partitionColumns) + "\n) STORED AS PARQUET";
+    }
+
+    private String escapeHiveString(String value) {
+        return value.replace("'", "\\'");
     }
 
     @Override
