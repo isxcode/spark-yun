@@ -21,8 +21,10 @@ public class MetaColumnAo {
 
     private LocalDateTime lastModifiedDateTime;
 
+    private Boolean isPartitionColumn;
+
     public MetaColumnAo(String datasourceId, String tableName, String columnName, String columnComment,
-        String columnType, String customComment, LocalDateTime lastModifiedDateTime) {
+        String columnType, String customComment, LocalDateTime lastModifiedDateTime, Boolean isPartitionColumn) {
 
         this.columnType = columnType;
         this.datasourceId = datasourceId;
@@ -31,5 +33,6 @@ public class MetaColumnAo {
         this.columnComment = columnComment;
         this.customComment = customComment;
         this.lastModifiedDateTime = lastModifiedDateTime;
+        this.isPartitionColumn = isPartitionColumn;
     }
 }
