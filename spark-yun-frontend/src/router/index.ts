@@ -7,11 +7,13 @@
  * @FilePath: /zqy-web/src/router/index.ts
  */
 import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
+import { ElMessage } from 'element-plus'
 import Home from '../views/home/home'
 import Login from '../views/login/login'
 import Ssoauth from '../views/login/ssoauth'
 import ShareForm from '../views/share-form/index.vue'
 import ShareReport from '../views/report-views/share-report/index.vue'
+import { getVipLicenseEnabled, isVipMenuCode } from '@/utils/vip-license'
 
 import HomeChildren from './home-children'
 
@@ -61,6 +63,25 @@ const routes: Array<RouteRecordRaw> = [
 const router = createRouter({
   history: createWebHistory(import.meta.env.VITE_VUE_APP_PUBLIC_PATH),
   routes
+})
+
+router.beforeEach(async (to) => {
+  const routeName = typeof to.name === 'string' ? to.name : ''
+  const openRouteName = new Set(['login', 'ssoauth', 'share', 'share-report'])
+
+  if (!routeName || openRouteName.has(routeName) || !isVipMenuCode(routeName)) {
+    return true
+  }
+
+  const vipEnabled = await getVipLicenseEnabled()
+  if (vipEnabled) {
+    return true
+  }
+
+  ElMessage.error('许可证未启用，无法访问商业版菜单')
+  return {
+    name: 'index'
+  }
 })
 
 export default router

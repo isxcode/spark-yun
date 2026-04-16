@@ -92,7 +92,7 @@ import LoadingPage from '@/components/loading/index.vue'
 import AddModal from './add-modal/index.vue'
 
 import { BreadCrumbList, TableConfig } from './license.config'
-import { GetLicenseList, UploadLicenseFile, DisableLicense, EnableLicense, DeleteLicense } from '@/services/license.service'
+import { GetLicenseList, UploadLicenseFile, DisableLicense, EnableLicense, DeleteLicense, CheckLicenseStatus } from '@/services/license.service'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Loading } from '@element-plus/icons-vue'
 
@@ -102,6 +102,16 @@ const keyword = ref('')
 const loading = ref(false)
 const networkError = ref(false)
 const addModalRef = ref(null)
+
+function refreshLicenseAndReload() {
+  CheckLicenseStatus()
+    .catch(() => {
+      // 上传/启用后仅做许可证状态刷新，失败也继续刷新页面
+    })
+    .finally(() => {
+      window.location.reload()
+    })
+}
 
 function initData(tableLoading?: boolean) {
   loading.value = tableLoading ? false : true
@@ -136,6 +146,7 @@ function addData() {
         .then((res: any) => {
           ElMessage.success(res.data.msg)
           initData()
+          refreshLicenseAndReload()
           resolve()
         })
         .catch((error: any) => {
@@ -156,6 +167,7 @@ function changeStatus(data: any, status: boolean) {
         ElMessage.success(res.msg)
         data.statusLoading = false
         initData(true)
+        refreshLicenseAndReload()
       })
       .catch(() => {
         data.statusLoading = false
@@ -168,6 +180,7 @@ function changeStatus(data: any, status: boolean) {
         ElMessage.success(res.msg)
         data.statusLoading = false
         initData(true)
+        refreshLicenseAndReload()
       })
       .catch(() => {
         data.statusLoading = false

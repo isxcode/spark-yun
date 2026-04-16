@@ -1,10 +1,11 @@
-import { computed, h, ref, resolveComponent, withModifiers, type CSSProperties, watch } from "vue"
+import { computed, h, onMounted, ref, resolveComponent, watch } from "vue"
 import { useAuthStore } from "@/store/useAuth"
 import type { Menu } from "../menu.config"
 import { useRoute, useRouter } from "vue-router"
 import { useMenuAvatar } from "./use-menu-avatar"
+import { filterVipMenus, getVipLicenseEnabled } from "@/utils/vip-license"
 
-function getCurrentMenu(menuList: Menu[], routeMenu: string, targetMenu?: menu) {
+function getCurrentMenu(menuList: Menu[], routeMenu: string, targetMenu?: Menu) {
   let currentMenu: any = null
   if (targetMenu) {
     return targetMenu
@@ -25,8 +26,15 @@ export function useRouterMenu(menuListData: Menu[]) {
   const route = useRoute()
   const router = useRouter()
   const { renderMenuAvatar } = useMenuAvatar()
+  const vipEnabled = ref(false)
+  const vipChecked = ref(false)
 
-  const menuViewData = computed(() => menuListData.filter(menuItem => menuItem.authType?.includes(authStore.role || 'ROLE_TENANT_MEMBER')))
+  const menuViewData = computed(() => {
+    const roleMenu = menuListData.filter(menuItem =>
+      menuItem.authType?.includes(authStore.role || "ROLE_TENANT_MEMBER")
+    )
+    return filterVipMenus(roleMenu, vipEnabled.value)
+  })
 
   const currentMenu = computed(() => {
     let m = menuViewData.value.find(menuData => menuData.code === route.name)
@@ -38,15 +46,43 @@ export function useRouterMenu(menuListData: Menu[]) {
       return m
     }
   })
-  if (!currentMenu.value) {
-    router.replace({
-      name: menuViewData.value[0].code
-    })
-  } else {
-    // router.replace({
-    //   name: currentMenu.value?.code
-    // })
+
+  const loadVipLicense = async (forceRefresh = false) => {
+    vipChecked.value = false
+    vipEnabled.value = await getVipLicenseEnabled(forceRefresh)
+    vipChecked.value = true
   }
+
+  onMounted(async () => {
+    await loadVipLicense()
+  })
+
+  watch(
+    () => authStore.tenantId,
+    async (tenantId, oldTenantId) => {
+      if (!tenantId || tenantId === oldTenantId) {
+        return
+      }
+      await loadVipLicense(true)
+    }
+  )
+
+  watch(
+    () => [vipChecked.value, route.name, menuViewData.value.length],
+    () => {
+      if (!vipChecked.value) {
+        return
+      }
+      if (!currentMenu.value && menuViewData.value.length) {
+        router.replace({
+          name: menuViewData.value[0].code
+        })
+      }
+    },
+    {
+      immediate: true
+    }
+  )
 
   let isCollapse = ref(true)
 

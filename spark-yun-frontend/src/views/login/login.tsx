@@ -4,6 +4,7 @@ import { LoginUserInfo } from "@/services/login.service";
 import { useRouter } from "vue-router";
 import { ElMessage } from "element-plus";
 import { useAuthStore } from "@/store/useAuth";
+import { getVipLicenseEnabled } from "@/utils/vip-license";
 
 import logoURL from '@/assets/imgs/logo-view.png';
 import logoIcon from '@/assets/imgs/logo-a.png'
@@ -23,11 +24,13 @@ export default defineComponent({
         authStore.setTenantId(res.data?.tenantId)
         authStore.setRole(res.data?.role)
 
-        ElMessage.success(res.msg)
+        return getVipLicenseEnabled(true).finally(() => {
+          ElMessage.success(res.msg)
 
-        nextTick(() => {
-          router.push({
-            name: 'home'
+          nextTick(() => {
+            router.push({
+              name: 'home'
+            })
           })
         })
       }).finally(() => {
