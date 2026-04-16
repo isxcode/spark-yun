@@ -36,6 +36,28 @@
               @click="showDetail(scopeSlot.row)"
             >{{ scopeSlot.row.name }}</span>
           </template>
+          <template #memorySlot="scopeSlot">
+            <div class="resource-progress">
+              <el-progress
+                :percentage="getPercentFromRatio(scopeSlot.row.memory)"
+                :color="getPercentColor()"
+                :stroke-width="12"
+                :show-text="false"
+              />
+              <span class="resource-progress__value">{{ getDisplayValue(scopeSlot.row.memory) }}</span>
+            </div>
+          </template>
+          <template #storageSlot="scopeSlot">
+            <div class="resource-progress">
+              <el-progress
+                :percentage="getPercentFromRatio(scopeSlot.row.storage)"
+                :color="getPercentColor()"
+                :stroke-width="12"
+                :show-text="false"
+              />
+              <span class="resource-progress__value">{{ getDisplayValue(scopeSlot.row.storage) }}</span>
+            </div>
+          </template>
           <template #statusTag="scopeSlot">
             <ZStatusTag :status="scopeSlot.row.status"></ZStatusTag>
           </template>
@@ -103,6 +125,42 @@ const keyword = ref('')
 const loading = ref(false)
 const networkError = ref(false)
 const addModalRef = ref(null)
+
+function normalizePercent(value: number): number {
+  if (!Number.isFinite(value)) {
+    return 0
+  }
+  return Math.max(0, Math.min(100, Math.round(value)))
+}
+
+function getPercentFromRatio(valueText: string): number {
+  if (!valueText) {
+    return 0
+  }
+  const ratioMatch = String(valueText)
+    .replace(/\s/g, '')
+    .match(/^([\d.]+)[a-zA-Z]*\/([\d.]+)[a-zA-Z]*$/)
+  if (!ratioMatch) {
+    return 0
+  }
+  const used = Number(ratioMatch[1])
+  const total = Number(ratioMatch[2])
+  if (!Number.isFinite(used) || !Number.isFinite(total) || total <= 0) {
+    return 0
+  }
+  return normalizePercent((used / total) * 100)
+}
+
+function getPercentColor(): string {
+  return 'var(--el-color-primary-light-3)'
+}
+
+function getDisplayValue(valueText: string): string {
+  if (!valueText) {
+    return '--'
+  }
+  return String(valueText)
+}
 
 function initData(tableLoading?: boolean) {
   loading.value = tableLoading ? false : true
@@ -248,3 +306,25 @@ onMounted(() => {
   initData()
 })
 </script>
+
+<style lang="scss">
+.zqy-seach-table {
+  .resource-progress {
+    min-width: 120px;
+    padding-right: 6px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    .el-progress {
+      flex: 1;
+    }
+  }
+
+  .resource-progress__value {
+    color: getCssVar('text-color', 'secondary');
+    white-space: nowrap;
+    font-size: getCssVar('font-size', 'extra-small');
+  }
+}
+</style>

@@ -16,6 +16,39 @@
           <template #nameSlot="scopeSlot">
             <span class="name-click" @click="editNodeData(scopeSlot.row)">{{ scopeSlot.row.name }}</span>
           </template>
+          <template #cpuSlot="scopeSlot">
+            <div class="resource-progress">
+              <el-progress
+                :percentage="getPercentFromCpu(scopeSlot.row.cpu)"
+                :color="getPercentColor(getPercentFromCpu(scopeSlot.row.cpu))"
+                :stroke-width="12"
+                :show-text="false"
+              />
+              <span class="resource-progress__value">{{ getCpuDisplay(scopeSlot.row.cpu) }}</span>
+            </div>
+          </template>
+          <template #memorySlot="scopeSlot">
+            <div class="resource-progress">
+              <el-progress
+                :percentage="getPercentFromUsage(scopeSlot.row.memory)"
+                :color="getPercentColor(getPercentFromUsage(scopeSlot.row.memory))"
+                :stroke-width="12"
+                :show-text="false"
+              />
+              <span class="resource-progress__value">{{ getUsageDisplay(scopeSlot.row.memory) }}</span>
+            </div>
+          </template>
+          <template #storageSlot="scopeSlot">
+            <div class="resource-progress">
+              <el-progress
+                :percentage="getPercentFromUsage(scopeSlot.row.storage)"
+                :color="getPercentColor(getPercentFromUsage(scopeSlot.row.storage))"
+                :stroke-width="12"
+                :show-text="false"
+              />
+              <span class="resource-progress__value">{{ getUsageDisplay(scopeSlot.row.storage) }}</span>
+            </div>
+          </template>
           <template #statusTag="scopeSlot">
             <ZStatusTag :status="scopeSlot.row.status"></ZStatusTag>
           </template>
@@ -116,6 +149,61 @@ const networkError = ref(false)
 const addModalRef = ref(null)
 const showLogRef = ref(null)
 const timer = ref()
+
+function normalizePercent(value: number): number {
+  if (!Number.isFinite(value)) {
+    return 0
+  }
+  return Math.max(0, Math.min(100, Math.round(value)))
+}
+
+function getPercentFromCpu(cpuValue: string): number {
+  if (!cpuValue) {
+    return 0
+  }
+  const percent = parseFloat(String(cpuValue).replace('%', '').trim())
+  return normalizePercent(percent)
+}
+
+function getPercentFromUsage(usageText: string): number {
+  if (!usageText) {
+    return 0
+  }
+  const ratioMatch = String(usageText)
+    .replace(/\s/g, '')
+    .match(/^([\d.]+)[a-zA-Z]*\/([\d.]+)[a-zA-Z]*$/)
+  if (!ratioMatch) {
+    return getPercentFromCpu(usageText)
+  }
+  const used = Number(ratioMatch[1])
+  const total = Number(ratioMatch[2])
+  if (!Number.isFinite(used) || !Number.isFinite(total) || total <= 0) {
+    return 0
+  }
+  return normalizePercent((used / total) * 100)
+}
+
+function getPercentColor(percent: number): string {
+  return 'var(--el-color-primary-light-3)'
+}
+
+function getUsageDisplay(usageText: string): string {
+  if (!usageText) {
+    return '--'
+  }
+  return String(usageText)
+}
+
+function getCpuDisplay(cpuValue: string): string {
+  if (!cpuValue) {
+    return '--'
+  }
+  const text = String(cpuValue).trim()
+  if (!text) {
+    return '--'
+  }
+  return text.includes('%') ? text : `${text}%`
+}
 
 function initData(tableLoading?: boolean, type?: string) {
   loading.value = tableLoading ? false : true
@@ -363,6 +451,24 @@ onUnmounted(() => {
   }
 
   &.zqy-computer-node {
+    .resource-progress {
+      min-width: 120px;
+      padding-right: 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      .el-progress {
+        flex: 1;
+      }
+    }
+
+    .resource-progress__value {
+      color: getCssVar('text-color', 'secondary');
+      white-space: nowrap;
+      font-size: getCssVar('font-size', 'extra-small');
+    }
+
     .zqy-seach {
       display: flex;
       align-items: center;
