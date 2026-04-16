@@ -37,6 +37,7 @@ import com.isxcode.spark.common.locker.Locker;
 
 
 import java.sql.Connection;
+import java.sql.SQLFeatureNotSupportedException;
 import java.sql.Statement;
 import java.util.Arrays;
 import java.util.List;
@@ -176,8 +177,8 @@ public class ExecuteSqlExecutor extends WorkExecutor {
                 connection = datasource.getConnection(connectInfo);
                 try (Statement statement = connection.createStatement()) {
 
-                    connection.setAutoCommit(false);
-                    statement.setQueryTimeout(1800);
+                    setAutoCommitIfSupported(connection, false);
+                    setQueryTimeoutIfSupported(statement, 1800);
 
                     // 清除脚本中的脏数据
                     List<String> sqls =
@@ -199,7 +200,7 @@ public class ExecuteSqlExecutor extends WorkExecutor {
                         workInstance = updateInstance(workInstance, logBuilder);
                     }
 
-                    connection.commit();
+                    commitIfSupported(connection);
                 }
             } catch (WorkRunException | IsxAppException e) {
                 rollbackQuietly(connection);
@@ -266,8 +267,56 @@ public class ExecuteSqlExecutor extends WorkExecutor {
         try {
             connection.rollback();
         } catch (Exception rollbackException) {
+            if (isMethodNotSupported(rollbackException)) {
+                log.info("jdbc rollback is not supported by this datasource, skip");
+                return;
+            }
             log.error("rollback jdbc transaction error", rollbackException);
         }
+    }
+
+    private void setAutoCommitIfSupported(Connection connection, boolean autoCommit) throws Exception {
+        try {
+            connection.setAutoCommit(autoCommit);
+        } catch (Exception exception) {
+            if (isMethodNotSupported(exception)) {
+                log.info("jdbc setAutoCommit is not supported by this datasource, skip");
+                return;
+            }
+            throw exception;
+        }
+    }
+
+    private void setQueryTimeoutIfSupported(Statement statement, int seconds) throws Exception {
+        try {
+            statement.setQueryTimeout(seconds);
+        } catch (Exception exception) {
+            if (isMethodNotSupported(exception)) {
+                log.info("jdbc setQueryTimeout is not supported by this datasource, skip");
+                return;
+            }
+            throw exception;
+        }
+    }
+
+    private void commitIfSupported(Connection connection) throws Exception {
+        try {
+            connection.commit();
+        } catch (Exception exception) {
+            if (isMethodNotSupported(exception)) {
+                log.info("jdbc commit is not supported by this datasource, skip");
+                return;
+            }
+            throw exception;
+        }
+    }
+
+    private boolean isMethodNotSupported(Exception exception) {
+        if (exception instanceof SQLFeatureNotSupportedException) {
+            return true;
+        }
+        String message = exception.getMessage();
+        return message != null && message.toLowerCase().contains("method not supported");
     }
 
     private void closeQuietly(Connection connection) {

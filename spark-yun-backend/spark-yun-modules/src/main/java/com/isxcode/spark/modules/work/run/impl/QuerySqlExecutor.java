@@ -30,6 +30,7 @@ import com.isxcode.spark.modules.workflow.repository.WorkflowInstanceRepository;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.SQLFeatureNotSupportedException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -170,8 +171,8 @@ public class QuerySqlExecutor extends WorkExecutor {
                 connection = datasource.getConnection(connectInfo);
                 try (Statement statement = connection.createStatement()) {
 
-                    connection.setAutoCommit(false);
-                    statement.setQueryTimeout(1800);
+                    setAutoCommitIfSupported(connection, false);
+                    setQueryTimeoutIfSupported(statement, 1800);
 
                     // 清除脚本中的脏数据
                     List<String> sqls =
@@ -203,7 +204,7 @@ public class QuerySqlExecutor extends WorkExecutor {
 
                     // 设置查询最大条数
                     if (workRunContext.getQueryConfig() != null && workRunContext.getQueryConfig().getEnableLimit()) {
-                        statement.setMaxRows(workRunContext.getQueryConfig().getLineLimit());
+                        setMaxRowsIfSupported(statement, workRunContext.getQueryConfig().getLineLimit());
                     }
 
                     // 开始执行
@@ -243,7 +244,7 @@ public class QuerySqlExecutor extends WorkExecutor {
                     // 保存日志
                     logBuilder.append(endLog("保存数据完成"));
                     updateInstance(workInstance, logBuilder);
-                    connection.commit();
+                    commitIfSupported(connection);
                 }
             } catch (WorkRunException | IsxAppException e) {
                 rollbackQuietly(connection);
@@ -305,8 +306,68 @@ public class QuerySqlExecutor extends WorkExecutor {
         try {
             connection.rollback();
         } catch (Exception rollbackException) {
+            if (isMethodNotSupported(rollbackException)) {
+                log.info("jdbc rollback is not supported by this datasource, skip");
+                return;
+            }
             log.error("rollback jdbc transaction error", rollbackException);
         }
+    }
+
+    private void setAutoCommitIfSupported(Connection connection, boolean autoCommit) throws Exception {
+        try {
+            connection.setAutoCommit(autoCommit);
+        } catch (Exception exception) {
+            if (isMethodNotSupported(exception)) {
+                log.info("jdbc setAutoCommit is not supported by this datasource, skip");
+                return;
+            }
+            throw exception;
+        }
+    }
+
+    private void setQueryTimeoutIfSupported(Statement statement, int seconds) throws Exception {
+        try {
+            statement.setQueryTimeout(seconds);
+        } catch (Exception exception) {
+            if (isMethodNotSupported(exception)) {
+                log.info("jdbc setQueryTimeout is not supported by this datasource, skip");
+                return;
+            }
+            throw exception;
+        }
+    }
+
+    private void setMaxRowsIfSupported(Statement statement, int rows) throws Exception {
+        try {
+            statement.setMaxRows(rows);
+        } catch (Exception exception) {
+            if (isMethodNotSupported(exception)) {
+                log.info("jdbc setMaxRows is not supported by this datasource, skip");
+                return;
+            }
+            throw exception;
+        }
+    }
+
+    private void commitIfSupported(Connection connection) throws Exception {
+        try {
+            connection.commit();
+        } catch (Exception exception) {
+            if (isMethodNotSupported(exception)) {
+                log.info("jdbc commit is not supported by this datasource, skip");
+                return;
+            }
+            throw exception;
+        }
+    }
+
+    private boolean isMethodNotSupported(Exception exception) {
+        if (exception instanceof SQLFeatureNotSupportedException) {
+            return true;
+        }
+        String message = exception.getMessage();
+        return message != null && message.toLowerCase().contains("method not supported");
     }
 
     private void closeQuietly(Connection connection) {
