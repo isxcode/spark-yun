@@ -6,8 +6,13 @@
                 <el-button type="primary" @click="addData">
                     新建字段
                 </el-button>
+                <el-button @click="backDataModel">返回数据模型</el-button>
             </div>
-            <div class="zqy-seach">
+            <div class="zqy-seach model-field-search">
+                <div class="search-actions">
+                    <el-button @click="configData">高级配置</el-button>
+                    <el-button type="primary" @click="buildData">构建</el-button>
+                </div>
                 <el-input
                     v-model="keyword"
                     placeholder="请输入搜索条件 回车进行搜索"
@@ -20,34 +25,29 @@
         </div>
         <LoadingPage :visible="loading" :network-error="networkError" @loading-refresh="initData(false)">
             <div class="zqy-table">
-                <BlockTable
-                    :table-config="tableConfig"
-                    @rowDragendEvent="rowDragendEvent"
-                >
-                    <template #statusTag="scopeSlot">
-                        <ZStatusTag :status="scopeSlot.row.status"></ZStatusTag>
-                    </template>
-                    <template #booleanTag="scopeSlot">
-                        <el-checkbox disabled v-model="scopeSlot.row[scopeSlot.column.property]" true-label="ENABLE" false-label="DISABLE" />
-                    </template>
-                    <template #options="scopeSlot">
-                        <div class="btn-group btn-group-msg">
-                            <template v-if="route.query && route.query.modelType === 'ORIGIN_MODEL'">
-                                <span @click="editData(scopeSlot.row)">编辑</span>
-                                <span @click="deleteData(scopeSlot.row)">删除</span>
-                            </template>
-                            <template v-else>
-                                <span> - </span>
-                            </template>
-                        </div>
-                    </template>
-                </BlockTable>
-                <div class="back-btn-group">
-                    <el-button @click="backDataModel">返回数据模型</el-button>
-                    <div class="action-btn-group">
-                        <el-button @click="configData">属性配置</el-button>
-                        <el-button type="primary" @click="buildData">构建</el-button>
-                    </div>
+                <div class="model-field-table">
+                    <BlockTable
+                        :table-config="tableConfig"
+                        @rowDragendEvent="rowDragendEvent"
+                    >
+                        <template #statusTag="scopeSlot">
+                            <ZStatusTag :status="scopeSlot.row.status"></ZStatusTag>
+                        </template>
+                        <template #booleanTag="scopeSlot">
+                            <el-checkbox disabled v-model="scopeSlot.row[scopeSlot.column.property]" true-label="ENABLE" false-label="DISABLE" />
+                        </template>
+                        <template #options="scopeSlot">
+                            <div class="btn-group btn-group-msg">
+                                <template v-if="route.query && route.query.modelType === 'ORIGIN_MODEL'">
+                                    <span @click="editData(scopeSlot.row)">编辑</span>
+                                    <span @click="deleteData(scopeSlot.row)">删除</span>
+                                </template>
+                                <template v-else>
+                                    <span> - </span>
+                                </template>
+                            </div>
+                        </template>
+                    </BlockTable>
                 </div>
             </div>
         </LoadingPage>
@@ -289,28 +289,46 @@ onMounted(() => {
 
 <style lang="scss">
 .model-field {
+    --top-action-gap: 8px;
+
     .btn-container {
         height: 100%;
         display: flex;
         align-items: center;
+        gap: var(--top-action-gap);
+    }
+    .model-field-search {
+        display: flex;
+        align-items: center;
+        gap: var(--top-action-gap);
+    }
+    .search-actions {
+        display: flex;
+        align-items: center;
+        gap: var(--top-action-gap);
+        flex-shrink: 0;
+    }
+
+    .btn-container .el-button + .el-button,
+    .search-actions .el-button + .el-button {
+        margin-left: 0;
     }
     &.zqy-seach-table {
         .zqy-table {
             height: calc(100% - 16px);
             max-height: calc(100% - 12px);
+
+            .model-field-table {
+                height: 100%;
+                overflow: hidden;
+
+                :deep(.block-table) {
+                    height: 100%;
+                }
+            }
+
             .btn-group-msg {
                 justify-content: space-around;
-            }
-            .back-btn-group {
-                margin-top: 8px;
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-            }
-            .action-btn-group {
-                display: flex;
-                align-items: center;
-                gap: 0;
             }
             .el-checkbox {
                 &.is-disabled {
