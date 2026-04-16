@@ -150,6 +150,14 @@ public class ClickhouseService extends Datasource {
         // ClickHouse 不需要显式刷新表信息，系统表会自动更新
     }
 
+    @Override
+    public String generateCreateTableSuffix(List<ColumnMetaDto> fromColumnList) {
+
+        // ClickHouse 必需的表引擎，使用 MergeTree
+        // ClickHouse 的排序键，默认使用 tuple() 表示无排序
+        return "ENGINE = MergeTree() ORDER BY tuple()";
+    }
+
     private String mapColumnType(String columnTypeCode, String columnType) {
         switch (columnTypeCode) {
             case ColumnFormatType.CUSTOM:
@@ -169,24 +177,6 @@ public class ClickhouseService extends Datasource {
             default:
                 return "String"; // 默认使用 String 作为兜底类型
         }
-    }
-
-    @Override
-    public String getCreateTableFormat() {
-        // CREATE TABLE 表名 (字段列表) 后缀 可选后缀
-        return "CREATE TABLE %s (%s) %s %s";
-    }
-
-    @Override
-    public String getCreateTableSuffix(List<ColumnMetaDto> fromColumnList) {
-        // ClickHouse 必需的表引擎，使用 MergeTree
-        return "ENGINE = MergeTree()";
-    }
-
-    @Override
-    public String getCreateTableOptionalSuffix(List<ColumnMetaDto> fromColumnList) {
-        // ClickHouse 的排序键，默认使用 tuple() 表示无排序
-        return "ORDER BY tuple()";
     }
 
     @Override

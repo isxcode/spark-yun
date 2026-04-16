@@ -158,20 +158,11 @@ public class DorisService extends Datasource {
     }
 
     @Override
-    public String getCreateTableFormat() {
-        return "CREATE TABLE %s (%s) %s %s";
-    }
+    public String generateCreateTableSuffix(List<ColumnMetaDto> fromColumnList) {
 
-    @Override
-    public String getCreateTableSuffix(List<ColumnMetaDto> fromColumnList) {
-        return "ENGINE=OLAP";
-    }
-
-    @Override
-    public String getCreateTableOptionalSuffix(List<ColumnMetaDto> fromColumnList) {
         // 查找第一个字段作为分布键
         String firstColumn = fromColumnList.isEmpty() ? "id" : fromColumnList.get(0).getName();
-        return "DISTRIBUTED BY HASH(" + firstColumn + ") BUCKETS 1 PROPERTIES (\n" + "    \"replication_num\" = \"1\"\n"
+        return "ENGINE=OLAP DISTRIBUTED BY HASH(" + firstColumn + ") BUCKETS 1 PROPERTIES (\n" + "    \"replication_num\" = \"1\"\n"
             + ")";
     }
 

@@ -194,17 +194,7 @@ public class SybaseService extends Datasource {
     }
 
     @Override
-    public String getCreateTableFormat() {
-        return "CREATE TABLE %s (%s) %s %s";
-    }
-
-    @Override
-    public String getCreateTableSuffix(List<ColumnMetaDto> fromColumnList) {
-        return "";
-    }
-
-    @Override
-    public String getCreateTableOptionalSuffix(List<ColumnMetaDto> fromColumnList) {
+    public String generateCreateTableSuffix(List<ColumnMetaDto> fromColumnList) {
         return "";
     }
 

@@ -158,6 +158,11 @@ public class H2Service extends Datasource {
         // Refresh logic can be implemented if needed
     }
 
+    @Override
+    public String generateCreateTableSuffix(List<ColumnMetaDto> fromColumnList) {
+        return "";
+    }
+
     private String mapColumnType(String columnTypeCode, String columnType) {
         switch (columnTypeCode) {
             case ColumnFormatType.CUSTOM:
@@ -177,21 +182,6 @@ public class H2Service extends Datasource {
             default:
                 return "暂不支持该类型字段";
         }
-    }
-
-    @Override
-    public String getCreateTableFormat() {
-        return "CREATE TABLE %s (%s) %s %s";
-    }
-
-    @Override
-    public String getCreateTableSuffix(List<ColumnMetaDto> fromColumnList) {
-        return "";
-    }
-
-    @Override
-    public String getCreateTableOptionalSuffix(List<ColumnMetaDto> fromColumnList) {
-        return "";
     }
 
     @Override

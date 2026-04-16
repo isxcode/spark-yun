@@ -214,18 +214,15 @@ public class HiveService extends Datasource {
     }
 
     @Override
-    public String getCreateTableFormat() {
-        return "CREATE TABLE %s (%s) %s %s";
-    }
+    public String generateCreateTableSuffix(List<ColumnMetaDto> fromColumnList) {
 
-    @Override
-    public String getCreateTableSuffix(List<ColumnMetaDto> fromColumnList) {
-        return "STORED AS PARQUET";
-    }
-
-    @Override
-    public String getCreateTableOptionalSuffix(List<ColumnMetaDto> fromColumnList) {
-        return "";
+        String partitionSql = "";
+        for (ColumnMetaDto columnMetaDto : fromColumnList) {
+            if (columnMetaDto.getIsPartitionColumn()) {
+                // PARTITIONED BY (    dt STRING COMMENT '分区日期yyyy-MM-dd' )
+            }
+        }
+        return partitionSql + " STORED AS PARQUET";
     }
 
     @Override

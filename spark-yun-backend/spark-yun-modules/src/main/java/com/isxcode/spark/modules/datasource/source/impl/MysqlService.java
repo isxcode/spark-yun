@@ -159,21 +159,8 @@ public class MysqlService extends Datasource {
     }
 
     @Override
-    public String getCreateTableFormat() {
-        // CREATE TABLE 表名 (字段列表) 后缀 可选后缀
-        return "CREATE TABLE %s (%s) %s %s";
-    }
-
-    @Override
-    public String getCreateTableSuffix(List<ColumnMetaDto> fromColumnList) {
-        // MySQL 必需的表后缀
+    public String generateCreateTableSuffix(List<ColumnMetaDto> fromColumnList) {
         return "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4";
-    }
-
-    @Override
-    public String getCreateTableOptionalSuffix(List<ColumnMetaDto> fromColumnList) {
-        // MySQL 可选的表后缀，暂时不需要
-        return "";
     }
 
     @Override
