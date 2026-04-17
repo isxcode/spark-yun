@@ -8,6 +8,7 @@ import { ChangeTenantData } from "@/services/login.service"
 import { ElMessage } from "element-plus"
 import { CheckLicenseStatus } from "@/services/license.service"
 import { getVipLicenseEnabled, resetVipLicenseCache } from "@/utils/vip-license"
+import { http } from "@/utils/http"
 
 export type AvatarMenuCommand = 'logout'
 
@@ -63,22 +64,32 @@ export function useMenuAvatar() {
     event.stopPropagation()
     event.preventDefault()
 
+    if (authStore.tenantId === tenant.id) {
+      tenantVisible.value = false
+      return
+    }
+
     onTenantChange(tenant.id)
 
     tenantVisible.value = false
 
     ChangeTenantData({
       tenantId: tenant.id
-    }).then(() => {
+    }, tenant.id).then(() => {
       
       ElMessage.success('租户切换成功')
 
       authStore.setTenantId(tenant.id)
+      http.setHeader({
+        tenant: tenant.id
+      })
       getVipLicenseEnabled(true).catch(() => {
         // 切换租户后刷新许可证状态，失败时不影响租户切换
       }).finally(() => {
         window.location.reload()
       })
+    }).catch(() => {
+      onTenantChange(authStore.tenantId)
     })
   }
 
