@@ -275,6 +275,7 @@ public class MonitorBizService {
         Page<WorkflowMonitorAo> workflowMonitorAos =
             workflowInstanceRepository.searchWorkflowMonitor(TENANT_ID.get(), pageInstancesReq.getSearchKeyWord(),
                 PageRequest.of(pageInstancesReq.getPage(), pageInstancesReq.getPageSize()));
+        JPA_TENANT_MODE.set(true);
 
         return workflowMonitorAos.map(workflowMapper::workflowMonitorAoToPageInstancesRes);
     }
@@ -287,6 +288,7 @@ public class MonitorBizService {
         // 获取所有的节点
         JPA_TENANT_MODE.set(false);
         List<ClusterNodeEntity> allNode = clusterNodeRepository.findAllByStatus(ClusterNodeStatus.RUNNING);
+        JPA_TENANT_MODE.set(true);
 
         allNode.forEach(e -> {
             CompletableFuture.supplyAsync(() -> {
