@@ -1,7 +1,7 @@
 import { useAuthStore } from "@/store/useAuth"
 import { computed, ref } from "vue"
 import { useRouter } from "vue-router"
-import { Switch, User } from '@element-plus/icons-vue'
+import { Switch } from '@element-plus/icons-vue'
 import { useSwitchTenant, type TenantInfo } from '@/hooks/switch-tenant'
 import EllipsisTooltip from '@/components/ellipsis-tooltip/ellipsis-tooltip.vue'
 import { ChangeTenantData } from "@/services/login.service"
@@ -9,7 +9,7 @@ import { ElMessage } from "element-plus"
 import { CheckLicenseStatus } from "@/services/license.service"
 import { getVipLicenseEnabled, resetVipLicenseCache } from "@/utils/vip-license"
 
-export type AvatarMenuCommand = 'logout' | 'personal-info'
+export type AvatarMenuCommand = 'logout'
 
 export function useMenuAvatar() {
   let authStore = useAuthStore()
@@ -56,8 +56,6 @@ export function useMenuAvatar() {
         .finally(() => {
           doLogout()
         })
-    } else if (command === 'personal-info') {
-      router.push({ name: 'personalInfo' })
     }
   }
 
@@ -116,10 +114,6 @@ export function useMenuAvatar() {
           default: () => (
             <>
               { !isAdmin.value ? renderTenantSwitch() : null }
-              <div class="zqy-home__menu-option" onClick={ () => handleCommand('personal-info') }>
-                <el-icon><User /></el-icon>
-                个人信息
-              </div>
               <div class="zqy-home__menu-option" onClick={ () => handleCommand('logout') }>
                 <el-icon><switch-button /></el-icon>
                 退出登录
