@@ -15,7 +15,7 @@ export function useSwitchTenant() {
   const tenantList = ref<TenantInfo[]>([])
 
   const initSwitchTenant = function() {
-    QueryTenantList().then(({ data }: { data: TenantInfo[] }) => {
+    return QueryTenantList().then(({ data }: { data: TenantInfo[] }) => {
       tenantList.value = data
     })
   }
