@@ -289,6 +289,9 @@ public class UserBizService {
         }
 
         userRepository.deleteById(deleteUserReq.getUserId());
+
+        // 同时删除租户中的成员
+        tenantUserRepository.deleteAllByUserId(deleteUserReq.getUserId());
     }
 
     public Page<PageUserRes> pageUser(PageUserReq usrQueryAllUsersReq) {

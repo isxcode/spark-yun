@@ -30,4 +30,6 @@ public interface TenantUserRepository extends JpaRepository<TenantUserEntity, St
         @Param("searchKeyWord") String searchKeyWord, Pageable pageable);
 
     long countByTenantId(String tenantId);
+
+    void deleteAllByUserId(String userId);
 }
