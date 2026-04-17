@@ -49,6 +49,7 @@ export const colConfigs: colConfig[] = [
     prop: 'username',
     title: '用户名',
     minWidth: 100,
+    customSlot: 'username',
     showOverflowTooltip: true
   },
   {
