@@ -50,6 +50,7 @@ export const colConfigs: colConfig[] = [
     prop: 'name',
     title: '租户名称',
     minWidth: 100,
+    customSlot: 'name',
     showOverflowTooltip: true
   },
   {

@@ -30,6 +30,9 @@
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
         >
+          <template #name="scopeSlot">
+            <span class="name-click" @click="editData(scopeSlot.row)">{{ scopeSlot.row.name }}</span>
+          </template>
           <template #statusTag="scopeSlot">
             <div class="btn-group">
               <el-tag
