@@ -82,6 +82,7 @@
           type="datetimerange"
           format="YYYY-MM-DD HH:mm:ss"
           value-format="YYYY-MM-DD HH:mm:ss"
+          :unlink-panels="true"
           range-separator="~"
           start-placeholder="有效期开始时间"
           end-placeholder="有效期结束时间"
