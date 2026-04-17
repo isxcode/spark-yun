@@ -132,6 +132,15 @@ function handleTenantChnage(tenantId: string) {
 }
 
 function initData(tableLoading?: boolean) {
+  if (!currentTenant.value.id) {
+    tableConfig.tableData = []
+    tableConfig.pagination.total = 0
+    loading.value = false
+    tableConfig.loading = false
+    networkError.value = false
+    return
+  }
+
   loading.value = tableLoading ? false : true
   networkError.value = networkError.value || false
   GetUserList({
@@ -154,8 +163,29 @@ function initData(tableLoading?: boolean) {
       tableConfig.loading = false
       networkError.value = true
     })
+}
 
+function initDefaultTenantUserData() {
   initSwitchTenant()
+    .then(() => {
+      if (!tenantList.value.length) {
+        tableConfig.tableData = []
+        tableConfig.pagination.total = 0
+        loading.value = false
+        tableConfig.loading = false
+        networkError.value = false
+        return
+      }
+      onTenantChange(tenantList.value[0].id)
+      initData()
+    })
+    .catch(() => {
+      tableConfig.tableData = []
+      tableConfig.pagination.total = 0
+      loading.value = false
+      tableConfig.loading = false
+      networkError.value = true
+    })
 }
 
 function addData() {
@@ -246,7 +276,7 @@ function handleCurrentChange(e: number) {
 onMounted(() => {
   tableConfig.pagination.currentPage = 1
   tableConfig.pagination.pageSize = 10
-  initData()
+  initDefaultTenantUserData()
 })
 </script>
 
