@@ -33,6 +33,28 @@
           <template #name="scopeSlot">
             <span class="name-click" @click="editData(scopeSlot.row)">{{ scopeSlot.row.name }}</span>
           </template>
+          <template #memberProgress="scopeSlot">
+            <div class="resource-progress">
+              <el-progress
+                :percentage="getUsagePercentage(scopeSlot.row.usedMemberNum, scopeSlot.row.maxMemberNum)"
+                :color="getPercentColor()"
+                :show-text="false"
+                :stroke-width="12"
+              />
+              <span class="resource-progress__value">{{ getUsageText(scopeSlot.row.usedMemberNum, scopeSlot.row.maxMemberNum) }}</span>
+            </div>
+          </template>
+          <template #workflowProgress="scopeSlot">
+            <div class="resource-progress">
+              <el-progress
+                :percentage="getUsagePercentage(scopeSlot.row.usedWorkflowNum, scopeSlot.row.maxWorkflowNum)"
+                :color="getPercentColor()"
+                :show-text="false"
+                :stroke-width="12"
+              />
+              <span class="resource-progress__value">{{ getUsageText(scopeSlot.row.usedWorkflowNum, scopeSlot.row.maxWorkflowNum) }}</span>
+            </div>
+          </template>
           <template #statusTag="scopeSlot">
             <div class="btn-group">
               <el-tag
@@ -278,9 +300,50 @@ function handleCurrentChange(e: number) {
   initData()
 }
 
+function getUsagePercentage(usedValue: number | string, totalValue: number | string) {
+  const used = Number(usedValue) || 0
+  const total = Number(totalValue) || 0
+  if (total <= 0) {
+    return used > 0 ? 100 : 0
+  }
+  return Math.min(100, Number(((used / total) * 100).toFixed(2)))
+}
+
+function getUsageText(usedValue: number | string, totalValue: number | string) {
+  const used = Number(usedValue) || 0
+  const total = Number(totalValue) || 0
+  return `${used} / ${total}`
+}
+
+function getPercentColor(): string {
+  return 'var(--el-color-primary-light-3)'
+}
+
 onMounted(() => {
   tableConfig.pagination.currentPage = 1
   tableConfig.pagination.pageSize = 10
   initData()
 })
 </script>
+
+<style lang="scss">
+.zqy-seach-table {
+  .resource-progress {
+    min-width: 120px;
+    padding-right: 6px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    .el-progress {
+      flex: 1;
+    }
+  }
+
+  .resource-progress__value {
+    color: getCssVar('text-color', 'secondary');
+    white-space: nowrap;
+    font-size: getCssVar('font-size', 'extra-small');
+  }
+}
+</style>
