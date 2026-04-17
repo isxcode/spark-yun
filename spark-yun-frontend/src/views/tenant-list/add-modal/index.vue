@@ -23,7 +23,8 @@
           v-model="formData.maxMemberNum"
           placeholder="请输入"
           :min="0"
-          :controls="false"
+          :step="1"
+          controls-position="right"
         />
       </el-form-item>
       <el-form-item label="作业流数">
@@ -31,7 +32,8 @@
           v-model="formData.maxWorkflowNum"
           placeholder="请输入"
           :min="0"
-          :controls="false"
+          :step="1"
+          controls-position="right"
         />
       </el-form-item>
       <el-form-item
