@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import javax.transaction.Transactional;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
@@ -175,10 +176,27 @@ public class TenantBizService {
             throw new IsxAppException("租户不存在");
         }
 
+        // 判断租户数量是否达到上限
+        if (licenseStore.getLicense() != null) {
+            // 获取租户数总和
+            long tenantCount = tenantRepository.count();
+            // 比较租户数最大值
+            if (licenseStore.getLicense().getMaxTenantNum() < tenantCount + 1) {
+                throw new IsxAppException("租户数超出许可证限制数:" + licenseStore.getLicense().getMaxTenantNum() + ",请升级许可证");
+            }
+            // 比较成员数最大值
+            if (licenseStore.getLicense().getMaxMemberNum() < tetUpdateTenantBySystemAdminReq.getMaxMemberNum()) {
+                throw new IsxAppException("成员数超出许可证限制数:" + licenseStore.getLicense().getMaxMemberNum() + ",请升级许可证");
+            }
+            // 比较作业流数最大值
+            if (licenseStore.getLicense().getMaxWorkflowNum() < tetUpdateTenantBySystemAdminReq.getMaxWorkflowNum()) {
+                throw new IsxAppException("作业流数超出许可证限制数:" + licenseStore.getLicense().getMaxWorkflowNum() + ",请升级许可证");
+            }
+        }
+
         // TetUpdateTenantBySystemAdminReq To TenantEntity
         TenantEntity tenantEntity = tenantMapper
             .tetUpdateTenantBySystemAdminReqToTenantEntity(tetUpdateTenantBySystemAdminReq, tenantEntityOptional.get());
-
 
         // 有效期保存
         if (tetUpdateTenantBySystemAdminReq.getValidDateTime() != null
