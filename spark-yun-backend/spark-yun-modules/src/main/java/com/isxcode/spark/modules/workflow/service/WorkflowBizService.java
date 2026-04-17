@@ -891,6 +891,7 @@ public class WorkflowBizService {
             TENANT_ID.get(), queryWorkFlowInstancesReq.getSearchKeyWord(), queryWorkFlowInstancesReq.getExecuteStatus(),
             queryWorkFlowInstancesReq.getWorkflowId(),
             PageRequest.of(queryWorkFlowInstancesReq.getPage(), queryWorkFlowInstancesReq.getPageSize()));
+        JPA_TENANT_MODE.set(true);
 
         return workflowInstanceAoPage.map(workflowMapper::wfiWorkflowInstanceAo2WfiQueryWorkFlowInstancesRes);
     }

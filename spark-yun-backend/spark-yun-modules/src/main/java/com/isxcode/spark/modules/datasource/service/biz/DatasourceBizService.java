@@ -377,6 +377,7 @@ public class DatasourceBizService {
         Page<DatabaseDriverEntity> pageDatabaseDriver =
             databaseDriverRepository.searchAll(pageDatabaseDriverReq.getSearchKeyWord(), TENANT_ID.get(),
                 PageRequest.of(pageDatabaseDriverReq.getPage(), pageDatabaseDriverReq.getPageSize()));
+        JPA_TENANT_MODE.set(true);
 
         Page<PageDatabaseDriverRes> map =
             pageDatabaseDriver.map(datasourceMapper::dataDriverEntityToPageDatabaseDriverRes);
@@ -468,6 +469,8 @@ public class DatasourceBizService {
         Optional<DatabaseDriverEntity> systemDriver =
             databaseDriverRepository.findByDriverTypeAndDbTypeAndIsDefaultDriver("SYSTEM_DRIVER",
                 getDefaultDatabaseDriverReq.getDbType(), true);
+        JPA_TENANT_MODE.set(true);
+
         return datasourceMapper.databaseDriverEntityToGetDefaultDatabaseDriverRes(systemDriver.get());
     }
 

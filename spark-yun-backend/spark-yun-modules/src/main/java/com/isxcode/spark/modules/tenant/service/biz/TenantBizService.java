@@ -164,6 +164,7 @@ public class TenantBizService {
             e.setUsedWorkflowNum(String.valueOf(workflowRepository.countByTenantId(e.getId())));
             e.setUsedMemberNum(String.valueOf(tenantUserRepository.countByTenantId(e.getId())));
         });
+        JPA_TENANT_MODE.set(true);
         return result;
     }
 
