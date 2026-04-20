@@ -21,9 +21,9 @@
                     @size-change="handleSizeChange"
                     @current-change="handleCurrentChange"
                 >
-                    <!-- <template #nameSlot="scopeSlot">
+                    <template #nameSlot="scopeSlot">
                         <span class="name-click" @click="showDetail(scopeSlot.row)">{{ scopeSlot.row.name }}</span>
-                    </template> -->
+                    </template>
                     <template #statusTag="scopeSlot">
                         <ZStatusTag :status="scopeSlot.row.status"></ZStatusTag>
                     </template>
@@ -238,3 +238,16 @@ onMounted(() => {
     initData()
 })
 </script>
+
+<style lang="scss">
+.zqy-seach-table {
+    .name-click {
+        cursor: pointer;
+        color: getCssVar('color', 'primary', 'light-5');
+
+        &:hover {
+            color: getCssVar('color', 'primary');
+        }
+    }
+}
+</style>
