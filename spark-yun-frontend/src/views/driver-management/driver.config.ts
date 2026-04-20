@@ -37,7 +37,11 @@ export interface SerchParams {
 
 export const BreadCrumbList: Array<BreadCrumb> = [
     {
-        name: '驱动上传',
+        name: '数据源',
+        code: 'datasource'
+    },
+    {
+        name: '驱动管理',
         code: 'driver-management'
     }
 ]
