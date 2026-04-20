@@ -11,10 +11,9 @@
                             <EllipsisTooltip class="title-tooltip" :label="workFlowData.name" />
                         </span>
                     </div>
-                    <el-dropdown trigger="click" @visible-change="handleChangeWorkflowVisible">
+                    <el-dropdown trigger="click">
                         <el-icon class="change-workflow">
-                            <Fold v-if="isChangeWorkflowDropdownVisible" />
-                            <Expand v-else />
+                            <Expand />
                         </el-icon>
                         <template #dropdown>
                             <el-dropdown-menu style="max-height: 340px; overflow: auto; padding: 12px 8px;">
@@ -37,9 +36,9 @@
                         @input="inputEvent"
                         @keyup.enter="initData"
                     ></el-input>
-                    <el-button type="primary" circle @click="addData">
-                        <el-icon><Plus /></el-icon>
-                    </el-button>
+                    <el-icon class="add-work-icon" @click="addData">
+                        <Plus />
+                    </el-icon>
                 </div>
                 <el-scrollbar>
                     <div class="list-box">
@@ -291,7 +290,7 @@ import ApiSync from '../api-sync/index.vue'
 import sparkJar from '../spark-jar/index.vue'
 import DatabaseMigrate from '../database-migrate/index.vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { Expand, Fold, Loading, MapLocation, Refresh, ZoomIn, ZoomOut } from '@element-plus/icons-vue'
+import { Expand, Loading, MapLocation, Refresh, ZoomIn, ZoomOut } from '@element-plus/icons-vue'
 import EllipsisTooltip from '@/components/ellipsis-tooltip/ellipsis-tooltip.vue'
 import {
     AddWorkflowDetailList,
@@ -341,7 +340,6 @@ const timer = ref()
 const runningStatus = ref(false)
 const copyModalRef = ref()
 const loading = ref<boolean>(false)
-const isChangeWorkflowDropdownVisible = ref(false)
 
 const btnLoadingConfig = reactive({
     runningLoading: false,
@@ -370,10 +368,6 @@ const workTypeName = computed(() => {
         return typeList.find((t) => t.value === code)?.label
     }
 })
-
-function handleChangeWorkflowVisible(visible: boolean) {
-    isChangeWorkflowDropdownVisible.value = visible
-}
 
 function initData() {
     return new Promise((resolve) => {
@@ -1004,17 +998,17 @@ onUnmounted(() => {
 
             .change-workflow {
                 position: absolute;
-                right: 12px;
+                right: 16px;
                 top: 50%;
                 transform: translateY(-50%);
+                display: inline-block;
+                white-space: nowrap;
+                writing-mode: horizontal-tb;
                 cursor: pointer;
                 color: getCssVar('color', 'primary');
-                font-size: 18px;
-                border-radius: 4px;
-                padding: 4px;
-                display: inline-flex;
-                align-items: center;
-                justify-content: center;
+                font-size: 13px;
+                font-weight: 400;
+                line-height: 1;
                 &:hover {
                     color: getCssVar('color', 'primary', 'dark-2');
                 }
@@ -1035,11 +1029,13 @@ onUnmounted(() => {
                 width: 180px;
             }
 
-            .el-button {
+            .add-work-icon {
                 margin-left: 4px;
                 margin-right: 4px;
-                // height: 32px;
                 width: 28px;
+                font-size: 18px;
+                color: getCssVar('color', 'primary');
+                cursor: pointer;
             }
         }
         .el-scrollbar {
