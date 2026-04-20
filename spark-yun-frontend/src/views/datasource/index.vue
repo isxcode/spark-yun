@@ -5,6 +5,9 @@
       <el-button type="primary" @click="addData">
         添加数据源
       </el-button>
+      <el-button @click="goDriverManagement">
+        驱动管理
+      </el-button>
       <div class="zqy-tenant__select">
         <el-select 
           v-model="datasourceType" 
@@ -73,6 +76,7 @@
 
 <script lang="ts" setup>
 import { reactive, ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import Breadcrumb from '@/layout/bread-crumb/index.vue'
 import BlockTable from '@/components/block-table/index.vue'
 import LoadingPage from '@/components/loading/index.vue'
@@ -91,6 +95,7 @@ const addModalRef = ref(null)
 const showLogRef = ref(null)
 const datasourceType = ref('')
 const datasourceTypeList = ref(typeList)
+const router = useRouter()
 
 const breadCrumbList = reactive(BreadCrumbList)
 const tableConfig: any = reactive(TableConfig)
@@ -133,6 +138,12 @@ function addData() {
           reject(error)
         })
     })
+  })
+}
+
+function goDriverManagement() {
+  router.push({
+    name: 'driver-management'
   })
 }
 

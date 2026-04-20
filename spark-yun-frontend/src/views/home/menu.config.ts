@@ -34,14 +34,7 @@ export const menuListData: Array<Menu> = [
         name: '数据源',
         icon: 'DataLine',
         authType: [ 'ROLE_TENANT_MEMBER', 'ROLE_TENANT_ADMIN' ],
-        childPage: []
-      },
-      {
-        code: 'driver-management',
-        name: '驱动上传',
-        icon: 'Cpu',
-        authType: [ 'ROLE_TENANT_MEMBER', 'ROLE_TENANT_ADMIN' ],
-        childPage: []
+        childPage: ['driver-management']
       },
       {
         code: 'file-center',
