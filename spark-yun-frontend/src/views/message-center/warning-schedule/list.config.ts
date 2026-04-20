@@ -32,6 +32,10 @@ export interface TableConfig {
 
 export const BreadCrumbList: Array<BreadCrumb> = [
     {
+        name: '基线配置',
+        code: 'warning-config'
+    },
+    {
         name: '告警实例',
         code: 'warning-schedule'
     }

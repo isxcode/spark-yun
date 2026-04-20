@@ -38,6 +38,10 @@ export interface SerchParams {
 
 export const BreadCrumbList: Array<BreadCrumb> = [
     {
+        name: '接口服务',
+        code: 'custom-api'
+    },
+    {
         name: '黑白名单',
         code: 'access-rule'
     }
@@ -100,4 +104,3 @@ export const TableConfig: TableConfig = {
     seqType: 'seq',
     loading: false
 }
-

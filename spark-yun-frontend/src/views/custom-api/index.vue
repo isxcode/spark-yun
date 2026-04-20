@@ -3,6 +3,7 @@
     <div class="zqy-seach-table driver-table">
         <div class="zqy-table-top">
             <el-button type="primary" @click="addData">添加接口</el-button>
+            <el-button @click="goAccessRule">黑白名单</el-button>
             <div class="zqy-seach">
                 <el-input
                     v-model="keyword"
@@ -61,10 +62,8 @@ import { BreadCrumbList, TableConfig } from './costom-api.config'
 import { QueryCustomApiList, CreateCustomApiData, UpdateCustomApiData, DeleteCustomApiData, PublishCustomApiData, OfflineCustomApiData } from '@/services/custom-api.service'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useRouter } from 'vue-router'
-import { useAuthStore } from '@/store/useAuth'
 
 const router = useRouter()
-const authStore = useAuthStore()
 
 const breadCrumbList = reactive(BreadCrumbList)
 const tableConfig: any = reactive(TableConfig)
@@ -117,6 +116,12 @@ function addData() {
         })
     }, null, () => {
         initData()
+    })
+}
+
+function goAccessRule() {
+    router.push({
+        name: 'access-rule'
     })
 }
 
@@ -220,6 +225,14 @@ onMounted(() => {
         }
     }
     &.driver-table {
+        .zqy-table-top {
+            justify-content: flex-start;
+            gap: 4px;
+
+            .zqy-seach {
+                margin-left: auto;
+            }
+        }
         .zqy-table {
             .btn-group {
                 // justify-content: center;

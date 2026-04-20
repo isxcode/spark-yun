@@ -5,6 +5,9 @@
             <el-button type="primary" @click="addData">
                 添加采集
             </el-button>
+            <el-button @click="goAcquisitionInstance">
+                采集实例
+            </el-button>
             <div class="zqy-seach">
                 <el-input v-model="keyword" placeholder="请输入搜索条件 回车进行搜索" :maxlength="200" clearable @input="inputEvent"
                     @keyup.enter="initData(false)" />
@@ -53,6 +56,7 @@ import { reactive, ref, onMounted } from 'vue'
 import Breadcrumb from '@/layout/bread-crumb/index.vue'
 import LoadingPage from '@/components/loading/index.vue'
 import AddModal from './add-modal/index.vue'
+import { useRouter } from 'vue-router'
 
 import { BreadCrumbList, TableConfig } from './list.config'
 import { GetMetadataTaskList, AddMetadataTaskData, UpdateMetadataTaskData, DeleteMetadataTaskData, TriggerMetadataTaskData, EnableMetadataTaskData, DisableMetadataTaskData } from '@/services/metadata-page.service'
@@ -64,6 +68,7 @@ const keyword = ref('')
 const loading = ref(false)
 const networkError = ref(false)
 const addModalRef = ref<any>(null)
+const router = useRouter()
 
 function initData(tableLoading?: boolean) {
     loading.value = tableLoading ? false : true
@@ -99,6 +104,12 @@ function addData() {
                 reject(error)
             })
         })
+    })
+}
+
+function goAcquisitionInstance() {
+    router.push({
+        name: 'acquisition-instance'
     })
 }
 function editData(data: any) {
@@ -202,6 +213,15 @@ onMounted(() => {
 <style lang="scss">
 .message-notification {
     &.zqy-seach-table {
+        .zqy-table-top {
+            justify-content: flex-start;
+            gap: 4px;
+
+            .zqy-seach {
+                margin-left: auto;
+            }
+        }
+
         .zqy-table {
             .btn-group-msg {
                 justify-content: space-around;

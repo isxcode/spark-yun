@@ -2,8 +2,11 @@
     <Breadcrumb :bread-crumb-list="breadCrumbList" />
     <div class="zqy-seach-table message-notification">
         <div class="zqy-table-top">
-            <el-button type="primary" @click="addData">
+            <el-button class="top-action-btn" type="primary" @click="addData">
                 新增基线
+            </el-button>
+            <el-button @click="goWarningSchedule">
+                告警实例
             </el-button>
             <div class="zqy-seach">
                 <el-input v-model="keyword" placeholder="请输入搜索条件 回车进行搜索" :maxlength="200" clearable @input="inputEvent"
@@ -54,6 +57,7 @@ import { BreadCrumbList, TableConfig } from './list.config'
 import { GetAlarmPagesList, AddAlarmData, UpdateAlarmData, DeleteAlarmData, DisabledAlarmData, EnableAlarmData } from '@/services/message-center.service'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import {Loading} from "@element-plus/icons-vue";
+import { useRouter } from 'vue-router'
 
 const breadCrumbList = reactive(BreadCrumbList)
 const tableConfig: any = reactive(TableConfig)
@@ -61,6 +65,7 @@ const keyword = ref('')
 const loading = ref(false)
 const networkError = ref(false)
 const addModalRef = ref(null)
+const router = useRouter()
 
 function initData(tableLoading?: boolean) {
     loading.value = tableLoading ? false : true
@@ -96,6 +101,12 @@ function addData() {
                 reject(error)
             })
         })
+    })
+}
+
+function goWarningSchedule() {
+    router.push({
+        name: 'warning-schedule'
     })
 }
 function editData(data: any) {
@@ -184,6 +195,20 @@ onMounted(() => {
 <style lang="scss">
 .message-notification {
     &.zqy-seach-table {
+        .zqy-table-top {
+            justify-content: flex-start;
+            gap: 4px;
+
+            .top-action-btn {
+                min-width: 86px;
+                height: 28px;
+            }
+
+            .zqy-seach {
+                margin-left: auto;
+            }
+        }
+
         .zqy-table {
             .btn-group-msg {
                 justify-content: space-around;
