@@ -157,14 +157,7 @@ export const menuListData: Array<Menu> = [
         name: '基线配置',
         icon: 'TakeawayBox',
         authType: [ 'ROLE_TENANT_MEMBER', 'ROLE_TENANT_ADMIN' ],
-        childPage: []
-      },
-      {
-        code: 'warning-schedule',
-        name: '告警实例',
-        icon: 'List',
-        authType: [ 'ROLE_TENANT_MEMBER', 'ROLE_TENANT_ADMIN' ],
-        childPage: []
+        childPage: ['warning-schedule']
       }
     ]
   },
@@ -186,14 +179,7 @@ export const menuListData: Array<Menu> = [
         name: '数据采集',
         icon: 'Collection',
         authType: ['ROLE_TENANT_MEMBER', 'ROLE_TENANT_ADMIN'],
-        childPage: []
-      },
-      {
-        code: 'acquisition-instance',
-        name: '采集实例',
-        icon: 'List',
-        authType: ['ROLE_TENANT_MEMBER', 'ROLE_TENANT_ADMIN'],
-        childPage: []
+        childPage: ['acquisition-instance']
       }
     ]
   },
@@ -218,18 +204,11 @@ export const menuListData: Array<Menu> = [
         childPage: ['report-views-detail']
       },
       {
-        code: 'access-rule',
-        name: '黑白名单',
-        icon: 'Lock',
-        authType: [ 'ROLE_TENANT_MEMBER', 'ROLE_TENANT_ADMIN' ],
-        childPage: []
-      },
-      {
         code: 'custom-api',
         name: '接口服务',
         icon: 'MessageBox',
         authType: [ 'ROLE_TENANT_MEMBER', 'ROLE_TENANT_ADMIN' ],
-        childPage: []
+        childPage: ['access-rule']
       },
       {
         code: 'custom-form',
