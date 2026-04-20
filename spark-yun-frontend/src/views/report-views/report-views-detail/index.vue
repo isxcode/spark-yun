@@ -13,8 +13,10 @@
                 :componentList="componentList"
                 :getPreviewOption="getPreviewOption"
                 :getRealDataOption="getRealDataOption"
+                :showReportComponentsBtn="true"
                 @getChartListEvent="getChartListEvent"
                 @previewChatEvent="previewChatEvent"
+                @goReportComponentsEvent="goReportComponents"
             ></ZChartsEngine>
         </LoadingPage>
         <PreviewReport ref="previewReportRef"></PreviewReport>
@@ -84,6 +86,16 @@ function previewChatEvent(e: any) {
     }).then((res: any) => {
         previewReportRef.value.showModal(res.data.cardInfo.exampleData)
     }).catch(() => {
+    })
+}
+
+function goReportComponents() {
+    router.push({
+        name: 'report-components',
+        query: {
+            reportViewId: route.query.id,
+            reportViewType: route.query.type
+        }
     })
 }
 // 获取所有配置信息

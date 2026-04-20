@@ -66,7 +66,7 @@ import LoadingPage from '@/components/loading/index.vue'
 import { BreadCrumbList, TableConfig } from './report-components.config'
 import { QueryReportComponent, CreateReportComponentData, PublishReportComponentData, OfflineReportComponentData, DeleteReportComponentData, EditReportComponent } from '@/services/report-echarts.service'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { ChartTypeList } from './report-item/report-item.config'
 
 interface Option {
@@ -75,8 +75,9 @@ interface Option {
 }
 
 const router = useRouter()
+const route = useRoute()
 
-const breadCrumbList = reactive(BreadCrumbList)
+const breadCrumbList = reactive([...BreadCrumbList])
 const tableConfig: any = reactive(TableConfig)
 const keyword = ref('')
 const loading = ref(false)
@@ -147,7 +148,7 @@ function editReport(data: any) {
 
 // 删除
 function deleteData(data: any) {
-    ElMessageBox.confirm('确定删除该数据卡片吗？', '警告', {
+    ElMessageBox.confirm('确定删除该卡片吗？', '警告', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
@@ -162,7 +163,7 @@ function deleteData(data: any) {
 }
 // 下线
 function underlineReport(data: any) {
-    ElMessageBox.confirm('确定下线该数据卡片吗？', '警告', {
+    ElMessageBox.confirm('确定下线该卡片吗？', '警告', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
@@ -177,7 +178,7 @@ function underlineReport(data: any) {
 }
 // 发布
 function publishReport(data: any) {
-    ElMessageBox.confirm('确定发布该数据卡片吗？', '警告', {
+    ElMessageBox.confirm('确定发布该卡片吗？', '警告', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
@@ -195,7 +196,9 @@ function showDetail(data: any) {
   router.push({
     name: 'report-item',
     query: {
-        id: data.id
+        id: data.id,
+        reportViewId: route.query.reportViewId,
+        reportViewType: route.query.reportViewType
     }
   })
 }
@@ -217,6 +220,26 @@ function handleCurrentChange(e: number) {
 }
 
 onMounted(() => {
+    if (route.query.reportViewId) {
+        breadCrumbList.splice(0, breadCrumbList.length,
+            {
+                name: '数据大屏',
+                code: 'report-views'
+            },
+            {
+                name: '大屏详情',
+                code: 'report-views-detail',
+                query: {
+                    id: route.query.reportViewId,
+                    type: route.query.reportViewType || 'edit'
+                }
+            },
+            {
+                name: '卡片中心',
+                code: 'report-components'
+            }
+        )
+    }
     tableConfig.pagination.currentPage = 1
     tableConfig.pagination.pageSize = 10
     initData()

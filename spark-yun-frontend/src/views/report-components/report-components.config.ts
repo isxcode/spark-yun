@@ -2,6 +2,7 @@ export interface BreadCrumb {
     name: string;
     code: string;
     hidden?: boolean;
+    query?: any;
 }
 
 export interface colConfig {
@@ -38,7 +39,7 @@ export interface SerchParams {
 
 export const BreadCrumbList: Array<BreadCrumb> = [
     {
-        name: '数据卡片',
+        name: '卡片中心',
         code: 'report-components'
     }
 ]

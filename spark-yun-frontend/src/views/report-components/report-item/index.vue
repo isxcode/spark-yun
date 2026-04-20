@@ -144,7 +144,7 @@ const fullScreenArr = ref<boolean[]>([])   // 对应sql脚本全屏显示
 const sqlLang = ref<any>(sql())
 let myChart: any = null
 const echartOption = ref<any>()
-const breadCrumbList = reactive(BreadCrumbList)
+const breadCrumbList = reactive([...BreadCrumbList])
 // 基础配置
 const baseConfigRules = reactive<FormRules>(BaseConfigRules)
 const baseConfig = reactive({
@@ -245,7 +245,11 @@ function publishChartEvent() {
             saveLoading.value = false
             ElMessage.success(res.msg)
             router.push({
-                name: 'report-components'
+                name: 'report-components',
+                query: {
+                    reportViewId: route.query.reportViewId,
+                    reportViewType: route.query.reportViewType
+                }
             })
         }).catch(() => {
             saveLoading.value = false
@@ -320,6 +324,34 @@ function previewChatEvent(sql: string) {
 }
 
 onMounted(() => {
+    if (route.query.reportViewId) {
+        breadCrumbList.splice(0, breadCrumbList.length,
+            {
+                name: '数据大屏',
+                code: 'report-views'
+            },
+            {
+                name: '大屏详情',
+                code: 'report-views-detail',
+                query: {
+                    id: route.query.reportViewId,
+                    type: route.query.reportViewType || 'edit'
+                }
+            },
+            {
+                name: '卡片中心',
+                code: 'report-components',
+                query: {
+                    reportViewId: route.query.reportViewId,
+                    reportViewType: route.query.reportViewType || 'edit'
+                }
+            },
+            {
+                name: '组件详情',
+                code: 'report-item'
+            }
+        )
+    }
     getDataSourceList(true)
     initData()
 })
