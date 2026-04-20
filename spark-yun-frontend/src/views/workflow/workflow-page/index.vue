@@ -11,9 +11,10 @@
                             <EllipsisTooltip class="title-tooltip" :label="workFlowData.name" />
                         </span>
                     </div>
-                    <el-dropdown trigger="click">
+                    <el-dropdown trigger="click" @visible-change="handleChangeWorkflowVisible">
                         <el-icon class="change-workflow">
-                            <Sort />
+                            <Fold v-if="isChangeWorkflowDropdownVisible" />
+                            <Expand v-else />
                         </el-icon>
                         <template #dropdown>
                             <el-dropdown-menu style="max-height: 340px; overflow: auto; padding: 12px 8px;">
@@ -290,7 +291,7 @@ import ApiSync from '../api-sync/index.vue'
 import sparkJar from '../spark-jar/index.vue'
 import DatabaseMigrate from '../database-migrate/index.vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { Loading, MapLocation, Refresh, Sort, ZoomIn, ZoomOut } from '@element-plus/icons-vue'
+import { Expand, Fold, Loading, MapLocation, Refresh, ZoomIn, ZoomOut } from '@element-plus/icons-vue'
 import EllipsisTooltip from '@/components/ellipsis-tooltip/ellipsis-tooltip.vue'
 import {
     AddWorkflowDetailList,
@@ -340,6 +341,7 @@ const timer = ref()
 const runningStatus = ref(false)
 const copyModalRef = ref()
 const loading = ref<boolean>(false)
+const isChangeWorkflowDropdownVisible = ref(false)
 
 const btnLoadingConfig = reactive({
     runningLoading: false,
@@ -368,6 +370,10 @@ const workTypeName = computed(() => {
         return typeList.find((t) => t.value === code)?.label
     }
 })
+
+function handleChangeWorkflowVisible(visible: boolean) {
+    isChangeWorkflowDropdownVisible.value = visible
+}
 
 function initData() {
     return new Promise((resolve) => {
@@ -999,10 +1005,18 @@ onUnmounted(() => {
             .change-workflow {
                 position: absolute;
                 right: 12px;
-                top: 16px;
+                top: 50%;
+                transform: translateY(-50%);
                 cursor: pointer;
+                color: getCssVar('color', 'primary');
+                font-size: 18px;
+                border-radius: 4px;
+                padding: 4px;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
                 &:hover {
-                    color: getCssVar('color', 'primary');
+                    color: getCssVar('color', 'primary', 'dark-2');
                 }
             }
         }
