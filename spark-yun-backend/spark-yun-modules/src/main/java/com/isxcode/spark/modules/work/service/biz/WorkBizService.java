@@ -224,8 +224,17 @@ public class WorkBizService {
 
     public Page<PageWorkRes> pageWork(PageWorkReq pageWorkReq) {
 
-        Page<WorkEntity> workPage = workRepository.pageSearchByWorkflowId(pageWorkReq.getSearchKeyWord(),
-            pageWorkReq.getWorkflowId(), PageRequest.of(pageWorkReq.getPage(), pageWorkReq.getPageSize()));
+        Page<WorkEntity> workPage;
+        if (Strings.isEmpty(pageWorkReq.getOrderType())) {
+            workPage = workRepository.pageSearchByWorkflowId(pageWorkReq.getSearchKeyWord(),
+                pageWorkReq.getWorkflowId(), PageRequest.of(pageWorkReq.getPage(), pageWorkReq.getPageSize()));
+        } else if ("asc".equalsIgnoreCase(pageWorkReq.getOrderType())) {
+            workPage = workRepository.pageSearchByWorkflowIdAndAscName(pageWorkReq.getSearchKeyWord(),
+                pageWorkReq.getWorkflowId(), PageRequest.of(pageWorkReq.getPage(), pageWorkReq.getPageSize()));
+        } else {
+            workPage = workRepository.pageSearchByWorkflowIdAndDescName(pageWorkReq.getSearchKeyWord(),
+                pageWorkReq.getWorkflowId(), PageRequest.of(pageWorkReq.getPage(), pageWorkReq.getPageSize()));
+        }
 
         Page<PageWorkRes> map = workPage.map(workMapper::workEntityToPageWorkRes);
 
