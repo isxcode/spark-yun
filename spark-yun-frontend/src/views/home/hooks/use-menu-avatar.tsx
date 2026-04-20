@@ -76,17 +76,13 @@ export function useMenuAvatar() {
     ChangeTenantData({
       tenantId: tenant.id
     }, tenant.id).then(() => {
-      
-      ElMessage.success('租户切换成功')
+      getVipLicenseEnabled(true).finally(() => {
+        ElMessage.success('租户切换成功')
 
-      authStore.setTenantId(tenant.id)
-      http.setHeader({
-        tenant: tenant.id
-      })
-      getVipLicenseEnabled(true).catch(() => {
-        // 切换租户后刷新许可证状态，失败时不影响租户切换
-      }).finally(() => {
-        window.location.reload()
+        authStore.setTenantId(tenant.id)
+        http.setHeader({
+          tenant: tenant.id
+        })
       })
     }).catch(() => {
       onTenantChange(authStore.tenantId)

@@ -63,7 +63,7 @@ export function useRouterMenu(menuListData: Menu[]) {
       if (!tenantId || tenantId === oldTenantId) {
         return
       }
-      await loadVipLicense(true)
+      await loadVipLicense()
     }
   )
 
