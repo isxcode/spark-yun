@@ -140,13 +140,14 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, defineExpose, ref, nextTick } from 'vue'
+import { reactive, defineExpose, ref, nextTick, computed } from 'vue'
 import BlockModal from '@/components/block-modal/index.vue'
 import { ElMessage, FormInstance, FormRules } from 'element-plus'
 import { GetComputerGroupList, GetComputerPointData } from '@/services/computer-group.service'
 import { GetDatasourceList } from '@/services/datasource.service'
 import { GetSparkContainerList } from '@/services/spark-container.service'
 import { TypeList } from '../../workflow.config'
+import { getVipLicenseEnabled } from '@/utils/vip-license'
 
 const form = ref<FormInstance>()
 const callback = ref<any>()
@@ -156,6 +157,8 @@ const dataSourceList = ref([]) // 数据源
 const showForm = ref(true)
 const renderSense = ref('')
 const sparkContainerList = ref([]) // spark容器
+const licenseEnabled = ref(true)
+const isEditMode = ref(false)
 
 const modelConfig = reactive({
     title: '添加作业',
@@ -187,7 +190,25 @@ const formData = reactive({
     remark: '',
     id: ''
 })
-const typeList = reactive(TypeList)
+const limitedWorkTypeSet = new Set([
+    'API',
+    'BASH',
+    'CURL',
+    'EXE_JDBC',
+    'FLINK_JAR',
+    'FLINK_SQL',
+    'PYTHON',
+    'QUERY_JDBC',
+    'SPARK_JAR',
+    'SPARK_SQL',
+    'DATA_SYNC_JDBC'
+])
+const typeList = computed(() => {
+    if (licenseEnabled.value || isEditMode.value) {
+        return TypeList
+    }
+    return TypeList.filter(item => limitedWorkTypeSet.has(item.value))
+})
 const rules = reactive<FormRules>({
     name: [
         {
@@ -233,8 +254,10 @@ const rules = reactive<FormRules>({
     ]
 })
 
-function showModal(cb: () => void, data: any): void {
+async function showModal(cb: () => void, data: any): Promise<void> {
     callback.value = cb
+    licenseEnabled.value = await getVipLicenseEnabled()
+    isEditMode.value = !!(data && data.id)
     modelConfig.visible = true
     if (data && data.id) {
         Object.keys(data).forEach((key: string) => {

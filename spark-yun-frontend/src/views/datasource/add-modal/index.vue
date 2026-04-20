@@ -218,6 +218,7 @@ import { ElMessage, FormInstance, FormRules } from 'element-plus'
 import { Delete, Plus } from '@element-plus/icons-vue'
 import { GetDefaultDriverData, GetDriverListData } from '@/services/driver-management.service'
 import { TestDatasourceData } from '@/services/datasource.service'
+import { getVipLicenseEnabled } from '@/utils/vip-license'
 
 const form = ref<FormInstance>()
 const callback = ref<any>()
@@ -227,6 +228,8 @@ const testResult = ref()
 const driverPopoverVisible = ref(false)
 const advancedConfigVisible = ref(false)
 const connectConfigList = ref<Array<{ key: string; value: string }>>([])
+const licenseEnabled = ref(true)
+const isEditMode = ref(false)
 const modelConfig = reactive({
   title: '添加数据源',
   visible: false,
@@ -263,7 +266,7 @@ const formData = reactive({
   connectConfig: {} as Record<string, string>,
   id: ''
 })
-const typeList = reactive([
+const allTypeList = [
   {
     label: 'Clickhouse',
     value: 'CLICKHOUSE'
@@ -368,7 +371,37 @@ const typeList = reactive([
     label: 'Trino',
     value: 'TRINO'
   }
-]);
+]
+const limitedTypeList = [
+  { label: 'Clickhouse', value: 'CLICKHOUSE' },
+  { label: 'Db2', value: 'DB2' },
+  { label: 'Dm', value: 'DM' },
+  { label: 'Doris', value: 'DORIS' },
+  { label: 'Gauss', value: 'GAUSS' },
+  { label: 'Gbase', value: 'GBASE' },
+  { label: 'Greenplum', value: 'GREENPLUM' },
+  { label: 'H2', value: 'H2' },
+  { label: 'Hana', value: 'HANA_SAP' },
+  { label: 'Hive', value: 'HIVE' },
+  { label: 'Impala', value: 'IMPALA' },
+  { label: 'Mysql', value: 'MYSQL' },
+  { label: 'Oceanbase', value: 'OCEANBASE' },
+  { label: 'OpenGauss', value: 'OPEN_GAUSS' },
+  { label: 'Oracle', value: 'ORACLE' },
+  { label: 'Postgres', value: 'POSTGRE_SQL' },
+  { label: 'Presto', value: 'PRESTO' },
+  { label: 'SqlServer', value: 'SQL_SERVER' },
+  { label: 'StarRocks', value: 'STAR_ROCKS' },
+  { label: 'Sybase', value: 'SYBASE' },
+  { label: 'Tidb', value: 'TIDB' },
+  { label: 'Trino', value: 'TRINO' }
+]
+const typeList = computed(() => {
+  if (licenseEnabled.value || isEditMode.value) {
+    return allTypeList
+  }
+  return limitedTypeList
+})
 const jdbcTipsMap: Record<string, string> = {
   MYSQL: 'jdbc:mysql://127.0.0.1:3306/db_name',
   ORACLE: 'jdbc:oracle:thin:@127.0.0.1:1521/db_name',
@@ -457,8 +490,10 @@ const rules = reactive<FormRules>({
   ]
 })
 
-function showModal(cb: () => void, data: any): void {
+async function showModal(cb: () => void, data: any): Promise<void> {
   callback.value = cb
+  licenseEnabled.value = await getVipLicenseEnabled()
+  isEditMode.value = !!data
   modelConfig.visible = true
 
   testResult.value = {

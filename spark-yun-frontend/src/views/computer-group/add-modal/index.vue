@@ -38,9 +38,10 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, defineExpose, ref, nextTick } from 'vue'
+import { reactive, defineExpose, ref, nextTick, computed } from 'vue'
 import BlockModal from '@/components/block-modal/index.vue'
 import { ElMessage, FormInstance, FormRules } from 'element-plus'
+import { getVipLicenseEnabled } from '@/utils/vip-license'
 
 const form = ref<FormInstance>()
 const callback = ref<any>()
@@ -78,7 +79,7 @@ const rules = reactive<FormRules>({
     }
   ]
 })
-const typeList = reactive([
+const allTypeList = [
   {
     label: 'Kubernetes',
     value: 'kubernetes',
@@ -91,10 +92,19 @@ const typeList = reactive([
     label: 'StandAlone',
     value: 'standalone',
   },
-]);
+]
+const licenseEnabled = ref(true)
+const typeList = computed(() => {
+  if (licenseEnabled.value) {
+    return allTypeList
+  }
+  return allTypeList.filter(item => item.value === 'standalone')
+})
 
-function showModal(cb: () => void, data: any): void {
+async function showModal(cb: () => void, data: any): Promise<void> {
   callback.value = cb
+  licenseEnabled.value = await getVipLicenseEnabled()
+
   if (data) {
     formData.name = data.name
     formData.clusterType = data.clusterType
@@ -103,7 +113,7 @@ function showModal(cb: () => void, data: any): void {
     modelConfig.title = '编辑集群'
   } else {
     formData.name = ''
-    formData.clusterType = ''
+    formData.clusterType = licenseEnabled.value ? '' : 'standalone'
     formData.remark = ''
     formData.id = ''
     modelConfig.title = '添加集群'
