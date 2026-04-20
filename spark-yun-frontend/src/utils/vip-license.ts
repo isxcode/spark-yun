@@ -46,6 +46,15 @@ const VIP_MENU_CODE_SET = new Set([
 
 let cachedVipEnabled: boolean | null = null;
 let pendingCheckPromise: Promise<boolean> | null = null;
+let cachedLicenseApiAvailable = true;
+
+function isLicenseMenuCode(code?: string): boolean {
+  return code === "license";
+}
+
+function isNotFoundError(error: any): boolean {
+  return error?.status === 404 || error?.code === 404 || error?.httpStatus === 404;
+}
 
 export function isVipMenuCode(code?: string): boolean {
   return !!code && VIP_MENU_CODE_SET.has(code);
@@ -63,10 +72,12 @@ export async function getVipLicenseEnabled(forceRefresh = false): Promise<boolea
   pendingCheckPromise = CheckLicenseStatus()
     .then((res: any) => {
       const status = res?.data?.status;
+      cachedLicenseApiAvailable = true;
       cachedVipEnabled = status === "ENABLE";
       return cachedVipEnabled;
     })
-    .catch(() => {
+    .catch((error: any) => {
+      cachedLicenseApiAvailable = !isNotFoundError(error);
       cachedVipEnabled = false;
       return false;
     })
@@ -80,19 +91,30 @@ export async function getVipLicenseEnabled(forceRefresh = false): Promise<boolea
 export function resetVipLicenseCache(): void {
   cachedVipEnabled = null;
   pendingCheckPromise = null;
+  cachedLicenseApiAvailable = true;
 }
 
-export function filterVipMenus(menuList: Menu[], vipEnabled: boolean): Menu[] {
+export function getLicenseApiAvailable(): boolean {
+  return cachedLicenseApiAvailable;
+}
+
+export function filterVipMenus(menuList: Menu[], vipEnabled: boolean, licenseApiAvailable = true): Menu[] {
   const result: Menu[] = [];
 
   menuList.forEach((menu) => {
+    if (isLicenseMenuCode(menu.code) && !licenseApiAvailable) {
+      return;
+    }
+
     const isVip = isVipMenuCode(menu.code);
     if (isVip && !vipEnabled) {
       return;
     }
 
     const hasChildren = !!menu.children?.length;
-    const children = hasChildren ? filterVipMenus(menu.children || [], vipEnabled) : undefined;
+    const children = hasChildren
+      ? filterVipMenus(menu.children || [], vipEnabled, licenseApiAvailable)
+      : undefined;
 
     if (hasChildren && (!children || !children.length)) {
       return;
