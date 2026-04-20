@@ -3,7 +3,7 @@ import { useAuthStore } from "@/store/useAuth"
 import type { Menu } from "../menu.config"
 import { useRoute, useRouter } from "vue-router"
 import { useMenuAvatar } from "./use-menu-avatar"
-import { filterVipMenus, getVipLicenseEnabled } from "@/utils/vip-license"
+import { filterVipMenus, getLicenseApiAvailable, getVipLicenseEnabled } from "@/utils/vip-license"
 
 function getCurrentMenu(menuList: Menu[], routeMenu: string, targetMenu?: Menu) {
   let currentMenu: any = null
@@ -27,13 +27,14 @@ export function useRouterMenu(menuListData: Menu[]) {
   const router = useRouter()
   const { renderMenuAvatar } = useMenuAvatar()
   const vipEnabled = ref(false)
+  const licenseApiAvailable = ref(true)
   const vipChecked = ref(false)
 
   const menuViewData = computed(() => {
     const roleMenu = menuListData.filter(menuItem =>
       menuItem.authType?.includes(authStore.role || "ROLE_TENANT_MEMBER")
     )
-    return filterVipMenus(roleMenu, vipEnabled.value)
+    return filterVipMenus(roleMenu, vipEnabled.value, licenseApiAvailable.value)
   })
 
   const currentMenu = computed(() => {
@@ -50,6 +51,7 @@ export function useRouterMenu(menuListData: Menu[]) {
   const loadVipLicense = async (forceRefresh = false) => {
     vipChecked.value = false
     vipEnabled.value = await getVipLicenseEnabled(forceRefresh)
+    licenseApiAvailable.value = getLicenseApiAvailable()
     vipChecked.value = true
   }
 
