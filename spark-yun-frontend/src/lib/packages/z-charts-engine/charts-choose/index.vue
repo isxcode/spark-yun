@@ -4,9 +4,11 @@
             <el-input
                 v-model="searchParam"
                 placeholder="输入后回车搜索"
+                :style="{ width: showReportComponentsBtn ? 'calc(100% - 112px)' : 'calc(100% - 24px)' }"
                 @input="inputEvent"
                 @keyup.enter="initData"
             ></el-input>
+            <el-button v-if="showReportComponentsBtn" @click="goReportComponents">卡片中心</el-button>
         </div>
         <div class="form-dragger-widget">
             <template v-if="chartsList.length">
@@ -28,8 +30,8 @@ import { ref, defineEmits, nextTick, defineProps } from 'vue'
 import EmptyPage from '../empty-page/index.vue'
 import EllipsisTooltip from '../ellipsis-tooltip/charts-ellipsis-tooltip.vue'
 
-const props = defineProps(['chartsList'])
-const emit = defineEmits([ 'endMoveEvent', 'startMoveEvent', 'getChartListEvent', 'previewChatEvent'])
+const props = defineProps(['chartsList', 'showReportComponentsBtn'])
+const emit = defineEmits([ 'endMoveEvent', 'startMoveEvent', 'getChartListEvent', 'previewChatEvent', 'goReportComponentsEvent'])
 
 const guid = function() {
     function S4() {
@@ -65,6 +67,10 @@ function previewChatEvent(e: any) {
 function initData() {
     emit('getChartListEvent', searchParam.value)
 }
+
+function goReportComponents() {
+    emit('goReportComponentsEvent')
+}
 </script>
 
 <style lang="scss">
@@ -85,10 +91,13 @@ function initData() {
 
         .el-input {
             margin: 0 12px;
-            width: 100%;
             .el-input__wrapper {
                 border-radius: 10px;
             }
+        }
+        .el-button {
+            margin-right: 12px;
+            flex-shrink: 0;
         }
     }
     .form-dragger-widget {

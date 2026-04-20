@@ -3,10 +3,12 @@
         <ChartsChoose
             v-if="renderSence !== 'readonly'"
             :chartsList="chartsList"
+            :showReportComponentsBtn="showReportComponentsBtn"
             @startMoveEvent="startMoveEvent"
             @endMoveEvent="endMoveEvent"
             @getChartListEvent="getChartListEvent"
             @previewChatEvent="previewChatEvent"
+            @goReportComponentsEvent="goReportComponentsEvent"
         ></ChartsChoose>
         <ChartsComponents
             ref="chartComponentsRef"
@@ -24,8 +26,8 @@ import { ref, defineProps, defineEmits } from 'vue'
 import ChartsChoose from './charts-choose/index.vue'
 import ChartsComponents from './charts-components/charts-grid-layout.vue'
 
-const props = defineProps(['chartsList', 'renderSence', 'componentList', 'getPreviewOption', 'getRealDataOption'])
-const emit = defineEmits(['getChartListEvent', 'previewChatEvent'])
+const props = defineProps(['chartsList', 'renderSence', 'componentList', 'getPreviewOption', 'getRealDataOption', 'showReportComponentsBtn'])
+const emit = defineEmits(['getChartListEvent', 'previewChatEvent', 'goReportComponentsEvent'])
 
 const chartComponentsRef = ref()
 
@@ -46,6 +48,10 @@ function getChartListEvent(e: string) {
 }
 function previewChatEvent(e: any) {
     emit('previewChatEvent', e)
+}
+
+function goReportComponentsEvent() {
+    emit('goReportComponentsEvent')
 }
 
 function downloadLog() {

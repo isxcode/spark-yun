@@ -190,18 +190,11 @@ export const menuListData: Array<Menu> = [
     authType: [ 'ROLE_TENANT_MEMBER', 'ROLE_TENANT_ADMIN' ],
     children: [
       {
-        code: 'report-components',
-        name: '数据卡片',
-        icon: 'Grid',
-        authType: [ 'ROLE_TENANT_MEMBER', 'ROLE_TENANT_ADMIN' ],
-        childPage: ['report-item']
-      },
-      {
         code: 'report-views',
         name: '数据大屏',
         icon: 'Histogram',
         authType: [ 'ROLE_TENANT_MEMBER', 'ROLE_TENANT_ADMIN' ],
-        childPage: ['report-views-detail']
+        childPage: ['report-views-detail', 'report-components', 'report-item']
       },
       {
         code: 'custom-api',
