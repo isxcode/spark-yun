@@ -51,12 +51,15 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, defineExpose, ref, nextTick } from 'vue'
+import { reactive, defineExpose, ref, nextTick, computed } from 'vue'
 import BlockModal from '@/components/block-modal/index.vue'
 import { ElMessage, FormInstance, FormRules } from 'element-plus'
+import { getVipLicenseEnabled } from '@/utils/vip-license'
 
 const form = ref<FormInstance>()
 const callback = ref<any>()
+const licenseEnabled = ref(true)
+const isEditMode = ref(false)
 const modelConfig = reactive({
   title: '添加作业',
   visible: false,
@@ -82,7 +85,7 @@ const formData = reactive({
   remark: '',
   id: ''
 })
-const typeList = reactive([
+const allTypeList = [
   {
     label: 'Jdbc执行作业',
     value: 'EXE_JDBC'
@@ -107,7 +110,26 @@ const typeList = reactive([
     label: 'Python作业',
     value: 'PYTHON'
   }
+]
+const limitedWorkTypeSet = new Set([
+  'API',
+  'BASH',
+  'CURL',
+  'EXE_JDBC',
+  'FLINK_JAR',
+  'FLINK_SQL',
+  'PYTHON',
+  'QUERY_JDBC',
+  'SPARK_JAR',
+  'SPARK_SQL',
+  'DATA_SYNC_JDBC'
 ])
+const typeList = computed(() => {
+  if (licenseEnabled.value || isEditMode.value) {
+    return allTypeList
+  }
+  return allTypeList.filter(item => limitedWorkTypeSet.has(item.value))
+})
 const rules = reactive<FormRules>({
   name: [
     {
@@ -125,8 +147,10 @@ const rules = reactive<FormRules>({
   ]
 })
 
-function showModal(cb: () => void, data: any): void {
+async function showModal(cb: () => void, data: any): Promise<void> {
   callback.value = cb
+  licenseEnabled.value = await getVipLicenseEnabled()
+  isEditMode.value = !!(data && data.id)
   modelConfig.visible = true
   if (data && data.id) {
     formData.name = data.name
