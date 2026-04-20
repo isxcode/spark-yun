@@ -30,6 +30,11 @@
                     </el-dropdown>
                 </div>
                 <div class="search-box">
+                    <el-icon class="order-type-icon" @click="toggleOrderType">
+                        <Sort v-if="!orderType" />
+                        <SortUp v-else-if="orderType === 'acs'" />
+                        <SortDown v-else />
+                    </el-icon>
                     <el-input
                         v-model="searchParam"
                         placeholder="回车搜索作业名称"
@@ -340,6 +345,7 @@ const timer = ref()
 const runningStatus = ref(false)
 const copyModalRef = ref()
 const loading = ref<boolean>(false)
+const orderType = ref<'acs' | 'desc' | ''>('')
 
 const btnLoadingConfig = reactive({
     runningLoading: false,
@@ -371,12 +377,16 @@ const workTypeName = computed(() => {
 
 function initData() {
     return new Promise((resolve) => {
-        GetWorkflowDetailList({
+        const params: any = {
             page: 0,
             pageSize: 99999,
             searchKeyWord: searchParam.value,
             workflowId: workFlowData.value.id
-        }).then((res: any) => {
+        }
+        if (orderType.value) {
+            params.orderType = orderType.value
+        }
+        GetWorkflowDetailList(params).then((res: any) => {
             workListItem.value = res.data.content
             resolve()
         }).catch(() => {
@@ -384,6 +394,17 @@ function initData() {
             resolve()
         })
     })
+}
+
+function toggleOrderType() {
+    if (!orderType.value) {
+        orderType.value = 'acs'
+    } else if (orderType.value === 'acs') {
+        orderType.value = 'desc'
+    } else {
+        orderType.value = ''
+    }
+    initData()
 }
 
 function getWorkFlows() {
@@ -1019,14 +1040,21 @@ onUnmounted(() => {
             padding: 4px 0;
             box-sizing: border-box;
             display: flex;
-            justify-content: space-between;
             align-items: center;
+            gap: 4px;
             width: 100%;
             border-bottom: 1px solid getCssVar('border-color');
 
-            .el-input {
+            .order-type-icon {
                 margin-left: 8px;
-                width: 180px;
+                font-size: 16px;
+                color: getCssVar('color', 'primary');
+                cursor: pointer;
+            }
+
+            .el-input {
+                flex: 1;
+                min-width: 0;
             }
 
             .add-work-icon {
