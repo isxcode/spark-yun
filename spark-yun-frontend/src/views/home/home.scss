@@ -176,6 +176,64 @@
   padding: 4px;
 }
 
+.zyq-home__tenant-dialog {
+  .el-dialog__header {
+    display: none;
+  }
+
+  .el-dialog__body {
+    padding: 16px;
+  }
+
+  .el-dialog__footer {
+    display: none;
+  }
+}
+
+.zyq-home__tenant-dialog-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 360px;
+  overflow: auto;
+  overflow-x: hidden;
+}
+
+.zyq-home__tenant-dialog-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 40px;
+  padding: 8px 12px;
+  box-sizing: border-box;
+  border-radius: 6px;
+  cursor: pointer;
+  border: 1px solid transparent;
+
+  &:hover {
+    background-color: getCssVar('color-primary-light-9');
+    color: getCssVar('color-primary');
+  }
+
+  &.is-active {
+    background-color: getCssVar('color-primary-light-9');
+    color: getCssVar('color-primary');
+    border-color: getCssVar('color-primary-light-7');
+  }
+
+  .zyq-home__tenant-name {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .zyq-home__tenant-current {
+    font-size: 12px;
+    color: getCssVar('color-primary');
+    margin-left: 12px;
+    flex-shrink: 0;
+  }
+}
+
 .zqy-home__menu-option {
   height: 32px;
   display: flex;
