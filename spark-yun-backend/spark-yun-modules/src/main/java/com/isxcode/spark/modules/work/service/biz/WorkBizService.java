@@ -228,7 +228,7 @@ public class WorkBizService {
         if (Strings.isEmpty(pageWorkReq.getOrderType())) {
             workPage = workRepository.pageSearchByWorkflowId(pageWorkReq.getSearchKeyWord(),
                 pageWorkReq.getWorkflowId(), PageRequest.of(pageWorkReq.getPage(), pageWorkReq.getPageSize()));
-        } else if ("asc".equalsIgnoreCase(pageWorkReq.getOrderType())) {
+        } else if ("acs".equalsIgnoreCase(pageWorkReq.getOrderType())) {
             workPage = workRepository.pageSearchByWorkflowIdAndAscName(pageWorkReq.getSearchKeyWord(),
                 pageWorkReq.getWorkflowId(), PageRequest.of(pageWorkReq.getPage(), pageWorkReq.getPageSize()));
         } else {

@@ -30,11 +30,6 @@
                     </el-dropdown>
                 </div>
                 <div class="search-box">
-                    <el-icon class="order-type-icon" @click="toggleOrderType">
-                        <Sort v-if="!orderType" />
-                        <SortUp v-else-if="orderType === 'acs'" />
-                        <SortDown v-else />
-                    </el-icon>
                     <el-input
                         v-model="searchParam"
                         placeholder="回车搜索作业名称"
@@ -175,6 +170,14 @@
                             </el-icon>
                             <span class="btn-text">定位</span>
                         </div>
+                        <div class="btn-box" @click="toggleOrderType">
+                            <el-icon>
+                                <Sort v-if="!orderType" />
+                                <SortDown v-else-if="orderType === 'desc'" />
+                                <SortUp v-else />
+                            </el-icon>
+                            <span class="btn-text">{{ orderTypeText }}</span>
+                        </div>
                         <div class="btn-box" @click="refreshFlowCanvas">
                             <el-icon>
                                 <Refresh />
@@ -200,21 +203,27 @@
                         v-if="showWorkItem && (workConfig.workType === 'SPARK_JAR' || workConfig.workType === 'FLINK_JAR')"
                         :workItemConfig="workConfig"
                         :workFlowData="workFlowData"
+                        :orderType="orderType"
                         @back="backToFlow"
                         @locationNode="locationNode"
+                        @sortWorkList="toggleOrderType"
                     ></spark-jar>
                     <WorkApi
                         v-if="showWorkItem && workConfig.workType === 'API'"
                         :workItemConfig="workConfig"
                         :workFlowData="workFlowData"
+                        :orderType="orderType"
                         @back="backToFlow"
                         @locationNode="locationNode"
+                        @sortWorkList="toggleOrderType"
                     ></WorkApi>
                     <ApiSync
                         v-if="showWorkItem && workConfig.workType === 'API_SYNC_JDBC'"
                         :workItemConfig="workConfig"
+                        :orderType="orderType"
                         @back="backToFlow"
                         @locationNode="locationNode"
+                        @sortWorkList="toggleOrderType"
                     ></ApiSync>
                     <WorkItem
                         v-if="
@@ -230,39 +239,51 @@
                         "
                         :workItemConfig="workConfig"
                         :workFlowData="workFlowData"
+                        :orderType="orderType"
                         @back="backToFlow"
                         @locationNode="locationNode"
+                        @sortWorkList="toggleOrderType"
                     ></WorkItem>
                     <data-sync
                         v-if="showWorkItem && workConfig.workType === 'DATA_SYNC_JDBC'"
                         :workItemConfig="workConfig"
+                        :orderType="orderType"
                         @back="backToFlow"
                         @locationNode="locationNode"
+                        @sortWorkList="toggleOrderType"
                     ></data-sync>
                     <DataSyncFlink
                         v-if="showWorkItem && workConfig.workType === 'DATA_SYNC_FLINK'"
                         :workItemConfig="workConfig"
+                        :orderType="orderType"
                         @back="backToFlow"
                         @locationNode="locationNode"
+                        @sortWorkList="toggleOrderType"
                     ></DataSyncFlink>
                     <ExcelImport
                         v-if="showWorkItem && workConfig.workType === 'EXCEL_SYNC_JDBC'"
                         :workItemConfig="workConfig"
+                        :orderType="orderType"
                         @back="backToFlow"
                         @locationNode="locationNode"
+                        @sortWorkList="toggleOrderType"
                     ></ExcelImport>
                     <DatabaseMigrate
                         v-if="showWorkItem && workConfig.workType === 'DB_MIGRATE'"
                         :workItemConfig="workConfig"
+                        :orderType="orderType"
                         @back="backToFlow"
                         @locationNode="locationNode"
+                        @sortWorkList="toggleOrderType"
                     ></DatabaseMigrate>
                     <!-- etl可视化作业 -->
                     <WorkEtl
                         v-if="showWorkItem && workConfig.workType === 'SPARK_ETL'"
                         :workItemConfig="workConfig"
+                        :orderType="orderType"
                         @back="backToFlow"
                         @locationNode="locationNode"
+                        @sortWorkList="toggleOrderType"
                     ></WorkEtl>
                 </template>
             </div>
@@ -375,6 +396,16 @@ const workTypeName = computed(() => {
     }
 })
 
+const orderTypeText = computed(() => {
+    if (orderType.value === 'desc') {
+        return '降序'
+    }
+    if (orderType.value === 'acs') {
+        return '升序'
+    }
+    return '排序'
+})
+
 function initData() {
     return new Promise((resolve) => {
         const params: any = {
@@ -398,9 +429,9 @@ function initData() {
 
 function toggleOrderType() {
     if (!orderType.value) {
-        orderType.value = 'acs'
-    } else if (orderType.value === 'acs') {
         orderType.value = 'desc'
+    } else if (orderType.value === 'desc') {
+        orderType.value = 'acs'
     } else {
         orderType.value = ''
     }
@@ -1037,20 +1068,13 @@ onUnmounted(() => {
         }
 
         .search-box {
-            padding: 4px 0;
+            padding: 4px 8px;
             box-sizing: border-box;
             display: flex;
             align-items: center;
             gap: 4px;
             width: 100%;
             border-bottom: 1px solid getCssVar('border-color');
-
-            .order-type-icon {
-                margin-left: 8px;
-                font-size: 16px;
-                color: getCssVar('color', 'primary');
-                cursor: pointer;
-            }
 
             .el-input {
                 flex: 1;
