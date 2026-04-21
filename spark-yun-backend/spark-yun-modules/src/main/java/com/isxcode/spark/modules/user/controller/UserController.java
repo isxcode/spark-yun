@@ -70,6 +70,15 @@ public class UserController {
         userBizService.updateUser(updateUserReq);
     }
 
+    @Secured({RoleType.SYS_ADMIN})
+    @Operation(summary = "修改用户密码接口")
+    @PostMapping("/updateUserPassword")
+    @SuccessResponse("修改成功")
+    public void updateUserPassword(@Valid @RequestBody UpdateUserPasswordReq updateUserPasswordReq) {
+
+        userBizService.updateUserPassword(updateUserPasswordReq);
+    }
+
     @Operation(summary = "更新用户信息接口")
     @PostMapping("/updateUserInfo")
     @SuccessResponse("更新成功")

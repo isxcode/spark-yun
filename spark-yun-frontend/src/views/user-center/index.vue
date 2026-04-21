@@ -84,6 +84,9 @@
                     <el-dropdown-item @click="editData(scopeSlot.row)">
                         编辑
                     </el-dropdown-item>
+                    <el-dropdown-item @click="changePassword(scopeSlot.row)">
+                        修改密码
+                    </el-dropdown-item>
                     <el-dropdown-item @click="deleteData(scopeSlot.row)">
                         删除
                     </el-dropdown-item>
@@ -96,6 +99,7 @@
       </div>
     </LoadingPage>
     <AddModal ref="addModalRef" />
+    <PasswordModal ref="passwordModalRef" />
   </div>
 </template>
 
@@ -105,9 +109,10 @@ import Breadcrumb from '@/layout/bread-crumb/index.vue'
 import BlockTable from '@/components/block-table/index.vue'
 import LoadingPage from '@/components/loading/index.vue'
 import AddModal from './add-modal/index.vue'
+import PasswordModal from './password-modal/index.vue'
 
 import { BreadCrumbList, TableConfig } from './user-center.config'
-import { GetUserCenterList, DisableUser, EnableUser, DeleteUser, AddUserData, UpdateUserData } from '@/services/user-center.service'
+import { GetUserCenterList, DisableUser, EnableUser, DeleteUser, AddUserData, UpdateUserData, UpdateUserPassword } from '@/services/user-center.service'
 import { ElMessage, ElMessageBox } from 'element-plus'
 
 interface FormUser {
@@ -126,6 +131,7 @@ const keyword = ref('')
 const loading = ref(false)
 const networkError = ref(false)
 const addModalRef = ref(null)
+const passwordModalRef = ref(null)
 
 function initData(tableLoading?: boolean) {
   loading.value = tableLoading ? false : true
@@ -174,6 +180,21 @@ function editData(data: any) {
         .then((res: any) => {
           ElMessage.success(res.msg)
           initData()
+          resolve()
+        })
+        .catch((error: any) => {
+          reject(error)
+        })
+    })
+  }, data)
+}
+
+function changePassword(data: any) {
+  passwordModalRef.value.showModal((formData: any) => {
+    return new Promise((resolve: any, reject: any) => {
+      UpdateUserPassword(formData)
+        .then((res: any) => {
+          ElMessage.success(res.msg)
           resolve()
         })
         .catch((error: any) => {

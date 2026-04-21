@@ -259,6 +259,22 @@ public class UserBizService {
         userRepository.save(userEntity);
     }
 
+    public void updateUserPassword(UpdateUserPasswordReq updateUserPasswordReq) {
+
+        Optional<UserEntity> userEntityOptional = userRepository.findById(updateUserPasswordReq.getUserId());
+        if (!userEntityOptional.isPresent()) {
+            throw new IsxAppException("用户不存在");
+        }
+
+        if (!updateUserPasswordReq.getNewPassword().equals(updateUserPasswordReq.getConfirmPassword())) {
+            throw new IsxAppException("两次输入的新密码不一致");
+        }
+
+        UserEntity userEntity = userEntityOptional.get();
+        userEntity.setPasswd(SecureUtil.md5(updateUserPasswordReq.getNewPassword()));
+        userRepository.save(userEntity);
+    }
+
     public void disableUser(DisableUserReq disableUserReq) {
 
         Optional<UserEntity> userEntityOptional = userRepository.findById(disableUserReq.getUserId());

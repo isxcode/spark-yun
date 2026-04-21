@@ -18,6 +18,12 @@ interface UserParam {
   userId: string;
 }
 
+interface UpdateUserPasswordParams {
+  userId: string;
+  newPassword: string;
+  confirmPassword: string;
+}
+
 interface User {
   account: string;
   email: string;
@@ -78,6 +84,15 @@ export function DeleteUser(params: UserParam): Promise<any> {
   return http.request({
     method: 'post',
     url: '/user/deleteUser',
+    params: params
+  })
+}
+
+// 用户中心-修改密码
+export function UpdateUserPassword(params: UpdateUserPasswordParams): Promise<any> {
+  return http.request({
+    method: 'post',
+    url: '/user/updateUserPassword',
     params: params
   })
 }
