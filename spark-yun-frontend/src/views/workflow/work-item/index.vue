@@ -67,6 +67,14 @@
               </el-icon>
               <span class="btn-text">定位</span>
             </div>
+            <div class="btn-box" @click="emit('sortWorkList')">
+              <el-icon>
+                <Sort v-if="!props.orderType" />
+                <SortDown v-else-if="props.orderType === 'desc'" />
+                <SortUp v-else />
+              </el-icon>
+              <span class="btn-text">{{ props.orderType === 'desc' ? '降序' : props.orderType === 'acs' ? '升序' : '排序' }}</span>
+            </div>
           </div>
           <code-mirror v-model="sqltextData" basic :lang="workConfig.workType === 'PYTHON' ? pythonLang : lang"
             @change="sqlConfigChange" />
@@ -131,11 +139,12 @@ import ParseModal from '@/components/log-container/parse-modal/index.vue'
 
 const route = useRoute()
 const router = useRouter()
-const emit = defineEmits(['back', 'locationNode'])
+const emit = defineEmits(['back', 'locationNode', 'sortWorkList'])
 
 const props = defineProps<{
   workItemConfig: any,
-  workFlowData: any
+  workFlowData: any,
+  orderType?: 'acs' | 'desc' | ''
 }>()
 
 const lang = ref(sql())

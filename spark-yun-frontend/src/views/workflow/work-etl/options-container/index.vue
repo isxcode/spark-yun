@@ -45,15 +45,26 @@
             </el-icon>
             <span class="btn-text">定位</span>
         </div>
+        <div class="btn-box" @click="optionsEvent('sortWorkList')">
+            <el-icon>
+                <Sort v-if="!props.orderType" />
+                <SortDown v-else-if="props.orderType === 'desc'" />
+                <SortUp v-else />
+            </el-icon>
+            <span class="btn-text">{{ props.orderType === 'desc' ? '降序' : props.orderType === 'acs' ? '升序' : '排序' }}</span>
+        </div>
     </div>
 </template>
 
 <script lang="ts" setup>
-import { defineEmits, reactive } from 'vue'
+import { defineEmits, defineProps, reactive } from 'vue'
 import { Loading } from '@element-plus/icons-vue'
 
 // const emit = defineEmits(['saveData', 'runWorkData', 'terWorkData', 'setConfigData', 'locationNode'])
 const emit = defineEmits(['optionsEvent'])
+const props = defineProps<{
+    orderType?: 'acs' | 'desc' | ''
+}>()
 
 const btnLoadingConfig = reactive({
     runningLoading: false,

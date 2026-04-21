@@ -3,6 +3,7 @@
         <LoadingPage :visible="loading">
             <OptionsContainer
                 ref="optionsContainerRef"
+                :orderType="props.orderType"
                 @optionsEvent="optionsEvent"
             ></OptionsContainer>
             <div class="work-etl-main">
@@ -62,9 +63,10 @@ const guid = function() {
     return (S4() + S4() + '-' + S4() + '-' + S4() + '-' + S4() + '-' +S4() + S4() +S4());
 }
 
-const emit = defineEmits(['back', 'locationNode'])
+const emit = defineEmits(['back', 'locationNode', 'sortWorkList'])
 const props = defineProps<{
-    workItemConfig: any
+    workItemConfig: any,
+    orderType?: 'acs' | 'desc' | ''
 }>()
 
 const changeStatus = ref<boolean>(false)
@@ -112,6 +114,8 @@ function optionsEvent(e: string) {
         runWorkData()
     } else if (e === 'terWorkData') {
         terWorkData()
+    } else if (e === 'sortWorkList') {
+        emit('sortWorkList')
     }
 }
 

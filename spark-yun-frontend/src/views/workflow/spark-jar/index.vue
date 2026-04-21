@@ -46,6 +46,14 @@
                 </el-icon>
                 <span class="btn-text">定位</span>
             </div>
+            <div class="btn-box" @click="emit('sortWorkList')">
+                <el-icon>
+                    <Sort v-if="!props.orderType" />
+                    <SortDown v-else-if="props.orderType === 'desc'" />
+                    <SortUp v-else />
+                </el-icon>
+                <span class="btn-text">{{ props.orderType === 'desc' ? '降序' : props.orderType === 'acs' ? '升序' : '排序' }}</span>
+            </div>
         </div>
         <LoadingPage :visible="loading" :network-error="networkError" @loading-refresh="initData">
             <div class="zqy-work-container jar-work-container">
@@ -139,11 +147,12 @@ import { Loading } from '@element-plus/icons-vue'
 
 const route = useRoute()
 const router = useRouter()
-const emit = defineEmits(['back', 'locationNode'])
+const emit = defineEmits(['back', 'locationNode', 'sortWorkList'])
 
 const props = defineProps<{
     workItemConfig: any,
-    workFlowData: any
+    workFlowData: any,
+    orderType?: 'acs' | 'desc' | ''
 }>()
 
 const loading = ref(false)

@@ -64,6 +64,14 @@
                 </el-icon>
                 <span class="btn-text">定位</span>
             </div>
+            <div class="btn-box" @click="emit('sortWorkList')">
+                <el-icon>
+                    <Sort v-if="!props.orderType" />
+                    <SortDown v-else-if="props.orderType === 'desc'" />
+                    <SortUp v-else />
+                </el-icon>
+                <span class="btn-text">{{ props.orderType === 'desc' ? '降序' : props.orderType === 'acs' ? '升序' : '排序' }}</span>
+            </div>
         </div>
         <LoadingPage
             :visible="loading"
@@ -224,10 +232,11 @@ interface Option {
 
 const props = defineProps<{
     workItemConfig: any,
-    disabled?: boolean
+    disabled?: boolean,
+    orderType?: 'acs' | 'desc' | ''
 }>()
 
-const emit = defineEmits(['back', 'locationNode'])
+const emit = defineEmits(['back', 'locationNode', 'sortWorkList'])
 
 const changeStatus = ref(false)
 const configDetailRef = ref()
