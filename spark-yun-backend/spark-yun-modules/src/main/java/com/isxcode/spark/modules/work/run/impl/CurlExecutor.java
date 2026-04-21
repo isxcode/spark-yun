@@ -28,6 +28,8 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.util.List;
 
+import static com.isxcode.spark.common.config.CommonConfig.USER_ID;
+
 @Service
 @Slf4j
 public class CurlExecutor extends WorkExecutor {
@@ -35,7 +37,10 @@ public class CurlExecutor extends WorkExecutor {
     private final IsxAppProperties isxAppProperties;
 
     private final SecretKeyRepository secretKeyRepository;
+
     private final AesUtils aesUtils;
+
+    private final SqlFunctionService sqlFunctionService;
 
     public CurlExecutor(WorkInstanceRepository workInstanceRepository,
         WorkflowInstanceRepository workflowInstanceRepository, SqlFunctionService sqlFunctionService,
@@ -50,6 +55,7 @@ public class CurlExecutor extends WorkExecutor {
         this.isxAppProperties = isxAppProperties;
         this.secretKeyRepository = secretKeyRepository;
         this.aesUtils = aesUtils;
+        this.sqlFunctionService = sqlFunctionService;
     }
 
     @Override
@@ -86,14 +92,27 @@ public class CurlExecutor extends WorkExecutor {
 
             // 脚本需要返回网络状态
             script = script.replace("curl", "curl -w \"%{http_code}\" ");
+
+            // 解析上游参数
+            script = parseJsonPath(script, workInstance);
+
+            // 翻译sql中的系统函数
+            script = sqlFunctionService.parseSqlFunction(script);
+
+            // 加密数据不打印
             String printScript = script;
 
             // 解析全局变量
             List<SecretKeyEntity> allKey = secretKeyRepository.findAll();
             for (SecretKeyEntity secretKeyEntity : allKey) {
-                script = script.replace("${{ secret." + secretKeyEntity.getKeyName() + " }}",
-                    aesUtils.decrypt(secretKeyEntity.getSecretValue()));
-                printScript = printScript.replace("${{ secret." + secretKeyEntity.getKeyName() + " }}", "******");
+                String secretName = "${{ secret." + secretKeyEntity.getKeyName() + " }}";
+                if (script.contains(secretName)) {
+                    if (!secretKeyEntity.getCreateBy().equals(USER_ID.get())) {
+                        throw errorLogException("检测脚本异常 : 需要申请别人的全局变量" + secretName);
+                    }
+                    script = script.replace(secretName, aesUtils.decrypt(secretKeyEntity.getSecretValue()));
+                    printScript = printScript.replace(secretName, "******");
+                }
             }
 
             // 保存上下文
