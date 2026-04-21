@@ -33,4 +33,6 @@ public class PageWorkflowRes {
     private String createBy;
 
     private String createUsername;
+
+    private String createBy;
 }

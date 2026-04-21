@@ -14,6 +14,9 @@
             <div class="zqy-table">
                 <BlockTable :table-config="tableConfig" @size-change="handleSizeChange"
                     @current-change="handleCurrentChange">
+                    <template #varName="scopeSlot">
+                        <span class="name-click" @click="editData(scopeSlot.row)">{{ scopeSlot.row.keyName }}</span>
+                    </template>
                     <template #options="scopeSlot">
                         <div class="btn-group">
                             <span @click="copyData(scopeSlot.row)">复制</span>

@@ -42,7 +42,8 @@ export const colConfigs: colConfig[] = [
     prop: 'keyName',
     title: '变量名称',
     minWidth: 125,
-    showOverflowTooltip: true
+    showOverflowTooltip: true,
+    customSlot: 'varName'
   },
   {
     prop: 'createUsername',

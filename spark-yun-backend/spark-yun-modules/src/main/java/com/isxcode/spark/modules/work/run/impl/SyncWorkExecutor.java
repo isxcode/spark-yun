@@ -57,6 +57,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
+import static com.isxcode.spark.common.config.CommonConfig.USER_ID;
 import static com.isxcode.spark.common.utils.ssh.SshUtils.scpJar;
 
 @Service
@@ -213,9 +214,14 @@ public class SyncWorkExecutor extends WorkExecutor {
                 // 解析全局变量
                 List<SecretKeyEntity> allKey = secretKeyRepository.findAll();
                 for (SecretKeyEntity secretKeyEntity : allKey) {
-                    script = script.replace("${{ secret." + secretKeyEntity.getKeyName() + " }}",
-                        aesUtils.decrypt(secretKeyEntity.getSecretValue()));
-                    printSql = printSql.replace("${{ secret." + secretKeyEntity.getKeyName() + " }}", "******");
+                    String secretName = "${{ secret." + secretKeyEntity.getKeyName() + " }}";
+                    if (script.contains(secretName)) {
+                        if (!secretKeyEntity.getCreateBy().equals(USER_ID.get())) {
+                            throw errorLogException("检测脚本异常 : 需要申请别人的全局变量" + secretName);
+                        }
+                        script = script.replace(secretName, aesUtils.decrypt(secretKeyEntity.getSecretValue()));
+                        printSql = printSql.replace(secretName, "******");
+                    }
                 }
 
                 // 保存事件
