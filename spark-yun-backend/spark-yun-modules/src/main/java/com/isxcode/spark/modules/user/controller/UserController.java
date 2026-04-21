@@ -78,6 +78,14 @@ public class UserController {
         userBizService.updateUserInfo(updateUserInfoReq);
     }
 
+    @Operation(summary = "修改个人密码接口")
+    @PostMapping("/updateMyPassword")
+    @SuccessResponse("修改成功")
+    public void updateMyPassword(@Valid @RequestBody UpdateMyPasswordReq updateMyPasswordReq) {
+
+        userBizService.updateMyPassword(updateMyPasswordReq);
+    }
+
     @Secured({RoleType.SYS_ADMIN})
     @Operation(summary = "禁用用户接口")
     @PostMapping("/disableUser")

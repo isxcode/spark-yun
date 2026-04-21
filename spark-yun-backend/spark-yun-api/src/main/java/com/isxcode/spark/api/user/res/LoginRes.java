@@ -13,6 +13,8 @@ public class LoginRes {
 
     private String username;
 
+    private String account;
+
     private String phone;
 
     private String email;

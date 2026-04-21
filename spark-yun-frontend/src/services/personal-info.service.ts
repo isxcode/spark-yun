@@ -14,3 +14,17 @@ export function UpdateUserInfo(params: UpdateUserInfoParams): Promise<any> {
     params: params
   })
 }
+
+export interface UpdateMyPasswordParams {
+  oldPassword: string
+  newPassword: string
+  confirmPassword: string
+}
+
+export function UpdateMyPassword(params: UpdateMyPasswordParams): Promise<any> {
+  return http.request({
+    method: 'post',
+    url: '/user/updateMyPassword',
+    params: params
+  })
+}
