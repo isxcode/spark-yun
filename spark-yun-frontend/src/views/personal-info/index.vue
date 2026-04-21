@@ -30,7 +30,7 @@
                 show-word-limit
               />
             </el-form-item>
-            <el-form-item label="手机号">
+            <el-form-item label="手机号" prop="phone">
               <el-input
                 v-model="personalModel.phone"
                 maxlength="100"
@@ -38,7 +38,7 @@
                 show-word-limit
               />
             </el-form-item>
-            <el-form-item label="邮箱">
+            <el-form-item label="邮箱" prop="email">
               <el-input
                 v-model="personalModel.email"
                 maxlength="100"
@@ -103,11 +103,44 @@ const elFormRef = ref<InstanceType<typeof ElForm> | null>()
 const passwordFormRef = ref<InstanceType<typeof ElForm> | null>()
 const activeMenu = ref('basic-info')
 
+const validatePhone = (_: any, value: string, callback: (error?: Error) => void) => {
+  if (!value) {
+    callback()
+    return
+  }
+
+  const phoneReg = /^1[3-9]\d{9}$/
+  if (!phoneReg.test(value)) {
+    callback(new Error('请输入正确的手机号'))
+    return
+  }
+
+  callback()
+}
+
 const personalRule: FormRules = {
   username: [
     {
       required: true,
       message: '请输入用户名',
+      trigger: [ 'blur', 'change' ]
+    }
+  ],
+  phone: [
+    {
+      validator: validatePhone,
+      trigger: [ 'blur', 'change' ]
+    }
+  ],
+  email: [
+    {
+      required: true,
+      message: '请输入邮箱',
+      trigger: [ 'blur', 'change' ]
+    },
+    {
+      type: 'email',
+      message: '请输入正确的邮箱格式',
       trigger: [ 'blur', 'change' ]
     }
   ]
@@ -199,10 +232,7 @@ const handleChangePassword = function() {
     if (valid) {
       UpdateMyPassword(passwordModel).then((res: any) => {
         ElMessage.success(res.msg)
-        passwordModel.oldPassword = ''
-        passwordModel.newPassword = ''
-        passwordModel.confirmPassword = ''
-        passwordFormRef.value?.clearValidate()
+        passwordFormRef.value?.resetFields()
       })
     }
   })
