@@ -84,8 +84,8 @@ public class UserBizService {
         // 如果是系统管理员直接返回
         if (RoleType.SYS_ADMIN.equals(userEntity.getRoleCode())) {
             return LoginRes.builder().tenantId(userEntity.getCurrentTenantId()).username(userEntity.getUsername())
-                .phone(userEntity.getPhone()).email(userEntity.getEmail()).remark(userEntity.getRemark())
-                .token(jwtToken).role(userEntity.getRoleCode()).build();
+                .account(userEntity.getAccount()).phone(userEntity.getPhone()).email(userEntity.getEmail())
+                .remark(userEntity.getRemark()).token(jwtToken).role(userEntity.getRoleCode()).build();
         }
 
         // 如果用户不在任何一个租户报错
@@ -130,8 +130,9 @@ public class UserBizService {
         }
 
         // 生成token并返回
-        return new LoginRes(userEntity.getUsername(), userEntity.getPhone(), userEntity.getEmail(),
-            userEntity.getRemark(), jwtToken, currentTenantId, tenantUserEntityOptional.get().getRoleCode());
+        return LoginRes.builder().username(userEntity.getUsername()).account(userEntity.getAccount())
+            .phone(userEntity.getPhone()).email(userEntity.getEmail()).remark(userEntity.getRemark()).token(jwtToken)
+            .tenantId(currentTenantId).role(tenantUserEntityOptional.get().getRoleCode()).build();
     }
 
     public GetUserRes getUser() {
@@ -155,7 +156,7 @@ public class UserBizService {
         // 如果是系统管理员直接返回
         if (RoleType.SYS_ADMIN.equals(userEntity.getRoleCode())) {
             return GetUserRes.builder().tenantId(userEntity.getCurrentTenantId()).username(userEntity.getUsername())
-                .token(jwtToken).role(userEntity.getRoleCode()).build();
+                .account(userEntity.getAccount()).token(jwtToken).role(userEntity.getRoleCode()).build();
         }
 
         // 获取用户最近一次租户信息
@@ -186,8 +187,9 @@ public class UserBizService {
         }
 
         // 生成token并返回
-        return new GetUserRes(userEntity.getUsername(), userEntity.getPhone(), userEntity.getEmail(),
-            userEntity.getRemark(), jwtToken, currentTenantId, tenantUserEntityOptional.get().getRoleCode());
+        return GetUserRes.builder().username(userEntity.getUsername()).account(userEntity.getAccount())
+            .phone(userEntity.getPhone()).email(userEntity.getEmail()).remark(userEntity.getRemark()).token(jwtToken)
+            .tenantId(currentTenantId).role(tenantUserEntityOptional.get().getRoleCode()).build();
     }
 
     public void logout() {
@@ -336,6 +338,34 @@ public class UserBizService {
         // 更新信息
         UserEntity userEntity = userMapper.updateUserInfoToUserEntity(updateUserInfoReq, userEntityOptional.get());
 
+        userRepository.save(userEntity);
+    }
+
+    public void updateMyPassword(UpdateMyPasswordReq updateMyPasswordReq) {
+
+        // 获取当前用户
+        Optional<UserEntity> userEntityOptional = userRepository.findById(USER_ID.get());
+        if (!userEntityOptional.isPresent()) {
+            throw new IsxAppException("用户不存在");
+        }
+
+        // 校验新密码
+        if (!updateMyPasswordReq.getNewPassword().equals(updateMyPasswordReq.getConfirmPassword())) {
+            throw new IsxAppException("两次输入的新密码不一致");
+        }
+
+        if (updateMyPasswordReq.getOldPassword().equals(updateMyPasswordReq.getNewPassword())) {
+            throw new IsxAppException("新密码不能与原密码相同");
+        }
+
+        UserEntity userEntity = userEntityOptional.get();
+
+        // 校验原密码
+        if (!SecureUtil.md5(updateMyPasswordReq.getOldPassword()).equals(userEntity.getPasswd())) {
+            throw new IsxAppException("原密码不正确");
+        }
+
+        userEntity.setPasswd(SecureUtil.md5(updateMyPasswordReq.getNewPassword()));
         userRepository.save(userEntity);
     }
 

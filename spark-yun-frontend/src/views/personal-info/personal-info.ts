@@ -1,5 +1,6 @@
 export interface PersonalModel {
   username: string
+  account: string
   phone: string
   email: string
   remark: string

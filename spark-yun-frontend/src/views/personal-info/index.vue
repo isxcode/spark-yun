@@ -12,6 +12,13 @@
       <div class="personal-info__content">
         <template v-if="activeMenu === 'basic-info'">
           <el-form ref="elFormRef" class="personal-info__form" :model="personalModel" label-position="top" :rules="personalRule">
+            <el-form-item label="账号">
+              <el-input
+                v-model="personalModel.account"
+                placeholder="--"
+                disabled
+              />
+            </el-form-item>
             <el-form-item
               label="用户名"
               prop="username"
@@ -85,7 +92,7 @@ import { reactive, ref } from "vue";
 import { PasswordModel, PersonalModel } from './personal-info'
 import Breadcrumb from '@/layout/bread-crumb/index.vue'
 import { useAuthStore } from "@/store/useAuth";
-import { UpdateUserInfo } from "@/services/personal-info.service";
+import { UpdateMyPassword, UpdateUserInfo } from "@/services/personal-info.service";
 import { ElForm, ElMessage, FormRules } from "element-plus";
 
 const authStore = useAuthStore()
@@ -108,6 +115,7 @@ const personalRule: FormRules = {
 
 const personalModel = reactive<PersonalModel>({
   username: userInfo.username || '',
+  account: userInfo.account || '',
   phone: userInfo.phone || '',
   email: userInfo.email || '',
   remark: userInfo.remark || ''
@@ -172,7 +180,14 @@ const handleSave = function() {
 
       authStore.setUserInfo(Object.assign(userInfo, personalModel))
 
-      UpdateUserInfo(personalModel).then((res: any) => {
+      const updateParams = {
+        username: personalModel.username,
+        phone: personalModel.phone,
+        email: personalModel.email,
+        remark: personalModel.remark
+      }
+
+      UpdateUserInfo(updateParams).then((res: any) => {
         ElMessage.success(res.msg)
       })
     }
@@ -182,7 +197,13 @@ const handleSave = function() {
 const handleChangePassword = function() {
   passwordFormRef.value?.validate(valid => {
     if (valid) {
-      ElMessage.warning('当前版本暂未开放个人密码修改接口')
+      UpdateMyPassword(passwordModel).then((res: any) => {
+        ElMessage.success(res.msg)
+        passwordModel.oldPassword = ''
+        passwordModel.newPassword = ''
+        passwordModel.confirmPassword = ''
+        passwordFormRef.value?.clearValidate()
+      })
     }
   })
 }
