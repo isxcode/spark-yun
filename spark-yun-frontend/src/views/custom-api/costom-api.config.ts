@@ -48,7 +48,8 @@ export const colConfigs: colConfig[] = [
         prop: 'name',
         title: '接口名称',
         minWidth: 100,
-        showOverflowTooltip: true
+        showOverflowTooltip: true,
+        customSlot: 'apiName'
     },
     {
       prop: 'apiType',

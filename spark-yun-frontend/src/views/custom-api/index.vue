@@ -22,6 +22,9 @@
                     @size-change="handleSizeChange"
                     @current-change="handleCurrentChange"
                 >
+                    <template #apiName="scopeSlot">
+                        <span class="name-click" @click="editData(scopeSlot.row)">{{ scopeSlot.row.name }}</span>
+                    </template>
                     <template #statusTag="scopeSlot">
                         <ZStatusTag :status="scopeSlot.row.status"></ZStatusTag>
                     </template>
