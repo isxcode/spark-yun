@@ -28,7 +28,7 @@
                     </el-tooltip>
                     <el-input v-model="formData.path" maxlength="1000" placeholder="请输入" />
                 </el-form-item>
-                <el-form-item label="数据源" prop="datasourceId" v-if="!isEdit">
+                <el-form-item label="数据源" prop="datasourceId">
                     <el-select v-model="formData.datasourceId" :filterable="true" placeholder="请选择" @visible-change="getDataSourceList">
                         <el-option
                             v-for="item in dataSourceList"
@@ -439,6 +439,9 @@ const stepIndex = ref<number>(0)
 const okLoading = ref<boolean>(false)
 const testLoading = ref<boolean>(false)
 const httpStatus = ref<number | null>(null)
+const DEFAULT_RES_BODY = `{
+  "code":"ok"
+}`
 
 const modelConfig = reactive({
     title: '添加接口',
@@ -545,6 +548,9 @@ function showModal(cb: () => void, data: any, cb2?: () => void): void {
     }
     nextTick(() => {
         form.value?.resetFields()
+        if (!data) {
+            formData.resBody = DEFAULT_RES_BODY
+        }
     })
 }
 
