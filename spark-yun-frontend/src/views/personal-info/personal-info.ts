@@ -4,3 +4,9 @@ export interface PersonalModel {
   email: string
   remark: string
 }
+
+export interface PasswordModel {
+  oldPassword: string
+  newPassword: string
+  confirmPassword: string
+}

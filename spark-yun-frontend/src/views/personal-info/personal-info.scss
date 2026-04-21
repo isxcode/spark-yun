@@ -1,3 +1,45 @@
 .personal-info {
   padding: 20px;
+
+  &__layout {
+    display: flex;
+    gap: 20px;
+  }
+
+  &__menu {
+    width: 160px;
+    background: #fff;
+    border-radius: 6px;
+    flex-shrink: 0;
+    position: relative;
+    margin-right: 16px;
+    padding-right: 16px;
+    min-height: 420px;
+  }
+
+  &__menu::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 1px;
+    height: 100%;
+    background: #ebeef5;
+  }
+
+  &__menu :deep(.el-menu-item) {
+    font-size: var(--el-font-size-extra-small);
+  }
+
+  &__content {
+    flex: 1;
+    background: #fff;
+    border-radius: 6px;
+    padding: 20px;
+    min-height: 420px;
+  }
+
+  &__form {
+    max-width: 560px;
+  }
 }

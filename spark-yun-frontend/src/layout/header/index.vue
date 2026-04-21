@@ -36,7 +36,7 @@
         </span>
         <template #dropdown>
           <el-dropdown-menu>
-            <el-dropdown-item>个人信息</el-dropdown-item>
+            <el-dropdown-item>设置</el-dropdown-item>
             <el-dropdown-item command="logout">
               退出登录
             </el-dropdown-item>
