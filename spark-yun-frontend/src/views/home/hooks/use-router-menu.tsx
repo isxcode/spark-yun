@@ -75,6 +75,9 @@ export function useRouterMenu(menuListData: Menu[]) {
       if (!vipChecked.value) {
         return
       }
+      if (route.name === 'personalInfo') {
+        return
+      }
       if (!currentMenu.value && menuViewData.value.length) {
         router.replace({
           name: menuViewData.value[0].code
