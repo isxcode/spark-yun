@@ -196,7 +196,6 @@ const limitedWorkTypeSet = new Set([
     'CURL',
     'EXE_JDBC',
     'FLINK_JAR',
-    'FLINK_SQL',
     'PYTHON',
     'QUERY_JDBC',
     'SPARK_JAR',
