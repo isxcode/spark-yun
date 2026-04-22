@@ -25,6 +25,7 @@ export function useMenuAvatar() {
   const { tenantList, initSwitchTenant, onTenantChange } = useSwitchTenant()
 
   const isAdmin = computed(() => authStore.userInfo?.role === 'ROLE_SYS_ADMIN')
+  const isBuiltInAdminAccount = computed(() => authStore.userInfo?.account === 'admin')
   const activeTenantName = computed(() => {
     const current = tenantList.value.find(item => item.id === authStore.tenantId)
     return current?.name || '切换租户'
@@ -107,10 +108,14 @@ export function useMenuAvatar() {
                     </div>
                   ) : null
                 }
-                <div class="zqy-home__menu-option" onClick={ goPersonalInfo }>
-                  <el-icon><Setting /></el-icon>
-                  设置
-                </div>
+                {
+                  !isBuiltInAdminAccount.value ? (
+                    <div class="zqy-home__menu-option" onClick={ goPersonalInfo }>
+                      <el-icon><Setting /></el-icon>
+                      设置
+                    </div>
+                  ) : null
+                }
                 <div class="zqy-home__menu-option" onClick={ () => handleCommand('logout') }>
                   <el-icon><switch-button /></el-icon>
                   退出登录

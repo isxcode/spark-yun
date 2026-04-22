@@ -8,22 +8,22 @@
       :rules="rules"
     >
       <el-form-item
-        label="用户名"
-        prop="username"
+        label="账号"
+        prop="account"
       >
         <el-input
-          v-model="formData.username"
+          v-model="formData.account"
           maxlength="100"
           placeholder="请输入"
           show-word-limit
         />
       </el-form-item>
       <el-form-item
-        label="账号"
-        prop="account"
+        label="用户名"
+        prop="username"
       >
         <el-input
-          v-model="formData.account"
+          v-model="formData.username"
           maxlength="100"
           placeholder="请输入"
           show-word-limit
