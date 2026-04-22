@@ -8,7 +8,7 @@
       >
         添加成员
       </el-button>
-      <div class="zqy-tenant__select">
+      <div v-if="isBuiltInAdminAccount" class="zqy-tenant__select">
         <el-select 
           :model-value="currentTenant.id" 
           placeholder="请选择租户" 
@@ -100,7 +100,7 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, ref, onMounted } from 'vue'
+import { reactive, ref, onMounted, computed } from 'vue'
 import Breadcrumb from '@/layout/bread-crumb/index.vue'
 import BlockTable from '@/components/block-table/index.vue'
 import LoadingPage from '@/components/loading/index.vue'
@@ -111,6 +111,7 @@ import { GetUserList, AddTenantUserData, DeleteTenantUser, GiveAuth, RemoveAuth 
 import { ElMessage, ElMessageBox } from 'element-plus'
 
 import { useSwitchTenant } from '@/hooks/switch-tenant'
+import { useAuthStore } from '@/store/useAuth'
 
 interface FormUser {
   isTenantAdmin: boolean;
@@ -123,6 +124,8 @@ const keyword = ref('')
 const loading = ref(false)
 const networkError = ref(false)
 const addModalRef = ref(null)
+const authStore = useAuthStore()
+const isBuiltInAdminAccount = computed(() => authStore.userInfo?.account === 'admin')
 
 const { currentTenant, tenantList, initSwitchTenant, onTenantChange } = useSwitchTenant()
 
