@@ -1,7 +1,7 @@
 import { useAuthStore } from "@/store/useAuth"
 import { computed, ref } from "vue"
 import { useRouter } from "vue-router"
-import { OfficeBuilding, Setting } from '@element-plus/icons-vue'
+import { OfficeBuilding, Search, Setting } from '@element-plus/icons-vue'
 import { useSwitchTenant, type TenantInfo } from '@/hooks/switch-tenant'
 import EllipsisTooltip from '@/components/ellipsis-tooltip/ellipsis-tooltip.vue'
 import { ChangeTenantData } from "@/services/login.service"
@@ -17,6 +17,9 @@ export function useMenuAvatar() {
   let router = useRouter()
   let menuVisible = ref(false)
   let tenantDialogVisible = ref(false)
+  let selectedTenantId = ref('')
+  let switchTenantLoading = ref(false)
+  let tenantKeyword = ref('')
 
   let username = computed(() => {
     return authStore.userInfo?.username?.slice(0, 1)
@@ -29,6 +32,13 @@ export function useMenuAvatar() {
   const activeTenantName = computed(() => {
     const current = tenantList.value.find(item => item.id === authStore.tenantId)
     return current?.name || '切换租户'
+  })
+  const filteredTenantList = computed(() => {
+    const keyword = tenantKeyword.value.trim().toLowerCase()
+    if (!keyword) {
+      return tenantList.value
+    }
+    return tenantList.value.filter(tenant => (tenant.name || '').toLowerCase().includes(keyword))
   })
 
   if (!isAdmin.value) {
@@ -62,33 +72,51 @@ export function useMenuAvatar() {
     }
   }
 
-  const handleTenantChange = function(tenant: TenantInfo) {
-    if (authStore.tenantId === tenant.id) {
-      tenantDialogVisible.value = false
+  const handleTenantSelect = function(tenant: TenantInfo) {
+    selectedTenantId.value = tenant.id
+  }
+
+  const closeTenantDialog = function() {
+    tenantDialogVisible.value = false
+    selectedTenantId.value = authStore.tenantId
+    tenantKeyword.value = ''
+  }
+
+  const confirmTenantSwitch = function() {
+    if (!selectedTenantId.value || switchTenantLoading.value) {
+      return
+    }
+    if (authStore.tenantId === selectedTenantId.value) {
+      closeTenantDialog()
       return
     }
 
-    onTenantChange(tenant.id)
-    tenantDialogVisible.value = false
+    switchTenantLoading.value = true
+    onTenantChange(selectedTenantId.value)
 
     ChangeTenantData({
-      tenantId: tenant.id
-    }, tenant.id).then(() => {
+      tenantId: selectedTenantId.value
+    }, selectedTenantId.value).then(() => {
       getVipLicenseEnabled(true).finally(() => {
         ElMessage.success('租户切换成功')
 
-        authStore.setTenantId(tenant.id)
+        authStore.setTenantId(selectedTenantId.value)
         http.setHeader({
-          tenant: tenant.id
+          tenant: selectedTenantId.value
         })
+        closeTenantDialog()
       })
     }).catch(() => {
       onTenantChange(authStore.tenantId)
+    }).finally(() => {
+      switchTenantLoading.value = false
     })
   }
 
   const openTenantDialog = function() {
     menuVisible.value = false
+    selectedTenantId.value = authStore.tenantId
+    tenantKeyword.value = ''
     tenantDialogVisible.value = true
   }
 
@@ -133,13 +161,42 @@ export function useMenuAvatar() {
           close-on-click-modal={false}
           close-on-press-escape={false}
           class="zyq-home__tenant-dialog"
+          v-slots={{
+            footer: () => (
+              <div class="zyq-home__tenant-dialog-footer">
+                <el-button onClick={ closeTenantDialog }>取消</el-button>
+                <el-button
+                  type="primary"
+                  loading={switchTenantLoading.value}
+                  disabled={!selectedTenantId.value}
+                  onClick={ confirmTenantSwitch }
+                >
+                  确认切换
+                </el-button>
+              </div>
+            )
+          }}
         >
+          <div class="zyq-home__tenant-dialog-header">
+            <div class="zyq-home__tenant-dialog-title">切换租户</div>
+            <el-input
+              v-model={tenantKeyword.value}
+              class="zyq-home__tenant-dialog-search"
+              clearable
+              placeholder="搜索租户"
+              prefix-icon={Search}
+            />
+          </div>
           <div class="zyq-home__tenant-dialog-list">
             {
-              tenantList.value.map(tenant => (
+              filteredTenantList.value.map(tenant => (
                 <div
-                  class={['zyq-home__tenant-dialog-item', authStore.tenantId === tenant.id ? 'is-active' : '' ]}
-                  onClick={ () => handleTenantChange(tenant) }
+                  class={[
+                    'zyq-home__tenant-dialog-item',
+                    authStore.tenantId === tenant.id ? 'is-current' : '',
+                    selectedTenantId.value === tenant.id ? 'is-selected' : ''
+                  ]}
+                  onClick={ () => handleTenantSelect(tenant) }
                 >
                   <div class="zyq-home__tenant-name">
                     <EllipsisTooltip class="zyq-home__menu-text" label={ tenant.name } />
@@ -147,6 +204,11 @@ export function useMenuAvatar() {
                   { authStore.tenantId === tenant.id ? <span class="zyq-home__tenant-current">当前</span> : null }
                 </div>
               ))
+            }
+            {
+              !filteredTenantList.value.length ? (
+                <div class="zyq-home__tenant-dialog-empty">暂无匹配租户</div>
+              ) : null
             }
           </div>
         </el-dialog>
